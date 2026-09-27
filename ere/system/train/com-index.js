@@ -2,21 +2,6 @@
  * @file 指令编号的两套空间之间的映射层：玩家可见的紧凑序号 L_IDX ↔
  * Train.csv 编号 L_I（issue #213，证据 #211 第二段的三条实机实证）。
  *
- * 源: target/ERB/調教相關/USERCOM.ERB  @SHOW_COMMENU（:188-216）
- *     ```
- *     FOR L_I,0,300
- *         SIF STRLENS(TRAINNAME:L_I) <= 0
- *             CONTINUE
- *         L_IDX++              ← 紧凑序号：跳过 CSV 空号，在 COM_ABLE
- *         RESULT = 1           检查之前自增——与可用性无关、稳定
- *         TRYCALLFORM COM_ABLE{L_I}
- *         SIF RESULT == 0
- *             CONTINUE
- *         …
- *         PRINTFORMC %TRAIN_NAME:RESULT%[{L_IDX,3}]
- *     NEXT
- *     ```
- *
  * == 为什么必须有这层（#211 的实机事实） ==
  *
  * 玩家看到并输入的指令编号（L_IDX）≠ Train.csv 的编号（L_I）。两套编号

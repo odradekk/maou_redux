@@ -1,9 +1,6 @@
 /**
  * @file 菜单按钮排版助手（#73 自 page-main-menu 收敛，全项目唯一落点）。
  *
- * 源: target/ERB/其他/DRAW_EXT_COMM.ERB  @MENU_BUTTON（:2，按钮明暗的近似）、
- *     @PRINT_COLORBAR（:22）、@PRINT_COLORBAR2（:54）、@BARCOLORSET（:76）
- *
  * ▌ 前缀不在原函数里——原作调用方把 ▌ 写进正文串（UNICODE(0x258c)），ere
  * 侧统一由本助手拼接，净效果等价。
  *

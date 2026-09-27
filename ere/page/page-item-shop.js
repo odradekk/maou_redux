@@ -1,17 +1,6 @@
 /**
  * @file 道具商店：@ITEM_SHOP 族（issue #399 / N15 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_ITEM.ERB
- *     @ITEM_SHOP（:17-80，绘制与输入循环头）
- *     @EVENTBUY（:85-248，购买回调：复数购买 / 当场使用 / 简单确认）
- *     @SALEITEM_CHECK（:253-400，在售标志）
- *     @BUY_PLURAL（:404-582，消耗型道具的复数购买）
- *     @USE_ITEM（:587-738，当场使用型道具的对象选择与结算）
- *     @TECHNIQUE_OF_MASTER（:744-769）/@TECHNIQUE_OF_MASTER_UP（:771-776）
- *     @CLEAR_SHOP（:781-786，清 ITEMSALES:0-299）
- *     @ITEM_DETOX（:791-810）自 #333 起已在 ere/system/equip/item-detox.js，
- *     本文件只在与道具链的接线处引用它（不重做）。
- *
  * == 引擎侧的购买流程（EraElectron 无此命令，是本文件补的最后一段） ==
  *
  * 原作 :73 的 `PRINT_SHOPITEM` 与 :63（陷阱商店）是 Emuera 内置命令：列出
@@ -180,34 +169,34 @@ function master_has(talent_id) {
  * @returns {number} 原作尾无 RETURN（隐式 0）
  */
 function saleitem_check() {
-  // :255-257 初始在售
+  // 初始在售
   for (let i = 0; i < BASE_SALES_COUNT; i += 1) {
     era.set(`itemsales:${i}`, 1);
   }
-  // :259-262 围裙、电极接头、拘束衣スーツ（落在上面那一段内，1:1 重写）
+  // 围裙、电极接头、拘束衣スーツ（落在上面那一段内，1:1 重写）
   for (const id of EXTRA_NON_CONSUMABLES) {
     era.set(`itemsales:${id}`, 1);
   }
 
-  // :264-280 营养剂：调合知识（主人或助手的素质）
+  // 营养剂：调合知识（主人或助手的素质）
   era.set(`itemsales:${NUTRITION}`, 0);
   if (master_has(BLEND_TALENT)) {
     era.set(`itemsales:${NUTRITION}`, 1);
   }
 
-  // :282-285 三件无条件非消耗品
+  // 三件无条件非消耗品
   for (const id of ALWAYS_NON_CONSUMABLES) {
     era.set(`itemsales:${id}`, 1);
   }
 
-  // :287-291 已持有的非消耗品下架（判据是「恰好 1 件」）
+  // 已持有的非消耗品下架（判据是「恰好 1 件」）
   for (let i = 0; i < BASE_SALES_COUNT; i += 1) {
     if ((era.get(`item:${i}`) || 0) === 1) {
       era.set(`itemsales:${i}`, 0);
     }
   }
 
-  // :293-300 消耗品与录像带
+  // 消耗品与录像带
   for (const id of CONSUMABLES) {
     era.set(`itemsales:${id}`, 1);
   }
@@ -215,7 +204,7 @@ function saleitem_check() {
     era.set(`itemsales:${VIDEO_TAPE}`, 1);
   }
 
-  // :302-329 药品系道具：同「调合知识」判据
+  // 药品系道具：同「调合知识」判据
   for (const id of [...BLEND_ITEMS, NUTRITION]) {
     era.set(`itemsales:${id}`, 0);
   }
@@ -227,26 +216,26 @@ function saleitem_check() {
     era.set(`itemsales:${NUTRITION}`, 1);
   }
 
-  // :335-352 秘密アイテム
+  // 秘密アイテム
   era.set(`itemsales:${SECRET_ITEM}`, 0);
   if (master_has(SECRET_TALENT)) {
     era.set(`itemsales:${SECRET_ITEM}`, 1);
   }
 
-  // :354-368 消耗品持有上限
+  // 消耗品持有上限
   for (const id of STOCK_LIMITED) {
     if ((era.get(`item:${id}`) || 0) >= STOCK_LIMIT) {
       era.set(`itemsales:${id}`, 0);
     }
   }
 
-  // :370-373 好感测定仪（持有即下架）
+  // 好感测定仪（持有即下架）
   era.set(`itemsales:${LOVE_METER}`, 1);
   if (era.get(`item:${LOVE_METER}`) || 0) {
     era.set(`itemsales:${LOVE_METER}`, 0);
   }
 
-  // :376-382 ラブダイナミックス（已持有素质 或 HARD/POWERFUL 难度 → 下架）
+  // ラブダイナミックス（已持有素质 或 HARD/POWERFUL 难度 → 下架）
   era.set(`itemsales:${LOVE_DYNAMICS}`, 1);
   if (talent(0, LOVE_DYNAMICS_TALENT) === 1) {
     era.set(`itemsales:${LOVE_DYNAMICS}`, 0);
@@ -256,26 +245,26 @@ function saleitem_check() {
     era.set(`itemsales:${LOVE_DYNAMICS}`, 0);
   }
 
-  // :384-387 秘密知识道具
+  // 秘密知识道具
   era.set(`itemsales:${SECRET_KNOWLEDGE_ITEM}`, 1);
   if (talent(0, SECRET_TALENT) === 1) {
     era.set(`itemsales:${SECRET_KNOWLEDGE_ITEM}`, 0);
   }
 
-  // :389-392 调合知识道具
+  // 调合知识道具
   era.set(`itemsales:${BLEND_KNOWLEDGE_ITEM}`, 1);
   if (talent(0, BLEND_TALENT) === 1) {
     era.set(`itemsales:${BLEND_KNOWLEDGE_ITEM}`, 0);
   }
 
-  // :394-398 技巧等级道具（上限 10，且不超过堕とした人数 + 2）
+  // 技巧等级道具（上限 10，且不超过堕とした人数 + 2）
   era.set(`itemsales:${TECHNIQUE_ITEM}`, 1);
   const technique = era.get('abl:0:12') || 0;
   if (technique >= TECHNIQUE_MAX || technique > (era.get('flag:30') || 0) + 1) {
     era.set(`itemsales:${TECHNIQUE_ITEM}`, 0);
   }
 
-  // :399-400 经验值道具（无判据）
+  // 经验值道具（无判据）
   era.set(`itemsales:${EXP_ITEM}`, 1);
 }
 
@@ -398,22 +387,22 @@ function snapshot_money() {
  *   无 RETURN（隐式 0）
  */
 async function item_shop() {
-  // :20 CUSTOMDRAWLINE = → 本屏的分隔线走实线（page-shop-trap.js 同款近似）
-  era.print('黑市商人'); // :21
-  era.print('《可以购买用于调教的物品》'); // :22
-  era.drawLine({ isSolid: true }); // :20-23 的分隔线
-  // :24-30 PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后
+  // CUSTOMDRAWLINE = → 本屏的分隔线走实线（page-shop-trap.js 同款近似）
+  era.print('黑市商人');
+  era.print('《可以购买用于调教的物品》');
+  era.drawLine({ isSolid: true }); // 的分隔线
+  // PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后
   era.print(
     `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
   );
-  era.print(`[所持金:${era_flag.money}点]`); // :32
+  era.print(`[所持金:${era_flag.money}点]`);
 
-  // :34-37 SETCOLORBYNAME LightSalmon → RESETCOLOR
+  // SETCOLORBYNAME LightSalmon → RESETCOLOR
   era.print([
     { content: `[技巧Lv:${era.get('abl:0:12') || 0}]`, color: LIGHT_SALMON },
   ]);
   era.print([{ content: '[调教道具一览]', color: LIGHT_SALMON }]);
-  // :39-48 第一段（持有道具，0-23）
+  // 第一段（持有道具，0-23）
   for (const row of item_grid_rows(
     0,
     FIRST_GRID_END,
@@ -423,9 +412,9 @@ async function item_shop() {
     era.print(row);
   }
 
-  // :49-51 SETCOLORBYNAME LightSalmon → RESETCOLOR
+  // SETCOLORBYNAME LightSalmon → RESETCOLOR
   era.print([{ content: '[消耗型调教道具一览]', color: LIGHT_SALMON }]);
-  // :53-64 第二段（消耗型道具，24-35 去掉 29-31）
+  // 第二段（消耗型道具，24-35 去掉 29-31）
   for (const row of item_grid_rows(
     SECOND_GRID_START,
     SECOND_GRID_END,
@@ -436,21 +425,21 @@ async function item_shop() {
     era.print(row);
   }
 
-  era.drawLine({ isSolid: true }); // :65
-  saleitem_check(); // :67 CALL SALEITEM_CHECK
-  snapshot_money(); // :69 TFLAG:15 = MONEY（文件头第 1 条）
+  era.drawLine({ isSolid: true });
+  saleitem_check(); // CALL SALEITEM_CHECK
+  snapshot_money(); // TFLAG:15 = MONEY（文件头第 1 条）
 
-  // :73 PRINT_SHOPITEM（引擎命令的 ere 等价物，见 print_shopitem）
+  // PRINT_SHOPITEM（引擎命令的 ere 等价物，见 print_shopitem）
   print_shopitem();
 
-  // :75-80 提示行
+  // 提示行
   era.print('《请输入要购买的道具的编号》');
-  era.drawLine({ isSolid: true }); // :77
-  // :78-79 两个 PRINTLC 打在同一行，:80 的 PRINTL 只结束那一行——PRINTLC
+  era.drawLine({ isSolid: true });
+  // 两个 PRINTLC 打在同一行，:80 的 PRINTL 只结束那一行——PRINTLC
   // 左对齐补位、**不换行**，故不产生空行。ere 的 printButton 自成一行
   // （＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md
   // 「输出 API 与原作的对应」）。
-  era.setAlign('center'); // :78-79 PRINTLC（排版近似：见 CONTEXT.md）
+  era.setAlign('center'); // PRINTLC（排版近似：见 CONTEXT.md）
   era.printButton('- 陷阱', 998, { align: 'center' });
   era.printButton('- 返回', 999, { align: 'center' });
   era.setAlign('left');
@@ -491,7 +480,7 @@ const PLURAL_PRICES = {
   35: 700,
   53: 1000,
   55: 5000,
-  91: 100, // :435-436（戒指）
+  91: 100, // （戒指）
 };
 
 /**
@@ -523,7 +512,7 @@ const SIMPLE_LEDGER = {
   21: 50000,
   22: 3000,
   23: 10000,
-  37: 1000, // :164-165 好感测定仪
+  37: 1000, // 好感测定仪
 };
 
 /** 开局不变量常数（MONEY == EX_FLAG:4444 + 8766，SYSTEM ver1.0.3.ERB:55-56） */
@@ -585,7 +574,7 @@ async function purchase(item_id) {
  * @returns {Promise<number>} 1 = 成交 / 0 = 取消（原作 RETURN）
  */
 async function event_buy(bought) {
-  // :89-91 複数持てるアイテム
+  // 複数持てるアイテム
   // 末段 `BOUGHT >= 60 && BOUGHT != 90` 与前面八个 `||` 同层：按 Emuera 的
   // 「&& 与 || 同优先级、左结合」应读作 `(九项 || BOUGHT >= 60) && BOUGHT != 90`。
   // 九项都 < 60、BOUGHT == 90 又不在九项里，两种读法在一切取值上同值，
@@ -597,22 +586,22 @@ async function event_buy(bought) {
     await buy_plural(bought);
     return 1;
   }
-  // :93-96 その場で使うアイテム
+  // その場で使うアイテム
   if (USE_ITEMS.includes(bought)) {
     await use_item(bought);
-    era.set(`item:${bought}`, 0); // :95
+    era.set(`item:${bought}`, 0);
     return 1;
   }
 
-  // :99-113 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
+  // 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
   // 「其余」由引擎按白名单拒收，重问支不可达——1:1 保留）
   for (;;) {
     era.print(`确定购买${item_name(bought)}？`);
-    era.printButton('- 好的', 0); // :101（正文的 `- ` 是原作文本）
-    era.printButton('- 不要', 1); // :102
+    era.printButton('- 好的', 0); // （正文的 `- ` 是原作文本）
+    era.printButton('- 不要', 1);
     const result = await era.input();
     if (result === 1) {
-      // :105-110 取消：退还货与钱、重建记账不变量（TFLAG:15 的暂存值）
+      // 取消：退还货与钱、重建记账不变量（TFLAG:15 的暂存值）
       era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) - 1);
       era_flag.bought = 0;
       era_flag.money = get_temp_money();
@@ -624,15 +613,15 @@ async function event_buy(bought) {
     }
   }
 
-  // :115 《购买了…》
+  // 《购买了…》
   era.print(`《购买了${item_name(bought)}》`);
-  // :116-165 逐条的记账额（0-23 与 37）
+  // 逐条的记账额（0-23 与 37）
   const ledger = SIMPLE_LEDGER[bought];
   if (ledger !== undefined) {
     era_exflag.legit_money -= ledger;
   }
 
-  // :167-173 素質アイテム・ラブダイナミックス（38）
+  // 素質アイテム・ラブダイナミックス（38）
   if (bought === 38) {
     era_exflag.legit_money -= 100000;
     era.print(
@@ -641,24 +630,24 @@ async function event_buy(bought) {
     chara(0).chara.魅惑 = 1;
     era.set(`item:${bought}`, 0);
   }
-  // :174-179 素質アイテム【秘密知識】（39）
+  // 素質アイテム【秘密知識】（39）
   if (bought === 39) {
     era_exflag.legit_money -= 100000;
     chara(0).stronghold.魔界知识 = 1;
     era.set(`item:${bought}`, 0);
   }
-  // :180-185 素質アイテム【调合知识】（42）
+  // 素質アイテム【调合知识】（42）
   if (bought === 42) {
     era_exflag.legit_money -= 40000;
     chara(0).stronghold.调合知识 = 1;
     era.set(`item:${bought}`, 0);
   }
-  // :186-224 素質アイテム【技巧LV】（52）：难度档的倍率段在原作里整体
+  // 素質アイテム【技巧LV】（52）：难度档的倍率段在原作里整体
   // 被注释掉（:190-223），现行实现只有一条 `CALL TECHNIQUE_OF_MASTER_UP`
   if (bought === 52) {
     technique_of_master_up();
   }
-  // :227-234 素質アイテム【淫魔知识】（54）：买完 ITEMSALES:54 熄灭——玩家
+  // 素質アイテム【淫魔知识】（54）：买完 ITEMSALES:54 熄灭——玩家
   // 自此只能在陷阱商店买淫魔的陷阱（BOUGHT 停在 54，下一轮跳陷阱商店）
   if (bought === 54) {
     era_exflag.legit_money -= 100000;
@@ -667,7 +656,7 @@ async function event_buy(bought) {
     era.set(`itemsales:${bought}`, 0);
     era.print('* 可以购买淫魔的陷阱了 *');
   }
-  // :236-243 素質アイテム【魔虫知识】（56）
+  // 素質アイテム【魔虫知识】（56）
   if (bought === 56) {
     era_exflag.legit_money -= 10000;
     chara(0).stronghold.魔虫知识 = 1;
@@ -676,7 +665,7 @@ async function event_buy(bought) {
     era.print('* 一些陷阱被强化了 *');
   }
 
-  await era.waitAnyKey(); // :246 WAIT
+  await era.waitAnyKey(); // WAIT
   return 1;
 }
 
@@ -714,20 +703,20 @@ function print_quantity_prompt(bought, d, with_half = true) {
  * @returns {Promise<void>}
  */
 async function use_exp_item(count) {
-  const gained = count * 10; // :505 E = RESULT * 10
+  const gained = count * 10; // E = RESULT * 10
   let no_page = 0; // #DIM NO_PAGE（缺省 0）
   for (;;) {
-    era.drawLine(); // :507-508
-    era.print(`要让谁使用${item_name(EXP_ITEM)}？`); // :510
-    life_list(no_page, 0); // :512 CALL LIFE_LIST(NO_PAGE,0)
+    era.drawLine();
+    era.print(`要让谁使用${item_name(EXP_ITEM)}？`);
+    life_list(no_page, 0); // CALL LIFE_LIST(NO_PAGE,0)
     era.setAlign('center');
-    era.printButton('- 上一页', 1000); // :514
-    era.printButton('- 下一页', 1001); // :515
+    era.printButton('- 上一页', 1000);
+    era.printButton('- 下一页', 1001);
     era.setAlign('left');
 
     const result = await era.input();
     if (result === 1000) {
-      // :520-525 上一页（首页再按无反应，退回选人）
+      // 上一页（首页再按无反应，退回选人）
       if (no_page > 0) {
         no_page -= 1;
         continue;
@@ -735,22 +724,22 @@ async function use_exp_item(count) {
       continue;
     }
     if (result === 1001) {
-      // :526-531 下一页
+      // 下一页
       if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {
         no_page += 1;
       }
       continue;
     }
-    // :533-534 非法目标 → 重问
+    // 非法目标 → 重问
     if (!era.getAddedCharacters().includes(result)) {
       continue;
     }
-    // :535-538 卖却済み・臨死中的角色不可选
+    // 卖却済み・臨死中的角色不可选
     if ((era.get(`cflag:${result}:1`) || 0) !== 0) {
       era.print('此人物尚不可选择');
       continue;
     }
-    // :541-542 经验值到手（RESULT == 0 即魔王，MASTER 也是 0）
+    // 经验值到手（RESULT == 0 即魔王，MASTER 也是 0）
     chara(result).dungeon.战斗经验 = chara(result).dungeon.战斗经验 + gained;
     era.print(`得到了${gained}点经验值`);
     return;
@@ -767,14 +756,14 @@ async function use_exp_item(count) {
  * @returns {Promise<number>} 原作 RETURN 0/1
  */
 async function buy_plural(bought) {
-  // :410-436 单价
+  // 单价
   let a = PLURAL_PRICES[bought];
   if (bought >= PLURAL_RANGE_START && bought < PLURAL_EXCLUDE) {
-    // :429-433 陷阱の値段は DUNGEON_TRAP 参照（P = BOUGHT; CALL TRAP_PRICE）
+    // 陷阱の値段は DUNGEON_TRAP 参照（P = BOUGHT; CALL TRAP_PRICE）
     a = trap_price(bought);
   }
 
-  // :407-408 上限：B* 是可持数（100 - 已持有）、C 是钱够买几件（＋引擎
+  // 上限：B* 是可持数（100 - 已持有）、C 是钱够买几件（＋引擎
   // 已扣的 1 件）、D 取小、E 记是哪一侧吃紧（0 = 持有上限、1 = 钱）
   const b = 100 - (era.get(`item:${bought}`) || 0);
   const c = Math.trunc(era_flag.money / a) + 1;
@@ -787,14 +776,14 @@ async function buy_plural(bought) {
     d = c;
     e = 1;
   }
-  // :447-448 陷阱等级不能越过地下城的阶层上限
+  // 陷阱等级不能越过地下城的阶层上限
   const trap_level = game.stronghold.陷阱等级;
   const maze_level = era.get('cflag:0:9') || 0;
   if (bought === 55 && trap_level + d > maze_level) {
     d = maze_level - trap_level;
   }
 
-  // :450-463 首次提示（:465 $INPUT_LOOP 的循环由本函数的 for 承担）
+  // 首次提示（:465 $INPUT_LOOP 的循环由本函数的 for 承担）
   print_quantity_prompt(bought, d);
 
   /** INPUT 的返回值（原作 RESULT，成交分支之后还要用它） */
@@ -802,27 +791,27 @@ async function buy_plural(bought) {
   for (;;) {
     result = await era.input();
     if (result === 0) {
-      // :467-472 取消：退还原价（引擎已扣一份）
+      // 取消：退还原价（引擎已扣一份）
       era.set(`item:${bought}`, (era.get(`item:${bought}`) || 0) - 1);
       era_flag.money += a;
       return 0;
     }
     if (result < 0) {
-      continue; // :473-474
+      continue;
     }
     if (result > d) {
-      // :475-488 越界：两种文案（E 记的哪一侧吃紧）＋重画提示
+      // 越界：两种文案（E 记的哪一侧吃紧）＋重画提示
       era.print(e === 0 ? '不能持有这么多' : '哪怕是魔王，也不能赊账啊');
-      print_quantity_prompt(bought, d, false); // :481-487 的重画不带 D/2 档
+      print_quantity_prompt(bought, d, false); // 的重画不带 D/2 档
       continue;
     }
     if (result === 1) {
-      // :489-492 买一件（钱在引擎侧已扣）：一支一个 WAIT
+      // 买一件（钱在引擎侧已扣）：一支一个 WAIT
       era_exflag.legit_money -= a;
       era.print(`《购买了${item_name(bought)}》`);
       await era.waitAnyKey();
     } else {
-      // :493-499 买 RESULT 件：引擎已给 1 件、已扣 1 件的钱；这里也是
+      // 买 RESULT 件：引擎已给 1 件、已扣 1 件的钱；这里也是
       // 一个 WAIT（:495），别在分支外再等一次（玩家会多按一键）
       era.print(`《购买了${result}个${item_name(bought)}》`);
       await era.waitAnyKey();
@@ -833,14 +822,14 @@ async function buy_plural(bought) {
     break;
   }
 
-  // :501-543 経験値アイテム（53）：买完转「让谁使用」的角色选择
+  // 経験値アイテム（53）：买完转「让谁使用」的角色选择
   if (bought === 53) {
     era.set(`item:${bought}`, 0);
     era.set(`itemsales:${bought}`, 1);
     await use_exp_item(result);
   }
 
-  // :548-565 陷阱LV（55）
+  // 陷阱LV（55）
   if (bought === 55) {
     // 判定式照原作是 `LOCAL <= CFLAG:0:9 || LOCAL <= CFLAG:MASTER:9`——两个
     // 地址是同一个角色（MASTER = 0），故等价于上一条。原作的 ELSE 支
@@ -854,7 +843,7 @@ async function buy_plural(bought) {
     era.set(`itemsales:${bought}`, 1);
   }
 
-  // :568-580 指輪（91）：一枚一枚进 ITEM:300，超过 99 的部分原价退还
+  // 指輪（91）：一枚一枚进 ITEM:300，超过 99 的部分原价退还
   if (bought === 91) {
     era.set(`item:${bought}`, 0);
     era.set(`itemsales:${bought}`, 1);
@@ -888,24 +877,24 @@ async function use_item(bought) {
   /** #DIM NO_PAGE（缺省 0） */
   let no_page = 0;
   for (;;) {
-    era.drawLine(); // :588-591
-    // :592-604 道具效果一行（每种道具一句）
+    era.drawLine();
+    // 道具效果一行（每种道具一句）
     const effect = USE_EFFECTS[bought];
     if (effect) {
       era.print(`${item_name(bought)}:${effect}`);
     }
-    era.print(`要让谁使用${item_name(bought)}？`); // :606
-    era.drawLine(); // :606-607
-    life_list(no_page); // :608 CALL LIFE_LIST,NO_PAGE
-    era.setAlign('center'); // :610-612 PRINTLC
+    era.print(`要让谁使用${item_name(bought)}？`);
+    era.drawLine();
+    life_list(no_page); // CALL LIFE_LIST,NO_PAGE
+    era.setAlign('center'); // PRINTLC
     era.printButton('- 上一页', 1000);
     era.printButton('- 返  回', 999);
     era.printButton('- 下一页', 1001);
     era.setAlign('left');
 
-    const result = await era.input(); // :614-615 $INPUT_LOOP
+    const result = await era.input(); // $INPUT_LOOP
     if (result === 999) {
-      // :617-642 取消：吃掉这件道具并按种类退钱（32 号原作无退项）
+      // 取消：吃掉这件道具并按种类退钱（32 号原作无退项）
       era.set(`item:${bought}`, 0);
       const refund = USE_REFUNDS[bought];
       if (refund !== undefined) {
@@ -914,27 +903,27 @@ async function use_item(bought) {
       return;
     }
     if (result === 1000) {
-      // :643-648 上一页（首页再按无反应：整块退回首屏重画）
+      // 上一页（首页再按无反应：整块退回首屏重画）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
     if (result === 1001) {
-      // :649-654 下一页
+      // 下一页
       if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {
         no_page += 1;
       }
       continue;
     }
     if (!era.getAddedCharacters().includes(result)) {
-      continue; // :655-656
+      continue;
     }
-    // :657-659 RESULT == 0 是魔王本人（ere 侧角色号 0 就是 MASTER）
+    // RESULT == 0 是魔王本人（ere 侧角色号 0 就是 MASTER）
     if ((era.get(`base:${result}:0`) || 0) < 1) {
-      continue; // :660-662 売却済み・臨死中
+      continue; // 売却済み・臨死中
     }
-    // :663-667 体力已满时营养剂用不了
+    // 体力已满时营养剂用不了
     if (
       bought === 30 &&
       (era.get(`base:${result}:0`) || 0) ===
@@ -944,7 +933,7 @@ async function use_item(bought) {
       await era.waitAnyKey();
       continue;
     }
-    // :668-672 否定点数已是 0 时熏香用不了
+    // 否定点数已是 0 时熏香用不了
     if (bought === 31 && (era.get(`juel:${result}:100`) || 0) < 1) {
       era.print(
         `${chara_callname(result)}的${era.get('palamname:100') ?? ''}点数已经不能再减少了`,
@@ -952,7 +941,7 @@ async function use_item(bought) {
       await era.waitAnyKey();
       continue;
     }
-    // :673-677 没有【爱慕】或没有寿命限制时 WG 电池用不了
+    // 没有【爱慕】或没有寿命限制时 WG 电池用不了
     if (
       bought === 33 &&
       ((era.get(`base:${result}:10`) || 0) === 0 ||
@@ -962,7 +951,7 @@ async function use_item(bought) {
       await era.waitAnyKey();
       continue;
     }
-    // :678-686 妊娠中・育儿中的角色用不了排卵促进剂
+    // 妊娠中・育儿中的角色用不了排卵促进剂
     // 该段条件 `BOUGHT == 40 && TALENT:RESULT:153 || TALENT:RESULT:154` 同层
     // 混写：该层运算符序列是「`&&` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式
     // 分组得到同一棵树——两种读法在一切取值上同值，故按显式括号保留结构（#517）。
@@ -984,7 +973,7 @@ async function use_item(bought) {
       continue;
     }
     apply_use_effect(bought, result);
-    await era.waitAnyKey(); // :696/:704/:712/:718/:724/:737 每支末尾的 WAIT
+    await era.waitAnyKey(); // 每支末尾的 WAIT
     return;
   }
 }
@@ -1054,7 +1043,7 @@ function apply_use_effect(bought, cid) {
     } else {
       era.print(`《${name}可以长出更多阴毛了》`);
       chara(cid).chara.阴毛生长极限 = hair + 50;
-      chara(cid).stronghold.白虎 = 0; // :735 白虎を消す
+      chara(cid).stronghold.白虎 = 0; // 白虎を消す
     }
   }
 }
@@ -1078,12 +1067,12 @@ const TECHNIQUE_UNIT_PRICE = 5000;
  */
 async function technique_of_master(f) {
   if ((era.get('flag:33') || 0) === f - 1) {
-    // :745-746 只差最后一件
+    // 只差最后一件
     technique_of_master_up();
     return 1;
   }
   game.stronghold.技巧素质道具数 = game.stronghold.技巧素质道具数 + 1;
-  era.print(''); // :749 PRINTL
+  era.print(''); // PRINTL
   const remaining = f - (era.get('flag:33') || 0);
   era.print(`为了提高技巧LV，需要 ${remaining} 个。`);
   era.print('买光剩余的吗？');
@@ -1102,7 +1091,7 @@ async function technique_of_master(f) {
       return 1;
     }
     if (result === 1) {
-      return 0; // :764-765
+      return 0;
     }
   }
 }

@@ -1,11 +1,6 @@
 /**
  * @file 调教菜单（指令序列）：COMSEQ 的登记 / 显示 / 执行（issue #214）。
  *
- * 源: target/ERB/調教相關/COM_REGISTER.ERB
- *     @COMSEQ_REGISTER（:25-121）/@COMSEQ_SHOW（:126-155）/
- *     @COMSEQSUB_PRINT_COMLIST（:162-179）/@MULTI_COMABLE（:190-202）/
- *     @COMSEQ_TRAIN（:207-237）/@CALLTRAINEND（:243-245）
- *
  * 数据面（COM_REGISTER.ERB:5-9 的变量说明）：
  *   TFLAG:204  当前选择指令号的暂存（门面「当前选择的调教指令编号」）；
  *   TFLAG:224  索求口上抑制（调教菜单实行中 = 555，门面「索求口上抑制」）；
@@ -94,7 +89,7 @@ async function comseq_show() {
   let count = 0;
   while (count < length) {
     const id = era.get(`flag:${SLOT_BASE + count}`) || 0;
-    // :131-136 TRYCALLFORM COM_ABLE{FLAG:LOCAL}（未前置 RESULT=1：全库
+    // TRYCALLFORM COM_ABLE{FLAG:LOCAL}（未前置 RESULT=1：全库
     // 可直选指令的 COM_ABLE 均有定义，TRYCALL 落空路径实际不可达；
     // ere 侧 whenMissing:1 = 引擎「未定义即视为可执行」）
     const able =
@@ -105,7 +100,7 @@ async function comseq_show() {
     } else {
       era.print('（不可用）');
     }
-    // :138-151 同指令连打的 ×n 折叠（连续段一并消费）
+    // 同指令连打的 ×n 折叠（连续段一并消费）
     let times = 1;
     while (count < length - 1) {
       const next_id = era.get(`flag:${SLOT_BASE + count + 1}`) || 0;
@@ -123,7 +118,7 @@ async function comseq_show() {
     }
     count += 1;
   }
-  // :155 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个
+  // 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个
   // print 已经自成一行，补 println 只会多一个空行（#562；「原作一行 / ere 多
   // 行」的排版差异是既有的记名差异，不在这里消解）
 }
@@ -152,38 +147,38 @@ async function print_comlist() {
 async function comseq_register() {
   let local0 = 0; // LOCAL:0 已登记条数（本次会话）
   const block = new ScreenBlock(async () => {
-    era.drawLine(); // :35
-    await comseq_show(); // :36
-    era.drawLine(); // :37
-    // :38 PRINTFORML（整行自成一行；era.println 不带参数，这里不需要再补）
+    era.drawLine();
+    await comseq_show();
+    era.drawLine();
+    // PRINTFORML（整行自成一行；era.println 不带参数，这里不需要再补）
     era.print(`选择第${local0 + 1}个指令:`);
-    await print_comlist(); // :39
-    era.println(); // :40（这一条是真空行——:39 的方格已由自己的 PRINTL 收尾）
-    // :41-51 出口按钮（守卫与文案逐字；按钮正文不带 [编号] 前缀）
+    await print_comlist();
+    era.println(); // （这一条是真空行——:39 的方格已由自己的 PRINTL 收尾）
+    // 出口按钮（守卫与文案逐字；按钮正文不带 [编号] 前缀）
     if (game_train.指令菜单长度 > 0) {
-      era.printButton('重置菜单', 998); // :41-42
+      era.printButton('重置菜单', 998);
     }
     if (local0 > 0) {
-      era.printButton('重复指令', 999); // :43-44
+      era.printButton('重复指令', 999);
     }
     if (local0 === 0) {
-      era.printButton('取消并返回', 1000); // :45-48 两分支文案相同
+      era.printButton('取消并返回', 1000); // 两分支文案相同
     } else {
-      era.printButton('保存并返回', 1000); // :50
+      era.printButton('保存并返回', 1000);
     }
-    // :52 的 PRINTL 只结束 :41-51 那串 PRINTC 出口键所在的行（PRINTC 系不
+    // 的 PRINTL 只结束 :41-51 那串 PRINTC 出口键所在的行（PRINTC 系不
     // 换行，见 CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里
     // 不补空行（#562）。
-    era.drawLine(); // :53
+    era.drawLine();
   });
 
-  era.print('调教菜单登录'); // :26 PRINTL（整行自成一行，不再补换行——#562）
+  era.print('调教菜单登录'); // PRINTL（整行自成一行，不再补换行——#562）
 
   for (;;) {
-    await block.redraw(); // :31-33 清锚点重画（REDRAW 0/1 不镜像）
-    const result = await era.input(); // :57 INPUT
+    await block.redraw(); // 清锚点重画（REDRAW 0/1 不镜像）
+    const result = await era.input(); // INPUT
 
-    // :58-62 出口：首步取消 → RETURN 0；越界（保存并返回 1000 等）→ 完成段
+    // 出口：首步取消 → RETURN 0；越界（保存并返回 1000 等）→ 完成段
     if (result === 1000 && local0 === 0) {
       return 0;
     }
@@ -191,7 +186,7 @@ async function comseq_register() {
       break; // GOTO COMPLETE
     }
 
-    // :65-74 重置菜单：TFLAG:204 清零、长度与 551-560 槽全清（550 亦清）
+    // 重置菜单：TFLAG:204 清零、长度与 551-560 槽全清（550 亦清）
     if (result === 998 && game_train.指令菜单长度 > 0) {
       game_train.当前选择的调教指令编号 = 0;
       local0 = 0;
@@ -201,7 +196,7 @@ async function comseq_register() {
       continue; // GOTO REDRAW_LOOP
     }
 
-    // :76-89 重复指令：把已登记的 period 条循环复制至满 10 条后直入完成段
+    // 重复指令：把已登记的 period 条循环复制至满 10 条后直入完成段
     if (result === 999 && local0 > 0) {
       const period = local0; // LOCAL:1 已登记条数的快照
       while (local0 <= 9) {
@@ -214,7 +209,7 @@ async function comseq_register() {
       break; // 填满（> 9）即 GOTO COMPLETE（:81-83）
     }
 
-    // :93-101 登记检查（TFLAG:204 暂存选中号；MULTI_COMABLE 拒 → 原作
+    // 登记检查（TFLAG:204 暂存选中号；MULTI_COMABLE 拒 → 原作
     // REUSELASTLINE「无效指令」重试，ere 侧引擎白名单已在输入层拦下——
     // 不可执行指令没有按钮，到不了这里；防御性 continue 对齐 GOTO）
     game_train.当前选择的调教指令编号 = result;
@@ -222,14 +217,14 @@ async function comseq_register() {
       continue; // GOTO INPUT_LOOP（ere 侧不可达路径，防御性保留）
     }
 
-    // :104-108 登记：写入槽位；首条覆盖旧菜单（SIF LOCAL:0 == 0 → 550 = 0）
+    // 登记：写入槽位；首条覆盖旧菜单（SIF LOCAL:0 == 0 → 550 = 0）
     era.set(`flag:${SLOT_BASE + local0}`, game_train.当前选择的调教指令编号);
     if (local0 === 0) {
       game_train.指令菜单长度 = 0;
     }
     game_train.指令菜单长度 += 1;
 
-    // :111-113 第 10 条登记完（local0 递增后 > 9）不再重画，直入完成段
+    // 第 10 条登记完（local0 递增后 > 9）不再重画，直入完成段
     local0 += 1;
     if (local0 <= 9) {
       continue; // GOTO REDRAW_LOOP
@@ -238,12 +233,12 @@ async function comseq_register() {
   }
 
   // $COMPLETE :115-121：终屏（无指令列表）+ 等键 + 清 TFLAG:204
-  era.drawLine(); // :116
-  await comseq_show(); // :117
-  era.drawLine(); // :118
-  era.print('调教菜单登录完毕'); // :119 PRINTW（print + 等键——夹具对等待
+  era.drawLine();
+  await comseq_show();
+  era.drawLine();
+  era.print('调教菜单登录完毕'); // PRINTW（print + 等键——夹具对等待
   await era.waitAnyKey(); // 的观测统一走 waitAnyKey，PRINTW 的既有约定）
-  game_train.当前选择的调教指令编号 = 0; // :120
+  game_train.当前选择的调教指令编号 = 0;
   return 0;
 }
 
@@ -283,19 +278,19 @@ async function run_calltrain(sequence) {
  * @returns {Promise<string|undefined>} 链内 BEGIN 暂存目标（转场优先）
  */
 async function comseq_train() {
-  era.drawLine(); // :208
-  await comseq_show(); // :209
-  era.drawLine(); // :210
-  era.print('开始自动执行调教指令'); // :211 PRINTFORMW（print + 等键）
+  era.drawLine();
+  await comseq_show();
+  era.drawLine();
+  era.print('开始自动执行调教指令'); // PRINTFORMW（print + 等键）
   await era.waitAnyKey();
-  game_train.索求口上抑制 = COMSEQ_ACTIVE; // :213
-  const prevcom_saved = era_flag.prevcom; // :217 PREVCOM 待避（只存不改）
+  game_train.索求口上抑制 = COMSEQ_ACTIVE;
+  const prevcom_saved = era_flag.prevcom; // PREVCOM 待避（只存不改）
   const length = game_train.指令菜单长度;
   const sequence = [];
   let blocked = false;
   for (let count = 0; count < length; count += 1) {
     const id = era.get(`flag:${SLOT_BASE + count}`) || 0;
-    // :220-224 预检查（探测在前 :220、PREVCOM 推进在后 :227——探测第 k 条
+    // 预检查（探测在前 :220、PREVCOM 推进在后 :227——探测第 k 条
     // 时 PREVCOM = 第 k-1 条，首轮 = 进函数时的原值，COM_ABLE 的连续指令
     // 判定因此看到与真实执行一致的序列）
     const able =
@@ -306,16 +301,16 @@ async function comseq_train() {
       break;
     }
     sequence.push(id);
-    era_flag.prevcom = id; // :227
+    era_flag.prevcom = id;
   }
   let pending;
   if (!blocked) {
-    pending = await run_calltrain(sequence); // :230 CALLTRAIN FLAG:550
+    pending = await run_calltrain(sequence); // CALLTRAIN FLAG:550
   } else {
-    game_train.索求口上抑制 = 0; // :233 不可实行 → 旗标复位
-    era.print('所登录的指令目前无法实行'); // :234 PRINTL（整行自成一行，不补空行——#595）
+    game_train.索求口上抑制 = 0; // 不可实行 → 旗标复位
+    era.print('所登录的指令目前无法实行'); // PRINTL（整行自成一行，不补空行——#595）
   }
-  era_flag.prevcom = prevcom_saved; // :236 PREVCOM 恢复
+  era_flag.prevcom = prevcom_saved; // PREVCOM 恢复
   return pending;
 }
 

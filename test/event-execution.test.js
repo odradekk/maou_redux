@@ -1021,7 +1021,7 @@ test('EXECUTION：肉便器支完整结算，录像开关关闭时不额外写�
 
 test('#597：处刑对象列表的表头之后不补空行（:22 的 PRINTL 只收 :18 那一行）', async () => {
   // 源 :18 `PRINT 请选择处刑对象`（不换行）+ :19-23 的 IF/ELSE：IF 支接
-  // :20 的实绩提示，ELSE 支的 :22 `PRINTL` 只结束 :18 那一行——**不是空
+  // 的实绩提示，ELSE 支的 :22 `PRINTL` 只结束 :18 那一行——**不是空
   // 行**（#597）。两支持续都得钉：只测 IF 支会让 ELSE 支多补的空行逃掉。
   for (const [label, decorations] of [
     ['IF 支（有实绩提示）', 0],
@@ -1397,7 +1397,7 @@ test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#5
 
 test('#597：流放画面的两处真空行（原作 :20-21 与 :30-31）', async () => {
   // 未显示的 100：打印完菜单就返回，两处空行都已落盘（:21 在开场白之后、
-  // :31 在五个按钮之后）——删掉任何一处即少一行
+  // 在五个按钮之后）——删掉任何一处即少一行
   const fixture = seed_world();
   fixture.set_inputs(100);
   const { banishment } = fixture.load_module('event/event-banishment');

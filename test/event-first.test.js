@@ -47,14 +47,14 @@ function expected_init_writes(initial_slave) {
       name: `flag:${10018 + k}`,
       value: -1,
     })),
-    { name: 'flag:26', value: [11, 115, 431, 325, 15, 232] }, // :11 种族年龄
+    { name: 'flag:26', value: [11, 115, 431, 325, 15, 232] }, // 种族年龄
     // 表槽 0-5（base-1000 打包 232015325431115011 的逐槽拆解，#105 决议四
     // 的数组承载——超 JS 安全整数，整数照搬必失精度）
-    { name: 'flag:27', value: [1, 1] }, // :12 种族年龄表槽 6-7（原 001001）
-    { name: 'flag:500', value: 2 }, // :15 狂王初期性别：扶她（问答前的暂定值）
-    // :19 CALL FIRST_SETTING（#463 起全量五问，first-setting.js 的
+    { name: 'flag:27', value: [1, 1] }, // 种族年龄表槽 6-7（原 001001）
+    { name: 'flag:500', value: 2 }, // 狂王初期性别：扶她（问答前的暂定值）
+    // CALL FIRST_SETTING（#463 起全量五问，first-setting.js 的
     // first_setting()）：
-    { name: 'cflag:0:16', value: -1 }, // :784 初吻对象（四个魔王性别分支
+    { name: 'cflag:0:16', value: -1 }, // 初吻对象（四个魔王性别分支
     // 写的都是同一个值，挪到编排层只写一次）
     // 魔王性别选「女性」（RESULT==1，:867-873）：四个 TALENT 全 0
     { name: 'talent:0:1', value: 0 },
@@ -68,30 +68,30 @@ function expected_init_writes(initial_slave) {
     ...Array.from({ length: 14 }, (_, k) => ({
       name: `flag:${60 + k}`,
       value: -1,
-    })), // :21-24 FLAG:60..73 = -1
-    { name: 'flag:10005', value: -1 }, // :26 TARGET = -1（指针槽）
+    })), // FLAG:60..73 = -1
+    { name: 'flag:10005', value: -1 }, // TARGET = -1（指针槽）
     { name: 'flag:10029', value: -1 }, // BOUGHT = -1（购入品指针，#395）
-    { name: 'flag:5', value: 17179934119 }, // :31 战斗日志显示设置
-    { name: 'flag:10001', value: 1 }, // :33 DAY:1 = 1（月）
-    { name: 'itemsales:53', value: 1 }, // :35 53 号道具开局上架（#38 恢复：
+    { name: 'flag:5', value: 17179934119 }, // 战斗日志显示设置
+    { name: 'flag:10001', value: 1 }, // DAY:1 = 1（月）
+    { name: 'itemsales:53', value: 1 }, // 53 号道具开局上架（#38 恢复：
     // Item 表已落地，item* 直接崩溃支消除；进商店轮时 @EVENTSHOP 的清零循环
     // 会再把它清 0——原作语义，见端到端用例的尾部断言）
     ...Array.from({ length: 8 }, (_, k) => ({
       name: `flag:${200 + k}`,
       value: 1,
-    })), // :36-40 FLAG:200..207 = 1
-    { name: 'flag:35', value: 0 }, // :45 濒死自动结束调教：关
-    { name: 'flag:37', value: 1 }, // :47 着衣系统：开
-    { name: 'flag:8', value: 7 }, // :50-52 新档翻位 0b111
-    { name: 'global:3', value: -1 }, // :53 冒險者性別 = -1（#547 落 global:3，
+    })), // FLAG:200..207 = 1
+    { name: 'flag:35', value: 0 }, // 濒死自动结束调教：关
+    { name: 'flag:37', value: 1 }, // 着衣系统：开
+    { name: 'flag:8', value: 7 }, // 新档翻位 0b111
+    { name: 'global:3', value: -1 }, // 冒險者性別 = -1（#547 落 global:3，
     // GLOBAL SAVEDATA：每次开局无条件重置，设置页 [27] 的用户选择维持到
     // 下一次新游戏）
-    { name: 'flag:10004', value: 10000 }, // :55 MONEY = 10000
-    { name: 'exflag:4444', value: 1234 }, // :56 EX_FLAG:4444 = 1234（#401 起播种：
+    { name: 'flag:10004', value: 10000 }, // MONEY = 10000
+    { name: 'exflag:4444', value: 1234 }, // EX_FLAG:4444 = 1234（#401 起播种：
     // @DEBUG_CHECK 按 MONEY == EX_FLAG:4444 + 8766 判「钱被改过」，这份不变量
     // 是它不误伤正常开局的全部依据）
-    { name: 'cflag:0:451', value: 21 }, // :60 魔王相当于人类年龄
-    { name: 'exflag:99', value: 70 }, // :62 EX_FLAG:99 = 70（初始威望，#117
+    { name: 'cflag:0:451', value: 21 }, // 魔王相当于人类年龄
+    { name: 'exflag:99', value: 70 }, // EX_FLAG:99 = 70（初始威望，#117
     // 接入：ExFlag.yml 已随 #113 落地，播种是侵略线窄路径的前置——威望 0
     // 会让首次魔力出兵落进「岌岌可危」档直接失败）
   ];
@@ -100,16 +100,16 @@ function expected_init_writes(initial_slave) {
       // 移植自建（#67，非原作动作）：村娘加入点的 portcflag 版本戳，先于
       // 原作 :105 起的 CFLAG 组（接入位置在 addCharacter/add_chara_ex 之后）
       { name: 'portcflag:17:数据版本', value: 1 },
-      { name: 'flag:10005', value: 17 }, // :107 TARGET = 1（序号）→ 角色 ID 17
-      { name: 'cflag:17:420', value: 1 }, // :110 玛奥专属标记
-      // :111 CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/
+      { name: 'flag:10005', value: 17 }, // TARGET = 1（序号）→ 角色 ID 17
+      { name: 'cflag:17:420', value: 1 }, // 玛奥专属标记
+      // CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/
       // chara-name.js）：省略数值参数按 0 处理（无 TARGET 代入），L_A = 0 =
       // 魔王，落特殊角色分支（:153-162）——两槽称呼取预设呼び名（addCharacter
       // 已写过同值，这里按原作再写一次）、NID = 10000；村娘（17）不经此调用
       { name: 'callname:0:-1', value: '你' },
       { name: 'callname:0:-2', value: '你' },
       { name: 'cflag:0:6', value: 10000 },
-      // :160 CALL RELATION_RENAME_REBUILD(L_A)（RELATION.ERB:52）真身：
+      // CALL RELATION_RENAME_REBUILD(L_A)（RELATION.ERB:52）真身：
       // needs_rebuild(0) 的 nid() 副作用先写一次 NID，核对不过（对角
       // c_relation 未初始化）→ @RELATION_REBUILD（:135-194）逐加入角色修
       // 复对角：角色 0 与 17 各「写 NID + 写 c_relation 对角」——村娘的
@@ -119,20 +119,20 @@ function expected_init_writes(initial_slave) {
       { name: 'c_relation:0:0', value: 10000 },
       { name: 'cflag:17:6', value: 10017 },
       { name: 'c_relation:17:17', value: 10017 },
-      { name: 'cflag:17:9', value: 1 }, // :112 等级
-      { name: 'cflag:17:1', value: 0 }, // :113 解除占用（可调教的关键一步）
-      { name: 'cflag:17:11', value: 15 }, // :114-117 战斗数值
+      { name: 'cflag:17:9', value: 1 }, // 等级
+      { name: 'cflag:17:1', value: 0 }, // 解除占用（可调教的关键一步）
+      { name: 'cflag:17:11', value: 15 }, // 战斗数值
       { name: 'cflag:17:12', value: 15 },
       { name: 'cflag:17:13', value: 15 },
       { name: 'cflag:17:14', value: 15 },
-      { name: 'cflag:17:16', value: -1 }, // :118 未定状态位
-      { name: 'cflag:17:450', value: 31 }, // :119 一人称（自称）编号
+      { name: 'cflag:17:16', value: -1 }, // 未定状态位
+      { name: 'cflag:17:450', value: 31 }, // 一人称（自称）编号
       // CHAR_BODY_GENERATE_WAPPED 链内的 relation 核对（needs_rebuild() 无参
       // 形态的 nid() 副作用：两名角色的 NID 各重写一次、值不变，核对通过
       // 不再重建）——上一次重建已把对角修好，这两笔是纯副作用写
       { name: 'cflag:0:6', value: 10000 },
       { name: 'cflag:17:6', value: 10017 },
-      // :121 CALL CHAR_BODY_GENERATE_WAPPED, 1（#385 起真身）：FLAG:5 的位
+      // CALL CHAR_BODY_GENERATE_WAPPED, 1（#385 起真身）：FLAG:5 的位
       // 12/15 在 :31 已开（17179934119），故身体数据真的生成。写入顺序是
       // CHAR_SIZE_GENERATE 先落胸围分量（CFLAG:458/459），再由
       // CHAR_BODY_GENERATE_WAPPED 落七元组（451-457）。这九个值由
@@ -319,7 +319,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
 
   // 读键恰为原作各 PRINTW/WAIT 的次数，无多余等待（主菜单的 input 在取数
   // 前抛错，不记入已消费）：:91 开场叙事 1 次、村娘分支 :96-100 五次、
-  // :126-129 四次、抱起分支 :138-142 五次、:175 囚禁播报 1 次
+  // 四次、抱起分支 :138-142 五次、:175 囚禁播报 1 次
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 }, // 标题「新的猎物」
     { api: 'input', value: 1 }, // 魔王性别「女性」（跳过肉棒尺寸一问）
@@ -341,7 +341,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert(texts.includes('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。'));
   // 囚禁播报读 callname:17:-1（引擎 addCharacter 写入的预设名）
   assert(texts.includes('村娘玛奥被囚禁在了地牢里'));
-  // :78 CALL CHARA_NAME_INIT 真的被调用（#388，只有读取 namelistkeys 才能证明，因为它无其它可观察副作用）
+  // CALL CHARA_NAME_INIT 真的被调用（#388，只有读取 namelistkeys 才能证明，因为它无其它可观察副作用）
   assert(
     fixture.var_reads.some((r) => r.name === 'namelistkeys'),
     'EVENTFIRST 链必须真的调用了 chara_name_init',
@@ -388,7 +388,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert.equal(era_flag.day_count, 0);
   assert.equal(era_flag.date, 1, 'date 应已被 @SHOW_SHOP 钳成 1');
   assert.equal(era_flag.time, 0);
-  // :107 TARGET = 1（序号）→ 指针槽存角色 ID 17（#21 语义；主菜单的
+  // TARGET = 1（序号）→ 指针槽存角色 ID 17（#21 语义；主菜单的
   // 防御性钳制放行：17 在已加入列表且 cflag:17:1 == 0）
   assert.equal(era_flag.target, 17);
 
@@ -486,7 +486,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
     ),
     '11 个存读档指针槽必须初始化为 -1（登记后 fillData 补 0 会冒充 0 号槽）',
   );
-  // :203 之前的直线赋值逐项一致（全量前缀断言：:11-:62 的原作开局值不被
+  // 之前的直线赋值逐项一致（全量前缀断言：:11-:62 的原作开局值不被
   // 接线改动）。:203 起进入 RAND_CHARA_MAKE 真身（换人循环、形象确认、
   // CHAR_MAKE 管线），其写入由 test/chara-make.test.js 各段锁，此处锁
   // 「真的进了那段」与链尾的原作语义（见下）。
@@ -526,9 +526,9 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
     !texts.some((t) => t.includes('@GOBI_KOUJO')),
     '形象确认的 -2 贡品页不得打语尾占位（TARGET 临时换 + 未命中静默）',
   );
-  // :172-186 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾
+  // 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾
   assert(texts.includes('冒险者佳奈美被囚禁在了地牢里！'));
-  // :182 FLAG:402 用过的标志归位、:184 TARGET = FLAG:1（开局 0）
+  // FLAG:402 用过的标志归位、:184 TARGET = FLAG:1（开局 0）
   assert.equal(fixture.store.get('flag:402'), 0);
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, 0, ':184 TARGET = FLAG:1（开局默认 0）');

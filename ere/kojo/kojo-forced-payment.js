@@ -1,8 +1,6 @@
 /**
  * @file 强制肉偿（issue #544，S3）：魔改新增/强制肉偿.ERB 单函数移植。
  *
- * 源: target/ERB/魔改新增/强制肉偿.ERB  @强制肉偿（:2-117）
- *
  * == 入口 ==
  *
  * 唯一调用点是 DUNGEON_BITCH.ERB:77 的 `CALL 强制肉偿(ARG)`——债务
@@ -97,190 +95,190 @@ async function forced_payment(arg, rand = default_rand) {
 
   await era.printAndWait(
     `由于${name_of(arg)}欠的债务实在太高了，在休息的时候${name_of(arg)}被某位的债主绑架了！`,
-  ); // :10
+  );
 
-  // :11 SELECTCASE RAND:4（:12/:25/:41/:58 四档，RAND:4 恒在 0-3）
+  // SELECTCASE RAND:4（:12/:25/:41/:58 四档，RAND:4 恒在 0-3）
   switch (rand_n(4)) {
-    // :12-24 第一档：乱交派对
+    // 第一档：乱交派对
     case 0:
       era.print(
         `${name_of(arg)}被强制灌了媚药并换上只有几根吊带之外什么也没有的淫荡内衣`,
-      ); // :13
+      );
       era.print(
         `然后几乎跟全裸没什么两样的${name_of(arg)}，被丢入乱交派对里进行还债。`,
-      ); // :14
+      );
       era.print(
         `昏昏沉沉的${name_of(arg)}带着迷茫的媚笑，就这样跟派对里的男男女女一直交媾着……`,
-      ); // :15
+      );
       if (is_veteran(arg)) {
         await era.printAndWait(
           `${name_of(arg)}那幅晃腰摆臀的淫荡模样，大大取悦了派对的宾客们`,
-        ); // :17
-        play = rand_n(20) + 10; // :18
-        cost = play * 100 + rand_n(1000) + 1000; // :19
+        );
+        play = rand_n(20) + 10;
+        cost = play * 100 + rand_n(1000) + 1000;
       } else {
         await era.printAndWait(
           `${name_of(arg)}那青涩懵懂的模样，让派对的宾客们感到新鲜`,
-        ); // :21
-        play = rand_n(10) + 5; // :22
-        cost = play * 100 + rand_n(500) + 500; // :23
+        );
+        play = rand_n(10) + 5;
+        cost = play * 100 + rand_n(500) + 500;
       }
       break;
 
-    // :25-40 第二档：壁洞公共便所
+    // 第二档：壁洞公共便所
     case 1:
       era.print(
         `${name_of(arg)}被蒙上了眼睛并除去下半身的衣物，然后固定在一个壁洞上`,
-      ); // :26
-      era.print('也不知道是在城里的那个位置，就这样开始了壁洞公共便所的PLAY……'); // :27
+      );
+      era.print('也不知道是在城里的那个位置，就这样开始了壁洞公共便所的PLAY……');
       era.print(
         `什么也看不见的${name_of(arg)}，除了能听见不知是谁的污言秽语与指指点点之外`,
-      ); // :28
-      era.print('就只能感受到炙热的肉棒在身后及嘴巴里来来回回进出着……'); // :29
+      );
+      era.print('就只能感受到炙热的肉棒在身后及嘴巴里来来回回进出着……');
       if (is_veteran(arg)) {
         await era.printAndWait(
           `即使不知对象是谁，${name_of(arg)}那淫荡的身体居然因为这样的PLAY兴奋了`,
-        ); // :31
-        await era.printAndWait('让围在这个壁洞"消遣"的人们络绎不绝……'); // :32
-        play = rand_n(20) + 10; // :33
-        cost = play * 100 + rand_n(1000) + 1000; // :34
+        );
+        await era.printAndWait('让围在这个壁洞"消遣"的人们络绎不绝……');
+        play = rand_n(20) + 10;
+        cost = play * 100 + rand_n(1000) + 1000;
       } else {
         await era.printAndWait(
           `即使不知对象是谁，${name_of(arg)}那青涩懵懂的身体也因为这样的PLAY渐渐兴奋了起来`,
-        ); // :36
-        await era.printAndWait('让围在这个壁洞"消遣"的人们络绎不绝……'); // :37
-        play = rand_n(10) + 5; // :38
-        cost = play * 100 + rand_n(500) + 500; // :39
+        );
+        await era.printAndWait('让围在这个壁洞"消遣"的人们络绎不绝……');
+        play = rand_n(10) + 5;
+        cost = play * 100 + rand_n(500) + 500;
       }
       break;
 
-    // :41-57 第三档：教堂审判
+    // 第三档：教堂审判
     case 2:
       era.print(
         `${name_of(arg)}被蒙上了眼睛并除去全身的衣物，然后固定在一个十字架上`,
-      ); // :42
+      );
       era.print(
         `这难道是在在城里的哪个教堂吗？茫然的${name_of(arg)}就这样开始被审判了……`,
-      ); // :43
+      );
       era.print(
         `什么也看不见的${name_of(arg)}，能听见底下不知是谁的祈祷声与窃窃私语`,
-      ); // :44
+      );
       era.print(
         `欠债过多的${name_of(arg)}最后被判决了犯了"贪婪"的罪名，并需要立即接受教徒的"净化"`,
-      ); // :45
+      );
       era.print(
         `基于神的仁爱，教徒们决定用滚烫的肉棒代替了烙铁，在${name_of(arg)}的身体，嘴巴里进进出出着……`,
-      ); // :46
+      );
       if (is_veteran(arg)) {
         await era.printAndWait(
           `在受刑时，${name_of(arg)}那淫荡的身体反应，让教徒们更加地谴责`,
-        ); // :48
+        );
         await era.printAndWait(
           `为了彻底纠正${name_of(arg)}的淫行，只好一直追加"刑罚"的数量了……`,
-        ); // :49
-        play = rand_n(20) + 10; // :50
-        cost = play * 100 + rand_n(1000) + 1000; // :51
+        );
+        play = rand_n(20) + 10;
+        cost = play * 100 + rand_n(1000) + 1000;
       } else {
         await era.printAndWait(
           `在受刑时，${name_of(arg)}那青涩懵懂的身体不停挣扎着，被教徒们认定为是不服从审判的反应`,
-        ); // :53
+        );
         await era.printAndWait(
           `为了让${name_of(arg)}认清自己的罪行，只好一直追加"刑罚"的数量了……`,
-        ); // :54
-        play = rand_n(10) + 5; // :55
-        cost = play * 100 + rand_n(500) + 500; // :56
+        );
+        play = rand_n(10) + 5;
+        cost = play * 100 + rand_n(500) + 500;
       }
       break;
 
-    // :58-71 第四档：牢房安抚
+    // 第四档：牢房安抚
     case 3:
       era.print(
         `${name_of(arg)}被剥除全身的衣物，然后丢入牢房中进行"安抚"犯人们的活动`,
-      ); // :59
+      );
       era.print(
         '为了降低牢狱的暴动率，维护社会的秩序，果然还是需要人挺身而出进行奉献',
-      ); // :60
+      );
       era.print(
         `就这样${name_of(arg)}变成了犯人们的泄欲工具，上上下下的洞口全被被不停地轮奸着……`,
-      ); // :61
+      );
       if (is_veteran(arg)) {
         await era.printAndWait(
           `${name_of(arg)}那积极的服务精神，连牢头都赞赏不已，甚至加入了体验的行列……`,
-        ); // :63
-        play = rand_n(20) + 10; // :64
-        cost = play * 100 + rand_n(1000) + 1000; // :65
+        );
+        play = rand_n(20) + 10;
+        cost = play * 100 + rand_n(1000) + 1000;
       } else {
         await era.printAndWait(
           `在服务时，${name_of(arg)}那青涩懵懂的身体不停挣扎着，连牢头看了都摇头不已`,
-        ); // :67
+        );
         await era.printAndWait(
           `最后只好将${name_of(arg)}铐在栏杆上，让他好好为整个牢狱进行贡献……`,
-        ); // :68
-        play = rand_n(10) + 5; // :69
-        cost = play * 100 + rand_n(500) + 500; // :70
+        );
+        play = rand_n(10) + 5;
+        cost = play * 100 + rand_n(500) + 500;
       }
       break;
   }
 
-  // :73-77 债务结算：抵得完清零，抵不完累加
+  // 债务结算：抵得完清零，抵不完累加
   if (chara(arg).patch.借款 + cost >= 0) {
-    chara(arg).patch.借款 = 0; // :74
+    chara(arg).patch.借款 = 0;
   } else {
-    chara(arg).patch.借款 += cost; // :76
+    chara(arg).patch.借款 += cost;
   }
 
-  // :78-86 结算行：原作五条 PRINTFORM/PRINTFORMW 拼成一行（#584；
+  // 结算行：原作五条 PRINTFORM/PRINTFORMW 拼成一行（#584；
   // 中间行 :79 SETCOLORBYNAME SkyBlue / :83 LightSalmon 的染色本作未建模）
   await era.printAndWait(
     `被强制用肉体偿债的${name_of(arg)}抵销了${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,
-  ); // :78+:80+:82+:84+:86
+  );
 
-  // :88-104 1/3 机率被拍片纪录，增加还债的金额
+  // 1/3 机率被拍片纪录，增加还债的金额
   if (!rand_n(3)) {
-    await era.printAndWait(`${name_of(arg)}用肉体还债的过程被人拍下来了！`); // :89
-    // :90-94 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:91 SkyBlue 染色未建模）
-    // :92 显示值：片酬第一次求值（RAND:100 第一次取）
+    await era.printAndWait(`${name_of(arg)}用肉体还债的过程被人拍下来了！`);
+    // 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:91 SkyBlue 染色未建模）
+    // 显示值：片酬第一次求值（RAND:100 第一次取）
     const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);
     await era.printAndWait(
       `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,
-    ); // :90+:92+:94
-    // :95 入账值：片酬第二次求值（RAND:100 再取一次，原作如此——#14）
+    );
+    // 入账值：片酬第二次求值（RAND:100 再取一次，原作如此——#14）
     chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);
-    // :96-100 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:97 LightSalmon 染色未建模）
-    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98+:100
-    era.print(`${name_of(arg)}的${expname(50)}，${expname(70)} 经验值上升了 1`); // :101
-    chara(arg).dungeon.异常经验 += 1; // :102 EXP:ARG:50
-    chara(arg).train.拍摄经验 += 1; // :103 EXP:ARG:70（train 域）
+    // 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:97 LightSalmon 染色未建模）
+    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`);
+    era.print(`${name_of(arg)}的${expname(50)}，${expname(70)} 经验值上升了 1`);
+    chara(arg).dungeon.异常经验 += 1; // EXP:ARG:50
+    chara(arg).train.拍摄经验 += 1; // EXP:ARG:70（train 域）
   }
 
-  // :105-114 经验/点数结算。TYPE 实参恒为空串（见文件头「原作缺陷」1），
+  // 经验/点数结算。TYPE 实参恒为空串（见文件头「原作缺陷」1），
   // 三次调用都按空串传给 exp_bitch——实际不动 EXP/JUEL，只打印声称变化的文案。
-  // :105 CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前
+  // CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前
   require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
   if (era.get(`talent:${arg}:122`)) {
-    // :107 CALL EXP_BITCH(ARG,, ANAL, PLAY)（ANAL 恒为空串）
+    // CALL EXP_BITCH(ARG,, ANAL, PLAY)（ANAL 恒为空串）
     require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
     era.print(
       `${name_of(arg)}的${expname(22)}，${expname(20)}，${expname(74)}，${expname(1)}，${expname(5)}经验值上升了${play}`,
-    ); // :108
+    );
     era.print(
       `${name_of(arg)}的${palamname(2)}点数＋${play * 10}，${palamname(5)}点数＋${play * 20}，${palamname(7)}点数＋${play}`,
-    ); // :109
+    );
   } else {
-    // :111 CALL EXP_BITCH(ARG,, SEX, PLAY)（SEX 恒为空串）
+    // CALL EXP_BITCH(ARG,, SEX, PLAY)（SEX 恒为空串）
     require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
     era.print(
       `${name_of(arg)}的${expname(22)}，${expname(20)}，${expname(74)}，${expname(0)}，${expname(5)}经验值上升了${play}`,
-    ); // :112
+    );
     era.print(
       `${name_of(arg)}的${palamname(1)}点数＋${play * 10}，${palamname(5)}点数＋${play * 20}，${palamname(7)}点数＋${play}`,
-    ); // :113
+    );
   }
 
-  // :115-117 善恶值下调（Emuera 的整数除法向零截断）
+  // 善恶值下调（Emuera 的整数除法向零截断）
   const local = Math.trunc((-1 * play) / 4);
-  await era.printAndWait(`（善恶值减少了：${local}）`); // :116
-  karma(arg, local); // :117
+  await era.printAndWait(`（善恶值减少了：${local}）`);
+  karma(arg, local);
 
   return 0;
 }

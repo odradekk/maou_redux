@@ -3,17 +3,6 @@
  * @COM_ABLE 可用性判定 + TRAIN_MESSAGE_A/B 分支 + @EQUIP_COM100 / 108
  * 持续效果 + @SYOKUSYU_MILK（issue #227 / J17）。
  *
- * 源: target/ERB/調教相關/COMF100_触手召喚.ERB  @COM100 / @EQUIP_COM100 /
- *     @COM101-109（JUMP 与 108 真身）/ @SYOKUSYU_MILK
- *     target/ERB/調教相關/COMF150_フリー調教.ERB @COM150
- *     target/ERB/調教相關/COMF208_触手.ERB      @COM208
- *     target/ERB/調教相關/COMABLE.ERB           @COM_ABLE100-109（:3548-）/
- *     @COM_ABLE150（:4623）/ @COM_ABLE208（:4760）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB SELECTCOM 100-109 / 150
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB SELECTCOM 150；100-109/208
- *     源侧无分支（显式无操作）；公共头 TFLAG:15 非死斗场触手两臂在
- *     train-message.js
- *
  * == JUMP 语义 ==
  *
  *   - COM101-107/109 尾 JUMP 不改写 SELECTCOM（TRAIN_MESSAGE_B 仍走触手号
@@ -270,25 +259,25 @@ function able208() {
 
 async function com100() {
   const target = era_flag.target;
-  era.print('召唤触手'); // :6
-  await train_message_b(); // :8 —— 翻转之前
+  era.print('召唤触手');
+  await train_message_b(); // —— 翻转之前
 
   if (tequip(target, 90)) {
-    // :11-30 退出：清触手位
+    // 退出：清触手位
     era.set(`tequip:${target}:90`, 0);
     for (const bit of [11, 13, 14, 15, 16, 17, 44, 46, 98]) {
       era.set(`tequip:${target}:${bit}`, 0);
     }
   } else {
-    era.set(`tequip:${target}:90`, 1); // :33
-    let a = scale_a_by_half_explv(target, 100); // :35-48
-    a = apply_timid_apathetic(target, a); // :50-55
-    add_lose(target, 0, a); // :57
-    add_lose(target, 1, a * 2); // :58
-    era.add(`delta:${target}:10`, a * 20); // :60 UP:10
-    add_src(target, 14, a * 5); // :61 SOURCE:14
+    era.set(`tequip:${target}:90`, 1);
+    let a = scale_a_by_half_explv(target, 100);
+    a = apply_timid_apathetic(target, a);
+    add_lose(target, 0, a);
+    add_lose(target, 1, a * 2);
+    era.add(`delta:${target}:10`, a * 20); // UP:10
+    add_src(target, 14, a * 5); // SOURCE:14
   }
-  era.set('t:0', 0); // :63
+  era.set('t:0', 0);
   return 1;
 }
 
@@ -316,32 +305,29 @@ function com107() {
 
 async function com108() {
   const target = era_flag.target;
-  era.print('触手口辱'); // :285
-  await train_message_b(); // :287
+  era.print('触手口辱');
+  await train_message_b();
 
-  add_lose(target, 0, 80); // :289
-  add_lose(target, 1, 100); // :290
+  add_lose(target, 0, 80);
+  add_lose(target, 1, 100);
 
-  // :292-296 初吻：CFLAG:16 直写（门面会吞 -1）
+  // 初吻：CFLAG:16 直写（门面会吞 -1）
   if (era.get(`cflag:${target}:16`) === -1) {
     era.set(`cflag:${target}:16`, 999);
     game.train.初吻与自我口上 = 1; // TFLAG:13
   }
 
-  apply_serve_and_skill(target); // :298-335
+  apply_serve_and_skill(target);
 
   if (tequip(target, 98)) {
-    era.set(`tequip:${target}:98`, 0); // :339
+    era.set(`tequip:${target}:98`, 0);
   } else {
-    era.set(`tequip:${target}:98`, 1); // :341
-    era.set(
-      `stain:${target}:0`,
-      (era.get(`stain:${target}:0`) || 0) | 2 | 4, // :342-343
-    );
+    era.set(`tequip:${target}:98`, 1);
+    era.set(`stain:${target}:0`, (era.get(`stain:${target}:0`) || 0) | 2 | 4);
   }
-  era.set('t:0', 0); // :345
-  chara(target).dungeon.口交经验 += 1; // :347 EXP:22
-  era.print('口交经验＋１'); // :348
+  era.set('t:0', 0);
+  chara(target).dungeon.口交经验 += 1; // EXP:22
+  era.print('口交经验＋１');
   return 1;
 }
 
@@ -352,30 +338,30 @@ function com109() {
 async function com150() {
   const target = era_flag.target;
   const player = era_flag.player;
-  era.print(`${fetish(target)}调教`); // :8
-  await train_message_b(); // :9
+  era.print(`${fetish(target)}调教`);
+  await train_message_b();
 
-  add_lose(target, 0, 5); // :14
-  add_lose(target, 1, 50); // :15
-  set_src(target, 18, 0); // :18
-  set_src(target, 8, 30); // :20
-  set_src(target, 12, 100); // :22
+  add_lose(target, 0, 5);
+  add_lose(target, 1, 50);
+  set_src(target, 18, 0);
+  set_src(target, 8, 30);
+  set_src(target, 12, 100);
 
   const f_sense = Math.min(abl(target, 4), 5);
-  set_src(target, 18, [20, 100, 500, 1200, 2000, 2800][f_sense]); // :25-37
+  set_src(target, 18, [20, 100, 500, 1200, 2000, 2800][f_sense]);
   const f_addict = Math.min(abl(target, 40), 5);
   set_src(
     target,
     18,
     times(src(target, 18), [1.0, 1.1, 1.2, 1.3, 1.5, 1.7][f_addict]),
-  ); // :40-52
+  );
 
   if (tal(target, 122) === 0 && tal(player, 122) === 0) {
-    era.print(`${name_of('expname', 40)}+5`); // :60-61 PRINTS+PRINTL
-    chara(target).train.百合经验 += 5; // :62 EXP:40
+    era.print(`${name_of('expname', 40)}+5`); // PRINTS+PRINTL
+    chara(target).train.百合经验 += 5; // EXP:40
   } else if (tal(target, 122) === 1 && tal(player, 122) === 1) {
     era.print(`${name_of('expname', 41)}+5`);
-    chara(target).train.断背经验 += 5; // :66 EXP:41
+    chara(target).train.断背经验 += 5; // EXP:41
   }
   return 1;
 }
@@ -390,58 +376,58 @@ async function com208(rand = default_rand) {
     com_after_arena,
   } = require('#/system/train/com-colosseum');
   const target = era_flag.target;
-  era.print('触手'); // :9
-  await train_message_b(); // :11
+  era.print('触手');
+  await train_message_b();
 
-  add_lose(target, 0, 5); // :16
-  add_lose(target, 1, 100); // :17
+  add_lose(target, 0, 5);
+  add_lose(target, 1, 100);
 
-  const slave_point = arena_slave_point(); // :19
-  game.train.死斗场收入 += rand(slave_point); // :20 TFLAG:402 += RAND:RESULT
-  const threshold = 10 * (era.get('cflag:0:9') || 0); // :22 字面角色 0
+  const slave_point = arena_slave_point();
+  game.train.死斗场收入 += rand(slave_point); // TFLAG:402 += RAND:RESULT
+  const threshold = 10 * (era.get('cflag:0:9') || 0); // 字面角色 0
   if (slave_point < threshold) {
-    era.print(`${target_name()}被触手弄的手足无措。`); // :23
+    era.print(`${target_name()}被触手弄的手足无措。`);
     await era.waitAnyKey();
-    add_lose(target, 0, 10); // :24
-    add_lose(target, 1, 200); // :25
+    add_lose(target, 0, 10);
+    add_lose(target, 1, 200);
   } else {
-    era.print(`${target_name()}一瞬间就把触手打倒了。`); // :27
+    era.print(`${target_name()}一瞬间就把触手打倒了。`);
     await era.waitAnyKey();
   }
 
-  game.train.死斗场敌种 = 208; // :30 TFLAG:400
-  const after = await com_after_arena(); // :32
+  game.train.死斗场敌种 = 208; // TFLAG:400
+  const after = await com_after_arena();
   if (after === 0) {
-    return 1; // :33-34 胜利跳过菜单
+    return 1; // 胜利跳过菜单
   }
 
   for (;;) {
     // COMF208:37-43 的菜单项全是整行 PRINTL——按钮之间不补空行（#595）
-    era.print('对哪里进行凌辱？'); // :37
-    era.printButton('- 嘴巴', 0); // :38
-    era.printButton('- 胸部', 1); // :39
+    era.print('对哪里进行凌辱？');
+    era.printButton('- 嘴巴', 0);
+    era.printButton('- 胸部', 1);
     if (tal(target, 122) === 0) {
-      era.printButton('- 私处', 2); // :40-41
+      era.printButton('- 私处', 2);
     }
-    era.printButton('- 肛门', 3); // :42
-    era.printButton('暂时放过', 999); // :43
-    const result = await era.input(); // :45
+    era.printButton('- 肛门', 3);
+    era.printButton('暂时放过', 999);
+    const result = await era.input();
 
     if (result === 0) {
-      return jump_com(31, { rewrite_selectcom: true }); // :47-49
+      return jump_com(31, { rewrite_selectcom: true });
     }
     if (result === 1) {
-      return jump_com(5, { rewrite_selectcom: true }); // :50-52
+      return jump_com(5, { rewrite_selectcom: true });
     }
     if (result === 2) {
-      if (tal(target, 122)) return 0; // :55-56 男人双保险
-      return jump_com(21, { rewrite_selectcom: true }); // :57-58
+      if (tal(target, 122)) return 0; // 男人双保险
+      return jump_com(21, { rewrite_selectcom: true });
     }
     if (result === 3) {
-      return jump_com(27, { rewrite_selectcom: true }); // :59-61
+      return jump_com(27, { rewrite_selectcom: true });
     }
     if (result === 999) {
-      return 1; // :62-67 暂时放过落空后 RETURN 1
+      return 1; // 暂时放过落空后 RETURN 1
     }
   }
 }
@@ -475,21 +461,21 @@ async function syokusyu_milk() {
 async function equip_com100() {
   const target = era_flag.target;
   const player = era_flag.player;
-  era.print('＜触手调教中＞'); // :69
+  era.print('＜触手调教中＞');
 
-  let a = scale_a_by_explv(target, 100); // :71-84
-  a = apply_timid_apathetic(target, a); // :86-92
-  add_lose(target, 0, a); // :94
-  add_lose(target, 1, a * 2); // :95
-  era.add(`delta:${target}:10`, a * 20); // :97
-  add_src(target, 8, a * 10); // :98
-  add_src(target, 14, a * 5); // :99
-  add_src(target, 10, 2000); // :101
-  set_src(target, 0, times(src(target, 0), 2.0)); // :103
+  let a = scale_a_by_explv(target, 100);
+  a = apply_timid_apathetic(target, a);
+  add_lose(target, 0, a);
+  add_lose(target, 1, a * 2);
+  era.add(`delta:${target}:10`, a * 20);
+  add_src(target, 8, a * 10);
+  add_src(target, 14, a * 5);
+  add_src(target, 10, 2000);
+  set_src(target, 0, times(src(target, 0), 2.0));
   set_src(target, 1, times(src(target, 1), 2.0));
   set_src(target, 2, times(src(target, 2), 2.0));
   set_src(target, 17, times(src(target, 17), 2.0));
-  set_src(target, 13, times(src(target, 13), 1.8)); // :107
+  set_src(target, 13, times(src(target, 13), 1.8));
 
   if ((era.get(`maxbase:${player}:4`) || 0) !== 0) {
     let b = [500, 600, 800, 1000, 1400, 2000][Math.min(abl(target, 12), 5)];
@@ -513,7 +499,7 @@ async function equip_com100() {
     if (tequip(target, 46)) b = times(b, 1.3);
     if (tequip(target, 98)) b = times(b, 1.5);
 
-    chara(player).train.触手射精槽 += b; // :188 BASE:PLAYER:4
+    chara(player).train.触手射精槽 += b; // BASE:PLAYER:4
     const s = chara(player).train.触手射精槽;
     const ejac = era.get(`maxbase:${player}:4`) || 0;
     let e = 0;
@@ -521,11 +507,11 @@ async function equip_com100() {
     else if (s > ejac) e = 1;
 
     if (e === 2) {
-      chara(target).dungeon.精液经验 += 3; // :203 EXP:20
+      chara(target).dungeon.精液经验 += 3; // EXP:20
       era.print('触手大量射精');
       era.print('精液经验＋３');
       era.add('t:0', 1);
-      if (tequip(target, 11)) game.train.对象膣内射精 = 2; // :209 TFLAG:38
+      if (tequip(target, 11)) game.train.对象膣内射精 = 2; // TFLAG:38
       chara(player).train.触手射精槽 -= ejac * 2;
       if (chara(player).train.触手射精槽 >= ejac) {
         chara(player).train.触手射精槽 = ejac - 1;
@@ -541,35 +527,35 @@ async function equip_com100() {
         chara(player).train.触手射精槽 = ejac - 1;
       }
     }
-    game.train.怪物射精或购入金 = e; // :231 TFLAG:15
+    game.train.怪物射精或购入金 = e; // TFLAG:15
   }
 
   if (chara(target).dungeon.触手经验 === 0) {
-    chara(target).dungeon.异常经验 += 1; // :236 EXP:50
+    chara(target).dungeon.异常经验 += 1; // EXP:50
     era.print('异常经验＋1');
   }
-  era.add('t:0', 1); // :240
+  era.add('t:0', 1);
   const t_final = era.get('t:0') || 0;
-  era.print(`触手经验＋${t_final}`); // :241-242 PRINT + PRINTVL
-  chara(target).dungeon.触手经验 += t_final; // :243 EXP:55
-  era.set('t:0', 0); // :244
+  era.print(`触手经验＋${t_final}`); // PRINT + PRINTVL
+  chara(target).dungeon.触手经验 += t_final; // EXP:55
+  era.set('t:0', 0);
   return 1;
 }
 
 async function equip_com108() {
   const target = era_flag.target;
-  era.print('＜触手口辱中＞'); // :354
+  era.print('＜触手口辱中＞');
   if (tal(target, 47)) {
-    add_lose(target, 0, 40); // :356-357 喜欢精液
+    add_lose(target, 0, 40); // 喜欢精液
     add_lose(target, 1, 60);
   } else {
     add_lose(target, 0, 80);
     add_lose(target, 1, 100);
   }
-  apply_serve_and_skill(target); // :363-400
-  chara(target).dungeon.口交经验 += 1; // :402
+  apply_serve_and_skill(target);
+  chara(target).dungeon.口交经验 += 1;
   era.print('口交经验＋１');
-  era.add('t:0', 1); // :404
+  era.add('t:0', 1);
   return 1;
 }
 

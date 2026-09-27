@@ -1,9 +1,6 @@
 /**
  * @file 角色信息的能力一览与刻印行（@SHOW_INFO_ABL / @SHOW_INFO_MARK）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
- *       @SHOW_INFO_ABL（:927-986）/ @SHOW_INFO_MARK（:992-1016）
- *
  * 两段的形态都由黄金样本钉住（train-upgrade-log:157 与 159，魔王的能力
  * 画面）：`  技巧     - LV3   ` 与 ` 苦痛:LV0 [...]   快乐:LV0 [...]`——用例
  * 逐字复现这两行。
@@ -89,11 +86,11 @@ function show_info_abl(cid) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
   const male = t(TALENT_MAN) !== 0;
   const penis = male || t(TALENT_FUTA) !== 0;
-  let element_count = 0; // :932 ELEMENT_COUNT = 0
+  let element_count = 0; // ELEMENT_COUNT = 0
 
   let row = '';
   for (let abl = 0; abl < 41; abl += 1) {
-    // :943 跳过空洞编号（源用五个 INRANGE 串联）
+    // 跳过空洞编号（源用五个 INRANGE 串联）
     if (
       (abl >= 5 && abl <= 9) ||
       (abl >= 18 && abl <= 19) ||
@@ -103,7 +100,7 @@ function show_info_abl(cid) {
     ) {
       continue;
     }
-    // :948-954 性别过滤：男无 私处感觉/百合气质/百合中毒，女无 断背气质/断背中毒
+    // 性别过滤：男无 私处感觉/百合气质/百合中毒，女无 断背气质/断背中毒
     if (
       male &&
       (abl === ABL_VAGINA || abl === ABL_LESBIAN || abl === ABL_LESBIAN_ADDICT)
@@ -115,26 +112,26 @@ function show_info_abl(cid) {
     }
     const level = era.get(`abl:${cid}:${abl}`) || 0;
     if (level === 0) {
-      continue; // :957-959 零值不显示
+      continue; // 零值不显示
     }
-    // :962-966 男体的阴蒂感觉改名（源里是字面量 "阴茎感觉"）
+    // 男体的阴蒂感觉改名（源里是字面量 "阴茎感觉"）
     const name =
       penis && abl === ABL_CLITORIS
         ? '阴茎感觉'
         : (era.get(`ablname:${abl}`) ?? '');
-    // :963/:965 两个前导空格（命令名后的第一个空格是分隔符，见文件头）
+    // 两个前导空格（命令名后的第一个空格是分隔符，见文件头）
     row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;
-    // :969 CALL DECIDE_ABLUP：可提升标记未移植（见文件头），按结果 0 补 2 空格
+    // CALL DECIDE_ABLUP：可提升标记未移植（见文件头），按结果 0 补 2 空格
     row += NBSP.repeat(2);
 
-    element_count += 1; // :972
+    element_count += 1;
     if (element_count % 4 === 0) {
-      era.print(row); // :973-975
+      era.print(row);
       row = '';
     }
   }
   if (element_count % 4 !== 0) {
-    era.print(row); // :979-981（不足 4 项也收行）
+    era.print(row); // （不足 4 项也收行）
   }
 }
 
@@ -146,19 +143,19 @@ function show_info_mark(cid) {
   const fragments = [];
   for (const [index, mark_id] of MARKS.entries()) {
     const level = era.get(`mark:${cid}:${mark_id}`) || 0;
-    // :1002/:1004/:1006/:1008 PRINTFORM 的间距：首项 1 个前导空格、
+    // PRINTFORM 的间距：首项 1 个前导空格、
     // 其余 4 个「快乐:」之间 3 个（命令后的第一个空格是分隔符，见文件头）。
     // 首项那 1 格同样计入四枚刻印的列对齐，故一并用 NBSP（#577）
     fragments.push({
       content: `${NBSP.repeat(index === 0 ? 1 : 3)}${MARK_LABELS[index]}:LV${level} `,
     });
-    // :1003/:1005/:1007/:1009 BAR MARK:n, 3, 3
+    // BAR MARK:n, 3, 3
     fragments.push({
       content: bar_text(level, MARK_BAR_MAX, MARK_BAR_LEN),
     });
   }
-  // :1010-1013 CALL DECIDE_ABLUP99 的 `*` 未移植（见文件头）
-  era.print(fragments); // :1010-1013 PRINTL
+  // CALL DECIDE_ABLUP99 的 `*` 未移植（见文件头）
+  era.print(fragments); // PRINTL
 }
 
 module.exports = { bar_text, show_info_abl, show_info_mark };

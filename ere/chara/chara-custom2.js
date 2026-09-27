@@ -1,12 +1,6 @@
 /**
  * @file 角色定制主循环与素质页（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB 的 8 个函数：
- *     @CHAR_CUSTOM（:1-152）、@CHAR_CUSTOM_TALENT_DEAL（:154-215）、
- *     @CONFLICT_CHECK（:217-261）、@CHAR_CUSTOM_TALENT_PAGE（:264-452）、
- *     @PRINT_SINGLE_TALENT（:455-482）、@TALENT_EMPTY_CHECK（:484-540）、
- *     @CHARA_COST（:543-594）、@CHARA_FIRST_XP（:596-794）
- *
  * 调用面：本文件内部的 @CHAR_CUSTOM 由同票的 ere/chara/chara-custom.js
  * （@CHAR_CREATE 尾段 `CALL CHAR_CUSTOM, A, ARG`）调用；外观页与外观分发在
  * ere/chara/chara-custom3.js；@CHAR_CUSTOM_TALENT_DEAL 尾段的
@@ -328,10 +322,10 @@ const COST_ARMS = [
  * @returns {number} 价格
  */
 function chara_cost(cid) {
-  let cost = 0; // :543-595
+  let cost = 0;
   for (let index = 0; index < 500; index += 1) {
     if (talent(cid, index) !== 1) {
-      continue; // :549（只认「恰好等于 1」）
+      continue; // （只认「恰好等于 1」）
     }
     for (const arm of COST_ARMS) {
       const hit =
@@ -344,12 +338,12 @@ function chara_cost(cid) {
     }
   }
   if (talent(cid, T_头发颜色) === 11) {
-    cost += 100000; // :588-589 粉毛加十万
+    cost += 100000; // 粉毛加十万
   }
   if (cost < 0) {
-    cost = 0; // :591-592 素质加算价格不为负数
+    cost = 0; // 素质加算价格不为负数
   }
-  return cost + 500000; // :593
+  return cost + 500000;
 }
 
 // —— @CONFLICT_CHECK 与 @CHAR_CUSTOM_TALENT_DEAL ——
@@ -372,9 +366,9 @@ function custom_conflict_check(arg, cid) {
       continue;
     }
     if (talent(cid, left) && talent(cid, right)) {
-      set_talent(cid, left, 0); // :254
-      set_talent(cid, right, 0); // :255
-      set_talent(cid, arg, 1); // :256
+      set_talent(cid, left, 0);
+      set_talent(cid, right, 0);
+      set_talent(cid, arg, 1);
     }
   }
 }
@@ -390,69 +384,69 @@ function custom_conflict_check(arg, cid) {
  */
 function char_custom_talent_deal(l_tal, cid, rand = default_rand) {
   if (!(l_tal >= 0 && l_tal <= 500)) {
-    return -1; // :158-160
+    return -1;
   }
 
-  set_talent(cid, l_tal, talent(cid, l_tal) ? 0 : 1); // :162 取反
-  custom_conflict_check(l_tal, cid); // :163
+  set_talent(cid, l_tal, talent(cid, l_tal) ? 0 : 1); // 取反
+  custom_conflict_check(l_tal, cid);
 
-  // :165-175 胸围互斥：五档只留选中那一个，并重掷胸围
+  // 胸围互斥：五档只留选中那一个，并重掷胸围
   const bust = talent(cid, l_tal);
   if (groupmatch(l_tal, BUST_TALENTS)) {
     for (const index of BUST_TALENTS) {
-      set_talent(cid, index, 0); // :168-172（顺序照源：109/110/114/119/116）
+      set_talent(cid, index, 0); // （顺序照源：109/110/114/119/116）
     }
-    set_talent(cid, l_tal, bust); // :173
-    char_bust_regenerate_wapped(cid, rand); // :174 TRYCALL，本票落真身
+    set_talent(cid, l_tal, bust);
+    char_bust_regenerate_wapped(cid, rand); // TRYCALL，本票落真身
   }
 
-  // :176-189 口上唯一：性格组内只留一个
+  // 口上唯一：性格组内只留一个
   if (groupmatch(l_tal, PERSONALITY_TALENTS)) {
     for (const index of PERSONALITY_TALENTS) {
-      set_personality(cid, index, 0); // :178-187
+      set_personality(cid, index, 0);
     }
-    set_personality(cid, l_tal, 1); // :154-216
+    set_personality(cid, l_tal, 1);
   }
   if (talent(cid, 174) === 1) {
-    set_talent(cid, T_男人, 1); // :190-191 貴公子是男人
+    set_talent(cid, T_男人, 1); // 貴公子是男人
   }
   if (talent(cid, 166) === 1) {
-    set_talent(cid, T_男人, 0); // :192-193
+    set_talent(cid, T_男人, 0);
   }
 
-  // :194-200 职业唯一：200-220 只留一个
+  // 职业唯一：200-220 只留一个
   if (l_tal >= JOB_FIRST && l_tal <= JOB_LAST) {
     for (let index = JOB_FIRST; index <= JOB_LAST; index += 1) {
-      set_talent(cid, index, 0); // :197
+      set_talent(cid, index, 0);
     }
-    set_talent(cid, l_tal, 1); // :154-216
+    set_talent(cid, l_tal, 1);
   }
 
-  // :201-205 精英固定魔族
+  // 精英固定魔族
   if (l_tal === T_精英) {
-    // :202-203 `SIF L_TAL == 220 → TALENT:314 = 9`
+    // `SIF L_TAL == 220 → TALENT:314 = 9`
     set_talent(cid, T_种族, 9);
   }
   if (talent(cid, T_种族) !== 9) {
-    set_talent(cid, T_精英, 0); // :204-205
+    set_talent(cid, T_精英, 0);
   }
 
-  // :206-208 龍族有角
+  // 龍族有角
   if (talent(cid, T_种族) === 5) {
     set_talent(cid, T_鬼角, 1);
   }
 
-  // :209-211 扶她及男人才有童贞（talent:1 属 train 域）
+  // 扶她及男人才有童贞（talent:1 属 train 域）
   if (!talent(cid, T_扶她) && !talent(cid, T_男人)) {
     chara(cid).train.童贞 = 0;
   }
 
-  // :212-214 纤细体型不肥胖
+  // 纤细体型不肥胖
   if (talent(cid, T_体型) <= 100) {
     set_talent(cid, 115, 0);
   }
 
-  return 0; // :154-216
+  return 0;
 }
 
 // —— @PRINT_SINGLE_TALENT（:455-482）与 @CHAR_CUSTOM_TALENT_PAGE（:264-452）——
@@ -487,7 +481,7 @@ function flush_talent_row() {
     );
     pending_talents = [];
   }
-  era.setColor(''); // :455-483 RESETCOLOR
+  era.setColor(''); // RESETCOLOR
 }
 
 /**
@@ -500,21 +494,21 @@ function flush_talent_row() {
 function print_single_talent(arg = -1, cid = era_flag.target) {
   if (arg < 0) {
     flush_talent_row();
-    talent_cursor = 0; // :455-483
-    return 0; // :455-483
+    talent_cursor = 0;
+    return 0;
   }
   const name = talentname(arg);
   if (strlens(name) < 1) {
-    return talent_cursor; // :464-465 无名素质不占格
+    return talent_cursor; // 无名素质不占格
   }
   pending_talents.push({
     accelerator: arg,
     content: name,
-    color: talent(cid, arg) ? undefined : GRAY, // :467-471
+    color: talent(cid, arg) ? undefined : GRAY,
   });
   talent_cursor += 1;
   if (talent_cursor % TALENT_COLUMNS === 0) {
-    flush_talent_row(); // :455-483
+    flush_talent_row();
   }
   return talent_cursor;
 }
@@ -629,7 +623,7 @@ function expand_group(group, mode) {
  * @param {number} cid 角色 ID（源里是 TARGET）
  */
 function char_custom_talent_page(page = 0, mode = 0, cid = era_flag.target) {
-  print_single_talent(-1, cid); // :264-454 入页冲行（LOCAL = 0）
+  print_single_talent(-1, cid); // 入页冲行（LOCAL = 0）
 
   const groups = TALENT_PAGE_GROUPS[page] ?? [];
   for (const group of groups) {
@@ -662,26 +656,26 @@ async function talent_empty_check(cid) {
       continue;
     }
     if (index >= 160 && index <= 175) {
-      has_personality = true; // :493-494
+      has_personality = true;
     } else if (index >= 200 && index <= 220) {
-      has_job = true; // :496-497
+      has_job = true;
     }
   }
   if (!has_personality) {
-    era.print('需要设定性格（口上）'); // :502-503
+    era.print('需要设定性格（口上）');
   }
   if (!has_job) {
-    era.print('需要有【近卫】及【后代】之外的职业设定'); // :504-505
+    era.print('需要有【近卫】及【后代】之外的职业设定');
   }
   for (const [index, message] of EMPTY_CHECK_TALENTS) {
     if (talent(cid, index) === 0) {
-      era.print(message); // :506-529
+      era.print(message);
     }
   }
   const elite_needs_race =
     talent(cid, T_精英) !== 0 && talent(cid, T_种族2) === 0;
   if (elite_needs_race) {
-    era.print('精英需要设定精英种族'); // :530-531
+    era.print('精英需要设定精英种族');
   }
 
   const complete =
@@ -690,14 +684,14 @@ async function talent_empty_check(cid) {
     EMPTY_CHECK_TALENTS.every(([index]) => talent(cid, index) !== 0) &&
     !elite_needs_race;
   if (complete) {
-    await chara_first_xp(cid); // :534
-    era.print('人物设定完成'); // :535 PRINTW
+    await chara_first_xp(cid);
+    era.print('人物设定完成'); // PRINTW
     await era.waitAnyKey();
-    return 0; // :484-542
+    return 0;
   }
-  era.print('请返回继续设定'); // :538 PRINTW
+  era.print('请返回继续设定'); // PRINTW
   await era.waitAnyKey();
-  return 1; // :539
+  return 1;
 }
 
 // —— @CHARA_FIRST_XP（:596-794）——
@@ -728,25 +722,25 @@ const DOG_POSITIONS = [1, 2, 3];
  * @returns {Promise<number>} 0（源 :596-794 `RETURN 0`）
  */
 async function chara_first_xp(cid, rand = default_rand) {
-  // :597 $LOOP2 —— 问卷整体的重来点（「输入错误」「还是改一下吧」都回到这里）
+  // $LOOP2 —— 问卷整体的重来点（「输入错误」「还是改一下吧」都回到这里）
   xp_loop: for (;;) {
     let kiss = 0; // LOCAL：初吻对象编码
     let kiss_name = ''; // LOCALS：初吻对象的称呼
     let sex = 0; // LOCAL:1：初体验对象编码
     let sex_name = ''; // LOCALS:1：初体验对象的称呼
 
-    // :596-794 四项产物先写初值（本段每次重来都重置）
+    // 四项产物先写初值（本段每次重来都重置）
     chara(cid).train.初吻对象 = kiss; // CFLAG:16
     chara(cid).train.初吻对象名 = kiss_name; // CSTR:4
     chara(cid).train.初体验对象 = sex; // CFLAG:15
     chara(cid).train.初体验对象名 = sex_name; // CSTR:3
     if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0) {
-      return 0; // :606-607 SIF EX_TALENT:ARG:2 RETURN 0（后代不问）
+      return 0; // SIF EX_TALENT:ARG:2 RETURN 0（后代不问）
     }
 
-    era.print('设定初体验'); // :610
-    era.print('初吻对象是？'); // :611
-    // :612 的九项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+    era.print('设定初体验');
+    era.print('初吻对象是？');
+    // 的九项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
     era.printButton('不明', 0);
     era.printButton('魔王', 1);
     era.printButton('狂王', 993);
@@ -756,104 +750,104 @@ async function chara_first_xp(cid, rand = default_rand) {
     era.printButton('随机', 996);
     era.printButton('自定义输入', 997);
     era.printButton('无', 998);
-    kiss = await era.input(); // :596-794
+    kiss = await era.input();
 
-    // :615 SELECTCASE LOCAL
+    // SELECTCASE LOCAL
     if (kiss === 1) {
-      // :616-631 魔王：先问部位
-      era.print('初吻位置是？'); // :596-794
-      // :618-623 的四行选项 → 按钮（PR #53 通则，正文不写 [编号]；#572）。
+      // 魔王：先问部位
+      era.print('初吻位置是？');
+      // 的四行选项 → 按钮（PR #53 通则，正文不写 [编号]；#572）。
       // **保留 useRule: false**（#572 审查返工）：显示是条件的（:619/:621 的
       // SIF），受理是无条件的（:625 `IF GROUPMATCH(RESULT,1,201,301,401)`）
       // ——女性魔王键入 201、男性魔王键入 301，原作照收且落盘编码与部位词
       // 都不同。收紧白名单会把这两条路径锁死，故与流放/公开处刑的 100、
       // ENDING 发色的 11 同款处置（先例 event-museum.js:83-85）。
-      era.printButton('唇', 1); // :618
+      era.printButton('唇', 1);
       if (talent(0, T_扶她) || talent(0, T_男人)) {
-        era.printButton('阴茎', 201); // :619-620（魔王的性别决定选项）
+        era.printButton('阴茎', 201); // （魔王的性别决定选项）
       }
       if (!talent(0, T_男人)) {
-        era.printButton('私处', 301); // :621-622
+        era.printButton('私处', 301);
       }
-      era.printButton('肛门', 401); // :623
-      const position = await era.input({ useRule: false }); // :596-794
+      era.printButton('肛门', 401);
+      const position = await era.input({ useRule: false });
       if (groupmatch(position, KISS_POSITIONS)) {
-        kiss_name = chara_callname(0); // :596-794 %SAVESTR:MASTER%
-        kiss = position; // :596-794
+        kiss_name = chara_callname(0); // %SAVESTR:MASTER%
+        kiss = position;
       } else {
-        era.print('输入错误，请重新开始。'); // :596-794
-        continue xp_loop; // :596-794 GOTO LOOP2
+        era.print('输入错误，请重新开始。');
+        continue xp_loop; // GOTO LOOP2
       }
     } else if (kiss === 995) {
-      // :632-641 野狗：部位码加到 995 上（996/997/998）
-      era.print('初吻位置是？'); // :596-794
-      era.printButton('肛门', 1); // :634
-      era.printButton('阴茎', 2); // :634
-      era.printButton('嘴', 3); // :634
-      const position = await era.input(); // :596-794
+      // 野狗：部位码加到 995 上（996/997/998）
+      era.print('初吻位置是？');
+      era.printButton('肛门', 1);
+      era.printButton('阴茎', 2);
+      era.printButton('嘴', 3);
+      const position = await era.input();
       if (groupmatch(position, DOG_POSITIONS)) {
-        kiss += position; // :637 LOCAL += RESULT
+        kiss += position; // LOCAL += RESULT
       } else {
-        era.print('输入错误，请重新开始。'); // :596-794
-        continue xp_loop; // :596-794
+        era.print('输入错误，请重新开始。');
+        continue xp_loop;
       }
     } else if (kiss === 996) {
-      kiss = -1; // :596-794 随机
+      kiss = -1; // 随机
     } else if (kiss === 997) {
-      // :644-670 自定义输入：$LOOP3 覆盖「名字」与「部位」两步
+      // 自定义输入：$LOOP3 覆盖「名字」与「部位」两步
       kiss_input: for (;;) {
-        era.print('输入初吻对象（留空将会随机生成）：'); // :646
+        era.print('输入初吻对象（留空将会随机生成）：');
         // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
         era.print('（输入 0 随机生成初吻对象）');
-        kiss_name = input_text(await era.input()); // :647-648 INPUTS + RESULTS
-        const length = strlens(kiss_name); // :649
+        kiss_name = input_text(await era.input()); // INPUTS + RESULTS
+        const length = strlens(kiss_name);
         if (length > 16) {
-          era.print(`太长，请使用全角八字以下。`); // :596-794
-          continue kiss_input; // :596-794 GOTO LOOP3
+          era.print(`太长，请使用全角八字以下。`);
+          continue kiss_input; // GOTO LOOP3
         }
         if (length > 0) {
-          era.print(`新建人物初吻对象为${kiss_name}。`); // :654
+          era.print(`新建人物初吻对象为${kiss_name}。`);
         } else {
-          era.print('随机生成。'); // :596-794
-          kiss = -1; // :596-794
+          era.print('随机生成。');
+          kiss = -1;
         }
         if (kiss !== -1) {
-          era.print('初吻位置是？'); // :596-794
-          // :661 的四项 → 按钮（同上）
+          era.print('初吻位置是？');
+          // 的四项 → 按钮（同上）
           era.printButton('唇', 1);
           era.printButton('阴茎', 201);
           era.printButton('私处', 301);
           era.printButton('肛门', 401);
-          const position = await era.input(); // :596-794
+          const position = await era.input();
           if (groupmatch(position, KISS_POSITIONS)) {
-            kiss_name = chara_callname(0); // :596-794
-            kiss = position; // :596-794
+            kiss_name = chara_callname(0);
+            kiss = position;
           } else {
-            era.print('输入错误，请重新开始。'); // :596-794
-            continue kiss_input; // :596-794 GOTO LOOP3
+            era.print('输入错误，请重新开始。');
+            continue kiss_input; // GOTO LOOP3
           }
         }
         break;
       }
     } else if (kiss === 0) {
-      // :671 不明：编码 0，不做别的
+      // 不明：编码 0，不做别的
     } else if (kiss === 993) {
-      // :672 狂王
+      // 狂王
     } else if (kiss === 994) {
-      // :673 怪物
+      // 怪物
     } else if (kiss === 999) {
-      // :674 触手
+      // 触手
     } else if (kiss === 998) {
-      kiss = -2; // :675-676 无
+      kiss = -2; // 无
     } else {
-      era.print('输入错误，请重新开始。'); // :596-794
-      continue xp_loop; // :596-794
+      era.print('输入错误，请重新开始。');
+      continue xp_loop;
     }
 
-    // :681-715 初体验对象：只对非処女问
+    // 初体验对象：只对非処女问
     if (!talent(cid, 0)) {
-      era.print('初体验对象是？'); // :682
-      // :683 的九项 → 按钮（同上）
+      era.print('初体验对象是？');
+      // 的九项 → 按钮（同上）
       era.printButton('魔王', 1);
       era.printButton('蠕虫', 101);
       era.printButton('触手生物', 102);
@@ -863,135 +857,135 @@ async function chara_first_xp(cid, rand = default_rand) {
       era.printButton('随机', 996);
       era.printButton('自定义输入', 997);
       era.printButton('无', 998);
-      sex = await era.input(); // :684-685
+      sex = await era.input();
       if (sex === 1) {
-        // :596-794 魔王
+        // 魔王
       } else if (sex === 101) {
-        // :688 蠕虫
+        // 蠕虫
       } else if (sex === 102) {
-        // :689 触手生物
+        // 触手生物
       } else if (sex === 996) {
-        sex = -1; // :596-794 随机
+        sex = -1; // 随机
       } else if (sex === 997) {
-        // :692-706 自定义输入（$LOOP4，只重问名字）
+        // 自定义输入（$LOOP4，只重问名字）
         for (;;) {
-          era.print('输入初体验对象（留空将会随机生成）：'); // :694
+          era.print('输入初体验对象（留空将会随机生成）：');
           // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
           era.print('（输入 0 随机生成初体验对象）');
-          sex_name = input_text(await era.input()); // :695-696
-          const length = strlens(sex_name); // :697
+          sex_name = input_text(await era.input());
+          const length = strlens(sex_name);
           if (length > 16) {
-            era.print('太长，请使用全角八字以下。'); // :596-794
-            continue; // :700 GOTO LOOP4
+            era.print('太长，请使用全角八字以下。');
+            continue; // GOTO LOOP4
           }
           if (length > 0) {
-            era.print(`新建人物初体验对象为为${sex_name}。`); // :702（原作「为为」的笔误 1:1）
+            era.print(`新建人物初体验对象为为${sex_name}。`); // （原作「为为」的笔误 1:1）
           } else {
-            era.print('随机生成。'); // :596-794
-            sex = -1; // :596-794
+            era.print('随机生成。');
+            sex = -1;
           }
           break;
         }
       } else if (sex === 998) {
-        // :596-794 无
+        // 无
       } else if (sex === 103) {
-        // :708 野狗
+        // 野狗
       } else if (sex === 104) {
-        // :709 怪物
+        // 怪物
       } else if (sex === 105) {
-        // :710 狂王
+        // 狂王
       } else {
-        era.print('输入错误，请重新开始。'); // :596-794
-        continue xp_loop; // :596-794 GOTO LOOP2
+        era.print('输入错误，请重新开始。');
+        continue xp_loop; // GOTO LOOP2
       }
     }
 
-    // :716-718 A = ARG；非后代补 CM_NS_EXP 的经验初始化
+    // A = ARG；非后代补 CM_NS_EXP 的经验初始化
     if ((era.get(`ex_talent:${cid}:2`) || 0) === 0) {
-      await cm_ns_exp(cid, rand); // :717-718 CALL CM_NS_EXP
+      await cm_ns_exp(cid, rand); // CALL CM_NS_EXP
     }
     if (kiss !== -1) {
-      chara(cid).train.初吻对象 = kiss; // :596-794
-      chara(cid).train.初吻对象名 = kiss_name; // :596-794
+      chara(cid).train.初吻对象 = kiss;
+      chara(cid).train.初吻对象名 = kiss_name;
     }
     if (sex !== -1) {
-      chara(cid).train.初体验对象 = sex; // :596-794
-      chara(cid).train.初体验对象名 = sex_name; // :596-794
+      chara(cid).train.初体验对象 = sex;
+      chara(cid).train.初体验对象名 = sex_name;
     }
 
-    // :728-765 初吻对象的回显
-    era.print('　'); // :728（全角空格）
+    // 初吻对象的回显
+    era.print('　'); // （全角空格）
     if (chara(cid).train.初吻对象 > -1) {
       if (chara(cid).train.初吻对象 === 0) {
-        era.print('[初吻对象：不明]'); // :732
+        era.print('[初吻对象：不明]');
       } else if (chara(cid).train.初吻对象 === 992) {
         // 992 在本问卷里取不到（:612/:620-623/:661 的选项里没有它，各支写下的
         // 编码也到不了 992）——按源码 :733-734 1:1 留档，无对应测试
-        era.print(`[初吻对象：${chara(cid).train.初吻对象名}]`); // :734
+        era.print(`[初吻对象：${chara(cid).train.初吻对象名}]`);
       } else if (chara(cid).train.初吻对象 === 993) {
-        era.print('[初吻对象：狂王]'); // :736
+        era.print('[初吻对象：狂王]');
       } else if (chara(cid).train.初吻对象 === 994) {
-        era.print('[初吻对象：怪物]'); // :738
+        era.print('[初吻对象：怪物]');
       } else if (chara(cid).train.初吻对象 === 995) {
-        era.print('[初吻对象：怪物的阴茎]'); // :740
+        era.print('[初吻对象：怪物的阴茎]');
       } else if (chara(cid).train.初吻对象 === 996) {
-        era.print('[初吻对象：野狗的肛门]'); // :742
+        era.print('[初吻对象：野狗的肛门]');
       } else if (chara(cid).train.初吻对象 === 997) {
-        era.print('[初吻对象：野狗的阴茎]'); // :744
+        era.print('[初吻对象：野狗的阴茎]');
       } else if (chara(cid).train.初吻对象 === 998) {
-        era.print('[初吻对象：野狗的嘴]'); // :746
+        era.print('[初吻对象：野狗的嘴]');
       } else if (chara(cid).train.初吻对象 === 999) {
-        era.print('[初吻对象：触手]'); // :748
+        era.print('[初吻对象：触手]');
       } else {
         let tail;
         if (rand(2)) {
-          tail = '唇]'; // :751-752（掷中即唇，不再看编码）
+          tail = '唇]'; // （掷中即唇，不再看编码）
         } else if (chara(cid).train.初吻对象 < 100) {
-          tail = '唇]'; // :754-755
+          tail = '唇]';
         } else if (chara(cid).train.初吻对象 < 300) {
-          tail = '阴茎]'; // :756-757
+          tail = '阴茎]';
         } else if (chara(cid).train.初吻对象 < 400) {
-          tail = '私处]'; // :758-759
+          tail = '私处]';
         } else if (chara(cid).train.初吻对象 < 500) {
-          tail = '肛门]'; // :760-761
+          tail = '肛门]';
         } else {
           tail = ']'; // 源 :596-794 ENDIF 之后直接跟闭括号，500 以上无部位词
         }
-        era.print(`[初吻对象：${chara(cid).train.初吻对象名}的${tail}`); // :750
+        era.print(`[初吻对象：${chara(cid).train.初吻对象名}的${tail}`);
       }
     }
 
-    // :767-788 初体验对象的回显
+    // 初体验对象的回显
     if (chara(cid).train.初体验对象 > 0) {
-      const local = chara(cid).train.初体验对象 - 1; // :768 LOCAL = CFLAG:15 - 1
+      const local = chara(cid).train.初体验对象 - 1; // LOCAL = CFLAG:15 - 1
       if (chara(cid).train.初体验对象 === 101) {
-        era.print('[初体验对象：蠕虫]'); // :771
+        era.print('[初体验对象：蠕虫]');
       } else if (chara(cid).train.初体验对象 === 102) {
-        era.print('[初体验对象：触手生物]'); // :774
+        era.print('[初体验对象：触手生物]');
       } else if (chara(cid).train.初体验对象 === 103) {
-        era.print('[初体验对象：野狗]'); // :777
+        era.print('[初体验对象：野狗]');
       } else if (chara(cid).train.初体验对象 === 104) {
-        era.print('[初体验对象：怪物]'); // :780
+        era.print('[初体验对象：怪物]');
       } else if (chara(cid).train.初体验对象 === 105) {
-        era.print('[初体验对象：狂王]'); // :782
+        era.print('[初体验对象：狂王]');
       } else if (local === 0) {
-        // :783-784 %SAVESTR:LOCAL% —— LOCAL 此处为 0 / 1（CFLAG:15=1 或 2），
+        // %SAVESTR:LOCAL% —— LOCAL 此处为 0 / 1（CFLAG:15=1 或 2），
         // SAVESTR:0 是魔王的称呼（#5 决议：SAVESTR:x ↔ callname:x:-1）
         era.print(`[初体验对象：${chara_callname(local)}]`);
       } else {
-        era.print(`[初体验对象：${chara(cid).train.初体验对象名}]`); // :786
+        era.print(`[初体验对象：${chara(cid).train.初体验对象名}]`);
       }
     }
 
-    era.print('这样就可以了吗？'); // :789
-    // :790 的两项 → 按钮（同上）
+    era.print('这样就可以了吗？');
+    // 的两项 → 按钮（同上）
     era.printButton('好的', 0);
     era.printButton('还是改一下吧', 1);
-    const answer = await era.input(); // :596-794
+    const answer = await era.input();
     if (answer === 1) {
-      continue xp_loop; // :596-794 GOTO LOOP2
+      continue xp_loop; // GOTO LOOP2
     }
-    return 0; // :596-794
+    return 0;
   }
 }
 
@@ -1017,20 +1011,20 @@ const PAGE_LAST = PAGE_COUNT - 1;
 async function char_custom(cid, mode, rand = default_rand) {
   let page = 0; // #DIM L_PAGE（:2）
   let price = 0; // #DIM PRICE（:4）
-  let entry = era.getLineCount(); // :1-153 L_LCOUNT = LINECOUNT
-  price = chara_cost(cid); // :1-153
+  let entry = era.getLineCount(); // L_LCOUNT = LINECOUNT
+  price = chara_cost(cid);
 
-  // :12 $DRAW_PAGE —— 每轮的绘制入口
+  // $DRAW_PAGE —— 每轮的绘制入口
   draw: for (;;) {
-    // :13 REDRAW 0 关自动重绘、:1-153/:1-153/:1-153 的 REDRAW 1 打开——EraElectron
+    // REDRAW 0 关自动重绘、:1-153/:1-153/:1-153 的 REDRAW 1 打开——EraElectron
     // 无对应开关，不镜像（page-ability-up.js 文件头第 3 条同款）
-    await era.clear(era.getLineCount() - entry); // :14 CLEARLINE LINECOUNT - L_LCOUNT
-    entry = era.getLineCount(); // :1-153 L_LCOUNT = LINECOUNT
+    await era.clear(era.getLineCount() - entry); // CLEARLINE LINECOUNT - L_LCOUNT
+    entry = era.getLineCount(); // L_LCOUNT = LINECOUNT
 
-    // :17 CUSTOMDRAWLINE =（自定义分隔线，无内容）
+    // CUSTOMDRAWLINE =（自定义分隔线，无内容）
     era.drawLine();
 
-    // :19/:21 页眉（原作的制表符 1:1 保留）
+    // 页眉（原作的制表符 1:1 保留）
     if (mode === 0) {
       era.print(
         `设定角色属性（${chara_callname(cid)}）\t角色现价值为${price}\t\t<${page + 1}/${PAGE_COUNT}>`,
@@ -1040,62 +1034,62 @@ async function char_custom(cid, mode, rand = default_rand) {
         `修改角色属性（${chara_callname(cid)}）\t\t\t<${page + 1}/${PAGE_COUNT}>`,
       );
     }
-    era.drawLine(); // :1-153
+    era.drawLine();
 
-    // :1-153-29 页体：前三页素质、后两页外观
+    // 页体：前三页素质、后两页外观
     if (page >= 0 && page <= TALENT_PAGE_LAST) {
-      char_custom_talent_page(page, mode, cid); // :26
+      char_custom_talent_page(page, mode, cid);
     } else {
-      char_custom_look_page(page - 3, cid); // :28
+      char_custom_look_page(page - 3, cid);
     }
 
-    // :31-35 补行到 27 行的页高
+    // 补行到 27 行的页高
     if (era.getLineCount() - entry < TALENT_PAGE_ROWS) {
       const pad = TALENT_PAGE_ROWS + entry - era.getLineCount();
       for (let i = 0; i < pad; i += 1) {
-        era.println(); // :1-153 PRINTL
+        era.println(); // PRINTL
       }
     }
 
     era.drawLine(); // 页脚段之前的 DRAWLINE
-    // :38-44 页脚四键是四个 PRINTLC 串（模式 1 少一个），紧随的 PRINTL 只结束
+    // 页脚四键是四个 PRINTLC 串（模式 1 少一个），紧随的 PRINTL 只结束
     // 它们所在的那一行——PRINTLC 左对齐补位、**不换行**，那个 PRINTL 因此不产生
     // 空行。ere 的 printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），
     // 不再补空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
-    era.printButton('前一页', 997); // :38 PRINTLC
-    era.printButton('确定', 999); // :39
+    era.printButton('前一页', 997); // PRINTLC
+    era.printButton('确定', 999);
     if (mode === 0) {
-      era.printButton('取消', 996); // :41-42
+      era.printButton('取消', 996);
     }
-    era.printButton('后一页', 998); // :44
+    era.printButton('后一页', 998);
 
-    // :47 $INPUT_LOOP
+    // $INPUT_LOOP
     for (;;) {
-      const result = await era.input(); // :1-153
+      const result = await era.input();
 
       if (result === 999) {
-        // :50-112 确定
+        // 确定
         if (mode === 0) {
           if ((await talent_empty_check(cid)) === 1) {
-            continue draw; // :1-153 GOTO DRAW_PAGE
+            continue draw; // GOTO DRAW_PAGE
           }
           if (talent(cid, T_种族) === 9) {
-            // :56-58 魔族新勇者随机成为黑暗救世主、九尾、混沌龙
+            // 魔族新勇者随机成为黑暗救世主、九尾、混沌龙
             set_talent(cid, 322, rand(3) + 191);
           }
-          // :59-77 人物初始设定（抄自 CHARA_MAKE）
-          chara(cid).chara.等级 = 1; // :62 CFLAG:A:9
-          chara(cid).dungeon.战斗经验 = 0; // :63 EXP:A:80
-          chara(cid).invasion.状态 = 0; // :65 CFLAG:A:1
-          await cm_base(cid); // :67 CALL CM_BASE
-          await cm_kind(cid, rand); // :69 CALL CM_KIND
-          await cm_cloth(cid, rand); // :71 CALL CM_CLOTH
-          await random_self_call(cid, rand); // :73 CALL RANDOM_SELF_CALL, A
-          const settings = era.get('flag:5') || 0; // :75 GETBIT(FLAG:5,12/15)
+          // 人物初始设定（抄自 CHARA_MAKE）
+          chara(cid).chara.等级 = 1; // CFLAG:A:9
+          chara(cid).dungeon.战斗经验 = 0; // EXP:A:80
+          chara(cid).invasion.状态 = 0; // CFLAG:A:1
+          await cm_base(cid); // CALL CM_BASE
+          await cm_kind(cid, rand); // CALL CM_KIND
+          await cm_cloth(cid, rand); // CALL CM_CLOTH
+          await random_self_call(cid, rand); // CALL RANDOM_SELF_CALL, A
+          const settings = era.get('flag:5') || 0; // GETBIT(FLAG:5,12/15)
           if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
-            char_body_generate_wapped(cid, rand); // :76
+            char_body_generate_wapped(cid, rand);
           }
-          // :78-82 妊娠设定出产日期
+          // 妊娠设定出产日期
           const pregnant =
             talent(cid, 153) ||
             talent(cid, 341) ||
@@ -1103,86 +1097,86 @@ async function char_custom(cid, mode, rand = default_rand) {
             talent(cid, 343) ||
             talent(cid, 344);
           if (pregnant) {
-            chara(cid).event.预产日 = era_flag.day_count + 10 + rand(6); // :80
-            chara(cid).event.孩子父亲 = 0; // :81
+            chara(cid).event.预产日 = era_flag.day_count + 10 + rand(6);
+            chara(cid).event.孩子父亲 = 0;
           }
-          price = chara_cost(cid); // :1-153 再次检查价格
-          era.print(`${chara_callname(cid)}的最终价格是${price}点，可以吗？`); // :86
-          // :87 的两项 → 按钮（同上）
+          price = chara_cost(cid); // 再次检查价格
+          era.print(`${chara_callname(cid)}的最终价格是${price}点，可以吗？`);
+          // 的两项 → 按钮（同上）
           era.printButton('好，就是这样了！', 1);
           era.printButton('我还想再修改一下。', 2);
 
-          // :1-153 $LOOP
+          // $LOOP
           for (;;) {
             const answer = await era.input();
             if (answer === 1) {
               if (era_flag.money < price) {
-                era.print('钱不够，还是重新设定吧！'); // :92 PRINTW
+                era.print('钱不够，还是重新设定吧！'); // PRINTW
                 await era.waitAnyKey();
-                continue draw; // :1-153 GOTO DRAW_PAGE
+                continue draw; // GOTO DRAW_PAGE
               }
               era.print(
                 `花费金钱${price}点，${chara_callname(cid)}现已加入啃鸡鸡豪华午餐。`,
-              ); // :95 PRINTFORMW
+              ); // PRINTFORMW
               await era.waitAnyKey();
-              era_flag.money -= price; // :96 MONEY -= PRICE
-              era_exflag.legit_money -= price; // :97 EX_FLAG:4444 -= PRICE
-              return; // :1-153-100 REDRAW 1 + SWAP + RETURN
+              era_flag.money -= price; // MONEY -= PRICE
+              era_exflag.legit_money -= price; // EX_FLAG:4444 -= PRICE
+              return; // REDRAW 1 + SWAP + RETURN
             }
             if (answer === 2) {
-              continue draw; // :102-103 GOTO DRAW_PAGE
+              continue draw; // GOTO DRAW_PAGE
             }
-            // :104-105 其余输入 GOTO LOOP
+            // 其余输入 GOTO LOOP
           }
         }
-        // :107-111 ARG:1 == 1：直接完成
-        era.print(`${chara_callname(cid)}现已加入啃鸡鸡豪华午餐。`); // :108
+        // ARG:1 == 1：直接完成
+        era.print(`${chara_callname(cid)}现已加入啃鸡鸡豪华午餐。`);
         await era.waitAnyKey();
-        return; // :1-153-111
+        return;
       }
 
       if (result === 998) {
-        // :113-116 后一页（到最后一页就不再前进）
+        // 后一页（到最后一页就不再前进）
         if (page < PAGE_LAST) {
           page += 1;
         }
-        continue draw; // :1-153 GOTO DRAW_PAGE
+        continue draw; // GOTO DRAW_PAGE
       }
       if (result === 997) {
-        // :117-120 前一页
+        // 前一页
         if (page > 0) {
           page -= 1;
         }
         continue draw;
       }
       if (result === 996) {
-        // :121-125 取消：删掉刚建出来的角色
-        era.removeCharacter(cid); // :124 DELCHARA ARG
-        return; // :1-153
+        // 取消：删掉刚建出来的角色
+        era.removeCharacter(cid); // DELCHARA ARG
+        return;
       }
 
-      // :128-142 分发：素质页走 DEAL + 重算价格，外观页走 LOOK_DEAL
+      // 分发：素质页走 DEAL + 重算价格，外观页走 LOOK_DEAL
       let dealt;
       if (page >= 0 && page <= TALENT_PAGE_LAST) {
-        dealt = char_custom_talent_deal(result, cid, rand); // :129
-        price = chara_cost(cid); // :1-153 每次素质变更检查价格
+        dealt = char_custom_talent_deal(result, cid, rand);
+        price = chara_cost(cid); // 每次素质变更检查价格
       } else {
-        dealt = char_custom_look_deal(result, cid); // :139
+        dealt = char_custom_look_deal(result, cid);
         if (talent(cid, T_体型) <= 100) {
-          set_talent(cid, 115, 0); // :1-153 纤细体型不肥胖
+          set_talent(cid, 115, 0); // 纤细体型不肥胖
         }
       }
 
       if (dealt === 0) {
-        continue draw; // :144-145 GOTO DRAW_PAGE
+        continue draw; // GOTO DRAW_PAGE
       }
-      // :146-150 未登记的编码：清一行、把上一行改写成「无效值」再重问。
+      // 未登记的编码：清一行、把上一行改写成「无效值」再重问。
       // **EraElectron 的输入集 = 本页已打印按钮的快捷键集**（夹具 era.input
       // 的按钮白名单校验），而本页所有按钮都是已登记的素质/外观编码——
       // 这一支因此不可达，按 page-ability-up.js:250-257 的先例 1:1 留档。
-      await era.clear(1); // :147 CLEARLINE 1
-      era.replaceText('无效值'); // :148 REUSELASTLINE 无效值
-      continue; // :149 GOTO INPUT_LOOP
+      await era.clear(1); // CLEARLINE 1
+      era.replaceText('无效值'); // REUSELASTLINE 无效值
+      continue; // GOTO INPUT_LOOP
     }
   }
 }

@@ -1,15 +1,6 @@
 /**
  * @file 角色身高、体重、三围、年龄与种族年龄的生成（issue #332、#385）。
  *
- * 源: target/ERB/キャラ関数/CHARA_BODY.ERB  @CHAR_BODY_GENERATE_WAPPED（:16-36）、
- *       @CHAR_AGE_GENERATE（:148-242）、@RACE_AGE_GENERATE（:245-337）、
- *       @HUMAN_AGE_GENERATE（:340-406）、
- *       @CHAR_SIZE_GENERATE（:408-761）、@UNDER_BUST（:763-779）
- *     target/ERB/キャラ関数/CHARA_BODY2.ERB  @CHAR_HWEIGHT_GENERATE（:17-120）、
- *       @CHAR_BUST_GENERATE（:123-323）、@NORMAL_POINT_PICKUP（:306-323）、
- *       @NORMAL_RANGE_PICKUP（:326-358）、@STATISTICS_WOMAN（:361-385）、
- *       @STATISTICS_MAN（:388-412）
- *
  * BODY2 的五段只作为本文件的计算步骤（三围生成 / 年龄取点），不扩大公开 API。
  * @NORMAL_POINT_PICKUP 由 #385 随 @CHAR_AGE_GENERATE 落地——它是后者的取点
  * 步骤，不是独立入口；BODY2 其余未落地段落（@CHAR_BUST_REGENERATE_WAPPED）
@@ -193,11 +184,6 @@ function under_bust(cid, height) {
 }
 
 /**
- * 源: target/ERB/キャラ関数/CHARA_BODY2.ERB:123-301 @CHAR_BUST_GENERATE。
- * 按年龄/胸系素质生成上胸围与胸围差（返回 [胸围, 下胸围, 胸围差]）。
- * 导出理由：`char_size_generate` 与 `char_bust_regenerate_wapped` 都会
- * 调用它，本身没有可观察副作用，导出后测试可用「对照组」核对接线
- * （同 `char_body_generate_wapped` 的测试写法），不必手算三围数值。
  *
  * @param {number} cid 角色 ID
  * @param {number} source_age 年龄（CHAR_AGE_GENERATE 或调用方直传）
@@ -369,35 +355,35 @@ function normal_point_pickup(middle, rand) {
  * @returns {number} 种族年龄
  */
 function race_age_generate(human_age, race_no, rand = default_rand) {
-  // :267-276 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：一条无条件的
+  // 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：一条无条件的
   // RETURN ARG:0 盖住整个 IF 体（见 race_id_of 头注），三个编号都原样返回
   if (race_no >= 7 && race_no < 10) return human_age;
 
-  // :285-292 コンフィグで設定された种族ごとの設定値を取得
+  // コンフィグで設定された种族ごとの設定値を取得
   const { cla, deg, num } = race_config_of(race_no);
   // 档位上限 = 倍数 × 10^数量级（cla 0/2/3/4 四支都从它派生，见下方各支）
   const cap = num * 10 ** deg;
 
   if (cla === 0) {
-    // :299-300 年齢の整数倍
+    // 年齢の整数倍
     return human_age * cap + rand(cap);
   }
   if (cla === 1) {
-    // :302-303 年齢の小数倍（整数除算で切り捨て）
+    // 年齢の小数倍（整数除算で切り捨て）
     return int((human_age * (deg * 10 + num)) / 10);
   }
   if (cla === 2) {
-    // :305-312 0～上限：桁の出方を偏らせてみる
-    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10; // :309 RAND:(RESULT + 1)
+    // 0～上限：桁の出方を偏らせてみる
+    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10; // RAND:(RESULT + 1)
     return rand(Math.min(cap, ceiling));
   }
   if (cla === 3) {
-    // :314-315 上限/2 ～ 上限
+    // 上限/2 ～ 上限
     const half = int(cap / 2);
     return rand(half) + half;
   }
   if (cla === 4) {
-    // :317-335 年齢～上限：桁の出方を偏らせてみる
+    // 年齢～上限：桁の出方を偏らせてみる
     const limit = cap;
     let age = 10;
     for (let i = 0; i <= digit_count(limit); i += 1) {
@@ -425,22 +411,22 @@ function race_age_generate(human_age, race_no, rand = default_rand) {
  * @returns {number} 人类换算年龄
  */
 function human_age_generate(race_age, cid) {
-  const race_no = era.get(`talent:${cid}:314`) || 0; // :361 TALENT:314
-  // :364-373 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：同 race_age_generate，
+  const race_no = era.get(`talent:${cid}:314`) || 0; // TALENT:314
+  // 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：同 race_age_generate，
   // 无条件的 RETURN ARG:0 盖住整个 IF 体，三个编号都原样返回
   if (race_no >= 7 && race_no < 10) return race_age;
 
   const { cla, deg, num } = race_config_of(race_no);
 
   if (cla === 0) {
-    // :396-397 年齢の整数倍（割り戻し）
+    // 年齢の整数倍（割り戻し）
     return int(race_age / (num * 10 ** deg));
   }
   if (cla === 1) {
-    // :399-400 年齢の小数倍
+    // 年齢の小数倍
     return int((race_age * 10 + 5) / (deg * 10 + num));
   }
-  // :402-404 0～上限 / 上限/2～上限 / 年齢～上限 三档：CFLAG:452（种族年龄）
+  // 0～上限 / 上限/2～上限 / 年齢～上限 三档：CFLAG:452（种族年龄）
   return era.get(`cflag:${cid}:452`) || 0;
 }
 
@@ -463,13 +449,13 @@ function human_age_generate(race_age, cid) {
 function char_age_generate(cid, rand = default_rand) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
 
-  // :171-174 根据经历推测年龄（原作注释：+18(31) -15）
+  // 根据经历推测年龄（原作注释：+18(31) -15）
   let age = 17 + char_age_expect(cid); // CHAR_AGE_EXPECT（CHARA_BODY.ERB:39-144）
-  // :176 LOCAL = EXP_AGE —— 只被注释掉的调试行（:231）读取，不落
-  age = Math.max(12, Math.min(35, age)); // :178 LIMIT(EXP_AGE,12,35)
-  age = normal_point_pickup(age, rand); // :180-181
+  // LOCAL = EXP_AGE —— 只被注释掉的调试行（:231）读取，不落
+  age = Math.max(12, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)
+  age = normal_point_pickup(age, rand);
 
-  // :212-225 家族成员的年龄（分支判据是 L_B，见函数头注）。rf_all 的第三实参
+  // 家族成员的年龄（分支判据是 L_B，见函数头注）。rf_all 的第三实参
   // 对应原作 CALL 的 RETURN_TYPE = 1：成对返回 [成员角色号, 关系码]（L_DATA 同形），
   // 本循环只取成员号——关系码那一列原作取进 L_B_TYPE 后从未使用
   for (const [member] of rf_all(cid, -1, true)) {
@@ -481,12 +467,12 @@ function char_age_generate(cid, rand = default_rand) {
     else if (member === 7 || member === 8) age = Math.max(age, member_age + 6);
   }
 
-  // :228-229 （stick增加）后代年龄按相当于人类 10 岁设定
+  // （stick增加）后代年龄按相当于人类 10 岁设定
   if (era.get(`ex_talent:${cid}:2`)) age = 10;
 
-  const race_age = race_age_generate(age, t(314), rand); // :234-235
+  const race_age = race_age_generate(age, t(314), rand);
 
-  // :240-241 人类年龄低于 14 即为未熟（TALENT:135，train 域属性，走门面）
+  // 人类年龄低于 14 即为未熟（TALENT:135，train 域属性，走门面）
   if (age <= 14) chara(cid).train.未熟 = 1;
   return [age, race_age];
 }
@@ -506,24 +492,23 @@ function char_age_generate(cid, rand = default_rand) {
  */
 function char_body_generate_wapped(cid, rand = default_rand) {
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
-  // :18-19 SIF !GETBIT(FLAG:5,12) && !GETBIT(FLAG:5,15) RETURN
+  // SIF !GETBIT(FLAG:5,12) && !GETBIT(FLAG:5,15) RETURN
   if (((settings >> 12) & 1) === 0 && ((settings >> 15) & 1) === 0) return;
 
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
   let age = 0;
   if (t(165))
-    age = rand(2) + 12; // :23 村娘Ａ
-  else if (t(171)) age = rand(2) + 17; // :25 村娘Ｂ
-  const body = char_size_generate(cid, age, 0, rand); // :27 缺省年龄交回年龄生成
+    age = rand(2) + 12; // 村娘Ａ
+  else if (t(171)) age = rand(2) + 17; // 村娘Ｂ
+  const body = char_size_generate(cid, age, 0, rand); // 缺省年龄交回年龄生成
 
-  // :30-36 CFLAG:451-457 = RESULT:0-6
+  // CFLAG:451-457 = RESULT:0-6
   for (let offset = 0; offset < 7; offset += 1) {
     era.set(`cflag:${cid}:${451 + offset}`, body[offset]);
   }
 }
 
 /**
- * 源: target/ERB/キャラ関数/CHARA_BODY2.ERB:2-14 @CHAR_BUST_REGENERATE_WAPPED
  *
  * 角色定制里切换胸围类素质（绝壁/贫乳/巨乳/爆乳/超乳）后重掷三围。
  * FLAG:5 位 15（显示三围开关）关闭时整体不动（:4-5）；CFLAG:451（年龄）或
@@ -538,17 +523,17 @@ function char_body_generate_wapped(cid, rand = default_rand) {
  */
 function char_bust_regenerate_wapped(cid, rand = default_rand) {
   const settings = era.get('flag:5') || 0;
-  if (((settings >> 15) & 1) === 0) return; // :4-5
+  if (((settings >> 15) & 1) === 0) return;
 
   const age = era.get(`cflag:${cid}:451`) || 0;
   const height = era.get(`cflag:${cid}:453`) || 0;
   if (!age || !height) {
-    char_body_generate_wapped(cid, rand); // :7-8
+    char_body_generate_wapped(cid, rand);
     return;
   }
 
-  const [bust] = char_bust_generate(cid, age, height * 100, rand); // :11
-  era.set(`cflag:${cid}:455`, int(bust / 100)); // :12
+  const [bust] = char_bust_generate(cid, age, height * 100, rand);
+  era.set(`cflag:${cid}:455`, int(bust / 100));
 }
 
 /**
@@ -691,11 +676,11 @@ const CUP_LETTERS = [
  * @returns {string} 罩杯字母；CAL_VAR ≤ 1 时 `'-'`
  */
 function cup_size(cid) {
-  // :788 CALL UNDER_BUST, ARG, CFLAG:ARG:453（身高 ×10 直接传入）
+  // CALL UNDER_BUST, ARG, CFLAG:ARG:453（身高 ×10 直接传入）
   const height10 = era.get(`cflag:${cid}:453`) || 0; // CFLAG:453 身高(×10)
   const bust10 = era.get(`cflag:${cid}:455`) || 0; // CFLAG:455 上胸围(×10)
-  const cal_var = int((bust10 - under_bust(cid, height10)) / 25); // :790
-  if (cal_var <= 1) return '-'; // :791-792
+  const cal_var = int((bust10 - under_bust(cid, height10)) / 25);
+  if (cal_var <= 1) return '-';
   return CUP_LETTERS[cal_var - 2] ?? '';
 }
 

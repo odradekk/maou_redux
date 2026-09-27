@@ -904,8 +904,8 @@ export default [
   {
     desc: 'M6831 JUEL_CHECK 断开出售资格检查',
     file: 'ere/system/train/juel-check.js',
-    find: '  await check_sellassiable(target); // :543',
-    replace: '  // 变异：漏掉出售资格检查 // :543',
+    find: '  await check_sellassiable(target);',
+    replace: '  // 变异：漏掉出售资格检查',
     tests: ['sale-chara'],
     must_mention: '回合结束与珠结算两个入口',
   },
@@ -970,7 +970,7 @@ export default [
   {
     desc: 'M6839 ABILITY_UP 出口断开出售资格复核',
     file: 'ere/page/page-ability-up.js',
-    find: '      await check_sellassiable(era_flag.target); // :248（CALL CHECK_SELLASSIABLE 无参）',
+    find: '      await check_sellassiable(era_flag.target); // （CALL CHECK_SELLASSIABLE 无参）',
     replace: '      // 变异：漏掉能力提升出口的出售资格复核',
     tests: ['sale-chara'],
     must_mention: '能力提升出口都调用真身',
@@ -1135,7 +1135,7 @@ export default [
   {
     desc: 'M8103 TAX_GET 非作弊资金不入账（EX_FLAG:4444 += TAX:0 删）',
     file: 'ere/system/stronghold/tax.js',
-    find: '  era_exflag.legit_money += total; // :229 EX_FLAG:4444 += TAX:0',
+    find: '  era_exflag.legit_money += total; // EX_FLAG:4444 += TAX:0',
     replace: '  // 变异：EX_FLAG:4444 不入账',
     tests: ['shop-tax'],
     must_mention: '入账：MONEY 与 EX_FLAG:4444',
@@ -1143,7 +1143,7 @@ export default [
   {
     desc: 'M8437 GOHOUBI_REQUEST 女装档偏移（+1 → +2）',
     file: 'ere/system/stronghold/gohoubi-request.js',
-    find: '    wish = rand(3) + 1; // :670-671 女装',
+    find: '    wish = rand(3) + 1; // 女装',
     replace: '    wish = rand(3) + 2; // 变异：女装档偏移',
     tests: ['page-intercept'],
     must_mention: 'WISH 三档判据整表驱动',
@@ -1151,7 +1151,7 @@ export default [
   {
     desc: 'M8438 GOHOUBI_REQUEST 爱慕档偏移（+4 → +5）',
     file: 'ere/system/stronghold/gohoubi-request.js',
-    find: '    wish = rand(3) + 4; // :672-673 爱慕',
+    find: '    wish = rand(3) + 4; // 爱慕',
     replace: '    wish = rand(3) + 5; // 变异：爱慕档偏移',
     tests: ['page-intercept'],
     must_mention: 'WISH 三档判据整表驱动',
@@ -1159,7 +1159,7 @@ export default [
   {
     desc: 'M8439 GOHOUBI_REQUEST 淫乱档偏移（+7 → +8）',
     file: 'ere/system/stronghold/gohoubi-request.js',
-    find: '    wish = rand(3) + 7; // :677-678 淫乱',
+    find: '    wish = rand(3) + 7; // 淫乱',
     replace: '    wish = rand(3) + 8; // 变异：淫乱档偏移',
     tests: ['page-intercept'],
     must_mention: 'WISH 三档判据整表驱动',
@@ -1300,7 +1300,7 @@ export default [
   {
     desc: 'M8896 经验值道具的每件经验错十倍（* 10 → * 100）',
     file: 'ere/page/page-item-shop.js',
-    find: 'const gained = count * 10; // :505 E = RESULT * 10',
+    find: 'const gained = count * 10; // E = RESULT * 10',
     replace: 'const gained = count * 100; // 变异：经验值错十倍',
     tests: ['item-shop'],
     must_mention: '经验值道具买完转',
@@ -1444,7 +1444,7 @@ export default [
   {
     desc: 'M8914 店内 997 的 JUMP 不再重画道具商店（item_shop → 无）',
     file: 'ere/page/page-shop.js',
-    find: '    await item_shop(); // :54 JUMP ITEM_SHOP（切道具商店并立即重画）',
+    find: '    await item_shop(); // JUMP ITEM_SHOP（切道具商店并立即重画）',
     replace: '    // 变异：切店不重画',
     tests: ['shop-trap'],
     must_mention: '切回道具商店',
@@ -1469,7 +1469,7 @@ export default [
   {
     desc: 'M8917 陷阱商店的 TFLAG:15 暂存不再落（snapshot_money → 空）',
     file: 'ere/page/page-shop-trap.js',
-    find: '  snapshot_money(); // :59 TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）',
+    find: '  snapshot_money(); // TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）',
     replace: '  // 变异：不落 TFLAG:15 暂存',
     tests: ['shop-trap'],
     must_mention: '暂存值',
@@ -1809,18 +1809,18 @@ export default [
   {
     desc: 'M9117 53 号选择面的页高错一格（(NO_PAGE + 1) * 20 → * 21）',
     file: 'ere/page/page-item-shop.js',
-    find: '      // :526-531 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {',
+    find: '      // 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {\n        no_page += 1;\n      }\n      continue;\n    }\n    // 非法目标 → 重问',
     replace:
-      '      // :526-531 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {',
+      '      // 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {\n        no_page += 1;\n      }\n      continue;\n    }\n    // 非法目标 → 重问',
     tests: ['item-shop'],
     must_mention: '53 号选择面的翻页',
   },
   {
     desc: 'M9118 30 号选择面的页高错一格（@USE_ITEM 的同款判据 * 20 → * 21）',
     file: 'ere/page/page-item-shop.js',
-    find: '      // :649-654 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {',
+    find: '      // 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {\n        no_page += 1;\n      }\n      continue;\n    }\n    if (!era.getAddedCharacters().includes(result)) {',
     replace:
-      '      // :649-654 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {',
+      '      // 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {\n        no_page += 1;\n      }\n      continue;\n    }\n    if (!era.getAddedCharacters().includes(result)) {',
     tests: ['item-shop'],
     must_mention: '30 号选择面的翻页',
   },
@@ -2047,8 +2047,9 @@ export default [
   {
     desc: 'M12024 商品一览轮的 [999] 返回改成按钮（白名单会把商品编号锁死）',
     file: 'ere/page/page-monster-shop.js',
-    find: "    era.print('[999] 返回'); // :250",
-    replace: "    era.printButton('返回', 999); // 变异：列表轮打了按钮",
+    find: "    era.print('[999] 返回');\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
+    replace:
+      "    era.printButton('返回', 999); // 变异：列表轮打了按钮\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
     tests: ['monster-shop'],
     must_mention: '输入不合法！请输入以下值之一：',
   },
@@ -2071,7 +2072,7 @@ export default [
   {
     desc: 'M12027 异界勇者列表轮的 [999] 返回改成按钮（同上，列表轮不打按钮）',
     file: 'ere/page/page-chara-shop.js',
-    find: "    era.print('[999] 返回'); // :389",
+    find: "    era.print('[999] 返回');",
     replace: "    era.printButton('返回', 999); // 变异：列表轮打了按钮",
     tests: ['chara-shop'],
     must_mention: '输入不合法！请输入以下值之一：',

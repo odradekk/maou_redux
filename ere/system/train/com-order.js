@@ -1,8 +1,6 @@
 /**
  * @file 指令实行值的共通明细段：@COM_ORDER（issue #214）。
  *
- * 源: target/ERB/調教相關/COMORDER.ERB  @COM_ORDER（:3-379 全文）
- *
  * == 原作的用法（调用点全在各 COMF 指令文件头部，随族票接线） ==
  *
  * COMF 在「実行できるかの判定」段先 A = 0 / S = 0，CALL COM_ORDER 打出

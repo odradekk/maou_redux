@@ -95,7 +95,7 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   const fixture = create_era_fixture();
   const { chara_make } = load(fixture);
   await chara_make(1, 0, 0, never);
-  // :23-30 等级/经验/家族/卖春积极性
+  // 等级/经验/家族/卖春积极性
   assert.equal(fixture.store.get('cflag:1:9'), 1, 'CFLAG:A:9 等级 = 1');
   assert.equal(fixture.store.get('exp:1:80'), 0, 'EXP:A:80 战斗经验 = 0');
   assert.equal(fixture.store.get('cflag:1:605'), 0, 'CFLAG:A:605 家族 = 0');
@@ -176,7 +176,7 @@ test('三分叉·后代（EX_TALENT:2）：CFLAG:1 = 0、阴毛状态 = 2、跳�
   await chara_make(9, 0, 0, always);
   assert.equal(fixture.store.get('cflag:9:1'), 0, 'CFLAG:A:1 = 0');
   assert.equal(fixture.store.get('talent:9:310'), 2, '阴毛状态 = 2（:80）');
-  // :15 后代不掷性别（always 下若掷必得扶她 121）
+  // 后代不掷性别（always 下若掷必得扶她 121）
   assert.equal(
     fixture.store.get('talent:9:121'),
     undefined,
@@ -189,7 +189,7 @@ test('三分叉·后代（EX_TALENT:2）：CFLAG:1 = 0、阴毛状态 = 2、跳�
     undefined,
     '后代跳过 CM_NS_EXP（出産経験不写）',
   );
-  // :101 家族登记只对非后代（always 下 RAND:4 == 0 恒真，仍不进）
+  // 家族登记只对非后代（always 下 RAND:4 == 0 恒真，仍不进）
   assert(
     !stub_texts(fixture).some((line) => line.includes('@FAMILY_REGISTER')),
     '后代不设定家族',
@@ -534,9 +534,9 @@ test('cm_talent 反抗心支：X == 0 → talent:11 + 傲娇连掷（:369-373）
   const fixture = create_era_fixture();
   let idx = 0;
   const seq = [
-    2, // :353 X = RAND:3（性格联动块不中）
-    0, // :368 X = RAND:12 == 0 → 反抗心
-    0, // :372 RAND:8 == 0 → 傲娇
+    2, // X = RAND:3（性格联动块不中）
+    0, // X = RAND:12 == 0 → 反抗心
+    0, // RAND:8 == 0 → 傲娇
   ];
   const { cm_talent } = load(fixture);
   await cm_talent(3, (n) => seq[Math.min(idx++, seq.length - 1)] % n);
@@ -548,10 +548,10 @@ test('cm_talent 跨域下标走门面：冷漠/感情淡薄/克制/悲观的（e
   const fixture = create_era_fixture();
   let idx = 0;
   const seq = [
-    2, // :353 RAND:3
-    5, // :368 RAND:12
-    5, // :384 RAND:12
-    0, // :398 RAND:16 == 0 → 冷漠 21
+    2, // RAND:3
+    5, // RAND:12
+    5, // RAND:12
+    0, // RAND:16 == 0 → 冷漠 21
   ];
   const { cm_talent } = load(fixture);
   await cm_talent(3, (n) => seq[Math.min(idx++, seq.length - 1)] % n);
@@ -633,7 +633,7 @@ test('cm_skill：额头天眼的暗之能力者第二机会（:855-856）', asyn
   const fixture = create_era_fixture();
   fixture.store.set('talent:3:260', 1); // 额头天眼
   const { cm_skill } = load(fixture);
-  // :855 的 RAND:40 命中：数掷序定位
+  // 的 RAND:40 命中：数掷序定位
   const rolls = [];
   await cm_skill(9, (n) => {
     rolls.push(n);
@@ -836,7 +836,7 @@ test('cm_cloth 男战士：锁子甲 + 剑 + 接頭語（:1126-1131、:1362）',
   assert.equal(fixture.store.get('cflag:3:550'), 100040, '剑 40 + 接頭語');
   assert.equal(fixture.store.get('cflag:3:45'), 0, '上衣上状态清 0');
   assert.equal(fixture.store.get('cflag:3:46'), 0, '上衣下状态清 0');
-  // :1368-1371 着替え装着自 #215（J5）起为真身：cm_cloth 已写 cflag:3:41 = 3
+  // 着替え装着自 #215（J5）起为真身：cm_cloth 已写 cflag:3:41 = 3
   // （锁甲，1-100 裙装段）→ WEARING_CLOTH_ALL 装位 1|2|4|8（无素质干扰）
   assert.equal(
     fixture.store.get('cflag:3:40'),

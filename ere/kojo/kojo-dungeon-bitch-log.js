@@ -2,14 +2,6 @@
  * @file 地下城卖春日志与文本函数（issue #185，H16）：DUNGEON_BITCH_LOG.ERB
  * 十四函数的移植。卖春主流程（ere/kojo/kojo-dungeon-bitch.js，#184）的
  *
- * 源: target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB  @LOG_TRY_BITCH（:8-49）
- *     @FS_BITCH（:51-277）@FS_LOG_BITCH（:279-316）@LOG_AFTER_BITCH
- *     （:318-378）@LOG_BITCH_HAND（:380-552）@LOG_BITCH_ORAL（:554-722）
- *     @LOG_BITCH_LES（:724-936）@LOG_BITCH_ANAL（:938-1174）
- *     @LOG_BITCH_SEX（:1176-1449）@LOG_BITCH_ANIMAL（:1451-1483）
- *     @LOG_BITCH_SELF（:1485-1519）@DUNGEON_SEX_LOG（:1532-1782）
- *     @DUNGEON_ANAL_LOG（:1784-1999）@DUNGEON_LES_LOG（:2001-2181）
- *
  * == 死代码判定（登记 #14） ==
  *
  * `@DUNGEON_SEX_LOG` / `@DUNGEON_ANAL_LOG` / `@DUNGEON_LES_LOG` 三个函数
@@ -93,7 +85,7 @@ function fs_bitch(type, arg, rand = default_rand) {
   const rand_n = rand;
   switch (type) {
     case 'PLAY': {
-      // :60-81 数値→プレイ内容変換
+      // 数値→プレイ内容変換
       const map = {
         1: 'HAND',
         2: 'ORAL',
@@ -105,12 +97,12 @@ function fs_bitch(type, arg, rand = default_rand) {
       };
       const v = map[arg];
       if (!v) {
-        throw new Error(`未知参数{${arg}}`); // :80 THROW 未知参数{ARG}
+        throw new Error(`未知参数{${arg}}`); // THROW 未知参数{ARG}
       }
       return v;
     }
     case 'PLAYNAME': {
-      // :83-98 表示用
+      // 表示用
       const map = {
         1: '手淫奉侍',
         2: '口交奉侍',
@@ -121,12 +113,11 @@ function fs_bitch(type, arg, rand = default_rand) {
       };
       const v = map[arg];
       if (!v) {
-        throw new Error('未知参数'); // :98 GOTO ERROR_ARG → THROW
+        throw new Error('未知参数'); // GOTO ERROR_ARG → THROW
       }
       return v;
     }
     case 'TOWN_MAN': {
-      // :100-114
       const map = {
         1: '村民',
         2: '冒险者',
@@ -141,7 +132,6 @@ function fs_bitch(type, arg, rand = default_rand) {
       return v;
     }
     case 'TOWN_GIRL': {
-      // :115-129
       const map = {
         1: '主妇',
         2: '女冒险者',
@@ -156,7 +146,6 @@ function fs_bitch(type, arg, rand = default_rand) {
       return v;
     }
     case 'DUNGEON_MAN': {
-      // :130-144
       const map = {
         1: '兽人',
         2: '魔族男人',
@@ -171,7 +160,6 @@ function fs_bitch(type, arg, rand = default_rand) {
       return v;
     }
     case 'DUNGEON_GIRL': {
-      // :145-159
       const map = {
         1: '淫魔',
         2: '魔族女人',
@@ -186,54 +174,54 @@ function fs_bitch(type, arg, rand = default_rand) {
       return v;
     }
     case 'LOOKS': {
-      // :162-270 本人の描写。DICE = 2，随机覆盖式：每个 SIF 以 RAND:DICE == 0
+      // 本人の描写。DICE = 2，随机覆盖式：每个 SIF 以 RAND:DICE == 0
       // 的概率把 LOCALS 换成候选串（一次都没覆盖则保留初始头发颜色串）。
-      let locals = `${get_look_info(arg, '头发颜色')}的`; // :171
+      let locals = `${get_look_info(arg, '头发颜色')}的`;
       const overwrite = (cond, text) => {
         if (cond && rand_n(2) === 0) {
           locals = text;
         }
       };
-      overwrite(t(arg, 253), '小麦色的'); // :174
-      overwrite(t(arg, 255), '白皙的'); // :176
-      overwrite(t(arg, 244), '青色的'); // :178
-      overwrite(t(arg, 310) === 1, '白虎的'); // :181
-      overwrite(t(arg, 310) > 150, '阴毛浓密的'); // :183
-      overwrite(t(arg, 313) === 7, '毛躁的'); // :186
-      overwrite(t(arg, 313) === 9, '翻白眼'); // :188
-      overwrite(t(arg, 313) === 10, '歪头'); // :190
-      overwrite(t(arg, 313) === 11, '忧郁的样子'); // :192
-      overwrite(t(arg, 313) === 14, '鼓腮的'); // :194
-      overwrite(t(arg, 313) === 18, '慵懒的'); // :196
-      overwrite(t(arg, 313) === 19, '不高兴的'); // :198
-      overwrite(t(arg, 305) === 7, '严厉的眼神'); // :201
-      overwrite(t(arg, 312) === 10, '手指漂亮的'); // :204
-      overwrite(t(arg, 312) === 13, '腰身纤细的'); // :206
-      overwrite(t(arg, 312) === 14, '臀部美形的'); // :208
-      overwrite(t(arg, 312) === 15, '双腿修长的'); // :210
-      overwrite(t(arg, 312) === 22, '艳丽头发的'); // :212
-      overwrite(t(arg, 312) === 23, '臀部丰满的'); // :214
-      overwrite(t(arg, 312) === 25, '虎牙可爱的'); // :216
-      overwrite(t(arg, 315) === 8, '元贵族'); // :219
-      overwrite(t(arg, 315) === 12, '元圣女'); // :221
-      overwrite(t(arg, 204), '肉便器'); // :223
-      overwrite(t(arg, 99), '高大的'); // :225
-      overwrite(t(arg, 100), '矮小的'); // :227
-      overwrite(t(arg, 256), '脸色不好的'); // :229
-      overwrite(t(arg, 21) || t(arg, 22), '假正经的'); // :231
-      overwrite(t(arg, 35), '害羞的'); // :233
-      overwrite(t(arg, 15) || t(arg, 16), '任性的'); // :235
-      overwrite(t(arg, 17), '笑容卑屈的'); // :237
-      overwrite(t(arg, 12), '笑容灿烂的'); // :239
-      overwrite(t(arg, 10) || t(arg, 26), '要哭了似的'); // :241
-      overwrite(t(arg, 23) || t(arg, 25), '开朗的'); // :243
-      overwrite(t(arg, 73), '水性杨花的'); // :245
-      // :247 `SIF CFLAG:ARG:509 == 1`——**CFLAG 不是 TALENT**。#389 返工勘误：
+      overwrite(t(arg, 253), '小麦色的');
+      overwrite(t(arg, 255), '白皙的');
+      overwrite(t(arg, 244), '青色的');
+      overwrite(t(arg, 310) === 1, '白虎的');
+      overwrite(t(arg, 310) > 150, '阴毛浓密的');
+      overwrite(t(arg, 313) === 7, '毛躁的');
+      overwrite(t(arg, 313) === 9, '翻白眼');
+      overwrite(t(arg, 313) === 10, '歪头');
+      overwrite(t(arg, 313) === 11, '忧郁的样子');
+      overwrite(t(arg, 313) === 14, '鼓腮的');
+      overwrite(t(arg, 313) === 18, '慵懒的');
+      overwrite(t(arg, 313) === 19, '不高兴的');
+      overwrite(t(arg, 305) === 7, '严厉的眼神');
+      overwrite(t(arg, 312) === 10, '手指漂亮的');
+      overwrite(t(arg, 312) === 13, '腰身纤细的');
+      overwrite(t(arg, 312) === 14, '臀部美形的');
+      overwrite(t(arg, 312) === 15, '双腿修长的');
+      overwrite(t(arg, 312) === 22, '艳丽头发的');
+      overwrite(t(arg, 312) === 23, '臀部丰满的');
+      overwrite(t(arg, 312) === 25, '虎牙可爱的');
+      overwrite(t(arg, 315) === 8, '元贵族');
+      overwrite(t(arg, 315) === 12, '元圣女');
+      overwrite(t(arg, 204), '肉便器');
+      overwrite(t(arg, 99), '高大的');
+      overwrite(t(arg, 100), '矮小的');
+      overwrite(t(arg, 256), '脸色不好的');
+      overwrite(t(arg, 21) || t(arg, 22), '假正经的');
+      overwrite(t(arg, 35), '害羞的');
+      overwrite(t(arg, 15) || t(arg, 16), '任性的');
+      overwrite(t(arg, 17), '笑容卑屈的');
+      overwrite(t(arg, 12), '笑容灿烂的');
+      overwrite(t(arg, 10) || t(arg, 26), '要哭了似的');
+      overwrite(t(arg, 23) || t(arg, 25), '开朗的');
+      overwrite(t(arg, 73), '水性杨花的');
+      // `SIF CFLAG:ARG:509 == 1`——**CFLAG 不是 TALENT**。#389 返工勘误：
       // 这里原先读 `t(arg, 509)`（talent），而 509 在 yml/Talent.yml 里不存在、
       // 全库无人写，这一行因此永不触发；真身是 dungeon-room.js:1060 写入的
       // 「迷惑状態」（下轮 WALK 归零）
       overwrite((era.get(`cflag:${arg}:509`) || 0) === 1, '迷路的');
-      // :250 INRANGE(ABL:ARG:37, 1, 3)
+      // INRANGE(ABL:ARG:37, 1, 3)
       overwrite(
         (era.get(`abl:${arg}:37`) || 0) >= 1 &&
           (era.get(`abl:${arg}:37`) || 0) <= 3,
@@ -242,32 +230,32 @@ function fs_bitch(type, arg, rand = default_rand) {
       overwrite(
         (era.get(`abl:${arg}:30`) || 0) === 10,
         '无法想象没有肉棒的生活的',
-      ); // :253
+      );
       overwrite(
         (era.get(`abl:${arg}:31`) || 0) === 10,
         '一有空就不自觉地自慰的',
-      ); // :255
+      );
       overwrite(
         (era.get(`abl:${arg}:32`) || 0) === 10,
         '变得非常喜欢腥臭精液的',
-      ); // :257
-      overwrite((era.get(`abl:${arg}:33`) || 0) === 10, '渴望侵犯女性的'); // :259
+      );
+      overwrite((era.get(`abl:${arg}:33`) || 0) === 10, '渴望侵犯女性的');
       overwrite(
         (era.get(`abl:${arg}:37`) || 0) === 10,
         '随时随地的渴望着Sexy，变成了欲望的俘虏',
-      ); // :261
-      // :264-267 陥落済みである
+      );
+      // 陥落済みである
       if (t(arg, 76)) {
         locals += '好色的';
       } else if (t(arg, 85)) {
         locals += '背叛的';
       }
-      // :269 %GET_LOOK_INFO(ARG, "种族")%的%SAVESTR:ARG%
+      // %GET_LOOK_INFO(ARG, "种族")%的%SAVESTR:ARG%
       locals += `${get_look_info(arg, '种族')}的${name_of(arg)}`;
       return locals;
     }
     default:
-      throw new Error(`未知的TYPE${type}`); // :271 THROW 未知的TYPE%TYPE%
+      throw new Error(`未知的TYPE${type}`); // THROW 未知的TYPE%TYPE%
   }
 }
 
@@ -294,12 +282,12 @@ function fs_log_bitch(type, ...counts) {
   for (let lcount = 1; lcount <= 5; lcount += 1) {
     const count = counts[lcount - 1];
     if (!count) {
-      continue; // :290 CONTINUE
+      continue; // CONTINUE
     }
     if (locals.length > 0) {
-      locals += '、'; // :292
+      locals += '、';
     }
-    locals += `${count}人的${name_fn(lcount)}`; // :293
+    locals += `${count}人的${name_fn(lcount)}`;
   }
   return locals;
 }
@@ -331,9 +319,9 @@ function getbit(bits, n) {
  * @returns {Promise<void>}
  */
 async function log_try_bitch(arg, place) {
-  // :14..:47 原作是一整行：无后缀 PRINTFORM 连续不换行，末行 PRINTFORMW 才收行。
+  // 原作是一整行：无后缀 PRINTFORM 连续不换行，末行 PRINTFORMW 才收行。
   // 各分支都是这一行上的片段——DUNGEON 的 :16-35 侵入中链（:18-26 侵攻中的勇者、
-  // :29-32 卖春指示）与 TOWN 的 :36-46 卖淫中毒か淫乱——判据提到语句外当取值、
+  // 卖春指示）与 TOWN 的 :36-46 卖淫中毒か淫乱——判据提到语句外当取值、
   // 片段文本留在输出语句里（保真锁按序核对 ERB 片段，#600）
   const cflag1 = era.get(`cflag:${arg}:1`) || 0;
   const horny =
@@ -370,7 +358,7 @@ async function log_try_bitch(arg, place) {
             ? '由于高额的债务，不由得开始'
             : '冒险资金花光了，') +
       '考虑着出卖肉体的事。',
-  ); // :14+:21+:23+:25+:28+:31+:32+:34+:39+:42+:44+:47
+  );
 }
 
 /**
@@ -396,36 +384,36 @@ async function log_after_bitch(arg, check, rand = default_rand) {
   let play = 0;
 
   if (getbit(check, 6)) {
-    play = 6; // :326
+    play = 6;
   } else if (getbit(check, 3) && rand_n(10) < 5) {
-    // :329-333 女性客抽选（bit3 LES）
+    // 女性客抽选（bit3 LES）
     do {
-      kyaku = 1 + rand_n(6 - 1); // :330 RAND(1, 6)
-    } while (!getbit(check, kyaku + 20)); // :332 SIF GETBIT(CHECK, KYAKU+20) BREAK
-    play = 3; // :334
+      kyaku = 1 + rand_n(6 - 1); // RAND(1, 6)
+    } while (!getbit(check, kyaku + 20)); // SIF GETBIT(CHECK, KYAKU+20) BREAK
+    play = 3;
   } else {
     if (getbit(check, 3)) {
-      // :343-347 女性客抽选
+      // 女性客抽选
       do {
         kyaku = 1 + rand_n(6 - 1);
       } while (!getbit(check, kyaku + 20));
-      play = 3; // :348
+      play = 3;
     } else {
-      // :350-354 男性客抽选
+      // 男性客抽选
       do {
         kyaku = 1 + rand_n(6 - 1);
       } while (!getbit(check, kyaku + 10));
-      // :355-361 玩法抽选（1-6，跳过 3，直到 PLAY 位命中）
+      // 玩法抽选（1-6，跳过 3，直到 PLAY 位命中）
       do {
-        play = 1 + rand_n(6 - 1); // :356 PLAY = RAND(1, 6)
+        play = 1 + rand_n(6 - 1); // PLAY = RAND(1, 6)
         if (play === 3) {
-          continue; // :358 SIF PLAY == 3 CONTINUE
+          continue; // SIF PLAY == 3 CONTINUE
         }
-      } while (!getbit(check, play)); // :360 SIF GETBIT(CHECK, PLAY) BREAK
+      } while (!getbit(check, play)); // SIF GETBIT(CHECK, PLAY) BREAK
     }
   }
 
-  // :366 %FS_BITCH("PLAY", PLAY)% —— CALLFORM LOG_BITCH_%LOCALS%(ARG, …)
+  // %FS_BITCH("PLAY", PLAY)% —— CALLFORM LOG_BITCH_%LOCALS%(ARG, …)
   // 动态函数名分派：按玩法号调对应描写函数
   const play_fn = {
     HAND: log_bitch_hand,
@@ -436,13 +424,13 @@ async function log_after_bitch(arg, check, rand = default_rand) {
     ANIMAL: log_bitch_animal,
   }[fs_bitch('PLAY', play)];
   if (getbit(check, 0)) {
-    // :368 CALLFORM LOG_BITCH_%LOCALS%(ARG, "DUNGEON", KYAKU)
+    // CALLFORM LOG_BITCH_%LOCALS%(ARG, "DUNGEON", KYAKU)
     await play_fn(arg, 'DUNGEON', kyaku, rand);
   } else {
-    // :370 CALLFORM LOG_BITCH_%LOCALS%(ARG, "TOWN", KYAKU)
+    // CALLFORM LOG_BITCH_%LOCALS%(ARG, "TOWN", KYAKU)
     await play_fn(arg, 'TOWN', kyaku, rand);
   }
-  await era.waitAnyKey(); // :372 WAIT
+  await era.waitAnyKey(); // WAIT
 }
 
 /**
@@ -459,7 +447,7 @@ async function log_after_bitch(arg, check, rand = default_rand) {
  */
 async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // :386..:403 原作是一整行：开场 `%SAVESTR:ARG%`（:386）与手淫经验分档文案
+  // 原作是一整行：开场 `%SAVESTR:ARG%`（:386）与手淫经验分档文案
   // （SELECTCASE + 无后缀 PRINTFORM，:389/:391/:393/:395/:397/:399/:401）
   // 都不换行，到末段 :403 的 PRINTFORMW 才收行。档位判据提到语句外当取值、
   // 片段文本留在输出语句里（#624）
@@ -482,12 +470,12 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
                     ? '娴熟的说着隐晦的淫词'
                     : '') +
       '进行着手交卖春...',
-  ); // :386+:389+:391+:393+:395+:397+:399+:401+:403
+  );
 
   if (place === 'DUNGEON') {
-    // :401-476 地下城客
+    // 地下城客
     const locals = fs_bitch('DUNGEON_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :408
+    era.print(`客：${locals}`);
     const picks = {
       1: [
         '「哇哦……射了　出来了　抱歉啊」',
@@ -513,7 +501,7 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
       5: null,
     };
     if (kyaku === 5) {
-      // :445-475 妖精商人按性格分档
+      // 妖精商人按性格分档
       const t = (i) => era.get(`talent:${arg}:${i}`) || 0;
       const lines = t(160)
         ? ['「这是一双温婉的手……」']
@@ -528,14 +516,14 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「要仔细闻哦…」']
                   : ['「睾丸也要弄哦」'];
-      await era.print(lines[rand_n(lines.length)]); // :445 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :412 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   } else {
-    // :479-551 街中客
+    // 街中客
     const locals = fs_bitch('TOWN_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :481
+    era.print(`客：${locals}`);
     const picks = {
       1: ['「呵呵……谢啦……」', `男村民笑着调戏${name_of(arg)}。`],
       2: [
@@ -569,18 +557,18 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「好好看着肉棒啊」']
                   : ['「不错不错」'];
-      await era.print(lines[rand_n(lines.length)]); // :485 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :485 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // :550-551 固定地の文
+  // 固定地の文
   await era.printAndWait(
     `${name_of(arg)}跪在地上一边套动着阴茎一边看向客人的脸，时不时伸出舌头舔向马眼，笑嘻嘻的看着客人在快感中颤抖的样子。`,
-  ); // :550
+  );
   await era.printAndWait(
     `在一阵无可忍耐的射精之后，${name_of(arg)}一边舔着被弄脏的手一边不屑的看着气喘吁吁的客人，随后媚笑着开始下一次服务。`,
-  ); // :551
+  );
 }
 
 /**
@@ -597,7 +585,7 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // :559..:574 原作是一整行：开场 `%SAVESTR:ARG%`（:559）与口交经验分档文案
+  // 原作是一整行：开场 `%SAVESTR:ARG%`（:559）与口交经验分档文案
   // （:562/:564/:566/:568/:570/:572）都不换行，到末段 :574 的 PRINTFORMW
   // 才收行（#624）
   const abl32 = era.get(`abl:${arg}:32`) || 0;
@@ -617,15 +605,15 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
                   ? '用积极又不太过冒犯的态度'
                   : '') +
       '进行着收费口交...',
-  ); // :559+:562+:564+:566+:568+:570+:572+:574
+  );
   await era.printAndWait(
     `${name_of(arg)}跪在地上将客人的阳具吞入口中，用舌头仔细地舔舐着。`,
-  ); // :575
+  );
 
   if (place === 'DUNGEON') {
-    // :578-650 地下城客
+    // 地下城客
     const locals = fs_bitch('DUNGEON_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :580
+    era.print(`客：${locals}`);
     const picks = {
       1: ['「哇哈哈……给我好好舔」', '「呜哇，舌头舔着好爽啊」'],
       2: ['「后面的屁眼也要替我舔哦」', '「没错，喉咙也要用上！」'],
@@ -653,14 +641,14 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「别用上牙来咬啊」']
                   : ['「哦哦……感觉不错呢」'];
-      await era.print(lines[rand_n(lines.length)]); // :584 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :584 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   } else {
-    // :653-720 街中客
+    // 街中客
     const locals = fs_bitch('TOWN_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :650
+    era.print(`客：${locals}`);
     const picks = {
       1: ['「哈哈……挺熟练的嘛……」', '「真拿你没办法，就让你舔吧～」'],
       2: ['「最近都没有洗啊……好好弄干净啊」', '「就那么缺钱吗？」'],
@@ -691,19 +679,19 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「哦吼，好怕怕哦」']
                   : ['「这不是很熟练么」'];
-      await era.print(lines[rand_n(lines.length)]); // :654 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :654 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // :719-721 固定地の文
-  await era.printAndWait('头突然被用手紧紧的按住，随后腥臭的精液在口中爆发了'); // :719
+  // 固定地の文
+  await era.printAndWait('头突然被用手紧紧的按住，随后腥臭的精液在口中爆发了');
   await era.printAndWait(
     `还没等其缓过神来，客人就将阳具继续插入喉咙，按着${name_of(arg)}的头前后摇晃着套弄起来`,
-  ); // :720
+  );
   await era.printAndWait(
     `在粗重的喘息声中，${name_of(arg)}的脸和乳房都沾满了白浊腥臭的精液，更多的精液沿着${name_of(arg)}的嘴角垂流而下`,
-  ); // :721
+  );
 }
 
 /**
@@ -720,7 +708,7 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // :729..:744 原作是一整行：开场 `%SAVESTR:ARG%`（:729）与百合经验分档文案
+  // 原作是一整行：开场 `%SAVESTR:ARG%`（:729）与百合经验分档文案
   // （:732/:734/:736/:738/:740/:742）都不换行，到末段 :744 的 PRINTFORMW
   // 才收行（#624）
   const abl33 = era.get(`abl:${arg}:33`) || 0;
@@ -740,18 +728,18 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
                   ? '忘记了时间，一次又一次的和客人缠绵着'
                   : '') +
       '进行着百合卖春...',
-  ); // :729+:732+:734+:736+:738+:740+:742+:744
+  );
   await era.printAndWait(
     `${name_of(arg)}跪在地上，用舌头仔细地舔舐着魔女的阴蒂，头突然被用手紧紧的按住，魔女按着她的头前后摇晃着摩擦起来，在高潮的尖叫中潮吹，爱液溅在${name_of(arg)}的唇舌和脸上…`,
-  ); // :745
+  );
   await era.printAndWait(
     `在沉重的喘息声中，魔女将${name_of(arg)}搂在怀里，雌性发情的阴户互相摩刺激擦着，除了肉体的激烈碰撞声，随之而来的还有魔女和${name_of(arg)}的高潮绝叫…`,
-  ); // :746
+  );
 
   if (place === 'DUNGEON') {
-    // :748-882 地下城女性客
+    // 地下城女性客
     const locals = fs_bitch('DUNGEON_GIRL', kyaku); // 客名
-    era.print(`客：${locals}`); // :751
+    era.print(`客：${locals}`);
     const picks = {
       1: [
         '「你的精气，我不客气啦♪」',
@@ -849,14 +837,14 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
                       '「唔呼呼~还要再指名哦」',
                       '「快乐就是我们的教义」',
                     ];
-      await era.print(lines[rand_n(lines.length)]); // :755 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :755 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   } else {
-    // :885-934 街中女性客
+    // 街中女性客
     const locals = fs_bitch('TOWN_GIRL', kyaku); // 客名
-    era.print(`客：${locals}`); // :868
+    era.print(`客：${locals}`);
     const picks = {
       1: ['「真好啊，这柔嫩的皮肤」', '「挺年轻的嘛……做这种事」'],
       2: ['「一起抱着睡吧……」', '「呵呵，别这么害怕嘛」'],
@@ -884,12 +872,12 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「请骂我吧！」']
                   : ['「可以喜欢我吗？」'];
-      await era.print(lines[rand_n(lines.length)]); // :890 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :872 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // :932-933 固定地の文（源文本只有这两行；:744-745 已在上方）
+  // 固定地の文（源文本只有这两行；:744-745 已在上方）
   // —— 源 :934 无输出；:935-936 是空行/下一函数 ——
 }
 
@@ -907,7 +895,7 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // :943..:960 原作是一整行：开场 `%SAVESTR:ARG%`（:943）与肛门经验分档文案
+  // 原作是一整行：开场 `%SAVESTR:ARG%`（:943）与肛门经验分档文案
   // （:946/:948/:950/:952/:954/:956/:958）都不换行，到末段 :960 的
   // PRINTFORMW 才收行（#624）
   const abl3 = era.get(`abl:${arg}:3`) || 0;
@@ -929,13 +917,13 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
                     ? '完完全全地沉溺在了H的快感之中'
                     : '') +
       '进行着肛交卖春...',
-  ); // :943+:946+:948+:950+:952+:954+:956+:958+:960
-  await era.printAndWait(`${name_of(arg)}跪伏在床上，像母狗一样摇动着屁股…`); // :961
+  );
+  await era.printAndWait(`${name_of(arg)}跪伏在床上，像母狗一样摇动着屁股…`);
 
   if (place === 'DUNGEON') {
-    // :961-1136 地下城客
+    // 地下城客
     const locals = fs_bitch('DUNGEON_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :968
+    era.print(`客：${locals}`);
     const picks = {
       1: [
         '「菊穴啊……凑合用吧」',
@@ -998,13 +986,13 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
       5: null,
     };
     if (kyaku === 5) {
-      // :1037-1133 妖精商人：先判娼妇のドレス，再按性格分档
+      // 妖精商人：先判娼妇のドレス，再按性格分档
       const t = (i) => era.get(`talent:${arg}:${i}`) || 0;
       if (
         (era.get(`cflag:${arg}:40`) || 0) & 28 &&
         (era.get(`cflag:${arg}:41`) || 0) === 203
       ) {
-        era.print('「这么H的衣服~」'); // :1042
+        era.print('「这么H的衣服~」');
       }
       const lines = t(160)
         ? [
@@ -1054,14 +1042,14 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
                       '「在干嘛啊，快点把屁股露出来。」',
                       '「后庭在一开一合地喘息着……！」',
                     ];
-      await era.print(lines[rand_n(lines.length)]); // :1045 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :972 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   } else {
-    // :1139-1172 街中客
+    // 街中客
     const locals = fs_bitch('TOWN_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :1102
+    era.print(`客：${locals}`);
     const picks = {
       1: ['「菊花挺柔软的嘛」', '「前面那不行吗？」'],
       2: ['「可以灌肠么？」', '「唔……在里面射了」'],
@@ -1089,24 +1077,24 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「随便你怎么哭喊也可以哦！」']
                   : ['「哈哈，多多关照！」'];
-      await era.print(lines[rand_n(lines.length)]); // :1141 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :1141 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // :1171-1174 固定地の文（源繁体已归一）
+  // 固定地の文（源繁体已归一）
   await era.printAndWait(
     `无法忍耐的客人从背将${name_of(arg)}抱住像狗一样耸动着，肛门在阳具的剧烈抽送中流出了白色的浆汁…`,
-  ); // :1171
+  );
   await era.printAndWait(
     `四肢着地趴着的${name_of(arg)}的臀瓣每次与客人的腰肢发生撞击，都会提高的发出愉悦的呻吟声…`,
-  ); // :1172
+  );
   await era.printAndWait(
     `呼吸逐渐变得粗重而凌乱，客人将${name_of(arg)}的臀部像揉面一般地揉抚着，疯狂忘我地耸动着腰部…`,
-  ); // :1173
+  );
   await era.printAndWait(
     `随后客人躺在地上，让${name_of(arg)}坐上来自己动，${name_of(arg)}跨坐在客人的腰上扭动着自己的身体感受着火热阳具的刺激，乳首也被肆意揉搓着…`,
-  ); // :1174
+  );
 }
 
 /**
@@ -1124,9 +1112,9 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // :1182..:1207 原作是一整行：开场 `%SAVESTR:ARG%`（:1182）与性交经验分档
+  // 原作是一整行：开场 `%SAVESTR:ARG%`（:1182）与性交经验分档
   // 文案（:1185/:1187/:1189/:1191/:1193，以及 7-8/9-10 档内 IF/ELSE 的
-  // :1196/:1198、:1202/:1204）都不换行，到末段 :1207 的 PRINTFORMW 才收行。
+  // ）都不换行，到末段 :1207 的 PRINTFORMW 才收行。
   // 档内 IF 的 `RAND:2` 有状态、只在命中该档时才抽取，所以留在档位判据里
   // 惰性求值；ABL:14 是纯读，提到语句外当取值（语句内再写 `era.get` 会引入
   // 嵌套模板的 `${arg}` 槽位，保真锁 C/D 按字面量槽位核对时误判为插值）（#624）
@@ -1154,12 +1142,12 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
                       : '比起客人那边更疯狂的高潮着'
                     : '') +
       '进行着性交卖春',
-  ); // :1182+:1185+:1187+:1189+:1191+:1193+:1196+:1198+:1202+:1204+:1207
+  );
 
   if (place === 'DUNGEON') {
-    // :1201-1408 地下城客
+    // 地下城客
     const locals = fs_bitch('DUNGEON_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :1212
+    era.print(`客：${locals}`);
     const picks = {
       1: [
         '「居然能抱着魔王大人的奴隶……」',
@@ -1236,13 +1224,13 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
       5: null,
     };
     if (kyaku === 5) {
-      // :1303-1396 妖精商人：先判娼妇のドレス，再按性格分档
+      // 妖精商人：先判娼妇のドレス，再按性格分档
       const t = (i) => era.get(`talent:${arg}:${i}`) || 0;
       if (
         (era.get(`cflag:${arg}:40`) || 0) & 28 &&
         (era.get(`cflag:${arg}:41`) || 0) === 203
       ) {
-        era.print('「这么H的衣服~」'); // :1312
+        era.print('「这么H的衣服~」');
       }
       const lines = t(160)
         ? [
@@ -1292,14 +1280,14 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
                       '「在干嘛啊，快把屁股露出来。」',
                       '「给我‘啊啊’地叫出来啊……！」',
                     ];
-      await era.print(lines[rand_n(lines.length)]); // :1315 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :1219 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   } else {
-    // :1411-1447 街中客
+    // 街中客
     const locals = fs_bitch('TOWN_MAN', kyaku); // 客名
-    era.print(`客：${locals}`); // :1372
+    era.print(`客：${locals}`);
     const picks = {
       1: ['「这是名器啊！」', '「勇者大人也是会卖身的啊……」'],
       2: ['「居然是勇者大人啊……」', '「哦，你……很懂嘛」'],
@@ -1327,21 +1315,21 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
                 : t(166)
                   ? ['「真是难以抗拒你的诱惑啊～」']
                   : ['「挣了多少钱啊？　嗯？」'];
-      await era.print(lines[rand_n(lines.length)]); // :1411 PRINTDATAL
+      await era.print(lines[rand_n(lines.length)]); // PRINTDATAL
     } else {
-      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // :1416 PRINTDATAL
+      await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // :1447-1449 固定地の文（源繁体已归一）
+  // 固定地の文（源繁体已归一）
   await era.printAndWait(
     `${name_of(arg)}仰卧着用双腿用力的夹住趴在自己身上的客人的腰发出呻吟…`,
-  ); // :1441
+  );
   await era.printAndWait(
     `随即被翻过身来，一边被玩弄肛门一边主动用屁股套弄着巨大的阴茎…`,
-  ); // :1442
+  );
   await era.printAndWait(
     `随后${name_of(arg)}被客人抱了起来，双腿被架在肩上，像洋娃娃一样被猛烈插入，乳房像面团一样被跳动着变成各种淫靡的形状…`,
-  ); // :1443
+  );
 }
 
 /**
@@ -1358,19 +1346,19 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_animal(arg, place) {
   if (place === 'TOWN') {
-    // :1459+:1464 原作 PRINTFORM %SAVESTR:ARG% + PRINTFORMW，同一行（#584）
+    // 原作 PRINTFORM %SAVESTR:ARG% + PRINTFORMW，同一行（#584）
     await era.printAndWait(
       `${name_of(arg)}在大家的眼前不知羞耻的进行着兽交表演...`,
-    ); // :1459+:1464
+    );
     await era.printAndWait(
       `${name_of(arg)}进入了兽栏，在众人炽热的注目下像母狗一样趴在地上，扭动着身躯引诱着发情的猎犬。在野兽舌头的舔舐润滑后，令人兴奋的喘息和呜咽伴随着野兽的咆哮和肉体的撞击声缭绕在兽栏内，${name_of(arg)}比真正的雌兽还要卖力的摇晃着屁股，逢迎着非人的巨大阳具的刺激。`,
-    ); // :1465
+    );
     await era.printAndWait(
       `随后一条猎犬躺在地上，${name_of(arg)}主动跨坐在野兽的阴茎上扭动着自己的身体，乳首也被旁边的野兽轻轻撕咬拉扯着。肛门的粗暴插入使${name_of(arg)}趴在身下的野兽毛皮上陷入了恍惚，口水不由自主的流淌出来，其后插入口腔的兽茎令${name_of(arg)}窒息，无与伦比的快感让${name_of(arg)}成为了一具供野兽发泄性欲的肉娃娃。`,
-    ); // :1466
+    );
     await era.printAndWait(
       `围观的观众们一边看着这场兽奸秀一边兴奋的手淫，时不时有人冲上前去向${name_of(arg)}的身上抛洒精液，而${name_of(arg)}也媚眼朦胧的感受着精液的温暖。`,
-    ); // :1467
+    );
   }
 }
 
@@ -1386,7 +1374,7 @@ async function log_bitch_animal(arg, place) {
  * @returns {Promise<void>}
  */
 async function log_bitch_self(arg, place, play) {
-  // :1488-1517 全部 CASE 为空（源注释仅标注妄想对象档位，无输出）
+  // 全部 CASE 为空（源注释仅标注妄想对象档位，无输出）
   // 保留空函数体（1:1；呼出侧的分歧描写在 self_bitch 已实现）
   void arg;
   void place;
@@ -1423,252 +1411,252 @@ async function log_bitch_self(arg, place, play) {
 async function dungeon_sex_log(arg0, rand = default_rand) {
   const rand_n = rand;
   if (arg0 === 0) {
-    // :1543-1576 兽人
+    // 兽人
     if (
       ((era.get('cflag:0:40') || 0) & 28) !== 0 &&
       (era.get('cflag:0:41') || 0) === 203
     ) {
-      era.print('「穿着这么下流的衣服来诱惑人……」'); // :1546
+      era.print('「穿着这么下流的衣服来诱惑人……」');
     }
     if (rand_n(15) === 0) {
-      era.print('「居然能抱着魔王大人的奴隶……」'); // :1548
+      era.print('「居然能抱着魔王大人的奴隶……」');
     } else if (rand_n(14) === 0) {
-      era.print('「哦！哦！舒服的穴！」'); // :1550
+      era.print('「哦！哦！舒服的穴！」');
     } else if (rand_n(13) === 0) {
-      era.print('「就这么喜欢精液吗？」'); // :1552
+      era.print('「就这么喜欢精液吗？」');
     } else if (rand_n(12) === 0) {
-      era.print('「随便就分开双腿的婊子！」'); // :1554
+      era.print('「随便就分开双腿的婊子！」');
     } else if (rand_n(11) === 0) {
-      era.print('「用手把尻扒开」'); // :1556
+      era.print('「用手把尻扒开」');
     } else if (rand_n(10) === 0) {
-      era.print('「做Ｖ字手！Ｖ字手！」'); // :1558
+      era.print('「做Ｖ字手！Ｖ字手！」');
     } else if (rand_n(9) === 0) {
-      era.print('「觉得鸡鸡舒服吗？」'); // :1560
+      era.print('「觉得鸡鸡舒服吗？」');
     } else if (rand_n(8) === 0) {
-      era.print('「啊！鸡鸡要融化了！」'); // :1562
+      era.print('「啊！鸡鸡要融化了！」');
     } else if (rand_n(7) === 0) {
-      era.print('「真是最贱的母猪！」'); // :1564
+      era.print('「真是最贱的母猪！」');
     } else if (rand_n(6) === 0) {
-      era.print('「抬起屁股，好好地发情吧」'); // :1566
+      era.print('「抬起屁股，好好地发情吧」');
     } else if (rand_n(5) === 0) {
-      era.print('「真是下流的模样呢，嘿嘿」'); // :1568
+      era.print('「真是下流的模样呢，嘿嘿」');
     } else if (rand_n(4) === 0) {
-      era.print('「分开双腿侍奉魔王军了吗？」'); // :1570
+      era.print('「分开双腿侍奉魔王军了吗？」');
     } else if (rand_n(3) === 0) {
-      era.print('「习惯吸啜小鸡鸡了吗？」'); // :1572
+      era.print('「习惯吸啜小鸡鸡了吗？」');
     } else if (rand_n(2) === 0) {
-      era.print('「你和精液很相称呢！」'); // :1574
+      era.print('「你和精液很相称呢！」');
     } else {
-      era.print('「射到你头发上都是！」'); // :1576
+      era.print('「射到你头发上都是！」');
     }
   } else if (arg0 === 1) {
-    // :1579-1612 魔族男人
+    // 魔族男人
     if (
       ((era.get('cflag:0:40') || 0) & 28) !== 0 &&
       (era.get('cflag:0:41') || 0) === 203
     ) {
-      era.print('「这一身……完全带动色情的气氛了啊！」'); // :1582
+      era.print('「这一身……完全带动色情的气氛了啊！」');
     }
     if (rand_n(15) === 0) {
-      era.print('「穿成这样四处转悠……真是变态啊」'); // :1584
+      era.print('「穿成这样四处转悠……真是变态啊」');
     } else if (rand_n(14) === 0) {
-      era.print('「你很适合精液的气味嘛～」'); // :1586
+      era.print('「你很适合精液的气味嘛～」');
     } else if (rand_n(13) === 0) {
-      era.print('「这是邀请吗？把腰扭起来啊」'); // :1588
+      era.print('「这是邀请吗？把腰扭起来啊」');
     } else if (rand_n(12) === 0) {
-      era.print('「正好欲求不满的说」'); // :1590
+      era.print('「正好欲求不满的说」');
     } else if (rand_n(11) === 0) {
-      era.print('「这也是你的工作？」'); // :1592
+      era.print('「这也是你的工作？」');
     } else if (rand_n(10) === 0) {
-      era.print('「阴蒂涨起来了，还开始流出爱液……嘿嘿……」'); // :1594
+      era.print('「阴蒂涨起来了，还开始流出爱液……嘿嘿……」');
     } else if (rand_n(9) === 0) {
-      era.print('「勇者也这么堕落，这么淫乱」'); // :1596
+      era.print('「勇者也这么堕落，这么淫乱」');
     } else if (rand_n(8) === 0) {
-      era.print('「手扶着墙，屁股转过来」'); // :1598
+      era.print('「手扶着墙，屁股转过来」');
     } else if (rand_n(7) === 0) {
-      era.print('「一定要狠狠地欺负一下你才行……」'); // :1600
+      era.print('「一定要狠狠地欺负一下你才行……」');
     } else if (rand_n(6) === 0) {
-      era.print('「母乳不出来么？」'); // :1602
+      era.print('「母乳不出来么？」');
     } else if (rand_n(5) === 0) {
-      era.print('「完全顺从了嘛」'); // :1604
+      era.print('「完全顺从了嘛」');
     } else if (rand_n(4) === 0) {
-      era.print('「一开始先来含一下吧？」'); // :1606
+      era.print('「一开始先来含一下吧？」');
     } else if (rand_n(3) === 0) {
-      era.print('「腿分开，打开那里让我看看」'); // :1608
+      era.print('「腿分开，打开那里让我看看」');
     } else if (rand_n(2) === 0) {
-      era.print('「不当勇者了，也变得可爱了嘛」'); // :1610
+      era.print('「不当勇者了，也变得可爱了嘛」');
     } else {
-      era.print('「已经是我们的同伴了嘛」'); // :1612
+      era.print('「已经是我们的同伴了嘛」');
     }
   } else if (arg0 === 2) {
-    // :1615-1648 魔族少年
+    // 魔族少年
     if (
       ((era.get('cflag:0:40') || 0) & 28) !== 0 &&
       (era.get('cflag:0:41') || 0) === 203
     ) {
-      era.print('「大姐姐的衣服，好色……」'); // :1618
+      era.print('「大姐姐的衣服，好色……」');
     }
     if (rand_n(15) === 0) {
-      era.print('「姐……姐姐……我带钱来了」'); // :1620
+      era.print('「姐……姐姐……我带钱来了」');
     } else if (rand_n(14) === 0) {
-      era.print('「我……还是处男……」'); // :1622
+      era.print('「我……还是处男……」');
     } else if (rand_n(13) === 0) {
-      era.print('「大姐姐，真好色啊」'); // :1624
+      era.print('「大姐姐，真好色啊」');
     } else if (rand_n(12) === 0) {
-      era.print('「这就是……女人……」'); // :1626
+      era.print('「这就是……女人……」');
     } else if (rand_n(11) === 0) {
-      era.print('「这就是姐姐的工作吗？」'); // :1628
+      era.print('「这就是姐姐的工作吗？」');
     } else if (rand_n(10) === 0) {
-      era.print('「哇……厉害」'); // :1630
+      era.print('「哇……厉害」');
     } else if (rand_n(9) === 0) {
-      era.print('「唔……要出来了！！」'); // :1632
+      era.print('「唔……要出来了！！」');
     } else if (rand_n(8) === 0) {
-      era.print('「大姐姐，软软的……」'); // :1634
+      era.print('「大姐姐，软软的……」');
     } else if (rand_n(7) === 0) {
-      era.print('「噗呲噗呲的」'); // :1636
+      era.print('「噗呲噗呲的」');
     } else if (rand_n(6) === 0) {
-      era.print('「能揉你的胸吗？」'); // :1638
+      era.print('「能揉你的胸吗？」');
     } else if (rand_n(5) === 0) {
-      era.print('「用力吸乳头的话，会有奶吗？」'); // :1640
+      era.print('「用力吸乳头的话，会有奶吗？」');
     } else if (rand_n(4) === 0) {
-      era.print('「好厉害……呜哇～」'); // :1642
+      era.print('「好厉害……呜哇～」');
     } else if (rand_n(3) === 0) {
-      era.print('「大姐姐，再教我更多……」'); // :1644
+      era.print('「大姐姐，再教我更多……」');
     } else if (rand_n(2) === 0) {
-      era.print('「呵呵，姐姐你真可爱」'); // :1646
+      era.print('「呵呵，姐姐你真可爱」');
     } else {
-      era.print('「小鸡鸡，快爆炸了！！」'); // :1648
+      era.print('「小鸡鸡，快爆炸了！！」');
     }
   } else if (arg0 === 3) {
-    // :1651-1694 魔族暴发户（两组 RAND 链）
+    // 魔族暴发户（两组 RAND 链）
     if (
       ((era.get('cflag:0:40') || 0) & 28) !== 0 &&
       (era.get('cflag:0:41') || 0) === 203
     ) {
-      era.print('「真是婊子的打扮啊。」'); // :1654
+      era.print('「真是婊子的打扮啊。」');
     }
     if (rand_n(4) === 0) {
-      era.print('「我知道……想要钱是吧？」'); // :1656
+      era.print('「我知道……想要钱是吧？」');
     } else if (rand_n(3) === 0) {
-      era.print('「我拿着钱哦！你想要的话……」'); // :1658
+      era.print('「我拿着钱哦！你想要的话……」');
     } else if (rand_n(2) === 0) {
-      era.print('「还没满足吧，这淫乱的娼妓！」'); // :1660
+      era.print('「还没满足吧，这淫乱的娼妓！」');
     } else {
-      era.print('「有钱就怎么都行？」'); // :1662
+      era.print('「有钱就怎么都行？」');
     }
     if (rand_n(15) === 0) {
-      era.print('「屁股也要舔，一直舔到肛门」'); // :1666
+      era.print('「屁股也要舔，一直舔到肛门」');
     } else if (rand_n(14) === 0) {
-      era.print('「腰动起来！多扭几下。」'); // :1668
+      era.print('「腰动起来！多扭几下。」');
     } else if (rand_n(13) === 0) {
-      era.print('「跪下来说你想要钱！」'); // :1670
+      era.print('「跪下来说你想要钱！」');
     } else if (rand_n(12) === 0) {
-      era.print('「说：请给我这母猪赏点钱」'); // :1672
+      era.print('「说：请给我这母猪赏点钱」');
     } else if (rand_n(11) === 0) {
-      era.print('「为了钱，什么话都能说出来的婊子」'); // :1674
+      era.print('「为了钱，什么话都能说出来的婊子」');
     } else if (rand_n(10) === 0) {
-      era.print('「阴垢也漂亮地清洁了呢」'); // :1676
+      era.print('「阴垢也漂亮地清洁了呢」');
     } else if (rand_n(9) === 0) {
-      era.print('「跪下来说请给我阴茎」'); // :1678
+      era.print('「跪下来说请给我阴茎」');
     } else if (rand_n(8) === 0) {
-      era.print('「跪下来像狗一样地摇屁股」'); // :1680
+      era.print('「跪下来像狗一样地摇屁股」');
     } else if (rand_n(7) === 0) {
-      era.print('「在这里像狗一样地尿尿」'); // :1682
+      era.print('「在这里像狗一样地尿尿」');
     } else if (rand_n(6) === 0) {
-      era.print('「鸡鸡和钱，愿意为了哪个被赏耳光？」'); // :1684
+      era.print('「鸡鸡和钱，愿意为了哪个被赏耳光？」');
     } else if (rand_n(5) === 0) {
-      era.print('「说自己是最喜欢鸡鸡的淫乱奴隶！」'); // :1686
+      era.print('「说自己是最喜欢鸡鸡的淫乱奴隶！」');
     } else if (rand_n(4) === 0) {
-      era.print('「就在这里自慰」'); // :1688
+      era.print('「就在这里自慰」');
     } else if (rand_n(3) === 0) {
-      era.print('「说自己是为了钱而卖淫的贱婊子」'); // :1690
+      era.print('「说自己是为了钱而卖淫的贱婊子」');
     } else if (rand_n(2) === 0) {
-      era.print('「跪下来说我想要鸡鸡」'); // :1692
+      era.print('「跪下来说我想要鸡鸡」');
     } else {
-      era.print('「再来点媚笑看看，要更淫邪的」'); // :1694
+      era.print('「再来点媚笑看看，要更淫邪的」');
     }
   } else {
-    // :1697-1780 狗头人商人（按 TALENT 性格分档）
+    // 狗头人商人（按 TALENT 性格分档）
     if (
       ((era.get('cflag:0:40') || 0) & 28) !== 0 &&
       (era.get('cflag:0:41') || 0) === 203
     ) {
-      era.print('「黄暴的衣服！」'); // :1701
+      era.print('「黄暴的衣服！」');
     }
     const t = (i) => era.get(`talent:${i}`) || 0;
     if (t(160)) {
       if (rand_n(4) === 0) {
-        era.print('「也来爱我啊～」'); // :1705
+        era.print('「也来爱我啊～」');
       } else if (rand_n(3) === 0) {
-        era.print('「爱意满满地来侍奉吧」'); // :1707
+        era.print('「爱意满满地来侍奉吧」');
       } else if (rand_n(2) === 0) {
-        era.print('「好好地来侍奉阴茎吧！」'); // :1709
+        era.print('「好好地来侍奉阴茎吧！」');
       } else {
-        era.print('「这样的我……也能得到爱吗？」'); // :1711
+        era.print('「这样的我……也能得到爱吗？」');
       }
     } else if (t(161)) {
       if (rand_n(4) === 0) {
-        era.print('「勇者大人，变得这么温顺」'); // :1716
+        era.print('「勇者大人，变得这么温顺」');
       } else if (rand_n(3) === 0) {
-        era.print('「对自己的性技有自信吗？」'); // :1718
+        era.print('「对自己的性技有自信吗？」');
       } else if (rand_n(2) === 0) {
-        era.print('「对这种事很擅长吧！」'); // :1720
+        era.print('「对这种事很擅长吧！」');
       } else {
-        era.print('「淫乱地如此彻底。」'); // :1722
+        era.print('「淫乱地如此彻底。」');
       }
     } else if (t(162)) {
       if (rand_n(4) === 0) {
-        era.print('「来，吸！」'); // :1727
+        era.print('「来，吸！」');
       } else if (rand_n(3) === 0) {
-        era.print('「来，腿分开！」'); // :1729
+        era.print('「来，腿分开！」');
       } else if (rand_n(2) === 0) {
-        era.print('「在干嘛，继续舔啊！」'); // :1731
+        era.print('「在干嘛，继续舔啊！」');
       } else {
-        era.print('「笨手笨脚的……把屁股抬起来就行啦！」'); // :1733
+        era.print('「笨手笨脚的……把屁股抬起来就行啦！」');
       }
     } else if (t(163)) {
       if (rand_n(4) === 0) {
-        era.print('「习惯肉棒的味道了吗？」'); // :1738
+        era.print('「习惯肉棒的味道了吗？」');
       } else if (rand_n(3) === 0) {
-        era.print('「好好地侍奉吧！」'); // :1740
+        era.print('「好好地侍奉吧！」');
       } else if (rand_n(2) === 0) {
-        era.print('「温柔的手法……鸡鸡快爆炸了」'); // :1742
+        era.print('「温柔的手法……鸡鸡快爆炸了」');
       } else {
-        era.print('「居然还有这么淫乱的大小姐。」'); // :1744
+        era.print('「居然还有这么淫乱的大小姐。」');
       }
     } else if (t(164)) {
       if (rand_n(4) === 0) {
-        era.print('「好啊！这冰冷的眼神！」'); // :1749
+        era.print('「好啊！这冰冷的眼神！」');
       } else if (rand_n(3) === 0) {
-        era.print('「这也是工作吧？」'); // :1751
+        era.print('「这也是工作吧？」');
       } else if (rand_n(2) === 0) {
-        era.print('「喂，摆出一张更舒服的脸吧！」'); // :1753
+        era.print('「喂，摆出一张更舒服的脸吧！」');
       } else {
-        era.print('「你不懂笑的吗？YEAH～YEAH！这样」'); // :1755
+        era.print('「你不懂笑的吗？YEAH～YEAH！这样」');
       }
     } else if (t(166)) {
       if (rand_n(4) === 0) {
-        era.print('「终于在肉棒前变得温顺了吗？」'); // :1760
+        era.print('「终于在肉棒前变得温顺了吗？」');
       } else if (rand_n(3) === 0) {
-        era.print('「那个性格恶劣的勇者大人已经成为肉棒的俘虏了？」'); // :1762
+        era.print('「那个性格恶劣的勇者大人已经成为肉棒的俘虏了？」');
       } else if (rand_n(2) === 0) {
-        era.print('「无需多言！腿打开！」'); // :1764
+        era.print('「无需多言！腿打开！」');
       } else {
-        era.print('「什么嘛这眼神……可恶……」'); // :1766
+        era.print('「什么嘛这眼神……可恶……」');
       }
     } else {
       if (rand_n(4) === 0) {
-        era.print('「这卖春女啊！」'); // :1770
+        era.print('「这卖春女啊！」');
       } else if (rand_n(3) === 0) {
-        era.print('「堕落为妓女了吗」'); // :1772
+        era.print('「堕落为妓女了吗」');
       } else if (rand_n(2) === 0) {
-        era.print('「在干嘛？赶紧把腿分开啊！」'); // :1774
+        era.print('「在干嘛？赶紧把腿分开啊！」');
       } else {
-        era.print('「呃呃地喘息……！」'); // :1776
+        era.print('「呃呃地喘息……！」');
       }
     }
   }
-  return 0; // :1781 RETURN 0
+  return 0; // RETURN 0
 }
 
 /**
@@ -1684,202 +1672,202 @@ async function dungeon_sex_log(arg0, rand = default_rand) {
 async function dungeon_anal_log(arg0, rand = default_rand) {
   const rand_n = rand;
   if (arg0 === 0) {
-    // :1795-1825 兽人
+    // 兽人
     if (rand_n(15) === 0) {
-      era.print('「菊穴啊……凑合用吧」'); // :1797
+      era.print('「菊穴啊……凑合用吧」');
     } else if (rand_n(14) === 0) {
-      era.print('「这完全是性器了嘛」'); // :1799
+      era.print('「这完全是性器了嘛」');
     } else if (rand_n(13) === 0) {
-      era.print('「又湿又软」'); // :1801
+      era.print('「又湿又软」');
     } else if (rand_n(12) === 0) {
-      era.print('「你是卖肛门的？」'); // :1803
+      era.print('「你是卖肛门的？」');
     } else if (rand_n(11) === 0) {
-      era.print('「好啊，屁股翘起来」'); // :1805
+      era.print('「好啊，屁股翘起来」');
     } else if (rand_n(10) === 0) {
-      era.print('「这么淫乱的尻穴」'); // :1807
+      era.print('「这么淫乱的尻穴」');
     } else if (rand_n(9) === 0) {
-      era.print('「就这么喜欢卖菊花吗？」'); // :1809
+      era.print('「就这么喜欢卖菊花吗？」');
     } else if (rand_n(8) === 0) {
-      era.print('「唔……你的直肠很舒服」'); // :1811
+      era.print('「唔……你的直肠很舒服」');
     } else if (rand_n(7) === 0) {
-      era.print('「这肛门夹得真紧」'); // :1813
+      era.print('「这肛门夹得真紧」');
     } else if (rand_n(6) === 0) {
-      era.print('「漂亮的后庭」'); // :1815
+      era.print('「漂亮的后庭」');
     } else if (rand_n(5) === 0) {
-      era.print('「你的后面，敏感度如何？」'); // :1817
+      era.print('「你的后面，敏感度如何？」');
     } else if (rand_n(4) === 0) {
-      era.print('「屁股，都露外面了哦」'); // :1819
+      era.print('「屁股，都露外面了哦」');
     } else if (rand_n(3) === 0) {
-      era.print('「这不已经习惯用后面了嘛」'); // :1821
+      era.print('「这不已经习惯用后面了嘛」');
     } else if (rand_n(2) === 0) {
-      era.print('「多少人用过这里了？」'); // :1823
+      era.print('「多少人用过这里了？」');
     } else {
-      era.print('「真是个好尻穴……」'); // :1825
+      era.print('「真是个好尻穴……」');
     }
   } else if (arg0 === 1) {
-    // :1828-1844 魔族男人
+    // 魔族男人
     if (rand_n(8) === 0) {
-      era.print('「尻穴有感觉的变态！」'); // :1830
+      era.print('「尻穴有感觉的变态！」');
     } else if (rand_n(7) === 0) {
-      era.print('「这尻穴能用几次？再来一次吧！」'); // :1832
+      era.print('「这尻穴能用几次？再来一次吧！」');
     } else if (rand_n(6) === 0) {
-      era.print('「收缩得真厉害啊……」'); // :1834
+      era.print('「收缩得真厉害啊……」');
     } else if (rand_n(5) === 0) {
-      era.print('「这个人，肛门被调教过了……」'); // :1836
+      era.print('「这个人，肛门被调教过了……」');
     } else if (rand_n(4) === 0) {
-      era.print('「菊花一开一合在引诱着我……」'); // :1838
+      era.print('「菊花一开一合在引诱着我……」');
     } else if (rand_n(3) === 0) {
-      era.print('「这个变态尻穴奴隶！」'); // :1840
+      era.print('「这个变态尻穴奴隶！」');
     } else if (rand_n(2) === 0) {
-      era.print('「用尻穴挣钱，感觉舒服吗？」'); // :1842
+      era.print('「用尻穴挣钱，感觉舒服吗？」');
     } else {
-      era.print('「肛门的感觉真好，你真有天赋！」'); // :1844
+      era.print('「肛门的感觉真好，你真有天赋！」');
     }
   } else if (arg0 === 2) {
-    // :1847-1870 魔族少年（TALENT:122 性别分档）
+    // 魔族少年（TALENT:122 性别分档）
     if (rand_n(8) === 0) {
       if (era.get(`talent:${era_flag.target}:122`) || 0) {
-        era.print('「哥哥的屁股，真棒」'); // :1850
+        era.print('「哥哥的屁股，真棒」');
       } else {
-        era.print('「姐姐的屁股，真棒」'); // :1852
+        era.print('「姐姐的屁股，真棒」');
       }
     } else if (rand_n(7) === 0) {
-      era.print('「哎？是用后面……？」'); // :1855
+      era.print('「哎？是用后面……？」');
     } else if (rand_n(6) === 0) {
-      era.print('「肛门好舒服啊」'); // :1857
+      era.print('「肛门好舒服啊」');
     } else if (rand_n(5) === 0) {
-      era.print('「没钱了，屁股……」'); // :1859
+      era.print('「没钱了，屁股……」');
     } else if (rand_n(4) === 0) {
-      era.print('「好厉害……完全被尻穴吸住了……」'); // :1861
+      era.print('「好厉害……完全被尻穴吸住了……」');
     } else if (rand_n(3) === 0) {
-      era.print('「尻穴……要出来了！」'); // :1863
+      era.print('「尻穴……要出来了！」');
     } else if (rand_n(2) === 0) {
-      era.print('「这么紧凑的，也只有菊花能做到了吧。」'); // :1865
+      era.print('「这么紧凑的，也只有菊花能做到了吧。」');
     } else {
       if (era.get(`talent:${era_flag.target}:122`) || 0) {
-        era.print('「大哥哥的肛门，非常地舒服啊……」'); // :1868
+        era.print('「大哥哥的肛门，非常地舒服啊……」');
       } else {
-        era.print('「大姐姐的肛门，非常地舒服啊……」'); // :1870
+        era.print('「大姐姐的肛门，非常地舒服啊……」');
       }
     }
   } else if (arg0 === 3) {
-    // :1873-1914 魔族暴发户（两组 RAND 链）
+    // 魔族暴发户（两组 RAND 链）
     if (rand_n(4) === 0) {
-      era.print('「我知道……想要钱是吧？」'); // :1876
+      era.print('「我知道……想要钱是吧？」');
     } else if (rand_n(3) === 0) {
-      era.print('「我拿着钱哦！你想要的话……」'); // :1878
+      era.print('「我拿着钱哦！你想要的话……」');
     } else if (rand_n(2) === 0) {
-      era.print('「还没满足吧，这淫乱的娼妓！」'); // :1880
+      era.print('「还没满足吧，这淫乱的娼妓！」');
     } else {
-      era.print('「有钱就怎么都行？」'); // :1882
+      era.print('「有钱就怎么都行？」');
     }
     if (rand_n(15) === 0) {
-      era.print('「屁股也要舔，一直舔到肛门」'); // :1886
+      era.print('「屁股也要舔，一直舔到肛门」');
     } else if (rand_n(14) === 0) {
-      era.print('「腰动起来！多扭几下。」'); // :1888
+      era.print('「腰动起来！多扭几下。」');
     } else if (rand_n(13) === 0) {
-      era.print('「跪下来说你想要钱！」'); // :1890
+      era.print('「跪下来说你想要钱！」');
     } else if (rand_n(12) === 0) {
-      era.print('「说：请给我这母猪赏点钱」'); // :1892
+      era.print('「说：请给我这母猪赏点钱」');
     } else if (rand_n(11) === 0) {
-      era.print('「为了钱，什么话都能说出来的婊子」'); // :1894
+      era.print('「为了钱，什么话都能说出来的婊子」');
     } else if (rand_n(10) === 0) {
-      era.print('「阴垢也漂亮地清洁了呢」'); // :1896
+      era.print('「阴垢也漂亮地清洁了呢」');
     } else if (rand_n(9) === 0) {
-      era.print('「跪下来说请给我阴茎」'); // :1898
+      era.print('「跪下来说请给我阴茎」');
     } else if (rand_n(8) === 0) {
-      era.print('「跪下来像狗一样地摇屁股」'); // :1900
+      era.print('「跪下来像狗一样地摇屁股」');
     } else if (rand_n(7) === 0) {
-      era.print('「在这里像狗一样地尿尿」'); // :1902
+      era.print('「在这里像狗一样地尿尿」');
     } else if (rand_n(6) === 0) {
-      era.print('「鸡鸡和钱，愿意为了哪个被赏耳光？」'); // :1904
+      era.print('「鸡鸡和钱，愿意为了哪个被赏耳光？」');
     } else if (rand_n(5) === 0) {
-      era.print('「说自己是最喜欢鸡鸡的淫乱尻穴奴隶！」'); // :1906
+      era.print('「说自己是最喜欢鸡鸡的淫乱尻穴奴隶！」');
     } else if (rand_n(4) === 0) {
-      era.print('「在这里用后庭自慰！」'); // :1908
+      era.print('「在这里用后庭自慰！」');
     } else if (rand_n(3) === 0) {
-      era.print('「说自己是为了钱而卖菊的贱婊子」'); // :1910
+      era.print('「说自己是为了钱而卖菊的贱婊子」');
     } else if (rand_n(2) === 0) {
-      era.print('「跪下来说我想要鸡鸡」'); // :1912
+      era.print('「跪下来说我想要鸡鸡」');
     } else {
-      era.print('「再来点媚笑看看，要更淫邪的」'); // :1914
+      era.print('「再来点媚笑看看，要更淫邪的」');
     }
   } else {
-    // :1917-1997 狗头人商人（按 TALENT 性格分档）
+    // 狗头人商人（按 TALENT 性格分档）
     const t = (i) => era.get(`talent:${i}`) || 0;
     if (t(160)) {
       if (rand_n(4) === 0) {
-        era.print('「喜欢用肛门表达爱意？」'); // :1922
+        era.print('「喜欢用肛门表达爱意？」');
       } else if (rand_n(3) === 0) {
-        era.print('「把整个肛塞都吞入了」'); // :1924
+        era.print('「把整个肛塞都吞入了」');
       } else if (rand_n(2) === 0) {
-        era.print('「什么都可以放进肛门去是吧？」'); // :1926
+        era.print('「什么都可以放进肛门去是吧？」');
       } else {
-        era.print('「用这种地方表达爱意吗？」'); // :1928
+        era.print('「用这种地方表达爱意吗？」');
       }
     } else if (t(161)) {
       if (rand_n(4) === 0) {
-        era.print('「肛塞对你来说太弱了吧。」'); // :1933
+        era.print('「肛塞对你来说太弱了吧。」');
       } else if (rand_n(3) === 0) {
-        era.print('「看！又放进一个了哦！」'); // :1935
+        era.print('「看！又放进一个了哦！」');
       } else if (rand_n(2) === 0) {
-        era.print('「越是看起来强悍的人，肛门越弱。原来是真的啊！」'); // :1937
+        era.print('「越是看起来强悍的人，肛门越弱。原来是真的啊！」');
       } else {
-        era.print('「像要把手指吸进去一样！」'); // :1939
+        era.print('「像要把手指吸进去一样！」');
       }
     } else if (t(162)) {
       if (rand_n(4) === 0) {
-        era.print('「肛门里放入振动宝石……再用力拔出来」'); // :1944
+        era.print('「肛门里放入振动宝石……再用力拔出来」');
       } else if (rand_n(3) === 0) {
-        era.print('「真是口嫌肛正直呢！」'); // :1946
+        era.print('「真是口嫌肛正直呢！」');
       } else if (rand_n(2) === 0) {
-        era.print('「菊穴，真舒畅……」'); // :1948
+        era.print('「菊穴，真舒畅……」');
       } else {
-        era.print('「把屁股再抬高一点……全部都看见了哦！」'); // :1950
+        era.print('「把屁股再抬高一点……全部都看见了哦！」');
       }
     } else if (t(163)) {
       if (rand_n(4) === 0) {
-        era.print('「哪怕是一幅高贵的姿态，肮脏的地方也还是脏啊」'); // :1955
+        era.print('「哪怕是一幅高贵的姿态，肮脏的地方也还是脏啊」');
       } else if (rand_n(3) === 0) {
-        era.print('「被爆菊感到羞耻了么……记住这份屈辱吧！」'); // :1957
+        era.print('「被爆菊感到羞耻了么……记住这份屈辱吧！」');
       } else if (rand_n(2) === 0) {
-        era.print('「肛门张开了～」'); // :1959
+        era.print('「肛门张开了～」');
       } else {
-        era.print('「振动杖都吞入了……真是了不起的菊穴啊」'); // :1961
+        era.print('「振动杖都吞入了……真是了不起的菊穴啊」');
       }
     } else if (t(164)) {
       if (rand_n(4) === 0) {
-        era.print('「卖菊啊，不介意么？」'); // :1966
+        era.print('「卖菊啊，不介意么？」');
       } else if (rand_n(3) === 0) {
-        era.print('「菊穴真的这么好么……？你看」'); // :1968
+        era.print('「菊穴真的这么好么……？你看」');
       } else if (rand_n(2) === 0) {
-        era.print('「看来肛门很喜欢振动宝石嘛」'); // :1970
+        era.print('「看来肛门很喜欢振动宝石嘛」');
       } else {
-        era.print('「哈哈，肛门变得黏黏糊糊的」'); // :1972
+        era.print('「哈哈，肛门变得黏黏糊糊的」');
       }
     } else if (t(166)) {
       if (rand_n(4) === 0) {
-        era.print('「肮脏的女人肛门也脏！」'); // :1977
+        era.print('「肮脏的女人肛门也脏！」');
       } else if (rand_n(3) === 0) {
-        era.print('「勇者大人，菊花舒服吗？」'); // :1979
+        era.print('「勇者大人，菊花舒服吗？」');
       } else if (rand_n(2) === 0) {
-        era.print('「屁股翘起来，把后庭扒开！」'); // :1981
+        era.print('「屁股翘起来，把后庭扒开！」');
       } else {
-        era.print('「尻穴还挺老实的」'); // :1983
+        era.print('「尻穴还挺老实的」');
       }
     } else {
       if (rand_n(4) === 0) {
-        era.print('「这个卖菊的娼妓！」'); // :1987
+        era.print('「这个卖菊的娼妓！」');
       } else if (rand_n(3) === 0) {
-        era.print('「堕落为卖菊的婊子了么？」'); // :1989
+        era.print('「堕落为卖菊的婊子了么？」');
       } else if (rand_n(2) === 0) {
-        era.print('「在干嘛啊，快把屁股露出来。」'); // :1991
+        era.print('「在干嘛啊，快把屁股露出来。」');
       } else {
-        era.print('「后庭在呃呃地喘息着……！」'); // :1993
+        era.print('「后庭在呃呃地喘息着……！」');
       }
     }
   }
-  return 0; // :1998 RETURN 0
+  return 0; // RETURN 0
 }
 
 /**
@@ -1895,168 +1883,168 @@ async function dungeon_anal_log(arg0, rand = default_rand) {
 async function dungeon_les_log(arg0, rand = default_rand) {
   const rand_n = rand;
   if (arg0 === 0) {
-    // :2014-2028 淫魔
+    // 淫魔
     if (rand_n(8) === 0) {
-      era.print('「你的精气，我不客气啦♪」'); // :2014
+      era.print('「你的精气，我不客气啦♪」');
     } else if (rand_n(7) === 0) {
-      era.print('「你看起来很可口嘛～」'); // :2016
+      era.print('「你看起来很可口嘛～」');
     } else if (rand_n(6) === 0) {
-      era.print('「胸部也要舔哦」'); // :2018
+      era.print('「胸部也要舔哦」');
     } else if (rand_n(5) === 0) {
-      era.print('「谢谢款待♪」'); // :2020
+      era.print('「谢谢款待♪」');
     } else if (rand_n(4) === 0) {
-      era.print('「拿这样的猎物来当晚餐，我真幸福呢～」'); // :2022
+      era.print('「拿这样的猎物来当晚餐，我真幸福呢～」');
     } else if (rand_n(3) === 0) {
-      era.print('「光是接吻就高潮了？」'); // :2024
+      era.print('「光是接吻就高潮了？」');
     } else if (rand_n(2) === 0) {
-      era.print('「满满的精气～吸走了哦」'); // :2026
+      era.print('「满满的精气～吸走了哦」');
     } else {
-      era.print('「我开食啦♪」'); // :2028
+      era.print('「我开食啦♪」');
     }
   } else if (arg0 === 1) {
-    // :2031-2047 魔族女人
+    // 魔族女人
     if (rand_n(8) === 0) {
-      era.print('「小奴隶，把尿接着啊」'); // :2033
+      era.print('「小奴隶，把尿接着啊」');
     } else if (rand_n(7) === 0) {
-      era.print('「你这样的，真是可爱」'); // :2035
+      era.print('「你这样的，真是可爱」');
     } else if (rand_n(6) === 0) {
-      era.print('「来，赶快开始，已经习惯了吧？」'); // :2037
+      era.print('「来，赶快开始，已经习惯了吧？」');
     } else if (rand_n(5) === 0) {
-      era.print('「可悲的母猪就是要挨鞭子！小奴隶……」'); // :2039
+      era.print('「可悲的母猪就是要挨鞭子！小奴隶……」');
     } else if (rand_n(4) === 0) {
-      era.print('「就这样一直抱着……」'); // :2041
+      era.print('「就这样一直抱着……」');
     } else if (rand_n(3) === 0) {
-      era.print('「好多爱液溢出来了哦」'); // :2043
+      era.print('「好多爱液溢出来了哦」');
     } else if (rand_n(2) === 0) {
-      era.print('「就一晚，我们来做恋人吧……」'); // :2045
+      era.print('「就一晚，我们来做恋人吧……」');
     } else {
-      era.print('「让我看看，你平常都是怎么自慰的？」'); // :2047
+      era.print('「让我看看，你平常都是怎么自慰的？」');
     }
   } else if (arg0 === 2) {
-    // :2050-2066 妖精的女乞丐
+    // 妖精的女乞丐
     if (rand_n(8) === 0) {
-      era.print('「钱，带来了……」'); // :2052
+      era.print('「钱，带来了……」');
     } else if (rand_n(7) === 0) {
-      era.print('「软软的……」'); // :2054
+      era.print('「软软的……」');
     } else if (rand_n(6) === 0) {
-      era.print('「弄坏我，什么都不用考虑……」'); // :2056
+      era.print('「弄坏我，什么都不用考虑……」');
     } else if (rand_n(5) === 0) {
-      era.print('「果然不是抱着女人，就做不来啊！」'); // :2058
+      era.print('「果然不是抱着女人，就做不来啊！」');
     } else if (rand_n(4) === 0) {
-      era.print('「偶尔奢侈一下，不行吗？」'); // :2060
+      era.print('「偶尔奢侈一下，不行吗？」');
     } else if (rand_n(3) === 0) {
-      era.print('「卖尻穴来挣钱，然后又可以买女人回来……」'); // :2062
+      era.print('「卖尻穴来挣钱，然后又可以买女人回来……」');
     } else if (rand_n(2) === 0) {
-      era.print('「想把你买下来，然后租出去给别人喝精液」'); // :2064
+      era.print('「想把你买下来，然后租出去给别人喝精液」');
     } else {
-      era.print('「这么脏的我，被你的爱液洗干净了……」'); // :2066
+      era.print('「这么脏的我，被你的爱液洗干净了……」');
     }
   } else if (arg0 === 3) {
-    // :2069-2097 魔族的贵妇人（两组 RAND 链）
+    // 魔族的贵妇人（两组 RAND 链）
     if (rand_n(4) === 0) {
-      era.print('「能满足我的性欲么？」'); // :2071
+      era.print('「能满足我的性欲么？」');
     } else if (rand_n(3) === 0) {
-      era.print('「看，想要钱吧？」'); // :2073
+      era.print('「看，想要钱吧？」');
     } else if (rand_n(2) === 0) {
-      era.print('「呵呵，真是一只好色的小猫咪」'); // :2075
+      era.print('「呵呵，真是一只好色的小猫咪」');
     } else {
-      era.print('「钱有的是，你看……」'); // :2077
+      era.print('「钱有的是，你看……」');
     }
     if (rand_n(9) === 0) {
-      era.print('「那里，在用力来！」'); // :2081
+      era.print('「那里，在用力来！」');
     } else if (rand_n(8) === 0) {
-      era.print('「啊，再多舔几下」'); // :2083
+      era.print('「啊，再多舔几下」');
     } else if (rand_n(7) === 0) {
-      era.print('「喂，屁股也要舔……」'); // :2085
+      era.print('「喂，屁股也要舔……」');
     } else if (rand_n(6) === 0) {
-      era.print('「再来接吻吧」'); // :2087
+      era.print('「再来接吻吧」');
     } else if (rand_n(5) === 0) {
-      era.print('「我的鞭子，专治母猪……」'); // :2089
+      era.print('「我的鞭子，专治母猪……」');
     } else if (rand_n(4) === 0) {
-      era.print('「喂，自慰给我看」'); // :2091
+      era.print('「喂，自慰给我看」');
     } else if (rand_n(3) === 0) {
-      era.print('「要从阴蒂舔到菊花啊」'); // :2093
+      era.print('「要从阴蒂舔到菊花啊」');
     } else if (rand_n(2) === 0) {
-      era.print('「爱抚一下我的那里吧」'); // :2095
+      era.print('「爱抚一下我的那里吧」');
     } else {
-      era.print('「来磨一下吧？打开你的腿……」'); // :2097
+      era.print('「来磨一下吧？打开你的腿……」');
     }
   } else {
-    // :2100-2179 魔族的女祭司（按 TALENT 性格分档）
+    // 魔族的女祭司（按 TALENT 性格分档）
     const t = (i) => era.get(`talent:${i}`) || 0;
     if (t(160)) {
       if (rand_n(4) === 0) {
-        era.print('「一起相爱吧」'); // :2105
+        era.print('「一起相爱吧」');
       } else if (rand_n(3) === 0) {
-        era.print('「来接吻吧，奴隶」'); // :2107
+        era.print('「来接吻吧，奴隶」');
       } else if (rand_n(2) === 0) {
-        era.print('「想这样一直抱着……」'); // :2109
+        era.print('「想这样一直抱着……」');
       } else {
-        era.print('「快乐是我们的教义」'); // :2111
+        era.print('「快乐是我们的教义」');
       }
     } else if (t(161)) {
       if (rand_n(4) === 0) {
-        era.print('「再来！再来！越粗暴越好！」'); // :2116
+        era.print('「再来！再来！越粗暴越好！」');
       } else if (rand_n(3) === 0) {
-        era.print('「啊，乳头……再用力地捏……」'); // :2118
+        era.print('「啊，乳头……再用力地捏……」');
       } else if (rand_n(2) === 0) {
-        era.print('「再打我的屁股……打得通红也无妨」'); // :2120
+        era.print('「再打我的屁股……打得通红也无妨」');
       } else {
-        era.print('「堕落是我们的教义」'); // :2122
+        era.print('「堕落是我们的教义」');
       }
     } else if (t(162)) {
       if (rand_n(4) === 0) {
-        era.print('「更认真地舔吧……」'); // :2127
+        era.print('「更认真地舔吧……」');
       } else if (rand_n(3) === 0) {
-        era.print('「要好好舔，一直舔到屁股啊」'); // :2129
+        era.print('「要好好舔，一直舔到屁股啊」');
       } else if (rand_n(2) === 0) {
-        era.print('「啊！表情不错，再来点更好的声音吧……」'); // :2131
+        era.print('「啊！表情不错，再来点更好的声音吧……」');
       } else {
-        era.print('「献媚是我们的教义」'); // :2133
+        era.print('「献媚是我们的教义」');
       }
     } else if (t(163)) {
       if (rand_n(4) === 0) {
-        era.print('「结束了之后一起去喝茶吧」'); // :2138
+        era.print('「结束了之后一起去喝茶吧」');
       } else if (rand_n(3) === 0) {
-        era.print('「就在这床睡吧」'); // :2140
+        era.print('「就在这床睡吧」');
       } else if (rand_n(2) === 0) {
-        era.print('「啊，请把尿喝光……」'); // :2142
+        era.print('「啊，请把尿喝光……」');
       } else {
-        era.print('「淫荡是我们的教义」'); // :2144
+        era.print('「淫荡是我们的教义」');
       }
     } else if (t(164)) {
       if (rand_n(4) === 0) {
-        era.print('「若无其事的神色，真漂亮」'); // :2149
+        era.print('「若无其事的神色，真漂亮」');
       } else if (rand_n(3) === 0) {
-        era.print('「比起挥剑，你还是卖淫比较有才能呢」'); // :2151
+        era.print('「比起挥剑，你还是卖淫比较有才能呢」');
       } else if (rand_n(2) === 0) {
-        era.print('「啊～腋下～是弱点啦～」'); // :2153
+        era.print('「啊～腋下～是弱点啦～」');
       } else {
-        era.print('「暴力是我们的教义」'); // :2155
+        era.print('「暴力是我们的教义」');
       }
     } else if (t(166)) {
       if (rand_n(4) === 0) {
-        era.print('「这次不来我们的神殿吗？」'); // :2160
+        era.print('「这次不来我们的神殿吗？」');
       } else if (rand_n(3) === 0) {
-        era.print('「皮肤真不错……」'); // :2162
+        era.print('「皮肤真不错……」');
       } else if (rand_n(2) === 0) {
-        era.print('「好屁股～」'); // :2164
+        era.print('「好屁股～」');
       } else {
-        era.print('「脱线是我们的教义」'); // :2166
+        era.print('「脱线是我们的教义」');
       }
     } else {
       if (rand_n(4) === 0) {
-        era.print('「就这样相互交缠着吧」'); // :2170
+        era.print('「就这样相互交缠着吧」');
       } else if (rand_n(3) === 0) {
-        era.print('「下次也要来我们的神殿哦」'); // :2172
+        era.print('「下次也要来我们的神殿哦」');
       } else if (rand_n(2) === 0) {
-        era.print('「呵呵～又指名你了」'); // :2174
+        era.print('「呵呵～又指名你了」');
       } else {
-        era.print('「快乐是我们的教义」'); // :2176
+        era.print('「快乐是我们的教义」');
       }
     }
   }
-  return 0; // :2181 RETURN 0
+  return 0; // RETURN 0
 }
 
 module.exports = {

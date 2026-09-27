@@ -2,10 +2,6 @@
  * @file 队伍编组（issue #172，阶段 3 H3）：迷宫勇者队伍的结成 / 加入 /
  *     离队 / 除名。
  *
- * 源: target/ERB/迷宮/DUNGEON_PARTY.ERB  @PARTY_UNITE（:5-83）、
- *       @PARTY_JOIN（:86-176）、@SEARCH_FREE（:179-223）、@PARTY_DEL
- *       （:226-297）、@PARTY_CHAR_DEL（:300-326）
- *
  * 队伍数据全在 CFLAG 530-533（まとめ :421-425「パーティー関連」）：
  * 530 行動終了フラグ（行动完了，同伴以此追随队长）、531 仲間A、532 仲間B、
  * 533 リーダー記憶（队长记忆）——属主 dungeon，本文件域内裸寻址即合法
@@ -52,13 +48,13 @@ function charanum() {
  * @returns {void} 原作 RETURN 0
  */
 function party_unite() {
-  // :15-17 まず行動終了フラグOFF（全角色）
+  // まず行動終了フラグOFF（全角色）
   for (const charid of era.getAddedCharacters()) {
     // CFLAG:530 = 0（行动完了复位）
     era.set(`cflag:${charid}:530`, 0);
   }
 
-  // :23-79 次に、リーダー以外のキャラを行動終了にしていく——仲間A/B 两段
+  // 次に、リーダー以外のキャラを行動終了にしていく——仲間A/B 两段
   // 同构（:25-50 / :53-78），slot 即 531/532
   for (const charid of era.getAddedCharacters()) {
     for (const slot of [531, 532]) {
@@ -86,7 +82,7 @@ function party_unite() {
       }
     }
   }
-  // :81 行動終了していないキャラはリーダーとなり、移動等を受け持つ
+  // 行動終了していないキャラはリーダーとなり、移動等を受け持つ
 }
 
 /**
@@ -189,7 +185,7 @@ async function try_join_slot(charid, slot, floor) {
  * @returns {Promise<void>} 原作 RETURN 0
  */
 async function party_join() {
-  // :98 行動完了初期化
+  // 行動完了初期化
   party_unite();
 
   for (const charid of era.getAddedCharacters()) {
@@ -282,9 +278,9 @@ function party_del(cid) {
   let marriage = era.get(`cflag:${cid}:601`) || 0;
   marriage %= 10;
   if (marriage === 9) {
-    const partner = search_family(cid, 'MARRIAGE'); // :291
+    const partner = search_family(cid, 'MARRIAGE');
     if (partner > 0) {
-      chara(partner).chara.结婚对象 = 0; // :293 CFLAG:RESULT:601 = 0
+      chara(partner).chara.结婚对象 = 0; // CFLAG:RESULT:601 = 0
     }
   }
 }
@@ -302,7 +298,7 @@ function party_del(cid) {
  */
 function party_char_del(cid) {
   party_del(cid);
-  // :312-324 注册号重排段：#21 扁平化下无对应语义，不移植（文件头）
+  // 注册号重排段：#21 扁平化下无对应语义，不移植（文件头）
 }
 
 module.exports = {

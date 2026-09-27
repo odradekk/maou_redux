@@ -580,16 +580,16 @@ test('SOURCE_LESBIAN_SEX_CHECK：TARGET 百合气质/中毒 + 调教者同名两
     }
     f.store.set('source:31:7', 0);
   });
-  // :8 100*0.4(A tier2)*0.6(B tier1)=24 ；:14 同 :8
+  // 100*0.4(A tier2)*0.6(B tier1)=24 ；:14 同 :8
   assert.equal(fixture.store.get('source:31:8'), 24);
   assert.equal(fixture.store.get('source:31:14'), 24);
-  // :13 100*0.6(A tier2，B 不碰 13)=60
+  // 100*0.6(A tier2，B 不碰 13)=60
   assert.equal(fixture.store.get('source:31:13'), 60);
-  // :7 0+200(A tier2)=200（B/C/D 均不加 :7）
+  // 0+200(A tier2)=200（B/C/D 均不加 :7）
   assert.equal(fixture.store.get('source:31:7'), 200);
-  // :5 100*1.2(A)*1.2(B)=144 → *1.3(C tier3)=187 → *2.5(D tier3)=467
+  // 100*1.2(A)*1.2(B)=144 → *1.3(C tier3)=187 → *2.5(D tier3)=467
   assert.equal(fixture.store.get('source:31:5'), 467);
-  // :3/:4 不经 A/B（两者都不碰 3/4），只经 C（tier3：3×1.4/4×1.3）、
+  // 不经 A/B（两者都不碰 3/4），只经 C（tier3：3×1.4/4×1.3）、
   // D（tier3：3/4 同 ×2.5）
   assert.equal(fixture.store.get('source:31:3'), 350);
   assert.equal(fixture.store.get('source:31:4'), 325);
@@ -2090,7 +2090,7 @@ test('跨域写走门面：22 条条目表寻址串的字面量 era.set/add 清�
     'chara(cid).chara.好感度 += r;',
     'game.train.屈服刻印结算 = 1;',
     'game.train.主人经验 = 0;',
-    'incest(cid, player); // :284-285 CALL INCEST',
+    'incest(cid, player); // CALL INCEST',
     'game.system.反抗刻印回避 = 0;',
     'game.system.上次调教者是助手 =',
   ]) {

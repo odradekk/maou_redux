@@ -79,7 +79,7 @@ const ALL_CIDS = [MASTER, SLAVE, ASSI];
  *   hit        该靶场下真正收到写入的受检者；'each' = 全角色组
  */
 const PAIRS = [
-  // :85-93 / :305-314 主人 → 奴隶
+  // 主人 → 奴隶
   {
     name: 'm_to_t',
     kind: 1,
@@ -90,7 +90,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: SLAVE,
   },
-  // :95-103 / :317-326 主人 → 助手
+  // 主人 → 助手
   {
     name: 'm_to_a',
     kind: 1,
@@ -101,7 +101,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: ASSI },
     hit: ASSI,
   },
-  // :105-112 / :329-338 奴隶 → 主人（守卫是 MASTER == 0 的恒真式）
+  // 奴隶 → 主人（守卫是 MASTER == 0 的恒真式）
   {
     name: 't_to_m',
     kind: 3,
@@ -113,7 +113,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: MASTER,
   },
-  // :114-122 / :341-351 助手 → 奴隶（两侧都要求助手在场）
+  // 助手 → 奴隶（两侧都要求助手在场）
   {
     name: 'a_to_t',
     kind: 2,
@@ -125,7 +125,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: ASSI },
     hit: SLAVE,
   },
-  // :124-132 / :354-364 奴隶 → 助手（IN_VAGINA 只查助手；CONCEPTION 另查目标）
+  // 奴隶 → 助手（IN_VAGINA 只查助手；CONCEPTION 另查目标）
   {
     name: 't_to_a',
     kind: 3,
@@ -137,7 +137,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: ASSI },
     hit: ASSI,
   },
-  // :134-141 / :366-376 野狗 → 奴隶
+  // 野狗 → 奴隶
   {
     name: 'd_to_t',
     kind: 5,
@@ -149,7 +149,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: SLAVE,
   },
-  // :143-150 / :389-399 怪物・触手 → 奴隶
+  // 怪物・触手 → 奴隶
   {
     name: 'syoku_to_t',
     kind: 6,
@@ -160,7 +160,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: SLAVE,
   },
-  // :152-159 / :402-411 怪物・触手 → 主人
+  // 怪物・触手 → 主人
   {
     name: 'syoku_to_m',
     kind: 6,
@@ -171,7 +171,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: MASTER,
   },
-  // :161-168 / :413-422 狂王 → 主人
+  // 狂王 → 主人
   {
     name: 'kyouou_to_m',
     kind: 7,
@@ -182,7 +182,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: MASTER,
   },
-  // :170-177 / :424-433 狂王 → 奴隶（REPEAT CHARANUM）
+  // 狂王 → 奴隶（REPEAT CHARANUM）
   {
     name: 'kyouou_to_t',
     kind: 7,
@@ -193,7 +193,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: 'each',
   },
-  // :179-186 / :435-444 兽奸秀 → 奴隶（REPEAT CHARANUM，相手码同野狗的 5）
+  // 兽奸秀 → 奴隶（REPEAT CHARANUM，相手码同野狗的 5）
   {
     name: 'ntrd_to_t',
     kind: 5,
@@ -205,7 +205,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: -1 },
     hit: 'each',
   },
-  // :188-194 / :379-387 卖春 → 奴隶（REPEAT CHARANUM）
+  // 卖春 → 奴隶（REPEAT CHARANUM）
   {
     name: 'extra',
     kind: 4,
@@ -562,7 +562,7 @@ test('IN_VAGINA_ALL：九连调顺序与逐组痕迹（写入序列逐项钉死�
   const { fixture, pregnancy } = setup_world({
     target: SLAVE,
     assi: ASSI,
-    dog: true, // :53 的 D_TO_T 是 kind 5，先过兽耳守卫（:224）
+    dog: true, // 的 D_TO_T 是 kind 5，先过兽耳守卫（:224）
   });
   // 九组各自的池都备货，让每一组都留下可辨认的痕迹
   for (const kind of [1, 2, 3, 4, 5, 6, 7]) {
@@ -578,15 +578,15 @@ test('IN_VAGINA_ALL：九连调顺序与逐组痕迹（写入序列逐项钉死�
       .filter((w) => w.name.endsWith(':102'))
       .map((w) => [w.name, w.value]),
     [
-      [`cflag:${SLAVE}:102`, 1], // :48 IN_VAGINA_M_TO_T
-      [`cflag:${ASSI}:102`, 1], // :49 IN_VAGINA_M_TO_A
-      [`cflag:${MASTER}:102`, 3], // :50 IN_VAGINA_T_TO_M
-      [`cflag:${SLAVE}:102`, 2], // :51 IN_VAGINA_A_TO_T
-      [`cflag:${ASSI}:102`, 3], // :52 IN_VAGINA_T_TO_A
-      [`cflag:${SLAVE}:102`, 5], // :53 IN_VAGINA_D_TO_T
-      [`cflag:${SLAVE}:102`, 6], // :54 IN_VAGINA_SYOKU_TO_T
-      [`cflag:${MASTER}:102`, 6], // :55 IN_VAGINA_SYOKU_TO_M
-      [`cflag:${MASTER}:102`, 7], // :56 IN_VAGINA_KYOUOU_TO_M
+      [`cflag:${SLAVE}:102`, 1], // IN_VAGINA_M_TO_T
+      [`cflag:${ASSI}:102`, 1], // IN_VAGINA_M_TO_A
+      [`cflag:${MASTER}:102`, 3], // IN_VAGINA_T_TO_M
+      [`cflag:${SLAVE}:102`, 2], // IN_VAGINA_A_TO_T
+      [`cflag:${ASSI}:102`, 3], // IN_VAGINA_T_TO_A
+      [`cflag:${SLAVE}:102`, 5], // IN_VAGINA_D_TO_T
+      [`cflag:${SLAVE}:102`, 6], // IN_VAGINA_SYOKU_TO_T
+      [`cflag:${MASTER}:102`, 6], // IN_VAGINA_SYOKU_TO_M
+      [`cflag:${MASTER}:102`, 7], // IN_VAGINA_KYOUOU_TO_M
     ],
     '九连调的调用顺序与各自的妊娠相手码',
   );
@@ -596,9 +596,9 @@ test('CONCEPTION_CHECK_ALL：九连调按受检者各自落定，写入序列逐
   const { fixture, pregnancy } = setup_world({ target: SLAVE, assi: ASSI });
   fixture.store.set('flag:10000', 3); // DAY:0
   // 三个受检者各挂一个不同的来源码，让九连调里的三组各自点火
-  fixture.store.set(`cflag:${SLAVE}:102`, 1); // :67 CONCEPTION_CHECK_M_TO_T
-  fixture.store.set(`cflag:${ASSI}:102`, 3); // :71 CONCEPTION_CHECK_T_TO_A
-  fixture.store.set(`cflag:${MASTER}:102`, 7); // :75 CONCEPTION_CHECK_KYOUOU_TO_M
+  fixture.store.set(`cflag:${SLAVE}:102`, 1); // CONCEPTION_CHECK_M_TO_T
+  fixture.store.set(`cflag:${ASSI}:102`, 3); // CONCEPTION_CHECK_T_TO_A
+  fixture.store.set(`cflag:${MASTER}:102`, 7); // CONCEPTION_CHECK_KYOUOU_TO_M
 
   assert.equal(pregnancy.conception_check_all(seq([4, 4, 4])), 0);
   assert.deepEqual(
@@ -606,9 +606,9 @@ test('CONCEPTION_CHECK_ALL：九连调按受检者各自落定，写入序列逐
       .filter((w) => w.name.endsWith(':110'))
       .map((w) => [w.name, w.value]),
     [
-      [`cflag:${SLAVE}:110`, 17], // :67 M_TO_T（3 + 10 + 4）
-      [`cflag:${ASSI}:110`, 17], // :71 T_TO_A
-      [`cflag:${MASTER}:110`, 17], // :75 KYOUOU_TO_M
+      [`cflag:${SLAVE}:110`, 17], // M_TO_T（3 + 10 + 4）
+      [`cflag:${ASSI}:110`, 17], // T_TO_A
+      [`cflag:${MASTER}:110`, 17], // KYOUOU_TO_M
     ],
     '三处落定的顺序与预产日',
   );
@@ -673,12 +673,12 @@ test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九�
       .filter((w) => w.name.endsWith(':102'))
       .map((w) => [w.name, w.value]),
     [
-      [`cflag:${SLAVE}:102`, 1], // :48 M_TO_T
-      [`cflag:${MASTER}:102`, 3], // :50 T_TO_M
-      [`cflag:${SLAVE}:102`, 5], // :53 D_TO_T
-      [`cflag:${SLAVE}:102`, 6], // :54 SYOKU_TO_T
-      [`cflag:${MASTER}:102`, 6], // :55 SYOKU_TO_M
-      [`cflag:${MASTER}:102`, 7], // :56 KYOUOU_TO_M
+      [`cflag:${SLAVE}:102`, 1], // M_TO_T
+      [`cflag:${MASTER}:102`, 3], // T_TO_M
+      [`cflag:${SLAVE}:102`, 5], // D_TO_T
+      [`cflag:${SLAVE}:102`, 6], // SYOKU_TO_T
+      [`cflag:${MASTER}:102`, 6], // SYOKU_TO_M
+      [`cflag:${MASTER}:102`, 7], // KYOUOU_TO_M
     ],
     'ASSI = -1 放行：非助手组照跑，:49/:51/:52 三组被各自的 `ASSI >= 1` 拦下',
   );
@@ -718,15 +718,15 @@ test('CHECK_ABLE_TO_CHILD_CARE：四档返回值各走一次，且档序照原�
   const { fixture, pregnancy } = setup_care();
   const able = pregnancy.check_able_to_child_care;
 
-  // :485-487 状态位既不是 2 也不是 10 → 3（该角色不在育儿室）
+  // 状态位既不是 2 也不是 10 → 3（该角色不在育儿室）
   assert.equal(able(SLAVE), 3);
-  // :482-484 侵攻中的勇者 → 2
+  // 侵攻中的勇者 → 2
   fixture.store.set(`cflag:${SLAVE}:1`, 2);
   assert.equal(able(SLAVE), 2);
-  // :489 育儿室（CFLAG:1 == 10）→ 0
+  // 育儿室（CFLAG:1 == 10）→ 0
   fixture.store.set(`cflag:${ASSI}:1`, 10);
   assert.equal(able(ASSI), 0);
-  // :479-481 ARG == 0 是第一档：状态位写着 2 也仍然回 1（档序写反必红）
+  // ARG == 0 是第一档：状态位写着 2 也仍然回 1（档序写反必红）
   fixture.store.set('cflag:0:1', 2);
   assert.equal(able(0), 1);
   fixture.store.set('cflag:0:1', 10);
@@ -906,7 +906,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
   };
   const none = () => {};
 
-  // :253-271 六档：系数 6/5/4/3/2/1（池 1/5/10/15/20/25），HAIRANZAI = 3；
+  // 六档：系数 6/5/4/3/2/1（池 1/5/10/15/20/25），HAIRANZAI = 3；
   // 第三列是成功阈值（:256 的 `rand(upper) <= success`）
   const LADDER = [
     [1, 18, 2],
@@ -949,7 +949,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
     );
   }
 
-  // :244 排卵剤：HAIRANZAI = 3 - CFLAG:109 * 2 —— 吃药的档位才算得出差别
+  // 排卵剤：HAIRANZAI = 3 - CFLAG:109 * 2 —— 吃药的档位才算得出差别
   assert.equal(
     probe((f) => f.store.set(`cflag:${SLAVE}:109`, 1), 25),
     1,
@@ -957,14 +957,14 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
   );
   assert.equal(probe(none, 25), 3, '无排卵诱发剂 → HAIRANZAI = 3');
 
-  // :254 娇小（TALENT:100）每级 +2 —— 池 25 的系数是 1，加一级 → (1+2)*3
+  // 娇小（TALENT:100）每级 +2 —— 池 25 的系数是 1，加一级 → (1+2)*3
   assert.equal(
     probe((f) => f.store.set(`talent:${SLAVE}:100`, 1), 25),
     9,
     '娇小 1 级 → 系数 +2',
   );
 
-  // :247-251 人狼（TALENT:314 == 2）在 DAY:2 14-16 日：无排卵剂 → 2，有 → 1；
+  // 人狼（TALENT:314 == 2）在 DAY:2 14-16 日：无排卵剂 → 2，有 → 1；
   // 窗口两侧的日子（13 / 17）走常规 3
   const wolf = (f, date) => {
     f.store.set(`talent:${SLAVE}:314`, 2);

@@ -2,13 +2,6 @@
  * @file 2D 地下城模式的地质数据与实验室菜单（issue #181，阶段 3 H12）：
  * LABO.ERB 十函数。
  *
- * 源: target/ERB/迷宮/LABO.ERB  @LABO（:3-40，实验室菜单）、@DA_CLEAR
- *       （:42-48，地图初始化）、@COLOR_OUTPUT_TEST（:50-55，调色输出）、
- *       @C_OUT（:57-93，彩色文字输出）、@GEO_OUTPUT（:96-107，地图输出）、
- *       @GEO_TEST（:109-240，地质地图生成）、@GEO_CALC_INTERP（:243-296，
- *       块内插值）、@LINEAR_INTERP_COS_X（:299-330）、@LINEAR_INTERP_COS_Y
- *       （:333-364）、@U_FACE（:366，空函数——源文件末行即函数头，无函数体）
- *
  * 原作局部变量语义（GEO_TEST :110-128 注释照抄）：
  *   LOCAL:3 = ポイント数（正方形 1 边的顶点数）  LOCAL:4 = 世界のマス数
  *   LOCAL:5/6 = 作業中の x / y   LOCAL:10-15 = 临时/四角 z
@@ -164,7 +157,7 @@ async function color_output_test() {
     row.push(...c_out(count));
   }
   era.print(row); // 8 格拼一行（文件头：一行归并为一次 print）
-  // :54 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换
+  // 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换
   // 行），**不是空行**——ere 的 print 一次调用即一行（#597）
   return 0;
 }
@@ -180,7 +173,7 @@ function geo_output() {
     for (let x = 0; x < 32; x += 1) {
       row.push(...c_out(idiv(da_get(y, x), 32))); // LOCAL:2 = DA:(y):(x)/32
     }
-    // :106 的 PRINTL 只结束这一行的 32 个 C_OUT `PRINT` 串（PRINT 不换
+    // 的 PRINTL 只结束这一行的 32 个 C_OUT `PRINT` 串（PRINT 不换
     // 行），**不是空行**——ere 的 print 一次调用即一行，别再补（#597）
     era.print(row);
   }
@@ -198,13 +191,13 @@ function geo_output() {
 function geo_test(rand) {
   const rand_n = rand ?? default_rand;
 
-  // :133 LOCAL:3 = 5（ポイント数：正方形の1辺の頂点数）
+  // LOCAL:3 = 5（ポイント数：正方形の1辺の頂点数）
   const points = 5;
-  // :136 LOCAL:4 = (ポイント数 - 1) * 8（世界のマス数——中心点にダンジョンを置く）
+  // LOCAL:4 = (ポイント数 - 1) * 8（世界のマス数——中心点にダンジョンを置く）
   // eslint-disable-next-line no-unused-vars
   const world_cells = (points - 1) * 8;
 
-  // :147-158 ポイントの乱数出力——点阵 (x,y) ∈ {0,8,16,24,32}² 各掷 RAND:256
+  // ポイントの乱数出力——点阵 (x,y) ∈ {0,8,16,24,32}² 各掷 RAND:256
   for (let py = 0; py < points; py += 1) {
     const y = py * 8; // ターゲットｙ座標（LOCAL:1）
     for (let px = 0; px < points; px += 1) {
@@ -213,7 +206,7 @@ function geo_test(rand) {
     }
   }
 
-  // :165-181 補完(1) 横線——Ｘ方向の補完（行 × 列块，:175-178 内侧 7 格）
+  // 補完(1) 横線——Ｘ方向の補完（行 × 列块，:175-178 内侧 7 格）
   for (let row = 0; row < points; row += 1) {
     for (let col = 0; col < points - 1; col += 1) {
       const x0 = col * 8; // 対象ブロックの左上（LOCAL:0）
@@ -224,7 +217,7 @@ function geo_test(rand) {
     }
   }
 
-  // :185-201 補完(1) 縦線——Ｙ方向の補完（列 × 行块）
+  // 補完(1) 縦線——Ｙ方向の補完（列 × 行块）
   for (let col = 0; col < points; col += 1) {
     for (let row = 0; row < points - 1; row += 1) {
       const x0 = col * 8;
@@ -235,7 +228,7 @@ function geo_test(rand) {
     }
   }
 
-  // :207-240 補完(2) 内側——16 块 × 各 7×7 格，四角 z 的双线性（带余弦系数）
+  // 補完(2) 内側——16 块 × 各 7×7 格，四角 z 的双线性（带余弦系数）
   for (let col = 0; col < points - 1; col += 1) {
     for (let row = 0; row < points - 1; row += 1) {
       const x0 = col * 8; // ブロックの左上[x,y]=[LOCAL:0,LOCAL:1]
@@ -247,7 +240,7 @@ function geo_test(rand) {
       const z_dr = da_get(y0 + 8, x0 + 8); // 右下（LOCAL:15）
       for (let y = y0 + 1; y < y0 + 8; y += 1) {
         for (let x = x0 + 1; x < x0 + 8; x += 1) {
-          geo_calc_interp(z_ul, z_ur, z_dl, z_dr, x - x0, y - y0, x, y); // :232（写 DA[y][x]，副作用函数）
+          geo_calc_interp(z_ul, z_ur, z_dl, z_dr, x - x0, y - y0, x, y); // （写 DA[y][x]，副作用函数）
         }
       }
     }
@@ -347,33 +340,33 @@ async function labo(rand) {
   const rand_n = rand ?? default_rand;
   for (;;) {
     // $INPUT_LOOP —— 菜单重绘
-    era.print('----------'); // :6 PRINTL
-    era.print('[LABORATORY]'); // :7
-    era.printButton('文字色彩测试', 1); // :8 [001]
-    era.printButton('GEO_MAKE', 4); // :9 [004]
-    era.printButton('GEO_OUTPUT', 5); // :10 [005]
-    era.printButton('GEO清除', 6); // :11 [006]
-    era.printButton('图片测试', 7); // :12 [007]
-    era.printButton('头像测试', 8); // :13 [008]
-    era.printButton('返回', 100); // :14 [100]
-    const result = await era.input(); // :15 INPUT
+    era.print('----------'); // PRINTL
+    era.print('[LABORATORY]');
+    era.printButton('文字色彩测试', 1); // [001]
+    era.printButton('GEO_MAKE', 4); // [004]
+    era.printButton('GEO_OUTPUT', 5); // [005]
+    era.printButton('GEO清除', 6); // [006]
+    era.printButton('图片测试', 7); // [007]
+    era.printButton('头像测试', 8); // [008]
+    era.printButton('返回', 100); // [100]
+    const result = await era.input(); // INPUT
     if (result === 100) {
-      return 0; // :17-18 RETURN 0
+      return 0; // RETURN 0
     }
     if (result === 1) {
-      await color_output_test(); // :20
+      await color_output_test();
     } else if (result === 4) {
-      geo_test(rand_n); // :26
+      geo_test(rand_n);
     } else if (result === 5) {
-      geo_output(); // :28
+      geo_output();
     } else if (result === 6) {
-      da_clear(); // :30
+      da_clear();
     } else if (result === 7) {
-      era.printImage('HEART_R'); // :32 PRINT_IMG "HEART_R"（注册名照抄，res/img.csv）
-      // :33 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），
+      era.printImage('HEART_R'); // PRINT_IMG "HEART_R"（注册名照抄，res/img.csv）
+      // 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），
       // **不是空行**——ere 的 printImage 自成一行（#597）
     } else if (result === 8) {
-      await u_face(); // :35
+      await u_face();
     }
     // CASE 2/3 与 CASEELSE：GOTO INPUT_LOOP——循环回菜单
   }

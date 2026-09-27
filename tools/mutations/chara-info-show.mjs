@@ -60,8 +60,8 @@ export default [
     8701,
     'CUP_SIZE：CAL_VAR ≤ 1 的档位由 1 放宽到 2',
     BODY,
-    `  if (cal_var <= 1) return '-'; // :791-792`,
-    `  if (cal_var <= 2) return '-'; // :791-792`,
+    "  if (cal_var <= 1) return '-';",
+    "  if (cal_var <= 2) return '-';",
     'CUP_SIZE',
     ['chara-body'],
   ),
@@ -69,8 +69,8 @@ export default [
     8702,
     'CUP_SIZE：除数 25 改成 20',
     BODY,
-    `  const cal_var = int((bust10 - under_bust(cid, height10)) / 25); // :790`,
-    `  const cal_var = int((bust10 - under_bust(cid, height10)) / 20); // :790`,
+    '  const cal_var = int((bust10 - under_bust(cid, height10)) / 25);',
+    '  const cal_var = int((bust10 - under_bust(cid, height10)) / 20);',
     'CUP_SIZE',
     ['chara-body'],
   ),
@@ -91,16 +91,16 @@ export default [
     8704,
     'SHOW_INFO_TITLE：编号列宽 3 改成 4',
     SHOW,
-    'const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }]; // :333',
-    'const title = [{ content: `NO.${pad_display(String(cid), 4)} ` }]; // :333',
+    'const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }];',
+    'const title = [{ content: `NO.${pad_display(String(cid), 4)} ` }];',
     'SHOW_INFO_TITLE',
   ),
   make(
     8705,
     'SHOW_INFO_TITLE：名字列宽 12 改成 10',
     SHOW,
-    '  title.push({ content: pad_display(name, 12) }); // :336',
-    '  title.push({ content: pad_display(name, 10) }); // :336',
+    '  title.push({ content: pad_display(name, 12) });',
+    '  title.push({ content: pad_display(name, 10) });',
     'SHOW_INFO_TITLE',
   ),
   make(
@@ -135,13 +135,8 @@ export default [
     8709,
     'SHOW_INFO_TITLE：魔王之影的寿命倒计时整段删掉',
     SHOW,
-    `    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {
-      // :364 寿命倒计时（{CFLAG:820, 3} 同样右对齐宽 3）
-      age_str += \` [寿命还有\${pad_left(String(era.get(\`cflag:\${cid}:820\`) || 0), 3)} 天]\`;
-    }`,
-    `    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {
-      // :364 寿命倒计时（变异：整段删掉）
-    }`,
+    '    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {\n      // 寿命倒计时（{CFLAG:820, 3} 同样右对齐宽 3）\n      age_str += ` [寿命还有${pad_left(String(era.get(`cflag:${cid}:820`) || 0), 3)} 天]`;\n    }',
+    '    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {\n      // 寿命倒计时（变异：整段删掉）\n    }',
     'SHOW_INFO_TITLE',
   ),
   make(
@@ -156,8 +151,8 @@ export default [
     8711,
     'SHOW_BLOCK：罩杯括号的补位宽度 7 改成 8',
     SHOW,
-    '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) }); // :379/:382',
-    '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 8) }); // :379/:382',
+    '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) });',
+    '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 8) });',
     'SHOW_BLOCK',
   ),
   make(
@@ -220,8 +215,8 @@ export default [
     8719,
     'SHOW_TALENT：328 的守卫由原作笔误的 327 改成 328（「修正」了原作缺陷）',
     TALENTS,
-    '      { id: 328, guard: (t) => t(327) !== 0 }, // :606-607 原作笔误，1:1 保留',
-    '      { id: 328, guard: (t) => t(328) !== 0 }, // :606-607 原作笔误，1:1 保留',
+    '      { id: 328, guard: (t) => t(327) !== 0 }, // 原作笔误，1:1 保留',
+    '      { id: 328, guard: (t) => t(328) !== 0 }, // 原作笔误，1:1 保留',
     '原作笔误',
   ),
   make(
@@ -300,10 +295,8 @@ export default [
     8729,
     'SHOW_APPEARACE：穿环的位序对调（鼻子与嘴唇）',
     APPEAR,
-    `  { bit: 64, name: '鼻子' }, // :1310-1318
-  { bit: 32, name: '嘴唇' }, // :1319-1327`,
-    `  { bit: 32, name: '鼻子' }, // :1310-1318
-  { bit: 64, name: '嘴唇' }, // :1319-1327`,
+    "  { bit: 64, name: '鼻子' },\n  { bit: 32, name: '嘴唇' },",
+    "  { bit: 32, name: '鼻子' },\n  { bit: 64, name: '嘴唇' },",
     '位序',
   ),
   make(
@@ -378,8 +371,8 @@ export default [
     8738,
     'ColorJudgmentWorB：白/黑字的判据由 <= 128 改成 <= 100',
     MAIN,
-    '  const value = average <= 128 ? 255 : 0; // :1827-1831',
-    '  const value = average <= 100 ? 255 : 0; // :1827-1831',
+    '  const value = average <= 128 ? 255 : 0;',
+    '  const value = average <= 100 ? 255 : 0;',
     'ColorJudgmentWorB',
   ),
   make(
@@ -410,8 +403,8 @@ export default [
     8742,
     'SHOW_TALENT_CONDITION：sexskill_2 的系数由 10 改成 20',
     COND,
-    '  const sexskill_2 = 100 + 10 * sexskill_count; // :160',
-    '  const sexskill_2 = 100 + 20 * sexskill_count; // :160',
+    '  const sexskill_2 = 100 + 10 * sexskill_count;',
+    '  const sexskill_2 = 100 + 20 * sexskill_count;',
     '四档需求',
   ),
   make(
@@ -434,48 +427,48 @@ export default [
     8745,
     'STC_COLOR_TRUE：达标色由 White 改成 Gray',
     COND,
-    "  true: 'White', // :586 SETCOLORBYNAME White",
-    "  true: 'Gray', // :586 SETCOLORBYNAME White",
+    "  true: 'White', // SETCOLORBYNAME White",
+    "  true: 'Gray', // SETCOLORBYNAME White",
     '两档配色',
   ),
   make(
     8746,
     'STC_COLOR_FALSE：未达标色由 Gray 改成 White',
     COND,
-    "  false: 'Gray', // :589 SETCOLORBYNAME Gray",
-    "  false: 'White', // :589 SETCOLORBYNAME Gray",
+    "  false: 'Gray', // SETCOLORBYNAME Gray",
+    "  false: 'White', // SETCOLORBYNAME Gray",
     '两档配色',
   ),
   make(
     8747,
     'STC_COLOR_INVALID：崩坏色由 DarkRed 改成 DarkSeaGreen',
     COND,
-    "  invalid: 'DarkRed', // :600 SETCOLORBYNAME DarkRed",
-    "  invalid: 'DarkSeaGreen', // :600 SETCOLORBYNAME DarkRed",
+    "  invalid: 'DarkRed', // SETCOLORBYNAME DarkRed",
+    "  invalid: 'DarkSeaGreen', // SETCOLORBYNAME DarkRed",
     '三档配色',
   ),
   make(
     8748,
     'STC_COLOR_ACHIEVE：达成色由 102,179,255 改成 255,215,0',
     COND,
-    "  achieve: '#66b3ff', // :603 SETCOLOR 102,179,255",
-    "  achieve: '#ffd700', // :603 SETCOLOR 102,179,255",
+    "  achieve: '#66b3ff', // SETCOLOR 102,179,255",
+    "  achieve: '#ffd700', // SETCOLOR 102,179,255",
     '三档配色',
   ),
   make(
     8749,
     'STC_COLOR_RIGHT：达标色与 STC_COLOR_ALERT 的警示色对调',
     COND,
-    "  right: 'DarkSeaGreen', // :597 SETCOLORBYNAME DarkSeaGreen",
-    "  right: 'LightSalmon', // :597 SETCOLORBYNAME DarkSeaGreen",
+    "  right: 'DarkSeaGreen', // SETCOLORBYNAME DarkSeaGreen",
+    "  right: 'LightSalmon', // SETCOLORBYNAME DarkSeaGreen",
     'STC_SAYNO',
   ),
   make(
     8750,
     'SHOW_TALENT_CONDITION：sexskill_3 的系数由 50 改成 60',
     COND,
-    '  const sexskill_3 = 300 + 50 * sexskill_count; // :161',
-    '  const sexskill_3 = 300 + 60 * sexskill_count; // :161',
+    '  const sexskill_3 = 300 + 50 * sexskill_count;',
+    '  const sexskill_3 = 300 + 60 * sexskill_count;',
     'sexskill_3',
   ),
   make(
@@ -605,12 +598,8 @@ export default [
     11902,
     'SHOW_CHARA_INFO：名单轮的返回判定退回 100（打印是 999，敲 999 落进名单循环）',
     MAIN,
-    `    if (result === LIST_RETURN) {
-      return true; // :131-133 ARG = shadow; RESTART
-    }`,
-    `    if (result === 100) {
-      return true; // :131-133 ARG = shadow; RESTART
-    }`,
+    '    if (result === LIST_RETURN) {\n      return true; // ARG = shadow; RESTART\n    }',
+    '    if (result === 100) {\n      return true; // ARG = shadow; RESTART\n    }',
     '输入不合法！请输入以下值之一',
   ),
   // —— #586 的十个探针暴露的覆盖缺口（条件键两端与编号基数、勇者档、自身排除、
@@ -661,10 +650,8 @@ export default [
     11906,
     'SHOW_CHARA_INFO：名单轮的返回从 RESTART 改成直接退到首页（出口轮不再重画）',
     MAIN,
-    `      const restart = await sacrifice_flow(cid, background); // :33-214
-      if (restart) continue; // RESTART`,
-    `      const restart = await sacrifice_flow(cid, background); // :33-214
-      if (restart) return 1; // 变异：RESTART 改成直接退到首页`,
+    '      const restart = await sacrifice_flow(cid, background);\n      if (restart) continue; // RESTART',
+    '      const restart = await sacrifice_flow(cid, background);\n      if (restart) return 1; // 变异：RESTART 改成直接退到首页',
     'RESTART 后出口轮重画',
   ),
   // —— #593：同屏固定编号核对的鉴别力（不认特定写法、`A + index` 展开、登记项失效） ——

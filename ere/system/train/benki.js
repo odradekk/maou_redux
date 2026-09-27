@@ -3,10 +3,6 @@
  * @NAME_BENKI_MENU / @GET_EXP_BENKI_MENU（战斗肉便器三段）与
  * @BENKI_PLAYER_NAME（侍奉对象名）的真身（issue #217，J7）。
  *
- * 源: target/ERB/調教相關/BENKI.ERB  @BENKI（:2-1356）
- *     @SELECT_BENKI_MENU（:1359-1427）@NAME_BENKI_MENU（:1430-1494）
- *     @GET_EXP_BENKI_MENU（:1497-1654）@BENKI_PLAYER_NAME（:1656-1681）
- *
  * == 调用点（全库已查实） ==
  *
  *   - @BENKI 由 @EVENTTURNEND 普通档逐角色调用（SYSTEM ver1.0.3.ERB:729，
@@ -624,7 +620,7 @@ async function run_benki(arg, rand_n = default_rand) {
         : abl(arg, 39)
           ? '沉醉在与魔兽交配的快感之中。' // 兽奸中毒1以上
           : '看起来很不自在。'; //
-    era.print(s); // :741-763+:765-776
+    era.print(s);
 
     play += menu[4]; // 兽奸ボーナス
     if (play < 1) {
@@ -678,17 +674,17 @@ async function run_benki(arg, rand_n = default_rand) {
       s += '主动地'; // 献身的ボーナス
       play += 1;
     }
-    // :887 的 PRINTFORML 自带换行——上面这条拼行到此收尾（#615：此前把
-    // :888 的 CALL 也并进同一行，少了一次换行）
+    // 的 PRINTFORML 自带换行——上面这条拼行到此收尾（#615：此前把
+    // 的 CALL 也并进同一行，少了一次换行）
     s += '作为侍奉用便器在地下城里服侍着'; //
     era.print(s);
 
-    // :888 CALL BENKI_PLAYER_NAME 落在新行行首，与 :890 的
+    // CALL BENKI_PLAYER_NAME 落在新行行首，与 :890 的
     // `PRINTFORML %SAVESTR:(ARG:0)%` 拼成同一条显示行：#615 起角色名随
     // 这一行收尾，不再起始下一条穴句行
     era.print(`${benki_player_name()}${name_of(arg)}`);
 
-    s = ''; // :892-920 段的穴句（角色名已在上一行）
+    s = ''; // 段的穴句（角色名已在上一行）
     if (menu[1] >= 3 && menu[2] >= 3) {
       s += '能用上的穴全用上了，';
       play += menu[1] + menu[2]; // A&Vボーナス
@@ -709,7 +705,7 @@ async function run_benki(arg, rand_n = default_rand) {
     s += '阴茎温柔地包裹在内，'; //
     // 奴隷の様子（:922-940）——上面 :892-920 的穴句是 PRINTFORM 拼行，由
     // 様子的 PRINTFORML 收尾：同一条显示行（#620：此前様子另起一行；
-    // :931-933/:936-938 两组「对底层 + CALL + 文案」也收在这一行里）
+    // 两组「对底层 + CALL + 文案」也收在这一行里）
     s +=
       flag63() === 1
         ? '一如平常的面带微笑地交欢着……' // 常識改変
@@ -720,18 +716,18 @@ async function run_benki(arg, rand_n = default_rand) {
             : exp(arg, 21) > 50
               ? `对底层${benki_player_name()}温柔地微笑着。` // 侍奉快乐经验50超
               : '看起来很不自在。'; //
-    era.print(s); // :892-920+:922-940
+    era.print(s);
 
     play += menu[0]; // 奉仕ボーナス
     if (play < 1) {
       play = 1; // 最低一人
     }
 
-    // :951 的 PRINTFORML 自带换行——清算首行到此收尾（#615：此前把 :952 的
+    // 的 PRINTFORML 自带换行——清算首行到此收尾（#615：此前把 :952 的
     // CALL 与 :953 并进了同一行，少了一次换行）
     era.print(`${name_of(arg)}共处理了${play}个底层`);
 
-    // :952 CALL + :953 `PRINTFORM 的性欲。` + :956-978 传闻的 PRINTFORML
+    // CALL + :953 `PRINTFORM 的性欲。` + :956-978 传闻的 PRINTFORML
     // ——同一条显示行（传闻接在「的性欲。」之后）
     era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);
 
@@ -804,17 +800,17 @@ async function run_benki(arg, rand_n = default_rand) {
             : exp(arg, 40) > 500
               ? '沉醉在这种缠绵之中……' // 百合经验500超
               : '看起来很不自在……'; //
-    era.print(s); // :1054-1078+:1080-1094
+    era.print(s);
 
     play += menu[3]; // 同性爱ボーナス
     if (play < 1) {
       play = 1; // 最低一人
     }
 
-    // :1105 的 PRINTFORML 自带换行——清算首行到此收尾（#615，同奉仕分派）
+    // 的 PRINTFORML 自带换行——清算首行到此收尾（#615，同奉仕分派）
     era.print(`${name_of(arg)}一共处理了${play}个`);
 
-    // :1106 CALL + :1107 `PRINTFORM 的性欲。` + :1109-1132 传闻的 PRINTFORML
+    // CALL + :1107 `PRINTFORM 的性欲。` + :1109-1132 传闻的 PRINTFORML
     // ——同一条显示行
     era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);
 
@@ -873,7 +869,7 @@ async function run_benki(arg, rand_n = default_rand) {
       s += '主动分开双腿，'; // 看轻贞操
     }
     // 奴隷の様子（:1235-1260，常識改変/崩坏/淫乱/爱慕/精液経験）——上面
-    // :1224-1232 的名字句是 PRINTFORM 拼行，由様子的 PRINTFORML 收尾：
+    // 的名字句是 PRINTFORM 拼行，由様子的 PRINTFORML 收尾：
     // 同一条显示行（#620：此前様子另起一行）
     s +=
       flag63() === 1
@@ -895,7 +891,7 @@ async function run_benki(arg, rand_n = default_rand) {
                       : exp(arg, 20) > 50
                         ? '不断重复着谢罪的话语……' // 精液経験50超
                         : '两眼无神地看着远方……'; //
-    era.print(s); // :1224-1232+:1235-1260
+    era.print(s);
 
     if (menu[1] >= 3 && menu[2] >= 3) {
       play += menu[1] + menu[2]; // A&Vボーナス
@@ -910,7 +906,7 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    // :1287 是 PRINTFORM（不换行）——共处理句、:1288 的 CALL、:1289 的「的性欲。」
+    // 是 PRINTFORM（不换行）——共处理句、:1288 的 CALL、:1289 的「的性欲。」
     // 与 :1292-1305 传闻的 PRINTFORML 同属一条显示行（#615：此前拆成两行）
     era.print(
       `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,

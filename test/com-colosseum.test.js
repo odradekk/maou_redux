@@ -91,15 +91,15 @@ test('@COM_ABLE200：观战券必备；自动调教与持续装备互斥；死�
 
   assert.equal(await com_able_family.call(200), 1, '持券且无装备 → 放行');
 
-  fixture.store.set('item:35', 0); // :4686-4687 无观战券
+  fixture.store.set('item:35', 0); // 无观战券
   assert.equal(await com_able_family.call(200), 0, '无观战券不可');
   fixture.store.set('item:35', 3);
 
-  fixture.store.set('tflag:224', 555); // :4654-4655 自动不可（调教菜单实行中）
+  fixture.store.set('tflag:224', 555); // 自动不可（调教菜单实行中）
   assert.equal(await com_able_family.call(200), 0);
   fixture.store.set('tflag:224', 0);
 
-  // :4657-4659 未在死斗场时，任何持续装备使用中不可开启
+  // 未在死斗场时，任何持续装备使用中不可开启
   fixture.store.set('tequip:31:44', 1); // 绳子紧缚
   assert.equal(await com_able_family.call(200), 0);
   // 已在死斗场（TEQUIP:55 = 1）时装备表跳过，但互斥位照判（:4661-4684）
@@ -152,7 +152,7 @@ for (const [com, min_level] of [
     assert.equal(await com_able_family.call(com), 0, '门槛之下 → 拒绝');
 
     fixture.store.set('cflag:0:9', min_level);
-    era_flag.assiplay = 1; // :4712 等 助手じゃ駄目
+    era_flag.assiplay = 1; // 等 助手じゃ駄目
     assert.equal(await com_able_family.call(com), 0);
   });
 }

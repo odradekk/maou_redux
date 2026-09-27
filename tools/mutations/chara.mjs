@@ -10,8 +10,9 @@ export default [
   {
     desc: 'M11614 cm_st 的逐级 ST_UP 调用删除（勇者初始等级不升）',
     file: 'ere/chara/chara-make.js',
-    find: '      st_up(cid, rand_n); // :879 CALL ST_UP, A（逐级一次；RETURN 0 无人读）',
-    replace: '      // 变异：ST_UP 调用删除',
+    find: '    for (let i = 0; i < times; i += 1) {\n      st_up(cid, rand_n); // CALL ST_UP, A（逐级一次；RETURN 0 无人读）',
+    replace:
+      '    for (let i = 0; i < times; i += 1) {\n      // 变异：ST_UP 调用删除',
     tests: ['chara-make'],
     must_mention: 'REPEAT FLAG:60 次：等级 2',
   },
@@ -41,9 +42,9 @@ export default [
   {
     desc: 'M11634 FLAG:1/2 的角色号调整复辟（:127-135 原作恒空操作被写活）',
     file: 'ere/chara/chara-make.js',
-    find: `        era_flag.target = game.event.上次调教对象; // :136 TARGET = FLAG:1`,
-    replace: `        if (game.event.上次调教对象 > newchara) game.event.上次调教对象 -= 1; // 变异：调整复辟
-        era_flag.target = game.event.上次调教对象; // :136 TARGET = FLAG:1`,
+    find: '        // （#71；属主域是 event）。\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
+    replace:
+      '        // （#71；属主域是 event）。\n        if (game.event.上次调教对象 > newchara) game.event.上次调教对象 -= 1; // 变异：调整复辟\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
     tests: ['page-campaign'],
     must_mention: 'FLAG:1 不被改写',
   },
@@ -58,8 +59,9 @@ export default [
   {
     desc: 'M11615 cm_st_ace 的逐级 ST_UP 调用删除（精英初始等级不升）',
     file: 'ere/chara/chara-make.js',
-    find: '      st_up(cid, rand_n); // :892 CALL ST_UP, A（逐级一次；RETURN 0 无人读）',
-    replace: '      // 变异：ST_UP 调用删除',
+    find: '    for (let i = 0; i < local; i += 1) {\n      st_up(cid, rand_n); // CALL ST_UP, A（逐级一次；RETURN 0 无人读）',
+    replace:
+      '    for (let i = 0; i < local; i += 1) {\n      // 变异：ST_UP 调用删除',
     tests: ['chara-make'],
     must_mention: '(60 + 2) / 10 = 6 次逐级',
   },
@@ -84,8 +86,8 @@ export default [
   {
     desc: 'M307 CM_STP 的 CFLAG:A:1 = 2 改 3（接入点触发条件被改坏——三分叉测试必须红）',
     file: 'ere/chara/chara-make.js',
-    find: '  chara(cid).invasion.状态 = 2; // :127 CFLAG:A:1 侵攻中',
-    replace: '  chara(cid).invasion.状态 = 3; // :127 CFLAG:A:1 侵攻中',
+    find: '  chara(cid).invasion.状态 = 2; // CFLAG:A:1 侵攻中',
+    replace: '  chara(cid).invasion.状态 = 3; // CFLAG:A:1 侵攻中',
     tests: ['chara-make'],
     must_mention: 'CFLAG:A:1 = 2 侵攻中',
   },
@@ -244,8 +246,8 @@ export default [
   {
     desc: 'M6540 SELL_BITCH 第一处 KARMA 调用不再传增减量',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
-    find: '      karma(arg, local); // :248 CALL KARMA',
-    replace: '      karma(arg, 0); // :248 CALL KARMA',
+    find: '      karma(arg, local); // CALL KARMA',
+    replace: '      karma(arg, 0); // CALL KARMA',
     tests: ['kojo-dungeon-bitch'],
     must_mention: '卖春次数经 KARMA 真身扣善恶值',
   },
@@ -491,7 +493,7 @@ export default [
   {
     desc: 'M10600 非异国分支的新角色号退回「已加入数 - 1」（#487 的原缺陷：编制不连号时写到别人身上）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = chara_id; // :63-64 A / ID_OF_NEWCHARA（= 新角色的角色号）',
+    find: '        newchara = chara_id; // A / ID_OF_NEWCHARA（= 新角色的角色号）',
     replace:
       '        newchara = era.getAddedCharacters().length - 1; // 变异：按人数取号',
     tests: ['chara-name'],
@@ -500,9 +502,9 @@ export default [
   {
     desc: 'M10601 异国分支不用 CHAR_MAKE_INPORT 的返回值（#487：那位是它内部 ADDCHARA 的，不是掷中的位号）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    find: '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
     replace:
-      '        newchara = chara_id; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+      '        newchara = chara_id; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
     tests: ['chara-name'],
     must_mention: 'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
   },
@@ -517,18 +519,18 @@ export default [
   {
     desc: 'M10603 换人支 DELCHARA 传「已加入数 - 1」（#487：删的不是刚加的那位）',
     file: 'ere/chara/chara-make.js',
-    find: '        era.removeCharacter(newchara); // :161 DELCHARA',
+    find: '        era.removeCharacter(newchara); // DELCHARA\n        cn_rebuild(); // CALL NAME_RESET\n        continue; // GOTO INPUT_LOOP_11',
     replace:
-      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异',
+      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异\n        cn_rebuild(); // CALL NAME_RESET\n        continue; // GOTO INPUT_LOOP_11',
     tests: ['chara-name'],
     must_mention: ':161 第一位（2 号）被 DELCHARA，重挑到 1 号',
   },
   {
     desc: 'M10604 「算了，不选了」支 DELCHARA 传「已加入数 - 1」（#487：刚招募的留在编制里）',
     file: 'ere/chara/chara-make.js',
-    find: '        era.removeCharacter(newchara); // :166 DELCHARA',
+    find: '        era.removeCharacter(newchara); // DELCHARA\n        cn_rebuild(); // CALL NAME_RESET\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
     replace:
-      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异',
+      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异\n        cn_rebuild(); // CALL NAME_RESET\n        era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1',
     tests: ['chara-make'],
     must_mention: '刚招募的 1 号（角色号，不是「已加入数 - 1」= 2）',
   },
@@ -544,7 +546,7 @@ export default [
   {
     desc: 'M10606 CFLAG:1 初始位置写「已加入数 - 1」（#487：归零落到别人身上）',
     file: 'ere/chara/chara-make.js',
-    find: '      chara(newchara).invasion.状态 = 0; // :180 CFLAG:1 初始位置',
+    find: '      chara(newchara).invasion.状态 = 0; // CFLAG:1 初始位置',
     replace:
       '      chara(era.getAddedCharacters().length - 1).invasion.状态 = 0; // 变异',
     tests: ['chara-name'],
@@ -553,16 +555,16 @@ export default [
   {
     desc: 'M10607 末尾 RETURN 给「已加入数 - 1」（#487：调用点据此点亮素质位）',
     file: 'ere/chara/chara-make.js',
-    find: '      return newchara; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
+    find: '      return newchara; // RETURN (CHARANUM - 1)（= 角色号，见函数头）',
     replace:
-      '      return era.getAddedCharacters().length - 1; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
+      '      return era.getAddedCharacters().length - 1; // RETURN (CHARANUM - 1)（= 角色号，见函数头）',
     tests: ['chara-name'],
     must_mention: 'RETURN CHARANUM-1 = 新角色的角色号',
   },
   {
     desc: 'M10608 性格预设落点改「已加入数 - 1」（#487：SET_CHARASTERISTIC 写错人）',
     file: 'ere/chara/chara-make.js',
-    find: '        set_charasteristic(newchara, character); // :67 CALL SET_CHARASTERISTIC',
+    find: '        set_charasteristic(newchara, character); // CALL SET_CHARASTERISTIC',
     replace:
       '        set_charasteristic(era.getAddedCharacters().length - 1, character); // 变异',
     tests: ['chara-and-hair'],
@@ -573,9 +575,9 @@ export default [
   {
     desc: 'M10609 ADDCHARA_EX 的实参退回「已加入数 - 1」（#487：编制为空时落 0 号，误触 CHARA_EX_0 的魔王标记）',
     file: 'ere/chara/chara-make.js',
-    find: '        await add_chara_ex(chara_id); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）',
+    find: '        await add_chara_ex(chara_id); // ADDCHARA_EX, CHARANUM-1（= 角色号）',
     replace:
-      '        await add_chara_ex(era.getAddedCharacters().length - 1); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）',
+      '        await add_chara_ex(era.getAddedCharacters().length - 1); // ADDCHARA_EX, CHARANUM-1（= 角色号）',
     tests: ['chara-name'],
     must_mention: '不落到「已加入数 - 1」的 0 号（魔王标记）',
   },
@@ -609,8 +611,9 @@ export default [
   {
     desc: 'M10613 16 位全满的 RETURN 0 改成 1（调用点据此误判招募成功：扣气力、点素质位）',
     file: 'ere/chara/chara-make.js',
-    find: '    return 0; // :191',
-    replace: '    return HERO_SLOT_IDS[0]; // 变异：不再返回 0',
+    find: '    await era.waitAnyKey(); // WAIT\n    return 0;',
+    replace:
+      '    await era.waitAnyKey(); // WAIT\n    return HERO_SLOT_IDS[0]; // 变异：不再返回 0',
     tests: ['chara-make', 'page-campaign'],
     must_mention: ':191 RETURN 0（调用点据此不扣气力）',
   },
@@ -622,7 +625,7 @@ export default [
   {
     desc: 'M10614 派遣奴隶标志置位改 0（原作 :139 的 FLAG:402 = 1 名存实亡，#494 补 #487 验收发现的覆盖缺口）',
     file: 'ere/chara/chara-make.js',
-    find: "        era.set('flag:402', 1); // :139 派遣奴隶标志（等级 1 生成）",
+    find: "        era.set('flag:402', 1); // 派遣奴隶标志（等级 1 生成）",
     replace: "        era.set('flag:402', 0); // 变异：置位改成 0",
     tests: ['chara-name'],
     must_mention: ':139 派遣奴隶标志置 1（等级 1 生成）',
@@ -630,48 +633,36 @@ export default [
   {
     desc: 'M10615 异国分支也跑性格与发色的预设落地（把 :66-72 复制进 ELSE——#494 的原缺陷形态之一）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
-    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
-        if (character !== -1) {
-          set_charasteristic(newchara, character); // 变异：异国也跑预设落地
-        }
-        if (haircolor > 0) {
-          set_haircolor(newchara, haircolor); // 变异：异国也跑预设落地
-        }`,
+    find: '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace:
+      '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）\n        if (character !== -1) {\n          set_charasteristic(newchara, character); // 变异：异国也跑预设落地\n        }\n        if (haircolor > 0) {\n          set_haircolor(newchara, haircolor); // 变异：异国也跑预设落地\n        }',
     tests: ['chara-name'],
     must_mention: '名单带来的性格未被覆盖',
   },
   {
     desc: 'M10616 异国分支也写 FLAG:402 = 1（把 :139 复制进 ELSE——#494 的原缺陷形态之一）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
-    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
-        era.set('flag:402', 1); // 变异：异国也写派遣奴隶标志`,
+    find: '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace:
+      "        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）\n        era.set('flag:402', 1); // 变异：异国也写派遣奴隶标志",
     tests: ['chara-name'],
     must_mention: ':139 FLAG:402 = 1 未执行（异国路径不写派遣奴隶标志）',
   },
   {
     desc: 'M10617 异国分支也调 CHAR_MAKE（把 :141 复制进 ELSE——#494 的原缺陷形态之一）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
-    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
-        await chara_make(newchara, xingge, 0, rand_n, newchara); // 变异：异国也调 CHAR_MAKE`,
+    find: '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace:
+      '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）\n        await chara_make(newchara, xingge, 0, rand_n, newchara); // 变异：异国也调 CHAR_MAKE',
     tests: ['chara-name'],
     must_mention: ':141 CHAR_MAKE 未执行（名单带来的等级未被重置为 1）',
   },
   {
     desc: 'M10618 异国分支也跑 FLAG:1/2 搬迁（把 :126-135 复制进 ELSE——#494 的原缺陷形态之一）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
-    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
-        if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;
-        if (game.event.上次助手 === newchara) game.event.上次助手 = -1;
-        if (game.event.上次调教对象 > newchara) {
-          game.event.上次调教对象 -= 1; // 变异：异国也跑搬迁
-        }
-        if (game.event.上次助手 > newchara) {
-          game.event.上次助手 -= 1; // 变异：异国也跑搬迁
-        }`,
+    find: '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace:
+      '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）\n        if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;\n        if (game.event.上次助手 === newchara) game.event.上次助手 = -1;\n        if (game.event.上次调教对象 > newchara) {\n          game.event.上次调教对象 -= 1; // 变异：异国也跑搬迁\n        }\n        if (game.event.上次助手 > newchara) {\n          game.event.上次助手 -= 1; // 变异：异国也跑搬迁\n        }',
     tests: ['chara-name'],
     must_mention: ':134 FLAG:2 未前移（搬迁段未执行）',
   },
@@ -687,11 +678,9 @@ export default [
   {
     desc: 'M10623 异国分支也进形象确认段（把 :76-81 与 :107 的 INPUT 复制进 ELSE——#494 的原缺陷形态之一）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
-    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
-        era.print('呃……面前的勇者，是这个形象的……'); // 变异：异国也进形象确认段
-        era.print('[0] 印象 ： '); // 变异
-        await era.input(); // 变异：:107 的 INPUT`,
+    find: '        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace:
+      "        newchara = inport_cid; // ID_OF_NEWCHARA = CHARANUM-1（= 角色号）\n        era.print('呃……面前的勇者，是这个形象的……'); // 变异：异国也进形象确认段\n        era.print('[0] 印象 ： '); // 变异\n        await era.input(); // 变异：:107 的 INPUT",
     tests: ['chara-name'],
     must_mention: ':107 的形象确认未执行（只问了 :158 的收下确认）',
   },

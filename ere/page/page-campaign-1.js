@@ -1,8 +1,6 @@
 /**
  * @file 战役1「赤蛮咒森」：CAMPAIGN_1.ERB 的 13 个编号函数（#469）。
  *
- * 源: target/ERB/侵略/CAMPAIGN/CAMPAIGN_1.ERB
- *
  * 本文件向 page-campaign.js（CAMPAIGN_NAME/EXIST/SET）与各域文件
  * （dungeon.js 等）声明的 DispatchFamily 注册战役 1 的实现，只 register(1,
  * fn)，不参与 family 的声明——与 kojo/kojo-kN-*.js 向 kojo-dungeon-after.js
@@ -80,7 +78,7 @@ campaign_exist_family.register(1, campaign_exist_1);
  * @returns {number} RETURN 1
  */
 async function campaign_set_1() {
-  era_flag.hero_campaign_active = 1; // :62 FLAG:400 = 1
+  era_flag.hero_campaign_active = 1; // FLAG:400 = 1
   const master = chara_callname(0); // %SAVESTR:MASTER%
   const lines = [
     '极东之地、赤蛮咒森。魔王的支配无法触及的诅咒之地',
@@ -190,7 +188,7 @@ const MONSTER_IDS_BY_FLOOR = new Map([
  * @returns {number} 怪物 ID（未登记的楼层恒 0）
  */
 function campaign_monster_list_1(floor, rand = default_rand) {
-  // :199 DICE = RAND:3——无条件掷（即使楼层不在表内也照掷），保持 PRNG
+  // DICE = RAND:3——无条件掷（即使楼层不在表内也照掷），保持 PRNG
   // 序列与原作对齐（dungeon-battle.js 文件头同款纪律）
   const dice = rand(3);
   const ids = MONSTER_IDS_BY_FLOOR.get(floor);
@@ -300,7 +298,7 @@ async function campaign_ending_1() {
     era.print(line);
     await era.waitAnyKey();
   }
-  era.print(''); // :369 PRINTW（空白等键行）
+  era.print(''); // PRINTW（空白等键行）
   await era.waitAnyKey();
   era.print('――水晶球映出的报告到这就结束了');
   await era.waitAnyKey();
@@ -310,9 +308,9 @@ async function campaign_ending_1() {
   await era.waitAnyKey();
   era.print(`为了进行下一次远征、${master}再次链接了水晶球――`);
   await era.waitAnyKey();
-  era.print('――'); // :374 PRINTW
+  era.print('――'); // PRINTW
   await era.waitAnyKey();
-  // :375-378 FONTBOLD 战役名 + FONTREGULAR 副标题（終）——与 CAMPAIGN_NAME_1
+  // FONTBOLD 战役名 + FONTREGULAR 副标题（終）——与 CAMPAIGN_NAME_1
   // 共用两段文本常量，此处额外拼「（终）」收尾
   era.print([
     { content: NAME_BOLD, fontWeight: 'bold' },

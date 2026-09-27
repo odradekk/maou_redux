@@ -3,9 +3,6 @@
  *     ADDCHARA 链）。一人称设定（@RANDOM_SELF_CALL）自 #383 起是完整实现，
  *     落在 ere/chara/chara-self-call.js，本文件只消费它。
  *
- * 源: target/ERB/キャラ関数/CHAR_MAKE.ERB  @CHAR_INIT（:22-25，JUMP 壳）
- *       target/ERB/キャラ関数/CHARA_MAKE_INIT.ERB  @CHARA_INIT（:2-49 本体）
- *
  * 移植说明（有意偏离，均注明依据）：
  *   - 原作经全局 A / TARGET 传角色（`A = CHARANUM-1` 后 JUMP CHARA_INIT(A)、
  *     SWAP L_A,TARGET 后 CALL WEARING_CLOTH_ABLE），ere 侧一律显式传参
@@ -49,10 +46,10 @@ const { st_up } = require('#/dungeon/dungeon-lvup');
 async function char_init(cid, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
-  // :7 SAVESTR:L_A = %CALLNAME:L_A% —— callname:id:-2 已由 addCharacter
+  // SAVESTR:L_A = %CALLNAME:L_A% —— callname:id:-2 已由 addCharacter
   // 自动写入（文件头），无动作
 
-  // :10-18 等级与基础数值：CSV 只设置了等级没设置攻击力时按等级逐级
+  // 等级与基础数值：CSV 只设置了等级没设置攻击力时按等级逐级
   // CALL ST_UP（:14），之后等级钳回（:15——ST_UP 每次 +1，正好还原）、
   // 体力/气力拉满到上限（:16-17）。菲娅 CFLAG:35:9 = 1（不 > 1）不可达；
   // ST_UP 自 #179（H10）起为真身
@@ -64,19 +61,19 @@ async function char_init(cid, rand) {
     for (let i = 0; i < lv; i += 1) {
       st_up(cid, rand_n);
     }
-    era.set(`cflag:${cid}:9`, lv); // :15 等级钳回原值
-    chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0; // :16
-    chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0; // :17
+    era.set(`cflag:${cid}:9`, lv); // 等级钳回原值
+    chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0;
+    chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
   }
 
-  // :22-24 着替え装着（SWAP TARGET → CALL WEARING_CLOTH_ABLE :23 → SWAP）
+  // 着替え装着（SWAP TARGET → CALL WEARING_CLOTH_ABLE :23 → SWAP）
   // ——#215（J5）起真身（ere/system/train/cloth.js，显式传参消解 SWAP）
   wearing_cloth_able(cid);
 
-  // :27 一人称の設定（CALL RANDOM_SELF_CALL）
+  // 一人称の設定（CALL RANDOM_SELF_CALL）
   await random_self_call(cid); // #546 起为 async（MODE 1 的输入等待）
 
-  // :29-33 年齢/身長显示设定（FLAG:5 位 12/15，:30）且身体数据缺失（CFLAG:451
+  // 年齢/身長显示设定（FLAG:5 位 12/15，:30）且身体数据缺失（CFLAG:451
   // == 0 || CFLAG:453 == 0）时生成。FLAG:5 是开局设置位图，窄路径恒 0；真身
   // 自 #385 起在 ere/chara/chara-body.js
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
@@ -85,11 +82,11 @@ async function char_init(cid, rand) {
       (era.get(`cflag:${cid}:451`) || 0) === 0 ||
       (era.get(`cflag:${cid}:453`) || 0) === 0
     ) {
-      char_body_generate_wapped(cid, rand_n); // :32 CALL CHAR_BODY_GENERATE_WAPPED
+      char_body_generate_wapped(cid, rand_n); // CALL CHAR_BODY_GENERATE_WAPPED
     }
   }
 
-  // :36-53 能力者技能：五系全无时各 RAND:40 独立掷 2.5% 获得（:38 起）
+  // 能力者技能：五系全无时各 RAND:40 独立掷 2.5% 获得（:38 起）
   // ere 无全局 RAND 序列（#117 决议），逐系独立掷，注入点显式传随机源
   const has_element = [275, 276, 277, 278, 279].some(
     (talent) => (era.get(`talent:${cid}:${talent}`) || 0) !== 0,
@@ -103,7 +100,7 @@ async function char_init(cid, rand) {
     }
   }
 
-  return cid; // :54 RETURN L_A
+  return cid; // RETURN L_A
 }
 
 module.exports = { char_init };

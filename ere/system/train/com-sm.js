@@ -3,21 +3,6 @@
  * 持续效果 + @COM_ABLE40-49 可用性 + TRAIN_MESSAGE_A/B 分支 + @GET_ADV_COM
  * 的 CASE 40 升格规则（issue #223，J13——#209 裁定 6 的「四样装齐」）。
  *
- * 源: target/ERB/調教相關/COMF40_スパンキング.ERB   @COM40（:7-69）
- *     target/ERB/調教相關/COMF41_鞭.ERB             @COM41（:7-59）
- *     target/ERB/調教相關/COMF42_針.ERB             @COM42（:7-59）
- *     target/ERB/調教相關/COMF43_アイマスク.ERB     @COM43（:7-89）+ @EQUIP_COM43（:95-189）
- *     target/ERB/調教相關/COMF44_縄.ERB             @COM44（:7-104）+ @EQUIP_COM44（:110-190）
- *     target/ERB/調教相關/COMF45_ボールギャグ.ERB   @COM45（:7-44）+ @EQUIP_COM45（:50-116）
- *     target/ERB/調教相關/COMF46_浣腸器＋プラグ.ERB @COM46（:7-197）+ @EQUIP_COM46（:203-352）
- *     target/ERB/調教相關/COMF47_ボンデージ装着.ERB @COM47（:7-32）+ @EQUIP_COM47（:38-126）
- *     target/ERB/調教相關/COMF48_足コキする.ERB     @COM48（:7-102）+ @EVENT_SEITSU_ASIKOKI（:108-122）
- *     target/ERB/調教相關/COMF49_アナル電極.ERB     @COM49（:7-142）+ @EQUIP_COM49（:148-296）
- *     target/ERB/調教相關/COMABLE.ERB               @COM_ABLE40-49（:1878-2238）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB    SELECTCOM 40-49 分支（:1742-1900）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB    SELECTCOM 40-42 分支（:1208-1272）
- *     target/ERB/調教相關/COMF_JUMP.ERB             @GET_ADV_COM CASE 40（:605-626）
- *
  * == 变量承载（com0-caress.js 同款，#44/#45 实证） ==
  *
  *   - SOURCE:xx → `source:${cid}:${xx}`；UP:xx → `delta:${cid}:${xx}`；
@@ -327,7 +312,7 @@ async function com40() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // :12-15 LOCAL = 40 / CALL GET_ADV_COM / SIF RESULT != LOCAL / JUMPFORM
+  // LOCAL = 40 / CALL GET_ADV_COM / SIF RESULT != LOCAL / JUMPFORM
   // COM{RESULT}——规则在 adv_com_family 的 CASE 40（文件尾注册），升格目标
   // 132 属 J19；缺失期落存根占位行、RETURN 1（见文件头说明）
   const upgraded = await get_adv_com(40);
@@ -335,26 +320,26 @@ async function com40() {
     return jump_to_advanced(upgraded);
   }
 
-  era.print('打屁股'); // :18 PRINTL（;SAVESTR:22 = 打屁股 在原作已是注释，com0 同款）
-  // :20 CALL TRAIN_MESSAGE_B（本族 B 分支在本文件尾注册）
+  era.print('打屁股'); // PRINTL（;SAVESTR:22 = 打屁股 在原作已是注释，com0 同款）
+  // CALL TRAIN_MESSAGE_B（本族 B 分支在本文件尾注册）
   await train_message_b();
 
-  // :22-24 実際には苦痛があるため（LOSEBASE 负向累加，见文件头）
+  // 実際には苦痛があるため（LOSEBASE 负向累加，见文件头）
   add_lose(target, 0, 80);
   add_lose(target, 1, 40);
 
   // —— ソースの計算（:26-43）——
-  set_src(target, 12, 200); // :29 SOURCE:12 露出
-  set_src(target, 14, 500); // :30 SOURCE:14 逃离
-  set_src(target, 6, pain_source(target, 40)); // :32-43 苦痛档
+  set_src(target, 12, 200); // SOURCE:12 露出
+  set_src(target, 14, 500); // SOURCE:14 逃离
+  set_src(target, 6, pain_source(target, 40)); // 苦痛档
 
   // —— 経験上昇（:45-56）——
-  same_sex_exp(target, player, 2); // :48-56 百合/断背 +2
-  master_exp(target, 1); // :58-59 ASSIPLAY == 0 && ABL:21 >= 1 → TFLAG:30 += 1
+  same_sex_exp(target, player, 2); // 百合/断背 +2
+  master_exp(target, 1); // ASSIPLAY == 0 && ABL:21 >= 1 → TFLAG:30 += 1
 
-  love_exp(target, 1, true); // :61-67 CFLAG:2 >= 1000 && (ABL:21>=3||受虐狂)
+  love_exp(target, 1, true); // CFLAG:2 >= 1000 && (ABL:21>=3||受虐狂)
 
-  return 1; // :69
+  return 1;
 }
 
 /**
@@ -365,23 +350,23 @@ async function com41() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print('鞭'); // :9
-  await train_message_b(); // :11
+  era.print('鞭');
+  await train_message_b();
 
-  // :14-15 苦痛在身、体力气力扣得更重
+  // 苦痛在身、体力气力扣得更重
   add_lose(target, 0, 100);
   add_lose(target, 1, 80);
 
   // —— ソースの計算（:17-33）——
-  set_src(target, 14, 1000); // :20
-  set_src(target, 6, pain_source(target, 41)); // :22-33
+  set_src(target, 14, 1000);
+  set_src(target, 6, pain_source(target, 41));
 
-  same_sex_exp(target, player, 2); // :38-46
-  master_exp(target, 2); // :48-49 ABL:21 >= 2
+  same_sex_exp(target, player, 2);
+  master_exp(target, 2); // ABL:21 >= 2
 
-  love_exp(target, 1, true); // :51-57
+  love_exp(target, 1, true);
 
-  return 1; // :59
+  return 1;
 }
 
 /**
@@ -392,22 +377,22 @@ async function com42() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print('针'); // :9
-  await train_message_b(); // :11
+  era.print('针');
+  await train_message_b();
 
-  // :14-15（LOSEBASE:0 += 0 是原样的空扣，不落调用）；気力 20
+  // （LOSEBASE:0 += 0 是原样的空扣，不落调用）；気力 20
   add_lose(target, 1, 20);
 
   // —— ソースの計算（:17-33）——
-  set_src(target, 14, 1000); // :20
-  set_src(target, 6, pain_source(target, 42)); // :24-35
+  set_src(target, 14, 1000);
+  set_src(target, 6, pain_source(target, 42));
 
-  same_sex_exp(target, player, 2); // :38-44
-  master_exp(target, 3); // :46-47 ABL:21 >= 3
+  same_sex_exp(target, player, 2);
+  master_exp(target, 3); // ABL:21 >= 3
 
-  love_exp(target, 1, true); // :51-57
+  love_exp(target, 1, true);
 
-  return 1; // :59
+  return 1;
 }
 
 /**
@@ -444,8 +429,8 @@ function obey_maso_chain(cid, base) {
 async function com43() {
   const target = era_flag.target;
 
-  era.print('眼罩'); // :9
-  await train_message_b(); // :11
+  era.print('眼罩');
+  await train_message_b();
 
   // LOSEBASE:0 += 0（:13 空扣不落）；:14-21 紧缚经验减免（半阈值）
   const [, lose1] = bondage_cost(target, [
@@ -456,24 +441,24 @@ async function com43() {
   add_lose(target, 1, lose1);
 
   // —— ソースの計算（:23-78）——
-  // :26-28 基础三格 → 欲情/顺从/抖M 三连（:30-71）→ 倒错的（TALENT:80）×2
+  // 基础三格 → 欲情/顺从/抖M 三连（:30-71）→ 倒错的（TALENT:80）×2
   let a = obey_maso_chain(target, 250);
   if (tal(target, 80)) {
-    a = times(a, 2); // :73-75
+    a = times(a, 2);
   }
-  set_src(target, 10, a); // :26 SOURCE:10 恭顺追加
-  set_src(target, 12, 1000); // :27 SOURCE:12 露出
-  // :28 SOURCE:14 = 500 → 胆怯（TALENT:10）×2
-  set_src(target, 14, tal(target, 10) ? times(500, 2) : 500); // :76-78
+  set_src(target, 10, a); // SOURCE:10 恭顺追加
+  set_src(target, 12, 1000); // SOURCE:12 露出
+  // SOURCE:14 = 500 → 胆怯（TALENT:10）×2
+  set_src(target, 14, tal(target, 10) ? times(500, 2) : 500);
 
   // —— 経験上昇（:80-84）——
-  era.add(`exp:${target}:51`, 2); // :83 EXP:51 紧缚经验
-  era.print('紧缚经验＋２'); // :84（全角字面 1:1）
+  era.add(`exp:${target}:51`, 2); // EXP:51 紧缚经验
+  era.print('紧缚经验＋２'); // （全角字面 1:1）
 
-  // :86-87 眼罩の着脱
+  // 眼罩の着脱
   set_tq(target, 43, 1 - tq(target, 43));
 
-  return 1; // :89
+  return 1;
 }
 
 /**
@@ -483,11 +468,11 @@ async function com43() {
 async function com44() {
   const target = era_flag.target;
 
-  // :8-15 触手紧缚/绳 二支
+  // 触手紧缚/绳 二支
   era.print(tq(target, 90) ? '触手紧缚' : '绳');
-  await train_message_b(); // :16
+  await train_message_b();
 
-  // :18-28 紧缚经验减免（半阈值，两 BASE 都扣）
+  // 紧缚经验减免（半阈值，两 BASE 都扣）
   const [lose0, lose1] = bondage_cost(target, [
     [100, 150],
     [80, 120],
@@ -497,28 +482,28 @@ async function com44() {
   add_lose(target, 1, lose1);
 
   // —— ソースの計算（:30-83）——
-  set_src(target, 6, 800); // :33 SOURCE:6 疼痛
-  set_src(target, 10, obey_maso_chain(target, 800)); // :34,38-79
-  set_src(target, 13, 500); // :35 SOURCE:13 屈从
-  set_src(target, 14, 500); // :36 SOURCE:14 逃离
-  // :81-83 倒错的 ×2（SOURCE:10 再乘）
+  set_src(target, 6, 800); // SOURCE:6 疼痛
+  set_src(target, 10, obey_maso_chain(target, 800));
+  set_src(target, 13, 500); // SOURCE:13 屈从
+  set_src(target, 14, 500); // SOURCE:14 逃离
+  // 倒错的 ×2（SOURCE:10 再乘）
   if (tal(target, 80)) {
     set_src(target, 10, times(src(target, 10), 2));
   }
 
   // —— 経験上昇（:85-89）——
-  era.add(`exp:${target}:51`, 5); // :88
-  era.print('紧缚经验＋５'); // :89
+  era.add(`exp:${target}:51`, 5);
+  era.print('紧缚经验＋５');
 
-  // :91-94 绳子の着脱 + 触手调教中重置触手回合计数（T:0）
+  // 绳子の着脱 + 触手调教中重置触手回合计数（T:0）
   set_tq(target, 44, 1 - tq(target, 44));
   if (tq(target, 90)) {
     era.set('t:0', 0);
   }
 
-  love_exp(target, 1, true); // :96-102
+  love_exp(target, 1, true);
 
-  return 1; // :104
+  return 1;
 }
 
 /**
@@ -530,10 +515,10 @@ async function com44() {
 async function com45() {
   const target = era_flag.target;
 
-  era.print('口塞'); // :9
-  await train_message_b(); // :11
+  era.print('口塞');
+  await train_message_b();
 
-  // :13-23 紧缚经验减免（半阈值）
+  // 紧缚经验减免（半阈值）
   const [lose0, lose1] = bondage_cost(target, [
     [80, 100],
     [60, 80],
@@ -543,21 +528,21 @@ async function com45() {
   add_lose(target, 1, lose1);
 
   // —— ソースの計算（:25-33）——
-  set_src(target, 6, 50); // :28 SOURCE:6 疼痛
-  set_src(target, 7, 50); // :29 SOURCE:7 成瘾追加
-  set_src(target, 12, 80); // :30 SOURCE:12 露出
-  set_src(target, 13, 150); // :31 SOURCE:13 屈从
-  set_src(target, 14, 80); // :32 SOURCE:14 逃离
-  set_src(target, 16, 80); // :33 SOURCE:16 恭顺追加
+  set_src(target, 6, 50); // SOURCE:6 疼痛
+  set_src(target, 7, 50); // SOURCE:7 成瘾追加
+  set_src(target, 12, 80); // SOURCE:12 露出
+  set_src(target, 13, 150); // SOURCE:13 屈从
+  set_src(target, 14, 80); // SOURCE:14 逃离
+  set_src(target, 16, 80); // SOURCE:16 恭顺追加
 
   // —— 経験上昇（:35-39）——
-  era.add(`exp:${target}:51`, 2); // :38
-  era.print('紧缚经验＋２'); // :39
+  era.add(`exp:${target}:51`, 2);
+  era.print('紧缚经验＋２');
 
-  // :41-42 口塞の着脱
+  // 口塞の着脱
   set_tq(target, 45, 1 - tq(target, 45));
 
-  return 1; // :44
+  return 1;
 }
 
 // —— @COM46 灌肠+肛塞（COMF46_浣腸器＋プラグ.ERB:7-201） ——
@@ -589,20 +574,20 @@ const MASO_WIDE_LADDER = [
 async function com46() {
   const target = era_flag.target;
 
-  // :9-15 触手灌肠/灌肠＋肛塞 二支
+  // 触手灌肠/灌肠＋肛塞 二支
   era.print(tq(target, 90) ? '触手灌肠' : '灌肠＋肛塞');
-  await train_message_b(); // :16
+  await train_message_b();
 
-  add_lose(target, 0, 60); // :18
-  add_lose(target, 1, 150); // :19
+  add_lose(target, 0, 60);
+  add_lose(target, 1, 150);
 
   // —— ソースの計算（:21-155）——
-  // :24-43 ABL:3 六档（S2/S13）
+  // ABL:3 六档（S2/S13）
   const anal = ANAL_LADDER[Math.min(abl(target, 3), 5)];
   set_src(target, 2, anal[0]);
   set_src(target, 13, anal[1]);
 
-  // :45-82 ABL:21 六档——**整组覆写**（含刚由 ABL:3 写下的 S13）
+  // ABL:21 六档——**整组覆写**（含刚由 ABL:3 写下的 S13）
   const wide = MASO_WIDE_LADDER[Math.min(abl(target, 21), 5)];
   set_src(target, 6, wide[0]);
   set_src(target, 8, wide[1]);
@@ -610,7 +595,7 @@ async function com46() {
   set_src(target, 14, wide[3]);
   set_src(target, 15, wide[4]);
 
-  // :84-100 PALAM:3（润滑）：S2 ×0.4-1.8 + S6 += 800/500/300/120/100
+  // PALAM:3（润滑）：S2 ×0.4-1.8 + S6 += 800/500/300/120/100
   const wet = palam_below(target, 3, 1)
     ? 0.4
     : palam_below(target, 3, 2)
@@ -636,28 +621,28 @@ async function com46() {
               : 100),
   );
 
-  // :102-128 S2 再乘 欲情（:102-113）× 顺从（:115-128，肛门系表）
+  // S2 再乘 欲情（:102-113）× 顺从（:115-128，肛门系表）
   set_src(target, 2, times(src(target, 2), lust_factor(target)));
   set_src(target, 2, times(src(target, 2), anal_obey_factor(target)));
 
-  // :130-138 体型三连（S6）
+  // 体型三连（S6）
   set_src(target, 6, body_factor(target, src(target, 6)));
 
-  // :140-150 肛门钝感/敏感（S6/S13/S14 三格共乘）
+  // 肛门钝感/敏感（S6/S13/S14 三格共乘）
   set_src(target, 6, anal_sense_factor(target, src(target, 6)));
   set_src(target, 13, anal_sense_factor(target, src(target, 13)));
   set_src(target, 14, anal_sense_factor(target, src(target, 14)));
 
-  // :152-155 看重贞操的处女（EXP:0 == 0 && TALENT:30）→ S13 /= 3
+  // 看重贞操的处女（EXP:0 == 0 && TALENT:30）→ S13 /= 3
   if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {
     set_src(target, 13, Math.floor(src(target, 13) / 3));
   }
 
   // —— 経験上昇（:157-161）——
-  chara(target).dungeon.肛门经验 += 5; // :160 EXP:1（属主 dungeon，走门面）
-  era.print('肛门经验＋5'); // :161（全角＋半角5，字面 1:1）
+  chara(target).dungeon.肛门经验 += 5; // EXP:1（属主 dungeon，走门面）
+  era.print('肛门经验＋5'); // （全角＋半角5，字面 1:1）
 
-  // :163-180 調教時の排泄が始めてだった場合（CFLAG:4 计数 + 异常经验）
+  // 調教時の排泄が始めてだった場合（CFLAG:4 计数 + 异常经验）
   if (tq(target, 46) && (era.get(`cflag:${target}:4`) || 0) === 0) {
     let x = 1;
     if (tq(target, 53)) {
@@ -667,10 +652,10 @@ async function com46() {
     } else {
       era.set(`cflag:${target}:4`, 1);
     }
-    era.print(`异常经验+${x}`); // :173 PRINTFORML
+    era.print(`异常经验+${x}`); // PRINTFORML
     chara(target).dungeon.异常经验 += x; // EXP:50（属主 dungeon）
   } else if (
-    // :175-179 初めてではないが録画中（计数 1 → 2）
+    // 初めてではないが録画中（计数 1 → 2）
     tq(target, 46) &&
     (era.get(`cflag:${target}:4`) || 0) === 1 &&
     tq(target, 53)
@@ -680,24 +665,24 @@ async function com46() {
     era.set(`cflag:${target}:4`, 2);
   }
 
-  // :182-184 触手灌肠処理（T:0 清零）
+  // 触手灌肠処理（T:0 清零）
   if (tq(target, 90)) {
     era.set('t:0', 0);
   }
-  // :185-188 插入侧（当前未装备）且触手调教 → A 口污垢置位
+  // 插入侧（当前未装备）且触手调教 → A 口污垢置位
   if (tq(target, 46) === 0 && tq(target, 90)) {
     era.set(`stain:${target}:4`, (era.get(`stain:${target}:4`) || 0) | 2 | 4);
   }
 
-  // :190-192 着衣おもらし処理（解除侧）：#215 真身，调教内调用走 tflag:45
+  // 着衣おもらし処理（解除侧）：#215 真身，调教内调用走 tflag:45
   if (tq(target, 46) && era.get('flag:37')) {
     await soiling_cloth_no2(target);
   }
 
-  // :194-195 浣腸プラグの着脱
+  // 浣腸プラグの着脱
   set_tq(target, 46, 1 - tq(target, 46));
 
-  return 1; // :197
+  return 1;
 }
 
 /**
@@ -709,10 +694,10 @@ async function com46() {
 async function com47() {
   const target = era_flag.target;
 
-  era.print('束缚衣'); // :9
-  await train_message_b(); // :11
+  era.print('束缚衣');
+  await train_message_b();
 
-  // :13-17 終了時は修正无：已穿着 → 脱掉即返回
+  // 終了時は修正无：已穿着 → 脱掉即返回
   if (tq(target, 47)) {
     set_tq(target, 47, 0);
     return 1;
@@ -723,10 +708,10 @@ async function com47() {
   const m = abl(target, 21);
   add_lose(target, 1, m === 0 ? 60 : m <= 2 ? 45 : 30);
 
-  // :29-30 拘束衣ルックの装着
+  // 拘束衣ルックの装着
   set_tq(target, 47, 1);
 
-  return 1; // :32
+  return 1;
 }
 
 // —— @COM48 践踏（COMF48_足コキする.ERB:7-106） ——
@@ -752,18 +737,18 @@ async function com48() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print('践踏'); // :9
-  await train_message_b(); // :11
+  era.print('践踏');
+  await train_message_b();
 
-  add_lose(target, 0, 10); // :13
-  add_lose(target, 1, 60); // :14
+  add_lose(target, 0, 10);
+  add_lose(target, 1, 60);
 
   // —— ソースの計算（:16-56）——
-  set_src(target, 12, 150); // :19 SOURCE:12 露出
-  set_src(target, 14, 400); // :20 SOURCE:14 逃离
-  // :22-35 ABL:0 六档
+  set_src(target, 12, 150); // SOURCE:12 露出
+  set_src(target, 14, 400); // SOURCE:14 逃离
+  // ABL:0 六档
   set_src(target, 0, CLIT_LADDER[Math.min(abl(target, 0), 5)]);
-  // :37-56 ABL:21 对 S0/S14 的配对乘法链
+  // ABL:21 对 S0/S14 的配对乘法链
   const [m0, m14] = MASO_PAIR_LADDER[Math.min(abl(target, 21), 5)];
   set_src(target, 0, times(src(target, 0), m0));
   set_src(target, 14, times(src(target, 14), m14));
@@ -772,25 +757,25 @@ async function com48() {
   // 被虐快乐经验（EXP:30，属主 dungeon 走门面）：受虐狂或双高 +3 /
   // 欲望≥3 且抖M≥1 +2 / 欲望≥3 或抖M≥1 +1
   if (tal(target, 88) === 1 || (abl(target, 11) >= 3 && abl(target, 21) >= 3)) {
-    era.print('被虐快乐经验+3'); // :67 PRINTFORML %EXPNAME:30%+3
+    era.print('被虐快乐经验+3'); // PRINTFORML %EXPNAME:30%+3
     chara(target).dungeon.被虐快乐经验 += 3;
   } else if (abl(target, 11) >= 3 && abl(target, 21) >= 1) {
-    era.print('被虐快乐经验+2'); // :70
+    era.print('被虐快乐经验+2');
     chara(target).dungeon.被虐快乐经验 += 2;
   } else if (abl(target, 11) >= 3 || abl(target, 21) >= 1) {
-    era.print('被虐快乐经验+1'); // :73
+    era.print('被虐快乐经验+1');
     chara(target).dungeon.被虐快乐经验 += 1;
   }
 
-  same_sex_exp(target, player, 3); // :77-86 百合/断背 +3
+  same_sex_exp(target, player, 3); // 百合/断背 +3
 
-  // :88 CALL EVENT_SEITSU_ASIKOKI（本族自有函数，:108-122）
+  // CALL EVENT_SEITSU_ASIKOKI（本族自有函数，:108-122）
   await event_seitsu_ashikoki();
 
-  // :90-100 爱情经验：男人（TALENT:122）E = 2、其余 E = 1，无抖M门
+  // 爱情经验：男人（TALENT:122）E = 2、其余 E = 1，无抖M门
   love_exp(target, tal(target, 122) ? 2 : 1);
 
-  return 1; // :102
+  return 1;
 }
 
 /**
@@ -803,27 +788,27 @@ async function event_seitsu_ashikoki() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // :109 A = NO:PLAYER（关系表的键）；:110-112 无前置限定的 TALENT 指
+  // A = NO:PLAYER（关系表的键）；:110-112 无前置限定的 TALENT 指
   // TARGET：男人或扶他、且未熟（与 COM_ABLE48 的对象门同向）
   if ((!tal(target, 121) && !tal(target, 122)) || !tal(target, 135)) {
     return 0;
   }
-  // :113-115 Ｃ感度 5 以上、非触手调教/兽奸
+  // Ｃ感度 5 以上、非触手调教/兽奸
   if (abl(target, 0) <= 4 || tq(target, 90) || tq(target, 89)) {
     return 0;
   }
-  // :116-118 「調教対象」から「調教者」への関係が150以上
+  // 「調教対象」から「調教者」への関係が150以上
   if ((era.get(`relation:${target}:${player}`) || 0) < 150) {
     return 0;
   }
-  // :119 PRINTFORML（原作全角逗号）
+  // PRINTFORML（原作全角逗号）
   era.print(
     `${chara_callname(player)}的阴茎被践踏着，${chara_callname(target)}开始精通这个了…`,
   );
-  // :120 TALENT:135 = 0（未熟解除；属主 train，域内直写）
+  // TALENT:135 = 0（未熟解除；属主 train，域内直写）
   era.set(`talent:${target}:135`, 0);
 
-  return 1; // :122
+  return 1;
 }
 
 // —— @COM49 肛门电极（COMF49_アナル電極.ERB:7-146） ——
@@ -855,19 +840,19 @@ const ANAL_EXP_LADDER = [
 async function com49() {
   const target = era_flag.target;
 
-  era.print('肛门电极'); // :9
-  await train_message_b(); // :11
+  era.print('肛门电极');
+  await train_message_b();
 
-  add_lose(target, 0, 100); // :16
-  add_lose(target, 1, 150); // :17
+  add_lose(target, 0, 100);
+  add_lose(target, 1, 150);
 
   // —— ソースの計算（:13-131）——
-  // :19-38 ABL:3 六档（S2/S13）
+  // ABL:3 六档（S2/S13）
   const anal = ELECTRODE_LADDER[Math.min(abl(target, 3), 5)];
   set_src(target, 2, anal[0]);
   set_src(target, 13, anal[1]);
 
-  // :40-59 EXP:1 六档（**半阈值** EXPLV:n/2——46/49 两个本体同形）：S2 系数
+  // EXP:1 六档（**半阈值** EXPLV:n/2——46/49 两个本体同形）：S2 系数
   // × S6 直填；整阈值只在 EQUIP_COM49 出现（见下）
   const e = era.get(`exp:${target}:1`) || 0;
   const exp_idx =
@@ -885,7 +870,7 @@ async function com49() {
   set_src(target, 2, times(src(target, 2), ANAL_EXP_LADDER[exp_idx][0]));
   set_src(target, 6, ANAL_EXP_LADDER[exp_idx][1]);
 
-  // :61-77 PALAM:3（润滑）：S2 ×0.4-1.8 + S6 += 800/500/300/120/100
+  // PALAM:3（润滑）：S2 ×0.4-1.8 + S6 += 800/500/300/120/100
   const wet = palam_below(target, 3, 1)
     ? 0.4
     : palam_below(target, 3, 2)
@@ -911,32 +896,32 @@ async function com49() {
               : 100),
   );
 
-  // :79-105 S2 再乘 欲情（:79-90）× 顺从（:92-105，肛门系表）
+  // S2 再乘 欲情（:79-90）× 顺从（:92-105，肛门系表）
   set_src(target, 2, times(src(target, 2), lust_factor(target)));
   set_src(target, 2, times(src(target, 2), anal_obey_factor(target)));
 
-  // :83-88 体型三连（S6）——COMF49 的娇小注释写「娇小」、46 写「小柄体形」，
+  // 体型三连（S6）——COMF49 的娇小注释写「娇小」、46 写「小柄体形」，
   // 同为 TALENT:100
   set_src(target, 6, body_factor(target, src(target, 6)));
 
-  // :117-127 肛门钝感/敏感（S6/S13/S14）
+  // 肛门钝感/敏感（S6/S13/S14）
   set_src(target, 6, anal_sense_factor(target, src(target, 6)));
   set_src(target, 13, anal_sense_factor(target, src(target, 13)));
   set_src(target, 14, anal_sense_factor(target, src(target, 14)));
 
-  // :129-131 看重贞操的处女 → S13 /= 3
+  // 看重贞操的处女 → S13 /= 3
   if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {
     set_src(target, 13, Math.floor(src(target, 13) / 3));
   }
 
   // —— 経験上昇（:133-137）——
-  chara(target).dungeon.肛门经验 += 5; // :136 EXP:1（属主 dungeon，走门面）
-  era.print('肛门经验＋５'); // :137
+  chara(target).dungeon.肛门经验 += 5; // EXP:1（属主 dungeon，走门面）
+  era.print('肛门经验＋５');
 
-  // :139-140 電極の着脱
+  // 電極の着脱
   set_tq(target, 49, 1 - tq(target, 49));
 
-  return 1; // :142
+  return 1;
 }
 
 // —— @EQUIP_COM43-49 装备持续效果（各 COMF 文件内、SYSTEM_SOURCE:58-123
@@ -951,7 +936,7 @@ async function equip_com43() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print('＜眼罩装着中＞'); // :97 PRINTL
+  era.print('＜眼罩装着中＞'); // PRINTL
 
   // LOSEBASE:0 += 0（:99 空扣不落）；:100-107 紧缚经验减免（半阈值）
   const [, lose1] = bondage_cost(target, [
@@ -961,30 +946,30 @@ async function equip_com43() {
   ]);
   add_lose(target, 1, lose1);
 
-  // :112-114 A = 250 / B = 1000 / C = 500
-  // :116-157 欲情 × 顺从 × 抖M 三连 + 倒错 ×2（A）
+  // A = 250 / B = 1000 / C = 500
+  // 欲情 × 顺从 × 抖M 三连 + 倒错 ×2（A）
   let a = obey_maso_chain(target, 250);
   if (tal(target, 80)) {
-    a = times(a, 2); // :159-161
+    a = times(a, 2);
   }
-  // :162-164 胆怯 ×2（C）
+  // 胆怯 ×2（C）
   const c = tal(target, 10) ? times(500, 2) : 500;
 
-  // :166-168 三格累加（SOURCE 是「+=」——叠在本回合指令已写的值上）
+  // 三格累加（SOURCE 是「+=」——叠在本回合指令已写的值上）
   set_src(target, 10, src(target, 10) + a);
   set_src(target, 12, src(target, 12) + 1000);
   set_src(target, 14, src(target, 14) + c);
 
-  // :170-171 直写 UP（欲情 / 恐怖——UP:10 吃的是 SOURCE:14 的逃离值）
+  // 直写 UP（欲情 / 恐怖——UP:10 吃的是 SOURCE:14 的逃离值）
   add_up(target, 5, a);
   add_up(target, 10, src(target, 14));
 
   // —— 経験上昇（:173-187）——
-  same_sex_exp(target, player, 1); // :176-184 +1
-  era.add(`exp:${target}:51`, 1); // :186-187 紧缚经验
+  same_sex_exp(target, player, 1);
+  era.add(`exp:${target}:51`, 1); // 紧缚经验
   era.print('紧缚经验＋１');
 
-  return 1; // :189
+  return 1;
 }
 
 /** ABL:21（抖M气质）六档 → A（COMF44 的持续效果 :132-145） */
@@ -999,9 +984,9 @@ async function equip_com44() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print(tq(target, 90) ? '＜触手紧缚中＞' : '＜紧缚中＞'); // :111-115
+  era.print(tq(target, 90) ? '＜触手紧缚中＞' : '＜紧缚中＞');
 
-  // :120-130 紧缚经验减免（半阈值）
+  // 紧缚经验减免（半阈值）
   const [lose0, lose1] = bondage_cost(target, [
     [50, 100],
     [40, 80],
@@ -1010,29 +995,29 @@ async function equip_com44() {
   add_lose(target, 0, lose0);
   add_lose(target, 1, lose1);
 
-  // :132-145 A = 抖M档 → 倒错 ×2（:147-149）→ 欲情 ×（:151-162）
+  // A = 抖M档 → 倒错 ×2（:147-149）→ 欲情 ×（:151-162）
   let a = ROPE_MASO_LADDER[Math.min(abl(target, 21), 5)];
   if (tal(target, 80)) {
     a = times(a, 2);
   }
   a = times(a, lust_factor(target));
 
-  // :164-167 四格累加
+  // 四格累加
   set_src(target, 6, src(target, 6) + a);
   set_src(target, 12, src(target, 12) + a);
   set_src(target, 13, src(target, 13) + a);
   set_src(target, 14, src(target, 14) + a);
 
   // —— 経験上昇（:169-189）——
-  same_sex_exp(target, player, 1); // :172-180
-  master_exp(target, 2); // :182-183 ASSIPLAY == 0 && ABL:21 >= 2
+  same_sex_exp(target, player, 1);
+  master_exp(target, 2); // ASSIPLAY == 0 && ABL:21 >= 2
 
-  // :185-186 触手调教中 T:0 += 1
+  // 触手调教中 T:0 += 1
   if (tq(target, 90)) {
     era.add('t:0', 1);
   }
 
-  era.add(`exp:${target}:51`, 2); // :188-189
+  era.add(`exp:${target}:51`, 2);
   era.print('紧缚经验＋２');
 
   return 0; // 源尾隐式（函数体止于 :189）
@@ -1049,9 +1034,9 @@ async function equip_com45() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print('＜口塞装备中＞'); // :52
+  era.print('＜口塞装备中＞');
 
-  // :54-64 紧缚经验减免（**整阈值** EXPLV:3/EXPLV:4，与 COM45 本体的半阈值
+  // 紧缚经验减免（**整阈值** EXPLV:3/EXPLV:4，与 COM45 本体的半阈值
   // 互异——源 :55 起两处阶梯不同，1:1）
   const e51 = era.get(`exp:${target}:51`) || 0;
   const [lose0, lose1] =
@@ -1059,22 +1044,22 @@ async function equip_com45() {
   add_lose(target, 0, lose0);
   add_lose(target, 1, lose1);
 
-  // :69-82 抖M档 → 欲情 ×（:84-95）
+  // 抖M档 → 欲情 ×（:84-95）
   let a = times(
     GAG_MASO_LADDER[Math.min(abl(target, 21), 5)],
     lust_factor(target),
   );
 
-  // :97-100 四格累加
+  // 四格累加
   set_src(target, 12, src(target, 12) + a);
   set_src(target, 13, src(target, 13) + a);
   set_src(target, 14, src(target, 14) + a);
   set_src(target, 16, src(target, 16) + a);
 
   // —— 経験上昇（:102-116）——
-  same_sex_exp(target, player, 1); // :105-113
-  era.add(`exp:${target}:51`, 1); // :115
-  era.print('紧缚经验＋１'); // :116
+  same_sex_exp(target, player, 1);
+  era.add(`exp:${target}:51`, 1);
+  era.print('紧缚经验＋１');
 
   return 0; // 源尾隐式（:116 后即文件尾）
 }
@@ -1087,16 +1072,16 @@ async function equip_com46() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print(tq(target, 90) ? '＜灌肠触手插入中＞' : '＜灌肠＋肛塞插入中＞'); // :204-208
+  era.print(tq(target, 90) ? '＜灌肠触手插入中＞' : '＜灌肠＋肛塞插入中＞');
 
-  add_lose(target, 0, 100); // :210
-  add_lose(target, 1, 80); // :211
+  add_lose(target, 0, 100);
+  add_lose(target, 1, 80);
 
   // —— ソースの計算（:213-333）——
-  // :216-241 A/B = ABL:3 六档（与本体同表）
+  // A/B = ABL:3 六档（与本体同表）
   const [a_base, b_base] = ANAL_LADDER[Math.min(abl(target, 3), 5)];
 
-  // :244-256 EXP:1 六档——**半阈值**（EXPLV:2/2 起），与 EQUIP_COM49 的整
+  // EXP:1 六档——**半阈值**（EXPLV:2/2 起），与 EQUIP_COM49 的整
   // 阈值互异（文件头「微妙点」第二条）
   const e = era.get(`exp:${target}:1`) || 0;
   const exp_idx =
@@ -1115,7 +1100,7 @@ async function equip_com46() {
   const c_add = [2000, 300, 50, 10, 0, 0][exp_idx];
   let a = times(a_base, exp_factor);
 
-  // :258-274 润滑：A × 系数 + C += 800/500/300/120/100
+  // 润滑：A × 系数 + C += 800/500/300/120/100
   const wet = palam_below(target, 3, 1)
     ? 0.4
     : palam_below(target, 3, 2)
@@ -1138,35 +1123,35 @@ async function equip_com46() {
             ? 120
             : 100);
 
-  // :276-302 欲情 × 顺从（肛门系表）
+  // 欲情 × 顺从（肛门系表）
   a = times(a, lust_factor(target));
   a = times(a, anal_obey_factor(target));
 
-  // :303-311 体型三连（C）
+  // 体型三连（C）
   const c = body_factor(target, c_wet);
 
-  // :313-323 肛门钝感/敏感——乘在**当前 SOURCE 格**上（叠完本体写的值）
+  // 肛门钝感/敏感——乘在**当前 SOURCE 格**上（叠完本体写的值）
   set_src(target, 6, anal_sense_factor(target, src(target, 6)));
   set_src(target, 13, anal_sense_factor(target, src(target, 13)));
   set_src(target, 14, anal_sense_factor(target, src(target, 14)));
 
-  // :325-328 累加（注意 SOURCE:14 += B、不是 C——源 :328 原样）
+  // 累加（注意 SOURCE:14 += B、不是 C——源 :328 原样）
   set_src(target, 2, src(target, 2) + a);
   set_src(target, 13, src(target, 13) + b_base);
   set_src(target, 6, src(target, 6) + c);
   set_src(target, 14, src(target, 14) + b_base);
 
-  // :330-333 看重贞操的处女 → S13 /= 3
+  // 看重贞操的处女 → S13 /= 3
   if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {
     set_src(target, 13, Math.floor(src(target, 13) / 3));
   }
 
   // —— 経験上昇（:335-352）——
-  chara(target).dungeon.肛门经验 += 3; // :338 EXP:1 += 3（属主 dungeon）
-  era.print('肛门经验＋３'); // :339
-  same_sex_exp(target, player, 1); // :341-349 +1
+  chara(target).dungeon.肛门经验 += 3; // EXP:1 += 3（属主 dungeon）
+  era.print('肛门经验＋３');
+  same_sex_exp(target, player, 1);
 
-  // :351-352 触手调教中 T:0 += 1
+  // 触手调教中 T:0 += 1
   if (tq(target, 90)) {
     era.add('t:0', 1);
   }
@@ -1195,15 +1180,15 @@ async function equip_com47() {
   const target = era_flag.target;
   const assi = era_flag.assi;
 
-  // :40 PRINTFORML ＜%SAVESTR:ASSI%束缚衣着装中＞
+  // PRINTFORML ＜%SAVESTR:ASSI%束缚衣着装中＞
   era.print(`＜${chara_callname(assi)}束缚衣着装中＞`);
 
-  // :42-49 抖M气质减免（== 0 / <= 2 / ELSE）
+  // 抖M气质减免（== 0 / <= 2 / ELSE）
   const m = abl(target, 21);
   add_lose(target, 1, m === 0 ? 60 : m <= 2 ? 45 : 30);
 
   // —— ソースの計算（:51-120）——
-  // :54 A = 300 → 恐怖档 ×（:56-67 PALAM:10）
+  // A = 300 → 恐怖档 ×（:56-67 PALAM:10）
   let a = 300;
   const fear = palam_below(target, 10, 1)
     ? 1
@@ -1216,7 +1201,7 @@ async function equip_com47() {
           : 1.4;
   a = times(a, fear);
 
-  // :69-97 抖M六档（S11/S10/S15 三格增量各档直书；0 档另有 A ×0.60、
+  // 抖M六档（S11/S10/S15 三格增量各档直书；0 档另有 A ×0.60、
   // 1 档 ×1.00、2 档 ×1.60——A 的系数只在 0/1/2 档出现，3 档起没有 TIMES 行）
   const maso_idx = Math.min(abl(target, 21), 5);
   const [s11, s10, s15] = BONDAGE_SUIT_LADDER[maso_idx];
@@ -1224,26 +1209,26 @@ async function equip_com47() {
   set_src(target, 10, src(target, 10) + s10);
   set_src(target, 15, src(target, 15) + s15);
   if (maso_idx === 0) {
-    a = times(a, 0.6); // :74
+    a = times(a, 0.6);
   } else if (maso_idx === 1) {
-    a = times(a, 1); // :79（×1.00 原样保留）
+    a = times(a, 1); // （×1.00 原样保留）
   } else if (maso_idx === 2) {
-    a = times(a, 1.6); // :84
+    a = times(a, 1.6);
   }
 
-  // :99-112 助手的抖S气质七档（≥5 落 3.00）
+  // 助手的抖S气质七档（≥5 落 3.00）
   a = times(a, ASSI_S_LADDER[Math.min(abl(assi, 20), 6)]);
 
-  // :114-116 胆怯 ×2
+  // 胆怯 ×2
   if (tal(target, 10)) {
     a = times(a, 2);
   }
 
-  // :118,120 累加 + 直写 UP:10
+  // 累加 + 直写 UP:10
   set_src(target, 14, src(target, 14) + a);
   add_up(target, 10, src(target, 14));
 
-  return 1; // :126（経験上昇段在源里只有空注释，RETURN 1 收尾）
+  return 1; // （経験上昇段在源里只有空注释，RETURN 1 收尾）
 }
 
 /**
@@ -1266,15 +1251,15 @@ async function equip_com49() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  era.print('＜肛门电极插入中＞'); // :150
+  era.print('＜肛门电极插入中＞');
 
-  add_lose(target, 0, 80); // :152
-  add_lose(target, 1, 120); // :153
+  add_lose(target, 0, 80);
+  add_lose(target, 1, 120);
 
   // —— ソースの計算（:155-279）——
   const [a_base, b_base] = ELECTRODE_EQUIP_LADDER[Math.min(abl(target, 3), 5)];
 
-  // :184-198 EXP:1 六档——**整阈值**（EXPLV:2/3/4/5 不除 2，全库唯一一处）
+  // EXP:1 六档——**整阈值**（EXPLV:2/3/4/5 不除 2，全库唯一一处）
   const e = era.get(`exp:${target}:1`) || 0;
   const exp_idx =
     e < EXPLV[1]
@@ -1292,7 +1277,7 @@ async function equip_com49() {
   const c_add = [2000, 300, 50, 10, 0, 0][exp_idx];
   let a = times(a_base, exp_factor);
 
-  // :200-215 润滑
+  // 润滑
   const wet = palam_below(target, 3, 1)
     ? 0.4
     : palam_below(target, 3, 2)
@@ -1315,44 +1300,44 @@ async function equip_com49() {
             ? 120
             : 100);
 
-  // :217-243 欲情 × 顺从（肛门系表）
+  // 欲情 × 顺从（肛门系表）
   a = times(a, lust_factor(target));
   a = times(a, anal_obey_factor(target));
 
-  // :245-253 体型三连（C）
+  // 体型三连（C）
   const c = body_factor(target, c_wet);
 
-  // :255-265 肛门钝感/敏感（当前 SOURCE 格）
+  // 肛门钝感/敏感（当前 SOURCE 格）
   set_src(target, 6, anal_sense_factor(target, src(target, 6)));
   set_src(target, 13, anal_sense_factor(target, src(target, 13)));
   set_src(target, 14, anal_sense_factor(target, src(target, 14)));
 
-  // :267-270 累加（49 的持续版没有 SOURCE:14 += B——与 46 互异，源原样）
+  // 累加（49 的持续版没有 SOURCE:14 += B——与 46 互异，源原样）
   set_src(target, 2, src(target, 2) + a);
   set_src(target, 13, src(target, 13) + b_base);
   set_src(target, 6, src(target, 6) + c);
 
-  // :272-275 看重贞操的处女 → S13 /= 3
+  // 看重贞操的处女 → S13 /= 3
   if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {
     set_src(target, 13, Math.floor(src(target, 13) / 3));
   }
 
-  // :272-275 看重贞操的处女 → S13 /= 3
+  // 看重贞操的处女 → S13 /= 3
   if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {
     set_src(target, 13, Math.floor(src(target, 13) / 3));
   }
 
   // —— 経験上昇（:277-291）——
-  chara(target).dungeon.肛门经验 += 5; // :280
-  era.print('肛门经验＋５'); // :281
-  same_sex_exp(target, player, 1); // :283-291
+  chara(target).dungeon.肛门经验 += 5;
+  era.print('肛门经验＋５');
+  same_sex_exp(target, player, 1);
 
-  // :293-294 触手调教中 T:0 += 1
+  // 触手调教中 T:0 += 1
   if (tq(target, 90)) {
     era.add('t:0', 1);
   }
 
-  return 1; // :296（与 EQUIP_COM43/47 同为显式 RETURN 1）
+  return 1; // （与 EQUIP_COM43/47 同为显式 RETURN 1）
 }
 
 // —— @COM_ABLE40-49（COMABLE.ERB:1878-2238） ——
@@ -1403,13 +1388,13 @@ const diaper_worn = (cid) =>
 // @COM_ABLE40（:1878-1901）：打屁股——无道具要求
 com_able_family.register(40, async () => {
   if (sm_filtered()) {
-    return 0; // :1881-1882
+    return 0;
   }
   if (assi_maso_blocked(2)) {
-    return 0; // :1884-1888
+    return 0;
   }
   if (scene_blocked(era_flag.target)) {
-    return 0; // :1890-1899
+    return 0;
   }
   return 1;
 });
@@ -1418,16 +1403,16 @@ com_able_family.register(40, async () => {
 com_able_family.register(41, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :1909-1910
+    return 0;
   }
   if (!has_item(10)) {
-    return 0; // :1913-1914
+    return 0;
   }
   if (assi_maso_blocked(3)) {
-    return 0; // :1916-1920
+    return 0;
   }
   if (scene_blocked(cid) || tq(cid, 58) || tq(cid, 59)) {
-    return 0; // :1922-1936
+    return 0;
   }
   return 1;
 });
@@ -1436,16 +1421,16 @@ com_able_family.register(41, async () => {
 com_able_family.register(42, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :1946-1947
+    return 0;
   }
   if (!has_item(11)) {
-    return 0; // :1950-1951
+    return 0;
   }
   if (assi_maso_blocked(3)) {
-    return 0; // :1953-1957
+    return 0;
   }
   if (scene_blocked(cid) || tq(cid, 58) || tq(cid, 59)) {
-    return 0; // :1959-1973
+    return 0;
   }
   return 1;
 });
@@ -1454,22 +1439,22 @@ com_able_family.register(42, async () => {
 com_able_family.register(43, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :1983-1984
+    return 0;
   }
   if ((era.get('tflag:899') || 0) > 0) {
-    return 0; // :1986-1987 失神中
+    return 0; // 失神中
   }
   if (zooko_worn(cid) && era.get('flag:37')) {
-    return 0; // :1989-1990 着ぐるみ（43 的原文带 FLAG:37）
+    return 0; // 着ぐるみ（43 的原文带 FLAG:37）
   }
   if (tq(cid, 43)) {
-    return 1; // :1993-1994 解除はいつでも可能
+    return 1; // 解除はいつでも可能
   }
   if (!has_item(5)) {
-    return 0; // :1996-1997
+    return 0;
   }
   if (tq(cid, 55)) {
-    return 0; // :1999-2000 決闘中
+    return 0; // 決闘中
   }
   return 1;
 });
@@ -1478,22 +1463,22 @@ com_able_family.register(43, async () => {
 com_able_family.register(44, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :2009-2010
+    return 0;
   }
   if (scene_blocked(cid)) {
-    return 0; // :2012-2021
+    return 0;
   }
   if (tq(cid, 44)) {
-    return 1; // :2024-2025 解除
+    return 1; // 解除
   }
   if (!has_item(14)) {
-    return 0; // :2027-2028
+    return 0;
   }
   if (abl(era_flag.player, 12) <= 2) {
-    return 0; // :2030-2031 調教者の技巧
+    return 0; // 調教者の技巧
   }
   if (era_flag.assiplay && abl(era_flag.assi, 12) <= 4) {
-    return 0; // :2033-2036 助手は技巧5
+    return 0; // 助手は技巧5
   }
   return 1;
 });
@@ -1502,28 +1487,28 @@ com_able_family.register(44, async () => {
 com_able_family.register(45, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :2046-2047
+    return 0;
   }
   if (tq(cid, 98)) {
-    return 0; // :2049-2050 触手口辱中
+    return 0; // 触手口辱中
   }
   if (zooko_worn(cid)) {
-    return 0; // :2052-2053 着ぐるみ（45 的原文不带 FLAG:37）
+    return 0; // 着ぐるみ（45 的原文不带 FLAG:37）
   }
   if (tq(cid, 45)) {
-    return 1; // :2056-2057 解除
+    return 1; // 解除
   }
   if (!has_item(9)) {
-    return 0; // :2059-2060
+    return 0;
   }
   if (era_flag.assiplay && abl(era_flag.assi, 12) < 3) {
-    return 0; // :2062-2065 助手は技巧3以上
+    return 0; // 助手は技巧3以上
   }
   if (tq(cid, 59)) {
-    return 0; // :2067-2068 新妻
+    return 0; // 新妻
   }
   if (tq(cid, 55)) {
-    return 0; // :2070-2071 決闘
+    return 0; // 決闘
   }
   return 1;
 });
@@ -1532,34 +1517,34 @@ com_able_family.register(45, async () => {
 com_able_family.register(46, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :2080-2081
+    return 0;
   }
   if (scene_blocked(cid)) {
-    return 0; // :2083-2092
+    return 0;
   }
   if (lower_worn(cid)) {
-    return 0; // :2094-2095 パンツか上着下・ズボン
+    return 0; // パンツか上着下・ズボン
   }
   if (diaper_worn(cid)) {
-    return 0; // :2097-2098 オムツ
+    return 0; // オムツ
   }
   if (zooko_worn(cid) && era.get('flag:37')) {
-    return 0; // :2100-2101 着ぐるみ（46 带 FLAG:37）
+    return 0; // 着ぐるみ（46 带 FLAG:37）
   }
   if (tq(cid, 46)) {
-    return 1; // :2103-2104 解除
+    return 1; // 解除
   }
   if (!has_item(15)) {
-    return 0; // :2106-2107
+    return 0;
   }
   if (tq(cid, 13) || tq(cid, 19) || tq(cid, 49)) {
-    return 0; // :2109-2118 肛门振动棒/肛珠/电极使用中
+    return 0; // 肛门振动棒/肛珠/电极使用中
   }
   if ((era.get(`exp:${cid}:1`) || 0) <= 25) {
-    return 0; // :2120-2121 肛门经验 > 25
+    return 0; // 肛门经验 > 25
   }
   if (abl(cid, 10) + abl(cid, 11) + abl(cid, 17) < 10) {
-    return 0; // :2123-2124 顺从+欲望+露出 ≥ 10
+    return 0; // 顺从+欲望+露出 ≥ 10
   }
   return 1;
 });
@@ -1568,19 +1553,19 @@ com_able_family.register(46, async () => {
 com_able_family.register(47, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :2133-2134
+    return 0;
   }
   if (tq(cid, 47)) {
-    return 1; // :2136-2137 解除
+    return 1; // 解除
   }
   if (!has_item(23)) {
-    return 0; // :2139-2140 拘束衣スーツ
+    return 0; // 拘束衣スーツ
   }
   if (era_flag.assiplay === 0 || era_flag.assi < 1) {
-    return 0; // :2142-2143 助手じゃなきゃダメ
+    return 0; // 助手じゃなきゃダメ
   }
   if (abl(era_flag.assi, 20) < 2) {
-    return 0; // :2145-2146 助手の抖S气质 ≥ 2
+    return 0; // 助手の抖S气质 ≥ 2
   }
   return 1;
 });
@@ -1589,25 +1574,25 @@ com_able_family.register(47, async () => {
 com_able_family.register(48, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :2156-2157
+    return 0;
   }
   if (!tal(cid, 121) && !tal(cid, 122)) {
-    return 0; // :2159-2160 対象が男人か扶她
+    return 0; // 対象が男人か扶她
   }
   if (assi_maso_blocked(2)) {
-    return 0; // :2162-2166
+    return 0;
   }
   if (scene_blocked(cid)) {
-    return 0; // :2168-2177
+    return 0;
   }
   if (lower_worn(cid)) {
-    return 0; // :2179-2180
+    return 0;
   }
   if (diaper_worn(cid)) {
-    return 0; // :2182-2183
+    return 0;
   }
   if (zooko_worn(cid) && era.get('flag:37')) {
-    return 0; // :2185-2186（48 带 FLAG:37）
+    return 0; // （48 带 FLAG:37）
   }
   return 1;
 });
@@ -1616,37 +1601,37 @@ com_able_family.register(48, async () => {
 com_able_family.register(49, async () => {
   const cid = era_flag.target;
   if (sm_filtered()) {
-    return 0; // :2196-2197
+    return 0;
   }
   if (scene_blocked(cid)) {
-    return 0; // :2199-2208
+    return 0;
   }
   if (lower_worn(cid)) {
-    return 0; // :2210-2211
+    return 0;
   }
   if (diaper_worn(cid)) {
-    return 0; // :2213-2214
+    return 0;
   }
   if (zooko_worn(cid) && era.get('flag:37')) {
-    return 0; // :2216-2217（49 带 FLAG:37）
+    return 0; // （49 带 FLAG:37）
   }
   if (tq(cid, 49)) {
-    return 1; // :2219-2220 解除
+    return 1; // 解除
   }
   if (!has_item(21)) {
-    return 0; // :2222-2223
+    return 0;
   }
   if (tq(cid, 13) || tq(cid, 19) || tq(cid, 46)) {
-    return 0; // :2225-2234 肛门振动棒/肛珠/普通の浣腸使用中
+    return 0; // 肛门振动棒/肛珠/普通の浣腸使用中
   }
   if (tq(cid, 58)) {
-    return 0; // :2236-2237 浴室
+    return 0; // 浴室
   }
   return 1;
 });
 
 // —— TRAIN_MESSAGE_B 的 SELECTCOM 40-49 分支（EVENT_TRAIN_MESSAGE_B.ERB
-//    :1742-1900；公共头（省略设定 + 点线）在 train-message.js） ——
+// ；公共头（省略设定 + 点线）在 train-message.js） ——
 
 /** 目标名（%SAVESTR:TARGET% → callname，#171 裁定） */
 const target_name = () => chara_callname(era_flag.target);
@@ -1657,13 +1642,13 @@ const target_name = () => chara_callname(era_flag.target);
  */
 const in_zooko = () => zooko_worn(era_flag.target);
 
-// :1742-1764 打屁股
+// 打屁股
 train_message_b_family.register(40, async () => {
   const target = era_flag.target;
   const player_name = chara_callname(era_flag.player);
   const tname = target_name();
 
-  // :1743-1751 第一行：%PLAYER%在 +（着ぐるみ → <特别服装>外面、/ 目标名
+  // 第一行：%PLAYER%在 +（着ぐるみ → <特别服装>外面、/ 目标名
   // +（魅力点 312 == 23 → 又大又翘的）+ 屁股上、）
   let line = `${player_name}在`;
   if (in_zooko()) {
@@ -1675,37 +1660,37 @@ train_message_b_family.register(40, async () => {
     }
     line += '屁股上、';
   }
-  era.print(`${line}一掌一掌地拍打着。`); // :1752 PRINTFORML
+  era.print(`${line}一掌一掌地拍打着。`); // PRINTFORML
 
-  // :1753-1763 尾句三支
+  // 尾句三支
   if (in_zooko()) {
     era.print(`${clothtype_special_text(target)}里的${tname}、好像不太有感觉…`);
   } else if (
     era_flag.prevcom === 40 &&
     ((era.get(`cflag:${target}:40`) || 0) & 16) === 0
   ) {
-    era.print(`${tname}被打的地方越来越红了…`); // :1757-1758 连续打
+    era.print(`${tname}被打的地方越来越红了…`); // 连续打
   } else if (((era.get(`cflag:${target}:40`) || 0) & 16) === 0) {
-    era.print(`${tname}被打的地方变红了…`); // :1759-1760
+    era.print(`${tname}被打的地方变红了…`);
   }
 });
 
-// :1765-1783 鞭
+// 鞭
 train_message_b_family.register(41, async () => {
   const target = era_flag.target;
   const player_name = chara_callname(era_flag.player);
   const tname = target_name();
 
-  // :1766-1772 第一行
+  // 第一行
   let line = player_name;
   if (in_zooko()) {
     line += clothtype_special_text(target);
   } else {
     line += `在${tname}的身上`;
   }
-  era.print(`${line}挥下鞭子…`); // :1773
+  era.print(`${line}挥下鞭子…`);
 
-  // :1774-1782 尾句三支
+  // 尾句三支
   if (in_zooko()) {
     era.print(`${clothtype_special_text(target)}里的${tname}、好像不太有效…`);
   } else if (era_flag.prevcom === 41) {
@@ -1715,35 +1700,35 @@ train_message_b_family.register(41, async () => {
   }
 });
 
-// :1784-1806 针
+// 针
 train_message_b_family.register(42, async () => {
   const target = era_flag.target;
   const tname = target_name();
   const player_name = chara_callname(era_flag.player);
 
-  // :1785-1797 第一行（着ぐるみ支的行尾「了、」字面 1:1）
+  // 第一行（着ぐるみ支的行尾「了、」字面 1:1）
   let line = `${player_name}、用针扎`;
   if (in_zooko()) {
     era.print(`${line}${clothtype_special_text(target)}了、`);
   } else {
     line += tname;
     if (tal(target, 244)) {
-      line += '蓝色的'; // :1790 恶魔肌肤
+      line += '蓝色的'; // 恶魔肌肤
     } else if (tal(target, 253)) {
-      line += '褐色的'; // :1792
+      line += '褐色的';
     } else if (tal(target, 255)) {
-      line += '白皙的'; // :1794
+      line += '白皙的';
     }
-    era.print(`${line}肌肤…`); // :1796 PRINTL
+    era.print(`${line}肌肤…`); // PRINTL
   }
 
-  // :1798-1804 着ぐるみ尾句（非着ぐるみ支无尾句）
+  // 着ぐるみ尾句（非着ぐるみ支无尾句）
   if (in_zooko()) {
     era.print(`${clothtype_special_text(target)}里的${tname}、好像不太有效…`);
   }
 });
 
-// :1807-1815 眼罩（分支打印在 TEQUIP 取反**之前**：装着中 → 即将解下）
+// 眼罩（分支打印在 TEQUIP 取反**之前**：装着中 → 即将解下）
 train_message_b_family.register(43, async () => {
   const tname = target_name();
   if (tq(era_flag.target, 43)) {
@@ -1753,7 +1738,7 @@ train_message_b_family.register(43, async () => {
   }
 });
 
-// :1816-1830 绳子
+// 绳子
 train_message_b_family.register(44, async () => {
   const target = era_flag.target;
   const tname = target_name();
@@ -1767,7 +1752,7 @@ train_message_b_family.register(44, async () => {
   );
 });
 
-// :1831-1839 口塞
+// 口塞
 train_message_b_family.register(45, async () => {
   const tname = target_name();
   if (tq(era_flag.target, 45)) {
@@ -1777,7 +1762,7 @@ train_message_b_family.register(45, async () => {
   }
 });
 
-// :1840-1864 灌肠+肛塞
+// 灌肠+肛塞
 train_message_b_family.register(46, async () => {
   const target = era_flag.target;
   const tname = target_name();
@@ -1809,7 +1794,7 @@ train_message_b_family.register(46, async () => {
   }
 });
 
-// :1865-1882 拘束衣（%SAVESTR:ASSI% 的肤色三选一）
+// 拘束衣（%SAVESTR:ASSI% 的肤色三选一）
 train_message_b_family.register(47, async () => {
   const assi = era_flag.assi;
   if (tq(era_flag.target, 47)) {
@@ -1827,7 +1812,7 @@ train_message_b_family.register(47, async () => {
   }
 });
 
-// :1883-1891 践踏（欲情 PALAMLV:3 以上 → 硬梆梆的）
+// 践踏（欲情 PALAMLV:3 以上 → 硬梆梆的）
 train_message_b_family.register(48, async () => {
   const target = era_flag.target;
   const tname = target_name();
@@ -1840,7 +1825,7 @@ train_message_b_family.register(48, async () => {
   era.print(`${line}阴茎、用脚踩着…`);
 });
 
-// :1892-1900 肛门电极
+// 肛门电极
 train_message_b_family.register(49, async () => {
   const tname = target_name();
   if (tq(era_flag.target, 49)) {
@@ -1851,7 +1836,7 @@ train_message_b_family.register(49, async () => {
 });
 
 // —— TRAIN_MESSAGE_A 的 SELECTCOM 40-42 分支（EVENT_TRAIN_MESSAGE_A.ERB
-//    :1208-1272；43-49 无 A 分支，维持缺省占位行） ——
+// ；43-49 无 A 分支，维持缺省占位行） ——
 
 /**
  * 痛苦反应的档位文本（:1229-1244，B = 0..5+）。
@@ -1875,17 +1860,17 @@ async function train_message_a_pain() {
   const target = era_flag.target;
   const tname = target_name();
 
-  // :1208 的第三臂 + TFLAG:899 失神门（> 1 时不进本分支——整支跳过，
+  // 的第三臂 + TFLAG:899 失神门（> 1 时不进本分支——整支跳过，
   // 与原作 ELSEIF 不命中同形）
   if ((era.get('tflag:899') || 0) > 1) {
     return;
   }
 
-  // :1209-1221 A = UP:9（苦痛上升量，delta 表）→ 档位
+  // A = UP:9（苦痛上升量，delta 表）→ 档位
   const a = era.get(`delta:${target}:9`) || 0;
   let b = a < 300 ? 0 : a < 1000 ? 1 : a < 2000 ? 2 : a < 3000 ? 3 : 4;
 
-  // :1223-1227 害怕疼痛（40）+1 / 不惧疼痛（41）-1
+  // 害怕疼痛（40）+1 / 不惧疼痛（41）-1
   if (tal(target, 40)) {
     b += 1;
   }
@@ -1893,7 +1878,7 @@ async function train_message_a_pain() {
     b -= 1;
   }
 
-  // :1229-1244 IF B < 1…B < 5 五档 + ELSE 求饶档（B < 0 由首档兜住——
+  // IF B < 1…B < 5 五档 + ELSE 求饶档（B < 0 由首档兜住——
   // 不惧疼痛把档位压到负同样落「发出了悲鸣」）
   if (b < 5) {
     era.print(
@@ -1902,12 +1887,12 @@ async function train_message_a_pain() {
   } else {
     let line = `${tname}因为实在太痛、`;
     if (!tal(target, 45) && !tal(target, 310)) {
-      line += '抽抽哒哒地哭着、'; // :1241-1242（不哭泣 45 / 阴毛状态 310）
+      line += '抽抽哒哒地哭着、'; // （不哭泣 45 / 阴毛状态 310）
     }
     era.print(`${line}拼命地求饶。`);
   }
 
-  // :1245-1252 欲情 > 1000 的勃起/潮湿追加
+  // 欲情 > 1000 的勃起/潮湿追加
   if ((era.get(`delta:${target}:5`) || 0) > 1000) {
     if (tal(target, 121) || tal(target, 122)) {
       era.print(`然而、${tname}因为痛苦而扭曲的身体上阴茎已经勃起了……`);
@@ -1916,7 +1901,7 @@ async function train_message_a_pain() {
     }
   }
 
-  // :1253-1272 浣腸＋アナルプラグ挿入中（TEQUIP:46 && TFLAG:899 <= 1）：
+  // 浣腸＋アナルプラグ挿入中（TEQUIP:46 && TFLAG:899 <= 1）：
   // 源里这段写在分支体内（缩进误导已核，见文件头），仍是 40/41/42 的
   // 反应段一部分——本函数末尾同位
   if (tq(target, 46) && (era.get('tflag:899') || 0) <= 1) {

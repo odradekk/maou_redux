@@ -1,10 +1,6 @@
 /**
  * @SHOW_FLOOR 的行为测试（#548 / S7：主菜单阶层按钮 [521]-[530] 的阶层信息）。
  *
- * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @SHOW_FLOOR（:426-500）
- *     依赖: @ENEMY_EXIST2（ere/page/page-dungeon-info2.js，#180 真身）与
- *     @MONSTERNAME（ere/dungeon/monster-data.js，#176 真身）。
- *
  * 缝 = test/helpers/era-fixture.js：直调 usershop 的 520-530 分发（引擎输入
  * 通道只送已打印按钮，测试夹具按项目惯例直接调分发函数——page-shop.test.js
  * 同款说明）。
@@ -68,14 +64,14 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   await show_floor_via_usershop(fixture, 521);
 
   const texts = text_lines(fixture);
-  // :433 + :452-467 + :469 的合行（PRINTFORM 链 + PRINTL 落行）
+  // 的合行（PRINTFORM 链 + PRINTL 落行）
   assert(
     texts.includes('第1阶层 - 商店街　'),
     '楼层头与设施后缀合一行（正文自带的那个前导半角空格 + 全角尾随空格）',
   );
-  // :478-486 设施四格（有格命中才出行 + 分隔线）
+  // 设施四格（有格命中才出行 + 分隔线）
   assert(texts.includes('[落穴]'), '设施四格的 [道具名] 行');
-  // :495 怪物库存：{5,2,LEFT} = "5 " + 只 + 名
+  // 怪物库存：{5,2,LEFT} = "5 " + 只 + 名
   assert(texts.includes('5\u00A0只史莱姆'), '怪物行（数量左对齐两位）');
   // 空行三处（#548 起）：@ENEMY_EXIST2 的首行空行（:595 / :630）+ :489 的
   // PRINTL——两处走 era.println（夹具记为 'br' 行）；:500 的无参 PRINTW 走

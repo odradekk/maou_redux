@@ -152,7 +152,7 @@ export default [
   {
     desc: 'M12225 结算表 `)` 与 `=` 之间的 12 格补位退回半角空格（JUEL_CHECK :687）',
     file: JUEL,
-    find: '      { content: `)${NBSP.repeat(12)}= ` }, // :687 PRINT ) + 12 空格 + "= "',
+    find: '      { content: `)${NBSP.repeat(12)}= ` }, // PRINT ) + 12 空格 + "= "',
     replace: '      { content: `)${" ".repeat(12)}= ` }, // 变异：回退半角空格',
     tests: ['juel-check'],
     must_mention: '结算表行的列补位须是 NBSP',
@@ -160,7 +160,7 @@ export default [
   {
     desc: 'M12226 ablup14 的 EXP 门槛行 6 格前导退回半角空格（ABLUP14 :50）',
     file: ABLUP,
-    find: "    era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // :50",
+    find: "    era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`);",
     replace:
       "    era.print(`${' '.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // 变异：回退",
     tests: ['ablup'],

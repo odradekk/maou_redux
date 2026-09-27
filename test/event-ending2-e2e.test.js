@@ -293,7 +293,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     // 封印播报的名字来自 %SAVESTR:TARGET%（→ callname:TARGET:-1，#5 决议：
     // NAME / SAVESTR 同源）。它必须是命名链**从上面种下的表里取到**的名字：
     // 勇者的称呼在生成时被 CHARA_NAME_RANDOM_DEFINE 掷号覆写（CHARA_MAKE.ERB
-    // :18-20），模板名（战士/骑士…）只活在 ADDCHARA 那一刻。
+    // ），模板名（战士/骑士…）只活在 ADDCHARA 那一刻。
     const report = texts.find((line) =>
       line.includes('封印了魔王，被后人歌颂为传说中的勇者'),
     );

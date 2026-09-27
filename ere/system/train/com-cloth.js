@@ -3,15 +3,6 @@
  * 实现 + @COM_ABLE110 / @COM_ABLE111 的可执行性判定（issue #228 J18——
  * 服装系统 #215 在指令侧的消费者，本票主要是接线）。
  *
- * 源: target/ERB/調教相關/COMF110_服の着脱.ERB  @COM110（:8-323）
- *     target/ERB/調教相關/COMF110_服の着脱.ERB  @COM110_ABLE0T…ABLE5W
- *     （:329-540，12 个着脱判定）
- *     target/ERB/調教相關/COMF111_服を破る.ERB  @COM111（:7-168）
- *     target/ERB/調教相關/COMF111_服を破る.ERB  @COM111_ABLE0L…ABLE6L
- *     （:174-262，7 个引き裂き判定）
- *     target/ERB/調教相關/COMABLE.ERB  @COM_ABLE110（:3662-3678）/
- *     @COM_ABLE111（:3692-3716）
- *
  * == 本族的形态（源文件头自述：「実行してもパラメーターは変更せず通常
  *    コマンド扱いにならない」） ==
  *
@@ -155,7 +146,7 @@ function com110_able0t(cid) {
       return 0;
     }
     if (worn(cid) & BIT_SPECIAL && special_type(cid) <= 50) {
-      return 0; // :342-343 尿布支内恒假（42==69 与 <=50 互斥），1:1
+      return 0; // 尿布支内恒假（42==69 与 <=50 互斥），1:1
     }
     if (main_type(cid) === 202 && worn(cid) & BIT_SKIRT) {
       return 0;
@@ -211,7 +202,7 @@ function com110_able1w(cid, b) {
   if (main_type(cid) <= 200) {
     return 0;
   }
-  // :400-403 「上装穿着中或洗涤中」且「下装穿着中或洗涤中」→ 不可
+  // 「上装穿着中或洗涤中」且「下装穿着中或洗涤中」→ 不可
   //（原作注释：为「衣装破れた」情形留的口——上下任一半还在（含洗着）
   // 就不算失去整件，不能重新穿上）
   if (worn(cid) & BIT_UPPER || laundry(cid, 45) !== 0) {
@@ -513,14 +504,14 @@ async function com110() {
   const name = chara_callname(target);
 
   for (;;) {
-    era.print('穿脱衣服'); // :12
+    era.print('穿脱衣服');
 
-    const b = standard_bits(target); // :14-17 A・B 探测
+    const b = standard_bits(target); // A・B 探测
 
-    // :22-24 着脱の確認（现在%名%的外貌是，…。）
+    // 着脱の確認（现在%名%的外貌是，…。）
     era.print(`现在${name}的外貌是，${clothtype_text(target)}。`);
 
-    // :27-50 判定変数 T/W
+    // 判定変数 T/W
     const t = [
       com110_able0t(target),
       com110_able1t(target),
@@ -601,15 +592,15 @@ async function com110() {
     }
     era.print(' [100] - 算了');
 
-    const result = await era.input(); // :136（COMF110）
+    const result = await era.input(); // （COMF110）
 
     // —— :142-319 着脱処理 ——
     if (result === 0 && laundry(target, 49)) {
-      // :141-144 外せない特別コス（贞操带钥匙已丢）
+      // 外せない特別コス（贞操带钥匙已丢）
       era.print(`${name}贞操带的钥匙丢掉了。`);
       await era.waitAnyKey();
     } else if (result === 0 && t[0]) {
-      // :146-160 特別コス脱衣
+      // 特別コス脱衣
       const mask = era.get('tflag:45') || 0;
       era.print(
         `${name}把${soiled_adjective(mask, 32, 16)}${clothtype_special_text(target)}${
@@ -618,7 +609,7 @@ async function com110() {
       );
       set_worn(target, worn(target) - BIT_SPECIAL);
     } else if (result === 0 && w[0]) {
-      // :161-178 特別コス装着（污物/尿浸时不可用）
+      // 特別コス装着（污物/尿浸时不可用）
       const mask = era.get('tflag:45') || 0;
       const unusable = soiled_unusable(mask, 32, 16);
       if (unusable) {
@@ -632,7 +623,7 @@ async function com110() {
         set_worn(target, worn(target) | BIT_SPECIAL);
       }
     } else if (result === 1 && t[1]) {
-      // :179-194 ワンピース脱衣（上下一起脱）
+      // ワンピース脱衣（上下一起脱）
       const mask = era.get('tflag:45') || 0;
       era.print(
         `${name}将${soiled_adjective(mask, 8, 4)}${clothtype_main2_text(target)}脱掉了。`,
@@ -649,7 +640,7 @@ async function com110() {
       }
       set_worn(target, bits);
     } else if (result === 1 && w[1]) {
-      // :195-216 ワンピース装着（上下两半都不可用才成）
+      // ワンピース装着（上下两半都不可用才成）
       const mask = era.get('tflag:45') || 0;
       const unusable = soiled_unusable(mask, 8, 4);
       if (unusable) {
@@ -661,21 +652,21 @@ async function com110() {
           bits |= BIT_UPPER;
         }
         if (laundry(target, 46) === 0) {
-          // :210-215 201-250 裙型 → 位 8 / 251-300 裤型 → 位 16
+          // 201-250 裙型 → 位 8 / 251-300 裤型 → 位 16
           bits |= main_type(target) <= 250 ? BIT_SKIRT : BIT_TROUSERS;
         }
         set_worn(target, bits);
       }
     } else if (result === 1 && t[2]) {
-      // :217-222 ツーピース上脱衣
+      // ツーピース上脱衣
       era.print(`${name}将${clothtype_main2_text(target)}的上半身脱掉了。`);
       set_worn(target, worn(target) - BIT_UPPER);
     } else if (result === 1 && w[2]) {
-      // :223-228 ツーピース上装着
+      // ツーピース上装着
       era.print(`${name}把${clothtype_main2_text(target)}的上半身穿上了。`);
       set_worn(target, worn(target) | BIT_UPPER);
     } else if (result === 2 && t[3]) {
-      // :229-247 ツーピース下脱衣
+      // ツーピース下脱衣
       const mask = era.get('tflag:45') || 0;
       era.print(
         `${name}将${soiled_adjective(mask, 8, 4)}${clothtype_main2_text(target)}${
@@ -691,7 +682,7 @@ async function com110() {
       }
       set_worn(target, bits);
     } else if (result === 2 && w[3]) {
-      // :248-273 ツーピース下装着
+      // ツーピース下装着
       const mask = era.get('tflag:45') || 0;
       const unusable = soiled_unusable(mask, 8, 4);
       if (unusable) {
@@ -702,27 +693,27 @@ async function com110() {
             is_skirt(target) ? '的裙子穿上了。' : '的下半身穿上了。'
           }`,
         );
-        // :263-267 1-100 裙型 → 位 8 / 101-200 裤型 → 位 16
+        // 1-100 裙型 → 位 8 / 101-200 裤型 → 位 16
         set_worn(
           target,
           worn(target) | (main_type(target) <= 100 ? BIT_SKIRT : BIT_TROUSERS),
         );
       }
     } else if (result === 3 && t[4]) {
-      // :270-273 ブラジャー脱衣
+      // ブラジャー脱衣
       era.print(`${name}的胸罩解开了。`);
       set_worn(target, worn(target) - BIT_BRA);
     } else if (result === 3 && w[4]) {
-      // :274-277 ブラジャー装着
+      // ブラジャー装着
       era.print(`${name}穿上了胸罩。`);
       set_worn(target, worn(target) | BIT_BRA);
     } else if (result === 4 && t[5]) {
-      // :278-287 パンツ脱衣（弄脏位查下装 8/4 是原作怪癖，见文件头）
+      // パンツ脱衣（弄脏位查下装 8/4 是原作怪癖，见文件头）
       const mask = era.get('tflag:45') || 0;
       era.print(`${name}把${soiled_adjective(mask, 8, 4)}内裤脱掉了。`);
       set_worn(target, worn(target) - BIT_PANTY);
     } else if (result === 4 && w[5]) {
-      // :288-299 パンツ装着
+      // パンツ装着
       const mask = era.get('tflag:45') || 0;
       const unusable = soiled_unusable(mask, 2, 1);
       if (unusable) {
@@ -732,7 +723,7 @@ async function com110() {
         set_worn(target, worn(target) | BIT_PANTY);
       }
     } else if (result === 7 && worn(target) !== 0) {
-      // :300-311 全裸にして終了（贞操带直接选才脱得掉）
+      // 全裸にして終了（贞操带直接选才脱得掉）
       if (special_type(target) === 79 && worn(target) & BIT_SPECIAL) {
         era.print(`${name}除了贞操带以外一丝不挂。`);
         await era.waitAnyKey();
@@ -744,7 +735,7 @@ async function com110() {
         return 0;
       }
     } else if (result === 9 && worn(target) !== 0) {
-      // :312-316 移动到撕破衣服；COMF110:313 的裸 PRINTL 落在菜单已收行
+      // 移动到撕破衣服；COMF110:313 的裸 PRINTL 落在菜单已收行
       // 之后 → 真空行（#595）
       era.print('');
       const ripped = await com111();
@@ -752,7 +743,7 @@ async function com110() {
         return 0;
       }
     } else if (result === 100) {
-      // :317-318 算了
+      // 算了
       return 0;
     }
 
@@ -771,14 +762,14 @@ async function com111() {
   const name = chara_callname(target);
 
   for (;;) {
-    era.print('撕破衣服'); // :11（COMF111）
+    era.print('撕破衣服'); // （COMF111）
 
-    standard_bits(target); // :13-16 A・B 探测（L 判定不用 B，还原即止）
+    standard_bits(target); // A・B 探测（L 判定不用 B，还原即止）
 
-    // :20-23 破り取る部位の確認
+    // 破り取る部位の確認
     era.print(`现在${name}的外貌是，${clothtype_text(target)}。`);
 
-    // :25-39 引き裂き判定変数 L
+    // 引き裂き判定変数 L
     const l = [
       com111_able0l(target),
       com111_able1l(target),
@@ -818,10 +809,10 @@ async function com111() {
     era.print(' [19] - 返回[穿脱衣服]');
     era.print(' [100]- 算了');
 
-    const result = await era.input(); // :85
+    const result = await era.input();
 
     // —— :91-157 引き裂き処理 ——
-    // :91-96 剥ぎ取れない特別コス（史莱姆/贞操带：被徒手撕破但撕不下来）
+    // 剥ぎ取れない特別コス（史莱姆/贞操带：被徒手撕破但撕不下来）
     if (
       result === 10 &&
       worn(target) & BIT_SPECIAL &&
@@ -832,19 +823,19 @@ async function com111() {
       return 0;
     }
     if (result === 10 && l[0]) {
-      // :97-103 特別コス引き裂き
+      // 特別コス引き裂き
       era.print(`${name}的${clothtype_special_text(target)}被强行剥掉了。`);
       set_worn(target, worn(target) - BIT_SPECIAL);
-      set_laundry(target, 47, -3); // :102 CFLAG:47 = -3（破り取られている）
+      set_laundry(target, 47, -3); // CFLAG:47 = -3（破り取られている）
     } else if (result === 11 && l[1]) {
-      // :104-110 ワンピース上半身引き裂き
+      // ワンピース上半身引き裂き
       era.print(
         `${name}穿着的${clothtype_main2_text(target)}的上半身被撕坏了。`,
       );
       set_worn(target, worn(target) - BIT_UPPER);
-      set_laundry(target, 45, -3); // :109
+      set_laundry(target, 45, -3);
     } else if (result === 12 && l[2]) {
-      // :111-120 ワンピース下半身引き裂き（位 4 一起消）
+      // ワンピース下半身引き裂き（位 4 一起消）
       era.print(
         `${name}穿着的${clothtype_main2_text(target)}的下半身被撕坏了。`,
       );
@@ -856,16 +847,16 @@ async function com111() {
         bits -= BIT_TROUSERS;
       }
       set_worn(target, bits);
-      set_laundry(target, 46, -3); // :119
+      set_laundry(target, 46, -3);
     } else if (result === 11 && l[3]) {
-      // :121-127 ツーピース上引き裂き
+      // ツーピース上引き裂き
       era.print(
         `${name}穿着的${clothtype_main2_text(target)}的上半身被撕破了。`,
       );
       set_worn(target, worn(target) - BIT_UPPER);
-      set_laundry(target, 45, -3); // :126
+      set_laundry(target, 45, -3);
     } else if (result === 12 && l[4]) {
-      // :128-141 ツーピース下引き裂き
+      // ツーピース下引き裂き
       era.print(
         `${name}穿着的${clothtype_main2_text(target)}${
           is_skirt(target) ? '的裙子被撕破了。' : '的下半身被撕破了。'
@@ -879,29 +870,29 @@ async function com111() {
         bits -= BIT_TROUSERS;
       }
       set_worn(target, bits);
-      set_laundry(target, 46, -3); // :140
+      set_laundry(target, 46, -3);
     } else if (result === 13 && l[5]) {
-      // :142-146 ブラジャー引き裂き（CFLAG:44 属主 stronghold，走门面 #71）
+      // ブラジャー引き裂き（CFLAG:44 属主 stronghold，走门面 #71）
       era.print(`${name}的胸罩被撕碎了。`);
       set_worn(target, worn(target) - BIT_BRA);
-      chara(target).stronghold.胸罩状态 = -3; // :145 CFLAG:44 = -3
+      chara(target).stronghold.胸罩状态 = -3; // CFLAG:44 = -3
     } else if (result === 14 && l[6]) {
-      // :147-151 パンツ引き裂き
+      // パンツ引き裂き
       era.print(`${name}的内裤被撕碎了。`);
       set_worn(target, worn(target) - BIT_PANTY);
-      set_laundry(target, 43, -3); // :150
+      set_laundry(target, 43, -3);
     } else if (result === 19) {
-      // :151-152 返回[穿脱衣服]
+      // 返回[穿脱衣服]
       return 0;
     } else if (result === 100) {
-      // :153-155 算了
+      // 算了
       return 1;
     } else {
-      // :156-157 ELSE → GOTO INPUT_LOOP（无空行直回菜单头）
+      // ELSE → GOTO INPUT_LOOP（无空行直回菜单头）
       continue;
     }
 
-    // :159-165 撕完全裸 → 收尾退出
+    // 撕完全裸 → 收尾退出
     if (worn(target) === 0) {
       era.print('（已经全裸，撕无可撕）');
       // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）
@@ -922,19 +913,19 @@ async function com111() {
 /** @COM_ABLE110（:3662-3678）：着衣設定未开/无衣可穿/特殊调教装备中不可 */
 async function com_able110() {
   const target = era_flag.target;
-  // :3664-3665 自动不可（CALLTRAIN 的自动回合标记）
+  // 自动不可（CALLTRAIN 的自动回合标记）
   if ((era.get('tflag:224') || 0) === 555) {
     return 0;
   }
-  // :3666-3667 着衣設定を使ってない
+  // 着衣設定を使ってない
   if ((era.get('flag:37') || 0) === 0) {
     return 0;
   }
-  // :3670-3671 着衣フラグが存在しない（既定服装与特别服装均未设定）
+  // 着衣フラグが存在しない（既定服装与特别服装均未设定）
   if (main_type(target) === 0 && special_type(target) === 0) {
     return 0;
   }
-  // :3672-3681 触手/决斗/绳子/浴室/新妻各装备位
+  // 触手/决斗/绳子/浴室/新妻各装备位
   if (tequip(target, 90)) {
     return 0;
   }
@@ -959,7 +950,7 @@ async function com_able111() {
   if (base === 0) {
     return 0;
   }
-  // :3718-3719 全裸だとダメ
+  // 全裸だとダメ
   if (worn(era_flag.target) === 0) {
     return 0;
   }

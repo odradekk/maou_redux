@@ -40,15 +40,15 @@ export default [
   make(
     8038,
     '村娘Ａ的年龄下界 12 改 11',
-    '    age = rand(2) + 12; // :23 村娘Ａ',
-    '    age = rand(2) + 11; // :23 村娘Ａ',
+    '    age = rand(2) + 12; // 村娘Ａ',
+    '    age = rand(2) + 11; // 村娘Ａ',
     '村娘 A（165）固定 12-13 岁',
   ),
   make(
     8039,
     '村娘Ｂ的年龄下界 17 改 16',
-    '  else if (t(171)) age = rand(2) + 17; // :25 村娘Ｂ',
-    '  else if (t(171)) age = rand(2) + 16; // :25 村娘Ｂ',
+    '  else if (t(171)) age = rand(2) + 17; // 村娘Ｂ',
+    '  else if (t(171)) age = rand(2) + 16; // 村娘Ｂ',
     '村娘 B（171）17-18 岁',
   ),
   make(
@@ -82,8 +82,8 @@ export default [
   make(
     8044,
     '身体生成改走「只重算胸围」模式（mode 0 改 1）',
-    '  const body = char_size_generate(cid, age, 0, rand); // :27 缺省年龄交回年龄生成',
-    '  const body = char_size_generate(cid, age, 1, rand); // :27 缺省年龄交回年龄生成',
+    '  const body = char_size_generate(cid, age, 0, rand); // 缺省年龄交回年龄生成',
+    '  const body = char_size_generate(cid, age, 1, rand); // 缺省年龄交回年龄生成',
     '七元组',
   ),
   make(
@@ -217,8 +217,8 @@ export default [
   make(
     8063,
     '偏斜档的掷骰上界丢掉 +1（数量级偏一档）',
-    '    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10; // :309 RAND:(RESULT + 1)',
-    '    const ceiling = 10 ** rand(digit_count(cap)) * 10; // :309 RAND:(RESULT + 1)',
+    '    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10; // RAND:(RESULT + 1)',
+    '    const ceiling = 10 ** rand(digit_count(cap)) * 10; // RAND:(RESULT + 1)',
     '偏斜随机档（槽 232）的五个数量级分支',
   ),
   make(
@@ -317,15 +317,15 @@ export default [
   make(
     8077,
     'LIMIT 下界 12 改 13',
-    '  age = Math.max(12, Math.min(35, age)); // :178 LIMIT(EXP_AGE,12,35)',
-    '  age = Math.max(13, Math.min(35, age)); // :178 LIMIT(EXP_AGE,12,35)',
+    '  age = Math.max(12, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)',
+    '  age = Math.max(13, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)',
     '经历推算值经 LIMIT(12,35) 钳制',
   ),
   make(
     8078,
     'LIMIT 上界 35 改 34',
-    '  age = Math.max(12, Math.min(35, age)); // :178 LIMIT(EXP_AGE,12,35)',
-    '  age = Math.max(12, Math.min(34, age)); // :178 LIMIT(EXP_AGE,12,35)',
+    '  age = Math.max(12, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)',
+    '  age = Math.max(12, Math.min(34, age)); // LIMIT(EXP_AGE,12,35)',
     '经历推算值经 LIMIT(12,35) 钳制',
   ),
   make(
@@ -393,8 +393,8 @@ export default [
   make(
     9475,
     '三围显示闸门位 15 认成 14（位 15 开也不再重掷）',
-    '  if (((settings >> 15) & 1) === 0) return; // :4-5',
-    '  if (((settings >> 14) & 1) === 0) return; // :4-5',
+    '  if (((settings >> 15) & 1) === 0) return;',
+    '  if (((settings >> 14) & 1) === 0) return;',
     'FLAG:5 位 15 关闭时整体不动',
   ),
   make(
@@ -407,15 +407,15 @@ export default [
   make(
     9477,
     '重掷分支被跳过（拆掉转发全身重生成的调用）',
-    '    char_body_generate_wapped(cid, rand); // :7-8',
-    '    void 0; // :7-8',
+    '    char_body_generate_wapped(cid, rand);',
+    '    void 0;',
     ':7-8 缺年龄或身高转发全身重生成',
   ),
   make(
     9478,
     '胸围回写漏除以 100（CFLAG:455 单位错一百倍）',
-    '  era.set(`cflag:${cid}:455`, int(bust / 100)); // :12',
-    '  era.set(`cflag:${cid}:455`, int(bust)); // :12',
+    '  era.set(`cflag:${cid}:455`, int(bust / 100));',
+    '  era.set(`cflag:${cid}:455`, int(bust));',
     ':11 CFLAG:455 = RESULT:0/100',
   ),
 ];

@@ -213,9 +213,9 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
   await run_show_status(fixture);
 
   const texts = fixture.text_lines();
-  // :62-68 {DAY+1}日(午前)——TIME 0
+  // {DAY+1}日(午前)——TIME 0
   assert(texts.includes('1日(午前)'));
-  // :69 目标行：呼び名 调教中 调教者:主人姓名（浅蓝），行尾三空格
+  // 目标行：呼び名 调教中 调教者:主人姓名（浅蓝），行尾三空格
   const header = fixture.lines.find(
     (line) => line.type === 'text' && line.text.includes('调教中'),
   );
@@ -228,7 +228,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
       (frag) => frag.content === '你' && frag.color === '#87cefa',
     ),
   );
-  // :95-124 绝顶计数：EX 全零 → 整段静默
+  // 绝顶计数：EX 全零 → 整段静默
   assert(!texts.some((line) => line.includes('绝顶')));
   // SHOW_EQUIP_1/2 自 #390 起是真身（ere/page/components/chara-equip-status.js）：
   // 本世界没有任何 TEQUIP/TFLAG 位 → SHOW_EQUIP_2 只打一个空格、SHOW_EQUIP_1
@@ -247,7 +247,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
     texts.some((line) => line === '【全裸】'),
     '服装表示行为【全裸】（着衣模式关）',
   );
-  // :85-86 LIFE_BAR/VITAL_BAR（#212）：maxbase 未播种时静默（MAXBASE <= 0
+  // LIFE_BAR/VITAL_BAR（#212）：maxbase 未播种时静默（MAXBASE <= 0
   // 的原作守卫）——温妮世界没播 maxbase:31:0/1，两条都不出
   assert(
     !fixture.lines.some(
@@ -261,7 +261,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
     ),
     'maxbase:31:1 未播种（<= 0）时不得渲染气力条',
   );
-  // :128-142 MAXBASE 修正：目标与主人的射精槽上限缺省补 10000
+  // MAXBASE 修正：目标与主人的射精槽上限缺省补 10000
   assert(
     fixture.var_writes.some(
       (w) => w.name === 'maxbase:31:2' && w.value === 10000,
@@ -272,7 +272,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
       (w) => w.name === 'maxbase:0:2' && w.value === 10000,
     ),
   );
-  // :238 SET_CLEAR_POINT：tflag:999 = 当前行数
+  // SET_CLEAR_POINT：tflag:999 = 当前行数
   const line_count = fixture.era.getLineCount();
   assert(
     fixture.var_writes.some(
@@ -544,7 +544,7 @@ test('射精（主人）：121/122 守卫、TALENT:135 无 ≥2000 臂（与助�
   assert.ok(bar, '主人（男人）的射精条必须渲染');
   assert.equal(bar.out, '(2500/10000)');
 
-  // :144 判据 (TALENT:135 || (135 && BASE>=2000)) == 0 ≡ !135——主人独缺
+  // 判据 (TALENT:135 || (135 && BASE>=2000)) == 0 ≡ !135——主人独缺
   // ≥2000 臂：135 置位时即便 BASE >= 2000 也不显示（原作三处守卫的差异本体）
   const f2 = create_era_fixture();
   base_world(f2);

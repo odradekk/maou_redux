@@ -3,9 +3,6 @@
  * （issue #469）。战役 1「赤蛮咒森」的展示三函数（page-campaign-1.js）
  * 随本文件一并验证——两者共用 DispatchFamily 实例，拆开测无法验证接线。
  *
- * 源: target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB @CAMPAIGN_MENU（:6-127）、
- *     @SELECT_CAMPAIGN（:130-152）；CAMPAIGN_1.ERB @CAMPAIGN_EXIST_1（:51-57）、
- *     @CAMPAIGN_SET_1（:59-71）、@CAMPAIGN_NAME_1（:73-81）。
  */
 
 'use strict';
@@ -44,7 +41,7 @@ test('campaign_menu()：FLAG:400 == 0 时只显示[行动选择] + [返回]', as
   assert.equal(ret, 0);
   const added = fixture.lines.slice(before);
   assert.deepEqual(accs(added), [0, 999]);
-  // :12/:22/:31 三条分隔线的位置：头部一条、行动按钮前一条、[999] 前再一条
+  // 三条分隔线的位置：头部一条、行动按钮前一条、[999] 前再一条
   assert.deepEqual(
     added.map((l) => l.type),
     ['divider', 'text', 'divider', 'button', 'divider', 'button'],
@@ -249,7 +246,7 @@ test('招募：16 位勇者位全满时走原作失败文案，不扣气力也�
 //
 // 原作 CAMPAIGN_EVENT.ERB:56 的 `CALL RAND_CHARA_MAKE` 虽然无参，但
 // `CALL CHAR_MAKE_INPORT`（CHAR_MAKE.ERB:57）在 `@RAND_CHARA_MAKE` 体内、
-// :55 的 IF 之内、:58 的 IF 之前，两条路径都会跑。ere 侧因转发层与真身
+// 的 IF 之内、:58 的 IF 之前，两条路径都会跑。ere 侧因转发层与真身
 // 相互 require 成环，只能由调用点把 char_make_inport 注入进去。
 
 test('招募：FLAG:76 与名单就绪时导入异国勇者，不建新的普通勇者（:57 的异国判定在战役路径上也跑）', async () => {
@@ -264,7 +261,7 @@ test('招募：FLAG:76 与名单就绪时导入异国勇者，不建新的普通
   // 通信名单（原作 GLOBALS:0..99，ere 侧是 global:100 的 JSON 数组）里放一条
   // 异国勇者记录：唯一标记_预设号_等级_称呼_十张表段。预设号 3 不在编制里，
   // talent 段带着性格 161（在 ID_OF_GENERAL_CHARASTERISTICS 表内，会被
-  // :67 的 SET_CHARASTERISTIC 清掉）
+  // 的 SET_CHARASTERISTIC 清掉）
   fixture.seed_chara(3, { id: 3, name: '预设3', callname: '预设3' });
   fixture.store.set('flag:76', 30); // 外来勇者等级上限（:9-10 的闸门）
   fixture.store.set(

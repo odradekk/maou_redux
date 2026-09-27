@@ -1,8 +1,6 @@
 /**
  * @file 迎击派遣：@INTERCEPT（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_2.ERB  @INTERCEPT（:257-658）。
- *
  * 调用点（本票接入）：page/page-shop.js 的 usershop [104] 分支。
  *
  * 三个子画面 1:1 搬：角色列表（$INPUT_LOOP_MAIN0）→ 迎击设定
@@ -117,20 +115,20 @@ function ex_talent(cid, idx) {
  *   'PREGNANT'/'GUARD'/'CHILD'）
  */
 function reject_reason(cid) {
-  if ((era.get(`base:${cid}:0`) || 0) < 1) return 'BASE'; // :284-285
-  if (cid === 0) return 'MASTER'; // :286
-  if (cflag(cid, 1) !== 0) return 'BUSY'; // :287
-  if (cflag(cid, 0) === 0 && talent(cid, 254) === 0) return 'UNTAMED'; // :287
+  if ((era.get(`base:${cid}:0`) || 0) < 1) return 'BASE';
+  if (cid === 0) return 'MASTER';
+  if (cflag(cid, 1) !== 0) return 'BUSY';
+  if (cflag(cid, 0) === 0 && talent(cid, 254) === 0) return 'UNTAMED';
   if (talent(cid, 153) === 1 && getbit(era.get('flag:5') || 0, 10) === 0) {
-    return 'PREGNANT'; // :288
+    return 'PREGNANT';
   }
-  if (ex_talent(cid, 1) !== 0 && ex_talent(cid, 2) === 0) return 'GUARD'; // :289
+  if (ex_talent(cid, 1) !== 0 && ex_talent(cid, 2) === 0) return 'GUARD';
   if (
     ex_talent(cid, 1) !== 0 &&
     ex_talent(cid, 2) !== 0 &&
     getbit(era.get('exflag:9000') || 0, 1) === 0
   ) {
-    return 'CHILD'; // :290
+    return 'CHILD';
   }
   return 0;
 }
@@ -167,18 +165,18 @@ async function print_wait(text) {
  * @param {number} item_get 道具补给标志
  */
 function draw_settings(select, floor, work, item_get) {
-  era.print(`${chara_callname(select)}的迎击设定`); // :421
-  era.drawLine(); // :422-423（DRAWLINE + 出发阶层行）
-  era.printButton(`出发阶层　　　- ${floor}层`, 0); // :423
-  era.printButton(`迎击时顺便　　- ${WORK_TEXTS[work] ?? '内职'}`, 1); // :424-437
+  era.print(`${chara_callname(select)}的迎击设定`);
+  era.drawLine(); // （DRAWLINE + 出发阶层行）
+  era.printButton(`出发阶层　　　- ${floor}层`, 0);
+  era.printButton(`迎击时顺便　　- ${WORK_TEXTS[work] ?? '内职'}`, 1);
   era.printButton(
     `道具的补给　　- ${item_get === 1 ? `全副整装(要${EQUIP_COST}G)` : '裸奔吧，奴隶！'}`,
     2,
-  ); // :438-443
-  era.print(''); // :444 PRINTL
-  // :445-447 SETCOLORBYNAME DarkSeaGreen → RESETCOLOR（只染这一枚按钮）
+  );
+  era.print(''); // PRINTL
+  // SETCOLORBYNAME DarkSeaGreen → RESETCOLOR（只染这一枚按钮）
   era.printButton('去吧！皮卡丘！', 998, { color: DARK_SEA_GREEN });
-  era.printButton('返回', 999); // :448
+  era.printButton('返回', 999);
 }
 
 /**
@@ -194,18 +192,18 @@ function draw_settings(select, floor, work, item_get) {
  */
 async function pick_floor(select) {
   for (;;) {
-    era.print('出发层设定'); // :516
-    era.print(`可用魔王的力量把${chara_callname(select)}传送到任意阶层。`); // :517
-    era.print('从那一层出发？ (1-9)'); // :518
+    era.print('出发层设定');
+    era.print(`可用魔王的力量把${chara_callname(select)}传送到任意阶层。`);
+    era.print('从那一层出发？ (1-9)');
     for (let f = FLOOR_MIN; f <= FLOOR_MAX; f += 1) {
-      era.printButton(String(f), f); // :519 的 [1] [2] … [9]
+      era.printButton(String(f), f); // 的 [1] [2] … [9]
     }
-    const result = await era.input(); // :521
+    const result = await era.input();
     if (result >= FLOOR_MIN && result <= FLOOR_MAX) {
-      // :522-523 合法：FLOOR = RESULT，退出本画面
+      // 合法：FLOOR = RESULT，退出本画面
       return result;
     }
-    // :524-525 其余输入重问（CLEARLINE 不镜像）
+    // 其余输入重问（CLEARLINE 不镜像）
   }
 }
 
@@ -215,17 +213,17 @@ async function pick_floor(select) {
  * @returns {boolean} true = 可扩张；false = 已回退（调用方回迎击设定）
  */
 function facility_expandable(floor) {
-  const room = era.get(`flag:${floor + ROOM_ID_BASE}`) || 0; // :529-531
+  const room = era.get(`flag:${floor + ROOM_ID_BASE}`) || 0;
   if (room === 0) {
-    era.print(`${floor}层没有任何设施`); // :534
+    era.print(`${floor}层没有任何设施`);
     return false;
   }
   const level =
-    era.get(`flag:${floor + ROOM_ID_BASE + ROOM_LEVEL_OFFSET}`) || 0; // :538-539
+    era.get(`flag:${floor + ROOM_ID_BASE + ROOM_LEVEL_OFFSET}`) || 0;
   if (level === ROOM_LEVEL_MAX) {
     era.print(
       `${floor}层的${era.get(`itemname:${room}`) ?? ''}已经扩张到极限了。`,
-    ); // :542
+    );
     return false;
   }
   return true;
@@ -241,21 +239,21 @@ function facility_expandable(floor) {
 async function pick_action(select, floor) {
   const master_lv = cflag(0, 9); // CFLAG:0:9 魔王等级
   for (;;) {
-    era.print('在地下城内的行动为'); // :554
-    era.drawLine(); // :555-556（DRAWLINE + 内职项）
-    era.printButton('内职', 0); // :556
+    era.print('在地下城内的行动为');
+    era.drawLine(); // （DRAWLINE + 内职项）
+    era.printButton('内职', 0);
     for (const gate of WORK_GATES) {
       if (master_lv >= gate.level) {
-        era.printButton(gate.label, gate.work); // :558/:566/:575/:583/:591
+        era.printButton(gate.label, gate.work);
       } else {
-        // :560-562 等的灰显不可选（保持纯文本，见文件头第 3 条）
+        // 等的灰显不可选（保持纯文本，见文件头第 3 条）
         era.print([{ content: `[---] （魔王等级不足）`, color: GRAY }]);
       }
     }
-    era.drawLine(); // :598-601（DRAWLINE + INPUT）
-    const result = await era.input(); // :601
+    era.drawLine(); // （DRAWLINE + INPUT）
+    const result = await era.input();
 
-    // :602-616 守卫（等级门在 ere 侧不可达，见文件头第 3 条；阈值的判据
+    // 守卫（等级门在 ere 侧不可达，见文件头第 3 条；阈值的判据
     // 由 WORK_GATES 一处提供，渲染侧用例覆盖）
     if (result < 0) continue;
     if (WORK_GATES.some((g) => g.work === result && master_lv < g.level)) {
@@ -264,29 +262,29 @@ async function pick_action(select, floor) {
     if (result > WORK_GATES.length) continue;
 
     if (result === 1) {
-      await print_wait('得到了在地下城中对怪物们卖淫的许可'); // :618-619
+      await print_wait('得到了在地下城中对怪物们卖淫的许可');
     } else if (result === 2) {
-      await print_wait('将进行陷阱的补充作业'); // :620-621
+      await print_wait('将进行陷阱的补充作业');
     } else if (result === 3) {
-      // :622-645 扩张设施：两道前置检查 + 资金检查
+      // 扩张设施：两道前置检查 + 资金检查
       if (!facility_expandable(floor)) {
         return 0; // 原作 GOTO INPUT_LOOP_MAIN——回迎击设定，WORK 不变
       }
       await print_wait(
         `${floor}层的${era.get(`itemname:${era.get(`flag:${floor + ROOM_ID_BASE}`) ?? 0}`) ?? ''}扩张需要${EQUIP_COST}资金。`,
-      ); // :640
+      );
       if (era_flag.money < EQUIP_COST) {
-        await print_wait('* 魔王大人，你怎么这么穷 *'); // :642-644
+        await print_wait('* 魔王大人，你怎么这么穷 *');
         return 0;
       }
     } else if (result === 4) {
-      await print_wait('对勇者队伍的潜入工作进行中'); // :647-648
+      await print_wait('对勇者队伍的潜入工作进行中');
     } else if (result === 5) {
-      await print_wait('在迎击的过程中进行了训练并得到了经验值'); // :649-650
+      await print_wait('在迎击的过程中进行了训练并得到了经验值');
     } else {
-      await print_wait('得到了收入'); // :651-652
+      await print_wait('得到了收入');
     }
-    return result; // :654 WORK = RESULT
+    return result; // WORK = RESULT
   }
 }
 
@@ -306,56 +304,56 @@ async function intercept(rand = default_rand) {
   let work = 0;
   let item_get = 0;
 
-  // :282-300 可派遣人数 → MAX_PAGE（上取整后 -1，空表为 -1）
+  // 可派遣人数 → MAX_PAGE（上取整后 -1，空表为 -1）
   max_page = Math.ceil(dispatchable_ids().length / NUM_PAGE) - 1;
 
   // $INPUT_LOOP_MAIN0（:301-349 的绘制 + :351-408 的分发）
-  // :304-314 的页码缓存（LIST_POS / PREV_PAGE / PREV_LIST_POS）与 :349 的
+  // 的页码缓存（LIST_POS / PREV_PAGE / PREV_LIST_POS）与 :349 的
   // PREV_PAGE = NO_PAGE 在 ere 侧没有消费者：列表按命中序号开窗（文件头
   // 第 2 条），与 @ABILITY_UP 同款处置。
   main0: for (;;) {
-    era.drawLine({ isSolid: true }); // :316 CUSTOMDRAWLINE =
-    era.print('派遣谁前去迎击勇者？'); // :317
-    era.print(`<状态若不为[可被卖]、将需要${DISPATCH_COST}pt资金来派遣>`); // :319
-    era.drawLine(); // :320-321（DRAWLINE + L_LCOUNT = LINECOUNT）
+    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+    era.print('派遣谁前去迎击勇者？');
+    era.print(`<状态若不为[可被卖]、将需要${DISPATCH_COST}pt资金来派遣>`);
+    era.drawLine(); // （DRAWLINE + L_LCOUNT = LINECOUNT）
 
-    // :321-338 列表：按命中序号开窗（文件头第 2 条）
+    // 列表：按命中序号开窗（文件头第 2 条）
     const window_ids = dispatchable_ids().slice(
       no_page * NUM_PAGE,
       (no_page + 1) * NUM_PAGE,
     );
     for (const cid of window_ids) {
-      life_list_item(cid); // :337
+      life_list_item(cid);
     }
-    // :340-344 补行（L_LCOUNT < NUM_PAGE + 1 时补到页高）
+    // 补行（L_LCOUNT < NUM_PAGE + 1 时补到页高）
     for (let row = window_ids.length; row < NUM_PAGE; row += 1) {
       era.print('');
     }
-    era.drawLine(); // :345-346（DRAWLINE + 上一页键）
-    era.printButton('- 上一页', 1000); // :346 PRINTLC
-    era.printButton('- 返 回', 999); // :347 PRINTLC（原作两个空格，引擎折叠成一个）
-    era.printButton('- 下一页', 1001); // :348
+    era.drawLine(); // （DRAWLINE + 上一页键）
+    era.printButton('- 上一页', 1000); // PRINTLC
+    era.printButton('- 返 回', 999); // PRINTLC（原作两个空格，引擎折叠成一个）
+    era.printButton('- 下一页', 1001);
 
     // $INPUT_LOOP_2（:351-408）
     for (;;) {
-      const result = await era.input(); // :352 INPUT
+      const result = await era.input(); // INPUT
       if (result === 999) {
-        return 0; // :353-354（返回键）
+        return 0; // （返回键）
       }
       if (result === 1000) {
         if (no_page > 0) {
           no_page -= 1;
         }
-        continue main0; // :355-360
+        continue main0;
       }
       if (result === 1001) {
         if (no_page < max_page) {
           no_page += 1;
         }
-        continue main0; // :361-366
+        continue main0;
       }
 
-      // :367-407 守卫（与列表过滤同判据；实机上只有「金钱不足」一支可达
+      // 守卫（与列表过滤同判据；实机上只有「金钱不足」一支可达
       // ——列表按钮即输入集，其余拒因对应的角色根本没画出来）
       const reason = reject_reason(result);
       if (reason !== 0) {
@@ -365,7 +363,7 @@ async function intercept(rand = default_rand) {
         }
         continue; // 原作 GOTO INPUT_LOOP_2
       }
-      // :388-391 売却可之外的派遣要花钱
+      // 売却可之外的派遣要花钱
       if (
         cflag(result, 0) === 0 &&
         talent(result, 254) === 1 &&
@@ -374,42 +372,42 @@ async function intercept(rand = default_rand) {
         await print_wait(`金钱不足，${chara_callname(result)}无视了你的命令`);
         continue;
       }
-      // :410-412 支付提示（真正扣款在出击决定里）
+      // 支付提示（真正扣款在出击决定里）
       if (cflag(result, 0) === 0) {
         era.print('支付了金钱');
       }
-      era.print(`*${chara_callname(result)}作为你的爪牙外出迎击了*`); // :412 PRINTFORMW
-      select = result; // :414
+      era.print(`*${chara_callname(result)}作为你的爪牙外出迎击了*`); // PRINTFORMW
+      select = result;
 
-      // :416-418 进入迎击设定
+      // 进入迎击设定
       floor = 9;
       work = cflag(select, 500);
       item_get = 0;
 
       // $INPUT_LOOP_MAIN（:420-473）
       for (;;) {
-        draw_settings(select, floor, work, item_get); // :421-448
-        const choice = await era.input(); // :450
+        draw_settings(select, floor, work, item_get);
+        const choice = await era.input();
         if (choice === 999) {
-          continue main0; // :452-453 返回列表
+          continue main0; // 返回列表
         }
         if (choice === 0) {
-          floor = await pick_floor(select); // :454-455 GOTO INPUT_LOOP_4
-          // :528-545 WORK == 3 的前置检查（失败回迎击设定）
+          floor = await pick_floor(select); // GOTO INPUT_LOOP_4
+          // WORK == 3 的前置检查（失败回迎击设定）
           if (work === 3 && !facility_expandable(floor)) {
             continue;
           }
-          continue; // :547 GOTO INPUT_LOOP_MAIN
+          continue; // GOTO INPUT_LOOP_MAIN
         }
         if (choice === 1) {
-          const picked = await pick_action(select, floor); // :456-457 GOTO INPUT_LOOP_3
+          const picked = await pick_action(select, floor); // GOTO INPUT_LOOP_3
           if (picked !== 0) {
-            work = picked; // :654 WORK = RESULT
+            work = picked; // WORK = RESULT
           }
-          continue; // :656 GOTO INPUT_LOOP_MAIN
+          continue; // GOTO INPUT_LOOP_MAIN
         }
         if (choice === 2 && item_get === 0) {
-          // :458-467 买补给：两道资金检查
+          // 买补给：两道资金检查
           if (era_flag.money < EQUIP_COST) {
             await print_wait('* 魔王大人，你怎么这么穷 *');
             continue;
@@ -425,52 +423,52 @@ async function intercept(rand = default_rand) {
           continue;
         }
         if (choice === 2) {
-          item_get = 0; // :468-470 取消补给
+          item_get = 0; // 取消补给
           continue;
         }
         if (choice !== 998) {
-          continue; // :471-472 其余输入重绘
+          continue; // 其余输入重绘
         }
         break; // [998] 落到出撃決定
       }
 
-      // :475-506 出撃決定
+      // 出撃決定
       // 跨域写走属主域门面（#71/#90 裁定；下表同）
-      chara(select).invasion.状态 = 3; // :476 CFLAG:SELECT:1 = 3（迎击中）
-      chara(select).stronghold.迷宫内行动 = work; // :477 CFLAG:500
-      chara(select).dungeon.侵攻阶层 = floor; // :478 CFLAG:501
-      chara(select).event.侵攻度 = DISPATCH_DURATION; // :479 CFLAG:502 = 90
-      chara(select).dungeon.勇者击破数 = 0; // :480 CFLAG:505 = 0
+      chara(select).invasion.状态 = 3; // CFLAG:SELECT:1 = 3（迎击中）
+      chara(select).stronghold.迷宫内行动 = work; // CFLAG:500
+      chara(select).dungeon.侵攻阶层 = floor; // CFLAG:501
+      chara(select).event.侵攻度 = DISPATCH_DURATION; // CFLAG:502 = 90
+      chara(select).dungeon.勇者击破数 = 0; // CFLAG:505 = 0
       if (cflag(select, 0) === 0) {
-        // :481-484 付费派遣（可被卖状态免 COST）
+        // 付费派遣（可被卖状态免 COST）
         era_flag.money -= DISPATCH_COST;
         era_exflag.legit_money -= DISPATCH_COST;
       }
       if (work === 3) {
-        // :486-489 扩张设施的费用
+        // 扩张设施的费用
         era_flag.money -= EQUIP_COST;
         era_exflag.legit_money -= EQUIP_COST;
       }
       if (item_get === 1) {
-        // :490-506 道具补给：三次抽取，一件都没入手就退款
+        // 道具补给：三次抽取，一件都没入手就退款
         era_flag.money -= EQUIP_COST;
         era_exflag.legit_money -= EQUIP_COST;
         let got = 0; // LOCAL:2
         for (let i = 0; i < 3; i += 1) {
-          const gained = await add_ex_item(-1, select, 2, rand); // :496
+          const gained = await add_ex_item(-1, select, 2, rand);
           if (gained > 0) {
-            got += 1; // :497-498
+            got += 1;
           }
         }
         if (got === 0) {
-          era.print('补给已满，资金被退还了。'); // :502
+          era.print('补给已满，资金被退还了。');
           era_flag.money += EQUIP_COST;
           era_exflag.legit_money += EQUIP_COST;
         }
       }
 
-      await gohoubi_request(select, rand); // :508 CALL GOHOUBI_REQUEST, SELECT
-      return 0; // :508-510（GOHOUBI_REQUEST + RETURN 0）
+      await gohoubi_request(select, rand); // CALL GOHOUBI_REQUEST, SELECT
+      return 0; // （GOHOUBI_REQUEST + RETURN 0）
     }
   }
 }

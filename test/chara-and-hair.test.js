@@ -1,8 +1,6 @@
 /**
  * ere/chara/chara-and-hair.js 的行为测试（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/FUNC_CHARA_AND_HAIR.ERB（性格 5 函数 ＋ 发色 4 函数）
- *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）+ 两个随机函数的
  * `rand` 形参（原作 `RAND:N` / `RAND(VARSIZE(...))` 的随机源，缺省均匀随机）。
  *
@@ -448,7 +446,7 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
   let asked = 0;
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
   const { rand_chara_make } = fixture.load_module('chara/chara-make');
-  // :52 的位号掷骰（上界 16）只命中第一次、给 2（位号 3）；其余随机恒 0：
+  // 的位号掷骰（上界 16）只命中第一次、给 2（位号 3）；其余随机恒 0：
   // 性格掷中表内第 0 项（160）、发色掷中 11（粉发）
   let rolled = false;
   await rand_chara_make(
@@ -474,7 +472,7 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
     [0, 3, 9],
     '新加入的是掷中的 3 号',
   );
-  // :173-178 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
+  // 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
   // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
   const recruit_name = fixture.store.get('callname:3:-1');
   assert.ok(recruit_name, '新加入的 3 号有称呼');

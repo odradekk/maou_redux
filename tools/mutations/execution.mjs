@@ -905,16 +905,16 @@ export default [
   {
     desc: 'M11366 士兵化：攻击减半的除数错',
     file: 'ere/event/event-execution-batch.js',
-    find: '  chara(cid).chara.基础攻击 = Math.trunc(chara(cid).chara.基础攻击 / 2); // :309',
+    find: '  chara(cid).chara.基础攻击 = Math.trunc(chara(cid).chara.基础攻击 / 2);',
     replace:
-      '  chara(cid).chara.基础攻击 = Math.trunc(chara(cid).chara.基础攻击 / 3); // :309',
+      '  chara(cid).chara.基础攻击 = Math.trunc(chara(cid).chara.基础攻击 / 3);',
     tests: ['event-execution-batch'],
     must_mention: '方法 5 士兵化：战力减半、刻印与称号',
   },
   {
     desc: 'M11367 士兵化：防御漏减半',
     file: 'ere/event/event-execution-batch.js',
-    find: '  chara(cid).chara.基础防御 = Math.trunc(chara(cid).chara.基础防御 / 2); // :310',
+    find: '  chara(cid).chara.基础防御 = Math.trunc(chara(cid).chara.基础防御 / 2);',
     replace: '  // 变异：防御漏减半',
     tests: ['event-execution-batch'],
     must_mention: '方法 5 士兵化：战力减半、刻印与称号',
@@ -946,18 +946,18 @@ export default [
   {
     desc: 'M11371 释放：善恶值下限错',
     file: 'ere/event/event-execution-batch.js',
-    find: '  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -50; // :349-350',
+    find: '  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -50;',
     replace:
-      '  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -51; // :349-350',
+      '  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -51;',
     tests: ['event-execution-batch'],
     must_mention: '方法 7 释放：没收所持金、复位状态、夹持善恶与好感并清标签',
   },
   {
     desc: 'M11372 释放：好感夹持方向反',
     file: 'ere/event/event-execution-batch.js',
-    find: '  if (chara(cid).chara.好感度 > 20) chara(cid).chara.好感度 = 20; // :352-353',
+    find: '  if (chara(cid).chara.好感度 > 20) chara(cid).chara.好感度 = 20;',
     replace:
-      '  if (chara(cid).chara.好感度 < 20) chara(cid).chara.好感度 = 20; // :352-353',
+      '  if (chara(cid).chara.好感度 < 20) chara(cid).chara.好感度 = 20;',
     tests: ['event-execution-batch'],
     must_mention: '方法 7 释放：没收所持金、复位状态、夹持善恶与好感并清标签',
   },
@@ -1125,7 +1125,7 @@ export default [
   {
     desc: 'M11392 肉便器：漏写家族档（CSTR:(FAMILY:2):5）',
     file: 'ere/event/event-execution-batch.js',
-    find: '  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title); // :302',
+    find: '  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);',
     replace: '  // 变异：漏写家族档',
     tests: ['event-execution-batch'],
     must_mention: '家族档归档（:300-301：CSTR:(FAMILY:2):5）',
@@ -1153,8 +1153,8 @@ export default [
   {
     desc: 'M11397 名单屏：普通 DRAWLINE 画成实线（isSolid 只对 CUSTOMDRAWLINE 那一类）',
     file: 'ere/event/event-execution-batch.js',
-    find: '        era.drawLine(); // :52-54',
-    replace: '        era.drawLine({ isSolid: true }); // :52-54',
+    find: '        era.drawLine();\n',
+    replace: '        era.drawLine({ isSolid: true });\n',
     tests: ['event-execution-batch'],
     must_mention: '普通 DRAWLINE 用默认线型',
   },
@@ -1375,7 +1375,7 @@ export default [
   {
     desc: 'M11999 录像架翻页退回纯文本行（三条 PRINTLC 选项点不动）',
     file: 'ere/page/page-infrastructure.js',
-    find: "    era.printButton('- 下一页', 1001); // :363",
+    find: "    era.printButton('- 下一页', 1001);",
     replace: "    era.print('[1001] - 下一页'); // 变异",
     tests: ['event-execution'],
     must_mention: '录像架',
@@ -1392,9 +1392,9 @@ export default [
   {
     desc: 'M12121 处刑对象列表的表头之后补回空行（:22 的 PRINTL 不是空行，只收 :18）',
     file: 'ere/event/event-execution.js',
-    find: '    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
+    find: '    // 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
     replace:
-      '    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
+      '    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n    // 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
     tests: ['event-execution'],
     must_mention: 'ELSE 支（无实绩提示）：表头之后不补空行',
   },
@@ -1411,7 +1411,7 @@ export default [
   {
     desc: 'M12125 凌辱致死支的 :56 真空行删除（:55 的 PRINTFORMW 已收尾，空行由它来）',
     file: 'ere/event/event-public-execution.js',
-    find: "    // :2-194 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的\n    // PRINTFORMW 之后（那一行已结束）——真空行（#597）\n    era.println();\n    fate = '凌辱致死';\n",
+    find: "    // 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的\n    // PRINTFORMW 之后（那一行已结束）——真空行（#597）\n    era.println();\n    fate = '凌辱致死';\n",
     replace: "    // 变异：:56 的真空行删除\n    fate = '凌辱致死';\n",
     tests: ['event-execution'],
     must_mention: '凌辱致死支（:56）：勋章播报之前的空行是真空行',

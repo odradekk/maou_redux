@@ -3,26 +3,6 @@
  * @TRAIN_MESSAGE_B/A 的本族分支 + @GET_ADV_COM 的本族升格规则
  * （issue #219 / J9——轴 A 十二族票的第一张，四样装齐的形状由本票定型）。
  *
- * 源: target/ERB/調教相關/COMF0_愛撫.ERB    @COM0（:7-168，#45 落地、
- *     #219 自 com0-caress.js 搬入本族模块——DispatchFamily 的重复注册守卫
- *     使「保留旧文件另注册」不可行，且 #209 裁定 6 要求一族四样同文件）
- *     target/ERB/調教相關/COMF1_クンニ.ERB   @COM1（:8-86）
- *     target/ERB/調教相關/COMF2_アナル愛撫.ERB @COM2（:8-152）
- *     target/ERB/調教相關/COMF3_自慰.ERB     @COM3（:14-379）+ @COM3_AUTO
- *     target/ERB/調教相關/COMF4_フェラする.ERB @COM4（:9-75）+ @EVENT_SEITSU
- *     target/ERB/調教相關/COMF5_胸愛撫.ERB   @COM5（:11-103）+ @EVENT_JUNYU
- *     target/ERB/調教相關/COMF6_キス.ERB     @COM6（:9-330）
- *     target/ERB/調教相關/COMF7_秘貝開帳.ERB @COM7（:10-245）
- *     target/ERB/調教相關/COMF8_指挿入れ.ERB @COM8（:7-146）
- *     target/ERB/調教相關/COMF9_アナル舐め.ERB @COM9（:7-63）
- *     target/ERB/調教相關/COMABLE.ERB        @COM_ABLE0-9（:28-381）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB  SELECTCOM 0-9 分支
- *     （:28-782；0 分支 #45 落地、#219 自 train-message.js 移入本族模块）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB  SELECTCOM 1/2/3/5 分支
- *     （:813-985；源侧无 4/6/7/8/9 分支——链落空、零输出，注册空 handler）
- *     target/ERB/調教相關/COMF_JUMP.ERB      @GET_ADV_COM 的 CASE 6/1/3/4/5/8
- *     （爱抚族的升格规则；0/2/7/9 无 CASE，原样返回）
- *
  * == 变量承载（ere 等价物，com0-caress.js 既有注记随搬） ==
  *
  *   - SOURCE:xx → `source:${cid}:${xx}`（nextTurnInTrain 每回合清零）；
@@ -347,70 +327,70 @@ async function com0() {
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('爱抚'); // :9 PRINTL（;SAVESTR:22 = 爱抚 在原作已是注释，不移植）
-  await train_message_b(); // :11
+  era.print('爱抚'); // PRINTL（;SAVESTR:22 = 爱抚 在原作已是注释，不移植）
+  await train_message_b();
 
   // —— ソースの計算 ——
-  lose(target, 0, 5); // :16-17
+  lose(target, 0, 5);
   lose(target, 1, 50);
 
-  // :20-30 基础源：阴核/乳房/情爱 先清 0（指令内的「= 0」在 ere 由回合清零
+  // 基础源：阴核/乳房/情爱 先清 0（指令内的「= 0」在 ere 由回合清零
   // 承担，此三行不落）；性行动/不洁/露出 直接赋值
-  set(4, 60); // :33
-  set(8, 30); // :34
-  set(12, 100); // :35
+  set(4, 60);
+  set(8, 30);
+  set(12, 100);
 
-  // :36-55 ABL:0（阴蒂感觉）分档
+  // ABL:0（阴蒂感觉）分档
   const abl_c = Math.min(Math.floor(era.get(`abl:${target}:0`) || 0), 5);
   set(0, ABL_C_TIERS_COM0[abl_c][0]);
   set(3, ABL_C_TIERS_COM0[abl_c][1]);
 
-  // :56-75 ABL:1（乳房感觉）分档（SOURCE:3 是增量累加）
+  // ABL:1（乳房感觉）分档（SOURCE:3 是增量累加）
   const abl_b = Math.min(Math.floor(era.get(`abl:${target}:1`) || 0), 5);
   set(17, ABL_B_TIERS_COM0[abl_b][0]);
   set(3, src(3) + ABL_B_TIERS_COM0[abl_b][1]);
 
-  // :76-121 接吻侧修正。:122-128（口污 + ASSIPLAY）与 :130-134（口塞）整支
+  // 接吻侧修正。:122-128（口污 + ASSIPLAY）与 :130-134（口塞）整支
   // 登记存根（见文件头）：当前构建 ASSIPLAY 恒 0、TEQUIP:45 无写入点。
   if ((era.get(`cflag:${target}:16`) || 0) === -1) {
-    // :136-140 初吻未体験 → 回避接吻，效果减
-    set(8, 0); // :141
-    set(0, Math.floor(src(0) / 2)); // :142
-    set(3, Math.floor(src(3) / 4)); // :148
-    set(10, Math.floor(src(10) / 2)); // :149
+    // 初吻未体験 → 回避接吻，效果减
+    set(8, 0);
+    set(0, Math.floor(src(0) / 2));
+    set(3, Math.floor(src(3) / 4));
+    set(10, Math.floor(src(10) / 2));
   } else {
-    // :150-174 已有接吻经验：素质修正 + 主人口污加成 + 口污双向移动
+    // 已有接吻经验：素质修正 + 主人口污加成 + 口污双向移动
     if (era.get(`talent:${target}:61`)) {
-      set(8, Math.floor(src(8) / 4)); // :176-177 不怕污臭
+      set(8, Math.floor(src(8) / 4)); // 不怕污臭
     }
     if (era.get(`talent:${target}:62`)) {
-      set(8, src(8) * 3); // :181-182 反感污臭
+      set(8, src(8) * 3); // 反感污臭
     }
     if (era.get(`talent:${target}:15`)) {
-      set(8, src(8) * 2); // :185-186 高姿态
+      set(8, src(8) * 2); // 高姿态
     }
     if (era.get(`talent:${target}:85`) && era_flag.assiplay === 0) {
-      set(3, src(3) * 2); // :187-190 爱慕且主人亲自调教
+      set(3, src(3) * 2); // 爱慕且主人亲自调教
       set(8, Math.floor(src(8) / 10));
     }
     if (era.get(`stain:${player}:0`)) {
-      set(8, Math.floor((src(8) * 3) / 2)); // :191-195 主人口有污垢 → 150%
+      set(8, Math.floor((src(8) * 3) / 2)); // 主人口有污垢 → 150%
     }
-    stain_exchange(target, 0, player, 0); // :198-200 口 ⇔ 口
+    stain_exchange(target, 0, player, 0); // 口 ⇔ 口
   }
 
-  // :201-203 兽奸提前返回（TEQUIP:89）——装备系存根，登记不落
+  // 兽奸提前返回（TEQUIP:89）——装备系存根，登记不落
 
   // —— 汚れの処理（:204-221）——
-  // :222-227 触手污れ（TEQUIP:90）整支登记存根；ELSE 支 1:1：
-  stain_exchange(target, 3, player, 1); // :228-230 V ⇔ 指
-  stain_exchange(target, 5, player, 1); // :231-233 B ⇔ 指
+  // 触手污れ（TEQUIP:90）整支登记存根；ELSE 支 1:1：
+  stain_exchange(target, 3, player, 1); // V ⇔ 指
+  stain_exchange(target, 5, player, 1); // B ⇔ 指
 
   // —— 経験上昇（:144-165）——
-  print_same_sex_exp(target, player, 5, 5); // :148-156 百合/断背同额
-  print_love_exp(target, 2); // :158-166（:160 E = 2）
+  print_same_sex_exp(target, player, 5, 5); // 百合/断背同额
+  print_love_exp(target, 2); // （:160 E = 2）
 
-  return 1; // :168
+  return 1;
 }
 
 /**
@@ -418,7 +398,7 @@ async function com0() {
  * @returns {Promise<number>} 原作 RETURN 1（升格跳转时为跳转目标的返回值）
  */
 async function com1() {
-  // :12-17 头部升格跳转（LOCAL = 1 → CASE 1：前回合口交/强制舔阴/六九式 → 69）
+  // 头部升格跳转（LOCAL = 1 → CASE 1：前回合口交/强制舔阴/六九式 → 69）
   const jumped = await jump_advanced(1);
   if (jumped !== false) {
     return jumped;
@@ -428,40 +408,40 @@ async function com1() {
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('舔阴'); // :19
-  await train_message_b(); // :21
+  era.print('舔阴');
+  await train_message_b();
 
-  lose(target, 0, 5); // :26
-  lose(target, 1, 50); // :27
+  lose(target, 0, 5);
+  lose(target, 1, 50);
 
-  set(10, 100); // :29
-  set(12, 220); // :30
-  set(14, 50); // :31
+  set(10, 100);
+  set(12, 220);
+  set(14, 50);
 
-  // :34-43 ABL:0（阴蒂感觉）分档 → SOURCE:0
+  // ABL:0（阴蒂感觉）分档 → SOURCE:0
   const abl_c = Math.min(Math.floor(era.get(`abl:${target}:0`) || 0), 5);
   set(0, ABL_C_TIERS_COM1[abl_c]);
 
-  // :44-47 调教者擅用舌头（TALENT:PLAYER:52）或兽奸（TEQUIP:89）
+  // 调教者擅用舌头（TALENT:PLAYER:52）或兽奸（TEQUIP:89）
   if (era.get(`talent:${player}:52`) || tequip(89)) {
     set(0, times(src(0), 2.0));
     set(16, src(16) + Math.floor(src(0) / 20));
   }
 
-  // :49-50 兽奸提前返回
+  // 兽奸提前返回
   if (tequip(89)) {
     return 1;
   }
 
-  stain_exchange(target, 3, player, 0); // :51-52 V ⇔ 口
+  stain_exchange(target, 3, player, 0); // V ⇔ 口
 
-  // :55-59 百合经验（源侧无断背支）
+  // 百合经验（源侧无断背支）
   print_same_sex_exp(target, player, 3);
-  record_player_first_kiss(player, target, 301); // :62-65
+  record_player_first_kiss(player, target, 301);
 
-  print_love_exp(target, 1); // :69-73 E = 1
+  print_love_exp(target, 1); // E = 1
 
-  return 1; // :76
+  return 1;
 }
 
 /**
@@ -473,21 +453,21 @@ async function com2() {
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('肛门爱抚'); // :9
-  await train_message_b(); // :11
+  era.print('肛门爱抚');
+  await train_message_b();
 
-  lose(target, 0, 20); // :16
-  lose(target, 1, 100); // :17
+  lose(target, 0, 20);
+  lose(target, 1, 100);
 
-  set(12, 850); // :19
-  set(14, 200); // :20
+  set(12, 850);
+  set(14, 200);
 
-  // :23-43 ABL:3（肛门感觉）分档 → [SOURCE:2, SOURCE:13]
+  // ABL:3（肛门感觉）分档 → [SOURCE:2, SOURCE:13]
   const abl_a = Math.min(Math.floor(era.get(`abl:${target}:3`) || 0), 5);
   set(2, ABL_A_TIERS_COM2[abl_a][0]);
   set(13, ABL_A_TIERS_COM2[abl_a][1]);
 
-  // :44-65 EXP:1（肛门经验）分档 → [SOURCE:2/13 系数, SOURCE:6, SOURCE:14 增量]
+  // EXP:1（肛门经验）分档 → [SOURCE:2/13 系数, SOURCE:6, SOURCE:14 增量]
   const exp_a = era.get(`exp:${target}:1`) || 0;
   if (exp_a < EXPLV[1]) {
     set(2, times(src(2), 0.2));
@@ -518,7 +498,7 @@ async function com2() {
     set(6, 50);
   }
 
-  // :66-81 PALAM:3（润滑）分档 → [SOURCE:2/13 系数, SOURCE:6 系数]
+  // PALAM:3（润滑）分档 → [SOURCE:2/13 系数, SOURCE:6 系数]
   const palam_lube = era.get(`palam:${target}:3`) || 0;
   if (palam_lube < PALAMLV[1]) {
     set(2, times(src(2), 0.1));
@@ -542,7 +522,7 @@ async function com2() {
     set(6, times(src(6), 0.1));
   }
 
-  // :82-93 PALAM:5（欲情）分档 → SOURCE:2/13 系数
+  // PALAM:5（欲情）分档 → SOURCE:2/13 系数
   const palam_lust = era.get(`palam:${target}:5`) || 0;
   const lust_m =
     palam_lust < PALAMLV[1]
@@ -557,12 +537,12 @@ async function com2() {
   set(2, times(src(2), lust_m));
   set(13, times(src(13), lust_m));
 
-  // :94-96 小人体型（TALENT:263）→ SOURCE:2 ×1.50
+  // 小人体型（TALENT:263）→ SOURCE:2 ×1.50
   if (era.get(`talent:${target}:263`)) {
     set(2, times(src(2), 1.5));
   }
 
-  // :97-106 肛门敏感（105）/钝感（106）→ SOURCE:6/13/14 系数
+  // 肛门敏感（105）/钝感（106）→ SOURCE:6/13/14 系数
   const a_sensitive = era.get(`talent:${target}:105`)
     ? 1.5
     : era.get(`talent:${target}:106`)
@@ -574,33 +554,33 @@ async function com2() {
     set(14, times(src(14), a_sensitive));
   }
 
-  // :107-110 处女且看重贞操 → SOURCE:13 ×0.80 / SOURCE:14 ×0.50
+  // 处女且看重贞操 → SOURCE:13 ×0.80 / SOURCE:14 ×0.50
   if (era.get(`talent:${target}:0`) && era.get(`talent:${target}:30`)) {
     set(13, times(src(13), 0.8));
     set(14, times(src(14), 0.5));
   }
 
-  // :111-113 未熟（TALENT:135）→ SOURCE:6 ×2.00
+  // 未熟（TALENT:135）→ SOURCE:6 ×2.00
   if (era.get(`talent:${target}:135`)) {
     set(6, times(src(6), 2.0));
   }
 
-  // :115-126 汚れ：触手 → A 位 |= 2/4；否则 A ⇔ 指
+  // 汚れ：触手 → A 位 |= 2/4；否则 A ⇔ 指
   if (tequip(90)) {
     era.set(`stain:${target}:4`, (era.get(`stain:${target}:4`) || 0) | 2 | 4);
   } else {
     stain_exchange(target, 4, player, 1);
   }
 
-  // :127-141 経験上昇：肛门经验按 ABL:3 档给 1-4
-  const s = abl_a <= 1 ? 1 : abl_a <= 4 ? 2 : abl_a <= 7 ? 3 : 4; // :143-150
-  chara(target).dungeon.肛门经验 += s; // :151 EXP:1 += S（exp:1 属主 dungeon，走门面）
-  era.print(`肛门经验+${s}`); // :156
+  // 経験上昇：肛门经验按 ABL:3 档给 1-4
+  const s = abl_a <= 1 ? 1 : abl_a <= 4 ? 2 : abl_a <= 7 ? 3 : 4;
+  chara(target).dungeon.肛门经验 += s; // EXP:1 += S（exp:1 属主 dungeon，走门面）
+  era.print(`肛门经验+${s}`);
 
-  print_same_sex_exp(target, player, 2, 5); // :158-164
-  print_love_exp(target, 1); // :165-169
+  print_same_sex_exp(target, player, 2, 5);
+  print_love_exp(target, 1);
 
-  return 1; // :173（尾行）
+  return 1; // （尾行）
 }
 
 // —— 判定段共用（COM3/6/7 的「実行できるかの判定」；行形状见文件头） ——
@@ -628,7 +608,7 @@ function push_judge_tail(parts, a, v) {
  * @returns {Promise<number>} 原作 RETURN 1（判定不过 RETURN 0）
  */
 async function com3() {
-  // :14-17 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）
+  // 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）
   const jumped = await jump_advanced(3);
   if (jumped !== false) {
     return jumped;
@@ -637,7 +617,7 @@ async function com3() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // :26-38 指令名行（装备前缀 + 手淫/自慰，PRINT 累加一行）
+  // 指令名行（装备前缀 + 手淫/自慰，PRINT 累加一行）
   let title = '';
   if (tequip(53)) {
     title += '公开';
@@ -665,7 +645,7 @@ async function com3() {
   // —— :32-189 実行できるかの判定 ——
   let a = 0;
   let s = 0;
-  const { a: order_a, s: order_s, parts } = await com_order(0, 0); // :190
+  const { a: order_a, s: order_s, parts } = await com_order(0, 0);
   a = order_a;
   s = order_s;
 
@@ -678,28 +658,28 @@ async function com3() {
   };
   const minus = () => parts.push(' - ');
 
-  // :194-201 ABL:11 欲望 ×3
+  // ABL:11 欲望 ×3
   if (abl(11)) {
     plus();
     a += abl(11) * 3;
     parts.push(`${name_of('ablname', 11)}LV${abl(11)}(${abl(11) * 3})`);
     s = 1;
   }
-  // :204-211 ABL:17 露出癖 ×4
+  // ABL:17 露出癖 ×4
   if (abl(17)) {
     plus();
     a += abl(17) * 4;
     parts.push(`${name_of('ablname', 17)}LV${abl(17)}(${abl(17) * 4})`);
     s = 1;
   }
-  // :216-223 ABL:31 自慰中毒 ×3
+  // ABL:31 自慰中毒 ×3
   if (abl(31)) {
     plus();
     a += abl(31) * 3;
     parts.push(`${name_of('ablname', 31)}LV${abl(31)}(${abl(31) * 3})`);
     s = 1;
   }
-  // :228-235 MARK:1 快乐刻印 ×3
+  // MARK:1 快乐刻印 ×3
   const mark1 = Math.floor(era.get(`mark:${target}:1`) || 0);
   if (mark1) {
     plus();
@@ -707,7 +687,7 @@ async function com3() {
     parts.push(`${name_of('markname', 1)}LV${mark1}(${mark1 * 3})`);
     s = 1;
   }
-  // :238-253 PALAM:5 欲情 ×3（L > 0 才进）
+  // PALAM:5 欲情 ×3（L > 0 才进）
   const palam5 = era.get(`palam:${target}:5`) || 0;
   const lust_l =
     palam5 < PALAMLV[1]
@@ -727,56 +707,56 @@ async function com3() {
     parts.push(`${name_of('palamname', 5)}LV${lust_l}(${lust_l * 3})`);
     s = 1;
   }
-  // :254-259 克制（TALENT:20）-5（负项不查 S）
+  // 克制（TALENT:20）-5（负项不查 S）
   if (talent(20)) {
     minus();
     a -= 5;
     parts.push(`${name_of('talentname', 20)}(5)`);
     s = 1;
   }
-  // :260-265 害羞（TALENT:35）-5
+  // 害羞（TALENT:35）-5
   if (talent(35)) {
     minus();
     a -= 5;
     parts.push(`${name_of('talentname', 35)}(5)`);
     s = 1;
   }
-  // :266-272 不知羞耻（TALENT:36）+2
+  // 不知羞耻（TALENT:36）+2
   if (talent(36)) {
     plus();
     a += 2;
     parts.push(`${name_of('talentname', 36)}(2)`);
     s = 1;
   }
-  // :273-279 容易自慰（TALENT:60）+5
+  // 容易自慰（TALENT:60）+5
   if (talent(60)) {
     plus();
     a += 5;
     parts.push(`${name_of('talentname', 60)}(5)`);
     s = 1;
   }
-  // :280-286 接受快感（TALENT:70）+5
+  // 接受快感（TALENT:70）+5
   if (talent(70)) {
     plus();
     a += 5;
     parts.push(`${name_of('talentname', 70)}(5)`);
     s = 1;
   }
-  // :288-294 否定快感（TALENT:71）-5
+  // 否定快感（TALENT:71）-5
   if (talent(71)) {
     minus();
     a -= 5;
     parts.push(`${name_of('talentname', 71)}(5)`);
     s = 1;
   }
-  // :295-301 露出狂（TALENT:89）+10
+  // 露出狂（TALENT:89）+10
   if (talent(89)) {
     plus();
     a += 10;
     parts.push(`${name_of('talentname', 89)}(10)`);
     s = 1;
   }
-  // :302-309 しあわせ草（TEQUIP:21，打印读 ITEMNAME:26 媚药）+8
+  // しあわせ草（TEQUIP:21，打印读 ITEMNAME:26 媚药）+8
   if (tequip(21)) {
     plus();
     a += 8;
@@ -784,8 +764,8 @@ async function com3() {
     s = 1;
   }
 
-  // :310-335 合计 + 実行值（公開+10、沐浴+3、振动+5、后庭振动+5）
-  let v = 33; // :336
+  // 合计 + 実行值（公開+10、沐浴+3、振动+5、后庭振动+5）
+  let v = 33;
   if (tequip(53)) {
     v += 10;
   }
@@ -800,44 +780,44 @@ async function com3() {
   }
   push_judge_tail(parts, a, v);
   era.print(parts.join(''));
-  await era.waitAnyKey(); // :339 WAIT
+  await era.waitAnyKey(); // WAIT
 
-  // :161-162 実行できない
+  // 実行できない
   if (a < v) {
     return 0;
   }
   order_state.a = a; // B 分支 3（TRAIN_MESSAGE_B）读 A/V
   order_state.v = v;
 
-  await train_message_b(); // :344
+  await train_message_b();
 
   const { src, set } = make_src_helpers(target);
-  lose(target, 0, 5); // :345
-  lose(target, 1, 50); // :346
-  set(14, 400); // :347
+  lose(target, 0, 5);
+  lose(target, 1, 50);
+  set(14, 400);
 
   let va = 0; // A（:348）
   let vb = 0; // B（:349）
   let vc = 0; // C（:350）
   let vd = 0; // D（:351）
 
-  // :352-355 ビデオ撮影中（TEQUIP:53）
+  // ビデオ撮影中（TEQUIP:53）
   if (tequip(53)) {
     set(10, 50);
     set(11, 100);
   }
 
-  // :356-371 ABL:0（阴蒂感觉）→ [SOURCE:0, SOURCE:12, SOURCE:13]
+  // ABL:0（阴蒂感觉）→ [SOURCE:0, SOURCE:12, SOURCE:13]
   const abl_c3 = Math.min(abl(0), 5);
   set(0, ABL_C_TIERS_COM3[abl_c3][0]);
   set(12, ABL_C_TIERS_COM3[abl_c3][1]);
   set(13, ABL_C_TIERS_COM3[abl_c3][2]);
 
-  // :372-380 ABL:1（乳房感觉）→ SOURCE:17
+  // ABL:1（乳房感觉）→ SOURCE:17
   const abl_b3 = Math.min(abl(1), 5);
   set(17, [15, 50, 300, 700, 1100, 1600][abl_b3]);
 
-  // :381-408 バイブ挿入中（TEQUIP:11）
+  // バイブ挿入中（TEQUIP:11）
   if (tequip(11)) {
     // ABL:2 → A/D 累加
     const lvl = Math.min(abl(2), 5);
@@ -871,10 +851,10 @@ async function com3() {
     set(13, src(13) + vd); // 一度単独で計算
   }
 
-  // :409-437 アナルバイブ挿入中（TEQUIP:13）
+  // アナルバイブ挿入中（TEQUIP:13）
   if (tequip(13)) {
-    lose(target, 0, 30); // :438
-    lose(target, 1, 80); // :439
+    lose(target, 0, 30);
+    lose(target, 1, 80);
     const lvl = Math.min(abl(3), 5);
     vb += ABL_VA_TIERS_COM3[lvl][0];
     vd += ABL_VA_TIERS_COM3[lvl][1];
@@ -908,7 +888,7 @@ async function com3() {
     set(13, src(13) + vd); // 一度単独で計算
   }
 
-  // :440-511 淋浴使用中（TEQUIP:18）——覆写 S0/S12/S13、S1 与 B 另计
+  // 淋浴使用中（TEQUIP:18）——覆写 S0/S12/S13、S1 与 B 另计
   if (tequip(18)) {
     set(0, ABL_C_TIERS_COM3_SHOWER[abl_c3][0]);
     set(12, ABL_C_TIERS_COM3_SHOWER[abl_c3][1]);
@@ -934,14 +914,14 @@ async function com3() {
     }
     set(13, src(13) + vd); // 一度単独で計算
   } else {
-    // :512-515 ELSE：B/A/S1/S2 清零（淋浴才有的尾巴）
+    // ELSE：B/A/S1/S2 清零（淋浴才有的尾巴）
     vb = 0;
     set(2, 0);
     va = 0;
     set(1, 0);
   }
 
-  // :516-531 ＶかＡが上昇するとき、SOURCE:0/17 減衰（E = ABL:2 + ABL:3）
+  // ＶかＡが上昇するとき、SOURCE:0/17 減衰（E = ABL:2 + ABL:3）
   if (tequip(11) || tequip(13)) {
     const e = abl(2) + abl(3);
     const m =
@@ -960,7 +940,7 @@ async function com3() {
     set(17, times(src(17), m));
   }
 
-  // :532-584 / :586-633 两段共用的 PALAM:5（欲情）系数（バイブ/淋浴同表）
+  // 两段共用的 PALAM:5（欲情）系数（バイブ/淋浴同表）
   const lust_m2 =
     palam5 < PALAMLV[1]
       ? 0.8
@@ -971,7 +951,7 @@ async function com3() {
           : palam5 < PALAMLV[4]
             ? 1.1
             : 1.2;
-  // :634-686 バイブ、アナルバイブだけ先に計算（SOURCE:1/2/6 的落点）
+  // バイブ、アナルバイブだけ先に計算（SOURCE:1/2/6 的落点）
   if (tequip(11) || tequip(13)) {
     const lube = era.get(`palam:${target}:3`) || 0;
     if (lube < PALAMLV[1]) {
@@ -1013,7 +993,7 @@ async function com3() {
     set(6, vc);
   }
 
-  // :687-734 淋浴だけ先に計算（A/B 再过一遍参数与顺从；C 的累加在此段
+  // 淋浴だけ先に計算（A/B 再过一遍参数与顺从；C 的累加在此段
   // 无落点——源序如此，1:1 保留）
   if (tequip(18)) {
     const lube = era.get(`palam:${target}:3`) || 0;
@@ -1046,7 +1026,7 @@ async function com3() {
     set(2, src(2) + vb);
   }
 
-  // :735-761 ABL:12（技巧）→ SOURCE:4 + 四源系数
+  // ABL:12（技巧）→ SOURCE:4 + 四源系数
   const skill = Math.min(abl(12), 5);
   set(4, [100, 160, 220, 280, 340, 400][skill]);
   {
@@ -1057,7 +1037,7 @@ async function com3() {
     set(2, times(src(2), m));
   }
 
-  // :762-788 ABL:31（自慰中毒）→ SOURCE:7 + 四源系数（LV5 的 S1/S2 是 ×1.50）
+  // ABL:31（自慰中毒）→ SOURCE:7 + 四源系数（LV5 的 S1/S2 是 ×1.50）
   const addict = Math.min(abl(31), 5);
   set(7, [0, 100, 300, 800, 1500, 2500][addict]);
   {
@@ -1069,7 +1049,7 @@ async function com3() {
     set(2, times(src(2), m_va));
   }
 
-  // :789-824 公開/野外（TEQUIP:53||54）→ ABL:17（露出癖）+ 露出狂
+  // 公開/野外（TEQUIP:53||54）→ ABL:17（露出癖）+ 露出狂
   if (tequip(53) || tequip(54)) {
     const expo = Math.min(abl(17), 5);
     set(7, src(7) + [0, 100, 300, 800, 1500, 2500][expo]);
@@ -1090,7 +1070,7 @@ async function com3() {
     }
   }
 
-  // :826-828 陰毛を生やす設定で剃毛状態 → SOURCE:12 ×2.00
+  // 陰毛を生やす設定で剃毛状態 → SOURCE:12 ×2.00
   if (
     !era.get(`talent:${target}:125`) &&
     (era.get(`talent:${target}:310`) || 0) <= 20
@@ -1098,11 +1078,11 @@ async function com3() {
     set(12, times(src(12), 2.0));
   }
 
-  // :833-849 汚れ：指 ⇔ B、指 ⇔ V 双向移动
+  // 汚れ：指 ⇔ B、指 ⇔ V 双向移动
   stain_exchange(target, 1, target, 5);
   stain_exchange(target, 1, target, 3);
 
-  // :851-858 淋浴时污垢重置、润滑减半（TEQUIP:18 == 1）
+  // 淋浴时污垢重置、润滑减半（TEQUIP:18 == 1）
   if (tequip(18) === 1) {
     era.set(`stain:${target}:1`, 0);
     era.set(`stain:${target}:2`, 2);
@@ -1114,7 +1094,7 @@ async function com3() {
     );
   }
 
-  // :859-885 经验上昇（录像/野外 +2、通常 +1；首次 + 异常经验）
+  // 经验上昇（录像/野外 +2、通常 +1；首次 + 异常经验）
   if (tequip(53) || tequip(54)) {
     chara(target).dungeon.自慰经验 += 2;
     era.print('自慰经验＋２'); // 全角＋（源 :888 逐字）
@@ -1129,14 +1109,14 @@ async function com3() {
   if ((tequip(53) || tequip(54)) && (era.get(`cflag:${target}:3`) || 0) === 0) {
     chara(target).dungeon.异常经验 += 1;
     era.print('异常经验＋１');
-    era.set(`cflag:${target}:3`, 1); // :889 CFLAG:3 = 1
+    era.set(`cflag:${target}:3`, 1); // CFLAG:3 = 1
   }
 
-  print_same_sex_exp(target, player, 3, 3); // :890-898
+  print_same_sex_exp(target, player, 3, 3);
 
-  era.set('tflag:200', 2); // :899 屈服刻印２に相当
+  era.set('tflag:200', 2); // 屈服刻印２に相当
 
-  return 1; // :900
+  return 1;
 }
 
 /**
@@ -1144,7 +1124,7 @@ async function com3() {
  * @returns {Promise<number>} 原作 RETURN 1（升格跳转时为跳转目标的返回值）
  */
 async function com4() {
-  // :12-17 头部升格跳转（LOCAL = 4 → CASE 4：前回合口交/强制舔阴/六九式 → 69）
+  // 头部升格跳转（LOCAL = 4 → CASE 4：前回合口交/强制舔阴/六九式 → 69）
   const jumped = await jump_advanced(4);
   if (jumped !== false) {
     return jumped;
@@ -1154,42 +1134,42 @@ async function com4() {
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('口交(主)'); // :18
-  await train_message_b(); // :20
+  era.print('口交(主)');
+  await train_message_b();
 
-  lose(target, 0, 5); // :25
-  lose(target, 1, 50); // :26
-  set(12, 220); // :28
-  set(14, 50); // :29
+  lose(target, 0, 5);
+  lose(target, 1, 50);
+  set(12, 220);
+  set(14, 50);
 
-  // :32-41 ABL:0 → SOURCE:0
+  // ABL:0 → SOURCE:0
   const abl_c = Math.min(Math.floor(era.get(`abl:${target}:0`) || 0), 5);
   set(0, ABL_C_TIERS_COM4[abl_c]);
 
-  // :42-45 调教者擅用舌头（TALENT:PLAYER:52）或兽奸（TEQUIP:89）
+  // 调教者擅用舌头（TALENT:PLAYER:52）或兽奸（TEQUIP:89）
   if (era.get(`talent:${player}:52`) || tequip(89)) {
     set(0, times(src(0), 2.0));
     set(16, src(16) + Math.floor(src(0) / 20));
   }
 
-  // :47-48 兽奸提前返回
+  // 兽奸提前返回
   if (tequip(89)) {
     return 1;
   }
 
-  stain_exchange(target, 2, player, 0); // :49-50 P ⇔ 口
+  stain_exchange(target, 2, player, 0); // P ⇔ 口
 
-  print_same_sex_exp(target, player, 3, 3); // :53-61
-  record_player_first_kiss(player, target, 201); // :67-70
+  print_same_sex_exp(target, player, 3, 3);
+  record_player_first_kiss(player, target, 201);
 
-  era.add(`cflag:${player}:22`, 1); // :71 調教者的経験
+  era.add(`cflag:${player}:22`, 1); // 調教者的経験
 
-  await event_seitsu(target, player); // :72 CALL EVENT_SEITSU
+  await event_seitsu(target, player); // CALL EVENT_SEITSU
 
-  // :73-78 爱情经验：对象是男人（TALENT:122）时 E = 2
+  // 爱情经验：对象是男人（TALENT:122）时 E = 2
   print_love_exp(target, era.get(`talent:${target}:122`) ? 2 : 1);
 
-  return 1; // :79
+  return 1;
 }
 
 /**
@@ -1200,26 +1180,26 @@ async function com4() {
  * @returns {Promise<number>} 原作 RETURN 0/1
  */
 async function event_seitsu(target, player) {
-  // :108-110 男人或扶她、且未熟——否则 RETURN 0
+  // 男人或扶她、且未熟——否则 RETURN 0
   if (!(era.get(`talent:${target}:121`) || era.get(`talent:${target}:122`))) {
     return 0;
   }
   if (!era.get(`talent:${target}:135`)) {
     return 0;
   }
-  // :111-112 C 感度 5 以上、非触手/兽奸
+  // C 感度 5 以上、非触手/兽奸
   if ((era.get(`abl:${target}:0`) || 0) <= 4 || tequip(90) || tequip(89)) {
     return 0;
   }
-  // :113-114 对调教者的关系 150 以上
+  // 对调教者的关系 150 以上
   if ((era.get(`relation:${target}:${player}`) || 0) < 150) {
     return 0;
   }
   era.print(
     `${chara_callname(player)}的阴茎被吸啜着，${chara_callname(target)}开始精通这个了…`,
-  ); // :116
-  era.set(`talent:${target}:135`, 0); // :117 未熟剥落（talent:135 属主 train）
-  return 1; // :118
+  );
+  era.set(`talent:${target}:135`, 0); // 未熟剥落（talent:135 属主 train）
+  return 1;
 }
 
 /**
@@ -1227,7 +1207,7 @@ async function event_seitsu(target, player) {
  * @returns {Promise<number>} 原作 RETURN 1（升格跳转时为跳转目标的返回值）
  */
 async function com5() {
-  // :12-17 头部升格跳转（LOCAL = 5 → CASE 5：正常位系 → 129 / 背后位系 → 131）
+  // 头部升格跳转（LOCAL = 5 → CASE 5：正常位系 → 129 / 背后位系 → 131）
   const jumped = await jump_advanced(5);
   if (jumped !== false) {
     return jumped;
@@ -1237,37 +1217,37 @@ async function com5() {
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('胸爱抚'); // :19
-  await train_message_b(); // :21
+  era.print('胸爱抚');
+  await train_message_b();
 
-  lose(target, 0, 5); // :26
-  lose(target, 1, 50); // :27
-  set(4, 60); // :29
-  set(8, 20); // :30
-  set(12, 100); // :31
+  lose(target, 0, 5);
+  lose(target, 1, 50);
+  set(4, 60);
+  set(8, 20);
+  set(12, 100);
 
-  // :34-44 ABL:1（乳房感觉）→ [SOURCE:17, SOURCE:3]
+  // ABL:1（乳房感觉）→ [SOURCE:17, SOURCE:3]
   const abl_b = Math.min(Math.floor(era.get(`abl:${target}:1`) || 0), 5);
   set(17, ABL_B_TIERS_COM5[abl_b][0]);
   set(3, ABL_B_TIERS_COM5[abl_b][1]);
 
-  // :45-46 死斗场/兽奸提前返回
+  // 死斗场/兽奸提前返回
   if (tequip(89) || tequip(55)) {
     return 1;
   }
 
-  // :47-51 调教者幼儿退行（TALENT:PLAYER:131）
+  // 调教者幼儿退行（TALENT:PLAYER:131）
   if (era.get(`talent:${player}:131`) && tequip(89) === 0) {
     set(17, times(src(17), 1.2));
     set(3, times(src(3), 1.2));
   }
-  // :52-56 调教者幼稚（TALENT:PLAYER:132）
+  // 调教者幼稚（TALENT:PLAYER:132）
   if (era.get(`talent:${player}:132`) && tequip(89) === 0) {
     set(17, times(src(17), 1.2));
     set(3, times(src(3), 1.2));
   }
 
-  // :59-81 汚れ：触手 → B 位 |= 2/4；否则胸可用时 B ⇔ 口（擅用舌头加成）、
+  // 汚れ：触手 → B 位 |= 2/4；否则胸可用时 B ⇔ 口（擅用舌头加成）、
   // 其后一律 B ⇔ 指
   if (tequip(90)) {
     era.set(`stain:${target}:5`, (era.get(`stain:${target}:5`) || 0) | 2 | 4);
@@ -1280,22 +1260,22 @@ async function com5() {
       era_flag.assiplay === 1 ||
       era.get('talent:0:64') === 1
     ) {
-      // :82-84 调教者擅用舌头 → SOURCE:17 ×1.40 + SOURCE:16 加成
+      // 调教者擅用舌头 → SOURCE:17 ×1.40 + SOURCE:16 加成
       if (era.get(`talent:${player}:52`)) {
         set(17, times(src(17), 1.4));
         set(16, src(16) + Math.floor(src(17) / 20));
       }
-      stain_exchange(target, 5, player, 0); // :87-88 B ⇔ 口
+      stain_exchange(target, 5, player, 0); // B ⇔ 口
     }
-    stain_exchange(target, 5, player, 1); // :89-90 B ⇔ 指
+    stain_exchange(target, 5, player, 1); // B ⇔ 指
   }
 
-  print_same_sex_exp(target, player, 5, 5); // :92-100
-  print_love_exp(target, 1); // :101-105
+  print_same_sex_exp(target, player, 5, 5);
+  print_love_exp(target, 1);
 
-  await event_junyu(target, player); // :106 CALL EVENT_JUNYU
+  await event_junyu(target, player); // CALL EVENT_JUNYU
 
-  return 1; // :107
+  return 1;
 }
 
 /**
@@ -1305,7 +1285,7 @@ async function com5() {
  * @returns {Promise<number>} 原作 RETURN 0/1
  */
 async function event_junyu(target, player) {
-  // :127-128 已是母乳体质（130）/娇小（100）/贫乳（109）/男人（122）→ 不发生
+  // 已是母乳体质（130）/娇小（100）/贫乳（109）/男人（122）→ 不发生
   if (
     era.get(`talent:${target}:130`) ||
     era.get(`talent:${target}:100`) ||
@@ -1314,7 +1294,7 @@ async function event_junyu(target, player) {
   ) {
     return 0;
   }
-  // :129-130 B 感度 5 以上且巨乳（110）/爆乳（114）/超乳（119）之一、
+  // B 感度 5 以上且巨乳（110）/爆乳（114）/超乳（119）之一、
   // 非触手/兽奸
   if (
     (era.get(`abl:${target}:1`) || 0) <= 4 ||
@@ -1326,7 +1306,7 @@ async function event_junyu(target, player) {
   ) {
     return 0;
   }
-  // :132-133 调教者幼稚（132）/幼儿退行（131）/未熟（135）之一
+  // 调教者幼稚（132）/幼儿退行（131）/未熟（135）之一
   if (
     !era.get(`talent:${player}:132`) &&
     !era.get(`talent:${player}:131`) &&
@@ -1334,7 +1314,7 @@ async function event_junyu(target, player) {
   ) {
     return 0;
   }
-  // :135-136 关系 150 以上、或主人亲自调教且爱慕（TALENT:85）
+  // 关系 150 以上、或主人亲自调教且爱慕（TALENT:85）
   const relation = era.get(`relation:${target}:${player}`) || 0;
   if (
     relation < 150 &&
@@ -1342,9 +1322,9 @@ async function event_junyu(target, player) {
   ) {
     return 0;
   }
-  era.print(`${chara_callname(target)}的乳房被玩弄着，里面的母乳漏出来了…`); // :138
-  chara(target).chara.母乳体质 = 1; // :139（talent:130 属主 chara，走门面）
-  return 1; // :140
+  era.print(`${chara_callname(target)}的乳房被玩弄着，里面的母乳漏出来了…`);
+  chara(target).chara.母乳体质 = 1; // （talent:130 属主 chara，走门面）
+  return 1;
 }
 
 /**
@@ -1396,25 +1376,25 @@ async function com6() {
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const palam5 = era.get(`palam:${target}:5`) || 0;
 
-  // :12-16 头部升格跳转（LOCAL = 6 → CASE 6：正常位系 → 128 / 背后位系 → 133）
+  // 头部升格跳转（LOCAL = 6 → CASE 6：正常位系 → 128 / 背后位系 → 133）
   const jumped = await jump_advanced(6);
   if (jumped !== false) {
     return jumped;
   }
 
-  era.print('接吻'); // :19
+  era.print('接吻');
 
   // —— :24-44 判定段前半：汚れ权重 Y（AUTO_SUCCESS 路径沿用此值） ——
   let y = kiss_stain_penalty();
 
-  // :45-46 顺从 2 以上 / 侍奉精神 3 以上 / 爱慕 → 自动成功（跳过判定）
+  // 顺从 2 以上 / 侍奉精神 3 以上 / 爱慕 → 自动成功（跳过判定）
   const auto_success = abl(10) >= 2 || abl(16) >= 3 || Boolean(talent(85));
 
   if (!auto_success) {
     // —— :47-115 判定段：COM_ORDER + 本指令贡献 ——
     let a = 0;
     let s = 0;
-    const { a: order_a, s: order_s, parts } = await com_order(0, 0); // :117
+    const { a: order_a, s: order_s, parts } = await com_order(0, 0);
     a = order_a;
     s = order_s;
     const plus = () => {
@@ -1424,21 +1404,21 @@ async function com6() {
     };
     const minus = () => parts.push(' - ');
 
-    // :118-125 ABL:11 欲望 ×1
+    // ABL:11 欲望 ×1
     if (abl(11)) {
       plus();
       a += abl(11);
       parts.push(`${name_of('ablname', 11)}LV${abl(11)}(${abl(11) * 1})`);
       s = 1;
     }
-    // :126-133 ABL:16 侍奉精神 ×4
+    // ABL:16 侍奉精神 ×4
     if (abl(16)) {
       plus();
       a += abl(16) * 4;
       parts.push(`${name_of('ablname', 16)}LV${abl(16)}(${abl(16) * 4})`);
       s = 1;
     }
-    // :134-141 MARK:1 快乐刻印 ×2
+    // MARK:1 快乐刻印 ×2
     const mark1 = Math.floor(era.get(`mark:${target}:1`) || 0);
     if (mark1) {
       plus();
@@ -1446,7 +1426,7 @@ async function com6() {
       parts.push(`${name_of('markname', 1)}LV${mark1}(${mark1 * 2})`);
       s = 1;
     }
-    // :142-153 PALAM:5 欲情 ×1（L > 0 才进）
+    // PALAM:5 欲情 ×1（L > 0 才进）
     const lust_l =
       palam5 < PALAMLV[1]
         ? 0
@@ -1465,49 +1445,49 @@ async function com6() {
       parts.push(`${name_of('palamname', 5)}LV${lust_l}(${lust_l * 1})`);
       s = 1;
     }
-    // :154-159 害羞（TALENT:35）-1
+    // 害羞（TALENT:35）-1
     if (talent(35)) {
       minus();
       a -= 1;
       parts.push(`${name_of('talentname', 35)}(1)`);
       s = 1;
     }
-    // :160-166 不怕污臭（TALENT:61）+1
+    // 不怕污臭（TALENT:61）+1
     if (talent(61)) {
       plus();
       a += 1;
       parts.push(`${name_of('talentname', 61)}(1)`);
       s = 1;
     }
-    // :168-174 反感污臭（TALENT:62）-1
+    // 反感污臭（TALENT:62）-1
     if (talent(62)) {
       minus();
       a -= 1;
       parts.push(`${name_of('talentname', 62)}(1)`);
       s = 1;
     }
-    // :175-182 献身的（TALENT:63）+6
+    // 献身的（TALENT:63）+6
     if (talent(63)) {
       plus();
       a += 6;
       parts.push(`${name_of('talentname', 63)}(6)`);
       s = 1;
     }
-    // :185-191 否定快感（TALENT:71）-1
+    // 否定快感（TALENT:71）-1
     if (talent(71)) {
       minus();
       a -= 1;
       parts.push(`${name_of('talentname', 71)}(1)`);
       s = 1;
     }
-    // :195-202 爱慕（TALENT:85）且主人亲自调教 +5（源 :207 S = 5，逐字）
+    // 爱慕（TALENT:85）且主人亲自调教 +5（源 :207 S = 5，逐字）
     if (talent(85) && era_flag.assiplay === 0) {
       plus();
       a += 5;
       parts.push(`${name_of('talentname', 85)}(5)`);
       s = 5;
     }
-    // :208-214 兽奸（TEQUIP:89）且非牝犬（TALENT:136）-15（打印值是 10——
+    // 兽奸（TEQUIP:89）且非牝犬（TALENT:136）-15（打印值是 10——
     // 源 :215 PRINTV '(,10,') 逐字，与 A 的 -15 不一致是原状）
     if (tequip(89) && !talent(136)) {
       minus();
@@ -1515,7 +1495,7 @@ async function com6() {
       parts.push(`${name_of('itemname', 22)}(10)`);
       s = 1;
     }
-    // :216-238 Y 重算 + 汚れあり块（脏、名字、(Y)）
+    // Y 重算 + 汚れあり块（脏、名字、(Y)）
     y = kiss_stain_penalty();
     if (y) {
       minus();
@@ -1528,35 +1508,35 @@ async function com6() {
       parts.push(`脏、${stain_name}(${y})`);
       s = 1;
     }
-    // :242-258 合計（15 以上で実行）
+    // 合計（15 以上で実行）
     push_judge_tail(parts, a, 15);
     era.print(parts.join(''));
-    await era.waitAnyKey(); // :260 WAIT
+    await era.waitAnyKey(); // WAIT
     if (a < 15) {
-      return 0; // :263-264 実行できない
+      return 0; // 実行できない
     }
   }
   order_state.y = y; // SOURCE:8 的算式读判定段 Y（$AUTO_SUCCESS 路径为第一块值）
 
-  await train_message_b(); // :265
+  await train_message_b();
 
   // —— :266-310 ソースの計算 ——
-  lose(target, 0, 5); // :311
-  lose(target, 1, 50); // :312
-  set(8, y * 20 + 10); // :313 上のほうで計算した汚れデータ
+  lose(target, 0, 5);
+  lose(target, 1, 50);
+  set(8, y * 20 + 10); // 上のほうで計算した汚れデータ
 
-  // :314-331 ABL:16（侍奉精神）→ [SOURCE:4, SOURCE:5, SOURCE:8 系数]
+  // ABL:16（侍奉精神）→ [SOURCE:4, SOURCE:5, SOURCE:8 系数]
   const serve = Math.min(abl(16), 5);
   set(4, ABL_SERVE_TIERS_COM6[serve][0]);
   set(5, ABL_SERVE_TIERS_COM6[serve][1]);
   set(8, times(src(8), ABL_SERVE_TIERS_COM6[serve][2]));
 
-  // :332-351 ABL:12（技巧）→ SOURCE:4/5 系数
+  // ABL:12（技巧）→ SOURCE:4/5 系数
   const skill = Math.min(abl(12), 5);
   set(4, times(src(4), ABL_SKILL_TIERS_COM6[skill][0]));
   set(5, times(src(5), ABL_SKILL_TIERS_COM6[skill][1]));
 
-  // :352-382 兽奸（TEQUIP:89）：兽奸中毒（ABL:39）分档 + 犬と初吻，提前返回
+  // 兽奸（TEQUIP:89）：兽奸中毒（ABL:39）分档 + 犬と初吻，提前返回
   if (tequip(89)) {
     const dog = Math.min(Math.floor(era.get(`abl:${target}:39`) || 0), 5);
     const row = ABL_DOG_TIERS_COM6[dog];
@@ -1565,25 +1545,25 @@ async function com6() {
       set(10, src(10) + row[1]);
       set(8, times(src(8), row[2]));
       if (dog >= 2) {
-        era.set('tflag:100', 1); // :388 等 LV2+ 置侍奉快乐经验旗
+        era.set('tflag:100', 1); // 等 LV2+ 置侍奉快乐经验旗
       }
     } else {
       set(8, times(src(8), dog === 0 ? 2.0 : 1.0)); // LV0 ×2.00 / LV1 ×1.00
     }
     if ((era.get(`cflag:${target}:16`) || 0) === -1) {
-      era.set('tflag:13', 1); // :389 犬と初吻
+      era.set('tflag:13', 1); // 犬と初吻
       era.set(`cflag:${target}:16`, 998);
-      era.set('tflag:200', 2); // :390 屈服刻印２に相当
+      era.set('tflag:200', 2); // 屈服刻印２に相当
     }
-    return 1; // :391
+    return 1;
   }
 
-  // :392-411 玩家的 ABL:12（技巧）→ [SOURCE:3, SOURCE:10, A]
+  // 玩家的 ABL:12（技巧）→ [SOURCE:3, SOURCE:10, A]
   const p_skill = Math.min(Math.floor(era.get(`abl:${player}:12`) || 0), 5);
   set(3, [100, 150, 200, 300, 500, 800][p_skill]);
   set(10, [0, 0, 0, 50, 100, 200][p_skill]);
 
-  // :412-413 爱慕（TALENT:85）→ SOURCE:3 ×2.00
+  // 爱慕（TALENT:85）→ SOURCE:3 ×2.00
   if (talent(85)) {
     set(3, times(src(3), 2.0));
   }
@@ -1592,20 +1572,20 @@ async function com6() {
   stain_exchange(target, 0, player, 0);
 
   // —— :385-434 経験上昇（レズ/ホモ :387-396、爱情 :398-434）——
-  print_same_sex_exp(target, player, 3, 3); // :387-396
+  print_same_sex_exp(target, player, 3, 3);
 
-  // :398-430 爱情经验段（:398 起）
-  let love_e = 1; // :400
+  // 爱情经验段（:398 起）
+  let love_e = 1;
   if (talent(85) && era_flag.assiplay === 0) {
-    love_e += 2; // :404
+    love_e += 2;
   }
   if ((era.get(`cflag:${target}:16`) || 0) === -1) {
-    era.set('tflag:13', 1); // :408 初吻
+    era.set('tflag:13', 1); // 初吻
     era.set(`cflag:${target}:16`, 1);
     era.set(`cstr:${target}:4`, chara_callname(player)); // CSTR:4 = %SAVESTR:PLAYER%
-    love_e += 20; // :412
+    love_e += 20;
     if (era_flag.assiplay && era_flag.assi > 0) {
-      // :414-419 初吻对象是助手时，对象对助手的关系 +10（==10 抬 110、>200 钳 200）
+      // 初吻对象是助手时，对象对助手的关系 +10（==10 抬 110、>200 钳 200）
       const r = era_flag.assi;
       let rel = (era.get(`relation:${target}:${r}`) || 0) + 10;
       if (rel === 10) {
@@ -1616,19 +1596,19 @@ async function com6() {
       }
       era.set(`relation:${target}:${r}`, rel);
     }
-    era.set('tflag:200', 1); // :422 屈服刻印１に相当
+    era.set('tflag:200', 1); // 屈服刻印１に相当
   }
-  record_player_first_kiss(player, target, 1); // :424-428 调教者的初吻
+  record_player_first_kiss(player, target, 1); // 调教者的初吻
 
-  print_love_exp(target, love_e); // :430-434
+  print_love_exp(target, love_e);
 
-  era.set('tflag:100', 1); // :439
+  era.set('tflag:100', 1);
 
   if (era_flag.assiplay === 0) {
-    era.add('tflag:30', 1); // :442 主人接吻计数
+    era.add('tflag:30', 1); // 主人接吻计数
   }
 
-  return 1; // :444
+  return 1;
 }
 
 /**
@@ -1643,13 +1623,13 @@ async function com7() {
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const palam5 = era.get(`palam:${target}:5`) || 0;
 
-  // :10-11 指令名行（公开前缀）
+  // 指令名行（公开前缀）
   era.print(`${tequip(53) ? '公开' : ''}自己扒开`);
 
   // —— :13-131 実行できるかの判定（无自动成功路径） ——
   let a = 0;
   let s = 0;
-  const { a: order_a, s: order_s, parts } = await com_order(0, 0); // :132
+  const { a: order_a, s: order_s, parts } = await com_order(0, 0);
   a = order_a;
   s = order_s;
   const plus = () => {
@@ -1659,49 +1639,49 @@ async function com7() {
   };
   const minus = () => parts.push(' - ');
 
-  // :133-140 ABL:11 欲望 ×3
+  // ABL:11 欲望 ×3
   if (abl(11)) {
     plus();
     a += abl(11) * 3;
     parts.push(`${name_of('ablname', 11)}LV${abl(11)}(${abl(11) * 3})`);
     s = 1;
   }
-  // :141-148 ABL:2 私处感觉 ×2
+  // ABL:2 私处感觉 ×2
   if (abl(2)) {
     plus();
     a += abl(2) * 2;
     parts.push(`${name_of('ablname', 2)}LV${abl(2)}(${abl(2) * 2})`);
     s = 1;
   }
-  // :150-157 ABL:16 侍奉精神 ×4
+  // ABL:16 侍奉精神 ×4
   if (abl(16)) {
     plus();
     a += abl(16) * 4;
     parts.push(`${name_of('ablname', 16)}LV${abl(16)}(${abl(16) * 4})`);
     s = 1;
   }
-  // :158-165 ABL:17 露出癖 ×3
+  // ABL:17 露出癖 ×3
   if (abl(17)) {
     plus();
     a += abl(17) * 3;
     parts.push(`${name_of('ablname', 17)}LV${abl(17)}(${abl(17) * 3})`);
     s = 1;
   }
-  // :166-173 ABL:31 自慰中毒 ×3
+  // ABL:31 自慰中毒 ×3
   if (abl(31)) {
     plus();
     a += abl(31) * 3;
     parts.push(`${name_of('ablname', 31)}LV${abl(31)}(${abl(31) * 3})`);
     s = 1;
   }
-  // :176-182 润滑不足（PALAM:3 < PALAMLV:3）-5（打印是字面量「润滑不足」）
+  // 润滑不足（PALAM:3 < PALAMLV:3）-5（打印是字面量「润滑不足」）
   if ((era.get(`palam:${target}:3`) || 0) < PALAMLV[3]) {
     minus();
     a -= 5;
     parts.push(`润滑不足(5)`);
     s = 1;
   }
-  // :185-196 PALAM:5 欲情 ×3
+  // PALAM:5 欲情 ×3
   const lust_l =
     palam5 < PALAMLV[1]
       ? 0
@@ -1720,42 +1700,42 @@ async function com7() {
     parts.push(`${name_of('palamname', 5)}LV${lust_l}(${lust_l * 3})`);
     s = 1;
   }
-  // :197-203 害羞（TALENT:35）-2
+  // 害羞（TALENT:35）-2
   if (talent(35)) {
     minus();
     a -= 2;
     parts.push(`${name_of('talentname', 35)}(2)`);
     s = 1;
   }
-  // :206-212 不知羞耻（TALENT:36）+2
+  // 不知羞耻（TALENT:36）+2
   if (talent(36)) {
     plus();
     a += 2;
     parts.push(`${name_of('talentname', 36)}(2)`);
     s = 1;
   }
-  // :215-221 接受快感（TALENT:70）+5
+  // 接受快感（TALENT:70）+5
   if (talent(70)) {
     plus();
     a += 5;
     parts.push(`${name_of('talentname', 70)}(5)`);
     s = 1;
   }
-  // :222-228 否定快感（TALENT:71）-5
+  // 否定快感（TALENT:71）-5
   if (talent(71)) {
     minus();
     a -= 5;
     parts.push(`${name_of('talentname', 71)}(5)`);
     s = 1;
   }
-  // :229-235 露出狂（TALENT:89）+10
+  // 露出狂（TALENT:89）+10
   if (talent(89)) {
     plus();
     a += 10;
     parts.push(`${name_of('talentname', 89)}(10)`);
     s = 1;
   }
-  // :236-247 处女（TALENT:0）-20 / 私处经验不足（EXP:0 < EXPLV:2）-5
+  // 处女（TALENT:0）-20 / 私处经验不足（EXP:0 < EXPLV:2）-5
   if (talent(0)) {
     minus();
     a -= 20;
@@ -1767,7 +1747,7 @@ async function com7() {
     parts.push(`${name_of('expname', 0)} 不足(5)`);
     s = 1;
   }
-  // :248-254 媚药（TEQUIP:21，打印读 ITEMNAME:26）+6
+  // 媚药（TEQUIP:21，打印读 ITEMNAME:26）+6
   if (tequip(21)) {
     plus();
     a += 6;
@@ -1775,59 +1755,59 @@ async function com7() {
     s = 1;
   }
 
-  // :257-274 合計（22 以上で実行；公開 +10）
+  // 合計（22 以上で実行；公開 +10）
   let v = 22;
   if (tequip(53)) {
     v += 10;
   }
   push_judge_tail(parts, a, v);
   era.print(parts.join(''));
-  await era.waitAnyKey(); // :275 WAIT
+  await era.waitAnyKey(); // WAIT
   if (a < v) {
-    return 0; // :276-277
+    return 0;
   }
   order_state.a = a;
   order_state.v = v;
 
-  await train_message_b(); // :278
+  await train_message_b();
 
   // —— :204-336 実行決定後的源计算（LOSEBASE 起至 TFLAG:200）——
-  lose(target, 0, 10); // :206
-  lose(target, 1, 50); // :207
-  set(14, 400); // :212
+  lose(target, 0, 10);
+  lose(target, 1, 50);
+  set(14, 400);
 
-  // :214-234 ABL:2 → [SOURCE:12, SOURCE:13]
+  // ABL:2 → [SOURCE:12, SOURCE:13]
   const abl_v = Math.min(abl(2), 5);
   set(12, ABL_V_TIERS_COM7[abl_v][0]);
   set(13, ABL_V_TIERS_COM7[abl_v][1]);
 
-  // :236-246 ABL:16 → [SOURCE:4, SOURCE:5]
+  // ABL:16 → [SOURCE:4, SOURCE:5]
   const serve = Math.min(abl(16), 5);
   set(4, ABL_SERVE_TIERS_COM7[serve][0]);
   set(5, ABL_SERVE_TIERS_COM7[serve][1]);
 
-  // :248-269 ABL:17（露出癖）→ [SOURCE:7 增量, SOURCE:12 系数, SOURCE:5 系数]
+  // ABL:17（露出癖）→ [SOURCE:7 增量, SOURCE:12 系数, SOURCE:5 系数]
   const expo = Math.min(abl(17), 5);
   set(7, src(7) + ABL_EXPO_TIERS_COM7[expo][0]);
   set(12, times(src(12), ABL_EXPO_TIERS_COM7[expo][1]));
   set(5, times(src(5), ABL_EXPO_TIERS_COM7[expo][2]));
 
-  // :271-276 露出狂（TALENT:89）→ SOURCE:7 += 500 + S12/S5 ×1.50
+  // 露出狂（TALENT:89）→ SOURCE:7 += 500 + S12/S5 ×1.50
   if (talent(89)) {
     set(7, src(7) + 500);
     set(12, times(src(12), 1.5));
     set(5, times(src(5), 1.5));
   }
 
-  // :289-291 剃毛状態 → SOURCE:12 ×2.00
+  // 剃毛状態 → SOURCE:12 ×2.00
   if (!talent(125) && (talent(310) || 0) <= 20) {
     set(12, times(src(12), 2.0));
   }
 
-  // :297-299 汚れ：指 ⇔ V
+  // 汚れ：指 ⇔ V
   stain_exchange(target, 1, target, 3);
 
-  // :305-327 露出癖 3+ 的自慰经验等：
+  // 露出癖 3+ 的自慰经验等：
   if (abl(17) >= 3) {
     if (tequip(53)) {
       chara(target).dungeon.自慰经验 += 2;
@@ -1847,11 +1827,11 @@ async function com7() {
     }
   }
 
-  print_same_sex_exp(target, player, 2); // :329-333 百合经验（源侧无断背支）
+  print_same_sex_exp(target, player, 2); // 百合经验（源侧无断背支）
 
-  era.set('tflag:200', 1); // :338 屈服刻印１に相当
+  era.set('tflag:200', 1); // 屈服刻印１に相当
 
-  return 1; // :338
+  return 1;
 }
 
 /**
@@ -1863,13 +1843,13 @@ async function com8() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // :9-11 夺处女确认（CALL CONFIRM_LOST_VIRGIN / SIF RESULT == 0 RETURN 0）
+  // 夺处女确认（CALL CONFIRM_LOST_VIRGIN / SIF RESULT == 0 RETURN 0）
   // 真身在 com-vaginasex.js（#216）；rebase 接线，替换本票先前的恒放行存根
   if ((await confirm_lost_virgin()) === 0) {
     return 0;
   }
 
-  // :17-24 头部升格跳转（LOCAL = 8 → CASE 8：PREVCOM==8 且技巧 3+ → 84）
+  // 头部升格跳转（LOCAL = 8 → CASE 8：PREVCOM==8 且技巧 3+ → 84）
   const jumped = await jump_advanced(8);
   if (jumped !== false) {
     return jumped;
@@ -1877,20 +1857,20 @@ async function com8() {
 
   const { src, set } = make_src_helpers(target);
 
-  era.print('插入手指'); // :26
-  await train_message_b(); // :31
+  era.print('插入手指');
+  await train_message_b();
 
-  lose(target, 0, 30); // :32
-  lose(target, 1, 80); // :34
-  set(12, 300); // :35
-  set(14, 200); // :38
+  lose(target, 0, 30);
+  lose(target, 1, 80);
+  set(12, 300);
+  set(14, 200);
 
-  // :39-53 ABL:2（私处感觉）→ [SOURCE:1, SOURCE:13]
+  // ABL:2（私处感觉）→ [SOURCE:1, SOURCE:13]
   const abl_v = Math.min(Math.floor(era.get(`abl:${target}:2`) || 0), 5);
   set(1, ABL_V_TIERS_COM8[abl_v][0]);
   set(13, ABL_V_TIERS_COM8[abl_v][1]);
 
-  // :54-75 EXP:0 档 → [SOURCE:1 系数, SOURCE:13 系数, SOURCE:6, SOURCE:14 增量]
+  // EXP:0 档 → [SOURCE:1 系数, SOURCE:13 系数, SOURCE:6, SOURCE:14 增量]
   // 注：最末档（ELSE）乘的是 SOURCE:2（源 :76 逐字——与同族的 SOURCE:1 不一致
   // 是原状，不「修正」）
   const exp_v = era.get(`exp:${target}:0`) || 0;
@@ -1920,12 +1900,12 @@ async function com8() {
     set(6, 0);
   }
 
-  // :77-78 小人体型（TALENT:263）→ SOURCE:1 ×1.50
+  // 小人体型（TALENT:263）→ SOURCE:1 ×1.50
   if (era.get(`talent:${target}:263`)) {
     set(1, times(src(1), 1.5));
   }
 
-  // :79-94 PALAM:3（润滑）→ [SOURCE:1 系数, SOURCE:6 增量+系数]
+  // PALAM:3（润滑）→ [SOURCE:1 系数, SOURCE:6 增量+系数]
   const lube = era.get(`palam:${target}:3`) || 0;
   if (lube < PALAMLV[1]) {
     set(1, times(src(1), 0.1));
@@ -1946,7 +1926,7 @@ async function com8() {
     set(6, times(src(6), 0.1));
   }
 
-  // :95-105 PALAM:5（欲情）→ SOURCE:1 系数
+  // PALAM:5（欲情）→ SOURCE:1 系数
   const lust_m =
     palam_lust_of(target) < PALAMLV[1]
       ? 0.5
@@ -1959,7 +1939,7 @@ async function com8() {
             : 1.8;
   set(1, times(src(1), lust_m));
 
-  // :106-115 私处敏感（103）/钝感（104）→ SOURCE:6/13/14 系数
+  // 私处敏感（103）/钝感（104）→ SOURCE:6/13/14 系数
   const m = era.get(`talent:${target}:103`)
     ? 1.5
     : era.get(`talent:${target}:104`)
@@ -1971,33 +1951,33 @@ async function com8() {
     set(14, times(src(14), m));
   }
 
-  // :116-117 无私处经验且看重贞操 → SOURCE:13 ×2.00（EXP:0 == 0）
+  // 无私处经验且看重贞操 → SOURCE:13 ×2.00（EXP:0 == 0）
   if (exp_v === 0 && era.get(`talent:${target}:30`)) {
     set(13, times(src(13), 2.0));
   }
-  // :118-120 未熟 → SOURCE:6 ×2.00
+  // 未熟 → SOURCE:6 ×2.00
   if (era.get(`talent:${target}:135`)) {
     set(6, times(src(6), 2.0));
   }
 
-  // :125-135 汚れ：触手 → V 位 |= 2/4；否则 V ⇔ 指
+  // 汚れ：触手 → V 位 |= 2/4；否则 V ⇔ 指
   if (tequip(90)) {
     era.set(`stain:${target}:3`, (era.get(`stain:${target}:3`) || 0) | 2 | 4);
   } else {
     stain_exchange(target, 3, player, 1);
   }
 
-  // :136-149 経験上昇：私处经验按 ABL:2 档给 1-4
+  // 経験上昇：私处经验按 ABL:2 档给 1-4
   const s = abl_v <= 1 ? 1 : abl_v <= 4 ? 2 : abl_v <= 7 ? 3 : 4;
-  chara(target).dungeon.私处经验 += s; // :151（exp:0 属主 dungeon，走门面）
-  era.print(`私处经验+${s}`); // :152
+  chara(target).dungeon.私处经验 += s; // （exp:0 属主 dungeon，走门面）
+  era.print(`私处经验+${s}`);
 
-  print_same_sex_exp(target, player, 4); // :153-157
-  print_love_exp(target, 1); // :158-162
+  print_same_sex_exp(target, player, 4);
+  print_love_exp(target, 1);
 
-  era.set('tflag:19', 1); // :163 私处经验を伴うコマンドのフラグ
+  era.set('tflag:19', 1); // 私处经验を伴うコマンドのフラグ
 
-  return 1; // :164
+  return 1;
 }
 
 /** PALAM:5（欲情）读数（COM8 用；独立小助手避免与判定段的局部变量混淆） */
@@ -2014,43 +1994,43 @@ async function com9() {
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('舔肛'); // :9
-  await train_message_b(); // :11
+  era.print('舔肛');
+  await train_message_b();
 
-  lose(target, 0, 5); // :18
-  lose(target, 1, 50); // :19
-  set(10, 50); // :21
-  set(12, 300); // :22
-  set(14, 500); // :23
+  lose(target, 0, 5);
+  lose(target, 1, 50);
+  set(10, 50);
+  set(12, 300);
+  set(14, 500);
 
-  // :26-35 ABL:3 → SOURCE:2
+  // ABL:3 → SOURCE:2
   const abl_a = Math.min(Math.floor(era.get(`abl:${target}:3`) || 0), 5);
   set(2, ABL_A_TIERS_COM9[abl_a]);
 
-  // :36-41 兽奸：肛门经验 +1 后提前返回
+  // 兽奸：肛门经验 +1 后提前返回
   if (tequip(89)) {
-    chara(target).dungeon.肛门经验 += 1; // :42
-    era.print('肛门经验＋１'); // :43（全角＋，源逐字）
-    return 1; // :44
+    chara(target).dungeon.肛门经验 += 1;
+    era.print('肛门经验＋１'); // （全角＋，源逐字）
+    return 1;
   }
 
-  // :45-49 调教者擅用舌头（TALENT:PLAYER:52）：SOURCE:2 ×2.00、
+  // 调教者擅用舌头（TALENT:PLAYER:52）：SOURCE:2 ×2.00、
   // SOURCE:16 += SOURCE:0/20（SOURCE:0 本指令从不写——恒 +0，源逐字保留）
   if (era.get(`talent:${player}:52`) || tequip(89)) {
     set(2, times(src(2), 2.0));
     set(16, src(16) + Math.floor(src(0) / 20));
   }
 
-  stain_exchange(target, 4, player, 0); // :50-51 A ⇔ 口
+  stain_exchange(target, 4, player, 0); // A ⇔ 口
 
-  print_same_sex_exp(target, player, 3); // :57-61
+  print_same_sex_exp(target, player, 3);
 
-  chara(target).dungeon.肛门经验 += 1; // :64
-  era.print('肛门经验＋１'); // :65（全角＋）
+  chara(target).dungeon.肛门经验 += 1;
+  era.print('肛门经验＋１'); // （全角＋）
 
-  record_player_first_kiss(player, target, 401); // :66-69
+  record_player_first_kiss(player, target, 401);
 
-  return 1; // :70
+  return 1;
 }
 
 // —— @TRAIN_MESSAGE_B 的本族分支（SELECTCOM 0-9；0 分支 #45 落地随搬，其余
@@ -2097,7 +2077,7 @@ async function train_message_b_0() {
   const player = era_flag.player;
   const target_name = chara_callname(target);
 
-  // :28-38 服装前缀（#215 起真身，ere/page/page-clothtype.js）
+  // 服装前缀（#215 起真身，ere/page/page-clothtype.js）
   const cloth_bits = era.get(`cflag:${target}:40`) || 0;
   const special_type = era.get(`cflag:${target}:42`) || 0;
   let line = '';
@@ -2109,7 +2089,7 @@ async function train_message_b_0() {
     line += '隔着内衣、';
   }
 
-  // :39-65 装备描写支（触手 :66-67 / 魔兽 :68-89 / 兽奸 :90-91）——#215 起真身
+  // 装备描写支（触手 :66-67 / 魔兽 :68-89 / 兽奸 :90-91）——#215 起真身
   const teq = (idx) => era.get(`tequip:${target}:${idx}`) || 0;
   if (teq(90)) {
     line += '触手玩弄着';
@@ -2136,7 +2116,7 @@ async function train_message_b_0() {
   } else if (teq(89)) {
     line += '狗的舌头舔舐着';
   } else {
-    // :94-99 普通支
+    // 普通支
     line += chara_callname(player);
     const mouth_stain = era.get(`stain:${target}:0`) || 0;
     const kissable =
@@ -2170,7 +2150,7 @@ async function train_message_b_1() {
   const lust3 = (era.get(`palam:${target}:5`) || 0) >= PALAMLV[3];
   const futanari = era.get(`talent:${target}:121`);
 
-  // :94-119 头段：兽奸 / 魔兽（E:307 种族支）/ 调教者名
+  // 头段：兽奸 / 魔兽（E:307 种族支）/ 调教者名
   let line;
   if (era.get(`tequip:${target}:89`)) {
     line = '狗的舌头';
@@ -2190,14 +2170,14 @@ async function train_message_b_1() {
     line = player_name;
   }
 
-  // :120-126 岩清水（TEQUIP:57）
+  // 岩清水（TEQUIP:57）
   if (era.get(`tequip:${target}:57`)) {
     line += `把脸伸到${target_name}的胯间、在淫秽的声音中舔舐着阴唇`;
   } else {
     line += `温柔仔细地舔舐着${target_name}的阴唇`;
   }
 
-  // :127-212 扶她/欲情的三岔（魔兽支各带种族文案）
+  // 扶她/欲情的三岔（魔兽支各带种族文案）
   const monster = era.get(`tequip:${target}:88`);
   if (futanari && lust3) {
     if (monster) {
@@ -2265,7 +2245,7 @@ async function train_message_b_2() {
   const teq = (idx) => era.get(`tequip:${target}:${idx}`) || 0;
 
   if (teq(88)) {
-    // :215-238 魔兽支（MONSTER_NAME + E:307 种族文案 + 尾随空行）
+    // 魔兽支（MONSTER_NAME + E:307 种族文案 + 尾随空行）
     const species = e_get(307);
     let body;
     if (species === 2) {
@@ -2285,7 +2265,7 @@ async function train_message_b_2() {
     }
     era.print(`${monster_name(e_get(300))} ${body} `); // 尾随空格（PRINTL ' '）
   } else {
-    // :239-262 普通支。SIF TEQUIP:90 == 0 的 PRINTFORM 是行内前缀（不收行），
+    // 普通支。SIF TEQUIP:90 == 0 的 PRINTFORM 是行内前缀（不收行），
     // 与后续 PRINTFORML 合成一行的形状在此按源拼接
     const prefix = teq(90) === 0 ? player_name : '';
     if (teq(90)) {
@@ -2315,7 +2295,7 @@ async function train_message_b_3(rand) {
   const player_name = chara_callname(era_flag.player);
   const { a, v } = order_state;
 
-  // :267-273 牡奴/牝奴的 LOCALS（RAND:2 参与分流）
+  // 牡奴/牝奴的 LOCALS（RAND:2 参与分流）
   const male_side =
     era.get(`talent:${target}:122`) ||
     (era.get(`talent:${target}:121`) && rand(2) === 0);
@@ -2325,7 +2305,7 @@ async function train_message_b_3(rand) {
   if (a < v) {
     era.print(`${target_name}拒绝了自慰的命令。看来还需要更多的调教。`);
   } else if (a > v && a < 50) {
-    // :274-296 命令下的起步（着衣/性格/摄像机前）
+    // 命令下的起步（着衣/性格/摄像机前）
     let line = `在${player_name}要求自慰的命令下、${target_name}`;
     if ((era.get(`cflag:${target}:40`) || 0) & 8) {
       line += `${clothtype_main2_text(target)}的前摆提了起来、露出了性器官、`;
@@ -2361,7 +2341,7 @@ async function train_message_b_3(rand) {
     );
   }
 
-  // :297-312 连续自慰的四段高潮描写（PREVCOM == 3 且装备/参数齐）
+  // 连续自慰的四段高潮描写（PREVCOM == 3 且装备/参数齐）
   const teq = (idx) => (era.get(`tequip:${target}:${idx}`) || 0) !== 0;
   const abl5 = (i) => (era.get(`abl:${target}:${i}`) || 0) >= 5;
   const lust4 = (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4];
@@ -2441,7 +2421,7 @@ async function train_message_b_5() {
     return era.waitAnyKey();
   };
 
-  // :349-362 死斗场的六种 PRINTFORMW 开场
+  // 死斗场的六种 PRINTFORMW 开场
   if (teq(55)) {
     const t400 = era.get('tflag:400') || 0;
     if (t400 === 201) {
@@ -2471,7 +2451,7 @@ async function train_message_b_5() {
     }
   }
 
-  // :363-410 谁在摸：兽奸 / 死斗场怪物 / 魔兽 / 调教者（触手中省）
+  // 谁在摸：兽奸 / 死斗场怪物 / 魔兽 / 调教者（触手中省）
   const pierced = (era.get(`cflag:${target}:7`) || 0) & 1;
   const skin_phrase = () =>
     talent(244)
@@ -2514,7 +2494,7 @@ async function train_message_b_5() {
     }
   }
 
-  // :411-423 %TARGET% + 乳房形容
+  // %TARGET% + 乳房形容
   buf += target_name;
   if (talent(116)) {
     buf += '平坦的';
@@ -2530,7 +2510,7 @@ async function train_message_b_5() {
     buf += '的';
   }
 
-  // :424-491 胸部的下场（触手/魔兽/母乳/普通各支；PRINTL 收行）
+  // 胸部的下场（触手/魔兽/母乳/普通各支；PRINTL 收行）
   const milk_peak =
     talent(130) &&
     (era.get(`palam:${target}:5`) || 0) > PALAMLV[3] &&
@@ -2619,10 +2599,10 @@ async function train_message_b_6() {
     ((era.get(`cflag:${target}:40`) || 0) & 64) !== 0;
 
   if (teq(89) && full_cloth) {
-    // :495-498 流浪狗隔着着ぐるみ舔（PRINTFORM + SPECIAL + PRINTFORML 一行）
+    // 流浪狗隔着着ぐるみ舔（PRINTFORM + SPECIAL + PRINTFORML 一行）
     era.print(`流浪狗把${clothtype_special_text(target)}舔舐变色了……`);
   } else if (teq(88)) {
-    // :499-532 魔兽接吻（异种婚姻 TALENT:159 时按种族深吻）
+    // 魔兽接吻（异种婚姻 TALENT:159 时按种族深吻）
     const species = e_get(307);
     if (talent(159)) {
       const text =
@@ -2644,12 +2624,12 @@ async function train_message_b_6() {
       era.print(`${monster_name(e_get(300))} 与${target_name}进行着亲吻……`);
     }
   } else if (full_cloth) {
-    // :533-536 隔着着ぐるみ接吻
+    // 隔着着ぐるみ接吻
     era.print(
       ` ${player_name}与穿着${clothtype_special_text(target)}的她接吻了……`,
     );
   } else if (teq(89)) {
-    // :537-547 兽奸接吻（牝犬 / 兽奸中毒 3+）
+    // 兽奸接吻（牝犬 / 兽奸中毒 3+）
     if (talent(136) && clear_minded) {
       era.print(`${target_name}把流浪狗当成热恋中的爱人一样、`);
       era.print('滋滋地吸取着彼此的口水、舌头相互纠缠着……');
@@ -2667,7 +2647,7 @@ async function train_message_b_6() {
       );
     }
   } else {
-    // :548-566 普通接吻。PRINTFORM 前缀不收行，与 PRINTL/PRINTFORML 的
+    // 普通接吻。PRINTFORM 前缀不收行，与 PRINTL/PRINTFORML 的
     // 尾段合成一行（golden 第 172 行「…来回舔舐着……」的形态）
     let kiss_line = `${player_name}在${target_name}口腔的每个角落来回舔舐着`;
     if (
@@ -2709,7 +2689,7 @@ async function train_message_b_7() {
   const abl = (i) => era.get(`abl:${target}:${i}`) || 0;
   const teq = (idx) => (era.get(`tequip:${target}:${idx}`) || 0) !== 0;
 
-  // :569-581 阴毛描述（TALENT:310 档）
+  // 阴毛描述（TALENT:310 档）
   const hair = talent(310) || 0;
   const locals0 =
     hair <= 20 || talent(125)
@@ -2733,7 +2713,7 @@ async function train_message_b_7() {
     line += `${clothtype_main2_text(target)}的前摆翻了上去、`;
   }
   if (abl(17) === 0) {
-    // :582-600 露出癖 0：性格 + 着衣的前摆
+    // 露出癖 0：性格 + 着衣的前摆
     if (talent(22)) {
       line += '毫无表情地、';
     } else if (talent(10) || talent(14)) {
@@ -2762,7 +2742,7 @@ async function train_message_b_7() {
   }
   era.print(line);
 
-  // :601-605 精液漏出（TFLAG:38）
+  // 精液漏出（TFLAG:38）
   const t38 = era.get('tflag:38') || 0;
   if (t38 >= 2) {
     era.print('从完全打开的私处口中、灌满的精液不断地流了出来……');
@@ -2770,7 +2750,7 @@ async function train_message_b_7() {
     era.print('从张开的阴部里、精液缓缓地流了出来……');
   }
 
-  // :606-608 貞操帯
+  // 貞操帯
   if (
     (era.get(`cflag:${target}:42`) || 0) === 79 &&
     ((era.get(`cflag:${target}:40`) || 0) & 64) !== 0
@@ -2778,7 +2758,7 @@ async function train_message_b_7() {
     era.print(`然后、${target_name}的阴部、被结实的贞操带紧紧保护着。`);
   }
 
-  // :609-624 穿环状態（CFLAG:7 & 8 阴茎环 / & 4 阴唇环）
+  // 穿环状態（CFLAG:7 & 8 阴茎环 / & 4 阴唇环）
   const pierced = era.get(`cflag:${target}:7`) || 0;
   if (pierced & 8 || pierced & 4) {
     let tail = target_name;
@@ -2813,11 +2793,11 @@ async function train_message_b_8() {
     ((era.get(`cflag:${target}:40`) || 0) & 8) !== 0 &&
     (era.get(`abl:${target}:17`) || 0) !== 0;
 
-  // :660-661 / :663 的 PRINTFORM 前缀不收行——与 :664-668 的 PRINTFORML
+  // 的 PRINTFORM 前缀不收行——与 :664-668 的 PRINTFORML
   // 插入行合成一行（finger_prefix）
   let finger_prefix;
   if (teq(11)) {
-    // :669-694 振动使用中（蠕虫在动作）
+    // 振动使用中（蠕虫在动作）
     let line = cloth_front
       ? `${player_name}把${target_name}的${clothtype_main2_text(target)}的裙摆翻起、`
       : `${target_name}的`;
@@ -2830,7 +2810,7 @@ async function train_message_b_8() {
     era.print(`${line}里有着前后抽插着的蠕虫。`);
     finger_prefix = `${player_name}将自己的手指`;
   } else {
-    // :695-720 裸手
+    // 裸手
     let line = `${player_name}把${target_name}的`;
     if (cloth_front) {
       line += `正穿着${clothtype_main2_text(target)}的裙摆翻起、`;
@@ -2844,12 +2824,12 @@ async function train_message_b_8() {
     finger_prefix = `${line}用自己的手指`;
   }
 
-  // :721-726 插入（G 点技巧时更温柔）
+  // 插入（G 点技巧时更温柔）
   era.print(
     `${finger_prefix}${g_spot ? '温柔地插了进去、轻轻地搅动着…' : '慢慢地插了进去…'}`,
   );
 
-  // :727-746 后续段（G 点 / 蠕虫 / 私处经验的六档）
+  // 后续段（G 点 / 蠕虫 / 私处经验的六档）
   const abl2 = era.get(`abl:${target}:2`) || 0;
   if (teq(11) && g_spot) {
     era.print(`${player_name}灵活地操纵着蠕虫、玩弄着敏感的顶点…`);
@@ -2895,7 +2875,7 @@ async function train_message_b_9() {
   const exp_a = era.get(`exp:${target}:1`) || 0;
 
   if (era.get(`tequip:${target}:88`)) {
-    // :740-765 魔兽支
+    // 魔兽支
     const species = e_get(307);
     let line = `${monster_name(e_get(300))} `;
     if (species === 2) {
@@ -2915,10 +2895,10 @@ async function train_message_b_9() {
     }
     era.print(line);
   } else if (era.get(`tequip:${target}:89`)) {
-    // :766-767 兽奸
+    // 兽奸
     era.print(`狗吐出了炽热的气息、伸出舌头对着${target_name}舔试着……`);
   } else {
-    // :768-780 普通支
+    // 普通支
     era.print(
       `${player_name}把${target_name}${exp_a <= 10 ? '故意用力闭起来' : ''}的肛门、认真细致地舔舐着${exp_a >= 50 && deep ? '、舌头伸入到洞里去、有节奏地搅动' : ''}了…`,
     );
@@ -2937,14 +2917,14 @@ async function train_message_a_0() {
   const player_name = chara_callname(era_flag.player);
   const target_name = chara_callname(target);
 
-  // :746 分支守卫（SELECTCOM == 0 由分发表保证；另两条在此）。原作条件
+  // 分支守卫（SELECTCOM == 0 由分发表保证；另两条在此）。原作条件
   // 不满足时整条 IF/ELSEIF 链没有分支命中、**什么都不输出**——此前打的
   // 「紧缚/失神中的爱抚反应」占位与原作不符，#565 起按原作改为直接返回
   if (era.get(`tequip:${target}:44`) || (era.get('tflag:899') || 0) > 1) {
     return;
   }
 
-  // :747-749 A = UP:0、B = UP:14、C = A + B
+  // A = UP:0、B = UP:14、C = A + B
   const c =
     (era.get(`delta:${target}:0`) || 0) + (era.get(`delta:${target}:14`) || 0);
 
@@ -3018,9 +2998,9 @@ async function train_message_a_1() {
   const player_name = chara_callname(era_flag.player);
   const target_name = chara_callname(target);
   if ((era.get('tflag:899') || 0) > 1) {
-    return; // :228 守卫（SELECTCOM == 1 由分发表保证）
+    return; // 守卫（SELECTCOM == 1 由分发表保证）
   }
-  const a = era.get(`delta:${target}:0`) || 0; // :229 A = UP:0
+  const a = era.get(`delta:${target}:0`) || 0; // A = UP:0
   const talent = (i) => era.get(`talent:${target}:${i}`);
 
   if (a < 300) {
@@ -3028,7 +3008,7 @@ async function train_message_a_1() {
   } else if (a < 1000) {
     era.print(`${target_name}承受着被舔的刺激、确实感觉到快感了。`);
   } else if (a < 3000) {
-    // :230-238 一行合成：前缀 + 害羞段 + 快感态度三岔
+    // 一行合成：前缀 + 害羞段 + 快感态度三岔
     let line = `敏感的阴蒂被舔、${target_name}`;
     if (talent(35)) {
       line += '羞耻得面红耳赤、咬着下唇抑制自己发出声音。';
@@ -3065,9 +3045,9 @@ async function train_message_a_2() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   if ((era.get('tflag:899') || 0) > 1) {
-    return; // :130 守卫
+    return; // 守卫
   }
-  const a = era.get(`delta:${target}:2`) || 0; // :131 A = UP:2
+  const a = era.get(`delta:${target}:2`) || 0; // A = UP:2
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const abl3 = era.get(`abl:${target}:3`) || 0;
 
@@ -3104,21 +3084,21 @@ async function train_message_a_3() {
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const abl17 = era.get(`abl:${target}:17`) || 0;
 
-  // :156-160 A/B/C/D = UP:0/1/2/17，E = 四者合计
+  // A/B/C/D = UP:0/1/2/17，E = 四者合计
   const a = era.get(`delta:${target}:0`) || 0;
   const b = era.get(`delta:${target}:1`) || 0;
   const c = era.get(`delta:${target}:2`) || 0;
   const d = era.get(`delta:${target}:17`) || 0;
   const e = a + b + c + d;
 
-  // :161-167 LOCALS（男人/扶她 → 撸系文案）
+  // LOCALS（男人/扶她 → 撸系文案）
   const male_side = talent(122) || talent(121);
   const locals0 = male_side ? '撸' : '玩弄性器官';
   const locals1 = male_side
     ? '握着勃起变硬的阴茎'
     : '把沾满爱液的私处扒开给你看';
 
-  // :168-184 状态描写（SIF 链全为行内追加，合成一行）
+  // 状态描写（SIF 链全为行内追加，合成一行）
   let line = target_name;
   if (abl17 === 4) {
     line += '露出了沉醉于快感的表情、';
@@ -3157,7 +3137,7 @@ async function train_message_a_3() {
   }
   era.print(`${line}继续手淫着。`);
 
-  // :185-208 E 的六档
+  // E 的六档
   if (e < 300) {
     era.print('这样笨拙的手部动作、相比快感还是羞耻来得强烈。');
   } else if (e < 1000) {
@@ -3187,19 +3167,19 @@ async function train_message_a_5() {
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const teq = (idx) => (era.get(`tequip:${target}:${idx}`) || 0) !== 0;
 
-  // :362 守卫（兽奸中与失神档不写反应）
+  // 守卫（兽奸中与失神档不写反应）
   if (teq(89) || (era.get('tflag:899') || 0) > 1) {
     return;
   }
-  // :363-364 爆乳的先行行
+  // 爆乳的先行行
   if (talent(114) && !teq(55)) {
     era.print(
       `${player_name}的手、完全陷入到${target_name}惊心动魄的汹涌波涛中了…… `,
     );
   }
 
-  const a = era.get(`delta:${target}:14`) || 0; // :365 A = UP:14
-  // :366-370 吸啜/揉（母乳体质且非搾乳器/吸盘）
+  const a = era.get(`delta:${target}:14`) || 0; // A = UP:14
+  // 吸啜/揉（母乳体质且非搾乳器/吸盘）
   const locals0 = talent(130) && !teq(16) && !teq(90) ? '吸啜' : '揉';
 
   if (a < 300) {
@@ -3278,7 +3258,7 @@ async function adv_rule_6() {
 
 // CASE 1（:51-63）：舔阴 → 六九式（69）——非兽奸、非绳缚
 //
-// :56 的守卫 `(ASSIPLAY && TFLAG:50) || (ASSIPLAY == 0 && TFLAG:50 == 0)
+// 的守卫 `(ASSIPLAY && TFLAG:50) || (ASSIPLAY == 0 && TFLAG:50 == 0)
 // && TEQUIP:89 == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」读作
 // `(同调教者两臂) && TEQUIP:89 == 0`——兽奸门是整个同调教者条件的合取项，
 // 不是 C 式「&& 优先」的「第二臂各自带兽奸门」（#517）。后续 PREVCOM 三选一
@@ -3400,10 +3380,10 @@ function assi_disgusted() {
 // @COM_ABLE0（:28-34）：爱抚系过滤与决斗中不可，其余可执行
 com_able_family.register(0, async () => {
   if ((era.get('flag:25') || 0) & 1) {
-    return 0; // :30-31
+    return 0;
   }
   if (era.get(`tequip:${era_flag.target}:55`)) {
-    return 0; // :32-33
+    return 0;
   }
   return 1;
 });
@@ -3426,7 +3406,7 @@ com_able_family.register(1, async () => {
   if (cloth_blocked(target, 17)) {
     return 0; // パンツか上着下・ズボン
   }
-  // :60-66 性器污れ + 反感污臭的助手
+  // 性器污れ + 反感污臭的助手
   const stain2 = era.get(`stain:${target}:2`) || 0;
   if ((stain2 & 4 || stain2 & 8 || stain2 & 32) && era_flag.assiplay) {
     if (assi_disgusted()) {
@@ -3453,9 +3433,9 @@ com_able_family.register(2, async () => {
     return 0;
   }
   if (era_flag.assiplay === 0) {
-    return 1; // :94-95 主人プレイなら自動成功
+    return 1; // 主人プレイなら自動成功
   }
-  // :96-108 助手プレイ：润滑不足时施虐狂或（源文的）双 ≤3 才行
+  // 助手プレイ：润滑不足时施虐狂或（源文的）双 ≤3 才行
   if ((era.get(`palam:${target}:3`) || 0) < PALAMLV[2]) {
     const assi = era_flag.assi;
     if (era.get(`talent:${assi}:83`)) {
@@ -3485,7 +3465,7 @@ com_able_family.register(3, async () => {
   if ((era.get('tflag:899') || 0) > 0) {
     return 0; // 失神中
   }
-  // :126-129 顺从/百合气质 3 以下的助手（小恶魔 OK）
+  // 顺从/百合气质 3 以下的助手（小恶魔 OK）
   if (
     era_flag.assiplay &&
     ((era.get(`abl:${assi}:10`) || 0) <= 3 ||
@@ -3534,7 +3514,7 @@ com_able_family.register(4, async () => {
   if (era.get(`tequip:${target}:55`)) {
     return 0;
   }
-  // :170-172 対象が男人/扶她的判定在源里已被注释，不移植
+  // 対象が男人/扶她的判定在源里已被注释，不移植
   if (era.get(`tequip:${target}:90`)) {
     return 0;
   }
@@ -3544,7 +3524,7 @@ com_able_family.register(4, async () => {
   if (era.get(`tequip:${target}:88`)) {
     return 0;
   }
-  // :181-183 `(CFLAG:40 & 1) || (CFLAG:40 & 16) && FLAG:37` 按 Emuera 的
+  // `(CFLAG:40 & 1) || (CFLAG:40 & 16) && FLAG:37` 按 Emuera 的
   // 「&& 与 || 同优先级、左结合」读作 `((CFLAG:40 & 1) || (CFLAG:40 & 16))
   // && FLAG:37`——同族 @COM_ABLE20-29 的服装位写的是等价式
   // `(CFLAG:40 & 17) && FLAG:37`（COMABLE.ERB:911），两处语义一致（#517）。
@@ -3553,7 +3533,7 @@ com_able_family.register(4, async () => {
     return 0;
   }
   if (cloth_blocked(target, 0)) {
-    return 0; // :184-188 オムツ/ズーコ（位 17 的着衣判定不在此段）
+    return 0; // オムツ/ズーコ（位 17 的着衣判定不在此段）
   }
   return 1;
 });
@@ -3570,7 +3550,7 @@ com_able_family.register(5, async () => {
   if (era.get(`talent:${target}:122`)) {
     return 0; // 男人
   }
-  // :206-207 ブラジャーか上着上（位 2|4）
+  // ブラジャーか上着上（位 2|4）
   const worn = era.get(`cflag:${target}:40`) || 0;
   const special = era.get(`cflag:${target}:42`) || 0;
   if ((worn & 6) !== 0 && era.get('flag:37')) {
@@ -3633,7 +3613,7 @@ com_able_family.register(7, async () => {
   if ((era.get(`abl:${target}:10`) || 0) < 2) {
     return 0; // 顺从 2 未満
   }
-  // :266-267 处女时需顺从 3+ 或露出癖 3+
+  // 处女时需顺从 3+ 或露出癖 3+
   if (
     era.get(`talent:${target}:0`) &&
     (era.get(`abl:${target}:10`) || 0) < 3 &&
@@ -3672,7 +3652,7 @@ com_able_family.register(8, async () => {
   if (era.get(`talent:${target}:122`)) {
     return 0;
   }
-  // :304-307 润滑不足 + 顺从/百合 3 以下的助手（施虐狂 OK）
+  // 润滑不足 + 顺从/百合 3 以下的助手（施虐狂 OK）
   if (
     (era.get(`palam:${target}:3`) || 0) < PALAMLV[2] &&
     era_flag.assiplay &&
@@ -3694,7 +3674,7 @@ com_able_family.register(8, async () => {
   if (cloth_blocked(target, 17)) {
     return 0;
   }
-  // :326-327 貞操帯（79）
+  // 貞操帯（79）
   const worn = era.get(`cflag:${target}:40`) || 0;
   const special = era.get(`cflag:${target}:42`) || 0;
   if (special === 79 && (worn & 64) !== 0 && era.get('flag:37')) {
@@ -3713,7 +3693,7 @@ com_able_family.register(9, async () => {
     return 0;
   }
   if (era_flag.assiplay && assi_disgusted()) {
-    return 0; // :341-344（无污渍门槛，只看助手态度）
+    return 0; // （无污渍门槛，只看助手态度）
   }
   if (era.get(`tequip:${target}:55`)) {
     return 0;

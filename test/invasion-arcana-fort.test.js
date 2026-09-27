@@ -2,12 +2,6 @@
  * ere/invasion/invasion-arcana-fort.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
- * 源: target/ERB/侵略/ARCANA_FORT.ERB 的 @ARCANA_FORT（:2-554）。战斗
- * 本体 arcana_battle 已由 test/invasion-arcana-battle.test.js 覆盖，
- * 这里只驱动：入场叙述、门选择、候选列表（含妊娠模式与 GOTO
- * INPUT_LOOP1 的翻转怪癖）、骑士生成（预设/武器/经验/初体验）、胜负
- * 结算（FLAG:92 置位、赏金镜像、体型回写、败北移除）。
- *
  * 缝 = test/helpers/era-fixture.js。随机源按上界注入（knob，同
  * invasion-arcana-battle.test.js 的核算）：rand(100)=99 不失手不连击、
  * rand(6)=1 平局、rand(2)=1 magic 三段未命中、rand(3)=0 怪物技能直退、
@@ -386,7 +380,7 @@ test('胜利：四门表驱动——武器编码、经验/初体验、FLAG:92 �
 test('FLAG:60 的追加强化：逐级 ST_UP（2 级）后再算赏金', async () => {
   const fixture = stage_zero_world();
   fixture.reset_inputs(0, 0); // 东门 → 阿尔
-  fixture.store.set('flag:60', 2); // :470-475 REPEAT FLAG:60
+  fixture.store.set('flag:60', 2); // REPEAT FLAG:60
   const mod = fixture.load_module('invasion/invasion-arcana-fort');
   await mod.arcana_fort(knob());
   assert.equal(fixture.store.get('cflag:22:9'), 107, '黑方片 105 → 107 级');

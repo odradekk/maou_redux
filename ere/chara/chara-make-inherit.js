@@ -1,10 +1,6 @@
 /**
  * @file 后代素质继承：调度骨架与三条继承规则（issue #332 建壳，#384 落真身）。
  *
- * 源: target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB
- *       @CHARA_MAKE_INHERIT（:4-67）、@CMI_SETTALENT（:73-91）、
- *       @CMI_MOM_COMPLEX（:97-121）、@CMI_CONFLICT_CHECK（:127-166）
- *
  * 移植说明（有意偏离，均注明依据）：
  *
  *   - **素质编号走 Talent.yml 的序号**：原作用名字寻址（`TALENT:L_A:私处封印`、
@@ -65,12 +61,12 @@ function chara_make_inherit(
   rand = default_rand,
 ) {
   if (parent_a < 0) {
-    return child; // :11-12
+    return child;
   }
 
-  // :16-21 性格／性への関心／乙女心／体質／技術／潔癖度／正直度 等
+  // 性格／性への関心／乙女心／体質／技術／潔癖度／正直度 等
   for (let index = 10; index < 153; index += 1) {
-    // :17-18 特殊性癖、扶她-疯狂、母乳体质-正太控、爱慕
+    // 特殊性癖、扶她-疯狂、母乳体质-正太控、爱慕
     if (
       (index >= 74 && index <= 78) ||
       (index >= 121 && index <= 123) ||
@@ -82,42 +78,42 @@ function chara_make_inherit(
     cmi_settalent(index, child, parent_a, parent_b, rand);
   }
 
-  // :24-25 TALENT:L_A:扶她 || 男人 || !处女 → 私处封印 = 0
+  // TALENT:L_A:扶她 || 男人 || !处女 → 私处封印 = 0
   if (
     era.get(`talent:${child}:121`) || // TALENT:扶她
     era.get(`talent:${child}:122`) || // TALENT:男人
     !era.get(`talent:${child}:0`) // TALENT:处女
   ) {
-    // :25 省略角色号的 TALENT 写当前 TARGET（文件头「移植说明」条）
+    // 省略角色号的 TALENT 写当前 TARGET（文件头「移植说明」条）
     chara(era_flag.target).chara.私处封印 = 0;
   }
 
-  // :27-30 恋母情结等
+  // 恋母情结等
   cmi_mom_complex(child, parent_a, rand);
   if (parent_b >= 0) {
     cmi_mom_complex(child, parent_b, rand);
   }
 
-  // :32-38 戦闘技能（战术~俊足~小人体型）
+  // 戦闘技能（战术~俊足~小人体型）
   for (let index = 240; index < 264; index += 1) {
-    // :35 恶魔xx、魔之刻印
+    // 恶魔xx、魔之刻印
     if ((index >= 244 && index <= 247) || index === 254) {
       continue;
     }
     cmi_settalent(index, child, parent_a, parent_b, rand);
   }
 
-  // :40-43 能力者
+  // 能力者
   for (let index = 275; index < 280; index += 1) {
     cmi_settalent(index, child, parent_a, parent_b, rand);
   }
 
-  // :45-48 外貌
+  // 外貌
   for (let index = 300; index < 314; index += 1) {
     cmi_settalent(index, child, parent_a, parent_b, rand);
   }
 
-  // :50-62 精英特技——只在亲本自身有该素质时逐项继承，且不再带第二亲本
+  // 精英特技——只在亲本自身有该素质时逐项继承，且不再带第二亲本
   if (era.get(`talent:${parent_a}:220`)) {
     // TALENT:精英
     for (let index = 470; index < 489; index += 1) {
@@ -134,9 +130,9 @@ function chara_make_inherit(
     }
   }
 
-  cmi_conflict_check(child, rand); // :65 冲突检查
+  cmi_conflict_check(child, rand); // 冲突检查
 
-  return child; // :67
+  return child;
 }
 
 /**
@@ -159,7 +155,7 @@ function cmi_settalent(
   rand = default_rand,
 ) {
   if (parent_b <= 0) {
-    // :79-82 单亲，或（stick 增加）魔王为父 → A 有 3/4 概率继承 B 的素质
+    // 单亲，或（stick 增加）魔王为父 → A 有 3/4 概率继承 B 的素质
     if (rand(4)) {
       era.set(
         `talent:${child}:${index}`,
@@ -167,7 +163,7 @@ function cmi_settalent(
       );
     }
   } else if (parent_a === 0) {
-    // :83-86 （stick 增加、未测试）魔王为母 → A 有 2/3 概率继承 C 的素质
+    // （stick 增加、未测试）魔王为母 → A 有 2/3 概率继承 C 的素质
     if (rand(3)) {
       era.set(
         `talent:${child}:${index}`,
@@ -175,8 +171,8 @@ function cmi_settalent(
       );
     }
   } else if (rand(16)) {
-    // :88-90 双亲 → A 有 15/16 概率继承 B 或 C 的素质。
-    // :90 `TALENT:A:L_I = RAND:2 ? TALENT:B:L_I # TALENT:C:L_I` ——
+    // 双亲 → A 有 15/16 概率继承 B 或 C 的素质。
+    // `TALENT:A:L_I = RAND:2 ? TALENT:B:L_I # TALENT:C:L_I` ——
     // Emuera 的三目是 `cond ? 真值 # 假值`（dev-guides 的运算符表，
     // emuera-basic-agent-guide 的 core-concepts/expressions.md:169），
     // 故 RAND:2 非零时取 L_B 侧（第一亲本）。
@@ -200,23 +196,23 @@ function cmi_mom_complex(child, parent, rand = default_rand) {
   const child_futa = (era.get(`talent:${child}:121`) || 0) !== 0; // TALENT:扶她
 
   if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {
-    // :101-102 母亲讨厌男人，孩子是男人——不设情结
+    // 母亲讨厌男人，孩子是男人——不设情结
   } else if (era.get(`talent:${parent}:79`) && !child_male && !child_futa) {
-    // :103-104 母亲讨厌女人，孩子是女人——不设情结
+    // 母亲讨厌女人，孩子是女人——不设情结
   } else {
-    // :106-107 母性
+    // 母性
     if (era.get(`talent:${parent}:155`) && rand(2)) {
       era.set(`talent:${child}:140`, 1); // 恋母情结
     }
-    // :108-109 人妻（恰 == 1 才算命中，与另几处 RAND:2 的真值判定不同）
+    // 人妻（恰 == 1 才算命中，与另几处 RAND:2 的真值判定不同）
     if (era.get(`talent:${parent}:157`) && rand(3) === 1) {
       era.set(`talent:${child}:140`, 1); // 恋母情结
     }
-    // :110-111 父性
+    // 父性
     if (era.get(`talent:${parent}:156`) && rand(2)) {
       era.set(`talent:${child}:141`, 1); // 恋父情结
     }
-    // :112-120 未熟或娇小 → 按亲本性别分派正太控/萝莉控
+    // 未熟或娇小 → 按亲本性别分派正太控/萝莉控
     const parent_male = (era.get(`talent:${parent}:122`) || 0) !== 0; // TALENT:男人
     const parent_futa = (era.get(`talent:${parent}:121`) || 0) !== 0; // TALENT:扶她
     if (
@@ -248,7 +244,7 @@ function cmi_conflict_check(child, rand = default_rand) {
       era.get(`talent:${child}:${left}`) &&
       era.get(`talent:${child}:${right}`)
     ) {
-      // :157-162 真值支清的是 L_I（= PAIRS:(L_II*2)，即本对的前一项），
+      // 真值支清的是 L_I（= PAIRS:(L_II*2)，即本对的前一项），
       // 假值支清 L_J（后一项）
       if (rand(2)) {
         era.set(`talent:${child}:${left}`, 0);
@@ -257,7 +253,7 @@ function cmi_conflict_check(child, rand = default_rand) {
       }
     }
   }
-  return child; // :166 RETURN L_A
+  return child; // RETURN L_A
 }
 
 module.exports = {

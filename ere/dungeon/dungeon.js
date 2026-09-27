@@ -1,10 +1,6 @@
 /**
  * @file 迷宫主循环（issue #172，阶段 3 H3）：@DUNGEON 与三个附属函数。
  *
- * 源: target/ERB/迷宮/DUNGEON.ERB  @DUNGEON（:3-853，主循环）、
- *       @CHECK_STATUS（:856-1035，队伍伤势判定）、@GET_JUNK_ITEM（:1041-1073，
- *       换金财物）、@GET_DOWN_ENEMY（:1076-1091，勇者陷落结算）
- *
  * 原作局部变量语义（DUNGEON.ERB :14-22 注释逐条照抄——后续七张 H 票的
  * 共同词汇表）：
  *   ARG:0 / A = 攻略中的角色（队长）     D:20 = 侵攻度    D:1 = 1 时帰還
@@ -125,7 +121,7 @@ async function campaign_quest(cid) {
   if (active < 1) {
     return 0;
   }
-  // :190-197 楼层（CFLAG:cid:501）超过剧情进度（FLAG:401）时推进一段剧情
+  // 楼层（CFLAG:cid:501）超过剧情进度（FLAG:401）时推进一段剧情
   if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {
     era.print('―STORY―');
     await era.waitAnyKey(true); // FORCEWAIT
@@ -147,7 +143,7 @@ async function campaign_quest(cid) {
  * @returns {Promise<number>} 原作 RETURN（FLAG:400 < 1 时恒 0）
  */
 async function campaign_ending() {
-  // :304-312 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立照抄）
+  // 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立照抄）
   for (const cid of era.getAddedCharacters()) {
     if (chara(cid).invasion.状态 === 12) {
       party_del(cid);
@@ -163,7 +159,7 @@ async function campaign_ending() {
     whenMissing: 0,
     args: [],
   });
-  era_flag.hero_campaign_active = 0; // :317 FLAG:400 = 0 战役结束清零
+  era_flag.hero_campaign_active = 0; // FLAG:400 = 0 战役结束清零
   return result;
 }
 
@@ -204,17 +200,17 @@ async function campaign_room(floor) {
  * @returns {Promise<string>} 该行后半句（MODE 0 与 MODE 1-3 两种文案）
  */
 async function bedroom_battle_male(cid) {
-  let mode = 0; // :1046 MODE = 0（:1048-1049 的 SIF 恒等写，省）
+  let mode = 0; // MODE = 0（:1048-1049 的 SIF 恒等写，省）
   if (era.get('talent:0:122')) {
-    mode = 2; // :1050-1051
+    mode = 2;
   }
   if ((era.get('abl:0:11') || 0) > 8) {
-    mode += 1; // :1052-1053
+    mode += 1;
   }
-  // :1054-1064 SELECTCASE MODE（CASE 1/2/3 同文归并）
+  // SELECTCASE MODE（CASE 1/2/3 同文归并）
   return mode === 0
-    ? `${name_of(0)}从睡梦中醒了过来。` // :1056
-    : `${name_of(0)}察觉到了${name_of(cid)}的气息。`; // :1058-1062
+    ? `${name_of(0)}从睡梦中醒了过来。`
+    : `${name_of(0)}察觉到了${name_of(cid)}的气息。`;
 }
 
 /**
@@ -233,10 +229,10 @@ async function run_dungeon(arg0, rand) {
   const rand_n = rand ?? default_rand;
   const leader_name = name_of(arg0);
 
-  // :23-25 MAPC：演出用词（战役是「迷宮」，其余「地下城」）
+  // MAPC：演出用词（战役是「迷宮」，其余「地下城」）
   const mapc = chara(arg0).invasion.状态 === 12 ? '迷宫' : '地下城';
 
-  // :27-32 行動完了の場合飛ばす（CFLAG:530 == 1 本日行动已完）
+  // 行動完了の場合飛ばす（CFLAG:530 == 1 本日行动已完）
   if ((era.get(`cflag:${arg0}:530`) || 0) === 1) {
     // 迎撃中の場合、潜入行動（CFLAG:1 == 3）——H6（#175）真身
     if (chara(arg0).invasion.状态 === 3) {
@@ -245,35 +241,35 @@ async function run_dungeon(arg0, rand) {
     return 0;
   }
 
-  // :34-35 SIDEA / SIDEB = 仲間A / 仲間B（CFLAG:531 / 532）
+  // SIDEA / SIDEB = 仲間A / 仲間B（CFLAG:531 / 532）
   let sidea = era.get(`cflag:${arg0}:531`) || 0;
   let sideb = era.get(`cflag:${arg0}:532`) || 0;
-  // :37 TARGET = ARG:0（进击了要）
+  // TARGET = ARG:0（进击了要）
   era_flag.target = arg0;
-  // :38 D:20 = CFLAG:502（侵攻度；event 属主，走门面）
+  // D:20 = CFLAG:502（侵攻度；event 属主，走门面）
   let walk20 = chara(arg0).event.侵攻度;
-  // :9 FLOOR = 现在阶层（#DIM 函数级变量——循环外战后段的「階層を反映」
+  // FLOOR = 现在阶层（#DIM 函数级变量——循环外战后段的「階層を反映」
   // 仍读它，声明随之外提）
   let floor = chara(arg0).dungeon.侵攻阶层;
-  // :39 D:1 = 0（帰還フラグ——全函数无读者，撤退判定实走 CFLAG:507，
+  // D:1 = 0（帰還フラグ——全函数无读者，撤退判定实走 CFLAG:507，
   // 原作注释照抄、不落变量）
 
-  // :40-67 FLAG:5 & 32（战斗日志显示）时的开场演出
+  // FLAG:5 & 32（战斗日志显示）时的开场演出
   const settings = era.get('flag:5') || 0;
   if ((settings & 32) !== 0) {
-    era.println(); // :41 PRINTL（空行）
-    era.drawLine(); // :42
+    era.println(); // PRINTL（空行）
+    era.drawLine();
     if (
       chara(arg0).invasion.状态 === 3 &&
       chara(arg0).invasion.回城标志 === 0
     ) {
-      // :43-44 迎击开始
+      // 迎击开始
       era.print(`${leader_name}的队伍，开始迎击勇者了！！`);
     } else if (
       chara(arg0).invasion.状态 === 3 &&
       chara(arg0).invasion.回城标志 === 1
     ) {
-      // :46-52 迎撃時体力が回復していると迎撃再開（HP/MP 均 > 80%）
+      // 迎撃時体力が回復していると迎撃再開（HP/MP 均 > 80%）
       if (
         Math.floor(
           (chara(arg0).dungeon.体力 * 100) /
@@ -285,20 +281,20 @@ async function run_dungeon(arg0, rand) {
         ) > 80
       ) {
         era.print(`体力恢复了的${leader_name}，再次开始迎击勇者！！`);
-        chara(arg0).invasion.回城标志 = 0; // :49 CFLAG:507 = 0
+        chara(arg0).invasion.回城标志 = 0; // CFLAG:507 = 0
       } else {
         era.print(`${leader_name}仍然在恢复体力。`);
       }
     } else if (chara(arg0).invasion.回城标志 === 1) {
-      // :53-54 撤退中
+      // 撤退中
       era.print(`${leader_name}的队伍，想要逃离${mapc}。`);
     } else {
-      // :55-56 攻略开始
+      // 攻略开始
       era.print(`${leader_name}的队伍开始攻略${mapc}！！`);
     }
-    era.drawLine(); // :58
-    era.println(); // :60
-    // :61-66 コンフィグ「戦闘ログでのSKIP中断」（FLAG:5 位 9）
+    era.drawLine();
+    era.println();
+    // コンフィグ「戦闘ログでのSKIP中断」（FLAG:5 位 9）
     if (((settings >> 9) & 1) !== 0) {
       await era.waitAnyKey(true); // FORCEWAIT
     } else {
@@ -306,7 +302,7 @@ async function run_dungeon(arg0, rand) {
     }
   }
 
-  // :69-74 フラグオフ（CFLAG:503 休憩标志复位，队长与同伴）
+  // フラグオフ（CFLAG:503 休憩标志复位，队长与同伴）
   chara(arg0).dungeon.休憩 = 0;
   if (sidea > 0) {
     chara(sidea).dungeon.休憩 = 0;
@@ -315,38 +311,38 @@ async function run_dungeon(arg0, rand) {
     chara(sideb).dungeon.休憩 = 0;
   }
 
-  // :78 FOR TURN, 0, 5——バランス調整のため侵攻は一回で終了（:80-81）
+  // FOR TURN, 0, 5——バランス調整のため侵攻は一回で終了（:80-81）
   for (let turn = 0; turn < 5; turn += 1) {
     if (turn > 0) {
       break;
     }
 
-    // :84 戦闘が発生しないフラグ初期化（NO_BATTLE）
+    // 戦闘が発生しないフラグ初期化（NO_BATTLE）
     let no_battle = 0;
 
-    // :86-88 PRINTFORM %SAVESTR%%MAPC%——与 :136-143 的 PRINTL 同一显示行
+    // PRINTFORM %SAVESTR%%MAPC%——与 :136-143 的 PRINTL 同一显示行
     // （拼接见文件头），此处仅在有守卫演出时随其归并
 
-    // :90-94 WALK = RAND:20 + 6 × RAND:10（速度UP）
+    // WALK = RAND:20 + 6 × RAND:10（速度UP）
     let walk = rand_n(20);
     for (let i = 0; i < 6; i += 1) {
       walk += rand_n(10);
     }
-    // :96-97 引き返す（撤退中 CFLAG:507 != 0 → 反向两倍速）
+    // 引き返す（撤退中 CFLAG:507 != 0 → 反向两倍速）
     if (chara(arg0).invasion.回城标志 !== 0) {
       walk *= -2;
     }
 
-    // :99-103 装備効果(侵攻)（W:8 = 17，#174 真身）
+    // 装備効果(侵攻)（W:8 = 17，#174 真身）
     if (equip_check(arg0, 17) > 0) {
       walk *= 2;
     }
-    // :105-109 装備効果(試練)（W:8 = 19）
+    // 装備効果(試練)（W:8 = 19）
     if (equip_check(arg0, 19) > 0) {
       walk = Math.floor(walk / 2);
     }
 
-    // :111-122 迷惑状態（CFLAG:509 == 1）：RAND:3 == 0 时解除，否则 WALK = 0
+    // 迷惑状態（CFLAG:509 == 1）：RAND:3 == 0 时解除，否则 WALK = 0
     if ((era.get(`cflag:${arg0}:509`) || 0) === 1) {
       if (rand_n(3) === 0) {
         // たまに回復（ハメを防ぐため先に判定する）
@@ -356,9 +352,9 @@ async function run_dungeon(arg0, rand) {
       }
     }
 
-    // :124 FLOOR = CFLAG:501（现在阶层——每轮从 CFLAG 重读，声明已外提）
+    // FLOOR = CFLAG:501（现在阶层——每轮从 CFLAG 重读，声明已外提）
     floor = chara(arg0).dungeon.侵攻阶层;
-    // :125-131 房间类型：战役（FLAG:400）走 CAMPAIGN_ROOM，否则
+    // 房间类型：战役（FLAG:400）走 CAMPAIGN_ROOM，否则
     // FLAG:(FLOOR + 349) 的逐层房间表
     let room;
     if (era.get('flag:400') || 0) {
@@ -367,7 +363,7 @@ async function run_dungeon(arg0, rand) {
       room = era.get(`flag:${floor + 349}`) || 0;
     }
 
-    // :133-153 FLAG:5 & 32 时的推进演出（与 :87 拼接为同一显示行）
+    // FLAG:5 & 32 时的推进演出（与 :87 拼接为同一显示行）
     if ((settings & 32) !== 0) {
       if (room === 507 && (era.get(`talent:${arg0}:180`) || 0)) {
         // 娼館街かつ娼婦（TALENT:180 妓女）
@@ -380,25 +376,25 @@ async function run_dungeon(arg0, rand) {
       } else {
         era.print(`${leader_name}${mapc}迷路了。`);
       }
-      await era.waitAnyKey(); // :146 WAIT
-      era.print('----------------------'); // :148
-      era.print(`\u00A0\u00A0\u00A0${mapc}深处`); // :149 PRINTFORML（内容空格 3，#577 起 NBSP）
-      era.print('----------------------'); // :150
-      era.print(`第${floor}阶层`); // :152 PRINTFORM
+      await era.waitAnyKey(); // WAIT
+      era.print('----------------------');
+      era.print(`\u00A0\u00A0\u00A0${mapc}深处`); // PRINTFORML（内容空格 3，#577 起 NBSP）
+      era.print('----------------------');
+      era.print(`第${floor}阶层`); // PRINTFORM
     }
 
-    // :154-159 侵攻度累加：侵攻/战役（2/12）前进，其余（迎击 3）倒退。
-    // :157 X *= 2 是原作全局 X（全库无初始化恒 0）的死代码，不落变量
+    // 侵攻度累加：侵攻/战役（2/12）前进，其余（迎击 3）倒退。
+    // X *= 2 是原作全局 X（全库无初始化恒 0）的死代码，不落变量
     if (chara(arg0).invasion.状态 === 2 || chara(arg0).invasion.状态 === 12) {
       walk20 += walk;
     } else {
       walk20 -= walk;
     }
-    // :160-162 BARL D:20,100,50（侵攻度条形图）——无 era API 通道，跳过
+    // BARL D:20,100,50（侵攻度条形图）——无 era API 通道，跳过
 
     // === 侵攻度检查（:165-373 三臂）===
     if (walk20 >= 100) {
-      // :167 階層滞在カウントをリセット（CFLAG:514）
+      // 階層滞在カウントをリセット（CFLAG:514）
       era.set(`cflag:${arg0}:514`, 0);
       if (chara(arg0).invasion.状态 === 2 || chara(arg0).invasion.状态 === 12) {
         // —— 勇者臂（:168-265）——
@@ -406,51 +402,51 @@ async function run_dungeon(arg0, rand) {
           (era.get('flag:400') || 0) !== 0 &&
           chara(arg0).invasion.状态 === 12
         ) {
-          // :169-180 イベント中は踏破できるか判定がある（战役踏破判定）
+          // イベント中は踏破できるか判定がある（战役踏破判定）
           const cleared = await campaign_quest(arg0);
           if (cleared) {
-            era.print(`${leader_name}踏破这一层了！`); // :174 攻略成功
+            era.print(`${leader_name}踏破这一层了！`); // 攻略成功
           } else {
-            // :176-179 攻略失敗。追い返される
+            // 攻略失敗。追い返される
             era.print(`${leader_name}放弃探索，开始回头了。`);
             chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1
             walk20 = 95;
           }
         } else {
-          era.print(`${leader_name}踏破这一层了！`); // :182
+          era.print(`${leader_name}踏破这一层了！`);
         }
 
-        // :185-186 搜刮战利品中…
+        // 搜刮战利品中…
         if ((settings & 32) !== 0) {
           era.print('搜刮战利品中…');
         }
-        // :188 CALL ADD_EX_ITEM, -1, ARG:0, 0（战利品；RESULT == 0 没找到）
+        // CALL ADD_EX_ITEM, -1, ARG:0, 0（战利品；RESULT == 0 没找到）
         const loot = await ex_item_mod.add_ex_item(-1, arg0, 0, rand_n);
         if ((settings & 32) !== 0 && loot === 0) {
-          era.print('没找到什么有用的。'); // :190-191
+          era.print('没找到什么有用的。');
         }
 
         if ((era.get('flag:400') || 0) > 0 && floor >= 6) {
-          // :193-197 戦役的盡頭（战役终局；#469 起 campaign_ending 为真身）
+          // 戦役的盡頭（战役终局；#469 起 campaign_ending 为真身）
           era.print(`到达了${mapc}的尽头………`);
           await campaign_ending(arg0);
           walk20 = 0;
           break;
         } else if (floor >= 9) {
-          // :199-224 魔王的房间——本票的贯通终点
-          era.print('这里是魔王的房间………'); // :200
+          // 魔王的房间——本票的贯通终点
+          era.print('这里是魔王的房间………');
           if ((era.get(`talent:${arg0}:122`) || 0) === 0) {
-            // :201-202 真勇者（非冒险者）→ JUMP ENDING_2（#173 H4 存根；
+            // 真勇者（非冒险者）→ JUMP ENDING_2（#173 H4 存根；
             // QUIT 后不返回，真身落地前以 RETURN 收口）
             await ending_2();
             return 0;
           } else if (era.get(`talent:${arg0}:122`)) {
-            // :203-222 冒险者（TALENT:122 非零）：深知无法击败魔王
+            // 冒险者（TALENT:122 非零）：深知无法击败魔王
             era.print('作为冒险者而非勇者的他深知自己无法击败魔王。');
             if (rand_n(4) === 0) {
-              // :205-214 四分之一概率发起挑战
+              // 四分之一概率发起挑战
               era.print(`但${leader_name}仍是向魔王发起了挑战。`);
-              // :207 女魔王且欲望大于3、男魔王欲望3基3、欲求不满的欲望6
+              // 女魔王且欲望大于3、男魔王欲望3基3、欲求不满的欲望6
               // （ABL:11 欲望 / ABL:23；TALENT:MASTER:122 男人位）
               if (
                 ((era.get('talent:0:122') || 0) === 0 &&
@@ -460,21 +456,21 @@ async function run_dungeon(arg0, rand) {
                   (era.get('abl:0:23') || 0) > 3) ||
                 (era.get('abl:0:11') || 0) > 6
               ) {
-                // :209-210 两句 PRINTFORM 都不换行 → 拼成同一显示行
+                // 两句 PRINTFORM 都不换行 → 拼成同一显示行
                 //（本函数返回后半句，一次 print 落行；#548 订正）
                 era.print(
                   `${name_of(0)}察觉到了${leader_name}的气息。` +
                     (await bedroom_battle_male(arg0)),
                 );
               } else {
-                // :212-213 挑战失败成为奴隶
+                // 挑战失败成为奴隶
                 era.print(
                   `可想而知${leader_name}失败了、成为了${mapc}里众多奴隶的一员。`,
                 );
                 chara(arg0).invasion.状态 = 0; // CFLAG:1 = 0
               }
             } else {
-              // :216-221 放弃英雄梦回头（挫折阶层记忆）
+              // 放弃英雄梦回头（挫折阶层记忆）
               era.print(`${leader_name}放弃了成为英雄的念头，开始回头了。`);
               era.print('再次鼓起勇气来到这里可能会花些时间了。');
               chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1
@@ -483,20 +479,20 @@ async function run_dungeon(arg0, rand) {
               chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8
             }
           }
-          walk20 = 0; // :224
+          walk20 = 0;
         } else {
-          // :225-264 体力有富余时再冒险一层
+          // 体力有富余时再冒险一层
           // CFLAG:520 目標階層（到达阶层记忆；dungeon 属主域内裸寻址）
           if (floor > (era.get(`cflag:${arg0}:520`) || 0)) {
-            let tired = 0; // :229 LOCAL = 0
+            let tired = 0; // LOCAL = 0
             const max_hp = era.get(`maxbase:${arg0}:0`) || 0;
             const max_wp = era.get(`maxbase:${arg0}:1`) || 0;
             if (Math.floor((chara(arg0).dungeon.体力 * 100) / max_hp) < 90) {
-              tired += 1; // :230-231
+              tired += 1;
             } else if (
               Math.floor((chara(arg0).dungeon.气力 * 100) / max_wp) < 90
             ) {
-              tired += 1; // :232-233
+              tired += 1;
             } else if (
               sidea > 0 &&
               Math.floor(
@@ -504,7 +500,7 @@ async function run_dungeon(arg0, rand) {
                   (era.get(`maxbase:${sidea}:0`) || 0),
               ) < 90
             ) {
-              tired += 1; // :235-236 仲間Aの体調も見る
+              tired += 1; // 仲間Aの体調も見る
             } else if (
               sidea > 0 &&
               Math.floor(
@@ -512,7 +508,7 @@ async function run_dungeon(arg0, rand) {
                   (era.get(`maxbase:${sidea}:1`) || 0),
               ) < 90
             ) {
-              tired += 1; // :237-238
+              tired += 1;
             } else if (
               sideb > 0 &&
               Math.floor(
@@ -520,7 +516,7 @@ async function run_dungeon(arg0, rand) {
                   (era.get(`maxbase:${sideb}:0`) || 0),
               ) < 90
             ) {
-              tired += 1; // :240-241 仲間Bの体調も見る
+              tired += 1; // 仲間Bの体調も見る
             } else if (
               sideb > 0 &&
               Math.floor(
@@ -528,26 +524,26 @@ async function run_dungeon(arg0, rand) {
                   (era.get(`maxbase:${sideb}:1`) || 0),
               ) < 90
             ) {
-              tired += 1; // :242-243
+              tired += 1;
             }
             if (tired === 0) {
-              // :245-248 状態良好→向更深阶层发起挑战
+              // 状態良好→向更深阶层发起挑战
               era.print(`状态良好的${leader_name}的队伍、向更深阶层发起挑战……`);
               era.set(`cflag:${arg0}:520`, floor); // CFLAG:520 = FLOOR
             }
           }
 
           if (floor > (era.get(`cflag:${arg0}:520`) || 0)) {
-            // :251-257 放弃探索回头（到达阶层未及，挫折阶层记忆）
+            // 放弃探索回头（到达阶层未及，挫折阶层记忆）
             era.print(`${leader_name}放弃探索，开始回头了。`);
             chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1
-            // :254-256 到達階層を記憶（CFLAG:521 存档点）
+            // 到達階層を記憶（CFLAG:521 存档点）
             if (floor > chara(arg0).invasion.存档点) {
               chara(arg0).invasion.存档点 = floor;
             }
             walk20 = 95;
           } else {
-            // :258-264 下潜一层
+            // 下潜一层
             chara(arg0).dungeon.侵攻阶层 += 1; // CFLAG:501 += 1
             chara(arg0).dungeon.再起点 += 1; // CFLAG:508 += 1
             floor += 1;
@@ -558,16 +554,16 @@ async function run_dungeon(arg0, rand) {
       } else {
         // —— 迎击臂（:266-283）：侵攻度满 100 时迎击方推到魔王房间 ——
         if (floor >= 9) {
-          era.print(`${leader_name}返回了魔王的房间。`); // :268
+          era.print(`${leader_name}返回了魔王的房间。`);
           walk20 = 100;
-          chara(arg0).invasion.回城标志 = 0; // :270 CFLAG:507 = 0
+          chara(arg0).invasion.回城标志 = 0; // CFLAG:507 = 0
         } else {
-          chara(arg0).dungeon.侵攻阶层 += 1; // :272 CFLAG:501 += 1
+          chara(arg0).dungeon.侵攻阶层 += 1; // CFLAG:501 += 1
           floor += 1;
           era.print(`${leader_name}回到了第${floor}阶层。`);
           walk20 = 10;
         }
-        // :277-281 深处滞在休憩 +1（队长与同伴；CFLAG:503）
+        // 深处滞在休憩 +1（队长与同伴；CFLAG:503）
         chara(arg0).dungeon.休憩 += 1;
         if (sidea > 0) {
           chara(sidea).dungeon.休憩 += 1;
@@ -575,32 +571,32 @@ async function run_dungeon(arg0, rand) {
         if (sideb > 0) {
           chara(sideb).dungeon.休憩 += 1;
         }
-        break; // :282
+        break;
       }
     } else if (walk20 <= 0) {
       // === 撤退臂（:284-354）===
-      // :286 階層滞在カウントをリセット
+      // 階層滞在カウントをリセット
       era.set(`cflag:${arg0}:514`, 0);
       if (chara(arg0).invasion.状态 === 2 || chara(arg0).invasion.状态 === 12) {
         // —— 勇者撤出（:287-327）——
         if (floor === 5) {
-          floor = 1; // :288-289 第 5 层直接回到 1（中转层设计）
+          floor = 1; // 第 5 层直接回到 1（中转层设计）
         }
         if (floor <= 1) {
-          era.print(`${leader_name}回到了${mapc}外面。`); // :291
+          era.print(`${leader_name}回到了${mapc}外面。`);
           walk20 = 0;
-          // :294-295 街でのイベント（城镇事件——#178 真身：恢复/筹钱/
+          // 街でのイベント（城镇事件——#178 真身：恢复/筹钱/
           // 借贷/采购/计划/受注/宴会）
           await town_mod.dungeon_town(arg0, rand_n);
-          // :297-314 補給购买段在原作是注释状态（;CALL ADD_EX_ITEM -3），不移植
-          break; // :315
+          // 補給购买段在原作是注释状态（;CALL ADD_EX_ITEM -3），不移植
+          break;
         } else {
-          chara(arg0).dungeon.侵攻阶层 -= 1; // :317 CFLAG:501 -= 1
+          chara(arg0).dungeon.侵攻阶层 -= 1; // CFLAG:501 -= 1
           floor -= 1;
-          era.print(`${leader_name}回到了第${floor}阶层。`); // :319
+          era.print(`${leader_name}回到了第${floor}阶层。`);
           walk20 = 90;
         }
-        // :322-326 休憩 +1（队长与同伴）
+        // 休憩 +1（队长与同伴）
         chara(arg0).dungeon.休憩 += 1;
         if (sidea > 0) {
           chara(sidea).dungeon.休憩 += 1;
@@ -610,9 +606,9 @@ async function run_dungeon(arg0, rand) {
         }
       } else {
         // —— 迎击方被推出（:328-354）——
-        era.print(`${leader_name}踏破了这一层！`); // :329
+        era.print(`${leader_name}踏破了这一层！`);
 
-        // :331-337 拡張任務の失敗判定（CFLAG:500 == 3）
+        // 拡張任務の失敗判定（CFLAG:500 == 3）
         if ((era.get(`cflag:${arg0}:500`) || 0) === 3) {
           era.print(`${leader_name}企图扩张设施，失败了……`);
           era.print(`${leader_name}使用回城魔法回来了。`);
@@ -621,7 +617,7 @@ async function run_dungeon(arg0, rand) {
         }
 
         if (floor <= 1) {
-          // :339-347 走出迷宫（回城标志 CFLAG:505 决定状态 5 或 6）
+          // 走出迷宫（回城标志 CFLAG:505 决定状态 5 或 6）
           era.print(`再往前走就走出${mapc}了………`);
           era.print(`${leader_name}使用回城魔法回来了。`);
           if ((era.get(`cflag:${arg0}:505`) || 0) > 0) {
@@ -631,18 +627,18 @@ async function run_dungeon(arg0, rand) {
           }
           return 0;
         } else {
-          chara(arg0).dungeon.侵攻阶层 -= 1; // :349 CFLAG:501 -= 1
+          chara(arg0).dungeon.侵攻阶层 -= 1; // CFLAG:501 -= 1
           floor -= 1;
-          era.print(`${leader_name}向夺回第${floor}阶层发起挑战。`); // :351
+          era.print(`${leader_name}向夺回第${floor}阶层发起挑战。`);
           walk20 = 90;
         }
       }
     } else {
       // === 滞留臂（:355-373）：0 < D:20 < 100，无阶层移动 ===
-      // :358 階層滞在カウントを+1（CFLAG:514）
+      // 階層滞在カウントを+1（CFLAG:514）
       era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);
 
-      // :360-371 奴隷の場合カウントが溜まると帰還する（迎击奴隶滞留 > 15）
+      // 奴隷の場合カウントが溜まると帰還する（迎击奴隶滞留 > 15）
       if (
         chara(arg0).invasion.状态 === 3 &&
         (era.get(`cflag:${arg0}:514`) || 0) > 15
@@ -668,7 +664,7 @@ async function run_dungeon(arg0, rand) {
     } else {
       a = arg0;
     }
-    // :386 CALL DUNGEON_ROOM, A——戦闘无なら1が加算される（RESULT → NO_BATTLE）
+    // CALL DUNGEON_ROOM, A——戦闘无なら1が加算される（RESULT → NO_BATTLE）
     // H8（#177）起真身 ere/dungeon/dungeon-room.js。D:20（侵攻度）与陷阱
     // 侧共享同一 ctx 槽（原作全局 D 槽，MASE :835 写、TELEPORT :330/:335
     // 写、ONE_WAY/SHOOT 读），房间与陷阱两段之间本变量无读者——单槽即
@@ -692,7 +688,7 @@ async function run_dungeon(arg0, rand) {
     // 经 ctx 对象回写（原作全局 D 槽，#5 决议第六条；房间段已建 move_ctx，
     // 此处复用同一槽）
     const trap_ctx = move_ctx;
-    // :400-405 装備効果(陷阱誘発)（W:8 = 20）
+    // 装備効果(陷阱誘発)（W:8 = 20）
     if (equip_check(trap_target, 20) > 0) {
       await trap_mod.dungeon_trap(
         trap_target,
@@ -701,7 +697,7 @@ async function run_dungeon(arg0, rand) {
         trap_ctx,
       );
     } else {
-      // :408-412 装備効果(陷阱避け)（W:8 = 16）：RESULT < RAND:10 时触发
+      // 装備効果(陷阱避け)（W:8 = 16）：RESULT < RAND:10 时触发
       if (equip_check(trap_target, 16) < rand_n(10)) {
         await trap_mod.dungeon_trap(trap_target, 0, rand_n, trap_ctx);
       }
@@ -709,7 +705,7 @@ async function run_dungeon(arg0, rand) {
     // TELEPORT 的 D:20 写回（:330/:335）——:748 的 CFLAG:502 = D:20 用它
     walk20 = trap_ctx.d20;
 
-    // :415-419 シュートでPTが分断された時のためにここで一度SIDEA・SIDEBを
+    // シュートでPTが分断された時のためにここで一度SIDEA・SIDEBを
     // 再定義（ちょっと乱暴だけど…ハズ）
     a = arg0;
     sidea = era.get(`cflag:${arg0}:531`) || 0;
@@ -719,10 +715,10 @@ async function run_dungeon(arg0, rand) {
     if (chara(arg0).invasion.状态 === 2) {
       // —— 侵攻勇者（:423-522）——
       if ((settings & 16) !== 0 || no_battle > 0) {
-        // :424-431 / :432-440 无敌人开关（FLAG:5 & 16）或战斗未发生：
+        // 无敌人开关（FLAG:5 & 16）或战斗未发生：
         // 経験値増加（CFLAG:MASTER:9 魔王等级，MASTER 恒角色 0）
         if ((settings & 32) !== 0) {
-          era.print('因为没有敌人所以进行了训练。（经验值增加）'); // :426/:434
+          era.print('因为没有敌人所以进行了训练。（经验值增加）');
           await era.waitAnyKey();
         }
         chara(arg0).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
@@ -733,17 +729,17 @@ async function run_dungeon(arg0, rand) {
           chara(sideb).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
         }
       } else {
-        // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
+        // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
         await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);
         walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
-        // :445 陥落したか否か（队长）
+        // 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
           chara(arg0).invasion.状态 !== 3
         ) {
-          await get_down_enemy(arg0); // :446（复活，依据 #103）
-          // :447-456 善悪値が低いと、仲間を売って助かろうとする（<= -50）
+          await get_down_enemy(arg0); // （复活，依据 #103）
+          // 善悪値が低いと、仲間を売って助かろうとする（<= -50）
           if (chara(arg0).chara.善恶值 <= -50 && (sidea > 0 || sideb > 0)) {
             era.print(`${leader_name}背叛了同伴，开始透露她们的位置。`);
             era.print('带着谄媚的神情出卖着同伴，拼死地乞求着饶命……');
@@ -755,41 +751,41 @@ async function run_dungeon(arg0, rand) {
               chara(sideb).invasion.状态 = 0;
             }
           }
-          party_del(arg0); // :457
+          party_del(arg0);
           turnend += 1;
         }
 
-        // :461-466 仲間Aが陥落したかどうか
+        // 仲間Aが陥落したかどうか
         if (
           sidea > 0 &&
           chara(sidea).invasion.状态 !== 2 &&
           chara(sidea).invasion.状态 !== 3
         ) {
-          await get_down_enemy(sidea); // :463
-          party_del(sidea); // :464
+          await get_down_enemy(sidea);
+          party_del(sidea);
           turnend += 1;
         }
-        // :468-473 仲間B
+        // 仲間B
         if (
           sideb > 0 &&
           chara(sideb).invasion.状态 !== 2 &&
           chara(sideb).invasion.状态 !== 3
         ) {
-          await get_down_enemy(sideb); // :470
-          party_del(sideb); // :471
+          await get_down_enemy(sideb);
+          party_del(sideb);
           turnend += 1;
         }
         if (turnend > 0) {
-          break; // :475-476
+          break;
         }
       }
 
-      // :479 TURNEND = 0——循环体单轮（:80-81 平衡调整），复位无后读，不落
+      // TURNEND = 0——循环体单轮（:80-81 平衡调整），复位无后读，不落
 
-      // :481-507 善悪値によっては魔王に寝返る（<= -150 且 CFLAG:1 == 2）
+      // 善悪値によっては魔王に寝返る（<= -150 且 CFLAG:1 == 2）
       if (chara(arg0).chara.善恶值 <= -150 && chara(arg0).invasion.状态 === 2) {
-        chara(arg0).invasion.状态 = 0; // :483
-        await get_down_enemy(arg0); // :484
+        chara(arg0).invasion.状态 = 0;
+        await get_down_enemy(arg0);
         if (sidea > 0 || sideb > 0) {
           era.print(`${leader_name}背叛了同伴，开始透露她们的位置。`);
           era.print('似乎想把同伴当成投诚的礼物……');
@@ -801,56 +797,56 @@ async function run_dungeon(arg0, rand) {
             chara(sideb).invasion.状态 = 0;
           }
         }
-        party_del(arg0); // :493
+        party_del(arg0);
 
-        // :495-499 仲間Aが陥落したかどうか（寝返り连锁）
+        // 仲間Aが陥落したかどうか（寝返り连锁）
         if (
           sidea > 0 &&
           chara(sidea).invasion.状态 !== 2 &&
           chara(sidea).invasion.状态 !== 3
         ) {
-          await get_down_enemy(sidea); // :497
-          chara(sidea).invasion.状态 = 0; // :498
+          await get_down_enemy(sidea);
+          chara(sidea).invasion.状态 = 0;
         }
-        // :501-505 仲間B
+        // 仲間B
         if (
           sideb > 0 &&
           chara(sideb).invasion.状态 !== 2 &&
           chara(sideb).invasion.状态 !== 3
         ) {
-          await get_down_enemy(sideb); // :503
-          chara(sideb).invasion.状态 = 0; // :504
+          await get_down_enemy(sideb);
+          chara(sideb).invasion.状态 = 0;
         }
-        // :506 TURNEND += 1 → :521-522 BREAK
+        // TURNEND += 1 → :521-522 BREAK
         break;
       }
 
-      // :509-513 SIDEA 善悪 <= -150 且 == 2
+      // SIDEA 善悪 <= -150 且 == 2
       if (
         sidea > 0 &&
         chara(sidea).chara.善恶值 <= -150 &&
         chara(sidea).invasion.状态 === 2
       ) {
-        await get_down_enemy(sidea); // :510
-        party_del(sidea); // :511
+        await get_down_enemy(sidea);
+        party_del(sidea);
         break; // TURNEND += 1 → BREAK
       }
-      // :515-519 SIDEB
+      // SIDEB
       if (
         sideb > 0 &&
         chara(sideb).chara.善恶值 <= -150 &&
         chara(sideb).invasion.状态 === 2
       ) {
-        await get_down_enemy(sideb); // :516
-        party_del(sideb); // :517
+        await get_down_enemy(sideb);
+        party_del(sideb);
         break;
       }
     } else if (chara(arg0).invasion.状态 === 12) {
       // —— 戦役（:523-563 イベントダンジョン）——
       if (no_battle > 0) {
-        // :525-533 戦闘未発生フラグ
+        // 戦闘未発生フラグ
         if ((settings & 32) !== 0) {
-          era.print('因没有敌人而自己进行了训练（经验值增加）'); // :528
+          era.print('因没有敌人而自己进行了训练（经验值增加）');
           await era.waitAnyKey();
         }
         chara(arg0).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
@@ -862,45 +858,45 @@ async function run_dungeon(arg0, rand) {
         }
       } else {
         let turnend = 0;
-        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx); // :536
+        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);
         walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
-        // :537-543 陥落したか否か（队长）
+        // 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
           chara(arg0).invasion.状态 !== 3 &&
           chara(arg0).invasion.状态 !== 12
         ) {
-          era.print(`${leader_name}被抓住了…`); // :539
-          chara(arg0).invasion.回城标志 = 0; // :540
-          party_del(arg0); // :541
+          era.print(`${leader_name}被抓住了…`);
+          chara(arg0).invasion.回城标志 = 0;
+          party_del(arg0);
           turnend += 1;
         }
-        // :545-551 仲間A
+        // 仲間A
         if (
           sidea > 0 &&
           chara(sidea).invasion.状态 !== 2 &&
           chara(sidea).invasion.状态 !== 3 &&
           chara(sidea).invasion.状态 !== 12
         ) {
-          era.print(`${name_of(sidea)}被抓住了…`); // :547
-          chara(sidea).invasion.回城标志 = 0; // :548
-          party_del(sidea); // :549
+          era.print(`${name_of(sidea)}被抓住了…`);
+          chara(sidea).invasion.回城标志 = 0;
+          party_del(sidea);
           turnend += 1;
         }
-        // :553-559 仲間B
+        // 仲間B
         if (
           sideb > 0 &&
           chara(sideb).invasion.状态 !== 2 &&
           chara(sideb).invasion.状态 !== 3 &&
           chara(sideb).invasion.状态 !== 12
         ) {
-          era.print(`${name_of(sideb)}被抓住了…`); // :555
-          chara(sideb).invasion.回城标志 = 0; // :556
-          party_del(sideb); // :557
+          era.print(`${name_of(sideb)}被抓住了…`);
+          chara(sideb).invasion.回城标志 = 0;
+          party_del(sideb);
           turnend += 1;
         }
         if (turnend > 0) {
-          break; // :561-562
+          break;
         }
       }
     } else {
@@ -910,28 +906,28 @@ async function run_dungeon(arg0, rand) {
         await battle2_mod.dungeon_battle2_party(arg0, rand_n, move_ctx);
       walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
       if (battle2r === 2) {
-        // :568-571 迎击方的 B 被打倒
-        await get_down_enemy(b); // :569（复活，依据 #103）
+        // 迎击方的 B 被打倒
+        await get_down_enemy(b); // （复活，依据 #103）
         // CFLAG:505 勇者撃破数 += 1（dungeon 属主域内）
         era.set(`cflag:${arg0}:505`, (era.get(`cflag:${arg0}:505`) || 0) + 1);
-        party_del(b); // :571
+        party_del(b);
       } else if (battle2r === 1) {
-        // :572-587 勇者被击退
-        chara(arg0).invasion.回城标志 = 0; // :574
+        // 勇者被击退
+        chara(arg0).invasion.回城标志 = 0;
         if (chara(arg0).invasion.状态 === 0) {
           if ((era.get(`cflag:${arg0}:505`) || 0) > 0) {
-            chara(arg0).invasion.状态 = 5; // :576-577
+            chara(arg0).invasion.状态 = 5;
           } else {
-            chara(arg0).invasion.状态 = 6; // :579
+            chara(arg0).invasion.状态 = 6;
           }
         }
-        // :582-584 NTRれたなら勇者討伐数を０に（CFLAG:1 == 9）
+        // NTRれたなら勇者討伐数を０に（CFLAG:1 == 9）
         if (chara(arg0).invasion.状态 === 9) {
           era.set(`cflag:${arg0}:505`, 0);
         }
-        party_del(arg0); // :585
-        era_flag.target = -1; // :586 TARGET = -1
-        return 0; // :587
+        party_del(arg0);
+        era_flag.target = -1; // TARGET = -1
+        return 0;
       }
     }
 
@@ -942,11 +938,11 @@ async function run_dungeon(arg0, rand) {
       (era.get('cflag:0:9') || 0) > 0
     ) {
       if ((settings & 32) !== 0) {
-        era.print(`${leader_name}和怪物们进行了训练（经验值增加）`); // :593
+        era.print(`${leader_name}和怪物们进行了训练（经验值增加）`);
         await era.waitAnyKey();
       }
       chara(arg0).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
-      // :596-597 訓練行動と合わせて1.5倍に増加（CFLAG:500 == 5）
+      // 訓練行動と合わせて1.5倍に増加（CFLAG:500 == 5）
       if ((era.get(`cflag:${arg0}:500`) || 0) === 5) {
         chara(arg0).dungeon.战斗经验 += Math.floor(
           (era.get('cflag:0:9') || 0) / 2,
@@ -957,9 +953,9 @@ async function run_dungeon(arg0, rand) {
       (era.get(`cflag:${arg0}:500`) || 0) === 5 &&
       (era.get('cflag:0:9') || 0) > 0
     ) {
-      // :598-602 迎撃時の訓練行動
+      // 迎撃時の訓練行動
       if ((settings & 32) !== 0) {
-        era.print(`${leader_name}和怪物们进行了训练（经验值增加）`); // :601
+        era.print(`${leader_name}和怪物们进行了训练（经验值增加）`);
         await era.waitAnyKey();
       }
       chara(arg0).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
@@ -971,12 +967,12 @@ async function run_dungeon(arg0, rand) {
       (era.get(`cflag:${arg0}:49`) || 0) === 1 &&
       (era.get(`cflag:${arg0}:50`) || 0) === 0
     ) {
-      era.println(); // :607
+      era.println();
       era.print(
         `探索${mapc}的时候，在洞穴角落里发现了发光的东西。${leader_name}在意地把它捡起来了。`,
       );
       await era.waitAnyKey();
-      // :609-626 ELSEIF 链（RAND:2 掷选，首个命中后短路）——原作每臂条件
+      // ELSEIF 链（RAND:2 掷选，首个命中后短路）——原作每臂条件
       // 字面相同（RAND:2 == 0），ere 侧以顺序 if + 提前收尾等价改写：掷中
       // 即打印读键并结束，未掷中继续掷下一臂（与 ELSEIF 短路同语义）
       if (rand_n(2) === 0) {
@@ -1025,7 +1021,7 @@ async function run_dungeon(arg0, rand) {
                     `${leader_name}带着陶醉的神情，郑重地把它放到怀里了………（${leader_name}拿着贞操带钥匙）`,
                   );
                   await era.waitAnyKey();
-                  chara(arg0).event.贞操带钥匙 = 1; // :625 CFLAG:50 = 1（event 属主门面）
+                  chara(arg0).event.贞操带钥匙 = 1; // CFLAG:50 = 1（event 属主门面）
                 }
               }
             }
@@ -1048,16 +1044,16 @@ async function run_dungeon(arg0, rand) {
 
     // === 帰還するかどうか（:639-705 撤退决议）===
     if (chara(arg0).invasion.回城标志 === 1) {
-      // :640-642 すでに帰還中である
+      // すでに帰還中である
       era.print(`${leader_name}在${mapc}内撤退（现在第${floor}层）`);
     } else {
-      // :643-700 帰還フラグを立て、挫折した階層を記憶する
+      // 帰還フラグを立て、挫折した階層を記憶する
       const set_retreat = (target_floor) => {
         chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1
         era.set(`cflag:${arg0}:520`, target_floor); // CFLAG:520 = …
       };
       if (sidea > 0 && sideb > 0) {
-        // :646-666 双同伴队
+        // 双同伴队
         if (status[3] >= 1) {
           era.print(`有人濒死，${leader_name}决定后退。（现在第${floor}层）`);
           set_retreat(floor - 2);
@@ -1075,13 +1071,13 @@ async function run_dungeon(arg0, rand) {
           );
           set_retreat(floor - 1);
         } else {
-          // :663-665 攻略を続ける
+          // 攻略を続ける
           era.print(
             `${leader_name}决定继续在${mapc}内前进……（现在第${floor}层）`,
           );
         }
       } else if (sidea > 0 || sideb > 0) {
-        // :667-683 单同伴队
+        // 单同伴队
         if (status[3] >= 1) {
           era.print(`有人濒死，${leader_name}决定后退。（现在第${floor}层）`);
           set_retreat(floor - 2);
@@ -1099,18 +1095,18 @@ async function run_dungeon(arg0, rand) {
           );
         }
       } else {
-        // :684-700 单人队（CFLAG:534 状态档 × 素质）
+        // 单人队（CFLAG:534 状态档 × 素质）
         if (
           (era.get(`cflag:${arg0}:534`) || 0) >= 2 &&
           (era.get(`talent:${arg0}:10`) || 0) === 1
         ) {
-          // :685-688 胆小的（TALENT:10）轻伤即撤
+          // 胆小的（TALENT:10）轻伤即撤
           era.print(
             `胆小的${leader_name}虽然只是受到轻伤，依然决定撤退。（现在第${floor}层）`,
           );
           set_retreat(floor - 1);
         } else if ((era.get(`cflag:${arg0}:534`) || 0) >= 3) {
-          // :689-692 重伤了
+          // 重伤了
           era.print(`${leader_name}重伤了，决定撤退。（现在第${floor}层）`);
           set_retreat(floor - 1);
         } else if (
@@ -1118,7 +1114,7 @@ async function run_dungeon(arg0, rand) {
           ((era.get(`talent:${arg0}:12`) || 0) === 1 ||
             (era.get(`talent:${arg0}:161`) || 0) === 1)
         ) {
-          // :693-696 坚毅的（TALENT:12 刚强 / 161）濒死才撤
+          // 坚毅的（TALENT:12 刚强 / 161）濒死才撤
           era.print(
             `坚毅的${leader_name}陷入濒死，迫不得已决定撤退了。（现在第${floor}层）`,
           );
@@ -1130,7 +1126,7 @@ async function run_dungeon(arg0, rand) {
         }
       }
 
-      // :702-704 防止后退过度（CFLAG:520 为 0 时钳到 1）
+      // 防止后退过度（CFLAG:520 为 0 时钳到 1）
       if ((era.get(`cflag:${arg0}:520`) || 0) === 0) {
         era.set(`cflag:${arg0}:520`, 1);
       }
@@ -1148,27 +1144,27 @@ async function run_dungeon(arg0, rand) {
     after_target = arg0;
   }
 
-  await dungeon_bitch_mod.dungeon_bitch(after_target, rand_n); // :718（真身 #184；rand_n 透传，迷宫与卖春共用随机源。模块对象不解构——测试可替换导出断言被调，enter-enemy 先例）
-  await get_junk_item(after_target, rand_n); // :719（rand_n 透传同 :718；#469 e2e 确定性——缺省会落回 Math.random）
+  await dungeon_bitch_mod.dungeon_bitch(after_target, rand_n); // （真身 #184；rand_n 透传，迷宫与卖春共用随机源。模块对象不解构——测试可替换导出断言被调，enter-enemy 先例）
+  await get_junk_item(after_target, rand_n); // （rand_n 透传同 :718；#469 e2e 确定性——缺省会落回 Math.random）
 
   // === 宝箱を見つける（:721-731；侵攻中 2 且 RAND:4 == 0，各自判定）===
   if (chara(arg0).invasion.状态 === 2 && rand_n(4) === 0) {
-    await equip_select(arg0, rand_n); // :723 CALL EQUIP_SELECT（#174 真身）
+    await equip_select(arg0, rand_n); // CALL EQUIP_SELECT（#174 真身）
   }
   if (sidea > 0 && chara(sidea).invasion.状态 === 2 && rand_n(4) === 0) {
-    await equip_select(sidea, rand_n); // :724-726
+    await equip_select(sidea, rand_n);
   }
   if (sideb > 0 && chara(sideb).invasion.状态 === 2 && rand_n(4) === 0) {
-    await equip_select(sideb, rand_n); // :728-730
+    await equip_select(sideb, rand_n);
   }
 
   // === アイテムの使用（:735-744 CALL USE_EX_ITEM,"战斗后"）===
-  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // :736（A = ARG:0）
+  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）
   if (sidea > 0) {
-    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // :739（A = SIDEA）
+    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // （A = SIDEA）
   }
   if (sideb > 0) {
-    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // :743（A = SIDEB）
+    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // （A = SIDEB）
   }
 
   // === 移動を反映（:748-753 CFLAG:502 = D:20，队长与同伴）===
@@ -1191,16 +1187,16 @@ async function run_dungeon(arg0, rand) {
 
   // === 休憩フェイズ（:762-849）===
 
-  // :764-777 勇者に紛れ込んだ奴隷が暗躍します（同伴是迎击奴隶 3 时，
+  // 勇者に紛れ込んだ奴隷が暗躍します（同伴是迎击奴隶 3 时，
   // 熟睡后对同伴降善恶值）
   if (sidea > 0 && chara(sidea).invasion.状态 === 3) {
     era.print(
       `${name_of(sidea)}在大家都熟睡后开始了奇妙的仪式……（同伴的善良值-1）`,
     );
     await era.waitAnyKey();
-    karma(arg0, -1); // :767
+    karma(arg0, -1);
     if (sideb > 0) {
-      karma(sideb, -1); // :769
+      karma(sideb, -1);
     }
   }
   if (sideb > 0 && chara(sideb).invasion.状态 === 3) {
@@ -1208,13 +1204,13 @@ async function run_dungeon(arg0, rand) {
       `${name_of(sideb)}在大家都熟睡后开始了奇妙的仪式……（同伴的善良值-1）`,
     );
     await era.waitAnyKey();
-    karma(arg0, -1); // :774
+    karma(arg0, -1);
     if (sidea > 0) {
-      karma(sidea, -1); // :776
+      karma(sidea, -1);
     }
   }
 
-  // :780-811 装備効果(キャンプ)（W:8 = 18）：RESULT > 0 且休憩位 0 → +1
+  // 装備効果(キャンプ)（W:8 = 18）：RESULT > 0 且休憩位 0 → +1
   // （队长与同伴各自 EQUIP_CHECK；0 = 空槽，原作 IF SIDEA > 0）
   for (const camper of [arg0, sidea, sideb]) {
     if (camper <= 0) {
@@ -1227,7 +1223,7 @@ async function run_dungeon(arg0, rand) {
     }
   }
 
-  // :816-836 装備効果(キャンプ禁止)（W:8 = 19）：休憩位 1 且 RESULT > 0 → -1
+  // 装備効果(キャンプ禁止)（W:8 = 19）：休憩位 1 且 RESULT > 0 → -1
   for (const camper of [arg0, sidea, sideb]) {
     if (camper <= 0) {
       continue;
@@ -1237,25 +1233,25 @@ async function run_dungeon(arg0, rand) {
     }
   }
 
-  // :841-849 休憩演出（侵攻中 2、休憩位 1、FLOOR > 1）
+  // 休憩演出（侵攻中 2、休憩位 1、FLOOR > 1）
   if (
     chara(arg0).invasion.状态 === 2 &&
     chara(arg0).dungeon.休憩 & 1 &&
     floor > 1
   ) {
     if ((settings & 32) !== 0) {
-      era.println(); // :843
-      era.drawLine(); // :844
-      era.print(`${leader_name}躲起来休息。`); // :845 PRINTFORMW
+      era.println();
+      era.drawLine();
+      era.print(`${leader_name}躲起来休息。`); // PRINTFORMW
       await era.waitAnyKey();
-      era.drawLine(); // :846
-      era.println(); // :847
+      era.drawLine();
+      era.println();
     }
   }
   if ((settings & 32) !== 0) {
-    era.println(); // :850-851
+    era.println();
   }
-  era_flag.target = -1; // :852 TARGET = -1
+  era_flag.target = -1; // TARGET = -1
   return 0;
 }
 
@@ -1282,7 +1278,7 @@ function check_status_one(cid, mode) {
   const wp_pct = Math.floor(
     (chara(cid).dungeon.气力 * 100) / (era.get(`maxbase:${cid}:1`) || 0),
   );
-  // :889-894 阈值（S1_HP 60 / S1_MP 50 / S2_HP 35 / S2_MP 30 / S3_HP 20 /
+  // 阈值（S1_HP 60 / S1_MP 50 / S2_HP 35 / S2_MP 30 / S3_HP 20 /
   // S3_MP 10）随各分支字面内联。原作是 ELSEIF 链，ere 侧以顺序 if + return
   // 等价改写（首个真条件胜出）——分支 2-7 的条件被首分支覆盖（原作现状），
   // 改写不引入行为差异
@@ -1294,7 +1290,7 @@ function check_status_one(cid, mode) {
     return 1;
   }
   if (wp_pct < 50) {
-    // :903-907 不可达（首分支已含），1:1 保留
+    // 不可达（首分支已含），1:1 保留
     if (!mode) {
       era.print(`${name}身体抱恙。`);
     }
@@ -1302,7 +1298,7 @@ function check_status_one(cid, mode) {
     return 4;
   }
   if (hp_pct < 35 || wp_pct < 30) {
-    // :908-912 不可达，1:1 保留
+    // 不可达，1:1 保留
     if (!mode) {
       era.print(`${name}重伤。`);
     }
@@ -1310,7 +1306,7 @@ function check_status_one(cid, mode) {
     return 2;
   }
   if (wp_pct < 30) {
-    // :913-917 不可达，1:1 保留
+    // 不可达，1:1 保留
     if (!mode) {
       era.print(`${name}头脑发昏。`);
     }
@@ -1318,7 +1314,7 @@ function check_status_one(cid, mode) {
     return 5;
   }
   if (hp_pct < 20 && wp_pct < 10) {
-    // :918-922 不可达，1:1 保留
+    // 不可达，1:1 保留
     if (!mode) {
       era.print(`${name}濒死。`);
     }
@@ -1326,7 +1322,7 @@ function check_status_one(cid, mode) {
     return 3;
   }
   if (hp_pct < 20) {
-    // :923-927 不可达，1:1 保留
+    // 不可达，1:1 保留
     if (!mode) {
       era.print(`${name}濒死。`);
     }
@@ -1334,7 +1330,7 @@ function check_status_one(cid, mode) {
     return 3;
   }
   if (wp_pct < 10) {
-    // :928-932 不可达，1:1 保留
+    // 不可达，1:1 保留
     if (!mode) {
       era.print(`${name}气绝。`);
     }
@@ -1365,11 +1361,11 @@ async function check_status(arg0, mode = 0) {
   let sidea;
   let sideb;
   if ((era.get(`cflag:${arg0}:533`) || 0) === arg0) {
-    // :878-880 自己是队长
+    // 自己是队长
     sidea = era.get(`cflag:${arg0}:531`) || 0;
     sideb = era.get(`cflag:${arg0}:532`) || 0;
   } else {
-    // :881-888 视角换队长；自己占同伴位时把自己换成队长号
+    // 视角换队长；自己占同伴位时把自己换成队长号
     const leader = era.get(`cflag:${arg0}:533`) || 0;
     sidea = era.get(`cflag:${leader}:531`) || 0;
     sideb = era.get(`cflag:${leader}:532`) || 0;
@@ -1381,24 +1377,24 @@ async function check_status(arg0, mode = 0) {
     }
   }
 
-  // :895 varset STATUS
+  // varset STATUS
   const status = [0, 0, 0, 0, 0, 0, 0, 0];
 
   const place = chara(arg0).invasion.状态;
   if (place === 2 || place === 3) {
-    // :897-938 队长
+    // 队长
     status[check_status_one(arg0, mode)] += 1;
-    // :939-981 仲間A
+    // 仲間A
     if (sidea > 0) {
       status[check_status_one(sidea, mode)] += 1;
     }
-    // :982-1024 仲間B
+    // 仲間B
     if (sideb > 0) {
       status[check_status_one(sideb, mode)] += 1;
     }
   }
 
-  // :1026-1034 队伍当前状态评级：基础分0|元气满满+0|轻伤+1|身体抱恙+1|
+  // 队伍当前状态评级：基础分0|元气满满+0|轻伤+1|身体抱恙+1|
   // 重伤+3|头脑发昏+2|濒死+4|气绝+4
   status[7] =
     status[1] +
@@ -1407,7 +1403,7 @@ async function check_status(arg0, mode = 0) {
     status[4] * 3 +
     status[5] * 2 +
     status[6] * 4;
-  // :1035 RETURN STATUS,STATUS:1..STATUS:7
+  // RETURN STATUS,STATUS:1..STATUS:7
   return status;
 }
 
@@ -1424,43 +1420,43 @@ async function check_status(arg0, mode = 0) {
  */
 async function get_junk_item(cid, rand) {
   const rand_n = rand ?? default_rand;
-  // :1046 CFLAG:MASTER:9 魔王等级（MASTER 恒角色 0）；SQRT 整数平方根
+  // CFLAG:MASTER:9 魔王等级（MASTER 恒角色 0）；SQRT 整数平方根
   const master_lv = era.get('cflag:0:9') || 0;
   const lv = era.get(`cflag:${cid}:9`) || 0;
   let local = 100 + lv * rand_n(Math.floor(Math.sqrt(master_lv + lv + 1)));
 
-  // :1048-1050 好奇心ボーナス（TALENT:23）
+  // 好奇心ボーナス（TALENT:23）
   if (era.get(`talent:${cid}:23`)) {
     local += 10;
   }
-  // :1051-1053 金のためボーナス（TALENT:316 成为勇者的契机 == 2）
+  // 金のためボーナス（TALENT:316 成为勇者的契机 == 2）
   if ((era.get(`talent:${cid}:316`) || 0) === 2) {
     local += 20;
   }
-  // :1054-1059 ホビット（種族 TALENT:314 == 10）・ドワーフ（== 11）+30
+  // ホビット（種族 TALENT:314 == 10）・ドワーフ（== 11）+30
   if (
     (era.get(`talent:${cid}:314`) || 0) === 10 ||
     (era.get(`talent:${cid}:314`) || 0) === 11
   ) {
     local += 30;
   }
-  // :1060-1062 盗賊は収入が多い（1.5倍；TALENT:203）
+  // 盗賊は収入が多い（1.5倍；TALENT:203）
   if (era.get(`talent:${cid}:203`)) {
     local += Math.floor(local / 2);
   }
 
-  // :1064 LOCAL *= CFLAG:ARG:501（阶层）
+  // LOCAL *= CFLAG:ARG:501（阶层）
   local *= chara(cid).dungeon.侵攻阶层;
 
-  // :1066-1067 SIF LOCAL < 1 → 1
+  // SIF LOCAL < 1 → 1
   if (local < 1) {
     local = 1;
   }
   if (((era.get('flag:5') || 0) & 32) !== 0) {
-    era.print(`${name_of(cid)}找到了价值${local}的财物。`); // :1069
+    era.print(`${name_of(cid)}找到了价值${local}的财物。`);
   }
 
-  // :1071 CFLAG:ARG:581 += LOCAL（dungeon 属主域内）
+  // CFLAG:ARG:581 += LOCAL（dungeon 属主域内）
   era.set(`cflag:${cid}:581`, (era.get(`cflag:${cid}:581`) || 0) + local);
   return 0;
 }
@@ -1477,19 +1473,19 @@ async function get_junk_item(cid, rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function get_down_enemy(arg0) {
-  // :1079-1083 善悪値 <= -150 且侵攻中 → 投诚；否则被抓住
+  // 善悪値 <= -150 且侵攻中 → 投诚；否则被抓住
   if (chara(arg0).chara.善恶值 <= -150 && chara(arg0).invasion.状态 === 2) {
     era.print(`${name_of(arg0)}背叛了使命，向魔王军投诚了……`);
   } else {
     era.print(`${name_of(arg0)}被抓住了…`);
   }
-  // :1084-1086 MONEY += CFLAG:580 / 100（所持金的百分之一充公；EX_FLAG:4444
+  // MONEY += CFLAG:580 / 100（所持金的百分之一充公；EX_FLAG:4444
   // 金钱增减镜像）
   const gain = Math.floor(chara(arg0).dungeon.所持金 / 100);
   era_flag.money += gain;
   era_exflag.legit_money += gain;
   era.print(`获得${gain}G！`);
-  // :1087-1089 资产复位与新人标志
+  // 资产复位与新人标志
   chara(arg0).dungeon.所持金 = 0; // CFLAG:580 = 0
   chara(arg0).invasion.新人 = 1; // CFLAG:506 = 1
   chara(arg0).invasion.回城标志 = 0; // CFLAG:507 = 0

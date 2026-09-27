@@ -2,12 +2,6 @@
  * @file 灵魂转移：把魔王的灵魂转移进出击中的角色体内，与之互换身份和部分
  * 能力；日程推进里的灵魂错位判定。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_FUNC2.ERB 全 6 函数——
- *     @TRANSFER_SOUL（:1-45）/@TRANSFERAPP（:47-99，@TRANSFER_SOUL 内部
- *     调用）/@BODYCHECK_MAOU（:102-138，@TRANSFER_SOUL 内部调用）/
- *     @PERSONALOCK（:140-287，@TRANSFERAPP 内部调用）/@BODYLOCK（:289-435，
- *     **全库零调用者，不实现**——见下）/@SOUL_DISLOCATION（:438-452）。
- *
  * 调用方：キャラ関数/CHARA_INFO ver1.0.1.ERB:1039 的 CASE 17（本域
  * page-chara-info.js）；EVENT/EVENT_NEXTDAY.ERB:50 每角色每日调用
  * @SOUL_DISLOCATION（ere/event/event-nextday.js，本票接真身、原存根撤下）。
@@ -197,7 +191,7 @@ function transferapp(cid) {
   chara(0).invasion.状态 = 0;
   chara(cid).invasion.状态 = 0;
 
-  // :82-87 姓名交换：原作对 NAME/CALLNAME/SAVESTR 各做一次 SWAP，随后又
+  // 姓名交换：原作对 NAME/CALLNAME/SAVESTR 各做一次 SWAP，随后又
   // 用（已互换的）CALLNAME 覆盖 SAVESTR。ere 侧 NAME/SAVESTR 共享同一份
   // 存储（callname:cid:-1，见 utils/callname-utils.js 文件头），若逐句
   // 照搬会把姓名换回原值——只落最终可观察效果：互换呼び名（:-2），
@@ -299,7 +293,7 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
     era.printButton('否', 1);
     const result = await era.input();
     if (result !== 0) {
-      return cid; // :10-11 SIF RESULT != 0 / RETURN ARG（拒绝）
+      return cid; // SIF RESULT != 0 / RETURN ARG（拒绝）
     }
   }
 
@@ -312,7 +306,7 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
   } else {
     era.set('cflag:0:621', marriage);
     const partner = search_family(cid, 'MARRIAGE');
-    // :23-29 三分支 IF/ELSEIF/ELSE 前两支皆空，判据都以 RESULT<0 为条件之
+    // 三分支 IF/ELSEIF/ELSE 前两支皆空，判据都以 RESULT<0 为条件之
     // 一（EX_TALENT:ARG:2 那一支的条件恒不会单独成立——它要求 RESULT<0 同时
     // 成立，与第二支重叠），实际效果等价于「partner<0 时跳过，否则执行」
     if (partner >= 0) {
@@ -322,10 +316,10 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
     }
   }
 
-  swap_chara(0, cid); // :33 SWAPCHARA MASTER, ARG
-  transferapp(cid); // :34 CALL TRANSFERAPP, ARG（返回值 MASTER 未被读取）
+  swap_chara(0, cid); // SWAPCHARA MASTER, ARG
+  transferapp(cid); // CALL TRANSFERAPP, ARG（返回值 MASTER 未被读取）
 
-  // :37-41 灵魂错位素质叠加（有 debuff）：本次转移让 ARG 背上 1-5 级，
+  // 灵魂错位素质叠加（有 debuff）：本次转移让 ARG 背上 1-5 级，
   // 若魔王身上已带着旧的错位素质则继承并 +1 级、魔王自己清零
   let debuff = rand(5) + 1;
   if (era.get('ex_talent:0:0')) {

@@ -2,10 +2,6 @@
  * @file 特殊素质获得判定（issue #405）：调教/据点侧信息达标后追加素质与
  * 强制体变的检查。
  *
- * 源: target/ERB/EVENT/GET_SPECIALTALENT.ERB  @CHECK_SPECIALSKIL（:7-739，
- *     含 $STEP1/$STEP2 两段标签、$ADD_SEXSKILL/$END_SEXSKILL 子标签）、
- *     @CHECK_SPECIALSKIL_BODYSHIFT（:740-752）
- *
  * 调用点 EVENT_TURNEND.ERB:20、調教相關/TRAIN_MAIN.ERB:544（`ere/system/
  * train/juel-check.js` 的调用点自 #565 起接真身）都在
  * #400/#401 范围内，签名定死为
@@ -290,7 +286,7 @@ async function step1(cid) {
     cflag(cid, 0) < 2 &&
     (talent(cid, 76) || talent(cid, 85))
   ) {
-    // :26-35 顺从 Lv5 达成 + 可卖出/助手化
+    // 顺从 Lv5 达成 + 可卖出/助手化
     await era.printAndWait(`${name}带着崇敬的眼神看着你…`);
     era.print(
       `${name}无论是灵魂还是肉体，都全心全意地献给${chara_nickname(MASTER)}了…`,
@@ -771,7 +767,7 @@ async function constant_arousal(cid) {
 
 /** :607-624 喜欢精液の习得（TFLAG:110 强制精饮绝顶触发 + seiin 参数） */
 async function forced_semen_liking(cid, seiin) {
-  // :607 逐字是 `IF TFLAG:110 && TALENT:47 == 0 && SEIIN`。**ERE 侧有意调整
+  // 逐字是 `IF TFLAG:110 && TALENT:47 == 0 && SEIIN`。**ERE 侧有意调整
   // 了三个操作数的次序**：EraElectron 的 tflag 桶随 endTrain 销毁（Emuera
   // 里它始终在场），而 `@EVENTTURNEND`（EVENT_TURNEND.ERB:20）正是调教外
   // 的调用点、SEIIN 取默认 0——照原序先读 TFLAG:110 会直接抛 key error。
@@ -946,7 +942,7 @@ async function check_specialskil_bodyshift(cid) {
  * @returns {Promise<number>} 0（原作全部 RETURN 0）
  */
 async function check_specialskil(cid, seiin = 0) {
-  // :12 SIF TARGET < 0 || TARGET >= CHARANUM —— #21 扁平化后按「不在已加入
+  // SIF TARGET < 0 || TARGET >= CHARANUM —— #21 扁平化后按「不在已加入
   // 角色列表」判定（page-select-target.js 先例）
   if (!era.getAddedCharacters().includes(cid)) {
     return 0;
@@ -964,7 +960,7 @@ async function check_specialskil(cid, seiin = 0) {
 
   await check_specialskil_bodyshift(cid);
   return 0;
-  // :719-734（闘姫の修得）是死代码，不构造，见文件头
+  // （闘姫の修得）是死代码，不构造，见文件头
 }
 
 module.exports = { check_specialskil, check_specialskil_bodyshift };

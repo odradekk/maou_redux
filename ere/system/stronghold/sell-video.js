@@ -1,7 +1,6 @@
 /**
  * @file 调教录像出售与水晶录像书架（issue #336）。
  *
- * 源: target/ERB/售卻相關/SELL_VIDEO.ERB 全文（:7-1244）
  */
 
 const era = require('#/era-electron');
@@ -13,7 +12,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 
 const ARCHIVE_SIZE = 20000;
 
-// :191-710 的直线指令表。列依次为：指令、基础价值、能力加成、部位、内容、
+// 的直线指令表。列依次为：指令、基础价值、能力加成、部位、内容、
 // 倾向、特殊；对象键是 PLAY_* 的下标。带装备切换或条件分支的指令在
 // apply_command 的 switch 中处理，不在此表重复表达。
 const COMMAND_SPECS = [
@@ -464,7 +463,7 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
   if (!era.getAddedCharacters().includes(cid)) return 0;
   const target = chara(cid);
 
-  // :25-32 仍在录像时先退一份魔力源，再删去“录像结束”占用的一格计数。
+  // 仍在录像时先退一份魔力源，再删去“录像结束”占用的一格计数。
   if (target.train.录像摄影) game.train.水晶球魔力源 -= 1;
   target.train.录像时间 -= 1;
   if (target.train.录像时间 <= 0) return 0;
@@ -504,7 +503,7 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     score = times(score, rates[Math.min(talking, 6)]);
   }
 
-  // :783-840 素质倍率按源顺序逐项 TIMES，不合并，保留每步截断。
+  // 素质倍率按源顺序逐项 TIMES，不合并，保留每步截断。
   const talent_rates = [
     [0, 1.2],
     [9, 0.5],
@@ -533,7 +532,7 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     score = times(score, 0.8);
   }
 
-  // :842-865 ABL:70 被摄技能倍率。
+  // ABL:70 被摄技能倍率。
   const camera_skill = era.get(`abl:${cid}:70`) || 0;
   const camera_rates = [0.5, 0.8, 1, 1.2, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
   score = times(score, camera_rates[Math.min(camera_skill, 10)]);

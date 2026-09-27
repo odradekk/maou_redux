@@ -245,8 +245,8 @@ export default [
   {
     desc: 'M9205 转职接线把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
-    find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾`,
-    replace: `        if (job_result !== 3) return job_result; // :1094-1097 的收尾`,
+    find: '        if (job_result !== 2) return job_result; // 的收尾',
+    replace: '        if (job_result !== 3) return job_result; // 的收尾',
     tests: ['page-chara-info'],
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
@@ -269,8 +269,8 @@ export default [
   {
     desc: 'M9208 转职接线把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
-    find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾`,
-    replace: `        if (job_result === 2) return job_result; // :1094-1097 的收尾`,
+    find: '        if (job_result !== 2) return job_result; // 的收尾',
+    replace: '        if (job_result === 2) return job_result; // 的收尾',
     tests: ['page-chara-info'],
     must_mention: '转职返回 0 时上浮回名册',
   },
@@ -435,18 +435,18 @@ export default [
   {
     desc: 'M11430 统一卖春积极性：侵攻档的状态判据 2 改 3（勇者档去写迎击奴隶）',
     file: 'ere/page/page-uniform-bitch-level.js',
-    find: "    scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' }; // :26/:31",
+    find: "    scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' };",
     replace:
-      "    scope = { states: [3], message: '侵攻中的勇者（不含以后出现的新勇者）' }; // :26/:31",
+      "    scope = { states: [3], message: '侵攻中的勇者（不含以后出现的新勇者）' };",
     tests: ['page-chara-info'],
     must_mention: 'scope=2000：角色 1 应写入',
   },
   {
     desc: 'M11431 统一卖春积极性：迎击档的状态判据 3 改 2',
     file: 'ere/page/page-uniform-bitch-level.js',
-    find: "    scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' }; // :47/:52",
+    find: "    scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' };",
     replace:
-      "    scope = { states: [2], message: '全迎击中的奴隶（不含以后追加的新奴隶）' }; // :47/:52",
+      "    scope = { states: [2], message: '全迎击中的奴隶（不含以后追加的新奴隶）' };",
     tests: ['page-chara-info'],
     must_mention: 'scope=2001：角色 1 不应写入',
   },
@@ -461,8 +461,8 @@ export default [
   {
     desc: 'M11433 统一卖春积极性：魔王跳过守卫写坏（COUNT==MASTER 不再 CONTINUE）',
     file: 'ere/page/page-uniform-bitch-level.js',
-    find: '    if (cid === 0) continue; // :24',
-    replace: '    if (cid === -1) continue; // :24',
+    find: '    if (cid === 0) continue;',
+    replace: '    if (cid === -1) continue;',
     tests: ['page-chara-info'],
     must_mention: 'scope=2000：角色 0 不应写入',
   },
@@ -487,10 +487,8 @@ export default [
   {
     desc: 'M11436 统一卖春积极性：侵攻档按钮快捷键 2000 撞到 2001（2000 进不了白名单）',
     file: 'ere/page/page-uniform-bitch-level.js',
-    find: `      accelerator: 2000,
-      content: '[ 全侵攻中的勇者 ]', // :5`,
-    replace: `      accelerator: 2001,
-      content: '[ 全侵攻中的勇者 ]', // :5`,
+    find: "      accelerator: 2000,\n      content: '[ 全侵攻中的勇者 ]',",
+    replace: "      accelerator: 2001,\n      content: '[ 全侵攻中的勇者 ]',",
     tests: ['page-chara-info'],
     must_mention: '输入不合法',
   },
@@ -540,34 +538,27 @@ export default [
   {
     desc: 'M11442 换号第一屏：下一页守卫 <= 写成 <（恰 25 人时进不了空尾页）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: `    if (first === 2001) {
-      // :44-49 下一页
-      if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;`,
-    replace: `    if (first === 2001) {
-      // :44-49 下一页
-      if ((no_page + 1) * NUM_PAGE < total) no_page += 1;`,
+    find: '    if (first === 2001) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
+    replace:
+      '    if (first === 2001) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE < total) no_page += 1;',
     tests: ['page-chara-info'],
     must_mention: '第 2 页没有第 1 人',
   },
   {
     desc: 'M11443 换号第二屏：下一页守卫 <= 写成 <（同一边界）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: `      if (picked === 3001) {
-        // :94-99 下一页
-        if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;`,
-    replace: `      if (picked === 3001) {
-        // :94-99 下一页
-        if ((no_page + 1) * NUM_PAGE < total) no_page += 1;`,
+    find: '      if (picked === 3001) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
+    replace:
+      '      if (picked === 3001) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE < total) no_page += 1;',
     tests: ['page-chara-info'],
     must_mention: '角色 2 出现在第一屏初始',
   },
   {
     desc: 'M11444 换号第一屏：上一页守卫 > 0 写成 >= 0（页首落到 -1、整屏空）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: `      // :38-43 上一页（页首不动，仅重绘）
-      if (no_page > 0) no_page -= 1;`,
-    replace: `      // :38-43 上一页（页首不动，仅重绘）
-      if (no_page >= 0) no_page -= 1;`,
+    find: '      // 上一页（页首不动，仅重绘）\n      if (no_page > 0) no_page -= 1;',
+    replace:
+      '      // 上一页（页首不动，仅重绘）\n      if (no_page >= 0) no_page -= 1;',
     tests: ['page-chara-info'],
     must_mention: '页首按上一页后仍停在第 1 页',
   },
@@ -608,32 +599,32 @@ export default [
   {
     desc: 'M11449 换号互换：TARGET 复位写成 0（原作 -1）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      era_flag.target = -1; // :118',
-    replace: '      era_flag.target = 0; // :118',
+    find: '      era_flag.target = -1;',
+    replace: '      era_flag.target = 0;',
     tests: ['page-chara-info'],
     must_mention: 'TARGET = -1',
   },
   {
     desc: 'M11450 换号：误加页码复位（NO_PAGE 是静态变量，RESTART 不归零）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      continue; // :120 RESTART（页码是静态变量，不归零）',
-    replace: '      no_page = 0; // 变异：误加复位\n      continue; // :120',
+    find: '      continue; // RESTART（页码是静态变量，不归零）',
+    replace: '      no_page = 0; // 变异：误加复位\n      continue;',
     tests: ['page-chara-info'],
     must_mention: '互换后重画仍在第 2 页',
   },
   {
     desc: 'M11451 换号确认：文案里两个名字对调',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '    era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`); // :107',
+    find: '    era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`);',
     replace:
-      '    era.print(`${name_of(second)}将与${name_of(first)}交换排序编号，确定吗？`); // :107',
+      '    era.print(`${name_of(second)}将与${name_of(first)}交换排序编号，确定吗？`);',
     tests: ['page-chara-info'],
     must_mention: '确认文案逐字',
   },
   {
     desc: 'M11452 换号第二屏：剃除 CN:1 的过滤被删（可跟自己换号）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      const second_ids = swap_candidates()\n        .slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE)\n        .filter((cid) => cid !== first); // :67-69 对象是角色1剃除',
+    find: '      const second_ids = swap_candidates()\n        .slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE)\n        .filter((cid) => cid !== first); // 对象是角色1剃除',
     replace:
       '      const second_ids = swap_candidates().slice(\n        no_page * NUM_PAGE,\n        (no_page + 1) * NUM_PAGE,\n      );',
     tests: ['page-chara-info'],

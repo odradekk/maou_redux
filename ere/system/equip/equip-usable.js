@@ -1,9 +1,6 @@
 /**
  * @file 装备适用判定：@USEABLE_EQUIPMENT。
  *
- * 源: target/ERB/其他/USE_EX_ITEM.ERB  @USEABLE_EQUIPMENT（:247-329，
- *     #FUNCTION——#134 裁定随本票）。消费方是 EX 道具的购入/使用判定
- *     （USE_EX_ITEM 存根随阶段 5）；职业素质号 → 名称见 yml/Talent.yml。
  */
 
 'use strict';
@@ -34,12 +31,12 @@ const JOB_WEAPON_TABLE = [
  * @returns {number} RETURNF：1 可用 / 0 不可用
  */
 function usable_equipment(cid, id) {
-  // :251-252 戒指段（SIF ARG:1 >= 0 && ARG:1 <= 20 RETURNF 1）
+  // 戒指段（SIF ARG:1 >= 0 && ARG:1 <= 20 RETURNF 1）
   if (id >= 0 && id <= 20) {
     return 1;
   }
 
-  // :267-329 职业判定（首个命中的职业定结果；无命中落到尾部隐式 0）
+  // 职业判定（首个命中的职业定结果；无命中落到尾部隐式 0）
   for (const [talent_no, weapons] of JOB_WEAPON_TABLE) {
     if (era.get(`talent:${cid}:${talent_no}`)) {
       return weapons.includes(id) ? 1 : 0;

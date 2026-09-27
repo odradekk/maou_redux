@@ -1,8 +1,6 @@
 /**
  * @file 指令结束事件 @EVENTCOMEND 的**无属性档**定义（issue #401）。
  *
- * 源: target/ERB/EVENT/EVENT1.ERB  @EVENTCOMEND（:1-9）
- *
  * == 引擎保留事件名的多定义（结论来自 emuera-basic-agent-guide） ==
  *
  * `@EVENTCOMEND` 全库零 `CALL` 调用点——它是**引擎保留事件名**，由引擎在
@@ -39,14 +37,14 @@ const era_flag = require('#/era-utils/era-flag');
 // @EVENTCOMEND（EVENT1.ERB:1-9，无属性档——on 的缺省档即 TIER.NORMAL）
 on('EVENTCOMEND', async () => {
   const target = era_flag.target;
-  // :3-4 SIF CFLAG:TARGET:100 —— 已经认定过就不再认定（一次性位）。
+  // SIF CFLAG:TARGET:100 —— 已经认定过就不再认定（一次性位）。
   // 这里的 RETURN 0 只结束**本定义**的执行，链上其它 @EVENTCOMEND 照跑
   // （退回语义见 emuera-basic-agent-guide；#SINGLE 才有中断语义，本函数没有）
   if (era.get(`cflag:${target}:100`)) {
     return 0;
   }
 
-  // :6 IF EXP:0 == 0 && EXP:1 > 0 && TALENT:30
+  // IF EXP:0 == 0 && EXP:1 > 0 && TALENT:30
   //    EXP:0 私处经验（没有膣经验）/ EXP:1 肛门经验（有肛经验）/ TALENT:30 看重贞操
   const view = chara(target);
   if (
@@ -54,9 +52,9 @@ on('EVENTCOMEND', async () => {
     view.dungeon.肛门经验 > 0 &&
     view.event.看重贞操
   ) {
-    era.set(`cflag:${target}:100`, 1); // :7
+    era.set(`cflag:${target}:100`, 1);
     await era.printAndWait(
       '（能守住贞操的话，稍微被进攻一下后面，也不是不能接受）',
-    ); // :8 PRINTW
+    ); // PRINTW
   }
 });

@@ -56,13 +56,13 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
 
   // 出口：:429 BEGIN TURNEND
   assert.equal(pending, 'TURNEND');
-  // :316 消息 + :317 WAIT
+  // 消息 + :317 WAIT
   assert(fixture.text_lines().includes('调教结束了。'));
   assert(fixture.inputs_consumed.some((c) => c.api === 'waitAnyKey'));
-  // :319-323 复位（TARGET = T:11；SIF ASSI（32 非零）→ ASSI = T:12）
+  // 复位（TARGET = T:11；SIF ASSI（32 非零）→ ASSI = T:12）
   assert.equal(era_flag.target, 31);
   assert.equal(era_flag.assi, 32);
-  // :334-336 前回指针记录（FLAG:1/FLAG:2）
+  // 前回指针记录（FLAG:1/FLAG:2）
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
   // CHARADEAD_CHECK / PARTY_CHAR_DEL 自 #548（S7）起为真身（存活路径
@@ -74,7 +74,7 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   // AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身：着衣分支可达
   // （FLAG:37 = 1 且存活）但本世界 TFLAG:45 = 0、无衣物状态变化 → 静默
   // （真身的行为锁在 test/cloth-func.test.js）
-  // :421 @JUEL_CHECK 已是真身（#47）：结算表落地、不再是占位行
+  // @JUEL_CHECK 已是真身（#47）：结算表落地、不再是占位行
   assert(fixture.text_lines().includes('以上的点数变化了。'));
   assert(!fixture.text_lines().some((line) => line.includes('@JUEL_CHECK')));
   // 尾部还原（:423-425）：ASSI = ASSI:1、TARGET = TARGET:1——复位段（:321）
@@ -117,7 +117,7 @@ test('死亡删除分支：后代的死亡标记按来源模板号落位（#561 
   assert.equal(fixture.era.addCharacter([100000, 1]), true);
   era_flag.target = 100000;
   era_flag.target_record = 100000;
-  era_flag.target_backup = 100000; // :321 TARGET = T:11 的暂存值
+  era_flag.target_backup = 100000; // TARGET = T:11 的暂存值
   fixture.store.set('base:100000:0', 0); // 死亡（体力 < 1 且非魔王）
   fixture.set_inputs(999);
 
@@ -159,7 +159,7 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
   const pending = await run_eventend(fixture);
 
   assert.equal(pending, 'TURNEND');
-  // :365-371 死亡标记 + 指针清空
+  // 死亡标记 + 指针清空
   assert(
     fixture.var_writes.some((w) => w.name === 'flag:230' && w.value === 1),
     'FLAG:NO+199（31+199=230）死亡标记必须置位',
@@ -168,7 +168,7 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
   assert.equal(era_flag.target, -1);
   assert.equal(era_flag.assi, -1);
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === -1));
-  // :373 DELCHARA → 引擎等价物 removeCharacter：从已加入列表除名
+  // DELCHARA → 引擎等价物 removeCharacter：从已加入列表除名
   assert(
     fixture.calls.some((c) => c.api === 'removeCharacter' && c.args[0] === 31),
     'DELCHARA 必须除名角色 31',

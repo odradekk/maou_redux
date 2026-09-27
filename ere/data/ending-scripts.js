@@ -2,9 +2,6 @@
  * @file 65 个 @END<n> 结局文本段的数据表（issue #404 / N20；数据表落点照
  *     #388 的 CHARA_NAME_INIT 先例，不为每个段写一个函数）。
  *
- * 源: target/ERB/EVENT/ENDINGDATA.ERB（52 段：@END7_* / @END11_* / @END14_*）
- *     target/ERB/EVENT/ENDINGDATA_ADDON1.ERB（13 段：@END10_*）
- *
  * 这 65 段是同一形状的结局文本段，只经 `TRYCALLFORM END{LOCAL}_{小节}`
  * 到达（ENDING ver 1.0.1.ERB:347 的分派循环，落在 ere/event/endcheck 的
  * END_FAMILY）——按字面 CALL 数外部调用全是 0，不是死代码。执行语义在

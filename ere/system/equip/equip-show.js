@@ -2,10 +2,6 @@
  * @file 装备详情显示：@EQUIP_ST_SHOW、@SHOW_BUTTON_EQUIP、
  * @CHECK_ABLE_TO_SHOW_EQUIP（issue #546）。
  *
- * 源: target/ERB/其他/EQUIP.ERB  @EQUIP_ST_SHOW（:1030-1071）
- *     @SHOW_BUTTON_EQUIP（:1074-1087）
- *     @CHECK_ABLE_TO_SHOW_EQUIP（:1090-1113，#FUNCTION 式）
- *
  * 调用方：ere/page/page-chara-info.js 的 CHARA_INFO_INDIVIDUAL——[16] 按钮在
  * sub_page 1/2 的操作行（原作 :880），详情正文在 CASE 16（原作 :1070-1074：
  * CALL EQUIP_ST_SHOW 后 WAIT，再 GOTO DRAW_PAGE 整页重绘；行首的
@@ -57,27 +53,27 @@ const { print_equiptype_weapon } = require('#/system/equip/equip-print');
  * @returns {0|1}
  */
 function check_able_to_show_equip(cid) {
-  // :1097 売却可なら見れる
+  // 売却可なら見れる
   if ((era.get(`cflag:${cid}:0`) || 0) > 0) {
     return 0;
   }
-  // :1100 信頼度20以上なら見れる
+  // 信頼度20以上なら見れる
   if ((era.get(`cflag:${cid}:2`) || 0) >= 20) {
     return 0;
   }
-  // :1103 従順1以上なら見れる
+  // 従順1以上なら見れる
   if ((era.get(`abl:${cid}:10`) || 0) > 0) {
     return 0;
   }
-  // :1106 目立ちたがりなら見れる
+  // 目立ちたがりなら見れる
   if (era.get(`talent:${cid}:28`) || 0) {
     return 0;
   }
-  // :1109 カルマ0以下なら見れる
+  // カルマ0以下なら見れる
   if ((era.get(`cflag:${cid}:151`) || 0) <= 0) {
     return 0;
   }
-  // :1113 見せられないよ
+  // 見せられないよ
   return 1;
 }
 
@@ -89,11 +85,11 @@ function check_able_to_show_equip(cid) {
  * @returns {void}
  */
 function show_button_equip(num, cid) {
-  // :1080 LOCAL = CHECK_ABLE_TO_SHOW_EQUIP(ARG)
+  // LOCAL = CHECK_ABLE_TO_SHOW_EQUIP(ARG)
   if (check_able_to_show_equip(cid) === 1) {
-    return; // :1081-1084 条件に合わないならボタン自体を表示しない
+    return; // 条件に合わないならボタン自体を表示しない
   }
-  // :1085 PRINTFORM [{NUM}] 装备情报 + 全角空格（尾部空格照抄）
+  // PRINTFORM [{NUM}] 装备情报 + 全角空格（尾部空格照抄）
   era.printButton('装备情报\u3000', num);
 }
 
@@ -111,20 +107,20 @@ function show_button_equip(num, cid) {
  * @returns {number} 恒 2（:1071 RETURN 2；调用方不读，1:1 保留）
  */
 function equip_st_show(cid) {
-  // :1035 W:0 = CFLAG:ARG:550（武装槽）
+  // W:0 = CFLAG:ARG:550（武装槽）
   const w = { 存储编号: era.get(`cflag:${cid}:550`) || 0 };
 
-  // :1037-1038 名称行（PRINT_EQUIPTYPE_WEAPON + PRINTL 收行）
+  // 名称行（PRINT_EQUIPTYPE_WEAPON + PRINTL 收行）
   print_equiptype_weapon(w);
-  // :1039-1040 查表 + 按角色素质强化（记录的后续 SIF 全读强化后的值）
+  // 查表 + 按角色素质强化（记录的后续 SIF 全读强化后的值）
   equip_database(w);
   equip_powerup(w, cid);
 
-  // :1042-1043 SIF W:5：空名段（53-60）走 ELSE 黑戒指行时可见，见文件头
+  // SIF W:5：空名段（53-60）走 ELSE 黑戒指行时可见，见文件头
   if (w.诅咒) {
     era.print('*带有诅咒');
   }
-  // :1044-1051 W:6 的毒/火/寒冰/电四个特殊位
+  // W:6 的毒/火/寒冰/电四个特殊位
   if (w.特殊 & 1) {
     era.print('*带有毒液');
   }
@@ -137,7 +133,7 @@ function equip_st_show(cid) {
   if (w.特殊 & 8) {
     era.print('*带电');
   }
-  // :1056-1069 六列战斗修正的七条显示行（气力回复正负两臂；=100 的防御/
+  // 六列战斗修正的七条显示行（气力回复正负两臂；=100 的防御/
   // 气力伤害两列不显示）
   if (w.伤害强化) {
     era.print(`*${w.伤害强化}的打击力`);

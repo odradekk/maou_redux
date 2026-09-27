@@ -1,9 +1,6 @@
 /**
  * @file 处刑选择与迷你处刑（issue #348）。
  *
- * 源: target/ERB/處刑相關/EXECUTION.ERB
- *     @EXECUTION（:2-372）/@EXECUTION_MINI（:375-446）
- *
  * 移植说明（有意偏离，注明依据）：
  *   - 处置菜单（源 :79-92 的 [0]-[7]/[100]/[101]）升格为 `era.printButton`
  *     （PR #53 通则，正文不写 [编号]）；候选人列表（源 :32 的 `[NN] 名字 …`
@@ -87,7 +84,7 @@ function print_candidates(candidates) {
       `<${60 - era_flag.day_count}天以内再展出${20 - game.event.装饰品数}名勇者到博物馆将解锁实绩！>`,
     );
   } else {
-    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行
+    // 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行
     // `PRINT 请选择处刑对象` 那一行（PRINT 不换行），**不是空行**——ere 的
     // print 自成一行，这里什么都不补（#597）。IF 支的实绩提示（20 行）在原作
     // 与 18 行同属一行，ere 侧拆成两个 print，是既有记名差异（不在本票范围）
@@ -323,7 +320,7 @@ async function execution(rand_n = default_rand) {
     print_candidates(candidates);
     if (candidates.length === 0) return 0;
     era.drawLine();
-    // :50 的 `[100] 返回` 保持纯文本：本轮的编号是上面那些候选人行的
+    // 的 `[100] 返回` 保持纯文本：本轮的编号是上面那些候选人行的
     // `[NN]`（print_candidates 的拼行，行号即输入值），单给这行打按钮会把
     // 白名单收成 100、候选人编号当场被拒收——整轮按钮化要先重排候选人列表
     // （多列对齐），留给后续按界面过（#572 的分类表、docs/research/

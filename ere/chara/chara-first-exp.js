@@ -1,8 +1,6 @@
 /**
  * @file 初吻与初体验的初始化（issue #394，N10）。
  *
- * 源: target/ERB/キャラ関数/CHARA_FIRST_EXP.ERB  @CHARA_FIRST_EXP（:2-670）
- *
  * 调用面：唯一调用点是 ere/chara/chara-make.js 的 cm_ns_exp（源
  * CHARA_MAKE.ERB:1103 `CALL CHARA_FIRST_EXP, A`，角色生成管线 @CM_NS_EXP
  * 段的初体验一句）。函数没有返回值出口（原作 `RETURN 0`），产物全在四个
@@ -152,7 +150,7 @@ function resolve_case_label(spec, previous, rand) {
  * 女另一张（:385-462）。`kiss` 是该 CASE 顺带预约的初吻部位。
  */
 const JOB_PARTNER_MALE_LIKE = {
-  gender: 2, // :302 / :382 とりあえず女限定
+  gender: 2, // とりあえず女限定
   cases: new Map([
     [
       1,
@@ -217,7 +215,7 @@ const JOB_PARTNER_MALE_LIKE = {
 };
 
 const JOB_PARTNER_FEMALE = {
-  gender: 1, // :464 とりあえず男限定
+  gender: 1, // とりあえず男限定
   cases: new Map([
     [
       1,
@@ -233,7 +231,7 @@ const JOB_PARTNER_FEMALE = {
     [3, { label: '农夫' }],
     [4, { label: '渔民' }],
     [6, { label: '流氓' }],
-    // :406-412 貴族：两条链都没有 ELSE，全不中即保留上一轮候选
+    // 貴族：两条链都没有 ELSE，全不中即保留上一轮候选
     [
       8,
       {
@@ -299,7 +297,7 @@ const JOB_PARTNER_FEMALE = {
  * @returns {string}
  */
 function pick_three(options, rand) {
-  const roll = rand(3); // :478 / :497 / :516 / :551 / :563 / :575 的选择式
+  const roll = rand(3); // 的选择式
   if (roll === 0) return options[0];
   if (roll === 1) return options[1];
   return options[2]; // CASEELSE
@@ -320,29 +318,29 @@ function chara_first_exp(cid, rand = default_rand) {
   const dungeon = chara(cid).dungeon;
   const not_virgin = () => t(0) === 0; // TALENT:0 処女 == 0（非処女）
 
-  // :14-17 四项产物的初值（写回在函数末）
+  // 四项产物的初值（写回在函数末）
   let first_kiss = train.初吻对象; // CFLAG:16
   let kiss_name = train.初吻对象名; // CSTR:4（原作 LOCALS）
   let first_sex = train.初体验对象; // CFLAG:15
   let sex_name = train.初体验对象名; // CSTR:3（原作 LOCALS:1）
-  // :18-19 KISS_POINT = 0 / MEN_OR_GIRL:1 = 0
+  // KISS_POINT = 0 / MEN_OR_GIRL:1 = 0
   let kiss_point = 0;
   let matched_gender = 0;
   // MEN_OR_GIRL（元素 0）：候选对象的性别，1 男 / 2 女 / 3 扶她 / 4 随机
   let candidate_gender = 0;
-  // :55 LOCALS:2 —— 当前候选对象的称呼，每个「换人」的段头重置
+  // LOCALS:2 —— 当前候选对象的称呼，每个「换人」的段头重置
   let candidate = '';
 
-  // :22-23 不是男人又不是处女 → 谈不上「未体验」
+  // 不是男人又不是处女 → 谈不上「未体验」
   if (t(122) === 0 && not_virgin() && first_sex === -1) {
     first_sex = 0;
   }
-  // :25-26 有性交或卖春经验 → 初吻的可能性还在（把 -1 拉回 0）
+  // 有性交或卖春经验 → 初吻的可能性还在（把 -1 拉回 0）
   if ((dungeon.性交经验 > 0 || dungeon.卖淫经验 > 0) && first_kiss === -1) {
     first_kiss = 0;
   }
 
-  // :29-34 兽姦经历 + 极稀有的野良犬肛门（996）；非处女者顺带初体验 103
+  // 兽姦经历 + 极稀有的野良犬肛门（996）；非处女者顺带初体验 103
   if (
     kiss_name === '' &&
     first_kiss === 0 &&
@@ -354,7 +352,7 @@ function chara_first_exp(cid, rand = default_rand) {
       first_sex = 103;
     }
   }
-  // :36-41 同前，野良犬阴茎（997），概率高五倍
+  // 同前，野良犬阴茎（997），概率高五倍
   if (
     kiss_name === '' &&
     first_kiss === 0 &&
@@ -366,7 +364,7 @@ function chara_first_exp(cid, rand = default_rand) {
       first_sex = 103;
     }
   }
-  // :43-48 同前，野良犬口（998），概率再高一倍
+  // 同前，野良犬口（998），概率再高一倍
   if (
     kiss_name === '' &&
     first_kiss === 0 &&
@@ -379,13 +377,13 @@ function chara_first_exp(cid, rand = default_rand) {
     }
   }
 
-  // :51-53 LOCAL:3 = TALENT:320 家族构成 / LOCAL:4 = 家族设定的有无
+  // LOCAL:3 = TALENT:320 家族构成 / LOCAL:4 = 家族设定的有无
   const family = t(320);
   const family_flag = family % 10;
 
-  // :58-196 有家族设定时，由配偶与六种亲属里随机挑一位当候选
+  // 有家族设定时，由配偶与六种亲属里随机挑一位当候选
   if (family_flag === 1) {
-    // :61-62 低五位（婚姻状态）与低十位（配偶性别数字位）
+    // 低五位（婚姻状态）与低十位（配偶性别数字位）
     const marriage = Math.trunc((family % 100000) / 10000);
     const family_low = family % 10000000000;
     const partner = MARRIAGE_PARTNER.get(marriage);
@@ -396,13 +394,13 @@ function chara_first_exp(cid, rand = default_rand) {
       candidate_gender = gender;
     }
 
-    // :133-134 兄
+    // 兄
     let scratch = Math.trunc((family % 10000000) / 1000000);
     if (scratch > 0 && candidate === '' && rand(20) === 0) {
       candidate = '亲哥哥';
       candidate_gender = 1;
     }
-    // :142-143 弟（正太控时概率 UP）
+    // 弟（正太控时概率 UP）
     scratch = Math.trunc((family % 1000000000) / 100000000);
     if (scratch > 0 && candidate === '' && rand(20) === 0) {
       candidate = '亲弟弟';
@@ -411,13 +409,13 @@ function chara_first_exp(cid, rand = default_rand) {
       candidate = '亲弟弟';
       candidate_gender = 1;
     }
-    // :155-156 姉
+    // 姉
     scratch = Math.trunc((family % 1000000) / 100000);
     if (scratch > 0 && candidate === '' && rand(20) === 0) {
       candidate = '亲姐姐';
       candidate_gender = 2;
     }
-    // :164-165 妹（萝莉控时概率 UP）
+    // 妹（萝莉控时概率 UP）
     scratch = Math.trunc((family % 100000000) / 10000000);
     if (scratch > 0 && candidate === '' && rand(20) === 0) {
       candidate = '亲妹妹';
@@ -426,7 +424,7 @@ function chara_first_exp(cid, rand = default_rand) {
       candidate = '亲妹妹';
       candidate_gender = 2;
     }
-    // :177-184 父（恋父情结时概率 UP）
+    // 父（恋父情结时概率 UP）
     if (candidate === '' && rand(20) === 0) {
       candidate = '亲爹';
       candidate_gender = 1;
@@ -434,7 +432,7 @@ function chara_first_exp(cid, rand = default_rand) {
       candidate = '亲爹';
       candidate_gender = 1;
     }
-    // :187-194 母（恋母情结时概率 UP）
+    // 母（恋母情结时概率 UP）
     if (candidate === '' && rand(20) === 0) {
       candidate = '亲妈';
       candidate_gender = 2;
@@ -444,7 +442,7 @@ function chara_first_exp(cid, rand = default_rand) {
     }
   }
 
-  // :199-202 随机让家族候选当上初吻对象
+  // 随机让家族候选当上初吻对象
   if (
     kiss_name === '' &&
     first_kiss === 0 &&
@@ -454,7 +452,7 @@ function chara_first_exp(cid, rand = default_rand) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
   }
-  // :204-205 随机让家族候选当上初体验对象
+  // 随机让家族候选当上初体验对象
   if (
     not_virgin() &&
     sex_name === '' &&
@@ -465,23 +463,23 @@ function chara_first_exp(cid, rand = default_rand) {
     sex_name += candidate;
   }
 
-  // :208-212 故郷の恋人（好きなもの == 4）：性别待定（4 = 随机）
+  // 故郷の恋人（好きなもの == 4）：性别待定（4 = 随机）
   if (t(317) === 4) {
     candidate = '故乡的恋人';
     candidate_gender = 4;
   }
 
-  // :215-218 再掷一次（家族段没选中时的兜底）
+  // 再掷一次（家族段没选中时的兜底）
   if (kiss_name === '' && first_kiss === 0 && rand(2) === 0) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
   }
-  // :220-221 初体验同上
+  // 初体验同上
   if (not_virgin() && sex_name === '' && first_sex === 0 && rand(2) === 0) {
     sex_name += candidate;
   }
 
-  // :224-465 「キスしたかもしれない職業」：按性别选表、按职业选候选对象
+  // 「キスしたかもしれない職業」：按性别选表、按职业选候选对象
   const is_male = t(122) !== 0;
   const is_futa = t(121) !== 0;
   const job_table =
@@ -494,19 +492,19 @@ function chara_first_exp(cid, rand = default_rand) {
       if (point !== undefined) kiss_point = point;
     }
   }
-  candidate_gender = job_table.gender; // :302 / :382 / :464 性别限定写在表里
+  candidate_gender = job_table.gender; // 性别限定写在表里
 
-  // :468-471 随机让职业对象当上初吻对象
+  // 随机让职业对象当上初吻对象
   if (kiss_name === '' && first_kiss === 0 && rand(2) === 0) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
   }
-  // :473-474 初体验同上
+  // 初体验同上
   if (not_virgin() && sex_name === '' && first_sex === 0 && rand(2) === 0) {
     sex_name += candidate;
   }
 
-  // :477-533 不幸なキス：男／扶她（:477-494 与 :496-513 逐字相同）与女
+  // 不幸なキス：男／扶她（:477-494 与 :496-513 逐字相同）与女
   // 各一组三选项（SELECTCASE RAND:3），并预约部位
   const unlucky =
     is_male || is_futa
@@ -531,21 +529,21 @@ function chara_first_exp(cid, rand = default_rand) {
   if (unlucky_point !== undefined) kiss_point = unlucky_point;
   candidate_gender = unlucky.gender;
 
-  // :536-539 随机让不幸的对象当上初吻对象（注意分母是 3，不是 2）
+  // 随机让不幸的对象当上初吻对象（注意分母是 3，不是 2）
   if (kiss_name === '' && first_kiss === 0 && rand(3) === 0) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
   }
-  // :542-543 预约的部位补进初吻
+  // 预约的部位补进初吻
   if (kiss_name !== '' && first_kiss === 0 && kiss_point > 0) {
     first_kiss = kiss_point;
   }
-  // :546-547 随机让不幸的对象当上初体验对象（同样分母 3）
+  // 随机让不幸的对象当上初体验对象（同样分母 3）
   if (not_virgin() && sex_name === '' && first_sex === 0 && rand(3) === 0) {
     sex_name += candidate;
   }
 
-  // :550-585 誰にでもあるキス：同款三选项，但不预约部位
+  // 誰にでもあるキス：同款三选项，但不预约部位
   const any_kiss =
     is_male || is_futa
       ? { gender: 2, options: ['青梅竹马', '女朋友', '初恋'] }
@@ -553,21 +551,21 @@ function chara_first_exp(cid, rand = default_rand) {
   candidate = pick_three(any_kiss.options, rand);
   candidate_gender = any_kiss.gender;
 
-  // :588-591 兜底：初吻必定有位对象
+  // 兜底：初吻必定有位对象
   if (kiss_name === '' && first_kiss === 0) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
   }
-  // :593-594 初体验同上
+  // 初体验同上
   if (not_virgin() && first_sex === 0 && sex_name === '') {
     sex_name += candidate;
   }
-  // :596-597 有对象但部位未定 → 初体验编码 100
+  // 有对象但部位未定 → 初体验编码 100
   if (sex_name !== '' && first_sex === 0) {
     first_sex = 100;
   }
 
-  // :599-631 性别待定（4 = 故郷の恋人）时按持有性征掷出具体性别
+  // 性别待定（4 = 故郷の恋人）时按持有性征掷出具体性别
   if (matched_gender === 4) {
     if (rand(10) === 0 && is_futa) {
       matched_gender = 2; // 扶她的恋人
@@ -590,7 +588,7 @@ function chara_first_exp(cid, rand = default_rand) {
     }
   }
 
-  // :635-641 与性别矛盾则白纸（ペニス指定却对方是女 / ヴァギナ指定却对方是男）
+  // 与性别矛盾则白纸（ペニス指定却对方是女 / ヴァギナ指定却对方是男）
   if (first_kiss >= 100 && first_kiss < 300 && matched_gender === 2) {
     first_kiss = 0;
   }
@@ -598,7 +596,7 @@ function chara_first_exp(cid, rand = default_rand) {
     first_kiss = 0;
   }
 
-  // :643-662 初吻部位：多半是嘴唇（RAND:30 > 0），否则按对象性别定
+  // 初吻部位：多半是嘴唇（RAND:30 > 0），否则按对象性别定
   if (kiss_name !== '' && first_kiss === 0 && rand(30) > 0) {
     first_kiss = 1; // 唇
   } else if (kiss_name !== '' && first_kiss === 0 && rand(3) === 0) {
@@ -618,7 +616,7 @@ function chara_first_exp(cid, rand = default_rand) {
     first_kiss = 301; // 扶她でヴァギナ
   }
 
-  // :664-667 写回四项（CFLAG:15/16 与 CSTR:3/4 属 train 域，走门面）
+  // 写回四项（CFLAG:15/16 与 CSTR:3/4 属 train 域，走门面）
   train.初吻对象 = first_kiss; // CFLAG:16
   train.初吻对象名 = kiss_name; // CSTR:4
   train.初体验对象 = first_sex; // CFLAG:15

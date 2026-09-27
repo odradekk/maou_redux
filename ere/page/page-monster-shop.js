@@ -1,12 +1,6 @@
 /**
  * @file 怪物商店（召唤魔物从者）：@MONSTER_SHOP 族（issue #399 / N15 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_MONSTER.ERB
- *     @MONSTER_SHOP（:18-173，入口菜单 + 性别选择 + 种族选择 + 召唤确认）
- *     @SHOW_SHOP_MONSTER（:178-196，头行）
- *     @SELECT_MONSTER（:200-285，种族映射 + 商品陈列 + 购买入口）
- *     @BUY_MONSTER（:288-410，祭品选择与召唤结算）
- *
  * 调用点：SHOP ver1.0.2.ERB:218（@USERSHOP 的 120「召唤」分支，
  * CHARANUM < MAX_CHARANUM 时），由 page/page-shop.js 接入。
  *
@@ -128,16 +122,16 @@ function csv_talent(no, idx) {
  * @SHOW_SHOP_MONSTER（:178-196）：召唤系列三个画面的公共头行。
  */
 function show_shop_monster() {
-  // :183 CUSTOMDRAWLINE = → 本屏的分隔线走实线（page-shop-trap.js 同款近似）
+  // CUSTOMDRAWLINE = → 本屏的分隔线走实线（page-shop-trap.js 同款近似）
   era.print('召唤');
   era.print('《需要献祭同类的怪物，并支付一定金钱来召唤精英魔物从者》');
-  era.drawLine({ isSolid: true }); // :183-186
-  // :187-193 PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后
+  era.drawLine({ isSolid: true });
+  // PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后
   era.print(
     `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
   );
-  era.print(`所持金：${era_flag.money}点`); // :195
-  era.drawLine({ isSolid: true }); // :195-196
+  era.print(`所持金：${era_flag.money}点`);
+  era.drawLine({ isSolid: true });
 }
 
 /**
@@ -152,12 +146,12 @@ function show_shop_monster() {
  * @returns {Promise<number>} 原作 RETURN 0（:173）
  */
 async function monster_shop(rand) {
-  // :21-23 TFLAG:100/101/102 = 0（文件头第 1 条）
+  // TFLAG:100/101/102 = 0（文件头第 1 条）
   shop_state.race = 0;
   shop_state.race2 = 0;
   shop_state.chosen = 0;
 
-  // :30-37 入口菜单。**#572 起整轮按钮化**：此前「本系列屏一律印纯文本」
+  // 入口菜单。**#572 起整轮按钮化**：此前「本系列屏一律印纯文本」
   // 的理由是「打了按钮就把输入集收紧到那批编号、头行里没有的选项（性别
   // 1-3、种族 1-9）再也键入不进」——那只在**同轮只打一部分按钮**时成立；
   // 同轮的每个选项都升格按钮后，白名单恰是显示出来的编号，点击与键入都通。
@@ -165,18 +159,18 @@ async function monster_shop(rand) {
   // 1:1 保留不补用例（page-ability-up.js 文件头同款登记）。
   era.drawLine({ isSolid: true });
   era.printButton('召唤魔物从者', 1);
-  // :32-35 [IF DEBUG] 的 [2]召唤异界勇者不移植（文件头第 2 条）
+  // [IF DEBUG] 的 [2]召唤异界勇者不移植（文件头第 2 条）
   era.drawLine({ isSolid: true });
   era.printButton('返回', 999);
   const entry = await era.input();
   if (entry === 999) {
-    clear_shop(); // :40
+    clear_shop();
     return 0;
   }
-  // :42-46 RESULT == 1 → GOTO MONSTER_SHOP_TAG；其余值（原作没有 ELSE）
+  // RESULT == 1 → GOTO MONSTER_SHOP_TAG；其余值（原作没有 ELSE）
   // 顺着往下落进 :48 的标签，与选 1 同路（[2] 的调试支不移植，见文件头）
 
-  // :48-62 召唤的魔物从者数量太多（TALENT:220 计数 >= 30）
+  // 召唤的魔物从者数量太多（TALENT:220 计数 >= 30）
   let follower_count = 0;
   for (const cid of era.getAddedCharacters()) {
     if (talent(cid, FOLLOWER_TALENT)) {
@@ -185,41 +179,41 @@ async function monster_shop(rand) {
   }
   if (follower_count >= FOLLOWER_LIMIT) {
     era.print('召唤的魔物从者数量太多，魔界已经没有志愿者了……');
-    await era.waitAnyKey(); // :57 WAIT
-    clear_shop(); // :58
+    await era.waitAnyKey(); // WAIT
+    clear_shop();
     return 0;
   }
 
-  // :66-88 性别选择
+  // 性别选择
   let sex_coin = 0;
   for (;;) {
-    show_shop_monster(); // :68
-    era.print('请选择要召唤的魔物从者的性别'); // :70
-    // :71 的列排版纯文本选项 → 与 :73 的返回一并升格为按钮（#572）
+    show_shop_monster();
+    era.print('请选择要召唤的魔物从者的性别');
+    // 的列排版纯文本选项 → 与 :73 的返回一并升格为按钮（#572）
     era.printButton('男性', 1);
     era.printButton('女性', 2);
     era.printButton('扶她', 3);
-    era.drawLine({ isSolid: true }); // :70-72
-    era.printButton('返回', 999); // :73
+    era.drawLine({ isSolid: true });
+    era.printButton('返回', 999);
     const result = await era.input();
     if (result === 999) {
-      clear_shop(); // :78
+      clear_shop();
       return 0;
     }
     if (result > SEX_MAX) {
-      continue; // :81-83（原作 CLEARLINE 1 后回标签）
+      continue; // （原作 CLEARLINE 1 后回标签）
     }
     sex_coin = result;
     if (result === 0) {
-      continue; // :86-87
+      continue;
     }
     break;
   }
 
-  // :91-117 种族选择
+  // 种族选择
   for (;;) {
-    show_shop_monster(); // :93
-    // :97-99 三行列排版纯文本选项 → 与 :101 的返回一并升格为按钮（#572）
+    show_shop_monster();
+    // 三行列排版纯文本选项 → 与 :101 的返回一并升格为按钮（#572）
     era.printButton('兽人类', 1);
     era.printButton('史莱姆类', 2);
     era.printButton('昆虫类', 3);
@@ -229,72 +223,72 @@ async function monster_shop(rand) {
     era.printButton('巨人类', 7);
     era.printButton('魔人类', 8);
     era.printButton('魔兽类', 9);
-    era.drawLine({ isSolid: true }); // :97-100
-    era.printButton('返回', 999); // :101
-    era.print('\u3000请选择魔物从者的种类'); // :102
+    era.drawLine({ isSolid: true });
+    era.printButton('返回', 999);
+    era.print('\u3000请选择魔物从者的种类');
     const result = await era.input();
     if (result === 999) {
-      clear_shop(); // :107
+      clear_shop();
       return 0;
     }
     if (result > RACE_MAX) {
-      continue; // :110-112
+      continue;
     }
     if ((await select_monster(result, rand)) === 0) {
-      continue; // :114-116 SIF RESULT == 0 → GOTO INPUT_LOOP
+      continue; // SIF RESULT == 0 → GOTO INPUT_LOOP
     }
     break;
   }
 
-  // :119-171 $ADD_CHARA：入队、生成、确认
+  // $ADD_CHARA：入队、生成、确认
   for (;;) {
-    const chara_id = shop_state.chosen; // :121 CHARA = TFLAG:102
-    era.addCharacter(chara_id); // :122 ADDCHARA CHARA
-    await add_chara_ex(chara_id); // :123 CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）
-    const a = chara_id; // :124 A = CHARANUM - 1（ere 侧角色号 = 预设号，#21）
+    const chara_id = shop_state.chosen; // CHARA = TFLAG:102
+    era.addCharacter(chara_id); // ADDCHARA CHARA
+    await add_chara_ex(chara_id); // CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）
+    const a = chara_id; // A = CHARANUM - 1（ere 侧角色号 = 预设号，#21）
     if (sex_coin === 1) {
-      chara(a).chara.男人 = 1; // :126-127 男性
+      chara(a).chara.男人 = 1; // 男性
     }
     if (sex_coin === 3) {
-      chara(a).chara.扶她 = 1; // :128-129 扶她
+      chara(a).chara.扶她 = 1; // 扶她
     }
-    await char_make(a, 0, 0, rand); // :131-132 CALL CHAR_MAKE; A = RESULT
-    chara(a).invasion.状态 = 0; // :133 CFLAG:A:1 = 0
-    // :135-137 善良値調整
+    await char_make(a, 0, 0, rand); // CALL CHAR_MAKE; A = RESULT
+    chara(a).invasion.状态 = 0; // CFLAG:A:1 = 0
+    // 善良値調整
     if ((era.get(`cflag:${a}:151`) || 0) < -100) {
       chara(a).chara.善恶值 = -100;
     }
 
-    era.print('*****************************************'); // :140
-    era.print(`${chara_callname(a)}回应了你的召唤………`); // :141
-    era.print('*****************************************'); // :142
-    await era.waitAnyKey(); // :143 PRINTW
-    // :144 CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
+    era.print('*****************************************');
+    era.print(`${chara_callname(a)}回应了你的召唤………`);
+    era.print('*****************************************');
+    await era.waitAnyKey(); // PRINTW
+    // CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
     // -2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
     await show_chara_info(a, -2, rand);
-    era.print(`确定要召唤${chara_callname(a)}么？`); // :146
-    era.print(''); // :147
-    era.print(''); // :148
-    // :149-155 [0] 就是 他/她 了  [1] 再换一个（花费1500）→ 按钮（#572）
+    era.print(`确定要召唤${chara_callname(a)}么？`);
+    era.print('');
+    era.print('');
+    // [0] 就是 他/她 了  [1] 再换一个（花费1500）→ 按钮（#572）
     const gender_word = talent(a, 122) !== 0 ? '他' : '她';
     era.printButton(`就是${gender_word}了`, 0);
     era.printButton('再换一个（花费1500）', 1);
 
     const result = await era.input();
     if (result !== 1) {
-      return 0; // :172-173（[0] 与其余输入都落到函数尾）
+      return 0; // （[0] 与其余输入都落到函数尾）
     }
-    // :159-170 再换一个：退人退钱再走一遍 $ADD_CHARA
+    // 再换一个：退人退钱再走一遍 $ADD_CHARA
     if (era_flag.money <= SUMMON_FEE) {
-      era.print('金钱不够！'); // :161-162
+      era.print('金钱不够！');
       await era.waitAnyKey();
       return 0;
     }
-    await party_char_del(a); // :164 CALL PARTY_CHAR_DEL, A
-    era.removeCharacter(a); // :165 DELCHARA A
-    era_flag.money -= SUMMON_FEE; // :166
-    era_exflag.legit_money -= SUMMON_FEE; // :167
-    name_reset(); // :168 CALL NAME_RESET
+    await party_char_del(a); // CALL PARTY_CHAR_DEL, A
+    era.removeCharacter(a); // DELCHARA A
+    era_flag.money -= SUMMON_FEE;
+    era_exflag.legit_money -= SUMMON_FEE;
+    name_reset(); // CALL NAME_RESET
   }
 }
 
@@ -312,7 +306,7 @@ async function monster_shop(rand) {
  * @returns {Promise<number>} 1 = 买定（原作 RETURN 1）、0 = 退回种族选择
  */
 async function select_follower({ arg0, show, guard, rand }) {
-  // :209-224 SELECTCASE ARG:0：种族两档的映射（TFLAG:100/101）
+  // SELECTCASE ARG:0：种族两档的映射（TFLAG:100/101）
   const mapping = {
     1: [1, 1],
     2: [2, 2],
@@ -326,18 +320,18 @@ async function select_follower({ arg0, show, guard, rand }) {
   };
   const mapped = mapping[arg0];
   if (mapped === undefined) {
-    return 0; // :222-223 CASEELSE → RETURN 0
+    return 0; // CASEELSE → RETURN 0
   }
   [shop_state.race, shop_state.race2] = mapped;
 
   for (;;) {
-    show(); // :228
+    show();
     era.print(
       '需要献祭一定数量的怪物以符合其合计等级的要求，作为祭品的怪物还需满足最低等级才能作为祭品，',
-    ); // :228-230
-    era.print('还需要支付最低等级＊１３５的金钱来召唤精英魔物从者'); // :230
+    );
+    era.print('还需要支付最低等级＊１３５的金钱来召唤精英魔物从者');
 
-    // :232-247 商品一览（ITEMPRICE 为 0 的不出场；CSVTALENT 的种族 319
+    // 商品一览（ITEMPRICE 为 0 的不出场；CSVTALENT 的种族 319
     // 与两个档任一相等即列出）
     const rows = [];
     let row = '';
@@ -350,13 +344,13 @@ async function select_follower({ arg0, show, guard, rand }) {
       if (race2 !== shop_state.race && race2 !== shop_state.race2) {
         continue;
       }
-      // :238 名字字段与「最低等级：」之间有一个半角空格（在 %…,22,LEFT% 之后，
+      // 名字字段与「最低等级：」之间有一个半角空格（在 %…,22,LEFT% 之后，
       // 是实参里的字面量，不是命令分隔符）
       row +=
         `[${pad_display(String(id), 3)}] ` +
         `${pad_display(item_name(id), NAME_WIDTH)} ` +
         `最低等级：${pad_left(String(item_price(id)), LEVEL_WIDTH)}\u3000\u3000`;
-      era.set(`itemsales:${id}`, 1); // :240 購入可能フラグ
+      era.set(`itemsales:${id}`, 1); // 購入可能フラグ
       shown += 1;
       if (shown % COLUMNS === 0) {
         rows.push(row);
@@ -367,21 +361,21 @@ async function select_follower({ arg0, show, guard, rand }) {
       era.print(line);
     }
     if (row !== '') {
-      era.print(row); // :246-247 SIF LOCAL%2 → PRINTL
+      era.print(row); // SIF LOCAL%2 → PRINTL
     }
 
-    era.drawLine({ isSolid: true }); // :238-249
-    // :250 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面商品行的
+    era.drawLine({ isSolid: true });
+    // 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面商品行的
     // 「[编号]」格行（拼行，编号即输入值 100-199），单给这行打按钮会把
     // 白名单收成 999、商品编号当场被拒收。整轮按钮化要先重排格行。
-    era.print('[999] 返回'); // :250
-    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者'); // :251-255
+    era.print('[999] 返回');
+    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');
 
     const result = await era.input();
     if (result === 999) {
-      return 0; // :258-259
+      return 0;
     }
-    // :261-265 商品编号段与在售位的两道守卫（不在段内/没点亮则重问；
+    // 商品编号段与在售位的两道守卫（不在段内/没点亮则重问；
     // SELECT_CHARA 没有这两条，见函数头）
     if (guard) {
       if (result < MONSTER_IDS.start || result > MONSTER_IDS.end) {
@@ -391,7 +385,7 @@ async function select_follower({ arg0, show, guard, rand }) {
         continue;
       }
     }
-    // :266-274 钱不够则重问（两条守卫的判据逐字相同，第二条恒不达——
+    // 钱不够则重问（两条守卫的判据逐字相同，第二条恒不达——
     // 文件头第 4 条）
     if (era_flag.money < item_price(result) * SACRIFICE_RATE) {
       era.print(
@@ -401,11 +395,11 @@ async function select_follower({ arg0, show, guard, rand }) {
       continue;
     }
 
-    shop_state.chosen = result; // :278 TFLAG:102 = RESULT
+    shop_state.chosen = result; // TFLAG:102 = RESULT
     if ((await buy_follower({ show, rand })) === 0) {
-      continue; // :282-283 SIF RESULT == 0 → GOTO INPUT_LOOP
+      continue; // SIF RESULT == 0 → GOTO INPUT_LOOP
     }
-    return 1; // :282-285
+    return 1;
   }
 }
 
@@ -439,7 +433,7 @@ async function select_monster(arg0, rand) {
  */
 async function buy_follower({ show, rand }) {
   const target = shop_state.chosen; // 原作 TFLAG:102
-  // :301-309 收集祭品
+  // 收集祭品
   const offering = new Map(); // 编号 → { level, stock, picked }
   let total_level = 0; // LOCAL:1（已选合计；收集期先累持有等级、随后清零）
   for (let id = 100; id < 200; id += 1) {
@@ -457,7 +451,7 @@ async function buy_follower({ show, rand }) {
     }
   }
 
-  // :311-318 祭品不足的两个早退（RETURN 0 → 退回种族选择）
+  // 祭品不足的两个早退（RETURN 0 → 退回种族选择）
   if (offering.size === 0) {
     era.print('没有能作为祭品的怪物');
     await era.waitAnyKey();
@@ -469,38 +463,38 @@ async function buy_follower({ show, rand }) {
     return 0;
   }
 
-  // :321-322 LOCAL:1 = 0（改记已选合计）
+  // LOCAL:1 = 0（改记已选合计）
   let picked_level = 0;
 
   for (;;) {
-    show(); // :326
+    show();
 
     if (item_price(target) - picked_level <= 0) {
-      // :328-341 已凑够：确认召唤
+      // 已凑够：确认召唤
       era.print('现在被选择的怪物');
       for (const line of sacrifice_rows(offering)) {
         era.print(line);
       }
-      era.print(`合计等级：${picked_level}`); // :341
-      era.drawLine({ isSolid: true }); // :341-342
+      era.print(`合计等级：${picked_level}`);
+      era.drawLine({ isSolid: true });
       era.print(
         `要以这些怪物为代价，加上${item_price(target) * SACRIFICE_RATE}点金钱，来召唤${item_name(target)}吗？`,
-      ); // :343
-      // :344 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+      );
+      // 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
       era.printButton('好的', 0);
       era.printButton('不要', 1);
 
       const result = await era.input();
       if (result === 1) {
-        return 0; // :346-347
+        return 0;
       }
       if (result !== 0) {
-        // :345-357 的两支只认 0/1：其余值的控制流落出 IF 链、由 :394 的
+        // 的两支只认 0/1：其余值的控制流落出 IF 链、由 :394 的
         // $INPUT_LOOP_1 回到祭品选择的输入（ere 侧重画一轮祭品屏，同本
         // 文件头的第 3 条偏离）
         continue;
       }
-      // :348-356 成交：扣钱、扣祭品
+      // 成交：扣钱、扣祭品
       era_flag.money -= item_price(target) * SACRIFICE_RATE;
       era_exflag.legit_money -= item_price(target) * SACRIFICE_RATE;
       for (const [id, info] of offering) {
@@ -512,22 +506,22 @@ async function buy_follower({ show, rand }) {
       return 1;
     }
 
-    // :358-391 还差等级：列出可选祭品，继续挑
+    // 还差等级：列出可选祭品，继续挑
     era.print('请选择满足最低等级要求的怪物作为祭品');
-    era.print(`剩余等级：${item_price(target) - picked_level}`); // :362
+    era.print(`剩余等级：${item_price(target) - picked_level}`);
     era.print('现在被选择的怪物');
     for (const line of sacrifice_rows(offering)) {
       era.print(line);
     }
-    era.print(`合计等级：${picked_level}`); // :375
-    era.drawLine({ isSolid: true }); // :376
+    era.print(`合计等级：${picked_level}`);
+    era.drawLine({ isSolid: true });
     let row = '';
     let columns = 0;
     for (const [id, info] of offering) {
       if (info.level === 0) {
         continue;
       }
-      // :381-382 两行 PRINTFORM 拼一格；格尾是实参里的制表符（不是全角空格，
+      // 两行 PRINTFORM 拼一格；格尾是实参里的制表符（不是全角空格，
       // 与祭品行的 `只` + 两个 U+3000 不同源），照抄成 \t
       row +=
         `[${pad_display(String(id), 3)}] ` +
@@ -541,31 +535,31 @@ async function buy_follower({ show, rand }) {
       }
     }
     if (row !== '') {
-      era.print(row); // :387-388
+      era.print(row);
     }
-    era.drawLine({ isSolid: true }); // :389
-    // :390 的 [999] 返回同上（祭品行轮的编号 100-199 是纯文本选项）。
-    era.print('[999] 返回'); // :390
-    era.print(''); // :391
+    era.drawLine({ isSolid: true });
+    // 的 [999] 返回同上（祭品行轮的编号 100-199 是纯文本选项）。
+    era.print('[999] 返回');
+    era.print('');
 
     const result = await era.input();
     if (result === 999) {
-      return 0; // :397-398
+      return 0;
     }
     if (result < 100 || result >= 200) {
-      continue; // :399-400
+      continue;
     }
     const info = offering.get(result);
     if (info === undefined || info.level === 0) {
-      continue; // :401-402
+      continue;
     }
     if (info.stock === info.picked) {
-      era.print('已经没有了'); // :403-405
+      era.print('已经没有了');
       await era.waitAnyKey();
       continue;
     }
-    info.picked += 1; // :408
-    picked_level += info.level; // :409
+    info.picked += 1;
+    picked_level += info.level;
   }
 }
 
@@ -593,7 +587,7 @@ function sacrifice_rows(offering) {
     }
   }
   if (row !== '') {
-    rows.push(row); // :337-338 SIF !LINEISEMPTY() → PRINTL
+    rows.push(row); // SIF !LINEISEMPTY() → PRINTL
   }
   return rows;
 }

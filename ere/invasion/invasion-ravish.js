@@ -5,13 +5,6 @@
  * 口上文件的同词先例 `kojo-dungeon-ravish.js`）；
  * 函数名 `invasion_ryouzyoku` 1:1 跟随原作 `@INVASION_RYOUZYOKU`，不改。
  *
- * 源: target/ERB/侵略/INVASION_RYOUZYOKU.ERB  @INVASION_RYOUZYOKU（:1-66，
- *       分发）× 12 个战场旁白函数：@ORC_INV（:71-162）/ @SLIME_INV
- *       （:165-237）/ @INSECT_INV（:240-291）/ @IVY_INV（:294-346）/
- *       @SYOKUSYU_INV（:349-402）/ @FAILY_INV（:405-460）/ @GIANT_INV
- *       （:463-527）/ @MAN_INV（:531-591）/ @GIRL_INV（:594-653）/
- *       @BEAST_INV（:655-697）/ @BRAIN_INV（:700-738）/ @HORSE_INV（:741-782）
- *
  * 调用方是 侵略/INVASION.ERB:671-683 与 :867-879 的出兵路线（人间界/精灵
  * 领域/龙之山/天界/天神宫各一段），两条路线目前都还是 page-invasion.js 的
  * 存根（[0] 怪物出兵 / [2] 勇者出兵），所以本模块现下没有运行时调用方——
@@ -67,25 +60,25 @@ const default_rand = (n) => Math.floor(Math.random() * n);
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function invasion_ryouzyoku(area, sinkou, rand = default_rand) {
-  // :10 侵攻ポイントを調整（整数除算で 0..10 档）
+  // 侵攻ポイントを調整（整数除算で 0..10 档）
   const point = Math.floor(sinkou / 5000);
 
-  // :13-64 戦争で陵辱（三列分）
+  // 戦争で陵辱（三列分）
   for (let count = 0; count < 3; count += 1) {
-    const x = (rand(9) + 1) * 10 + 100 + rand(5); // :14
-    monster_data(x, count, 0, -1, -1, rand); // :15
+    const x = (rand(9) + 1) * 10 + 100 + rand(5);
+    monster_data(x, count, 0, -1, -1, rand);
 
-    const ryouzyoku = count * 100 + 7; // :17
-    const num = count * 100 + 99; // :18
+    const ryouzyoku = count * 100 + 7;
+    const num = count * 100 + 99;
     if (e_get(num) <= 0) {
-      e_set(ryouzyoku, 0); // :20 その列に怪物がいなければ凌辱类型を消す
+      e_set(ryouzyoku, 0); // その列に怪物がいなければ凌辱类型を消す
     }
     if (e_get(ryouzyoku) > 0) {
-      const id = e_get(count * 100); // :23
-      await era.printAndWait(`${item_name(id)}的凌辱开始了。`); // :24
+      const id = e_get(count * 100);
+      await era.printAndWait(`${item_name(id)}的凌辱开始了。`);
     }
 
-    // :26-62 凌辱类型 → 旁白（1 兽人 / 2 史莱姆 / 3 昆虫 / 4 藤蔓 / 5 触手 /
+    // 凌辱类型 → 旁白（1 兽人 / 2 史莱姆 / 3 昆虫 / 4 藤蔓 / 5 触手 /
     // 6 妖精 / 7 巨人 / 8 男 / 9 女 / 10 兽 / 11 脑奸 / 12 马）
     if (e_get(ryouzyoku) === 1) {
       await orc_inv(area, point, rand);
@@ -112,10 +105,10 @@ async function invasion_ryouzyoku(area, sinkou, rand = default_rand) {
     } else if (e_get(ryouzyoku) === 12) {
       await horse_inv(area, point, rand);
     }
-    era.print(''); // :63 PRINTL（空行分隔）
+    era.print(''); // PRINTL（空行分隔）
   }
 
-  return 0; // :63-66
+  return 0;
 }
 
 /**
@@ -126,7 +119,7 @@ async function invasion_ryouzyoku(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function orc_inv(area, sinkou, rand = default_rand) {
-  // :74-102 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['看板娘', '女骑士', '少女'],
     2: ['精灵少女', '精灵猎手', '精灵少女'],
@@ -136,7 +129,6 @@ async function orc_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['看板娘', '女骑士', '少女'];
 
   if (rand(5) === 0 && sinkou > 1) {
-    // :104-109
     await era.printAndWait(`被亚人群所包围的${l1}的部队、被迫做出了决断`);
     await era.printAndWait(
       '『已经无法再期待救援了……既然这样干脆就保持着纯洁而玉碎吧……』',
@@ -147,7 +139,6 @@ async function orc_inv(area, sinkou, rand = default_rand) {
       `${l1}看到的是、曾经信任的团长取悦着亚人的阴茎的媚态……`,
     );
   } else if (rand(4) === 0) {
-    // :110-125
     await era.printAndWait(
       `${l1}的抵抗是如此地无力，一个又一个的据点被攻占下来了，抵抗的部队也都尽数被捕虏了。`,
     );
@@ -168,7 +159,6 @@ async function orc_inv(area, sinkou, rand = default_rand) {
       era.print(`${l1}的妊娠数已经超过了两位数`);
     }
   } else if (rand(3) === 0) {
-    // :126-143
     await era.printAndWait('「这，这里是面包店……要买面包么？」');
     await era.printAndWait(`兽人们冲入面包店，把里面的${l0}抓住，按倒在地，`);
     await era.printAndWait(
@@ -191,7 +181,6 @@ async function orc_inv(area, sinkou, rand = default_rand) {
       era.print(`${l0}在烤面包、并且不得不履行身为肉便器的职责……`);
     }
   } else if (rand(2) === 0) {
-    // :144-152
     await era.printAndWait(
       '『被这种下等兽人……如果当时有增援的话，也不会这样……』',
     );
@@ -211,7 +200,6 @@ async function orc_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait(`嚎啕大哭的${l1}眼前，兽人的阴茎晃动着。`);
     await era.printAndWait('「舔吧！母猪！」');
   } else {
-    // :153-159
     await era.printAndWait('「新人，就在里面！」');
     await era.printAndWait(
       `作为新的奴隶的${l2}，被带入奴隶的帐篷中，看到了这样一幅光景：`,
@@ -226,7 +214,7 @@ async function orc_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait(`${l2}全身无力，崩溃了。`);
   }
 
-  return 0; // :159-162
+  return 0;
 }
 
 /**
@@ -237,7 +225,7 @@ async function orc_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function slime_inv(area, sinkou, rand = default_rand) {
-  // :168-195 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女人', '女孩', '年轻修女'],
     2: ['精灵女性', '精灵女孩', '精灵巫女'],
@@ -247,14 +235,12 @@ async function slime_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女人', '女孩', '年轻修女'];
 
   if (rand(4) === 0 && sinkou > 1) {
-    // :197-202
     await era.printAndWait(`成为俘虏的${l2}被往肛门里尽可能地注入了泥浆`);
     await era.printAndWait(`在其它${l2}的注视中、全裸的跨在神谕的书物之上`);
     await era.printAndWait('「被干趴的话、同伴、全部奴隶的干活」');
     await era.printAndWait(`魔物使命令兽人、操起了${l2}的大屁股`);
     await era.printAndWait(`在持续数小时的肛交之后、${l2}再也忍受不住了……`);
   } else if (rand(3) === 0) {
-    // :203-208
     await era.printAndWait(`${l2}们，在战火中祈祷着。`);
     await era.printAndWait(`逃入圣堂里的${l2}们，已经做好了死的觉悟。`);
     await era.printAndWait('『……怎么回事……身体……动不了……了……』');
@@ -265,7 +251,6 @@ async function slime_inv(area, sinkou, rand = default_rand) {
       '门外，伴随着可憎的的口音和下流的呼喊，大量的脚步声传进来了。想死，也没这么容易噢～',
     );
   } else if (rand(2) === 0) {
-    // :209-226
     await era.printAndWait(
       `${l0}千辛万苦地躲入不起眼的屋子里，在外面，战斗正在打响。`,
     );
@@ -292,7 +277,6 @@ async function slime_inv(area, sinkou, rand = default_rand) {
       era.print(`${l0}们之后、持续不断地被在肛门中培养史莱姆的样子……`);
     }
   } else {
-    // :227-234
     await era.printAndWait('『快停下！放过我吧！不要啊！』');
     await era.printAndWait(`作为营地的余兴节目，${l1}被丢入有史莱姆的浴池里。`);
     await era.printAndWait('史莱姆占据了半个浴池，马上开始侵犯着下半身，');
@@ -302,7 +286,7 @@ async function slime_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait(`${l1}脸色铁青，彻底绝望了。`);
   }
 
-  return 0; // :234-237
+  return 0;
 }
 
 /**
@@ -313,7 +297,7 @@ async function slime_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function insect_inv(area, sinkou, rand = default_rand) {
-  // :243-264 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '女学生'],
     2: ['女精灵', '精灵学生'],
@@ -323,7 +307,6 @@ async function insect_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女人', '女学生'];
 
   if (rand(3) === 0 && sinkou > 1) {
-    // :266-271
     await era.printAndWait(
       `被捕获的${l1}们、被逼往嘴里吞下了紫芋虫。很快出现了各种症状`,
     );
@@ -336,7 +319,6 @@ async function insect_inv(area, sinkou, rand = default_rand) {
       '头被锁链锁在一起的二人的表情、看上去好像无比的幸福',
     );
   } else if (rand(2) === 0) {
-    // :272-283
     await era.printAndWait(`${l1}们，从战场上避的难途中，被魔虫群袭击了。`);
     await era.printAndWait('用臭布裹体的兽人虫使，用魔虫笛操纵着虫群。');
     if (sinkou > 6) {
@@ -351,7 +333,6 @@ async function insect_inv(area, sinkou, rand = default_rand) {
       '又有新的虫卵，新的虫子了。兽人虫使这么想着，开心地笑了。',
     );
   } else {
-    // :284-289
     await era.printAndWait(`在战场上被抓获的${l0}们，成为了魔界昆虫的孵化箱。`);
     await era.printAndWait(
       `脖子被锁着，${l0}们的私处和肛门，被虫子下了很多卵。`,
@@ -363,7 +344,7 @@ async function insect_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :289-291
+  return 0;
 }
 
 /**
@@ -379,7 +360,7 @@ async function insect_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function ivy_inv(area, sinkou, rand = default_rand) {
-  // :297-318 戦場別の称呼（:312 的第二臂 == 4 恒不可达，天神宫落 ELSE）
+  // 戦場別の称呼（:312 的第二臂 == 4 恒不可达，天神宫落 ELSE）
   const [l0, l1] = {
     1: ['女人', '女兵士'],
     2: ['精灵女性', '精灵守卫'],
@@ -388,7 +369,6 @@ async function ivy_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女人', '女兵士'];
 
   if (rand(3) === 0 && sinkou > 1) {
-    // :320-325
     await era.printAndWait(
       `植物型魔物在一夜之间吞没了城寨、${l1}们全被巨大的藤蔓缠住了`,
     );
@@ -401,7 +381,6 @@ async function ivy_inv(area, sinkou, rand = default_rand) {
       '生下来的孩子将被当做奴隶卖掉。她们在花的诱惑下持续着交尾……。',
     );
   } else if (rand(2) === 0) {
-    // :326-337
     await era.printAndWait(`${l1}们被覆盖了战场的植物群给吞没了`);
     await era.printAndWait('手足被藤蔓缠住、毫无防备的肛门被根茎插了进去');
     await era.printAndWait(`从根分泌出的物质很快令${l1}们露出了啊嘿颜、`);
@@ -418,7 +397,6 @@ async function ivy_inv(area, sinkou, rand = default_rand) {
       '『哈啊啊、好爽啊啊啊～！　屁股、要变成傻瓜了！　要变成屁股了～～～～！』',
     );
   } else {
-    // :338-344
     await era.printAndWait(
       `在被镇压了的据点上，种满了魔界的植物，${l0}们被抓了过来，提供养分。`,
     );
@@ -435,7 +413,7 @@ async function ivy_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :344-346
+  return 0;
 }
 
 /**
@@ -446,7 +424,7 @@ async function ivy_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function syokusyu_inv(area, sinkou, rand = default_rand) {
-  // :352-379 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女人', '侍女', '贵族女人'],
     2: ['女精灵', '精灵侍女', '精灵贵族'],
@@ -456,7 +434,6 @@ async function syokusyu_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女人', '侍女', '贵族女人'];
 
   if (rand(3) === 0 && sinkou > 1) {
-    // :381-386
     await era.printAndWait(`${l2}被捕获后、被触手细致地催眠了`);
     await era.printAndWait(`数日后、婚纱装的${l2}走到了史莱姆的街道上`);
     await era.printAndWait(
@@ -469,7 +446,6 @@ async function syokusyu_inv(area, sinkou, rand = default_rand) {
       '『好开心～……大家都成为新娘子了～……要生好多的孩子哦……』',
     );
   } else if (rand(2) === 0) {
-    // :387-393
     await era.printAndWait(
       `侍奉着贵族的${l1}，让主人的千金躲到暗格里，自己一个抵抗着。`,
     );
@@ -487,7 +463,6 @@ async function syokusyu_inv(area, sinkou, rand = default_rand) {
       '『大小姐……一直、一直都恋慕着你！　啊哈！　侵犯……大小姐什么的！　最最舒服啦！！』',
     );
   } else {
-    // :394-400
     await era.printAndWait('被镇压的据点里，临时设置了触手生产工厂。');
     await era.printAndWait(
       `被镶嵌到恶心的肉壁中，${l0}们个个都挺着怀孕的大肚子。`,
@@ -502,7 +477,7 @@ async function syokusyu_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :400-402
+  return 0;
 }
 
 /**
@@ -513,7 +488,7 @@ async function syokusyu_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function faily_inv(area, sinkou, rand = default_rand) {
-  // :408-435 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女人', '少女', '人类'],
     2: ['精灵女性', '精灵少女', '精灵'],
@@ -523,7 +498,6 @@ async function faily_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女人', '少女', '人类'];
 
   if (rand(3) === 0 && sinkou > 1) {
-    // :436-441
     await era.printAndWait('都会学校被妖精们占据了、学生全被囚禁起来');
     await era.printAndWait('「你们、将作为妖精的奴隶尽情地生产哦～」');
     await era.printAndWait(
@@ -536,7 +510,6 @@ async function faily_inv(area, sinkou, rand = default_rand) {
       `一个${l2}的优等生、以生下5个孩子的奴隶身份得到了优秀的表扬`,
     );
   } else if (rand(2) === 0) {
-    // :442-451
     await era.printAndWait(`${l0}被拘束着，承受妖精们的欺凌。`);
     await era.printAndWait(
       '被魔法强制勃起的阴蒂，对于体型娇小的妖精来说，正好可以当阴茎使。',
@@ -555,7 +528,6 @@ async function faily_inv(area, sinkou, rand = default_rand) {
       await era.printAndWait(`阴蒂勃起的${l0}直到死都无休止地被妖精们泄欲着`);
     }
   } else {
-    // :452-458
     await era.printAndWait(`妖精们宛如孩子般天真无邪的玩弄着破坏着${l0}们。`);
     await era.printAndWait('「哈哈～不如把尿道也侵犯了吧！」');
     await era.printAndWait('『啊～啊啊～！求求你们，不要再继续了！！』');
@@ -566,7 +538,7 @@ async function faily_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :458-460
+  return 0;
 }
 
 /**
@@ -577,7 +549,7 @@ async function faily_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function giant_inv(area, sinkou, rand = default_rand) {
-  // :466-493 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女奴隶', '魔导士', '人类'],
     2: ['精灵女奴隶', '精灵使', '精灵'],
@@ -587,7 +559,6 @@ async function giant_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女奴隶', '魔导士', '人类'];
 
   if (rand(4) === 0 && sinkou > 1) {
-    // :495-500
     await era.printAndWait(
       `因为巨人们的余兴而被捕获的${l0}们成为了稀罕的收藏品`,
     );
@@ -600,7 +571,6 @@ async function giant_inv(area, sinkou, rand = default_rand) {
       '在输掉就会被杀的恐惧前、二人展现着猥琐下流的性交猥杂、苟延残喘着',
     );
   } else if (rand(3) === 0) {
-    // :501-507
     await era.printAndWait(`本来就身份低微的${l0}们被抓获了，`);
     await era.printAndWait(
       '顺势给她们施加了淫媚的魔法，成为了随军用的飞机杯。',
@@ -616,7 +586,6 @@ async function giant_inv(area, sinkou, rand = default_rand) {
       `『我是飞机杯！${'\u3000'}我不要做${l2}了！${'\u3000'}再狠狠地操我吧！！让我作为飞机杯，狠狠地泄出来吧！！！』`,
     );
   } else if (rand(2) === 0) {
-    // :508-514
     await era.printAndWait(`在战场上被抓获的${l0}们，在接受最初的洗礼。`);
     await era.printAndWait('在巨人的大量精液中洗澡。');
     await era.printAndWait('『这是什么…讨厌…呀啊啊啊啊啊啊！』');
@@ -626,7 +595,6 @@ async function giant_inv(area, sinkou, rand = default_rand) {
       `${l0}们战战兢兢地在精液中沐浴着，不知道自己过后将被如何处置。`,
     );
   } else {
-    // :515-526
     await era.printAndWait(`${l1}被巨人压倒了，连续的战斗让她的魔力已经见底。`);
     await era.printAndWait('『被这种下等的家伙……队长！？』');
     await era.printAndWait('队长用残存的魔力，把自己的内心摧毁了。');
@@ -645,7 +613,7 @@ async function giant_inv(area, sinkou, rand = default_rand) {
     }
   }
 
-  return 0; // :525-527
+  return 0;
 }
 
 /**
@@ -656,7 +624,7 @@ async function giant_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function man_inv(area, sinkou, rand = default_rand) {
-  // :534-561 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女神官', '女战士', '人类的法律'],
     2: ['精灵女神官', '女精灵战士', '投降'],
@@ -666,7 +634,6 @@ async function man_inv(area, sinkou, rand = default_rand) {
   }[area] ?? ['女神官', '女战士', '人类的法律'];
 
   if (rand(4) === 0 && sinkou > 1) {
-    // :563-570
     await era.printAndWait(
       `${l1}用锐利的视线睨视着魔王军的兵士。但是、她的眼里含着泪水。`,
     );
@@ -683,7 +650,6 @@ async function man_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait(`${l1}被强拽到两侧被抱住的同伴的两腿之间。`);
     await era.printAndWait('她的腰、因为对性交的期待微微晃动着。');
   } else if (rand(3) === 0) {
-    // :571-577
     await era.printAndWait(
       `被捕获了的${l0}，为求饶命而向魔王军团发誓忠诚于魔王。`,
     );
@@ -697,14 +663,12 @@ async function man_inv(area, sinkou, rand = default_rand) {
       `看着同伴那彻底失去理智的神色，${l0}绝望了，一个激灵，终于忍不住地尿了出来。`,
     );
   } else if (rand(2) === 0) {
-    // :578-583
     await era.printAndWait('「今后也一直为肉棒祈祷吧，神官大人。」');
     await era.printAndWait('哪怕在街上的寺院里，凌辱也在继续着。');
     await era.printAndWait('『神啊，为什么要降下这样的试炼……』');
     await era.printAndWait('「废话真多！让你的菊花也感受神的召唤吧！」');
     await era.printAndWait(`魔族男人这么说着，直接贯穿了${l0}的肛门。`);
   } else {
-    // :584-589
     await era.printAndWait('『呀！讨厌……啊啊啊！』');
     await era.printAndWait(`年轻的${l1}投降了，当然魔王军可不接受${l2}。`);
     await era.printAndWait('马上就被年轻的魔族轮奸了。');
@@ -712,7 +676,7 @@ async function man_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait(`已经成为肉便器的${l1}，什么都无法思考了。`);
   }
 
-  return 0; // :589-591
+  return 0;
 }
 
 /**
@@ -723,7 +687,7 @@ async function man_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function girl_inv(area, sinkou, rand = default_rand) {
-  // :597-624 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女司令官', '秘书', '女人'],
     2: ['精灵士官', '侍从', '精灵女性'],
@@ -732,9 +696,8 @@ async function girl_inv(area, sinkou, rand = default_rand) {
     5: ['破邪天使', '侍从', '天使'],
   }[area] ?? ['女司令官', '秘书', '女人'];
 
-  // :626 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
   if (rand(3) === 0) {
-    // :626-634
     await era.printAndWait(`据点被攻陷，${l0}成功地突围逃命，不过`);
     await era.printAndWait(`${l0}的${l1}却被女魔族俘虏了。`);
     await era.printAndWait(`「${l0}逃哪去了？告诉我吧！」`);
@@ -748,7 +711,6 @@ async function girl_inv(area, sinkou, rand = default_rand) {
     );
     await era.printAndWait(`不过她现在即将带队，亲手去抓拿${l0}回来拷问！`);
   } else if (rand(2) === 0) {
-    // :635-644
     await era.printAndWait(`前线的${l0}和${l1}一起被抓住了。`);
     await era.printAndWait(
       `「${l1}，如果你去侵犯那边的${l0}大人的话，就饶你一命。」`,
@@ -763,7 +725,6 @@ async function girl_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait('『对不起…真的对不起…！』');
     await era.printAndWait('女魔族微笑着，欣赏百合奴隶玩弄对方身体的身姿。');
   } else {
-    // :645-651
     await era.printAndWait('『舔…呃呃…舔…』');
     await era.printAndWait(
       '「哦，舔得不错啊！作为百合便器也是有板有眼的呢～」',
@@ -776,7 +737,7 @@ async function girl_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :651-653
+  return 0;
 }
 
 /**
@@ -787,7 +748,7 @@ async function girl_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function beast_inv(area, sinkou, rand = default_rand) {
-  // :658-679 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '贵族千金'],
     2: ['精灵猎手', '精灵千金'],
@@ -796,9 +757,8 @@ async function beast_inv(area, sinkou, rand = default_rand) {
     5: ['破邪天使', '天使圣女'],
   }[area] ?? ['女人', '贵族千金'];
 
-  // :681 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
   if (rand(2) === 0) {
-    // :681-687
     await era.printAndWait(
       `在被俘的${l1}身上，施加了强力的催眠魔法，持续的心理暗示，让她成为一只发情期的母兽了。`,
     );
@@ -812,7 +772,6 @@ async function beast_inv(area, sinkou, rand = default_rand) {
       `和魔兽不停地激烈交配着，${l1}发出了像野兽一样的高亢叫声。`,
     );
   } else {
-    // :688-695
     await era.printAndWait(
       `在魔王军的驻地里，偶尔被抓获的${l0}作为俘虏被戏耍着。`,
     );
@@ -828,7 +787,7 @@ async function beast_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :695-697
+  return 0;
 }
 
 /**
@@ -839,7 +798,7 @@ async function beast_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function brain_inv(area, sinkou, rand = default_rand) {
-  // :705-720 戦場別の称呼（只有一个名字；ELSE 臂 = 人间界的「女」）
+  // 戦場別の称呼（只有一个名字；ELSE 臂 = 人间界的「女」）
   const [l0] = {
     1: ['女'],
     2: ['女精灵'],
@@ -848,9 +807,8 @@ async function brain_inv(area, sinkou, rand = default_rand) {
     5: ['天使'],
   }[area] ?? ['女'];
 
-  // :721 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
   if (rand(2) === 0) {
-    // :721-727
     await era.printAndWait(
       `${l0}司令官的拷问开始了。为了下一步的进军，有必要让她说出全部。`,
     );
@@ -868,7 +826,6 @@ async function brain_inv(area, sinkou, rand = default_rand) {
       '爱液和小便弄脏了椅子，顺着椅脚流下，和地上的血与汗一起，混合成一个小水坑。',
     );
   } else {
-    // :728-736
     await era.printAndWait(`${l0}间谍的拷问在持续着。`);
     await era.printAndWait('『无论怎么折磨我，都是徒劳的！…』');
     await era.printAndWait(
@@ -887,7 +844,7 @@ async function brain_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :736-738
+  return 0;
 }
 
 /**
@@ -898,7 +855,7 @@ async function brain_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function horse_inv(area, sinkou, rand = default_rand) {
-  // :745-766 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
+  // 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '本地女领主'],
     2: ['女精灵', '精灵女族长'],
@@ -907,9 +864,8 @@ async function horse_inv(area, sinkou, rand = default_rand) {
     5: ['十字军', '十字军军官'],
   }[area] ?? ['女人', '本地女领主'];
 
-  // :768 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
   if (rand(2) === 0) {
-    // :768-774
     await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');
     await era.printAndWait(`居然是原来的${l1}，现在成为了马的阴茎套。`);
     await era.printAndWait('被魔法变成了肉袋，很轻易的将马的巨根纳入腔中。');
@@ -917,7 +873,6 @@ async function horse_inv(area, sinkou, rand = default_rand) {
     await era.printAndWait('不过肖像上贤淑的影子，已经在这个肉袋上找不到了。');
     await era.printAndWait('带着一副贪欲的阿嘿颜，和下流无比的神色在游街。');
   } else {
-    // :775-780
     await era.printAndWait(
       `『马奸刑…？那是什么…』${l0}被全裸锁在木马上，挣扎着。`,
     );
@@ -931,7 +886,7 @@ async function horse_inv(area, sinkou, rand = default_rand) {
     );
   }
 
-  return 0; // :780-782
+  return 0;
 }
 
 module.exports = {

@@ -1,13 +1,6 @@
 /**
  * ere/chara/chara-body.js 的行为测试（issue #385：身体与年龄生成）。
  *
- * 源: target/ERB/キャラ関数/CHARA_BODY.ERB  @CHAR_BODY_GENERATE_WAPPED（:16-36）、
- *       @CHAR_AGE_GENERATE（:148-242）、@RACE_AGE_GENERATE（:245-337）、
- *       @HUMAN_AGE_GENERATE（:340-406）
- *     target/ERB/キャラ関数/CHARA_BODY2.ERB  @NORMAL_POINT_PICKUP（:306-323，
- *       CHAR_AGE_GENERATE 的取点步骤，随本票落地）、
- *       @CHAR_BUST_REGENERATE_WAPPED（:2-14，issue #406 落地）
- *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开导出
  * 直驱。随机源一律显式注入确定序列（#344：漏给会落到真随机，用例只在部分
  * 抽样里真的守住行为）；种族年龄表按 #138 的数组承载预置。
@@ -94,7 +87,7 @@ test('RACE_AGE_GENERATE：堕落种族三编号（7/8/9）一律原样返回人�
   const fixture = create_era_fixture();
   seed_race_table(fixture);
   const { race_age_generate } = fixture.load_module('chara/chara-body');
-  // :267-276 的 IF 体内只有一条无条件的 RETURN ARG:0——两条 SIF 赋值
+  // 的 IF 体内只有一条无条件的 RETURN ARG:0——两条 SIF 赋值
   // （RACE_ID = 0/5）是死代码，暗精灵/堕天使同样直接返回（见 race_id_of 头注）。
   // 用 42 而不是 17：精灵槽（×10）与天使槽（偏斜）在 17 上都可能碰巧给出
   // 别的档位，42 能同时把「误走精灵槽」「误走天使槽」两种情况分开。
@@ -127,7 +120,7 @@ test('RACE_AGE_GENERATE：小数倍档按整数除法截断（人狼 115）', ()
   const fixture = create_era_fixture();
   seed_race_table(fixture);
   const { race_age_generate } = fixture.load_module('chara/chara-body');
-  // :302-303 ARG:0 × (DEG × 10 + NUM) / 10 = 年龄 × 15 / 10
+  // ARG:0 × (DEG × 10 + NUM) / 10 = 年龄 × 15 / 10
   assert.equal(race_age_generate(17, 2, always), 25);
   assert.equal(race_age_generate(19, 2, always), 28, '285 / 10 截断为 28');
   assert.equal(race_age_generate(20, 2, always), 30);
@@ -275,7 +268,7 @@ test('HUMAN_AGE_GENERATE：随机档（2 起）无唯一解 → 回落 CFLAG:452
 test('HUMAN_AGE_GENERATE：堕落种族三编号（7/8/9）原样返回；未设种族（0）走 1 倍档', () => {
   const fixture = create_era_fixture();
   seed_race_table(fixture);
-  // :364-373 同 race_age_generate：无条件的 RETURN ARG:0 盖住整个 IF 体
+  // 同 race_age_generate：无条件的 RETURN ARG:0 盖住整个 IF 体
   for (const race_no of [7, 8, 9]) {
     const fallen = seed_race(fixture, 13, race_no);
     assert.equal(fallen(42, 13), 42, `堕落种族 ${race_no} 原样返回`);

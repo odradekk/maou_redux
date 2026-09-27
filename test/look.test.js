@@ -2,8 +2,6 @@
  * ere/chara/look-info.js 的行为测试（issue #389，N5 段 1）：
  * `%GET_LOOK_INFO(ARG, ARGS)%` 式中函数的全部 kind。
  *
- * 源: target/ERB/キャラ関数/LOOK.ERB  @GET_LOOK_INFO（:2885-3775）
- *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开导出
  * 直驱。本函数是纯函数（只有读取与拼接），无随机源、无输出——所以本文件
  * 一律用「预置素质 → 断言返回值」的表驱动写法，不注入随机。
@@ -267,11 +265,11 @@ table(
   T.体型,
   [
     [1, '纤细'],
-    [100, '纤细'], // :3072 上界
+    [100, '纤细'], // 上界
     [101, '标准'],
     [200, '标准'],
     [201, '丰满'],
-    [300, '丰满'], // :3076 上界
+    [300, '丰满'], // 上界
     [0, 'ERROR'],
     [301, 'ERROR'],
   ],
@@ -297,8 +295,8 @@ table(
   T.阴毛状态,
   [
     [1, '白虎'],
-    [2, '胎毛'], // :3100 下界
-    [20, '胎毛'], // :3100 上界（与下一段 :3102 的下界 20 重叠 → 归前一段）
+    [2, '胎毛'], // 下界
+    [20, '胎毛'], // 上界（与下一段 :3102 的下界 20 重叠 → 归前一段）
     [21, '新长的'],
     [50, '新长的'], // 重叠点归前一段
     [51, '稀薄'],
@@ -308,7 +306,7 @@ table(
     [151, '浓密'],
     [200, '浓密'], // 重叠点归前一段
     [201, '硬毛'],
-    [500, '硬毛'], // :3109 上界
+    [500, '硬毛'], // 上界
     [0, 'ERROR'],
     [501, 'ERROR'],
   ],
@@ -354,7 +352,7 @@ table(
 );
 
 test('GET_LOOK_INFO「魅力点」CASE 29：扶她/男人返回自己的鸡鸡，否则私处', () => {
-  // :3172-3176 源里用 PRINT；本实现返回同串（本文件头已判等价）
+  // 源里用 PRINT；本实现返回同串（本文件头已判等价）
   const { get_look_info } = load({ [T.魅力点]: 29, [T.男人]: 1 });
   assert.equal(get_look_info(5, '魅力点'), '自己的鸡鸡');
 
@@ -463,7 +461,7 @@ table(
 );
 
 test('GET_LOOK_INFO「种族12」：精英（TALENT:220）走种族2，否则走种族', () => {
-  // :3309-3314 GOTO $INFO_种族 / $INFO_种族2
+  // GOTO $INFO_种族 / $INFO_种族2
   const elite = load({ [T.种族]: 2, [T.种族2]: 7, 220: 1 });
   assert.equal(elite.get_look_info(5, '种族12'), '巨人');
 
@@ -505,7 +503,7 @@ table(
 );
 
 test('GET_LOOK_INFO「成为勇者前的生活」：四档按性别分叉的女性侧', () => {
-  // :3336-3340 / :3356-3360 / :3366-3370 / :3378-3382（男人素质未置位）
+  // （男人素质未置位）
   const fixture = create_era_fixture();
   const { get_look_info } = fixture.load_module('chara/look-info');
   for (const [value, expected] of [
@@ -520,7 +518,6 @@ test('GET_LOOK_INFO「成为勇者前的生活」：四档按性别分叉的女�
 });
 
 test('GET_LOOK_INFO「成为勇者前的生活」：男人走四档的男性侧', () => {
-  // :3336-3340 / :3356-3360 / :3366-3370 / :3378-3382
   const cases = [
     [2, '修士'],
     [11, '巫者'],
@@ -587,7 +584,7 @@ table(
 );
 
 test('GET_LOOK_INFO「职业」：200-228 取最后一个真值档的素质名', () => {
-  // :3460-3472 FOR LOCAL, 200, 229（上界开区间）——多个真值时取后者
+  // FOR LOCAL, 200, 229（上界开区间）——多个真值时取后者
   const single = world({ 205: 1 });
   single.store.set('talentname:205', '剑士');
   assert.equal(
@@ -647,7 +644,7 @@ test('GET_LOOK_INFO「性格」：160-178 优先，全空才回落 10-18', () =>
 });
 
 test('GET_LOOK_INFO「性格」：两段扫描区间各含自己的上界与下界', () => {
-  // :3475 `FOR LOCAL, 160, 179` / :3480 `FOR LOCAL, 10, 19`
+  // `FOR LOCAL, 160, 179` / :3480 `FOR LOCAL, 10, 19`
   const probe = (talents, names) => {
     const fixture = world(talents);
     for (const [idx, label] of Object.entries(names)) {
@@ -671,7 +668,7 @@ test('GET_LOOK_INFO「性格」：两段扫描区间各含自己的上界与下�
 // —— 婚史：TALENT:320 的十进制压缩码解码 ——
 
 test('GET_LOOK_INFO「婚史」：保密/无两档', () => {
-  // :3493-3500 LOCAL:1 = LOCAL % 10
+  // LOCAL:1 = LOCAL % 10
   const secret = load({ [T.家族构成]: 20 }); // 个位 0 且非 0
   assert.equal(secret.get_look_info(5, '婚史'), '婚史保密');
 
@@ -680,7 +677,6 @@ test('GET_LOOK_INFO「婚史」：保密/无两档', () => {
 });
 
 test('GET_LOOK_INFO「婚史」：CASE 0 未婚，CFLAG:601 != 0 时加「原」', () => {
-  // :3516-3521
   const plain = load({ [T.家族构成]: 1 });
   assert.equal(plain.get_look_info(5, '婚史'), '未婚');
 
@@ -693,7 +689,7 @@ test('GET_LOOK_INFO「婚史」：CASE 0 未婚，CFLAG:601 != 0 时加「原」
 });
 
 test('GET_LOOK_INFO「婚史」：五档婚姻状态 × 三类配偶称呼', () => {
-  // :3522-3558：万位 = 婚姻状态，十亿位 = 夫妻性别码
+  // ：万位 = 婚姻状态，十亿位 = 夫妻性别码
   const cases = [
     // [家族码, 期望串]
     [10001, '已与丈夫结婚'], // 万位 1、十亿位 0
@@ -718,7 +714,7 @@ test('GET_LOOK_INFO「婚史」：五档婚姻状态 × 三类配偶称呼', () 
 // —— 家族：双亲指定 / 家族码解码 ——
 
 test('GET_LOOK_INFO「家族」：双亲指定时按素质/物品名拼串', () => {
-  // :3564-3587：>1000 是素质名、否则是物品名
+  // ：>1000 是素质名、否则是物品名
   const fixture = world({
     [T.父亲种族]: 1000 + 12,
     [T.母亲种族]: 345,
@@ -730,13 +726,13 @@ test('GET_LOOK_INFO「家族」：双亲指定时按素质/物品名拼串', () 
 });
 
 test('GET_LOOK_INFO「家族」：只有一方指定时不走双亲支', () => {
-  // :3564 判据是与——单方指定落家族码解码，码为 0 → 家族保密
+  // 判据是与——单方指定落家族码解码，码为 0 → 家族保密
   const { get_look_info } = load({ [T.父亲种族]: 1005 });
   assert.equal(get_look_info(5, '家族'), '家族保密');
 });
 
 test('GET_LOOK_INFO「家族」：个位为 0 → 家族保密；全员皆空 → 孤身一人', () => {
-  // :3588-3594 LOCAL:1 = LOCAL % 10（注意与「婚史」不同：这里不排除 0 本身）
+  // LOCAL:1 = LOCAL % 10（注意与「婚史」不同：这里不排除 0 本身）
   const secret = load({ [T.家族构成]: 10 });
   assert.equal(secret.get_look_info(5, '家族'), '家族保密');
 
@@ -748,7 +744,7 @@ test('GET_LOOK_INFO「家族」：个位为 0 → 家族保密；全员皆空 �
 });
 
 test('GET_LOOK_INFO「家族」：配偶档位 1 与 3 都出称呼，其余不出', () => {
-  // :3600-3621 LOCAL:1 == 1 与 == 3 两支同体
+  // LOCAL:1 == 1 与 == 3 两支同体
   for (const [marriage, expected] of [
     [1, '丈夫'],
     [3, '丈夫'],
@@ -761,7 +757,7 @@ test('GET_LOOK_INFO「家族」：配偶档位 1 与 3 都出称呼，其余不�
 });
 
 test('GET_LOOK_INFO「家族」：六类亲属的单个/多个两种写法', () => {
-  // :3623-3671：一位数 = 1 时不带数量、>1 时 `TOSTR(v, " 娘x{0}")`（格式串
+  // ：一位数 = 1 时不带数量、>1 时 `TOSTR(v, " 娘x{0}")`（格式串
   // 自带前导空格，故两式都带空格；家族码 = 1 + 值×位）
   const cases = [
     // [位, 值, 期望串]
@@ -814,7 +810,6 @@ test('GET_LOOK_INFO「原种族」：未登记码回落到「种族」分支（�
 });
 
 test('GET_LOOK_INFO「现种族」：INRANGE(v, 100, 220) 走物品名，否则 ERROR', () => {
-  // :3704-3709
   for (const [value, expected] of [
     [100, '蜥蜴人'],
     [132, '小恶魔'],
@@ -1118,7 +1113,7 @@ look_table(
 );
 
 test('LOOK_SET 素质 304：发型按头发长度三段取不同上界', () => {
-  // :122-128 短(1-100) → RAND:3 / 半长(101-200) → RAND:10 / 长(201-300) → RAND:12
+  // 短(1-100) → RAND:3 / 半长(101-200) → RAND:10 / 长(201-300) → RAND:12
   const cases = [
     [0, 3, 2, 3], // 短：长度掷 0 → 302 = 1 → RAND:3
     [4, 10, 9, 10], // 半长：长度掷 4 → 302 = 101
@@ -1514,7 +1509,7 @@ test('LOOK_SET：不会法术时修道女（Q=2）重掷', () => {
 });
 
 test('LOOK_SET：男人两支的经验上界（童貞オトコ RAND:20 / オトコ RAND:40）', () => {
-  // :508-521 两支的上界不同（20 / 40），必须分开钉——RAND:20 与 RAND:40 各
+  // 两支的上界不同（20 / 40），必须分开钉——RAND:20 与 RAND:40 各
   // 投不同的值，两支才区分得开：20 → 5（local = 6）、40 → 1（local = 2）
   const cases = [
     // [素质前置, 期望经验值, 依据]
@@ -1561,7 +1556,7 @@ test('LOOK_SET：妓女/乞丐/奴隶的经验与善恶值', () => {
 });
 
 test('LOOK_SET：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40 的差异）', () => {
-  // :529-537 RAND:5 == 0 支：私处与肛门各掷 40、性交 += 两者之和
+  // RAND:5 == 0 支：私处与肛门各掷 40、性交 += 两者之和
   const anal = look_world();
   const cid_a = anal.run(0, always);
   anal.run_again(
@@ -1575,7 +1570,7 @@ test('LOOK_SET：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40
   assert.equal(anal.exp(cid_a, 5), 12, '性交经验 = 私处 + 肛门 = 12');
   assert.equal(anal.exp(cid_a, 74), 12, '卖淫经验同额（Q != 20）');
 
-  // :538-544 非处女 V 支（RAND:5 != 0）：只掷一次 40
+  // 非处女 V 支（RAND:5 != 0）：只掷一次 40
   const v_only = look_world();
   const cid_v = v_only.run(0, always);
   v_only.run_again(cid_v, 0, steer({ 21: 4, 5: [1], 40: [5], 15: 1, 20: 1 }));
@@ -1586,7 +1581,7 @@ test('LOOK_SET：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40
 });
 
 test('LOOK_SET：刺青名表（CSTR:LOCAL，RAND:8 + 10 → 8 项全走）', () => {
-  // :550 `LOCALS:10 '= "淫乱","母猪",…` 十项，:551 `CSTR:LOCAL = %LOCALS:LOCAL%`；
+  // `LOCALS:10 '= "淫乱","母猪",…` 十项，:551 `CSTR:LOCAL = %LOCALS:LOCAL%`；
   // LOCAL = RAND:8 + 10 只取到前 8 项——逐项表驱动走完
   const names = [
     '淫乱',
@@ -1637,7 +1632,7 @@ test('LOOK_SET：刺青与生育经验的两处 RAND:15 掷骰', () => {
 });
 
 test('LOOK_SET：乞丐（Q=7）不刺青', () => {
-  // :548 `Q != 7` 是刺青的第二条判据
+  // `Q != 7` 是刺青的第二条判据
   const w = look_world();
   const cid = w.run(0, always);
   w.run_again(cid, 0, steer({ 21: 6, 5: 1, 15: [0, 1], 8: 0, 40: 1, 20: 1 }));
@@ -1811,7 +1806,7 @@ test('LOOK_SET 素质 320：后代（EX_TALENT:2）不进入离婚支', () => {
 });
 
 test('LOOK_SET 素质 320：主婦子供段（先加后判 break，「一人确定」）', () => {
-  // :686-700 主婦段：先加后判 break——掷到 break 也已经加过一个孩子，
+  // 主婦段：先加后判 break——掷到 break 也已经加过一个孩子，
   // 故「主婦必有一名子女」。精确值 2000050021 解：个位 1（設定あり）、
   // 十亿位 2（女女カップル）、百万位 5（子女 5 人，主婦段不动 break 走满）
   const w = look_world();
@@ -1831,7 +1826,7 @@ test('LOOK_SET 素质 320：主婦子供段（先加后判 break，「一人确�
 });
 
 test('LOOK_SET 素质 320：结婚经历子供段（先判后加 break）', () => {
-  // :701-716 第二支：`local >= 10 && 处女 == 0`——人妻档给 +10 + 10000
+  // 第二支：`local >= 10 && 处女 == 0`——人妻档给 +10 + 10000
   // （万位 = 結婚），子供段的 break 判据在加孩子之前
   const w = look_world();
   const cid = w.run(0, always);
@@ -1848,7 +1843,7 @@ test('LOOK_SET 素质 320：结婚经历子供段（先判后加 break）', () =
 });
 
 test('LOOK_SET 素质 320：未婚の母（娼婦上限 +2：2 → 4 人）', () => {
-  // :717-736 第三支：`RAND:20 == 0 && 处女 == 0`，且不能落进前两支。
+  // 第三支：`RAND:20 == 0 && 处女 == 0`，且不能落进前两支。
   // 前职业必须**掷**出来（315 是 LOOK_SET 自己写的，预置会被覆盖）：
   // RAND:21 → 4 得娼婦（q=5），RAND:21 → 0 得学生。
   // 家族码的百位 = 女儿数，正是本支的上限差
@@ -1894,7 +1889,7 @@ test('LOOK_SET 素质 320：未婚の母（娼婦上限 +2：2 → 4 人）', ()
 });
 
 test('LOOK_SET 素质 320：兄弟姐妹四类各占自己的位（100000/1000000/10000000/100000000）', () => {
-  // :739-759 的兄弟段：RAND:2 先判 break，再按 RAND:4/RAND:3/RAND:2 依次判
+  // 的兄弟段：RAND:2 先判 break，再按 RAND:4/RAND:3/RAND:2 依次判
   // 姉/兄/妹，都不中则 弟。四支各掷一次，钉住四个位不互相串
   const cases = [
     // [steer 覆盖, 位, 期望该位值]。RAND:2 的第一次是 break 判据（不给 0

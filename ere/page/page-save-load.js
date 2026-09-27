@@ -3,12 +3,6 @@
  * 删除（@SYSTEM_DELDATA）/ 槽位列表（@SYSTEM_LIST_DATA）+ 存档备注文本
  * （@SAVEINFO）的 1:1 移植（issue #136）。
  *
- * 源: target/ERB/SYSTEM/SYSTEM_DATA.ERB  @SYSTEM_LOADGAME（:5-83）/
- *     @SYSTEM_SAVEGAME（:88-213）/ @SYSTEM_DELDATA（:220-292）/
- *     @SYSTEM_LIST_DATA（:297-323）
- *     target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB  @SAVEINFO（:954-977）
- *     target/ERB/其他/VARIABLES.ERB:16  LASTSAVE_NO（10 元数组的声明）
- *
  * @SYSTEM_LOADEND（SYSTEM_DATA.ERB:328-469，142 行）**不移植**：全库静态搜索
  * 零调用者，且它不是 Emuera 保留名（保留名 @SYSTEM_TITLE / @TITLE_LOADGAME
  * / @SYSTEM_AUTOSAVE / @EVENTLOAD 等，技能 system-flow.md「主要系统函数一览」）
@@ -156,29 +150,29 @@ function get_times() {
 function list_data(start, end, empty_clickable) {
   for (let i = start; i < end; i += 1) {
     if (i >= AUTOSAVE_SLOT) {
-      // :302-304 PRINTL（空行）CONTINUE——末页的 99 号位在列表里留空，
+      // PRINTL（空行）CONTINUE——末页的 99 号位在列表里留空，
       // 由读档界面的单列段渲染
       era.println();
       continue;
     }
     let color;
-    // :307-308 SIF L_I == LASTLOAD_NO → DEEPSKYBLUE
+    // SIF L_I == LASTLOAD_NO → DEEPSKYBLUE
     if (i === era_flag.last_load_no) {
       color = 'deepskyblue';
     }
-    // :309-310 SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）
+    // SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）
     if (i === era_flag.last_save_no) {
       color = 'lightgreen';
     }
     const comment = era.get(`global:saves:${i}`);
     if (has_valid_save(comment)) {
-      // :313-314 PRINTFORML  [{L_I,2}] %RESULTS%（存在槽一律按钮，见文件头）
+      // PRINTFORML  [{L_I,2}] %RESULTS%（存在槽一律按钮，见文件头）
       era.printButton(comment, i, color ? { color } : undefined);
     } else if (empty_clickable) {
       // 存档界面的空槽：灰色按钮（正文 `----` 对应 :317；编号归引擎拼）
       era.printButton('----', i, { color: 'gray' });
     } else {
-      // :316-318 SETCOLORBYNAME GRAY → [{L_I,2}] ----（读/删视角不可选）
+      // SETCOLORBYNAME GRAY → [{L_I,2}] ----（读/删视角不可选）
       era.print([{ content: '----', color: 'gray' }]);
     }
   }
@@ -228,23 +222,23 @@ function push_last_save_no(idx) {
  * @returns {string} 备注正文（不含时间戳前缀）
  */
 function build_save_info() {
-  // :955-958 IF TIME == 0 → 第{DAY+1,2}日午前 ELSE 第{DAY+1,2}日午后；
+  // IF TIME == 0 → 第{DAY+1,2}日午前 ELSE 第{DAY+1,2}日午后；
   // %LOCALS,11%（宽 11 左对齐）
   const day_half = era_flag.time === 0 ? '午前' : '午后';
   let text = pad_display(
     `第${pad_left(String(era_flag.day_count + 1), 2)}日${day_half}`,
     11,
   );
-  // :960-963 指针改写副作用（见函数头注释）
+  // 指针改写副作用（见函数头注释）
   if ((era.get('flag:1') || 0) >= 0) {
     era_flag.target = era.get('flag:1') || 0;
   }
   if ((era.get('flag:2') || 0) >= 0) {
     era_flag.assi = era.get('flag:2') || 0;
   }
-  // :966 PUTFORM LV{CFLAG:MASTER:9,4,RIGHT}（魔王等级，右对齐宽 4）
+  // PUTFORM LV{CFLAG:MASTER:9,4,RIGHT}（魔王等级，右对齐宽 4）
   text += `LV${pad_left(String(era.get('cflag:0:9') || 0), 4)}`;
-  // :968-972 TARGET >= 1 → ` 正在调教:%SAVESTR:TARGET,14,LEFT% `（首尾各一
+  // TARGET >= 1 → ` 正在调教:%SAVESTR:TARGET,14,LEFT% `（首尾各一
   // 半角空格）；ELSE → %"",24%（24 个空格）
   if (era_flag.target >= 1) {
     // SAVESTR:TARGET → callname（#5 决议，见文件头映射表）
@@ -253,7 +247,7 @@ function build_save_info() {
   } else {
     text += NBSP.repeat(24);
   }
-  // :974-975 SIF STRLENS(CSTR:MASTER:99) > 0 → 『%CSTR:MASTER:99%』
+  // SIF STRLENS(CSTR:MASTER:99) > 0 → 『%CSTR:MASTER:99%』
   const story = chara(0).system.故事名;
   if (story.length > 0) {
     text += `『${story}』`;
@@ -271,39 +265,38 @@ async function set_story_name(anchor) {
   // 文本输入前必须清屏（erauma 12-sl 改名段同款；原作 INPUTS 无此限制，
   // 见文件头「界面形态说明」）
   await era.clear(era.getLineCount() - anchor);
-  // :151 CASE 200 的 DRAWLINE
+  // CASE 200 的 DRAWLINE
   era.drawLine();
-  // :193 PRINTFORM 请输入一个名称故事：（原作文案即此语序，1:1 保留）
+  // PRINTFORM 请输入一个名称故事：（原作文案即此语序，1:1 保留）
   era.print('请输入一个名称故事：');
   const current = chara(0).system.故事名;
   if (current.length > 0) {
-    // :194-197 现名提示。原作 PRINTBUTTON（现名）点击可预填输入框；ere 无
+    // 现名提示。原作 PRINTBUTTON（现名）点击可预填输入框；ere 无
     // 该能力（引擎渲染层无此变换），降为纯文本提示
     era.print(`（${current}）`);
   }
-  era.println(); // :198 PRINTL
-  // :200 INPUTS——引擎把回传值按 getNumber 归一（'' 与 "0" 都成数值 0），
+  era.println(); // PRINTL
+  // INPUTS——引擎把回传值按 getNumber 归一（'' 与 "0" 都成数值 0），
   // 按 #567 的裁定 0 视为空输入，经共享判据还原成空串后落 :207-209 的消名支
   // （判断依据见 ere/utils/input-text.js；文件头的 #151 作废说明同源）
   const name = input_text(await era.input());
   if (name.length > 32) {
-    // :201-203 存储截断到 32 字符，**显示原串**（原作如此——CSTR 存
+    // 存储截断到 32 字符，**显示原串**（原作如此——CSTR 存
     // SUBSTRING(RESULTS,0,32)，PRINTFORMW 打印的是未截断的 RESULTS）
     chara(0).system.故事名 = name.substring(0, 32);
     era.print(`将故事命名为『${name}』`);
     await era.waitAnyKey();
   } else if (name.length > 0) {
-    // :204-206
     chara(0).system.故事名 = name;
     era.print(`将故事命名为『${name}』`);
     await era.waitAnyKey();
   } else {
-    // :207-209 空输入 = 消名
+    // 空输入 = 消名
     chara(0).system.故事名 = '';
     era.print('消去了故事的名字');
     await era.waitAnyKey();
   }
-  // :213 GOTO DRAW_PAGE（调用方循环尾清行重画）
+  // GOTO DRAW_PAGE（调用方循环尾清行重画）
 }
 
 /**
@@ -321,16 +314,16 @@ async function set_story_name(anchor) {
  */
 async function load_game() {
   let pos = 0; // #DIM L_POS（Emuera 局部零值；:12 的 < 0 归一不触发）
-  const anchor = era.getLineCount(); // :14 L_LINECOUNT = LINECOUNT
+  const anchor = era.getLineCount(); // L_LINECOUNT = LINECOUNT
 
   // $DRAW_PAGE
   for (;;) {
-    era.drawLine({ isSolid: true }); // :18 CUSTOMDRAWLINE =
-    era.print('【读取存档】要载入以下哪个存档？'); // :19
-    era.drawLine(); // :20
-    list_data(pos, pos + PAGE_LEN, false); // :22
+    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+    era.print('【读取存档】要载入以下哪个存档？');
+    era.drawLine();
+    list_data(pos, pos + PAGE_LEN, false);
 
-    // :24-34 99 号槽（自动存档位）单列渲染：存在 → 分隔线夹槽行（高亮判据
+    // 99 号槽（自动存档位）单列渲染：存在 → 分隔线夹槽行（高亮判据
     // LASTLOAD_NO == 99）；不存在 → 只一条分隔线（连 ---- 行都没有）
     era.drawLine();
     const comment99 = era.get(`global:saves:${AUTOSAVE_SLOT}`);
@@ -345,7 +338,7 @@ async function load_game() {
       era.drawLine();
     }
 
-    // :36-39 [101] 上一页 / [100] 返回 / [102] 下一页 + PRINTL
+    // [101] 上一页 / [100] 返回 / [102] 下一页 + PRINTL
     print_page_buttons(
       { accelerator: 101, content: '上一页' },
       { accelerator: 100, content: '返回' },
@@ -353,31 +346,31 @@ async function load_game() {
     );
     era.println();
 
-    // :43 INPUT 99（99 是默认值——空回车得 99；ere 无默认值参数，见文件头）
+    // INPUT 99（99 是默认值——空回车得 99；ere 无默认值参数，见文件头）
     const result = await era.input();
 
     if (result === 100) {
-      // :48-49 返回
+      // 返回
       return pos;
     }
     if (result === 101 && pos - PAGE_LEN >= 0) {
-      // :51-57 上一页
+      // 上一页
       pos -= PAGE_LEN;
     } else if (result === 102 && pos + PAGE_LEN < 99) {
-      // :59-65 下一页（< 99：末页 80 起时 80+20=100 不再翻）
+      // 下一页（< 99：末页 80 起时 80+20=100 不再翻）
       pos += PAGE_LEN;
     } else if (
       result >= 0 &&
       result <= 99 &&
       has_valid_save(era.get(`global:saves:${result}`))
     ) {
-      // :67-77 范围内且存在 → 读档
-      // :73 LOADDATA：ere 等价 era.loadData（Boolean）。引擎拒读时返回
+      // 范围内且存在 → 读档
+      // LOADDATA：ere 等价 era.loadData（Boolean）。引擎拒读时返回
       // false（如版本闸门），**不转场**——落到循环尾清行重绘，留在读档
       // 界面（原作无此分支：CHKDATA 通过后 LOADDATA 失败由 Emuera 弹错
       // 终止；ere 侧 false 不吞不炸，1:1 对应 CHKDATA 拦下的等输入路径）
       if (await era.loadData(result)) {
-        // :74-75 SIF EX_FLAG:2801 < 10 → 10（读入后的值上钳制；EX_FLAG:2801
+        // SIF EX_FLAG:2801 < 10 → 10（读入后的值上钳制；EX_FLAG:2801
         // = 一周目主线截止，包装层名 first_run_deadline）
         if (era_exflag.first_run_deadline < 10) {
           era_exflag.first_run_deadline = 10;
@@ -387,7 +380,7 @@ async function load_game() {
         era_flag.last_load_no = result;
         // @EVENTLOAD 链（原作 LOADDATA 后迁移的保留名回调，ere/event/
         // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——原作
-        // :769-771 的 BEGIN SHOP（显式、会跑 @EVENTSHOP）与隐式进入 SHOP
+        // 的 BEGIN SHOP（显式、会跑 @EVENTSHOP）与隐式进入 SHOP
         // 的区分在 ere 侧即此缺省值与覆盖值之差（begin-signal.js）
         const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;
         // LOADDATA 的转场语义（SYSTEM_DATA.ERB:71 注释「実行後、
@@ -398,7 +391,7 @@ async function load_game() {
         begin(next);
       }
     }
-    // :80-82 无效输入（CLEARLINE 1 重输）与翻页失败：统一清行重画（先例
+    // 无效输入（CLEARLINE 1 重输）与翻页失败：统一清行重画（先例
     // page-select-target，见文件头）
     await era.clear(era.getLineCount() - anchor);
   }
@@ -415,8 +408,8 @@ async function save_game() {
 
   // $DRAW_PAGE
   for (;;) {
-    era.drawLine({ isSolid: true }); // :101 CUSTOMDRAWLINE =
-    // :102-108 标题（故事名拼接；PRINT 不带行尾，两段拼同一行——ere 的
+    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+    // 标题（故事名拼接；PRINT 不带行尾，两段拼同一行——ere 的
     // print 独占一行，一次拼完再输出，两行布局等效）。标题 PRINT 的
     // 「【保存存档】」前缀首版漏抄，#161 范围 B 对拍实证
     // （saveload-natural-log:90），已补——读取画面（:19）同款前缀
@@ -429,17 +422,17 @@ async function save_game() {
     } else {
       era.print('【保存存档】当前故事还没有名字，要保存到以下哪个存档？');
     }
-    era.drawLine(); // :109
-    list_data(pos, pos + PAGE_LEN, true); // :111（空槽也按钮，见文件头）
+    era.drawLine();
+    list_data(pos, pos + PAGE_LEN, true); // （空槽也按钮，见文件头）
 
-    era.drawLine(); // :113
-    // :114-116 [200] 为故事命名 / [300] 删除存档
+    era.drawLine();
+    // [200] 为故事命名 / [300] 删除存档
     print_page_buttons(
       { accelerator: 200, content: '为故事命名' },
       { accelerator: 300, content: '删除存档' },
     );
     era.println();
-    // :117-120 [101] 上一页 / [100] 返回 / [102] 下一页
+    // [101] 上一页 / [100] 返回 / [102] 下一页
     print_page_buttons(
       { accelerator: 101, content: '上一页' },
       { accelerator: 100, content: '返回' },
@@ -447,33 +440,30 @@ async function save_game() {
     );
     era.println();
 
-    // :124 INPUT（无默认值）
+    // INPUT（无默认值）
     const result = await era.input();
 
     if (result === 100) {
-      // :129-130 返回
+      // 返回
       return pos;
     }
     if (result === 101 && pos - PAGE_LEN >= 0) {
-      // :132-138
       pos -= PAGE_LEN;
     } else if (result === 102 && pos + PAGE_LEN < 99) {
-      // :140-146
       pos += PAGE_LEN;
     } else if (result === 200) {
-      // :148-152 为故事命名（内部自管清行，返回后回 DRAW_PAGE）
+      // 为故事命名（内部自管清行，返回后回 DRAW_PAGE）
       await set_story_name(anchor);
     } else if (result === 300) {
-      // :154-159 删除存档：子界面带走当前页起点，返回新起点（子界面的
+      // 删除存档：子界面带走当前页起点，返回新起点（子界面的
       // 输出行留屏，由本循环尾的清行一并收走——原作同构）
       pos = await del_data(pos);
     } else if (result >= 0 && result <= 98) {
-      // :161-174 槽位（0-98，不含自动存档位）：存在 → 覆盖确认
+      // 槽位（0-98，不含自动存档位）：存在 → 覆盖确认
       const comment = era.get(`global:saves:${result}`);
       if (has_valid_save(comment)) {
-        // :165-166
         era.print('存档已经存在，确定要覆盖么？');
-        // :166 [1] 确定    [0] 取消（一行两选项；INPUT 0 的默认值 0 =
+        // [1] 确定    [0] 取消（一行两选项；INPUT 0 的默认值 0 =
         // 空回车取消，ere 无默认值参数，见文件头）
         print_page_buttons(
           { accelerator: 1, content: '确定' },
@@ -481,25 +471,25 @@ async function save_game() {
         );
         const confirm = await era.input();
         if (confirm !== 1) {
-          // :168-171 取消 → 清行回 DRAW_PAGE
+          // 取消 → 清行回 DRAW_PAGE
           await era.clear(era.getLineCount() - anchor);
           continue;
         }
       }
       // $SAVE_GAME（:181-190）
-      // :182-184 SAVEDATA_TEXT 清空 + CALL SAVEINFO + 拼时间戳前缀
+      // SAVEDATA_TEXT 清空 + CALL SAVEINFO + 拼时间戳前缀
       const remark = `${get_times()} ${build_save_info()}`;
-      // :185 SAVEDATA L_IDX, LOCALS（备注落 global:saves，引擎自动 saveGlobal）
+      // SAVEDATA L_IDX, LOCALS（备注落 global:saves，引擎自动 saveGlobal）
       await era.saveData(result, remark);
-      // :186 ARRAYSHIFT LASTSAVE_NO, 1, L_IDX
+      // ARRAYSHIFT LASTSAVE_NO, 1, L_IDX
       push_last_save_no(result);
-      // :189 PRINTFORMW 已将游戏保存为{L_IDX}号存档……（读键后返回；行留
+      // PRINTFORMW 已将游戏保存为{L_IDX}号存档……（读键后返回；行留
       // 屏由调用方重绘收走——原作 RETURN 前同样不清）
       era.print(`已将游戏保存为${result}号存档……`);
       await era.waitAnyKey();
       return pos;
     }
-    // :176-178 无效输入/翻页失败：清行重画
+    // 无效输入/翻页失败：清行重画
     await era.clear(era.getLineCount() - anchor);
   }
 }
@@ -539,7 +529,7 @@ async function auto_save() {
  * @returns {Promise<number>} 离开时的页起点（原作 RETURN L_POS）
  */
 async function del_data(pos = -1) {
-  // :227 L_POS = L_POS < 0 ? 0 # L_POS
+  // L_POS = L_POS < 0 ? 0 # L_POS
   if (pos < 0) {
     pos = 0;
   }
@@ -547,14 +537,14 @@ async function del_data(pos = -1) {
 
   // $DRAW_PAGE
   for (;;) {
-    era.drawLine({ isSolid: true }); // :233
-    era.print('【删除存档】要删除以下哪个存档？'); // :234
-    era.drawLine(); // :235
-    list_data(pos, pos + PAGE_LEN, false); // :237
+    era.drawLine({ isSolid: true });
+    era.print('【删除存档】要删除以下哪个存档？');
+    era.drawLine();
+    list_data(pos, pos + PAGE_LEN, false);
 
-    era.drawLine(); // :239
-    era.println(); // :240 PRINTL
-    // :242-245 [101] 上一页 / [100] 返回 / [102] 下一页
+    era.drawLine();
+    era.println(); // PRINTL
+    // [101] 上一页 / [100] 返回 / [102] 下一页
     print_page_buttons(
       { accelerator: 101, content: '上一页' },
       { accelerator: 100, content: '返回' },
@@ -562,39 +552,37 @@ async function del_data(pos = -1) {
     );
     era.println();
 
-    // :249 INPUT 99（默认值 99，见文件头）
+    // INPUT 99（默认值 99，见文件头）
     const result = await era.input();
 
     if (result === 100) {
-      // :253-255 返回
+      // 返回
       return pos;
     }
     if (result === 101 && pos - PAGE_LEN >= 0) {
-      // :257-263
       pos -= PAGE_LEN;
     } else if (result === 102 && pos + PAGE_LEN < 99) {
-      // :265-271
       pos += PAGE_LEN;
     } else if (
       result >= 0 &&
       result <= 99 &&
       has_valid_save(era.get(`global:saves:${result}`))
     ) {
-      // :273-287 存在 → 删除确认
-      era.print('确定要删除这个存档么？'); // :277
+      // 存在 → 删除确认
+      era.print('确定要删除这个存档么？');
       print_page_buttons(
         { accelerator: 1, content: '确定' },
         { accelerator: 0, content: '取消' },
       );
       const confirm = await era.input();
       if (confirm === 1) {
-        // :284 DELDATA L_IDX（备注随之从 global:saves 消失，引擎自动
+        // DELDATA L_IDX（备注随之从 global:saves 消失，引擎自动
         // saveGlobal）→ 回 DRAW_PAGE
         await era.rmData(result);
       }
-      // :280-285 取消/删除完成：一律回 DRAW_PAGE（循环尾清行重画）
+      // 取消/删除完成：一律回 DRAW_PAGE（循环尾清行重画）
     }
-    // :290-292 无效输入：清行重画
+    // 无效输入：清行重画
     await era.clear(era.getLineCount() - anchor);
   }
 }

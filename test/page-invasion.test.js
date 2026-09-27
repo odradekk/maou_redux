@@ -206,10 +206,10 @@ test('【验收 2】威望区间折扣：五档与原作公式逐档一致（INV
   // SINKOU 基数 400（气力 10000/25）；新档魔王无任何补正，档内折扣即增量。
   // 侵攻度起点 100（非 0）：同时固定「非首次侵略不打精锐部队传闻」
   const cases = [
-    { prestige: 30, expected: 100, tier: '动荡不安' }, // :275-278 ÷4
-    { prestige: 50, expected: 320, tier: '略受质疑' }, // :279-284 ×(100+(50-60)*2)/100
-    { prestige: 70, expected: 400, tier: '相安无事' }, // :285-286 无修正
-    { prestige: 90, expected: 440, tier: '广受爱戴' }, // :287-292 ×(100+(90-80))/100
+    { prestige: 30, expected: 100, tier: '动荡不安' }, // ÷4
+    { prestige: 50, expected: 320, tier: '略受质疑' }, // ×(100+(50-60)*2)/100
+    { prestige: 70, expected: 400, tier: '相安无事' }, // 无修正
+    { prestige: 90, expected: 440, tier: '广受爱戴' }, // ×(100+(90-80))/100
   ];
   for (const { prestige, expected, tier } of cases) {
     const fixture = create_era_fixture();
@@ -357,9 +357,9 @@ function seed_raidable(fixture, ids) {
   for (const id of ids) {
     fixture.seed_chara(id, { name: `勇者${id}`, callname: `勇者${id}` });
     fixture.era.addCharacter(id);
-    fixture.store.set(`base:${id}:0`, 500); // :452 体力
-    fixture.store.set(`cflag:${id}:0`, 1); // :455 出售与助手资格
-    fixture.store.set(`cflag:${id}:1`, 0); // :454 待机
+    fixture.store.set(`base:${id}:0`, 500); // 体力
+    fixture.store.set(`cflag:${id}:0`, 1); // 出售与助手资格
+    fixture.store.set(`cflag:${id}:1`, 0); // 待机
     fixture.store.set(`cflag:${id}:9`, 10); // 等级（勇者补正的读数源）
   }
 }
@@ -509,14 +509,14 @@ test('#612 征服后菜单：七个按钮的正文照写原作的「- 」', asyn
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
   for (const expected of [
-    '[0] - 巡视地上的魔界领土（已征服）', // :52
-    '[1] - 入侵精灵族的领域', // :56（未征服支）
-    '[2] - 入侵龙之山脉', // :61
-    '[3] - 入侵天界', // :66
-    '[4] - 攻略圣灵骑士的堡垒', // :71
-    '[5] - 攻略天神宫', // :78
-    '[9] - 向着世界之外', // :80（原文作「向著」）
-    '[999] - 退出', // :82
+    '[0] - 巡视地上的魔界领土（已征服）',
+    '[1] - 入侵精灵族的领域', // （未征服支）
+    '[2] - 入侵龙之山脉',
+    '[3] - 入侵天界',
+    '[4] - 攻略圣灵骑士的堡垒',
+    '[5] - 攻略天神宫',
+    '[9] - 向着世界之外', // （原文作「向著」）
+    '[999] - 退出',
   ]) {
     assert.ok(rendered.includes(expected), `${expected}（INVASION.ERB）`);
   }
@@ -534,10 +534,10 @@ test('#612 征服后菜单：七个按钮的正文照写原作的「- 」', asyn
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
   for (const expected of [
-    '[1] - 巡视黑暗精灵的领土（已征服）', // :54
-    '[2] - 巡视混沌龙之山（已征服）', // :59
-    '[3] - 巡视堕天使的淫界（已征服）', // :64
-    '[4] - 巡视圣灵骑士的卖春堡垒（已征服）', // :69
+    '[1] - 巡视黑暗精灵的领土（已征服）',
+    '[2] - 巡视混沌龙之山（已征服）',
+    '[3] - 巡视堕天使的淫界（已征服）',
+    '[4] - 巡视圣灵骑士的卖春堡垒（已征服）',
   ]) {
     assert.ok(
       won_rendered.includes(expected),
@@ -908,7 +908,7 @@ test('[3] 页窗守卫：max_page == 0 时 [上一页]/[下一页] 都不动页�
     ],
     'max_page == 0 时两个翻页键都不动页码',
   );
-  // :506-511 的补行：每页渲染 25 行、NUM_PAGE - rows = 1 行空行（三次重画各一次）
+  // 的补行：每页渲染 25 行、NUM_PAGE - rows = 1 行空行（三次重画各一次）
   assert.equal(
     history_texts(fixture).filter((line) => line === '').length,
     3,
@@ -1036,7 +1036,7 @@ test('@INVASION_EVENT_SEIEI 的三档传闻：后两档只对非魔力路线开�
   const third =
     '根据斥候打探的消息，狂王的精锐部队似乎已经在前方的城镇中布下了防线。';
   const third2 = '而且精锐部队的真正目的就是要捕捉魔王麾下的勇者………';
-  // :446-457 的「没有出现」四行（[2] 路线进战斗体但 FLAG:AREA < 5000 时）
+  // 的「没有出现」四行（[2] 路线进战斗体但 FLAG:AREA < 5000 时）
   const absent = ['………', '……', '…', '传闻中的精锐部队并没有出现…………'];
 
   // 直接驱动该臂：三档的判据是「FLAG:AREA 区间 × INV_TYPE 条件」，与
@@ -1221,7 +1221,7 @@ test('【验收 3】[109] 返回 1：run_shop 抛 BeginSignal(TURNEND)（SHOP ve
   const { run_shop } = fixture.load_module('page/page-shop');
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  // :127 BEGIN TURNEND —— 原作引擎行为：BEGIN 结束当前函数；ere 侧信号
+  // BEGIN TURNEND —— 原作引擎行为：BEGIN 结束当前函数；ere 侧信号
   // 上抛由主循环接站（先例：100 分支的 BEGIN TRAIN，#44）
   await assert.rejects(
     () => run_shop(),
@@ -2179,11 +2179,11 @@ function seed_seiei(fixture, id) {
 function seed_brute_hero(fixture, id, { lv = 10 } = {}) {
   fixture.seed_chara(id, { name: `勇者${id}`, callname: `勇者${id}` });
   fixture.era.addCharacter(id);
-  fixture.store.set(`base:${id}:0`, 500); // :308 体力
-  fixture.store.set(`cflag:${id}:0`, 1); // :309 出售与助手资格位
-  fixture.store.set(`cflag:${id}:1`, 0); // :310 待机
+  fixture.store.set(`base:${id}:0`, 500); // 体力
+  fixture.store.set(`cflag:${id}:0`, 1); // 出售与助手资格位
+  fixture.store.set(`cflag:${id}:1`, 0); // 待机
   fixture.store.set(`cflag:${id}:9`, lv); // 等级（勇者补正的读数源）
-  fixture.store.set(`talent:${id}:85`, 1); // :311 爱慕
+  fixture.store.set(`talent:${id}:85`, 1); // 爱慕
 }
 
 /**
@@ -2280,7 +2280,7 @@ test('@_INV_DEATH_CHECK：魔王侧四条退场判据与俘虏支（:482-521）'
     return { ret: await inv_death_check(0, 9), texts: fixture.text_lines() };
   };
 
-  // :482-487 被狂王俘虏过（TALENT:280）且气力 <= 1000 且 FLAG:5 位 7
+  // 被狂王俘虏过（TALENT:280）且气力 <= 1000 且 FLAG:5 位 7
   const captured = await run((s) => {
     s.set('base:0:1', 1000);
     s.set('talent:0:280', 1);
@@ -2292,7 +2292,7 @@ test('@_INV_DEATH_CHECK：魔王侧四条退场判据与俘虏支（:482-521）'
     '精锐部队俘获了魔王………',
   ]);
 
-  // :488-498 魔王军体力 <= 0：位 7 开 → 俘虏（状态 9），关 → 逃回（状态 0）
+  // 魔王军体力 <= 0：位 7 开 → 俘虏（状态 9），关 → 逃回（状态 0）
   const wiped = await run((s) => s.set('base:0:0', 0));
   assert.equal(wiped.ret, 1, ':498 RETURN 1');
   assert.deepEqual(wiped.texts, [
@@ -2306,14 +2306,14 @@ test('@_INV_DEATH_CHECK：魔王侧四条退场判据与俘虏支（:482-521）'
     '魔王军被精锐部队消灭了，魔王也被俘虏了…………',
   ]);
 
-  // :499-509 体力 <= 300
+  // 体力 <= 300
   const broken = await run((s) => s.set('base:0:0', 300));
   assert.equal(broken.ret, 1, ':509 RETURN 1');
   assert.deepEqual(broken.texts, [
     '魔王军被精锐部队击溃了，魔王从乱军中逃了回来…………',
   ]);
 
-  // :510-520 气力 <= 0
+  // 气力 <= 0
   const exhausted = await run((s) => s.set('base:0:1', 0));
   assert.equal(exhausted.ret, 1, ':520 RETURN 1');
   assert.deepEqual(exhausted.texts, [
@@ -2398,7 +2398,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
   const rand = seq([2001, 0]);
   assert.equal(await invasion_event_seiei(81, 82, 2, state, rand), 0);
 
-  // :315-316 勇者的体力/气力加上 SINKOU（2048）
+  // 勇者的体力/气力加上 SINKOU（2048）
   assert.equal(
     fixture.store.get('base:1:0'),
     20000 + 2048 - 250,
@@ -2409,9 +2409,9 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
     20000 + 2048 - 250,
     ':422 气力同减',
   );
-  // :361 先制守卫：200 < 100*(2048/2048+1) = 200 不成立 → ELSE 支
+  // 先制守卫：200 < 100*(2048/2048+1) = 200 不成立 → ELSE 支
   assert.equal(fixture.store.get('cflag:18:12'), 100, ':388 精锐防御减半');
-  // :412 精锐反击：100 < 150 → 伤害 (150-100)*5 = 250，防御 100/3*2 = 66
+  // 精锐反击：100 < 150 → 伤害 (150-100)*5 = 250，防御 100/3*2 = 66
   assert.equal(
     fixture.store.get('cflag:1:12'),
     66,
@@ -2423,7 +2423,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
     undefined,
     ':471 的退场分支不给经验（经验只在 :394 之后）',
   );
-  // :432-435 DELCHARA
+  // DELCHARA
   assert.ok(
     !fixture.era.getAddedCharacters().includes(18),
     ':434 精锐部队退场（DELCHARA）',
@@ -2435,7 +2435,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
     '你的勇者勇者1率领着魔王军和精锐部队展开了战斗！',
     '（怪物的战斗力将被添加到攻击力和体力和气力上）',
     '魔王军 勇者1',
-    // :344 的攻防行在交手之前：攻击值按 SINKOU/1024+1 = 3 倍放大，防御尚未被削
+    // 的攻防行在交手之前：攻击值按 SINKOU/1024+1 = 3 倍放大，防御尚未被削
     '攻击300 防御100 怪物的合计战力2048点',
     'VS',
     '精锐部队',
@@ -2446,7 +2446,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
   ]) {
     assert(texts.includes(line), `缺少输出行：${line}`);
   }
-  // :340/:343/:352/:355 的 (cur/max) 数值列（条后文字）不可被 barWidth 吞掉
+  // 的 (cur/max) 数值列（条后文字）不可被 barWidth 吞掉
   assert(
     progress_outs(fixture).includes(' 22048/20000'),
     '魔王军体力条的数值列可见（显示发生在 :315-316 的 SINKOU 补正之后）',
@@ -2462,7 +2462,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
 });
 
 test('@INVASION_EVENT_SEIEI 战斗体：胜出交付经验走的是第一条无实参检查（原作缺陷）', async () => {
-  // :391 `CALL _INV_DEATH_CHECK`（**无实参**）→ ARG:0 = ARG:1 = 0，判的是
+  // `CALL _INV_DEATH_CHECK`（**无实参**）→ ARG:0 = ARG:1 = 0，判的是
   // 魔王（角色 0）自己的体力/气力。于是 :394 的「魔王侧获得胜利」经验段
   // 由**魔王被打残**触发，而不是精锐部队倒下。原作缺陷，#14 登记，1:1 保留。
   const fixture = create_era_fixture();
@@ -2488,7 +2488,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：胜出交付经验走的是第一条无�
   const state = { sinkou: 2048, yusya_i: 1 };
   const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
   assert.equal(await invasion_event_seiei(81, 82, 2, state, seq([2001, 0])), 0);
-  // :394-395 经验 SINKOU/5 = 409（精锐部队本身毫发未损）
+  // 经验 SINKOU/5 = 409（精锐部队本身毫发未损）
   assert.equal(fixture.store.get('exp:1:80'), 409, ':394 SINKOU/5');
   assert.equal(fixture.store.get('base:18:0'), 9000, '精锐部队全程未被击伤');
   assert(fixture.text_lines().includes('勇者1获得了409点经验值！'), ':395');
@@ -2523,7 +2523,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：攻击型 19 与 FLAG:60 的等级补正
   // RAND:2 == 1 → 攻击型 19（:301-305）
   assert.equal(await invasion_event_seiei(81, 82, 2, state, seq([2001, 1])), 0);
 
-  // :308-313 六行补正（FLAG:60 = 10）：攻击/防御 +10、上限与当前各 +100
+  // 六行补正（FLAG:60 = 10）：攻击/防御 +10、上限与当前各 +100
   assert.equal(fixture.store.get('cflag:19:11'), 200 + 10, ':308 CFLAG:11');
   assert.equal(
     fixture.store.get('cflag:19:12'),
@@ -2586,7 +2586,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：REPEAT 21 打满 → 战线崩溃 RETURN
   ]) {
     assert(texts.includes(line), `缺少超时输出行：${line}`);
   }
-  // :326-327 超时也给经验（SINKOU/10 = 204），与 :394 的胜出档 SINKOU/5 不同
+  // 超时也给经验（SINKOU/10 = 204），与 :394 的胜出档 SINKOU/5 不同
   assert.equal(fixture.store.get('exp:1:80'), 204, ':326 SINKOU/10');
   assert(texts.includes('勇者1获得了204点经验值！'), ':327');
   // REPEAT 21 的第 21 次由 :318 的 TIME_I > 19 截住：整屏只画 20 次
@@ -2649,7 +2649,7 @@ test('[2] 勇者出兵：怪物消耗三分之一、勇者补正、结果段（:
   // RAND:100 = 99：结果段的 9% 抓捕不命中（:882）
   assert.equal(await run_invasion(fixture, [2, 1], knob({ 100: 99 })), 1);
 
-  // :424-426 怪物 /= 3 后 *= 2（与 [0] 的 /= 2 不同）
+  // 怪物 /= 3 后 *= 2（与 [0] 的 /= 2 不同）
   assert.equal(
     fixture.store.get('item:100'),
     400,
@@ -2657,7 +2657,7 @@ test('[2] 勇者出兵：怪物消耗三分之一、勇者补正、结果段（:
   );
   // 战力 11 → 勇者补正 x1.10（等级 10）→ 12 → 侵攻度 +12
   assert.equal(fixture.store.get('flag:81'), 12, ':611 未征服全额入账');
-  // :842/:843/:845 未征服：战利品 = SINKOU*5、经验 = SINKOU/2
+  // 未征服：战利品 = SINKOU*5、经验 = SINKOU/2
   assert.equal(fixture.store.get('flag:10004'), 60, ':843 MONEY += SINKOU*5');
   assert.equal(fixture.store.get('exflag:4444'), 60, ':844 EX_FLAG:4444 同步');
   assert.equal(
@@ -3184,7 +3184,7 @@ test('FORT 的选项渲染：INV_TYPE 0/2/3 三套正文，2/3 才需要输入�
       ),
     ':587',
   );
-  // :595 `L_CHOICE = RESULT + 1`：键入 2 → L_CHOICE == 3（绕路）
+  // `L_CHOICE = RESULT + 1`：键入 2 → L_CHOICE == 3（绕路）
   assert(
     raid.text_lines().includes('勇者1绕开城堡向人间界进发，但却遇到了埋伏。'),
     ':798 键入 2 到了绕路支',
@@ -3359,7 +3359,7 @@ test('CHALLENGE [召唤魔王应战] 的道具二选一：堂堂正正与开挂�
     ':1059 EX_FLAG:4444 -= 3000',
   );
   assert(failed.text_lines().includes('金钱-3000。'), ':1057');
-  // :1047-1053 的 PRINTFORM 与 PRINTDATAL 同显示行归并，道具行整行输出
+  // 的 PRINTFORM 与 PRINTDATAL 同显示行归并，道具行整行输出
   assert(
     failed
       .text_lines()
@@ -3531,7 +3531,7 @@ test('CHALLENGE [亲自上前处理]：20/40/40 三档（:1087-1135）', async (
     'INV_TYPE == 2 的失败支不写 CFLAG（那两条在 ELSEIF 之下）',
   );
 
-  // :1127-1133 的两条收尾只对 INV_TYPE != 2 开（[3] 路线；该路线无选项、固定 L_CHOICE = 2）
+  // 的两条收尾只对 INV_TYPE != 2 开（[3] 路线；该路线无选项、固定 L_CHOICE = 2）
   const loot_escaped = await run(
     6,
     [(f) => f.store.set('flag:5', 128), (f) => f.store.set('flag:82', 1)],

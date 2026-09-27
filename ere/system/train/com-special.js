@@ -3,20 +3,6 @@
  * 判定 + @EQUIP_COM53/54/57/58/59 持续效果 + TRAIN_MESSAGE_A/B 分支（issue
  * #224，阶段 4 轴 A J14）。
  *
- * 源: target/ERB/調教相關/COMF50_ローション.ERB     @COM50（:3-28）
- *     target/ERB/調教相關/COMF51_媚薬.ERB           @COM51（:10-97）
- *     target/ERB/調教相關/COMF52_利尿剤.ERB         @COM52（:6-71）
- *     target/ERB/調教相關/COMF53_水晶球.ERB         @COM53（:3-49）+ @EQUIP_COM53（:52-204）
- *     target/ERB/調教相關/COMF54_野外プレイ.ERB     @COM54（:3-109）+ @EQUIP_COM54（:111-211）
- *     target/ERB/調教相關/COMF55_何もしない.ERB     @COM55（:7-84）
- *     target/ERB/調教相關/COMF56_会話する.ERB       @COM56（:6-196）
- *     target/ERB/調教相關/COMF57_羞恥プレイ.ERB     @COM57（:3-131）+ @EQUIP_COM57（:134-254）
- *     target/ERB/調教相關/COMF58_お風呂場プレイ.ERB @COM58（:3-98）+ @EQUIP_COM58（:100-198）
- *     target/ERB/調教相關/COMF59_新妻プレイ.ERB     @COM59（:3-160）+ @EQUIP_COM59（:163-318）
- *     target/ERB/調教相關/COMABLE.ERB               @COM_ABLE50-59（:2246-2506）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB    SELECTCOM 55（:362-373）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB    SELECTCOM 50-54、56-59（:1901-2063）
- *
  * == 本族边界 ==
  *
  * - COM50_AUTO（COMF50:30-46）属于自动调教票 #218，本模块不重复实现。
@@ -125,7 +111,7 @@ const tier = (values, level) => values[Math.min(level, values.length - 1)];
 function outdoor_sources(cid) {
   let a = 500;
   let b = 500;
-  a = times(a, lust_factor(cid)); // :23-34 / :122-133
+  a = times(a, lust_factor(cid));
 
   const exposure = abl(cid, 17);
   const [extra, factor] = tier(
@@ -141,13 +127,13 @@ function outdoor_sources(cid) {
   );
   add_src(cid, 7, extra);
   add_src(cid, 10, extra);
-  a = times(a, factor); // :35-60 / :134-159
-  a = times(a, tier([80, 100, 130, 160, 200, 300], abl(cid, 21))); // :61-74
+  a = times(a, factor);
+  a = times(a, tier([80, 100, 130, 160, 200, 300], abl(cid, 21)));
 
-  if (tal(cid, 28)) a = times(a, 150); // :76-78
-  if (tal(cid, 33)) a = times(a, 150); // :79-81
-  if (tal(cid, 10)) b = times(b, 200); // :83-85
-  if (tal(cid, 35)) b = times(b, 200); // :86-88
+  if (tal(cid, 28)) a = times(a, 150);
+  if (tal(cid, 33)) a = times(a, 150);
+  if (tal(cid, 10)) b = times(b, 200);
+  if (tal(cid, 35)) b = times(b, 200);
   if (tal(cid, 89)) {
     a = times(a, 200);
     b = times(b, 50);
@@ -321,20 +307,20 @@ function set_video_record(cid, frame, value) {
 /** @COM50 润滑液（COMF50:3-28）。 */
 async function com50() {
   const cid = target_id();
-  era.print('润滑液'); // :6
-  await train_message_b(); // :8
-  set_src(cid, 10, 10000); // :13
-  set_src(cid, 12, 300); // :14
-  game.train.润滑液 -= 1; // :16
-  same_sex_exp(cid, era_flag.player, 1); // :18-26
+  era.print('润滑液');
+  await train_message_b();
+  set_src(cid, 10, 10000);
+  set_src(cid, 12, 300);
+  game.train.润滑液 -= 1;
+  same_sex_exp(cid, era_flag.player, 1);
   return 1;
 }
 
 /** @COM51 媚药（COMF51:10-97）。 */
 async function com51() {
   const cid = target_id();
-  era.print('媚药'); // :12
-  await train_message_b(); // :14
+  era.print('媚药');
+  await train_message_b();
 
   let lose0 = 300;
   let lose1 = 300;
@@ -357,7 +343,7 @@ async function com51() {
   } else {
     set_src(cid, 11, 5000);
   }
-  add_lose(cid, 0, Math.max(lose0, 0)); // :59-61 体力损耗不低于 0
+  add_lose(cid, 0, Math.max(lose0, 0)); // 体力损耗不低于 0
   add_lose(cid, 1, lose1);
 
   same_sex_exp(cid, era_flag.player, 1);
@@ -373,8 +359,8 @@ async function com51() {
 /** @COM52 利尿剂（COMF52:6-71）。 */
 async function com52() {
   const cid = target_id();
-  era.print('利尿剂'); // :8
-  await train_message_b(); // :10
+  era.print('利尿剂');
+  await train_message_b();
 
   let lose0 = 120;
   let lose1 = 120;
@@ -414,7 +400,7 @@ function drug_exp_level(value) {
 /** @COM53 水晶球录像开关（COMF53:3-49）。 */
 async function com53() {
   const cid = target_id();
-  await train_message_b(); // :7：切换前消息看旧 TEQUIP
+  await train_message_b(); // ：切换前消息看旧 TEQUIP
   if (chara(cid).train.录像摄影) {
     chara(cid).train.录像摄影 = 0;
     game.train.水晶球魔力源 -= 1;
@@ -450,7 +436,7 @@ async function equip_com53() {
   const frame = chara(cid).train.录像时间;
 
   if (frame === 0) {
-    chara(cid).train.录像时间 += 1; // :63-65 首 tick 不记入录像
+    chara(cid).train.录像时间 += 1; // 首 tick 不记入录像
   } else if (frame <= video_max) {
     let record = era_flag.selectcom;
     if (era_flag.assiplay && !tal(era_flag.assi, 122)) record += 1000;
@@ -743,8 +729,8 @@ async function com58() {
   era.print('浴室PLAY');
   await train_message_b();
   if (chara(cid).train.浴室PLAY) {
-    if (chara(cid).train.淋浴中) chara(cid).train.淋浴中 = 0; // :13-14 必须先清淋浴
-    chara(cid).train.浴室PLAY = 0; // :15
+    if (chara(cid).train.淋浴中) chara(cid).train.淋浴中 = 0; // 必须先清淋浴
+    chara(cid).train.浴室PLAY = 0;
     return 1;
   }
   add_lose(cid, 1, 30);

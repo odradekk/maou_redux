@@ -2,10 +2,6 @@
  * @file 怪物数据表（issue #175，阶段 3 H6）：@MONSTER_DATA 分发器里的各
  *     怪物函数落为纯数据常量表；查表与生成行为在 ere/dungeon/monster-data.js。
  *
- * 源: target/ERB/怪物相關/MONSTER_DATA.ERB  各 @怪物函数（:465-2483 的
- *     同构段，每段 9 个 E 数组赋值）
- *     target/ERB/侵略/ENEMY_DATA.ERB  @CRUSADER（:23-67，十字军 1000-1009）
- *
  * 与 ere/data/equip-database.js 同一先例（#168 裁定 6：纯 ELSEIF 数据链落
  * ere/data/，无逻辑、无 require、无条件分支）。形状由
  * test/dungeon-battle.test.js 的「从 ERB 源解析怪物函数、与产物逐条比对」

@@ -65,7 +65,7 @@ test('税収日：整个 1..31 只有 10/20/30 三天产出，其余日子一行
       assert(fixture.text_lines().length > 0, `${day} 日是税収日，应当有输出`);
       continue;
     }
-    // :15-19 非税日 → 在任何输出之前 RETURN 0
+    // 非税日 → 在任何输出之前 RETURN 0
     assert.deepEqual(fixture.text_lines(), [], `${day} 日不应有任何输出`);
     assert.equal(fixture.waits.length, 0, `${day} 日不应有任何等待`);
     assert(
@@ -88,7 +88,7 @@ test('税収日：开场文案与「收税」分隔块 1:1', async () => {
     '- - - 收税 - - -',
     '',
   ]);
-  // :16 PRINTW 与 :29 裸 WAIT 各等一次键
+  // PRINTW 与 :29 裸 WAIT 各等一次键
   assert.equal(fixture.waits[0].waited, true);
   assert.equal(fixture.waits[1].waited, true);
 });
@@ -157,7 +157,7 @@ test('威望五档：四档封顶各自生效（超额即压到上限）', async
 });
 
 test('威望五档：封顶以内按整数除法截断（单价 × 天数 × 威望 / 100）', async () => {
-  // :46 trunc(7*30*21/100) = trunc(44.1) = 44（不是四舍五入的 45）
+  // trunc(7*30*21/100) = trunc(44.1) = 44（不是四舍五入的 45）
   const fixture = await run_tax({
     'flag:10000': 7,
     'exflag:99': 21,
@@ -410,11 +410,11 @@ test('魔王特别税：按 FLAG:9 加成（+= 不是 ×），收完清零', asy
   for (const [surcharge, expected] of cases) {
     const fixture = await run_tax({ 'flag:9': surcharge });
     assert.equal(tax3(fixture), expected, `FLAG:9 = ${surcharge}`);
-    // :213 FLAG:9 = 0——税率是消费点，收完归零
+    // FLAG:9 = 0——税率是消费点，收完归零
     assert.equal(fixture.store.get('flag:9'), 0, 'FLAG:9 应清零');
   }
 
-  // :205-207 的顺序：先乘 (FLAG:9 + 100) 再整除 100，最后减回原额。
+  // 的顺序：先乘 (FLAG:9 + 100) 再整除 100，最后减回原额。
   // 舍入看得到：基数 120、FLAG:9 = 1 → trunc(121.2) = 121 → 修正 +1
   const rounded = await run_tax({ 'flag:9': 1 });
   assert.equal(tax3(rounded), 1);

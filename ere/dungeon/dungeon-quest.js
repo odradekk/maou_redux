@@ -1,13 +1,6 @@
 /**
  * @file 任务系统（issue #178，阶段 3 H9）：DUNGEON_QUEST.ERB 全量 17 函数。
  *
- * 源: target/ERB/迷宮/DUNGEON_QUEST.ERB  @SET_QUEST（:6-113，受注与清算）、
- *       @RESULT_QUEST（:116-177，战斗后成败结算）、@QUEST_SELECT（:180-513，
- *       任务文本分发——セット/成功/失敗/名前 四态 × 三型任务）、
- *       @QUEST_BATTLE_SET（:516-617，任务战斗判定与敌方设置）、
- *       @QUEST_BITCH（:620-682，性奉侍按怪物凌辱类型分派）+ 12 个
- *       @*_QUEST_BITCH 段（:689-951，各类型性奉侍的经验结算）
- *
  * 任务状态槽（CFLAG，dungeon 属主域内）：
  *   534 受注状态（0=无 1=受注中 bit1=成功完结 bit2=失败完结）
  *   535 报酬类型（1=资金 2=道德 3=道具）/ 536 障碍位图（bit0 BOSS、1 陷阱、
@@ -79,20 +72,20 @@ function setbit(v, n) {
  */
 async function set_quest(arg, rand = default_rand) {
   const rand_n = rand;
-  // :16-17 クエスト禁止（FLAG:8 位 3 = 游戏设置 2 的任务开关，enter-enemy.js
+  // クエスト禁止（FLAG:8 位 3 = 游戏设置 2 的任务开关，enter-enemy.js
   // 同款裸读；CHARA_INFO_SHOW 的受注显示同判此位）
   if (getbit(era.get('flag:8') || 0, 3) !== 0) {
     return 0;
   }
 
-  // :19-21 PM:0 队长 / PM:1 仲間A / PM:2 仲間B
+  // PM:0 队长 / PM:1 仲間A / PM:2 仲間B
   const pm = [
     arg,
     era.get(`cflag:${arg}:531`) || 0,
     era.get(`cflag:${arg}:532`) || 0,
   ];
 
-  // :23-111 全員に順番に設定する
+  // 全員に順番に設定する
   for (let lcount = 0; lcount < 3; lcount += 1) {
     if (pm[lcount] <= 0) {
       continue;
@@ -100,7 +93,7 @@ async function set_quest(arg, rand = default_rand) {
     const cid = pm[lcount];
     const q534 = chara(cid).dungeon.已接任务;
 
-    // :28-47 終了したクエストの清算
+    // 終了したクエストの清算
     if (getbit(q534, 2) !== 0) {
       // 失败完结：无报酬，仅复位
       chara(cid).dungeon.已接任务 = 0;
@@ -127,18 +120,18 @@ async function set_quest(arg, rand = default_rand) {
         const { add_ex_item } = require('#/dungeon/dungeon');
         await add_ex_item(-3, cid, 1); // CALL ADD_EX_ITEM, -3, (PM:LCOUNT), 1
       }
-      chara(cid).dungeon.已接任务 = 0; // :46
+      chara(cid).dungeon.已接任务 = 0;
     }
 
-    // :49-51 受注状態が初期化されていないとダメ
+    // 受注状態が初期化されていないとダメ
     if (chara(cid).dungeon.已接任务 !== 0) {
       continue;
     }
 
-    // :53-54 クエスト報酬（RAND:3 + 1 → 1=お金/2=道德/3=道具）
+    // クエスト報酬（RAND:3 + 1 → 1=お金/2=道德/3=道具）
     era.set(`cflag:${cid}:535`, rand_n(3) + 1);
 
-    // :56-83 クエストの障害（六个独立 1/3 掷点；bit5 假任务非显示）
+    // クエストの障害（六个独立 1/3 掷点；bit5 假任务非显示）
     let q536 = 0; // CFLAG:536 = 0（:58 初始化）
     if (rand_n(3) === 0) {
       q536 = setbit(q536, 0); // それはボスとの戦闘を強いられる
@@ -160,10 +153,10 @@ async function set_quest(arg, rand = default_rand) {
     }
     era.set(`cflag:${cid}:536`, q536);
 
-    // :85-86 クエストの目的（タイプ 1-3 与人称 540 在此掷定）
+    // クエストの目的（タイプ 1-3 与人称 540 在此掷定）
     await quest_select(cid, '设定', 0, rand_n);
 
-    // :88-96 討伐対象（モンスターID）
+    // 討伐対象（モンスターID）
     if (chara(cid).invasion.状态 === 12) {
       // 戦役（CFLAG:1 == 12）：怪物表由战役侧给出（#469 起真身）
       const { campaign_monster_list } = require('#/dungeon/dungeon-battle');
@@ -179,7 +172,7 @@ async function set_quest(arg, rand = default_rand) {
       era.set(`cflag:${cid}:538`, local * 10 + rand_n(5) + 100);
     }
 
-    // :98-104 受注カウンタ——**原作判 GETBIT(536,3)（大量敌人）而非 bit2
+    // 受注カウンタ——**原作判 GETBIT(536,3)（大量敌人）而非 bit2
     // （时限）**，注释却写「時間制限あり」：短时限实际挂在大量敌人位上
     // （登记 #14；1:1 照抄不修）。普通依頼は99ターンまで猶予。
     if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) {
@@ -188,7 +181,7 @@ async function set_quest(arg, rand = default_rand) {
       era.set(`cflag:${cid}:539`, 99);
     }
 
-    // :106-110 クエスト：受注状態 → 名前打印
+    // クエスト：受注状態 → 名前打印
     chara(cid).dungeon.已接任务 = 1;
     era.print(`${name_of(cid)}接受了任务！`);
     await quest_select(cid, '名前', 0, rand_n);
@@ -214,30 +207,30 @@ async function set_quest(arg, rand = default_rand) {
  */
 async function result_quest(arg, args, rand = default_rand) {
   const rand_n = rand;
-  // :125-127 クエスト禁止
+  // クエスト禁止
   if (getbit(era.get('flag:8') || 0, 3) !== 0) {
     return 0;
   }
 
-  // :129-131 PM:0 队长 / PM:1 仲間A / PM:2 仲間B
+  // PM:0 队长 / PM:1 仲間A / PM:2 仲間B
   const pm = [
     arg,
     era.get(`cflag:${arg}:531`) || 0,
     era.get(`cflag:${arg}:532`) || 0,
   ];
 
-  // :133-175 全員に順番に結果を見る
+  // 全員に順番に結果を見る
   for (let lcount = 0; lcount < 3; lcount += 1) {
     if (pm[lcount] <= 0) {
       continue;
     }
     const cid = pm[lcount];
-    // :138-140 クエスト受注で成功でも失敗でもない場合じゃないとダメ
+    // クエスト受注で成功でも失敗でもない場合じゃないとダメ
     if (chara(cid).dungeon.已接任务 !== 1) {
       continue;
     }
 
-    // :142-150 該当モンスターがいないとダメ（E 列头直比讨伐对象）
+    // 該当モンスターがいないとダメ（E 列头直比讨伐对象）
     const monid = era.get(`cflag:${cid}:538`) || 0;
     let found = 0; // LOCAL
     for (let mcount = 0; mcount < 300; mcount += 100) {
@@ -249,11 +242,11 @@ async function result_quest(arg, args, rand = default_rand) {
       continue;
     }
 
-    // :153 PRINTW *クエスト結果*
+    // PRINTW *クエスト結果*
     era.print('*任务结果*');
     await era.waitAnyKey();
 
-    // :155-158 偽の依頼（ARGS 覆写为 失敗；原作引用传参，此处局部变量）
+    // 偽の依頼（ARGS 覆写为 失敗；原作引用传参，此处局部变量）
     let args_local = args;
     if (getbit(era.get(`cflag:${cid}:536`) || 0, 5) !== 0) {
       era.print('看来是接了个假任务……');
@@ -261,17 +254,17 @@ async function result_quest(arg, args, rand = default_rand) {
       args_local = '失败';
     }
 
-    // :160-163 受注カウンタ消滅（超时同覆写）
+    // 受注カウンタ消滅（超时同覆写）
     if ((era.get(`cflag:${cid}:539`) || 0) < 1) {
       era.print('看来是没有赶上……');
       await era.waitAnyKey(); // PRINTW
       args_local = '失败';
     }
 
-    // :165 成败日志（QUEST_SELECT 的成功/失敗文本）
+    // 成败日志（QUEST_SELECT 的成功/失敗文本）
     await quest_select(cid, args_local, 0, rand_n);
 
-    // :167-173 完结位（bit1 成功 / bit2 失败）
+    // 完结位（bit1 成功 / bit2 失败）
     if (args_local === '失败') {
       era.print('-任务失败-'); // PRINTFORML
       chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 2);
@@ -400,7 +393,7 @@ function quest_fail_tail3(rand_n) {
 async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
   const rand_n = rand;
 
-  // :194-199 ARGS == セット时掷定类型，否则读既有值
+  // ARGS == セット时掷定类型，否则读既有值
   let type;
   if (args === '设定') {
     type = rand_n(3) + 1;
@@ -409,30 +402,28 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
     type = era.get(`cflag:${arg}:537`) || 0;
   }
 
-  // :201 MON_ID = CFLAG:ARG:538（セット态时是上一任务残留，但 LINE3 段
+  // MON_ID = CFLAG:ARG:538（セット态时是上一任务残留，但 LINE3 段
   // 受名前态守卫、セット 不消费它——残留值无读者）
   const mon_id = era.get(`cflag:${arg}:538`) || 0;
   const mon_name = era.get(`itemname:${mon_id}`) ?? ''; // %ITEMNAME:MON_ID%
 
-  // :204-208 QUEST_LINE 2/3 直跳 LINE2/LINE3（跳过 TYPE 段）
+  // QUEST_LINE 2/3 直跳 LINE2/LINE3（跳过 TYPE 段）
   if (quest_line !== 2 && quest_line !== 3) {
     if (type === 1) {
-      // :210-288 さらわれた娘
+      // さらわれた娘
       if (args === '设定') {
-        era.set(`cflag:${arg}:540`, rand_n(5)); // :213
+        era.set(`cflag:${arg}:540`, rand_n(5));
       } else if (args === '成功') {
-        // :214-229
         era.print(
           `${name_of(arg)}将被${mon_name}掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}安全救出了！`,
         );
       } else if (args === '失败') {
-        // :230-267
         era.print(
           `被${mon_name}掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}`,
         );
         era.print(quest_fail_tail(rand_n)); // ;PRINT は（原注释态的接续词不落）
       } else if (args === '名前') {
-        // :268-287 名段 + ]（原作两次 PRINT 不换行 = 同一显示行，归并为
+        // 名段 + ]（原作两次 PRINT 不换行 = 同一显示行，归并为
         // 一次 print——dungeon.js 文件头先例；quest_line 1 供
         // CHARA_INFO_SHOW 行内拼接，不落换行符）
         era.print(
@@ -440,9 +431,9 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         );
       }
     } else if (type === 2) {
-      // :289-366 淫魔の虜
+      // 淫魔の虜
       if (args === '设定') {
-        era.set(`cflag:${arg}:540`, rand_n(5)); // :292
+        era.set(`cflag:${arg}:540`, rand_n(5));
       } else if (args === '成功') {
         era.print(
           `${name_of(arg)}将被${mon_name}诱惑了的${quest_victim(2, era.get(`cflag:${arg}:540`) || 0)}安全救出了！`,
@@ -459,9 +450,9 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         );
       }
     } else if (type === 3) {
-      // :367-445 変異する身体
+      // 変異する身体
       if (args === '设定') {
-        era.set(`cflag:${arg}:540`, rand_n(5)); // :370
+        era.set(`cflag:${arg}:540`, rand_n(5));
       } else if (args === '成功') {
         era.print(
           `${name_of(arg)}将${mon_name}的肝打了包用回城魔法传送了、成功治好了${quest_victim(3, era.get(`cflag:${arg}:540`) || 0)}的异状！`,
@@ -478,9 +469,9 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         );
       }
     } else {
-      return 0; // :446-447
+      return 0;
     }
-    // :449-450 SIF QUEST_LINE == 1 → LINEEND
+    // SIF QUEST_LINE == 1 → LINEEND
     if (quest_line === 1) {
       return 1;
     }
@@ -490,7 +481,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
   //    GOTO 跳过 IF 判定直落块内——args 非名前也执行讨伐对象行 ——
   if (quest_line === 3) {
     if (mon_id === 0) {
-      return 1; // :502-503 GOTO LINEEND
+      return 1; // GOTO LINEEND
     }
     era.print(`*讨伐对象是${mon_name}`); // PRINTFORM（不换行）
     return 1;
@@ -500,7 +491,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
   if (args === '名前') {
     const q536 = era.get(`cflag:${arg}:536`) || 0;
     if (quest_line === 0) {
-      // :453-463 五行逐位明细（受注面板全份形态）
+      // 五行逐位明细（受注面板全份形态）
       if (getbit(q536, 0) !== 0) {
         era.print('*须强迫与BOSS战斗');
       }
@@ -517,7 +508,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         era.print('*会有性奉仕的要求');
       }
     } else {
-      // :464-498 聚合形态（CHARA_INFO_SHOW:406 的行内拼接；SIF CFLAG:536
+      // 聚合形态（CHARA_INFO_SHOW:406 的行内拼接；SIF CFLAG:536
       // 守门——无障碍时「*任务会有」也不打）
       if (q536 !== 0) {
         const parts = [];
@@ -530,7 +521,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         era.print(`*任务会有${parts.join('/')}`); // PRINTFORM（不换行）
       }
     }
-    // :499-500 SIF QUEST_LINE == 2 → LINEEND
+    // SIF QUEST_LINE == 2 → LINEEND
     if (quest_line === 2) {
       return 1;
     }
@@ -538,11 +529,11 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
     // —— $LINE3（:501-510）：讨伐对象行（名前 态内；quest_line 3 经上方
     //    GOTO 分支独立进入）——
     if (mon_id === 0) {
-      return 1; // :502-503 GOTO LINEEND
+      return 1; // GOTO LINEEND
     }
     if (quest_line === 0) {
       era.print(`*讨伐对象是${mon_name}`); // PRINTFORML
-      await era.waitAnyKey(); // :509-510 SIF QUEST_LINE == 0 → WAIT
+      await era.waitAnyKey(); // SIF QUEST_LINE == 0 → WAIT
     } else {
       era.print(`*讨伐对象是${mon_name}`); // PRINTFORM（不换行）
     }
@@ -568,13 +559,13 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
  */
 async function quest_battle_set(arg0, rand = default_rand) {
   const rand_n = rand;
-  // :526-528 PM:0 队长 / PM:1 仲間A / PM:2 仲間B
+  // PM:0 队长 / PM:1 仲間A / PM:2 仲間B
   const pm = [
     arg0,
     era.get(`cflag:${arg0}:531`) || 0,
     era.get(`cflag:${arg0}:532`) || 0,
   ];
-  let quest_on = 0; // :530 クエスト発生フラグ
+  let quest_on = 0; // クエスト発生フラグ
 
   for (let lcount = 0; lcount < 3; lcount += 1) {
     if (pm[lcount] <= 0) {
@@ -582,22 +573,22 @@ async function quest_battle_set(arg0, rand = default_rand) {
     }
     const cid = pm[lcount];
 
-    // :536-538 時間経過（受注计数在掷点之前递减——每场战斗都tick）
+    // 時間経過（受注计数在掷点之前递减——每场战斗都tick）
     if ((era.get(`cflag:${cid}:539`) || 0) > 0) {
       era.set(`cflag:${cid}:539`, (era.get(`cflag:${cid}:539`) || 0) - 1);
     }
 
-    // :540-542 発生しないときもある（2/3 概率跳过该成员）
+    // 発生しないときもある（2/3 概率跳过该成员）
     if (rand_n(3) > 0) {
       continue;
     }
 
-    // :544-546 受注中（成功/失败完结都不可）
+    // 受注中（成功/失败完结都不可）
     if (chara(cid).dungeon.已接任务 !== 1) {
       continue;
     }
 
-    // :548-556 該当モンスターがいないとダメ
+    // 該当モンスターがいないとダメ
     const monid = era.get(`cflag:${cid}:538`) || 0;
     let found = 0; // LOCAL
     for (let mcount = 0; mcount < 300; mcount += 100) {
@@ -609,20 +600,20 @@ async function quest_battle_set(arg0, rand = default_rand) {
       continue;
     }
 
-    // :558-559 PRINTW *任务戦闘発生*
+    // PRINTW *任务戦闘発生*
     era.print('*任务战斗发生*');
     await era.waitAnyKey();
-    quest_on = 2; // :559
+    quest_on = 2;
 
     const q536 = era.get(`cflag:${cid}:536`) || 0;
 
-    // :561-565 それはボスとの戦闘（最後列 boss 化——E 第三列 208/299）
+    // それはボスとの戦闘（最後列 boss 化——E 第三列 208/299）
     if (getbit(q536, 0) !== 0) {
       e_set(208, 1);
       e_set(299, 1);
     }
 
-    // :567-579 それは罠が仕掛けてある（原作全局 A 换手 PM:LCOUNT，A 的
+    // それは罠が仕掛けてある（原作全局 A 换手 PM:LCOUNT，A 的
     // 暂存/恢复即陷阱受者的指定；ere 侧经第一参数显式传）
     if (getbit(q536, 1) !== 0) {
       if (rand_n(3) === 0) {
@@ -634,46 +625,46 @@ async function quest_battle_set(arg0, rand = default_rand) {
       }
     }
 
-    // :581-585 それは敵の数が異様に多い（最前列 15 只，覆写 boss 位）
+    // それは敵の数が異様に多い（最前列 15 只，覆写 boss 位）
     if (getbit(q536, 3) !== 0) {
       e_set(208, 0);
       e_set(299, 15);
     }
 
-    // :587-612 それは性奉仕を要求される
+    // それは性奉仕を要求される
     if (getbit(q536, 4) !== 0) {
       era.print('看来敌人提出了性方面的需求进行着交涉……'); // PRINTL
       let local = 100;
       // 娼婦 / 奴隷（出身位 TALENT:315 的值 5 / 20）
       const origin = era.get(`talent:${cid}:315`) || 0;
       if (origin === 5) {
-        local += 30; // :592-593
+        local += 30;
       }
       if (origin === 20) {
-        local += 30; // :595-596
+        local += 30;
       }
       // 売春経験（EXP:74）
-      local += era.get(`exp:${cid}:74`) || 0; // :598
+      local += era.get(`exp:${cid}:74`) || 0;
       // カルマ低い/すごく低い（两档可叠 +30）
       const karma_v = era.get(`cflag:${cid}:151`) || 0;
       if (karma_v < -30) {
-        local += 10; // :600-601
+        local += 10;
       }
       if (karma_v < -60) {
-        local += 20; // :603-604
+        local += 20;
       }
       if (rand_n(local) > 100) {
-        // :605-609 交涉成立——性奉侍完结任务，跳过普通战斗
+        // 交涉成立——性奉侍完结任务，跳过普通战斗
         await quest_bitch(cid, rand_n);
         era.print('*任务成功*'); // PRINTFORML
         chara(cid).dungeon.已接任务 = setbit(chara(cid).dungeon.已接任务, 1);
         return 1;
       }
-      era.print(`${name_of(cid)}用愤怒的话语回绝了`); // :611 PRINTFORML
+      era.print(`${name_of(cid)}用愤怒的话语回绝了`); // PRINTFORML
     }
   }
 
-  return quest_on; // :617
+  return quest_on;
 }
 
 /**
@@ -706,7 +697,7 @@ async function quest_bitch(arg, rand = default_rand) {
     12: horse_quest_bitch, // 馬
   };
 
-  // :628-673 三列按凌辱类型分派（;一応モンスター数の確認——数量 > 0）
+  // 三列按凌辱类型分派（;一応モンスター数の確認——数量 > 0）
   for (let mcount = 0; mcount < 300; mcount += 100) {
     const monnum = e_get(mcount + 99); // MONNUM = E:(MCOUNT+99)
     if (monnum <= 0) {
@@ -719,7 +710,7 @@ async function quest_bitch(arg, rand = default_rand) {
     }
   }
 
-  // :675-679 失贞判定（省略角色号 → TARGET；104 = 初体验对象「怪物」，
+  // 失贞判定（省略角色号 → TARGET；104 = 初体验对象「怪物」，
   // CFLAG:15/16 属主 train、TALENT:0 属主 chara——跨域写一律走门面）
   const t = era_flag.target;
   if (

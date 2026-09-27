@@ -325,7 +325,7 @@ export default [
   {
     desc: 'M6801 dungeon-town.js 的 SELL_EX_ITEM 真身调用删除',
     file: 'ere/dungeon/dungeon-town.js',
-    find: '    ex_item_mod.sell_ex_item(cid, rand_n); // :123 CALL SELL_EX_ITEM',
+    find: '    ex_item_mod.sell_ex_item(cid, rand_n); // CALL SELL_EX_ITEM',
     replace: '    // 变异：城镇出售 EX 道具调用删除',
     tests: ['ex-item'],
     must_mention: '房间与城镇调用点复用',

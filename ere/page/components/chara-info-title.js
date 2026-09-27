@@ -1,9 +1,6 @@
 /**
  * @file 角色信息画面的标题行与状态块（@SHOW_INFO_TITLE / @SHOW_BLOCK）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
- *       @SHOW_INFO_TITLE（:323-371）/ @SHOW_BLOCK（:372-427）
- *
  * 两段是一体的：@SHOW_CHARA_INFO 开局无条件先 CALL SHOW_INFO_TITLE（:28），
  * 页码 0/1 再 CALL SHOW_BLOCK（:261/:274）。等号线与年龄行只属前者。
  *
@@ -63,14 +60,14 @@ function talent(cid, index) {
  * @param {(n: number) => number} [rand] RAND:N 随机源（身体数据缺失时用）
  */
 function show_info_title(cid, rand = default_rand) {
-  era.drawLine({ isSolid: true }); // :326 CUSTOMDRAWLINE =
+  era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
 
-  // :336 名字：ARG == 0（魔王）取 NAME、其余取 SAVESTR——两者在 ere 侧同源
+  // 名字：ARG == 0（魔王）取 NAME、其余取 SAVESTR——两者在 ere 侧同源
   // callname:-1（callname-utils 头注），仍按两个函数取以留住语义分野
   const name = cid === 0 ? chara_name(cid) : chara_callname(cid);
-  const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }]; // :333
-  title.push({ content: pad_display(name, 12) }); // :336
-  // :337-347 爱慕优先于淫乱，两者都不命中时补五个全角空格对齐
+  const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }];
+  title.push({ content: pad_display(name, 12) });
+  // 爱慕优先于淫乱，两者都不命中时补五个全角空格对齐
   if (talent(cid, TALENT_AIBA) !== 0) {
     title.push({ content: '　<爱慕>　', color: ENAMORED_COLOR });
   } else if (talent(cid, TALENT_INRAN) !== 0) {
@@ -79,30 +76,30 @@ function show_info_title(cid, rand = default_rand) {
     title.push({ content: '　　　　　' });
   }
 
-  // :350-365 年龄串（三个 SIF 依次叠加；位 12 未开时为空串）
+  // 年龄串（三个 SIF 依次叠加；位 12 未开时为空串）
   let age_str = '';
   if (getbit(BIT_AGE) && cid !== 0) {
-    // :353-354 身体数据尚未生成时现生成（生成后 CFLAG:451 非 0）
+    // 身体数据尚未生成时现生成（生成后 CFLAG:451 非 0）
     if ((era.get(`cflag:${cid}:451`) || 0) === 0) {
       char_body_generate_wapped(cid, rand);
     }
     age_str = getbit(BIT_RACE_AGE)
-      ? `${era.get(`cflag:${cid}:452`) || 0} 岁` // :357 种族年龄
-      : `${era.get(`cflag:${cid}:451`) || 0} 岁`; // :359 人类年龄
+      ? `${era.get(`cflag:${cid}:452`) || 0} 岁` // 种族年龄
+      : `${era.get(`cflag:${cid}:451`) || 0} 岁`; // 人类年龄
     if (
       getbit(BIT_RACE_AGE) &&
       getbit(BIT_HUMAN_AGE) &&
       (era.get(`cflag:${cid}:451`) || 0) !== (era.get(`cflag:${cid}:452`) || 0)
     ) {
-      // :362 换算人类年龄（{..., 3} 是右对齐宽 3）
+      // 换算人类年龄（{..., 3} 是右对齐宽 3）
       age_str += ` (换算人类${pad_left(String(era.get(`cflag:${cid}:451`) || 0), 3)} 岁)`;
     }
     if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {
-      // :364 寿命倒计时（{CFLAG:820, 3} 同样右对齐宽 3）
+      // 寿命倒计时（{CFLAG:820, 3} 同样右对齐宽 3）
       age_str += ` [寿命还有${pad_left(String(era.get(`cflag:${cid}:820`) || 0), 3)} 天]`;
     }
   }
-  // :370 ELSE 臂：PRINTFORML %AGE_STR, 48%
+  // ELSE 臂：PRINTFORML %AGE_STR, 48%
   title.push({ content: pad_left(age_str, 48) });
   era.print(title);
 }
@@ -140,16 +137,16 @@ function size_str(cid, index) {
  * @returns {Promise<void>}
  */
 async function show_block(cid) {
-  // :370-373/:374-377/:395/:400/:411 的 (ARG != MASTER || MASTER) 守卫。打印
+  // 的 (ARG != MASTER || MASTER) 守卫。打印
   // 段用得到它；:395/:400/:411 三处只守 PRINTL 的收行（#596 起不镜像——ere
   // 的 print 自成一行，收行由引擎负责）
   const is_not_master = cid !== 0;
   const show_size = getbit(BIT_SIZE) && is_not_master;
 
   if (is_not_master) {
-    // :374 PRINTPLAINFORM 一人称：%SELF_CALL(ARG),26,LEFT%
+    // PRINTPLAINFORM 一人称：%SELF_CALL(ARG),26,LEFT%
     era.print(`一人称：${pad_display(self_call(cid), 26)}`);
-    // :375 PRINTFORM [8] 一人称重設 ——原作是与上一行同行的纯文字提示（Emuera
+    // PRINTFORM [8] 一人称重設 ——原作是与上一行同行的纯文字提示（Emuera
     // 的 INPUT 接受手输任意编号，敲 8 即可）；ere 的 input 只接受本轮已打印
     // 按钮的快捷键（#129），CASE 8（RANDOM_SELF_CALL 的 MODE 1）必须由真
     // 按钮接进——升级为 printButton（本项目通例，#384 改名按钮同款），按钮
@@ -158,50 +155,50 @@ async function show_block(cid) {
   }
 
   if (show_size) {
-    // :378-385 身高三围行（罩杯括号接在同一行尾）
+    // 身高三围行（罩杯括号接在同一行尾）
     const bust = [
-      // :380 PRINTPLAINFORM 后三个空格 = 1 个命令分隔符 + 2 个正文（见 chara-info-abl-mark.js 文件头）
+      // PRINTPLAINFORM 后三个空格 = 1 个命令分隔符 + 2 个正文（见 chara-info-abl-mark.js 文件头）
       { content: '\u00A0\u00A0' },
       {
         content: `身高 ${size_str(cid, 453)} cm\u3000B ${size_str(cid, 455)} cm`,
       },
     ];
     if (talent(cid, TALENT_MAN) === 0) {
-      bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) }); // :379/:382
+      bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) });
     } else {
-      bust.push({ content: NBSP.repeat(7) }); // :384（男性不显示罩杯，8 空格减分隔符 = 7）
+      bust.push({ content: NBSP.repeat(7) }); // （男性不显示罩杯，8 空格减分隔符 = 7）
     }
     era.print(bust);
   }
 
-  // :391-393 受注任务名（页码 1，不换行形态；页码 0 时守卫不成立）
+  // 受注任务名（页码 1，不换行形态；页码 0 时守卫不成立）
   if (quest_guard(cid)) {
     await quest_now()(cid, '名前', 1);
   }
-  // :395-396 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是
+  // 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是
   // LIFE_BAR 留下的未收行），不产生空行
 
-  // :399 CALL LIFE_BAR, ARG, 1（原作末尾免改行，见文件头的逐行说明）
+  // CALL LIFE_BAR, ARG, 1（原作末尾免改行，见文件头的逐行说明）
   life_bar(cid);
   if (show_size) {
-    // :401 体重/腰围行
+    // 体重/腰围行
     era.print(`体重 ${size_str(cid, 454)} kg\u3000W ${size_str(cid, 456)} cm`);
   }
   if (quest_guard(cid)) {
-    await quest_now()(cid, '名前', 2); // :405-406
+    await quest_now()(cid, '名前', 2);
   }
-  // :405-408 的 PRINTL 同理（只收体重行/LIFE_BAR 行）
+  // 的 PRINTL 同理（只收体重行/LIFE_BAR 行）
 
-  // :410 CALL VITAL_BAR, ARG, 1
+  // CALL VITAL_BAR, ARG, 1
   vital_bar(cid);
   if (show_size) {
-    // :412 臀围行（行首七个全角空格是对齐衬垫，不镜像）
+    // 臀围行（行首七个全角空格是对齐衬垫，不镜像）
     era.print(` H ${size_str(cid, 457)} cm`);
   }
   if (quest_guard(cid)) {
-    await quest_now()(cid, '名前', 3); // :416-417
+    await quest_now()(cid, '名前', 3);
   }
-  // :416-419 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）
+  // 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）
 }
 
 /**

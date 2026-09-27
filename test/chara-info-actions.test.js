@@ -260,7 +260,7 @@ test('CHARA_INFO_UP_LEVEL：金钱不够不扣款，购买播报恒用魔王名�
 
     await chara_info_up_level(1);
 
-    // :83 LOCALS 三目从未被 PRINTFORMW 读取，播报恒写 NAME:MASTER
+    // LOCALS 三目从未被 PRINTFORMW 读取，播报恒写 NAME:MASTER
     assert.equal(
       printed_includes(fixture, '你花费了1000G，购买了经验10点'),
       true,

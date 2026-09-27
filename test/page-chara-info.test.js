@@ -719,7 +719,7 @@ test('CHARA_INFO：直调内层的视图里转职返回 2（防御支）也不�
   // 转职的 2 来自原作 CHARA_JOB_CHANGE.ERB:55-57（侵攻中的勇者，RETURN 2，
   // 无输出直接返回）；CHARA_INFO ver1.0.1.ERB:1094-1099 的收尾写明
   // 「2なら再入力」——2 在内层就被消化成页内重画，不会上浮给名册，名册
-  // :100 的 IF RESULT == 1 收到的只会是其后 [100] 的 0。ere 侧该档位不渲染
+  // 的 IF RESULT == 1 收到的只会是其后 [100] 的 0。ere 侧该档位不渲染
   // [2] 按钮、编号进不了输入白名单（#129），故按夹具头注的既有手法（test
   // 里「被调方返回 2（防御支）」同款）就地替换 era.input 把 2 喂进去。
   // 序列：[1300] 切状态视图 → 选 1 → 个别页喂 2（转职防御支）→ [100]
@@ -1220,7 +1220,7 @@ test('case 8：输入 0 代替空输入（有意偏离，原作会把一人称�
 
 // —— #542：PTJ_BUTTON 的判死落点（[20] 立绘入口随 #638 一并删除，见上方） ——
 test('卖春积极性按钮（PTJ_BUTTON 默认态）：档位文案随 CFLAG:120 变，按下进真身——表驱动', async () => {
-  // :883 CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
+  // CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
   // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE = SHOW_BUTTON_BICH_LEVEL(18,ARG)
   // 的 [18] 卖春积极性按钮；打工变体（SHOW_PTJ_BUTTON_LEVEL）不渲染
   // [CFLAG:1:120, 期望按钮正文]
@@ -1559,7 +1559,7 @@ test('排序表头：[1200]-[1500] 四个快捷键各自切到对应视图——
     add_chara(fixture, 0, '你');
     add_chara(fixture, 1, '甲');
     // 下标含义（CHARA_INFO ver1.0.1.ERB:158-163 同款）：CFLAG:x:13 攻击 /
-    // :14 防御 / :580 所持金 / :582 借金（负值存储，显示取反）
+    // 防御 / :580 所持金 / :582 借金（负值存储，显示取反）
     fixture.store.set('cflag:1:13', 15);
     fixture.store.set('cflag:1:14', 20);
     fixture.store.set('cflag:1:580', 300);

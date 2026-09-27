@@ -65,7 +65,7 @@ test('TRAIN_NAME_INIT：守卫空过 → 110 槽全播种；再次调用幂等�
   assert.equal(writes.length, 121);
   assert.equal(fixture.store.get('trainalias:0'), '爱抚');
   assert.equal(fixture.store.get('trainalias:12'), '振动杖');
-  // :899 TRAIN_NAME:150 = %CSTR:7%調教（CSTR:31:7 未播种 → 空串 + 调教）
+  // TRAIN_NAME:150 = %CSTR:7%調教（CSTR:31:7 未播种 → 空串 + 调教）
   assert.equal(fixture.store.get('trainalias:150'), '调教');
 
   // 幂等（:786-787 守卫：槽 0 非空即返回）

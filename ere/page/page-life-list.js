@@ -2,12 +2,6 @@
  * @file 据点角色列表：@LIFE_LIST 族的七个函数（issue #397 / N13 段 3）；
  * @SELECT_YES_NO 自 #333 起已在（本文件原有内容，行为未动）。
  *
- * 源: target/ERB/SHOP/LIFE_LIST.ERB  @LIFE_LIST（:1-93）/
- *     @LIFE_LIST_ITEM（:95-141）/@LIFE_LIST_ENEMY（:144-161）/
- *     @MAX_PAGE_ENEMY（:163-176）/@LIFE_LIST_SALAVE（:178-197）/
- *     @MAX_PAGE_SALAVE（:199-212）/@LIFE_LIST_ITEM_E（:214-276）/
- *     @SELECT_YES_NO（:278-292）。
- *
  * 消费方（本票只落地，接入随各自页面）：SHOP_ITEM.ERB:512/:608、
  * SHOP_LABO ver1.0.2.ERB 的 42 处分页调用、CHARA_MARRIAGE.ERB:202、
  * CAMPAIGN_EVENT.ERB:75、AGENT_EVENT.ERB:72、INVASION.ERB:359/:502；
@@ -228,13 +222,13 @@ function tail_fragments(
   if (gender) {
     fragments.push(gender);
   }
-  // :62-66 / :115-120 お気に入り（CFLAG:700）
+  // お気に入り（CFLAG:700）
   if (cflag(cid, 700) !== 0) {
-    fragments.push({ content: favorite_space ? ' [☆]' : '[☆]' }); // :63/:117/:248
+    fragments.push({ content: favorite_space ? ' [☆]' : '[☆]' });
   } else if (favorite_pad) {
     fragments.push({ content: NBSP.repeat(5) });
   }
-  // :67-68 / :121-122 可被卖（CFLAG:1 == 0 且 CFLAG:0 > 0 且 非魔王 且 活着）
+  // 可被卖（CFLAG:1 == 0 且 CFLAG:0 > 0 且 非魔王 且 活着）
   if (
     cflag(cid, 1) === 0 &&
     cflag(cid, 0) > 0 &&
@@ -243,7 +237,7 @@ function tail_fragments(
   ) {
     fragments.push({ content: '[可被卖]' });
   }
-  // :69-70 / :123-124 可作为助手（CFLAG:0 == 2）
+  // 可作为助手（CFLAG:0 == 2）
   if (
     cflag(cid, 1) === 0 &&
     cflag(cid, 0) === 2 &&
@@ -252,7 +246,7 @@ function tail_fragments(
   ) {
     fragments.push({ content: '[可作为助手]' });
   }
-  // :71-72 / :125-126 虫寄生（190-193 任一）
+  // 虫寄生（190-193 任一）
   if ([190, 191, 192, 193].some((idx) => talent(cid, idx) !== 0)) {
     fragments.push({ content: '[虫寄生]' });
   }
@@ -260,7 +254,7 @@ function tail_fragments(
   if (pregnant) {
     fragments.push(pregnant);
   }
-  // :81-85 / :135-139 / :269-273 派遣（CFLAG:1 == 12）
+  // 派遣（CFLAG:1 == 12）
   if (cflag(cid, 1) === 12) {
     fragments.push({ content: '[派遣]', color: COLOR_DISPATCH });
   }
@@ -304,22 +298,22 @@ function base_field_text(cid, name_width, lv_width) {
  * @param {number} [num_page] 每页行数
  */
 function life_list(no_page = 0, mode = 1, num_page = 20) {
-  // :15 编号字段宽 = 本页最大序号 (NO_PAGE+1)*NUM_PAGE 的位数
+  // 编号字段宽 = 本页最大序号 (NO_PAGE+1)*NUM_PAGE 的位数
   const max_num_len = String((no_page + 1) * num_page).length;
-  // :16-21 名字与等级的字段宽（MAX_ATK_LEN/MAX_DEF_LEN 是死计算，见文件头）
+  // 名字与等级的字段宽（MAX_ATK_LEN/MAX_DEF_LEN 是死计算，见文件头）
   let max_name_len = 0;
   let max_lv_len = 0;
   for (const cid of era.getAddedCharacters()) {
     max_name_len = Math.max(max_name_len, display_width(chara_callname(cid)));
     max_lv_len = Math.max(max_lv_len, String(cflag(cid, 9)).length);
   }
-  const num_width = max_num_len + 2; // :22-24 的 %LOCALS, MAX_NUM_LEN+2, RIGHT%
+  const num_width = max_num_len + 2; // 的 %LOCALS, MAX_NUM_LEN+2, RIGHT%
   const name_width = max_name_len + 8;
   const lv_width = max_lv_len;
 
-  // :23-32 表头
+  // 表头
   if (mode === 0) {
-    // :24 %"你（可强化地下城）", MAX_NAME_LEN + 8,LEFT% ＋ LV（紧贴，无间距）
+    // %"你（可强化地下城）", MAX_NAME_LEN + 8,LEFT% ＋ LV（紧贴，无间距）
     print_row(
       0,
       [
@@ -330,9 +324,9 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
       num_width,
     );
   } else if (mode === 2) {
-    // :28-29 MODE 2：分支体为空，只画列表
+    // MODE 2：分支体为空，只画列表
   } else {
-    // :31 %SAVESTR:MASTER, MAX_NAME_LEN + 8,LEFT% %"",8,LEFT% LV{…}
+    // %SAVESTR:MASTER, MAX_NAME_LEN + 8,LEFT% %"",8,LEFT% LV{…}
     print_row(
       0,
       [
@@ -346,13 +340,13 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
     );
   }
 
-  // :34-88 列表：窗口按位置开（文件头第 1 条），逐行渲染 + 空位补行
+  // 列表：窗口按位置开（文件头第 1 条），逐行渲染 + 空位补行
   const window_ids = slave_ids().slice(
     no_page * num_page,
     (no_page + 1) * num_page,
   );
   for (const cid of window_ids) {
-    // :42-44 行首编号（按钮格）＋ 名/职业/等级 ＋ 行尾标签
+    // 行首编号（按钮格）＋ 名/职业/等级 ＋ 行尾标签
     print_row(
       cid,
       [
@@ -362,7 +356,7 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
       num_width,
     );
   }
-  // :36-38 COUNT >= CHARANUM → PRINTL（页高固定）
+  // COUNT >= CHARANUM → PRINTL（页高固定）
   pad_blank_rows(window_ids.length, num_page);
 }
 
@@ -378,7 +372,7 @@ function life_list_item(arg) {
   print_row(
     arg,
     [{ content: base_field_text(arg, 12, 4) }, ...tail_fragments(arg)],
-    // :97 [{ARG,2}]：编号字段宽 2 ＋ 方括号
+    // [{ARG,2}]：编号字段宽 2 ＋ 方括号
     4,
   );
 }
@@ -392,15 +386,15 @@ function life_list_item(arg) {
  * @param {number} arg 角色 ID
  */
 function life_list_item_e(arg) {
-  // :237-244 性别表示：TALENT:122 → 男；!122 && 121 → 扶她；!122 → 女
-  // :237-244 PRINT 的空格是字面量：男/女 前各两格（与「扶她」两字等宽，
+  // 性别表示：TALENT:122 → 男；!122 && 121 → 扶她；!122 → 女
+  // PRINT 的空格是字面量：男/女 前各两格（与「扶她」两字等宽，
   // 保证后面的标签列对齐）
   const gender = talent(arg, 122)
     ? { content: '\u00A0\u00A0<男>' }
     : talent(arg, 121)
       ? { content: '<扶她>' }
       : { content: '\u00A0\u00A0<女>' };
-  // :219 种族・性格（GET_LOOK_INFO 的式中函数，真身在 ere/chara/look-info.js；
+  // 种族・性格（GET_LOOK_INFO 的式中函数，真身在 ere/chara/look-info.js；
   // #389 落地前它是 kojo-dungeon-bitch-log.js 里的子集，那份已随 #389 并入）
   const look = `[${get_look_info(arg, '种族')} - ${get_look_info(arg, '性格')}]`;
   print_row(
@@ -414,7 +408,7 @@ function life_list_item_e(arg) {
       },
       ...tail_fragments(arg, {
         favorite_pad: false,
-        favorite_space: false, // :248 的 PRINT [☆] 无前导空格
+        favorite_space: false, // 的 PRINT [☆] 无前导空格
         anal_pregnancy: true,
         gender,
       }),
@@ -431,7 +425,7 @@ function life_list_item_e(arg) {
  */
 function is_enemy(cid) {
   return (
-    cflag(cid, 1) === 2 && // :152 侵攻中
+    cflag(cid, 1) === 2 && // 侵攻中
     cid !== 0 && // 魔王不算勇者
     (era.get(`base:${cid}:0`) || 0) > 0 // 濒死不列
   );
@@ -445,8 +439,8 @@ function is_enemy(cid) {
  */
 function is_salave(cid) {
   return (
-    [0, 3, 5, 6, 7, 10].includes(cflag(cid, 1)) && // :188 六种状态
-    cid !== 0 && // :186-187 魔王排除
+    [0, 3, 5, 6, 7, 10].includes(cflag(cid, 1)) && // 六种状态
+    cid !== 0 && // 魔王排除
     (era.get(`base:${cid}:0`) || 0) > 0 // 濒死不列
   );
 }
@@ -467,7 +461,7 @@ function life_list_enemy(no_page = 0, num_page = 20) {
     no_page * num_page,
     (no_page + 1) * num_page,
   )) {
-    life_list_item_e(cid); // :153 CALL LIFE_LIST_ITEM_E(COUNT)
+    life_list_item_e(cid); // CALL LIFE_LIST_ITEM_E(COUNT)
   }
 }
 
@@ -477,13 +471,13 @@ function life_list_enemy(no_page = 0, num_page = 20) {
  * @returns {number}
  */
 function max_page_enemy(num_page) {
-  let local = 0; // :165
+  let local = 0;
   for (const cid of era.getAddedCharacters()) {
     if (is_enemy(cid)) {
-      local += 1; // :168
+      local += 1;
     }
   }
-  // :170-174 向上取整（整数除法，Emuera 的 / 对两整数相除截断）
+  // 向上取整（整数除法，Emuera 的 / 对两整数相除截断）
   if (local % num_page > 0) {
     return Math.trunc(local / num_page) + 1;
   }
@@ -505,7 +499,7 @@ function life_list_salave(no_page = 0, num_page = 20) {
     no_page * num_page,
     (no_page + 1) * num_page,
   )) {
-    life_list_item_e(cid); // :189 CALL LIFE_LIST_ITEM_E(COUNT)
+    life_list_item_e(cid); // CALL LIFE_LIST_ITEM_E(COUNT)
   }
 }
 
@@ -515,10 +509,10 @@ function life_list_salave(no_page = 0, num_page = 20) {
  * @returns {number}
  */
 function max_page_salave(num_page) {
-  let local = 0; // :201
+  let local = 0;
   for (const cid of era.getAddedCharacters()) {
     if (is_salave(cid)) {
-      local += 1; // :204
+      local += 1;
     }
   }
   if (local % num_page > 0) {

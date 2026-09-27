@@ -148,16 +148,18 @@ export default [
   {
     desc: 'M8517 妊娠：IN_VAGINA_ALL 的 TARGET 越界守卫删掉',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (target_out_of_range()) return 0; // :44',
-    replace: '  // 变异：删掉 TARGET 越界守卫',
+    find: 'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;',
+    replace:
+      'function in_vagina_all(rand = default_rand) {\n  // 变异：删掉 TARGET 越界守卫',
     tests: ['event-pregnancy'],
     must_mention: 'TARGET 越界时 IN_VAGINA_ALL 整组早退',
   },
   {
     desc: 'M8518 妊娠：IN_VAGINA_ALL 的 ASSI 越界守卫删掉',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (assi_out_of_range()) return 0; // :46',
-    replace: '  // 变异：删掉 ASSI 越界守卫',
+    find: 'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;\n  if (assi_out_of_range()) return 0;',
+    replace:
+      'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;\n  // 变异：删掉 ASSI 越界守卫',
     tests: ['event-pregnancy'],
     must_mention: 'ASSI 越界时 IN_VAGINA_ALL 整组早退',
   },
@@ -172,8 +174,9 @@ export default [
   {
     desc: 'M8520 妊娠：CONCEPTION_CHECK_ALL 的 TARGET 越界守卫删掉',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (target_out_of_range()) return 0; // :62',
-    replace: '  // 变异：删掉 CONCEPTION_CHECK_ALL 的 TARGET 越界守卫',
+    find: 'function conception_check_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;',
+    replace:
+      'function conception_check_all(rand = default_rand) {\n  // 变异：删掉 CONCEPTION_CHECK_ALL 的 TARGET 越界守卫',
     tests: ['event-pregnancy'],
     must_mention: '整组早退',
   },
@@ -245,7 +248,7 @@ export default [
   {
     desc: 'M8529 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「角色 0」档判据改成 arg < 0',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (arg === 0) return 1; // :479-481 你は育児室にいない',
+    find: '  if (arg === 0) return 1; // 你は育児室にいない',
     replace: '  if (arg < 0) return 1; // 变异：角色 0 不再走第一档',
     tests: ['event-pregnancy', 'page-chara-info'],
     must_mention: '四档返回值',
@@ -253,7 +256,7 @@ export default [
   {
     desc: 'M8530 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「侵攻中的勇者」档判据改成 3',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (chara(arg).invasion.状态 === 2) return 2; // :482-484 侵攻中の勇者だ',
+    find: '  if (chara(arg).invasion.状态 === 2) return 2; // 侵攻中の勇者だ',
     replace:
       '  if (chara(arg).invasion.状态 === 3) return 2; // 变异：状态 2 不再判勇者',
     tests: ['event-pregnancy', 'page-chara-info'],
@@ -262,7 +265,7 @@ export default [
   {
     desc: 'M8531 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「不在育儿室」档判据改成 11',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (chara(arg).invasion.状态 !== 10) return 3; // :485-487 育児室にいない',
+    find: '  if (chara(arg).invasion.状态 !== 10) return 3; // 育児室にいない',
     replace:
       '  if (chara(arg).invasion.状态 !== 11) return 3; // 变异：育儿室档位改成 11',
     tests: ['event-pregnancy', 'page-chara-info'],
@@ -271,7 +274,7 @@ export default [
   {
     desc: 'M8532 妊娠：SHOW_BUTTON_CHILD_CARE 的渲染条件取反',
     file: 'ere/event/event-pregnancy.js',
-    find: '  if (check_able_to_child_care(arg) !== 0) return 0; // :459-467',
+    find: '  if (check_able_to_child_care(arg) !== 0) return 0;',
     replace:
       '  if (check_able_to_child_care(arg) === 0) return 0; // 变异：渲染条件取反',
     tests: ['event-pregnancy'],
@@ -280,7 +283,7 @@ export default [
   {
     desc: 'M8533 妊娠：CHILD_CARE_CHARA 的「侵攻中的勇者」防御支返回值改成 0',
     file: 'ere/event/event-pregnancy.js',
-    find: '      return 2; // :500-502',
+    find: '      return 2;',
     replace: '      return 0; // 变异：防御支不再上浮 2',
     tests: ['event-pregnancy'],
     must_mention: '三条早退分支',
@@ -288,7 +291,7 @@ export default [
   {
     desc: 'M8534 妊娠：CHILD_CARE_CHARA 不再写 TARGET = ARG',
     file: 'ere/event/event-pregnancy.js',
-    find: '  era_flag.target = arg; // :511 TARGET = ARG',
+    find: '  era_flag.target = arg; // TARGET = ARG',
     replace: '  // 变异：不写 TARGET',
     tests: ['event-pregnancy'],
     must_mention: 'TARGET = ARG',
@@ -322,7 +325,7 @@ export default [
   {
     desc: 'M8538 TURNEND：IN_VAGINA_ALL 的调用点删掉（妊娠判定整条断线）',
     file: 'ere/event/event-turnend.js',
-    find: '      in_vagina_all(); // :23 妊娠判定（全角色）',
+    find: '      in_vagina_all(); // 妊娠判定（全角色）',
     replace: '      // 变异：妊娠判定不调',
     tests: ['event-turnend'],
     must_mention: '妊娠判定接入',
@@ -330,7 +333,7 @@ export default [
   {
     desc: 'M8539 TURNEND：CONCEPTION_CHECK_ALL 的调用点删掉',
     file: 'ere/event/event-turnend.js',
-    find: '      conception_check_all(); // :26 妊娠确定处理（全角色）',
+    find: '      conception_check_all(); // 妊娠确定处理（全角色）',
     replace: '      // 变异：妊娠确定不调',
     tests: ['event-turnend'],
     must_mention: '妊娠判定接入',
@@ -338,7 +341,7 @@ export default [
   {
     desc: 'M8540 TURNEND：全角色循环不再写回 TARGET（判定读到上个角色的残留）',
     file: 'ere/event/event-turnend.js',
-    find: '      era_flag.target = cid; // :14 FOR TARGET 写全局 TARGET',
+    find: '      era_flag.target = cid; // FOR TARGET 写全局 TARGET',
     replace: '      // 变异：循环不写回 TARGET',
     tests: ['event-turnend'],
     must_mention: '妊娠相手 = 1',
@@ -346,7 +349,7 @@ export default [
   {
     desc: 'M8541 TURNEND：第二组的 IN_VAGINA_EXTRA 调用点删掉（卖春判定断线）',
     file: 'ere/event/event-turnend.js',
-    find: '        in_vagina_extra(); // :64',
+    find: '        in_vagina_extra();',
     replace: '        // 变异：卖春妊娠判定不调',
     tests: ['event-turnend'],
     must_mention: '第二组',
@@ -354,7 +357,7 @@ export default [
   {
     desc: 'M8542 TURNEND：第二组的 CONCEPTION_CHECK_EXTRA 调用点删掉',
     file: 'ere/event/event-turnend.js',
-    find: '        conception_check_extra(); // :65',
+    find: '        conception_check_extra();',
     replace: '        // 变异：卖春妊娠确定不调',
     tests: ['event-turnend'],
     must_mention: '第二组',
@@ -429,7 +432,7 @@ export default [
   {
     desc: 'M8551 TURNEND：DEBUG_CHECK 第二段的放弃阈值 5000 改成 6000',
     file: 'ere/event/event-turnend.js',
-    find: '      } else if (attempts >= 5000) {\n        neighbour = -1; // :303-305 原作此处为空体（不终止），按意图补齐（文件头偏离二）\n      }',
+    find: '      } else if (attempts >= 5000) {\n        neighbour = -1; // 原作此处为空体（不终止），按意图补齐（文件头偏离二）\n      }',
     replace:
       '      } else if (attempts >= 6000) {\n        neighbour = -1;\n      }',
     tests: ['event-turnend'],
@@ -446,7 +449,7 @@ export default [
   {
     desc: 'M8553 TURNEND：DEBUG_CHECK 第一段的清钱档不重建不变量',
     file: 'ere/event/event-turnend.js',
-    find: '    era_exflag.legit_money = era_flag.money - 8766; // :199（重建不变量：0 == -8766 + 8766）',
+    find: '    era_exflag.legit_money = era_flag.money - 8766; // （重建不变量：0 == -8766 + 8766）',
     replace: '    era_exflag.legit_money = 0; // 变异：不重建不变量',
     tests: ['event-turnend'],
     must_mention: '重建不变量',

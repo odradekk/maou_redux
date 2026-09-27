@@ -268,7 +268,7 @@ test('屈服Lv2＆快乐Lv3 链（3xx）：301/302/303 逐格推进后随机尾'
 });
 
 test('3xx 支的附加门槛 MARK:1 == 3：Lv2 屈服而无快乐刻印时两支皆不命中', async () => {
-  // :1021 ELSEIF MARK:2 == 2 && MARK:1 == 3 —— 删掉 MARK:1 臂会让本状态
+  // ELSEIF MARK:2 == 2 && MARK:1 == 3 —— 删掉 MARK:1 臂会让本状态
   // 误入 3xx（验收变异实测的误报通过位）：MARK:2 == 2 且 MARK:1 != 3 时，
   // 3xx（要 MARK:1 == 3）与 2xx（要 MARK:2 <= 1）都不命中，原作一句不出
   const fixture = await setup_k3((f) => {
@@ -657,7 +657,7 @@ test('胸爱抚二次以后：淫乱 / 爱慕 / B感覚Lv3 / それ以外', asyn
 });
 
 test('胸爱抚首次 乳头环支（CFLAG:7 & 1 且 抖M气质Lv3）：两句反应，爱慕时多一句炫耀乳环', async () => {
-  // :1343 IF CFLAG:7 & 1 && ABL:21 >= 3——CFLAG:7 是穿环状态位（#493：曾误读
+  // IF CFLAG:7 & 1 && ABL:21 >= 3——CFLAG:7 是穿环状态位（#493：曾误读
   // 成 train 域不存在的「穿孔装着」，undefined & 1 === 0 使本支恒不触发）
   const lewd = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -978,7 +978,7 @@ test('#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 �
 test('SELECTCOM 7 录像展示：:1640..:1656 的五段 SIF 后缀与收行同属一行（#600）', async () => {
   // 原作 :1640 以全角空格开头「只要是魔王大人的命令来的话、%SELF_CALL(TARGET)%一定会在这里…用这个」
   // 后接五条 SIF（:1643 魔王大人专用 / :1646 淫乱 / :1649 牝犬 / :1652 贪欲 /
-  // :1655 处女），末行 :1656 PRINTFORML 收行。五段各自可有可无，文本顺序固定
+  // 处女），末行 :1656 PRINTFORML 收行。五段各自可有可无，文本顺序固定
   const head = '\u3000只要是魔王大人的命令来的话、我一定会在这里…用这个';
   const tail = '小穴来、给今天看到的大家侍奉也说不定呢。';
   const cases = [
@@ -1225,7 +1225,7 @@ test('#623 强制排泄·两穴与屈辱支的整行（:4775+:4777 / :4810+:4812
   }
 
   // 屈辱支：MARK:2 == 3 且 CFLAG:387 <= 1（:4786 支）的 ELSE（:4809）；
-  // :4810 的 PRINTFORM 行尾带全角空格，三支都拼（审查建议 11）
+  // 的 PRINTFORM 行尾带全角空格，三支都拼（审查建议 11）
   const shame_seed = (f) => {
     f.load_module('era-utils/era-flag').selectcom = 46;
     f.store.set('tequip:31:46', 0);

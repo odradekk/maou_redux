@@ -1,6 +1,5 @@
 /**
  * @file 道具除虫处理（issue #333）。
- * 源: target/ERB/SHOP/SHOP_ITEM.ERB  @ITEM_DETOX（:791-810）
  */
 
 'use strict';

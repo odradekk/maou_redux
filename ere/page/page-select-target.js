@@ -4,12 +4,6 @@
  * IS_ASSISTABLE / GET_JOB_NAME 判定与取名（issue #44 起步，#395 补全富化列
  * 与 SELECT_ASSI 真身）。
  *
- * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @SELECT_TARGET（:234-327）/
- *     @SELECT_ASSI（:331-421）
- *     target/ERB/SHOP/SHOP_FUNCTION.ERB  @SHOW_LIST_TRAINABLE（:7-53）/
- *     @SHOW_LIST_ASSISTABLE（:55-103）/@IS_TRAINABLE（:105-113）/
- *     @IS_ASSISTABLE（:116-128）/@GET_JOB_NAME（:131-175）
- *
  * 移植说明（有意偏离，均注明依据）：
  *   - 判定函数的 `ARG >= CHARANUM`（序号越界）按 ID 语义改写为「不在已
  *     加入列表」（CONTEXT.md：两种编号在原作重合但不等价，ere 一律用
@@ -55,12 +49,12 @@ const { chara_callname } = require('#/utils/callname-utils');
  * @returns {number} 0 = 可调教
  */
 function is_trainable(cid) {
-  // :109-110 SIF ARG < 1 || ARG >= CHARANUM || ARG == MASTER（=0，魔王）→ 1。
+  // SIF ARG < 1 || ARG >= CHARANUM || ARG == MASTER（=0，魔王）→ 1。
   // CHARANUM 判据的 ID 语义改写见文件头
   if (cid < 1 || !era.getAddedCharacters().includes(cid) || cid === 0) {
     return 1;
   }
-  // :111-112 SIF CFLAG:ARG:1 != 0 → 2
+  // SIF CFLAG:ARG:1 != 0 → 2
   if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {
     return 2;
   }
@@ -74,19 +68,19 @@ function is_trainable(cid) {
  * @returns {number} 0 = 可当助手
  */
 function is_assistable(cid) {
-  // :120-121 范围外（ID 语义改写，见 is_trainable）
+  // 范围外（ID 语义改写，见 is_trainable）
   if (cid < 1 || !era.getAddedCharacters().includes(cid)) {
     return 1;
   }
-  // :122-123 SIF CFLAG:ARG:0 != 2
+  // SIF CFLAG:ARG:0 != 2
   if ((era.get(`cflag:${cid}:0`) || 0) !== 2) {
     return 2;
   }
-  // :124-125 SIF CFLAG:ARG:1 != 0
+  // SIF CFLAG:ARG:1 != 0
   if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {
     return 3;
   }
-  // :126-127 SIF TARGET == ARG（目标不能兼助手）
+  // SIF TARGET == ARG（目标不能兼助手）
   if (era_flag.target === cid) {
     return 4;
   }
@@ -256,7 +250,7 @@ function show_list_assistable(no_page, num_page) {
  */
 async function select_target() {
   const num_page = 26; // #DIM NUM_PAGE = 26
-  // :242-254 可调教总数 → 最大页码（0 起；空表为 -1，但首渲染即 RETURN 0，
+  // 可调教总数 → 最大页码（0 起；空表为 -1，但首渲染即 RETURN 0，
   // 页码不会被用到）
   const total = era
     .getAddedCharacters()
@@ -266,61 +260,61 @@ async function select_target() {
   let no_page = 0; // #DIM NO_PAGE = 0（局部，非跨调用静态）
   // $INPUT_LOOP（:256-327；LIST_POS/PREV_PAGE 缓存不生效的说明见文件头）
   for (;;) {
-    // :271-273 CUSTOMDRAWLINE = / 标题 / DRAWLINE（'=' 线以 isSolid 近似）
+    // CUSTOMDRAWLINE = / 标题 / DRAWLINE（'=' 线以 isSolid 近似）
     era.drawLine({ isSolid: true });
     era.print('请魔王大人选择将要调教的奴隶人选');
     era.drawLine();
-    // :275 CALL SHOW_LIST_TRAINABLE(NO_PAGE,NUM_PAGE,LIST_POS)；:276-279
+    // CALL SHOW_LIST_TRAINABLE(NO_PAGE,NUM_PAGE,LIST_POS)；:276-279
     // RESULT < 1 → RETURN 0（列表为空 = 取消）
     if (show_list_trainable(no_page, num_page) < 1) {
       return 0;
     }
-    // :280-285 补行对齐（CLEARLINE 排版）不镜像，见文件头
+    // 补行对齐（CLEARLINE 排版）不镜像，见文件头
     era.drawLine();
-    // :287-290 [1000] 上一页 / [999] 返回 / [1002] 其它 / [1001] 下一页
+    // [1000] 上一页 / [999] 返回 / [1002] 其它 / [1001] 下一页
     //（按钮正文不带 [编号] 前缀——引擎自动拼，PR #30）
     era.printButton('- 上一页', 1000);
     era.printButton('返回', 999);
     era.printButton('其它', 1002);
     era.printButton('- 下一页', 1001);
 
-    // :293 INPUT
+    // INPUT
     const result = await era.input();
     if (result === 999) {
-      // :294-296 返回 → RETURN 0
+      // 返回 → RETURN 0
       return 0;
     }
     if (result === 1002) {
-      // :297-300 其它 → CALL MONSTER_PLAY（#340 真身）；RETURN RESULT。
+      // 其它 → CALL MONSTER_PLAY（#340 真身）；RETURN RESULT。
       return monster_play_mod.monster_play();
     }
     if (is_trainable(result) === 0) {
-      // :301-305 調教可能な対象 → TARGET = RESULT；FLAG:1 = TARGET；RETURN 1
+      // 調教可能な対象 → TARGET = RESULT；FLAG:1 = TARGET；RETURN 1
       era_flag.target = result;
       era.set('flag:1', result);
       return 1;
     }
     if (is_assistable(result) === 0) {
-      // :306-310 助手可能な対象 → ASSI = RESULT；FLAG:2 = ASSI；RETURN 1
+      // 助手可能な対象 → ASSI = RESULT；FLAG:2 = ASSI；RETURN 1
       era_flag.assi = result;
       era.set('flag:2', result);
       return 1;
     }
     if (result === 1000) {
-      // :311-316 上一页（页首不再退；CLEARLINE 不镜像）
+      // 上一页（页首不再退；CLEARLINE 不镜像）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
     if (result === 1001) {
-      // :317-322 下一页（页尾不再进）
+      // 下一页（页尾不再进）
       if (no_page < max_page) {
         no_page += 1;
       }
       continue;
     }
-    // :323-327 范围外（RESULT < 0 || RESULT >= CHARANUM）与其余输入：
+    // 范围外（RESULT < 0 || RESULT >= CHARANUM）与其余输入：
     // CLEARLINE 1 + GOTO INPUT_LOOP —— 重绘不提示（ere：无 CLEARLINE，
     // 直接回循环头整屏重绘）
   }
@@ -340,7 +334,7 @@ async function select_target() {
  */
 async function select_assi() {
   const num_page = 13; // #DIM NUM_PAGE = 13
-  // :339-352 可当助手总数 → 最大页码（同 select_target 的同构段）
+  // 可当助手总数 → 最大页码（同 select_target 的同构段）
   const total = era
     .getAddedCharacters()
     .filter((cid) => is_assistable(cid) === 0).length;
@@ -352,51 +346,51 @@ async function select_assi() {
     era.drawLine({ isSolid: true });
     era.print('请魔王大人选择在调教过程当中的助手人选');
     era.drawLine();
-    // :372 CALL SHOW_LIST_ASSISTABLE；:374-376 RESULT < 1 → RETURN 0
+    // CALL SHOW_LIST_ASSISTABLE；:374-376 RESULT < 1 → RETURN 0
     if (show_list_assistable(no_page, num_page) < 1) {
       return 0;
     }
     era.drawLine();
-    // :384-387 [1000] 上一页 / [999] 我先想想… / [1002] 我自己上阵 /
+    // [1000] 上一页 / [999] 我先想想… / [1002] 我自己上阵 /
     // [1001] 下一页（按钮正文不带 [编号] 前缀——引擎自动拼，PR #30）
     era.printButton('- 上一页', 1000);
     era.printButton('我先想想…', 999);
     era.printButton('哇嘎嘎！我可是魔王！这次就由我自己亲自上阵！', 1002);
     era.printButton('- 下一页', 1001);
 
-    // :390 INPUT
+    // INPUT
     const result = await era.input();
     if (result === 1002) {
-      // :391-395 助手は無し → ASSI = -1；FLAG:2 = ASSI；RETURN 0
+      // 助手は無し → ASSI = -1；FLAG:2 = ASSI；RETURN 0
       era_flag.assi = -1;
       game.event.上次助手 = -1;
       return 0;
     }
     if (result === 999) {
-      // :396-398 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）
+      // 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）
       return 2;
     }
     if (is_assistable(result) === 0) {
-      // :399-403 助手可能な対象 → ASSI = RESULT；FLAG:2 = ASSI；RETURN 1
+      // 助手可能な対象 → ASSI = RESULT；FLAG:2 = ASSI；RETURN 1
       era_flag.assi = result;
       game.event.上次助手 = result;
       return 1;
     }
     if (result === 1000) {
-      // :404-409 上一页（页首不再退；CLEARLINE 不镜像）
+      // 上一页（页首不再退；CLEARLINE 不镜像）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
     if (result === 1001) {
-      // :410-415 下一页（页尾不再进）
+      // 下一页（页尾不再进）
       if (no_page < max_page) {
         no_page += 1;
       }
       continue;
     }
-    // :416-421 范围外与其余输入：重绘不提示（同 select_target 的尾处理）
+    // 范围外与其余输入：重绘不提示（同 select_target 的尾处理）
   }
 }
 

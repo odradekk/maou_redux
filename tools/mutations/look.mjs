@@ -91,8 +91,8 @@ export default [
   make(
     8309,
     '精灵的善恶值 +20 改成 +21',
-    '      // :368-372 エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 20);',
-    '      // :368-372 エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 21);',
+    '      // エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 20);',
+    '      // エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 21);',
     '种族 1 的善恶值增减',
   ),
   make(
@@ -105,15 +105,15 @@ export default [
   make(
     8311,
     '童貞オトコ支的经验上界 +1 改成 +2（验收探针：原用例只查了处女支）',
-    '      // :508-514 童貞オトコの場合\n      const local = rand_n(20) + 1;',
-    '      // :508-514 童貞オトコの場合\n      const local = rand_n(20) + 2;',
+    '      // 童貞オトコの場合\n      const local = rand_n(20) + 1;',
+    '      // 童貞オトコの場合\n      const local = rand_n(20) + 2;',
     '肛门经验（童貞オトコ：RAND:20 + 1 = 6）',
   ),
   make(
     8312,
     '主婦（Q=21）的「必得人妻」写错素质下标',
-    '    set_t(cid, T_人妻, 1); // :586-587 必ず人妻がつく',
-    '    set_t(cid, T_妓女, 1); // :586-587 必ず人妻がつく',
+    '    set_t(cid, T_人妻, 1); // 必ず人妻がつく',
+    '    set_t(cid, T_妓女, 1); // 必ず人妻がつく',
     '必得人妻',
   ),
   make(
@@ -133,8 +133,8 @@ export default [
   make(
     8315,
     'BL 补正（断背气质）的加值 3 改成 2',
-    '      chara(cid).system.断背气质 = 3; // :767-768 BLっ気補正',
-    '      chara(cid).system.断背气质 = 2; // :767-768 BLっ気補正',
+    '      chara(cid).system.断背气质 = 3; // BLっ気補正',
+    '      chara(cid).system.断背气质 = 2; // BLっ気補正',
     '断背气质（abl:23）',
   ),
 
@@ -274,8 +274,8 @@ export default [
   make(
     8334,
     '处女支的经验掷骰上界 +1 改成 +2（原用例只断 1-40 的区间）',
-    '    } else if (t(cid, T_处女) === 1) {\n      // :522-528 处女の場合\n      const local = rand_n(40) + 1;',
-    '    } else if (t(cid, T_处女) === 1) {\n      // :522-528 处女の場合\n      const local = rand_n(40) + 2;',
+    '    } else if (t(cid, T_处女) === 1) {\n      // 处女の場合\n      const local = rand_n(40) + 1;',
+    '    } else if (t(cid, T_处女) === 1) {\n      // 处女の場合\n      const local = rand_n(40) + 2;',
     '肛门经验 = RAND:40 + 1 = 2',
   ),
   make(
@@ -304,8 +304,8 @@ export default [
   make(
     8338,
     'LOOKS 表「阴毛浓密」的阈值 150 收到 140（验收探针：表本身零断言）',
-    "      overwrite(t(arg, 310) > 150, '阴毛浓密的'); // :183",
-    "      overwrite(t(arg, 310) > 140, '阴毛浓密的'); // :183",
+    "      overwrite(t(arg, 310) > 150, '阴毛浓密的');",
+    "      overwrite(t(arg, 310) > 140, '阴毛浓密的');",
     '阴毛浓密的',
     {
       file: 'ere/kojo/kojo-dungeon-bitch-log.js',
@@ -315,8 +315,8 @@ export default [
   make(
     8339,
     'LOOKS 表「忧郁的样子」的癖档位 11 改成 12',
-    "      overwrite(t(arg, 313) === 11, '忧郁的样子'); // :192",
-    "      overwrite(t(arg, 313) === 12, '忧郁的样子'); // :192",
+    "      overwrite(t(arg, 313) === 11, '忧郁的样子');",
+    "      overwrite(t(arg, 313) === 12, '忧郁的样子');",
     '忧郁的样子',
     {
       file: 'ere/kojo/kojo-dungeon-bitch-log.js',
@@ -381,15 +381,15 @@ export default [
   {
     desc: 'M11766 LOOK_INFO 首行丢弃语尾（#570：语尾须拼进「」之内）',
     file: look,
-    find: '    s.add(await gobi_koujo(gobi_mark)); // :877',
-    replace: "    s.add(''); // :877 变异：丢弃语尾",
+    find: '    s.add(await gobi_koujo(gobi_mark));',
+    replace: "    s.add(''); // 变异：丢弃语尾",
     tests: ['look'],
     must_mention: '首行语尾在「」之内',
   },
   {
     desc: 'M11767 LOOK_INFO_LOVE 收尾丢弃语尾（#570：喜び语尾接在物品行末）',
     file: look,
-    find: '    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行',
+    find: '    s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行',
     replace: "    s.add('」 '); // 变异：丢弃语尾",
     tests: ['look'],
     must_mention: '最后一项物品与「♪」 」同一行',
@@ -411,9 +411,9 @@ export default [
   {
     desc: 'M11774 LOOK_INFO 语尾调用点丢返回值（裸 await，语尾不进行内；#570 结构化检查）',
     file: look,
-    find: '    s.add(await gobi_koujo(gobi_mark)); // :877',
+    find: '    s.add(await gobi_koujo(gobi_mark));',
     replace:
-      '    // 变异：丢返回值（裸调用）\n    await gobi_koujo(gobi_mark); // :877',
+      '    // 变异：丢返回值（裸调用）\n    await gobi_koujo(gobi_mark);',
     tests: ['look'],
     must_mention: '裸调用 gobi_koujo 会丢掉语尾文字',
   },
@@ -433,7 +433,7 @@ export default [
   {
     desc: 'M11776 LOOK_INFO_LOVE 收尾另起一行（#570 返工：原作接在物品行末）',
     file: look,
-    find: '    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行',
+    find: '    s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行',
     replace: '    era.print(`${await gobi_koujo(1)}」 `); // 变异：另起一行',
     tests: ['look'],
     must_mention: '语尾不得另起一行',
@@ -730,7 +730,7 @@ export default [
   {
     desc: 'M11939 LOOK_INFO_LOVE 喜好收尾的语尾档 1 改成 0（喜 → 默认）',
     file: look,
-    find: '    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行',
+    find: '    s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行',
     replace: '    s.add(`${await gobi_koujo(0)}」 `); // 变异：收尾档 1 → 0',
     tests: ['look'],
     must_mention: '源 :2799 喜好收尾（喜 → 1）',

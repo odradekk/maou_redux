@@ -1,8 +1,6 @@
 /**
  * @file 怪物玩弄（issue #340，阶段 5a L9）。
  *
- * 源: target/ERB/怪物相關/MONSTER_PLAY.ERB  @MONSTER_PLAY（:5-74）、
- *     @MONSTERPLAY_LIST（:77-96）与十三个种族分支（见各函数头）。
  */
 
 'use strict';
@@ -122,7 +120,7 @@ async function orc_monster_play(cid, y, rand = default_rand) {
     era.add(`exp:${cid}:20`, y); // EXP:A:20 = 精液经验
     era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数
   }
-  await era.waitAnyKey(); // :121-167 WAIT
+  await era.waitAnyKey(); // WAIT
   return 0;
 }
 
@@ -285,7 +283,7 @@ async function giant_monster_play(cid, y) {
     return 0;
   }
   await print_wait('『魔王大人，被弄坏了也可以么？』');
-  // :349-377 X = 0；其余三臂恒不达，1:1 不引入随机源。
+  // X = 0；其余三臂恒不达，1:1 不引入随机源。
   await print_wait('『洒家这辈子值了！！！』');
   await print_wait(`${name_of(cid)}的腰被巨人抓着，雄壮的阴茎在体内抽插着，`);
   await print_wait('『嗯！魔王大人！真舒服！！』');
@@ -406,7 +404,7 @@ async function monster_play(rand = default_rand) {
       (selected !== 900 && item_count(selected) <= 0) ||
       (selected === 900 && item_count(22) <= 0)
     ) {
-      await era.clear(1); // :5-74 CLEARLINE 1，只清输入回显，不重画菜单
+      await era.clear(1); // CLEARLINE 1，只清输入回显，不重画菜单
       continue;
     }
     break;
@@ -414,13 +412,13 @@ async function monster_play(rand = default_rand) {
 
   let type = 0;
   if (selected !== 900) {
-    // :5-74 X 列取数。与 Y/场景共用随机序列，保留 MONSTER_DATA 的消费顺序。
+    // X 列取数。与 Y/场景共用随机序列，保留 MONSTER_DATA 的消费顺序。
     monster_data(selected, 5, -1, -1, -1, rand);
     type = e_get(507); // E:507 = 凌辱类型（怪物种族）
   }
 
-  const cid = 0; // :5-74 A = 0（魔王）
-  const y = rand(5) + 3; // :5-74 Y = RAND:5 + 3
+  const cid = 0; // A = 0（魔王）
+  const y = rand(5) + 3; // Y = RAND:5 + 3
   if (selected === 900) {
     await monster_play_dog(cid, y);
   } else {
@@ -442,12 +440,12 @@ async function monster_play(rand = default_rand) {
     if (play) await play(cid, y, rand);
   }
 
-  // :5-74 场景后的处女丧失判定。TALENT:0 属 chara 域，跨域写经门面。
+  // 场景后的处女丧失判定。TALENT:0 属 chara 域，跨域写经门面。
   if (chara(cid).chara.处女 === 1 && (era.get(`exp:${cid}:0`) || 0) > 0) {
     await print_wait('【处女丧失】');
     chara(cid).chara.处女 = 0;
   }
-  begin(STATE.TURNEND); // :5-74；其后的 RETURN 1 因 BEGIN 立即结束而不可达
+  begin(STATE.TURNEND); // ；其后的 RETURN 1 因 BEGIN 立即结束而不可达
 }
 
 /** @BEAST_MONSTER_PLAY（:459-475）：魔兽。 */

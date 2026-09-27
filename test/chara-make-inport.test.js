@@ -260,10 +260,10 @@ test('成功路径：14 段字段逐项落地（:44-108）', () => {
 
   assert.equal(chara_make_inport(always), 3, 'RETURN CHARA');
   assert.deepEqual(fixture.chara_no, [3], 'ADDVOIDCHARA 等价物建出角色 3');
-  // :47 NO:CHARA —— 扁平化下就是角色号本身（文件头二）
+  // NO:CHARA —— 扁平化下就是角色号本身（文件头二）
   assert.equal(fixture.store.get('callname:3:-1'), '甲', ':51 CALLNAME');
   assert.equal(fixture.store.get('callname:3:-2'), '甲', ':49 SAVESTR');
-  // :54-103 十张表（段尾空元素由 RESULT-1 挡掉，不能写成 0）
+  // 十张表（段尾空元素由 RESULT-1 挡掉，不能写成 0）
   assert.equal(fixture.store.get('abl:3:14'), 5, 'ABL');
   assert.equal(fixture.store.get('abl:3:17'), 9, 'ABL 第二项');
   assert.equal(

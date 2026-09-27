@@ -2,12 +2,6 @@
  * @file 安全套共用子程序：每角色的用套设定画面、性交前的用套确认、
  * 逆侵犯助手（COM65）专用的对象侧确认。
  *
- * 源: target/ERB/調教相關/COMF_CONDOM.ERB
- *     @CONDOM_SETTINGS（:10-40；按钮与 [103] 分发由 page-usercom.js 承载，
- *     #214 接线、本票落本体）/ @CONFIRM_CONDOM（:42-163，性交系指令的
- *     入口闸——COM20/21/22/23/34/90/120-134 等 CALL 它，SIF !RESULT 即中止）
- *     / @CONFIRM_CONDOM2（:165-183，COMF65 专用）
- *
  * 变量语义：CFLAG:61 = 每角色的自动用套设定（0 每次问 / 1 有就用 / 2 不用，
  * COMF_CONDOM.ERB:7-8 的头注）；TEQUIP:35 = 主人装着（属主 event——train
  * 侧写经 chara(cid).event 门面，#215 建模）；TEQUIP:36 = 助手装着 /
@@ -45,39 +39,39 @@ const MASTER = 0;
 async function condom_settings() {
   const cid = era_flag.target;
   if (cid < 1) {
-    return 1; // :12
+    return 1;
   }
   const name = era.get(`callname:${cid}:-1`) ?? '';
-  era.print(`和${name}做爱要戴套吗？`); // :13
-  // :14 %LOCALS:(CFLAG:61)% —— LOCALS 是函数级局部数组，本函数零写点 →
+  era.print(`和${name}做爱要戴套吗？`);
+  // %LOCALS:(CFLAG:61)% —— LOCALS 是函数级局部数组，本函数零写点 →
   // 恒空串。1:1：整行照打、值为空（头注缺陷条，#14 已登记不修）
   era.print('现在：');
-  era.drawLine(); // :15
-  era.printButton('每次都问', 0); // :16
-  era.printButton('有套就用', 1); // :17
-  era.printButton('每次都直接来，来个痛快', 2); // :18
-  era.printButton('返回', 9); // :19
+  era.drawLine();
+  era.printButton('每次都问', 0);
+  era.printButton('有套就用', 1);
+  era.printButton('每次都直接来，来个痛快', 2);
+  era.printButton('返回', 9);
   for (;;) {
-    const result = await era.input(); // :21
+    const result = await era.input();
     if (result === 9) {
-      return 0; // :24
+      return 0;
     }
     if (result === 0) {
-      era.print('每次确认。'); // :26
+      era.print('每次确认。');
       await era.waitAnyKey(); // PRINTW
-      era.set(`cflag:${cid}:61`, 0); // :27
+      era.set(`cflag:${cid}:61`, 0);
       return 0;
     }
     if (result === 1) {
-      era.print('使用安全套。'); // :29
+      era.print('使用安全套。');
       await era.waitAnyKey();
-      era.set(`cflag:${cid}:61`, 1); // :30
+      era.set(`cflag:${cid}:61`, 1);
       return 0;
     }
     if (result === 2) {
-      era.print(`和${name}直接做。`); // :32
+      era.print(`和${name}直接做。`);
       await era.waitAnyKey();
-      era.set(`cflag:${cid}:61`, 2); // :33
+      era.set(`cflag:${cid}:61`, 2);
       return 0;
     }
     // CASEELSE GOTO INPUT_LOOP_01（:35）：白名单外输入到不了游戏（头注）
@@ -96,22 +90,22 @@ async function confirm_condom() {
   // RESTART = 外层循环：CASE 2/3 改 CFLAG:61 后按新值重跑（头注）
   for (;;) {
     if ((era.get(`cflag:${cid}:61`) || 0) === 2) {
-      return 1; // :46 设定为不用
+      return 1; // 设定为不用
     }
     if (era.get(`tequip:${cid}:89`)) {
-      return 1; // :48 兽奸
+      return 1; // 兽奸
     }
     if (era.get(`tequip:${cid}:55`)) {
-      return 1; // :50 死斗场
+      return 1; // 死斗场
     }
-    // :52 调教者既非扶她（121）也非男人（122）→ 无男性器，继续
+    // 调教者既非扶她（121）也非男人（122）→ 无男性器，继续
     if (
       !(era.get(`talent:${player}:121`) || 0) &&
       !(era.get(`talent:${player}:122`) || 0)
     ) {
       return 1;
     }
-    // :54 调教者已戴着（主人位 35 / 助手位 36）
+    // 调教者已戴着（主人位 35 / 助手位 36）
     const wearing_master = chara(cid).event.主人避孕套;
     const wearing_assi = era.get(`tequip:${cid}:36`) || 0;
     if (
@@ -121,87 +115,87 @@ async function confirm_condom() {
       return 1;
     }
     const player_name = era.get(`callname:${player}:-1`) ?? '';
-    // :57-98 每次确认且有套 → 问一次（0 戴 / 1 不戴 / 2 今后都直接 / 3 今后都戴）
+    // 每次确认且有套 → 问一次（0 戴 / 1 不戴 / 2 今后都直接 / 3 今后都戴）
     if ((era.get(`cflag:${cid}:61`) || 0) === 0 && game.train.安全套) {
       if (!era_flag.assiplay) {
-        era.print('要戴套吗？'); // :61
-        era.printButton('- 戴', 0); // :62
-        era.printButton('- 不戴', 1); // :63
+        era.print('要戴套吗？');
+        era.printButton('- 戴', 0);
+        era.printButton('- 不戴', 1);
       } else {
-        era.print('让使用安全套吗？'); // :65
-        era.printButton('- 使用', 0); // :66
-        era.printButton('- 不使用', 1); // :67
+        era.print('让使用安全套吗？');
+        era.printButton('- 使用', 0);
+        era.printButton('- 不使用', 1);
       }
-      era.printButton('- 今后都直接来，来个痛快', 2); // :69
-      era.printButton('- 今后都戴套', 3); // :70
-      const result = await era.input(); // :73
+      era.printButton('- 今后都直接来，来个痛快', 2);
+      era.printButton('- 今后都戴套', 3);
+      const result = await era.input();
       if (result === 0) {
-        game.train.安全套 -= 1; // :76
+        game.train.安全套 -= 1;
         if (!era_flag.assiplay) {
-          era.print(`${player_name}戴着套。`); // :78
-          chara(cid).event.主人避孕套 = 1; // :79（属主 event，走门面）
+          era.print(`${player_name}戴着套。`);
+          chara(cid).event.主人避孕套 = 1; // （属主 event，走门面）
         } else {
-          era.print(`让${player_name}戴着套。`); // :81
-          era.set(`tequip:${cid}:36`, 1); // :82
+          era.print(`让${player_name}戴着套。`);
+          era.set(`tequip:${cid}:36`, 1);
         }
-        return 1; // :83
+        return 1;
       }
       if (result === 1) {
-        return 1; // :85
+        return 1;
       }
       if (result === 2) {
-        era.print(`今后和${name_of(cid)}做都是直接来。`); // :87
-        era.set(`cflag:${cid}:61`, 2); // :88
-        continue; // :89 RESTART
+        era.print(`今后和${name_of(cid)}做都是直接来。`);
+        era.set(`cflag:${cid}:61`, 2);
+        continue; // RESTART
       }
       if (result === 3) {
-        era.print('今后有套就用。'); // :91
-        era.set(`cflag:${cid}:61`, 1); // :92
-        continue; // :93 RESTART
+        era.print('今后有套就用。');
+        era.set(`cflag:${cid}:61`, 1);
+        continue; // RESTART
       }
       // CASEELSE GOTO（:95）：白名单外输入到不了游戏（头注）
     }
-    // :101-141 设定为有就用
+    // 设定为有就用
     if ((era.get(`cflag:${cid}:61`) || 0) === 1) {
       if (game.train.安全套 > 0) {
-        game.train.安全套 -= 1; // :105 有 → 用
+        game.train.安全套 -= 1; // 有 → 用
         if (!era_flag.assiplay) {
-          era.print(`${player_name}戴着套。`); // :107
-          chara(cid).event.主人避孕套 = 1; // :108
+          era.print(`${player_name}戴着套。`);
+          chara(cid).event.主人避孕套 = 1;
         } else {
-          era.print(`让${player_name}戴着套。`); // :110
-          era.set(`tequip:${cid}:36`, 1); // :111
+          era.print(`让${player_name}戴着套。`);
+          era.set(`tequip:${cid}:36`, 1);
         }
         return 1;
       }
-      // :113-137 没套：主人技巧 Lv5 以上才问（魔王笨一点就直接来——:115 原注）
+      // 没套：主人技巧 Lv5 以上才问（魔王笨一点就直接来——:115 原注）
       if (Math.floor(era.get(`abl:${MASTER}:12`) || 0) > 4) {
-        // :118-120 PRINTFORM 尾接 PRINTFORML 拼一行（头注）
+        // PRINTFORM 尾接 PRINTFORML 拼一行（头注）
         era.print(
           `没有安全套，直接来。${era_flag.assiplay ? '让吗？' : '来吗？'}`,
         );
-        era.printButton('- 好的(下次也继续确认)', 0); // :121
-        era.printButton('- 好的(今后都直接来)', 1); // :122
-        era.printButton('- 不要', 2); // :123
-        const result = await era.input(); // :126
+        era.printButton('- 好的(下次也继续确认)', 0);
+        era.printButton('- 好的(今后都直接来)', 1);
+        era.printButton('- 不要', 2);
+        const result = await era.input();
         if (result === 0) {
-          return 1; // :128
+          return 1;
         }
         if (result === 1) {
-          era.print(`今后对${name_of(cid)}不再确认。`); // :130
-          era.set(`cflag:${cid}:61`, 2); // :131
-          return 1; // :132
+          era.print(`今后对${name_of(cid)}不再确认。`);
+          era.set(`cflag:${cid}:61`, 2);
+          return 1;
         }
         if (result === 2) {
-          return 0; // :134
+          return 0;
         }
         // CASEELSE（:136）：白名单外输入到不了游戏（头注）
       } else {
-        era.print('因为没有安全套所以直接插入。'); // :138
+        era.print('因为没有安全套所以直接插入。');
         return 1;
       }
     }
-    return 1; // :162 全模式拾遗（原文为注释态的兜底 RETURN）
+    return 1; // 全模式拾遗（原文为注释态的兜底 RETURN）
   }
 }
 
@@ -223,21 +217,21 @@ async function confirm_condom2() {
         0) &&
       (era.get(`cflag:${MASTER}:61`) || 0) !== 2
     ) {
-      // :167（主人的 CFLAG:61——注意是 MASTER 行不是 TARGET 行）
-      era.print(`${name_of(cid)}使用安全套吗？`); // :168
-      era.printButton('- 用', 0); // :169
-      era.printButton('- 这次直接来', 1); // :170
-      const result = await era.input(); // :170
+      // （主人的 CFLAG:61——注意是 MASTER 行不是 TARGET 行）
+      era.print(`${name_of(cid)}使用安全套吗？`);
+      era.printButton('- 用', 0);
+      era.printButton('- 这次直接来', 1);
+      const result = await era.input();
       if (result === 0) {
-        era.print(`${name_of(cid)}戴着套`); // :172
-        game.train.安全套 -= 1; // :173
-        era.set(`tequip:${cid}:37`, 1); // :174
+        era.print(`${name_of(cid)}戴着套`);
+        game.train.安全套 -= 1;
+        era.set(`tequip:${cid}:37`, 1);
       } else if (result === 1) {
-        era.set(`cflag:${MASTER}:61`, 2); // :176
+        era.set(`cflag:${MASTER}:61`, 2);
       }
       // ELSEIF RESULT != 1 → GOTO（:178）：白名单外输入到不了游戏（头注）
     }
-    return 1; // :183
+    return 1;
   }
 }
 

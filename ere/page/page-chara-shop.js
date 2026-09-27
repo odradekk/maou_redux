@@ -1,13 +1,6 @@
 /**
  * @file 异界勇者召唤：@CHARA_SIM_SHOP 族（issue #399 / N15 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_CHARA.ERB
- *     @CHARA_SIM_SHOP（:11-128，异界勇者的召唤流程）
- *     @SHOW_SHOP_CHARA（:133-151，头行）
- *     @SELECT_CHARA（:155-234）/@BUY_CHARA（:237-359）——**原作零调用点**
- *     @CHAR_IKAI_CREATE（:361-432，调试档的强行召唤）/ @CHAR_IKAI_APPEND
- *     （:435-449）/ @CHARA_IKAI_COST（:451-458）
- *
  * == 发布构建里的可达性（本文件最要紧的一条） ==
  *
  * 进本屏的唯一入口是 SHOP_MONSTER.ERB:32-35 的 `[IF DEBUG]` 档
@@ -127,17 +120,17 @@ function findchara_no(no) {
  * @SHOW_SHOP_CHARA（:133-151）：异界召唤系列两个画面的公共头行。
  */
 function show_shop_chara() {
-  // :138 CUSTOMDRAWLINE = → 本屏的分隔线走实线
+  // CUSTOMDRAWLINE = → 本屏的分隔线走实线
   era.print('异界召唤');
   era.print('《需要勋章经验来激活次元大门，并支付一定金钱来召唤异次元的勇者》');
-  era.drawLine({ isSolid: true }); // :141
+  era.drawLine({ isSolid: true });
   era.print(
     `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
   );
   era.print(
     `所持金：${era_flag.money}点\t\t勋章：${era.get(`exp:0:${MEDAL_EXP}`) || 0}点`,
-  ); // :150
-  era.drawLine({ isSolid: true }); // :151
+  );
+  era.drawLine({ isSolid: true });
 }
 
 /**
@@ -148,11 +141,11 @@ function show_shop_chara() {
  * @returns {[number, number]} [C, D] = [勋章数, 金钱]
  */
 function chara_ikai_cost(l_i) {
-  let c = Math.trunc(Math.trunc(l_i % IKAI_MOD) / IKAI_DIVISOR); // :453-454
+  let c = Math.trunc(Math.trunc(l_i % IKAI_MOD) / IKAI_DIVISOR);
   if (c < IKAI_MIN_COINS) {
-    c = IKAI_MIN_COINS; // :455-456
+    c = IKAI_MIN_COINS;
   }
-  return [c, c * IKAI_COIN_RATE]; // :457 RETURN C,D
+  return [c, c * IKAI_COIN_RATE]; // RETURN C,D
 }
 
 /**
@@ -166,21 +159,21 @@ function chara_ikai_cost(l_i) {
  * @returns {Promise<number>} 新角色号（原作 RETURN A）
  */
 async function char_ikai_append(arg, rand) {
-  era.addCharacter(arg); // :436 ADDCHARA ARG
-  const saved_target = era_flag.target; // :437 LOCAL = TARGET
-  // :438 CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）：原作的 TRYCALLFORM 对
+  era.addCharacter(arg); // ADDCHARA ARG
+  const saved_target = era_flag.target; // LOCAL = TARGET
+  // CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）：原作的 TRYCALLFORM 对
   // 「没有 CHARA_EX_<N> 这个函数」的编号是**静默无操作**——异界人的 10000+
   // 编号全库没有专属实现（EXCOM.ERB 的 45 个声明编号里没有它们）；
   // ere 的注册表对声明空间外直接抛错（拼写错误防线），故这里先查空间再调
   if (DECLARED_CHARA_IDS.includes(arg)) {
     await add_chara_ex(arg);
   }
-  era_flag.target = arg; // :439 TARGET = CHARANUM - 1
-  const a = arg; // :440 A = CHARANUM - 1
-  await char_init(a, rand); // :443 CALL CHAR_INIT（rand 显式传参）
-  chara(a).invasion.状态 = 0; // :446 CFLAG:A:1 = 0
-  era_flag.target = saved_target; // :448 TARGET = LOCAL
-  return a; // :449 RETURN A
+  era_flag.target = arg; // TARGET = CHARANUM - 1
+  const a = arg; // A = CHARANUM - 1
+  await char_init(a, rand); // CALL CHAR_INIT（rand 显式传参）
+  chara(a).invasion.状态 = 0; // CFLAG:A:1 = 0
+  era_flag.target = saved_target; // TARGET = LOCAL
+  return a; // RETURN A
 }
 
 /**
@@ -193,27 +186,27 @@ async function char_ikai_append(arg, rand) {
  * @returns {Promise<number>} 原作 RETURN 0（:393-395 的 999 分支）
  */
 async function char_ikai_create(rand) {
-  era.drawLine({ isSolid: true }); // :361-363
-  era.print('强行从异世界召唤魔王想要召唤的人'); // :364
-  era.print('这将耗费不少的金钱以及更多的勋章'); // :365
-  era.drawLine({ isSolid: true }); // :364-366
-  era.print(''); // :367
-  await era.waitAnyKey(); // :368 WAIT
+  era.drawLine({ isSolid: true });
+  era.print('强行从异世界召唤魔王想要召唤的人');
+  era.print('这将耗费不少的金钱以及更多的勋章');
+  era.drawLine({ isSolid: true });
+  era.print('');
+  await era.waitAnyKey(); // WAIT
 
   for (;;) {
-    show_shop_chara(); // :370
-    let columns = 0; // :371 LOCAL = 0
-    // :372-384 一览：有预设、且不在场（FINDCHARA 未命中）的编号
+    show_shop_chara();
+    let columns = 0; // LOCAL = 0
+    // 一览：有预设、且不在场（FINDCHARA 未命中）的编号
     let row = '';
     for (let l_i = IKAI_IDS.start; l_i < IKAI_IDS.end; l_i += 1) {
       if (!exist_csv(l_i)) {
-        continue; // :373-374 SIF !EXISTCSV(L_I) → CONTINUE
+        continue; // SIF !EXISTCSV(L_I) → CONTINUE
       }
       if (findchara_no(l_i) > 0) {
-        continue; // :375-377 SIF A > 0 → CONTINUE
+        continue; // SIF A > 0 → CONTINUE
       }
       const [coins, money] = chara_ikai_cost(l_i);
-      // :378 `PRINTFORM  [{L_I,2}] …` 命令名后是两个空格：Emuera 只吃掉一个
+      // `PRINTFORM  [{L_I,2}] …` 命令名后是两个空格：Emuera 只吃掉一个
       // 作命令分隔，第二个是实参的首字符（黄金样本里主菜单 `PRINT  上午`
       // 的行首空格、`PRINTL  ` 的单空格行都是同一条规则的旁证），故格首有一个
       // 半角空格
@@ -223,21 +216,21 @@ async function char_ikai_create(rand) {
         `(${coins}勋章&${money}金)`;
       columns += 1;
       if (columns % COLUMNS === 0) {
-        era.print(row); // :382-383 SIF LOCAL % 5 == 0 → PRINTL
+        era.print(row); // SIF LOCAL % 5 == 0 → PRINTL
         row = '';
       }
     }
     if (row !== '') {
-      era.print(row); // :385-386 SIF !LINEISEMPTY() → PRINTL
+      era.print(row); // SIF !LINEISEMPTY() → PRINTL
     }
 
-    era.drawLine({ isSolid: true }); // :386-388
-    // :389 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面那些
+    era.drawLine({ isSolid: true });
+    // 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面那些
     // 勇者行的 `[编号]`（格行拼行，编号即输入值），单给这行打按钮会把
     // 白名单收成 999、异界勇者的编号当场被拒收。整轮按钮化要先重排格行。
-    era.print('[999] 返回'); // :389
+    era.print('[999] 返回');
 
-    // :391 INPUT 1（默认值 1）：只有「空回传」按默认值 1 处理——显式键入的
+    // INPUT 1（默认值 1）：只有「空回传」按默认值 1 处理——显式键入的
     // 0 是合法值，不能被 `|| 1` 吞掉（文件头）
     const raw = await era.input();
     const result =
@@ -245,23 +238,23 @@ async function char_ikai_create(rand) {
         ? 1
         : raw;
     if (result === 999) {
-      return 0; // :393-395 CASE 999
+      return 0; // CASE 999
     }
-    const l_i = result; // :396-397 CASEELSE：L_I = RESULT
+    const l_i = result; // CASEELSE：L_I = RESULT
 
     if (!exist_csv(l_i)) {
-      continue; // :400-403
+      continue;
     }
 
-    let a = -1; // :405 A = -1
-    // :407-409 已登录的角色（编号段内才查）
-    // :408 INRANGE(L_I,10000,100000) 两端闭——上界与 FOR 的开区间不同源，
+    let a = -1; // A = -1
+    // 已登录的角色（编号段内才查）
+    // INRANGE(L_I,10000,100000) 两端闭——上界与 FOR 的开区间不同源，
     // 别顺手抄成 `< IKAI_IDS.end`（L_I == 100000 且在库时会重复收费入队）
     if (l_i >= IKAI_IDS.start && l_i <= IKAI_IDS.end) {
       a = findchara_no(l_i);
     }
     if (a < 0) {
-      // :411-432 登录新角色：价钱与勋章两道闸
+      // 登录新角色：价钱与勋章两道闸
       const [coins, money] = chara_ikai_cost(l_i);
       if (era_flag.money < money) {
         era.print('金钱不够！');
@@ -273,19 +266,19 @@ async function char_ikai_create(rand) {
         await era.waitAnyKey();
         continue;
       }
-      era_flag.money -= money; // :422
-      era_exflag.legit_money -= money; // :423
+      era_flag.money -= money;
+      era_exflag.legit_money -= money;
       era.set(
         `exp:0:${MEDAL_EXP}`,
         (era.get(`exp:0:${MEDAL_EXP}`) || 0) - coins,
-      ); // :424
-      a = await char_ikai_append(l_i, rand); // :426-427
+      );
+      a = await char_ikai_append(l_i, rand);
       era.print('*****************************************');
-      era.print(`${era.get(`callname:${a}:-1`) ?? ''}被你强行召唤了………`); // :429
+      era.print(`${era.get(`callname:${a}:-1`) ?? ''}被你强行召唤了………`);
       era.print('*****************************************');
-      await era.waitAnyKey(); // :431 PRINTW
+      await era.waitAnyKey(); // PRINTW
     }
-    return 0; // :428-432 之后落回 $INPUT_LOOP 之外，函数尾
+    return 0; // 之后落回 $INPUT_LOOP 之外，函数尾
   }
 }
 
@@ -296,109 +289,109 @@ async function char_ikai_create(rand) {
  * @returns {Promise<number>} 原作 RETURN 0（:128）
  */
 async function chara_sim_shop(rand) {
-  // :21-23 TFLAG:100/101/102 = 0（与怪物商店同一组槽位，见文件头）
+  // TFLAG:100/101/102 = 0（与怪物商店同一组槽位，见文件头）
   shop_state.race = 0;
   shop_state.race2 = 0;
   shop_state.chosen = 0;
 
-  // :25-51 性别选择
+  // 性别选择
   let sex_coin = 0;
   for (;;) {
-    show_shop_chara(); // :27
-    era.print('请选择要召唤的勇者的性别'); // :29
-    // :30 的 `[1]男性…` 是列排版纯文本选项 → 与 :36 的返回一并升格为按钮
+    show_shop_chara();
+    era.print('请选择要召唤的勇者的性别');
+    // 的 `[1]男性…` 是列排版纯文本选项 → 与 :36 的返回一并升格为按钮
     // （PR #53 通则，正文不写 [编号]；#572）
     era.printButton('男性', 1);
     era.printButton('女性', 2);
     era.printButton('扶她', 3);
-    // :31-34 [IF_DEBUG] 的 [99] 强行召唤不移植（文件头）
-    era.drawLine({ isSolid: true }); // :35
-    era.printButton('返回', 999); // :36
+    // [IF_DEBUG] 的 [99] 强行召唤不移植（文件头）
+    era.drawLine({ isSolid: true });
+    era.printButton('返回', 999);
     const result = await era.input();
     if (result === 999) {
-      clear_shop(); // :41
+      clear_shop();
       return 0;
     }
-    // :44 `RESULT > 3 && RESULT != 99`——99 是未移植的调试档，判据退化为 > 3
+    // `RESULT > 3 && RESULT != 99`——99 是未移植的调试档，判据退化为 > 3
     if (result > SEX_MAX) {
       continue;
     }
     sex_coin = result;
     if (result === 0) {
-      continue; // :49-50
+      continue;
     }
     break;
   }
 
-  // :53-127 $ADD_CHARA
+  // $ADD_CHARA
   for (;;) {
-    show_shop_chara(); // :54
-    // :60-62 SEXCOIN == 99 → JUMP CHAR_IKAI_CREATE（调试档，文件头）
+    show_shop_chara();
+    // SEXCOIN == 99 → JUMP CHAR_IKAI_CREATE（调试档，文件头）
 
-    const chara_id = IKA_SIM_ID; // :63 CHARA = 211
-    era.addCharacter(chara_id); // :64 ADDCHARA CHARA
-    await add_chara_ex(chara_id); // :65 CALL ADDCHARA_EX, CHARANUM-1
-    const a = chara_id; // :66 A = CHARANUM - 1（扁平化）
+    const chara_id = IKA_SIM_ID; // CHARA = 211
+    era.addCharacter(chara_id); // ADDCHARA CHARA
+    await add_chara_ex(chara_id); // CALL ADDCHARA_EX, CHARANUM-1
+    const a = chara_id; // A = CHARANUM - 1（扁平化）
     if (sex_coin === 1) {
-      era.set(`talent:${a}:${MALE_TALENT}`, 1); // :68-69
+      era.set(`talent:${a}:${MALE_TALENT}`, 1);
     }
     if (sex_coin === 3) {
-      era.set(`talent:${a}:${FUTA_TALENT}`, 1); // :70-71
+      era.set(`talent:${a}:${FUTA_TALENT}`, 1);
     }
-    await char_make(a, 0, 0, rand); // :73-74 CALL CHAR_MAKE; A = RESULT
-    chara(a).invasion.状态 = 0; // :75
+    await char_make(a, 0, 0, rand); // CALL CHAR_MAKE; A = RESULT
+    chara(a).invasion.状态 = 0;
     if ((era.get(`cflag:${a}:151`) || 0) < -100) {
-      chara(a).chara.善恶值 = -100; // :77-79 善良値調整
+      chara(a).chara.善恶值 = -100; // 善良値調整
     }
 
-    era.print('*****************************************'); // :81
-    era.print(`${chara_callname(a)}回应了你的召唤………`); // :82
-    era.print('*****************************************'); // :83
-    await era.waitAnyKey(); // :84 PRINTW
-    // :85 CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
+    era.print('*****************************************');
+    era.print(`${chara_callname(a)}回应了你的召唤………`);
+    era.print('*****************************************');
+    await era.waitAnyKey(); // PRINTW
+    // CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
     // -2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
     await show_chara_info(a, -2, rand);
-    era.print(`确定要召唤${chara_callname(a)}么？`); // :87
-    era.print(''); // :88
-    era.print(''); // :89
+    era.print(`确定要召唤${chara_callname(a)}么？`);
+    era.print('');
+    era.print('');
     const gender_word = talent(a, MALE_TALENT) !== 0 ? '他' : '她';
-    // :90-96 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+    // 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
     era.printButton(`就是${gender_word}了`, 0);
     era.printButton('再换一个（花费1500）', 1);
 
     const result = await era.input();
     if (result === 1) {
-      // :99-111 再换一个
+      // 再换一个
       if (era_flag.money <= SUMMON_FEE) {
-        era.print('金钱不够！'); // :102-103
+        era.print('金钱不够！');
         await era.waitAnyKey();
         return 0;
       }
-      await party_char_del(a); // :105
-      era.removeCharacter(a); // :106
-      era_flag.money -= SUMMON_FEE; // :107
-      era_exflag.legit_money -= SUMMON_FEE; // :108
-      name_reset(); // :109 CALL NAME_RESET
-      continue; // :110 GOTO ADD_CHARA
+      await party_char_del(a);
+      era.removeCharacter(a);
+      era_flag.money -= SUMMON_FEE;
+      era_exflag.legit_money -= SUMMON_FEE;
+      name_reset(); // CALL NAME_RESET
+      continue; // GOTO ADD_CHARA
     }
     if (result === 0) {
-      // :112-125 就是（成交）：金钱与勋章两道闸，随后扣款
+      // 就是（成交）：金钱与勋章两道闸，随后扣款
       if (era_flag.money <= SUMMON_FEE) {
-        era.print('金钱不够！'); // :114-115
+        era.print('金钱不够！');
         await era.waitAnyKey();
       } else if ((era.get(`exp:0:${MEDAL_EXP}`) || 0) < 1) {
-        era.print('勋章不够！'); // :116-118
+        era.print('勋章不够！');
         await era.waitAnyKey();
       } else {
-        era_flag.money -= SUMMON_FEE; // :120
-        era_exflag.legit_money -= SUMMON_FEE; // :121
-        era.set(`exp:0:${MEDAL_EXP}`, (era.get(`exp:0:${MEDAL_EXP}`) || 0) - 1); // :122
+        era_flag.money -= SUMMON_FEE;
+        era_exflag.legit_money -= SUMMON_FEE;
+        era.set(`exp:0:${MEDAL_EXP}`, (era.get(`exp:0:${MEDAL_EXP}`) || 0) - 1);
         if ((era.get(`cflag:${a}:999`) || 0) === 0) {
-          chara(a).stronghold.异界召唤标记 = 1; // :123-124
+          chara(a).stronghold.异界召唤标记 = 1;
         }
       }
     }
-    return 0; // :126-128
+    return 0;
   }
 }
 

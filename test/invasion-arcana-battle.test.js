@@ -2,10 +2,6 @@
  * ere/invasion/invasion-arcana-battle.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
- * 源: target/ERB/侵略/ARCANA_BATTLE.ERB 的 @ARCANA_BATTLE / @SPEED_PLUS3 /
- * @DEATH_CHECK4。攻击本体 @DUEL_ATTACK 是 dungeon-battle2 已落地的真身
- * （arg3 = 3 奴隶→圣灵 / 2 圣灵→奴隶），本票只驱动、不重写。
- *
  * 缝 = test/helpers/era-fixture.js。随机源按上界注入（knob），duel_attack
  * 链内每个消费点都已核算：
  *   rand(2) → 1：magic(0,·) 的三段（MAGIC_SELECT / SHAMAN_SELECT / 末段）

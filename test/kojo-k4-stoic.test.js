@@ -204,7 +204,7 @@ test('初調教屈服刻印分档（各 Lv 一次）：CFLAG:201 2 → 3 → 4 �
 
 test('K4_KOJO2 二回目以降（ASSI < 0 → :168-169）：反抗刻印Lv3 支', async () => {
   // CFLAG:201 已到顶（6）且 ASSI < 0 → K4_KOJO2；反抗刻印Lv3 + FLAG:7 == 2。
-  // :241+:244+:245（:243 的 SIF CFLAG:42 == 83 只护住 :244 那一段）是一整行
+  // （:243 的 SIF CFLAG:42 == 83 只护住 :244 那一段）是一整行
   // （#625），眼镜档两臂各断言整行
   const cases = [
     [0, '冷徹的目光异常冰冷…'],
@@ -718,7 +718,7 @@ test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（CFLAG:50
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 test('#625 COLOSSEUM_KOJO_4：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
   // 原作 :4952+:4954+:4956+:4957、:4985+:4987+:4989+:4990、:5009+:5011+
-  // :5013+:5014 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
+  // 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
   // 收行），ere 侧曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
   const cases = [
     {

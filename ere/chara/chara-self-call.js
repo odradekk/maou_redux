@@ -8,10 +8,6 @@
  * `@SET_NICK_SELFCALL`（绰号一人称，从姓名派生）与共用的
  * `@CALC_SELFCALL_FACTOR`（角色的教育/姿态/开放三维评分）。
  *
- * 源: target/ERB/キャラ関数/SELF_CALL.ERB
- *       @RANDOM_SELF_CALL（:2-65）@SET_SUIT_SELFCALL（:67-161）
- *       @SET_NICK_SELFCALL（:163-274）@CALC_SELFCALL_FACTOR（:276-396）
- *
  * 移植说明（有意偏离，均注明依据）：
  *   - **MODE=1（自定义输入）分支自 #546 起落地**（原作 :7-23）：唯一调用方
  *     `キャラ関数/CHARA_INFO ver1.0.1.ERB:1062` 的 CASE 8（[8] 一人称重设）
@@ -148,7 +144,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
   let attitude = 0; // L_姿态
   let openness = 0; // L_开放
 
-  // :286-308 种族（GOTO CASE_魔族 展开为内层种族2 判定，:311-322）
+  // 种族（GOTO CASE_魔族 展开为内层种族2 判定，:311-322）
   switch (get_look_info(cid, '种族')) {
     case '精灵':
     case '暗精灵':
@@ -170,7 +166,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
       openness -= 2;
       break;
     case '魔族':
-      // :302-303 GOTO CASE_魔族，跳进上面注释点名的 IF 0 死块（只经 GOTO 到达）
+      // GOTO CASE_魔族，跳进上面注释点名的 IF 0 死块（只经 GOTO 到达）
       switch (get_look_info(cid, '种族2')) {
         case '植物':
           attitude -= 1;
@@ -195,7 +191,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
       break;
   }
 
-  // :324-343 成为勇者前的生活（"修女"/"巫女" 等仅女性向词条命中，1:1——
+  // 成为勇者前的生活（"修女"/"巫女" 等仅女性向词条命中，1:1——
   // get_look_info 对同一素质值按性别返回不同词，本处不额外处理性别）
   switch (get_look_info(cid, '成为勇者前的生活')) {
     case '学生':
@@ -233,7 +229,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
 
   const talent = (idx) => era.get(`talent:${cid}:${idx}`) || 0;
 
-  // :347-392 素质加成（原作借 SWAP ARG,TARGET 走裸 TALENT 寻址，文件头）
+  // 素质加成（原作借 SWAP ARG,TARGET 走裸 TALENT 寻址，文件头）
   if (talent(163)) {
     // 高贵
     edu += 2;
@@ -288,7 +284,7 @@ function calc_selfcall_factor(cid, rand = default_rand) {
     attitude = -10;
   }
 
-  return [edu, attitude, openness]; // :396 RETURN L_教育,L_姿态,L_开放
+  return [edu, attitude, openness]; // RETURN L_教育,L_姿态,L_开放
 }
 
 /**
@@ -344,7 +340,7 @@ function set_suit_selfcall(cid, start = -1, rand = default_rand) {
           } else if (attitude < -2) {
             word = male ? '小人' : '小女子';
           } else if (attitude <= -5) {
-            // :141 原作可达性存疑：上一支 `attitude < -2` 已把这个区间
+            // 原作可达性存疑：上一支 `attitude < -2` 已把这个区间
             // 拦下，1:1 保留分支不改写
             word = '在下';
           } else {
@@ -393,13 +389,13 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
     local += 1;
 
     if (!is_all_fullwidth(name)) {
-      // :171-175 含半角字符：直接回落姓名本体
+      // 含半角字符：直接回落姓名本体
       era.set(`cstr:${cid}:60`, name);
       return -1;
     }
 
     if (nid_get_type(era.get(`cflag:${cid}:6`) || 0) === 0) {
-      // :180-225 和名
+      // 和名
       switch (local) {
         case 0: {
           // 皐月 -> 皐月
@@ -465,7 +461,7 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
           return -1;
       }
     } else {
-      // :227-272 洋名
+      // 洋名
       switch (local) {
         case 0: {
           // 艾莉 -> 艾莉
@@ -553,12 +549,12 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
  * @returns {Promise<number>} 已设定的一人称档位（原作 RETURN 值）
  */
 async function random_self_call(cid, rand = default_rand, mode = 0) {
-  // :6 LOCAL = CFLAG:ARG:450（MODE 1 的空输入回落也沿用这个进入时读的档位）
+  // LOCAL = CFLAG:ARG:450（MODE 1 的空输入回落也沿用这个进入时读的档位）
   let local = era.get(`cflag:${cid}:450`) || 0;
 
   if (mode === 1) {
-    // :7-8 SIF MODE == 0 → GOTO RANDOM（只有 MODE 1 进输入段）
-    // :10-12 $INPUT_LOOP：两条分割线夹一句提示
+    // SIF MODE == 0 → GOTO RANDOM（只有 MODE 1 进输入段）
+    // $INPUT_LOOP：两条分割线夹一句提示
     era.drawLine();
     era.print('请输入想设定的第一人称，若不输入择随机设定');
     // 有意偏离（#567，第 1 轮验收补）：上一行 1:1 照抄原作，但 ere 的渲染层
@@ -568,14 +564,14 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     // 按下第一个键时就提交，自由文本反而输不成
     era.print('（输入 0 随机设定）');
     era.drawLine();
-    // :13-14 INPUTS → LOCALS '= RESULTS
+    // INPUTS → LOCALS '= RESULTS
     const text = input_text(await era.input());
-    // :15-16 IF LOCALS == "" → GOTO RANDOM。空输入在引擎里的形态就是数值 0
+    // IF LOCALS == "" → GOTO RANDOM。空输入在引擎里的形态就是数值 0
     // （getNumber 把 '' 与 "0" 都归一成 0，且渲染层不受理空提交），#567 起由
     // 共享判据统一还原（两条依据的完整注记见 ere/utils/input-text.js）：
     // 空串落 $RANDOM 的随机路径，其余值字符串化落为自定义一人称
     if (text !== '') {
-      // :18-21 STRLENS(LOCALS) > 0（ELSE 内的判空，恒真）：写入并清档位
+      // STRLENS(LOCALS) > 0（ELSE 内的判空，恒真）：写入并清档位
       era.set(`cstr:${cid}:60`, text);
       era.set(`cflag:${cid}:450`, 0);
       return 0;
@@ -583,13 +579,13 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     // 空输入 → 落 $RANDOM（local 已在 :6 读好，等价于重读本档位）
   }
 
-  // :24 $RANDOM 起为 MODE 0/1 共用的随机路径
-  // :25-26 SIF LOCAL >= 200 → LOCAL = -1（CSV 回落档）
+  // $RANDOM 起为 MODE 0/1 共用的随机路径
+  // SIF LOCAL >= 200 → LOCAL = -1（CSV 回落档）
   if (local >= 200) {
     local = -1;
   }
 
-  // :28-36 LOCAL < 0：CSV 预设回落
+  // LOCAL < 0：CSV 预设回落
   if (local < 0) {
     const preset = preset_self_call(cid);
     if (preset) {
@@ -599,24 +595,24 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     }
   }
 
-  // :38-42 LOCAL < 9 → 一人称 = 我
+  // LOCAL < 9 → 一人称 = 我
   if (local < 9) {
     era.set(`cstr:${cid}:60`, '我');
     era.set(`cflag:${cid}:450`, 9);
     return 9;
   }
 
-  // :44-52 LOCAL < 100 → 合适一人称表
+  // LOCAL < 100 → 合适一人称表
   if (local < 100) {
     const result = set_suit_selfcall(cid, local - 10, rand);
     if (result >= 0) {
       era.set(`cflag:${cid}:450`, result + 10);
       return result + 10;
     }
-    local = 99; // :51
+    local = 99;
   }
 
-  // :54-62 LOCAL < 200 → 绰号一人称表
+  // LOCAL < 200 → 绰号一人称表
   if (local < 200) {
     const result = set_nick_selfcall(cid, local - 100, rand);
     if (result >= 0) {
@@ -627,7 +623,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     }
   }
 
-  // :63-65 两张表均未命中：清空档位重试（原作 CALL RANDOM_SELF_CALL, ARG——
+  // 两张表均未命中：清空档位重试（原作 CALL RANDOM_SELF_CALL, ARG——
   // 不带 MODE，恒走随机路径）
   era.set(`cflag:${cid}:450`, -1);
   return random_self_call(cid, rand);

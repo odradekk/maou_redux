@@ -1,12 +1,6 @@
 /**
  * @file 2D 地下城模式的地图组件（issue #181，阶段 3 H12）：LABO_MAP.ERB 八函数。
  *
- * 源: target/ERB/迷宮/LABO_MAP.ERB  @GEO_OUTPUT_2（:6-23，chip 地图输出）、
- *       @UNIT_CHECK（:26-47，勇者存在检查）、@MON_CHECK（:51-77，怪物存在
- *       检查）、@VIL_CHECK（:80-91，村庄存在检查）、@CHIP_DRAW（:95-139，
- *       地图 chip 绘制）、@SET_VIL（:142-159，村庄设置）、@MON_LIMIT
- *       （:162-181，怪物配置限界）、@C_OUT_MON（:183-228，怪物彩色输出）
- *
  * 移植说明（有意偏离，均注明依据）：
  *   - DA/DB/DC 的承载与 [y][x] 维度约定见 labo.js 文件头（本文件是 DB 的
  *     清零方之一与 DC 的产地）；
@@ -55,21 +49,21 @@ function unit_check(x, y) {
       (era.get(`cflag:${cid}:1`) || 0) !== 2 &&
       (era.get(`cflag:${cid}:1`) || 0) !== 3
     ) {
-      continue; // :33-34 SIF … CONTINUE
+      continue; // SIF … CONTINUE
     }
     const ux = era.get(`cflag:${cid}:510`) || 0; // X = CFLAG:COUNT:510
     if (ux < 0) {
-      continue; // :36-37
+      continue;
     }
     const uy = era.get(`cflag:${cid}:511`) || 0; // Y = CFLAG:COUNT:511
     if (uy < 0) {
-      continue; // :39-40
+      continue;
     }
     if (ux === x && uy === y) {
-      return cid; // :42-43 RETURN COUNT
+      return cid; // RETURN COUNT
     }
   }
-  return -1; // :47
+  return -1;
 }
 
 /**
@@ -84,7 +78,7 @@ function mon_check(x, y) {
   const lv = db_get(y, x); // LOCAL:0 = DB:(P:1):(P:0)
 
   if (lv <= 0 || lv >= 10) {
-    return 0; // :59-60
+    return 0;
   }
 
   let troops = 0; // LOCAL:1
@@ -98,7 +92,7 @@ function mon_check(x, y) {
     return lv;
   }
 
-  db_set(y, x, 0); // :75 兵力不足——扫掉
+  db_set(y, x, 0); // 兵力不足——扫掉
 
   return 0;
 }
@@ -112,7 +106,7 @@ function mon_check(x, y) {
 function vil_check(x, y) {
   const v = dc_get(y, x); // X = DC:(P:1):(P:0)
   if (v <= 0) {
-    return 0; // :88-89
+    return 0;
   }
   return v;
 }
@@ -168,27 +162,27 @@ function c_out_mon(arg0) {
 function chip_draw(x, y) {
   // ;マップチップ描画
   if (x === 16 && y === 16) {
-    return [{ content: '凸,' }]; // :100-104 PRINT 凸 / PRINT ,
+    return [{ content: '凸,' }]; // PRINT 凸 / PRINT ,
   }
 
-  const unit = unit_check(x, y); // :106 CALL UNIT_CHECK
+  const unit = unit_check(x, y); // CALL UNIT_CHECK
   if (unit >= 0) {
     if ((era.get(`cflag:${unit}:1`) || 0) === 2) {
-      return [{ color: '#c83232', content: '@,' }]; // :108-112 SETCOLOR 200,50,50 → PRINT ＠ / PRINT ,
+      return [{ color: '#c83232', content: '@,' }]; // SETCOLOR 200,50,50 → PRINT ＠ / PRINT ,
     }
-    return [{ content: '@,' }]; // :113-115
+    return [{ content: '@,' }];
   }
 
-  const mon = mon_check(x, y); // :121 CALL MON_CHECK
+  const mon = mon_check(x, y); // CALL MON_CHECK
   if (mon > 0) {
-    return c_out_mon(mon); // :123 CALL C_OUT_MON(RESULT)
+    return c_out_mon(mon); // CALL C_OUT_MON(RESULT)
   }
 
   if (vil_check(x, y) > 0) {
-    return [{ content: '凹,' }]; // :127-131 PRINTFORM 凹 / PRINT ,
+    return [{ content: '凹,' }]; // PRINTFORM 凹 / PRINT ,
   }
 
-  return c_out(Math.trunc(da_get(y, x) / 32)); // :134-135 LOCAL:2 = DA/32 → C_OUT
+  return c_out(Math.trunc(da_get(y, x) / 32)); // LOCAL:2 = DA/32 → C_OUT
 }
 
 /**
@@ -203,13 +197,13 @@ async function geo_output_2() {
     for (let x = 0; x < 32; x += 1) {
       row.push(...chip_draw(x, y)); // P:0/P:1 → 显式传参
     }
-    // :18 的 PRINTL 只结束这一行的 32 个 CHIP_DRAW `PRINT` 串（PRINT 不换
+    // 的 PRINTL 只结束这一行的 32 个 CHIP_DRAW `PRINT` 串（PRINT 不换
     // 行），**不是空行**——ere 的 print 一次调用即一行，别再补（#597）
     era.print(row);
   }
   // SETFONT（:21）——复原同样无通道，跳过
 
-  await era.waitAnyKey(); // :23 WAIT
+  await era.waitAnyKey(); // WAIT
 }
 
 /**
@@ -233,7 +227,7 @@ function set_vil(rand) {
     const y = rand_n(32);
     const x = rand_n(32);
     if (y === 16 && x === 16) {
-      continue; // :154-155 中心（魔王城）不放村
+      continue; // 中心（魔王城）不放村
     }
     dc_set(y, x, dc_get(y, x) + 1);
   }
@@ -258,10 +252,10 @@ function mon_limit() {
   }
 
   if (total <= 120) {
-    return 1; // :176-177
+    return 1;
   }
 
-  era.print('*怪物的配置到极限了*'); // :179 PRINTL
+  era.print('*怪物的配置到极限了*'); // PRINTL
 
   return 0;
 }

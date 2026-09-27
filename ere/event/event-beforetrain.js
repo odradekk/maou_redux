@@ -1,10 +1,6 @@
 /**
  * @file 调教开始前事件处理与叙述消息（EVENT_BEFORETRAIN.ERB 移植）。
  *
- * 源: target/ERB/EVENT/EVENT_BEFORETRAIN.ERB
- *     @PRITRAIN_MESSAGE（:6-201）
- *     @PRITRAIN_MESSAGE_NOCLOTHES（:207-270）
- *     @PRITRAIN_MESSAGE_CLOTHED（:266-323）
  */
 
 const era = require('#/era-electron');

@@ -5,20 +5,6 @@
  *     @CHAR_GIFT 的献上流程、@ENDING_N 的 Normal End 演出与
  *     @ENDINGINPUT / @ENDINCONSQSELECT 两个选项分发。
  *
- * 源: target/ERB/EVENT/ENDING ver 1.0.1.ERB  @ENDING_1（:6-40，人间界
- *       征服的中场结局）/ @ENDING_2（:43-56，魔王城陷落的真
- *       GAMEOVER）/ @ENDING_3（:59-74，精灵领域）/ @ENDING_4
- *       （:77-92，龙之山脉）/ @ENDING_5（:97-112，天界）/ @ENDING_N
- *       （:115-135，一周目 500 天的 Normal End）/ @CHAR_GIFT（:136-297，
- *       贡品角色的献上流程）/ @ENDINGINPUT（:919-993，选项分发与后果写入）/
- *       @ENDINCONSQSELECT（:994-1036，菲娅线因果选择的后果文本）
- *     target/ERB/EVENT/ENDINGDATA_ADDON1.ERB  @END10_55（:475-485，
- *       天神宫结局演出）
- *     （ENDING_1 的触发条件与 CALL 在 ere/page/page-invasion.js 的
- *     invasion_check，原作 INVASION.ERB:999-1021；ENDING_2 的触发在
- *     ere/dungeon/dungeon.js，原作 DUNGEON.ERB:202 的 JUMP；ENDING_N
- *     的触发在 ere/event/event-endcheck.js 的 run_endcheck 尾部）
- *
  * 移植说明（有意偏离，均注明依据）：
  *   - ENDING_1 是中场结局不是游戏终止（#112 判据）：默认路径继续游戏，
  *     玩家选 [1] 才 QUIT（era.quit()，引擎 API）；「演出已出现」的判定
@@ -78,7 +64,7 @@ const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起�
  *   返回（异常炸穿，见上）——原作 :40 的 RETURN 0 在该路径同样不可达。
  */
 async function ending_1() {
-  // :8-18 横幅（DRAWLINE + 制表框 8 行 + 空行 2，含全角空格的手工对齐，
+  // 横幅（DRAWLINE + 制表框 8 行 + 空行 2，含全角空格的手工对齐，
   // 逐字抄）
   era.drawLine();
   era.print('┌─────────────────────────────┐');
@@ -92,39 +78,39 @@ async function ending_1() {
   era.print('');
   era.print('');
 
-  // :20-23 ADDCHARA 35（菲娅）→ CALL ADDCHARA_EX → CALL CHAR_INIT。
+  // ADDCHARA 35（菲娅）→ CALL ADDCHARA_EX → CALL CHAR_INIT。
   // ADDCHARA_EX 分发 CHARA_EX_35（EX_TALENT:104 = 菲娅，#21 已实现）
   era.addCharacter(35);
   await add_chara_ex(35);
   await char_init(35);
 
-  // :25 WAIT
+  // WAIT
   await era.waitAnyKey();
   era.drawLine();
-  // :27 询问
+  // 询问
   era.print('人间界已经陷落了，不过世上还有很多其它地方，要继续游戏吗？');
-  // :29-30 [0] 继续 / [1] 退出（printButton 的偏离说明见文件头）
+  // [0] 继续 / [1] 退出（printButton 的偏离说明见文件头）
   era.printButton('- 世界这么大，我想再去看看！', 0);
   era.printButton('- 我……已经……不想做魔王了……', 1);
 
-  // :31-37 $INPUT_LOOP：选 1 → QUIT；非 0 的其它值重问
+  // $INPUT_LOOP：选 1 → QUIT；非 0 的其它值重问
   for (;;) {
     const result = await era.input();
     if (result === 1) {
-      // :34 QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，
+      // QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，
       // #148）——本函数与全部调用方的后续语句不可达，:38 的 FLAG:82 = 1
       // 与 :39 的 PRINTW 均不执行。quit() 之后不写任何语句（原作 QUIT 后
       // 函数不再返回，1:1）；夹具同款 throw（era-fixture.js），测试可证
       era.quit();
     }
     if (result !== 0) {
-      continue; // :35-36 GOTO INPUT_LOOP（重问不重画）
+      continue; // GOTO INPUT_LOOP（重问不重画）
     }
     break;
   }
-  // :38 FLAG:82 = 1（人间界已陷落）——「演出已出现」的判据（#112）
+  // FLAG:82 = 1（人间界已陷落）——「演出已出现」的判据（#112）
   era_flag.human_realm_fallen = 1;
-  // :39 PRINTW *人类皇族公主菲娅，被你抓获了*
+  // PRINTW *人类皇族公主菲娅，被你抓获了*
   era.print('*人类皇族公主菲娅，被你抓获了*');
   await era.waitAnyKey();
   return 0;
@@ -146,16 +132,16 @@ async function ending_1() {
  * @returns {Promise<void>} 永不返回（QUIT 抛 Error("quit") 炸穿调用链）
  */
 async function ending_2() {
-  // :45 DRAWLINE
+  // DRAWLINE
   era.drawLine();
-  // :46-50 横幅（制表框 4 行，含全角空格的手工对齐，逐字抄）
+  // 横幅（制表框 4 行，含全角空格的手工对齐，逐字抄）
   era.print('┌─────────────────────────────┐');
   era.print('｜　　　　　　新的女勇者，终于攻陷了魔王的地下城　　　　　　｜');
   era.print('｜　　　　　　魔王将打倒自己的勇者的模样铭记于心　　　　　　｜');
   era.print('｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜');
   era.print('└─────────────────────────────┘');
 
-  // :52 PRINTFORMW *勇者%SAVESTR:TARGET%封印了魔王……*。SAVESTR 无引擎
+  // PRINTFORMW *勇者%SAVESTR:TARGET%封印了魔王……*。SAVESTR 无引擎
   // 通道（#171：app.asar 无 savestr 表），名字承载按 #5 决议读
   // callname:TARGET:-1。**取的是 TARGET 指针、不是队长 ARG:0**（票面
   // #173：两者在这条路径上未必同一人，差异属原作行为，照抄别顺手改成
@@ -167,18 +153,18 @@ async function ending_2() {
   era.print(`*勇者${target_name}封印了魔王，被后人歌颂为传说中的勇者*`);
   await era.waitAnyKey(); // PRINTFORMW 的读键
 
-  // :53 PRINTL（两个尾随半角空格的行——与 ENDING_1 的纯空 PRINTL 不同，
+  // PRINTL（两个尾随半角空格的行——与 ENDING_1 的纯空 PRINTL 不同，
   // 逐字抄）
   era.print('  ');
-  // :54 GAMEOVER 分隔行
+  // GAMEOVER 分隔行
   era.print(
     '-------------------------------GAMEOVER---------------------------------',
   );
 
-  // :55 INPUT——确认用，结果不被消费（QUIT 之后无读者）
+  // INPUT——确认用，结果不被消费（QUIT 之后无读者）
   await era.input();
 
-  // :56 QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，#148）
+  // QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，#148）
   // ——本函数与 DUNGEON 调用链的后续语句全部不可达。quit() 之后不写任何
   // 语句（原作 QUIT 后无 RETURN，1:1）
   era.quit();
@@ -259,14 +245,14 @@ const CHAR_GIFT_PERSONAL = [160, 161, 162, 163, 164, 166, 172, 173];
 async function char_gift(arg, rand = default_rand) {
   const gift = CHAR_GIFT_TABLE[arg];
   if (gift === undefined) {
-    // :162-163 ELSE / THROW INVALID ARGUMENT
+    // ELSE / THROW INVALID ARGUMENT
     throw new Error('INVALID ARGUMENT');
   }
   const { no_chara, head, tail, ask, pick, race } = gift;
 
-  // :168 L_LINECOUNT:0 = LINECOUNT（整段入口捕一次，GOTO 回 :169 不重捕）
+  // L_LINECOUNT:0 = LINECOUNT（整段入口捕一次，GOTO 回 :169 不重捕）
   const line_count_0 = era.getLineCount();
-  // :195 PERSONAL = 160 的初值；state 从 loop0 落到 loop1 时复位
+  // PERSONAL = 160 的初值；state 从 loop0 落到 loop1 时复位
   let personal = 160;
   let haircolor = 0; // #DIM HAIRCOLOR（loop 1 重入不重置）
   let a = 0; // 原作的全局 A
@@ -275,71 +261,71 @@ async function char_gift(arg, rand = default_rand) {
 
   for (;;) {
     if (state === 0) {
-      // :170 CLEARLINE LINECOUNT-L_LINECOUNT:0
+      // CLEARLINE LINECOUNT-L_LINECOUNT:0
       await era.clear(era.getLineCount() - line_count_0);
-      // :171-175 添加预设角色 + ADDCHARA_EX + CHAR_INIT
+      // 添加预设角色 + ADDCHARA_EX + CHAR_INIT
       era.addCharacter(no_chara);
       await add_chara_ex(no_chara);
       a = no_chara; // A = CHARANUM - 1（#21：角色号即预设号）
       await char_init(a);
-      // :177-179 贡品播报（LOCALS:10 的拼接见函数头）
+      // 贡品播报（LOCALS:10 的拼接见函数头）
       era.print('*****************************************');
       era.print(`${head}${name_of(no_chara)}${tail}`);
       era.print('*****************************************');
-      // :177-180 贡品播报与 PRINTW（空行 + 读键）
+      // 贡品播报与 PRINTW（空行 + 读键）
       era.print('');
       await era.waitAnyKey();
-      // :181 CALL SHOW_CHARA_INFO, A, -2（#390 真身）
+      // CALL SHOW_CHARA_INFO, A, -2（#390 真身）
       await show_chara_info(a, -2);
-      // :183-185 询问
+      // 询问
       era.print(ask);
       era.printButton('收下她吧', 0);
       era.printButton('另外挑选', 1);
       const result = await era.input();
       if (result === 0) {
-        // :183-188 询问与「收下预设角色」支（原作 RETURN 无值）
+        // 询问与「收下预设角色」支（原作 RETURN 无值）
         return undefined;
       }
-      // :190-192 退掉预设角色
+      // 退掉预设角色
       await drop_gift_chara(a);
-      // :195 PERSONAL = 160（只在落进 loop 1 时执行）
+      // PERSONAL = 160（只在落进 loop 1 时执行）
       personal = 160;
       state = 1;
       continue;
     }
 
     if (state === 1) {
-      // :198-201 随机角色（CHARA = RAND(1, 17) → 1..16），并入队 + 初始化。
+      // 随机角色（CHARA = RAND(1, 17) → 1..16），并入队 + 初始化。
       // 局部名用 rand_chara：`chara` 已被门面占用（跨域写走门面）
       const rand_chara = rand(16) + 1;
       era.addCharacter(rand_chara);
       await add_chara_ex(rand_chara);
       a = rand_chara;
-      // :203-205 发色：沿用上一轮的 HAIRCOLOR，0 时落 1（跨域写走门面）
+      // 发色：沿用上一轮的 HAIRCOLOR，0 时落 1（跨域写走门面）
       chara(a).chara.头发颜色 = haircolor;
       if (chara(a).chara.头发颜色 === 0) {
         chara(a).chara.头发颜色 = 1;
       }
-      // :207 L_LINECOUNT:2 = LINECOUNT
+      // L_LINECOUNT:2 = LINECOUNT
       line_count_2 = era.getLineCount();
       state = 2;
       continue;
     }
 
     // state === 2：$INPUT_LOOP_2（:208-262）
-    // :209 CLEARLINE LINECOUNT-L_LINECOUNT:2
+    // CLEARLINE LINECOUNT-L_LINECOUNT:2
     await era.clear(era.getLineCount() - line_count_2);
-    era.print('请设定偏好的性格和发色。'); // :210
-    // :211-212 %TALENTNAME:PERSONAL% 与 %GET_LOOK_INFO(A,"头发颜色")%
+    era.print('请设定偏好的性格和发色。');
+    // %TALENTNAME:PERSONAL% 与 %GET_LOOK_INFO(A,"头发颜色")%
     // 源是 PRINTFORML 纯文本选项（PR #53 通则升格按钮，正文不写 [编号]）。
     era.printButton(`性格 ：  ${era.get(`talentname:${personal}`) ?? ''}`, 0);
     era.printButton(`发色 ：  ${get_look_info(a, '头发颜色')}`, 1);
-    era.drawLine(); // :210-214 菜单块（PRINTL 三行 + DRAWLINE + 决定行）
-    era.printButton('决定', 100); // :214
+    era.drawLine(); // 菜单块（PRINTL 三行 + DRAWLINE + 决定行）
+    era.printButton('决定', 100);
     const result = await era.input(); // 菜单的 INPUT（见 :210-216）
 
     if (result === 0) {
-      // :218-247 性格子菜单（源 :220-222 的三行 PRINTL 选项）。正文里的
+      // 性格子菜单（源 :220-222 的三行 PRINTL 选项）。正文里的
       // `- ` 是原作文本的一部分（编号只是引擎按 showAcc 拼的前缀），#572
       // 审查返工：不能丢。
       era.print('请选择偏好的性格。');
@@ -353,17 +339,17 @@ async function char_gift(arg, rand = default_rand) {
       era.printButton('- 庇护者', 7);
       const picked = await era.input();
       if (picked >= 8) {
-        personal = 160; // :225
+        personal = 160;
       } else if (picked >= 0) {
-        personal = CHAR_GIFT_PERSONAL[picked]; // :227-242 的 0..7 映射
+        personal = CHAR_GIFT_PERSONAL[picked]; // 的 0..7 映射
       } else {
-        personal = 160; // :243-245（负数同样落回 160）
+        personal = 160; // （负数同样落回 160）
       }
-      continue; // :226/:245/:247 GOTO INPUT_LOOP_2
+      continue; // GOTO INPUT_LOOP_2
     }
 
     if (result === 1) {
-      // :249-258 发色子菜单（源 :251-252 的两行 PRINTL 选项）
+      // 发色子菜单（源 :251-252 的两行 PRINTL 选项）
       era.print('请选择发色。');
       era.printButton('金发', 1);
       era.printButton('栗发', 2);
@@ -379,30 +365,30 @@ async function char_gift(arg, rand = default_rand) {
       // 收紧白名单会锁死它——保留 useRule: false 留住这条路径（#572；
       // 先例：ere/event/event-museum.js:83-85）。
       const picked = await era.input({ useRule: false });
-      // :254 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`：该层运算符序列是
+      // `RESULT >= 1 && RESULT <= 10 || RESULT == 11`：该层运算符序列是
       // 「`&&` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式分组得到同一棵树——
       // 两种读法在一切取值上同值，故按显式括号保留结构（#517）
       if ((picked >= 1 && picked <= 10) || picked === 11) {
-        chara(a).chara.头发颜色 = picked; // :255
-        haircolor = picked; // :256
+        chara(a).chara.头发颜色 = picked;
+        haircolor = picked;
       }
-      continue; // :258 GOTO INPUT_LOOP_2
+      continue; // GOTO INPUT_LOOP_2
     }
 
     if (result !== 100) {
-      continue; // :260-261 ELSE / GOTO INPUT_LOOP_2
+      continue; // ELSE / GOTO INPUT_LOOP_2
     }
 
-    // :259 RESULT == 100 → 落出循环
-    // :264-266 CALL CHAR_MAKE, PERSONAL, ARG → CFLAG:RESULT:1 = 0 → A = RESULT
+    // RESULT == 100 → 落出循环
+    // CALL CHAR_MAKE, PERSONAL, ARG → CFLAG:RESULT:1 = 0 → A = RESULT
     const made = await char_make(a, personal, arg, rand);
     a = made;
     chara(a).invasion.状态 = 0;
-    // :269-272 種族年齢再設定（FLAG:5 位 12/13 时；RACE_AGE_GENERATE 的真身
+    // 種族年齢再設定（FLAG:5 位 12/13 时；RACE_AGE_GENERATE 的真身
     // 属 キャラ関数/CHARA_BODY.ERB，由 #385 落在 ere/chara/chara-body.js）
     const settings = era.get('flag:5') || 0;
     if (((settings >> 12) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {
-      // :269-271 種族年齢再設定：CALL RACE_AGE_GENERATE, CFLAG:A:451, TALENT:A:314
+      // 種族年齢再設定：CALL RACE_AGE_GENERATE, CFLAG:A:451, TALENT:A:314
       // → CFLAG:A:452 = RESULT。落进 CFLAG:452 的是**函数返回值**（种族年龄），
       // 不是入参 CFLAG:451（人类换算年龄）；随机源按仓库约定透传（#385 的真身
       // 在 ere/chara/chara-body.js）
@@ -412,24 +398,24 @@ async function char_gift(arg, rand = default_rand) {
         rand,
       );
     }
-    // :274-277 定人选播报
+    // 定人选播报
     era.print('*****************************************');
     era.print(`${race}挑选少女${name_of(a)}作为贡品………`);
     era.print('*****************************************');
     era.print(''); // PRINTW（见 :274-277 的定人选播报）
     await era.waitAnyKey();
-    // :278 CALL SHOW_CHARA_INFO, A, -2（同上，#390 真身）
+    // CALL SHOW_CHARA_INFO, A, -2（同上，#390 真身）
     await show_chara_info(a, -2);
-    // :279-281 询问（源 :280 的 PRINTFORML 纯文本选项 → 按钮）
+    // 询问（源 :280 的 PRINTFORML 纯文本选项 → 按钮）
     era.print('要收下这名少女作为贡品吗？');
     era.printButton('就是她了', 0);
     era.printButton('再换一个', 1);
     era.printButton(pick, 2);
     const final_result = await era.input();
     if (final_result === 0) {
-      return 0; // :283-284 收下
+      return 0; // 收下
     }
-    // :286-290 [2] 回到预设角色；:291-296 其余回到随机角色
+    // [2] 回到预设角色；:291-296 其余回到随机角色
     await drop_gift_chara(a);
     state = final_result === 2 ? 0 : 1;
   }
@@ -455,7 +441,7 @@ async function drop_gift_chara(cid) {
  * @returns {Promise<number>} 原作恒 RETURN 0
  */
 async function ending_3(rand) {
-  // :60-68 横幅 + WAIT（DRAWLINE、制表框 4 行、空行、WAIT、DRAWLINE 逐字抄；
+  // 横幅 + WAIT（DRAWLINE、制表框 4 行、空行、WAIT、DRAWLINE 逐字抄；
   // 源里横幅与 WAIT 之间是真正的空行，不产出行）
   era.drawLine();
   era.print('┌─────────────────────────────┐');
@@ -465,7 +451,7 @@ async function ending_3(rand) {
   era.print('└─────────────────────────────┘');
   await era.waitAnyKey();
   era.drawLine();
-  // :70-74 FLAG:87 的 1 → 2 状态机（置位是防重复触发的判据）与 RETURN 0
+  // FLAG:87 的 1 → 2 状态机（置位是防重复触发的判据）与 RETURN 0
   era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 2;
@@ -480,7 +466,7 @@ async function ending_3(rand) {
  * @returns {Promise<number>} 原作恒 RETURN 0
  */
 async function ending_4(rand) {
-  // :78-86 横幅 + WAIT（同 ending_3 的形态，逐字抄）
+  // 横幅 + WAIT（同 ending_3 的形态，逐字抄）
   era.drawLine();
   era.print('┌─────────────────────────────┐');
   era.print('｜　　　　　　　　　魔王终于征服了龙族的山脉　　　　　　　　｜');
@@ -489,7 +475,7 @@ async function ending_4(rand) {
   era.print('└─────────────────────────────┘');
   await era.waitAnyKey();
   era.drawLine();
-  // :88-92 FLAG:89 的 1 → 2 与 RETURN 0（CHAR_GIFT 5：龙族公主·角色 32）
+  // FLAG:89 的 1 → 2 与 RETURN 0（CHAR_GIFT 5：龙族公主·角色 32）
   era_flag.dragon_realm_conquered = 1;
   await char_gift(5, rand);
   era_flag.dragon_realm_conquered = 2;
@@ -504,7 +490,7 @@ async function ending_4(rand) {
  * @returns {Promise<number>} 原作恒 RETURN 0
  */
 async function ending_5(rand) {
-  // :98-106 横幅 + WAIT（同 ending_3 的形态，逐字抄）
+  // 横幅 + WAIT（同 ending_3 的形态，逐字抄）
   era.drawLine();
   era.print('┌─────────────────────────────┐');
   era.print('｜　　　　　　　　　　魔王终于征服了天界　　　　　　　　　　｜');
@@ -513,7 +499,7 @@ async function ending_5(rand) {
   era.print('└─────────────────────────────┘');
   await era.waitAnyKey();
   era.drawLine();
-  // :108-112 FLAG:91 的 1 → 2 与 RETURN 0（CHAR_GIFT 6：下任主神·角色 33）
+  // FLAG:91 的 1 → 2 与 RETURN 0（CHAR_GIFT 6：下任主神·角色 33）
   era_flag.heaven_conquered = 1;
   await char_gift(6, rand);
   era_flag.heaven_conquered = 2;
@@ -534,11 +520,11 @@ async function ending_5(rand) {
  * @returns {Promise<void>}
  */
 async function ending_n() {
-  // :116-117 DRAWLINE + 首行 PRINTFORMW
+  // DRAWLINE + 首行 PRINTFORMW
   era.drawLine();
-  // :117-131 逐行 PRINTFORMW（每行一次读键；:122-124 之间的 PRINTFORML 空行不读）
+  // 逐行 PRINTFORMW（每行一次读键；:122-124 之间的 PRINTFORML 空行不读）
   const lines = [
-    '自从魔王被解开封印已经过了整整500天。', // :117（其后 :118 FORCEWAIT，连读）
+    '自从魔王被解开封印已经过了整整500天。', // （其后 :118 FORCEWAIT，连读）
     '尽管各界源源不断地派遣勇者讨伐魔王，',
     '但都要么成为了魔王的收藏品，',
     '要么被倒卖到大陆各个龌龊的角落，',
@@ -560,12 +546,12 @@ async function ending_n() {
     } else {
       era.print(line); // 空行：PRINTFORML（不读键，见 :122-124）
     }
-    // :118 FORCEWAIT 紧跟 :117 的读键（连读两次），只在首行之后
+    // FORCEWAIT 紧跟 :117 的读键（连读两次），只在首行之后
     if (i === 0) {
       await era.waitAnyKey();
     }
   }
-  // :133 CALL ENDINGINPUT,(EX_FLAG:2801 + 1000)
+  // CALL ENDINGINPUT,(EX_FLAG:2801 + 1000)
   await ending_input(era_exflag.first_run_deadline + 1000);
 }
 
@@ -591,27 +577,27 @@ async function ending_n() {
  * @returns {Promise<void>} QUIT 路径不返回（异常炸穿，见 ending_1 的说明）
  */
 async function ending_input(arg) {
-  // :922 LOCAL = ARG / 1000（Emuera 整数除法向零截断）
+  // LOCAL = ARG / 1000（Emuera 整数除法向零截断）
   const local = Math.trunc(arg / 1000);
-  // :924 $ENDDINGSELECT：INPUT + 无效输入 GOTO 重问（不重画）
+  // $ENDDINGSELECT：INPUT + 无效输入 GOTO 重问（不重画）
   for (;;) {
     const result = await era.input(); // $ENDDINGSELECT 的 INPUT（见 :924-926）
     let handled = true;
     if (local === 1) {
-      // :928-938 Normal End：[1] 结束游戏（QUIT）/ [2] 继续
+      // Normal End：[1] 结束游戏（QUIT）/ [2] 继续
       if (result === 1) {
-        // :932 QUIT：throw 型控制流（#148）——QUIT 之后无语句
+        // QUIT：throw 型控制流（#148）——QUIT 之后无语句
         era.quit();
       } else if (result === 2) {
-        era.print('魔王的传说，还将继续......'); // :934 PRINTW
+        era.print('魔王的传说，还将继续......'); // PRINTW
         await era.waitAnyKey();
       } else {
-        handled = false; // :936 GOTO ENDDINGSELECT
+        handled = false; // GOTO ENDDINGSELECT
       }
     } else if (local === 7) {
-      // :939-957 菲娅线
+      // 菲娅线
       if (result === 1) {
-        // :944-947 两个 SIF 各护一行 PRINTW
+        // 两个 SIF 各护一行 PRINTW
         if (era_exflag.route_35 === 3) {
           era.print('菲娅公主线start~');
           await era.waitAnyKey();
@@ -620,59 +606,59 @@ async function ending_input(arg) {
           era.print('菲娅魔女线start~');
           await era.waitAnyKey();
         }
-        era_exflag.route_35 = era_exflag.route_35 + 100; // :948-949
-        era_exflag.first_run_deadline = era_exflag.first_run_deadline + 2; // :949
+        era_exflag.route_35 = era_exflag.route_35 + 100;
+        era_exflag.first_run_deadline = era_exflag.first_run_deadline + 2;
       } else if (result === 2) {
-        era.print('嘛...那祝你其他线好运咯'); // :951
+        era.print('嘛...那祝你其他线好运咯');
         await era.waitAnyKey();
-        era_exflag.route_35 = era_exflag.route_35 + 100; // :952
+        era_exflag.route_35 = era_exflag.route_35 + 100;
       } else if (result === 3) {
-        era.print('嗯，那就给你先存个档，明天再问吧'); // :954
+        era.print('嗯，那就给你先存个档，明天再问吧');
         await era.waitAnyKey();
       } else {
-        handled = false; // :956 GOTO ENDDINGSELECT
+        handled = false; // GOTO ENDDINGSELECT
       }
     } else if (local === 16) {
-      // :958-972 双飞 end（原作未完成：两个选项都只写 2805）
+      // 双飞 end（原作未完成：两个选项都只写 2805）
       if (result === 1) {
-        era.print('此处剧情尚未做好'); // :963
+        era.print('此处剧情尚未做好');
         await era.waitAnyKey();
-        era_exflag.route_17 = era_exflag.route_17 + 100; // :964 EX_FLAG:2805
+        era_exflag.route_17 = era_exflag.route_17 + 100; // EX_FLAG:2805
       } else if (result === 2) {
-        era.print('你跳过了本故事线'); // :966
+        era.print('你跳过了本故事线');
         await era.waitAnyKey();
-        era_exflag.route_17 = era_exflag.route_17 + 100; // :967
+        era_exflag.route_17 = era_exflag.route_17 + 100;
       } else if (result === 3) {
-        era.print('好的，明天见'); // :969
+        era.print('好的，明天见');
         await era.waitAnyKey();
       } else {
-        handled = false; // :971 GOTO ENDDINGSELECT
+        handled = false; // GOTO ENDDINGSELECT
       }
     } else {
-      // :973-991 各角色线（LOCAL = 5/6/8/9/10/11/12/13/14）
+      // 各角色线（LOCAL = 5/6/8/9/10/11/12/13/14）
       if (result === 1) {
-        era.print('此处剧情尚未做好'); // :977
+        era.print('此处剧情尚未做好');
         await era.waitAnyKey();
-        // :978 FLAG:(2800 + LOCAL) += 100 —— 原作错写 FLAG 侧（见函数头）；
+        // FLAG:(2800 + LOCAL) += 100 —— 原作错写 FLAG 侧（见函数头）；
         // flag 是引擎内嵌表，未声明下标直写可落（era-flag.js 尾注）
         const flag_no = 2800 + local;
         era.set(`flag:${flag_no}`, (era.get(`flag:${flag_no}`) || 0) + 100);
-        era_exflag.first_run_deadline = era_exflag.first_run_deadline + 2; // :979
-        // :980 SIF LOCAL == (5 || 6)：恒假（见函数头），照抄为 local === 1
+        era_exflag.first_run_deadline = era_exflag.first_run_deadline + 2;
+        // SIF LOCAL == (5 || 6)：恒假（见函数头），照抄为 local === 1
         if (local === 1) {
           era_exflag.first_run_deadline = era_exflag.first_run_deadline + 1;
         }
       } else if (result === 2) {
-        era.print('你跳过了本故事线'); // :984
+        era.print('你跳过了本故事线');
         await era.waitAnyKey();
-        // :985 FLAG:(2800 + LOCAL) += 100（同一处 FLAG 侧错写，见函数头）
+        // FLAG:(2800 + LOCAL) += 100（同一处 FLAG 侧错写，见函数头）
         const flag_no = 2800 + local;
         era.set(`flag:${flag_no}`, (era.get(`flag:${flag_no}`) || 0) + 100);
       } else if (result === 3) {
-        era.print('好的，明天见'); // :987
+        era.print('好的，明天见');
         await era.waitAnyKey();
       } else {
-        handled = false; // :989 GOTO ENDDINGSELECT
+        handled = false; // GOTO ENDDINGSELECT
       }
     }
     if (handled) {
@@ -695,7 +681,7 @@ async function ending_input(arg) {
 async function inconseq_select(arg) {
   const result = await era.input(); // 见 :994-996 的 @ENDINCONSQSELECT
   if (arg !== 7) {
-    return; // :1035 CASEELSE 空档
+    return; // CASEELSE 空档
   }
   // %NAME:MASTER% 的承载（#5 决议：NAME/SAVESTR 同源，走 callname 的 -1 槽）
   const master = era.get('callname:0:-1') ?? '';
@@ -755,7 +741,7 @@ async function inconseq_select(arg) {
  * @returns {Promise<void>} 原作无显式 RETURN
  */
 async function end10_55() {
-  // :476-484 演出（八行 PRINTFORMW，逐字抄）
+  // 演出（八行 PRINTFORMW，逐字抄）
   era.drawLine();
   const lines = [
     '当你突破层层包围、攻入天界宫广场时、首先看到的却是嘉德被六个人包围在其中的身影',
@@ -771,7 +757,7 @@ async function end10_55() {
     era.print(line);
     await era.waitAnyKey();
   }
-  // :485 EX_FLAG:2810 += 5（嘉德线的天神宫段进度）
+  // EX_FLAG:2810 += 5（嘉德线的天神宫段进度）
   era_exflag.route_33 = era_exflag.route_33 + 5;
 }
 

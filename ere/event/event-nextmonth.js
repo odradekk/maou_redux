@@ -1,8 +1,6 @@
 /**
  * @file 月替处理 @EVENT_NEXTMONTH（issue #115：日期翻页的月份回绕）。
  *
- * 源: target/ERB/EVENT/EVENT_NEXTMONTH.ERB  @EVENT_NEXTMONTH（:12-36 全函数）
- *
  * 原作头注（:3-7）：DAY:1 是当前月、DAY:2 是当前日；2 月闰月不考虑；
  * 「存在しない日付を弾く部分、初心者丸出しの処理」——按各月末日成立回绕。
  * 唯一调用点是 @EVENTTURNEND 的 #PRI 档（EVENT_TURNEND.ERB:84，SIF
@@ -36,17 +34,17 @@ const era_flag = require('#/era-utils/era-flag');
  * DAY:2 > 28 时调用；见文件头的调用前提）。
  */
 async function run_event_nextmonth() {
-  // :14-17 2 月：29 日即换 3 月（调用前提保证 DAY:2 >= 29，故无日条件）
+  // 2 月：29 日即换 3 月（调用前提保证 DAY:2 >= 29，故无日条件）
   if (era_flag.month === 2) {
     era_flag.month += 1;
     era_flag.date = 1;
     era.print(`明天就是${era_flag.month}月了，是个适合调教的月份呢……`);
-    // :18-21 小月（4/6/9/11，30 天）：31 日溢出换月
+    // 小月（4/6/9/11，30 天）：31 日溢出换月
   } else if (era_flag.date > 30 && [4, 6, 9, 11].includes(era_flag.month)) {
     era_flag.month += 1;
     era_flag.date = 1;
     era.print(`明天就是${era_flag.month}月了，是个适合调教的月份呢……`);
-    // :22-25 大月（1/3/5/7/8/10，31 天）：32 日溢出换月
+    // 大月（1/3/5/7/8/10，31 天）：32 日溢出换月
   } else if (
     era_flag.date > 31 &&
     [1, 3, 5, 7, 8, 10].includes(era_flag.month)
@@ -54,7 +52,7 @@ async function run_event_nextmonth() {
     era_flag.month += 1;
     era_flag.date = 1;
     era.print(`明天就是${era_flag.month}月了，是个适合调教的月份呢……`);
-    // :26-35 12 月：32 日溢出回 1 月（新年）+ 全角色年龄增长
+    // 12 月：32 日溢出回 1 月（新年）+ 全角色年龄增长
   } else if (era_flag.date > 31 && era_flag.month === 12) {
     era_flag.month = 1;
     era_flag.date = 1;
@@ -64,7 +62,7 @@ async function run_event_nextmonth() {
         continue; // FOR AGE_COUNT, 1, CHARANUM 跳过 0 号位（魔王不涨年龄）
       }
       chara(cid).chara.种族年龄 += 1; // CFLAG:452 += 1（:31）
-      // :32-33 CALL HUMAN_AGE_GENERATE, CFLAG:452, AGE_COUNT → CFLAG:451
+      // CALL HUMAN_AGE_GENERATE, CFLAG:452, AGE_COUNT → CFLAG:451
       chara(cid).chara.年龄 = human_age_generate(
         chara(cid).chara.种族年龄,
         cid,

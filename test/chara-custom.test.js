@@ -1,9 +1,6 @@
 /**
  * ere/chara/chara-custom.js 的行为测试（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_CUSTOM ver1.0.1.ERB
- *     @CHAR_CREATE（:17-98）、@CHAR_APPEND（:103-269）
- *
  * 缝 = test/helpers/era-fixture.js。@CHAR_DEBUG 不在本票（不移植，文件头），
  * 故本文件也不测它。
  */
@@ -119,7 +116,7 @@ test('CHAR_CREATE：特殊段列 17-39（含上界 39、不含 40），显示编
     !rows.some((t) => t.includes('预设40')),
     '40 越出 FOR 的右端（:49 `FOR L_I, 17, 40`），即使它在库',
   );
-  // :52 `[{L_I+20,2}]`：17 号显示为 [37]
+  // `[{L_I+20,2}]`：17 号显示为 [37]
   const row_17 = rows.find((t) => t.includes('预设17'));
   assert.ok(
     row_17.includes('[37] 预设17'),
@@ -225,7 +222,7 @@ test('CHAR_CREATE：特殊位（17-40）已在场则复用（FINDCHARA），不�
 test('CHAR_CREATE：特殊位区间上界 40——已在场同样复用（INRANGE 的右端）', async () => {
   const fixture = setup();
   // 40 号不在 yml/Chara*.yml 里（合成种），故本用例是**源码边界的保真锁**：
-  // :85 的 `INRANGE(L_I,17,40)` 收敛成 `<= 39` 会让 40 号改走 CHAR_APPEND。
+  // 的 `INRANGE(L_I,17,40)` 收敛成 `<= 39` 会让 40 号改走 CHAR_APPEND。
   // 在库数据里这条端不可达（EXISTCSV(40) 为假、先把输入退回重问）
   seed_presets(fixture, [40]);
   fixture.era.addCharacter(40); // 预设 40 已在场

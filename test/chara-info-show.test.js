@@ -2,10 +2,6 @@
  * 角色信息显示链的行为测试（issue #390，N6 段 2）——本票全部生产模块共用
  * 一个测试文件（内环按票跑）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB（全 18 函数）
- *     target/ERB/キャラ関数/CHARA_INFO_SHOW_TALENT.ERB（全 20 函数）
- *     target/ERB/キャラ関数/CHARA_BODY.ERB @CUP_SIZE（:781-850，#390 认领）
- *
  * 被测模块：components/chara-info-title.js / chara-talents.js /
  * chara-info-abl-mark.js / chara-appearance.js / stain-info.js /
  * chara-equip-status.js / chara-data.js、page-chara-talent-condition.js、
@@ -74,7 +70,7 @@ test('SHOW_INFO_TITLE：等号线 + 编号/名字/年龄行的逐字形态', () 
 
   assert.equal(fixture.lines[0].type, 'divider');
   assert.equal(fixture.lines[0].border, 'solid', ':326 CUSTOMDRAWLINE =');
-  // :333/:336/:346/:370 —— 编号宽 3 左对齐（"7  " + 一个空格）、名字宽 12、
+  // —— 编号宽 3 左对齐（"7  " + 一个空格）、名字宽 12、
   // 五个全角空格、年龄右对齐 48
   assert.equal(
     text_at(fixture, 1),
@@ -1157,17 +1153,17 @@ test('SHOW_APPEARACE：裙装未穿内裤的一句，与三条提前 RETURN 的�
   no_panties.show_appearance(7);
   assert(no_panties.fixture.text_lines().includes(' 貌似没穿内裤。'));
 
-  // :1257 CFLAG:40 & 17 → RETURN 0
+  // CFLAG:40 & 17 → RETURN 0
   const hidden = appearance_fixture({ cflags: { 40: 16, 1: 1 } });
   assert.equal(hidden.show_appearance(7), 0);
   assert.deepEqual(hidden.fixture.text_lines(), []);
 
-  // :1263 (CFLAG:40 & 64) && CFLAG:42 == 69 → RETURN 0
+  // (CFLAG:40 & 64) && CFLAG:42 == 69 → RETURN 0
   const diaper = appearance_fixture({ cflags: { 40: 64, 42: 69, 1: 1 } });
   assert.equal(diaper.show_appearance(7), 0);
   assert.deepEqual(diaper.fixture.text_lines(), []);
 
-  // :1269 裙装且 顺从+露出度 < 3 → RETURN 0（「没穿内裤」那句已在守卫之前打出）
+  // 裙装且 顺从+露出度 < 3 → RETURN 0（「没穿内裤」那句已在守卫之前打出）
   const skirt_shy = appearance_fixture({
     cflags: { 40: 8, 1: 0 },
     abls: { 10: 1, 17: 1 },
@@ -2258,7 +2254,7 @@ test('SHOW_CHARA_INFO：出口轮的空行按原作（#596）——[10] 之前�
   // 原作 :79-80 是两句 `PRINTS "\n"*2 + 按钮文本`：第一句的两个换行落在
   // 上一行（:41 合计行）已收尾之后 = 两个真空行；第二句的首个换行只结束
   // [10] 那一行（ere 的 printButton 自成一行），余下一个是真空行；
-  // :127 的返回文本之后停在 INPUT，没有 PRINTL
+  // 的返回文本之后停在 INPUT，没有 PRINTL
   const row_of = (accelerator) => {
     const line = fixture.lines.find(
       (entry) => entry.type === 'button' && entry.accelerator === accelerator,
@@ -2510,7 +2506,7 @@ test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、
     (l) => l.type === 'text' && l.text.includes('魔王之影 『 考狄利亚 』'),
   );
   assert.ok(banner1 >= 0, '横幅第一行在场');
-  // :63-65：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16 + "\s"*2 + "\n"*2`
+  // ：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16 + "\s"*2 + "\n"*2`
   // —— 一次 print 一行（自带 2 个尾随空格），末尾第二个 \n 是真空行
   assert.equal(
     lines[banner1].text,
@@ -2522,13 +2518,13 @@ test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、
     'br',
     ':65 的第二个 \\n：两行横幅之间的真空行',
   );
-  // :66-68：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2 + "\n"` —— 第二行
+  // ：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2 + "\n"` —— 第二行
   assert.equal(
     lines[banner1 + 2].text,
     `${'-'.repeat(16)}< 完 全 召 唤 >${'-'.repeat(16)}  `,
     '横幅第二行（不再被拆成三段）',
   );
-  // :75 WAIT → :76 `PRINTS "\n"*2`：第二行横幅之后的两个真空行（横幅票补一个）
+  // WAIT → :76 `PRINTS "\n"*2`：第二行横幅之后的两个真空行（横幅票补一个）
   assert.equal(lines[banner1 + 3].type, 'br', ':76 的第一个 \\n');
   assert.equal(lines[banner1 + 4].type, 'br', ':76 的第二个 \\n');
   // 演出到此为止（:77 RESTART → 外层 for(;;) 重画一屏，下一行是新一屏的行）

@@ -1,10 +1,6 @@
 /**
  * @file ere/chara/chara-job-change.js 的行为测试（issue #393，N9）。
  *
- * 源: target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB 全四函数（:4-263）——
- *     @SHOW_BUTTON_JOB_CHANGE / @CHECK_ABLE_TO_JOB_CHANGE（式中函数）/
- *     @CHARA_INFO_JOB_CHANGE / @JOB_CHANGE_BENKI。
- *
  * 缝 = test/helpers/era-fixture.js。判定与按钮外观照 chara-name-edit.test.js
  * 的读法（`rendered` 看引擎拼的快捷键前缀，染灰看 `setColor` 调用序列——
  * 夹具不把颜色带进按钮，见该文件头）。

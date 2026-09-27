@@ -1,8 +1,6 @@
 /**
  * @file 指令执行后事件 @EVENTCOMEND 的处理器（issue #44，#PRI 档真身）。
  *
- * 源: target/ERB/調教相關/TRAIN_MAIN.ERB  @EVENTCOMEND（:272-310，#PRI）
- *
  * 调教キャラの死亡・衰弱判定，四条分支（FLAG:35 = 濒死自动结束调教开关，
  * @EVENTFIRST :45 开局置 0 = 关）：
  *   1. BASE:0 <= 0 && !FLAG:35     → 目标死亡：消息 + WAIT + BEGIN AFTERTRAIN
@@ -37,50 +35,50 @@ async function check_target_vitals() {
   const stamina = era.get(`base:${era_flag.target}:0`) || 0;
   const auto_end_flag = era.get('flag:35') || 0;
   if (stamina <= 0 && auto_end_flag === 0) {
-    // :275-283 死亡
+    // 死亡
     era.drawLine();
-    // :277-279 死亡時にビデオを使用していた？→ TFLAG:34 = 1
+    // 死亡時にビデオを使用していた？→ TFLAG:34 = 1
     if (era.get(`tequip:${era_flag.target}:53`)) {
       era.set('tflag:34', 1);
     }
-    era.print(`${chara_callname(era_flag.target)}一动也不动，`); // :280
-    era.print(`对${she(era_flag.target)}做什么都不再有反应了……`); // :281
-    await era.waitAnyKey(); // :282 WAIT
-    begin(STATE.AFTERTRAIN); // :283
+    era.print(`${chara_callname(era_flag.target)}一动也不动，`);
+    era.print(`对${she(era_flag.target)}做什么都不再有反应了……`);
+    await era.waitAnyKey(); // WAIT
+    begin(STATE.AFTERTRAIN);
   } else if (stamina < 500 && auto_end_flag !== 0) {
-    // :284-289 瀕死時に調教を自動終了設定（FLAG:35 = 1 才生效）
-    era.drawLine(); // :286
-    era.print('（体力到了极限。调教结束。）'); // :287
-    await era.waitAnyKey(); // :288 WAIT
-    begin(STATE.AFTERTRAIN); // :289
+    // 瀕死時に調教を自動終了設定（FLAG:35 = 1 才生效）
+    era.drawLine();
+    era.print('（体力到了极限。调教结束。）');
+    await era.waitAnyKey(); // WAIT
+    begin(STATE.AFTERTRAIN);
   }
 }
 
 // 助手侧判定（:292-309；衰弱分支无 FLAG:35 条件，见文件头第 4 条）
 async function check_assi_vitals() {
   if (era_flag.assi <= 0) {
-    return; // :292 IF ASSI > 0
+    return; // IF ASSI > 0
   }
   const stamina = era.get(`base:${era_flag.assi}:0`) || 0;
   if (stamina <= 0) {
-    // :293-301 死亡。两处 1:1 保留原作的隐式 TARGET：消息代词用 SHE(TARGET)
+    // 死亡。两处 1:1 保留原作的隐式 TARGET：消息代词用 SHE(TARGET)
     //（:299，原作笔误）、SIF TEQUIP:53 无角色前缀 = TEQUIP:TARGET:53
     //（:296-297，助手死时查的还是目标的录像装备——同为可疑但照搬，
     // 勿「修好」）
-    era.drawLine(); // :294
+    era.drawLine();
     if (era.get(`tequip:${era_flag.target}:53`)) {
       era.set('tflag:34', 1);
     }
-    era.print(`${chara_callname(era_flag.assi)}一动也不动，`); // :298
+    era.print(`${chara_callname(era_flag.assi)}一动也不动，`);
     era.print(`对${she(era_flag.target)}做什么都不再有反应了……`);
-    await era.waitAnyKey(); // :300 WAIT
-    begin(STATE.AFTERTRAIN); // :301
+    await era.waitAnyKey(); // WAIT
+    begin(STATE.AFTERTRAIN);
   } else if (stamina < 500) {
-    // :302-307 衰弱（无 FLAG:35 守卫——开关只管目标侧）
-    era.drawLine(); // :304
-    era.print('（助手体力到了极限。调教结束。）'); // :305
-    await era.waitAnyKey(); // :306 WAIT
-    begin(STATE.AFTERTRAIN); // :307
+    // 衰弱（无 FLAG:35 守卫——开关只管目标侧）
+    era.drawLine();
+    era.print('（助手体力到了极限。调教结束。）');
+    await era.waitAnyKey(); // WAIT
+    begin(STATE.AFTERTRAIN);
   }
 }
 

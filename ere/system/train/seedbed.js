@@ -1,8 +1,6 @@
 /**
  * @file 苗床业务（issue #348）。
  *
- * 源: target/ERB/處刑相關/NAEDOKO.ERB
- *     @NAEDOKO（:2-70）/@NAEDOKO_MAN（:72-104）/@NAEDOKO_NOT_V（:106-130）
  */
 
 'use strict';

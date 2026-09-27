@@ -1,14 +1,6 @@
 /**
  * @file 队伍战斗（issue #175，阶段 3 H6）：勇者队伍 vs 怪物。
  *
- * 源: target/ERB/迷宮/DUNGEON_BATLLE.ERB  @DUNGEON_PARTY_BATTLE（:3-412，
- *       主流程）、@MONSTER_LIST（:416-444）、@SELECT_ATKER（:447-487）、
- *       @SPEED_PLUS（:490-543）、@ENEMY_ATTACK（:546-882，勇者侧攻击）、
- *       @SLAVE_MONSTER_ATTACK（:886-1004，配下怪物攻击）、@MONSTER_ATTACK
- *       （:1006-1115，怪物侧攻击）、@ATTACK_CHARA_EXTRA_DMG（:1118-1145）、
- *       @DEFENCE_CHARA_EXTRA_DMG（:1148-1206）、@DEATH_CHECK（:1209-1256）、
- *       @VICTORY_GET（:1260-1325）、@SKILL_EXTRA_BONUS（:1328-1441）
- *
  * H6 之前这里是 ere/dungeon/dungeon.js 的三处带记录存根之一（H3 留）：
  * 存根不改 CFLAG:1，勇者不掉血必然推到第 9 层（#168 裁定 1 认可的中间
  * 状态）。本文件接上真身后勇者会掉 HP/气力、会投降（@DEATH_CHECK 写
@@ -205,7 +197,7 @@ async function ryouzyoku(atker, rand) {
  * @returns {void} 原作 RETURN 0
  */
 function monster_list() {
-  // :424-443 REPEAT 3（B 从 0 起 += 100——列头 0/100/200）
+  // REPEAT 3（B 从 0 起 += 100——列头 0/100/200）
   for (let b = 0; b < 300; b += 100) {
     const id = e_get(b);
     const lv = e_get(b + 1);
@@ -214,15 +206,15 @@ function monster_list() {
     const num = e_get(b + 99);
     const boss = e_get(b + 8);
     if (boss === 1 && num > 0) {
-      // :433-435 『%ITEMNAME:ID%的boss』
+      // 『%ITEMNAME:ID%的boss』
       era.print(
         `『${era.get(`itemname:${id}`) ?? ''}的boss』 LV${lv} ${atk}/${def}`,
       );
     } else if (num <= 0) {
-      // :436-437 尸体
+      // 尸体
       era.print(`${era.get(`itemname:${id}`) ?? ''}的尸体`);
     } else {
-      // :438-440 %MONSTERNAME(ID)%（改造前缀 + 名 + 兵种）
+      // %MONSTERNAME(ID)%（改造前缀 + 名 + 兵种）
       era.print(
         ` ${pad_left(String(num), 2)}只${monstername(id)} LV${lv} ${atk}/${def}`,
       );
@@ -238,7 +230,7 @@ function monster_list() {
  */
 function select_atker(arg0, arg1) {
   let member = 1;
-  arg1 += 1; // :456
+  arg1 += 1;
 
   const sidea = era.get(`cflag:${arg0}:531`) || 0;
   if (sidea > 0) {
@@ -249,12 +241,12 @@ function select_atker(arg0, arg1) {
     member += 1;
   }
 
-  const rest = arg1 % member; // :467
+  const rest = arg1 % member;
   if (rest === 0) {
     return arg0;
   }
   if (rest === 1) {
-    // :473-479 仲間A 空栏时顺看仲間B
+    // 仲間A 空栏时顺看仲間B
     if (sidea > 0) {
       return sidea;
     }
@@ -266,7 +258,7 @@ function select_atker(arg0, arg1) {
       return sideb;
     }
   }
-  return arg0; // :487 念のため
+  return arg0; // 念のため
 }
 
 /**
@@ -342,7 +334,7 @@ function speed_plus(atker, rand) {
  */
 function skill_extra_bonus(arg0, rand) {
   if ((era.get(`cflag:${arg0}:9`) || 0) < 100) {
-    // :1331-1332 等级 100 起
+    // 等级 100 起
     return '';
   }
   let out = '';
@@ -575,15 +567,15 @@ function pick_defender_column() {
  */
 async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
-  // :561-562 一応代入（A / TARGET）
+  // 一応代入（A / TARGET）
   era_flag.target = arg0;
 
-  // :565 肉便器用（PLAY_TYPE——#217 真身：以 RAND:DICE 抽调教指令号）
+  // 肉便器用（PLAY_TYPE——#217 真身：以 RAND:DICE 抽调教指令号）
   const play_type = select_benki_menu(arg0, '战斗', rand);
 
-  // :568 PLAYER = 0——本函数无读者，不落变量（死赋值，注释留痕）
+  // PLAYER = 0——本函数无读者，不落变量（死赋值，注释留痕）
 
-  // :570-574 肛门虫（TALENT:193）自动调教三连（:572 CALL COM13_AUTO——
+  // 肛门虫（TALENT:193）自动调教三连（:572 CALL COM13_AUTO——
   // 真身 ere/event/event-autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await before_autotrain();
@@ -592,9 +584,9 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     await source_check_auto();
   }
 
-  // :577-595 防御侧の防御力を算出
+  // 防御侧の防御力を算出
   const { head: c, b: scan_b } = pick_defender_column();
-  // :589-595 全滅時（B >= 400）——REPEAT 3 的扫描终值最多 300，不可达
+  // 全滅時（B >= 400）——REPEAT 3 的扫描终值最多 300，不可达
   if (scan_b >= 400) {
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
@@ -603,14 +595,14 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 1;
   }
 
-  // :597-601 B = C; CALL MAGIC,1; C = B（MAGIC 可重定向目标列——存根不动）
+  // B = C; CALL MAGIC,1; C = B（MAGIC 可重定向目标列——存根不动）
   let target_head = c;
   if ((await magic_mod.magic(1, arg0, target_head, rand, move_ctx)) === 999) {
     return 999;
   }
   target_head = c;
 
-  // :603-611 个体防御力（boss 时 RAND:(DEF*30)，先钳 1）
+  // 个体防御力（boss 时 RAND:(DEF*30)，先钳 1）
   let def = e_get(target_head + 3);
   const boss_flag = e_get(target_head + 8);
   if (boss_flag === 1) {
@@ -619,46 +611,46 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     }
     def = rand(Math.max(def * 30, 1));
   }
-  // :612-613 DEF += CFLAG:0:9——仕様変更にてオミット（注释态，不移植）
+  // DEF += CFLAG:0:9——仕様変更にてオミット（注释态，不移植）
 
-  // :615-616 X = 群れの防御力（个体防 × 数量）
+  // X = 群れの防御力（个体防 × 数量）
   const herd_def = def * e_get(target_head + 99);
 
-  // :622 戦闘前発動スキル（行内标签串，文件头「同一显示行归并」）
+  // 戦闘前発動スキル（行内标签串，文件头「同一显示行归并」）
   const skill_tag = skill_extra_bonus(arg0, rand);
 
-  // :628-630 セリフ（FLAG:5 & 32 守卫；口上分发）
+  // セリフ（FLAG:5 & 32 守卫；口上分发）
   if ((settings & 32) !== 0) {
     await attack_koujo(arg0);
   }
 
-  // :633-640 装備品効果（伤害增加 = 1）
+  // 装備品効果（伤害增加 = 1）
   const dmg_up = equip_check(arg0, 1);
-  let dmg = chara(arg0).dungeon.攻击力; // :637 DMG = CFLAG:11
+  let dmg = chara(arg0).dungeon.攻击力; // DMG = CFLAG:11
   if (dmg_up > 0) {
     dmg *= dmg_up + 1;
   }
 
-  // :643-648 武器（CFLAG:550；素手 → 40 号剑）
+  // 武器（CFLAG:550；素手 → 40 号剑）
   const w = { 存储编号: era.get(`cflag:${arg0}:550`) || 0 };
   if (w.存储编号 <= 0) {
     w.存储编号 = 40;
     chara(arg0).chara.武装 = 40; // CFLAG:550（跨域写走门面，#71/#72）
   }
 
-  // :662-663 查表与素质强化
+  // 查表与素质强化
   equip_database(w);
   equip_powerup(w, arg0);
 
-  // :650-660 攻击演出（行内拼接：技能标签 + 攻击文，一次 print）
+  // 攻击演出（行内拼接：技能标签 + 攻击文，一次 print）
   const benki =
     (era.get(`talent:${arg0}:178`) || 0) !== 0 &&
     (era.get(`talent:${arg0}:281`) || 0) !== 0;
   if ((settings & 32) !== 0) {
     let line = skill_tag;
     if (benki) {
-      // :652-654 作为肉便器的XX以（NAME_BENKI_MENU 的类型名）进行了诱惑！！
-      // :653 CALL NAME_BENKI_MENU,PLAY_TYPE（#217 真身：返回类型名拼行）
+      // 作为肉便器的XX以（NAME_BENKI_MENU 的类型名）进行了诱惑！！
+      // CALL NAME_BENKI_MENU,PLAY_TYPE（#217 真身：返回类型名拼行）
       line += `作为肉便器的${name_of(arg0)}以${name_benki_menu(play_type)}进行了诱惑！！`;
     } else {
       line += `勇者${name_of(arg0)}使用${
@@ -695,7 +687,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     era.print(line);
   }
 
-  // :665-675 ミス処理（失手率 W:11）
+  // ミス処理（失手率 W:11）
   if (rand(100) - w.失手率 < 0) {
     if ((settings & 32) !== 0) {
       if (benki) {
@@ -707,14 +699,14 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 0;
   }
 
-  // :677-680 気力回復（W:12，钳上限）
+  // 気力回復（W:12，钳上限）
   const max_wp = era.get(`maxbase:${arg0}:1`) || 0;
   chara(arg0).dungeon.气力 = Math.min(
     chara(arg0).dungeon.气力 + w.气力回复,
     max_wp,
   );
 
-  // :682-696 ダメージ変動（弹药 CFLAG:571）
+  // ダメージ変動（弹药 CFLAG:571）
   const bullets = era.get(`cflag:${arg0}:571`) || 0;
   if (bullets > 0) {
     dmg = Math.floor((dmg * w.伤害强化) / 100);
@@ -731,10 +723,10 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 0;
   }
 
-  // :698 CFLAG:571 -= W:10
+  // CFLAG:571 -= W:10
   era.set(`cflag:${arg0}:571`, bullets - w.弹药消耗);
 
-  // :700-708 畏怖・隷属処理（CFLAG:130 凌辱记忆怪物号 / 131 深度；无守卫）
+  // 畏怖・隷属処理（CFLAG:130 凌辱记忆怪物号 / 131 深度；无守卫）
   const trauma_mon = era.get(`cflag:${arg0}:130`) || 0;
   const trauma_lv = era.get(`cflag:${arg0}:131`) || 0;
   if (trauma_mon === e_get(target_head) && trauma_lv > 5) {
@@ -745,7 +737,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     dmg = Math.floor((dmg * (6 - trauma_lv)) / 10);
   }
 
-  // :711-722 連続攻撃処理（连击率 W:13）
+  // 連続攻撃処理（连击率 W:13）
   if (rand(100) - w.连击率 < 0) {
     if ((settings & 32) !== 0) {
       if (benki) {
@@ -761,13 +753,13 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     );
   }
 
-  // :724-725 キャラ補正（与ダメージ）
+  // キャラ補正（与ダメージ）
   dmg = attack_chara_extra_dmg(arg0, dmg, arg1);
 
-  // :727-728 DEF = 敵残り防御力
+  // DEF = 敵残り防御力
   let rest_def = herd_def - dmg;
 
-  // :730-740 先手かつ奇袭（TALENT:243）
+  // 先手かつ奇袭（TALENT:243）
   let surprise_tag = '';
   if (arg1 === 0 && (era.get(`talent:${arg0}:243`) || 0) === 1) {
     if ((settings & 32) !== 0) {
@@ -776,7 +768,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     rest_def -= era.get(`cflag:${arg0}:9`) || 0;
   }
 
-  // :742-765 追加効果（毒：W:6 位 0 且 RAND:2）
+  // 追加効果（毒：W:6 位 0 且 RAND:2）
   let poison_tag = '';
   if (w.特殊 & 1 && rand(2)) {
     if (e_get(target_head + 9) & 1) {
@@ -792,7 +784,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     }
   }
 
-  // :767-797 耐性処理（火/冷/电：W:6 位 1/2/4 × E:(Y+10) 位 1/2/4）
+  // 耐性処理（火/冷/电：W:6 位 1/2/4 × E:(Y+10) 位 1/2/4）
   if (w.特殊 & 2) {
     rest_def +=
       e_get(target_head + 10) & 1 ? -Math.floor(dmg / 2) : Math.floor(dmg / 5);
@@ -806,10 +798,10 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
       e_get(target_head + 10) & 4 ? -Math.floor(dmg / 2) : Math.floor(dmg / 5);
   }
 
-  const mon_id = e_get(target_head); // :799 B = 敵識別番号
+  const mon_id = e_get(target_head); // B = 敵識別番号
 
   if (rest_def <= 0) {
-    // :802-829 列全灭
+    // 列全灭
     // SIF 单行作用域（:803-807）：守卫只盖住第一行 PRINTFORML，怪物名与
     // 「全灭了」两行无条件出（Emuera SIF 语义，1:1 保留）
     if (boss_flag === 0) {
@@ -824,7 +816,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
         );
       }
     }
-    // :812-818 経験値計算
+    // 経験値計算
     let get_exp = e_get(target_head + 1) + (era.get('cflag:0:9') || 0);
     get_exp *= e_get(target_head + 99);
     get_exp *= 3;
@@ -832,7 +824,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     era.set('flag:63', (era.get('flag:63') || 0) + e_get(target_head + 99));
     era.set(`exp:${arg0}:80`, (era.get(`exp:${arg0}:80`) || 0) + get_exp);
     await get_exp_benki_menu(arg0, play_type);
-    // :820-824 ITEM:E:C -= E:(C + 99)（怪物库存，钳 0）
+    // ITEM:E:C -= E:(C + 99)（怪物库存，钳 0）
     const stock = era.get(`item:${mon_id}`) || 0;
     era.set(`item:${mon_id}`, Math.max(stock - e_get(target_head + 99), 0));
     e_set(target_head + 99, 0);
@@ -843,10 +835,10 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 1;
   }
 
-  // :831 DEF = CFLAG:11 / E:(C+3)——下一行立即覆盖（死赋值，原作现状保留）
-  // :834 DEF = CFLAG:11 / X（部分杀伤数）
+  // DEF = CFLAG:11 / E:(C+3)——下一行立即覆盖（死赋值，原作现状保留）
+  // DEF = CFLAG:11 / X（部分杀伤数）
   const killed = Math.floor(chara(arg0).dungeon.攻击力 / herd_def);
-  // :836-837 死亡怪物計算
+  // 死亡怪物計算
   era.set('flag:63', (era.get('flag:63') || 0) + killed);
   if ((settings & 32) !== 0 && boss_flag === 0) {
     // Z == 1 的先导（…但是，）——Z 即 CFLAG:570（配下怪物号 >= 100 或 0），
@@ -873,7 +865,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     era.print('BOSS忍受着勇者的攻击……');
   }
 
-  // :866-875 経験値取得
+  // 経験値取得
   let get_exp = e_get(target_head + 1) + (era.get('cflag:0:9') || 0);
   get_exp *= killed;
   get_exp *= 3;
@@ -902,7 +894,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 async function slave_monster_attack(rand) {
   const settings = era.get('flag:5') || 0;
   const atker = era_flag.target; // 原作全局 A（攻击者）
-  // :891-895 配下がいるかどうか
+  // 配下がいるかどうか
   if ((era.get(`cflag:${atker}:570`) || 0) < 100) {
     return 0;
   }
@@ -910,7 +902,7 @@ async function slave_monster_attack(rand) {
     return 0;
   }
 
-  // :897-916 防御侧选择（同 ENEMY_ATTACK）
+  // 防御侧选择（同 ENEMY_ATTACK）
   const { head: c, b: scan_b } = pick_defender_column();
   if (scan_b >= 400) {
     // 全滅時（不可达臂，文件头 pick_defender_column 注释）
@@ -921,7 +913,7 @@ async function slave_monster_attack(rand) {
     return 1;
   }
 
-  // :918-929 个体防御与群防御（boss 时 RAND:(Y*30)）
+  // 个体防御与群防御（boss 时 RAND:(Y*30)）
   let y = e_get(c + 3);
   const boss_flag = e_get(c + 8);
   if (boss_flag === 1) {
@@ -932,25 +924,25 @@ async function slave_monster_attack(rand) {
   }
   let z = y * e_get(c + 99); // 群れの防御力
 
-  // :932-937 怪物側の攻撃力（第 4 列的配下怪物；魔法补正 ×2）
+  // 怪物側の攻撃力（第 4 列的配下怪物；魔法补正 ×2）
   let x = (era.get(`cflag:${atker}:9`) || 0) * (e_get(302) + 1);
   if (e_get(306) !== 0) {
     x *= 2;
   }
 
-  // :940-943 演出
+  // 演出
   if ((settings & 32) !== 0) {
     era.print(
       `成为勇者属下的${era.get(`itemname:${e_get(300)}`) ?? ''}发动了攻击！！`,
     );
   }
 
-  // :946 攻撃による被害
+  // 攻撃による被害
   z -= x;
 
-  const mon_id = e_get(c); // :948 B = E:C
+  const mon_id = e_get(c); // B = E:C
   if (z <= 0) {
-    // :949-972 列全灭
+    // 列全灭
     if (boss_flag === 0) {
       if ((settings & 32) !== 0) {
         era.print(
@@ -964,7 +956,7 @@ async function slave_monster_attack(rand) {
         );
       }
     }
-    // :957-964 経験値計算
+    // 経験値計算
     let exp_gain = e_get(c + 1);
     exp_gain *= e_get(c + 99);
     era.set('flag:63', (era.get('flag:63') || 0) + e_get(c + 99));
@@ -976,7 +968,7 @@ async function slave_monster_attack(rand) {
     return 1;
   }
 
-  // :974-977 部分杀伤
+  // 部分杀伤
   const killed = Math.floor(z / e_get(c + 3));
   const mon_id2 = e_get(c);
   era.set('flag:63', (era.get('flag:63') || 0) + killed);
@@ -993,7 +985,7 @@ async function slave_monster_attack(rand) {
   } else if ((settings & 32) !== 0 && boss_flag === 1) {
     era.print('BOSS忍受着勇者属下的攻击……');
   }
-  // :990-993 経験値
+  // 経験値
   let exp_gain = e_get(c + 1);
   exp_gain *= killed;
   era.set(`exp:${atker}:80`, (era.get(`exp:${atker}:80`) || 0) + exp_gain);
@@ -1031,7 +1023,7 @@ async function slave_monster_attack(rand) {
  */
 async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
-  // :1024-1030 生存怪物数を求める
+  // 生存怪物数を求める
   let member = 0;
   for (let monid = 0; monid < 300; monid += 1) {
     monid += 99;
@@ -1040,7 +1032,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     }
   }
 
-  // :1032-1037 全滅時
+  // 全滅時
   if (member <= 0) {
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
@@ -1048,7 +1040,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     return 1;
   }
 
-  // :1039-1049 ターン数から攻撃怪物を求める（BREAK 停在数量槽 99/199/299）
+  // ターン数から攻撃怪物を求める（BREAK 停在数量槽 99/199/299）
   let rest = arg1 % member;
   let monid = 0;
   for (monid = 0; monid < 300; monid += 1) {
@@ -1060,15 +1052,15 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
       rest -= 1;
     }
   }
-  // :1052 IDを先頭に——-100（非同构处的 -99）：off-by-one，文件头注释
+  // IDを先頭に——-100（非同构处的 -99）：off-by-one，文件头注释
   monid -= 100;
 
-  // :1054-1057 B = MONID; CALL MAGIC,2（存根不动目标）
+  // B = MONID; CALL MAGIC,2（存根不动目标）
   if ((await magic_mod.magic(2, arg0, monid, rand, move_ctx)) === 999) {
     return 999;
   }
 
-  // :1060-1063 怪物技能（E:(MONID+5) 为技能号——off-by-one 下实读速度槽）
+  // 怪物技能（E:(MONID+5) 为技能号——off-by-one 下实读速度槽）
   const skill_no = e_get(monid + 5);
   if (
     (await monster_skill_mod.monster_skill(arg0, skill_no, monid, rand)) === 999
@@ -1076,20 +1068,20 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     return 999;
   }
 
-  // :1065-1070 怪物数（off-by-one 下实读 E:98/198/298，恒 0）
+  // 怪物数（off-by-one 下实读 E:98/198/298，恒 0）
   let monnum = e_get(monid + 99);
   const boss_flag = e_get(monid + 8);
   if (boss_flag === 1) {
     // ボスは15人分の力を持つ
     monnum *= 15;
   }
-  // :1072-1075 ダンジョンレベル補正——仕様変更にてステータス生成時に反映
+  // ダンジョンレベル補正——仕様変更にてステータス生成時に反映
 
-  // :1077 DMG = MONNUM * E:(MONID + 2)
+  // DMG = MONNUM * E:(MONID + 2)
   let dmg = monnum * e_get(monid + 2);
-  const monname_no = e_get(monid); // :1079 MONNAME
+  const monname_no = e_get(monid); // MONNAME
 
-  // :1080-1086 攻击演出
+  // 攻击演出
   if ((settings & 32) !== 0 && boss_flag === 0) {
     era.print(`${monster_name(monname_no)}发动了攻击！！`);
   } else if ((settings & 32) !== 0 && boss_flag === 1) {
@@ -1098,7 +1090,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     );
   }
 
-  // :1088-1096 畏怖・隷属処理（CFLAG:130/131，无守卫）
+  // 畏怖・隷属処理（CFLAG:130/131，无守卫）
   const trauma_mon = era.get(`cflag:${arg0}:130`) || 0;
   const trauma_lv = era.get(`cflag:${arg0}:131`) || 0;
   if (trauma_mon === monname_no && trauma_lv > 5) {
@@ -1109,11 +1101,11 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     dmg = Math.floor((dmg * (6 + trauma_lv)) / 5);
   }
 
-  // :1098-1100 ダメージ処理（HP 扣减在此）
+  // ダメージ処理（HP 扣减在此）
   dmg = defence_chara_extra_dmg(arg0, dmg, rand);
 
   if (dmg > 0) {
-    // :1102-1108 防御値を超えるダメージ（气力扣减）
+    // 防御値を超えるダメージ（气力扣减）
     if ((settings & 32) !== 0) {
       era.print(`怪物的攻击使勇者受到了${dmg}伤害！`);
     }
@@ -1121,7 +1113,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     return 0;
   }
 
-  // :1111-1113 ダメージが無かった場合
+  // ダメージが無かった場合
   if ((settings & 32) !== 0) {
     era.print('勇者拼死忍耐着怪物的攻击………');
   }
@@ -1135,7 +1127,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
  *   2 = 勇者败北（投降/力尽，CFLAG:1 = 0）
  */
 async function death_check(arg0) {
-  // :1214-1227 プレイヤー死亡判定
+  // プレイヤー死亡判定
   if (chara(arg0).dungeon.体力 <= 0) {
     era.print(`${name_of(arg0)}最终在潮湿的地下城中用尽了最后的气力。`);
     chara(arg0).invasion.状态 = 0;
@@ -1152,7 +1144,7 @@ async function death_check(arg0) {
     return 2;
   }
 
-  // :1229-1248 怪物側の生き残りを算出（三列扫描 + 支配判定）
+  // 怪物側の生き残りを算出（三列扫描 + 支配判定）
   let alive = 0;
   let b = 0;
   for (let count = 0; count < 3; count += 1) {
@@ -1174,7 +1166,7 @@ async function death_check(arg0) {
     b += 100;
   }
 
-  // :1250-1254 全滅時
+  // 全滅時
   if (alive === 0) {
     era.print('负责防御的怪物全灭了………');
     return 1;
@@ -1193,7 +1185,7 @@ async function victory_get(arg0, rand) {
   const settings = era.get('flag:5') || 0;
   let will = 0; // LOCAL:0
 
-  // :1269-1279 善恶值档位掷骰（越高越想搜）
+  // 善恶值档位掷骰（越高越想搜）
   const karma_v = chara(arg0).chara.善恶值;
   if (karma_v > 150) {
     will += rand(125);
@@ -1207,7 +1199,7 @@ async function victory_get(arg0, rand) {
     will += rand(15);
   }
 
-  // :1281-1295 やりたくなる素质（-1 各）
+  // やりたくなる素质（-1 各）
   if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {
     will -= 1; // プライド低い
   }
@@ -1215,7 +1207,7 @@ async function victory_get(arg0, rand) {
     will -= 1; // 好奇心
   }
   if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {
-    will -= 1; // :1287-1289 重出的プライド低い（原作重印，1:1 保留）
+    will -= 1; // 重出的プライド低い（原作重印，1:1 保留）
   }
   if ((era.get(`talent:${arg0}:36`) || 0) !== 0) {
     will -= 1; // 恥薄い
@@ -1224,7 +1216,7 @@ async function victory_get(arg0, rand) {
     will -= 1; // 盗賊
   }
 
-  // :1297-1308 思いとどまる素质（+1 各）
+  // 思いとどまる素质（+1 各）
   if ((era.get(`talent:${arg0}:15`) || 0) !== 0) {
     will += 1; // プライド高い
   }
@@ -1238,7 +1230,7 @@ async function victory_get(arg0, rand) {
     will += 1; // 恥じらい
   }
 
-  // :1311-1312 意愿不足
+  // 意愿不足
   if (will > 5) {
     return 0;
   }
@@ -1248,15 +1240,15 @@ async function victory_get(arg0, rand) {
     await era.waitAnyKey();
   }
 
-  // :1317 CALL KARMA, (ARG:0), -5（dungeon.js 的既有存根，不动值）
+  // CALL KARMA, (ARG:0), -5（dungeon.js 的既有存根，不动值）
   const { karma } = require('#/dungeon/dungeon');
   karma(arg0, -5);
 
-  // :1319 CALL ADD_EX_ITEM, -1, (ARG:0), 0（存根恒 0 = 没找到）
+  // CALL ADD_EX_ITEM, -1, (ARG:0), 0（存根恒 0 = 没找到）
   const { add_ex_item } = require('#/dungeon/dungeon');
   const found = await add_ex_item(-1, arg0, 0);
 
-  // :1321-1323 なにも見つからなかったらしい。代わりに金品を得る
+  // なにも見つからなかったらしい。代わりに金品を得る
   if (found === 0) {
     const { get_junk_item } = require('#/dungeon/dungeon');
     await get_junk_item(arg0, rand);
@@ -1275,7 +1267,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
   const rand_n = rand ?? default_rand;
   const settings = era.get('flag:5') || 0;
 
-  // :18-20 行動完了の場合飛ばす
+  // 行動完了の場合飛ばす
   if ((era.get(`cflag:${arg0}:530`) || 0) === 1) {
     return 0;
   }
@@ -1295,9 +1287,9 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     }
   } else {
     for (let count = 0; count < 4; count += 1) {
-      // :45 LOCAL = (阶层 - 1) * 10 + 100 + RAND:5
+      // LOCAL = (阶层 - 1) * 10 + 100 + RAND:5
       let local = (chara(arg0).dungeon.侵攻阶层 - 1) * 10 + 100 + rand_n(5);
-      // :46-51 8階以上で強敵の抽選（RAND:10 == 0 且 ITEM 有库存）
+      // 8階以上で強敵の抽選（RAND:10 == 0 且 ITEM 有库存）
       if (chara(arg0).dungeon.侵攻阶层 >= 8 && rand_n(10) === 0) {
         const monid = 191 + rand_n(3);
         if ((era.get(`item:${monid}`) || 0) > 0) {
@@ -1384,7 +1376,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
 
   // === 主循环（:125-360）===
   for (let turn = 0; turn < 99; turn += 1) {
-    // :132-137 反抗的・高傲的・抵抗的：第 7 回合多打一轮（演出）
+    // 反抗的・高傲的・抵抗的：第 7 回合多打一轮（演出）
     if (
       ((era.get(`talent:${arg0}:11`) || 0) !== 0 ||
         (era.get(`talent:${arg0}:15`) || 0) !== 0 ||
@@ -1399,7 +1391,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
         (era.get(`talent:${arg0}:26`) || 0) !== 0) &&
       rand_n(5) === 0
     ) {
-      // :138-163 臆病・大人しい・悲観的：ランダムで逃げ出す
+      // 臆病・大人しい・悲観的：ランダムで逃げ出す
       if ((settings & 32) !== 0) {
         era.print(`气馁的${name_of(arg0)}逃跑了……`);
       }
@@ -1422,7 +1414,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
         break;
       }
     } else if (turn > 5) {
-      // :165-191 ターン数超過：強制的に戦闘が中断される
+      // ターン数超過：強制的に戦闘が中断される
       const local = (era.get('cflag:0:9') || 0) + rand_n(10) + 1;
       if ((settings & 32) !== 0) {
         era.print(`${name_of(arg0)}逃跑了………`);
@@ -1506,15 +1498,15 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     const atker = select_atker(arg0, turn);
     atker_slot = atker;
 
-    // :304 消耗品を使用するかチェック（存根）
+    // 消耗品を使用するかチェック（存根）
     const { use_ex_item } = require('#/dungeon/dungeon');
     await use_ex_item('战斗中', atker);
 
-    // :307 支配している怪物の攻撃（A 换手后打防御怪物）
+    // 支配している怪物の攻撃（A 换手后打防御怪物）
     era_flag.target = atker;
     await slave_monster_attack(rand_n);
 
-    // :313-314 先攻後攻決定
+    // 先攻後攻決定
     const speed = speed_plus(atker, rand_n);
     let interrupted = false;
     if (speed > 0) {
@@ -1573,10 +1565,10 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
       success.v = 1;
       break;
     }
-    // :359 ATK_TURN += 1——死赋值（无读者），不落地（文件头注释）
+    // ATK_TURN += 1——死赋值（无读者），不落地（文件头注释）
   }
 
-  // :362-365 クエスト结算——#178 真身起两臂第一次可达（存根期 QUEST_FLAG
+  // クエスト结算——#178 真身起两臂第一次可达（存根期 QUEST_FLAG
   // 恒 0）：任务战斗（quest_flag === 2）按战果 SUCCESS 走成功/失败结算
   if (quest_flag === 2 && success.v === 1) {
     await quest_mod.result_quest(arg0, '成功', rand);
@@ -1585,7 +1577,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     await quest_mod.result_quest(arg0, '失败', rand);
   }
 
-  // :367-368 侵攻中的再出发演出
+  // 侵攻中的再出发演出
   if (chara(arg0).invasion.状态 === 2 && (settings & 32) !== 0) {
     era.print(`${name_of(arg0)}再次对地下城进行攻略`);
   }

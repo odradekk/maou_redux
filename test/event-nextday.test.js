@@ -3174,7 +3174,7 @@ test('示众台（PILLORY）：战役经验结算——FLAG:400 置位时派遣�
     fixture.text_lines().some((t) => t.includes('获得了2点经验值')),
     '结算播报',
   );
-  // :298 是 PRINTFORMW（自带等待）、调用点 :2392 另有一个 WAIT——两次等键
+  // 是 PRINTFORMW（自带等待）、调用点 :2392 另有一个 WAIT——两次等键
   // 都要还原：缺了前者，这个等待会落在那之后的下一行输出上
   const exp_line = fixture.lines_history.find(
     (l) => l.type === 'text' && l.text.includes('获得了2点经验值'),

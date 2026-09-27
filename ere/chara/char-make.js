@@ -2,14 +2,6 @@
  * @file 角色生成的转发层（issue #170）：全库 30 余处调用点走本层的名字，
  * 真身在 ere/chara/chara-make.js（源 キャラ関数/CHARA_MAKE.ERB）。
  *
- * 源: target/ERB/キャラ関数/CHAR_MAKE.ERB  @CHAR_MAKE（:2-4）、
- *       @NAMING（:7-9）、@NAME_RESET（:12-14）、@SET_CHAR_CLOTH（:17-19）、
- *       @CHAR_MAKE_INPORT（:27-34）、@CHAR_INHERIT（:37-39）。@CHAR_INIT
- *       （:22-25）的 ere 形态是 ere/chara/chara-init.js（#118，其文件头已
- *       声明本壳）；@RAND_CHARA_MAKE（:42-194）的真身在同目录
- *       ere/chara/chara-make.js 的 rand_chara_make——它需要本层的
- *       @CHAR_MAKE_INPORT 作参数注入（反向 require 会成环），调用方从本层取。
- *
  * 转发不折叠（工单验收第 2 条）：调用点的名字稳定在转发层上，真身可随
  * 后续票替换。JUMP 的指针语义（A / TARGET 隐式传递）由 ere 侧显式传参
  * 承接（#5 决议第六条）。
@@ -33,7 +25,7 @@ const { chara_name_define, cn_rebuild } = require('#/chara/chara-name');
  * @returns {Promise<number>} @CHARA_MAKE 的 RETURN（角色号）
  */
 async function char_make(cid, arg0 = 0, arg1 = 0, rand) {
-  // :4 JUMP CHARA_MAKE(A, ARG:0, ARG:1)
+  // JUMP CHARA_MAKE(A, ARG:0, ARG:1)
   return chara_make(cid, arg0, arg1, rand);
 }
 
@@ -44,7 +36,7 @@ async function char_make(cid, arg0 = 0, arg1 = 0, rand) {
  * @returns {void} JUMP 不向调用点返回结果
  */
 function naming(cid) {
-  // :9 JUMP CHARA_NAME_DEFINE(A)（#384 起真身）
+  // JUMP CHARA_NAME_DEFINE(A)（#384 起真身）
   chara_name_define(cid);
 }
 
@@ -53,7 +45,7 @@ function naming(cid) {
  * @returns {void} JUMP 不向调用点返回结果
  */
 function name_reset() {
-  // :14 JUMP CN_REBUILD（#384 起真身）
+  // JUMP CN_REBUILD（#384 起真身）
   cn_rebuild();
 }
 
@@ -66,7 +58,7 @@ function name_reset() {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function set_char_cloth(cid, rand) {
-  // :19 JUMP CM_CLOTH
+  // JUMP CM_CLOTH
   return cm_cloth(cid, rand);
 }
 
@@ -82,11 +74,11 @@ async function set_char_cloth(cid, rand) {
  */
 async function char_make_inport(arg0 = 1, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
-  // :31-32 SIF RAND(ARG:0) != 0 RETURN 0
+  // SIF RAND(ARG:0) != 0 RETURN 0
   if (rand_n(arg0) !== 0) {
     return 0;
   }
-  // :34 JUMP CHARA_MAKE_INPORT
+  // JUMP CHARA_MAKE_INPORT
   return chara_make_inport(rand_n);
 }
 

@@ -2,16 +2,6 @@
  * @file 失神状态机：失神判定、失神中的计数与文本、恢复时的参数回流、
  * 野外失神的带回处理。
  *
- * 源: target/ERB/調教相關/PASSOUT.ERB
- *     @PASSOUT_CHECK（:14-89，判定——@SOURCE_CHECK :398 调用）
- *     @PASSOUT_TEXT（:91-283，失神瞬间的清零、每回合的精液/装备计数、
- *     装备快照、失神文案——@SOURCE_CHECK :482-497 两臂均调用，未失神时
- *     除快照 else 臂外自守）/ @PASSOUT_MESSAGE（:285-456，恢复时的大段
- *     地の文章——@PASSOUT_TEXT 的恢复分支经 CFLAG:99（地の文章カット）
- *     调用）/ @PASSOUT_PALAM_CHECK（:457-485，失神中的 UP 暂存与清零）
- *     / @PASSOUT_PALAM_UP（:487-589，恢复时的参数回流——UP 的放大返还）
- *     / @PASSOUT_OUTDOOR（:591-602，野外 PLAY 中失神 → 解除并带回）
- *
  * TFLAG 簿记（PASSOUT.ERB:4-10 的原注）：
  *   - 864-882：失神中的状态保存与计算用（864-865/866-867/877-878 等分位
  *     装备，868-876 精液/污液计数，879-882 特殊装备/媚药利尿/情景/触手）；
@@ -84,32 +74,32 @@ async function passout_check(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const cid = era_flag.target;
   if ((era.get('flag:70') || 0) === 1) {
-    return; // :16 系统关闭（头注：全库零写点，恒开）
+    return; // 系统关闭（头注：全库零写点，恒开）
   }
-  set_tflag(895, 0); // :18
+  set_tflag(895, 0);
 
-  const z = // :20 Z = 本回合四部位绝顶计数和（NOWEX:0-3）
+  const z = // Z = 本回合四部位绝顶计数和（NOWEX:0-3）
     (era.get(`nowex:${cid}:0`) || 0) +
     (era.get(`nowex:${cid}:1`) || 0) +
     (era.get(`nowex:${cid}:2`) || 0) +
     (era.get(`nowex:${cid}:3`) || 0);
 
-  // :25-34 连续强绝顶（首回 8% 记相位、次回 60% 失神）
+  // 连续强绝顶（首回 8% 记相位、次回 60% 失神）
   if (z >= 16 && tflag(897) === 0 && tflag(899) < 1 && rand_n(10) < 8) {
     set_tflag(897, 1);
   } else if (z >= 16 && tflag(897) === 1 && tflag(899) < 1 && rand_n(10) < 6) {
     set_tflag(895, 1);
     set_tflag(897, 2);
     era.add(`exp:${cid}:65`, 1);
-    era.print('失神'); // :33
+    era.print('失神');
   } else if (z < 16 && tflag(897) < 2 && tflag(899) < 1) {
-    set_tflag(897, 0); // :35 连续中断，相位回退
+    set_tflag(897, 0); // 连续中断，相位回退
   }
 
-  // :37-55 苦痛（PALAM:9 的累计跨回合折算：≥ 15000 减去之）
+  // 苦痛（PALAM:9 的累计跨回合折算：≥ 15000 减去之）
   let a = era.get(`palam:${cid}:9`) || 0;
   if (a >= 15000) {
-    a -= 15000; // :40-41
+    a -= 15000;
   }
   if (
     (up(cid, 9) >= 7500 || up(cid, 9) + a >= 15000) &&
@@ -120,29 +110,29 @@ async function passout_check(rand) {
       set_tflag(895, 2);
       set_tflag(898, 2);
       era.add(`exp:${cid}:65`, 1);
-      era.print('失神'); // :51
+      era.print('失神');
     } else if (tflag(895) === 1) {
-      // :52-54 快感失神叠加苦痛 → 4
+      // 快感失神叠加苦痛 → 4
       set_tflag(895, 4);
       set_tflag(898, 2);
     }
   }
 
-  // :57-71 恐怖（UP:10 ≥ 5000，50%）
+  // 恐怖（UP:10 ≥ 5000，50%）
   if (up(cid, 10) >= 5000 && tflag(899) < 1 && rand_n(10) < 5) {
     if (tflag(895) === 0) {
       set_tflag(895, 3);
       set_tflag(896, 2);
       era.add(`exp:${cid}:65`, 1);
-      era.print('失神'); // :67
+      era.print('失神');
     } else if (tflag(895) === 2) {
-      // :68-70 苦痛失神叠加恐怖 → 6
+      // 苦痛失神叠加恐怖 → 6
       set_tflag(895, 6);
       set_tflag(896, 2);
     }
   }
 
-  // :73-81 失神中的指令执行回数（含失神当回——≥ 1 即失神中）
+  // 失神中的指令执行回数（含失神当回——≥ 1 即失神中）
   if (tflag(896) >= 2 || tflag(897) >= 2 || tflag(898) >= 2) {
     if (tflag(899) === 0) {
       set_tflag(899, 1);
@@ -151,13 +141,13 @@ async function passout_check(rand) {
     }
   }
 
-  // :83-89 恢复判定（失神次回起；条件满足过一次后每回都判——原注）
+  // 恢复判定（失神次回起；条件满足过一次后每回都判——原注）
   if (tflag(899) >= 2) {
     if (z >= 16 || (tflag(899) >= 2 && up(cid, 9) >= 5000) || tflag(899) >= 4) {
       set_tflag(896, 3);
       set_tflag(897, 3);
       set_tflag(898, 3);
-      era.print('从失神中恢复了'); // :88
+      era.print('从失神中恢复了');
     }
   }
 }
@@ -174,14 +164,14 @@ async function passout_text() {
   const cflag74 = () => era.get(`cflag:${cid}:74`) || 0;
   const condom = () => chara(cid).event.主人避孕套; // TEQUIP:35（属主 event）
 
-  // :95-100 失神瞬间：864-894 全清（REPEAT 31）
+  // 失神瞬间：864-894 全清（REPEAT 31）
   if (tflag(895) > 0) {
     for (let i = 0; i < 31; i += 1) {
       set_tflag(864 + i, 0);
     }
   }
 
-  // :107-156 失神次回起：精液/污液计数（射到哪算哪——TEQUIP:35 戴套
+  // 失神次回起：精液/污液计数（射到哪算哪——TEQUIP:35 戴套
   // 时计数减 1，头套不省）
   if (tflag(899) > 1) {
     if (tflag(0) + tflag(6) >= 1) {
@@ -207,7 +197,7 @@ async function passout_text() {
       }
     }
     if (tflag(2) + tflag(6) >= 1) {
-      // :115-127 膣内（体位组指令）/ 肛内（肛交位组）
+      // 膣内（体位组指令）/ 肛内（肛交位组）
       if (
         [
           20, 21, 22, 23, 34, 64, 120, 121, 128, 129, 130, 131, 132, 133, 134,
@@ -222,9 +212,9 @@ async function passout_text() {
         }
       }
     }
-    add_tflag(873, tflag(3)); // :128 处女丧失
+    add_tflag(873, tflag(3)); // 处女丧失
     if (tflag(2) + tflag(6) >= 1) {
-      // :129-136 素股（33）与ぶっかけ位（CFLAG:74 4/6/7）
+      // 素股（33）与ぶっかけ位（CFLAG:74 4/6/7）
       if (com === 33 || cflag74() === 4 || cflag74() === 6 || cflag74() === 7) {
         if (condom() === 0) {
           add_tflag(874, tflag(6));
@@ -234,10 +224,10 @@ async function passout_text() {
       }
     }
     if (tflag(2) >= 1) {
-      add_tflag(875, tflag(2)); // :137-138
+      add_tflag(875, tflag(2));
     }
     if (tflag(15) >= 1) {
-      // :139-150 怪物/触手射精（101 触手 = 100、102 = 1000）
+      // 怪物/触手射精（101 触手 = 100、102 = 1000）
       if (com === 101) {
         add_tflag(876, 100);
       } else if (com === 102) {
@@ -249,7 +239,7 @@ async function passout_text() {
   }
 
   if (tflag(899) === 1) {
-    // :153-234 失神初回：装备快照（此刻装着什么，恢复文本的参照系）
+    // 失神初回：装备快照（此刻装着什么，恢复文本的参照系）
     set_tflag(867, 0);
     set_tflag(877, 0);
     if (tequip(cid, 13) === 1 || tequip(cid, 19) === 1) {
@@ -294,10 +284,10 @@ async function passout_text() {
     }
     set_tflag(882, tequip(cid, 90)); // 触手
     if (cflag74() !== 0) {
-      era.set(`cflag:${cid}:74`, 0); // :236-237 ぶっかけ位复位
+      era.set(`cflag:${cid}:74`, 0); // ぶっかけ位复位
     }
   } else {
-    // :239-272 失神次回起（含未失神回合）：与快照不同的位标 -1
+    // 失神次回起（含未失神回合）：与快照不同的位标 -1
     if (tequip(cid, 11) === 1 && tflag(877) !== 1) {
       set_tflag(877, -1);
     }
@@ -338,7 +328,7 @@ async function passout_text() {
   }
 
   if (tflag(899) >= 1) {
-    // :274-313 失神文案（895 分档；口塞 45 时首行台词吞掉）
+    // 失神文案（895 分档；口塞 45 时首行台词吞掉）
     const gagged = () => tequip(cid, 45) === 0; // SIF TEQUIP:45 == 0 才印
     if (tflag(895) === 1) {
       // 快感失神
@@ -384,13 +374,13 @@ async function passout_text() {
       era.print(`…${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('受不了无法忍耐的痛楚和恐惧，失去了意识。');
     } else if (tflag(896) === 3 && tflag(897) === 3 && tflag(898) === 3) {
-      // :286-292 恢复（等键 → 地の文章（CFLAG:99 == 0 才印））
+      // 恢复（等键 → 地の文章（CFLAG:99 == 0 才印））
       era.print(`${name_of(cid)}恢复了意识。`);
       await era.waitAnyKey();
       if ((era.get(`cflag:${cid}:99`) || 0) === 0) {
         await passout_message();
       }
-      // :275-278 原作注释掉的 TFLAG:200 = 12 / CALL SELF_KOJO——头注
+      // 原作注释掉的 TFLAG:200 = 12 / CALL SELF_KOJO——头注
     } else {
       // PASSOUT.ERB:280 的 PRINTFORML（空内容）落在分支外已收行之后 → 真空行（#595）
       era.print('');
@@ -412,7 +402,7 @@ async function passout_message() {
   const player = era_flag.player;
   const com = era_flag.selectcom || 0;
 
-  // :288-302 挿しっぱ无（TFLAG:60）：侵犯持续中的骨架句
+  // 挿しっぱ无（TFLAG:60）：侵犯持续中的骨架句
   if (tflag(60) === 1) {
     era.print('不知不觉间，');
     if (com === 101 || com === 102) {
@@ -437,9 +427,9 @@ async function passout_message() {
     await era.waitAnyKey(); // PRINTW
   }
 
-  // :304-455 计数选支（ELSEIF 链，命中即止）
+  // 计数选支（ELSEIF 链，命中即止）
   if (tflag(873) >= 1) {
-    // :304-322 处女丧失（血 + 精液/污液的混合）
+    // 处女丧失（血 + 精液/污液的混合）
     if (tflag(60) === 1) {
       if (
         [
@@ -465,7 +455,7 @@ async function passout_message() {
     era.print('不知不觉中，处女被夺走，茫然地呆了…'); // PRINTFORMW
     await era.waitAnyKey();
   } else if (tflag(871) >= 1) {
-    // :323-354 膣内精液
+    // 膣内精液
     if (tflag(60) === 1) {
       if (
         [
@@ -503,7 +493,7 @@ async function passout_message() {
     }
     await era.waitAnyKey();
   } else if (tflag(872) >= 1) {
-    // :355-383 肛内精液
+    // 肛内精液
     if (tflag(60) === 1) {
       if ([26, 27, 28, 29].includes(com)) {
         era.print('被阴茎强行塞满的');
@@ -527,7 +517,7 @@ async function passout_message() {
     }
     await era.waitAnyKey();
   } else if (tflag(876) >= 1) {
-    // :384-391 触手污液
+    // 触手污液
     era.print('全身沾满了');
     if (
       tflag(868) +
@@ -548,7 +538,7 @@ async function passout_message() {
     tflag(868) + tflag(869) + tflag(870) + tflag(874) + tflag(875) >=
     1
   ) {
-    // :392-404 全身精液
+    // 全身精液
     era.print('不省人事前，没有感觉到身体');
     if (tflag(868) + tflag(869) + tflag(870) + tflag(874) + tflag(875) >= 3) {
       era.print('里面');
@@ -561,7 +551,7 @@ async function passout_message() {
     }
     await era.waitAnyKey();
   } else if (tflag(867) < 0 || tflag(877) < 0) {
-    // :405-427 插入系装备（蠕虫/肛珠）
+    // 插入系装备（蠕虫/肛珠）
     era.print(' 不知什么时候，');
     if (tequip(cid, 11) === 1) {
       if (tequip(cid, 13) === 1) {
@@ -589,11 +579,11 @@ async function passout_message() {
     era.print('对这样的事感到不知所措…');
     await era.waitAnyKey();
   } else if (tflag(878) < 0 || tflag(866) < 0) {
-    // :428-429 取り付け系装具
+    // 取り付け系装具
     era.print('对不经意间被装上了器具感到不知所措…');
     await era.waitAnyKey();
   } else if (tflag(879) < 0 || tflag(864) < 0 || tflag(865) < 0) {
-    // :430-449 被虐系具（绳的支有专属句）
+    // 被虐系具（绳的支有专属句）
     era.print('不知什么时候，');
     if (tequip(cid, 44)) {
       era.print('被绑起来了，');
@@ -611,11 +601,11 @@ async function passout_message() {
     era.print('发现后开始感到困惑和恐惧了…');
     await era.waitAnyKey();
   } else if (tflag(880) < 0) {
-    // :450-451 媚药/利尿剂
+    // 媚药/利尿剂
     era.print('发现自己身体的异样，掩饰不住地困惑着，');
     await era.waitAnyKey();
   } else if (tflag(881) < 0) {
-    // :452-458 情景（摄影机/野外/浴室）
+    // 情景（摄影机/野外/浴室）
     if (tequip(cid, 53)) {
       era.print('映照出自己的摄影机，');
     } else if (tequip(cid, 54)) {
@@ -626,12 +616,12 @@ async function passout_message() {
     era.print('发现后开始感到困惑和恐惧了…');
     await era.waitAnyKey();
   } else if (tflag(882) < 0) {
-    // :459-460 触手
+    // 触手
     era.print('不知不觉间…身体被触手缠绕了，开始感到困惑和恐惧了…');
     await era.waitAnyKey();
   }
 
-  // :461-463 有任一装备变化或肛内精液 → 再等一次键
+  // 有任一装备变化或肛内精液 → 再等一次键
   if (
     tflag(867) +
       tflag(877) +
@@ -648,7 +638,7 @@ async function passout_message() {
     await era.waitAnyKey();
   }
 
-  // :465-470 G/X/Y 结算（PASSOUT_PALAM_UP 读，头注）
+  // G/X/Y 结算（PASSOUT_PALAM_UP 读，头注）
   G =
     tflag(868) + tflag(869) + tflag(870) + tflag(874) + tflag(875) + tflag(876);
   X =
@@ -688,7 +678,7 @@ function passout_palam_check() {
     add_tflag(893, up(cid, 12));
     add_tflag(894, up(cid, 13));
   }
-  // :475-484 清零（UP:7 / 4 / 6 / 8 / 9 / 10-13）
+  // 清零（UP:7 / 4 / 6 / 8 / 9 / 10-13）
   for (const k of [4, 6, 7, 8, 9, 10, 11, 12, 13]) {
     zero_up(cid, k);
   }
@@ -718,14 +708,14 @@ function passout_palam_up() {
     e += tflag(893) * (t899 - 2);
     f += tflag(894) * (t899 - 2);
   }
-  // :509-514 整数除（Emuera 截断除，正值域同 floor）
+  // 整数除（Emuera 截断除，正值域同 floor）
   a = Math.floor(a / 600);
   b = Math.floor(b / 240);
   c = Math.floor(c / 60);
   d = Math.floor(d / 10);
   e = Math.floor(e / 10);
   f = Math.floor(f / 10);
-  // :515-527 精液/污液暴露（G ≥ 1）：全额乘 G + 精液中毒档的 UP:5 加成
+  // 精液/污液暴露（G ≥ 1）：全额乘 G + 精液中毒档的 UP:5 加成
   if (G >= 1) {
     a += a * G;
     b += b * G;
@@ -741,7 +731,7 @@ function passout_palam_up() {
       add_up(cid, 5, 2000);
     }
   }
-  // :529-535 装具变化（X ≥ 1）：全额乘 X
+  // 装具变化（X ≥ 1）：全额乘 X
   if (X >= 1) {
     a += a * X;
     b += b * X;
@@ -750,7 +740,7 @@ function passout_palam_up() {
     e += e * X;
     f += f * X;
   }
-  // :537-551 膣内/肛内精液（Y ≥ 1）：全额乘 Y + 同款 UP:5 加成
+  // 膣内/肛内精液（Y ≥ 1）：全额乘 Y + 同款 UP:5 加成
   if (Y >= 1) {
     a += a * Y;
     b += b * Y;
@@ -766,7 +756,7 @@ function passout_palam_up() {
       add_up(cid, 5, 2000);
     }
   }
-  // :557-563 处女丧失（873 ≥ 1）：翻倍
+  // 处女丧失（873 ≥ 1）：翻倍
   if (tflag(873) >= 1) {
     a *= 2;
     b *= 2;
@@ -775,7 +765,7 @@ function passout_palam_up() {
     e *= 2;
     f *= 2;
   }
-  // :565-570 恐怖/屈服的折扣率 Z（屈服刻印 MARK:2 与顺从 ABL:10 抬 Z，
+  // 恐怖/屈服的折扣率 Z（屈服刻印 MARK:2 与顺从 ABL:10 抬 Z，
   // 爱慕 TALENT:85 减半）
   let z = 100;
   z -= (era.get(`mark:${cid}:2`) || 0) * 10;
@@ -783,7 +773,7 @@ function passout_palam_up() {
   if (tal(cid, 85)) {
     z = Math.floor(z / 2);
   }
-  // :572-577 分配（恐怖/屈服走 Z，其余走 100 - Z）
+  // 分配（恐怖/屈服走 Z，其余走 100 - Z）
   const idiv = (v, w) => Math.floor((v * w) / 100);
   add_up(cid, 7, idiv(a, 100 - z));
   add_up(cid, 8, idiv(b, 100 - z));
@@ -792,7 +782,7 @@ function passout_palam_up() {
   add_up(cid, 12, idiv(e, z));
   add_up(cid, 13, idiv(f, z));
 
-  // :579-583 恢复完成：相位与回数复位
+  // 恢复完成：相位与回数复位
   if (tflag(896) === 3 || tflag(897) === 3 || tflag(898) === 3) {
     set_tflag(896, 0);
     set_tflag(897, 0);
@@ -808,10 +798,10 @@ function passout_palam_up() {
  */
 async function passout_outdoor() {
   const cid = era_flag.target;
-  era.set(`tequip:${cid}:54`, 0); // :594 野外 PLAY 解除（属主 train）
-  era.print(`${name_of(cid)}失神了，所以带回了房间…`); // :595 PRINTFORMW
+  era.set(`tequip:${cid}:54`, 0); // 野外 PLAY 解除（属主 train）
+  era.print(`${name_of(cid)}失神了，所以带回了房间…`); // PRINTFORMW
   await era.waitAnyKey();
-  // :598-602 调教者的体力/气力（BASE:MASTER:0/1，钳 0）
+  // 调教者的体力/气力（BASE:MASTER:0/1，钳 0）
   chara(MASTER).dungeon.体力 = Math.max(
     (era.get(`base:${MASTER}:0`) || 0) - 20,
     0,

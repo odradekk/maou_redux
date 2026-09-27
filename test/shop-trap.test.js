@@ -96,7 +96,7 @@ test('SALEITEM_CHECK_TRAP：只写 1，不写 0（清空是商店轮 @EVENTSHOP 
 });
 
 test('SALEITEM_CHECK_TRAP：两个分支共有的 65/79 各写两次（1:1 照搬，不合并）', () => {
-  // :96-105 的えっちな陷阱与 :116-120 的魔蟲知識陷阱都含 65/79——两个
+  // 的えっちな陷阱与 :116-120 的魔蟲知識陷阱都含 65/79——两个
   // 守卫同时成立时原作写两次 1。写值幂等，但「两个分支都跑过」只有写序
   // 看得见，故照搬不合并。
   const both = run_saleitem_check({
@@ -201,7 +201,7 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
     '《请输入要购买陷阱的编号》',
   ]);
 
-  // :68-69 的两个键是按钮（正文不写 [编号] 前缀；引擎拼出 `[997] - 普通物品`）
+  // 的两个键是按钮（正文不写 [编号] 前缀；引擎拼出 `[997] - 普通物品`）
   // ——#399 起本屏还会印商品按钮，键若只印文本就键入不进（#130）
   assert.deepEqual(
     fixture.lines
@@ -213,12 +213,12 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
     ],
   );
 
-  // :10 CUSTOMDRAWLINE = → isSolid 近似；:12/:55/:67 三处
+  // CUSTOMDRAWLINE = → isSolid 近似；:12/:55/:67 三处
   const dividers = fixture.lines.filter((line) => line.type === 'divider');
   assert.equal(dividers.length, 3);
   assert(dividers.every((line) => line.border === 'solid'));
 
-  // :68-69 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 与原作
+  // 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 与原作
   // 的对应」）以 setAlign 包一次近似排版、随后还原 'left'
   assert.deepEqual(
     fixture.calls
@@ -228,7 +228,7 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
     '两行提示必须夹在居中排版里（否则排版退化为左对齐）',
   );
 
-  // :23-26/:39-41 SETCOLORBYNAME LightSalmon → RESETCOLOR：三行标签着色
+  // SETCOLORBYNAME LightSalmon → RESETCOLOR：三行标签着色
   for (const text of ['[陷阱Lv:3]', '[陷阱]', '[戒指]']) {
     const line = fixture.lines.find(
       (l) => l.type === 'text' && l.text === text,

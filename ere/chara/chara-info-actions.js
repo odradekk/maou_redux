@@ -2,12 +2,6 @@
  * @file 角色信息个别画面的动作函数：能力提升/换装资格判定、拘束台解放、金钱
  * 回复体力气力、金钱购买等级、传送召回。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_FUNC.ERB 全 6 函数——
- *     @IS_ABLE_TO_ABILITY_UP（:3-6，#FUNCTION 式中函数）/
- *     @IS_ABLE_TO_CLOTH（:9-11，#FUNCTION 式中函数）/
- *     @CHARA_INFO_RESTORE_STATE（:14-18）/@CHARA_INFO_RECOVER_HP（:20-46）/
- *     @CHARA_INFO_UP_LEVEL（:48-88）/@CHARA_INFO_CALLBACK（:89-122）。
- *
  * 调用方：キャラ関数/CHARA_INFO ver1.0.1.ERB（本域 page-chara-info.js）的
  * CASE 10/11/12/14/15/13，以及外部两处：其他/NINSIN.ERB:286（临盆迎击角色
  * 请求传送召回，ere/chara/chara-pregnancy.js 的 ninsin_reach_term）。
@@ -113,7 +107,7 @@ async function chara_info_recover_hp(cid) {
   era.printButton('还是算了', 1);
   const result = await era.input();
   if (result === 1) {
-    return; // :39-40 还是算了
+    return; // 还是算了
   }
   if (result === 0) {
     await era.printAndWait(`花费${cost}G，恢复了${name_of(cid)}的体力与气力`);
@@ -163,7 +157,7 @@ async function chara_info_up_level(cid) {
     return;
   }
   if (result === 0) {
-    // :83 LOCALS 三目（ARG==MASTER ? NAME:MASTER # SAVESTR:ARG）算出后从未被
+    // LOCALS 三目（ARG==MASTER ? NAME:MASTER # SAVESTR:ARG）算出后从未被
     // 读取，下一行的 PRINTFORMW 直接写死 %NAME:MASTER%——原作缺陷 1:1 保留：
     // 给奴隶提升等级时，播报也说成是「你」花的钱（#14 登记）。
     await era.printAndWait(`${name_of(0)}花费了${cost}G，购买了经验${need}点`);

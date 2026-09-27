@@ -1,13 +1,6 @@
 /**
  * @file 精饮绝顶：口内射精的连锁绝顶判定（eraIM@S 流用）。
  *
- * 源: target/ERB/調教相關/SEIIN.ERB
- *     @SEIIN_START（:6-23，入口——@EX_CHECK_UP 的 ECST_CHECK 之后调用，
- *     ere/event/source-check.js）/ @SEIIN_CHECK（:25-78，强制精饮绝顶的
- *     回数阈值 P 计算）/ @SEIIN_ORGASM（:80-122，精饮绝顶本体——喜欢精液
- *     素质者直行）/ @SEIIN_COMPULSION_ORGASM（:124-166，强制精饮绝顶——
- *     帕夫洛夫计数器 CFLAG:600 达阈值 P 时获得喜欢精液 + 精液中毒 LV3）
- *
  * 触发位：TFLAG:0 = 口で射精（本回合口内射精次数，奉仕系指令写——J12
  * 落地后游玩可达，此前仅测试可驱动）；TFLAG:29 = 绝顶强度
  * （@ECST_CHECK 写，已在库）；TFLAG:899 = 失神中（passout.js 写）——
@@ -51,15 +44,15 @@ const times = (v, m) => Math.floor(v * m);
  */
 async function seiin_start() {
   if ((era.get('flag:72') || 0) === 1) {
-    return; // :8 系统关闭（头注：全库零写点，恒开）
+    return; // 系统关闭（头注：全库零写点，恒开）
   }
   if (tflag(0) === 0 || tflag(899) > 0) {
-    return; // :11-12 未口内射精 / 失神中
+    return; // 未口内射精 / 失神中
   }
   if (tal(47) && tflag(0) > 0) {
-    await seiin_orgasm(); // :15-16 喜欢精液 → 直行
+    await seiin_orgasm(); // 喜欢精液 → 直行
   } else if (tflag(0) > 0 && tflag(29) > 0) {
-    await seiin_check(); // :18-19 绝顶中 → 查计数器
+    await seiin_check(); // 绝顶中 → 查计数器
   }
 }
 
@@ -71,8 +64,8 @@ async function seiin_start() {
 async function seiin_check() {
   // P = 阈值（Emuera 全局，SEIIN_COMPULSION_ORGASM 读——ere 侧显式传参，
   // #214 A/S 同款裁定）
-  let p = 50; // :30
-  // :32-65 素质修正（+：刚强 13 / 保守 24 / 悲观 26 / 戒备森严 27 /
+  let p = 50;
+  // 素质修正（+：刚强 13 / 保守 24 / 悲观 26 / 戒备森严 27 /
   // 压抑 32 / 反感污臭 62 / 否定快感 71；-：乐观 25 / 开放 33 /
   // 不怕污臭 61 / 接受快感 70 / 容易上瘾 72 / 倒错 80 / 淫乱 76 -20）
   if (tal(13) === 1) {
@@ -117,7 +110,7 @@ async function seiin_check() {
   if (tal(76) === 1) {
     p -= 20;
   }
-  await seiin_compulsion_orgasm(p); // :68
+  await seiin_compulsion_orgasm(p);
 }
 
 /**
@@ -126,11 +119,11 @@ async function seiin_check() {
  */
 async function seiin_orgasm() {
   const cid = era_flag.target;
-  // :82-83 计数：EX:13（train 直写）与 EXP:8（dungeon 门面）
+  // 计数：EX:13（train 直写）与 EXP:8（dungeon 门面）
   era.add(`ex:${cid}:13`, 1);
   chara(cid).dungeon.精饮绝顶经验 = chara(cid).dungeon.精饮绝顶经验 + 1;
 
-  // :86-99 文案（TFLAG:0 == 2 = 连续两发）
+  // 文案（TFLAG:0 == 2 = 连续两发）
   if (tflag(0) === 2) {
     era.print(`${name_of(cid)}精饮绝顶`);
     era.print('精饮绝顶经验＋1');
@@ -145,7 +138,7 @@ async function seiin_orgasm() {
     era.print('随着肩膀轻微的颤动，达到高潮了…');
   }
 
-  // :101-119 源加成（基础 + 经验/精液中毒分档）
+  // 源加成（基础 + 经验/精液中毒分档）
   era.set(`source:${cid}:10`, 2000); // 屈从
   era.set(`source:${cid}:11`, 5000); // 饮精
   era.set(`source:${cid}:13`, 10000); // 中毒
@@ -177,16 +170,16 @@ async function seiin_orgasm() {
  */
 async function seiin_compulsion_orgasm(p) {
   const cid = era_flag.target;
-  era.add(`cflag:${cid}:600`, 1); // :127 计数器 +1
+  era.add(`cflag:${cid}:600`, 1); // 计数器 +1
 
   const count = era.get(`cflag:${cid}:600`) || 0;
   if (count >= p) {
-    // :130-133 达阈值 → 喜欢精液获得旗（属主 event 走门面）
+    // 达阈值 → 喜欢精液获得旗（属主 event 走门面）
     era.print('强制精饮绝顶');
     era.print(`${name_of(cid)}彻底地把精液的味道记住了…`);
     game.event.精爱味觉 = 1; // TFLAG:110 = 1
   } else if (count === 1) {
-    // :134-141 初回（附带异常经验）
+    // 初回（附带异常经验）
     era.print('强制精饮绝顶');
     era.print(
       `${name_of(cid)}将${era.get('callname:0:-1') ?? ''}射出的精液尽力喝下去了，`,
@@ -196,7 +189,7 @@ async function seiin_compulsion_orgasm(p) {
     era.print('异常经验＋１');
     chara(cid).dungeon.异常经验 = chara(cid).dungeon.异常经验 + 1;
   } else {
-    // :142-150 以降（同文无等待——原注）
+    // 以降（同文无等待——原注）
     era.print('强制精饮绝顶');
     era.print(
       `${name_of(cid)}将${era.get('callname:0:-1') ?? ''}射出的精液尽力喝下去了，`,
@@ -205,7 +198,7 @@ async function seiin_compulsion_orgasm(p) {
     era.print(`强制地让${she(0)}去了……`);
   }
 
-  // :152-158 达阈值且精液中毒未满 3 → 直接抬到 LV3
+  // 达阈值且精液中毒未满 3 → 直接抬到 LV3
   if (count >= p) {
     if (abl32() < 3) {
       era.print(`${name_of(cid)}的精液中毒达到LV3了`);
@@ -213,7 +206,7 @@ async function seiin_compulsion_orgasm(p) {
     }
   }
 
-  // :160-166 源加成
+  // 源加成
   era.set(`source:${cid}:13`, 1000);
   if (count === 1) {
     era.set(`source:${cid}:13`, times(era.get(`source:${cid}:13`) || 0, 1.5));

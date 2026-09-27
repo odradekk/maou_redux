@@ -1,12 +1,6 @@
 /**
  * @file 外观描述（issue #389，N5）：LOOK.ERB 的设定、清空与信息显示五函数。
  *
- * 源: target/ERB/キャラ関数/LOOK.ERB
- *     @LOOK_SET（:4-813）、@LOOK_CLEAR（:814-822）、@LOOK_INFO（:823-1666）、
- *     @LOOK_INFO_LOVE（:1667-2810）、@LOVE_LIKE_BASE（:2811-2884）
- *     ——同文件的第六个函数 @GET_LOOK_INFO（:2885-3775）是式中函数，真身在
- *     ere/chara/look-info.js（拆出去消 require 环，见该文件头）。
- *
  * 调用面：#389 起 LOOK_SET 由 ere/chara/chara-make.js 的 @CM_LOOK 接入
  * （源 CHARA_MAKE.ERB:864 的 `CALL LOOK_SET, ARG`）；@LOOK_INFO 的两个调用点
  * 在 CHARA_INFO_SHOW ver1.1.2.ERB:233/:295，#390 的靶——本票只把函数做成
@@ -161,10 +155,10 @@ function look_set(cid, arg, rand = default_rand) {
 
   // —— 头发颜色（:7-61）——
   if (t(cid, T_头发颜色) > 0) {
-    // :10-12 設定済み（stick 修改：不再按 rand 重掷）
+    // 設定済み（stick 修改：不再按 rand 重掷）
   } else {
-    rand_n(100); // :13-15 Q = RAND:100 —— 源里随即被 SELECTCASE 的 RAND:100 覆盖，此掷不参与判定（1:1 保留，它仍消费一个随机数）
-    // :15-59 0-4 粉髪 5% / 5-14 紫髪 10% / 15-20 白发 6% / 21-30 青髪 10%
+    rand_n(100); // Q = RAND:100 —— 源里随即被 SELECTCASE 的 RAND:100 覆盖，此掷不参与判定（1:1 保留，它仍消费一个随机数）
+    // 0-4 粉髪 5% / 5-14 紫髪 10% / 15-20 白发 6% / 21-30 青髪 10%
     //        31-40 緑髪 10% / 41-50 栗毛 10% / 51-60 金色 10% / 61-79 黒髪 19%
     //        80-89 赤毛 10% / 90-94 暗金色 5% / 95-99 銀髪 5%
     const q_color = rand_n(100);
@@ -196,37 +190,37 @@ function look_set(cid, arg, rand = default_rand) {
   }
 
   // —— 头发状态（:63-83）——
-  const q_state = rand_n(12); // :63-64 Q = RAND:12
+  const q_state = rand_n(12); // Q = RAND:12
   set_t(
     cid,
     T_头发状态,
     q_state <= 6
-      ? 1 // :65-67 直毛
+      ? 1 // 直毛
       : q_state === 7
-        ? 2 // :68-70 カール
+        ? 2 // カール
         : q_state === 8
-          ? 3 // :71-73 内カール
+          ? 3 // 内カール
           : q_state === 9
-            ? 4 // :74-76 外カール
+            ? 4 // 外カール
             : q_state === 10
-              ? 5 // :77-79 癖毛
-              : 6, // :80-82 ウェーブ
+              ? 5 // 癖毛
+              : 6, // ウェーブ
   );
 
   // —— 头发长度（:85-97）ボーイッシュ（未熟 135）なら常にショート ——
-  const q_hair_len = rand_n(6); // :87-88
+  const q_hair_len = rand_n(6);
   set_t(
     cid,
     T_头发长度,
     q_hair_len <= 1 || t(cid, T_未熟)
-      ? 1 // :88-90 ショート
+      ? 1 // ショート
       : q_hair_len === 4
-        ? 101 // :91-93 セミロング
-        : 201, // :94-96 ロング
+        ? 101 // セミロング
+        : 201, // ロング
   );
 
   // —— 头发修剪方式（:99-114）——
-  const q_cut = rand_n(6); // :101-102
+  const q_cut = rand_n(6);
   // 源 :102-113 是 `IF Q >= 2 → 1` 后接 `ELSEIF Q == 3 → 2` / `ELSEIF Q == 4 → 3`：
   // 前一支把 2..5 全吃掉，2 齐剪与 3 层剪**不可达**（page-chara-info.js 先例，
   // 精简为可达形状：Q >= 2 → 1 基本剪法，否则 → 4 碎发）
@@ -234,7 +228,7 @@ function look_set(cid, arg, rand = default_rand) {
 
   // —— 髪型（:116-130）长度决定可掷范围 ——
   const hair_len = t(cid, T_头发长度);
-  let q_style; // :122-128
+  let q_style;
   if (hair_len >= 1 && hair_len <= 100) {
     q_style = rand_n(3);
   } else if (hair_len >= 101 && hair_len <= 200) {
@@ -242,168 +236,168 @@ function look_set(cid, arg, rand = default_rand) {
   } else {
     q_style = rand_n(12);
   }
-  set_t(cid, T_发型, q_style + 1); // :129-130 Q += 1
+  set_t(cid, T_发型, q_style + 1); // Q += 1
 
   // —— 目（:132-166）——
-  const q_eye = rand_n(100); // :133-134
+  const q_eye = rand_n(100);
   set_t(
     cid,
     T_目,
     q_eye <= 10
-      ? 1 // :142-144 切れ長 11%
+      ? 1 // 切れ長 11%
       : q_eye <= 20
-        ? 2 // :145-147 大きい 10%
+        ? 2 // 大きい 10%
         : q_eye <= 25
-          ? 3 // :148-150 神秘的 5%
+          ? 3 // 神秘的 5%
           : q_eye <= 35
-            ? 4 // :151-153 釣り目 5%
+            ? 4 // 釣り目 5%
             : q_eye <= 40
-              ? 5 // :154-156 潤み目 5%
+              ? 5 // 潤み目 5%
               : q_eye <= 45
-                ? 8 // :157-159 たれ目 5%
+                ? 8 // たれ目 5%
                 : q_eye <= 48
-                  ? 7 // :160-162 三白眼 3%
-                  : 6, // :163-165 標準 56%
+                  ? 7 // 三白眼 3%
+                  : 6, // 標準 56%
   );
 
   // —— 瞳色（:168-188）——
-  const q_eye_color = rand_n(100); // :168-169
+  const q_eye_color = rand_n(100);
   set_t(
     cid,
     T_瞳色,
     q_eye_color <= 40
-      ? 1 // :170-172 碧
+      ? 1 // 碧
       : q_eye_color <= 60
-        ? 2 // :173-175 ブラウン
+        ? 2 // ブラウン
         : q_eye_color <= 80
-          ? 6 // :176-178 黒
+          ? 6 // 黒
           : q_eye_color <= 97
-            ? 3 // :179-181 グレー
+            ? 3 // グレー
             : q_eye_color <= 98
-              ? 4 // :182-184 ゴールド
-              : 5, // :185-187 クリムゾン
+              ? 4 // ゴールド
+              : 5, // クリムゾン
   );
 
   // —— 唇（:190-204）——
-  const q_lip = rand_n(6); // :190-191
+  const q_lip = rand_n(6);
   set_t(
     cid,
     T_唇,
     q_lip === 0
-      ? 1 // :192-194 肉感的
+      ? 1 // 肉感的
       : q_lip === 1
-        ? 2 // :195-197 薄い
+        ? 2 // 薄い
         : q_lip === 2
-          ? 3 // :198-200 瑞々しい
-          : 4, // :201-203 標準
+          ? 3 // 瑞々しい
+          : 4, // 標準
   );
 
   // —— 体型（:206-217）——
-  const q_body = rand_n(3); // :206-207
+  const q_body = rand_n(3);
   set_t(
     cid,
     T_体型,
     q_body === 0
-      ? 300 // :208-210 丰满
+      ? 300 // 丰满
       : q_body === 1
-        ? 1 // :211-213 骨感
-        : 150, // :214-216 標準
+        ? 1 // 骨感
+        : 150, // 標準
   );
 
   // —— 乳头（:219-233）——
-  const q_nipple = rand_n(6); // :219-220
+  const q_nipple = rand_n(6);
   set_t(
     cid,
     T_乳头,
     q_nipple === 0
-      ? 1 // :221-223 ピンク
+      ? 1 // ピンク
       : q_nipple === 1
-        ? 2 // :224-226 褐色
+        ? 2 // 褐色
         : q_nipple === 2
-          ? 4 // :227-229 陥没
-          : 3, // :230-232 標準
+          ? 4 // 陥没
+          : 3, // 標準
   );
 
   // —— 陰毛（:235-255）——
-  const q_pubic = rand_n(150); // :235-236
+  const q_pubic = rand_n(150);
   set_t(
     cid,
     T_阴毛生长极限,
     q_pubic <= 20
-      ? 1 // :237-239 無
+      ? 1 // 無
       : q_pubic <= 45
-        ? 20 // :240-242 産毛
+        ? 20 // 産毛
         : q_pubic <= 70
-          ? 50 // :243-245 薄い
+          ? 50 // 薄い
           : q_pubic <= 100
-            ? 100 // :246-248 標準
+            ? 100 // 標準
             : q_pubic <= 130
-              ? 150 // :249-251 濃い
-              : 201, // :252-254 剛毛
+              ? 150 // 濃い
+              : 201, // 剛毛
   );
-  set_t(cid, T_阴毛状态, t(cid, T_阴毛生长极限)); // :256
+  set_t(cid, T_阴毛状态, t(cid, T_阴毛生长极限));
 
   // —— ペニス（:258-273）有無にかかわらず設定は入れておく ——
-  const q_penis = rand_n(150); // :259-260
+  const q_penis = rand_n(150);
   const boyish = t(cid, T_未熟);
   set_t(
     cid,
     T_阴茎的状态,
     q_penis <= 50
-      ? 0 // :261-263 普通
+      ? 0 // 普通
       : q_penis <= 100 || (boyish && q_penis <= 50)
-        ? 3 // :264-266 包茎
+        ? 3 // 包茎
         : q_penis <= 130 || (boyish && q_penis <= 100)
-          ? 2 // :267-269 短小包茎
-          : 1, // :270-272 巨根
+          ? 2 // 短小包茎
+          : 1, // 巨根
   );
-  // :275-277 包茎・短小包茎は早漏を得ることがあるように
+  // 包茎・短小包茎は早漏を得ることがあるように
   const penis_state = t(cid, T_阴茎的状态);
   if ((penis_state === 2 || penis_state === 3) && rand_n(10) === 0) {
     set_t(cid, T_早泄, 1);
   }
 
   // —— 魅力点（:279-302）：$CHARMPOINT 标号 + 两处 GOTO 重掷 ——
-  let charm; // :280-282 $CHARMPOINT
+  let charm; // $CHARMPOINT
   for (;;) {
     charm = rand_n(28) + 1;
-    // :284-286 贫乳は美乳になれない（109 命中且掷到 12 → 重掷）
+    // 贫乳は美乳になれない（109 命中且掷到 12 → 重掷）
     if (t(cid, T_贫乳) && charm === 12) {
       continue;
     }
-    // :293-300 自前のペニス持ちなら追加のふたなり獲得チャンス
+    // 自前のペニス持ちなら追加のふたなり獲得チャンス
     if (charm === 24) {
       if (rand_n(40) === 0 && t(cid, T_男人) === 0) {
         set_t(cid, T_扶她, 1);
       }
-      // :297-299 ふたなりになれなければチャームポイント決め直し
+      // ふたなりになれなければチャームポイント決め直し
       if (t(cid, T_扶她) === 0 && t(cid, T_男人) === 0) {
         continue;
       }
     }
     break;
   }
-  set_t(cid, T_魅力点, charm); // :302
+  set_t(cid, T_魅力点, charm);
 
   // —— 癖（:305-315）：$HABIT 标号 + 说话不能时重掷 ——
-  let habit; // :306-308 $HABIT
+  let habit; // $HABIT
   for (;;) {
     habit = rand_n(34) + 1;
-    // :310-312 話せないなら決め台詞はありえない（金红桃 167 命中且掷到 25 → 重掷）
+    // 話せないなら決め台詞はありえない（金红桃 167 命中且掷到 25 → 重掷）
     if (t(cid, T_金红桃) && habit === 25) {
       continue;
     }
     break;
   }
-  set_t(cid, T_癖, habit); // :315
+  set_t(cid, T_癖, habit);
 
-  race_set(cid, arg, rand_n); // :320-487 $RACE
-  born_set(cid, rand_n); // :496-589 $BORN
-  reason_set(cid, rand_n); // :592-608 $REASON
-  love_set(cid, rand_n); // :611-621 $LOVE
-  family_set(cid, rand_n); // :641-808 $FAMILY
+  race_set(cid, arg, rand_n); // $RACE
+  born_set(cid, rand_n); // $BORN
+  reason_set(cid, rand_n); // $REASON
+  love_set(cid, rand_n); // $LOVE
+  family_set(cid, rand_n); // $FAMILY
 
-  return 1; // :808-811 RETURN 1
+  return 1; // RETURN 1
 }
 
 /**
@@ -414,32 +408,32 @@ function look_set(cid, arg, rand = default_rand) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function race_set(cid, arg, rand_n) {
-  // :328-329 精英は种族随机作成を行わないように修正
+  // 精英は种族随机作成を行わないように修正
   if (t(cid, T_精英) !== 1) {
-    const q = rand_n(200); // :330
-    // :331-333 人間 50%（ARG == -1 强制人类）
+    const q = rand_n(200);
+    // 人間 50%（ARG == -1 强制人类）
     if ((arg === 0 && q <= 99) || arg === -1) {
       set_t(cid, T_种族, 0);
     } else if ((arg === 0 && q <= 119) || arg === 10) {
-      // :334-350 ホビット
+      // ホビット
       set_t(cid, T_种族, 10);
       set_t(cid, T_娇小, 1);
       if (t(cid, T_男人) === 0) {
         set_t(cid, T_贫乳, 1);
       }
-      // :340-345 ドワーフとホビットには巨乳と大柄は付かない（絶壁と爆乳、超乳も付かない）
+      // ドワーフとホビットには巨乳と大柄は付かない（絶壁と爆乳、超乳も付かない）
       set_t(cid, T_绝壁, 0);
       set_t(cid, T_爆乳, 0);
       set_t(cid, T_超乳, 0);
       set_t(cid, T_巨乳, 0);
       set_t(cid, T_魁梧, 0);
-      // :346-350 ホビットは陰毛が無毛になりやすい
+      // ホビットは陰毛が無毛になりやすい
       if (rand_n(10) <= 3) {
         set_t(cid, T_阴毛生长极限, 1);
         set_t(cid, T_阴毛状态, 1);
       }
     } else if ((arg === 0 && q <= 139) || arg === 11) {
-      // :351-367 ドワーフ
+      // ドワーフ
       set_t(cid, T_种族, 11);
       set_t(cid, T_娇小, 1);
       if (t(cid, T_男人) === 0) {
@@ -450,40 +444,40 @@ function race_set(cid, arg, rand_n) {
       set_t(cid, T_超乳, 0);
       set_t(cid, T_巨乳, 0);
       set_t(cid, T_魁梧, 0);
-      // :363-367 ドワーフは陰毛が剛毛になりやすい
+      // ドワーフは陰毛が剛毛になりやすい
       if (rand_n(10) <= 3) {
         set_t(cid, T_阴毛生长极限, 201);
         set_t(cid, T_阴毛状态, 201);
       }
     } else if ((arg === 0 && q <= 159) || arg === 1) {
-      // :368-372 エルフ（善恶值が高い）
+      // エルフ（善恶值が高い）
       set_t(cid, T_种族, 1);
       karma(cid, 20);
     } else if ((arg === 0 && q <= 169) || arg === 2) {
-      // :373-378 人狼（善恶值が低い）
+      // 人狼（善恶值が低い）
       set_t(cid, T_种族, 2);
       set_t(cid, T_动物耳朵, 1);
       karma(cid, -20);
     } else if ((arg === 0 && q <= 179) || arg === 3) {
-      // :379-383 吸血鬼
+      // 吸血鬼
       set_t(cid, T_种族, 3);
       karma(cid, -40);
     } else if ((arg === 0 && q <= 189) || arg === 4) {
-      // :384-391 无头骑士
+      // 无头骑士
       set_t(cid, T_种族, 4);
       if (rand_n(40) === 0) {
         set_t(cid, T_暗之能力者, 1);
       }
       karma(cid, -40);
     } else if ((arg === 0 && q <= 197) || arg === 5) {
-      // :392-396 ドラゴン（角）
+      // ドラゴン（角）
       set_t(cid, T_种族, 5);
       set_t(cid, T_角, 1);
     } else if (arg) {
-      // :397-399 その他指定の種族
+      // その他指定の種族
       set_t(cid, T_种族, arg);
     } else {
-      // :400-408 天使（光之能力者，善恶值が高い）
+      // 天使（光之能力者，善恶值が高い）
       set_t(cid, T_种族, 6);
       if (rand_n(40) === 0) {
         set_t(cid, T_光之能力者, 1);
@@ -493,21 +487,21 @@ function race_set(cid, arg, rand_n) {
     return;
   }
 
-  // :409-487 精英の場合はこちら（种族 9 + 种族2 的特性）
+  // 精英の場合はこちら（种族 9 + 种族2 的特性）
   set_t(cid, T_种族, 9);
-  const race2 = t(cid, T_种族2); // :412 TALENT:319
+  const race2 = t(cid, T_种族2); // TALENT:319
   if (race2 === 1) {
-    // :412-420 亜人
+    // 亜人
     if (rand_n(4) === 0) {
       set_t(cid, 472, 1); // 落穴捕获
     }
-    // :416-420 亜人は陰毛が剛毛になりやすい
+    // 亜人は陰毛が剛毛になりやすい
     if (rand_n(10) <= 3) {
       set_t(cid, T_阴毛生长极限, 201);
       set_t(cid, T_阴毛状态, 201);
     }
   } else if (race2 === 2) {
-    // :421-428 史莱姆（無毛）
+    // 史莱姆（無毛）
     set_t(cid, T_史莱姆, 1);
     if (rand_n(4) === 0) {
       set_t(cid, 471, 1); // 粘液捕获
@@ -515,13 +509,13 @@ function race_set(cid, arg, rand_n) {
     set_t(cid, T_阴毛生长极限, 1);
     set_t(cid, T_阴毛状态, 1);
   } else if (race2 === 3) {
-    // :429-434 昆虫（战术）
+    // 昆虫（战术）
     set_t(cid, T_战术, 1);
     if (rand_n(4) === 0) {
       set_t(cid, 474, 1); // 铠破坏
     }
   } else if (race2 === 4) {
-    // :435-441 植物（たまに触手を持つ）
+    // 植物（たまに触手を持つ）
     if (rand_n(10) === 0) {
       set_t(cid, T_触手, 1);
     }
@@ -529,32 +523,32 @@ function race_set(cid, arg, rand_n) {
       set_t(cid, 473, 1); // 藤蔓捕获
     }
   } else if (race2 === 5 || race2 === 11) {
-    // :442-446 触手＆脑奸
+    // 触手＆脑奸
     set_t(cid, T_触手, 1);
     if (rand_n(4) === 0) {
       set_t(cid, 476, 1); // 再生
     }
   } else if (race2 === 6) {
-    // :447-461 妖精
+    // 妖精
     set_t(cid, T_小人体型, 1);
     set_t(cid, T_魁梧, 0);
     set_t(cid, T_娇小, 0);
     if (rand_n(4) === 0) {
       set_t(cid, 478, 1); // 迷惑
     }
-    // :454-456 妖精の大半は幼稚である
+    // 妖精の大半は幼稚である
     if (rand_n(4) !== 0) {
       set_t(cid, T_幼稚, 1);
     }
-    // :457-461 妖精は陰毛が無毛になりやすい
+    // 妖精は陰毛が無毛になりやすい
     if (rand_n(10) <= 3) {
       set_t(cid, T_阴毛生长极限, 1);
       set_t(cid, T_阴毛状态, 1);
     }
   } else if (race2 === 7) {
-    // :462-463 巨人（无追加设定）
+    // 巨人（无追加设定）
   } else if (race2 === 8 || race2 === 9) {
-    // :464-475 男＆女魔族
+    // 男＆女魔族
     set_t(cid, T_恶魔翅膀, 1);
     set_t(cid, T_恶魔尾巴, 1);
     set_t(cid, T_恶魔眼睛, 1);
@@ -566,7 +560,7 @@ function race_set(cid, arg, rand_n) {
       }
     }
   } else {
-    // :476-486 獣＆馬。**源写 `ELSEIF TALENT:319 == 10 || 12`——`|| 12` 是
+    // 獣＆馬。**源写 `ELSEIF TALENT:319 == 10 || 12`——`|| 12` 是
     // 恒真常量（Emuera 的 || 两侧按数值取真），该臂因此等价于 ELSE**：任何
     // 未命中前几档的 319 值都落到这里。写法上收成裸 else（ESLint 的
     // no-constant-condition 会拦原样照抄），语义逐字相同
@@ -589,25 +583,25 @@ function race_set(cid, arg, rand_n) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function born_set(cid, rand_n) {
-  let q; // :496-498 $BORN
+  let q; // $BORN
   for (;;) {
     q = rand_n(21) + 1;
-    // :500-502 配下の場合、特別な元職業
+    // 配下の場合、特別な元職業
     if (t(cid, T_精英) === 1 || ex_t(cid, 2)) {
       q = 90 + rand_n(4);
     }
-    // :503-505 法術を知らない場合修道女にはなれない
+    // 法術を知らない場合修道女にはなれない
     if (q === 2 && t(cid, T_法术) === 0) {
       continue;
     }
     break;
   }
 
-  // :506-558 妓女・物乞い・奴隷の場合、経験がつく
+  // 妓女・物乞い・奴隷の場合、経験がつく
   // （EXP:0/1/5/74 属 dungeon 域 → 走 chara(cid).dungeon 门面，#71）
   if (q === 5 || q === 7 || q === 20) {
     if (t(cid, T_男人) && t(cid, T_童贞)) {
-      // :508-514 童貞オトコの場合
+      // 童貞オトコの場合
       const local = rand_n(20) + 1;
       chara(cid).dungeon.肛门经验 += local;
       chara(cid).dungeon.性交经验 += local;
@@ -615,7 +609,7 @@ function born_set(cid, rand_n) {
         chara(cid).dungeon.卖淫经验 += local;
       }
     } else if (t(cid, T_男人)) {
-      // :515-521 オトコの場合
+      // オトコの場合
       const local = rand_n(40) + 1;
       chara(cid).dungeon.肛门经验 += local;
       chara(cid).dungeon.性交经验 += local;
@@ -623,7 +617,7 @@ function born_set(cid, rand_n) {
         chara(cid).dungeon.卖淫经验 += local;
       }
     } else if (t(cid, T_处女) === 1) {
-      // :522-528 处女の場合
+      // 处女の場合
       const local = rand_n(40) + 1;
       chara(cid).dungeon.肛门经验 += local;
       chara(cid).dungeon.性交经验 += local;
@@ -631,7 +625,7 @@ function born_set(cid, rand_n) {
         chara(cid).dungeon.卖淫经验 += local;
       }
     } else if (rand_n(5) === 0) {
-      // :529-537 非处女でアナルも使用している
+      // 非处女でアナルも使用している
       const local0 = rand_n(40) + 1;
       const local1 = rand_n(40) + 1;
       chara(cid).dungeon.私处经验 += local0;
@@ -642,7 +636,7 @@ function born_set(cid, rand_n) {
         chara(cid).dungeon.卖淫经验 += sum5;
       }
     } else {
-      // :538-544 非处女でVのみ
+      // 非处女でVのみ
       const local = rand_n(40) + 1;
       chara(cid).dungeon.私处经验 += local;
       chara(cid).dungeon.性交经验 += local;
@@ -651,39 +645,39 @@ function born_set(cid, rand_n) {
       }
     }
 
-    // :547-552 妓女と奴隷は、刺青を入れられていることがある
+    // 妓女と奴隷は、刺青を入れられていることがある
     if (rand_n(15) === 0 && q !== 7 && t(cid, T_男人) === 0) {
-      const local = rand_n(8) + 10; // :549
-      // :550 `LOCALS:10 '= "淫乱" , …"骷髅"`（10 项），:551 `CSTR:LOCAL = %LOCALS:LOCAL%`
+      const local = rand_n(8) + 10;
+      // `LOCALS:10 '= "淫乱" , …"骷髅"`（10 项），:551 `CSTR:LOCAL = %LOCALS:LOCAL%`
       era.set(`cstr:${cid}:${local}`, TATTOO_NAMES[local - 10]);
     }
 
-    // :554-556 非处女の場合、生育经验がつくことがある（EXP:60 属主 chara）
+    // 非处女の場合、生育经验がつくことがある（EXP:60 属主 chara）
     if (t(cid, T_处女) === 0 && rand_n(15) === 0 && t(cid, T_男人) === 0) {
       chara(cid).chara.生育经验 += rand_n(3);
     }
-    // :557-558 そして善恶值が低い
+    // そして善恶值が低い
     karma(cid, -30);
   } else if (q === 2 || q === 8 || q === 11 || q === 12 || q === 13) {
-    // :559-561 修道女・貴族・巫女・聖女・予言者は善恶值が高い
+    // 修道女・貴族・巫女・聖女・予言者は善恶值が高い
     karma(cid, 30);
-    // :561-564 光之能力者になるチャンス
+    // 光之能力者になるチャンス
     if (rand_n(40) === 0) {
       set_t(cid, T_光之能力者, 1);
     }
   } else if (q === 6) {
-    // :565-567 盗人は善恶值が低い
+    // 盗人は善恶值が低い
     karma(cid, -40);
   } else if (q === 21 && t(cid, T_男人) === 0) {
-    // :568-587 主婦は経験がつく + 確定で子持ち
+    // 主婦は経験がつく + 確定で子持ち
     const local0 = rand_n(20) + 10;
     chara(cid).dungeon.私处经验 += local0;
     chara(cid).dungeon.性交经验 += local0;
-    set_t(cid, T_处女, 0); // :582-583 处女を失う
-    set_t(cid, T_私处封印, 0); // :584-585 私处封印も失う
-    set_t(cid, T_人妻, 1); // :586-587 必ず人妻がつく
+    set_t(cid, T_处女, 0); // 处女を失う
+    set_t(cid, T_私处封印, 0); // 私处封印も失う
+    set_t(cid, T_人妻, 1); // 必ず人妻がつく
   }
-  set_t(cid, T_成为勇者前的生活, q); // :589
+  set_t(cid, T_成为勇者前的生活, q);
 }
 
 /**
@@ -693,24 +687,24 @@ function born_set(cid, rand_n) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function reason_set(cid, rand_n) {
-  let q = rand_n(20) + 1; // :592-594
-  // :596-598 配下の場合、特別な理由
+  let q = rand_n(20) + 1;
+  // 配下の場合、特別な理由
   if (t(cid, T_精英) === 1 || ex_t(cid, 2)) {
     q = 90 + rand_n(4);
   }
-  // :599-600 `SIF Q >103 && EX_TALENT:2 → Q = 93`：Q 只可能是 1-20 或
+  // `SIF Q >103 && EX_TALENT:2 → Q = 93`：Q 只可能是 1-20 或
   // 90-93，此判定在两个赋值点之后**恒假**（1:1 保留原写法，见文件头）
   if (q > 103 && ex_t(cid, 2)) {
     q = 93;
   }
   if (q === 1 || q === 3 || q === 4 || q === 7 || q === 16 || q === 17) {
-    // :601-603 運命・啓示・使命・故郷・平和・正義は善恶值が高い
+    // 運命・啓示・使命・故郷・平和・正義は善恶值が高い
     karma(cid, 20);
   } else if (q === 2 || q === 11 || q === 13) {
-    // :604-606 金・自暴自棄・命令は善恶值が低い
+    // 金・自暴自棄・命令は善恶值が低い
     karma(cid, -20);
   }
-  set_t(cid, T_成为勇者的契机, q); // :608
+  set_t(cid, T_成为勇者的契机, q);
 }
 
 /**
@@ -720,15 +714,15 @@ function reason_set(cid, rand_n) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function love_set(cid, rand_n) {
-  const q = rand_n(20) + 1; // :611-613
+  const q = rand_n(20) + 1;
   if (q === 4 || q === 8 || q === 9 || q === 10 || q === 11) {
-    // :614-616 恋人・家族・使命・故郷・憧れは善恶值が高い
+    // 恋人・家族・使命・故郷・憧れは善恶值が高い
     karma(cid, 20);
   } else if (q === 5 || q === 13 || q === 14) {
-    // :617-619 金・装飾品・宝石は善恶值が低い
+    // 金・装飾品・宝石は善恶值が低い
     karma(cid, -20);
   }
-  set_t(cid, T_喜欢的东西, q); // :621
+  set_t(cid, T_喜欢的东西, q);
 }
 
 /**
@@ -739,17 +733,17 @@ function love_set(cid, rand_n) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function family_set(cid, rand_n) {
-  // :641-642 非精英（TALENT:220 == 0）は家族構成設定あり＝個位 1 から始める
+  // 非精英（TALENT:220 == 0）は家族構成設定あり＝個位 1 から始める
   if (t(cid, T_精英) === 0) {
     set_t(cid, T_家族构成, 1);
   }
 
-  let local = 0; // :646-647 LOCAL = 0 / MARRY = 0
+  let local = 0; // LOCAL = 0 / MARRY = 0
   let marry = 0;
 
-  // :644-682 結婚相手の設定
+  // 結婚相手の設定
   if (t(cid, T_人妻) === 1) {
-    // :650-659 人妻：バツ2 / バツ1 / 初婚
+    // 人妻：バツ2 / バツ1 / 初婚
     if (rand_n(20) === 0) {
       local += 30;
     } else if (rand_n(10) === 0) {
@@ -757,10 +751,10 @@ function family_set(cid, rand_n) {
     } else {
       local += 10;
     }
-    local += 10000; // :660-661 現在の状況…結婚
+    local += 10000; // 現在の状況…結婚
     marry = 1;
   } else if (rand_n(20) === 0 && ex_t(cid, 2) === 0) {
-    // :663-682 離婚または未亡人
+    // 離婚または未亡人
     if (rand_n(10) === 0) {
       local += 20; // バツ2
     } else {
@@ -774,9 +768,9 @@ function family_set(cid, rand_n) {
     marry = 1;
   }
 
-  // :684-737 子供の設定（非処女限定）
+  // 子供の設定（非処女限定）
   if (t(cid, T_成为勇者前的生活) === 21 && t(cid, T_处女) === 0) {
-    // :686-700 主婦：最大 4 人（ループ抜けの位置が違うので、一人は確定する）
+    // 主婦：最大 4 人（ループ抜けの位置が違うので、一人は確定する）
     for (let i = 0; i < 4; i += 1) {
       local += rand_n(2) === 0 ? 100 : 1000; // 娘 / 息子
       if (rand_n(2) === 0) {
@@ -784,7 +778,7 @@ function family_set(cid, rand_n) {
       }
     }
   } else if (local >= 10 && t(cid, T_处女) === 0) {
-    // :701-716 結婚経験がある
+    // 結婚経験がある
     for (let i = 0; i < 4; i += 1) {
       if (rand_n(2) === 0) {
         break;
@@ -792,10 +786,10 @@ function family_set(cid, rand_n) {
       local += rand_n(2) === 0 ? 100 : 1000;
     }
   } else if (rand_n(20) === 0 && t(cid, T_处女) === 0) {
-    // :717-736 未婚の母：最大 2 人（娼婦は 4 人もいる可能性）
-    let limit = 2; // :720 LOCAL:2 = 2
+    // 未婚の母：最大 2 人（娼婦は 4 人もいる可能性）
+    let limit = 2; // LOCAL:2 = 2
     if (t(cid, T_成为勇者前的生活) === 5) {
-      limit += 2; // :721-723
+      limit += 2;
     }
     for (let i = 0; i < limit; i += 1) {
       if (rand_n(2) === 0) {
@@ -805,7 +799,7 @@ function family_set(cid, rand_n) {
     }
   }
 
-  // :739-759 兄弟姉妹の設定（最大 4 人）
+  // 兄弟姉妹の設定（最大 4 人）
   for (let i = 0; i < 4; i += 1) {
     if (rand_n(2) === 0) {
       break;
@@ -821,40 +815,40 @@ function family_set(cid, rand_n) {
     }
   }
 
-  // :761-805 性別の設定（人妻の場合）
+  // 性別の設定（人妻の場合）
   if (t(cid, T_男人) === 1 && marry === 1) {
-    // :762-775 オトコ
+    // オトコ
     if (rand_n(20) === 0) {
       local += 8000000000; // 男男カップル
-      chara(cid).system.断背气质 = 3; // :767-768 BLっ気補正
+      chara(cid).system.断背气质 = 3; // BLっ気補正
     } else if (rand_n(8) === 0) {
       local += 7000000000; // 男ふたカップル
     } else {
       local += 6000000000; // 男女カップル
     }
   } else if (t(cid, T_扶她) === 1 && marry === 1) {
-    // :776-791 ふたなり
+    // ふたなり
     if (rand_n(10) === 0) {
       local += 5000000000; // 希少なふたなりのカップル
-      chara(cid).chara.百合气质 = 3; // :780-782 百合气质補正
+      chara(cid).chara.百合气质 = 3; // 百合气质補正
     } else if (rand_n(2) === 0) {
       local += 4000000000; // ふた男カップル
     } else {
       local += 3000000000; // ふた女カップル
-      chara(cid).chara.百合气质 = 3; // :788-790
+      chara(cid).chara.百合气质 = 3;
     }
   } else if (marry === 1) {
-    // :792-804 女
+    // 女
     if (rand_n(20) === 0) {
       local += 2000000000; // 女女カップル
-      chara(cid).chara.百合气质 = 3; // :796-798
+      chara(cid).chara.百合气质 = 3;
     } else if (rand_n(8) === 0) {
       local += 1000000000; // 女ふたカップル
-      chara(cid).chara.百合气质 = 3; // :801-803
+      chara(cid).chara.百合气质 = 3;
     }
   }
 
-  // :807-808 データ反映
+  // データ反映
   era.add(`talent:${cid}:${T_家族构成}`, local);
 }
 
@@ -889,8 +883,8 @@ function look_clear(cid) {
  * @returns {{printed: string, matched: boolean}} 命中的文本与命中标志
  */
 function love_like_base(cid) {
-  const v = t(cid, T_喜欢的东西); // :2815-2817 TALENT:317
-  const zero_cflag0 = (era.get(`cflag:${cid}:0`) || 0) === 0; // :2823-2825 起四处 `&& CFLAG:0 == 0`
+  const v = t(cid, T_喜欢的东西); // TALENT:317
+  const zero_cflag0 = (era.get(`cflag:${cid}:0`) || 0) === 0; // 起四处 `&& CFLAG:0 == 0`
   const table = [
     [1, true, '甜食'],
     [2, true, '辣条'],
@@ -915,10 +909,10 @@ function love_like_base(cid) {
   ];
   for (const [code, ok, text] of table) {
     if (v === code && ok) {
-      return { printed: text, matched: true }; // :2819 起 `PRINTFORM …` + `LOCAL++`
+      return { printed: text, matched: true }; // 起 `PRINTFORM …` + `LOCAL++`
     }
   }
-  return { printed: '', matched: false }; // :2881 RETURN LOCAL（未被覆盖 → 0）
+  return { printed: '', matched: false }; // RETURN LOCAL（未被覆盖 → 0）
 }
 
 /** SETCOLORBYNAME LightSalmon 的 ere 等价物（LOOK.ERB:859 起全篇的高亮色） */
@@ -1127,20 +1121,20 @@ const csv_name = (cid) => era.get(`callname:${cid}:-1`) ?? '';
  * @returns {Promise<number>} 源 :1662-1664（尾段 CALL LOOK_INFO_LOVE + `RETURN 1`）
  */
 async function look_info(cid) {
-  // :829-832 LOCALS / LOCALS:1..3（LOCALS 是函数局部，天然为空）
-  const loc0 = get_look_info(cid, '种族'); // :834
+  // LOCALS / LOCALS:1..3（LOCALS 是函数局部，天然为空）
+  const loc0 = get_look_info(cid, '种族');
   let loc1 = '';
   let loc2 = '';
   let loc3 = '';
   if (t(cid, T_精英)) {
-    // :836-841 精英は2つ目の素質を持つ
+    // 精英は2つ目の素質を持つ
     const race2 = t(cid, T_种族2);
     if (race2 !== 8 && race2 !== 9) {
       loc1 = get_look_info(cid, '种族2');
     }
     loc2 = csv_name(cid); // CSVNAME(NO:TARGET)
   } else if (t(cid, T_种族) === 9) {
-    // :843-851 魔族化済みで现种族が設定されていない場合設定しておく
+    // 魔族化済みで现种族が設定されていない場合設定しておく
     const now = t(cid, T_现种族_T);
     if (!(now >= 100 && now <= 220)) {
       set_t(cid, T_现种族_T, 132); // インプ
@@ -1156,7 +1150,7 @@ async function look_info(cid) {
   const gobi_mark = mark_rank >= 3 ? 0 : 4; // (MARK:屈服刻印 >= 3) ? 0 # 4
 
   if (kojo_view()) {
-    // :855-893 口上视角
+    // 口上视角
     const s = new Spans();
     s.add('「');
     if (cid === 0) s.add('拥有');
@@ -1165,12 +1159,11 @@ async function look_info(cid) {
     if (loc2.length > 0) s.add(`·${loc2}`);
     if (cid === 0) s.add('肉体');
     s.add(`的${chara_callname(cid)}`);
-    s.add(await gobi_koujo(gobi_mark)); // :877
+    s.add(await gobi_koujo(gobi_mark));
     s.add('」');
     era.print(s.take());
 
     if (loc3.length > 0) {
-      // :880-892
       const t3 = new Spans();
       t3.add('「成为魔族前的种族：');
       if (t(cid, T_原种族_T) === 9) {
@@ -1183,10 +1176,10 @@ async function look_info(cid) {
       t3.add('」');
       era.print(t3.take());
     }
-    // :892-894 PRINTL（口上视角的收尾换行；默认视角没有）
+    // PRINTL（口上视角的收尾换行；默认视角没有）
     era.println();
   } else {
-    // :894-909 默认视角
+    // 默认视角
     const s = new Spans();
     s.add(`[${loc0}`);
     if (loc1.length > 0) s.add(`·${loc1}`);
@@ -1194,13 +1187,13 @@ async function look_info(cid) {
     s.add(']');
     era.print(s.take());
     if (loc3.length > 0) {
-      era.print(`[原种族：${loc3}]`); // :907-908
+      era.print(`[原种族：${loc3}]`);
     }
   }
 
   const kojo = kojo_view();
 
-  // :911-936 头发颜色と性質
+  // 头发颜色と性質
   if (t(cid, T_头发颜色) && t(cid, T_头发状态)) {
     const s = new Spans();
     if (kojo) {
@@ -1216,14 +1209,14 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :939-976 头发长度・カット・髪型
+  // 头发长度・カット・髪型
   if (t(cid, T_头发长度) && t(cid, T_头发修剪方式) && t(cid, T_发型)) {
     const s = new Spans();
     const male = t(cid, T_男人) !== 0;
     if (kojo) {
       s.add('「留着').hl(get_look_info(cid, '头发长度')).add('头发，');
       s.hl(get_look_info(cid, '头发修剪方式')).add('式的');
-      // :961-966 男性去除髮型顯示（口上视角同样只跳过名字本身）
+      // 男性去除髮型顯示（口上视角同样只跳过名字本身）
       if (!male) {
         s.hl(get_look_info(cid, '发型'));
       }
@@ -1240,7 +1233,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :978-1018 その他の外見（目・瞳色・唇）
+  // その他の外見（目・瞳色・唇）
   if (t(cid, T_目) && t(cid, T_瞳色) && t(cid, T_唇)) {
     const s = new Spans();
     if (kojo) {
@@ -1258,7 +1251,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1019-1078 体型・乳头・阴毛・阴茎
+  // 体型・乳头・阴毛・阴茎
   if (t(cid, T_体型) && t(cid, T_乳头) && t(cid, T_阴毛状态)) {
     const s = new Spans();
     if (kojo) {
@@ -1268,7 +1261,7 @@ async function look_info(cid) {
       s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
       s.add(await gobi_koujo(4));
       if (t(cid, T_扶她) || t(cid, T_男人)) {
-        // :1056-1071 ペニス（扶她・男人のみ）
+        // ペニス（扶她・男人のみ）
         s.add('小鸡鸡是……').hl(get_look_info(cid, '阴茎的状态'));
         s.add(await gobi_koujo(2));
       }
@@ -1285,7 +1278,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1079-1111 魅力点・癖
+  // 魅力点・癖
   if (t(cid, T_魅力点) && t(cid, T_癖)) {
     const s = new Spans();
     if (kojo) {
@@ -1302,9 +1295,9 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  family_print_info(cid); // :1113 CALL FAMILY_PRINT_INFO(TARGET)
+  family_print_info(cid); // CALL FAMILY_PRINT_INFO(TARGET)
 
-  // :1345-1380 + :1382-1408 成为勇者之前（四路前缀 + 取值 + 语尾）
+  // 成为勇者之前（四路前缀 + 取值 + 语尾）
   await look_info_block(
     cid,
     kojo,
@@ -1321,7 +1314,7 @@ async function look_info(cid) {
     look_info_job_gobi(t(cid, T_成为勇者前的生活)),
   );
 
-  // :1411-1446 + :1448-1475 成为勇者的契机
+  // 成为勇者的契机
   await look_info_block(
     cid,
     kojo,
@@ -1338,7 +1331,7 @@ async function look_info(cid) {
     look_info_reason_gobi(t(cid, T_成为勇者的契机)),
   );
 
-  // :1478-1550 信仰（巫女・聖女・法術・咒术持ち、且非魔王）
+  // 信仰（巫女・聖女・法術・咒术持ち、且非魔王）
   if (
     (t(cid, T_法术) === 1 ||
       t(cid, T_咒术) === 1 ||
@@ -1375,7 +1368,7 @@ async function look_info(cid) {
       }
       era.print(s.take());
 
-      // :1517-1548 堕落した場合、以前の信仰を冒涜する（プライド低い・冒涜者のみ）
+      // 堕落した場合、以前の信仰を冒涜する（プライド低い・冒涜者のみ）
       if (
         (t(cid, T_服从) === 1 || cflag_of(cid, 0) !== 0) &&
         (t(cid, T_低姿态) || t(cid, T_冒渎者))
@@ -1404,7 +1397,7 @@ async function look_info(cid) {
     }
   }
 
-  // :1553-1573 妊娠适性（同族不育）
+  // 妊娠适性（同族不育）
   if (t(cid, T_妊娠适性)) {
     const s = new Spans();
     if (kojo) {
@@ -1417,7 +1410,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1575-1611 所持金・借金
+  // 所持金・借金
   {
     const money = cflag_of(cid, 580); // CFLAG:580 所持金
     const debt = cflag_of(cid, 582); // CFLAG:582 借金（负值）
@@ -1439,7 +1432,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1613-1658 常识改变系
+  // 常识改变系
   if (t(cid, 281) > 0 || t(cid, 283) > 0) {
     const s = new Spans();
     s.add(kojo ? '「肉便器经过洗脑之后、' : '[常识改变：');
@@ -1469,9 +1462,9 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  await look_info_love(cid); // :1662 CALL LOOK_INFO_LOVE
+  await look_info_love(cid); // CALL LOOK_INFO_LOVE
 
-  return 1; // :1662-1664（CALL LOOK_INFO_LOVE + RETURN 1）
+  return 1; // （CALL LOOK_INFO_LOVE + RETURN 1）
 }
 
 /**
@@ -1544,14 +1537,14 @@ function love_score(cid) {
   const main = new Array(100).fill(0); // MAIN_LOVE（源 :1737-1742 的初始化循环）
   const pool = new Array(100).fill(0); // LOVE_POOL
 
-  main[LOVE.喜欢的东西] = 15; // :1744-1746 初期値（最初から好き）
+  main[LOVE.喜欢的东西] = 15; // 初期値（最初から好き）
 
   const race = t(cid, T_种族);
   const job = t(cid, T_成为勇者前的生活);
   const reason = t(cid, T_成为勇者的契机);
   const fall = cflag_of(cid, 0); // CFLAG:0 陥落度合い
 
-  // :1753-1811 种族補正
+  // 种族補正
   if (RACES_NOBLE.includes(race)) {
     main[LOVE.世界] += 1;
     main[LOVE.性交] -= 1;
@@ -1580,7 +1573,7 @@ function love_score(cid) {
     main[LOVE.恋人] -= 1;
   }
 
-  // :1813-1877 元の職業補正
+  // 元の職業補正
   if (job === 2 || job === 12) {
     main[LOVE.世界] += 3;
     main[LOVE.自慰] -= 1;
@@ -1607,7 +1600,7 @@ function love_score(cid) {
     main[LOVE.夫] += 2;
   }
 
-  // :1879-1898 理由補正
+  // 理由補正
   if (reason === 2 || reason === 11) {
     main[LOVE.世界] -= 1;
     main[LOVE.卖淫] += 1;
@@ -1616,7 +1609,7 @@ function love_score(cid) {
     main[LOVE.奉仕] += 1;
   }
 
-  // :1900-1947 喜欢的东西補正
+  // 喜欢的东西補正
   if (like === 4) {
     main[LOVE.恋人] += 3;
   } else if (like === 5) {
@@ -1635,7 +1628,7 @@ function love_score(cid) {
     main[LOVE.獣姦] += 1;
   }
 
-  // :1949-1978 陥落度合い
+  // 陥落度合い
   if (fall === 1) {
     main[LOVE.你] += 1;
     main[LOVE.世界] -= 1;
@@ -1650,7 +1643,7 @@ function love_score(cid) {
     main[LOVE.コンプレックス] -= 1;
   }
 
-  // :1980-2374 素質による補正（各素質が独立に効く。源の重複条件二箇所は 1:1 保留）
+  // 素質による補正（各素質が独立に効く。源の重複条件二箇所は 1:1 保留）
   if (t(cid, T_淫乱_T)) {
     main[LOVE.你] -= 1;
     main[LOVE.世界] -= 5;
@@ -1728,7 +1721,7 @@ function love_score(cid) {
     main[LOVE.野良犬] += 1;
     main[LOVE.獣姦] += 1;
   }
-  // :2167-2171 双性恋——源与上一段同写 `IF TALENT:80`（原文如此，1:1 保留）
+  // 双性恋——源与上一段同写 `IF TALENT:80`（原文如此，1:1 保留）
   if (t(cid, T_倒错的)) {
     main[LOVE.同性愛] += 1;
   }
@@ -1749,7 +1742,7 @@ function love_score(cid) {
   if (t(cid, T_早泄) && (t(cid, T_扶她) || t(cid, T_男人))) {
     main[LOVE.自ペニス] -= 1;
   }
-  // :2263-2269 牝犬——源同样写 `IF TALENT:124`（原文如此，1:1 保留）
+  // 牝犬——源同样写 `IF TALENT:124`（原文如此，1:1 保留）
   if (t(cid, T_动物耳朵)) {
     main[LOVE.野良犬] += 3;
     main[LOVE.獣姦] += 3;
@@ -1780,7 +1773,7 @@ function love_score(cid) {
     main[LOVE.狂王] += 30;
   }
 
-  // :2376-2470 能力による補正（前半四行は無条件）
+  // 能力による補正（前半四行は無条件）
   main[LOVE.C性感] += abl_of(cid, 0);
   main[LOVE.B性感] += abl_of(cid, 1);
   main[LOVE.V性感] += abl_of(cid, 2);
@@ -1808,9 +1801,9 @@ function love_score(cid) {
   main[LOVE.卖淫] += abl_of(cid, 37) * 3;
   main[LOVE.獣姦] += abl_of(cid, 39) * 3;
 
-  // :2472-2550 経験補正：每组自带两个档位（第 3/4 列），>0 → +1 七组共用。
+  // 経験補正：每组自带两个档位（第 3/4 列），>0 → +1 七组共用。
   // 肛门快乐经验（:2519-2528）单独用 >200 / >80，其余六组（:2475-2517、
-  // :2530-2550）用 >100 / >30——源逐组写死，不是一处常量。
+  // ）用 >100 / >30——源逐组写死，不是一处常量。
   for (const [exp_idx, target, hi, mid] of [
     [E_精饮绝顶经验, LOVE.精液, 100, 30],
     [E_侍奉快乐经验, LOVE.奉仕, 100, 30],
@@ -1826,15 +1819,15 @@ function love_score(cid) {
     else if (v > 0) main[target] += 1;
   }
 
-  // :2552-2555 新しい夫ボーナス / 恋人ボーナス
+  // 新しい夫ボーナス / 恋人ボーナス
   main[LOVE.新夫] += Math.trunc(cflag_of(cid, 602) / 3);
   main[LOVE.恋人] += Math.trunc(cflag_of(cid, 607) / 3);
 
-  // :2557-2565 刻印
+  // 刻印
   main[LOVE.コンプレックス] += mark_of(cid, M_快乐刻印) * 3;
   main[LOVE.你] -= mark_of(cid, M_反抗刻印) * 5;
 
-  // :2567-2597 相互作用
+  // 相互作用
   if (main[LOVE.母]) pool[LOVE.母] += main[LOVE.コンプレックス];
   if (main[LOVE.父]) pool[LOVE.父] += main[LOVE.コンプレックス];
   if (main[LOVE.少女]) pool[LOVE.少女] += main[LOVE.コンプレックス];
@@ -1847,7 +1840,7 @@ function love_score(cid) {
   pool[LOVE.野良犬] += Math.trunc(main[LOVE.獣姦] / 2); // 獣姦好きは野良犬も好き
   pool[LOVE.夫] -= Math.trunc(main[LOVE.新夫] / 3); // 新しい夫の方がいいの…
 
-  for (let i = 0; i < 100; i += 1) main[i] += pool[i]; // :2600-2603 修正値適用
+  for (let i = 0; i < 100; i += 1) main[i] += pool[i]; // 修正値適用
 
   return main;
 }
@@ -1862,11 +1855,11 @@ function love_score(cid) {
  * @returns {Promise<number>} 源 :2806-2808（计数行 + `RETURN 1`）
  */
 async function look_info_love(cid) {
-  const lover = cflag_of(cid, 606); // :1735 LOVER = CFLAG:606 的读取点移到显示侧
+  const lover = cflag_of(cid, 606); // LOVER = CFLAG:606 的读取点移到显示侧
   const main = love_score(cid);
   const sort = new Array(100).fill(0); // LOVE_SORT
 
-  // :2618-2667 ソート（降順に最大 30 件。同値は添字順）
+  // ソート（降順に最大 30 件。同値は添字順）
   let top = -9999; // LOCAL
   for (let i = 0; i < 100; i += 1) {
     if (top < main[i]) top = main[i];
@@ -1886,24 +1879,24 @@ async function look_info_love(cid) {
     top = next_top;
     next_top = -9999;
     guard += 1;
-    if (guard > 100) break; // :2662-2665 SIF LOCAL:1 > 100 BREAK
+    if (guard > 100) break; // SIF LOCAL:1 > 100 BREAK
   }
 
-  // :2606-2616 各種表示の前置き
-  era.print(kojo_view() ? '「喜欢的东西是……' : '[喜欢的东西]'); // :2612-2616 PRINTL（两种视角的引子）
+  // 各種表示の前置き
+  era.print(kojo_view() ? '「喜欢的东西是……' : '[喜欢的东西]'); // PRINTL（两种视角的引子）
 
-  // :2671-2795 本体
+  // 本体
   const s = new Spans();
   s.add('　');
   let shown = 0; // LOVE_NUM
   const lover_names = require('#/dungeon/dungeon-lovers').LOVER_NAMES;
   for (let rank = 0; rank < LOVE_SORT_MAX; rank += 1) {
     const id = sort[rank]; // LOVE_ID = LOVE_SORT:LOVE_COUNT
-    if (main[id] <= LOVE_SHOW_MIN) continue; // :2677-2678
+    if (main[id] <= LOVE_SHOW_MIN) continue;
     let text = null;
     if (id === 0) {
       const base = love_like_base(cid);
-      if (!base.matched) continue; // :2681-2682 SIF RESULT == 0 CONTINUE
+      if (!base.matched) continue; // SIF RESULT == 0 CONTINUE
       text = base.printed;
     } else if (id === 1) {
       text = '魔王大人';
@@ -1916,7 +1909,7 @@ async function look_info_love(cid) {
     } else if (id === 10) {
       text = t(cid, T_男人) ? '被玩弄阴茎' : '被弄阴蒂';
     } else if (id === 11) {
-      if (t(cid, T_男人)) continue; // :2697 `ELSEIF LOVE_ID == 11 && !TALENT:男人`
+      if (t(cid, T_男人)) continue; // `ELSEIF LOVE_ID == 11 && !TALENT:男人`
       text = '被弄小穴';
     } else if (id === 12) {
       text = '被弄菊穴';
@@ -1945,7 +1938,7 @@ async function look_info_love(cid) {
     } else if (id === 41) {
       text = t(cid, T_男人) ? '现在的伴侣' : '现在的丈夫';
     } else if (id === 42) {
-      // :2731-2742 恋人（四支）
+      // 恋人（四支）
       if (lover === 0 && t(cid, T_男人)) {
         text = '将来的伴侣';
       } else if (lover === 0) {
@@ -1957,7 +1950,7 @@ async function look_info_love(cid) {
         text = `恋人的${name === '' ? '' : name.padEnd(14, '　')}`;
       }
     } else if (id === 50) {
-      continue; // :2743-2745 コンプレックスは強化ソースなので表示はしない
+      continue; // コンプレックスは強化ソースなので表示はしない
     } else if (id === 51) {
       text = main[LOVE.コンプレックス] > 6 ? '人妻' : '妈妈';
     } else if (id === 52) {
@@ -1973,17 +1966,17 @@ async function look_info_love(cid) {
     } else if (id === 62) {
       text = '狂王大人';
     } else {
-      continue; // :2772-2773 ELSE CONTINUE
+      continue; // ELSE CONTINUE
     }
     s.add(text);
-    // :2776-2780 5 個ごとに金红桃が一つずつ増える（上限 6 個）
+    // 5 個ごとに金红桃が一つずつ増える（上限 6 個）
     let hearts = Math.trunc(main[id] / 5) - 1;
     if (hearts > LOVE_HEART_MAX) hearts = LOVE_HEART_MAX;
     if (hearts > 0) s.add(heart(hearts));
-    s.add('　'); // :2784-2785 間の空白
-    shown += 1; // :2787-2788 好きな数を増やす
+    s.add('　'); // 間の空白
+    shown += 1; // 好きな数を増やす
     if (shown % LOVE_PER_ROW === 0) {
-      // :2791-2793 改行：PRINTL「 」（行末补一个空格）后换行，新行以全角空格开头。
+      // 改行：PRINTL「 」（行末补一个空格）后换行，新行以全角空格开头。
       // 原先写成 era.print(s.take()) + era.println()——era.println 是**多打一个空行**，
       // 原作只是换行（#570 返工）。
       s.add(' ');
@@ -1991,18 +1984,18 @@ async function look_info_love(cid) {
       s.add('　');
     }
   }
-  // :2797-2804 收尾：语尾与「」 」接在最后一项的同一个输出行上（#570 返工——原先
+  // 收尾：语尾与「」 」接在最后一项的同一个输出行上（#570 返工——原先
   // 单开一行，引擎实测语尾跑到物品行外；只有刚好满 6 项换行时，它才落在新行的
   // 全角空格后面，这里由 s 的当前状态自然承接）
   if (kojo_view()) {
-    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行
+    s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行
   } else {
     s.add(' '); // PRINTL：物品行末尾补一个空格后换行
   }
   era.print(s.take());
-  era.print(`[共${shown}个喜欢的东西]`); // :2806 PRINTFORML
+  era.print(`[共${shown}个喜欢的东西]`); // PRINTFORML
 
-  return 1; // :2806-2808（计数行之后的 RETURN 1）
+  return 1; // （计数行之后的 RETURN 1）
 }
 
 module.exports = {

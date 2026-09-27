@@ -151,7 +151,7 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
 
   // 第 9 层的踏破：D:20 再次到 100 → FLOOR >= 9 → 魔王的房间 → ENDING_2
   // 真身（#173 起）：演出 + INPUT + QUIT（throw 型，#148）炸穿 run_dungeon
-  fixture.set_inputs(0); // :55 INPUT（确认用）
+  fixture.set_inputs(0); // INPUT（确认用）
   let caught;
   for (let i = 0; i < 2; i += 1) {
     try {
@@ -280,7 +280,7 @@ test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，
     texts.includes('阿尔放弃了成为英雄的念头，开始回头了。'),
     'RAND:4 != 0 → 回头臂（max 下 RAND:4 = 3 ≠ 0）',
   );
-  // :218-221 挫折记忆四连写
+  // 挫折记忆四连写
   assert.equal(fixture.store.get('cflag:1:507'), 1, 'CFLAG:507 = 1 撤退中');
   assert.equal(fixture.store.get('cflag:1:508'), 7, 'CFLAG:508 = 7');
   assert.equal(fixture.store.get('cflag:1:521'), 7, 'CFLAG:521 = 7（存档点）');
@@ -305,7 +305,7 @@ test('冒险者·回头臂：再起点分支的 CFLAG:520 = 8 真的落进变量
     text_lines(fixture).includes('阿尔放弃了成为英雄的念头，开始回头了。'),
     '走到再起点分支（max 下 RAND:4 = 3 ≠ 0）',
   );
-  // :221 CFLAG:520 = 8（门面写：chara(...).dungeon.目标阶层）
+  // CFLAG:520 = 8（门面写：chara(...).dungeon.目标阶层）
   assert.equal(
     fixture.store.get('cflag:1:520'),
     8,
@@ -733,7 +733,7 @@ test('体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一
     text_lines(fixture).includes('状态良好的阿尔的队伍、向更深阶层发起挑战……'),
     'tired == 0 → 向更深阶层挑战的演出',
   );
-  // :247 CFLAG:520 = FLOOR（进入本轮时的阶层，下潜前）
+  // CFLAG:520 = FLOOR（进入本轮时的阶层，下潜前）
   assert.equal(
     fixture.store.get('cflag:1:520'),
     3,

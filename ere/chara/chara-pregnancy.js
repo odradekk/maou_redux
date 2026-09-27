@@ -1,8 +1,6 @@
 /**
  * @file 妊娠、生产与育儿（issue #346，阶段 5a L15）。
  *
- * 源: target/ERB/其他/NINSIN.ERB 全函数（:16-1098）。
- *
  * 移植说明：
  *   - MASTER 恒为角色 ID 0；SAVESTR 读 callname:id:-1。
  *   - RAND:N 经 rand 参数逐层透传；测试可注入确定性序列。

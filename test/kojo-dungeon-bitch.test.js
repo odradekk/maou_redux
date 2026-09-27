@@ -677,7 +677,7 @@ test('EXP_BITCH：ANIMAL 的 JUEL 加算真打到 arg 名下（JUEL:1/6/8 三段
 
   mod.exp_bitch(31, 'DUNGEON', 'ANIMAL', 2);
 
-  // :406-408 JUEL:N += PLAY * 200/300/200（省略位 == TARGET == arg）
+  // JUEL:N += PLAY * 200/300/200（省略位 == TARGET == arg）
   assert.equal(fixture.store.get('juel:31:1'), 400, 'JUEL:1 必须 +PLAY*200');
   assert.equal(fixture.store.get('juel:31:6'), 600, 'JUEL:6 必须 +PLAY*300');
   assert.equal(fixture.store.get('juel:31:8'), 400, 'JUEL:8 必须 +PLAY*200');
@@ -776,7 +776,7 @@ test('#624 SELF_BITCH：:571..:637 的分档文本、扶她追加与收行同属
     );
   }
 
-  // :632 扶她/男人/肉芽 → :634 的追加与分档文本、收行同属一行
+  // 扶她/男人/肉芽 → :634 的追加与分档文本、收行同属一行
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('talent:31:121', 1);
     f.store.set('abl:31:22', 10);

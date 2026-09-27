@@ -63,11 +63,11 @@ test('@COM_ABLE0：默认可执行；爱抚系过滤与决斗中各挡一条', a
 
   assert.equal(await com_able_family.call(0), 1, '默认放行（:34 RETURN 1）');
 
-  fixture.store.set('flag:25', 1); // :30-31 FLAG:25 & 1（爱抚系过滤）
+  fixture.store.set('flag:25', 1); // FLAG:25 & 1（爱抚系过滤）
   assert.equal(await com_able_family.call(0), 0);
   fixture.store.set('flag:25', 0);
 
-  fixture.store.set('tequip:31:55', 1); // :32-33 TEQUIP:55（决斗中）
+  fixture.store.set('tequip:31:55', 1); // TEQUIP:55（决斗中）
   assert.equal(await com_able_family.call(0), 0);
 });
 
@@ -153,7 +153,7 @@ test('主人口有污垢：不洁 × 3 / 2；且口污双向移动', async () =>
   fixture.store.set('stain:31:0', 2); // 奴隶的口
   await com_family.call(0);
   assert.equal(fixture.store.get('source:31:8'), Math.floor((30 * 3) / 2));
-  // :117-118 两边同为原两值的按位或
+  // 两边同为原两值的按位或
   assert.equal(fixture.store.get('stain:31:0'), 2 | 5);
   assert.equal(fixture.store.get('stain:0:0'), 2 | 5);
 });
@@ -292,7 +292,7 @@ test('@COM1：源计算的分档与污垢移动；调教者初吻记录 301', as
   // V ⇔ 口 双向（beginTrain 不种初污——那是 run_train 的补偿段：undef|4=4）
   assert.equal(fixture.store.get('stain:31:3'), 4);
   assert.equal(fixture.store.get('stain:0:0'), 4);
-  assert.equal(fixture.store.get('cflag:0:16'), 301); // :72-75 调教者初吻
+  assert.equal(fixture.store.get('cflag:0:16'), 301); // 调教者初吻
   assert.equal(fixture.store.get('cstr:0:4'), '温妮');
   assert.equal(fixture.store.get('exp:31:40'), 3); // 百合经验+3（无断背支）
 });

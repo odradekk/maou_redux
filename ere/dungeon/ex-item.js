@@ -1,11 +1,6 @@
 /**
  * @file EX 道具的入手、出售与使用（issue #344，阶段 5a L13）。
  *
- * 源: target/ERB/其他/USE_EX_ITEM.ERB  @USE_EX_ITEM（:4-71）、
- *       @SELL_EX_ITEM（:74-124）、@ADD_EX_ITEM（:127-244）、
- *       @HARB_ITEM 至 @HERO_POTION_ITEM（:331-996）、
- *       @EX_ITEM_NAME（:999-1010）。
- *
  * 移植说明：
  *   - 原作全局 A / RESULT 改为显式 cid / 返回值；库存仍是 CFLAG:560-564；
  *   - RAND 经参数注入（缺省 Math.random），供迷宫共用随机序列并可测试；
@@ -521,7 +516,7 @@ function sell_ex_item(cid, rand = default_rand) {
     const slot = ITEM_FIRST_SLOT + offset;
     const stored = era.get(`cflag:${cid}:${slot}`) || 0;
     const item_no = stored > 1000 ? stored - 1000 : stored;
-    // :95-97 的 RAND 每个槽都掷一次；即使未鉴定品已经确定卖出也会消费随机数。
+    // 的 RAND 每个槽都掷一次；即使未鉴定品已经确定卖出也会消费随机数。
     const random_sale = rand(10) === 0;
     if (stored <= 1000 && !random_sale) {
       continue;

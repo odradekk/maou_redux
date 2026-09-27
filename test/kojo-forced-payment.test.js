@@ -400,7 +400,7 @@ test('强制肉偿：EXP_BITCH 被调用两次、TYPE 全为空串（:105 无条
     } finally {
       bitch.exp_bitch = saved;
     }
-    // :105 一次（无条件）+ :107 或 :111 一次（分支内）
+    // 一次（无条件）+ :107 或 :111 一次（分支内）
     assert.equal(calls.length, 2, `男人=${male} 的调用次数`);
     for (const args of calls) {
       assert.deepEqual(args, [31, '', '', 5], `男人=${male} 的实参`);

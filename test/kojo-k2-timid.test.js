@@ -405,7 +405,7 @@ test('#625 交谈·自我介绍：本名与后续是同一行（:3915 首次 / :
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.selectcom = 56;
       f.store.set('tequip:31:53', 1); // 摄影中
-      f.store.set('abl:31:17', 5); // :3914 的 (TALENT:89 || ABL:17 >= 5)
+      f.store.set('abl:31:17', 5); // 的 (TALENT:89 || ABL:17 >= 5)
       if (talked) {
         f.load_module('facade/chara').chara(31).kojo.交谈 = 1; // 二次以后
       }
@@ -457,7 +457,7 @@ test('#625 交谈·按捺住声音：工具档三档与前后文同一行（:395
 
 test('#625 COLOSSEUM_KOJO_2：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
   // 原作 :6674+:6676+:6678+:6679、:6707+:6709+:6711+:6712、:6731+:6733+
-  // :6735+:6736 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
+  // 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
   // ere 侧曾把每行拆成四条 era.print（#625）
   const cases = [
     {

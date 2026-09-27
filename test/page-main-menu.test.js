@@ -71,7 +71,7 @@ test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整
   assert(status.includes('上午'));
   assert(status.includes('(所持金：12345 pts.)'));
 
-  // :53 FONTBOLD 整行粗体（片段级携带）；:54 ALIGNMENT RIGHT 后还原左对齐
+  // FONTBOLD 整行粗体（片段级携带）；:54 ALIGNMENT RIGHT 后还原左对齐
   const record = fixture.lines.find((line) => line.text?.includes('所持金'));
   assert(record.content.every((frag) => frag.fontWeight === 'bold'));
   assert(
@@ -360,13 +360,13 @@ test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位'
   const { fixture } = draw_menu_with(() => {});
 
   const dividers = fixture.lines.filter((line) => line.type === 'divider');
-  // :45/:320 双线 ═ 以 solid 近似，中间三条单线 ─ 以 dashed 近似
+  // 双线 ═ 以 solid 近似，中间三条单线 ─ 以 dashed 近似
   assert.equal(dividers.length, 5);
   assert.equal(dividers[0].border, 'solid');
   assert.equal(dividers[dividers.length - 1].border, 'solid');
   assert(dividers.slice(1, -1).every((d) => d.border === 'dashed'));
 
-  // :207 ▌Commands 标题（粗体）+ 指令面板渲染（#395 起全部真身；输入
+  // ▌Commands 标题（粗体）+ 指令面板渲染（#395 起全部真身；输入
   // 分发本体在 page-shop.js，#24）
   const title = fixture.text_lines().find((line) => line.includes('Commands'));
   assert.ok(title);

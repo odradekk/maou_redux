@@ -738,7 +738,7 @@ test('#623 交谈：六支各自并入前缀整行（:4440+:4442 / :4446.. / :44
   for (const replay of [false, true]) {
     const phase = replay ? '二回目' : '初回';
     // PALAMLV[4] 是内建常量 10000、PALAMLV[2] = 500（era-utils/palam-level）；
-    // :4440 / :4491 的无后缀 PRINTFORM 前缀提到语句外，六支都拼它（#623）
+    // 的无后缀 PRINTFORM 前缀提到语句外，六支都拼它（#623）
     const merge_cases = [
       {
         // 首支：PALAM:5 >= PALAMLV:4 && (TALENT:85 || ABL:10 >= 5) && TFLAG:60

@@ -1,8 +1,6 @@
 /**
  * @file 奖赏请求：@GOHOUBI_REQUEST（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_2.ERB  @GOHOUBI_REQUEST（:661-691）。
- *
  * 调用点（本票接入）：page/page-intercept.js 的 @INTERCEPT 出击决定
  * （:508 `CALL GOHOUBI_REQUEST, SELECT`）。
  *
@@ -61,25 +59,25 @@ function talent(cid, idx) {
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function gohoubi_request(arg0, rand = default_rand) {
-  const select = arg0; // :668 SELECT = ARG:0
-  let wish; // :663 #DIM WISH
+  const select = arg0; // SELECT = ARG:0
+  let wish; // #DIM WISH
 
-  // :670-681 三档判据 + 兜底
+  // 三档判据 + 兜底
   if (talent(select, 136) === 1 && rand(3) === 0) {
-    wish = rand(3) + 1; // :670-671 女装
+    wish = rand(3) + 1; // 女装
   } else if (talent(select, 85) === 1) {
-    wish = rand(3) + 4; // :672-673 爱慕
+    wish = rand(3) + 4; // 爱慕
     if (wish === 6 && talent(0, 121) === 0 && talent(0, 122) === 0) {
-      wish = 4; // :674-676 魔王既非扶她也非男 → 降为 4
+      wish = 4; // 魔王既非扶她也非男 → 降为 4
     }
   } else if (talent(select, 76) === 1) {
-    wish = rand(3) + 7; // :677-678 淫乱
+    wish = rand(3) + 7; // 淫乱
   } else {
-    wish = 0; // :679-680
+    wish = 0;
   }
 
-  chara(select).stronghold.要求奖赏 = wish; // :684 CFLAG:SELECT:504 = WISH（跨域写走属主门面）
-  await gohoubi_request_koujo(select); // :687 CALL GOHOUBI_REQUEST_KOUJO
+  chara(select).stronghold.要求奖赏 = wish; // CFLAG:SELECT:504 = WISH（跨域写走属主门面）
+  await gohoubi_request_koujo(select); // CALL GOHOUBI_REQUEST_KOUJO
   return 0;
 }
 

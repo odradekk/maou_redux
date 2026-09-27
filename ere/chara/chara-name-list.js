@@ -1,8 +1,6 @@
 /**
  * @file 固定名列表：查表实现（issue #388，#329 裁定 10 的落地）。
  *
- * 源: target/ERB/キャラ関数/CHARA_NAME_INIT.ERB:5-3360  @CHARA_NAME_INIT
- *
  * 原作 @CHARA_NAME_INIT 是「3,336 条 LIST_CHARA_NAME:n = 名字」的纯数据体，
  * 首行 SIF STRLENS(LIST_CHARA_NAME:0) > 1 RETURN（:7-8）只是防止游戏内重复
  * 初始化的守卫。写成 JS 代码没有意义（#329 裁定 10），数据落点是

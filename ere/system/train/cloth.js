@@ -4,13 +4,6 @@
  * 写入、AFTERTRAIN_CLOTH / SOILING_CLOTH / WASHING_CLOTH 的消费者全在
  * 调教流程内）。
  *
- * 源: target/ERB/其他/FUNC_CLOTH.ERB  @WEARING_CLOTH_ALL（:161-221）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @WEARING_CLOTH_ABLE（:226-239）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @AFTERTRAIN_CLOTH（:244-388）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @RE_CLOTHED（:393-405）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @SOILING_CLOTH_NO1（:459-488）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @SOILING_CLOTH_NO2（:493-525）
- *
  * == 变量承载（CFLAG 头注的逐条对应，FUNC_CLOTH.ERB:8-21） ==
  *
  *   - CFLAG:40 着衣状態位域（&1 内裤 &2 胸罩 &4 上装 &8 下装·裙
@@ -84,18 +77,18 @@ function or_tflag45(mask, bit, in_train) {
  * @returns {number} 原作 RETURN（0 = 无既定服装、1 = 已初始化）
  */
 function wearing_cloth_all(cid) {
-  // :163-164 標準衣装が設定されてない場合は戻る
+  // 標準衣装が設定されてない場合は戻る
   if (main_type(cid) === 0 && special_type(cid) === 0) {
     return 0;
   }
-  // :167 一旦全裸に
+  // 一旦全裸に
   let bits = 0;
 
-  // :170-215 標準コス処理（CFLAG:41 != 0）
+  // 標準コス処理（CFLAG:41 != 0）
   if (main_type(cid) !== 0) {
-    // :172 パンツ装着
+    // パンツ装着
     bits |= 1;
-    // :174 绝壁(116)、未熟(135)＋幼稚(132)＆贫乳(109)の場合を除きブラ装着
+    // 绝壁(116)、未熟(135)＋幼稚(132)＆贫乳(109)の場合を除きブラ装着
     if (
       talent(cid, 116) === 0 &&
       talent(cid, 135) === 0 &&
@@ -104,11 +97,11 @@ function wearing_cloth_all(cid) {
       bits |= 2;
     }
     const type = main_type(cid);
-    // :177-178 和服(202)・バニースーツ(254)用ノーブラ化処理
+    // 和服(202)・バニースーツ(254)用ノーブラ化処理
     if (bits & 2 && (type === 202 || type === 254)) {
       bits -= 2;
     }
-    // :180-185 全裸の上にまとうタイプ（191-200 / 241-250 / 291-300）
+    // 全裸の上にまとうタイプ（191-200 / 241-250 / 291-300）
     if (type >= 191 && type <= 200) {
       bits = 0;
     }
@@ -118,16 +111,16 @@ function wearing_cloth_all(cid) {
     if (type >= 291 && type <= 300) {
       bits = 0;
     }
-    // :187-188 島の娘の服（29）
+    // 島の娘の服（29）
     if (type === 29) {
       bits = 0;
     }
-    // :190-191 オムツ着用時（CFLAG:42 == 69）のノーパン処理
+    // オムツ着用時（CFLAG:42 == 69）のノーパン処理
     if (bits & 1 && special_type(cid) === 69) {
       bits -= 1;
     }
 
-    // :194-209 下装类型 → 位 4 与位 8/16
+    // 下装类型 → 位 4 与位 8/16
     if (type >= 1 && type <= 100) {
       // スカートタイプのツーピース
       bits |= 4;
@@ -146,13 +139,13 @@ function wearing_cloth_all(cid) {
       bits |= 16;
     }
 
-    // :212-213 ふんどし（192）は位 16 单独成立
+    // ふんどし（192）は位 16 单独成立
     if (type === 192) {
       bits = 16;
     }
   }
 
-  // :218-219 特別コスの装着（位 64）
+  // 特別コスの装着（位 64）
   if (special_type(cid)) {
     bits |= 64;
   }
@@ -172,7 +165,7 @@ function wearing_cloth_able(cid) {
   wearing_cloth_all(cid);
   const before = worn(cid);
   let bits = before;
-  // :228-239 洗濯中（≥1）/没收（-1）/废弃（-2）的部位不可着用——原作每条
+  // 洗濯中（≥1）/没收（-1）/废弃（-2）的部位不可着用——原作每条
   // SIF 命中才写 CFLAG:40（-= 位），全不命中时**不写**（未写与写 0 在
   // undefined 读数上有别，测试可见）
   if ((era.get(`cflag:${cid}:43`) || 0) !== 0) {
@@ -222,13 +215,13 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
 
   // —— :247-295 特別コス ——
   if (special_type(cid) !== 0 && (mask() & 32) !== 0) {
-    // :249 被拿去扔掉了（PRINTFORMW：一行 + 等键）
+    // 被拿去扔掉了（PRINTFORMW：一行 + 等键）
     era.print(`（${name}的${get_clothtype_special(cid)}被拿去扔掉了）`);
     await era.waitAnyKey();
-    chara(cid).chara.特别服装类型 = 0; // :250 CFLAG:42 = 0
-    set_mask(mask() - 32); // :251
+    chara(cid).chara.特别服装类型 = 0; // CFLAG:42 = 0
+    set_mask(mask() - 32);
     if (worn(cid) & 64) {
-      set_worn(cid, worn(cid) - 64); // :253-254
+      set_worn(cid, worn(cid) - 64);
     }
   } else if (
     special_type(cid) === 69 &&
@@ -236,77 +229,77 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     (era.get(`cflag:${cid}:47`) || 0) === 0 &&
     era_flag.money >= 50
   ) {
-    // :255-284 オムツの場合の特殊処理（换新 / 洗涤的选择）
+    // オムツの場合の特殊処理（换新 / 洗涤的选择）
     for (;;) {
-      era.print(`花费50p为${name}换尿布吗？`); // :258 PRINTFORML
-      // :259/:260 原作 `PRINTL  [0] - 好的`：命令名后第一格是分隔符，内容
+      era.print(`花费50p为${name}换尿布吗？`); // PRINTFORML
+      // 原作 `PRINTL  [0] - 好的`：命令名后第一格是分隔符，内容
       // 一格里那一个半角空格照全项目 `[n] - …` 一族写成半角（#577 的普查口径）
-      era.print(' [0] - 好的'); // :259
-      era.print(' [1] - 不要'); // :260
-      const result = await era.input(); // :261
+      era.print(' [0] - 好的');
+      era.print(' [1] - 不要');
+      const result = await era.input();
       if (result === 0) {
-        // :263 换上新的尿布（PRINTFORM 不收行；:269 的裸 PRINTL 只收尾它）
+        // 换上新的尿布（PRINTFORM 不收行；:269 的裸 PRINTL 只收尾它）
         era.print(`（为${name}换上了新的尿布）`);
-        era_flag.money -= 50; // :264 MONEY
-        era_exflag.legit_money -= 50; // :265 EX_FLAG:4444
-        era.set(`cflag:${cid}:47`, 0); // :266
-        set_mask(mask() - 16); // :267
+        era_flag.money -= 50; // MONEY
+        era_exflag.legit_money -= 50; // EX_FLAG:4444
+        era.set(`cflag:${cid}:47`, 0);
+        set_mask(mask() - 16);
         if (talent(cid, 135) === 0) {
-          // :268-271 未熟以外：耻情点数＋500（PALAMNAME:8 = 耻情）；
+          // 未熟以外：耻情点数＋500（PALAMNAME:8 = 耻情）；
           // FUNC_CLOTH.ERB:269 的裸 PRINTL 只收尾 :263 的 PRINTFORM，
           // 不是空行——这里不补 println（#595）
           era.print(`${era.get('palamname:8') ?? ''}点数＋500`);
           const juel8 = era.get(`juel:${cid}:8`) || 0; // JUEL:8
           era.set(`juel:${cid}:8`, juel8 + 500);
         }
-        await era.waitAnyKey(); // :273 WAIT
+        await era.waitAnyKey(); // WAIT
         break;
       }
       if (result === 1) {
-        // :276 把尿布拿去洗了
+        // 把尿布拿去洗了
         era.print(`（把${name}的尿布拿去洗了）`);
         await era.waitAnyKey();
-        era.set(`cflag:${cid}:47`, 2); // :277
-        set_mask(mask() - 16); // :278
+        era.set(`cflag:${cid}:47`, 2);
+        set_mask(mask() - 16);
         if (worn(cid) & 64) {
-          set_worn(cid, worn(cid) - 64); // :280-281
+          set_worn(cid, worn(cid) - 64);
         }
         break;
       }
-      // :282-283 ELSE → GOTO INPUT_LOOP_01（重问）
+      // ELSE → GOTO INPUT_LOOP_01（重问）
     }
   } else if (
     special_type(cid) !== 0 &&
     (mask() & 16) !== 0 &&
     (era.get(`cflag:${cid}:47`) || 0) === 0
   ) {
-    // :285-294 特別コスの洗濯
+    // 特別コスの洗濯
     era.print(`（${name}的${get_clothtype_special(cid)}被拿去洗了）`);
     await era.waitAnyKey();
-    era.set(`cflag:${cid}:47`, 5); // :287
+    era.set(`cflag:${cid}:47`, 5);
     if (special_type(cid) === 69) {
-      // :289-290 オムツは洗濯速度が下着並
+      // オムツは洗濯速度が下着並
       era.set(`cflag:${cid}:47`, 2);
     }
-    set_mask(mask() - 16); // :291
+    set_mask(mask() - 16);
     if (worn(cid) & 64) {
-      set_worn(cid, worn(cid) - 64); // :293-294
+      set_worn(cid, worn(cid) - 64);
     }
   }
 
   // —— :297-350 上着下（下装） ——
   if (main_type(cid) !== 0 && (mask() & 8) !== 0) {
-    // :298-305 被拿去扔掉了（PRINTFORM + PRINTW 拼一行后等键）
+    // 被拿去扔掉了（PRINTFORM + PRINTW 拼一行后等键）
     let line = `（${name}穿过的${clothtype_main2_text(cid)}`;
     if (main_type(cid) >= 1 && main_type(cid) <= 100) {
-      line += '的裙子'; // :300-301
+      line += '的裙子';
     } else if (main_type(cid) <= 200) {
-      line += '的下身'; // :302-303（201+ 无后缀，1:1）
+      line += '的下身'; // （201+ 无后缀，1:1）
     }
     era.print(`${line}被拿去扔掉了）`);
     await era.waitAnyKey(); // PRINTW
     if (main_type(cid) >= 201) {
-      // :306-313 全身衣装は上下一緒に消える
+      // 全身衣装は上下一緒に消える
       era.set(`cflag:${cid}:41`, 0);
       let bits = worn(cid);
       if (bits & 4) {
@@ -320,7 +313,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       }
       set_worn(cid, bits);
     } else {
-      era.set(`cflag:${cid}:46`, -2); // :315 ツーピースは下のみ廃棄
+      era.set(`cflag:${cid}:46`, -2); // ツーピースは下のみ廃棄
       let bits = worn(cid);
       if (bits & 8) {
         bits -= 8;
@@ -330,23 +323,23 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       }
       set_worn(cid, bits);
     }
-    set_mask(mask() - 8); // :321
+    set_mask(mask() - 8);
   } else if (
     main_type(cid) !== 0 &&
     (mask() & 4) !== 0 &&
     (era.get(`cflag:${cid}:46`) || 0) === 0
   ) {
-    // :323-349 被拿去洗了
+    // 被拿去洗了
     let line = `（${name}穿过的${clothtype_main2_text(cid)}`;
     if (main_type(cid) >= 1 && main_type(cid) <= 100) {
-      line += '的裙子'; // :326-327
+      line += '的裙子';
     } else if (main_type(cid) <= 200) {
-      line += '的下身'; // :328-329
+      line += '的下身';
     }
     era.print(`${line}被拿去洗了）`);
     await era.waitAnyKey();
     if (main_type(cid) >= 201) {
-      // :332-340 全身衣装は上下とも洗濯
+      // 全身衣装は上下とも洗濯
       era.set(`cflag:${cid}:45`, 3);
       era.set(`cflag:${cid}:46`, 3);
       let bits = worn(cid);
@@ -361,7 +354,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       }
       set_worn(cid, bits);
     } else {
-      era.set(`cflag:${cid}:46`, 3); // :342
+      era.set(`cflag:${cid}:46`, 3);
       let bits = worn(cid);
       if (bits & 8) {
         bits -= 8;
@@ -371,44 +364,44 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       }
       set_worn(cid, bits);
     }
-    set_mask(mask() - 4); // :348
+    set_mask(mask() - 4);
   }
 
   // —— :352-366 パンツ ——
   if ((mask() & 2) !== 0) {
-    // :353 内衣被拿去扔掉了
+    // 内衣被拿去扔掉了
     era.print(`（${name}的内衣被拿去扔掉了）`);
     await era.waitAnyKey();
-    era.set(`cflag:${cid}:43`, -2); // :354
+    era.set(`cflag:${cid}:43`, -2);
     if (worn(cid) & 1) {
-      set_worn(cid, worn(cid) - 1); // :355-356
+      set_worn(cid, worn(cid) - 1);
     }
-    set_mask(mask() - 2); // :357
+    set_mask(mask() - 2);
   } else if ((mask() & 1) !== 0 && (era.get(`cflag:${cid}:43`) || 0) === 0) {
-    // :359-365 内衣被拿去洗了
+    // 内衣被拿去洗了
     era.print(`（${name}的内衣被拿去洗了）`);
     await era.waitAnyKey();
-    era.set(`cflag:${cid}:43`, 2); // :361
+    era.set(`cflag:${cid}:43`, 2);
     if (worn(cid) & 1) {
-      set_worn(cid, worn(cid) - 1); // :362-363
+      set_worn(cid, worn(cid) - 1);
     }
-    set_mask(mask() - 1); // :364
+    set_mask(mask() - 1);
   }
 
   // —— :369-381 上下ともダメになった衣装は削除 ——
   if (main_type(cid)) {
-    // :370-371 上着上（45）も下（46）も不可 → 类型消除
+    // 上着上（45）も下（46）も不可 → 类型消除
     if (
       (era.get(`cflag:${cid}:45`) || 0) < 0 &&
       (era.get(`cflag:${cid}:46`) || 0) < 0
     ) {
       era.set(`cflag:${cid}:41`, 0);
     }
-    // :373-374 ふんどし用処理（192 は下が無ければ成立しない）
+    // ふんどし用処理（192 は下が無ければ成立しない）
     if (main_type(cid) === 192 && (era.get(`cflag:${cid}:46`) || 0) < 0) {
       era.set(`cflag:${cid}:41`, 0);
     }
-    // :376-377 外衣脱掉了（41 == 0）、但还穿着内衣（40 & 3）→ 类型 1
+    // 外衣脱掉了（41 == 0）、但还穿着内衣（40 & 3）→ 类型 1
     if (main_type(cid) === 0 && (worn(cid) & 3) !== 0) {
       era.set(`cflag:${cid}:41`, 1);
     }
@@ -416,14 +409,14 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     (main_type(cid) === 1 || main_type(cid) === -1) &&
     (worn(cid) & 3) === 0
   ) {
-    // :379-380 内衣也被脱掉了 → 类型 0
+    // 内衣也被脱掉了 → 类型 0
     era.set(`cflag:${cid}:41`, 0);
   }
 
   // —— :383-386 ダメになった特別コスは削除 ——
   if (special_type(cid)) {
     if ((era.get(`cflag:${cid}:47`) || 0) < 0) {
-      chara(cid).chara.特别服装类型 = 0; // :385
+      chara(cid).chara.特别服装类型 = 0;
     }
   }
 
@@ -443,7 +436,7 @@ async function re_clothed(cid) {
     const before = worn(cid);
     wearing_cloth_able(cid);
     if (worn(cid) > before) {
-      // :400 PRINTFORML + :401 WAIT
+      // PRINTFORML + :401 WAIT
       era.print(`（${chara_callname(cid)}把被脱掉的衣服又穿上了）`);
       await era.waitAnyKey();
     }
@@ -479,34 +472,34 @@ function soiled_lower_prefix(cid) {
  *   调教外调用方把它传给 aftertrain_cloth）
  */
 async function soiling_cloth_no1(cid, { in_train = true } = {}) {
-  // :461-462 着衣設定でなければそのまま終了
+  // 着衣設定でなければそのまま終了
   if ((era.get('flag:37') || 0) === 0) {
     return 0;
   }
   let mask = in_train ? era.get('tflag:45') || 0 : 0;
 
-  // :465-471 着衣中に放尿：特别服装（≤50 的着装型或 69 尿布）暂时不可用
+  // 着衣中に放尿：特别服装（≤50 的着装型或 69 尿布）暂时不可用
   if (
     (worn(cid) & 64) !== 0 &&
     (special_type(cid) <= 50 || special_type(cid) === 69)
   ) {
     era.print(
       `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了尿》`,
-    ); // :466 PRINTFORML
+    ); // PRINTFORML
     mask = or_tflag45(mask, 16, in_train);
-    // :469-470 オムツ着用中なら他の衣類は無事
+    // オムツ着用中なら他の衣類は無事
     if (special_type(cid) === 69) {
       return mask;
     }
   }
-  // :472-482 下装
+  // 下装
   if ((worn(cid) & 8) !== 0 || (worn(cid) & 16) !== 0) {
-    era.print(`${soiled_lower_prefix(cid)}沾满了尿》`); // :480 PRINTFORML
+    era.print(`${soiled_lower_prefix(cid)}沾满了尿》`); // PRINTFORML
     mask = or_tflag45(mask, 4, in_train);
   }
-  // :483-486 内裤
+  // 内裤
   if (worn(cid) & 1) {
-    era.print(`《${chara_callname(cid)}的内衣沾满了尿》`); // :484
+    era.print(`《${chara_callname(cid)}的内衣沾满了尿》`);
     mask = or_tflag45(mask, 1, in_train);
   }
   return mask;
@@ -520,36 +513,36 @@ async function soiling_cloth_no1(cid, { in_train = true } = {}) {
  * @returns {Promise<number>} 置位后的掩码
  */
 async function soiling_cloth_no2(cid, { in_train = true } = {}) {
-  // :495-496 着衣設定でなければそのまま終了
+  // 着衣設定でなければそのまま終了
   if ((era.get('flag:37') || 0) === 0) {
     return 0;
   }
   let mask = in_train ? era.get('tflag:45') || 0 : 0;
 
-  // :499-506 特别服装：洗濯 + 処分双位置位
+  // 特别服装：洗濯 + 処分双位置位
   if (
     (worn(cid) & 64) !== 0 &&
     (special_type(cid) <= 50 || special_type(cid) === 69)
   ) {
     era.print(
       `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了污物`,
-    ); // :500 PRINTFORML（原文缺右书名号，1:1）
+    ); // PRINTFORML（原文缺右书名号，1:1）
     mask = or_tflag45(mask, 16, in_train);
     mask = or_tflag45(mask, 32, in_train);
-    // :504-505 オムツ着用中なら他の衣類は無事
+    // オムツ着用中なら他の衣類は無事
     if (special_type(cid) === 69) {
       return mask;
     }
   }
-  // :507-518 下装：洗濯 + 処分
+  // 下装：洗濯 + 処分
   if ((worn(cid) & 8) !== 0 || (worn(cid) & 16) !== 0) {
-    era.print(`${soiled_lower_prefix(cid)}沾满了污物》`); // :515 PRINTL
+    era.print(`${soiled_lower_prefix(cid)}沾满了污物》`); // PRINTL
     mask = or_tflag45(mask, 4, in_train);
     mask = or_tflag45(mask, 8, in_train);
   }
-  // :519-523 内裤
+  // 内裤
   if (worn(cid) & 1) {
-    era.print(`《${chara_callname(cid)}的内衣沾满了污物》`); // :520
+    era.print(`《${chara_callname(cid)}的内衣沾满了污物》`);
     mask = or_tflag45(mask, 1, in_train);
     mask = or_tflag45(mask, 2, in_train);
   }

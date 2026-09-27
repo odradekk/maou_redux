@@ -35,7 +35,7 @@ function expected_train_name_writes(train_name_table) {
       name: `trainalias:${id}`,
       value: name,
     })),
-    // :899 TRAIN_NAME:150 = %CSTR:7%調教（TARGET=31 的 CSTR:7 未播种 → 空串）
+    // TRAIN_NAME:150 = %CSTR:7%調教（TARGET=31 的 CSTR:7 未播种 → 空串）
     { name: 'trainalias:150', value: '调教' },
   ];
 }
@@ -46,28 +46,28 @@ function expected_train_name_writes(train_name_table) {
 //（播种表以实现为准——表内容错漏由 train-name.test.js 的逐条断言守）。
 function expected_train_writes(train_name_table) {
   return [
-    { name: 'base:0:2', value: 0 }, // :15-16 主人的射精清零
-    { name: 'base:31:2', value: 0 }, // :17-18 目标的射精清零
-    // :19-20 SIF ASSI >= 0 → BASE:ASSI:2 = 0（ASSI = -1，不写）
-    { name: 'base:31:3', value: 0 }, // :21 目标母乳槽清零
-    { name: 'base:0:4', value: 0 }, // :22 主人触手射精槽清零
+    { name: 'base:0:2', value: 0 }, // 主人的射精清零
+    { name: 'base:31:2', value: 0 }, // 目标的射精清零
+    // SIF ASSI >= 0 → BASE:ASSI:2 = 0（ASSI = -1，不写）
+    { name: 'base:31:3', value: 0 }, // 目标母乳槽清零
+    { name: 'base:0:4', value: 0 }, // 主人触手射精槽清零
     ...Array.from({ length: 200 }, (_, k) => ({
       name: `tflag:${k}`,
       value: 0,
-    })), // :25-27 REPEAT 200：TFLAG:0..199 清零
-    { name: 'flag:10008', value: 0 }, // :32-37 PLAYER = MASTER（ASSIPLAY 0）
-    { name: 'flag:10013', value: -1 }, // :40 ASSI:1 = ASSI（记录助手）
-    { name: 'flag:10012', value: 31 }, // :41 TARGET:1 = TARGET（记录目标）
-    // :44-46 SIF TALENT:TARGET:271 → PALAM 3/5 = 3000（无素质，不写）
-    { name: 'tflag:402', value: 0 }, // :49-50 死斗场收入初始化
-    // :53 CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，守卫空过）
+    })), // REPEAT 200：TFLAG:0..199 清零
+    { name: 'flag:10008', value: 0 }, // PLAYER = MASTER（ASSIPLAY 0）
+    { name: 'flag:10013', value: -1 }, // ASSI:1 = ASSI（记录助手）
+    { name: 'flag:10012', value: 31 }, // TARGET:1 = TARGET（记录目标）
+    // SIF TALENT:TARGET:271 → PALAM 3/5 = 3000（无素质，不写）
+    { name: 'tflag:402', value: 0 }, // 死斗场收入初始化
+    // CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，守卫空过）
     ...expected_train_name_writes(train_name_table),
-    // :55 PRITRAIN_MESSAGE（真身写入）：
-    { name: 'cflag:31:10', value: 1 }, // :7-8 CFLAG:TARGET:10 += 1（调教回数）
-    { name: 'flag:10014', value: 0 }, // :11 T:10 = MASTER
-    { name: 'flag:10015', value: 31 }, // :12 T:11 = TARGET
-    { name: 'flag:10016', value: -1 }, // :13-14 SIF ASSI → T:12 = ASSI
-    { name: 'cflag:31:40', value: 0 }, // :28-29 着衣OFF (FLAG:37==0) 全裸
+    // PRITRAIN_MESSAGE（真身写入）：
+    { name: 'cflag:31:10', value: 1 }, // CFLAG:TARGET:10 += 1（调教回数）
+    { name: 'flag:10014', value: 0 }, // T:10 = MASTER
+    { name: 'flag:10015', value: 31 }, // T:11 = TARGET
+    { name: 'flag:10016', value: -1 }, // SIF ASSI → T:12 = ASSI
+    { name: 'cflag:31:40', value: 0 }, // 着衣OFF (FLAG:37==0) 全裸
   ];
 }
 
@@ -126,14 +126,14 @@ test('助手参与（ASSIPLAY = 1）：PLAYER = ASSI，助手射精槽一并清�
   const writes = fixture.var_writes;
   // 世界底座的指针写入（seed_world 侧）不计：从 @EVENTTRAIN 第一笔写起看
   const start = writes.findIndex((w) => w.name === 'base:0:2');
-  // :19-20 SIF ASSI >= 0 → BASE:ASSI:2 = 0（插在目标射精之后、母乳槽之前）
+  // SIF ASSI >= 0 → BASE:ASSI:2 = 0（插在目标射精之后、母乳槽之前）
   assert.deepEqual(writes.slice(start, start + 4), [
     { name: 'base:0:2', value: 0 },
     { name: 'base:31:2', value: 0 },
     { name: 'base:32:2', value: 0 },
     { name: 'base:31:3', value: 0 },
   ]);
-  // :35-36 ELSE → PLAYER = ASSI；:13-14 SIF ASSI → T:12 = ASSI
+  // ELSE → PLAYER = ASSI；:13-14 SIF ASSI → T:12 = ASSI
   assert(
     writes.some((w) => w.name === 'flag:10008' && w.value === 32),
     'PLAYER 必须是助手 32',

@@ -2,10 +2,6 @@
  * ere/page/page-config-age.js 的行为测试（issue #547：设置页的年龄/三围
  * 子菜单与种族年龄编辑器）。
  *
- * 源: target/ERB/キャラ関数/CHARA_BODY.ERB  @CONFIG_AGE_SETTING（:853-929）、
- *       @RACE_CONFIG（:931-1333）；入口 SYSTEM/CONFIG.ERB:224（设置页 [15]，
- * dispatch_config 的接线在 test/page-config.test.js）。
- *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。随机源
  * 一律显式注入确定序列（#344）；种族年龄表按 #138 的数组承载预置。
  */
@@ -585,7 +581,7 @@ test('RACE_CONFIG 编辑循环的数字网格与模式按钮（DIS_FLAG 各档�
   assert.ok(grid_of(21).includes('\u00A0\u00A0100 岁'));
   assert.ok(grid_of(25).includes('\u00A0\u00A0500 岁'));
   assert.deepEqual(grid_of(26), [], '26-30 不渲染');
-  // :1215/:1233 两行标签带前导两个全角空格（#547 验收第 6 条）
+  // 两行标签带前导两个全角空格（#547 验收第 6 条）
   assert.ok(
     fixture.text_lines().some((t) => t.startsWith('　　■ 下限')),
     '「■ 下限」带前导两个全角空格',
@@ -594,7 +590,7 @@ test('RACE_CONFIG 编辑循环的数字网格与模式按钮（DIS_FLAG 各档�
     fixture.text_lines().some((t) => t.startsWith('　　■ 上限')),
     '「■ 上限」带前导两个全角空格',
   );
-  // :1111 每次重画编辑头前先出空行（#547 验收第 5 条）
+  // 每次重画编辑头前先出空行（#547 验收第 5 条）
   const header_rows = fixture.lines
     .map((l, i) =>
       l.type === 'text' && l.text.includes('■ 种族 [精灵]') ? i : -1,

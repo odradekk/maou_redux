@@ -2,14 +2,6 @@
  * @file 妊娠判定与妊娠确定（issue #401：EVENT_PREGNANCY.ERB 31 个函数全量；
  * issue #333 先落其中三个）。
  *
- * 源: target/ERB/EVENT/EVENT_PREGNANCY.ERB
- *      @IN_VAGINA_ALL（:42-60）、@CONCEPTION_CHECK_ALL（:61-79）
- *      @IN_VAGINA_<源>_TO_<目标>（:85-194，12 个）
- *      @NAKADASHI_CHECK（:196-274，issue #333 先落，本票并入共同形状）
- *      @CONCEPTION_CHECK_<源>_TO_<目标>（:305-444，12 个）
- *      @SHOW_BUTTON_CHILD_CARE（:452-470）、@CHECK_ABLE_TO_CHILD_CARE（:473-489）
- *      @CHILD_CARE_CHARA（:492-514）
- *
  * **12 组是维度型分支，不是 12 段逻辑。** 每组的 `IN_VAGINA_<源>_TO_<目标>`
  * 与同名 `CONCEPTION_CHECK_` 只差四个维度：受检主体（TARGET / ASSI /
  * MASTER / 全角色）、妊娠相手码（CFLAG:102，亦即 NAKADASHI_CHECK 的
@@ -71,7 +63,7 @@ function default_rand(n) {
  *           NID(该角色)+1，并同步写 CSTR:2 = SAVESTR:该角色
  */
 const PAIRS = [
-  // :85-93 / :305-314 主人 → 奴隶
+  // 主人 → 奴隶
   {
     name: 'm_to_t',
     kind: 1,
@@ -81,7 +73,7 @@ const PAIRS = [
     kin: true,
     father: 0,
   },
-  // :95-103 / :317-326 主人 → 助手
+  // 主人 → 助手
   {
     name: 'm_to_a',
     kind: 1,
@@ -91,7 +83,7 @@ const PAIRS = [
     kin: true,
     father: 0,
   },
-  // :105-112 / :329-338 奴隶 → 主人（:108 的 MASTER == 0 恒真）
+  // 奴隶 → 主人（:108 的 MASTER == 0 恒真）
   {
     name: 't_to_m',
     kind: 3,
@@ -101,7 +93,7 @@ const PAIRS = [
     kin: true,
     father: 'target',
   },
-  // :114-122 / :341-351 助手 → 奴隶
+  // 助手 → 奴隶
   {
     name: 'a_to_t',
     kind: 2,
@@ -111,7 +103,7 @@ const PAIRS = [
     kin: true,
     father: 'assi',
   },
-  // :124-132 / :354-364 奴隶 → 助手（两侧守卫不对称，见文件头）
+  // 奴隶 → 助手（两侧守卫不对称，见文件头）
   {
     name: 't_to_a',
     kind: 3,
@@ -121,7 +113,7 @@ const PAIRS = [
     kin: true,
     father: 'target',
   },
-  // :134-141 / :366-376 野狗 → 奴隶
+  // 野狗 → 奴隶
   {
     name: 'd_to_t',
     kind: 5,
@@ -131,7 +123,7 @@ const PAIRS = [
     kin: false,
     father: -2,
   },
-  // :143-150 / :389-399 怪物・触手 → 奴隶
+  // 怪物・触手 → 奴隶
   {
     name: 'syoku_to_t',
     kind: 6,
@@ -141,7 +133,7 @@ const PAIRS = [
     kin: false,
     father: -3,
   },
-  // :152-159 / :402-411 怪物・触手 → 主人
+  // 怪物・触手 → 主人
   {
     name: 'syoku_to_m',
     kind: 6,
@@ -151,7 +143,7 @@ const PAIRS = [
     kin: false,
     father: -3,
   },
-  // :161-168 / :413-422 狂王 → 主人
+  // 狂王 → 主人
   {
     name: 'kyouou_to_m',
     kind: 7,
@@ -161,7 +153,7 @@ const PAIRS = [
     kin: true,
     father: -4,
   },
-  // :170-177 / :424-433 狂王 → 奴隶（REPEAT CHARANUM）
+  // 狂王 → 奴隶（REPEAT CHARANUM）
   {
     name: 'kyouou_to_t',
     kind: 7,
@@ -171,7 +163,7 @@ const PAIRS = [
     kin: true,
     father: -4,
   },
-  // :179-186 / :435-444 兽奸秀 → 奴隶（相手码 5 = 野狗，见文件头）
+  // 兽奸秀 → 奴隶（相手码 5 = 野狗，见文件头）
   {
     name: 'ntrd_to_t',
     kind: 5,
@@ -181,7 +173,7 @@ const PAIRS = [
     kin: false,
     father: -2,
   },
-  // :188-194 / :379-387 卖春 → 奴隶（REPEAT CHARANUM）
+  // 卖春 → 奴隶（REPEAT CHARANUM）
   {
     name: 'extra',
     kind: 4,
@@ -261,33 +253,33 @@ function subjects_of(subject) {
  */
 function nakadashi_check(cid, kind, rand = default_rand) {
   const view = chara(cid);
-  // :204 FLAG:5 bit 2 = 启用妊娠系统：关闭时只清池（:209 的「妊娠不可でも
+  // FLAG:5 bit 2 = 启用妊娠系统：关闭时只清池（:209 的「妊娠不可でも
   // 膣射のリセット」）
   if (((era.get('flag:5') || 0) & 4) === 0) {
     clear_pool(cid, kind);
     return 0;
   }
-  // :220 男か未熟なら関数終了（**不清池**）
+  // 男か未熟なら関数終了（**不清池**）
   if (view.chara.男人 || view.train.未熟) return 0;
-  // :224 兽奸で対象が动物耳朵じゃないなら関数終了（**不清池**）
+  // 兽奸で対象が动物耳朵じゃないなら関数終了（**不清池**）
   if (kind === 5 && !view.chara.动物耳朵) return 0;
 
   const pool = pool_of(cid, kind);
-  // :228 中だしされてないなら関数終了（**不清池**）
+  // 中だしされてないなら関数終了（**不清池**）
   if (pool === 0) return 0;
-  // :232/:238 妊娠確定済み・妊娠中・育儿中は清池して終了
+  // 妊娠確定済み・妊娠中・育儿中は清池して終了
   if (view.event.预产日 > 0 || view.chara.妊娠 || view.chara.育儿中) {
     clear_pool(cid, kind);
     return 0;
   }
 
-  // :244 排卵剤の有無による定数設定：HAIRANZAI = 3 - CFLAG:109 * 2
+  // 排卵剤の有無による定数設定：HAIRANZAI = 3 - CFLAG:109 * 2
   let ovulation = 3 - view.stronghold.排卵诱发剂 * 2;
-  // :247-251 人狼（TALENT:314 == 2）は満月（DAY:2 14-16 日）に妊娠しやすく
+  // 人狼（TALENT:314 == 2）は満月（DAY:2 14-16 日）に妊娠しやすく
   if (view.chara.种族 === 2 && era_flag.date >= 14 && era_flag.date <= 16) {
     ovulation = view.stronghold.排卵诱发剂 === 1 ? 1 : 2;
   }
-  // :253-271 中出し量の六档：基底系数与阈值
+  // 中出し量の六档：基底系数与阈值
   let base;
   let success;
   if (pool >= 25) [base, success] = [1, 3];
@@ -297,10 +289,10 @@ function nakadashi_check(cid, kind, rand = default_rand) {
   else if (pool >= 5) [base, success] = [5, 2];
   else [base, success] = [6, 2];
 
-  // :254 上界 = (系数 + TALENT:100 娇小 * 2) * HAIRANZAI
+  // 上界 = (系数 + TALENT:100 娇小 * 2) * HAIRANZAI
   const upper = (base + view.chara.娇小 * 2) * ovulation;
   if (rand(upper) <= success) view.event.妊娠相手 = kind;
-  // :274 判定を行った膣射のリセット
+  // 判定を行った膣射のリセット
   clear_pool(cid, kind);
   return 0;
 }
@@ -381,8 +373,8 @@ for (const pair of PAIRS) {
 
 /** @IN_VAGINA_ALL（:42-60）：九连调，先过两道指针守卫 */
 function in_vagina_all(rand = default_rand) {
-  if (target_out_of_range()) return 0; // :44
-  if (assi_out_of_range()) return 0; // :46
+  if (target_out_of_range()) return 0;
+  if (assi_out_of_range()) return 0;
   for (const name of [
     'm_to_t',
     'm_to_a',
@@ -401,8 +393,8 @@ function in_vagina_all(rand = default_rand) {
 
 /** @CONCEPTION_CHECK_ALL（:61-79）：九连调，守卫同 ALL */
 function conception_check_all(rand = default_rand) {
-  if (target_out_of_range()) return 0; // :62
-  if (assi_out_of_range()) return 0; // :64
+  if (target_out_of_range()) return 0;
+  if (assi_out_of_range()) return 0;
   for (const name of [
     'm_to_t',
     'm_to_a',
@@ -428,10 +420,10 @@ function conception_check_all(rand = default_rand) {
  *   勇者；3 = 该角色不在育儿室（CFLAG:1 != 10）
  */
 function check_able_to_child_care(arg) {
-  if (arg === 0) return 1; // :479-481 你は育児室にいない
-  if (chara(arg).invasion.状态 === 2) return 2; // :482-484 侵攻中の勇者だ
-  if (chara(arg).invasion.状态 !== 10) return 3; // :485-487 育児室にいない
-  return 0; // :489
+  if (arg === 0) return 1; // 你は育児室にいない
+  if (chara(arg).invasion.状态 === 2) return 2; // 侵攻中の勇者だ
+  if (chara(arg).invasion.状态 !== 10) return 3; // 育児室にいない
+  return 0;
 }
 
 /**
@@ -448,8 +440,8 @@ function check_able_to_child_care(arg) {
  * @returns {number} 原作的 RETURN 0
  */
 function show_button_child_care(num, arg) {
-  if (check_able_to_child_care(arg) !== 0) return 0; // :459-467
-  // :468 PRINTFORM [{NUM}] 前往育儿室 —— 正文不写 [编号] 前缀，按钮的
+  if (check_able_to_child_care(arg) !== 0) return 0;
+  // PRINTFORM [{NUM}] 前往育儿室 —— 正文不写 [编号] 前缀，按钮的
   // 快捷键前缀由引擎按 accelerator 拼（AGENTS.md「输出类 API 会二次加工
   // 参数」：手写前缀会渲染成 `[0] [0] …`，#170 的 PR #30 实录）
   era.printButton('前往育儿室', num);
@@ -479,22 +471,22 @@ async function child_care_chara(arg) {
   const able = check_able_to_child_care(arg);
   if (able !== 0) {
     if (able === 1) {
-      await era.printAndWait('你不在育儿室。'); // :499
+      await era.printAndWait('你不在育儿室。');
     } else if (able === 2) {
-      return 2; // :500-502
+      return 2;
     } else if (able === 3) {
-      await era.printAndWait('该角色不在育儿室。'); // :504
+      await era.printAndWait('该角色不在育儿室。');
     }
     return 0;
   }
 
-  // :509 PRINTFORMW 你去了%SAVESTR:ARG%的育儿室。
+  // PRINTFORMW 你去了%SAVESTR:ARG%的育儿室。
   await era.printAndWait(`你去了${chara_callname(arg)}的育儿室。`);
-  era.print(''); // :510 PRINTL（空行）
-  era_flag.target = arg; // :511 TARGET = ARG
+  era.print(''); // PRINTL（空行）
+  era_flag.target = arg; // TARGET = ARG
   await game.train.with_self_kojo_event(13, () =>
     self_kojo(undefined, undefined, true),
-  ); // :512-513 TFLAG:13 = 13 / CALL SELF_KOJO
+  ); // TFLAG:13 = 13 / CALL SELF_KOJO
   return 0;
 }
 

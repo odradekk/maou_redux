@@ -2,10 +2,6 @@
  * @file ere/page/page-intercept.js 与 ere/system/stronghold/gohoubi-request.js
  * 的行为测试（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_2.ERB  @INTERCEPT（:257-658）、
- *     @GOHOUBI_REQUEST（:661-691）；口上侧 @GOHOUBI_REQUEST_KOUJO 的调用面
- *     由本票冻结（ere/kojo/kojo-dungeon-after.js）。
- *
  * 接缝 = test/helpers/era-fixture.js。维度型判据表驱动：
  *   - 派遣判据 `reject_reason` 的七条 × 两侧整表走完；
  *   - 迎击设定的三层子画面（出发阶层 1-9 / 行动 0-5 / 出击确认）各走一遍；

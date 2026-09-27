@@ -236,21 +236,21 @@ function fill_chara_no(fixture, count) {
  * @returns {Array<[string, object, number]>} [说明, flag 置法, 角色数]
  */
 const CAP_CASES = [
-  // :35 FLAG:82 == 0（ENDING_1 未出）且 > 60
+  // FLAG:82 == 0（ENDING_1 未出）且 > 60
   ['① FLAG:82 == 0 && CHARANUM > 60', { 82: 0 }, 61],
-  // :37 三领域全未征服且 > 65（82 置 1 绕开 ①）
+  // 三领域全未征服且 > 65（82 置 1 绕开 ①）
   ['② 三领域全未征服 && CHARANUM > 65', { 82: 1, 87: 0, 89: 0, 91: 0 }, 66],
-  // :39 三对积全为 0（至多一个领域征服）且 > 70
+  // 三对积全为 0（至多一个领域征服）且 > 70
   ['③ 两两之积全 0 && CHARANUM > 70', { 82: 1, 87: 1, 89: 0, 91: 0 }, 71],
-  // :41 有任一领域未征服且 > 75（87*89 != 0 破 ③；91 == 0 命中本档）
+  // 有任一领域未征服且 > 75（87*89 != 0 破 ③；91 == 0 命中本档）
   ['④ 任一领域未征服 && CHARANUM > 75', { 82: 1, 87: 1, 89: 1, 91: 0 }, 76],
-  // :43 四方堡垒未全陷（FLAG:92 < 15）且 > 80（三领域全征服绕开 ②③④）
+  // 四方堡垒未全陷（FLAG:92 < 15）且 > 80（三领域全征服绕开 ②③④）
   [
     '⑤ FLAG:92 < 15 && CHARANUM > 80',
     { 82: 1, 87: 1, 89: 1, 91: 1, 92: 0 },
     81,
   ],
-  // :45 到 MAX_CHARANUM（VARIABLES.ERH:2 = 90）硬上限
+  // 到 MAX_CHARANUM（VARIABLES.ERH:2 = 90）硬上限
   [
     '⑥ CHARANUM >= MAX_CHARANUM(90)',
     { 82: 1, 87: 1, 89: 1, 91: 1, 92: 15 },
@@ -569,7 +569,7 @@ function setup_crazylord() {
   fixture.store.set('flag:500', 1); // 狂王性别：女性
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.day_count = 350;
-  fixture.set_inputs(0); // :295 仪式性确认输入
+  fixture.set_inputs(0); // 仪式性确认输入
   return { fixture, era_flag };
 }
 

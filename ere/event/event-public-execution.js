@@ -1,7 +1,6 @@
 /**
  * @file 公开处刑（issue #348）。
  *
- * 源: target/ERB/處刑相關/PUBLIC_EXECUTION.ERB  @PUBLIC_EXECUTION（:2-194）
  */
 
 'use strict';
@@ -34,14 +33,14 @@ async function public_execution(cid, rand_n = default_rand) {
   era.printButton('凌辱刑', 0);
   era.printButton('绞刑', 1);
   era.printButton('魂粉碎', 2);
-  era.println(); // :22 的空行（PRINTFORML  的尾随空格）
+  era.println(); // 的空行（PRINTFORML  的尾随空格）
 
   let result;
   do {
     // 保留 useRule: false 以留住 :23 被注释掉的 `[100] 算了`（见下）。
     result = await era.input({ useRule: false });
   } while (result < 0 || (result >= 3 && result !== 100));
-  // :23 的 `;PRINTFORML [100] 算了` 被注释掉、界面上不显示，但 :31-33 的
+  // 的 `;PRINTFORML [100] 算了` 被注释掉、界面上不显示，但 :31-33 的
   // `ELSEIF RESULT == 100` 仍受理它（原作置 TFLAG:16 = -1 后 JUMP 批量处刑；
   // ere 没有该魔改入口，本函数以「不执行」返回表达同一出口）。
   if (result === 100) {
@@ -71,7 +70,7 @@ async function public_execution(cid, rand_n = default_rand) {
     if (get(`talent:${cid}:85`)) {
       await era.printAndWait(`${name}的尸体，作为祭品被怪物郑重地奉献给你了。`);
     }
-    // :2-194 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的
+    // 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的
     // PRINTFORMW 之后（那一行已结束）——真空行（#597）
     era.println();
     fate = '凌辱致死';
@@ -94,7 +93,7 @@ async function public_execution(cid, rand_n = default_rand) {
         `${name}的尸体，被悬挂示众三天之后，${chara_callname(0)}亲自将${she(cid)}火化了。`,
       );
     }
-    // :2-194 的淫行悬挂支：空 `PRINTFORML`（原作 76 行）落在 75 行的
+    // 的淫行悬挂支：空 `PRINTFORML`（原作 76 行）落在 75 行的
     // PRINTFORMW 之后（那一行已结束）——真空行（#597）
     era.println();
     fate = '淫行悬挂';
@@ -129,7 +128,7 @@ async function public_execution(cid, rand_n = default_rand) {
   }
 
   chara(0).event.勋章经验 += 1;
-  // :2-194 的魂粉碎支没有空行：129 行的 `PRINTFORMW  ` 只收尾 89-128 行那串
+  // 的魂粉碎支没有空行：129 行的 `PRINTFORMW  ` 只收尾 89-128 行那串
   // 未换行的 `PRINTFORM`；前两支的空行各写在上面两支的末尾（#597）
   era.print('得到了用勇者力量形成的勋章');
   era.print('勋章经验+1');

@@ -1,10 +1,6 @@
 /**
  * @file 怪物与精英部下的战斗技能（issue #345）。
  *
- * 源: target/ERB/怪物相關/MONSTER_SKILL.ERB
- *   @MONSTER_SKILL（:2-173）、@MONSTER_ROOM_SKILL（:174-241）、
- *   @SLAVE_MONSTER_SKILL（:242-298）、@USE_MONSTER_SKILL（:299-457）
- *
  * E 列布局沿用 monster-data：列头 +0 = 怪物识别号、+1 = 等级、+2 = 攻击、
  * +3 = 防御。两套 1–18 技能表有多处原作差异（倍率、名字与写入位置），
  * 因此分别按源结构保留，不抽成一张会掩盖差异的共享表。

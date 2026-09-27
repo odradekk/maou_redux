@@ -2,35 +2,6 @@
  * @file 指令结算事件 @SOURCE_CHECK 的处理器（issue #45：爱抚可达路径；
  * issue #461：自动调教入口 @SOURCE_CHECK_AUTO）。
  *
- * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB  @SOURCE_CHECK（:7-576 主体）
- *     @SOURCE_CHECK_UP_C（:579）/ _V（:675）/ _A（:773）/ _B（:872）/
- *     _LOVE（:987）/_IMPULSIVE（:1052）/_ACHIEVE（:1122）/_PAIN（:1186）/
- *     _POISON（:1294）/_DIRTY（:1338）/_MOIST（:1373）/_DESIRE（:1383）/
- *     _FLASHER（:1393）/_SUBMIT（:1471）/_DEVIATE（:1529）/_ANTI（:1576，
- *     issue #461——manual 路径的调用被原作者注释掉，只有 AUTO 调用）/
- *     _LIKE（:1587）/_FREE（:1598）、@LOVE_MOIST_CHECK_UP（:1609）、
- *     @PAIN_DAMAGE_CHECK_UP（:1628）、@EX_CHECK_UP（:1662-2131）、
- *     @SHOW_SOURCE（:2137-2175）/@PALAM_UP_CHECK（:2182-2242）/
- *     @PALAM_MESSAGE（:2278-2394）/@FIGURE_INDENT_2（:2513-2520）/
- *     @LOSELIFE_BAR（:2529）/@LOSEVITAL_BAR（:2561）/@SOURCE_CHECK_AUTO
- *     （:2594-2807，issue #461）/@PALAM_UP_CHECK_MINI（:2248-2277，issue
- *     #461——AUTO 专用静默结算，UPID 序缺完整版分支，1:1 保留原作缺陷）
- *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB  @SOURCE_SEX_CHECK（:31）/
- *     @PLAYER_SKILL_CHECK（:45）/@MASTER_SKILL_CHECK（:172）/
- *     @INCEST_SEX_CHECK（:222）/@LOST_VIRGIN_CHECK（:265，守卫段）/
- *     @TARGET_EJAC_CHECK（:345-524）/@TARGET_MILK_CHECK（:529-690）/
- *     @UP_TALENT_CVA_CHECK（:691）/
- *     @UP_TALENT_CHECK（:740）/
- *     @MARK_GOT_CHECK（:952-1080）/@YOKUBO_UP_CHECK（:1092）/
- *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124-1310）/@SOKUOCHI_CHECK
- *     （:1315-1550）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561-1610）/
- *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727-1847）/
- *     @AUTO_NUM_CHECK（:1852-1879，issue #461——自动调教次数越多、单次结算
- *     倍率越高，EX_CHECK_UP 之后立即执行，避免自动调教过度绝顶）
- *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB  @SOURCE_LESBIAN_SEX_CHECK
- *     （:9）/@SOURCE_GAY_SEX_CHECK（:242）/@INCEST（:324）/
- *     @SOUL_DISLOCATION_DEBUFF（:350）
- *
  * 与引擎的职责划分（app.asar 的 nextTurnInTrain 实证，#44）：
  *   - UP/DOWN 的 ere 等价物是 delta 表（清零归引擎回合结算）。本模块把 UP
  *     累加进 delta；PALAM_UP_CHECK 展示后**当场把 delta 结算进 palam 并清零
@@ -445,7 +416,7 @@ function source_gay_sex_check() {
 
 // @PLAYER_SKILL_CHECK（SUB1:45-171）：调教者素质与技巧对源的乘算
 function player_skill_check() {
-  // :47-51 调教者开放（TALENT:33）
+  // 调教者开放（TALENT:33）
   if (ptal(33)) {
     set_src(0, times(src(0), 1.2));
     set_src(1, times(src(1), 1.2));
@@ -453,11 +424,11 @@ function player_skill_check() {
     set_src(3, times(src(3), 1.2));
     set_src(17, times(src(17), 1.2));
   }
-  // :53-55 小恶魔（TALENT:87）
+  // 小恶魔（TALENT:87）
   if (ptal(87)) {
     set_src(12, times(src(12), 1.6));
   }
-  // :57-68 魅惑（91）/ 谜之魅力（92）：同倍率
+  // 魅惑（91）/ 谜之魅力（92）：同倍率
   for (const t of [91, 92]) {
     if (ptal(t)) {
       set_src(8, times(src(8), 0.5));
@@ -469,35 +440,35 @@ function player_skill_check() {
       set_src(17, times(src(17), 1.2));
     }
   }
-  // :70-77 母性/人妻（155/157）× 恋母情结（140）
+  // 母性/人妻（155/157）× 恋母情结（140）
   if ((ptal(155) || ptal(157)) && tal(140)) {
     set_src(8, times(src(8), 0.5));
     set_src(14, times(src(14), 0.5));
     set_src(3, times(src(3), 1.2));
     set_src(5, times(src(5), 1.2));
   }
-  // :79-86 父性（156）× 恋父情结（141）
+  // 父性（156）× 恋父情结（141）
   if (ptal(156) && tal(141)) {
     set_src(8, times(src(8), 0.5));
     set_src(14, times(src(14), 0.5));
     set_src(3, times(src(3), 1.2));
     set_src(5, times(src(5), 1.2));
   }
-  // :88-95 调教者非男人且未熟/娇小 × 目标萝莉控（142）
+  // 调教者非男人且未熟/娇小 × 目标萝莉控（142）
   if (!ptal(122) && (ptal(100) || ptal(135)) && tal(142)) {
     set_src(8, times(src(8), 0.5));
     set_src(14, times(src(14), 0.5));
     set_src(3, times(src(3), 1.2));
     set_src(5, times(src(5), 1.2));
   }
-  // :97-104 调教者是男人且未熟/娇小 × 目标正太控（143）
+  // 调教者是男人且未熟/娇小 × 目标正太控（143）
   if (ptal(122) && (ptal(100) || ptal(135)) && tal(143)) {
     set_src(8, times(src(8), 0.5));
     set_src(14, times(src(14), 0.5));
     set_src(3, times(src(3), 1.2));
     set_src(5, times(src(5), 1.2));
   }
-  // :106-113 调教者萝莉控（142）× 目标未熟/娇小非男人
+  // 调教者萝莉控（142）× 目标未熟/娇小非男人
   if (ptal(142) && (tal(100) || tal(135)) && !tal(122)) {
     set_src(0, times(src(0), 1.2));
     set_src(1, times(src(1), 1.2));
@@ -505,14 +476,14 @@ function player_skill_check() {
     set_src(17, times(src(17), 1.2));
     set_src(14, times(src(14), 0.8));
   }
-  // :115-122 调教者正太控（143）× 目标未熟/娇小男人
+  // 调教者正太控（143）× 目标未熟/娇小男人
   if (ptal(143) && (tal(100) || tal(135)) && tal(122)) {
     set_src(0, times(src(0), 1.2));
     set_src(2, times(src(2), 1.2));
     set_src(17, times(src(17), 1.2));
     set_src(14, times(src(14), 0.8));
   }
-  // :124-169 调教者的 ABL:技巧（12）阶梯——无条件执行（爱抚路径实测：
+  // 调教者的 ABL:技巧（12）阶梯——无条件执行（爱抚路径实测：
   // 黄金样本的 阴核 300 = 1200 ×0.50，即技巧 0 档）
   const rates = [0.5, 0.8, 1.0, 1.2, 1.5, 2.0];
   const rate = pabl(12) >= 5 ? rates[5] : rates[pabl(12)];
@@ -549,7 +520,7 @@ function master_skill_check() {
     set_src(14, times(src(14), 0.9));
     set_src(3, times(src(3), 1.1));
   }
-  // :205-220 淫乱（76）/ 爱慕（85）：主人亲自调教时的追加乘算
+  // 淫乱（76）/ 爱慕（85）：主人亲自调教时的追加乘算
   if (tal(76)) {
     set_src(0, times(src(0), 1.8));
     set_src(1, times(src(1), 1.8));
@@ -601,27 +572,27 @@ function incest_sex_check() {
 // INCEST 使用 system/train/incest.js 的共用真身；TFLAG:14 由该函数写回。
 function lost_virgin_check() {
   if (!tal(0) || tflag(19) === 0) {
-    return; // :267-268
+    return;
   }
-  era.print('【处女丧失】'); // :270
-  chara(cid).chara.处女 = 0; // :271（talent:0 属主 chara 走门面）
+  era.print('【处女丧失】');
+  chara(cid).chara.处女 = 0; // （talent:0 属主 chara 走门面）
 
-  // :274-277 本次指令/调教/摄影的三面旗（31 属 event、32 属 kojo 走门面）
+  // 本次指令/调教/摄影的三面旗（31 属 event、32 属 kojo 走门面）
   game.train.处女丧失 = 1;
   game.event.本次调教处女丧失 = 1;
   if (era.get(`tequip:${cid}:53`)) {
     game.kojo.录像内容 |= 1;
   }
 
-  const r = era_flag.player; // :282 R = NO:PLAYER
-  incest(cid, player); // :284-285 CALL INCEST
+  const r = era_flag.player; // R = NO:PLAYER
+  incest(cid, player); // CALL INCEST
 
-  // :287-313 初体验相手记录（CFLAG:15 属主 train 直写；+1 存 character no，
+  // 初体验相手记录（CFLAG:15 属主 train 直写；+1 存 character no，
   // 300+ 近亲代码——与 COM_AFTER_*_SEX 的表不同组，原作两处各表 1:1）
   if ((era.get(`cflag:${cid}:15`) || 0) === 0) {
-    chara(cid).train.初体验对象 = era_flag.player + 1; // :289
+    chara(cid).train.初体验对象 = era_flag.player + 1;
     chara(cid).train.初体验对象名 =
-      era.get(`callname:${era_flag.player}:-1`) ?? ''; // :290
+      era.get(`callname:${era_flag.player}:-1`) ?? '';
     const rel = era.get('tflag:14') || 0;
     const male = ptal(122) ? 1 : 0;
     if (rel === 1 && male) {
@@ -641,7 +612,7 @@ function lost_virgin_check() {
     } else if (rel === 6 && male) {
       chara(cid).train.初体验对象 = 309;
     }
-    // :314-325 特殊初体验的覆盖代码
+    // 特殊初体验的覆盖代码
     if (era_flag.selectcom === 11) {
       chara(cid).train.初体验对象 = 101; // 振动棒
     }
@@ -656,7 +627,7 @@ function lost_virgin_check() {
     }
   }
 
-  // :327-340 反抗刻印回避与爱情源乘算（TALENT:85 爱慕 / 76 淫乱 /
+  // 反抗刻印回避与爱情源乘算（TALENT:85 爱慕 / 76 淫乱 /
   // 助手相性 200+；150 属 system 走门面）
   if (era_flag.player === MASTER && tal(85)) {
     game.system.反抗刻印回避 = 1;
@@ -744,7 +715,7 @@ const DENY_LADDER = [
 
 // @SOURCE_CHECK_UP_C（:578-655）
 function source_check_up_c() {
-  // :583-588 Ｃ敏感（101 & 1 / & 2）与 Ｃ钝感外侧的敏感（102）
+  // Ｃ敏感（101 & 1 / & 2）与 Ｃ钝感外侧的敏感（102）
   if ((tal(101) || 0) & 1) {
     set_src(0, times(src(0), 0.5));
   }
@@ -755,21 +726,21 @@ function source_check_up_c() {
     set_src(0, times(src(0), 2.0));
   }
 
-  // :590-605 LOCAL:0 过欲情系数
+  // LOCAL:0 过欲情系数
   let local0 = times(src(0), desire_rate(RATE_C));
-  // :607-624 LOCAL:1 过欲望阶梯
+  // LOCAL:1 过欲望阶梯
   let local1 = src(0);
   local1 =
     abl(11) >= 6
       ? times(local1, 0.5)
       : times(local1, DESIRE_LADDER[abl(11)][1]);
-  // :626-648 快感的否定（32）/ 抑压（34）/ 抵抗（71）→ 抑鬱
+  // 快感的否定（32）/ 抑压（34）/ 抵抗（71）→ 抑鬱
   let local2 = 0;
   if (tal(32) || tal(34) || tal(71)) {
     local2 = idiv(src(0), 3);
     local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);
   }
-  // :650-655 自慰狂（74）/ 淫核（230）/ ABL:0 > 5 的放大
+  // 自慰狂（74）/ 淫核（230）/ ABL:0 > 5 的放大
   if (tal(74)) {
     local0 = times(local0, 1.5);
     local1 = times(local1, 1.2);
@@ -882,7 +853,7 @@ function source_check_up_b() {
   if (tal(108)) {
     set_src(17, times(src(17), 2.0));
   }
-  // :879-897 胸围对 SOURCE:1 的乘算——原作写的就是 V 源（可疑但 1:1）
+  // 胸围对 SOURCE:1 的乘算——原作写的就是 V 源（可疑但 1:1）
   const BUST_RATES = [
     [253, 2.5],
     [252, 2.15],
@@ -1610,7 +1581,7 @@ async function ex_check_up() {
   });
 
   ecst_check(ex_c + ex_v + ex_a + ex_b + ex_f);
-  // :1812 精饮绝顶（J6 真身，system/train/seiin.js；TFLAG:0 口内射精由
+  // 精饮绝顶（J6 真身，system/train/seiin.js；TFLAG:0 口内射精由
   // 奉仕系指令置位——J12 前游玩不可达，守卫自守）
   await seiin_start();
 
@@ -2672,7 +2643,7 @@ function master_flag_check() {
   }
   game.train.主人经验 = tflag(30) + tflag(29) * q;
 
-  // :1633-1640 射精系 TFLAG 的经验加算（TFLAG:0-4/9 恒 0，循环 1:1 保留）
+  // 射精系 TFLAG 的经验加算（TFLAG:0-4/9 恒 0，循环 1:1 保留）
   for (let count = 0; count < 5; count += 1) {
     if (tflag(count) > 0 && (era.get(`exp:${cid}:20`) || 0) >= PALAMLV[2]) {
       game.train.主人经验 = tflag(30) + tflag(count);
@@ -2682,7 +2653,7 @@ function master_flag_check() {
     game.train.主人经验 = tflag(30) + tflag(9);
   }
 
-  // :1642-1707 主人亲自调教时的好感度（CFLAG:2）累积
+  // 主人亲自调教时的好感度（CFLAG:2）累积
   if (era_flag.assiplay === 0 && !era.get(`tequip:${cid}:90`)) {
     let r = abl(10);
     // 素质增减（1:1 清单）
@@ -2978,7 +2949,7 @@ function show_source() {
   if (src(15) > 0) {
     parts.push(`反感追加(${src(15)})`);
   }
-  era.print(parts.join('') + '　'); // :2175 PRINTL（行尾以全角空格收行）
+  era.print(parts.join('') + '　'); // PRINTL（行尾以全角空格收行）
 }
 
 // @SOUL_DISLOCATION_DEBUFF（SUB2:350-356）：灵魂错位等级（EX_TALENT:0，
@@ -3112,7 +3083,7 @@ function palam_up_check() {
       const u = up(upid);
       const d = down(upid);
       const post = old + u - d;
-      // :2230-2231 PALAM += UP / PALAM -= DOWN —— ere 侧当场结算
+      // PALAM += UP / PALAM -= DOWN —— ere 侧当场结算
       era.set(`palam:${cid}:${upid}`, post);
       era.print(
         name +
@@ -3202,13 +3173,13 @@ on('SOURCE_CHECK', async () => {
   player = era_flag.player;
   down_map.clear();
 
-  // :11-12 指令口上（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM——真身在
+  // 指令口上（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM——真身在
   // kojo/kojo-system.js，#46：总开关 + 存在判定 + 性格分发，K3/K5 已实现）
   if ((era.get('flag:7') || 0) > 0) {
     await kojo_message_com();
   }
 
-  // :19-51 避孕套判定（#461 落真身）。谁在戴：TEQUIP:35（主人避孕套，属
+  // 避孕套判定（#461 落真身）。谁在戴：TEQUIP:35（主人避孕套，属
   // event 域，本域内直写）/ TEQUIP:36（助手避孕套，属 train 域，跨域写走
   // #461 新补门面）命中同一组射精类 TFLAG 即清位。TFLAG:0/1/2/4/5/7/8/9
   // 属 train 域、TFLAG:18 属 dungeon 域，读写均走各自门面
@@ -3263,11 +3234,11 @@ on('SOURCE_CHECK', async () => {
     game.train.助手射精 = 0;
   }
 
-  // :56 CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线（排版近似，记名差异
+  // CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线（排版近似，记名差异
   // 见 issue #45；TRAIN_MESSAGE_B/A 的同类分隔线同此）
   era.drawLine();
 
-  // :58-123 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
+  // 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
   // 接通）：按原作链序遍历装备位。EQUIP_COM_CHAIN 的每个号都已注册进
   // equip_com_family（道具/SM/特殊/重度/触手各族的 EQUIP_COM 注册），链上
   // 不再有缺失位——缺位回落分支随存根机制一并删除（#638）
@@ -3278,12 +3249,12 @@ on('SOURCE_CHECK', async () => {
     await equip_com_family.call(com);
   }
 
-  // :128-130 调教者侧检查三连
+  // 调教者侧检查三连
   source_sex_check();
   player_skill_check();
   master_skill_check();
 
-  // :132-144 服装（CFLAG:42 == 11 && CFLAG:40 & 64 的茲古着ぐるみ减益）：
+  // 服装（CFLAG:42 == 11 && CFLAG:40 & 64 的茲古着ぐるみ减益）：
   // 着衣位无写入路径，1:1 保留判据
   if (
     (era.get(`cflag:${cid}:42`) || 0) === 11 &&
@@ -3298,22 +3269,22 @@ on('SOURCE_CHECK', async () => {
     }
   }
 
-  // :148 / :152 / :157-158 近亲与处女丧失（守卫 1:1，正文登记）
+  // 近亲与处女丧失（守卫 1:1，正文登记）
   incest_sex_check();
   lost_virgin_check();
-  // :160-161 初吻（TFLAG:13 由接吻指令置位）
+  // 初吻（TFLAG:13 由接吻指令置位）
   if (tflag(13)) {
     era.print('初吻');
   }
 
-  // :162-186 快乐源的换算（C/V/A/B/FREE）
+  // 快乐源的换算（C/V/A/B/FREE）
   source_check_up_c();
   source_check_up_v();
   source_check_up_a();
   source_check_up_b();
   source_check_up_free();
 
-  // :188-206 同一指令连续 / 气力 0 的快乐减半
+  // 同一指令连续 / 气力 0 的快乐减半
   if (era_flag.selectcom === era_flag.prevcom && tflag(201) !== 1) {
     set_up(0, idiv(up(0), 2));
     set_up(1, idiv(up(1), 2));
@@ -3327,7 +3298,7 @@ on('SOURCE_CHECK', async () => {
     set_up(14, idiv(up(14), 2));
   }
 
-  // :210-218 相性（快乐系，RELATION:PLAYER）
+  // 相性（快乐系，RELATION:PLAYER）
   const relation_p = era.get(`relation:${cid}:${player}`) || 0;
   if (relation_p !== 0 && tflag(201) !== 1) {
     set_up(0, idiv(up(0) * relation_p, 100));
@@ -3336,21 +3307,21 @@ on('SOURCE_CHECK', async () => {
     set_up(14, idiv(up(14) * relation_p, 100));
   }
 
-  // :225 / :230 素质乘算（快乐系）与爱液处理
+  // 素质乘算（快乐系）与爱液处理
   up_talent_cva_check();
   love_moist_check_up();
 
-  // :235 绝顶
+  // 绝顶
   await ex_check_up();
 
-  // :238-252 调教对象的射精/喷乳/蠕虫出産
+  // 调教对象的射精/喷乳/蠕虫出産
   target_ejac_check();
   target_milk_check();
   await target_wormbaby_check();
-  // :254-255 主人调教的好感度累积
+  // 主人调教的好感度累积
   master_flag_check();
 
-  // :260-315 情爱以下全部源换算
+  // 情爱以下全部源换算
   source_check_up_love();
   source_check_up_impulsive();
   source_check_up_achieve();
@@ -3364,10 +3335,10 @@ on('SOURCE_CHECK', async () => {
   source_check_up_deviate();
   source_check_up_like();
 
-  // :326 素质乘算（全参数）
+  // 素质乘算（全参数）
   up_talent_check();
 
-  // :331-345 相性（感情系：恭顺/欲情/习得/反感/不快/抑郁）
+  // 相性（感情系：恭顺/欲情/习得/反感/不快/抑郁）
   if (relation_p !== 0) {
     set_up(4, idiv(up(4) * relation_p, 100));
     set_up(5, idiv(up(5) * relation_p, 100));
@@ -3377,18 +3348,18 @@ on('SOURCE_CHECK', async () => {
     set_up(13, idiv(up(13) * 100, relation_p));
   }
 
-  // :352-357 同一指令连续（感情系减半）
+  // 同一指令连续（感情系减半）
   if (era_flag.selectcom === era_flag.prevcom) {
     for (const k of [4, 5, 6, 7, 8]) {
       set_up(k, idiv(up(k), 2));
     }
   }
 
-  // :363 TFLAG:59 = PREVCOM（读的是**旧值**——PREVCOM 的更新在其后 :545，
+  // TFLAG:59 = PREVCOM（读的是**旧值**——PREVCOM 的更新在其后 :545，
   // ere 侧由回合循环承载，见 train-loop.js 步骤 13）
   era.set('tflag:59', era_flag.prevcom);
 
-  // :377-387 气力 0 的感情减半与损耗加倍
+  // 气力 0 的感情减半与损耗加倍
   if ((era.get(`base:${cid}:1`) || 0) <= 0) {
     for (const k of [3, 4, 5, 7, 9, 13]) {
       set_up(k, idiv(up(k), 2));
@@ -3396,12 +3367,12 @@ on('SOURCE_CHECK', async () => {
     set_lose(0, lose(0) * 2 + 80);
   }
 
-  // :393 灵魂错位
+  // 灵魂错位
   soul_dislocation_debuff();
-  // :398 失神检查（J6 真身，system/train/passout.js——TFLAG:899 的写入
+  // 失神检查（J6 真身，system/train/passout.js——TFLAG:899 的写入
   // 路径，#213 七道守卫第四道的置位者）
   await passout_check();
-  // :400-401 野外 PLAY 中失神 → 解除并带回
+  // 野外 PLAY 中失神 → 解除并带回
   if (
     (era.get(`tequip:${cid}:54`) || 0) > 0 &&
     (era.get('tflag:899') || 0) > 0
@@ -3409,10 +3380,10 @@ on('SOURCE_CHECK', async () => {
     await passout_outdoor();
   }
 
-  // :406 苦痛的追加损耗
+  // 苦痛的追加损耗
   pain_damage_check_up();
 
-  // :411-412 体力气力扣减（deltabase → base 当场结算并清零，钳 0..maxbase
+  // 体力气力扣减（deltabase → base 当场结算并清零，钳 0..maxbase
   // ——引擎 nextTurnInTrain 的同款语义，见文件头）。损耗值先快照——:552 的
   // 损耗条在扣减之后还要读 LOSEBASE，原作的 LOSEBASE 独立存活于扣减后
   const lose0 = Math.max(lose(0), 0);
@@ -3431,7 +3402,7 @@ on('SOURCE_CHECK', async () => {
     }
   }
 
-  // :415-424 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——判据
+  // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——判据
   // 1:1 保留）
   era.set('tflag:60', 0);
   if (
@@ -3445,7 +3416,7 @@ on('SOURCE_CHECK', async () => {
     }
   }
 
-  // :426-473 对象侧避孕套：目标射精先消耗避孕套，并清掉 TFLAG:10；后续
+  // 对象侧避孕套：目标射精先消耗避孕套，并清掉 TFLAG:10；后续
   // 内射链看的是清零后的值（原作顺序不可调整）。TEQUIP:37 属 train，
   // source-check 是 system 域，故跨域写走生成门面。
   if (chara(cid).train.对象避孕套 && tflag(10)) {
@@ -3486,10 +3457,10 @@ on('SOURCE_CHECK', async () => {
     chara(era_flag.assi).system.对象膣内射精 += tflag(10);
   }
 
-  // :476 调教文本的后半
+  // 调教文本的后半
   await train_message_a();
 
-  // :482-497 失神文本（J6 真身）。两臂（TFLAG:899 < 1 与 ≥ 1）都调
+  // 失神文本（J6 真身）。两臂（TFLAG:899 < 1 与 ≥ 1）都调
   // PASSOUT_TEXT——未失神回合跑快照 else 段（装备变化的 -1 标记），失神
   // 中另按相位调参数暂存（== 2）/ 回流（== 3，含刻印复查与口上）
   await passout_text();
@@ -3509,32 +3480,32 @@ on('SOURCE_CHECK', async () => {
     mark_got_check();
     await kojo_message_markcng();
   }
-  // :499 绝顶漏尿
+  // 绝顶漏尿
   await pissing_ecst_check();
 
-  // :504-513 参数变动口上 / 刻印取得口上（FLAG:7，#46/#232）
+  // 参数变动口上 / 刻印取得口上（FLAG:7，#46/#232）
   if ((era.get('flag:7') || 0) > 0) {
     await kojo_message_palamcng();
   }
 
-  // :510 刻印取得
+  // 刻印取得
   mark_got_check();
   if ((era.get('flag:7') || 0) > 0) {
     await kojo_message_markcng();
   }
 
-  // :518 经验检查；:523 容易陷落
+  // 经验检查；:523 容易陷落
   exp_got_check();
   sokuochi_check();
 
-  // :525 PRINTW ‥×39（读键；点线逐字）
+  // PRINTW ‥×39（读键；点线逐字）
   era.print('‥'.repeat(39));
   await era.waitAnyKey();
 
-  // :530 源一览
+  // 源一览
   show_source();
 
-  // :536-543 相性与连续执行的提示行
+  // 相性与连续执行的提示行
   if (relation_p !== 0) {
     era.print(`＜相性${idiv(relation_p, 100)}.${relation_p % 100}倍＞`);
   }
@@ -3542,11 +3513,11 @@ on('SOURCE_CHECK', async () => {
     era.print('＜连续执行同一指令＞');
   }
 
-  // :545 PREVCOM = SELECTCOM —— 由回合循环承载（train-loop 步骤 13），
+  // PREVCOM = SELECTCOM —— 由回合循环承载（train-loop 步骤 13），
   // 此处不重复写；:547-549 TFLAG:50（上次调教者是主人还是助手）
   game.system.上次调教者是助手 = era_flag.assiplay ? 1 : 0;
 
-  // :552-567 体力气力损耗条（含濒死/死亡星标；死亡档显示 BAR 0）——条与
+  // 体力气力损耗条（含濒死/死亡星标；死亡档显示 BAR 0）——条与
   // 「 -N 」拼为一行（原作 PRINT/PRINTFORM 同行累积 + PRINTL 收行）。
   // 损耗值用 :411 扣减前的快照（见上）
   const base0 = era.get(`base:${cid}:0`) || 0;
@@ -3566,7 +3537,7 @@ on('SOURCE_CHECK', async () => {
     era.print(' 气力[................................] ★气力０★ ');
   }
 
-  // :576 参数变动的展示与结算
+  // 参数变动的展示与结算
   palam_up_check();
 });
 
@@ -3581,18 +3552,18 @@ on('SOURCE_CHECK_AUTO', async () => {
   player = era_flag.player;
   down_map.clear();
 
-  // :2601-2602 调教者能力检查
+  // 调教者能力检查
   player_skill_check();
   master_skill_check();
 
-  // :2607-2627 快乐源换算（C/V/A/B/FREE）
+  // 快乐源换算（C/V/A/B/FREE）
   source_check_up_c();
   source_check_up_v();
   source_check_up_a();
   source_check_up_b();
   source_check_up_free();
 
-  // :2632-2638 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
+  // 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
   if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {
     set_up(0, idiv(up(0), 2));
     set_up(1, idiv(up(1), 2));
@@ -3600,20 +3571,20 @@ on('SOURCE_CHECK_AUTO', async () => {
     set_up(14, idiv(up(14), 2));
   }
 
-  // :2643 / :2648 素质乘算（快乐系）与爱液处理
+  // 素质乘算（快乐系）与爱液处理
   up_talent_cva_check();
   love_moist_check_up();
 
-  // :2653 绝顶
+  // 绝顶
   await ex_check_up();
 
-  // :2658-2668 调教对象的射精/喷乳/蠕虫出産（#462 真身化，原「素质门槛
+  // 调教对象的射精/喷乳/蠕虫出産（#462 真身化，原「素质门槛
   // 不可达」登记已撤销——三个检查的守卫真身自带早退）
   target_ejac_check();
   target_milk_check();
   await target_wormbaby_check();
 
-  // :2673-2723 情爱以下全部源换算
+  // 情爱以下全部源换算
   source_check_up_love();
   source_check_up_impulsive();
   source_check_up_achieve();
@@ -3626,21 +3597,21 @@ on('SOURCE_CHECK_AUTO', async () => {
   source_check_up_submit();
   source_check_up_deviate();
 
-  // :2728-2735 反感／恭顺——AUTO 专属门槛（manual 路径的 ANTI 调用被原作
+  // 反感／恭顺——AUTO 专属门槛（manual 路径的 ANTI 调用被原作
   // 者注释掉，LIKE 在 manual 无条件调用；两者在 AUTO 都受同一门槛限制）
   if ((era.get(`cflag:${cid}:1`) || 0) === 0 && player === MASTER) {
     source_check_up_anti();
     source_check_up_like();
   }
 
-  // :2740 素质乘算（全参数）
+  // 素质乘算（全参数）
   up_talent_check();
 
-  // :2744-2747 自动调教次数的倍率（原作注释：放在绝顶处理之后会绝顶过度，
+  // 自动调教次数的倍率（原作注释：放在绝顶处理之后会绝顶过度，
   // 故放在这里；因此本函数不影响 :2653 的 EX_CHECK_UP 判定）
   auto_num_check(cid);
 
-  // :2750-2763 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
+  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
   // TFLAG:201 豁免——原作 1:1 保留）
   if ((era.get(`base:${cid}:1`) || 0) <= 0) {
     for (const k of [3, 4, 5, 7, 9, 13]) {
@@ -3649,10 +3620,10 @@ on('SOURCE_CHECK_AUTO', async () => {
     set_lose(0, lose(0) * 2 + 80);
   }
 
-  // :2768 苦痛的追加损耗
+  // 苦痛的追加损耗
   pain_damage_check_up();
 
-  // :2773-2774 体力气力扣减（deltabase → base 当场结算并清零，钳
+  // 体力气力扣减（deltabase → base 当场结算并清零，钳
   // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要
   // manual 那两个 lose0/lose1 快照变量）
   for (const k of [0, 1]) {
@@ -3669,17 +3640,17 @@ on('SOURCE_CHECK_AUTO', async () => {
     }
   }
 
-  // :2779 绝顶时的漏尿处理（#462 真身化）
+  // 绝顶时的漏尿处理（#462 真身化）
   await pissing_ecst_check();
-  // :2784 刻印取得检查
+  // 刻印取得检查
   mark_got_check();
-  // :2790 / :2795 经验与陷落检查（#462 真身化）
+  // 经验与陷落检查（#462 真身化）
   exp_got_check();
   sokuochi_check();
 
-  // :2800 调教源展示
+  // 调教源展示
   show_source();
-  // :2805 参数变动的静默结算（含 DOWN，不打印）
+  // 参数变动的静默结算（含 DOWN，不打印）
   palam_up_check_mini();
 });
 

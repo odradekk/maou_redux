@@ -2,9 +2,6 @@
  * @file 统一卖春积极性（issue #545，阶段 6 S4）：名册页 [1600] 的批量卖春
  * 积极性设置流程。
  *
- * 源: target/ERB/魔改新增/统一卖春积极性.ERB 全 1 函数——
- *     @统一卖春积极性（:2-76，文件首行是空行）。
- *
  * 调用方：ere/page/page-chara-info.js 的 CHARA_INFO 分发（result === 1600，
  * 源 :62-63 `CALL 统一卖春积极性`）。函数尾 `JUMP CHARA_INFO`（:76）＝重进
  * 名册；名册侧的 NO_PAGE/SORT_SELECT/SORT_ACT 都是**静态变量**（指南
@@ -34,76 +31,76 @@ const { chara } = require('#/facade/chara');
  * @returns {Promise<void>}
  */
 async function uniform_bitch_level() {
-  era.print('统一设置迷宫内角色的"卖春积极性"'); // :4
+  era.print('统一设置迷宫内角色的"卖春积极性"');
   era.printMultiColumns([
     {
       type: 'button',
       accelerator: 2000,
-      content: '[ 全侵攻中的勇者 ]', // :5
+      content: '[ 全侵攻中的勇者 ]',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
       accelerator: 2001,
-      content: '[ 全迎击中的奴隶 ]', // :6
+      content: '[ 全迎击中的奴隶 ]',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
       accelerator: 2002,
-      content: '[ 所有侵攻与迎击者 ]', // :7
+      content: '[ 所有侵攻与迎击者 ]',
       config: { align: 'left', width: 6 },
     },
     {
       type: 'button',
       accelerator: 2003,
-      content: '[ 取消设置 ]', // :8（原文「取消設置」，按 #60 归一为简体）
+      content: '[ 取消设置 ]', // （原文「取消設置」，按 #60 归一为简体）
       config: { align: 'left', width: 6 },
     },
   ]);
-  era.println(); // :9
-  const target = await era.input(); // :10
+  era.println();
+  const target = await era.input();
 
-  // :11/:32/:53 三支范围分支；2003 与其余输入落到空 ELSE（:74-75），
+  // 三支范围分支；2003 与其余输入落到空 ELSE（:74-75），
   // 不动作直接返回（重进名册由调用方处理）
   let scope;
   if (target === 2000) {
-    scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' }; // :26/:31
+    scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' };
   } else if (target === 2001) {
-    scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' }; // :47/:52
+    scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' };
   } else if (target === 2002) {
     scope = {
       states: [2, 3],
       message: '所有侵攻与迎击者（不含以后新入迷宫的对象）',
-    }; // :68/:73
+    };
   } else {
     return;
   }
 
-  era.print('要将积极性设置为多少？'); // :12/:33/:54
+  era.print('要将积极性设置为多少？');
   era.printMultiColumns(
     [0, 1, 2, 3, 4, 5].map((level) => ({
       type: 'button',
-      // :13-18/:34-39/:55-60 的 [0]-[5] 按钮；正文不写编号（文件头）
+      // 的 [0]-[5] 按钮；正文不写编号（文件头）
       accelerator: level,
       content: '',
       config: { align: 'left', width: 4 },
     })),
   );
   era.println(); // 空行（:9 同款）
-  const level = await era.input(); // :20（白名单下恒 0-5，见文件头）
+  const level = await era.input(); // （白名单下恒 0-5，见文件头）
 
-  // :23-29/:44-50/:65-71 REPEAT CHARANUM → SIF COUNT == MASTER CONTINUE →
+  // REPEAT CHARANUM → SIF COUNT == MASTER CONTINUE →
   // 状态判据命中才写 CFLAG:COUNT:120 = N:9
   for (const cid of era.getAddedCharacters()) {
-    if (cid === 0) continue; // :24
+    if (cid === 0) continue;
     const state = chara(cid).invasion.状态;
     if (scope.states.includes(state)) {
-      chara(cid).patch.卖春积极性 = level; // :27/:48/:69
+      chara(cid).patch.卖春积极性 = level;
     }
   }
   await era.printAndWait(
-    `已将当前迷宫${scope.message}，卖春积极性全设置为${level}了`, // :31/:52/:73
+    `已将当前迷宫${scope.message}，卖春积极性全设置为${level}了`,
   );
 }
 

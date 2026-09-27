@@ -1,17 +1,6 @@
 /**
  * @file 自动调教系统（EVENT_AUTOTRAIN.ERB 与各 COMF AUTO 移植）。
  *
- * 源: target/ERB/EVENT/EVENT_AUTOTRAIN.ERB
- *     @AUTOTRAIN（:11-47）
- *     @FORMAT_AUTOTRAIN（:51-87）
- *     @BEFORE_AUTOTRAIN（:91-104）
- *     @AFTER_AUTOTRAIN（:108-159）
- *     target/ERB/調教相關/COMF0_愛撫.ERB @COM0_AUTO
- *     target/ERB/調教相關/COMF3_自慰.ERB @COM3_AUTO
- *     target/ERB/調教相關/COMF13_アナルワーム.ERB @COM13_AUTO
- *     target/ERB/調教相關/COMF50_ローション.ERB @COM50_AUTO
- *     target/ERB/調教相關/COMF63_貝あわせ.ERB @COM63_AUTO
- *     target/ERB/迷宮/DUNGEON_TOWN.ERB @RAND_AUTOTRAIN
  */
 
 const era = require('#/era-electron');
@@ -85,7 +74,7 @@ function format_autotrain() {
   chara(target).train.母乳槽 = 0;
   chara(0).train.触手射精槽 = 0;
 
-  // :64-65 LOSEBASE:0/1 = 0（损耗槽归零；deltabase 是负值通道）
+  // LOSEBASE:0/1 = 0（损耗槽归零；deltabase 是负值通道）
   era.set(`deltabase:${target}:0`, 0);
   era.set(`deltabase:${target}:1`, 0);
 
@@ -149,7 +138,7 @@ async function after_autotrain(target) {
   juel_check_main(target);
 
   if ((era.get('flag:5') || 0) & (1 << 35)) {
-    await auto_ablup(); // :150-151 SIF GETBIT(FLAG:5,35) → CALL AUTO_ABLUP
+    await auto_ablup(); // SIF GETBIT(FLAG:5,35) → CALL AUTO_ABLUP
   }
 
   if ((era.get(`cflag:${target}:667`) || 0) > 50) {

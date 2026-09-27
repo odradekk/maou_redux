@@ -1,8 +1,6 @@
 /**
  * @file 亲族关系判定共用子程序。
  *
- * 源: target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB  @INCEST（:324-343）
- *
  * TFLAG:14 = 从当前 TARGET 看 PLAYER 的亲族关系：0 无、1 父母、2 子女、
  * 3 兄姐、4 弟妹、5 表姐、6 表弟。SOURCE_CHECK 与性交事后处理都会调用，
  * 因此不能各自复制或打桩。

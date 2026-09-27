@@ -1,11 +1,6 @@
 /**
  * ere/chara/chara-custom2.js 的行为测试（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB 的 8 个函数：
- *     @CHAR_CUSTOM / @CHAR_CUSTOM_TALENT_DEAL / @CONFLICT_CHECK /
- *     @CHAR_CUSTOM_TALENT_PAGE / @PRINT_SINGLE_TALENT / @TALENT_EMPTY_CHECK /
- *     @CHARA_COST / @CHARA_FIRST_XP
- *
  * 缝 = test/helpers/era-fixture.js ＋ 三个随机源形参（RAND:3 / RAND:6 / RAND:2）。
  * 随机上界单独钉：`rand(n)` 捕获实参 n（只取上界不取命中）。
  */

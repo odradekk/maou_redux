@@ -1,11 +1,6 @@
 /**
  * @file 口上系统的公共底座：口上总开关、性格编号解析、指令口上的分发。
  *
- * 源: target/ERB/EVENT/EVENT_K.ERB  @EVENTSHOP（:12-15，#PRI——总开关默认开）
- *     @GET_KOJO_NUM（:86-144；活代码是 :89-91 的参缺省与 :134-144 的
- *     EX 扫描 + 素质扫描，:92-131 的 ELSEIF 长链在原作就是注释）
- *     @KOJO_MESSAGE_COM（:150-162——两道守卫 + TRYCALLFORM 分发）
- *
  * 调用点：@SOURCE_CHECK:11-12（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM，
  * ere/event/source-check.js）。
  *
@@ -500,11 +495,11 @@ function kojo_handler_id(arg = -1) {
  * @returns {number} 口上编号（普通 100-119；EX 1001-1700；无命中时 0）
  */
 function get_kojo_num(arg = -1) {
-  const cid = arg < 0 ? era_flag.target : arg; // :89-91
-  let local = get_ex_kojo_num(cid); // :135 EX 口上先判，普通素质后写覆盖
+  const cid = arg < 0 ? era_flag.target : arg;
+  let local = get_ex_kojo_num(cid); // EX 口上先判，普通素质后写覆盖
   for (let count = 160; count < 180; count += 1) {
     if (era.get(`talent:${cid}:${count}`)) {
-      local = count - 60; // :139
+      local = count - 60;
     }
   }
   return local;
@@ -522,13 +517,13 @@ function get_kojo_num(arg = -1) {
  * @returns {Promise<number>} 0（:152/:157/:161 的 RETURN 0；调用方不读）
  */
 async function kojo_message_com(rand) {
-  // :151-152 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）
+  // 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
 
-  // :155-157 第二道守卫：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 臂）
-  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
+  // 第二道守卫：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 臂）
+  const local = get_kojo_num(); // GET_KOJO_NUM()（参缺省 → TARGET）
   if (
     (era.get(`flag:${local}`) || 0) === 0 &&
     era_exflag.get(local - 900) === 0
@@ -536,7 +531,7 @@ async function kojo_message_com(rand) {
     return 0;
   }
 
-  // :160-161 キャラ別：TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100}
+  // キャラ別：TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100}
   if (in_kojo_window(local)) {
     await kojo_message_com_family.call(local - 100, {
       whenMissing: 0,
@@ -612,7 +607,7 @@ async function kojo_message_palamcng(rand) {
     return 0;
   }
   const local = get_kojo_num();
-  // :169-181 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
+  // 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
   // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
   // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
   if (
@@ -649,10 +644,10 @@ async function kojo_message_markcng(rand) {
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function kojo_event_com() {
-  // :209-219 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）
+  // 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）
   const local = get_kojo_num();
 
-  // :218 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
+  // 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
   if (in_kojo_window(local)) {
     await kojo_event_com_family.call(local - 100, { whenMissing: 0, args: [] });
   }

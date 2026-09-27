@@ -1,14 +1,6 @@
 /**
  * @file 外观信息式中函数（issue #389，N5）：`%GET_LOOK_INFO(ARG, ARGS)%`。
  *
- * 源: target/ERB/キャラ関数/LOOK.ERB  @GET_LOOK_INFO（:2885-3775，
- *     `#FUNCTIONS` 于 :2886——**返回字符串的式中函数**，见
- *     .agents/skills/emuera-basic-agent-guide 的
- *     references/core-concepts/user-defined-functions.md：`#FUNCTION` 返回
- *     整数、`#FUNCTIONS` 返回字符串，两者都以 RETURNF 结束、不经 CALL 调用
- *     而是直接写在表达式里。全库 48 处调用点全部是 `%GET_LOOK_INFO(…)%` 形态，
- *     `CALL GET_LOOK_INFO` 零处）。
- *
  * 本文件只承载这一个纯计算函数：它被 `ere/chara/look.js`（同源文件的其余
  * 五个函数）与八个外部模块消费，且 **被 ere/dungeon/dungeon-lovers.js 反向
  * 依赖**——LOOK_INFO_LOVE 要用 dungeon-lovers 的 LOVER_NAMES，若两者同处一个
@@ -58,34 +50,34 @@ const ERROR = 'ERROR';
 
 /** 定义时的 kind 名（`ELSEIF ARGS == "<名>"` 的实参；源 :2894 起） */
 const KIND = {
-  HAIR_COLOR_ALT: '发色(颜色)', // :2894
-  HAIR_COLOR: '头发颜色', // :2922
-  HAIR_STYLE_STATE: '头发状态', // :2950
-  HAIR_LENGTH: '头发长度', // :2967
-  HAIR_CUT: '头发修剪方式', // :2978
-  HAIR_STYLE: '发型', // :2991
-  EYES: '目', // :3020
-  EYE_COLOR: '瞳色', // :3041
-  LIPS: '唇', // :3058
-  BODY: '体型', // :3071
-  NIPPLE: '乳头', // :3082
-  PUBIC: '阴毛状态', // :3095
-  CHARM_POINT: '魅力点', // :3114
-  HABIT: '癖', // :3180
-  RACE: '种族', // :3253
-  RACE2: '种族2', // :3285
-  RACE12: '种族12', // :3309
-  PREV_JOB: '成为勇者前的生活', // :3315
-  HERO_REASON: '成为勇者的契机', // :3390
-  PENIS: '阴茎的状态', // :3447
-  JOB: '职业', // :3460
-  PERSONALITY: '性格', // :3473
-  MARRIAGE_HISTORY: '婚史', // :3490
-  FAMILY: '家族', // :3562
-  ORIGIN_RACE: '原种族', // :3674
-  NOW_RACE: '现种族', // :3704
-  COMMON_SENSE_BATTLE: '常识改变【战斗】', // :3710
-  COMMON_SENSE_DAILY: '常识改变【日常】', // :3739
+  HAIR_COLOR_ALT: '发色(颜色)',
+  HAIR_COLOR: '头发颜色',
+  HAIR_STYLE_STATE: '头发状态',
+  HAIR_LENGTH: '头发长度',
+  HAIR_CUT: '头发修剪方式',
+  HAIR_STYLE: '发型',
+  EYES: '目',
+  EYE_COLOR: '瞳色',
+  LIPS: '唇',
+  BODY: '体型',
+  NIPPLE: '乳头',
+  PUBIC: '阴毛状态',
+  CHARM_POINT: '魅力点',
+  HABIT: '癖',
+  RACE: '种族',
+  RACE2: '种族2',
+  RACE12: '种族12',
+  PREV_JOB: '成为勇者前的生活',
+  HERO_REASON: '成为勇者的契机',
+  PENIS: '阴茎的状态',
+  JOB: '职业',
+  PERSONALITY: '性格',
+  MARRIAGE_HISTORY: '婚史',
+  FAMILY: '家族',
+  ORIGIN_RACE: '原种族',
+  NOW_RACE: '现种族',
+  COMMON_SENSE_BATTLE: '常识改变【战斗】',
+  COMMON_SENSE_DAILY: '常识改变【日常】',
 };
 
 /** 素质下标（yml/Talent.yml 的名字表；源里混用列名与下标，此处统一取下标的字面量） */
@@ -162,7 +154,7 @@ const HAIR_COLOR_ALT_MAP = {
   9: '白色',
   10: '暗金色',
   11: '粉色',
-}; // :2895-2917
+};
 
 const HAIR_COLOR_MAP = {
   1: '金发',
@@ -176,7 +168,7 @@ const HAIR_COLOR_MAP = {
   9: '白发',
   10: '暗金发',
   11: '粉发',
-}; // :2923-2944
+};
 
 const HAIR_STATE_MAP = {
   1: '直发',
@@ -185,9 +177,9 @@ const HAIR_STATE_MAP = {
   4: '外卷发',
   5: '天然卷',
   6: '大波浪',
-}; // :2951-2963
+};
 
-const HAIR_CUT_MAP = { 1: '基本剪法', 2: '齐剪', 3: '层剪', 4: '碎发' }; // :2979-2987
+const HAIR_CUT_MAP = { 1: '基本剪法', 2: '齐剪', 3: '层剪', 4: '碎发' };
 
 const HAIR_STYLE_MAP = {
   1: '自然',
@@ -202,7 +194,7 @@ const HAIR_STYLE_MAP = {
   10: '侧束发',
   11: '鱼骨辫',
   12: '卷发',
-}; // :2992-3016
+};
 
 const EYES_MAP = {
   1: '细长眼',
@@ -213,7 +205,7 @@ const EYES_MAP = {
   6: '标准眼',
   7: '三白眼',
   8: '下垂眼',
-}; // :3021-3037
+};
 
 const EYE_COLOR_MAP = {
   1: '蓝色',
@@ -222,11 +214,11 @@ const EYE_COLOR_MAP = {
   4: '金色',
   5: '红色',
   6: '黑色',
-}; // :3042-3054
+};
 
-const LIPS_MAP = { 1: '肉感的', 2: '薄的', 3: '丰润的', 4: '标准' }; // :3059-3067
+const LIPS_MAP = { 1: '肉感的', 2: '薄的', 3: '丰润的', 4: '标准' };
 
-const NIPPLE_MAP = { 1: '粉红色', 2: '褐色', 3: '标准', 4: '凹陷' }; // :3083-3091
+const NIPPLE_MAP = { 1: '粉红色', 2: '褐色', 3: '标准', 4: '凹陷' };
 
 const CHARM_POINT_MAP = {
   1: '皮肤',
@@ -257,7 +249,7 @@ const CHARM_POINT_MAP = {
   26: '眉毛',
   27: '指甲',
   28: '寝癖',
-}; // :3115-3171
+};
 
 /** 魅力点 CASE 29（:3172-3176）：男人/扶她看自己的，其余看私处 */
 const CHARM_POINT_PENIS = '自己的鸡鸡';
@@ -298,7 +290,7 @@ const HABIT_MAP = {
   32: '估算物体长度',
   33: '说话越说越近',
   34: '舔手背',
-}; // :3181-3237
+};
 
 const RACE_MAP = {
   0: '人类',
@@ -313,7 +305,7 @@ const RACE_MAP = {
   9: '魔族',
   10: '霍比特人',
   11: '矮人',
-}; // :3255-3279（"种族" 与 "原种族" :3675-3699 共用同一张表）
+}; // （"种族" 与 "原种族" :3675-3699 共用同一张表）
 
 const RACE2_MAP = {
   1: '兽人',
@@ -328,7 +320,7 @@ const RACE2_MAP = {
   9: '魔族',
   10: '魔兽',
   12: '魔兽',
-}; // :3287-3305
+};
 
 const PREV_JOB_MAP = {
   0: '不明',
@@ -354,7 +346,7 @@ const PREV_JOB_MAP = {
   92: '爱的结晶',
   93: '交欢的副产品',
   94: '魔族的孽种',
-}; // :3316-3386 的性别中立档
+}; // 的性别中立档
 
 /** 修道女/巫女/圣女/主妇四档按性别分叉（源 :3336-3340、:3356-3360、:3366-3370、:3378-3382） */
 const PREV_JOB_SISTER = [2, '修士', '修女'];
@@ -389,9 +381,9 @@ const HERO_REASON_MAP = {
   92: '为了出人头地',
   93: '为了报恩',
   94: '被恶魔诱惑',
-}; // :3391-3443
+};
 
-const PENIS_MAP = { 1: '巨根', 2: '短小包茎', 3: '包茎', 4: '马阴茎' }; // :3448-3456
+const PENIS_MAP = { 1: '巨根', 2: '短小包茎', 3: '包茎', 4: '马阴茎' };
 
 /** 常识改变【战斗】（:3711-3735）：3-11 档源里显式留空，CASEELSE 回「不改变」 */
 const COMMON_SENSE_BATTLE_MAP = {
@@ -505,16 +497,14 @@ function family_suffix(count, single, label) {
 function get_look_info(cid, kind) {
   switch (kind) {
     case KIND.HAIR_COLOR_ALT:
-      // :2894-2921 发色（形容词形；与 "头发颜色" 是两个 kind，源里各一张表）
+      // 发色（形容词形；与 "头发颜色" 是两个 kind，源里各一张表）
       return HAIR_COLOR_ALT_MAP[talent(cid, T_头发颜色)] ?? '黑色';
     case KIND.HAIR_COLOR:
-      // :2922-2948
       return HAIR_COLOR_MAP[talent(cid, T_头发颜色)] ?? '黑发';
     case KIND.HAIR_STYLE_STATE:
-      // :2950-2966
       return HAIR_STATE_MAP[talent(cid, T_头发状态)] ?? ERROR;
     case KIND.HAIR_LENGTH: {
-      // :2967-2977 `CASE 1 TO 100` / `101 TO 200` / `201 TO 300`
+      // `CASE 1 TO 100` / `101 TO 200` / `201 TO 300`
       const v = talent(cid, T_头发长度);
       if (v >= 1 && v <= HAIR_LENGTH_SHORT_MAX) return '短';
       if (v >= 101 && v <= HAIR_LENGTH_MID_MAX) return '半长';
@@ -522,22 +512,16 @@ function get_look_info(cid, kind) {
       return ERROR;
     }
     case KIND.HAIR_CUT:
-      // :2978-2990
       return HAIR_CUT_MAP[talent(cid, T_头发修剪方式)] ?? ERROR;
     case KIND.HAIR_STYLE:
-      // :2991-3019
       return HAIR_STYLE_MAP[talent(cid, T_发型)] ?? ERROR;
     case KIND.EYES:
-      // :3020-3040
       return EYES_MAP[talent(cid, T_目)] ?? ERROR;
     case KIND.EYE_COLOR:
-      // :3041-3057
       return EYE_COLOR_MAP[talent(cid, T_瞳色)] ?? ERROR;
     case KIND.LIPS:
-      // :3058-3070
       return LIPS_MAP[talent(cid, T_唇)] ?? ERROR;
     case KIND.BODY: {
-      // :3071-3081
       const v = talent(cid, T_体型);
       if (v >= 1 && v <= BODY_SLIM_MAX) return '纤细';
       if (v >= 101 && v <= BODY_NORMAL_MAX) return '标准';
@@ -545,10 +529,9 @@ function get_look_info(cid, kind) {
       return ERROR;
     }
     case KIND.NIPPLE:
-      // :3082-3094
       return NIPPLE_MAP[talent(cid, T_乳头)] ?? ERROR;
     case KIND.PUBIC: {
-      // :3095-3113 `CASE 2 TO 20` 等六段闭区间（20/50/…/200 归前一段）
+      // `CASE 2 TO 20` 等六段闭区间（20/50/…/200 归前一段）
       const v = talent(cid, T_阴毛状态);
       if (v === 1) return '白虎';
       if (v >= 2 && v <= 20) return '胎毛';
@@ -560,10 +543,9 @@ function get_look_info(cid, kind) {
       return ERROR;
     }
     case KIND.CHARM_POINT: {
-      // :3114-3179
       const v = talent(cid, T_魅力点);
       if (v === 29) {
-        // :3172-3176 CASE 29 是源里唯一以 PRINT 出值的分支（本文件头已判等价）
+        // CASE 29 是源里唯一以 PRINT 出值的分支（本文件头已判等价）
         return talent(cid, T_扶她) === 1 || talent(cid, T_男人) === 1
           ? CHARM_POINT_PENIS
           : CHARM_POINT_VULVA;
@@ -571,21 +553,20 @@ function get_look_info(cid, kind) {
       return CHARM_POINT_MAP[v] ?? ERROR;
     }
     case KIND.HABIT:
-      // :3180-3252
       return HABIT_MAP[talent(cid, T_癖)] ?? ERROR;
     case KIND.RACE:
-      // :3253-3284（标号 $INFO_种族 :3254）
+      // （标号 $INFO_种族 :3254）
       return RACE_MAP[talent(cid, T_种族)] ?? ERROR;
     case KIND.RACE2: {
-      // :3285-3308（标号 $INFO_种族2 :3286）
+      // （标号 $INFO_种族2 :3286）
       const v = talent(cid, T_种族2);
       return RACE2_MAP[v] ?? `$${v}`; // CASEELSE = TOSTR(v, "$${0}")
     }
     case KIND.RACE12:
-      // :3309-3314 TALENT:220 为真走 种族2，否则走 种族
+      // TALENT:220 为真走 种族2，否则走 种族
       return get_look_info(cid, talent(cid, T_精英) ? KIND.RACE2 : KIND.RACE);
     case KIND.PREV_JOB: {
-      // :3315-3389：四档按性别分叉（男人走前一列）
+      // ：四档按性别分叉（男人走前一列）
       const v = talent(cid, T_成为勇者前的生活);
       const male = talent(cid, T_男人) !== 0;
       for (const [code, male_word, female_word] of [
@@ -599,13 +580,12 @@ function get_look_info(cid, kind) {
       return PREV_JOB_MAP[v] ?? ERROR;
     }
     case KIND.HERO_REASON:
-      // :3390-3446
       return HERO_REASON_MAP[talent(cid, T_成为勇者的契机)] ?? ERROR;
     case KIND.PENIS:
-      // :3447-3459：CASEELSE 是「普通」（不是 ERROR）
+      // ：CASEELSE 是「普通」（不是 ERROR）
       return PENIS_MAP[talent(cid, T_阴茎的状态)] ?? '普通';
     case KIND.JOB: {
-      // :3460-3472：扫 200..228 取**最后一个**真值档
+      // ：扫 200..228 取**最后一个**真值档
       let found = -1;
       for (let tc = JOB_RANGE.start; tc < JOB_RANGE.end; tc += 1) {
         if (talent(cid, tc)) found = tc;
@@ -615,7 +595,7 @@ function get_look_info(cid, kind) {
       return '无';
     }
     case KIND.PERSONALITY: {
-      // :3473-3489：先扫 160..178，全空再扫 10..18；都取最后一个真值档
+      // ：先扫 160..178，全空再扫 10..18；都取最后一个真值档
       let found = -1;
       for (
         let tc = PERSONALITY_RANGE.start;
@@ -636,7 +616,7 @@ function get_look_info(cid, kind) {
       return found >= 0 ? talentname(found) : '不明';
     }
     case KIND.MARRIAGE_HISTORY: {
-      // :3490-3561（TALENT:320 压缩家族码；与 CHARA_MARRIGE_BEFORE 同源不同式）
+      // （TALENT:320 压缩家族码；与 CHARA_MARRIGE_BEFORE 同源不同式）
       const family = talent(cid, T_家族构成);
       if (family % 10 === 0 && family !== 0) return '婚史保密';
       if (family === 0) return '无';
@@ -660,11 +640,10 @@ function get_look_info(cid, kind) {
       }
     }
     case KIND.FAMILY: {
-      // :3562-3673
       const father = talent(cid, T_父亲种族);
       const mother = talent(cid, T_母亲种族);
       if (father > 0 && mother > 0) {
-        // :3564-3587 双亲指定（>1000 是素质、否则是物品图鉴号）
+        // 双亲指定（>1000 是素质、否则是物品图鉴号）
         const parent_word = (code, suffix) => {
           if (code > 1000) return `${talentname(code - 1000)}${suffix}`;
           return `${itemname(code)}${suffix}`;
@@ -678,9 +657,9 @@ function get_look_info(cid, kind) {
       let out = '';
       const marriage = Math.trunc(family / 10000) % 10;
       const kind = Math.trunc(family / FAMILY_MARRIAGE_PLACE) % 10;
-      // :3599-3601-3621 夫の有無（LOCAL:1 == 1 与 == 3 两支同体）
+      // 夫の有無（LOCAL:1 == 1 与 == 3 两支同体）
       if (marriage === 1 || marriage === 3) out += spouse_word(kind);
-      // :3623-3672 娘/儿/姊/兄/妹/弟六段，位序见文件头注释的十进制编码
+      // 娘/儿/姊/兄/妹/弟六段，位序见文件头注释的十进制编码
       const names = [
         ['娘', '娘', FAMILY_CHILD_DIGITS[0]],
         ['儿', '儿', FAMILY_CHILD_DIGITS[1]],
@@ -692,30 +671,27 @@ function get_look_info(cid, kind) {
       for (const [single, label, place] of names) {
         out += family_suffix(Math.trunc(family / place) % 10, single, label);
       }
-      return out === '' ? '孤身一人' : out; // :3672-3673
+      return out === '' ? '孤身一人' : out;
     }
     case KIND.ORIGIN_RACE:
-      // :3674-3703：CASEELSE 是 `ARGS = "种族"; RESTART`（本文件头已判等价）
+      // ：CASEELSE 是 `ARGS = "种族"; RESTART`（本文件头已判等价）
       return RACE_MAP[talent(cid, T_原种族)] ?? get_look_info(cid, KIND.RACE);
     case KIND.NOW_RACE: {
-      // :3704-3709
       const v = talent(cid, T_现种族);
       return inrange(v, 100, 220) ? itemname(v) : ERROR;
     }
     case KIND.COMMON_SENSE_BATTLE:
-      // :3710-3738
       return (
         COMMON_SENSE_BATTLE_MAP[talent(cid, T_常识改变战斗)] ??
         COMMON_SENSE_BATTLE_DEFAULT
       );
     case KIND.COMMON_SENSE_DAILY:
-      // :3739-3765
       return (
         COMMON_SENSE_DAILY_MAP[talent(cid, T_常识改变日常)] ??
         COMMON_SENSE_DAILY_DEFAULT
       );
     default:
-      // :3772-3773 ELSE → LOCALS =（空串）
+      // ELSE → LOCALS =（空串）
       return '';
   }
 }

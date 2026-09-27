@@ -3,15 +3,6 @@
  * 导航（列表内容渲染真身；SHOW_CHARA_INFO 详情正文属 CHARA_INFO_SHOW
  * ver1.1.2.ERB，已随 #390 落地，本文件只调用）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB 全 9 函数——
- *     @CHARA_INFO（:4-113，主循环）/@SHOW_CHARA_INFO_LIST（:114-217）/
- *     @SHOW_CHARA_ACT_LIST（:218-382）/@CHARA_MARRIGE_BEFORE（:383-433，
- *     仅供 ACT_LIST 的婚姻括号列）/@SHOW_CHARA_MONEY_LIST（:434-595）/
- *     @SHOW_CHARA_DEBT_LIST（:596-757）/@SHOW_CHARA_ACT（:758-797）/
- *     @COMPARE_CHARA_ACT（:798-819，#FUNCTION 比较器）/
- *     @CHARA_INFO_INDIVIDUAL_WAPPED（:820-832）/
- *     @CHARA_INFO_INDIVIDUAL（:833-1100）。
- *
  * 调用方：page-shop.js 的 USERSHOP 分发（result===101 → CHARA_INFO，
  * result===498/499 → CHARA_INFO_INDIVIDUAL_WAPPED(target/assi)）。
  *
@@ -168,7 +159,7 @@ function show_chara_act(cid) {
   if (state === 8) return { content: '[拘束台]', color: '#64ff64' };
   if (state === 9) return { content: '[ NTR中]', color: '#ff0000' };
   if (state === 10) return { content: '[育儿室]', color: '#64ff64' };
-  // :791 LOCALS = -F\u3000―\u3000（原作字面量，"F" 疑似残留字符，1:1 保留）
+  // LOCALS = -F\u3000―\u3000（原作字面量，"F" 疑似残留字符，1:1 保留）
   return { content: '-F\u3000\u2015\u3000' };
 }
 
@@ -188,7 +179,7 @@ function compare_chara_act(a, b, act = 2) {
   const rank_a = (state_a + 11 - act) % 11;
   const rank_b = (state_b + 11 - act) % 11;
   if (rank_a !== rank_b) return rank_a < rank_b ? -1 : 1;
-  // :813 `CFLAG:ARG:1==2 || CFLAG:ARG:1==3 && CFLAG:ARG:501!=CFLAG:(ARG:1):501`
+  // `CFLAG:ARG:1==2 || CFLAG:ARG:1==3 && CFLAG:ARG:501!=CFLAG:(ARG:1):501`
   // 按 Emuera 的「&& 与 || 同优先级、左结合」读作
   // `(CFLAG:ARG:1 ∈ {2,3}) && 楼层不等`——两态都吃楼层判据，楼层相等时
   // 整支不命中，落到末行的 `a < b ? -1 # 1`（#517）。
@@ -246,7 +237,7 @@ function marriage_bracket_text(cid) {
     // 14 格填充；此处只需裸文本，改读同一张登记表）
     return LOVER_NAMES.get(era.get(`cflag:${cid}:606`) || 0) ?? '';
   }
-  // :351-374 ELSE 分支：其内两支 `CFLAG:COUNT:601==0` 判据在此处恒假
+  // ELSE 分支：其内两支 `CFLAG:COUNT:601==0` 判据在此处恒假
   // （外层已排除 spouse==0），原作死代码，1:1 保留其余可达分支
   const partner = search_family(cid, 'MARRIAGE');
   if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0 && partner < 0) return '无';
@@ -612,7 +603,7 @@ async function chara_info() {
     const result = await era.input();
 
     if (result === 1600) {
-      // :62-63 CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
+      // CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
       // 被调函数尾 JUMP CHARA_INFO：原作的 NO_PAGE/SORT_SELECT/SORT_ACT 是静态
       // 变量（指南 user-defined-variables.md:67-69），重进名册沿用现值；本函数里
       // 它们是局部变量，靠「同一轮循环 continue 重绘」复现该效果——子流程返回后
@@ -621,7 +612,7 @@ async function chara_info() {
       continue;
     }
     if (result === 1700) {
-      // :74-75 CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
+      // CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
       // [1999] 結束换号 → JUMP CHARA_INFO（同上：同一轮 continue 沿用现值）；
       // RETURN 0 出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
       // （该文件文件头）
@@ -653,10 +644,10 @@ async function chara_info() {
       continue;
     }
     if (result === 0 || added_chara_ids().includes(result)) {
-      // :91-94 CASE 0 TO CHARANUM-1（改写为 ID 语义：0=魔王或已加入
+      // CASE 0 TO CHARANUM-1（改写为 ID 语义：0=魔王或已加入
       // 角色）。`SIF RESULT==0 && MASTER: RESULT=MASTER` 恒假（MASTER 是
       // 恒 0 常量，逻辑与运算里恒假），无需代码
-      // :95-99 SORT_SELECT==1200 走包装入口（恒回 0，见该函数注释——
+      // SORT_SELECT==1200 走包装入口（恒回 0，见该函数注释——
       // 原作缺陷，#606 起照搬）；其余视图直调内层，返回值直达 :100 的判据
       const sub_result =
         sort_select === 1200
@@ -720,14 +711,14 @@ async function chara_info_individual(arg, chara_sort) {
     // 记下行数差判断这一轮有没有打过按钮（块内只有 printButton，见 #596）
     const button_anchor = era.getLineCount();
     if (sub_page === 0) {
-      // :858-859 两个改名按钮（#384 落真身：ere/chara/chara-name-edit.js）
+      // 两个改名按钮（#384 落真身：ere/chara/chara-name-edit.js）
       show_button_name_edit(0, current);
       show_button_name_edit(1, current, 1);
-      // :860-862 三个动作按钮（#393 落真身，三个同构模块各一对）
+      // 三个动作按钮（#393 落真身，三个同构模块各一对）
       show_button_job_change(2, current);
       show_button_temptation(3, current);
       show_button_marriage(4, current);
-      // :863 CALL SHOW_BUTTON_CHILD_CARE(5,ARG)（#401 真身，ere/event/event-pregnancy.js）
+      // CALL SHOW_BUTTON_CHILD_CARE(5,ARG)（#401 真身，ere/event/event-pregnancy.js）
       show_button_child_care(5, current);
       if (is_able_to_ability_up(current)) era.printButton('提升能力', 10);
       if (current !== 0) {
@@ -741,10 +732,10 @@ async function chara_info_individual(arg, chara_sort) {
     } else if (sub_page === 1 || sub_page === 2) {
       if (is_trainable(current) === 0) era.printButton('设为目标', 6);
       if (is_assistable(current) === 0) era.printButton('设为助手', 7);
-      // :880 CALL SHOW_BUTTON_EQUIP(16,ARG)（#546 真身：system/equip/
+      // CALL SHOW_BUTTON_EQUIP(16,ARG)（#546 真身：system/equip/
       // equip-show.js——五道 OR 判定放行才渲染按钮，不放行时零输出）
       show_button_equip(16, current);
-      // :883 CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
+      // CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
       // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE =
       // SHOW_BUTTON_BICH_LEVEL(18,ARG) 的 [18] 卖春积极性按钮（档位文案
       // kojo-dungeon-bitch.js；按本页通例升级 printButton，引擎只送达已打印
@@ -762,7 +753,7 @@ async function chara_info_individual(arg, chara_sort) {
     }
     // sub_page === 3：原作两支 IF/ELSEIF 都不命中，无操作按钮
 
-    // :907 的 PRINTL：打过按钮时只结束那一行（train-upgrade-log:171-172 里按钮
+    // 的 PRINTL：打过按钮时只结束那一行（train-upgrade-log:171-172 里按钮
     // 行与分割线逐行相邻）；一个按钮都没打时它落在已收行的空行上 = 真空行
     // （sub_page 3，以及所有守卫都不放行的角色页）
     if (era.getLineCount() === button_anchor) {
@@ -773,7 +764,7 @@ async function chara_info_individual(arg, chara_sort) {
     era.printButton('返回', 100);
     era.printButton('后页', 102);
     if (current > 0) era.printButton('前一人', 500);
-    // :920 `L_INDX >= CHARANUM - 2`：CHARANUM 含魔王（总数=chara_sort.length+1），
+    // `L_INDX >= CHARANUM - 2`：CHARANUM 含魔王（总数=chara_sort.length+1），
     // 换算成不含魔王的 chara_sort.length 得 `l_indx >= chara_sort.length - 1`；
     // 原作没有额外要求 `L_INDX>=0`——魔王行（l_indx=-1）同样受这条判据支配，
     // 且 -1 通常小于 chara_sort.length-1，所以魔王行也会画出「后一人」（对应
@@ -821,13 +812,13 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 10:
-        // :1003 CALL ABILITY_UP_CORE（#397 真身：page/page-ability-up.js）
+        // CALL ABILITY_UP_CORE（#397 真身：page/page-ability-up.js）
         if (is_able_to_ability_up(current)) {
           await ability_up_core(current);
         }
         continue;
       case 11:
-        // :1009 CALL TAILOR_CORE（#397 真身：page/page-tailor.js）
+        // CALL TAILOR_CORE（#397 真身：page/page-tailor.js）
         if (is_able_to_cloth(current)) {
           await tailor_core(current);
         }
@@ -864,21 +855,21 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 0:
-        // :1045 改名（#384 落真身）
+        // 改名（#384 落真身）
         await chara_info_name_edit(current);
         continue;
       case 1:
-        // :1048 恢复原名（#384 落真身）
+        // 恢复原名（#384 落真身）
         await chara_info_name_edit(current, 1);
         continue;
       case 2: {
-        // :1051 CALL CHARA_INFO_JOB_CHANGE(ARG)（#393 真身）
+        // CALL CHARA_INFO_JOB_CHANGE(ARG)（#393 真身）
         const job_result = await chara_info_job_change(current);
-        if (job_result !== 2) return job_result; // :1094-1097 的收尾
+        if (job_result !== 2) return job_result; // 的收尾
         continue;
       }
       case 3: {
-        // :1054 CALL TEMPTATION(ARG)（#393 真身）。原作 :1094-1099 的收尾
+        // CALL TEMPTATION(ARG)（#393 真身）。原作 :1094-1099 的收尾
         // 按被调方的 RESULT 分流：0/1 上浮给 CHARA_INFO（0 = 回名册、
         // 1 = 回合结束），其余落回 INPUT_LOOP 重画——三支「动作」都照此接
         // （CASE 0/1/5 等其它 case 的「留在页内」是各自票据的既有处置，
@@ -888,7 +879,7 @@ async function chara_info_individual(arg, chara_sort) {
         continue;
       }
       case 4: {
-        // :1057 CALL MARRIAGE(ARG)（#393 真身；1 = 回合结束，上浮给
+        // CALL MARRIAGE(ARG)（#393 真身；1 = 回合结束，上浮给
         // CHARA_INFO——原作 MARRIAGE 的「結婚するとターンエンド」是最初
         // 就写明的出口）
         const marriage_result = await marriage(current);
@@ -896,12 +887,12 @@ async function chara_info_individual(arg, chara_sort) {
         continue;
       }
       case 5:
-        // :1060 CALL CHILD_CARE_CHARA(ARG)（#401 真身；返回 2 是「侵攻中的
+        // CALL CHILD_CARE_CHARA(ARG)（#401 真身；返回 2 是「侵攻中的
         // 勇者」防御支，此处与其它 case 同款忽略返回值，留在页内继续导航）
         await child_care_chara(current);
         continue;
       case 8:
-        // :1062 CALL RANDOM_SELF_CALL(ARG,1)（#546 真身：chara/chara-
+        // CALL RANDOM_SELF_CALL(ARG,1)（#546 真身：chara/chara-
         // self-call.js 的 MODE 1——自定义输入分支；[8] 按钮由 SHOW_BLOCK
         // 渲染，见 components/chara-info-title.js）。
         // 有意偏离（第 1 轮验收补记）：原作 CASE 8 无前置判断，任何分页手输
@@ -917,7 +908,7 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 16:
-        // :1070-1074 LOCAL = LINECOUNT（死赋值，无人再读）→ CALL
+        // LOCAL = LINECOUNT（死赋值，无人再读）→ CALL
         // EQUIP_ST_SHOW, ARG（#546 真身：system/equip/equip-show.js）→ WAIT
         // → GOTO DRAW_PAGE（本循环天然整页重绘，continue 即是）。
         // 有意偏离（第 1 轮验收补记）：原作 CASE 16 同样无前置判断——

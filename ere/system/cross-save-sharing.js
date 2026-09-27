@@ -1,6 +1,5 @@
 /**
  * @file 跨存档勇者通信。
- * 源: target/ERB/其他/MAOUNET.ERB  @MAOUNET、@EXPORT、@INPORT_A、@INPORT_B
  *
  * 原作 GLOBALS:0..99 在 EraElectron 4.8.0 已是废弃表名。这里把同样的
  * 100 条记录以 JSON 数组存入 global:100；数组元素仍保持原作下划线与

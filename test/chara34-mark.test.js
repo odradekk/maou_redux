@@ -1,12 +1,6 @@
 /**
  * `MARK,4,3`（葵希罗预设）的行为测试（#548 / S7）。
  *
- * 源: target/CSV/Chara/Chara34.csv:91（MARK,4,3）
- *     消费判据: target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB:961-981
- *     （@MARK_GOT_CHECK 的反抗刻印三档门均以 MARK:4 <= 0/1/2 为前提）
- *     加入点: target/ERB/侵略…ENTER_ENEMY.ERB:247（ADDCHARA 34 →
- *     ere/event/enter-enemy.js 的 k_34_crazylord）
- *
  * 背景（#118 定夺的同族缺口）：ere 引擎 initCharaTable 只按 Mark.yml
  * 名字表登记的下标建槽抄预设——Mark.yml 无 4 号名条目，addCharacter 不把
  * MARK,4,3 落 data（test/extalent-table.test.js 的引擎级用例钉住）。扩名
@@ -65,7 +59,7 @@ function setup_crazylord() {
   fixture.store.set('flag:500', 1); // 狂王性别：女性
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.day_count = 350;
-  fixture.set_inputs(0); // :295 仪式性确认输入
+  fixture.set_inputs(0); // 仪式性确认输入
   return { fixture, era_flag };
 }
 
@@ -87,8 +81,8 @@ test('研究所复活：RESULECTION 也过 ADDCHARA_EX，补偿照样落（#548 
   fixture.era.addCharacter(0);
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
   fixture.store.set('exp:0:81', 5); // 勋章经验（> 0 才进复活流程）
-  fixture.store.set('flag:1033', -2); // :2608 判据（可复活）
-  fixture.set_inputs(0, 133); // :2575 确定 → :2599 选 34 号
+  fixture.store.set('flag:1033', -2); // 判据（可复活）
+  fixture.set_inputs(0, 133); // 确定 → :2599 选 34 号
   const { resulection } = fixture.load_module('page/page-shop-labo');
 
   assert.equal(await resulection(() => 0), 1, '复活流程走完（RETURN 1）');

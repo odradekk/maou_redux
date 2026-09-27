@@ -1,10 +1,6 @@
 /**
  * @CHARADEAD_CHECK 的行为测试（#548 / S7：调教后死亡检查）。
  *
- * 源: target/ERB/EVENT/EVENT_AFTERTRAIN.ERB  @CHARADEAD_CHECK（:6-92）
- *     调用点: target/ERB/調教相關/TRAIN_MAIN.ERB @EVENTEND（:339，
- *     ere/event/event-end.js——本文件末两用例覆盖接线）。
- *
  * 缝 = test/helpers/era-fixture.js。真身在 ere/event/event-aftertrain.js
  * （该文件头自 #44 起就登记着本函数，本票落地）。
  *
@@ -108,7 +104,7 @@ test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后 QUIT 抛出（:26-29
   const { fixture } = seed_world({ target: 0 });
   fixture.store.set('base:0:0', 0); // 魔王倒下
   fixture.store.set('exflag:3', 0); // EX_FLAG:3 无继任
-  fixture.set_inputs(0); // :28 INPUT（无分支确认）
+  fixture.set_inputs(0); // INPUT（无分支确认）
 
   await assert.rejects(
     () => run_check(fixture),
@@ -151,7 +147,7 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
 
   assert.equal(await run_check(fixture), 1);
   const texts = text_lines(fixture);
-  // :41-44 分支二（EX_FLAG:3 != GETCHARA(17) 且非 PLAYER/ASSI）
+  // 分支二（EX_FLAG:3 != GETCHARA(17) 且非 PLAYER/ASSI）
   assert(texts.includes('你猛的醒了过来、看着这似曾相识的房间……'));
   assert(texts.includes('你似乎明白了什么……'));
   assert(texts.includes('从一旁的镜子中映出的是温妮的身影……'));
@@ -164,7 +160,7 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
   );
   // 共通死亡段：魔王自己死了（%SAVESTR:TARGET%）
   assert(texts.includes('你死掉了……'));
-  // :76 BASE:0 = -1 的写入意图；真引擎把 base 钳到 0（dev-guides/09-static.md:203），
+  // BASE:0 = -1 的写入意图；真引擎把 base 钳到 0（dev-guides/09-static.md:203），
   // 夹具不钳。不断言 -1——那是引擎存不下的值，★死亡★ 显示不出来
   //（文件头「移植说明」记了这处偏离）
   assert.ok(fixture.store.get('base:0:0') <= 0, 'BASE:0 = -1（引擎落盘为 0）');
@@ -216,7 +212,7 @@ test('魔王死亡·候补是 17 号且在身旁（PLAYER）：第三支（看�
 
 test('魔王死亡·候补是 17 号且在身旁（ASSI）：第三支（:46-50）', async () => {
   const { fixture, era_flag } = seed_maou_death({ successor: 17 });
-  era_flag.assi = 17; // :49 的 (== PLAYER || == ASSI) 另一半
+  era_flag.assi = 17; // 的 (== PLAYER || == ASSI) 另一半
 
   await run_check(fixture);
   const texts = text_lines(fixture);
@@ -230,9 +226,9 @@ test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数（:59-92�
 
   assert.equal(await run_check(fixture), 1);
   const texts = text_lines(fixture);
-  // :61-62 TFLAG:13 = 999 + CALL SELF_KOJO（FLAG:7 总开关关 → 口上静默）
+  // TFLAG:13 = 999 + CALL SELF_KOJO（FLAG:7 总开关关 → 口上静默）
   assert.equal(fixture.store.get('tflag:13'), 999, '死亡口上事件码');
-  // :66 TEMP 恒 0 → !TEMP 恒真，「X死掉了……」（ELSEIF 不可达，#14 登记）
+  // TEMP 恒 0 → !TEMP 恒真，「X死掉了……」（ELSEIF 不可达，#14 登记）
   assert(texts.includes('温妮死掉了……'));
   // #597：:74 的 PRINTL 落在 :69 的 PRINTFORML 之后（那一行已结束）——真空行
   assert_one_blank_after(fixture, '温妮死掉了……', '奴隶死亡（:74）');

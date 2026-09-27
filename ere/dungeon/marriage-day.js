@@ -1,9 +1,6 @@
 /**
  * @file 结婚日事件（issue #342，阶段 5a L11）。
  *
- * 源: target/ERB/怪物相關/MARRIAGE_DAY.ERB  @MARRIAGE_DAY
- *     及其十六个分支。
- *
  * Emuera 的全局单字母 y 在主分发中掷出后由分支共用，ere 侧改为显式参数；
  * 所有随机分支均接受注入的随机源，确保测试与回放可复现。
  */
@@ -41,10 +38,8 @@ const lover_display_name = (lover_type) => {
 };
 
 // CFLAG[603] = 结婚对象状态（0 普通、1 出轨、2 私通、3 私通妊娠）；
-// 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt:466。
 const marriage_partner_status = (cid) => era.get(`cflag:${cid}:603`) || 0;
 // CFLAG[609] = 结婚对象采用角色数据的标志；原作同名“结婚对象名字”槽。
-// 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt:472。
 const marriage_partner_character = (cid) => era.get(`cflag:${cid}:609`) || 0;
 // JUEL[4]/[5]/[6] = 欲情／恭顺／屈服点数。
 const desire_points = (cid) => era.get(`juel:${cid}:4`) || 0;

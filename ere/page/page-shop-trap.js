@@ -1,9 +1,6 @@
 /**
  * @file 陷阱商店：@ITEM_SHOP_TRAP 与 @SALEITEM_CHECK_TRAP。
  *
- * 源: target/ERB/SHOP/SHOP_TRAP.ERB  @ITEM_SHOP_TRAP（:7-70，绘制）
- *     @SALEITEM_CHECK_TRAP（:75-128，在售标志）
- *
  * **#399 补齐的两笔**：原作 :63 的引擎命令 `PRINT_SHOPITEM`（把 ITEMSALES
  * 不为 0 的商品连同价格列出来、点击即买）与 :59 的 `TFLAG:15 = MONEY`
  * 都已落地——列货与购买流程是**两个商店共用的一套**，真身在
@@ -92,37 +89,37 @@ function saleitem_check_trap() {
   }
 
   if ((era.get('talent:0:327') || 0) === 1) {
-    // :96-105 えっちな陷阱（魔王的淫魔知识）
+    // えっちな陷阱（魔王的淫魔知识）
     for (const id of SALES_EROTIC) {
       era.set(`itemsales:${id}`, 1);
     }
   } else {
-    // :106-109 淫魔知识
+    // 淫魔知识
     for (const id of SALES_SUCCUBUS_KNOWLEDGE) {
       era.set(`itemsales:${id}`, 1);
     }
   }
 
-  // :112-113 魔虫知识**不在**时点亮 56（SIF，单一语句的 IF）
+  // 魔虫知识**不在**时点亮 56（SIF，单一语句的 IF）
   if ((era.get('talent:0:328') || 0) === 0) {
     for (const id of SALES_WORM_BASE) {
       era.set(`itemsales:${id}`, 1);
     }
   }
 
-  // :116-120 魔蟲知識でも手に入る罠
+  // 魔蟲知識でも手に入る罠
   if ((era.get('talent:0:328') || 0) === 1) {
     for (const id of SALES_WORM_EXTRA) {
       era.set(`itemsales:${id}`, 1);
     }
   }
 
-  // :123 指輪
+  // 指輪
   for (const id of SALES_RING) {
     era.set(`itemsales:${id}`, 1);
   }
 
-  // :125-126 陷阱Lv（严格小于：相等不点亮 55）
+  // 陷阱Lv（严格小于：相等不点亮 55）
   if (game.stronghold.陷阱等级 < (era.get('cflag:0:9') || 0)) {
     for (const id of SALES_LEVEL_TRAP) {
       era.set(`itemsales:${id}`, 1);
@@ -177,55 +174,52 @@ function item_grid_rows({ start, end }) {
  *   隐式返回 0（函数体在末尾的 PRINTL 之后结束）
  */
 async function item_shop_trap() {
-  // :11 标题（:10-12 的 CUSTOMDRAWLINE = 与 DRAWLINE 一并见文件头布局映射）
+  // 标题（:10-12 的 CUSTOMDRAWLINE = 与 DRAWLINE 一并见文件头布局映射）
   era.print('《可以购买在地下城里布置的陷阱》');
   era.drawLine({ isSolid: true });
-  // :13-19 PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后（PRINT 后的第一个
+  // PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后（PRINT 后的第一个
   // 空格是语法分隔符，字面量余一个前导空格——同 DRAW_MAINMENU:64-71）
   era.print(
     `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
   );
-  // :21
   era.print(`[所持金:${era_flag.money}点]`);
 
-  // :23-26 SETCOLORBYNAME LightSalmon → RESETCOLOR
+  // SETCOLORBYNAME LightSalmon → RESETCOLOR
   era.print([
     { content: `[陷阱Lv:${game.stronghold.陷阱等级}]`, color: LIGHT_SALMON },
   ]);
   era.print([{ content: '[陷阱]', color: LIGHT_SALMON }]);
-  // :27-38
   for (const row of item_grid_rows(TRAP_IDS)) {
     era.print(row);
   }
 
-  // :39-41 SETCOLORBYNAME LightSalmon → RESETCOLOR
+  // SETCOLORBYNAME LightSalmon → RESETCOLOR
   era.print([{ content: '[戒指]', color: LIGHT_SALMON }]);
-  // :42-53
   for (const row of item_grid_rows(RING_IDS)) {
     era.print(row);
   }
 
-  era.drawLine({ isSolid: true }); // :55-57 DRAWLINE + CALL SALEITEM_CHECK_TRAP
-  saleitem_check_trap(); // :57 CALL SALEITEM_CHECK_TRAP
-  snapshot_money(); // :59 TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）
+  era.drawLine({ isSolid: true }); // DRAWLINE + CALL SALEITEM_CHECK_TRAP
+  saleitem_check_trap(); // CALL SALEITEM_CHECK_TRAP
+  snapshot_money(); // TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）
 
-  // :61 $INPUT_LOOP：购买循环的重新进入点，原作的循环本体是 :63 的
+  // $INPUT_LOOP：购买循环的重新进入点，原作的循环本体是 :63 的
   // PRINT_SHOPITEM + 引擎侧购买。era 侧的重绘由 page-shop.js 的商店轮
   // 循环承担（998 分支再调一次本函数），购买本身由该轮的分发交给
   // page-item-shop.js 的 purchase，故此处不设标签。
 
-  // :63 PRINT_SHOPITEM（#399 起真身，两个商店共用）
+  // PRINT_SHOPITEM（#399 起真身，两个商店共用）
   print_shopitem();
 
-  // :65-70 提示行（两个键印成按钮：本屏已有商品按钮，rule 会收紧到那批
+  // 提示行（两个键印成按钮：本屏已有商品按钮，rule 会收紧到那批
   // 编号，纯文本的 997/999 就再也键入不进了——#130 的输入通道语义）
   era.print('《请输入要购买陷阱的编号》');
-  era.drawLine({ isSolid: true }); // :65-70 段的 DRAWLINE
-  // :68-69 两个 PRINTLC 打在同一行，紧随的 PRINTL 只结束那一行——PRINTLC
+  era.drawLine({ isSolid: true }); // 段的 DRAWLINE
+  // 两个 PRINTLC 打在同一行，紧随的 PRINTL 只结束那一行——PRINTLC
   // 左对齐补位、**不换行**，故不产生空行。ere 的 printButton 自成一行
   // （＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md
   // 「输出 API 与原作的对应」）。
-  era.setAlign('center'); // :68-69 PRINTLC（排版近似：见 CONTEXT.md）
+  era.setAlign('center'); // PRINTLC（排版近似：见 CONTEXT.md）
   era.printButton('- 普通物品', 997);
   era.printButton('- 返回', 999);
   era.setAlign('left');

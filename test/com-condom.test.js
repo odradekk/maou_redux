@@ -129,7 +129,7 @@ test('画面：标题 + 当前设定行（值为空，LOCALS 缺陷的 1:1）+ �
   assert.equal(result, 0);
   const lines = fixture.text_lines();
   assert.ok(lines.includes('和温妮做爱要戴套吗？'));
-  // :14 的 %LOCALS:(CFLAG:61)% 恒空——整行在、值空（#14 已登记不修）
+  // 的 %LOCALS:(CFLAG:61)% 恒空——整行在、值空（#14 已登记不修）
   assert.ok(lines.includes('现在：'), '行在');
   assert.ok(
     !lines.some((t) => /^现在：.+/.test(t)),

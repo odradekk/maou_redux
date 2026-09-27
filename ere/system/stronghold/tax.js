@@ -1,10 +1,6 @@
 /**
  * @file 税収：@TAX_GET。
  *
- * 源: target/ERB/SHOP/TAX.ERB  @TAX_GET（:8-230）。被
- *     EVENT/EVENT_NEXTDAY.ERB:181 无条件调用（朝事件段），调用点接入随
- *     #400（N16 的日循环靶）——本票先把税金算出来，让 N16 接手时它已在位。
- *
  * 结算结构（四段，全部累加进 TAX:0；TAX 是原作 #DIM TAX,4 的局部数组，
  * 这里落四个局部量）：威望档位的「魔界支援」（:31-68）→ 土地税 TAX:1
  * （:82）→ 肉便器税 TAX:2（:163）→ 魔王特別税 TAX:3（:205）。末段按黑方片
@@ -135,40 +131,40 @@ async function tax_get() {
     return 0;
   }
 
-  era.print('今天宜收税，宜鬼畜，宜调教，宜激烈做爱；忌纯爱，忌良心发现……'); // :16 PRINTW
+  era.print('今天宜收税，宜鬼畜，宜调教，宜激烈做爱；忌纯爱，忌良心发现……'); // PRINTW
   await era.waitAnyKey();
-  era.drawLine(); // :24-29 DRAWLINE / PRINTL×3 / WAIT
+  era.drawLine(); // DRAWLINE / PRINTL×3 / WAIT
   era.print('');
   era.print('- - - 收税 - - -');
   era.print('');
   await era.waitAnyKey();
 
-  // :21 TAX:0 = 0（合计，四段累加）
+  // TAX:0 = 0（合计，四段累加）
   let total = 0;
 
-  // :31-68 魔界からの支援
+  // 魔界からの支援
   const prestige = era_exflag.prestige; // EX_FLAG:99 = 威望
   const day_count = era_flag.day_count; // DAY:0 = 天数
   let prev_max = -1; // 首档的 `>= 0`
   for (const { max, rate, cap, label } of PRESTIGE_BRACKETS) {
     if (prestige <= max && prestige > prev_max) {
       era.print(label);
-      total += Math.trunc((day_count * rate * prestige) / 100); // :46 等
+      total += Math.trunc((day_count * rate * prestige) / 100); // 等
       if (total > cap) {
-        total = cap; // :47-49 等（TAX:0 此刻即本档贡献）
+        total = cap; // 等（TAX:0 此刻即本档贡献）
       }
       break;
     }
     prev_max = max;
   }
 
-  era.print(''); // :70-71 PRINTL + PRINTFORMW 合计
+  era.print(''); // PRINTL + PRINTFORMW 合计
   era.print(`来自魔界的支援 ${total}`);
   await era.waitAnyKey();
 
-  // :73-152 土地税（TAX:1）
-  let land_tax = 0; // :82 TAX:1 = 0
-  era.print('*土地税*'); // :84 PRINTL
+  // 土地税（TAX:1）
+  let land_tax = 0; // TAX:1 = 0
+  era.print('*土地税*'); // PRINTL
 
   for (const {
     flag,
@@ -197,7 +193,7 @@ async function tax_get() {
     }
   }
 
-  // :126-145 地下城（PRINTFORM 不换行 + PRINTFORML 取值 → 同一行）
+  // 地下城（PRINTFORM 不换行 + PRINTFORML 取值 → 同一行）
   const maze_level = era.get('cflag:0:9') || 0; // CFLAG:0:9 = 迷宫 Lv
   const [, rate, base] = DUNGEON_TAX_BRACKETS.find(
     ([limit]) => maze_level < limit,
@@ -206,31 +202,31 @@ async function tax_get() {
   era.print(`└ 地下城 ${dungeon_tax}`);
   land_tax += dungeon_tax;
 
-  era.print(''); // :149-150 PRINTL + PRINTFORMW 合计
+  era.print(''); // PRINTL + PRINTFORMW 合计
   era.print(`合计 ${land_tax}`);
   await era.waitAnyKey();
-  total += land_tax; // :152 TAX:0 += TAX:1
+  total += land_tax; // TAX:0 += TAX:1
 
-  // :154-196 肉便器税（TAX:2）
-  let toilet_tax = 0; // :163 TAX:2 = 0
-  era.print(''); // :165-166 PRINTL + PRINTL
+  // 肉便器税（TAX:2）
+  let toilet_tax = 0; // TAX:2 = 0
+  era.print(''); // PRINTL + PRINTL
   era.print('*肉便器税*');
 
-  // :168-171 展品观赏税（FLAG:84 = 展品数，> 0 才收，每件 10）
+  // 展品观赏税（FLAG:84 = 展品数，> 0 才收，每件 10）
   const exhibits = era.get('flag:84') || 0;
   if (exhibits > 0) {
     era.print(`├ 展品观赏税 ${exhibits * 10}`);
     toilet_tax += exhibits * 10;
   }
 
-  // :173-176 肉便器使用税（FLAG:83 = 肉便器数，> 0 才收，每件 10）
+  // 肉便器使用税（FLAG:83 = 肉便器数，> 0 才收，每件 10）
   const toilets = era.get('flag:83') || 0;
   if (toilets > 0) {
     era.print(`├ 肉便器使用税 ${toilets * 10}`);
     toilet_tax += toilets * 10;
   }
 
-  // :179-185 淫魔卖春税（无门槛）：ITEM:143 女巫 / 152 魅魔 / 182 莉莉丝
+  // 淫魔卖春税（无门槛）：ITEM:143 女巫 / 152 魅魔 / 182 莉莉丝
   // 各 ×2，另加固定 20
   const whores =
     (era.get('item:143') || 0) * 2 +
@@ -240,7 +236,7 @@ async function tax_get() {
   era.print(`└ 淫魔卖春税 ${whores}`);
   toilet_tax += whores;
 
-  // :187-191 `FOR LOCAL,1,10` + `SIF FLAG:(LOCAL + 349) == 507`：
+  // `FOR LOCAL,1,10` + `SIF FLAG:(LOCAL + 349) == 507`：
   // 娼馆街（FLAG:350-358，九个下标、步长 1）每有一处就整体乘 1.1。
   // TIMES 是「整数 × 小数后截断」（Emuera 命令，emuera 技能
   // math-etc.md:209-227），命中多次即逐个复合。
@@ -250,30 +246,30 @@ async function tax_get() {
     }
   }
 
-  era.print(''); // :193-194 PRINTL + PRINTFORMW 合计
+  era.print(''); // PRINTL + PRINTFORMW 合计
   era.print(`合计 ${toilet_tax}`);
   await era.waitAnyKey();
-  total += toilet_tax; // :196 TAX:0 += TAX:2
+  total += toilet_tax; // TAX:0 += TAX:2
 
-  // :198-213 魔王特別税（TAX:3）：按 FLAG:9 的百分比加成，收完清零。
+  // 魔王特別税（TAX:3）：按 FLAG:9 的百分比加成，收完清零。
   // 三行是「乘 (FLAG:9 + 100) → 整除 100 → 减回原额」，故这是「加到
   // total 上的增量」而不是「total 乘以税率」——FLAG:9 为负时修正为负。
-  era.print(''); // :202-203 PRINTL + PRINTL
+  era.print(''); // PRINTL + PRINTL
   era.print('*魔王特别税*');
   let surcharge_tax = Math.trunc(
     (total * (game.stronghold.税金修正 + 100)) / 100,
   );
   surcharge_tax -= total;
-  era.print(`合计 ${surcharge_tax}`); // :209 PRINTFORMW
+  era.print(`合计 ${surcharge_tax}`); // PRINTFORMW
   await era.waitAnyKey();
-  total += surcharge_tax; // :211 TAX:0 += TAX:3
-  game.stronghold.税金修正 = 0; // :213 FLAG:9 = 0
+  total += surcharge_tax; // TAX:0 += TAX:3
+  game.stronghold.税金修正 = 0; // FLAG:9 = 0
 
-  // :215-229 合计税収
-  era.drawLine(); // :215-229 段的 DRAWLINE + PRINTL
+  // 合计税収
+  era.drawLine(); // 段的 DRAWLINE + PRINTL
   era.print('');
 
-  // :221-225 黑方片的商业运营：EX_FLAG:2811 ∈ [51, 100) 时收入乘
+  // 黑方片的商业运营：EX_FLAG:2811 ∈ [51, 100) 时收入乘
   // (10 + 2811/10)/10——倍数的小数位就是 2811 的十位数字
   const route_22 = era_exflag.route_22;
   if (route_22 >= 51 && route_22 < 100) {
@@ -282,10 +278,10 @@ async function tax_get() {
     total = Math.trunc((total * (10 + level)) / 10);
   }
 
-  era.print(`合计税收 ${total}`); // :226 PRINTFORMW
+  era.print(`合计税收 ${total}`); // PRINTFORMW
   await era.waitAnyKey();
-  era_flag.money += total; // :228 MONEY += TAX:0
-  era_exflag.legit_money += total; // :229 EX_FLAG:4444 += TAX:0
+  era_flag.money += total; // MONEY += TAX:0
+  era_exflag.legit_money += total; // EX_FLAG:4444 += TAX:0
 
   return 0; // 原作尾的 RETURN 0（两句出口同值，见上方 :8-230 的收尾）
 }

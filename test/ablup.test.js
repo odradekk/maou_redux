@@ -4433,7 +4433,7 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'c', 'b'],
       },
     ],
-    clamp: ['a', 'b'], // :320-324「最低でも1回・1個は必要」
+    clamp: ['a', 'b'], // 「最低でも1回・1個は必要」
     talents: {
       13: spread('abcd', 0.95), // 坦率 :217-223
       21: spread('abcd', 1.2), // 冷漠 :224-230
@@ -4467,7 +4467,7 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'c', 'b'],
       },
     ],
-    clamp: ['a', 'b'], // :307-311
+    clamp: ['a', 'b'],
     talents: {
       13: spread('abcd', 0.95), // 坦率 :213-219
       21: spread('abcd', 1.2), // 冷漠 :220-226
@@ -4495,7 +4495,7 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
       },
     ],
-    clamp: ['a', 'b', 'c'], // :309-314
+    clamp: ['a', 'b', 'c'],
     talents: {
       12: spread('abc', 1.2), // 刚强 :193-197
       20: spread('abc', 1.2), // 克制 :199-203
@@ -4529,9 +4529,9 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'e'],
       },
     ],
-    clamp: ['a', 'b', 'c', 'd', 'e'], // :303-313
+    clamp: ['a', 'b', 'c', 'd', 'e'],
     talents: {
-      // :252-281 四项都只乘 A-D，E（[1] 轨调教自慰经验）不受影响
+      // 四项都只乘 A-D，E（[1] 轨调教自慰经验）不受影响
       60: { a: 0.25, b: 0.25, c: 0.25, d: 0.25 }, // 容易自慰 :252-258
       72: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 容易上瘾 :260-266
       80: { a: 0.75, b: 0.75, c: 0.75, d: 0.75 }, // 倒错的 :268-274
@@ -4549,7 +4549,7 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
       },
     ],
-    clamp: ['a', 'b', 'c'], // :329-334
+    clamp: ['a', 'b', 'c'],
     talents: {
       11: spread('abc', 1.5), // 反抗心 :216-220
       22: spread('abc', 0.95), // 感情淡薄 :222-226
@@ -4582,7 +4582,7 @@ const MULTIPLIER_SPECS = [
         refs: ['b', 'a', 'a', 'c'],
       },
     ],
-    clamp: ['a', 'b', 'c'], // :341-346
+    clamp: ['a', 'b', 'c'],
     talents: {
       11: spread('abc', 1.5), // 反抗心 :199-203
       20: spread('abc', 1.2), // 克制 :205-208
@@ -4620,7 +4620,7 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'b', 'c', 'd'],
       },
     ],
-    clamp: ['a', 'b', 'c', 'd'], // :411-418
+    clamp: ['a', 'b', 'c', 'd'],
     talents: {
       11: spread('abcd', 1.5), // 反抗心 :187-191
       12: spread('abcd', 1.2), // 刚强 :194-198
@@ -4660,7 +4660,7 @@ const MULTIPLIER_SPECS = [
         refs: ['a', 'b', 'c'],
       },
     ],
-    clamp: ['a', 'b', 'c'], // :229-235
+    clamp: ['a', 'b', 'c'],
     talents: {
       20: { a: 2.5, b: 2.5, c: 1.5 }, // 克制 :177-181（A/B 与 C 倍率不同）
       70: { a: 0.75, b: 0.75 }, // 接受快感 :183-186（只乘 A/B，C 不动）
@@ -4680,7 +4680,7 @@ const MULTIPLIER_SPECS = [
       // 梯子 :70-92。Lv0：A=2000（单轨道，按钮分母就是 A）
       { state: { abl: { 40: 0 } }, base: { a: 2000 }, refs: ['a'] },
     ],
-    clamp: ['a'], // :124-125
+    clamp: ['a'],
     talents: {
       20: { a: 2.5 }, // 克制 :98-99
       70: { a: 0.75 }, // 接受快感 :102-103
@@ -4763,7 +4763,7 @@ for (const spec of MULTIPLIER_SPECS) {
  */
 const LADDER_SPECS = [
   {
-    id: 37, // :109-159；Lv5 起入口把关（:16）要求 76/31/180 至少有一个
+    id: 37, // ；Lv5 起入口把关（:16）要求 76/31/180 至少有一个
     rows: [
       { lv: 0, base: { a: 2000, b: 3000, c: 1000, d: 50 } },
       { lv: 1, base: { a: 5000, b: 8000, c: 2500, d: 100 } },
@@ -4799,7 +4799,7 @@ const LADDER_SPECS = [
     refs: ['a', 'b', 'c', 'd'],
   },
   {
-    id: 39, // :107-147；Lv5 起入口把关（:16）要求 76/124/136 至少有一个
+    id: 39, // ；Lv5 起入口把关（:16）要求 76/124/136 至少有一个
     rows: [
       { lv: 0, base: { a: 2000, b: 2000, c: 30 } },
       { lv: 1, base: { a: 5000, b: 5000, c: 100 } },
@@ -4815,7 +4815,7 @@ const LADDER_SPECS = [
     refs: ['a', 'b', 'c'],
   },
   {
-    id: 40, // :70-90（与 ABLUP39 的 A 同值表，无入口把关）
+    id: 40, // （与 ABLUP39 的 A 同值表，无入口把关）
     rows: [
       { lv: 0, base: { a: 2000 } },
       { lv: 1, base: { a: 5000 } },
@@ -4831,7 +4831,7 @@ const LADDER_SPECS = [
     refs: ['a'],
   },
   {
-    id: 99, // :98-104（MARK:3 = 1/2/3）——等级住在 mark:3，不是 abl:99
+    id: 99, // （MARK:3 = 1/2/3）——等级住在 mark:3，不是 abl:99
     family: 'mark',
     slot: 3,
     rows: [
@@ -4842,7 +4842,7 @@ const LADDER_SPECS = [
     refs: ['a'],
   },
   {
-    id: 100, // :82-92（MARK:10 = 1..5）——等级住在 mark:10
+    id: 100, // （MARK:10 = 1..5）——等级住在 mark:10
     family: 'mark',
     slot: 10,
     rows: [
@@ -4874,7 +4874,7 @@ for (const spec of LADDER_SPECS) {
         for (const id of Object.keys(row.talents ?? {})) {
           value = scale(value, factors[id][track]);
         }
-        return value < 1 ? 1 : value; // :411-418 番外的最低 1 点
+        return value < 1 ? 1 : value; // 番外的最低 1 点
       });
       assert.deepEqual(
         denominators(fixture),
@@ -5263,21 +5263,21 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 21,
-    // :245-246；前置素质 37 只用于越过 Lv5 入口把关（:15）
+    // ；前置素质 37 只用于越过 Lv5 入口把关（:15）
     talents: { 37: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 3: 1, 4: 2, 7: 5 },
   },
   {
     id: 22,
-    // :214-215（ABL:22 >= 3 起，不是 == 3/4/7）；前置素质 82 越过 Lv5 把关（:18）
+    // （ABL:22 >= 3 起，不是 == 3/4/7）；前置素质 82 越过 Lv5 把关（:18）
     talents: { 82: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 6, 9: 7 },
   },
   {
     id: 23,
-    // :210-211（ABL:23 >= 3 起）；前置素质 122=男人（:117-118）。Lv5 起入口把关
+    // （ABL:23 >= 3 起）；前置素质 122=男人（:117-118）。Lv5 起入口把关
     // （:121）的名单与 E 的豁免名单（33/80/81/123）**完全相同**，越过把关就必然
     // 把 E 清零，故 Lv5 以上 E 恒为 0
     talents: { 122: 1, 82: 1 },
@@ -5286,7 +5286,7 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 30,
-    // :317（ABL:30 >= 2 起 lv-1）。Lv>=5 的入口把关是「六项任一为 0 即拦」，
+    // （ABL:30 >= 2 起 lv-1）。Lv>=5 的入口把关是「六项任一为 0 即拦」，
     // 六项里含 F 的豁免素质 76，故 Lv5 以上 F 恒为 0，不必也无法区分
     talents: {},
     levels: [0, 1, 2, 3, 4],
@@ -5294,21 +5294,21 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 31,
-    // :242（仅 ABL:31 == 2 时 F=lv-1，注释写「LV2→3、3→4、4→5」但代码只判 ==2）
+    // （仅 ABL:31 == 2 时 F=lv-1，注释写「LV2→3、3→4、4→5」但代码只判 ==2）
     talents: {},
     levels: [0, 1, 2, 3, 4],
     expected: { 2: 1 },
   },
   {
     id: 32,
-    // :212（ABL:32 >= 2 起 lv-1）；前置素质 50 越过 Lv5 入口把关（:128）
+    // （ABL:32 >= 2 起 lv-1）；前置素质 50 越过 Lv5 入口把关（:128）
     talents: { 50: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 },
   },
   {
     id: 33,
-    // :195（ABL:33 >= 2 起 lv-1）；Lv5 的入口把关是 AND，且名单（76/80/81/82）
+    // （ABL:33 >= 2 起 lv-1）；Lv5 的入口把关是 AND，且名单（76/80/81/82）
     // 里只有 76 不在 D 的豁免名单（72/80/81/82/123）里，故取 76 越过把关
     talents: { 76: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -5316,7 +5316,7 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 37,
-    // :368-401（ABL:37 >= 2 起 lv-1，再做 17 项素质增减表，下限 0）；
+    // （ABL:37 >= 2 起 lv-1，再做 17 项素质增减表，下限 0）；
     // 前置素质 31 不在增减表内，只用于越过 Lv5 入口把关（:97）
     talents: { 31: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -5324,7 +5324,7 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 39,
-    // :173（ABL:39 >= 2 起 F = lv+1）；前置素质 124 越过 Lv5 入口把关（:98），
+    // （ABL:39 >= 2 起 F = lv+1）；前置素质 124 越过 Lv5 入口把关（:98），
     // 且不在 F 的豁免名单（72/76/136）内
     talents: { 124: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -5332,7 +5332,7 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 40,
-    // :94（ABL:40 >= 2 起 F = lv+1）；本文件没有 Lv5 入口把关，只有 Lv10 硬顶
+    // （ABL:40 >= 2 起 F = lv+1）；本文件没有 Lv5 入口把关，只有 Lv10 硬顶
     talents: {},
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10 },
@@ -5374,29 +5374,29 @@ function exp_requirement(fixture) {
 const GATE_SPECS = [
   {
     id: 20,
-    // :332 `SIF ABL:11 < ABL:20 + 1` → I |= 4；Lv3 的 A/B/C = 3000/120/1
+    // `SIF ABL:11 < ABL:20 + 1` → I |= 4；Lv3 的 A/B/C = 3000/120/1
     cases: [
       { lv: 3, gate: 11, state: { juel: { 5: 3000 }, exp: { 33: 120 } } },
     ],
   },
   {
     id: 21,
-    // :480-484 `IF ABL:11 < ABL:21+1` → I/J 同置 4
+    // `IF ABL:11 < ABL:21+1` → I/J 同置 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 22,
-    // :343-347 `IF ABL:11 < ABL:22 + 1` → I/J 同置 4
+    // `IF ABL:11 < ABL:22 + 1` → I/J 同置 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 30,
-    // :327 `IF ABL:16 < ABL:30 + 1` → I/J 同置 4
+    // `IF ABL:16 < ABL:30 + 1` → I/J 同置 4
     cases: [{ lv: 0, gate: 16, state: {} }],
   },
   {
     id: 31,
-    // :291 `IF ABL:17 < ABL:31 + 1` 与 :297 `IF ABL:0 < ABL:31 + 1` 两道；
+    // `IF ABL:17 < ABL:31 + 1` 与 :297 `IF ABL:0 < ABL:31 + 1` 两道；
     // 两道都置能力位，故测其中一道时把另一道补到临界值之上
     cases: [
       { lv: 0, gate: 17, state: { abl: { 0: 1 } } },
@@ -5405,7 +5405,7 @@ const GATE_SPECS = [
   },
   {
     id: 32,
-    // :344 无淫乱查 ABL:16、:350 有淫乱（TALENT:76）改查 ABL:11
+    // 无淫乱查 ABL:16、:350 有淫乱（TALENT:76）改查 ABL:11
     cases: [
       { lv: 0, gate: 16, state: {} },
       { lv: 0, gate: 11, state: { talent: { 76: 1 } } },
@@ -5413,22 +5413,22 @@ const GATE_SPECS = [
   },
   {
     id: 33,
-    // :355 `IF ABL:22 < ABL:33 + 1` → I |= 4
+    // `IF ABL:22 < ABL:33 + 1` → I |= 4
     cases: [{ lv: 0, gate: 22, state: {} }],
   },
   {
     id: 37,
-    // :421 `IF ABL:11 < ABL:37 + 1` → I |= 4
+    // `IF ABL:11 < ABL:37 + 1` → I |= 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 39,
-    // :237 `SIF ABL:11 < ABL:39 + 1` → I |= 4（#467 验收逃逸的那一处）
+    // `SIF ABL:11 < ABL:39 + 1` → I |= 4（#467 验收逃逸的那一处）
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 40,
-    // :128 `SIF ABL:11 < ABL:40 + 1` → I |= 4
+    // `SIF ABL:11 < ABL:40 + 1` → I |= 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
 ];
@@ -5562,7 +5562,7 @@ const ABLUP_FUNCTIONS = [
  * 不补这几项，循环用例对它们就是空转（按钮数为 0，空行断言恒真）。
  */
 const ABLUP_REACH_MENU = {
-  ablup23: { [`talent:${CID}:122`]: 1 }, // :10-11 非男人直接返回
+  ablup23: { [`talent:${CID}:122`]: 1 }, // 非男人直接返回
   ablup99: { [`mark:${CID}:3`]: 1 }, // MARK:3 <= 0 提前返回
   ablup100: { [`mark:${CID}:10`]: 1 }, // MARK:10 <= 0 直接返回「并没有异界异常反应」
 };
@@ -5614,7 +5614,7 @@ test('#595 ablup2：选项行、经验需求行、停止行逐行相邻（中间
   const option = buttons(fixture).find((b) => b.accelerator === 0);
   const exit = buttons(fixture).find((b) => b.accelerator === 100);
   // ABLUP2.ERB:51 的 PRINTL 收尾 [0] 行，:53 的 PRINTFORML 是独立经验行，
-  // :55 是 [100]——三行连续，中间没有空行
+  // 是 [100]——三行连续，中间没有空行
   const rows_between = fixture.lines.filter(
     (line) => line.row > option.row && line.row < exit.row,
   );
