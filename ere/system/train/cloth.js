@@ -31,13 +31,13 @@
  * != 0 时滞留的 &4）会跨 TRAIN 残留到日程段被补消费，ere 侧 endTrain 删
  * 表后该残留窗口关闭——按 #179 的等价裁定接受，不补通道。
  *
- * == WASHING_CLOTH（:410-454）不移植 ==
+ * == 洗涤与洗衣状态（CFLAG:43-47 的正值语义已废弃） ==
  *
- * 全库唯一调用点被注释（EVENT_NEXTDAY.ERB:98-99 的 `;SIF FLAG:37` /
- * `;CALL WASHING_CLOTH`）——原作死代码，判死不移植（@SYSTEM_LOADEND 的
- * C2 先例），登记 #14。后果 1:1 继承：洗衣状态（CFLAG:43/46/47 ≥ 1）没有
- * 递减者，洗过的衣物直到 SHOP_TAILOR 购新（CFLAG:43/46/47 = 0 重置）才
- * 回来。CFLAG:48（内裤穿旧度）的唯一递增点也在其中，恒 0。
+ * 洗涤即时完成：AFTERTRAIN_CLOTH 的各洗涤分支只收穿着位、不再置洗衣
+ * 状态（43/45/46/47 ≥ 1 的正值），洗过的衣物下次 WEARING_CLOTH_ABLE /
+ * RE_CLOTHED 即可穿回，无需购新重置。负值状态保留语义：-2 废弃
+ * （AFTERTRAIN 丢弃支）、-3 撕破（COM111）、-1 没收。CFLAG:48（内裤穿旧度）
+ * 无写点，恒 0。
  *
  * 这张票存根/登记（docs/stub-registry.md）：无——本文件全函数真身；
  * 消费方（PISSING_ECST_CHECK / COMF46 / COMF85 / 尿床事件）随各自票接线。
@@ -259,8 +259,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
         // 把尿布拿去洗了
         era.print(`（把${name}的尿布拿去洗了）`);
         await era.waitAnyKey();
-        era.set(`cflag:${cid}:47`, 2);
-        set_mask(mask() - 16);
+        // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
         if (worn(cid) & 64) {
           set_worn(cid, worn(cid) - 64);
         }
@@ -276,11 +275,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     // 特別コスの洗濯
     era.print(`（${name}的${get_clothtype_special(cid)}被拿去洗了）`);
     await era.waitAnyKey();
-    era.set(`cflag:${cid}:47`, 5);
-    if (special_type(cid) === 69) {
-      // オムツは洗濯速度が下着並
-      era.set(`cflag:${cid}:47`, 2);
-    }
+    // 洗衣状态不再设置：洗涤即时完成，下次着衣即可穿回
     set_mask(mask() - 16);
     if (worn(cid) & 64) {
       set_worn(cid, worn(cid) - 64);
@@ -294,7 +289,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     if (main_type(cid) >= 1 && main_type(cid) <= 100) {
       line += '的裙子';
     } else if (main_type(cid) <= 200) {
-      line += '的下身'; // （201+ 无后缀，1:1）
+      line += '的下身'; // （201+ 无后缀）
     }
     era.print(`${line}被拿去扔掉了）`);
     await era.waitAnyKey(); // PRINTW
@@ -339,9 +334,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     era.print(`${line}被拿去洗了）`);
     await era.waitAnyKey();
     if (main_type(cid) >= 201) {
-      // 全身衣装は上下とも洗濯
-      era.set(`cflag:${cid}:45`, 3);
-      era.set(`cflag:${cid}:46`, 3);
+      // 全身衣装は上下とも洗濯（洗衣状态不再设置，只收穿着位）
       let bits = worn(cid);
       if (bits & 4) {
         bits -= 4;
@@ -354,7 +347,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       }
       set_worn(cid, bits);
     } else {
-      era.set(`cflag:${cid}:46`, 3);
+      // 两截型只收下装位（洗衣状态不再设置）
       let bits = worn(cid);
       if (bits & 8) {
         bits -= 8;
@@ -381,7 +374,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     // 内衣被拿去洗了
     era.print(`（${name}的内衣被拿去洗了）`);
     await era.waitAnyKey();
-    era.set(`cflag:${cid}:43`, 2);
+    // 洗衣状态不再设置：洗涤即时完成，下次着衣即可穿回
     if (worn(cid) & 1) {
       set_worn(cid, worn(cid) - 1);
     }
@@ -405,13 +398,10 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     if (main_type(cid) === 0 && (worn(cid) & 3) !== 0) {
       era.set(`cflag:${cid}:41`, 1);
     }
-  } else if (
-    (main_type(cid) === 1 || main_type(cid) === -1) &&
-    (worn(cid) & 3) === 0
-  ) {
-    // 内衣也被脱掉了 → 类型 0
-    era.set(`cflag:${cid}:41`, 0);
   }
+  // （旧实现此处还有一条 ELSEIF「内衣也脱掉了 → 类型 0」：外层 IF 对
+  // 非零（含 -1）恒真、41==0 时判据又恒假，两支都到不了——不可达死分支，
+  // 已删除）
 
   // —— :383-386 ダメになった特別コスは削除 ——
   if (special_type(cid)) {
@@ -525,8 +515,8 @@ async function soiling_cloth_no2(cid, { in_train = true } = {}) {
     (special_type(cid) <= 50 || special_type(cid) === 69)
   ) {
     era.print(
-      `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了污物`,
-    ); // PRINTFORML（原文缺右书名号，1:1）
+      `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了污物》`,
+    ); // PRINTFORML（与下装句同形，右书名号闭合）
     mask = or_tflag45(mask, 16, in_train);
     mask = or_tflag45(mask, 32, in_train);
     // オムツ着用中なら他の衣類は無事

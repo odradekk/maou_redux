@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1002; // #641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1013; // #648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -847,14 +847,6 @@ export default [
     must_mention: '两截型下装废弃（:315）',
   },
   {
-    desc: 'M798 AFTERTRAIN_CLOTH 内裤洗涤天数错（43 = 2 改 3）',
-    file: 'ere/system/train/cloth.js',
-    find: 'era.set(`cflag:${cid}:43`, 2);',
-    replace: 'era.set(`cflag:${cid}:43`, 3); // （变异）',
-    tests: ['cloth-func'],
-    must_mention: '洗濯 2 日（:361）',
-  },
-  {
     desc: 'M799 AFTERTRAIN_CLOTH 上下俱废的类型消除删（45<0&&46<0 判恒假）',
     file: 'ere/system/train/cloth.js',
     find: `    if (
@@ -942,7 +934,7 @@ export default [
     find: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';",
     replace: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '';",
     tests: ['cloth-func'],
-    must_mention: 'GET 版无胸甲＆透视裙子（:884-885 CASEELSE）',
+    must_mention: '未知编号落 CASEELSE 兜底串',
   },
   {
     desc: 'M809 GET_CLOTHTYPE_SPECIAL 的 98 号退回繁体残留（#60 简体锁的靶点）',
@@ -950,7 +942,7 @@ export default [
     find: "  98: '神秘的尿道导管',",
     replace: "  98: '神秘的導尿管',",
     tests: ['cloth-func'],
-    must_mention: 'ere 统一简体（#14）',
+    must_mention: '98/99 按简体规则取 PRINT 版名称',
   },
   {
     desc: 'M830 BENKI 魔王除外守卫删（ARG:0 == 0 不再提前返回）',
@@ -1174,14 +1166,6 @@ export default [
 
   // —— #216 J6 跨族共用子程序与失神、受精（锚定 find 串经脚本核唯一）——
   {
-    desc: 'M870 CONDOM_SETTINGS 显示出当前设定标签（反向变异：LOCALS 缺陷 1:1 空值形态的钉子——谁把 %LOCALS:(CFLAG:61)% 修成有值，此处红，SOP §5 判据 7）',
-    file: 'ere/system/train/com-condom.js',
-    find: `  era.print('现在：');`,
-    replace: `  era.print(\`现在：\${['每次都问', '有套就用', '每次都直接来，来个痛快'][era.get(\`cflag:\${cid}:61\`) || 0] ?? ''}\`); // 变异：修好缺陷`,
-    tests: ['com-condom'],
-    must_mention: '当前设定行',
-  },
-  {
     desc: 'M871 CONFIRM_CONDOM 已戴守卫删（重复消耗安全套）',
     file: 'ere/system/train/com-condom.js',
     find: `    const wearing_master = chara(cid).event.主人避孕套;
@@ -1329,14 +1313,6 @@ export default [
     must_mention: 'CFLAG:113 = -1',
   },
   {
-    desc: 'M884 MILK 的 E 判据改 S（上游 B 判据怪相的行为锁）',
-    file: 'ere/system/train/com-vaginasex.js',
-    find: `  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;`,
-    replace: `  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;`,
-    tests: ['com-vaginasex'],
-    must_mention: 'B 判据行为锁',
-  },
-  {
     desc: 'M885 童贞丧失的初体验记录删（CFLAG:PLAYER:15 / CSTR:3）',
     file: 'ere/system/train/com-vaginasex.js',
     find: '  if (tal(player, 1)) {\n    era.set(`talent:${player}:1`, 0); // （属主 train）',
@@ -1405,8 +1381,8 @@ export default [
   {
     desc: 'M891 爱情经验 26 档删（恒走其他 2）',
     file: 'ere/system/train/com-analsex.js',
-    find: '  let e;\n  if (era_flag.selectcom === 26) {\n    e = 3;\n  } else {\n    e = 2; // その他（含 28）\n  }',
-    replace: `  let e = 2; // 变异：26 档删`,
+    find: '  let e;\n  if (era_flag.selectcom === 26) {\n    e = 3;\n  } else if (era_flag.selectcom === 28) {\n    e = 4; // 対面座位\n  } else {\n    e = 2; // その他\n  }',
+    replace: `  let e = 2; // 变异：档位表删`,
     tests: ['com-analsex'],
     must_mention: 'COM26 → 3',
   },
@@ -2427,7 +2403,7 @@ export default [
   {
     desc: 'M1021 COM201 的非助手出战双保险删',
     file: 'ere/system/train/com-colosseum.js',
-    find: '  // 非助手亲自出战不可执行（与 COM_ABLE201 双保险，1:1 保留）\n  if (assi !== era_flag.player) {\n    return 0;\n  }',
+    find: '  // 非助手亲自出战不可执行（与 COM_ABLE201 双保险）\n  if (assi !== era_flag.player) {\n    return 0;\n  }',
     replace: '  // 变异：双保险删',
     tests: ['com-colosseum'],
     must_mention: ':10-11 双保险',
@@ -2506,15 +2482,6 @@ export default [
     replace: '    income: (lose0) => lose0 * 4,',
     tests: ['com-colosseum'],
     must_mention: '死亡斗场收入 × 5',
-  },
-  {
-    desc: 'M1031 COM206 的 999 缺 RETURN 0 标记删（放过也作废回合）',
-    file: 'ere/system/train/com-colosseum.js',
-    find: 'MONSTER_CONFIGS[206].no_999_return = true; // 缺 RETURN 0（#14 第七批）',
-    replace:
-      'MONSTER_CONFIGS[206].no_999_return = false; // 变异：缺 RETURN 0 不复现',
-    tests: ['com-colosseum'],
-    must_mention: '999 后照走射精检查并 RETURN 1',
   },
   {
     desc: 'M1032 COM206 拡張经验的初回异常经验判据删',
@@ -10410,5 +10377,147 @@ export default [
     replace: '  // 变异：100 号 handler 删除',
     tests: ['page-ability-up'],
     must_mention: '菜单可达的每个编号都有 handler',
+  },
+
+  // —— #648 F2 缺陷修复：调教指令、服装与昏迷（M13000-M13013 守修复点；
+  // M798/M870/M884/M1031 随缺陷修复删除——反向变异全删、失效前提的守卫
+  // 一并移除）——
+  {
+    desc: 'M13000 怪物 999 暂时放过作废出口回退（RETIRE 又返回 1——放过照结算怪物射精）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: `  if (outcome === RETIRE) {
+    return 0; // 999 暂时放过：整条指令作废，不结算怪物射精
+  }`,
+    replace: `  if (outcome === RETIRE) {
+    return 1; // 变异：放过也不作废
+  }`,
+    tests: ['com-colosseum'],
+    must_mention: '一律 RETURN 0（整条指令作废）',
+  },
+  {
+    desc: 'M13001 ＜奴隶陷落＞行的等键删（五行统一 PRINTW 被破）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: `        era.print('＜奴隶陷落＞');
+        await era.waitAnyKey(); // PRINTW（五体统一等键）`,
+    replace: `        era.print('＜奴隶陷落＞');`,
+    tests: ['com-colosseum'],
+    must_mention: '202 同形对照',
+  },
+  {
+    desc: 'M13002 MILK 的 E1 判据退回增量 B（蓄积 S 越过上限也不喷乳）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: '  const ejac = era.get(`maxbase:${player}:3`) || 0;\n  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;',
+    replace: '  const ejac = era.get(`maxbase:${player}:3`) || 0;\n  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;',
+    tests: ['com-vaginasex'],
+    must_mention: '喷乳后槽按 EJAC*2 扣减钳 0',
+  },
+  {
+    desc: 'M13003 对面座位（COM28）的爱情经验 4 档删（按普通档 2 结算）',
+    file: 'ere/system/train/com-analsex.js',
+    find: `  } else if (era_flag.selectcom === 28) {
+    e = 4; // 対面座位`,
+    replace: `  } else if (era_flag.selectcom === 28) {
+    e = 2; // 变异：28 档删`,
+    tests: ['com-analsex'],
+    must_mention: 'COM28 男性=0',
+  },
+  {
+    desc: 'M13004 CONDOM_SETTINGS 的当前档位标签删（回到恒空串）',
+    file: 'ere/system/train/com-condom.js',
+    find: '  era.print(`现在：${setting_label}`);',
+    replace: "  era.print('现在：'); // 变异：档位标签删",
+    tests: ['com-condom'],
+    must_mention: 'CFLAG:61 = 0 的档位标签',
+  },
+  {
+    desc: 'M13005 尿布洗涤的洗衣状态复辟（CFLAG:47 又置 2——洗过的尿布要购新才回得来）',
+    file: 'ere/system/train/cloth.js',
+    find: `        // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
+        if (worn(cid) & 64) {`,
+    replace: `        era.set(\`cflag:\${cid}:47\`, 2); // 变异：洗衣状态复辟
+        if (worn(cid) & 64) {`,
+    tests: ['cloth-func'],
+    must_mention: '洗衣状态不再设置（洗过不留占用）',
+  },
+  {
+    desc: 'M13006 特别服装洗涤的洗衣状态复辟（CFLAG:47 又置 5）',
+    file: 'ere/system/train/cloth.js',
+    find: `    // 洗衣状态不再设置：洗涤即时完成，下次着衣即可穿回
+    set_mask(mask() - 16);`,
+    replace: `    era.set(\`cflag:\${cid}:47\`, 5); // 变异：洗衣状态复辟
+    set_mask(mask() - 16);`,
+    tests: ['cloth-func'],
+    must_mention: '洗衣状态不再设置',
+  },
+  {
+    desc: 'M13007 全身型下装洗涤的洗衣状态复辟（CFLAG:45/46 又置 3）',
+    file: 'ere/system/train/cloth.js',
+    find: `      // 全身衣装は上下とも洗濯（洗衣状态不再设置，只收穿着位）`,
+    replace: `      era.set(\`cflag:\${cid}:45\`, 3); // 变异：洗衣状态复辟
+      era.set(\`cflag:\${cid}:46\`, 3);`,
+    tests: ['cloth-func'],
+    must_mention: '上装位不置洗衣状态',
+  },
+  {
+    desc: 'M13008 两截型下装洗涤的洗衣状态复辟（CFLAG:46 又置 3）',
+    file: 'ere/system/train/cloth.js',
+    find: `      // 两截型只收下装位（洗衣状态不再设置）`,
+    replace: `      era.set(\`cflag:\${cid}:46\`, 3); // 变异：洗衣状态复辟`,
+    tests: ['cloth-func'],
+    must_mention: '洗衣状态不再设置',
+  },
+  {
+    desc: 'M13009 内裤洗涤的洗衣状态复辟（CFLAG:43 又置 2）',
+    file: 'ere/system/train/cloth.js',
+    find: `    // 洗衣状态不再设置：洗涤即时完成，下次着衣即可穿回
+    if (worn(cid) & 1) {`,
+    replace: `    era.set(\`cflag:\${cid}:43\`, 2); // 变异：洗衣状态复辟
+    if (worn(cid) & 1) {`,
+    tests: ['cloth-func'],
+    must_mention: '洗衣状态不再设置',
+  },
+  {
+    desc: 'M13010 SOILING_CLOTH_NO2 特别服装行的右书名号又缺（污物句不闭合）',
+    file: 'ere/system/train/cloth.js',
+    find: '      `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了污物》`,',
+    replace:
+      '      `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了污物`,',
+    tests: ['cloth-func'],
+    must_mention: '右书名号闭合',
+  },
+  {
+    desc: 'M13011 PASSOUT_MESSAGE 侵犯持续句的代词回退成魔王性别（she(0)）',
+    file: 'ere/system/train/passout.js',
+    find: '粗野地对待${she(cid)}。',
+    replace: '粗野地对待${she(0)}。',
+    tests: ['passout'],
+    must_mention: '男性对象用「他」',
+  },
+  {
+    desc: 'M13012 强制精饮绝顶初回支的代词回退成魔王性别（she(0)）',
+    file: 'ere/system/train/seiin.js',
+    find: "    era.print(`强制地让${she(cid)}去了……`);\n    era.print('异常经验＋１');",
+    replace:
+      "    era.print(`强制地让${she(0)}去了……`); // 变异：代词回退\n    era.print('异常经验＋１');",
+    tests: ['seiin'],
+    must_mention: '男性对象用「他」（初回支）',
+  },
+  {
+    desc: 'M13013 强制精饮绝顶以降支的代词回退成魔王性别（she(0)）',
+    file: 'ere/system/train/seiin.js',
+    find: "    era.print(`强制地让${she(cid)}去了……`);\n  }",
+    replace:
+      "    era.print(`强制地让${she(0)}去了……`); // 变异：代词回退\n  }",
+    tests: ['seiin'],
+    must_mention: '男性对象用「他」（以降支）',
+  },
+  {
+    desc: 'M13014 GET_CLOTHTYPE_MAIN2 的 CASE 9 又缺（胸甲＆透视裙子落回「服」）',
+    file: 'ere/system/cloth-lookup.js',
+    find: `  8: '乳贴＆迷你短裙铠甲',
+  9: '胸甲＆透视裙子',`,
+    replace: `  8: '乳贴＆迷你短裙铠甲',`,
+    tests: ['cloth-func'],
+    must_mention: '9 号补登（与 PRINT 版同名）',
   },
 ];

@@ -23,12 +23,11 @@
  *     let 恰好同构）。
  *   - @PASSOUT_TEXT 恢复分支里被注释掉的 `TFLAG:200 = 12 / CALL
  *     SELF_KOJO`（:275-278，原注「TFLAG:200 が中身違うのでスルー」）
- *     1:1 保持注释态——SELF_KOJO 的分发族（SELF_KOJO_K{n}）随第一个
+ *     保持注释态——SELF_KOJO 的分发族（SELF_KOJO_K{n}）随第一个
  *     真实调用方（J8 的 EVENT_AFTERTRAIN）落地，本票不注册。
- *   - %SHE()%（@PASSOUT_MESSAGE :294）实参为空 = ARG 0 = MASTER 的代词
- *     （master 恒男 → 恒「他」）——eraIM@S 流用残留的怪相，1:1（she(0)）。
- *   - FLAG:70（失神系统开关）全库零写点 → 恒 0 → 系统恒开，守卫 1:1
- *     保留（读 flag:70，#14 登记零写点事实）。
+ *   - 侵犯持续骨架句的代词取对象角色 she(cid)——按对象的性别显示他/她。
+ *   - FLAG:70（失神系统开关）全库零写点 → 恒 0 → 系统恒开，守卫照读
+ *     flag:70。
  */
 
 const era = require('#/era-electron');
@@ -417,7 +416,7 @@ async function passout_message() {
     } else {
       era.print('尻穴');
     }
-    era.print(`给侵犯了，不顾失去意识的${name_of(cid)}，粗野地对待${she(0)}。`);
+    era.print(`给侵犯了，不顾失去意识的${name_of(cid)}，粗野地对待${she(cid)}。`);
     if (com === 101 || com === 102) {
       era.print('触手');
     } else {

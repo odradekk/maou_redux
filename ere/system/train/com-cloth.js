@@ -56,18 +56,14 @@
  *   源 `PRINTL  [7] - 全部扒光`（两空格）在 golden train-natural:217
  *   渲染为 ` [7] - 全部扒光`（一空格）——脱衣行一空格、穿衣行
  *   （源四空格）三空格。
- * - COM111 的 [100] 行源是 `PRINTL  [100]- 算了`——] 与 - 间无空格，
- *   1:1 保留。
- *   （附带发现——**ere 侧移植缺陷，待修，不属 #14**：原作行为正确、是
- *   #215 抄错。ere/system/train/cloth.js 的 242/243 两行（'  [0] - 好的'
- *   与 '  [1] - 不要'）照抄了源 FUNC_CLOTH.ERB 的 259/260 两行的两个
- *   前导空格，按上条语义渲染应为一个；同族疑似 ere/system/train/
- *   passout.js 的 559 行（PASSOUT.ERB 的 396 行 `PRINTFORM  不知什么时
- *   候，` 两空格）。两处均
- *   不在 golden 窗口内故未暴露，随后续接线票修正——本票不动他人文件。）
+ * - COM111 的 [100] 行是 ` [100]- 算了`——] 与 - 间无空格（有意保留的
+ *   排版本样）。
+ *   （cloth.js 尿布菜单两键与 passout.js 恢复文本的前导空格曾是移植
+ *   转录缺陷——比渲染语义多抄了一格，#577 已改正；两处均不在 golden
+ *   窗口内，靠 #577 的普查补漏发现。）
  * - 内裤脱衣（:278-287）的弄脏前缀查 TFLAG:45 的位 8/4（下装/下装处理）
- *   而非位 2/1（内裤）——与穿衣分支（位 2/1）不对称，是原作的抄写怪癖，
- *   1:1 保留不改。
+ *   而非位 2/1（内裤）——与穿衣分支（位 2/1）不对称，是抄写怪癖的既有
+ *   行为，保留不改。
  *
  * 这张票无存根/登记（docs/stub-registry.md）：被调全为真身，口上经既有
  * 分发的合法缺失。
@@ -132,7 +128,8 @@ function standard_bits(cid) {
 
 /**
  * @COM110_ABLE0T（:329-349）：特別コス脱衣。尿布（42==69）支内的第二条
- * SIF（(40&64) && 42<=50）在 42==69 的分支里恒假——原作死条件，1:1 保留。
+ * SIF（(40&64) && 42<=50）在 42==69 的分支里恒假——尿布支内互斥条件的
+ * 双保险写法，保留。
  */
 function com110_able0t(cid) {
   if (special_type(cid) === 0) {
@@ -146,7 +143,7 @@ function com110_able0t(cid) {
       return 0;
     }
     if (worn(cid) & BIT_SPECIAL && special_type(cid) <= 50) {
-      return 0; // 尿布支内恒假（42==69 与 <=50 互斥），1:1
+      return 0; // 尿布支内恒假（42==69 与 <=50 互斥）的双保险
     }
     if (main_type(cid) === 202 && worn(cid) & BIT_SKIRT) {
       return 0;
@@ -174,7 +171,7 @@ function com110_able0w(cid, b) {
       return 0;
     }
     if (worn(cid) & BIT_SPECIAL && special_type(cid) <= 50) {
-      return 0; // 同 able0t：尿布支内恒假，1:1
+      return 0; // 同 able0t：尿布支内恒假的双保险
     }
     if (main_type(cid) === 202 && worn(cid) & BIT_SKIRT) {
       return 0;

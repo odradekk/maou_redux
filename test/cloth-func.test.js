@@ -9,10 +9,11 @@
  *   - @AFTERTRAIN_CLOTH 的六组分支（特别服装丢弃/尿布换洗（含 INPUT 循环）/
  *     特别服装洗涤/下装丢弃与洗涤（两截 vs 全身）/内裤丢弃与洗涤/类型消除
  *     与回归规则）+ 调教外 mask 参数链（TFLAG:45 的 #179 同形态处置）；
+ *     洗涤分支不再置洗衣状态（洗后即能穿回），废弃/撕破/没收的负值状态保留；
  *   - @RE_CLOTHED 的顺从+露出癖守卫与再着衣输出；
  *   - @SOILING_CLOTH_NO1/NO2 的置位矩阵（含尿布早退与调教外无 tflag 通道）；
- *   - GET_/PRINT_ 两版取串表的差异位（GET 版缺 CASE 9、SPECIAL 的 98/99
- *     简体化、动词后置）与 clothtype_text 的组合（全裸/史莱姆/特别服装句）。
+ *   - GET_/PRINT_ 两版取串表（SPECIAL 的 98/99 简体化、GET 版已补
+ *     CASE 9 胸甲＆透视裙子、动词后置）与 clothtype_text 的组合（全裸/史莱姆/特别服装句）。
  *
  * 世界底座与 test/com-caress.test.js 同构：魔王 0 + 奴隶 31、火车表按
  * 用例决定开否（mask 参数链的用例特意**不开**——证明调教外路径不碰
@@ -271,9 +272,10 @@ test('AFTERTRAIN_CLOTH：尿布换新分支（42=69 & 47=0 & 钱 ≥ 50，选 0�
   );
 });
 
-test('AFTERTRAIN_CLOTH：尿布换洗分支（同上但选 1）→ 47=2、位 64 剥除', async () => {
+test('AFTERTRAIN_CLOTH：尿布换洗分支（同上但选 1）→ 不置洗衣状态、位 64 剥除，可再穿回', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
+  fixture.store.set('cflag:31:41', 5);
   fixture.store.set('cflag:31:42', 69);
   fixture.store.set('cflag:31:47', 0);
   fixture.store.set('cflag:31:40', SPECIAL);
@@ -283,11 +285,16 @@ test('AFTERTRAIN_CLOTH：尿布换洗分支（同上但选 1）→ 47=2、位 64
   fixture.set_inputs(1); // [1] 不要
   await cloth.aftertrain_cloth(31);
   assert.equal(era_flag.money, 100, '不换新不扣费');
-  assert.equal(fixture.store.get('cflag:31:47'), 2, '拿去洗（:277）');
+  assert.equal(fixture.store.get('cflag:31:47'), 0, '洗衣状态不再设置（洗过不留占用）');
   assert.equal(fixture.store.get('cflag:31:40') & SPECIAL, 0, '位 64 剥除');
+  cloth.wearing_cloth_able(31);
+  assert.equal(
+    fixture.store.get('cflag:31:40') & SPECIAL,
+    SPECIAL,
+    '洗后即可经 WEARING_CLOTH_ABLE 穿回',
+  );
 });
-
-test('AFTERTRAIN_CLOTH：特别服装洗涤（&16，钱不足或非尿布）→ 47=5', async () => {
+test('AFTERTRAIN_CLOTH：特别服装洗涤（&16，钱不足或非尿布）→ 不置洗衣状态', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:41', 5);
@@ -298,10 +305,9 @@ test('AFTERTRAIN_CLOTH：特别服装洗涤（&16，钱不足或非尿布）→ 
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.money = 0; // 尿布换新分支的钱档不达
   await cloth.aftertrain_cloth(31);
-  assert.equal(fixture.store.get('cflag:31:47'), 5, '洗濯 5 日（:287）');
+  assert.equal(fixture.store.get('cflag:31:47'), 0, '洗衣状态不再设置');
   assert.equal(fixture.store.get('tflag:45'), 0, 'TFLAG:45 -= 16');
 });
-
 test('AFTERTRAIN_CLOTH：下装丢弃（&8）两截型 → 46=-2、位 8/16 剥除', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
@@ -335,34 +341,63 @@ test('AFTERTRAIN_CLOTH：下装丢弃（&8）全身型（41 ≥ 201）→ 类型
   );
 });
 
-test('AFTERTRAIN_CLOTH：下装洗涤（&4 且 46=0）两截型 → 46=3', async () => {
+test('AFTERTRAIN_CLOTH：下装洗涤（&4 且 46=0）两截型 → 不置洗衣状态、可穿回', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:41', 5);
   fixture.store.set('cflag:31:40', SKIRT);
   fixture.store.set('tflag:45', 4);
   await cloth.aftertrain_cloth(31);
-  assert.equal(fixture.store.get('cflag:31:46'), 3, '洗濯 3 日（:342）');
+  assert.equal(fixture.store.get('cflag:31:46') ?? 0, 0, '洗衣状态不再设置');
   assert.equal(fixture.store.get('cflag:31:41'), 5, '类型保留');
+  cloth.wearing_cloth_able(31);
+  assert.equal(
+    fixture.store.get('cflag:31:40') & SKIRT,
+    SKIRT,
+    '洗后即可经 WEARING_CLOTH_ABLE 穿回',
+  );
 });
 
-test('AFTERTRAIN_CLOTH：内裤丢弃（&2）→ 43=-2；洗涤（&1 且 43=0）→ 43=2', async () => {
+test('AFTERTRAIN_CLOTH：下装洗涤（&4 且 46=0）全身型（41 ≥ 201）→ 上下位都收、不置洗衣状态', async () => {
+  const { fixture, cloth } = seed_train_world();
+  fixture.store.set('flag:37', 1);
+  fixture.store.set('cflag:31:41', 209); // 女仆装（全身）
+  fixture.store.set('cflag:31:40', SKIRT);
+  fixture.store.set('tflag:45', 4);
+  await cloth.aftertrain_cloth(31);
+  assert.equal(fixture.store.get('cflag:31:45') ?? 0, 0, '上装位不置洗衣状态');
+  assert.equal(fixture.store.get('cflag:31:46') ?? 0, 0, '下装位不置洗衣状态');
+  assert.equal(fixture.store.get('cflag:31:41'), 209, '类型保留');
+  cloth.wearing_cloth_able(31);
+  assert.equal(
+    fixture.store.get('cflag:31:40') & SKIRT,
+    SKIRT,
+    '洗后即可经 WEARING_CLOTH_ABLE 穿回',
+  );
+});
+test('AFTERTRAIN_CLOTH：内裤丢弃（&2）→ 43=-2；洗涤（&1 且 43=0）→ 不置状态', async () => {
   const discard = seed_train_world();
   discard.fixture.store.set('flag:37', 1);
   discard.fixture.store.set('cflag:31:40', PANTS);
   discard.fixture.store.set('tflag:45', 2);
   await discard.cloth.aftertrain_cloth(31);
-  assert.equal(discard.fixture.store.get('cflag:31:43'), -2, '废弃（:354）');
+  assert.equal(discard.fixture.store.get('cflag:31:43'), -2, '废弃');
   assert.equal(discard.fixture.store.get('cflag:31:40'), 0, '位 1 剥除');
 
   const wash = seed_train_world();
   wash.fixture.store.set('flag:37', 1);
+  wash.fixture.store.set('cflag:31:41', 1); // 有基本服装，着衣位才有初始化来源
   wash.fixture.store.set('cflag:31:40', PANTS);
   wash.fixture.store.set('tflag:45', 1);
   await wash.cloth.aftertrain_cloth(31);
-  assert.equal(wash.fixture.store.get('cflag:31:43'), 2, '洗濯 2 日（:361）');
+  assert.equal(wash.fixture.store.get('cflag:31:43') ?? 0, 0, '洗衣状态不再设置');
+  wash.cloth.wearing_cloth_able(31);
+  assert.equal(
+    wash.fixture.store.get('cflag:31:40') & PANTS,
+    PANTS,
+    '洗后即可经 WEARING_CLOTH_ABLE 穿回',
+  );
 });
-
 test('AFTERTRAIN_CLOTH：上下都不可用 → 类型清零；仅剩内衣 → 类型回落 1；内衣也失 → 0', async () => {
   // 45=-2（上装废弃）与 46=-2（下装废弃）→ 41=0（:370-371）。三条 SIF
   // 顺序执行：41 归零后若内衣在身（40 & 3），紧随的回落 SIF 把它抬回 1——
@@ -390,7 +425,7 @@ test('AFTERTRAIN_CLOTH：上下都不可用 → 类型清零；仅剩内衣 → 
   );
 
   // 回落 SIF 在 IF CFLAG:41 块内：进块时已 0 的类型走不到它（外层 IF 假），
-  // 41=0 + 内衣在身 → 维持 0（块结构的直接后果，1:1）
+  // 41=0 + 内衣在身 → 维持 0（块结构的直接后果）
   const prezero = seed_train_world();
   prezero.fixture.store.set('flag:37', 1);
   prezero.fixture.store.set('cflag:31:41', 0);
@@ -402,10 +437,9 @@ test('AFTERTRAIN_CLOTH：上下都不可用 → 类型清零；仅剩内衣 → 
     '预先 0 的类型不被回落 SIF 抬回（:369 块界）',
   );
 
-  // 的 ELSEIF（(41==1||41==-1) && !(40&3) → 0）是**死代码**：
-  // 外层 IF CFLAG:41 在 Emuera 对非零（含 -1）为真，41==0 时 ELSEIF 的
-  // (0==1||0==-1) 恒假——两支都到不了。1:1 保留不可达分支，登记 #14；
-  // 此处断言其不可达（41=1 + 无内衣 → 维持 1）
+  // 旧实现尾段还有一条 ELSEIF（(41==1||41==-1) && !(40&3) → 0），但外层
+  // IF CFLAG:41 对非零（含 -1）恒真、41==0 时判据又恒假——两支都到不了，
+  // 是不可达死分支，已删除；此处断言同一输入下行为不变（41=1 + 无内衣 → 维持 1）
   const unreachable = seed_train_world();
   unreachable.fixture.store.set('flag:37', 1);
   unreachable.fixture.store.set('cflag:31:41', 1);
@@ -414,7 +448,7 @@ test('AFTERTRAIN_CLOTH：上下都不可用 → 类型清零；仅剩内衣 → 
   assert.equal(
     unreachable.fixture.store.get('cflag:31:41'),
     1,
-    '内衣脱光分支不可达（外层 IF 吃掉 41==1，#14 登记的死代码）',
+    '内衣脱光分支不可达（旧死代码已删，41=1 维持不变）',
   );
 });
 
@@ -439,8 +473,8 @@ test('AFTERTRAIN_CLOTH 调教外调用：soiled_mask 参数链代位 TFLAG:45，
   await cloth.aftertrain_cloth(31, 1); // bit 1：内裤洗涤
   assert.equal(
     fixture.store.get('cflag:31:43'),
-    2,
-    '经参数链结算（=2 洗濯中）',
+    0,
+    '经参数链结算（洗衣状态不再设置）',
   );
   assert.equal(fixture.store.get('cflag:31:40'), 0, '位 1 剥除');
 });
@@ -490,7 +524,7 @@ test('SOILING_CLOTH_NO1：尿布（42=69）→ 早退，其他衣物无恙', asy
   assert.equal(fixture.store.get('tflag:45'), 16);
 });
 
-test('SOILING_CLOTH_NO2：三段双位置位（洗+废）与缺右书名号的原文', async () => {
+test('SOILING_CLOTH_NO2：三段双位置位（洗+废）与右书名号闭合的污物句', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:41', 5);
@@ -501,8 +535,8 @@ test('SOILING_CLOTH_NO2：三段双位置位（洗+废）与缺右书名号的�
   assert(
     fixture
       .text_lines()
-      .some((l) => l.includes('的围裙沾满了污物') && !l.includes('》')),
-    '特别服装行缺右书名号（:500 原文如此，1:1）',
+      .some((l) => l.includes('的围裙沾满了污物》')),
+    '特别服装行右书名号闭合',
   );
 });
 
@@ -552,14 +586,16 @@ test('GET_CLOTHTYPE_MAIN2：名字查表与动词后置（渲染序 = 名字 →
   );
 });
 
-test('GET_CLOTHTYPE_MAIN2：缺 CASE 9（与 PRINT 版的表差，#14 登记）→ 落「服」', () => {
+test('GET_CLOTHTYPE_MAIN2：CASE 9 = 胸甲＆透视裙子；未知编号兜底「服」', () => {
   const fixture = create_era_fixture();
   const { get_clothtype_main2 } = fixture.load_module('system/cloth-lookup');
   fixture.store.set('cflag:31:41', 9);
+  assert.equal(get_clothtype_main2(31), '胸甲＆透视裙子', '9 号补登（与 PRINT 版同名）');
+  fixture.store.set('cflag:31:41', 999);
   assert.equal(
     get_clothtype_main2(31),
     '服',
-    'GET 版无胸甲＆透视裙子（:884-885 CASEELSE）',
+    '未知编号落 CASEELSE 兜底串',
   );
 });
 
@@ -572,7 +608,7 @@ test('GET_CLOTHTYPE_SPECIAL：98/99 取 PRINT 版简体名（#60），未知 →
   assert.equal(
     get_clothtype_special(31),
     '神秘的尿道导管',
-    '原作此两号是繁体残留（GET 版 PRINT 未赋 LOCALS），ere 统一简体（#14）',
+    '98/99 按简体规则取 PRINT 版名称（神秘的尿道导管）',
   );
   fixture.store.set('cflag:31:42', 999);
   assert.equal(
@@ -582,7 +618,7 @@ test('GET_CLOTHTYPE_SPECIAL：98/99 取 PRINT 版简体名（#60），未知 →
   );
 });
 
-test('PRINT_CLOTHTYPE_MAIN2 的表比 GET 版多 CASE 9（两表不合并，1:1 各自落地）', () => {
+test('PRINT_CLOTHTYPE_MAIN2 的 CASE 9 = 胸甲＆透视裙子（与 GET 版两表各自落地）', () => {
   const fixture = create_era_fixture();
   const { clothtype_main2_text } = fixture.load_module('page/page-clothtype');
   fixture.store.set('cflag:31:41', 9);
