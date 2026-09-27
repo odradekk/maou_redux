@@ -7,7 +7,8 @@ export const COUNT = 50; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
 // GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的守护）+ 第三批
 // M10346-M10348（独立审查整改后补钉的三条：拼名、FLAG:500 档、FLAG:60 循环）
 // #612 起 +1（M12305：按钮正文补回原作的「- 」分隔符——补回点被改回时
-// 对应的 rendered 断言必须红）；
+// 对应的 rendered 断言必须红）；#655（F9）净 0：删反向变异 M10344（藤蔓旁白
+// 战场表重复臂已修正为天神宫 5 档），+1 M13355 守修正后的 5 档称呼；
 
 export default [
   {
@@ -86,9 +87,9 @@ export default [
   {
     desc: 'M10309 999 的 BREAK 挪出显示守卫（BATTLE2 形态，显示关也中断）',
     file: 'ere/invasion/invasion-arcana-battle.js',
-    find: '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1\n      if (result === 999 && (settings & 32) !== 0) {',
+    find: '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头）\n      if (result === 999 && (settings & 32) !== 0) {',
     replace:
-      '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1\n      if (result === 999) {',
+      '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头）\n      if (result === 999) {',
     tests: ['invasion-arcana-battle'],
     must_mention: '显示关时 999 不退出循环',
   },
@@ -364,21 +365,12 @@ export default [
     must_mention: '分支：',
   },
   {
-    desc: 'M10343 女旁白的第一臂补上侵攻点门槛（原作没有）',
+    desc: 'M10343 女旁白的第一臂补上侵攻点门槛（其它函数同位置都有，唯独这里缺）',
     file: 'ere/invasion/invasion-ravish.js',
     find: '  if (rand(3) === 0) {',
     replace: '  if (rand(3) === 0 && sinkou > 1) {',
     tests: ['invasion-ravish'],
     must_mention: '分支：',
-  },
-  {
-    desc: 'M10344 藤蔓旁白的战场表「修好」重复臂（补上天神宫 5 档）',
-    file: 'ere/invasion/invasion-ravish.js',
-    find: "    4: ['天使', '破邪天使'],\n  }[area] ?? ['女人', '女兵士'];",
-    replace:
-      "    4: ['天使', '破邪天使'],\n    5: ['十字军', '十字军军官'],\n  }[area] ?? ['女人', '女兵士']; // 变异：把原作缺陷修好",
-    tests: ['invasion-ravish'],
-    must_mention: '天神宫（5）落 ELSE',
   },
   {
     desc: 'M10345 马旁白的第一臂守卫反向（rand(2) === 0 改 === 1）',
@@ -424,5 +416,15 @@ export default [
     replace: "era.printButton('东方堡垒', 0); // 变异：丢掉「- 」",
     tests: ['invasion-arcana-fort'],
     must_mention: 'ARCANA_FORT.ERB:83-103 的分隔符照写',
+  },
+
+  // —— #655（F9）：@IVY_INV 天神宫档的守卫 ——
+  {
+    desc: 'M13355 藤蔓旁白的战场表删掉天神宫档（5 档移除，天神宫落回 ELSE 拿人间界称呼，#655 修正回退）',
+    file: 'ere/invasion/invasion-ravish.js',
+    find: "    5: ['十字军', '十字军军官'],\n  }[area] ?? ['女人', '女兵士'];",
+    replace: "  }[area] ?? ['女人', '女兵士']; // 变异：删天神宫档",
+    tests: ['invasion-ravish'],
+    must_mention: '天神宫（5）拿十字军称呼',
   },
 ];

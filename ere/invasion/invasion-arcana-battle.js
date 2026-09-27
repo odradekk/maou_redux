@@ -12,15 +12,14 @@
  * speed_plus2。两处主循环的差异只剩平局方向：BATTLE2 是 `IF RESULT > 0`
  * （平局勇者先攻），本文件是 `IF X >= Y`（:73，平局奴隶先攻）。
  *
- * @ENEMY_ATTACK3（:182-353）与 @MONSTER_ATTACK3（:356-525）是死代码：
- * 全库零调用点（含文件内部互调），是 @DUEL_ATTACK 泛化前的旧实现
- * （grep 证据见 issue #470 勘察评论），不移植、不建存根行——文件级
- * 状态仍归「已移植」，函数级判死记录在 issue #14。
+ * @ENEMY_ATTACK3（:182-353）与 @MONSTER_ATTACK3（:356-525）没有任何
+ * 活调用方（全库零调用点，含文件内部互调），是 @DUEL_ATTACK 泛化前的旧
+ * 实现，不移植、不建存根行。
  *
- * 移植说明（有意保留的原作形态，均注明出处）：
+ * 移植说明（有意保留的形态差异）：
  *   - 主循环 :79-85 的 `IF RESULT == 999` 里 BREAK 嵌在 `IF FLAG:5 & 32`
- *     内——显示关闭时「战斗中断」（999）不退出循环。BATTLE2 同位置的
- *     BREAK 在守卫外，本文件照抄原样嵌套。当前依赖下 999 不可达
+ *     内——显示关闭时「战斗中断」（999）不退出循环；BATTLE2 同位置的
+ *     BREAK 在守卫外。当前依赖下 999 不可达
  *     （duel_attack 的 999 只能出自 MAGIC 的 target_type 1 分支，本战斗
  *     恒 0），该差异暂无实跑面，测试用可替换的 duel_attack 钉住。
  *   - 弹药补充 15（:21-22），不是 BATTLE2 的 7——各文件字面量分别保留。
@@ -204,7 +203,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       if (result === 0) {
         result = await battle2.duel_attack(defer, 1, atker, 2, rand, move_ctx);
       }
-      // RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1
+      // RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头）
       if (result === 999 && (settings & 32) !== 0) {
         era.print('战斗中断了');
         break;

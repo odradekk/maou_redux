@@ -1,5 +1,6 @@
 /**
- * 普林希丝（K902）的失声契约（issue #248，裁定见 #14）。
+ * 普林希丝（K902）的失声契约（issue #248：她的口上函数后缀全部错位，
+ * K902 在全库没有任何实现，分发点到 902 一律静默跳过）。
  *
  */
 
@@ -72,7 +73,7 @@ test('K902 事件边界：EVENTTRAIN 读 102，EVENTEND 不承接 K903 正文', 
   );
 });
 
-test('K902 失声：EX 编号分发到 902，21 个源分发点均无真身与输出', async () => {
+test('K902 失声：EX 编号分发到 902，20 个动态分发点均无真身与输出', async () => {
   const fixture = setup_k902();
   fixture.store.set('exflag:102', 1);
 
@@ -103,13 +104,16 @@ test('K902 失声：EX 编号分发到 902，21 个源分发点均无真身与�
     ['GOHOUBI_AFTER_KOUJO', after.gohoubi_after_koujo_family],
     ['OSIOKI_KOUJO', after.osioski_koujo_family],
     ['GOBI_KOUJO', kojo.gobi_koujo_family],
-    ['KOJO_EVENT_COM', kojo.kojo_event_com_family],
   ];
-  assert.equal(implemented_points.length, 21, 'EVENT_K.ERB 共 21 个动态分发点');
+  assert.equal(
+    implemented_points.length,
+    20,
+    'EVENT_K 分发表共 20 个动态分发点',
+  );
 
   for (const [name, family] of implemented_points) {
     assert.equal(family.has(KEY), false, `${name} 不注册 K902`);
     await family.call(KEY, { whenMissing: 0, args: [] });
   }
-  assert.deepEqual(fixture.text_lines(), [], 'K902 在 21 个分发点全程失声');
+  assert.deepEqual(fixture.text_lines(), [], 'K902 在 20 个分发点全程失声');
 });
