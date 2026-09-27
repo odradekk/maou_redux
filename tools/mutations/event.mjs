@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 385; // #641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 389; // #650 起 +6（M13102-M13107 修复守卫）；#650 起再 -1（M6960 反向变异随造型王双倍修复删除）；#650 起 -1（M348 反向变异随月末守卫死注释删除）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
@@ -525,7 +525,7 @@ export default [
     must_mention: 'flag:26',
   },
   {
-    desc: 'M254 钩子的 EX_TALENT:MASTER:200 写入被拆（DATA_FIX 三行之一，魔王高贵标识）',
+    desc: 'M254 钩子的 EX_TALENT:MASTER:200 写入被拆（历史补丁三行之一，魔王高贵标识）',
     file: 'ere/event/event-load.js',
     find: `      if (cid === 0) {
         // EX_TALENT:200 = 魔王（高贵标识）
@@ -533,11 +533,10 @@ export default [
       }`,
     replace: `      // 变异：魔王标识写入被拆`,
     tests: ['event-load', 'page-save-load'],
-    must_mention:
-      'EX_TALENT:MASTER:200 = 1（魔王高贵标识，DATA_FIX 170205 段）',
+    must_mention: 'EX_TALENT:MASTER:200 = 1（魔王高贵标识）',
   },
   {
-    desc: 'M255 钩子的 MAXBASE 下限钳制被拆（DATA_FIX 三行之二与三——读入存档的低上限不被兜回）',
+    desc: 'M255 钩子的 MAXBASE 下限钳制被拆（历史补丁三行之二与三——读入存档的低上限不被兜回）',
     file: 'ere/event/event-load.js',
     find: `      if ((era.get(\`maxbase:\${cid}:0\`) || 0) < 600) {
         era.set(\`maxbase:\${cid}:0\`, 600);
@@ -550,14 +549,14 @@ export default [
     must_mention: '体力上限 < 600 → 600',
   },
   {
-    desc: 'M252 自动存档被拆（EVENT_NEWDAY 入口不再写 99 号槽，#137/ADR-0006 的有意偏离）',
+    desc: 'M252 自动存档被拆（EVENT_NEWDAY 入口不再写 99 号槽，#137/ADR-0006 的约定）',
     file: 'ere/event/event-nextday.js',
     find: `  // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的
   // auto_save：备注带「自动」前缀、不 push LASTSAVE_NO、无输出）
   await auto_save();`,
     replace: `  // 变异：自动存档被拆`,
     tests: ['event-nextday'],
-    must_mention: '自动存档必须写 99 号槽（原作留白，ADR-0006）',
+    must_mention: '自动存档必须写 99 号槽（ADR-0006 的读档钩子配套约定）',
   },
   // —— #148 quit 的 throw 型控制流（夹具镜像 + ere 侧哨兵机制拆除）——
   {
@@ -583,23 +582,6 @@ export default [
     must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
   // —— #171 H2 勇者来袭（ere/event/enter-enemy.js 与其接线）——
-  {
-    // 反向变异（#116 的 M214/M218 先例）：把被汉化版注释掉、1:1 保留为
-    // 死注释的月末守卫「修好」——钉住用例证明原作现状是「月末也照来」
-    desc: 'M348 月末守卫被修好（死注释复活成活代码——原作现状是每日来袭）',
-    file: 'ere/event/enter-enemy.js',
-    find: '  // LOCAL = 10（原 RAND:10 + 20 被写死）——原作现状，#14 登记，勿修\n  // 月末才来的守卫（SIF DAY:2 > LOCAL && ARG:0 == 0 && FLAG:60 < 300\n  //   → RETURN 0）在汉化版里被整段注释掉，1:1 保持死注释不移植（钉住\n  //   用例证明「月末也照来」，反向变异条目防守「修好」它的手滑）',
-    replace: `  const local_month = 10; // 变异：月末守卫复活
-  if (
-    era_flag.date > local_month &&
-    arg0 === 0 &&
-    (era.get('flag:60') || 0) < 300
-  ) {
-    return 0; // 变异：原作现状是这段被注释掉、每日都来
-  }`,
-    tests: ['enter-enemy'],
-    must_mention: '月末守卫已死：日 28 仍每日来袭',
-  },
   {
     desc: 'M349 人数上限分支①的线从 60 抬到 61（61 人不再拦）',
     file: 'ere/event/enter-enemy.js',
@@ -904,17 +886,6 @@ export default [
     replace: '    // 变异：漏回收 CFLAG:552 装饰2',
     tests: ['event-museum'],
     must_mention: '装饰2退回库存',
-  },
-  {
-    desc: 'M6960 MUSEUM 造型王：错误把双倍显示值计入实际经验',
-    file: 'ere/event/event-museum.js',
-    find: `  chara(0).dungeon.战斗经验 += lv;
-  // TALENT:329 = 造型王实绩；原作先加经验再翻倍显示值，顺序 1:1 保留。
-  if (get('talent:0:329')) lv *= 2;`,
-    replace: `  if (get('talent:0:329')) lv *= 2;
-  chara(0).dungeon.战斗经验 += lv;`,
-    tests: ['event-museum'],
-    must_mention: '已有造型王只翻倍显示经验',
   },
   {
     desc: 'M6961 MUSEUM 反抗口上：反抗刻印 Lv3 错判为 Lv2',
@@ -3494,5 +3465,67 @@ export default [
     replace: '    // 变异：装备持续效果不执行',
     tests: ['com-sm'],
     must_mention: '眼罩位真身执行',
+  },
+  // —— #650 F4 缺陷修复守卫 ——
+  {
+    desc: 'M13102 ENTER_ENEMY：月末守卫复活（每日来袭变月末才来）',
+    file: 'ere/event/enter-enemy.js',
+    find: `  // LOCAL = 10 写死（早退阈值用）：原月末守卫要求 DAY:2 > LOCAL，该守卫
+  // 被注释掉的功能不恢复，每日来袭（#574 第 4 条）`,
+    replace: `  const local_month = 10; // 变异：月末守卫复活
+  if (
+    era_flag.date > local_month &&
+    arg0 === 0 &&
+    (era.get('flag:60') || 0) < 300
+  ) {
+    return 0;
+  }`,
+    tests: ['enter-enemy'],
+    must_mention: '月末守卫已删：日 28 仍每日来袭',
+  },
+  {
+    desc: 'M13104 WITHDRAWAL：废人化生效素质回退成未声明的 19 号',
+    file: 'ere/event/event-addict.js',
+    find: `  await era.printAndWait(\`\${name}的精神【崩坏】了……\`);
+  set_talent(cid, 9, 1);`,
+    replace: `  await era.printAndWait(\`\${name}的精神【崩坏】了……\`);
+  set_talent(cid, 19, 1);`,
+    tests: ['event-addict'],
+    must_mention: '播报【崩坏】必须实际写入 TALENT:9',
+  },
+  {
+    desc: 'M13105 EVENTCOMEND：助手死亡代词回退成目标侧',
+    file: 'ere/event/event-comend.js',
+    find: '    era.print(`对${she(era_flag.assi)}做什么都不再有反应了……`);',
+    replace:
+      '    era.print(`对${she(era_flag.target)}做什么都不再有反应了……`);',
+    tests: ['event-comend'],
+    must_mention: '分支 3：助手体力 <= 0 → 助手死亡消息',
+  },
+  {
+    desc: 'M13106 MUSEUM：造型王双倍回退成只翻显示值（实际入账不计双倍）',
+    file: 'ere/event/event-museum.js',
+    find: `  if (get('talent:0:329')) lv *= 2;
+  chara(0).dungeon.战斗经验 += lv;`,
+    replace: `  chara(0).dungeon.战斗经验 += lv;
+  if (get('talent:0:329')) lv *= 2;`,
+    tests: ['event-museum'],
+    must_mention: '已有造型王双倍加成计入实际入账与显示',
+  },
+  {
+    desc: 'M13107 SPECIALSKIL：嫉妒移除回退成打印 32 号（压抑）的名字',
+    file: 'ere/event/get-specialtalent.js',
+    find: '      line += `【${talent_name(84)}】`;',
+    replace: '      line += `【${talent_name(32)}】`;',
+    tests: ['event-get-specialtalent'],
+    must_mention: '84 号（嫉妒）消失必须打印 84 号自身的名字',
+  },
+  {
+    desc: 'M13103 BANISHMENT：选项 1 的男性条件被删（女性也拒绝复活）',
+    file: 'ere/event/event-banishment.js',
+    find: `    if (result === 1 && has(cid, 'talent', 122)) {`,
+    replace: `    if (result === 1) {`,
+    tests: ['event-execution'],
+    must_mention: '施予男性化的诅咒',
   },
 ];

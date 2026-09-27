@@ -20,9 +20,9 @@
  *   - @SELF_CHECK 五条派发臂的互斥与优先次序（男性→肛门、女性 V<A→肛门、
  *     处女+A感觉≥3→肛门、其余→性交），以及失神守卫与逆强暴复位。
  *
- * 原作缺陷（#14 / #270，1:1 照抄不修）：
- *   - aftertrain_beastsex_check 报告分支写 juel:8 += leftover_a*200
- *     （源 :837 `JUEL:8 += A*200`，A 是自慰回数残留；打印仍用 B*200）。
+ * 已修缺陷（#270）：aftertrain_beastsex_check 报告分支的二次累加曾用自慰
+ * 回数（leftover_a）结算，显示点数（B*200）与实得不符——现按兽奸回数 B
+ * 结算，显示与实得一致。
  */
 
 const assert = require('node:assert/strict');
@@ -877,10 +877,9 @@ test('AFTERTRAIN: aftertrain_beastsex_check 报告分支（顺从+露出+抖M≥
     '动物耳目标报告时必须有「摇着尾巴」',
   );
   assert.ok(fixture.text_lines().some((l) => l.includes('来报告了')));
-  // 第一次 juel:8 += B*200；第二次源 :837 用 A*200。单独调用兽奸时
-  // leftover_a = 0（跨模块残留不建模），故二次累加为 0。
-  // B = 中毒 3→+1 + 动物耳后置 +1 = 2；第一次 +400，第二次 +0 → 400。
-  assert.equal(fixture.store.get('juel:17:8'), 400);
+  // 两次累加都按 B*200（#270 修正：第二次曾用自慰回数 leftover_a，显示与
+  // 实得不符）。B = 中毒 3→+1 + 动物耳后置 +1 = 2；+400 再 +400 → 800。
+  assert.equal(fixture.store.get('juel:17:8'), 800);
 });
 
 test('AFTERTRAIN: self_check 失神跳过守卫与五条派发臂', async () => {
@@ -1018,14 +1017,14 @@ test('AFTERTRAIN: self_check 逆强暴复位与目标为空守卫', async () => 
   assert.equal(await self_check(() => 0), 0, '目标为空直接返回 0');
 });
 
-test('AFTERTRAIN: 兽奸报告二次累加 A≠B 时按自慰回数而非兽奸回数（#270）', async () => {
+test('AFTERTRAIN: 兽奸报告二次累加按兽奸回数结算，与显示一致（#270 已修）', async () => {
   const { fixture, era_flag } = seed_aftertrain_world();
   const { aftertrain_masturbation_check, aftertrain_beastsex_check } =
     fixture.load_module('event/event-aftertrain');
 
   fixture.store.set('abl:17:0', 3);
   fixture.store.set('abl:17:11', 2);
-  fixture.store.set('abl:17:31', 5); // A += 9
+  fixture.store.set('abl:17:31', 5); // 自慰次数 A = 9（不得漏进兽奸结算）
   fixture.store.set('base:17:0', 1000);
   era_flag.time = 0;
   assert.equal(await aftertrain_masturbation_check(0, 0, () => 0), 1);
@@ -1041,7 +1040,6 @@ test('AFTERTRAIN: 兽奸报告二次累加 A≠B 时按自慰回数而非兽奸�
   fixture.store.set('abl:17:21', 5);
   await aftertrain_beastsex_check();
 
-  // 第一次 += B*200 = 400；第二次 += A*200 = 1800 → 2200。
-  // 若误写成 B*200，会得到 800。反向变异「改成 b 即红」落在这里。
-  assert.equal(fixture.store.get('juel:17:8'), 2 * 200 + 9 * 200);
+  // 两次 += B*200：400 + 400 = 800。若第二次回退成自慰回数，会得到 2200。
+  assert.equal(fixture.store.get('juel:17:8'), 2 * 200 * 2);
 });

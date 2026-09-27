@@ -506,11 +506,12 @@ test('淫乱觉醒：只持有【抵抗】时单独消失', async () => {
   assert(fixture.text_lines().includes('琼的【抵抗】失去了。'));
 });
 
-test('淫乱觉醒：【压抑】【抵抗】【嫉妒】组合消失——84 号打印的是 32 号的名字（原作 bug）', async () => {
+test('淫乱觉醒：【压抑】【抵抗】【嫉妒】组合消失——84 号打印自身的名字（#650 修复误报压抑）', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   set_talentname(fixture, 32, '压抑');
   set_talentname(fixture, 34, '抵抗');
+  set_talentname(fixture, 84, '嫉妒');
   fixture.store.set('cflag:31:2', 1500);
   fixture.store.set('abl:31:11', 3);
   fixture.store.set('abl:31:0', 10);
@@ -523,8 +524,8 @@ test('淫乱觉醒：【压抑】【抵抗】【嫉妒】组合消失——84 �
 
   assert.equal(fixture.store.get('talent:31:84'), 0);
   assert(
-    fixture.text_lines().some((l) => l === '琼的【压抑】失去了。'),
-    '84 号消失渲染出的是 32 号（压抑）的名字，原作 bug 逐字保留',
+    fixture.text_lines().some((l) => l === '琼的【嫉妒】失去了。'),
+    '84 号（嫉妒）消失必须打印 84 号自身的名字',
   );
 });
 

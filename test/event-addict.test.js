@@ -377,7 +377,7 @@ test('SUFFER_FROM_WITHDRAWAL：W >= 30 时无候选可选，纯占位换行', as
   assert.equal(fixture.store.get('talent:31:9'), undefined);
 });
 
-test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（TALENT:9 判据，TALENT:19 生效）', async () => {
+test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（判据与生效同为 TALENT:9）', async () => {
   const fixture = seed_world();
   const { suffer_from_withdrawal } = fixture.load_module('event/event-addict');
 
@@ -386,13 +386,13 @@ test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（TALENT:9 判据，T
 
   assert.equal(
     fixture.store.get('talent:31:9'),
-    undefined,
-    '判据素质本身不被写入',
+    1,
+    '播报【崩坏】必须实际写入 TALENT:9（#650：原先误写未声明的 19 号）',
   );
   assert.equal(
     fixture.store.get('talent:31:19'),
-    1,
-    '生效素质是 19（原作 bug，逐字保留）',
+    undefined,
+    '未声明的 19 号素质不得被写入',
   );
   // #597：290 行的 PRINTL 落在候选函数自己的 PRINTFORMW 之后——真空行，
   // 且它是整段演出的收尾（删掉即少一行）

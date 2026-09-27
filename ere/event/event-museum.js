@@ -386,7 +386,7 @@ async function museum(a, rand_n = default_rand) {
             `变成喷水像的${chara_callname(a)}散发着说不出的美丽…`,
           );
           locals += '魅惑';
-          // 原作第 259 行重复 TALENT:153；前支已覆盖，死分支仍按 1:1 保留。
+          // TALENT:153（妊娠）与前支判据重叠、永不可达，保留死分支形态。
           // eslint-disable-next-line no-dupe-else-if
         } else if (get(`talent:${a}:153`)) {
           await era.printAndWait(
@@ -1506,9 +1506,10 @@ async function museum(a, rand_n = default_rand) {
 
   game.event.处刑勇者数 += 1;
   lv = (lv + 1) * 50;
-  chara(0).dungeon.战斗经验 += lv;
-  // TALENT:329 = 造型王实绩；原作先加经验再翻倍显示值，顺序 1:1 保留。
+  // TALENT:329 = 造型王实绩：双倍加成先计入 lv 再入账，显示与实际获得
+  // 一致（#650 修复：原先入账后才翻倍显示值，显示是实际入账的两倍）
   if (get('talent:0:329')) lv *= 2;
+  chara(0).dungeon.战斗经验 += lv;
   line = '《封印吸取了勇者的力量，';
   if (get('talent:0:329')) {
     line += '因为造型王实绩的双倍加成，最后';
