@@ -931,7 +931,7 @@ export default [
     find: '  } else if ((cloth_bits & 28) !== 0) {',
     replace: '  } else if (false) {',
     tests: ['cloth-func'],
-    must_mention: '基本服装前缀（:33-35',
+    must_mention: '基本服装前缀（get_clothtype_main2 取名）',
   },
   {
     desc: 'M805 train_message_b 触手支删（触手玩弄着 → 仔细爱抚着）',
@@ -939,7 +939,7 @@ export default [
     find: "    line += '触手玩弄着';",
     replace: "    line += ''; // （变异）",
     tests: ['cloth-func'],
-    must_mention: '触手支（:42-43）',
+    must_mention: '触手支',
   },
   {
     desc: 'M806 train_message_b 兽奸支删（狗的舌头舔舐着 → 空）',
@@ -947,7 +947,7 @@ export default [
     find: "    line += '狗的舌头舔舐着';",
     replace: "    line += ''; // （变异）",
     tests: ['cloth-func'],
-    must_mention: '兽奸支（:62-63）',
+    must_mention: '兽奸支',
   },
   {
     desc: 'M807 train_message_b 魔兽支的种族分支改走 ELSE（E:307 判恒假）',
