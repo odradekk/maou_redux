@@ -15,7 +15,7 @@ export default [
     must_mention: '装饰行五列（成长戒指价格 70000 等）',
   },
   {
-    desc: 'M331 装备数据表删分支（洗脑戒指 15 号整行删——洗脑陷落接线用例红）',
+    desc: 'M331 装备数据表删分支（洗脑戒指 15 号整行删——洗脑陷落接入用例红）',
     file: 'ere/data/equip-database.js',
     find: '  15: { 效果: 15, 价格: 1000, 诅咒: 1, 特殊: 0, 部位: 1 },',
     replace: '  // 变异：15 号分支删除',
@@ -31,7 +31,7 @@ export default [
     must_mention: '附魔增量：前缀 1 巨人的伤害强化 +30',
   },
   {
-    desc: 'M333 数据表混入条件分支（装饰戒指行裹三元——形状锁红，裁定 6 的交付形态）',
+    desc: 'M333 数据表混入条件分支（装饰戒指行裹三元——形状锁红，结论 6 的交付形式）',
     file: 'ere/data/equip-database.js',
     find: '  0: { 效果: 0, 价格: 100, 诅咒: 0, 特殊: 0, 部位: 1 },',
     replace:
@@ -48,7 +48,7 @@ export default [
     must_mention: '的拆装往返',
   },
   {
-    desc: 'M335 戒指名 ELSE 臂改坏（暗黑戒指 → 黑戒指——装备名打印用例红）',
+    desc: 'M335 戒指名 ELSE 分支改坏（暗黑戒指 → 黑戒指——装备名打印用例红）',
     file: 'ere/data/equip-database.js',
     find: "const EQUIP_RING_FALLBACK = '暗黑戒指';",
     replace: "const EQUIP_RING_FALLBACK = '黑戒指';",

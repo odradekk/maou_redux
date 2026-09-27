@@ -1217,8 +1217,7 @@ export default [
     find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
     replace: '  era.set(`flag:${cid + 199}`, 1);',
     tests: ['event-execution-batch'],
-    must_mention:
-      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
   {
     desc: 'M11784 肉便器归档槽位回退成角色 ID',
@@ -1285,8 +1284,7 @@ export default [
     find: '      era.set(`flag:${template_no_of(target) + 199}`, 1);',
     replace: '      era.set(`flag:${target + 199}`, 1);',
     tests: ['event-end'],
-    must_mention:
-      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
   // M11792/M11793：删除（#643）——与 M11394/M11395 同款：W/L 等待后缀在夹具
   // 的行为层不可观测，源文锁删除后无守卫。

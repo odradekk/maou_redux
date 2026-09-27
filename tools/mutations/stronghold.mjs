@@ -265,12 +265,12 @@ export default [
     must_mention: '结算后清录像帧',
   },
   {
-    desc: 'M6672 EVENTEND 删除 SELL_VIDEO 真身调用',
+    desc: 'M6672 EVENTEND 删除 sell_video 真身调用',
     file: 'ere/event/event-end.js',
     find: '    await sell_video(era_flag.target, era_flag.assi);',
-    replace: '    // 变异：跳过 SELL_VIDEO',
+    replace: '    // 变异：跳过 sell_video',
     tests: ['event-end'],
-    must_mention: 'SELL_VIDEO 真身完成定价',
+    must_mention: 'sell_video 真身完成定价',
   },
   {
     desc: 'M6673 EVENT_NEXTDAY 删除 EVENT_VIDEO_DAY 真身调用',

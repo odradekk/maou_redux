@@ -1,26 +1,25 @@
 /**
- * @file END 族分发：65 个 @END<n> 结局文本段的执行器（issue #404 / N20）。
+ * @file END 族分发：65 个结局文本段的执行器（issue #404 / N20）。
  *
  * 分发模型沿用 #7 决议的 DispatchFamily：**族号 = LOCAL（2..15），小节 =
  * 线值 / 10**。族 7/10/11/14 在本文件装载期注册，声明空间也只含这四族——
  * 其余 10 族全库无脚本定义，分派不巡它们（#649），空间内缺失 =
- * TRYCALLFORM 落空静默跳过。
+ * 调用落空静默跳过。
  *
  * 步词表与文本语义见数据文件的头注。本文件的四件事：
  *   1. 装载期把 END_SCRIPTS 注册进 END_FAMILY；
  *   2. 解释器 run_steps（文本步 / 效果步 / if / ask）；
  *   3. 三个需要循环或跨模块的具名步（leave / rampage / finish）与
- *      ENDINCONSQSELECT 的转发；
- *   4. %SAVESTR:MASTER% 的插值（本数据表里唯一的取值形态）。
+ *      inconseq_select 的转发；
+ *   4. %SAVESTR:MASTER% 的插值（本数据表里唯一的取值写法）。
  *
  * 两处有意保留的怪癖（详见数据文件头注）：
  *   - `SIF FLAG:2 == GETCHARA(x)` 之后的 `G:2 = -1` 写未声明的表 G（FLAG:2
  *     的笔误）——不落表；同段的「前回の助手・調教対象より前だった場合は
- *     フラグを減算」是 DELCHARA 重排残留，按 dungeon-party.js /
+ *     フラグを減算」是删除角色重排的残留逻辑，按 dungeon-party.js /
  *     event-chara-leave.js 的先例不移植（#404 与本文件头注各一处）。
- *   - END10_15 的 `FOR MONSTER, 100, 200` / `FOR CHARA, 1, CHARANUM` 在
- *     ere 侧按引擎的已加入列表迭代（#150 数值升序），`MONSTER < 190` 的
- *     保护保留。
+ *   - END10_15 的怪物/角色双循环在 ere 侧按引擎的已加入列表迭代（#150
+ *     数值升序），`MONSTER < 190` 的下限保留。
  */
 
 const era = require('#/era-electron');
@@ -35,7 +34,7 @@ const { game } = require('#/facade/game');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { END_SCRIPTS } = require('#/data/ending-scripts');
 
-/** 二维表 / flag 读点：未声明下标读得 undefined（#13），一律 || 0 兜底 */
+/** 二维表 / flag 读点：未声明下标读得 undefined（#13），一律 || 0 缺省处理 */
 function get(name) {
   return era.get(name) || 0;
 }
@@ -54,8 +53,8 @@ function name_of(cid) {
 }
 
 /**
- * %SAVESTR:MASTER% 的插值。本数据表里唯一出现的取值形态是 MASTER
- * （65 段全量扫描的结论），故不做通用 %…% 求值器——遇到未知形态会原样
+ * %SAVESTR:MASTER% 的插值。本数据表里唯一出现的取值写法是 MASTER
+ * （65 段全量扫描的结论），故不做通用 %…% 求值器——遇到未知写法会原样
  * 输出，比静默吞掉更容易在测试里发现。
  * @param {string} text
  * @returns {string}
@@ -65,7 +64,7 @@ function interpolate(text) {
 }
 
 /**
- * `['finish']`：真结局段的收尾（ENDINGDATA.ERB:648-652 等五处同型）。
+ * `['finish']`：真结局段的收尾（五处同型）。
  *    IF EX_FLAG:2801 < 99
  *        SIF EX_FLAG:2801 <= 90 → EX_FLAG:2801 = 90
  *        EX_FLAG:2801++
@@ -81,8 +80,8 @@ function op_finish() {
 }
 
 /**
- * `['leave', cid]`：角色线 [1] 支的离队三连（ENDINGDATA.ERB:929-945 与
- * :1185-1201 同型，ENDCHECKSPADE 的 [SKIPSTART] 段是同一段死代码）。
+ * `['leave', cid]`：角色线 [1] 支的离队三连（与银黑桃线清单里的离队段
+ * 同型，那段是被括起的死代码）。
  *
  * @param {number} cid 离队角色（22 黑方片 / 21 银黑桃）
  */
@@ -105,15 +104,15 @@ async function op_leave(cid) {
 }
 
 /**
- * `['rampage']`：END10_15 的嘉德暴走结算（ENDINGDATA_ADDON1.ERB:419-434）。
- * 实体损失：EX_FLAG:2810 = 540、威望 −50、怪物库存减半（下限 30、190 号
- * 以下才兜底）、全角色 BASE 扣减、金库损失 20%、嘉德除名归档。
+ * `['rampage']`：END10_15 的嘉德暴走结算。实体损失：EX_FLAG:2810 = 540、
+ * 威望 −50、怪物库存减半（下限 30、190 号以下才保底）、全角色 BASE 扣减、
+ * 金库损失 20%、嘉德除名归档。
  */
 async function op_rampage() {
   era_exflag.route_33 = 540;
   era_exflag.prestige = era_exflag.prestige - 50; // EX_FLAG:99 -= 50
   // FOR MONSTER, 100, 200（含头不含尾）/ ITEM:MONSTER /= 2（向零
-  // 截断），命中 <= 30 且 MONSTER < 190 时兜底 30
+  // 截断），命中 <= 30 且 MONSTER < 190 时保底 30
   for (let monster = 100; monster < 200; monster += 1) {
     let stock = Math.trunc(get(`item:${monster}`) / 2);
     if (stock <= 30 && monster < 190) {
@@ -195,7 +194,7 @@ async function run_steps(steps, ctx) {
     } else if (op === 'exp') {
       era.set(`exp:${a}:${b}`, get(`exp:${a}:${b}`) + c);
     } else if (op === 'inconseq') {
-      await inconseq_select(a); // CALL ENDINCONSQSELECT,arg
+      await inconseq_select(a); // 菲娅线因果选择（event-ending.js）
     } else if (op === 'sub') {
       await run_end_script(ctx.family, String(a)); // CALL 同族另一段
     } else if (op === 'finish') {
@@ -220,7 +219,7 @@ async function run_steps(steps, ctx) {
 
 /**
  * `['ask', {prompt, branches, else?, again?, after?}]`：INPUT 分岔。
- * `again` 为真时未命中重问（原作 `GOTO $…LOOP`）。
+ * `again` 为真时未命中重问（跳回询问头）。
  * @param {object} ask 见数据文件头注
  * @param {{family: number, result?: number}} ctx
  */
@@ -235,7 +234,7 @@ async function run_ask(ask, ctx) {
       break;
     }
     if (ask.again) {
-      continue; // 原作 GOTO INPUT_LOOP
+      continue; // 未命中重问
     }
     await run_steps(ask.else ?? [], ctx);
     break;
