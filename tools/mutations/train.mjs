@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1002; // #641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1004; // #647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归守卫）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -6688,15 +6688,6 @@ export default [
     must_mention: 'ablup7：Lv0-4 梯子字面值',
   },
   {
-    desc: 'M9695 ablup7：修复重复折扣缺陷（第二段应判 TALENT:28）',
-    file: 'ere/system/train/ablup.js',
-    find: 'if (talent(80)) a = times(a, 0.5); // 缺陷：应判 TALENT:28，1:1 保留',
-    replace:
-      'if (talent(28)) a = times(a, 0.5); // 缺陷：应判 TALENT:28，1:1 保留',
-    tests: ['ablup'],
-    must_mention: '双重折扣缺陷',
-  },
-  {
     desc: 'M9696 ablup7：始终生效经验门槛分档',
     file: 'ere/system/train/ablup.js',
     find: `    let exp_line;
@@ -6743,12 +6734,12 @@ export default [
     must_mention: '开放×0.50 先于倒错的×0.75',
   },
   {
-    desc: 'M9701 ablup8：修复缺失哨兵缺陷',
+    desc: 'M9701 ablup8：选项0 渲染条件 b>0 被改坏（无哨兵的守卫）',
     file: 'ere/system/train/ablup.js',
     find: '    if (b > 0) {\n      if (juel9 < a) i |= 1;',
     replace: '    if (b >= 0) {\n      if (juel9 < a) i |= 1;',
     tests: ['ablup'],
-    must_mention: '缺失哨兵缺陷',
+    must_mention: 'B=0 时选项0 不渲染，结构上不可能被选中',
   },
   {
     desc: 'M9702 ablup8：Lv3 E 梯子字面值',
@@ -7655,16 +7646,16 @@ export default [
     find: '    if (self_training && money < 5000) i |= 4;',
     replace: '    if (self_training && money < 4000) i |= 4;',
     tests: ['ablup'],
-    must_mention: 'bit2+bit4 无分隔符粘连',
+    must_mention: '两段文案应以空格分隔',
   },
   {
-    desc: 'M9919 ablup12：自我训练 bit2 错位判定阈值',
+    desc: 'M9919 ablup12：自我训练 bit2 门槛阈值',
     file: 'ere/system/train/ablup.js',
-    find: '    if (self_training && master_abl12 > flag30 + 1) i |= 2; // （文案错位，见文件头）',
+    find: '    if (self_training && master_abl12 > flag30 + 1) i |= 2; // 魔王技巧超过爱或淫乱人数+1 不可自我训练',
     replace:
-      '    if (self_training && master_abl12 > flag30 + 2) i |= 2; // （文案错位，见文件头）',
+      '    if (self_training && master_abl12 > flag30 + 2) i |= 2; // 魔王技巧超过爱或淫乱人数+1 不可自我训练',
     tests: ['ablup'],
-    must_mention: 'bit2 用"经验不足"文案显示 ABL:MASTER:12',
+    must_mention: 'bit2 用"人数不足"文案显示魔王技巧超过爱或淫乱人数+1',
   },
   {
     desc: 'M9920 ablup12：自我训练金钱扣款额',
@@ -7681,7 +7672,7 @@ export default [
     replace:
       "    if (bits & 4) text += '金钱不足'; // （尾随制表符，原文如此）",
     tests: ['ablup'],
-    must_mention: 'bit2+bit4 无分隔符粘连',
+    must_mention: '两段文案应以空格分隔',
   },
   {
     desc: 'M9922 ablup13：Lv5 侍奉精神门槛越界值',
@@ -7757,14 +7748,6 @@ export default [
     replace: 'if (lv === 0) [a, b] = [2, 3];',
     tests: ['ablup'],
     must_mention: 'EXP 门槛行前导 6 个 NBSP+全角空格对齐',
-  },
-  {
-    desc: 'M9930 ablup14：技巧门槛误比较 ABL:12 被"修正"为 ABL:14',
-    file: 'ere/system/train/ablup.js',
-    find: '    if (abl12() < 5 && abl12() < lv + 1) i |= 4;',
-    replace: '    if (abl14() < 5 && abl12() < lv + 1) i |= 4;',
-    tests: ['ablup'],
-    must_mention: 'DECIDE 的技巧门槛误比较 ABL:12<5',
   },
   {
     desc: 'M9931 ablup14：EXP 门槛行前导空格丢失一格',
@@ -7934,14 +7917,6 @@ export default [
       "    if (talent(85) === 1) {\n      era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`);\n    } else {",
     tests: ['ablup'],
     must_mention: '无[爱慕]时门槛查欲望，有[爱慕]时改查顺从',
-  },
-  {
-    desc: 'M9949 ablup17：重试文案句号丢失',
-    file: 'ere/system/train/ablup.js',
-    find: "      era.print('未满足条件。'); // （唯一带句号）",
-    replace: "      era.print('未满足条件'); // （唯一带句号）",
-    tests: ['ablup'],
-    must_mention: '唯一带句号的重试文案',
   },
   {
     desc: 'M9950 ablup17：成功购买写入等级改为 +2',
@@ -9779,8 +9754,8 @@ export default [
   {
     desc: 'M10938 ablup99：CORE_ABLUP99 一次降两级（MARK:3 -- → -= 2）',
     file: 'ere/system/train/ablup.js',
-    find: 'chara(cid).system.反抗刻印 -= 1; // @CORE_ABLUP99',
-    replace: 'chara(cid).system.反抗刻印 -= 2; // @CORE_ABLUP99',
+    find: 'chara(cid).system.反抗刻印 -= 1; // core_ablup99',
+    replace: 'chara(cid).system.反抗刻印 -= 2; // core_ablup99',
     tests: ['ablup'],
     must_mention: 'CORE_ABLUP99 每次只降一级',
   },
@@ -10410,5 +10385,62 @@ export default [
     replace: '  // 变异：100 号 handler 删除',
     tests: ['page-ability-up'],
     must_mention: '菜单可达的每个编号都有 handler',
+  },
+  // ———— issue #647：ABLUP 缺陷修复的回归守卫（F1） ————
+  {
+    desc: 'M12950 ablup7：爱表现折扣改回判 TALENT:80（第二段折扣回归叠到倒错的）',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(80)) a = times(a, 0.75); // 倒错的
+    if (talent(28)) a = times(a, 0.5); // 爱表现`,
+    replace: `    if (talent(80)) a = times(a, 0.75); // 倒错的
+    if (talent(80)) a = times(a, 0.5); // 爱表现`,
+    tests: ['ablup'],
+    must_mention: '两段折扣各归其主',
+  },
+  {
+    desc: 'M12951 ablup14：技巧门槛退回误比较 ABL:12（Lv5 以上再现无提示的隐藏限制）',
+    file: 'ere/system/train/ablup.js',
+    find: '    if (abl14() < 5 && abl12() < lv + 1) i |= 4;',
+    replace: '    if (abl12() < 5 && abl12() < lv + 1) i |= 4;',
+    tests: ['ablup'],
+    must_mention: '技巧门槛比较性交技术自身等级',
+  },
+  {
+    desc: 'M12952 ablup16：DECIDE 素质复核退回 AND（缺两项素质的角色被误判可提升）',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (
+        abl16() >= 5 &&
+        (talent(63) === 0 || talent(85) === 0 || talent(86) === 0)
+      ) {
+        return null;
+      }`,
+    replace: `      if (
+        abl16() >= 5 &&
+        talent(63) === 0 &&
+        talent(85) === 0 &&
+        talent(86) === 0
+      ) {
+        return null;
+      }`,
+    tests: ['ablup'],
+    must_mention: 'DECIDE 复核与入口同判据',
+  },
+  {
+    desc: 'M12953 ablup17：重试文案改回带句号（与 ABLUP10～16 的统一被打破）',
+    file: 'ere/system/train/ablup.js',
+    find: "      era.print('未满足条件'); // （与 ABLUP10～16 统一，无句号）",
+    replace:
+      "      era.print('未满足条件。'); // （与 ABLUP10～16 统一，无句号）",
+    tests: ['ablup'],
+    must_mention: '重试文案"未满足条件"与 ABLUP10～16 统一',
+  },
+  {
+    desc: 'M12954 ablup12：bit2 文案退回"经验不足"且无分隔（实际检查与显示再次错位）',
+    file: 'ere/system/train/ablup.js',
+    find: "    if (bits & 2) text += '人数不足 '; // 魔王技巧超过爱或淫乱人数+1 的自我训练上限，与经验无关",
+    replace:
+      "    if (bits & 2) text += '经验不足'; // 魔王技巧超过爱或淫乱人数+1 的自我训练上限，与经验无关",
+    tests: ['ablup'],
+    must_mention: '两段文案应以空格分隔',
   },
 ];

@@ -1,50 +1,50 @@
 /**
  * @file 能力 ABL 的升级判定与交互（ABLUP0～ABLUP17 见 issue #464/#465，
  * ABLUP20～23 与 ABLUP30～33 见 issue #466，ABLUP37/39/40/99/100 与
- * ABL.ERB 本体见 issue #467）。
+ * decide_ablup/auto_ablup/userablup 本体见 issue #467）。
  *
- * 调用方: ere/system/train/juel-check.js 的 @JUEL_CHECK 输入分发
- *     （:463-539）。ABLUP0～4（#464）、10～17（#465）、20～23/30～33（#466）、
- *     37/39/40/99/100（#467）均已接入分发；ABLUP5～9 不接入——Abl.yml/
- *     Abl.csv 没有能力编号 5～9 的名字条目，juel-check.js 的 ABLUP_IDS 也从未
- *     包含 5～9，说明原作没有任何菜单能选中它们；ABLUP5～9 因此保留为独立导出，
- *     不接入 juel-check.js 的分发，行为完整但从任何玩家可达路径均无法调用
- *     （与原作一致的不可达状态，1:1 保留，不是本票引入的缺陷）。
+ * 调用方: ere/system/train/juel-check.js 的 JUEL_CHECK 输入分发。
+ * ABLUP0～4（#464）、10～17（#465）、20～23/30～33（#466）、
+ * 37/39/40/99/100（#467）均已接入分发；ABLUP5～9 不接入——Abl.yml
+ * 没有能力编号 5～9 的名字条目，juel-check.js 的 ABLUP_IDS 也从未
+ * 包含 5～9，没有任何菜单能选中它们；ABLUP5～9 因此保留为独立导出，
+ * 不接入 juel-check.js 的分发，行为完整但从任何玩家可达路径均无法调用
+ * （移植初期即确定的不可达状态，不是本票引入的缺陷）。
  *
- * 输出行模型的必要改写（AGENTS.md「移植需要重新实现游戏逻辑」）：Emuera
+ * 输出行模型的必要改写（AGENTS.md「移植需要重新实现游戏逻辑」）：旧引擎的
  * 的 PRINT（不换行，续写同一行）与 PRINTL/PRINTFORML/PRINTV（换行）是两种
  * 语句；本引擎的 era.print/printButton 每次调用各自独占一行（无续写同一
- * 行的等价物）。原作里若干条连续 PRINT 拼成一整行的写法，port 时收窄成一次
+ * 行的等价物）。旧代码里若干条连续 PRINT 拼成一整行的写法，port 时收窄成一次
  * era.print(拼好的整串)。空 PRINTL（无内容，只换行）对应 era.println()。
  *
- * 输入-UI 模型的必要改写：Emuera 用 INPUT 接收任意数字，靠显式 IF 链拦截
+ * 输入-UI 模型的必要改写：旧引擎用 INPUT 接收任意数字，靠显式 IF 链拦截
  * 越界值或未渲染的选项（RESTART/GOTO 重来）。本项目的 printButton 输入
  * 模型只登记本轮渲染过的快捷键，era.input() 结构上不可能收到其他值
- * （issue #130，测试夹具同款校验，见 test/helpers/era-fixture.js:892-918）。
- * 故各函数仍保留原作等价的越界/隐藏选项分支，写法与既有 com-colosseum.js
- * 的同类分支一致（引擎层已经拒收代位，分支是防御性保留，不是必要判据）。
+ * （issue #130，测试夹具同款校验）。故各函数仍保留旧代码等价的越界/
+ * 隐藏选项分支，写法与既有 com-colosseum.js 的同类分支一致（引擎层已经
+ * 拒收代位，分支是防御性保留，不是必要判据）。
  *
- * 成功购买的提升文案，各文件原作现状不同：ABLUP0～3 原作本身已是中文
- * 「{name}变为LV{X}。」，ABLUP7 原作本身是另一句中文「{name}的等级提升到
- * {X}级了。」——这两组分别 1:1 保留各自原文，不统一措辞。ABLUP4/5/6/8/9
- * 原作这行是**未翻译的日文**「{name}のレベルが{X}になりました。」（汉化版
- * 遗留），没有对应的原作中文可以 1:1 保留；按 issue #60 译成简体时沿用
+ * 成功购买的提升文案，各文件来源不同：ABLUP0～3 本身已是中文
+ * 「{name}变为LV{X}。」，ABLUP7 本身是另一句中文「{name}的等级提升到
+ * {X}级了。」——这两组分别保留各自原文，不统一措辞。ABLUP4/5/6/8/9
+ * 的这行是**未翻译的日文**「{name}のレベルが{X}になりました。」（汉化版
+ * 遗留），没有对应中文可沿用；按 issue #60 译成简体时统一用
  * ABLUP0～3 已有的「变为LV{X}。」，不为这五个文件另造第三种措辞。
  * lang-table.js 未收录这个词条——这是整句译文替换，不是逐字机械转换。
  *
- * 重试路径的输出收窄，有意为之，未逐条恢复：ABLUP0～5、7～9 的原作条件不
+ * 重试路径的输出收窄，有意为之，未逐条恢复：ABLUP0～5、7～9 的旧代码条件不
  * 满足分支走 RESTART（跳回函数最开头，无 GOTO/标签），会连着 DRAWLINE 与
  * 开头两行说明文字一起重打；本移植的 for(;;) 循环把这段说明文字放在循环
  * 外，只执行一次，continue 时只重渲按钮行本身，不重打说明文字。ABLUP6 方向
- * 相反但同样不是本票引入的偏差：其原作 $INPUT_LOOP+GOTO 不重打任何说明
+ * 相反但同样不是本票引入的偏差：其旧代码 $INPUT_LOOP+GOTO 不重打任何说明
  * 文字，而 era.printButton 的注册在每次 era.input() 之后被引擎清空
  * （returnFromButton 置 rule=[]），移植后每次 continue 必须重渲染按钮
- * 行——这一方向由引擎强制，不能收窄成原作的"什么都不重打"。两个方向都只
+ * 行——这一方向由引擎强制，不能收窄成旧代码的"什么都不重打"。两个方向都只
  * 影响重试时的重复文字，不改变任何判定与数值；黄金样本与输出比对不覆盖
  * 重试路径，不会被现有回归覆盖到。
  */
 /* eslint-disable no-irregular-whitespace -- ablup2/ablup3 的经验门槛行用全角空格
-   对齐（原作 ABLUP2.ERB:53、ABLUP3.ERB:50 的 `EXPNAME　　{EXP}/{B}`），1:1 保留原文 */
+   对齐（沿用旧代码 `EXPNAME　　{EXP}/{B}` 的排版） */
 
 const era = require('#/era-electron');
 const { EXPLV } = require('#/era-utils/exp-level');
@@ -52,7 +52,7 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
-// @USERABLUP（ABL.ERB:192-200）要调的两个检查（#462 落真身，同域）
+// userablup 要调的两个检查（#462 落真身，同域）
 const {
   jujun_up_check,
   yokubo_up_check,
@@ -85,13 +85,12 @@ function get_ablup_state(arg) {
 }
 
 /**
- * @DECIDE_ABLUP0（ABLUP0.ERB:126-234）的判定本体，也是 @ABLUP0 主流程的
- * 数值来源——原作 @ABLUP0 只有一处 `CALL DECIDE_ABLUP0`（:38），两处共用
- * 同一份梯子/加成代码，抽成一个函数是为了让 `*` 标记（page-ablup.js）与
- * @AUTO_ABLUP 的 TRYCALLFORM DECIDE_ABLUP0 用上同一真身，不是新逻辑。
+ * ablup0 的判定本体（decide_ablup0 与主流程共用同一份梯子/加成代码，
+ * 抽成一个函数是为了让 `*` 标记（page-ablup.js）与 auto_ablup 的
+ * TRYCALLFORM 式调用用上同一真身，不是新逻辑）。
  * @param {number} cid TARGET
  * @returns {{blocked: (null|'talent'|'locked'|'max'), lv: number, a: number,
- *   juel: number, i: number}} blocked 非空时其余字段无意义（原作提前 RETURN 0）
+ *   juel: number, i: number}} blocked 非空时其余字段无意义（提前 RETURN 0）
  */
 function evaluate_ablup0(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -102,7 +101,7 @@ function evaluate_ablup0(cid) {
     (talent(107) & 2 ? 1 : 0);
   const lv = era.get(`abl:${cid}:0`) || 0;
 
-  // 入口守卫（:139-145，与 @ABLUP0 :37-52 同判据、顺序不同）
+  // 入口守卫（与主流程同判据、顺序不同）
   if (lv >= 5 && talent(74) === 0) return { blocked: 'talent' };
   if (talent(101) & 2) return { blocked: 'locked' };
   if (lv >= calc * 5 + 10) return { blocked: 'max' };
@@ -150,7 +149,7 @@ function evaluate_ablup0(cid) {
 }
 
 /**
- * @DECIDE_ABLUP0 的 RESULT 语义（:230-234）：I==0 返回 1（可提升），否则 0。
+ * decide_ablup0 的 RESULT 语义（:230-234）：I==0 返回 1（可提升），否则 0。
  * @param {number} cid TARGET
  * @returns {number} 1 / 0
  */
@@ -160,7 +159,7 @@ function decide_ablup0(cid) {
 }
 
 /**
- * @CORE_ABLUP0（ABLUP0.ERB:114-120）：ABL:0 ++ 并在 I==0 时扣珠。
+ * core_ablup0（ABLUP0.ERB:114-120）：ABL:0 ++ 并在 I==0 时扣珠。
  * @param {number} cid TARGET
  * @returns {number} 0（CORE 的 RESULT 恒 0，见 :116-120 无 RETURN）
  */
@@ -170,7 +169,7 @@ function core_ablup0(cid) {
   if (r.blocked === null && r.i === 0) {
     era.add(`juel:${cid}:0`, -r.a); // JUEL:0 -= A（:86-88）
   }
-  return 0; // CORE 无 RETURN，Emuera 视作 RESULT = 0（@AUTO_ABLUP_CORE 判 >= 0 才打印）
+  return 0; // CORE 无 RETURN，引擎视作 RESULT = 0（auto_ablup_core 判 >= 0 才打印）
 }
 
 async function ablup0(cid) {
@@ -223,8 +222,8 @@ async function ablup0(cid) {
 }
 
 /**
- * @DECIDE_ABLUP1（ABLUP1.ERB:86-210）的判定本体，与 @ABLUP1 主流程共用
- * （原作的唯一调用点仍是主流程，抽函数见 evaluate_ablup0 的说明）。
+ * ablup1 的判定本体，与主流程共用
+ * （唯一调用点是主流程，抽函数见 evaluate_ablup0 的说明）。
  * @param {number} cid TARGET
  * @returns {{blocked: (null|'talent'|'locked'|'max'), lv: number, a: number,
  *   juel: number, i: number}}
@@ -287,7 +286,7 @@ function evaluate_ablup1(cid) {
 }
 
 /**
- * @DECIDE_ABLUP1 的 RESULT 语义。
+ * decide_ablup1 的 RESULT 语义。
  * @param {number} cid TARGET
  * @returns {number} 1 / 0
  */
@@ -297,7 +296,7 @@ function decide_ablup1(cid) {
 }
 
 /**
- * @CORE_ABLUP1：ABL:1 ++ 并在 I==0 时扣珠（ABLUP1.ERB:74-84）。
+ * core_ablup1：ABL:1 ++ 并在 I==0 时扣珠。
  * @param {number} cid TARGET
  * @returns {number} 0
  */
@@ -309,7 +308,7 @@ function core_ablup1(cid) {
 }
 
 async function ablup1(cid) {
-  era.drawLine(); // DRAWLINE（:19-23 原作叙事文本已被注释掉，不移植）
+  era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   const blocked = evaluate_ablup1(cid).blocked;
   if (blocked === 'talent') {
@@ -352,9 +351,9 @@ async function ablup1(cid) {
 }
 
 /**
- * @DECIDE_ABLUP2（ABLUP2.ERB:91-237）的判定本体，与 @ABLUP2 主流程共用。
- * 男人（TALENT:122）在 DECIDE 里也是提前 RETURN 0（:102-104），与主流程
- * :18-20 的却下同判据，归入 blocked='male'。
+ * ablup2 的判定本体，与主流程共用。
+ * 男人（TALENT:122）在判定里也是提前 RETURN 0，与主流程的却下同判据，
+ * 归入 blocked='male'。
  * @param {number} cid TARGET
  * @returns {{blocked: (null|'male'|'talent'|'locked'|'max'), lv: number,
  *   a: number, b: number, juel: number, exp: number, i: number}}
@@ -454,7 +453,7 @@ function evaluate_ablup2(cid) {
 }
 
 /**
- * @DECIDE_ABLUP2 的 RESULT 语义。
+ * decide_ablup2 的 RESULT 语义。
  * @param {number} cid TARGET
  * @returns {number} 1 / 0
  */
@@ -464,7 +463,7 @@ function decide_ablup2(cid) {
 }
 
 /**
- * @CORE_ABLUP2：ABL:2 ++ 并在 I==0 时扣点数（经验不扣，ABLUP2.ERB:79-85）。
+ * core_ablup2：ABL:2 ++ 并在 I==0 时扣点数（经验不扣）。
  * @param {number} cid TARGET
  * @returns {number} 0
  */
@@ -476,9 +475,9 @@ function core_ablup2(cid) {
 }
 
 async function ablup2(cid) {
-  if (evaluate_ablup2(cid).blocked === 'male') return; // 男人却下（原作在 @ABLUP2 与 @DECIDE_ABLUP2 内各查一次，逐字相同，内联后合一）
+  if (evaluate_ablup2(cid).blocked === 'male') return; // 男人却下（判定与主流程各查一次，逐字相同，内联后合一）
 
-  era.drawLine(); // DRAWLINE（:23-25 叙事文本已被注释掉，不移植）
+  era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   const blocked = evaluate_ablup2(cid).blocked;
   if (blocked === 'talent') {
@@ -522,7 +521,7 @@ async function ablup2(cid) {
 }
 
 /**
- * @DECIDE_ABLUP3（ABLUP3.ERB:89-233）的判定本体，与 @ABLUP3 主流程共用。
+ * ablup3 的判定本体，与主流程共用。
  * @param {number} cid TARGET
  * @returns {{blocked: (null|'talent'|'locked'|'max'), lv: number, a: number,
  *   b: number, juel: number, exp: number, i: number}}
@@ -617,7 +616,7 @@ function evaluate_ablup3(cid) {
 }
 
 /**
- * @DECIDE_ABLUP3 的 RESULT 语义。
+ * decide_ablup3 的 RESULT 语义。
  * @param {number} cid TARGET
  * @returns {number} 1 / 0
  */
@@ -627,7 +626,7 @@ function decide_ablup3(cid) {
 }
 
 /**
- * @CORE_ABLUP3：ABL:3 ++ 并在 I==0 时扣点数（ABLUP3.ERB:77-87）。
+ * core_ablup3：ABL:3 ++ 并在 I==0 时扣点数。
  * @param {number} cid TARGET
  * @returns {number} 0
  */
@@ -639,7 +638,7 @@ function core_ablup3(cid) {
 }
 
 async function ablup3(cid) {
-  era.drawLine(); // DRAWLINE（:19-20 叙事文本已被注释掉，不移植）
+  era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   const blocked = evaluate_ablup3(cid).blocked;
   if (blocked === 'talent') {
@@ -683,13 +682,12 @@ async function ablup3(cid) {
 }
 
 /**
- * @DECIDE_ABLUP4（ABLUP4.ERB:50-83）的判定本体：梯子只有 5 级、无复利区间。
- * 原作这里**不把 A 清零**（:50-53 只清 I），A 是文件级全局——ABL.ERB:94
- * 的 `CALL DECIDE_ABLUP4` 会读到上一行 DECIDE 留下的 A；到了 lv>=5（梯子
- * 五档全落空）A 保持旧值，`JUEL < A` 就成了对残留值的比较，`*` 标记
- * 因此不确定。移植没有 Emuera 的全局 A，本函数按「A 初始为 0」处理：
- * lv>=5 时 I 恒 0（与原作 A 恰好为 0 时一致），这条不可移植的残留依赖
- * 登记在 issue #14，不额外模拟。
+ * ablup4 的判定本体：梯子只有 5 级、无复利区间。
+ * 旧代码这里**不把 A 清零**（只清 I），A 是文件级全局——decide_ablup 的
+ * 分发调用会读到上一行判定留下的 A；到了 lv>=5（梯子五档全落空）A 保持
+ * 旧值，`JUEL < A` 就成了对残留值的比较，`*` 标记因此不确定。本作没有
+ * 全局 A，本函数按「A 初始为 0」处理：lv>=5 时 I 恒 0（与 A 恰好为 0
+ * 时一致），这条不可移植的残留依赖不额外模拟。
  * @param {number} cid TARGET
  * @returns {{blocked: (null|'max'), lv: number, a: number, juel: number, i: number}}
  */
@@ -710,13 +708,13 @@ function evaluate_ablup4(cid) {
 }
 
 /**
- * @DECIDE_ABLUP4 的 RESULT 语义。注意原作没有 ABL:4 >= 5 的提前 RETURN 0
- * （见 evaluate_ablup4 的说明）——满级行的 `*` 标记在原作取决于调用前残留
- * 的 A。移植的做法是：`evaluate_ablup4` 对 lv>=5 返回 blocked='max'
+ * decide_ablup4 的 RESULT 语义。注意旧代码没有 ABL:4 >= 5 的提前 RETURN 0
+ * （见 evaluate_ablup4 的说明）——满级行的 `*` 标记在旧代码取决于调用前
+ * 残留的 A。本作的做法是：`evaluate_ablup4` 对 lv>=5 返回 blocked='max'
  * （A 视为 0、I 视为 0），`decide_ablup4` 因 blocked 非空而恒返回 0——
- * **满级行一律不打 `*`**。这与「原作 A 恰好残留为 0 时 I=0 → RETURN 1
- * （会打标记）」不同，是有意取「满级不打标记」的更稳一侧；该偏离与
- * evaluate_ablup4 的说明一并登记在 issue #14。
+ * **满级行一律不打 `*`**。这与「A 恰好残留为 0 时 I=0 → RETURN 1（会打
+ * 标记）」不同，是有意取「满级不打标记」的更稳一侧；该偏离与
+ * evaluate_ablup4 的说明一并记录。
  * @param {number} cid TARGET
  * @returns {number} 1 / 0
  */
@@ -735,9 +733,9 @@ async function ablup4(cid) {
   for (;;) {
     const { a, i } = evaluate_ablup4(cid);
 
-    // 无 GET_ABLUP_STATE：手写状态文案，"点数不足 " 带尾随空格、"经验不足"
-    // 不带（:16-23，与 GET_ABLUP_STATE 的两个 bit 都带尾随空格不同）；
-    // I&2 分支（:21-22）在原作与本移植里都恒假，1:1 保留
+    // 无 get_ablup_state：手写状态文案，"点数不足 " 带尾随空格、"经验不足"
+    // 不带（与 get_ablup_state 的两个 bit 都带尾随空格不同）；I&2 分支
+    // （经验不足位）恒假——evaluate_ablup4 只置 bit1
     let status;
     if (i === 0) {
       status = 'ＯＫ';
@@ -769,10 +767,10 @@ async function ablup4(cid) {
 
 /**
  *
- * ABLNAME:5～9 在 Abl.yml/Abl.csv 里没有条目（本文件头「调用方」一节的
- * 依据），era.get 读到 undefined；成功文案的名称前缀因此原样留空，不是
- * 缺陷——与原作在 ABLUP5～9 上的实际显示一致，`|| ''` 只是避免模板字符串
- * 把 undefined 拼成字面文字。
+ * ABLNAME:5～9 在 Abl.yml 里没有条目（本文件头「调用方」一节的依据），
+ * era.get 读到 undefined；成功文案的名称前缀因此原样留空，不是缺陷——
+ * 与 ABLUP5～9 的实际情况一致，`|| ''` 只是避免模板字符串把 undefined
+ * 拼成字面文字。
  */
 async function ablup5(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -903,10 +901,8 @@ async function ablup6(cid) {
       d = times(d, 0.75);
     }
 
-    // 门槛读 ABL:0（阴蒂感觉），需达到本次升级后等级+1，三个选项共享
-    // （:67-76）。原作注释写"従順が奉仕精神+1レベル"（应指顺从 ABL:10 或
-    // 侍奉精神 ABL:16），代码却读 ABL:0——注释与代码不一致，以代码为准，
-    // 1:1 保留，issue #14 登记为文档性存疑，不改动行为
+    // 门槛读 ABL:0（阴蒂感觉），需达到本次升级后等级+1，三个选项共享；
+    // 需求行与判定同读 ABL:0，玩家可见的提示与实际检查一致
     let i = 0,
       j = 0,
       k = 0;
@@ -971,7 +967,7 @@ async function ablup6(cid) {
 
     const juel7 = era.get(`juel:${cid}:7`) || 0;
     if (c > 0) {
-      if (juel7 < a) k |= 1; // （原作误用 A，见文件头注释；1:1 保留）
+      if (juel7 < c) k |= 1; // 习得点数需求（与按钮显示的×C、扣款 C 同变量）
       if (exp2 < 1) k |= 2; // 绝顶经验≥1，写死的 1
 
       const option2 = `- ${era.get('palamname:7')}点数×${c}、${era.get('expname:2')}1以上……${status_text(k)}`;
@@ -1034,12 +1030,11 @@ async function ablup7(cid) {
     if (lv === 3 && talent(27)) a = times(a, 2.0);
     if (lv === 4 && talent(27)) a = times(a, 3.0);
     if (talent(80)) a = times(a, 0.75); // 倒错的
-    if (talent(80)) a = times(a, 0.5); // 缺陷：应判 TALENT:28，1:1 保留
+    if (talent(28)) a = times(a, 0.5); // 爱表现
 
     let i = 0;
-    // 门槛读 ABL:1（乳房感觉），原作注释写"欲望が露出癖+1レベル"（应指欲望
-    // ABL:11 或露出癖 ABL:17），代码却读 ABL:1——与 ABLUP6 同样的注释/代码
-    // 不一致，以代码为准，1:1 保留，issue #14 登记
+    // 门槛读 ABL:1（乳房感觉），需达到本次升级后等级+1；需求行与判定同读
+    // ABL:1，玩家可见的提示与实际检查一致
     const gate_needed = lv + 1;
     const gate_line = `${era.get('ablname:1')}${gate_needed}LV以上`;
     if ((era.get(`abl:${cid}:1`) || 0) < gate_needed) i |= 4;
@@ -1168,9 +1163,8 @@ async function ablup8(cid) {
 
     let i = 0,
       j = 0;
-    // 门槛读 ABL:1（乳房感觉），原作注释写"欲望がマゾっ気+1レベル"（应指
-    // 欲望 ABL:11 或受虐狂 TALENT:88），代码却读 ABL:1——与 ABLUP6/7 同样
-    // 的注释/代码不一致，以代码为准，1:1 保留，issue #14 登记
+    // 门槛读 ABL:1（乳房感觉），需达到本次升级后等级+1，两个选项共享；需求行
+    // 与判定同读 ABL:1，玩家可见的提示与实际检查一致
     const gate_needed = lv + 1;
     const gate_line = `${era.get('ablname:1')}${gate_needed}LV以上`;
     if ((era.get(`abl:${cid}:1`) || 0) < gate_needed) {
@@ -1202,7 +1196,7 @@ async function ablup8(cid) {
     if (b > 0) {
       if (juel9 < a) i |= 1;
       if (juel5 < b) i |= 1;
-      if (exp30 < c) i |= 2; // （b>0 时 c 恒为 0，此判定恒假，1:1 保留）
+      if (exp30 < c) i |= 2; // （b>0 时 c 恒为 0，此判定恒假，保留原样）
 
       let option0 = `- ${era.get('palamname:9')}点数×${a}、${era.get('palamname:5')}点数×${b}`;
       if (c > 0) option0 += `、${era.get('expname:30')}${c}以上`;
@@ -1210,7 +1204,8 @@ async function ablup8(cid) {
       era.printButton(option0, 0);
       // ABLUP8.ERB:141 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     }
-    // b===0 时 [0] 不渲染，原作对应位置没有 ELSE 哨兵（见文件头缺陷说明）
+    // b===0 时 [0] 不渲染且没有 ELSE 哨兵——未渲染的按钮输入不进来（见文件头），
+    // 缺失哨兵因此不是缺陷
 
     const exp2 = era.get(`exp:${cid}:2`) || 0;
     const juel6 = era.get(`juel:${cid}:6`) || 0;
@@ -1391,7 +1386,7 @@ async function ablup9(cid) {
 }
 
 /**
- * @DECIDE_ABLUP10（ABLUP10.ERB:137-342）的判定本体，与 @ABLUP10 主流程共用。
+ * ablup10 的判定本体，与主流程共用。
  * 四条轨道 A(恐怖 JUEL:10)/B(恭顺 JUEL:4)/C(欲情 JUEL:5)/D(屈服 JUEL:6)，
  * I/J/K/L 四个独立可否位；K/L（I 见文件头）在对应等级为 0 时置 256（自动
  * 不可，对应选项不渲染）。
@@ -1556,7 +1551,7 @@ function evaluate_ablup10(cid) {
 }
 
 /**
- * @DECIDE_ABLUP10 的 RESULT 语义（:338-342）：**任一**轨道可提升即 1
+ * decide_ablup10 的 RESULT 语义（:338-342）：**任一**轨道可提升即 1
  * （`I == 0 || J == 0 || K == 0 || L == 0`）。256 哨兵不等于 0，满级/隐藏
  * 选项不会凭哨兵混进「可提升」。
  * @param {number} cid TARGET
@@ -1569,7 +1564,7 @@ function decide_ablup10(cid) {
 }
 
 /**
- * @CORE_ABLUP10（ABLUP10.ERB:119-131）：ABL:10 ++ 后按 I→J→K→L 的优先级
+ * core_ablup10（ABLUP10.ERB:119-131）：ABL:10 ++ 后按 I→J→K→L 的优先级
  * 扣**第一条**可用轨道的珠（也只会扣这一条）。
  * @param {number} cid TARGET
  * @returns {number} 0
@@ -1758,11 +1753,11 @@ async function ablup11(cid, mode) {
     if (juel5 < a) i |= 1;
     if (e > exp50_11) i |= 2;
 
-    // 干跑出口（decide_ablup11 / core_ablup11）：@DECIDE_ABLUP11 与
-    // @CORE_ABLUP11 复用主流程同一段梯子/加成/门槛，不另写一份
-    if (mode === 'decide') return { i }; // @DECIDE_ABLUP11 :220-223 的 RESULT
+    // 干跑出口（decide_ablup11 / core_ablup11）：decide_ablup11 与
+    // core_ablup11 复用主流程同一段梯子/加成/门槛，不另写一份
+    if (mode === 'decide') return { i }; // decide_ablup11 :220-223 的 RESULT
     if (mode === 'core') {
-      chara(cid).system.欲望 += 1; // @CORE_ABLUP11: ABL:11 ++
+      chara(cid).system.欲望 += 1; // core_ablup11: ABL:11 ++
       if (i === 0) era.add(`juel:${cid}:5`, -a); // JUEL:5 -= A
       return 0;
     }
@@ -1803,7 +1798,7 @@ async function ablup12(cid, mode) {
     if (bits === 0) return 'ＯＫ';
     let text = '';
     if (bits & 1) text += '点数不足 ';
-    if (bits & 2) text += '经验不足'; // （实际比较 ABL:MASTER:12 与 FLAG:30，与经验无关，issue #14）
+    if (bits & 2) text += '人数不足 '; // 魔王技巧超过爱或淫乱人数+1 的自我训练上限，与经验无关
     if (bits & 4) text += '金钱不足\t'; // （尾随制表符，原文如此）
     return text;
   };
@@ -1828,8 +1823,8 @@ async function ablup12(cid, mode) {
 
   for (;;) {
     const lv = abl12();
-    // 组合上限触发提前 RETURN（:96-97），A/I 维持调用方清零的初值——免费
-    // 直接购买，不进梯子/素质/自我训练判定（见文件头 issue #14）
+    // 组合上限触发时主流程提前返回，A/I 维持清零的初值——免费直接购买，
+    // 不进梯子/素质/自我训练判定
     const combo_break = lv + abl15() >= 15;
     let a = 0;
     let i = 0;
@@ -1873,19 +1868,19 @@ async function ablup12(cid, mode) {
     if (!combo_break) {
       if (juel7 < a) i |= 1;
       if (self_training && money < 5000) i |= 4;
-      if (self_training && master_abl12 > flag30 + 1) i |= 2; // （文案错位，见文件头）
+      if (self_training && master_abl12 > flag30 + 1) i |= 2; // 魔王技巧超过爱或淫乱人数+1 不可自我训练
     }
 
     // 干跑出口（decide_ablup12 / core_ablup12）
     if (mode === 'decide') {
-      // @DECIDE_ABLUP12 的组合上限是硬 RETURN 0（:95-97），比主流程的
-      // 「免费购买」缺陷（见文件头 issue #14）更早判死：干跑按 DECIDE 走
+      // 判定的组合上限是硬 RETURN 0，比主流程的「免费购买」分支更早判死：
+      // 干跑按判定走
       if (combo_break) return null;
       return { i };
     }
     if (mode === 'core') {
-      chara(cid).system.技巧 += 1; // @CORE_ABLUP12: ABL:12 ++
-      // 只扣珠不扣钱（@CORE_ABLUP12 :79-85 没有主流程 :63-65 的金钱段）
+      chara(cid).system.技巧 += 1; // core_ablup12: ABL:12 ++
+      // 只扣珠不扣钱（core_ablup12 :79-85 没有主流程 :63-65 的金钱段）
       if (i === 0) era.add(`juel:${cid}:7`, -a);
       return 0;
     }
@@ -2004,14 +1999,12 @@ async function ablup13(cid, mode) {
     const juel7 = era.get(`juel:${cid}:7`) || 0;
     let i = 0;
     if (juel7 < a) i |= 1;
-    // Lv5 未满时检查技巧≥侍奉技术+1（:258-260）；Lv5 以上的对应检查在原作
-    // 中被注释掉（:262-263），死代码不恢复，issue #14
     if (lv < 5 && abl12() < lv + 1) i |= 2;
 
     // 干跑出口（decide_ablup13 / core_ablup13）
     if (mode === 'decide') return { i };
     if (mode === 'core') {
-      era.add(`abl:${cid}:13`, 1); // @CORE_ABLUP13: ABL:13 ++
+      era.add(`abl:${cid}:13`, 1); // core_ablup13: ABL:13 ++
       if (i === 0) era.add(`juel:${cid}:7`, -a); // JUEL:7 -= A
       return 0;
     }
@@ -2200,14 +2193,14 @@ async function ablup14(cid, mode) {
     let i = 0;
     if (juel7 < a) i |= 1;
     if (exp5 < b) i |= 2;
-    // 两个子句都比较 ABL:12，第一个子句本应比较 ABL<5，与渲染层
-    // 的门槛文案不对称，是原作真实缺陷，1:1 保留（见文件头，issue #14）
-    if (abl12() < 5 && abl12() < lv + 1) i |= 4;
+    // 技巧门槛：性交技术未达 Lv5 时要求 技巧≥性交技术+1（与 ABLUP13 同形），
+    // Lv5 以上不再检查——渲染层同样不显示技巧要求行
+    if (abl14() < 5 && abl12() < lv + 1) i |= 4;
 
     // 干跑出口（decide_ablup14 / core_ablup14）
     if (mode === 'decide') return { i };
     if (mode === 'core') {
-      era.add(`abl:${cid}:14`, 1); // @CORE_ABLUP14: ABL ++
+      era.add(`abl:${cid}:14`, 1); // core_ablup14: ABL ++
       if (i === 0) era.add(`juel:${cid}:7`, -a); // JUEL:7 -= A
       return 0;
     }
@@ -2262,8 +2255,8 @@ async function ablup15(cid, mode) {
 
   for (;;) {
     const lv = abl15();
-    // 组合上限触发提前 RETURN（:89-90），A/B/C/I 维持调用方清零的初值——
-    // 免费直接购买，不进梯子/素质判定（见文件头 issue #14）
+    // 组合上限触发时主流程提前返回，A/B/C/I 维持清零的初值——免费直接购买，
+    // 不进梯子/素质判定
     const combo_break = abl12() + lv >= 15;
     let a = 0,
       b = 0,
@@ -2435,13 +2428,13 @@ async function ablup15(cid, mode) {
 
     // 干跑出口（decide_ablup15 / core_ablup15）
     if (mode === 'decide') {
-      // @DECIDE_ABLUP15 的组合上限（:89-90）是硬 RETURN 0，比主流程的
-      // 「免费购买」缺陷（见文件头 issue #14）更早判死：干跑按 DECIDE 走
+      // 判定的组合上限是硬 RETURN 0，比主流程的「免费购买」分支更早判死：
+      // 干跑按判定走
       if (combo_break) return null;
       return { i };
     }
     if (mode === 'core') {
-      era.add(`abl:${cid}:15`, 1); // @CORE_ABLUP15: ABL ++
+      era.add(`abl:${cid}:15`, 1); // core_ablup15: ABL ++
       if (i === 0) era.add(`juel:${cid}:7`, -a); // JUEL:7 -= A
       return 0;
     }
@@ -2777,20 +2770,18 @@ async function ablup16(cid, mode) {
 
     // 干跑出口（decide_ablup16 / core_ablup16）
     if (mode === 'decide') {
-      // @DECIDE_ABLUP16 的素质复查用 AND（:139）——两个调用点（`*` 标记与
-      // AUTO_ABLUP）不经过入口把关，此处按 AND 原样复现（文件头已登记）
+      // 素质复查与入口把关同判据（OR）：两个调用点（`*` 标记与 auto_ablup）
+      // 不经过入口把关，缺一即不可提升
       if (
         abl16() >= 5 &&
-        talent(63) === 0 &&
-        talent(85) === 0 &&
-        talent(86) === 0
+        (talent(63) === 0 || talent(85) === 0 || talent(86) === 0)
       ) {
         return null;
       }
       return { i, j, k };
     }
     if (mode === 'core') {
-      chara(cid).system.侍奉精神 += 1; // @CORE_ABLUP16: ABL:16 ++（system 域，走门面）
+      chara(cid).system.侍奉精神 += 1; // core_ablup16: ABL:16 ++（system 域，走门面）
       if (i === 0) era.add(`juel:${cid}:6`, -a);
       else if (j === 0) era.add(`juel:${cid}:4`, -b);
       else if (k === 0) era.add(`juel:${cid}:7`, -c);
@@ -2975,7 +2966,7 @@ async function ablup17(cid, mode) {
     // 干跑出口（decide_ablup17 / core_ablup17）
     if (mode === 'decide') return { i };
     if (mode === 'core') {
-      chara(cid).system.露出癖 += 1; // @CORE_ABLUP17: ABL:17 ++
+      chara(cid).system.露出癖 += 1; // core_ablup17: ABL:17 ++
       if (i === 0) era.add(`juel:${cid}:8`, -a); // JUEL:8 -= A
       return 0;
     }
@@ -3005,7 +2996,7 @@ async function ablup17(cid, mode) {
     if (result === 100) {
       return;
     } else if (result === 0 && i !== 0) {
-      era.print('未满足条件。'); // （唯一带句号）
+      era.print('未满足条件'); // （与 ABLUP10～16 统一，无句号）
       continue;
     } else if (result === 0) {
       const new_lv = (chara(cid).system.露出癖 += 1);
@@ -3020,18 +3011,16 @@ async function ablup17(cid, mode) {
 
 /**
  *
- * 本文件自己的三处原作特性，1:1 保留：
- * - 状态文案是 @ABLUP20 内联的 PRINT 链（:49-56），拼接为「点数不足 」
- *   「经验不足」（无尾随空格）「能力不足 」——bit2/bit4 的尾随空格与共享
- *   @GET_ABLUP_STATE（ABLUP0.ERB:97-110，经验不足带空格、能力不足不带）
- *   恰好相反，不能复用 get_ablup_state。
- * - @DECIDE_ABLUP20 的异常经验 C 分两段：C = ABL:20-2 在 :175，戒备森严块
- *   （:153-171）的 TIMES C 在它**之前**——乘的是 0，全部无效；而淫乱
- *   （:276-282）的 TIMES C 在它**之后**，×0.80 真实生效（lv4 无豁免素质时
- *   C = floor(2×0.8) = 1，不是 2）。D/E 在本文件无任何读者，是死写入；
- *   G=1（:178）同样无读者。
- * - 异常经验行（:45）用全角括号「（现在{EXP:50}）」，其余 ABLUP 文件均为
- *   半角。输入越界拦截是 RESULT!=0&&!=100（:66-67），不是 <0||>1 形式。
+ * 本文件自己的三处特性，保留原样：
+ * - 状态文案是 ablup20 内联的拼接链，拼为「点数不足 」「经验不足」（无尾随
+ *   空格）「能力不足 」——bit2/bit4 的尾随空格与共享 get_ablup_state（经验
+ *   不足带空格、能力不足不带）恰好相反，不能复用。
+ * - 异常经验 C 的赋值分两段：戒备森严块的 TIMES C 在 C 赋值之前——乘的是 0，
+ *   全部无效；而淫乱的 TIMES C 在赋值之后，×0.80 真实生效（lv4 无豁免素质时
+ *   C = floor(2×0.8) = 1，不是 2）。D/E 在本文件无任何读者，是死写入；G=1
+ *   同样无读者。
+ * - 异常经验行用全角括号「（现在{EXP:50}）」，其余 ABLUP 文件均为半角。输入
+ *   越界拦截是 RESULT!=0&&!=100 形式，不是 <0||>1。
  */
 async function ablup20(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -3039,7 +3028,7 @@ async function ablup20(cid) {
   const abl20 = () => era.get(`abl:${cid}:20`) || 0;
   const abl21 = () => era.get(`abl:${cid}:21`) || 0;
 
-  // @ABLUP20 的内联状态文案（与 get_ablup_state 的尾随空格分布相反）
+  // ablup20 的内联状态文案（与 get_ablup_state 的尾随空格分布相反）
   const state_text = (i) => {
     if (i === 0) return 'ＯＫ';
     return `${i & 1 ? '点数不足 ' : ''}${i & 2 ? '经验不足' : ''}${i & 4 ? '能力不足 ' : ''}`;
@@ -3644,9 +3633,9 @@ async function ablup21(cid) {
 
 /**
  *
- * 显示顺序与其他 ABLUP 相反：异常经验行（:46-47）在欲望行（:50）
- * **之前**。异常经验豁免名单（开放/倒错的/双性恋/疯狂，:214）不含
- * 讨厌男人，与 Lv5 上限豁免名单（:18 多一项 TALENT:82）不同，1:1 保留。
+ * 显示顺序与其他 ABLUP 相反：异常经验行在欲望行**之前**。异常经验豁免名单
+ * （开放/倒错的/双性恋/疯狂）不含讨厌男人，与 Lv5 上限豁免名单（多一项
+ * TALENT:82）不同，保留原样。
  */
 async function ablup22(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -4137,16 +4126,14 @@ async function ablup23(cid) {
 
 /**
  *
- * 原作的两处不一致，1:1 保留：
- * - Lv5 上限豁免：主流程（:17）是六项素质任一 ==0 即拦（OR），@DECIDE
- *   （:115-116）是六项全 0 才拦（AND）——主流程更严，先拦即返回，DECIDE
- *   的 AND 分支只对六项全有的角色生效（此时条件为假，不拦）。
- * - 组合上限的拦截判定（:26）查 JUEL:6 ≥ 30²×1000 且 JUEL:5 ≥ 30²×300，
- *   而提示文案（:27）写「欲情…1000 / 屈服…300」——判定与文案的表交叉
- *   错位，照抄。
- * @DECIDE_ABLUP30:118 的 `SIF 30+31 >= 20 RETURN 0` 会令需求归零＝免费
- * 购买，但正常流程合计 19 封顶（30、31 各自 Lv10 即封顶无购买入口），
- * 该分支不可达、未移植（不登记 issue #14）。
+ * 本函数的两处不一致，保留原样：
+ * - Lv5 上限豁免：主流程是六项素质任一 ==0 即拦（OR），未移植的判定函数是
+ *   六项全 0 才拦（AND）——主流程更严，先拦即返回，AND 分支只对六项全有
+ *   的角色生效（此时条件为假，不拦）。
+ * - 组合上限的拦截判定查 JUEL:6 ≥ 30²×1000 且 JUEL:5 ≥ 30²×300，而提示
+ *   文案写「欲情…1000 / 屈服…300」——判定与文案的表交叉错位，保留原样。
+ * 未移植的判定的 `SIF 30+31 >= 20 RETURN 0` 会令需求归零＝免费购买，但正常
+ * 流程合计 19 封顶（30、31 各自 Lv10 即封顶无购买入口），该分支不可达。
  */
 async function ablup30(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -4184,7 +4171,7 @@ async function ablup30(cid) {
       );
       era.print(
         `至少达成${era.get('palamname:5')}点数${abl30() * abl30() * 1000}点或${era.get('palamname:6')}点数${abl30() * abl30() * 300}点的其中一项`,
-      ); // （文案的表与判定交叉，原作如此）
+      ); // （文案的表与判定交叉，保留原样）
       await era.printAndWait('方可提升当前性交中毒的等级');
       return;
     }
@@ -4550,8 +4537,8 @@ async function ablup31(cid) {
     }
 
     const exp50 = era.get(`exp:${cid}:50`) || 0;
-    // 异常经验检查：原作在 F 段（:244-248）与素质修正后（:285-288）重复执行
-    // 两次同条件判定，等价合并为一次
+    // 异常经验检查：旧代码在 F 段与素质修正后重复执行两次同条件判定，
+    // 等价合并为一次
     let i = 0;
     let j = 0;
     if (f > exp50) {
@@ -4636,13 +4623,12 @@ async function ablup31(cid) {
 
 /**
  *
- * 原作的数值不一致，1:1 保留：组合上限的拦截判定（:25）用 32²×6500（欲情
- * JUEL:5）/32²×19000（屈服 JUEL:6），而提示文案（:27）写 32²×4000——
- * 玩家满足提示值仍可能被拦。合计≥10 且珠够时，@DECIDE 的 A/B 直接覆盖为
- * 32²×4000/32²×19000（:185-188），**梯子值作废**，且覆盖发生在戒备森严
- * （:191-209）之前——戒备森严作用于覆盖后的值。@DECIDE:131 的
- * `SIF 32+33+39 >= 30 RETURN 0` 理论免费分支正常流程不可达（三个中毒各
- * Lv10 封顶即无购买入口），未移植。
+ * 本函数的数值不一致，保留原样：组合上限的拦截判定用 32²×6500（欲情
+ * JUEL:5）/32²×19000（屈服 JUEL:6），而提示文案写 32²×4000——玩家满足
+ * 提示值仍可能被拦。合计≥10 且珠够时，A/B 直接覆盖为
+ * 32²×4000/32²×19000，**梯子值作废**，且覆盖发生在戒备森严之前——戒备
+ * 森严作用于覆盖后的值。判定的 `SIF 32+33+39 >= 30 RETURN 0` 理论免费
+ * 分支正常流程不可达（三个中毒各 Lv10 封顶即无购买入口），未移植。
  */
 async function ablup32(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -4681,7 +4667,7 @@ async function ablup32(cid) {
       );
       era.print(
         `至少达成${era.get('palamname:5')}点数${abl32() * abl32() * 4000}点或${era.get('palamname:6')}点数${abl32() * abl32() * 19000}点的其中一项`,
-      ); // （文案写 4000，判定用 6500，原作如此）
+      ); // （文案写 4000，判定用 6500，保留原样）
       await era.printAndWait('方可提升当前精液中毒的等级');
       return;
     }
@@ -5180,7 +5166,7 @@ async function ablup33(cid) {
     const exp40 = era.get(`exp:${cid}:40`) || 0;
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
-    if (d > exp50) i |= 2; // （异常经验；原作的 J|=2 是死写入）
+    if (d > exp50) i |= 2; // （异常经验；J 轨没有选项渲染，J|=2 是死写入）
     if (abl22() < lv + 1) i |= 4; // （百合气质门槛；J|=4 同为死写入）
     if (juel0 < b) i |= 1;
     if (juel5 < a) i |= 1;
@@ -5225,7 +5211,7 @@ async function ablup37(cid, mode) {
   const abl11 = () => era.get(`abl:${cid}:11`) || 0;
   const abl37 = () => era.get(`abl:${cid}:37`) || 0;
 
-  if (!mode) era.drawLine(); // DRAWLINE（:10-13 叙事文本已被注释掉，不移植）
+  if (!mode) era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   if (
     abl37() >= 5 &&
@@ -5383,7 +5369,7 @@ async function ablup37(cid, mode) {
       d = times(d, 0.5);
     }
     if (talent(76)) {
-      // 淫乱 :294-299——B 轨 ×0.50 与其余 ×0.80 不同，原作如此
+      // 淫乱 :294-299——B 轨 ×0.50 与其余 ×0.80 不同，保留原样
       a = times(a, 0.8);
       b = times(b, 0.5);
       c = times(c, 0.8);
@@ -5495,13 +5481,13 @@ async function ablup37(cid, mode) {
 
     // 干跑出口（decide_ablup37 / core_ablup37）
     if (mode === 'decide') {
-      // @DECIDE_ABLUP37 的额外门槛（:95-96）：卖淫中毒＋性交中毒合计 10
+      // decide_ablup37 的额外门槛（:95-96）：卖淫中毒＋性交中毒合计 10
       // 以上即不可提升——主流程没有这条（文件头登记的差异）
       if (lv + (era.get(`abl:${cid}:38`) || 0) >= 10) return null;
       return { i };
     }
     if (mode === 'core') {
-      era.add(`abl:${cid}:37`, 1); // @CORE_ABLUP37: ABL ++
+      era.add(`abl:${cid}:37`, 1); // core_ablup37: ABL ++
       if (i === 0) {
         era.add(`juel:${cid}:4`, -a);
         era.add(`juel:${cid}:5`, -b);
@@ -5550,7 +5536,7 @@ async function ablup39(cid, mode) {
   const abl_sum = () =>
     (era.get(`abl:${cid}:32`) || 0) + (era.get(`abl:${cid}:33`) || 0) + abl39();
 
-  if (!mode) era.drawLine(); // DRAWLINE（:10-13 叙事文本已被注释掉，不移植）
+  if (!mode) era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   if (
     abl39() >= 5 &&
@@ -5606,8 +5592,8 @@ async function ablup39(cid, mode) {
       b = lv * lv * 4000;
     }
 
-    // 戒备森严 :155-169——分档判 ABL（卖淫中毒），非本能力等级，
-    // 原作复制粘贴缺陷 1:1 保留（issue #14）
+    // 戒备森严 :155-169——分档判 ABL:37（卖淫中毒），非本能力等级，
+    // 复制粘贴残留，保留原样
     if (talent(27)) {
       const gate = era.get(`abl:${cid}:37`) || 0;
       if (gate === 3) {
@@ -5700,13 +5686,13 @@ async function ablup39(cid, mode) {
 
     // 干跑出口（decide_ablup39 / core_ablup39）
     if (mode === 'decide') {
-      // @DECIDE_ABLUP39 的上限判据是 32+33+39 >= 30（:101-102），与主流程
+      // decide_ablup39 的上限判据是 32+33+39 >= 30（:101-102），与主流程
       // 的 >= 10 不同（主流程那条是「两珠任一不足即拦」的价位门槛）
       if (abl_sum() >= 30) return null;
       return { i };
     }
     if (mode === 'core') {
-      era.add(`abl:${cid}:39`, 1); // @CORE_ABLUP39: ABL:39 ++
+      era.add(`abl:${cid}:39`, 1); // core_ablup39: ABL:39 ++
       if (i === 0) {
         era.add(`juel:${cid}:5`, -a);
         era.add(`juel:${cid}:6`, -b);
@@ -5797,9 +5783,9 @@ async function ablup40(cid, mode) {
     if (juel15 < a) i |= 1;
     if (exp50 < f) i |= 2; // 异常经验
 
-    // 干跑出口（decide_ablup40）：@DECIDE_ABLUP40 的门槛与主流程同判据
-    // （只有 ABL:40 >= 10 与同段的 i 位）。原作无 @CORE_ABLUP40
-    // （@AUTO_ABLUP 的 REPEAT 40 不含 40），故不做 core 干跑。
+    // 干跑出口（decide_ablup40）：判定的门槛与主流程同判据
+    // （只有 ABL:40 >= 10 与同段的 i 位）。旧代码没有对应的 CORE
+    // （auto_ablup 的 REPEAT 40 不含 40），故不做 core 干跑。
     if (mode === 'decide') return { i };
 
     // 内联状态 :28-37（非 GET_ABLUP_STATE；尾随空格原样）
@@ -5816,7 +5802,7 @@ async function ablup40(cid, mode) {
     if (f > 0) {
       era.print(`${era.get('expname:50')}${f}以上(现在${exp50})`);
     }
-    // 显示 ABL:39+1（与判定的 ABL:40+1 不一致，原作缺陷 1:1 保留）
+    // 显示 ABL:39+1（与判定的 ABL:40+1 不一致，保留原样）
     era.print(
       `${era.get('ablname:11')}LV${(era.get(`abl:${cid}:39`) || 0) + 1}以上(现在LV${abl11()})`,
     );
@@ -5849,7 +5835,7 @@ async function ablup99(cid, mode) {
   const mark2 = () => era.get(`mark:${cid}:2`) || 0;
   const mark3 = () => era.get(`mark:${cid}:3`) || 0;
 
-  if (!mode) era.drawLine(); // DRAWLINE（:24-26 叙事文本已被注释掉，不移植）
+  if (!mode) era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   if (mark3() <= 0) {
     if (!mode) {
@@ -5880,11 +5866,11 @@ async function ablup99(cid, mode) {
     if (b > abl10) i |= 4;
     if (juel6 < a) i |= 1; // 屈服珠
 
-    // 干跑出口（decide_ablup99 / core_ablup99）：@DECIDE_ABLUP99 的门槛与
+    // 干跑出口（decide_ablup99 / core_ablup99）：decide_ablup99 的门槛与
     // 主流程同判据（MARK:3 <= 0 的提前 RETURN 0 已在上方守卫里）
     if (mode === 'decide') return { i };
     if (mode === 'core') {
-      chara(cid).system.反抗刻印 -= 1; // @CORE_ABLUP99: MARK:3 --
+      chara(cid).system.反抗刻印 -= 1; // core_ablup99: MARK:3 --
       if (i === 0) era.add(`juel:${cid}:6`, -a);
       return 0;
     }
@@ -5919,7 +5905,7 @@ async function ablup100(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
   const mark10 = () => era.get(`mark:${cid}:10`) || 0;
 
-  era.drawLine(); // DRAWLINE（:6-8 叙事文本已被注释掉，不移植）
+  era.drawLine(); // DRAWLINE（函数头的叙事文本已被注释掉，不移植）
 
   if (mark10() <= 0) {
     era.print('并没有异界异常反应'); //  PRINTL
@@ -5989,26 +5975,24 @@ async function ablup100(cid) {
   }
 }
 
-// ———— ABL.ERB：@DECIDE_ABLUP 族 / @AUTO_ABLUP / @USERABLUP ————
+// ———— decide_ablup 族 / auto_ablup / userablup ————
 //
-// 这三个函数是 ABL.ERB 自己的代码（不是某个 ABLUPn.ERB 的），与上面各能力的
-// 主流程是两条通路：
-//   * @DECIDE_ABLUP / @DECIDE_ABLUPn —— 可提升判定，菜单用它打 `*`
-//     （page-ablup.js 的 @SHOW_ABLUP_SELECT :78/:89/:94/:99/:105）；
-//   * @AUTO_ABLUP + @AUTO_ABLUP_CORE —— FLAG:5 位 35 打开时的自动提升
-//     （:203-267），由 @JUEL_CHECK 与 @AFTER_AUTOTRAIN 各调一次。
+// 这三个函数与上面各能力的主流程是两条通路：
+//   * decide_ablup / decide_ablupN —— 可提升判定，菜单用它打 `*`
+//     （page-ablup.js 的 show_ablup_select）；
+//   * auto_ablup + auto_ablup_core —— FLAG:5 位 35 打开时的自动提升，
+//     由 juel-check 与 event-autotrain 各调一次。
 //
-// 判定的真身只有一份：@ABLUPn 主流程在 0-4/10 抽出纯函数 evaluate_ablupN，
+// 判定的真身只有一份：各主流程在 0-4/10 抽出纯函数 evaluate_ablupN，
 // 其余编号用主流程的 mode='decide'/'core' 干跑（见各函数内的干跑出口）。
-// 两种形态的差别只是「梯子是否规整」，语义都是同一个 @DECIDE_ABLUPn。
+// 两种形态的差别只是「梯子是否规整」，语义都是同一个判定。
 
 /**
- * @DECIDE_ABLUP（ABL.ERB:113-189）的分发：X → @DECIDE_ABLUPn 的 RESULT。
- * 原作是 IF/ELSEIF 链，编号集合即下表；未登记编号返回 0——对应 TRYCALL
- * 落空：ABLUP20～ABLUP33 的文件仍是存根（docs/stub-registry.md 的
- * `ABLUP0`～`ABLUP100` 行），它们的 @DECIDE_ABLUPn 随各自文件落地。
+ * decide_ablup 的分发：能力编号 → decide_ablupN 的 RESULT。
+ * 编号集合即下表（旧代码是 IF/ELSEIF 链）；未登记编号返回 0——对应
+ * TRYCALL 落空：ABLUP20～ABLUP33 没有对应的判定函数，这几行不打 `*`。
  * @param {number} cid TARGET
- * @param {number} x 原作 X（能力编号）
+ * @param {number} x 能力编号
  * @returns {Promise<number>} 1 = 可提升 / 0 = 不可
  */
 async function decide_ablup(cid, x) {
@@ -6017,120 +6001,120 @@ async function decide_ablup(cid, x) {
   return await handler(cid);
 }
 
-/** @DECIDE_ABLUP11 的 RESULT 语义（I==0 才可提升），干跑主流程 */
+/** decide_ablup11 的 RESULT 语义（I==0 才可提升），干跑主流程 */
 async function decide_ablup11(cid) {
   const r = await ablup11(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP11：干跑主流程的 mode='core'（ABL:11 ++，I==0 时扣珠） */
+/** core_ablup11：干跑主流程的 mode='core'（ABL:11 ++，I==0 时扣珠） */
 async function core_ablup11(cid) {
   await ablup11(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP12 的 RESULT 语义（组合上限即 0，见干跑出口） */
+/** decide_ablup12 的 RESULT 语义（组合上限即 0，见干跑出口） */
 async function decide_ablup12(cid) {
   const r = await ablup12(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP12：干跑主流程的 mode='core'（只扣珠，不扣钱） */
+/** core_ablup12：干跑主流程的 mode='core'（只扣珠，不扣钱） */
 async function core_ablup12(cid) {
   await ablup12(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP13 的 RESULT 语义 */
+/** decide_ablup13 的 RESULT 语义 */
 async function decide_ablup13(cid) {
   const r = await ablup13(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP13：干跑主流程的 mode='core' */
+/** core_ablup13：干跑主流程的 mode='core' */
 async function core_ablup13(cid) {
   await ablup13(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP14 的 RESULT 语义（原作判 `ABL == 10`，本体按 >=10；
+/** decide_ablup14 的 RESULT 语义（旧代码判 `ABL == 10`，本体按 >=10；
  * 到达 >10 无路径，两者同效） */
 async function decide_ablup14(cid) {
   const r = await ablup14(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP14：干跑主流程的 mode='core' */
+/** core_ablup14：干跑主流程的 mode='core' */
 async function core_ablup14(cid) {
   await ablup14(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP15 的 RESULT 语义（组合上限即 0） */
+/** decide_ablup15 的 RESULT 语义（组合上限即 0） */
 async function decide_ablup15(cid) {
   const r = await ablup15(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP15：干跑主流程的 mode='core' */
+/** core_ablup15：干跑主流程的 mode='core' */
 async function core_ablup15(cid) {
   await ablup15(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP16 的 RESULT 语义（:529-533：任一轨道可提升即 1；素质复查
- * 用 AND，与入口把关的 OR 不同，见干跑出口） */
+/** decide_ablup16 的 RESULT 语义（任一轨道可提升即 1；素质复查
+ * 与入口把关同判据，见干跑出口） */
 async function decide_ablup16(cid) {
   const r = await ablup16(cid, 'decide');
   if (!r) return 0;
   return r.i === 0 || r.j === 0 || r.k === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP16：干跑主流程的 mode='core'（I→J→K 优先级扣珠） */
+/** core_ablup16：干跑主流程的 mode='core'（I→J→K 优先级扣珠） */
 async function core_ablup16(cid) {
   await ablup16(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP17 的 RESULT 语义 */
+/** decide_ablup17 的 RESULT 语义 */
 async function decide_ablup17(cid) {
   const r = await ablup17(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP17：干跑主流程的 mode='core' */
+/** core_ablup17：干跑主流程的 mode='core' */
 async function core_ablup17(cid) {
   await ablup17(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP37 的 RESULT 语义 */
+/** decide_ablup37 的 RESULT 语义 */
 async function decide_ablup37(cid) {
   const r = await ablup37(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP37：干跑主流程的 mode='core' */
+/** core_ablup37：干跑主流程的 mode='core' */
 async function core_ablup37(cid) {
   await ablup37(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP39 的 RESULT 语义 */
+/** decide_ablup39 的 RESULT 语义 */
 async function decide_ablup39(cid) {
   const r = await ablup39(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP39：干跑主流程的 mode='core' */
+/** core_ablup39：干跑主流程的 mode='core' */
 async function core_ablup39(cid) {
   await ablup39(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP40 的 RESULT 语义（原作无 @CORE_ABLUP40） */
+/** decide_ablup40 的 RESULT 语义（旧代码没有 core_ablup40） */
 async function decide_ablup40(cid) {
   const r = await ablup40(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @DECIDE_ABLUP99 的 RESULT 语义 */
+/** decide_ablup99 的 RESULT 语义 */
 async function decide_ablup99(cid) {
   const r = await ablup99(cid, 'decide');
   return r && r.i === 0 ? 1 : 0;
 }
-/** @CORE_ABLUP99：干跑主流程的 mode='core'（MARK:3 --） */
+/** core_ablup99：干跑主流程的 mode='core'（MARK:3 --） */
 async function core_ablup99(cid) {
   await ablup99(cid, 'core');
   return 0;
 }
 
 /**
- * @DECIDE_ABLUP 的分发目标。键集合 = ABL.ERB:115-180 的 IF/ELSEIF 链
- * （0/1/2/3/10-17/20-23/30-33/37/39）+ :89/:94/:99 三处单独调用
- * （99/4/40）。20-23/30-33 的 @DECIDE_ABLUPn 尚未落地（它们的 ABLUPn.ERB
- * 仍是存根，随 #466），落空时不打 `*`。
+ * decide_ablup 的分发目标。键集合 = 旧代码的 IF/ELSEIF 链
+ * （0/1/2/3/10-17/20-23/30-33/37/39）+ 99/4/40 三处单独调用。
+ * 20-23/30-33 没有对应的判定函数（随 #466 各自落地时未补判定），
+ * 落空时不打 `*`。
  */
 const DECIDE_HANDLERS = {
   0: decide_ablup0,
@@ -6153,9 +6137,9 @@ const DECIDE_HANDLERS = {
 };
 
 /**
- * @AUTO_ABLUP_CORE 的 CORE 分发表：ABLUPn.ERB 里定义了 @CORE_ABLUPn 的
- * 编号（0-3/10-17/20-23/30-33/37/39/99）。@AUTO_ABLUP 的 REPEAT 40 不含
- * 4/40，原作也没有这两个 CORE。
+ * auto_ablup_core 的 CORE 分发表：编号集合 = 定义了 core_ablupN 的
+ * 编号（0-3/10-17/20-23/30-33/37/39/99）。auto_ablup 的 REPEAT 40 不含
+ * 4/40——旧代码也没有这两个 CORE。
  */
 const CORE_HANDLERS = {
   0: core_ablup0,
@@ -6175,24 +6159,24 @@ const CORE_HANDLERS = {
   99: core_ablup99,
 };
 
-/** GETBIT(X, n)（Emuera 内建） */
+/** GETBIT(X, n)（旧引擎内建函数的等价物） */
 function auto_getbit(value, n) {
   return Math.floor((value || 0) / 2 ** n) % 2 === 1;
 }
 
 /**
- * @AUTO_ABLUP（ABL.ERB:203-241）：自动能力提升。ARG 缺省 -1 = 沿用调用方的
- * TARGET；ARG >= 0 时临时代入该角色（原作 :204-206 的 LOCAL/TARGET 换出
- * 换回），结束时还原。
+ * auto_ablup：自动能力提升。arg 缺省 -1 = 沿用调用方的
+ * TARGET；arg >= 0 时临时代入该角色（旧代码的 LOCAL/TARGET 换出换回），
+ * 结束时还原。
  *
- * 「卖淫影响」的读法（1:1 的缺省化）：原作 :230-232 直读 SAVEDATA 变量；ere 侧
- * 自 #547 落 yml/ModSave.yml id 0（era_modsave.prostitution_effect，设置页
+ * 「卖淫影响」的读法（缺省化）：旧代码直读 SAVEDATA 变量；ere 侧自 #547
+ * 落 yml/ModSave.yml id 0（era_modsave.prostitution_effect，设置页
  * [29] 可切），参数缺省值读它，显式传参覆盖（通道仅为测试注入保留）——
  * 0 档（负面评价）跳过 37 卖淫中毒的自动提升。
  *
  * 另一条取舍：COUNT > 15 的 `GETBIT(FLAG:5,36)` 是「只自动提升前 15 项」的
- * 开关，与调用方的位 35（自动化总开关）不是同一位，1:1 保留（:233-235）。
- * @param {number} [arg] 原作 ARG（-1 = 当前 TARGET）
+ * 开关，与调用方的位 35（自动化总开关）不是同一位，保留原样。
+ * @param {number} [arg] 角色编号（-1 = 当前 TARGET）
  * @param {{prostitution_effect?: number}} [opts]
  * @returns {Promise<void>}
  */
@@ -6240,10 +6224,10 @@ async function auto_ablup(
 }
 
 /**
- * @AUTO_ABLUP_CORE（ABL.ERB:247-267）：NUM 号能力的自动提升，循环到升不动
- * 为止（:267 RESTART 回到函数头的 ABL:NUM >= 10 检查）。
- * @param {number} num 能力编号（原作 NUM）
- * @param {number} info 提升后是否打印等级行（原作 INFO，1 = 打印）
+ * auto_ablup_core：num 号能力的自动提升，循环到升不动为止（RESTART 回到
+ * 函数头的 ABL:NUM >= 10 检查）。
+ * @param {number} num 能力编号
+ * @param {number} info 提升后是否打印等级行（1 = 打印）
  * @returns {Promise<void>}
  */
 async function auto_ablup_core(num, info) {
@@ -6252,7 +6236,7 @@ async function auto_ablup_core(num, info) {
     if ((era.get(`abl:${target}:${num}`) || 0) >= 10) return;
     if ((await decide_ablup(target, num)) <= 0) return;
     const core = CORE_HANDLERS[num];
-    if (!core) return; // TRYCALLFORM CORE_ABLUP{NUM} 落空
+    if (!core) return; // core_ablupN 落空
     const result = await core(target);
     if (result >= 0 && info) {
       era.print(
@@ -6263,23 +6247,23 @@ async function auto_ablup_core(num, info) {
 }
 
 /**
- * @USERABLUP（ABL.ERB:192-200）：引擎驱动的能力提升阶段的用户出口。原作
- * 在 RESULT == 999（@SHOW_ABLUP_SELECT 的 [999] - 能力值提高结束）时做两件
+ * userablup：引擎驱动的能力提升阶段的用户出口。旧代码
+ * 在 RESULT == 999（show_ablup_select 的 [999] - 能力值提高结束）时做两件
  * 事——顺从/坦率检查与欲情检查——然后 BEGIN TURNEND 结束本回合。
  *
  * 返回值沿用本移植的转场约定：1 = 已发 BEGIN TURNEND（page-shop.js 的 199、
  * page-invasion.js 的 109 同款上浮给 main-loop），0 = 无事发生。
  *
- * 可达性：本作手写的 @JUEL_CHECK 循环不走引擎的 BEGIN ABLUP 阶段（全库唯一
- * 的 BEGIN ABLUP 在 TRAIN_MAIN.ERB:430 被注释掉），@USERABLUP 因而与原作
- * 一样没有调用点——1:1 落真身，不接入任何分发。
- * @param {number} result 原作 RESULT
+ * 可达性：本作手写的 JUEL_CHECK 循环不走引擎的 BEGIN ABLUP 阶段（全库唯一
+ * 的 BEGIN ABLUP 在 train 主循环被注释掉），userablup 因而没有调用点——
+ * 落真身，不接入任何分发。
+ * @param {number} result 菜单输入（999 = 能力值提高结束）
  * @returns {Promise<number>} 1 / 0
  */
 async function userablup(result) {
   if (result !== 999) return 0;
-  jujun_up_check(era_flag.target); // CALL JUJUN_UP_CHECK（:193-195 的两句 CALL）
-  yokubo_up_check(era_flag.target); // CALL YOKUBO_UP_CHECK
+  jujun_up_check(era_flag.target); // 顺从检查
+  yokubo_up_check(era_flag.target); // 欲情检查
   return 1; // BEGIN TURNEND
 }
 

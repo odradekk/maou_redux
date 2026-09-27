@@ -10,9 +10,9 @@
  *
  * `*` 可提升标记（:78/:89/:94/:99/:105 的 `CALL DECIDE_ABLUP*` + `SIF
  * RESULT == 1 → PRINT *`）由 #467 接入：逐行调 system/train/ablup.js 的
- * decide_ablup（@DECIDE_ABLUP 分发），可提升时在按钮正文尾追一个空格加
+ * decide_ablup（decide_ablup 分发），可提升时在按钮正文尾追一个空格加
  * `*`（原作是 PRINTFORM 之后 `PRINT *`，同一行）。编号 20-23/30-33 的
- * @DECIDE_ABLUPn 尚未落地（它们的 ABLUPn.ERB 仍是存根），这几行不打标记。
+ * decide_ablupN 没有对应函数（20-23/30-33 未补判定），这几行不打标记。
  */
 
 const era = require('#/era-electron');
@@ -37,7 +37,7 @@ function show_juel(cid) {
   for (let count = 0; count < 12; count += 1) {
     // FOR COUNT, 0, 12 —— :6-14 行号 → juel 序号（3→乳房 14、
     // 11→否定 100；:10-11 的 COUNT == 12 分支在 0..11 循环里不可达，
-    // 1:1 不镜像）
+    // 不镜像）
     let idx = count;
     if (count === 3) {
       idx = 14;
@@ -65,7 +65,7 @@ function show_juel(cid) {
  * @SHOW_ABLUP_SELECT（:29-117）：能力值列表（按钮化，见文件头）+ 收尾
  * 的反抗刻印 / 癖好条目与 [999] 结束键。
  *
- * `*` 标记（#467）要看 @DECIDE_ABLUPn 的 RESULT，因此本函数是 async。
+ * `*` 标记（#467）要看 decide_ablupn 的 RESULT，因此本函数是 async。
  *
  * @param {number} cid 调教目标（原作隐式 TARGET）
  */
@@ -78,7 +78,7 @@ async function show_ablup_select(cid) {
     if (count >= 34 && count <= 36) continue;
     if (count === 38) continue;
     // 性别过滤：男无 私处感觉/百合气质/百合中毒，女无 断背气质/
-    // ＢＬ中毒（34 已被上行区间跳过，判据 1:1 保留）
+    // ＢＬ中毒（34 已被上行区间跳过，判据保留原样）
     const male = era.get(`talent:${cid}:122`);
     if (male && (count === 2 || count === 22 || count === 33)) continue;
     if (!male && (count === 23 || count === 34)) continue;
