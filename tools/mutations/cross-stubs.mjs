@@ -209,7 +209,7 @@ export default [
     must_mention: '剂量、体型和排卵药共同决定掷骰上界',
   },
   {
-    desc: 'M6587 NAKADASHI_CHECK 预产日守卫阈值改错',
+    desc: 'M6587 NAKADASHI_CHECK 预产日检查阈值改错',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (view.event.预产日 > 0 || view.chara.妊娠 || view.chara.育儿中) {',
     replace:

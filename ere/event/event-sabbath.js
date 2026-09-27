@@ -1,30 +1,28 @@
 /**
  * @file 安息日事件（issue #405）：满月献祭与三日一次的信徒仪式。
  *
- * 调用点 EVENT_NEXTDAY.ERB:137/:139（每角色每日）在 #400（N16）范围内，
- * 本票只落两个函数的真身，不改调用点、不接线——`ere/event/event-nextday.js`
+ * 调用点 event-nextday.js 的角色事件段（每角色每日，#400 接入），
+ * 这张工单只落两个函数的真身，不改调用点、不做调用侧接入——
+ * `ere/event/event-nextday.js` 保留调用注释。
  *
  * 移植说明：
- *   - CFLAG:1 = 角色状态（0=調教中/默认待机 1=待機 2=侵攻中…11=召喚酔い，
- *     target/資料_非必要無須解壓/eramaouフラグまとめ.txt:260）。0 同时是
- *     绝大多数角色平时的默认值——只有真的进入某个特殊状态才会偏离 0，
- *     故 @SABBATH 的 `CFLAG:1 != 0 → 排除` 与「非调教状态排除」两种读法
- *     在实践中重合，照原样搬运判据；
+ *   - CFLAG:1 = 角色状态（0=調教中/默认待机 1=待機 2=侵攻中…11=召喚酔い）。
+ *     0 同时是绝大多数角色平时的默认值——只有真的进入某个特殊状态才会偏离 0，
+ *     故 sabbath 的 `CFLAG:1 != 0 → 排除` 与「非调教状态排除」两种读法
+ *     在实践中重合，照原样搬运条件；
  *   - DAY:2（当月第几日）落 era_flag.date（#5 决议，flag:10002）；
- *   - PRINTDATAW/DATAFORM 的随机取一条按 kojo-dungeon-ravish-man.js 先例
+ *   - 随机取一条演出按 kojo-dungeon-ravish-man.js 先例
  *     译为 `pick(list, rand)` + `rand` 形参（缺省 Math.random，测试注入
  *     定值序）；
- *   - SAVESTR:TARGET → chara_callname（#5 决议，callname 表无引擎对应）。
- *   - **@SABBATH_DAY 的种族向分支（原作 :291/:298，TALENT:315==11/12「大
- *     地女神」「大海女神」冒渎）是死代码，不构造**：函数入口 :244 无条件
- *     `SIF TALENT:242==0 && TALENT:250==0: RETURN 0` 要求「至少持有法术或
- *     咒术之一」，而这两个种族分支要触发，必须先让 :277（TALENT:250 分支）
- *     与 :284（TALENT:242 分支）的 elseif 判定落空——对共享的
- *     `TALENT:17||TALENT:282` 子句已经为真的前提下，落空即 TALENT:242==0
- *     且 TALENT:250==0，而这组合在入口就已经 RETURN 0，函数根本到不了这
- *     里。三次独立验证（两次人工读 :244/:277/:284/:291/:298 逐行核对、一
- *     次夹具穷举 242/250 四种取值组合只命中前两分支）结论一致，处置口径
- *     同 `get-specialtalent.js` 的闘姫死代码：不实现，登记说明；
+ *   - 角色称呼读 chara_callname（#5 决议，callname 表无引擎对应）。
+ *   - **sabbath_day 的种族向分支（TALENT:315==11/12「大地女神」「大海女神」
+ *     冒渎）是死代码，不构造**：函数入口的无条件检查要求「至少持有法术或
+ *     咒术之一」，而这两个种族分支要触发，必须先让 TALENT:250 分支与
+ *     TALENT:242 分支的 elseif 判定落空——对共享的 `TALENT:17||TALENT:282`
+ *     子句已经为真的前提下，落空即 TALENT:242==0 且 TALENT:250==0，而这
+ *     组合在入口就已经返回，函数根本到不了这里。三次独立验证（两次人工
+ *     逐行核对、一次夹具穷举 242/250 四种取值组合只命中前两分支）结论一致，
+ *     处置方式同 `get-specialtalent.js` 的闘姫死代码：不实现，登记说明；
  */
 
 'use strict';
@@ -53,7 +51,7 @@ function add_juel(cid, n, v) {
   era.add(`juel:${cid}:${n}`, v);
 }
 
-/** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
+/** 随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand) {
   return list[rand(list.length)];
 }
@@ -61,14 +59,14 @@ function pick(list, rand) {
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
- * @SABBATH（:2-229）：满月（DAY:2 15 日）时，淫乱且持有法术/咒术素质的
+ * sabbath：满月（当月 15 日）时，淫乱且持有法术/咒术素质的
  * 角色对地下城怪物进行性施舍，按经历分支结算私处/肛门/精液/兽奸经验与
  * 对应快感点数。
  *
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @param {(n: number) => number} [rand] RAND:N 随机源（[0,n) 整数；缺省
+ * @param {number} cid 角色 ID（事件循环的当前目标）
+ * @param {(n: number) => number} [rand] 随机源（[0,n) 整数；缺省
  *   均匀随机，测试注入定值序）
- * @returns {Promise<number>} 0（原作 RETURN 0；调用方不读）
+ * @returns {Promise<number>} 0（调用方不读）
  */
 async function sabbath(cid, rand = default_rand) {
   // 调教状态以外排除（文件头 CFLAG:1 语义）
@@ -79,11 +77,11 @@ async function sabbath(cid, rand = default_rand) {
   if (era_flag.date <= 14 || era_flag.date >= 16) {
     return 0;
   }
-  // 无法术（242）且无咒术（250）排除
+  // 无法术且无咒术排除
   if (talent(cid, 242) === 0 && talent(cid, 250) === 0) {
     return 0;
   }
-  // 非淫乱（76）排除
+  // 非淫乱排除
   if (talent(cid, 76) === 0) {
     return 0;
   }
@@ -267,20 +265,20 @@ async function sabbath(cid, rand = default_rand) {
 }
 
 /**
- * @SABBATH_DAY（:232-314）：每 3 日一次的信徒集会演出（陷落且信仰值 ≥40
- * 的持法术/咒术角色），四种题材按 RAND:4 分派，纯演出、无数值结算。
+ * sabbath_day：每 3 日一次的信徒集会演出（陷落且信仰值 ≥40
+ * 的持法术/咒术角色），四种题材按四选一随机分派，纯演出、无数值结算。
  *
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @param {(n: number) => number} [rand] RAND:N 随机源（[0,n) 整数；缺省
+ * @param {number} cid 角色 ID（事件循环的当前目标）
+ * @param {(n: number) => number} [rand] 随机源（[0,n) 整数；缺省
  *   均匀随机，测试注入定值序）
- * @returns {Promise<number>} 0（原作 RETURN 0）
+ * @returns {Promise<number>} 0
  */
 async function sabbath_day(cid, rand = default_rand) {
   // 每 3 日一次（当月日期 % 3 != 0 跳过）
   if (era_flag.date % 3 > 0) {
     return 0;
   }
-  // 无法术（242）且无咒术（250）排除
+  // 无法术且无咒术排除
   if (talent(cid, 242) === 0 && talent(cid, 250) === 0) {
     return 0;
   }
@@ -293,13 +291,12 @@ async function sabbath_day(cid, rand = default_rand) {
     return 0;
   }
 
-  const user = rand(4); // SABBATH_USER
+  const user = rand(4); // 题材编号
   const name = chara_callname(cid);
-  // 的 @SABBATH_DAY：段首的 PRINTL（258 行）落在空行上——上游事件的
-  // 收尾已结束当前行，那一个是**真空行**
+  // 段首的空行：上一事件的收尾已结束当前行，这里补一个空行
   era.println();
-  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后
-  // 不补空行（#597；原作的空源码行不产生输出）
+  // 仪式播报之后是空源码行（没有换行输出），故不补空行
+  // （#597；空源码行不产生输出）
   era.print(`${name}参与了献给无名的淫荡女神的仪式，`);
 
   if (user === 0 && get('item:22')) {

@@ -37,10 +37,10 @@ function apply_prestige(cid) {
 }
 
 /**
- * SUISEI_STR（录像书架）的写入槽位（issue #561 第 1 条）：原作
- * `SUISEI_STR:A = …` 按**书架槽位**寻址（书架本体见 售卻相關/SELL_VIDEO.ERB
- * 的 @VIDEO_SHELF），A 是该角色在角色数组里的下标——处刑入口的
- * `A = COUNT` 取自 `REPEAT CHARANUM`（處刑相關/EXECUTION.ERB:65-73），既不是
+ * SUISEI_STR（录像书架）的写入槽位（issue #561 第 1 条）：书架按**槽位**
+ * 寻址（书架本体在 system/stronghold/sell-video.js 的 video_maturo），
+ * 原写法里槽位是该角色在角色数组里的下标——处刑入口的 `A = COUNT`
+ * 取自 `REPEAT CHARANUM`，既不是
  * ere 的角色 ID，也不是「逐角色末路记录」。
  *
  * ere 里用 `era.getAddedCharacters()` 的下标代位（引擎与夹具都按角色号升序
@@ -94,14 +94,14 @@ async function dispose_character(
   if (equipment) release_equipment(cid);
 
   const level = target_chara.chara.等级;
-  // FLAG:(NO:A + 199) = 对应勇者已经处刑（@EXECUTION 各支尾部的
-  // `X = NO:A + 199; FLAG:X = 1`）。普通角色的 NO 就是角色 ID；后代的原作
+  // FLAG:(NO:A + 199) = 对应勇者已经处刑（处刑各支尾部的
+  // `X = NO:A + 199; FLAG:X = 1`）。普通角色的 NO 就是角色 ID；后代的
   // NO 是来源模板号（chara-pregnancy.js 的 template_no_of），故经它换算——
   // 直加角色 ID 会写到 100199 以上的别处下标。
   era.set(`flag:${template_no_of(cid) + 199}`, 1);
 
-  // 原作后续的“注册号大于被删号则减一”依赖 DELCHARA 重排；ere 使用稳定
-  // 角色 ID，故只清掉真正指向被删角色的槽位（#21 扁平化裁定）。
+  // 原写法后续的“注册号大于被删号则减一”依赖 DELCHARA 重排；ere 使用稳定
+  // 角色 ID，故只清掉真正指向被删角色的槽位（#21 扁平化结论）。
   if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;
   if (game.event.上次助手 === cid) game.event.上次助手 = -1;
   era_flag.target = game.event.上次调教对象;
@@ -116,7 +116,7 @@ async function dispose_character(
   chara(0).dungeon.战斗经验 += experience;
   if (medal) {
     chara(0).event.勋章经验 += 1;
-    era.println(); // 真空行：438 行的 PRINTL 落在上一条 PRINTFORML 之后
+    era.println(); // 空行：勋章播报与前一行隔开
     era.print('得到了用勇者力量形成的勋章');
     era.print('勋章经验+1');
   }

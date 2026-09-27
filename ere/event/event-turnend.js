@@ -1,31 +1,31 @@
 /**
- * @file 回合结束事件 @EVENTTURNEND 的 #PRI 档定义（issue #114 真身；#44 曾以
- * 壳承载调教闭环的出口；#401 补齐体外调用）。
+ * @file 回合结束事件 EVENTTURNEND 的 #PRI 档定义（issue #114 真身；#44 曾以
+ * 壳承载调教收尾的出口；#401 补齐体外调用）。
  *
- * 原作 @EVENTTURNEND 有三处定义（#6 的论证样本），本文件是第一处：
+ * EVENTTURNEND 有三处定义（#6 的论证样本），本文件是第一处：
  *   - #PRI（本文件）：时段推进 TIME 0→1→0、TIME==1 时的日推进与日程事件；
- *   - 普通档（SYSTEM ver1.0.3.ERB:234-760，回合结算本体：HP/装备回复、队伍
- *     设定、迷宫处理，尾部 :758 BEGIN SHOP）——ere/system/turnend-settle.js；
- *   - #LATER（EVENT/ENDING ver 1.0.1.ERB:1-3，空）——ere/event/event-turnend-later.js。
+ *   - 普通档（回合结算本体：HP/装备回复、队伍设定、迷宫处理，尾部转场 SHOP）
+ *     ——ere/system/turnend-settle.js；
+ *   - #LATER（空）——ere/event/event-turnend-later.js。
  * 三者在同一条链上先后执行（#6 语义：BEGIN 只暂存跳转、链继续，最后的
  * BEGIN 胜出；两个出口同为 SHOP，覆盖不产生差异）。
  *
- * `@AUTO_BUYING` 与 `@DEBUG_CHECK` 宿主在本文件（原作的同名文件），也是
- * #401 剩下的两个存根，函数体落在本模块尾部并导出（可单独驱动、可测）。
+ * `auto_buying` 与 `debug_check` 的宿主在本文件，函数体落在本模块尾部并
+ * 导出（可单独驱动、可测）。
  *
  * 移植说明：
- *   - 原作两处 FOR TARGET 循环以 TARGET 为循环变量、被调函数隐式读它；ere
+ *   - 两处 FOR TARGET 循环以 TARGET 为循环变量、被调函数隐式读它；ere
  *     侧指针不隐式传（#5 决议第六条），循环按角色 ID 显式进行（era.
- *     getAddedCharacters()，对应原作 0..CHARANUM-1 的已加入序号全体），
- *     循环体内显式写回 `era_flag.target`——原作 FOR 就是写全局 TARGET，
+ *     getAddedCharacters()，对应 0..CHARANUM-1 的已加入序号全体），
+ *     循环体内显式写回 `era_flag.target`——FOR 就是写全局 TARGET，
  *     不写回会让全部 TARGET 相关的妊娠判定读到上个角色的残留。
- *   - :31-51 原作注释掉的死亡删除段，1:1 不移植（照原样保持注释状态）。
- *   - `@DEBUG_CHECK` 两段 DO 的 `LOCAL:5` 是**同一个局部量**（:204/:276），
- *     第二段的 5000 次预算接着第一段算——照原作共用一个计数器（`attempts`），
+ *   - 死亡删除段被注释掉，保持不实现（照原样保持注释状态）。
+ *   - `debug_check` 两段 DO 的 `LOCAL:5` 是**同一个局部量**，
+ *     第二段的 5000 次预算接着第一段算——共用一个计数器（`attempts`），
  *     不拆成两个。
- *   - `@DEBUG_CHECK` 的两处有意偏离（都是旧实现自带的缺陷，详见各自函数
- *     注释）：DELCHARA 后的 FLAG:1/FLAG:2 重排补偿段不移植（同
- *     dungeon-party.js 的 @PARTY_CHAR_DEL 先例）；第二段爆炸的「放弃搜索」
+ *   - `debug_check` 的两处有意偏离（都是旧实现自带的缺陷，详见各自函数
+ *     注释）：删除后的 FLAG:1/FLAG:2 重排补偿段不移植（同
+ *     dungeon-party.js 的 party_char_del 先例）；第二段爆炸的「放弃搜索」
  *     分支补上退出（旧实现是空体，会让 DO 循环永不终止）。
  */
 
@@ -37,7 +37,7 @@ const { check_specialskil } = require('#/event/get-specialtalent');
 const { run_event_nextday } = require('#/event/event-nextday');
 const { run_event_nextmonth } = require('#/event/event-nextmonth');
 // ENTER_ENEMY 经模块对象调用（不解构）：#171 的夹具隔离开关
-// （era-fixture.js 的 disable_enter_enemy，#168 裁定 4）就地替换本模块的
+// （era-fixture.js 的 disable_enter_enemy，#168 结论 4）就地替换本模块的
 // enter_enemy 导出，解构会把函数固化进本闭包、替换不可达——两个写法的
 // 游戏行为完全等价，差别只在导出表的属性查找发生在调用时
 const enter_enemy_mod = require('#/event/enter-enemy');
@@ -65,13 +65,13 @@ function default_rand(n) {
 }
 
 /**
- * 原作 `RAND:CHARANUM` 的 ere 等价物：从在场名单里随机取一个角色。
+ * `RAND:CHARANUM` 的 ere 等价物：从在场名单里随机取一个角色。
  * #21 扁平化下角色号 = 预设号且稀疏（0 主人 / 1-16 勇者位 / 17-40 特殊位 /
  * 1000+ 子代），`RAND:CHARANUM` 那种「序号取值范围」不再等于「在场角色」，
  * 等价物是名单的均匀抽样。
  *
  * @param {number[]} added 在场角色号（调用方传入，避免循环内重取）
- * @param {(n: number) => number} rand RAND:N 的等价物
+ * @param {(n: number) => number} rand 随机源
  * @returns {number} 抽中的角色号
  */
 function random_chara(added, rand) {
@@ -81,13 +81,13 @@ function random_chara(added, rand) {
 /**
  * 把角色从场上抹掉，并修好两处指向它的引用。
  *
- * 原作三段爆炸事件把同一段步骤逐字抄了三遍（:209-228 宝库受害者的清理、
- * :252-271 暴走奴隶本人的清理、:280-299 陪葬近邻的清理）——这里收敛成
- * 一处落点；每一步的行号在函数内逐条标注。
+ * 三段爆炸事件把同一段步骤逐字抄了三遍（宝库受害者的清理、
+ * 暴走奴隶本人的清理、陪葬近邻的清理）——这里合并成
+ * 一处实现；每一步在函数内逐条标注。
  *
- * **登録番号の前移補償段不移植**（:215-219 / :258-262 / :286-290 的
- * `SIF FLAG:1 > <被删号> THEN FLAG:1 -= 1`）：它依赖 DELCHARA 后注册号前移，
- * 而 #21 扁平化下角色号 = 预设号、removeCharacter 不重排——照搬会把活引用
+ * **登録番号の前移補償段不移植**（
+ * `SIF FLAG:1 > <被删号> THEN FLAG:1 -= 1`）：它依赖删除后注册号前移，
+ * 而 #21 扁平化下角色号 = 预设号、removeCharacter 不重排——照原样保留会把活引用
  * 改写成另一个角色的号（文件头偏离一）。`== <被删号> → -1` 那两行不是补偿、
  * 是作废，保留。
  *
@@ -103,25 +103,24 @@ function erase_chara(cid) {
   era_flag.target = game.event.上次调教对象;
   era_flag.assi = game.event.上次助手;
   party_char_del(cid); // 队伍与据点引用清理
-  era.removeCharacter(cid); // DELCHARA
+  era.removeCharacter(cid); // 除名
   name_reset(); // 名字表重建
 }
 
 /**
- * @AUTO_BUYING（:145-167）：回合结束时按开关位自动购入三类道具。
+ * auto_buying：回合结束时按开关位自动购入三类道具。
  *
- * 触发位 FLAG:34 的位语义来自原作文档
- * （target/資料_非必要無須解壓/eramaouフラグまとめ.txt:166：&1 润滑液 /
- * &2 ビデオテープ / &4 コンドーム / &8 コンドーム10個，该行自带「未稼働」
- * 标注）：**全库（ERB + CSV + 存档说明）没有任何写入点**，也没有设置项，
- * FLAG:34 恒 0——本函数在原版里同样空转，1:1 落地等开局设置票接线。
+ * 触发位 FLAG:34 的位语义来自旗标文档
+ * （&1 润滑液 / &2 ビデオテープ / &4 コンドーム / &8 コンドーム10個，该行自带
+ * 「未稼働」标注）：**代码里没有任何写入点**，也没有设置项，
+ * FLAG:34 恒 0——本函数同样空转，按原样实现等开局设置票接入。
  *
  * 两处与道具表/文档的字面差异照写：位 `&4`（单个安全套）在旗标文档里
  * 列了、但本函数没有对应分支（只有 `&8` 的十连买）；`ITEM:28` 的注释写
  * 「ビデオテープ」而 yml/Item.yml 的 id 28 叫「水晶球魔力源」——道具表是
  * 权威，注释是旧稿。
  *
- * @returns {Promise<number>} 原作的隐式 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function auto_buying() {
   const flags = era.get('flag:34') || 0;
@@ -161,53 +160,52 @@ async function auto_buying() {
 }
 
 /**
- * @DEBUG_CHECK（:170-334）：反作弊检查与三段「爆炸」事件。
+ * debug_check：反作弊检查与三段「爆炸」事件。
  *
- * 调用点 :137-138 是 `SIF !反作弊`——反作弊是 MOD 追加的 SAVEDATA 开关
- * （魔改新增/魔改使用.ERH:15），#547 起落 modsave:1（era_modsave.anti_cheat）：
+ * 调用点是 `SIF !反作弊`——反作弊是 MOD 追加的 SAVEDATA 开关
+ * （魔改使用.ERH 的自定义变量），#547 起落 modsave:1（era_modsave.anti_cheat）：
  * 新档默认 0 = 每回合执行，设置页 [30] 切 1 后跳过（OFF = 可开修改）。它
  * **不是**无副作用的检查：三段事件都会删角色、清钱，其中第三段直接 GAMEOVER。
  *
- * 三道前置的语义（原作文档：資料_非必要無須解壓/eramaouフラグまとめ - 汉化人员.txt:34-35）：
+ * 三道前置的语义（旗标文档）：
  *   - `EX_FLAG:4444` = 非作弊资金。开局不变量 `MONEY == 4444 + 8766`
- *     （SYSTEM ver1.0.3.ERB:55-56 的 MONEY = 10000 与 EX_FLAG:4444 = 1234）
- *     ——同一份不变量在 EVENT/ENDINGDATA.ERB:46 也用它判「钱多得不正常」。
- *     这条不变量是本函数落地才真正可观察的：播种随首个消费者而来，
+ *     （10000 = 1234 + 8766）
+ *     ——同一份不变量在结局追加数据处也用它判「钱多得不正常」。
+ *     这条不变量是本函数实现才真正可观察的：播种随首个消费者而来，
  *     见 ere/event/event-first.js。
- *   - `EX_FLAG:2801 % 100 < 10` = 一周目主线**未进结局档**（:303 的注释
- *     「主线剧情的检定，显示等。使用 EX_FLAG:2801-2820」；ENDINGDATA 把
+ *   - `EX_FLAG:2801 % 100 < 10` = 一周目主线**未进结局档**（旗标文档
+ *     「主线剧情的检定，显示等。使用 EX_FLAG:2801-2820」；结局追加数据把
  *     它推到 99）。三段事件都以它为前提。
  *   - `EX_FLAG:2802/2803/2804` 三段各自的触发位。
  *
- * 两处有意偏离（都是旧实现自带的缺陷，照搬会得到比旧实现更糟的结果）：
+ * 两处有意偏离（都是旧实现自带的缺陷，按原样保留会得到比旧实现更糟的结果）：
  *
- *   一、**DELCHARA 后的 FLAG:1/FLAG:2 重排补偿段不移植**（`SIF FLAG:1 >
+ *   一、**删除后的 FLAG:1/FLAG:2 重排补偿段不移植**（`SIF FLAG:1 >
  *       LOCAL:1 THEN FLAG:1 -= 1`）。它依赖删号后注册号前移，而 ere
- *       扁平化（#21）下角色号 = 预设号、removeCharacter 不重排——照搬
+ *       扁平化（#21）下角色号 = 预设号、removeCharacter 不重排——按原样保留
  *       会把活引用改写成另一个角色的号。
- *       同 dungeon-party.js 的 @PARTY_CHAR_DEL 重排段、event-chara-leave.js
- *       决议四，同一形态同判。`== 被删号 → -1` 那两行不是补偿、是作废，
+ *       同 dungeon-party.js 的 party_char_del 重排段、event-chara-leave.js
+ *       决议四，同一形式同判。`== 被删号 → -1` 那两行不是补偿、是作废，
  *       保留。
  *
  *   二、**第二段爆炸的「放弃搜索」分支补上退出**。旧实现的该段
  *       ELSEIF 是空体、不置 `LOCAL:1 = -1`，而 LOOP 条件是 `LOCAL:1 >= 0`
- *       且每轮都重新掷 `RAND:CHARANUM`（恒 >= 0）——一旦 5000 次都没抽到
+ *       且每轮都重新掷随机数（恒 >= 0）——一旦 5000 次都没抽到
  *       可炸的角色（例如除魔王外全场妊娠），循环永不终止。第一段爆炸
- *       （:230-231）的同款分支写了 `LOCAL:1 = -1`，可见这是复制粘贴事故，
+ *       的同款分支写了 `LOCAL:1 = -1`，可见这是复制粘贴事故，
  *       意图明确。**假死不是可移植的行为**，按意图补齐退出。
  *
- * @param {(n: number) => number} [rand] RAND:N 的随机源（缺省 Math.random）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @param {(n: number) => number} [rand] 随机源（缺省 Math.random）
+ * @returns {Promise<number>} 恒 0
  */
 async function debug_check(rand = default_rand) {
   // #DIM COUNTER / #DIM MINUS：函数局部量（不是持久状态），ere
-  // 侧用 JS 局部。:173 的 `MINUS = MONEY - EX_FLAG:4444` 算出后全函数
-  // 无人读——原作的死局部量，写它没有可观察效果，不落地。
+  // 侧用 JS 局部。MINUS = MONEY - EX_FLAG:4444 算出后全函数
+  // 无人读——死局部量，写它没有可观察效果，不实现。
   const added = era.getAddedCharacters();
   // 的 `LOCAL:5 ++`：两段 DO **共用同一个局部量**，所以第二段
   // 的 5000 次预算接着第一段算（同一回合里钱被改又有人暴走时，前一段试了
-  // N 次、后一段只剩 5000-N 次）。分成两个计数器是常见误读，本移植照原作
-  // 共用一个
+  // N 次、后一段只剩 5000-N 次）。分成两个计数器是常见误读，本移植照原样
   let attempts = 0;
 
   // 资金不变量被破坏即认定改过钱
@@ -215,7 +213,7 @@ async function debug_check(rand = default_rand) {
     era_exflag.money_cheat_ending = 1;
   }
 
-  // 全角色扫描（SIF 逐次覆盖，循环结束后留的是最后一个命中的
+  // 全角色扫描（条件逐次覆盖，循环结束后留的是最后一个命中的
   // 角色）：等级 >= 5000 且状态位 0 的角色 → EX_FLAG:2803（失控奴隶号）
   for (const cid of added) {
     if (chara(cid).chara.等级 >= 5000 && chara(cid).invasion.状态 === 0) {
@@ -231,9 +229,9 @@ async function debug_check(rand = default_rand) {
   // 三段共同的第一道前置：EX_FLAG:2801 % 100 < 10（未进结局档）
   const not_in_ending = era_exflag.first_run_deadline % 100 < 10;
 
-  // —— :187-235 第一段：资金作弊 → 宝库被炸 ——
+  // —— 第一段：资金作弊 → 宝库被炸 ——
   if (era_exflag.money_cheat_ending === 1 && not_in_ending) {
-    era.drawLine(); // （DRAWLINE + 首行）
+    era.drawLine(); // 分隔线 + 首行
     await era.printAndWait('一些贪婪的魔物们对宝库里的财宝动起了歪念头。');
     await era.waitAnyKey(true); // FORCEWAIT
     for (const line of [
@@ -246,7 +244,7 @@ async function debug_check(rand = default_rand) {
     ]) {
       await era.printAndWait(line);
     }
-    await era.printAndWait(''); // PRINTFORMW（空行等待）
+    await era.printAndWait(''); // 空行等待
 
     era_flag.money = 0;
     era_exflag.legit_money = era_flag.money - 8766; // （重建不变量：0 == -8766 + 8766）
@@ -255,7 +253,7 @@ async function debug_check(rand = default_rand) {
     // 随机挑一个「状态位 0」的奴隶炸死（最多试 5000 次）
     let victim = 1; // LOCAL:1 = 1——只是进入 DO 的初值
     while (victim >= 0) {
-      victim = random_chara(added, rand); // RAND:CHARANUM
+      victim = random_chara(added, rand);
       attempts += 1;
       if (victim > 0 && attempts < 5000 && chara(victim).invasion.状态 === 0) {
         await era.printAndWait(
@@ -275,11 +273,11 @@ async function debug_check(rand = default_rand) {
     era_exflag.money_cheat_ending = 0;
   }
 
-  // —— :237-308 第二段：失控奴隶 → 自身的魔力爆炸 ——
+  // —— 第二段：失控奴隶 → 自身的魔力爆炸 ——
   const runaway = era_exflag.runaway_slave_id;
   if (runaway > 0 && not_in_ending) {
     const runaway_name = chara_callname(runaway); // LOCALS
-    era.drawLine(); // （DRAWLINE + 首行）
+    era.drawLine(); // 分隔线 + 首行
     await era.printAndWait('整个地下城，其实就是一个巨大的封印，');
     await era.waitAnyKey(true); // FORCEWAIT
     for (const line of [
@@ -301,7 +299,7 @@ async function debug_check(rand = default_rand) {
     erase_chara(runaway);
 
     // 再挑一个「就在她旁边」的奴隶陪葬（同样最多试 5000 次）
-    let neighbour = 1; // （循环初值同第一段；DO 体先赋值，初值不进判据）
+    let neighbour = 1; // （循环初值同第一段；DO 体先赋值，初值不进条件）
     while (neighbour >= 0) {
       neighbour = random_chara(added, rand);
       attempts += 1; // LOCAL:5 ++（与第一段同一个局部量）
@@ -319,15 +317,15 @@ async function debug_check(rand = default_rand) {
         erase_chara(neighbour);
         neighbour = -1;
       } else if (attempts >= 5000) {
-        neighbour = -1; // 原作此处为空体（不终止），按意图补齐（文件头偏离二）
+        neighbour = -1; // 此处为空体（不终止），按意图补齐（文件头偏离二）
       }
     }
     era_exflag.runaway_slave_id = 0;
   }
 
-  // —— :310-332 第三段：魔王本人暴走 → GAMEOVER ——
+  // —— 第三段：魔王本人暴走 → GAMEOVER ——
   if (era_exflag.maou_runaway_ending === 1 && not_in_ending) {
-    era.drawLine(); // （DRAWLINE + 首行）
+    era.drawLine(); // 分隔线 + 首行
     await era.printAndWait('整个地下城，其实就是一个巨大的封印，');
     await era.waitAnyKey(true); // FORCEWAIT
     for (const line of [
@@ -355,12 +353,12 @@ async function debug_check(rand = default_rand) {
     await era.printAndWait('');
     era.print(
       '-------------------------------GAMEOVER---------------------------------',
-    ); // PRINTL
-    await era.input(); // INPUT
-    era.quit(); // QUIT
+    ); // 横幅行
+    await era.input();
+    era.quit(); // 退出
   }
 
-  // 的收尾 RETURN 0 ——:331 的 QUIT 是 throw 型（引擎 quit() 直接
+  // 收尾 0 ——QUIT 是 throw 型（引擎 quit() 直接
   // 抛，event-ending.js 同款），其后不可达，故本行只在三段都没触发时走到
   return 0;
 }
@@ -369,7 +367,7 @@ on(
   'EVENTTURNEND',
   async () => {
     // 全角色判定循环（LOCAL = TARGET 暂存 → FOR TARGET,0,CHARANUM →
-    // 原样还原）。CHECK_SPECIALSKIL 只对非当前目标执行（原行 19 的 SIF TARGET != LOCAL）
+    // 原样还原）。check_specialskil 只对非当前目标执行（SIF TARGET != LOCAL）
     const saved_target = era_flag.target;
     for (const cid of era.getAddedCharacters()) {
       era_flag.target = cid; // FOR TARGET 写全局 TARGET
@@ -382,16 +380,16 @@ on(
     }
     era_flag.target = saved_target; // TARGET = LOCAL
 
-    // 完全死亡角色的删除段：原作整段注释掉，1:1 保持不移植。
+    // 完全死亡角色的删除段：整段被注释掉，保持不实现。
 
-    // 休憩标志外す（flag:0 = 休息，@EVENTSHOP 的 199 休息置位、此处复位）
+    // 休憩标志外す（flag:0 = 休息，EVENTSHOP 的休息置位、此处复位）
     era.set('flag:0', 0);
 
     // 午后（TIME==1）则进次日、午前（TIME==0）则进午后
     if (era_flag.time === 1) {
-      // 妊判第二组（卖春/狂王兽奸/NTR 各两件）。原作这里也是
+      // 妊判第二组（卖春/狂王兽奸/NTR 各两件）。这里也是
       // FOR TARGET,0,CHARANUM——六个被调函数内部自己 REPEAT 全角色、
-      // 不看 TARGET，但 FOR 仍写全局 TARGET，1:1 写回（#5 决议第六条）
+      // 不看 TARGET，但 FOR 仍写全局 TARGET，按原样写回（#5 决议第六条）
       const local = era_flag.target;
       for (const cid of era.getAddedCharacters()) {
         era_flag.target = cid;
@@ -404,25 +402,25 @@ on(
       }
       era_flag.target = local; // TARGET = LOCAL
 
-      // 日付変更時のイベント（日程推进，#115 真身；全库唯此一处调用，
-      // 先于 :79 的 DAY:0 += 1 执行）
+      // 日付変更時のイベント（日程推进，#115 真身；只此一处调用，
+      // 先于 DAY:0 += 1 执行）
       await run_event_nextday();
 
       // 日推进：DAY:0 天数 +1；DAY:2 日 +1，超过 28 触发月替（
-      // EVENT_NEXTMONTH，#115）；DAY:3 星期 +1，日曜（6）的次日回月曜（0）
+      // EVENTNEXTMONTH，#115）；DAY:3 星期 +1，日曜的次日回月曜
       era_flag.day_count += 1;
       era_flag.date += 1;
       if (era_flag.date > 28) {
-        // 毎月 29 日以上になってたら月替わり処理（行 81-84，#115 真身）
+        // 毎月 29 日以上になってたら月替わり処理（#115 真身）
         await run_event_nextmonth();
       }
       era_flag.weekday += 1;
       if (era_flag.weekday > 6) {
-        // 日曜の次は月曜にする（行 86-89）
+        // 日曜の次は月曜にする
         era_flag.weekday = 0;
       }
 
-      // TIME = 0（次日午前，行 91）
+      // TIME = 0（次日午前）
       era_flag.time = 0;
 
       // 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）
@@ -430,9 +428,9 @@ on(
 
       // 宣言数 SENGEN/SENGENMAX（EX_FLAG:9012 = 水晶球流行度，SENGEN
       // 一族：投放时累加、每日 SENGEN_VIDEO_DE 衰减）。#502 起真读——此前
-      // 「EX_FLAG 表未落地、按 0 承接」的 TODO 已过时（门面早已备好）。
-      // DAY 分档依原作（>=100/>=300/>=500 各减一档，注意原作 IF 顺序：
-      // DAY >= 500 的分支因 >= 100 先命中而不可达，1:1 照搬）
+      // 「EX_FLAG 表未实现、按 0 承接」的 TODO 已过时（门面早已备好）。
+      // DAY 分档（>=100/>=300/>=500 各减一档，注意 IF 顺序：
+      // DAY >= 500 的分支因 >= 100 先命中而不可达，按原样保留）
       const ex_flag_9012 = era_exflag.crystal_ball_popularity;
       const day = era_flag.day_count;
       let sengen;
@@ -456,15 +454,15 @@ on(
         sengen = sengenmax;
       }
       if (day >= 100) {
-        // CALL ENTER_ENEMY（#171 起为真身）
+        // enter_enemy（#171 起为真身）
         await enter_enemy_mod.enter_enemy(0);
       }
       if (day >= 300) {
-        // CALL ENTER_ENEMY
+        // enter_enemy
         await enter_enemy_mod.enter_enemy(0);
       }
       if (day >= 500) {
-        // CALL ENTER_ENEMY
+        // enter_enemy
         await enter_enemy_mod.enter_enemy(0);
       }
       if (sengen <= 0 && ex_flag_9012 > 0) {
@@ -475,7 +473,7 @@ on(
       }
       // IF SENGEN > 0：FOR EFFECT, 0, SENGEN 追加遇敌
       for (let effect = 0; effect < sengen; effect += 1) {
-        // CALL ENTER_ENEMY
+        // enter_enemy
         await enter_enemy_mod.enter_enemy(0);
       }
     } else {
@@ -490,16 +488,16 @@ on(
     era_flag.target = -1;
     era_flag.assi = -1;
 
-    // 反作弊检查（`SIF !反作弊` → CALL DEBUG_CHECK）。反作弊是 MOD
-    // 追加的 SAVEDATA 开关（魔改使用.ERH:15），#547 落 modsave:1
+    // 反作弊检查（`SIF !反作弊` → debug_check）。反作弊是 MOD
+    // 追加的 SAVEDATA 开关（魔改使用.ERH 的自定义变量），#547 落 modsave:1
     // （era_modsave.anti_cheat）：0 = 每回合执行（新档默认），1 = 跳过检查
     // （设置页 [30] 可切，OFF = 可开修改）
     if (!era_modsave.anti_cheat) {
       await debug_check();
     }
 
-    // BEGIN SHOP —— 无条件出口（链继续，普通档与 #LATER 随后执行，
-    // #6 用 emuera.log 证明的原作行为）
+    // SHOP 转场 —— 无条件出口（链继续，普通档与 #LATER 随后执行，
+    // #6 已证明的引擎行为）
     begin(STATE.SHOP);
   },
   TIER.PRI,

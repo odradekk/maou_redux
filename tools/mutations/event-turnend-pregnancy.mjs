@@ -9,23 +9,23 @@ export const COUNT = 60; // #401 建表 60 条（M8501-M8560，本票号段上�
 export default [
   // —— event-pregnancy.js：12 组成对函数的共同形状与维度数据 ——
   {
-    desc: 'M8501 妊娠：IN_VAGINA 侧的存在性守卫整条删掉（主体不在场也掷）',
+    desc: 'M8501 妊娠：IN_VAGINA 侧的存在性检查整条删掉（主体不在场也掷）',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (!gate_ok(pair.iv)) return 0;',
-    replace: '  // 变异：删掉 IN_VAGINA 侧的存在性守卫',
+    replace: '  // 变异：删掉 IN_VAGINA 侧的存在性检查',
     tests: ['event-pregnancy'],
     must_mention: '主体指针落到主人位',
   },
   {
-    desc: 'M8502 妊娠：CONCEPTION 侧的存在性守卫整条删掉',
+    desc: 'M8502 妊娠：CONCEPTION 侧的存在性检查整条删掉',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (!gate_ok(pair.cc)) return 0;',
-    replace: '  // 变异：删掉 CONCEPTION 侧的存在性守卫',
+    replace: '  // 变异：删掉 CONCEPTION 侧的存在性检查',
     tests: ['event-pregnancy'],
     must_mention: '主体指针落到主人位',
   },
   {
-    desc: 'M8503 妊娠：守卫的 `>= 1` 放宽成 `>= 0`（主人位 0 也算在场）',
+    desc: 'M8503 妊娠：检查的 `>= 1` 放宽成 `>= 0`（主人位 0 也算在场）',
     file: 'ere/event/event-pregnancy.js',
     find: "    if (who === 'target' && era_flag.target < 1) return false;",
     replace: "    if (who === 'target' && era_flag.target < 0) return false;",
@@ -41,7 +41,7 @@ export default [
     must_mention: '主体指针落到主人位',
   },
   {
-    desc: 'M8505 妊娠：158（同族不育）守卫的 kin 闸删掉（非 kin 组也被拦）',
+    desc: 'M8505 妊娠：158（同族不育）检查的 kin 闸删掉（非 kin 组也被拦）',
     file: 'ere/event/event-pregnancy.js',
     find: '    if (pair.kin && view.event.同族不育) continue;',
     replace: '    if (view.event.同族不育) continue;',
@@ -49,7 +49,7 @@ export default [
     must_mention: '非 kin 组不查 158',
   },
   {
-    desc: 'M8506 妊娠：IN_VAGINA 侧的 TALENT:153（妊娠中）守卫删掉',
+    desc: 'M8506 妊娠：IN_VAGINA 侧的 TALENT:153（妊娠中）检查删掉',
     file: 'ere/event/event-pregnancy.js',
     find: `    if (view.chara.妊娠) continue;
     if (pair.kin && view.event.同族不育) continue;`,
@@ -66,7 +66,7 @@ export default [
     must_mention: '妊娠相手码不符时整组不动作',
   },
   {
-    desc: 'M8508 妊娠：CONCEPTION 侧的「已有预产日」守卫删掉（可重复改写）',
+    desc: 'M8508 妊娠：CONCEPTION 侧的「已有预产日」检查删掉（可重复改写）',
     file: 'ere/event/event-pregnancy.js',
     find: '    if (view.event.预产日 !== 0) continue;',
     replace: '    // 变异：不再拦已有预产日',
@@ -93,12 +93,12 @@ export default [
     desc: 'M8511 妊娠：父亲名字（CSTR:2）不写了',
     file: 'ere/event/event-pregnancy.js',
     find: '      view.event.孩子父亲名字 = chara_callname(parent);',
-    replace: '      // 变异：父亲名字不落地',
+    replace: '      // 变异：父亲名字不实现',
     tests: ['event-pregnancy'],
     must_mention: 'NID 码组同步写父亲名字',
   },
   {
-    desc: 'M8512 妊娠：T_TO_A 的 CONCEPTION 守卫少查一个 target（两侧合一）',
+    desc: 'M8512 妊娠：T_TO_A 的 CONCEPTION 检查少查一个 target（两侧合一）',
     file: 'ere/event/event-pregnancy.js',
     find: `    iv: ['assi'],
     cc: ['assi', 'target'],`,
@@ -146,20 +146,20 @@ export default [
     must_mention: 't_to_m',
   },
   {
-    desc: 'M8517 妊娠：IN_VAGINA_ALL 的 TARGET 越界守卫删掉',
+    desc: 'M8517 妊娠：IN_VAGINA_ALL 的 TARGET 越界检查删掉',
     file: 'ere/event/event-pregnancy.js',
     find: 'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;',
     replace:
-      'function in_vagina_all(rand = default_rand) {\n  // 变异：删掉 TARGET 越界守卫',
+      'function in_vagina_all(rand = default_rand) {\n  // 变异：删掉 TARGET 越界检查',
     tests: ['event-pregnancy'],
     must_mention: 'TARGET 越界时 IN_VAGINA_ALL 整组早退',
   },
   {
-    desc: 'M8518 妊娠：IN_VAGINA_ALL 的 ASSI 越界守卫删掉',
+    desc: 'M8518 妊娠：IN_VAGINA_ALL 的 ASSI 越界检查删掉',
     file: 'ere/event/event-pregnancy.js',
     find: 'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;\n  if (assi_out_of_range()) return 0;',
     replace:
-      'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;\n  // 变异：删掉 ASSI 越界守卫',
+      'function in_vagina_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;\n  // 变异：删掉 ASSI 越界检查',
     tests: ['event-pregnancy'],
     must_mention: 'ASSI 越界时 IN_VAGINA_ALL 整组早退',
   },
@@ -172,16 +172,16 @@ export default [
     must_mention: 'ASSI = -1 放行',
   },
   {
-    desc: 'M8520 妊娠：CONCEPTION_CHECK_ALL 的 TARGET 越界守卫删掉',
+    desc: 'M8520 妊娠：CONCEPTION_CHECK_ALL 的 TARGET 越界检查删掉',
     file: 'ere/event/event-pregnancy.js',
     find: 'function conception_check_all(rand = default_rand) {\n  if (target_out_of_range()) return 0;',
     replace:
-      'function conception_check_all(rand = default_rand) {\n  // 变异：删掉 CONCEPTION_CHECK_ALL 的 TARGET 越界守卫',
+      'function conception_check_all(rand = default_rand) {\n  // 变异：删掉 CONCEPTION_CHECK_ALL 的 TARGET 越界检查',
     tests: ['event-pregnancy'],
     must_mention: '整组早退',
   },
   {
-    desc: 'M8521 妊娠：NAKADASHI_CHECK 的「男生/未熟」早退判据改成 &&',
+    desc: 'M8521 妊娠：NAKADASHI_CHECK 的「男生/未熟」早退条件改成 &&',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (view.chara.男人 || view.train.未熟) return 0;',
     replace: '  if (view.chara.男人 && view.train.未熟) return 0;',
@@ -189,10 +189,10 @@ export default [
     must_mention: 'in_vagina',
   },
   {
-    desc: 'M8522 妊娠：兽奸（kind 5）的兽耳守卫删掉',
+    desc: 'M8522 妊娠：兽奸（kind 5）的兽耳检查删掉',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (kind === 5 && !view.chara.动物耳朵) return 0;',
-    replace: '  // 变异：删掉兽奸的兽耳守卫',
+    replace: '  // 变异：删掉兽奸的兽耳检查',
     tests: ['event-pregnancy'],
     must_mention: 'd_to_t',
   },
@@ -222,7 +222,7 @@ export default [
     must_mention: '掷骰上界',
   },
   {
-    desc: 'M8526 妊娠：命中判据 `<= success` 改成 `< success`',
+    desc: 'M8526 妊娠：命中条件 `<= success` 改成 `< success`',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (rand(upper) <= success) view.event.妊娠相手 = kind;',
     replace: '  if (rand(upper) < success) view.event.妊娠相手 = kind;',
@@ -246,7 +246,7 @@ export default [
     must_mention: '精液池清零',
   },
   {
-    desc: 'M8529 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「角色 0」档判据改成 arg < 0',
+    desc: 'M8529 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「角色 0」档条件改成 arg < 0',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (arg === 0) return 1; // 你は育児室にいない',
     replace: '  if (arg < 0) return 1; // 变异：角色 0 不再走第一档',
@@ -254,7 +254,7 @@ export default [
     must_mention: '四档返回值',
   },
   {
-    desc: 'M8530 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「侵攻中的勇者」档判据改成 3',
+    desc: 'M8530 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「侵攻中的勇者」档条件改成 3',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (chara(arg).invasion.状态 === 2) return 2; // 侵攻中の勇者だ',
     replace:
@@ -263,7 +263,7 @@ export default [
     must_mention: '四档返回值',
   },
   {
-    desc: 'M8531 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「不在育儿室」档判据改成 11',
+    desc: 'M8531 妊娠：CHECK_ABLE_TO_CHILD_CARE 的「不在育儿室」档条件改成 11',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (chara(arg).invasion.状态 !== 10) return 3; // 育児室にいない',
     replace:
@@ -321,7 +321,7 @@ export default [
     must_mention: '到访播报',
   },
 
-  // —— event-turnend.js：十个体外调用的接线 ——
+  // —— event-turnend.js：十个体外调用的接入 ——
   {
     desc: 'M8538 TURNEND：IN_VAGINA_ALL 的调用点删掉（妊娠判定整条断线）',
     file: 'ere/event/event-turnend.js',
@@ -372,7 +372,7 @@ export default [
     must_mention: 'AUTO_BUYING',
   },
   {
-    desc: 'M8544 TURNEND：AUTO_BUYING 的开关位 1 改成位 4（原作未实现的那一位）',
+    desc: 'M8544 TURNEND：AUTO_BUYING 的开关位 1 改成位 4（闲置的那一位）',
     file: 'ere/event/event-turnend.js',
     find: '  if ((flags & 1) !== 0 && era_flag.money >= 200',
     replace: '  if ((flags & 4) !== 0 && era_flag.money >= 200',
@@ -404,7 +404,7 @@ export default [
     must_mention: '整支空转',
   },
   {
-    desc: 'M8548 TURNEND：DEBUG_CHECK 的结局档守卫 % 100 < 10 放宽成 < 11',
+    desc: 'M8548 TURNEND：DEBUG_CHECK 的结局档检查 % 100 < 10 放宽成 < 11',
     file: 'ere/event/event-turnend.js',
     find: '  const not_in_ending = era_exflag.first_run_deadline % 100 < 10;',
     replace:
@@ -432,14 +432,14 @@ export default [
   {
     desc: 'M8551 TURNEND：DEBUG_CHECK 第二段的放弃阈值 5000 改成 6000',
     file: 'ere/event/event-turnend.js',
-    find: '      } else if (attempts >= 5000) {\n        neighbour = -1; // 原作此处为空体（不终止），按意图补齐（文件头偏离二）\n      }',
+    find: '      } else if (attempts >= 5000) {\n        neighbour = -1; // 此处为空体（不终止），按意图补齐（文件头偏离二）\n      }',
     replace:
       '      } else if (attempts >= 6000) {\n        neighbour = -1;\n      }',
     tests: ['event-turnend'],
     must_mention: '抽取次数超过 5000',
   },
   {
-    desc: 'M8552 TURNEND：DEBUG_CHECK 第二段的「另一个受害者」判据删掉（可炸自己）',
+    desc: 'M8552 TURNEND：DEBUG_CHECK 第二段的「另一个受害者」条件删掉（可炸自己）',
     file: 'ere/event/event-turnend.js',
     find: '        neighbour !== runaway &&',
     replace: '        true && // 变异：不再排除刚被炸死的那个',
@@ -493,7 +493,7 @@ export default [
 
   // —— get-specialtalent.js：tflag 的调教外可达性 ——
   {
-    desc: 'M8558 SPSKIL：喜欢精液判据的操作数次序改回原序（调教外读 tflag 崩）',
+    desc: 'M8558 SPSKIL：喜欢精液条件的操作数次序改回原序（调教外读 tflag 崩）',
     file: 'ere/event/get-specialtalent.js',
     find: '  if (!seiin || !game.event.精爱味觉 || talent(cid, 47) !== 0) {',
     replace: '  if (!game.event.精爱味觉 || !seiin || talent(cid, 47) !== 0) {',
@@ -501,9 +501,9 @@ export default [
     must_mention: 'key error',
   },
 
-  // —— 页面接线 ——
+  // —— 页面接入 ——
   {
-    desc: 'M8559 PAGE：个别信息页的育儿室按钮不再接线（回到占位）',
+    desc: 'M8559 PAGE：个别信息页的育儿室按钮不再接入（回到占位）',
     file: 'ere/page/page-chara-info.js',
     find: '      show_button_child_care(5, current);',
     replace: "      era.print('（育儿室按钮未接线）');",

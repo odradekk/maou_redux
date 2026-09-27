@@ -1,6 +1,6 @@
 /**
- * @file 特殊素质获得判定 @CHECK_SPECIALSKIL / @CHECK_SPECIALSKIL_BODYSHIFT
- *   的行为测试（issue #405）。
+ * @file 特殊素质获得判定 check_specialskil / check_specialskil_bodyshift
+ * 的行为测试（issue #405）。
  */
 
 'use strict';
@@ -25,7 +25,7 @@ function set_talentname(fixture, id, name) {
   fixture.store.set(`talentname:${id}`, name);
 }
 
-// —— 顶层守卫 ——
+// —— 顶层检查 ——
 
 test('CHECK_SPECIALSKIL：cid 不在已加入角色列表时直接跳过', async () => {
   const fixture = create_era_fixture();
@@ -54,7 +54,7 @@ test('CHECK_SPECIALSKIL：TALENT:9（崩坏）时只跑体变检查，跳过 STE
   assert.equal(fixture.store.get('talent:31:158'), 1, '体变检查仍执行');
 });
 
-// —— @CHECK_SPECIALSKIL_BODYSHIFT ——
+// —— check_specialskil_bodyshift ——
 
 test('CHECK_SPECIALSKIL_BODYSHIFT：异种妊娠经验达标且未持有时取得【同族妊娠不能】', async () => {
   const fixture = seed_world();
@@ -329,7 +329,7 @@ test('爱慕觉醒：持有寿命且＞0 时提示剩余天数为 BASE:10 的一
   assert(fixture.text_lines().includes('琼时日无多，生命还剩下3天。'));
 });
 
-test('爱慕觉醒：持有【魂缚】（274）时被解放', async () => {
+test('爱慕觉醒：持有【魂缚】时被解放', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   set_talentname(fixture, 274, '魂缚');
@@ -399,7 +399,7 @@ test('淫乱觉醒：种族=1（精灵）时堕落为肉壶，青肌以外变褐
   assert.equal(fixture.store.get('talent:31:255'), 0);
 });
 
-test('淫乱觉醒：种族=1 但已是青肌（244）时不改变肌色', async () => {
+test('淫乱觉醒：种族=1 但已是青肌时不改变肌色', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   fixture.store.set('cflag:31:2', 1500);
@@ -631,7 +631,7 @@ test('semen_liking：已持有喜欢精液时不重复触发', async () => {
 
 // —— STEP2：特殊技能素质【擅用舌头】 ——
 
-test('skilled_tongue：已持有特殊技能（51）时门槛降为 7/7/1500', async () => {
+test('skilled_tongue：已持有特殊技能时门槛降为 7/7/1500', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -775,7 +775,7 @@ test('arousal_specialty：count=0 时直接尝试获得 74（非扶她/男，打
   assert(fixture.text_lines().some((l) => l === '阴蒂'));
 });
 
-test('arousal_specialty：持有扶她素质（122）时 74 的展示改为阴茎', async () => {
+test('arousal_specialty：持有扶她素质时 74 的展示改为阴茎', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -867,7 +867,7 @@ test('arousal_specialty：扶她时 78 改走 JUEL:14 门槛（乳房经验不�
   assert.equal(fixture.store.get('talent:31:78'), 1);
 });
 
-test('arousal_specialty：四项全部持有时直接跳过（两重守卫合并为一次判定）', async () => {
+test('arousal_specialty：四项全部持有时直接跳过（两重检查合并为一次判定）', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -910,7 +910,7 @@ test('arousal_specialty：持有 1~3 个且满足抬高后的跃迁门槛时才�
   fixture.store.set('abl:31:2', 5); // 跃迁条件：abl2>=5
   fixture.store.set('exp:31:0', 350); // 跃迁条件：exp0>=exp3
   fixture.store.set('exp:31:2', 110); // 跃迁条件：exp2>=exp1(150)——
-  // 注意跃迁的第二条件是 exp(2)>=exp1（150），110 不够，改用 150
+  // 注意跃迁的第二条件是 exp(2)>=exp1，110 不够，改用 150
   fixture.store.set('exp:31:2', 150);
   // ADD 自身门槛仍是固定值（abl2>=4,exp0>=300,exp2>=100），均已满足
 
@@ -1067,7 +1067,7 @@ test('constant_arousal：门槛未达标时不触发', async () => {
   assert.equal(fixture.store.get('talent:31:271'), undefined);
 });
 
-test('constant_arousal：扶她（121）时同时展示龟头与私处，中间加「和」', async () => {
+test('constant_arousal：扶她时同时展示龟头与私处，中间加「和」', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1082,7 +1082,7 @@ test('constant_arousal：扶她（121）时同时展示龟头与私处，中间�
   assert(fixture.text_lines().some((l) => l === '私处'));
 });
 
-test('constant_arousal：男（122，非扶她）时只展示龟头', async () => {
+test('constant_arousal：男（非扶她）时只展示龟头', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1129,7 +1129,7 @@ test('constant_arousal：已持有 43 时改为失去 43', async () => {
   );
 });
 
-test('constant_arousal：否定快感（71）与看重贞操（30）随之消失', async () => {
+test('constant_arousal：否定快感与看重贞操随之消失', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1212,7 +1212,7 @@ test('forced_semen_liking：精液中毒已达 LV3 时不下调', async () => {
 
 // —— STEP2：マイナス素质の消灭 ——
 
-test('negative_talent_removal：绝不侍奉（151）在 ABL:16>=5 时消失', async () => {
+test('negative_talent_removal：绝不侍奉在 ABL:16>=5 时消失', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1225,7 +1225,7 @@ test('negative_talent_removal：绝不侍奉（151）在 ABL:16>=5 时消失', a
   assert.equal(fixture.store.get('talent:31:151'), 0);
 });
 
-test('negative_talent_removal：从不自慰（150）在 ABL:31>=5 时消失', async () => {
+test('negative_talent_removal：从不自慰在 ABL:31>=5 时消失', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1238,7 +1238,7 @@ test('negative_talent_removal：从不自慰（150）在 ABL:31>=5 时消失', a
   assert.equal(fixture.store.get('talent:31:150'), 0);
 });
 
-test('negative_talent_removal：男性（122）时 82 需 ABL:23>=5 才消失', async () => {
+test('negative_talent_removal：男性时 82 需 ABL:23>=5 才消失', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1252,7 +1252,7 @@ test('negative_talent_removal：男性（122）时 82 需 ABL:23>=5 才消失', 
   assert.equal(fixture.store.get('talent:31:82'), 0);
 });
 
-test('negative_talent_removal：男性（122）但 ABL:23 不足时 82 不消失', async () => {
+test('negative_talent_removal：男性但 ABL:23 不足时 82 不消失', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1284,7 +1284,7 @@ test('negative_talent_removal：非男性时 82 需 ABL:30>=3 且 ABL:32>=3 才�
   assert.equal(fixture.store.get('talent:31:82'), 0);
 });
 
-test('negative_talent_removal：反感精液（79）在 ABL:22>=5 时消失', async () => {
+test('negative_talent_removal：反感精液在 ABL:22>=5 时消失', async () => {
   const fixture = seed_world();
   skip_step1(fixture);
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -1338,7 +1338,7 @@ test('master_charm：魔王已持有时不重复触发', async () => {
 
 // —— STEP2：妓女・倾城の修得（不调用 skip_step1，靠 CFLAG:2 偏低让 STEP1 自然静默）——
 
-test('prostitution_talents：种族=5 路径门槛达标取得妓女（180）', async () => {
+test('prostitution_talents：种族=5 路径门槛达标取得妓女', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   set_talentname(fixture, 180, '妓女');
@@ -1351,7 +1351,7 @@ test('prostitution_talents：种族=5 路径门槛达标取得妓女（180）', 
   assert.equal(fixture.store.get('talent:31:180'), 1);
 });
 
-test('prostitution_talents：常规路径门槛（经验 100/能力 2/1）达标取得妓女（180）', async () => {
+test('prostitution_talents：常规路径门槛（经验 100/能力 2/1）达标取得妓女', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   fixture.store.set('exp:31:74', 100);
@@ -1376,7 +1376,7 @@ test('prostitution_talents：MARK:3 非 0（有反抗刻印）时不取得妓女
   assert.equal(fixture.store.get('talent:31:180'), undefined);
 });
 
-test('prostitution_talents：种族=5 路径门槛达标（180 已持有）取得倾城（181）', async () => {
+test('prostitution_talents：种族=5 路径门槛达标（180 已持有）取得倾城', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   set_talentname(fixture, 181, '倾城');
@@ -1389,7 +1389,7 @@ test('prostitution_talents：种族=5 路径门槛达标（180 已持有）取�
   assert.equal(fixture.store.get('talent:31:181'), 1);
 });
 
-test('prostitution_talents：常规路径门槛（经验 200，180 已持有）取得倾城（181）', async () => {
+test('prostitution_talents：常规路径门槛（经验 200，180 已持有）取得倾城', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   fixture.store.set('exp:31:74', 200);
@@ -1400,7 +1400,7 @@ test('prostitution_talents：常规路径门槛（经验 200，180 已持有）�
   assert.equal(fixture.store.get('talent:31:181'), 1);
 });
 
-test('prostitution_talents：未持有 180 时不取得倾城（181）', async () => {
+test('prostitution_talents：未持有 180 时不取得倾城', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   fixture.store.set('exp:31:74', 200);
@@ -1412,7 +1412,7 @@ test('prostitution_talents：未持有 180 时不取得倾城（181）', async (
 
 // —— STEP2：妄信の修得 ——
 
-test('blind_faith：持有爱慕（85）且门槛达标时取得妄信', async () => {
+test('blind_faith：持有爱慕且门槛达标时取得妄信', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   set_talentname(fixture, 86, '妄信');
@@ -1425,7 +1425,7 @@ test('blind_faith：持有爱慕（85）且门槛达标时取得妄信', async (
   assert.equal(fixture.store.get('talent:31:86'), 1);
 });
 
-test('blind_faith：持有淫乱（76）时门槛更高（经验 10/顺从 5）', async () => {
+test('blind_faith：持有淫乱时门槛更高（经验 10/顺从 5）', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
   fixture.store.set('talent:31:76', 1);
@@ -1475,8 +1475,8 @@ test('blind_faith：已持有妄信时不重复触发', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('#597：解封询问之后的空行是真空行（原作 :110）', async () => {
-  // 【贞操封印】在【淫乱】觉醒那一支的尾部被解封询问：原作 :110 用一个独立
+test('#597：解封询问之后的空行不许删（）', async () => {
+  // 【贞操封印】在【淫乱】觉醒那一支的尾部被解封询问：用一个独立
   // PRINTL 让出空行，再接 [0]/[1] 两个选项——删掉它即少一行
   const fixture = seed_world();
   fixture.set_inputs(0); // [0] - 保留封印
@@ -1499,6 +1499,6 @@ test('#597：解封询问之后的空行是真空行（原作 :110）', async ()
   assert_one_blank_after(
     fixture,
     '如果是现在的话，可以解开封印。要解开封印吗？',
-    '解封询问（:110）',
+    '解封询问',
   );
 });

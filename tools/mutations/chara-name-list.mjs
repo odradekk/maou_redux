@@ -47,7 +47,7 @@ export default [
     must_mention: 'chara_name_init 必须读取 namelistkeys',
   },
   {
-    desc: 'M7973 event-first.js 里 CHARA_NAME_INIT 的接线调用被删掉',
+    desc: 'M7973 event-first.js 里 CHARA_NAME_INIT 的接入调用被删掉',
     file: 'ere/event/event-first.js',
     find: 'chara_name_init();',
     replace: '',
@@ -55,7 +55,7 @@ export default [
     must_mention: 'EVENTFIRST 链必须真的调用了 chara_name_init',
   },
   {
-    desc: 'M7974 event-load.js 里 CHARA_NAME_INIT 的接线调用被删掉',
+    desc: 'M7974 event-load.js 里 CHARA_NAME_INIT 的接入调用被删掉',
     file: 'ere/event/event-load.js',
     find: 'chara_name_init();',
     replace: '',

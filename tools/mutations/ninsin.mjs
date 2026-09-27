@@ -563,8 +563,7 @@ export default [
     find: '  return Math.trunc((cid - FIRST_CHILD_ID) / CHILD_ID_BLOCK_SIZE) + 1;',
     replace: '  return Math.trunc((cid - 1000) / CHILD_ID_BLOCK_SIZE) + 1;',
     tests: ['event-execution-batch'],
-    must_mention:
-      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
   // —— #653（F7）：近卫模板窗 201-211、超乳降档、生育部位按生产角色（修复守卫） ——
   {

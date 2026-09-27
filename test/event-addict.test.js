@@ -1,6 +1,6 @@
 /**
  * @file 媚药中毒关联事件的行为测试（issue #405）：
- *   @APHRODISIAC_ADDICT / @PRECIPITATE_WITHDRAWAL / @SUFFER_FROM_WITHDRAWAL。
+ *   aphrodisiac_addict / precipitate_withdrawal / suffer_from_withdrawal。
  */
 
 'use strict';
@@ -31,7 +31,7 @@ function seed_world() {
   return fixture;
 }
 
-// —— @APHRODISIAC_ADDICT：每 7 日残留度衰减 + 禁断症状触发 ——
+// —— aphrodisiac_addict：每 7 日残留度衰减 + 禁断症状触发 ——
 
 test('APHRODISIAC_ADDICT：非第 7 日不衰减残留度也不查禁断症状', async () => {
   const fixture = seed_world();
@@ -93,7 +93,7 @@ test('APHRODISIAC_ADDICT：媚药中毒 + 无豁免标记时触发禁断症状�
   fixture.store.set('talent:31:46', 1);
   fixture.store.set('item:26', 1); // 走喂药支线，避免深入随机结算
 
-  fixture.set_inputs(1); // 拒绝喂药 → 落到 :106 侵攻中判定（本例非侵攻中）
+  fixture.set_inputs(1); // 拒绝喂药 → 落到侵攻中判定（本例非侵攻中）
   await aphrodisiac_addict(31, seq([0]));
 
   assert(fixture.text_lines().some((l) => l.includes('身体不适应症状')));
@@ -179,8 +179,8 @@ test('APHRODISIAC_ADDICT：取得疯狂——普通门槛 40', async () => {
 
   assert.equal(fixture.store.get('talent:31:123'), 1);
   assert(fixture.text_lines().includes('琼获得了【疯狂】。'));
-  // #597：源 :57 的 PRINTFORML 之后 :58 的 `PRINTL ` 落在已换行的那一行上
-  // ——它是**真空行**，末句之后恰有一个空行；删掉即少一行（本用例的守卫）
+  // #597：PRINTFORML 之后的 `PRINTL ` 落在已换行的那一行上
+  // ——它是**空行**，末句之后恰有一个空行；删掉即少一行（本用例的检查）
   const acquired = fixture.lines.findIndex(
     (line) => line.type === 'text' && line.text.includes('获得了【疯狂】。'),
   );
@@ -188,7 +188,7 @@ test('APHRODISIAC_ADDICT：取得疯狂——普通门槛 40', async () => {
   const next = fixture.lines[acquired + 1];
   assert.ok(
     next !== undefined && next.type === 'br',
-    ':58 的真空行紧跟取得播报',
+    '取得播报之后紧跟一个空行',
   );
 });
 
@@ -213,8 +213,8 @@ test('APHRODISIAC_ADDICT：取得废人——普通门槛 100', async () => {
 
   assert.equal(fixture.store.get('talent:31:9'), 1);
   assert(fixture.text_lines().includes('琼的精神变成【崩坏】了。'));
-  // #597：67 行的 PRINTL 落在上面三条 PRINTFORML 之后（那一行已结束）——真空行
-  assert_one_blank_after(fixture, '的精神变成【崩坏】了。', '取得废人（:67）');
+  // #597：67 行的 PRINTL 落在上面三条 PRINTFORML 之后（那一行已结束）——空行
+  assert_one_blank_after(fixture, '的精神变成【崩坏】了。', '取得废人');
 });
 
 test('APHRODISIAC_ADDICT：TALENT:72 时取得废人门槛降到 75', async () => {
@@ -245,7 +245,7 @@ test('APHRODISIAC_ADDICT：已持有对应素质时不重复取得/不重复触�
   );
 });
 
-// —— @PRECIPITATE_WITHDRAWAL：禁断症状本体 ——
+// —— precipitate_withdrawal：禁断症状本体 ——
 
 test('PRECIPITATE_WITHDRAWAL：喂媚药（非侵攻中）直接返场，残留度 +1 道具 -1', async () => {
   const fixture = seed_world();
@@ -282,7 +282,7 @@ test('PRECIPITATE_WITHDRAWAL：输入范围外重试后拒绝喂药，落到后�
   const fixture = seed_world();
   const { precipitate_withdrawal } = fixture.load_module('event/event-addict');
   fixture.store.set('item:26', 1);
-  fixture.store.set('cflag:31:1', 2); // 侵攻中，拒绝后走 :106 独自捱过分支
+  fixture.store.set('cflag:31:1', 2); // 侵攻中，拒绝后走独自捱过分支
   fixture.set_inputs(9, 1);
 
   const result = await precipitate_withdrawal(31, seq([0]));
@@ -364,7 +364,7 @@ test('PRECIPITATE_WITHDRAWAL：触发禁断症状恶化时体力/气力上限双
   assert(fixture.text_lines().includes('琼的体力和气力衰退了。'));
 });
 
-// —— @SUFFER_FROM_WITHDRAWAL：七级恶化梯子 ——
+// —— suffer_from_withdrawal：七级恶化梯子 ——
 
 test('SUFFER_FROM_WITHDRAWAL：W >= 30 时无候选可选，纯占位换行', async () => {
   const fixture = seed_world();
@@ -377,7 +377,7 @@ test('SUFFER_FROM_WITHDRAWAL：W >= 30 时无候选可选，纯占位换行', as
   assert.equal(fixture.store.get('talent:31:9'), undefined);
 });
 
-test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（判据与生效同为 TALENT:9）', async () => {
+test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（条件与生效同为 TALENT:9）', async () => {
   const fixture = seed_world();
   const { suffer_from_withdrawal } = fixture.load_module('event/event-addict');
 
@@ -394,9 +394,9 @@ test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（判据与生效同�
     undefined,
     '未声明的 19 号素质不得被写入',
   );
-  // #597：290 行的 PRINTL 落在候选函数自己的 PRINTFORMW 之后——真空行，
+  // #597：290 行的 PRINTL 落在候选函数自己的 PRINTFORMW 之后——空行，
   // 且它是整段演出的收尾（删掉即少一行）
-  assert_trailing_blank(fixture, 'W < 5 废人支的收尾（:290）');
+  assert_trailing_blank(fixture, 'W < 5 废人支的收尾');
 });
 
 test('SUFFER_FROM_WITHDRAWAL：W < 5 但已是废人（TALENT:9）时改选疯狂', async () => {
@@ -473,22 +473,26 @@ test('SUFFER_FROM_WITHDRAWAL：厌世相性从 0 起改为 50', async () => {
   assert.equal(fixture.store.get('relation:31:0'), 50);
 });
 
-test('SUFFER_FROM_WITHDRAWAL：相性介于 (0,50] 时厌世不可选，落到兜底失宠', async () => {
+test('SUFFER_FROM_WITHDRAWAL：相性介于 (0,50] 时厌世不可选，落到保底处理失宠', async () => {
   const fixture = seed_world();
   const { suffer_from_withdrawal } = fixture.load_module('event/event-addict');
   fixture.store.set('talent:31:123', 1); // <10 段：疯狂已持有
   fixture.store.set('relation:31:0', 30); // 0 < 30 <= 50，厌世条件不满足
-  fixture.store.set('talent:31:34', 1); // 抵抗也堵死，逼到兜底
+  fixture.store.set('talent:31:34', 1); // 抵抗也堵死，逼到保底处理
   fixture.store.set('talent:31:26', 1); // 悲观
   fixture.store.set('talent:31:22', 1); // 感情淡薄
 
   await suffer_from_withdrawal(31, 0, 0, seq([8]));
 
-  assert.equal(fixture.store.get('relation:31:0'), 30, '兜底失宠不改动相性');
+  assert.equal(
+    fixture.store.get('relation:31:0'),
+    30,
+    '保底处理失宠不改动相性',
+  );
   assert.equal(fixture.store.get('cflag:31:2'), -200);
 });
 
-test('SUFFER_FROM_WITHDRAWAL：同段全部候选都已持有时落到失宠兜底', async () => {
+test('SUFFER_FROM_WITHDRAWAL：同段全部候选都已持有时落到失宠保底处理', async () => {
   const fixture = seed_world();
   const { suffer_from_withdrawal } = fixture.load_module('event/event-addict');
   // <5 段：wreck/crazy/misanthropist/resister/depression/athymia 全部堵死
@@ -502,5 +506,9 @@ test('SUFFER_FROM_WITHDRAWAL：同段全部候选都已持有时落到失宠兜�
 
   await suffer_from_withdrawal(31, 0, 0, seq([0]));
 
-  assert.equal(fixture.store.get('cflag:31:2'), 800, '兜底失宠：好感度 -200');
+  assert.equal(
+    fixture.store.get('cflag:31:2'),
+    800,
+    '保底处理失宠：好感度 -200',
+  );
 });

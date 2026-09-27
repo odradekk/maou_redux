@@ -2,24 +2,24 @@
  * @file 媚药中毒关联事件（issue #405）：残留度衰减、禁断症状、中毒/疯狂/废人
  * 三级取得判定。
  *
- * 调用点 EVENT_NEXTDAY.ERB:47（每角色每日，无条件）在 #400（N16）范围内，
- * 本票只落函数真身，签名定死为 `aphrodisiac_addict(cid, rand)`——
- * 接线随该票。
+ * 调用点（每角色每日、无条件）在 #400（N16）范围内，
+ * 这张工单只落函数真身，签名定死为 `aphrodisiac_addict(cid, rand)`——
+ * 接入随该票。
  *
  * 移植说明：
- *   - @SUFFER_FROM_WITHDRAWAL 的七级恶化梯子按「离散度 W」分七段
+ *   - suffer_from_withdrawal 的七级恶化梯子按「离散度 W」分七段
  *     （<5/<10/<15/<20/<25/<30/其余），但 **<15 与 <20 两段候选列表逐字
  *     相同**（均为 抵抗/悲观/淡漠/失宠 四选一），合并成一段 `<20` 不改变
  *     任何可观察行为——保留冗余分支会让 15 这个边界值成为「改了也不会有
  *     用例变红」的死边界，与工单验收标准（字面量改动必须有用例能抓）相
- *     悖，故按等价简化处理，不算「未 1:1」；
- *   - `PRECIPITATE_WITHDRAWAL_BE_A_WRECK` 的准入判据读 `TALENT:9`（崩坏），
+ *     悖，故按等价简化处理，只留可观察差异。
+ *   - `PRECIPITATE_WITHDRAWAL_BE_A_WRECK` 的准入条件读 `TALENT:9`（崩坏），
  *     生效动作也写 `TALENT:9`——播报【崩坏】与实际获得一致（#650 修复：
  *     原先误写未声明的 TALENT:19，提示看得到、实际不生效）；
  *   - `RAND:100`/`RAND:50`/`RAND:3` 等经 `rand(n)` 形参注入（[0,n) 整数，
  *     缺省 Math.random，测试注入定值序，juel-check.js 同款先例）；
- *   - U/V/W 是 Emuera 全局标量（issue #5 决议第 3 条：A-Z 类临时变量按 JS
- *     局部变量处理），`@PRECIPITATE_WITHDRAWAL` 与 `@SUFFER_FROM_WITHDRAWAL`
+ *   - U/V/W 是旧引擎全局标量（issue #5 决议第 3 条：A-Z 类临时变量按 JS
+ *     局部变量处理），`precipitate_withdrawal` 与 `suffer_from_withdrawal`
  *     之间靠它们隐式传值——ere 侧显式改成参数与返回值；
  *   - CFLAG:1 = 角色状态（0=調教中/默认待机…2=侵攻中，同 event-sabbath.js
  *     文件头证据）；DAY（裸，日循环总天数）落 era_flag.day_count（#5 决议，
@@ -58,12 +58,12 @@ function set_cflag(cid, n, v) {
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
- * @APHRODISIAC_ADDICT（:10-69）：媚药中毒的发病与恢复——每 7 日一次残留度
+ * aphrodisiac_addict：媚药中毒的发病与恢复——每 7 日一次残留度
  * 衰减 + 禁断症状检查，随后判定【媚药中毒】消失/取得与【疯狂】【废人】
  * 的追加恶化。
  *
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @param {(n: number) => number} [rand] RAND:N 随机源（[0,n) 整数；缺省
+ * @param {number} cid 角色 ID（本函数隐式指向 TARGET）
+ * @param {(n: number) => number} [rand] 随机源（[0,n) 整数；缺省
  *   均匀随机，测试注入定值序）——透传给 `precipitate_withdrawal`
  * @returns {Promise<void>}
  */
@@ -127,7 +127,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     era.print(`${name}的样子有点奇怪……`);
     era.print(`${name}随着媚药的过量使用，人也变得暴躁了。`);
     era.print(`${name}获得了【${era.get('talentname:123') || ''}】。`);
-    era.println(); // 真空行：58 行的 PRINTL 落在上面三条 PRINTFORML 之后
+    era.println(); // 空行：三条播报之后隔一行
     set_talent(cid, 123, 1);
   }
 
@@ -140,20 +140,20 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     era.print(`${name}的样子有点奇怪……`);
     era.print(`${name}随着媚药的过量使用，完全变成了废人。`);
     era.print(`${name}的精神变成【${era.get('talentname:9') || ''}】了。`);
-    era.println(); // 真空行：67 行的 PRINTL 落在上面三条 PRINTFORML 之后
+    era.println(); // 空行：三条播报之后隔一行
     set_talent(cid, 9, 1);
   }
 }
 
 /**
- * @PRECIPITATE_WITHDRAWAL（:73-219）：禁断症状事件——玩家可用媚药道具喂服
+ * precipitate_withdrawal：禁断症状事件——玩家可用媚药道具喂服
  * 免除本轮症状（侵攻中角色额外有陷落分支），否则按残留度与看护人数决定
  * 检查次数，40% 概率触发一次 `suffer_from_withdrawal`，触发与否决定末尾
  * 是「痛苦挣扎」还是「平静入睡」两套体力消耗与看护人代价演出。
  *
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 0（原作 RETURN 0，多处提前返回同为 0）
+ * @param {number} cid 角色 ID（本函数隐式指向 TARGET）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 0（约定恒 0，多处提前返回同为 0）
  */
 async function precipitate_withdrawal(cid, rand = default_rand) {
   era.print(`${chara_callname(cid)}在诉说着自己的身体不适应症状。`);
@@ -208,7 +208,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
     return 0;
   }
 
-  // [治疗][献身的]持ちの看护人数（仅待机中计入，原作注释与判据
+  // [治疗][献身的]持ちの看护人数（仅待机中计入，注释与条件
   // 字面量一致按代码搬运，见 event-sabbath.js 文件头 CFLAG:1 语义说明）
   let u = 0;
   for (const other of era.getAddedCharacters()) {
@@ -347,8 +347,8 @@ async function simple_withdrawal_outcome(cid, key) {
 }
 
 /**
- * @PRECIPITATE_WITHDRAWAL_BE_A_WRECK：废人化——播报【崩坏】并写入
- * TALENT:9（与准入判据同序号）。
+ * precipitate_withdrawal_be_a_wreck：废人化——播报【崩坏】并写入
+ * TALENT:9（与准入条件同序号）。
  */
 async function precipitate_withdrawal_be_a_wreck(cid) {
   const name = chara_callname(cid);
@@ -358,7 +358,7 @@ async function precipitate_withdrawal_be_a_wreck(cid) {
   set_talent(cid, 9, 1);
 }
 
-/** @PRECIPITATE_WITHDRAWAL_BE_A_MISANTHROPIST（:319-331）：厌世 + 好感度惩罚 */
+/** precipitate_withdrawal_be_a_misanthropist：厌世 + 好感度惩罚 */
 async function precipitate_withdrawal_be_a_misanthropist(cid) {
   const name = chara_callname(cid);
   await era.printAndWait(`${name}的样子明显不对头……`);
@@ -377,7 +377,7 @@ async function precipitate_withdrawal_be_a_misanthropist(cid) {
   chara(cid).chara.好感度 -= 200;
 }
 
-/** @PRECIPITATE_WITHDRAWAL_FALL_INTO_DISFAVOR（:295-299 前段）：失宠（兜底） */
+/** precipitate_withdrawal_fall_into_disfavor：失宠（保底处理） */
 async function precipitate_withdrawal_fall_into_disfavor(cid) {
   const name = chara_callname(cid);
   await era.printAndWait(`${name}的样子明显不对头……`);
@@ -388,8 +388,8 @@ async function precipitate_withdrawal_fall_into_disfavor(cid) {
 }
 
 // 七级梯子：W = RAND:50 - V + U*2，按区间选出候选表，表内按
-// 「素质尚未持有」的优先级依次取用，取不到则落到 disfavor 兜底。
-// 原作 <15 与 <20 两段候选表逐字相同，合并为一段 <20（文件头说明）
+// 「素质尚未持有」的优先级依次取用，取不到则落到 disfavor 保底处理。
+// <15 与 <20 两段候选表逐字相同，合并为一段 <20（文件头说明）
 const WITHDRAWAL_TIERS = [
   {
     upper: 5,
@@ -436,7 +436,7 @@ function candidate_available(cid, key) {
     case 'athymia':
       return talent(cid, 22) === 0;
     default:
-      return true; // disfavor：兜底，恒可用
+      return true; // disfavor：保底处理，恒可用
   }
 }
 
@@ -453,12 +453,12 @@ async function apply_candidate(cid, key) {
 }
 
 /**
- * @SUFFER_FROM_WITHDRAWAL（:220-294）：禁断症状恶化的具体一击。
+ * suffer_from_withdrawal：禁断症状恶化的具体一击。
  *
  * @param {number} cid 角色 ID
- * @param {number} u `precipitate_withdrawal` 算出的看护人数（原作全局 U）
- * @param {number} v `precipitate_withdrawal` 算出的检查次数（原作全局 V）
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @param {number} u `precipitate_withdrawal` 算出的看护人数（旧引擎里是全局 U）
+ * @param {number} v `precipitate_withdrawal` 算出的检查次数（旧引擎里是全局 V）
+ * @param {(n: number) => number} [rand] 随机源
  * @returns {Promise<void>}
  */
 async function suffer_from_withdrawal(cid, u, v, rand = default_rand) {
@@ -475,7 +475,7 @@ async function suffer_from_withdrawal(cid, u, v, rand = default_rand) {
     // W >= 30：无候选可选，纯占位换行
     era.println();
   }
-  era.println(); // 真空行：候选函数的收尾 PRINTFORMW 已结束那一行
+  era.println(); // 空行：候选函数收尾之后隔一行
 }
 
 module.exports = {

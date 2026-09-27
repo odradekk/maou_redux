@@ -462,7 +462,7 @@ export default [
     find: '    if (place !== 2) {',
     replace: '    if (true) { // 变异：守卫删',
     tests: ['event-turnend'],
-    must_mention: 'SIF CFLAG:A:1 != 2 守卫',
+    must_mention: '升级检查（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级',
   },
   {
     desc: 'M621 LVUP 精英曲线翻倍删（LV*20+10 → LV*10+10）',
@@ -1972,7 +1972,7 @@ export default [
     find: '    await marriage_day(cid, undefined, false);',
     replace: '    // 变异：结婚日调用断线',
     tests: ['event-turnend'],
-    must_mention: '结婚日接线：普通档逐角色调用真身，妊娠角色看到婚后生活',
+    must_mention: '结婚日接入：普通档逐角色调用真身，妊娠角色看到婚后生活',
   },
   {
     desc: 'M6900 怪物库存零仍执行婚后事件',
@@ -2023,7 +2023,7 @@ export default [
     find: '    await marriage_day(cid, undefined, false);',
     replace: '    await marriage_day(cid); // 变异：重新抛出同状态转场',
     tests: ['event-turnend'],
-    must_mention: '结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP',
+    must_mention: '结婚日接入：完成婚后事件后顺接剩余结算并回到 SHOP',
   },
   {
     desc: 'M6906 种类零漏掉角色配偶回退',

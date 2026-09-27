@@ -2,9 +2,10 @@
  * @file 处刑选择与迷你处刑（issue #348）。
  *
  * 移植说明（有意偏离，注明依据）：
- *   - 处置菜单（源 :79-92 的 [0]-[7]/[100]/[101]）升格为 `era.printButton`
- *     （PR #53 通则，正文不写 [编号]）；候选人列表（源 :32 的 `[NN] 名字 …`
- *     拼行，行号即输入值）**保持纯文本**——先例与理由见 :50 处的注释（#572）。
+ *   - 处置菜单（[0]-[7]/[100]/[101]）升格为 `era.printButton`
+ *     （PR #53 通则，正文不写 [编号]）；候选人列表（`[NN] 名字 …`
+ *     拼行，行号即输入值）**保持纯文本**——先例与理由见下方
+ *     print_candidates 的注释（#572）。
  */
 
 'use strict';
@@ -33,7 +34,7 @@ const { grotesque } = require('#/event/event-grotesque');
 const { museum } = require('#/event/event-museum');
 const { public_execution } = require('#/event/event-public-execution');
 
-// 数字槽沿用原作：CFLAG:0/1/9/700 = 出售资格/当前状态/等级/收藏；
+// 数字槽沿用源定义：CFLAG:0/1/9/700 = 出售资格/当前状态/等级/收藏；
 // TALENT:9/76/85/121/122 = 崩坏/淫乱/爱慕/扶她/男人，200–212 = 前职业，
 // 230–233 = 淫核/淫乳/淫壶/淫肛，241/242/250 = 魔术/法术/咒术，
 // 312/317/318 = 魅力点/喜好/阴茎状态；ABL:2/3/16/17/21/22/32/33 =
@@ -84,10 +85,10 @@ function print_candidates(candidates) {
       `<${60 - era_flag.day_count}天以内再展出${20 - game.event.装饰品数}名勇者到博物馆将解锁实绩！>`,
     );
   } else {
-    // 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行
-    // `PRINT 请选择处刑对象` 那一行（PRINT 不换行），**不是空行**——ere 的
-    // print 自成一行，这里什么都不补（#597）。IF 支的实绩提示（20 行）在原作
-    // 与 18 行同属一行，ere 侧拆成两个 print，是既有记名差异（不在本票范围）
+    // IF/ELSE 两分支：ELSE 支原本只换行结束「请选择处刑对象」那一行
+    // （不换行），**不是空行**——ere 的 print 自成一行，这里什么都不补
+    // （#597）。IF 支的实绩提示原本与该行同属一行，ere 侧拆成两个 print，
+    // 是既有写法差异（不在这张工单范围）。
   }
   era.drawLine();
   candidates.forEach((cid, index) => {
@@ -99,12 +100,12 @@ function print_candidates(candidates) {
 }
 
 function print_methods(cid) {
-  // 源 :79-92 的 `PRINTL [0]`…`[7]`、`PRINT [100] 停止`、`PRINTL [101] 水晶球记录`
-  // 是纯文本选项 + INPUT，按 PR #53 通则升格为按钮（正文不写 [编号] 前缀，
+  // 处置菜单原是 `PRINTL [0]`…`[7]`、`PRINT [100] 停止`、`PRINTL [101] 水晶球记录`
+  // 的纯文本选项 + INPUT，按 PR #53 通则升格为按钮（正文不写 [编号] 前缀，
   // 引擎按 showAcc 自动拼）。
-  // 收藏列表里的 0-4（CFLAG:700）源是灰字，仍是可选项——守卫在 :339 按取值
+  // 收藏列表里的 0-4（CFLAG:700）源是灰字，仍是可选项——检查按取值
   // 拒绝，故按钮只给灰色、**不设 disabled**（disabled 的编号不进输入集，
-  // 会把守卫文案那条路变成不可达）。
+  // 会把检查文案那条路变成不可达）。
   [
     '流放出地下城',
     '公开处刑',
@@ -121,7 +122,7 @@ function print_methods(cid) {
       era.printButton(label, index);
     }
   });
-  era.println(); // 真空行：88 行的 PRINTL 已收尾（89 行的 PRINTL 落在空行上）
+  era.println(); // 空行：处置菜单与 [100]/[101] 按钮隔开
   era.printButton('停止', 100);
   era.printButton('水晶球记录', 101, {
     color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',
@@ -130,7 +131,7 @@ function print_methods(cid) {
 
 async function call_execution_kojo(cid, result, rand_n) {
   game.event.犬射精或处刑口上 = result;
-  // EVENT_K.ERB:357-367 的 @EXUCUTION_KOUJO（#403 收口到分发入口）
+  // 处刑口上（exucution_koujo，#403 收到分发入口）
   await exucution_koujo(cid, result, rand_n);
 }
 
@@ -187,9 +188,8 @@ async function make_toilet(cid) {
   const prelude = get(`talent:${cid}:85`)
     ? `${name}不知道自己为什么要被做成肉便器，不停地高叫着你的名字，请求饶恕。`
     : '';
-  // 原作肉便器段的四条输出语句里，条件行 `PRINTFORM` 与其后的 `PRINTFORML`、
-  // 两条 `PRINTL` 都不等待（前几条合成本轮输出），只有收尾的 `PRINTW` 等待。
-  // #561 第 3 条；新文件 event-execution-batch.js 的肉便器段同款
+  // 肉便器段的四条输出语句里，前三条不等待（合成本轮输出），只有收尾一条
+  // 等待。#561 第 3 条；event-execution-batch.js 的肉便器段同款
   era.print(
     `${prelude}但${chara_callname(0)}依然给${name}烙上了封锁所有力量的封印，`,
   );
@@ -298,8 +298,7 @@ async function make_toilet(cid) {
       `${name}双眼空虚，在重复着谁的名字。也许正在妄想和爱人拥抱吧。`,
     );
   }
-  // 原文这一行是 PRINTFORMW（等待）；#561 第 3 条（新文件
-  // event-execution-batch.js 的同名一行同款）
+  // 这一行等待确认；#561 第 3 条（event-execution-batch.js 的同名一行同款）
   await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`);
   const title = `肉便器${name}`;
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);
@@ -320,7 +319,7 @@ async function execution(rand_n = default_rand) {
     print_candidates(candidates);
     if (candidates.length === 0) return 0;
     era.drawLine();
-    // 的 `[100] 返回` 保持纯文本：本轮的编号是上面那些候选人行的
+    // `[100] 返回` 保持纯文本：本轮的编号是上面那些候选人行的
     // `[NN]`（print_candidates 的拼行，行号即输入值），单给这行打按钮会把
     // 白名单收成 100、候选人编号当场被拒收——整轮按钮化要先重排候选人列表
     // （多列对齐），留给后续按界面过（#572 的分类表、docs/research/
@@ -422,7 +421,7 @@ async function execution_mini(cid = era_flag.target, note = '') {
     medal: true,
     reset_names: false,
   });
-  // 原作紧邻两次 DELCHARA TARGET；ere 的角色键稳定，第二次同 ID 删除是
+  // 紧邻两次删除同一角色；ere 的角色键稳定，第二次同 ID 删除是
   // 幂等操作。保留第二次 API 调用，不把缺陷扩散成“删除下一个角色”。
   era.removeCharacter(cid);
   era.drawLine();

@@ -1,10 +1,10 @@
 /**
- * @file 博物馆处刑 @MUSEUM 的行为测试（issue #347，阶段 5a L16）。
+ * @file 博物馆处刑 museum 的行为测试（issue #347，阶段 5a L16）。
  *
  * #561 第 1 条起：录像书架（SUISEI_STR）的槽位是**调用时该角色在已加入列表
  * 中的位置**，不是角色 ID。本文件的 seed_world() 是 [0, 31]，所以槽位 1 =
  * 31 号；两连发的用例（先处刑 31、再处刑 32）里 31 已被除名，列表变成
- * [0, 32]，第二次写的是**同一个槽位 1**（与原作 DELCHARA 之后数组前移、
+ * [0, 32]，第二次写的是**同一个槽位 1**（与 DELCHARA 之后数组前移、
  * 下一个角色按下标覆写同构）。下文的 `videoarchive:N` 一律按这条读。
  */
 
@@ -83,7 +83,7 @@ test('MUSEUM：拒绝范围外输入，直到选中有效展品', async () => {
   assert.equal(fixture.store.get('videoarchive:1'), '人形桌子温妮');
 });
 
-test('MUSEUM：保留原作隐藏输入 100 的无分类处刑路径', async () => {
+test('MUSEUM：保留隐藏输入 100 的无分类处刑路径', async () => {
   const fixture = seed_world();
   fixture.set_inputs(100);
   const { museum } = fixture.load_module('event/event-museum');
@@ -95,7 +95,7 @@ test('MUSEUM：保留原作隐藏输入 100 的无分类处刑路径', async () 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0], '仍执行公共处刑尾段');
 });
 
-test('MUSEUM：隐藏输入 100 继承原作 MATURO 静态残值', async () => {
+test('MUSEUM：隐藏输入 100 继承 MATURO 静态残值', async () => {
   const fixture = seed_world();
   fixture.seed_chara(32, { id: 32, name: '妹妹', callname: '妹妹' });
   fixture.era.addCharacter(32);
@@ -106,8 +106,8 @@ test('MUSEUM：隐藏输入 100 继承原作 MATURO 静态残值', async () => {
   fixture.set_inputs(100);
   await museum(32, seq([0]));
 
-  // 槽位取「调用时」的角色在列表中的位置：31 被除名后列表是 [0, 32]，
-  // 故 32 号写槽位 1（把它前一次记在 31 号槽位的标题盖掉）——与原作
+  // 槽位取「调用时」的角色在列表中的位置 被除名后列表是 [0, 32]，
+  // 故 32 号写槽位 1（把它前一次记在 31 号槽位的标题盖掉）——与
   // DELCHARA 之后数组前移、下一个角色按下标覆写同一槽位同构
   assert.equal(fixture.store.get('videoarchive:1'), '人形桌子妹妹');
   assert.equal(fixture.store.get('videoarchive:2'), undefined);
@@ -220,7 +220,7 @@ test('MUSEUM：金属像分支增加装饰品总数', async () => {
   assert.equal(fixture.store.get('flag:84'), 1);
 });
 
-test('MUSEUM：原作 ELSEIF 会重新掷 RAND', async () => {
+test('MUSEUM：ELSEIF 会重新掷 RAND', async () => {
   const fixture = seed_world();
   fixture.set_inputs(0);
   const { museum } = fixture.load_module('event/event-museum');
@@ -248,7 +248,7 @@ test('MUSEUM：反抗刻印 3 与反抗素质进入叛逆口上', async () => {
   assert.equal(fixture.store.get('videoarchive:1'), '射精叛逆石膏像温妮');
 });
 
-test('MUSEUM：保留原作 LOCALS 跨调用残值', async () => {
+test('MUSEUM：保留 LOCALS 跨调用残值', async () => {
   const fixture = seed_world();
   fixture.seed_chara(32, { id: 32, name: '妹妹', callname: '妹妹' });
   fixture.era.addCharacter(32);

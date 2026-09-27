@@ -1,5 +1,5 @@
 /**
- * @file 调教开始前事件处理与叙述消息（EVENT_BEFORETRAIN.ERB 移植）。
+ * @file 调教开始前事件处理与叙述消息（pritrain_message 一族）。
  *
  */
 
@@ -10,7 +10,7 @@ const { clothtype_text } = require('#/page/page-clothtype');
 const { wearing_cloth_all } = require('#/system/train/cloth');
 
 /**
- * 获取角色称呼（SAVESTR / CALLNAME）
+ * 获取角色称呼（callname:${id}:-1）
  * @param {number} cid
  * @returns {string}
  */
@@ -19,7 +19,7 @@ function chara_name(cid) {
 }
 
 /**
- * 第三人称代词（SHE(TARGET)）
+ * 第三人称代词（she(TARGET)）
  * @param {number} cid
  * @returns {string}
  */
@@ -28,7 +28,7 @@ function she(cid) {
 }
 
 /**
- * @PRITRAIN_MESSAGE_NOCLOTHES（:207-270）：初调教时・着衣设定关闭
+ * pritrain_message_noclothes：初调教时・着衣设定关闭
  * @param {number} target
  */
 function pritrain_message_noclothes(target) {
@@ -101,7 +101,7 @@ function pritrain_message_noclothes(target) {
 }
 
 /**
- * @PRITRAIN_MESSAGE_CLOTHED（:266-323）：初调教时・上衣着用时
+ * pritrain_message_clothed：初调教时・上衣着用时
  * @param {number} target
  */
 function pritrain_message_clothed(target) {
@@ -158,7 +158,7 @@ function pritrain_message_clothed(target) {
 }
 
 /**
- * @PRITRAIN_MESSAGE（:6-201）：调教开始时的消息。
+ * pritrain_message：调教开始时的消息。
  */
 async function pritrain_message() {
   const target = era_flag.target;
@@ -195,7 +195,7 @@ async function pritrain_message() {
     era.print(
       `${target_name}的第一次调教开始了，把${she(target)}变成棒棒哒性奴隶吧！`,
     );
-    era.print(''); // 真空行：34 行的 PRINTFORML 已收尾（35 行的 PRINTL 落在空行上）
+    era.print(''); // 空行：开场句已收尾，此行补空行
 
     if ((era.get('flag:37') || 0) !== 0) {
       pritrain_message_clothed(target);
@@ -205,7 +205,7 @@ async function pritrain_message() {
 
     if (era.get(`talent:${target}:23`)) {
       // 容易好奇/好奇心
-      era.print(''); // 真空行：44 行的 PRINTFORML 已收尾（它落在空行上）
+      era.print(''); // 空行：好奇分支的对比句之前补空行
       era.print(`然而在${target_name}的眼神最深处却好像流淌着期待的光芒。`);
     }
 
@@ -370,9 +370,8 @@ async function pritrain_message() {
     }
   }
 
-  // EVENT_BEFORETRAIN.ERB:173 `(CFLAG:7 & 4) || (CFLAG:7 & 8) && (CFLAG:40 & 1) == 0
-  // && (CFLAG:40 & 16) == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」读作
-  // `((CFLAG:7 & 4) || (CFLAG:7 & 8)) && 无内裤 && 非裤装`——注入位两臂同吃
+  // 源条件的运算符优先级按「&& 与 || 同优先级、左结合」读作
+  // `((CFLAG:7 & 4) || (CFLAG:7 & 8)) && 无内裤 && 非裤装`——注入位两分支同吃
   // 后两项合取（#517）。
   // 下半身穿孔无内裤非裤装
   if (

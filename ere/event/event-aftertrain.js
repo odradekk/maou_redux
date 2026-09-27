@@ -2,7 +2,7 @@
  * @file 调教后自主行为检查。
  *
  * 移植说明（有意偏离）：
- *   - **@CHARADEAD_CHECK 的 `BASE:0 = -1` 落到 0**：引擎自动钳制 base
+ *   - **CHARADEAD_CHECK 的 `BASE:0 = -1` 落到 0**：引擎自动钳制 base
  *     （小于 0 时重置为 0，大于 maxbase 时重置为 maxbase——
  *     `dev-guides/09-static.md:203`），ere 侧写不进 -1。**后果不是「等价」**：
  *     魔王死亡且有继任者时，旧魔王的身体留在场上，角色信息展示
@@ -16,8 +16,8 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-// @MAOU_KOUHO 的真身（EVENT_NEXTDAY.ERB:2430-2451）——原作另一处调用点正是
-// 本文件的 @CHARADEAD_CHECK（:33），ere 侧此前只有 @EVENTEND 的魔王倒下分支
+// maou_kouho 的真身（ere/event/event-nextday.js）——另一处调用点正是
+// 本文件的 charadead_check，ere 侧此前只有 EVENTEND 的魔王倒下分支
 // 引用它
 const { maou_kouho } = require('#/event/event-nextday');
 const { chara } = require('#/facade/chara');
@@ -27,22 +27,22 @@ const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
- * 原作 Q 是跨函数全局。AFTERTRAIN 自慰检查写，SELF_KOJO（K2 等）读
+ * leftover_q 是跨函数全局。AFTERTRAIN 自慰检查写，SELF_KOJO（K2 等）读
  * （调教后自慰口上里 Q == 1 助手 / Q == 2 野狗）。
  */
 let leftover_q = 0;
 /**
- * 原作 S 是跨函数全局。AFTERTRAIN 性交检查写次数，SELF_KOJO 的
- * 调教后性交支读 `s`（K5 :6223 源文就是小写 s；K6 的 SELF_KOJO 同读）。
+ * leftover_s 是跨函数全局。AFTERTRAIN 性交检查写次数，SELF_KOJO 的
+ * 调教后性交支读 `s`。
  */
 let leftover_s = 0;
 /**
- * 原作 S 在出售链是卖出价。SELL_CHARA 写完再 CALL SELF_KOJO。
+ * leftover_sale 在出售链是卖出价。SELL_CHARA 写完再调 SELF_KOJO。
  */
 let leftover_sale = 0;
 
 /**
- * SELF_KOJO 读的原作 Q（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
+ * SELF_KOJO 读的妄想对象（AFTERTRAIN 自慰检查的妄想对象：0 主人 / 1 助手 / 2 野狗）。
  * @returns {number}
  */
 function peek_aftertrain_q() {
@@ -50,7 +50,7 @@ function peek_aftertrain_q() {
 }
 
 /**
- * SELF_KOJO 读的原作性交次数 S（K5 源文 :6223 写作小写 s）。
+ * SELF_KOJO 读的性交次数。
  * @returns {number}
  */
 function peek_aftertrain_s() {
@@ -58,7 +58,7 @@ function peek_aftertrain_s() {
 }
 
 /**
- * SELF_KOJO 出售支读的原作卖出价 S（K5 :6250 注释「Sは売却値」）。
+ * SELF_KOJO 出售支读的卖出价。
  * @returns {number}
  */
 function peek_sale_price() {
@@ -66,7 +66,7 @@ function peek_sale_price() {
 }
 
 /**
- * 写入出售口上要读的卖出价（原作 SELL_CHARA 的 S）。
+ * 写入出售口上要读的卖出价。
  * @param {number} v
  */
 function remember_sale_price(v) {
@@ -74,7 +74,7 @@ function remember_sale_price(v) {
 }
 
 /**
- * AFTERTRAIN 性交检查未跑时，测试写入性交回数（原作 S / K5 源文 s）。
+ * AFTERTRAIN 性交检查未跑时，测试写入性交回数。
  * @param {number} v
  */
 function remember_aftertrain_s(v) {
@@ -82,7 +82,7 @@ function remember_aftertrain_s(v) {
 }
 
 /**
- * 获取角色称呼（SAVESTR / CALLNAME）
+ * 获取角色称呼（callname:${id}:-1）
  * @param {number} cid
  * @returns {string}
  */
@@ -90,29 +90,29 @@ function chara_name(cid) {
   return chara_callname(cid);
 }
 
-/** 原作 GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
+/** GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
 function get_chara(no) {
   return era.getAddedCharacters().includes(no) ? no : -1;
 }
 
 /**
- * @CHARADEAD_CHECK：调教后死亡检查。
+ * charadead_check：调教后死亡检查。
  *
- * RESULT：0 = 存活（或濒死自动结束）；1 = 目标已死（调用方跳过 SELF_CHECK，
- * 死亡删除分支接管）。尾行 `RETURN 1, TEMP` 的第二个返回值全库无读者
- * （TEMP 是死变量），ere 侧只回 RESULT。
+ * 返回值：0 = 存活（或濒死自动结束）；1 = 目标已死（调用方跳过 SELF_CHECK，
+ * 死亡删除分支接管）。尾行还有一个第二返回值，它是死变量、没有读者，
+ * ere 侧只回数值结果。
  *
- * TEMP / TEMPMAOU 是从未被赋值的死变量：`IF !TEMP || ...` 恒走第一支
- * 「%SAVESTR:TARGET%死掉了……」，ELSEIF 的「身体死掉了/苏醒了」叙事与
- * %SAVESTR:TEMP% 不可达，不构造。
+ * TEMP / TEMPMAOU 是从未被赋值的死变量：`!TEMP || ...` 恒走第一支
+ * （目标名 + 「死掉了……」），ELSEIF 的「身体死掉了/苏醒了」叙事
+ * 不可达，不构造。
  *
  * BASE:0 = -1 的写：引擎自动把 base 钳到 0~maxbase（`dev-guides/09-static.md:203`
  * ——小于 0 重置为 0），写入落盘即 0。**这不是等价替换**：角色信息展示
  * 对 `BASE:0 < 0` 显示 ★死亡★，ere 只剩 ★濒死★（文件头「移植说明」有
- * 完整说明）。判死判据全走 `< 1`，除显示档位外的行为不受影响；写入仍写
+ * 完整说明）。判死全部走 `< 1`，除显示档位外的行为不受影响；写入仍写
  * -1。
  *
- * @returns {Promise<number>} 原作 RESULT（QUIT 路径 throw，不返回）
+ * @returns {Promise<number>} 0/1（QUIT 路径 throw，不返回）
  */
 async function charadead_check() {
   const target = era_flag.target;
@@ -171,7 +171,7 @@ async function charadead_check() {
       await era.waitAnyKey();
       const successor = era_exflag.next_maou;
       const successor_name = chara_name(successor);
-      // 四分支叙事（SAVESTR → callname 承载，#5 决议）
+      // 四分支叙事（称呼读 callname:${id}:-1，#5 决议）
       if (
         successor !== get_chara(17) &&
         (successor === era_flag.player || successor === era_flag.assi)
@@ -232,7 +232,7 @@ async function charadead_check() {
     }
   }
 
-  // 死亡時口上（TFLAG:13 = 999 的事件码；@EVENTEND 尚在调教期，
+  // 死亡時口上（TFLAG:13 = 999 的事件码；EVENTEND 尚在调教期，
   // tflag 表开着——self_check 的同款调法）
   game.train.初吻与自我口上 = 999;
   await self_kojo();
@@ -240,13 +240,13 @@ async function charadead_check() {
   era.println(); // PRINTL（空行）
   // TEMP 恒 0 → 恒走第一支（ELSEIF 不可达，见 JSDoc）
   era.print(`${chara_name(target)}死掉了……`);
-  era.println(); // 真空行：69、71-72 行的 PRINTFORML 已收尾（74 行的 PRINTL 落在空行上）
+  era.println(); // 空行：GAMEOVER 横幅与后文隔开
   era.drawLine();
   // BASE:0 = -1（引擎把 base 钳到 0，★死亡★ 显示不出来——见文件头
   // 「移植说明」的这处偏离；写入仍保留 -1 的意图）
   chara(target).dungeon.体力 = -1;
 
-  // 死亡フラグを残す：FLAG:(NO+999) = -2（与 @EVENTEND 死亡删除
+  // 死亡フラグを残す：FLAG:(NO+999) = -2（与 EVENTEND 死亡删除
   // 分支的 FLAG:(NO+199) = 1 是两段不同的旗）
   // FLAGNAME:(TARGET+999) = 死亡旗（-2 = 已死）
   era.set(`flag:${target + 999}`, -2);
@@ -257,7 +257,7 @@ async function charadead_check() {
   // 殺した人数が3人以上で、【威圧感】が付く（TALENT:93）
   if (game.event.杀死人数 >= 3 && !era.get('talent:0:93')) {
     era.print(`${chara_name(0)}掌握了【${era.get('talentname:93') ?? ''}】。`);
-    await era.waitAnyKey(); // PRINTFORMW 的读键
+    await era.waitAnyKey(); // 等待确认
     era.set('talent:0:93', 1);
   }
 
@@ -265,7 +265,7 @@ async function charadead_check() {
 }
 
 /**
- * @AFTERTRAIN_SEX_CHECK（:140-250）：调教后通常性交检查
+ * aftertrain_sex_check：调教后通常性交检查
  * @returns {Promise<number>} 执行回数或 0
  */
 async function aftertrain_sex_check() {
@@ -335,11 +335,10 @@ async function aftertrain_sex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  // 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的
-  // PRINTFORML 已结束那一行，空源码行不产生输出，这里不补空行（#597；
+  // 上一行已结束当前行；空源码行不产生输出，这里不补空行（#597；
   // ere 的 print 自成一行）
 
-  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+  // 口上事件码 TFLAG:13 = 4 后调 SELF_KOJO（在私处经验播报之前）
   leftover_s = s;
   game.train.初吻与自我口上 = 4;
   await self_kojo();
@@ -369,7 +368,7 @@ async function aftertrain_sex_check() {
 }
 
 /**
- * @AFTERTRAIN_ANALSEX_CHECK（:255-349）：调教后肛门性交检查
+ * aftertrain_analsex_check：调教后肛门性交检查
  * @returns {Promise<number>}
  */
 async function aftertrain_analsex_check() {
@@ -428,9 +427,9 @@ async function aftertrain_analsex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  // （332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML
-  // 已结束那一行，空源码行不产生输出，这里不补空行（#597，与
-  // @AFTERTRAIN_SEX_CHECK 的 :229-231 同源）
+  // （空源码行不产生输出）：上一行的 PRINTFORML
+  // 已结束那一行，这里不补空行（#597，与
+  // 通常性交检查同源）
 
   era.print(`A经验＋${s}`);
   era.print(`性交经验＋${s}`);
@@ -458,7 +457,7 @@ async function aftertrain_analsex_check() {
 }
 
 /**
- * @AFTERTRAIN_LESBIANSEX_CHECK（:354-546）：百合中毒百合检查
+ * aftertrain_lesbiansex_check：百合中毒百合检查
  * @param {number} sex_result 之前的性交返回值 S
  * @returns {Promise<number>}
  */
@@ -640,7 +639,7 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
 }
 
 /**
- * @AFTERTRAIN_MASTURBATION_CHECK（:551-703）：自慰检查
+ * aftertrain_masturbation_check：自慰检查
  * @param {number} sex_result S
  * @param {number} les_result N
  * @param {(n: number) => number} [rand]
@@ -786,7 +785,7 @@ async function aftertrain_masturbation_check(
 }
 
 /**
- * @AFTERTRAIN_BEASTSEX_CHECK（:708-842）：兽奸检查
+ * aftertrain_beastsex_check：兽奸检查
  * @returns {Promise<number>}
  */
 async function aftertrain_beastsex_check() {
@@ -886,7 +885,7 @@ async function aftertrain_beastsex_check() {
 }
 
 /**
- * @SELF_CHECK（:100-128）：调教后行为检查
+ * self_check：调教后行为检查
  * @param {(n: number) => number} [rand]
  * @returns {Promise<number>}
  */

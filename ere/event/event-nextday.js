@@ -1,40 +1,39 @@
 /**
- * @file 日程推进 @EVENT_NEXTDAY 与翌朝事件 @EVENT_NEWDAY（issue #115 起步，
+ * @file 日程推进 EVENTNEXTDAY 与翌朝事件 EVENTNEWDAY（issue #115 起步，
  * #400（N16）扩成全路径）。
  *
  * 调用关系：
- *   - @EVENT_NEXTDAY 由 #PRI 档在日推进时调用（EVENT_TURNEND.ERB:77，
- *     先于 :79 的 DAY:0 += 1）——ere/event/event-turnend.js；
- *   - @EVENT_NEWDAY 由普通档在日推进回合（TIME==0）调用（SYSTEM
- *     ver1.0.3.ERB:751）——ere/system/turnend-settle.js；
- *   - @MAOU_TENSHIN 另由 @EVENTEND 的魔王倒下分支调用
- *     （TRAIN_MAIN.ERB:376-378）——ere/event/event-end.js；
- *   - @MAOU_KOUHO 的原作另一处调用点在 @CHARADEAD_CHECK（EVENT_AFTERTRAIN
- *     :33）内（自 #548 起为真身，ere/event/event-aftertrain.js）。
+ *   - EVENTNEXTDAY 由 #PRI 档在日推进时调用（先于 DAY:0 += 1）
+ *     ——ere/event/event-turnend.js；
+ *   - EVENTNEWDAY 由普通档在日推进回合（TIME==0）调用
+ *     ——ere/system/turnend-settle.js；
+ *   - MAOU_TENSHIN 另由 EVENTEND 的魔王倒下分支调用——ere/event/event-end.js；
+ *   - MAOU_KOUHO 的另一处调用点在 charadead_check 内（自 #548 起为真身，
+ *     ere/event/event-aftertrain.js）。
  *
  * 移植说明：
- *   - 原作注释态的调用 1:1 保持不调用（:59 熏香洗濯链、:75/:84/:88 出产三
- *     CALL、:117 @RUNNING_COST、:196 @SOMETIMES_SHE_COMES_BACK、:229 誕生日、
- *     :235 特定日付）——其中 @RUNNING_COST 与 @SOMETIMES_SHE_COMES_BACK
- *     本体已移植并导出，直接驱动可测（调用点仍照原作留注释）。
- *   - 指针不落（#5 决议第六条）：原作用 TARGET/COUNT/全局 A-Z 在函数间传值，
+ *   - 熏香洗濯链、出产三 CALL、running_cost、sometimes_she_comes_back、
+ *     誕生日、特定日付这些调用点目前没有接入——其中 running_cost 与
+ *     sometimes_she_comes_back 本体已移植并导出，直接驱动可测（调用点
+ *     仍留注释）。
+ *   - 指针不落（#5 决议第六条）：旧引擎用 TARGET/COUNT/全局 A-Z 在函数间传值，
  *     ere 侧一律显式传参；本文件内需要时改 era_flag.target 并在轮末还原
- *     （@DOG_WALK 的 SAVE_TARGET 同款）。
- *   - SAVESTR:x 的读数源是 callname 表（utils/callname-utils.js，本作
- *     里 = 名前）；%SAVESTR:COUNT% 播报一律 chara_callname(cid)。
- *   - @EVENT_NEWDAY 的影寿命循环（:200-221，TALENT:292 魔王之影）当前
+ *     （dog_walk 的 SAVE_TARGET 同款）。
+ *   - 角色名/称呼的读数源是 callname 表（utils/callname-utils.js，本作
+ *     里 = 名前）；角色称呼播报一律 chara_callname(cid)。
+ *   - EVENTNEWDAY 的影寿命循环（TALENT:292 魔王之影）当前
  *     不可达（292 无写入路径）——按「登记不占位」处理（#119 KYOTEN_EVENT
- *     先例）：代码留接入注释，执行到也不输出。影角色票落地时补真身。
- *   - :146-147 原作注释「处女の場合善恶值上昇」与条件 TALENT:0 == 0
- *     （非处女）相反——条件 1:1 照搬，以注释存疑。
- *   - @RUNNING_COST 的人气梯子升序书写，70/90 两支不可达；
- *     @MAOU_KOUHO 的内层重扫净效果是「最后一个候补胜出」——两处上游
+ *     先例）：代码留接入注释，执行到也不输出。影角色票实现时补真身。
+ *   - 处女条件与注释「处女の場合善恶值上昇」的字面语义相反——条件按原样保留，
+ *     以注释存疑。
+ *   - running_cost 的人气梯子升序书写，70/90 两支不可达；
+ *     maou_kouho 的内层重扫净效果是「最后一个候补胜出」——两处书写瑕疵
  *     书写瑕疵都照写并在各自 JSDoc 里写明证明。
  *   - 调教期专表的读写在调教外会失效（EraElectron 的 tflag/tequip/palam 随
  *     endTrain 删除）：TFLAG:13/14 走 game.train 的调教外通道，TEQUIP:35
  *     （安全套）改函数内局部，PALAM:5 的两条 SIF 在引擎里恒不命中——
- *     OFFERVIRGIN_CHECK 的 JSDoc 逐条记了这三处。
- *   - 三处 `[0] - 好的 / [1] - 不要` 式选项（:371-372、:944-945、:969-970）
+ *     offervirgin_check 的 JSDoc 逐条记了这三处。
+ *   - 三处 `[0] - 好的 / [1] - 不要` 式选项
  *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；#572）。
  *     随之「其余值 GOTO INPUT_LOOP」的重问支在实机上不可达（引擎按白名单
  *     拒收），不补用例（page-ability-up.js 文件头同款登记）。
@@ -60,8 +59,8 @@ const {
   chara_name,
   chara_nickname,
 } = require('#/utils/callname-utils');
-// 三张跨边的被调方，皆由并行票交付、本票只接线（各自的调用点备注见
-// docs/stub-registry.md 的「调用点接线随 #400」）
+// 三张跨边的被调方，皆由并行票交付、这张工单只接入（各自的调用点
+// 见下方 run_event_nextday 里的调用处）
 const { aphrodisiac_addict } = require('#/event/event-addict');
 const { sabbath, sabbath_day } = require('#/event/event-sabbath');
 const { tax_get } = require('#/system/stronghold/tax');
@@ -79,40 +78,40 @@ const { event_video_day } = require('#/system/stronghold/sell-video');
 const { ntr_video } = require('#/system/ntr');
 // H8（#177）起 DUNGEON_ROOM_DAY 真身：设施日结算（商店街税入 + 牧场）。
 // 随机源不注入（缺省 Math.random）——日结算的税额掷与迷宫推进的随机源
-// 在原作同属全局 RAND 序列，ere 侧各自缺省即等价
+// 同属一个全局随机序列，ere 侧各自缺省即等价
 const room_day_mod = require('#/dungeon/dungeon-room');
 
-/** 原作 RAND:N（0..N-1）的缺省随机源（各函数以 rand 为注入名，同族模块同款） */
+/** 随机源（[0,n) 整数）的缺省实现（各函数以 rand 为注入名，同族模块同款） */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** %TALENTNAME:n%（:370/:375/:380/:392/:402/:407…）的读数源：引擎素质名表 */
+/** 素质名（%TALENTNAME:n%）的读数源：引擎素质名表 */
 function talent_name(n) {
   return era.get(`talentname:${n}`) ?? '';
 }
 
-/** %MARKNAME:n%（:463）的读数源 */
+/** 刻印名（%MARKNAME:n%）的读数源 */
 function mark_name(n) {
   return era.get(`markname:${n}`) ?? '';
 }
 
 /**
- * @EVENT_FUTA_F（:367-386）：不思議の根（TALENT:326）持有者的扶她化确认。
+ * event_futa_f：不思議の根（TALENT:326）持有者的扶她化确认。
  *
- * 原作 INPUT 的三路分支：0 = 得到【扶她】+【童贞】并清【肉芽诅咒】、
- * 1 = 放弃并只清【肉芽诅咒】、其余 = `GOTO INPUT_LOOP` 重问（#400 落真身，
- * 由 @EVENT_NEXTDAY 的 `TALENT:326 == 1 && EXP:20 >= 150` 支触发）。
+ * 三路分支：0 = 得到【扶她】+【童贞】并清【肉芽诅咒】、
+ * 1 = 放弃并只清【肉芽诅咒】、其余 = 重问（#400 落真身，
+ * 由日程推进的 `TALENT:326 == 1 && EXP:20 >= 150` 支触发）。
  *
- * @param {number} cid 角色 ID（原作循环里的 TARGET）
+ * @param {number} cid 角色 ID（角色循环的当前目标）
  */
 async function event_futa_f(cid) {
   const name = chara_callname(cid);
   era.print('（呃…这是什么？）');
   for (;;) {
     era.print(`${name}要【${talent_name(121)}】化吗？`);
-    // 的两行选项 → 按钮（PR #53 通则，#572）
-    era.printButton('- 好的', 0); // （正文的 `- ` 是原作文本）
+    // 两行选项 → 按钮（PR #53 通则，#572）
+    era.printButton('- 好的', 0); // （正文的 `- ` 是既有文案）
     era.printButton('- 不要', 1);
     const result = await era.input();
     if (result === 0) {
@@ -127,7 +126,7 @@ async function event_futa_f(cid) {
       chara(cid).stronghold.肉芽诅咒 = 0;
       break;
     }
-    // ELSE → GOTO INPUT_LOOP（重印询问行，不消耗其它状态）
+    // 其余值 → 重印询问行（不消耗其它状态）
   }
   await era.waitAnyKey();
 }
@@ -138,8 +137,8 @@ function times(v, m) {
 }
 
 /**
- * 原作 FLAG:48 的建造位 → 每日追加额（:258-278 的七个 SIF，位 64 另计人数）。
- * 顺序即原作的书写顺序（加法可交换，保留只为 1:1 追溯）。
+ * FLAG:48 的建造位 → 每日追加额（七个 SIF，位 64 另计人数）。
+ * 顺序即各 SIF 的书写顺序（加法可交换，保留只为可追溯）。
  */
 const RUNNING_COST_FACILITIES = [
   [1, 500], // 個室を拡張
@@ -151,12 +150,12 @@ const RUNNING_COST_FACILITIES = [
 ];
 
 /**
- * @RUNNING_COST（:247-363）：娼館の維持費と奴隷達の生活費。
+ * running_cost：娼館の維持費と奴隷達の生活費。
  *
- * **原作的调用点（:117）是注释态**，ere 侧 1:1 保持不调用；本函数导出，
- * 供直接驱动（`CALL RUNNING_COST` 一旦被启用，接上即可）。
+ * **目前没有调用点**（调用点被注释掉，ere 侧保持不调用）；本函数导出，
+ * 供测试直接驱动（一旦被启用，接上即可）。
  *
- * 两处上游判据的书写瑕疵照写（改了就是改了行为）：
+ * 两处条件的书写瑕疵照写（改了就是改了行为）：
  *   - 人气梯子升序书写且用 `>=`，故 50 那一支先命中，70/90 两支**永不
  *     可达**——人气 90 仍只乘 1.10；
  *   - 贡献度梯子降序书写，各支正常可达。
@@ -234,7 +233,7 @@ async function running_cost() {
       (difficulty === 1 && era_flag.day_count >= 20) ||
       (difficulty >= 2 && era_flag.day_count >= 10);
     if (due) {
-      // 原作 `…花了${A}……`——紧挨取值的 `$` 是字面量，JS 模板串要写 $$
+      // 文案 `…花了${A}……`——紧挨取值的 `$` 是字面量，JS 模板串要写 $$
       era.print(`调教中心的维持费和奴隶们的生活费花了$${cost}……`);
       era.drawLine();
       era_flag.money -= cost; // MONEY -= A
@@ -244,16 +243,16 @@ async function running_cost() {
 }
 
 /**
- * @SOMETIMES_SHE_COMES_BACK（:502-526）：死掉的奴隶偶尔回归。
+ * sometimes_she_comes_back：死掉的奴隶偶尔回归。
  *
- * **原作的调用点（:196）是注释态**（`;CALL SOMETIMES_SHE_COMES_BACK`、
- * `;D = 0` / `;SIF D` / `;RETURN 1`），ere 侧 1:1 保持不调用；本函数导出
- * 供直接驱动，返回值即原作经全局 D 回传的「有人归来」标志。
+ * **目前没有调用点**（`;CALL SOMETIMES_SHE_COMES_BACK`、
+ * `;D = 0` / `;SIF D` / `;RETURN 1` 全被注释掉），ere 侧保持不调用；本函数导出
+ * 供测试直接驱动，返回值即经全局 D 回传的「有人归来」标志。
  *
- * 一次只回来一人（:520 注释）：扫到第一个「体力 0」的非 0 号角色即复位
- * 并返回；0 号位（魔王）在 :505-506 被跳过，不参与判定。
+ * 一次只回来一人：扫到第一个「体力 0」的非 0 号角色即复位
+ * 并返回；0 号位（魔王）跳过，不参与判定。
  *
- * @returns {Promise<number>} 1 = 有人归来（原作 `D = 1` / `RETURN 1`），
+ * @returns {Promise<number>} 1 = 有人归来、
  *   0 = 无人（WAIT 落 await，故整函数异步）
  */
 async function sometimes_she_comes_back() {
@@ -286,17 +285,17 @@ async function sometimes_she_comes_back() {
   return 0;
 }
 
-/** 原作 GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
+/** GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
 function get_chara(no) {
   return era.getAddedCharacters().includes(no) ? no : -1;
 }
 
 /**
- * 朝フェラ候选的过滤 + 适性值 A（原作 :575-616 与 :624-671 两趟逐字相同的
- * 筛选块）。七条排除守卫任一命中即返回 null；通过则回 A：
+ * 朝フェラ候选的过滤 + 适性值 A（两个调用点共用同一段
+ * 筛选块）。七条排除检查任一命中即返回 null；通过则回 A：
  * `A = 精液中毒(ABL:32)`，再按五项素质各加减 1。
  *
- * @param {number} cid 角色 ID（原作循环里的 COUNT）
+ * @param {number} cid 角色 ID（角色循环的当前角色）
  * @returns {number|null} 适性值（≤ 0 视为不合格时调用方按 null 处理）
  */
 function fellatio_aptitude(cid) {
@@ -346,8 +345,8 @@ function has_item(i) {
 }
 
 /**
- * 处女献上的十条准入守卫（原作 :815-864），任一条成立即早退。
- * @param {number} cid 当前目标（原作 TARGET）
+ * 处女献上的十条准入检查，任一条成立即早退。
+ * @param {number} cid 当前目标
  * @returns {boolean} true = 该早退
  */
 function virgin_offer_blocked(cid) {
@@ -396,11 +395,11 @@ function virgin_offer_blocked(cid) {
 }
 
 /**
- * 判定变量 S（原作 :868-924）：`-RAND:3` 起步，爱/淫乱各行按能力档加值，
+ * 判定变量 S：`-RAND:3` 起步，爱/淫乱各行按能力档加值，
  * 再叠快感/贞操/好奇/戒备四项。S ≤ 0 即「这次不发生」。
  *
  * @param {number} cid 当前目标
- * @param {(n: number) => number} rand RAND:N 随机源
+ * @param {(n: number) => number} rand 随机源
  * @returns {number} 判定值
  */
 function virgin_offer_score(cid, rand) {
@@ -421,8 +420,8 @@ function virgin_offer_score(cid, rand) {
   }
   // 欲情达 PALAMLV:4，两档各 +1（高档含低档，故最多 +2）。
   // **引擎事实**：PALAM 表随 endTrain 删除，本函数跑在日循环里，读回来恒
-  // 为空 → 这两支在 EraElectron 里恒不命中（原作在 Emuera 里 PALAM 常驻，
-  // 会命中）。保留 1:1 代码，不因引擎限制删判据。
+  // 为空 → 这两支在 EraElectron 里恒不命中（旧引擎里 PALAM 常驻，
+  // 会命中）。保留条件代码，不因引擎限制删条件。
   if (
     (era.get(`abl:${cid}:11`) || 0) >= 5 &&
     (era.get(`abl:${cid}:16`) || 0) >= 5 &&
@@ -444,12 +443,12 @@ function virgin_offer_score(cid, rand) {
     s -= 2; // 看重贞操
   else if (era.get(`talent:${cid}:31`)) s += 1; // 看轻贞操
   if (era.get(`talent:${cid}:27`)) s += 1; // 好奇心
-  if (era.get(`talent:${cid}:27`)) s -= 2; // 戒备森严（原作同读 TALENT:27）
+  if (era.get(`talent:${cid}:27`)) s -= 2; // 戒备森严（与好奇心同读 TALENT:27）
   return s;
 }
 
 /**
- * 亲族关系编码 → CFLAG:15 的九档映射（原作 :1028-1044 与 :1055-1071 两张
+ * 亲族关系编码 → CFLAG:15 的九档映射（两张
  * 同构表，后者是魔王侧）。表驱动等价于 ELSEIF 链：按顺序取首个命中。
  * @param {number} relation TFLAG:14
  * @param {boolean} is_male 对应角色的男人素质
@@ -485,22 +484,22 @@ function first_experience_code(relation, is_male, master_side) {
 }
 
 /**
- * @OFFERVIRGIN_CHECK（:813-1088）：调教对象主动献上处女。
+ * offervirgin_check：调教对象主动献上处女。
  *
- * 结构：十条准入守卫（`virgin_offer_blocked`）→ 判定值 S（`virgin_offer_score`，
+ * 结构：十条准入检查（`virgin_offer_blocked`）→ 判定值 S（`virgin_offer_score`，
  * S ≤ 0 即不发生）→ 询问（INPUT 循环，非 0/1 重问）→ 拒绝支（顺从 -2 带下限、
  * 收回贞操带钥匙、一次限定落 CFLAG:62）→ 破处支（安全套二问、经验与珠结算、
  * 初体验记录、亲族关系编码）→ 收尾。
  *
  * **跨边（不在位，存根 + 登记）**：`CALL IN_VAGINA_M_TO_T` /
- * `CALL CONCEPTION_CHECK_M_TO_T`（:1012/:1013）属 EVENT_PREGNANCY.ERB 的
- * @N17（#401 并行票），本票只保留占位，不另造一份。
+ * `CALL CONCEPTION_CHECK_M_TO_T` 属妊娠判定的并行票交付内容
+ * （#401），这张工单只保留占位，不另造一份。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 1 = 献上成立、0 = 未发生/被拒（原作两处 `RETURN 0`）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 1 = 献上成立、0 = 未发生/被拒
  */
 async function offervirgin_check(rand = default_rand) {
-  const cid = era_flag.target; // 原作 TARGET
+  const cid = era_flag.target;
   if (virgin_offer_blocked(cid)) {
     return 0;
   }
@@ -511,9 +510,9 @@ async function offervirgin_check(rand = default_rand) {
 
   const name = chara_callname(cid);
   const master = chara_nickname(0); // %CALLNAME:MASTER%
-  // 的 TEQUIP:35（安全套使用フラグ）在 EraElectron 里
+  // TEQUIP:35（安全套使用フラグ）在 EraElectron 里
   // 是**调教期专表**：三段寻址在调教外被引擎静默丢弃，写不进去也读不回来。
-  // 原作用途全程在本函数内（置 0 → 也许置 1 → 判一次 → 复位 0），与 TFLAG
+  // 该变量用途全程在本函数内（置 0 → 也许置 1 → 判一次 → 复位 0），与 TFLAG
   // 同属「调教外借调教期变量」的情形，改由函数内局部承载（#5：临时变量按
   // JS 局部处理），语义与在引擎里可执行的等价物一致。
   let condom = 0; // TEQUIP:35 = 0
@@ -538,12 +537,12 @@ async function offervirgin_check(rand = default_rand) {
   let answer;
   for (;;) {
     era.print(`要夺取${name}的处女吗？`);
-    // 的两行选项 → 按钮（PR #53 通则，#572）
+    // 两行选项 → 按钮（PR #53 通则，#572）
     era.printButton('- 等你很久了！', 0);
     era.printButton('- 继续等着吧你……', 1);
     answer = await era.input();
     if (answer === 1 || answer === 0) break;
-    // ELSEIF RESULT != 0 → GOTO INPUT_LOOP_01
+    // 其余值 → 重问
   }
 
   if (answer === 1) {
@@ -559,7 +558,7 @@ async function offervirgin_check(rand = default_rand) {
     if (era.get(`cflag:${cid}:49`)) {
       await era.printAndWait(`${name}的贞操带的钥匙拿回来了。`);
       chara(cid).stronghold.贞操带钥匙已丢弃 = 0; // CFLAG:49 = 0
-      era.set(`cflag:${cid}:50`, 0); // （原作注释：不清会飞回奴隶手里）
+      era.set(`cflag:${cid}:50`, 0); // （注释：不清会飞回奴隶手里）
     }
     if ((era.get('flag:38') || 0) === 0) {
       era.set(`cflag:${cid}:62`, 1); // 発生済フラグ
@@ -571,11 +570,11 @@ async function offervirgin_check(rand = default_rand) {
     // 安全套二问
     for (;;) {
       era.print('要使用安全套吗？');
-      // 的两行选项 → 按钮（PR #53 通则，#572）
+      // 两行选项 → 按钮（PR #53 通则，#572）
       era.printButton('- 安全第一！', 0);
       era.printButton('- 中出最高！', 1);
       const answer_condom = await era.input();
-      if (answer_condom === 1) break; // ELSEIF RESULT != 1 → 重问
+      if (answer_condom === 1) break; // 非 1 → 重问
       if (answer_condom === 0) {
         condom = 1; // TEQUIP:35 = 1
         break;
@@ -616,7 +615,7 @@ async function offervirgin_check(rand = default_rand) {
 
   if (condom === 0) {
     // 膣内射精チェック。IN_VAGINA_M_TO_T/CONCEPTION_CHECK_M_TO_T
-    // 的真身早已随 event-pregnancy.js 的 PAIRS 通用表落地（'m_to_t' 那一档，
+    // 真身早已随 event-pregnancy.js 的 PAIRS 通用表实现（'m_to_t' 那一档，
     // 供 in_vagina_all/conception_check_all 复用），只是这个调用点一直没接
     // 上、留着占位——era_flag.target 此刻正是 cid（本函数开头 `const cid =
     // era_flag.target`），两个函数按 TARGET 隐式取人，直接调用即可（#406）
@@ -676,11 +675,11 @@ async function offervirgin_check(rand = default_rand) {
 }
 
 /**
- * 夜这い候选的过滤 + OK_FLAG（原作 :1105-1167 与 :1175-1243 两趟逐字相同的
- * 筛选块）。十条排除守卫任一命中即 null；通过则回
+ * 夜这い候选的过滤 + OK_FLAG（两个调用点共用同一段
+ * 筛选块）。十条排除检查任一命中即 null；通过则回
  * `OK_FLAG = 性交中毒 + 七项素质加减`，≤ 0 视为不合格。
  *
- * @param {number} cid 角色 ID（原作循环里的 NIGHT_COUNT）
+ * @param {number} cid 角色 ID（角色循环的当前角色）
  * @returns {number|null} OK_FLAG
  */
 function night_ok_flag(cid) {
@@ -709,7 +708,7 @@ function night_ok_flag(cid) {
     (era.get(`abl:${cid}:10`) || 0) +
     (era.get(`abl:${cid}:11`) || 0) +
     (era.get(`abl:${cid}:${n}`) || 0);
-  // 处女 / 非男人 / 男人 / 贞操带 四支门槛（判据互不包含，逐条照写）
+  // 处女 / 非男人 / 男人 / 贞操带 四支门槛（条件互不包含，逐条照写）
   if (era.get(`talent:${cid}:0`) && sum(3) <= 14) return null;
   if (
     (era.get(`talent:${cid}:122`) || 0) === 0 &&
@@ -753,17 +752,17 @@ function night_ok_flag(cid) {
 }
 
 /**
- * @NIGHT_STALKING_CHECK（:1095-1321）：性交中毒者的夜这い。
+ * night_stalking_check：性交中毒者的夜这い。
  *
- * 两趟筛选逐字相同（:1105-1168 数合格人数 LOCAL:1、:1175-1243 按
+ * 两趟筛选逐字相同（一趟数合格人数 LOCAL:1、一趟按
  * `RAND:(LOCAL:1)` 抽当番），故共用 `night_ok_flag`。合格者为零即早退；
  * 选中后先打来访播报，再以事件码 5（TFLAG:13）在调教外调 SELF_KOJO，
  * 随后按「V 使用标志」二分：V 支写 EXP:0/5 + JUEL:1/4/5，肛门支写
  * EXP:1/5 + JUEL:2/4/5，PLAY = 性交中毒 + 感覚三档加成（≤4 → +1、
  * ==5 → +2、≥6 → +4）。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 1 = 有人来访、0 = 无人（原作两处 `RETURN 0`）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 1 = 有人来访、0 = 无人
  */
 async function night_stalking_check(rand = default_rand) {
   if (
@@ -867,22 +866,22 @@ async function night_stalking_check(rand = default_rand) {
 }
 
 /**
- * @DOG_WALK（:1325-1462）：遛狗。
+ * dog_walk：遛狗。
  *
  * 当番选取按**加入序下标**（`DOG_WALKING = RAND:(CHARANUM - 1)`，取
- * 0..CHARANUM-2——加入序最后一个角色永远不会被随机选中，上游如此），
- * 再经三条调整守卫退回 0 号位（魔王自己带狗散步）。选出后按
+ * 0..CHARANUM-2——加入序最后一个角色永远不会被随机选中，旧引擎如此），
+ * 再经三条调整检查退回 0 号位（魔王自己带狗散步）。选出后按
  * `PLAY = 兽奸中毒 + 牝犬×2 + 动物耳 + 喜欢动物` 与
  * `OPEN = -2 + 露出癖 + 露出狂 + 爱表现` 决定交尾/口交/耻情三支。
  *
- * 原作 `%SAVESTR:TARGET%` 的读法：`TARGET = DOG_WALKING` 后由
- * SAVESTR/服装两处消费，尾部 `TARGET = SAVE_TARGET` 还原——ere 侧同样
- * 在体内改 `era_flag.target` 再还原（本轮内改、轮末还原，可见范围与原作
+ * 读法：`TARGET = DOG_WALKING` 后由
+ * 角色名/服装两处消费，尾部 `TARGET = SAVE_TARGET` 还原——ere 侧同样
+ * 在体内改 `era_flag.target` 再还原（本轮内改、轮末还原，可见范围与旧引擎
  * 一致）。NO_SEX（处女/私处封印/贞操带）与 !NO_SEX 的两支只差「交尾 vs
  * 口交」，经验/珠的写法各不相同。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 0 = 魔王自己散步或没道具（原作两处 `RETURN 0`），
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 0 = 魔王自己散步或没道具、
  *   1 = 奴隶带狗散步
  */
 async function dog_walk(rand = default_rand) {
@@ -902,8 +901,8 @@ async function dog_walk(rand = default_rand) {
   walking = rand(walking); // （下标 0..CHARANUM-2）
 
   const picked = () => list[walking];
-  // 三条调整守卫：不满足「已陷落且待机」就退回 0 号位。原作写成
-  // 三个 ELSEIF，第三支的判据（CFLAG:0 == 0）与第一支同侧重复，并集即
+  // 三条调整检查：不满足「已陷落且待机」就退回 0 号位。写成
+  // 三个 ELSEIF，第三支的条件（CFLAG:0 == 0）与第一支同侧重复，并集即
   // 「CFLAG:1 != 0 或 CFLAG:0 == 0」——按并集写，不构造重复支。
   if (
     walking !== 0 &&
@@ -942,7 +941,7 @@ async function dog_walk(rand = default_rand) {
   }
 
   if (walking !== 0) {
-    // 服（原作 PRINT 不换行三连，拼成一行）
+    // 服（三段不换行输出，拼成一行）
     const name = chara_callname(cid);
     const collar =
       play > 0 ? '好像自己散步似地，戴上项圈，四脚爬爬地出去了。' : '';
@@ -996,23 +995,23 @@ async function dog_walk(rand = default_rand) {
 }
 
 /**
- * @ONESHO（:703-806）：【漏尿癖】持有者的尿床检查（晨间三事件之二）。
+ * onesho：【漏尿癖】持有者的尿床检查（晨间三事件之二）。
  *
  * 准入掷：`TALENT:57 == 1 && RAND:12 <= EXP:31/10 + TALENT:132*2`——左值
  * 为真才掷（`&&` 短絡，operators 章），故未持【漏尿癖】者不消耗随机序列。
  * 命中后按「尿道导管」二分：装备判定 = 特別服装 98/99 + CFLAG:40 位 64 +
- * 着衣开关 FLAG:37 + 角色状态 < 2（:712-715），内层再按顺从（ABL:10）
+ * 着衣开关 FLAG:37 + 角色状态 < 2，内层再按顺从（ABL:10）
  * 分 <3 / <6 / 其余三档。无导管支走洗濯两连（调教外通道 `in_train: false`）
  * 与围观报告（露+抖M ≥ 8，人数 ≥ 3 换文案）。
  *
- * **L 的初值（有意偏差，写明理由）**：原作导管支的四处 `JUEL:L:8/9/4` 用的
- * 是全局 L，而本函数自始至终没有给 L 赋值——它在实机里是上一个调用者留下
- * 的值（紧邻的 @MORNING_FELLATIO 会写 L），在 EreElectron 侧没有跨函数
- * 残留的全局量（#5 决议：A-Z 按 JS 局部处理）。本移植取 Emuera 的**初值 0**
- * （即 0 号位，魔王），不复刻残留，也不擅自改成 COUNT（那是替原作改行为）。
+ * **L 的初值（有意偏差，写明理由）**：导管支的四处 `JUEL:L:8/9/4` 用的
+ * 是全局 L，而本函数自始至终没有给 L 赋值——它在旧引擎里是上一个调用者留下
+ * 的值（紧邻的 morning_fellatio 会写 L），在 EreElectron 侧没有跨函数
+ * 残留的全局量（#5 决议：A-Z 按 JS 局部处理）。本移植取初值 0
+ * （即 0 号位，魔王），不复刻残留，也不擅自改成 COUNT（那是替调用方改行为）。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 恒 1（原作 :804-806）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 恒 1
  */
 async function onesho(rand = default_rand) {
   for (const cid of era.getAddedCharacters()) {
@@ -1116,7 +1115,7 @@ async function onesho(rand = default_rand) {
         }
       }
     } else {
-      // 无导管（原作 :778 注释「元々あった記述」）
+      // 无导管（注释「元々あった記述」）
       era.print(`${name}尿床了……`);
       chara(cid).system.放尿经验 += 1; // EXP:COUNT:31 += 1
       era.print(`${era.get('expname:31') ?? ''}＋1`);
@@ -1147,18 +1146,18 @@ async function onesho(rand = default_rand) {
 }
 
 /**
- * @MORNING_FELLATIO（:533-698）：朝フェラ（晨间口交）。
+ * morning_fellatio：朝フェラ（晨间口交）。
  *
- * 两趟筛选逐字相同（:575-617 数合格人数 F、:624-672 按 `RAND:F` 抽当番），
- * 故共用 `fellatio_aptitude`。主人须为男人或扶她（:535）；无人合格（F == 0）
- * 或当番未定（L == 0，原作注释「セルフフェラ発生を防止」）即早退。
+ * 两趟筛选逐字相同（一趟数合格人数 F、一趟按 `RAND:F` 抽当番），
+ * 故共用 `fellatio_aptitude`。主人须为男人或扶她；无人合格（F == 0）
+ * 或当番未定（L == 0，注释「セルフフェラ発生を防止」）即早退。
  *
- * 原作 :538-572 的「朝フェラ係が決まっている場合」整段是注释态，不构造。
+ * 「朝フェラ係が決まっている場合」整段目前没有调用点，不构造。
  * 选中后写 A（当番的适性值）到 EXP:22/20 与 JUEL:4/6/7，最后以事件码 3
  * （TFLAG:13）在调教外调 SELF_KOJO。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 1 = 有人侍奉（原作 `RETURN 1`），0 = 未发生
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 1 = 有人侍奉、0 = 未发生
  */
 async function morning_fellatio(rand = default_rand) {
   if (
@@ -1220,7 +1219,7 @@ async function morning_fellatio(rand = default_rand) {
 }
 
 /**
- * @MAOU_KOUHO（:2430-2451）：魔王候补的确定。
+ * maou_kouho：魔王候补的确定。
  *
  * **净效果 = 最后一个持有 EX_TALENT:n:3（候补标记）的角色**，与好感度无关。
  * 证明：外层 `FOR COUNT, 1, CHARANUM` 每命中一名候补就把 TEMP 重置成自己，
@@ -1228,7 +1227,7 @@ async function morning_fellatio(rand = default_rand) {
  * `CFLAG:TEMPMAOU:2` 更大的候补时把 TEMP 往**更靠后**的候补上挪——于是每次
  * 外层迭代的终点都落在「该候补及其之后的最大者」，而最后一次迭代的候补身后
  * 再无候补，TEMP 必然停在自己身上。内层重扫因此不构造（#405 event-sabbath
- * 「可证死代码不构造」同款；它是原作拿来比较好感度的写法，实际不可达）。
+ * 「可证死代码不构造」同款；它是拿来比较好感度的写法，实际不可达）。
  *
  * 0 号位（魔王）不在候选面内（`FOR COUNT, 1, CHARANUM`）。
  */
@@ -1248,17 +1247,17 @@ function maou_kouho() {
 }
 
 /**
- * @SENGEN_VIDEO_DE（INVASION.ERB:1269-1281）：水晶球投放的每日结算。
+ * sengen_video_de：水晶球投放的每日结算。
  *
  * 流行过时倒计时必减 1；另有 2/3 概率让流行度减 1（`SIF RAND:3` 是非零即
  * 真，RAND:3 取值 0..2）。任一降到 0 以下即两者清零——这里写了**两段同款
  * 的 IF**，第二段在多数情况下只是重写同一对值，照写不擅自合并（两段各自
- * 是独立的清零判据，合并会改变边界行为）。
+ * 是独立的清零条件，合并会改变边界行为）。
  *
- * 无输出、无交互、零 CALL；原作 EVENT_NEXTDAY.ERB:184 无条件每日调用，
- * 调用点在 run_event_nextday 的 :184。
+ * 无输出、无交互、零 CALL；每日调用，
+ * 调用点在 run_event_nextday 内。
  *
- * @param {(n: number) => number} [rand] 随机源（RAND:3 的上界）
+ * @param {(n: number) => number} [rand] 随机源（三分之一的概率上界）
  */
 function sengen_video_de(rand = default_rand) {
   era_exflag.crystal_ball_expire = era_exflag.crystal_ball_expire - 1;
@@ -1276,23 +1275,23 @@ function sengen_video_de(rand = default_rand) {
 }
 
 /**
- * @MAOU_TENSHIN（:2455-2479）：魔王替换（旧魔王倒下后由候补继位）。
+ * event_maou_tenshin：魔王替换（旧魔王倒下后由候补继位）。
  *
- * **`MASTER = GETCHARA(17)`（:2463）的 ere 等价物是 `swap_chara(0, cid)`**：
+ * **`MASTER = GETCHARA(17)` 的 ere 等价物是 `swap_chara(0, cid)`**：
  * 本项目的 MASTER 不是变量而是常量约定（恒角色 0，CONTEXT.md），「魔王换成
  * 另一个人」只能靠把身体数据换进 0 号槽来表达——这正是 TRANSFER_SOUL 的手法
  * （chara-soul-transfer.js 的 `swap_chara(0, cid)` 同款），ELSE 支走的就是它。
  *
  * 两处由该等价物带出的落点（都在注释里写明，不是漏移植）：
- *   - `EX_FLAG:0 = MASTER`（:2459）记的是「旧魔王身体所在的槽位」。原作里
+ *   - `EX_FLAG:0 = MASTER` 记的是「旧魔王身体所在的槽位」。旧引擎里
  *     那是 0（指针改指 17 后旧魔王仍在 0 号位），ere 侧互换后旧魔王的身体落在
  *     cid 上，故写 cid——CHARA_INFO 的排名循环拿它剔除旧魔王（COUNT ==
  *     EX_FLAG:0），写 0 会剔掉刚继位的新魔王；
- *   - 紧随其后的 `EX_TALENT:(EX_FLAG:3):200 = 1`（魔王标记）与 `:3 = 0`
- *     （候补标记）在互换**之后**写 0 号位：互换已把候补的数据换进 0 号槽，
- *     原作的 `(EX_FLAG:3)` 指的就是「刚成为魔王的这个人」。
+ *   - 紧随其后的 `EX_TALENT:(EX_FLAG:3):200 = 1`（魔王标记）与候补标记清零
+ *     在互换**之后**写 0 号位：互换已把候补的数据换进 0 号槽，
+ *     `(EX_FLAG:3)` 指的就是「刚成为魔王的这个人」。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（透传给 TRANSFER_SOUL；
+ * @param {(n: number) => number} [rand] 随机源（透传给 TRANSFER_SOUL；
  *   本函数自身不掷随机）
  * @returns {Promise<void>}
  */
@@ -1330,12 +1329,12 @@ async function event_maou_tenshin(rand = default_rand) {
 }
 
 /**
- * @EVENT_MAZOKU（:470-498）：恶魔器官四件齐后的种族魔族化。
+ * event_mazoku：恶魔器官四件齐后的种族魔族化。
  *
  * 两支共用「原种族 = 种族、种族 = 9（魔族）」；分岔在素质与播报：
  * 欲望（ABL:11）≥ 3 → 现种族按【淫乱】二选一（152 魅魔 / 132 小恶魔）并给
  * 【魅惑】【诱惑】；否则现种族 = 140（下等恶魔）并给【混乱】（TALENT:482）。
- * 持有【魂缚】（274）者在入口早退，不做任何改造（:471-472）。
+ * 持有【魂缚】者在入口早退，不做任何改造。
  *
  * @param {number} cid 角色 ID（循环里的 TARGET）
  */
@@ -1348,7 +1347,7 @@ async function event_mazoku(cid) {
   chara(cid).chara.原种族 = era.get(`talent:${cid}:314`) || 0;
 
   if ((era.get(`abl:${cid}:11`) || 0) >= 3) {
-    // 淫乱ならサキュバス（152）、それ以外はナイトガール（132）
+    // 淫乱ならサキュバス、それ以外はナイトガール
     const race = era.get(`talent:${cid}:76`) ? 152 : 132;
     chara(cid).chara.现种族 = race;
     chara(cid).chara.种族 = 9;
@@ -1386,9 +1385,9 @@ async function event_mazoku(cid) {
 }
 
 /**
- * @EVENT_MORASI（:390-395）：漏尿癖取得。
+ * event_morasi：漏尿癖取得。
  *
- * @param {number} cid 角色 ID（原作循环里的 TARGET）
+ * @param {number} cid 角色 ID（角色循环的当前目标）
  */
 async function event_morasi(cid) {
   const name = chara_callname(cid);
@@ -1399,20 +1398,20 @@ async function event_morasi(cid) {
 }
 
 /**
- * @EVENT_YOUJI 清空的素质序号（原作 :405-456 的 13 个独立 `IF TALENT:n`
- * 块，逐个守卫「有才清」，故表驱动与逐块展开等价）。
+ * 幼儿退行清空的素质序号（13 个独立 `IF TALENT:n`
+ * 块，逐个「有才清」，故表驱动与逐块展开等价）。
  */
 const YOUJI_CLEARED_TALENTS = [
   20, 21, 22, 24, 26, 27, 30, 32, 34, 35, 37, 55, 93,
 ];
 
 /**
- * @EVENT_YOUJI（:399-465）：幼儿退行。
+ * event_youji：幼儿退行。
  *
  * 三条独立动作：13 项「严苛系」素质逐个清理（有才清 + 播报）→ 无【漏尿癖】
- * 则补上 → 【反抗刻印】清零。顺序即原作的书写顺序，播报次序可观察。
+ * 则补上 → 【反抗刻印】清零。顺序即三段动作的书写顺序，播报次序可观察。
  *
- * @param {number} cid 角色 ID（原作循环里的 TARGET）
+ * @param {number} cid 角色 ID（角色循环的当前目标）
  */
 async function event_youji(cid) {
   const name = chara_callname(cid);
@@ -1442,11 +1441,11 @@ async function event_youji(cid) {
 }
 
 /**
- * 日程推进（原作 @EVENT_NEXTDAY，#PRI 档日推进时先于 DAY:0 += 1 调用）。
+ * 日程推进（EVENTNEXTDAY，#PRI 档日推进时先于 DAY:0 += 1 调用）。
  */
 async function run_event_nextday() {
   // 全角色素质变化检查（FOR NEXTDAY_COUNT, 1, CHARANUM 跳过 0 号
-  // 位；行 11-12 的 SIF CONTINUE 是死代码——1 起永不为 0，照搬不模拟）
+  // 位；入口的 SIF CONTINUE 是死代码——1 起永不为 0，不模拟）
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) {
       continue;
@@ -1515,8 +1514,8 @@ async function run_event_nextday() {
       }
     }
 
-    // 媚药中毒 / :50 灵魂错位（无条件调用）——两者皆真身：#405 落
-    // ere/event/event-addict.js 与 chara-soul-transfer.js，本票（#400）接线
+    // 媚药中毒 / 灵魂错位（无条件调用）——两者皆真身：#405 落
+    // ere/event/event-addict.js 与 chara-soul-transfer.js，#400 接入
     await aphrodisiac_addict(cid);
     soul_dislocation(cid);
   }
@@ -1537,7 +1536,7 @@ async function run_event_nextday() {
   await pregnancy_mod.ninsin_main();
 
   // 出産日播报（FOR LOCAL, 0, CHARANUM 含 0 号位；妊娠 153 / 育儿
-  // 中 154；:75/:84/:88 的三个 CALL 是注释态，1:1 不调用——只剩分隔线）。
+  // 中 154；三个 CALL 目前没有调用点（被注释掉），保持不调用——只剩分隔线）。
   // CFLAG:110 出産日の属主即 event 域（ownership/cflag-ownership.yml），域内
   // 直读；写点在妊娠系统，本处只读比较
   for (const cid of era.getAddedCharacters()) {
@@ -1568,7 +1567,7 @@ async function run_event_nextday() {
     }
   }
 
-  // 着衣洗濯（原作注释态，不移植）
+  // 着衣洗濯（调用点被注释掉，不移植）
 
   // 处女献上检查（REPEAT 跳过 0 号位；SIF COUNT == 0 在这里有
   // 意义——COUNT 从 0 起）
@@ -1584,7 +1583,7 @@ async function run_event_nextday() {
   // 性交中毒夜這い检查（无条件）
   await night_stalking_check();
 
-  // 運営費（原作注释态，不移植）
+  // 運営費（调用点被注释掉，不移植）
 
   // 指輪と召喚（CURSE_EQUIP_RING #174 起真身）/ :123 召喚（参数 0）/
   // 设施効果（均无条件；DUNGEON_ROOM_DAY #177 起真身——商店街税入
@@ -1600,13 +1599,13 @@ async function run_event_nextday() {
     }
 
     await pillory(); // #400 起真身（ere/event/event-nextday-pillory.js）
-    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线
+    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接入
     await sabbath_day(cid);
     await ntr_video(cid);
     await event_video_day(cid);
 
-    // 善恶值随机变动（KARMA 四支；:147 条件是非处女——与原作
-    // 注释「处女の場合」相反，条件照搬，见文件头）
+    // 善恶值随机变动（KARMA 四支；第一支条件是非处女——与
+    // 注释「处女の場合」的字面语义相反，条件按原样保留，见文件头）
     if (!(era.get(`talent:${cid}:0`) || 0) && default_rand(3) === 0) {
       karma(cid, 1);
     }
@@ -1623,7 +1622,7 @@ async function run_event_nextday() {
     }
 
     // 信仰值增减：圣女（TALENT:315 == 12，成为勇者前的生活）/
-    // 神官（202）/ 巫女（206）上升；信仰不足 30 衰减；其后随机增减
+    // 神官/ 巫女上升；信仰不足 30 衰减；其后随机增减
     if (
       (era.get(`talent:${cid}:315`) || 0) === 12 ||
       era.get(`talent:${cid}:202`) ||
@@ -1639,20 +1638,20 @@ async function run_event_nextday() {
     }
   }
 
-  // 税収 / :184 水晶球投放结算 / :187 确定魔王候补（均无条件）
-  await tax_get(); // #396 真身（system/stronghold/tax.js），#400 接线
-  sengen_video_de(); // #502 真身（本文件；INVASION.ERB:1269-1281）
+  // 税収 / 水晶球投放结算 / 确定魔王候补（均无条件）
+  await tax_get(); // #396 真身（system/stronghold/tax.js），#400 接入
+  sengen_video_de(); // #502 真身（本文件）
   maou_kouho();
 
   // RETURN 1
 }
 
 /**
- * 翌朝事件（原作 @EVENT_NEWDAY，普通档日推进回合 TIME==0 时调用）。
+ * 翌朝事件（EVENTNEWDAY，普通档日推进回合 TIME==0 时调用）。
  *
- * 调用时机（turnend-settle.js:749-751）：#PRI 档已推进 DAY:0 += 1、TIME
+ * 调用时机（turnend-settle.js）：#PRI 档已推进 DAY:0 += 1、TIME
  * 已归 0——本函数入口即「新游戏日开始」的语义点，自动存档（#137 / ADR-0006
- * 的有意偏离，非原作动作）挂在这里，备注里的「第N日午前」反映新的一天。
+ * 的有意偏离，非既定动作）挂在这里，备注里的「第N日午前」反映新的一天。
  */
 async function run_event_newday() {
   // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的
@@ -1660,24 +1659,24 @@ async function run_event_newday() {
   await auto_save();
 
   // 影寿命循环（TALENT:292 魔王之影）：292 无写入路径，整段
-  // 当前不可达——登记不占位（docs/stub-registry.md），影角色票落地时按
-  // 原行号补真身（逐日 CFLAG:A:820 -1 播报、归零时 CFLAG:A:9 = 1 +
-  // CALL EXECUTION_MINI 并从头重扫）
+  // 当前不可达——登记不占位，影角色票实现时按
+  // 同位语义补真身（逐日 CFLAG:A:820 -1 播报、归零时 CFLAG:A:9 = 1 +
+  // 调用简易处刑并从头重扫）
 
   // 朝フェラ（晨间事件，无条件）
   await morning_fellatio();
 
-  // 誕生日（原作注释态，不移植）
+  // 誕生日（调用点被注释掉，不移植）
 
   // おねしょ（晨间事件，无条件）
   await onesho();
 
-  // 特定日付イベント（原作注释态，不移植）
+  // 特定日付イベント（调用点被注释掉，不移植）
 
   // 犬の散歩（晨间事件，无条件）
   await dog_walk();
 
-  // 主线剧情监测——每日一次的结局判定入口，@ENDCHECK 全链本体在
+  // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在
   // ere/event/event-endcheck.js（#116）
   await run_endcheck();
 

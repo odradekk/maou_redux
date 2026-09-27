@@ -24,12 +24,12 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-// 本函数沿原作分支密集读取的数字槽：TALENT 11 反抗心、12 刚强、14 文静、
+// 本函数沿各分支密集读取的数字槽：TALENT 11 反抗心、12 刚强、14 文静、
 // 16 嚣张、26 悲观、28 爱表现、34 抵抗、35 害羞、57 漏尿癖、60 容易自慰、
 // 80 倒错、85 爱慕、89 露出狂、113 魅力、121 扶她、122 男人、130 母乳体质、
 // 136 牝犬、153 妊娠、220 精英、308 体型、312 魅力点、315 成为勇者前的生活、
 // 317 喜欢的东西、329 造型王；EX_TALENT:1 是扣威望的特殊角色标志；
-// MARK:3 是反抗刻印。来源为 yml/Talent.yml、yml/Mark.yml 与原作对应条件。
+// MARK:3 是反抗刻印。槽位语义见 yml/Talent.yml、yml/Mark.yml。
 function get(name) {
   return era.get(name) || 0;
 }
@@ -38,16 +38,16 @@ function she(cid) {
   return chara(cid).chara.男人 ? '他' : '她';
 }
 
-// #DIMS MATURO 与内建 LOCALS 在 Emuera 中是函数静态槽；宝石支及隐藏的
-// 100 输入会观察到上次调用的残值，故不能降成每次调用重置的 JS 局部量。
+// MATURO 与 LOCALS 是函数级静态槽；宝石支及隐藏的 100 输入会观察到
+// 上次调用的残值，故不能降成每次调用重置的 JS 局部量。
 let maturo = '';
 let locals = '';
 
 /**
- * @MUSEUM：把指定角色制作成展品并从队伍中除名。
- * @param {number} a 原作单字母变量 A（待处刑角色 ID）
- * @param {(n: number) => number} [rand_n] RAND:N 随机源
- * @returns {Promise<number>} RESULT：恒 0
+ * museum：把指定角色制作成展品并从队伍中除名。
+ * @param {number} a 待处刑角色 ID
+ * @param {(n: number) => number} [rand_n] 随机源
+ * @returns {Promise<number>} 恒 0
  */
 async function museum(a, rand_n = default_rand) {
   if (a === 0) return 0;
@@ -79,7 +79,7 @@ async function museum(a, rand_n = default_rand) {
 
   let result;
   do {
-    // 原作 INPUT 可键入未显示的 100；关闭按钮规则才能保留其隐藏路径。
+    // 数字输入可键入未显示的 100；关闭按钮规则才能保留其隐藏路径。
     result = await era.input({ useRule: false });
   } while (result < 0 || (result >= 10 && result !== 100));
 
@@ -92,7 +92,7 @@ async function museum(a, rand_n = default_rand) {
     era.print('威望值减少');
   }
   game.event.博物馆口上 = result;
-  // EVENT_K.ERB:372-382 的 @MUSEUM_KOUJO（#403 收口到分发入口）
+  // 博物馆口上（museum_koujo，#403 收到分发入口）
   await museum_koujo(a, result, rand_n);
 
   if (game.event.博物馆口上 === 0) {
@@ -386,7 +386,7 @@ async function museum(a, rand_n = default_rand) {
             `变成喷水像的${chara_callname(a)}散发着说不出的美丽…`,
           );
           locals += '魅惑';
-          // TALENT:153（妊娠）与前支判据重叠、永不可达，保留死分支形态。
+          // TALENT:153（妊娠）与前支条件重叠、永不可达，保留死分支写法。
           // eslint-disable-next-line no-dupe-else-if
         } else if (get(`talent:${a}:153`)) {
           await era.printAndWait(
@@ -1489,12 +1489,12 @@ async function museum(a, rand_n = default_rand) {
   }
 
   lv = target_chara.chara.等级;
-  // FLAG:(NO:A + 199) = 对应勇者已经处刑（MUSEUM.ERB:1053）。普通角色的 NO
-  // 就是角色 ID；后代的原作 NO 是来源模板号，故经 template_no_of 换算。
+  // FLAG:(NO:A + 199) = 对应勇者已经处刑。普通角色的 NO 就是角色 ID；
+  // 后代的 NO 是来源模板号，故经 template_no_of 换算。
   era.set(`flag:${template_no_of(a) + 199}`, 1);
 
-  // FLAG:1/2 = 上次调教目标/助手；被删角色本身需清空。原作第 1062-1066 行
-  // 的注册号重排依赖 DELCHARA 后编号前移，ere 的角色 ID 稳定，故不移植。
+  // FLAG:1/2 = 上次调教目标/助手；被删角色本身需清空。旧引擎的注册号
+  // 重排依赖删除后编号前移，ere 的角色 ID 稳定，故不移植。
   if (game.event.上次调教对象 === a) game.event.上次调教对象 = -1;
   if (game.event.上次助手 === a) game.event.上次助手 = -1;
   era_flag.target = game.event.上次调教对象;
