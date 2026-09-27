@@ -601,7 +601,7 @@ export default [
     must_mention: '收入钳上限',
   },
   {
-    desc: 'M6634 EVENTEND 断开 SELL_MILK 真身',
+    desc: 'M6634 EVENTEND 断开 sell_milk 真身',
     file: 'ere/event/event-end.js',
     find: '    await sell_milk();',
     replace: '    // 变异：漏掉母乳结算',
@@ -609,7 +609,7 @@ export default [
     must_mention: 'EVENTEND 接入',
   },
   {
-    desc: 'M6635 EVENTEND 断开 SELL_FIGHTMONEY 真身',
+    desc: 'M6635 EVENTEND 断开 sell_fightmoney 真身',
     file: 'ere/event/event-end.js',
     find: '    await sell_fightmoney();',
     replace: '    // 变异：漏掉死斗场结算',

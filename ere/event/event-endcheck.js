@@ -22,7 +22,7 @@
  *     FLAG:2816 写入同样无消费点（死写入，保留）。
  *   - cflag/talent 的读是跨域读，放行（ADR-0002「跨域读放行」），直读
  *     + || 0 缺省处理（#13：未声明下标读得 undefined）。
- *   - 四条线状态机里的 `SIF` **只护住紧接的下一行**（引擎忽略缩进，
+ *   - 四条线状态机里的 `SIF` **只护住紧接的下一行**（该语法忽略缩进，
  *     条件语句不形成块）：endcheck_square 里 30-40 档的计数器清零在
  *     分支内无条件执行，不是书写错误，按现状保留，见该函数内注释。
  *     同理 endcheck_godness 各档里的 `SIF DAY:1 …` 只护住跳档那一行。
@@ -261,8 +261,8 @@ function endcheck_square(rand = default_rand) {
       era_exflag.route_22 = 30;
     }
   } else if (stage >= 30 && stage < 40) {
-    // ：SIF 只护住本档的跳档，计数器清零在下一行、分支内无条件
-    // 执行（引擎忽略缩进，本文件头注有据）——状态机的既有行为，保留不扩成 SIF 块
+    // SIF 只护住本档的跳档，计数器清零在下一行、分支内
+    // 无条件执行（该语法忽略缩进，本文件头注有据）——状态机的既有行为，保留不扩成 SIF 块
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_22 = 40;
     }
@@ -362,7 +362,7 @@ async function endcheck_spade(rand = default_rand) {
       era_exflag.route_21 = 30;
     }
   } else if (stage >= 30 && stage < 40) {
-    // ：SIF 只护住跳档那一行，计数器清零在分支内无条件（同 SQUARE）
+    // SIF 只护住跳档那一行，计数器清零在分支内无条件（同 SQUARE）
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_21 = 40;
     }

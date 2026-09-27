@@ -380,7 +380,7 @@ export default [
     must_mention: 'ARG 2 臂不得误读人间界状态再退一档',
   },
   {
-    desc: 'M205 ending_1 的 FLAG:82 置位删除（:38）',
+    desc: 'M205 ending_1 的 FLAG:82 置位删除',
     file: 'ere/event/event-ending.js',
     find: '  era_flag.human_realm_fallen = 1;',
     replace: '  // 变异：FLAG:82 不置位',
@@ -399,7 +399,7 @@ export default [
     must_mention: '退出路径不置陷落标记',
   },
   {
-    desc: 'M207 ending_1 入队角色号改坏（ADDCHARA 35 → 34，:20）',
+    desc: 'M207 ending_1 入队角色号改坏（ADDCHARA 35 → 34）',
     file: 'ere/event/event-ending.js',
     find: '  era.addCharacter(35);',
     replace: '  era.addCharacter(34); // 变异：入错角色',
@@ -407,7 +407,7 @@ export default [
     must_mention: '菲娅）入队',
   },
   {
-    desc: 'M208 ENDING_3 的置位状态机断在 1（FLAG:87 = 2 → 1，:72）',
+    desc: 'M208 ending_3 的置位状态机断在 1（FLAG:87 = 2 → 1）',
     file: 'ere/event/event-ending.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
@@ -662,7 +662,7 @@ export default [
     must_mention: '封印播报随 TARGET 指针取名',
   },
   {
-    desc: 'M442 ending_2 的 GAMEOVER 分隔行删除（:54）',
+    desc: 'M442 ending_2 的 GAMEOVER 分隔行删除',
     file: 'ere/event/event-ending.js',
     find: `  era.print(
     '-------------------------------GAMEOVER---------------------------------',
@@ -672,7 +672,7 @@ export default [
     must_mention: 'GAMEOVER 分隔行',
   },
   {
-    desc: 'M443 ending_2 横幅末行删除（:49「带着一丝不易察觉的微笑……」）',
+    desc: 'M443 ending_2 横幅末行删除（「带着一丝不易察觉的微笑……」）',
     file: 'ere/event/event-ending.js',
     find: "  era.print('｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜');",
     replace: '  // 变异：横幅末行删',
@@ -680,7 +680,7 @@ export default [
     must_mention: '横幅末行',
   },
   {
-    desc: 'M444 ending_2 的仪式性 INPUT 删除（:55）',
+    desc: 'M444 ending_2 的仪式性 INPUT 删除',
     file: 'ere/event/event-ending.js',
     find: '  // INPUT——确认用，结果不被消费（QUIT 之后无读者）\n  await era.input();',
     replace: '  // 变异：INPUT 删（演出不等确认直接 QUIT）',
@@ -688,7 +688,7 @@ export default [
     must_mention: 'INPUT 恰一次在 QUIT 之前',
   },
   {
-    desc: 'M445 ending_2 封印播报的读键删除（PRINTFORMW 不等键，:52）',
+    desc: 'M445 ending_2 封印播报的读键删除（PRINTFORMW 不等键）',
     file: 'ere/event/event-ending.js',
     find: '  await era.waitAnyKey(); // PRINTFORMW 的读键',
     replace: '  // 变异：PRINTFORMW 的读键删',
@@ -1412,9 +1412,9 @@ export default [
   {
     desc: 'M8242 endcheck_square 30-40 档下界：stage >= 30 误写成 >= 31（30 落空、计数器不清零）',
     file: 'ere/event/event-endcheck.js',
-    find: '  } else if (stage >= 30 && stage < 40) {\n    // ：SIF 只护住本档的跳档，计数器清零在下一行、分支内无条件',
+    find: '  } else if (stage >= 30 && stage < 40) {\n    // SIF 只护住本档的跳档，计数器清零在下一行、分支内',
     replace:
-      '  } else if (stage >= 31 && stage < 40) {\n    // ：SIF 只护住本档的跳档，计数器清零在下一行、分支内无条件',
+      '  } else if (stage >= 31 && stage < 40) {\n    // SIF 只护住本档的跳档，计数器清零在下一行、分支内',
     tests: ['event-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
