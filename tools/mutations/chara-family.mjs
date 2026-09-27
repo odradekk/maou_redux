@@ -20,7 +20,7 @@ export default [
       '    family_register(cid, rand_n);',
       '    void cid;',
       'ere/chara/chara-make.js',
-      'FAMILY_REGISTER 调用真身',
+      'family_register 调用真身',
     ),
     tests: ['chara-make'],
   },

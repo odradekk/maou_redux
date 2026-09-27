@@ -44,7 +44,7 @@ function load(fixture) {
   return fixture.load_module('chara/chara-name');
 }
 
-/** NAME:x / CALLNAME:x / SAVESTR:x 在 ere 侧同为 callname 表的两个键（#5 决议） */
+/** 姓名与称呼在 ere 侧同为 callname 表的两个键（#5 决议：-1 姓名、-2 称呼） */
 function names_of(fixture, cid) {
   return {
     name: fixture.store.get(`callname:${cid}:-1`),
@@ -52,13 +52,13 @@ function names_of(fixture, cid) {
   };
 }
 
-// —— @CHARA_NAME_DEFINE（:147-202）——
+// —— chara_name_define ——
 
-test('chara_name_define：特殊角色（NO 0 与 17-40）取 CSV 预设名并固定 NID = 10000 + NO', () => {
+test('chara_name_define：特殊角色（角色号 0 与 17-40）取预设名并固定 NID = 10000 + 角色号', () => {
   for (const cid of [0, 17, 40]) {
     const fixture = create_era_fixture();
     fixture.store.set('cflag:0:6', 7); // 反例：预设 NID 必须被覆盖
-    // 引擎的 chara: 静态表（yml/Chara<N>.yml 的装载结果），CSVCALLNAME 的读数源
+    // 引擎的 chara: 静态表（yml/Chara<N>.yml 的装载结果），预设称呼的读数源
     fixture.store.set(`chara:${cid}`, {
       id: cid,
       name: `预设名${cid}`,
@@ -66,8 +66,8 @@ test('chara_name_define：特殊角色（NO 0 与 17-40）取 CSV 预设名并�
     });
     const { chara_name_define } = load(fixture);
 
-    assert.equal(chara_name_define(cid, 1234), 0, ':161 RETURN 0');
-    // 的写入值走 var_writes：紧随其后的 RELATION_RENAME_REBUILD 会用
+    assert.equal(chara_name_define(cid, 1234), 0, '返回 0');
+    // 写入值走 var_writes：紧随其后的 relation_rename_rebuild 会用
     // chara-family 的 nid() 覆写同一个键，只看 store 会漏掉这一处的常量
     const writes = fixture.var_writes.filter(
       (write) => write.name === `cflag:${cid}:6`,
@@ -75,13 +75,13 @@ test('chara_name_define：特殊角色（NO 0 与 17-40）取 CSV 预设名并�
     assert.equal(
       writes[0]?.value,
       10_000 + cid,
-      `:159 首次写入 10000 + NO（${cid}）——后续的 RELATION_RENAME_REBUILD ` +
+      `首次写入 10000 + 角色号（${cid}）——后续的 relation_rename_rebuild ` +
         '会用 chara-family 的 nid() 再写一次同一个键，只看 store 会漏掉这一处',
     );
     assert.deepEqual(
       names_of(fixture, cid),
       { name: `预称呼${cid}`, callname: `预称呼${cid}` },
-      `NO ${cid} 取 CSVCALLNAME 而非传入的 NID 1234`,
+      `${cid} 号取预设称呼而非传入的 NID 1234`,
     );
   }
 });
@@ -94,24 +94,24 @@ test('chara_name_define：特殊角色区间两侧——16 与 41 走普通路�
     assert.equal(
       fixture.store.get(`cflag:${cid}:6`),
       205,
-      `NO ${cid} 不在 [17,40] 内，预设 NID 生效`,
+      `角色号 ${cid} 不在 [17,40] 内，预设 NID 生效`,
     );
   }
 });
 
-test('chara_name_define：默认 L_NID = -1 时沿用 CFLAG:6 现值', () => {
+test('chara_name_define：默认（NID = -1）时沿用 CFLAG:6 现值', () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:5:6', 205);
   fixture.store.set('namelistkeys', [205]);
   fixture.store.set('namelistname:205', '露娜');
   const { chara_name_define } = load(fixture);
   chara_name_define(5);
-  assert.equal(fixture.store.get('cflag:5:6'), 205, ':166 L_NID = CFLAG:L_A:6');
-  // 名单里 205 号有名字 → 名字必须按 205 查出来（缺了 :166 的回读会落 佳奈美）
+  assert.equal(fixture.store.get('cflag:5:6'), 205, '沿用 CFLAG:6 现值');
+  // 名单里 205 号有名字 → 名字必须按 205 查出来（缺了这处回读会落 佳奈美）
   assert.equal(
     fixture.store.get('callname:5:-1'),
     '露娜',
-    ':176 查的是 CFLAG:6',
+    '名字按 CFLAG:6 查出',
   );
 });
 
@@ -124,13 +124,13 @@ test('chara_name_define：显式 NID 写回 CFLAG:6，并在两次改名点重�
 
   fixture.store.set('cflag:3:6', 205);
   chara_name_define(3, 205);
-  assert.equal(fixture.store.get('c_relation:3:3'), 205, ':169 重建写对角');
+  assert.equal(fixture.store.get('c_relation:3:3'), 205, '重建写对角');
 
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
-  fixture.store.set('c_relation:0:0', 12345); // MASTER 的对角错位
+  fixture.store.set('c_relation:0:0', 12345); // 0 号（魔王）的对角错位
   chara_name_define(0);
-  assert.equal(fixture.store.get('c_relation:0:0'), 10_000, ':160 重建写对角');
+  assert.equal(fixture.store.get('c_relation:0:0'), 10_000, '重建写对角');
 });
 
 test('chara_name_define：固定名列表命中时写入三个名字键', () => {
@@ -158,11 +158,11 @@ test('chara_name_define：固定名列表空串（有产物但该编号没记名
 });
 
 test('chara_name_define：无效 NID（列表外）回落佳奈美', () => {
-  // 5500 是 VARSIZE("LIST_CHARA_NAME") 的等价常量（CHARA_NAME.ERH:7）；
-  // 5499（声明界内）与 5500（界外）都走「无效的NID」分支——:175 判的是
+  // 5500 是固定名表的声明尺寸（LIST_CHARA_NAME_SIZE，ere/chara/chara-name-list.js）；
+  // 5499（声明界内）与 5500（界外）都走「无效的NID」分支——判的是
   // 声明尺寸而非注册表，两个边界都必须回落到佳奈美。
-  // （:193 的 L_NID 钳位是死写、不可观察，故本用例只断名字；见
-  // chara-name.js 该行的注释。）
+  // （NID 的钳位是死写、不可观察，故本用例只断名字；见
+  // chara-name.js 相应位置的注释。）
   for (const nid of [5499, 5500]) {
     const fixture = create_era_fixture();
     fixture.store.set('namelistkeys', [205]);
@@ -174,7 +174,7 @@ test('chara_name_define：无效 NID（列表外）回落佳奈美', () => {
       `NID ${nid}`,
     );
   }
-  // 尺寸判据的上界：5500 号**即使已注册**也必须走无效分支（:175 的 5500 是
+  // 尺寸判断条件的上界：5500 号**即使已注册**也必须走无效分支（5500 是
   // 声明尺寸，不是注册表尺寸——把常量抬到 5501 就会去查这张表）
   const boundary = create_era_fixture();
   boundary.store.set('namelistkeys', [5500]);
@@ -212,9 +212,9 @@ test('chara_name_define：NID < 1e9 一侧走固定名表（空表回落佳奈�
   });
 });
 
-// —— @CHARA_NAME_RESET（:209-218）——
+// —— chara_name_reset ——
 
-test('chara_name_reset：17-40 的勇者取 CSV 呼び名覆盖称呼', () => {
+test('chara_name_reset：17-40 的勇者取预设称呼覆盖称呼', () => {
   for (const cid of [17, 40]) {
     const fixture = create_era_fixture();
     fixture.store.set(`chara:${cid}`, {
@@ -243,14 +243,14 @@ test('chara_name_reset：区间外（16 / 41）回落姓名本体', () => {
     assert.equal(
       fixture.store.get(`callname:${cid}:-2`),
       '本名',
-      `NO ${cid} 走 NAME:L_A 而非 CSV`,
+      `角色号 ${cid} 走姓名键而非预设称呼`,
     );
   }
 });
 
-// —— @CN_REBUILD（:225-230）——
+// —— cn_rebuild ——
 
-test('cn_rebuild：逐个角色以姓名重建称呼，跳过 MASTER（0）', () => {
+test('cn_rebuild：逐个角色以姓名重建称呼，跳过 0 号（魔王）', () => {
   const fixture = create_era_fixture();
   for (const cid of [0, 3, 7]) {
     fixture.seed_chara(cid, {
@@ -269,11 +269,11 @@ test('cn_rebuild：逐个角色以姓名重建称呼，跳过 MASTER（0）', ()
   assert.equal(
     fixture.store.get('callname:0:-2'),
     '旧称呼',
-    'MASTER 被 CONTINUE 跳过',
+    '0 号（魔王）被跳过',
   );
 });
 
-// —— @NID_GET_TYPE（:255-265；#384 起真身在本文件）——
+// —— nid_get_type（#384 起真身在本文件）——
 
 test('nid_get_type：三档分界与男性和名/中式名的和名归位', () => {
   const fixture = create_era_fixture();
@@ -293,14 +293,14 @@ test('nid_get_type：三档分界与男性和名/中式名的和名归位', () =
     ['4058 → 和名（男性和名终点 3000+1059-1）', 4058, 0],
     ['4500 → 和名（中式名起点）', 4500, 0],
     ['5288 → 和名（中式名终点 4500+789-1）', 5288, 0],
-    ['负数 NID → 洋名（:260 的 < 200 侧）', -1, 1],
+    ['负数 NID → 洋名（< 200 侧）', -1, 1],
   ];
   for (const [label, nid, expected] of cases) {
     assert.equal(nid_get_type(nid), expected, label);
   }
 });
 
-// —— @CN_SPAN_COMBINE_NAME_NUM / @CN_SPAN_COMBINE_NAME（:291-604）——
+// —— cn_span_combine_name_num / cn_span_combine_name ——
 
 const VER2_TABLE = new Map([
   [200, 'アー'],
@@ -380,7 +380,7 @@ test('cn_span_combine_name：ver0.2 全档位表——单段 NID 逐档映射（
   const fixture = create_era_fixture();
   const { cn_span_combine_name } = load(fixture);
   // 单段取值恒落在 200-501（生成器的首段与末段实测范围），900 段由
-  // 原作标注「使用しない」不在此列（它只可能出现在非末段，而 900 段是
+  // 在档位表里标注「使用しない」不在此列（它只可能出现在非末段，而 900 段是
   // 长词，见下一条用例）
   for (const [piece, word] of VER2_TABLE) {
     if (piece >= 900) {
@@ -404,8 +404,8 @@ test('cn_span_combine_name：段首被吃规则——非首段丢掉 ア/イ/ウ
       2_000_000_000 + 207_400,
       'ヴィアカル',
     ],
-    // 401 档在原作里不存在（:430 的重复 400 是死档，见文件头）：段值落空时
-    // 的 IF 链没有 ELSE，LOCALS 保持上一轮的值。低位段先入，
+    // 401 档在档位表里不存在（重复登记的 400 档是死档，见 chara-name.js
+    // 的档位表注释）：段值落空时沿用上一轮的词。低位段先入，
     // 故首位落空 = 拼上空串，非首位落空 = 把上一段又拼一遍。
     ['落空档在首位：拼上空串', 2_000_000_000 + 401, ''],
     ['落空档在首位、其后正常段照拼', 2_000_000_000 + 207_401, 'カル'],
@@ -420,39 +420,39 @@ test('cn_span_combine_name：段首被吃规则——非首段丢掉 ア/イ/ウ
       'ーー',
     ],
     // 501 段（「ン」）只可能出现在首段高位，作非首段是生成器不可达的
-    // 形态（generator 只给 500 段作末段）；此处按「非首段吃掉首字」的规则钉值
+    // 写法（生成器只给 500 段作末段）；此处按「非首段吃掉首字」的规则钉值
     ['非首段 501「ン」被吃成空段', 2_000_000_000 + 501_500, 'ー'],
     ['首段 300「ヴェ」+ 末段 500「ー」', 2_000_000_000 + 300_500, 'ーヴェ'],
   ];
   for (const [label, nid, expected] of cases) {
     assert.equal(cn_span_combine_name(nid), expected, label);
   }
-  // 末段段首被吃的两侧：404「タ」不以元音起、照抄
+  // 末段段首被吃的两侧：404「タ」不以元音起、原样保留
   assert.equal(cn_span_combine_name(2_000_000_000 + 207_404), 'タカル');
-  // 「ー」起头的档位被吃：200 段「アー」的非首段形态只剩尾巴「ー」
+  // 「ー」起头的档位被吃：200 段「アー」的非首段形式只剩尾巴「ー」
   // （低位段 500「ー」先入 → 段首的「ア」被吃 → 「ー」）
 });
 
-test('cn_span_combine_name：ッ 结尾时下一段的「ー」丢尾两字（:504-508）', () => {
+test('cn_span_combine_name：ッ 结尾时下一段的「ー」丢尾两字', () => {
   const fixture = create_era_fixture();
   const { cn_span_combine_name } = load(fixture);
   // 低位段 500「ー」先入（首段，保留）→ 高位段 426「ッラ」：段首「ッ」不在
-  // 吃字表内，整词照抄（:504-508 只在「本段首字是 ー」时开花，与此无交集）
+  // 吃字表内，整词保留（丢尾规则只在「本段首字是 ー」时开花，与此无交集）
   assert.equal(cn_span_combine_name(2_000_000_000 + 426_500), 'ーッラ');
   // 的正面（acc 以「ッ」结尾 + 本段首字「ー」→ 切掉 acc 末两字）
   // 在当前生成器下不可达：能产出「ッ」结尾的档位只有 426「ッラ」，而它自带
-  // 尾字「ラ」，下一段进来时 acc 的尾字恒是「ラ」。这段逻辑按 1:1 保留，
-  // 不设用例（设了也只能自证实现、证不了原作）。
+  // 尾字「ラ」，下一段进来时 acc 的尾字恒是「ラ」。这段逻辑按既有行为原样保留，
+  // 不设用例（设了也只能自证实现，起不到对照作用）。
 });
 
-test('cn_span_combine_name：900 段（长词，原作标注「不使用」）作非末段时整词保留首段', () => {
+test('cn_span_combine_name：900 段（长词，档位表标注「不使用」）作非末段时整词保留首段', () => {
   const fixture = create_era_fixture();
   const { cn_span_combine_name } = load(fixture);
   // 首段 900「サン」+ 末段 404「タ」
   assert.equal(cn_span_combine_name(2_000_000_000 + 900_404), 'タサン');
 });
 
-test('cn_span_combine_name：ver0.1 表（ARG 落 [1e9,2e9]，生成器不产、留档路径）逐档', () => {
+test('cn_span_combine_name：ver0.1 表（编号落 [1e9,2e9]，生成器不产、留档路径）逐档', () => {
   const fixture = create_era_fixture();
   const { cn_span_combine_name } = load(fixture);
   const ver1 = new Map([
@@ -504,7 +504,7 @@ test('cn_span_combine_name：ver0.1 表（ARG 落 [1e9,2e9]，生成器不产、
       `ver0.1 档位 ${piece}`,
     );
   }
-  // 表外档位无产物（原作落到没有分支的 IF 链尾，LOCALS:9 不动）
+  // 表外档位无产物（表里没有该档，拼入空串）
   assert.equal(cn_span_combine_name(1_000_000_000 + 199), '');
 });
 
@@ -514,7 +514,7 @@ test('cn_span_combine_name：两处分支下界（1e9 与 2e9）都走 ver0.1 �
   assert.equal(
     cn_span_combine_name(1_000_000_000),
     '',
-    '恰 1e9：两条 > 判据都不中',
+    '恰 1e9：两条 > 条件都不中',
   );
   // 恰 2e9：rest = 0，while(0 > 1) 不进循环
   assert.equal(cn_span_combine_name(2_000_000_000), '');
@@ -524,21 +524,21 @@ test('cn_span_combine_name_num：长度分档与首段/末段档位的掷骰上�
   const fixture = create_era_fixture();
   const { cn_span_combine_name_num, cn_span_combine_name } = load(fixture);
 
-  // L_L = 3 - RAND:2 - RAND:3 % 2；RAND:2 上界与 RAND:3 上界都必须被钉住
+  // 名字长度 = 3 - rand(2) - rand(3) % 2；rand(2) 上界与 rand(3) 上界都必须被钉住
   const three = seq_capture([0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   assert.equal(cn_span_combine_name_num(three) >= 2_000_000_000, true);
   assert.deepEqual(three.bounds.slice(0, 2), [2, 3], '前两掷的上界');
-  // 首段的两音判定（:305-310）：L_L = 3 时必掷 RAND:5，上界 5 是本票的字面量
+  // 首段的两音判定：长度为 3 时必掷 rand(5)，上界 5 是这张工单钉住的字面量
   assert.equal(three.bounds[2], 5, '首段两音判定的上界恒 5');
 
-  // RAND:2 = 1、RAND:3 = 1 → L_L = 3 - 1 - 1 = 1（单段）
+  // rand(2) = 1、rand(3) = 1 → 长度 = 3 - 1 - 1 = 1（单段）
   const one = seq_capture([1, 1, 0, 0, 0]);
   const nid = cn_span_combine_name_num(one);
   // 编号 = 2e9 + 一段三位数 → 10 位
   assert.equal(String(nid).length, 10, '单段编号恰 10 位');
   assert.notEqual(cn_span_combine_name(nid), '', '单段名非空');
 
-  // RAND:2 = 0、RAND:3 = 1 → L_L = 3 - 0 - 1 = 2（两段）
+  // rand(2) = 0、rand(3) = 1 → 长度 = 3 - 0 - 1 = 2（两段）
   const two = seq_capture([0, 1, 1, 0, 0, 0, 0, 0]);
   const nid2 = cn_span_combine_name_num(two);
   assert.equal(String(nid2).length, 10, '两段编号同为 10 位（每段三位）');
@@ -552,7 +552,7 @@ test('cn_span_combine_name_num：各档位的编号值逐一钉住（生成器�
   // 每条都给全掷骰序（越界回落成 0），断言的是**生成器产出的 NID 值**——
   // 档位下界（300/200/400/500）与拆位基数都在这个值上可见；只测
   // cn_span_combine_name 的查表是够不着这些字面量的。
-  // 单段名的段值是 200-229（L_L == 1 时 :314 的两个条件都不成立，恒走两音段），
+  // 单段名的段值是 200-229（长度 1 时那两个条件都不成立，恒走两音段），
   // 所以一音段/终端段的用例都取两段名。
   const cases = [
     ['一段两音：2e9 + 200', [0, 1, 0, 1, 1, 0], 2_000_200_300, 'ヴェー'],
@@ -592,17 +592,17 @@ test('cn_span_combine_name_num：随机名的生成域与「名字非空」不�
   for (let i = 0; i < 2000; i += 1) {
     const nid = cn_span_combine_name_num(rand);
     // 恒为 2e9 + 1-3 段三位数 → 10 位十进制数
-    assert.match(String(nid), /^2\d{9}$/, `编号 ${nid} 的形态`);
+    assert.match(String(nid), /^2\d{9}$/, `编号 ${nid} 的形式`);
     assert.notEqual(cn_span_combine_name(nid), '', `NID ${nid} 的名字不得为空`);
   }
 });
 
-// —— @CHARA_NAME_RANDOM_DEFINE（:14-141，随机命名入口）——
+// —— chara_name_random_define（随机命名入口）——
 
 test('chara_name_random_define：职业偏向——骑士掷中偏洋名、巫女/忍者偏和名', () => {
   const fixture = create_era_fixture();
   const { chara_name_random_define } = load(fixture);
-  // 骑士（205）+ RAND:10 != 0 → L_TYPE = 1 → 洋名分支（rand(585) + 0）
+  // 骑士（205）+ rand(10) != 0 → 名字类型 1 → 洋名分支（rand(585) + 0）
   fixture.store.set('talent:9:205', 1);
   chara_name_random_define(9, -1, seq([1, 0])); // rand(10)=1, rand(585)=0
   assert.equal(
@@ -611,7 +611,7 @@ test('chara_name_random_define：职业偏向——骑士掷中偏洋名、巫�
     '洋名编号 = rand(585) 无偏移',
   );
 
-  // 巫女（206）+ RAND:10 != 0 → L_TYPE = 0 → 经 RAND:5 % 2 再定
+  // 巫女（206）+ rand(10) != 0 → 名字类型 0 → 经 rand(5) % 2 再定
   const f2 = create_era_fixture();
   f2.store.set('talent:9:206', 1);
   f2.store.set('namelistkeys', []);
@@ -619,11 +619,11 @@ test('chara_name_random_define：职业偏向——骑士掷中偏洋名、巫�
   run2(9, -1, seq([1, 0, 1, 0])); // rand(10)=1, rand(5)=0→%2=0, rand(450)=1
   assert.equal(f2.store.get('cflag:9:6'), 201, '和名编号 = rand(450) + 200');
 
-  // 骑士与巫女都未命中（talent 未设）→ 不掷 RAND:10
+  // 骑士与巫女都未命中（talent 未设）→ 不掷 rand(10)
   const f3 = create_era_fixture();
   const cap = seq_capture([0]);
   f3.load_module('chara/chara-name').chara_name_random_define(9, -1, cap);
-  assert.deepEqual(cap.bounds, [585], '无 talent 时不掷职业偏向的 RAND:10');
+  assert.deepEqual(cap.bounds, [585], '无 talent 时不掷职业偏向的 rand(10)');
 });
 
 test('chara_name_random_define：种族偏向表——九个种族偏洋名、人狼偏和名、其余不动', () => {
@@ -636,7 +636,7 @@ test('chara_name_random_define：种族偏向表——九个种族偏洋名、�
     chara_name_random_define(9, -1, seq([0])); // rand(585) = 0
     assert.equal(fixture.store.get('cflag:9:6'), 0, `种族 ${race} 偏洋名`);
   }
-  // 和名侧：2 人狼 → 经 RAND:5 % 2
+  // 和名侧：2 人狼 → 经 rand(5) % 2
   const wolf = create_era_fixture();
   wolf.store.set('cflag:9:314', 2);
   wolf
@@ -654,12 +654,12 @@ test('chara_name_random_define：种族偏向表——九个种族偏洋名、�
     assert.deepEqual(
       cap.bounds,
       [585],
-      `种族 ${race} 无偏向（不掷 RAND:5，直接走洋名）`,
+      `种族 ${race} 无偏向（不掷 rand(5)，直接走洋名）`,
     );
   }
 });
 
-test('chara_name_random_define：和名分支 RAND:5 % 2 —— 1/3/4 落和名、0/2 落洋名', () => {
+test('chara_name_random_define：和名分支 rand(5) % 2 —— 1/3/4 落和名、0/2 落洋名', () => {
   for (const [roll, expected_type] of [
     [0, 0],
     [1, 1],
@@ -672,9 +672,9 @@ test('chara_name_random_define：和名分支 RAND:5 % 2 —— 1/3/4 落和名�
     chara_name_random_define(9, 0, seq([roll, 0]));
     const nid = fixture.store.get('cflag:9:6');
     if (expected_type === 0) {
-      assert.equal(nid, 200, `RAND:5 = ${roll} → %2 = 0 → 和名 200`);
+      assert.equal(nid, 200, `rand(5) = ${roll} → %2 = 0 → 和名 200`);
     } else {
-      assert.equal(nid, 0, `RAND:5 = ${roll} → %2 = 1 → 洋名 0`);
+      assert.equal(nid, 0, `rand(5) = ${roll} → %2 = 1 → 洋名 0`);
     }
   }
 });
@@ -683,12 +683,12 @@ test('chara_name_random_define：男性角色的和名/洋名编号换用男名�
   const fixture = create_era_fixture();
   fixture.store.set('talent:9:122', 1); // TALENT:男人
   const { chara_name_random_define } = load(fixture);
-  // 和名（type 0）+ 男性 → 先 RAND:5 % 2 定类型，再 rand(JAPANESE_MALE_NAME_COUNT) + 3000
+  // 和名（type 0）+ 男性 → 先 rand(5) % 2 定类型，再 rand(JAPANESE_MALE_NAME_COUNT) + 3000
   chara_name_random_define(9, 0, seq([0, 7]));
   assert.equal(
     fixture.store.get('cflag:9:6'),
     3000,
-    '3000 起始偏移（RAND:5 后仍落和名）',
+    '3000 起始偏移（rand(5) 后仍落和名）',
   );
 
   // 洋名（type 1）+ 男性 → 先掷 rand(585) 再被男名表覆盖为
@@ -726,7 +726,7 @@ test('chara_name_random_define：重复检查排除自身、命中他人则重�
 });
 
 test('chara_name_random_define：名字空间占满时逐条改换类型（三条可达规则各一侧）', () => {
-  // 三个阈值都在 1000 角色的量级（CHARANUM 是已加入角色数，真造造不出来），
+  // 三个阈值都在 1000 角色的量级（阈值按已加入角色数算，真实流程造不出来），
   // 用 mock 的 getAddedCharacters 提供足量编号。
   //
   // 每条都用一层**查表宽度**断言：只读最终 NID 分不出「改换类型后重掷」与
@@ -734,7 +734,7 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
   // 办法：把 1 号角色的 NID 种成「首掷必然撞上的值」，逼出重掷那一轮
   // （首掷撞不上时循环在第一轮就结束，根本走不到占满判定）。
   //
-  // 第四条规则（:130-131 男性向和名占满）**不可达**，没有用例：它的判据
+  // 第四条规则（男性和名占满）**不可达**，没有用例：它的判断条件
   // 蕴含第一条（1059 > 450）而第一条先中。chara-name.js 文件头有推导。
   const run = (count, type, talents, seed_nid, vals) => {
     const fixture = create_era_fixture();
@@ -753,23 +753,22 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
     return { cap, nid: fixture.store.get('cflag:9:6') };
   };
 
-  // ① 和名占满：判据是 `CHARANUM*4/10 > JAPANESE_NAME_COUNT(450)`，**整数除法**
-  //    （Emuera 的 / 是向零截断）：1126 时 4504/10 = 450 不 > 450，1128 才过。
-  //    掷骰序：RAND:5（定类型）→ RAND:450（和名 201，撞种下的 201）→ RAND:585
+  // ① 和名占满：判断条件是 `已加入角色数*4/10 > JAPANESE_NAME_COUNT(450)`，**整数除法**
+  //    （除法向零截断）：1126 时 4504/10 = 450 不 > 450，1128 才过。
+  //    掷骰序：rand(5)（定类型）→ rand(450)（和名 201，撞种下的 201）→ rand(585)
   const a = run(1128, 0, {}, { 1: 201 }, [0, 1, 300]);
   assert.deepEqual(a.cap.bounds, [5, 450, 585], '和名 450 → 洋名 585');
   assert.equal(a.nid, 1300, '改洋名后掷出 1300（300 + 1000 档）');
 
   // ② 洋名占满：469 > WEST_NAME_COUNT*8/10 = 468 → 改和名
-  //    掷骰序：RAND:585（洋名 5，撞种下的 5）→ RAND:450（和名 200）
+  //    掷骰序：rand(585)（洋名 5，撞种下的 5）→ rand(450)（和名 200）
   const b = run(469, 1, {}, { 1: 5 }, [5, 0, 0]);
   assert.deepEqual(b.cap.bounds, [585, 450], '洋名 585 → 和名 450');
   assert.equal(b.nid, 200, '改和名后掷出 200（200-299 区间）');
 
   // ④ 男性洋名占满：363 > WEST_MALE_NAME_COUNT*8/10 = 362.4，而第二条的
   //    468 不成立 → 只有这一条能中。掷骰序：585（被男名表覆盖）→ 453 掷出
-  //    2000（撞种下的 2000）→ 改和名 → 450 与 1059 两掷（男性两支都掷，
-  //    与 :100-105 的两条 SIF 一致）→ 3000
+  //    2000（撞种下的 2000）→ 改和名 → 450 与 1059 两掷（男性两支都掷）→ 3000
   const d = run(363, 1, { 122: 1 }, { 1: 2000 }, [0, 0, 0]);
   assert.deepEqual(
     d.cap.bounds,
@@ -778,39 +777,39 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
   );
   assert.equal(d.nid, 3000, '改男性和名后掷出 3000');
 
-  // ⑤ 真落 ELSE（组合名）：count = 2 时三条占满判据都不成立
+  // ⑤ 三条占满判断条件都不成立时改组合名：count = 2 时正是如此
   const e = run(2, 1, {}, { 1: 0 }, [0, 0, 0]);
   assert.deepEqual(e.cap.bounds, [585, 789], '洋名 585 → 组合名 789');
-  assert.equal(e.nid, 4500, '落 ELSE → 组合名 4500 起');
+  assert.equal(e.nid, 4500, '改组合名 → 4500 起');
 
   // 阈值判别（第一条的 4/10，**整数除法**）：count = 1126 时 4504/10 = 450
-  // 不 > 450 → 判据不成立、落 ELSE 走组合名；1128 时 4512/10 = 451 才过。
+  // 不 > 450 → 判断条件不成立、走组合名；1128 时 4512/10 = 451 才过。
   // 这两条把「整数截断 vs 浮点」的分野钉在 1126/1128 上（浮点会在 1126 就过）。
   const at1126 = run(1126, 0, {}, { 1: 201 }, [0, 1, 0]);
   assert.deepEqual(
     at1126.cap.bounds,
     [5, 450, 789],
-    '1126 时 4504/10 截断成 450，判据不成立 → 组合名',
+    '1126 时 4504/10 截断成 450，判断条件不成立 → 组合名',
   );
   assert.equal(at1126.nid, 4500, '组合名 4500 起');
 
-  // 阈值判别（第一条的 4/10）：count = 1000 时 4000/10 = 400 未过 450 → 判据
-  // 不成立、落 ELSE 走组合名；把 4 改成 5 就是 500 > 450、会改类型去掷 585。
+  // 阈值判别（第一条的 4/10）：count = 1000 时 4000/10 = 400 未过 450 → 判断条件
+  // 不成立、走组合名；把 4 改成 5 就是 500 > 450、会改类型去掷 585。
   const h = run(1000, 0, {}, { 1: 200 }, [0, 0, 0, 0]);
   assert.deepEqual(
     h.cap.bounds,
     [5, 450, 789],
-    'count=1000 时和名判据不成立 → 落 ELSE 走组合名',
+    'count=1000 时和名判断条件不成立 → 走组合名',
   );
   assert.equal(h.nid, 4500, '组合名 4500 起');
 
-  // 阈值判别（第二条的 8/10）：count = 468 时 468 > 468 不成立 → 落 ELSE；
+  // 阈值判别（第二条的 8/10）：count = 468 时 468 > 468 不成立 → 走组合名；
   // 469 时成立 → 改和名（上一条用例）。两端各一侧。
   const at468 = run(468, 1, {}, { 1: 0 }, [0, 0, 0]);
   assert.deepEqual(
     at468.cap.bounds,
     [585, 789],
-    '468 == 阈值下侧 → 判据不成立',
+    '468 == 阈值下侧 → 判断条件不成立',
   );
 
   // 对照：有一号角色被占但不撞车 → 不重掷（569 = rand(585) 直接收，
@@ -826,39 +825,39 @@ test('chara_name_random_define：名字空间占满时逐条改换类型（三�
   assert.deepEqual(cap.bounds, [585], '空表时只掷一次');
 });
 
-test('chara_name_random_define：末端 JUMP 到 chara_name_define 真身（名字落地）', () => {
+test('chara_name_random_define：末端尾调用 chara_name_define 真身（名字写入）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('namelistkeys', [0]);
   fixture.store.set('namelistname:0', '');
   const { chara_name_random_define } = load(fixture);
   const result = chara_name_random_define(9, 1, seq([0]));
-  assert.equal(result, undefined, 'JUMP 不向调用点返回结果');
+  assert.equal(result, undefined, '尾调用不向调用点返回结果');
   assert.equal(
     fixture.store.get('callname:9:-1'),
     '佳奈美',
-    '固定名 0 未注册名字 → 佳奈美（真身已落地，不再是占位行）',
+    '固定名 0 未注册名字 → 佳奈美（真身已执行，不再是占位行）',
   );
 });
 
-// —— @RAND_CHARA_MAKE（CHAR_MAKE.ERB:42-194）——
+// —— rand_chara_make（ere/chara/chara-make.js）——
 //
-// 这条线的 UI 依赖（八处 FUNC_CHARA_AND_HAIR 与 SHOW_CHARA_INFO）以
+// 这条线的 UI 依赖（chara-and-hair.js 的性格/发色交互函数与 show_chara_info）以
 // stub_line_wait 占位，故断言分两层：可观测的状态变化（新角色入库、
 // flag 搬迁、CFLAG:1 归零）＋ 分支走向（换人循环、16 位占满的早退）。
 //
-// 随机源：`never` 恒 1 只够表达「位号」，内部 CHAR_MAKE 的名字重掷要大量
+// 随机源：`never` 恒 1 只够表达「位号」，内部 chara_make 的名字重掷要大量
 // 掷骰，故统一用 `seq_capture`（越界回落到 0）——且每个预设角色都先种一个
 // **不可能撞车**的 NID（99），否则名字重掷会与同 NID 的既有角色相撞而
 // `addCharacter` 返回 false。
 
-/** 打桩的异国勇者判定：恒「不是异国勇者」（返回 0 = CHAR_MAKE_INPORT 的未命中） */
+/** 打桩的异国勇者判定：恒「不是异国勇者」（返回 0 = chara_make_inport 的未命中） */
 const not_overseas = () => Promise.resolve(0);
 
 /**
  * 让 era.input 依次返回给定答案。
  *
- * @RAND_CHARA_MAKE 里有两处 INPUT：:107 的形象确认（0=改性格 / 1=改发色 /
- * 100=继续）与 :158 的收下确认（1=换一个 / 2=收下）。测试给的序列要把
+ * rand_chara_make 里有两处输入：形象确认（0=改性格 / 1=改发色 /
+ * 100=继续）与收下确认（1=换一个 / 2=收下）。测试给的序列要把
  * 前者写在前头（`[100, 2]` = 不改形象、收下）。
  */
 function answer_sequence(fixture, answers) {
@@ -879,30 +878,30 @@ function load_rand(fixture) {
   return fixture.load_module('chara/chara-make').rand_chara_make;
 }
 
-test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并返回新角色号', async () => {
+test('rand_chara_make：挑中空位——新建、加 EX、chara_make 收尾并返回新角色号', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 2);
   seed_hero(fixture, 9);
   fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
   fixture.store.set('flag:1', 2); // 上一位调教对象 == 新角色（掷出 2 号）
-  answer_sequence(fixture, [100, 2]); // 继续 → :158 收下
+  answer_sequence(fixture, [100, 2]); // 继续 → 收下
   const result = await load_rand(fixture)(seq_capture([1]), not_overseas);
 
-  // #487：:63-64 的 A / ID_OF_NEWCHARA 是**角色号**（掷中的勇者位），不是
-  // 「第几个加入」——招募后 CHARANUM = 2 →「已加入数 - 1」= 1 ≠ 2
-  assert.equal(result, 2, ':194 RETURN CHARANUM-1 = 新角色的角色号');
+  // #487：新建角色代号（newchara）取的是**角色号**（掷中的勇者位），不是
+  // 「第几个加入」——招募后已加入数 = 2 →「已加入数 - 1」= 1 ≠ 2
+  assert.equal(result, 2, '返回值 = 新角色的角色号');
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
     [2, 9],
-    ':61 ADDCHARA 落在 2 号位',
+    'addCharacter 落在 2 号位',
   );
-  assert.equal(fixture.store.get('cflag:2:1'), 0, ':180 CFLAG:1 归零');
+  assert.equal(fixture.store.get('cflag:2:1'), 0, 'CFLAG:1 归零');
   assert.equal(
     fixture.store.get('cflag:1:1'),
     undefined,
     '不写到「人数 - 1」的 1 号',
   );
-  // 的置 1 会被 :182 的归 0 掩盖，只看终值分不出有没有写过——按写
+  // 派遣标志的置 1 会被收下分支的归 0 掩盖，只看终值分不出有没有写过——按写
   // 记录断言（#494 补 #487 验收发现的覆盖缺口：该行的 1 改成 0 时
   // chara-name / chara-make / chara-and-hair / campaign-e2e / page-campaign
   // 五份用例曾全绿）
@@ -910,30 +909,26 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
     fixture.var_writes.some(
       (write) => write.name === 'flag:402' && write.value === 1,
     ),
-    ':139 派遣奴隶标志置 1（等级 1 生成）',
+    '派遣奴隶标志置 1（等级 1 生成）',
   );
-  assert.equal(fixture.store.get('flag:402'), 0, ':182 派遣标志归位');
-  // 的搬迁是**原作恒空操作**（@ADDCHARA_EX 首行 TARGET = ARG、新角色
-  // 总在登记序末尾，等于/大于都不可能成立；#565 返工第 3 条 1:1 保留为不做）
-  // ——FLAG:1 原样保留，:184-185 的复位把它赋回 TARGET 指针槽
-  assert.equal(
-    fixture.store.get('flag:1'),
-    2,
-    ':127-135 原作恒空操作 → FLAG:1 不动',
-  );
-  assert.equal(fixture.store.get('flag:10005'), 2, ':184 TARGET = FLAG:1');
-  // 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
-  // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
+  assert.equal(fixture.store.get('flag:402'), 0, '派遣标志归位');
+  // 这段搬迁是**恒空操作**（新角色总在登记序末尾，等于/大于都
+  // 不可能成立；#565 返工第 3 条按既有行为保留为不做）
+  // ——FLAG:1 原样保留，收下分支的复位把它赋回 target 指针槽
+  assert.equal(fixture.store.get('flag:1'), 2, '搬迁恒空操作 → FLAG:1 不动');
+  assert.equal(fixture.store.get('flag:10005'), 2, 'target = FLAG:1');
+  // 收下播报读新角色的姓名键——chara_make 内部会重建名字，
+  // 故按写入后的实际姓名比对（它非空是这条断言有意义的前提）
   const recruit_name = fixture.store.get('callname:2:-1');
   assert.ok(recruit_name, '新加入的 2 号有称呼');
-  // 的 SIF LOCAL:0：非异国档不加「异国的」前缀。放在逐字相等那条
-  // **之前**——前缀判据被写反时先红在这一条上，报出的是「加错档」而不是
+  // 单行判定：非异国档不加「异国的」前缀。放在逐字相等那条
+  // **之前**——前缀判断条件被写反时先红在这一条上，报出的是「加错档」而不是
   // 「点名点错人」
   assert.ok(
     !fixture.lines_history.some(
       (line) => line.type === 'text' && line.text.includes('异国的'),
     ),
-    ':174-175 非异国档不加「异国的」前缀',
+    '非异国档不加「异国的」前缀',
   );
   assert.ok(
     fixture.lines_history.some(
@@ -941,11 +936,11 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
         line.type === 'text' &&
         line.text === `冒险者${recruit_name}被囚禁在了地牢里！`,
     ),
-    ':173-178 收下播报点名新加入的 2 号（源 SAVESTR:(CHARANUM-1)）',
+    '收下播报点名新加入的 2 号（读新角色的姓名键）',
   );
 });
 
-test('rand_chara_make：:52 的 RAND(1,17) 上界恒 16（勇者位 1-16）', async () => {
+test('rand_chara_make：掷勇者位的上界恒 16（位号 1-16）', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 5);
   answer_sequence(fixture, [100, 2]);
@@ -953,38 +948,38 @@ test('rand_chara_make：:52 的 RAND(1,17) 上界恒 16（勇者位 1-16）', as
   await load_rand(fixture)(cap, not_overseas);
   assert.equal(cap.bounds[0], 16, '第一掷上界 16 → 位号 1-16');
   assert.deepEqual(fixture.era.getAddedCharacters(), [5], '4 + 1 = 5');
-  // 的 ADDCHARA_EX 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
-  // 是 0，而 0 号走 CHARA_EX_0（EXCOM.ERB:28 的守卫放行）、会给魔王点亮
-  // EX 素质——这里顺手钉住「不落到那个值」（#487）
+  // add_chara_ex 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
+  // 是 0，而 0 号会分到魔王的专属初始化（add_chara_ex 的分发条件对 0 号
+  // 放行）、会给魔王点亮 EX 素质——这里顺手钉住「不落到那个值」（#487）
   assert.equal(
     fixture.store.get('ex_talent:0:200'),
     undefined,
-    ':62 add_chara_ex 不落到「已加入数 - 1」的 0 号（魔王标记）',
+    'add_chara_ex 不落到「已加入数 - 1」的 0 号（魔王标记）',
   );
 });
 
-test('rand_chara_make：异国勇者分支不 ADDCHARA，用 CHAR_MAKE_INPORT 返回的角色号', async () => {
+test('rand_chara_make：异国勇者分支不 addCharacter，用 chara_make_inport 返回的角色号', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 5);
   seed_hero(fixture, 9);
   fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
-  // CHAR_MAKE_INPORT 判定通过时由它内部 ADDCHARA（此处用打桩模拟），并把
-  // 新角色的**角色号**交回调用点——原作 :57 的 RESULT 直接就是它（#487）。
-  // 返回值故意与位号不同（5 ≠ :52 掷出的 7），「用位号顶替」会被抓出来
+  // chara_make_inport 判定通过时由它内部 addCharacter（此处用打桩模拟），并把
+  // 新角色的**角色号**交回调用点——返回值直接就是它（#487）。
+  // 返回值故意与位号不同（5 ≠ 掷出的 7），「用位号顶替」会被抓出来
   const overseas = async () => {
     fixture.era.addCharacter(5);
     return 5;
   };
-  // 异国路径不进 :75-125 的形象确认循环（#494），唯一的 INPUT 是 :158 的
+  // 异国路径不进形象确认循环（#494），唯一的输入是
   // 收下确认——序列里只有一项
   answer_sequence(fixture, [2]);
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
-  assert.equal(
-    result,
-    5,
-    'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
+  assert.equal(result, 5, 'newchara = chara_make_inport 的返回值（角色号）');
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [5, 9],
+    '不重复 addCharacter',
   );
-  assert.deepEqual(fixture.era.getAddedCharacters(), [5, 9], '不重复 ADDCHARA');
   assert.equal(fixture.store.get('cflag:5:1'), 0, '新角色 = 5 号');
   assert.equal(fixture.store.get('cflag:7:1'), undefined, '不写到掷中的位号 7');
   assert.equal(
@@ -994,14 +989,13 @@ test('rand_chara_make：异国勇者分支不 ADDCHARA，用 CHAR_MAKE_INPORT �
   );
 });
 
-// —— #494：:66-141 整段归非异国分支 ——
+// —— #494：整段归非异国分支 ——
 //
-// 原作 :58 的 `IF RESULT == 0` 开到 :143 的 `ELSE`，性格/发色的预设落地
-// （:66-72）、形象确认循环（:75-125）、FLAG:1/2 搬迁（:126-137）、FLAG:402
-// （:139）与 CHAR_MAKE（:141）全在分支体内；异国路径只有 :144-146 三行。
+// 「不是异国勇者」的分支体从性格/发色的预设写入、形象确认循环、FLAG:1/2
+// 搬迁、FLAG:402 一直连到 chara_make；异国路径只有三行。
 // 两条用例各站一侧：异国不跑、非异国照旧。
 
-test('rand_chara_make：异国分支不跑非异国段——名单带来的性格/发色不被覆盖、不进形象确认、不写 FLAG:402、不调 CHAR_MAKE', async () => {
+test('rand_chara_make：异国分支不跑非异国段——名单带来的性格/发色不被覆盖、不进形象确认、不写 FLAG:402、不调 chara_make', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 5);
   seed_hero(fixture, 9);
@@ -1010,11 +1004,11 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
   // FLAG:2 = 7 也不该前移（搬迁跑起来会把它减成 6）
   fixture.store.set('flag:1', 3); // 上一次的调教对象
   fixture.store.set('flag:2', 7); // 上一次的助手
-  // CHAR_MAKE_INPORT 真身会把名单记录里的十张二维表回填到新角色身上
+  // chara_make_inport 真身会把名单记录里的十张二维表回填到新角色身上
   // （chara-make-inport.js 的 TABLE_SEGMENTS），性格（TALENT 160-175）与
   // 发色（TALENT 300）就在 talent 表里。这里用打桩模拟「记录带来了性格
-  // 161、发色 4 与等级 30」——161 在 ID_OF_GENERAL_CHARASTERISTICS 表内
-  // （chara-and-hair.js），会被 SET_CHARASTERISTIC 的 CLEAR 清掉，正对
+  // 161、发色 4 与等级 30」——161 在 GENERAL_CHARASTERISTICS 表内
+  // （chara-and-hair.js），会被 set_charasteristic 的清档步清掉，正对
   // 本用例要守的症状
   const overseas = async () => {
     fixture.era.addCharacter(5);
@@ -1030,74 +1024,66 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
   };
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
 
-  assert.equal(
-    result,
-    5,
-    'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
-  );
-  // 断言顺序即「哪条变异先被逮住」：先钉 :141 的 CHAR_MAKE，再钉 :66-72 的
-  // 预设落地（CHAR_MAKE 内部也会写 talent:160，两者会互相盖住）
+  assert.equal(result, 5, 'newchara = chara_make_inport 的返回值（角色号）');
+  // 断言顺序即「哪条变异先被逮住」：先钉 chara_make，再钉
+  // 预设写入（chara_make 内部也会写 talent:160，两者会互相盖住）
   //
-  // CALL CHAR_MAKE：异国路径不调。cflag:9 是 CHAR_MAKE 的第一处写入
-  // （chara-make.js:140 `CFLAG:A:9 = 1`），名单带来的等级因此原样保留
+  // chara_make：异国路径不调。cflag:9 是 chara_make 的第一处写入
+  // （chara-make.js 的等级段写 cflag:9 = 1），名单带来的等级因此原样保留
   assert.equal(
     fixture.store.get('cflag:5:9'),
     30,
-    ':141 CHAR_MAKE 未执行（名单带来的等级未被重置为 1）',
+    'chara_make 未执行（名单带来的等级未被重置为 1）',
   );
-  // 性格与发色的预设落地：只在非异国分支里，异国路径一条都不该写
+  // 性格与发色的预设写入：只在非异国分支里，异国路径一条都不该写
   assert.equal(fixture.store.get('talent:5:161'), 1, '名单带来的性格未被覆盖');
   assert.equal(
     fixture.store.get('talent:5:160'),
     undefined,
-    ':67 SET_CHARASTERISTIC 未执行（异国路径不跑预设落地）',
+    'set_charasteristic 未执行（异国路径不跑预设写入）',
   );
   assert.equal(fixture.store.get('talent:5:300'), 4, '名单带来的发色未被覆盖');
-  // 形象确认循环：异国路径直落 :150，唯一的 INPUT 在 :158
-  assert.equal(asked, 1, ':107 的形象确认未执行（只问了 :158 的收下确认）');
+  // 形象确认循环：异国路径直落收下确认，唯一的输入就是它
+  assert.equal(asked, 1, '形象确认未执行（只问了收下确认）');
   assert.ok(
     !fixture.lines_history.some(
       (line) => line.type === 'text' && line.text.includes('[0] 印象'),
     ),
-    ':81 形象确认段的输出未打印',
+    '形象确认段的输出未打印',
   );
-  // 派遣奴隶标志：异国路径不写。只看终值区分不出（:182 会归 0），
+  // 派遣奴隶标志：异国路径不写。只看终值区分不出（收下分支会归 0），
   // 按写记录断言「从未写过 1」
   assert.ok(
     !fixture.var_writes.some(
       (write) => write.name === 'flag:402' && write.value === 1,
     ),
-    ':139 FLAG:402 = 1 未执行（异国路径不写派遣奴隶标志）',
+    'FLAG:402 = 1 未执行（异国路径不写派遣奴隶标志）',
   );
-  assert.equal(fixture.store.get('flag:402'), 0, ':182 归位');
+  assert.equal(fixture.store.get('flag:402'), 0, '归位');
   // 的 FLAG:1/2 搬迁同样在非异国分支里，异国路径不动它们；
   // 的指针复位读的就是这对未被搬迁的值
   assert.equal(
     fixture.store.get('flag:1'),
     3,
-    ':128 等于新角色则清空、:132 大于则前移，都未执行',
+    '等于新角色则清空、大于则前移，都未执行',
   );
-  assert.equal(
-    fixture.store.get('flag:2'),
-    7,
-    ':134 FLAG:2 未前移（搬迁段未执行）',
-  );
+  assert.equal(fixture.store.get('flag:2'), 7, 'FLAG:2 未前移（搬迁段未执行）');
   assert.equal(
     fixture.store.get('flag:10005'),
     3,
-    ':184 TARGET = FLAG:1（未搬迁的值）',
+    'target = FLAG:1（未搬迁的值）',
   );
   assert.equal(
     fixture.store.get('flag:10006'),
     7,
-    ':185 ASSI = FLAG:2（未搬迁的值）',
+    'assi = FLAG:2（未搬迁的值）',
   );
-  // 的收下播报带「异国的」前缀（LOCAL:0 = 1 只在异国分支写）
+  // 收下播报带「异国的」前缀（异国标记只在异国分支写）
   assert.ok(
     fixture.lines_history.some(
       (line) => line.type === 'text' && line.text.startsWith('异国的冒险者'),
     ),
-    ':174-175 SIF LOCAL:0 →「异国的」前缀',
+    '异国档加「异国的」前缀',
   );
 });
 
@@ -1118,19 +1104,19 @@ test('rand_chara_make：异国分支换人重挑不把上一位的发色落到�
     call += 1;
     return cid;
   };
-  // 换一个（DELCHARA + GOTO $INPUT_LOOP_11）→ 重挑后 :158 收下。
-  // 异国路径不跑形象确认循环，两个答案都落在 :158 上
+  // 换一个（删角色 + 回到重挑循环）→ 重挑后收下。
+  // 异国路径不跑形象确认循环，两个答案都是收下确认
   answer_sequence(fixture, [1, 2]);
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
 
   assert.equal(result, 6, '重挑后收下的仍是「角色号」6');
-  assert.equal(call, 2, '两次导入各调一次 CHAR_MAKE_INPORT');
-  // 的发色落地读的是跨 $INPUT_LOOP_11 迭代携带的 HAIRCOLOR 局部量；
-  // 异国路径不跑那段，HAIRCOLOR 恒 0，第二位导入的角色保住自己的发色
+  assert.equal(call, 2, '两次导入各调一次 chara_make_inport');
+  // 非异国段的发色写入读的是跨重挑迭代携带的 haircolor 局部量；
+  // 异国路径不跑那段，该量恒 0，第二位导入的角色保住自己的发色
   assert.equal(
     fixture.store.get('talent:6:300'),
     6,
-    ':71 SET_HAIRCOLOR 未把上一位的发色写到新导入的角色上',
+    'set_haircolor 未把上一位的发色写到新导入的角色上',
   );
   assert.equal(fixture.store.get('talent:5:300'), 4, '5 号的发色未被改写');
 });
@@ -1143,17 +1129,17 @@ test('rand_chara_make：16 位占满时早退（只掷一次、返回 0）', asy
   }
   const cap = seq_capture([]);
   const result = await load_rand(fixture)(cap, not_overseas);
-  assert.equal(result, 0, ':191 RETURN 0');
+  assert.equal(result, 0, '返回 0');
   assert.deepEqual(cap.bounds, [16], '只掷一次就撞上占满');
   assert(
     fixture.lines_history.some(
       (line) => line.type === 'text' && line.text.includes('勇者没有出现'),
     ),
-    ':189 的提示已出',
+    '占满提示已出',
   );
 });
 
-test('rand_chara_make：:159 换人支删除刚加的角色并回到 :50 重挑', async () => {
+test('rand_chara_make：换人支删除刚加的角色并回到重挑', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 1);
   seed_hero(fixture, 2);
@@ -1165,12 +1151,12 @@ test('rand_chara_make：:159 换人支删除刚加的角色并回到 :50 重挑'
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
     [1, 9],
-    ':161 第一位（2 号）被 DELCHARA，重挑到 1 号',
+    '第一位（2 号）被删除，重挑到 1 号',
   );
   assert.equal(result, 1, '返回重挑后的角色号');
 });
 
-test('rand_chara_make：TARGET/ASSI 复位——:127-135 原作恒空操作，FLAG:1/2 原样保留（#565 返工）', async () => {
+test('rand_chara_make：target/assi 复位——FLAG:1/2 搬迁是恒空操作、原样保留（#565 返工）', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 3);
   seed_hero(fixture, 9);
@@ -1179,20 +1165,12 @@ test('rand_chara_make：TARGET/ASSI 复位——:127-135 原作恒空操作，FL
   fixture.store.set('flag:2', 5); // 助手编号在新角色之后
   answer_sequence(fixture, [100, 2]);
   await load_rand(fixture)(seq_capture([2]), not_overseas);
-  // 原作 :127-135 四行恒不成立（@ADDCHARA_EX 首行 TARGET = ARG、新角色总在
-  // 登记序末尾）——旧移植按角色号比较并 -=1，会把 5 改成 4、3 清成 -1
-  assert.equal(
-    fixture.store.get('flag:2'),
-    5,
-    ':134 原作恒空操作 → FLAG:2 不前移',
-  );
-  assert.equal(
-    fixture.store.get('flag:1'),
-    3,
-    ':128 原作恒空操作 → FLAG:1 不清空',
-  );
-  // 与 :184-185 都写同一对值（原作如此，重复是 1:1 保留的），故只断
-  // 终值。两条都是「FLAG:1/2 → TARGET/ASSI 指针槽」这条链的出口
-  assert.equal(fixture.store.get('flag:10005'), 3, ':184 TARGET = FLAG:1');
-  assert.equal(fixture.store.get('flag:10006'), 5, ':185 ASSI = FLAG:2');
+  // 搬迁那四行恒不成立（新角色总在登记序末尾）——旧移植按角色号比较并 -=1，
+  // 会把 5 改成 4、3 清成 -1
+  assert.equal(fixture.store.get('flag:2'), 5, '搬迁恒空操作 → FLAG:2 不前移');
+  assert.equal(fixture.store.get('flag:1'), 3, '搬迁恒空操作 → FLAG:1 不清空');
+  // 搬迁与复位写同一对值（重复是按既有行为保留的），故只断
+  // 终值。两条都是「FLAG:1/2 → target/assi 指针槽」这条链的出口
+  assert.equal(fixture.store.get('flag:10005'), 3, 'target = FLAG:1');
+  assert.equal(fixture.store.get('flag:10006'), 5, 'assi = FLAG:2');
 });

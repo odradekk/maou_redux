@@ -73,9 +73,9 @@ function seed_hero(fixture, cid = 1) {
   return cid;
 }
 
-// —— @CHECK_ABLE_TO_TEMPTATION（:23-36，式中函数）——
+// —— check_able_to_temptation（式中函数）——
 
-test('CHECK_ABLE_TO_TEMPTATION：三档——非侵攻中一律不可，狂王那档单独区分', () => {
+test('check_able_to_temptation：三档——非侵攻中一律不可，狂王那档单独区分', () => {
   // [标签, 状态, CFLAG:800, 期望]
   const table = [
     ['待机（状态 0）', 0, 0, 1],
@@ -94,9 +94,9 @@ test('CHECK_ABLE_TO_TEMPTATION：三档——非侵攻中一律不可，狂王�
   }
 });
 
-// —— @SHOW_BUTTON_TEMPTATION（:4-20）——
+// —— show_button_temptation ——
 
-test('SHOW_BUTTON_TEMPTATION：只有可诱惑（0）才渲染按钮', () => {
+test('show_button_temptation：只有可诱惑（0）才渲染按钮', () => {
   // [标签, 状态, CFLAG:800, 期望渲染]
   const table = [
     ['侵攻中非狂王：可诱惑', 2, 0, true],
@@ -118,9 +118,9 @@ test('SHOW_BUTTON_TEMPTATION：只有可诱惑（0）才渲染按钮', () => {
   }
 });
 
-// —— @TEMPTATION（:39-86）——
+// —— temptation ——
 
-test('TEMPTATION：入口两档——非侵攻中返回 2，狂王返回 0，都不扣气力', async () => {
+test('temptation：入口两档——非侵攻中返回 2，狂王返回 0，都不扣气力', async () => {
   const table = [
     ['待机（不可诱惑）', 0, 0, 2],
     ['侵攻中的狂王', 2, 4, 0],
@@ -136,7 +136,7 @@ test('TEMPTATION：入口两档——非侵攻中返回 2，狂王返回 0，都
   }
 });
 
-test('TEMPTATION：气力不足 2000 播报魔力耗尽、不扣不减、不跑判定', async () => {
+test('temptation：气力不足 2000 播报魔力耗尽、不扣不减、不跑判定', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('base:0:1', 1999);
@@ -153,12 +153,12 @@ test('TEMPTATION：气力不足 2000 播报魔力耗尽、不扣不减、不跑�
   );
 });
 
-test('TEMPTATION：扣 2000 气力、跑完六轮判定；好感度满 1000 时勇者投诚并离队', async () => {
+test('temptation：扣 2000 气力、跑完六轮判定；好感度满 1000 时勇者投诚并离队', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('cflag:1:2', 950); // 两轮各 +40 即越 1000
-  fixture.store.set('talent:1:73', 1); // 即落ち：FI_TEMPTATION 恒成功
-  fixture.store.set('cflag:1:533', 1); // 自己当队长，验证投诚时 PARTY_DEL 生效
+  fixture.store.set('talent:1:73', 1); // 即落ち：fi_temptation 恒成功
+  fixture.store.set('cflag:1:533', 1); // 自己当队长，验证投诚时 party_del 生效
   // 六轮各「rand(9) → CASE 3（+40）＋ karma 的 rand(3)」，末尾三次赞助骰
   // 全部不命中（rand(20)==0 的两支与 rand(10)==0 的那支）
   const rand = seq([3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 1, 1, 1]);
@@ -171,15 +171,15 @@ test('TEMPTATION：扣 2000 气力、跑完六轮判定；好感度满 1000 时�
   assert.equal(fixture.store.get('cflag:1:1'), 0, '投诚后状态清零');
   assert.equal(fixture.store.get('cflag:1:506'), 1, '新人标记');
   assert.equal(fixture.store.get('cflag:1:507'), 0, '归还标记清零');
-  assert.equal(fixture.store.get('cflag:1:530') || 0, 0, 'PARTY_DEL 解散队伍');
+  assert.equal(fixture.store.get('cflag:1:530') || 0, 0, 'party_del 解散队伍');
   assert.equal(fixture.store.get('cflag:1:151'), -6, '六轮成功各扣 1 善恶值');
 });
 
-test('TEMPTATION：投诚的门槛是「满」1000——正好 1000 就投诚（判据是 >= 不是 >）', async () => {
+test('temptation：投诚的门槛是「满」1000——正好 1000 就投诚（条件是 >= 不是 >）', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('cflag:1:2', 1000 - 40 * 6); // 六轮 CASE 3 各 +40 → 正好落在 1000
-  fixture.store.set('talent:1:73', 1); // 即落ち：FI_TEMPTATION 恒成功
+  fixture.store.set('talent:1:73', 1); // 即落ち：fi_temptation 恒成功
   const rand = seq([3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 1, 1, 1]);
 
   assert.equal(await load(fixture).temptation(1, rand), 0);
@@ -191,7 +191,7 @@ test('TEMPTATION：投诚的门槛是「满」1000——正好 1000 就投诚（
   );
 });
 
-test('TEMPTATION：好感度未满 1000 不触发投诚，两条进度格照出', async () => {
+test('temptation：好感度未满 1000 不触发投诚，两条进度格照出', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('cflag:1:2', 0);
@@ -234,9 +234,9 @@ function repeat(n, values) {
 /** 六轮结束后的三次赞助骰（rand(20) / rand(20) / rand(10) 各自不命中） */
 const NO_SPONSOR = [1, 1, 1];
 
-// —— @PREPARE_TEMPTATION（:404-447）——
+// —— prepare_temptation ——
 
-test('PREPARE_TEMPTATION：成功签的九项加成与两条残量倍率、失败签的刻印修正——表驱动', () => {
+test('prepare_temptation：成功签的九项加成与两条残量倍率、失败签的刻印修正——表驱动', () => {
   // [标签, 预置（store 键值对）, 期望的 [SEIKOU, SIPPAI]]
   const table = [
     ['基线：全零、体力气力满', {}, [99, 50]],
@@ -315,9 +315,9 @@ test('PREPARE_TEMPTATION：成功签的九项加成与两条残量倍率、失�
   }
 });
 
-// —— @FI_TEMPTATION（:373-397，式中函数）——
+// —— fi_temptation（式中函数）——
 
-test('FI_TEMPTATION：四个无条件成功素质一律成功且一次骰都不掷', () => {
+test('fi_temptation：四个无条件成功素质一律成功且一次骰都不掷', () => {
   for (const talent of [73, 76, 85, 204]) {
     const fixture = create_era_fixture();
     add_chara(fixture, 1);
@@ -333,7 +333,7 @@ test('FI_TEMPTATION：四个无条件成功素质一律成功且一次骰都不�
   }
 });
 
-test('FI_TEMPTATION：指轮的两条强制判据与主抽签的上界（149 = 99 + 50）', () => {
+test('fi_temptation：指轮的两条强制条件与主抽签的上界（149 = 99 + 50）', () => {
   // [标签, CFLAG:551/552, 掷骰序列, 上界序列, 期望]
   const table = [
     [
@@ -345,7 +345,7 @@ test('FI_TEMPTATION：指轮的两条强制判据与主抽签的上界（149 = 9
     ],
     ['不幸の指轮在 552 上也认', [0, 2020], [0], [20], 1],
     [
-      '不幸の指轮掷出 >= 5 → 落到结界判据（掷 10）再落到主抽签',
+      '不幸の指轮掷出 >= 5 → 落到结界条件（掷 10）再落到主抽签',
       [1020, 0],
       [5, 0, 98],
       [20, 10, 149],
@@ -374,9 +374,9 @@ test('FI_TEMPTATION：指轮的两条强制判据与主抽签的上界（149 = 9
   }
 });
 
-// —— @TEMPTATION_TRY（:202-364）：九档 SELECTCASE ——
+// —— temptation_try：九档 SELECTCASE ——
 
-test('TEMPTATION_TRY：六轮 SELECTCASE 的档 0-4——表驱动走完 rand(9) 的前五档', async () => {
+test('temptation_try：六轮 SELECTCASE 的档 0-4——表驱动走完 rand(9) 的前五档', async () => {
   const master_lv = 3; // 让 CFLAG:0:9 的倍数可见
   // [档位, 预置, 期望的每轮 [juel5, juel6, 好感度]]
   const table = [
@@ -442,7 +442,7 @@ test('TEMPTATION_TRY：六轮 SELECTCASE 的档 0-4——表驱动走完 rand(9)
   }
 });
 
-test('TEMPTATION_TRY：档 5/6 的治愈按残量给好感度，加值后按上限截断', async () => {
+test('temptation_try：档 5/6 的治愈按残量给好感度，加值后按上限截断', async () => {
   // 六轮全走同一档（体力/气力满时不掷判定骰，talent 73 恒成功，每轮只掷
   // 「档位 + karma」两枚）；加值每轮固定 50（魔王等级 1 × 50），好感度档位
   // 按**每轮开始时的残量**取——上界取 10000 让六轮都落在同一档里。
@@ -495,16 +495,16 @@ test('TEMPTATION_TRY：档 5/6 的治愈按残量给好感度，加值后按上�
   }
 });
 
-test('TEMPTATION_TRY：档 7/8 送道具成功则 +5 好感；五个槽填满后走 GOTO FAIL 的失败结算', async () => {
+test('temptation_try：档 7/8 送道具成功则 +5 好感；五个槽填满后走失败结算', async () => {
   // 六轮都是道具档。一轮的掷骰是「档位、选道具的 rand(14)、换武器的 rand(4)、
   // 侵攻中那枚 rand(4)（敌人状态 2 才掷，掷非 0 就不改写道具号）、
   // 成功结算的 karma rand(3)」——五个槽 560-564 正好够前五轮各填一个
-  // （+5 好感、各扣 1 善恶值），第六轮无槽可放 → GOTO FAIL（加 1 善恶值）。
+  // （+5 好感、各扣 1 善恶值），第六轮无槽可放 → 失败结算（加 1 善恶值）。
   const ITEM_ROUND = [7, 0, 3, 1, 0];
   // [标签, 是否预置满槽, 期望善恶值, 期望好感度, 期望被切断次数]
   const table = [
-    ['逐轮填槽：五轮成功 + 第六轮 GOTO FAIL', false, -5 + 1, 25, 1],
-    ['一开场就满槽：六轮全 GOTO FAIL', true, 6, 0, 6],
+    ['逐轮填槽：五轮成功 + 第六轮失败结算', false, -5 + 1, 25, 1],
+    ['一开场就满槽：六轮全失败结算', true, 6, 0, 6],
   ];
   for (const [label, full, karma_value, affection, cut] of table) {
     const fixture = create_era_fixture();
@@ -541,7 +541,7 @@ test('TEMPTATION_TRY：档 7/8 送道具成功则 +5 好感；五个槽填满后
   }
 });
 
-test('TEMPTATION_TRY：判定失败的那一轮播报被切断并按 RAND(1, 3) 加善恶值', async () => {
+test('temptation_try：判定失败的那一轮播报被切断并按 1-3 随机加善恶值', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   // 六轮全部失败：主抽签掷 99（不小于成功签 99），karma 骰掷 0 → 各加 1
@@ -550,13 +550,17 @@ test('TEMPTATION_TRY：判定失败的那一轮播报被切断并按 RAND(1, 3) 
   await load(fixture).temptation_try(1, rand);
 
   assert.equal(texts(fixture).filter((t) => t === '诱惑被切断了！').length, 6);
-  assert.equal(fixture.store.get('cflag:1:151'), 6, 'RAND(1,3) 掷出 1 × 六轮');
+  assert.equal(
+    fixture.store.get('cflag:1:151'),
+    6,
+    '1-3 随机善恶值，掷出下界 1 × 六轮',
+  );
   assert.equal(fixture.store.get('cflag:1:2') || 0, 0, '失败不加好感度');
 });
 
-// —— @TEMPTATION_TRY：三次赞助机会（:301-360）——
+// —— temptation_try：三次赞助机会 ——
 
-test('TEMPTATION_TRY：赞助机会三支各按自己的判据命中，答 [0] 才落地', async () => {
+test('temptation_try：赞助机会三支各按自己的条件命中，答 [0] 才生效', async () => {
   // [标签, 预置, 赞助掷骰, 期望效果]
   const table = [
     [
@@ -612,7 +616,7 @@ test('TEMPTATION_TRY：赞助机会三支各按自己的判据命中，答 [0] �
     for (const [key, value] of Object.entries(preset)) {
       fixture.store.set(key, value);
     }
-    fixture.set_inputs(0); // SELECT_YES_NO 答「是的」
+    fixture.set_inputs(0); // select_yes_no 答「是的」
     // 六轮都不作弊地小步走（档 3），再进赞助骰
     const rand = seq(repeat(6, [3, 0]).concat(sponsor_rolls));
 
@@ -670,7 +674,7 @@ test('TEMPTATION_TRY：赞助机会三支各按自己的判据命中，答 [0] �
   }
 });
 
-test('TEMPTATION_TRY：赞助机会答 [1] 不落地，资金与素质都不动', async () => {
+test('temptation_try：赞助机会答 [1] 不生效，资金与素质都不动', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('talent:1:73', 1);
@@ -687,7 +691,7 @@ test('TEMPTATION_TRY：赞助机会答 [1] 不落地，资金与素质都不动'
   assert.equal(fixture.store.get('cflag:1:2'), 40 * 6, '好感度只有六轮的部分');
 });
 
-test('TEMPTATION_TRY：资金不足 10000 时三支赞助全部落空（掷骰照掷）', async () => {
+test('temptation_try：资金不足 10000 时三支赞助全部落空（掷骰照掷）', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('talent:1:73', 1);
@@ -704,13 +708,13 @@ test('TEMPTATION_TRY：资金不足 10000 时三支赞助全部落空（掷骰�
   assert.equal(
     fixture.inputs_consumed.filter((i) => i.api === 'input').length,
     0,
-    '没有问过 SELECT_YES_NO',
+    '没有问过 select_yes_no',
   );
 });
 
-// —— 补钉三：担保人素质守卫、结婚返回值的上浮（#393 自检探针打出来的缺口） ——
+// —— 补钉三：担保人素质检查、结婚返回值的上浮（#393 自检探针打出来的缺口） ——
 
-test('TEMPTATION_TRY：已经是担保人时那一条判据不命中，「肉芽诅咒」那支接手', async () => {
+test('temptation_try：已经是担保人时那一条条件不命中，「肉芽诅咒」那支接手', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
   fixture.store.set('talent:1:73', 1);
@@ -718,7 +722,7 @@ test('TEMPTATION_TRY：已经是担保人时那一条判据不命中，「肉芽
   fixture.store.set('flag:10004', 50000);
   fixture.store.set('exflag:4444', 50000);
   fixture.store.set('talent:1:290', 1); // 已经是担保人
-  fixture.set_inputs(0); // 若问了 SELECT_YES_NO 就答「是的」
+  fixture.set_inputs(0); // 若问了 select_yes_no 就答「是的」
   // 两次 rand(20) 都掷 0：第一支被素质 290 挡下，第二支（肉芽）接手
   const rand = seq(repeat(6, [3, 0]).concat([0, 0]));
 

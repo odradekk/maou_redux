@@ -1,30 +1,30 @@
 /**
  * @file 角色定制主循环与素质页（issue #392，N8 段 2）。
  *
- * 调用面：本文件内部的 @CHAR_CUSTOM 由同票的 ere/chara/chara-custom.js
- * （@CHAR_CREATE 尾段 `CALL CHAR_CUSTOM, A, ARG`）调用；外观页与外观分发在
- * ere/chara/chara-custom3.js；@CHAR_CUSTOM_TALENT_DEAL 尾段的
- * `TRYCALL CHAR_BUST_REGENERATE_WAPPED` 打向 chara-body2 的
+ * 调用面：本文件内部的 char_custom 由同一工单的 ere/chara/chara-custom.js
+ * （char_create 尾段 `await char_custom(target, arg, rand)`）调用；外观页与外观分发在
+ * ere/chara/chara-custom3.js；char_custom_talent_deal 尾段的
+ * 胸围重掷调用 chara-body.js 的
  * `char_bust_regenerate_wapped`（#406 落真身）。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 移植说明（有意偏离既有行为，均注明依据）：
  *
- *   - **TARGET 换手显式化**：源 :1-153 的 `SWAP TARGET, ARG` 把指针换到被定制
- *     的角色上、:1-153/:1-153/:1-153 换回来（#5 决议第六条）。ere 侧全部以 cid 形参
- *     承载，SWAP 消解；唯一需要指针的地方是 `chara(cid).*` 门面，本身就带 cid。
- *   - **页脚四个 `PRINTLC` 升级为按钮**：源 :38-44 是列排版文本 `[997] 前一页`
- *     一类（左对齐补位、**不换行**，见 CONTEXT.md「输出 API 与原作的对应」），
- *     配 :1-153 的 `INPUT` 收编号——列排版文本 + INPUT 的通则（PR #53）
+ *   - **TARGET 换手显式化**：被定制的角色全部以 cid 形参承载（#5 决议
+ *     第六条），无指针换手；唯一按角色寻址的地方是 `chara(cid).*` 门面，
+ *     本身就带 cid。
+ *   - **页脚四个 `PRINTLC` 升级为按钮**：`[997] 前一页` 一类列排版文本
+ *     （左对齐补位、**不换行**），
+ *     配 `INPUT` 收编号——列排版文本 + INPUT 的通则（PR #53）
  *     升级为 `era.printButton`，正文不写 `[编号]`（引擎 showAcc 自动补）。
- *   - **素质格用 `printMultiColumns`，每行 6 格**：源 :455-483 的
+ *   - **素质格用 `printMultiColumns`，每行 6 格**：
  *     `SIF LOCAL % 6 == 0 PRINT` / `PRINTBUTTON` / `SIF LOCAL % 6 == 0 PRINTL`
  *     是「6 枚一行」的字符流排版；EraElectron 的等价物是每行一次
  *     `printMultiColumns`（page-save-load.js 的 PRINTFORMLC 先例），
- *     每格宽度按 24 列均分（24/6 = 4）。**LOCAL 的跨调用累加**（Emuera 的
- *     LOCAL 函数调用时不初始化，variables.md「LOCAL/LOCALS 详细说明」）
+ *     每格宽度按 24 列均分（24/6 = 4）。**LOCAL 的跨调用累加**（LOCAL
+ *     函数调用时不初始化）
  *     落成模块级缓冲：`print_single_talent(-1)` 冲掉未满的一行并把计数归零
- *     ——源 :455-483-461 的 LOCAL = 0 就是它。
- *   - **素质名空串即不渲染**（源 :464-465 `SIF STRLENS(TALENTNAME:ARG) < 1
+ *     ——`char_custom_talent_page` 入页时先调一次。
+ *   - **素质名空串即不渲染**（`SIF STRLENS(TALENTNAME:ARG) < 1
  *     RETURN`）：该分支同时挡住计数（LOCAL 不 ++）。
  *   - **素质格的颜色**：`RESETCOLOR` / `SETCOLORBYNAME GRAY` 落按钮的
  *     `config.color`（page-ablup.js 的 GRAY 同值 #808080；命名色在 hover 态
@@ -37,27 +37,26 @@
  *     event 域的预产日/孩子父亲（`cflag` 的 110/111）——一律经
  *     `chara(cid).<域>` 的具名访问器；域内下标（`talent` 的 chara 属主下标、
  *     `cflag` 的 9 号）裸寻址即合法，读全部放行（#70）。
- *   - **随机源提成 `rand` 形参**（chara-init.js 先例）：源 :58 的
- *     `RAND:3`、:80 的 `RAND:6`、:751 的 `RAND:2` 三处。
+ *   - **随机源提成 `rand` 形参**（chara-init.js 先例）：
+ *     `RAND:3`、`RAND:6`、`RAND:2` 三处。
  *   - **`EX_FLAG:4444` 与 `MONEY`**：`era_exflag.legit_money`（非作弊资金）
- *     与 `era_flag.money`；两者同步扣款是原作写法（:96-97）。
- *   - **`CHAR_BUST_REGENERATE_WAPPED` 落真身（#406）**：源 :174 的
- *     `TRYCALL`，真身在 `ere/chara/chara-body.js` 的
- *     `char_bust_regenerate_wapped`（对应 CHARA_BODY2.ERB:2-14），随
+ *     与 `era_flag.money`；两者同步扣款是既有写法。
+ *   - **`char_bust_regenerate_wapped` 落真身（#406）**：真身在
+ *     `ere/chara/chara-body.js`，随
  *     `rand` 形参一并从 `char_custom_talent_deal` 传入。
- *   - **空输入（:647-648 / :695-696 的 `INPUTS`）按 #567 的裁定处理**：0 视为
- *     空输入、走 :644-670 / :692-706 段内的「随机生成。」支；两处提示行后各
- *     补一句「（输入 0 随机生成）」——有意偏离 1:1 文案，判据与依据见
+ *   - **空输入（`INPUTS`）按 #567 的决定处理**：0 视为
+ *     空输入、走同一问卷的「随机生成。」支；两处提示行后各
+ *     补一句「（输入 0 随机生成）」——有意偏离既有文案，判断条件与依据见
  *     ere/utils/input-text.js。
- *   - **选项升格为按钮**（#572）：@CHARA_FIRST_XP 的六处选项行
- *     （:612/:620-623/:634/:661/:683/:790）与 @CHAR_CUSTOM 的最终确认
- *     （:87）改 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
+ *   - **选项升格为按钮**（#572）：chara_first_xp 的六处选项行
+ *     与 char_custom 的最终确认
+ *     改 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
  *     选项全部按钮化：input() 只回传本轮已打印按钮的快捷键，「输入错误，
  *     请重新开始」等越界支在实机不可达，保留为防御分支，不为它们造用例
  *     ——逐处说明见 chara_first_xp 的 JSDoc 与各处注释。
- *     **一处例外**：初吻部位一问（:618-623）保留 `useRule: false`——那四的
- *     显示是有条件的（:619/:621 的 SIF）、受理是无条件的（:625），
- *     收紧白名单会锁死「未显示但原作照收」的 201/301（见该处注释）。
+ *     **一处例外**：初吻部位一问保留 `useRule: false`——那四个编号的
+ *     显示是有条件的（SIF）、受理是无条件的，
+ *     收紧白名单会锁死「未显示但照收」的 201/301（见该处注释）。
  */
 
 'use strict';
@@ -87,30 +86,30 @@ const default_rand = (n) => Math.floor(Math.random() * n);
 /** `SETCOLORBYNAME GRAY`（page-ablup.js 同值） */
 const GRAY = '#808080';
 
-/** 素质格每行的格数（源 :455-483/:455-483 的 `LOCAL % 6`） */
+/** 素质格每行的格数（`LOCAL % 6`） */
 const TALENT_COLUMNS = 6;
 
 /** 栅格满行宽度（引擎 24 列） */
 const GRID_COLUMNS = 24;
 
-/** 页面总数（源 :19/:21 的 `<{L_PAGE+1}/5>`） */
+/** 页面总数（`<{L_PAGE+1}/5>` 的 5） */
 const PAGE_COUNT = 5;
 
-/** 素质页的行高（源 :31 的 `LINECOUNT - L_LCOUNT < 27`） */
+/** 素质页的行高（`LINECOUNT - L_LCOUNT < 27` 的 27） */
 const TALENT_PAGE_ROWS = 27;
 
-/** 职业唯一的区间（源 :195 `INRANGE(L_TAL,200,220)`） */
+/** 职业唯一的区间（`INRANGE(L_TAL,200,220)`） */
 const JOB_FIRST = 200;
 const JOB_LAST = 220;
 
-/** 口上唯一组（源 :177 的 GROUPMATCH 列表，与 VARIABLES.ERH:6 的性格表同源 ） */
+/** 口上唯一组（GROUPMATCH 列表） */
 const PERSONALITY_TALENTS = [160, 161, 162, 163, 164, 166, 172, 173, 174, 175];
 
-/** 胸围互斥组（源 :167 的 GROUPMATCH(109,110,114,116,119)） */
+/** 胸围互斥组（GROUPMATCH(109,110,114,116,119)） */
 const BUST_TALENTS = [109, 110, 114, 116, 119];
 
 /**
- * @CONFLICT_CHECK 的 PAIRS 表（源 :221-244，逐对一字不动）。
+ * custom_conflict_check 的 PAIRS 表。
  * 互斥对：两侧同时为真时清空两侧、并把本次点选的 ARG 设为真。
  */
 const CONFLICT_PAIRS = [
@@ -210,7 +209,7 @@ const T_体型 = 308;
 const T_种族 = 314;
 const T_种族2 = 319;
 
-/** 解析 @TALENT_EMPTY_CHECK 的 14 项必填素质（源 :506-529 的打印表） */
+/** talent_empty_check 逐项提示的必填素质表 */
 const EMPTY_CHECK_TALENTS = [
   [300, '需要设定发色'],
   [301, '需要设定头发状态'],
@@ -226,7 +225,7 @@ const EMPTY_CHECK_TALENTS = [
   [317, '需要设定喜欢的东西'],
 ];
 
-/** 读取素质（#13：未声明下标读回 undefined，兜底 0） */
+/** 读取素质（#13：未声明下标读回 undefined，默认 0） */
 function talent(cid, index) {
   return era.get(`talent:${cid}:${index}`) || 0;
 }
@@ -262,10 +261,10 @@ function set_personality(cid, index, value) {
   set_personality_talent(cid, index, value);
 }
 
-// —— @CHARA_COST（:543-594）——
+// —— chara_cost ——
 
 /**
- * 单价表（源 :552-583 的 SELECTCASE，逐臂一字不动）。
+ * 单价表（SELECTCASE 逐分支的数值）。
  * 键 = 素质下标（或区间），值 = 加减额；`{ from, to }` 表达 `a TO b`。
  */
 const COST_ARMS = [
@@ -314,12 +313,12 @@ const COST_ARMS = [
 ];
 
 /**
- * @CHARA_COST（:543-594）：按已设素质累加价格。
+ * chara_cost：按已设素质累加价格。
  *
- * 三处字面量是价格档本身：基础价 500000（:593）、粉毛加算 100000（:588-589）、
- * 负值钳到 0（:591-592）。扫描区间是 0-499（:548 `FOR L_I ,0 ,500`）。
+ * 三处字面量是价格档本身：基础价 500000、粉毛加算 100000、
+ * 负值钳到 0。扫描区间是 0-499（`FOR L_I ,0 ,500`）。
  *
- * @param {number} cid 角色 ID（源 TARGET）
+ * @param {number} cid 角色 ID
  * @returns {number} 价格
  */
 function chara_cost(cid) {
@@ -347,19 +346,19 @@ function chara_cost(cid) {
   return cost + 500000;
 }
 
-// —— @CONFLICT_CHECK 与 @CHAR_CUSTOM_TALENT_DEAL ——
+// —— custom_conflict_check 与 char_custom_talent_deal ——
 
 /**
- * @CONFLICT_CHECK（:217-261）：按 PAIRS 表清掉互斥素质。
+ * custom_conflict_check：按 PAIRS 表清掉互斥素质。
  *
- * 源 :247 的 `FINDELEMENT(PAIRS, ARG, LOCAL)` 从 LOCAL 起找 ARG 的下一次
+ * `FINDELEMENT(PAIRS, ARG, LOCAL)` 从 LOCAL 起找 ARG 的下一次
  * 出现（命中给出元素下标，未命中 -1）；命中后取下标的 `(LOCAL/2*2)` 与
  * `(LOCAL/2*2+1)` 两个元素作为一对。这里展开成「逐对扫描」——同一对里
  * 出现两次 ARG 的情形（如 119,109 与 109,110 分属不同对）不受影响，
  * 因为每对的判定是独立的，且命中后总会清掉 ARG 侧以外的那个。
  *
- * @param {number} arg 素质下标（源 ARG）
- * @param {number} cid 角色 ID（源里是 TARGET）
+ * @param {number} arg 素质下标
+ * @param {number} cid 角色 ID
  */
 function custom_conflict_check(arg, cid) {
   for (const [left, right] of CONFLICT_PAIRS) {
@@ -375,13 +374,13 @@ function custom_conflict_check(arg, cid) {
 }
 
 /**
- * @CHAR_CUSTOM_TALENT_DEAL（:154-215）：点选一条素质后的全部连带处理。
+ * char_custom_talent_deal：点选一条素质后的全部连带处理。
  *
- * @param {number} l_tal 素质下标（源 L_TAL）
- * @param {number} cid 角色 ID（源里是 TARGET）
- * @param {(n: number) => number} [rand] 源 :174 `CHAR_BUST_REGENERATE_WAPPED`
- *   内部 `CHAR_BUST_GENERATE`/`CHAR_BODY_GENERATE_WAPPED` 用到的随机源
- * @returns {number} 0 = 已处理；-1 = 下标越界（源 :158-160）
+ * @param {number} l_tal 素质下标
+ * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand] `char_bust_regenerate_wapped`
+ *   内部 `char_bust_generate`/`char_body_generate_wapped` 用到的随机源
+ * @returns {number} 0 = 已处理；-1 = 下标越界
  */
 function char_custom_talent_deal(l_tal, cid, rand = default_rand) {
   if (!(l_tal >= 0 && l_tal <= 500)) {
@@ -395,10 +394,10 @@ function char_custom_talent_deal(l_tal, cid, rand = default_rand) {
   const bust = talent(cid, l_tal);
   if (groupmatch(l_tal, BUST_TALENTS)) {
     for (const index of BUST_TALENTS) {
-      set_talent(cid, index, 0); // （顺序照源：109/110/114/119/116）
+      set_talent(cid, index, 0); // （清空顺序即 BUST_TALENTS 声明序）
     }
     set_talent(cid, l_tal, bust);
-    char_bust_regenerate_wapped(cid, rand); // TRYCALL，本票落真身
+    char_bust_regenerate_wapped(cid, rand); // TRYCALL，#406 落真身
   }
 
   // 口上唯一：性格组内只留一个
@@ -450,16 +449,16 @@ function char_custom_talent_deal(l_tal, cid, rand = default_rand) {
   return 0;
 }
 
-// —— @PRINT_SINGLE_TALENT（:455-482）与 @CHAR_CUSTOM_TALENT_PAGE（:264-452）——
+// —— print_single_talent 与 char_custom_talent_page ——
 
 /**
- * 素质格的行缓冲：LOCAL 的跨调用累加（源 :455-483/:455-483/:455-483-482）。
+ * 素质格的行缓冲：LOCAL 的跨调用累加。
  * 每次 `char_custom(…)` 进入前由 `char_custom_talent_page` 的入口 flush 归零。
  */
 let pending_talents = [];
 let talent_cursor = 0;
 
-/** 冲掉未满一行的素质格（源 :455-483 的两次 `LOCAL % 6 == 0` 之间） */
+/** 冲掉未满一行的素质格（两次 `LOCAL % 6 == 0` 之间） */
 function flush_talent_row() {
   if (pending_talents.length > 0) {
     // 每格宽度按本行格数均分（栅格 24 列）。下限 3 是排版保底，实际用不到
@@ -486,11 +485,11 @@ function flush_talent_row() {
 }
 
 /**
- * @PRINT_SINGLE_TALENT（:455-482）：打印一枚素质按钮。
+ * print_single_talent：打印一枚素质按钮。
  *
- * @param {number} [arg=-1] 素质下标；-1 是「冲行并归零」的哨兵（源 :456-462）
- * @param {number} cid 角色 ID（源里是 TARGET）
- * @returns {number} 已打印的累计格数（源 :482 `RETURN LOCAL`；哨兵分支返回 0）
+ * @param {number} [arg=-1] 素质下标；-1 是「冲行并归零」的哨兵
+ * @param {number} cid 角色 ID
+ * @returns {number} 已打印的累计格数（`RETURN LOCAL`；哨兵分支返回 0）
  */
 function print_single_talent(arg = -1, cid = era_flag.target) {
   if (arg < 0) {
@@ -515,11 +514,11 @@ function print_single_talent(arg = -1, cid = era_flag.target) {
 }
 
 /**
- * 素质页的分组表（源 :271-449 的 `PRINTL ■=== 名 ===■` + `FOR` 区间）。
+ * 素质页的分组表（`PRINTL ■=== 名 ===■` + `FOR` 区间）。
  *
- * `list` 是逐项列出的小组（源里的连续 `CALL PRINT_SINGLE_TALENT(n)`），
- * `ranges` 是 `FOR` 区间（`to` 开区间，与源一致），`skip` 是 `CONTINUE` 的项。
- * `when_mode1` 标注只在 ARG:1 == 1 时打印的组（源 :378-384）。
+ * `list` 是逐项列出的小组（连续调用 `print_single_talent(n)`），
+ * `ranges` 是 `FOR` 区间（`to` 开区间），`skip` 是 `CONTINUE` 的项。
+ * `when_mode1` 标注只在 ARG:1 == 1 时打印的组。
  */
 const TALENT_PAGE_GROUPS = [
   [
@@ -575,15 +574,15 @@ const TALENT_PAGE_GROUPS = [
 ];
 
 /**
- * 展开一个分组表的项序（源里的打印顺序）。
+ * 展开一个分组表的项序（分组表声明的打印顺序）。
  * @param {object} group 分组定义
- * @param {number} mode 源 ARG:1（0 = 新建，1 = 修改）
+ * @param {number} mode（0 = 新建，1 = 修改）
  * @returns {number[]} 素质下标序列（含 title 之外的顺序，skip 已剔除）
  */
 function expand_group(group, mode) {
   const items = [];
-  // 顺序 = 源里的打印顺序：`before`（FOR 之前的三句单点）→ `ranges`（FOR）→
-  // `then`（FOR 之后的单点）。三段的语义名就是源里的位置，不是任意分组。
+  // 顺序 = 打印顺序：`before`（FOR 之前的三句单点）→ `ranges`（FOR）→
+  // `then`（FOR 之后的单点）。三段的语义名对应打印位置，不是任意分组。
   const apply_part = (part) => {
     for (const index of part.before ?? []) {
       items.push(index);
@@ -614,14 +613,14 @@ function expand_group(group, mode) {
 }
 
 /**
- * @CHAR_CUSTOM_TALENT_PAGE（:264-452）：三页素质看板。
+ * char_custom_talent_page：三页素质看板。
  *
- * 结构上「一组 = 一个标题 + 一批素质格 + 一次冲行」（源里每组末尾那句
- * `CALL PRINT_SINGLE_TALENT()`），入页时先冲一次（源 :264-454）。
+ * 结构上「一组 = 一个标题 + 一批素质格 + 一次冲行」（每组末尾一次冲行），
+ * 入页时先冲一次。
  *
- * @param {number} [page=0] 页号（源 ARG：0-2）
- * @param {number} [mode=0] 源 ARG:1（0 = 新建，1 = 修改——只影响口上组的第二段）
- * @param {number} cid 角色 ID（源里是 TARGET）
+ * @param {number} [page=0] 页号（0-2）
+ * @param {number} [mode=0]（0 = 新建，1 = 修改——只影响口上组的第二段）
+ * @param {number} cid 角色 ID
  */
 function char_custom_talent_page(page = 0, mode = 0, cid = era_flag.target) {
   print_single_talent(-1, cid); // 入页冲行（LOCAL = 0）
@@ -636,18 +635,18 @@ function char_custom_talent_page(page = 0, mode = 0, cid = era_flag.target) {
   }
 }
 
-// —— @TALENT_EMPTY_CHECK（:484-540）——
+// —— talent_empty_check ——
 
 /**
- * @TALENT_EMPTY_CHECK（:484-540）：设定完备性检查。
+ * talent_empty_check：设定完备性检查。
  *
- * 三段判据（源 :487-500 的扫描、:502-531 的提示、:533-540 的结论）：
+ * 三段判断条件（扫描、提示、结论）：
  * 性格组（160-175）与职业组（200-220）各要有一个；12 项外观素质各自非零；
  * 精英另需精英种族（319）。**逐项提示是并列的 `SIF`**（不是 else-if），
  * 缺几项就打几行。
  *
- * @param {number} cid 角色 ID（源 ARG）
- * @returns {Promise<number>} 0 = 完备（并触发 CHARA_FIRST_XP）；1 = 还需设定
+ * @param {number} cid 角色 ID
+ * @returns {Promise<number>} 0 = 完备（并触发 chara_first_xp）；1 = 还需设定
  */
 async function talent_empty_check(cid) {
   let has_personality = false; // CHECK:1
@@ -695,32 +694,32 @@ async function talent_empty_check(cid) {
   return 1;
 }
 
-// —— @CHARA_FIRST_XP（:596-794）——
+// —— chara_first_xp ——
 
-/** 初吻位置的四个可选项（源 :596-794/:636/:596-794 的 GROUPMATCH 列表） */
+/** 初吻位置的四个可选项（GROUPMATCH 列表） */
 const KISS_POSITIONS = [1, 201, 301, 401];
-/** 野狗（995）的三个部位码：LOCAL += 1/2/3 → 996/997/998（源 :637） */
+/** 野狗（995）的三个部位码：LOCAL += 1/2/3 → 996/997/998 */
 const DOG_POSITIONS = [1, 2, 3];
 
 /**
- * @CHARA_FIRST_XP（:596-794）：初吻与初体验的对象、部位、名称的问卷。
+ * chara_first_xp：初吻与初体验的对象、部位、名称的问卷。
  *
- * 选择项在源里是**列排版文本 + `INPUT`**（:612/:620-623 一类），不是
+ * 选择项旧写法是**列排版文本 + `INPUT`**，不是
  * `PRINTBUTTON`——#572 起按 PR #53 通则升格为按钮（正文不写 [编号] 前缀，
  * 引擎按 showAcc 自动拼）。此前的处置是「保持文本行，免得
  * 「输入错误，请重新开始」这些校验支变成不可达」（page-life-list.js 的
- * @SELECT_YES_NO 先例）：改为按钮后白名单就是显示出来的编号，越界输入由
- * 引擎当场拒收（弹「输入不合法」）——那些兜底支因此结构性不可达，1:1
+ * select_yes_no 先例）：改为按钮后白名单就是显示出来的编号，越界输入由
+ * 引擎当场拒收（弹「输入不合法」）——那些缺省处理支因此结构性不可达，
  * 保留结构不补用例（page-ability-up.js 文件头同款登记）。**例外一处**：初吻
- * 部位一问（:618-623）保留 `useRule: false`——那四个编号的显示是有条件的、
- * 受理是无条件的（:625），属「原作允许输入未显示编号」，按 #572 的要求
- * 保住路径并写明出处。免费文本支
- * （:647-648/:695-696 的 `INPUTS` 与 :612/:683 的 `[997] 自定义输入`）
+ * 部位一问保留 `useRule: false`——那四个编号的显示是有条件的、
+ * 受理是无条件的，属「允许输入未显示编号」的既有行为，按 #572 的要求
+ * 保住路径。免费文本支
+ * （`INPUTS` 与 `[997] 自定义输入`）
  * 不受影响：它们是各自独立的 `era.input()`，与按钮轮不共用白名单。
  *
- * @param {number} cid 角色 ID（源 ARG）
- * @param {(n: number) => number} [rand] 源 :751 `RAND:2` 的随机源
- * @returns {Promise<number>} 0（源 :596-794 `RETURN 0`）
+ * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand] `RAND:2` 的随机源
+ * @returns {Promise<number>} 0（恒 `RETURN 0`）
  */
 async function chara_first_xp(cid, rand = default_rand) {
   // $LOOP2 —— 问卷整体的重来点（「输入错误」「还是改一下吧」都回到这里）
@@ -758,9 +757,9 @@ async function chara_first_xp(cid, rand = default_rand) {
       // 魔王：先问部位
       era.print('初吻位置是？');
       // 的四行选项 → 按钮（PR #53 通则，正文不写 [编号]；#572）。
-      // **保留 useRule: false**（#572 审查返工）：显示是条件的（:619/:621 的
-      // SIF），受理是无条件的（:625 `IF GROUPMATCH(RESULT,1,201,301,401)`）
-      // ——女性魔王键入 201、男性魔王键入 301，原作照收且落盘编码与部位词
+      // **保留 useRule: false**（#572 审查返工）：显示是有条件的（
+      // SIF），受理是无条件的（`IF GROUPMATCH(RESULT,1,201,301,401)`）
+      // ——女性魔王键入 201、男性魔王键入 301，照收且落盘编码与部位词
       // 都不同。收紧白名单会把这两条路径锁死，故与流放/公开处刑的 100、
       // ENDING 发色的 11 同款处置（先例 event-museum.js:83-85）。
       era.printButton('唇', 1);
@@ -798,7 +797,7 @@ async function chara_first_xp(cid, rand = default_rand) {
       // 自定义输入：$LOOP3 覆盖「名字」与「部位」两步
       kiss_input: for (;;) {
         era.print('输入初吻对象（留空将会随机生成）：');
-        // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+        // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形式）
         era.print('（输入 0 随机生成初吻对象）');
         kiss_name = input_text(await era.input()); // INPUTS + RESULTS
         const length = strlens(kiss_name);
@@ -871,7 +870,7 @@ async function chara_first_xp(cid, rand = default_rand) {
         // 自定义输入（$LOOP4，只重问名字）
         for (;;) {
           era.print('输入初体验对象（留空将会随机生成）：');
-          // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+          // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形式）
           era.print('（输入 0 随机生成初体验对象）');
           sex_name = input_text(await era.input());
           const length = strlens(sex_name);
@@ -903,7 +902,7 @@ async function chara_first_xp(cid, rand = default_rand) {
 
     // A = ARG；非后代补 CM_NS_EXP 的经验初始化
     if ((era.get(`ex_talent:${cid}:2`) || 0) === 0) {
-      await cm_ns_exp(cid, rand); // CALL CM_NS_EXP
+      await cm_ns_exp(cid, rand);
     }
     if (kiss !== -1) {
       chara(cid).train.初吻对象 = kiss;
@@ -920,8 +919,8 @@ async function chara_first_xp(cid, rand = default_rand) {
       if (chara(cid).train.初吻对象 === 0) {
         era.print('[初吻对象：不明]');
       } else if (chara(cid).train.初吻对象 === 992) {
-        // 992 在本问卷里取不到（:612/:620-623/:661 的选项里没有它，各支写下的
-        // 编码也到不了 992）——按源码 :733-734 1:1 留档，无对应测试
+        // 992 在本问卷里取不到（选项里没有它，各支写下的
+        // 编码也到不了 992）——保留既有写法，无对应测试
         era.print(`[初吻对象：${chara(cid).train.初吻对象名}]`);
       } else if (chara(cid).train.初吻对象 === 993) {
         era.print('[初吻对象：狂王]');
@@ -950,7 +949,7 @@ async function chara_first_xp(cid, rand = default_rand) {
         } else if (chara(cid).train.初吻对象 < 500) {
           tail = '肛门]';
         } else {
-          tail = ']'; // 源 :596-794 ENDIF 之后直接跟闭括号，500 以上无部位词
+          tail = ']'; // ENDIF 之后直接跟闭括号，500 以上无部位词
         }
         era.print(`[初吻对象：${chara(cid).train.初吻对象名}的${tail}`);
       }
@@ -990,34 +989,34 @@ async function chara_first_xp(cid, rand = default_rand) {
   }
 }
 
-// —— @CHAR_CUSTOM（:1-152）——
+// —— char_custom ——
 
-/** `L_PAGE` 的三个素质页上界（源 :1-153 `INRANGE(L_PAGE, 0, 2)`） */
+/** `L_PAGE` 的三个素质页上界（`INRANGE(L_PAGE, 0, 2)`） */
 const TALENT_PAGE_LAST = 2;
-/** `L_PAGE` 的最后一页（源 :114 `SIF L_PAGE < 4`） */
+/** `L_PAGE` 的最后一页（`SIF L_PAGE < 4`） */
 const PAGE_LAST = PAGE_COUNT - 1;
 
 /**
- * @CHAR_CUSTOM（:1-152）：角色定制主循环。
+ * char_custom：角色定制主循环。
  *
- * 三种模式由 `mode`（源 ARG:1）区分：0 = 新建（显示价格、可取消、确认后
+ * 两种模式由 `mode` 区分：0 = 新建（显示价格、可取消、确认后
  * 走初始化与扣款），1 = 修改（不显示价格、无取消、确认即完成——调试入口
- * @CHAR_DEBUG 的用法）。
+ * 调试入口的用法）。
  *
- * @param {number} cid 角色 ID（源 :1-153 `SWAP TARGET, ARG` 换进来的目标）
- * @param {number} mode 源 ARG:1
- * @param {(n: number) => number} [rand] 源 :58/:80 两处 RAND 的随机源
+ * @param {number} cid 角色 ID（被定制的角色）
+ * @param {number} mode（0 = 新建，1 = 修改）
+ * @param {(n: number) => number} [rand] 两处 RAND 的随机源
  * @returns {Promise<void>}
  */
 async function char_custom(cid, mode, rand = default_rand) {
-  let page = 0; // #DIM L_PAGE（:2）
-  let price = 0; // #DIM PRICE（:4）
+  let page = 0; // #DIM L_PAGE
+  let price = 0; // #DIM PRICE
   let entry = era.getLineCount(); // L_LCOUNT = LINECOUNT
   price = chara_cost(cid);
 
   // $DRAW_PAGE —— 每轮的绘制入口
   draw: for (;;) {
-    // REDRAW 0 关自动重绘、:1-153/:1-153/:1-153 的 REDRAW 1 打开——EraElectron
+    // REDRAW 0 关自动重绘、REDRAW 1 打开——EraElectron
     // 无对应开关，不镜像（page-ability-up.js 文件头第 3 条同款）
     await era.clear(era.getLineCount() - entry); // CLEARLINE LINECOUNT - L_LCOUNT
     entry = era.getLineCount(); // L_LCOUNT = LINECOUNT
@@ -1056,7 +1055,7 @@ async function char_custom(cid, mode, rand = default_rand) {
     // 页脚四键是四个 PRINTLC 串（模式 1 少一个），紧随的 PRINTL 只结束
     // 它们所在的那一行——PRINTLC 左对齐补位、**不换行**，那个 PRINTL 因此不产生
     // 空行。ere 的 printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），
-    // 不再补空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+    // 不再补空行。
     era.printButton('前一页', 997); // PRINTLC
     era.printButton('确定', 999);
     if (mode === 0) {
@@ -1078,14 +1077,14 @@ async function char_custom(cid, mode, rand = default_rand) {
             // 魔族新勇者随机成为黑暗救世主、九尾、混沌龙
             set_talent(cid, 322, rand(3) + 191);
           }
-          // 人物初始设定（抄自 CHARA_MAKE）
+          // 人物初始设定（走 chara-make.js 的初始化函数）
           chara(cid).chara.等级 = 1; // CFLAG:A:9
           chara(cid).dungeon.战斗经验 = 0; // EXP:A:80
           chara(cid).invasion.状态 = 0; // CFLAG:A:1
-          await cm_base(cid); // CALL CM_BASE
-          await cm_kind(cid, rand); // CALL CM_KIND
-          await cm_cloth(cid, rand); // CALL CM_CLOTH
-          await random_self_call(cid, rand); // CALL RANDOM_SELF_CALL, A
+          await cm_base(cid);
+          await cm_kind(cid, rand);
+          await cm_cloth(cid, rand);
+          await random_self_call(cid, rand);
           const settings = era.get('flag:5') || 0; // GETBIT(FLAG:5,12/15)
           if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
             char_body_generate_wapped(cid, rand);
@@ -1156,7 +1155,7 @@ async function char_custom(cid, mode, rand = default_rand) {
         return;
       }
 
-      // 分发：素质页走 DEAL + 重算价格，外观页走 LOOK_DEAL
+      // 分发：素质页走 char_custom_talent_deal + 重算价格，外观页走 char_custom_look_deal
       let dealt;
       if (page >= 0 && page <= TALENT_PAGE_LAST) {
         dealt = char_custom_talent_deal(result, cid, rand);
@@ -1174,7 +1173,7 @@ async function char_custom(cid, mode, rand = default_rand) {
       // 未登记的编码：清一行、把上一行改写成「无效值」再重问。
       // **EraElectron 的输入集 = 本页已打印按钮的快捷键集**（夹具 era.input
       // 的按钮白名单校验），而本页所有按钮都是已登记的素质/外观编码——
-      // 这一支因此不可达，按 page-ability-up.js:250-257 的先例 1:1 留档。
+      // 这一支因此不可达，按 page-ability-up.js:250-257 的先例留档。
       await era.clear(1); // CLEARLINE 1
       era.replaceText('无效值'); // REUSELASTLINE 无效值
       continue; // GOTO INPUT_LOOP

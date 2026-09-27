@@ -85,20 +85,20 @@ function width_rows(fixture) {
 const range = (start, end) =>
   Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
-// —— @CHARA_COST（:543-594）——
+// —— chara_cost ——
 
-test('CHARA_COST：无素质时是基础价 500000', () => {
+test('chara_cost：无素质时是基础价 500000', () => {
   const fixture = setup();
   const { chara_cost } = load(fixture);
   assert.equal(chara_cost(1), 500000);
 });
 
-test('CHARA_COST：十三档单价逐档核对（表驱动）', () => {
+test('chara_cost：十三档单价逐档核对（表驱动）', () => {
   const fixture = setup();
   const { chara_cost } = load(fixture);
-  // 单价可以单独为负，但结果会被钳到 0（:591-592），所以每轮都配一个
-  // +15 万的锚点素质（10 或 31，两者不同档）：锚点 + 目标档位的净效果。
-  // [锚点, 目标档位, 期望价格]
+  // 单价可以单独为负，但结果会被钳到 0，所以每轮都配一个
+  // +15 万的基准素质（10 或 31，两者不同档）：基准素质 + 目标档位的净效果。
+  // [基准素质, 目标档位, 期望价格]
   const table = [
     [31, 10, 800000], // +150000
     [31, 37, 800000],
@@ -147,14 +147,14 @@ test('CHARA_COST：十三档单价逐档核对（表驱动）', () => {
   }
 });
 
-test('CHARA_COST：只认「恰好等于 1」的素质（值为 2 不计价）', () => {
+test('chara_cost：只认「恰好等于 1」的素质（值为 2 不计价）', () => {
   const fixture = setup();
   fixture.store.set('talent:1:10', 2);
   const { chara_cost } = load(fixture);
   assert.equal(chara_cost(1), 500000);
 });
 
-test('CHARA_COST：扫描区间是 0-499（500 号不计价）', () => {
+test('chara_cost：扫描区间是 0-499（500 号不计价）', () => {
   const fixture = setup();
   fixture.store.set('talent:1:499', 1); // 表外档位，不计价
   fixture.store.set('talent:1:500', 1);
@@ -162,14 +162,14 @@ test('CHARA_COST：扫描区间是 0-499（500 号不计价）', () => {
   assert.equal(chara_cost(1), 500000);
 });
 
-test('CHARA_COST：粉毛（发色 11）额外加十万', () => {
+test('chara_cost：粉毛（发色 11）额外加十万', () => {
   const fixture = setup();
   fixture.store.set('talent:1:300', 11);
   const { chara_cost } = load(fixture);
   assert.equal(chara_cost(1), 600000);
 });
 
-test('CHARA_COST：负价钳到 0（基础价仍是 500000）', () => {
+test('chara_cost：负价钳到 0（基础价仍是 500000）', () => {
   const fixture = setup();
   // 11(-5万) 20(-10万) 30(-10万) 69(-10万) 9(-10万) = -45 万
   for (const index of [11, 20, 30, 69, 9]) {
@@ -179,9 +179,9 @@ test('CHARA_COST：负价钳到 0（基础价仍是 500000）', () => {
   assert.equal(chara_cost(1), 500000);
 });
 
-// —— @CONFLICT_CHECK（:217-261）——
+// —— custom_conflict_check ——
 
-test('CONFLICT_CHECK：84 对互斥素质逐对核对（表驱动）', () => {
+test('custom_conflict_check：84 对互斥素质逐对核对（表驱动）', () => {
   const fixture = setup();
   const { CONFLICT_PAIRS, custom_conflict_check } = load(fixture);
   // 表本体另抄一份：实现在表里改一个数、这里就对不上
@@ -294,7 +294,7 @@ test('CONFLICT_CHECK：84 对互斥素质逐对核对（表驱动）', () => {
   }
 });
 
-test('CONFLICT_CHECK：只有一侧为真时不动', () => {
+test('custom_conflict_check：只有一侧为真时不动', () => {
   const fixture = setup();
   fixture.store.set('talent:1:10', 1);
   const { custom_conflict_check } = load(fixture);
@@ -303,7 +303,7 @@ test('CONFLICT_CHECK：只有一侧为真时不动', () => {
   assert.equal(fixture.store.get('talent:1:12') || 0, 0);
 });
 
-test('CONFLICT_CHECK：ARG 不在任何一对里时什么也不发生', () => {
+test('custom_conflict_check：实参不在任何一对里时什么也不发生', () => {
   const fixture = setup();
   fixture.store.set('talent:1:10', 1);
   fixture.store.set('talent:1:12', 1);
@@ -313,9 +313,9 @@ test('CONFLICT_CHECK：ARG 不在任何一对里时什么也不发生', () => {
   assert.equal(fixture.store.get('talent:1:12'), 1);
 });
 
-// —— @CHAR_CUSTOM_TALENT_DEAL（:154-215）——
+// —— char_custom_talent_deal ——
 
-test('TALENT_DEAL：越界返回 -1 且不动任何素质', () => {
+test('char_custom_talent_deal：越界返回 -1 且不动任何素质', () => {
   const fixture = setup();
   const { char_custom_talent_deal } = load(fixture);
   for (const index of [-1, 501]) {
@@ -327,11 +327,11 @@ test('TALENT_DEAL：越界返回 -1 且不动任何素质', () => {
   );
 });
 
-test('TALENT_DEAL：区间两端（0 与 500）都放行', () => {
+test('char_custom_talent_deal：区间两端（0 与 500）都放行', () => {
   const fixture = setup();
   const { char_custom_talent_deal } = load(fixture);
-  // 判据是 `l_tal >= 0 && l_tal <= 500`（源 :158-160）：两端各取一次，
-  // 收敛任一端（<= 499 / >= 1）本用例即红
+  // 判断条件是 `l_tal >= 0 && l_tal <= 500`：两端各取一次，
+  // 改动任一端（<= 499 / >= 1）本用例即红
   assert.equal(char_custom_talent_deal(0, 1), 0, '下界 0 放行');
   assert.equal(char_custom_talent_deal(500, 1), 0, '上界 500 放行');
   assert.deepEqual(
@@ -341,7 +341,7 @@ test('TALENT_DEAL：区间两端（0 与 500）都放行', () => {
   );
 });
 
-test('TALENT_DEAL：取反——已设的取消、未设的设上', () => {
+test('char_custom_talent_deal：取反——已设的取消、未设的设上', () => {
   const fixture = setup();
   fixture.store.set('talent:1:10', 1);
   const { char_custom_talent_deal } = load(fixture);
@@ -351,7 +351,7 @@ test('TALENT_DEAL：取反——已设的取消、未设的设上', () => {
   assert.equal(fixture.store.get('talent:1:10'), 1);
 });
 
-test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1），并重掷三围（#406）', () => {
+test('char_custom_talent_deal：胸围五档互斥，选中项保留原值（1），并重掷三围（#406）', () => {
   const fixture = setup();
   fixture.store.set('flag:5', 1 << 15); // 显示三围开关，重掷才会真的落盘
   fixture.store.set('cflag:1:451', 22); // 年龄
@@ -359,7 +359,7 @@ test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1），并重�
   // 四档非选中项都先设上：只把选中项设为 1 的话，「漏清某一档」的改动看不见
   // ——没设过的档本来就是 0，断言恒真
   // （注：五档在 CONFLICT_PAIRS 里两两互斥，组内清空与互斥检查重叠，
-  //  119 这一档由互斥对 [119,114] 兜住；组内循环本身钉 :173 的还原行）
+  //  119 这一档由互斥对 [119,114] 兜住；组内清空循环由本用例钉住）
   for (const index of [109, 110, 116, 119]) {
     fixture.store.set(`talent:1:${index}`, 1);
   }
@@ -378,7 +378,7 @@ test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1），并重�
   assert.equal(fixture.store.get('talent:1:117'), 1, '胸围组外的 117 不动');
 
   // 对照组：同一种子、同一 talent 状态（重掷发生在互斥赋值之后，此时
-  // talent:1:114 已经是 1）下直接调 char_bust_generate 核对接线（#406）
+  // talent:1:114 已经是 1）下直接调 char_bust_generate 核对接入（#406）
   const control = create_era_fixture();
   control.store.set('talent:1:114', 1);
   const [expected_bust] = control
@@ -387,11 +387,11 @@ test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1），并重�
   assert.equal(
     fixture.store.get('cflag:1:455'),
     Math.trunc(expected_bust / 100),
-    '胸围重掷落 CFLAG:455（#406 落真身，取代旧的占位断言）',
+    '胸围重掷写 CFLAG:455（#406 接真身，取代旧的占位断言）',
   );
 });
 
-test('TALENT_DEAL：胸围组外的素质不触发重掷', () => {
+test('char_custom_talent_deal：胸围组外的素质不触发重掷', () => {
   const fixture = setup();
   fixture.store.set('flag:5', 1 << 15);
   fixture.store.set('cflag:1:451', 22);
@@ -405,7 +405,7 @@ test('TALENT_DEAL：胸围组外的素质不触发重掷', () => {
   );
 });
 
-test('TALENT_DEAL：口上组唯一，且 174（贵公子）置男人、166 清男人', () => {
+test('char_custom_talent_deal：口上组唯一，且 174（贵公子）置男人、166 清男人', () => {
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   const { char_custom_talent_deal } = load(fixture);
@@ -427,7 +427,7 @@ test('TALENT_DEAL：口上组唯一，且 174（贵公子）置男人、166 清�
   assert.equal(fixture.store.get('talent:1:174') || 0, 0, '同组被清');
 });
 
-test('TALENT_DEAL：职业唯一（200-220 只留一个）', () => {
+test('char_custom_talent_deal：职业唯一（200-220 只留一个）', () => {
   const fixture = setup();
   // 整段 200-220 都先设上：区间的两端（200 与 220）只有「本来设过」才验得出
   // ——只设 205 的话，收窄到 201-220 或 200-219 都看不出来
@@ -452,7 +452,7 @@ test('TALENT_DEAL：职业唯一（200-220 只留一个）', () => {
   assert.equal(fixture.store.get('talent:1:221'), 1, '221 不在职业唯一区间内');
 });
 
-test('TALENT_DEAL：职业组外的素质不动职业位', () => {
+test('char_custom_talent_deal：职业组外的素质不动职业位', () => {
   const fixture = setup();
   fixture.store.set('talent:1:205', 1);
   const { char_custom_talent_deal } = load(fixture);
@@ -460,7 +460,7 @@ test('TALENT_DEAL：职业组外的素质不动职业位', () => {
   assert.equal(fixture.store.get('talent:1:205'), 1);
 });
 
-test('TALENT_DEAL：精英（220）固定魔族；非魔族时清掉精英位', () => {
+test('char_custom_talent_deal：精英（220）固定魔族；非魔族时清掉精英位', () => {
   const fixture = setup();
   const { char_custom_talent_deal } = load(fixture);
 
@@ -475,7 +475,7 @@ test('TALENT_DEAL：精英（220）固定魔族；非魔族时清掉精英位', 
   assert.equal(fixture.store.get('talent:1:220'), 0);
 });
 
-test('TALENT_DEAL：龍族（种族 5）补鬼角', () => {
+test('char_custom_talent_deal：龍族（种族 5）补鬼角', () => {
   const fixture = setup();
   const { char_custom_talent_deal } = load(fixture);
   fixture.store.set('talent:1:314', 5);
@@ -488,7 +488,7 @@ test('TALENT_DEAL：龍族（种族 5）补鬼角', () => {
   assert.equal(fixture.store.get('talent:1:264') || 0, 0, '非龍族不补');
 });
 
-test('TALENT_DEAL：非扶她也非男人时清童贞（train 域门面）', () => {
+test('char_custom_talent_deal：非扶她也非男人时清童贞（train 域门面）', () => {
   const fixture = setup();
   fixture.store.set('talent:1:1', 1);
   const { char_custom_talent_deal } = load(fixture);
@@ -506,7 +506,7 @@ test('TALENT_DEAL：非扶她也非男人时清童贞（train 域门面）', () 
   assert.equal(fixture.store.get('talent:1:1'), 1, '扶她保留童贞位');
 });
 
-test('TALENT_DEAL：纤细体型（308 <= 100）清肥胖位', () => {
+test('char_custom_talent_deal：纤细体型（308 <= 100）清肥胖位', () => {
   const fixture = setup();
   fixture.store.set('talent:1:115', 1);
   const { char_custom_talent_deal } = load(fixture);
@@ -521,9 +521,9 @@ test('TALENT_DEAL：纤细体型（308 <= 100）清肥胖位', () => {
   assert.equal(fixture.store.get('talent:1:115'), 1, '标准体型不清');
 });
 
-// —— @PRINT_SINGLE_TALENT 与 @CHAR_CUSTOM_TALENT_PAGE（:264-482）——
+// —— print_single_talent 与 char_custom_talent_page ——
 
-test('TALENT_PAGE 0：九组的分组边界与每行 6 格', () => {
+test('char_custom_talent_page 0：九组的分组边界与每行 6 格', () => {
   const fixture = setup();
   const { char_custom_talent_page } = load(fixture);
   for (let index = 0; index < 500; index += 1) {
@@ -584,7 +584,7 @@ test('TALENT_PAGE 0：九组的分组边界与每行 6 格', () => {
   ]);
 });
 
-test('TALENT_PAGE 1：口上组在模式 1 多出 165-179（剔除 166/172/173/174/175）', () => {
+test('char_custom_talent_page 1：口上组在模式 1 多出 165-179（剔除 166/172/173/174/175）', () => {
   const fixture = setup();
   const { char_custom_talent_page } = load(fixture);
   for (let index = 0; index < 500; index += 1) {
@@ -611,7 +611,7 @@ test('TALENT_PAGE 1：口上组在模式 1 多出 165-179（剔除 166/172/173/1
   );
 });
 
-test('TALENT_PAGE 1：各组编码逐组核对（含身体特征尾项 119 与混杂的首三项）', () => {
+test('char_custom_talent_page 1：各组编码逐组核对（含身体特征尾项 119 与混杂的首三项）', () => {
   const fixture = setup();
   const { char_custom_talent_page } = load(fixture);
   for (let index = 0; index < 500; index += 1) {
@@ -624,15 +624,15 @@ test('TALENT_PAGE 1：各组编码逐组核对（含身体特征尾项 119 与�
     ...range(79, 89), // 性癖
     ...range(91, 98), // 魅力
     ...range(99, 116), // 身体特征
-    119, // 身体特征的尾项（源 :355 的单点）
-    ...[117, 118, 121], // 混杂的前三项（源 :360-362）
+    119, // 身体特征的尾项（单独列出的一点）
+    ...[117, 118, 121], // 混杂的前三项
     ...range(122, 159), // 混杂的主体
     ...[160, 161, 162, 163, 164, 166, 172, 173, 174, 175], // 性格（口上）
     ...range(180, 189), // 卖春相关
   ]);
 });
 
-test('TALENT_PAGE 2：特殊素质/境遇的跳过项与精英组 471-489', () => {
+test('char_custom_talent_page 2：特殊素质/境遇的跳过项与精英组 471-489', () => {
   const fixture = setup();
   const { char_custom_talent_page } = load(fixture);
   for (let index = 0; index < 500; index += 1) {
@@ -648,10 +648,10 @@ test('TALENT_PAGE 2：特殊素质/境遇的跳过项与精英组 471-489', () =
   assert.deepEqual(circumstance, [...range(290, 291), ...range(293, 299)]);
 });
 
-test('PRINT_SINGLE_TALENT：无名素质不占格（STRLENS < 1 早退）', () => {
+test('print_single_talent：无名素质不占格（空名早退）', () => {
   const fixture = setup();
   fixture.store.set('talentname:0', '有名字');
-  fixture.store.set('talentname:1', ''); // 无名（:464-465 早退）
+  fixture.store.set('talentname:1', ''); // 无名（早退）
   fixture.store.set('talentname:2', '也有名字');
   const { print_single_talent } = load(fixture);
 
@@ -671,7 +671,7 @@ test('PRINT_SINGLE_TALENT：无名素质不占格（STRLENS < 1 早退）', () =
   );
 });
 
-test('PRINT_SINGLE_TALENT：返回累计格数，哨兵分支归零', () => {
+test('print_single_talent：返回累计格数，哨兵分支归零', () => {
   const fixture = setup();
   for (let index = 0; index < 10; index += 1) {
     fixture.store.set(`talentname:${index}`, `T${index}`);
@@ -692,7 +692,7 @@ test('PRINT_SINGLE_TALENT：返回累计格数，哨兵分支归零', () => {
   );
 });
 
-test('PRINT_SINGLE_TALENT：空缓冲的冲行不产出 Row（flush 的 length 守卫）', () => {
+test('print_single_talent：空缓冲的冲行不产出 Row（flush 的 length 检查）', () => {
   const fixture = setup();
   const { print_single_talent } = load(fixture);
   const before = fixture.era.getLineCount();
@@ -705,7 +705,7 @@ test('PRINT_SINGLE_TALENT：空缓冲的冲行不产出 Row（flush 的 length �
   );
 });
 
-test('PRINT_SINGLE_TALENT：已设素质不灰、未设为灰', () => {
+test('print_single_talent：已设素质不灰、未设为灰', () => {
   const fixture = setup();
   fixture.store.set('talentname:0', '甲');
   fixture.store.set('talentname:1', '乙');
@@ -721,7 +721,7 @@ test('PRINT_SINGLE_TALENT：已设素质不灰、未设为灰', () => {
   assert.deepEqual(colors, ['#808080', undefined]);
 });
 
-// —— @TALENT_EMPTY_CHECK（:484-540）——
+// —— talent_empty_check ——
 
 /** 造一个「设定完备」的角色 */
 function complete_chara(fixture, cid = 1) {
@@ -734,7 +734,7 @@ function complete_chara(fixture, cid = 1) {
   }
 }
 
-test('TALENT_EMPTY_CHECK：完备时返回 0，给出「人物设定完成」并进入初体验问卷', async () => {
+test('talent_empty_check：完备时返回 0，给出「人物设定完成」并进入初体验问卷', async () => {
   const fixture = setup();
   complete_chara(fixture);
   fixture.set_inputs(998, 998, 0); // 初吻=无、初体验=无、确认
@@ -742,10 +742,7 @@ test('TALENT_EMPTY_CHECK：完备时返回 0，给出「人物设定完成」并
 
   assert.equal(await talent_empty_check(1), 0);
   assert.ok(texts(fixture).includes('人物设定完成'));
-  assert.ok(
-    texts(fixture).includes('设定初体验'),
-    ':534 的 CHARA_FIRST_XP 真的跑了',
-  );
+  assert.ok(texts(fixture).includes('设定初体验'), 'chara_first_xp 真的跑了');
   assert.deepEqual(
     fixture.inputs_consumed
       .filter((i) => i.api === 'input')
@@ -756,7 +753,7 @@ test('TALENT_EMPTY_CHECK：完备时返回 0，给出「人物设定完成」并
   assert.ok(fixture.waits.length > 0, 'PRINTW 的等键');
 });
 
-test('TALENT_EMPTY_CHECK：缺项逐条提示（表驱动），返回 1', async () => {
+test('talent_empty_check：缺项逐条提示（表驱动），返回 1', async () => {
   // [缺什么, 期望提示]
   const table = [
     ['性格', '需要设定性格（口上）'],
@@ -793,7 +790,7 @@ test('TALENT_EMPTY_CHECK：缺项逐条提示（表驱动），返回 1', async 
   }
 });
 
-test('TALENT_EMPTY_CHECK：精英另需精英种族 319', async () => {
+test('talent_empty_check：精英另需精英种族 319', async () => {
   const fixture = setup();
   complete_chara(fixture);
   fixture.store.set('talent:1:220', 1);
@@ -812,7 +809,7 @@ test('TALENT_EMPTY_CHECK：精英另需精英种族 319', async () => {
   );
 });
 
-test('TALENT_EMPTY_CHECK：性格只设 175（区间上界）也算有性格', async () => {
+test('talent_empty_check：性格只设 175（区间上界）也算有性格', async () => {
   const fixture = setup();
   complete_chara(fixture);
   fixture.store.delete('talent:1:160');
@@ -827,7 +824,7 @@ test('TALENT_EMPTY_CHECK：性格只设 175（区间上界）也算有性格', a
   );
 });
 
-test('TALENT_EMPTY_CHECK：非精英不看 319', async () => {
+test('talent_empty_check：非精英不看 319', async () => {
   const fixture = setup();
   complete_chara(fixture);
   fixture.set_inputs(998, 998, 0);
@@ -835,9 +832,9 @@ test('TALENT_EMPTY_CHECK：非精英不看 319', async () => {
   assert.equal(await talent_empty_check(1), 0);
 });
 
-test('TALENT_EMPTY_CHECK：性格与职业区间的四端（含区间外的邻值）', async () => {
+test('talent_empty_check：性格与职业区间的四端（含区间外的邻值）', async () => {
   // [动哪一组, 设上的素质, 期望返回值]——两组各钉住区间的两端与两端外的邻值
-  // （源 :487-500 的 `INRANGE(L_I,160,175)` 与 `INRANGE(L_I,200,220)`）
+  // （性格段 160-175 与职业段 200-220 的端点判断）
   const table = [
     ['性格', 160, 0], // 下界：算性格
     ['性格', 175, 0], // 上界：算性格
@@ -873,9 +870,9 @@ test('TALENT_EMPTY_CHECK：性格与职业区间的四端（含区间外的邻�
   }
 });
 
-// —— @CHARA_FIRST_XP（:596-794）——
+// —— chara_first_xp ——
 
-test('CHARA_FIRST_XP：后代（EX_TALENT:2）直接返回 0 且不问', async () => {
+test('chara_first_xp：后代（EX_TALENT:2）直接返回 0 且不问', async () => {
   const fixture = setup();
   fixture.store.set('ex_talent:1:2', 1);
   const { chara_first_xp } = load(fixture);
@@ -884,7 +881,7 @@ test('CHARA_FIRST_XP：后代（EX_TALENT:2）直接返回 0 且不问', async (
   assert.deepEqual(texts(fixture), []);
 });
 
-test('CHARA_FIRST_XP：处女（TALENT:0 == 1）不问初体验', async () => {
+test('chara_first_xp：处女（TALENT:0 == 1）不问初体验', async () => {
   const fixture = setup();
   fixture.store.set('talent:1:0', 1);
   const { chara_first_xp } = load(fixture);
@@ -899,7 +896,7 @@ test('CHARA_FIRST_XP：处女（TALENT:0 == 1）不问初体验', async () => {
   );
 });
 
-test('CHARA_FIRST_XP：非处女会问初体验，初体验编码落 CFLAG:15', async () => {
+test('chara_first_xp：非处女会问初体验，初体验编码落 CFLAG:15', async () => {
   const fixture = setup();
   // TALENT:0 非处女（未设 = 0，即「不是処女」）
   const { chara_first_xp } = load(fixture);
@@ -910,7 +907,7 @@ test('CHARA_FIRST_XP：非处女会问初体验，初体验编码落 CFLAG:15', 
   assert.ok(texts(fixture).includes('[初体验对象：野狗]'));
 });
 
-test('CHARA_FIRST_XP：初吻对象各编码的回显（表驱动）', async () => {
+test('chara_first_xp：初吻对象各编码的回显（表驱动）', async () => {
   const fixture = setup();
   const { chara_first_xp } = load(fixture);
   // [输入, 期望回显, 期望写入的 CFLAG:16]
@@ -938,7 +935,7 @@ test('CHARA_FIRST_XP：初吻对象各编码的回显（表驱动）', async () 
   }
 });
 
-test('CHARA_FIRST_XP：野狗（995）把部位码加到编码上', async () => {
+test('chara_first_xp：野狗（995）把部位码加到编码上', async () => {
   const fixture = setup();
   const { chara_first_xp } = load(fixture);
   // [部位输入, 期望编码, 期望回显]
@@ -965,26 +962,26 @@ test('CHARA_FIRST_XP：野狗（995）把部位码加到编码上', async () => 
           [2, '阴茎'],
           [3, '嘴'],
         ],
-        ':634 的三枚按钮',
+        '野狗部位的三枚按钮',
       );
     }
   }
 });
 
-test('CHARA_FIRST_XP：魔王（1）按部位编码与部位词，名字取魔王的称呼', async () => {
+test('chara_first_xp：魔王（1）按部位编码与部位词，名字取魔王的称呼', async () => {
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
-  // #572 审查返工：部位菜单的显示是有条件的（源 :619/:621 的 SIF），**受理是
-  // 无条件的**（:625 `GROUPMATCH(RESULT,1,201,301,401)`）——女性魔王键入 201
-  // 原作照收。所以消费点保留了 `useRule: false`，本用例就在「魔王不是扶她/
+  // #572 审查返工：部位菜单的显示是有条件的，**受理是无条件的**
+  // （消费点收 1/201/301/401 一组）——女性魔王键入 201 也被受理。
+  // 所以消费点保留了 `useRule: false`，本用例就在「魔王不是扶她/
   // 男人」的世界里直接键入未显示的 201（改回默认白名单即红）。
   const { chara_first_xp } = load(fixture);
   // [部位输入, 期望编码, 期望部位词]——部位词链的四个区间字面量（<100 / <300
   // / <400 / <500）各取一端
   const table = [
     [1, 1, '魔王的唇]'],
-    [201, 201, '魔王的阴茎]'], // 未显示（魔王非扶她非男人）但原作受理
+    [201, 201, '魔王的阴茎]'], // 未显示（魔王非扶她非男人）但仍被受理
     [301, 301, '魔王的私处]'], // <400 档
     [401, 401, '魔王的肛门]'],
   ];
@@ -1001,7 +998,7 @@ test('CHARA_FIRST_XP：魔王（1）按部位编码与部位词，名字取魔�
     // #572：四个选项都是按钮，实显文本由引擎按 showAcc 拼（正文不带 [N]）。
     // 按正文筛出这一问的三枚（对象菜单不含这三个词）。
     if (position === 1) {
-      // 初吻对象菜单（源 :612）的九枚也一并钉住（本轮的按钮前九枚就是它）
+      // 初吻对象菜单的九枚也一并钉住（本轮的按钮前九枚就是它）
       assert.deepEqual(
         buttons(fixture)
           .slice(0, 9)
@@ -1017,7 +1014,7 @@ test('CHARA_FIRST_XP：魔王（1）按部位编码与部位词，名字取魔�
           [997, '自定义输入'],
           [998, '无'],
         ],
-        ':612 的九枚对象按钮',
+        '初吻对象菜单的九枚按钮',
       );
       assert.deepEqual(
         buttons(fixture)
@@ -1028,13 +1025,13 @@ test('CHARA_FIRST_XP：魔王（1）按部位编码与部位词，名字取魔�
           [301, '私处'],
           [401, '肛门'],
         ],
-        '魔王非扶她非男人 → :619-620 的 [201] 不显示，其余三枚照常',
+        '魔王非扶她非男人 → [201] 不显示，其余三枚照常',
       );
     }
   }
 });
 
-test('CHARA_FIRST_XP：RAND:2 掷中即「唇」，上界被测试固定', async () => {
+test('chara_first_xp：RAND:2 掷中即「唇」，上界被测试固定', async () => {
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
@@ -1054,7 +1051,7 @@ test('CHARA_FIRST_XP：RAND:2 掷中即「唇」，上界被测试固定', async
   );
 });
 
-test('CHARA_FIRST_XP：自定义输入（997）写下名字与部位', async () => {
+test('chara_first_xp：自定义输入（997）写下名字与部位', async () => {
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
@@ -1069,7 +1066,7 @@ test('CHARA_FIRST_XP：自定义输入（997）写下名字与部位', async () 
     texts(fixture).includes('（输入 0 随机生成初吻对象）'),
     'ere 侧补的输入 0 说明（#567）',
   );
-  // #572 审查返工：997 支路的部位一问（源 :661）四枚按钮与 612 支路同集
+  // #572 审查返工：997 支路的部位一问四枚按钮与对象菜单那支同集
   for (const [acc, text] of [
     [1, '唇'],
     [201, '阴茎'],
@@ -1078,7 +1075,7 @@ test('CHARA_FIRST_XP：自定义输入（997）写下名字与部位', async () 
   ]) {
     assert.ok(
       buttons(fixture).some((b) => b.acc === acc && b.text === text),
-      `:661 的按钮 [${acc}] ${text}`,
+      `部位一问的按钮 [${acc}] ${text}`,
     );
   }
   assert.ok(
@@ -1087,32 +1084,32 @@ test('CHARA_FIRST_XP：自定义输入（997）写下名字与部位', async () 
   );
 });
 
-test('CHARA_FIRST_XP：初吻自定义输入 0 走原作的随机生成支（#567：0 视为空输入）', async () => {
+test('chara_first_xp：初吻自定义输入 0 走随机生成支（#567：0 视为空输入）', async () => {
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
   const { chara_first_xp } = load(fixture);
   // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 都是数值 0。
-  // #567 裁定 0 视为空输入：走 :655-657 的「随机生成。」支（LOCAL = -1），
-  // 部位一问随 :659 的 `IF !(LOCAL == -1)` 一并跳过，编码不落盘。
+  // #567 的结论是 0 视为空输入：走「随机生成。」支（随机标记 = -1），
+  // 部位一问随随机支一并跳过，编码不落盘。
   // 第三项 1 是接着的初体验对象一问（[1] 魔王，两侧都合法），末项 0 是
   // #572 起按钮化的最终确认（[0] 好的）。A 语义的变异（M11835）会让部位
   // 一问照问，输入序列随即错位、由引擎的按钮白名单当场拒收——变异仍被判红。
   fixture.set_inputs(997, 0, 1, 0);
 
   await chara_first_xp(1);
-  assert.ok(texts(fixture).includes('随机生成。'), ':656 的播报');
+  assert.ok(texts(fixture).includes('随机生成。'), '该支的播报');
   assert.ok(
     !texts(fixture).includes('新建人物初吻对象为0。'),
     '不再把 0 当字面量名字',
   );
   assert.ok(!texts(fixture).includes('初吻位置是？'), '部位一问被跳过');
-  // 随机支不落盘：:721-724 的写入被 `kiss !== -1` 拦下，CFLAG:16 保持
-  // CM_NS_EXP（:717）写下的值（同下一条用例的既有写法）
+  // 随机支不落盘：写入被 `kiss !== -1` 拦下，CFLAG:16 保持
+  // cm_ns_exp 写下的值（同下一条用例的既有写法）
   assert.notEqual(fixture.store.get('cflag:1:16'), -1);
 });
 
-test('CHARA_FIRST_XP：名字过长（>16）重问', async () => {
+test('chara_first_xp：名字过长（>16）重问', async () => {
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
@@ -1131,10 +1128,10 @@ test('CHARA_FIRST_XP：名字过长（>16）重问', async () => {
   assert.equal(fixture.store.get('cflag:1:16'), 401);
 });
 
-test('CHARA_FIRST_XP：非法输入由引擎拒收（#572：选项已按钮化）', async () => {
+test('chara_first_xp：非法输入由引擎拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「非菜单值 → 输入错误，请重新开始」——按钮化后白名单就是本轮
   // 打印的按钮集，77 这类值在引擎那头被拒收、不回传游戏，「输入错误」支
-  // 结构性不可达（1:1 保留，page-ability-up.js 文件头同款登记）。
+  // 结构性不可达（行为保留，page-ability-up.js 文件头同款登记）。
   const fixture = setup();
   fixture.set_inputs(77);
   const { chara_first_xp } = load(fixture);
@@ -1149,7 +1146,7 @@ test('CHARA_FIRST_XP：非法输入由引擎拒收（#572：选项已按钮化�
   );
 });
 
-test('CHARA_FIRST_XP：确认时输入 1 → 重来问卷', async () => {
+test('chara_first_xp：确认时输入 1 → 重来问卷', async () => {
   const fixture = setup();
   fixture.set_inputs(993, 998, 1, 993, 998, 0);
   const { chara_first_xp } = load(fixture);
@@ -1160,7 +1157,7 @@ test('CHARA_FIRST_XP：确认时输入 1 → 重来问卷', async () => {
     2,
     '问卷跑了两轮',
   );
-  // #572 审查返工：确认一问（源 :790）的两枚按钮逐个钉住
+  // #572 审查返工：确认一问的两枚按钮逐个钉住
   assert.deepEqual(
     buttons(fixture)
       .slice(-2)
@@ -1169,22 +1166,22 @@ test('CHARA_FIRST_XP：确认时输入 1 → 重来问卷', async () => {
       [0, '好的'],
       [1, '还是改一下吧'],
     ],
-    ':790 的 [0]/[1] 按钮（正文不带 [N]）',
+    '最终确认的 [0]/[1] 按钮（正文不带 [N]）',
   );
 });
 
-test('CHARA_FIRST_XP：初体验自定义输入（997）写下名字', async () => {
+test('chara_first_xp：初体验自定义输入（997）写下名字', async () => {
   const fixture = setup();
   const { chara_first_xp } = load(fixture);
   fixture.set_inputs(0, 997, '初恋', 0);
 
   await chara_first_xp(1);
-  // 源 :692-706 的 CASE 997 只写名字、**不改 LOCAL:1**，故编码留在 997
+  // 997 支只写名字、**不改编码变量**，故编码留在 997
   assert.equal(fixture.store.get('cflag:1:15'), 997);
   assert.equal(fixture.store.get('cstr:1:3'), '初恋');
   assert.ok(texts(fixture).includes('新建人物初体验对象为初恋。'));
   assert.ok(texts(fixture).includes('[初体验对象：初恋]'));
-  // #572 审查返工：初体验对象一问（源 :683）的九枚按钮
+  // #572 审查返工：初体验对象一问的九枚按钮
   for (const [acc, text] of [
     [1, '魔王'],
     [101, '蠕虫'],
@@ -1198,7 +1195,7 @@ test('CHARA_FIRST_XP：初体验自定义输入（997）写下名字', async () 
   ]) {
     assert.ok(
       buttons(fixture).some((b) => b.acc === acc && b.text === text),
-      `:683 的按钮 [${acc}] ${text}`,
+      `初体验对象一问的按钮 [${acc}] ${text}`,
     );
   }
   assert.ok(
@@ -1207,27 +1204,27 @@ test('CHARA_FIRST_XP：初体验自定义输入（997）写下名字', async () 
   );
 });
 
-test('CHARA_FIRST_XP：初体验 996（随机）不写编码', async () => {
+test('chara_first_xp：初体验 996（随机）不写编码', async () => {
   const fixture = setup();
   const { chara_first_xp } = load(fixture);
 
   fixture.set_inputs(0, 996, 0);
   await chara_first_xp(1);
-  // 源码序：CM_NS_EXP（:717，内含 #394 的 CHARA_FIRST_EXP）先写 CFLAG:15，
-  // 问卷的随机支（LOCAL:1 = -1）不覆盖它——所以这里只钉「没被写成 -1」
+  // 源码序：cm_ns_exp（内含 #394 的 chara_first_exp）先写 CFLAG:15，
+  // 问卷的随机支不覆盖它——所以这里只钉「没被写成 -1」
   assert.notEqual(fixture.store.get('cflag:1:15'), -1);
 });
 
-test('CHARA_FIRST_XP：初体验自定义输入 0 走原作的随机生成支（#567：0 视为空输入）', async () => {
+test('chara_first_xp：初体验自定义输入 0 走随机生成支（#567：0 视为空输入）', async () => {
   const fixture = setup();
   const { chara_first_xp } = load(fixture);
   // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 都是数值 0。
-  // #567 裁定 0 视为空输入：走 :703-705 的「随机生成。」支（LOCAL:1 = -1），
-  // 编码不落盘（:707-711 的 IF 守卫）。
+  // #567 的结论是 0 视为空输入：走「随机生成。」支（随机标记 = -1），
+  // 编码不落盘（写入前的检查拦下）。
   fixture.set_inputs(0, 997, 0, 0);
 
   await chara_first_xp(1);
-  assert.ok(texts(fixture).includes('随机生成。'), ':704 的播报');
+  assert.ok(texts(fixture).includes('随机生成。'), '该支的播报');
   assert.ok(
     !texts(fixture).includes('新建人物初体验对象为0。'),
     '不再把 0 当字面量名字',
@@ -1236,13 +1233,13 @@ test('CHARA_FIRST_XP：初体验自定义输入 0 走原作的随机生成支（
     texts(fixture).includes('（输入 0 随机生成初体验对象）'),
     'ere 侧补的输入 0 说明（#567）',
   );
-  // 随机支不落盘：:721-724 的写入被 `sex !== -1` 拦下（同 996 支的既有写法）
+  // 随机支不落盘：写入被 `sex !== -1` 拦下（同 996 支的既有写法）
   assert.notEqual(fixture.store.get('cflag:1:15'), -1);
 });
 
-// —— @CHAR_CUSTOM（:1-152）——
+// —— char_custom ——
 
-test('CHAR_CUSTOM：页眉显示设定与价格，页脚四键（模式 0 有取消）', async () => {
+test('char_custom：页眉显示设定与价格，页脚四键（模式 0 有取消）', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(996); // 取消
@@ -1277,17 +1274,15 @@ function last_button_row(fixture) {
   return buttons[buttons.length - 1].row;
 }
 
-test('CHAR_CUSTOM：页脚四个 PRINTLC 之后没有空行（PRINTLC 不换行，:45 的 PRINTL 只收那一行）', async () => {
+test('char_custom：页脚四键之后没有空行（按键不换行，收尾换行只收那一行）', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(996); // 取消：只画一屏就走
 
   await char_custom(1, 0);
-  // 原作 :38-45 是四个 PRINTLC（模式 0；模式 1 三个）加一个 PRINTL：
-  // PRINTLC 按「PRINTCの文字数」补空格后打在同一行、**不换行**（语义与勘误
-  // 见 CONTEXT.md「输出 API 与原作的对应」），那个 PRINTL 只结束它所在的那
-  // 一行，不产生空行。ere 的 printButton 自成一行（＝ PRINTLC + 收尾的
-  // PRINTL），页脚之后再补一条就是多出来的空行。
+  // 页脚是四个按钮（模式 0；模式 1 三个）：每枚按钮按固定列宽补位、
+  // 打在同一行上；行末的收尾换行只结束它所在的那一行，不产生空行。
+  // ere 的 printButton 自成一行，页脚之后再补一条换行就是多出来的空行。
   assert.deepEqual(
     fixture.lines.filter((line) => line.row > last_button_row(fixture)),
     [],
@@ -1295,7 +1290,7 @@ test('CHAR_CUSTOM：页脚四个 PRINTLC 之后没有空行（PRINTLC 不换行�
   );
 });
 
-test('CHAR_CUSTOM：模式 1 无取消键、页眉不显示价格', async () => {
+test('char_custom：模式 1 无取消键、页眉不显示价格', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(998, 998, 998, 999); // 翻到第 5 页再确定
@@ -1315,7 +1310,7 @@ test('CHAR_CUSTOM：模式 1 无取消键、页眉不显示价格', async () => 
   );
 });
 
-test('CHAR_CUSTOM：后退页在 0 页不生效（SIF L_PAGE > 0）', async () => {
+test('char_custom：后退页在 0 页不生效', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(997, 998, 999); // 先按「前一页」（无效），再后一页，再确定
@@ -1327,7 +1322,7 @@ test('CHAR_CUSTOM：后退页在 0 页不生效（SIF L_PAGE > 0）', async () =
   assert.deepEqual(headers, ['<1/5>', '<1/5>', '<2/5>']);
 });
 
-test('CHAR_CUSTOM：前进页在第 5 页封顶（SIF L_PAGE < 4）', async () => {
+test('char_custom：前进页在第 5 页封顶', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(998, 998, 998, 998, 998, 998, 999); // 六次「后一页」
@@ -1347,7 +1342,7 @@ test('CHAR_CUSTOM：前进页在第 5 页封顶（SIF L_PAGE < 4）', async () =
   ]);
 });
 
-test('CHAR_CUSTOM：素质页点选后重算价格并重绘', async () => {
+test('char_custom：素质页点选后重算价格并重绘', async () => {
   const fixture = setup();
   fixture.store.set('talentname:10', '胆怯');
   const { char_custom } = load(fixture);
@@ -1360,7 +1355,7 @@ test('CHAR_CUSTOM：素质页点选后重算价格并重绘', async () => {
   assert.deepEqual(prices, [500000, 650000], '重绘时价格已重算');
 });
 
-test('CHAR_CUSTOM：模式 0 的确定流程——检查不过则留在页内', async () => {
+test('char_custom：模式 0 的确定流程——检查不过则留在页内', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(999, 996); // 确定（不完备）→ 取消
@@ -1370,7 +1365,7 @@ test('CHAR_CUSTOM：模式 0 的确定流程——检查不过则留在页内', 
   assert.deepEqual(fixture.era.getAddedCharacters(), [], '取消删掉了角色');
 });
 
-test('CHAR_CUSTOM：模式 0 完备时扣款并收下（MONEY 与 EX_FLAG:4444 同步）', async () => {
+test('char_custom：模式 0 完备时扣款并收下（MONEY 与 EX_FLAG:4444 同步）', async () => {
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   fixture.store.set('talent:1:205', 1);
@@ -1388,8 +1383,8 @@ test('CHAR_CUSTOM：模式 0 完备时扣款并收下（MONEY 与 EX_FLAG:4444 �
   await char_custom(1, 0);
   const line = texts_history(fixture).find((t) => t.includes('的最终价格是'));
   assert.ok(line, texts_history(fixture).join(' / '));
-  // 最终价格含 CM_BASE/CM_KIND/CM_CLOTH 刚设上的素质（它们在再次计价之前
-  // 运行，:67-85），故取屏上那个数——chara_cost 的数值本身另有专测钉住
+  // 最终价格含身体、种族、着装三段刚设上的素质（它们在再次计价之前
+  // 运行），故取屏上那个数——chara_cost 的数值本身另有专测钉住
   const price = Number(/最终价格是(\d+)点/.exec(line)[1]);
   assert.ok(price > 0);
   assert.equal(fixture.store.get('flag:10004'), 10000000 - price);
@@ -1397,7 +1392,7 @@ test('CHAR_CUSTOM：模式 0 完备时扣款并收下（MONEY 与 EX_FLAG:4444 �
   assert.equal(fixture.store.get('cflag:1:9'), 1, '等级初始化');
 });
 
-test('CHAR_CUSTOM：钱不够则退回重画（不扣款）', async () => {
+test('char_custom：钱不够则退回重画（不扣款）', async () => {
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   fixture.store.set('talent:1:205', 1);
@@ -1415,9 +1410,9 @@ test('CHAR_CUSTOM：钱不够则退回重画（不扣款）', async () => {
   assert.equal(fixture.store.get('flag:10004'), 1, '未扣款');
 });
 
-test('CHAR_CUSTOM：最终确认的越界输入由引擎拒收（#572：选项已按钮化）', async () => {
+test('char_custom：最终确认的越界输入由引擎拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「其余输入回到 $LOOP 重问」——按钮化后白名单就是 1/2，7 这类值
-  // 被引擎拒收、不回传游戏，重问支结构性不可达（1:1 保留）。
+  // 被引擎拒收、不回传游戏，重问支结构性不可达（行为保留）。
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   fixture.store.set('talent:1:205', 1);
@@ -1439,7 +1434,7 @@ test('CHAR_CUSTOM：最终确认的越界输入由引擎拒收（#572：选项�
     1,
     '只问过一次最终价格（拒收就发生在最终确认处）',
   );
-  // #572 审查返工：最终确认（源 :87）的两枚按钮逐个钉住
+  // #572 审查返工：最终确认的两枚按钮逐个钉住
   assert.deepEqual(
     buttons(fixture)
       .slice(-2)
@@ -1448,11 +1443,11 @@ test('CHAR_CUSTOM：最终确认的越界输入由引擎拒收（#572：选项�
       [1, '好，就是这样了！'],
       [2, '我还想再修改一下。'],
     ],
-    ':87 的 [1]/[2] 按钮（正文不带 [N]）',
+    '最终确认的 [1]/[2] 按钮（正文不带 [N]）',
   );
 });
 
-test('CHAR_CUSTOM：种族 9（魔族）随机补现种族，RAND:3 上界被测试固定', async () => {
+test('char_custom：种族 9（魔族）随机补现种族，RAND:3 上界被测试固定', async () => {
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   fixture.store.set('talent:1:205', 1);
@@ -1474,8 +1469,8 @@ test('CHAR_CUSTOM：种族 9（魔族）随机补现种族，RAND:3 上界被测
   assert.equal(fixture.store.get('talent:1:322'), 194, '191 + RAND:3');
 });
 
-test('CHAR_CUSTOM：五种妊娠素质各自触发预产日（DAY + 10 + RAND:6）', async () => {
-  // 源 :78-80 的判据是五个素质的析取（153/341/342/343/344）：逐个单设，
+test('char_custom：五种妊娠素质各自触发预产日（DAY + 10 + RAND:6）', async () => {
+  // 判断条件是五个素质的析取（153/341/342/343/344）：逐个单设，
   // 漏掉任何一项本用例即红
   for (const talent_index of [153, 341, 342, 343, 344]) {
     const fixture = setup();
@@ -1508,7 +1503,7 @@ test('CHAR_CUSTOM：五种妊娠素质各自触发预产日（DAY + 10 + RAND:6�
   }
 });
 
-test('CHAR_CUSTOM：不成立妊娠素质时不写预产日', async () => {
+test('char_custom：不成立妊娠素质时不写预产日', async () => {
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   fixture.store.set('talent:1:205', 1);
@@ -1525,19 +1520,19 @@ test('CHAR_CUSTOM：不成立妊娠素质时不写预产日', async () => {
   assert.equal(fixture.store.get('cflag:1:110') || 0, 0);
 });
 
-test('CHAR_CUSTOM：页高 27 行（补行到固定高度）', async () => {
+test('char_custom：页高 27 行（补行到固定高度）', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(996); // 取消
 
   await char_custom(1, 0);
-  // 「27 行」从清屏锚点起算：drawLine + 页眉 + drawLine + 内容 + 补行 = 27；
-  // 之后才是页脚（drawLine + 四枚按钮）——四个 PRINTLC 串之后的 PRINTL 只
-  // 收尾，不产生空行，故不计一行（见 CONTEXT.md「输出 API 与原作的对应」）
+  // 「27 行」从清屏基准起算：drawLine + 页眉 + drawLine + 内容 + 补行 = 27；
+  // 之后才是页脚（drawLine + 四枚按钮）——按钮串之后的收尾换行只结束
+  // 该行，不产生空行，故不计一行
   assert.equal(fixture.lines.length, 27 + 1 + 4, '页体恒 27 行（含补行）');
 });
 
-test('CHAR_CUSTOM：第 3 页仍是素质页（点 205 能落到职业上）', async () => {
+test('char_custom：第 3 页仍是素质页（点 205 能落到职业上）', async () => {
   const fixture = setup();
   fixture.store.set('talentname:205', '骑士');
   const { char_custom } = load(fixture);
@@ -1547,7 +1542,7 @@ test('CHAR_CUSTOM：第 3 页仍是素质页（点 205 能落到职业上）', a
   assert.equal(fixture.store.get('talent:1:205'), 1, '第 3 页的素质按钮可达');
 });
 
-test('CHAR_CUSTOM：外观页点选走 LOOK_DEAL（编码回传）', async () => {
+test('char_custom：外观页点选走 char_custom_look_deal（编码回传）', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   // 翻到第 4 页（外观页 1），点 1101（发色「金色」），再取消
@@ -1557,11 +1552,11 @@ test('CHAR_CUSTOM：外观页点选走 LOOK_DEAL（编码回传）', async () =>
   assert.equal(fixture.store.get('talent:1:300'), 1);
 });
 
-test('CHAR_CUSTOM：外观页点选后按体型清肥胖位（两头）', async () => {
+test('char_custom：外观页点选后按体型清肥胖位（两头）', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
-  // 第 4 页（页号 3）是外观页：点 1101（发色）落到 LOOK_DEAL，随后按
-  // TALENT:308 决定要不要清 115（源 :1-153 的纤细体型不肥胖）
+  // 第 4 页（页号 3）是外观页：点 1101（发色）落到 char_custom_look_deal，随后按
+  // TALENT:308 决定要不要清 115（纤细体型不肥胖）
   const look_deal_round = async (body_size) => {
     fixture.store.set('talent:1:308', body_size);
     fixture.reset_inputs(998, 998, 998, 1101, 996); // 翻到第 4 页、点 1101、取消
@@ -1581,8 +1576,8 @@ test('CHAR_CUSTOM：外观页点选后按体型清肥胖位（两头）', async 
   assert.equal(fixture.store.get('talent:1:115'), 1, '308 = 101 不动肥胖位');
 });
 
-test('CHAR_CUSTOM：FLAG:5 位 12/15 打开时才调用身体生成（分支两侧）', async () => {
-  // 真身 char_body_generate_wapped 自己带同一道 FLAG:5 守卫（chara-body.js:498），
+test('char_custom：FLAG:5 位 12/15 打开时才调用身体生成（分支两侧）', async () => {
+  // 真身 char_body_generate_wapped 自己带同一道 FLAG:5 检查（chara-body.js），
   // 只看 CFLAG:451-457 写没写分不出「分支没进」与「进了但被真身早退」——
   // 故把模块导出换成记录桩，让分支的两侧都能断言
   // （夹具 disable_enter_enemy 的同款手法：替换模块导出、游戏代码零修改）

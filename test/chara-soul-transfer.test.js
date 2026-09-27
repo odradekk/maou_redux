@@ -30,7 +30,7 @@ function printed_includes(fixture, substr) {
   return fixture.lines_history.some((line) => line.text?.includes(substr));
 }
 
-test('SWAP_CHARA：数值表与字符串表双向互换，双侧皆未声明时不凭空造键', () => {
+test('swap_chara：数值表与字符串表双向互换，双侧皆未声明时不凭空造键', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '奴隶甲');
@@ -51,7 +51,7 @@ test('SWAP_CHARA：数值表与字符串表双向互换，双侧皆未声明时�
   assert.equal(fixture.store.get('cflag:1:777'), undefined);
 });
 
-test('SWAP_CHARA：仅一侧声明时，另一侧读作 0/空串，不留旧值', () => {
+test('swap_chara：仅一侧声明时，另一侧读作 0/空串，不留旧值', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '奴隶甲');
@@ -64,7 +64,7 @@ test('SWAP_CHARA：仅一侧声明时，另一侧读作 0/空串，不留旧值'
   assert.equal(fixture.store.get('cflag:1:20'), 5, '接收方拿到旧值');
 });
 
-test('PERSONALOCK：区间左闭右开（[10,19) 命中10不含19），55 被显式跳过', () => {
+test('personalock：区间左闭右开（[10,19) 命中10不含19），55 被显式跳过', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '奴隶甲');
@@ -84,7 +84,7 @@ test('PERSONALOCK：区间左闭右开（[10,19) 命中10不含19），55 被显
   assert.equal(fixture.store.get('talent:1:117'), 1, '离散项 117 正常交换');
 });
 
-test('TRANSFERAPP：等级/攻防互换、双侧状态清零、姓名呼び名互换、级联触发 PERSONALOCK', () => {
+test('transferapp：等级/攻防互换、双侧状态清零、姓名呼び名互换、级联触发 personalock', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   add_chara(fixture, 1, '奴隶甲');
@@ -94,7 +94,7 @@ test('TRANSFERAPP：等级/攻防互换、双侧状态清零、姓名呼び名�
   fixture.store.set('base:1:0', 40);
   fixture.store.set('cflag:0:1', 5); // 转移前的状态标记
   fixture.store.set('cflag:1:1', 3);
-  fixture.store.set('talent:0:15', 1); // PERSONALOCK 覆盖范围内的一项
+  fixture.store.set('talent:0:15', 1); // personalock 覆盖范围内的一项
   const { transferapp } = fixture.load_module('chara/chara-soul-transfer');
 
   transferapp(1);
@@ -114,21 +114,29 @@ test('TRANSFERAPP：等级/攻防互换、双侧状态清零、姓名呼び名�
   assert.equal(
     fixture.store.get('talent:1:15'),
     1,
-    'PERSONALOCK 确实被级联调用',
+    'personalock 确实被级联调用',
   );
 });
 
-test('BODYCHECK_MAOU：种族>0 用 666，种族为0用 21，三围缺项时补齐生成', () => {
+test('bodycheck_maou：种族>0 用 666，种族为0用 21，三围缺项时补齐生成', () => {
   {
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
-    fixture.store.set('cflag:0:314', 2); // 有种族（源用 CFLAG:314，不是 TALENT:314）
+    fixture.store.set('cflag:0:314', 2); // 有种族（用 CFLAG:314，不是 TALENT:314）
     const { bodycheck_maou } = fixture.load_module('chara/chara-soul-transfer');
     bodycheck_maou();
     assert.equal(fixture.store.get('cflag:0:452'), 666);
-    assert.equal(fixture.store.get('cflag:0:451'), 21, '肉体年龄缺省兜底');
+    assert.equal(
+      fixture.store.get('cflag:0:451'),
+      21,
+      '肉体年龄缺省时给默认值',
+    );
     assert.ok((fixture.store.get('cflag:0:453') || 0) > 0, '身高被生成补齐');
-    assert.equal(fixture.store.get('talent:0:300'), 5, '外貌素质组缺省兜底');
+    assert.equal(
+      fixture.store.get('talent:0:300'),
+      5,
+      '外貌素质组缺省时给默认值',
+    );
     assert.equal(fixture.store.get('talent:0:305'), 3);
     assert.equal(fixture.store.get('talent:0:308'), 150);
   }
@@ -142,7 +150,7 @@ test('BODYCHECK_MAOU：种族>0 用 666，种族为0用 21，三围缺项时补�
   }
 });
 
-test('BODYCHECK_MAOU：已有完整数据时不覆盖', () => {
+test('bodycheck_maou：已有完整数据时不覆盖', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   fixture.store.set('cflag:0:452', 999);
@@ -172,7 +180,7 @@ test('BODYCHECK_MAOU：已有完整数据时不覆盖', () => {
   assert.equal(fixture.store.get('talent:0:300'), 9);
 });
 
-test('TRANSFER_SOUL：拒绝确认时原地返回 ARG，不触发任何互换', async () => {
+test('transfer_soul：拒绝确认时原地返回参数，不触发任何互换', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   add_chara(fixture, 1, '奴隶甲');
@@ -188,7 +196,7 @@ test('TRANSFER_SOUL：拒绝确认时原地返回 ARG，不触发任何互换', 
   assert.equal(fixture.store.get('cflag:1:9'), 3);
 });
 
-test('TRANSFER_SOUL：确认后返回 0，双重 SWAP 抵消令等级/攻防/婚姻状态维持原值', async () => {
+test('transfer_soul：确认后返回 0，双重互换抵消令等级/攻防/婚姻状态维持原值', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   add_chara(fixture, 1, '奴隶甲');
@@ -202,29 +210,29 @@ test('TRANSFER_SOUL：确认后返回 0，双重 SWAP 抵消令等级/攻防/婚
   const result = await transfer_soul(1, 0, seq([2])); // debuff = 2+1 = 3
 
   assert.equal(result, 0);
-  // CFLAG:9（等级）先被 SWAPCHARA 整表换一次，紧接着 TRANSFERAPP 又显式
+  // CFLAG:9（等级）先被 swap_chara 整表换一次，紧接着 transferapp 又显式
   // 再换一次，同一对字段换两次抵消，净效果是维持原值（文件头「二次互换
   // 会互相抵消」的说明，这里钉住可观测效果）
-  assert.equal(fixture.store.get('cflag:0:9'), 10, '二次 SWAP 抵消，等级不变');
+  assert.equal(fixture.store.get('cflag:0:9'), 10, '二次互换抵消，等级不变');
   assert.equal(fixture.store.get('cflag:1:9'), 3);
-  // CFLAG:601（婚姻状态）同理：SEARCH_FAMILY 分支前先手动 SWAP 一次，
-  // 随后 SWAPCHARA 整表又换一次，同样抵消
+  // CFLAG:601（婚姻状态）同理：search_family 分支前先手动 swap_var 换一次，
+  // 随后 swap_chara 整表又换一次，同样抵消
   assert.equal(
     fixture.store.get('cflag:0:601'),
     555,
-    '二次 SWAP 抵消，婚姻状态不变',
+    '二次互换抵消，婚姻状态不变',
   );
   assert.equal(fixture.store.get('cflag:1:601'), 0);
   assert.equal(fixture.store.get('ex_talent:1:0'), 3, '新错位等级=rand+1');
   assert.equal(fixture.store.get('ex_talent:0:0'), 0, '魔王侧清零');
 });
 
-test('TRANSFER_SOUL：婚姻区间 [900,902] 闭区间两端都走直接互换分支（与 903/899 进 SEARCH_FAMILY 分支不同）', async () => {
+test('transfer_soul：婚姻区间 [900,902] 闭区间两端都走直接互换分支（与 903/899 进 search_family 分支不同）', async () => {
   // 只测区间边界本身：现有用例只用 marriage=0（也命中直接分支）与
-  // marriage=903（命中 SEARCH_FAMILY 分支），拖不住区间边界——把 900/902
+  // marriage=903（命中 search_family 分支），拖不住区间边界——把 900/902
   // 改成 901/901 仍满足与 marriage===0 无关的其他条件，现有用例一概不
   // 发现。直接分支会先 swap_var 换一次 601/609，紧接着 swap_chara() 整表
-  // 互换又换一次，两次抵消；若边界改坏导致 900/902 跑进 SEARCH_FAMILY
+  // 互换又换一次，两次抵消；若边界改坏导致 900/902 跑进 search_family
   // 分支，那里没有先行的 swap_var，swap_chara() 只换一次，601 会真正
   // 交换而非维持原值——两侧行为在此处可观测地不同
   for (const marriage of [900, 902]) {
@@ -241,23 +249,23 @@ test('TRANSFER_SOUL：婚姻区间 [900,902] 闭区间两端都走直接互换�
     assert.equal(
       fixture.store.get('cflag:0:601'),
       777,
-      `marriage=${marriage}：二次 SWAP 抵消，魔王婚姻状态不变`,
+      `marriage=${marriage}：二次互换抵消，魔王婚姻状态不变`,
     );
     assert.equal(
       fixture.store.get('cflag:1:601'),
       marriage,
-      `marriage=${marriage}：二次 SWAP 抵消，cid 婚姻状态不变`,
+      `marriage=${marriage}：二次互换抵消，cid 婚姻状态不变`,
     );
   }
 });
 
-test('TRANSFER_SOUL：婚姻状态为其他值时改走 SEARCH_FAMILY，命中配偶联动更新其记录', async () => {
+test('transfer_soul：婚姻状态为其他值时改走 search_family，命中配偶联动更新其记录', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   add_chara(fixture, 1, '奴隶甲');
   add_chara(fixture, 2, '配偶');
   fixture.store.set('cflag:1:601', 903); // 非 [900,902] 也非 0
-  fixture.store.set('talent:1:165', 1); // SEARCH_FAMILY 村娘A捷径：忽略 kind
+  fixture.store.set('talent:1:165', 1); // search_family 村娘A捷径：忽略 kind
   fixture.store.set('talent:2:171', 1); // 村娘B，两者互认
   fixture.store.set('cflag:2:601', 700);
   fixture.store.set('cflag:2:6', 42);
@@ -266,26 +274,26 @@ test('TRANSFER_SOUL：婚姻状态为其他值时改走 SEARCH_FAMILY，命中�
 
   await transfer_soul(1, 0, seq([0])); // debuff = 0+1 = 1
 
-  // CFLAG:0:621 只被 era.set() 写入一次，随后 SWAPCHARA 整表把它单次互换
-  // 到 cid 身上（不在 TRANSFERAPP 的二次改写名单内，不会被抵消）
+  // CFLAG:0:621 只被 era.set() 写入一次，随后 swap_chara 整表把它单次互换
+  // 到 cid 身上（不在 transferapp 的二次改写名单内，不会被抵消）
   assert.equal(
     fixture.store.get('cflag:1:621'),
     903,
-    '原婚姻状态随 SWAPCHARA 移到 cid 身上',
+    '原婚姻状态随 swap_chara 移到 cid 身上',
   );
   assert.equal(fixture.store.get('cflag:2:621'), 700, '配偶原状态存档');
   assert.equal(fixture.store.get('cflag:2:601'), 901, '配偶改指向魔王');
   assert.equal(fixture.store.get('cflag:2:609'), 42, '配偶记下对方原名字编号');
 });
 
-test('TRANSFER_SOUL：错位等级继承——SWAPCHARA 先把 cid 的旧错位换到 MASTER 槽位上，据此 +1 级而非重掷', async () => {
+test('transfer_soul：错位等级继承——swap_chara 先把 cid 的旧错位换到 MASTER 槽位上，据此 +1 级而非重掷', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   add_chara(fixture, 1, '奴隶甲');
   fixture.store.set('cflag:1:601', 0);
   // ex_talent 也在 swap_chara() 覆盖范围内：这里预置的是 cid（奴隶甲）自己
-  // 转移前已带的错位等级，SWAPCHARA 把它换到 MASTER 槽位后，原作代码读的
-  // 「EX_TALENT:MASTER:0」实际读到的正是这份旧值——继承的是 cid 自己的旧
+  // 转移前已带的错位等级，swap_chara 把它换到 MASTER 槽位后，实现里读的
+  // ex_talent:0:0 实际读到的正是这份旧值——继承的是 cid 自己的旧
   // 错位，不是魔王本身持有的
   fixture.store.set('ex_talent:1:0', 2);
   fixture.set_inputs(0);
@@ -298,7 +306,7 @@ test('TRANSFER_SOUL：错位等级继承——SWAPCHARA 先把 cid 的旧错位�
   assert.equal(fixture.store.get('ex_talent:0:0'), 0);
 });
 
-test('TRANSFER_SOUL：mode 非 0 跳过确认直接执行', async () => {
+test('transfer_soul：mode 非 0 跳过确认直接执行', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   add_chara(fixture, 1, '奴隶甲');
@@ -316,7 +324,7 @@ test('TRANSFER_SOUL：mode 非 0 跳过确认直接执行', async () => {
   );
 });
 
-test('SOUL_DISLOCATION：命中降级，降到 0 时播报康复；未命中不变', () => {
+test('soul_dislocation：命中降级，降到 0 时播报康复；未命中不变', () => {
   {
     const fixture = create_era_fixture();
     add_chara(fixture, 1, '奴隶甲');

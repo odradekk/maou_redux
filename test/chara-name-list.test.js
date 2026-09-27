@@ -1,14 +1,14 @@
 /**
  * @file ere/chara/chara-name-list.js 与 yml/NameList.yml 的行为测试
- * （issue #388：CHARA_NAME_INIT 落表；#435：文件名被引擎误判为逐角色数据）。
+ * （issue #388：chara_name_init 落表；#435：文件名被引擎误判为逐角色数据）。
  *
  * 三层验证：
- *   - 夹具层（快，无需引擎）：get_fixed_chara_name 的守卫与缓存行为；
+ *   - 夹具层（快，无需引擎）：get_fixed_chara_name 的防护判断与缓存行为；
  *   - 文件分类层（需引擎）：拿引擎自己的 staticFormatRegex 逐文件分类一遍，
  *     钉住「本表走的是普通表分支」（#435 的根因与修复方向）；
  *   - 引擎实证层（需引擎）：真解析器 + 真 setVar 驱动生产模块查表——表名由
  *     文件名派生（与引擎同款取法），生产代码的读取键必须与它一致；以及
- *     「未注册 id 直接崩溃」是真实风险（未经守卫的裸三段寻址会撞上它，
+ *     「未注册 id 直接崩溃」是真实风险（未经检查的裸三段寻址会撞上它，
  *     这正是 chara-name-list.js 的 valid_ids() 存在的理由）；
  */
 
@@ -35,7 +35,7 @@ const YML_DIR = path.join(REPO_ROOT, 'yml');
 const YML_NAME = 'NameList.yml';
 const TABLE = YML_NAME.replace(/\.yml$/, '').toLowerCase(); // = 'namelist'
 const YML_PATH = path.join(YML_DIR, YML_NAME);
-// —— 夹具层：valid_ids 守卫与缓存 ——
+// —— 夹具层：valid_ids 防护判断与缓存 ——
 
 test('get_fixed_chara_name：已注册 id 查表返回名字', () => {
   const fixture = create_era_fixture();
@@ -53,7 +53,7 @@ test('get_fixed_chara_name：已注册 id 查表返回名字', () => {
 test('get_fixed_chara_name：未注册 id（含合并丢弃的缺口）直接返回空串，不去读名字地址', () => {
   const fixture = create_era_fixture();
   // 3030 不在 keys 里（模拟被重名合并丢弃），但故意仍在 store 里放一个陈旧值，
-  // 证明函数走的是 valid_ids 守卫、不是「地址查到了就用」。
+  // 证明函数走的是 valid_ids 防护判断、不是「地址查到了就用」。
   fixture.store.set('namelistkeys', [0, 17]);
   fixture.store.set('namelistname:3030', '陈旧残留');
   const { get_fixed_chara_name } = fixture.load_module('chara/chara-name-list');
@@ -70,7 +70,7 @@ test('get_fixed_chara_name：未注册 id（含合并丢弃的缺口）直接返
   );
 });
 
-test('get_fixed_chara_name：已注册但名字地址未播种（undefined）时兜底为空串', () => {
+test('get_fixed_chara_name：已注册但名字地址未播种（undefined）时缺省为空串', () => {
   const fixture = create_era_fixture();
   fixture.store.set('namelistkeys', [42]);
   // 42 在 keys 里，但对应的 name: 地址没有被播种——只有在这个场景下 `?? ''`
@@ -80,7 +80,7 @@ test('get_fixed_chara_name：已注册但名字地址未播种（undefined）时
   assert.equal(
     get_fixed_chara_name(42),
     '',
-    "名字地址未播种时必须兜底为空串（?? ''）",
+    "名字地址未播种时必须缺省为空串（?? ''）",
   );
 });
 
@@ -128,7 +128,7 @@ test('EVENTFIRST/EVENTLOAD 真的调用了 chara_name_init（读取 namelistkeys
 
 // —— 文件分类层：引擎按文件名把静态表分成「逐角色」与「普通表」两条路 ——
 
-/** 引擎 eraStart 的分类判据（yml 档）：模块 84 的 staticFormatRegex 按格式取 */
+/** 引擎 eraStart 的分类条件（yml 档）：模块 84 的 staticFormatRegex 按格式取 */
 function chara_file_regex() {
   const index = engine.static_format_priority.indexOf('yml');
   return engine.static_format_regex[index];
@@ -157,7 +157,7 @@ engine_test(
     assert.equal(
       chara_re.test('yml/chara0.yml'),
       true,
-      '引擎正则必须命中 Chara0.yml（否则本用例的判据本身失效）',
+      '引擎正则必须命中 Chara0.yml（否则本用例的判断条件本身失效）',
     );
     // 根因留证：改名前那支文件正是被它命中的（#435）
     assert.equal(
@@ -235,11 +235,11 @@ engine_test(
       `生产模块读的必须是 staticData.${TABLE}（引擎按 yml/${YML_NAME} 的文件名建表）`,
     );
     assert.equal(get_fixed_chara_name(3610), '空', 'そら 覆盖后的名字');
-    // 未注册 id：守卫挡住，不去撞引擎那条 `.n` 读在 undefined 上的崩溃
+    // 未注册 id：valid_ids 检查挡住，不去撞引擎那条 `.n` 读在 undefined 上的崩溃
     assert.equal(
       get_fixed_chara_name(3030),
       '',
-      '未注册 id 必须走 valid_ids 守卫返回空串',
+      '未注册 id 必须走 valid_ids 检查返回空串',
     );
     assert(
       fixture.var_reads.some((r) => r.name === `${TABLE}keys`),
@@ -273,7 +273,7 @@ engine_test(
       assert.throws(
         () => engine.set_var.call(fake, `${TABLE}name:${gap_id}`),
         /Cannot read properties of undefined/,
-        `id ${gap_id} 应当撞上未注册崩溃（chara-name-list.js 的 valid_ids 守卫正是防这个）`,
+        `id ${gap_id} 应当撞上未注册崩溃（chara-name-list.js 的 valid_ids 检查正是防这个）`,
       );
     }
   },

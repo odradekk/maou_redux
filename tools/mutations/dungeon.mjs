@@ -558,7 +558,7 @@ export default [
     must_mention: '150 → 钳 100 → -2',
   },
   {
-    desc: 'M632 CHARA_INIT 等级段的逐级 ST_UP 删（循环体空转）',
+    desc: 'M632 char_init 等级段的逐级 st_up 删（循环体空转）',
     file: 'ere/chara/chara-init.js',
     find: '    for (let i = 0; i < lv; i += 1) {\n      st_up(cid, rand_n);\n    }',
     replace:

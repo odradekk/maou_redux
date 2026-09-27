@@ -334,20 +334,20 @@ export default [
   },
   // —— #596：print 之后多补的空行普查（角色家族调试/输出） ——
   {
-    desc: 'M12081 关系调试表每行之后补回空行（:298 的 PRINTL 只结束那一串 PRINTFORM 拼出的行）',
+    desc: 'M12081 关系调试表每行之后补回空行（PRINTL 只结束那一串 PRINTFORM 拼出的行）',
     file: 'ere/chara/chara-family.js',
-    find: '    era.print(parts);\n    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行',
+    find: '    era.print(parts);\n    // 一名角色一行，行间不额外产生空行',
     replace:
-      '    era.print(parts);\n    era.println(); // 变异：多补一条空行\n    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行',
+      '    era.print(parts);\n    era.println(); // 变异：多补一条空行\n    // 一名角色一行，行间不额外产生空行',
     tests: ['chara-family'],
     must_mention: '两行相邻，没有空行',
   },
   {
-    desc: 'M12082 家族信息行之后补回空行（RELATION_FAMILY :422-423 的 !LINEISEMPTY → PRINTL 只收尾那一行）',
+    desc: 'M12082 家族信息行之后补回空行（!LINEISEMPTY → PRINTL 只收尾那一行）',
     file: 'ere/chara/chara-family.js',
-    find: '  // RELATION_FAMILY.ERB:422-423 的',
+    find: '  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：',
     replace:
-      '  if (displayed > 0) era.println(); // 变异：多补一条空行\n  // RELATION_FAMILY.ERB:422-423 的',
+      '  if (displayed > 0) era.println(); // 变异：多补一条空行\n  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：',
     tests: ['chara-family'],
     must_mention: '家族片段行逐段相邻，没有空行',
   },

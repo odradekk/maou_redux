@@ -1,13 +1,13 @@
 // 变异条目表切片：ere/facade、ere/era-utils、ere/chara、ere/utils（门面与包装层）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 16; // #643 -1（M185：产物出处路径注释变异无行为面，出处核对用例删除）；#641 起 -4（M145、M11310–M11312 随 ere/utils/stub-line.js 删除）；#542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
 // 话术退回、丢等键、丢 @函数名，均由 test/page-config.test.js 的 dispatch_config(26/28)
-// 用例守护）
-//；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首臂——由 test/era-modsave.test.js 与 test/era-global.test.js 守护）
-//；#567 起 +2（M11830/M11831，utils/input-text 的空输入判据——由 test/input-text.test.js 守护）
+// 用例盯守）
+//；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首分支——由 test/era-modsave.test.js 与 test/era-global.test.js 盯守）
+//；#567 起 +2（M11830/M11831，utils/input-text 的空输入判断条件——由 test/input-text.test.js 盯守）
 
 export default [
   {
@@ -71,7 +71,7 @@ export default [
     must_mention: '按 ID 缓存',
   },
   {
-    desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，SELF_CALL.ERB:38-42，#383 起真身落在 chara-self-call.js）',
+    desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，#383 起真身落在 chara-self-call.js）',
     file: 'ere/chara/chara-self-call.js',
     find: `    era.set(\`cstr:\${cid}:60\`, '我');
     era.set(\`cflag:\${cid}:450\`, 9);`,
@@ -80,12 +80,12 @@ export default [
     must_mention: 'CSTR:x:60 = 我',
   },
   {
-    desc: 'M204 能力者技能守卫反转（!(275||…||279)，CHARA_MAKE_INIT.ERB:36）',
+    desc: 'M204 能力者技能检查反转（!(275||…||279)）',
     file: 'ere/chara/chara-init.js',
     find: '  if (!has_element) {',
-    replace: '  if (has_element) { // 变异：守卫反转',
+    replace: '  if (has_element) { // 变异：检查反转',
     tests: ['chara-init'],
-    must_mention: '守卫挡住五连',
+    must_mention: '检查挡住五连',
   },
   {
     desc: 'M813 tequip 门面口塞位寻址错（45 写到 46——#215 四检查位的门面目标）',
@@ -145,7 +145,7 @@ export default [
     tests: ['era-global'],
     must_mention: '-1→0→1→2→3→4→-1 六档循环',
   },
-  // —— #567：自由文本输入的空输入判据（0 ＝ 空输入），靶 ere/utils/input-text.js ——
+  // —— #567：自由文本输入的空输入判断条件（0 ＝ 空输入），目标 ere/utils/input-text.js ——
   {
     desc: 'M11830 判空漏掉 0（引擎归一后的空输入形式不再还原，全库回到 A 语义）',
     file: 'ere/utils/input-text.js',

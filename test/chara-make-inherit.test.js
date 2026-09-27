@@ -1,6 +1,6 @@
 /**
  * @file ere/chara/chara-make-inherit.js 的行为测试（issue #384）：
- * @CMI_SETTALENT / @CMI_MOM_COMPLEX / @CMI_CONFLICT_CHECK 三个存根换真身。
+ * cmi_settalent / cmi_mom_complex / cmi_conflict_check 三个存根换真身。
  *
  */
 
@@ -41,10 +41,10 @@ function load(fixture) {
   return fixture.load_module('chara/chara-make-inherit');
 }
 
-// —— @CMI_SETTALENT（:73-91）：三档概率继承 ——
+// —— cmi_settalent：三档概率继承 ——
 
 test('cmi_settalent：单亲（L_C <= 0）掷 RAND:4，非零即继承（3/4）', () => {
-  // SIF RAND:4 → 掷出 1/2/3 时继承，0 时不继承
+  // 掷 RAND:4：掷出 1/2/3 时继承，0 时不继承
   for (const [roll, inherited] of [
     [0, 0],
     [1, 1],
@@ -65,7 +65,7 @@ test('cmi_settalent：单亲（L_C <= 0）掷 RAND:4，非零即继承（3/4）'
   }
 });
 
-test('cmi_settalent：L_C = 0 也走单亲支（判据是 <= 0，不是 < 0）', () => {
+test('cmi_settalent：L_C = 0 也走单亲支（条件是 <= 0，不是 < 0）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('talent:3:20', 5);
   const { cmi_settalent } = load(fixture);
@@ -97,8 +97,7 @@ test('cmi_settalent：魔王为母（L_B == 0）掷 RAND:3，非零即继承（2
 });
 
 test('cmi_settalent：双亲掷 RAND:16，命中后再掷 RAND:2 选亲本', () => {
-  // TALENT:A:L_I = RAND:2 ? TALENT:B:L_I # TALENT:C:L_I ——
-  // Emuera 三目是 `cond ? 真值 # 假值`，故 RAND:2 非零取 L_B 侧（11）
+  // 掷 RAND:2 选亲本：非零取 L_B 侧（11），零取 L_C 侧
   for (const [pick, expected] of [
     [0, 22],
     [1, 11],
@@ -137,16 +136,16 @@ test('cmi_settalent：素质值是 0 时照样写 0（「不继承」与「继�
   assert.equal(fixture.store.get('talent:8:20'), 0, '显式写 0');
 });
 
-// —— @CMI_MOM_COMPLEX（:97-121）——
+// —— cmi_mom_complex ——
 
 test('cmi_mom_complex：母亲讨厌男人而孩子是男性/扶她 → 整段跳过（不掷任何骰）', () => {
   for (const child_male of [122, 121]) {
     const fixture = create_era_fixture();
     fixture.store.set('talent:3:82', 1); // 亲本「讨厌男人」
     fixture.store.set(`talent:8:${child_male}`, 1);
-    // **反例路径的前置条件**（#384 返工）：守卫一旦失效就落进 ELSE 支，
+    // **反例路径的前置条件**（#384 返工）：检查一旦失效就会继续往下走，
     // 母性（155）在那里掷 RAND:2 并写下恋母情结。不摆这一项时，两种世界里
-    // 「不掷任何骰」都成立——断言恒真、拆掉守卫也不红。
+    // 「不掷任何骰」都成立——断言恒真、拆掉检查也不红。
     fixture.store.set('talent:3:155', 1); // 亲本「母性」
     const { cmi_mom_complex } = load(fixture);
     const cap = seq_capture([1]); // 万一掷到，必须写 140（让反例也可见）
@@ -160,7 +159,7 @@ test('cmi_mom_complex：母亲男人婆而孩子是女性 → 整段跳过', () 
   const fixture = create_era_fixture();
   fixture.store.set('talent:3:79', 1); // 亲本「男人婆」
   // 孩子既非男性也非扶她
-  // 反例路径的前置条件同上一例（守卫失效 → ELSE 支的母性掷骰并写 140）
+  // 反例路径的前置条件同上一例（检查失效 → 母性段掷骰并写 140）
   fixture.store.set('talent:3:155', 1);
   const { cmi_mom_complex } = load(fixture);
   const cap = seq_capture([1]);
@@ -263,18 +262,18 @@ test('cmi_mom_complex：亲本无任何相关素质时不掷任何骰', () => {
   assert.deepEqual(cap.bounds, [], '四条件全不成立');
 });
 
-// —— @CMI_CONFLICT_CHECK（:127-166）——
+// —— cmi_conflict_check ——
 
 test('cmi_conflict_check：PAIRS 表逐对检查——两侧都有时随机消掉一个', () => {
   const fixture = create_era_fixture();
-  // 的 PAIRS 常量表首对 10/12
+  // PAIRS 冲突表首对 10/12
   fixture.store.set('talent:8:10', 1);
   fixture.store.set('talent:8:12', 1);
   const { cmi_conflict_check } = load(fixture);
   const cap = seq_capture([1]);
-  assert.equal(cmi_conflict_check(8, cap), 8, ':166 RETURN L_A');
+  assert.equal(cmi_conflict_check(8, cap), 8, '原样返回子代 ID');
   assert.deepEqual(cap.bounds, [2], '消哪个是 RAND:2');
-  // 真值支清 L_I（本对前一项，PAIRS:(L_II*2)）
+  // 真值支清 L_I（本对前一项）
   assert.equal(fixture.store.get('talent:8:10'), 0, 'RAND:2 = 1 消前者');
   assert.equal(fixture.store.get('talent:8:12'), 1, '后者保留');
 });
@@ -289,7 +288,7 @@ test('cmi_conflict_check：RAND:2 = 0 消后者（与真值支对称）', () => 
   assert.equal(fixture.store.get('talent:8:12'), 0);
 });
 
-test('cmi_conflict_check：只有一侧有素质时不动它（与门是 AND）', () => {
+test('cmi_conflict_check：只有一侧有素质时不动它（两侧都置位才消）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('talent:8:10', 1);
   const { cmi_conflict_check } = load(fixture);
@@ -316,9 +315,8 @@ test('cmi_conflict_check：PAIRS 表逐对标量抽查（多对同时命中时�
   );
 });
 
-// PAIRS 的期望表（独立照抄原作 CHARA_MAKE_INHERIT.ERB:133-150 的
-// `#DIM CONST PAIRS`，64 组 / 128 个数）。**必须独立照抄、不从实现里读**：
-// 这张表是维度型结构，只抽查表头时表尾改了不红（#384 返工实测：
+// PAIRS 的期望表（64 组 / 128 个数，维度型结构）。**必须独立手写、不从实现里读**：
+// 只抽查表头时表尾改了不红（#384 返工实测：
 // `122, 109, 122, 110` → `122, 111` 无人拦）。
 const EXPECTED_PAIRS = [
   10, 12, 11, 13, 14, 16, 15, 17, 17, 18, 20, 23, 21, 23, 22, 23, 20, 63, 21,
@@ -341,7 +339,7 @@ function expected_pairs() {
 
 test('cmi_conflict_check：PAIRS 全表逐组——两侧置位时恰好消掉约定的一侧', () => {
   const pairs = expected_pairs();
-  assert.equal(pairs.length, 64, '原作 CONST PAIRS 是 64 组');
+  assert.equal(pairs.length, 64, 'PAIRS 表是 64 组');
   assert.equal(
     new Set(pairs.map(([a, b]) => `${a},${b}`)).size,
     pairs.length,
@@ -384,7 +382,7 @@ test('cmi_conflict_check：穷举全表下标域——只有表内的组合会�
   // 逐组断言「掷骰 ⇔ 该组在表内」。任何一处数字写错、漏一对、多一对，
   // 都会在对应的那一格上红——表内容自此完整被守，而不是只守表头。
   const pairs = expected_pairs();
-  // 键一律取排序后的形态：表内有两对是「大下标在前」写的（119,109 与
+  // 键一律取排序后的写法：表内有两对是「大下标在前」写的（119,109 与
   // 122,109 一族），而判定只看两侧是否置位、与书写次序无关（清哪一侧才看
   // 次序，那由上面那条逐组用例钉）。
   const key_of = ([a, b]) => (a < b ? `${a},${b}` : `${b},${a}`);
@@ -433,10 +431,10 @@ test('cmi_conflict_check：表外下标一起置位不构成任何冲突', () =>
   assert.equal(fixture.store.get('talent:8:1'), 1, '也不消任何一侧');
 });
 
-// —— @CHARA_MAKE_INHERIT 的调度（:4-67）——
+// —— chara_make_inherit 的调度 ——
 
-test('chara_make_inherit：负亲本（L_B < 0）直接 RETURN，不写任何继承结果（:11-12）', () => {
-  // 子代预先带一个素质值——一旦守卫失效、继续往下执行，:20-21 段会把它
+test('chara_make_inherit：负亲本（L_B < 0）直接返回，不写任何继承结果', () => {
+  // 子代预先带一个素质值——一旦检查失效、继续往下执行，继承段会把它
   // 覆盖成 `talent:-1:20`（未声明的负亲本，读回 undefined），从而可观察。
   const fixture = create_era_fixture();
   fixture.store.set('talent:8:20', 42);
@@ -446,7 +444,7 @@ test('chara_make_inherit：负亲本（L_B < 0）直接 RETURN，不写任何继
   assert.equal(
     fixture.store.get('talent:8:20'),
     42,
-    '负亲本直接 RETURN，子代已有素质值原样保留',
+    '负亲本直接返回，子代已有素质值原样保留',
   );
 });
 
@@ -477,7 +475,7 @@ test('chara_make_inherit：继承候选表的四段与两类排除（每个区�
       `候选段成员 ${index} 应被继承`,
     );
   }
-  // 与 :35 的排除项一律不继承
+  // 排除项一律不继承
   for (const index of [74, 78, 121, 123, 130, 143, 85, 244, 247, 254]) {
     assert.notEqual(
       fixture.store.get(`talent:8:${index}`),
@@ -491,7 +489,7 @@ test('chara_make_inherit：继承候选表的四段与两类排除（每个区�
   }
 });
 
-test('chara_make_inherit：私处封印裸写命中的是 TARGET（:24-25）', () => {
+test('chara_make_inherit：私处封印裸写命中的是 TARGET', () => {
   const fixture = create_era_fixture();
   fixture.store.set('talent:8:122', 1); // 子代「男人」
   fixture.store.set('talent:8:273', 1); // 子代私处封印
@@ -514,7 +512,7 @@ test('chara_make_inherit：处女且非男性非扶她时不写私处封印', ()
 });
 
 test('chara_make_inherit：恋母情结段随第二亲本存在与否决定调用次数', () => {
-  // 双亲：CMI_MOM_COMPLEX 对两个亲本各调一次（母性 → RAND:2）
+  // 双亲：cmi_mom_complex 对两个亲本各调一次（母性 → RAND:2）
   // 恒真掷骰：10-152 段会把母性（155）也抄给子代，故清掉子代侧的输入，
   // 让「子代有没有 140」只反映这一段的调用
   const two = create_era_fixture();
@@ -523,7 +521,7 @@ test('chara_make_inherit：恋母情结段随第二亲本存在与否决定调�
   chara_make_inherit(8, 2, 3, () => 1);
   assert.equal(two.store.get('talent:8:140'), 1, '亲本 A 的母性设了恋母情结');
 
-  // 第二亲本的母性只由 :29-30 的守卫决定是否被看到：单亲时不看 L_C
+  // 第二亲本的母性只在双亲时被看到：单亲时不看 L_C
   const one = create_era_fixture();
   one.store.set('talent:3:155', 1); // 只有第二亲本有母性
   const { chara_make_inherit: run_one } = load(one);
@@ -531,10 +529,10 @@ test('chara_make_inherit：恋母情结段随第二亲本存在与否决定调�
   assert.equal(
     one.store.get('talent:8:140'),
     undefined,
-    'L_C < 0 时 :29 的守卫挡住第二次调用',
+    'L_C < 0 时检查挡住第二次调用',
   );
 
-  // 守卫的边界在 0 那一侧（判据是 `L_C >= 0`，不是 `> 0`）：魔王当第二亲本
+  // 检查的边界在 0 那一侧（条件是 `L_C >= 0`，不是 `> 0`）：魔王当第二亲本
   // （L_C = 0）仍算「有第二亲本」。亲本 A 不带母性，140 只可能来自第二次调用
   const king = create_era_fixture();
   king.store.set('talent:0:155', 1); // 魔王（0）母性
@@ -570,13 +568,13 @@ test('chara_make_inherit：精英特技 470-488 段只在亲本自身有该素�
   assert.notEqual(
     plain.store.get('talent:8:470'),
     1,
-    '非精英不进 470 段（470 段只由 :51 的精英守卫放行）',
+    '非精英不进 470 段（470 段只由精英检查放行）',
   );
 });
 
 test('chara_make_inherit：三处委托都接到真身（素质真被继承、冲突真被清理）', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('talent:2:20', 3); // 亲本素质（：20-21 段）
+  fixture.store.set('talent:2:20', 3); // 亲本素质
   fixture.store.set('talent:2:10', 1); // 冲突对 10/12 —— 两侧都由亲本带过来
   fixture.store.set('talent:2:12', 1);
   const { chara_make_inherit } = load(fixture);
@@ -584,10 +582,10 @@ test('chara_make_inherit：三处委托都接到真身（素质真被继承、�
   const result = chara_make_inherit(8, 2, -1, () => 1);
   assert.equal(result, 8);
 
-  // CMI_SETTALENT 真身：素质 20 真的从亲本抄了过来
+  // cmi_settalent 真身：素质 20 真的从亲本抄了过来
   assert.equal(fixture.store.get('talent:8:20'), 3, '继承真身已生效');
 
-  // CMI_CONFLICT_CHECK 真身：子代同时拿到 10 与 12（互斥对），消掉一侧。
+  // cmi_conflict_check 真身：子代同时拿到 10 与 12（互斥对），消掉一侧。
   // 掷骰恒 1（RAND:2 非零）走 `TALENT:L_A:L_I = 0` 那一支 → 消左侧 10
   assert.equal(
     fixture.store.get('talent:8:10'),

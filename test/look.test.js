@@ -1,6 +1,6 @@
 /**
  * ere/chara/look-info.js 的行为测试（issue #389，N5 段 1）：
- * `%GET_LOOK_INFO(ARG, ARGS)%` 式中函数的全部 kind。
+ * get_look_info 的全部 kind。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开导出
  * 直驱。本函数是纯函数（只有读取与拼接），无随机源、无输出——所以本文件
@@ -8,7 +8,7 @@
  *
  * 表驱动的理由（派单简报的覆盖面标准）：本函数是**维度型**的（kind × 档位），
  * 挑点钉只能钉住挑中的那几个点；这里每个 kind 一张表走完整个值域，含
- * CASEELSE 兜底档与区间边界（20/50/…/200 归前一段这类重叠点单独钉）。
+ * CASEELSE 默认档与区间边界（20/50/…/200 归前一段这类重叠点单独钉）。
  */
 
 'use strict';
@@ -78,13 +78,13 @@ function load(talents = {}) {
 /**
  * 表驱动骨架：同一 kind 下逐条「素质值 → 期望串」。整张表共用一个夹具
  * （素质值逐条改写，模块读的是活存储），避免几百次重建夹具的开销。
- * @param {string} kind GET_LOOK_INFO 的分支名
+ * @param {string} kind get_look_info 的分支名
  * @param {number} talent_idx 被读的素质下标
  * @param {Array<[number, string]>} cases [素质值, 期望串]
  * @param {string} note 断言里的说明
  */
 function table(kind, talent_idx, cases, note) {
-  test(`GET_LOOK_INFO「${kind}」：${note}`, () => {
+  test(`get_look_info「${kind}」：${note}`, () => {
     const fixture = create_era_fixture();
     const { get_look_info } = fixture.load_module('chara/look-info');
     for (const [value, expected] of cases) {
@@ -98,7 +98,7 @@ function table(kind, talent_idx, cases, note) {
   });
 }
 
-// —— 发色两张表（源 :2894 与 :2922 是两个 kind，表体不同） ——
+// —— 发色两张表（两个 kind，表体不同） ——
 
 table(
   '发色(颜色)',
@@ -115,7 +115,7 @@ table(
     [9, '白色'],
     [10, '暗金色'],
     [11, '粉色'],
-    [0, '黑色'], // CASEELSE :2918
+    [0, '黑色'], // CASEELSE
     [99, '黑色'], // CASEELSE
   ],
   '11 档 + CASEELSE 落「黑色」',
@@ -136,7 +136,7 @@ table(
     [9, '白发'],
     [10, '暗金发'],
     [11, '粉发'],
-    [0, '黑发'], // CASEELSE :2946
+    [0, '黑发'], // CASEELSE
     [12, '黑发'], // CASEELSE
   ],
   '11 档 + CASEELSE 落「黑发」',
@@ -164,11 +164,11 @@ table(
   T.头发长度,
   [
     [1, '短'],
-    [100, '短'], // 区间上界 :2968
-    [101, '半长'], // 下一段下界 :2970
+    [100, '短'], // 区间上界
+    [101, '半长'], // 下一段下界
     [200, '半长'],
     [201, '长'],
-    [300, '长'], // 区间上界 :2972
+    [300, '长'], // 区间上界
     [0, 'ERROR'],
     [301, 'ERROR'],
     [999, 'ERROR'],
@@ -296,7 +296,7 @@ table(
   [
     [1, '白虎'],
     [2, '胎毛'], // 下界
-    [20, '胎毛'], // 上界（与下一段 :3102 的下界 20 重叠 → 归前一段）
+    [20, '胎毛'], // 上界（与下一段的下界 20 重叠 → 归前一段）
     [21, '新长的'],
     [50, '新长的'], // 重叠点归前一段
     [51, '稀薄'],
@@ -351,8 +351,8 @@ table(
   '1-28 档 + CASEELSE 落 ERROR',
 );
 
-test('GET_LOOK_INFO「魅力点」CASE 29：扶她/男人返回自己的鸡鸡，否则私处', () => {
-  // 源里用 PRINT；本实现返回同串（本文件头已判等价）
+test('get_look_info「魅力点」CASE 29：扶她/男人返回自己的鸡鸡，否则私处', () => {
+  // 本实现返回同串（与直接输出等价）
   const { get_look_info } = load({ [T.魅力点]: 29, [T.男人]: 1 });
   assert.equal(get_look_info(5, '魅力点'), '自己的鸡鸡');
 
@@ -457,11 +457,11 @@ table(
     [13, '$13'],
     [-1, '$-1'],
   ],
-  'CASEELSE = TOSTR(v, "$${0}") 的字面 $ 前缀',
+  'CASEELSE 的字面 $ 前缀',
 );
 
-test('GET_LOOK_INFO「种族12」：精英（TALENT:220）走种族2，否则走种族', () => {
-  // GOTO $INFO_种族 / $INFO_种族2
+test('get_look_info「种族12」：精英（TALENT:220）走种族2，否则走种族', () => {
+  // 精英走种族2、其余走种族
   const elite = load({ [T.种族]: 2, [T.种族2]: 7, 220: 1 });
   assert.equal(elite.get_look_info(5, '种族12'), '巨人');
 
@@ -502,7 +502,7 @@ table(
   '性别中立档 + CASEELSE 落 ERROR',
 );
 
-test('GET_LOOK_INFO「成为勇者前的生活」：四档按性别分叉的女性侧', () => {
+test('get_look_info「成为勇者前的生活」：四档按性别分叉的女性侧', () => {
   // （男人素质未置位）
   const fixture = create_era_fixture();
   const { get_look_info } = fixture.load_module('chara/look-info');
@@ -517,7 +517,7 @@ test('GET_LOOK_INFO「成为勇者前的生活」：四档按性别分叉的女�
   }
 });
 
-test('GET_LOOK_INFO「成为勇者前的生活」：男人走四档的男性侧', () => {
+test('get_look_info「成为勇者前的生活」：男人走四档的男性侧', () => {
   const cases = [
     [2, '修士'],
     [11, '巫者'],
@@ -577,14 +577,14 @@ table(
     [2, '短小包茎'],
     [3, '包茎'],
     [4, '马阴茎'],
-    [0, '普通'], // CASEELSE :3457
+    [0, '普通'], // CASEELSE
     [5, '普通'], // CASEELSE
   ],
   '4 档 + CASEELSE 落「普通」',
 );
 
-test('GET_LOOK_INFO「职业」：200-228 取最后一个真值档的素质名', () => {
-  // FOR LOCAL, 200, 229（上界开区间）——多个真值时取后者
+test('get_look_info「职业」：200-228 取最后一个真值档的素质名', () => {
+  // 扫描 [200,229)（上界开区间）——多个真值时取后者
   const single = world({ 205: 1 });
   single.store.set('talentname:205', '剑士');
   assert.equal(
@@ -602,7 +602,7 @@ test('GET_LOOK_INFO「职业」：200-228 取最后一个真值档的素质名',
   );
 });
 
-test('GET_LOOK_INFO「职业」：无职业时魔王（cid 0）报魔王，其余报无', () => {
+test('get_look_info「职业」：无职业时魔王（cid 0）报魔王，其余报无', () => {
   const master = load();
   assert.equal(master.get_look_info(0, '职业'), '魔王');
 
@@ -610,8 +610,8 @@ test('GET_LOOK_INFO「职业」：无职业时魔王（cid 0）报魔王，其�
   assert.equal(other.get_look_info(5, '职业'), '无');
 });
 
-test('GET_LOOK_INFO「职业」：扫的区间是 200-228，199/229 不在内', () => {
-  // 区间边界：源 :3462 `FOR LOCAL, 200, 229` 上界开区间
+test('get_look_info「职业」：扫的区间是 200-228，199/229 不在内', () => {
+  // 区间边界：扫描 [200,229) 上界开区间
   const probe = (talents, name) => {
     const fixture = world(talents);
     for (const [idx, label] of Object.entries(name)) {
@@ -625,7 +625,7 @@ test('GET_LOOK_INFO「职业」：扫的区间是 200-228，199/229 不在内', 
   assert.equal(probe({ 228: 1 }, { 228: '上界' }), '上界');
 });
 
-test('GET_LOOK_INFO「性格」：160-178 优先，全空才回落 10-18', () => {
+test('get_look_info「性格」：160-178 优先，全空才回落 10-18', () => {
   const probe = (talents, names) => {
     const fixture = world(talents);
     for (const [idx, label] of Object.entries(names)) {
@@ -643,8 +643,8 @@ test('GET_LOOK_INFO「性格」：160-178 优先，全空才回落 10-18', () =>
   assert.equal(probe({}, {}), '不明');
 });
 
-test('GET_LOOK_INFO「性格」：两段扫描区间各含自己的上界与下界', () => {
-  // `FOR LOCAL, 160, 179` / :3480 `FOR LOCAL, 10, 19`
+test('get_look_info「性格」：两段扫描区间各含自己的上界与下界', () => {
+  // 扫描 [160,179) 与 [10,19)
   const probe = (talents, names) => {
     const fixture = world(talents);
     for (const [idx, label] of Object.entries(names)) {
@@ -667,8 +667,8 @@ test('GET_LOOK_INFO「性格」：两段扫描区间各含自己的上界与下�
 
 // —— 婚史：TALENT:320 的十进制压缩码解码 ——
 
-test('GET_LOOK_INFO「婚史」：保密/无两档', () => {
-  // LOCAL:1 = LOCAL % 10
+test('get_look_info「婚史」：保密/无两档', () => {
+  // 个位 = 家族码 % 10
   const secret = load({ [T.家族构成]: 20 }); // 个位 0 且非 0
   assert.equal(secret.get_look_info(5, '婚史'), '婚史保密');
 
@@ -676,7 +676,7 @@ test('GET_LOOK_INFO「婚史」：保密/无两档', () => {
   assert.equal(none.get_look_info(5, '婚史'), '无');
 });
 
-test('GET_LOOK_INFO「婚史」：CASE 0 未婚，CFLAG:601 != 0 时加「原」', () => {
+test('get_look_info「婚史」：CASE 0 未婚，CFLAG:601 != 0 时加「原」', () => {
   const plain = load({ [T.家族构成]: 1 });
   assert.equal(plain.get_look_info(5, '婚史'), '未婚');
 
@@ -688,7 +688,7 @@ test('GET_LOOK_INFO「婚史」：CASE 0 未婚，CFLAG:601 != 0 时加「原」
   );
 });
 
-test('GET_LOOK_INFO「婚史」：五档婚姻状态 × 三类配偶称呼', () => {
+test('get_look_info「婚史」：五档婚姻状态 × 三类配偶称呼', () => {
   // ：万位 = 婚姻状态，十亿位 = 夫妻性别码
   const cases = [
     // [家族码, 期望串]
@@ -713,7 +713,7 @@ test('GET_LOOK_INFO「婚史」：五档婚姻状态 × 三类配偶称呼', () 
 
 // —— 家族：双亲指定 / 家族码解码 ——
 
-test('GET_LOOK_INFO「家族」：双亲指定时按素质/物品名拼串', () => {
+test('get_look_info「家族」：双亲指定时按素质/物品名拼串', () => {
   // ：>1000 是素质名、否则是物品名
   const fixture = world({
     [T.父亲种族]: 1000 + 12,
@@ -725,14 +725,14 @@ test('GET_LOOK_INFO「家族」：双亲指定时按素质/物品名拼串', () 
   assert.equal(get_look_info(5, '家族'), '刚强的父亲，蜥蜴人的母亲，');
 });
 
-test('GET_LOOK_INFO「家族」：只有一方指定时不走双亲支', () => {
-  // 判据是与——单方指定落家族码解码，码为 0 → 家族保密
+test('get_look_info「家族」：只有一方指定时不走双亲支', () => {
+  // 条件是与——单方指定落家族码解码，码为 0 → 家族保密
   const { get_look_info } = load({ [T.父亲种族]: 1005 });
   assert.equal(get_look_info(5, '家族'), '家族保密');
 });
 
-test('GET_LOOK_INFO「家族」：个位为 0 → 家族保密；全员皆空 → 孤身一人', () => {
-  // LOCAL:1 = LOCAL % 10（注意与「婚史」不同：这里不排除 0 本身）
+test('get_look_info「家族」：个位为 0 → 家族保密；全员皆空 → 孤身一人', () => {
+  // 个位 = 家族码 % 10（注意与「婚史」不同：这里不排除 0 本身）
   const secret = load({ [T.家族构成]: 10 });
   assert.equal(secret.get_look_info(5, '家族'), '家族保密');
 
@@ -743,8 +743,8 @@ test('GET_LOOK_INFO「家族」：个位为 0 → 家族保密；全员皆空 �
   assert.equal(alone.get_look_info(5, '家族'), '孤身一人');
 });
 
-test('GET_LOOK_INFO「家族」：配偶档位 1 与 3 都出称呼，其余不出', () => {
-  // LOCAL:1 == 1 与 == 3 两支同体
+test('get_look_info「家族」：配偶档位 1 与 3 都出称呼，其余不出', () => {
+  // 个位 == 1 与 == 3 两支同体
   for (const [marriage, expected] of [
     [1, '丈夫'],
     [3, '丈夫'],
@@ -756,8 +756,8 @@ test('GET_LOOK_INFO「家族」：配偶档位 1 与 3 都出称呼，其余不�
   }
 });
 
-test('GET_LOOK_INFO「家族」：六类亲属的单个/多个两种写法', () => {
-  // ：一位数 = 1 时不带数量、>1 时 `TOSTR(v, " 娘x{0}")`（格式串
+test('get_look_info「家族」：六类亲属的单个/多个两种写法', () => {
+  // ：一位数 = 1 时不带数量、>1 时带 " 娘x{0}" 式后缀（格式串
   // 自带前导空格，故两式都带空格；家族码 = 1 + 值×位）
   const cases = [
     // [位, 值, 期望串]
@@ -780,7 +780,7 @@ test('GET_LOOK_INFO「家族」：六类亲属的单个/多个两种写法', () 
   }
 });
 
-test('GET_LOOK_INFO「家族」：六类亲属可叠加，顺序固定为娘儿姊兄妹弟', () => {
+test('get_look_info「家族」：六类亲属可叠加，顺序固定为娘儿姊兄妹弟', () => {
   const { get_look_info } = load({
     [T.家族构成]: 1 + 100 + 1000 + 100000 + 1000000 + 10000000 + 100000000,
   });
@@ -800,7 +800,7 @@ table(
   '0-11 与「种族」同表；越界码不是 ERROR 而是回落',
 );
 
-test('GET_LOOK_INFO「原种族」：未登记码回落到「种族」分支（源 :3701 RESTART）', () => {
+test('get_look_info「原种族」：未登记码回落到「种族」分支', () => {
   const { get_look_info } = load({ [T.原种族]: 99, [T.种族]: 3 });
   assert.equal(get_look_info(5, '原种族'), '吸血鬼');
 
@@ -809,7 +809,7 @@ test('GET_LOOK_INFO「原种族」：未登记码回落到「种族」分支（�
   assert.equal(neither.get_look_info(5, '原种族'), 'ERROR');
 });
 
-test('GET_LOOK_INFO「现种族」：INRANGE(v, 100, 220) 走物品名，否则 ERROR', () => {
+test('get_look_info「现种族」：inrange(v, 100, 220) 走物品名，否则 ERROR', () => {
   for (const [value, expected] of [
     [100, '蜥蜴人'],
     [132, '小恶魔'],
@@ -872,21 +872,21 @@ table(
   '0-5 有名 + 6-11 空串 + CASEELSE 落「不改变」',
 );
 
-// —— 兜底 ——
+// —— 缺省处理 ——
 
-test('GET_LOOK_INFO：未登记的 kind 返回空串（源 :3772-3773 的 ELSE）', () => {
+test('get_look_info：未登记的 kind 返回空串（ELSE 支）', () => {
   const { get_look_info } = load({ [T.种族]: 1 });
   assert.equal(get_look_info(5, '不存在的kind'), '');
   assert.equal(get_look_info(5, ''), '');
 });
 
-test('GET_LOOK_INFO：kind 严格区分——「发色(颜色)」与「头发颜色」不是同一张表', () => {
+test('get_look_info：kind 严格区分——「发色(颜色)」与「头发颜色」不是同一张表', () => {
   const { get_look_info } = load({ [T.头发颜色]: 5 });
   assert.equal(get_look_info(5, '发色(颜色)'), '银色');
   assert.equal(get_look_info(5, '头发颜色'), '银发');
 });
 
-test('GET_LOOK_INFO：读未声明的角色返回兜底值而非抛错（引擎 undefined → 0）', () => {
+test('get_look_info：读未声明的角色返回默认值而非抛错（引擎 undefined → 0）', () => {
   const { get_look_info } = load();
   assert.equal(get_look_info(999, '种族'), '人类', '素质 0 档');
   assert.equal(get_look_info(999, '目'), 'ERROR', '0 无档 → CASEELSE');
@@ -894,7 +894,7 @@ test('GET_LOOK_INFO：读未声明的角色返回兜底值而非抛错（引擎 
 });
 
 // ===========================================================================
-// ere/chara/look.js：@LOOK_SET（:4-813）
+// ere/chara/look.js：look_set
 // ===========================================================================
 
 /**
@@ -922,8 +922,7 @@ function steer(map, fallback = 0) {
  * （RAND:20 依次落在 理由 / 喜好 / 家族婚姻 / 家族子女 / 家族性别五处）
  * 用它精确定位某一次，其余返回该上界的单值映射或 fallback。
  *
- * **fallback 取 0**：常数随机源下有两个重掷循环会死转（源 :504 的修道女
- * 重掷 `Q == 2 && 法术 == 0`、:286/:312 的魅力点与癖重掷），0 是唯一不触发
+ * **fallback 取 0**：常数随机源下有两个重掷循环会死转（修道女重掷 `Q == 2 && 法术 == 0`、魅力点与癖两处重掷），0 是唯一不触发
  * 任何一支的取值。
  * @param {Record<string, number>} map 键 `上界#序号` 或 `上界` → 值
  * @param {number} [fallback] 都未命中时的返回值
@@ -957,7 +956,7 @@ const always = () => 0;
 const top = (n) => n - 1;
 
 /**
- * LOOK_SET 的驱动面：一个夹具、自增角色 ID——每个用例各占一个角色，
+ * look_set 的驱动面：一个夹具、自增角色 ID——每个用例各占一个角色，
  * 互不污染，省掉逐用例重建夹具的开销。
  * @returns {object} 驱动面
  */
@@ -973,7 +972,7 @@ function look_world() {
       mod.look_set(cid, arg, rand);
       return cid;
     },
-    /** 只占一个全新角色号、不跑 LOOK_SET（供「先置素质再跑」的用例） */
+    /** 只占一个全新角色号、不跑 look_set（供「先置素质再跑」的用例） */
     reserve() {
       const cid = next_cid;
       next_cid += 1;
@@ -1012,7 +1011,7 @@ function look_world() {
  * @param {string} note 断言说明
  */
 function look_table(talent_idx, bound, cases, note) {
-  test(`LOOK_SET 素质 ${talent_idx}：${note}`, () => {
+  test(`look_set 素质 ${talent_idx}：${note}`, () => {
     const w = look_world();
     for (const [roll, expected] of cases) {
       const cid = w.run(0, steer({ [bound]: roll }));
@@ -1048,10 +1047,10 @@ look_table(
     [95, 5],
     [99, 5],
   ],
-  '头发颜色 11 档（:26-59 的区间边界逐条）',
+  '头发颜色 11 档（区间边界逐条）',
 );
 
-test('LOOK_SET：TALENT:300 已设定时整段跳过（不重掷）', () => {
+test('look_set：TALENT:300 已设定时整段跳过（不重掷）', () => {
   const w = look_world();
   const cid = w.run(0, steer({ 100: 99 }));
   assert.equal(w.talent(cid, 300), 5, '首次掷到 99 → 銀髪');
@@ -1071,7 +1070,7 @@ look_table(
     [10, 5],
     [11, 6],
   ],
-  '头发状态 6 档（:64-82）',
+  '头发状态 6 档',
 );
 
 look_table(
@@ -1085,10 +1084,10 @@ look_table(
     [4, 101],
     [5, 201],
   ],
-  '头发长度三档（:87-96）',
+  '头发长度三档',
 );
 
-test('LOOK_SET：未熟（TALENT:135）在调用前已置位 → 头发长度恒 1', () => {
+test('look_set：未熟（TALENT:135）在调用前已置位 → 头发长度恒 1', () => {
   const w = look_world();
   for (const roll of [0, 2, 4, 5]) {
     const cid = w.run(0, always);
@@ -1109,10 +1108,10 @@ look_table(
     [4, 1],
     [5, 1],
   ],
-  '头发修剪方式（源 :102-113 的 ELSEIF 3/4 不可达，Q >= 2 → 基本剪法）',
+  '头发修剪方式（ELSEIF 3/4 不可达，Q >= 2 → 基本剪法）',
 );
 
-test('LOOK_SET 素质 304：发型按头发长度三段取不同上界', () => {
+test('look_set 素质 304：发型按头发长度三段取不同上界', () => {
   // 短(1-100) → RAND:3 / 半长(101-200) → RAND:10 / 长(201-300) → RAND:12
   const cases = [
     [0, 3, 2, 3], // 短：长度掷 0 → 302 = 1 → RAND:3
@@ -1147,7 +1146,7 @@ look_table(
     [49, 6],
     [99, 6],
   ],
-  '目 8 档（:133-165 的区间边界逐条）',
+  '目 8 档（区间边界逐条）',
 );
 
 look_table(
@@ -1165,7 +1164,7 @@ look_table(
     [98, 4],
     [99, 5],
   ],
-  '瞳色 6 档（:169-187）',
+  '瞳色 6 档',
 );
 
 look_table(
@@ -1178,7 +1177,7 @@ look_table(
     [3, 4],
     [5, 4],
   ],
-  '唇 4 档（:191-203）',
+  '唇 4 档',
 );
 
 look_table(
@@ -1202,10 +1201,10 @@ look_table(
     [3, 3],
     [5, 3],
   ],
-  '乳头 4 档（:220-232）',
+  '乳头 4 档',
 );
 
-test('LOOK_SET 素质 311/310：阴毛生长极限 6 档，状态同步', () => {
+test('look_set 素质 311/310：阴毛生长极限 6 档，状态同步', () => {
   for (const [roll, expected] of [
     [0, 1],
     [20, 1],
@@ -1223,11 +1222,11 @@ test('LOOK_SET 素质 311/310：阴毛生长极限 6 档，状态同步', () => 
     const w = look_world();
     const cid = w.run(0, steer({ 150: roll }));
     assert.equal(w.talent(cid, 311), expected, `生长极限掷 ${roll}`);
-    assert.equal(w.talent(cid, 310), expected, '状态 = 生长极限（:256）');
+    assert.equal(w.talent(cid, 310), expected, '状态 = 生长极限');
   }
 });
 
-test('LOOK_SET 素质 318/133：阴茎 4 档 + 包茎早泄判定', () => {
+test('look_set 素质 318/133：阴茎 4 档 + 包茎早泄判定', () => {
   for (const [roll, expected] of [
     [0, 0],
     [50, 0],
@@ -1256,7 +1255,7 @@ test('LOOK_SET 素质 318/133：阴茎 4 档 + 包茎早泄判定', () => {
   }
 });
 
-test('LOOK_SET 素质 312：魅力点 1-28，贫乳不能掷到 12', () => {
+test('look_set 素质 312：魅力点 1-28，贫乳不能掷到 12', () => {
   const w = look_world();
   for (const [roll, expected] of [
     [0, 1],
@@ -1276,7 +1275,7 @@ test('LOOK_SET 素质 312：魅力点 1-28，贫乳不能掷到 12', () => {
   assert.equal(w.talent(cid2, 312), 12, '非贫乳掷到 12 → 保留');
 });
 
-test('LOOK_SET 素质 312/121：魅力点 24 给扶她机会，成不了则重掷', () => {
+test('look_set 素质 312/121：魅力点 24 给扶她机会，成不了则重掷', () => {
   const got = look_world();
   // RAND:28 给队列 [23, 5]：命中 24 档后若没成扶她还要再掷一次，队列必须有
   // 第二项——只给单值会让重掷循环在变异下空转（M8311 自验时踩到过）
@@ -1297,7 +1296,7 @@ test('LOOK_SET 素质 312/121：魅力点 24 给扶她机会，成不了则重�
   assert.equal(male.talent(cid_male, 121), 0, '男人不成扶她');
 });
 
-test('LOOK_SET 素质 313：癖 1-34，金红桃（167）掷到 25 重掷', () => {
+test('look_set 素质 313：癖 1-34，金红桃（167）掷到 25 重掷', () => {
   const w = look_world();
   for (const [roll, expected] of [
     [0, 1],
@@ -1316,7 +1315,7 @@ test('LOOK_SET 素质 313：癖 1-34，金红桃（167）掷到 25 重掷', () =
   assert.equal(w.talent(cid2, 313), 25, '非金红桃 → 保留 25');
 });
 
-test('LOOK_SET 素质 314：非精英 11 档（:331-407）', () => {
+test('look_set 素质 314：非精英 11 档', () => {
   for (const [roll, expected] of [
     [0, 0],
     [99, 0],
@@ -1343,7 +1342,7 @@ test('LOOK_SET 素质 314：非精英 11 档（:331-407）', () => {
   }
 });
 
-test('LOOK_SET 素质 314：ARG 指定种族（-1 人类 / 10 / 11 / 其余码）', () => {
+test('look_set 素质 314：arg 指定种族（-1 人类 / 10 / 11 / 其余码）', () => {
   for (const [arg, expected] of [
     [-1, 0],
     [10, 10],
@@ -1357,11 +1356,11 @@ test('LOOK_SET 素质 314：ARG 指定种族（-1 人类 / 10 / 11 / 其余码�
   ]) {
     const w = look_world();
     const cid = w.run(arg, steer({ 40: 1, 10: 4 }));
-    assert.equal(w.talent(cid, 314), expected, `ARG = ${arg}`);
+    assert.equal(w.talent(cid, 314), expected, `arg = ${arg}`);
   }
 });
 
-test('LOOK_SET：霍比特/矮人的种族副作用（小体型、巨乳系清零、阴毛倾向）', () => {
+test('look_set：霍比特/矮人的种族副作用（小体型、巨乳系清零、阴毛倾向）', () => {
   const hobbit = look_world();
   const cid_h = hobbit.run(0, steer({ 200: 100, 10: 3 }));
   assert.equal(hobbit.talent(cid_h, 314), 10);
@@ -1386,7 +1385,7 @@ test('LOOK_SET：霍比特/矮人的种族副作用（小体型、巨乳系清�
   );
 });
 
-test('LOOK_SET：精灵/人狼/吸血鬼/无头骑士/天使的善恶值与能力者', () => {
+test('look_set：精灵/人狼/吸血鬼/无头骑士/天使的善恶值与能力者', () => {
   const cases = [
     [140, 1, 20, 0],
     [160, 2, -20, 0],
@@ -1417,7 +1416,7 @@ test('LOOK_SET：精灵/人狼/吸血鬼/无头骑士/天使的善恶值与能�
   assert.equal(w.talent(cid, 278), 0, 'RAND:40 != 0 → 不置能力者');
 });
 
-test('LOOK_SET 素质 314：精英（220）恒 9 + 种族2 特性各档', () => {
+test('look_set 素质 314：精英（220）恒 9 + 种族2 特性各档', () => {
   const cases = [
     [1, [472], []],
     [2, [261, 471], []],
@@ -1454,7 +1453,7 @@ test('LOOK_SET 素质 314：精英（220）恒 9 + 种族2 特性各档', () => 
   assert.equal(w.talent(cid, 478), 0, 'RAND:4 != 0 时不给 478');
 });
 
-test('LOOK_SET：精英的种族2 未命中前几档时落 `|| 12` 恒真臂', () => {
+test('look_set：精英的种族2 未命中前几档时落 `|| 12` 恒真分支', () => {
   for (const race2 of [0, 10, 12, 13, 99]) {
     const w = look_world();
     const cid = w.run(0, always);
@@ -1470,7 +1469,7 @@ test('LOOK_SET：精英的种族2 未命中前几档时落 `|| 12` 恒真臂', (
   }
 });
 
-test('LOOK_SET 素质 315：成为勇者前的生活 21 档 + 配下 90-93', () => {
+test('look_set 素质 315：成为勇者前的生活 21 档 + 配下 90-93', () => {
   for (const [roll, expected] of [
     [0, 1],
     [4, 5],
@@ -1496,7 +1495,7 @@ test('LOOK_SET 素质 315：成为勇者前的生活 21 档 + 配下 90-93', () 
   }
 });
 
-test('LOOK_SET：不会法术时修道女（Q=2）重掷', () => {
+test('look_set：不会法术时修道女（Q=2）重掷', () => {
   const no_magic = look_world();
   const cid = no_magic.run(0, steer({ 21: [1, 0], 5: 1, 15: 1 }));
   assert.equal(no_magic.talent(cid, 315), 1, '第一次掷 2 → 重掷到 1');
@@ -1508,7 +1507,7 @@ test('LOOK_SET：不会法术时修道女（Q=2）重掷', () => {
   assert.equal(has_magic.talent(cid2, 315), 2, '会法术则保留修道女');
 });
 
-test('LOOK_SET：男人两支的经验上界（童貞オトコ RAND:20 / オトコ RAND:40）', () => {
+test('look_set：男人两支的经验上界（童貞オトコ RAND:20 / オトコ RAND:40）', () => {
   // 两支的上界不同（20 / 40），必须分开钉——RAND:20 与 RAND:40 各
   // 投不同的值，两支才区分得开：20 → 5（local = 6）、40 → 1（local = 2）
   const cases = [
@@ -1530,8 +1529,8 @@ test('LOOK_SET：男人两支的经验上界（童貞オトコ RAND:20 / オト�
   }
 });
 
-test('LOOK_SET：妓女/乞丐/奴隶的经验与善恶值', () => {
-  // RAND:40 钉在 1 → 处女支的 `LOCAL = RAND:40 + 1` 恒为 2，三个 EXP 都是
+test('look_set：妓女/乞丐/奴隶的经验与善恶值', () => {
+  // RAND:40 钉在 1 → 处女支的经验恒为 2（RAND:40 + 1），三个 EXP 都是
   // 确定值：肛门 2 / 性交 2 / 卖淫 2（Q == 20 的奴隶档不吃卖淫经验 → 0）
   for (const [roll, expected_q, expected_sex_work] of [
     [4, 5, 2],
@@ -1548,14 +1547,14 @@ test('LOOK_SET：妓女/乞丐/奴隶的经验与善恶值', () => {
     assert.equal(
       w.exp(cid, 74),
       expected_sex_work,
-      `卖淫经验（Q=${expected_q} 的 \`Q != 20\` 判据）`,
+      `卖淫经验（Q=${expected_q} 的 \`Q != 20\` 条件）`,
     );
     assert.equal(w.exp(cid, 60), 0, 'RAND:15 = 1 → 不中生育经验');
     assert.equal(w.cflag(cid, 151), -30, '善恶值 -30');
   }
 });
 
-test('LOOK_SET：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40 的差异）', () => {
+test('look_set：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40 的差异）', () => {
   // RAND:5 == 0 支：私处与肛门各掷 40、性交 += 两者之和
   const anal = look_world();
   const cid_a = anal.run(0, always);
@@ -1580,9 +1579,9 @@ test('LOOK_SET：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40
   assert.equal(v_only.exp(cid_v, 74), 6, '卖淫经验 = 6');
 });
 
-test('LOOK_SET：刺青名表（CSTR:LOCAL，RAND:8 + 10 → 8 项全走）', () => {
-  // `LOCALS:10 '= "淫乱","母猪",…` 十项，:551 `CSTR:LOCAL = %LOCALS:LOCAL%`；
-  // LOCAL = RAND:8 + 10 只取到前 8 项——逐项表驱动走完
+test('look_set：刺青名表（CSTR:LOCAL，RAND:8 + 10 → 8 项全走）', () => {
+  // 名表十项（"淫乱","母猪",…）写入 CSTR 的随机下标处；
+  // 下标 = RAND:8 + 10 只取到前 8 项——逐项表驱动走完
   const names = [
     '淫乱',
     '母猪',
@@ -1610,8 +1609,8 @@ test('LOOK_SET：刺青名表（CSTR:LOCAL，RAND:8 + 10 → 8 项全走）', ()
   }
 });
 
-test('LOOK_SET：刺青与生育经验的两处 RAND:15 掷骰', () => {
-  // RAND:15 在 :548（刺青）与 :555（生育经验）各一次：第一次 0 → 进刺青、
+test('look_set：刺青与生育经验的两处 RAND:15 掷骰', () => {
+  // RAND:15 在刺青与生育经验各掷一次：第一次 0 → 进刺青、
   // 第二次 0 → 进生育经验；RAND:3 = 2 → 生育经验 +2
   const w = look_world();
   const cid = w.run(0, always);
@@ -1631,8 +1630,8 @@ test('LOOK_SET：刺青与生育经验的两处 RAND:15 掷骰', () => {
   assert.equal(w2.exp(cid2, 60), 0, '第二次 1 → 不中生育经验');
 });
 
-test('LOOK_SET：乞丐（Q=7）不刺青', () => {
-  // `Q != 7` 是刺青的第二条判据
+test('look_set：乞丐（Q=7）不刺青', () => {
+  // `Q != 7` 是刺青的第二条条件
   const w = look_world();
   const cid = w.run(0, always);
   w.run_again(cid, 0, steer({ 21: 6, 5: 1, 15: [0, 1], 8: 0, 40: 1, 20: 1 }));
@@ -1640,7 +1639,7 @@ test('LOOK_SET：乞丐（Q=7）不刺青', () => {
   assert.equal(w.cstr(cid, 10), undefined, '乞丐不刺青');
 });
 
-test('LOOK_SET：主婦（Q=21）失去处女与私处封印、必得人妻', () => {
+test('look_set：主婦（Q=21）失去处女与私处封印、必得人妻', () => {
   const w = look_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 0, 1); // 处女
@@ -1652,7 +1651,7 @@ test('LOOK_SET：主婦（Q=21）失去处女与私处封印、必得人妻', ()
   assert.equal(w.talent(cid, 157), 1, '人妻');
 });
 
-test('LOOK_SET 素质 316：理由三档的善恶值', () => {
+test('look_set 素质 316：理由三档的善恶值', () => {
   for (const [roll, expected, delta] of [
     [0, 1, 20],
     [2, 3, 20],
@@ -1667,9 +1666,9 @@ test('LOOK_SET 素质 316：理由三档的善恶值', () => {
     [19, 20, 0],
   ]) {
     const w = look_world();
-    // 本用例的角色按调用序触到四处 RAND:20：理由（源 :593）、喜好（:612）、
-    // 家族婚姻·离婚支（:663）、家族子女（:717）——角色非人妻，人妻支（:650）
-    // 与性别段（:764 / :794）都进不去。只钉第一处，其余给不增减的值。
+    // 本用例的角色按调用序触到四处 RAND:20：理由、喜好、
+    // 家族婚姻·离婚支、家族子女——角色非人妻，人妻支
+    // 与性别段都进不去。只钉第一处，其余给不增减的值。
     const cid = w.run(
       0,
       steer_at({ '20#0': roll, '20#1': 0, '20#2': 9, '20#3': 9, '20#4': 9 }),
@@ -1679,9 +1678,9 @@ test('LOOK_SET 素质 316：理由三档的善恶值', () => {
   }
 });
 
-test('LOOK_SET 素质 317：喜欢的东西三档的善恶值', () => {
+test('look_set 素质 317：喜欢的东西三档的善恶值', () => {
   for (const [roll, expected, delta] of [
-    [0, 1, 0], // q=1 不属任何一支（源 :614/:617 两组都不含 1）
+    [0, 1, 0], // q=1 不属任何一支（两组都不含 1）
     [3, 4, 20],
     [7, 8, 20],
     [8, 9, 20],
@@ -1704,8 +1703,8 @@ test('LOOK_SET 素质 317：喜欢的东西三档的善恶值', () => {
   }
 });
 
-test('LOOK_SET 素质 320：人妻三档（バツ2/バツ1/初婚）', () => {
-  // 结婚次数落在**十位**（源 :627 起的码位注释：10の位 = 勇者以前の結婚歴）
+test('look_set 素质 320：人妻三档（バツ2/バツ1/初婚）', () => {
+  // 结婚次数落在**十位**（码位记录勇者以前的婚姻次数）
   for (const [batsu2, batsu1, expected] of [
     [0, 9, 3],
     [1, 0, 2],
@@ -1743,7 +1742,7 @@ test('LOOK_SET 素质 320：人妻三档（バツ2/バツ1/初婚）', () => {
   }
 });
 
-test('LOOK_SET 素质 320：离婚/未亡人支（RAND:20 == 0 且非后代）', () => {
+test('look_set 素质 320：离婚/未亡人支（RAND:20 == 0 且非后代）', () => {
   for (const [roll, expected] of [
     [0, 2],
     [1, 5],
@@ -1776,7 +1775,7 @@ test('LOOK_SET 素质 320：离婚/未亡人支（RAND:20 == 0 且非后代）',
   }
 });
 
-test('LOOK_SET 素质 320：后代（EX_TALENT:2）不进入离婚支', () => {
+test('look_set 素质 320：后代（EX_TALENT:2）不进入离婚支', () => {
   const w = look_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 0, 1);
@@ -1796,7 +1795,7 @@ test('LOOK_SET 素质 320：后代（EX_TALENT:2）不进入离婚支', () => {
       4: 0,
     }),
   );
-  // 精确值：后代（EX_TALENT:2）把「離婚/未亡人」支整支关掉 → LOCAL = 0，
+  // 精确值：后代（EX_TALENT:2）把「離婚/未亡人」支整支关掉 → 婚姻位保持 0，
   // 家族码只剩非精英预置的个位 1（万位 0 = 未婚）
   assert.equal(
     w.talent(cid, 320),
@@ -1805,14 +1804,14 @@ test('LOOK_SET 素质 320：后代（EX_TALENT:2）不进入离婚支', () => {
   );
 });
 
-test('LOOK_SET 素质 320：主婦子供段（先加后判 break，「一人确定」）', () => {
+test('look_set 素质 320：主婦子供段（先加后判 break，「一人确定」）', () => {
   // 主婦段：先加后判 break——掷到 break 也已经加过一个孩子，
   // 故「主婦必有一名子女」。精确值 2000050021 解：个位 1（設定あり）、
   // 十亿位 2（女女カップル）、百万位 5（子女 5 人，主婦段不动 break 走满）
   const w = look_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 0, 0);
-  // 前职业必须**掷**出来（315 由 LOOK_SET 自己写，预置会被覆盖）：RAND:21 → 20
+  // 前职业必须**掷**出来（315 由 look_set 自己写，预置会被覆盖）：RAND:21 → 20
   w.run_again(cid, 0, steer({ 2: [1, 0], 21: 20 }));
   assert.equal(w.talent(cid, 315), 21, '前职业 = 主婦（掷值 20）');
   // 绝对值 2000011031 解：个位 1（設定あり）、十位 3（主婦档自带人妻 →
@@ -1825,9 +1824,9 @@ test('LOOK_SET 素质 320：主婦子供段（先加后判 break，「一人确�
   );
 });
 
-test('LOOK_SET 素质 320：结婚经历子供段（先判后加 break）', () => {
+test('look_set 素质 320：结婚经历子供段（先判后加 break）', () => {
   // 第二支：`local >= 10 && 处女 == 0`——人妻档给 +10 + 10000
-  // （万位 = 結婚），子供段的 break 判据在加孩子之前
+  // （万位 = 結婚），子供段的 break 条件在加孩子之前
   const w = look_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 157, 1); // 人妻 → 结婚档
@@ -1842,9 +1841,9 @@ test('LOOK_SET 素质 320：结婚经历子供段（先判后加 break）', () =
   );
 });
 
-test('LOOK_SET 素质 320：未婚の母（娼婦上限 +2：2 → 4 人）', () => {
+test('look_set 素质 320：未婚の母（娼婦上限 +2：2 → 4 人）', () => {
   // 第三支：`RAND:20 == 0 && 处女 == 0`，且不能落进前两支。
-  // 前职业必须**掷**出来（315 是 LOOK_SET 自己写的，预置会被覆盖）：
+  // 前职业必须**掷**出来（315 是 look_set 自己写的，预置会被覆盖）：
   // RAND:21 → 4 得娼婦（q=5），RAND:21 → 0 得学生。
   // 家族码的百位 = 女儿数，正是本支的上限差
   for (const [roll, expected] of [
@@ -1888,12 +1887,12 @@ test('LOOK_SET 素质 320：未婚の母（娼婦上限 +2：2 → 4 人）', ()
   }
 });
 
-test('LOOK_SET 素质 320：兄弟姐妹四类各占自己的位（100000/1000000/10000000/100000000）', () => {
+test('look_set 素质 320：兄弟姐妹四类各占自己的位（100000/1000000/10000000/100000000）', () => {
   // 的兄弟段：RAND:2 先判 break，再按 RAND:4/RAND:3/RAND:2 依次判
   // 姉/兄/妹，都不中则 弟。四支各掷一次，钉住四个位不互相串
   const cases = [
-    // [steer 覆盖, 位, 期望该位值]。RAND:2 的第一次是 break 判据（不给 0
-    // 就一直转），第二次才是「妹」判据——故妹档给队列 [1, 0]
+    // [steer 覆盖, 位, 期望该位值]。RAND:2 的第一次是 break 条件（不给 0
+    // 就一直转），第二次才是「妹」条件——故妹档给队列 [1, 0]
     [{ 2: 1, 4: 0 }, 100000, 4],
     [{ 2: 1, 4: 1, 3: 0 }, 1000000, 4],
     [{ 2: [1, 0], 4: 1, 3: 1 }, 10000000, 1],
@@ -1904,7 +1903,7 @@ test('LOOK_SET 素质 320：兄弟姐妹四类各占自己的位（100000/100000
     const cid = w.reserve();
     // 两条隔离：① 处女（0）让三条子供段全不生效；② RAND:20 = 9（非 0）
     // 让「離婚/未亡人」支与性别段都进不去——那两处各有一个 RAND:2 消费者
-    // （源 :674 与 :783），不隔离会先吃掉本用例给兄弟段的队列值
+    // ，不隔离会先吃掉本用例给兄弟段的队列值
     w.set_talent(cid, 0, 1);
     w.run_again(cid, 0, steer({ ...map, 20: 9 }));
     const code = w.talent(cid, 320);
@@ -1912,7 +1911,7 @@ test('LOOK_SET 素质 320：兄弟姐妹四类各占自己的位（100000/100000
   }
 });
 
-test('LOOK_SET 素质 320：配偶性别码三支（男/扶她/女）', () => {
+test('look_set 素质 320：配偶性别码三支（男/扶她/女）', () => {
   const cases = [
     // [男人, 扶她, 性别段掷法, 期望十亿位, 期望百合气质]
     [1, 0, { gender: 0 }, 8, false], // 男男（RAND:20 == 0）
@@ -1979,7 +1978,7 @@ test('LOOK_SET 素质 320：配偶性别码三支（男/扶她/女）', () => {
   assert.equal(w.abl(cid, 23), 3, '断背气质（abl:23）');
 });
 
-test('LOOK_SET：一次全 0 掷的完整走向（端到端形状）', () => {
+test('look_set：一次全 0 掷的完整走向（端到端形状）', () => {
   const w = look_world();
   const cid = w.run(0, always);
   assert.deepEqual(
@@ -2007,11 +2006,11 @@ test('LOOK_SET：一次全 0 掷的完整走向（端到端形状）', () => {
   assert.equal(
     w.cflag(cid, 151),
     20,
-    '理由 q=1 给 +20；喜好 q=1 不在增减两支内（源 :614/:617）',
+    '理由 q=1 给 +20；喜好 q=1 不在增减两支内',
   );
 });
 
-test('LOOK_SET：一次全上界掷的完整走向', () => {
+test('look_set：一次全上界掷的完整走向', () => {
   const w = look_world();
   const cid = w.run(0, top);
   assert.deepEqual(
@@ -2043,14 +2042,14 @@ test('LOOK_SET：一次全上界掷的完整走向', () => {
   );
 });
 
-test('LOOK_SET：返回值 1（源 :811 RETURN 1）', () => {
+test('look_set：返回值 1', () => {
   const w = look_world();
   assert.equal(w.mod.look_set(200, 0, always), 1);
 });
 
-// —— @LOOK_CLEAR（:814-822）——
+// —— look_clear ——
 
-test('LOOK_CLEAR：300-313 清零，299 与 314 不动（源 REPEAT 314 的等价形状）', () => {
+test('look_clear：300-313 清零，299 与 314 不动（扫描上界开区间）', () => {
   const w = look_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 299, 7);
@@ -2063,9 +2062,9 @@ test('LOOK_CLEAR：300-313 清零，299 与 314 不动（源 REPEAT 314 的等�
   assert.equal(w.talent(cid, 314), 3, '314 不在扫描面内');
 });
 
-// —— @LOVE_LIKE_BASE（:2811-2884）——
+// —— love_like_base ——
 
-test('LOVE_LIKE_BASE：20 档文本与命中标志', () => {
+test('love_like_base：20 档文本与命中标志', () => {
   const cases = [
     [1, '甜食'],
     [2, '辣条'],
@@ -2112,7 +2111,7 @@ test('LOVE_LIKE_BASE：20 档文本与命中标志', () => {
   );
 });
 
-test('LOVE_LIKE_BASE：4/8/9/10/11 五档在 CFLAG:0 != 0 时不命中', () => {
+test('love_like_base：4/8/9/10/11 五档在 CFLAG:0 != 0 时不命中', () => {
   const fixture = create_era_fixture();
   const { love_like_base } = fixture.load_module('chara/look');
   for (const value of [4, 8, 9, 10, 11]) {
@@ -2135,15 +2134,15 @@ test('LOVE_LIKE_BASE：4/8/9/10/11 五档在 CFLAG:0 != 0 时不命中', () => {
 });
 
 // ===========================================================================
-// ere/chara/look.js：@LOOK_INFO（:823-1666）
+// ere/chara/look.js：look_info
 // ===========================================================================
 
-/** LOOK_INFO 的驱动面：一个夹具、自增角色 ID、可预置任意变量 */
+/** look_info 的驱动面：一个夹具、自增角色 ID、可预置任意变量 */
 function info_world() {
   const fixture = create_era_fixture();
   const mod = fixture.load_module('chara/look');
-  // 自增角色号从 2 起：**必须 < 200**——源 :1310 的「来据点之前」前缀按
-  // NO:TARGET >= 200 分叉，用 500 起会把默认路径整个挪到配下支
+  // 自增角色号从 2 起：**必须 < 200**——「来据点之前」前缀按
+  // 角色号 >= 200 分叉，用 500 起会把默认路径整个挪到配下支
   let next_cid = 2;
   return {
     fixture,
@@ -2177,7 +2176,7 @@ function info_world() {
   };
 }
 
-test('LOOK_INFO 默认视角：外观五块 + 来历两块 + 所持金 + 喜好，逐行形态', async () => {
+test('look_info 默认视角：外观五块 + 来历两块 + 所持金 + 喜好，逐行断言', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.fixture.store.set('callname:637:-1', '预设名');
@@ -2201,7 +2200,7 @@ test('LOOK_INFO 默认视角：外观五块 + 来历两块 + 所持金 + 喜好�
   assert.ok(lines.includes('[共1个喜欢的东西]'));
 });
 
-test('LOOK_INFO：所持金 <= 0 报身无分文；借金为负时报借金行', async () => {
+test('look_info：所持金 <= 0 报身无分文；借金为负时报借金行', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   const lines = await w.info(cid);
@@ -2212,13 +2211,10 @@ test('LOOK_INFO：所持金 <= 0 报身无分文；借金为负时报借金行',
   w2.set_cflag(cid2, 580, 100);
   w2.set_cflag(cid2, 582, -300);
   const lines2 = await w2.info(cid2);
-  assert.ok(
-    lines2.includes('[所持金：100][借金：300]'),
-    '负债取相反数（源 :1558 `{0 - CFLAG:582}`）',
-  );
+  assert.ok(lines2.includes('[所持金：100][借金：300]'), '负债取相反数');
 });
 
-test('LOOK_INFO：外观块按素质是否存在分块显示，缺一块整块不出', async () => {
+test('look_info：外观块按素质是否存在分块显示，缺一块整块不出', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 300, 0); // 头发颜色缺席
@@ -2240,14 +2236,14 @@ test('LOOK_INFO：外观块按素质是否存在分块显示，缺一块整块�
   );
 });
 
-test('LOOK_INFO：男性不显示发型、显示阴茎；女性相反', async () => {
+test('look_info：男性不显示发型、显示阴茎；女性相反', async () => {
   const w = info_world();
   const male = w.run(0, always);
   w.set_talent(male, 122, 1);
   const male_lines = await w.info(male);
   assert.ok(
     male_lines.some((l) => l === '[头发长度：短][修剪：碎发]'),
-    '男性：没有「发型」段（源 :962-966）',
+    '男性：没有「发型」段',
   );
   assert.ok(
     male_lines.some((l) => l.includes('[阴茎：')),
@@ -2264,7 +2260,7 @@ test('LOOK_INFO：男性不显示发型、显示阴茎；女性相反', async ()
   assert.ok(!female_lines.some((l) => l.includes('[阴茎：')), '女性不显示阴茎');
 });
 
-test('LOOK_INFO：精英（220）出「种族·种族2·预设名」，且种族2 为 8/9 时省略', async () => {
+test('look_info：精英（220）出「种族·种族2·预设名」，且种族2 为 8/9 时省略', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 220, 1);
@@ -2284,7 +2280,7 @@ test('LOOK_INFO：精英（220）出「种族·种族2·预设名」，且种族
   assert.equal(lines2[0], '[魔族：预设名]');
 });
 
-test('LOOK_INFO：魔族化的角色补现种族并显示原种族行', async () => {
+test('look_info：魔族化的角色补现种族并显示原种族行', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 314, 9); // 种族 = 魔族
@@ -2299,7 +2295,7 @@ test('LOOK_INFO：魔族化的角色补现种族并显示原种族行', async ()
   );
   assert.ok(lines.includes('[原种族：人类]'), '原种族行');
 
-  // 原种族为魔族时显示「不明」（源 :850-851）
+  // 原种族为魔族时显示「不明」
   const w2 = info_world();
   const cid2 = w2.run(0, always);
   w2.set_talent(cid2, 314, 9);
@@ -2308,7 +2304,7 @@ test('LOOK_INFO：魔族化的角色补现种族并显示原种族行', async ()
   assert.ok(lines2.includes('[原种族：不明]'), '原种族 = 魔族 → 不明');
 });
 
-test('LOOK_INFO：来历的四路前缀（后代/女性勇者/男性勇者/魔王）', async () => {
+test('look_info：来历的四路前缀（后代/女性勇者/男性勇者/魔王）', async () => {
   // 逐支独立夹具：配下档（cid >= 200）另有一条用例，这里钉其余四路
   const base = info_world();
   const b = base.run(0, always);
@@ -2339,7 +2335,7 @@ test('LOOK_INFO：来历的四路前缀（后代/女性勇者/男性勇者/魔�
   );
 });
 
-test('LOOK_INFO：cid >= 200 且非 222 且非后代走「来据点之前」前缀', async () => {
+test('look_info：cid >= 200 且非 222 且非后代走「来据点之前」前缀', async () => {
   // 自增 cid 到 200 区间：直接造一个 250 号角色
   const w = info_world();
   const cid = 250;
@@ -2354,14 +2350,14 @@ test('LOOK_INFO：cid >= 200 且非 222 且非后代走「来据点之前」前�
   await w2.mod.look_info(222);
   assert.ok(
     w2.lines().some((l) => l.includes('[成为勇者之前：')),
-    '222 号例外（源 :1310 的 `NO:TARGET != 222`）',
+    '222 号例外（角色号 != 222 的分叉）',
   );
 });
 
-test('LOOK_INFO：信仰行的七个分支（含弃教）', async () => {
+test('look_info：信仰行的七个分支（含弃教）', async () => {
   const cases = [
     // [设置, 期望神名片段]
-    // 源 :1452-1467 是 IF/ELSEIF 链：爱慕（85）在最前，命中即不再看后面
+    // IF/ELSEIF 链：爱慕（85）在最前，命中即不再看后面
     [{ 85: 1 }, '魔王大人'],
     [{ cflag0: 1 }, '无名的淫荡女神'],
     [{ 220: 1, 315: 11 }, '混沌的魔界女神'],
@@ -2395,7 +2391,7 @@ test('LOOK_INFO：信仰行的七个分支（含弃教）', async () => {
   assert.ok(!lines.some((l) => l.startsWith('[信仰：')), '信仰値 9 → 不出');
 });
 
-test('LOOK_INFO：弃教行（爱慕或沦落 + 低姿态或冒渎者）', async () => {
+test('look_info：弃教行（爱慕或沦落 + 低姿态或冒渎者）', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 85, 1); // 爱慕
@@ -2440,7 +2436,7 @@ test('LOOK_INFO：弃教行（爱慕或沦落 + 低姿态或冒渎者）', async
   assert.ok(!lines3.some((l) => l.startsWith('[弃教：')), '无冒渎者 → 不出');
 });
 
-test('LOOK_INFO：妊娠适性行（同族不育）', async () => {
+test('look_info：妊娠适性行（同族不育）', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.set_talent(cid, 158, 1);
@@ -2448,7 +2444,7 @@ test('LOOK_INFO：妊娠适性行（同族不育）', async () => {
   assert.ok(lines.includes('[妊娠适性：只能异种族]'));
 });
 
-test('LOOK_INFO：常识改变四态（战斗/日常/两者/都无）', async () => {
+test('look_info：常识改变四态（战斗/日常/两者/都无）', async () => {
   const w = info_world();
   const battle = w.run(0, always);
   w.set_talent(battle, 281, 1);
@@ -2473,7 +2469,7 @@ test('LOOK_INFO：常识改变四态（战斗/日常/两者/都无）', async ()
     (await w3.info(both)).some(
       (l) => l === '[常识改变：【战斗】 奉侍战斗 【日常】 服侍乞丐]',
     ),
-    '两者（分隔是一个空格，源 :1582 的 `PRINT  `）',
+    '两者（分隔是一个空格）',
   );
 
   const w4 = info_world();
@@ -2510,20 +2506,20 @@ function capture_gobi(fixture) {
 
 /**
  * 造一个「只剩两处语尾档位还会开口」的角色：外观各块因素质缺席整块跳过、
- * 信仰/妊娠/常识全关。kojo 视角下 GOBI_KOUJO 的调用序因此固定为
+ * 信仰/妊娠/常识全关。kojo 视角下 gobi_koujo 的调用序因此固定为
  * `[首行(4), 前职业档, 契机档, 所持金档(0), 喜好收尾(1)]`——两张档位表
  * 各据一位，不必管中间的其它调用。
  * @param {object} fixture 夹具
  * @param {number} roll21 RAND:21 的掷值（→ 前职业 = 掷值 + 1）
  * @param {number} roll20 RAND:20 的掷值（→ 契机 = 掷值 + 1）
- * @returns {Promise<number[]>} 捕获到的 GOBI_KUJO 实参序列
+ * @returns {Promise<number[]>} 捕获到的 gobi_koujo 实参序列
  */
 async function gobi_sequence(fixture, roll21, roll20) {
   const mod = fixture.load_module('chara/look');
   const cid = 800;
   // 一次掷到位：315/316 分别由 RAND:21 / RAND:20 决定（掷值 + 1）
   mod.look_set(cid, 0, steer({ 21: roll21, 20: roll20 }));
-  // LOOK_SET 会把外观素质一起掷出来，**掷完再清零**让外观各块整块跳过
+  // look_set 会把外观素质一起掷出来，**掷完再清零**让外观各块整块跳过
   // （顺序反了会被第二次 look_set 重新掷上，块又活了）
   for (const idx of [
     300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 313, 314,
@@ -2542,7 +2538,7 @@ async function gobi_sequence(fixture, roll21, roll20) {
   return calls;
 }
 
-test('LOOK_INFO 的语尾档位：前职业 5 档（源 :1348-1365，表驱动走完）', async () => {
+test('look_info 的语尾档位：前职业 5 档（表驱动走完）', async () => {
   const cases = [
     // [RAND:21 掷值, TALENT:315, 期望档位, 依据]
     [7, 8, 1, '貴族は誇らしい'],
@@ -2567,7 +2563,7 @@ test('LOOK_INFO 的语尾档位：前职业 5 档（源 :1348-1365，表驱动�
   }
 });
 
-test('LOOK_INFO 的语尾档位：成为勇者的契机 5 档（源 :1407-1428，表驱动走完）', async () => {
+test('look_info 的语尾档位：成为勇者的契机 5 档（表驱动走完）', async () => {
   const cases = [
     // [RAND:20 掷值, TALENT:316, 期望档位, 依据]
     [2, 3, 1, '啓示は誇らしい'],
@@ -2589,7 +2585,7 @@ test('LOOK_INFO 的语尾档位：成为勇者的契机 5 档（源 :1407-1428�
   }
 });
 
-test('LOOK_INFO 的语尾档位：序列本身（首行/所持金/喜好收尾）也钉住', async () => {
+test('look_info 的语尾档位：序列本身（首行/所持金/喜好收尾）也钉住', async () => {
   const fixture = create_era_fixture();
   const calls = await gobi_sequence(fixture, 0, 0);
   assert.deepEqual(
@@ -2601,7 +2597,7 @@ test('LOOK_INFO 的语尾档位：序列本身（首行/所持金/喜好收尾�
 
 /**
  * 语尾世界底座：口上视角 + 指定性格（era_flag.target 指到被显示角色——
- * @GOBI_KOUJO 读当前 TARGET，游戏侧由 SHOW_CHARA_INFO 换手指到）。
+ * gobi_koujo 读它确定性格，游戏侧由 show_chara_info 换手指到）。
  * @param {number} talent_idx 性格素质下标（160-179）
  * @returns {object} info_world 的 api
  */
@@ -2617,7 +2613,7 @@ function gobi_world(talent_idx) {
   return { w, cid };
 }
 
-test('LOOK_INFO：语尾口上拼进「」之内、与台词同一行（#570）', async () => {
+test('look_info：语尾口上拼进「」之内、与台词同一行（#570）', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
   w.fixture.load_module('kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
@@ -2630,19 +2626,19 @@ test('LOOK_INFO：语尾口上拼进「」之内、与台词同一行（#570）'
   );
   assert.ok(
     lines.includes('「人类的阿名吧……算是……。」'),
-    '首行语尾在「」之内（源 :875-878 PRINTFORM → CALL GOBI_KOUJO → PRINT 」 一行；mark < 3 → 档 4）',
+    '首行语尾在「」之内（mark < 3 → 档 4）',
   );
 });
 
-test('LOOK_INFO：原作语尾落空的性格不多出空内容（K11 两侧同缺，#570）', async () => {
-  const { w, cid } = gobi_world(171); // K11 リリィ：原作没有 GOBI_KOUJO_K11
+test('look_info：无对应语尾模块的性格不多出空内容（K11 两侧同缺，#570）', async () => {
+  const { w, cid } = gobi_world(171); // K11 リリィ：语尾族表没有 K11 条目
   // 族里先装两个别的性格——族表空时任何编号都落空，测不出「K11 缺号」这件事
   w.fixture.load_module('kojo/kojo-k0-tender');
   w.fixture.load_module('kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   assert.ok(
     lines.includes('「人类的阿名」'),
-    'TRYCALLFORM 落空 → 空串，首行照常结束',
+    '语尾族表无该性格 → 空串，首行照常结束',
   );
   assert.ok(
     !lines.some((l) => l === ''),
@@ -2654,11 +2650,11 @@ test('LOOK_INFO：原作语尾落空的性格不多出空内容（K11 两侧同�
   );
 });
 
-test('LOOK_INFO_LOVE 收尾：喜び语尾接在最后一项物品的同一行（源 :2797-2804）', async () => {
+test('look_info_love 收尾：喜び语尾接在最后一项物品的同一行', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
   w.fixture.load_module('kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
-  // 原作 :2799 CALL GOBI_KOUJO, 1 + :2801 PRINTL 」 ：语尾与「」 」接在最后一项物品
+  // 语尾与「」 」接在最后一项物品
   // 之后（#570 返工：引擎实测原先语尾另起一行、跑到物品行外）
   const rows = lines.slice(lines.indexOf('「喜欢的东西是……') + 1);
   const item_rows = rows.filter((l) => !l.startsWith('[共'));
@@ -2681,7 +2677,7 @@ test('LOOK_INFO_LOVE 收尾：喜び语尾接在最后一项物品的同一行�
  * #570 相同（语尾凭空消失），只是不再自成一行。look.js 的 20 个调用点里只有
  * 首行与 LOVE 收尾有整行断言（上面两条），其余靠这道结构化检查守。
  */
-test('LOOK_INFO 语尾调用点：返回值必须被消费（#570 行内拼接的前提）', () => {
+test('look_info 语尾调用点：返回值必须被消费（#570 行内拼接的前提）', () => {
   const src = fs.readFileSync(
     path.join(__dirname, '..', 'ere', 'chara', 'look.js'),
     'utf8',
@@ -2719,13 +2715,13 @@ test('LOOK_INFO 语尾调用点：返回值必须被消费（#570 行内拼接�
 function gobi_tier_world() {
   const fixture = create_era_fixture();
   const mod = fixture.load_module('chara/look');
-  // 素质 164（性格 K4 冷徹）→ GET_KOJO_NUM = 104 → 语尾族键 4
+  // 素质 164（性格 K4 冷徹）→ get_kojo_num = 104 → 语尾族键 4
   fixture
     .load_module('kojo/kojo-system')
     .gobi_koujo_family.register(4, async (arg0) => `〈${arg0}〉`);
   const cid = 800;
   mod.look_set(cid, 0, always);
-  // LOOK_SET 掷出来的外观（300-314）与其它干扰素质逐项清零（315/316 除外，
+  // look_set 掷出来的外观（300-314）与其它干扰素质逐项清零（315/316 除外，
   // 见上面夹具说明：它们要留下掷骰结果给「默认支」用）
   for (const idx of [
     300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 313, 314, 17,
@@ -2734,10 +2730,10 @@ function gobi_tier_world() {
     fixture.store.set(`talent:${cid}:${idx}`, 0);
   }
   fixture.store.set(`talent:${cid}:164`, 1); // 性格 K4 冷徹 → 语尾族键 4（见上）
-  fixture.store.set(`cflag:${cid}:580`, 100); // 所持金 100（源 :1586 的「> 0」支）
+  fixture.store.set(`cflag:${cid}:580`, 100); // 所持金 100（「> 0」支）
   fixture.store.set(`callname:${cid}:-1`, '阿名');
   fixture.store.set('flag:5', 2048); // 口上视角
-  fixture.load_module('era-utils/era-flag').target = cid; // GOBI_KOUJO 读当前 TARGET
+  fixture.load_module('era-utils/era-flag').target = cid; // gobi_koujo 读当前 target
   return {
     fixture,
     cid,
@@ -2761,7 +2757,7 @@ function gobi_tier_world() {
  * 语尾档位表（#583）：一行一个 `gobi_koujo` 调用点。
  *
  * 列：
- *   - `src`   原作 LOOK.ERB 里 `CALL GOBI_KOUJO` 的行号
+ *   - `src`   移植对照行号（历史留档）
  *   - `site`  look.js 的调用点（两个「来历」块共用 look_info_block 的那一处）
  *   - `note`  断言消息里的说明（也是对应变异条目 must_mention 的出处）
  *   - `pick`  目标台词行的选择子（必须唯一命中一行）
@@ -2774,11 +2770,11 @@ function gobi_tier_world() {
  * `seq` 也顺带钉住标记个数：漏调、多调一处都会让序列对不上。
  */
 const GOBI_TIER_ROWS = [
-  // —— 首行（源 :875-878）——
+  // —— 首行——
   {
     src: 877,
     site: 'look.js:1176',
-    note: '源 :877 首行（屈服刻印 < 3 → 4）',
+    note: '首行（屈服刻印 < 3 → 4）',
     pick: '「人类的阿名',
     seq: [4],
     at: 0,
@@ -2786,17 +2782,17 @@ const GOBI_TIER_ROWS = [
   {
     src: 877,
     site: 'look.js:1176',
-    note: '源 :877 首行（屈服刻印 >= 3 → 0）',
+    note: '首行（屈服刻印 >= 3 → 0）',
     pick: '「人类的阿名',
     seq: [0],
     at: 0,
     setup: (w) => w.set_mark(2, 3), // MARK:2 屈服刻印 = 3
   },
-  // —— 原种族块（源 :880-892）——
+  // —— 原种族块——
   {
     src: 884,
     site: 'look.js:1186',
-    note: '源 :884 原种族不明（爱慕 → 0）',
+    note: '原种族不明（爱慕 → 0）',
     pick: '「成为魔族前的种族：不明',
     seq: [0],
     at: 0,
@@ -2809,7 +2805,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 884,
     site: 'look.js:1186',
-    note: '源 :884 原种族不明（淫乱 → 0）',
+    note: '原种族不明（淫乱 → 0）',
     pick: '「成为魔族前的种族：不明',
     seq: [0],
     at: 0,
@@ -2822,7 +2818,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 884,
     site: 'look.js:1186',
-    note: '源 :884 原种族不明（非爱慕非淫乱 → 3）',
+    note: '原种族不明（非爱慕非淫乱 → 3）',
     pick: '「成为魔族前的种族：不明',
     seq: [3],
     at: 0,
@@ -2834,7 +2830,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 889,
     site: 'look.js:1189',
-    note: '源 :889 原种族已知（屈服刻印 < 3 → 2）',
+    note: '原种族已知（屈服刻印 < 3 → 2）',
     pick: '「成为魔族前的种族：',
     seq: [2],
     at: 0,
@@ -2846,7 +2842,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 889,
     site: 'look.js:1189',
-    note: '源 :889 原种族已知（屈服刻印 >= 3 → 0）',
+    note: '原种族已知（屈服刻印 >= 3 → 0）',
     pick: '「成为魔族前的种族：',
     seq: [0],
     at: 0,
@@ -2856,11 +2852,11 @@ const GOBI_TIER_ROWS = [
       w.set_mark(2, 3); // MARK:2 屈服刻印 = 3
     },
   },
-  // —— 头发（源 :911-976）——
+  // —— 头发——
   {
     src: 931,
     site: 'look.js:1217',
-    note: '源 :931 发色与性质（喜 → 1）',
+    note: '发色与性质（喜 → 1）',
     pick: '「头发是',
     seq: [1],
     at: 0,
@@ -2872,7 +2868,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 971,
     site: 'look.js:1238',
-    note: '源 :971 头发长度・修剪・发型（默认 → 0）',
+    note: '头发长度・修剪・发型（默认 → 0）',
     pick: '「留着',
     seq: [0],
     at: 0,
@@ -2882,11 +2878,11 @@ const GOBI_TIER_ROWS = [
       w.set_talent(304, 1); // 发型
     },
   },
-  // —— 眼・瞳・唇（源 :978-1018）——
+  // —— 眼・瞳・唇——
   {
     src: 1013,
     site: 'look.js:1258',
-    note: '源 :1013 眼/瞳/唇（喜 → 1）',
+    note: '眼/瞳/唇（喜 → 1）',
     pick: '「我的',
     seq: [1],
     at: 0,
@@ -2896,11 +2892,11 @@ const GOBI_TIER_ROWS = [
       w.set_talent(307, 1); // 唇
     },
   },
-  // —— 体型块（源 :1019-1078，一行三处）——
+  // —— 体型块（一行三处）——
   {
     src: 1042,
     site: 'look.js:1275',
-    note: '源 :1042 乳头（默认 → 0）',
+    note: '乳头（默认 → 0）',
     pick: '的体型……',
     seq: [0, 4, 2],
     at: 0,
@@ -2914,7 +2910,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1054,
     site: 'look.js:1277',
-    note: '源 :1054 阴毛（害羞 → 4）',
+    note: '阴毛（害羞 → 4）',
     pick: '的体型……',
     seq: [0, 4, 2],
     at: 1,
@@ -2928,7 +2924,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1069,
     site: 'look.js:1281',
-    note: '源 :1069 阴茎（怒 → 2）',
+    note: '阴茎（怒 → 2）',
     pick: '的体型……',
     seq: [0, 4, 2],
     at: 2,
@@ -2939,11 +2935,11 @@ const GOBI_TIER_ROWS = [
       w.set_talent(121, 1); // 扶她 → 阴茎行开口
     },
   },
-  // —— 魅力点・癖（源 :1079-1111，一行两处）——
+  // —— 魅力点・癖（一行两处）——
   {
     src: 1093,
     site: 'look.js:1301',
-    note: '源 :1093 魅力点（默认 → 0）',
+    note: '魅力点（默认 → 0）',
     pick: '是我的魅力点',
     seq: [0, 0],
     at: 0,
@@ -2955,7 +2951,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1105,
     site: 'look.js:1303',
-    note: '源 :1105 癖（默认 → 0）',
+    note: '癖（默认 → 0）',
     pick: '是我的魅力点',
     seq: [0, 0],
     at: 1,
@@ -2964,11 +2960,11 @@ const GOBI_TIER_ROWS = [
       w.set_talent(313, 1); // 癖
     },
   },
-  // —— 来历两块的前职业支（源 :1384-1404，五个分支一个包装调用点）——
+  // —— 来历两块的前职业支（五个分支一个包装调用点）——
   {
     src: 1388,
     site: 'look.js:1500',
-    note: '源 :1388 前职业贵族・聖女・軍人（誇らしい → 1）',
+    note: '前职业贵族・聖女・軍人（誇らしい → 1）',
     pick: '「来据点之前我是',
     seq: [1],
     at: 0,
@@ -2977,7 +2973,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1392,
     site: 'look.js:1500',
-    note: '源 :1392 前职业妓女・奴隷（恥ずかしい → 4）',
+    note: '前职业妓女・奴隷（恥ずかしい → 4）',
     pick: '「来据点之前我是',
     seq: [4],
     at: 0,
@@ -2986,7 +2982,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1396,
     site: 'look.js:1500',
-    note: '源 :1396 前职业盗人（逆切れ → 2）',
+    note: '前职业盗人（逆切れ → 2）',
     pick: '「来据点之前我是',
     seq: [2],
     at: 0,
@@ -2995,7 +2991,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1400,
     site: 'look.js:1500',
-    note: '源 :1400 前职业物乞い・貧民（情けない → 5）',
+    note: '前职业物乞い・貧民（情けない → 5）',
     pick: '「来据点之前我是',
     seq: [5],
     at: 0,
@@ -3004,17 +3000,17 @@ const GOBI_TIER_ROWS = [
   {
     src: 1403,
     site: 'look.js:1500',
-    note: '源 :1403 前职业默认（学生 → 0）',
+    note: '前职业默认（学生 → 0）',
     pick: '「来据点之前我是',
     seq: [0],
     at: 0,
     setup: (w) => w.set_talent(315, 1), // = 学生 → 默认支
   },
-  // —— 来历两块的契机支（源 :1450-1470）——
+  // —— 来历两块的契机支——
   {
     src: 1454,
     site: 'look.js:1500',
-    note: '源 :1454 契机啓示・故郷・平和・正義（誇らしい → 1）',
+    note: '契机啓示・故郷・平和・正義（誇らしい → 1）',
     pick: '「回应召唤是因为',
     seq: [1],
     at: 0,
@@ -3023,7 +3019,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1458,
     site: 'look.js:1500',
-    note: '源 :1458 契机罪・仕方なく（恥ずかしい → 4）',
+    note: '契机罪・仕方なく（恥ずかしい → 4）',
     pick: '「回应召唤是因为',
     seq: [4],
     at: 0,
@@ -3032,7 +3028,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1462,
     site: 'look.js:1500',
-    note: '源 :1462 契机復讐（逆切れ → 2）',
+    note: '契机復讐（逆切れ → 2）',
     pick: '「回应召唤是因为',
     seq: [2],
     at: 0,
@@ -3041,7 +3037,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1466,
     site: 'look.js:1500',
-    note: '源 :1466 契机金のため・命令（情けない → 5）',
+    note: '契机金のため・命令（情けない → 5）',
     pick: '「回应召唤是因为',
     seq: [5],
     at: 0,
@@ -3050,17 +3046,17 @@ const GOBI_TIER_ROWS = [
   {
     src: 1469,
     site: 'look.js:1500',
-    note: '源 :1469 契机默认（運命 → 0）',
+    note: '契机默认（運命 → 0）',
     pick: '「回应召唤是因为',
     seq: [0],
     at: 0,
     setup: (w) => w.set_talent(316, 1), // = 運命 → 默认支
   },
-  // —— 信仰与弃教（源 :1478-1548）——
+  // —— 信仰与弃教——
   {
     src: 1511,
     site: 'look.js:1379',
-    note: '源 :1511 信仰（喜 → 1）',
+    note: '信仰（喜 → 1）',
     pick: '「信仰着',
     seq: [1],
     at: 0,
@@ -3072,7 +3068,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1542,
     site: 'look.js:1405',
-    note: '源 :1542 弃教（喜 → 1）',
+    note: '弃教（喜 → 1）',
     pick: '婊子肉便器',
     seq: [1],
     at: 0,
@@ -3083,21 +3079,21 @@ const GOBI_TIER_ROWS = [
       w.set_talent(17, 1); // 低姿态
     },
   },
-  // —— 妊娠适性（源 :1553-1573）——
+  // —— 妊娠适性——
   {
     src: 1567,
     site: 'look.js:1420',
-    note: '源 :1567 妊娠适性（情けない → 5）',
+    note: '妊娠适性（情けない → 5）',
     pick: '「我不能正常的怀孕',
     seq: [5],
     at: 0,
     setup: (w) => w.set_talent(158, 1), // 妊娠适性（同族不育）
   },
-  // —— 所持金・借金（源 :1575-1611）——
+  // —— 所持金・借金——
   {
     src: 1585,
     site: 'look.js:1436',
-    note: '源 :1585 身无分文（情けない → 5）',
+    note: '身无分文（情けない → 5）',
     pick: '身无分文',
     seq: [5],
     at: 0,
@@ -3106,7 +3102,7 @@ const GOBI_TIER_ROWS = [
   {
     src: 1590,
     site: 'look.js:1439',
-    note: '源 :1590 所持金 > 0（默认 → 0）',
+    note: '所持金 > 0（默认 → 0）',
     pick: '「身上的钱么……100',
     seq: [0],
     at: 0,
@@ -3114,27 +3110,27 @@ const GOBI_TIER_ROWS = [
   {
     src: 1604,
     site: 'look.js:1444',
-    note: '源 :1604 欠债（情けない → 5）',
+    note: '欠债（情けない → 5）',
     pick: '欠债',
     seq: [0, 5],
     at: 1,
     setup: (w) => w.set_cflag(582, -50), // CFLAG:582 借金（负值）
   },
-  // —— 常识改变（源 :1613-1658）——
+  // —— 常识改变——
   {
     src: 1653,
     site: 'look.js:1472',
-    note: '源 :1653 常识改变（喜 → 1）',
+    note: '常识改变（喜 → 1）',
     pick: '方面完全被改变了',
     seq: [1],
     at: 0,
     setup: (w) => w.set_talent(281, 1), // 常识改变【战斗】
   },
-  // —— 喜欢的东西收尾（源 :2797-2804）——
+  // —— 喜欢的东西收尾——
   {
     src: 2799,
     site: 'look.js:2004',
-    note: '源 :2799 喜好收尾（喜 → 1）',
+    note: '喜好收尾（喜 → 1）',
     pick: '甜食',
     seq: [1],
     at: 0,
@@ -3145,7 +3141,7 @@ const GOBI_TIER_ROWS = [
 const GOBI_MARK_RE = /〈(\d)〉/g;
 
 for (const row of GOBI_TIER_ROWS) {
-  test(`LOOK_INFO 语尾档位 ${row.note}`, async () => {
+  test(`look_info 语尾档位 ${row.note}`, async () => {
     const w = gobi_tier_world();
     if (row.setup) row.setup(w);
     const lines = await w.info();
@@ -3172,7 +3168,7 @@ for (const row of GOBI_TIER_ROWS) {
   });
 }
 
-test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未命中静默', async () => {
+test('look_info：口上视角（FLAG:5 位 11）走「」与高亮，语尾未命中静默', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.fixture.store.set('flag:5', 2048);
@@ -3185,14 +3181,14 @@ test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未�
   assert.ok(lines.includes('「头发是粉发的直发」'), '全 0 掷 → 状态 1 直发');
   assert.ok(
     lines.some((l) => l === '「喜欢的东西是……'),
-    '喜好段的口上引子（源 :2652）',
+    '喜好段的口上引子',
   );
   assert.ok(
     !lines.some((l) => l.includes('语尾口上尚未移植')),
-    'GOBI_KOUJO 未命中静默（原作 TRYCALLFORM 落空，#565 返工；真缺口由 kojo-family-coverage 拦）',
+    'gobi_koujo 未命中静默（语尾族表落空返回空串，#565 返工；真缺口由 kojo-family-coverage 拦）',
   );
 
-  // 口上视角的阴茎块与默认视角是两段代码（源 :1064-1076 与 :1030-1040），
+  // 口上视角的阴茎块与默认视角是两段代码，
   // 各钉一次：只改口上那段时默认视角的断言看不见
   const male = info_world();
   const male_cid = male.run(0, always);
@@ -3205,14 +3201,14 @@ test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未�
   );
 });
 
-test('LOOK_INFO：返回 1（源 :1664 RETURN 1）', async () => {
+test('look_info：返回 1', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   assert.equal(await w.mod.look_info(cid), 1);
 });
 
 // ===========================================================================
-// ere/chara/look.js：@LOOK_INFO_LOVE 的评分半（love_score）
+// ere/chara/look.js：look_info_love 的评分半（love_score）
 // ===========================================================================
 
 /** love_score 的驱动面：一个夹具、一个固定角色号、各表按需预置 */
@@ -3257,7 +3253,7 @@ function love_delta(table, src_idx, target, expected, note) {
   });
 }
 
-// —— 种族補正（:1753-1811）——
+// —— 种族補正——
 
 test('love_score 种族補正：高洁（精灵/天使）与恶（吸血鬼/无头骑士）', () => {
   for (const race of [1, 6]) {
@@ -3335,7 +3331,7 @@ test('love_score 种族補正：堕落（暗精灵/堕天使/魔族）三档', (
   }
 });
 
-// —— 元の職業補正（:1813-1877）——
+// —— 元の職業補正——
 
 test('love_score 职业補正：修道女/聖女、妓女、盗人、乞食/貧民、貴族、巫女、主婦', () => {
   for (const job of [2, 12]) {
@@ -3405,7 +3401,7 @@ test('love_score 职业補正：五支各自的加減', () => {
   }
 });
 
-// —— 理由補正（:1879-1898）——
+// —— 理由補正——
 
 test('love_score 理由補正：不纯动机与义理名分', () => {
   for (const reason of [2, 11]) {
@@ -3432,7 +3428,7 @@ test('love_score 理由補正：不纯动机与义理名分', () => {
   }
 });
 
-// —— 喜欢的东西補正（:1900-1947）——
+// —— 喜欢的东西補正——
 
 test('love_score 喜好補正：故乡恋人/金钱/家族（三种）/使命/可爱动物', () => {
   // 喜好 4（故乡的恋人）→ 恋人(42) +3：317 是「档位」不是开关，直接给值
@@ -3479,11 +3475,11 @@ test('love_score 喜好補正：故乡恋人/金钱/家族（三种）/使命/�
   );
 });
 
-// —— 陥落度合い（:1949-1978）——
+// —— 陥落度合い——
 
-test('love_score 陥落度合い三档（源 :1949-1978 含 ELSE 支）', () => {
+test('love_score 陥落度合い三档（含 ELSE 支）', () => {
   // 三支的落点是 你(1)/世界(2)/コンプレックス(50)；ELSE 支（fall = 0）也在
-  // 同一判据链里，所以基准不能拿「不设 CFLAG:0」当 0 点——这里钉绝对值
+  // 同一条件链里，所以基准不能拿「不设 CFLAG:0」当 0 点——这里钉绝对值
   const cases = [
     [
       1,
@@ -3520,7 +3516,7 @@ test('love_score 陥落度合い三档（源 :1949-1978 含 ELSE 支）', () => 
   }
 });
 
-// —— 素質による補正（:1980-2374）——
+// —— 素質による補正——
 
 test('love_score 素质補正：淫乱 / 爱慕 / 处女 / 童贞 / 崩坏', () => {
   const lust = love_world();
@@ -3565,7 +3561,7 @@ test('love_score 素质補正：淫乱 / 爱慕 / 处女 / 童贞 / 崩坏', () 
     ),
     // 40（夫）的 +3 被相互作用里的 `pool:40 -= main:41 / 3` 抵掉 1（41 同期 +3）
     [-3, -60, 3, 3, 3, 3, 3, 2, 3, 3, 3, 1, 1],
-    '崩坏（源 :1980-2015）',
+    '崩坏',
   );
 });
 
@@ -3580,11 +3576,11 @@ test('love_score 素质補正：各 ±1 档与独立加成', () => {
     [136, 60, 4], // 牝犬 +3，野良犬再折算 61/2 = 1
     [136, 61, 3], // 牝犬
     [130, 13, 1], // 喷涂体质
-    // 51/52/53/54 的池子回调：源 :1972-1981 把 50 加进它们，而 50 在
+    // 51/52/53/54 的池子回调：50 被加进它们，而 50 在
     // ELSE 支（fall = 0）里是 -1 → 10 - 1 = 9
     [140, 51, 9], // 恋母情结
     [141, 52, 9], // 恋父情结
-    // 萝莉控的 53 会被 pool 抵掉 1：源 :1969 的 `pool:53 += main:50`，
+    // 萝莉控的 53 会被 pool 抵掉 1：`pool:53 += main:50`，
     // 而 50 在 ELSE 支（fall = 0）里是 -1
     [142, 53, 9],
     [143, 54, 9], // 正太控（同样被池子回调，见上）
@@ -3793,7 +3789,7 @@ test('love_score 素质補正：肉便器与狂王俘虏', () => {
 });
 
 test('love_score 相互作用：コンプレックスがこじれる（四支）与野良犬/夫の相関', () => {
-  // 51-54 有值时把 50 加进池子（源 :1972-1981 的四支 SIF）
+  // 51-54 有值时把 50 加进池子（四支 SIF）
   for (const [talent_idx, idx] of [
     [140, 51],
     [141, 52],
@@ -3804,8 +3800,8 @@ test('love_score 相互作用：コンプレックスがこじれる（四支）
     w.set_talent(talent_idx, 1); // 对应项 +10
     w.set_talent(23, 1); // 好奇心 → 50 +1
     const score = w.score();
-    // 素质分 10 + 池子里的 コンプレックス 分。50 的净值是 0：源 :1959-1961
-    // 的 ELSE 支给 -1、好奇心给 +1——池子因此加 0，只留素质分
+    // 素质分 10 + 池子里的 コンプレックス 分。50 的净值是 0：
+    // ELSE 支给 -1、好奇心给 +1——池子因此加 0，只留素质分
     assert.equal(
       score[idx],
       10,
@@ -3813,7 +3809,7 @@ test('love_score 相互作用：コンプレックスがこじれる（四支）
     );
   }
 
-  // 獣姦好きは野良犬も好き：60 += 61/2（源 :2587）
+  // 獣姦好きは野良犬も好き：60 += 61/2
   const w = love_world();
   w.set_talent(124, 1); // 動物耳朵 → 61 +1
   w.set_talent(136, 1); // 牝犬 → 60 +3、61 +3
@@ -3842,7 +3838,7 @@ test('love_score 相互作用：喜好 12 时把野良犬/兽姦折算进「喜�
   );
 });
 
-// —— 能力/经验/刻印（:2376-2565）——
+// —— 能力/经验/刻印——
 
 test('love_score 能力補正：四感无条件和、顺从/欲望/技巧', () => {
   const w = love_world();
@@ -3921,9 +3917,8 @@ test('love_score 能力補正：无条件入项（16/17/20/21/22/23/30-39）', (
 });
 
 test('love_score 经验補正：七组各自的档位（肛门组 >200/>80，其余 >100/>30）', () => {
-  // 源 :2472-2550 逐组核对：精饮/侍奉/爱情/被虐/施虐/营业爱情六组是
-  // >100 → +3、>30 → +2、>0 → +1；只有肛门快乐经验一组（:2519-2528，
-  // EXP:32 → LOVE:12）用 >200 → +3、>80 → +2、>0 → +1（#601）。
+  // 逐组核对：精饮/侍奉/爱情/被虐/施虐/营业爱情六组是
+  // >100 → +3、>30 → +2、>0 → +1；只有肛门快乐经验一组（EXP:32 → LOVE:12）用 >200 → +3、>80 → +2、>0 → +1（#601）。
   const groups = [
     [8, 31, 100, 30], // 精饮绝顶经验 → 精液
     [21, 30, 100, 30], // 侍奉快乐经验 → 奉仕
@@ -3955,9 +3950,9 @@ test('love_score 经验補正：七组各自的档位（肛门组 >200/>80，其
   }
 });
 
-test('love_score 经验補正：肛门快乐经验的 150/50 按原作给 2/1（#601）', () => {
+test('love_score 经验補正：肛门快乐经验的 150/50 给 2/1（#601）', () => {
   // 两个值正好落在两套档位的差集里：统一按 >100/>30 时 150 得 3、50 得 2；
-  // 原作 :2519-2528 的 >200/>80 给 2、1。用例取它们是为了让「整组抄了别组
+  // 肛门组自己的 >200/>80 给 2、1。用例取它们是为了让「整组误用别组
   // 的档位」这一款在只差一档的区间上也红。
   for (const [value, delta] of [
     [150, 2],
@@ -3999,14 +3994,14 @@ test('love_score：新夫/恋人ボーナス与刻印', () => {
 });
 
 // ===========================================================================
-// ere/chara/look.js：@LOOK_INFO_LOVE 的显示半（look_info_love）
+// ere/chara/look.js：look_info_love 的显示半
 // ===========================================================================
 
 test('look_info_love：显示行的排序、心形数与「共 N 个」计数', async () => {
   const w = love_world();
   w.fixture.store.set(`callname:${w.cid}:-1`, '角色丙');
   // 让「精液」与「被人虐待」都越过 3 分门槛，且分值不同（心形数可分）
-  w.set_talent(317, 1); // 喜好 = 甜食（LOVE_LIKE_BASE 只认登记的档）
+  w.set_talent(317, 1); // 喜好 = 甜食（love_like_base 只认登记的档）
   w.set_talent(47, 1); // 精液 +10 → 心形 10/5-1 = 1
   w.set_talent(88, 1); // 受虐（= 被人虐待）+10
   w.set_talent(140, 1); // 恋母情结 +10
@@ -4025,13 +4020,13 @@ test('look_info_love：显示行的排序、心形数与「共 N 个」计数', 
 test('look_info_love：满桌角色的整屏输出（排序 × 心形 × 每行 6 个 × 计数）', async () => {
   // 把能越过 3 分门槛的素质/能力全点亮，让显示面一次走满：本用例同时钉住
   // ① 降序排序（同值按添字序）② 心形数 = 分值/5-1 ③ 每行 6 个（LOVE_PER_ROW）
-  // ④ 收尾计数 ⑤ 每行末尾的 PRINTL 空格（:2792/:2803）只接在行尾、不多一行
+  // ④ 收尾计数 ⑤ 每行末尾的行尾空格只接在行尾、不多一行
   //（#570 返工）。任何一处改动（换行位置、排序、心形、名字、行尾空格）都会红。
   //
   // 已知盲区：LOVE_SORT_MAX（30）在本用例的世界里只有压到 15 才会红（验收实测：
   // 15 红、20 全绿）。原因不是「显示面最多 28 项」，是这个世界喂出的得分项本身
   // 只有十几个，排序取前 16 与取前 30 的可见输出相同。要钉住 30 这个值，得先造
-  // 一个得分项超过 30 的角色——留给后续动 LOOK_INFO_LOVE 的票。
+  // 一个得分项超过 30 的角色——留给后续改 look_info_love 的工单。
   const w = love_world();
   for (const idx of [
     0, 1, 9, 23, 24, 30, 31, 35, 36, 40, 47, 57, 60, 74, 75, 76, 77, 78, 80, 83,
@@ -4048,7 +4043,7 @@ test('look_info_love：满桌角色的整屏输出（排序 × 心形 × 每行 
     w.set_abl(idx, 5);
   }
   await w.mod.look_info_love(w.cid);
-  // 每 6 项换行只换行（:2792 PRINTL 的空格接在行尾），不多出空行：
+  // 每 6 项换行只换行（换行前先补行尾空格），不多出空行：
   // 夹具把 era.println() 记成 br 行（text_lines 过滤掉它们），这里直接看全量行。
   // 先查空行——放 deepEqual 之后会被它抢先抛出、这层就看不见了（M11775）。
   assert.deepEqual(
@@ -4109,8 +4104,7 @@ function max_love_world() {
  * 是 LOVE_SORT_MAX（30），能出文本的项却只有 29 个 id 的来源（分支表 0-4/10-13/
  * 20-22/30-35/40-42/51-54/60-62，去掉恒不显示的 50 → 至多 28 项名额），它们最坏
  * 也只排到 rank 27；本角色实测「分数 > 3 的下标」23 个（含那个 50，见下面的断言），
- * 过门槛的项排到 rank 22 就到头，rank 23 起全是分数 ≤ 3、必被显示门槛
- * `SIF MAIN_LOVE:LOVE_ID <= 3 CONTINUE` continue 掉。结论：LOVE_SORT_MAX 取 28
+ * 过门槛的项排到 rank 22 就到头，rank 23 起全是分数 ≤ 3、必被显示门槛（分数 <= 3 即跳过）挡掉。结论：LOVE_SORT_MAX 取 28
  * 以上的任何值（29 / 30 / 31 …）都与 30 逐字同输出（等价变异，实测见 #591 完成
  * 报告：25…32 逐个代入排序 + 显示，22 项与顺序完全一致）。
  *
@@ -4155,7 +4149,7 @@ test('look_info_love：分值 <= 3 与未登记的喜好都不显示，计数据
   assert.equal(
     w.fixture.text_lines().find((l) => l.startsWith('[共')),
     '[共0个喜欢的东西]',
-    '全 0 素质且喜好未登记 → 一件都不显示（源 :2711 与 :2715 两道闸）',
+    '全 0 素质且喜好未登记 → 一件都不显示（两道检查拦下）',
   );
 
   const listed = love_world();
@@ -4185,7 +4179,7 @@ test('look_info_love：id 11（被弄小穴）对男人不显示', async () => {
   await male.mod.look_info_love(male.cid);
   assert.ok(
     !male.fixture.text_lines().some((l) => l.includes('被弄小穴')),
-    '男人跳过（源 :2720）',
+    '男人跳过',
   );
 });
 
@@ -4196,7 +4190,7 @@ test('look_info_love：id 50（コンプレックス）恒不显示，但决定 
   await w.mod.look_info_love(w.cid);
   const lines = w.fixture.text_lines().join('\n');
   assert.ok(!lines.includes('コンプレックス'), '50 号项本身不显示');
-  assert.ok(lines.includes('妈妈'), '50 <= 6 → 「妈妈」（源 :2757）');
+  assert.ok(lines.includes('妈妈'), '50 <= 6 → 「妈妈」');
 
   const lewd = love_world();
   lewd.set_talent(140, 1);
@@ -4257,7 +4251,7 @@ test('look_info_love：心形数 = 分值/5 - 1（含封顶 6）', async () => {
     `心形 3 个（20/5-1；除数写成 4 会变 4 个）：${row}`,
   );
 
-  // 封顶：分值 40 时心形仍是 6 个（源 :2743 SIF HEART > 6）
+  // 封顶：分值 40 时心形仍是 6 个
   const cap = love_world();
   cap.set_talent(232, 1);
   cap.set_abl(2, 37); // 40
@@ -4275,17 +4269,17 @@ test('look_info_love：口上视角的收尾（引子与」 接在物品行末�
   await w.mod.look_info_love(w.cid);
   const lines = w.fixture.text_lines();
   assert.ok(lines.includes('「喜欢的东西是……'));
-  // 无口上模块时语尾为空串，但「」 」仍接在物品行末（源 :2797-2804）
+  // 无口上模块时语尾为空串，但「」 」仍接在物品行末
   const rows = lines.slice(lines.indexOf('「喜欢的东西是……') + 1);
   const last = rows.filter((l) => !l.startsWith('[共')).pop();
   assert.ok(!lines.includes('」 '), '「」 」不得另起一行（#570 返工）');
   assert.ok(
     last !== undefined && last.endsWith('」 '),
-    `口上收尾的「」 」接在物品行末（源 :2797-2804；实际：${JSON.stringify(last)}）`,
+    `口上收尾的「」 」接在物品行末（实际：${JSON.stringify(last)}）`,
   );
 });
 
-test('look_info_love：返回 1（源 :2808 RETURN 1）', async () => {
+test('look_info_love：返回 1', async () => {
   const w = love_world();
   assert.equal(await w.mod.look_info_love(w.cid), 1);
 });

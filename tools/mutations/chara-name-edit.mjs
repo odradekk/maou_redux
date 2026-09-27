@@ -1,12 +1,12 @@
 // 变异条目表分片：角色生成链（issue #384，N2）。
-// 靶文件：ere/chara/chara-name.js、chara-name-edit.js、chara-make-inherit.js、
-// chara-make.js（@RAND_CHARA_MAKE 与转发层）、chara-name-list.js 的新导出。
+// 目标文件：ere/chara/chara-name.js、chara-name-edit.js、chara-make-inherit.js、
+// chara-make.js（rand_chara_make 与转发层）、chara-name-list.js 的新导出。
 // 守护测试：test/chara-name.test.js、test/chara-name-edit.test.js、
 // test/chara-make-inherit.test.js。字段与运行方式见 tools/mutation-check.mjs 头注释。
-// M7821 原在 chara.mjs（靶是 chara-family.js 里的 nid_get_type），#384 把该函数
+// M7821 原在 chara.mjs（目标是 chara-family.js 里的 nid_get_type），#384 把该函数
 // 收拢到 chara-name.js，条目随真身搬入本分片。
 
-export const COUNT = 72; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，守卫型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）；#653 -1（M7987 随 nid_findcharas 删除）；#653 +1（M13261：NID_GET_TYPE 3000 和名臂的修复守卫）
+export const COUNT = 72; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，检查型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）；#653 -1（M7987 随 nid_findcharas 删除）；#653 +1（M13261：nid_get_type 3000 和名分支的修复检查）
 
 export default [
   {
@@ -34,7 +34,7 @@ export default [
     must_mention: '随机组合名',
   },
   {
-    desc: 'M7979 整数除法换成浮点（:126 的阈值判据在 1126 处提前一档）',
+    desc: 'M7979 整数除法换成浮点（阈值判断在 1126 处提前一档）',
     file: 'ere/chara/chara-name.js',
     find: 'const int_div = (a, b) => Math.trunc(a / b);',
     replace: 'const int_div = (a, b) => a / b;',
@@ -42,7 +42,7 @@ export default [
     must_mention: '1126 时 4504/10 截断成 450',
   },
   {
-    desc: 'M7980 默认名「佳奈美」被改掉（固定名表未记录时的兜底）',
+    desc: 'M7980 默认名「佳奈美」被改掉（固定名表未记录时的缺省值）',
     file: 'ere/chara/chara-name.js',
     find: "        // 名字没有被记录\n        era.set(`callname:${cid}:-1`, '佳奈美');\n        era.set(`callname:${cid}:-2`, '佳奈美');",
     replace:
@@ -56,35 +56,34 @@ export default [
     find: '    name_id = era.get(`cflag:${cid}:6`) || 0;',
     replace: '    name_id = 0;',
     tests: ['chara-name'],
-    must_mention: '默认 L_NID = -1',
+    must_mention: '默认（NID = -1）',
   },
   {
     desc: 'M7982 还原名字的勇者区间上界 40 改 39',
     file: 'ere/chara/chara-name.js',
-    find: 'cid >= 17 && cid <= 40 // INRANGE(NO:L_A, 17,40)',
-    replace: 'cid >= 17 && cid <= 39 // INRANGE(NO:L_A, 17,40)',
+    find: 'cid >= 17 && cid <= 40',
+    replace: 'cid >= 17 && cid <= 39',
     tests: ['chara-name'],
     must_mention: '区间外（16 / 41）',
   },
   {
     desc: 'M7983 还原名字不再回落姓名本体（非勇者的称呼被清空）',
     file: 'ere/chara/chara-name.js',
-    find: "      : (era.get(`callname:${cid}:-1`) ?? ''); // NAME:L_A",
-    replace: "      : ''; // NAME:L_A",
+    find: "      : (era.get(`callname:${cid}:-1`) ?? ''); // 姓名",
+    replace: "      : ''; // 姓名",
     tests: ['chara-name'],
     must_mention: '回落姓名本体',
   },
   {
-    desc: 'M7984 CN_REBUILD 不再跳过 MASTER（魔王的称呼被改写）',
+    desc: 'M7984 cn_rebuild 不再跳过 0 号（魔王的称呼被改写）',
     file: 'ere/chara/chara-name.js',
-    find: '    if (cid === 0) {\n      continue; // SIF LOCAL == 0 CONTINUE',
-    replace:
-      '    if (cid === -1) {\n      continue; // SIF LOCAL == 0 CONTINUE',
+    find: '    if (cid === 0) {\n      continue; // 跳过魔王',
+    replace: '    if (cid === -1) {\n      continue; // 跳过魔王',
     tests: ['chara-name'],
-    must_mention: '跳过 MASTER',
+    must_mention: '跳过 0 号（魔王）',
   },
   {
-    desc: 'M7985 NID_GET_TYPE 和名下界改错（CHARA_NAME.ERB:261）',
+    desc: 'M7985 nid_get_type 和名下界改错',
     file: 'ere/chara/chara-name.js',
     find: '  if (nid < 200 || nid >= 2000) {\n    return 1; // 洋名（含男性洋名 [2000,2453)）',
     replace:
@@ -93,7 +92,7 @@ export default [
     must_mention: '和名下界 200',
   },
   {
-    desc: 'M7986 NID_GET_TYPE 的和名上界改错（999 判成洋名）',
+    desc: 'M7986 nid_get_type 的和名上界改错（999 判成洋名）',
     file: 'ere/chara/chara-name.js',
     find: '  if (nid < 1000) {\n    return 0; // 和名 [200,650)',
     replace: '  if (nid < 1001) {\n    return 0; // 和名 [200,650)',
@@ -157,7 +156,7 @@ export default [
     must_mention: '生成域',
   },
   {
-    desc: 'M7995 组合名的分档判据 2e9 改 3e9（ver0.2 走不进）',
+    desc: 'M7995 组合名的分档条件 2e9 改 3e9（ver0.2 走不进）',
     file: 'ere/chara/chara-name.js',
     find: '  if (arg > 2_000_000_000) {',
     replace: '  if (arg > 3_000_000_000) {',
@@ -167,8 +166,8 @@ export default [
   {
     desc: 'M7996 组合名的取模基 1e9 改 1e8（拆位全错）',
     file: 'ere/chara/chara-name.js',
-    find: '  let rest = arg % 1_000_000_000; // N = ARG % 1000000000',
-    replace: '  let rest = arg % 100_000_000; // N = ARG % 1000000000',
+    find: '  let rest = arg % 1_000_000_000;',
+    replace: '  let rest = arg % 100_000_000;',
     tests: ['chara-name'],
     must_mention: '各档位的编号值逐一钉住',
   },
@@ -218,7 +217,7 @@ export default [
     find: '    name_type = rand(5) % 2;\n  }',
     replace: '    name_type = 0;\n  }',
     tests: ['chara-name'],
-    must_mention: 'RAND:5 % 2',
+    must_mention: 'rand(5) % 2',
   },
   {
     desc: 'M8003 洋名编号的 +1000 档位边界 200 改 201',
@@ -253,7 +252,7 @@ export default [
     must_mention: '和名/洋名编号换用男名表',
   },
   {
-    desc: 'M8007 名字空间占满的和名判据 4/10 改 3/10（阈值偏移）',
+    desc: 'M8007 名字空间占满的和名条件 4/10 改 3/10（阈值偏移）',
     file: 'ere/chara/chara-name.js',
     find: 'if (name_type === 0 && int_div(count * 4, 10) > JAPANESE_NAME_COUNT) {',
     replace:
@@ -262,7 +261,7 @@ export default [
     must_mention: '名字空间占满',
   },
   {
-    desc: 'M8008 名字空间占满的洋名判据 8/10 改 9/10',
+    desc: 'M8008 名字空间占满的洋名条件 8/10 改 9/10',
     file: 'ere/chara/chara-name.js',
     find: '} else if (name_type === 1 && count > int_div(WEST_NAME_COUNT * 8, 10)) {',
     replace:
@@ -284,7 +283,7 @@ export default [
     find: '    return NAME_EDIT_KING; // 你的名字不能改',
     replace: '    return 0; // 你的名字不能改',
     tests: ['chara-name-edit'],
-    must_mention: '魔王（ARG 0）恒 1',
+    must_mention: '魔王（角色号 0）恒 1',
   },
   {
     desc: 'M8012 改名判定的苗床档返回值 3 改 4',
@@ -328,11 +327,10 @@ export default [
     must_mention: '阈值两侧',
   },
   {
-    desc: 'M8017 改名落地只写姓名不写称呼（两条名字键分家）',
+    desc: 'M8017 改名生效只写姓名不写称呼（两条名字键分家）',
     file: 'ere/chara/chara-name-edit.js',
-    find: "      era.set(`callname:${arg}:-2`, input); // SAVESTR:ARG '= LOCALS",
-    replace:
-      "      era.set(`callname:${arg}:-2`, ''); // SAVESTR:ARG '= LOCALS",
+    find: '      era.set(`callname:${arg}:-2`, input); // 称呼',
+    replace: "      era.set(`callname:${arg}:-2`, ''); // 称呼",
     tests: ['chara-name-edit'],
     must_mention: '改名成功',
   },
@@ -372,7 +370,7 @@ export default [
     must_mention: '双亲两档分母',
   },
   {
-    desc: 'M8022 单亲判据 <= 0 改成 < 0（L_C = 0 被当成双亲）',
+    desc: 'M8022 单亲条件 <= 0 改成 < 0（L_C = 0 被当成双亲）',
     file: 'ere/chara/chara-make-inherit.js',
     find: '  if (parent_b <= 0) {',
     replace: '  if (parent_b < 0) {',
@@ -398,7 +396,7 @@ export default [
     must_mention: '母性',
   },
   {
-    desc: 'M8025 人妻分支的判据 == 1 改成 != 1',
+    desc: 'M8025 人妻分支的条件 == 1 改成 != 1',
     file: 'ere/chara/chara-make-inherit.js',
     find: '    if (era.get(`talent:${parent}:157`) && rand(3) === 1) {',
     replace: '    if (era.get(`talent:${parent}:157`) && rand(3) !== 1) {',
@@ -440,17 +438,17 @@ export default [
     must_mention: 'PAIRS 表',
   },
   {
-    // #483 起靶代码从单行变成三元（战役招募走候选表、普通路径仍是 RAND(1,17)），
-    // 靶落在普通路径那一支上
-    desc: 'M8030 RAND_CHARA_MAKE 的位号掷骰上界 16 改 17（挑到 17 号勇者位）',
+    // #483 起目标代码从单行变成三元（战役招募走候选表、普通路径仍是 RAND(1,17)），
+    // 目标落在普通路径那一支上
+    desc: 'M8030 rand_chara_make 的位号掷骰上界 16 改 17（挑到 17 号勇者位）',
     file: 'ere/chara/chara-make.js',
     find: '      : rand_n(16) + 1;',
     replace: '      : rand_n(17) + 1;',
     tests: ['chara-name'],
-    must_mention: 'RAND(1,17) 上界',
+    must_mention: '掷勇者位的上界恒 16',
   },
   {
-    desc: 'M8031 RAND_CHARA_MAKE 的派遣标志复位值改错',
+    desc: 'M8031 rand_chara_make 的派遣标志复位值改错',
     file: 'ere/chara/chara-make.js',
     find: "      era.set('flag:402', 0); // 用过的标志归位",
     replace: "      era.set('flag:402', 1); // 用过的标志归位",
@@ -458,7 +456,7 @@ export default [
     must_mention: '派遣标志归位',
   },
   {
-    desc: 'M8032 RAND_CHARA_MAKE 的收下分支不再清 CFLAG:1',
+    desc: 'M8032 rand_chara_make 的收下分支不再清 CFLAG:1',
     file: 'ere/chara/chara-make.js',
     find: '      chara(newchara).invasion.状态 = 0; // CFLAG:1 初始位置',
     replace: '      chara(newchara).invasion.状态 = 2; // CFLAG:1 初始位置',
@@ -466,15 +464,14 @@ export default [
     must_mention: 'CFLAG:1 归零',
   },
   {
-    // #487 起靶代码从 `count() - 1` 改成新角色的角色号（newchara），
+    // #487 起目标代码从 `count() - 1` 改成新角色的角色号（newchara），
     // 「多减一」随之落在这个局部量上
-    desc: 'M8033 RAND_CHARA_MAKE 的新角色号返回时多减一',
+    desc: 'M8033 rand_chara_make 的新角色号返回时多减一',
     file: 'ere/chara/chara-make.js',
-    find: '      return newchara; // RETURN (CHARANUM - 1)（= 角色号，见函数头）',
-    replace:
-      '      return newchara - 1; // RETURN (CHARANUM - 1)（= 角色号，见函数头）',
+    find: '      return newchara;',
+    replace: '      return newchara - 1;',
     tests: ['chara-name'],
-    must_mention: 'RETURN CHARANUM-1',
+    must_mention: '返回值 = 新角色的角色号',
   },
   {
     desc: 'M8034 LIST_CHARA_NAME_SIZE 的 5500 改 5501（无效 NID 的钳位尺寸错）',
@@ -485,28 +482,28 @@ export default [
     must_mention: '无效 NID',
   },
   {
-    desc: 'M8035 转发层 @NAME_RESET 不再调 CN_REBUILD',
+    desc: 'M8035 转发层 name_reset 不再调 cn_rebuild',
     file: 'ere/chara/char-make.js',
-    find: 'function name_reset() {\n  // JUMP CN_REBUILD（#384 起真身）\n  cn_rebuild();\n}',
-    replace: 'function name_reset() {\n  // JUMP CN_REBUILD（#384 起真身）\n}',
+    find: 'function name_reset() {\n  // cn_rebuild（#384 起真身）\n  cn_rebuild();\n}',
+    replace: 'function name_reset() {\n  // cn_rebuild（#384 起真身）\n}',
     tests: ['chara-make'],
-    must_mention: 'JUMP 目标自',
+    must_mention: '转发目标自 #384 起是真身',
   },
   {
-    desc: 'M7821 NID_GET_TYPE 和名下界改错（CHARA_NAME.ERB:261；#384 起真身落在 chara-name.js）',
+    desc: 'M7821 nid_get_type 和名下界改错（#384 起真身落在 chara-name.js）',
     file: 'ere/chara/chara-name.js',
     find: '  if (nid < 200 || nid >= 2000) {\n    return 1; // 洋名',
     replace: '  if (nid < 201 || nid >= 2000) {\n    return 1; // 洋名',
     tests: ['chara-name'],
     must_mention: '三档分界',
   },
-  // —— #384 返工：守卫型用例与 PAIRS 表的补钉 ——
-  // 前七条钉的是「拆掉守卫也不会红」的那一类：用例原先只断「整段跳过」，
+  // —— #384 返工：检查型用例与 PAIRS 表的补钉 ——
+  // 前七条钉的是「拆掉检查也不会红」的那一类：用例原先只断「整段跳过」，
   // 而反例路径在夹具里本来无副作用，断言恒真。整改后夹具摆好了反例路径会
   // 产生副作用的前置条件（chara-make-inherit.test.js 的母性、chara-name-edit
   // 的魔王档与零长输入）。
   {
-    desc: 'M8276 讨厌男人守卫的素质号 82 改 83（守卫失效，情结段照跑）',
+    desc: 'M8276 讨厌男人检查的素质号 82 改 83（检查失效，情结段照跑）',
     file: 'ere/chara/chara-make-inherit.js',
     find: 'if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {',
     replace:
@@ -515,7 +512,7 @@ export default [
     must_mention: '第一支直接跳过',
   },
   {
-    desc: 'M8277 男人婆守卫的素质号 79 改 78（同上，第二支）',
+    desc: 'M8277 男人婆检查的素质号 79 改 78（同上，第二支）',
     file: 'ere/chara/chara-make-inherit.js',
     find: '} else if (era.get(`talent:${parent}:79`) && !child_male && !child_futa) {',
     replace:
@@ -524,7 +521,7 @@ export default [
     must_mention: '第二支直接跳过',
   },
   {
-    desc: 'M8278 讨厌男人守卫的「孩子是男」判据倒置（整支改成反例才跳过）',
+    desc: 'M8278 讨厌男人检查的「孩子是男」条件倒置（整支改成反例才跳过）',
     file: 'ere/chara/chara-make-inherit.js',
     find: 'if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {',
     replace:
@@ -533,7 +530,7 @@ export default [
     must_mention: '第一支直接跳过',
   },
   {
-    desc: 'M8279 第二亲本的守卫 >= 0 改成 > 0（魔王当第二亲本时整段漏掉）',
+    desc: 'M8279 第二亲本的检查 >= 0 改成 > 0（魔王当第二亲本时整段漏掉）',
     file: 'ere/chara/chara-make-inherit.js',
     find: '  if (parent_b >= 0) {',
     replace: '  if (parent_b > 0) {',
@@ -543,9 +540,9 @@ export default [
   {
     desc: 'M8280 chara_info_name_edit 的魔王档例外被拆（魔王被当成不可改名）',
     file: 'ere/chara/chara-name-edit.js',
-    find: '  const able = check_able_to_name_edit(arg); // LOCAL\n  if (able !== 0 && able !== NAME_EDIT_KING) {',
+    find: '  const able = check_able_to_name_edit(arg);\n  if (able !== 0 && able !== NAME_EDIT_KING) {',
     replace:
-      '  const able = check_able_to_name_edit(arg); // LOCAL\n  if (able !== 0) {',
+      '  const able = check_able_to_name_edit(arg);\n  if (able !== 0) {',
     tests: ['chara-name-edit'],
     must_mention: '输入循环入口',
   },
@@ -555,15 +552,15 @@ export default [
     find: '  if (able !== 0 && able !== NAME_EDIT_KING) {\n    // 奴隷で実行不可なら灰色にする',
     replace: '  if (able !== 0) {\n    // 奴隷で実行不可なら灰色にする',
     tests: ['chara-name-edit'],
-    must_mention: '不进 :19-22 的染灰支',
+    must_mention: '魔王档不进染灰支',
   },
   {
-    desc: 'M8282 零长输入的判据 strlens(input) > 0 改成恒真（空输入也落名）',
+    desc: 'M8282 零长输入的判断条件 strlens(input) > 0 改成恒真（空输入也写名）',
     file: 'ere/chara/chara-name-edit.js',
     find: '    if (strlens(input) > 0) {',
     replace: '    if (strlens(input) >= 0) {',
     tests: ['chara-name-edit'],
-    must_mention: '走 ELSE 支而非落地支',
+    must_mention: '走「没有变更」支而非写键支',
   },
   // 后四条钉 PAIRS 的表内容：整改前只有表头被抽查守住，表尾改一个字、
   // 多一对、少一对都不红。现在 chara-make-inherit.test.js 逐组走完全表
@@ -603,17 +600,17 @@ export default [
   },
   // —— #567：空输入语义统一（0 ＝ 空输入），改名链由 A 翻修到 B ——
   {
-    desc: 'M11832 改名输入改回 A 语义（0 落成字面量名字「0」，:100-101 支不可达）',
+    desc: 'M11832 改名输入改回 A 语义（0 落成字面量名字「0」，该支不可达）',
     file: 'ere/chara/chara-name-edit.js',
     find: '    const input = input_text(await era.input());',
     replace:
       "    const input = String((await era.input()) ?? ''); // 变异：A 语义",
     tests: ['chara-name-edit'],
-    must_mention: ':101 的播报（空输入支）',
+    must_mention: '播报（空输入支）',
   },
-  // —— #653（F7）：男性和名/中式名的判型守卫 ——
+  // —— #653（F7）：男性和名/中式名的判型检查 ——
   {
-    desc: 'M13261 NID_GET_TYPE 的 3000 和名臂回退（男性和名/中式名又判成洋名）',
+    desc: 'M13261 nid_get_type 的 3000 和名分支回退（男性和名/中式名又判成洋名）',
     file: 'ere/chara/chara-name.js',
     find: '  if (nid >= 3000) {\n    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)',
     replace:

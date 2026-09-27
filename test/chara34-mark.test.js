@@ -5,7 +5,7 @@
  * 名字表登记的下标建槽抄预设——Mark.yml 无 4 号名条目，addCharacter 不把
  * MARK,4,3 落 data（test/extalent-table.test.js 的引擎级用例钉住）。扩名
  * 条目会给所有角色预建 4 槽，故在加入点直写 mark:34:4 = 3（反抗刻印履历
- * 已满：三档取得门全关，与原作 ADDCHARA 全量拷贝预设的行为一致）。
+ * 已满：三档取得检查全关，效果与预设全量拷入一致）。
  *
  * 覆盖：
  *   - 加入点写值（k_34_crazylord 后 mark:34:4 = 3，mark:34:3 预设原样）；
@@ -73,33 +73,33 @@ test('K_34 加入点：mark:34:4 = 3（反抗刻印履历）与 mark:34:3 预设
   // 钉住：data.mark[34][1] = 3 / [3] = 3）；夹具不读 yml/，此处不重复断言
 });
 
-test('研究所复活：RESULECTION 也过 ADDCHARA_EX，补偿照样落（#548 返工）', async () => {
-  // 复活 34 号：FLAG:(34+999) = -2 是新的 @CHARADEAD_CHECK 写的死亡旗，
+test('研究所复活：resulection 也经过 add_chara_ex，补偿照样写上（#548 返工）', async () => {
+  // 复活 34 号：FLAG:(34+999) = -2 是死亡旗（-2 = 已死），
   // 按钮编号 = COUNT + 100（COUNT = 33 → 133 → preset = 133 - 99 = 34）
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
   fixture.store.set('exp:0:81', 5); // 勋章经验（> 0 才进复活流程）
-  fixture.store.set('flag:1033', -2); // 判据（可复活）
-  fixture.set_inputs(0, 133); // 确定 → :2599 选 34 号
+  fixture.store.set('flag:1033', -2); // 条件（可复活）
+  fixture.set_inputs(0, 133); // 确定 → 选 34 号
   const { resulection } = fixture.load_module('page/page-shop-labo');
 
-  assert.equal(await resulection(() => 0), 1, '复活流程走完（RETURN 1）');
+  assert.equal(await resulection(() => 0), 1, '复活流程走完（返回 1）');
   assert(
     fixture.era.getAddedCharacters().includes(34),
-    '34 号被 ADDCHARA 收回',
+    '34 号被 addCharacter 收回',
   );
   assert.equal(
     fixture.store.get('mark:34:4'),
     3,
-    'MARK,4,3 的补偿写在 @CHARA_EX_34 里，复活路径同样经过',
+    'MARK,4,3 的补偿写在 add_chara_ex 里，复活路径同样经过',
   );
 });
 
 /**
- * 调教链世界：目标 34 已按「加入点」形态带着 MARK 1/3/4 = 3（SOURCE_CHECK
- * 的判死门读 mark:4）。post 在 SOURCE_CHECK 前把反感源面改大（source-check.
+ * 调教链世界：目标 34 已按「加入点」的写法带着 MARK 1/3/4 = 3（SOURCE_CHECK
+ * 的判死检查读 mark:4）。post 在 SOURCE_CHECK 前把反感源面改大（source-check.
  * test.js 的 run_caress 同款时机）。
  */
 async function run_source_check(post, { with_mark4 = true } = {}) {
@@ -122,7 +122,7 @@ async function run_source_check(post, { with_mark4 = true } = {}) {
   fixture.store.set('base:34:0', 1450);
   fixture.store.set('base:34:1', 410);
   fixture.store.set('talent:0:122', 1);
-  // 预设的落点形态（Mark.yml 有名条目的 1/3 引擎自落；4 走加入点补偿）
+  // 预设的落点（Mark.yml 有名条目的 1/3 引擎自落；4 走加入点补偿）
   fixture.store.set('mark:34:1', 3);
   fixture.store.set('mark:34:3', 3);
   if (with_mark4) {
@@ -142,20 +142,20 @@ async function run_source_check(post, { with_mark4 = true } = {}) {
   return fixture;
 }
 
-test('效果：mark:4 = 3 时反感 ≥ 500 也不取得反抗刻印（三档门全关）', async () => {
+test('效果：mark:4 = 3 时反感 ≥ 500 也不取得反抗刻印（三档检查全关）', async () => {
   const fixture = await run_source_check((f) => {
     f.store.set('source:34:12', 1000); // 不快源 ×0.5（顺从 0）= 500 ≥ 500
   });
 
   assert(
     !text_lines(fixture).some((line) => line.includes('获得反抗刻印')),
-    'mark:4 = 3 → MARK:4 <= 0/1/2 三档门全关',
+    'mark:4 = 3 → MARK:4 <= 0/1/2 三档检查全关',
   );
   assert.equal(fixture.store.get('mark:34:3'), 3, '反抗刻印保持预设 Lv3');
   assert.equal(fixture.store.get('mark:34:4'), 3, '履历不再推进');
 });
 
-test('对照：无 mark:4 履历时同一链上取得反抗刻印 LV1（判据仍活着）', async () => {
+test('对照：无 mark:4 履历时同一链上取得反抗刻印 LV1（条件仍活着）', async () => {
   const fixture = await run_source_check(
     (f) => {
       f.store.set('source:34:12', 1000);

@@ -1,10 +1,10 @@
 // issue #385：CHARA_BODY 身体与年龄生成（M8036-M8085）。
 //
-// 靶文件常住 ere/chara/chara-body.js（新增的四个函数与取点步骤）；最后两条
-// 打接线点（event-first / event-nextmonth）。tests 一律是本票的
-// test/chara-body.test.js（接线两条除外）。
+// 目标文件常住 ere/chara/chara-body.js（新增的四个函数与取点步骤）；最后两条
+// 打接入点（event-first / event-nextmonth）。tests 一律是这张工单的
+// test/chara-body.test.js（接入两条除外）。
 const code = 'ere/chara/chara-body.js';
-// extra 可给 file / tests / test_name 三项覆盖：接线条目打别的靶文件与别的
+// extra 可给 file / tests / test_name 三项覆盖：接入条目打别的目标文件与别的
 // 测试文件；test_name 是「must_mention 是运行期拼出来的断言消息」时的快路
 // 口（见 tools/mutation-check.mjs 头注的 #242 段）——不写它，`--ids` 内环会
 // 退回整份测试文件跑，慢但不漏判。
@@ -22,20 +22,20 @@ const make = (id, desc, find, replace, must_mention, extra = {}) => ({
 export const COUNT = 54;
 
 export default [
-  // —— @CHAR_BODY_GENERATE_WAPPED（CHARA_BODY.ERB:16-36）——
+  // —— char_body_generate_wapped ——
   make(
     8036,
-    '身体生成闸门位 12 认成 13（位 12 开也不再生成）',
+    '身体生成的阻断性检查位 12 认成 13（位 12 开也不再生成）',
     'if (((settings >> 12) & 1) === 0 && ((settings >> 15) & 1) === 0) return;',
     'if (((settings >> 13) & 1) === 0 && ((settings >> 15) & 1) === 0) return;',
-    'FLAG:5 位 12/15 是闸门',
+    'FLAG:5 位 12/15 是开关',
   ),
   make(
     8037,
-    '身体生成闸门位 15 认成 14（位 15 开也不再生成）',
+    '身体生成的阻断性检查位 15 认成 14（位 15 开也不再生成）',
     'if (((settings >> 12) & 1) === 0 && ((settings >> 15) & 1) === 0) return;',
     'if (((settings >> 12) & 1) === 0 && ((settings >> 14) & 1) === 0) return;',
-    'FLAG:5 位 12/15 是闸门',
+    'FLAG:5 位 12/15 是开关',
   ),
   make(
     8038,
@@ -149,7 +149,7 @@ export default [
     '    cla: int(raw / 1000),',
     '槽位与档位',
   ),
-  // —— @NORMAL_POINT_PICKUP（CHARA_BODY2.ERB:306-323）——
+  // —— normal_point_pickup ——
   make(
     8054,
     '取点掷骰上界 17 改 16（丢一档落点）',
@@ -185,7 +185,7 @@ export default [
     '  return middle + 3;',
     '取点表 RAND:17 的 17 个落点',
   ),
-  // —— @RACE_AGE_GENERATE（CHARA_BODY.ERB:245-337）——
+  // —— race_age_generate ——
   make(
     8059,
     '堕落种族下界 7 改 5（龙族被当堕落种族，倍率失效）',
@@ -217,8 +217,8 @@ export default [
   make(
     8063,
     '偏斜档的掷骰上界丢掉 +1（数量级偏一档）',
-    '    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10; // RAND:(RESULT + 1)',
-    '    const ceiling = 10 ** rand(digit_count(cap)) * 10; // RAND:(RESULT + 1)',
+    '    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10;',
+    '    const ceiling = 10 ** rand(digit_count(cap)) * 10;',
     '偏斜随机档（槽 232）的五个数量级分支',
   ),
   make(
@@ -240,44 +240,44 @@ export default [
     '年龄～上限档的 BREAK 阈值 2 改 3（偏斜概率变）',
     '      if (rand(5) < 2) break;',
     '      if (rand(5) < 3) break;',
-    '年龄～上限档（吸血鬼 431）的 BREAK 与连乘钳位',
+    '年龄～上限档（吸血鬼 431）的提前退出与连乘钳位',
   ),
   make(
     8067,
     '年龄～上限档的连乘底数 10 改 100',
     '      age *= 10;',
     '      age *= 100;',
-    '年龄～上限档（吸血鬼 431）的 BREAK 与连乘钳位',
+    '年龄～上限档（吸血鬼 431）的提前退出与连乘钳位',
   ),
   make(
     8068,
     '年龄～上限档的上限钳位被拆掉',
     '    if (age > limit) age = limit;',
     '    if (false) age = limit;',
-    '年龄～上限档（吸血鬼 431）的 BREAK 与连乘钳位',
+    '年龄～上限档（吸血鬼 431）的提前退出与连乘钳位',
   ),
   make(
     8069,
     '年龄～上限档的低位抬升去掉 +1（RAND:0 取空）',
     '    if (human_age >= age) age = human_age + 1;',
     '    if (human_age >= age) age = human_age;',
-    '年龄～上限档（吸血鬼 431）的 BREAK 与连乘钳位',
+    '年龄～上限档（吸血鬼 431）的提前退出与连乘钳位',
   ),
   make(
     8070,
     '年龄～上限档的取点上界 +1',
     '    return rand(age - human_age) + human_age;',
     '    return rand(age - human_age + 1) + human_age;',
-    '年龄～上限档（吸血鬼 431）的 BREAK 与连乘钳位',
+    '年龄～上限档（吸血鬼 431）的提前退出与连乘钳位',
   ),
   make(
     8071,
-    '档位 5 起原作不设值，被补成返回人类年龄',
-    '  return 0;\n}\n\n/**\n * @HUMAN_AGE_GENERATE',
-    '  return human_age;\n}\n\n/**\n * @HUMAN_AGE_GENERATE',
-    '档位 5 及以上原作不设值',
+    '档位 5 起不设值，被补成返回人类年龄',
+    '  return 0;\n}\n\n/**\n * human_age_generate',
+    '  return human_age;\n}\n\n/**\n * human_age_generate',
+    '档位 5 及以上不设值',
   ),
-  // —— @HUMAN_AGE_GENERATE（CHARA_BODY.ERB:340-406）——
+  // —— human_age_generate ——
   make(
     8072,
     '换算侧的堕落种族下界 7 改 5（龙族被当堕落种族）',
@@ -297,7 +297,7 @@ export default [
     '小数倍档的四舍五入常数 5 改 4',
     '    return int((race_age * 10 + 5) / (deg * 10 + num));',
     '    return int((race_age * 10 + 4) / (deg * 10 + num));',
-    '小数倍档用原作写死的四舍五入式',
+    '小数倍档用固定的四舍五入式',
   ),
   make(
     8075,
@@ -306,27 +306,27 @@ export default [
     '  return era.get(`cflag:${cid}:451`) || 0;',
     '回落 CFLAG:452',
   ),
-  // —— @CHAR_AGE_GENERATE（CHARA_BODY.ERB:148-242）——
+  // —— char_age_generate ——
   make(
     8076,
     '经历推算的基准 17 改 18',
-    '  let age = 17 + char_age_expect(cid); // CHAR_AGE_EXPECT（CHARA_BODY.ERB:39-144）',
-    '  let age = 18 + char_age_expect(cid); // CHAR_AGE_EXPECT（CHARA_BODY.ERB:39-144）',
+    '  let age = 17 + char_age_expect(cid); // char_age_expect',
+    '  let age = 18 + char_age_expect(cid); // char_age_expect',
     '素质与经历逐个分支的推算',
   ),
   make(
     8077,
     'LIMIT 下界 12 改 13',
-    '  age = Math.max(12, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)',
-    '  age = Math.max(13, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)',
-    '经历推算值经 LIMIT(12,35) 钳制',
+    '  age = Math.max(12, Math.min(35, age)); // 夹到 [12,35]',
+    '  age = Math.max(13, Math.min(35, age)); // 夹到 [12,35]',
+    '经历推算值钳制在 12-35',
   ),
   make(
     8078,
     'LIMIT 上界 35 改 34',
-    '  age = Math.max(12, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)',
-    '  age = Math.max(12, Math.min(34, age)); // LIMIT(EXP_AGE,12,35)',
-    '经历推算值经 LIMIT(12,35) 钳制',
+    '  age = Math.max(12, Math.min(35, age)); // 夹到 [12,35]',
+    '  age = Math.max(12, Math.min(34, age)); // 夹到 [12,35]',
+    '经历推算值钳制在 12-35',
   ),
   make(
     8079,
@@ -364,10 +364,10 @@ export default [
     '14 岁（边界值）必须盖未熟',
     { test_name: '人类年龄 ≤ 14 补盖未熟' },
   ),
-  // —— 接线点（#385 的五个等待方里两条有独立断言的面）——
+  // —— 接入点（#385 的五个等待方里两条有独立断言的面）——
   make(
     8084,
-    'EVENTFIRST 的村娘身体生成接线被拆掉',
+    'EVENTFIRST 的村娘身体生成接入被拆掉',
     '    char_body_generate_wapped(17); // A = 1（序号）→ 角色 ID 17',
     '    void 17; // A = 1（序号）→ 角色 ID 17',
     '村娘的身体数据必须经真身落盘',
@@ -379,7 +379,7 @@ export default [
   ),
   make(
     8085,
-    '月替的种族年龄换算接线被拆掉（CFLAG:451 恒 0）',
+    '月替的种族年龄换算接入被拆掉（CFLAG:451 恒 0）',
     '      chara(cid).chara.年龄 = human_age_generate(\n        chara(cid).chara.种族年龄,\n        cid,\n      );',
     '      chara(cid).chara.年龄 = 0;',
     '奴隶的年龄应写入换算结果',
@@ -389,33 +389,33 @@ export default [
       test_name: '跨年的年龄增长',
     },
   ),
-  // —— @CHAR_BUST_REGENERATE_WAPPED（CHARA_BODY2.ERB:2-14，issue #406）——
+  // —— char_bust_regenerate_wapped（issue #406）——
   make(
     9475,
-    '三围显示闸门位 15 认成 14（位 15 开也不再重掷）',
+    '三围显示的阻断性检查位 15 认成 14（位 15 开也不再重掷）',
     '  if (((settings >> 15) & 1) === 0) return;',
     '  if (((settings >> 14) & 1) === 0) return;',
     'FLAG:5 位 15 关闭时整体不动',
   ),
   make(
     9476,
-    '缺年龄或缺身高的判据从「任一」松成「两者都缺」',
+    '缺年龄或缺身高的条件从「任一」松成「两者都缺」',
     '  if (!age || !height) {',
     '  if (!age && !height) {',
-    ':7-8 只缺身高也要转发全身重生成',
+    '只缺身高也要转发全身重生成',
   ),
   make(
     9477,
     '重掷分支被跳过（拆掉转发全身重生成的调用）',
     '    char_body_generate_wapped(cid, rand);',
     '    void 0;',
-    ':7-8 缺年龄或身高转发全身重生成',
+    '缺年龄或身高转发全身重生成',
   ),
   make(
     9478,
     '胸围回写漏除以 100（CFLAG:455 单位错一百倍）',
     '  era.set(`cflag:${cid}:455`, int(bust / 100));',
     '  era.set(`cflag:${cid}:455`, int(bust));',
-    ':11 CFLAG:455 = RESULT:0/100',
+    'CFLAG:455 = 结果/100',
   ),
 ];
