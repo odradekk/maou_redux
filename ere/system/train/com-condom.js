@@ -8,13 +8,8 @@
  * TEQUIP:37 = 对象装着（属主 train，直写）；ITEM:24 = 安全套所持数。
  *
  * 移植说明（有意偏离，均注明依据）：
- *   - `PRINTFORML 现在：%LOCALS:(CFLAG:61)%`（:14）是上游缺陷：Emuera 的
- *     LOCALS 是**函数级局部数组**（skill 变量表：函数内局部、不进存档），
- *     @CONDOM_SETTINGS 自身零写点——别处函数（EVENT_TRAIN_MESSAGE_B 等）
- *     写的 LOCALS 进不了这一份，故该行读到的恒为空串，显示「现在：」加
- *     空值。已登记 #14、按移植期规约不修（#101「答案恒为不改」/SOP §5
- *     判据 7）：ere 侧 1:1 打出该行，值为空；反向变异 M870 钉住缺陷本身
- *     （谁把标签显示出来，测试当场红）。
+ *   - 设定画面的「现在：」行显示当前档位标签（CFLAG:61 → 每次问/有套就用/
+ *     不用三档措辞，与画面按钮一一对应）。
  *   - 原作 PRINTL [n] 正文 + 自由数字 INPUT、CASEELSE GOTO 的行内重试在
  *     ere 侧不可达：引擎对已打印按钮拒收白名单外输入（#130 白名单），
  *     按钮化后无效值到不了游戏（#214 裁定六同款）。循环骨架保留给
@@ -43,9 +38,12 @@ async function condom_settings() {
   }
   const name = era.get(`callname:${cid}:-1`) ?? '';
   era.print(`和${name}做爱要戴套吗？`);
-  // %LOCALS:(CFLAG:61)% —— LOCALS 是函数级局部数组，本函数零写点 →
-  // 恒空串。1:1：整行照打、值为空（头注缺陷条，#14 已登记不修）
-  era.print('现在：');
+  // 当前档位标签（与下方三键措辞一一对应；CFLAG:61 未设时按 0 档显示，
+  // 档位越界时回退空串——不打印 undefined）
+  const setting61 = era.get(`cflag:${cid}:61`) || 0;
+  const setting_label =
+    ['每次都问', '有套就用', '每次都直接来，来个痛快'][setting61] ?? '';
+  era.print(`现在：${setting_label}`);
   era.drawLine();
   era.printButton('每次都问', 0);
   era.printButton('有套就用', 1);

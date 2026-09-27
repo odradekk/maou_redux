@@ -214,3 +214,35 @@ test('以降（1 < count < P）：同文无异常经验、源无乘算', async (
   assert.equal(fixture.store.get('source:31:13'), 1000);
   assert.ok(fixture.text_lines().some((t) => t.includes('强制地让')));
 });
+
+test('代词跟随对象性别：女性对象 →「强制地让她去了」；男性对象（TALENT:122）→「他」', async () => {
+  const female = seed_world();
+  female.fixture.store.set('tflag:0', 1);
+  female.fixture.store.set('tflag:29', 1);
+  await female.seiin.seiin_start();
+  assert.ok(
+    female.fixture.text_lines().some((t) => t.includes('强制地让她去了')),
+    '代词取对象（温妮）的性别',
+  );
+
+  const male = seed_world();
+  male.fixture.store.set('tflag:0', 1);
+  male.fixture.store.set('tflag:29', 1);
+  male.fixture.store.set('talent:31:122', 1); // 对象是男人
+  await male.seiin.seiin_start();
+  assert.ok(
+    male.fixture.text_lines().some((t) => t.includes('强制地让他去了')),
+    '男性对象用「他」（初回支）',
+  );
+
+  const male_later = seed_world();
+  male_later.fixture.store.set('tflag:0', 1);
+  male_later.fixture.store.set('tflag:29', 1);
+  male_later.fixture.store.set('talent:31:122', 1); // 对象是男人
+  male_later.fixture.store.set('cflag:31:600', 10); // count 11 → 以降支
+  await male_later.seiin.seiin_start();
+  assert.ok(
+    male_later.fixture.text_lines().some((t) => t.includes('强制地让他去了')),
+    '男性对象用「他」（以降支）',
+  );
+});
