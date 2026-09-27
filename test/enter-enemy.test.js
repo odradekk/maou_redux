@@ -10,8 +10,8 @@
  *   - one = () => 1（恒 1：座標走 ELSE 末臂 Y=31）
  *
  * 验收对应（#171 清单）：
- *   - 月末守卫 1:1 保留为死注释——钉住用例证明「月末也照来」（反向变异
- *     M348 的靶）；
+ *   - 月末守卫不移植（被注释掉的功能不恢复，#574 第 4 条）——钉住用例
+ *     证明「月末也照来」；
  *   - 新生成的勇者 CFLAG:1 == 2 有测试，且让 turnend-settle.js:128 那处
  *     守卫（DUNGEON 占位）为真（链路两用例）；
  *   - 人数上限六分支各有测试；「出于对魔王的恐惧」早退有测试；
@@ -62,22 +62,21 @@ function setup_world() {
   return fixture;
 }
 
-// —— 月末守卫 1:1 保留（钉住用例；反向变异 M348 的靶）——
+// —— 月末守卫不移植（钉住用例：被注释掉的功能不恢复，勇者每日来袭）——
 
-test('月末守卫已死：日 28、DAY 50、FLAG:60 = 0 仍每日生成（原作现状，#14 登记）', async () => {
+test('月末守卫已删：日 28、DAY 50、FLAG:60 = 0 仍每日生成（#574 第 4 条）', async () => {
   const fixture = setup_world();
   const { enter_enemy } = load(fixture);
-  // 被注释掉的守卫是 SIF DAY:2 > LOCAL(=10) && ARG:0 == 0 && FLAG:60 < 300
-  // ——三项全真（月末 28 > 10、通常来袭、无等级补正）照样来袭
+  // 原守卫的三项条件全真（月末 28 > 10、通常来袭、无等级补正）照样来袭
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.date = 28; // DAY:2 日
   era_flag.day_count = 50;
   fixture.store.set('flag:60', 0);
   const ret = await enter_enemy(0, zero);
-  assert.equal(ret, 1, '月末守卫已死：日 28 仍每日来袭');
+  assert.equal(ret, 1, '月末守卫已删：日 28 仍每日来袭');
   assert(
     fixture.chara_no.includes(1),
-    '勇者 1 号在月末照常入队（守卫被注释掉是原作现状）',
+    '勇者 1 号在月末照常入队（守卫不移植，每日来袭）',
   );
 });
 

@@ -1,8 +1,8 @@
 /**
  * ere/event/event-load.js（@EVENTLOAD 读档钩子，#137）的行为测试。
  *
- * 验收项：钩子本体直驱（emit('EVENTLOAD')）——DATA_FIX 三行的等价落地
- * 逐条判定（判定依据见 event-load.js 文件头）；「读档成功后钩子被调用」
+ * 验收项：钩子本体直驱（emit('EVENTLOAD')）——历史补丁三行等价物的
+ * 落地逐条判定（判定依据见 event-load.js 文件头）；「读档成功后钩子被调用」
  * 的集成判据在 test/page-save-load.test.js（emit 点与转场一起测）。
  */
 
@@ -18,7 +18,7 @@ async function run_hook(fixture) {
   await emit('EVENTLOAD');
 }
 
-test('DATA_FIX 等价物 1：EX_TALENT:MASTER:200 = 1，只写 MASTER（恒 0 号魔王）', async () => {
+test('历史补丁等价物 1：EX_TALENT:MASTER:200 = 1，只写 MASTER（恒 0 号魔王）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(17, { id: 17, name: '琼', callname: '琼' });
@@ -30,7 +30,7 @@ test('DATA_FIX 等价物 1：EX_TALENT:MASTER:200 = 1，只写 MASTER（恒 0 �
   assert.equal(
     fixture.store.get('ex_talent:0:200'),
     1,
-    'EX_TALENT:MASTER:200 = 1（魔王高贵标识，DATA_FIX 170205 段）',
+    'EX_TALENT:MASTER:200 = 1（魔王高贵标识）',
   );
   assert.equal(
     fixture.store.get('ex_talent:17:200'),
@@ -39,13 +39,13 @@ test('DATA_FIX 等价物 1：EX_TALENT:MASTER:200 = 1，只写 MASTER（恒 0 �
   );
 });
 
-test('DATA_FIX 等价物 2：MAXBASE 下限钳制（< 600 → 600、< 100 → 100），高值与恰等不动', async () => {
+test('历史补丁等价物 2：MAXBASE 下限钳制（< 600 → 600、< 100 → 100），高值与恰等不动', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(17, { id: 17, name: '琼', callname: '琼' });
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(17);
-  // 读入存档可能带着被剧情压低的上限（EVENT_ADDICT.ERB:160-172 的写点）
+  // 读入存档可能带着被剧情压低的上限（event-addict.js 的写点）
   fixture.store.set('maxbase:0:0', 550);
   fixture.store.set('maxbase:0:1', 90);
   fixture.store.set('maxbase:17:0', 1200);
@@ -67,7 +67,7 @@ test('DATA_FIX 等价物 2：MAXBASE 下限钳制（< 600 → 600、< 100 → 10
   );
 });
 
-test('DATA_FIX 等价物 3：未声明序号读值 undefined → || 0 兜底也钳（#13）', async () => {
+test('历史补丁等价物 3：未声明序号读值 undefined → || 0 兜底也钳（#13）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -76,7 +76,7 @@ test('DATA_FIX 等价物 3：未声明序号读值 undefined → || 0 兜底也�
   assert.equal(
     fixture.store.get('maxbase:0:0'),
     600,
-    'undefined 兜底 0 → 同样低于下限，钳到 600（与原作 Emuera 零值语义一致）',
+    'undefined 兜底 0 → 同样低于下限，钳到 600（零值语义一致）',
   );
   assert.equal(fixture.store.get('maxbase:0:1'), 100);
 });

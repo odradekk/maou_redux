@@ -625,9 +625,9 @@ async function banishment(cid, rand_n = default_rand) {
     // 0-4 可点可键入，100（未显示）只能键入；其余值走原作的重问循环。
     result = await era.input({ useRule: false });
     if (result < 0 || (result >= 5 && result !== 100)) continue;
-    // 原作 :27 的 ELSEIF RESULT == 1 缺少 TALENT:A:122 条件，导致女性也
-    // 无法选择男性化；这是可达的原作缺陷，1:1 保留。
-    if (result === 1) {
+    // 选项 1 只对已是男性（TALENT:122）的角色拒绝——提示语就是「已经是
+    // 男性了」，女性应能选择男性化（#650 修复：原先缺条件判断，全部拒绝）
+    if (result === 1 && has(cid, 'talent', 122)) {
       await era.printAndWait(
         `${chara_callname(cid)}已经是男性了。换个手段吧。`,
       );

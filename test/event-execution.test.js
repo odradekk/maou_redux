@@ -281,8 +281,28 @@ test('处分函数直调：口上观察到传入角色，而不是调用前残�
   assert.equal(fixture.store.get('videoarchive:2'), '凌辱致死艾达');
 });
 
-test('BANISHMENT：选项 1 对女性也会被原作校验拒绝，再接受普通流放', async () => {
+test('BANISHMENT：选项 1 对女性可选——施予男性化的诅咒（#650 修复无条件拒绝）', async () => {
   const fixture = seed_world();
+  fixture.set_inputs(1);
+  const { banishment } = fixture.load_module('event/event-banishment');
+
+  await banishment(31, seq([0]));
+
+  assert.deepEqual(
+    fixture.inputs_consumed.map(({ value }) => value),
+    [1],
+  );
+  assert(
+    fixture
+      .text_lines()
+      .some((l) => l.includes('女性的肉体被咒语改变成为了男性')),
+  );
+  assert.equal(fixture.store.get('videoarchive:1'), '一个爷们站起来了温妮');
+});
+
+test('BANISHMENT：选项 1 对男性仍拒绝并提示，再接受普通流放', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:122', 1); // 男人
   fixture.set_inputs(1, 0);
   const { banishment } = fixture.load_module('event/event-banishment');
 
