@@ -1,5 +1,5 @@
 /**
- * @file 玩家设定画面（issue #463，源 target/ERB/SYSTEM/CONFIG.ERB）。
+ * @file 玩家设定画面（issue #463）。
  */
 
 const { test } = require('node:test');
@@ -78,7 +78,7 @@ test('config_penis_you_setting：0-4 写 chara(0).chara.阴茎的状态 并回�
   assert(fixture.text_lines().some((t) => t.includes('《巨根》')));
 });
 
-test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 静默无操作（原作无重试）', async () => {
+test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 静默无操作（旧版无重试）', async () => {
   const fixture = create_era_fixture();
   const { config_penis_you_setting } = load(fixture);
   const { chara } = fixture.load_module('facade/chara');
@@ -89,7 +89,7 @@ test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 �
   assert.equal(chara(0).chara.阴茎的状态, before);
 });
 
-// —— #615：print 正文不带尾换行（CONTEXT.md「输出 API 与原作的对应」）——
+// —— #615：print 正文不带尾换行（CONTEXT.md「输出 API 的排版与对齐」）——
 
 test('#615 config_penis_you_setting：标题行不带尾换行，紧接 [0] 按钮行', async () => {
   const fixture = create_era_fixture();
@@ -101,13 +101,13 @@ test('#615 config_penis_you_setting：标题行不带尾换行，紧接 [0] 按�
   assert.equal(
     lines[0].text,
     '魔王的兵器是如意金箍棒，可大也可小！！',
-    'CONFIG.ERB:88 的 PRINTFORML 自成一行，正文不带尾换行（多写 \\n 会多一个空行）',
+    'PRINTFORML 自成一行，正文不带尾换行（多写 \\n 会多一个空行）',
   );
-  assert.equal(lines[1].type, 'button', ':90 的 [0] 按钮行紧随其下');
+  assert.equal(lines[1].type, 'button', '[0] 按钮行紧随其下');
   assert.equal(lines[1].accelerator, 0);
 });
 
-test('#615 config_penis_you_setting：回显行不带尾换行（:103 PRINT + :105 PRINTW）', async () => {
+test('#615 config_penis_you_setting：回显行不带尾换行（PRINT + PRINTW）', async () => {
   const fixture = create_era_fixture();
   const { config_penis_you_setting } = load(fixture);
   fixture.set_inputs(1);
@@ -119,7 +119,7 @@ test('#615 config_penis_you_setting：回显行不带尾换行（:103 PRINT + :1
   );
 });
 
-test('adventurer_gender_status_text：六档文案（global:3，@EVENTFIRST 开局 -1）', () => {
+test('adventurer_gender_status_text：六档文案（global:3，EVENTFIRST 开局 -1）', () => {
   const fixture = create_era_fixture();
   const { adventurer_gender_status_text } = load(fixture);
   const era_global = fixture.load_module('era-utils/era-global');
@@ -296,7 +296,7 @@ test('dispatch_config(28)：立绘开关入口已删（#638），输入不被接
     '立绘系统不移植（#542），删掉入口后不得再打印任何提示行',
   );
   assert.equal(fixture.waits.length, 0, '不得等待读键');
-  assert.equal(fixture.var_writes.length, 0, '开关不落地');
+  assert.equal(fixture.var_writes.length, 0, '开关不写入');
 });
 
 test('config_menu page 1：MOD 开关与立绘开关按钮不再渲染', async () => {
@@ -316,7 +316,7 @@ test('config_menu page 1：MOD 开关与立绘开关按钮不再渲染', async (
     '[28] 立绘开关 按钮不得渲染',
   );
 });
-test('dispatch_config(27/29/30)：三个魔改存档变量的切换落地（#547 存储）', async () => {
+test('dispatch_config(27/29/30)：三个魔改存档变量的切换写入（#547 存储）', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
   const era_global = fixture.load_module('era-utils/era-global');

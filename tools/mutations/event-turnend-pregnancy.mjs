@@ -503,10 +503,10 @@ export default [
 
   // —— 页面接线 ——
   {
-    desc: 'M8559 PAGE：个别信息页的育儿室按钮不再接线（回到占位）',
+    desc: 'M8559 个别信息页的育儿室按钮不再接入（回到占位）',
     file: 'ere/page/page-chara-info.js',
     find: '      show_button_child_care(5, current);',
-    replace: "      era.print('（育儿室按钮未接线）');",
+    replace: "      era.print('（育儿室按钮未接入）');",
     tests: ['page-chara-info'],
     must_mention: '输入不合法',
   },

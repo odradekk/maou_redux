@@ -1,27 +1,27 @@
 /**
- * @file 角色信息的素质一览（@SHOW_TALENT / @SHOW_TALENT_GROUP）。
+ * @file 角色信息的素质一览（show_talent / show_talent_group）。
  *
- * 两个显示臂由 FLAG:5 位 8「素质分类显示」（SYSTEM/CONFIG.ERB:165）切换：
+ * 两个显示路径由 FLAG:5 位 8「素质分类显示」（设置页）切换：
  *   - 开：七个带标签的分组（性別/性格/体质/技术/性癖/后天/战斗），组内逐项
  *     过素质表，每 8 项换行、续行补 4 个全角空格对齐到标签之后；
  *   - 关：0-399 全扫一遍（跳过 300-324）再补一趟 470-489 的精英技能，无标签，
- *     起始计数 U = 6（原作如此，首行只放得下 2 项）。
+ *     起始计数 U = 6（首行只放得下 2 项）。
  *
- * 分组扫描用表驱动（SECTIONS）：源里是 60 余段几乎同形的
- * `FOR LCOUNT, A, B / SIF TALENT:TARGET:(LCOUNT) / CALL SHOW_TALENT_GROUP`，
- * 逐段抄写既无从复核也易漏项。边界与跳过集逐条对着源行抄，注释给出行号。
+ * 分组扫描用表驱动（SECTIONS）：直写 60 余段几乎同形的
+ * `FOR LCOUNT, A, B / SIF TALENT:TARGET:(LCOUNT) / CALL SHOW_TALENT_GROUP`
+ * 既无从复核也易漏项。边界与跳过集逐条核对。
  *
  * 有意偏离（各条注明依据）：
- *   - `PRINTFORML %TSTR%`（:518-521/:587-590/:718-721/:758-761）里的 TSTR 在活代码里从不被
- *     写入（写它的那一版已被注释掉，:663-677），运行期恒为空串——它的作用
+ *   - `PRINTFORML %TSTR%` 里的 TSTR 在活代码里从不被
+ *     写入（写它的那一版已被注释掉），运行期恒为空串——它的作用
  *     只是「把当前行收掉」，此处按「收行」承载，不读那个变量；
- *   - 命名色按项目先例直接落名字串（loader 认 CSS 色名，look.js:932-934 的
- *     LIGHT_SALMON / page-intercept.js:84 的 DarkSeaGreen 同款），不转十六
+ *   - 命名色按项目先例直接落名字串（loader 认 CSS 色名，look.js 的
+ *     LIGHT_SALMON / page-intercept.js 的 DarkSeaGreen 同款），不转十六
  *     进制——命名色与十六进制在渲染层的 hover 态判定不同；
  *   - `SETCOLOR`/`RESETCOLOR` 的有状态配色按「逐项独立定色」承载：
- *     SHOW_TALENT_GROUP 末尾无条件 RESETCOLOR（:916），故未命中 SELECTCASE
+ *     SHOW_TALENT_GROUP 末尾无条件 RESETCOLOR，故未命中 SELECTCASE
  *     的项总是从默认色开始，与「每项独立定色」等价；
- *   - 模式 1（感觉封锁名）在 `target/` 全库零调用者（本文件九个调用点的实参
+ *   - 模式 1（感觉封锁名）零调用者（本文件九个调用点的实参
  *     只有 0 与 TALENT&2），但它是函数签名的一部分，照原样实现，
  *     `show_talent_group` 导出以便用例与将来的调用方直驱。
  */
@@ -29,13 +29,13 @@
 const era = require('#/era-electron');
 const { ex_talentname } = require('#/chara/chara-ex');
 
-/** FLAG:5 位 8 = 素质分类显示（SYSTEM/CONFIG.ERB:165 的配置页标签） */
+/** FLAG:5 位 8 = 素质分类显示（设置页标签） */
 const BIT_TALENT_GROUP = 8;
 
-/** 每行素质数（源 `U % 8 == 0`，:835-838/:837-840） */
+/** 每行素质数（源 `U % 8 == 0`） */
 const PER_ROW = 8;
 
-/** 换行后的行首缩进（源 `PRINTV "\u3000\u3000\u3000\u3000"`，:838-841，对齐到「\u3000性格：」之后） */
+/** 换行后的行首缩进（源 `PRINTV "\u3000\u3000\u3000\u3000"`，对齐到「\u3000性格：」之后） */
 const ROW_INDENT = '　　　　';
 
 /** 素质编号（yml/Talent.yml 的名字表；原件以名字寻址，此处用编号 + 注释） */
@@ -45,11 +45,11 @@ const TALENT_FUTA = 121; // 扶她
 const TALENT_MAN = 122; // 男人
 const TALENT_SEALED = 273; // 私处封印
 const TALENT_PENIS = 318; // 阴茎的状态
-const TALENT_WITCH = 206; // 巫者（该编号恒以固定名显示，源 :911-912）
+const TALENT_WITCH = 206; // 巫者（该编号恒以固定名显示）
 
 /**
- * 素质分组色（源 :842-868 的 SELECTCASE）。未命中即默认色（返回 undefined）。
- * 七条与源逐条对应；职业那档（200-212）与育儿档同为 100,255,100。
+ * 素质分组色（SELECTCASE 逐条）。未命中即默认色（返回 undefined）。
+ * 七条逐条对应；职业那档（200-212）与育儿档同为 100,255,100。
  */
 const GROUP_COLORS = [
   { ids: [101, 102, 230, 74], color: 'DarkSeaGreen' },
@@ -61,17 +61,17 @@ const GROUP_COLORS = [
   { from: 200, to: 212, color: '#64ff64' },
 ];
 
-/** SETCOLOR 255,215,0（EX 性格，源 :900） */
+/** SETCOLOR 255,215,0（EX 性格） */
 const EX_COLOR_SELF = '#ffd700';
-/** SETCOLOR 100,255,100（EX 职业，源 :906） */
+/** SETCOLOR 100,255,100（EX 职业） */
 const EX_COLOR_SKILL = '#64ff64';
-// 源 :902-903 的 CASE 801 TO 900 与 :907-908 的 CASEELSE 都是 RESETCOLOR，
+// CASE 801 TO 900 与 CASEELSE 都是 RESETCOLOR，
 // 即「不染」，与默认色同形，不需要单独的常量。
 
-/** `SETCOLOR 161,216,230`（阴茎状态标，源 :450）→ 渲染层 CSS 色串 */
+/** `SETCOLOR 161,216,230`（阴茎状态标）→ 渲染层 CSS 色串 */
 const PENIS_COLOR = '#a1d8e6';
 
-/** 阴茎状态标（源 :451-460：TALENT:318 的五个档，越界不标） */
+/** 阴茎状态标（TALENT:318 的五个档，越界不标） */
 const PENIS_LABELS = [
   '[普通阴茎]',
   '[巨根]',
@@ -81,8 +81,8 @@ const PENIS_LABELS = [
 ];
 
 /**
- * `FOR LCOUNT, A, B` 展开成编号表。上界是不含的——Emuera 的 FOR 在步长为正
- * 时循环到 `>= 结束值`（emuera-basic-agent-guide 的 control-flow.md）。
+ * `FOR LCOUNT, A, B` 展开成编号表。上界是不含的——步长为正的 FOR
+ * 循环到 `>= 结束值` 即停（emuera-basic-agent-guide 的 control-flow.md）。
  * @param {number} from 起始（含）
  * @param {number} to 结束（不含）
  * @param {{skip?: number[], ex?: boolean, value?: boolean}} [extra] 附加属性；
@@ -110,13 +110,13 @@ const SKIP_BATTLE_EXCLUSIVE = [244, 245, 246, 247, 248, 253, 254, 255, 256]; // 
  *   - `ex`：读 EX_TALENT 并按模式 2 渲染（源 `SIF EX_TALENT:TARGET:(LCOUNT)` +
  *     `CALL SHOW_TALENT_GROUP(LCOUNT, 2)`）；
  *   - `value`：渲染模式取自该素质自身的第 2 位（源 :661
+ *   - `value`：渲染模式取自该素质自身的第 2 位（源
  *     `TALENT:TARGET:(LCOUNT) & 2`）；
- *   - `guard(t)`：用别的判据当守卫（缺省 = 自身非 0）。
- *
+ *   - `guard(t)`：用别的条件当检查（缺省 = 自身非 0）。
  * `flush` 是段收尾方式：
  *   - `'items'`：本段出过至少一项才收行（源 `SIF U != 0 → PRINTFORML %TSTR%`），
  *     否则标签留在行上、由下一段的标签接着拼——黄金样本
- *     daycycle-max-log:188 的 `\u3000体质：\u3000技术：[魅力]` 就是这个形态；
+ *     daycycle-max-log 的 `\u3000体质：\u3000技术：[魅力]` 就是这个写法；
  *   - `'always'`：无条件收行（源 `SIF !LINEISEMPTY() → PRINTL`，标签已在行上）。
  */
 const SECTIONS = [
@@ -233,14 +233,14 @@ const SECTIONS = [
   },
 ];
 
-/** 简单显示臂的扫描上界（源 `REPEAT 400`，:796） */
+/** 简单显示路径的扫描上界（源 `REPEAT 400`） */
 const PLAIN_LIMIT = 400;
-/** 简单显示臂跳过的区间（源 :799-800 `COUNT >= 300 && COUNT < 325`） */
+/** 简单显示路径跳过的区间（`COUNT >= 300 && COUNT < 325`） */
 const PLAIN_SKIP_FROM = 300;
 const PLAIN_SKIP_TO = 325;
-/** 简单显示臂的起始计数（源 :795 `U = 6`，首行只放得下 2 项） */
+/** 简单显示路径的起始计数（`U = 6`，首行只放得下 2 项） */
 const PLAIN_START_U = 6;
-/** 简单显示臂的两趟扫描之间的额外一趟（源 :823-827，精英魔物技能） */
+/** 简单显示路径两趟扫描之间的额外一趟（精英魔物技能） */
 const PLAIN_EXTRA_FROM = 470;
 const PLAIN_EXTRA_TO = 490;
 
@@ -254,7 +254,7 @@ function talent_name(id) {
 }
 
 /**
- * 一项素质的显示名（源 :873-915 的三段改名规则）。
+ * 一项素质的显示名（三段改名规则）。
  *
  * @param {number} cid 角色 ID（源 TARGET）
  * @param {number} id 素质编号
@@ -287,7 +287,7 @@ function talent_label(cid, id, mode) {
 }
 
 /**
- * 一项素质的颜色（源 :842-909 的 SELECTCASE）。
+ * 一项素质的颜色（SELECTCASE 逐档）。
  * @param {number} id 素质编号
  * @param {number} mode 渲染模式
  * @returns {string|undefined} 渲染层色串；默认色返回 undefined
@@ -319,7 +319,7 @@ function new_line(label, count = 0) {
 }
 
 /**
- * @SHOW_TALENT_GROUP（:835-921）的单步：换行判定 + 定名定色 + 计数。
+ * show_talent_group 的单步：换行判定 + 定名定色 + 计数。
  *
  * @param {{fragments: Array, count: number}} line 行缓冲
  * @param {number} cid 角色 ID（源 TARGET）
@@ -339,7 +339,7 @@ function show_talent_group(line, cid, id, mode = 0) {
 }
 
 /**
- * 分类显示臂（源 :439-793）。
+ * 分类显示路径。
  * @param {number} cid 角色 ID
  */
 function show_talent_grouped(cid) {
@@ -384,7 +384,7 @@ function show_talent_grouped(cid) {
 }
 
 /**
- * 简单显示臂（源 :794-829）：0-399 全扫（跳过 300-324）再补一趟精英技能。
+ * 简单显示路径：0-399 全扫（跳过 300-324）再补一趟精英技能。
  * @param {number} cid 角色 ID
  */
 function show_talent_plain(cid) {
@@ -405,13 +405,13 @@ function show_talent_plain(cid) {
 }
 
 /**
- * @SHOW_TALENT（:428-834）：当前角色的素质一览。
+ * show_talent：当前角色的素质一览。
  *
- * `ARG:0`（指定角色）→ 显式参数 cid——原作的 TARGET 换出换入习语不移植
+ * `ARG:0`（指定角色）→ 显式参数 cid——换出换入 TARGET 的习语不移植
  * （项目通例：ere 一律显式传参，chara-bars.js 同款）。
  *
  * @param {number} cid 角色 ID
- * @returns {string} 本臂用的分组标签形态（'grouped' / 'plain'，便于用例定位）
+ * @returns {string} 本路径用的分组标签（'grouped' / 'plain'，便于用例定位）
  */
 function show_talent(cid) {
   const grouped = (((era.get('flag:5') || 0) >> BIT_TALENT_GROUP) & 1) !== 0;

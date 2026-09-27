@@ -1,6 +1,6 @@
 /**
- * ere/page/page-train.js 的行为测试（issue #44：@SHOW_STATUS 骨架 +
- * PRINT_PALAM 引擎内建命令的移植；#74：整页画面组件 + 原生进度条换表现层）。
+ * ere/page/page-train.js 的行为测试（issue #44：SHOW_STATUS 骨架 +
+ * PRINT_PALAM 的移植；#74：整页画面组件 + 原生进度条换表现层）。
  *
  * 缝 = test/helpers/era-fixture.js。#74 起参数条是 printMultiColumns 的
  * progress 格——语义值（参数名/palam 原值）与表现（percentage）的分离
@@ -80,7 +80,7 @@ test('PRINT_PALAM：16 格原生进度条——条内名、条后数值与样本
   seed_world(fixture);
   const { print_palam } = load_module_safe(fixture);
 
-  // emuera.log 的实机值（SHOW_STATUS 首屏 log:52-57 的条后数值）
+  // emuera.log 的实机值（SHOW_STATUS 首屏样本的条后数值）
   const sample = {
     0: 5540, // 阴核 LV3
     3: 2915, // 润滑 LV2
@@ -126,7 +126,7 @@ test('PRINT_PALAM：16 格原生进度条——条内名、条后数值与样本
     ],
   );
   // 表现：percentage＝100×值/下一等级阈值（手算基线：LV0/100、LV1/500、
-  // LV2/3000、LV3/10000；不取整——原作 floor(10*值/阈值) 的格数没有等价物）
+  // LV2/3000、LV3/10000；不取整——手绘字符条按 floor(10*值/阈值) 填格的写法没有等价物）
   const expected_pct = {
     阴核: 55.4,
     私处: 0,
@@ -186,7 +186,7 @@ test('PRINT_PALAM：条后数值列必须真实渲染（barWidth<24——引擎�
 
   // #74 发回：app.vue 渲染层 el-col :span="24 - barWidth"——barWidth=24 时
   // span=0（display:none），**条后数值整列不渲染，而 24 正是引擎缺省值**。
-  // 两个已知破坏形态（PALAM_PROGRESS_BAR_WIDTH 改 24 / 删掉 config 整行
+  // 两个已知破坏形式（PALAM_PROGRESS_BAR_WIDTH 改 24 / 删掉 config 整行
   // 吃缺省）都使 out_visible 翻 false，本用例当场红——夹具已把引擎公式
   // 镜像进记录（bar_width/out_visible，见 test/fixture.test.js 的镜像用例）。
   const bars = fixture.lines;
@@ -205,7 +205,7 @@ test('PRINT_PALAM：条后数值列必须真实渲染（barWidth<24——引擎�
   );
 });
 
-test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点，1:1 骨架', async () => {
+test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点，原样移植的骨架', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   era_flag.day_count = 0; // 开局：第 1 日
@@ -232,7 +232,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
   assert(!texts.some((line) => line.includes('绝顶')));
   // SHOW_EQUIP_1/2 自 #390 起是真身（ere/page/components/chara-equip-status.js）：
   // 本世界没有任何 TEQUIP/TFLAG 位 → SHOW_EQUIP_2 只打一个空格、SHOW_EQUIP_1
-  // 整段静默（:1600 的守卫不成立）；两段都不再出现占位文案
+  // 整段静默（条件不成立）；两段都不再出现占位文案
   assert(
     !texts.some((line) => line.includes('@SHOW_EQUIP')),
     'SHOW_EQUIP_1/2 已换真身，不该再有占位行',
@@ -242,13 +242,13 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
     '无装备位时 SHOW_EQUIP_1 整段不出（含头行）',
   );
   // PRINT_CLOTHTYPE 自 #215（J5）起为真身：本世界未播种服装 → 【全裸】
-  //（FLAG:37 缺省 0 时 clothtype_text 的 :37 早退路径）
+  //（FLAG:37 缺省 0 时 clothtype_text 的早退路径）
   assert(
     texts.some((line) => line === '【全裸】'),
     '服装表示行为【全裸】（着衣模式关）',
   );
   // LIFE_BAR/VITAL_BAR（#212）：maxbase 未播种时静默（MAXBASE <= 0
-  // 的原作守卫）——温妮世界没播 maxbase:31:0/1，两条都不出
+  // 的检查）——温妮世界没播 maxbase:31:0/1，两条都不出
   assert(
     !fixture.lines.some(
       (line) => line.type === 'progress' && line.text === '体力',
@@ -282,7 +282,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
   );
 });
 
-test('@SHOW_STATUS：助手调教时目标行换助手名（粉色）', async () => {
+test('SHOW_STATUS：助手调教时目标行换助手名（粉色）', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   join_slave_chara(fixture, 32, '助手桑');
@@ -303,15 +303,15 @@ test('@SHOW_STATUS：助手调教时目标行换助手名（粉色）', async ()
   );
 });
 
-// —— #74：整页 ScreenBlock 的重绘策略（EVENTCOM 探针判据）与生命周期 ——
+// —— #74：整页 ScreenBlock 的重绘策略（EVENTCOM 探针条件）与生命周期 ——
 
-test('@SHOW_STATUS 组件化：无指令轮就地重绘（菜单与回显被锚点跨度消费）', async () => {
+test('SHOW_STATUS 组件化：无指令轮就地重绘（菜单与回显被基准点跨度消费）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   await run_show_status(fixture); // 首绘：追加（不清屏）
   const block_rows = fixture.era.getLineCount();
 
-  // 模拟一轮无效输入：@SHOW_USERCOM 的菜单行 + input 回显（各占 Row）——
+  // 模拟一轮无效输入：调教菜单（usercom）的菜单行 + input 回显（各占 Row）——
   // 两者都已被那一次输入消费，且未进指令路径（无 EVENTCOM）
   fixture.era.print('指令菜单占位');
   fixture.set_inputs(777);
@@ -321,26 +321,26 @@ test('@SHOW_STATUS 组件化：无指令轮就地重绘（菜单与回显被锚�
 
   await run_show_status(fixture); // EVENTCOM 未发 → 就地重绘
 
-  // 行数回到块自身（锚点跨度清掉 旧状态画面+菜单+回显 后重画）
+  // 行数回到块自身（基准点跨度清掉 旧状态画面+菜单+回显 后重画）
   assert.equal(fixture.era.getLineCount(), block_rows);
   assert(!fixture.text_lines().includes('指令菜单占位'), '旧菜单行应被清掉');
   // 「发生过什么」记录在行史（#73 的取证层）
   assert(fixture.lines_history.some((l) => l.text === '指令菜单占位'));
 });
 
-test('@SHOW_STATUS 组件化：指令轮追加绘制（叙述行不被重绘吃掉）', async () => {
+test('SHOW_STATUS 组件化：指令轮追加绘制（叙述行不被重绘吃掉）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { emit } = fixture.load_module('system/event/registry');
   await run_show_status(fixture);
 
-  // 模拟一轮指令执行：叙述与算式行（SOURCE_CHECK 一族的输出）落在锚点
+  // 模拟一轮指令执行：叙述与算式行（SOURCE_CHECK 一族的输出）落在基准点
   // 跨度内；EVENTCOM 是指令路径的必经事件（train-loop 步骤 11）
   fixture.era.print('「哈呜、温妮、可是，一心地，想要杀了……」');
   fixture.era.print('阴核  5240+   300       =  5540');
   await emit('EVENTCOM');
 
-  await run_show_status(fixture); // 指令轮 → 追加（原作同款滚动）
+  await run_show_status(fixture); // 指令轮 → 追加滚动
 
   // 叙述与算式行仍在屏幕上——「分发期输出必须被玩家看到再被重绘清掉」
   //（#73 通则）；状态画面侧无等键，只能不吃它们
@@ -352,17 +352,17 @@ test('@SHOW_STATUS 组件化：指令轮追加绘制（叙述行不被重绘吃�
     fixture.text_lines().some((t) => t.includes('阴核  5240+')),
     '算式行不得被重绘清掉',
   );
-  // 两次状态画面都在屏（滚动形态）：日期行恰两次
+  // 两次状态画面都在屏（滚动样式）：日期行恰两次
   assert.equal(fixture.text_lines().filter((t) => t === '1日(午前)').length, 2);
 });
 
-test('@SHOW_STATUS 组件化：重复执行同一指令也追加（EVENTCOM 探针，评审抓出的洞）', async () => {
+test('SHOW_STATUS 组件化：重复执行同一指令也追加（EVENTCOM 探针，评审抓出的洞）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { emit } = fixture.load_module('system/event/registry');
   await run_show_status(fixture);
 
-  // 两轮同指令（爱抚→爱抚）：PREVCOM 的值差判据在这里失灵（步骤 13 同值
+  // 两轮同指令（爱抚→爱抚）：PREVCOM 的值差条件在这里失灵（步骤 13 同值
   // 直写 0→0，首版实现据此误判成无指令轮、吃掉第二轮叙述——评审探针
   // 实证）；EVENTCOM 探针与指令编号无关，两轮都翻标志
   fixture.era.print('「第一轮的叙述行」');
@@ -378,11 +378,11 @@ test('@SHOW_STATUS 组件化：重复执行同一指令也追加（EVENTCOM 探�
   );
   assert(
     fixture.text_lines().includes('「第二轮的叙述行」'),
-    '重复同指令的叙述不得被重绘清掉（PREVCOM 值差判据的洞）',
+    '重复同指令的叙述不得被重绘清掉（PREVCOM 值差条件的洞）',
   );
 });
 
-test('@SHOW_STATUS 组件化：跨会话重建（旧锚点不得清掉新局内容）', async () => {
+test('SHOW_STATUS 组件化：跨会话重建（旧基准点不得清掉新局内容）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { emit } = fixture.load_module('system/event/registry');
@@ -391,19 +391,19 @@ test('@SHOW_STATUS 组件化：跨会话重建（旧锚点不得清掉新局内�
   await emit('EVENTTRAIN');
   await emit('SHOW_STATUS');
 
-  // 出调教、进商店：整屏清空后是商店内容（主菜单重绘的消费形态）
+  // 出调教、进商店：整屏清空后是商店内容（主菜单重绘的消费样式）
   await fixture.era.clear();
   for (let i = 0; i < 10; i += 1) {
     fixture.era.print(`商店主菜单占位行${i}`);
   }
 
-  // 会话 2：EVENTTRAIN 重建（不重建则旧锚点＝0，重入时跨度覆盖全部商店行）
+  // 会话 2：EVENTTRAIN 重建（不重建则旧基准点＝0，重入时跨度覆盖全部商店行）
   await emit('EVENTTRAIN');
   await emit('SHOW_STATUS');
 
   assert(
     fixture.text_lines().includes('商店主菜单占位行0'),
-    '新局上方的商店内容必须幸存（跨会话旧锚点是 #73 固定的坑）',
+    '新局上方的商店内容必须幸存（跨会话旧基准点是 #73 固定的坑）',
   );
   assert(
     fixture.text_lines().includes('商店主菜单占位行9'),
@@ -411,20 +411,20 @@ test('@SHOW_STATUS 组件化：跨会话重建（旧锚点不得清掉新局内�
   );
 });
 
-test('旁路清行：重绘后行数未回锚点须记录并重锚恢复（#73 转来的待办）', async () => {
+test('旁路清行：重绘后行数未回基准点须记录并重定基准恢复（#73 转来的待办）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   await run_show_status(fixture);
 
   // 一轮无效输入（菜单+回显）后重绘；把 clear 的返回值模拟成引擎
-  // setTotalLines 回传漂移——「旁路动过行数」的形态（自校验的靶子）
+  // setTotalLines 回传多一行——「旁路动过行数」的样子（自校验的目标）
   fixture.era.print('指令菜单占位');
   fixture.set_inputs(777);
   await fixture.era.input();
   const original_clear = fixture.era.clear;
   fixture.era.clear = async (n) => {
     await original_clear(n);
-    return fixture.era.getLineCount() + 1; // 漂移：比真实多一行
+    return fixture.era.getLineCount() + 1; // 模拟偏差：比真实多一行
   };
   try {
     await run_show_status(fixture);
@@ -435,9 +435,9 @@ test('旁路清行：重绘后行数未回锚点须记录并重锚恢复（#73 �
   // 自校验必须记录（去掉自校验本用例全绿——#73 验收报出的空覆盖）
   assert(
     fixture.logs.some((l) => l.level === 'warn' && l.msg.includes('旁路清行')),
-    '重绘后行数未回锚点必须 warn 记录',
+    '重绘后行数未回基准点必须 warn 记录',
   );
-  // 恢复力：组件据真实行数重锚，下一次（无漂移）重绘干净通过、不再记录
+  // 恢复力：组件据真实行数重定基准，下一次（无偏差）重绘干净通过、不再记录
   fixture.era.print('指令菜单占位');
   fixture.set_inputs(777);
   await fixture.era.input();
@@ -445,11 +445,11 @@ test('旁路清行：重绘后行数未回锚点须记录并重锚恢复（#73 �
   assert.equal(
     fixture.logs.filter((l) => l.msg.includes('旁路清行')).length,
     1,
-    '重锚后不应再触发自校验',
+    '重定基准后不应再触发自校验',
   );
 });
 
-// —— #212：基础条（@LIFE_BAR/@VITAL_BAR）与射精/母乳/触手槽条段（:144-252）——
+// —— #212：基础条（life_bar/vital_bar）与射精/母乳/触手槽条段 ——
 
 /** 找指定条内文字的 progress 记录 */
 function find_bar(fixture, label) {
@@ -469,7 +469,7 @@ test('LIFE_BAR/VITAL_BAR：数值宽 4、(cur/max) 语义值、濒死/死亡/气
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   era_flag.day_count = 0;
-  // MAXBASE <= 0 的静默守卫由骨架测试反向钉住；这里播种后必须渲染
+  // MAXBASE <= 0 的静默检查由骨架测试反向钉住；这里播种后必须渲染
   fixture.store.set('maxbase:31:0', 2000);
   fixture.store.set('base:31:0', 1445);
   fixture.store.set('maxbase:31:1', 2000);
@@ -489,7 +489,7 @@ test('LIFE_BAR/VITAL_BAR：数值宽 4、(cur/max) 语义值、濒死/死亡/气
     'VITAL 数值右对齐宽 4（{BASE:1,4}）',
   );
 
-  // 濒死（< 500）/死亡（< 0，按 0 渲染）/气力０（<= 0）缀标（:1159-1163/:1198）
+  // 濒死（< 500）/死亡（< 0，按 0 渲染）/气力０（<= 0）缀标
   const cases = [
     {
       base: 'base:31:0',
@@ -526,7 +526,7 @@ test('LIFE_BAR/VITAL_BAR：数值宽 4、(cur/max) 语义值、濒死/死亡/气
   }
 });
 
-test('射精（主人）：121/122 守卫、TALENT:135 无 ≥2000 臂（与助手/目标不同）、自调教不显示', async () => {
+test('射精（主人）：121/122 检查、TALENT:135 无 ≥2000 分支（与助手/目标不同）、自调教不显示', async () => {
   // 基线世界：主人男人（122）、目标 31 无阴茎侧素质
   const base_world = (fixture) => {
     const era_flag = seed_world(fixture);
@@ -544,8 +544,8 @@ test('射精（主人）：121/122 守卫、TALENT:135 无 ≥2000 臂（与助�
   assert.ok(bar, '主人（男人）的射精条必须渲染');
   assert.equal(bar.out, '(2500/10000)');
 
-  // 判据 (TALENT:135 || (135 && BASE>=2000)) == 0 ≡ !135——主人独缺
-  // ≥2000 臂：135 置位时即便 BASE >= 2000 也不显示（原作三处守卫的差异本体）
+  // 条件 (TALENT:135 || (135 && BASE>=2000)) == 0 ≡ !135——主人独缺
+  // ≥2000 分支：135 置位时即便 BASE >= 2000 也不显示（三处检查的差异本体）
   const f2 = create_era_fixture();
   base_world(f2);
   f2.store.set('talent:0:135', 1); // 未熟
@@ -553,11 +553,11 @@ test('射精（主人）：121/122 守卫、TALENT:135 无 ≥2000 臂（与助�
   assert.equal(
     find_bar(f2, '射精（你）'),
     undefined,
-    '主人档 TALENT:135 置位即不显示（无 ≥2000 臂）',
+    '主人档 TALENT:135 置位即不显示（无 ≥2000 分支）',
   );
 
-  // TARGET != MASTER：自调教（target = 0）时主人段（:144）不显示；但目标段
-  //（:177）的守卫不含此判据——目标=主人时按主人自己的素质照渲染一条同名条，
+  // TARGET != MASTER：自调教（target = 0）时主人段不显示；但目标段
+  // 的检查不含此条件——目标=主人时按主人自己的素质照渲染一条同名条，
   // 故「射精（你）」恰一条（来自目标段），不是两条
   const f3 = create_era_fixture();
   const ef3 = base_world(f3);
@@ -584,7 +584,7 @@ test('射精（主人）：121/122 守卫、TALENT:135 无 ≥2000 臂（与助�
   assert.equal(find_bar(f5, '射精（你）'), undefined);
 });
 
-test('射精（目标）：TALENT:135 的 ≥2000 臂放行（与主人档对照）', async () => {
+test('射精（目标）：TALENT:135 的 ≥2000 分支放行（与主人档对照）', async () => {
   const seed = (fixture) => {
     const era_flag = seed_world(fixture);
     era_flag.day_count = 0;
@@ -657,7 +657,7 @@ test('射精（助手）：仅助手调教时显示（IF ASSIPLAY）', async () 
   );
 });
 
-test('母乳三段：TALENT:130 守卫 + MAXBASE:3 缺省补 10000（副作用写入）', async () => {
+test('母乳三段：TALENT:130 检查 + MAXBASE:3 缺省补 10000（副作用写入）', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   era_flag.day_count = 0;
@@ -673,11 +673,11 @@ test('母乳三段：TALENT:130 守卫 + MAXBASE:3 缺省补 10000（副作用�
     fixture.var_writes.some(
       (w) => w.name === 'maxbase:31:3' && w.value === 10000,
     ),
-    'MAXBASE:3 缺省必须补 10000（:217-218 SIF 写入）',
+    'MAXBASE:3 缺省必须补 10000（SIF 写入）',
   );
   assert.equal(find_bar(fixture, '母乳（你）'), undefined, '主人无 130 不显示');
 
-  // 助手档守卫是 IF ASSI > 0（与射精段 ASSI >= 0 不同，原作不一致 1:1）：
+  // 助手档检查是 IF ASSI > 0（与射精段 ASSI >= 0 不同，不一致是既有行为）：
   // 本世界 ASSI = -1 → 不渲染也不写 MAXBASE
   assert(
     !fixture.var_writes.some((w) => w.name.startsWith('maxbase:-1')),

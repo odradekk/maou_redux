@@ -1,16 +1,16 @@
 /**
- * @file 调教中装备状态两段（@SHOW_EQUIP_1 / @SHOW_EQUIP_2）。
+ * @file 调教中装备状态两段（show_equip_1 / show_equip_2）。
  *
- * 两段都读 TEQUIP/TFLAG（调教域的装备位），整行着 `SETCOLOR 0xff1493`
- * （粉色）——ere 侧以片段 color 承载（chara-bars.js 与 page-train.js 同款）。
+ * 两段都读 TEQUIP/TFLAG（调教域的装备位），整行粉色（0xff1493）
+ * ——ere 侧以片段 color 承载（chara-bars.js 与 page-train.js 同款）。
  *
- * #174 的归属勘误（docs/stub-registry.md 的 38 / 42 两行）在这里兑现：这两段显示的
- * 是**调教装备**（TEQUIP）而不是 EQUIP.ERB 的武器/戒指（CONTEXT.md 的两套
+ * #174 的归属勘误在这里兑现：这两段显示的
+ * 是**调教装备**（TEQUIP）而不是装备域的武器/戒指（CONTEXT.md 的两套
  * 「装备」不同物，ADR-0007），所以它们归调教域、不归装备票。两个运行时占位
- * （page-train.js:241/:406）随本票换真身。
+ * （page-train.js 的调用点）随那张工单换真身。
  *
  * 排版依据同 chara-info-abl-mark.js 文件头：命令名后的第一个空格是分隔符，
- * `PRINT  [野外PLAY中]` 输出一个前导空格。
+ * `PRINT  [野外PLAY中]` 对应输出一个前导空格。
  */
 
 const era = require('#/era-electron');
@@ -18,21 +18,21 @@ const era_flag = require('#/era-utils/era-flag');
 const { monster_name } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
 
-/** `SETCOLOR 0xff1493`（:1565/:1603）→ 渲染层 CSS 色串 */
+/** 两段统一的粉色（0xff1493）→ 渲染层 CSS 色串 */
 const EQUIP_COLOR = '#ff1493';
 
-/** E:300 的读取兜底（MONSTER_DATA 写入的怪物番号，monster-data.js:469） */
+/** E:300 的读取缺省处理（monster_data 写入的怪物番号，monster-data.js） */
 function e300() {
   return era.get('e:300') || 0;
 }
 
 /**
- * @SHOW_EQUIP_2（:1564-1590）：特殊 PLAY 状态的粉色一行。
+ * show_equip_2：特殊 PLAY 状态的粉色一行。
  *
- * 九个位按源序：53 摄影 / 54 野外 / 57 大镜子 / 58 浴室 / 59 新妻 /
+ * 九个位按既有顺序：53 摄影 / 54 野外 / 57 大镜子 / 58 浴室 / 59 新妻 /
  * 88 使役魔兽 / 89 兽奸 / 90 触手召唤 / 55 死斗场。
  *
- * @param {number} cid 角色 ID（源隐式 TARGET）
+ * @param {number} cid 角色 ID
  */
 function show_equip_2(cid) {
   const t = (index) => era.get(`tequip:${cid}:${index}`) || 0;
@@ -53,7 +53,7 @@ function show_equip_2(cid) {
   if (t(58)) push(' [浴室PLAY中]');
   if (t(59)) push(' [新妻PLAY中]');
   if (t(88)) {
-    // 使役魔兽（名字经 MONSTER_DATA 落进 E:300）
+    // 使役魔兽（名字经 monster_data 落进 E:300）
     push(' [使役魔兽PLAY中（');
     line.push({ content: monster_name(e300()), color: EQUIP_COLOR });
     push('）]');
@@ -61,18 +61,18 @@ function show_equip_2(cid) {
   if (t(89)) push(' [兽奸PLAY中]');
   if (t(90)) push(' [触手召唤中]');
   if (t(55)) push(' [死斗场决斗中]');
-  push(' '); // PRINTL（两个空格减分隔符）
+  push(' '); // （两个空格减掉分隔符那 1 格）
   era.print(line);
 }
 
-/** @SHOW_EQUIP_1 的「使用中」头行守卫位（源 :1600 的全部 OR 项） */
+/** show_equip_1 的「使用中」头行检查位（全部 OR 项） */
 const EQUIP_1_HEAD_BITS = [
   11, 13, 14, 15, 16, 17, 18, 19, 21, 22, 43, 44, 45, 46, 47, 48, 49, 98,
 ];
 
 /**
- * 触手替换名（源 :1608-1654 的六组 `IF TEQUIP:n && TEQUIP:90 … ELSEIF TEQUIP:n`）
- * ——位号 → [触手形态, 常态形态]。
+ * 触手替换名（六组「位与 TEQUIP:90 同时成立用触手名，否则用常态名」）
+ * ——位号 → [触手写法, 常态写法]。
  */
 const EQUIP_1_PAIRS = [
   { bit: 11, tentacle: '[触手插入]', normal: '[蠕虫]' },
@@ -85,7 +85,7 @@ const EQUIP_1_PAIRS = [
   { bit: 46, tentacle: '[触手灌肠]', normal: '[灌肠＋肛门塞]' },
 ];
 
-/** 单形态的位（源 :1604-1607/:1655-1671 的 SIF 组，顺序即输出顺序） */
+/** 单一写法的位（位测试组，顺序即输出顺序） */
 const EQUIP_1_SINGLES = [
   { bit: 21, text: '[媚药效果发挥中]' },
   { bit: 22, text: '[利尿剂效果发挥中]' },
@@ -100,12 +100,12 @@ const EQUIP_1_TAIL_SINGLES = [
 ];
 
 /**
- * @SHOW_EQUIP_1（:1598-1676）：调教中使用中道具的粉色一行。
+ * show_equip_1：调教中使用中道具的粉色一行。
  *
  * 头行「使用中(名字)」只在十八个装备位或 TFLAG:60 / TFLAG:899 任一命中时
- * 出现（:1600 的那条长 OR），整段也在同一个 IF 里——全不命中时什么都不打。
+ * 出现（一条长 OR），整段也在同一个检查里——全不命中时什么都不打。
  *
- * @param {number} cid 角色 ID（源隐式 TARGET）
+ * @param {number} cid 角色 ID
  */
 function show_equip_1(cid) {
   const t = (index) => era.get(`tequip:${cid}:${index}`) || 0;
@@ -115,18 +115,18 @@ function show_equip_1(cid) {
     tflag(60) !== 0 ||
     tflag(899) >= 1;
   if (!active) {
-    return; // 的 IF 不成立：整段（含头行）都不出
+    return; // 检查不成立：整段（含头行）都不出
   }
 
   const line = [];
   const push = (text) => line.push({ content: text, color: EQUIP_COLOR });
-  // 头行在 SETCOLOR（:1603）之前，是默认色；其后整段才是粉色
+  // 头行在染色之前，是默认色；其后整段才是粉色
   line.push({ content: `使用中(${chara_callname(cid)}) ` });
   for (const { bit, text } of EQUIP_1_SINGLES) {
     if (t(bit)) push(` ${text}`);
   }
   for (const { bit, tentacle, normal } of EQUIP_1_PAIRS) {
-    // 触手形态优先（TEQUIP:90 与位同时成立）
+    // 触手写法优先（TEQUIP:90 与位同时成立）
     if (t(bit) && t(90)) push(` ${tentacle}`);
     else if (t(bit)) push(` ${normal}`);
   }
@@ -137,7 +137,7 @@ function show_equip_1(cid) {
   if (tflag(60) === 1 && era_flag.prevcom !== 56) push(' [插入中]');
   // 失神中
   if (tflag(899) >= 1) push(' [失神中]');
-  push(' '); // PRINTL（两个空格减分隔符）
+  push(' '); // （两个空格减掉分隔符那 1 格）
   era.print(line);
 }
 

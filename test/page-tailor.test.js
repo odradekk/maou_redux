@@ -5,7 +5,7 @@
  * 素质编号、顺从档这些字面量被改动时都要有红）：
  *   - 日常服饰 2 件、普通装备 42 件（5 页）、黑市 27 件（3 页）、装备品 43 件
  *     （5 页）——逐件走「选中 → CFLAG 写入」的全链；
- *   - 顺从档的动态判据（ABL:21、素质 63/88/124/136/122/153 等）单列用例；
+ *   - 顺从档的动态条件（ABL:21、素质 63/88/124/136/122/153 等）单列用例；
  *   - 装备的强化数学（千位强度、超限回退、十万位前缀）表驱动。
  */
 
@@ -38,7 +38,7 @@ function tailor_fixture(seed = {}) {
   return fixture;
 }
 
-/** 跑一次 @TAILOR_CORE，返回新增的输出行 */
+/** 跑一次 tailor_core，返回新增的输出行 */
 async function run_core(fixture, inputs, cid = 1) {
   fixture.set_inputs(...inputs);
   const before = fixture.lines.length;
@@ -54,7 +54,7 @@ const texts = (lines) =>
 const button_with = (lines, label) =>
   lines.find((l) => l.type === 'button' && l.text === label);
 
-test('TAILOR_MAIN：标题/日期/成员列表与返回；三道守卫拦下不合格的选择', async () => {
+test('tailor_main：标题/日期/成员列表与返回；三项检查拦下不合格的选择', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '玛奥');
@@ -71,13 +71,13 @@ test('TAILOR_MAIN：标题/日期/成员列表与返回；三道守卫拦下不�
   const body = texts(added);
   assert.ok(body.includes('服装设计师'));
   assert.ok(body.includes('《这里是制作衣装的服饰店》'));
-  assert.ok(body.includes('11日 午后'), 'DAY+1 与时段（:24-30）');
+  assert.ok(body.includes('11日 午后'), 'DAY+1 与时段');
   assert.ok(body.includes('所持金：5000点'));
   assert.ok(body.includes('调整谁的衣装？'));
   assert.deepEqual(accs(added), [1, 999], '成员行 + 返回键');
 });
 
-test('LIFE_LIST_TAILOR：行渲染三态（穿着/内衣/全裸）+ 特别服装 + 武器戒指', async () => {
+test('life_list_tailor：行渲染三态（穿着/内衣/全裸）+ 特别服装 + 武器戒指', async () => {
   // 全裸
   const bare = tailor_fixture();
   const { life_list_tailor } = bare.load_module('page/page-tailor');
@@ -98,12 +98,12 @@ test('LIFE_LIST_TAILOR：行渲染三态（穿着/内衣/全裸）+ 特别服装
   const mod = worn.load_module('page/page-tailor');
   mod.life_list_tailor();
   const row = texts(worn.lines).join('\n');
-  assert.ok(row.includes('穿着日常服装'), '上衣名取自 PRINT_CLOTHTYPE_MAIN2');
+  assert.ok(row.includes('穿着日常服装'), '上衣名取自 clothtype_main2_text');
   assert.ok(row.includes('佩戴着贞操带'), '特别服装（CFLAG:42 = 79）');
   assert.ok(row.includes('/ ['), '武器段有方括号包裹');
 
   // 内衣（上衣为 0，内衣服）
-  // 内衣支的判据是「上衣有、且 45/46 都为负」（任一大等于 0 就走穿着支）
+  // 内衣支的条件是「上衣有、且 45/46 都为负」（任一大等于 0 就走穿着支）
   const under = tailor_fixture({
     'cflag:1:41': 1,
     'cflag:1:45': -1,
@@ -118,9 +118,8 @@ test('LIFE_LIST_TAILOR：行渲染三态（穿着/内衣/全裸）+ 特别服装
   );
 });
 
-test('TAILOR_CORE：现状行与追问行之间不夹空行（#596）', async () => {
-  // 原作 :73 与 :75 是两条 PRINTFORML，:74 只是一行空白源码（不产生输出）：
-  // 现状行与追问行逐行相邻
+test('tailor_core：现状行与追问行之间不夹空行（#596）', async () => {
+  // 现状行与追问行逐行相邻（中间没有空行）
   const fixture = tailor_fixture();
   const added = await run_core(fixture, [999]);
   assert.deepEqual(
@@ -128,7 +127,7 @@ test('TAILOR_CORE：现状行与追问行之间不夹空行（#596）', async ()
       .slice(1, 4)
       .map((line) => (line.type === 'text' ? line.text : `<${line.type}>`)),
     ['所持金：10000000点', '玛奥现在全裸身穿。', '要让玛奥穿上什么？'],
-    ':72 所持金 → :73 现状行 → :75 追问行，中间零空行',
+    '所持金 → 现状行 → 追问行，中间零空行',
   );
   assert.ok(
     texts(added)[1].includes('现在'),
@@ -141,11 +140,11 @@ test('TAILOR_CORE：现状行与追问行之间不夹空行（#596）', async ()
         line.type === 'br' || (line.type === 'text' && line.text === ''),
     ).length,
     0,
-    'TAILOR_CORE 主菜单零空行',
+    'tailor_core 主菜单零空行',
   );
 });
 
-test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5）', async () => {
+test('tailor_core：主菜单选项与条件（尿布 4 / 贞操带钥匙 5）', async () => {
   const plain = tailor_fixture();
   {
     await run_core(plain, [999]);
@@ -164,7 +163,7 @@ test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5�
     assert.ok(accs(diapered.lines).includes(4), '穿着尿布 → 有 [4]');
     assert.ok(
       button_with(diapered.lines, '- 替换尿布（50点）'),
-      '尿布价格 50 印在按钮正文里（正文带原作的「- 」）',
+      '尿布价格 50 印在按钮正文里（正文带「- 」前缀）',
     );
   }
   const chastity = tailor_fixture({
@@ -179,14 +178,14 @@ test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5�
   }
 });
 
-test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价格插值的四项）', async () => {
+test('#612 tailor_core 主菜单：按钮正文带「- 」前缀（含价格插值的四项）', async () => {
   const fixture = tailor_fixture({ 'cflag:1:42': 69, 'cflag:1:40': 0 });
   await run_core(fixture, [999]);
   const rendered = fixture.lines
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
   for (const expected of [
-    '[0] - 日常服饰（100点）', // （原作写死价格，移植侧是插值）
+    '[0] - 日常服饰（100点）', // （价格是插值，不是写死的字面量）
     '[1] - 普通装备（1000点）',
     '[2] - 其它',
     '[3] - 替换内衣（5点）',
@@ -195,7 +194,7 @@ test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价�
     '[8] - 武器',
     '[999] - 返回',
   ]) {
-    assert.ok(rendered.includes(expected), `${expected}（SHOP_TAILOR.ERB）`);
+    assert.ok(rendered.includes(expected), `${expected}（换装铺主菜单按钮）`);
   }
 });
 
@@ -205,37 +204,34 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
       .filter((line) => line.type === 'button')
       .map((line) => line.rendered);
 
-  // 日常服饰 2 件（原作 :276-277）
+  // 日常服饰 2 件
   const casual = tailor_fixture();
   await run_core(casual, [0, 999, 999]);
   const casual_out = rendered_in(casual);
-  assert.ok(casual_out.includes('[1] - 日常着装・裙子'), 'SHOP_TAILOR.ERB:276');
-  assert.ok(casual_out.includes('[2] - 日常着装・裤子'), 'SHOP_TAILOR.ERB:277');
+  assert.ok(casual_out.includes('[1] - 日常着装・裙子'), '日常服饰第 1 件');
+  assert.ok(casual_out.includes('[2] - 日常着装・裤子'), '日常服饰第 2 件');
 
-  // 普通装备 42 件（原作 :328 起，表驱动、前缀在调用点拼）
+  // 普通装备 42 件（表驱动、前缀在调用点拼）
   const normal = tailor_fixture();
   await run_core(normal, [1, 999, 999]);
   const normal_out = rendered_in(normal);
-  assert.ok(normal_out.includes('[1] - 护胸＆裙甲'), 'SHOP_TAILOR.ERB:328');
-  assert.ok(normal_out.includes('[2] - 童装（女孩用）'), 'SHOP_TAILOR.ERB:329');
+  assert.ok(normal_out.includes('[1] - 护胸＆裙甲'), '普通装备第 1 件');
+  assert.ok(normal_out.includes('[2] - 童装（女孩用）'), '普通装备第 2 件');
 
-  // 黑市特殊服 27 件（原作 :1320 起）
+  // 黑市特殊服 27 件
   const special = tailor_fixture({ 'flag:10004': 100000 });
   await run_core(special, [1, 996, 999, 999, 999]);
-  assert.ok(
-    rendered_in(special).includes('[1] - 高中制服'),
-    'SHOP_TAILOR.ERB:1320',
-  );
+  assert.ok(rendered_in(special).includes('[1] - 高中制服'), '黑市第 1 件');
 
-  // 装备品 43 件（原作 :571 起，价格印在正文里）
+  // 装备品 43 件（价格印在正文里）
   const accessory = tailor_fixture();
   await run_core(accessory, [2, 999, 999, 999]);
   assert.ok(
     rendered_in(accessory).includes('[1] - 围裙（10000点）'),
-    'SHOP_TAILOR.ERB:571',
+    '装备品第 1 件',
   );
 
-  // 强化前缀 10 档（原作 :1254-1263）
+  // 强化前缀 10 档
   const prefix = tailor_fixture({
     'item:341': 1,
     'itemname:341': '剑',
@@ -244,12 +240,12 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
   });
   await run_core(prefix, [8, 341, 1, 0, 999, 999, 999, 999]);
   const prefix_out = rendered_in(prefix);
-  assert.ok(prefix_out.includes('[0] - 无'), 'SHOP_TAILOR.ERB:1254');
-  assert.ok(prefix_out.includes('[9] - 暗黑'), 'SHOP_TAILOR.ERB:1263');
-  // 武器页的持有行是同一句（:1156），与 :1027 那两个调用点互为孪生
-  assert.ok(prefix_out.includes('[341] - 剑 (1)'), 'SHOP_TAILOR.ERB:1156');
+  assert.ok(prefix_out.includes('[0] - 无'), '前缀第 0 档（无）');
+  assert.ok(prefix_out.includes('[9] - 暗黑'), '前缀第 9 档（暗黑）');
+  // 武器页的持有行与戒指页同句（两处调用点互为孪生）
+  assert.ok(prefix_out.includes('[341] - 剑 (1)'), '武器页的持有行');
 
-  // 持有装备品行（原作 :1027 `[{X}] - %ITEMNAME:X% ({ITEM:X})`）
+  // 持有装备品行（正文 `- 名字 (持有数)`）
   const held = tailor_fixture({
     'item:300': 2,
     'itemname:300': '剑',
@@ -257,13 +253,9 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
     'cflag:1:551': -1,
   });
   await run_core(held, [7, 1, 999, 999, 999, 999]);
-  assert.ok(
-    rendered_in(held).includes('[300] - 剑 (2)'),
-    'SHOP_TAILOR.ERB:1027',
-  );
+  assert.ok(rendered_in(held).includes('[300] - 剑 (2)'), '戒指页的持有行');
 
-  // 戒指页的灰字行（原作 :1032 `PRINTL  [---] - 未开放（30级后才能装备强化）`）：
-  // 假编号与前缀照写，武器页那处（:1164）的断言在 EQUIP_MAGIC_WEAPON 用例里
+  // 戒指页的灰字行：假编号与前缀照写；武器页那处的断言在 equip_magic_weapon 用例里
   const ring_low = tailor_fixture({
     'item:300': 1,
     'itemname:300': '剑',
@@ -272,12 +264,12 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
   await run_core(ring_low, [7, 1, 999, 999, 999, 999]);
   assert.ok(
     texts(ring_low.lines).includes('[---] - 未开放（30级后才能装备强化）'),
-    'SHOP_TAILOR.ERB:1032',
+    '灰字行整行照写',
   );
   assert.ok(!accs(ring_low.lines).includes(997), '等级不够时没有强化键');
 });
 
-test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async () => {
+test('tailor_casual：两件整表驱动（含男性 S = 3 的门槛）', async () => {
   const { CASUAL_ITEMS } = tailor_fixture().load_module('page/page-tailor');
   for (const item of CASUAL_ITEMS) {
     const fixture = tailor_fixture();
@@ -291,7 +283,7 @@ test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async 
     assert.equal(
       fixture.store.get('exflag:4444'),
       10000000 - 100,
-      ':1185 的跨域消费同步扣',
+      '跨域消费同步扣',
     );
   }
   // 裙子（1）对男性角色要求 S = 3：顺从 2 时被拒
@@ -305,7 +297,7 @@ test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async 
   assert.equal(male_ok.store.get('cflag:1:41'), 1);
 });
 
-test('TAILOR_NORMAL：42 件整表驱动（编号 → CFLAG:41 = R，价格 1000）', async () => {
+test('tailor_normal：42 件整表驱动（编号 → CFLAG:41 = R，价格 1000）', async () => {
   const { NORMAL_ITEMS } = tailor_fixture().load_module('page/page-tailor');
   assert.equal(NORMAL_ITEMS.length, 42, '普通装备表 42 件');
   for (const item of NORMAL_ITEMS) {
@@ -325,14 +317,14 @@ test('TAILOR_NORMAL：42 件整表驱动（编号 → CFLAG:41 = R，价格 1000
   }
 });
 
-test('TAILOR_NORMAL：童装（第 2 件）的三条 S 判据（娇小免顺从 / 男性至少 3 / 默认 5）', async () => {
+test('tailor_normal：童装（第 2 件）的三条 S 条件（娇小免顺从 / 男性至少 3 / 默认 5）', async () => {
   // 四档来源：默认 5 / 娇小类素质 → 0 / 男性 → 至少 3
   const CASES = [
     [{}, 5],
     [{ 'talent:1:132': 1 }, 0], // 娇小
     [{ 'talent:1:135': 1 }, 0], // 未成长
     [{ 'talent:1:131': 1 }, 0], // 幼儿体质
-    [{ 'talent:1:122': 1 }, 5], // 男性单独不降（SIF 只在 S 已被降到 0 时抬到 3）
+    [{ 'talent:1:122': 1 }, 5], // 男性单独不降（抬到 3 的那步只在 S 已低于 3 时生效）
     [{ 'talent:1:122': 1, 'talent:1:132': 1 }, 3], // 娇小 + 男性 → 0 抬到 3
   ];
   for (const [seed, s] of CASES) {
@@ -357,7 +349,7 @@ test('TAILOR_NORMAL：童装（第 2 件）的三条 S 判据（娇小免顺从 
   }
 });
 
-test('TAILOR_NORMAL_SPECIAL：黑市 27 件整表驱动（价格 30000）', async () => {
+test('tailor_normal_special：黑市 27 件整表驱动（价格 30000）', async () => {
   const { SPECIAL_ITEMS } = tailor_fixture().load_module('page/page-tailor');
   assert.equal(SPECIAL_ITEMS.length, 27, '黑市表 27 件');
   for (const item of SPECIAL_ITEMS) {
@@ -373,14 +365,14 @@ test('TAILOR_NORMAL_SPECIAL：黑市 27 件整表驱动（价格 30000）', asyn
   }
 });
 
-test('TAILOR_NORMAL：黑市 [999] 取消回 CORE 主菜单（原作 :545 → :550 RETURN 1）', async () => {
-  // 钱够 30000 → 真的进了黑市菜单；取消后由 CORE 的 `A == 0` 回主菜单，
-  // 不是留在普通装备页（原作 :545 的 CALL 之后落到 :550 的 RETURN 1）
+test('tailor_normal：黑市 [999] 取消回 tailor_core 主菜单', async () => {
+  // 钱够 30000 → 真的进了黑市菜单；取消后由 tailor_core 的 `A == 0` 回主菜单，
+  // 不是留在普通装备页
   const fixture = tailor_fixture({ 'flag:10004': 100000 });
   const added = await run_core(fixture, [1, 996, 999, 999]);
   assert.ok(
     texts(added).some((t) => t.includes('□黑市服装')),
-    '先真的进了黑市（不是被入口守卫拦下的那支）',
+    '先真的进了黑市（不是被入口检查拦下的那支）',
   );
   const core_menus = added.filter(
     (l) => l.type === 'button' && l.text.includes('日常服饰'),
@@ -390,18 +382,18 @@ test('TAILOR_NORMAL：黑市 [999] 取消回 CORE 主菜单（原作 :545 → :5
   assert.equal(fixture.store.get('flag:10004'), 100000, '取消不扣钱');
 });
 
-test('TAILOR_NORMAL：黑市买成（对照：走 :550 的同一出口但带着 A = 2）', async () => {
+test('tailor_normal：黑市买成（对照：与取消走同一出口但带着 A = 2）', async () => {
   const fixture = tailor_fixture({ 'flag:10004': 100000 });
   await run_core(fixture, [1, 996, 1]);
   assert.equal(fixture.store.get('cflag:1:41'), 17, '黑市第 1 件（高中制服）');
   assert.equal(fixture.store.get('flag:10004'), 100000 - 30000, '扣 30000');
 });
 
-test('TAILOR_ACCESSORY：43 件整表驱动（价格随件、CFLAG:42 = R）', async () => {
+test('tailor_accessory：43 件整表驱动（价格随件、CFLAG:42 = R）', async () => {
   const { ACCESSORY_ITEMS } = tailor_fixture().load_module('page/page-tailor');
   assert.equal(ACCESSORY_ITEMS.length, 43, '装备品表 43 件');
   {
-    // 页数 = (LOCAL:1 / 10) + 1 = 5（:566 的标题行）
+    // 页数 = 5（标题行印当前页/总页数）
     const page = tailor_fixture({ 'item:300': 1 });
     await run_core(page, [2, 999, 999]);
     assert.ok(
@@ -432,8 +424,8 @@ test('TAILOR_ACCESSORY：43 件整表驱动（价格随件、CFLAG:42 = R）', a
   }
 });
 
-test('TAILOR_ACCESSORY：翻页取模的两侧（末页再下一页回首页 / 首页上一页到末页）', async () => {
-  // 5 页：从第 1 页按 5 次「下一页」应回到第 1 页（:634-639 的取模）
+test('tailor_accessory：翻页取模的两侧（末页再下一页回首页 / 首页上一页到末页）', async () => {
+  // 5 页：从第 1 页按 5 次「下一页」应回到第 1 页（翻页取模）
   const fixture = tailor_fixture();
   const draw = await run_core(fixture, [2, ...Array(5).fill(997), 999, 999]);
   const titles = draw
@@ -442,23 +434,23 @@ test('TAILOR_ACCESSORY：翻页取模的两侧（末页再下一页回首页 / �
   assert.equal(titles.length, 6, '首页 + 5 次翻页各画一次');
   assert.equal(titles[0], titles[5], '翻满一圈回到第 1 页');
   assert.ok(titles[4].includes('5页'), '第 5 次翻页到最后一页');
-  // 首页按「上一页」应直接到末页（:640-645）
+  // 首页按「上一页」应直接到末页
   const back = tailor_fixture();
   await run_core(back, [2, 998, 999, 999]);
   const titles_back = texts(back.lines).filter((t) => t.includes('□装备品'));
   assert.ok(titles_back[1].includes('5页'), '首页按上一页到第 5 页');
 });
 
-test('TAILOR_ACCESSORY：r = 98/99（尿道导管 / 贞操带）的额外演出（:226-227）', async () => {
+test('tailor_accessory：r = 98/99（尿道导管 / 贞操带）的额外演出', async () => {
   // 43 号（神秘的尿道导管，r = 98）在第 5 页
   const fixture = tailor_fixture();
   const body = texts(
     await run_core(fixture, [2, ...Array(4).fill(997), 43]),
   ).join('\n');
   assert.equal(fixture.store.get('cflag:1:42'), 98);
-  assert.ok(body.includes('尚未习惯的尿道导管的插入'), ':226 的演出行');
-  assert.ok(body.includes('泛起了红潮'), ':227 的演出行');
-  // 39 号（贞操带，r = 79）不触发该演出——判据是 r === 98/99
+  assert.ok(body.includes('尚未习惯的尿道导管的插入'), '插入的演出行');
+  assert.ok(body.includes('泛起了红潮'), '红潮的演出行');
+  // 39 号（贞操带，r = 79）不触发该演出——条件是 r === 98/99
   const plain = tailor_fixture();
   const body2 = texts(
     await run_core(plain, [2, ...Array(3).fill(997), 39]),
@@ -466,7 +458,7 @@ test('TAILOR_ACCESSORY：r = 98/99（尿道导管 / 贞操带）的额外演出�
   assert.ok(!body2.includes('尿道导管'), '别的装备不触发');
 });
 
-test('TAILOR_ACCESSORY：顺从档的动态判据整表驱动（欲望/素质档）', async () => {
+test('tailor_accessory：顺从档的动态条件整表驱动（欲望/素质档）', async () => {
   // [件号, 预置, 期望 S]——S 由表里的函数算出，这里钉住每条分支
   const CASES = [
     [29, {}, 10], // 狗项圈：10 - ABL:21（欲望 0）
@@ -495,7 +487,7 @@ test('TAILOR_ACCESSORY：顺从档的动态判据整表驱动（欲望/素质档
     const { ACCESSORY_ITEMS } = fixture.load_module('page/page-tailor');
     const item = ACCESSORY_ITEMS.find((entry) => entry.n === n);
     assert.equal(item.s(1), s, `[${n}] ${item.label} 的 S`);
-    // 顺从刚好差 1 时被拒（钉住判据真的被用于准入）
+    // 顺从刚好差 1 时被拒（钉住条件真的被用于准入）
     if (s > 0 && s <= 20) {
       const narrow = tailor_fixture({ ...seed, 'abl:1:10': s - 1 });
       await run_core(narrow, [2, ...Array(item.page).fill(997), n, 999]);
@@ -507,7 +499,7 @@ test('TAILOR_ACCESSORY：顺从档的动态判据整表驱动（欲望/素质档
   }
 });
 
-test('TAILOR_CORE：钱不够时子菜单直接劝退（100 / 1000 / 30000 三档）', async () => {
+test('tailor_core：钱不够时子菜单直接劝退（100 / 1000 / 30000 三档）', async () => {
   for (const [choice, price] of [
     [0, 100],
     [1, 1000],
@@ -523,7 +515,7 @@ test('TAILOR_CORE：钱不够时子菜单直接劝退（100 / 1000 / 30000 三�
   assert.ok(texts(special.lines).includes('钱不够！'), '黑市 30000 档');
 });
 
-test('TAILOR_CORE：童装撑破两支（魁梧 → 下半身 / 巨乳 → 上半身）与「作罢」', async () => {
+test('tailor_core：童装撑破两支（魁梧 → 下半身 / 巨乳 → 上半身）与「作罢」', async () => {
   // 魁梧（TALENT:99）+ 童装：强行套上 → F = 2 → CFLAG:46 = -3
   const big = tailor_fixture({ 'talent:1:99': 1, 'abl:1:10': 99 });
   await run_core(big, [1, 2, 0]);
@@ -553,7 +545,7 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
   for (const [seed, gain] of CASES) {
     const fixture = tailor_fixture({
       'cflag:1:43': 1,
-      'cflag:1:44': 3, // 胸罩也是「穿着中」，验证 :204 的清扫真的发生
+      'cflag:1:44': 3, // 胸罩也是「穿着中」，验证清扫真的发生
       'cflag:1:48': 6,
       ...seed,
     });
@@ -567,7 +559,7 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
     assert.equal(
       fixture.store.get('exflag:4444'),
       before - 5 + gain,
-      ':1132 的变卖收入同步进账（跨域）',
+      '变卖收入同步进账（跨域）',
     );
     assert.ok(
       texts(fixture.lines).some((t) => t.includes(`挣了${gain}点钱`)),
@@ -577,14 +569,14 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
     assert.equal(fixture.store.get('cflag:1:40'), 3);
     assert.equal(fixture.store.get('cflag:1:43'), 0);
     assert.equal(fixture.store.get('cflag:1:48'), 0);
-    assert.equal(fixture.store.get('cflag:1:44'), 0, ':204 胸罩状态清 0');
-    assert.equal(fixture.store.get('flag:10005'), -1, ':249 TARGET = -1');
+    assert.equal(fixture.store.get('cflag:1:44'), 0, '胸罩状态清 0');
+    assert.equal(fixture.store.get('flag:10005'), -1, 'TARGET = -1');
   }
   // CFLAG:48 < 6 时不进变卖支
   const few = tailor_fixture({ 'cflag:1:43': 1, 'cflag:1:48': 5 });
   await run_core(few, [3]);
   assert.ok(!texts(few.lines).some((t) => t.includes('挣了')), '不足 6 条不卖');
-  // CFLAG:43 的判据是 >= 0（0 = 正常内裤同样变卖）——收紧成 > 0 会被这条抓住
+  // CFLAG:43 的条件是 >= 0（0 = 正常内裤同样变卖）——收紧成 > 0 会被这条抓住
   const normal_pants = tailor_fixture({ 'cflag:1:43': 0, 'cflag:1:48': 6 });
   const before = normal_pants.store.get('flag:10004');
   await run_core(normal_pants, [3]);
@@ -593,16 +585,16 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
     'CFLAG:43 == 0（正常内裤）同样变卖',
   );
   assert.equal(normal_pants.store.get('flag:10004'), before - 5 + 300);
-  // CFLAG:41 == 0 时先替她穿上上衣（:196-200 的三连写）
+  // CFLAG:41 == 0 时先替她穿上上衣（三连写）
   const bare = tailor_fixture({ 'cflag:1:41': 0, 'cflag:1:43': 0 });
   await run_core(bare, [3]);
-  assert.equal(bare.store.get('cflag:1:41'), 1, ':196-200 自动穿上衣');
-  assert.equal(bare.store.get('cflag:1:45'), -3, ':198');
-  assert.equal(bare.store.get('cflag:1:46'), -3, ':199');
+  assert.equal(bare.store.get('cflag:1:41'), 1, '自动穿上衣');
+  assert.equal(bare.store.get('cflag:1:45'), -3, '上衣上状态 -3');
+  assert.equal(bare.store.get('cflag:1:46'), -3, '上衣下状态 -3');
 });
 
-test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', async () => {
-  // 选项 [5] 的门（:84）：CFLAG:42 == 79 且 CFLAG:40 位 64 且 CFLAG:49 == 0
+test('chastity_key：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', async () => {
+  // 选项 [5] 的显示条件：CFLAG:42 == 79 且 CFLAG:40 位 64 且 CFLAG:49 == 0
   // 且 **TALENT:0（処女）为真**——极性是「处女才给」
   const KEY_GATE = {
     'cflag:1:42': 79,
@@ -620,15 +612,15 @@ test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
     await run_core(fixture, [999]);
     assert.ok(!accs(fixture.lines).includes(5), `${label} 时不给 [5]`);
   }
-  // CFLAG:71 的两侧：显示门（:84-85）不含它，输入门（:104）含——按钮在，
-  // 但按下去什么都不发生（原作这两处判据本就不同，1:1 保留）
+  // CFLAG:71 的两侧：显示条件不含它、输入分发条件含——按钮在，
+  // 但按下去什么都不发生（两处条件本就不同，原样保留）
   const flagged = tailor_fixture({ ...KEY_GATE, 'cflag:1:71': 1 });
   await run_core(flagged, [5, 999]);
-  assert.ok(accs(flagged.lines).includes(5), ':84 的显示门不看 CFLAG:71');
+  assert.ok(accs(flagged.lines).includes(5), '显示条件不看 CFLAG:71');
   assert.equal(
     flagged.store.get('cflag:1:49') ?? 0,
     0,
-    ':104 的输入门拦下了丢弃',
+    '输入分发的条件拦下了丢弃',
   );
   assert.ok(
     !texts(flagged.lines).some((t) => t.includes('再也没人知道了')),
@@ -641,7 +633,7 @@ test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
     texts(drop.lines).some((t) => t.includes('再也没人知道了')),
     '演出台词',
   );
-  // #612：确认两键的正文照写原作（SHOP_TAILOR.ERB:915-916）
+  // #612：确认两键的正文带「- 」前缀
   const rendered = drop.lines
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
@@ -652,7 +644,7 @@ test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
   assert.equal(keep.store.get('cflag:1:49') ?? 0, 0, '不丢 → 不写');
 });
 
-test('TAILOR_CORE：换装的应用行带动词实参（脱下 / 换上 / 身穿）', async () => {
+test('tailor_core：换装的应用行带动词实参（脱下 / 换上 / 身穿）', async () => {
   const fixture = tailor_fixture({
     'cflag:1:41': 1,
     'cflag:1:45': 0,
@@ -662,14 +654,14 @@ test('TAILOR_CORE：换装的应用行带动词实参（脱下 / 换上 / 身穿
   const body = texts(added).join('\n');
   assert.ok(
     body.includes('日常服装脱下'),
-    ':167-169 的「旧衣名 + 脱下」（渲染序：名字 → 动词）',
+    '「旧衣名 + 脱下」（渲染序：名字 → 动词）',
   );
-  assert.ok(body.includes('日常服装换上了。'), ':176 的「新衣名 + 换上」');
-  assert.ok(body.includes('身穿'), ':73 的「现在…身穿…」行');
+  assert.ok(body.includes('日常服装换上了。'), '「新衣名 + 换上」');
+  assert.ok(body.includes('身穿'), '「现在…身穿…」行');
 });
 
-test('TAILOR_CORE：40/45/46 的三种形态下略（脱下行打不打）', async () => {
-  // 判据是 `CFLAG:41 && (CFLAG:45 == 0 || CFLAG:46 == 0)`：任一半完好就打
+test('tailor_core：40/45/46 的三种状态下略（脱下行打不打）', async () => {
+  // 条件是 `CFLAG:41 && (CFLAG:45 == 0 || CFLAG:46 == 0)`：任一半完好就打
   const CASES = [
     [{ 'cflag:1:45': 0, 'cflag:1:46': 0 }, true],
     [{ 'cflag:1:45': -1, 'cflag:1:46': 0 }, true], // 上半破、下半完好
@@ -687,7 +679,7 @@ test('TAILOR_CORE：40/45/46 的三种形态下略（脱下行打不打）', asy
   }
 });
 
-test('TAILOR_CORE：旧衣状态为「穿着中」时不打脱下行（:167 的判据两侧）', async () => {
+test('tailor_core：旧衣状态为「穿着中」时不打脱下行（条件的两侧）', async () => {
   // 45/46 都为负（已破/被没收）→ 不打脱下行，直接换上
   const fixture = tailor_fixture({
     'cflag:1:41': 1,
@@ -695,11 +687,11 @@ test('TAILOR_CORE：旧衣状态为「穿着中」时不打脱下行（:167 的�
     'cflag:1:46': -1,
   });
   const body = texts(await run_core(fixture, [0, 2])).join('\n');
-  assert.ok(!body.includes('脱下'), ':167 判据为假时不打脱下行');
+  assert.ok(!body.includes('脱下'), '条件为假时不打脱下行');
   assert.ok(body.includes('日常服装换上了。'), '换上照样打');
 });
 
-test('TAILOR_CORE：尿布（A = 11）清 CFLAG:47；装备品（A = 20）换 CFLAG:42', async () => {
+test('tailor_core：尿布（A = 11）清 CFLAG:47；装备品（A = 20）换 CFLAG:42', async () => {
   const diaper = tailor_fixture({ 'cflag:1:42': 69, 'cflag:1:47': 5 });
   await run_core(diaper, [4]);
   assert.equal(diaper.store.get('cflag:1:47'), 0, '尿布清 CFLAG:47');
@@ -712,16 +704,16 @@ test('TAILOR_CORE：尿布（A = 11）清 CFLAG:47；装备品（A = 20）换 CF
   await run_core(accessory, [2, 1, 999]);
   assert.ok(
     texts(accessory.lines).includes('不解开贞操带的话，无法穿戴其他装备！'),
-    '贞操带上锁时装备品被拦（:118-120）',
+    '贞操带上锁时装备品被拦',
   );
 });
 
-test('EQUIP_MAGIC_ITEM：装备戒指与强化（千位强度、超限回退、扣钱）', async () => {
+test('equip_magic_item：装备戒指与强化（千位强度、超限回退、扣钱）', async () => {
   // 装备 300 号（识别号 0）的戒指，强化档 2
   const fixture = tailor_fixture({
     'item:300': 3,
     'cflag:0:9': 30,
-    'cflag:1:551': -1, // 空槽（原作 = -1；0 会被当成「装备 0 号」而多回一件）
+    'cflag:1:551': -1, // 空槽用 -1（0 会被当成「装备 0 号」而多回一件）
   });
   await run_core(fixture, [7, 1, 300, 2, 999, 999, 999]);
   assert.equal(
@@ -770,7 +762,7 @@ test('EQUIP_MAGIC_ITEM：装备戒指与强化（千位强度、超限回退、�
   assert.equal(fixture.store.get('flag:10004'), money, '超两格：同样付 0 档');
 });
 
-test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有品过滤（item > 0）', async () => {
+test('equip_magic_item：装备槽条件（>= 0 才给强化/取下）与持有品过滤（item > 0）', async () => {
   // 空槽（-1）+ 持有 0 件：既没有「装备强化 / 取下」，也没有 300 号那一行
   const empty = tailor_fixture({ 'cflag:0:9': 30, 'cflag:1:551': -1 });
   const draw = await run_core(empty, [7, 1, 999, 999, 999]); // 进装饰A 的选件页
@@ -788,7 +780,7 @@ test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有�
   const ids2 = accs(draw2);
   assert.ok(ids2.includes(997) && ids2.includes(998), '有装备才给两键');
   assert.ok(ids2.includes(300), 'item:300 > 0 → 列出该行');
-  // #612：装饰槽与两键的正文（SHOP_TAILOR.ERB:991/:1000、:1035/:1039/:1040）
+  // #612：装饰槽与两键的正文
   const rendered = full.lines
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
@@ -799,7 +791,7 @@ test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有�
         line.accelerator === 1 &&
         line.text.startsWith('- 装饰A　:'),
     ),
-    '装饰A 行带「- 」（SHOP_TAILOR.ERB:991）',
+    '装饰A 行带「- 」前缀',
   );
   assert.ok(
     full.lines.some(
@@ -808,15 +800,15 @@ test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有�
         line.accelerator === 2 &&
         line.text.startsWith('- 装饰B　:'),
     ),
-    '装饰B 行带「- 」（SHOP_TAILOR.ERB:1000）',
+    '装饰B 行带「- 」前缀',
   );
   assert.ok(rendered.includes('[997] - 装备强化'));
   assert.ok(rendered.includes('[998] - 取下'));
   assert.ok(rendered.includes('[999] - 返回'));
 });
 
-test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一起动', async () => {
-  // 的 install 与 :957 的强化各写一次 exflag:4444（累计消费），
+test('equip_magic_item：强化的两笔支出（所持金与跨域消费）一起动', async () => {
+  // install 路径与强化路径各写一次 exflag:4444（累计消费），
   // 只断言所持金会漏掉这两句——两条路径各来一次
   const fixture = tailor_fixture({
     'item:300': 3,
@@ -834,7 +826,7 @@ test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一�
   assert.equal(
     fixture.store.get('exflag:4444'),
     before_ex - 2 * 10000,
-    ':836 的跨域消费同步扣',
+    '装备路径的跨域消费同步扣',
   );
   await run_core(fixture, [7, 1, 997, 4, 999, 999, 999]); // 强化（pay 路径）
   assert.equal(
@@ -845,11 +837,11 @@ test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一�
   assert.equal(
     fixture.store.get('exflag:4444'),
     before_ex - 6 * 10000,
-    ':957 的跨域消费同步扣',
+    '强化路径的跨域消费同步扣',
   );
 });
 
-test('EQUIP_MAGIC_WEAPON：强化的跨域消费（:1049）与装备路径', async () => {
+test('equip_magic_weapon：强化的跨域消费与装备路径', async () => {
   const fixture = tailor_fixture({
     'item:341': 1,
     'cflag:0:9': 30,
@@ -857,15 +849,15 @@ test('EQUIP_MAGIC_WEAPON：强化的跨域消费（:1049）与装备路径', asy
   });
   const before_money = fixture.store.get('flag:10004');
   const before_ex = fixture.store.get('exflag:4444');
-  await run_core(fixture, [8, 341, 1, 0, 999, 999]); // 装备（install :836）
+  await run_core(fixture, [8, 341, 1, 0, 999, 999]); // 装备（install 路径）
   assert.equal(fixture.store.get('flag:10004'), before_money - 10000);
   assert.equal(fixture.store.get('exflag:4444'), before_ex - 10000);
-  await run_core(fixture, [8, 997, 2, 999, 999]); // 强化 +2（:1049）
+  await run_core(fixture, [8, 997, 2, 999, 999]); // 强化 +2
   assert.equal(fixture.store.get('flag:10004'), before_money - 3 * 10000);
   assert.equal(fixture.store.get('exflag:4444'), before_ex - 3 * 10000);
 });
 
-test('EQUIP_MAGIC_WEAPON：装备武器带前缀档（十万位）与武器化触手', async () => {
+test('equip_magic_weapon：装备武器带前缀档（十万位）与武器化触手', async () => {
   // 装备 341 号的武器，档位 1，前缀 9（暗黑）
   const fixture = tailor_fixture({
     'item:341': 1,
@@ -892,7 +884,7 @@ test('EQUIP_MAGIC_WEAPON：装备武器带前缀档（十万位）与武器化�
   );
 });
 
-test('EQUIP_MAGIC_WEAPON：空手时不给强化/取下（w:0 <= -1）', async () => {
+test('equip_magic_weapon：空手时不给强化/取下（w:0 <= -1）', async () => {
   const fixture = tailor_fixture({ 'cflag:0:9': 30, 'cflag:1:550': -1 });
   const added = await run_core(fixture, [8, 999, 999]);
   assert.ok(!accs(added).includes(997), '空手不给「装备强化」');
@@ -901,7 +893,7 @@ test('EQUIP_MAGIC_WEAPON：空手时不给强化/取下（w:0 <= -1）', async (
     texts(added).some((t) => t.includes('空手')),
     '显示「武器　: 空手」',
   );
-  // #612：空手页仍有的两键（SHOP_TAILOR.ERB:1150-1151 的 [340] - 剑、:1171-1172）
+  // #612：空手页仍有的两键（[340] - 剑与返回）
   const rendered = added
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
@@ -909,7 +901,7 @@ test('EQUIP_MAGIC_WEAPON：空手时不给强化/取下（w:0 <= -1）', async (
   assert.ok(rendered.includes('[999] - 返回'));
 });
 
-test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async () => {
+test('equip_magic_weapon：武器段只列 341-359（360 不在段内）', async () => {
   const fixture = tailor_fixture({
     'item:349': 1, // 武器化触手在段内但被过滤掉，只走 [990]
     'item:359': 1,
@@ -922,7 +914,7 @@ test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async
     .filter((l) => l.type === 'button')
     .map((l) => l.accelerator);
   assert.ok(items.includes(359), '段尾 359 列出');
-  assert.ok(!items.includes(360), '360 在段外（REPEAT 19）');
+  assert.ok(!items.includes(360), '360 在段外（循环 19 次）');
   assert.ok(items.includes(340), '[340] 剑恒在');
   assert.ok(
     !items.includes(349),
@@ -930,15 +922,15 @@ test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async
   );
 });
 
-test('EQUIP_MAGIC_WEAPON：等级门的灰显与「取下」', async () => {
+test('equip_magic_weapon：等级不足的灰显与「取下」', async () => {
   // 等级 < 30：强化键不出现（灰显文本），取下仍在
   const low = tailor_fixture({ 'cflag:1:550': 40, 'cflag:0:9': 29 });
   {
     const added = await run_core(low, [8, 999, 999]);
-    // #612：灰字行照写原作的假编号与前缀（SHOP_TAILOR.ERB:1164 逐字）
+    // #612：灰字行照写假编号与前缀（逐字）
     assert.ok(
       texts(added).includes('[---] - 未开放（30级后才能装备强化）'),
-      'SHOP_TAILOR.ERB:1163-1165 的灰显行写 `[---] - 未开放（30级后才能装备强化）`',
+      '灰显行整行照写为 `[---] - 未开放（30级后才能装备强化）`',
     );
     assert.ok(!accs(added).includes(997), '没有强化键');
     assert.ok(accs(added).includes(998), '有取下键');

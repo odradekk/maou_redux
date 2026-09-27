@@ -1,14 +1,14 @@
 /**
- * 道具商店测试（issue #399 / N15 段 3）：SHOP_ITEM.ERB 的九个函数
- * （@ITEM_SHOP / @EVENTBUY / @SALEITEM_CHECK / @BUY_PLURAL / @USE_ITEM /
- * @TECHNIQUE_OF_MASTER / @TECHNIQUE_OF_MASTER_UP / @CLEAR_SHOP；
- * @ITEM_DETOX 自 #333 起已在 ere/system/equip/item-detox.js，本票只接线）。
+ * 道具商店测试（issue #399 / N15 段 3）：九个函数
+ * （item_shop / event_buy / saleitem_check / buy_plural / use_item /
+ * technique_of_master / technique_of_master_up / clear_shop；
+ * item_detox 自 #333 起已在 ere/system/equip/item-detox.js，这张工单只接入）。
  *
  * 缝 = ere/page/page-item-shop.js 导出的函数 + 商店轮（page-shop.js）的
  * 两个调用点；经唯一夹具观察玩家输出行、变量读写与输入消费，不断言模块
  * 内部辅助函数。
  *
- * 维度型判据一律表驱动走完整维度（在售标志的四个判据、印刷品一览的两段
+ * 维度型条件一律表驱动走完整维度（在售标志的四个条件、印刷品一览的两段
  * 网格、购买流程的三支分派），不挑点各钉一条。
  */
 
@@ -27,9 +27,9 @@ function fixture_with(seed = {}) {
   return fixture;
 }
 
-// —— @CLEAR_SHOP（:781-786） ——
+// —— clear_shop ——
 
-test('CLEAR_SHOP：清 ITEMSALES:0-299（两端都在，300 在外），一律写 0', () => {
+test('clear_shop：清 ITEMSALES:0-299（两端都在，300 在外），一律写 0', () => {
   const fixture = fixture_with({ 'itemsales:0': 1, 'itemsales:299': 1 });
   const { clear_shop } = fixture.load_module('page/page-item-shop');
   fixture.var_writes.length = 0; // 只数本函数自己的写
@@ -37,7 +37,7 @@ test('CLEAR_SHOP：清 ITEMSALES:0-299（两端都在，300 在外），一律�
   const written = fixture.var_writes.filter((w) =>
     w.name.startsWith('itemsales:'),
   );
-  assert.equal(written.length, 300, 'REPEAT 300 的闭区间 0-299');
+  assert.equal(written.length, 300, '循环 300 次的闭区间 0-299');
   assert.deepEqual(
     written.map((w) => w.name),
     Array.from({ length: 300 }, (_, i) => `itemsales:${i}`),
@@ -50,11 +50,11 @@ test('CLEAR_SHOP：清 ITEMSALES:0-299（两端都在，300 在外），一律�
   assert.equal(fixture.store.get('itemsales:299'), 0);
 });
 
-// —— @SALEITEM_CHECK（:253-400） ——
+// —— saleitem_check ——
 
-/** 基础在售集：无素质、无持有、难度 0、技巧 0（下表逐条从原作抄出） */
+/** 基础在售集：无素质、无持有、难度 0、技巧 0（下表逐条与实现核对） */
 const BASE = [
-  ...Array.from({ length: 24 }, (_, i) => i), // REPEAT 24 → 0-23
+  ...Array.from({ length: 24 }, (_, i) => i), // 初始 24 位 → 0-23
   24,
   25,
   34,
@@ -67,10 +67,10 @@ const BASE = [
   53, // 经验值
 ];
 
-/** 调合知识（TALENT:MASTER:55）点亮的一段（:322-329 + :278-280） */
+/** 调合知识（TALENT:MASTER:55）点亮的一段 */
 const BLEND_ITEMS = [26, 27, 29, 30, 31, 40, 41];
 
-/** 跑一遍 @SALEITEM_CHECK，返回最终在售集（升序、去重） */
+/** 跑一遍 saleitem_check，返回最终在售集（升序、去重） */
 function sale_set(seed = {}) {
   const fixture = fixture_with(seed);
   const { saleitem_check } = fixture.load_module('page/page-item-shop');
@@ -79,7 +79,7 @@ function sale_set(seed = {}) {
   const last = new Map();
   for (const w of fixture.var_writes) {
     if (!w.name.startsWith('itemsales:')) continue;
-    // 后写覆盖先写（原作同一段里先置 1 再置 0 的条目按最后一次算）
+    // 后写覆盖先写（同一段里先置 1 再置 0 的条目按最后一次算）
     last.set(Number(w.name.slice('itemsales:'.length)), w.value);
   }
   for (const [id, value] of last) {
@@ -88,14 +88,14 @@ function sale_set(seed = {}) {
   return [...lit].sort((a, b) => a - b);
 }
 
-test('SALEITEM_CHECK：无素质无持有的基线（0-23 与四件消耗品等逐条对上）', () => {
+test('saleitem_check：无素质无持有的基线（0-23 与四件消耗品等逐条对上）', () => {
   assert.deepEqual(
     sale_set(),
     [...BASE].sort((a, b) => a - b),
   );
 });
 
-test('SALEITEM_CHECK：调合知识（TALENT:MASTER:55）的两侧——点亮七件药品、熄灭 42', () => {
+test('saleitem_check：调合知识（TALENT:MASTER:55）的两侧——点亮七件药品、熄灭 42', () => {
   for (const has_blend of [0, 1]) {
     const lit = sale_set({ 'talent:0:55': has_blend });
     for (const id of BLEND_ITEMS) {
@@ -114,19 +114,15 @@ test('SALEITEM_CHECK：调合知识（TALENT:MASTER:55）的两侧——点亮�
   }
 });
 
-test('SALEITEM_CHECK：秘密知识（TALENT:MASTER:325）的两侧——点亮 33、熄灭 39', () => {
+test('saleitem_check：秘密知识（TALENT:MASTER:325）的两侧——点亮 33、熄灭 39', () => {
   for (const has_secret of [0, 1]) {
     const lit = sale_set({ 'talent:0:325': has_secret });
-    assert.equal(
-      lit.includes(33),
-      has_secret === 1,
-      ':337-352 秘密アイテム 33',
-    );
-    assert.equal(lit.includes(39), has_secret !== 1, ':384-387 秘密知识道具');
+    assert.equal(lit.includes(33), has_secret === 1, '秘密アイテム 33');
+    assert.equal(lit.includes(39), has_secret !== 1, '秘密知识道具');
   }
 });
 
-test('SALEITEM_CHECK：ラブダイナミックス（38）的三个熄灭判据整表驱动', () => {
+test('saleitem_check：ラブダイナミックス（38）的三个熄灭条件整表驱动', () => {
   // 素质（TALENT:MASTER:91）× 难度（FLAG:5 的 3/4 两档 × 其余档）
   for (const talent91 of [0, 1]) {
     for (const flag5 of [0, 1, 2, 3, 4, 9]) {
@@ -141,7 +137,7 @@ test('SALEITEM_CHECK：ラブダイナミックス（38）的三个熄灭判据�
   }
 });
 
-test('SALEITEM_CHECK：技巧等级道具（52）的两条熄灭判据整表驱动', () => {
+test('saleitem_check：技巧等级道具（52）的两条熄灭条件整表驱动', () => {
   // ABL:MASTER:12 >= 10 || ABL:MASTER:12 > FLAG:30 + 1
   for (const [abl, flag30, expected] of [
     [0, 0, true],
@@ -163,7 +159,7 @@ test('SALEITEM_CHECK：技巧等级道具（52）的两条熄灭判据整表驱�
   }
 });
 
-test('SALEITEM_CHECK：非消耗品的「已持有一件」下架（判据是 == 1，2 件仍上架）', () => {
+test('saleitem_check：非消耗品的「已持有一件」下架（条件是 == 1，2 件仍上架）', () => {
   for (const stock of [0, 1, 2]) {
     const lit = sale_set({ 'item:0': stock, 'item:23': stock });
     assert.equal(lit.includes(0), stock !== 1, `ITEM:0=${stock}`);
@@ -171,7 +167,7 @@ test('SALEITEM_CHECK：非消耗品的「已持有一件」下架（判据是 ==
   }
 });
 
-test('SALEITEM_CHECK：消耗品的 99 上限（判据是 >= 99，98 仍上架）', () => {
+test('saleitem_check：消耗品的 99 上限（条件是 >= 99，98 仍上架）', () => {
   // 26/27/40/41 之类要调合知识才上架，这里把素质与摄像机都置上，
   // 让七件消耗品全部先站在「在售」一侧，再逐件撞上限
   for (const stock of [0, 98, 99, 100]) {
@@ -199,20 +195,20 @@ test('SALEITEM_CHECK：录像带（28）要持有摄像机（ITEM:6 != 0），�
   }
 });
 
-test('SALEITEM_CHECK：好感测定仪（37）持有即下架（判据是真值，不是 == 1）', () => {
+test('saleitem_check：好感测定仪（37）持有即下架（条件是真值，不是 == 1）', () => {
   for (const stock of [0, 1, 2]) {
     const lit = sale_set({ 'item:37': stock });
     assert.equal(lit.includes(37), stock === 0, `ITEM:37=${stock}`);
   }
 });
 
-test('SALEITEM_CHECK：已持有下架在 6/17/20 之后（三件非消耗品持有 1 件也下架）', () => {
-  // 的三行在 :288-291 之前——顺序反过来才是「无条件上架」。
+test('saleitem_check：已持有下架在 6/17/20 之后（三件非消耗品持有 1 件也下架）', () => {
+  // 的三行在「已持有下架」段之前——顺序反过来才是「无条件上架」。
   // 由此两件事是等价变异（改了输出不变，不建条目）：ALWAYS_NON_CONSUMABLES
   // 与 EXTRA_NON_CONSUMABLES 的成员全在 0-23 内，而 0-23 先被基线段点亮、
   // 再被这段按「恰好持有 1 件」清掉——两组常量的成员各摘一个，终态不变；
   // 同理 BASE_SALES_COUNT 24 → 25 只多写一次 ITEMSALES:24，随后被消耗品段
-  // 重新点 1。这几处的 1:1 只体现在写序列上（终态判不出）。
+  // 重新点 1。这几处的原样复现只体现在写序列上（终态判不出）。
   for (const stock of [0, 1, 2]) {
     const lit = sale_set({
       'item:6': stock,
@@ -234,8 +230,8 @@ test('SALEITEM_CHECK：只写本商店的两类标志，不碰别的变量', () 
   assert.deepEqual([...names].sort(), ['itemsales']);
 });
 
-// —— 排版助手（原作 %…,N,LEFT% 的显示宽度填充；与 page-shop-trap 的
-//    cell() 同形，两处各留一份，本文件只服务本票的两段网格） ——
+// —— 排版助手（显示宽度填充；与 page-shop-trap 的 cell() 同形，
+//    两处各留一份，本文件只服务这张工单的两段网格） ——
 
 /** 一格：字面方括号包住补到 width 显示宽度的正文 */
 function cell(text, width) {
@@ -262,9 +258,9 @@ function grid_rows(fixture, start_label, end_label) {
   return lines.slice(start + 1, end);
 }
 
-// —— @ITEM_SHOP（:17-80）的绘制半 ——
+// —— item_shop 的绘制半 ——
 
-/** 铺一个跑得动 ITEM_SHOP 的最小世界（空持有、无在售） */
+/** 铺一个跑得动 item_shop 的最小世界（空持有、无在售） */
 function item_shop_world(seed = {}) {
   return fixture_with({
     'flag:10000': 6, // DAY:0 → 显示 7 日
@@ -279,10 +275,8 @@ function item_shop_world(seed = {}) {
 /**
  * 页脚 [999] 返回键所在的行号（页脚空行断言的取证面）。
  *
- * 原作 :78-80 是两个 `PRINTLC` 跟一个 `PRINTL`：`PRINTLC` 不换行（按
- * CONTEXT.md「输出 API 与原作的对应」），那个 `PRINTL` 只结束它所在的那一行。
- * ere 的 `printButton` 自成一行（＝ `PRINTLC` + 收尾的 `PRINTL`），故页脚
- * 按钮之后不应再出现空行。
+ * 页脚两个按钮打在同一行（见 CONTEXT.md「输出 API 的排版与对齐」）：
+ * printButton 自成一行（打完即收行），故页脚按钮之后不应再出现空行。
  * @param {object} fixture 夹具
  * @returns {number} 行号
  */
@@ -292,16 +286,13 @@ function footer_row(fixture) {
   ).row;
 }
 
-test('ITEM_SHOP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换行，:80 的 PRINTL 只收那一行）', async () => {
+test('item_shop：页脚两个按钮之后没有空行（两键同行、打完即收行）', async () => {
   const fixture = item_shop_world();
   const { item_shop } = fixture.load_module('page/page-item-shop');
   await item_shop();
 
-  // 原作 :78-80 是两个 PRINTLC 加一个 PRINTL。PRINTLC 按「PRINTCの文字数」
-  // 补空格后打在同一行、**不换行**（语义与勘误见 CONTEXT.md「输出 API 与
-  // 原作的对应」），那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的
-  // printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条
-  // 就是多出来的空行。
+  // 页脚两键打在同一行、**不换行**（见 CONTEXT.md「输出 API 的排版与对齐」）。
+  // printButton 自成一行（打完即收行），页脚之后再补一条就是多出来的空行。
   assert.deepEqual(
     fixture.lines.filter((line) => line.row > footer_row(fixture)),
     [],
@@ -309,7 +300,7 @@ test('ITEM_SHOP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换行，
   );
 });
 
-test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标题）与三处性判据', async () => {
+test('item_shop：头行逐字复现（标题/日期/所持金/技巧Lv/两段一览标题）与三处染色行', async () => {
   const fixture = item_shop_world();
   const { item_shop } = fixture.load_module('page/page-item-shop');
   await item_shop();
@@ -336,13 +327,12 @@ test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标�
     [999, '[999] - 返回'],
   ]);
 
-  // CUSTOMDRAWLINE = → 三处 DRAWLINE（:23 日期行前、:65 在售标志前、
-  // 提示行后）都走实线
+  // 三处分隔线（日期行前、在售标志前、提示行后）都走实线
   const dividers = fixture.lines.filter((line) => line.type === 'divider');
-  assert.equal(dividers.length, 3, 'DRAWLINE 三次');
+  assert.equal(dividers.length, 3, '分隔线三次');
   assert(dividers.every((line) => line.border === 'solid'));
 
-  // 的 SETCOLORBYNAME LightSalmon → 三行标签着色
+  // 三行标签着色 LightSalmon
   for (const text of ['[技巧Lv:3]', '[调教道具一览]', '[消耗型调教道具一览]']) {
     const line = fixture.lines.find(
       (l) => l.type === 'text' && l.text === text,
@@ -354,8 +344,8 @@ test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标�
     );
   }
 
-  // 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 与原作
-  // 的对应」）以 setAlign 包一次近似排版、随后还原
+  // 页脚两键（左对齐补位、不换行，见 CONTEXT.md「输出 API 的排版与对齐」）
+  // 以 setAlign 包一次近似排版、随后还原
   assert.deepEqual(
     fixture.calls
       .filter((call) => call.api === 'setAlign')
@@ -364,7 +354,7 @@ test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标�
   );
 });
 
-test('ITEM_SHOP：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0 + 1', async () => {
+test('item_shop：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0 + 1', async () => {
   for (const [time, half] of [
     [0, '午前'],
     [1, '午后'],
@@ -388,7 +378,7 @@ test('ITEM_SHOP：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0
   }
 });
 
-test('ITEM_SHOP：两段一览的网格（名字补 10 / 名字(所持:N) 补 20，5 格一行）', async () => {
+test('item_shop：两段一览的网格（名字补 10 / 名字(所持:N) 补 20，5 格一行）', async () => {
   const fixture = item_shop_world({
     'item:0': 2, // 第一段：持有的非消耗品
     'item:1': 1,
@@ -434,7 +424,7 @@ test('ITEM_SHOP：两段一览的网格（名字补 10 / 名字(所持:N) 补 20
   assert.deepEqual(
     grid_rows(fixture, '[消耗型调教道具一览]', '《请输入要购买的道具的编号》'),
     [
-      // 24/25/35 三格；29-31 被 :56-57 跳过（种子里 30/31 有持有也不出场）
+      // 24/25/35 三格；29-31 被跳过（种子里 30/31 有持有也不出场）
       ['安全套(所持:1)', '润滑液(所持:3)', '观战卷(所持:2)']
         .map((text) => cell(text, 20))
         .join(''),
@@ -442,7 +432,7 @@ test('ITEM_SHOP：两段一览的网格（名字补 10 / 名字(所持:N) 补 20
   );
 });
 
-test('ITEM_SHOP：网格段的边界与空段（持有 0 不占格，段空则一行不打）', async () => {
+test('item_shop：网格段的边界与空段（持有 0 不占格，段空则一行不打）', async () => {
   // 空段：两段都不出一行（0 % 5 == 0，不补换行）
   const empty = item_shop_world();
   const { item_shop } = empty.load_module('page/page-item-shop');
@@ -495,9 +485,9 @@ test('ITEM_SHOP：网格段的边界与空段（持有 0 不占格，段空则�
   );
 });
 
-// —— PRINT_SHOPITEM（引擎命令，EraElectron 无）的 ere 等价物 ——
+// —— print_shopitem（列货） ——
 
-test('PRINT_SHOPITEM：在售商品各一枚按钮（accelerator = 道具序号），按序号升序', async () => {
+test('print_shopitem：在售商品各一枚按钮（accelerator = 道具序号），按序号升序', async () => {
   const fixture = item_shop_world({
     itemkeys: [0, 24, 60, 300, 91],
     'itemsales:0': 1,
@@ -520,9 +510,8 @@ test('PRINT_SHOPITEM：在售商品各一枚按钮（accelerator = 道具序号�
   const buttons = fixture.lines
     .filter((line) => line.type === 'button')
     .map((line) => [line.accelerator, line.text]);
-  // 金额单位取游戏配置（target/CSV/_replace.csv お金の単位 = pts. / 位置=後，
-  // 黄金样本的状态行「(所持金：800 pts.)」同源）——引擎的 PRINT_SHOPITEM
-  // 就按这份配置渲染价格
+  // 金额单位取 MONEY_UNIT（pts.，位置在后；黄金样本的状态行
+  // 「(所持金：800 pts.)」同源）
   assert.deepEqual(buttons, [
     [0, '振动宝石（200pts.）'],
     [24, '安全套（100pts.）'],
@@ -531,7 +520,7 @@ test('PRINT_SHOPITEM：在售商品各一枚按钮（accelerator = 道具序号�
   ]);
 });
 
-test('PRINT_SHOPITEM：一件在售都没有时一行不打（空表不出按钮）', () => {
+test('print_shopitem：一件在售都没有时一行不打（空表不出按钮）', () => {
   const fixture = item_shop_world({ itemkeys: [0, 1] });
   const { print_shopitem } = fixture.load_module('page/page-item-shop');
   print_shopitem();
@@ -539,7 +528,7 @@ test('PRINT_SHOPITEM：一件在售都没有时一行不打（空表不出按钮
 });
 
 // ================================================================
-// 购买流程（@EVENTBUY 族）：引擎侧五步 → 三支分派 → 各支的输入循环
+// 购买流程（event_buy 族）：购买五步 → 三支分派 → 各支的输入循环
 // ================================================================
 
 /** 铺一个可购买的世界：在售位、名字、价格齐全（价格与 yml/Item.yml 同值） */
@@ -580,7 +569,7 @@ async function run_purchase(item_id, seed = {}, inputs = []) {
   return { fixture, result };
 }
 
-test('purchase：不在售时无声退回（不出货、不扣钱、不进 EVENTBUY）', async () => {
+test('purchase：不在售时无声退回（不出货、不扣钱、不进 event_buy）', async () => {
   const fixture = buy_world({ 'itemsales:24': 0 });
   const { purchase } = fixture.load_module('page/page-item-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -614,7 +603,7 @@ test('purchase：钱不够时无声退回；恰好等于价格则成交（下界
   }
 });
 
-test('purchase：成交做四件事——BOUGHT 设定、给货、扣钱、再走 EVENTBUY', async () => {
+test('purchase：成交做四件事——BOUGHT 设定、给货、扣钱、再走 event_buy', async () => {
   const { fixture, result } = await run_purchase(0, {}, [0]);
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
@@ -625,14 +614,14 @@ test('purchase：成交做四件事——BOUGHT 设定、给货、扣钱、再�
   assert.equal(
     era_exflag.legit_money,
     -200,
-    'EVENTBUY 的记账额（SIMPLE_LEDGER 的 200）',
+    'event_buy 的记账额（SIMPLE_LEDGER 的 200）',
   );
   assert(history_texts(fixture).includes('《购买了振动宝石》'));
 });
 
-// —— @EVENTBUY 的三支分派（:89/:93/兜底） ——
+// —— event_buy 的三支分派 ——
 
-test('EVENTBUY 分派：复数购买支的名单（含 >= 60 且 != 90 的第二段判据）', async () => {
+test('event_buy 分派：复数购买支的名单（含 >= 60 且 != 90 的第二段条件）', async () => {
   // 名单内：24/25/26/27/28/34/35/53/55 与 60-89/91；名单外：90 与 0-23/37
   const plural = [24, 25, 26, 27, 28, 34, 35, 53, 55, 60, 89, 91];
   for (const id of plural) {
@@ -648,7 +637,7 @@ test('EVENTBUY 分派：复数购买支的名单（含 >= 60 且 != 90 的第二
       history_texts(fixture).some((line) => line.includes('要买多少')),
       `${id} 应打数量选择的提示`,
     );
-    // 取消路径的净效果：货退回、钱还上（@EVENTBUY 的复数支恒 RETURN 1，
+    // 取消路径的净效果：货退回、钱还上（复数支恒返回 1，
     // 返回值不反映成交与否，故这里看状态）
     assert.equal(fixture.store.get(`item:${id}`) ?? 0, 0, `${id} 取消后不持有`);
   }
@@ -656,12 +645,12 @@ test('EVENTBUY 分派：复数购买支的名单（含 >= 60 且 != 90 的第二
     const { fixture } = await run_purchase(90, { 'itemsales:90': 1 }, [1]);
     assert(
       history_texts(fixture).some((line) => line.includes('确定购买')),
-      '90 被 :89 的 `!= 90` 排除，走简单确认支',
+      '90 被 `!= 90` 排除，走简单确认支',
     );
   }
 });
 
-test('EVENTBUY 分派：当场使用支的名单（29-33/40/41）与其余走确认', async () => {
+test('event_buy 分派：当场使用支的名单（29-33/40/41）与其余走确认', async () => {
   for (const id of [29, 30, 31, 32, 33, 40, 41]) {
     const fixture = buy_world({
       [`itemsales:${id}`]: 1,
@@ -683,7 +672,7 @@ test('EVENTBUY 分派：当场使用支的名单（29-33/40/41）与其余走确
   );
 });
 
-// —— 简单确认支（:99-248） ——
+// —— 简单确认支 ——
 
 test('确认支：不要（1）时退货退钱，并从 TFLAG:15 的暂存值重建不变量', async () => {
   const fixture = buy_world({ 'exflag:4444': 5000 });
@@ -710,7 +699,7 @@ test('确认支：不要（1）时退货退钱，并从 TFLAG:15 的暂存值重
 
 test('确认支：非法输入（非 0/1）由引擎拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「非 0/1 重问一次」——按钮化后白名单就是 0/1，7 这类值被引擎
-  // 拒收、不回传游戏，重问支结构性不可达（1:1 保留，不补用例）。
+  // 拒收、不回传游戏，重问支结构性不可达（原样保留，不补用例）。
   const fixture = buy_world();
   const { purchase } = fixture.load_module('page/page-item-shop');
   fixture.set_inputs(7);
@@ -732,7 +721,7 @@ test('确认支：两项是按钮（#572）——[0] 好的 / [1] 不要', async
       .filter((line) => line.type === 'button')
       .map((line) => line.rendered),
     ['[0] - 好的', '[1] - 不要'],
-    ':99-113 的两项（正文不带 [N]）',
+    '两项按钮（正文不带 [N]）',
   );
 });
 
@@ -812,7 +801,7 @@ test('确认支：素质道具四件（38/39/42/54/56）各自的素质与熄灭
   }
 });
 
-test('确认支：52 号技巧等级道具走 TECHNIQUE_OF_MASTER_UP', async () => {
+test('确认支：52 号技巧等级道具走 technique_of_master_up', async () => {
   const { fixture } = await run_purchase(
     52,
     {
@@ -833,7 +822,7 @@ test('确认支：52 号技巧等级道具走 TECHNIQUE_OF_MASTER_UP', async () 
   assert(history_texts(fixture).some((line) => line.includes('技巧LV4了')));
 });
 
-// —— 复数购买支的账目与边界（@BUY_PLURAL，:404-582） ——
+// —— 复数购买支的账目与边界（buy_plural） ——
 
 /** 复数购买支：买 qty 件（成交路径），返回夹具 */
 async function buy_one(id, seed = {}, qty = 1, extra = []) {
@@ -852,7 +841,7 @@ test('复数购买：单价表逐条对上（含陷阱的 TRAP_PRICE 段与 91 �
     [35, 700],
     [55, 5000],
     [91, 100],
-    [60, 10], // TRAP_PRICE:60（SHOP_TRAP.ERB 的价表，与 yml/Item.yml 同值）
+    [60, 10], // TRAP_PRICE:60（价表与 yml/Item.yml 同值）
     [61, 50],
     [89, 100], // 陷阱段的上界（TRAP_PRICE:89）
   ];
@@ -867,7 +856,7 @@ test('复数购买：单价表逐条对上（含陷阱的 TRAP_PRICE 段与 91 �
         [`itemprice:${id}`]: price,
       },
       1,
-      // 53 号买完转「让谁使用」的角色选择（:501-543），补一个目标
+      // 53 号买完转「让谁使用」的角色选择，补一个目标
       id === 53 ? [0] : [],
     );
     const era_flag = fixture.load_module('era-utils/era-flag');
@@ -882,7 +871,7 @@ test('复数购买：单价表逐条对上（含陷阱的 TRAP_PRICE 段与 91 �
 });
 
 test('复数购买：可买数 D 取「持有上限」与「钱够买几件」的较小者，E 记被哪一侧卡住', async () => {
-  // 持有上限吃紧：ITEM:24 = 95 → 引擎给 1 件后 B = 4，钱远够 → D = 4、E = 0
+  // 持有上限吃紧：ITEM:24 = 95 → 购买流程给 1 件后 B = 4，钱远够 → D = 4、E = 0
   {
     const { fixture } = await run_purchase(
       24,
@@ -920,7 +909,7 @@ test('复数购买：可买数 D 取「持有上限」与「钱够买几件」�
   }
 });
 
-test('复数购买：D/2 的档位只在大于 20 时出现（:456-460）', async () => {
+test('复数购买：D/2 的档位只在大于 20 时出现', async () => {
   {
     const fixture = await buy_one(24, { 'item:24': 0, 'flag:10004': 1000000 });
     // B = 99（上限吃紧）→ D = 99、D/2 = 49 > 20 → 出现
@@ -943,20 +932,20 @@ test('复数购买：D/2 的档位只在大于 20 时出现（:456-460）', asyn
   }
 });
 
-test('复数购买：买 n 件的账（引擎给 1 件 + 脚本补 n-1；钱与记账各按件数走）', async () => {
+test('复数购买：买 n 件的账（购买流程给 1 件 + 脚本补 n-1；钱与记账各按件数走）', async () => {
   const fixture = await buy_one(24, {
     'item:24': 0,
     'flag:10004': 1000,
   });
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
-  // 买 1 件：引擎扣 100 → 900；脚本只记账
+  // 买 1 件：购买流程扣 100 → 900；脚本只记账
   assert.equal(era_flag.money, 900);
   assert.equal(fixture.store.get('item:24'), 1);
   assert.equal(era_exflag.legit_money, -100);
   assert(history_texts(fixture).includes('《购买了安全套》'));
 
-  // 买 3 件：引擎扣 100、脚本补扣 200 → 700；货 3 件；记账 300
+  // 买 3 件：购买流程扣 100、脚本补扣 200 → 700；货 3 件；记账 300
   const three = await buy_one(24, { 'item:24': 0, 'flag:10004': 1000 }, 3);
   const three_flag = three.load_module('era-utils/era-flag');
   const three_exflag = three.load_module('era-utils/era-exflag');
@@ -974,9 +963,9 @@ test('复数购买：取消（0）退还原价，负值重问', async () => {
   );
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(fixture.store.get('item:24'), 0, '取消退货（ITEM -= 1）');
-  assert.equal(era_flag.money, 1000, '取消退钱（引擎已扣的那一份）');
+  assert.equal(era_flag.money, 1000, '取消退钱（购买流程已扣的那一份）');
 
-  // 负值 → :473-474 重问，随后按有效值成交
+  // 负值 → 重问，随后按有效值成交
   const neg = await buy_one(24, { 'item:24': 0, 'flag:10004': 1000 }, -1, [1]);
   assert.equal(neg.store.get('item:24'), 1, '负值不打乱成交');
   assert.deepEqual(
@@ -986,7 +975,7 @@ test('复数购买：取消（0）退还原价，负值重问', async () => {
   );
 });
 
-test('复数购买：55 号陷阱等级的 D 被地下城阶层钳制（:447-448）', async () => {
+test('复数购买：55 号陷阱等级的 D 被地下城阶层钳制', async () => {
   // FLAG:85 = 3、CFLAG:0:9 = 5 → D = 5 - 3 = 2，尽管持有上限 100、钱也够
   const { fixture } = await run_purchase(
     55,
@@ -1018,7 +1007,7 @@ test('复数购买：53 号经验值道具买完转「让谁使用」（EXP += �
   });
   fixture.seed_chara(31, { id: 31, name: '奴隶31' });
   fixture.era.addCharacter(31);
-  // 1 件（引擎已给）→ 数量 2 → 补 1 件；E = 2 * 10 = 20
+  // 1 件（购买流程已给）→ 数量 2 → 补 1 件；E = 2 * 10 = 20
   fixture.set_inputs(2, 31);
   const { purchase } = fixture.load_module('page/page-item-shop');
   await purchase(53);
@@ -1026,10 +1015,10 @@ test('复数购买：53 号经验值道具买完转「让谁使用」（EXP += �
   assert(
     history_texts(fixture).some((line) => line.includes('得到了20点经验值')),
   );
-  assert.equal(fixture.store.get('item:53'), 0, ':503 买后吃掉');
+  assert.equal(fixture.store.get('item:53'), 0, '买后吃掉');
 });
 
-test('复数购买：53 号的选择面——卖却済み不可选（:535-538；不在场目标被引擎弹回，#130）', async () => {
+test('复数购买：53 号的选择面——卖却済み不可选（不在场目标被引擎弹回，#130）', async () => {
   const fixture = buy_world({ 'item:53': 0, 'flag:10004': 10000 });
   fixture.seed_chara(31, { id: 31, name: '奴隶31' });
   fixture.seed_chara(32, { id: 32, name: '奴隶32' });
@@ -1045,7 +1034,7 @@ test('复数购买：53 号的选择面——卖却済み不可选（:535-538；
   assert.equal(fixture.store.get('exp:31:80'), 10, '换人后成交（E = 1 × 10）');
 });
 
-test('复数购买：91 号戒指进 ITEM:300，超过 99 的部分原价退还（:568-580）', async () => {
+test('复数购买：91 号戒指进 ITEM:300，超过 99 的部分原价退还', async () => {
   const { fixture } = await run_purchase(
     91,
     { 'item:300': 99, 'flag:10004': 10000, 'item:91': 0 },
@@ -1064,7 +1053,7 @@ test('复数购买：91 号戒指进 ITEM:300，超过 99 的部分原价退还�
   assert.equal(fixture.store.get('item:91'), 0);
 });
 
-// —— 当场使用支（@USE_ITEM，:587-738） ——
+// —— 当场使用支（use_item） ——
 
 /** 使用支：以 cid 为目标使用 item_id（默认 999 之前先给一个目标） */
 async function use_on(item_id, cid, seed = {}, inputs = []) {
@@ -1113,7 +1102,7 @@ test('使用支：999 取消——吃掉道具并按种类退钱（退额表逐�
   }
 });
 
-test('使用支：30 号体力回复与上限钳制（含「已经达到最大值」的守卫）', async () => {
+test('使用支：30 号体力回复与上限钳制（含「已经达到最大值」的检查）', async () => {
   const healed = await use_on(30, 31, {
     'base:31:0': 500,
     'maxbase:31:0': 2000,
@@ -1151,7 +1140,7 @@ test('使用支：30 号体力回复与上限钳制（含「已经达到最大�
   assert.equal(full.store.get('base:32:0'), 1100, '打回后换人成功');
 });
 
-test('使用支：31 号否定点数减半（JUEL/2 截断 + FLAG:61 += 1）与 0 点守卫', async () => {
+test('使用支：31 号否定点数减半（JUEL/2 截断 + FLAG:61 += 1）与 0 点检查', async () => {
   const fixture = await use_on(31, 31, {
     'juel:31:100': 7,
     'base:31:0': 100,
@@ -1182,7 +1171,7 @@ test('使用支：31 号否定点数减半（JUEL/2 截断 + FLAG:61 += 1）与 
   assert.equal(zero.store.get('juel:32:100'), 2, '打回后换人成功');
 });
 
-test('使用支：33 号寿命制限削除（两个守卫条件各打回一次）', async () => {
+test('使用支：33 号寿命制限削除（两个检查条件各打回一次）', async () => {
   // 条件一：BASE:31:10 == 0（本就没有寿命限制）
   const no_lifespan = buy_world({
     'flag:10004': 1000000,
@@ -1206,7 +1195,7 @@ test('使用支：33 号寿命制限削除（两个守卫条件各打回一次�
     history_texts(no_lifespan).some((line) =>
       line.includes('已经不受寿命限制了'),
     ),
-    '两条守卫之一不成立即打回',
+    '两条检查之一不成立即打回',
   );
 
   // 条件二：BASE:31:10 > 0 但 TALENT:31:85 == 0（没有爱慕）
@@ -1243,7 +1232,7 @@ test('使用支：33 号寿命制限削除（两个守卫条件各打回一次�
   assert.equal(ok.store.get('base:31:10'), 0, 'BASE:RESULT:10 = 0');
 });
 
-test('使用支：40 号排卵促进（妊娠中/育儿中两条守卫文案）', async () => {
+test('使用支：40 号排卵促进（妊娠中/育儿中两条检查文案）', async () => {
   for (const [talent_idx, word] of [
     [153, '怀孕中'],
     [154, '育儿中'],
@@ -1265,7 +1254,7 @@ test('使用支：40 号排卵促进（妊娠中/育儿中两条守卫文案）'
       history_texts(fixture).some((line) =>
         line.includes(`${word}的奴隶31不能使用排卵诱发剂`),
       ),
-      `TALENT:${talent_idx} 的守卫文案`,
+      `TALENT:${talent_idx} 的检查文案`,
     );
   }
   const ok = await use_on(40, 31, { 'base:31:0': 100 });
@@ -1289,7 +1278,7 @@ test('使用支：41 号生毛剂的两支（已经浓密的封顶与正常增�
   assert.equal(grown.store.get('talent:31:125'), 0, '白虎を消す');
 });
 
-test('使用支：29 号寄生回复接 ITEM_DETOX 真身（不重做）', async () => {
+test('使用支：29 号寄生回复接 item_detox 真身（不重做）', async () => {
   const fixture = await use_on(29, 31, {
     'base:31:0': 100,
     'talent:31:190': 1,
@@ -1347,9 +1336,9 @@ test('使用支：翻页键（1000 首页无反应 / 1001 有下一页时翻页�
   assert.equal(fixture.store.get('base:31:0'), 1100, '翻页键不挡成交');
 });
 
-// —— @TECHNIQUE_OF_MASTER / @TECHNIQUE_OF_MASTER_UP（:744-776） ——
+// —— technique_of_master / technique_of_master_up ——
 
-test('TECHNIQUE_OF_MASTER：只差一件时直接升级（FLAG:33 == F - 1）', async () => {
+test('technique_of_master：只差一件时直接升级（FLAG:33 == F - 1）', async () => {
   const fixture = buy_world({ 'abl:0:12': 3, 'flag:33': 4 });
   const { technique_of_master } = fixture.load_module('page/page-item-shop');
   assert.equal(await technique_of_master(5), 1);
@@ -1357,7 +1346,7 @@ test('TECHNIQUE_OF_MASTER：只差一件时直接升级（FLAG:33 == F - 1）', 
   assert.equal(fixture.store.get('flag:33'), 0, '已投入件数清零');
 });
 
-test('TECHNIQUE_OF_MASTER：凑齐剩余件数（钱够与不够两侧）', async () => {
+test('technique_of_master：凑齐剩余件数（钱够与不够两侧）', async () => {
   {
     // FLAG:33 从 0 起 → 提示需要 F - 1 = 3 件；钱不够（3 × 5000 > 10000）
     const fixture = buy_world({ 'abl:0:12': 3, 'flag:10004': 10000 });
@@ -1397,7 +1386,7 @@ test('TECHNIQUE_OF_MASTER：凑齐剩余件数（钱够与不够两侧）', asyn
   }
 });
 
-test('#612 TECHNIQUE_OF_MASTER：确认两键的正文照写原作的「- 」', async () => {
+test('#612 technique_of_master：确认两键的正文带「- 」前缀', async () => {
   const fixture = buy_world({ 'abl:0:12': 3, 'flag:10004': 20000 });
   fixture.set_inputs(1);
   const { technique_of_master } = fixture.load_module('page/page-item-shop');
@@ -1405,12 +1394,12 @@ test('#612 TECHNIQUE_OF_MASTER：确认两键的正文照写原作的「- 」', 
   const rendered = fixture.lines
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
-  assert.ok(rendered.includes('[0] - 好的'), 'SHOP_ITEM.ERB:752');
-  assert.ok(rendered.includes('[1] - 不要'), 'SHOP_ITEM.ERB:753');
+  assert.ok(rendered.includes('[0] - 好的'), '「好的」键的正文');
+  assert.ok(rendered.includes('[1] - 不要'), '「不要」键的正文');
 });
 
-test('复数购买：越界后的重画提示不带 D/2 那一段（源 :481-487 与首次不同形）', async () => {
-  // 首次提示带 D/2（:450-463），越界后的重画不带（:485-487 直接从 [20] 接 D）
+test('复数购买：越界后的重画提示不带 D/2 那一段（与首次不同形）', async () => {
+  // 首次提示带 D/2，越界后的重画不带（直接从 [20] 接 D）
   const { fixture } = await run_purchase(
     24,
     { 'item:24': 0, 'flag:10004': 1000000 },
@@ -1426,19 +1415,19 @@ test('复数购买：越界后的重画提示不带 D/2 那一段（源 :481-487
   );
   assert(
     !prompts[1].includes('[49]') && prompts[1].includes('[99]'),
-    '重画只有 D = 99（源 :485-487）',
+    '重画只有 D = 99',
   );
 });
 
-test('复数购买：买 n 件时只等一次键（源 :492/:495 各一支一个 WAIT）', async () => {
+test('复数购买：买 n 件时只等一次键（两支各一次等键）', async () => {
   const one = await run_purchase(24, { 'item:24': 0, 'flag:10004': 1000 }, [1]);
   const three = await run_purchase(
     24,
     { 'item:24': 0, 'flag:10004': 1000 },
     [3],
   );
-  assert.equal(one.fixture.waits.length, 1, '买 1 件：一个 WAIT');
-  assert.equal(three.fixture.waits.length, 1, '买 3 件：也是一个 WAIT');
+  assert.equal(one.fixture.waits.length, 1, '买 1 件：一次等键');
+  assert.equal(three.fixture.waits.length, 1, '买 3 件：也是一次等键');
 });
 
 // —— 剩下的两个内联端点（第三轮评审点名：页高与戒指槽位） ——
@@ -1460,7 +1449,7 @@ function char_buttons(fixture) {
 }
 
 test('复数购买：53 号选择面的翻页吃页高 20（正好 20 人时下一页翻到空页）', async () => {
-  // (NO_PAGE + 1) * 20 <= CHARANUM：正好 20 人时成立 → 翻到第 2 页（空页）。
+  // (NO_PAGE + 1) * 20 <= 角色数：正好 20 人时成立 → 翻到第 2 页（空页）。
   // 页高挪到 21 时这一格不成立、第二屏仍是 20 人——char_buttons 从 20 变 40
   const fixture = buy_world({ 'item:53': 0, 'flag:10004': 100000 });
   join_20_slaves(fixture);
@@ -1470,8 +1459,8 @@ test('复数购买：53 号选择面的翻页吃页高 20（正好 20 人时下�
   assert.equal(char_buttons(fixture), 20, '页 0 列 20 人，翻到页 1 是空页');
 });
 
-test('当场使用支：30 号选择面的翻页吃页高 20（同一判据的另一处）', async () => {
-  // 与 53 号那条同形，但判据在 @USE_ITEM 的 :649-654（两处字面量各一份）
+test('当场使用支：30 号选择面的翻页吃页高 20（同一条件的另一处）', async () => {
+  // 与 53 号那条同形，但条件在 use_item 里另有一份字面量
   const fixture = buy_world({
     'itemsales:30': 1,
     'itemname:30': '体力恢复药',
@@ -1486,8 +1475,8 @@ test('当场使用支：30 号选择面的翻页吃页高 20（同一判据的�
 });
 
 test('复数购买：91 号戒指的上限正好卡在 99/100（持 99 再买 1 枚退回）', async () => {
-  // 的 `ITEM:300 > 99`：持 99 再买一枚正好摸到 100 → 退 1 枚的钱并
-  // 夹回 99。判据挪到 `> 100` 时这一枚不再退（金额差 100）
+  // `ITEM:300 > 99`：持 99 再买一枚正好摸到 100 → 退 1 枚的钱并
+  // 夹回 99。条件挪到 `> 100` 时这一枚不再退（金额差 100）
   const { fixture } = await run_purchase(
     91,
     { 'item:300': 99, 'flag:10004': 10000, 'item:91': 0 },

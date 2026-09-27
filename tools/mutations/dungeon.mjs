@@ -1797,12 +1797,12 @@ export default [
     must_mention: 'MONSTER_PLAY 取消返回 0',
   },
   {
-    desc: 'M6879 SELECT_TARGET 的怪物玩弄真身调用删除',
+    desc: 'M6879 select_target 的怪物玩弄真身调用删除',
     file: 'ere/page/page-select-target.js',
     find: '      return monster_play_mod.monster_play();',
     replace: '      return 0; // 变异：删除怪物玩弄调用',
     tests: ['page-select-target'],
-    must_mention: '1002 其它：进入 MONSTER_PLAY 真身',
+    must_mention: '1002 其它：进入 monster_play 真身',
   },
   {
     desc: 'M6880 DUNGEON_INFO2 的怪物改造真身调用删除',

@@ -1,13 +1,13 @@
 /**
- * ere/page/page-select-target.js 的行为测试（issue #44：@SELECT_TARGET 真身，
- * #395 补全 @SELECT_ASSI 真身与两份列表的富化列）。
+ * ere/page/page-select-target.js 的行为测试（issue #44：select_target 真身，
+ * #395 补全 select_assi 真身与两份列表的富化列）。
  *
  * 缝 = test/helpers/era-fixture.js。验收项：真实实现（分页列表 + 输入循环 +
- * 取消路径），判据 IS_TRAINABLE/IS_ASSISTABLE；**取消时回主菜单且不进调教，
+ * 取消路径），条件 is_trainable/is_assistable；**取消时回主菜单且不进调教，
  * 此行为有测试**。列表行的富化列（职业/等级/HP/调教回数/沦陷标签）用
  * trainable_button_text/assistable_button_text 计算期望值——助手也是
  * chara() 提供的角色，join_slave_chara 不预置这些字段，默认值走
- * page-select-target.js 的 `|| 0` 兜底，两处计算式必须逐值对应。
+ * page-select-target.js 的 `|| 0` 缺省处理，两处计算式必须逐值对应。
  */
 
 const assert = require('node:assert/strict');
@@ -46,20 +46,20 @@ function assistable_button_text(
   return `[${cid}] ${name} LV${level} HP(${hp[0]}/${hp[1]}) ${tags}`;
 }
 
-test('IS_TRAINABLE：范围外/魔王/占用/可选四态（ID 语义判据）', () => {
+test('is_trainable：范围外/魔王/占用/可选四态（ID 语义判断）', () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31);
   const { is_trainable } = load_page(fixture);
 
-  assert.equal(is_trainable(-1), 1, '负指针：范围外'); // ARG < 1
-  assert.equal(is_trainable(0), 1, '魔王：不可调教'); // ARG == MASTER
+  assert.equal(is_trainable(-1), 1, '负指针：范围外'); // 参数 < 1
+  assert.equal(is_trainable(0), 1, '魔王：不可调教'); // 参数 == 魔王 ID
   assert.equal(is_trainable(31), 0, '已加入且未占用：可选');
-  assert.equal(is_trainable(77), 1, '未加入：范围外（ID 语义的越界判据）');
+  assert.equal(is_trainable(77), 1, '未加入：范围外（ID 语义的越界判断）');
   fixture.store.set('cflag:31:1', 2);
   assert.equal(is_trainable(31), 2, '占用中（CFLAG:x:1 != 0）');
 });
 
-test('IS_ASSISTABLE：助手役/占用/目标重叠/可选四态', () => {
+test('is_assistable：助手役/占用/目标重叠/可选四态', () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31);
   join_slave_chara(fixture, 32);
@@ -128,9 +128,8 @@ test('列表为空：唯一角色是魔王（不可选）→ 不等输入直接�
 
 test('未打印按钮的值引擎不送达：拒收且不重绘；再选 999 取消（#130）', async () => {
   // 原用例曾喂 42 验证「重绘不提示」：42 不是已打印按钮（列表只印 31 与
-  // 999），引擎的 input() 在渲染层就把它弹回——无效输入重绘分支是引擎死
-  // 路径。此处钉引擎可达的部分：拒收时画面原样（不重绘、无提示），取消
-  // 键照常生效
+  // 999），引擎的 input() 在渲染层就把它弹回——无效输入重绘分支在此不可
+  // 达。此处钉可达的部分：拒收时画面原样（不重绘、无提示），取消键照常生效
   const locked = create_era_fixture();
   join_slave_chara(locked, 31, '温妮');
   const { select_target: select_locked } = load_page(locked);
@@ -206,7 +205,7 @@ test('页首不再退：第一页输入 [1000] 维持原页', async () => {
   );
 });
 
-test('1002 其它：进入 MONSTER_PLAY 真身，怪物菜单取消语义透传', async () => {
+test('1002 其它：进入 monster_play 真身，怪物菜单取消语义透传', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31);
   const { select_target } = load_page(fixture);
@@ -217,7 +216,7 @@ test('1002 其它：进入 MONSTER_PLAY 真身，怪物菜单取消语义透传'
   assert(!fixture.text_lines().some((line) => line.includes('@MONSTER_PLAY')));
 });
 
-test('SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1', async () => {
+test('select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 32, '青岛');
   fixture.store.set('cflag:32:0', 2); // 助手役
@@ -240,9 +239,9 @@ test('SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1', 
   );
 });
 
-test('GET_JOB_NAME：职业维度表驱动（TALENT 200-212 逐支断言，含 206 的巫者/巫女二级判据）', async () => {
+test('get_job_name：职业维度表驱动（TALENT 200-212 逐支断言，含 206 的巫者/巫女二级判断）', async () => {
   // [素质编号, 附加素质, 期望职业名]——206 的两条分支合表：附加 talent:122
-  // 决定巫者/巫女，其余职业无第二判据（附加为空对象）
+  // 决定巫者/巫女，其余职业无第二条件（附加为空对象）
   const JOB_TABLE = [
     [200, {}, '战士'],
     [201, {}, '魔法师'],
@@ -296,7 +295,7 @@ test('love_status_tag：沦陷标签用真实 TALENT 值渲染（非默认空白
     'TALENT:85 必须映射为沦陷标签「<爱慕>」',
   );
 });
-test('SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）', async () => {
+test('select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 32);
   fixture.store.set('cflag:32:0', 2);
@@ -310,7 +309,7 @@ test('SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（�
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === -1));
 });
 
-test('SELECT_ASSI 我先想想（999）：返回 2（取消，与 SELECT_TARGET 的 999=0 不同码），不置 ASSI', async () => {
+test('select_assi 我先想想（999）：返回 2（取消，与 select_target 的 999=0 不同码），不置 ASSI', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 32);
   fixture.store.set('cflag:32:0', 2);

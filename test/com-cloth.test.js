@@ -1,22 +1,20 @@
 'use strict';
 /**
- * ere/system/train/com-cloth.js 的行为测试（issue #228 J18：COM110 穿脱
- * 衣服 / COM111 撕破衣服——服装系统 #215 在指令侧的消费者）。
+ * ere/system/train/com-cloth.js 的行为测试（issue #228 J18：com110 穿脱
+ * 衣服 / com111 撕破衣服——服装系统 #215 在指令侧的消费者）。
  *
- * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @COM_ABLE110 的八条判据（自动标记 / 着衣设定 / 衣装存在 / 五个装备位）
- *     与 @COM_ABLE111 的追加全裸判据；
- *   - @COM110 的 12 个着脱判定（T/W 各六：两截·全身·胸罩·内裤·特别服装，
- *     含标准装位 B 通道、洗濯中、弄脏、和服/史莱姆/尿布支）；
- *   - @COM110 的子菜单与各动作分支（golden train-natural:212-221 的逐字
- *     形状、贞操带钥匙、贞操带全裸、撕破移轨）；
- *   - @COM111 的 7 个引き裂き判定与各撕破分支（-3 废弃写入：43/45/46/47
- *     直写 + 44 经 stronghold 门面）、史莱姆/贞操带徒手守卫、全裸收尾；
- *   - 引擎「@COMxx 返回 0 → 回合取消」语义（train-loop.js：不结算、
- *     PREVCOM 不推、SOURCE_CHECK/EVENTCOMEND 不跑——era wiki Emuera/flow
- *     TRAIN 节，golden train-natural:210/:250 的实证）。
+ * 测试夹具：test/helpers/era-fixture.js。覆盖：
+ *   - 110 号可用性检查的八条判断条件（自动标记 / 着衣设定 / 衣装存在 / 五个装备位）
+ *     与 111 号可用性检查的追加全裸判断条件；
+ *   - com110 的 12 个着脱判定（T/W 各六：两截·全身·胸罩·内裤·特别服装，
+ *     含标准装位 B 通道、洗涤中、弄脏、和服/史莱姆/尿布支）；
+ *   - com110 的子菜单正文与各动作分支（贞操带钥匙、贞操带全裸、切换到撕破菜单）；
+ *   - com111 的 7 个撕破判断与各撕破分支（-3 废弃写入：43/45/46/47
+ *     直写 + 44 经 stronghold 门面）、史莱姆/贞操带徒手检查、全裸收尾；
+ *   - 调教指令「返回 0 → 回合取消」语义（train-loop.js：不结算、
+ *     PREVCOM 不推、SOURCE_CHECK/EVENTCOMEND 不跑）。
  *
- * 世界底座与 test/com-caress.test.js 同构：魔王 0 + 奴隶 31、火车表已开。
+ * 初始状态：魔王 0 + 奴隶 31，已初始化调教变量。
  */
 
 const assert = require('node:assert/strict');
@@ -34,7 +32,7 @@ const TROUSERS = 16;
 const SPECIAL = 64;
 
 /**
- * 世界底座：开火车表、指好 TARGET/PLAYER、装载被测模块与依赖。
+ * 初始状态：初始化调教变量、设置 TARGET/PLAYER、装载被测模块与依赖。
  * @param {object} [cloth0] 初始 CFLAG:40（缺省不写）
  * @param {number} [type41] CFLAG:41（缺省不写）
  * @param {number} [type42] CFLAG:42（缺省不写）
@@ -53,7 +51,7 @@ function seed_world(cloth0, type41, type42) {
   fixture.load_module('system/train/cloth');
   fixture.load_module('page/page-clothtype');
   fixture.load_module('system/train/com-cloth');
-  fixture.store.set('flag:37', 1); // 着衣系统开（COM_ABLE110 的前提）
+  fixture.store.set('flag:37', 1); // 着衣系统开（110 号可用性检查的前提）
   if (type41 !== undefined) {
     fixture.store.set('cflag:31:41', type41);
   }
@@ -74,17 +72,17 @@ function text_lines(fixture) {
   return fixture.lines.filter((l) => l.type === 'text').map((l) => l.text);
 }
 
-// —— @COM_ABLE110 / @COM_ABLE111 ——
+// —— 110 号可用性检查 / 111 号可用性检查 ——
 
-test('@COM_ABLE110：默认可执行；八条判据各挡一条', async () => {
+test('110 号可用性检查：默认可执行；八条判断条件各挡一条', async () => {
   const { fixture, com_able_family } = seed_world(15, 5);
-  assert.equal(await com_able_family.call(110), 1, '默认放行（:3684）');
+  assert.equal(await com_able_family.call(110), 1, '默认放行');
 
   fixture.store.set('tflag:224', 555); // 自动不可
   assert.equal(await com_able_family.call(110), 0);
   fixture.store.set('tflag:224', 0);
 
-  fixture.store.set('flag:37', 0); // 着衣設定未开
+  fixture.store.set('flag:37', 0); // 着衣设定未开
   assert.equal(await com_able_family.call(110), 0);
   fixture.store.set('flag:37', 1);
 
@@ -102,18 +100,18 @@ test('@COM_ABLE110：默认可执行；八条判据各挡一条', async () => {
   }
 });
 
-test('@COM_ABLE111：继承 110 判据 + 全裸不可', async () => {
+test('111 号可用性检查：继承 110 判断条件 + 全裸不可', async () => {
   const { fixture, com_able_family } = seed_world(0, 5);
   assert.equal(await com_able_family.call(111), 0, '全裸（CFLAG:40=0）不可');
   fixture.store.set('cflag:31:40', 15);
   assert.equal(await com_able_family.call(111), 1);
-  fixture.store.set('flag:37', 0); // 110 的判据经 111 复用
+  fixture.store.set('flag:37', 0); // 110 的判断条件经 111 复用
   assert.equal(await com_able_family.call(111), 0);
 });
 
-// —— @COM110 子菜单形状 ——
+// —— com110 子菜单形状 ——
 
-test('@COM110：golden train-natural:212-221 的逐字形状（紧身衣＆裙甲→全部扒光）', async () => {
+test('com110：子菜单正文与动作输出（紧身衣＆裙甲→全部扒光）', async () => {
   const { fixture, com_family } = seed_world(15, 5);
   fixture.set_inputs(7);
   assert.equal(await com_family.call(110), 0, '全部分支 RETURN 0');
@@ -128,22 +126,22 @@ test('@COM110：golden train-natural:212-221 的逐字形状（紧身衣＆裙�
     ' [100] - 算了',
     '温妮全裸了。',
   ]);
-  assert.equal(fixture.store.get('cflag:31:40'), 0, '扒光（:307）');
+  assert.equal(fixture.store.get('cflag:31:40'), 0, '扒光');
 });
 
-test('@COM110：菜单 [3] 胸罩行被上装位挡下（40=15 有胸罩但上装在身）', async () => {
-  // ABLE4T 的「上着上を着ているとダメ」——golden 会话的着衣态正是如此：
-  // 位 2 在身但 [3] 不出现（train-natural:214-219 无 [3] 行）
+test('com110：菜单 [3] 胸罩行被上装位挡下（40=15 有胸罩但上装在身）', async () => {
+  // able4t 在上装仍穿着时禁止脱胸罩：
+  // 位 2 在身但 [3] 不出现。
   const { fixture, com_family } = seed_world(15, 5);
   fixture.set_inputs(100);
   await com_family.call(110);
   assert.ok(
     !text_lines(fixture).some((l) => l.includes('胸罩')),
-    '上装在身时 [3] 不出现（ABLE4T :480-481）',
+    '上装在身时 [3] 不出现（able4t）',
   );
 });
 
-test('@COM110：空身（40=0）时无脱衣行、穿衣行全出（[7]/[9] 隐藏）', async () => {
+test('com110：空身（40=0）时无脱衣行、穿衣行全出（[7]/[9] 隐藏）', async () => {
   const { fixture, com_family } = seed_world(0, 5);
   fixture.set_inputs(100);
   await com_family.call(110);
@@ -158,7 +156,7 @@ test('@COM110：空身（40=0）时无脱衣行、穿衣行全出（[7]/[9] 隐�
   ]);
 });
 
-test('@COM110：算了（100）不改着衣位（B 探测还原 A——当前 11 ≠ 标准 15 的判别世界）', async () => {
+test('com110：算了（100）不改着衣位（B 探测还原 A——当前 11 ≠ 标准 15 的判别世界）', async () => {
   const { fixture, com_family } = seed_world(PANTY | BRA | SKIRT, 5);
   fixture.set_inputs(100);
   await com_family.call(110);
@@ -169,22 +167,22 @@ test('@COM110：算了（100）不改着衣位（B 探测还原 A——当前 11
   );
 });
 
-// —— @COM110 着脱动作（两截衣装） ——
+// —— com110 着脱动作（两截衣装） ——
 
-test('@COM110：上装脱衣→菜单重绘→上装置着（T:2 / W:2 往返）', async () => {
+test('com110：上装脱衣→菜单重绘→上装置着（T:2 / W:2 往返）', async () => {
   const { fixture, com_family } = seed_world(15, 5);
   fixture.set_inputs(1, 100); // 先脱上装，再看菜单后算了
   await com_family.call(110);
   const lines = text_lines(fixture);
   assert.ok(
     lines.includes('温妮将紧身衣＆裙甲的上半身脱掉了。'),
-    'T:2 动作行（:218-219）',
+    'T:2 动作行（脱下上装后重绘菜单）',
   );
   assert.equal(fixture.store.get('cflag:31:40'), 15 - UPPER);
   // 重绘的菜单：上装已脱 → 穿衣行（三空格前缀）出现，穿衣侧位 4 还原
   assert.ok(
     lines.some((l) => l === '\u00A0\u00A0\u00A0[1] - 紧身衣＆裙甲上半身穿起'),
-    'W:2 菜单行（源 PRINT 四空格 → 渲染三空格）',
+    'W:2 菜单行（输出四空格 → 渲染三空格）',
   );
 
   const second = seed_world(15 - UPPER, 5);
@@ -199,11 +197,11 @@ test('@COM110：上装脱衣→菜单重绘→上装置着（T:2 / W:2 往返）
   assert.equal(
     second.fixture.store.get('cflag:31:40'),
     15,
-    'W:2 置位 4（:226）',
+    'W:2 置位 4（穿回上装，恢复完整着衣位）',
   );
 });
 
-test('@COM110：下装脱衣的裙型措辞与弄脏前缀（T:3，41=5 裙型 + tflag:45 位 8）', async () => {
+test('com110：下装脱衣的裙型措辞与弄脏前缀（T:3，41=5 裙型 + tflag:45 位 8）', async () => {
   const { fixture, com_family } = seed_world(15, 5);
   fixture.store.set('tflag:45', 8); // 下装处理位（污物）
   fixture.set_inputs(2, 100);
@@ -215,24 +213,24 @@ test('@COM110：下装脱衣的裙型措辞与弄脏前缀（T:3，41=5 裙型 +
   );
   assert.ok(
     lines.includes('温妮将沾满污物的紧身衣＆裙甲的裙子脱掉了。'),
-    '弄脏前缀（:234-237 位 8/4）',
+    '弄脏前缀（位 8/4）',
   );
   assert.equal(fixture.store.get('cflag:31:40'), 15 - SKIRT, '位 8 剥除');
 });
 
-test('@COM110：下装置着弄脏拒绝（W:3，tflag:45 位 4 → 被尿淋透）', async () => {
+test('com110：下装置着弄脏拒绝（W:3，tflag:45 位 4 → 被尿淋透）', async () => {
   const { fixture, com_family } = seed_world(15 - SKIRT, 5);
   fixture.store.set('tflag:45', 4);
   fixture.set_inputs(2, 100);
   await com_family.call(110);
   assert.ok(
     text_lines(fixture).includes('被尿淋透了，不是可以使用的状态'),
-    'W:3 拒绝行（:260-261）',
+    'W:3 拒绝行',
   );
   assert.equal(fixture.store.get('cflag:31:40'), 15 - SKIRT, '位不置');
 });
 
-test('@COM110：裤型下装走「下半身」措辞（41=106 军服，位 16）', async () => {
+test('com110：裤型下装走「下半身」措辞（41=106 军服，位 16）', async () => {
   const { fixture, com_family } = seed_world(
     PANTY | BRA | UPPER | TROUSERS,
     106,
@@ -252,9 +250,9 @@ test('@COM110：裤型下装走「下半身」措辞（41=106 军服，位 16）
   );
 });
 
-// —— @COM110 着脱动作（全身衣装 / 胸罩 / 内裤 / 特别服装） ——
+// —— com110 着脱动作（全身衣装 / 胸罩 / 内裤 / 特别服装） ——
 
-test('@COM110：ワンピース整件脱着（T:1 / W:1，41=201 连衣裙）', async () => {
+test('com110：连衣裙整件脱着（T:1 / W:1，41=201 连衣裙）', async () => {
   const strip = seed_world(PANTY | BRA | UPPER | SKIRT, 201);
   strip.fixture.set_inputs(1, 100);
   await strip.com_family.call(110);
@@ -277,11 +275,11 @@ test('@COM110：ワンピース整件脱着（T:1 / W:1，41=201 连衣裙）', 
   assert.equal(
     wear.fixture.store.get('cflag:31:40'),
     PANTY | BRA | UPPER | SKIRT,
-    '201-250 裙型 → 位 4+8（:210-215）',
+    '201-250 裙型 → 位 4+8',
   );
 });
 
-test('@COM110：ワンピース装着的上下两半守卫（W:1：上半洗着+下半洗着 → 不可）', async () => {
+test('com110：连衣裙装着的上下两半检查（W:1：上半洗着+下半洗着 → 不可）', async () => {
   // 「上装穿着中或洗涤中」且「下装穿着中或洗涤中」→ RETURN 0——
   // 衣装撕破后的「半件还在」情形才允许重穿整件
   const world = seed_world(PANTY | BRA, 201);
@@ -291,7 +289,7 @@ test('@COM110：ワンピース装着的上下两半守卫（W:1：上半洗着+
   await world.com_family.call(110);
   assert.ok(
     !text_lines(world.fixture).some((l) => l.includes('连衣裙穿起')),
-    '上下两半都不可用时 W:1 不出现（:400-403 守卫）',
+    '上下两半都不可用时 W:1 不出现（检查）',
   );
   // 上半洗着、下半不在也不洗 → 允许（整件穿回）
   world.fixture.store.set('cflag:31:46', 0);
@@ -303,13 +301,13 @@ test('@COM110：ワンピース装着的上下两半守卫（W:1：上半洗着+
   );
 });
 
-test('@COM110：胸罩脱着与洗濯中守卫（T:4 / W:4，CFLAG:44）', async () => {
+test('com110：胸罩脱着与洗涤中检查（T:4 / W:4，CFLAG:44）', async () => {
   const strip = seed_world(PANTY | BRA, 5); // 上装已不在身
   strip.fixture.set_inputs(3, 100);
   await strip.com_family.call(110);
   assert.ok(
     strip.fixture.lines.some((l) => l.text === '温妮的胸罩解开了。'),
-    'T:4 动作行（:271）',
+    'T:4 动作行',
   );
   assert.equal(strip.fixture.store.get('cflag:31:40'), PANTY);
 
@@ -325,18 +323,18 @@ test('@COM110：胸罩脱着与洗濯中守卫（T:4 / W:4，CFLAG:44）', async
   await washing.com_family.call(110);
   assert.ok(
     !text_lines(washing.fixture).some((l) => l.includes('穿上胸罩')),
-    'CFLAG:44 != 0 时 W:4 不出现（:498-499）',
+    'CFLAG:44 != 0 时 W:4 不出现',
   );
 });
 
-test('@COM110：内裤脱着的弄脏位怪癖（T:5 查下装位 8/4，W:5 查内裤位 2/1）', async () => {
+test('com110：内裤脱着的弄脏位怪癖（T:5 查下装位 8/4，W:5 查内裤位 2/1）', async () => {
   const strip = seed_world(PANTY, 5);
   strip.fixture.store.set('tflag:45', 4); // 下装「尿」位——内裤脱衣查的是它
   strip.fixture.set_inputs(4, 100);
   await strip.com_family.call(110);
   assert.ok(
     strip.fixture.lines.some((l) => l.text === '温妮把尿湿透的内裤脱掉了。'),
-    'T:5 的弄脏前缀走位 4（原作怪癖，COMF110:281-284）',
+    'T:5 的弄脏前缀走位 4（脱衣检查下装位）',
   );
   assert.equal(strip.fixture.store.get('cflag:31:40'), 0);
 
@@ -346,7 +344,7 @@ test('@COM110：内裤脱着的弄脏位怪癖（T:5 查下装位 8/4，W:5 查�
   await wear.com_family.call(110);
   assert.ok(
     wear.fixture.lines.some((l) => l.text === '沾满了污物，不是可以使用的状态'),
-    'W:5 拒绝行（:291-292）',
+    'W:5 拒绝行',
   );
   assert.equal(wear.fixture.store.get('cflag:31:40'), 0, '拒绝时位不置');
 
@@ -356,11 +354,11 @@ test('@COM110：内裤脱着的弄脏位怪癖（T:5 查下装位 8/4，W:5 查�
   await washing.com_family.call(110);
   assert.ok(
     !text_lines(washing.fixture).some((l) => l.includes('穿上内裤')),
-    'CFLAG:43 != 0 时 W:5 不出现（:533-534）',
+    'CFLAG:43 != 0 时 W:5 不出现',
   );
 });
 
-test('@COM110：特别服装脱着（≤50 脱掉/穿起、≥51 取下/装上）', async () => {
+test('com110：特别服装脱着（≤50 脱掉/穿起、≥51 取下/装上）', async () => {
   const apron = seed_world(PANTY | SPECIAL, 0, 1); // 围裙（穿着型 ≤50）
   apron.fixture.set_inputs(0, 100);
   await apron.com_family.call(110);
@@ -373,7 +371,7 @@ test('@COM110：特别服装脱着（≤50 脱掉/穿起、≥51 取下/装上�
   glasses.fixture.set_inputs(0, 100);
   await glasses.com_family.call(110);
   const gl = text_lines(glasses.fixture);
-  assert.ok(gl.includes(' [0] - 眼镜取下'), '≥51 措辞：取下（:58-59）');
+  assert.ok(gl.includes(' [0] - 眼镜取下'), '≥51 措辞：取下');
   assert.ok(gl.includes('温妮把眼镜取下了。'));
 
   const wear = seed_world(PANTY, 0, 1);
@@ -381,19 +379,19 @@ test('@COM110：特别服装脱着（≤50 脱掉/穿起、≥51 取下/装上�
   await wear.com_family.call(110);
   assert.ok(
     wear.fixture.lines.some((l) => l.text === '温妮将围裙穿上了。'),
-    'W:0 动作行（:169-172）',
+    'W:0 动作行',
   );
   assert.equal(wear.fixture.store.get('cflag:31:40'), PANTY | SPECIAL);
 });
 
-test('@COM110：特别服装弄脏两路（T:0 前缀位 32 / W:0 拒绝位 16）', async () => {
+test('com110：特别服装弄脏两路（T:0 前缀位 32 / W:0 拒绝位 16）', async () => {
   const strip = seed_world(PANTY | SPECIAL, 0, 1);
   strip.fixture.store.set('tflag:45', 32);
   strip.fixture.set_inputs(0, 100);
   await strip.com_family.call(110);
   assert.ok(
     strip.fixture.lines.some((l) => l.text === '温妮把沾满污物的围裙脱掉了。'),
-    'T:0 前缀（:150-154 位 32/16）',
+    'T:0 前缀（位 32/16）',
   );
 
   const wear = seed_world(PANTY, 0, 1);
@@ -402,18 +400,18 @@ test('@COM110：特别服装弄脏两路（T:0 前缀位 32 / W:0 拒绝位 16�
   await wear.com_family.call(110);
   assert.ok(
     wear.fixture.lines.some((l) => l.text === '被尿淋透了，不是可以使用的状态'),
-    'W:0 拒绝行（:165-166）',
+    'W:0 拒绝行',
   );
   assert.equal(wear.fixture.store.get('cflag:31:40'), PANTY, '拒绝时位不置');
 });
 
-test('@COM110：贞操带钥匙已丢（CFLAG:49）→ 提示后回菜单', async () => {
+test('com110：贞操带钥匙已丢（CFLAG:49）→ 提示后回菜单', async () => {
   const world = seed_world(PANTY | SPECIAL, 0, 79); // 贞操带
   world.fixture.store.set('cflag:31:49', 1);
   world.fixture.set_inputs(0, 100);
   await world.com_family.call(110);
   const lines = text_lines(world.fixture);
-  assert.ok(lines.includes('温妮贞操带的钥匙丢掉了。'), ':143 的提示行');
+  assert.ok(lines.includes('温妮贞操带的钥匙丢掉了。'), '提示行');
   assert.equal(
     world.fixture.store.get('cflag:31:40'),
     PANTY | SPECIAL,
@@ -425,12 +423,12 @@ test('@COM110：贞操带钥匙已丢（CFLAG:49）→ 提示后回菜单', asyn
   );
 });
 
-test('@COM110：全裸分支的贞操带保留（42=79 且位 64 → 40=64）', async () => {
+test('com110：全裸分支的贞操带保留（42=79 且位 64 → 40=64）', async () => {
   const world = seed_world(PANTY | SPECIAL, 0, 79);
   world.fixture.set_inputs(7, 100);
   await world.com_family.call(110);
   const lines = text_lines(world.fixture);
-  assert.ok(lines.includes('温妮除了贞操带以外一丝不挂。'), ':303 的保留行');
+  assert.ok(lines.includes('温妮除了贞操带以外一丝不挂。'), '保留行');
   assert.equal(world.fixture.store.get('cflag:31:40'), SPECIAL, '仅剩位 64');
   assert.ok(
     lines.lastIndexOf('穿脱衣服') >
@@ -439,8 +437,8 @@ test('@COM110：全裸分支的贞操带保留（42=79 且位 64 → 40=64）', 
   );
 });
 
-test('@COM110：史莱姆着ぐるみ挡住普通脱衣判定（42=11）', async () => {
-  // 位 64 且 42 ≤ 50 的「邪魔になる特別コス」挡 T:1/T:2/T:4；史莱姆另挡
+test('com110：史莱姆服装挡住普通脱衣判定（42=11）', async () => {
+  // 位 64 且 42 ≤ 50 的特别服装挡 T:1/T:2/T:4；史莱姆另挡
   // 下装与内裤（42 == 11）
   const world = seed_world(PANTY | BRA | UPPER | SKIRT | SPECIAL, 5, 11);
   world.fixture.set_inputs(100);
@@ -455,17 +453,17 @@ test('@COM110：史莱姆着ぐるみ挡住普通脱衣判定（42=11）', async
   );
 });
 
-test('@COM110：和服（41=202）下为裙时内裤不可脱（T:5 的和服支）', async () => {
+test('com110：和服（41=202）下为裙时内裤不可脱（T:5 的和服支）', async () => {
   const world = seed_world(PANTY | BRA | UPPER | SKIRT, 202);
   world.fixture.set_inputs(100);
   await world.com_family.call(110);
   assert.ok(
     !text_lines(world.fixture).some((l) => l.includes('脱掉内裤')),
-    '202 && 位 8 → T:5 = 0（:518-519）',
+    '202 && 位 8 → T:5 = 0',
   );
 });
 
-test('@COM110：B 探测通道——兜裆布（41=192）的标准装位不含上装/内裤', async () => {
+test('com110：B 探测通道——兜裆布（41=192）的标准装位不含上装/内裤', async () => {
   const world = seed_world(TROUSERS, 192);
   world.fixture.set_inputs(100);
   await world.com_family.call(110);
@@ -477,27 +475,27 @@ test('@COM110：B 探测通道——兜裆布（41=192）的标准装位不含�
   );
 });
 
-test('@COM110：位 64 在身但特别服装类型未设定（42=0）→ 无 [0] 行', async () => {
-  // ABLE0T 首判据（42==0 → 0）的唯一判别世界：位 64 残留而类型已清
-  //（AFTERTRAIN_CLOTH 丢弃特别服装后的形态）
+test('com110：位 64 在身但特别服装类型未设定（42=0）→ 无 [0] 行', async () => {
+  // able0t 的首个判断条件（42==0 → 0）的唯一判别世界：位 64 残留而类型已清
+  //（调教结束后丢弃特别服装的状态）
   const world = seed_world(PANTY | SPECIAL, 0, 0);
   world.fixture.set_inputs(100);
   await world.com_family.call(110);
   assert.ok(
     !text_lines(world.fixture).some((l) => l.startsWith(' [0] - ')),
-    '类型未设定时 [0] 不出现（ABLE0T :332-333）',
+    '类型未设定时 [0] 不出现（able0t）',
   );
 });
 
-// —— @COM111 撕破 ——
+// —— com111 撕破 ——
 
-/** 直接驱动 COM111（COM110 [9] 的调用形态同 family 直调） */
+/** 直接驱动 com111（com110 [9] 的调用形式同 family 直调） */
 function rip_world(cloth0, type41, type42) {
   const world = seed_world(cloth0, type41, type42);
   return world;
 }
 
-test('@COM111：两截上撕破（L:3，位 4 消 + CFLAG:45 = -3）', async () => {
+test('com111：两截上撕破（L:3，位 4 消 + CFLAG:45 = -3）', async () => {
   const { fixture, com_family } = rip_world(15, 5);
   fixture.set_inputs(11, 100);
   assert.equal(await com_family.call(111), 1, '100 → RETURN 1');
@@ -507,11 +505,11 @@ test('@COM111：两截上撕破（L:3，位 4 消 + CFLAG:45 = -3）', async () 
   assert.ok(lines.includes(' [11] - 紧身衣＆裙甲的上半撕破'), 'L:3 菜单行');
   assert.ok(
     lines.includes('温妮穿着的紧身衣＆裙甲的上半身被撕破了。'),
-    'L:3 动作行（:124-125）',
+    'L:3 动作行',
   );
   assert.equal(fixture.store.get('cflag:31:40'), 15 - UPPER);
-  assert.equal(fixture.store.get('cflag:31:45'), -3, '废弃态 -3（:126）');
-  // #595：COMF111:166 的裸 PRINTL 落在撕破分支已收行之后 → 真空行（重绘前）
+  assert.equal(fixture.store.get('cflag:31:45'), -3, '废弃态 -3');
+  // #595：裸输出发生在撕破分支已收行之后 → 真空行（重绘前）
   assert.equal(
     lines.filter((l) => l === '撕破衣服').length,
     2,
@@ -520,11 +518,11 @@ test('@COM111：两截上撕破（L:3，位 4 消 + CFLAG:45 = -3）', async () 
   assert.equal(
     lines[lines.lastIndexOf('撕破衣服') - 1],
     '',
-    'COM111:166 的真空行',
+    '那次裸输出的真空行',
   );
 });
 
-test('@COM111：两截下撕破的裙型措辞与双位消（L:4，位 8/16 + CFLAG:46）', async () => {
+test('com111：两截下撕破的裙型措辞与双位消（L:4，位 8/16 + CFLAG:46）', async () => {
   const { fixture, com_family } = rip_world(15, 5);
   fixture.set_inputs(12, 100);
   await com_family.call(111);
@@ -535,7 +533,7 @@ test('@COM111：两截下撕破的裙型措辞与双位消（L:4，位 8/16 + CF
   assert.equal(fixture.store.get('cflag:31:46'), -3);
 });
 
-test('@COM111：全身衣装撕破走 L:1/L:2（41=201，措辞「撕掉/撕坏」）', async () => {
+test('com111：全身衣装撕破走 L:1/L:2（41=201，措辞「撕掉/撕坏」）', async () => {
   const { fixture, com_family } = rip_world(PANTY | BRA | UPPER | SKIRT, 201);
   fixture.set_inputs(11, 100);
   await com_family.call(111);
@@ -543,66 +541,66 @@ test('@COM111：全身衣装撕破走 L:1/L:2（41=201，措辞「撕掉/撕坏�
   assert.ok(lines.includes(' [11] - 连衣裙的上半身撕掉'), 'L:1 菜单措辞');
   assert.ok(
     lines.includes('温妮穿着的连衣裙的上半身被撕坏了。'),
-    'L:1 动作行（:107，撕坏 vs 两截的撕破）',
+    'L:1 动作行（撕坏 vs 两截的撕破）',
   );
-  // L:1 只消位 4（全身衣装分上下两半撕，:86——与 COM110 T:1 的整件脱
+  // L:1 只消位 4（全身衣装分上下两半撕——与 com110 T:1 的整件脱
   // （4+8+16 一起消）不同）
   assert.equal(fixture.store.get('cflag:31:40'), PANTY | BRA | SKIRT);
   assert.equal(fixture.store.get('cflag:31:45'), -3);
 });
 
-test('@COM111：胸罩撕碎经 stronghold 门面写 CFLAG:44 = -3（L:5）', async () => {
+test('com111：胸罩撕碎经 stronghold 门面写 CFLAG:44 = -3（L:5）', async () => {
   const { fixture, com_family } = rip_world(PANTY | BRA, 5);
   fixture.set_inputs(13, 100);
   await com_family.call(111);
   assert.ok(
     fixture.lines.some((l) => l.text === '温妮的胸罩被撕碎了。'),
-    'L:5 动作行（:148）',
+    'L:5 动作行',
   );
   assert.equal(fixture.store.get('cflag:31:40'), PANTY);
-  // 属主 stronghold（ownership/cflag-ownership.yml "44"）——经门面写入的
+  // CFLAG:44 属于 stronghold 域，经门面写入的
   // 落点仍是 cflag:31:44（domain-check 守写入通道）
-  assert.equal(fixture.store.get('cflag:31:44'), -3, '门面写 CFLAG:44（:117）');
+  assert.equal(fixture.store.get('cflag:31:44'), -3, '门面写 CFLAG:44');
 });
 
-test('@COM111：内裤撕碎（L:6，CFLAG:43 = -3）与全裸收尾', async () => {
+test('com111：内裤撕碎（L:6，CFLAG:43 = -3）与全裸收尾', async () => {
   const { fixture, com_family } = rip_world(PANTY, 5);
-  // 尾键 100 同徒手守卫测试：收尾被删的变异形态会重绘菜单再等键
+  // 尾键 100 同徒手检查测试：收尾被删的变异形式会重绘菜单再等键
   fixture.set_inputs(14, 100);
   assert.equal(
     await com_family.call(111),
     0,
-    '撕完全裸 → RETURN 0（:159-165）',
+    '撕完全裸 → RETURN 0（全裸收尾后取消本回合）',
   );
   const lines = text_lines(fixture);
   assert.ok(lines.includes('温妮的内裤被撕碎了。'));
-  assert.ok(lines.includes('（已经全裸，撕无可撕）'), ':160 的收尾行');
-  // #595：COMF111:161 的裸 PRINTL 落在 :160 已收行之后 → 真空行
+  assert.ok(lines.includes('（已经全裸，撕无可撕）'), '收尾行');
+  // #595：裸输出发生在全裸提示已收行之后 → 真空行
   assert.equal(
     lines[lines.indexOf('（已经全裸，撕无可撕）') + 1],
     '',
-    '全裸收尾行之后是 COMF111:161 的真空行（其后才等键）',
+    '全裸收尾行之后是那次裸输出的真空行（其后才等键）',
   );
   assert.equal(fixture.store.get('cflag:31:40'), 0);
   assert.equal(fixture.store.get('cflag:31:43'), -3);
 });
 
-test('@COM111：特别服装撕破（L:0，CFLAG:47 = -3）', async () => {
+test('com111：特别服装撕破（L:0，CFLAG:47 = -3）', async () => {
   const { fixture, com_family } = rip_world(PANTY | SPECIAL, 0, 1);
   fixture.set_inputs(10, 100);
   await com_family.call(111);
   const lines = text_lines(fixture);
   assert.ok(lines.includes(' [10] - 围裙剥掉'), 'L:0 菜单行');
-  assert.ok(lines.includes('温妮的围裙被强行剥掉了。'), 'L:0 动作行（:100）');
+  assert.ok(lines.includes('温妮的围裙被强行剥掉了。'), 'L:0 动作行');
   assert.equal(fixture.store.get('cflag:31:40'), PANTY);
-  assert.equal(fixture.store.get('cflag:31:47'), -3, '废弃态 -3（:102）');
+  assert.equal(fixture.store.get('cflag:31:47'), -3, '废弃态 -3');
 });
 
-test('@COM111：史莱姆/贞操带徒手守卫（撕不动，RETURN 0）', async () => {
+test('com111：史莱姆/贞操带徒手检查（撕不动，RETURN 0）', async () => {
   for (const type of [11, 79]) {
     const world = rip_world(PANTY | SPECIAL, 0, type);
-    // 尾键 100 兜住「守卫被删后菜单重绘再要输入」的变异形态——正确的
-    // 实现到不了它，删了守卫的实现会重绘菜单等下一键
+    // 预留尾键 100，避免检查被删后的变异实现重绘菜单并一直等待输入。
+    // 正确实现直接退出，不会使用尾键。
     world.fixture.set_inputs(10, 100);
     assert.equal(
       await world.com_family.call(111),
@@ -612,33 +610,33 @@ test('@COM111：史莱姆/贞操带徒手守卫（撕不动，RETURN 0）', asyn
     const name = type === 11 ? '史莱姆' : '贞操带';
     assert.ok(
       world.fixture.lines.some((l) => l.text === `${name}被徒手撕破了。`),
-      ':93-94 的徒手行',
+      '徒手行',
     );
     assert.equal(
       world.fixture.store.get('cflag:31:40'),
       PANTY | SPECIAL,
-      '守卫分支不动着衣位',
+      '检查分支不动着衣位',
     );
   }
 });
 
-test('@COM111：[19] 返回穿脱（RETURN 0）与 [100] 算了（RETURN 1）', async () => {
+test('com111：[19] 返回穿脱（RETURN 0）与 [100] 算了（RETURN 1）', async () => {
   const back = rip_world(15, 5);
   back.fixture.set_inputs(19);
-  assert.equal(await back.com_family.call(111), 0, '19 → RETURN 0（:152）');
+  assert.equal(await back.com_family.call(111), 0, '19 → RETURN 0');
 
   const quit = rip_world(15, 5);
   quit.fixture.set_inputs(100);
-  assert.equal(await quit.com_family.call(111), 1, '100 → RETURN 1（:154）');
+  assert.equal(await quit.com_family.call(111), 1, '100 → RETURN 1');
   assert.ok(
     quit.fixture.lines.some((l) => l.text === ' [100]- 算了'),
-    'COM111 的 [100] 行 ] 与 - 间无空格（源 :63，1:1）',
+    'com111 的 [100] 行 ] 与 - 间无空格',
   );
 });
 
-test('@COM111：无效输入直回菜单头（无空行，ELSE 分支）', async () => {
+test('com111：无效输入直回菜单头（无空行，ELSE 分支）', async () => {
   const { fixture, com_family } = rip_world(15, 5);
-  fixture.set_inputs(5, 100); // 5 无对应分支 → GOTO INPUT_LOOP
+  fixture.set_inputs(5, 100); // 5 无对应分支 → 返回输入循环
   await com_family.call(111);
   const lines = text_lines(fixture);
   const menus = lines.filter((l) => l === '撕破衣服');
@@ -647,45 +645,45 @@ test('@COM111：无效输入直回菜单头（无空行，ELSE 分支）', async
     lines.indexOf('撕破衣服') + 1,
     lines.lastIndexOf('撕破衣服'),
   );
-  assert.ok(!between.includes(''), 'ELSE 分支重绘前无空行（:128-129）');
+  assert.ok(!between.includes(''), 'ELSE 分支重绘前无空行');
 });
 
-// —— COM110 ↔ COM111 的移轨 ——
+// —— com110 ↔ com111 的菜单切换 ——
 
-test('@COM110 [9]：COM111 返回 0（19 返回）→ COM110 重绘菜单；返回 1（算了）→ COM110 退出', async () => {
+test('com110 [9]：com111 返回 0（19 返回）→ com110 重绘菜单；返回 1（算了）→ com110 退出', async () => {
   const back = seed_world(15, 5);
   back.fixture.set_inputs(9, 19, 100);
   assert.equal(await back.com_family.call(110), 0);
   const lines = text_lines(back.fixture);
-  assert.ok(lines.includes('撕破衣服'), '移轨后 COM111 菜单在场');
+  assert.ok(lines.includes('撕破衣服'), '菜单切换后 com111 菜单在场');
   assert.equal(
     lines.filter((l) => l === '穿脱衣服').length,
     2,
-    'COM111 返回 0 → COM110 重绘（[9] 前后各一次 + 重绘）…实际：初次 + 返回后重绘',
+    'com111 返回 0 → com110 重绘：初次进入与返回后各显示一次',
   );
   assert.equal(
     lines[lines.lastIndexOf('穿脱衣服') - 1],
     '',
-    'COM110 重绘前有空行（:321）',
+    'com110 重绘前有空行',
   );
-  // #595：COMF110:313 的裸 PRINTL 落在 COM110 菜单已收行之后 → 真空行，
-  // 紧接 COM111 的菜单头
+  // #595：裸输出发生在 com110 菜单已收行之后 → 真空行，
+  // 紧接 com111 的菜单头
   assert.equal(
     lines[lines.indexOf('撕破衣服') - 1],
     '',
-    'COM111 菜单之前是 COMF110:313 的真空行',
+    'com111 菜单之前是那次裸输出的真空行',
   );
 
   const quit = seed_world(15, 5);
   quit.fixture.set_inputs(9, 100);
-  assert.equal(await quit.com_family.call(110), 0, 'COM111 算了 → COM110 退出');
+  assert.equal(await quit.com_family.call(110), 0, 'com111 算了 → com110 退出');
   const q = text_lines(quit.fixture);
   assert.equal(q.filter((l) => l === '穿脱衣服').length, 1, '退出前不再重绘');
 });
 
-// —— 引擎「@COMxx 返回 0 → 回合取消」语义（train-loop.js） ——
+// —— 调教指令「返回 0 → 回合取消」语义（train-loop.js） ——
 
-test('回合取消：COM110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHECK/EVENTCOMEND 不跑', async () => {
+test('回合取消：com110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHECK/EVENTCOMEND 不跑', async () => {
   const world = seed_world(15, 5);
   const { on } = world.fixture.load_module('system/event/registry');
   const seen = [];
@@ -699,7 +697,7 @@ test('回合取消：COM110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHE
     'system/train/train-loop',
   );
   world.fixture.load_module('system/train/com-caress');
-  world.era_flag.prevcom = 6; // golden train-natural:210 的接吻位
+  world.era_flag.prevcom = 6; // 上一回合为接吻指令
   world.fixture.set_inputs(7);
   const round = await execute_command_round(110);
   assert.deepEqual(
@@ -707,7 +705,7 @@ test('回合取消：COM110 RETURN 0 → 不结算、PREVCOM 不推、SOURCE_CHE
     { missing: false, cancelled: true },
     'RETURN 0 → cancelled（不与 missing 混同）',
   );
-  assert.equal(world.era_flag.prevcom, 6, 'PREVCOM 不推（golden :250 实证）');
+  assert.equal(world.era_flag.prevcom, 6, 'PREVCOM 不推');
   assert.deepEqual(seen, [], 'SOURCE_CHECK / EVENTCOMEND 不跑');
   assert.ok(
     !world.fixture.calls.some((c) => c.api === 'nextTurnInTrain'),

@@ -1,22 +1,22 @@
 /**
- * @file 角色信息的外观段与武器装饰行（@SHOW_APPEARACE / @SHOW_RING）。
+ * @file 角色信息的外观段与武器装饰行（show_appearance / show_ring）。
  *
- * 排版依据同 chara-info-abl-mark.js 的文件头：Emuera 命令名后的**第一个空格
- * 是命令与表达式之间的分隔符**，不算正文——`PRINT  阴茎` 输出 ` 阴茎`（一个
- * 前导空格）。逐字抄源时把这一格减掉。
+ * 排版依据同 chara-info-abl-mark.js 的文件头：命令名后的**第一个空格
+ * 是命令与表达式之间的分隔符**，不算正文——`PRINT  阴茎` 对应 ` 阴茎`（一个
+ * 前导空格）。逐字转写时把这一格减掉。
  *
  * 这一段是**一个持续累加的行缓冲**：叙述逐段追加，换行才收行。阴毛那
- * 七档 IF 链与穿环段都没有 ELSE 兜底，两条链都没命中时**行不收**，后一
+ * 七档 IF 链与穿环段都没有 ELSE 分支，两条链都没命中时**行不收**，后一
  * 段直接接在同一行上。本文件用 row 缓冲承载，只在有
  * 换行的位置收行；没收的行在出口处收掉（见 end_row 调用处的注释）。
  *
  * 有意偏离：
- *   - `ARG:0`（指定角色）→ 显式 cid，TARGET 换出换入不移植（chara-bars.js 同款）；
+ *   - 指定角色走显式 cid，TARGET 换出换入不移植（chara-bars.js 同款）；
  *   - 返回值（三处提前返回 1/0）照原样实现，调用方不使用；
  *   - `W:0 = CFLAG:…` 的等价物是一次性的装备记录对象（`{存储编号}`，
- *     equip-print.js 文件头与 page-tailor.js:514 同款）；
+ *     equip-print.js 文件头与 page-tailor.js 同款）；
  *   - 阴毛段的繁/日字形（`陰部`「長毛」「整斉」）按 #60 的简体锁落简体——
- *     源那一段三种文字混用，玩家可见文本一律简体。
+ *     三种文字混用的字形一律落简体，玩家可见文本一律简体。
  */
 
 const era = require('#/era-electron');
@@ -30,7 +30,7 @@ const {
 } = require('#/page/page-clothtype');
 const { chara_callname } = require('#/utils/callname-utils');
 
-/** CFLAG 下标（源里的裸下标，逐个注释） */
+/** CFLAG 下标（裸下标，逐个注释） */
 const CF_GAPED = 40; // 着衣状态位域
 const CF_CLOTH_TYPE = 42; // 特别服装类型
 const CF_PIERCING = 7; // 穿环位域
@@ -38,7 +38,7 @@ const CF_WEAPON = 550; // 武器
 const CF_RING_A = 551; // 装饰Ａ
 const CF_RING_B = 552; // 装饰Ｂ
 
-/** CFLAG:40 的位（源 :1230/:1240/:1253/:1257/:1263/:1269/:1276 的逐条判据） */
+/** CFLAG:40 的位（逐条位测试） */
 const BIT_TOPS_OFF = 6; // 上半身赤裸（位 1 + 位 2）
 const BIT_SKIRT = 8; // 裙装
 const BIT_PANTIES = 1; // 已穿内裤
@@ -47,7 +47,7 @@ const BIT_DIAPER = 64; // 尿布／玩偶装
 /** CFLAG:7 的位（与 CFLAG:40 的位号同值不同域，单独取名以免读串） */
 const PIERCING_NIPPLE = 1; // 乳头
 
-/** 阴毛段（TALENT:310）的七档阈值（源 :1285-1298） */
+/** 阴毛段（TALENT:310）的七档阈值 */
 const HAIR_BANDS = [
   { max: 1, text: '的性器完全没有长毛。' },
   { max: 20, text: '的阴部覆盖着刚刚长出的阴毛。' },
@@ -57,7 +57,7 @@ const HAIR_BANDS = [
   { max: Infinity, text: '从阴阜到肛门都被茂密的阴毛所覆盖。' },
 ];
 
-/** 穿环位与部位名（源 :1302-1365 的七条 SIF，顺序即输出顺序） */
+/** 穿环位与部位名（七条位测试，顺序即输出顺序） */
 const PIERCING_BITS = [
   { bit: 8, name: '阴茎' }, // （女体改称阴蒂）
   { bit: 64, name: '鼻子' },
@@ -70,7 +70,7 @@ const PIERCING_BITS = [
 
 const PIERCING_GENITAL = 8; // 第一枚（阴茎/阴蒂）的位号，改名用
 
-/** CFLAG:40 的「私处不可见」位域（源 :1257 `CFLAG:40 & 17`，位 1 + 位 16） */
+/** CFLAG:40 的「私处不可见」位域（`CFLAG:40 & 17`，位 1 + 位 16） */
 const MASK_GENITAL_HIDDEN = 17;
 
 /** 素质编号（yml/Talent.yml） */
@@ -95,9 +95,9 @@ function chara_no(cid) {
 }
 
 /**
- * @SHOW_APPEARACE（:1209-1388）：角色当前外观的整屏描述。
+ * show_appearance：角色当前外观的整屏描述。
  * @param {number} cid 角色 ID
- * @returns {number} 源 :1236 的 RETURN 1，或三条提前 RETURN 0（其余路径隐式 0）
+ * @returns {number} 玩偶装支 1；三条提前返回与其余路径 0
  */
 function show_appearance(cid) {
   let row = [];
@@ -158,7 +158,7 @@ function show_appearance(cid) {
     return 0;
   }
 
-  row.push({ content: ' ' }); // PRINT（一个半角空格）
+  row.push({ content: ' ' }); // （一个半角空格）
   if ((g & BIT_SKIRT) !== 0) {
     // 掀起下摆
     row.push({ content: '掀起' });
@@ -170,7 +170,7 @@ function show_appearance(cid) {
   if (chara_no(cid) !== 0) {
     row.push({ content: chara_callname(cid) });
   }
-  // 阴毛（TALENT:125 白虎优先；无 ELSE 兜底 → 不命中则本行不收）
+  // 阴毛（TALENT:125 白虎优先；无 ELSE 分支，不命中则本行不收）
   const hair = talent(cid, TALENT_HAIR_STATE);
   if (talent(cid, TALENT_WHITE_TIGER) === 1) {
     row.push({ content: '露出了永久脱毛的阴部。' });
@@ -188,7 +188,7 @@ function show_appearance(cid) {
     if (bit === PIERCING_NIPPLE && (g & BIT_TOPS_OFF) !== 0) continue;
     if ((p & bit) === 0) continue;
     row.push({ content: pierced > 0 ? '、' : ' ' }); // 等的两种间隔
-    // 生殖器那枚按性别取名（源里是两个字面量）
+    // 生殖器那枚按性别取名（男女两个字面量）
     row.push({
       content:
         bit === PIERCING_GENITAL &&
@@ -218,15 +218,15 @@ function show_appearance(cid) {
       era.print(` ${where}刻着『${cstr(cid, index)}』样的刺青。`);
     }
   }
-  // 出口处把没收的行收掉：源里紧跟的 `CUSTOMDRAWLINE ‥` 会接在未收的
-  // 行后面（` 名字‥‥‥`），ere 的 print 与
+  // 出口处把没收的行收掉：后面的等号分割线若接在未收的
+  // 行后面会拼出「 名字‥‥‥」，ere 的 print 与
   // drawLine 各自成行，接不上，收成一行才不会丢玩家可见的字。
   if (row.length !== 0) end_row();
   return 0;
 }
 
 /**
- * @SHOW_RING（:1393-1430）：武器与两枚装饰（魔法装备）一行。
+ * show_ring：武器与两枚装饰（魔法装备）一行。
  *
  * 空位（存储编号 ≤ -1）用「空手」/「无」；非空位走 equip-print 的片段出口
  * （装备名的 LightSalmon 由那段自带）。
@@ -234,7 +234,7 @@ function show_appearance(cid) {
  * @param {number} cid 角色 ID
  */
 function show_ring(cid) {
-  const stone = [{ content: ' 【武器】: ' }]; // （2 空格减命令分隔符）
+  const stone = [{ content: ' 【武器】: ' }]; // （2 个空格减掉分隔符那 1 格，见文件头）
   const weapon = cflag(cid, CF_WEAPON);
   if (weapon <= -1) {
     stone.push({ content: '空手' });
@@ -255,10 +255,10 @@ function show_ring(cid) {
   stone.push({ content: ' 【装饰B】: ' });
   const ring_b = cflag(cid, CF_RING_B);
   if (ring_b <= -1) {
-    stone.push({ content: '无' }); // PRINTL 无
+    stone.push({ content: '无' });
   } else {
     stone.push(...equip_ring_spans({ 存储编号: ring_b }));
-    stone.push({ content: ' ' }); // PRINTL（一个半角空格）
+    stone.push({ content: ' ' }); // （行尾一个半角空格）
   }
   era.print(stone);
 }

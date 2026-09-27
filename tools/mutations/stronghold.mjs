@@ -1175,7 +1175,7 @@ export default [
     must_mention: '无素质无持有的基线',
   },
   {
-    desc: 'M8882 SALEITEM_CHECK 已持有非消耗品的下架判据取反（== 1 → == 0）',
+    desc: 'M8882 saleitem_check 已持有非消耗品的下架条件取反（== 1 → == 0）',
     file: 'ere/page/page-item-shop.js',
     find: '    if ((era.get(`item:${i}`) || 0) === 1) {',
     replace: '    if ((era.get(`item:${i}`) || 0) === 0) {',
@@ -1183,7 +1183,7 @@ export default [
     must_mention: '已持有一件',
   },
   {
-    desc: 'M8883 SALEITEM_CHECK 消耗品上限的判据松一格（>= 99 → > 99）',
+    desc: 'M8883 saleitem_check 消耗品上限的条件松一格（>= 99 → > 99）',
     file: 'ere/page/page-item-shop.js',
     find: 'if ((era.get(`item:${id}`) || 0) >= STOCK_LIMIT) {',
     replace: 'if ((era.get(`item:${id}`) || 0) > STOCK_LIMIT) {',
@@ -1191,7 +1191,7 @@ export default [
     must_mention: '99 上限',
   },
   {
-    desc: 'M8884 SALEITEM_CHECK ラブダイナミックスの素质判据取反（=== 1）',
+    desc: 'M8884 saleitem_check ラブダイナミックスの素质条件取反（=== 1）',
     file: 'ere/page/page-item-shop.js',
     find: 'if (talent(0, LOVE_DYNAMICS_TALENT) === 1) {',
     replace: 'if (talent(0, LOVE_DYNAMICS_TALENT) !== 1) {',
@@ -1207,7 +1207,7 @@ export default [
     must_mention: 'ラブダイナミックス',
   },
   {
-    desc: 'M8886 SALEITEM_CHECK 技巧上限的判据错一档（>= 10 → > 10）',
+    desc: 'M8886 saleitem_check 技巧上限的条件错一档（>= 10 → > 10）',
     file: 'ere/page/page-item-shop.js',
     find: 'const TECHNIQUE_MAX = 10;',
     replace: 'const TECHNIQUE_MAX = 9;',
@@ -1426,7 +1426,7 @@ export default [
     must_mention: '勋章闸',
   },
   {
-    desc: 'M8913 @SHOW_SHOP 的道具商店上界错一位（< 54 → < 55）',
+    desc: 'M8913 show_shop 的道具商店上界错一位（< 54 → < 55）',
     file: 'ere/page/page-shop.js',
     find: 'if (era_flag.bought >= 0 && era_flag.bought < 54) {',
     replace: 'if (era_flag.bought >= 0 && era_flag.bought < 55) {',
@@ -1434,9 +1434,9 @@ export default [
     must_mention: '陷阱商店',
   },
   {
-    desc: 'M8914 店内 997 的 JUMP 不再重画道具商店（item_shop → 无）',
+    desc: 'M8914 店内 997 的跳转不再重画道具商店（item_shop 调用删）',
     file: 'ere/page/page-shop.js',
-    find: '    await item_shop(); // JUMP ITEM_SHOP（切道具商店并立即重画）',
+    find: '    await item_shop(); // 切道具商店并立即重画',
     replace: '    // 变异：切店不重画',
     tests: ['shop-trap'],
     must_mention: '切回道具商店',
@@ -1451,7 +1451,7 @@ export default [
     must_mention: '商品一览的排版字面量',
   },
   {
-    desc: 'M8916 120 分支的满员判据宽一位（< MAX_CHARANUM → <=）',
+    desc: 'M8916 120 分支的满员条件宽一位（< MAX_CHARANUM → <=）',
     file: 'ere/page/page-shop.js',
     find: 'if (era.getAddedCharacters().length < MAX_CHARANUM) {',
     replace: 'if (era.getAddedCharacters().length <= MAX_CHARANUM) {',
@@ -1808,7 +1808,7 @@ export default [
     must_mention: '53 号选择面的翻页',
   },
   {
-    desc: 'M9118 30 号选择面的页高错一格（@USE_ITEM 的同款判据 * 20 → * 21）',
+    desc: 'M9118 30 号选择面的页高错一格（使用支的同款条件 * 20 → * 21）',
     file: 'ere/page/page-item-shop.js',
     find: '      // 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {\n        no_page += 1;\n      }\n      continue;\n    }\n    if (!era.getAddedCharacters().includes(result)) {',
     replace:
@@ -1995,7 +1995,7 @@ export default [
   {
     // #562：PRINTLC 不换行，:80 的 PRINTL 只结束两个按钮那一行（见 CONTEXT.md
     // 「输出 API 与原作的对应」）
-    desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-item-shop.js',
     find: "  era.setAlign('left');\n\n  return 0;\n}",
     replace:

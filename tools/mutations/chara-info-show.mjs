@@ -141,7 +141,7 @@ export default [
   ),
   make(
     8710,
-    'SHOW_BLOCK：三围行的守卫位由 15 改成 12',
+    'show_block：三围行的条件位由 15 改成 12',
     SHOW,
     '  const show_size = getbit(BIT_SIZE) && is_not_master;',
     '  const show_size = getbit(BIT_AGE) && is_not_master;',
@@ -157,7 +157,7 @@ export default [
   ),
   make(
     8712,
-    'SHOW_BLOCK：受注任务守卫的 CFLAG:534 判据由 1 改成 0',
+    'show_block：受注任务检查的 CFLAG:534 条件由 1 改成 0',
     SHOW,
     '    (era.get(`cflag:${cid}:534`) || 0) === 1 &&',
     '    (era.get(`cflag:${cid}:534`) || 0) === 0 &&',
@@ -181,7 +181,7 @@ export default [
   ),
   make(
     8715,
-    'SHOW_TALENT：简单臂的起始计数 U 由 6 改成 0',
+    'show_talent：简单分支的起始计数 U 由 6 改成 0',
     TALENTS,
     'const PLAIN_START_U = 6;',
     'const PLAIN_START_U = 0;',
@@ -189,7 +189,7 @@ export default [
   ),
   make(
     8716,
-    'SHOW_TALENT：简单臂的跳过区间上界由 325 改成 324（325 被误跳）',
+    'show_talent：简单分支的跳过区间上界由 325 改成 324（325 被误跳）',
     TALENTS,
     'const PLAIN_SKIP_TO = 325;',
     'const PLAIN_SKIP_TO = 324;',
@@ -213,7 +213,7 @@ export default [
   ),
   make(
     8720,
-    'SHOW_TALENT：男体的淫核改名判据由 230 改成 231',
+    'show_talent：男体的淫核改名条件由 230 改成 231',
     TALENTS,
     "    else if (id === 230) label = '绝伦';",
     "    else if (id === 231) label = '绝伦';",
@@ -277,7 +277,7 @@ export default [
   ),
   make(
     8728,
-    'SHOW_APPEARACE：上身的位由 6 改成 4（胸部刺青的守卫判错）',
+    'show_appearance：上身的位由 6 改成 4（胸部刺青的条件判错）',
     APPEAR,
     'const BIT_TOPS_OFF = 6; // 上半身赤裸（位 1 + 位 2）',
     'const BIT_TOPS_OFF = 4; // 上半身赤裸（位 1 + 位 2）',
@@ -303,7 +303,7 @@ export default [
   ),
   make(
     8731,
-    'STAIN_INFO：男人跳过乳房位的判据被删',
+    'stain_info：男人跳过乳房位的条件被删',
     STAIN,
     '    if (count === PART_BREAST && t(TALENT_MAN) !== 0) continue;',
     '    if (false && count === PART_BREAST && t(TALENT_MAN) !== 0) continue;',
@@ -321,7 +321,7 @@ export default [
   ),
   make(
     8733,
-    'SHOW_EQUIP_1：触手形态的优先判据由 90 改成 89',
+    'show_equip_1：触手名的优先条件由 90 改成 89',
     EQUIP,
     '    if (t(bit) && t(90)) push(` ${tentacle}`);',
     '    if (t(bit) && t(89)) push(` ${tentacle}`);',
@@ -353,7 +353,7 @@ export default [
   ),
   make(
     8738,
-    'ColorJudgmentWorB：白/黑字的判据由 <= 128 改成 <= 100',
+    'color_judgment_wor_b：白/黑字的条件由 <= 128 改成 <= 100',
     MAIN,
     '  const value = average <= 128 ? 255 : 0;',
     '  const value = average <= 100 ? 255 : 0;',
@@ -361,7 +361,7 @@ export default [
   ),
   make(
     8739,
-    'SHOW_CHARA_INFO：献祭满足的判据由 30 改成 20',
+    'show_chara_info：献祭满足的条件由 30 改成 20',
     MAIN,
     'const SACRIFICE_FULL = 30;',
     'const SACRIFICE_FULL = 20;',
@@ -489,7 +489,7 @@ export default [
   ),
   make(
     8755,
-    'STAIN_INFO：私处位的跳位判据错挂到乳房位',
+    'stain_info：私处位的跳位条件错挂到乳房位',
     STAIN,
     '    if (count === PART_VAGINA && t(TALENT_MAN) !== 0) continue;',
     '    if (count === PART_BREAST && t(TALENT_MAN) !== 0) continue;',
@@ -497,7 +497,7 @@ export default [
   ),
   make(
     8756,
-    'STAIN_INFO：助手段的整段守卫由 ASSI >= 0 改成 ASSI > 0',
+    'stain_info：助手段的整段检查由 ASSI >= 0 改成 ASSI > 0',
     STAIN,
     '  if (era_flag.assi >= 0) {',
     '  if (era_flag.assi > 0) {',
@@ -563,7 +563,7 @@ export default [
   // —— #586：献祭名单轮的返回编号（预设 100 × 原作的 [100] 撞号） ——
   make(
     11900,
-    'SHOW_CHARA_INFO：名单轮的返回编号退回原作的 100（与预设 100 的角色行撞号复现）',
+    'show_chara_info：名单轮的返回编号退回 100（与预设 100 的角色行撞号复现）',
     MAIN,
     'const LIST_RETURN = 999;',
     'const LIST_RETURN = 100;',
@@ -572,7 +572,7 @@ export default [
   ),
   make(
     11901,
-    'SHOW_CHARA_INFO：名单轮的返回按钮打回原作的 100（判定仍按 LIST_RETURN，敲 999 被拒收）',
+    'show_chara_info：名单轮的返回按钮打回 100（判定仍按 LIST_RETURN，敲 999 被拒收）',
     MAIN,
     "    era.printButton('返回', LIST_RETURN);",
     "    era.printButton('返回', 100);",
@@ -582,8 +582,8 @@ export default [
     11902,
     'SHOW_CHARA_INFO：名单轮的返回判定退回 100（打印是 999，敲 999 落进名单循环）',
     MAIN,
-    '    if (result === LIST_RETURN) {\n      return true; // ARG = shadow; RESTART\n    }',
-    '    if (result === 100) {\n      return true; // ARG = shadow; RESTART\n    }',
+    '    if (result === LIST_RETURN) {\n      return true; // 重画（外层循环继续）\n    }',
+    '    if (result === 100) {\n      return true; // 重画（外层循环继续）\n    }',
     '输入不合法！请输入以下值之一',
   ),
   // —— #586 的十个探针暴露的覆盖缺口（条件键两端与编号基数、勇者档、自身排除、
@@ -622,7 +622,7 @@ export default [
   ),
   make(
     11905,
-    'SHOW_CHARA_INFO：名单不再排除献祭对象自身（源 :98 的 temp != shadow 去掉）',
+    'show_chara_info：名单不再排除献祭对象自身（temp != shadow 的排除被去掉）',
     MAIN,
     `      if (
         id === shadow ||`,
@@ -634,7 +634,7 @@ export default [
     11906,
     'SHOW_CHARA_INFO：名单轮的返回从 RESTART 改成直接退到首页（出口轮不再重画）',
     MAIN,
-    '      const restart = await sacrifice_flow(cid, background);\n      if (restart) continue; // RESTART',
+    '      const restart = await sacrifice_flow(cid, background);\n      if (restart) continue; // 重画一轮',
     '      const restart = await sacrifice_flow(cid, background);\n      if (restart) return 1; // 变异：RESTART 改成直接退到首页',
     'RESTART 后出口轮重画',
   ),
