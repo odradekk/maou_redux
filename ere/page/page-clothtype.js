@@ -1,9 +1,9 @@
 /**
  * @file 服装类型的显示串构造：@PRINT_CLOTHTYPE / _MAIN / _MAIN2 / _SPECIAL
  * （issue #215 J5；PRINT_/GET_ 分法见 #106 裁定三：PRINT_ → ere/page/，
- * GET_ → ere/system/cloth-lookup.js，两处不共享表——原作就是两份有差异
- * 的拷贝，MAIN2 缺 CASE 9、SPECIAL 的 98/99 文本不同，见 cloth-lookup.js
- * 文件头与 #14 登记）。
+ * GET_ → ere/system/cloth-lookup.js，两处不共享表——两版取串表本身有差
+ * 异：MAIN2 缺 CASE 9、SPECIAL 的 98/99 文本不同，既有行为、被用例钉
+ * 住，见 cloth-lookup.js 文件头）。
  *
  * == 出口形态（equip-print.js 的「两种出口」同款裁定） ==
  *

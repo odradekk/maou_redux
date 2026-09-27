@@ -15,7 +15,7 @@
  *
  * 2. **物品表落成数据表**（原作的 if/elseif 长链是纯数据）：四张表
  *    `CASUAL_ITEMS` / `NORMAL_ITEMS` / `ACCESSORY_ITEMS` / `SPECIAL_ITEMS`
- *    逐条照抄（编号、名字、价格、顺从档），S 的动态调整作为小函数挂在各条上
+ *    逐条列出（编号、名字、价格、顺从档），S 的动态调整作为小函数挂在各条上
  *    （表里写不出「10 - ABL:21」这类判据）。表驱动让测试能整表走完每个维度
  *    （覆盖面标准），也让 42/43/27 条的字面量逐个可钉。
  *
@@ -41,13 +41,13 @@
  *
  * 5a. **一处不可达的判据半支**：演出判据里的 `R == 99`（:226）在本代码路径
  *     取不到——装备品表的 R 值是 79（贞操带）/ 98（尿道导管）等，没有 99。
- *     1:1 保留（原作改过表之后可能补上 99 号装备），另一支 `R == 98` 有用例。
+ *     R == 99 半支当前取不到，保留作防御，另一支 `R == 98` 有用例。
  *
  * 5b. **一处结构性不可达的守卫，登记在此**：@EQUIP_MAGIC_ITEM / @EQUIP_MAGIC_WEAPON
  *     强化档画面里的「钱不够！！」（`MONEY < RESULT * 10000`）永远不成立——
  *     可选档位由当时的 `MONEY / 10000` 现算（:1068-1071/:1206-1209 的 X），
  *     打印出来的按钮集合里不会有超过它的档位，而 ere 的输入集就是已打印按钮。
- *     1:1 保留（原作玩家可以手敲任意数字，所以那句在原作是可达的）。
+ *     该守卫恒不命中，保留作防御。
  *
  * 6. **`@LIFE_LIST_TAILOR` 的列表**：原作是 `REPEAT CHARANUM` + 排除魔王/
  *    濒死/非待机，逐行打「编号 名字 / 穿着…」。列表行按 #391（page-chara-info.js 的 print_chara_row）的通例做成
@@ -55,7 +55,7 @@
  */
 
 'use strict';
-/* eslint-disable no-irregular-whitespace -- 装备槽与装备名的全角空格（原作 :992/:1143 的 `装饰A　:` / `武器　:`），1:1 保留原文标点 */
+/* eslint-disable no-irregular-whitespace -- 装备槽与装备名后的全角空格（`装饰A　:` / `武器　:`，原文标点保留） */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
@@ -793,7 +793,7 @@ async function pick_enhance_amount() {
     if (result === 999) {
       return null;
     }
-    // 原作判的是 X（所持金的档位数）而非 RESULT，1:1 保留这一判据
+    // 判据读档位上限（max_amount）而非输入值——每轮重算且按钮集合受限，守卫恒不命中
     if (max_amount < 0 || max_amount > ENHANCE_MAX) {
       continue;
     }

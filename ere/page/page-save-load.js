@@ -3,11 +3,10 @@
  * 删除（@SYSTEM_DELDATA）/ 槽位列表（@SYSTEM_LIST_DATA）+ 存档备注文本
  * （@SAVEINFO）的 1:1 移植（issue #136）。
  *
- * @SYSTEM_LOADEND（SYSTEM_DATA.ERB:328-469，142 行）**不移植**：全库静态搜索
- * 零调用者，且它不是 Emuera 保留名（保留名 @SYSTEM_TITLE / @TITLE_LOADGAME
- * / @SYSTEM_AUTOSAVE / @EVENTLOAD 等，技能 system-flow.md「主要系统函数一览」）
- * ——死代码，登记 #14；「不要顺手接上」由 test/page-save-load.test.js 的反向
- * 钉与变异条目 M232 守住。
+ * @SYSTEM_LOADEND 不移植：全库静态搜索零调用者，且它不是引擎保留名
+ * （保留名是 SYSTEM_TITLE / TITLE_LOADGAME / SYSTEM_AUTOSAVE / EVENTLOAD
+ * 等，技能 system-flow.md「主要系统函数一览」）——读档成功的收尾由
+ * 本文件的 EVENTLOAD 链与转场承担。
  *
  * 原作 → ere 的引擎映射（本文件全部语义依据集中在此）：
  *   - SAVENOS()（分页步长）→ 常量 PAGE_LEN = 20。它是 Emuera 的
@@ -215,9 +214,8 @@ function push_last_save_no(idx) {
  *   TARGET >= 1 时 ` 正在调教:名字 `（名字左对齐宽 14）否则 24 个空格 →
  *   有故事名时追加 `『故事名』`。
  *
- * 原作的副作用 1:1 保留（:959-963）：SIF FLAG:1 >= 0 → TARGET = FLAG:1、
- * SIF FLAG:2 >= 0 → ASSI = FLAG:2——@SAVEINFO 会把指针改写成「前回调教
- * 目标/助手」（Emuera 的 FLAG 零值 0 恒 >= 0，新档上等于把指针归零）。
+ * 读档备注的副作用：FLAG:1/FLAG:2 >= 0 时把 TARGET/ASSI 指针改回前回调教
+ * 目标/助手（FLAG 缺省 0 也满足 >= 0，新档上等于把指针归零）。
  *
  * @returns {string} 备注正文（不含时间戳前缀）
  */
@@ -267,7 +265,7 @@ async function set_story_name(anchor) {
   await era.clear(era.getLineCount() - anchor);
   // CASE 200 的 DRAWLINE
   era.drawLine();
-  // PRINTFORM 请输入一个名称故事：（原作文案即此语序，1:1 保留）
+  // PRINTFORM 请输入一个名称故事：（提示语即此语序）
   era.print('请输入一个名称故事：');
   const current = chara(0).system.故事名;
   if (current.length > 0) {
@@ -500,7 +498,7 @@ async function save_game() {
  * **对原作的有意偏离**：原作全库只有一处玩家存档写点（SYSTEM_DATA.ERB:185，
  * 槽位 0-98），99 号槽在读档界面被渲染却没有任何写点，原作也未定义 Emuera
  * 的内建自动存档钩子 @SYSTEM_AUTOSAVE——占用它不改变任何原作可见行为，
- * 正当性见 ADR-0006「后果」节，追溯登记 #14。
+ * 正当性见 ADR-0006「后果」节。
  *
  * 行为边界（有意取舍，写明）：
  *   - 备注 = 「自动」前缀 + 手动档同款 `%GETTIMES()% %SAVEDATA_TEXT%`

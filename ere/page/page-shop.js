@@ -197,7 +197,7 @@ async function usershop(result) {
   //     失效，只有 997/998/999 三个键有反应。
   // 三处 CALL CLEAR_SHOP（清 ITEMSALES:0-299）自 #399 起是真身——
   // @SHOW_SHOP 每轮进店也清一次（本文件 show_shop 的 clear_shop），此处是
-  // 退出/切店时的即时清账（1:1 保留两次清）。
+  // 退出/切店时两次清账（既有行为）。
   if (result === 999 && era_flag.bought >= 0) {
     clear_shop();
     era_flag.bought = -1;
@@ -259,7 +259,7 @@ async function usershop(result) {
           }
         }
         // SIF ASSI == 0 → ASSI = -1（select_assi 的两个真实分支恒把
-        // ASSI 置为 -1 或有效 ID，此处是原作留的防御性兜底，1:1 保留）
+        // ASSI 置为 -1 或有效 ID，此处是防御性兜底，结构保留）
         if (era_flag.assi === 0) {
           era_flag.assi = -1;
         }
@@ -450,11 +450,10 @@ async function usershop(result) {
  *   - 10 层：近卫兵头 → 本层的护卫名单（!CFLAG:1 && EX_TALENT:1 一行一人，
  *     [名] —— + TALENT:200-211 素质名）→ 分隔线 → 怪物库存（190 段）。
  *
- * **两条与「10 层」无关的既有行为，按原作保留**：
- *   - 护卫名单在 `@ENEMY_EXIST2` 里由**全局 X == 10** 触发（#548 订正，
- *     #14 登记）——从地城概况进来时 X 恒为 10，所以**1-9 层也会追加**全部
- *     护卫的 `[护卫中]…` 行；10 层这里的是原作本条分支自己的名单。
- *   - 首行的空行由 `@ENEMY_EXIST2` 落（调用方的行已落）。
+ * **近卫层以外不追加护卫名单**（#652 改正）：ENEMY_EXIST2 的护卫名单
+ * 按阶层实参判断、只出在第 10 层，从本画面进 1-9 层时不再追加
+ * `[护卫中]…` 行；第 10 层的是本作本条分支自己的名单。
+ * 首行的空行由 ENEMY_EXIST2 落（调用方的行已落）。
  *
  * 怪物行的 {ITEM:LOCAL,2,LEFT}：数量左对齐两位（padEnd）拼「只+名」
  * （@MONSTERNAME 的拼接名，含改造前缀——monstername 真身 #176）。
@@ -497,10 +496,9 @@ async function show_floor(arg) {
       era.print(install_fragments.join('')); // 四格合一行（PRINTFORM 链）
       era.drawLine(); // IF LOCAL:1 → PRINTL + DRAWLINE
     }
-    // @ENEMY_EXIST2（#180 真身）+ 空行。第二个实参是原作的 `X == 10`：
-    // 从地城概况进来时 X 恒为 10（DRAW_MAINMENU 楼层循环的末值），所以
-    // 1-9 层也会追加护卫名单（#548 订正，依据见 @ENEMY_EXIST2 的 JSDoc）
-    await enemy_exist2(arg, true);
+    // @ENEMY_EXIST2（#180 真身）+ 空行。护卫名单只出在近卫层（#652：
+    // 1-9 层一律不追加），与从部下一览进来的行为一致
+    await enemy_exist2(arg);
     era.println();
   } else {
     // 近卫层：近卫兵头 + 护卫名单（GOTO MONSTERDATA 的等价跳过：

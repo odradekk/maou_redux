@@ -34,8 +34,8 @@
  *    输入就进不去」**——那是 #530 的旧推断，#572 已纠正（详见
  *    docs/research/plaintext-options.md 第二节 C 类）。
  *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的兜底支
- *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，1:1 保留
- *    不补用例（page-ability-up.js 文件头同款登记）。
+ *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，结构保留
+ *    不补用例（page-ability-up.js 文件头同款）。
  *    **两处自由文字输入（刺青 :1864、自由局部调教 :4131）的 0 ＝ 空输入**
  *    （#567）：原作靠「留空」表达消去/重置，ere 侧经共享判据
  *    `#/utils/input-text` 把引擎归一后的 0 还原成空串（引擎把 `''` 与 `"0"`
@@ -122,7 +122,7 @@
  */
 
 'use strict';
-/* eslint-disable no-irregular-whitespace -- 原作正文里的全角空格（:2140 的 `　[…]`、:2192 的 `　　此项改造…`、:2147 的 `%SAVESTR:RESULT%　…`），1:1 保留原文标点 */
+/* eslint-disable no-irregular-whitespace -- 正文里的全角空格（`　[…]`、`　　此项改造…`、`%SAVESTR:RESULT%　…`，原文标点保留） */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
@@ -452,7 +452,7 @@ async function modify_bustup(rand = default_rand) {
       return 0; // 的 ELSE RETURN 0（不可达，见文件头第 3 条）
     }
     // 乳房档位递升。**不调 N_BREAST_GROW**：那条函数是妊娠/母乳
-    // 路径的升档，文案与档位取舍都不同（超乳不再升），照抄原作的这一份
+    // 路径的升档，文案与档位取舍都不同——这里采用这一份档位取舍（超乳不再升）
     if (talent(cid, 116)) {
       era.print(`《${savestr(cid)}的【${talentname(109)}】消去了》`);
       chara(cid).chara.绝壁 = 0; // TALENT:T:116 = 0
@@ -509,7 +509,7 @@ async function modify_bustdown(rand = default_rand) {
     if (answer !== 0) {
       return 0; // 的 ELSE RETURN 0
     }
-    // 乳房档位递降（同 :358-375：文案与 N_BREAST_REVERSE 不同，照抄）
+    // 乳房档位递降（同 :358-375：文案与 N_BREAST_REVERSE 不同，同左：档位递降的既有文案）
     if (talent(cid, 119)) {
       era.print(`《${savestr(cid)}获得了【${talentname(114)}】》`);
       chara(cid).chara.超乳 = 0;
@@ -2845,8 +2845,8 @@ async function secret_labo(rand = default_rand) {
       await encharmed_erase();
     } else if (result === 68) {
       // 生命摇篮：勇者数量与上限的六道守卫（过了才进 @CHAR_CREATE）。
-      // 六支的判据与阈值逐字照抄原作，不抽成表：各支的领域旗组合互不相同，
-      // 抽表反而看不清「哪一支在拦」
+      // 六支的判据与阈值各支互不相同，有意不抽成表：抽表反而看不清
+      // 「哪一支在拦」
       if (game.event.人间界征服完了 === 0 && charanum() > 60) {
         era.print('勇者数量过多');
         await era.waitAnyKey(); // PRINTW

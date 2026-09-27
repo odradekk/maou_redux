@@ -151,7 +151,7 @@ function print_ex_counters(cid) {
 // @SHOW_STATUS 的 MAXBASE 修正段（:128-142）：射精槽（BASE:2）上限缺省
 // 10000、早泄（TALENT:133）压到 5000；三处（目标/主人/助手）判据各有微差
 // （助手档是 ELSEIF MAXBASE:2 != 0 && TALENT:133，与另两处的 != 5000 不同，
-// 1:1 保留）
+// 三处守卫的写法差异是既有行为）
 function fix_maxbase(cid, assi_variant = false) {
   const gauge = era.get(`maxbase:${cid}:2`) || 0;
   if (gauge === 0) {
@@ -313,7 +313,7 @@ async function draw_status_screen(target) {
   }
 
   // 母乳（助手）：守卫 IF ASSI > 0（注意与射精段的 ASSI >= 0 不同，
-  // 原作两处写法不一致，1:1 保留）
+  // 两处守卫写法不一致是既有行为）
   if (era_flag.assi > 0 && era.get(`talent:${era_flag.assi}:130`)) {
     if (!(era.get(`maxbase:${era_flag.assi}:3`) > 0)) {
       era.set(`maxbase:${era_flag.assi}:3`, 10000);

@@ -1,7 +1,9 @@
 /**
- * ere/event/event-ending.js @ENDING_1 真身与 @ENDING_3/4/5/@END10_55 接线
- * 的行为测试（issue #118），外加 ere/page/page-invasion.js @INVASION_CHECK
- * 五组条件的触发测试（经模块公开接口 invasion_check 直驱）。
+ * ere/event/event-ending.js @ENDING_1 真身与 @ENDING_3/4/5 接线的
+ * 行为测试（issue #118），外加 ere/page/page-invasion.js @INVASION_CHECK
+ * 四组条件的触发测试（经模块公开接口 invasion_check 直驱）。天神宫组
+ * 随 #652 删除（判据读的 EX_FLAG:101 无写点，死分支）；END10_55 演出
+ * 本体保留、直驱测试。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。
  *
@@ -46,8 +48,6 @@ function make_world(
     dragon_conquered = 0,
     heaven_invasion = 0,
     heaven_conquered = 0,
-    shrine_invasion = 0,
-    shrine_stage = 0,
   } = {},
 ) {
   fixture.store.set('exflag:99', prestige); // EX_FLAG:99 威望
@@ -59,8 +59,6 @@ function make_world(
   fixture.store.set('flag:89', dragon_conquered); // FLAG:89 龙之山脉征服
   fixture.store.set('flag:90', heaven_invasion); // FLAG:90 天界侵攻度
   fixture.store.set('flag:91', heaven_conquered); // FLAG:91 天界征服
-  fixture.store.set('exflag:101', shrine_invasion); // EX_FLAG:101 天神宫侵攻度
-  fixture.store.set('exflag:102', shrine_stage); // EX_FLAG:102 天神宫阶段
   // 菲娅预设（Chara35.yml 的最小夹具形状）：addCharacter 守卫放行的前提
   fixture.seed_chara(35, { name: '菲娅', callname: '菲娅' });
 }
@@ -712,21 +710,22 @@ test('ENDINCONSQSELECT：ARG != 7 时只读一次键、无输出（:1035 的 CAS
   );
 });
 
-test('END10_55：天神宫满 10000 且阶段 0 → 八行演出 + 嘉德线 +5、威望 +10；EX_FLAG:102 不置（口上 K902 的职责，1:1）', async () => {
+test('END10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLAG:102 不置（#652 起不受 invasion_check 分派，直驱演出本体）', async () => {
   const fixture = create_era_fixture();
-  make_world(fixture, { shrine_invasion: 10000 });
-  await run_check(fixture);
+  make_world(fixture);
+  const { end10_55 } = fixture.load_module('event/event-ending');
+  await end10_55();
 
   assert.equal(
     fixture.store.get('exflag:2810'),
     5,
     'EX_FLAG:2810 += 5（:485）',
   );
-  assert.equal(fixture.store.get('exflag:99'), 80, 'EX_FLAG:99 += 10');
+  assert.equal(fixture.store.get('exflag:99'), 70, '演出本体不写威望（EX_FLAG:99 += 10 是分派层的职责）');
   assert.equal(
     fixture.store.get('exflag:102'),
-    0,
-    '判据 102 原作不置（K902 置）',
+    undefined,
+    'EX_FLAG:102 不置（K902 剧情线的职责）',
   );
   const texts = history_texts(fixture);
   assert(
@@ -738,6 +737,17 @@ test('END10_55：天神宫满 10000 且阶段 0 → 八行演出 + 嘉德线 +5�
   assert(texts.includes('战斗、一触即发。'), 'END10_55 末行（:484）');
 });
 
+test('天神宫组不再是 invasion_check 的分派（#652 删除死分支）：EX_FLAG:101 满 10000 也空转', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  fixture.store.set('exflag:101', 10000); // 旧判据读的侵攻度（已无写点）
+  fixture.store.set('exflag:102', 0);
+  await run_check(fixture);
+
+  assert.equal(history_texts(fixture).length, 0, '空转零输出');
+  assert.equal(fixture.store.get('exflag:99'), 70, '威望不动');
+  assert.equal(fixture.store.get('exflag:2810'), undefined, '嘉德线不推进');
+});
 test('五组全不满足：零输出、威望不动（窄路径的常态）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 9999 });

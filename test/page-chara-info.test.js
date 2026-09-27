@@ -678,7 +678,7 @@ test('CHARA_INFO：个别页子调用完成后 continue 回名册主循环（非
   assert.equal(fixture.store.get('cflag:1:1'), 0, '拘束台解放已生效');
 });
 
-test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1 被吞掉，回到人物列表、本回合不结束（#606）', async () => {
+test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1 透传上浮，本回合结束（#652 改正）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -686,10 +686,9 @@ test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1
   fixture.store.set('itemname:100', '怪物');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 原作 :95-96 走 @CHARA_INFO_INDIVIDUAL_WAPPED，它在 :829 的 CALL 之后
-  // 没有 RETURN，Emuera 把 RESULT 置 0（#592 的三份源码出处）→ :100 的
-  // IF RESULT == 1 在这个视图下永不成立。名册默认 1200：选 1 → [4] 结婚 →
-  // 选 100 号怪（内层返回 1 的唯一操作）→ 应回名册重绘 → [999] 退出
+  // 旧包装把内层返回值清成 0（原作缺陷），1200 视图下结婚不结束本回合；
+  // 改正后包装透传内层返回值：名册默认 1200——选 1 → [4] 结婚 → 选 100 号怪
+  // （内层返回 1 的唯一操作）→ 1 上浮、本回合结束，[999] 不再被消费
   fixture.set_inputs(1, 4, 100, 999);
   const result = await chara_info();
 
@@ -700,13 +699,15 @@ test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1
     '内层确实走到了结婚成功（唯一返回 1 的操作）',
   );
   const headers = text_positions(fixture, '请选择一个角色以了解详细信息');
-  assert.equal(headers.length, 2, '婚礼之后名册重绘（初始一次 + 回列表一次）');
-  assert.ok(wedding[0] < headers[1], '婚礼播报先于名册的下一次重绘');
+  assert.equal(headers.length, 1, '婚礼之后不再回名册重绘（本回合已结束）');
   assert.equal(
     result,
-    0,
-    '包装入口吞掉 1：名册以 [999] 正常退出，本回合不结束',
+    1,
+    '包装入口透传 1：本回合结束（[999] 留在预置输入里不被消费）',
   );
+  const input_count = fixture.inputs_consumed.filter((i) => i.api === 'input')
+    .length;
+  assert.equal(input_count, 3, '[999] 未被消费');
 });
 
 test('CHARA_INFO：直调内层的视图里转职返回 2（防御支）也不结束本回合——2 在内层被消化成页内重画（#606 返工）', async () => {
@@ -1014,7 +1015,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：顺位表是全部已加入角色（按排�
   assert.deepEqual(nos, ['2', '1'], '后一人按排序编号顺位走到 1 号');
 });
 
-test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口吞掉内层的 1，恒回 0（原作 CALL 后无 RETURN、RESULT 被清 0，#606）', async () => {
+test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口透传内层返回值，结婚返回 1 结束本回合（#652 改正）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1024,16 +1025,14 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口吞掉内层的 1，恒回 0（
     'page/page-chara-info',
   );
 
-  // 结婚是内层唯一返回 1 的操作（@MARRIAGE 婚礼完成的出口 :450-451
-  // 「リターン１でターンエンドする」，ENTER_LOVER 成功的 :71-74 同）；
-  // 原作 @CHARA_INFO_INDIVIDUAL_WAPPED:829 的 CALL
-  // 之后无 RETURN，Emuera 执行到函数末尾把 RESULT 置 0（#592），包装入口
-  // 因此恒回 0
+  // 结婚是内层唯一返回 1 的操作（婚礼完成的出口、ENTER_LOVER 成功同）；
+  // 旧包装把内层的返回值清成 0，1200 视图下结婚不结束本回合（原作缺陷）。
+  // 改正后包装透传内层返回值：婚礼完成 → 1。
   fixture.set_inputs(4, 100);
   assert.equal(
     await chara_info_individual_wrapped(1),
-    0,
-    '内层返回 1 也被清 0',
+    1,
+    '婚礼完成透传内层的 1（结束本回合）',
   );
   assert.ok(
     printed_includes(fixture, '举行了结婚典礼'),
