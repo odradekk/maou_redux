@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2696; // #643 -5（M67：K3 随机尾中支整句只由黄金样本逐字守）（M8967/M8968/M8974/M8975：分发表 line/erb/拼名/行数只由源对照守）；#640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 #641 净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除，+1 M12907 try_kojo 守卫）；// 原沿革见 git 历史
+export const COUNT = 2693; // #643 -5（M67：K3 随机尾中支整句只由黄金样本逐字守）（M8967/M8968/M8974/M8975：分发表 line/erb/拼名/行数只由源对照守）；#640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 #641 净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除，+1 M12907 try_kojo 守卫）；#655（F9）-8+5：删 M523/M718/M8942/M8943 及反向变异 M11414/M11416/M11422/M11426（锚点随死代码删除与缺陷修正消失），新增 M13350-M13354 守修正后行为；// 原沿革见 git 历史
 
 export default [
   {
@@ -335,14 +335,6 @@ export default [
     tests: ['kojo-dungeon-bitch-log'],
     must_mention: '调 LOG_BITCH_ANIMAL（DUNGEON 空）',
   },
-  {
-    desc: 'M523 LOG_AFTER_BITCH 误调死代码 DUNGEON_SEX_LOG（本应调 LOG_BITCH_SEX，#185 反向变异：死代码不接线）',
-    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
-    find: '    SEX: log_bitch_sex,',
-    replace: '    SEX: dungeon_sex_log, // 变异：误接死代码',
-    tests: ['kojo-dungeon-bitch-log'],
-    must_mention: '调 LOG_BITCH_SEX',
-  },
 
   // —— #212 返工：存量二段寻址修复的反向变异 ——
   {
@@ -352,16 +344,6 @@ export default [
     replace: '      era.add(`juel:1`, play * 200); // 变异：二段',
     tests: ['chara-table-addressing', 'kojo-dungeon-bitch'],
     must_mention: 'JUEL:1 必须 +PLAY*200',
-  },
-  {
-    desc: 'M718 性别分档回退成二段（talent:TARGET:122 → talent:122——恒走 else 臂）',
-    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
-    find: `    if (rand_n(8) === 0) {
-      if (era.get(\`talent:\${era_flag.target}:122\`) || 0) {`,
-    replace: `    if (rand_n(8) === 0) {
-      if (era.get('talent:122') || 0) {`,
-    tests: ['chara-table-addressing', 'kojo-dungeon-bitch-log'],
-    must_mention: 'TALENT:122 置位 → 哥哥臂',
   },
   // —— #235（J25）：K4 冷徹 口上模块（M1750-M1789 号段） ——
   {
@@ -20385,24 +20367,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '守卫的 LOCAL > 1000 臂可达',
   },
   {
-    desc: 'M8942 KOJO_EVENT_COM 拼名偏移（local - 100 改 - 101）',
-    file: 'ere/kojo/kojo-system.js',
-    find: '    await kojo_event_com_family.call(local - 100, { whenMissing: 0, args: [] });',
-    replace:
-      '    await kojo_event_com_family.call(local - 101, { whenMissing: 0, args: [] });',
-    tests: ['event-k-dispatch'],
-    must_mention: 'handler 实参逐条对上',
-  },
-  {
-    desc: 'M8943 KOJO_EVENT_COM 多出一道 FLAG:7 守卫（原件同段没有，关掉口上就静默）',
-    file: 'ere/kojo/kojo-system.js',
-    find: 'async function kojo_event_com() {\n  // 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）',
-    replace:
-      "async function kojo_event_com() {\n  if ((era.get('flag:7') || 0) <= 0) {\n    return 0; // 变异：凭空加一道守卫\n  }\n  // 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）",
-    tests: ['event-k-dispatch'],
-    must_mention: '无 FLAG:7 守卫（:209-219 没有 SIF FLAG:7）',
-  },
-  {
     desc: 'M8944 ATTACK_KOUJO_B 不置 TARGET（B 侧对象不进分发上下文）',
     file: 'ere/kojo/kojo-system.js',
     find: `  if (cid !== undefined && cid >= 0) {
@@ -21122,15 +21086,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '拍摄经验 +1',
   },
   {
-    desc: 'M11414 强制肉偿的片酬只求值一次（入账改用显示的 shown_price，两次 RAND:100 变成一次，#544）',
-    file: 'ere/kojo/kojo-forced-payment.js',
-    find: '    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);',
-    replace:
-      '    chara(arg).patch.借款 += shown_price; // 变异：入账复用显示值',
-    tests: ['kojo-forced-payment'],
-    must_mention: '片酬分两次求值',
-  },
-  {
     desc: 'M11415 强制肉偿的片酬除数改错（COST*1/3 改 COST*1/2，#544）',
     file: 'ere/kojo/kojo-forced-payment.js',
     find: '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);',
@@ -21138,15 +21093,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    const shown_price = Math.trunc((cost * 1) / 2) + rand_n(100);',
     tests: ['kojo-forced-payment'],
     must_mention: '片酬 333',
-  },
-  {
-    desc: 'M11416 强制肉偿的 EXP_BITCH 实参被「修正」成 "ORAL"（原作 #DIMS 空串被臆改，EXP/JUEL 开始真的变了，#544）',
-    file: 'ere/kojo/kojo-forced-payment.js',
-    find: "    // CALL EXP_BITCH(ARG,, ANAL, PLAY)（ANAL 恒为空串）\n    require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);",
-    replace:
-      "    // 变异：TYPE 改成 ANAL\n    require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', 'ANAL', play);",
-    tests: ['kojo-forced-payment'],
-    must_mention: '不应变化（男人=',
   },
   {
     desc: 'M11417 强制肉偿的男人判定读错下标（TALENT:122 改 TALENT:121，扶她走 ANAL 档文案，#544）',
@@ -21183,21 +21129,12 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '真身开场',
   },
   {
-    desc: 'M11421 强制肉偿的片酬显示上界改错（RAND:100 改 RAND:50，显示侧的片酬区间缩半——两处 100 只改显示侧，#544）',
+    desc: 'M11421 强制肉偿的片酬随机上界改错（RAND:100 改 RAND:50，片酬区间缩半——显示与入账同用这一个随机值，#655）',
     file: 'ere/kojo/kojo-forced-payment.js',
     find: '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);',
     replace: '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(50);',
     tests: ['kojo-forced-payment'],
-    must_mention: '拍片显示侧 RAND 上界序',
-  },
-  {
-    desc: 'M11422 强制肉偿的片酬入账上界改错（RAND:100 改 RAND:90，入账侧的片酬区间缩窄，#544）',
-    file: 'ere/kojo/kojo-forced-payment.js',
-    find: '    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);',
-    replace:
-      '    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(90);',
-    tests: ['kojo-forced-payment'],
-    must_mention: '拍片入账侧 RAND 上界序',
+    must_mention: '拍片分支的 RAND 上界序',
   },
   {
     desc: 'M11423 强制肉偿的 ANAL 档点数系数改错（{PLAY*10} 改 {PLAY*11}，点数文案与 PLAY 脱钩，#544）',
@@ -21224,15 +21161,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '  const local = Math.trunc((-1 * play) / 5);',
     tests: ['kojo-forced-payment'],
     must_mention: '除数 4 与向零截断',
-  },
-  {
-    desc: 'M11426 强制肉偿的 :105 无条件 EXP_BITCH 调用删除（ORAL 那一次整个丢掉，只剩两臂内的一次，#544）',
-    file: 'ere/kojo/kojo-forced-payment.js',
-    find: "  // CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前\n  require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);",
-    replace:
-      '  // CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前\n  // 变异：删掉 :105 的空串调用',
-    tests: ['kojo-forced-payment'],
-    must_mention: '的调用次数',
   },
   {
     desc: 'M11427 强制肉偿的调用点漏写 await（heroine_bitch 不等真身跑完就往下走，:78 的 RAND:36 抢走 RAND:4 的随机数、输出顺序也反了，#544 第 1 轮验收返工）',
@@ -21701,9 +21629,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11952 强制肉偿拍片结算行拆回两条（#584：:90+:92+:94 的同一行被拆）',
     file: 'ere/kojo/kojo-forced-payment.js',
-    find: '    // 显示值：片酬第一次求值（RAND:100 第一次取）\n    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n    await era.printAndWait(\n      `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,\n    );',
+    find: '    // 片酬只求值一次：显示与入账同一个数（RAND:100 只取一次）\n    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n    await era.printAndWait(\n      `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,\n    );',
     replace:
-      "    era.print('这部淫荡煽情的影像以'); // （变异：拆回）\n    // 显示值：片酬第一次求值（RAND:100 第一次取）\n    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n    era.print(`${shown_price}`); // （变异：拆回）\n    await era.printAndWait('的金额，被人买下收藏了'); // （变异：拆回）",
+      "    era.print('这部淫荡煽情的影像以'); // （变异：拆回）\n    // 片酬只求值一次：显示与入账同一个数（RAND:100 只取一次）\n    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n    era.print(`${shown_price}`); // （变异：拆回）\n    await era.printAndWait('的金额，被人买下收藏了'); // （变异：拆回）",
     tests: ['kojo-forced-payment'],
     must_mention: '拍片结算行同一行',
   },
@@ -25641,5 +25569,49 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   if (false && id >= 0 && family.has(id)) { // 变异：命中静默化`,
     tests: ['kojo-system'],
     must_mention: '缺省与 -1 都吃 TARGET',
+  },
+
+  // —— #655（F9）：强制肉偿片酬单次求值与经验实入账、巨人凌辱写入修正的守卫 ——
+  {
+    desc: 'M13350 强制肉偿的入账复用显示值被破坏（shown_price 入账改成减——片酬后的欠金与显示对不上，#655）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).patch.借款 += shown_price;',
+    replace: '    chara(arg).patch.借款 -= shown_price; // 变异：入账方向取反',
+    tests: ['kojo-forced-payment'],
+    must_mention: '入账与显示同额',
+  },
+  {
+    desc: 'M13351 强制肉偿的男人档经验写错（肛门经验写成了私处经验，EXP:1/0 两档对调，#655）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).dungeon.肛门经验 += play; // EXP:ARG:1 肛门经验',
+    replace:
+      '    chara(arg).dungeon.私处经验 += play; // 变异：男人档写错成私处',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'EXP:1（男人（肛门档））+PLAY',
+  },
+  {
+    desc: 'M13352 强制肉偿的欲情点数系数改错（PLAY*20 改 PLAY*21，欲情入账与文案脱钩，#655）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  era.add(`juel:${arg}:5`, play * 20); // JUEL:ARG:5 欲情',
+    replace: '  era.add(`juel:${arg}:5`, play * 21); // 变异：欲情系数改错',
+    tests: ['kojo-forced-payment'],
+    must_mention: '欲情 +PLAY*20',
+  },
+  {
+    desc: 'M13353 强制肉偿漏加性交经验（EXP:5 入账恒 0，与「性交经验 上升了 PLAY」文案不符，#655）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  chara(arg).dungeon.性交经验 += play; // EXP:ARG:5 性交经验',
+    replace: '  chara(arg).dungeon.性交经验 += 0; // 变异：漏加性交经验',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'EXP:5（性交经验）+PLAY',
+  },
+  {
+    desc: 'M13354 巨人凌辱贯穿分支的写入改回肛门扩张经验（显示「阴道扩张经验」却写 EXP:53，#655 修正回退）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    chara(arg).dungeon.私处扩张经验 += mon_num; // EXP:ARG:52 私处扩张经验',
+    replace:
+      '    chara(arg).dungeon.肛门扩张经验 += mon_num; // 变异：写回肛门扩张',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: 'EXP:52 私处扩张经验 +5',
   },
 ];

@@ -9,11 +9,10 @@
  *     低档 RAND:10+5 / RAND:500+500）；
  *   - 分档条件的三个析取项各自单独命中（ABL:11 >= 3 / ABL:37 / EXP:20 >= 30）；
  *   - 债务结算（CFLAG:582）：抵完清零 / 未抵完累加 / 恰好抵完的边界；
- *   - 拍片分支（!RAND:3）：EXP:50/70 各 +1、片酬分两次求值（显示与入账
- *     各取一次 RAND:100——原作如此，#14 登记）；
- *   - EXP_BITCH 以空 TYPE 调用：除 50/70 外 EXP/JUEL 一律不变（原作缺陷，
- *     1:1 保留并登记 #14）；
- *   - 男人（TALENT:122）走 ANAL 档、非男人走 SEX 档的文案分档；
+ *   - 拍片分支（!RAND:3）：EXP:50/70 各 +1、片酬只求值一次（显示与入账同额，
+ *   - 经验/点数按文案实际入账：EXP:22/20/74/5 与 肛门或私处经验 各 +PLAY，
+ *     肛门或私处点数 +PLAY*10、欲情 +PLAY*20、习得 +PLAY（男人走肛门档，
+ *     非男人走私处档）；
  *   - KARMA：LOCAL = -1 * PLAY / 4（向零截断）；
  *   - HEROINE_BITCH 调用点接真身（占位行消失）。
  *
@@ -208,24 +207,36 @@ test('强制肉偿：低档 PLAY = RAND:10 + 5、COST = PLAY*100 + RAND:500 + 50
   }
 });
 
-test('强制肉偿：拍片分支的两处 RAND:100 上界（片酬显示与入账各一次）', async () => {
+test('强制肉偿：片酬只求值一次（显示与入账同额，RAND:100 总共取一次）', async () => {
   const { fixture, mod } = setup(with_debt(-20000));
   const uppers = [];
   const rand = (n) => {
     uppers.push(n);
-    return 0; // 档 0、PLAY 0、COST 0、拍片 0（进入）、两处片酬 0
+    return 0; // 档 0、PLAY 0、COST 0、拍片 0（进入）、片酬 0
   };
   await mod.forced_payment(31, rand);
   assert.deepEqual(
-    uppers.slice(0, 5),
+    uppers,
     [4, 10, 500, 3, 100],
-    '拍片显示侧 RAND 上界序',
+    '拍片分支的 RAND 上界序（入账复用显示值，不再取第二次 100）',
   );
-  assert.deepEqual(uppers.slice(5), [100], '拍片入账侧 RAND 上界序');
-  // 显示侧的片酬只打印不加算；入账侧 +333
-  assert.equal(DEBT(fixture), -20000 + 1000 + 333);
+  assert.equal(
+    DEBT(fixture),
+    -20000 + 1000 + 333,
+    '入账与显示同额（DEBT 直接断言）',
+  );
+  // （先抵债到 -19000，再加片酬 → -18667）
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((l) => l.includes('这部淫荡煽情的影像以333的金额，被人买下收藏了')),
+    '显示片酬（同一行）',
+  );
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('当前欠金变为-18667点')),
+    '入账与显示同额（同一行）',
+  );
 });
-
 // —— 分档条件的三个析取项 ——
 
 test('强制肉偿：分档条件（ABL:11 >= 3 / ABL:37 / EXP:20 >= 30）逐项表驱动', async () => {
@@ -324,11 +335,11 @@ test('强制肉偿：!RAND:3 才拍片，EXP:50/70 各 +1', async () => {
   );
 });
 
-test('强制肉偿：片酬分两次求值——显示取第一次、入账取第二次（原作 #14）', async () => {
-  // 低档：draws [档 0, PLAY 0, COST 0, 拍片 0, 片酬 5, 片酬 7]
-  // PLAY = 5、COST = 1000；片酬两次求值各消费一次 RAND:100
+test('强制肉偿：片酬入账复用显示值（RAND:100 只取一次的定值序验证）', async () => {
+  // 低档：draws [档 0, PLAY 0, COST 0, 拍片 0, 片酬 5]
+  // PLAY = 5、COST = 1000；片酬只取一次随机数 = 5
   const { fixture, mod } = setup(with_debt(-20000));
-  await mod.forced_payment(31, seq_rand(0, 0, 0, 0, 5, 7));
+  await mod.forced_payment(31, seq_rand(0, 0, 0, 0, 5));
   const lines = fixture.text_lines();
   // 显示值 = COST*1/3 + 5 = 333 + 5 = 338（#584 起与前后文同一行）
   assert.ok(
@@ -337,14 +348,17 @@ test('强制肉偿：片酬分两次求值——显示取第一次、入账取�
     ),
     '显示片酬（同一行）',
   );
-  // 入账 = 333 + 7 = 340；先抵债到 -19000，再加片酬 → -18660
-  assert.equal(DEBT(fixture), -20000 + 1000 + 340);
+  // 入账 = 显示 = 338；先抵债到 -19000，再加片酬 → -18662
+  assert.equal(
+    DEBT(fixture),
+    -20000 + 1000 + 338,
+    '入账与显示同额（定值序验证）',
+  );
   assert.ok(
-    lines.some((l) => l.includes('当前欠金变为-18660点')),
+    lines.some((l) => l.includes('当前欠金变为-18662点')),
     '片酬后的欠金（同一行）',
   );
 });
-
 test('强制肉偿：片酬的 COST*1/3 是向零截断的整数除法', async () => {
   // 低档 COST = 5*100 + 0 + 500 = 1000 → 1000/3 = 333（截断），两处 RAND:100 都取 0
   const { fixture, mod } = setup(with_debt(-20000));
@@ -358,56 +372,47 @@ test('强制肉偿：片酬的 COST*1/3 是向零截断的整数除法', async (
   assert.equal(DEBT(fixture), -20000 + 1000 + 333);
 });
 
-// —— EXP_BITCH 空 TYPE（原作缺陷 1:1）——
+// —— 经验/点数按文案入账 ——
 
-test('强制肉偿：EXP_BITCH 收到空 TYPE——除 EXP:50/70 外 EXP/JUEL 全不动（#14）', async () => {
-  for (const male of [0, 1]) {
+test('强制肉偿：经验与点数按文案实际入账（男人走肛门档、非男人走私处档）', async () => {
+  const cases = [
+    // [TALENT:122, 第三经验下标, 第一点数下标, 档位标签]
+    [1, 1, 2, '男人（肛门档）'],
+    [0, 0, 1, '非男人（私处档）'],
+  ];
+  for (const [male, third_exp, first_juel, label] of cases) {
     const { fixture, mod } = setup(
       with_debt(-20000, (f) => f.store.set('talent:31:122', male)),
     );
-    await mod.forced_payment(31, seq_rand(0, 0, 0, 0));
-    for (const idx of [0, 1, 5, 20, 22, 74, 80]) {
+    // draws [档 0, PLAY 0, COST 0, 拍片 0, 片酬 0] → 低档 PLAY = 5，拍片片酬 333
+    await mod.forced_payment(31, seq_rand(0, 0, 0, 0, 0));
+    // 文案列名的五类经验各 +PLAY
+    for (const [idx, name] of [
+      [22, '口交经验'],
+      [20, '精液经验'],
+      [74, '卖淫经验'],
+      [third_exp, label],
+      [5, '性交经验'],
+    ]) {
       assert.equal(
         fixture.store.get(`exp:31:${idx}`),
-        undefined,
-        `EXP:${idx} 不应变化（男人=${male}）`,
+        5,
+        `${label} EXP:${idx}（${name}）+PLAY`,
       );
     }
-    for (const idx of [0, 1, 2, 5, 6, 7, 8, 9]) {
-      assert.equal(
-        fixture.store.get(`juel:31:${idx}`),
-        undefined,
-        `JUEL:${idx} 不应变化（男人=${male}）`,
-      );
-    }
-  }
-});
-
-test('强制肉偿：EXP_BITCH 被调用两次、TYPE 全为空串（:105 无条件 + 两臂各一次）', async () => {
-  for (const male of [0, 1]) {
-    const { fixture, mod } = setup(
-      with_debt(-20000, (f) => f.store.set('talent:31:122', male)),
+    // 文案点数三槽：肛门或私处 +PLAY*10、欲情 +PLAY*20、习得 +PLAY
+    assert.equal(
+      fixture.store.get(`juel:31:${first_juel}`),
+      50,
+      `${label} 第一点数 +PLAY*10`,
     );
-    const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
-    const calls = [];
-    const saved = bitch.exp_bitch;
-    bitch.exp_bitch = (...args) => {
-      calls.push(args);
-    };
-    try {
-      // draws [档 0, PLAY 0, COST 0, 拍片 1] → 低档 PLAY = 5
-      await mod.forced_payment(31, seq_rand(0, 0, 0, 1));
-    } finally {
-      bitch.exp_bitch = saved;
-    }
-    // 一次（无条件）+ :107 或 :111 一次（分支内）
-    assert.equal(calls.length, 2, `男人=${male} 的调用次数`);
-    for (const args of calls) {
-      assert.deepEqual(args, [31, '', '', 5], `男人=${male} 的实参`);
-    }
+    assert.equal(fixture.store.get('juel:31:5'), 100, `${label} 欲情 +PLAY*20`);
+    assert.equal(fixture.store.get('juel:31:7'), 5, `${label} 习得 +PLAY`);
+    // 拍片分支的 EXP:50/70 各 +1（不受经验结算影响）
+    assert.equal(fixture.store.get('exp:31:50'), 1, '异常经验 +1');
+    assert.equal(fixture.store.get('exp:31:70'), 1, '拍摄经验 +1');
   }
 });
-
 test('强制肉偿：男人（TALENT:122）走 ANAL 档文案、否则走 SEX 档文案', async () => {
   // draws [档 0, PLAY 0, COST 0, 拍片 1] → 低档 PLAY = 5
   const { fixture, mod } = setup(

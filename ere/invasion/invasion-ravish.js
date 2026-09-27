@@ -3,18 +3,16 @@
  *
  * 文件名按仓库约定意译（凌辱 → ravish；同词先例是
  * 口上文件的同词先例 `kojo-dungeon-ravish.js`）；
- * 函数名 `invasion_ryouzyoku` 1:1 跟随原作 `@INVASION_RYOUZYOKU`，不改。
+ * 函数名沿用罗马字 `invasion_ryouzyoku`。
  *
- * 调用方是 侵略/INVASION.ERB:671-683 与 :867-879 的出兵路线（人间界/精灵
- * 领域/龙之山/天界/天神宫各一段），两条路线目前都还是 page-invasion.js 的
- * 存根（[0] 怪物出兵 / [2] 勇者出兵），所以本模块现下没有运行时调用方——
- * 按原样接真身，等出兵路线票接线（本票不动 page-invasion.js 的存根分支）。
+ * 调用方是 ere/page/page-invasion.js 出兵路线的两处（人间界/精灵
+ * 领域/龙之山/天界/天神宫各一段）。
  *
  * 整份模块是**无状态纯叙事**：只有 PRINTFORMW/PRINTW/PRINTFORML 输出，没有
  * 任何 CFLAG/BASE/FLAG 写入。唯一的对外依赖是 MONSTER_DATA（写 E: 三列的
  * 怪物数据，:15）与 %ITEMNAME%（:24 读 Item.yml 的登记名）。
  *
- * 移植说明（有意保留的原作形态，均注明出处）：
+ * 移植说明（有意保留的形态差异）：
  *   - :10 `ARG:1 /= 5000` 是侵攻点的整数除算（0..10 档）；分发函数只在入口
  *     归一一次，12 个旁白函数收到的已是归一后的档位。
  *   - :14 `X = (RAND:9 + 1) * 10 + 100 + RAND:5` 抽 110-194 的怪物号
@@ -26,12 +24,10 @@
  *     都走不到。**该守卫在 ere 侧不可达**：`monster_data` 给 0–2 列写的
  *     数量（`E:列头+99`）恒 ≥ 1——它算这个数的「数量第二骰」段
  *     （ere/dungeon/monster-data.js:437-464）每条分支的取值都 ≥ 1，三处
- *     提前返回只发生在 `line` 为 3/4/5，而本模块只传 0/1/2。保留只为 1:1，
+ *     提前返回只发生在 `line` 为 3/4/5，而本模块只传 0/1/2。该守卫保留
  *     不删不改行为（issue #486；不可达分支无法用变异守住，故不设变异条目）。
  *   - :63 `PRINTL` 的空行分隔每列一段，照排。
- *   - @IVY_INV 的战场表（:312）把 `ELSEIF ARG == 5` 写成了
- *     `ELSEIF ARG == 4`——第二臂不可达，天神宫（5）落进 ELSE。原作缺陷，
- *     1:1 保留并登记 issue #14；本文件的天神宫档因此取 ELSE 的名字。
+ *   - @IVY_INV 的战场表带天神宫（5）档，称呼取十字军系的两个名字。
  *
  * 跨域：本文件属 invasion 域；E: 数组与 ITEMNAME 都在 dungeon 域，
  * 经 ere/dungeon/monster-data.js 的具名导出读取，不是裸寻址。
@@ -350,9 +346,8 @@ async function insect_inv(area, sinkou, rand = default_rand) {
 /**
  * @IVY_INV（:294-346）：藤蔓触手（凌辱类型 4）。
  *
- * **原作缺陷**：战场表 :312 把天神宫的 `ELSEIF ARG == 5` 写成了
- * `ELSEIF ARG == 4`（与 :309 重复），第二臂不可达，天神宫落进 ELSE。
- * 1:1 保留，登记 issue #14。
+ * 战场表按 area 取称呼（1 人间界 / 2 精灵领域 / 3 龙之山 / 4 天界 /
+ * 5 天神宫），未知道场回落人间界的称呼。
  *
  * @param {number} area 战场（原作 ARG:0）
  * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
@@ -360,14 +355,14 @@ async function insect_inv(area, sinkou, rand = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function ivy_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（:312 的第二臂 == 4 恒不可达，天神宫落 ELSE）
+  // 戦場別の称呼（5 = 天神宫；未知道场回落人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '女兵士'],
     2: ['精灵女性', '精灵守卫'],
     3: ['龙族女人', '龙族女战士'],
     4: ['天使', '破邪天使'],
+    5: ['十字军', '十字军军官'],
   }[area] ?? ['女人', '女兵士'];
-
   if (rand(3) === 0 && sinkou > 1) {
     await era.printAndWait(
       `植物型魔物在一夜之间吞没了城寨、${l1}们全被巨大的藤蔓缠住了`,
@@ -696,7 +691,7 @@ async function girl_inv(area, sinkou, rand = default_rand) {
     5: ['破邪天使', '侍从', '天使'],
   }[area] ?? ['女司令官', '秘书', '女人'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同）
   if (rand(3) === 0) {
     await era.printAndWait(`据点被攻陷，${l0}成功地突围逃命，不过`);
     await era.printAndWait(`${l0}的${l1}却被女魔族俘虏了。`);
@@ -757,7 +752,7 @@ async function beast_inv(area, sinkou, rand = default_rand) {
     5: ['破邪天使', '天使圣女'],
   }[area] ?? ['女人', '贵族千金'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同）
   if (rand(2) === 0) {
     await era.printAndWait(
       `在被俘的${l1}身上，施加了强力的催眠魔法，持续的心理暗示，让她成为一只发情期的母兽了。`,
@@ -807,7 +802,7 @@ async function brain_inv(area, sinkou, rand = default_rand) {
     5: ['天使'],
   }[area] ?? ['女'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同）
   if (rand(2) === 0) {
     await era.printAndWait(
       `${l0}司令官的拷问开始了。为了下一步的进军，有必要让她说出全部。`,
@@ -864,7 +859,7 @@ async function horse_inv(area, sinkou, rand = default_rand) {
     5: ['十字军', '十字军军官'],
   }[area] ?? ['女人', '本地女领主'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同，照抄）
+  // 第一臂没有侵攻点门槛（与其它函数不同）
   if (rand(2) === 0) {
     await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');
     await era.printAndWait(`居然是原来的${l1}，现在成为了马的阴茎套。`);

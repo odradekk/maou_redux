@@ -4,13 +4,12 @@
  * 表在 ere/kojo/kojo-system.js 的 EVENT_K_DISPATCH_TABLE（分片在
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点）。覆盖：
- *   - 22 条派发的编号换算（性格素质 160-179 → LOCAL 100-119 → 分发键
+ *   - 21 条派发的编号换算（性格素质 160-179 → LOCAL 100-119 → 分发键
  *     LOCAL - 100；EX_TALENT 101-800 → LOCAL 1001-1700 → 键 901-1600）；
  *   - 各入口的守卫集与 TARGET 语义逐条驱动（有无 FLAG:7 守卫、
  *     有无存在判定、是否 TARGET = A / B / ARG:0 并还原）；
- *   - 缺席语义：未命中一律静默（原作 TRYCALL 落空；#565 返工统一）——逐条钉住；
- *   - :218 的 KOJO_EVENT_COM 恒空转（全库 0 个 @KOJO_EVENT_COM_* 定义，
- *     #14 登记）与 :325 的 ATTACK_KOUJO_B（调用方侵略/ARCANA_BATTLE.ERB
+ *   - 缺席语义：未命中一律静默（TRYCALL 落空；#565 返工统一）——逐条钉住；
+ *   - :325 的 ATTACK_KOUJO_B（调用方侵略/ARCANA_BATTLE.ERB
  *     未移植）；
  *   - TARGET 置位守卫的两侧：置成传入对象 / cid 缺省时吃当前 TARGET；
  *   - 分发窗口（in_kojo_window）与键偏移：本地可达格在这里、边界格与窗口
@@ -72,57 +71,6 @@ function probe(sink) {
     return 0;
   };
 }
-
-// —— @KOJO_EVENT_COM（:209-219）——
-
-test('@KOJO_EVENT_COM（:217-218）：有目标时分发到 KOJO_EVENT_COM_{LOCAL-100}', async () => {
-  const fixture = setup_kojo();
-  seed_noble(fixture);
-  const { kojo_event_com, kojo_event_com_family } =
-    fixture.load_module('kojo/kojo-system');
-  const seen = [];
-  kojo_event_com_family.register(3, probe(seen));
-
-  assert.equal(await kojo_event_com(), 0);
-  assert.deepEqual(seen, [[]], '键 = LOCAL - 100 = 3（高貴 163 → 103）');
-  assert.deepEqual(fixture.text_lines(), [], '分发本身不输出');
-});
-
-test('@KOJO_EVENT_COM：无 FLAG:7 守卫（:209-219 没有 SIF FLAG:7）', async () => {
-  for (const off of [0, -1]) {
-    const fixture = setup_kojo();
-    seed_noble(fixture);
-    fixture.store.set('flag:7', off);
-    const { kojo_event_com, kojo_event_com_family } =
-      fixture.load_module('kojo/kojo-system');
-    const seen = [];
-    kojo_event_com_family.register(3, probe(seen));
-    await kojo_event_com();
-    assert.deepEqual(seen, [[]], `FLAG:7 = ${off} 也照样分发（原作无守卫）`);
-  }
-});
-
-test('@KOJO_EVENT_COM：无存在判定（:212-214 的存在判定在原作是注释态）', async () => {
-  const fixture = setup_kojo();
-  fixture.store.set('talent:17:163', 1); // FLAG:103 不置
-  const { kojo_event_com, kojo_event_com_family } =
-    fixture.load_module('kojo/kojo-system');
-  const seen = [];
-  kojo_event_com_family.register(3, probe(seen));
-  await kojo_event_com();
-  assert.deepEqual(seen, [[]], 'FLAG:103 == 0 不拦');
-});
-
-test('@KOJO_EVENT_COM：没有性格素质（LOCAL 0）→ 分发守卫不通过，静默', async () => {
-  const fixture = setup_kojo();
-  const { kojo_event_com, kojo_event_com_family } =
-    fixture.load_module('kojo/kojo-system');
-  const seen = [];
-  kojo_event_com_family.register(3, probe(seen));
-  assert.equal(await kojo_event_com(), 0);
-  assert.deepEqual(seen, []);
-  assert.deepEqual(fixture.text_lines(), [], '无目标 = TRYCALL 落空，静默');
-});
 
 // —— @ATTACK_KOUJO_B（:325-337）——
 
@@ -371,8 +319,7 @@ test('迷宫凌辱两族：无性格编号时静默（TRYCALL 落空）', async 
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-// —— 22 条分发表（EVENT_K_DISPATCH_TABLE）——
-
+// —— 21 条分发表（EVENT_K_DISPATCH_TABLE）——
 /** 读分发表（独立夹具加载一次；表是纯数据，后续夹具重建不影响它）。 */
 function table_rows() {
   return create_era_fixture().load_module('kojo/kojo-system')
@@ -403,7 +350,7 @@ function arg_value(name, ctx) {
  * 表驱动的单行驱动：一份新夹具 + 探针注册 + 调用入口。
  *
  * 每行一份新夹具：DUNGEON_ATTACK_K 一族被两行共用（@ATTACK_KOUJO 与
- * @ATTACK_KOUJO_B），同族重复注册会被 DispatchFamily 当场拦下（#14 的守卫）。
+ * @ATTACK_KOUJO_B），同族重复注册会被 DispatchFamily 当场拦下（同名遮蔽守卫）。
  *
  * @param {object} row 表行
  * @param {object} [options]
@@ -438,7 +385,7 @@ async function drive_row(row, { key = 3, seed = () => {} } = {}) {
   return { fixture, era_flag, mod, seen, target_during, rand, cid, result };
 }
 
-test('22 行逐条驱动：注册 handler 后按 LOCAL-100 命中，实参形状与实现一致', async () => {
+test('21 行逐条驱动：注册 handler 后按 LOCAL-100 命中，实参形状与实现一致', async () => {
   for (const row of table_rows()) {
     const { seen, era_flag, fixture, cid, rand, result } = await drive_row(
       row,
@@ -466,7 +413,6 @@ test('22 行逐条驱动：注册 handler 后按 LOCAL-100 命中，实参形状
     );
   }
 });
-
 test('GET_KOJO_NUM 素质扫描全范围：160-179 逐格 → LOCAL 100-119', async () => {
   for (let talent = 160; talent <= 179; talent += 1) {
     const fixture = create_era_fixture();
@@ -482,7 +428,7 @@ test('GET_KOJO_NUM 素质扫描全范围：160-179 逐格 → LOCAL 100-119', as
   }
 });
 
-test('22 行逐条驱动（EX 臂）：EX_TALENT:102 → LOCAL 1002 → 键 902 同样命中', async () => {
+test('21 行逐条驱动（EX 臂）：EX_TALENT:102 → LOCAL 1002 → 键 902 同样命中', async () => {
   for (const row of table_rows()) {
     const { seen, cid, rand } = await drive_row(row, {
       key: 902,
@@ -496,7 +442,7 @@ test('22 行逐条驱动（EX 臂）：EX_TALENT:102 → LOCAL 1002 → 键 902 
   }
 });
 
-test('族 call 的落空值契约：22 行都在 options 里声明 whenMissing = 0，实参同表', async () => {
+test('族 call 的落空值契约：21 行都在 options 里声明 whenMissing = 0，实参同表', async () => {
   // whenMissing 是**契约注记**：这些入口一律 return 0（TRYCALLFORM 的 RESULT
   // 不读），所以 0 从返回值上与合法值分不开——只能在分发缝上钉住它（#403
   // 二轮验收点名「whenMissing 的 0」与「家族 call 的键」这一类哨兵值）。

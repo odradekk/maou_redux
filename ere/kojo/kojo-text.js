@@ -33,7 +33,7 @@ function black_heart(n) {
 
 /**
  * %UNICODE(0x2665) *N%：黑心（实心黑桃心，K0 慈爱口上专用字——与
- * black_heart 的 U+2764 不同码位，1:1 保真不混用）。
+ * black_heart 的 U+2764 不同码位，两个记号不混用）。
  * @param {number} n 次数
  * @returns {string}
  */
