@@ -1939,29 +1939,33 @@ test('ablup16：入口把关用 OR（三项素质任一缺失即挡），全部�
   assert.ok(maxed.text_lines().includes('已达最高级'));
 });
 
-test('ablup16：DECIDE 复核与入口同判据（OR）——三项素质缺一即不可提升，与 AUTO/`*` 标记一致', async () => {
-  // abl16=5、只具备献身的：资源全够，唯独缺爱慕/盲从——入口 OR 与 DECIDE
-  // 复核统一后都必须拦（AND 形态会漏过这种角色）
-  const partial = create_era_fixture();
-  const { decide_ablup: decide_partial } = seed(partial);
-  partial.store.set(`abl:${CID}:16`, 5);
-  set_talents(partial, { 63: 1 }); // 缺爱慕/盲从
-  partial.store.set(`abl:${CID}:10`, 6); // 顺从门槛
-  partial.store.set(`juel:${CID}:6`, 50000); // A 轨道（Lv5：A=50000）
-  partial.store.set(`exp:${CID}:2`, 80); // E 轨道门槛
-  partial.store.set(`exp:${CID}:20`, 80);
-  assert.equal(await decide_partial(CID, 16), 0);
+test('ablup16：DECIDE 复核缺一即挡——只缺献身的/只缺爱慕的/只缺盲从的都被拦，三项齐全且可负担则通过', async () => {
+  // 三个用例各自只缺一项素质（另两项都有）、资源全够——OR 形态三者都必须
+  // 被拦；「缺两项才拦」的形态会漏过全部三例，某项漏判的形态漏过对应用例
+  for (const missing of [63, 85, 86]) {
+    const fixture = create_era_fixture();
+    const { decide_ablup } = seed(fixture);
+    fixture.store.set(`abl:${CID}:16`, 5);
+    const talents = { 63: 1, 85: 1, 86: 1 };
+    delete talents[missing];
+    set_talents(fixture, talents); // 只缺 missing，另两项都有
+    fixture.store.set(`abl:${CID}:10`, 6); // 顺从门槛
+    fixture.store.set(`juel:${CID}:6`, 50000); // A 轨道（Lv5：A=50000）
+    fixture.store.set(`exp:${CID}:2`, 80); // E 轨道门槛
+    fixture.store.set(`exp:${CID}:20`, 80);
+    assert.equal(await decide_ablup(CID, 16), 0, `只缺 ${missing} 时必须被拦`);
+  }
 
   // 三项素质齐全且可负担 → 可提升（任一轨道满足即 1）
   const full = create_era_fixture();
-  const { decide_ablup } = seed(full);
+  const { decide_ablup: decide_full } = seed(full);
   full.store.set(`abl:${CID}:16`, 5);
   set_talents(full, { 63: 1, 85: 1, 86: 1 });
   full.store.set(`abl:${CID}:10`, 6); // 顺从门槛
   full.store.set(`juel:${CID}:6`, 50000); // A 轨道（Lv5：A=50000）
   full.store.set(`exp:${CID}:2`, 80); // E 轨道门槛
   full.store.set(`exp:${CID}:20`, 80);
-  assert.equal(await decide_ablup(CID, 16), 1);
+  assert.equal(await decide_full(CID, 16), 1);
 });
 
 test('ablup16：Lv0 梯子字面值，三个选项皆渲染，选项0 恒渲染（无 IF 包裹）', async () => {
