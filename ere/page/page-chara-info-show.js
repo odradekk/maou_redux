@@ -144,8 +144,7 @@ const LIST_RETURN = 999;
  *
  * `TOSTR hex,hexS` 把颜色整数转成 6 位十六进制串（源里随即逐位 SUBSTRING 并
  * 认 A-F，非十六进制串解释不出那六个 CASE），本实现按同样形态取值。三段按
- * 十六进制位权合成（×16）——旧实现误用 ×15（写成十进制的位权），颜色整体
- * 偏暗，#652 改正。
+ * 十六进制位权合成（×16）。
  * @param {number} hex 颜色整数（源 GETBGCOLOR 的返回值）
  * @param {number[]} dec 输出数组（源 `#DIM REF dec,0` 的 RESULT，写 dec[0..2]）
  */

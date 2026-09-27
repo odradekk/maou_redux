@@ -41,32 +41,24 @@
  *   - **地区泛化（#505）**：`AREA`/`SINDO` 由 `CAMPAIGN_REGIONS` 表给出，
  *     各处按 AREA 分派的位置全部读表：出兵菜单标签、累加、四条结果段的
  *     地区名/已征服臂/进度条、invasion_ryouzyoku() 的地区号、kyoten_event()
- *     的实参。天神宫的侵攻度读写在「哪张表」上曾自相矛盾（出兵菜单与魔力
- *     结果段读 EX_FLAG:101，累加与其余读点写 FLAG:101），而 EX_FLAG:101 没有
- *     写点——读另一张表的分派随 #652 删除，读点统一到 FLAG 侧；[0] 的已征服
- *     臂漏列天神宫（落 ELSE 战利品臂、不封顶）也随 #652 补上。FLAG:101/102
+ *     的实参。侵攻度一律读写 FLAG 侧（`flag:${AREA}`；EX_FLAG:101 没有写
+ *     点，天神宫的累加在 FLAG:101）；[0] 的已征服臂列全五个地区。FLAG:101/102
  *     与 K1/K2 的「口上存在标志」同槽（yml/Flag.yml 保留区外的 1xx 段），
  *     累加会覆盖口上标志、读 FLAG:102 会把口上的存在当成「已征服」——#102
  *     查明、ExFlag.yml 头注登记，写侧的重叠保留、由用例钉住；
- *   - [2] 候选判据第三条旧写法 `!CFLAG:COUNT:0 == 2` 按单目 `!` 的最高
- *     优先级读作 `(!CFLAG:COUNT:0) == 2`，恒假、从不淘汰——「助手可不许
- *     带队」的意图从未生效。#652 改正为按意图判 `== 2` 淘汰，
- *     由 `brute_rejected` 的注释与用例钉住；
- *   - SEIEI 战斗体的第一处退场检查旧写法漏了实参、判的是魔王自己，
- *     「魔王侧获得胜利」由魔王被打残触发而非精锐部队倒下。#652 起两处
- *     调用都传（领军勇者，精锐部队）；
+ *   - [2] 候选判据的第三条：带队者必须是助手可的角色（CFLAG:0 == 2），
+ *     其余一律排除，由 `brute_rejected` 的注释与用例钉住；
+ *   - SEIEI 战斗体的两处退场检查都判（领军勇者，精锐部队）——「魔王侧
+ *     获得胜利」的判据是精锐部队倒下，不是魔王被打残；
  *
  *   - kyoten_event() 的 ARG 2/3/4 三臂只有判定骨架：推进赋值整体被注释，
- *     状态字恒 0，首档条件每次调用都成立——旧实现保留了骨架形态，档内
- *     只剩一行星号反复弹出（设计意图是「事件开始、只一次」）。#652 起三臂
- *     不再输出任何内容、也不恢复推进，状态字维持原样。三臂随地区续接
- *     （#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有写入路径。
- *     三臂的状态字（FLAG:94/95/96）没有写点：94 号被挪作「人数上限阶梯」
- *     的判据，CHALLENGE 用的是 EX_FLAG:95 位域。
+ *     不输出任何内容、不推进，状态字维持原样。三臂随地区续接（#505）可达：
+ *     出兵结算尾的 AREA 可取 86/88/90，侵攻度有写入路径。状态字（FLAG:94/95/96）
+ *     没有写点：94 号被挪作「人数上限阶梯」的判据，CHALLENGE 用的是
+ *     EX_FLAG:95 位域；
  *
- *   - FORT 的 [3] 绕路支（勇者掠夺路线）旧写法从不掷骰，「平安无事
- *     （体力 ×9/10）」支不可达、恒走埋伏并 RETURN 1——#652 改正为与怪物
- *     路线同构的 RAND:10（九成平安 / 一成埋伏）；
+ *   - FORT 的 [3] 绕路支（勇者掠夺路线）掷 RAND:10：九成平安无事（体力
+ *     ×9/10、直接 RETURN 0）、一成埋伏（RETURN 1），与怪物路线同构；
  *
  *
  *   - FORT/CHALLENGE 的 `LOCAL:3`（领军勇者的种族号）与 `LOCAL:12`（复现
@@ -89,10 +81,8 @@
  *     调用不受限）；[1]/[2]/[3]/[5] 自 #505 起按 CAMPAIGN_REGIONS 取
  *     AREA/SINDO 后汇入同一个 start_campaign()；
  *
- *   - [5] 天神宫的按钮渲染与派发检查曾用两组不对称条件（按钮随
- *     shrine_stage 渲染、派发只认 route_33），窗口外点 [5] 被拒收重问——
- *     #652 起渲染与派发共用同一道 route_33 > 500 守卫，玩家看不到「可选却
- *     进不去」的按钮；
+ *   - [5] 天神宫的渲染与派发共用同一道 route_33 > 500 守卫：按钮只在窗口
+ *     内渲染，派发拒收窗口外的值，玩家看不到「可选却进不去」的按钮；
  *
  *   - [1001]（AGENT_MENU）是复制改名事故（#103 判定）、不排期——缺内容的
  *     入口随 #638 一并删除：键入 1001 落到 >=6 的拒收支重问；
@@ -163,10 +153,9 @@ const BAR_WIDTH = 16;
  * :680/:683 与 :867/:870/:873/:876/:879）、`kyoten_arg` 是 @KYOTEN_EVENT 的
  * 实参（:984/:987/:990/:993——**没有天神宫臂**，故为 null）。
  *
- * 侵攻度读写曾在「哪张表」上不自洽：出兵菜单与魔力结果段读 EX_FLAG:101，
- * 累加与其余读点写 FLAG:101——而 EX_FLAG:101 没有写点，进度条恒 0。读另
- * 一张表的分派随 #652 删除（region_progress() 一律读 FLAG 侧，见该函数的
- * 注释）；写侧保持 FLAG:101/102，与 K1/K2 的「口上存在标志」同槽（yml/
+ * 侵攻度一律读写 FLAG 侧（`flag:${AREA}`）：EX_FLAG:101 没有写点，天神宫
+ * 的累加在 FLAG:101（add_region_progress，出兵结算），region_progress()
+ * 与之同表。写侧 FLAG:101/102 与 K1/K2 的「口上存在标志」同槽（yml/
  * Flag.yml 保留区外的 1xx 段）——累加会覆盖口上标志、读 FLAG:102 会把
  * 口上的存在当成「已征服」。这个重叠随 #102 登记保留、不另迁槽位。
  */
@@ -222,16 +211,15 @@ const CAMPAIGN_REGIONS = {
 const HUMAN_WORLD = CAMPAIGN_REGIONS[0];
 
 /**
- * [0] 怪物路线的已征服臂（强制征收 ×10 + 封顶）适用的地区。原作漏列天神宫
- * （AREA=101），已征服的天神宫因此落 ELSE 战利品臂、不封顶——#652 补上。
+ * [0] 怪物路线的已征服臂（强制征收 ×10 + 封顶）适用的五个地区；不在列的
+ * 地区落 ELSE 战利品臂、不封顶。
  */
 const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];
 
 /**
- * 侵攻度的读点：一律读 FLAG 侧（`flag:${region.area}`）。天神宫的侵攻度
- * 累加写 FLAG:101（add_region_progress），读点与之同表（#652 统一——旧分派
- * 在出兵菜单与魔力结果段读 EX_FLAG:101，而 EX_FLAG:101 没有写点，进度条
- * 恒 0；那个读另一张表的分派随 #652 删除）。
+ * 侵攻度的读点：一律读 FLAG 侧（`flag:${region.area}`），与累加同表（天神宫
+ * 写 FLAG:101，add_region_progress）。EX_FLAG:101 没有写点，读那张表进度
+ * 恒 0。
  *
  * 地址是模板串：AREA 本来就是按地区取的变量，domain-check 的属主判定对
  * 动态下标不适用（tools/domain-check.mjs 头注的「动态下标静态无法判定
@@ -388,10 +376,9 @@ function kyoten_next_stage(progress, stage) {
  * 推进 FLAG:93，回落到 500/2000/4000/6000/8000 以下时逐档回退，命中的档打
  * 七行横幅并写回状态字。
  *
- * arg == 2/3/4（精灵/龙/天界）三臂只有判定骨架：推进赋值整体被注释，状态字
- * 恒 0，首档条件每次调用都成立——旧实现保留了骨架形态，档内只剩一行星号
- * 反复弹出（设计意图是「事件开始、只一次」）。#652 起三臂不再输出任何
- * 内容、也不恢复推进：状态字维持原样，出兵结算的侵攻度照算。
+ * arg == 2/3/4（精灵/龙/天界）三臂只有判定骨架：推进赋值整体被注释、状态字
+ * 恒 0，三臂不输出任何内容、也不推进——状态字维持原样，出兵结算的侵攻度
+ * 照算。
  * 三臂随地区续接（#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有
  * 写入路径。三臂的状态字（FLAG:94/95/96）没有写点：94 号被挪作「人数上限
  * 阶梯」的判据，CHALLENGE 用的是 EX_FLAG:95 位域。
@@ -420,7 +407,7 @@ async function kyoten_event(arg) {
     return 0;
   }
 
-  // 精灵/龙/天界三臂：不输出、不推进（#652）
+  // 精灵/龙/天界三臂：不输出、不推进（见函数头注释）
   return 0;
 }
 
@@ -492,9 +479,9 @@ function captive_route() {
  * （FLAG:5 & 128）决定退场状态：开 = 被狂王带走（CFLAG:1 = 9），关 = 逃回
  * 本国（CFLAG:1 = 0）。
  *
- * 战斗体内有两处调用点：第一处（精锐部队反击前）旧写法漏了实参、判的是
- * 魔王自己，「魔王侧获得胜利」由魔王被打残触发；#652 起两处都传
- * （领军勇者，精锐部队），先判精锐部队的三条死线。
+ * 战斗体内有两处调用点（精锐部队反击前、反击后），都传（领军勇者，精锐
+ * 部队）：先判精锐部队的三条死线，「魔王侧获得胜利」的判据是精锐部队
+ * 退场，不是魔王被打残。
  *
  * @param {number} arg0 领军勇者（原作 ARG:0）
  * @param {number} arg1 精锐部队（原作 ARG:1）
@@ -736,8 +723,7 @@ async function seiei_battle(area, state, rand) {
       chara(seiei).dungeon.防御力 = Math.trunc(chara(seiei).dungeon.防御力 / 2);
     }
 
-    // 精锐部队战斗的退场判定（领军勇者、精锐部队）——旧写法漏了实参，
-    // 判的是魔王自己，「魔王侧获得胜利」由魔王被打残触发（#652 改正）
+    // 精锐部队战斗的退场判定（领军勇者、精锐部队）：先判精锐部队的死线
     const first_check = await inv_death_check(yusya, seiei);
     if (first_check === 2) {
       // 魔王侧获得胜利
@@ -1193,20 +1179,16 @@ async function invasion_event_fort(
     await era.waitAnyKey();
     return 0;
   }
-  // [3] 绕路（INV_TYPE == 3）：RAND:10，九成平安无事（体力 ×9/10）/ 一成
-  // 埋伏（RETURN 1）。旧写法从不掷骰，「平安无事」支不可达、恒走埋伏
-  // ——#652 改正，与怪物路线（INV_TYPE == 2）的绕路同构。
+  // [3] 绕路（INV_TYPE == 3）：RAND:10，九成平安无事（体力 ×9/10，直接
+  // RETURN 0）/ 一成埋伏（RETURN 1），与怪物路线（INV_TYPE == 2）同构。
   if (choice === 3 && inv_type === 3) {
     if (rand(10) > 0) {
       era.print(
-        `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂受了一些伤。`,
+        `${chara_callname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,
       );
-      era.println();
       chara(yusya).dungeon.体力 = Math.trunc(
         (chara(yusya).dungeon.体力 * 9) / 10,
       );
-      era.print('体力减少了10%'); // PRINTFORMW
-      await era.waitAnyKey();
       return 0;
     }
     era.print(
@@ -2082,9 +2064,9 @@ async function sengen_video(rand = default_rand) {
  * 标记仍为 0 就会触发（三组的标记由各自 ENDING_x 置 1）。#118 时写的
  * 「窄路径不可达（对应无写入点）」对这三组已失效。
  *
- * 天神宫组随 #652 删除：判据读的 EX_FLAG:101 没有写点（侵攻度累加在
+ * 天神宫不在检查之列：判据读的 EX_FLAG:101 没有写点（侵攻度累加在
  * FLAG:101），那组条件永不成立，是死分支；END10_55 演出本体保留在
- * event-ending.js（直驱测试覆盖），只是不再有分派入口。
+ * event-ending.js（直驱测试覆盖），没有分派入口。
  *
  * 「结算尾 → invasion_check → ENDING_x」这条链有三条用例守着：人间界的
  * ENDING_1 由 test/page-invasion.test.js 的既有用例（窄路径跨 10000）覆盖，
@@ -2302,9 +2284,8 @@ async function post_conquest_menu(rand = default_rand) {
       : '- 攻略圣灵骑士的堡垒', // INVASION.ERB:71
     4,
   );
-  // [5] 的渲染与派发同一道守卫（route_33 > 500，#652 改正——旧写法按
-  // shrine_stage 渲染按钮，窗口外点 [5] 会被派发拒收重问，玩家看得到
-  // 「可选却进不去」）：窗口开着才渲染，标签随剧情阶段切换。
+  // [5] 的渲染与派发同一道守卫（route_33 > 500）：窗口开着才渲染，
+  // 标签随剧情阶段切换；派发拒收窗口外的键入（见下方派发检查）。
   if (era_exflag.route_33 > 500) {
     if (era_exflag.shrine_stage >= 4) {
       era.printButton('- 巡视淫乱意志的神宫（已征服）', 5);
@@ -2345,7 +2326,7 @@ async function post_conquest_menu(rand = default_rand) {
       return 0;
     }
     if (result === 5 && era_exflag.route_33 <= 500) {
-      // [5] 的派发守卫与按钮渲染同款（route_33 > 500，#652）：
+      // [5] 的派发守卫与按钮渲染同款（route_33 > 500）：
       // 窗口外键入 5 按无效输入重问
       continue;
     }
@@ -2414,12 +2395,10 @@ function raid_rejected(cid) {
  * filter）。判据只有这一处真相，列表计数（:305-316）与列表渲染
  * （:349-357）共用。
  *
- * 六条依次为：魔王自己 → 濒死 → 助手可（CFLAG:0 == 2）→ 非待机非苗床
+ * 六条依次为：魔王自己 → 濒死 → 非助手可（CFLAG:0 != 2）→ 非待机非苗床
  * （CFLAG:1 不属于 {0, 7}）→ 不爱慕也不淫乱 → 孕妇且未开「孕妇可出征」位。
  *
- * 第三条旧写法 `!CFLAG:0 == 2` 按单目 `!` 的最高优先级读作
- * `(!CFLAG:0) == 2`，恒假、从不淘汰——「助手可不许带队」的意图从未生效。
- * #652 改正为按意图判 `== 2` 淘汰。
+ * 带队的必须是助手可的角色（CFLAG:0 == 2 才放行），不满足的一律排除。
  *
  * @param {number} cid 角色 ID
  * @returns {boolean} true = 不可派遣
@@ -2427,8 +2406,8 @@ function raid_rejected(cid) {
 function brute_rejected(cid) {
   if (cid === 0) return true; // COUNT == 0（魔王自己）
   if ((era.get(`base:${cid}:0`) || 0) < 1) return true; // 体力为 0
-  // 助手可（CFLAG:0 == 2）不许带队（旧写法恒假、从不淘汰——#652 改正）
-  if ((era.get(`cflag:${cid}:0`) || 0) === 2) return true;
+  // 只有助手可（CFLAG:0 == 2）能带队
+  if ((era.get(`cflag:${cid}:0`) || 0) !== 2) return true;
   const status = era.get(`cflag:${cid}:1`) || 0; // CFLAG:1
   if (status !== 0 && status !== 7) return true; // 待机 / 苗床之外一律淘汰
   // 爱慕（TALENT:85）或淫乱（TALENT:76）二者皆无
@@ -2582,7 +2561,7 @@ async function pick_hero(state, rejected) {
  * 战利品 = SINKOU × 10：已征服的土地（FLAG:SINDO != 0）是「强制征收」且先
  * 按 100000 封顶，未征服是「战利品」且**不封顶**（ELSE 臂没有 MIN，两臂的
  * 差别是既有行为）。已征服臂的地区见 MONSTER_CONQUERED_AREAS——五个地区
- * 都在列（#652 补上了原作漏列的天神宫 101）。
+ * 都在列。
  *
  * :686-692 的 5% 抓捕按原作即「等键 → GET_ENEMY → 返回 0 才有犒赏行」。
  *
@@ -2830,7 +2809,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     }
     // 画面绘制：侵攻度 / 气力 / 怪物数量 / 出兵选项
     era.drawLine();
-    // 侵攻度条按 AREA 换标签，读点一律是 FLAG 侧（#652 统一，见 region_progress）
+    // 侵攻度条按 AREA 换标签，读点一律是 FLAG 侧（见 region_progress）
     print_progress_line(region.campaign_label, region_progress(region), 10000);
     // MAXBASE:0:1（气力上限）直读：跨域读放行（ADR-0002），maxbase 无门面
     print_progress_line(
@@ -3090,7 +3069,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     await era.waitAnyKey();
     chara(0).dungeon.战斗经验 += exp_gain; // EXP:0:80（魔王的侵略经验）
     era.drawLine();
-    // 侵攻度条（读点一律是 FLAG 侧，#652 统一）
+    // 侵攻度条（读点一律是 FLAG 侧，见 region_progress）
     print_progress_line(region.result_label, region_progress(region), 10000);
   }
 

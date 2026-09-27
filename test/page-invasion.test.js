@@ -1010,12 +1010,12 @@ test('FORT 守卫按 Emuera 的左结合求值：2/3 恒进、0 看 FLAG:SINDO�
   make_world(raid, { fallen: 1 });
   seed_raidable(raid, [1]);
   // 征服后菜单 [0] → 出兵菜单 [3] → 列表选 1；RAND:10 = 9 命中 FORT，
-  // INV_TYPE == 3 的 FORT 有选项 → 再键入 2（绕路），#652 起掷 RAND:10——
+  // INV_TYPE == 3 的 FORT 有选项 → 再键入 2（绕路），掷 RAND:10——
   // knob 给 9 → 九成平安支（体力 ×9/10、RETURN 0）；给 0 走埋伏支
   await run_post_conquest(raid, [0, 3, 1, 2], knob({ 10: 9, 100: 99 }));
   assert(
     history_texts(raid).includes(
-      '勇者1绕开城堡向人间界进发，因为路途遥远地形复杂受了一些伤。',
+      '勇者1绕开城堡向人间界进发，因为路途遥远地形复杂耗费了一些体力。',
     ),
     'INV_TYPE == 3 + 已征服：FORT 不早退（左结合读法），绕路掷 9 走平安支',
   );
@@ -1358,7 +1358,7 @@ test('征服后菜单渲染：圣灵骑士堡垒按 FLAG:92 == 15 切换选项�
 });
 
 test('征服后菜单渲染：天神宫状态条与 [5] 选项，渲染与派发同一道 route_33 守卫（#652 改正）', async () => {
-  // #652 起 [5] 按钮只在 route_33 > 500 时渲染（与派发守卫同款）：窗口外
+  // [5] 按钮只在 route_33 > 500 时渲染（与派发守卫同款）：窗口外
   // shrine_stage 再高也不渲染；进度条仍按 route_33 开窗 / shrine_stage >= 4 两组条件。
   const cases = [
     {
@@ -1398,8 +1398,7 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项，渲染与派发
       renders_option: false,
     },
     {
-      // 交叉格：进度条随 route_33 优先、按钮随 shrine_stage 优先的旧优先级
-      // 随 #652 消亡（按钮守卫外提）——这组只验进度条优先级不变
+      // 交叉格：进度条与按钮都随 route_33 优先——这组只验进度条优先级不变
       label:
         '交叉格：route_33 开窗且 shrine_stage=4 同时成立，进度条随 route_33、按钮随 shrine_stage',
       route_33: 510,
@@ -1530,8 +1529,8 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 与越
   const fixture = create_era_fixture();
   make_world(fixture, { fallen: 1 });
   fixture.store.set('exflag:2810', 0); // route_33 开放区间外，[5] 会被拒收
-  fixture.store.set('exflag:102', 1); // shrine_stage >= 1（#652 起窗口外不渲染 [5]，这里绕过白名单直喂派发层）
-  // [5] 自 #652 起窗口外不渲染：白名单喂不进 5，覆写 era.input 直喂派发层
+  fixture.store.set('exflag:102', 1); // shrine_stage >= 1（窗口外不渲染 [5]，这里绕过白名单直喂派发层）
+  // [5] 窗口外不渲染：白名单喂不进 5，覆写 era.input 直喂派发层
   //（dispatch 的 route_33 守卫仍要先挡下它，continue 不渲染按钮 → 后续输入
   // 按自由输入走到 >=6 拒收）
   const answers = [5, 1001];
@@ -1559,7 +1558,7 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 与越
 test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）', async () => {
   // 取守卫的两个边界值：6 是第一个被 `>= 6` 拒收的，-1 是最后一个被
   // `< 0` 拒收的——门槛挪一格（>= 7 / < -1）当场就被这两条钉住。
-  // [5] 自 #652 起窗口外不渲染：同上路，覆写 era.input 直喂派发层。
+  // [5] 窗口外不渲染：同上路，覆写 era.input 直喂派发层。
   for (const bad of [6, -1]) {
     const fixture = create_era_fixture();
     make_world(fixture, { fallen: 1 });
@@ -2209,7 +2208,7 @@ function seed_brute_hero(fixture, id, { lv = 10 } = {}) {
   fixture.seed_chara(id, { name: `勇者${id}`, callname: `勇者${id}` });
   fixture.era.addCharacter(id);
   fixture.store.set(`base:${id}:0`, 500); // 体力
-  fixture.store.set(`cflag:${id}:0`, 1); // 出售与助手资格位
+  fixture.store.set(`cflag:${id}:0`, 2); // 出售与助手资格位（2 = 助手可：[2] 路线只有助手可能带队）
   fixture.store.set(`cflag:${id}:1`, 0); // 待机
   fixture.store.set(`cflag:${id}:9`, lv); // 等级（勇者补正的读数源）
   fixture.store.set(`talent:${id}:85`, 1); // 爱慕
@@ -2398,9 +2397,9 @@ test('@_INV_DEATH_CHECK 的 CFLAG 状态写入：俘虏支 9 / 逃回支 0（:48
 });
 
 test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:279-459）', async () => {
-  // 精锐部队残血（BASE:18:0 = 100）：第一条退场检查（#652 起带实参、
-  // 判精锐部队）在第一轮先制攻击后直接判溃 → 魔王侧胜利（SINKOU/5 经验）
-  // → BREAK → RETURN 0。反击分支走不到。
+  // 精锐部队残血（BASE:18:0 = 100）：第一条退场检查（判精锐部队）在第一轮
+  // 先制攻击后直接判溃 → 魔王侧胜利（SINKOU/5 经验）→ BREAK → RETURN 0。
+  // 反击分支走不到。
   const fixture = create_era_fixture();
   // 直驱该臂：SINKOU 按引用传入（原作 #DIM REF SINKOU，:315 把它加进勇者体力）
   fixture.store.set('flag:81', 5000); // FLAG:AREA >= 5000 才开打
@@ -2812,9 +2811,8 @@ test('[2] 性格旁白七档 + 未命中空的 PRINTL（:778-800）', async () =
 });
 
 test('[2] 候选资格六条逐条（:305-316）', async () => {
-  // 六条 filter 的逐条覆盖。第三条旧写法 `!CFLAG:0 == 2` 按单目 `!` 的
-  // 最高优先级读成 `(!CFLAG:0) == 2` 恒假、从不淘汰——「助手可不许带队」
-  // 从未生效；#652 改正后该条按意图淘汰（见下表末行）。
+  // 六条 filter 的逐条覆盖。第三条：带队者必须是助手可的角色（CFLAG:0 == 2
+  // 才放行），下表末三行按 0/1/2 逐值钉住。
   const cases = [
     {
       label: '体力 0（BASE:0 < 1）',
@@ -2858,8 +2856,18 @@ test('[2] 候选资格六条逐条（:305-316）', async () => {
       },
     },
     {
-      label: '助手可（CFLAG:0 == 2）淘汰——旧写法恒假、#652 按意图改正',
+      label: '资格位空（CFLAG:0 == 0）→ 排除',
       rejected: true,
+      setup: (f) => f.store.set('cflag:1:0', 0),
+    },
+    {
+      label: '非助手可（CFLAG:0 == 1）→ 排除',
+      rejected: true,
+      setup: (f) => f.store.set('cflag:1:0', 1),
+    },
+    {
+      label: '助手可（CFLAG:0 == 2）→ 可带队',
+      rejected: false,
       setup: (f) => f.store.set('cflag:1:0', 2),
     },
   ];
@@ -3169,7 +3177,7 @@ test('FORT [2] 亲自潜入 INV_TYPE == 3：无经验无牧场，失败两支（
     ':760',
   );
 });
-test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 / 一成埋伏（#652 改正）', async () => {
+test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 / 一成埋伏', async () => {
   // INV_TYPE == 2：roll > 0 → 平安无事（九成兵力）
   const safe = make_arm_world();
   const safe_state = { sinkou: 100, yusya_i: 1 };
@@ -3193,8 +3201,8 @@ test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 /
   assert(ambushed.text_lines().includes('怪物数量减少了50%'), ':785');
 
   // INV_TYPE == 3 的选项是 [1] 偷偷潜入 / [2] 绕路：键入 2 → 绕路。
-  // #652 起与怪物路线同构：掷 RAND:10，roll > 0 平安无事（体力 ×9/10，
-  // RETURN 0）、roll == 0 埋伏（RETURN 1）——旧写法从不掷骰、恒埋伏。
+  // 与怪物路线同构：掷 RAND:10，roll > 0 平安无事（体力 ×9/10、直接
+  // RETURN 0）、roll == 0 埋伏（RETURN 1）。
   const raid = make_arm_world();
   const raid_state = { sinkou: 100, yusya_i: 1 };
   let roll_upper = 0;
@@ -3209,7 +3217,14 @@ test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 /
   );
   assert.equal(roll_upper, 10, '绕路掷的是 RAND:10（与怪物路线的上界同款）');
   assert.equal(raid.store.get('base:1:0'), 4500, '体力 ×9/10（5000 → 4500）');
-  assert(raid.text_lines().includes('体力减少了10%'), '平安支的减员提示');
+  assert(
+    raid
+      .text_lines()
+      .includes(
+        '勇者1绕开城堡向人间界进发，因为路途遥远地形复杂耗费了一些体力。',
+      ),
+    '平安支的播报（PRINTFORML，不等键）',
+  );
 
   const raid_ambushed = make_arm_world();
   const raid_ambushed_state = { sinkou: 100, yusya_i: 1 };
@@ -3283,8 +3298,10 @@ test('FORT 的选项渲染：INV_TYPE 0/2/3 三套正文，2/3 才需要输入�
   assert(
     raid
       .text_lines()
-      .includes('勇者1绕开城堡向人间界进发，因为路途遥远地形复杂受了一些伤。'),
-    ':798 键入 2 到了绕路支（#652 起掷 RAND:10，5 → 平安）',
+      .includes(
+        '勇者1绕开城堡向人间界进发，因为路途遥远地形复杂耗费了一些体力。',
+      ),
+    ':798 键入 2 到了绕路支（掷 RAND:10，5 → 平安）',
   );
 
   // INV_TYPE == 0：不渲染选项、不输入，直接走强攻
@@ -4298,7 +4315,7 @@ test('【地区续接】[1]/[2]/[3] 各映射到自己的 AREA/SINDO 并汇入�
     );
 
     // 结算尾的 KYOTEN_EVENT 实参按 AREA 分派：本地区跨过首档 2000——精灵/
-    // 龙/天界三臂不再输出任何内容（#652），星号一行都不打；实参表仍由
+    // 龙/天界三臂不输出任何内容，星号一行都不打；实参表仍由
     // 末尾「人间界臂也不打」鉴别（误调 ARG 1 会打人间界的七行横幅）
     assert.equal(
       history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,

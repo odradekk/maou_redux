@@ -668,9 +668,8 @@ async function chara_info() {
  * 的序号顺位表，即「编号」视图那套顺序；ere 侧换成同一套排列键
  * （number_view_order，按移植自建的排序编号）。
  *
- * 包装透传内层返回值（#652 改正）：旧写法在 CALL 之后没有 RETURN，内层返回
- * 值被清 0，1200 视图下结婚不结束本回合；改正后内层返回 1（婚礼完成/
- * ENTER_LOVER 成功）即上浮结束本回合，与其余视图一致。
+ * 包装透传内层返回值：内层返回 1（婚礼完成 / ENTER_LOVER 成功）即上浮
+ * 结束本回合，与其余视图一致。
  * @param {number} cid 角色 ID
  * @returns {Promise<number>} 内层的返回值（0 = 回到名册；1 = 回合结束）
  */

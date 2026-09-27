@@ -4629,7 +4629,7 @@ export default [
   {
     desc: 'M13200 据点事件三臂恢复星号输出（#652 删掉的反复弹星号复原）',
     file: 'ere/page/page-invasion.js',
-    find: '  // 精灵/龙/天界三臂：不输出、不推进（#652）\n  return 0;',
+    find: '  // 精灵/龙/天界三臂：不输出、不推进（见函数头注释）\n  return 0;',
     replace:
       '  // 变异：三臂恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
     tests: ['page-invasion'],
@@ -4684,10 +4684,10 @@ export default [
   {
     desc: 'M13206 [2] 候选资格的助手可守卫删除（#652 按意图补的淘汰被拆）',
     file: 'ere/page/page-invasion.js',
-    find: '  // 助手可（CFLAG:0 == 2）不许带队（旧写法恒假、从不淘汰——#652 改正）\n  if ((era.get(`cflag:${cid}:0`) || 0) === 2) return true;',
+    find: '  // 只有助手可（CFLAG:0 == 2）能带队\n  if ((era.get(`cflag:${cid}:0`) || 0) !== 2) return true;',
     replace: '  // 变异：助手可守卫删除',
     tests: ['page-invasion'],
-    must_mention: '助手可（CFLAG:0 == 2）淘汰',
+    must_mention: '资格位空（CFLAG:0 == 0）→ 排除：列表不该渲染',
   },
   {
     desc: 'M13207 征服后菜单 [5] 的渲染守卫删除（#652 外提的 route_33 守卫被拆）',
@@ -4744,11 +4744,10 @@ export default [
   {
     desc: 'M13213 SHOW_TALENT 魔虫知识（328）的守卫退回笔误形态（读回 327，#652 改正被拆）',
     file: 'ere/page/components/chara-talents.js',
-    find: '      { id: 328, guard: (t) => t(328) !== 0 }, // 守卫读自身（旧版误读 327，#652 改正）',
-    replace:
-      '      { id: 328, guard: (t) => t(327) !== 0 }, // 变异：退回笔误形态',
+    find: '      { id: 328 },',
+    replace: '      { id: 327 }, // 变异：魔虫知识行换成 327',
     tests: ['chara-info-show'],
-    must_mention: '只设 327 时 328 不再连带出（笔误已改正）',
+    must_mention: '只设 328 时照出',
   },
   {
     desc: 'M13214 FORT 绕路（INV_TYPE == 3）的 RAND:10 上界改坏（10 改 5，九成平安变五成）',

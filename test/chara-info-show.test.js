@@ -650,7 +650,7 @@ test('SHOW_TALENT：体质段无输出时标签与下一段同拼一行，有输
   );
 });
 
-test('SHOW_TALENT：魔虫知识（328）的守卫读自身（#652 改正笔误）', () => {
+test('SHOW_TALENT：魔虫知识（328）按自身判据显示', () => {
   const only327 = talent_fixture({
     flag5: 1 << 8,
     talents: { [T.淫魔知识]: 1 },
@@ -658,10 +658,7 @@ test('SHOW_TALENT：魔虫知识（328）的守卫读自身（#652 改正笔误�
   only327.show_talent(7);
   const line = only327.fixture.text_lines().find((t) => t.includes('技术'));
   assert(line.includes('[淫魔知识]'), '327 自身照出');
-  assert(
-    !line.includes('[魔虫知识]'),
-    '只设 327 时 328 不再连带出（笔误已改正）',
-  );
+  assert(!line.includes('[魔虫知识]'), '只设 327 时 328 不连带出');
 
   const only328 = talent_fixture({
     flag5: 1 << 8,
@@ -670,7 +667,7 @@ test('SHOW_TALENT：魔虫知识（328）的守卫读自身（#652 改正笔误�
   only328.show_talent(7);
   assert(
     only328.fixture.text_lines().some((t) => t.includes('[魔虫知识]')),
-    '只设 328 时照出（改正后按自身判据）',
+    '只设 328 时照出',
   );
 });
 
