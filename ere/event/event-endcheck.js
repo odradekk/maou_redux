@@ -1,20 +1,19 @@
 /**
- * @file @ENDCHECK 主线剧情监测全链（issue #116：S4「可空转」落地）。
+ * @file run_endcheck 主线剧情监测全链（issue #116：S4「可空转」实现）。
  *
- * 调用关系（全库唯一调用点，已查实）：@EVENT_NEWDAY :241（「主线剧情
- * 监测」，每日一次）——ere/event/event-nextday.js 的 run_event_newday
- * 尾部。
+ * 调用关系（全库唯一调用点，已查实）：ere/event/event-nextday.js 的
+ * run_event_newday 尾部（「主线剧情监测」，每日一次）。
  *
- * 本票边界（#112 父票定「可空转」）：
- *   - 真做：ENDRESET 十一角清场、ENDCHECKMAIN 五条线、ENDCHECKCHARA 的
+ * 本工单边界（#112 父票定「可空转」）：
+ *   - 真做：endreset 十一角清场、endcheck_main 五条线、endcheck_chara 的
  *     七条素质定线与四条子判定**调用**、END 族分派循环。这些是纯 flag
  *     读写，无演出，是后续阶段的挂接面。
- *   - 四条角色线推进判定（@ENDCHECKSPADE / @ENDCHECKSQUARE /
- *     @ENDCHECKGODNESS / @ENDCHECKGODNESS_SKY_TEMPLE / @ENDCHECKPRINCESS）
- *     自 #404（N20）起为真身（见下方各函数）；@ENDING_N 演出同票落地
- *     （ere/event/event-ending.js 的 ending_n）。
+ *   - 四条角色线推进判定（endcheck_spade / endcheck_square /
+ *     endcheck_godness / endcheck_godness_sky_temple / endcheck_princess）
+ *     自 #404（N20）起为真身（见下方各函数）；ending_n 演出同一工单实现
+ *     （ere/event/event-ending.js）。
  *
- * 移植说明：
+ * 说明：
  *   - GETCHARA(n) 按登记号寻址；ere 侧登记号已扁平化为角色号
  *     （#21，addCharacter(17) 后 cid=17），在场判定即列表包含。
  *   - EX_FLAG:2801-2815 读写一律走包装层（era-exflag.js，#113 落表）；
@@ -22,12 +21,11 @@
  *     自洽；族 15 无脚本、不进分派，该线值无消费者）。反叛结局的
  *     FLAG:2816 写入同样无消费点（死写入，保留）。
  *   - cflag/talent 的读是跨域读，放行（ADR-0002「跨域读放行」），直读
- *     + || 0 兜底（#13：未声明下标读得 undefined）。
- *   - 四条线状态机里的 `SIF` **只护住紧接的下一行**（emuera-basic-agent-guide
- *     references/commands/control-flow.md:19-24，Emuera 忽略缩进）：ENDCHECKSQUARE
- *     :166-168 的计数器清零在分支内无条件执行，不是书写错误，按现状
- *     保留，见该函数内注释。同理 ENDCHECKGODNESS 各档里的 `SIF DAY:1 …`
- *     只护住跳档那一行。
+ *     + || 0 缺省处理（#13：未声明下标读得 undefined）。
+ *   - 四条线状态机里的 `SIF` **只护住紧接的下一行**（该语法忽略缩进，
+ *     条件语句不形成块）：endcheck_square 里 30-40 档的计数器清零在
+ *     分支内无条件执行，不是书写错误，按现状保留，见该函数内注释。
+ *     同理 endcheck_godness 各档里的 `SIF DAY:1 …` 只护住跳档那一行。
  */
 
 const era = require('#/era-electron');
@@ -37,7 +35,7 @@ const { END_FAMILY } = require('#/event/ending-family');
 const { ending_n } = require('#/event/event-ending');
 
 /**
- * 原作 RAND:N（0..N-1）的缺省实现（dungeon-lvup.js 同款）。四条线状态机
+ * RAND:N（0..N-1）的缺省实现（dungeon-lvup.js 同款）。四条线状态机
  * 只有两处随机（银黑桃 151 档以上的乳业收入 RAND:200、黑方片 300 档的
  * RAND:5），均由调用点可注入的随机源承担——测试给确定性源（#344）。
  */
@@ -45,7 +43,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** 二维表读点：未声明下标读得 undefined（#13），包装层同款 || 0 兜底 */
+/** 二维表读点：未声明下标读得 undefined（#13），包装层同款 || 0 缺省处理 */
 function get(name) {
   return era.get(name) || 0;
 }
@@ -56,9 +54,8 @@ function get_chara(no) {
 }
 
 /**
- * 每日清场（原作 @ENDRESET，ENDINGDATA.ERB :1-35）。
- * 剧情角色不在场则清对应线 flag；银黑桃/嘉德有段位守卫——推进到离队
- * 死亡段（300/500+）后不归零重走。
+ * 每日清场。剧情角色不在场则清对应线 flag；银黑桃/嘉德有段位检查——推进到
+ * 离队死亡段（300/500+）后不归零重走。
  */
 function endreset() {
   // 玛奥（角色号 17）
@@ -93,9 +90,9 @@ function endreset() {
   if (get_chara(32) < 0) {
     era_exflag.route_32 = 0;
   }
-  // 嘉德（33）——清场守卫读自家线值 2810（原作误读 2814：写入的是 2810；
-  // 银黑桃线值上界 311，2814 < 500 恒真，守卫形同虚设，嘉德离队即每天清
-  // 2810——#649 改正为读 2810，与写入同侧）
+  // 嘉德（33）——清场检查读自家线值 2810：写入侧是 2810，若误读银黑桃的
+  // 2814，则 2814 < 500 恒真、检查形同虚设，嘉德离队后会每天清 2810——
+  // #649 改正为读 2810，与写入同侧
   if (get_chara(33) < 0 && era_exflag.route_33 < 500) {
     era_exflag.route_33 = 0;
   }
@@ -110,14 +107,13 @@ function endreset() {
 }
 
 /**
- * 全局判定（原作 @ENDCHECKMAIN，ENDINGDATA.ERB :38-63）：五条线。
- * 2802/2803/2804 的真实消费者是 @DEBUG_CHECK（反作弊，EVENT_TURNEND.ERB
- * :170-334，随反作弊票）；本函数只负责置位。
+ * 全局判定：五条线。2802/2803/2804 的真实消费者是 debug_check（反作弊，
+ * ere/event/event-turnend.js，随反作弊票）；本函数只负责置位。
  */
 function endcheck_main() {
   // 一周目 500 日 Normal End 门槛：DAY:0 == 500 且主线空闲
   // （2801 == 0 未起步，或 >= 90 真结局收尾中）→ 置 99。99 同时是分派
-  // 循环的短路条件（ENDING ver 1.0.1.ERB :344）
+  // 循环的短路条件
   if (
     era_flag.day_count === 500 &&
     (era_exflag.first_run_deadline === 0 || era_exflag.first_run_deadline >= 90)
@@ -133,10 +129,10 @@ function endcheck_main() {
   }
 
   // 奴隶魔力过载：任一角色（含 0 号魔王）CFLAG:9 >= 5000 且无
-  // 占用/调教中标记（CFLAG:x:1 == 0）→ 记角色号。原作 DO 循环从 0 号
-  // 扫到 CHARANUM-1、后命中覆盖先命中；ere 侧迭代序＝引擎键序
+  // 占用/调教中标记（CFLAG:x:1 == 0）→ 记角色号。扫描从 0 号起、
+  // 后命中覆盖先命中；ere 侧迭代序＝引擎键序
   // （getAddedCharacters 数值升序，#150），覆盖写语义同，「最后」＝
-  // 最大命中 ID——非升序加入时与原作位序模型分道，取舍随 #21 的
+  // 最大命中 ID——非升序加入时与位序模型分道，取舍随 #21 的
   // ID 语义扁平化
   for (const cid of era.getAddedCharacters()) {
     // CFLAG:x:9 魔力存量；CFLAG:x:1 占用/状态标记（0=空闲）
@@ -149,7 +145,7 @@ function endcheck_main() {
   }
 
   // 魔王自己过载（登记号 0 = 角色 0）：CFLAG:0:9 >= 1500 → 置 10，
-  // 消费者是 @DEBUG_CHECK 的大冲击 GAMEOVER
+  // 消费者是 debug_check 的大冲击 GAMEOVER
   if ((era.get('cflag:0:9') || 0) >= 1500) {
     era_exflag.maou_runaway_ending = 10;
   }
@@ -162,30 +158,28 @@ function endcheck_main() {
 }
 
 /**
- * 七角素质定线表（@ENDCHECKCHARA 的同型块，ENDINGDATA.ERB :66-137）。
- * 结构：角色在场 && 线 flag == 0 → TALENT:85 恋慕置 10 / TALENT:76 淫乱
- * 置 20。no = 角色号；holder/name = 线 flag 所在的包装层对象与访问器名
- * （葵希罗线在 FLAG 侧，见文件头）。src = 源码区间。
+ * 七角素质定线表。结构：角色在场 && 线 flag == 0 → TALENT:85 恋慕置 10 /
+ * TALENT:76 淫乱置 20。no = 角色号；holder/name = 线 flag 所在的包装层对象
+ * 与访问器名（葵希罗线在 FLAG 侧，见文件头）。
  */
 const LINE_STARTERS = [
-  { no: 17, holder: era_exflag, name: 'route_17', src: ':66-73' }, // 玛奥
-  { no: 20, holder: era_exflag, name: 'route_20', src: ':74-81' }, // 金红桃
-  { no: 23, holder: era_exflag, name: 'route_23', src: ':90-97' }, // 白梅花
-  { no: 24, holder: era_exflag, name: 'route_24', src: ':98-105' }, // 莉莉
-  { no: 31, holder: era_exflag, name: 'route_31', src: ':106-113' }, // 琼
-  { no: 32, holder: era_exflag, name: 'route_32', src: ':114-121' }, // 普林希斯
-  { no: 34, holder: era_flag, name: 'route_34', src: ':130-137' }, // 葵希罗（FLAG 侧）
+  { no: 17, holder: era_exflag, name: 'route_17' }, // 玛奥
+  { no: 20, holder: era_exflag, name: 'route_20' }, // 金红桃
+  { no: 23, holder: era_exflag, name: 'route_23' }, // 白梅花
+  { no: 24, holder: era_exflag, name: 'route_24' }, // 莉莉
+  { no: 31, holder: era_exflag, name: 'route_31' }, // 琼
+  { no: 32, holder: era_exflag, name: 'route_32' }, // 普林希斯
+  { no: 34, holder: era_flag, name: 'route_34' }, // 葵希罗（FLAG 侧）
 ];
 
 /**
- * 角色线推进（原作 @ENDCHECKCHARA，ENDINGDATA.ERB :64-140）。
- * 七条素质定线真做；四个推进状态机（好感/阶段计数器逐级爬段）自 #404 起
- * 为真身，见下方各 endcheck_* 函数。
+ * 角色线推进：七条素质定线真做；四个推进状态机（好感/阶段计数器逐级爬段）
+ * 自 #404 起为真身，见下方各 endcheck_* 函数。
  */
 async function endcheck_chara() {
   for (const starter of LINE_STARTERS) {
     if (get_chara(starter.no) > 0) {
-      // 源码区间见 LINE_STARTERS 的 src 列
+      // 线 flag 未起步才定线
       if (starter.holder[starter.name] === 0) {
         // TALENT:85 恋慕 / TALENT:76 淫乱（素质定线，直读子表）
         if (era.get(`talent:${starter.no}:85`) || 0) {
@@ -201,7 +195,7 @@ async function endcheck_chara() {
   if (get_chara(21) > 0 && era_exflag.route_21 < 300) {
     await endcheck_spade();
   }
-  // 黑方片（22）：在场即判定（无段位守卫）
+  // 黑方片（22）：在场即判定（无段位检查）
   if (get_chara(22) > 0) {
     endcheck_square();
   }
@@ -223,16 +217,16 @@ async function endcheck_chara() {
 }
 
 /**
- * @ENDCHECKSQUARE（ENDINGDATA.ERB:143-207）：黑方片线（角色 22）的每日推进。
+ * endcheck_square：黑方片线（角色 22）的每日推进。
  *
  * 线值 EX_FLAG:2811：10-90 是恋慕线的逐档推进，110-200 是淫乱线，300-310
- * 是「放走/死亡」段（:151 的互换重置与 :199 的 300 档）。计数器
+ * 是「放走/死亡」段（爱慕淫乱互换重置与 300 档）。计数器
  * CFLAG:22:515 承担「材料累积到阈值才跳档」。
  *
- * @param {(n: number) => number} [rand] RAND:5 的随机源（:205 的 300 档掷骰）
+ * @param {(n: number) => number} [rand] RAND:5 的随机源（300 档掷骰）
  */
 function endcheck_square(rand = default_rand) {
-  const cid = get_chara(22); // GETCHARA(22)：不在场为 -1（读数全 0，调用方已守卫）
+  const cid = get_chara(22); // GETCHARA(22)：不在场为 -1（读数全 0，调用方已检查）
   const cflag = (idx) => get(`cflag:${cid}:${idx}`);
   const talent = (idx) => get(`talent:${cid}:${idx}`);
 
@@ -267,8 +261,8 @@ function endcheck_square(rand = default_rand) {
       era_exflag.route_22 = 30;
     }
   } else if (stage >= 30 && stage < 40) {
-    // ：SIF 只护住 :167 的跳档，:168 的计数器清零在分支内无条件
-    // 执行（Emuera 忽略缩进，本文件头注有据）——状态机的既有行为，保留不扩成 SIF 块
+    // SIF 只护住本档的跳档，计数器清零在下一行、分支内
+    // 无条件执行（该语法忽略缩进，本文件头注有据）——状态机的既有行为，保留不扩成 SIF 块
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_22 = 40;
     }
@@ -305,7 +299,7 @@ function endcheck_square(rand = default_rand) {
     }
   } else if (stage === 300) {
     // 300 档：1/5 概率推进到 310（无门槛，计数器不动）。
-    // 是被原作 `;` 注释掉的一段，不移植
+    // 300 档以下还有一段被 `;` 注释掉的代码，不移植
     if (rand(5) === 0) {
       era_exflag.route_22 = era_exflag.route_22 + 10;
     }
@@ -313,14 +307,14 @@ function endcheck_square(rand = default_rand) {
 }
 
 /**
- * @ENDCHECKSPADE（ENDINGDATA.ERB:208-352）：银黑桃线（角色 21）的每日推进。
+ * endcheck_spade：银黑桃线（角色 21）的每日推进。
  *
  * 线值 EX_FLAG:2814：30-90 恋慕 / 110-200 淫乱 / 300-310 放走段；
- * 151 档以上每日产奶收入（MONEY 与 EX_FLAG:4444 同步）。:210-233 的
- * `[SKIPSTART]…[SKIPEND]` 段（CFLAG:1 == 9 的离队处置）是原作主动括起来
- * 的死代码，不移植（清单行 :208-352 含它）。
+ * 151 档以上每日产奶收入（MONEY 与 EX_FLAG:4444 同步）。原清单里
+ * `[SKIPSTART]…[SKIPEND]` 段（CFLAG:1 == 9 的离队处置）是被主动括起来的
+ * 死代码，不移植。
  *
- * @param {(n: number) => number} [rand] RAND:200 的随机源（:236 乳业收入）
+ * @param {(n: number) => number} [rand] RAND:200 的随机源（乳业收入）
  */
 async function endcheck_spade(rand = default_rand) {
   const cid = get_chara(21);
@@ -368,7 +362,7 @@ async function endcheck_spade(rand = default_rand) {
       era_exflag.route_21 = 30;
     }
   } else if (stage >= 30 && stage < 40) {
-    // ：SIF 只护住跳档那一行，计数器清零在分支内无条件（同 SQUARE）
+    // SIF 只护住跳档那一行，计数器清零在分支内无条件（同 SQUARE）
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_21 = 40;
     }
@@ -422,7 +416,7 @@ async function endcheck_spade(rand = default_rand) {
       era_exflag.route_21 = 120;
     }
   } else if (lust_stage >= 120 && lust_stage < 130) {
-    // 这一档没有素质守卫（原作即如此）
+    // 这一档没有素质检查（有意保留）
     if (cflag(515) >= 2) {
       era_exflag.route_21 = 130;
     } else {
@@ -477,10 +471,10 @@ async function endcheck_spade(rand = default_rand) {
 }
 
 /**
- * @ENDCHECKPRINCESS（ENDINGDATA.ERB:353-480）：菲娅线（角色 35）的每日推进。
+ * endcheck_princess：菲娅线（角色 35）的每日推进。
  *
  * 线值 EX_FLAG:2807：10（初次会面）/ -10（崩坏态 → 当天 Bad Ending 占位段）/ 30-120 恋慕 /
- * 130-220 淫乱。:445-447 的 160-170 档是空分支（判定已移到 aftertrain），
+ * 130-220 淫乱。160-170 档是空分支（判定已移到 aftertrain），
  * 保留为空分支。
  */
 function endcheck_princess() {
@@ -623,16 +617,15 @@ function endcheck_princess() {
 }
 
 /**
- * @ENDCHECKGODNESS（ENDINGDATA_ADDON1.ERB:1-144）：嘉德线（角色 33）的每日
- * 推进，线值 EX_FLAG:2810。
+ * endcheck_godness：嘉德线（角色 33）的每日推进，线值 EX_FLAG:2810。
  *
  * 两片未完成区保留原状：
- *   - :3-24 与 :37-85 整段被 `;` 注释掉（含恋慕线阶梯与 CFLAG:1 == 9 的
+ *   - 首段与重置段整段被 `;` 注释掉（含恋慕线阶梯与 CFLAG:1 == 9 的
  *     离队处置），不移植；
- *   - :98-101 与 :111-116 的 `SIF DAY:1 …` 只护住跳档那一行，计数器累加
- *     在分支内无条件执行（SIF 语义同 ENDCHECKSQUARE）；
- *   - :112 的 `EX_FLAG:2810 == 560` 位于 `[150,160)` 档内，恒假——死分支，
- *     与 560 转移整体的不可达（ENDCHECKGODNESS_SKY_TEMPLE 的守卫缺陷）
+ *   - 各档的 `SIF DAY:1 …` 只护住跳档那一行，计数器累加
+ *     在分支内无条件执行（SIF 语义同 endcheck_square）；
+ *   - 150 档内的 `EX_FLAG:2810 == 560` 与档区间矛盾，恒假——死分支，
+ *     与 560 转移整体的不可达（endcheck_godness_sky_temple 的检查缺陷）
  *     是同一片未完成区。
  */
 function endcheck_godness() {
@@ -658,7 +651,7 @@ function endcheck_godness() {
   }
 
   // 淫乱线（TALENT:76）阶梯。八档都是「门槛满足跳档、否则计数器
-  // 累加」的同型块，逐档的源区间标在档位头上（行级锚只落在带动词的那一行）
+  // 累加」的同型块，各档的门槛注记在档位头上
   const stage = era_exflag.route_33;
   const lust = talent(76) === 1;
   if (lust && cflag(2) >= 2000 && stage < 10) {
@@ -736,12 +729,11 @@ function endcheck_godness() {
 }
 
 /**
- * @ENDCHECKGODNESS_SKY_TEMPLE（ENDINGDATA_ADDON1.ERB:146-153）：嘉德离队后的
- * 天神宫线。500-510 / 520-530 / 530-540 三档是空分支；540-550 档的 560
- * 转移带 `GETCHARA(33) == 0` 守卫——GETCHARA 返回列表位置（不存在为 -1，
- * 见 emuera-basic-agent-guide references/commands/character.md:136），而
- * 0 号魔王恒占位置 0，故该条件在真机上永不成立、560 不可达。这是
- * 未完成区域（#102 查明天神宫侵度 EX_FLAG:101 无写入点），保留原状。
+ * endcheck_godness_sky_temple：嘉德离队后的天神宫线。500-510 / 520-530 /
+ * 530-540 三档是空分支；540-550 档的 560 转移带 `GETCHARA(33) == 0`
+ * 检查——GETCHARA 返回列表位置（不存在为 -1），而 0 号魔王恒占位置 0，
+ * 故该条件永不成立、560 不可达。这是未完成区域（#102 查明天神宫侵度
+ * EX_FLAG:101 无写入点），保留原状。
  */
 function endcheck_godness_sky_temple() {
   const stage = era_exflag.route_33;
@@ -752,7 +744,7 @@ function endcheck_godness_sky_temple() {
   } else if (stage >= 530 && stage < 540) {
     // 空分支
   } else if (stage >= 540 && stage < 550) {
-    // 死守卫（见函数头注）
+    // 死检查（见函数头注）
     if (get_chara(33) === 0 && era_flag.human_realm_event_stage === 3) {
       era_exflag.route_33 = 560;
     }
@@ -760,8 +752,8 @@ function endcheck_godness_sky_temple() {
 }
 
 /**
- * 主线剧情监测（原作 @ENDCHECK，ENDING ver 1.0.1.ERB :301-356）。
- * 每日一次，@EVENT_NEWDAY :241 调用。
+ * 主线剧情监测：每日清场、全局判定、角色线推进、END 族分派与 Normal End
+ * 演出。每日一次，run_event_newday 尾部调用。
  */
 async function run_endcheck() {
   // 每日清场
@@ -777,7 +769,7 @@ async function run_endcheck() {
   // 2801 == 99（Normal End 已定）时整体短路。
   if (era_exflag.first_run_deadline !== 99) {
     for (const family of [7, 10, 11, 14]) {
-      // EX_FLAG:(2800+族号) 是动态下标（原作拼名寻址的读侧），直读 + || 0
+      // EX_FLAG:(2800+族号) 是动态下标（拼名寻址的读侧），直读 + || 0
       const stage = era.get(`exflag:${2800 + family}`) || 0;
       if (stage % 10 === 0) {
         // TRYCALLFORM END{族号}_{stage / 10}：整数除法向零截断

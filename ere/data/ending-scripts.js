@@ -1,15 +1,15 @@
 /**
- * @file 65 个 @END<n> 结局文本段的数据表（issue #404 / N20；数据表落点照
+ * @file 65 个结局文本段的数据表（issue #404 / N20；数据表落点照
  *     #388 的 CHARA_NAME_INIT 先例，不为每个段写一个函数）。
  *
- * 这 65 段是同一形状的结局文本段，只经 `TRYCALLFORM END{LOCAL}_{小节}`
- * 到达（ENDING ver 1.0.1.ERB:347 的分派循环，落在 ere/event/endcheck 的
- * END_FAMILY）——按字面 CALL 数外部调用全是 0，不是死代码。执行语义在
+ * 这 65 段是同一形状的结局文本段，只经「按族号与小节键查表」
+ * 到达（ere/event/event-endcheck.js 的 END_FAMILY 分派循环）——按字面
+ * 调用数外部调用全是 0，不是死代码。执行语义在
  * ere/event/ending-family.js 的 run_steps。
  *
- * 结构：`{ <族号>: { <小节键>: { src, steps } } }`。小节键 = 原作函数名里
+ * 结构：`{ <族号>: { <小节键>: { steps } } }`。小节键 = 段名里
  * 族号之后的部分（`END7_1` → `'1'`、`END10_12_1` → `'12_1'`）。族号即
- * 原作 FOR LOCAL,2,16 的 LOCAL，小节 = `EX_FLAG:(2800+LOCAL)/10`。
+ * 分派循环变量 LOCAL（2..15），小节 = `EX_FLAG:(2800+LOCAL)/10`。
  *
  * 步词表（steps 顺序执行；`if`/`ask` 递归）：
  *   ['d']                          DRAWLINE
@@ -23,33 +23,34 @@
  *   ['talent', cid, 序号, 值]       TALENT:cid:序号 = 值
  *   ['base', cid, 序号, 增量]
  *   ['exp', cid, 序号, 增量]
- *   ['inconseq', arg]              CALL ENDINCONSQSELECT,arg（event-ending.js）
- *   ['sub', 小节键]                 CALL 同族另一段（END10_12 → 12_1/12_2）
+ *   ['inconseq', arg]              菲娅线因果选择（event-ending.js 的 inconseq_select）
+ *   ['sub', 小节键]                 同族另一段（END10_12 → 12_1/12_2）
  *   ['finish']                     结局收尾：EX_FLAG:2801 < 99 时先抬到 90 再 ++
  *   ['leave', cid]                 角色线离队三连（见 ending-family.js）
  *   ['rampage']                    嘉德暴走结算（END10_15，见 ending-family.js）
  *   ['if', 条件, 真支, 假支?]        条件见下
  *   ['ask', {prompt, branches, else?, again?, after?}]  INPUT 分岔
+ *
  * 条件词表：['talent_eq', cid, 序号, 值] / ['result_is', 值] /
  *   ['cflag_between', cid, 序号, 下界, 上界]（左闭右开）
  *
- * 移植说明（有意偏离与保留的怪癖，逐条注明）：
- *   - `PRINTFORM`（无 L/W 后缀）原作是「纯打印不换行」（print-system.md:32），
+ * 说明（有意偏离与保留的怪癖，逐条注明）：
+ *   - `PRINTFORM`（无 L/W 后缀）是「纯打印不换行」，
  *     ere 的 print 模型每次调用落一整行、没有半行输出，故按最接近的整行
  *     处理（['l', …]）。全库只出现在四处「询问 + 选项」的上一行。
  *   - `REDRAW 0/1` 无 ere 对应语义，不镜像（page-dungeon-info2.js 先例）。
  *   - `ALIGNMENT CENTER`/`LEFT` → era.setAlign（END10_54，event-first.js 先例）。
  *   - `%SAVESTR:MASTER%` 由 ending-family.js 的插值换成角色 0 的姓名
  *     （SAVESTR 无引擎通道，#5 决议；本作里 SAVESTR:x = %NAME:x%）。
- *   - `@END713`（ENDINGDATA.ERB:659）原作无下划线，与相邻的 END7_1–END7_22
- *     不一致。本表把该节登记在节号 `'13'` 下（#649 挪正——分派按线值 / 10
- *     拼节号，13 能命中；该节本身是空段，命中后无输出、线值不动，防重播
- *     由分派循环的个位守卫承担）。
- *   - `G:2 = -1`（END11_4 / END14_4 与 ADDON1 里的同型段）写的是未声明表 G
+ *   - `END713` 的段名无下划线，与相邻的 END7_1–END7_22 不一致。本表把该节
+ *     登记在节号 `'13'` 下（#649 挪正——分派按线值 / 10 拼节号，13 能命中；
+ *     该节本身是空段，命中后无输出、线值不动，防重播由分派循环的个位检查
+ *     承担）。
+ *   - `G:2 = -1`（END11_4 / END14_4 与天神宫线的同型段）写的是未声明表 G
  *     （全库无声明），是 `FLAG:2` 的笔误——不落任何表（见 ending-family.js
  *     的 leave 步）。
  *   - 族 7 的小节 -1（菲娅线崩坏态的 Bad Ending 占位段）是 #649 用户决定
- *     的新增内容，不是原作段落；正式剧情写好后替换占位文案。
+ *     的新增内容；正式剧情写好后替换占位文案。
  *   - 文本一律简体（issue #60）：本文件的字面量受 tools/lang-check.js 检查。
  */
 
@@ -58,7 +59,7 @@ const END_SCRIPTS = {
     // 菲娅线崩坏态（EX_FLAG:2807 = -10）的 Bad Ending 占位段：分派按线值 / 10
     // 拼出小节 -1。内容按 #649 用户决定只用占位文案（标题 + 「此处剧情
     // 尚未做好」），不写剧情；收尾 += 1 置个位（-10 → -9），只播一次、
-    // 线值永停 -9。本段是新增内容，没有原作来源（无 src 行标）。
+    // 线值永停 -9。本段是新增内容，没有来源标注。
     '-1': {
       steps: [
         ['d'],
@@ -69,7 +70,6 @@ const END_SCRIPTS = {
     },
 
     1: {
-      src: 'ENDINGDATA.ERB:483-490',
       steps: [
         ['d'],
         [
@@ -87,7 +87,6 @@ const END_SCRIPTS = {
       ],
     },
     2: {
-      src: 'ENDINGDATA.ERB:492-499',
       steps: [
         ['d'],
         ['w', '「啊，魔王大人～♪」'],
@@ -99,11 +98,9 @@ const END_SCRIPTS = {
       ],
     },
     3: {
-      src: 'ENDINGDATA.ERB:501-501',
       steps: [],
     },
     4: {
-      src: 'ENDINGDATA.ERB:503-514',
       steps: [
         ['d'],
         ['w', '「魔王大人，今天也是个好天气呢～」'],
@@ -119,7 +116,6 @@ const END_SCRIPTS = {
       ],
     },
     5: {
-      src: 'ENDINGDATA.ERB:516-527',
       steps: [
         ['d'],
         ['w', '「魔王大人……那个……菲娅……试着做了点心……」'],
@@ -135,7 +131,6 @@ const END_SCRIPTS = {
       ],
     },
     6: {
-      src: 'ENDINGDATA.ERB:529-545',
       steps: [
         ['d'],
         ['w', '「魔王大人～❤」'],
@@ -162,7 +157,6 @@ const END_SCRIPTS = {
       ],
     },
     7: {
-      src: 'ENDINGDATA.ERB:547-560',
       steps: [
         ['w', '「魔王大人。」'],
         ['f'],
@@ -189,7 +183,6 @@ const END_SCRIPTS = {
       ],
     },
     8: {
-      src: 'ENDINGDATA.ERB:562-572',
       steps: [
         ['d'],
         ['w', '「啊，魔王大人～～」'],
@@ -210,7 +203,6 @@ const END_SCRIPTS = {
       ],
     },
     9: {
-      src: 'ENDINGDATA.ERB:574-585',
       steps: [
         ['d'],
         ['w', '「呼……呼……」'],
@@ -229,7 +221,6 @@ const END_SCRIPTS = {
       ],
     },
     10: {
-      src: 'ENDINGDATA.ERB:587-597',
       steps: [
         ['d'],
         ['w', '最近菲娅似乎在偷偷摸摸做什么的样子。'],
@@ -250,7 +241,6 @@ const END_SCRIPTS = {
       ],
     },
     11: {
-      src: 'ENDINGDATA.ERB:599-610',
       steps: [
         ['d'],
         ['w', '路过菲娅的房间的时候，听见了悦耳的琴声，'],
@@ -266,7 +256,6 @@ const END_SCRIPTS = {
       ],
     },
     12: {
-      src: 'ENDINGDATA.ERB:612-658',
       steps: [
         [
           'ask',
@@ -348,7 +337,6 @@ const END_SCRIPTS = {
       ],
     },
     14: {
-      src: 'ENDINGDATA.ERB:661-671',
       steps: [
         ['d'],
         ['w', '「啊，魔王大人～」'],
@@ -366,7 +354,6 @@ const END_SCRIPTS = {
       ],
     },
     15: {
-      src: 'ENDINGDATA.ERB:673-682',
       steps: [
         ['d'],
         ['w', '「嗯……啾……呼哈……」'],
@@ -383,7 +370,6 @@ const END_SCRIPTS = {
       ],
     },
     16: {
-      src: 'ENDINGDATA.ERB:684-694',
       steps: [
         ['d'],
         ['w', '「诶嘿嘿……肚子里面……还是黏糊糊的呢，感觉好舒服～」'],
@@ -407,7 +393,6 @@ const END_SCRIPTS = {
       ],
     },
     17: {
-      src: 'ENDINGDATA.ERB:696-713',
       steps: [
         ['d'],
         ['w', '「啊啊，魔王大人～」'],
@@ -435,7 +420,6 @@ const END_SCRIPTS = {
       ],
     },
     18: {
-      src: 'ENDINGDATA.ERB:715-724',
       steps: [
         ['d'],
         ['w', '「魔王大人……❤」'],
@@ -455,7 +439,6 @@ const END_SCRIPTS = {
       ],
     },
     19: {
-      src: 'ENDINGDATA.ERB:726-738',
       steps: [
         ['d'],
         ['w', '在走廊上走的时候，看见菲娅从旁边飞了过去，'],
@@ -475,7 +458,6 @@ const END_SCRIPTS = {
       ],
     },
     20: {
-      src: 'ENDINGDATA.ERB:740-750',
       steps: [
         ['d'],
         ['w', '「啊，魔王大人，那个……菲娅稍微出去一下哦～」'],
@@ -493,7 +475,6 @@ const END_SCRIPTS = {
       ],
     },
     21: {
-      src: 'ENDINGDATA.ERB:752-763',
       steps: [
         ['d'],
         ['w', '「诶？菲娅在做什么吗？」'],
@@ -509,7 +490,6 @@ const END_SCRIPTS = {
       ],
     },
     22: {
-      src: 'ENDINGDATA.ERB:765-818',
       steps: [
         [
           'ask',
@@ -602,13 +582,11 @@ const END_SCRIPTS = {
       ],
     },
     13: {
-      src: 'ENDINGDATA.ERB:659-659',
       steps: [],
     },
   },
   10: {
     11: {
-      src: 'ENDINGDATA_ADDON1.ERB:155-180',
       steps: [
         [
           'w',
@@ -666,7 +644,6 @@ const END_SCRIPTS = {
       ],
     },
     12: {
-      src: 'ENDINGDATA_ADDON1.ERB:182-291',
       steps: [
         [
           'ask',
@@ -915,7 +892,6 @@ const END_SCRIPTS = {
       ],
     },
     13: {
-      src: 'ENDINGDATA_ADDON1.ERB:311-349',
       steps: [
         ['w', '当你结束调教的回到房间时。'],
         ['w', '意外的发现你的被子微微隆起着、似乎里面有什么东西。'],
@@ -1000,7 +976,6 @@ const END_SCRIPTS = {
       ],
     },
     14: {
-      src: 'ENDINGDATA_ADDON1.ERB:351-389',
       steps: [
         ['w', '当一天的调教结束时。就算是你、也是有点累了'],
         ['w', '你回到自己的房间、打算休息。'],
@@ -1064,7 +1039,6 @@ const END_SCRIPTS = {
       ],
     },
     15: {
-      src: 'ENDINGDATA_ADDON1.ERB:391-435',
       steps: [
         ['w', '「呐、魔王大人~」'],
         [
@@ -1116,7 +1090,6 @@ const END_SCRIPTS = {
       ],
     },
     16: {
-      src: 'ENDINGDATA_ADDON1.ERB:487-541',
       steps: [
         ['w', '将天界交给嘉德处理已经过了一段时间了、'],
         ['w', '带着一丝巡查工作的想法、你来到了嘉德办公的地方'],
@@ -1241,7 +1214,6 @@ const END_SCRIPTS = {
       ],
     },
     17: {
-      src: 'ENDINGDATA_ADDON1.ERB:543-560',
       steps: [
         ['w', '不知道时候来到地下城的嘉德突然从后面蒙上了你的眼睛。'],
         ['w', '「猜猜~本宫是谁~」'],
@@ -1269,7 +1241,6 @@ const END_SCRIPTS = {
       ],
     },
     18: {
-      src: 'ENDINGDATA_ADDON1.ERB:562-621',
       steps: [
         ['w', '天界的某个的房间'],
         ['w', '一个浑身赤裸的天使族少女跪坐在床上、双手掩盖自己的胸部和私处。'],
@@ -1396,7 +1367,6 @@ const END_SCRIPTS = {
       ],
     },
     19: {
-      src: 'ENDINGDATA_ADDON1.ERB:623-704',
       steps: [
         [
           'w',
@@ -1581,7 +1551,6 @@ const END_SCRIPTS = {
       ],
     },
     54: {
-      src: 'ENDINGDATA_ADDON1.ERB:437-473',
       steps: [
         ['align', 'center'],
         [
@@ -1646,7 +1615,6 @@ const END_SCRIPTS = {
       ],
     },
     55: {
-      src: 'ENDINGDATA_ADDON1.ERB:475-485',
       steps: [
         ['d'],
         [
@@ -1670,7 +1638,6 @@ const END_SCRIPTS = {
       ],
     },
     '12_1': {
-      src: 'ENDINGDATA_ADDON1.ERB:293-301',
       steps: [
         ['w', '在你不注意的时候、欲求不满的嘉德又一次引诱了你的部下们。'],
         ['w', '在你不知道的地方展开了一次新的乱交派对。'],
@@ -1686,7 +1653,6 @@ const END_SCRIPTS = {
       ],
     },
     '12_2': {
-      src: 'ENDINGDATA_ADDON1.ERB:303-309',
       steps: [
         ['w', '在你不注意的时候、欲求不满的嘉德又一次引诱了你的部下们。'],
         ['w', '但是除你之外的肉棒显然已经没法让她得到满足了'],
@@ -1708,7 +1674,6 @@ const END_SCRIPTS = {
   },
   11: {
     1: {
-      src: 'ENDINGDATA.ERB:819-838',
       steps: [
         ['d'],
         ['l', '「大人，今晚也请早些休息」'],
@@ -1738,7 +1703,6 @@ const END_SCRIPTS = {
       ],
     },
     2: {
-      src: 'ENDINGDATA.ERB:840-882',
       steps: [
         ['d'],
         ['l', '「大人」'],
@@ -1816,7 +1780,6 @@ const END_SCRIPTS = {
       ],
     },
     3: {
-      src: 'ENDINGDATA.ERB:884-911',
       steps: [
         ['d'],
         [
@@ -1857,7 +1820,6 @@ const END_SCRIPTS = {
       ],
     },
     4: {
-      src: 'ENDINGDATA.ERB:913-972',
       steps: [
         [
           'ask',
@@ -1947,7 +1909,6 @@ const END_SCRIPTS = {
       ],
     },
     5: {
-      src: 'ENDINGDATA.ERB:974-1000',
       steps: [
         ['d'],
         ['l', '「大人……」'],
@@ -2003,7 +1964,6 @@ const END_SCRIPTS = {
       ],
     },
     6: {
-      src: 'ENDINGDATA.ERB:1002-1014',
       steps: [
         ['d'],
         ['l', '魔王的房间，女孩们用不同的姿势瘫倒在床上。'],
@@ -2023,7 +1983,6 @@ const END_SCRIPTS = {
       ],
     },
     7: {
-      src: 'ENDINGDATA.ERB:1016-1028',
       steps: [
         ['d'],
         ['l', '商业的运作已经走上了轨道。黑方片和她挑选的人都是很厉害的角色。'],
@@ -2049,7 +2008,6 @@ const END_SCRIPTS = {
       ],
     },
     8: {
-      src: 'ENDINGDATA.ERB:1030-1045',
       steps: [
         ['d'],
         [
@@ -2087,7 +2045,6 @@ const END_SCRIPTS = {
       ],
     },
     9: {
-      src: 'ENDINGDATA.ERB:1047-1100',
       steps: [
         [
           'ask',
@@ -2203,7 +2160,6 @@ const END_SCRIPTS = {
       ],
     },
     31: {
-      src: 'ENDINGDATA.ERB:1102-1118',
       steps: [
         ['d'],
         [
@@ -2236,7 +2192,6 @@ const END_SCRIPTS = {
   },
   14: {
     1: {
-      src: 'ENDINGDATA.ERB:1119-1133',
       steps: [
         ['d'],
         ['w', '「明天见，魔王大人」'],
@@ -2270,7 +2225,6 @@ const END_SCRIPTS = {
       ],
     },
     2: {
-      src: 'ENDINGDATA.ERB:1135-1153',
       steps: [
         ['d'],
         ['w', '早上醒来，%SAVESTR:MASTER%打了个响指'],
@@ -2306,7 +2260,6 @@ const END_SCRIPTS = {
       ],
     },
     3: {
-      src: 'ENDINGDATA.ERB:1155-1169',
       steps: [
         ['d'],
         ['w', '路过训练场门口的时候，正好遇到了刚从里面出来的银黑桃'],
@@ -2328,7 +2281,6 @@ const END_SCRIPTS = {
       ],
     },
     4: {
-      src: 'ENDINGDATA.ERB:1171-1221',
       steps: [
         [
           'ask',
@@ -2408,7 +2360,6 @@ const END_SCRIPTS = {
       ],
     },
     5: {
-      src: 'ENDINGDATA.ERB:1223-1246',
       steps: [
         ['d'],
         ['l', '「魔王大人，这些人愿意随我一同投奔于魔王大人麾下」'],
@@ -2452,7 +2403,6 @@ const END_SCRIPTS = {
       ],
     },
     6: {
-      src: 'ENDINGDATA.ERB:1248-1259',
       steps: [
         ['d'],
         ['l', '训练场里，形态各异的魔族松散的站成一堆等待着最后的测试'],
@@ -2480,7 +2430,6 @@ const END_SCRIPTS = {
       ],
     },
     7: {
-      src: 'ENDINGDATA.ERB:1261-1272',
       steps: [
         ['d'],
         ['l', '「训练正在顺利进行」'],
@@ -2511,7 +2460,6 @@ const END_SCRIPTS = {
       ],
     },
     8: {
-      src: 'ENDINGDATA.ERB:1274-1288',
       steps: [
         ['d'],
         ['l', '仅仅三个月，忍者部队已经开始发挥作用了'],
@@ -2539,7 +2487,6 @@ const END_SCRIPTS = {
       ],
     },
     9: {
-      src: 'ENDINGDATA.ERB:1290-1329',
       steps: [
         [
           'ask',
@@ -2608,7 +2555,6 @@ const END_SCRIPTS = {
       ],
     },
     11: {
-      src: 'ENDINGDATA.ERB:1331-1354',
       steps: [
         ['d'],
         ['l', '「你终于又来了」'],
@@ -2652,7 +2598,6 @@ const END_SCRIPTS = {
       ],
     },
     12: {
-      src: 'ENDINGDATA.ERB:1356-1367',
       steps: [
         ['d'],
         ['l', '近几天，%SAVESTR:MASTER%总觉得什么人的视线'],
@@ -2674,7 +2619,6 @@ const END_SCRIPTS = {
       ],
     },
     13: {
-      src: 'ENDINGDATA.ERB:1369-1389',
       steps: [
         ['d'],
         ['l', '被监视已经好几天了，依然找到没有任何有用的线索'],
@@ -2720,7 +2664,6 @@ const END_SCRIPTS = {
       ],
     },
     14: {
-      src: 'ENDINGDATA.ERB:1391-1399',
       steps: [
         ['d'],
         ['l', '虽然只是感觉，但%SAVESTR:MASTER%今天大概又被银黑桃跟踪了'],
@@ -2736,7 +2679,6 @@ const END_SCRIPTS = {
       ],
     },
     15: {
-      src: 'ENDINGDATA.ERB:1401-1418',
       steps: [
         ['d'],
         ['l', '银黑桃一只手伸向自己的两腿之间，另一只手疯狂的揉搓着自己的乳房'],
@@ -2767,7 +2709,6 @@ const END_SCRIPTS = {
       ],
     },
     16: {
-      src: 'ENDINGDATA.ERB:1420-1436',
       steps: [
         ['d'],
         ['l', '%SAVESTR:MASTER%走在走廊上，手中的绳子连着银黑桃脖子上的项圈。'],
@@ -2794,7 +2735,6 @@ const END_SCRIPTS = {
       ],
     },
     17: {
-      src: 'ENDINGDATA.ERB:1438-1448',
       steps: [
         ['d'],
         ['l', '%SAVESTR:MASTER%品味着鲜榨的乳汁'],
@@ -2818,7 +2758,6 @@ const END_SCRIPTS = {
       ],
     },
     18: {
-      src: 'ENDINGDATA.ERB:1450-1463',
       steps: [
         ['d'],
         ['l', '被固定住在木质框架上的银黑桃的乳汁顺着透明的软管流到了桶里'],
@@ -2842,7 +2781,6 @@ const END_SCRIPTS = {
       ],
     },
     19: {
-      src: 'ENDINGDATA.ERB:1465-1475',
       steps: [
         ['d'],
         ['l', '现在银黑桃已经彻底成为了『魔王乳业』的招牌'],
@@ -2866,7 +2804,6 @@ const END_SCRIPTS = {
       ],
     },
     20: {
-      src: 'ENDINGDATA.ERB:1477-1509',
       steps: [
         [
           'ask',
@@ -2922,7 +2859,6 @@ const END_SCRIPTS = {
       ],
     },
     31: {
-      src: 'ENDINGDATA.ERB:1511-1523',
       steps: [
         ['d'],
         [

@@ -1,18 +1,17 @@
 /**
- * @file 调教结束事件 @EVENTEND 的处理器（issue #44，#LATER 档真身）。
+ * @file 调教结束事件 EVENTEND 的处理器（issue #44，#LATER 档真身）。
  *
  * STATE.AFTERTRAIN 的主体（train-loop.js 的 run_aftertrain 发起链、收尾
- * era.endTrain）。直线赋值与判定 1:1 照搬；死亡删除分支（:363-375）内的
- * BEGIN TURNEND 会当场结束本函数（#6 语义：BEGIN 结束当前函数、链继续），
- * 其后的善恶值/时常发情/气力回复/JUEL_CHECK/指针还原按原作一并跳过。
+ * era.endTrain）。直线赋值与判定按原样保留；死亡删除分支内的
+ * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
+ * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
  *
- * 原存根已全部换真身：SELF_CHECK / AFTERTRAIN_CLOTH / RE_CLOTHED /
- * NAME_RESET / KARMA（各自票）；CHARADEAD_CHECK 与 PARTY_CHAR_DEL 自
- * #548（S7）起为真身（ere/event/event-aftertrain.js 的 charadead_check
- * 与 ere/dungeon/dungeon-party.js 的 party_char_del）。
- * MAOU_TENSHIN 自 #400（N16）起为真身（ere/event/event-nextday.js 的
- * event_maou_tenshin，本体源 EVENT_NEXTDAY.ERB:2455-2479）。
- * @JUEL_CHECK（:421 的一次性珠结算）已随 #47 实现
+ * 原存根已全部换真身：self_check / aftertrain_cloth / re_clothed /
+ * name_reset / karma（各自工单）；charadead_check 与 party_char_del 自
+ * #548（S7）起为真身（ere/event/event-aftertrain.js 与
+ * ere/dungeon/dungeon-party.js）。
+ * event_maou_tenshin 自 #400（N16）起为真身（ere/event/event-nextday.js）。
+ * 一次性珠结算（run_juel_check）已随 #47 实现
  * （system/train/juel-check.js，含与 era.endTrain 的职责划分定案）。
  */
 
@@ -26,14 +25,14 @@ const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
 const era_flag = require('#/era-utils/era-flag');
-// AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身（train 域的
-// ere/system/train/cloth.js——@EVENTEND 在 endTrain 之前发（run_aftertrain
+// aftertrain_cloth / re_clothed 自 #215（J5）起为真身（train 域的
+// ere/system/train/cloth.js——EVENTEND 在 endTrain 之前发（run_aftertrain
 // 的既有次序），TFLAG:45 的读写落在火车表内，原生成立）
 const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
 const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
-// CHARADEAD_CHECK 自 #548（S7）起为真身（同文件的 @EVENTEND :339 调用）
+// charadead_check 自 #548（S7）起为真身（ere/event/event-aftertrain.js）
 const { charadead_check, self_check } = require('#/event/event-aftertrain');
-// PARTY_CHAR_DEL 真身（#172）——@EVENTEND :372 死亡删除分支的调用
+// party_char_del 真身（#172）——死亡删除分支的调用
 const { party_char_del } = require('#/dungeon/dungeon-party');
 
 on(
@@ -42,7 +41,7 @@ on(
     era.print('调教结束了。');
     await era.waitAnyKey();
 
-    // 角色復位（读 @PRITRAIN_MESSAGE 暂存的 T:10/11/12）。
+    // 角色復位（读 train 循环暂存的 T:10/11/12）。
     // MASTER = T:10 —— ere 侧 MASTER 不是变量而是常量约定（恒角色 0，
     // CONTEXT.md），暂存值亦恒 0，此行为空操作、不落槽位
     era_flag.target = era_flag.target_backup; // TARGET = T:11
@@ -61,7 +60,7 @@ on(
     }
 
     // 今回の調教対象と助手を記録（FLAG:1 = 前回调教目标、
-    // FLAG:2 = 前回助手——TARGET:1/ASSI:1 是 @EVENTTRAIN 的记录值）
+    // FLAG:2 = 前回助手——TARGET:1/ASSI:1 是 train 循环的记录值）
     era.set('flag:1', era_flag.target_record);
     era.set('flag:2', era_flag.assi_record);
 
@@ -82,7 +81,7 @@ on(
     await sell_fightmoney();
 
     // 生きていて着衣モードなら調教後の衣類の処理（FLAG:37 =
-    // 着衣系统，@EVENTFIRST 开局置 1；#215 真身——调教内调用，TFLAG:45
+    // 着衣系统，开局置 1；#215 真身——调教内调用，TFLAG:45
     // 直读直清）
     if (
       (era.get('flag:37') || 0) !== 0 &&
@@ -100,21 +99,20 @@ on(
     const target_willpower = era.get(`base:${target}:1`) || 0;
     if (target_stamina < 1 && target !== 0) {
       // 角色削除処理：FLAG:(NO:A + 199) = 1（死亡标记）。普通角色的
-      // NO 就是角色 ID；后代的原作 NO 是来源模板号（chara-pregnancy.js 的
-      // template_no_of），故经它换算。随后清指针、除名（:373 DELCHARA）
+      // NO 就是角色 ID；后代角色的 NO 是来源模板号（chara-pregnancy.js 的
+      // template_no_of），故经它换算。随后清指针、除名（DELCHARA）
       era.set(`flag:${template_no_of(target) + 199}`, 1);
       era_flag.target = -1;
       era.set('flag:1', -1);
       era_flag.assi = -1;
-      party_char_del(target); // CALL PARTY_CHAR_DEL, A（#548 起真身）
+      party_char_del(target); // party_char_del 调用（#548 起真身）
       // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）
       era.removeCharacter(target);
       await name_reset();
       begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
     } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
       // 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——
-      // 本体在 ere/event/event-nextday.js（@MAOU_TENSHIN 的源文件即
-      // EVENT_NEXTDAY.ERB），#400（N16）接线
+      // 本体在 ere/event/event-nextday.js，#400（N16）接入
       await event_maou_tenshin();
     }
 
@@ -164,7 +162,7 @@ on(
       era.print('*因调教奴隶而恢复了气力*');
       recover = 500;
     }
-    // BASE:0:1 = 魔王（角色 0）的气力，回复后钳到上限（:416-418）
+    // BASE:0:1 = 魔王（角色 0）的气力，回复后钳到上限
     era.add('base:0:1', recover);
     const max_willpower = era.get('maxbase:0:1') || 0;
     if ((era.get('base:0:1') || 0) > max_willpower) {
@@ -176,7 +174,7 @@ on(
     // 文件头：gotjuel 已在结算尾部清零，链后的 endTrain 只删表、不加算）
     await run_juel_check();
 
-    // 切换回原来的目标与助手（@EVENTTRAIN 记录的 TARGET:1/ASSI:1）
+    // 切换回原来的目标与助手（train 循环记录的 TARGET:1/ASSI:1）
     era_flag.assi = era_flag.assi_record;
     era_flag.target = era_flag.target_record;
 
