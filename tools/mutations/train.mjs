@@ -10373,7 +10373,7 @@ export default [
     must_mention: '技巧门槛比较性交技术自身等级',
   },
   {
-    desc: 'M12952 ablup16：DECIDE 素质复核退回 AND（缺两项素质的角色被误判可提升）',
+    desc: 'M12952 ablup16：DECIDE 素质复核退回 AND（只缺一项素质的角色被放行）',
     file: 'ere/system/train/ablup.js',
     find: `      if (
         abl16() >= 5 &&
@@ -10390,7 +10390,7 @@ export default [
         return null;
       }`,
     tests: ['ablup'],
-    must_mention: 'DECIDE 复核与入口同判据',
+    must_mention: 'DECIDE 复核缺一即挡',
   },
   {
     desc: 'M12953 ablup17：重试文案改回带句号（与 ABLUP10～16 的统一被打破）',
