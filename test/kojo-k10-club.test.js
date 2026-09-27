@@ -870,3 +870,20 @@ test('初調教的两处二选一是按钮（#572）：[0] 直不起来。/[1] �
     '选项不再以纯文本出现（纯文本编号在实机上点不动）',
   );
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:331', 2);
+    f.store.set('abl:20:16', 3);
+  }, 30);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「哈啊…哈啊…侍奉你肉棒的方法…人家已经明白了哦」',
+    '白梅花一边舔着嘴角一边灵活的套弄着你的阴茎。',
+    '白梅花哼着小调、一副很高兴的样子持续动着手腕………',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:331'), 3, 'CFLAG:331 推进到 3');
+});

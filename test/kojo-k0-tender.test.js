@@ -5529,3 +5529,19 @@ test('#624 灌肠+肛塞脱着：:4475..:4484 的「主人…那…」是一整�
     assert.deepEqual(fixture.text_lines(), lines, why);
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕（TALENT:85 为模板笔误） ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k0((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 30;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+  });
+  await speak_k0(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「总觉得…能分辨出能让大鸡鸡感到舒服的地方了呢…啊～～♪」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
+});

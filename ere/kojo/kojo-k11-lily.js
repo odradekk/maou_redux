@@ -8679,13 +8679,11 @@ async function kojo_message_com_11(rand) {
           );
           // CFLAG:331  = 4（变量语义：CFLAG 族，331）
           kojo.手淫 = 4;
-
-          // 原作 :4740 重复上一档的「爱慕＋奉仕精神」判据，因此本档不可达。
         } else if (
-          era.get(`talent:${target}:85`) === 1 &&
           chara(target).system.侍奉精神 >= 3 &&
           (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
         ) {
+          // 侍奉精神Lv3以上
           await era.printAndWait(
             `『姐姐，要好好伺候人家的小鸡鸡啊${heart(1)}』`,
           );
@@ -8746,13 +8744,11 @@ async function kojo_message_com_11(rand) {
           }
           // CFLAG:331  = 4（变量语义：CFLAG 族，331）
           kojo.手淫 = 4;
-
-          // 原作 :4774 同样重复上一档判据，因此本档不可达。
         } else if (
-          era.get(`talent:${target}:85`) === 1 &&
           chara(target).system.侍奉精神 >= 3 &&
           (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
         ) {
+          // 侍奉精神Lv3以上
           await era.printAndWait(
             `「这，这样就行了吗……呜啊啊……阴茎在，在手中勃起了…！」`,
           );
@@ -20659,7 +20655,6 @@ async function dog_kojo_11(rand) {
         // CFLAG:331  = 4（变量语义：CFLAG 族，331）
         kojo.手淫 = 4;
       } else if (
-        era.get(`talent:${target}:85`) === 1 &&
         chara(target).system.侍奉精神 >= 3 &&
         (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
       ) {

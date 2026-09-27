@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2674; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数
+export const COUNT = 2698; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数
 
 export default [
   {
@@ -10103,9 +10103,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     {
       desc: 'M4312 COM30 助手爱慕 CFLAG:331 写错（4 改 3，#242）',
       file: 'ere/kojo/kojo-k11-lily.js',
-      find: '          kojo.手淫 = 4;\n\n          // 原作 :4740 重复上一档的「爱慕＋奉仕精神」判据，因此本档不可达。',
+      find: '          await era.printAndWait(\n            `『姐姐和小鸡鸡都好喜欢，但是最喜欢的还是给我侍奉小鸡鸡的姐姐，真是太棒了！』`,\n          );\n          // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n          kojo.手淫 = 4;',
       replace:
-        '          kojo.手淫 = 3;\n\n          // 原作 :4740 重复上一档的「爱慕＋奉仕精神」判据，因此本档不可达。',
+        '          await era.printAndWait(\n            `『姐姐和小鸡鸡都好喜欢，但是最喜欢的还是给我侍奉小鸡鸡的姐姐，真是太棒了！』`,\n          );\n          // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n          kojo.手淫 = 3;',
       tests: ['kojo-k11-lily'],
       must_mention: 'COM30 助手玛奥可达第 2 档推进',
     },
@@ -10115,7 +10115,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       find: '          kojo.手淫 = 2;\n        }\n      } else {',
       replace: '          kojo.手淫 = 1;\n        }\n      } else {',
       tests: ['kojo-k11-lily'],
-      must_mention: 'COM30 助手玛奥可达第 3 档推进',
+      must_mention: 'COM30 助手玛奥可达第 4 档推进',
     },
     {
       desc: 'M4314 COM30 非助手淫乱 CFLAG:331 写错（5 改 4，#242）',
@@ -10129,9 +10129,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     {
       desc: 'M4315 COM30 非助手爱慕 CFLAG:331 写错（4 改 3，#242）',
       file: 'ere/kojo/kojo-k11-lily.js',
-      find: '          kojo.手淫 = 4;\n\n          // 原作 :4774 同样重复上一档判据，因此本档不可达。',
+      find: '          }\n          // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n          kojo.手淫 = 4;',
       replace:
-        '          kojo.手淫 = 3;\n\n          // 原作 :4774 同样重复上一档判据，因此本档不可达。',
+        '          }\n          // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n          kojo.手淫 = 3;',
       tests: ['kojo-k11-lily'],
       must_mention: 'COM30 非助手玛奥可达第 2 档推进',
     },
@@ -10142,7 +10142,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       replace:
         '          );\n          // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n          kojo.手淫 = 1;',
       tests: ['kojo-k11-lily'],
-      must_mention: 'COM30 非助手玛奥可达第 3 档推进',
+      must_mention: 'COM30 非助手玛奥可达第 4 档推进',
     },
   ],
   {
@@ -10212,7 +10212,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM30 助手玛奥可达第 1 档推进',
   },
   {
-    desc: 'M4324 COM30 助手爱慕前档守卫收紧暴露原作遮蔽档（#242）',
+    desc: 'M4324 COM30 助手爱慕前档守卫收紧（#242，#688 后侍奉精神档递补命中）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
         ) {
@@ -10223,10 +10223,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
           await era.printAndWait(
             \`『嘿嘿，这个小鸡鸡可是魔王大人给我装上的哦，要温柔地对待呀♪』\`,`,
     tests: ['kojo-k11-lily'],
-    must_mention: '原作被遮蔽的 CFLAG=3 档',
+    must_mention: 'COM30 助手玛奥可达第 2 档推进',
   },
   {
-    desc: 'M4325 COM30 非助手爱慕前档守卫收紧暴露原作遮蔽档（#242）',
+    desc: 'M4325 COM30 非助手爱慕前档守卫收紧（#242，#688 后侍奉精神档递补命中）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
         ) {
@@ -10239,7 +10239,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
             await era.printAndWait(
               \`「哈啊……魔王大人的阴茎，在\${target_name}的手里……变得硬邦邦的了\${heart(1)}」\`,`,
     tests: ['kojo-k11-lily'],
-    must_mention: '原作被遮蔽的 CFLAG=3 档',
+    must_mention: 'COM30 非助手玛奥可达第 2 档推进',
   },
   {
     desc: 'M4326 COM30 非助手淫乱 RAND:2 ===0 改 ===1（#242）',
@@ -25437,5 +25437,221 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2) // 变异：顶档上限退回 5\n    ) {\n      // 淫乱＋侍奉精神Lv3以上（RAND:2 二选一）',
     tests: ['kojo-k8-spade'],
     must_mention: '口上开关关闭时顶档仍命中',
+  },
+  {
+    desc: 'M13650 K0 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      } else if (\n        serve >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        serve >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k0-tender'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13651 K2 DOG_KOJO_2 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        (era.get(`abl:${target}:16`) || 0) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)",
+    replace:
+      "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        (era.get(`talent:${target}:85`) || 0) === 1 &&\n        (era.get(`abl:${target}:16`) || 0) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)",
+    tests: ['kojo-k2-timid'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13652 K3 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k3-noble'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13653 K5 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k5-mao'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13654 K5 SELF_KOJO 调教后自慰尻穴狂档回退叠回淫乱（#688）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: '      } else if (\n        era.get(`talent:${target}:77`) === 1 &&\n        (kojo.调教后自慰 <= 4 || game.kojo.口上开关 === 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        era.get(`talent:${target}:77`) === 1 &&\n        (kojo.调教后自慰 <= 4 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k5-mao'],
+    must_mention: '尻穴狂档（TALENT:77）不再叠加淫乱要求',
+  },
+  {
+    desc: 'M13655 K6 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      } else if (\n        (era.get(`abl:${target}:16`) || 0) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        await era.printAndWait(`「男人居然真的喜欢这样的事情啊………♪」`);\n        await era.printAndWait(`笑意暖暖的${target_name}温柔地摩挲着阴茎………`);\n        // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n        kojo.手淫 = 3;\n      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {\n        await era.printAndWait(\n          `「会、会喜欢这样的事情…该说不愧是变态的垃圾吗…！」`,\n        );\n        await era.printAndWait(\n          `一边咒骂着，${target_name}继续笨拙地搓动着双手………`,\n        );\n        // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n        kojo.手淫 = 2;\n      }\n      return 0;\n    }\n  }\n\n  if (era_flag.selectcom === 31) {\n    if (kojo.口交_奴 === 0) {\n      if ((era.get(`talent:${target}:76`) || 0) === 1) {\n        await era.printAndWait(\n          `「哈啊哈啊…您的…您的肉棒…还真是…惊人啊…${heart(1)}」`,\n        );\n        await era.printAndWait(\n          `${target_name}贪婪地吮吸着阴茎，心情十分舒畅………`,\n        );\n      } else if ((era.get(`talent:${target}:85`) || 0) === 1) {\n        await era.printAndWait(\n          `「嗷嗷呜…用魔王大人的肉棒当做奶嘴…是最最高兴的事情啦……呜哈…哈啊…${heart(1)}」`,\n        );\n        await era.printAndWait(\n          `${target_name}毫不犹豫地凑在${player_name}的阴茎上，出神地舔舐着………`,\n        );\n      } else if ((era.get(`abl:${target}:16`) || 0) >= 3) {\n        await era.printAndWait(\n          `「真是的，男人的这活儿怎么这么…呜…大啊…呜…呜呜…真是的………」`,\n        );\n        await era.printAndWait(\n          `${target_name}脸上有些吃惊的样子，用舌头拨动着阴茎………`,\n        );\n      } else {\n        await era.printAndWait(\n          `「唔啊啊…混蛋、怎么可能这么做…不行啊…呼…呜啊…」`,\n        );\n        await era.printAndWait(\n          `${target_name}脸上全是嫌恶的表情，但还是不得不用舌头舔舐着${player_name}的阴茎………`,\n        );\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (\n        (era.get(`talent:${target}:76`) || 0) === 1 &&\n        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)',
+    replace:
+      '      } else if (\n        (era.get(`talent:${target}:85`) || 0) === 1 &&\n        (era.get(`abl:${target}:16`) || 0) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        await era.printAndWait(`「男人居然真的喜欢这样的事情啊………♪」`);\n        await era.printAndWait(`笑意暖暖的${target_name}温柔地摩挲着阴茎………`);\n        // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n        kojo.手淫 = 3;\n      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {\n        await era.printAndWait(\n          `「会、会喜欢这样的事情…该说不愧是变态的垃圾吗…！」`,\n        );\n        await era.printAndWait(\n          `一边咒骂着，${target_name}继续笨拙地搓动着双手………`,\n        );\n        // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n        kojo.手淫 = 2;\n      }\n      return 0;\n    }\n  }\n\n  if (era_flag.selectcom === 31) {\n    if (kojo.口交_奴 === 0) {\n      if ((era.get(`talent:${target}:76`) || 0) === 1) {\n        await era.printAndWait(\n          `「哈啊哈啊…您的…您的肉棒…还真是…惊人啊…${heart(1)}」`,\n        );\n        await era.printAndWait(\n          `${target_name}贪婪地吮吸着阴茎，心情十分舒畅………`,\n        );\n      } else if ((era.get(`talent:${target}:85`) || 0) === 1) {\n        await era.printAndWait(\n          `「嗷嗷呜…用魔王大人的肉棒当做奶嘴…是最最高兴的事情啦……呜哈…哈啊…${heart(1)}」`,\n        );\n        await era.printAndWait(\n          `${target_name}毫不犹豫地凑在${player_name}的阴茎上，出神地舔舐着………`,\n        );\n      } else if ((era.get(`abl:${target}:16`) || 0) >= 3) {\n        await era.printAndWait(\n          `「真是的，男人的这活儿怎么这么…呜…大啊…呜…呜呜…真是的………」`,\n        );\n        await era.printAndWait(\n          `${target_name}脸上有些吃惊的样子，用舌头拨动着阴茎………`,\n        );\n      } else {\n        await era.printAndWait(\n          `「唔啊啊…混蛋、怎么可能这么做…不行啊…呼…呜啊…」`,\n        );\n        await era.printAndWait(\n          `${target_name}脸上全是嫌恶的表情，但还是不得不用舌头舔舐着${player_name}的阴茎………`,\n        );\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (\n        (era.get(`talent:${target}:76`) || 0) === 1 &&\n        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k6-wicked'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13656 K6 DOG_KOJO_6 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        (era.get(`abl:${target}:16`) || 0) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)",
+    replace:
+      "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        (era.get(`talent:${target}:85`) || 0) === 1 &&\n        (era.get(`abl:${target}:16`) || 0) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)",
+    tests: ['kojo-k6-wicked'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13657 K8 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (\n      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // 侍奉精神Lv3以上\n      await era.printAndWait(\n        `「这样就好了吗？………呵呵呵、真的露出了好像很舒服似的脸啊、你」`,\n      );\n      await era.printAndWait(\n        `${target_name}一边舔着嘴唇，一边侍奉着${player_name}的阴茎………`,\n      );\n      kojo.手淫 = 3; // CFLAG:331 = 3\n    } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {\n      // それ以外（侍奉精神Lv3未満）\n      await era.printAndWait(`「啊啊…用手服侍你的东西什么的，真是屈辱………」`);\n      await era.printAndWait(\n        `${target_name}一边撅起嘴唇，一边服侍着${player_name}的阴茎………`,\n      );\n      kojo.手淫 = 2; // CFLAG:331 = 2\n    }\n    return 0;\n  } else if (era_flag.selectcom == 31) {\n    // 口交 CFLAG:332（无 A感覚 分档，四档；二回目以降淫乱/爱慕臂各接 RAND:3→RAND:2 双层三选一）\n    if (kojo.口交_奴 == 0) {\n      // 初めて\n      if (era0(`talent:${target}:76`) == 1) {\n        // 淫乱\n        await era.printAndWait(\n          `「啊啊、你的阴茎…我开动了${heart(1)} 啊呜…嗯呜嗯…咕噜…啾…嗯！」`,\n        );\n        await era.printAndWait(\n          `${target_name}突然抓起${player_name}的阴茎，以猛烈的势头吞了下去。`,\n        );\n        await era.printAndWait(\n          `「嗯…嗯呼…我、我…一直想舔你的阴茎想的不得了、一直都等着呢！嗯咕噜…嗯…啾${heart(1)}」`,\n        );\n      } else if (era0(`talent:${target}:85`) == 1) {\n        // 爱慕\n        await era.printAndWait(\n          `「即使是你的阴茎，这么突然让我舔你觉得可能吗？」`,\n        );\n        await era.printAndWait(\n          `${target_name}这么说着，一边撸着${player_name}的阴茎，一边吻向了阴茎的顶部。`,\n        );\n        await era.printAndWait(\n          `「嗯…呵呵呵、首先要先接吻…${heart(1)} 然后…嗯咕嗯…再舔舔龟头吧${heart(1)}」`,\n        );\n      } else if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上\n        await era.printAndWait(\n          `「啊啊…你那肮脏的阴茎…变干净了…嗯…啊…嗯…咕噜…」`,\n        );\n        await era.printAndWait(\n          `${target_name}眯着眼看起来很高兴的把${player_name}的阴茎吸入口中舔了起来。`,\n        );\n        await era.printAndWait(`「咕噜…啊…明明味道这么重…啊…嗯…嗯…♪」`);\n      } else {\n        // それ以外（侍奉精神Lv3未満）\n        await era.printAndWait(\n          `「啊啊…终于我也到了用嘴来含住这根肮脏的阴茎的时候了…嗯…嗯…咕噜」`,\n        );\n        await era.printAndWait(\n          `${target_name}战战兢兢的舔起了${player_name}的阴茎。`,\n        );\n        await era.printAndWait(\n          `「毕竟输了，这种程度是理所当然的呢…啊…嗯…咕………」`,\n        );\n        await era.printAndWait(\n          `${target_name}带着因悔恨而歪曲的表情，继续着口腔奉仕………`,\n        );\n      }\n      kojo.口交_奴 = 1; // CFLAG:TARGET:332 = 1\n      return 0;\n    }\n    // 二回目以降（四档）\n    if (\n      era0(`talent:${target}:76`) == 1 &&\n      (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)',
+    replace:
+      '    } else if (\n      era0(`talent:${target}:85`) == 1 &&\n      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // 侍奉精神Lv3以上\n      await era.printAndWait(\n        `「这样就好了吗？………呵呵呵、真的露出了好像很舒服似的脸啊、你」`,\n      );\n      await era.printAndWait(\n        `${target_name}一边舔着嘴唇，一边侍奉着${player_name}的阴茎………`,\n      );\n      kojo.手淫 = 3; // CFLAG:331 = 3\n    } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {\n      // それ以外（侍奉精神Lv3未満）\n      await era.printAndWait(`「啊啊…用手服侍你的东西什么的，真是屈辱………」`);\n      await era.printAndWait(\n        `${target_name}一边撅起嘴唇，一边服侍着${player_name}的阴茎………`,\n      );\n      kojo.手淫 = 2; // CFLAG:331 = 2\n    }\n    return 0;\n  } else if (era_flag.selectcom == 31) {\n    // 口交 CFLAG:332（无 A感覚 分档，四档；二回目以降淫乱/爱慕臂各接 RAND:3→RAND:2 双层三选一）\n    if (kojo.口交_奴 == 0) {\n      // 初めて\n      if (era0(`talent:${target}:76`) == 1) {\n        // 淫乱\n        await era.printAndWait(\n          `「啊啊、你的阴茎…我开动了${heart(1)} 啊呜…嗯呜嗯…咕噜…啾…嗯！」`,\n        );\n        await era.printAndWait(\n          `${target_name}突然抓起${player_name}的阴茎，以猛烈的势头吞了下去。`,\n        );\n        await era.printAndWait(\n          `「嗯…嗯呼…我、我…一直想舔你的阴茎想的不得了、一直都等着呢！嗯咕噜…嗯…啾${heart(1)}」`,\n        );\n      } else if (era0(`talent:${target}:85`) == 1) {\n        // 爱慕\n        await era.printAndWait(\n          `「即使是你的阴茎，这么突然让我舔你觉得可能吗？」`,\n        );\n        await era.printAndWait(\n          `${target_name}这么说着，一边撸着${player_name}的阴茎，一边吻向了阴茎的顶部。`,\n        );\n        await era.printAndWait(\n          `「嗯…呵呵呵、首先要先接吻…${heart(1)} 然后…嗯咕嗯…再舔舔龟头吧${heart(1)}」`,\n        );\n      } else if (era0(`abl:${target}:16`) >= 3) {\n        // 侍奉精神Lv3以上\n        await era.printAndWait(\n          `「啊啊…你那肮脏的阴茎…变干净了…嗯…啊…嗯…咕噜…」`,\n        );\n        await era.printAndWait(\n          `${target_name}眯着眼看起来很高兴的把${player_name}的阴茎吸入口中舔了起来。`,\n        );\n        await era.printAndWait(`「咕噜…啊…明明味道这么重…啊…嗯…嗯…♪」`);\n      } else {\n        // それ以外（侍奉精神Lv3未満）\n        await era.printAndWait(\n          `「啊啊…终于我也到了用嘴来含住这根肮脏的阴茎的时候了…嗯…嗯…咕噜」`,\n        );\n        await era.printAndWait(\n          `${target_name}战战兢兢的舔起了${player_name}的阴茎。`,\n        );\n        await era.printAndWait(\n          `「毕竟输了，这种程度是理所当然的呢…啊…嗯…咕………」`,\n        );\n        await era.printAndWait(\n          `${target_name}带着因悔恨而歪曲的表情，继续着口腔奉仕………`,\n        );\n      }\n      kojo.口交_奴 = 1; // CFLAG:TARGET:332 = 1\n      return 0;\n    }\n    // 二回目以降（四档）\n    if (\n      era0(`talent:${target}:76`) == 1 &&\n      (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13658 K8 DOG_KOJO_8 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      kojo.手淫 = 4;\n    } else if (\n      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    replace:
+      '      kojo.手淫 = 4;\n    } else if (\n      era0(`talent:${target}:85`) == 1 &&\n      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k8-spade'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13659 K9 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: '        );\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    replace:
+      '        );\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k9-diamond'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13660 K10 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k10-club'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13661 K11 COM30 助手玛奥列侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '        } else if (\n          chara(target).system.侍奉精神 >= 3 &&\n          (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 侍奉精神Lv3以上\n          await era.printAndWait(\n            `『姐姐，要好好伺候人家的小鸡鸡啊${heart(1)}』`,\n          );\n          await era.printAndWait(\n            `「就……就是要侍奉到射精为止对吧……可是……你为什么腿间会长出这种…」`,\n          );\n          await era.printAndWait(`『唔唔，姐姐的指法真温柔……』`);\n          // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n          kojo.手淫 = 3;\n        } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {\n          await era.printAndWait(`「可，可以停下了吗，${player_name}」`);\n          await era.printAndWait(`『说什么呐，要侍奉到射精为止啊笨蛋姐姐』`);\n          await era.printAndWait(`「呜呜呜……」`);\n          // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n          kojo.手淫 = 2;\n        }\n      } else {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)',
+    replace:
+      '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          chara(target).system.侍奉精神 >= 3 &&\n          (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 侍奉精神Lv3以上\n          await era.printAndWait(\n            `『姐姐，要好好伺候人家的小鸡鸡啊${heart(1)}』`,\n          );\n          await era.printAndWait(\n            `「就……就是要侍奉到射精为止对吧……可是……你为什么腿间会长出这种…」`,\n          );\n          await era.printAndWait(`『唔唔，姐姐的指法真温柔……』`);\n          // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n          kojo.手淫 = 3;\n        } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {\n          await era.printAndWait(`「可，可以停下了吗，${player_name}」`);\n          await era.printAndWait(`『说什么呐，要侍奉到射精为止啊笨蛋姐姐』`);\n          await era.printAndWait(`「呜呜呜……」`);\n          // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n          kojo.手淫 = 2;\n        }\n      } else {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.手淫 <= 4 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k11-lily'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13662 K11 COM30 无助手侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '        } else if (\n          chara(target).system.侍奉精神 >= 3 &&\n          (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 侍奉精神Lv3以上\n          await era.printAndWait(\n            `「这，这样就行了吗……呜啊啊……阴茎在，在手中勃起了…！」`,\n          );\n          await era.printAndWait(\n            `${target_name}虽然技术不娴熟，但是仍然努力的用手指侍奉着${player_name}的阴茎……`,\n          );\n          // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n          kojo.手淫 = 3;\n        } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {\n          await era.printAndWait(`「就，就像这样做吗？」`);\n          await era.printAndWait(\n            `${target_name}战战兢兢地用手指侍奉着${player_name}的阴茎……`,\n          );\n          // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n          kojo.手淫 = 2;\n        }\n      }\n      return 0;\n    }\n  }\n\n  // IF SELECTCOM == 31（口交 CFLAG:332）\n  if (era_flag.selectcom === 31) {\n    if (kojo.口交_奴 === 0) {\n      if (assi_mao) {\n        if (era.get(`talent:${target}:76`) === 1) {\n          await era.printAndWait(`「唔呣……唔呣……阴茎……好喜欢${heart(1)}」`);\n          await era.printAndWait(`『看到鸡鸡就这么兴奋，姐姐真是个变态呢…』`);\n        } else if (era.get(`talent:${target}:85`) === 1) {\n          await era.printAndWait(\n            `「要……要姐姐去吸妹妹腿间长出来的…奇怪东西……这种事实在是…唔呣……唔唔」`,\n          );\n          await era.printAndWait(\n            `『噢噢，姐姐在为妹妹的扶他鸡鸡口交啊……果然是变态呢。不过放心好了，这样的变态姐姐才是我和魔王大人喜欢的！』`,\n          );\n        } else if (chara(target).system.侍奉精神 >= 3) {\n          await era.printAndWait(\n            `「唔呣……唔唔……唔呣……这，这样可以吗……还要继续？」`,\n          );\n          await era.printAndWait(\n            `『当然要继续啦，姐姐的嘴巴很舒服呢……一会儿就射在姐姐的嘴里好了♪』`,\n          );\n        } else {\n          await era.printAndWait(\n            `『哎嘿嘿 ，被姐姐舔着小鸡鸡的感觉，好像在做梦一样♪』`,\n          );\n          await era.printAndWait(`「唔呣……唔呣……求求你，放过姐姐吧！」`);\n          await era.printAndWait(\n            `『笨蛋，要舔到射精为止啊${heart(1)}　要是在魔王大人面前说出“含在嘴里真讨厌”这样的话，可是会被拔掉所有牙齿的哦？』`,\n          );\n        }\n      } else {\n        if (era.get(`talent:${target}:76`) === 1) {\n          await era.printAndWait(\n            `「哈啊……唔呣……呣呣……阴茎的味道……好棒${heart(1)}」`,\n          );\n          await era.printAndWait(\n            `${target_name}趴伏在${player_name}的双腿之间，积极地进行着口交侍奉………`,\n          );\n        } else if (era.get(`talent:${target}:85`) === 1) {\n          await era.printAndWait(\n            `「${target_name}会好好侍奉陛下的阴茎的${heart(1)}……唔呣……唔呣${heart(1)}」`,\n          );\n          await era.printAndWait(\n            `${target_name}的眼睛里充满了爱意，卖力地吸吮着${player_name}的阴茎……`,\n          );\n        } else if (chara(target).system.侍奉精神 >= 3) {\n          await era.printAndWait(\n            `「嗯哈…嗯啾…咻…哈呣…嗯噗…啊啊，可不要把我当那种看到阴茎就想舔上去的女人啊！这个是…没办法的事，所以……所以…嗯…啾……………」`,\n          );\n          await era.printAndWait(\n            `${player_name}听着${target_name}含糊辩解，笑了起来，继续享受着${target_name}的口交侍奉……`,\n          );\n        } else {\n          await era.printAndWait(\n            `「呜呜……唔呣……如，如果我这么做了……能放过我的妹妹嘛……唔呣……嗯噗」`,\n          );\n          await era.printAndWait(\n            `${target_name}流着泪边进行着口交侍奉边乞求着…`,\n          );\n        }\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (assi_mao) {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.口交_奴 <= 3 || game.kojo.口上开关 === 2)',
+    replace:
+      '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          chara(target).system.侍奉精神 >= 3 &&\n          (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 侍奉精神Lv3以上\n          await era.printAndWait(\n            `「这，这样就行了吗……呜啊啊……阴茎在，在手中勃起了…！」`,\n          );\n          await era.printAndWait(\n            `${target_name}虽然技术不娴熟，但是仍然努力的用手指侍奉着${player_name}的阴茎……`,\n          );\n          // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n          kojo.手淫 = 3;\n        } else if (kojo.手淫 <= 1 || game.kojo.口上开关 === 2) {\n          await era.printAndWait(`「就，就像这样做吗？」`);\n          await era.printAndWait(\n            `${target_name}战战兢兢地用手指侍奉着${player_name}的阴茎……`,\n          );\n          // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n          kojo.手淫 = 2;\n        }\n      }\n      return 0;\n    }\n  }\n\n  // IF SELECTCOM == 31（口交 CFLAG:332）\n  if (era_flag.selectcom === 31) {\n    if (kojo.口交_奴 === 0) {\n      if (assi_mao) {\n        if (era.get(`talent:${target}:76`) === 1) {\n          await era.printAndWait(`「唔呣……唔呣……阴茎……好喜欢${heart(1)}」`);\n          await era.printAndWait(`『看到鸡鸡就这么兴奋，姐姐真是个变态呢…』`);\n        } else if (era.get(`talent:${target}:85`) === 1) {\n          await era.printAndWait(\n            `「要……要姐姐去吸妹妹腿间长出来的…奇怪东西……这种事实在是…唔呣……唔唔」`,\n          );\n          await era.printAndWait(\n            `『噢噢，姐姐在为妹妹的扶他鸡鸡口交啊……果然是变态呢。不过放心好了，这样的变态姐姐才是我和魔王大人喜欢的！』`,\n          );\n        } else if (chara(target).system.侍奉精神 >= 3) {\n          await era.printAndWait(\n            `「唔呣……唔唔……唔呣……这，这样可以吗……还要继续？」`,\n          );\n          await era.printAndWait(\n            `『当然要继续啦，姐姐的嘴巴很舒服呢……一会儿就射在姐姐的嘴里好了♪』`,\n          );\n        } else {\n          await era.printAndWait(\n            `『哎嘿嘿 ，被姐姐舔着小鸡鸡的感觉，好像在做梦一样♪』`,\n          );\n          await era.printAndWait(`「唔呣……唔呣……求求你，放过姐姐吧！」`);\n          await era.printAndWait(\n            `『笨蛋，要舔到射精为止啊${heart(1)}　要是在魔王大人面前说出“含在嘴里真讨厌”这样的话，可是会被拔掉所有牙齿的哦？』`,\n          );\n        }\n      } else {\n        if (era.get(`talent:${target}:76`) === 1) {\n          await era.printAndWait(\n            `「哈啊……唔呣……呣呣……阴茎的味道……好棒${heart(1)}」`,\n          );\n          await era.printAndWait(\n            `${target_name}趴伏在${player_name}的双腿之间，积极地进行着口交侍奉………`,\n          );\n        } else if (era.get(`talent:${target}:85`) === 1) {\n          await era.printAndWait(\n            `「${target_name}会好好侍奉陛下的阴茎的${heart(1)}……唔呣……唔呣${heart(1)}」`,\n          );\n          await era.printAndWait(\n            `${target_name}的眼睛里充满了爱意，卖力地吸吮着${player_name}的阴茎……`,\n          );\n        } else if (chara(target).system.侍奉精神 >= 3) {\n          await era.printAndWait(\n            `「嗯哈…嗯啾…咻…哈呣…嗯噗…啊啊，可不要把我当那种看到阴茎就想舔上去的女人啊！这个是…没办法的事，所以……所以…嗯…啾……………」`,\n          );\n          await era.printAndWait(\n            `${player_name}听着${target_name}含糊辩解，笑了起来，继续享受着${target_name}的口交侍奉……`,\n          );\n        } else {\n          await era.printAndWait(\n            `「呜呜……唔呣……如，如果我这么做了……能放过我的妹妹嘛……唔呣……嗯噗」`,\n          );\n          await era.printAndWait(\n            `${target_name}流着泪边进行着口交侍奉边乞求着…`,\n          );\n        }\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (assi_mao) {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.口交_奴 <= 3 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k11-lily'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13663 K11 DOG_KOJO_11 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '      } else if (\n        chara(target).system.侍奉精神 >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        chara(target).system.侍奉精神 >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)',
+    tests: ['kojo-k11-lily'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13664 K12 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(`「我知道了、用手来辅助自慰行为就行了是吧」`);\n        // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n        kojo.手淫 = 3;\n      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {\n        await era.printAndWait(`「呜呜、热热的……好恶心……」`);\n        // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n        kojo.手淫 = 2;\n      }\n      return 0;\n    }\n  }\n\n  if (era_flag.selectcom == 31) {\n    if (kojo.口交_奴 == 0) {\n      if (era.get(`talent:${target}:76`) == 1) {\n        await era.printAndWait(`「${sc()}的口活、还没试过吧？」`);\n      } else if (era.get(`talent:${target}:85`) == 1) {\n        await era.printAndWait(`「精液、直接喝下去了呢」`);\n      } else if (era.get(`abl:${target}:16`) >= 3) {\n        await era.printAndWait(`「我知道了、口交就行了是吧」`);\n      } else {\n        await era.printAndWait(`「这样子去舔什么的……呜诶～」`);\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(`「我知道了、用手来辅助自慰行为就行了是吧」`);\n        // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n        kojo.手淫 = 3;\n      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {\n        await era.printAndWait(`「呜呜、热热的……好恶心……」`);\n        // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n        kojo.手淫 = 2;\n      }\n      return 0;\n    }\n  }\n\n  if (era_flag.selectcom == 31) {\n    if (kojo.口交_奴 == 0) {\n      if (era.get(`talent:${target}:76`) == 1) {\n        await era.printAndWait(`「${sc()}的口活、还没试过吧？」`);\n      } else if (era.get(`talent:${target}:85`) == 1) {\n        await era.printAndWait(`「精液、直接喝下去了呢」`);\n      } else if (era.get(`abl:${target}:16`) >= 3) {\n        await era.printAndWait(`「我知道了、口交就行了是吧」`);\n      } else {\n        await era.printAndWait(`「这样子去舔什么的……呜诶～」`);\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13665 K12 DOG_KOJO_12 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    replace:
+      "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13666 K13 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(`「舒服吗？加油。……」`);\n        // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n        kojo.手淫 = 3;\n      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {\n        await era.printAndWait(`「哎呀…被你吓到了呢……」`);\n        // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n        kojo.手淫 = 2;\n      }\n      return 0;\n    }\n  }\n\n  if (era_flag.selectcom == 31) {\n    if (kojo.口交_奴 == 0) {\n      if (era0(`talent:${target}:76`) == 1) {\n        await era.printAndWait(`「噗、一直想舔了……真爱欺负人♪」`);\n      } else if (era0(`talent:${target}:85`) == 1) {\n        await era.printAndWait(`「就算不这么拜托、${sc()}也不会咬的啦…♪」`);\n      } else if (era0(`abl:${target}:16`) >= 3) {\n        await era.printAndWait(`「请放心、不会咬的啦……」`);\n      } else {\n        await era.printAndWait(`（呜……臭……讨厌……）`);\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (\n        era0(`talent:${target}:76`) == 1 &&\n        era0(`abl:${target}:16`) >= 5 &&\n        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
+    replace:
+      '      } else if (\n        era0(`talent:${target}:85`) == 1 &&\n        era0(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(`「舒服吗？加油。……」`);\n        // CFLAG:331  = 3（变量语义：CFLAG 族，331）\n        kojo.手淫 = 3;\n      } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {\n        await era.printAndWait(`「哎呀…被你吓到了呢……」`);\n        // CFLAG:331  = 2（变量语义：CFLAG 族，331）\n        kojo.手淫 = 2;\n      }\n      return 0;\n    }\n  }\n\n  if (era_flag.selectcom == 31) {\n    if (kojo.口交_奴 == 0) {\n      if (era0(`talent:${target}:76`) == 1) {\n        await era.printAndWait(`「噗、一直想舔了……真爱欺负人♪」`);\n      } else if (era0(`talent:${target}:85`) == 1) {\n        await era.printAndWait(`「就算不这么拜托、${sc()}也不会咬的啦…♪」`);\n      } else if (era0(`abl:${target}:16`) >= 3) {\n        await era.printAndWait(`「请放心、不会咬的啦……」`);\n      } else {\n        await era.printAndWait(`（呜……臭……讨厌……）`);\n      }\n      // CFLAG:TARGET:332  = 1（变量语义：CFLAG 族，TARGET:332）\n      kojo.口交_奴 = 1;\n      return 0;\n    } else {\n      if (\n        era0(`talent:${target}:76`) == 1 &&\n        era0(`abl:${target}:16`) >= 5 &&\n        (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k13-protector'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13667 K13 DOG_KOJO_13 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    replace:
+      "        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era0(`talent:${target}:85`) == 1 &&\n        era0(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    tests: ['kojo-k13-protector'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13668 K14 SELECTCOM:30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k14-nobleman.js',
+    find: "      if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 6（变量语义：CFLAG 族，331）\n        kojo.手淫 = 6;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 5（变量语义：CFLAG 族，331）\n        kojo.手淫 = 5;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    replace:
+      "      if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 6（变量语义：CFLAG 族，331）\n        kojo.手淫 = 6;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 5（变量语义：CFLAG 族，331）\n        kojo.手淫 = 5;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13669 K14 DOG_KOJO_14 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k14-nobleman.js',
+    find: "      } else if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 6（变量语义：CFLAG 族，331）\n        kojo.手淫 = 6;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 5（变量语义：CFLAG 族，331）\n        kojo.手淫 = 5;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    replace:
+      "      } else if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 6（变量语义：CFLAG 族，331）\n        kojo.手淫 = 6;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.手淫 <= 4 || game.kojo.口上开关 == 2)\n      ) {\n        if (rand_n(2) == 0) {\n          await era.printAndWait('');\n        } else {\n          await era.printAndWait('');\n        }\n        // CFLAG:331  = 5（变量语义：CFLAG 族，331）\n        kojo.手淫 = 5;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait('');\n        // CFLAG:331  = 4（变量语义：CFLAG 族，331）\n        kojo.手淫 = 4;\n      } else if (\n        era.get(`talent:${target}:85`) == 1 &&\n        era.get(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)",
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13670 K15 DOG_KOJO_15 SC30 手淫侍奉精神档回退加回 TALENT:85（#688）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    replace:
+      '      } else if (\n        era0(`talent:${target}:85`) == 1 &&\n        era0(`abl:${target}:16`) >= 3 &&\n        (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    tests: ['kojo-k15-clever'],
+    must_mention: '侍奉精神Lv3以上档不再要求爱慕',
+  },
+  {
+    desc: 'M13671 K12 SELECTCOM:56 交谈无摄像首档回退误读爱慕（#688）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '} else {\n        if (\n          era.get(`talent:${target}:76`) == 1 &&\n          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)\n        ) {',
+    replace:
+      '} else {\n        if (\n          era.get(`talent:${target}:85`) == 1 &&\n          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)\n        ) {',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '首档回正为淫乱',
+  },
+  {
+    desc: 'M13672 K13 SELECTCOM:56 交谈无摄像首档回退误读爱慕（#688）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: '} else {\n        if (\n          era0(`talent:${target}:76`) == 1 &&\n          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)\n        ) {',
+    replace:
+      '} else {\n        if (\n          era0(`talent:${target}:85`) == 1 &&\n          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)\n        ) {',
+    tests: ['kojo-k13-protector'],
+    must_mention: '首档回正为淫乱',
+  },
+  {
+    desc: 'M13673 K14 SELECTCOM:56 交谈无摄像首档回退误读爱慕（#688）',
+    file: 'ere/kojo/kojo-k14-nobleman.js',
+    find: '} else {\n        if (\n          era.get(`talent:${target}:76`) == 1 &&\n          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)\n        ) {',
+    replace:
+      '} else {\n        if (\n          era.get(`talent:${target}:85`) == 1 &&\n          (kojo.交谈 <= 3 || game.kojo.口上开关 == 2)\n        ) {',
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '首档回正为淫乱',
   },
 ];

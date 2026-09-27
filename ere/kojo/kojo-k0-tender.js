@@ -8879,11 +8879,7 @@ async function kojo_message_com_0(rand) {
           );
         }
         kojo.手淫 = 4;
-      } else if (
-        era.get(`talent:${target}:85`) === 1 &&
-        serve >= 3 &&
-        (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
-      ) {
+      } else if (serve >= 3 && (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)) {
         await era.printAndWait(
           `「总觉得…能分辨出能让大鸡鸡感到舒服的地方了呢…啊～～♪」`,
         );

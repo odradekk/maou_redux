@@ -5839,7 +5839,6 @@ async function kojo_message_com_5(rand) {
         // CFLAG:331  = 4（变量语义：CFLAG 族，331）
         kojo.手淫 = 4;
       } else if (
-        era.get(`talent:${target}:85`) === 1 &&
         era.get(`abl:${target}:16`) >= 3 &&
         (kojo.手淫 <= 2 || game.kojo.口上开关 === 2)
       ) {
@@ -10178,10 +10177,10 @@ async function self_kojo_k5(rand) {
         // CFLAG:261  = 5（变量语义：CFLAG 族，261）
         kojo.调教后自慰 = 5;
       } else if (
-        era.get(`talent:${target}:76`) === 1 &&
         era.get(`talent:${target}:77`) === 1 &&
         (kojo.调教后自慰 <= 4 || game.kojo.口上开关 === 2)
       ) {
+        // 尻穴狂
         await era.printAndWait(
           `「屁、屁股小穴${heart(1)}…屁股小穴好舒服哟${heart(1)}…我…已、已经不行了…要疯了啊…屁股小穴要翻开了啊${heart(1)}」`,
         );

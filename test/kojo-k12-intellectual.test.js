@@ -1118,3 +1118,53 @@ test('kojo_message_markcng_12 快乐刻印Lv3 取得（TFLAG:23==3）', async ()
   ]);
   assert.equal(fixture.store.get('cflag:20:298'), 1);
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k12((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:331', 2);
+    f.store.set('abl:20:16', 3);
+  }, 30);
+  await speak_k12(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「我知道了、用手来辅助自慰行为就行了是吧」',
+  ]);
+  assert.equal(fixture.store.get('cflag:20:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_12 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k12((f, ef) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:331', 2);
+    f.store.set('abl:20:16', 3);
+    ef.selectcom = 30;
+  });
+  const { dog_kojo_12 } = fixture.load_module('kojo/kojo-k12-intellectual');
+  await dog_kojo_12();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:20:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+// —— #688：SELECTCOM 56 交谈无摄像分支首档回正为淫乱（TALENT:76），爱慕二档不再被遮蔽 ——
+
+test('SELECTCOM 56 交谈无摄像分支：首档回正为淫乱（#688），淫乱与爱慕档在口上开关关闭时各命中推进', async () => {
+  const lewd = await setup_k12((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:357', 3);
+    f.store.set('talent:20:76', 1);
+  }, 56);
+  await speak_k12(lewd);
+  assert.deepEqual(lewd.text_lines(), ['']);
+  assert.equal(lewd.store.get('cflag:20:357'), 4, '淫乱首档推进到 4');
+
+  const love = await setup_k12((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:357', 2);
+    f.store.set('talent:20:85', 1);
+  }, 56);
+  await speak_k12(love);
+  assert.deepEqual(love.text_lines(), ['']);
+  assert.equal(love.store.get('cflag:20:357'), 3, '爱慕二档推进到 3');
+});

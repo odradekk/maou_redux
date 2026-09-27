@@ -5463,11 +5463,11 @@ test('COM30 初めて：助手玛奥与非助手玛奥各四档', async () => {
   }
 });
 
-test('COM30 二回目：助手玛奥可达档与原作被遮蔽的 CFLAG=3 档', async () => {
+test('COM30 二回目：助手玛奥各档推进（#688 起侍奉精神档不再要求爱慕）', async () => {
   const cases = [
     { talent: 76, abl: 3, expected: 5 },
     { talent: 85, abl: 3, expected: 4 },
-    { abl: 3, expected: 2 },
+    { abl: 3, expected: 3 },
     { expected: 2 },
   ];
   for (const [index, item] of cases.entries()) {
@@ -5494,11 +5494,11 @@ test('COM30 二回目：助手玛奥可达档与原作被遮蔽的 CFLAG=3 档',
   }
 });
 
-test('COM30 二回目：非助手玛奥可达档与原作被遮蔽的 CFLAG=3 档', async () => {
+test('COM30 二回目：非助手玛奥各档推进（#688 起侍奉精神档不再要求爱慕）', async () => {
   const cases = [
     { talent: 76, expected: 5 },
     { talent: 85, abl: 3, expected: 4 },
-    { abl: 3, expected: 2 },
+    { abl: 3, expected: 3 },
     { expected: 2 },
   ];
   for (const [index, item] of cases.entries()) {
@@ -8969,4 +8969,52 @@ test('#623 NTR P=4：V プレイ两段整行合并（:12683+… / :12700+…）'
       `FLAG:500=${item.flag500} ${item.seed.toString()}`,
     );
   }
+});
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('COM30 二回目·助手玛奥在列：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = MAO;
+    era_flag.assiplay = 1;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${LILY}:331`, 2);
+    f.store.set(`abl:${LILY}:16`, 3);
+  }, 30);
+  fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+  fixture.era.addCharacter(MAO);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '『姐姐，要好好伺候人家的小鸡鸡啊♡』',
+    '「就……就是要侍奉到射精为止对吧……可是……你为什么腿间会长出这种…」',
+    '『唔唔，姐姐的指法真温柔……』',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:331`), 3, 'CFLAG:331 推进到 3');
+});
+
+test('COM30 二回目·无助手：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${LILY}:331`, 2);
+    f.store.set(`abl:${LILY}:16`, 3);
+  }, 30);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), [
+    '「这，这样就行了吗……呜啊啊……阴茎在，在手中勃起了…！」',
+    '莉莉虽然技术不娴熟，但是仍然努力的用手指侍奉着你的阴茎……',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${LILY}:331`), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_11 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${LILY}:331`, 2);
+    f.store.set(`abl:${LILY}:16`, 3);
+    era_flag.selectcom = 30;
+    f.store.set(`tequip:${LILY}:89`, 1); // 兽奸守卫岔去 DOG_KOJO_11（该函数不导出，只能经守卫调用）
+  });
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get(`cflag:${LILY}:331`), 3, 'CFLAG:331 推进到 3');
 });
