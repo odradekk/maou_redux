@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 249; // #562 起 +1（M11864：道具商店页脚不产生空行）；
+export const COUNT = 249; // #562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 守卫无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -435,16 +435,16 @@ export default [
   {
     desc: 'M6614 ESTIMATE_CHARA 卖淫经验负面低档倍率改坏',
     file: 'ere/system/stronghold/sale.js',
-    find: '    let multiplier = exp < 50 ? 40 : 20;',
-    replace: '    let multiplier = exp < 50 ? 41 : 20;',
+    find: '    return exp < 50 ? 40 : 20;',
+    replace: '    return exp < 50 ? 41 : 20;',
     tests: ['sale'],
     must_mention: '负面项',
   },
   {
     desc: 'M6615 ESTIMATE_CHARA 倾城高卖淫经验正面倍率改坏',
     file: 'ere/system/stronghold/sale.js',
-    find: '    if (talent(181)) multiplier = exp > 5000 ? 300 : 250;',
-    replace: '    if (talent(181)) multiplier = exp > 5000 ? 299 : 250;',
+    find: '    if (talent(181)) return exp > 5000 ? 300 : 250;',
+    replace: '    if (talent(181)) return exp > 5000 ? 299 : 250;',
     tests: ['sale'],
     must_mention: '卖淫正面模式',
   },
@@ -632,14 +632,6 @@ export default [
       '    if (prostitution_effect === 0 || prostitution_effect === 2) multipliers[180] = 80;',
     tests: ['sale'],
     must_mention: '卖淫影响 2',
-  },
-  {
-    desc: 'M6638 ESTIMATE_CHARA 顺手修正卖淫无影响模式的残留倍率',
-    file: 'ere/system/stronghold/sale.js',
-    find: "  experience_multipliers[74] = era.get('e:74') || 0;",
-    replace: '  experience_multipliers[74] = 100;',
-    tests: ['sale'],
-    must_mention: '沿用 E:74',
   },
   {
     desc: 'M6639 SELL_MILK 第二档经验倍率改坏',
@@ -2094,5 +2086,14 @@ export default [
     replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
     tests: ['sale-chara'],
     must_mention: '出售确认两键带「- 」',
+  },
+  // —— #653（F7）：卖淫影响 2 的倍率修复守卫 ——
+  {
+    desc: 'M13255 卖淫影响 2 的倍率改回参与估价（无影响档被卖淫经验打折）',
+    file: 'ere/system/stronghold/sale.js',
+    find: '  // 卖淫影响 2（无影响）：卖淫经验不参与估价\n  return 100;',
+    replace: '  // 卖淫影响 2（无影响）：卖淫经验不参与估价\n  return 20;',
+    tests: ['sale'],
+    must_mention: '卖淫影响 2 不应用卖淫经验倍率',
   },
 ];

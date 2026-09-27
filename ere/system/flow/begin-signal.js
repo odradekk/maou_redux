@@ -79,7 +79,7 @@ class BeginSignal extends Error {
  * @throws {BeginSignal} 永远抛出
  */
 function begin(state) {
-  // 笔误防护：未知目标在发信号处即报错，而不是等主循环收到一个悬空状态。
+  // 未知目标在发信号处即报错，而不是等主循环收到一个悬空状态。
   // 按「值」校验（调用方传的是 STATE.XXX 取值，不是键）
   if (!Object.values(STATE).includes(state)) {
     throw new TypeError(`begin() 收到未知游戏状态: ${String(state)}`);

@@ -209,7 +209,7 @@ test('ESTIMATE_CHARA：素质倍率及条件分支生成可渲染明细', () => 
   assert.equal(estimate_chara(31).talent_multipliers[314], 80, '矮人种族');
 });
 
-test('ESTIMATE_CHARA：卖淫影响 2 首次用零，随后沿用 E:74 的旧倍率', () => {
+test('ESTIMATE_CHARA：卖淫影响 2 不应用卖淫经验倍率，E:74 不再参与估价', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('abl:31:10', 1); // 顺从 +200；欲望 LV0 固有 +10
@@ -218,22 +218,27 @@ test('ESTIMATE_CHARA：卖淫影响 2 首次用零，随后沿用 E:74 的旧倍
   const { estimate_chara } = fixture.load_module('system/stronghold/sale');
 
   let result = estimate_chara(31, { prostitution_effect: 2 });
-  assert.equal(result.price, 0);
-  assert.equal(result.experience_multipliers[74], 0);
+  assert.equal(result.experience_multipliers[74], 100);
+  const base_price = result.price;
+  assert.ok(base_price > 0, '无影响档不受卖淫经验归零');
 
+  // 与其他档位的估价互不影响：负面档算出自己的倍率后，无影响档仍是 100
   fixture.store.set('abl:31:37', 0);
-  result = estimate_chara(31, { prostitution_effect: 0 });
-  assert.equal(result.price, 42);
-  assert.equal(result.experience_multipliers[74], 20);
+  const negative = estimate_chara(31, { prostitution_effect: 0 });
+  assert.equal(negative.experience_multipliers[74], 20);
 
   fixture.store.set('abl:31:37', 5);
   result = estimate_chara(31, { prostitution_effect: 2 });
-  assert.equal(result.price, 42);
-  assert.equal(result.experience_multipliers[74], 20);
+  assert.equal(result.experience_multipliers[74], 100);
+  assert.equal(result.price, base_price, '不沿用其他档位的旧倍率');
 
+  // 妓女素质的折价/溢价同样只在 0/1 档生效
   fixture.store.set('talent:31:180', 1); // mode 2 不应用妓女倍率
   result = estimate_chara(31, { prostitution_effect: 2 });
   assert.equal(result.talent_multipliers[180], 100);
+
+  // E:74 不再是估价的跨调用状态通道
+  assert.equal(fixture.store.get('e:74'), undefined);
 });
 
 test('ESTIMATE_CHARA：卖淫影响缺省读 modsave:0（#547 存储，无参调用跟随设置页）', () => {

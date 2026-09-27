@@ -774,8 +774,8 @@ export default [
   {
     desc: 'M11533 MODE 1 的提示行文案改字（随机设定 → 随机选一个）',
     file: 'ere/chara/chara-self-call.js',
-    find: "    era.print('请输入想设定的第一人称，若不输入择随机设定');",
-    replace: "    era.print('请输入想设定的第一人称，若不输入择随机选一个');",
+    find: "    era.print('请输入想设定的第一人称，若不输入则随机设定');",
+    replace: "    era.print('请输入想设定的第一人称，若不输入则随机选一个');",
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },

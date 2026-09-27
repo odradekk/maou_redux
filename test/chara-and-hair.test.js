@@ -282,13 +282,19 @@ test('CHOOSE_CHARASTERISTIC：换行位置按每行 N 项（实参可换）', as
   ]);
 });
 
-test('CHOOSE_CHARASTERISTIC：输入等于表长（越界一项）时写素质 0', async () => {
+test('CHOOSE_CHARASTERISTIC：输入等于表长（10）按越界重问', async () => {
   const fixture = setup();
   const { choose_charasteristic } = load(fixture);
-  fixture.set_inputs(10); // SIZE = 10，`RESULT > SIZE` 才拒收
+  fixture.set_inputs(10, 3); // SIZE = 10，输入 10 越界重问；3 命中
 
   await choose_charasteristic(1);
-  assert.equal(fixture.store.get('talent:1:0'), 1, '表外项读到 0，落成素质 0');
+  assert.equal(
+    fixture.store.get('talent:1:163'),
+    1,
+    '重问后输入 3 → 表内第 3 项',
+  );
+  assert.equal(fixture.store.get('talent:1:0') ?? 0, 0, '素质 0 未被写入');
+  assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
 // —— @SHOW_HAIRCOLOR（:127-138）／@SET_HAIRCOLOR（:194-202）——
@@ -305,7 +311,7 @@ test('SHOW_HAIRCOLOR：打印发色名并返回编号；未设（0）时打印�
   assert.deepEqual(texts(fixture), ['', '黑发']);
 });
 
-test('SHOW_HAIRCOLOR：编号超表（12，CHOOSE_HAIRCOLOR 允许的端）时打印空串', () => {
+test('SHOW_HAIRCOLOR：编号超表（12，SET_HAIRCOLOR 不设检查的端）时打印空串', () => {
   const fixture = setup();
   fixture.store.set('talent:1:300', 12); // 12 号没有名字（ARR_HAIRCOLOR 到 11 止）
   const { show_haircolor } = load(fixture);
@@ -372,7 +378,7 @@ function haircolor_row(index, name) {
 test('CHOOSE_HAIRCOLOR：列出 1-11 号，每 6 项换行；输入越界重问', async () => {
   const fixture = setup();
   const { choose_haircolor } = load(fixture);
-  fixture.set_inputs(0, 13, 5); // 0 与 13 越界（`< 1 || > 12`），5 命中
+  fixture.set_inputs(0, 13, 12, 5); // 0、13 与 12 越界（`< 1 || >= 12`），5 命中
 
   await choose_haircolor(1);
   const items = HAIRCOLORS.slice(1).map((name, i) =>
@@ -383,16 +389,17 @@ test('CHOOSE_HAIRCOLOR：列出 1-11 号，每 6 项换行；输入越界重问'
     items.slice(6).join(''),
   ]);
   assert.equal(fixture.store.get('talent:1:300'), 5);
-  assert.equal(fixture.inputs_consumed.length, 3);
+  assert.equal(fixture.inputs_consumed.length, 4);
 });
 
-test('CHOOSE_HAIRCOLOR：12 号是允许的（SIZE 含端，1:1）', async () => {
+test('CHOOSE_HAIRCOLOR：12 号无名字（表外），按越界重问', async () => {
   const fixture = setup();
   const { choose_haircolor } = load(fixture);
-  fixture.set_inputs(12);
+  fixture.set_inputs(12, 4); // 12 越界重问；4 命中
 
   await choose_haircolor(1);
-  assert.equal(fixture.store.get('talent:1:300'), 12);
+  assert.equal(fixture.store.get('talent:1:300'), 4, '重问后输入 4 → 黑发');
+  assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
 test('CHOOSE_HAIRCOLOR：每行 N 项可换（实参）', async () => {

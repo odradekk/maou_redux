@@ -1,6 +1,6 @@
 // issue #337：成熟奴隶异族市场与宠物市场末路（M7100-M7129）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 30;
+export const COUNT = 30; // #653 -1 +1（删反向变异 M7128、新增 M13264 守卫 K1 奶罐判定修复）
 
 const code = 'ere/system/stronghold/sell-maturo.js';
 const make = (id, desc, find, replace, must_mention) => ({
@@ -210,17 +210,17 @@ export default [
     '价格边界与种族、职业素质维度逐项分流',
   ),
   make(
-    7128,
-    'K1 把原作漏判扶她的重复超乳条件修正',
-    '          // 原作行 111 把超乳（119）写了两次、没有检查扶她（121）；按 1:1 保留。\n          if (\n            era.get(`talent:${cid}:110`) == 1 ||\n            era.get(`talent:${cid}:114`) == 1 ||\n            era.get(`talent:${cid}:119`) == 1 ||\n            era.get(`talent:${cid}:119`) == 1',
-    '          // 原作行 111 把超乳（119）写了两次、没有检查扶她（121）；按 1:1 保留。\n          if (\n            era.get(`talent:${cid}:110`) == 1 ||\n            era.get(`talent:${cid}:114`) == 1 ||\n            era.get(`talent:${cid}:119`) == 1 ||\n            era.get(`talent:${cid}:121`) == 1',
-    '原作漏判扶她素质，不进入奶罐分支',
-  ),
-  make(
     7129,
     'K2 常态百万档分发到牝犬结局而非淫乱牝犬结局',
     "  } else if (price >= 1_000_000) {\n    [buyer, branch, ending] = ['魔界土豪', 104, '高级牝犬'];\n  } else if (price >= 500_000) {",
     "  } else if (price >= 1_000_000) {\n    [buyer, branch, ending] = ['魔界土豪', 103, '高级牝犬'];\n  } else if (price >= 500_000) {",
     '主流程按牝犬、淫乱与售价分发实际结局文本',
+  ),
+  make(
+    13264,
+    'K1 奶罐判定回退（扶她不再进奶罐、第二个超乳回归）',
+    '            era.get(`talent:${cid}:121`) == 1',
+    '            era.get(`talent:${cid}:119`) == 1',
+    '奶罐判定覆盖巨乳、爆乳、超乳与扶她',
   ),
 ];

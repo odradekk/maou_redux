@@ -11,7 +11,7 @@
  * 前后文拼成**一次** era.print；`print_equiptype_weapon`/`print_equiptype_ring`
  * 是独立调用点（原作 CALL 后整行只有装备名）用的整行出口。@PRINT_EQUIPTYPE_
  * WEAPON 尾部没有 RETURN（隐式 0），@PRINT_EQUIPTYPE_RING 尾部 RETURN 0，
- * 对调用方无差别，返回值 0 仅 1:1 保留。
+ * 调用方只取输出、不读返回值。
  */
 
 'use strict';

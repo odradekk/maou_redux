@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 72; // #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）
+export const COUNT = 74; // #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）；#653 -3 +5（删反向变异 M7200/M7201/M7203，新增 M13250-M13254 守卫修复后行为）
 
 export default [
   {
@@ -166,38 +166,12 @@ export default [
     must_mention: '怪物妊娠从发觉、临月推进到生产',
   },
   {
-    desc: 'M7200 修正原作 CHILD_BIRTH_PLACE 漏传参数缺陷',
-    file: 'ere/chara/chara-pregnancy.js',
-    find: '`${name_of(cid)}平安的${child_birth_place_text(0)}生下了${description}。`,',
-    replace:
-      '`${name_of(cid)}平安的${child_birth_place_text(cid)}生下了${description}。`,',
-    tests: ['chara-pregnancy'],
-    must_mention: '原作 CALL CHILD_BIRTH_PLACE 漏传参数',
-  },
-  {
-    desc: 'M7201 修正原作近卫模板下界 200 的缺预设缺陷',
-    file: 'ere/chara/chara-pregnancy.js',
-    find: 'source = 200 + rand(11);',
-    replace: 'source = 201 + rand(11);',
-    tests: ['chara-pregnancy'],
-    must_mention: '模板 200 不存在时明确失败',
-  },
-  {
     desc: 'M7202 绝壁升档后漏置贫乳',
     file: 'ere/chara/chara-pregnancy.js',
     find: '    view.绝壁 = 0;\n    view.贫乳 = 1;',
     replace: '    view.绝壁 = 0;',
     tests: ['chara-pregnancy'],
     must_mention: '胸部升档覆盖绝壁',
-  },
-  {
-    desc: 'M7203 修正原作超乳不退档缺陷',
-    file: 'ere/chara/chara-pregnancy.js',
-    find: '    // 缺陷；按 #14 的先 1:1 原则保留，不改成 爆乳。\n    view.超乳 = 1;',
-    replace:
-      '    // 缺陷；按 #14 的先 1:1 原则保留，不改成 爆乳。\n    view.超乳 = 0;\n    view.爆乳 = 1;',
-    tests: ['chara-pregnancy'],
-    must_mention: '超乳不退的原作缺陷',
   },
   {
     desc: 'M7204 体型重算的两个独立设定位误改为同时成立',
@@ -278,7 +252,7 @@ export default [
     find: '    view.爆乳 = 0;\n    view.巨乳 = 1;',
     replace: '    view.爆乳 = 0;\n    view.巨乳 = 0;',
     tests: ['chara-pregnancy'],
-    must_mention: '胸部降档覆盖超乳不退',
+    must_mention: '胸部降档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六种状态',
   },
   {
     desc: 'M7214 巨乳降档后仍保留巨乳',
@@ -287,7 +261,7 @@ export default [
     replace:
       '  } else if (view.巨乳) {\n    view.巨乳 = 1;\n  } else if (!view.贫乳',
     tests: ['chara-pregnancy'],
-    must_mention: '胸部降档覆盖超乳不退',
+    must_mention: '胸部降档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六种状态',
   },
   {
     desc: 'M7215 普通胸部降档后漏置贫乳',
@@ -295,7 +269,7 @@ export default [
     find: '  } else if (!view.贫乳 && !view.绝壁) {\n    view.贫乳 = 1;',
     replace: '  } else if (!view.贫乳 && !view.绝壁) {\n    view.贫乳 = 0;',
     tests: ['chara-pregnancy'],
-    must_mention: '胸部降档覆盖超乳不退',
+    must_mention: '胸部降档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六种状态',
   },
   {
     desc: 'M7216 乳内妊娠错授精巢妊娠素质',
@@ -591,5 +565,47 @@ export default [
     tests: ['event-execution-batch'],
     must_mention:
       'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+  },
+  // —— #653（F7）：近卫模板窗 201-211、超乳降档、生育部位按生产角色（修复守卫） ——
+  {
+    desc: 'M13250 近卫后代随机模板退回 200 起（缺预设报错中断）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: 'source = 201 + rand(11);',
+    replace: 'source = 200 + rand(11);',
+    tests: ['chara-pregnancy'],
+    must_mention: '后代预设角色 200 不存在',
+  },
+  {
+    desc: 'M13251 近卫生成的双亲模板窗退回 200-210（模板 211 被当作随机模板）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    (other_template >= 201 && other_template <= 211)',
+    replace: '    (other_template >= 200 && other_template <= 210)',
+    tests: ['chara-pregnancy'],
+    must_mention: '近卫生成覆盖随机、普通、精英模板及双亲替身和等级两侧',
+  },
+  {
+    desc: 'M13252 奴隶后代的母亲模板窗退回 200-210',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    (mother_template >= 201 && mother_template <= 211)',
+    replace: '    (mother_template >= 200 && mother_template <= 210)',
+    tests: ['chara-pregnancy'],
+    must_mention: '普通后代生成覆盖普通、精英、随机模板及父亲有无的等级路径',
+  },
+  {
+    desc: 'M13253 超乳降档改回写超乳（永不退档）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.超乳 = 0;\n    view.爆乳 = 1;',
+    replace: '    view.超乳 = 1;',
+    tests: ['chara-pregnancy'],
+    must_mention: '超乳 → 爆乳',
+  },
+  {
+    desc: 'M13254 生育部位文案改回读 0 号角色',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '`${name_of(cid)}平安的${child_birth_place_text(cid)}生下了${description}。`,',
+    replace:
+      '`${name_of(cid)}平安的${child_birth_place_text(0)}生下了${description}。`,',
+    tests: ['chara-pregnancy'],
+    must_mention: '正常生产分支取母亲的异常妊娠部位',
   },
 ];

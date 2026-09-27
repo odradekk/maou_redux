@@ -26,11 +26,9 @@
  *   - **随机源提成 `rand` 形参**（chara-init.js 先例）：源 :41 的
  *     `RAND( VARSIZE("ID_OF_GENERAL_CHARASTERISTICS") )` 与 :161 的
  *     `RAND:100` 缺省均匀随机，测试注入定值序。
- *   - **`TALENT:CHARA_ID:0`（输入越界一项）**：源 :117 的判据是
- *     `RESULT < 0 || RESULT > SIZE`，`RESULT == SIZE` 放行；此时
- *     `ID_OF_GENERAL_CHARASTERISTICS:(RESULT)` 读到表外，Emuera 给 0，
- *     于是写的是素质 0（処女）。1:1 保留这个端（`?? 0`）。同一条也管
- *     @SET_CHARASTERISTIC（:62 无范围检查，表外序号同样落素质 0）。
+ *   - **表外序号的落点**：@CHOOSE_CHARASTERISTIC 的判据收在表长内
+ *     （`RESULT >= SIZE` 重问）；@SET_CHARASTERISTIC 不做范围检查，
+ *     表外序号经 `?? 0` 兜底落成素质 0（処女）。
  */
 
 'use strict';
@@ -136,8 +134,8 @@ function charasteristic_index(cid) {
 /**
  * @SET_RANDOM_CHARASTERISTIC（:28-46）：清空后随机设一条性格（174 貴公子不参与）。
  *
- * 源 :44 的 `GOTO CHARA_GENERAL_CHARASTERISTICS_FIRST` 回到 :33 的标号，
- * 即**重掷且重清**（标号在 CLEAR 之前）——1:1 保留在循环里。
+ * 源 :44 的 `GOTO CHARA_GENERAL_CHARACTERISTICS_FIRST` 回到 :33 的标号，
+ * 即**重掷且重清**（标号在 CLEAR 之前），故清空留在循环体内。
  *
  * @param {number} [cid=-1] 角色 ID（源 ARG:0）
  * @param {(n: number) => number} [rand] RAND 的随机源，缺省均匀随机
@@ -165,9 +163,8 @@ function set_random_charasteristic(cid = -1, rand = default_rand) {
 function set_charasteristic(cid = -1, index) {
   const chara_id = cid < 0 ? target_cid() : cid;
   clear_charasteristic(chara_id);
-  // 表外序号与 @CHOOSE_CHARASTERISTIC 同款：源 :62 的
-  // `ID_OF_GENERAL_CHARASTERISTICS:(ARG:1)` 越界时 Emuera 给 0，
-  // 于是写的是素质 0（処女）。少了这个兜底会写出不存在的下标
+  // 直连入口不做范围检查：表外序号读回 undefined，经 ?? 0 落素质 0（処女）。
+  // 少了这个兜底会写出不存在的下标
   const talent_id = GENERAL_CHARASTERISTICS[index] ?? 0;
   set_talent(chara_id, talent_id, 1);
 }
@@ -224,10 +221,10 @@ async function choose_charasteristic(cid = -1, per_line = 3) {
 
   for (;;) {
     const result = await era.input();
-    if (result < 0 || result > size) {
+    if (result < 0 || result >= size) {
       continue;
     }
-    const chosen = GENERAL_CHARASTERISTICS[result] ?? 0; // （表外读 0，见文件头）
+    const chosen = GENERAL_CHARASTERISTICS[result];
     set_talent(chara_id, chosen, 1);
     return;
   }
@@ -296,8 +293,8 @@ function set_haircolor(cid = -1, value) {
 /**
  * @CHOOSE_HAIRCOLOR（:207-236）：列出 1-11 号发色供选择，每 N 项换行。
  *
- * 源 :217 的 `SIZE = 12` 与 :232 的判据 `RESULT < 1 || RESULT > SIZE`
- * 允许输入 12——而 12 号没有名字（ARR_HAIRCOLOR 到 11 止）。1:1 保留。
+ * 列表与判据都取 SIZE = 12 为上界（表内发色是 1-11 号，0 号是未设定的
+ * 空串）：输入 12 按越界重问——12 号没有名字（ARR_HAIRCOLOR 到 11 止）。
  *
  * @param {number} [cid=-1] 角色 ID（源 ARG:0）
  * @param {number} [per_line=6] 每行项数（源 ARG:1）
@@ -327,7 +324,7 @@ async function choose_haircolor(cid = -1, per_line = 6) {
 
   for (;;) {
     const result = await era.input();
-    if (result < 1 || result > size) {
+    if (result < 1 || result >= size) {
       continue;
     }
     set_talent(chara_id, 300, result);

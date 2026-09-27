@@ -11,8 +11,8 @@
  *   - `PRINTFORM [{NUM}] 装备情报\u3000`（尾部全角空格）升级为 era.printButton（本项目通例，
  *     #384 改名按钮同款）：引擎的 input 只接受本轮已打印按钮的快捷键
  *     （#129），纯文字 [16] 在 ere 里点不进也敲不进；按钮正文不写 [16]
- *     前缀（AGENTS.md 硬约束，PR #30 实显 [0] [0] 的教训），尾部全角
- *     空格照抄（:1085）。
+ *     前缀（AGENTS.md 硬约束，PR #30 实显 [0] [0] 的教训），按钮正文带
+ *     一个尾部全角空格。
  *   - EQUIP_ST_SHOW 的名称行：原作 CALL PRINT_EQUIPTYPE_WEAPON 后接
  *     `PRINTL  `（两个半角空格收行）——引擎每次 print 调用即结束一行
  *     （equip-print.js 文件头），这里用其整行出口 print_equiptype_weapon
@@ -25,9 +25,8 @@
  *     M11547 钉住这条路径。
  *   - 原作 :1086 的 RESETCOLOR 不镜像：ere 侧按钮配色由 printButton 的
  *     config.color 直通（#384 先例），本函数没有需要复位的前置着色。
- *   - @SHOW_BUTTON_EQUIP 的两处 RETURN 0（:1082-1083/:1086-1087）不设返回值：
- *     不读（与 equip_st_show 的恒 2「1:1 保留」不同——那边原作 RETURN 2
- *     同样无人读，保留它只为 1:1；按钮侧连值都恒 0，`@returns {void}` 即可）。
+ *   - @SHOW_BUTTON_EQUIP 的两处出口不设返回值：调用方不读，
+ *     `@returns {void}` 即可。
  */
 
 'use strict';
@@ -89,7 +88,7 @@ function show_button_equip(num, cid) {
   if (check_able_to_show_equip(cid) === 1) {
     return; // 条件に合わないならボタン自体を表示しない
   }
-  // PRINTFORM [{NUM}] 装备情报 + 全角空格（尾部空格照抄）
+  // [NUM] 装备情报按钮（正文含尾部全角空格）
   era.printButton('装备情报\u3000', num);
 }
 
@@ -104,7 +103,7 @@ function show_button_equip(num, cid) {
  * 连击率/防御伤害/气力伤害。
  *
  * @param {number} cid 角色 ID（原作 ARG:0）
- * @returns {number} 恒 2（:1071 RETURN 2；调用方不读，1:1 保留）
+ * @returns {number} 恒 2（调用方不读，保留作接口形状）
  */
 function equip_st_show(cid) {
   // W:0 = CFLAG:ARG:550（武装槽）

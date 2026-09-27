@@ -295,7 +295,8 @@ on('EVENTTURNEND', async () => {
           chara(cid).chara.异种婚姻 = 0;
         }
       } else if (dominate > 0 && chara(cid).invasion.状态 === 3) {
-        // 迎击中的勇者按阶层决定捕获（存根 RESULT 0 下不达，1:1 保留）
+        // 迎击中的勇者按阶层（CFLAG:501）分配从属怪物：阶层越高怪物号越大；
+        // 8 层以上有一成概率换成稀有怪物（191-193），前提是魔王持有该怪物
         let partner = (era.get(`cflag:${cid}:501`) || 0) - 1;
         partner *= 10;
         partner += 100 + rand(5);
@@ -470,7 +471,7 @@ on('EVENTTURNEND', async () => {
   era.println(); // PRINTL
   // 侵攻度自然衰减：未征服（FLAG:82/87/89/91 == 0）且有余量时每日 RAND:100；
   // 已征服低概率反抗、保底 100。直接决定通关天数（#112 验收的天数估算依据），
-  // 1:1 保留。衰减后各领域按领域号 CALL KYOTEN_EVENT, <1-4>（#119 接线，
+  // 衰减后各领域按领域号 CALL KYOTEN_EVENT, <1-4>（#119 接线，
   // 本体在 ere/page/page-invasion.js）
   await decay_invasion_degree(1, {
     conquered: era.get('flag:82') || 0, // 人间界征服完了
@@ -528,10 +529,9 @@ on('EVENTTURNEND', async () => {
     chara(0).dungeon.气力 = maou_max_wp;
   }
 
-  // 战役败北检查（CAMPAIGN_EVENT.ERB:260-281，#469 起真身）：气力
-  // 刚被本函数扣到 <= 0（:713-714 战役中 -10）即战役失败。原作播报文案写
-  // 「体力耗尽」，但判定的其实是气力（BASE:MASTER:1）——原作用词与判定
-  // 变量不一致，1:1 照抄文案，不据判定变量改写
+  // 战役败北检查（#469 起真身）：气力刚被本函数扣到 <= 0（战役中每回合
+  // -10）即战役失败。播报文案写「体力耗尽」，判定用的是气力（BASE:MASTER:1）
+  // ——文案与判定变量的这一不一致按现状保留。
   if (era_flag.hero_campaign_active >= 1 && chara(0).dungeon.气力 <= 0) {
     era.print(`***${chara_callname(0)}的体力耗尽了***`);
     await era.waitAnyKey();

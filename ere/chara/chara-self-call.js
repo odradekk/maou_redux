@@ -14,7 +14,7 @@
  *     已随角色详情页接线，mode 形参排在 rand 之后（既有调用方都以第二参传
  *     随机源，chara-custom2/test 同款，不破坏签名）。空输入的语义映射见
  *     函数体内注释：引擎把 '' 与 "0" 都归一成数值 0 且不受理空提交，原作
- *     「不输入择随机设定」在 ere 的可达等价物是输入 0；提示行后因此**补了
+ *     「不输入则随机设定」在 ere 的可达等价物是输入 0；提示行后因此**补了
  *     一句 ere 侧说明「（输入 0 随机设定）」**——有意偏离 1:1 文案（第 1 轮
  *     验收要求）。判据自 #567 起统一收在 ere/utils/input-text.js（全库的
  *     空输入语义裁定与普查清单见该票）。
@@ -37,7 +37,7 @@
  *
  *   - **`@SELF_CALLNAME` 不移植**（:422-423）：原作本体就是
  *     `THROW 函数@SELF_CALLNAME 已被废弃，请调用函数@RANDOM_SELF_CALL`——
- *     全库零调用者，判定同 #14 的死代码处置（保留追溯注释，不落 JS）。
+ *     全库零调用者：保留说明、不落代码。
  *
  *   - **CALC_SELFCALL_FACTOR 的 `SWAP ARG,TARGET`（:345，函数尾对称换回）不移植**：
  *     原作用它把随后几行的裸 `TALENT:163` 一类隐式-TARGET 寻址接到 ARG
@@ -51,10 +51,8 @@
  *     真身比两份存根危险（将来谁改了一边，另一边会静默不同步且没有测试
  *     会红），本文件直接 `require('#/chara/chara-family')` 复用，不新造
  *     第二份。完整 `CHARA_NAME.ERB` 属另一票（N2/#384），落地时按该票裁定
- *     处理这份共享函数的归属。该实现自身有一处未修的可疑重叠（`nid>=2000`
- *     分支比 `nid<1000||nid>=3000` 分支先判定，导致 [3000,4059) 的和名
- *     男性向 NID 反而落进「洋名」返回值）——1:1 保留，不是本票的判断，
- *     也不是本票能改的范围，`@SET_NICK_SELFCALL` 调用点仍按此行为测试。
+ *     处理这份共享函数的归属。#653 起 `nid_get_type` 已把 [3000,4059) 的
+ *     男性和名与 [4500,5289) 的中式名归回和名，本调用点按修复后的行为测试。
  *
  *   - **`@GET_LOOK_INFO` 的「种族2」kind 补进共享子集**
  *     （ere/kojo/kojo-dungeon-bitch-log.js，非本文件）：`CALC_SELFCALL_FACTOR`
@@ -341,7 +339,7 @@ function set_suit_selfcall(cid, start = -1, rand = default_rand) {
             word = male ? '小人' : '小女子';
           } else if (attitude <= -5) {
             // 原作可达性存疑：上一支 `attitude < -2` 已把这个区间
-            // 拦下，1:1 保留分支不改写
+            // 拦下，分支保持原判据
             word = '在下';
           } else {
             break;
@@ -556,8 +554,8 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     // SIF MODE == 0 → GOTO RANDOM（只有 MODE 1 进输入段）
     // $INPUT_LOOP：两条分割线夹一句提示
     era.drawLine();
-    era.print('请输入想设定的第一人称，若不输入择随机设定');
-    // 有意偏离（#567，第 1 轮验收补）：上一行 1:1 照抄原作，但 ere 的渲染层
+    era.print('请输入想设定的第一人称，若不输入则随机设定');
+    // 有意偏离（#567，第 1 轮验收补）：提示行按原文印出，但 ere 的渲染层
     // 不受理空提交（app.asar returnFromInput 的 `if (!any && !val) return`——
     // 直接回车没有反应），「不输入」走不到 $RANDOM，只有输入 0 才进随机路径；
     // 补一行提示玩家。不能用 `era.input({ any: true })` 替代：any 键模式在
@@ -618,7 +616,7 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     if (result >= 0) {
       era.set(`cflag:${cid}:450`, result + 100);
       // RETURN RESULT 不带 +100：与上面合适一人称表的 RETURN RESULT+10 不对称，
-      // 原作逐字如此（CFLAG 与 RETURN 各自独立赋值），1:1 保留不判定为笔误
+      // CFLAG 与 RETURN 各自独立赋值，两行都保留
       return result;
     }
   }
