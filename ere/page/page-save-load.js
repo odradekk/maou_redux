@@ -7,8 +7,8 @@
  * system-flow.md「主要系统函数一览」）——读档成功的收尾由本文件的
  * EVENTLOAD 链与转场承担。
  *
- * 旧版机制 → ere 写法的映射（本文件全部语义依据集中在此）：
- *   - SAVENOS()（分页步长）→ 常量 PAGE_LEN = 20。它是旧版的
+ * 旧引擎机制 → ere 写法的映射（本文件全部语义依据集中在此）：
+ *   - SAVENOS()（分页步长）→ 常量 PAGE_LEN = 20。它是
  *     「表示するセーブデータ数」配置项（默认 20，技能 data-save-load.md），
  *     ere 引擎无此配置，取其默认值为常量；
  *   - CHKDATA n（RESULT==0 = 可加载，RESULTS = 备注）→
@@ -18,11 +18,11 @@
  *   - SAVEDATA n, text → era.saveData(n, text)；LOADDATA n → era.loadData(n)
  *     （Boolean）；DELDATA n → era.rmData(n)；SAVEGLOBAL → 引擎在
  *     saveData/rmData 后自动调（11-saves.md），显式调用省略；
- *   - LASTLOAD_NO（旧版内建只读、LOADDATA 时自动设置）→
+ *   - LASTLOAD_NO（内建只读、LOADDATA 时自动设置）→
  *     era_flag.last_load_no（flag:10018，读档成功后自写入，随存档保存）；
  *   - LASTSAVE_NO（10 元数组，随存档保存）→ flag:10019..10028
  *     （[0] 走 era_flag.last_save_no，[1..9] 直写；list_data 的高亮比较
- *     只读 [0]，旧版裸名比较即如此）；
+ *     只读 [0]，裸名比较即如此）；
  *   - CSTR:MASTER:99（故事名）→ chara(0).system.故事名（门面访问器，
  *     cstr:0:99——ownership 属主 system；yml/CStr.yml 是空表（零条目），
  *     引擎对未登记下标原样回落数字寻址，可写可存；**不要**往该表补
@@ -33,11 +33,11 @@
  *     （读 callname:<角色号>:-1；#5 决议：SAVESTR 的名字承载归内置 callname）；
  *   - GETTIMES() → get_times()（`YYYY/MM/DD HH:MM:SS`，技能
  *     in-expression-functions.md）；
- *   - SAVEDATA_TEXT + PUTFORM → 局部字符串拼接（旧版的存档备注暂存
+ *   - SAVEDATA_TEXT + PUTFORM → 局部字符串拼接（存档备注暂存
  *     变量，ere 无对应）。
  *
  * 界面写法说明（有意偏离，均注明依据）：
- *   - 槽位行在旧版是 PRINTFORM 文本 `[N] 备注`，`[数字]` 文本自动升格为
+ *   - 槽位行本是 PRINTFORM 文本 `[N] 备注`，`[数字]` 文本自动升格为
  *     可点按钮；ere 的 input() 只送达 printButton 的快捷键，故存在槽一律
  *     printButton（正文=备注，编号前缀由引擎 showAcc 拼）。编号宽度
  *     `{L_I,2}`（右对齐宽 2）无引擎对应——`[N]` 的拼法归渲染层。
@@ -48,22 +48,22 @@
  *     空格补位也是同一结果，实机表现不变。要真正对齐得把槽位行改成
  *     `printMultiColumns` 的「按钮格 + 文本格」（page-life-list.js 的
  *     print_row 写法），不在本工单范围。
- *   - 空槽的可达性按界面分化：存档界面空槽是**灰色按钮**（旧版 CASE 0 TO
+ *   - 空槽的可达性按界面分化：存档界面空槽是**灰色按钮**（CASE 0 TO
  *     98 对空槽照存，键盘数字在 ere 不可达，必须按钮化）；读档/删除界面
- *     空槽是灰色纯文本（旧版 CHKDATA 拦下 = 无效输入，不可选即等价）。
+ *     空槽是灰色纯文本（CHKDATA 拦下 = 无效输入，不可选即等价）。
  *   - PRINTFORMLC（同行分列按钮）→ printMultiColumns；`[1] 确定 [0] 取消`
  *     一行两选项同款。
  *   - INPUT 的参数是**默认值**（`INPUT 99` = 空回车得 99、`INPUT 0` = 空回车
  *     得 0，技能 input.md），ere 的 input() 无默认值参数——空回车快捷语义
  *     丢失（引擎能力差异，点击/键入不受影响）。
  *   - REDRAW/CLEARLINE → 本文件用「入口基准 + clear(跨度)」就地重绘
- *     （旧版 L_LINECOUNT = LINECOUNT → CLEARLINE LINECOUNT - L_LINECOUNT 的
- *     习语，ScreenBlock 同源）。旧版无效输入只 CLEARLINE 1 不重画，ere 统一
+ *     （L_LINECOUNT = LINECOUNT → CLEARLINE LINECOUNT - L_LINECOUNT 的
+ *     习语，ScreenBlock 同源）。无效输入只 CLEARLINE 1 不重画，ere 统一
  *     整屏重绘（page-select-target 先例：ere 控制台是滚动视图）。
  *   - 故事命名（$SET_NAME）：INPUTS 前先 clear 回基准——引擎在屏幕有按钮时
  *     拒收非按钮输入（dev-guides/05-interaction.md:144），文本输入必须先把
- *     列表按钮清掉（erauma 12-sl 改名段同款姿势）；旧版的 INPUTS 无此限制，
- *     且旧版命名后不清行（该处语句被注释）直接堆叠重画，ere 侧清掉后由
+ *     列表按钮清掉（erauma 12-sl 改名段同款姿势）；INPUTS 无此限制，
+ *     且命名后不清行（该处语句被注释）直接堆叠重画，ere 侧清掉后由
  *     DRAW_PAGE 重画，等价（反馈行经 waitAnyKey 读键，可见性不损失）。
  *   - PRINTBUTTON（现名, CSTR:MASTER:99）（点击把现名预填进输入框）→ 纯
  *     文本 `（现名）` 提示：ere 引擎无「按钮点击预填输入框」能力。
@@ -86,7 +86,7 @@
  *     RESTART、据点的循环重绘都不再走），而是 emit EVENTLOAD 链后转场进
  *     SHOP——且**不执行 EVENTSHOP**（技能 system-flow.md:51-53），以
  *     STATE.SHOP_AFTER_LOAD 承载（begin-signal.js 的本地扩展）。引擎拒读
- *     （loadData false）时不转场：留在读档界面重绘（#136 已有行为，与旧版
+ *     （loadData false）时不转场：留在读档界面重绘（#136 已有行为，与
  *     CHKDATA 拦下等效）。
  */
 
@@ -105,12 +105,12 @@ const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #57
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
- * 分页步长：旧版 SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
+ * 分页步长：SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
  * 99 槽按 20/页 → 5 页（0/20/40/60/80），末页渲染 80–98 加一个空行。
  */
 const PAGE_LEN = 20;
 
-/** 自动存档槽号（读档界面单列渲染，ADR-0006：占用旧版的遗留空位）。 */
+/** 自动存档槽号（读档界面单列渲染，ADR-0006：占用旧引擎遗留的空位）。 */
 const AUTOSAVE_SLOT = 99;
 
 /**
@@ -143,7 +143,7 @@ function get_times() {
  * @param {number} start 起始槽号（L_POS）
  * @param {number} end 排他上限（L_POS + L_LEN）
  * @param {boolean} empty_clickable 空槽是否渲染为按钮——存档界面 true
- *   （旧版对空槽照存），读档/删除界面 false（旧版 CHKDATA 拦下）
+ *   （对空槽照存），读档/删除界面 false（CHKDATA 拦下）
  */
 function list_data(start, end, empty_clickable) {
   for (let i = start; i < end; i += 1) {
@@ -198,7 +198,7 @@ function print_page_buttons(...items) {
  */
 function push_last_save_no(idx) {
   // [1..9] 的历史元素直写（↔ LASTSAVE_NO:1..9，随存档保存；包装层只暴露
-  // [0]——旧版唯一被消费的元素）
+  // [0]——唯一被消费的元素）
   for (let i = 9; i > 0; i -= 1) {
     era.set(`flag:${10019 + i}`, era.get(`flag:${10019 + i - 1}`) ?? -1);
   }
@@ -208,7 +208,7 @@ function push_last_save_no(idx) {
 /**
  * build_save_info：拼存档备注的正文段。
  *
- * 段式（宽度均为旧版的半角显示宽）：
+ * 段式（宽度均为半角显示宽）：
  *   `第N日午前/午后`（宽 11 左对齐）→ `LV等级`（右对齐宽 4）→
  *   TARGET >= 1 时 ` 正在调教:名字 `（名字左对齐宽 14）否则 24 个空格 →
  *   有故事名时追加 `『故事名』`。
@@ -260,7 +260,7 @@ function build_save_info() {
  */
 async function set_story_name(anchor) {
   // 清掉列表按钮：引擎在屏幕有按钮时拒收非按钮输入（05-interaction.md:144），
-  // 文本输入前必须清屏（erauma 12-sl 改名段同款；旧版 INPUTS 无此限制，
+  // 文本输入前必须清屏（erauma 12-sl 改名段同款；INPUTS 无此限制，
   // 见文件头「界面写法说明」）
   await era.clear(era.getLineCount() - anchor);
   // CASE 200 的 DRAWLINE
@@ -269,7 +269,7 @@ async function set_story_name(anchor) {
   era.print('请输入一个名称故事：');
   const current = chara(0).system.故事名;
   if (current.length > 0) {
-    // 现名提示。旧版 PRINTBUTTON（现名）点击可预填输入框；ere 无
+    // 现名提示。PRINTBUTTON（现名）点击可预填输入框；ere 无
     // 该能力（引擎渲染层无此变换），降为纯文本提示
     era.print(`（${current}）`);
   }
@@ -279,7 +279,7 @@ async function set_story_name(anchor) {
   // （判断依据见 ere/utils/input-text.js；文件头的 #151 作废说明同源）
   const name = input_text(await era.input());
   if (name.length > 32) {
-    // 存储截断到 32 字符，**显示原串**（旧版即如此——CSTR 存
+    // 存储截断到 32 字符，**显示原串**（CSTR 存
     // SUBSTRING(RESULTS,0,32)，PRINTFORMW 打印的是未截断的 RESULTS）
     chara(0).system.故事名 = name.substring(0, 32);
     era.print(`将故事命名为『${name}』`);
@@ -303,10 +303,10 @@ async function set_story_name(anchor) {
  * 列表 + 99 号自动存档槽单列段 + 翻页行；读档成功后：EX_FLAG:2801 钳制 +
  * LASTLOAD_NO 自写入 → EVENTLOAD 链（ere/event/event-load.js）→ 转场进
  * SHOP（LOADDATA 的转场语义，见文件头）。**读档成功后本函数不再返回**
- * （begin 只 throw）——旧版 `RETURN L_POS` 与标题的 RESTART 都在
+ * （begin 只 throw）——`RETURN L_POS` 与标题的 RESTART 都在
  * 「没读成」的世界里，ere 侧返回值只在 [100] 返回分支产生。
  *
- * @returns {Promise<number>} [100] 返回时的页起点（旧版 RETURN L_POS）
+ * @returns {Promise<number>} [100] 返回时的页起点
  * @throws {BeginSignal} 读档成功：转场进 STATE.SHOP_AFTER_LOAD
  */
 async function load_game() {
@@ -364,7 +364,7 @@ async function load_game() {
       // 范围内且存在 → 读档
       // LOADDATA：ere 等价 era.loadData（Boolean）。引擎拒读时返回
       // false（如版本检查），**不转场**——落到循环尾清行重绘，留在读档
-      // 界面（旧版无此分支：CHKDATA 通过后 LOADDATA 失败会弹错终止；
+      // 界面（无此分支：CHKDATA 通过后 LOADDATA 失败会弹错终止；
       // ere 侧 false 不吞不炸，等效于 CHKDATA 拦下的等输入路径）
       if (await era.loadData(result)) {
         // SIF EX_FLAG:2801 < 10 → 10（读入后的值上钳制；EX_FLAG:2801
@@ -372,17 +372,17 @@ async function load_game() {
         if (era_exflag.first_run_deadline < 10) {
           era_exflag.first_run_deadline = 10;
         }
-        // LASTLOAD_NO：旧版在 LOADDATA 时自动设置；ere 自写入（写进
-        // 读入后的数据，随下一次存档带走——与旧版同序）
+        // LASTLOAD_NO：引擎在 LOADDATA 时自动设置；ere 自写入（写进
+        // 读入后的数据，随下一次存档带走——同序）
         era_flag.last_load_no = result;
-        // EVENTLOAD 链（旧版 LOADDATA 后迁移的保留名回调，ere/event/
-        // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——旧版
+        // EVENTLOAD 链（LOADDATA 后迁移的保留名回调，ere/event/
+        // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——
         // 的 BEGIN SHOP（显式、会跑 EVENTSHOP）与隐式进入 SHOP
         // 的区分在 ere 侧即此缺省值与覆盖值之差（begin-signal.js）
         const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;
         // LOADDATA 的转场语义（#137，见文件头）：不回调用方（标题的
         // RESTART、据点的循环重绘都不再走），进 SHOP 且不执行
-        // EVENTSHOP。begin 只 throw 不返回——旧版 RETURN L_POS 在迁移
+        // EVENTSHOP。begin 只 throw 不返回——RETURN L_POS 在迁移
         // 发生后不回调用方，ere 侧以「成功分支无返回」等效
         begin(next);
       }
@@ -396,7 +396,7 @@ async function load_game() {
 /**
  * save_game：存档界面。
  *
- * @returns {Promise<number>} 离开时的页起点（旧版 RETURN L_POS）
+ * @returns {Promise<number>} 离开时的页起点
  */
 async function save_game() {
   let pos = 0;
@@ -452,7 +452,7 @@ async function save_game() {
       await set_story_name(anchor);
     } else if (result === 300) {
       // 删除存档：子界面带走当前页起点，返回新起点（子界面的
-      // 输出行留屏，由本循环尾的清行一并收走——旧版同构）
+      // 输出行留屏，由本循环尾的清行一并收走——同构）
       pos = await del_data(pos);
     } else if (result >= 0 && result <= 98) {
       // 槽位（0-98，不含自动存档位）：存在 → 覆盖确认
@@ -480,7 +480,7 @@ async function save_game() {
       // ARRAYSHIFT LASTSAVE_NO, 1, L_IDX
       push_last_save_no(result);
       // PRINTFORMW 已将游戏保存为{L_IDX}号存档……（读键后返回；行留
-      // 屏由调用方重绘收走——旧版 RETURN 前同样不清）
+      // 屏由调用方重绘收走——RETURN 前同样不清）
       era.print(`已将游戏保存为${result}号存档……`);
       await era.waitAnyKey();
       return pos;
@@ -493,9 +493,9 @@ async function save_game() {
 /**
  * 自动存档（#137 / ADR-0006）：每个游戏日开始时写进 99 号槽。
  *
- * **对旧版的有意偏离**：旧版只有一处玩家存档写点（槽位 0-98），99 号槽在
- * 读档界面被渲染却没有任何写点，旧版也未定义内建自动存档钩子
- * SYSTEM_AUTOSAVE——占用它不改变任何旧版可见行为，
+ * **有意偏离**：旧引擎只有一处玩家存档写点（槽位 0-98），99 号槽在
+ * 读档界面被渲染却没有任何写点，也没定义内建自动存档钩子
+ * SYSTEM_AUTOSAVE——占用它不改变任何可见行为，
  * 正当性见 ADR-0006「后果」节。
  *
  * 行为边界（有意取舍，写明）：
@@ -503,11 +503,11 @@ async function save_game() {
  *     （工单 #137 / 决议 #104 第三节）；
  *   - **不 push LASTSAVE_NO**：自动行为不占用玩家的「上次存档」高亮
  *     （99 号槽有独立的渲染位与 LASTLOAD_NO == 99 高亮条件）；
- *   - **无输出、无确认**：日推进的输出流不被打断（旧版无此功能，无
+ *   - **无输出、无确认**：日推进的输出流不被打断（无此功能，无
  *     先例可循；覆盖旧自动档无条件进行——手动档的覆盖确认是玩家动作
  *     的护栏，自动档没有玩家动作）；
  *   - build_save_info 的指针改写副作用（SIF FLAG:1/FLAG:2 >= 0 →
- *     TARGET/ASSI）随调用发生——与旧版 SAVEINFO 的调用语义一致，且
+ *     TARGET/ASSI）随调用发生——与 SAVEINFO 的调用语义一致，且
  *     本函数的调用点（run_event_newday 入口）之后回合结算会重设同一对
  *     指针（turnend-settle.js:753-758），无实害。
  *
@@ -521,8 +521,8 @@ async function auto_save() {
 /**
  * del_data：删除存档界面。
  *
- * @param {number} [pos] 页起点（旧版参数默认 -1 → 归 0）
- * @returns {Promise<number>} 离开时的页起点（旧版 RETURN L_POS）
+ * @param {number} [pos] 页起点（参数默认 -1 → 归 0）
+ * @returns {Promise<number>} 离开时的页起点
  */
 async function del_data(pos = -1) {
   // L_POS = L_POS < 0 ? 0 # L_POS

@@ -17,7 +17,7 @@
  * 有意偏离：
  *   - 染色/复位的有状态配色按「每个片段自带色」承载
  *     （look.js 的 Spans、equip-print.js 的两种出口同款）；补位空格与被补的
- *     文本同色（源里复位在补位输出之后），`COLOR.default` 与复位一样
+ *     文本同色（复位本来就在补位输出之后），`COLOR.default` 与复位一样
  *     都是「不染」，实现为不写 color；
  *   - 封面图改用引擎的 `era.printImage`（res/img.csv 已登记该资源）；
  *     源在四处图片后面各跟一个收行输出，图片出口自带换行，故不再补。
@@ -107,7 +107,7 @@ const SEIIN_ADJUST = [
 const SEXSKILL_IDS = [T_MASTURBATE, T_SEX_ADDICT, T_ANAL_ADDICT, T_BREAST_PLAY];
 
 /**
- * 行缓冲。源里的 `PRINT`/`PRINTFORM` 一路追加、`PRINTL` 收行，`SETCOLOR` 与
+ * 行缓冲。`PRINT`/`PRINTFORM` 一路追加、`PRINTL` 收行，`SETCOLOR` 与
  * `RESETCOLOR` 之间换色——片段数组天然承载这两件事。
  * @returns {{fragments: Array}}
  */
@@ -124,7 +124,7 @@ function put(row, content, color) {
   row.fragments.push(color === undefined ? { content } : { content, color });
 }
 
-/** 收行（源里每一处 `PRINTL`） */
+/** 收行（每一处 `PRINTL`） */
 function end_row(row) {
   era.print(row.fragments);
   row.fragments = [];
@@ -179,7 +179,7 @@ function stc_lab_tal(row, cid, id) {
   if (display_width(label) <= TALENT_LABEL_LIMIT) {
     label = `${pad_display(label, 4)}条件`;
   }
-  // PRINTFORM %LOCALS,8,LEFT%：（源里的全角冒号后跟一个半角空格）
+  // PRINTFORM %LOCALS,8,LEFT%：（全角冒号后跟一个半角空格）
   put(row, `${pad_display(label, 8)}： `, color);
 }
 
@@ -309,7 +309,7 @@ function stc_say_abcv(row, cid, need) {
 
 /**
  * stc_saysum_abl：`[能力名|能力名 LvN]`（四项之和）。
- * 本文件没有调用点（源里的调用都被注释掉了），按签名完整实现。
+ * 本文件没有调用点（调用都被注释掉了），按签名完整实现。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} need 合计要求

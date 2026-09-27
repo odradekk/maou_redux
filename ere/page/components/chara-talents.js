@@ -22,7 +22,7 @@
  *     SHOW_TALENT_GROUP 末尾无条件 RESETCOLOR，故未命中 SELECTCASE
  *     的项总是从默认色开始，与「每项独立定色」等价；
  *   - 模式 1（感觉封锁名）零调用者（本文件九个调用点的实参
- *     只有 0 与 TALENT&2），但它是函数签名的一部分，照原样实现，
+ *     只有 0 与 TALENT&2），但它是函数签名的一部分，保留该参数，
  *     `show_talent_group` 导出以便用例与将来的调用方直驱。
  */
 
@@ -86,7 +86,7 @@ const PENIS_LABELS = [
  * @param {number} from 起始（含）
  * @param {number} to 结束（不含）
  * @param {{skip?: number[], ex?: boolean, value?: boolean}} [extra] 附加属性；
- *   skip = 源里 `CONTINUE` 掉的编号，其余字段原样并进每条 entry
+ *   skip = 循环里 `CONTINUE` 掉的编号，其余字段并进每条 entry
  * @returns {Array<object>}
  */
 function span(from, to, extra = {}) {

@@ -352,8 +352,8 @@ test('RACE_CONFIG [98]：取消（[1]）回顶层不写表', async () => {
   fixture.set_inputs(98, 1, 100);
   await race_config(always);
 
-  // 取消后回顶层、[100] 退出仍会打包（旧版 [100] 分支），但 [98] 的「回默认」
-  // 不执行：编辑态原样保留（引用换新是打包的正常行为，值不变）
+  // 取消后回顶层、[100] 退出仍会打包（[100] 分支），但 [98] 的「回默认」
+  // 不执行：编辑态保留不动（引用换新是打包的正常行为，值不变）
   assert.deepEqual(
     fixture.store.get('flag:26'),
     [12, 115, 431, 325, 15, 232],
@@ -429,7 +429,7 @@ test('RACE_CONFIG 编辑页：和人类一样（DIS_FLAG -1）不打印任何网
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
-  // 槽 6 霍比特人默认就是「和人类一样」（001）——旧实现进了 else 分支，
+  // 槽 6 霍比特人默认就是「和人类一样」（001）——实现进了 else 分支，
   // 可见按钮就能把 SET_VAR:0 写成 -1、写坏种族年龄表（#547 验收第 1 条）
   fixture.set_inputs(6, 100, 100);
   await race_config(always);
@@ -459,7 +459,7 @@ test('RACE_CONFIG 编辑流：吸血鬼 [101]→[104]→[110]→[999] 保存为 
   assert.equal(
     fixture.store.get('flag:26')[2],
     231,
-    '下限 0 岁 + 原上限 1000 岁 → cla 2 / deg 3 / num 1（旧实现误存 001）',
+    '下限 0 岁 + 原上限 1000 岁 → cla 2 / deg 3 / num 1（修正前误存 001）',
   );
 });
 
@@ -475,7 +475,7 @@ test('RACE_CONFIG 怪癖：[112] 在未选上限时不切算法档（SET_VAR:4 >
   assert.equal(
     fixture.store.get('flag:26')[0],
     11,
-    '旧版行为：只按了下限、未选上限时不落随机档',
+    '只按了下限、未选上限时不落随机档',
   );
 });
 
@@ -502,7 +502,7 @@ test('RACE_CONFIG [99]：打包先于确认（取消也写回编辑态），确�
   assert.equal(fixture.store.get('cflag:21:452'), 400, '重算种族年龄');
   assert.equal(fixture.store.get('cflag:0:452'), 999, '魔王跳过');
 });
-test('RACE_CONFIG [99] 取消：表已打包（旧版时序），但不算年龄、回顶层', async () => {
+test('RACE_CONFIG [99] 取消：表已打包（打包先于确认），但不算年龄、回顶层', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -651,7 +651,7 @@ test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断）
 //
 // `era.print` 自成一行：正文里再写 `\n` 只会多出一个显示行（引擎手册 06-output
 // 的「在字符串中输出 '\n' 可将文本分割为两行」）。本文件内所有 `...\n` 的尾换行
-// 都是这类多补，旧版对应处一律是 `PRINTFORM(L)` 收尾，故按行拆开断言。
+// 都是这类多补，对应处一律是 `PRINTFORM(L)` 收尾，故按行拆开断言。
 
 test('#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按钮位置正确', async () => {
   const fixture = create_era_fixture();

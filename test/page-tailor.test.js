@@ -255,7 +255,7 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
   await run_core(held, [7, 1, 999, 999, 999, 999]);
   assert.ok(rendered_in(held).includes('[300] - 剑 (2)'), '戒指页的持有行');
 
-  // 戒指页的灰字行：假编号与前缀照写；武器页那处的断言在 equip_magic_weapon 用例里
+  // 戒指页的灰字行：假编号与前缀保留；武器页那处的断言在 equip_magic_weapon 用例里
   const ring_low = tailor_fixture({
     'item:300': 1,
     'itemname:300': '剑',
@@ -264,7 +264,7 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
   await run_core(ring_low, [7, 1, 999, 999, 999, 999]);
   assert.ok(
     texts(ring_low.lines).includes('[---] - 未开放（30级后才能装备强化）'),
-    '灰字行整行照写',
+    '灰字行整行保留',
   );
   assert.ok(!accs(ring_low.lines).includes(997), '等级不够时没有强化键');
 });
@@ -613,7 +613,7 @@ test('chastity_key：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
     assert.ok(!accs(fixture.lines).includes(5), `${label} 时不给 [5]`);
   }
   // CFLAG:71 的两侧：显示条件不含它、输入分发条件含——按钮在，
-  // 但按下去什么都不发生（两处条件本就不同，原样保留）
+  // 但按下去什么都不发生（两处条件本就不同，保留现状）
   const flagged = tailor_fixture({ ...KEY_GATE, 'cflag:1:71': 1 });
   await run_core(flagged, [5, 999]);
   assert.ok(accs(flagged.lines).includes(5), '显示条件不看 CFLAG:71');
@@ -927,10 +927,10 @@ test('equip_magic_weapon：等级不足的灰显与「取下」', async () => {
   const low = tailor_fixture({ 'cflag:1:550': 40, 'cflag:0:9': 29 });
   {
     const added = await run_core(low, [8, 999, 999]);
-    // #612：灰字行照写假编号与前缀（逐字）
+    // #612：灰字行保留假编号与前缀的写法
     assert.ok(
       texts(added).includes('[---] - 未开放（30级后才能装备强化）'),
-      '灰显行整行照写为 `[---] - 未开放（30级后才能装备强化）`',
+      '灰显行整行保留为 `[---] - 未开放（30级后才能装备强化）`',
     );
     assert.ok(!accs(added).includes(997), '没有强化键');
     assert.ok(accs(added).includes(998), '有取下键');

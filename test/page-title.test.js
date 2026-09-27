@@ -3,7 +3,7 @@
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  *
- * 标题画面是常驻交互循环（旧版 RESTART 语义），没有自然退出点。两种终止
+ * 标题画面是常驻交互循环（重进即整体重绘的 RESTART 语义），没有自然退出点。两种终止
  * 方式：多数用例以预置输入驱动交互，输入耗尽时 era.input() 抛错即是终止信
  * 号（夹具的既定设计），断言落在「耗尽瞬间的最后一块屏幕」与变量/调用记
  * 录上；「新的猎物」分支自 issue #20 起改为发出 BEGIN FIRST 转场信号，对
@@ -34,7 +34,7 @@ test('首屏：标题、版本行、作者、年份与两个按钮（#642：名�
 
   const texts = fixture.text_lines();
   // 标题与版本行取自静态表：版本直读【版本代号】versionName（#135，
-  // "0.0.0"），不再沿用旧版 {V/1000}.{V%1000} 自算式
+  // "0.0.0"），不再沿用 {V/1000}.{V%1000} 自算式
   assert(
     texts.includes('魔王 Redux'),
     '标题画面必须显示 yml 的游戏名称「魔王 Redux」',
@@ -70,7 +70,7 @@ test('首屏：标题、版本行、作者、年份与两个按钮（#642：名�
     '标题画面整屏居中：首个 setAlign 必须是 center',
   );
 
-  // 按钮只剩 [0]/[1]：accelerator 沿用旧版编号，名单钮 9 与联系方式钮 8
+  // 按钮只剩 [0]/[1]：accelerator 沿用原编号，名单钮 9 与联系方式钮 8
   // 已随各自段落删除。断言看 rendered（引擎实际显示的文本，含引擎自动拼的
   // [快捷键] 前缀）——只断言 text 会漏掉手写前缀与引擎前缀撞车，实机曾渲染出
   // 「[0] [0] 旧的奴隶」。
@@ -129,7 +129,7 @@ test('空行普查（#596）：年份空行、信息行缺席与分割线-按钮
 test('版本行直读【版本代号】自静态表，不自算、不硬编码（#135）', async () => {
   const fixture = create_era_fixture();
   // versionName 换值 + version 设成自算式会算出别的结果的值：证明显示
-  // 跟随 versionName 走、与 version 无关（旧版公式 {V/1000}.{V%1000} 对
+  // 跟随 versionName 走、与 version 无关（自算公式 {V/1000}.{V%1000} 对
   // 20004 会算 "20.4"），也不是写死的 0.0.0
   preset_gamebase(fixture, { versionName: '1.2.3', version: 20004 });
   const run_title_page = fixture.load_module('page/page-title');
@@ -217,7 +217,7 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
     '初始角色 0 必须通过引擎检查、真的被加入',
   );
   // 标题侧变量写入恰为 CHARA_EX_0 的魔王素质一条 + 移植自建的 portcflag
-  // 版本戳（#67，非旧版动作），此外零写入——全量断言，任何混入的意外写入
+  // 版本戳（#67，移植自建的动作），此外零写入——全量断言，任何混入的意外写入
   // 都会当场暴露
   assert.deepEqual(fixture.var_writes, [
     { name: 'ex_talent:0:200', value: 1 },
@@ -240,7 +240,7 @@ test('选项 0（旧的奴隶）：进读档界面，[100] 返回后 RESTART 回
     { api: 'input', value: 100 },
   ]);
   // 进过真身读档界面（#136 接通 load_game；返回后标题整屏重绘，
-  // 界面行只在行史里——旧版 CALL 后无条件 RESTART，ere 侧照搬控制流）
+  // 界面行只在行史里——CALL 后无条件重进标题重绘，ere 侧沿用了这一控制流形状）
   assert(
     fixture.lines_history.some(
       (line) => line.text === '【读取存档】要载入以下哪个存档？',
@@ -262,8 +262,8 @@ test('选项 0 读档成功：转场进 SHOP_AFTER_LOAD，不回标题（#137—
   const run_title_page = fixture.load_module('page/page-title');
 
   // #136 实机验收：标题读档成功后回标题画面，玩家从此无路可走（标题只有
-  // 新档与再读一次）。根因：ere 侧把 era.loadData() 当普通函数，照搬了
-  // 控制流的字面形状、丢掉 LOADDATA 的转场语义（旧版写死了它执行后迁移
+  // 新档与再读一次）。根因：ere 侧把 era.loadData() 当普通函数，沿用了
+  // 控制流的字面形状、丢掉 LOADDATA 的转场语义（LOADDATA 写死执行后迁移
   // EVENTLOAD、不返回）。读档成功必须以信号离开
   // 整条标题循环
   const { BeginSignal, STATE } = fixture.load_module(
@@ -294,7 +294,7 @@ test('标题音乐：全新 global.sav 播种后进标题即播 TFM-003A_17（�
 
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
 
-  // 播种（global:0=1/66/标记）先于播放；PLAYBGM 在旧版默认循环，ere 的
+  // 播种（global:0=1/66/标记）先于播放；PLAYBGM 默认循环，ere 的
   // playMusic 缺省不循环，必须显式 {loop: true}（app.asar 实证）
   assert.equal(fixture.store.get('global:0'), 1);
   assert.deepEqual(fixture.music, [

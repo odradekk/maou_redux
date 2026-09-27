@@ -5,11 +5,11 @@
  *   - LOADGLOBAL 不镜像：引擎在每次脚本启动前自动读取公共存档
  *     （dev-guides/11-saves.md），显式加载由引擎承担。
  *   - 标题音乐自 #69 起接通：GLOBAL:0 == 1 时播 TFM-003A_17.mp3（注册名
- *     即文件名，res/sound/sound.csv）。旧版 PLAYBGM 默认循环，而
+ *     即文件名，res/sound/sound.csv）。PLAYBGM 默认循环，而
  *     playMusic 的缺省 config 是 {loop: false}（app.asar 实证），须显式
  *     {loop: true}。SETBGMVOLUME（标题音乐音量）无引擎等价物（playMusic
  *     只有 loop/fade；window.audio 是全局音量非逐曲），音量值不镜像，
- *     仅为存档保真由 era-global 的播种落 66。默认值 1/66 是旧版随包
+ *     仅为存档保真由 era-global 的播种落 66。默认值 1/66 是随包
  *     global.sav 的实证值，ere 侧由 seed_title_music_defaults() 一次性
  *     播种（#18 移交的缺口，#69 实现）。
  *   - 调试残留（[IF_DEBUG] 分支与被注释的 CLEARLINE）不移植。
@@ -17,7 +17,7 @@
  *     缩放）。资源未启用时（resource: false 或未注册）checkImage 为假、
  *     退回纯文本标题——组件必须知道自己能不能用图（ADR-0003）；其下
  *     两行空行保留纵向间距。
- *   - %GAMEBASE_TITLE% 的文本标题在旧版被注释（标题由图片承载）；图片
+ *   - %GAMEBASE_TITLE% 的文本标题被注释（标题由图片承载）；图片
  *     缺席的回退路径仍是文本输出标题，满足「标题画面显示游戏标题」的
  *     验收（#19）。
  *   - 停曲自 #69 起镜像为 era.stopMusic()（新的猎物/旧的奴隶两分支各
@@ -48,7 +48,7 @@ function draw_title_screen() {
   // gamebase 由静态表 yml/GameBase.yml 提供，属性名是英文变量名
   // （dev-guides/09-static.md）；只读，不硬编码
   const gamebase = era.get('gamebase');
-  // 旧版自算式 {V/1000}.{V%1000}（整数除法）。有意偏离（#135 / ADR-0006）：
+  // 自算式 {V/1000}.{V%1000}（整数除法）。有意偏离（#135 / ADR-0006）：
   // 移植版版本轴重设为 0.0.0 后，自算式对【版本】0 会算出 "0.0"，位数语义
   // 已失；改为直读【版本代号】versionName（String，纯显示，
   // dev-guides/09-static.md）。引擎对 versionName 缺省的回退恰是「版本号
@@ -105,7 +105,7 @@ function draw_title_screen() {
  */
 async function run_title_page() {
   // 标题音乐：在重绘循环之前，每次进标题状态只执行一次（重绘不重播）。
-  // 播种先于播放：全新 global.sav 的开关是 0，先补上旧版随包默认值 1/66
+  // 播种先于播放：全新 global.sav 的开关是 0，先补上随包默认值 1/66
   // （#18 移交、#69 实现），否则首局进标题没 BGM。
   await era_global.seed_title_music_defaults();
   if (era_global.title_music_enabled === 1) {

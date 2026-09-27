@@ -210,7 +210,7 @@ test('life_list：行尾标签按条件逐维驱动（沦陷 × ☆ × 可被卖
 });
 
 test('life_list：爱慕/淫乱标签的两格内补位是 NBSP（#577 实机对齐的前置）', () => {
-  // 源里这两格（`PRINT <爱  慕>`）把标签补到 `<未沦陷>` 的 8 列，后面的
+  // 这两格（`PRINT <爱  慕>`）把标签补到 `<未沦陷>` 的 8 列，后面的
   // [☆] 一族才与未沦陷行同列；退回半角空格会被引擎合并成一格，整段左移
   const fixture = three_chara();
   fixture.store.set('talent:1:85', 1); // 爱慕
@@ -430,7 +430,7 @@ test('life_list_item_e：☆ 无前导空格、无 ☆ 时不补占位', () => {
     row_text(fixture, 1).endsWith(`<未沦陷>${SP(2)}<女>`),
     `E 版无 ☆ 支不打占位空格，实得 ${JSON.stringify(row_text(fixture, 1))}`,
   );
-  // 有 ☆：E 版的 PRINT [☆] 没有前导空格，与两个旧版不同
+  // 有 ☆：E 版的 PRINT [☆] 没有前导空格，与另两个列表不同
   const starred = three_chara();
   starred.store.set('cflag:1:700', 1);
   const mod = starred.load_module('page/page-life-list');

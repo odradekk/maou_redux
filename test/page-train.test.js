@@ -205,7 +205,7 @@ test('PRINT_PALAM：条后数值列必须真实渲染（barWidth<24——引擎�
   );
 });
 
-test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点，原样移植的骨架', async () => {
+test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点，保留实现的骨架', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   era_flag.day_count = 0; // 开局：第 1 日

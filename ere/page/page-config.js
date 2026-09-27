@@ -317,7 +317,7 @@ function draw_config_page(page) {
       '陷落之后处女主动献身　　 现在：' + virgin_conceded_status_text(),
       21,
     );
-    // [22] 男冒险者许可：该菜单文字在旧版源码里就是注释态（未公开的隐藏
+    // [22] 男冒险者许可：该菜单文字本就是注释态（未公开的隐藏
     // 分支），但分发仍受理 22——不渲染按钮，只留分发
     era.printButton(
       '勇者出现时的素质表示　　 现在：' + (getbit(af, 1) ? 'ON' : 'OFF'),
@@ -351,7 +351,7 @@ function draw_config_page(page) {
 
 /**
  * config_menu 的输入分发，与渲染/输入获取分离（同 page-shop.js 的
- * show_shop/usershop 二分）：[22] 男冒险者许可的菜单文字在旧版源码里就是
+ * show_shop/usershop 二分）：[22] 男冒险者许可的菜单文字本就是
  * 注释态（未公开隐藏分支），不会被任何 printButton 打印，era.input() 的
  * 按钮白名单校验（#130）永远拒收它——必须绕开 era.input() 直调本函数才能
  * 测到，与 page-shop.js 的 110/111、520-530 抽查同一必要性。

@@ -7,7 +7,7 @@
  * LIFE_BAR/VITAL_BAR（#212，组件在
  * ere/page/components/chara-bars.js）与射精/母乳/触手槽条段（#212 就地
  * 实现）已写真身。其余直线代码（日期行、目标行、绝顶计数、
- * MAXBASE 修正）原样移植。
+ * MAXBASE 修正）按表保留。
  *
  * #74 的两条换表现层（比对都在旁边看着——本画面在黄金样本覆盖内）：
  *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
@@ -187,7 +187,7 @@ async function draw_status_screen(target) {
   );
 
   // %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
-  // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格原样保留）
+  // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格保留）
   const header = [
     { content: `${chara_callname(target)} 调教中\u00A0\u00A0\u00A0调教者:` },
   ];
@@ -221,7 +221,7 @@ async function draw_status_screen(target) {
   // 【】行）
   era.print(`【${clothtype_text(target)}】`);
 
-  // 绝顶计数（直线段，原样移植）
+  // 绝顶计数（直线段，保留实现）
   print_ex_counters(target);
 
   // PRINT_PALAM TARGET 的移植（参数条——指令菜单之外

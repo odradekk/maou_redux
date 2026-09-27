@@ -581,7 +581,7 @@ async function event_buy(bought) {
   // 「其余」由引擎按白名单拒收，重问支不可达，结构保留）
   for (;;) {
     era.print(`确定购买${item_name(bought)}？`);
-    era.printButton('- 好的', 0); // （正文的 `- ` 照写）
+    era.printButton('- 好的', 0); // （正文保留 `- `）
     era.printButton('- 不要', 1);
     const result = await era.input();
     if (result === 1) {
@@ -657,7 +657,7 @@ async function event_buy(bought) {
  * 数量选择的提示行（首次与越界后重画两处）。
  *
  * **两处不同形**：首次的选项行多一段 `D/2`（仅在 `D/2 > 20` 时出现），
- * 越界后的重画没有（直接从 `[20] - [` 接 `{D}]`）。差异照搬——原样。
+ * 越界后的重画没有（直接从 `[20] - [` 接 `{D}]`）。差异保留，两边不同形。
  *
  * @param {number} bought 道具序号
  * @param {number} d 本次可买的最大数量
@@ -732,7 +732,7 @@ async function use_exp_item(count) {
 /**
  * buy_plural：复数购买（数量选择 → 结算 → 三支尾处理）。
  *
- * 买空/取消/越界的四支原样：取消退还原价（购买流程已扣一份），越界打印两种
+ * 买空/取消/越界的四支行为：取消退还原价（购买流程已扣一份），越界打印两种
  * 文案后重问，成交按 `RESULT` 结算 `ITEM`/`MONEY`/`EX_FLAG:4444`。
  *
  * @param {number} bought 道具序号
@@ -1041,7 +1041,7 @@ const TECHNIQUE_UNIT_PRICE = 5000;
 /**
  * technique_of_master：按已投入的件数凑齐剩余件数。
  *
- * **无调用者**（它原属难度档倍率段，该段整段不启用）；本文件按原样实现
+ * **无调用者**（它原属难度档倍率段，该段整段不启用）；本文件保留实现
  * （函数是文件的交付内容），用例直接驱动。`FLAG:33` 是「已投入的件数」，
  * `F` 是凑齐所需的总件数。
  *

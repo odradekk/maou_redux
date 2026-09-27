@@ -46,7 +46,7 @@
  *      （口内妊娠）与前一支条件逐字相同、恒不可达，第一支（肛内妊娠）
  *      可达（343 单独成立时），保留；两处「乳内/精巣」一并精简。
  *
- * 4b. **条件收在一处**：列表过滤与页数计算在源里各写一份同样的条件
+ * 4b. **条件收在一处**：列表过滤与页数计算各写一份同样的条件
  *     （两两逐字相同），本移植收成 `is_enemy` /
  *     `is_salave` 两个函数由四处共用——与 page-intercept.js 的
  *     `reject_reason` 同一处置（条件只有一处真相，页数与列表不会分家）。
@@ -55,7 +55,7 @@
  *    （不足一页补满）；life_list_enemy / life_list_salave
  *    不补（补行在其调用方，如强化页的
  *    `REPEAT (NUM_PAGE - L_LCOUNT)`），故这两支也不补——页高契约由各自
- *    调用方维持，原样保留。
+ *    调用方维持，这两支保持不补。
  *
  * 6. **局部的对齐参数逐字保留**：`MAX_NAME_LEN + 8` 的名字字段宽、职业的
  *    8、等级右对齐的 `MAX_LV_LEN`（列表）/4（单项）、装备品段的 3 与 20，
@@ -159,7 +159,7 @@ function pad_blank_rows(filled, num_page) {
  * @returns {{content: string, color: string}}
  */
 function love_fragment(cid) {
-  // 源里的 `PRINT <爱  慕>`：两个空格把标签补到 `<未沦陷>` 的 8 列，后面的
+  // `PRINT <爱  慕>`：两个空格把标签补到 `<未沦陷>` 的 8 列，后面的
   // [☆] 一族才与未沦陷行同列——列对齐补位，#577 起用 NBSP
   if (talent(cid, 85) !== 0)
     return { content: '<爱\u00A0\u00A0慕>', color: COLOR_LOVE };
@@ -194,12 +194,12 @@ function pregnancy_fragment(cid, anal) {
  * 行尾标签串（life_list 与 life_list_item 共用的同一条链）。
  *
  * 顺序：沦陷 →（E 版的性别插在这里）→ ☆ → 可被卖 → 可作为助手 →
- * 虫寄生 → 妊娠 → 派遣。每条条件的阈值与素质编号原样移植。
+ * 虫寄生 → 妊娠 → 派遣。每条条件的阈值与素质编号按表保留。
  *
  * @param {number} cid
  * @param {object} [options]
  * @param {boolean} [options.favorite_pad] 无 ☆ 时打 5 空格占位（两个
- *   旧版列表有、life_list_item_e 无）
+ *   前两个列表有、life_list_item_e 无）
  * @param {boolean} [options.favorite_space] 有 ☆ 时前置一个空格（前两个列表
  * 有、life_list_item_e 无）
  * @param {boolean} [options.anal_pregnancy] 带 343 的 [肛内妊娠] 支

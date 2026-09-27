@@ -1223,7 +1223,7 @@ test('show_appearance：阴毛七档 + 白虎（TALENT:125）优先级', () => {
   );
 });
 
-test('show_appearance：TALENT:310 为 0 时行不收（无默认分支的旧版显示缺陷，出口收行是 ere 侧的等价承载）', () => {
+test('show_appearance：TALENT:310 为 0 时行不收（无默认分支的显示缺陷，出口收行是 ere 侧的等价承载）', () => {
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 0, 1: 1 },
   });
@@ -1839,7 +1839,7 @@ test('show_talent_condition：黄金样本 daycycle-max 的 20 行逐字复现',
   // 组合覆盖在 stc_seiin_check 的用例里（黄金组合单独一条）。
   // 唯一与样本的差异在末行行尾：样本记的 `[反抗刻印]` 没有 stc_printc 补的
   // 两个空格，stc_printc 与收行之间没有任何东西会吃掉它，
-  // 判定为录制侧的截断（比对工具的分类路径不看行尾空白），实现照原样保留。
+  // 判定为录制侧的截断（比对工具的分类路径不看行尾空白），实现保留现状。
   const { fixture, show_talent_condition } = condition_fixture();
   show_talent_condition(7);
   assert.deepEqual(fixture.text_lines(), [
@@ -2344,7 +2344,7 @@ test('show_chara_info：祭品名单的返回是真按钮（名单轮次白名�
 
 test('show_chara_info：名单里 100 号角色行可选、返回仍可用（预设 100 × [100] 撞号，#586）', async () => {
   // 预设 100「怪物的女儿」能以 ID 100 加入：生命摇篮 char_create 在输入不落进
-  // 1-16 / 21-30 / 37-60 三段时把它原样当预设编号、查表
+  // 1-16 / 21-30 / 37-60 三段时直接当预设编号、查表
   // 放行（yml/Chara100.yml 在库），随后 `era.addCharacter(100)`
   // （chara-custom.js 的 char_append，见
   // test/chara-outer.test.js）。名单轮的角色行以角色 ID 作快捷键，

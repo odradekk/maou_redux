@@ -18,13 +18,13 @@
  *    （覆盖面标准），也让 42/43/27 条的字面量逐个可钉。
  *
  * 3. **子菜单的选项一律按钮化**（PR #53 通则）：`[n] - 名字` 式的纯文本选项
- *    改成 `era.printButton('- 名字', n)`——**正文里的 `- ` 照写**，它是玩家可见
+ *    改成 `era.printButton('- 名字', n)`——**正文里的 `- ` 保留**，它是玩家可见
  *    文本的一部分（编号由引擎按 showAcc 拼，正文不写 [n]；#612 全库普查的
  *    标准，与 page-shop-labo.js 文件头同款）。数据表驱动的几处（四张物品表 ＋
  *    强化前缀表 ＋ 戒指页/武器页两个持有行）的 label 是数据字段，
  *    渲染前缀留在调用点拼（这样每条按钮各有一个可打的调用点）；翻页键
  *    [997]/[998]、黑市 [996]、返回 [999] 同。`[---] - 未开放…` 这类灰字行连
- *    假编号一起照写。价格与顺从档**印在按钮正文里**：价格写在名字后的括号里、
+ *    假编号一起保留。价格与顺从档**印在按钮正文里**：价格写在名字后的括号里、
  *    顺从档不显示——只有主菜单与装备品/黑市表写价格，普通装备表只写名字。
  *
  * 4. **输出与等待**：提示后等键用 print + waitAnyKey、局部重绘不镜像、
@@ -901,7 +901,7 @@ async function pick_ring(cid, slot) {
       const item_no = EQUIP_ITEM_BASE + index; // X = COUNT + 300
       if ((era.get(`item:${item_no}`) || 0) > 0) {
         // 正文不写 [编号]：引擎 showAcc 自动拼 `[300] …`（PR #30，AGENTS.md）；
-        // `- ` 照写（正文是 `- 名字 (持有数)`）
+        // `- ` 保留（正文是 `- 名字 (持有数)`）
         era.printButton(
           `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
           item_no,
@@ -911,7 +911,7 @@ async function pick_ring(cid, slot) {
     // 强化 / 取下
     if (cflag(0, 9) < ENHANCE_LEVEL) {
       // `[---] - 未开放（30级后才能装备强化）`：`---` 是灰字项的假编号，
-      // 照写整行（同款先例：page-intercept.js 的 `[---] （魔王等级不足）`）
+      // 整行保留（同款先例：page-intercept.js 的 `[---] （魔王等级不足）`）
       era.print([
         { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
       ]);
@@ -993,7 +993,7 @@ async function equip_magic_weapon(cid) {
         item_no !== WEAPON_TENTACLE_ID
       ) {
         // 正文不写 [编号]：引擎 showAcc 自动拼 `[300] …`（PR #30，AGENTS.md）；
-        // `- ` 照写（正文是 `- 名字 (持有数)`）
+        // `- ` 保留（正文是 `- 名字 (持有数)`）
         era.printButton(
           `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
           item_no,

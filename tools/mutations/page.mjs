@@ -3530,7 +3530,7 @@ export default [
     must_mention: ':1043-1044 回默认',
   },
   {
-    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（旧版时序：取消也写回编辑态，#547）',
+    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
     file: 'ere/page/page-config-age.js',
     find: "    } else if (result === 99 || result === 100) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === 99) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
     replace: `    } else if (result === 99 || result === 100) {
@@ -3751,7 +3751,7 @@ export default [
           sv[4] = -1; // 变异：多清上限两值（只该设 0-3）
           sv[5] = -1;`,
     tests: ['page-config-age'],
-    must_mention: '旧实现误存 001',
+    must_mention: '修正前误存 001',
   },
   {
     desc: 'M11586 编辑头重画前的空行被删（PRINTL 丢失，#547 返工 5）',
@@ -4500,7 +4500,7 @@ export default [
   {
     desc: 'M12901 主菜单 999 调试入口复活（提示行+等键打回——#638 删除的 DEBUG_MENU_U 分支不得回潮）',
     file: 'ere/page/page-shop.js',
-    find: `  // 调试菜单入口（上游作者的调试工具）自 #542 判不移植、#638 起随存根
+    find: `  // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随存根
   // 清单一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
   // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾`,
     replace: `  if (result === 999) {

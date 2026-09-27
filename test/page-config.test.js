@@ -78,7 +78,7 @@ test('config_penis_you_setting：0-4 写 chara(0).chara.阴茎的状态 并回�
   assert(fixture.text_lines().some((t) => t.includes('《巨根》')));
 });
 
-test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 静默无操作（旧版无重试）', async () => {
+test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 静默无操作（无重试循环）', async () => {
   const fixture = create_era_fixture();
   const { config_penis_you_setting } = load(fixture);
   const { chara } = fixture.load_module('facade/chara');

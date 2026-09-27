@@ -658,7 +658,7 @@ test('SHOP_AFTER_LOAD：读档后的进入路径不执行 EVENTSHOP 链（system
 test('状态机映射：enter_state(SHOP_AFTER_LOAD) 走 run_shop 的跳过变体', async () => {
   const fixture = create_shop_fixture();
   // main-loop 装配全部事件模块（require 清单），enter_state 是主循环真正
-  // 调用的入口——直接钉「映射没有指回 run_shop 原样」
+  // 调用的入口——直接钉「映射没有指回 run_shop 本身」
   const main_loop = fixture.load_module('system/flow/main-loop');
   const { on } = fixture.load_module('system/event/registry');
   let probe = 0;

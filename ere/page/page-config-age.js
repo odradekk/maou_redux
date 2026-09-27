@@ -1,22 +1,22 @@
 /**
  * @file 设置页的年龄/三围子菜单与种族年龄编辑器（issue #547）。
  *
- * 两个函数是同源文件里仅存的配置界面段（其余都是生成算法，住 ere/chara/chara-body.js）；编辑对象是同一张种族年龄表（FLAG:26/27 的数组承载，#105 决议四），读写经 game.chara.种族年龄设定_0/1 门面——page 是伪域，裸寻址写会被域检查拦下（tools/domain-check.mjs）。
+ * 两个函数是 chara-body.js 里仅存的配置界面段（其余都是生成算法）；编辑对象是同一张种族年龄表（FLAG:26/27 的数组承载，#105 决议四），读写经 game.chara.种族年龄设定_0/1 门面——page 是伪域，裸寻址写会被域检查拦下（tools/domain-check.mjs）。
  *
- * 对旧版的四类有意偏离（前两类沿 page-config.js 文件头的既有结论）：
+ * 四类有意取舍（前两类沿 page-config.js 文件头的既有结论）：
  *
  * - 颜色不镜像：当前档高亮（0,255,80）、次要说明（40,128,255）、无效选项
  *   灰字（112,112,112）都是纯视觉状态；可读信息由 ON/OFF 文字与当前档
  *   说明行承载，不静默丢弃。
- * - 按钮独占一行 + 引擎自动加 [n] 前缀（PR #30）：旧版一行多个按钮的数字
+ * - 按钮独占一行 + 引擎自动加 [n] 前缀（PR #30）：一行多个按钮的数字
  *   网格、PRINT 后接 PRINTFORM 的行内拼接（如「■ 种族 […] 的年龄设定：」
  *   与档位说明同行）全部竖排；按钮正文不手写 [n] 前缀，编号列的
  *   `[-]`/`[1]` 视觉态（依赖项关闭时编号显示为 -）随之不镜像——按钮编号
- *   恒显示真实值，输入语义与旧版一致（旧版自由键入也收 1）。
- * - [9] 详细设定旧版仅位 13 开时打印，旧版自由键入在位 13
+ *   恒显示真实值，输入语义不变（自由键入也收 1）。
+ * - [9] 详细设定仅位 13 开时打印，自由键入在位 13
  *   关时仍可达（IF RESULT == 9 不查位 13）；ere 的按钮白名单（#130）在未
  *   打印时拒收 9——隐藏分支不可达，与 [22] 男冒险者许可的既有结论同款。
- * - 旧版的「无匹配档（cla≥5）时 PRINT 缓冲接到下一行」无法
+ * - 「无匹配档（cla≥5）时 PRINT 缓冲接到下一行」无法
  *   镜像（ere 引擎每次 print 即一行）：说明行与 17 岁预览行分开打印，
  *   cla≥5 时各自打短行。
  * - **档位网格与说明行的按钮正文对不齐（已知差异，#577 普查登记）。** 这些
@@ -28,7 +28,7 @@
  *
  * 三条既有怪癖（行为被用例钉住，不改）：
  * - 顶层表格行对 cla≥5 的槽不写 PRINT_STR（空 ELSE）——残留
- *   上一行的文案（旧版 #DIMS 跨循环残留），本文件同样保留前值。
+ *   上一行的文案（#DIMS 跨循环残留），本文件同样保留前值。
  * - [99] 的打包先于确认 INPUT：确认页选「再想想」也写回
  *   编辑态（见 test 的取消用例）。
  * - [110]-[112] 只在 SET_VAR:4 > 0（已选过上限）时切算法档，
@@ -61,7 +61,7 @@ function invertbit(v, n) {
   return getbit(v, n) ? v - 2 ** n : v + 2 ** n;
 }
 
-/** 八个种族的显示名（槽号顺序，旧版的注释表） */
+/** 八个种族的显示名（槽号顺序，注释表随常量） */
 const RACE_NAMES = [
   '精灵',
   '狼人',
@@ -80,19 +80,19 @@ const RACE_NAMES = [
 const RACE_DEFAULT_0 = [11, 115, 431, 325, 15, 232];
 const RACE_DEFAULT_1 = [1, 1];
 
-/** 旧版 `IF FLAG:26 == 0` 的未设哨兵：数组承载下未设 = getter 缺值按 0 */
+/** `IF FLAG:26 == 0` 的未设哨兵：数组承载下未设 = getter 缺值按 0 */
 function race_table_unset() {
   return game.chara.种族年龄设定_0 === 0;
 }
 
-/** 播种默认表（旧版三处同款） */
+/** 播种默认表（三处同款） */
 function seed_race_defaults() {
   game.chara.种族年龄设定_0 = [...RACE_DEFAULT_0];
   game.chara.种族年龄设定_1 = [...RACE_DEFAULT_1];
 }
 
 /**
- * 顶层表格一行的两段文案。返回 null = 该档无文案（旧版空
+ * 顶层表格一行的两段文案。返回 null = 该档无文案（空
  * ELSE，PRINT_STR 残留前值——由调用方保留）。
  * @returns {[string, string] | null} [设定说明, 相当于人类 17 岁的年龄]
  */
@@ -134,7 +134,7 @@ function table_texts(cla, deg, num) {
 /**
  * 编辑循环的当前档说明与 17 岁换算预览。入参 SET_VAR 是
  * 六元组 [0:方法, 1:整数倍档, 2:小数位, 3:随机下限档, 4:上限数量级, 5:上限位]。
- * 说明无匹配档时为空串（旧版不打印）；预览行总有值（内层 ELSE 无条件）。
+ * 说明无匹配档时为空串（不打印该行）；预览行总有值（内层 ELSE 无条件）。
  * @returns {[string, string]} [档位说明, 预览年龄（17 岁换算或随机区间）]
  */
 function edit_texts(sv) {
@@ -188,10 +188,10 @@ async function confirm_reset(prompt) {
  * 任一开启时，为 CFLAG:451 尚为 0 的全部角色（魔王 0 除外）生成身体数据
  * （CFLAG:451-457 ← RESULT:0-6）。村娘Ａ/Ｂ在这里用 RAND:5+11 / RAND:5+14
  * 的年龄区间——**与开局生成 char_size_generate 的 RAND:2+12 /
- * RAND:2+17 不同**，两处都是旧版区间，不要合并调用。
+ * RAND:2+17 不同**，两处区间不同，不要合并调用。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 旧版 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function config_age_setting(rand = default_rand) {
   for (;;) {
@@ -276,7 +276,7 @@ async function config_age_setting(rand = default_rand) {
  * INPUT_LOOP 用 labeled continue 镜像）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[99] 重算用）
- * @returns {Promise<number>} 旧版 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function race_config(rand = default_rand) {
   // 解包：槽 0-5 ← FLAG:26、槽 6-7 ← FLAG:27（数组承载下即逐槽）

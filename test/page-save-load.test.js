@@ -55,7 +55,7 @@ test('LIST_DATA：存在槽 = 备注按钮，空槽按视角分化（存=灰按�
 
   list_data(0, 3, true); // 存档视角
   let entries = buttons(fixture);
-  assert.equal(entries.length, 3, '存档视角：空槽也是按钮（旧版可对空槽存档）');
+  assert.equal(entries.length, 3, '存档视角：空槽也是按钮（对空槽照存）');
   assert.equal(entries[0].accelerator, 0);
   assert.equal(
     entries[0].text,
@@ -71,11 +71,7 @@ test('LIST_DATA：存在槽 = 备注按钮，空槽按视角分化（存=灰按�
   const { list_data: list_data2 } = load_page(fixture2);
   list_data2(0, 2, false); // 读档/删除视角
   const entries2 = buttons(fixture2);
-  assert.equal(
-    entries2.length,
-    1,
-    '读/删视角：空槽不可点（旧版 CHKDATA 拦下）',
-  );
+  assert.equal(entries2.length, 1, '读/删视角：空槽不可点（CHKDATA 拦下）');
   const gray_text = fixture2.lines.find(
     (line) => line.type === 'text' && line.text === '----',
   );
@@ -104,7 +100,7 @@ test('LIST_DATA：`(FILE LOST) ` 前缀的备注按空槽对待（#147——引�
     '四个空槽加一个丢失槽同样渲染 ---- 灰文本',
   );
 
-  // 存档视角：丢失槽照旧是灰按钮（旧版对空槽照存，可覆盖）
+  // 存档视角：丢失槽照旧是灰按钮（对空槽照存，可覆盖）
   const fixture2 = create_era_fixture();
   seed_save(fixture2, 5, '(FILE LOST) 文件丢失的档');
   const { list_data: list_data2 } = load_page(fixture2);
@@ -183,7 +179,7 @@ test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接
   fixture.store.set('flag:10003', 0); // TIME = 0 → 午前
   fixture.store.set('cflag:0:9', 5); // 魔王等级
   fixture.store.set('flag:1', 3); // 前回调教目标
-  // 引擎把 callname 按 <角色号>:<下标> 存（-1 = 呼び名）——旧写法不带下标读
+  // 引擎把 callname 按 <角色号>:<下标> 存（-1 = 呼び名）——此前的写法不带下标读
   // callname:3 会拿到整个名字表对象，存档说明里显出 [object Object]
   fixture.store.set('callname:3:-1', '玛奥');
   fixture.store.set('cstr:0:99', '魔王城物语');
@@ -217,7 +213,7 @@ test('SAVEINFO 副作用：SIF FLAG:1/FLAG:2 >= 0 改写 TARGET/ASSI 指针', ()
   assert.equal(
     era_flag.target,
     3,
-    'TARGET = FLAG:1（前回调教目标，旧版同款副作用）',
+    'TARGET = FLAG:1（前回调教目标，同款副作用）',
   );
   assert.equal(era_flag.assi, 7, 'ASSI = FLAG:2');
 });
@@ -326,7 +322,7 @@ test('SAVEGAME 翻页：102 前进 / 101 回退 / 首页不退 / 末页（80 起
     '101 回退重绘又见 0 号',
   );
 
-  // 首页按 101：无效（旧版落出 IF → 无效输入重输），页不动
+  // 首页按 101：无效（落出 IF → 无效输入重输），页不动
   const fixture3 = create_era_fixture();
   const { save_game: save3 } = load_page(fixture3);
   fixture3.set_inputs(101, 100);
@@ -395,7 +391,7 @@ test('故事命名：超过 32 字符存储截断、显示保留原串', async (
   );
   assert(
     history_texts(fixture).some((t) => t === `将故事命名为『${long_name}』`),
-    '反馈行显示未截断的原串（旧版如此）',
+    '反馈行显示未截断的原串',
   );
 });
 
@@ -406,7 +402,7 @@ test('故事命名：输入 0 走消名分支（#567：0 视为空输入）', as
   // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与字面量 "0" 到手都是
   // 数值 0；渲染层又不受理空提交（app.vue 的 returnFromInput 空值检查，
   // dev-guides/05-interaction.md:124），0 因此是「不输入」的唯一可达写法。
-  // #567 决定 0 视为空输入，旧版的消名分支由此恢复可达
+  // #567 决定 0 视为空输入，消名分支由此恢复可达
   // （#151 曾记为真机不可达，这张工单按新决定翻修断言）。
   fixture.set_inputs(200, 0, 100);
   await save_game();
@@ -421,11 +417,11 @@ test('故事命名：输入 0 走消名分支（#567：0 视为空输入）', as
   );
   assert(
     history_texts(fixture).some((t) => t.includes('（旧名）')),
-    '命名提示行带现名（旧版 PRINTBUTTON 的预填降级为文本提示）',
+    '命名提示行带现名（PRINTBUTTON 的预填降级为文本提示）',
   );
   assert(
     history_texts(fixture).some((t) => t.includes('请输入一个名称故事：')),
-    '旧版文案（含语序）原样',
+    '文案（含语序）保持',
   );
 });
 
@@ -570,7 +566,7 @@ test('LOADGAME：引擎拒读（loadData false）不写 LASTLOAD_NO，回列表�
   );
 });
 
-test('LOADGAME 读档界面标题与操作行文案（原样）', async () => {
+test('LOADGAME 读档界面标题与操作行文案（按期望逐字）', async () => {
   const fixture = create_era_fixture();
   const { load_game } = load_page(fixture);
   fixture.set_inputs(100);

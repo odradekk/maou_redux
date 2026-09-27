@@ -113,8 +113,8 @@ test('chara_sim_shop：性别菜单是按钮 —— 999 清在售位退出（#57
     '999 直接退出，不进召唤段',
   );
 
-  // 旧行为是「4 与 0 打回重问」——按钮化后白名单就是 1/2/3/999，越界值由
-  // 引擎拒收、不回传游戏，重问支结构性不可达（原样保留，不补用例）
+  // 「4 与 0 打回重问」的重问支——按钮化后白名单就是 1/2/3/999，越界值由
+  // 引擎拒收、不回传游戏，重问支结构性不可达（保留现状，不补用例）
   const rejected = chara_world({ 'itemsales:202': 1 });
   rejected.set_inputs(4);
   const { chara_sim_shop } = rejected.load_module('page/page-chara-shop');
