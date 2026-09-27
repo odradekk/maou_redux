@@ -9,7 +9,7 @@
  *     肛内异常妊娠（TALENT:340 × rand 概率档）；
  *   - @COM_AFTER_ANAL_SEX：肛门经验分档（首两档同 3）、CFLAG:113 == 3 的
  *     妊娠相手判定（五种相手，102 属主 event 走门面）、百合 +5 / 男同 +7、
- *     爱情经验（26 → 3；28 与其他 → 2——原文 E = 4 死行的行为锁定）、
+ *     爱情经验（26 → 3；28 → 4；其他 → 2；男性对象 +1）、
  *     TFLAG:30、污渍互换（A 位 4 ↔ P 位 2）。
  *
  * 契约（调用方 = COMF25-29/36，J11/J15 落地）：
@@ -232,12 +232,14 @@ test('百合 +5（双方非男人）；男同 +7（双方男人）', async () =>
   assert.equal(f2.fixture.store.get('exp:31:40'), undefined);
 });
 
-test('爱情经验：COM26 → 3；COM28 与其他 → 2（原文 E = 4 不可达的行为锁）；男性 +1', async () => {
+test('爱情经验：COM26 → 3；COM28 → 4；其他 → 2；男性 +1', async () => {
   for (const [com, male, want] of [
     [26, 0, 3],
-    [28, 0, 2],
+    [28, 0, 4],
     [27, 0, 2],
+    [29, 0, 2],
     [26, 1, 4],
+    [28, 1, 5],
   ]) {
     const { fixture, era_flag, as } = seed_world();
     era_flag.selectcom = com;

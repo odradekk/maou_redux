@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 385; // #641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 401; // #649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 修复守卫；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的守卫）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
@@ -466,14 +466,6 @@ export default [
     must_mention: '威望 <= 0 必须置',
   },
   {
-    desc: 'M214 ENDRESET 嘉德清场守卫改读自家线值（把原作 2814 笔误"修好"）',
-    file: 'ere/event/event-endcheck.js',
-    find: '  if (get_chara(33) < 0 && era_exflag.route_21 < 500) {',
-    replace: '  if (get_chara(33) < 0 && era_exflag.route_33 < 500) {',
-    tests: ['event-endcheck'],
-    must_mention: '守卫读 2814',
-  },
-  {
     desc: 'M215 ENDCHECKCHARA 素质定线值交换（恋慕也置 20）',
     file: 'ere/event/event-endcheck.js',
     find: '          starter.holder[starter.name] = 10;',
@@ -493,19 +485,11 @@ export default [
     desc: 'M217 END 族分派循环短路守卫删除（2801 == 99 时照跑）',
     file: 'ere/event/event-endcheck.js',
     find: `  if (era_exflag.first_run_deadline !== 99) {
-    for (let local = 2; local < 16; local += 1) {`,
+    for (const family of [7, 10, 11, 14]) {`,
     replace: `  {
-    for (let local = 2; local < 16; local += 1) {`,
+    for (const family of [7, 10, 11, 14]) {`,
     tests: ['event-endcheck'],
     must_mention: '整体短路',
-  },
-  {
-    desc: 'M218 END 族声明空间丢族 15（葵希罗错位读点从合法缺失变空间外）',
-    file: 'ere/event/ending-family.js',
-    find: '  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],',
-    replace: '  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],',
-    tests: ['event-endcheck'],
-    must_mention: '不在声明的编号空间内',
   },
   {
     desc: 'M219 ENDING_N 门槛丢 DAY 守卫（99 已定即每天调演出）',
@@ -525,7 +509,7 @@ export default [
     must_mention: 'flag:26',
   },
   {
-    desc: 'M254 钩子的 EX_TALENT:MASTER:200 写入被拆（DATA_FIX 三行之一，魔王高贵标识）',
+    desc: 'M254 钩子的 EX_TALENT:MASTER:200 写入被拆（历史补丁三行之一，魔王高贵标识）',
     file: 'ere/event/event-load.js',
     find: `      if (cid === 0) {
         // EX_TALENT:200 = 魔王（高贵标识）
@@ -533,11 +517,10 @@ export default [
       }`,
     replace: `      // 变异：魔王标识写入被拆`,
     tests: ['event-load', 'page-save-load'],
-    must_mention:
-      'EX_TALENT:MASTER:200 = 1（魔王高贵标识，DATA_FIX 170205 段）',
+    must_mention: 'EX_TALENT:MASTER:200 = 1（魔王高贵标识）',
   },
   {
-    desc: 'M255 钩子的 MAXBASE 下限钳制被拆（DATA_FIX 三行之二与三——读入存档的低上限不被兜回）',
+    desc: 'M255 钩子的 MAXBASE 下限钳制被拆（历史补丁三行之二与三——读入存档的低上限不被兜回）',
     file: 'ere/event/event-load.js',
     find: `      if ((era.get(\`maxbase:\${cid}:0\`) || 0) < 600) {
         era.set(\`maxbase:\${cid}:0\`, 600);
@@ -550,14 +533,14 @@ export default [
     must_mention: '体力上限 < 600 → 600',
   },
   {
-    desc: 'M252 自动存档被拆（EVENT_NEWDAY 入口不再写 99 号槽，#137/ADR-0006 的有意偏离）',
+    desc: 'M252 自动存档被拆（EVENT_NEWDAY 入口不再写 99 号槽，#137/ADR-0006 的约定）',
     file: 'ere/event/event-nextday.js',
     find: `  // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的
   // auto_save：备注带「自动」前缀、不 push LASTSAVE_NO、无输出）
   await auto_save();`,
     replace: `  // 变异：自动存档被拆`,
     tests: ['event-nextday'],
-    must_mention: '自动存档必须写 99 号槽（原作留白，ADR-0006）',
+    must_mention: '自动存档必须写 99 号槽（ADR-0006 的读档钩子配套约定）',
   },
   // —— #148 quit 的 throw 型控制流（夹具镜像 + ere 侧哨兵机制拆除）——
   {
@@ -583,23 +566,6 @@ export default [
     must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
   // —— #171 H2 勇者来袭（ere/event/enter-enemy.js 与其接线）——
-  {
-    // 反向变异（#116 的 M214/M218 先例）：把被汉化版注释掉、1:1 保留为
-    // 死注释的月末守卫「修好」——钉住用例证明原作现状是「月末也照来」
-    desc: 'M348 月末守卫被修好（死注释复活成活代码——原作现状是每日来袭）',
-    file: 'ere/event/enter-enemy.js',
-    find: '  // LOCAL = 10（原 RAND:10 + 20 被写死）——原作现状，#14 登记，勿修\n  // 月末才来的守卫（SIF DAY:2 > LOCAL && ARG:0 == 0 && FLAG:60 < 300\n  //   → RETURN 0）在汉化版里被整段注释掉，1:1 保持死注释不移植（钉住\n  //   用例证明「月末也照来」，反向变异条目防守「修好」它的手滑）',
-    replace: `  const local_month = 10; // 变异：月末守卫复活
-  if (
-    era_flag.date > local_month &&
-    arg0 === 0 &&
-    (era.get('flag:60') || 0) < 300
-  ) {
-    return 0; // 变异：原作现状是这段被注释掉、每日都来
-  }`,
-    tests: ['enter-enemy'],
-    must_mention: '月末守卫已死：日 28 仍每日来袭',
-  },
   {
     desc: 'M349 人数上限分支①的线从 60 抬到 61（61 人不再拦）',
     file: 'ere/event/enter-enemy.js',
@@ -906,17 +872,6 @@ export default [
     must_mention: '装饰2退回库存',
   },
   {
-    desc: 'M6960 MUSEUM 造型王：错误把双倍显示值计入实际经验',
-    file: 'ere/event/event-museum.js',
-    find: `  chara(0).dungeon.战斗经验 += lv;
-  // TALENT:329 = 造型王实绩；原作先加经验再翻倍显示值，顺序 1:1 保留。
-  if (get('talent:0:329')) lv *= 2;`,
-    replace: `  if (get('talent:0:329')) lv *= 2;
-  chara(0).dungeon.战斗经验 += lv;`,
-    tests: ['event-museum'],
-    must_mention: '已有造型王只翻倍显示经验',
-  },
-  {
     desc: 'M6961 MUSEUM 反抗口上：反抗刻印 Lv3 错判为 Lv2',
     file: 'ere/event/event-museum.js',
     find: `        locals = '射精';
@@ -1183,8 +1138,9 @@ export default [
   {
     desc: 'M8208 ENDCHECKPRINCESS 崩坏态：线值 -10 误写成 -20',
     file: 'ere/event/event-endcheck.js',
-    find: '      era_exflag.route_35 = -10; // 崩坏态（Bad Ending 触发源）',
-    replace: '      era_exflag.route_35 = -20; // 崩坏态（Bad Ending 触发源）',
+    find: '      era_exflag.route_35 = -10; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）',
+    replace:
+      '      era_exflag.route_35 = -20; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）',
     tests: ['event-ending'],
     must_mention: 'MARK:1/2',
   },
@@ -3494,5 +3450,218 @@ export default [
     replace: '    // 变异：装备持续效果不执行',
     tests: ['com-sm'],
     must_mention: '眼罩位真身执行',
+  },
+
+  // —— #649（F3）：结局缺陷修复 ——
+  {
+    desc: 'M13050 ENDRESET 嘉德清场守卫回读银黑桃线值 2814（#649 改正的回退）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  if (get_chara(33) < 0 && era_exflag.route_33 < 500) {',
+    replace: '  if (get_chara(33) < 0 && era_exflag.route_21 < 500) {',
+    tests: ['event-endcheck'],
+    must_mention: '嘉德 >= 500 不得清',
+  },
+  {
+    desc: 'M13051 END31 死调用复活（#649 删除的回退：2803 非零时打印 END31）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  // 尾部无 END31 调用：EX_FLAG:2803（失控奴隶号）的消费者是 debug_check
+  // （event-turnend.js），#649 删除了全库无定义的 END31 死引用
+}`,
+    replace: `  // 变异：END31 死调用复活
+  if ((era.get('exflag:2803') || 0) !== 0) {
+    era.print('END31');
+  }
+}`,
+    tests: ['event-endcheck'],
+    must_mention: 'END31 死调用已删',
+  },
+  {
+    desc: "M13052 数据表 END713 的节号键回挪 '713'（#649 挪正的回退）",
+    file: 'ere/data/ending-scripts.js',
+    find: `    13: {
+      src: 'ENDINGDATA.ERB:659-659',
+      steps: [],
+    },`,
+    replace: `    713: {
+      src: 'ENDINGDATA.ERB:659-659',
+      steps: [],
+    },`,
+    tests: ['event-ending'],
+    must_mention: '必须登记在节号 13',
+  },
+  {
+    desc: 'M13053 END 分派循环混入无脚本的族 2（#649 缩圈的回退：族 2 调用抛空间外错）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [2, 7, 10, 11, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '不在声明的编号空间内',
+  },
+  {
+    desc: 'M13054 ENDINGINPUT 的 CASEELSE 复活（#649 删除的回退：写 FLAG 侧）',
+    file: 'ere/event/event-ending.js',
+    find: `    } else {
+      // 未分档的线号（5/6/8-14 各角色线）：无活调用点，原 CASEELSE 整档已删
+      // （#649）——落进来静默返回，不印文本、不写任何 flag 侧
+    }`,
+    replace: `    } else {
+      // 变异：CASEELSE 复活
+      if (result === 1) {
+        era.print('此处剧情尚未做好');
+        await era.waitAnyKey();
+        const flag_no = 2800 + local;
+        era.set(\`flag:\${flag_no}\`, (era.get(\`flag:\${flag_no}\`) || 0) + 100);
+      }
+    }`,
+    tests: ['event-ending'],
+    must_mention: 'FLAG 侧不得写入',
+  },
+  {
+    desc: 'M13055 END 族声明空间扩回 2..15（#649 缩圈的回退：无脚本的族回到空间内）',
+    file: 'ere/event/ending-family.js',
+    find: "const END_FAMILY = new DispatchFamily('END', [7, 10, 11, 14]);",
+    replace:
+      "const END_FAMILY = new DispatchFamily('END', [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);",
+    tests: ['event-endcheck'],
+    must_mention: '族 2（无脚本）必须在声明空间外',
+  },
+  {
+    desc: 'M13056 菲娅线 Bad Ending 占位段的收尾 += 1 被拆（-10 重播守卫消失）',
+    file: 'ere/data/ending-scripts.js',
+    find: `    '-1': {
+      steps: [
+        ['d'],
+        ['w', '菲娅线 Bad Ending'],
+        ['w', '此处剧情尚未做好'],
+        ['exflag', 2807, 1],
+      ],
+    },`,
+    replace: `    '-1': {
+      steps: [
+        ['d'],
+        ['w', '菲娅线 Bad Ending'],
+        ['w', '此处剧情尚未做好'],
+      ],
+    },`,
+    tests: ['event-endcheck'],
+    must_mention: '演出收尾 += 1 置个位',
+  },
+  {
+    desc: 'M13057 END 分派循环丢族 7（菲娅线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [10, 11, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 7 线值 20 必须以小节 2 命中',
+  },
+  {
+    desc: 'M13058 END 分派循环丢族 10（嘉德线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [7, 11, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 10 线值 510 必须以小节 51 命中',
+  },
+  {
+    desc: 'M13059 END 分派循环丢族 11（黑方片线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [7, 10, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 11 线值 20 必须以小节 2 命中',
+  },
+  {
+    desc: 'M13060 END 分派循环丢族 14（银黑桃线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [7, 10, 11]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 14 线值 300 必须以小节 30 命中',
+  },
+  {
+    desc: 'M13061 END 分派循环负线值守卫（-10 不再分发，Bad Ending 播不出）',
+    file: 'ere/event/event-endcheck.js',
+    find: '      if (stage % 10 === 0) {',
+    replace: '      if (stage % 10 === 0 && stage >= 0) {',
+    tests: ['event-endcheck'],
+    must_mention: '演出收尾 += 1 置个位',
+  },
+  {
+    desc: 'M13062 数据表 END7_-1 的占位标题被改写',
+    file: 'ere/data/ending-scripts.js',
+    find: "        ['w', '菲娅线 Bad Ending'],",
+    replace: "        ['w', '菲娅线 坏结局'],",
+    tests: ['event-endcheck'],
+    must_mention: '当天分派必须命中 Bad Ending 占位演出（标题）',
+  },
+  {
+    desc: "M13063 数据表 END7_-1 的节号键被挪走（'-1' → '-2'，分派查不到）",
+    file: 'ere/data/ending-scripts.js',
+    find: "    '-1': {",
+    replace: "    '-2': {",
+    tests: ['event-endcheck'],
+    must_mention: '演出收尾 += 1 置个位',
+  },
+  // —— #650 F4 缺陷修复守卫 ——
+  {
+    desc: 'M13102 ENTER_ENEMY：月末守卫复活（每日来袭变月末才来）',
+    file: 'ere/event/enter-enemy.js',
+    find: `  // LOCAL = 10 写死（早退阈值用）：原月末守卫要求 DAY:2 > LOCAL，该守卫
+  // 被注释掉的功能不恢复，每日来袭（#574 第 4 条）`,
+    replace: `  const local_month = 10; // 变异：月末守卫复活
+  if (
+    era_flag.date > local_month &&
+    arg0 === 0 &&
+    (era.get('flag:60') || 0) < 300
+  ) {
+    return 0;
+  }`,
+    tests: ['enter-enemy'],
+    must_mention: '月末守卫已删：日 28 仍每日来袭',
+  },
+  {
+    desc: 'M13104 WITHDRAWAL：废人化生效素质回退成未声明的 19 号',
+    file: 'ere/event/event-addict.js',
+    find: `  await era.printAndWait(\`\${name}的精神【崩坏】了……\`);
+  set_talent(cid, 9, 1);`,
+    replace: `  await era.printAndWait(\`\${name}的精神【崩坏】了……\`);
+  set_talent(cid, 19, 1);`,
+    tests: ['event-addict'],
+    must_mention: '播报【崩坏】必须实际写入 TALENT:9',
+  },
+  {
+    desc: 'M13105 EVENTCOMEND：助手死亡代词回退成目标侧',
+    file: 'ere/event/event-comend.js',
+    find: '    era.print(`对${she(era_flag.assi)}做什么都不再有反应了……`);',
+    replace:
+      '    era.print(`对${she(era_flag.target)}做什么都不再有反应了……`);',
+    tests: ['event-comend'],
+    must_mention: '分支 3：助手体力 <= 0 → 助手死亡消息',
+  },
+  {
+    desc: 'M13106 MUSEUM：造型王双倍回退成只翻显示值（实际入账不计双倍）',
+    file: 'ere/event/event-museum.js',
+    find: `  if (get('talent:0:329')) lv *= 2;
+  chara(0).dungeon.战斗经验 += lv;`,
+    replace: `  chara(0).dungeon.战斗经验 += lv;
+  if (get('talent:0:329')) lv *= 2;`,
+    tests: ['event-museum'],
+    must_mention: '已有造型王双倍加成计入实际入账与显示',
+  },
+  {
+    desc: 'M13107 SPECIALSKIL：嫉妒移除回退成打印 32 号（压抑）的名字',
+    file: 'ere/event/get-specialtalent.js',
+    find: '      line += `【${talent_name(84)}】`;',
+    replace: '      line += `【${talent_name(32)}】`;',
+    tests: ['event-get-specialtalent'],
+    must_mention: '84 号（嫉妒）消失必须打印 84 号自身的名字',
+  },
+  {
+    desc: 'M13103 BANISHMENT：选项 1 的男性条件被删（女性也拒绝复活）',
+    file: 'ere/event/event-banishment.js',
+    find: `    if (result === 1 && has(cid, 'talent', 122)) {`,
+    replace: `    if (result === 1) {`,
+    tests: ['event-execution'],
+    must_mention: '施予男性化的诅咒',
   },
 ];

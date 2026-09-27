@@ -899,7 +899,7 @@ async function com3() {
     const lv3 = Math.min(abl(3), 5);
     vb = ABL_A_TIERS_COM3_SHOWER[lv3][0];
     vd += ABL_A_TIERS_COM3_SHOWER[lv3][1];
-    // 私处/肛门敏感各乘一次 SOURCE:6 与 D（源序两段各自独立，1:1 保留）
+    // 私处/肛门敏感各乘一次 SOURCE:6 与 D（两段各自独立，互不影响）
     for (const idx of [103, 104]) {
       if (era.get(`talent:${target}:${idx}`)) {
         set(6, times(src(6), idx === 103 ? 1.5 : 0.6));
@@ -994,7 +994,7 @@ async function com3() {
   }
 
   // 淋浴だけ先に計算（A/B 再过一遍参数与顺从；C 的累加在此段
-  // 无落点——源序如此，1:1 保留）
+  // 无落点——先算的 C 在淋浴段不再使用，是这段计算序的固有形态）
   if (tequip(18)) {
     const lube = era.get(`palam:${target}:3`) || 0;
     if (lube < PALAMLV[1]) {

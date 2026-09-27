@@ -461,6 +461,29 @@ test('MESSAGE：无任何计数/标记 → 全支静默（只有恢复宣言行�
   assert.deepEqual(fixture.text_lines(), ['温妮恢复了意识。']);
 });
 
+test('MESSAGE：侵犯持续骨架句（TFLAG:60 = 1）的代词跟随对象性别', async () => {
+  const female = seed_world();
+  female.era_flag.selectcom = 20; // 体位组指令 → 「膣内」
+  await recover_with(female.fixture, female.passout, (f) => {
+    f.store.set('tflag:60', 1);
+  });
+  assert.ok(
+    female.fixture.text_lines().some((t) => t.includes('粗野地对待她。')),
+    '女性对象（温妮）用「她」',
+  );
+
+  const male = seed_world();
+  male.era_flag.selectcom = 20;
+  await recover_with(male.fixture, male.passout, (f) => {
+    f.store.set('tflag:60', 1);
+    f.store.set('talent:31:122', 1); // 对象是男人
+  });
+  assert.ok(
+    male.fixture.text_lines().some((t) => t.includes('粗野地对待他。')),
+    '男性对象用「他」',
+  );
+});
+
 // —— @PASSOUT_PALAM_CHECK / @PASSOUT_PALAM_UP ——
 
 test('PALAM_CHECK：失神瞬间（895 > 0）UP 进 883-888，UP 清零', () => {

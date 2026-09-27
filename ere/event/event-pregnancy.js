@@ -9,7 +9,7 @@
  * CFLAG:111（孩子父亲）。四个维度全在下方 `PAIRS` 表里，函数体共用
  * `run_in_vagina` / `run_conception` 两条形状。
  *
- * 三处一眼看不出的原作细节，逐条 1:1 保留：
+ * 三处一眼看不出的细节，逐条照写：
  *
  *   - **T_TO_A 两侧的存在性守卫不对称**：`@IN_VAGINA_T_TO_A`（:127）只查
  *     `ASSI >= 1`，而 `@CONCEPTION_CHECK_T_TO_A`（:357）另查 `TARGET >= 1`
@@ -21,11 +21,10 @@
  *   - **NTR 兽奸秀（NTRD_TO_T）的妊娠相手码是 5（野狗）不是 6**（:184）：
  *     它成立的条件是 SHOW 里放了狗，故走 `CFLAG:106` 犬精液池。
  *
- * 不移植的一处：`@GET_CHILD`（:280-303）**全库零调用者**（`grep -rn
- * GET_CHILD target/` 只命中它自己的定义行，TRYCALLFORM 面也已查），且
- * 函数体是五道「不满足则 RETURN 0」的守卫、末尾同样 RETURN 0——没有任何
- * 可观察效果，落地只会得到一批改了也不红的死代码。按 #14 同款判死不实现，
- * 登记在 docs/stub-registry.md。
+ * 不移植的一处：`@GET_CHILD` 全库零调用者（全库检索只命中它自己的定义行，
+ * TRYCALLFORM 面也已查），且函数体是五道「不满足则 RETURN 0」的守卫、
+ * 末尾同样 RETURN 0——没有任何可观察效果，落地只会得到一批改了也不红
+ * 的死代码，判死不实现。
  *
  * 随机源一律经末位形参注入（缺省 Math.random）；`@EVENTTURNEND` 链上没有
  * 参数通道，由夹具的 override_math_random 兜（#120）。
@@ -228,8 +227,8 @@ function gate_ok(gate) {
 }
 
 /**
- * 受检角色列表。'each' = 原作 `REPEAT CHARANUM`（:172/:181/:190/:381/:426/
- * :437），自 COUNT = 0 起——**角色 0（主人）也在受检之列**，不是笔误。
+ * 受检角色列表。'each' = `REPEAT CHARANUM` 从 COUNT = 0 起——**角色 0
+ * （主人）也在受检之列**，这是判据本身的行为，不是笔误。
  */
 function subjects_of(subject) {
   if (subject === 'target') return [era_flag.target];
@@ -430,10 +429,10 @@ function check_able_to_child_care(arg) {
  * @SHOW_BUTTON_CHILD_CARE(NUM, ARG)（:452-470）：个别信息页的「前往育儿室」
  * 按钮渲染。
  *
- * 原作 :459-467 的结构是 `IF LOCAL == 2 → RETURN 0` / `ELSEIF LOCAL != 0
- * → RETURN 0 → SETCOLOR 0x646464`——**那条 SETCOLOR 在 RETURN 0 之后，
- * 永远不会执行**（原作的注释「奴隷で実行不可なら灰色にする」是未完成的
- * 意图）。1:1 保留：灰色分支不落地，只留注释，函数化简为「可访问才渲染」。
+ * 原结构是 `IF LOCAL == 2 → RETURN 0` / `ELSEIF LOCAL != 0 → RETURN 0 →
+ * SETCOLOR 0x646464`——**那条 SETCOLOR 在 RETURN 0 之后，永远不会执行**
+ * （注释「奴隷で実行不可なら灰色にする」是未完成的意图）。灰色分支不落地，
+ * 只留注释，函数化简为「可访问才渲染」。
  *
  * @param {number} num 按钮编号（原作实参 5）
  * @param {number} arg 角色号

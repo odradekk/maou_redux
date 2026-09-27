@@ -1,22 +1,16 @@
 /**
- * @file 调教后自主行为检查（EVENT_AFTERTRAIN.ERB 移植）。
- *
- * 原作缺陷 1:1 照抄（#14 / #270）：兽奸报告分支源 :837 `JUEL:8 += A*200`
- * 而打印用 `B*200`。本模块用 leftover_a 只建模同模块内自慰→兽奸那一跳，
- * 跨模块残留不建模。
+ * @file 调教后自主行为检查。
  *
  * 移植说明（有意偏离）：
- *   - **@CHARADEAD_CHECK 的 `BASE:0 = -1`（:76）落到 0**：引擎自动钳制 base
+ *   - **@CHARADEAD_CHECK 的 `BASE:0 = -1` 落到 0**：引擎自动钳制 base
  *     （小于 0 时重置为 0，大于 maxbase 时重置为 maxbase——
  *     `dev-guides/09-static.md:203`），ere 侧写不进 -1。**后果不是「等价」**：
- *     魔王死亡且有继任者时，旧魔王的身体留在场上，原作
- *     `CHARA_INFO_SHOW ver1.1.2.ERB:1159-1160` 对 `BASE:0 < 0` 显示
- *     ★死亡★，ere 只能落到「体力 0」那一档的 ★濒死★。后续判死全部走
- *     `< 1`（:357 / :364 / :376 的判据），所以除显示档位外的行为不受影响。
- *     写入仍照原作写 -1（意图 1:1），钳制是引擎的行为。
- *   - 原作 `#DIM TEMP` / `TEMPMAOU` 是死变量（#14 登记）：:68-73 的
- *     `IF !TEMP || ...` 恒走第一支，`ELSEIF` 的叙事与 `%SAVESTR:TEMP%`
- *     不可达，不构造。
+ *     魔王死亡且有继任者时，旧魔王的身体留在场上，角色信息展示
+ *     对 `BASE:0 < 0` 显示 ★死亡★，ere 只能落到「体力 0」那一档的
+ *     ★濒死★。后续判死全部走 `< 1`，所以除显示档位外的行为不受影响。
+ *     写入仍写 -1，钳制是引擎的行为。
+ *   - TEMP / TEMPMAOU 是从未被赋值的死变量：`IF !TEMP || ...` 恒走第一支，
+ *     ELSEIF 的叙事不可达，不构造。
  */
 
 const era = require('#/era-electron');
@@ -32,13 +26,6 @@ const { self_kojo } = require('#/kojo/kojo-system');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname } = require('#/utils/callname-utils');
 
-/**
- * 原作 A 是跨函数全局（技能指南 glossary.md:151）。本项目只建模同模块内
- * 的那一跳：aftertrain_masturbation_check 写、aftertrain_beastsex_check 读。
- * 跨模块残留不建模（已知偏差，#14 / #270）。兽奸报告分支源 :837 写
- * `JUEL:8 += A*200` 而打印用 `B*200`——原作缺陷，1:1 照抄。
- */
-let leftover_a = 0;
 /**
  * 原作 Q 是跨函数全局。AFTERTRAIN 自慰检查写，SELF_KOJO（K2 等）读
  * （调教后自慰口上里 Q == 1 助手 / Q == 2 野狗）。
@@ -109,23 +96,21 @@ function get_chara(no) {
 }
 
 /**
- * @CHARADEAD_CHECK（:6-92）：调教后死亡检查（@EVENTEND :339 的 CALL）。
+ * @CHARADEAD_CHECK：调教后死亡检查。
  *
  * RESULT：0 = 存活（或濒死自动结束）；1 = 目标已死（调用方跳过 SELF_CHECK，
- * 死亡删除分支接管）。原作尾行 `RETURN 1, TEMP` 的第二个返回值全库无读者
- * （TEMP 是 #DIM 死变量），ere 侧只回 RESULT。
+ * 死亡删除分支接管）。尾行 `RETURN 1, TEMP` 的第二个返回值全库无读者
+ * （TEMP 是死变量），ere 侧只回 RESULT。
  *
- * 原作缺陷 1:1 保留（#14 登记）：`#DIM TEMP = 0` / `#DIM TEMPMAOU = 0`
- * 之后两者从未被赋值——:68-73 的 `IF !TEMP || ...` 恒走第一支
+ * TEMP / TEMPMAOU 是从未被赋值的死变量：`IF !TEMP || ...` 恒走第一支
  * 「%SAVESTR:TARGET%死掉了……」，ELSEIF 的「身体死掉了/苏醒了」叙事与
- * %SAVESTR:TEMP% 不可达，不构造（#405 可证死代码同款）。TEMPMAOU 同为
- * 死变量。
+ * %SAVESTR:TEMP% 不可达，不构造。
  *
  * BASE:0 = -1 的写：引擎自动把 base 钳到 0~maxbase（`dev-guides/09-static.md:203`
- * ——小于 0 重置为 0），写入落盘即 0。**这不是等价替换**：原作
- * `CHARA_INFO_SHOW ver1.1.2.ERB:1159-1160` 对 `BASE:0 < 0` 显示 ★死亡★，
- * ere 只剩 ★濒死★（文件头「移植说明」有完整说明）。判死判据全走 `< 1`，
- * 除显示档位外的行为不受影响；写入仍照原作写 -1。
+ * ——小于 0 重置为 0），写入落盘即 0。**这不是等价替换**：角色信息展示
+ * 对 `BASE:0 < 0` 显示 ★死亡★，ere 只剩 ★濒死★（文件头「移植说明」有
+ * 完整说明）。判死判据全走 `< 1`，除显示档位外的行为不受影响；写入仍写
+ * -1。
  *
  * @returns {Promise<number>} 原作 RESULT（QUIT 路径 throw，不返回）
  */
@@ -233,7 +218,7 @@ async function charadead_check() {
         successor === get_chara(17) &&
         (successor !== era_flag.player || successor !== era_flag.assi)
       ) {
-        // 分支四：候补是 17 号且不在身旁（条件的 || 形态照抄——17 号已在前
+        // 分支四：候补是 17 号且不在身旁（|| 写法——17 号已在前
         // 一支被 (==PLAYER || ==ASSI) 挡过，这里的 OR 与 AND 同效）
         era.print(`${successor_name}突然像丢了魂似的瘫坐在地上……`);
         await era.waitAnyKey();
@@ -257,8 +242,8 @@ async function charadead_check() {
   era.print(`${chara_name(target)}死掉了……`);
   era.println(); // 真空行：69、71-72 行的 PRINTFORML 已收尾（74 行的 PRINTL 落在空行上）
   era.drawLine();
-  // BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
-  // 见文件头「移植说明」的这处偏离）
+  // BASE:0 = -1（引擎把 base 钳到 0，★死亡★ 显示不出来——见文件头
+  // 「移植说明」的这处偏离；写入仍保留 -1 的意图）
   chara(target).dungeon.体力 = -1;
 
   // 死亡フラグを残す：FLAG:(NO+999) = -2（与 @EVENTEND 死亡删除
@@ -678,7 +663,6 @@ async function aftertrain_masturbation_check(
   if ((era.get(`base:${target}:0`) || 0) < 500) return 0;
 
   let a = 0;
-  leftover_a = 0;
   leftover_q = 0;
   const abl31 = era.get(`abl:${target}:31`) || 0; // 自慰中毒
   if (abl31 === 1) a += 1;
@@ -704,7 +688,6 @@ async function aftertrain_masturbation_check(
   if (abl11 >= 5 && abl17 >= 4 && palam5 >= palamlv4) a += 1;
   if (abl11 >= 4 && abl17 >= 3 && palam5 >= palamlv4) a += 1;
 
-  leftover_a = a;
   if (a <= 0) return 0;
   if (era.get(`talent:${target}:74`)) a = Math.floor(a * 1.5);
   if (assi >= 0 && era.get(`talent:${assi}:118`)) a = Math.floor(a * 1.2);
@@ -720,9 +703,6 @@ async function aftertrain_masturbation_check(
   else if (era.get(`talent:${target}:71`)) a -= 2;
 
   if (era.get(`talent:${target}:76`)) a += 1;
-
-  leftover_a = a;
-
   if (a <= 0) return 0;
 
   const target_name = chara_name(target);
@@ -898,8 +878,8 @@ async function aftertrain_beastsex_check() {
     const tail = era.get(`talent:${target}:124`) ? '摇着尾巴，' : '';
     era.print(`在那之后${target_name}${tail}来报告了。`);
     era.print(`耻情点数＋${b * 200}`);
-    // 源 :837 `JUEL:8 += A*200`：A 是自慰回数残留（#14 / #270），打印仍用 B
-    era.add(`juel:${target}:8`, leftover_a * 200);
+    // 二次累加与显示同按兽奸回数 B（#270：曾用自慰回数残留，显示与实得不符）
+    era.add(`juel:${target}:8`, b * 200);
   }
 
   return 1;

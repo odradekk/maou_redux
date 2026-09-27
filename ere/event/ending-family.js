@@ -2,8 +2,9 @@
  * @file END 族分发：65 个 @END<n> 结局文本段的执行器（issue #404 / N20）。
  *
  * 分发模型沿用 #7 决议的 DispatchFamily：**族号 = LOCAL（2..15），小节 =
- * 线值 / 10**。族 7/10/11/14 在本文件装载期注册；其余 10 族全库无定义
- * （#14 登记），空间内缺失 = TRYCALLFORM 落空静默跳过。
+ * 线值 / 10**。族 7/10/11/14 在本文件装载期注册，声明空间也只含这四族——
+ * 其余 10 族全库无脚本定义，分派不巡它们（#649），空间内缺失 =
+ * TRYCALLFORM 落空静默跳过。
  *
  * 步词表与文本语义见数据文件的头注。本文件的四件事：
  *   1. 装载期把 END_SCRIPTS 注册进 END_FAMILY；
@@ -12,14 +13,14 @@
  *      ENDINCONSQSELECT 的转发；
  *   4. %SAVESTR:MASTER% 的插值（本数据表里唯一的取值形态）。
  *
- * 两处照抄的原作缺陷（详见数据文件头注）：
+ * 两处有意保留的怪癖（详见数据文件头注）：
  *   - `SIF FLAG:2 == GETCHARA(x)` 之后的 `G:2 = -1` 写未声明的表 G（FLAG:2
  *     的笔误）——不落表；同段的「前回の助手・調教対象より前だった場合は
  *     フラグを減算」是 DELCHARA 重排残留，按 dungeon-party.js /
  *     event-chara-leave.js 的先例不移植（#404 与本文件头注各一处）。
  *   - END10_15 的 `FOR MONSTER, 100, 200` / `FOR CHARA, 1, CHARANUM` 在
  *     ere 侧按引擎的已加入列表迭代（#150 数值升序），`MONSTER < 190` 的
- *     保护照抄。
+ *     保护保留。
  */
 
 const era = require('#/era-electron');
@@ -40,14 +41,12 @@ function get(name) {
 }
 
 /**
- * END 族分发注册表：TRYCALLFORM END{2..15}_{小节} 的等价物（#7 分发族）。
- * 声明空间 = 原作 FOR LOCAL,2,16 的循环域（族号 2..15，@ENDCHECK 头注释
- * 「2-15为分剧情」）；族 7/10/11/14 有定义，其余 10 族全库无定义（#14）。
+ * END 族分发注册表：TRYCALLFORM END{族号}_{小节} 的等价物（#7 分发族）。
+ * 声明空间 = 有脚本的四族（7 菲娅 / 10 嘉德 / 11 黑方片 / 14 银黑桃）；
+ * 其余 10 族全库无定义，#649 起不再声明、分派也不巡——对它们的调用按
+ * 拼写错误抛错，而不是静默落空。
  */
-const END_FAMILY = new DispatchFamily(
-  'END',
-  [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-);
+const END_FAMILY = new DispatchFamily('END', [7, 10, 11, 14]);
 
 /** 姓名读数（SAVESTR:x / NAME:x 在 ere 侧的共同源，#5 决议） */
 function name_of(cid) {
@@ -92,14 +91,14 @@ async function op_leave(cid) {
   if (get('flag:1') === cid) {
     game.event.上次调教对象 = -1;
   }
-  // `SIF FLAG:2 == GETCHARA(cid) → G:2 = -1`：G 是未声明的表，
-  // 原作笔误（意图是 FLAG:2）——不落表，见文件头
+  // `SIF FLAG:2 == GETCHARA(cid) → G:2 = -1`：G 是未声明的表（意图是
+  // FLAG:2 的笔误）——写入不落任何表，保留这个无效果的操作，见文件头
   // 「前回の助手・調教対象より前だった場合はフラグを減算」是
   // DELCHARA 重排残留，ere 扁平化（#21）下角色号不重排，按先例不移植
   era_flag.target = get('flag:1'); // TARGET = FLAG:1
   era_flag.assi = get('flag:2'); // ASSI = FLAG:2
-  // CALL PARTY_CHAR_DEL, EX_FLAG:2803——实参是「失控奴隶号」而非 cid，
-  // 原作即如此（疑为笔误），1:1 照抄
+  // CALL PARTY_CHAR_DEL, EX_FLAG:2803——实参是「失控奴隶号」而非 cid
+  // （疑为笔误），保留这个错位的实参，见文件头
   party_char_del(era_exflag.runaway_slave_id);
   era.removeCharacter(cid); // DELCHARA GETCHARA(cid)
   await name_reset(); // CALL NAME_RESET
@@ -253,13 +252,13 @@ async function run_ask(ask, ctx) {
 async function run_end_script(family, section) {
   const entry = END_SCRIPTS[family]?.[section];
   if (entry === undefined) {
-    // 声明空间内缺失：原作 TRYCALLFORM 落空（含 END7_13 这类原作笔误）
+    // 空间内缺失：TRYCALLFORM 落空（无脚本的小节静默跳过）
     return;
   }
   await run_steps(entry.steps, { family });
 }
 
-// 装载期注册：族 7/10/11/14 各有实现（其余族全库无定义，缺失合法）
+// 装载期注册：四族各有实现（END_SCRIPTS 的键即声明空间，见上）
 for (const family of Object.keys(END_SCRIPTS)) {
   END_FAMILY.register(Number(family), (section) =>
     run_end_script(Number(family), String(section)),

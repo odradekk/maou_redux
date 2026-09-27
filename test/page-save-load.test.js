@@ -605,11 +605,11 @@ test('读档成功后钩子被调用：EVENTLOAD 链真的跑了（不是只证�
 
   await assert.rejects(() => load_game(), /BEGIN/);
   assert.equal(probe_calls, 1, '读档成功必须 emit EVENTLOAD 链一次');
-  // 钩子的 DATA_FIX 等价物也跑了（魔王标识写入——角色 0 虽不在场，钩子
+  // 钩子的历史补丁等价物也跑了（魔王标识写入——角色 0 虽不在场，钩子
   // 对 getAddedCharacters 循环，空列表零写入；探针即「被调用」的判据）
 });
 
-test('钩子副作用：DATA_FIX 三行对新档有语义的行在读档后被重放', async () => {
+test('钩子副作用：历史补丁三行对新档有语义的等价物在读档后被重放', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 3, '三号档');
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
@@ -629,7 +629,7 @@ test('钩子副作用：DATA_FIX 三行对新档有语义的行在读档后被�
   assert.equal(
     fixture.store.get('ex_talent:0:200'),
     1,
-    'EX_TALENT:MASTER:200 = 1（魔王高贵标识，DATA_FIX 170205 段）',
+    'EX_TALENT:MASTER:200 = 1（魔王高贵标识）',
   );
   assert.equal(fixture.store.get('ex_talent:17:200'), undefined, '只写 MASTER');
   assert.equal(fixture.store.get('maxbase:0:0'), 600, 'MAXBASE:0 < 600 → 600');
