@@ -54,7 +54,6 @@ test('形状锁：equip-database.js 无逻辑、无 require、无条件分支，
       !code.includes(banned),
 
       `数据表必须是纯数据（结论 6）：代码区不得出现「${banned}」`,
-
     );
   }
   assert(code.includes('module.exports'), '只许一处 module.exports 导出常量表');

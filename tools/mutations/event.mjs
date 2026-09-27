@@ -3303,7 +3303,7 @@ export default [
     find: "    era.printButton('再换一个', 1);",
     replace: "    era.print('[1] 再换一个'); // 变异",
     tests: ['event-ending'],
-    must_mention: ':280 终局询问',
+    must_mention: '终局询问',
   },
   {
     desc: 'M12004 扶她化确认的两项退回纯文本行',
