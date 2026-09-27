@@ -7545,11 +7545,19 @@ for (const assistant of [true, false]) {
 }
 
 test('COM124 二回目门槛按深喉 CFLAG:365 分档（助手玛奥 × 非助手玛奥）', async () => {
+  // 四臂（淫乱/爱慕/侍奉精神/それ以外）× 助手玛奥/非助手，各自判据读 365
+  const write_of = { lewd: 5, love: 4, serve: 3, other: 2 };
   const cases = [
-    { assi: true, low365: true },
-    { assi: false, low365: true },
-    { assi: true, low365: false },
-    { assi: false, low365: false },
+    { assi: true, arm: 'lewd', low365: true },
+    { assi: false, arm: 'lewd', low365: true },
+    { assi: true, arm: 'lewd', low365: false },
+    { assi: false, arm: 'lewd', low365: false },
+    { assi: true, arm: 'love', low365: true },
+    { assi: false, arm: 'love', low365: true },
+    { assi: true, arm: 'serve', low365: true },
+    { assi: false, arm: 'serve', low365: true },
+    { assi: true, arm: 'other', low365: true },
+    { assi: false, arm: 'other', low365: true },
   ];
   for (const item of cases) {
     const fixture = setup_lily((f, era_flag) => {
@@ -7558,9 +7566,11 @@ test('COM124 二回目门槛按深喉 CFLAG:365 分档（助手玛奥 × 非助�
         era_flag.assiplay = 1;
       }
       f.store.set('flag:7', 0);
-      f.store.set(`talent:${LILY}:76`, 1);
+      if (item.arm === 'lewd') f.store.set(`talent:${LILY}:76`, 1);
+      if (item.arm === 'love') f.store.set(`talent:${LILY}:85`, 1);
+      if (item.arm === 'serve') f.store.set(`abl:${LILY}:16`, 3);
       f.store.set(`cflag:${LILY}:365`, item.low365 ? 1 : 5);
-      f.store.set(`cflag:${LILY}:363`, item.low365 ? 5 : 1);
+      f.store.set(`cflag:${LILY}:363`, 6);
     }, 124);
     if (item.assi) {
       fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
@@ -7568,15 +7578,21 @@ test('COM124 二回目门槛按深喉 CFLAG:365 分档（助手玛奥 × 非助�
     }
     await speak_com11(fixture, seq_rand());
     if (item.low365) {
+      assert.ok(fixture.text_lines().length > 0, '按 365 门槛命中出声');
       assert.equal(
         fixture.store.get(`cflag:${LILY}:365`),
-        5,
-        '淫乱档按 365 门槛命中推进到 5',
+        write_of[item.arm],
+        '推进到本臂档值',
       );
     } else {
       assert.deepEqual(fixture.text_lines(), [], '越过 365 门槛后静默');
       assert.equal(fixture.store.get(`cflag:${LILY}:365`), 5);
     }
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:363`),
+      6,
+      'CFLAG:363 不被本指令读取',
+    );
   }
 });
 
@@ -7794,20 +7810,39 @@ test('DOG_KOJO_11 接吻首吻与普通首次两条入口都推进 CFLAG:307', a
 });
 
 test('DOG_KOJO_11 眼罩着脱各档判据读 CFLAG:444 自身，不再读 CFLAG:338', async () => {
-  const fixture = setup_lily((f) => {
-    f.store.set(`tequip:${LILY}:89`, 1);
-    f.store.set(`talent:${LILY}:136`, 1);
-    f.store.set(`cflag:${LILY}:444`, 1);
-    f.store.set(`cflag:${LILY}:338`, 5);
-    f.store.set('flag:7', 0); // 关掉总开关旁路，让 CFLAG 门槛真正生效
-  }, 43);
-  await speak_com11(fixture, seq_rand());
-  assert.equal(
-    fixture.store.get(`cflag:${LILY}:444`),
-    4,
-    '牝犬档按 444 门槛命中推进到 4',
-  );
-  assert.equal(fixture.store.get(`cflag:${LILY}:338`), 5, '338 不被本指令读取');
+  // 三档（牝犬/淫乱/爱慕）各按 444 自身门槛命中；越过门槛后静默
+  const hit_of = { 136: 4, 76: 3, 85: 2 };
+  const cases = [
+    { talent: '136', high: false },
+    { talent: '76', high: false },
+    { talent: '85', high: false },
+    { talent: '76', high: true },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:89`, 1);
+      f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      f.store.set(`cflag:${LILY}:444`, item.high ? 5 : 1);
+      f.store.set(`cflag:${LILY}:338`, 5);
+      f.store.set('flag:7', 0); // 关掉总开关旁路，让 CFLAG 门槛真正生效
+    }, 43);
+    await speak_com11(fixture, seq_rand());
+    if (item.high) {
+      assert.deepEqual(fixture.text_lines(), [], '越过 444 门槛后静默');
+      assert.equal(fixture.store.get(`cflag:${LILY}:444`), 5);
+    } else {
+      assert.equal(
+        fixture.store.get(`cflag:${LILY}:444`),
+        hit_of[item.talent],
+        '按 444 门槛命中推进到本档值',
+      );
+    }
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:338`),
+      5,
+      '338 不被本指令读取',
+    );
+  }
 });
 
 test('DOG_KOJO_11 录像交谈后续牝犬档推进 CFLAG:357=5', async () => {

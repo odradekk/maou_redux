@@ -149,6 +149,19 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
       `${name}档不写胸爱抚 CFLAG:306`,
     );
   }
+
+  const guard_fixture = await setup_k904((f, era_flag) => {
+    era_flag.selectcom = 7;
+    f.store.set('flag:7', 1); // 关掉总开关旁路，让判据真正生效
+    f.store.set(`cflag:${CID}:308`, 1);
+    f.store.set(`cflag:${CID}:306`, 6); // 干扰项：胸爱抚计数偏高
+  });
+  await speak_k904(guard_fixture);
+  assert.equal(
+    guard_fixture.store.get(`cflag:${CID}:308`),
+    2,
+    '兜底判据读 308 自身：306=6 不影响命中',
+  );
 });
 
 test('MUSEUM 口上不按博物馆口上编号分派：固定低头正文，爱慕加印求慰台词', async () => {

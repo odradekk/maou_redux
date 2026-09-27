@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2674; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13347 守卫，#655（F9）-8+5 后合并计数
+export const COUNT = 2673; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13347 守卫，#655（F9）-8+5 后合并计数
 
 export default [
   {
@@ -13928,14 +13928,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '非处女四档 EXP 全为 0 时只出开场一行',
   },
   {
-    desc: 'M1970 K8 DUNGEON_RYOUZYOKU_AFTER 非处女精液味档的孤立开引号被「修正」掉（#239）',
-    file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      await era.printAndWait(`「`);',
-    replace: '      // 变异：源作多打的孤立开引号被删掉',
-    tests: ['kojo-k8-spade'],
-    must_mention: '非处女精液味档 源作多打一行孤立开引号',
-  },
-  {
     desc: 'M1971 K8 DUNGEON_VICTORY 決め台詞首支写错（RAND:3 == 0 串到第三支，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    await era.printAndWait(`「哼、没有会输的要素、这是理所当然的结果」`);',
@@ -13988,15 +13980,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '        `面对的叹息，周围的女魔族冷冷的笑着………`,',
     tests: ['kojo-k8-spade'],
     must_mention: 'BENKI：FLAG:62==1 爱慕支两行（第二行带角色名）',
-  },
-  {
-    desc: 'M1977 K8 BENKI A+V 侍奉支源作多打的句末引号被「修正」（#239）',
-    file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」」`,',
-    replace:
-      '        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」`,',
-    tests: ['kojo-k8-spade'],
-    must_mention: 'A+V 侍奉支 源作句末多打一个引号',
   },
   {
     desc: 'M1978 K8 BENKI V プレイ淫乱支第二处爱心丢失（#239）',
@@ -14150,14 +14133,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '  if (choice == 1) {\n    // （变异：档位守卫写错）\n    await era.printAndWait(`「………知道了、我就这样退下了」`);',
     tests: ['kojo-k8-spade'],
     must_mention: 'GOHOUBI_AFTER：choice 0/1 各一行，choice 越界静默',
-  },
-  {
-    desc: 'M1998 K8 GOHOUBI_AFTER キス旁白的汉化重复被「修正」（#239）',
-    file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        `就这样${a_name}和你反复的接吻了十分钟以上１０分以上………`,',
-    replace: '        `就这样${a_name}和你反复的接吻了十分钟以上………`,',
-    tests: ['kojo-k8-spade'],
-    must_mention: 'キス档旁白的「十分钟以上１０分以上」是汉化重复，1:1 保真',
   },
   {
     desc: 'M1999 K8 GOHOUBI_AFTER 童贞狩档膣/肛门两支被串成同文（#239）',
@@ -22771,11 +22746,11 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12504 K8 口塞·淫乱＋受虐狂Lv3以上（:4393+:4395）拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);',
+    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     replace:
       '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4393+:4395',
+    must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
   {
     desc: 'M12505 K8 口塞·淫乱（:4403+:4405）拆回两条（#622）',
@@ -22790,18 +22765,18 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12506 K8 口塞·爱＋受虐狂Lv5以上（:4413+:4415）拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        // 与上两档"眼神快融化了………"不同，此处缺"了"字（源作误写，1:1 保真）',
+    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 6; // CFLAG:TARGET:346 = 6',
     replace:
       '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        // 与上两档"眼神快融化了………"不同，此处缺"了"字（源作误写，1:1 保真）',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4413+:4415',
+    must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
   {
     desc: 'M12507 K8 口塞·爱＋受虐狂Lv3以上（:4423+:4425）拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
+    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
     replace:
-      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
     tests: ['kojo-k8-spade'],
     must_mention: ':4423+:4425',
   },
@@ -22817,9 +22792,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12509 K8 口塞·受虐狂Lv3以上（:4443+:4445）拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
+    find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     replace:
-      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     tests: ['kojo-k8-spade'],
     must_mention: ':4443+:4445',
   },
@@ -24048,7 +24023,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12561 K8 NTR P==5 それ以外·蜜裂与肛门段（:7549+:7551+:7553）拆回三条（#622 补查：普查把这一组归一类误报，只并第一支会漏）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      // 原作是一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT\n      // （互斥两支，各支自带收尾，块后没有共同的收行语句）（#622 补查）。\n      // 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同），1:1 保真\n      await era.print(\n        `${target_name}的蜜裂和肛门被` +\n          (game.system.狂王性别 == 0\n            ? `阴茎搅动着、精液不停的溢了出来………`\n            : `假阳具搅动着、爱液不停的溢了出来………`),\n      );',
+    find: '      // 一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT\n      // （互斥两支，各支自带收尾，块后没有共同的收行语句）（#622 补查）。\n      // 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同）\n      await era.print(\n        `${target_name}的蜜裂和肛门被` +\n          (game.system.狂王性别 == 0\n            ? `阴茎搅动着、精液不停的溢了出来………`\n            : `假阳具搅动着、爱液不停的溢了出来………`),\n      );',
     replace:
       '      await era.print(`${target_name}的蜜裂和肛门被`); // 变异：拆回\n' +
       '      if (game.system.狂王性别 == 0) {\n' +
@@ -25088,7 +25063,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '      era0(`talent:${target}:85`) == 1 &&\n      era0(`talent:${target}:78`) == 1 &&\n      (kojo.乳头夹 <= 2 || game.kojo.口上开关 == 2) // 变异：回退误读 316',
     tests: ['kojo-k8-spade'],
-    must_mention: 'CFLAG:317=5 越过爱慕+弄乳狂门槛后静默',
+    must_mention: '各臂守卫读 CFLAG:317 自身',
   },
   {
     desc: 'M13315 K8 SELECTCOM:22 处女支回退空白引号占位（#654）',
@@ -25433,5 +25408,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    chara(arg).dungeon.肛门扩张经验 += mon_num; // 变异：写回肛门扩张',
     tests: ['kojo-dungeon-ravish'],
     must_mention: 'EXP:52 私处扩张经验 +5',
+  },
+
+  // ===== #654 返工新增守卫（M13348–）=====
+  {
+    desc: 'M13348 K8 SELECTCOM:124 深喉判据回退误读 CFLAG:363（#654 返工）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`talent:${target}:76`) == 1 &&\n      (kojo.深喉 <= 4 || game.kojo.口上开关 == 2)\n    ) {\n      // 二回目以降·淫乱',
+    replace:
+      '      era0(`talent:${target}:76`) == 1 &&\n      (kojo.真空口交 <= 4 || game.kojo.口上开关 == 2) // 变异：回退误读 363\n      ) {\n        // 二回目以降·淫乱',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'SELECTCOM 124 深喉，二回目以降·四臂判据读 CFLAG:365 自身',
+  },
+  {
+    desc: 'M13349 K8 SELECTCOM:41 鞭兜底判据回退误读骑乘位 CFLAG:335（#654 返工）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '    } else if (kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {\n      // それ以外\n      await era.printAndWait(\n        `「咕…啊啊！呵呵呵…真不愧是这个鞭子',
+    replace:
+      '    } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) { // 变异：回退误读 335\n      // それ以外\n      await era.printAndWait(\n        `「咕…啊啊！呵呵呵…真不愧是这个鞭子',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'SELECTCOM 41 鞭，それ以外分支判据读 CFLAG:342 自身',
   },
 ];
