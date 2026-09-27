@@ -2,11 +2,6 @@
  * @file 调教结束时的珠结算：@JUEL_CHECK 的交互循环与 @JUEL_CHECK_MAIN 的
  * 数值结算（issue #47——调教一回合里唯一的数值结算）。
  *
- * 源: target/ERB/調教相關/TRAIN_MAIN.ERB  @JUEL_CHECK（:435-549，一次性
- *     普通 CALL——@EVENTEND:421 调它，不是引擎回调、也不是每回合）
- *     @JUEL_CHECK_MAIN（:552-740，结算本体）
- *     @FIGURE_INDENT（:743-758，8 位右对齐的数字缩进）
- *
  * 画面侧两个子调用在 ere/page/ 下各自模块：@SHOW_INFO_EXP
  * （page-info-exp.js）与 @SHOW_JUEL / @SHOW_ABLUP_SELECT（page-ablup.js）。
  *
@@ -133,7 +128,7 @@ const PALAMLV = [
   0, 100, 500, 3000, 10000, 30000, 60000, 100000, 150000, 250000,
 ];
 
-// :559-585 獲得珠の梯子：PALAM 低于上界时得对应珠。乘数（×3 / ×2）是
+// 獲得珠の梯子：PALAM 低于上界时得对应珠。乘数（×3 / ×2）是
 // 原作语义（PALAMLV:1*3 = 300 等）；梯子外（≥ PALAMLV:9）兜底 12000
 const GAIN_LADDER = [
   [PALAMLV[1], 0],
@@ -151,7 +146,7 @@ const GAIN_LADDER = [
 ];
 const GAIN_MAX = 12000;
 
-// :606-613 的加算对象（0-10 去 3，另加 14/15/100）——也即文件头定案的
+// 的加算对象（0-10 去 3，另加 14/15/100）——也即文件头定案的
 // gotjuel 清零对象：游戏侧结算碰过哪些键，收尾前就把哪些键清回 0
 const OWNED_JUEL_KEYS = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];
 
@@ -224,7 +219,7 @@ function offset_negative_group(cid, pools, rng) {
   const pick_index = rng ?? (() => Math.floor(Math.random() * pools.length));
   const negative = () => era.get(`juel:${cid}:100`) || 0;
   const pool_value = (id) => era.get(`juel:${cid}:${id}`) || 0;
-  // :636 / :648 SIF JUEL:100 > 0 && (组内三池之和) > 0
+  // SIF JUEL:100 > 0 && (组内三池之和) > 0
   while (
     negative() > 0 &&
     pools.reduce((sum, id) => sum + pool_value(id), 0) > 0
@@ -232,13 +227,13 @@ function offset_negative_group(cid, pools, rng) {
     const pick = pools[pick_index()]; // RAND:3 + 4 / + 8
     let take = Math.floor(negative() / 2); // LOCAL:1 = JUEL:100 / 2
     if (take === 0) {
-      take = 1; // :629-630 否定未清零时至少扣 1
+      take = 1; // 否定未清零时至少扣 1
     }
     if (pool_value(pick) < take) {
-      take = pool_value(pick); // :631-632 池子里不够就整池扣走
+      take = pool_value(pick); // 池子里不够就整池扣走
     }
-    era.set(`juel:${cid}:${pick}`, pool_value(pick) - take); // :633
-    era.set(`juel:${cid}:100`, negative() - take); // :634
+    era.set(`juel:${cid}:${pick}`, pool_value(pick) - take);
+    era.set(`juel:${cid}:100`, negative() - take);
   }
 }
 
@@ -256,9 +251,9 @@ function offset_negative_group(cid, pools, rng) {
  */
 function render_settlement_row(cid, row) {
   if (row <= 3 || row === 7 || row === 12) {
-    // :659-692 基础行。:660-666 行号 → juel 序号（3→乳房 14、12→癖好 15）
+    // 基础行。:660-666 行号 → juel 序号（3→乳房 14、12→癖好 15）
     const idx = row === 3 ? 14 : row === 12 ? 15 : row;
-    // :667-674 癖好行读 CSTR:7（自定义癖好名，未定制/为空显示「癖好」）
+    // 癖好行读 CSTR:7（自定义癖好名，未定制/为空显示「癖好」）
     const fetish = era.get(`cstr:${cid}:7`);
     const label =
       row === 12
@@ -267,17 +262,17 @@ function render_settlement_row(cid, row) {
     const got = era.get(`gotjuel:${cid}:${idx}`) || 0;
     const now = era.get(`juel:${cid}:${idx}`) || 0;
     era.print([
-      { content: label }, // :669/:671/:674
-      { content: figure_indent(now - got), color: SKY_BLUE }, // :676-679
-      { content: ' + ' }, // :681 PRINT  + （本行为纯文本、不着色）
-      { content: figure_indent(got), color: SKY_BLUE }, // :682-685
-      { content: `)${NBSP.repeat(12)}= ` }, // :687 PRINT ) + 12 空格 + "= "
-      { content: figure_indent(now), color: SKY_BLUE }, // :688-691
-      { content: '|' }, // :728 PRINTL |
+      { content: label },
+      { content: figure_indent(now - got), color: SKY_BLUE },
+      { content: ' + ' }, // PRINT  + （本行为纯文本、不着色）
+      { content: figure_indent(got), color: SKY_BLUE },
+      { content: `)${NBSP.repeat(12)}= ` }, // PRINT ) + 12 空格 + "= "
+      { content: figure_indent(now), color: SKY_BLUE },
+      { content: '|' }, // PRINTL |
     ]);
     return;
   }
-  // :693-724 抵消行。:694-700 行号 11 → TFLAG:58/否定 juel:100；
+  // 抵消行。:694-700 行号 11 → TFLAG:58/否定 juel:100；
   // 其余 4/5/6/8/9/10 → TFLAG:(行号+47)/同名 juel
   const record = row === 11 ? 58 : row + 47;
   const idx = row === 11 ? 100 : row;
@@ -285,15 +280,15 @@ function render_settlement_row(cid, row) {
   const got = era.get(`gotjuel:${cid}:${idx}`) || 0;
   const now = era.get(`juel:${cid}:${idx}`) || 0;
   era.print([
-    { content: `${era.get(`palamname:${idx}`)}点数：(` }, // :701
-    { content: figure_indent(tflag - got), color: SKY_BLUE }, // :702-705
-    { content: ' + ' }, // :707
-    { content: figure_indent(got), color: SKY_BLUE }, // :708-711
-    { content: ') - ' }, // :713 PRINT ) -
-    { content: figure_indent(tflag - now), color: LIGHT_SALMON }, // :714-717
-    { content: ' = ' }, // :719 PRINT  =
-    { content: figure_indent(now), color: SKY_BLUE }, // :720-723
-    { content: '|' }, // :728
+    { content: `${era.get(`palamname:${idx}`)}点数：(` },
+    { content: figure_indent(tflag - got), color: SKY_BLUE },
+    { content: ' + ' },
+    { content: figure_indent(got), color: SKY_BLUE },
+    { content: ') - ' }, // PRINT ) -
+    { content: figure_indent(tflag - now), color: LIGHT_SALMON },
+    { content: ' = ' }, // PRINT  =
+    { content: figure_indent(now), color: SKY_BLUE },
+    { content: '|' },
   ]);
 }
 
@@ -307,43 +302,43 @@ function render_settlement_row(cid, row) {
  * @returns {number} 0（:740 RETURN 0，调用方不读）
  */
 function juel_check_main(cid, rng) {
-  // :558-601 FOR JUEL_COUNT, 0, 16：参数 → 獲得珠の梯子 → GOTJUEL 配分
+  // FOR JUEL_COUNT, 0, 16：参数 → 獲得珠の梯子 → GOTJUEL 配分
   for (let count = 0; count <= 15; count += 1) {
     const gain = palam_to_gain(era.get(`palam:${cid}:${count}`) || 0);
     if (count === 0) {
-      // :587-588 阴核 + EX:0（阴蒂绝顶）× 1000
+      // 阴核 + EX:0（阴蒂绝顶）× 1000
       era.set(`gotjuel:${cid}:0`, gain + (era.get(`ex:${cid}:0`) || 0) * 1000);
     } else if (count === 1) {
-      // :589-590 私处 + EX:1（私处绝顶）
+      // 私处 + EX:1（私处绝顶）
       era.set(`gotjuel:${cid}:1`, gain + (era.get(`ex:${cid}:1`) || 0) * 1000);
     } else if (count === 2) {
-      // :591-592 肛门 + EX:2（肛门绝顶）
+      // 肛门 + EX:2（肛门绝顶）
       era.set(`gotjuel:${cid}:2`, gain + (era.get(`ex:${cid}:2`) || 0) * 1000);
     } else if (count === 14) {
-      // :593-594 乳房 + EX:3（乳房绝顶）
+      // 乳房 + EX:3（乳房绝顶）
       era.set(`gotjuel:${cid}:14`, gain + (era.get(`ex:${cid}:3`) || 0) * 1000);
     } else if (count === 15) {
-      // :595-596 局部 + EX:4（癖好绝顶）。Exp.yml 无 id 4（原作 exp.csv
+      // 局部 + EX:4（癖好绝顶）。Exp.yml 无 id 4（原作 exp.csv
       // 即缺），ex:4 读得 undefined → 加成 0；癖好绝顶的落点随癖好调教票
       era.set(`gotjuel:${cid}:15`, gain + (era.get(`ex:${cid}:4`) || 0) * 1000);
     } else if (count < 11) {
-      // :597-598 3-10 原样落珠（3 润滑是死存储不落，见文件头）
+      // 3-10 原样落珠（3 润滑是死存储不落，见文件头）
       if (count !== 3) {
         era.set(`gotjuel:${cid}:${count}`, gain);
       }
     } else {
-      // :599-600 11 反感 / 12 不快 / 13 抑郁 → 汇入否定（GOTJUEL:100 +=）
+      // 11 反感 / 12 不快 / 13 抑郁 → 汇入否定（GOTJUEL:100 +=）
       era.add(`gotjuel:${cid}:100`, gain);
     }
   }
 
-  // :604-613 现在保有する珠に今回獲得した珠を加算（3 润滑与 11-13 的
+  // 现在保有する珠に今回獲得した珠を加算（3 润滑与 11-13 的
   // 本体不加——11-13 已汇入否定）
   for (const key of OWNED_JUEL_KEYS) {
     era.add(`juel:${cid}:${key}`, era.get(`gotjuel:${cid}:${key}`) || 0);
   }
 
-  // :615-624 相殺前の珠を TFLAG:51-58 に記录（渲染的「上次值/抵消量」
+  // 相殺前の珠を TFLAG:51-58 に記录（渲染的「上次值/抵消量」
   // 快照；count 3 跳过 → tflag:54 不写，juel:7 习得无抵消）
   for (let count = 0; count <= 6; count += 1) {
     if (count === 3) {
@@ -351,35 +346,35 @@ function juel_check_main(cid, rng) {
     }
     era.set(`tflag:${count + 51}`, era.get(`juel:${cid}:${count + 4}`) || 0);
   }
-  era.set('tflag:58', era.get(`juel:${cid}:100`) || 0); // :624
+  era.set('tflag:58', era.get(`juel:${cid}:100`) || 0);
 
-  // :626-637 / :639-649 否定の珠による相殺（两个 GOTO 循环同构，参数化）
+  // 否定の珠による相殺（两个 GOTO 循环同构，参数化）
   offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_1 恭顺/欲情/屈服
   offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_2 耻情/苦痛/恐怖
 
-  // :648-656 结算表头
-  era.drawLine(); // :651 DRAWLINE
+  // 结算表头
+  era.drawLine(); // DRAWLINE
   const cancelled_total = era.get('tflag:58') || 0;
   era.print(
     `调教结果：${cancelled_total > 0 ? `否定点数${cancelled_total}个抵消。` : ''}`,
-  ); // :652-654（无抵消时只有前缀）
-  // :655 的 PRINTL（空串）只收尾上面那条 PRINTFORM 链——前一条没有换行，
+  ); // （无抵消时只有前缀）
+  // 的 PRINTL（空串）只收尾上面那条 PRINTFORM 链——前一条没有换行，
   // 故它不是空行，这里不补 println（#595）
-  era.drawLine(); // :656 CUSTOMDRAWLINE ‥
+  era.drawLine(); // CUSTOMDRAWLINE ‥
 
-  // :658-735 结算表 13 行
+  // 结算表 13 行
   for (let row = 0; row <= 12; row += 1) {
     render_settlement_row(cid, row);
   }
-  era.drawLine(); // :736 CUSTOMDRAWLINE ‥
-  era.print('以上的点数变化了。'); // :737
+  era.drawLine(); // CUSTOMDRAWLINE ‥
+  era.print('以上的点数变化了。');
 
   // —— 文件头定案的 gotjuel 清零：引擎 endTrain 的 gotjuel→juel 加算
   // 由此成为精确无操作（防双重累加），删表职责不受影响 ——
   for (const key of OWNED_JUEL_KEYS) {
     era.set(`gotjuel:${cid}:${key}`, 0);
   }
-  return 0; // :740 RETURN 0
+  return 0; // RETURN 0
 }
 
 /**
@@ -394,45 +389,45 @@ function juel_check_main(cid, rng) {
 async function run_juel_check() {
   const target = era_flag.target;
 
-  juel_check_main(target); // :437 CALL JUEL_CHECK_MAIN
-  await era.waitAnyKey(); // :440 WAIT
+  juel_check_main(target); // CALL JUEL_CHECK_MAIN
+  await era.waitAnyKey(); // WAIT
 
   // $INPUT_LOOP_1 :443-549
   for (;;) {
-    era.drawLine(); // :444 CUSTOMDRAWLINE ‥
-    show_info_exp(target); // :445 CALL SHOW_INFO_EXP
-    show_juel(target); // :446 CALL SHOW_JUEL
-    // :449-458 自动升级点数（:450 IF GETBIT(FLAG:5,35)）：不进交互，直接
+    era.drawLine(); // CUSTOMDRAWLINE ‥
+    show_info_exp(target); // CALL SHOW_INFO_EXP
+    show_juel(target); // CALL SHOW_JUEL
+    // 自动升级点数（:450 IF GETBIT(FLAG:5,35)）：不进交互，直接
     // 收尾；:452-455 的三次 AUTO_ABLUP（TARGET / ASSI>0 / MASTER）自 #467
     // 起改调真身（ere/system/train/ablup.js 的 auto_ablup）
     if (getbit(era.get('flag:5'), 35)) {
-      // :452-455 AUTO_ABLUP 三连：目标 → 助手（仅 ASSI > 0）→ 魔王
-      await auto_ablup(); // :452 CALL AUTO_ABLUP
+      // AUTO_ABLUP 三连：目标 → 助手（仅 ASSI > 0）→ 魔王
+      await auto_ablup(); // CALL AUTO_ABLUP
       if ((era_flag.assi || 0) > 0) {
-        await auto_ablup(era_flag.assi); // :453-454 CALL AUTO_ABLUP, ASSI
+        await auto_ablup(era_flag.assi); // CALL AUTO_ABLUP, ASSI
       }
-      await auto_ablup(0); // :455 CALL AUTO_ABLUP, MASTER（魔王恒为角色 0）
-      break; // :457 GOTO LABEL_EXIT
+      await auto_ablup(0); // CALL AUTO_ABLUP, MASTER（魔王恒为角色 0）
+      break; // GOTO LABEL_EXIT
     }
-    await show_ablup_select(target); // :459 CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
+    await show_ablup_select(target); // CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
 
-    const result = await era.input(); // :461 INPUT
+    const result = await era.input(); // INPUT
     if (result === 999) {
-      break; // :540-541 → $LABEL_EXIT（能力值提高结束）
+      break; // → $LABEL_EXIT（能力值提高结束）
     }
     if (result in ABLUP_HANDLERS) {
-      await ABLUP_HANDLERS[result](target); // :463-539 各能力分支（issue #464）
+      await ABLUP_HANDLERS[result](target); // 各能力分支（issue #464）
     }
     // 其余输入无分支命中 → :549 GOTO INPUT_LOOP_1（重绘再来）
   }
 
   // $LABEL_EXIT :541-546：收尾三查，全数真身（CHECK_SPECIALSKIL 自 #565 接线）
-  yokubo_up_check(target); // :542
-  await check_sellassiable(target); // :543
-  // :544 CALL CHECK_SPECIALSKIL, 1（#565 起真身 ere/event/get-specialtalent.js；
+  yokubo_up_check(target);
+  await check_sellassiable(target);
+  // CALL CHECK_SPECIALSKIL, 1（#565 起真身 ere/event/get-specialtalent.js；
   // 实参 1 = SEIIN——强制精饮绝顶次数超阈值时的档位判定用，见 :607）
   await check_specialskil(target, 1);
-  // :545 LOCAL = TARGET —— CALL 方传 RESULT 的暂存，无人读，不镜像
+  // LOCAL = TARGET —— CALL 方传 RESULT 的暂存，无人读，不镜像
 }
 
 module.exports = {

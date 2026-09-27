@@ -1,10 +1,6 @@
 /**
  * @file 战果口上的分发层（issue #179，阶段 3 H10）：奖赏口上与惩罚口上。
  *
- * 源: target/ERB/EVENT/EVENT_K.ERB  @GOHOUBI_AFTER_KOUJO（:468-476）、
- *     @GOHOUBI_REQUEST_KOUJO（:450-463，签名由 #397 定死、函数体由 #403 落）、
- *     @OSIOKI_KOUJO（:486-494）
- *
  * 调用点：ere/dungeon/dungeon-after.js 的 @GOHOUBI / @OSIOKI（本票接入）；
  * @GOHOUBI_REQUEST_KOUJO 的调用方是商店侧 ere/system/stronghold/
  * gohoubi-request.js（#397）。

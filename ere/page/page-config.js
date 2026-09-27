@@ -1,8 +1,6 @@
 /**
  * @file 玩家设定画面（issue #463）。
  *
- * 源: target/ERB/SYSTEM/CONFIG.ERB（296 行，8 个函数全部移植）。
- *
  * 颜色不镜像：原作 CONFIG_FILTER_SETTING/CONFIG_SHOW_FILTER_STATUS 用
  * SETCOLOR 深灰标记「已过滤」，本项目画面组件不复刻纯视觉状态（同
  * LIFE_BAR/立绘先例，docs/stub-registry.md 相关行）。CONFIG_SHOW_FILTER_STATUS
@@ -148,7 +146,7 @@ function virgin_conceded_status_text() {
  * 语义，单纯的 print 会在 config_menu 下一轮 redraw 里一闪即逝。
  */
 async function config_penis_you_setting() {
-  // :88 的 PRINTFORML 自成一行——正文不带尾换行（多写 `\n` 会多出空行，#615）
+  // 的 PRINTFORML 自成一行——正文不带尾换行（多写 `\n` 会多出空行，#615）
   era.print('魔王的兵器是如意金箍棒，可大也可小！！');
   era.printButton('- 普通', 0);
   era.printButton('- 巨根', 1);
@@ -169,7 +167,7 @@ async function config_penis_you_setting() {
       '《包茎》',
       '《马阴茎》',
     ];
-    // :103 的 PRINT + :105 的 PRINTW 是一条显示行（printAndWait = print + 等键），
+    // 的 PRINT + :105 的 PRINTW 是一条显示行（printAndWait = print + 等键），
     // 正文不带尾换行（#615）
     await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}`);
     chara(0).chara.阴茎的状态 = result;

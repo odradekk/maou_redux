@@ -1,9 +1,6 @@
 /**
  * @file 角色创建入口与追加（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_CUSTOM ver1.0.1.ERB
- *     @CHAR_CREATE（:17-98）、@CHAR_APPEND（:103-269）
- *
  * **@CHAR_DEBUG（同文件 :1-15）不移植**：它是 [IF_DEBUG] 的世界观调试面板，
  * docs/stub-registry.md 已判「不移植（调试功能）」，运行时占位留在
  * ere/page/page-chara-info.js:890（CHARA_INFO 的 CASE 99；行号随 #542 的
@@ -128,81 +125,81 @@ function build_rows(entries, columns) {
  *   @CHAR_CUSTOM 或返回角色号
  */
 async function char_create(arg, rand = default_rand) {
-  era.drawLine(); // :17-102
-  era.print('使用神奇的生命摇篮，凭空创造出一体生物'); // :20
-  era.print('这生物的一切，完全由魔王大人您自己凭喜好定制'); // :21
+  era.drawLine();
+  era.print('使用神奇的生命摇篮，凭空创造出一体生物');
+  era.print('这生物的一切，完全由魔王大人您自己凭喜好定制');
   if (arg === 0) {
-    era.print('这将耗费大量的金钱，幸好只看不买是免费的'); // :22-23
+    era.print('这将耗费大量的金钱，幸好只看不买是免费的');
   }
-  era.drawLine(); // :17-102
-  era.println(); // :17-102
-  await era.waitAnyKey(); // :26 WAIT
+  era.drawLine();
+  era.println();
+  await era.waitAnyKey(); // WAIT
 
-  era.print('■=== 勇者 ===■'); // :28
+  era.print('■=== 勇者 ===■');
   for (const row of build_rows(
-    Array.from({ length: 8 }, (_, i) => [i + 1, i + 1]), // :29 FOR L_I, 1, 9
+    Array.from({ length: 8 }, (_, i) => [i + 1, i + 1]), // FOR L_I, 1, 9
     HERO_COLUMNS,
   )) {
-    era.print(row); // :30-33
+    era.print(row);
   }
 
-  era.print('■=== 精英 ===■'); // :37
+  era.print('■=== 精英 ===■');
   for (const row of build_rows(
-    Array.from({ length: 10 }, (_, i) => [i + 21, i + 201]), // :38 FOR L_I, 1, 11
+    Array.from({ length: 10 }, (_, i) => [i + 21, i + 201]), // FOR L_I, 1, 11
     ELITE_COLUMNS,
   )) {
-    era.print(row); // :39-42
+    era.print(row);
   }
 
   if (arg === 1) {
-    // :46-59 特殊段（仅调试登录）：17-39 里在库且在用的预设，18/19 排除
-    era.print('■=== 特殊 ===■'); // :47
+    // 特殊段（仅调试登录）：17-39 里在库且在用的预设，18/19 排除
+    era.print('■=== 特殊 ===■');
     const special = [];
     for (let i = 17; i < 40; i += 1) {
       if (!exist_csv(i) || i === 19 || i === 18) {
-        continue; // :50-51
+        continue;
       }
-      special.push([i + 20, i]); // :52
+      special.push([i + 20, i]);
     }
     for (const row of build_rows(special, ELITE_COLUMNS)) {
-      era.print(row); // :52-55
+      era.print(row);
     }
   }
 
-  era.drawLine(); // :17-102
-  era.print(' [999] 返回'); // :62 PRINT（同一行的收尾由下一行的 INPUT 承接）
+  era.drawLine();
+  era.print(' [999] 返回'); // PRINT（同一行的收尾由下一行的 INPUT 承接）
 
-  // :17-102 $INPUT_LOOP
+  // $INPUT_LOOP
   for (;;) {
-    const result = await era.input(); // :65 INPUT 1
+    const result = await era.input(); // INPUT 1
     let index;
     if (result === 999) {
-      return 0; // :68-69
+      return 0;
     } else if (result >= 1 && result <= 16) {
-      index = result; // :17-102
+      index = result;
     } else if (result >= 21 && result <= 30) {
-      index = result - 20 + 200; // :72-73
+      index = result - 20 + 200;
     } else if (result >= 37 && result <= 60) {
-      index = result - 20; // :74-75
+      index = result - 20;
     } else {
-      index = result; // :17-102（兜底臂，文件头）
+      index = result; // （兜底臂，文件头）
     }
 
     if (!exist_csv(index)) {
-      await era.clear(1); // :81 CLEARLINE 1（抹掉刚回显的输入行）
-      continue; // :17-102 GOTO INPUT_LOOP
+      await era.clear(1); // CLEARLINE 1（抹掉刚回显的输入行）
+      continue; // GOTO INPUT_LOOP
     }
 
-    let target = -1; // :85
+    let target = -1;
     if (index >= 17 && index <= 40) {
-      target = find_chara(index); // :88-89
+      target = find_chara(index);
     }
     if (target < 0) {
-      target = await char_append(index, arg); // :93-94
-      era.print(`你召唤出了${chara_callname(target)}……`); // :95 PRINTFORMW
+      target = await char_append(index, arg);
+      era.print(`你召唤出了${chara_callname(target)}……`); // PRINTFORMW
       await era.waitAnyKey();
     }
-    await char_custom(target, arg, rand); // :98
+    await char_custom(target, arg, rand);
     return target;
   }
 }
@@ -216,116 +213,116 @@ async function char_create(arg, rand = default_rand) {
  * @returns {Promise<number>} 新角色号（源 :269 `RETURN A`）
  */
 async function char_append(arg, mode, rand = default_rand) {
-  era.addCharacter(arg); // :104 ADDCHARA ARG
-  await add_chara_ex(arg); // :105 CALL ADDCHARA_EX, CHARANUM-1
-  const previous_target = era_flag.target; // :106 LOCAL = TARGET
-  const cid = arg; // :103-272 A = CHARANUM-1（扁平化下角色号 = 预设号）
-  era_flag.target = cid; // :107 TARGET = CHARANUM-1
+  era.addCharacter(arg); // ADDCHARA ARG
+  await add_chara_ex(arg); // CALL ADDCHARA_EX, CHARANUM-1
+  const previous_target = era_flag.target; // LOCAL = TARGET
+  const cid = arg; // A = CHARANUM-1（扁平化下角色号 = 预设号）
+  era_flag.target = cid; // TARGET = CHARANUM-1
 
-  // :110 SELECTCASE ARG
+  // SELECTCASE ARG
   if (arg >= 1 && arg <= 16) {
-    // :111-114 勇者
+    // 勇者
     if (mode === 1) {
-      await char_make(cid, 0, 0, rand); // :103-272-114 CALL CHAR_MAKE
+      await char_make(cid, 0, 0, rand); // CALL CHAR_MAKE
     }
   } else if (arg >= 201 && arg <= 210) {
-    // :116-121 精英部下
+    // 精英部下
     if (mode === 1) {
-      await char_make(cid, 0, 0, rand); // :103-272-119 CALL CHAR_MAKE
+      await char_make(cid, 0, 0, rand); // CALL CHAR_MAKE
     }
   } else if (arg === 17) {
-    // :123-137 玛奥（REF ENTER_ENEMY.ERB）
-    era.set(`cflag:${cid}:420`, 1); // :127 CFLAG:420（chara 域内，无门面；全库只写不读）
-    chara(cid).chara.等级 = 1; // :129 CFLAG:9
-    chara(cid).invasion.状态 = 0; // :130 CFLAG:1
-    chara(cid).dungeon.攻击力 = 15; // :131 CFLAG:11
-    chara(cid).dungeon.防御力 = 15; // :132 CFLAG:12
-    chara(cid).chara.基础攻击 = 15; // :133 CFLAG:13（chara 域内）
-    chara(cid).chara.基础防御 = 15; // :134 CFLAG:14
-    chara(cid).train.初吻对象 = -1; // :135 CFLAG:16
-    char_body_generate_wapped(17, rand); // :137 CALL CHAR_BODY_GENERATE_WAPPED, 1
+    // 玛奥（REF ENTER_ENEMY.ERB）
+    era.set(`cflag:${cid}:420`, 1); // CFLAG:420（chara 域内，无门面；全库只写不读）
+    chara(cid).chara.等级 = 1; // CFLAG:9
+    chara(cid).invasion.状态 = 0; // CFLAG:1
+    chara(cid).dungeon.攻击力 = 15; // CFLAG:11
+    chara(cid).dungeon.防御力 = 15; // CFLAG:12
+    chara(cid).chara.基础攻击 = 15; // CFLAG:13（chara 域内）
+    chara(cid).chara.基础防御 = 15; // CFLAG:14
+    chara(cid).train.初吻对象 = -1; // CFLAG:16
+    char_body_generate_wapped(17, rand); // CALL CHAR_BODY_GENERATE_WAPPED, 1
   } else if (arg === 24) {
-    // :139-148 莉莉（REF ENTER_ENEMY.ERB）
-    chara(cid).chara.武装 = 40; // :103-272 CFLAG:A:550（初期装備：剑）
-    era_flag.target = cid; // :103-272 TARGET = A
-    wearing_cloth_able(cid); // :103-272 CALL WEARING_CLOTH_ABLE
-    char_body_generate_wapped(cid, rand); // :103-272
+    // 莉莉（REF ENTER_ENEMY.ERB）
+    chara(cid).chara.武装 = 40; // CFLAG:A:550（初期装備：剑）
+    era_flag.target = cid; // TARGET = A
+    wearing_cloth_able(cid); // CALL WEARING_CLOTH_ABLE
+    char_body_generate_wapped(cid, rand);
   } else if (arg >= 20 && arg <= 23) {
-    // :150-218 扑克牌（REF ARCANA_FORT）
-    await append_card(cid, arg, rand); // :153-208
-    wearing_cloth_able(cid); // :103-272 衣装全装備
-    char_body_generate_wapped(cid, rand); // :103-272
+    // 扑克牌（REF ARCANA_FORT）
+    await append_card(cid, arg, rand);
+    wearing_cloth_able(cid); // 衣装全装備
+    char_body_generate_wapped(cid, rand);
 
-    // :210-215 等级调整：FLAG:60 的勇者基础等级修正逐级 ST_UP
+    // 等级调整：FLAG:60 的勇者基础等级修正逐级 ST_UP
     const base_level = era.get('flag:60') || 0;
     for (let i = 0; i < base_level; i += 1) {
-      st_up(cid, rand); // :213 CALL ST_UP, A
+      st_up(cid, rand); // CALL ST_UP, A
     }
-    // :217-218 四张牌的数值直接取上限（BASE = MAXBASE）
-    chara(cid).dungeon.体力 = chara(cid).dungeon.体力上限; // :217 BASE:A:0
-    chara(cid).dungeon.气力 = chara(cid).dungeon.气力上限; // :218 BASE:A:1（上限访问器见 facade/chara-dungeon.js 手写区）
+    // 四张牌的数值直接取上限（BASE = MAXBASE）
+    chara(cid).dungeon.体力 = chara(cid).dungeon.体力上限; // BASE:A:0
+    chara(cid).dungeon.气力 = chara(cid).dungeon.气力上限; // BASE:A:1（上限访问器见 facade/chara-dungeon.js 手写区）
   } else if ((arg >= 31 && arg <= 33) || arg === 35) {
-    // :220-222 贡品（REF ENDING.ERB）
-    await char_init(cid, rand); // :222 CALL CHAR_INIT
+    // 贡品（REF ENDING.ERB）
+    await char_init(cid, rand); // CALL CHAR_INIT
   } else if (arg === 34) {
-    // :223-234 狂王替身 葵希罗
-    game.chara.勇者入场_24 = 1; // :225 FLAG:224
-    era_flag.target = cid; // :103-272 TARGET = A
-    wearing_cloth_able(cid); // :103-272
-    char_body_generate_wapped(cid, rand); // :103-272
+    // 狂王替身 葵希罗
+    game.chara.勇者入场_24 = 1; // FLAG:224
+    era_flag.target = cid; // TARGET = A
+    wearing_cloth_able(cid);
+    char_body_generate_wapped(cid, rand);
   }
 
   if (mode === 0) {
-    // :237-265 付费路径才问性别与名字
-    era.print('请问登陆的角色是什么性别呢？'); // :238 PRINTFORMW
+    // 付费路径才问性别与名字
+    era.print('请问登陆的角色是什么性别呢？'); // PRINTFORMW
     await era.waitAnyKey();
-    era.drawLine(); // :103-272
-    // :240 的性别选项**保持纯文本**（#572 复核）：源是 `PRINTFORMW [1] 男性…`
+    era.drawLine();
+    // 的性别选项**保持纯文本**（#572 复核）：源是 `PRINTFORMW [1] 男性…`
     // ——PRINTFORMW 自带 WAIT，:241 的 INPUT 在它之后，中间那次成功回传会把
     // 按钮的 valCount 推高（引擎 app.asar 的 getButtonObject 按
     // `line.valCount < buttonValCount` 禁用早先的按钮），按钮化后会点不动。
     // 纯文本 + 本轮无按钮 = 引擎的自由输入通道，键入 1/2/3 照常。
-    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`); // :240
-    await era.waitAnyKey(); // :240 PRINTFORMW 的 WAIT
-    const gender = await era.input(); // :103-272
+    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`);
+    await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+    const gender = await era.input();
     if (gender === 1) {
-      era.set(`talent:${cid}:122`, 1); // :242-243 男人
+      era.set(`talent:${cid}:122`, 1); // 男人
     }
     if (gender === 3) {
-      era.set(`talent:${cid}:121`, 1); // :244-245 扶她
+      era.set(`talent:${cid}:121`, 1); // 扶她
     }
-    era.drawLine(); // :103-272
+    era.drawLine();
 
-    // :103-272 $INPUT_LOOP
+    // $INPUT_LOOP
     for (;;) {
-      era.print('新建人物的名字是？（不输入将随机生成名字）'); // :248
+      era.print('新建人物的名字是？（不输入将随机生成名字）');
       // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
       era.print('（输入 0 随机生成名字）');
-      const raw = await era.input(); // :249 INPUTS
-      chara_name_random_define(cid, -1, rand); // :103-272（先掷一个随机名打底）
-      const name = input_text(raw); // :251 LOCALS '= RESULTS（0 经共享判据归空串）
+      const raw = await era.input(); // INPUTS
+      chara_name_random_define(cid, -1, rand); // （先掷一个随机名打底）
+      const name = input_text(raw); // LOCALS '= RESULTS（0 经共享判据归空串）
       const length = strlens(name);
       if (length > NAME_MAX_LENGTH) {
-        era.print('名字太长，请使用全角八字以下的名字。'); // :254 PRINTFORMW
+        era.print('名字太长，请使用全角八字以下的名字。'); // PRINTFORMW
         await era.waitAnyKey();
-        continue; // :103-272 GOTO INPUT_LOOP
+        continue; // GOTO INPUT_LOOP
       }
       if (length > 0) {
-        era.print(`新建人物今后被称呼为${name}。`); // :257
+        era.print(`新建人物今后被称呼为${name}。`);
         await era.waitAnyKey();
-        era.set(`callname:${cid}:-2`, name); // :258 CALLNAME:A
-        era.set(`callname:${cid}:-1`, name); // :259 SAVESTR:A / :260 NAME:A
+        era.set(`callname:${cid}:-2`, name); // CALLNAME:A
+        era.set(`callname:${cid}:-1`, name); // SAVESTR:A / :260 NAME:A
       } else {
-        chara_name_random_define(cid, -1, rand); // :103-272
-        era.print(`新建人物今后被称呼为${chara_callname(cid)}。`); // :263
+        chara_name_random_define(cid, -1, rand);
+        era.print(`新建人物今后被称呼为${chara_callname(cid)}。`);
         await era.waitAnyKey();
       }
       break;
     }
   }
-  chara(cid).invasion.状态 = 0; // :266 CFLAG:A:1 = 0
-  era_flag.target = previous_target; // :268 TARGET = LOCAL（还原）
-  return cid; // :269 RETURN A
+  chara(cid).invasion.状态 = 0; // CFLAG:A:1 = 0
+  era_flag.target = previous_target; // TARGET = LOCAL（还原）
+  return cid; // RETURN A
 }
 
 /**
@@ -337,38 +334,38 @@ async function char_append(arg, mode, rand = default_rand) {
  */
 async function append_card(cid, arg, rand) {
   if (arg === 22) {
-    // :153-161 東の砦 黑方片 &1：剑 +9000 + 暗黒接頭語
-    chara(cid).chara.武装 = 40; // :103-272
-    chara(cid).chara.武装 += 9000; // :103-272
-    chara(cid).chara.武装 += 900000; // :159
-    chara(cid).chara.随机名编号 = rand(80); // :103-272 CFLAG:A:6
+    // 東の砦 黑方片 &1：剑 +9000 + 暗黒接頭語
+    chara(cid).chara.武装 = 40;
+    chara(cid).chara.武装 += 9000;
+    chara(cid).chara.武装 += 900000;
+    chara(cid).chara.随机名编号 = rand(80); // CFLAG:A:6
   } else if (arg === 23) {
-    // :162-173 西の砦 白梅花 &4：法杖 + アイス
-    chara(cid).train.自慰中毒 = 1; // :164 ABL:A:31
-    chara(cid).dungeon.自慰经验 = 30; // :165 EXP:A:10
-    chara(cid).chara.武装 = 41; // :167
-    chara(cid).chara.武装 += 9000; // :103-272
-    chara(cid).chara.武装 += 600000; // :171
-    chara(cid).chara.随机名编号 = rand(80); // :103-272
+    // 西の砦 白梅花 &4：法杖 + アイス
+    chara(cid).train.自慰中毒 = 1; // ABL:A:31
+    chara(cid).dungeon.自慰经验 = 30; // EXP:A:10
+    chara(cid).chara.武装 = 41;
+    chara(cid).chara.武装 += 9000;
+    chara(cid).chara.武装 += 600000;
+    chara(cid).chara.随机名编号 = rand(80);
   } else if (arg === 21) {
-    // :174-184 南の砦 银黑桃 &2：手里剑 + デス
-    chara(cid).dungeon.自慰经验 = 10; // :176
-    chara(cid).chara.武装 = 44; // :178
-    chara(cid).chara.武装 += 9000; // :103-272
-    chara(cid).chara.武装 += 300000; // :182
-    chara(cid).chara.随机名编号 = rand(80); // :103-272
+    // 南の砦 银黑桃 &2：手里剑 + デス
+    chara(cid).dungeon.自慰经验 = 10;
+    chara(cid).chara.武装 = 44;
+    chara(cid).chara.武装 += 9000;
+    chara(cid).chara.武装 += 300000;
+    chara(cid).chara.随机名编号 = rand(80);
   } else if (arg === 20) {
-    // :185-200 北の砦 金红桃 &8：细剑 + スラッシュ
-    chara(cid).dungeon.私处经验 = 20; // :187 EXP:A:0
+    // 北の砦 金红桃 &8：细剑 + スラッシュ
+    chara(cid).dungeon.私处经验 = 20; // EXP:A:0
     const king_flag = era.get('flag:500') || 0;
     if (king_flag === 0 || king_flag === 2) {
-      chara(cid).dungeon.性交经验 = chara(cid).dungeon.私处经验; // :189-190
+      chara(cid).dungeon.性交经验 = chara(cid).dungeon.私处经验;
     }
-    chara(cid).train.初体验对象 = 105; // :192 CFLAG:A:15（初体験の相手は狂王）
-    chara(cid).chara.武装 = 50; // :194
-    chara(cid).chara.武装 += 10000; // :196
-    chara(cid).chara.武装 += 400000; // :198
-    chara(cid).chara.随机名编号 = rand(80); // :103-272
+    chara(cid).train.初体验对象 = 105; // CFLAG:A:15（初体験の相手は狂王）
+    chara(cid).chara.武装 = 50;
+    chara(cid).chara.武装 += 10000;
+    chara(cid).chara.武装 += 400000;
+    chara(cid).chara.随机名编号 = rand(80);
   }
 }
 

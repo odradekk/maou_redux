@@ -1,12 +1,6 @@
 /**
  * @file 奉仕系指令族（30-38）：@COM / @COM_ABLE / TRAIN_MESSAGE / GET_ADV_COM。
  *
- * 源: target/ERB/調教相關/COMF30_手淫.ERB 至 COMF38_足コキ.ERB
- *     target/ERB/調教相關/COMABLE.ERB @COM_ABLE30-38
- *     target/ERB/調教相關/COMF_JUMP.ERB CASE 30-34
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB / _B.ERB
- *     @COM30 的 JUMPFORM 头部 :1-11；@COM34 的 FLAG:71 清零时机 :12-17。
- *
  * 本文件的高级跳转遵从 COMF 头部的 JUMPFORM：目标尚未移植时返回
  * COM_MISSING，由训练循环废弃本回合；绝不回退执行原基础指令。
  */

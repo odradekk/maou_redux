@@ -2,10 +2,6 @@
  * @file 改名交互：角色信息页的「改名 / 还原名字」按钮与输入流程
  * （issue #384，N2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_NAME_EDIT.ERB 全三函数——
- *       @SHOW_BUTTON_NAME_EDIT（:4-29）、@CHECK_ABLE_TO_NAME_EDIT（:32-50，式中函数）、
- *       @CHARA_INFO_NAME_EDIT（:53-109）
- *
  * 调用点：原作的 CHARA_INFO ver1.0.1.ERB:858/:859（两个按钮）与
  * :1045/:1048（两条交互分支），已接在 ere/page/page-chara-info.js。
  *
@@ -75,19 +71,19 @@ function strlens(text) {
  */
 function check_able_to_name_edit(arg) {
   if (arg === 0) {
-    return NAME_EDIT_KING; // :38-39 你的名字不能改
+    return NAME_EDIT_KING; // 你的名字不能改
   }
   const state = era.get(`cflag:${arg}:1`) || 0; // CFLAG:1 状态（原作读四次的同一个键）
   if (state === 2) {
-    return NAME_EDIT_HERO; // :40-42 侵攻中的勇者
+    return NAME_EDIT_HERO; // 侵攻中的勇者
   }
   if (state === 7) {
-    return NAME_EDIT_NURSERY; // :43-45 苗床
+    return NAME_EDIT_NURSERY; // 苗床
   }
   if (state !== 0 && state !== 3) {
-    return NAME_EDIT_BLOCKED; // :46-48 调教中也不是迎击中也不是
+    return NAME_EDIT_BLOCKED; // 调教中也不是迎击中也不是
   }
-  return 0; // :50
+  return 0;
 }
 
 /**
@@ -99,17 +95,17 @@ function check_able_to_name_edit(arg) {
  * @returns {void} 判定为侵攻中的勇者时不渲染任何按钮（:14-15 RETURN 0）
  */
 function show_button_name_edit(num, arg, reset = 0) {
-  const able = check_able_to_name_edit(arg); // :12 LOCAL = CHECK_ABLE_TO_NAME_EDIT
+  const able = check_able_to_name_edit(arg); // LOCAL = CHECK_ABLE_TO_NAME_EDIT
   if (able === NAME_EDIT_HERO) {
-    return; // :13-15 侵攻中的勇者不显示按钮本身
+    return; // 侵攻中的勇者不显示按钮本身
   }
   if (able !== 0 && able !== NAME_EDIT_KING) {
-    // :19-22 奴隷で実行不可なら灰色にする
+    // 奴隷で実行不可なら灰色にする
     era.setColor('#646464');
   }
 
   era.printButton(reset ? '还原名字\u3000' : '改名\u3000', num);
-  era.setColor(''); // :29 RESETCOLOR
+  era.setColor(''); // RESETCOLOR
 }
 
 /**
@@ -120,58 +116,58 @@ function show_button_name_edit(num, arg, reset = 0) {
  * @returns {Promise<number>} 0 = 已处理；2 = 侵攻中的勇者（按钮本不该显示）
  */
 async function chara_info_name_edit(arg, reset = 0) {
-  const able = check_able_to_name_edit(arg); // :60 LOCAL
+  const able = check_able_to_name_edit(arg); // LOCAL
   if (able !== 0 && able !== NAME_EDIT_KING) {
-    // :61-71 不可改名：按档位给出反馈后返回 0
+    // 不可改名：按档位给出反馈后返回 0
     if (able === NAME_EDIT_NURSERY) {
-      era.print('苗床不可改变名字'); // :67
+      era.print('苗床不可改变名字');
     } else if (able === NAME_EDIT_BLOCKED) {
-      era.print('角色处于不能变更名字的状态'); // :69
+      era.print('角色处于不能变更名字的状态');
     }
-    // :62-65 的 `IF LOCAL == 1 / ELSEIF LOCAL == 2 RETURN 2`：前者空体、
+    // 的 `IF LOCAL == 1 / ELSEIF LOCAL == 2 RETURN 2`：前者空体、
     // 后者是「按钮没显示但输入仍能到达」的防御支，返回值给调用点。
     return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;
   }
 
   if (reset) {
-    // :76-85 还原名字
-    chara_name_reset(arg); // :77 CALL CHARA_NAME_RESET(ARG)
-    era.print(`${era.get(`callname:${arg}:-2`) ?? ''}恢复了原来的名字……`); // :78
+    // 还原名字
+    chara_name_reset(arg); // CALL CHARA_NAME_RESET(ARG)
+    era.print(`${era.get(`callname:${arg}:-2`) ?? ''}恢复了原来的名字……`);
     if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
-      await random_self_call(arg); // :82 一人称設定
+      await random_self_call(arg); // 一人称設定
     }
-    return 0; // :76-85 块的出口
+    return 0; // 块的出口
   }
 
-  // :87-102 [改名]
+  // [改名]
   for (;;) {
-    era.print(`${era.get(`callname:${arg}:-2`) ?? ''}的新名字是？`); // :89
-    // :90 INPUTS —— 引擎把回传值按 getNumber 归一（'' 与 "0" 都成数值 0，
+    era.print(`${era.get(`callname:${arg}:-2`) ?? ''}的新名字是？`);
+    // INPUTS —— 引擎把回传值按 getNumber 归一（'' 与 "0" 都成数值 0，
     // 夹具同款），且不受理空提交；按 #567 的裁定 0 视为空输入，经共享判据
     // 还原成空串后落 :100-101 的「名字没有变更」支（两条依据的完整注记见
     // ere/utils/input-text.js）。
     const input = input_text(await era.input());
     if (strlens(input) > 16) {
-      // :93-95 名字太长
+      // 名字太长
       era.print('名字太长，请使用全角八字以下的名字。');
-      continue; // :95 GOTO INPUT_LOOP
+      continue; // GOTO INPUT_LOOP
     }
     if (strlens(input) > 0) {
-      // :97-99 改名落地
+      // 改名落地
       era.print(`${era.get(`callname:${arg}:-2`) ?? ''}今后被称呼为${input}。`);
-      era.set(`callname:${arg}:-1`, input); // :98 CALLNAME:ARG '= LOCALS
-      era.set(`callname:${arg}:-2`, input); // :99 SAVESTR:ARG '= LOCALS
+      era.set(`callname:${arg}:-1`, input); // CALLNAME:ARG '= LOCALS
+      era.set(`callname:${arg}:-2`, input); // SAVESTR:ARG '= LOCALS
     } else {
-      // :100-101 名字没有变更（零长输入 = 取消）
+      // 名字没有变更（零长输入 = 取消）
       era.print(`${era.get(`callname:${arg}:-2`) ?? ''}的名字没有变更。`);
     }
     break;
   }
 
   if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
-    await random_self_call(arg); // :106 一人称設定
+    await random_self_call(arg); // 一人称設定
   }
-  return 0; // :109
+  return 0;
 }
 
 module.exports = {

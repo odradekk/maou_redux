@@ -1,18 +1,6 @@
 /**
  * @file 迷宫房间与设施（issue #177，阶段 3 H8）：DUNGEON_ROOM.ERB 十四函数。
  *
- * 源: target/ERB/迷宮/DUNGEON_ROOM.ERB  @DUNGEON_ROOM（:2-73，房间分发）、
- *       @DUNGEON_ROOM_BUILD（:76-141，迎击方的设施扩张）、
- *       @DUNGEON_ROOM_DAY（:145-167，设施的每日结算循环）、
- *       @DUNGEON_SHOP（:170-265，商店街）、@DUNGEON_SHOP_ITEMSELL
- *       （:268-325，不可思议的房间）、@DUNGEON_SHOP_DAY（:328-368，
- *       商店街日结算）、@DUNGEON_SWAMP（:371-414，毒沼）、@DUNGEON_FARM
- *       （:417-648，人类牧场日结算）、@DUNGEON_FARM_RESCUE（:650-680，
- *       勇者到达牧场）、@DUNGEON_ICE（:683-735，冰室）、@DUNGEON_HEAT
- *       （:738-801，热砂）、@DUNGEON_MASE（:804-846，迷阵）、
- *       @DUNGEON_MUSEUM（:849-912，博物馆）、@DUNGEON_HOTEL（:915-1013，
- *       娼馆街）
- *
  * 原作局部变量语义（各函数 #DIM 注释照抄，DUNGEON.ERB :14-22 词汇表）：
  *   ARG:0 / A = 受设施效果者（调用方 1/3 掷选）   ROOM = 设施番号 500-507
  *   EXTRA = 设施扩张位域（位 0 / 位 1）           COST / INCOME = 代金 / 收入
@@ -136,45 +124,45 @@ function expansion_text(extra, names) {
 async function dungeon_room(arg0, rand, ctx) {
   const rand_n = rand ?? default_rand;
 
-  // :9-14 迎撃の場合、建設
+  // 迎撃の場合、建設
   if (chara(arg0).invasion.状态 === 3) {
     await dungeon_room_build(arg0, rand_n);
     return 0;
   }
 
-  // :16-18 侵攻中の勇者？（2 = 侵攻 / 12 = 战役）
+  // 侵攻中の勇者？（2 = 侵攻 / 12 = 战役）
   const place = chara(arg0).invasion.状态;
   if (place !== 2 && place !== 12) {
     return 0;
   }
 
-  // :20-26 店遭遇の可能性——戦闘が発生しないフラグを返す
+  // 店遭遇の可能性——戦闘が発生しないフラグを返す
   if (rand_n(10) === 0) {
     await dungeon_shop_itemsell(arg0, rand_n);
     return 1;
   }
 
-  // :32-50 施設番号（;ITEM:ROOM -= 1 原作即注释态）
+  // 施設番号（;ITEM:ROOM -= 1 原作即注释态）
   let room;
   let extra;
   if (place === 12) {
-    // :33-38 戦役：CAMPAIGN_ROOM（延迟 require dungeon.js，防环）/
+    // 戦役：CAMPAIGN_ROOM（延迟 require dungeon.js，防环）/
     // CAMPAIGN_ROOM_EXTRA（域内真身，#469 起）
     const dungeon_mod = require('#/dungeon/dungeon');
     room = await dungeon_mod.campaign_room(chara(arg0).dungeon.侵攻阶层);
     extra = await campaign_room_extra(chara(arg0).dungeon.侵攻阶层);
   } else {
-    const room_id = chara(arg0).dungeon.侵攻阶层 + 349; // :40
-    // :42-44 施設なし
+    const room_id = chara(arg0).dungeon.侵攻阶层 + 349;
+    // 施設なし
     if ((era.get(`flag:${room_id}`) || 0) <= 0) {
       return 0;
     }
-    room = era.get(`flag:${room_id}`) || 0; // :45
-    // :46-48 拡張（+10 槽）
+    room = era.get(`flag:${room_id}`) || 0;
+    // 拡張（+10 槽）
     extra = era.get(`flag:${room_id + 10}`) || 0;
   }
 
-  // :55-71 八种设施分发
+  // 八种设施分发
   if (room === 500) {
     await dungeon_shop(arg0, extra, rand_n);
   } else if (room === 501) {
@@ -193,7 +181,7 @@ async function dungeon_room(arg0, rand, ctx) {
     await dungeon_hotel(arg0, extra);
   }
 
-  return 0; // :73
+  return 0;
 }
 
 /**
@@ -213,53 +201,53 @@ async function dungeon_room(arg0, rand, ctx) {
 async function dungeon_room_build(a, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :87-89 命令チェック
+  // 命令チェック
   if ((era.get(`cflag:${a}:500`) || 0) !== 3) {
     return 0;
   }
 
-  const room_id = chara(a).dungeon.侵攻阶层 + 349; // :91
+  const room_id = chara(a).dungeon.侵攻阶层 + 349;
 
-  // :93-95 设施无
+  // 设施无
   if ((era.get(`flag:${room_id}`) || 0) <= 0) {
     return 0;
   }
 
-  // :97-103 设施番号 / 拡張
+  // 设施番号 / 拡張
   const room = era.get(`flag:${room_id}`) || 0;
   const extra = era.get(`flag:${room_id + 10}`) || 0;
 
-  // :105 確率を弄る場合ここのランダムを弄る
+  // 確率を弄る場合ここのランダムを弄る
   if (rand_n(4) === 0) {
-    // :107-111 拡張1
+    // 拡張1
     if (extra & 1) {
       return 0;
     }
-    era.set(`flag:${room_id + 10}`, extra + 1); // :111 FLAG:ROOMID += 1
+    era.set(`flag:${room_id + 10}`, extra + 1); // FLAG:ROOMID += 1
   } else if (rand_n(3) === 0) {
-    // :112-116 拡張2
+    // 拡張2
     if (extra & 2) {
       return 0;
     }
-    era.set(`flag:${room_id + 10}`, extra + 2); // :116 FLAG:ROOMID += 2
+    era.set(`flag:${room_id + 10}`, extra + 2); // FLAG:ROOMID += 2
   } else {
-    return 0; // :117-118
+    return 0;
   }
 
-  // :121-137 建成播报（FLAG:5 & 32 守卫）
+  // 建成播报（FLAG:5 & 32 守卫）
   if (show) {
-    era.println(); // :122 PRINTL
+    era.println(); // PRINTL
     era.print(
       `${era.get(`itemname:${room}`) ?? ''}进行了扩张！扩张` +
         `${(era.get(`flag:${room_id + 10}`) || 0) & 1 ? '：○' : '：×'}` +
         `${(era.get(`flag:${room_id + 10}`) || 0) & 2 ? '：○' : '：×'}`,
-    ); // :123-135 同一显示行
-    era.print(`${name_of(a)}的工作变为内职了。`); // :136 printformw
+    ); // 同一显示行
+    era.print(`${name_of(a)}的工作变为内职了。`); // printformw
     await era.waitAnyKey();
   }
 
-  chara(a).stronghold.迷宫内行动 = 0; // :139（CFLAG:500 = 0，门面 #177 补名）
-  return 0; // :141
+  chara(a).stronghold.迷宫内行动 = 0; // （CFLAG:500 = 0，门面 #177 补名）
+  return 0;
 }
 
 /**
@@ -276,19 +264,19 @@ async function dungeon_room_build(a, rand_n) {
 async function dungeon_room_day(rand) {
   const rand_n = rand ?? default_rand;
 
-  // :151 FOR ROOMID, 350, 359（Emuera FOR 区间 [350, 359) = 九层）
+  // FOR ROOMID, 350, 359（Emuera FOR 区间 [350, 359) = 九层）
   for (let room_id = 350; room_id < 359; room_id += 1) {
-    const room = era.get(`flag:${room_id}`) || 0; // :153
-    const extra = era.get(`flag:${room_id + 10}`) || 0; // :155-156
+    const room = era.get(`flag:${room_id}`) || 0;
+    const extra = era.get(`flag:${room_id + 10}`) || 0;
 
     if (room === 500) {
-      await dungeon_shop_day(extra, rand_n); // :160
+      await dungeon_shop_day(extra, rand_n);
     } else if (room === 502) {
-      await dungeon_farm(extra, rand_n); // :162
+      await dungeon_farm(extra, rand_n);
     }
   }
 
-  return 0; // :167
+  return 0;
 }
 
 /**
@@ -308,104 +296,104 @@ async function dungeon_room_day(rand) {
 async function dungeon_shop(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :178-189 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :179
+    era.println();
     era.print(
       `是商店街型地下城扩张${expansion_text(extra, ['武器店', '道具店'])}`,
-    ); // :180-188 同一显示行
+    ); // 同一显示行
   }
 
-  // :191 COST = 代金
+  // COST = 代金
   let cost = (era.get(`cflag:${a}:9`) || 0) * 5 + 10;
 
   if (extra & 1 && rand_n(3) === 0) {
-    // :193-218 武器屋分岐
+    // 武器屋分岐
     if (show) {
-      era.print(`${name_of(a)}找到了武器店…`); // :196 printformw
+      era.print(`${name_of(a)}找到了武器店…`); // printformw
       await era.waitAnyKey();
     }
 
-    cost = (era.get(`cflag:${a}:9`) || 0) * 8 + 20; // :199
+    cost = (era.get(`cflag:${a}:9`) || 0) * 8 + 20;
 
     if ((era.get(`cflag:${a}:580`) || 0) < cost) {
       if (show) {
-        era.print(`${name_of(a)}带的钱不够，眼巴巴地看着橱窗发愁……`); // :203
+        era.print(`${name_of(a)}带的钱不够，眼巴巴地看着橱窗发愁……`);
         await era.waitAnyKey();
       }
       return 0;
     }
 
-    // :208 CALL ADD_EX_ITEM, -2, A, 1
+    // CALL ADD_EX_ITEM, -2, A, 1
     const result = await ex_item_mod.add_ex_item(-2, a, 1, rand_n);
     if (show && result > 0) {
-      era.print(`现金收入+${cost}`); // :210
+      era.print(`现金收入+${cost}`);
       await era.waitAnyKey();
     }
 
     if (result > 0) {
-      era_flag.money += cost; // :213
-      era_exflag.legit_money += cost; // :214
-      chara(a).dungeon.所持金 -= cost; // :215
+      era_flag.money += cost;
+      era_exflag.legit_money += cost;
+      chara(a).dungeon.所持金 -= cost;
     }
 
     return 0;
   } else if (extra & 2 && rand_n(2) === 0) {
-    // :219-244 道具屋分岐
+    // 道具屋分岐
     if (show) {
-      era.print(`${name_of(a)}找到了道具店…`); // :222
+      era.print(`${name_of(a)}找到了道具店…`);
       await era.waitAnyKey();
     }
 
-    cost = (era.get(`cflag:${a}:9`) || 0) * 6 + 20; // :225
+    cost = (era.get(`cflag:${a}:9`) || 0) * 6 + 20;
 
     if ((era.get(`cflag:${a}:580`) || 0) < cost) {
       if (show) {
-        era.print(`${name_of(a)}带的钱不够，眼巴巴地看着橱窗发愁……`); // :229
+        era.print(`${name_of(a)}带的钱不够，眼巴巴地看着橱窗发愁……`);
         await era.waitAnyKey();
       }
       return 0;
     }
 
-    // :234 CALL ADD_EX_ITEM, -3, A, 1
+    // CALL ADD_EX_ITEM, -3, A, 1
     const result = await ex_item_mod.add_ex_item(-3, a, 1, rand_n);
     if (show && result > 0) {
-      era.print(`现金收入+${cost}`); // :236
+      era.print(`现金收入+${cost}`);
       await era.waitAnyKey();
     }
 
     if (result > 0) {
-      era_flag.money += cost; // :239
-      era_exflag.legit_money += cost; // :240
-      chara(a).dungeon.所持金 -= cost; // :241
+      era_flag.money += cost;
+      era_exflag.legit_money += cost;
+      chara(a).dungeon.所持金 -= cost;
     }
 
     return 0;
   }
 
-  // :247-252 逛街档的钱检
+  // 逛街档的钱检
   if ((era.get(`cflag:${a}:580`) || 0) < cost) {
     if (show) {
-      era.print(`${name_of(a)}带的钱不够，在商店街边走边叹气……`); // :249
+      era.print(`${name_of(a)}带的钱不够，在商店街边走边叹气……`);
       await era.waitAnyKey();
     }
     return 0;
   }
 
-  era_flag.money += cost; // :254
-  era_exflag.legit_money += cost; // :255
-  chara(a).dungeon.所持金 -= cost; // :256
-  chara(a).dungeon.体力 += 20; // :257 BASE:A:0 += 20
-  chara(a).dungeon.气力 += 50; // :258 BASE:A:1 += 50
+  era_flag.money += cost;
+  era_exflag.legit_money += cost;
+  chara(a).dungeon.所持金 -= cost;
+  chara(a).dungeon.体力 += 20; // BASE:A:0 += 20
+  chara(a).dungeon.气力 += 50; // BASE:A:1 += 50
 
   if (show) {
-    era.print(`${name_of(a)}在商店街尽情地大吃大喝…（体力+20、气力+50）`); // :261
+    era.print(`${name_of(a)}在商店街尽情地大吃大喝…（体力+20、气力+50）`);
     await era.waitAnyKey();
-    era.print(`现金收入+${cost}`); // :262
+    era.print(`现金收入+${cost}`);
     await era.waitAnyKey();
   }
 
-  return 0; // :265
+  return 0;
 }
 
 /**
@@ -423,68 +411,68 @@ async function dungeon_shop(a, extra, rand_n) {
 async function dungeon_shop_itemsell(a, rand_n = default_rand) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :275-279 COST = 値段（最大 1000）
+  // COST = 値段（最大 1000）
   let cost = (era.get(`cflag:${a}:9`) || 0) * 6 + 50;
   if (cost > 1000) {
     cost = 1000;
   }
 
   if (show) {
-    era.println(); // :282
+    era.println();
     era.print(
       `${name_of(a)}发现了一间不可思议的房间，里面有着陈列架和柜台，正在卖着东西……`,
-    ); // :283
+    );
   }
 
-  // :286-293 否定の珠売却
+  // 否定の珠売却
   if ((era.get(`juel:${a}:100`) || 0) > 2000) {
     if (show) {
-      era.print(`很反感魔王的${name_of(a)}从店主处拿到了赞助……（资金+500）`); // :289
+      era.print(`很反感魔王的${name_of(a)}从店主处拿到了赞助……（资金+500）`);
       await era.waitAnyKey();
     }
-    era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500); // :291
-    chara(a).dungeon.所持金 += 500; // :292
+    era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500);
+    chara(a).dungeon.所持金 += 500;
   }
 
-  // :295-302 反発刻印売却
+  // 反発刻印売却
   if ((era.get(`mark:${a}:3`) || 0) > 0) {
     if (show) {
       era.print(
         `很讨厌魔王的${name_of(a)}从店主处获得了力量……（经验值+${(era.get(`mark:${a}:3`) || 0) * 1000}）`,
-      ); // :298
+      );
       await era.waitAnyKey();
     }
     era.set(
       `exp:${a}:80`,
       (era.get(`exp:${a}:80`) || 0) + (era.get(`mark:${a}:3`) || 0) * 1000,
-    ); // :300
-    chara(a).system.反抗刻印 -= 1; // :301 MARK:3 -= 1
+    );
+    chara(a).system.反抗刻印 -= 1; // MARK:3 -= 1
   }
 
-  // :304-305 アイテム売却（域内存根）
+  // アイテム売却（域内存根）
   ex_item_mod.sell_ex_item(a, rand_n);
 
-  // :307-312 钱检
+  // 钱检
   if ((era.get(`cflag:${a}:580`) || 0) < cost) {
     if (show) {
-      era.print(`${name_of(a)}带的钱不够，眼巴巴地在店里转了一圈……`); // :309 PRINTFORML（无读键）
+      era.print(`${name_of(a)}带的钱不够，眼巴巴地在店里转了一圈……`); // PRINTFORML（无读键）
     }
     return 0;
   }
 
-  // :314-322 CALL ADD_EX_ITEM, -3, A, 1
+  // CALL ADD_EX_ITEM, -3, A, 1
   const result = await ex_item_mod.add_ex_item(-3, a, 1, rand_n);
   if (show && result > 0) {
-    era.print(`现金收入+${cost}`); // :316 PRINTFORML（无读键）
+    era.print(`现金收入+${cost}`); // PRINTFORML（无读键）
   }
 
   if (result > 0) {
-    era_flag.money += cost; // :319
-    era_exflag.legit_money += cost; // :320
-    chara(a).dungeon.所持金 -= cost; // :321
+    era_flag.money += cost;
+    era_exflag.legit_money += cost;
+    chara(a).dungeon.所持金 -= cost;
   }
 
-  return 0; // :325
+  return 0;
 }
 
 /**
@@ -501,11 +489,11 @@ async function dungeon_shop_itemsell(a, rand_n = default_rand) {
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function dungeon_shop_day(extra, rand_n) {
-  // :335 INCOME = CFLAG:0:9 * (RAND:10 + 5)
+  // INCOME = CFLAG:0:9 * (RAND:10 + 5)
   const master_lv = era.get('cflag:0:9') || 0;
   let income = master_lv * (rand_n(10) + 5);
 
-  // :337-341 拡張によって僅かに増える
+  // 拡張によって僅かに増える
   if (extra & 1) {
     income += master_lv + 20;
   }
@@ -513,35 +501,35 @@ async function dungeon_shop_day(extra, rand_n) {
     income += master_lv + 20;
   }
 
-  // :342-361 威望值五档（EX_FLAG:99）
+  // 威望值五档（EX_FLAG:99）
   const prestige = era_exflag.prestige;
   if (prestige <= 20 && prestige >= 0) {
-    era.print('威望值是【岌岌可危】'); // :343 PRINTL
-    income = 0; // :344
+    era.print('威望值是【岌岌可危】'); // PRINTL
+    income = 0;
   } else if (prestige <= 40 && prestige > 20) {
-    era.print('威望值是【动荡不安】'); // :346
-    era.print('收入减少'); // :347 PRINTW（原文「収入减少」，#60 归一）
+    era.print('威望值是【动荡不安】');
+    era.print('收入减少'); // PRINTW（原文「収入减少」，#60 归一）
     await era.waitAnyKey();
-    income = Math.floor((income * 3) / 10); // :348-349
+    income = Math.floor((income * 3) / 10);
   } else if (prestige <= 60 && prestige > 40) {
-    era.print('威望值是【略受质疑】'); // :351
-    income = Math.floor((income * 3) / 4); // :352-353
+    era.print('威望值是【略受质疑】');
+    income = Math.floor((income * 3) / 4);
   } else if (prestige <= 80 && prestige > 60) {
-    era.print('威望值是【相安无事】'); // :355
-    income = Math.floor((income * 6) / 5); // :356-357
+    era.print('威望值是【相安无事】');
+    income = Math.floor((income * 6) / 5);
   } else if (prestige <= 100 && prestige > 80) {
-    era.print('威望值是【广受爱戴】'); // :359
-    income *= 2; // :360
+    era.print('威望值是【广受爱戴】');
+    income *= 2;
   }
 
-  era.println(); // :362 PRINTL 真空行：343/346/351/355/359 行的威望行已收尾
-  era.print(`从商店街征收了今天的税金。（现金收入+${income}）`); // :363
+  era.println(); // PRINTL 真空行：343/346/351/355/359 行的威望行已收尾
+  era.print(`从商店街征收了今天的税金。（现金收入+${income}）`);
   await era.waitAnyKey();
 
-  era_flag.money += income; // :365
-  era_exflag.legit_money += income; // :366
+  era_flag.money += income;
+  era_exflag.legit_money += income;
 
-  return 0; // :368
+  return 0;
 }
 
 /**
@@ -556,38 +544,38 @@ async function dungeon_shop_day(extra, rand_n) {
 async function dungeon_swamp(a, extra) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :379-390 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :380
+    era.println();
     era.print(`是毒沼型地下城扩张${expansion_text(extra, ['毒草', '毒虫'])}`);
   }
 
-  // :392 DMG = ダメージ量
+  // DMG = ダメージ量
   let dmg = (era.get('cflag:0:9') || 0) + 10;
 
-  // :394-397 毒草（相手が強いほど強化）
+  // 毒草（相手が強いほど強化）
   if (extra & 1) {
     dmg += era.get(`cflag:${a}:9`) || 0;
   }
 
-  // :399-402 毒蟲（陷阱レベルで強化）
+  // 毒蟲（陷阱レベルで強化）
   if (extra & 2) {
     dmg += (era.get('flag:85') || 0) * 2;
   }
 
-  chara(a).dungeon.体力 -= dmg; // :404
+  chara(a).dungeon.体力 -= dmg;
 
-  // :406-408 最低1は残るタイプ
+  // 最低1は残るタイプ
   if (chara(a).dungeon.体力 < 1) {
     chara(a).dungeon.体力 = 1;
   }
 
   if (show) {
-    era.print(`${name_of(a)}走在毒沼中………（${dmg}点伤害！）`); // :411
+    era.print(`${name_of(a)}走在毒沼中………（${dmg}点伤害！）`);
     await era.waitAnyKey();
   }
 
-  return 0; // :414
+  return 0;
 }
 
 /**
@@ -725,61 +713,61 @@ const FARM_TALK = {
  * @returns {Promise<number>} 原作 RETURN 0（:429-430 早退后无显式 RETURN）
  */
 async function dungeon_farm(extra, rand_n) {
-  // :428-430 肉便器ないとダメ
+  // 肉便器ないとダメ
   const meat_count = era_flag.meat_toilet_count;
   if (meat_count <= 0) {
     return 0;
   }
 
-  // :432 20160524改変
-  // :434-437 GETBIT FLAG:614,0 → LOG_OFF；GETBIT FLAG:614,1 → SELL_BABY
+  // 20160524改変
+  // GETBIT FLAG:614,0 → LOG_OFF；GETBIT FLAG:614,1 → SELL_BABY
   const flags614 = era.get('flag:614') || 0;
   const log_off = (flags614 & 1) !== 0;
   const sell_baby = ((flags614 >> 1) & 1) !== 0;
 
-  // :439-449 怪物抽选与只数
-  const mon_id = summon_mod.rand_monster_number(rand_n); // :439-440
-  let mon_num = era.get(`item:${mon_id}`) || 0; // :441
+  // 怪物抽选与只数
+  const mon_id = summon_mod.rand_monster_number(rand_n);
+  let mon_num = era.get(`item:${mon_id}`) || 0;
   if (sell_baby) {
-    era_flag.money += meat_count * 10; // :443
-    era_exflag.legit_money += meat_count * 10; // :444
+    era_flag.money += meat_count * 10;
+    era_exflag.legit_money += meat_count * 10;
   } else if (mon_num + meat_count > 999) {
-    mon_num = 999; // :445-446
+    mon_num = 999;
   } else {
-    mon_num += meat_count; // :448
+    mon_num += meat_count;
   }
 
-  // :451-461 竿役分岐（FLAG:613 == 1/2/3 且日志开着）
+  // 竿役分岐（FLAG:613 == 1/2/3 且日志开着）
   const pole_role = era.get('flag:613') || 0;
   if (pole_role === 1 && !log_off) {
-    era.print('「播种的大叔们好好努力让便器们怀孕啊~」'); // :453
-    era.print('监督的淫魔踹着俘虏中年的腰，中年将腥臭的精液大量注入了肉便器……'); // :454
+    era.print('「播种的大叔们好好努力让便器们怀孕啊~」');
+    era.print('监督的淫魔踹着俘虏中年的腰，中年将腥臭的精液大量注入了肉便器……');
     await era.waitAnyKey();
   } else if (pole_role === 2 && !log_off) {
-    era.print('「小鸡鸡奴隶少年们，加把劲啊。把分配的播种任务完成就行了。」'); // :456
+    era.print('「小鸡鸡奴隶少年们，加把劲啊。把分配的播种任务完成就行了。」');
     era.print(
       '监督的淫魔温柔地催促着，俘虏少年将充满年轻气息的浓厚精液注入了肉便器……',
-    ); // :457
+    );
     await era.waitAnyKey();
   } else if (pole_role === 3 && !log_off) {
-    era.print('「怀孕吧！　怀上吧！　啊哈哈哈，怀孕吧！」'); // :459
-    era.print('扶她淫魔的媚药精液不断地注入了肉便器中……'); // :460
+    era.print('「怀孕吧！　怀上吧！　啊哈哈哈，怀孕吧！」');
+    era.print('扶她淫魔的媚药精液不断地注入了肉便器中……');
     await era.waitAnyKey();
   }
 
-  // :463-620 FOR LOCAL:0, 0, FLAG:83——台词段（≤10 条，LOG_OFF 即断）
+  // FOR LOCAL:0, 0, FLAG:83——台词段（≤10 条，LOG_OFF 即断）
   // （每条 PRINT 后跟 PRINT 空格，全部拼一行，:622 的 PRINTL 收行）
   let talk_line = '';
   if (!log_off) {
     for (let local0 = 0; local0 < meat_count; local0 += 1) {
       if (local0 >= 10) {
-        break; // :464-465
+        break;
       }
 
-      // :470-471 1の位はランダムパターン
+      // 1の位はランダムパターン
       let talk = rand_n(6);
 
-      // :473-480 10の位は施設拡張フラグ
+      // 10の位は施設拡張フラグ
       if (extra & 1 && rand_n(6) === 0) {
         // 搾乳フラグON
         talk += 10;
@@ -788,7 +776,7 @@ async function dungeon_farm(extra, rand_n) {
         talk += 20;
       }
 
-      // :482-493 100の位は肉便器の数
+      // 100の位は肉便器の数
       if (meat_count > 100 && rand_n(6) === 0) {
         talk += 500;
       } else if (meat_count > 80 && rand_n(5) === 0) {
@@ -801,43 +789,43 @@ async function dungeon_farm(extra, rand_n) {
         talk += 100;
       }
 
-      talk_line += `${FARM_TALK[talk] ?? ''} `; // :495-618（+ :618 空格）
+      talk_line += `${FARM_TALK[talk] ?? ''} `; // （+ :618 空格）
     }
   }
-  era.print(talk_line); // :622 PRINTL（LOG_OFF 时为空行）
+  era.print(talk_line); // PRINTL（LOG_OFF 时为空行）
 
-  // :624-625 播报（原作的 SIF 守卫行被注释，无条件打印——LOG_OFF 也打）
+  // 播报（原作的 SIF 守卫行被注释，无条件打印——LOG_OFF 也打）
   era.print(
     `人类牧场的肉便器生了${meat_count}只${era.get(`itemname:${mon_id}`) ?? ''}。`,
   );
 
-  // :627-630 原作缺陷（文件头）：SIF 只管播报行，钱两行无条件计入
+  // 原作缺陷（文件头）：SIF 只管播报行，钱两行无条件计入
   if (!log_off && sell_baby) {
     era.print(`将人类牧场的肉便器生下的孩子卖了${meat_count * 10}G。`);
   }
-  era_flag.money += meat_count * 10; // :629
-  era_exflag.legit_money += meat_count * 10; // :630
+  era_flag.money += meat_count * 10;
+  era_exflag.legit_money += meat_count * 10;
 
   if (extra & 1) {
-    // :631-636 搾乳
+    // 搾乳
     era.print(`出售从肉便器挤出的乳汁得到了${meat_count}G。`);
-    era_flag.money += meat_count; // :634
-    era_exflag.legit_money += meat_count; // :635
+    era_flag.money += meat_count;
+    era_exflag.legit_money += meat_count;
   }
 
   if (extra & 2) {
-    // :638-642 扶她奴隷（EXP:0:80——角色 0，MASTER）
+    // 扶她奴隷（EXP:0:80——角色 0，MASTER）
     era.print(
       `原本是勇者的扶她奴隶侵犯着肉便器，淫欲转化成了${meat_count}经验值。`,
     );
-    era.set('exp:0:80', (era.get('exp:0:80') || 0) + meat_count); // :641
+    era.set('exp:0:80', (era.get('exp:0:80') || 0) + meat_count);
   }
 
   if (!log_off) {
-    await era.waitAnyKey(); // :644-645 WAIT
+    await era.waitAnyKey(); // WAIT
   }
 
-  era.set(`item:${mon_id}`, mon_num); // :647
+  era.set(`item:${mon_id}`, mon_num);
 
   return 0;
 }
@@ -857,30 +845,30 @@ async function dungeon_farm(extra, rand_n) {
 async function dungeon_farm_rescue(arg0) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :656-667 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :657
+    era.println();
     era.print(
       `是人类牧场型地下城扩张${expansion_text(arg0, ['榨乳设备', '扶她配种奴隶'])}`,
     );
   }
 
-  // :669-671 肉便器ないとダメ
+  // 肉便器ないとダメ
   if ((era.get('flag:83') || 0) <= 0) {
     return 0;
   }
 
   if (show) {
-    era.print('勇者发现了一个可悲的肉便器，并且将其解放。'); // :674
+    era.print('勇者发现了一个可悲的肉便器，并且将其解放。');
     await era.waitAnyKey();
   }
 
-  // :677-678 原作缺陷（文件头）：ARG:0 是 EXTRA，按角色号读
+  // 原作缺陷（文件头）：ARG:0 是 EXTRA，按角色号读
   if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {
     era_flag.meat_toilet_count -= 1;
   }
 
-  return 0; // :680
+  return 0;
 }
 
 /**
@@ -896,46 +884,46 @@ async function dungeon_farm_rescue(arg0) {
 async function dungeon_ice(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :691-702 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :692
+    era.println();
     era.print(`是冰封型地下城扩张${expansion_text(extra, ['吹雪', '积雪'])}`);
   }
 
-  let mdmg = 0; // :704 MDMG=気力ダメージ
+  let mdmg = 0; // MDMG=気力ダメージ
 
   if (extra & 1 && rand_n(6) === 0) {
-    // :706-714 吹雪（アイテム破壊）——LOCAL = RAND:5 + 560 的 CFLAG 槽
+    // 吹雪（アイテム破壊）——LOCAL = RAND:5 + 560 的 CFLAG 槽
     const slot = rand_n(5) + 560;
     if ((era.get(`cflag:${a}:${slot}`) || 0) > 0 && show) {
       era.print(
         `激烈的飞雪把${ex_item_mod.ex_item_name(era.get(`cflag:${a}:${slot}`) || 0)}破坏了……`,
-      ); // :709-711 拼行
+      ); // 拼行
       await era.waitAnyKey();
     }
-    era.set(`cflag:${a}:${slot}`, 0); // :713（破坏无条件）
+    era.set(`cflag:${a}:${slot}`, 0); // （破坏无条件）
   }
 
-  // :716-718 デフォの攻撃値減少（CFLAG:11 *= 9 /= 10）
+  // デフォの攻撃値減少（CFLAG:11 *= 9 /= 10）
   const atk = era.get(`cflag:${a}:11`) || 0;
   era.set(`cflag:${a}:11`, Math.floor((atk * 9) / 10));
 
-  // :720-722 積雪による精神ダメージ
+  // 積雪による精神ダメージ
   if (extra & 2) {
     mdmg += (era.get('cflag:0:9') || 0) + 2;
   }
 
-  chara(a).dungeon.气力 -= mdmg; // :724
+  chara(a).dungeon.气力 -= mdmg;
 
   if (show) {
     era.print(
       `${name_of(a)}在冰室的严寒中哆嗦着身体………（攻击力下降一成！）` +
         `${mdmg > 0 ? `（${mdmg}点气力下降！）` : ''}`,
-    ); // :727-729 拼行 + :730 PRINTW
+    ); // 拼行 + :730 PRINTW
     await era.waitAnyKey();
   }
 
-  return 0; // :735
+  return 0;
 }
 
 /**
@@ -952,27 +940,27 @@ async function dungeon_ice(a, extra, rand_n) {
 async function dungeon_heat(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :746-757 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :747
+    era.println();
     era.print(`是灼热型的地下城扩张${expansion_text(extra, ['绿洲', '火柱'])}`);
   }
 
   if (extra & 1 && rand_n(6) === 0) {
-    // :759-776 回復点（诱惑的な効果）
-    chara(a).dungeon.气力 += 50; // :763
+    // 回復点（诱惑的な効果）
+    chara(a).dungeon.气力 += 50;
     const max_wp = era.get(`maxbase:${a}:1`) || 0;
     if (chara(a).dungeon.气力 > max_wp) {
-      chara(a).dungeon.气力 = max_wp; // :764-765
+      chara(a).dungeon.气力 = max_wp;
     }
 
     if (show) {
-      era.print('发现了绿洲………（气力50回复！亲密度上升！）'); // :768 PRINTFORML（无读键）
-      era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 4}`); // :769
+      era.print('发现了绿洲………（气力50回复！亲密度上升！）'); // PRINTFORML（无读键）
+      era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 4}`);
       await era.waitAnyKey();
     }
 
-    // :772-773 JUEL:TARGET:6 += CFLAG:0:9 * 4；CFLAG:TARGET:2 += 20
+    // JUEL:TARGET:6 += CFLAG:0:9 * 4；CFLAG:TARGET:2 += 20
     // （TARGET 经 era_flag.target，run_dungeon :37 置位，文件头）
     const target = era_flag.target;
     era.set(
@@ -981,37 +969,37 @@ async function dungeon_heat(a, extra, rand_n) {
     );
     chara(target).chara.好感度 += 20; // CFLAG:TARGET:2 += 20
 
-    return 0; // :775
+    return 0;
   }
 
-  let dmg = 0; // :778
+  let dmg = 0;
 
-  // :780-781 防御値減少（CFLAG:12 *= 9 /= 10）
+  // 防御値減少（CFLAG:12 *= 9 /= 10）
   const def = era.get(`cflag:${a}:12`) || 0;
   era.set(`cflag:${a}:12`, Math.floor((def * 9) / 10));
 
-  // :783-785 火柱によるダメージ
+  // 火柱によるダメージ
   if (extra & 2) {
     dmg += (era.get('cflag:0:9') || 0) + 10;
   }
 
-  chara(a).dungeon.体力 -= dmg; // :787
+  chara(a).dungeon.体力 -= dmg;
 
-  // :789-791 最低1は残るタイプ
+  // 最低1は残るタイプ
   if (chara(a).dungeon.体力 < 1) {
     chara(a).dungeon.体力 = 1;
   }
 
   if (show) {
-    era.println(); // :794
+    era.println();
     era.print(
       `${name_of(a)}由于热砂的暑气，集中力下降了……（防御力下降一成！）` +
         `${dmg > 0 ? `（火柱造成了${dmg}点伤害！）` : ''}`,
-    ); // :795-797 拼行 + :798 PRINTW
+    ); // 拼行 + :798 PRINTW
     await era.waitAnyKey();
   }
 
-  return 0; // :801
+  return 0;
 }
 
 /**
@@ -1029,15 +1017,15 @@ async function dungeon_heat(a, extra, rand_n) {
 async function dungeon_mase(a, extra, rand_n, ctx) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :812-823 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :813
+    era.println();
     era.print(
       `是迷宫型地下城扩张${expansion_text(extra, ['回转地板', '黑暗地带'])}`,
     );
   }
 
-  // :825-830 BACK = 侵攻減少度
+  // BACK = 侵攻減少度
   let back = 0;
   if (extra & 1) {
     back += 5;
@@ -1046,27 +1034,27 @@ async function dungeon_mase(a, extra, rand_n, ctx) {
     back += 5;
   }
 
-  // :832-833 SIF RAND:3 < 1 → RETURN 0（1/3 不迷路）
+  // SIF RAND:3 < 1 → RETURN 0（1/3 不迷路）
   if (rand_n(3) < 1) {
     return 0;
   }
 
-  // :835 D:20 -= BACK（ctx 回写，文件头）
+  // D:20 -= BACK（ctx 回写，文件头）
   if (ctx) {
     ctx.d20 -= back;
   }
 
   if (show) {
-    era.print(`${name_of(a)}在迷宫里迷路了………`); // :838 printformw
+    era.print(`${name_of(a)}在迷宫里迷路了………`); // printformw
     await era.waitAnyKey();
     if (back > 0) {
-      era.print('突然发现走了回头路！'); // :840 printform
+      era.print('突然发现走了回头路！'); // printform
     }
-    await era.waitAnyKey(); // :841 PRINTW
+    await era.waitAnyKey(); // PRINTW
   }
 
-  era.set(`cflag:${a}:509`, 1); // :844
-  return 0; // :846
+  era.set(`cflag:${a}:509`, 1);
+  return 0;
 }
 
 /**
@@ -1083,28 +1071,28 @@ async function dungeon_mase(a, extra, rand_n, ctx) {
 async function dungeon_museum(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :859-870 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :860
+    era.println();
     era.print(
       `是博物馆型地下城扩张${expansion_text(extra, ['巡逻魔像', '陈列架'])}`,
     );
   }
 
-  // :872-874 石像と剥製ないとダメ
+  // 石像と剥製ないとダメ
   const exhibits = era.get('flag:84') || 0;
   if (exhibits <= 0) {
     return 0;
   }
 
-  // :876-880 MDMG = 気力ダメージ；DMG = ダメージ
+  // MDMG = 気力ダメージ；DMG = ダメージ
   let mdmg = exhibits * 5;
   let dmg = 0;
   if (extra & 1) {
     dmg += exhibits * 2;
   }
 
-  // :882-883 上限 MAXBASE:A:1 / 4
+  // 上限 MAXBASE:A:1 / 4
   const max_wp = era.get(`maxbase:${a}:1`) || 0;
   if (mdmg > Math.floor(max_wp / 4)) {
     mdmg = Math.floor(max_wp / 4);
@@ -1113,39 +1101,39 @@ async function dungeon_museum(a, extra, rand_n) {
   if (show) {
     era.print(
       `${name_of(a)}看到了勇者们变成的装饰品，发自内心地颤抖着………（气力-${mdmg}）`,
-    ); // :886 PRINTFORML（无读键；原文「変成」#60 归一为「变」）
+    ); // PRINTFORML（无读键；原文「変成」#60 归一为「变」）
     if (dmg > 0) {
-      era.print(`用牺牲者制作成的魔像发起了攻击！（${dmg}伤害！）`); // :888
+      era.print(`用牺牲者制作成的魔像发起了攻击！（${dmg}伤害！）`);
     }
-    await era.waitAnyKey(); // :889 PRINTW
+    await era.waitAnyKey(); // PRINTW
   }
 
-  // :892-902 陳列棚（先制封印——CFLAG:503 位 5，#176 位域约定）
+  // 陳列棚（先制封印——CFLAG:503 位 5，#176 位域约定）
   if (rand_n(4) === 0 && extra & 2) {
     if (show) {
-      era.print('远程攻击被柜子妨碍……（无法先发制人）'); // :895
+      era.print('远程攻击被柜子妨碍……（无法先发制人）');
       await era.waitAnyKey();
     }
     if ((era.get(`cflag:${a}:503`) || 0) & 32) {
       if (show) {
-        era.print('已经无法先发制人了。'); // :898 PRINTL（无读键）
+        era.print('已经无法先发制人了。'); // PRINTL（无读键）
       }
     } else {
-      era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32); // :900
+      era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32);
     }
   }
 
-  chara(a).dungeon.气力 -= mdmg; // :904
+  chara(a).dungeon.气力 -= mdmg;
   if (dmg > 0) {
-    chara(a).dungeon.体力 -= dmg; // :905-906
+    chara(a).dungeon.体力 -= dmg;
   }
 
-  // :908-910 最低1は残るタイプ
+  // 最低1は残るタイプ
   if (chara(a).dungeon.体力 < 1) {
     chara(a).dungeon.体力 = 1;
   }
 
-  return 0; // :912
+  return 0;
 }
 
 /**
@@ -1165,55 +1153,54 @@ async function dungeon_museum(a, extra, rand_n) {
 async function dungeon_hotel(a, extra) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
-  // :925-936 设施头部
+  // 设施头部
   if (show) {
-    era.println(); // :926
+    era.println();
     era.print(
       `来到了娼馆街的迷宫扩张${expansion_text(extra, ['菊花OK', '本垒OK'])}`,
     );
   }
 
-  // :938-963 判定（MENU = 1 正太控 / 2 萝莉控 / 3 男淫魔 / 4 女淫魔）
+  // 判定（MENU = 1 正太控 / 2 萝莉控 / 3 男淫魔 / 4 女淫魔）
   let menu = 0;
   const karma = era.get(`cflag:${a}:151`) || 0;
-  // :946-948 カルマが低い非処女の場合（TALENT:0 处女位为 0）
+  // カルマが低い非処女の場合（TALENT:0 处女位为 0）
   if (karma < -20 && (era.get(`talent:${a}:0`) || 0) === 0) {
     menu = 3;
   }
-  // :949-951 カルマが低いレズっ気の場合（ABL:22）
+  // カルマが低いレズっ気の場合（ABL:22）
   if (karma < 0 && (era.get(`abl:${a}:22`) || 0) > 0) {
     menu = 4;
   }
-  // :952-954 カルマが低いふたなりの場合（TALENT:121）
+  // カルマが低いふたなりの場合（TALENT:121）
   if (karma < 30 && era.get(`talent:${a}:121`)) {
     menu = 4;
   }
-  // :955-957 カルマが低いオトコの場合（TALENT:122）
+  // カルマが低いオトコの場合（TALENT:122）
   if (karma < 10 && era.get(`talent:${a}:122`)) {
     menu = 4;
   }
-  // :958-960 ショタコン（TALENT:143）
+  // ショタコン（TALENT:143）
   if (era.get(`talent:${a}:143`)) {
     menu = 1;
   }
-  // :961-963 ロリコン（TALENT:142）
+  // ロリコン（TALENT:142）
   if (era.get(`talent:${a}:142`)) {
     menu = 2;
   }
 
   if (menu === 0) {
-    // :965-970
     if (show) {
-      era.print(`${name_of(a)}面露厌恶的穿过了街道…`); // :967
+      era.print(`${name_of(a)}面露厌恶的穿过了街道…`);
       await era.waitAnyKey();
     }
     return 0;
   }
 
-  // :972 COST = 代金
+  // COST = 代金
   let cost = (era.get(`cflag:${a}:9`) || 0) * 8 + 150;
 
-  // :974-978 オプション（TIMES COST, 1.1 两次，#176 截断同款）
+  // オプション（TIMES COST, 1.1 两次，#176 截断同款）
   if (extra & 1) {
     cost = Math.floor(cost * 1.1);
   }
@@ -1221,17 +1208,17 @@ async function dungeon_hotel(a, extra) {
     cost = Math.floor(cost * 1.1);
   }
 
-  // :980-985 钱检
+  // 钱检
   if ((era.get(`cflag:${a}:580`) || 0) < cost) {
     if (show) {
-      era.print(`${name_of(a)}带的钱好像不够了…`); // :982
+      era.print(`${name_of(a)}带的钱好像不够了…`);
       await era.waitAnyKey();
     }
     return 0;
   }
 
   if (show) {
-    // :987-1006 两行演出（PRINTL 收行 + PRINTFORMW 收尾）
+    // 两行演出（PRINTL 收行 + PRINTFORMW 收尾）
     const partner =
       menu === 1
         ? '少年奴隶'
@@ -1245,19 +1232,19 @@ async function dungeon_hotel(a, extra) {
         ? '享受着地上无法体会到的背德的快感……'
         : '愉快地享乐着…';
     era.print(`${name_of(a)}在娼馆街和${partner}一起${enjoy}（善恶值下降了1）`);
-    era.print(`现金收入+${cost}`); // :1005
+    era.print(`现金收入+${cost}`);
     await era.waitAnyKey();
   }
 
-  era_flag.money += cost; // :1008
-  era_exflag.legit_money += cost; // :1009
-  chara(a).dungeon.所持金 -= cost; // :1010
+  era_flag.money += cost;
+  era_exflag.legit_money += cost;
+  chara(a).dungeon.所持金 -= cost;
 
-  // :1011 CALL KARMA, A, -1（域内延迟 require，文件头）
+  // CALL KARMA, A, -1（域内延迟 require，文件头）
   const dungeon_mod = require('#/dungeon/dungeon');
   dungeon_mod.karma(a, -1);
 
-  return 0; // :1013
+  return 0;
 }
 
 module.exports = {

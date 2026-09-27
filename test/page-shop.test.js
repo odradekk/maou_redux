@@ -165,7 +165,7 @@ test('100（A > 0）无目标：SELECT_TARGET 取消（返回 0）后回循环�
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
-  // :67-68 SIF RESULT == 0 → RETURN 0：取消路径不转场（主菜单重绘到耗尽；
+  // SIF RESULT == 0 → RETURN 0：取消路径不转场（主菜单重绘到耗尽；
   // 选择画面被重绘消费，取证在行史）
   const texts = history_texts(fixture);
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
@@ -187,7 +187,7 @@ test('100（A > 0）已有目标：begin(TRAIN) 信号上抛（#44 接通，主�
   const { run_shop } = fixture.load_module('page/page-shop');
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  // :99 BEGIN TRAIN —— 原作引擎行为：BEGIN 结束当前函数。ere 侧 begin() 抛
+  // BEGIN TRAIN —— 原作引擎行为：BEGIN 结束当前函数。ere 侧 begin() 抛
   // 信号、run_shop 不捕获自然上抛，由主循环接站（端到端见
   // test/train-loop.test.js）
   await assert.rejects(
@@ -208,7 +208,7 @@ test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转
   fixture.set_inputs(100);
   const { run_shop } = fixture.load_module('page/page-shop');
 
-  // :93-96 PRINTFORMW 育儿室中的%CALLNAME:MASTER%不能进行调教…… → RETURN 0
+  // PRINTFORMW 育儿室中的%CALLNAME:MASTER%不能进行调教…… → RETURN 0
   //（报文行是分发期输出，被下一轮重绘消费——取证在行史）
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   const texts = history_texts(fixture);
@@ -751,7 +751,7 @@ test('店内 999 退出商店：清标志后直接结束，不打调试菜单提
   // 并要求按键。原作 :44-46 确实没有 RETURN，但 :45 的 CALL CLEAR_SHOP 调
   // 的是个没有 RETURN 的函数——Emuera 在函数落到末尾时把 RESULT 置 0
   // （出处见 page-shop.js 购物段的段首注释），回到 @USERSHOP 时 RESULT 已是 0，
-  // :59-224 的链上没有 0 的去处，:226 的 `SIF RESULT == 7788` 也不成立，
+  // 的链上没有 0 的去处，:226 的 `SIF RESULT == 7788` 也不成立，
   // 出口是 :229 的 RETURN 0（回主菜单）
   const fixture = create_shop_fixture();
   fixture.set_inputs(107, 999); // 107 进道具商店，999 退出

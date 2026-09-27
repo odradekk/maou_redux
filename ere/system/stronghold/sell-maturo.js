@@ -1,9 +1,6 @@
 /**
  * @file 成熟奴隶出售后的异族市场与宠物市场末路（issue #337）。
  *
- * 源: target/ERB/售卻相關/SELL_MATURO_K1.ERB @SELL_MATURO_K1（:25-1381）
- *     target/ERB/售卻相關/SELL_MATURO_K2_牝犬.ERB 全文（追加于文件尾）
- *
  * 原作 S = SALE_CHARA 算出的售价；独立调用时用 ESTIMATE_CHARA 重算。
  * K1 的随机源可注入，保证分支测试确定。CSTR 的家族角色下标 5 保存末路，
  * TSTR 下标 30 是 VIDEO_MATURO 消费的录像标题暂存。

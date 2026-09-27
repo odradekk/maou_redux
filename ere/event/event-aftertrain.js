@@ -1,15 +1,6 @@
 /**
  * @file 调教后自主行为检查（EVENT_AFTERTRAIN.ERB 移植）。
  *
- * 源: target/ERB/EVENT/EVENT_AFTERTRAIN.ERB
- *     @CHARADEAD_CHECK（:6-92，#548/S7 起真身）
- *     @SELF_CHECK（:100-128）
- *     @AFTERTRAIN_SEX_CHECK（:140-250）
- *     @AFTERTRAIN_ANALSEX_CHECK（:255-349）
- *     @AFTERTRAIN_LESBIANSEX_CHECK（:354-546）
- *     @AFTERTRAIN_MASTURBATION_CHECK（:551-703）
- *     @AFTERTRAIN_BEASTSEX_CHECK（:708-842）
- *
  * 原作缺陷 1:1 照抄（#14 / #270）：兽奸报告分支源 :837 `JUEL:8 += A*200`
  * 而打印用 `B*200`。本模块用 leftover_a 只建模同模块内自慰→兽奸那一跳，
  * 跨模块残留不建模。
@@ -140,18 +131,18 @@ function get_chara(no) {
  */
 async function charadead_check() {
   const target = era_flag.target;
-  // :11-13 菲娅线推进（EX_FLAG:2807 落在 160-169 段且调教对象是菲娅 → 170）
+  // 菲娅线推进（EX_FLAG:2807 落在 160-169 段且调教对象是菲娅 → 170）
   const route = era_exflag.route_35;
   if (route >= 160 && route < 170 && target === get_chara(35)) {
     era_exflag.route_35 = 170;
   }
 
-  // :16-17 生きてるなら問題ナシ（BASE:0 = 目标的体力）
+  // 生きてるなら問題ナシ（BASE:0 = 目标的体力）
   if ((era.get(`base:${target}:0`) || 0) > 0) {
     return 0;
   }
 
-  // :19-24 瀕死時に調教を自動終了（FLAG:35 = 濒死自动结束开关，
+  // 瀕死時に調教を自動終了（FLAG:35 = 濒死自动结束开关，
   // event-comend.js 同一变量）：体力钳到 1 后按存活返回
   if (era.get('flag:35')) {
     if ((era.get(`base:${target}:0`) || 0) < 1) {
@@ -160,10 +151,10 @@ async function charadead_check() {
     return 0;
   }
 
-  // :26-61 mowangsiwang（TARGET == 0 = 魔王自己倒下）
+  // mowangsiwang（TARGET == 0 = 魔王自己倒下）
   if (target === 0) {
     if (!era_exflag.next_maou) {
-      // :28-31 无继任（EX_FLAG:3 = 0）：GAMEOVER + INPUT + QUIT。QUIT 是
+      // 无继任（EX_FLAG:3 = 0）：GAMEOVER + INPUT + QUIT。QUIT 是
       // throw 型（#148）：之后的死亡口上/死亡旗整段不可达
       era.print(
         '-------------------------------GAMEOVER---------------------------------',
@@ -171,7 +162,7 @@ async function charadead_check() {
       await era.input();
       era.quit();
     } else {
-      // :33 继任候补的确定（净效果 = 最后一个持 EX_TALENT:3 的角色，
+      // 继任候补的确定（净效果 = 最后一个持 EX_TALENT:3 的角色，
       // event-nextday.js 的 JSDoc 有证明）
       maou_kouho();
       era.print(
@@ -195,7 +186,7 @@ async function charadead_check() {
       await era.waitAnyKey();
       const successor = era_exflag.next_maou;
       const successor_name = chara_name(successor);
-      // :39-58 四分支叙事（SAVESTR → callname 承载，#5 决议）
+      // 四分支叙事（SAVESTR → callname 承载，#5 决议）
       if (
         successor !== get_chara(17) &&
         (successor === era_flag.player || successor === era_flag.assi)
@@ -256,36 +247,36 @@ async function charadead_check() {
     }
   }
 
-  // :63-67 死亡時口上（TFLAG:13 = 999 的事件码；@EVENTEND 尚在调教期，
+  // 死亡時口上（TFLAG:13 = 999 的事件码；@EVENTEND 尚在调教期，
   // tflag 表开着——self_check 的同款调法）
   game.train.初吻与自我口上 = 999;
   await self_kojo();
   era.drawLine();
   era.println(); // PRINTL（空行）
-  // :68-75 TEMP 恒 0 → 恒走第一支（ELSEIF 不可达，见 JSDoc）
+  // TEMP 恒 0 → 恒走第一支（ELSEIF 不可达，见 JSDoc）
   era.print(`${chara_name(target)}死掉了……`);
   era.println(); // 真空行：69、71-72 行的 PRINTFORML 已收尾（74 行的 PRINTL 落在空行上）
   era.drawLine();
-  // :76 BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
+  // BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
   // 见文件头「移植说明」的这处偏离）
   chara(target).dungeon.体力 = -1;
 
-  // :78-80 死亡フラグを残す：FLAG:(NO+999) = -2（与 @EVENTEND 死亡删除
+  // 死亡フラグを残す：FLAG:(NO+999) = -2（与 @EVENTEND 死亡删除
   // 分支的 FLAG:(NO+199) = 1 是两段不同的旗）
   // FLAGNAME:(TARGET+999) = 死亡旗（-2 = 已死）
   era.set(`flag:${target + 999}`, -2);
 
-  // :82-83 キャラの殺害回数に加算
+  // キャラの殺害回数に加算
   game.event.杀死人数 += 1;
 
-  // :86-90 殺した人数が3人以上で、【威圧感】が付く（TALENT:93）
+  // 殺した人数が3人以上で、【威圧感】が付く（TALENT:93）
   if (game.event.杀死人数 >= 3 && !era.get('talent:0:93')) {
     era.print(`${chara_name(0)}掌握了【${era.get('talentname:93') ?? ''}】。`);
     await era.waitAnyKey(); // PRINTFORMW 的读键
     era.set('talent:0:93', 1);
   }
 
-  return 1; // :92 RETURN 1, TEMP（TEMP 无读者，见 JSDoc）
+  return 1; // RETURN 1, TEMP（TEMP 无读者，见 JSDoc）
 }
 
 /**
@@ -359,7 +350,7 @@ async function aftertrain_sex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的
+  // 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的
   // PRINTFORML 已结束那一行，空源码行不产生输出，这里不补空行（#597；
   // ere 的 print 自成一行）
 
@@ -452,7 +443,7 @@ async function aftertrain_analsex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML
+  // （332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML
   // 已结束那一行，空源码行不产生输出，这里不补空行（#597，与
   // @AFTERTRAIN_SEX_CHECK 的 :229-231 同源）
 

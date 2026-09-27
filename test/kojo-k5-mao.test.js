@@ -440,7 +440,7 @@ test('迷宫胜利淫乱档：决め台词 + 随机第一句', async () => {
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 // 源：六九式 :5191/:5204/:5236（PLAYER 侧判 121/122/PBAND）、死斗场
-// :7278/:7311/:7335（ASSI 侧判 121/122/PBAND）。
+// （ASSI 侧判 121/122/PBAND）。
 test('六九式初回·淫乱（TALENT:76）：调教者无 121/122 且 item:4 → 「大鸡巴」而非「花蕾」', async () => {
   const fixture = await setup_k5((f) => {
     f.store.set('talent:17:76', 1); // 淫乱 → :5189 分支
@@ -546,7 +546,7 @@ test('#625 交谈·自我介绍：名字段与后续同一行（:4795 / :4841 �
   for (const [talked, abl31] of cases) {
     const fixture = await setup_k5((f) => {
       f.store.set(`tequip:17:53`, 1); // 摄影中
-      f.store.set('abl:17:17', 5); // :4794 的 (TALENT:89 || ABL:17 >= 5)
+      f.store.set('abl:17:17', 5); // 的 (TALENT:89 || ABL:17 >= 5)
       f.store.set('abl:17:31', abl31);
       if (talked) {
         f.load_module('facade/chara').chara(17).kojo.交谈 = 1;
@@ -601,7 +601,7 @@ test('#625 交谈·发出了…的声音：工具档与前后文同一行（:481
 });
 
 test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支）', async () => {
-  // :4812/:4858 的 `PRINTFORM %SAVESTR:PLAYER%` 是各自那条链上各互斥分支共同的
+  // 的 `PRINTFORM %SAVESTR:PLAYER%` 是各自那条链上各互斥分支共同的
   // 前缀行：前缀提到语句外当局部量，各支都拼同一份前缀——玩家在**每一支**上
   // 都只看一行（#625）
   const cases = [
@@ -688,7 +688,7 @@ test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支�
 });
 
 test('#625 百合 PLAY·前缀行并入两条互斥终点（:6150+:6152 / :6154）', async () => {
-  // :6150 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与 :6152/:6154
+  // 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与 :6152/:6154
   // 两条互斥 PRINTFORMW 终点同属一行（#625）；该链在 SELF_KOJO（:6129 起的
   // 「初吻与自我口上」段），不在 COM 的助手守卫之后
   const cases = [
@@ -700,7 +700,7 @@ test('#625 百合 PLAY·前缀行并入两条互斥终点（:6150+:6152 / :6154�
       join_slave_chara(f, 5, '奴隶5');
       f.store.set('talent:17:85', 1); // 爱慕档 → :6137 分支
       f.store.set('cflag:17:262', 3); // 百合 PLAY < 4
-      f.load_module('facade/game').game.train.初吻与自我口上 = 2; // :6129 入口
+      f.load_module('facade/game').game.train.初吻与自我口上 = 2; // 入口
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.assi = 5;
       era_flag.time = time;

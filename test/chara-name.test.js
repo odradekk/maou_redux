@@ -1,8 +1,6 @@
 /**
  * @file ere/chara/chara-name.js 的行为测试（issue #384，N2 段 1 枢纽）。
  *
- * 源: target/ERB/キャラ関数/CHARA_NAME.ERB 全函数（:14-604）。
- *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源一律经
  * 公开形参注入确定序列（seq / seq_capture，chara-self-call.test.js 先例）：
  * 漏给就落到真随机，用例只在一部分抽样里真的守住那个行为。
@@ -69,7 +67,7 @@ test('chara_name_define：特殊角色（NO 0 与 17-40）取 CSV 预设名并�
     const { chara_name_define } = load(fixture);
 
     assert.equal(chara_name_define(cid, 1234), 0, ':161 RETURN 0');
-    // :159 的写入值走 var_writes：紧随其后的 RELATION_RENAME_REBUILD 会用
+    // 的写入值走 var_writes：紧随其后的 RELATION_RENAME_REBUILD 会用
     // chara-family 的 nid() 覆写同一个键，只看 store 会漏掉这一处的常量
     const writes = fixture.var_writes.filter(
       (write) => write.name === `cflag:${cid}:6`,
@@ -431,7 +429,7 @@ test('cn_span_combine_name：段首被吃规则——非首段丢掉 ア/イ/ウ
       'ヴィアカル',
     ],
     // 401 档在原作里不存在（:430 的重复 400 是死档，见文件头）：段值落空时
-    // :346-497 的 IF 链没有 ELSE，LOCALS 保持上一轮的值。低位段先入，
+    // 的 IF 链没有 ELSE，LOCALS 保持上一轮的值。低位段先入，
     // 故首位落空 = 拼上空串，非首位落空 = 把上一段又拼一遍。
     ['落空档在首位：拼上空串', 2_000_000_000 + 401, ''],
     ['落空档在首位、其后正常段照拼', 2_000_000_000 + 207_401, 'カル'],
@@ -465,7 +463,7 @@ test('cn_span_combine_name：ッ 结尾时下一段的「ー」丢尾两字（:5
   // 低位段 500「ー」先入（首段，保留）→ 高位段 426「ッラ」：段首「ッ」不在
   // 吃字表内，整词照抄（:504-508 只在「本段首字是 ー」时开花，与此无交集）
   assert.equal(cn_span_combine_name(2_000_000_000 + 426_500), 'ーッラ');
-  // :504-508 的正面（acc 以「ッ」结尾 + 本段首字「ー」→ 切掉 acc 末两字）
+  // 的正面（acc 以「ッ」结尾 + 本段首字「ー」→ 切掉 acc 末两字）
   // 在当前生成器下不可达：能产出「ッ」结尾的档位只有 426「ッラ」，而它自带
   // 尾字「ラ」，下一段进来时 acc 的尾字恒是「ラ」。这段逻辑按 1:1 保留，
   // 不设用例（设了也只能自证实现、证不了原作）。
@@ -911,7 +909,7 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
   seed_hero(fixture, 9);
   fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
   fixture.store.set('flag:1', 2); // 上一位调教对象 == 新角色（掷出 2 号）
-  answer_sequence(fixture, [100, 2]); // :107 继续 → :158 收下
+  answer_sequence(fixture, [100, 2]); // 继续 → :158 收下
   const result = await load_rand(fixture)(seq_capture([1]), not_overseas);
 
   // #487：:63-64 的 A / ID_OF_NEWCHARA 是**角色号**（掷中的勇者位），不是
@@ -928,7 +926,7 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
     undefined,
     '不写到「人数 - 1」的 1 号',
   );
-  // :139 的置 1 会被 :182 的归 0 掩盖，只看终值分不出有没有写过——按写
+  // 的置 1 会被 :182 的归 0 掩盖，只看终值分不出有没有写过——按写
   // 记录断言（#494 补 #487 验收发现的覆盖缺口：该行的 1 改成 0 时
   // chara-name / chara-make / chara-and-hair / campaign-e2e / page-campaign
   // 五份用例曾全绿）
@@ -939,7 +937,7 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
     ':139 派遣奴隶标志置 1（等级 1 生成）',
   );
   assert.equal(fixture.store.get('flag:402'), 0, ':182 派遣标志归位');
-  // :126-135 的搬迁是**原作恒空操作**（@ADDCHARA_EX 首行 TARGET = ARG、新角色
+  // 的搬迁是**原作恒空操作**（@ADDCHARA_EX 首行 TARGET = ARG、新角色
   // 总在登记序末尾，等于/大于都不可能成立；#565 返工第 3 条 1:1 保留为不做）
   // ——FLAG:1 原样保留，:184-185 的复位把它赋回 TARGET 指针槽
   assert.equal(
@@ -948,11 +946,11 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
     ':127-135 原作恒空操作 → FLAG:1 不动',
   );
   assert.equal(fixture.store.get('flag:10005'), 2, ':184 TARGET = FLAG:1');
-  // :173-178 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
+  // 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
   // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
   const recruit_name = fixture.store.get('callname:2:-1');
   assert.ok(recruit_name, '新加入的 2 号有称呼');
-  // :174-175 的 SIF LOCAL:0：非异国档不加「异国的」前缀。放在逐字相等那条
+  // 的 SIF LOCAL:0：非异国档不加「异国的」前缀。放在逐字相等那条
   // **之前**——前缀判据被写反时先红在这一条上，报出的是「加错档」而不是
   // 「点名点错人」
   assert.ok(
@@ -979,7 +977,7 @@ test('rand_chara_make：:52 的 RAND(1,17) 上界恒 16（勇者位 1-16）', as
   await load_rand(fixture)(cap, not_overseas);
   assert.equal(cap.bounds[0], 16, '第一掷上界 16 → 位号 1-16');
   assert.deepEqual(fixture.era.getAddedCharacters(), [5], '4 + 1 = 5');
-  // :62 的 ADDCHARA_EX 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
+  // 的 ADDCHARA_EX 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
   // 是 0，而 0 号走 CHARA_EX_0（EXCOM.ERB:28 的守卫放行）、会给魔王点亮
   // EX 素质——这里顺手钉住「不落到那个值」（#487）
   assert.equal(
@@ -1032,7 +1030,7 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
   seed_hero(fixture, 5);
   seed_hero(fixture, 9);
   fixture.era.addCharacter(9); // 编制不连号：只有 9 号先在场
-  // :126-135 的搬迁段也在非异国分支里：新角色是 5 号，故 FLAG:1 = 3 不动、
+  // 的搬迁段也在非异国分支里：新角色是 5 号，故 FLAG:1 = 3 不动、
   // FLAG:2 = 7 也不该前移（搬迁跑起来会把它减成 6）
   fixture.store.set('flag:1', 3); // 上一次的调教对象
   fixture.store.set('flag:2', 7); // 上一次的助手
@@ -1064,14 +1062,14 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
   // 断言顺序即「哪条变异先被逮住」：先钉 :141 的 CHAR_MAKE，再钉 :66-72 的
   // 预设落地（CHAR_MAKE 内部也会写 talent:160，两者会互相盖住）
   //
-  // :141 CALL CHAR_MAKE：异国路径不调。cflag:9 是 CHAR_MAKE 的第一处写入
+  // CALL CHAR_MAKE：异国路径不调。cflag:9 是 CHAR_MAKE 的第一处写入
   // （chara-make.js:140 `CFLAG:A:9 = 1`），名单带来的等级因此原样保留
   assert.equal(
     fixture.store.get('cflag:5:9'),
     30,
     ':141 CHAR_MAKE 未执行（名单带来的等级未被重置为 1）',
   );
-  // :66-72 性格与发色的预设落地：只在非异国分支里，异国路径一条都不该写
+  // 性格与发色的预设落地：只在非异国分支里，异国路径一条都不该写
   assert.equal(fixture.store.get('talent:5:161'), 1, '名单带来的性格未被覆盖');
   assert.equal(
     fixture.store.get('talent:5:160'),
@@ -1079,7 +1077,7 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
     ':67 SET_CHARASTERISTIC 未执行（异国路径不跑预设落地）',
   );
   assert.equal(fixture.store.get('talent:5:300'), 4, '名单带来的发色未被覆盖');
-  // :75-125 形象确认循环：异国路径直落 :150，唯一的 INPUT 在 :158
+  // 形象确认循环：异国路径直落 :150，唯一的 INPUT 在 :158
   assert.equal(asked, 1, ':107 的形象确认未执行（只问了 :158 的收下确认）');
   assert.ok(
     !fixture.lines_history.some(
@@ -1087,7 +1085,7 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
     ),
     ':81 形象确认段的输出未打印',
   );
-  // :139 派遣奴隶标志：异国路径不写。只看终值区分不出（:182 会归 0），
+  // 派遣奴隶标志：异国路径不写。只看终值区分不出（:182 会归 0），
   // 按写记录断言「从未写过 1」
   assert.ok(
     !fixture.var_writes.some(
@@ -1096,8 +1094,8 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
     ':139 FLAG:402 = 1 未执行（异国路径不写派遣奴隶标志）',
   );
   assert.equal(fixture.store.get('flag:402'), 0, ':182 归位');
-  // :126-135 的 FLAG:1/2 搬迁同样在非异国分支里，异国路径不动它们；
-  // :184-185 的指针复位读的就是这对未被搬迁的值
+  // 的 FLAG:1/2 搬迁同样在非异国分支里，异国路径不动它们；
+  // 的指针复位读的就是这对未被搬迁的值
   assert.equal(
     fixture.store.get('flag:1'),
     3,
@@ -1118,7 +1116,7 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
     7,
     ':185 ASSI = FLAG:2（未搬迁的值）',
   );
-  // :173-178 的收下播报带「异国的」前缀（LOCAL:0 = 1 只在异国分支写）
+  // 的收下播报带「异国的」前缀（LOCAL:0 = 1 只在异国分支写）
   assert.ok(
     fixture.lines_history.some(
       (line) => line.type === 'text' && line.text.startsWith('异国的冒险者'),
@@ -1144,14 +1142,14 @@ test('rand_chara_make：异国分支换人重挑不把上一位的发色落到�
     call += 1;
     return cid;
   };
-  // :158 换一个（DELCHARA + GOTO $INPUT_LOOP_11）→ 重挑后 :158 收下。
+  // 换一个（DELCHARA + GOTO $INPUT_LOOP_11）→ 重挑后 :158 收下。
   // 异国路径不跑形象确认循环，两个答案都落在 :158 上
   answer_sequence(fixture, [1, 2]);
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
 
   assert.equal(result, 6, '重挑后收下的仍是「角色号」6');
   assert.equal(call, 2, '两次导入各调一次 CHAR_MAKE_INPORT');
-  // :70-71 的发色落地读的是跨 $INPUT_LOOP_11 迭代携带的 HAIRCOLOR 局部量；
+  // 的发色落地读的是跨 $INPUT_LOOP_11 迭代携带的 HAIRCOLOR 局部量；
   // 异国路径不跑那段，HAIRCOLOR 恒 0，第二位导入的角色保住自己的发色
   assert.equal(
     fixture.store.get('talent:6:300'),
@@ -1217,7 +1215,7 @@ test('rand_chara_make：TARGET/ASSI 复位——:127-135 原作恒空操作，FL
     3,
     ':128 原作恒空操作 → FLAG:1 不清空',
   );
-  // :136-137 与 :184-185 都写同一对值（原作如此，重复是 1:1 保留的），故只断
+  // 与 :184-185 都写同一对值（原作如此，重复是 1:1 保留的），故只断
   // 终值。两条都是「FLAG:1/2 → TARGET/ASSI 指针槽」这条链的出口
   assert.equal(fixture.store.get('flag:10005'), 3, ':184 TARGET = FLAG:1');
   assert.equal(fixture.store.get('flag:10006'), 5, ':185 ASSI = FLAG:2');

@@ -88,7 +88,7 @@ test('PARTY_UNITE：队长记忆对不上号时整套复位', async () => {
   const { party_unite } = load(fixture);
 
   party_unite();
-  // :44-48 変な指定——双方的队伍数据全套复位
+  // 変な指定——双方的队伍数据全套复位
   assert.equal(fixture.store.get('cflag:1:531'), 0, '发起方的仲間A 清');
   assert.equal(fixture.store.get('cflag:2:530'), 0);
   assert.equal(fixture.store.get('cflag:2:531'), 0);

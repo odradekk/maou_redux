@@ -861,7 +861,7 @@ test('自動處刑：多个目标一次过天全部处刑（稳定 ID 重扫）'
 });
 
 test('方法 6 固定示众：三支示众文案按素质选择', async () => {
-  // :323-329 的 IF/ELSEIF/ELSE 三支：TALENT:9（崩坏）→ TALENT:76（淫乱）→
+  // 的 IF/ELSEIF/ELSE 三支：TALENT:9（崩坏）→ TALENT:76（淫乱）→
   // 缺省。三分支分别造世界，缺省支什么都不置（只置处刑标签）
   const cases = [
     { set: { 'talent:31:9': 1 }, fragment: '被玩坏了的奴隶' },

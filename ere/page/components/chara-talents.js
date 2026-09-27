@@ -1,9 +1,6 @@
 /**
  * @file 角色信息的素质一览（@SHOW_TALENT / @SHOW_TALENT_GROUP）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
- *       @SHOW_TALENT（:428-834）/ @SHOW_TALENT_GROUP（:835-921）
- *
  * 两个显示臂由 FLAG:5 位 8「素质分类显示」（SYSTEM/CONFIG.ERB:165）切换：
  *   - 开：七个带标签的分组（性別/性格/体质/技术/性癖/后天/战斗），组内逐项
  *     过素质表，每 8 项换行、续行补 4 个全角空格对齐到标签之后；
@@ -107,8 +104,8 @@ function span(from, to, extra = {}) {
 const SKIP_BODY_FEATURES = [
   101, 102, 103, 104, 105, 106, 107, 108, 113, 117, 118, 121, 122, 123, 126,
   127, 132, 133, 134, 136,
-]; // :537 的 CASE 101 TO 108, 113, 117, 118, 121, 122, 123, 126, 127, 132, 133, 134, 136
-const SKIP_BATTLE_EXCLUSIVE = [244, 245, 246, 247, 248, 253, 254, 255, 256]; // :771 INRANGE(244,248) || INRANGE(253,256)
+]; // 的 CASE 101 TO 108, 113, 117, 118, 121, 122, 123, 126, 127, 132, 133, 134, 136
+const SKIP_BATTLE_EXCLUSIVE = [244, 245, 246, 247, 248, 253, 254, 255, 256]; // INRANGE(244,248) || INRANGE(253,256)
 
 /**
  * 分类显示的分组表。每条 entry：`{ id, ex?, value?, guard? }`——
@@ -126,7 +123,7 @@ const SKIP_BATTLE_EXCLUSIVE = [244, 245, 246, 247, 248, 253, 254, 255, 256]; // 
  */
 const SECTIONS = [
   {
-    // :471-518 性格：口上用性格 160-179 → EX 性格 500-599 → EX 素质 100-800
+    // 性格：口上用性格 160-179 → EX 性格 500-599 → EX 素质 100-800
     //   → 性への関心/乙女心 10-39 → 潔癖度 60-69 → 三个单点 → 150-156
     label: '　性格：',
     flush: 'items',
@@ -143,7 +140,7 @@ const SECTIONS = [
     ],
   },
   {
-    // :520-587 体质：体質 40-49 → 抗药性/漏尿癖 → 身体特徴 99-139（跳集见
+    // 体质：体質 40-49 → 抗药性/漏尿癖 → 身体特徴 99-139（跳集见
     //   SKIP_BODY_FEATURES）→ 妊娠系单点 → 244-248 → 四个单点
     label: '　体质：',
     flush: 'items',
@@ -156,7 +153,7 @@ const SECTIONS = [
         id: 133,
         guard: (t) =>
           t(133) !== 0 && (t(TALENT_FUTA) !== 0 || t(TALENT_MAN) !== 0),
-      }, // :544
+      },
       { id: 153 },
       { id: 341 },
       { id: 342 },
@@ -172,7 +169,7 @@ const SECTIONS = [
     ],
   },
   {
-    // :589-636 技术：技術 50-59（跳 56/57）→ 四个单点 → 魅了 90-98 →
+    // 技术：技術 50-59（跳 56/57）→ 四个单点 → 魅了 90-98 →
     //   三个单点 → 売春関係 180-189
     label: '　技术：',
     flush: 'always',
@@ -180,7 +177,7 @@ const SECTIONS = [
       ...span(50, 60, { skip: [56, 57] }),
       { id: 325 },
       { id: 327 },
-      { id: 328, guard: (t) => t(327) !== 0 }, // :606-607 原作笔误，1:1 保留
+      { id: 328, guard: (t) => t(327) !== 0 }, // 原作笔误，1:1 保留
       { id: 329 },
       ...span(90, 99),
       { id: 113 },
@@ -191,7 +188,7 @@ const SECTIONS = [
     ],
   },
   {
-    // :638-721 性癖：性癖 70-89 → 101-108（带封锁位）→ 140-143 → 牝犬 →
+    // 性癖：性癖 70-89 → 101-108（带封锁位）→ 140-143 → 牝犬 →
     //   强化 230-239 → 特殊 270-272 → 五个单点
     label: '　性癖：',
     flush: 'items',
@@ -210,7 +207,7 @@ const SECTIONS = [
     ],
   },
   {
-    // :724-758 后天：四个单点 → 体調不良系 190-199 → 境遇や肩書 290-299 →
+    // 后天：四个单点 → 体調不良系 190-199 → 境遇や肩書 290-299 →
     //   キャンペーン 360-368
     label: '　后天：',
     flush: 'items',
@@ -225,7 +222,7 @@ const SECTIONS = [
     ],
   },
   {
-    // :761-790 战斗：职业 200-212 → 240-269（跳 244-248 与 253-256）→
+    // 战斗：职业 200-212 → 240-269（跳 244-248 与 253-256）→
     //   精英魔物技能 470-489 → EX 技能 801-899
     label: '　战斗：',
     flush: 'always',
@@ -268,16 +265,16 @@ function talent_name(id) {
  */
 function talent_label(cid, id, mode) {
   if (mode === 2) {
-    return ex_talentname(id); // :896 %EX_TALENTNAME:(ARG)%
+    return ex_talentname(id); // %EX_TALENTNAME:(ARG)%
   }
-  let label = talent_name(id); // :873
-  // :874-882 男体：三个素质换用阴茎侧的名字
+  let label = talent_name(id);
+  // 男体：三个素质换用阴茎侧的名字
   if ((era.get(`talent:${cid}:${TALENT_MAN}`) || 0) !== 0) {
     if (id === 101) label = '阴茎钝感';
     else if (id === 102) label = '阴茎敏感';
     else if (id === 230) label = '绝伦';
   }
-  // :883-894 模式 1（感觉封锁名）
+  // 模式 1（感觉封锁名）
   if (mode === 1) {
     if (id === 101) {
       label =
@@ -299,7 +296,7 @@ function talent_label(cid, id, mode) {
  */
 function talent_color(id, mode) {
   if (mode === 2) {
-    // :897-909 第二个 SELECTCASE，覆盖第一个的结论
+    // 第二个 SELECTCASE，覆盖第一个的结论
     if (id >= 101 && id <= 800) return EX_COLOR_SELF;
     if (id >= 901 && id <= 999) return EX_COLOR_SKILL;
     return undefined;
@@ -332,15 +329,15 @@ function new_line(label, count = 0) {
  * @param {number} mode 渲染模式（源 ARG:1）
  */
 function show_talent_group(line, cid, id, mode = 0) {
-  // :838-841 每 8 项先换行、续行补 4 个全角空格
+  // 每 8 项先换行、续行补 4 个全角空格
   if (line.count !== 0 && line.count % PER_ROW === 0) {
     era.print(line.fragments);
     line.fragments = [{ content: ROW_INDENT }];
   }
-  // :911-914 巫者恒以固定名显示（写在函数最后，优先于前两段的改名结论）
+  // 巫者恒以固定名显示（写在函数最后，优先于前两段的改名结论）
   const label = id === TALENT_WITCH ? '巫者' : talent_label(cid, id, mode);
   line.fragments.push({ content: `[${label}]`, color: talent_color(id, mode) });
-  line.count += 1; // :917
+  line.count += 1;
 }
 
 /**
@@ -350,13 +347,13 @@ function show_talent_group(line, cid, id, mode = 0) {
 function show_talent_grouped(cid) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
 
-  // :441-469 性別行：性别标 +（男/扶她时）阴茎状态标 + 三个素质标
+  // 性別行：性别标 +（男/扶她时）阴茎状态标 + 三个素质标
   const gender = [{ content: '　性别：' }];
   if (t(TALENT_MAN) !== 0) gender.push({ content: '[男]' });
   else if (t(TALENT_FUTA) !== 0) gender.push({ content: '[扶她]' });
   else gender.push({ content: '[女]' });
   if (t(TALENT_MAN) !== 0 || t(TALENT_FUTA) !== 0) {
-    const state = t(TALENT_PENIS); // :451-460 TALENT:318 五档
+    const state = t(TALENT_PENIS); // TALENT:318 五档
     if (state >= 0 && state < PENIS_LABELS.length) {
       gender.push({ content: PENIS_LABELS[state], color: PENIS_COLOR });
     }
@@ -364,13 +361,13 @@ function show_talent_grouped(cid) {
   for (const id of [TALENT_MAIDEN, TALENT_VIRGIN, TALENT_SEALED]) {
     if (t(id) !== 0) gender.push({ content: `[${talent_name(id)}]` });
   }
-  era.print(gender); // :466-469 PRINTL
+  era.print(gender); // PRINTL
 
   // 缓冲跨段落携带未收行的标签（flush: 'items' 且本段无输出时，见文件头）
   let line = new_line();
   for (const section of SECTIONS) {
     line.fragments.push({ content: section.label });
-    line.count = 0; // :473 等处的 U = 0
+    line.count = 0; // 等处的 U = 0
     for (const entry of section.entries) {
       const read = entry.ex
         ? (index) => era.get(`ex_talent:${cid}:${index}`) || 0
@@ -382,7 +379,7 @@ function show_talent_grouped(cid) {
       show_talent_group(line, cid, entry.id, mode);
     }
     if (section.flush === 'always' || line.count !== 0) {
-      era.print(line.fragments); // :518-521/:587-590/:633-636/:718-721/:758-761/:787-790 的收行
+      era.print(line.fragments); // 的收行
       line = new_line();
     }
   }
@@ -394,18 +391,18 @@ function show_talent_grouped(cid) {
  */
 function show_talent_plain(cid) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
-  const line = new_line(undefined, PLAIN_START_U); // :795 U = 6
+  const line = new_line(undefined, PLAIN_START_U); // U = 6
   for (let count = 0; count < PLAIN_LIMIT; count += 1) {
-    if (count >= PLAIN_SKIP_FROM && count < PLAIN_SKIP_TO) continue; // :799-800
+    if (count >= PLAIN_SKIP_FROM && count < PLAIN_SKIP_TO) continue;
     if (t(count) === 0) continue;
-    // :802-804 早泄只在扶她/男人时显示
+    // 早泄只在扶她/男人时显示
     if (count === 133 && t(TALENT_FUTA) === 0 && t(TALENT_MAN) === 0) continue;
     show_talent_group(line, cid, count, 0);
   }
   for (let id = PLAIN_EXTRA_FROM; id < PLAIN_EXTRA_TO; id += 1) {
-    if (t(id) !== 0) show_talent_group(line, cid, id, 0); // :823-827
+    if (t(id) !== 0) show_talent_group(line, cid, id, 0);
   }
-  // :828-829 SIF !LINEISEMPTY() → PRINTL
+  // SIF !LINEISEMPTY() → PRINTL
   if (line.fragments.length !== 0) era.print(line.fragments);
 }
 
@@ -419,7 +416,7 @@ function show_talent_plain(cid) {
  * @returns {string} 本臂用的分组标签形态（'grouped' / 'plain'，便于用例定位）
  */
 function show_talent(cid) {
-  const grouped = (((era.get('flag:5') || 0) >> BIT_TALENT_GROUP) & 1) !== 0; // :439
+  const grouped = (((era.get('flag:5') || 0) >> BIT_TALENT_GROUP) & 1) !== 0;
   if (grouped) {
     show_talent_grouped(cid);
     return 'grouped';

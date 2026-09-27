@@ -1,6 +1,5 @@
 /**
  * @file NTR 影像与出产演出。
- * 源: target/ERB/其他/NTR.ERB  @NTR_VIDEO、@NTR_PLAY、@NTR_CHILD_BIRTH
  */
 
 'use strict';

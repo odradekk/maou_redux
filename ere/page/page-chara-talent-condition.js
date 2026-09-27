@@ -1,13 +1,6 @@
 /**
  * @file 素质达成条件的明细画面（@SHOW_TALENT_CONDITION 与 19 个 STC_* 辅助）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW_TALENT.ERB 全 20 函数——
- *     @SHOW_TALENT_CONDITION（:2-409）＋ @STC_PRINTC（:414）/ @STC_LAB_TAL（:425）
- *     / @STC_SAY_ABL（:445）/ @STC_SAY_EXP（:471）/ @STC_SAY_MARK（:483）
- *     / @STC_SAY_TAL（:492）/ @STC_SAYNO_MARK（:507）/ @STC_SAYNO_TAL（:516）
- *     / @STC_SAYSUM_EXP（:526）/ @STC_SAY_ABCV（:549）/ @STC_SAYSUM_ABL（:562）
- *     / 七个 @STC_COLOR_*（:585-606）/ @STC_SEIIN_CHECK（:612-662）。
- *
  * **这个文件的唯一调用方是 CHARA_INFO_SHOW**（:252 与 :300 两处），所以它与
  * 那个文件同票——拆开会让一张票交付一个没人调的文件（#390 的立项理由）。
  *
@@ -45,13 +38,13 @@ const STC_PRINT_WIDTH = 15;
 
 /** 七个 @STC_COLOR_*（源 :585-606）的色串；DEFAULT 是 RESETCOLOR = 不染 */
 const COLOR = {
-  true: 'White', // :586 SETCOLORBYNAME White
-  false: 'Gray', // :589 SETCOLORBYNAME Gray
-  alert: 'LightSalmon', // :594 SETCOLORBYNAME LightSalmon
-  right: 'DarkSeaGreen', // :597 SETCOLORBYNAME DarkSeaGreen
-  invalid: 'DarkRed', // :600 SETCOLORBYNAME DarkRed
-  achieve: '#66b3ff', // :603 SETCOLOR 102,179,255
-  default: undefined, // :606 RESETCOLOR
+  true: 'White', // SETCOLORBYNAME White
+  false: 'Gray', // SETCOLORBYNAME Gray
+  alert: 'LightSalmon', // SETCOLORBYNAME LightSalmon
+  right: 'DarkSeaGreen', // SETCOLORBYNAME DarkSeaGreen
+  invalid: 'DarkRed', // SETCOLORBYNAME DarkRed
+  achieve: '#66b3ff', // SETCOLOR 102,179,255
+  default: undefined, // RESETCOLOR
 };
 
 /** 素质编号（yml/Talent.yml） */
@@ -163,8 +156,8 @@ function exp_label(index) {
  * @param {number} [width] 列宽（缺省 15）
  */
 function stc_printc(row, text, color, width = STC_PRINT_WIDTH) {
-  const pad = width - (display_width(text) % width); // :415
-  // :416-417 SIF LOCAL == ARG → LOCAL = 0（长度整好整除时不补）
+  const pad = width - (display_width(text) % width);
+  // SIF LOCAL == ARG → LOCAL = 0（长度整好整除时不补）
   put(row, text + NBSP.repeat(pad === width ? 0 : pad), color);
 }
 
@@ -175,18 +168,18 @@ function stc_printc(row, text, color, width = STC_PRINT_WIDTH) {
  * @param {number} id 素质编号
  */
 function stc_lab_tal(row, cid, id) {
-  // :426-433 三档配色（崩坏 → 不可用；已获得 → 达成色；否则默认）
+  // 三档配色（崩坏 → 不可用；已获得 → 达成色；否则默认）
   let color = COLOR.default;
   if (talent_of(cid, TALENT_BREAK) !== 0) color = COLOR.invalid;
   else if (talent_of(cid, id) !== 0) color = COLOR.achieve;
   let label = era.get(`talentname:${id}`) ?? '';
-  // :435-436 男体的「淫核」改称绝伦
+  // 男体的「淫核」改称绝伦
   if (id === T_SUPER_CLIT && talent_of(cid, TALENT_MAN) !== 0) label = '绝伦';
-  // :438-439 名字 4 字节以下补「条件」二字
+  // 名字 4 字节以下补「条件」二字
   if (display_width(label) <= TALENT_LABEL_LIMIT) {
     label = `${pad_display(label, 4)}条件`;
   }
-  // :440 PRINTFORM %LOCALS,8,LEFT%：（源里的全角冒号后跟一个半角空格）
+  // PRINTFORM %LOCALS,8,LEFT%：（源里的全角冒号后跟一个半角空格）
   put(row, `${pad_display(label, 8)}： `, color);
 }
 
@@ -198,8 +191,8 @@ function stc_lab_tal(row, cid, id) {
  * @param {number} level 要求等级
  */
 function stc_say_abl(row, cid, id, level) {
-  const color = abl_of(cid, id) >= level ? COLOR.true : COLOR.false; // :446-450
-  // :451-455 男体的 0 号能力（阴蒂感觉）改称阴茎感觉
+  const color = abl_of(cid, id) >= level ? COLOR.true : COLOR.false;
+  // 男体的 0 号能力（阴蒂感觉）改称阴茎感觉
   const label =
     id === 0 && talent_of(cid, TALENT_MAN) !== 0
       ? '阴茎感觉'
@@ -215,7 +208,7 @@ function stc_say_abl(row, cid, id, level) {
  * @param {number} need 要求值
  */
 function stc_say_exp(row, cid, id, need) {
-  const color = exp_of(cid, id) >= need ? COLOR.true : COLOR.false; // :472-476
+  const color = exp_of(cid, id) >= need ? COLOR.true : COLOR.false;
   stc_printc(
     row,
     `[${pad_display(exp_label(id), 8)}${pad_left(String(need), 4)}]`,
@@ -290,14 +283,14 @@ function stc_saysum_exp(row, cid, need, first, second = 0, third = 0) {
   const ids = [first, second, third];
   let sum = 0;
   for (const id of ids) {
-    if (id > 0) sum += exp_of(cid, id); // :530-531
+    if (id > 0) sum += exp_of(cid, id);
   }
-  const color = sum >= need ? COLOR.true : COLOR.false; // :534-538
-  let label = `[${exp_label(first)}`; // :539-540
+  const color = sum >= need ? COLOR.true : COLOR.false;
+  let label = `[${exp_label(first)}`;
   for (const id of [second, third]) {
-    if (id > 0) label += `|${exp_label(id)}`; // :541-544
+    if (id > 0) label += `|${exp_label(id)}`;
   }
-  // :545 PRINTFORM %LOCALS%{ARG,4}]（不补位，没有 STC_PRINTC）
+  // PRINTFORM %LOCALS%{ARG,4}]（不补位，没有 STC_PRINTC）
   put(row, `${label}${pad_left(String(need), 4)}]`, color);
 }
 
@@ -353,7 +346,7 @@ function stc_saysum_abl(
  * @returns {number}
  */
 function stc_seiin_check(cid) {
-  let local = SEIIN_BASE; // :616
+  let local = SEIIN_BASE;
   for (const [id, delta] of SEIIN_ADJUST) {
     if (talent_of(cid, id) === 1) local += delta;
   }
@@ -395,14 +388,14 @@ function show_talent_condition(cid) {
       '[好感度 200%]',
       affection >= 2000 ? COLOR.true : COLOR.false,
     );
-    stc_sayno_mark(row, cid, 3); // :29
+    stc_sayno_mark(row, cid, 3);
     if (t(TALENT_INRAN) !== 0) {
       put(row, `[${era.get(`talentname:${TALENT_INRAN}`) ?? ''}]`, COLOR.true);
     }
     if (t(TALENT_AIBA) !== 0) {
       put(row, `[${era.get(`talentname:${TALENT_AIBA}`) ?? ''}]`, COLOR.true);
     }
-    end_row(row); // :36 PRINTL
+    end_row(row); // PRINTL
   }
 
   // —— :39-60 爱慕条件（未获得 爱慕 与 求爱 时）——
@@ -413,12 +406,12 @@ function show_talent_condition(cid) {
       '[好感度 100%]',
       affection >= 1000 ? COLOR.true : COLOR.false,
     );
-    stc_say_abl(row, cid, 10, 3); // :52
-    stc_say_abl(row, cid, 16, 3); // :53
-    stc_say_mark(row, cid, 2, 3); // :54
-    stc_say_exp(row, cid, 21, EXPLV[5]); // :55
-    stc_sayno_mark(row, cid, 3); // :58
-    end_row(row); // :59
+    stc_say_abl(row, cid, 10, 3);
+    stc_say_abl(row, cid, 16, 3);
+    stc_say_mark(row, cid, 2, 3);
+    stc_say_exp(row, cid, 21, EXPLV[5]);
+    stc_sayno_mark(row, cid, 3);
+    end_row(row);
   }
 
   // —— :62-83 淫乱条件（未获得 爱慕 时）——
@@ -429,13 +422,13 @@ function show_talent_condition(cid) {
       '[好感度 100%]',
       affection >= 1000 ? COLOR.true : COLOR.false,
     );
-    stc_say_abl(row, cid, 11, 3); // :74
-    stc_say_abcv(row, cid, 10); // :76
-    stc_say_mark(row, cid, 1, 3); // :77
-    stc_say_mark(row, cid, 2, 3); // :78
-    stc_say_exp(row, cid, 50, 3); // :79
-    stc_sayno_mark(row, cid, 3); // :81
-    end_row(row); // :82
+    stc_say_abl(row, cid, 11, 3);
+    stc_say_abcv(row, cid, 10);
+    stc_say_mark(row, cid, 1, 3);
+    stc_say_mark(row, cid, 2, 3);
+    stc_say_exp(row, cid, 50, 3);
+    stc_sayno_mark(row, cid, 3);
+    end_row(row);
   }
 
   // —— :90-105 擅用舌头（学习缓慢 51 走严一档）——
@@ -449,7 +442,7 @@ function show_talent_condition(cid) {
     stc_say_abl(row, cid, 13, 5);
     stc_say_exp(row, cid, 22, 1000);
   }
-  end_row(row); // :105
+  end_row(row);
 
   // —— :108-143 四个特殊性癖 ——
   stc_lab_tal(row, cid, T_SADIST);
@@ -477,43 +470,43 @@ function show_talent_condition(cid) {
   end_row(row);
 
   // —— :145-258 四个特殊性感素质 ——
-  // :149-161 SEXSKILL_COUNT = 74/75/77/78 的已得数，三档需求随它上浮
+  // SEXSKILL_COUNT = 74/75/77/78 的已得数，三档需求随它上浮
   let sexskill_count = 0;
   for (const id of SEXSKILL_IDS) {
     if (t(id) !== 0) sexskill_count += 1;
   }
-  const sexskill_1 = 100 + 50 * sexskill_count; // :159
-  const sexskill_2 = 100 + 10 * sexskill_count; // :160
-  const sexskill_3 = 300 + 50 * sexskill_count; // :161
+  const sexskill_1 = 100 + 50 * sexskill_count;
+  const sexskill_2 = 100 + 10 * sexskill_count;
+  const sexskill_3 = 300 + 50 * sexskill_count;
 
   stc_lab_tal(row, cid, T_MASTURBATE);
   if (sexskill_count === 0) {
-    stc_say_abl(row, cid, 0, 4); // :166
-    stc_say_exp(row, cid, 11, 100); // :167
-    stc_say_exp(row, cid, 2, 100); // :168
+    stc_say_abl(row, cid, 0, 4);
+    stc_say_exp(row, cid, 11, 100);
+    stc_say_exp(row, cid, 2, 100);
     end_row(row);
   } else if (t(T_MASTURBATE) === 0) {
-    stc_say_abl(row, cid, 0, 5); // :170
-    stc_say_exp(row, cid, 11, sexskill_1); // :171
-    stc_say_exp(row, cid, 2, sexskill_2); // :172
+    stc_say_abl(row, cid, 0, 5);
+    stc_say_exp(row, cid, 11, sexskill_1);
+    stc_say_exp(row, cid, 2, sexskill_2);
     end_row(row);
   } else {
-    cover_white(row); // :173-177
+    cover_white(row);
   }
 
   stc_lab_tal(row, cid, T_BREAST_PLAY);
   if (sexskill_count === 0 && !man) {
-    stc_say_abl(row, cid, 1, 4); // :184
-    stc_say_exp(row, cid, 54, 100); // :185
-    stc_say_exp(row, cid, 2, 100); // :186
+    stc_say_abl(row, cid, 1, 4);
+    stc_say_exp(row, cid, 54, 100);
+    stc_say_exp(row, cid, 2, 100);
     end_row(row);
   } else if (t(T_BREAST_PLAY) === 0 && sexskill_count > 0 && !man) {
-    stc_say_abl(row, cid, 1, 5); // :188
-    stc_say_exp(row, cid, 54, sexskill_1); // :189
-    stc_say_exp(row, cid, 2, sexskill_2); // :190
+    stc_say_abl(row, cid, 1, 5);
+    stc_say_exp(row, cid, 54, sexskill_1);
+    stc_say_exp(row, cid, 2, sexskill_2);
     end_row(row);
   } else if (man && sexskill_count === 0) {
-    // :191-199 男体：乳房点数（JUEL:14）替代喷奶经验
+    // 男体：乳房点数（JUEL:14）替代喷奶经验
     stc_say_abl(row, cid, 1, 4);
     const juels = era.get(`juel:${cid}:14`) || 0;
     stc_printc(
@@ -524,7 +517,7 @@ function show_talent_condition(cid) {
     stc_say_exp(row, cid, 2, 100);
     end_row(row);
   } else if (t(T_BREAST_PLAY) === 0 && sexskill_count > 0 && man) {
-    // :200-208 男体且四枚已有得
+    // 男体且四枚已有得
     stc_say_abl(row, cid, 1, 5);
     const juels = era.get(`juel:${cid}:14`) || 0;
     stc_printc(
@@ -535,22 +528,22 @@ function show_talent_condition(cid) {
     stc_say_exp(row, cid, 2, sexskill_2);
     end_row(row);
   } else {
-    cover_white(row); // :209-213
+    cover_white(row);
   }
 
   stc_lab_tal(row, cid, T_SEX_ADDICT);
   if (sexskill_count === 0 && !man) {
-    stc_say_abl(row, cid, 2, 4); // :220
-    stc_say_exp(row, cid, 0, 300); // :221
-    stc_say_exp(row, cid, 2, 100); // :222
+    stc_say_abl(row, cid, 2, 4);
+    stc_say_exp(row, cid, 0, 300);
+    stc_say_exp(row, cid, 2, 100);
     end_row(row);
   } else if (t(T_SEX_ADDICT) === 0 && sexskill_count > 0 && !man) {
-    stc_say_abl(row, cid, 2, 5); // :224
-    stc_say_exp(row, cid, 0, sexskill_3); // :225
-    stc_say_exp(row, cid, 2, sexskill_2); // :226
+    stc_say_abl(row, cid, 2, 5);
+    stc_say_exp(row, cid, 0, sexskill_3);
+    stc_say_exp(row, cid, 2, sexskill_2);
     end_row(row);
   } else if (man && sexskill_count === 0) {
-    // :227-230 男体走阴茎侧（0 号能力、5 号经验）
+    // 男体走阴茎侧（0 号能力、5 号经验）
     stc_say_abl(row, cid, 0, 4);
     stc_say_exp(row, cid, 5, 300);
     stc_say_exp(row, cid, 2, 100);
@@ -561,22 +554,22 @@ function show_talent_condition(cid) {
     stc_say_exp(row, cid, 2, sexskill_1);
     end_row(row);
   } else {
-    cover_white(row); // :235-239
+    cover_white(row);
   }
 
   stc_lab_tal(row, cid, T_ANAL_ADDICT);
   if (sexskill_count === 0) {
-    stc_say_abl(row, cid, 3, 4); // :246
-    stc_say_exp(row, cid, 32, 300); // :247
-    stc_say_exp(row, cid, 2, 100); // :248
+    stc_say_abl(row, cid, 3, 4);
+    stc_say_exp(row, cid, 32, 300);
+    stc_say_exp(row, cid, 2, 100);
     end_row(row);
   } else if (t(T_ANAL_ADDICT) === 0) {
-    stc_say_abl(row, cid, 3, 5); // :250
-    stc_say_exp(row, cid, 32, sexskill_3); // :251
-    stc_say_exp(row, cid, 2, sexskill_2); // :252
+    stc_say_abl(row, cid, 3, 5);
+    stc_say_exp(row, cid, 32, sexskill_3);
+    stc_say_exp(row, cid, 2, sexskill_2);
     end_row(row);
   } else {
-    cover_white(row); // :253-257
+    cover_white(row);
   }
 
   // —— :262-309 四枚强化素质（FLAG:73 关闭时才有这一组）——
@@ -636,13 +629,13 @@ function show_talent_condition(cid) {
     `[饮精绝顶${pad_left(String(stc_seiin_check(cid)), 4)}]`,
     t(T_LIKE_SPERM) !== 0 ? COLOR.true : COLOR.false,
   );
-  end_row(row); // :347 PRINTFORML
+  end_row(row); // PRINTFORML
 
   // —— :350-382 妓女 / 倾城 ——
   if (t(T_PROSTITUTE) === 0) {
     stc_lab_tal(row, cid, T_PROSTITUTE);
     if (t(T_EXPERIENCE) === 5) {
-      // :356-360 元妓女
+      // 元妓女
       stc_say_abl(row, cid, 11, 1);
       stc_say_exp(row, cid, 74, 80);
       stc_sayno_mark(row, cid, 3);
@@ -654,26 +647,26 @@ function show_talent_condition(cid) {
     }
   } else {
     stc_lab_tal(row, cid, T_COURTESAN);
-    stc_say_tal(row, cid, T_PROSTITUTE); // :373/:378
+    stc_say_tal(row, cid, T_PROSTITUTE);
     stc_say_exp(row, cid, 74, t(T_EXPERIENCE) === 5 ? 160 : 200);
     stc_sayno_mark(row, cid, 3);
   }
-  end_row(row); // :383 PRINTL
+  end_row(row); // PRINTL
 
   // —— :384-407 盲从（两段素质条件各用【】包起来）——
   stc_lab_tal(row, cid, T_OBEDIENT);
   put(row, '', t(T_OBEDIENT) !== 0 ? COLOR.true : COLOR.false);
-  put(row, '【'); // :394
+  put(row, '【');
   stc_say_tal(row, cid, TALENT_AIBA);
   stc_say_exp(row, cid, 81, 5);
   stc_say_abl(row, cid, 10, 4);
-  put(row, '】【'); // :399
+  put(row, '】【');
   stc_say_tal(row, cid, TALENT_INRAN);
   stc_say_exp(row, cid, 81, 10);
   stc_say_abl(row, cid, 10, 5);
-  put(row, '】'); // :401-404
+  put(row, '】');
   stc_sayno_mark(row, cid, 3);
-  end_row(row); // :406 PRINTL
+  end_row(row); // PRINTL
 }
 
 module.exports = {

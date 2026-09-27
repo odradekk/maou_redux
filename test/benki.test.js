@@ -421,7 +421,7 @@ test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
 test('#595 run_benki：入口空行＋分割线（:50-51）与收尾空行（:1352 PRINTW）', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
-  // :50 的 PRINTL 落在已收行的空行上（调用方输出均以换行收尾）→ 真空行；
+  // 的 PRINTL 落在已收行的空行上（调用方输出均以换行收尾）→ 真空行；
   // 其后紧跟 :51 的 DRAWLINE
   assert.equal(
     fixture.lines[0].type,
@@ -431,7 +431,7 @@ test('#595 run_benki：入口空行＋分割线（:50-51）与收尾空行（:13
   assert.equal(fixture.lines[0].text, '', 'BENKI.ERB:50 的真空行');
   assert.equal(fixture.lines[1].type, 'divider', ':51 DRAWLINE 紧随');
 
-  // :1351 DRAWLINE 之后的 :1352 PRINTW（空内容）——真空行 + 等键
+  // DRAWLINE 之后的 :1352 PRINTW（空内容）——真空行 + 等键
   const last = fixture.lines.at(-1);
   assert.equal(last.type, 'text', 'BENKI.ERB:1352 的真空行在场（收尾）');
   assert.equal(last.text, '', 'BENKI.ERB:1352 的真空行');
@@ -699,7 +699,7 @@ test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922
       text: '浮现出被玩坏的痴笑。',
     },
     {
-      // :932/:937 的 CALL BENKI_PLAYER_NAME 也落在这一行里（FLAG:64 = 0）
+      // 的 CALL BENKI_PLAYER_NAME 也落在这一行里（FLAG:64 = 0）
       label: '侍奉快乐>100',
       seed: (f) => f.store.set('exp:31:21', 101),
       text: '对底层居住在地下城深渊中散发着恶臭的肮脏眷属勃起的阴茎报以勉励式的温柔微笑。',

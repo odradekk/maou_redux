@@ -180,7 +180,7 @@ test('#401 无属性档：无膣经验 + 有肛经验 + 看重贞操 → 一次�
   assert.equal(fixture.store.get('cflag:31:100'), 1, ':7 CFLAG:TARGET:100 = 1');
   assert(fixture.text_lines().includes(ACCEPT_TEXT), ':8 PRINTW 的播报');
 
-  // :3-4 SIF CFLAG:TARGET:100 → RETURN 0：已经认定过就不再认定
+  // SIF CFLAG:TARGET:100 → RETURN 0：已经认定过就不再认定
   const again = create_era_fixture();
   seed_world_comend_normal(again);
   again.store.set('cflag:31:100', 1);

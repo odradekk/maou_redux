@@ -2,21 +2,6 @@
  * @file 调教指令 20–29「性交系」族：阴道性交、逆强奸与肛交的 @COM、
  * @COM_ABLE、TRAIN_MESSAGE_A/B 及 @GET_ADV_COM 派生规则。
  *
- * 源: target/ERB/調教相關/COMF20_正常位.ERB         @COM20
- *     target/ERB/調教相關/COMF21_後背位.ERB           @COM21
- *     target/ERB/調教相關/COMF22_対面座位.ERB         @COM22
- *     target/ERB/調教相關/COMF23_背面座位.ERB         @COM23
- *     target/ERB/調教相關/COMF24_逆レイプ.ERB         @COM24
- *     target/ERB/調教相關/COMF25_逆アナルレイプ.ERB   @COM25
- *     target/ERB/調教相關/COMF26_正常位アナル.ERB     @COM26
- *     target/ERB/調教相關/COMF27_後背位アナル.ERB     @COM27
- *     target/ERB/調教相關/COMF28_対面座位アナル.ERB   @COM28
- *     target/ERB/調教相關/COMF29_背面座位アナル.ERB   @COM29
- *     target/ERB/調教相關/COMABLE.ERB                 @COM_ABLE20-29
- *     target/ERB/調教相關/COMF_JUMP.ERB               @GET_ADV_COM CASE 20-23/26-27
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB      @TRAIN_MESSAGE_A
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB      @TRAIN_MESSAGE_B
- *
  * J11（issue #221）。COM20–23 是阴道性交，24/25 是目标侵犯调教者，26–29
  * 是肛交。原作没有 EQUIP_COM20–29，故本文件不注册装备持续效果。
  */

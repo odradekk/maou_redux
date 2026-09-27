@@ -1,11 +1,6 @@
 /**
  * @file @ENDCHECK 主线剧情监测全链（issue #116：S4「可空转」落地）。
  *
- * 源: target/ERB/EVENT/ENDING ver 1.0.1.ERB  @ENDCHECK（:301-356）
- *     target/ERB/EVENT/ENDINGDATA.ERB  @ENDRESET（:1-35）
- *     target/ERB/EVENT/ENDINGDATA.ERB  @ENDCHECKMAIN（:38-63）
- *     target/ERB/EVENT/ENDINGDATA.ERB  @ENDCHECKCHARA（:64-140）
- *
  * 调用关系（全库唯一调用点，已查实）：@EVENT_NEWDAY :241（「主线剧情
  * 监测」，每日一次）——ere/event/event-nextday.js 的 run_event_newday
  * 尾部。
@@ -74,49 +69,49 @@ function get_chara(no) {
  * 死亡段（300/500+）后不归零重走。
  */
 function endreset() {
-  // :3-5 玛奥（角色号 17）
+  // 玛奥（角色号 17）
   if (get_chara(17) < 0) {
     era_exflag.route_17 = 0;
   }
-  // :6-8 金红桃（20）
+  // 金红桃（20）
   if (get_chara(20) < 0) {
     era_exflag.route_20 = 0;
   }
-  // :9-11 银黑桃（21）——段位 >= 300（放走/死亡段）不清
+  // 银黑桃（21）——段位 >= 300（放走/死亡段）不清
   if (get_chara(21) < 0 && era_exflag.route_21 < 300) {
     era_exflag.route_21 = 0;
   }
-  // :12-14 黑方片（22）
+  // 黑方片（22）
   if (get_chara(22) < 0) {
     era_exflag.route_22 = 0;
   }
-  // :15-17 白梅花（23）
+  // 白梅花（23）
   if (get_chara(23) < 0) {
     era_exflag.route_23 = 0;
   }
-  // :18-20 莉莉（24）
+  // 莉莉（24）
   if (get_chara(24) < 0) {
     era_exflag.route_24 = 0;
   }
-  // :21-23 琼（31）
+  // 琼（31）
   if (get_chara(31) < 0) {
     era_exflag.route_31 = 0;
   }
-  // :24-26 普林希斯（32）
+  // 普林希斯（32）
   if (get_chara(32) < 0) {
     era_exflag.route_32 = 0;
   }
-  // :27-29 嘉德（33）——原作守卫读 EX_FLAG:2814（银黑桃线值，疑为 2810
+  // 嘉德（33）——原作守卫读 EX_FLAG:2814（银黑桃线值，疑为 2810
   // 的笔误：写入的是 2810；银黑桃线值上界 311，2814 < 500 实际恒真，故
   // 行为上等价于无守卫，嘉德离队即每天清 2810）。1:1 照抄读 2814，勿修
   if (get_chara(33) < 0 && era_exflag.route_21 < 500) {
     era_exflag.route_33 = 0;
   }
-  // :30-32 葵希罗（34）——原作错写 FLAG 侧（见文件头），照写 era_flag
+  // 葵希罗（34）——原作错写 FLAG 侧（见文件头），照写 era_flag
   if (get_chara(34) < 0) {
     era_flag.route_34 = 0;
   }
-  // :33-35 菲娅（35）
+  // 菲娅（35）
   if (get_chara(35) < 0) {
     era_exflag.route_35 = 0;
   }
@@ -128,7 +123,7 @@ function endreset() {
  * :170-334，随反作弊票）；本函数只负责置位。
  */
 function endcheck_main() {
-  // :42-44 一周目 500 日 Normal End 门槛：DAY:0 == 500 且主线空闲
+  // 一周目 500 日 Normal End 门槛：DAY:0 == 500 且主线空闲
   // （2801 == 0 未起步，或 >= 90 真结局收尾中）→ 置 99。99 同时是分派
   // 循环的短路条件（ENDING ver 1.0.1.ERB :344）
   if (
@@ -138,14 +133,14 @@ function endcheck_main() {
     era_exflag.first_run_deadline = 99;
   }
 
-  // :46-47 资金异常：持有金超过「非作弊获得资金」追踪器 +8766 的容差
+  // 资金异常：持有金超过「非作弊获得资金」追踪器 +8766 的容差
   // → 置 10（分派循环会拼出 END2_1，无定义，静默——反作弊计数器与剧情
   // flag 区间的碰撞，docs/research/ending-paths.md 第一节）
   if (era_flag.money > era_exflag.legit_money + 8766) {
     era_exflag.money_cheat_ending = 10;
   }
 
-  // :51-55 奴隶魔力过载：任一角色（含 0 号魔王）CFLAG:9 >= 5000 且无
+  // 奴隶魔力过载：任一角色（含 0 号魔王）CFLAG:9 >= 5000 且无
   // 占用/调教中标记（CFLAG:x:1 == 0）→ 记角色号。原作 DO 循环从 0 号
   // 扫到 CHARANUM-1、后命中覆盖先命中；ere 侧迭代序＝引擎键序
   // （getAddedCharacters 数值升序，#150），覆盖写语义同，「最后」＝
@@ -161,13 +156,13 @@ function endcheck_main() {
     }
   }
 
-  // :58-59 魔王自己过载（登记号 0 = 角色 0）：CFLAG:0:9 >= 1500 → 置 10，
+  // 魔王自己过载（登记号 0 = 角色 0）：CFLAG:0:9 >= 1500 → 置 10，
   // 消费者是 @DEBUG_CHECK 的大冲击 GAMEOVER
   if ((era.get('cflag:0:9') || 0) >= 1500) {
     era_exflag.maou_runaway_ending = 10;
   }
 
-  // :61-63 反叛判定：威望（EX_FLAG:99）耗尽 → FLAG 侧 2816 置 10。
+  // 反叛判定：威望（EX_FLAG:99）耗尽 → FLAG 侧 2816 置 10。
   // 原作错写 FLAG 侧（见文件头）；全库无消费点（死代码），1:1 保留写入
   if (era_exflag.prestige <= 0) {
     era_flag.rebellion_ending = 10;
@@ -210,15 +205,15 @@ async function endcheck_chara() {
     }
   }
 
-  // :82-85 银黑桃（21）：在场且段位 < 300 才判定（300+ 是放走/死亡段）
+  // 银黑桃（21）：在场且段位 < 300 才判定（300+ 是放走/死亡段）
   if (get_chara(21) > 0 && era_exflag.route_21 < 300) {
     await endcheck_spade();
   }
-  // :86-89 黑方片（22）：在场即判定（无段位守卫）
+  // 黑方片（22）：在场即判定（无段位守卫）
   if (get_chara(22) > 0) {
     endcheck_square();
   }
-  // :122-129 嘉德（33）：< 500 段在场判定；>= 500 段离队后转天神宫线
+  // 嘉德（33）：< 500 段在场判定；>= 500 段离队后转天神宫线
   if (
     (get_chara(33) > 0 && era_exflag.route_33 < 500) ||
     era_exflag.route_33 >= 500
@@ -229,7 +224,7 @@ async function endcheck_chara() {
       endcheck_godness_sky_temple();
     }
   }
-  // :138-139 菲娅（35）：判定状态机含线起步（2807 = 10 初次会面）
+  // 菲娅（35）：判定状态机含线起步（2807 = 10 初次会面）
   if (get_chara(35) > 0) {
     endcheck_princess();
   }
@@ -249,7 +244,7 @@ function endcheck_square(rand = default_rand) {
   const cflag = (idx) => get(`cflag:${cid}:${idx}`);
   const talent = (idx) => get(`talent:${cid}:${idx}`);
 
-  // :147-155 通过实验室爱慕淫乱互换将导致剧情线重置
+  // 通过实验室爱慕淫乱互换将导致剧情线重置
   if (
     talent(85) === 1 &&
     era_exflag.route_22 >= 100 &&
@@ -266,21 +261,21 @@ function endcheck_square(rand = default_rand) {
     era.set(`cflag:${cid}:515`, 0);
   }
 
-  // :157-198 恋慕线（TALENT:85）阶梯。快照 stage：ELSEIF 链内只有一支命中
+  // 恋慕线（TALENT:85）阶梯。快照 stage：ELSEIF 链内只有一支命中
   const stage = era_exflag.route_22;
   const love = talent(85) === 1;
   if (love && cflag(2) >= 2000 && stage < 10) {
-    era_exflag.route_22 = 10; // :158 起步
+    era_exflag.route_22 = 10; // 起步
   } else if (stage >= 10 && stage < 20) {
     if (love && cflag(2) >= 5000) {
-      era_exflag.route_22 = 20; // :160-161
+      era_exflag.route_22 = 20;
     }
   } else if (stage >= 20 && stage < 30) {
     if (love && cflag(2) >= 10000) {
-      era_exflag.route_22 = 30; // :163-164
+      era_exflag.route_22 = 30;
     }
   } else if (stage >= 30 && stage < 40) {
-    // :166-168：SIF 只护住 :167 的跳档，:168 的计数器清零在分支内无条件
+    // ：SIF 只护住 :167 的跳档，:168 的计数器清零在分支内无条件
     // 执行（Emuera 忽略缩进，本文件头注有据）——照抄，勿「修」成 SIF 块
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_22 = 40;
@@ -288,9 +283,9 @@ function endcheck_square(rand = default_rand) {
     era.set(`cflag:${cid}:515`, 0);
   } else if (stage >= 40 && stage < 50) {
     if (love && cflag(515) >= 10) {
-      era_exflag.route_22 = 50; // :170-171
+      era_exflag.route_22 = 50;
     } else {
-      era.set(`cflag:${cid}:515`, cflag(515) + 1); // :173
+      era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 50 && stage < 60) {
     if (love && cflag(515) >= 30) {
@@ -317,8 +312,8 @@ function endcheck_square(rand = default_rand) {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage === 300) {
-    // :199-206 300 档：1/5 概率推进到 310（无门槛，计数器不动）。
-    // :200-204 是被原作 `;` 注释掉的一段，不移植
+    // 300 档：1/5 概率推进到 310（无门槛，计数器不动）。
+    // 是被原作 `;` 注释掉的一段，不移植
     if (rand(5) === 0) {
       era_exflag.route_22 = era_exflag.route_22 + 10;
     }
@@ -340,17 +335,17 @@ async function endcheck_spade(rand = default_rand) {
   const cflag = (idx) => get(`cflag:${cid}:${idx}`);
   const talent = (idx) => get(`talent:${cid}:${idx}`);
 
-  // :235-240 151 档以上：乳业收入 = (线值-140)/10 × (RAND:200 + 200)
+  // 151 档以上：乳业收入 = (线值-140)/10 × (RAND:200 + 200)
   if (era_exflag.route_21 >= 151) {
     const income =
       Math.trunc((era_exflag.route_21 - 140) / 10) * (rand(200) + 200);
-    era.print(`银黑桃乳业获得的收入desu，一共${income}哟~`); // :237 PRINTFORMW
+    era.print(`银黑桃乳业获得的收入desu，一共${income}哟~`); // PRINTFORMW
     await era.waitAnyKey();
-    era_flag.money = era_flag.money + income; // :238 MONEY +=
-    era_exflag.legit_money = era_exflag.legit_money + income; // :239
+    era_flag.money = era_flag.money + income; // MONEY +=
+    era_exflag.legit_money = era_exflag.legit_money + income;
   }
 
-  // :243-251 通过实验室爱慕淫乱互换将导致剧情线重置
+  // 通过实验室爱慕淫乱互换将导致剧情线重置
   if (
     talent(85) === 1 &&
     era_exflag.route_21 >= 110 &&
@@ -367,30 +362,30 @@ async function endcheck_spade(rand = default_rand) {
     era.set(`cflag:${cid}:515`, 0);
   }
 
-  // :253-301 恋慕线（TALENT:85）
+  // 恋慕线（TALENT:85）
   const stage = era_exflag.route_21;
   const love = talent(85) === 1;
   if (love && cflag(2) >= 2000 && stage < 10) {
-    era_exflag.route_21 = 10; // :254 起步
+    era_exflag.route_21 = 10; // 起步
   } else if (stage >= 10 && stage < 20) {
     if (love && cflag(2) >= 5000) {
-      era_exflag.route_21 = 20; // :256-257
+      era_exflag.route_21 = 20;
     }
   } else if (stage >= 20 && stage < 30) {
     if (love && cflag(2) >= 10000) {
-      era_exflag.route_21 = 30; // :259-260
+      era_exflag.route_21 = 30;
     }
   } else if (stage >= 30 && stage < 40) {
-    // :262-264：SIF 只护住跳档那一行，计数器清零在分支内无条件（同 SQUARE）
+    // ：SIF 只护住跳档那一行，计数器清零在分支内无条件（同 SQUARE）
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_21 = 40;
     }
     era.set(`cflag:${cid}:515`, 0);
   } else if (stage >= 40 && stage < 50) {
     if (love && cflag(515) >= 10) {
-      era_exflag.route_21 = 50; // :266-267
+      era_exflag.route_21 = 50;
     } else {
-      era.set(`cflag:${cid}:515`, cflag(515) + 1); // :269
+      era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 50 && stage < 60) {
     if (love && cflag(515) >= 30) {
@@ -418,24 +413,24 @@ async function endcheck_spade(rand = default_rand) {
     }
   } else if (stage === 300) {
     if (love && cflag(515) >= 10) {
-      era_exflag.route_21 = 310; // :296-297
+      era_exflag.route_21 = 310;
     } else {
-      era.set(`cflag:${cid}:515`, cflag(515) + 1); // :299
+      era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   }
 
-  // :303-351 淫乱线（TALENT:76）。**重新快照**：上面那支可能刚改过线值
+  // 淫乱线（TALENT:76）。**重新快照**：上面那支可能刚改过线值
   const lust_stage = era_exflag.route_21;
   const lust = talent(76) === 1;
   if (lust && cflag(2) >= 2000 && lust_stage < 10) {
-    era_exflag.route_21 = 110; // :304-305 起步 11
+    era_exflag.route_21 = 110; // 起步 11
     era.set(`cflag:${cid}:515`, 0);
   } else if (lust_stage >= 110 && lust_stage < 120) {
     if (lust && cflag(2) >= 5000) {
-      era_exflag.route_21 = 120; // :307-308
+      era_exflag.route_21 = 120;
     }
   } else if (lust_stage >= 120 && lust_stage < 130) {
-    // :310-314 这一档没有素质守卫（原作即如此）
+    // 这一档没有素质守卫（原作即如此）
     if (cflag(515) >= 2) {
       era_exflag.route_21 = 130;
     } else {
@@ -443,7 +438,7 @@ async function endcheck_spade(rand = default_rand) {
     }
   } else if (lust_stage >= 130 && lust_stage < 140) {
     if (lust && cflag(2) >= 10000) {
-      era_exflag.route_21 = 140; // :316-317
+      era_exflag.route_21 = 140;
     }
   } else if (lust_stage >= 140 && lust_stage < 150) {
     if (
@@ -453,12 +448,12 @@ async function endcheck_spade(rand = default_rand) {
       get(`talent:${cid}:78`) === 1 &&
       get(`talent:${cid}:0`) === 0
     ) {
-      era_exflag.route_21 = 150; // :319-320
-      era.set(`cflag:${cid}:515`, 0); // :321
+      era_exflag.route_21 = 150;
+      era.set(`cflag:${cid}:515`, 0);
     }
   } else if (lust_stage >= 150 && lust_stage < 160) {
     if (lust && cflag(515) >= 10) {
-      era_exflag.route_21 = 160; // :323-324
+      era_exflag.route_21 = 160;
     } else {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
@@ -501,12 +496,12 @@ function endcheck_princess() {
   const cflag = (idx) => get(`cflag:${cid}:${idx}`);
   const talent = (idx) => get(`talent:${cid}:${idx}`);
 
-  // :356-357 初次会面：在场且线值 0 → 10
+  // 初次会面：在场且线值 0 → 10
   if (get_chara(35) > 0 && era_exflag.route_35 === 0) {
     era_exflag.route_35 = 10;
   }
 
-  // :361-369 通过实验室爱慕淫乱互换将导致剧情线重置
+  // 通过实验室爱慕淫乱互换将导致剧情线重置
   if (talent(85) === 1 && era_exflag.route_35 >= 130) {
     era_exflag.route_35 = 30; // 恋慕线起始 3
     era.set(`cflag:${cid}:515`, 0);
@@ -519,10 +514,10 @@ function endcheck_princess() {
     era.set(`cflag:${cid}:515`, 0);
   }
 
-  // :371-479 阶梯
+  // 阶梯
   const stage = era_exflag.route_35;
   if (stage >= 10 && stage < 20) {
-    // :372-376 MARK:1/2 == 3 的崩坏判定（TALENT:0 真 = 处女）
+    // MARK:1/2 == 3 的崩坏判定（TALENT:0 真 = 处女）
     if (get(`mark:${cid}:1`) === 3 && talent(0)) {
       era_exflag.route_35 = 20;
     } else if (
@@ -532,7 +527,7 @@ function endcheck_princess() {
       era_exflag.route_35 = -10; // 崩坏态（Bad Ending 触发源）
     }
   } else if (stage >= 20 && stage < 30) {
-    // :377-384 素质定线
+    // 素质定线
     if (talent(85) === 1) {
       era_exflag.route_35 = 30; // 恋慕线起始 3
     } else if (talent(76) === 1) {
@@ -540,7 +535,7 @@ function endcheck_princess() {
     }
   } else if (stage >= 30 && stage < 40) {
     if (cflag(2) >= 2000) {
-      era_exflag.route_35 = 40; // :386-387
+      era_exflag.route_35 = 40;
     }
   } else if (stage >= 40 && stage < 50) {
     if (cflag(2) >= 5000) {
@@ -563,13 +558,13 @@ function endcheck_princess() {
       era_exflag.route_35 = 160;
     }
   } else if (stage >= 60 && stage < 70) {
-    // :409-413 婚礼门槛：CFLAG:601 == 901
+    // 婚礼门槛：CFLAG:601 == 901
     if (cflag(601) === 901) {
       era_exflag.route_35 = 70;
       era.set(`cflag:${cid}:515`, 0);
     }
   } else if (stage >= 70 && stage < 80) {
-    // :414-419 计数器爬到 10 跳档
+    // 计数器爬到 10 跳档
     if (cflag(515) < 10) {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     } else if (cflag(515) === 10) {
@@ -600,7 +595,7 @@ function endcheck_princess() {
       era_exflag.route_35 = 120; // 12 为菲娅恋慕线完结
     }
   } else if (stage >= 160 && stage < 170) {
-    // :445-447 空分支：该部分判定移动至 aftertrain（照抄留空）
+    // 空分支：该部分判定移动至 aftertrain（照抄留空）
   } else if (stage >= 170 && stage < 180) {
     if (cflag(515) < 10) {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
@@ -632,7 +627,7 @@ function endcheck_princess() {
       era_exflag.route_35 = 220; // 22 为菲娅淫乱线完结
     }
   }
-  // :479-480 尾部 ELSE 空分支
+  // 尾部 ELSE 空分支
 }
 
 /**
@@ -653,7 +648,7 @@ function endcheck_godness() {
   const cflag = (idx) => get(`cflag:${cid}:${idx}`);
   const talent = (idx) => get(`talent:${cid}:${idx}`);
 
-  // :27-35 通过实验室爱慕淫乱互换将导致剧情线重置
+  // 通过实验室爱慕淫乱互换将导致剧情线重置
   if (
     talent(85) === 1 &&
     era_exflag.route_33 >= 110 &&
@@ -670,33 +665,33 @@ function endcheck_godness() {
     era.set(`cflag:${cid}:515`, 0);
   }
 
-  // :87-144 淫乱线（TALENT:76）阶梯。八档都是「门槛满足跳档、否则计数器
+  // 淫乱线（TALENT:76）阶梯。八档都是「门槛满足跳档、否则计数器
   // 累加」的同型块，逐档的源区间标在档位头上（行级锚只落在带动词的那一行）
   const stage = era_exflag.route_33;
   const lust = talent(76) === 1;
   if (lust && cflag(2) >= 2000 && stage < 10) {
-    era_exflag.route_33 = 110; // :87-89 起步 11
+    era_exflag.route_33 = 110; // 起步 11
     era.set(`cflag:${cid}:515`, 0);
   } else if (stage >= 110 && stage < 120) {
-    // :90-93（门槛：好感 <= 5000 且计数器 >= 70；本档起计数器无条件累加）
+    // （门槛：好感 <= 5000 且计数器 >= 70；本档起计数器无条件累加）
     if (lust && cflag(2) <= 5000 && cflag(515) >= 70) {
       era_exflag.route_33 = 120;
     }
     era.set(`cflag:${cid}:515`, cflag(515) + 1);
   } else if (stage >= 110 && stage < 130) {
-    // :94-97（120-129 档：好感 >= 8000）
+    // （120-129 档：好感 >= 8000）
     if (lust && cflag(2) >= 8000) {
       era_exflag.route_33 = 130;
     }
     era.set(`cflag:${cid}:515`, cflag(515) + 1);
   } else if (stage >= 130 && stage < 140) {
-    // :98-101（攻 + 敏 >= 14）
+    // （攻 + 敏 >= 14）
     if (lust && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_33 = 140;
     }
     era.set(`cflag:${cid}:515`, cflag(515) + 1);
   } else if (stage >= 140 && stage < 150) {
-    // :102-109（计数器 >= 150 且 DAY:1 >= 350 且葵希罗在场）
+    // （计数器 >= 150 且 DAY:1 >= 350 且葵希罗在场）
     if (lust && cflag(515) >= 150) {
       if (era_flag.month >= 350 && get_chara(34)) {
         era_exflag.route_33 = 150;
@@ -705,7 +700,7 @@ function endcheck_godness() {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 150 && stage < 160) {
-    // :110-116（`EX_FLAG:2810 == 560` 与本档区间矛盾 → 恒假，原作缺陷，照抄）
+    // （`EX_FLAG:2810 == 560` 与本档区间矛盾 → 恒假，原作缺陷，照抄）
     if (lust && cflag(515) >= 180) {
       if (era_flag.month >= 350 && era_exflag.route_33 === 560) {
         era_exflag.route_33 = 160;
@@ -714,7 +709,7 @@ function endcheck_godness() {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 160 && stage < 170) {
-    // :117-123（嘉德在场）
+    // （嘉德在场）
     if (lust && cflag(515) >= 200) {
       if (era_flag.month >= 350 && get_chara(33)) {
         era_exflag.route_33 = 170;
@@ -723,7 +718,6 @@ function endcheck_godness() {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 170 && stage < 180) {
-    // :124-130
     if (lust && cflag(515) >= 220) {
       if (era_flag.month >= 350 && get_chara(33)) {
         era_exflag.route_33 = 180;
@@ -732,7 +726,6 @@ function endcheck_godness() {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 180 && stage < 190) {
-    // :131-137
     if (lust && cflag(515) >= 250) {
       if (era_flag.month >= 350 && get_chara(33)) {
         era_exflag.route_33 = 190;
@@ -741,7 +734,7 @@ function endcheck_godness() {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage === 300) {
-    // :138-143（计数器 >= 300）
+    // （计数器 >= 300）
     if (lust && cflag(515) >= 300) {
       era_exflag.route_33 = 310;
     } else {
@@ -761,13 +754,13 @@ function endcheck_godness() {
 function endcheck_godness_sky_temple() {
   const stage = era_exflag.route_33;
   if (stage >= 500 && stage < 510) {
-    // :147 空分支
+    // 空分支
   } else if (stage >= 520 && stage < 530) {
-    // :148 空分支
+    // 空分支
   } else if (stage >= 530 && stage < 540) {
-    // :149 空分支
+    // 空分支
   } else if (stage >= 540 && stage < 550) {
-    // :151-152 死守卫（见函数头注）
+    // 死守卫（见函数头注）
     if (get_chara(33) === 0 && era_flag.human_realm_event_stage === 3) {
       era_exflag.route_33 = 560;
     }
@@ -779,16 +772,16 @@ function endcheck_godness_sky_temple() {
  * 每日一次，@EVENT_NEWDAY :241 调用。
  */
 async function run_endcheck() {
-  // :310 每日清场
+  // 每日清场
   endreset();
-  // :312 全局判定（五条线）
+  // 全局判定（五条线）
   endcheck_main();
-  // :314-339 LOCAL:1..15 = 各线 flag % 100——死代码：赋值后无任何消费者
+  // LOCAL:1..15 = 各线 flag % 100——死代码：赋值后无任何消费者
   // （:342 之后的分派直接读 EX_FLAG:(2800+LOCAL)），照搬不模拟（先例：
   // event-nextday.js 的 :11-12 SIF CONTINUE）
-  // :342 角色线推进
+  // 角色线推进
   await endcheck_chara();
-  // :344-349 分派循环：EX_FLAG:28xx 十位 = 小节、个位 = 0 才演出（防重播，
+  // 分派循环：EX_FLAG:28xx 十位 = 小节、个位 = 0 才演出（防重播，
   // 演出函数尾部 += 1 置个位）。2801 == 99（Normal End 已定）时整体短路。
   // EX_FLAG:(2800+LOCAL) 是动态下标（原作拼名寻址的读侧），直读 + || 0
   if (era_exflag.first_run_deadline !== 99) {
@@ -806,11 +799,11 @@ async function run_endcheck() {
       }
     }
   }
-  // :351-352 Normal End 演出：2801 == 99 && DAY:0 == 500
+  // Normal End 演出：2801 == 99 && DAY:0 == 500
   if (era_exflag.first_run_deadline === 99 && era_flag.day_count === 500) {
     await ending_n();
   }
-  // :354-356 TRYCALL END31——死引用（#14 缺陷 3）：全库无 @END31 定义，
+  // TRYCALL END31——死引用（#14 缺陷 3）：全库无 @END31 定义，
   // EX_FLAG:2803 非零时原作静默无动作，1:1 保留 = 不实现、勿「修好」。
   // 2803 的真实消费者是 @DEBUG_CHECK（EVENT_TURNEND.ERB :237-308）
 }

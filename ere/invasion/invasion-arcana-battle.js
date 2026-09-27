@@ -1,9 +1,6 @@
 /**
  * @file 圣灵骑士堡垒的一对一对战（issue #470，阶段 5c Q13 侵略残余·3）。
  *
- * 源: target/ERB/侵略/ARCANA_BATTLE.ERB  @ARCANA_BATTLE（:2-121，主循环）、
- *       @SPEED_PLUS3（:124-177）、@DEATH_CHECK4（:531-584）
- *
  * 元勇者（ATKER，玩家派出的奴隶）对圣灵骑士（DEFER）。攻击本体不重写：
  * 主循环调用的 @DUEL_ATTACK 已由 ere/dungeon/dungeon-battle2.js 的
  * duel_attack 真身覆盖（arg3 = 3 奴隶→圣灵 / 2 圣灵→奴隶，泛化时连
@@ -57,7 +54,7 @@ const { name_of } = battle2;
  *   2 = 圣灵骑士退场
  */
 async function death_check4(atker, defer) {
-  // :534-547 圣灵ナイト死亡判定（PRINTFORML，无等待）
+  // 圣灵ナイト死亡判定（PRINTFORML，无等待）
   if (chara(defer).dungeon.体力 <= 0) {
     era.print(`${name_of(defer)}徒劳地奋战着，力竭了。`);
     chara(defer).invasion.状态 = 0;
@@ -74,7 +71,7 @@ async function death_check4(atker, defer) {
     return 2;
   }
 
-  // :551-566 魔王側の生き残りを判定（狂王線：退场状态 9）
+  // 魔王側の生き残りを判定（狂王線：退场状态 9）
   const crazy = (era.get('flag:5') || 0) & 128;
   if (chara(atker).dungeon.体力 <= 0 && crazy) {
     era.print(`${name_of(atker)}在圣灵骑士前力竭倒下了。`);
@@ -98,7 +95,7 @@ async function death_check4(atker, defer) {
     return 1;
   }
 
-  // :568-582 通常線（退场状态 0；HP≤0 档无第二行——原作如此）
+  // 通常線（退场状态 0；HP≤0 档无第二行——原作如此）
   if (chara(atker).dungeon.体力 <= 0) {
     era.print(`${name_of(atker)}在圣灵骑士前力竭倒下了。`);
     chara(atker).invasion.状态 = 0;
@@ -133,30 +130,30 @@ async function death_check4(atker, defer) {
 async function arcana_battle(atker, defer, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
 
-  // :9-12 開場演出（FLAG:5 位 5 详细战斗显示）
+  // 開場演出（FLAG:5 位 5 详细战斗显示）
   if ((settings & 32) !== 0) {
     era.print('* 一对一单挑！*');
     await era.waitAnyKey();
     era.drawLine();
   }
 
-  // :19-22 弾の補充（双方 15 发；dungeon 域字段走门面）
+  // 弾の補充（双方 15 发；dungeon 域字段走门面）
   chara(atker).dungeon.弹药 = 15;
   chara(defer).dungeon.弹药 = 15;
 
-  // :24-27 先制（元勇者，TALENT:252）
+  // 先制（元勇者，TALENT:252）
   if ((era.get(`talent:${atker}:252`) || 0) === 1) {
     await battle2.duel_attack(atker, 2, defer, 3, rand, move_ctx);
   }
 
-  // :29-32 先制圣灵
+  // 先制圣灵
   if ((era.get(`talent:${defer}:252`) || 0) === 1) {
     await battle2.duel_attack(defer, 2, atker, 2, rand, move_ctx);
   }
 
-  // :34-110 主循环（FOR TURN, 0, 20）
+  // 主循环（FOR TURN, 0, 20）
   for (let turn = 0; turn < 20; turn += 1) {
-    // :35-40 時間切れ（TURN > 15）
+    // 時間切れ（TURN > 15）
     if (turn > 15) {
       if ((settings & 32) !== 0) {
         era.print(`${name_of(atker)}逃跑了………`);
@@ -165,7 +162,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       break;
     }
 
-    // :42-59 パラメータ表示。BARL（HP/气力条，宽 50）无 era API 通道，
+    // パラメータ表示。BARL（HP/气力条，宽 50）无 era API 通道，
     // 跳过（dungeon.js 的 BARL 先例）；其余 PRINT 段一一对应。
     if ((settings & 32) !== 0) {
       era.print(name_of(atker));
@@ -185,12 +182,12 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       await era.waitAnyKey();
     }
 
-    // :61-64 先制（旧処理の場所）——只剩守卫内的一条 DRAWLINE
+    // 先制（旧処理の場所）——只剩守卫内的一条 DRAWLINE
     if ((settings & 32) !== 0) {
       era.drawLine();
     }
 
-    // :66-73 先攻後攻決定（X = RAND:6、Y = RAND:6 + @SPEED_PLUS3 补正，
+    // 先攻後攻決定（X = RAND:6、Y = RAND:6 + @SPEED_PLUS3 补正，
     // 真身即 speed_plus2，文件头）。X >= Y（含平局）→ 奴隶先攻。
     const speed = battle2.speed_plus2(atker, defer, rand);
     if (speed >= 0) {
@@ -207,7 +204,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       if (result === 0) {
         result = await battle2.duel_attack(defer, 1, atker, 2, rand, move_ctx);
       }
-      // :79-85 RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1
+      // RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1
       if (result === 999 && (settings & 32) !== 0) {
         era.print('战斗中断了');
         break;
@@ -226,35 +223,35 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       if (result === 0) {
         result = await battle2.duel_attack(atker, 1, defer, 3, rand, move_ctx);
       }
-      // :91-97 同构段
+      // 同构段
       if (result === 999 && (settings & 32) !== 0) {
         era.print('战斗中断了');
         break;
       }
     }
 
-    // :99-107 退场判定（RESULT 2 / 1 均 BREAK）
+    // 退场判定（RESULT 2 / 1 均 BREAK）
     const dc = await death_check4(atker, defer);
     if (dc !== 0) {
       break;
     }
 
-    // :108-109 双方回合损耗
+    // 双方回合损耗
     chara(atker).dungeon.气力 -= rand(20);
     chara(defer).dungeon.气力 -= rand(20);
   }
 
-  // :112-113 圣灵骑士仍在任（CFLAG:1 == 2）→ 元勇者被击退的叙述
+  // 圣灵骑士仍在任（CFLAG:1 == 2）→ 元勇者被击退的叙述
   // （PRINTFORML，无显示开关守卫——原样保留）
   if (chara(defer).invasion.状态 === 2) {
     era.print(`${name_of(atker)}被圣灵骑士击败了………`);
   }
 
-  // :116-117 装備の回復（双方）
+  // 装備の回復（双方）
   await weapon_restore(atker);
   await weapon_restore(defer);
 
-  // :119-121 圣灵骑士退场（CFLAG:1 == 0）→ RETURN 2
+  // 圣灵骑士退场（CFLAG:1 == 0）→ RETURN 2
   if (chara(defer).invasion.状态 === 0) {
     return 2;
   }

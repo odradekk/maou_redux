@@ -2,11 +2,6 @@
  * @file 媚药中毒关联事件（issue #405）：残留度衰减、禁断症状、中毒/疯狂/废人
  * 三级取得判定。
  *
- * 源: target/ERB/EVENT/EVENT_ADDICT.ERB  @APHRODISIAC_ADDICT（:10-69）、
- *     @PRECIPITATE_WITHDRAWAL（:73-219）、@SUFFER_FROM_WITHDRAWAL（:220-294）、
- *     @PRECIPITATE_WITHDRAWAL_FALL_INTO_DISFAVOR/BE_A_ATHYMIA/BE_A_DEPRESSION/
- *     BE_A_RESISTER/BE_A_MISANTHROPIST/BE_A_CRAZY/BE_A_WRECK（:295-343）
- *
  * 调用点 EVENT_NEXTDAY.ERB:47（每角色每日，无条件）在 #400（N16）范围内，
  * 本票只落函数真身，签名定死为 `aphrodisiac_addict(cid, rand)`——
  * 接线随该票。
@@ -73,7 +68,7 @@ const default_rand = (n) => Math.floor(Math.random() * n);
  * @returns {Promise<void>}
  */
 async function aphrodisiac_addict(cid, rand = default_rand) {
-  // :11-29 每 7 日一次：体内媚药残留度 -1（下限 0），[媚药中毒]时再查禁断症状
+  // 每 7 日一次：体内媚药残留度 -1（下限 0），[媚药中毒]时再查禁断症状
   if ((era_flag.day_count + 1) % 7 === 0) {
     if (cflag(cid, 31) > 0) {
       era.add(`cflag:${cid}:31`, -1);
@@ -94,7 +89,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     }
   }
 
-  // :31-39 消失判定：残留度归零则消除【媚药中毒】
+  // 消失判定：残留度归零则消除【媚药中毒】
   if (cflag(cid, 31) === 0 && talent(cid, 46)) {
     const name = chara_callname(cid);
     era.print(`${name}的样子变了……`);
@@ -104,7 +99,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     set_talent(cid, 46, 0);
   }
 
-  // :40-51 取得判定：媚药中毒（TALENT:86 容易上瘾时门槛 9，否则 12；
+  // 取得判定：媚药中毒（TALENT:86 容易上瘾时门槛 9，否则 12；
   // 门槛来源与 TALENT:72 的关系照代码字面量搬运，不重新推导语义）
   if (
     ((talent(cid, 86) === 0 && cflag(cid, 31) >= 12) ||
@@ -123,7 +118,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     }
   }
 
-  // :52-60 取得判定：疯狂（TALENT:72 时门槛 30，否则 40）
+  // 取得判定：疯狂（TALENT:72 时门槛 30，否则 40）
   if (
     (cflag(cid, 31) >= 40 || (talent(cid, 72) && cflag(cid, 31) >= 30)) &&
     talent(cid, 123) === 0
@@ -136,7 +131,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     set_talent(cid, 123, 1);
   }
 
-  // :61-69 取得判定：废人/崩坏（TALENT:72 时门槛 75，否则 100）
+  // 取得判定：废人/崩坏（TALENT:72 时门槛 75，否则 100）
   if (
     (cflag(cid, 31) >= 100 || (talent(cid, 72) && cflag(cid, 31) >= 75)) &&
     talent(cid, 9) === 0
@@ -165,7 +160,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
   era.print('看来，春药中毒的禁断症状出现了……');
   await era.waitAnyKey();
 
-  // :84-113 持有媚药道具（ITEM:26）时可喂服免除本轮
+  // 持有媚药道具（ITEM:26）时可喂服免除本轮
   if (get('item:26')) {
     for (;;) {
       era.print(`给予${chara_callname(cid)}媚药吗？`);
@@ -203,7 +198,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
     }
   }
 
-  // :115-122 侵攻中角色：无媚药可用，独自捱过症状后退出本轮
+  // 侵攻中角色：无媚药可用，独自捱过症状后退出本轮
   if (cflag(cid, 1) === 2) {
     era.print(`数小时后${chara_callname(cid)}身体的颤抖终于停了下来。`);
     chara(cid).dungeon.体力 -= 300;
@@ -213,7 +208,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
     return 0;
   }
 
-  // :125-132 [治疗][献身的]持ちの看护人数（仅待机中计入，原作注释与判据
+  // [治疗][献身的]持ちの看护人数（仅待机中计入，原作注释与判据
   // 字面量一致按代码搬运，见 event-sabbath.js 文件头 CFLAG:1 语义说明）
   let u = 0;
   for (const other of era.getAddedCharacters()) {
@@ -222,7 +217,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
     }
   }
 
-  // :134-140 检查次数：残留度与看护人数决定，钳制 [1, 10]
+  // 检查次数：残留度与看护人数决定，钳制 [1, 10]
   let v = Math.floor(cflag(cid, 31) / 10) + 1 - u;
   if (v < 1) {
     v = 1;
@@ -230,7 +225,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
     v = 10;
   }
 
-  // :142-150 每次 40% 概率触发一次恶化事件，触发即止
+  // 每次 40% 概率触发一次恶化事件，触发即止
   let triggered = false;
   for (let i = 0; i < v; i += 1) {
     if (rand(100) < 40) {
@@ -241,7 +236,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
   }
 
   if (triggered) {
-    // :152-192 恶化：体力/气力上限各 -50（下限 600/100）、体力 -500，
+    // 恶化：体力/气力上限各 -50（下限 600/100）、体力 -500，
     // 看护人（[治疗][献身的]持ち优先，其余 1/3 概率）各消耗 200 体力
     await era.printAndWait(
       `被禁断症状折磨着的${chara_callname(cid)}痛苦地在地上打滚，`,
@@ -288,7 +283,7 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
       }
     }
   } else {
-    // :193-217 平静：体力 -300，看护人（无待机限定）各消耗 100 体力
+    // 平静：体力 -300，看护人（无待机限定）各消耗 100 体力
     era.print(`数小时后，${chara_callname(cid)}身体的颤抖终于停止了，`);
     era.print('护理人员也辛苦了，');
     era.print('这次总算平安度过了……');
@@ -392,7 +387,7 @@ async function precipitate_withdrawal_fall_into_disfavor(cid) {
   chara(cid).chara.好感度 -= 200;
 }
 
-// :221-289 七级梯子：W = RAND:50 - V + U*2，按区间选出候选表，表内按
+// 七级梯子：W = RAND:50 - V + U*2，按区间选出候选表，表内按
 // 「素质尚未持有」的优先级依次取用，取不到则落到 disfavor 兜底。
 // 原作 <15 与 <20 两段候选表逐字相同，合并为一段 <20（文件头说明）
 const WITHDRAWAL_TIERS = [
@@ -477,7 +472,7 @@ async function suffer_from_withdrawal(cid, u, v, rand = default_rand) {
       await apply_candidate(cid, key);
     }
   } else {
-    // :287-288 W >= 30：无候选可选，纯占位换行
+    // W >= 30：无候选可选，纯占位换行
     era.println();
   }
   era.println(); // 真空行：候选函数的收尾 PRINTFORMW 已结束那一行

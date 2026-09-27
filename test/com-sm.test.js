@@ -66,7 +66,7 @@ test('@COM_ABLE40：默认可执行；SM 过滤与四场景挡各挡一条；无
     '打屁股无道具要求（:1883-1901）',
   );
 
-  fixture.store.set('flag:25', 16); // :1881-1882 FLAG:25 & 16（SM 系过滤）
+  fixture.store.set('flag:25', 16); // FLAG:25 & 16（SM 系过滤）
   assert.equal(await com_able_family.call(40), 0);
   fixture.store.set('flag:25', 0);
 

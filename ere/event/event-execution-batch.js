@@ -1,9 +1,6 @@
 /**
  * @file 处刑改写：批量处刑与自动处刑（issue #543，阶段 6 S2）。
  *
- * 源: target/ERB/魔改新增/處刑改寫.ERB  @批量处刑（:3-417）/
- *     @自動處刑（:419-433）/@自動處刑1（:435-498）
- *
  * 两个玩家入口接在本文件：主菜单 [103]（page/page-shop.js 的 usershop，
  * 原作 SHOP ver1.0.2.ERB:110-112 的 CALL 批量处刑）与 @EVENTTURNEND 的
  * FLAG:5 位 3 开关（system/turnend-settle.js，设置页 [3] 勇者自动处刑）。
@@ -230,7 +227,7 @@ async function next_tagged(method) {
 async function make_toilet(cid) {
   game.invasion.肉便器数 += 1; // FLAG:83（:192）
   apply_prestige(cid); // EX_FLAG:99（:193-199）
-  // :200-204：FAMILY = CFLAG:A:605 → FAMILY:1 = % 10 → CALL SEARCH_FAMILY, A
+  // ：FAMILY = CFLAG:A:605 → FAMILY:1 = % 10 → CALL SEARCH_FAMILY, A
   // → FAMILY:2 = RESULT。末句 `M = FAMILY:2`（第 204 行）省略：M 在本文件里
   // 只有这一处写、全库无读（该函数内也没再引用），赋不赋都一样
   const family_id = search_family(cid); // FAMILY:2（search_family 内部做 % 10）
@@ -238,8 +235,8 @@ async function make_toilet(cid) {
   const prelude = get(`talent:${cid}:85`)
     ? `深爱着你的${name}不知道自己为什么要被做成肉便器，不停地高叫着你的名字，请求饶恕。`
     : '';
-  // :206 PRINTFORM + :207 PRINTFORML 是同一条显示行（PRINTFORM 不换行），
-  // :208/:209 的 PRINTFORML/PRINTL 也不等待——只有 :210 的 PRINTW 等待
+  // PRINTFORM + :207 PRINTFORML 是同一条显示行（PRINTFORM 不换行），
+  // 的 PRINTFORML/PRINTL 也不等待——只有 :210 的 PRINTW 等待
   era.print(
     `${prelude}但${chara_callname(0)}依然给${name}烙上了封锁所有力量的封印，`,
   );
@@ -349,7 +346,7 @@ async function make_toilet(cid) {
   };
   const charm_line = charm_lines[get(`talent:${cid}:312`)];
   if (charm_line) await era.printAndWait(charm_line);
-  // :297 的后半截 `TALENT:317 == 11` 没写角色下标、读的是 TARGET；此处写
+  // 的后半截 `TALENT:317 == 11` 没写角色下标、读的是 TARGET；此处写
   // ${cid} —— :161 的 TARGET = A 之后到本行没有任何 TARGET 写入点（该分支
   // 全段无 TARGET），两者等价
   if (get(`talent:${cid}:317`) === 4 || get(`talent:${cid}:317`) === 11) {
@@ -357,9 +354,9 @@ async function make_toilet(cid) {
       `${name}双眼空虚，在重复着谁的名字。也许正在妄想和爱人拥抱吧。`,
     );
   }
-  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`); // :299 PRINTFORMW
+  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`); // PRINTFORMW
   const title = `肉便器${name}`;
-  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title); // :302
+  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);
   era.set('tstr:30', title);
   era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:303）
   video_maturo(cid);
@@ -382,12 +379,12 @@ async function keep_as_soldier(cid) {
   await era.printAndWait(
     '只残留一点点的意识和记忆，随时可以下命令去把勇者杀光。',
   );
-  chara(cid).chara.基础攻击 = Math.trunc(chara(cid).chara.基础攻击 / 2); // :309
-  chara(cid).chara.基础防御 = Math.trunc(chara(cid).chara.基础防御 / 2); // :310
+  chara(cid).chara.基础攻击 = Math.trunc(chara(cid).chara.基础攻击 / 2);
+  chara(cid).chara.基础防御 = Math.trunc(chara(cid).chara.基础防御 / 2);
   era.print(
-    `法术的副作用导致其战斗力下降了！攻击变成${chara(cid).chara.基础攻击}，防御变成${chara(cid).chara.基础防御}`, // :311
+    `法术的副作用导致其战斗力下降了！攻击变成${chara(cid).chara.基础攻击}，防御变成${chara(cid).chara.基础防御}`,
   );
-  era.print(`${name}可以于迎击名单中派遣出场了！`); // :312
+  era.print(`${name}可以于迎击名单中派遣出场了！`);
   const title = `魔王傀儡${name}`;
   era.set(`cstr:${cid}:30`, title); // CSTR:30（:313，无下标 = TARGET）
   era.set('tstr:30', title);
@@ -401,7 +398,7 @@ async function keep_as_soldier(cid) {
  */
 async function keep_on_display(cid) {
   const name = chara_callname(cid);
-  chara(cid).invasion.状态 = 8; // :320
+  chara(cid).invasion.状态 = 8;
   era.print(`把${name}的屁股抬高，扣在固定的枷锁上，`);
   await era.printAndWait('任由怪物们发泄性欲，');
   if (get(`talent:${cid}:9`) === 1) {
@@ -432,14 +429,14 @@ async function release_without_memory(cid) {
   await era.printAndWait(`昏昏沉沉的${name}醒来之后，再次开始了冒险……`);
   era_flag.money += money; // MONEY（:339）
   era_exflag.legit_money += money; // EX_FLAG:4444（:340）
-  chara(cid).dungeon.所持金 = 0; // :341
+  chara(cid).dungeon.所持金 = 0;
   // 侵入阶层・侵攻度・侵攻中・再起点（:343-346）
   chara(cid).dungeon.侵攻阶层 = 1;
   era.set(`cflag:${cid}:502`, 0);
   chara(cid).invasion.状态 = 2;
   chara(cid).dungeon.再起点 = 3;
-  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -50; // :349-350
-  if (chara(cid).chara.好感度 > 20) chara(cid).chara.好感度 = 20; // :352-353
+  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -50;
+  if (chara(cid).chara.好感度 > 20) chara(cid).chara.好感度 = 20;
   chara(cid).patch.待处刑标签 = 0; // 去除处刑标签（:354-356）
 }
 
@@ -502,14 +499,14 @@ async function execute_one(cid, method, rand_n) {
  */
 async function method_screen(rand_n) {
   for (;;) {
-    era.drawLine(); // :90-147 段的 DRAWLINE（默认线型）
+    era.drawLine(); // 段的 DRAWLINE（默认线型）
     era.print([
       { content: '注意：以下0～4项的处刑' },
       { content: '会让人物永远从列表中消失', color: '#ffff33' },
       { content: '（但可获得勋章或经验）' },
     ]);
     era.print(`${NBSP.repeat(6)}开启水晶球的话，则可记录0～6项的处刑影像`);
-    era.drawLine(); // :90-147 段的 DRAWLINE（默认线型）
+    era.drawLine(); // 段的 DRAWLINE（默认线型）
     [
       '流放出地下城',
       '公开处刑',
@@ -586,14 +583,14 @@ async function batch_execution(rand_n = default_rand) {
           );
         }
         era.println(); // PRINTL（:19-21）
-        era.drawLine(); // :15-73 段的 DRAWLINE（默认线型）
+        era.drawLine(); // 段的 DRAWLINE（默认线型）
         era.print('请选出处刑对象(可复选)');
         era.print(
           '标签：[售]可卖出\u00A0\u00A0[☆]收藏中\u00A0\u00A0[兵]已士兵化\u00A0\u00A0[SP]特殊角色',
         );
-        era.drawLine(); // :15-73 段的 DRAWLINE（默认线型）
+        era.drawLine(); // 段的 DRAWLINE（默认线型）
         print_roster(added, no_page);
-        era.drawLine(); // :52-54
+        era.drawLine();
 
         // 收藏目标带标签 → 播报 + 剃除 + JUMP 批量处刑（:54-65）
         for (const cid of added) {
@@ -665,7 +662,7 @@ async function auto_execution() {
   for (;;) {
     let executed = false;
     for (const cid of era.getAddedCharacters()) {
-      // :424 三个无下标变量（CFLAG:506/ABL:10/CFLAG:700）都按 TARGET 解读
+      // 三个无下标变量（CFLAG:506/ABL:10/CFLAG:700）都按 TARGET 解读
       if (
         chara(cid).invasion.新人 === 1 &&
         chara(cid).system.顺从 < 2 &&
@@ -675,7 +672,7 @@ async function auto_execution() {
         executed = true;
         break; // 重扫剩余角色
       }
-      // :428-430 收藏豁免：求饶播报（PRINTFORMW 两条）
+      // 收藏豁免：求饶播报（PRINTFORMW 两条）
       if (chara(cid).invasion.新人 === 1 && get(`cflag:${cid}:700`)) {
         const name = chara_callname(cid);
         await era.printAndWait(`${name}拼命地求饶，向魔王宣誓效忠`);

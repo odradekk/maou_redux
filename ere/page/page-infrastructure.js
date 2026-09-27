@@ -1,8 +1,6 @@
 /**
  * @file 设施与设备查看页（issue #348）。
  *
- * 源: target/ERB/處刑相關/INFRASTRUCTURE.ERB  @INFRASTRUCTURE（:2-385）
- *
  * 移植说明（有意偏离，注明依据）：
  *   - **四个菜单的编号选项升格为按钮**（#572）：主菜单（源 :46/:54/:56-68/
  *     :70/:72）、牧场设定（:255-267 与 :269 的 [999]）、播种者的四选
@@ -263,7 +261,7 @@ async function show_farm() {
       '地下城的便所里，散发着酸臭。充斥着崩坏的呻吟和悲鸣……',
     );
     era.print('各种设定');
-    // :255-267 的四项（播种者/人类牧场记录/卖掉产出的孩子）与 :269 的
+    // 的四项（播种者/人类牧场记录/卖掉产出的孩子）与 :269 的
     // [999] 返回 → 按钮（PR #53 通则，#572）
     era.printButton(`播种者  现在：${seed_name()}`, 0);
     era.printButton(
@@ -279,7 +277,7 @@ async function show_farm() {
     if (result === 999) return;
     if (result === 0) {
       era.print('请选择播种者');
-      // :277-280 的四项 → 按钮（同上）
+      // 的四项 → 按钮（同上）
       era.printButton('怪物', 0);
       era.printButton('俘虏的中年', 1);
       era.printButton('俘虏的少年', 2);
@@ -328,10 +326,10 @@ async function show_video_shelf() {
       era.println();
     }
     era.drawLine();
-    // :361-363 的三项 → 按钮（PR #53 通则，#572）
-    era.printButton('- 上一页', 1000); // :361（正文的 `- ` 是原作文本）
-    era.printButton('- 离  开', 999); // :362
-    era.printButton('- 下一页', 1001); // :363
+    // 的三项 → 按钮（PR #53 通则，#572）
+    era.printButton('- 上一页', 1000); // （正文的 `- ` 是原作文本）
+    era.printButton('- 离  开', 999);
+    era.printButton('- 下一页', 1001);
     const result = await era.input();
     if (result === 999) return;
     previous_page = no_page;

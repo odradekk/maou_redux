@@ -1,12 +1,6 @@
 /**
  * @file CHARA_EX 族：角色专属初始化的分发注册表与 8 个实现（issue #21）。
  *
- * 源: target/ERB/其他/EXCOM.ERB  @ADDCHARA_EX（分发点，:28-29 为活代码；
- *     其上 [SKIPSTART]/[SKIPEND] 括住的「口上添加」「特殊战斗素质添加」两段
- *     是被括掉的死代码，不移植）
- *     target/ERB/キャラ関数/CHARA<N>.ERB  @CHARA_EX_<N>（8 个实现）
- *     target/ERB/SYSTEM/TITLE ver1.0.8.ERB  :101-102（新游戏的调用点）
- *
  * 分发语义（EXCOM.ERB:28-29）：
  *     SIF NO:ARG >= 17 || NO:ARG == 0
  *     TRYCALLFORM CHARA_EX_{NO:ARG}

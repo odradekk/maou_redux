@@ -1,8 +1,6 @@
 /**
  * @file 流放处刑（issue #348）。
  *
- * 源: target/ERB/處刑相關/BANISHMENT.ERB  @BANISHMENT（:2-949）
- *
  * 移植说明（有意偏离，注明依据）：
  *   - @BANISHMENT 的五选一菜单（源 :22-30）升格为 `era.printButton`
  *     （PR #53 通则，正文不写 [编号]）；消费点保留 `useRule: false`——

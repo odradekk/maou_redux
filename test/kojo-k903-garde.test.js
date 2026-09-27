@@ -1,8 +1,6 @@
 /**
  * 嘉德 K903 的口上行为测试（issue #249）。
  *
- * 源: target/ERB/口上/EVENT_K903_嘉德.ERB。K903 不沿用普通性格的
- * FLAG/TALENT 注册对，而是 EX_FLAG:103（存在）和 EX_TALENT:103（守卫）。
  */
 
 'use strict';
@@ -594,7 +592,7 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模�
 // 死斗场先例）：TALENT:121/122 均未置位，121/122 门不成立，判定只看假阳具位。
 test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三种 selectcom × 三档）', async () => {
   // 原作 :5390+:5392+:5394+:5395、:5423+:5425+:5427+:5428、:5447+:5449+
-  // :5451+:5452 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
+  // 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
   // 收行），ere 侧曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
   const cases = [
     {

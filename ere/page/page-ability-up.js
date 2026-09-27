@@ -1,9 +1,6 @@
 /**
  * @file 能力值提升：@ABILITY_UP 与 @ABILITY_UP_CORE（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_2.ERB  @ABILITY_UP（:4-153，菜单与页码缓存）、
- *     @ABILITY_UP_CORE（:155-254，单项的能力提升输入循环）。
- *
  * 调用点（本票接入）：page/page-shop.js 的 usershop [105] 分支（选中后
  * 复核出售资格）、page/page-chara-info.js 的 CHARA_INFO_INDIVIDUAL CASE 10
  * （只调 CORE）。
@@ -87,18 +84,18 @@ function cflag(cid, idx) {
  * #bbbbbb）走 menu_button 的 dim 参数。
  */
 function draw_menu_header() {
-  era.drawLine({ isSolid: true }); // :46 CUSTOMDRAWLINE =
-  // :47-48 SETFONT "ARIEL BLACK" / FONTBOLD 不镜像（见文件头第 4 条）
-  const dim = cflag(0, 9) < 20; // :50 SIF CFLAG:0:9 < 20
-  menu_button('奴隶一览', MENU_SLAVE, dim); // :52（UNICODE(0x258c) 由助手拼）
-  menu_button('勇者一览', MENU_ENEMY, dim); // :53
-  // :56 的 PRINTL 只结束 :52 / :53 那两个 PRINTBUTTON 所在的行（按钮自成
+  era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+  // SETFONT "ARIEL BLACK" / FONTBOLD 不镜像（见文件头第 4 条）
+  const dim = cflag(0, 9) < 20; // SIF CFLAG:0:9 < 20
+  menu_button('奴隶一览', MENU_SLAVE, dim); // （UNICODE(0x258c) 由助手拼）
+  menu_button('勇者一览', MENU_ENEMY, dim);
+  // 的 PRINTL 只结束 :52 / :53 那两个 PRINTBUTTON 所在的行（按钮自成
   // 一行，见 CONTEXT.md「输出 API 与原作的对应」）；golden 的
   // sale-natural-log:88-93 里按钮行与 :61-63 的分割线逐行相邻，故这里不补
   // 空行（#562）
-  era.drawLine(); // :61-63 DRAWLINE + SETFONT
-  era.print('要提高谁的能力值？'); // :63
-  era.drawLine(); // :64-66（DRAWLINE + SIF 灰显 + 两个 PRINTBUTTON）
+  era.drawLine(); // DRAWLINE + SETFONT
+  era.print('要提高谁的能力值？');
+  era.drawLine(); // （DRAWLINE + SIF 灰显 + 两个 PRINTBUTTON）
 }
 
 /**
@@ -122,16 +119,16 @@ function draw_list(select_menu, no_page) {
   const anchor = era.getLineCount(); // L_LCOUNT = LINECOUNT（:65）
   let max_page;
   if (select_menu === MENU_ENEMY) {
-    // :67-71 勇者一览：NUM_PAGE = 24、页数取 @MAX_PAGE_ENEMY、列表走 ENEMY
+    // 勇者一览：NUM_PAGE = 24、页数取 @MAX_PAGE_ENEMY、列表走 ENEMY
     page_size = ENEMY_NUM_PAGE;
-    max_page = max_page_enemy(page_size) - 1; // :69-70（RESULT - 1）
-    life_list_enemy(no_page, page_size); // :71
+    max_page = max_page_enemy(page_size) - 1; // （RESULT - 1）
+    life_list_enemy(no_page, page_size);
   } else {
-    // :72-79 奴隶一览（含イレギュラー：:74 把菜单档归一回 998 并写回）
-    menu = MENU_SLAVE; // :74 SELECT_MENU = 998
+    // 奴隶一览（含イレギュラー：:74 把菜单档归一回 998 并写回）
+    menu = MENU_SLAVE; // SELECT_MENU = 998
     page_size = SLAVE_NUM_PAGE;
-    max_page = max_page_salave(page_size) - 1; // :76-77
-    // :78 魔王行（[{0,2}] %NAME:MASTER,12,LEFT% %"",8,LEFT% LV{…,4,RIGHT}）
+    max_page = max_page_salave(page_size) - 1;
+    // 魔王行（[{0,2}] %NAME:MASTER,12,LEFT% %"",8,LEFT% LV{…,4,RIGHT}）
     // ——名字字段宽 12、随后 8 空格、等级右对齐宽 4，与 LIFE_LIST 的
     // 表头同款（那里是 MAX_NAME_LEN + 8 的动态宽，这里是字面量 12）
     print_row(
@@ -145,28 +142,28 @@ function draw_list(select_menu, no_page) {
       ],
       4,
     );
-    life_list_salave(no_page, page_size); // :79
+    life_list_salave(no_page, page_size);
   }
-  const l_lcount = era.getLineCount() - anchor; // :81 L_LCOUNT = LINECOUNT - L_LCOUNT
-  // :82-90 补行（L_LCOUNT < NUM_PAGE + 1 时补到页高）
+  const l_lcount = era.getLineCount() - anchor; // L_LCOUNT = LINECOUNT - L_LCOUNT
+  // 补行（L_LCOUNT < NUM_PAGE + 1 时补到页高）
   if (l_lcount < page_size + 1) {
     let pad_size = page_size;
     if (select_menu === MENU_SLAVE) {
-      pad_size += 1; // :83-84 SIF SELECT_MENU == 998 → NUM_PAGE++
+      pad_size += 1; // SIF SELECT_MENU == 998 → NUM_PAGE++
     }
     for (let row = 0; row < pad_size - l_lcount; row += 1) {
       era.print('');
     }
-    // :88-89 SIF SELECT_MENU == 998 → NUM_PAGE--（配对还原，见函数头）
+    // SIF SELECT_MENU == 998 → NUM_PAGE--（配对还原，见函数头）
   }
-  era.drawLine(); // :91-93（DRAWLINE + 三个 PRINTLC 页脚键）
-  // :92 起的三个 PRINTLC 打在同一行，:96 的 PRINTL（写作 `PRINTL  `）只结束
+  era.drawLine(); // （DRAWLINE + 三个 PRINTLC 页脚键）
+  // 起的三个 PRINTLC 打在同一行，:96 的 PRINTL（写作 `PRINTL  `）只结束
   // 那一行——PRINTLC 左对齐补位、**不换行**，故不产生空行。ere 的 printButton
   // 自成一行（＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见
   // CONTEXT.md「输出 API 与原作的对应」）。
-  era.printButton('- 上一页', 1000); // :92 PRINTLC
-  era.printButton('- 返  回', 999); // :93（原作的 `-` 是正文的一部分）
-  era.printButton('- 下一页', 1001); // :94
+  era.printButton('- 上一页', 1000); // PRINTLC
+  era.printButton('- 返  回', 999); // （原作的 `-` 是正文的一部分）
+  era.printButton('- 下一页', 1001);
   return { menu, page_size, max_page };
 }
 
@@ -188,7 +185,7 @@ async function print_guard(text) {
  * @returns {Promise<number>} 0（:100-101 的 RETURN 0；其余出口都是 GOTO）
  */
 async function ability_up() {
-  // :153 RESTART：CORE 返回后重跑本函数（局部变量回 #DIM 默认值）
+  // RESTART：CORE 返回后重跑本函数（局部变量回 #DIM 默认值）
   restart: for (;;) {
     let select_menu = MENU_SLAVE; // #DIM SELECT_MENU = 998（:5）
     let no_page = 0; // #DIM NO_PAGE = 0（:9）
@@ -196,52 +193,52 @@ async function ability_up() {
 
     // $INPUT_LOOP_MENU（:18-96）
     menu: for (;;) {
-      // :33-38 菜单档换了（PREV_MODE != SELECT_MENU）→ 页码归零
+      // 菜单档换了（PREV_MODE != SELECT_MENU）→ 页码归零
       //（同段的 LIST_POS/PREV_PAGE/PREV_LIST_POS 在 ere 侧失去消费者，
       // 见文件头第 1 条）
       if (prev_mode !== select_menu) {
         no_page = 0;
       }
-      prev_mode = select_menu; // :44
+      prev_mode = select_menu;
 
-      draw_menu_header(); // :46-64
-      const drawn = draw_list(select_menu, no_page); // :65-96
-      select_menu = drawn.menu; // :74 的写回（イレギュラー归一）
-      max_page = drawn.max_page; // :70/:77 MAX_PAGE = RESULT - 1
+      draw_menu_header();
+      const drawn = draw_list(select_menu, no_page);
+      select_menu = drawn.menu; // 的写回（イレギュラー归一）
+      max_page = drawn.max_page; // MAX_PAGE = RESULT - 1
 
       // $INPUT_LOOP_0（:98-147）
       for (;;) {
-        const result = await era.input(); // :99 INPUT
+        const result = await era.input(); // INPUT
 
         if (result === 999) {
-          return 0; // :100-101
+          return 0;
         }
         if (result > 990 && result < 999 && cflag(0, 9) < 20) {
-          // :102-105 等级不足：提示后回 $INPUT_LOOP_0（两个按钮的点选门）
+          // 等级不足：提示后回 $INPUT_LOOP_0（两个按钮的点选门）
           await print_guard('这个指令需要更高等级');
           continue;
         }
         if (result > 990 && result < 999) {
-          // :106-110 切换菜单档（991-998，イレギュラー全部归奴隶一览）
+          // 切换菜单档（991-998，イレギュラー全部归奴隶一览）
           select_menu = result;
           continue menu; // GOTO INPUT_LOOP_MENU
         }
         if (result === 1000) {
-          // :111-116 上一页
+          // 上一页
           if (no_page > 0) {
             no_page -= 1;
           }
           continue menu;
         }
         if (result === 1001) {
-          // :117-122 下一页
+          // 下一页
           if (no_page < max_page) {
             no_page += 1;
           }
           continue menu;
         }
         if (result < 0 || !era.getAddedCharacters().includes(result)) {
-          // :123-126 范围外。原作的判据是 `RESULT < 0 || RESULT >= CHARANUM`
+          // 范围外。原作的判据是 `RESULT < 0 || RESULT >= CHARANUM`
           // （角色号连续）；ere 侧编号空间是角色 ID，未加入的 ID 等同于
           // 「不存在的人」，与越界同路（ID 语义改写，page-select-target.js
           // 同款；实机上这一支不可达——列表按钮即输入集，见文件头第 3 条）
@@ -249,26 +246,26 @@ async function ability_up() {
           continue;
         }
         if ((era.get(`base:${result}:0`) || 0) < 1) {
-          // :127-131 臨死中は排除
+          // 臨死中は排除
           await print_guard('濒死中，无法选择');
           continue;
         }
         if (cflag(result, 1) !== 0 && select_menu === MENU_SLAVE) {
-          // :138-141 奴隷待機以外は除外
+          // 奴隷待機以外は除外
           await print_guard('不能选择非待命状态的奴隶');
           continue;
         }
         if (cflag(result, 1) !== 2 && select_menu === MENU_ENEMY) {
-          // :143-146 侵攻中勇者以外は除外
+          // 侵攻中勇者以外は除外
           await print_guard('不能选择非侵攻状态的勇者');
           continue;
         }
 
-        // :149-150 SIF RESULT == 0 → RESULT = MASTER：MASTER 恒 0，于是这一句
+        // SIF RESULT == 0 → RESULT = MASTER：MASTER 恒 0，于是这一句
         // 是恒等映射（0 号就是魔王自己），保留出处注释即可
         const target = result;
-        await ability_up_core(target); // :152 CALL ABILITY_UP_CORE(RESULT)
-        continue restart; // :153 RESTART
+        await ability_up_core(target); // CALL ABILITY_UP_CORE(RESULT)
+        continue restart; // RESTART
       }
     }
   }
@@ -284,41 +281,41 @@ async function ability_up() {
  * @returns {Promise<number>} 0（[999] 结束支）；其余输入在循环内消化
  */
 async function ability_up_core(arg) {
-  const previous_target = era_flag.target; // :156 T = TARGET
-  era_flag.target = arg; // :157 TARGET = ARG
+  const previous_target = era_flag.target; // T = TARGET
+  era_flag.target = arg; // TARGET = ARG
 
   // $INPUT_LOOP_1（:159-254）
   for (;;) {
-    era.drawLine(); // :160-161（DRAWLINE + 目标名）
-    era.print(chara_callname(arg)); // :161 PRINTFORML %SAVESTR:TARGET%
-    era.drawLine(); // :162 CUSTOMDRAWLINE ‥
-    show_info_exp(arg); // :163 CALL SHOW_INFO_EXP
-    show_juel(arg); // :164 CALL SHOW_JUEL
-    await show_ablup_select(arg); // :165 CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
+    era.drawLine(); // （DRAWLINE + 目标名）
+    era.print(chara_callname(arg)); // PRINTFORML %SAVESTR:TARGET%
+    era.drawLine(); // CUSTOMDRAWLINE ‥
+    show_info_exp(arg); // CALL SHOW_INFO_EXP
+    show_juel(arg); // CALL SHOW_JUEL
+    await show_ablup_select(arg); // CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
 
-    const result = await era.input(); // :167 INPUT
+    const result = await era.input(); // INPUT
 
-    // :170-245 各能力分支（阴蒂感觉 0 / 乳房感觉 1 / 私处感觉 2 / 肛门感觉 3 /
+    // 各能力分支（阴蒂感觉 0 / 乳房感觉 1 / 私处感觉 2 / 肛门感觉 3 /
     // 局部感覚 4 / 顺从 10 / 欲望 11 / 技巧 12 / 侍奉技术 13 / 性交技术 14 /
     // 话术 15 / 侍奉精神 16 / 露出癖 17 / 抖S气质 20 / 抖M气质 21 / 百合气质
     // 22 / ホモっ気 23 / 性交中毒 30 / 自慰中毒 31 / 精液中毒 32 / 百合中毒 33 /
     // 卖淫中毒 37 / 兽奸中毒 39 / 局部中毒 40 / 反抗刻印 99 / 100）
     if (result in ABLUP_HANDLERS) {
       await ABLUP_HANDLERS[result](arg); // issue #464
-      continue; // :254 GOTO INPUT_LOOP_1
+      continue; // GOTO INPUT_LOOP_1
     }
     // 菜单按钮的编号与 ABLUP_HANDLERS 的键一一对应（#464-#466 全部落地），
     // 未实现的回落分支随存根机制一并删除（#638）：其余输入落到链尾重绘
 
     if (result === 999) {
-      // :246-251 结束：欲情变化检查（真身）→ 出售资格复核 → 还原 TARGET
+      // 结束：欲情变化检查（真身）→ 出售资格复核 → 还原 TARGET
       // 商店内、非调教期调用，tflag 桶不存在——见 ability-check.js 文件头
       // 「TFLAG:25 的调教外通道」节
-      yokubo_up_check(era_flag.target, { in_train: false }); // :247
-      await check_sellassiable(era_flag.target); // :248（CALL CHECK_SELLASSIABLE 无参）
-      // :249 CALL CHECK_SPECIALSKIL 在原作是注释行，不移植
-      era_flag.target = previous_target; // :250 TARGET = T
-      return 0; // :250-251（TARGET 还原 + RETURN 0）
+      yokubo_up_check(era_flag.target, { in_train: false });
+      await check_sellassiable(era_flag.target); // （CALL CHECK_SELLASSIABLE 无参）
+      // CALL CHECK_SPECIALSKIL 在原作是注释行，不移植
+      era_flag.target = previous_target; // TARGET = T
+      return 0; // （TARGET 还原 + RETURN 0）
     }
     // 其余输入：:254 GOTO INPUT_LOOP_1（重绘再来，无提示）
   }

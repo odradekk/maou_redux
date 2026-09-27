@@ -1,8 +1,6 @@
 /**
  * @file 开局设置 @FIRST_SETTING（issue #463 起全量实现，除丽塔/卡拉隐藏分支）。
  *
- * 源: target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB  @FIRST_SETTING（:781-950）
- *
  * 原作是一个可反复重选的总菜单（$INPUT_LOOP，:787-941）：玩家可任意顺序
  * 多次修改各问答案，最后点 [100] 决定退出；未点开的问维持 Emuera 零值
  * 默认。ask_initial_slave/ask_dungeon_mode（#50/#181）已确立「强制逐问作答、
@@ -111,10 +109,10 @@ async function ask_penis_size() {
  * @returns {Promise<number>} 玩家的选择（0 男性/1 女性/2 扶她）
  */
 async function ask_kuangwang_sex() {
-  // :902/:903 是两条 PRINTL（两行两 Row）；一次 print 一条，不用内部 \n 并成
+  // 是两条 PRINTL（两行两 Row）；一次 print 一条，不用内部 \n 并成
   // 一行——那样显示行数虽同、引擎行计数只有 1（CONTEXT.md 的 Row 定义，#615）
-  era.print('狂王是支配这个地区的领主'); // :902
-  era.print('继承了曾经封印你的勇者的血统，打算把你再次封印'); // :903
+  era.print('狂王是支配这个地区的领主');
+  era.print('继承了曾经封印你的勇者的血统，打算把你再次封印');
   for (;;) {
     era.printButton('男性', 0);
     era.printButton('女性', 1);
@@ -141,7 +139,7 @@ async function ask_kuangwang_sex() {
  * @returns {Promise<number>} 玩家的选择（0 随机 / 1 村娘），已写入 flag:501
  */
 async function ask_initial_slave() {
-  // :912 PRINTL [0] 随机  [1] 村娘 —— 纯文本 + INPUT 改按钮（先例：
+  // PRINTL [0] 随机  [1] 村娘 —— 纯文本 + INPUT 改按钮（先例：
   // page-title.js 的 [0]/[1]）；ere 按钮独占一行，同行排版归 #9。原作无效
   // 输入经 GOTO INPUT_LOOP 回总菜单重绘，本切片等价为重渲染本题再问。
   for (;;) {
@@ -168,14 +166,14 @@ async function ask_initial_slave() {
  *   （dungeon 属主，走 game 门面）
  */
 async function ask_dungeon_mode() {
-  // :920 PRINTL [0] 普通  [1] 2D —— 按钮化同 ask_initial_slave
+  // PRINTL [0] 普通  [1] 2D —— 按钮化同 ask_initial_slave
   for (;;) {
     era.print('地下城模式：');
     era.printButton('普通', 0);
     era.printButton('2D', 1);
     const result = await era.input();
     if (result === 0 || result === 1) {
-      game.dungeon.迷宫模式 = result; // :924 FLAG:502 = RESULT
+      game.dungeon.迷宫模式 = result; // FLAG:502 = RESULT
       return result;
     }
   }
@@ -186,11 +184,11 @@ async function ask_dungeon_mode() {
  * 菜单，本切片按固定顺序强制逐问作答一次（偏离依据见文件头）。
  */
 async function first_setting() {
-  chara(0).train.初吻对象 = -1; // :784，四个魔王性别分支写的都是同一个值
-  que2mk(); // :785 CALL QUE2MK，恒 0——:786 IF !RESULT 恒真，:942 起不可达
+  chara(0).train.初吻对象 = -1; // ，四个魔王性别分支写的都是同一个值
+  que2mk(); // CALL QUE2MK，恒 0——:786 IF !RESULT 恒真，:942 起不可达
   const maou_sex = await ask_maou_sex();
   if (maou_sex !== 1) {
-    // :800 IF MAOUSEX != 1 —— 女性跳过肉棒尺寸一问
+    // IF MAOUSEX != 1 —— 女性跳过肉棒尺寸一问
     await ask_penis_size();
   }
   await ask_kuangwang_sex();

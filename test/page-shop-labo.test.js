@@ -1,8 +1,6 @@
 /**
  * @file ere/page/page-shop-labo.js 的行为测试（issue #398 / N14 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB（4,497 行，52 函数）。
- *
  * 接缝 = test/helpers/era-fixture.js：驱动整幅界面（预置输入 → 收集本次
  * 新增的输出行 → 断言文案、按钮集与变量落点）。
  *
@@ -207,7 +205,7 @@ test('LABO_PAGE1：条目编号与价格逐个钉住（页 0）', async () => {
     [997, 999, 998],
     '页脚三键 [997]/[999]/[998]',
   );
-  // :13-25 的标题与所持金
+  // 的标题与所持金
   assert.ok(texts(added).includes('魔界的大门'), '标题在 :13');
   assert.ok(
     texts(added).includes('《可以对奴隶进行肉体和精神的魔改》'),
@@ -295,7 +293,7 @@ test('LABO_PAGE4：洗脑四项的按钮正文价格（8000 与 10000 两个档�
     [70, 71, 72, 73, 74],
     '战斗段五项',
   );
-  // :272 的 PRINTL 是独立的一行（:271 `PRINTL [74] - 赋予魔法耐性` 整行自成
+  // 的 PRINTL 是独立的一行（:271 `PRINTL [74] - 赋予魔法耐性` 整行自成
   // 一行，不是 PRINTLC 串）——所以 [74] 与「□洗脑」之间恰有一个真空行。
   // 它不属于 #562 修的那一类（PRINTLC 收尾 PRINTL 不多补空行），删掉即错。
   const magic_row = button_of(added, 74).row;

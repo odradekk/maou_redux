@@ -1,8 +1,6 @@
 /**
  * @file ere/page/page-life-list.js 的行为测试（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/LIFE_LIST.ERB 全 8 函数。
- *
  * 接缝 = test/helpers/era-fixture.js：经唯一夹具观察玩家输出行与变量读写，
  * 不断言模块内部辅助函数。一行 = 网格的两个格（编号按钮格 + 正文文本格，
  * 共享同一 row 号）；断言按行取格拼接。
@@ -342,7 +340,7 @@ test('LIFE_LIST_ITEM：定宽字段逐字比对（编号宽 2 / 名字 12 / 职�
 });
 
 test('LIFE_LIST_ITEM：0 号（魔王）不出「可被卖 / 可作为助手」', () => {
-  // :121/:123 的 `ARG != 0` 判据——列表版的行永远非 0，这条只在单项版可达
+  // 的 `ARG != 0` 判据——列表版的行永远非 0，这条只在单项版可达
   const fixture = three_chara();
   fixture.store.set('cflag:0:0', 2);
   fixture.store.set('base:0:0', 1);

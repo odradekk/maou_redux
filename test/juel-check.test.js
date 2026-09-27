@@ -398,8 +398,8 @@ test('交互循环：选 999 退出，收尾三查全走真身（#565：CHECK_SP
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
   assert.deepEqual(fixture.inputs_consumed, [
-    { api: 'waitAnyKey' }, // :439 WAIT（结算表后的读键）
-    { api: 'input', value: 999 }, // :461 INPUT → :540 退出
+    { api: 'waitAnyKey' }, // WAIT（结算表后的读键）
+    { api: 'input', value: 999 }, // INPUT → :540 退出
   ]);
   assert.ok(
     fixture.text_lines().some((line) => line.includes('生育了太多异种的孩子')),
@@ -492,8 +492,8 @@ test('自动升级（GETBIT(FLAG:5,35)）：不吃 INPUT，AUTO_ABLUP 真身三�
     [{ api: 'waitAnyKey' }],
     '自动模式不吃 INPUT',
   );
-  // :452-455 三连：目标升一级并打印 ;453-454 的 ASSI 分支由 ASSI <= 0 跳过，
-  // :455 的 MASTER（角色 0）确实被调到（读过它的 abl:0:0）
+  // 三连：目标升一级并打印 ;453-454 的 ASSI 分支由 ASSI <= 0 跳过，
+  // 的 MASTER（角色 0）确实被调到（读过它的 abl:0:0）
   assert.equal(fixture.store.get('abl:31:0'), 1);
   assert.equal(fixture.store.get('juel:31:0'), 0);
   assert.ok(
@@ -682,7 +682,7 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.equal(buttons[0].rendered, '[0] 阴蒂感觉 - LV 3');
   assert.equal(buttons.at(-2).rendered, '[99] 反抗刻印 - LV 1');
   assert.equal(buttons.at(-1).rendered, '[999] - 能力值提高结束');
-  // :81-86 的两处 PRINTL（每 4 条换行、末行不足 4 也收行）与 :109/:111 同款，
+  // 的两处 PRINTL（每 4 条换行、末行不足 4 也收行）与 :109/:111 同款，
   // 都只结束所在的按钮行，不产生空行：train-natural-log:945-953 里五行能力
   // 按钮、[99] 行、尾部分割线与 [999] 行全部逐行相邻（#596）。
   // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
@@ -693,8 +693,8 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.deepEqual(
     fixture.lines.map((line) => line.type),
     Array.from({ length: buttons.length - 1 }, () => 'button').concat([
-      'divider', // :110 CUSTOMDRAWLINE ‥（夹在 [99] 行与 [999] 行之间）
-      'button', // :111 [999] - 能力值提高结束
+      'divider', // CUSTOMDRAWLINE ‥（夹在 [99] 行与 [999] 行之间）
+      'button', // [999] - 能力值提高结束
     ]),
     '按钮逐行相邻，[99] 行与尾部分割线、[999] 行之间都没有空行',
   );

@@ -2,8 +2,6 @@
  * @file 装备数据表（裁定 6：#168/#174——@EQUIP_DATABASE 的 ELSEIF 链落为
  * 纯数据常量表；查表行为在 ere/system/equip/equip-lookup.js）。
  *
- * 源: target/ERB/其他/EQUIP.ERB  @EQUIP_DATABASE（:274-702）
- *
  * 本文件是**全库唯一的装备数据来源**（原作没有装备 CSV，target/CSV/ 只有
  * Item.csv），也是二次开发改装备数值/名称时唯一要碰的文件：无逻辑、无
  * require、无条件分支——形状由 test/equip-database.test.js 的源码扫描锁住，

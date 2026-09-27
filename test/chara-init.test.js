@@ -37,7 +37,7 @@ test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 
   assert.equal(result, 35, 'RETURN L_A');
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称已设');
   const texts = history_texts(fixture);
-  // :21-23 着替え装着自 #215（J5）起为真身：菲娅无既定服装（41/42 均 0）
+  // 着替え装着自 #215（J5）起为真身：菲娅无既定服装（41/42 均 0）
   // → WEARING_CLOTH_ALL 早退、无输出无写入（行为锁在 test/cloth-func.test.js）
   assert.equal(fixture.store.get('cflag:35:40'), undefined, '无服装不写装位');
   assert(

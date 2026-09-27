@@ -1,12 +1,6 @@
 /**
  * @file 魔的诱惑：侵攻中勇者的劝降判定与结算（issue #393，N9）。
  *
- * 源: target/ERB/キャラ関数/CHARA_TEMPTATION.ERB 六个函数——
- *     @SHOW_BUTTON_TEMPTATION（:4-20）、@CHECK_ABLE_TO_TEMPTATION
- *     （:23-36，#FUNCTION 式中函数）、@TEMPTATION（:39-86）、
- *     @TEMPTATION_TRY（:202-364）、@FI_TEMPTATION（:373-397，#FUNCTION）、
- *     @PREPARE_TEMPTATION（:404-447，#DIM REF 双输出）。
- *
  * 调用点：原作 CHARA_INFO ver1.0.1.ERB:861（按钮）与 :1054（CASE 3 动作），
  * 已接在 ere/page/page-chara-info.js。
  *
@@ -117,9 +111,9 @@ function print_bar(label, value, max) {
  * @returns {0|1|2} 0 = 可以；1 = 不是侵攻中的勇者；2 = 狂王
  */
 function check_able_to_temptation(arg) {
-  if (state_of(arg) !== 2) return TEMPTATION_NOT_HERO; // :29-31
-  if ((era.get(`cflag:${arg}:800`) || 0) === 4) return TEMPTATION_CRAZY_KING; // :32-34
-  return 0; // :36
+  if (state_of(arg) !== 2) return TEMPTATION_NOT_HERO;
+  if ((era.get(`cflag:${arg}:800`) || 0) === 4) return TEMPTATION_CRAZY_KING;
+  return 0;
 }
 
 /**
@@ -132,8 +126,8 @@ function check_able_to_temptation(arg) {
  * @param {number} arg 目标角色号（原作 ARG）
  */
 function show_button_temptation(num, arg) {
-  if (check_able_to_temptation(arg) !== 0) return; // :10-19
-  era.printButton('魔的诱惑\u3000', num); // :20
+  if (check_able_to_temptation(arg) !== 0) return;
+  era.printButton('魔的诱惑\u3000', num);
 }
 
 /**
@@ -144,31 +138,31 @@ function show_button_temptation(num, arg) {
  * @returns {Promise<number>} 0 = 已处理；2 = 不是侵攻中的勇者（按钮本不该显示）
  */
 async function temptation(arg, rand = default_rand) {
-  const able = check_able_to_temptation(arg); // :45 LOCAL
+  const able = check_able_to_temptation(arg); // LOCAL
   if (able !== 0) {
-    if (able === TEMPTATION_NOT_HERO) return 2; // :47-49 按钮没显示但输入仍能到达
-    return 0; // :46-51（狂王那一档的收尾）
+    if (able === TEMPTATION_NOT_HERO) return 2; // 按钮没显示但输入仍能到达
+    return 0; // （狂王那一档的收尾）
   }
 
   if ((chara(0).dungeon.气力 || 0) < TEMPTATION_MP_COST) {
-    // :60-63 気力減衰
+    // 気力減衰
     era.print('*你的魔力耗尽了*');
     return 0;
   }
-  chara(0).dungeon.气力 -= TEMPTATION_MP_COST; // :64
+  chara(0).dungeon.气力 -= TEMPTATION_MP_COST;
 
-  await temptation_try(arg, rand); // :67
-  await era.waitAnyKey(); // :68 WAIT
+  await temptation_try(arg, rand);
+  await era.waitAnyKey(); // WAIT
 
-  // :71-74 結果表示
+  // 結果表示
   print_bar('好感度', era.get(`cflag:${arg}:2`) || 0, TEMPTATION_FALL);
   // MAXBASE:1 属 dungeon 域；门面生成器只产出了 MAXBASE:0（体力上限），
   // 这个下标仍用裸寻址（chara-dungeon.js 手写区注释同款）
   print_bar('你的魔力', chara(0).dungeon.气力, era.get('maxbase:0:1') || 0);
-  await era.waitAnyKey(); // :75 WAIT
+  await era.waitAnyKey(); // WAIT
 
   if ((era.get(`cflag:${arg}:2`) || 0) >= TEMPTATION_FALL) {
-    // :77-83 陥落：投诚
+    // 陥落：投诚
     era.print('*勇者被你诱惑，投诚了！*');
     chara(arg).invasion.状态 = 0; // CFLAG:ARG:1 = 0
     chara(arg).invasion.新人 = 1; // CFLAG:ARG:506 = 1
@@ -176,7 +170,7 @@ async function temptation(arg, rand = default_rand) {
     party_del(arg); // CALL PARTY_DEL(ARG)
   }
 
-  // :85-86 `;リターン１でターンエンド` 与 `;RETURN 1` 在原作里是注释，
+  // `;リターン１でターンエンド` 与 `;RETURN 1` 在原作里是注释，
   // 函数落尾返回 0——移植照此不返回 1。
   return 0;
 }
@@ -189,7 +183,7 @@ async function temptation(arg, rand = default_rand) {
  *   见文件头）
  */
 function prepare_temptation(arg) {
-  // :411-416 成功の基本値（魔王等级＋三个 FLAG 加成＋勇者的经验与素质）
+  // 成功の基本値（魔王等级＋三个 FLAG 加成＋勇者的经验与素质）
   let seikou = 99 + (era.get('cflag:0:9') || 0);
   seikou +=
     (era.get('flag:30') || 0) +
@@ -214,11 +208,11 @@ function prepare_temptation(arg) {
   seikou +=
     10 * ((era.get(`abl:${arg}:10`) || 0) + (era.get(`abl:${arg}:11`) || 0));
 
-  // :419-429 / :430-440 残り体力・気力の二段（最大倍率は脅威の36倍）
+  // 残り体力・気力の二段（最大倍率は脅威の36倍）
   seikou = times(seikou, health_factor(arg, 0));
   seikou = times(seikou, health_factor(arg, 1));
 
-  // :443-447 失敗の基本値は勇者レベルとカルマ、刻印の効果が大
+  // 失敗の基本値は勇者レベルとカルマ、刻印の効果が大
   let sippai =
     50 + (era.get(`cflag:${arg}:9`) || 0) + (era.get(`cflag:${arg}:151`) || 0); // CFLAG:151 善恶值
   sippai = Math.max(0, sippai);
@@ -282,7 +276,7 @@ function times(value, factor) {
 function fi_temptation(arg, seikou, sippai, rand = default_rand) {
   const ring1 = (era.get(`cflag:${arg}:551`) || 0) % 1000; // RING:1
   const ring2 = (era.get(`cflag:${arg}:552`) || 0) % 1000; // RING:2
-  // :382-384 [即落ち][淫乱][愛][肉便器]なら無条件で成功
+  // [即落ち][淫乱][愛][肉便器]なら無条件で成功
   if (
     era.get(`talent:${arg}:73`) ||
     era.get(`talent:${arg}:76`) ||
@@ -291,11 +285,11 @@ function fi_temptation(arg, seikou, sippai, rand = default_rand) {
   ) {
     return 1;
   }
-  // :385-388 不幸の指輪（RING == 20）は 25％で強制成功
+  // 不幸の指輪（RING == 20）は 25％で強制成功
   if (rand(20) < 5 && (ring1 === 20 || ring2 === 20)) return 1;
-  // :389-391 結界の指輪（RING == 18）は 50％で強制失敗
+  // 結界の指輪（RING == 18）は 50％で強制失敗
   if (rand(10) < 5 && (ring1 === 18 || ring2 === 18)) return 0;
-  // :393-397 本抽签：成功签 / 总签
+  // 本抽签：成功签 / 总签
   return rand(seikou + sippai) < seikou ? 1 : 0;
 }
 
@@ -307,22 +301,22 @@ function fi_temptation(arg, seikou, sippai, rand = default_rand) {
  * @returns {Promise<number>} 原作的 RETURN 0
  */
 async function temptation_try(arg, rand = default_rand) {
-  const [seikou, sippai] = prepare_temptation(arg); // :207
+  const [seikou, sippai] = prepare_temptation(arg);
   const name = era.get(`callname:${arg}:-1`) ?? ''; // %SAVESTR:ARG%
   const master_lv = era.get('cflag:0:9') || 0; // CFLAG:0:9 魔王等级
 
   for (let num = 0; num < 6; num += 1) {
-    // :210 誘惑判定成功
+    // 誘惑判定成功
     if (fi_temptation(arg, seikou, sippai, rand)) {
       let item_failed = false; // 原作 CASE 7,8 的 GOTO FAIL
       switch (rand(9)) {
-        case 0: // :216-220
+        case 0:
           era.print(`*梦魔的快乐袭击了${name}！*`);
           era.print(`欲情点数+${master_lv * 10}`);
           add_juel(arg, 5, master_lv * 10);
           add_affection(arg, 10 * (1 + abl_sum(arg, [0, 1, 2, 3])));
           break;
-        case 1: // :221-227
+        case 1:
           era.print(`*自己隐藏着的兽欲袭击了${name}！*`);
           era.print(`欲情点数+${master_lv * 5}`);
           era.print(`屈服点数+${master_lv * 2}`);
@@ -330,7 +324,7 @@ async function temptation_try(arg, rand = default_rand) {
           add_juel(arg, 6, master_lv * 2);
           add_affection(arg, 15 * (1 + abl_sum(arg, [10, 11])));
           break;
-        case 2: // :228-232
+        case 2:
           era.print(`*自己心中的黑暗面袭击了${name}！*`);
           era.print(`屈服点数+${master_lv * 4}`);
           add_juel(arg, 6, master_lv * 4);
@@ -341,31 +335,31 @@ async function temptation_try(arg, rand = default_rand) {
             ),
           );
           break;
-        case 3: // :233-237
+        case 3:
           era.print(`*魔王的甜蜜诱惑袭击了${name}！*`);
           era.print(`屈服点数+${master_lv}`);
           add_juel(arg, 6, master_lv);
           add_affection(arg, 40);
           break;
-        case 4: // :238-242
+        case 4:
           era.print(`*可以和你平分这个世界哦……*`);
           era.print(`屈服点数+${master_lv * 2}`);
           add_juel(arg, 6, master_lv * 2);
           add_affection(arg, 50);
           break;
-        case 5: // :243-260 体力条按残量给好感度，再治愈体力
+        case 5: // 体力条按残量给好感度，再治愈体力
           add_affection(arg, heal_affection(arg, 0));
           era.print(`*魔界的波动，治愈了${name}…*`);
           era.print(`HP+${master_lv * 50}`);
           heal_base(arg, 0, master_lv * 50);
           break;
-        case 6: // :261-278 气力同款
+        case 6: // 气力同款
           add_affection(arg, heal_affection(arg, 1));
           era.print(`*魔界的波动，治愈了${name}的心灵…*`);
           era.print(`气力+${master_lv * 50}`);
           heal_base(arg, 1, master_lv * 50);
           break;
-        default: // :279-287 CASE 7, 8
+        default: // CASE 7, 8
           era.print(`*你赐予了${name}道具…*`);
           if ((await add_ex_item(-1, arg, 0, rand)) > 0) {
             add_affection(arg, 5);
@@ -376,24 +370,24 @@ async function temptation_try(arg, rand = default_rand) {
       }
 
       if (item_failed) {
-        // :294-297 $FAIL：道具没送出去也走失败结算（掷的是 RAND(1, 3)）
+        // $FAIL：道具没送出去也走失败结算（掷的是 RAND(1, 3)）
         era.print('诱惑被切断了！');
         karma(arg, 1 + rand(2));
       } else {
-        // :290-291 籠絡され堕落していく（失败时掷的是 RAND(1, 4)）
+        // 籠絡され堕落していく（失败时掷的是 RAND(1, 4)）
         karma(arg, -(1 + rand(3)));
       }
     } else {
-      // :293-298 誘惑失敗
+      // 誘惑失敗
       era.print('诱惑被切断了！');
       karma(arg, 1 + rand(2));
     }
   }
 
-  // :301-360 保証人チャンス！（三次机会各自一条判据）
+  // 保証人チャンス！（三次机会各自一条判据）
   await sponsor_chances(arg, rand);
 
-  return 0; // :344-364（保証人チャンス段落走到函数尾的收尾）
+  return 0; // （保証人チャンス段落走到函数尾的收尾）
 }
 
 /**
@@ -443,7 +437,7 @@ async function sponsor_chances(arg, rand) {
     (era.get(`talent:${arg}:${T_SPONSOR}`) || 0) === 0 &&
     money >= SPONSOR_AMOUNT
   ) {
-    // :306-322 担保人でなく、あなたが LOCAL 以上のお金を持ち、1/20 の確率
+    // 担保人でなく、あなたが LOCAL 以上のお金を持ち、1/20 の確率
     era.print(
       `*你向${era.get(`callname:${arg}:-1`) ?? ''}赞助了${SPONSOR_AMOUNT}点资金……*`,
     );
@@ -467,7 +461,7 @@ async function sponsor_chances(arg, rand) {
     (era.get(`talent:${arg}:122`) || 0) === 0 &&
     money >= SPONSOR_AMOUNT
   ) {
-    // :326-342 オトコでもふたなりでもなく、1/20 の確率で肉芽の呪い（肉芽诅咒
+    // オトコでもふたなりでもなく、1/20 の確率で肉芽の呪い（肉芽诅咒
     // 素质属 stronghold 域，写经门面）
     era.print(
       `*你向${era.get(`callname:${arg}:-1`) ?? ''}赞助了${SPONSOR_AMOUNT}点资金……*`,
@@ -491,7 +485,7 @@ async function sponsor_chances(arg, rand) {
     (era.get(`cflag:${arg}:582`) || 0) < SPONSOR_AMOUNT * -1 &&
     money >= SPONSOR_AMOUNT
   ) {
-    // :344-358 借金が LOCAL 以上あり、1/10 の確率で代わりに返済
+    // 借金が LOCAL 以上あり、1/10 の確率で代わりに返済
     era.print(
       `*你可以拿${SPONSOR_AMOUNT}点，来帮${era.get(`callname:${arg}:-1`) ?? ''}还债*`,
     );
@@ -502,7 +496,7 @@ async function sponsor_chances(arg, rand) {
       era.print(`屈服点数+${(era.get('cflag:0:9') || 0) * 5}`);
       add_juel(arg, 6, (era.get('cflag:0:9') || 0) * 5);
       add_affection(arg, 80);
-      pay_sponsor(); // :355-356 只扣双资金，不入目标所持金
+      pay_sponsor(); // 只扣双资金，不入目标所持金
       chara(arg).patch.借款 += SPONSOR_AMOUNT; // CFLAG:582（patch 域）
     }
   }

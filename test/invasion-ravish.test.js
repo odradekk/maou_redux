@@ -2,9 +2,6 @@
  * ere/invasion/invasion-ravish.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
- * 源: target/ERB/侵略/INVASION_RYOUZYOKU.ERB 的 @INVASION_RYOUZYOKU（:1-66）
- * 与 12 个战场旁白函数（:71-782）。整份模块无状态、只输出，所以测试分两层：
- *
  *   1. 分发层（:13-64）：三列各抽一个怪物（X = (RAND:9+1)*10+100+RAND:5）、
  *      MONSTER_DATA 写列、按凌辱类型（E:列头+7）调旁白、每列末尾一行空行。
  *      怪物 110 = 兽人（凌辱类型 1，ere/data/monster-database.js 的 @ORC），
@@ -172,7 +169,7 @@ const AREA_PROBES = [
       2: ['精灵女性', '精灵守卫'],
       3: ['龙族女人', '龙族女战士'],
       4: ['天使', '破邪天使'],
-      // :312 的第二臂写成 ARG == 4（不可达）→ 天神宫落 ELSE
+      // 的第二臂写成 ARG == 4（不可达）→ 天神宫落 ELSE
       5: ['女人', '女兵士'],
       6: ['女人', '女兵士'],
     },

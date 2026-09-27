@@ -1,12 +1,6 @@
 /**
  * @file 角色信息画面的主分发（@SHOW_CHARA_INFO）与它的两个十六进制帮手。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
- *       @SHOW_CHARA_INFO（:7-321）/ @HEXtoDEC（:1765-1822）/
- *       @ColorJudgmentWorB（:1824-1833）
- *       target/ERB/キャラ関数/CHARA_INFO_SHOW_MaouShadowsPlus.ERH
- *         （`#DIM directToHomePage`，只服务本文件的献祭分支，见下）
- *
  * 页码臂（`ARG:1`）：
  *   -2 贡品时 / -1 调教时 / 0 首页 / 1 状态 / 2 外观 / 3 素质条件。
  *   4 自我介绍页（SHOW_PERSONAL_INFO）结构性不可达——全库无定义、调用方只传
@@ -185,7 +179,7 @@ function hex_to_dec(hex, dec) {
  */
 function color_judgment_wor_b(dec) {
   const average = Math.trunc((dec[0] + dec[1] + dec[2]) / 3);
-  const value = average <= 128 ? 255 : 0; // :1827-1831
+  const value = average <= 128 ? 255 : 0;
   dec[1] = value;
   dec[2] = value;
   dec[3] = value;
@@ -214,20 +208,20 @@ function dashes() {
  * @returns {Promise<boolean>} true = 源里走 `RESTART`（外层重画一次）
  */
 async function sacrifice_flow(cid, background) {
-  const shadow = cid; // :45
-  era.print('已献祭的肉便器数量'); // :34
+  const shadow = cid;
+  era.print('已献祭的肉便器数量');
   SACRIFICE_FLAGS.forEach((index, kind) => {
-    // :35-40 六项：数量（条件值） + 对应的外观信息
+    // 六项：数量（条件值） + 对应的外观信息
     era.print(
       `${SACRIFICE_KINDS[kind]}相同\u3000\u3000……${cflag(cid, index)}（${get_look_info(cid, SACRIFICE_KINDS[kind])}）`,
     );
   });
   era.print(
     `合计\u3000\u3000\u3000\u3000……${sacrifice_score(cid)} / ${SACRIFICE_FULL}`,
-  ); // :41
+  );
 
   if (sacrifice_score(cid) >= SACRIFICE_FULL) {
-    // :48-77 献祭完成演出（GETBGCOLOR/FONTSTYLE 的替代见文件头）
+    // 献祭完成演出（GETBGCOLOR/FONTSTYLE 的替代见文件头）
     // 三句各是 `PRINTS "\n"*2 + 文案` + WAIT（空两行、文案不换行、等键）
     era.println();
     era.println();
@@ -244,57 +238,57 @@ async function sacrifice_flow(cid, background) {
     const dec = [0, 0, 0];
     hex_to_dec(background, dec);
     color_judgment_wor_b(dec);
-    era.setColor(`rgb(${dec[1]},${dec[2]},${dec[3]})`); // :60 SETCOLOR
-    era.setAlign('center'); // :62 ALIGNMENT CENTER
-    // :63-65 横幅第一行：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16` +
+    era.setColor(`rgb(${dec[1]},${dec[2]},${dec[3]})`); // SETCOLOR
+    era.setAlign('center'); // ALIGNMENT CENTER
+    // 横幅第一行：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16` +
     // `"\s"*2`（尾随两个空格照抄）+ `"\n"*2`——头一个 \n 收行，第二个是
     // 两行横幅之间的真空行（#615）
     era.print(
       `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,
     );
-    era.println(); // :65 的第二个 \n：横幅之间的真空行
-    // :66-68 横幅第二行：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2`——
+    era.println(); // 的第二个 \n：横幅之间的真空行
+    // 横幅第二行：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2`——
     // 三段是同一显示行（#615：此前被拆成三行）
     era.print(`${dashes()}< 完 全 召 唤 >${dashes()}  `);
-    era.setAlign('left'); // :69 ALIGNMENT LEFT
-    era.setColor(); // :71 RESETCOLOR
+    era.setAlign('left'); // ALIGNMENT LEFT
+    era.setColor(); // RESETCOLOR
     // 三处跨域写一律走属主域门面（#71 裁定；属主见 ownership/cflag-ownership.yml
     // "1"（invasion）/"700"（chara）/"820"（chara）与 flag-ownership.yml "80"）
-    chara(shadow).invasion.状态 = 0; // :72
-    chara(shadow).chara.收藏 = 1; // :73
-    chara(shadow).chara.寿命 = 666666; // :74
-    await era.waitAnyKey(); // :75 WAIT（三处赋值已在上方三行各自标注）
-    era.println(); // :76 的第一个 \n
-    era.println(); // :76 的第二个 \n
-    return true; // :77 RESTART（外层重画）
+    chara(shadow).invasion.状态 = 0;
+    chara(shadow).chara.收藏 = 1;
+    chara(shadow).chara.寿命 = 666666;
+    await era.waitAnyKey(); // WAIT（三处赋值已在上方三行各自标注）
+    era.println(); // 的第一个 \n
+    era.println(); // 的第二个 \n
+    return true; // RESTART（外层重画）
   }
 
-  // :79-80 未满 30：给两个出口（各是 `PRINTS "\n"*2 + 文案`）
+  // 未满 30：给两个出口（各是 `PRINTS "\n"*2 + 文案`）
   // 两枚都是**真按钮**（PR #53 通则，#530 补齐本文件剩余几处）：引擎的 input
   // 只接受本轮打印过的按钮快捷键，纯文本的 ` [N] 文字 ` 行玩家敲不进编号。
   // 正文不写 `[N]`（引擎按 showAcc 自动拼，自带会显示成 `[10] [ 10] …`）。
   era.println();
   era.println();
   era.printButton('查看符合条件的奴隶或勇者', 10); // 原作 `[ 10]` 的补位交给引擎排版
-  // :80 的第二句 `PRINTS "\n"*2 + " [100] 返回 "`：首个 \n 只结束 [10] 那一行
+  // 的第二句 `PRINTS "\n"*2 + " [100] 返回 "`：首个 \n 只结束 [10] 那一行
   // （ere 的 printButton 自成一行），余下的一个是真空白；两枚按钮之间只有
   // 一个空行，:80 末尾的返回文本之后没有 PRINTL
   era.println();
   era.printButton('返回', 100);
-  const choice = await era.input(); // :82 INPUT
+  const choice = await era.input(); // INPUT
   if (choice === 100) {
-    return false; // :84-87 返回首页
+    return false; // 返回首页
   }
   if (choice !== 10) {
-    return true; // :207-209 CASEELSE：重新开始
+    return true; // CASEELSE：重新开始
   }
 
-  // :88-206 $SacrificeListRefresh 的名单循环
-  let page = 0; // :18
+  // $SacrificeListRefresh 的名单循环
+  let page = 0;
   for (;;) {
     era.println();
-    era.drawLine({ isSolid: true }); // :92 DRAWLINEFORM =
-    era.print(`当前总祭品数： ${sacrifice_score(shadow)} /${SACRIFICE_FULL}`); // :93
+    era.drawLine({ isSolid: true }); // DRAWLINEFORM =
+    era.print(`当前总祭品数： ${sacrifice_score(shadow)} /${SACRIFICE_FULL}`);
     era.println();
     for (const id of era.getAddedCharacters()) {
       if (
@@ -302,7 +296,7 @@ async function sacrifice_flow(cid, background) {
         get_look_info(id, SACRIFICE_KINDS[page]) !==
           get_look_info(shadow, SACRIFICE_KINDS[page])
       ) {
-        continue; // :98
+        continue;
       }
       // 名单行做成真按钮（PR #53 通则：`[N] 文字` + INPUT 惯用法升级为
       // era.printButton）——引擎的 input 只接受本轮打印过的按钮快捷键，
@@ -313,49 +307,49 @@ async function sacrifice_flow(cid, background) {
       // 编号前缀由引擎按 showAcc 自动拼（正文不写 `[N]`，AGENTS.md 那条硬约束）
       era.printButton(label, id, color === undefined ? undefined : { color });
     }
-    // :119 `PRINTS "\n"*2 + "切换条件类型：" + "\n"*2`
+    // `PRINTS "\n"*2 + "切换条件类型：" + "\n"*2`
     era.println();
     era.println();
     era.print('切换条件类型：');
-    // :119 文本尾的两个换行里，首个只收文本行（ere 的 print 自成一行），
+    // 文本尾的两个换行里，首个只收文本行（ere 的 print 自成一行），
     // 余下的一个才是真空行
     era.println();
-    // :120-126 六个条件按钮（编号即 kind 下标 + 1000）
+    // 六个条件按钮（编号即 kind 下标 + 1000）
     for (const [index, kind] of SACRIFICE_KINDS.entries()) {
       era.printButton(kind, 1000 + index);
     }
     era.println();
     era.println();
-    // :127 ` [100] 返回 ` 的编号 #586 起改 999（LIST_RETURN 的注释）——真按钮
+    // ` [100] 返回 ` 的编号 #586 起改 999（LIST_RETURN 的注释）——真按钮
     // （#530）。**这一轮的白名单非空**：名单行与六个条件键都在上面打印过了，
     // 纯文本行必然被引擎拒收（夹具当场抛「输入不合法」，见
     // test/chara-info-show.test.js 的 #530 用例）。
     era.printButton('返回', LIST_RETURN);
-    // :127 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行
+    // 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行
 
-    const result = await era.input(); // :129
+    const result = await era.input();
     if (result === LIST_RETURN) {
-      return true; // :131-133 ARG = shadow; RESTART
+      return true; // ARG = shadow; RESTART
     }
     if (result >= 1000 && result <= 1005) {
-      page = result % 10; // :135
-      continue; // :136 GOTO SacrificeListRefresh
+      page = result % 10;
+      continue; // GOTO SacrificeListRefresh
     }
     if (result >= 1 && era.getAddedCharacters().includes(result)) {
-      // :138-203 名单里点了某个角色
+      // 名单里点了某个角色
       const picked_state = cflag(result, 1);
       if (picked_state === STATE_HERO) {
-        await show_chara_info(result, -2); // :140
-        continue; // :141 GOTO
+        await show_chara_info(result, -2);
+        continue; // GOTO
       }
       if (!SACRIFICABLE_STATES.includes(picked_state)) {
-        // :193-201 其余状态一律不可操作（原作这一臂里还嵌了一层
+        // 其余状态一律不可操作（原作这一臂里还嵌了一层
         // `IF CFLAG:(RESULT):1 == 2` 的重复判据，恒假——上面已经拦过
         // STATE_HERO，1:1 精简为可达分支）
         era.print(`该状态不可操作：${picked_state}`);
-        continue; // :200 GOTO
+        continue; // GOTO
       }
-      // :143-189 献祭确认
+      // 献祭确认
       era.println();
       era.print(
         `确定要将 ${chara_callname(result)} 献祭？（*将永远失去这个奴隶）`,
@@ -372,7 +366,7 @@ async function sacrifice_flow(cid, background) {
         await era.waitAnyKey();
         sacrifice_chara(shadow, result, page);
       }
-      continue; // :189/:191 GOTO SacrificeListRefresh
+      continue; // GOTO SacrificeListRefresh
     }
     // 其余输入：回环重问（源 :205-206 CLEARLINE 1 + GOTO 输入点）
   }
@@ -385,28 +379,28 @@ async function sacrifice_flow(cid, background) {
  * @param {number} page 当前条件下标（源 page，用来累加 CFLAG:shadow:(800+page)）
  */
 function sacrifice_chara(shadow, target_id, page) {
-  chara(target_id).invasion.状态 = 0; // :156（跨域写走属主域门面）
-  era.set(`cflag:${shadow}:${800 + page}`, cflag(shadow, 800 + page) + 100); // :157
-  // :158-159 SIF RESULT < shadow → shadow--（序号世界的下标前移；ID 世界不适用，
+  chara(target_id).invasion.状态 = 0; // （跨域写走属主域门面）
+  era.set(`cflag:${shadow}:${800 + page}`, cflag(shadow, 800 + page) + 100);
+  // SIF RESULT < shadow → shadow--（序号世界的下标前移；ID 世界不适用，
   //   见文件头「序号世界改角色 ID 世界」）
-  era_flag.target = target_id; // :161-162 TARGET = RESULT; A = TARGET
+  era_flag.target = target_id; // TARGET = RESULT; A = TARGET
   for (const slot of [550, 551, 552]) {
-    // :163-171 三件装备回收（W:0 = CFLAG:A:slot; CALL EQUIP_GET; CFLAG:A:slot = -1）
+    // 三件装备回收（W:0 = CFLAG:A:slot; CALL EQUIP_GET; CFLAG:A:slot = -1）
     equip_get({ 存储编号: cflag(target_id, slot) });
     era.set(`cflag:${target_id}:${slot}`, -1);
   }
-  // :172-173 X = NO:A + 199; FLAG:X = 1。普通角色的 NO 就是角色 ID；后代的
+  // X = NO:A + 199; FLAG:X = 1。普通角色的 NO 就是角色 ID；后代的
   // 原作 NO 是来源模板号（chara-pregnancy.js 的 template_no_of），故经它换算。
   era.set(`flag:${template_no_of(target_id) + 199}`, 1);
-  // :174-181 前回目标/助手（FLAG:1/FLAG:2）的下标前移——ID 世界不适用
-  era_flag.target = era.get('flag:1') || 0; // :182 TARGET = FLAG:1
-  party_char_del(target_id); // :184 CALL PARTY_CHAR_DEL, A
-  era.removeCharacter(target_id); // :185 DELCHARA A
-  // :186 CALL NAME_RESET（读 TARGET）。**惰性 require**：char-make.js 是
+  // 前回目标/助手（FLAG:1/FLAG:2）的下标前移——ID 世界不适用
+  era_flag.target = era.get('flag:1') || 0; // TARGET = FLAG:1
+  party_char_del(target_id); // CALL PARTY_CHAR_DEL, A
+  era.removeCharacter(target_id); // DELCHARA A
+  // CALL NAME_RESET（读 TARGET）。**惰性 require**：char-make.js 是
   // rand_chara_make 的宿主，它 require 本模块（形象确认段），顶层再 require
   // 回去会成环——只有献祭分支用得到，就在用到处取。
   require('#/chara/char-make').name_reset();
-  game.event.处刑勇者数 += 1; // :187（跨域写走属主域门面）
+  game.event.处刑勇者数 += 1; // （跨域写走属主域门面）
 }
 
 /**
@@ -425,7 +419,7 @@ async function show_chara_info(
   rand = default_rand,
   background = 0x000000,
 ) {
-  // :25-26 TARGET = ARG / LOCAL:1 = TARGET——被调段（LOOK_INFO 的语尾等）
+  // TARGET = ARG / LOCAL:1 = TARGET——被调段（LOOK_INFO 的语尾等）
   // 按 TARGET 取口上；:320-321 退出恢复。try/finally 覆盖全部出口
   const target_pool = era_flag.target;
   era_flag.target = cid;
@@ -442,19 +436,19 @@ async function show_chara_info(
  */
 async function show_chara_info_body(cid, page, rand, background) {
   for (;;) {
-    const line_count = era.getLineCount(); // :19-22 L_LCOUNT = LINECOUNT
-    show_info_title(cid, rand); // :28
-    era.drawLine(); // :27-30 CUSTOMDRAWLINE ‥
+    const line_count = era.getLineCount(); // L_LCOUNT = LINECOUNT
+    show_info_title(cid, rand);
+    era.drawLine(); // CUSTOMDRAWLINE ‥
 
     if (cflag(cid, 1) === STATE_SACRIFICED) {
-      const restart = await sacrifice_flow(cid, background); // :33-214
+      const restart = await sacrifice_flow(cid, background);
       if (restart) continue; // RESTART
-      return 1; // :86-87 directToHomePage = 1; RETURN 0
+      return 1; // directToHomePage = 1; RETURN 0
     }
 
     switch (page) {
       case -2:
-        // :217-235 贡品信息
+        // 贡品信息
         show_talent(cid);
         era.drawLine();
         show_info_abl(cid);
@@ -464,26 +458,25 @@ async function show_chara_info_body(cid, page, rand, background) {
         show_info_mark(cid);
         era.drawLine();
         show_data(cid, rand);
-        await look_info(cid); // :233 CALL LOOK_INFO
+        await look_info(cid); // CALL LOOK_INFO
         show_appearance(cid);
         era.drawLine();
         break;
       case -1:
-        // :236-258 调教信息
+        // 调教信息
         show_talent(cid);
         era.drawLine();
         show_info_abl(cid);
         era.drawLine();
         show_info_mark(cid);
         era.drawLine();
-        await era.waitAnyKey(); // :244-247 WAIT
+        await era.waitAnyKey(); // WAIT
         show_info_exp(cid);
-        show_juel(cid); // :249 CALL SHOW_JUEL
-        await era.waitAnyKey(); // :247-250 WAIT
+        show_juel(cid); // CALL SHOW_JUEL
+        await era.waitAnyKey(); // WAIT
         show_talent_condition(cid);
         era.drawLine();
         if (era.get('item:37') && cid !== 0) {
-          // :255-258
           era.print(
             `总计调教${era.get(`cflag:${cid}:10`) || 0}次，好感度: ${Math.trunc((era.get(`cflag:${cid}:2`) || 0) / 10)}％`,
           );
@@ -491,7 +484,7 @@ async function show_chara_info_body(cid, page, rand, background) {
         }
         break;
       case 0:
-        // :260-271 首页
+        // 首页
         await show_block(cid);
         era.drawLine();
         show_talent(cid);
@@ -502,7 +495,7 @@ async function show_chara_info_body(cid, page, rand, background) {
         era.drawLine();
         break;
       case 1:
-        // :273-288 状态页
+        // 状态页
         await show_block(cid);
         era.drawLine();
         show_info_mark(cid);
@@ -517,19 +510,19 @@ async function show_chara_info_body(cid, page, rand, background) {
         }
         break;
       case 2:
-        // :290-297 外观页
+        // 外观页
         show_ring(cid);
         era.drawLine();
         show_data(cid, rand);
-        await look_info(cid); // :295 CALL LOOK_INFO
+        await look_info(cid); // CALL LOOK_INFO
         show_appearance(cid);
         era.drawLine();
         break;
       case 3:
-        // :299-303 素质条件页
+        // 素质条件页
         show_talent_condition(cid);
         era.drawLine();
-        // :302 按源序取 TALENTNAME 的 74 / 78 / 75 / 77（弄乳狂、性爱狂、
+        // 按源序取 TALENTNAME 的 74 / 78 / 75 / 77（弄乳狂、性爱狂、
         // 尻穴狂、自慰狂——编号不是升序，1:1 保留）
         era.print(
           `※ ${era.get('talentname:74') ?? ''}、${era.get('talentname:78') ?? ''}、${era.get('talentname:75') ?? ''}、${era.get('talentname:77') ?? ''}每获得一项，其他素质的获得要求便会上升，素质获得后条件将会隐藏；`,
@@ -543,12 +536,12 @@ async function show_chara_info_body(cid, page, rand, background) {
         break;
     }
 
-    // :310-315 不足 27 行补空行
+    // 不足 27 行补空行
     const used = era.getLineCount() - line_count;
     for (let count = used; count < MIN_LINES; count += 1) {
       era.println();
     }
-    return 0; // :210-213
+    return 0;
   }
 }
 

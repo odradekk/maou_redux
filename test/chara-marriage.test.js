@@ -1,11 +1,6 @@
 /**
  * @file ere/chara/chara-marriage.js 的行为测试（issue #393，N9）。
  *
- * 源: target/ERB/キャラ関数/CHARA_MARRIAGE.ERB 全二十函数（:14-902）——
- *     @SHOW_BUTTON_MARRIAGE / @CHECK_ABLE_TO_MARRIAGE（式中函数）/
- *     @MARRIAGE（主流程）/ 十三支种族典礼 / @MARRIAGE_DOG/ YOU/ LOVERS/
- *     @SLAVE_MARRIAGE / @DIVORCE。
- *
  * 缝 = test/helpers/era-fixture.js。婚姻状况读写 CFLAG:601/602/606/609，
  * 家族构成读 TALENT:320（`chara_marriage_before` 的既有测试在
  * test/page-chara-info.test.js，本文件不重复）。

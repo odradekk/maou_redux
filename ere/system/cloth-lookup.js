@@ -4,9 +4,6 @@
  * PRINT_ → ere/page/page-clothtype.js，两处不共享表——原作自己就是两份
  * 有差异的拷贝，见下）。
  *
- * 源: target/ERB/其他/FUNC_CLOTH.ERB  @GET_CLOTHTYPE_MAIN2（:707-888）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @GET_CLOTHTYPE_SPECIAL（:998-1109）
- *
  * == Emuera 内联 PRINT 习语的 ere 等价物 ==
  *
  * 原作 @GET_CLOTHTYPE_MAIN2 的 CASE 分支全部用 `PRINT`（不赋 LOCALS），

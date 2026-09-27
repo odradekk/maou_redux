@@ -1,10 +1,6 @@
 /**
  * @file 处刑事件公共结算（issue #348）。
  *
- * 源: target/ERB/處刑相關/EXECUTION.ERB  @EXECUTION/@EXECUTION_MINI
- *     target/ERB/處刑相關/BANISHMENT.ERB  @BANISHMENT
- *     target/ERB/處刑相關/GROTESQUE.ERB  @GROTESQUE
- *     target/ERB/處刑相關/PUBLIC_EXECUTION.ERB  @PUBLIC_EXECUTION
  */
 
 'use strict';

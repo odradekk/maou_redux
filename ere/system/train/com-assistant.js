@@ -3,25 +3,6 @@
  * 可执行性判定 + TRAIN_MESSAGE_A/B 分支 + @GET_ADV_COM CASE 61 升格规则
  * （issue #225，阶段 4 轴 A J15）。
  *
- * 源: target/ERB/調教相關/COMF60_助手にキス.ERB     @COM60
- *     target/ERB/調教相關/COMF61_クンニ強制.ERB     @COM61
- *     target/ERB/調教相關/COMF62_助手を犯す.ERB     @COM62
- *     target/ERB/調教相關/COMF63_貝あわせ.ERB       @COM63 + @COM63_AUTO
- *     target/ERB/調教相關/COMF64_３Ｐ.ERB           @COM64
- *     target/ERB/調教相關/COMF65_助手を犯させる.ERB @COM65
- *     target/ERB/調教相關/COMF66_ニ本フェラ.ERB     @COM66
- *     target/ERB/調教相關/COMF67_足コキする.ERB     @COM67（文件名足交，正文是践踏奴隶）
- *     target/ERB/調教相關/COMF68_ダブルフェラ.ERB   @COM68
- *     target/ERB/調教相關/COMF69_シックスナイン.ERB @COM69
- *     target/ERB/調教相關/COMF70_ダブル素股.ERB     @COM70
- *     target/ERB/調教相關/COMF71_ダブルパイズリ.ERB @COM71
- *     target/ERB/調教相關/COMF72_陰毛を剃る.ERB     @COM72
- *     target/ERB/調教相關/COMF73_髪型を弄る.ERB     @COM73 / @HAIRSET / @HAIRSET_TALK_1 / @HAIRSET_TALK_2
- *     target/ERB/調教相關/COMABLE.ERB               @COM_ABLE60-73（:2514-3135；无 67、无 74-79）
- *     target/ERB/調教相關/COMF_JUMP.ERB             @GET_ADV_COM CASE 61（:627-637 → 69）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB    SELECTCOM 62/68/69/72
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB    SELECTCOM 60-66、68-72（67/73 源侧无分支）
- *
  * == 本族边界 ==
  *
  * - 可直选 11 条（60-66/68/71-73）+ 高级 COM 3 条（67/69/70）。67/69/70 在

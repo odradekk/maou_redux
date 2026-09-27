@@ -1,8 +1,6 @@
 /**
  * @file 调教开始事件 @EVENTTRAIN 的**无属性档**定义（issue #401）。
  *
- * 源: target/ERB/EVENT/EVETRAIN.ERB  @EVENTTRAIN（:1-17）
- *
  * == 引擎保留事件名的多定义（结论来自 emuera-basic-agent-guide，不是猜的） ==
  *
  * `@EVENTTRAIN` 全库零 `CALL` 调用点——它是**引擎保留事件名**，由引擎在
@@ -57,17 +55,17 @@ const era_flag = require('#/era-utils/era-flag');
 
 // @EVENTTRAIN（EVETRAIN.ERB:1-17，无属性档——on 的缺省档即 TIER.NORMAL）
 on('EVENTTRAIN', async () => {
-  // :3 主人公の射精を0に（BASE:2 = 射精槽，属主 train → 门面）
+  // 主人公の射精を0に（BASE:2 = 射精槽，属主 train → 门面）
   chara(0).train.射精槽 = 0;
 
-  // :5 いちおう調教対象と助手も
+  // いちおう調教対象と助手も
   chara(era_flag.target).train.射精槽 = 0;
-  // :6-7 SIF ASSI >= 0
+  // SIF ASSI >= 0
   if (era_flag.assi >= 0) {
     chara(era_flag.assi).train.射精槽 = 0;
   }
 
-  // :10 VARSET TFLAG, 0, 0, 201 —— 201 个下标逐条清 0（起始 0、结束 201
+  // VARSET TFLAG, 0, 0, 201 —— 201 个下标逐条清 0（起始 0、结束 201
   // 不含）。分域落法见文件头「:10 那 201 条写的落法」。
   // —— 跨域 47 条：一律走属主域门面 setter（跨域写登记
   //    逐条核对过：train 31 / system 12 / dungeon 1 / kojo 1 / stronghold 2）——
@@ -141,7 +139,7 @@ on('EVENTTRAIN', async () => {
     era.set(`tflag:${index}`, 0);
   }
 
-  // :13-17 調教者は誰か（ASSIPLAY 是调教域槽位，经包装层读写）
+  // 調教者は誰か（ASSIPLAY 是调教域槽位，经包装层读写）
   if (era_flag.assiplay === 0) {
     era_flag.player = 0; // PLAYER = MASTER（MASTER 恒角色 0，见 event-pregnancy.js）
   } else {

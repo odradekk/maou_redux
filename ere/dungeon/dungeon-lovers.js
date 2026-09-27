@@ -1,10 +1,6 @@
 /**
  * @file 恋人系统（issue #341，阶段 5a L10）。
  *
- * 源: target/ERB/其他/LOVERS.ERB  @ENTER_LOVER（:7-72）、
- *     @NAME_LOVER（:73-143）、@DUNGEON_TOWN_LOVER（:144-1616）、
- *     @DUNGEON_TOWN_LOVER_CHARA_ENTER（:1617-1708）。
- *
  * `DUNGEON_TOWN_LOVER` 的 :201-1043 是二十种恋人的文本密集分支；这里把
  * 每个叶子的正文与 LOVE_EXP 增量收成静态表，选择顺序仍与原作一致。结算段
  * 保留 Emuera 整数除法的向零截断。原作 `JUEL += LOCAL * 5` 在 :1526/:1528
@@ -1051,7 +1047,7 @@ function apply_love_bonuses(cid, love_lv, love_exp) {
   const talent = (index) => era.get(`talent:${cid}:${index}`) || 0;
   const abl = (index) => era.get(`abl:${cid}:${index}`) || 0;
 
-  // :1293-1302 贞操带/处女封印：V 行为全部转作 A 行为。
+  // 贞操带/处女封印：V 行为全部转作 A 行为。
   if (
     ((era.get(`cflag:${cid}:42`) || 0) === 79 &&
       ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0 &&
@@ -1103,7 +1099,7 @@ function apply_love_bonuses(cid, love_lv, love_exp) {
     if (love_exp[3] > 0) love_exp[3] += love_exp[7];
   }
 
-  // :1416-1438 拍摄倾向即使本次没有基础拍摄次数也会增减。
+  // 拍摄倾向即使本次没有基础拍摄次数也会增减。
   if (talent(10)) love_exp[8] -= 1;
   if (talent(20)) love_exp[8] -= 1;
   if (talent(23)) love_exp[8] += 1;
@@ -1168,9 +1164,9 @@ async function settle_love_exp(
   }
   if (love_exp[9] > 0) {
     summary.push(`${era.get('palamname:0') || ''}点数＋${love_exp[9] * 5} `);
-    era.add(`juel:${cid}:0`, 250); // :1526 LOCAL 是首个 FOR 结束值 50（原作缺陷）
+    era.add(`juel:${cid}:0`, 250); // LOCAL 是首个 FOR 结束值 50（原作缺陷）
     summary.push(`${era.get('palamname:14') || ''}点数＋${love_exp[9] * 5} `);
-    era.add(`juel:${cid}:14`, 250); // :1528 同上，不是 LOVE_EXP:9 * 5
+    era.add(`juel:${cid}:14`, 250); // 同上，不是 LOVE_EXP:9 * 5
   }
   if (love_exp[4] > 0) {
     summary.push(`私处经验＋${love_exp[4]} `);

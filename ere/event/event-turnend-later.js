@@ -2,8 +2,6 @@
  * @file 回合结束事件 @EVENTTURNEND 的 #LATER 档定义（issue #114——按 1:1
  * 保留为空）。
  *
- * 源: target/ERB/EVENT/ENDING ver 1.0.1.ERB  @EVENTTURNEND（:1-3，#LATER）
- *
  * 原作此处只有函数头、#LATER 标记与一行注释「;エンディングチェック」——
  * 函数体为空，1:1 保留为空（工单 #114 的明确要求）。结局检查的实际链路是
  * @ENDCHECK（#116）；若该票或 #118（ENDING_1 分派）需要在此挂处理器，本

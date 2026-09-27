@@ -5,11 +5,6 @@
  * 的拷贝，MAIN2 缺 CASE 9、SPECIAL 的 98/99 文本不同，见 cloth-lookup.js
  * 文件头与 #14 登记）。
  *
- * 源: target/ERB/其他/FUNC_CLOTH.ERB  @PRINT_CLOTHTYPE（:35-58）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @PRINT_CLOTHTYPE_MAIN（:61-156）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @PRINT_CLOTHTYPE_MAIN2（:530-703）
- *     target/ERB/其他/FUNC_CLOTH.ERB  @PRINT_CLOTHTYPE_SPECIAL（:892-994）
- *
  * == 出口形态（equip-print.js 的「两种出口」同款裁定） ==
  *
  * 原作四个函数全用 PRINT（追加行缓冲、不换行），全部调用点都是**行内嵌**
@@ -232,11 +227,11 @@ function clothtype_main_text(cid) {
   const type = main_type(cid);
   const bits = worn_bits(cid);
 
-  // :63-65 ふんどし
+  // ふんどし
   if (type === 192 && bits & 16) {
     return '只穿一条兜裆布';
   }
-  // :67-83 体操服＆运动短裤（109）的半脱两态
+  // 体操服＆运动短裤（109）的半脱两态
   if (type === 109) {
     if (bits & 4 && (bits & 24) === 0) {
       // 只穿上身的体操服，+ 内裤有无
@@ -249,7 +244,7 @@ function clothtype_main_text(cid) {
       return bits & 2 ? '只穿运动短裤和胸罩' : '只穿一条运动短裤';
     }
   }
-  // :86-110 全身タイプ（201-300）的半脱两态
+  // 全身タイプ（201-300）的半脱两态
   if (type >= 201 && type <= 300) {
     if (bits & 4 && (bits & 24) === 0) {
       // 下半身被撕破了，
@@ -268,7 +263,7 @@ function clothtype_main_text(cid) {
       return `${clothtype_main2_text(cid)}的前襟撕裂了，${upper}`;
     }
   }
-  // :112-154 通常の衣服与内衣以下各态
+  // 通常の衣服与内衣以下各态
   if (bits & 28) {
     if (bits & 4 && (bits & 24) === 0) {
       // 只穿着上衣，+ 内裤有无
@@ -308,15 +303,15 @@ function clothtype_main_text(cid) {
  * @returns {string}
  */
 function clothtype_text(cid) {
-  // :37-40 着衣設定を使ってない場合（FLAG:37 = 0）或无基本服装 → 全裸
+  // 着衣設定を使ってない場合（FLAG:37 = 0）或无基本服装 → 全裸
   if ((era.get('flag:37') || 0) === 0 || main_type(cid) === 0) {
     return '全裸';
   }
-  // :43-46 史莱姆特装（CFLAG:42 == 11 且着装位 64）
+  // 史莱姆特装（CFLAG:42 == 11 且着装位 64）
   if (special_type(cid) === 11 && worn_bits(cid) & 64) {
     return '被史莱姆包围着';
   }
-  // :49 基本コスチューム + :52-56 特別コスチューム（穿戴着…的模样）
+  // 基本コスチューム + :52-56 特別コスチューム（穿戴着…的模样）
   let out = clothtype_main_text(cid);
   if (special_type(cid)) {
     out += `穿戴着${clothtype_special_text(cid)}的模样`;

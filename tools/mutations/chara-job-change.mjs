@@ -8,9 +8,8 @@ export default [
   {
     desc: 'M8821 SHOW_BUTTON_JOB_CHANGE 删掉侵攻中早退（勇者也能看到转职按钮）',
     file: 'ere/chara/chara-job-change.js',
-    find: '  if (able === JOB_CHANGE_HERO) return 0; // :11-13 侵攻中の勇者ならボタン自体を表示しない',
-    replace:
-      '  if (false) return 0; // :11-13 侵攻中の勇者ならボタン自体を表示しない',
+    find: '  if (able === JOB_CHANGE_HERO) return 0; // 侵攻中の勇者ならボタン自体を表示しない',
+    replace: '  if (false) return 0; // 侵攻中の勇者ならボタン自体を表示しない',
     tests: ['chara-job-change'],
     must_mention: 'SHOW_BUTTON_JOB_CHANGE：侵攻中不渲染',
   },
@@ -25,16 +24,16 @@ export default [
   {
     desc: 'M8823 CHECK_ABLE_TO_JOB_CHANGE 放行苗床以外的占用态（状态 8 也能转职）',
     file: 'ere/chara/chara-job-change.js',
-    find: '  if (state !== 0 && state !== 7) return JOB_CHANGE_BLOCKED; // :38-40',
-    replace: '  if (state !== 0) return JOB_CHANGE_BLOCKED; // :38-40',
+    find: '  if (state !== 0 && state !== 7) return JOB_CHANGE_BLOCKED;',
+    replace: '  if (state !== 0) return JOB_CHANGE_BLOCKED;',
     tests: ['chara-job-change'],
     must_mention: 'CHECK_ABLE_TO_JOB_CHANGE：五档判定的先后与边界',
   },
   {
     desc: 'M8824 CHECK_ABLE_TO_JOB_CHANGE 把侵攻中的状态码由 2 改成 3（迎击中也走恋人线）',
     file: 'ere/chara/chara-job-change.js',
-    find: '=== 2) return JOB_CHANGE_HERO; // :32-34',
-    replace: '=== 3) return JOB_CHANGE_HERO; // :32-34',
+    find: '=== 2) return JOB_CHANGE_HERO;',
+    replace: '=== 3) return JOB_CHANGE_HERO;',
     tests: ['chara-job-change'],
     must_mention: 'CHECK_ABLE_TO_JOB_CHANGE：五档判定的先后与边界',
   },
@@ -57,17 +56,17 @@ export default [
   {
     desc: 'M8827 转职落地的职业素质下标整体偏移 1（十三格全部认错）',
     file: 'ere/chara/chara-job-change.js',
-    find: '    const local = result + JOB_TALENT_BASE; // :111 LOCAL = RESULT+200',
+    find: '    const local = result + JOB_TALENT_BASE; // LOCAL = RESULT+200',
     replace:
-      '    const local = result + JOB_TALENT_BASE + 1; // :111 LOCAL = RESULT+200',
+      '    const local = result + JOB_TALENT_BASE + 1; // LOCAL = RESULT+200',
     tests: ['chara-job-change'],
     must_mention: '转职落地——职业表先清后设',
   },
   {
     desc: 'M8828 转职后的等级归 1 改成归 2',
     file: 'ere/chara/chara-job-change.js',
-    find: '    chara(arg).chara.等级 = 1; // :115 CFLAG:ARG:9 = 1',
-    replace: '    chara(arg).chara.等级 = 2; // :115 CFLAG:ARG:9 = 1',
+    find: '    chara(arg).chara.等级 = 1; // CFLAG:ARG:9 = 1',
+    replace: '    chara(arg).chara.等级 = 2; // CFLAG:ARG:9 = 1',
     tests: ['chara-job-change'],
     must_mention: '转职落地——职业表先清后设',
   },
@@ -90,8 +89,8 @@ export default [
   {
     desc: 'M8831 上位职的上限加成 500 砍成 1',
     file: 'ere/chara/chara-job-change.js',
-    find: '      max_base += JOB_ELITE_BONUS; // :180-184 魔界将军 / 魔导神官',
-    replace: '      max_base += 1; // :180-184 魔界将军 / 魔导神官',
+    find: '      max_base += JOB_ELITE_BONUS; // 魔界将军 / 魔导神官',
+    replace: '      max_base += 1; // 魔界将军 / 魔导神官',
     tests: ['chara-job-change'],
     must_mention: '四维与上限按职业表',
   },
@@ -122,9 +121,9 @@ export default [
   {
     desc: 'M8835 契约魔兽的编号偏移 1（存进 CFLAG:570 的是下一只）',
     file: 'ere/chara/chara-job-change.js',
-    find: '      chara(arg).system.从属怪物 = monster; // :225 CFLAG:ARG:570（system 域）',
+    find: '      chara(arg).system.从属怪物 = monster; // CFLAG:ARG:570（system 域）',
     replace:
-      '      chara(arg).system.从属怪物 = monster + 1; // :225 CFLAG:ARG:570（system 域）',
+      '      chara(arg).system.从属怪物 = monster + 1; // CFLAG:ARG:570（system 域）',
     tests: ['chara-job-change'],
     must_mention: '魔物使转职后选契约魔兽',
   },
@@ -163,9 +162,9 @@ export default [
   {
     desc: 'M8840 神官/巫女的高信仰值 20 改成 21',
     file: 'ere/chara/chara-job-change.js',
-    find: '      era.set(`cflag:${arg}:152`, HIGH_FAITH); // :215 高い信仰値を持つ',
+    find: '      era.set(`cflag:${arg}:152`, HIGH_FAITH); // 高い信仰値を持つ',
     replace:
-      '      era.set(`cflag:${arg}:152`, HIGH_FAITH + 1); // :215 高い信仰値を持つ',
+      '      era.set(`cflag:${arg}:152`, HIGH_FAITH + 1); // 高い信仰値を持つ',
     tests: ['chara-job-change'],
     must_mention: '转职落地——职业表先清后设',
   },
@@ -173,9 +172,9 @@ export default [
   {
     desc: 'M9026 转职等级门由 < 50 改成 < 51（50 级不再够格）',
     file: 'ere/chara/chara-job-change.js',
-    find: '  if ((era.get(`cflag:${arg}:9`) || 0) < 50) return JOB_CHANGE_LOW_LEVEL; // :35-37',
+    find: '  if ((era.get(`cflag:${arg}:9`) || 0) < 50) return JOB_CHANGE_LOW_LEVEL;',
     replace:
-      '  if ((era.get(`cflag:${arg}:9`) || 0) < 51) return JOB_CHANGE_LOW_LEVEL; // :35-37',
+      '  if ((era.get(`cflag:${arg}:9`) || 0) < 51) return JOB_CHANGE_LOW_LEVEL;',
     tests: ['chara-job-change'],
     must_mention: '五档判定的先后与边界',
   },

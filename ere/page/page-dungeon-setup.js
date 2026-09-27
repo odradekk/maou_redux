@@ -3,10 +3,6 @@
  * @ENEMY_EXIST 部下显示 + @ROOM_SETUP 设施改造 + @DUNGEON_INFO_MAP 的 2D
  * 模式分流 + @MON_SET_OMAKASE 随机放置的 1:1 移植（issue #180，阶段 3 H11）。
  *
- * 源: target/ERB/迷宮/DUNGEON_SETUP.ERB  @DUNGEON_INFO（:5-231）/
- *     @ENEMY_EXIST（:237-264）/ @ROOM_SETUP（:268-307）/
- *     @DUNGEON_INFO_MAP（:311-483）/ @MON_SET_OMAKASE（:486-516）
- *
  * 与 page-dungeon-info2.js 的 @DUNGEON_INFO2 是**两个不同的界面**（#180 票面
  * 裁定，勿合并）：本文件是建设向（逐层设定的列表界面：一行一层的陷阱三列 +
  * 设施 + 宝箱，楼层子画面的 A/B/C 列指定），那边是情报向（三标签页矩阵 +
@@ -47,9 +43,9 @@ const { item_name } = require('#/dungeon/monster-data');
 const { db_set } = require('#/dungeon/labo');
 const { geo_output_2, mon_limit, chip_draw } = require('#/dungeon/labo-map');
 
-// :17 SETCOLORBYNAME RoyalBlue（楼层列表行）
+// SETCOLORBYNAME RoyalBlue（楼层列表行）
 const COLOR_ROYAL_BLUE = 'royalblue';
-// :240 SETCOLOR 255,255,0（部下名黄）
+// SETCOLOR 255,255,0（部下名黄）
 const COLOR_SUBORDINATE = 'rgb(255, 255, 0)';
 
 /** FLAG:N 读（undefined → 0 兜底，#13） */
@@ -89,7 +85,7 @@ function enemy_exist(floor) {
   for (const cid of era.getAddedCharacters()) {
     // 原作 REPEAT CHARANUM 从 0 起；COUNT != MASTER（0 = 魔王）
     if (cflag_get(cid, 501) === floor && cid !== 0) {
-      // :242-255 侵攻中（2）/ 迎击中（3），逃走中（CFLAG:507 == 1）追加
+      // 侵攻中（2）/ 迎击中（3），逃走中（CFLAG:507 == 1）追加
       let line = null;
       if (cflag_get(cid, 1) === 2) {
         line = `${name_of(cid)}[侵攻中]`;
@@ -103,7 +99,7 @@ function enemy_exist(floor) {
         era.print([{ content: line, color: COLOR_SUBORDINATE }]);
       }
     }
-    // :259-260 近卫层：未占用（CFLAG:1 == 0）且 EX_TALENT:x:1 → 护卫中
+    // 近卫层：未占用（CFLAG:1 == 0）且 EX_TALENT:x:1 → 护卫中
     if (
       floor === 10 &&
       cid !== 0 &&
@@ -138,7 +134,7 @@ async function print_subordinate_scan(start, budget, banner) {
     if (z % 10 === 0) {
       floor = z / 10 + 1;
       era.drawLine();
-      // :119-123 第 10 段显示「近卫兵」
+      // 第 10 段显示「近卫兵」
       if (floor !== 10) {
         era.print(`第${floor}阶层`);
       } else {
@@ -149,7 +145,7 @@ async function print_subordinate_scan(start, budget, banner) {
     const a = z + 100;
     const b = item_count(a);
     if (b > 0) {
-      // :128-133 PRINTV B / PRINT 只 / PRINTS ITEMNAME:A（纯文本，无按钮——
+      // PRINTV B / PRINT 只 / PRINTS ITEMNAME:A（纯文本，无按钮——
       // 建设向的部下扫描不可点选，与 INFO2 的 [A] 按钮版成对差异）
       era.print([
         { content: `${b}只${item_name(a)}`, color: COLOR_ROYAL_BLUE },
@@ -173,22 +169,22 @@ async function room_setup(floor) {
     era.print(`第${floor + 1}阶层`);
     era.printButton('通路', 0);
     for (let i = 500; i < 507; i += 1) {
-      // :276-284 REPEAT 7：[500]-[506]（每行 3 个的排版归一行一钮）
+      // REPEAT 7：[500]-[506]（每行 3 个的排版归一行一钮）
       era.printButton(item_name(i), i);
     }
     era.printButton('停止', 999);
     era.print('改造为通路免费。改造为其它设施则需要改装费10000p');
     const result = await era.input();
     if (result === 0) {
-      // :290-292 通路（清槽）
+      // 通路（清槽）
       flag_set(floor + 350, 0);
     } else if (result === 999) {
-      // :293-294 停止
+      // 停止
       return 0;
     } else if (result >= 500 && result <= 507) {
-      // :295-303 设施（10000p）
+      // 设施（10000p）
       if (era_flag.money < 10000) {
-        // :297-299 资金不足（RETURN 0 退出，原作不打提示以外的动作）
+        // 资金不足（RETURN 0 退出，原作不打提示以外的动作）
         era.print('*资金不足！！*');
         return 0;
       }
@@ -196,7 +192,7 @@ async function room_setup(floor) {
       era_exflag.legit_money -= 10000;
       flag_set(floor + 350, result);
     } else {
-      // :304-305 无效输入 → 重输（ere 侧结构性不可达，见文件头）
+      // 无效输入 → 重输（ere 侧结构性不可达，见文件头）
       continue;
     }
     return 0;
@@ -212,27 +208,27 @@ async function room_setup(floor) {
  * @returns {Promise<number>} 原作 RETURN（恒 0）
  */
 async function mon_set_omakase(rand = Math.random) {
-  // :492 LOCAL:0 = 0（放置计数）
+  // LOCAL:0 = 0（放置计数）
   let count = 0;
   // $INPUT_LOOP_MONSET_OMAKASE
   for (;;) {
-    // :496-497 SIF LOCAL:0 > 100 → RETURN 0
+    // SIF LOCAL:0 > 100 → RETURN 0
     if (count > 100) {
       return 0;
     }
-    // :500-502 許容量チェック
+    // 許容量チェック
     if ((await mon_limit()) === 0) {
       return 0;
     }
-    // :505-507 等级 RAND:10 / X RAND:32 / Y RAND:32
+    // 等级 RAND:10 / X RAND:32 / Y RAND:32
     const lv = Math.floor(rand() * 10);
     const x = Math.floor(rand() * 32);
     const y = Math.floor(rand() * 32);
-    // :509-511 玉座 (16,16) 跳过
+    // 玉座 (16,16) 跳过
     if (x === 16 && y === 16) {
       continue;
     }
-    // :512 DB:(Y):(X) = LOCAL:2
+    // DB:(Y):(X) = LOCAL:2
     db_set(y, x, lv);
     count += 1;
   }
@@ -259,12 +255,12 @@ async function dungeon_info_map() {
     era.printButton('- 返回', 100);
     const result = await era.input();
     if (result === 1) {
-      // :332-334 显示地图
+      // 显示地图
       await geo_output_2();
       continue;
     }
     if (result >= 2 && result <= 5) {
-      // :335-384 部下の表示（区段起止同 @DUNGEON_INFO 的 10-12 族）
+      // 部下の表示（区段起止同 @DUNGEON_INFO 的 10-12 族）
       let start = 0;
       let budget = 100;
       if (result >= 3) {
@@ -281,19 +277,19 @@ async function dungeon_info_map() {
       continue;
     }
     if (result === 100) {
-      // :386-387 返回
+      // 返回
       return 0;
     }
-    // :390-393 許容量チェック（RESULT == 0（满）→ 回菜单）
+    // 許容量チェック（RESULT == 0（满）→ 回菜单）
     if ((await mon_limit()) === 0) {
       continue;
     }
     // $INPUT_LOOP_MONSET（:395-483）：等级 → X → Y → 确认 → DB 写入。
     // 原作的 GOTO INPUT_LOOP_MONSET 都回到**等级输入**（坐标无效 :426-427/
-    // :442-443、玉座 :448-451 重头再问），此处外层循环承担
+    // 、玉座 :448-451 重头再问），此处外层循环承担
     let placed_or_exit = false;
     while (!placed_or_exit) {
-      // :397-411 *放置怪物* + 等级 [1]-[10]（[0] 停止 [100] 自动）
+      // *放置怪物* + 等级 [1]-[10]（[0] 停止 [100] 自动）
       let lv = 0;
       for (;;) {
         era.print('*放置怪物*');
@@ -312,12 +308,12 @@ async function dungeon_info_map() {
         era.printButton('自动', 100);
         const lv_input = await era.input();
         if (lv_input === 0) {
-          // :403-404 停止 → 回菜单
+          // 停止 → 回菜单
           placed_or_exit = true;
           break;
         }
         if (lv_input === 100) {
-          // :405-408 自动（随机放置 + PRINTW *随机放置了怪物*）
+          // 自动（随机放置 + PRINTW *随机放置了怪物*）
           await mon_set_omakase();
           era.print('*随机放置了怪物*');
           await era.waitAnyKey();
@@ -325,7 +321,7 @@ async function dungeon_info_map() {
           break;
         }
         if (lv_input < 0 || lv_input >= 11) {
-          // :409-410 无效 → 重问等级
+          // 无效 → 重问等级
           continue;
         }
         lv = lv_input;
@@ -334,7 +330,7 @@ async function dungeon_info_map() {
       if (placed_or_exit) {
         break;
       }
-      // :413-428 X 坐标 [1]-[32]（[0] 停止回菜单；无效 → 重问等级）
+      // X 坐标 [1]-[32]（[0] 停止回菜单；无效 → 重问等级）
       let x = 0;
       let x_valid = false;
       for (;;) {
@@ -362,7 +358,7 @@ async function dungeon_info_map() {
       if (!x_valid) {
         continue;
       }
-      // :430-444 Y 坐标 [1]-[32]（同 X：无效 → 重问等级）
+      // Y 坐标 [1]-[32]（同 X：无效 → 重问等级）
       let y = 0;
       let y_valid = false;
       for (;;) {
@@ -390,13 +386,13 @@ async function dungeon_info_map() {
       if (!y_valid) {
         continue;
       }
-      // :448-451 玉座 (16,16) 不可放置 → 重问等级
+      // 玉座 (16,16) 不可放置 → 重问等级
       if (x === 16 && y === 16) {
         era.print('无法在此放置');
         await era.waitAnyKey();
         continue;
       }
-      // :455-468 マップを出力（32×32；★ 在 (x,y)，其余 CHIP_DRAW 存根芯片。
+      // マップを出力（32×32；★ 在 (x,y)，其余 CHIP_DRAW 存根芯片。
       // SETFONT 等宽无通道，见文件头）
       for (let my = 0; my < 32; my += 1) {
         // chip_draw 真身返回带色分段数组（#181），一行 32 格归并为一次
@@ -412,19 +408,19 @@ async function dungeon_info_map() {
         }
         era.print(row);
       }
-      // :472-473 PRINTW 确定放置在★的所在？
+      // PRINTW 确定放置在★的所在？
       era.print('确定放置在★的所在？');
       await era.waitAnyKey();
       era.printButton('好的', 0);
       era.printButton('不要', 1);
       const confirm = await era.input();
       if (confirm !== 0) {
-        // :475-476 不要 → 回菜单
+        // 不要 → 回菜单
         break;
       }
-      // :478 DB:(Y):(X) = LOCAL:2（放置等级）
+      // DB:(Y):(X) = LOCAL:2（放置等级）
       db_set(y, x, lv);
-      // :480-483 PRINTW *放置了怪物* → 回菜单
+      // PRINTW *放置了怪物* → 回菜单
       era.print('*放置了怪物*');
       await era.waitAnyKey();
       break;
@@ -442,18 +438,18 @@ async function dungeon_info_map() {
  * @returns {Promise<number>} 原作 RETURN（恒 0）
  */
 async function dungeon_info() {
-  // :8-11 2D 模式分流（FLAG:502 随 #181 H12 的 FIRST_SETTING 一问置位）
+  // 2D 模式分流（FLAG:502 随 #181 H12 的 FIRST_SETTING 一问置位）
   if (flag_get(502) === 1) {
     return dungeon_info_map();
   }
   const screen = new ScreenBlock(async () => {
-    // :14 DRAWLINE
+    // DRAWLINE
     era.drawLine();
-    // :16-79 REPEAT 9：一行一层（陷阱三列 + 设施 + 宝箱）
+    // REPEAT 9：一行一层（陷阱三列 + 设施 + 宝箱）
     for (let l = 0; l < 9; l += 1) {
-      // :17 SETCOLORBYNAME RoyalBlue
+      // SETCOLORBYNAME RoyalBlue
       const color = COLOR_ROYAL_BLUE;
-      // :19-28 陷阱A（X = COUNT + 300）
+      // 陷阱A（X = COUNT + 300）
       const trap_a = flag_get(l + 300);
       let trap_a_text;
       if (trap_a <= 0) {
@@ -464,7 +460,7 @@ async function dungeon_info() {
         trap_a_text = '陷阱：无';
         flag_set(l + 300, -1);
       }
-      // :31-52 陷阱B / 陷阱C（同构；C 行收 PRINTFORML）
+      // 陷阱B / 陷阱C（同构；C 行收 PRINTFORML）
       const trap_b = flag_get(l + 310);
       let trap_b_text;
       if (trap_b <= 0) {
@@ -485,13 +481,13 @@ async function dungeon_info() {
         trap_c_text = '：无';
         flag_set(l + 320, -1);
       }
-      // :22 [COUNT] 按钮（楼层选择 0-8）
+      // [COUNT] 按钮（楼层选择 0-8）
       era.printButton(
         `第${l + 1}阶层\u3000${trap_a_text} ${trap_b_text} ${trap_c_text}`,
         l,
         { color },
       );
-      // :57-66 设施（500-506 为合法设施段，越界归通路 0）
+      // 设施（500-506 为合法设施段，越界归通路 0）
       const facility = flag_get(l + 350);
       let facility_text;
       if (facility <= 0) {
@@ -502,7 +498,7 @@ async function dungeon_info() {
         facility_text = '\u3000设施：通路';
         flag_set(l + 350, 0);
       }
-      // :69-78 宝箱
+      // 宝箱
       const treasure = flag_get(l + 340);
       let treasure_text;
       if (treasure <= 0) {
@@ -515,7 +511,7 @@ async function dungeon_info() {
       }
       era.print(`${facility_text}${treasure_text}`);
     }
-    // :81-82 部下入口
+    // 部下入口
     era.printButton('部下状态总览', 9);
     era.printButton('1～3层 的部下', 10);
     era.printButton('4～6层 的部下', 11);
@@ -527,11 +523,11 @@ async function dungeon_info() {
   for (;;) {
     await screen.redraw();
     const result = await era.input();
-    // :88-92 无效输入 → 重输（ere 侧结构性不可达，见文件头）
+    // 无效输入 → 重输（ere 侧结构性不可达，见文件头）
     if (result < 0 || (result >= 13 && result !== 100)) {
       continue;
     }
-    // :95-143 部下の表示（9-12）
+    // 部下の表示（9-12）
     if (result >= 9 && result <= 12) {
       let start = 0;
       let budget = 100;
@@ -545,27 +541,27 @@ async function dungeon_info() {
       }
       await print_subordinate_scan(start, budget, '地下城内的部下');
       era.drawLine();
-      // :140 WAIT → GOTO INPUT_LOOP
+      // WAIT → GOTO INPUT_LOOP
       await era.waitAnyKey();
       continue;
     }
-    // :145-146 [100] 返回
+    // [100] 返回
     if (result === 100) {
       return 0;
     }
-    // :148 X = RESULT（0-8 楼层）→ 设定子画面
+    // X = RESULT（0-8 楼层）→ 设定子画面
     const floor = result;
-    // :150-177 进行第{X+1}阶层的设定 + 库存列表 + 指令按钮
+    // 进行第{X+1}阶层的设定 + 库存列表 + 指令按钮
     const floor_screen = new ScreenBlock(async () => {
       era.print(`进行第${floor + 1}阶层的设定`);
       era.print('《请选择要设置的陷阱和宝物》');
-      // :153-163 陷阱库存 [60-88]
+      // 陷阱库存 [60-88]
       for (let i = 60; i < 89; i += 1) {
         if (item_count(i) > 0) {
           era.printButton(`${item_name(i)}（${item_count(i)}）`, i);
         }
       }
-      // :164-173 宝物库存 [300-320]
+      // 宝物库存 [300-320]
       for (let i = 300; i < 321; i += 1) {
         if (item_count(i) > 0) {
           era.printButton(`${item_name(i)}（${item_count(i)}）`, i);
@@ -587,34 +583,34 @@ async function dungeon_info() {
         setup_result < 0 ||
         (setup_result >= 321 && setup_result !== 998 && setup_result !== 999)
       ) {
-        // :181-185 无效输入 → 重输（不重画，$INPUT_LOOP_2 在 INPUT 之前）
+        // 无效输入 → 重输（不重画，$INPUT_LOOP_2 在 INPUT 之前）
         continue;
       }
       if (setup_result === 0) {
-        // :187-194 解除陷阱：三列全清
+        // 解除陷阱：三列全清
         flag_set(floor + 300, -1);
         flag_set(floor + 310, -1);
         flag_set(floor + 320, -1);
         done = true;
       } else if (setup_result === 1) {
-        // :195-198 取下宝物
+        // 取下宝物
         flag_set(floor + 340, -1);
         done = true;
       } else if (setup_result === 2) {
-        // :199-201 设施的设定（ROOM_SETUP）
+        // 设施的设定（ROOM_SETUP）
         await room_setup(floor);
         done = true;
       } else if (setup_result === 998) {
-        // :202-203 停止 → 回主画面
+        // 停止 → 回主画面
         done = true;
       } else if (setup_result === 999) {
-        // :204-205 结束地下城的设定 → RETURN 0
+        // 结束地下城的设定 → RETURN 0
         return 0;
       } else {
-        // :207-231 Z = RESULT（60-88 陷阱 / 300-320 宝物）
+        // Z = RESULT（60-88 陷阱 / 300-320 宝物）
         const z = setup_result;
         if (z < 100) {
-          // :208-229 陷阱的列指定（$INPUT_LOOP_3）
+          // 陷阱的列指定（$INPUT_LOOP_3）
           const col_screen = new ScreenBlock(async () => {
             era.printButton('A', 0);
             era.printButton('B', 1);
@@ -626,23 +622,23 @@ async function dungeon_info() {
             await col_screen.redraw();
             const col = await era.input();
             if (col < 0 || col >= 4) {
-              // :212-215 无效 → 重输
+              // 无效 → 重输
               continue;
             }
             if (col === 3) {
-              // :216-223 全部：三列同设
+              // 全部：三列同设
               flag_set(floor + 300, z);
               flag_set(floor + 310, z);
               flag_set(floor + 320, z);
             } else {
-              // :225-226 Y = X + 300 + RESULT * 10（A/B/C 列）
+              // Y = X + 300 + RESULT * 10（A/B/C 列）
               y = floor + 300 + col * 10;
               flag_set(y, z);
             }
             break;
           }
         } else if (z > 300) {
-          // :227-229 宝物：Y = X + 340
+          // 宝物：Y = X + 340
           flag_set(floor + 340, z);
         }
         done = true;

@@ -1,8 +1,6 @@
 /**
  * @file 流放处刑的亲属位与前世末路计算（issue #348）。
  *
- * 源: target/ERB/處刑相關/BANISHMENT.ERB  @BANISHMENT（:269-552）
- * 源: target/ERB/處刑相關/BANISHMENT.ERB  @BANISHMENT（:612-890）
  */
 
 'use strict';

@@ -1,13 +1,6 @@
 /**
  * @file 性格与发色的读写面板（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/FUNC_CHARA_AND_HAIR.ERB 的 9 个函数：
- *     @SHOW_CHARASTERISTIC（:7-23）、@SET_RANDOM_CHARASTERISTIC（:28-46）、
- *     @SET_CHARASTERISTIC（:52-63）、@CLEAR_CHARASTERISTIC（:68-78）、
- *     @CHOOSE_CHARASTERISTIC（:84-122）、@SHOW_HAIRCOLOR（:127-138）、
- *     @SET_RANDOM_HAIRCOLOR（:143-189）、@SET_HAIRCOLOR（:194-202）、
- *     @CHOOSE_HAIRCOLOR（:207-236）
- *
  * 调用面（全库唯一调用方）：ere/chara/chara-make.js 的 `rand_chara_make`
  * （源 CHARA_MAKE.ERB:67/:71/:42-194/:85/:42-194/:42-194/:97/:42-194/:112/:118，@RAND_CHARA_MAKE
  * 的形象确认段）。#392 把该处八条存根换成本模块的真身。
@@ -114,13 +107,13 @@ function set_talent(cid, index, value) {
  * @returns {number} 表内序号（0-9）或 -1
  */
 function show_charasteristic(cid = -1) {
-  const chara_id = cid < 0 ? target_cid() : cid; // :7-27
+  const chara_id = cid < 0 ? target_cid() : cid;
   const i = charasteristic_index(chara_id);
   if (i >= 0) {
-    era.print(talentname(GENERAL_CHARASTERISTICS[i])); // :19 PRINTFORM（不换行，见文件头）
-    return i; // :20-21
+    era.print(talentname(GENERAL_CHARASTERISTICS[i])); // PRINTFORM（不换行，见文件头）
+    return i;
   }
-  return -1; // :23
+  return -1;
 }
 
 /**
@@ -132,12 +125,12 @@ function show_charasteristic(cid = -1) {
  */
 function charasteristic_index(cid) {
   for (let i = 0; i < GENERAL_CHARASTERISTICS.length; i += 1) {
-    const talent_id = GENERAL_CHARASTERISTICS[i]; // :7-27
+    const talent_id = GENERAL_CHARASTERISTICS[i];
     if (talent(cid, talent_id)) {
       return i;
     }
   }
-  return -1; // :23
+  return -1;
 }
 
 /**
@@ -153,14 +146,14 @@ function charasteristic_index(cid) {
 function set_random_charasteristic(cid = -1, rand = default_rand) {
   const chara_id = cid < 0 ? target_cid() : cid;
   for (;;) {
-    clear_charasteristic(chara_id); // :28-51
-    const temp = rand(GENERAL_CHARASTERISTICS.length); // :41
+    clear_charasteristic(chara_id);
+    const temp = rand(GENERAL_CHARASTERISTICS.length);
     const talent_id = GENERAL_CHARASTERISTICS[temp];
     if (talent_id === 174) {
-      continue; // :43-44
+      continue;
     }
-    set_talent(chara_id, talent_id, 1); // :28-51
-    return temp; // :46
+    set_talent(chara_id, talent_id, 1);
+    return temp;
   }
 }
 
@@ -171,12 +164,12 @@ function set_random_charasteristic(cid = -1, rand = default_rand) {
  */
 function set_charasteristic(cid = -1, index) {
   const chara_id = cid < 0 ? target_cid() : cid;
-  clear_charasteristic(chara_id); // :52-67
+  clear_charasteristic(chara_id);
   // 表外序号与 @CHOOSE_CHARASTERISTIC 同款：源 :62 的
   // `ID_OF_GENERAL_CHARASTERISTICS:(ARG:1)` 越界时 Emuera 给 0，
   // 于是写的是素质 0（処女）。少了这个兜底会写出不存在的下标
-  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 0; // :62
-  set_talent(chara_id, talent_id, 1); // :52-67
+  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 0;
+  set_talent(chara_id, talent_id, 1);
 }
 
 /**
@@ -184,9 +177,9 @@ function set_charasteristic(cid = -1, index) {
  * @param {number} [cid=-1] 角色 ID（源 ARG:0）
  */
 function clear_charasteristic(cid = -1) {
-  const chara_id = cid < 0 ? target_cid() : cid; // :68-83
+  const chara_id = cid < 0 ? target_cid() : cid;
   for (const talent_id of GENERAL_CHARASTERISTICS) {
-    set_talent(chara_id, talent_id, 0); // :77
+    set_talent(chara_id, talent_id, 0);
   }
 }
 
@@ -201,41 +194,41 @@ function clear_charasteristic(cid = -1) {
  * @returns {Promise<void>}
  */
 async function choose_charasteristic(cid = -1, per_line = 3) {
-  clear_charasteristic(cid); // :90 事前初期化
-  const chara_id = cid < 0 ? target_cid() : cid; // :84-126
+  clear_charasteristic(cid); // 事前初期化
+  const chara_id = cid < 0 ? target_cid() : cid;
 
-  let count = 0; // :84-126 LOCAL:1
+  let count = 0; // LOCAL:1
   let row = '';
-  const size = GENERAL_CHARASTERISTICS.length; // :97
+  const size = GENERAL_CHARASTERISTICS.length;
   for (let i = 0; i < size; i += 1) {
-    const talent_id = GENERAL_CHARASTERISTICS[i]; // :84-126
+    const talent_id = GENERAL_CHARASTERISTICS[i];
     if (talent_id === 174) {
-      continue; // :100-102
+      continue;
     }
-    // :103 每格是 `[{i,2}] %名,10,LEFT%`；源一行放 N 格（`SIF (LOCAL:1) %
+    // 每格是 `[{i,2}] %名,10,LEFT%`；源一行放 N 格（`SIF (LOCAL:1) %
     // (ARG:1) == 0 PRINTL` 才断行），故拼成整行再输出——引擎的「一次 print
     // 即一行」口径见 look.js 文件头的「PRINT 合流」条
     row += `[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 10)}`;
-    count += 1; // :84-126
+    count += 1;
     if (count % per_line === 0) {
-      era.print(row); // :84-126 PRINTL（本行满 N 格）
+      era.print(row); // PRINTL（本行满 N 格）
       row = '';
     }
   }
   if (row.length > 0) {
-    era.print(row); // :112 的 PRINTL 只收残行那一行，不产生空行
+    era.print(row); // 的 PRINTL 只收残行那一行，不产生空行
   } else {
     // 整行恰满时 :112 的 PRINTL 落在空行上——这一支才是真空行
     era.println();
   }
 
   for (;;) {
-    const result = await era.input(); // :84-126
+    const result = await era.input();
     if (result < 0 || result > size) {
-      continue; // :117-118
+      continue;
     }
-    const chosen = GENERAL_CHARASTERISTICS[result] ?? 0; // :120（表外读 0，见文件头）
-    set_talent(chara_id, chosen, 1); // :84-126
+    const chosen = GENERAL_CHARASTERISTICS[result] ?? 0; // （表外读 0，见文件头）
+    set_talent(chara_id, chosen, 1);
     return;
   }
 }
@@ -246,10 +239,10 @@ async function choose_charasteristic(cid = -1, per_line = 3) {
  * @returns {number} TALENT:300（发色编号）
  */
 function show_haircolor(cid = -1) {
-  const chara_id = cid < 0 ? target_cid() : cid; // :127-142
-  const color_id = talent(chara_id, 300); // :135
-  era.print(ARR_HAIRCOLOR[color_id] ?? ''); // :136
-  return color_id; // :127-142
+  const chara_id = cid < 0 ? target_cid() : cid;
+  const color_id = talent(chara_id, 300);
+  era.print(ARR_HAIRCOLOR[color_id] ?? '');
+  return color_id;
 }
 
 /**
@@ -264,28 +257,28 @@ function show_haircolor(cid = -1) {
  * @returns {number} 决定的发色编号（源 :143-193 RETURN COLOR_ID）
  */
 function set_random_haircolor(cid = -1, rand = default_rand) {
-  const chara_id = cid < 0 ? target_cid() : cid; // :143-193
-  const roll = rand(100); // :161 SELECTCASE RAND:100
+  const chara_id = cid < 0 ? target_cid() : cid;
+  const roll = rand(100); // SELECTCASE RAND:100
   let color_id = 0;
   if (roll === 0) {
-    color_id = 11; // :162-164 粉髪
+    color_id = 11; // 粉髪
   } else if (roll <= 20) {
-    color_id = 1; // :165-167 金髪
+    color_id = 1; // 金髪
   } else if (roll <= 30) {
-    color_id = 6; // :168-170 青髪
+    color_id = 6; // 青髪
   } else if (roll <= 40) {
-    color_id = 7; // :171-173 緑髪
+    color_id = 7; // 緑髪
   } else if (roll <= 60) {
-    color_id = 2; // :174-176 栗毛
+    color_id = 2; // 栗毛
   } else if (roll <= 80) {
-    color_id = 3; // :177-179 黒髪
+    color_id = 3; // 黒髪
   } else if (roll <= 97) {
-    color_id = 4; // :180-182 赤毛
+    color_id = 4; // 赤毛
   } else {
-    color_id = 5; // :183-185 銀髪（98-99）
+    color_id = 5; // 銀髪（98-99）
   }
-  set_talent(chara_id, 300, color_id); // :188
-  return color_id; // :143-193
+  set_talent(chara_id, 300, color_id);
+  return color_id;
 }
 
 /**
@@ -295,9 +288,9 @@ function set_random_haircolor(cid = -1, rand = default_rand) {
  * @returns {number} 回传 value（源 :202）
  */
 function set_haircolor(cid = -1, value) {
-  const chara_id = cid < 0 ? target_cid() : cid; // :194-206
-  set_talent(chara_id, 300, value); // :201
-  return value; // :202
+  const chara_id = cid < 0 ? target_cid() : cid;
+  set_talent(chara_id, 300, value);
+  return value;
 }
 
 /**
@@ -311,33 +304,33 @@ function set_haircolor(cid = -1, value) {
  * @returns {Promise<void>}
  */
 async function choose_haircolor(cid = -1, per_line = 6) {
-  const chara_id = cid < 0 ? target_cid() : cid; // :207-236
+  const chara_id = cid < 0 ? target_cid() : cid;
 
-  let count = 0; // :207-236 LOCAL:1
+  let count = 0; // LOCAL:1
   let row = '';
-  const size = 12; // :217
+  const size = 12;
   for (let color_id = 1; color_id < size; color_id += 1) {
-    // :219 每格是 `[{COLOR_ID,2}] %名,7,LEFT%`，一行 N 格（同 :103 的收行法）
+    // 每格是 `[{COLOR_ID,2}] %名,7,LEFT%`，一行 N 格（同 :103 的收行法）
     row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;
-    count += 1; // :207-236
+    count += 1;
     if (count % per_line === 0) {
-      era.print(row); // :207-236 PRINTL
+      era.print(row); // PRINTL
       row = '';
     }
   }
   if (row.length > 0) {
-    era.print(row); // :227 的 PRINTL 只收残行那一行，不产生空行
+    era.print(row); // 的 PRINTL 只收残行那一行，不产生空行
   } else {
     // 整行恰满时 :227 的 PRINTL 落在空行上——这一支才是真空行
     era.println();
   }
 
   for (;;) {
-    const result = await era.input(); // :207-236
+    const result = await era.input();
     if (result < 1 || result > size) {
-      continue; // :232-233
+      continue;
     }
-    set_talent(chara_id, 300, result); // :235
+    set_talent(chara_id, 300, result);
     return;
   }
 }

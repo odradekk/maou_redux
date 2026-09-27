@@ -1,9 +1,6 @@
 /**
  * @file 角色信息的外观段与武器装饰行（@SHOW_APPEARACE / @SHOW_RING）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
- *       @SHOW_APPEARACE（:1209-1388）/ @SHOW_RING（:1393-1430）
- *
  * 排版依据同 chara-info-abl-mark.js 的文件头：Emuera 命令名后的**第一个空格
  * 是命令与表达式之间的分隔符**，不算正文——`PRINT  阴茎` 输出 ` 阴茎`（一个
  * 前导空格）。逐字抄源时把这一格减掉。
@@ -62,13 +59,13 @@ const HAIR_BANDS = [
 
 /** 穿环位与部位名（源 :1302-1365 的七条 SIF，顺序即输出顺序） */
 const PIERCING_BITS = [
-  { bit: 8, name: '阴茎' }, // :1302-1309（女体改称阴蒂）
-  { bit: 64, name: '鼻子' }, // :1310-1318
-  { bit: 32, name: '嘴唇' }, // :1319-1327
-  { bit: 4, name: '阴唇' }, // :1328-1336
-  { bit: 1, name: '乳头' }, // :1337-1347（上半身赤裸时整段跳过）
-  { bit: 2, name: '肚脐' }, // :1348-1356
-  { bit: 16, name: '舌头' }, // :1357-1365
+  { bit: 8, name: '阴茎' }, // （女体改称阴蒂）
+  { bit: 64, name: '鼻子' },
+  { bit: 32, name: '嘴唇' },
+  { bit: 4, name: '阴唇' },
+  { bit: 1, name: '乳头' }, // （上半身赤裸时整段跳过）
+  { bit: 2, name: '肚脐' },
+  { bit: 16, name: '舌头' },
 ];
 
 const PIERCING_GENITAL = 8; // 第一枚（阴茎/阴蒂）的位号，改名用
@@ -109,13 +106,13 @@ function show_appearance(cid) {
     row = [];
   };
 
-  // :1219-1220 脸上的刺青
+  // 脸上的刺青
   if (cstr(cid, 10) !== '') {
     era.print(` 脸上刻着『${cstr(cid, 10)}』样的刺青。`);
   }
 
   const g = cflag(cid, CF_GAPED);
-  // :1223-1227 现在の格好（FLAG:37 服装系统打开时才出）
+  // 现在の格好（FLAG:37 服装系统打开时才出）
   if (era.get('flag:37')) {
     row.push({ content: ` ${chara_callname(cid)}现在的样子是` });
     row.push({ content: clothtype_text(cid) });
@@ -123,15 +120,15 @@ function show_appearance(cid) {
     end_row();
   }
 
-  // :1230-1237 玩偶装：CFLAG:42 == 11 且穿了尿布/玩偶装位 → 到此结束
+  // 玩偶装：CFLAG:42 == 11 且穿了尿布/玩偶装位 → 到此结束
   if (cflag(cid, CF_CLOTH_TYPE) === 11 && (g & BIT_DIAPER) !== 0) {
     if (g === BIT_DIAPER) {
-      era.print(' 貌似，里面是真空的。'); // :1231-1232
+      era.print(' 貌似，里面是真空的。');
     }
     return 1;
   }
 
-  // :1240-1251 上半身赤裸时的三处刺青
+  // 上半身赤裸时的三处刺青
   if ((g & BIT_TOPS_OFF) === 0) {
     for (const [index, where] of [
       [11, '胸部上'],
@@ -144,16 +141,16 @@ function show_appearance(cid) {
     }
   }
 
-  // :1253-1254 裙装且未穿内裤
+  // 裙装且未穿内裤
   if ((g & BIT_SKIRT) !== 0 && (g & BIT_PANTIES) === 0) {
     era.print(' 貌似没穿内裤。');
   }
 
-  // :1256-1261 性器周辺が見えない状況
+  // 性器周辺が見えない状況
   if ((g & MASK_GENITAL_HIDDEN) !== 0) return 0;
-  // :1262-1267 オムツ着用中
+  // オムツ着用中
   if ((g & BIT_DIAPER) !== 0 && cflag(cid, CF_CLOTH_TYPE) === 69) return 0;
-  // :1268-1273 スカートタイプ着用で従順＋露出度が 3 未満
+  // スカートタイプ着用で従順＋露出度が 3 未満
   if (
     (g & BIT_SKIRT) !== 0 &&
     (era.get(`abl:${cid}:10`) || 0) + (era.get(`abl:${cid}:17`) || 0) < 3
@@ -161,37 +158,37 @@ function show_appearance(cid) {
     return 0;
   }
 
-  row.push({ content: ' ' }); // :1272-1275 PRINT（一个半角空格）
+  row.push({ content: ' ' }); // PRINT（一个半角空格）
   if ((g & BIT_SKIRT) !== 0) {
-    // :1276-1280 掀起下摆
+    // 掀起下摆
     row.push({ content: '掀起' });
     row.push({ content: clothtype_main2_text(cid) });
     row.push({ content: '的下摆，' });
   }
 
-  // :1282-1284 阴毛状态的开头：非魔王才显示名字
+  // 阴毛状态的开头：非魔王才显示名字
   if (chara_no(cid) !== 0) {
     row.push({ content: chara_callname(cid) });
   }
-  // :1285-1299 阴毛（TALENT:125 白虎优先；无 ELSE 兜底 → 不命中则本行不收）
+  // 阴毛（TALENT:125 白虎优先；无 ELSE 兜底 → 不命中则本行不收）
   const hair = talent(cid, TALENT_HAIR_STATE);
   if (talent(cid, TALENT_WHITE_TIGER) === 1) {
-    row.push({ content: '露出了永久脱毛的阴部。' }); // :1286
+    row.push({ content: '露出了永久脱毛的阴部。' });
     end_row();
   } else if (hair >= 1) {
     row.push({ content: HAIR_BANDS.find((band) => hair <= band.max).text });
     end_row();
   }
 
-  // :1300-1370 穿环（S 计数决定收尾用语；S == 0 时本行同样不收）
+  // 穿环（S 计数决定收尾用语；S == 0 时本行同样不收）
   let pierced = 0;
   const p = cflag(cid, CF_PIERCING);
   for (const { bit, name } of PIERCING_BITS) {
-    // :1337 乳头在「上半身赤裸」时整段跳过
+    // 乳头在「上半身赤裸」时整段跳过
     if (bit === PIERCING_NIPPLE && (g & BIT_TOPS_OFF) !== 0) continue;
     if ((p & bit) === 0) continue;
-    row.push({ content: pierced > 0 ? '、' : ' ' }); // :1311-1315 等的两种间隔
-    // :1303-1307 生殖器那枚按性别取名（源里是两个字面量）
+    row.push({ content: pierced > 0 ? '、' : ' ' }); // 等的两种间隔
+    // 生殖器那枚按性别取名（源里是两个字面量）
     row.push({
       content:
         bit === PIERCING_GENITAL &&
@@ -203,14 +200,14 @@ function show_appearance(cid) {
     pierced += 1;
   }
   if (pierced > 1) {
-    row.push({ content: '都被穿环了。' }); // :1366-1367
+    row.push({ content: '都被穿环了。' });
     end_row();
   } else if (pierced === 1) {
-    row.push({ content: '被穿环了。' }); // :1368-1369
+    row.push({ content: '被穿环了。' });
     end_row();
   }
 
-  // :1373-1384 后四处刺青
+  // 后四处刺青
   for (const [index, where] of [
     [14, '屁股上'],
     [15, '性器上'],
@@ -237,31 +234,31 @@ function show_appearance(cid) {
  * @param {number} cid 角色 ID
  */
 function show_ring(cid) {
-  const stone = [{ content: ' 【武器】: ' }]; // :1402（2 空格减命令分隔符）
+  const stone = [{ content: ' 【武器】: ' }]; // （2 空格减命令分隔符）
   const weapon = cflag(cid, CF_WEAPON);
   if (weapon <= -1) {
-    stone.push({ content: '空手' }); // :1404
+    stone.push({ content: '空手' });
   } else {
-    stone.push(...equip_weapon_spans({ 存储编号: weapon })); // :1406
+    stone.push(...equip_weapon_spans({ 存储编号: weapon }));
   }
-  stone.push({ content: '　' }); // :1406-1409
+  stone.push({ content: '　' });
 
-  stone.push({ content: ' 【装饰A】: ' }); // :1412
+  stone.push({ content: ' 【装饰A】: ' });
   const ring_a = cflag(cid, CF_RING_A);
   if (ring_a <= -1) {
-    stone.push({ content: '无' }); // :1414
+    stone.push({ content: '无' });
   } else {
-    stone.push(...equip_ring_spans({ 存储编号: ring_a })); // :1416
+    stone.push(...equip_ring_spans({ 存储编号: ring_a }));
   }
-  stone.push({ content: '　' }); // :1416-1419
+  stone.push({ content: '　' });
 
-  stone.push({ content: ' 【装饰B】: ' }); // :1422
+  stone.push({ content: ' 【装饰B】: ' });
   const ring_b = cflag(cid, CF_RING_B);
   if (ring_b <= -1) {
-    stone.push({ content: '无' }); // :1424 PRINTL 无
+    stone.push({ content: '无' }); // PRINTL 无
   } else {
-    stone.push(...equip_ring_spans({ 存储编号: ring_b })); // :1426
-    stone.push({ content: ' ' }); // :1424-1427 PRINTL（一个半角空格）
+    stone.push(...equip_ring_spans({ 存储编号: ring_b }));
+    stone.push({ content: ' ' }); // PRINTL（一个半角空格）
   }
   era.print(stone);
 }

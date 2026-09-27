@@ -1,8 +1,6 @@
 /**
  * @file 成熟奴隶出售后的黑市末路（issue #338）。
  *
- * 源: target/ERB/售卻相關/SELL_MATURO.ERB @SELL_MATURO_K0（:29-2099）
- *
  * 原作 S = SALE_CHARA 算出的售价；独立调用时用 ESTIMATE_CHARA 重算。
  * 市场菜单的 1000 号输入翻转 EXFLAG:9000 第 2 位（水晶球录像开关）。
  * 原作 135 处无参 SHE() 会读取 0 号角色而非出售对象；按 #14 登记的缺陷

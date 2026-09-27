@@ -1,15 +1,6 @@
 /**
  * @file ere/chara/chara-temptation.js 的行为测试（issue #393，N9）。
  *
- * 源: target/ERB/キャラ関数/CHARA_TEMPTATION.ERB 六个函数——
- *     @SHOW_BUTTON_TEMPTATION（:4-20）、@CHECK_ABLE_TO_TEMPTATION
- *     （:23-36，#FUNCTION 式中函数）、@TEMPTATION（:39-86）、
- *     @TEMPTATION_TRY（:202-364）、@FI_TEMPTATION（:373-397，#FUNCTION）、
- *     @PREPARE_TEMPTATION（:404-447，#DIM REF 双输出）。
- *     同名的另一个 @TEMPTATION_TRY（:90-197）整段包在 [SKIPSTART]/[SKIPEND]
- *     里，Emuera 不装载（技能手册 references/core-concepts/preprocessor.md:61-69），
- *     不是重定义——模块文件头有完整说明。
- *
  * 缝 = test/helpers/era-fixture.js。带随机源形参的函数一律喂确定性序列
  * （`seq`），断言同时看「掷出的值」与「掷骰的上界」（`seq_probe` 记上界）。
  */

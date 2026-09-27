@@ -1,11 +1,6 @@
 /**
  * @file 商店轮（据点主界面）：STATE.SHOP 的处理器。
  *
- * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @EVENTSHOP（:4-20，BEGIN SHOP 后
- *     最先执行一次）/@SHOW_SHOP（:22-38，绘制）/@USERSHOP（:40-229，输入
- *     分发，#24 落地；100 分支的助手循环与 BEGIN TRAIN 随 #44 补全；199
- *     休息随 #395 真身，回合真正能推进；997-999 店内购物段随 #396 接通）
- *
  * Emuera 语义（引擎行为，非 ERB 函数）：BEGIN SHOP 后引擎先调 @EVENTSHOP
  * 一次，随后循环「@SHOW_SHOP 绘制 → 等输入 → @USERSHOP 分发」。ere 侧把
  * 这一轮收进本模块导出的处理器，由 main-loop.js 的 STATE_HANDLERS 接驳。
@@ -80,11 +75,11 @@ const MAX_CHARANUM = 90;
 on(
   'EVENTSHOP',
   () => {
-    // :7-12 バグ対策：指针越界钳制（判据的 ID 语义移植说明见
+    // バグ対策：指针越界钳制（判据的 ID 语义移植说明见
     // page-main-menu.js 的 reset_out_of_range_pointers）。
     reset_out_of_range_pointers();
 
-    // :15-18 REPEAT 100: ITEMSALES:COUNT = 0（清道具上架位）。Item 表已随
+    // REPEAT 100: ITEMSALES:COUNT = 0（清道具上架位）。Item 表已随
     // #38 落地，item* 寻址的直接崩溃支（PR #34）已消除；注意清零范围 0..99 覆盖
     // @EVENTFIRST :35 置 1 的 53 号——原作即如此（清空后由商店侧重新点亮
     // 在售位），1:1 照搬两层写入。
@@ -92,7 +87,7 @@ on(
       era.set(`itemsales:${i}`, 0);
     }
 
-    // :20 BOUGHT = -1（#395 起落表：flag:10029，与 @EVENTFIRST :27 的初始化
+    // BOUGHT = -1（#395 起落表：flag:10029，与 @EVENTFIRST :27 的初始化
     // 同一变量，见文件头 BOUGHT 段）。
     era_flag.bought = -1;
   },
@@ -106,18 +101,18 @@ on(
  *   主菜单画面组件（run_shop 进入 SHOP 状态时创建；本函数即组件的每轮重入）
  */
 async function show_shop(main_menu) {
-  // :24 SAVESTR:0 = 你（魔王的存档名字串）：#5 决议由内置 callname:0:-1
+  // SAVESTR:0 = 你（魔王的存档名字串）：#5 决议由内置 callname:0:-1
   // 承载（Chara0.yml 的名前同为「你」，且原作每轮都重写回「你」——改名
   // 不残留）。原作仅有的三个读取点（DUNGEON.ERB:209 / AGENT.ERB:210 /
   // BEDROOM_BATTLE_MALE）在 ere 全走 name_of(0)/chara_callname，此行为
   // 空操作、不落槽位（#548 清单订正：名字按钮 498/499 并不读它）。
 
-  // :25 CALL CLEAR_SHOP（清 ITEMSALES:0-299）：每轮重绘前都清一遍，商店
+  // CALL CLEAR_SHOP（清 ITEMSALES:0-299）：每轮重绘前都清一遍，商店
   // 本体（@ITEM_SHOP / @ITEM_SHOP_TRAP）随后各自重新点亮——清与亮分居两处
   // 是原作的形状（商店轮内还各有一次清，见 usershop 的 997/998/999）。
   clear_shop();
 
-  // :26-27 JUMP ITEM_SHOP（BOUGHT 0-53，道具商店）：#399 起真身
+  // JUMP ITEM_SHOP（BOUGHT 0-53，道具商店）：#399 起真身
   // （page/page-item-shop.js）。整个接管本轮——日期修正与主菜单都不执行
   // （1:1）；玩家 [999] 退出后（bought → -1）的下一次重绘由主菜单组件的
   // 锚点跨度收掉商店那段（同 #396 陷阱商店的机制）。
@@ -126,7 +121,7 @@ async function show_shop(main_menu) {
     return undefined; // 本轮没画主菜单，无行数可报（调用方 run_shop 不取返回值）
   }
 
-  // :28-29 JUMP ITEM_SHOP_TRAP（BOUGHT >= 54，陷阱商店）：#396 起真身
+  // JUMP ITEM_SHOP_TRAP（BOUGHT >= 54，陷阱商店）：#396 起真身
   // （page/page-shop-trap.js）。BOUGHT 停在 54-91 的情形有两处：商店内切
   // 陷阱商店（998），以及刚买下 54 号【淫魔知识】（BOUGHT 停在 54，原作
   // 的「可以购买淫魔的陷阱了」正是这个转场）。
@@ -135,7 +130,7 @@ async function show_shop(main_menu) {
     return undefined; // 同上
   }
 
-  // :33-36 防御性日期修正：月/日小于 1 时钳成 1。@EVENTFIRST 只初始化
+  // 防御性日期修正：月/日小于 1 时钳成 1。@EVENTFIRST 只初始化
   // DAY:1 = 1、DAY 与 DAY:2 留 0（#22 的 1:1 决定），玩家看到的开局因此是
   // 「第 0 年 1 月 1 日（第 1 日）」——修正只发生在 SHOP 侧，勿挪去初始
   // 化侧（#22 验收移交的提醒）。
@@ -146,7 +141,7 @@ async function show_shop(main_menu) {
     era_flag.date = 1;
   }
 
-  // :38 CALL DRAW_MAINMENU（本体在 DRAW_MAINMENU.ERB，ere 侧同构拆分到
+  // CALL DRAW_MAINMENU（本体在 DRAW_MAINMENU.ERB，ere 侧同构拆分到
   // page/page-main-menu.js）。自 #73 起主菜单是画面组件：本函数每轮的重入
   // ＝组件的就地重绘——清锚点跨度（自身行 + input 回显行 + 分发期临时输出）
   // 再重画，等价于原作引擎在 @USERSHOP 返回后重画主菜单；首绘（组件未画过）
@@ -183,7 +178,7 @@ async function usershop(result) {
     return;
   }
 
-  // :44-57 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 切商店）。
+  // 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 切商店）。
   // #395 给 BOUGHT 落了表、#396 接上陷阱商店、#399 接上道具商店，整段自此
   // 三支都是真身——判据与出口 1:1，三支的 **return 形态各不相同**，照原作
   // 逐支还原：
@@ -193,7 +188,7 @@ async function usershop(result) {
   //     「（関数終端） or ファイル終端」支，前提 `!state.IsFunctionMethod`：
   //     CALL 的普通函数都满足；1.821 / 1.824 / EM+EE 三份源码同形，出处与
   //     行号见 #592 的完成评论）。回到本函数时 RESULT 已是 0，
-  //     :59 起的 ELSEIF 链上没有 0 的去处，:226-227 的 `SIF RESULT == 7788`
+  // 起的 ELSEIF 链上没有 0 的去处，:226-227 的 `SIF RESULT == 7788`
   //     也不成立，出口是 :226-229 的 RETURN 0——玩家回主菜单，**不进调试
   //     菜单**（旧移植按「CALL 之后 RESULT 不变」错落到 :222-223，#562 实机
   //     发现）；
@@ -204,21 +199,21 @@ async function usershop(result) {
   // @SHOW_SHOP 每轮进店也清一次（本文件 show_shop 的 clear_shop），此处是
   // 退出/切店时的即时清账（1:1 保留两次清）。
   if (result === 999 && era_flag.bought >= 0) {
-    clear_shop(); // :45
-    era_flag.bought = -1; // :46
-    return; // :44 支的出口：原作 :226-229 的 RETURN 0（#592）
+    clear_shop();
+    era_flag.bought = -1;
+    return; // 支的出口：原作 :226-229 的 RETURN 0（#592）
   } else if (result === 998 && era_flag.bought >= 0) {
-    era_flag.bought = 200; // :48
-    clear_shop(); // :49
-    await item_shop_trap(); // :50 JUMP ITEM_SHOP_TRAP（切陷阱商店并立即重画）
+    era_flag.bought = 200;
+    clear_shop();
+    await item_shop_trap(); // JUMP ITEM_SHOP_TRAP（切陷阱商店并立即重画）
     return;
   } else if (result === 997 && era_flag.bought >= 0) {
-    era_flag.bought = 1; // :52
-    clear_shop(); // :53
-    await item_shop(); // :54 JUMP ITEM_SHOP（切道具商店并立即重画）
+    era_flag.bought = 1;
+    clear_shop();
+    await item_shop(); // JUMP ITEM_SHOP（切道具商店并立即重画）
     return;
   } else if (era_flag.bought >= 0) {
-    return; // :55-57 的 RETURN 0
+    return; // 的 RETURN 0
   }
 
   // A（可选奴隶数）：原作在 @DRAW_MAINMENU :208-216 算出，:59/:152/:154
@@ -230,11 +225,11 @@ async function usershop(result) {
   if (result === 100 && selectable_count > 0) {
     // 进调教（:59-101，#44 补全）。
     if (era_flag.target <= 0) {
-      // :65-68 目标未选 → CALL SELECT_TARGET（真身见 page-select-target.js）；
+      // 目标未选 → CALL SELECT_TARGET（真身见 page-select-target.js）；
       // SIF RESULT == 0（取消/列表为空）→ RETURN 0
       const selected = await select_target();
       if (selected === 0) {
-        return; // :67-68
+        return;
       }
     }
     // $SELECT_ASSI_LOOP（:71-97）：助手候选计数 TEMP:3——CFLAG:x:0 == 2
@@ -256,14 +251,14 @@ async function usershop(result) {
               era_flag.target !== cid,
           ).length;
         if (assi_candidates >= 1) {
-          // :79-80 CALL SELECT_ASSI（真身见 page-select-target.js，#395）
+          // CALL SELECT_ASSI（真身见 page-select-target.js，#395）
           const assi_result = await select_assi();
-          // :81-82 SIF RESULT == 2 → RETURN 0（「我先想想」，取消整次调教）
+          // SIF RESULT == 2 → RETURN 0（「我先想想」，取消整次调教）
           if (assi_result === 2) {
             return;
           }
         }
-        // :83-84 SIF ASSI == 0 → ASSI = -1（select_assi 的两个真实分支恒把
+        // SIF ASSI == 0 → ASSI = -1（select_assi 的两个真实分支恒把
         // ASSI 置为 -1 或有效 ID，此处是原作留的防御性兜底，1:1 保留）
         if (era_flag.assi === 0) {
           era_flag.assi = -1;
@@ -276,29 +271,29 @@ async function usershop(result) {
         // 可在 ASSI 预先已为有效值且恰好等于 TARGET 时命中（跳过本块直接进这），
         // 这一处则不行——保留为原作 1:1 的防御性代码，不补测试（改坐它不可观测）。
         if (era_flag.target === era_flag.assi) {
-          // :85-88 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
+          // 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
           era_flag.assi = -1;
           select_assi_loop = true;
           continue;
         }
       }
-      // :91-92 SIF ASSI >= 1 && TARGET == ASSI → ASSI = -1（循环外尾检查）
+      // SIF ASSI >= 1 && TARGET == ASSI → ASSI = -1（循环外尾检查）
       if (era_flag.assi >= 1 && era_flag.target === era_flag.assi) {
         era_flag.assi = -1;
       }
     }
-    // :94-97 育儿室判定：CFLAG:MASTER:1 == 10 → 报文 RETURN 0
+    // 育儿室判定：CFLAG:MASTER:1 == 10 → 报文 RETURN 0
     if ((era.get('cflag:0:1') || 0) === 10) {
       era.print('育儿室中的你不能进行调教……'); // %CALLNAME:MASTER%（恒「你」）
       await era.waitAnyKey(); // PRINTFORMW 的读键
       return;
     }
-    // :98-99 SIF TARGET >= 1 && TARGET != ASSI → BEGIN TRAIN（#44 接通：
+    // SIF TARGET >= 1 && TARGET != ASSI → BEGIN TRAIN（#44 接通：
     // 信号上抛，主循环进 TRAIN 状态——train-loop.js）
     if (era_flag.target >= 1 && era_flag.target !== era_flag.assi) {
       begin(STATE.TRAIN);
     }
-    // :101 RETURN 1 —— BEGIN 已结束原作函数，ere 侧 begin() 抛出后同样
+    // RETURN 1 —— BEGIN 已结束原作函数，ere 侧 begin() 抛出后同样
     // 到不了这里；守卫不成立时（理论上不可达）落到链尾 RETURN 0
   } else if (result === 101) {
     // 能力显示（:102-106）：CALL CHARA_INFO，返回 1 才 BEGIN TURNEND
@@ -403,13 +398,10 @@ async function usershop(result) {
     // page-main-menu.js 的面板渲染同址读）
     era.set('flag:36', 0);
   } else if (result === 501) {
-    // :162-163
     era.set('flag:36', 1);
   } else if (result === 504) {
-    // :164-165
     era.set('flag:36', 4);
   } else if (result === 505) {
-    // :166-167
     era.set('flag:36', 5);
   } else if (result > 520 && result <= 530) {
     // 阶层信息（:168-170）：RESULT -= 520 → CALL SHOW_FLOOR（10 层为近卫）
@@ -422,7 +414,7 @@ async function usershop(result) {
     if (era.getAddedCharacters().length < MAX_CHARANUM) {
       await monster_shop();
     } else {
-      era.print('奴隶太多了！'); // :220 PRINTW
+      era.print('奴隶太多了！'); // PRINTW
       await era.waitAnyKey();
     }
   }
@@ -431,13 +423,13 @@ async function usershop(result) {
   // 白名单（#130）本就送不到这里；店内的 999 在上面的购物段早退（#592），
   // 也不会落到链尾
 
-  // :226-227 链外尾检查（SIF，非 ELSEIF）：未被链上分支提前 RETURN 的
+  // 链外尾检查（SIF，非 ELSEIF）：未被链上分支提前 RETURN 的
   // 输入再查一次 7788。链上的提前 return 都在 100 分支内（取消 :68 与
   // 育儿室 :96，同原作），其余分支落到这里时 result 必非 7788，判定等价。
   if (result === 7788) {
     await relation_debugprint();
   }
-  // :226-229 RETURN 0：认不出 / 守卫拦下的输入一律落到这里，回 @SHOW_SHOP
+  // RETURN 0：认不出 / 守卫拦下的输入一律落到这里，回 @SHOW_SHOP
   // 重绘（run_shop 的下一轮循环）。原作的 RETURN 0/1 都被引擎循环忽略、
   // 恒重绘，ere 侧无需区分。
 }
@@ -471,10 +463,10 @@ async function usershop(result) {
  * @returns {Promise<void>} 原作无 RETURN（隐式 0，调用方不消费）
  */
 async function show_floor(arg) {
-  arg = Math.min(Math.max(arg, 1), 10); // :429 ARG = LIMIT(ARG,1,10)
+  arg = Math.min(Math.max(arg, 1), 10); // ARG = LIMIT(ARG,1,10)
   era.drawLine();
   if (arg <= 9) {
-    // :433 + :451-469 楼层头与设施后缀合行（SELECTCASE 不命中则无后缀）
+    // 楼层头与设施后缀合行（SELECTCASE 不命中则无后缀）
     const facility = era.get(`flag:${arg + 349}`) || 0;
     const facility_names = {
       500: '商店街\u3000',
@@ -492,7 +484,7 @@ async function show_floor(arg) {
         : `第${arg}阶层`,
     );
     era.drawLine();
-    // :472-486 设施四格（+0/+10/+20/+40，跳 +30——COUNT==3 → COUNT=4）
+    // 设施四格（+0/+10/+20/+40，跳 +30——COUNT==3 → COUNT=4）
     const install_fragments = [];
     for (const slot of [0, 10, 20, 40]) {
       // LOCAL = 300+ARG-1+COUNT*10（格上的道具号）；有库存才显示
@@ -505,25 +497,25 @@ async function show_floor(arg) {
       era.print(install_fragments.join('')); // 四格合一行（PRINTFORM 链）
       era.drawLine(); // IF LOCAL:1 → PRINTL + DRAWLINE
     }
-    // :488 @ENEMY_EXIST2（#180 真身）+ 空行。第二个实参是原作的 `X == 10`：
+    // @ENEMY_EXIST2（#180 真身）+ 空行。第二个实参是原作的 `X == 10`：
     // 从地城概况进来时 X 恒为 10（DRAW_MAINMENU 楼层循环的末值），所以
     // 1-9 层也会追加护卫名单（#548 订正，依据见 @ENEMY_EXIST2 的 JSDoc）
     await enemy_exist2(arg, true);
     era.println();
   } else {
-    // :434-449 近卫层：近卫兵头 + 护卫名单（GOTO MONSTERDATA 的等价跳过：
+    // 近卫层：近卫兵头 + 护卫名单（GOTO MONSTERDATA 的等价跳过：
     // 设施/四格/ENEMY_EXIST2 三段整段不走）
-    era.print('近卫兵'); // :435（PRINTL 只落行尾）
+    era.print('近卫兵'); // （PRINTL 只落行尾）
     era.drawLine();
     for (const cid of era.getAddedCharacters()) {
-      // :438-446 FOR COUNT, 0, CHARANUM：未在勇者阵营（CFLAG:1 状态 0）
+      // FOR COUNT, 0, CHARANUM：未在勇者阵营（CFLAG:1 状态 0）
       // 但是近卫（EX_TALENT:1）
       if (
         (era.get(`cflag:${cid}:1`) || 0) === 0 &&
         (era.get(`ex_talent:${cid}:1`) || 0) !== 0
       ) {
         const fragments = [{ content: `[${chara_callname(cid)}] —— ` }];
-        // :441-444 TALENT:200-211 的素质名依次追加
+        // TALENT:200-211 的素质名依次追加
         for (let t = 200; t < 212; t += 1) {
           if (era.get(`talent:${cid}:${t}`)) {
             fragments.push({
@@ -536,7 +528,7 @@ async function show_floor(arg) {
     }
     era.drawLine();
   }
-  // :491-498 $MONSTERDATA：该层怪物库存十格（槽 = (ARG-1)*10+100）
+  // $MONSTERDATA：该层怪物库存十格（槽 = (ARG-1)*10+100）
   const base_slot = (arg - 1) * 10 + 100;
   for (let i = 0; i < 10; i += 1) {
     const count = era.get(`item:${base_slot + i}`) || 0;
@@ -546,7 +538,7 @@ async function show_floor(arg) {
       );
     }
   }
-  // :500 无参 PRINTW＝先落一个空行再等键（同 kojo-dungeon-ravish.js:923）
+  // 无参 PRINTW＝先落一个空行再等键（同 kojo-dungeon-ravish.js:923）
   await era.printAndWait('');
 }
 

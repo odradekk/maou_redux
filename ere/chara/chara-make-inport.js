@@ -1,8 +1,6 @@
 /**
  * @file 异国（通信）勇者的生成（issue #394，N10）。
  *
- * 源: target/ERB/キャラ関数/CHARA_MAKE_INPORT.ERB  @CHARA_MAKE_INPORT（:2-126）
- *
  * 调用面：全库只有转发层 ere/chara/char-make.js 的 @CHAR_MAKE_INPORT（源
  * CHAR_MAKE.ERB:27-34 的判定式 + CHAR_MAKE.ERB:34 的 JUMP）调本函数；两个
  * 真实调用点是 ere/event/enter-enemy.js:215（源 ENTER_ENEMY.ERB:63）与
@@ -102,98 +100,98 @@ function decode_table(cid, table, segment, is_string) {
  *   目标预设不存在时 0（原作 `RETURN 0`，预设不存在那一档见文件头二）
  */
 function chara_make_inport(rand = default_rand) {
-  // :9-10 SIF FLAG:76 <= 0 RETURN 0（FLAG:76 外来勇者等级上限，MAOUNET 菜单设定）
+  // SIF FLAG:76 <= 0 RETURN 0（FLAG:76 外来勇者等级上限，MAOUNET 菜单设定）
   const level_cap = game.system.外来勇者等级上限;
   if (level_cap <= 0) {
     return 0;
   }
 
-  // :12-13 VARSET LIST, -100 / LOCAL:1 = 0 —— 候选槽位表与它的计数
+  // VARSET LIST, -100 / LOCAL:1 = 0 —— 候选槽位表与它的计数
   const list = new Array(100).fill(-100);
   let candidate_count = 0;
 
   const roster = get_roster();
-  // :15-35 扫全部 100 个名单槽，逐条过四道过滤
+  // 扫全部 100 个名单槽，逐条过四道过滤
   for (let slot = 0; slot < 100; slot += 1) {
     const record = String(roster[slot] ?? '');
-    if (record === '') continue; // :16-17 空槽
+    if (record === '') continue; // 空槽
 
     const fields = record.split('_');
-    // :19-20 等级高于上限的勇者不来（`>` 而非 `>=`，等于上限放行）
+    // 等级高于上限的勇者不来（`>` 而非 `>=`，等于上限放行）
     if (to_int(fields[2]) > level_cap) continue;
 
-    // :21-27 同一唯一标记的角色已在场则不重复导入
+    // 同一唯一标记的角色已在场则不重复导入
     const stamp = to_int(fields[0]); // CFLAG:190 通信勇者唯一标记
     let duplicated = false;
     for (const other of era.getAddedCharacters()) {
       if (chara(other).system.通信勇者唯一标记 === stamp) {
-        duplicated = true; // :24
-        break; // :25
+        duplicated = true;
+        break;
       }
     }
-    if (duplicated) continue; // :28-29
+    if (duplicated) continue;
 
-    // :31-32 同一预设号已在场则跳过（GETCHARA(NO, 0) >= 0，
+    // 同一预设号已在场则跳过（GETCHARA(NO, 0) >= 0，
     // #21 扁平化下即「名单里有这个号」）
     if (era.getAddedCharacters().includes(to_int(fields[1]))) continue;
 
-    list[candidate_count] = slot; // :33
-    candidate_count += 1; // :34
+    list[candidate_count] = slot;
+    candidate_count += 1;
   }
 
-  // :38-39 没有可生成的勇者
+  // 没有可生成的勇者
   if (candidate_count === 0) {
     return 0;
   }
 
-  // :42 从候选里随机抽一条（RAND 的分母是候选数，不是 100）
+  // 从候选里随机抽一条（RAND 的分母是候选数，不是 100）
   const chosen = list[rand(candidate_count)];
   const record = String(roster[chosen] ?? '').split('_');
 
-  // :44-45 空白角色を作成 / CHARA = CHARANUM-1（扁平化下角色号 = 预设号，见文件头二）
-  const cid = to_int(record[1]); // :47 NO:CHARA
+  // 空白角色を作成 / CHARA = CHARANUM-1（扁平化下角色号 = 预设号，见文件头二）
+  const cid = to_int(record[1]); // NO:CHARA
   if (!era.addCharacter(cid)) {
     return 0; // 有意的守卫，见文件头二
   }
 
-  // :49-51 SAVESTR / CALLNAME 都写 LOCALS:3（ere 侧同落 -2，见文件头三）
+  // SAVESTR / CALLNAME 都写 LOCALS:3（ere 侧同落 -2，见文件头三）
   const nickname = record[3] ?? '';
-  era.set(`callname:${cid}:-2`, nickname); // :49 SAVESTR:CHARA = %LOCALS:3%
-  era.set(`callname:${cid}:-1`, nickname); // :51 CALLNAME:CHARA = %LOCALS:3%
+  era.set(`callname:${cid}:-2`, nickname); // SAVESTR:CHARA = %LOCALS:3%
+  era.set(`callname:${cid}:-1`, nickname); // CALLNAME:CHARA = %LOCALS:3%
 
-  // :54-103 十张二维表回填
+  // 十张二维表回填
   for (const [index, [table, is_string]] of TABLE_SEGMENTS.entries()) {
     decode_table(cid, table, record[index + 4] ?? '', is_string);
   }
 
-  // :106-108 侵入階層 / 侵攻度 / 侵攻中設定（跨域写走门面）
+  // 侵入階層 / 侵攻度 / 侵攻中設定（跨域写走门面）
   chara(cid).dungeon.侵攻阶层 = 1; // CFLAG:501
   chara(cid).event.侵攻度 = 0; // CFLAG:502
-  chara(cid).invasion.状态 = 2; // :108 CFLAG:1 = 2 侵攻中
+  chara(cid).invasion.状态 = 2; // CFLAG:1 = 2 侵攻中
 
-  // :109-118 FLAG:77「通信勇者登场时为等级 1」：压到 1 级后按 FLAG:60 补级
+  // FLAG:77「通信勇者登场时为等级 1」：压到 1 级后按 FLAG:60 补级
   if (era_flag.communication_hero_level_one) {
-    chara(cid).chara.等级 = 1; // :111 CFLAG:9
-    chara(cid).dungeon.战斗经验 = 0; // :112 EXP:80
-    // :113-117 FLAG:60 勇者基础等级修正：逐级 ST_UP
+    chara(cid).chara.等级 = 1; // CFLAG:9
+    chara(cid).dungeon.战斗经验 = 0; // EXP:80
+    // FLAG:60 勇者基础等级修正：逐级 ST_UP
     const times = game.event.勇者基础等级修正;
     if (times > 0) {
       for (let i = 0; i < times; i += 1) {
-        st_up(cid, rand); // :115 CALL ST_UP, CHARA
+        st_up(cid, rand); // CALL ST_UP, CHARA
       }
     }
   }
 
-  // :119-120 HP 与气力补到上限（BASE:0/1 = MAXBASE:0/1）
+  // HP 与气力补到上限（BASE:0/1 = MAXBASE:0/1）
   chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0;
   chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
 
-  // :123-124 身体データ未生成なら生成（#385 起真身；FLAG:5 的位闸门在函数内部）
+  // 身体データ未生成なら生成（#385 起真身；FLAG:5 的位闸门在函数内部）
   if (chara(cid).chara.年龄 === 0) {
     char_body_generate_wapped(cid, rand);
   }
 
-  return cid; // :126 RETURN CHARA
+  return cid; // RETURN CHARA
 }
 
 module.exports = { chara_make_inport };

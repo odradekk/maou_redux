@@ -1,8 +1,6 @@
 /**
  * @file 升级结算（issue #179，阶段 3 H10）：@LVUP 与 @ST_UP 真身。
  *
- * 源: target/ERB/迷宮/LVUP.ERB  @LVUP（:2-41）、@ST_UP（:44-89）
- *
  * 调用点（全部随本票接线）：
  *   - ere/system/turnend-settle.js 结算主循环（原作 SYSTEM ver1.0.3.ERB:299，
  *     守卫 SIF CFLAG:A:1 != 2——侵攻中的勇者不升级，1:1 保留在调用方）；
@@ -54,13 +52,13 @@ function default_rand(n) {
  * @returns {number} 0（原作 RETURN 0；调用方不读）
  */
 function st_up(cid, rand = default_rand) {
-  // :45-47 等级与攻防各 +1（CFLAG:9 / :13 / :14，后两者走门面）
+  // 等级与攻防各 +1（CFLAG:9 / :13 / :14，后两者走门面）
   const lv = (era.get(`cflag:${cid}:9`) || 0) + 1; // CFLAG:9（读点裸寻址）
   chara(cid).chara.等级 = lv; // CFLAG:9 写点走门面（chara 域属主）
   chara(cid).chara.基础攻击 += 1; // CFLAG:13
   chara(cid).chara.基础防御 += 1; // CFLAG:14
 
-  // :48-54 ランダムでさらに強く：RAND:2 → 0 攻 +1 / 1 防 +1
+  // ランダムでさらに強く：RAND:2 → 0 攻 +1 / 1 防 +1
   const r = rand(2);
   if (r === 0) {
     chara(cid).chara.基础攻击 += 1;
@@ -68,40 +66,40 @@ function st_up(cid, rand = default_rand) {
     chara(cid).chara.基础防御 += 1;
   }
 
-  // :55-58 百日之后补强（各 RAND:3，可叠 0-2 点）
+  // 百日之后补强（各 RAND:3，可叠 0-2 点）
   if (era_flag.day_count >= 100) {
     chara(cid).chara.基础攻击 += rand(3);
     chara(cid).chara.基础防御 += rand(3);
   }
-  // :59-62 战术（TALENT:240）
+  // 战术（TALENT:240）
   if ((era.get(`talent:${cid}:240`) || 0) === 1) {
     chara(cid).chara.基础攻击 += rand(3);
     chara(cid).chara.基础防御 += rand(3);
   }
-  // :63-66 肌肉型（TALENT:248）
+  // 肌肉型（TALENT:248）
   if ((era.get(`talent:${cid}:248`) || 0) === 1) {
     chara(cid).chara.基础攻击 += rand(2);
     chara(cid).chara.基础防御 += rand(2);
   }
-  // :69-72 竜族戦闘補正（TALENT:314 == 5）
+  // 竜族戦闘補正（TALENT:314 == 5）
   if ((era.get(`talent:${cid}:314`) || 0) === 5) {
     chara(cid).chara.基础攻击 += rand(2);
     chara(cid).chara.基础防御 += rand(2);
   }
-  // :75-76 矮人族防御補正（TALENT:314 == 11）
+  // 矮人族防御補正（TALENT:314 == 11）
   if ((era.get(`talent:${cid}:314`) || 0) === 11) {
     chara(cid).chara.基础防御 += rand(2);
   }
-  // :79-80 史莱姆防御補正（TALENT:261）
+  // 史莱姆防御補正（TALENT:261）
   if ((era.get(`talent:${cid}:261`) || 0) === 1) {
     chara(cid).chara.基础防御 += rand(2);
   }
-  // :83-84 触手攻撃補正（TALENT:262）
+  // 触手攻撃補正（TALENT:262）
   if ((era.get(`talent:${cid}:262`) || 0) === 1) {
     chara(cid).chara.基础攻击 += rand(2);
   }
 
-  // :86-87 体力/气力上限各 +10
+  // 体力/气力上限各 +10
   era.add(`maxbase:${cid}:0`, 10);
   era.add(`maxbase:${cid}:1`, 10);
   return 0;
@@ -123,9 +121,9 @@ function st_up(cid, rand = default_rand) {
  * @returns {number} 本次升的级数（原作 RETURN LOCAL:2；调用方不读）
  */
 function lvup(cid, rand = default_rand) {
-  // :6 LOCAL:0 = CFLAG:9 * 10 + 10（经验曲线基数）
+  // LOCAL:0 = CFLAG:9 * 10 + 10（经验曲线基数）
   let local0 = (era.get(`cflag:${cid}:9`) || 0) * 10 + 10;
-  // :8 LOCAL:2 = 升级计数
+  // LOCAL:2 = 升级计数
   let gained = 0;
 
   // $LVUP_REPEAT（:10-29）
@@ -145,7 +143,7 @@ function lvup(cid, rand = default_rand) {
     }
 
     if (chara(cid).dungeon.战斗经验 >= need) {
-      // :24-28 扣经验、升级、重算基数、再判
+      // 扣经验、升级、重算基数、再判
       chara(cid).dungeon.战斗经验 -= need;
       st_up(cid, rand);
       local0 = (era.get(`cflag:${cid}:9`) || 0) * 10 + 10;
@@ -155,12 +153,12 @@ function lvup(cid, rand = default_rand) {
     break;
   }
 
-  // :31-34 升级播报（NAME:MASTER 与 SAVESTR:ARG 同为名前，文件头）
+  // 升级播报（NAME:MASTER 与 SAVESTR:ARG 同为名前，文件头）
   if (gained > 0) {
     const local_s = name_of(cid);
     era.print(`*${local_s}的等级提升为LV${era.get(`cflag:${cid}:9`) || 0}*`);
   }
-  // :35-39 初心者（TALENT:291）在战斗中成长到 LV30 → 失去初心者
+  // 初心者（TALENT:291）在战斗中成长到 LV30 → 失去初心者
   if (
     (era.get(`talent:${cid}:291`) || 0) !== 0 &&
     (era.get(`cflag:${cid}:9`) || 0) >= 30

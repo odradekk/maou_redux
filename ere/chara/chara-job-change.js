@@ -2,11 +2,6 @@
  * @file 转职：角色信息页的「转职」按钮、资格判定与转职流程
  * （issue #393，N9）。
  *
- * 源: target/ERB/キャラ関数/CHARA_JOB_CHANGE.ERB 全四函数——
- *     @SHOW_BUTTON_JOB_CHANGE（:4-20）、@CHECK_ABLE_TO_JOB_CHANGE
- *     （:23-42，#FUNCTION 式中函数）、@CHARA_INFO_JOB_CHANGE（:45-230）、
- *     @JOB_CHANGE_BENKI（:233-262）。
- *
  * 调用点：原作 CHARA_INFO ver1.0.1.ERB:860（按钮）与 :1051（CASE 2 动作），
  * 已接在 ere/page/page-chara-info.js。
  *
@@ -178,12 +173,12 @@ function talent(cid, idx) {
  *   50；4 = 处于不可转职的状态
  */
 function check_able_to_job_change(arg) {
-  if (arg === 0) return JOB_CHANGE_KING; // :29-31 你の職は変えられない
-  if ((era.get(`cflag:${arg}:1`) || 0) === 2) return JOB_CHANGE_HERO; // :32-34
-  if ((era.get(`cflag:${arg}:9`) || 0) < 50) return JOB_CHANGE_LOW_LEVEL; // :35-37
+  if (arg === 0) return JOB_CHANGE_KING; // 你の職は変えられない
+  if ((era.get(`cflag:${arg}:1`) || 0) === 2) return JOB_CHANGE_HERO;
+  if ((era.get(`cflag:${arg}:9`) || 0) < 50) return JOB_CHANGE_LOW_LEVEL;
   const state = era.get(`cflag:${arg}:1`) || 0;
-  if (state !== 0 && state !== 7) return JOB_CHANGE_BLOCKED; // :38-40
-  return 0; // :42
+  if (state !== 0 && state !== 7) return JOB_CHANGE_BLOCKED;
+  return 0;
 }
 
 /**
@@ -194,14 +189,14 @@ function check_able_to_job_change(arg) {
  * @returns {number} 原作的 RETURN 0
  */
 function show_button_job_change(num, arg) {
-  const able = check_able_to_job_change(arg); // :10 LOCAL
-  if (able === JOB_CHANGE_HERO) return 0; // :11-13 侵攻中の勇者ならボタン自体を表示しない
+  const able = check_able_to_job_change(arg); // LOCAL
+  if (able === JOB_CHANGE_HERO) return 0; // 侵攻中の勇者ならボタン自体を表示しない
   if (able !== 0) {
-    era.setColor('#646464'); // :15-16 奴隷で実行不可なら灰色にする
+    era.setColor('#646464'); // 奴隷で実行不可なら灰色にする
   }
-  era.printButton('转职\u3000', num); // :18
-  era.setColor(''); // :19 RESETCOLOR
-  return 0; // :18-20（PRINTFORM/RESETCOLOR 之后收尾）
+  era.printButton('转职\u3000', num);
+  era.setColor(''); // RESETCOLOR
+  return 0; // （PRINTFORM/RESETCOLOR 之后收尾）
 }
 
 /**
@@ -249,13 +244,13 @@ function print_job_menu(arg) {
     push_row(entries.slice(i, i + JOB_MENU_COLUMNS));
   }
   if (medals >= MEDAL_REQUIRED) {
-    // :81-84 上位職は勲章が必要（两项同一条判据）
+    // 上位職は勲章が必要（两项同一条判据）
     push_row([
       [10, '魔界将军'],
       [11, '魔导神官'],
     ]);
   }
-  era.printButton('停止', 999); // :86
+  era.printButton('停止', 999);
 }
 
 /**
@@ -265,58 +260,58 @@ function print_job_menu(arg) {
  * @returns {Promise<number>} 0 = 已处理；2 = 侵攻中的勇者（按钮本不该显示）
  */
 async function chara_info_job_change(arg) {
-  const able = check_able_to_job_change(arg); // :51 LOCAL
+  const able = check_able_to_job_change(arg); // LOCAL
   if (able !== 0) {
-    // :52-64 不可转职：按档位给出反馈后返回 0
+    // 不可转职：按档位给出反馈后返回 0
     if (able === JOB_CHANGE_KING) {
-      era.print('你的职业无法改变'); // :54
+      era.print('你的职业无法改变');
     } else if (able === JOB_CHANGE_HERO) {
-      return 2; // :55-57 按钮没显示但输入仍能到达
+      return 2; // 按钮没显示但输入仍能到达
     } else if (able === JOB_CHANGE_LOW_LEVEL) {
-      era.print('必须积累更多经验！'); // :59
+      era.print('必须积累更多经验！');
     } else if (able === JOB_CHANGE_BLOCKED) {
-      era.print('该角色处于不可转职的状态'); // :61
+      era.print('该角色处于不可转职的状态');
     }
-    return 0; // :61-63（四档反馈之后收尾）
+    return 0; // （四档反馈之后收尾）
   }
 
   for (;;) {
-    print_job_menu(arg); // :68-86
-    const result = await era.input(); // :88
+    print_job_menu(arg);
+    const result = await era.input();
 
-    if (result === 999) return 0; // :89-90
+    if (result === 999) return 0;
     if (result < 12 && result > 9) {
       if ((era.get(`exp:${arg}:81`) || 0) < MEDAL_REQUIRED) {
-        era.print('*勋章不足*'); // :94
-        continue; // :95 GOTO INPUT_LOOP
+        era.print('*勋章不足*');
+        continue; // GOTO INPUT_LOOP
       }
     } else if (result === 12) {
-      // :97-98 魔物使い：无额外守卫
+      // 魔物使い：无额外守卫
     } else if (result < 0 || result > 9) {
-      continue; // :99-100 GOTO INPUT_LOOP
+      continue; // GOTO INPUT_LOOP
     }
 
-    // :103-115 职业落地：状态复位 → 十三格职业素质全清 → 常识改变复位 →
+    // 职业落地：状态复位 → 十三格职业素质全清 → 常识改变复位 →
     // 目标格置 1 → 等级归 1
-    chara(arg).invasion.状态 = 0; // :104 CFLAG:ARG:1 = 0（invasion 域）
+    chara(arg).invasion.状态 = 0; // CFLAG:ARG:1 = 0（invasion 域）
     for (let offset = 0; offset < JOB_TALENT_COUNT; offset += 1) {
-      era.set(`talent:${arg}:${JOB_TALENT_BASE + offset}`, 0); // :105-107
+      era.set(`talent:${arg}:${JOB_TALENT_BASE + offset}`, 0);
     }
-    era.set(`talent:${arg}:${COMMON_SENSE_BATTLE_TALENT}`, 0); // :109
-    const local = result + JOB_TALENT_BASE; // :111 LOCAL = RESULT+200
-    era.set(`talent:${arg}:${local}`, 1); // :113
-    chara(arg).chara.等级 = 1; // :115 CFLAG:ARG:9 = 1
+    era.set(`talent:${arg}:${COMMON_SENSE_BATTLE_TALENT}`, 0);
+    const local = result + JOB_TALENT_BASE; // LOCAL = RESULT+200
+    era.set(`talent:${arg}:${local}`, 1);
+    chara(arg).chara.等级 = 1; // CFLAG:ARG:9 = 1
 
-    // :117-137 战斗技能（九支 IF；肉便器与两个上位职原样无技能）
+    // 战斗技能（九支 IF；肉便器与两个上位职原样无技能）
     const skill = JOB_SKILLS.get(local);
     if (skill !== undefined) {
       era.set(`talent:${arg}:${skill}`, 1);
     } else if (local === JOB_TALENT_BASE + 9) {
-      // :133-134 苗床：不设技能，改把状态重设为 7（覆盖 :104 的清零）
+      // 苗床：不设技能，改把状态重设为 7（覆盖 :104 的清零）
       chara(arg).invasion.状态 = 7;
     }
 
-    // :140-176 職ごとの基礎パラメーター（十三格只有一个命中，等价于按 local 查表）
+    // 職ごとの基礎パラメーター（十三格只有一个命中，等价于按 local 查表）
     const [attack, defense, base_attack, base_defense] =
       JOB_PARAMS.get(local) ?? JOB_PARAMS_DEFAULT;
     chara(arg).dungeon.攻击力 = attack; // CFLAG:11
@@ -324,31 +319,31 @@ async function chara_info_job_change(arg) {
     chara(arg).chara.基础攻击 = base_attack; // CFLAG:13
     chara(arg).chara.基础防御 = base_defense; // CFLAG:14
 
-    // :178-186 上限重设与回满（maxbase 属 dungeon 域；0 有门面入口，
+    // 上限重设与回满（maxbase 属 dungeon 域；0 有门面入口，
     // 1 的生成器尚未产出，见 chara-dungeon.js 手写区注释）
     let max_base = JOB_MAX_BASE;
     if (local === JOB_ELITE_TALENT_A || local === JOB_ELITE_TALENT_B) {
-      max_base += JOB_ELITE_BONUS; // :180-184 魔界将军 / 魔导神官
+      max_base += JOB_ELITE_BONUS; // 魔界将军 / 魔导神官
     }
     chara(arg).dungeon.体力上限 = max_base; // MAXBASE:0
     era.set(`maxbase:${arg}:1`, max_base); // MAXBASE:1
-    chara(arg).dungeon.体力 = max_base; // :185 BASE:0 = MAXBASE:0
-    chara(arg).dungeon.气力 = max_base; // :186 BASE:1 = MAXBASE:1
+    chara(arg).dungeon.体力 = max_base; // BASE:0 = MAXBASE:0
+    chara(arg).dungeon.气力 = max_base; // BASE:1 = MAXBASE:1
 
-    era.print(`${chara_callname(arg)}转职为${talentname(local)}了！`); // :188
+    era.print(`${chara_callname(arg)}转职为${talentname(local)}了！`);
 
     if (talent(arg, JOB_BENKI_TALENT) === 1) {
-      await job_change_benki(arg); // :190-192 肉便器：常识改变菜单
+      await job_change_benki(arg); // 肉便器：常识改变菜单
     }
 
-    // :194-208 神官でも巫女でもない場合、神を冒涜するか選べる
+    // 神官でも巫女でもない場合、神を冒涜するか選べる
     if (
       talent(arg, 202) === 0 &&
       talent(arg, 206) === 0 &&
       (talent(arg, 250) || talent(arg, 242)) &&
       talent(arg, 282) === 0
     ) {
-      era.print('要弃教吗'); // :197
+      era.print('要弃教吗');
       era.printMultiColumns([
         {
           type: 'button',
@@ -362,18 +357,18 @@ async function chara_info_job_change(arg) {
           content: '不弃教',
           config: { align: 'left', width: 6 },
         },
-      ]); // :198-199
-      const answer = await era.input(); // :201
+      ]);
+      const answer = await era.input();
       if (answer === 0) {
-        era.set(`talent:${arg}:282`, 1); // :204
-        era.print('*已经弃教了*'); // :205
+        era.set(`talent:${arg}:282`, 1);
+        era.print('*已经弃教了*');
       }
     }
 
-    // :212-218 神官と巫女は治癒を持つ／戦士と騎士魔物使いは鼓舞を持つ
+    // 神官と巫女は治癒を持つ／戦士と騎士魔物使いは鼓舞を持つ
     if (talent(arg, 202) === 1 || talent(arg, 206) === 1) {
       era.set(`talent:${arg}:${T_HEAL}`, 1);
-      era.set(`cflag:${arg}:152`, HIGH_FAITH); // :215 高い信仰値を持つ
+      era.set(`cflag:${arg}:152`, HIGH_FAITH); // 高い信仰値を持つ
     } else if (
       talent(arg, 200) === 1 ||
       talent(arg, 205) === 1 ||
@@ -383,14 +378,14 @@ async function chara_info_job_change(arg) {
     }
 
     if (talent(arg, 212)) {
-      // :219-229 魔物使いに転職した場合、契約モンスターを選べる
-      era.print('请选择想要契约的魔兽'); // :221
-      monsterplay_list(); // :222
-      const monster = await era.input(); // :224
-      chara(arg).system.从属怪物 = monster; // :225 CFLAG:ARG:570（system 域）
-      era.print(`与${monster_name(monster)}缔结契约了`); // :226-228
+      // 魔物使いに転職した場合、契約モンスターを選べる
+      era.print('请选择想要契约的魔兽');
+      monsterplay_list();
+      const monster = await era.input();
+      chara(arg).system.从属怪物 = monster; // CFLAG:ARG:570（system 域）
+      era.print(`与${monster_name(monster)}缔结契约了`);
     }
-    return 0; // :226-230（契约魔兽段之后收尾）
+    return 0; // （契约魔兽段之后收尾）
   }
 }
 
@@ -406,7 +401,7 @@ async function chara_info_job_change(arg) {
  */
 async function job_change_benki(arg) {
   for (;;) {
-    era.print('将常识变成性爱。'); // :238
+    era.print('将常识变成性爱。');
     era.printMultiColumns([
       {
         type: 'button',
@@ -416,7 +411,7 @@ async function job_change_benki(arg) {
       },
       {
         type: 'text',
-        content: `${NBSP.repeat(2)}-${NBSP.repeat(2)}${get_look_info(arg, KIND.COMMON_SENSE_BATTLE)}`, // :239-240
+        content: `${NBSP.repeat(2)}-${NBSP.repeat(2)}${get_look_info(arg, KIND.COMMON_SENSE_BATTLE)}`,
         config: { align: 'left', width: 8 },
       },
     ]);
@@ -429,37 +424,37 @@ async function job_change_benki(arg) {
       },
       {
         type: 'text',
-        content: `${NBSP.repeat(2)}-${NBSP.repeat(2)}${get_look_info(arg, KIND.COMMON_SENSE_DAILY)}`, // :242-243
+        content: `${NBSP.repeat(2)}-${NBSP.repeat(2)}${get_look_info(arg, KIND.COMMON_SENSE_DAILY)}`,
         config: { align: 'left', width: 8 },
       },
     ]);
-    era.printButton('终了', 999); // :245
+    era.printButton('终了', 999);
 
-    const result = await era.input(); // :247
+    const result = await era.input();
 
-    if (result === 999) return 0; // :249-250
+    if (result === 999) return 0;
     if (result === 0) {
-      // :251-253 战斗常识：0 → 1 → 2 → 0
+      // 战斗常识：0 → 1 → 2 → 0
       const next =
         ((era.get(`talent:${arg}:${COMMON_SENSE_BATTLE_TALENT}`) || 0) + 1) %
         COMMON_SENSE_BATTLE_MOD;
       era.set(`talent:${arg}:${COMMON_SENSE_BATTLE_TALENT}`, next);
     } else if (result === 1) {
-      // :254-259 日常常识：兽奸过滤后 0-5 循环
+      // 日常常识：兽奸过滤后 0-5 循环
       let next =
         (era.get(`talent:${arg}:${COMMON_SENSE_DAILY_TALENT}`) || 0) + 1;
       if (
         next === COMMON_SENSE_DAILY_BEAST &&
         (era.get(`item:${DOG_ITEM}`) || 0) === 0
       ) {
-        next += 1; // :257-258 没养狗就跳过「兽奸」那一档
+        next += 1; // 没养狗就跳过「兽奸」那一档
       }
       era.set(
         `talent:${arg}:${COMMON_SENSE_DAILY_TALENT}`,
         next % COMMON_SENSE_DAILY_MOD,
       );
     }
-    // :260-262 其余输入无限重问（ere 侧结构性不可达，见文件头）
+    // 其余输入无限重问（ere 侧结构性不可达，见文件头）
   }
 }
 

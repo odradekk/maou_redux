@@ -1,8 +1,6 @@
 /**
  * @file 换号（issue #545，阶段 6 S4）：名册页 [1700] 的角色排序编号互换。
  *
- * 源: target/ERB/魔改新增/角色編號交換.ERB 全 1 函数——@換號（:1-127）。
- *
  * 调用方：ere/page/page-chara-info.js 的 CHARA_INFO 分发（result === 1700，
  * 调用点 `CALL 換號`）。
  *
@@ -91,10 +89,10 @@ const {
 const { get_job_name } = require('#/page/page-select-target');
 const { chara } = require('#/facade/chara');
 const { pad_display } = require('#/utils/display-width');
-// :7 #DIM CONST NUM_PAGE = 25（换号页自己的分页宽度，与名册的 24 无关）
+// #DIM CONST NUM_PAGE = 25（换号页自己的分页宽度，与名册的 24 无关）
 const NUM_PAGE = 25;
 
-// :5 #DIM NO_PAGE = 0——无 DYNAMIC ⇒ 静态变量：RESTART 与函数退出都不重置
+// #DIM NO_PAGE = 0——无 DYNAMIC ⇒ 静态变量：RESTART 与函数退出都不重置
 // （指南 user-defined-variables.md:67-69；:82 属 DYNAMIC 一节，不适用）。函数内的
 // let 每次进入都回到 0，并不等价于原作，故提在模块级：翻页状态跨次进入沿用，
 // 第 2 页退出后再进 [1700] 仍是第 2 页（test/page-chara-info.test.js 有用例钉住）。
@@ -129,7 +127,7 @@ function is_sp(cid) {
  */
 function swap_candidates() {
   const ids = era.getAddedCharacters().filter((cid) => {
-    if (cid === 0) return false; // :16-18 对象是魔王剃除
+    if (cid === 0) return false; // 对象是魔王剃除
     const state = chara(cid).invasion.状态;
     return (
       (state === 0 || state === 7) &&
@@ -142,7 +140,7 @@ function swap_candidates() {
   return sort_by_number(ids);
 }
 
-// :21/:72 行体：编号按钮 + 姓名/职业/等级（职业取 @GET_JOB_NAME 的既有真身
+// 行体：编号按钮 + 姓名/职业/等级（职业取 @GET_JOB_NAME 的既有真身
 // page-select-target.js，等级 CFLAG:x:9 按原作 `LV:{CFLAG:COUNT:9,4,LEFT}`
 // 补上冒号、值左对齐占 4 格——`pad_display` 就是 `%,N,LEFT%` 的等价写法）
 function print_swap_row(cid) {
@@ -189,59 +187,59 @@ async function chara_number_swap() {
     const total = swap_candidates().length;
 
     // —— 第一屏（:8-36）——
-    era.print('交换角色的排序编号(PS:侵攻与迎击中的角色无法换号)'); // :10
-    era.print('请先选择要变换排序的角色'); // :11
+    era.print('交换角色的排序编号(PS:侵攻与迎击中的角色无法换号)');
+    era.print('请先选择要变换排序的角色');
     const window_ids = swap_candidates().slice(
       no_page * NUM_PAGE,
       (no_page + 1) * NUM_PAGE,
     );
     for (const cid of window_ids) print_swap_row(cid);
-    era.println(); // :31
-    era.println(); // :32
-    era.printButton('上一页', 2000); // :33
-    era.printButton('下一页', 2001); // :34
-    era.printButton('结束换号', 1999); // :35（原文「結束换号」，#60 归一）
-    const first = await era.input(); // :36
+    era.println();
+    era.println();
+    era.printButton('上一页', 2000);
+    era.printButton('下一页', 2001);
+    era.printButton('结束换号', 1999); // （原文「結束换号」，#60 归一）
+    const first = await era.input();
 
     if (first === 2000) {
-      // :38-43 上一页（页首不动，仅重绘）
+      // 上一页（页首不动，仅重绘）
       if (no_page > 0) no_page -= 1;
       continue;
     }
     if (first === 2001) {
-      // :44-49 下一页
+      // 下一页
       if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;
       continue;
     }
     if (first === 1999) {
-      return; // :50-51 JUMP CHARA_INFO
+      return; // JUMP CHARA_INFO
     }
-    // :53-56 CASEELSE：CN:1 = RESULT（显示守卫外的编号在原作可手输，
+    // CASEELSE：CN:1 = RESULT（显示守卫外的编号在原作可手输，
     // ere 白名单下不可达，见文件头）
 
     // —— 第二屏（:57-105；同一页码窗口，剃除 CN:1 的行）——
     let second = 0; // CN:2
     for (;;) {
-      era.print('要跟那个角色换号呢？'); // :59
+      era.print('要跟那个角色换号呢？');
       const second_ids = swap_candidates()
         .slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE)
-        .filter((cid) => cid !== first); // :67-69 对象是角色1剃除
+        .filter((cid) => cid !== first); // 对象是角色1剃除
       for (const cid of second_ids) print_swap_row(cid);
-      era.println(); // :82
-      era.println(); // :83
-      era.printButton('上一页', 3000); // :84
-      era.printButton('下一页', 3001); // :85
+      era.println();
+      era.println();
+      era.printButton('上一页', 3000);
+      era.printButton('下一页', 3001);
       // [3002] 取消：有意偏离（原作靠「乱输编号也走确认屏」兜底），见文件头
       era.printButton('取消', 3002);
-      const picked = await era.input(); // :86
+      const picked = await era.input();
 
       if (picked === 3000) {
-        // :88-93 上一页（与第一屏共用 NO_PAGE）
+        // 上一页（与第一屏共用 NO_PAGE）
         if (no_page > 0) no_page -= 1;
         continue;
       }
       if (picked === 3001) {
-        // :94-99 下一页
+        // 下一页
         if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;
         continue;
       }
@@ -249,25 +247,25 @@ async function chara_number_swap() {
         // 回第一屏重选 CN:1（原作那条兜底的净效果，见文件头）＝ GOTO 换号页
         continue swap_page;
       }
-      second = picked; // :100-103 CN:2 = RESULT
+      second = picked; // CN:2 = RESULT
       break;
     }
 
     // —— 确认屏（:106-110）——
-    era.println(); // :106
-    era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`); // :107
-    era.printButton('是', 4000); // :108
-    era.printButton('否', 4001); // :109
-    const confirm = await era.input(); // :110
+    era.println();
+    era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`);
+    era.printButton('是', 4000);
+    era.printButton('否', 4001);
+    const confirm = await era.input();
 
     if (confirm === 4000) {
-      // :112-116 原作是「SWAPCHARA 搬数据 + 手工把 SAVESTR 换回」；ere 侧
+      // 原作是「SWAPCHARA 搬数据 + 手工把 SAVESTR 换回」；ere 侧
       // 只交换排序编号（不搬数据、不改 ID，见文件头）
       swap_sort_numbers(first, second);
-      await era.printAndWait('已完成互换'); // :117
-      era_flag.target = -1; // :118
-      era_flag.assi = -1; // :119
-      continue; // :120 RESTART（页码是静态变量，不归零）
+      await era.printAndWait('已完成互换');
+      era_flag.target = -1;
+      era_flag.assi = -1;
+      continue; // RESTART（页码是静态变量，不归零）
     }
     // [4001] 回第一屏（:121-122；其后的 CN 复位是死代码）；ELSE → RETURN 0
     // （:125-127）在 ere 白名单下不可达，不镜像（文件头）

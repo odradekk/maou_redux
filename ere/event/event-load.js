@@ -1,8 +1,6 @@
 /**
  * @file 读档钩子 @EVENTLOAD（issue #137：C3 读档钩子与自动存档）。
  *
- * 源: target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB  @EVENTLOAD（:760-778）
- *
  * Emuera 语义：LOADDATA 是转场命令（与 BEGIN 并列，技能
  * system-flow.md:26）——执行后不回调用方，迁移到 @EVENTLOAD；它跑完后
  * 引擎隐式进入 SHOP 阶段（**不执行 @EVENTSHOP**，同文件 51-53 行）。ere 侧
@@ -63,19 +61,19 @@ const era_flag = require('#/era-utils/era-flag');
 on(
   'EVENTLOAD',
   async () => {
-    // :762 LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
+    // LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
     // `this.era.global = n`），丢弃读档前未保存的内存改动——@EVENTFIRST :53
     // 与设置页 [27] 都不即时 SAVEGLOBAL，读档须按原作恢复最近一次保存值
     // （#547 验收第 3 条修正 #137 的判断：当时「global 表变量改完都立即
     // SAVEGLOBAL」的前提被 global:3 打破）。副作用核对过引擎源码：随后
     // listSaveFiles 重扫备注、saveGlobal 写回同值，不动刚读入的存档数据
     await era.loadGlobal();
-    // :764 角色名初始化，真身见 chara-name-list.js（#388）
+    // 角色名初始化，真身见 chara-name-list.js（#388）
     chara_name_init();
-    // :766 EX素质名初始化（非存档表，读档后重放；重复调用按原作早退）
+    // EX素质名初始化（非存档表，读档后重放；重复调用按原作早退）
     ex_talentname_init();
 
-    // :768-772 与 :773-774：普通读档界面仍只放行 0-99，故两支不可达；
+    // 与 :773-774：普通读档界面仍只放行 0-99，故两支不可达；
     // 保留原作钩子，供 MAOUNET 的特殊档流程使用。
     if (era_flag.last_load_no === 999) {
       await maounet_mod.maounet();
@@ -85,7 +83,7 @@ on(
       await maounet_mod.inport_b();
     }
 
-    // :779 CALL DATA_FIX 中三处对新档仍有语义的行（判定依据见文件头）。
+    // CALL DATA_FIX 中三处对新档仍有语义的行（判定依据见文件头）。
     // 原作 FOR A,0,CHARANUM 对全部已加入角色（含 0 号位）
     for (const cid of era.getAddedCharacters()) {
       // DATA_FIX.ERB 170205 段：SIF A == MASTER → EX_TALENT:A:200 = 1。

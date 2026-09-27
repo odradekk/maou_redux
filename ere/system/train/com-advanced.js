@@ -2,27 +2,6 @@
  * @file 调教指令 120–135「追加与高级」族：@COM、@COM_ABLE、TRAIN_MESSAGE_A/B
  * 分支，以及 @GET_ADV_COM CASE 135（自助舔舐 → 口交时自慰）升格规则。
  *
- * 源: target/ERB/調教相關/COMF120_挿入Ｇスポ責め.ERB       @COM120
- *     target/ERB/調教相關/COMF121_挿入子宮口責め.ERB     @COM121
- *     target/ERB/調教相關/COMF122_兜あわせ.ERB           @COM122
- *     target/ERB/調教相關/COMF123_パイズリフェラ.ERB     @COM123
- *     target/ERB/調教相關/COMF124_ディープスロート.ERB   @COM124
- *     target/ERB/調教相關/COMF125_フェラ自慰.ERB         @COM125
- *     target/ERB/調教相關/COMF126_手コキフェラ.ERB       @COM126
- *     target/ERB/調教相關/COMF127_バキュームフェラ.ERB   @COM127
- *     target/ERB/調教相關/COMF128_正常位・キス.ERB       @COM128
- *     target/ERB/調教相關/COMF129_正常位・胸愛撫.ERB     @COM129
- *     target/ERB/調教相關/COMF130_正常位ＳＰ.ERB         @COM130
- *     target/ERB/調教相關/COMF131_後背位・胸愛撫.ERB     @COM131
- *     target/ERB/調教相關/COMF132_後背位・スパンキング.ERB @COM132
- *     target/ERB/調教相關/COMF133_立ちバック.ERB         @COM133
- *     target/ERB/調教相關/COMF134_後背位ＳＰ.ERB         @COM134
- *     target/ERB/調教相關/COMF135_セルフクンニ.ERB       @COM135
- *     target/ERB/調教相關/COMABLE.ERB                   @COM_ABLE120-135（:3728-4622）
- *     target/ERB/調教相關/COMF_JUMP.ERB                 @GET_ADV_COM CASE 135（:666-682）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB        @TRAIN_MESSAGE_A
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB        @TRAIN_MESSAGE_B
- *
  * J19（issue #229）。122 与 135 在 Train.csv（可直选）；其余 14 条是高级 COM，
  * 只能经 @GET_ADV_COM 升格抵达，但进 DECLARED_COM_IDS 分发空间（#213）。
  *

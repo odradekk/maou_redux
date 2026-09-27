@@ -1,16 +1,6 @@
 /**
  * @file 战斗魔法（issue #343，阶段 5a L12）。
  *
- * 源: target/ERB/其他/MAGIC.ERB  @MAGIC（:5-46）、@MAGIC_USE（:47-75）、
- *       @MAGIC_SELECT（:76-143）、@SHAMAN_SELECT（:144-214）、
- *       @MAGIC_DAMAGE_CAP（:215-237）、@MAGIC_BONUS_C_TO_M（:238-275）、
- *       @MAGIC_BONUS_M_TO_C（:276-331）、@MAGIC_BONUS_C_TO_C（:332-381）、
- *       @TELEPORT_MAGIC（:382-436）、@SLEEP_MAGIC（:437-557）、
- *       @ENERGY_BOLT_MAGIC（:558-644）、@ENERGY_DRAIN_MAGIC（:645-740）、
- *       @FIREBALL_MAGIC（:741-827）、@HEAL_MAGIC（:828-914）、
- *       @SHIELD_MAGIC（:915-968）、@CURSE_MAGIC（:969-1081）、
- *       @MIND_DRAIN_MAGIC（:1082-1176）、@LV_DRAIN_MAGIC（:1177-1315）
- *
  * 移植说明：
  *   - 原作全局 A/B 与 D:20 改为显式参数和 `move_ctx.d20`；B 在 type 1/2
  *     表示怪物列头，在 type 3/4 表示对手角色 ID。

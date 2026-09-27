@@ -4,21 +4,6 @@
  * @GET_ADV_COM CASE 80（强制口交 → 3P）升格规则与 @EQUIP_COM89（兽奸 PLAY 中
  * 持续效果）。
  *
- * 源: target/ERB/調教相關/COMF80_イラマチオ.ERB       @COM80
- *     target/ERB/調教相關/COMF81_フィストファック.ERB @COM81
- *     target/ERB/調教相關/COMF82_アナルフィスト.ERB   @COM82
- *     target/ERB/調教相關/COMF83_両穴フィスト.ERB     @COM83
- *     target/ERB/調教相關/COMF84_Gスポット刺激.ERB    @COM84
- *     target/ERB/調教相關/COMF85_放尿.ERB             @COM85
- *     target/ERB/調教相關/COMF87_ピアシング.ERB       @COM87
- *     target/ERB/調教相關/COMF88_使役魔獣プレイ.ERB   @COM88
- *     target/ERB/調教相關/COMF89_獣姦プレイ.ERB       @COM89 / @EQUIP_COM89
- *     target/ERB/調教相關/COMF90_ニプルファック.ERB   @COM90（Shift-JIS 编码）
- *     target/ERB/調教相關/COMABLE.ERB                 @COM_ABLE80-90（:3142-3538）
- *     target/ERB/調教相關/COMF_JUMP.ERB               @GET_ADV_COM CASE 80（:642-663）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB      @TRAIN_MESSAGE_A（SELECTCOM 80/90）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB      @TRAIN_MESSAGE_B（SELECTCOM 80-89）
- *
  * J16（issue #226）。族编号 80-99，本票落 80–85、87、88、89、90 十条；86（饮尿）
  * 在 Train.csv 被注释、TRAINNAME 恒空，COM_ABLE86 第 4 行即 RETURN 0（后续判定
  * 全死码）——com-family.js 头注已勘定为「死段不进 DECLARED_TRAIN_IDS」，本票不
@@ -423,7 +408,7 @@ async function com80() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // :10-14 CASE 80 头部升格跳转（LOCAL = 80 → 3P，见 adv_com_family.register(80)）
+  // CASE 80 头部升格跳转（LOCAL = 80 → 3P，见 adv_com_family.register(80)）
   const upgraded = await get_adv_com(80);
   if (upgraded !== 80) {
     return jump_to_advanced(upgraded);
@@ -432,7 +417,7 @@ async function com80() {
   era.print('强制口交');
   await train_message_b();
 
-  // :218-302 射精ゲージチェック（B = 蓄积量）
+  // 射精ゲージチェック（B = 蓄积量）
   let b =
     abl(target, 12) === 0
       ? 1200
@@ -498,7 +483,7 @@ async function com80() {
     era.add(`base:${player}:2`, b);
   }
 
-  // :306-371 ソースの計算
+  // ソースの計算
   const { src, set } = make_src_helpers(target);
   if (tal(target, 47)) {
     lose(target, 0, 100);
@@ -511,7 +496,7 @@ async function com80() {
   set(13, 1500);
   set(14, 500);
   set(16, 500);
-  // :323 汚れデータ（Y*40+100）：Y 的计算段在死码内从未刷新，恒为其唯一
+  // 汚れデータ（Y*40+100）：Y 的计算段在死码内从未刷新，恒为其唯一
   // 可能取值 0（见文件头注）
   set(8, 100);
   if (abl(target, 16) === 0) {
@@ -559,7 +544,7 @@ async function com80() {
     set(5, src(5) * 2.0);
   }
 
-  // :375-386 射精チェック
+  // 射精チェック
   const s = era.get(`base:${player}:2`) || 0;
   const ejac = era.get(`maxbase:${player}:2`) || 0;
   const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
@@ -592,7 +577,7 @@ async function com80() {
     }
   }
 
-  // :420-459 大量射精 / 通常射精
+  // 大量射精 / 通常射精
   if (e === 2) {
     era.add(`source:${target}:7`, 0); // 无操作（对齐 TIMES 后续读点，占位）
     set(7, src(7) * 2.0);
@@ -628,10 +613,10 @@ async function com80() {
   era.print(`${name_of('expname', 22)}＋１`);
   chara(target).dungeon.口交经验 += 1;
 
-  // :464-466 奴隷の口⇔調教者のＰの汚れが移动
+  // 奴隷の口⇔調教者のＰの汚れが移动
   stain_exchange(target, 0, player, 2);
 
-  // :468-473 侍奉精神LV2+&&技巧LV2+ → なめ取る
+  // 侍奉精神LV2+&&技巧LV2+ → なめ取る
   if (abl(target, 16) >= 2 && abl(target, 12) >= 2) {
     era.set(`stain:${player}:2`, 2);
     if (e >= 1) {
@@ -641,7 +626,7 @@ async function com80() {
 
   await com_ejac_player_milk(b);
 
-  // :477-482 初吻（TARGET 侧的第一次口内経験记录，与 com-caress.js 的
+  // 初吻（TARGET 侧的第一次口内経験记录，与 com-caress.js 的
   // record_player_first_kiss（CFLAG:PLAYER:16）方向相反、槽位相同）
   if ((era.get(`cflag:${target}:16`) || 0) === -1) {
     era.set(`cflag:${target}:16`, 201);

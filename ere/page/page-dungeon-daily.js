@@ -1,9 +1,6 @@
 /**
  * @file 地城日常的部下日程（issue #179，阶段 3 H10）。
  *
- * 源: target/ERB/迷宮/DUNGEON_DAILY.ERB  @DISPLAY_DUNGEON_DAILY（:1-768）、
- *     @CAL_DUNGEON_DAILY（:769-774，仅 6 行）
- *
  * 调用点：
  *   - @DISPLAY_DUNGEON_DAILY ← ere/page/page-main-menu.js 的
  *     draw_dungeon_daily 尾部（原作 DRAW_MAINMENU.ERB:601，本票接线）；
@@ -82,10 +79,10 @@ function name_of(cid) {
 function display_dungeon_daily(rand = default_rand) {
   const added = era.getAddedCharacters();
 
-  // :6-7 占位头（PRINT 全角空格 + PRINTFORML 拼一行）
+  // 占位头（PRINT 全角空格 + PRINTFORML 拼一行）
   era.print(`${FULL_WIDTH_SPACE} Space for further docuement`);
 
-  // :13 STORAGE:0 = 0；:16-23 奴隶日常扫描：空闲且爱慕（85）/淫乱（76）
+  // STORAGE:0 = 0；:16-23 奴隶日常扫描：空闲且爱慕（85）/淫乱（76）
   const storage = [];
   for (const cid of added) {
     if (chara(cid).invasion.状态 === 0) {
@@ -98,14 +95,14 @@ function display_dungeon_daily(rand = default_rand) {
     }
   }
 
-  // :24-27 Testing Purpose 的计数行
+  // Testing Purpose 的计数行
   era.print('Testing Purpose');
   era.print(`${storage.length}`);
 
-  // :28-37 有候选 → RAND (STORAGE)（RESULT = [0, n)）+ 1 → 一位下标
+  // 有候选 → RAND (STORAGE)（RESULT = [0, n)）+ 1 → 一位下标
   let daily_target = 0; // 无候选时保持 0（原作 DAILYTARGET 初值）
   if (storage.length !== 0) {
-    const picked = rand(storage.length) + 1; // :29-30 RAND + RESULT++
+    const picked = rand(storage.length) + 1; // RAND + RESULT++
     daily_target = storage[picked - 1]; // STORAGE:RESULT（一位下标）
     era.print('Testing Purpose');
     era.print(`${picked}`);
@@ -113,14 +110,14 @@ function display_dungeon_daily(rand = default_rand) {
   }
 
   // === 显示段（:39-68）===
-  // :40 DISPLAYCHARA = %SAVESTR:DAILYTARGET%
+  // DISPLAYCHARA = %SAVESTR:DAILYTARGET%
   let display = name_of(daily_target);
-  // :41-42 越界早退（SIF DAILYTARGET >= CHARANUM → RETURN 0；按语义移植
+  // 越界早退（SIF DAILYTARGET >= CHARANUM → RETURN 0；按语义移植
   // 为「不在已加入列表」，文件头）
   if (!added.includes(daily_target)) {
     return 0;
   }
-  // :43-58 类型标签：EX_TALENT:2 女儿 / TALENT:220 魔物娘（SIF 逐条覆盖）
+  // 类型标签：EX_TALENT:2 女儿 / TALENT:220 魔物娘（SIF 逐条覆盖）
   // → 命中即跳；否则性格素质 160-180（FOR 含头含尾 160..180，最后命中者
   // 胜——原作无 BREAK）→ EX_TALENT 101-199（FOR 101,200 含头不含尾）
   let locals = '';
@@ -130,7 +127,7 @@ function display_dungeon_daily(rand = default_rand) {
   if ((era.get(`talent:${daily_target}:220`) || 0) !== 0) {
     locals = '魔物娘';
   }
-  // :47-48 STRLENS(LOCALS) > 1 → GOTO DAILYTYPE
+  // STRLENS(LOCALS) > 1 → GOTO DAILYTYPE
   if (locals.length <= 1) {
     for (let count = 160; count <= 180; count += 1) {
       if (era.get(`talent:${daily_target}:${count}`)) {
@@ -138,7 +135,7 @@ function display_dungeon_daily(rand = default_rand) {
         locals = String(era.get(`talentname:${count}`) ?? '');
       }
     }
-    // :53-54 再判一次
+    // 再判一次
     if (locals.length <= 1) {
       for (let count = 101; count < 200; count += 1) {
         if (era.get(`ex_talent:${daily_target}:${count}`)) {
@@ -148,15 +145,15 @@ function display_dungeon_daily(rand = default_rand) {
       }
     }
   }
-  // :59-60 $DAILYTYPE: DISPLAYCHARA += LOCALS
+  // $DAILYTYPE: DISPLAYCHARA += LOCALS
   display += locals;
-  // :61-65 日常类型（爱慕优先于淫乱，ELSEIF）
+  // 日常类型（爱慕优先于淫乱，ELSEIF）
   if (era.get(`talent:${daily_target}:85`)) {
     display += '爱慕日常';
   } else if (era.get(`talent:${daily_target}:76`)) {
     display += '淫乱日常';
   }
-  // :66 PRINTFORML %DISPLAYCHARA%；:67 LOCALS 清空（局部变量，无动作）
+  // PRINTFORML %DISPLAYCHARA%；:67 LOCALS 清空（局部变量，无动作）
   era.print(display);
 
   // === 怪物日常（:70-554）===
@@ -185,11 +182,11 @@ function display_dungeon_daily(rand = default_rand) {
  * @returns {number} 0（原作无 RETURN；调用方不读）
  */
 function cal_dungeon_daily() {
-  // :771-773 钳上界
+  // 钳上界
   if (era_exflag.prestige >= 100) {
     era_exflag.prestige = 100;
   }
-  // :774 每日衰减
+  // 每日衰减
   era_exflag.prestige -= 2;
   return 0;
 }

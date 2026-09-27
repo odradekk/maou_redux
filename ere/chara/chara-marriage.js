@@ -2,13 +2,6 @@
  * @file 婚姻：角色信息页的「结婚」与「恋人设定」入口、婚礼典礼与离婚
  * （issue #393，N9）。
  *
- * 源: target/ERB/キャラ関数/CHARA_MARRIAGE.ERB 全二十函数——
- *     @SHOW_BUTTON_MARRIAGE（:14-32）、@CHECK_ABLE_TO_MARRIAGE（:35-49，
- *     #FUNCTION 式中函数）、@MARRIAGE（:52-451，主流程与奴隶列表分页）、
- *     @MARRIAGE_DOG（:455-480）/ @MARRIAGE_YOU（:484-491）/
- *     @MARRIAGE_LOVERS（:494-505）、十三支种族典礼（:508-867）、
- *     @SLAVE_MARRIAGE（:870-878）、@DIVORCE（:881-902）。
- *
  * 调用点：原作 CHARA_INFO ver1.0.1.ERB:862（按钮）与 :1057（CASE 4 动作），
  * 已接在 ere/page/page-chara-info.js。
  *
@@ -242,10 +235,10 @@ function print_disabled(content) {
  * @returns {0|1|2} 0 = 可以；1 = 状态不对；2 = 侵攻中的勇者（走恋人线）
  */
 function check_able_to_marriage(arg) {
-  if ((era.get(`cflag:${arg}:1`) || 0) === 2) return MARRIAGE_HERO; // :42-43
+  if ((era.get(`cflag:${arg}:1`) || 0) === 2) return MARRIAGE_HERO;
   const state = era.get(`cflag:${arg}:1`) || 0;
-  if (state !== 0 && state !== 3 && state !== 7) return MARRIAGE_BLOCKED; // :45-48
-  return 0; // :49
+  if (state !== 0 && state !== 3 && state !== 7) return MARRIAGE_BLOCKED;
+  return 0;
 }
 
 /**
@@ -255,14 +248,14 @@ function check_able_to_marriage(arg) {
  * @param {number} arg 目标角色号（原作 ARG）
  */
 function show_button_marriage(num, arg) {
-  const able = check_able_to_marriage(arg); // :20 LOCAL
-  if (able === MARRIAGE_BLOCKED) return; // :21-23 結婚不可能ならボタン自体を表示しない
+  const able = check_able_to_marriage(arg); // LOCAL
+  if (able === MARRIAGE_BLOCKED) return; // 結婚不可能ならボタン自体を表示しない
   if (able === MARRIAGE_HERO) {
-    // :24-28 侵攻中の勇者の場合、恋人選択肢
+    // 侵攻中の勇者の場合、恋人選択肢
     print_choice('恋人设定\u3000', num);
     return;
   }
-  print_choice('结婚\u3000', num); // :30
+  print_choice('结婚\u3000', num);
 }
 
 // —— 十三支种族典礼（:508-867）：同形的「开场 ＋ 三档反应」 ——
@@ -733,35 +726,35 @@ async function slave_marriage(arg, partner) {
  */
 function current_spouse_text(cid) {
   const spouse = era.get(`cflag:${cid}:601`) || 0;
-  if (spouse === SPOUSE_DOG) return '野狗'; // :129-130
-  if (spouse === SPOUSE_YOU) return '你'; // :131-132
+  if (spouse === SPOUSE_DOG) return '野狗';
+  if (spouse === SPOUSE_YOU) return '你';
   if (spouse === 0) {
-    // :133-139 主婦?人妻の場合、夫がいる
+    // 主婦?人妻の場合、夫がいる
     if (talent(cid, 315) === 21 || talent(cid, T_HOMETOWN_WIFE)) {
       return '在故乡等待的伴侣';
     }
     return '无';
   }
   if (spouse === SPOUSE_LOVER) {
-    // :140-141 CALL NAME_LOVER,CFLAG:ARG:606,1——只要裸文本，读同一张登记表
+    // CALL NAME_LOVER,CFLAG:ARG:606,1——只要裸文本，读同一张登记表
     //（page-chara-info.js 的 marriage_bracket_text 同款读法）
     return LOVER_NAMES.get(era.get(`cflag:${cid}:606`) || 0) ?? '';
   }
-  // :142-165 ELSE：先看家族册上的婚姻关系
-  const found = search_family(cid, 'MARRIAGE'); // :143
-  if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0 && found < 0) return '无'; // :144-145
+  // ELSE：先看家族册上的婚姻关系
+  const found = search_family(cid, 'MARRIAGE');
+  if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0 && found < 0) return '无';
   if ((era.get('cflag:0:601') || 0) === (era.get(`cflag:${cid}:6`) || 0)) {
-    return name_of(0); // :146-147
+    return name_of(0);
   }
   // 原作 ELSE 里的 :148-149 / :150-151 两支（`CFLAG:ARG:601 == 0` 的两种
   // 分档）在 :133-139 的 `== 0` 早退之后恒假——这里 1:1 精简为可达分支，
   // 不逐字保留死支（page-chara-info.js 的 MASTER 恒假两支同款处置）。
   if (spouse % 10 === 9) {
-    // :152-164 一の位が 9：家族册上的人
+    // 一の位が 9：家族册上的人
     const partner = search_family(cid, 'MARRIAGE');
     return partner > 0 ? name_of(partner) : '无';
   }
-  return itemname(spouse); // :163
+  return itemname(spouse);
 }
 
 /**
@@ -771,43 +764,43 @@ function current_spouse_text(cid) {
 function print_marriage_menu(arg) {
   const lover = era.get(`cflag:${arg}:606`) || 0;
   const married = (era.get(`cflag:${arg}:601`) || 0) !== 0;
-  // :81-87 四道 DRAWLINE ＋ 两行标题（逐行排布，锚在 :84 的 MONSTERPLAY_LIST）
+  // 四道 DRAWLINE ＋ 两行标题（逐行排布，锚在 :84 的 MONSTERPLAY_LIST）
   era.drawLine();
   era.print('怪物');
   era.drawLine();
-  monsterplay_list(); // :84
+  monsterplay_list();
   era.drawLine();
   era.print('特殊');
   era.drawLine();
   if ((era.get('item:22') || 0) >= 1) {
-    print_choice('野狗', SPOUSE_DOG); // :88-89
+    print_choice('野狗', SPOUSE_DOG);
   } else {
-    print_disabled('野狗'); // :90-93
+    print_disabled('野狗');
   }
-  print_choice('你', SPOUSE_YOU); // :95
+  print_choice('你', SPOUSE_YOU);
   if (lover > 0) {
-    print_choice('与恋人结婚', SPOUSE_LOVER); // :96-97
+    print_choice('与恋人结婚', SPOUSE_LOVER);
   } else {
-    print_disabled('与恋人结婚'); // :98-101
+    print_disabled('与恋人结婚');
   }
   if (lover === 0) {
-    print_choice('恋人设定', SPOUSE_LOVER); // :103-104
+    print_choice('恋人设定', SPOUSE_LOVER);
   } else {
-    print_disabled('恋人设定'); // :105-108
+    print_disabled('恋人设定');
   }
   if (lover > 0) {
-    print_choice('与恋人分手', 903); // :110-111
+    print_choice('与恋人分手', 903);
   } else {
-    print_disabled('与恋人分手'); // :112-115
+    print_disabled('与恋人分手');
   }
-  print_choice('从奴隶中选', 904); // :118
+  print_choice('从奴隶中选', 904);
   if (married) {
-    print_choice('离婚', 998); // :119-120
+    print_choice('离婚', 998);
   } else {
-    print_disabled('离婚'); // :121-124
+    print_disabled('离婚');
   }
-  print_choice('返回', 999); // :126
-  // :128-168 [%SAVESTR:ARG%目前结婚对象: … ]
+  print_choice('返回', 999);
+  // [%SAVESTR:ARG%目前结婚对象: … ]
   era.print(`[${name_of(arg)}目前结婚对象:${current_spouse_text(arg)}]`);
 }
 
@@ -829,47 +822,47 @@ function print_marriage_menu(arg) {
 async function slave_sub_menu(arg, no_page) {
   let page = no_page;
   for (;;) {
-    // :200-205 子菜单每轮重画的四道输出（锚在 :202 的 LIFE_LIST）
+    // 子菜单每轮重画的四道输出（锚在 :202 的 LIFE_LIST）
     era.drawLine();
-    life_list(page, 2); // :202
-    print_choice('- 上一页', 1000); // :203
-    print_choice('- 返  回', 999); // :204
-    print_choice('- 下一页', 1001); // :205
+    life_list(page, 2);
+    print_choice('- 上一页', 1000);
+    print_choice('- 返  回', 999);
+    print_choice('- 下一页', 1001);
 
-    const pick = await era.input(); // :207
+    const pick = await era.input();
 
-    if (pick === 999) return { partner: null, no_page: page }; // :209-210
+    if (pick === 999) return { partner: null, no_page: page };
     if (pick === 1000) {
-      // :211-216 上一页（首屏时 NO_PAGE 不降、落回菜单重画）
+      // 上一页（首屏时 NO_PAGE 不降、落回菜单重画）
       if (page > 0) page -= 1;
       continue;
     }
     if (pick === 1001) {
-      // :217-222 下一页（末页时 NO_PAGE 不升、落回菜单重画）
+      // 下一页（末页时 NO_PAGE 不升、落回菜单重画）
       if ((page + 1) * SLAVE_PAGE_SIZE <= added_ids().length) page += 1;
       continue;
     }
     if (pick < 0 || !added_ids().includes(pick)) {
-      return { partner: null, no_page: page }; // :223-224 越界（ID 世界改写）
+      return { partner: null, no_page: page }; // 越界（ID 世界改写）
     }
     if ((era.get(`cflag:${pick}:1`) || 0) === 2) {
-      era.print(`${name_of(pick)}尚未在支配之下。`); // :225-226
+      era.print(`${name_of(pick)}尚未在支配之下。`);
       return { partner: null, no_page: page };
     }
     if ((era.get(`cflag:${pick}:1`) || 0) !== 0) {
-      era.print(`${name_of(pick)}处于无法出席婚礼的状态。`); // :227-229
+      era.print(`${name_of(pick)}处于无法出席婚礼的状态。`);
       return { partner: null, no_page: page };
     }
     if ((era.get(`cflag:${pick}:601`) || 0) !== 0) {
-      era.print(`${name_of(pick)}已婚了。`); // :230-232
+      era.print(`${name_of(pick)}已婚了。`);
       return { partner: null, no_page: page };
     }
-    // :233-238 自恋判据：ELSE 内层只有这一支，命中即回重画
+    // 自恋判据：ELSE 内层只有这一支，命中即回重画
     if (pick === arg) {
       era.print(`${name_of(pick)}并不是一个自恋狂。`);
       return { partner: null, no_page: page };
     }
-    return { partner: pick, no_page: page }; // :241-243
+    return { partner: pick, no_page: page };
   }
 }
 
@@ -880,9 +873,9 @@ async function slave_sub_menu(arg, no_page) {
  */
 function settle_previous_marriage(arg) {
   if ((era.get(`cflag:${arg}:${SPOUSE_NAME_SLOT}`) || 0) > 0) {
-    const found = search_family(arg, 'MARRIAGE'); // :268
+    const found = search_family(arg, 'MARRIAGE');
     if (!(era.get(`ex_talent:${arg}:2`) && found < 0)) {
-      divorce(found); // :271
+      divorce(found);
     }
   }
 }
@@ -902,19 +895,19 @@ function settle_previous_marriage(arg) {
  * @returns {{label: string, groom_num: number, groom_type: number}}
  */
 function resolve_groom(arg, groom_num, groom_type, partner, rand) {
-  if (groom_num === SPOUSE_DOG) return { label: '野狗', groom_num, groom_type }; // :277-278
-  if (groom_num === SPOUSE_YOU) return { label: '你', groom_num, groom_type }; // :279-280
+  if (groom_num === SPOUSE_DOG) return { label: '野狗', groom_num, groom_type };
+  if (groom_num === SPOUSE_YOU) return { label: '你', groom_num, groom_type };
   if (groom_num === SPOUSE_LOVER) {
-    // :281-302 恋人
+    // 恋人
     if ((era.get(`cflag:${arg}:606`) || 0) === LOVER_IS_REAL_PERSON) {
-      const found = search_family(arg, 'LOVE'); // :283
+      const found = search_family(arg, 'LOVE');
       let label = '';
       if (found >= 0) {
-        // :285-298 恋人就是家族册上的实人：同时把对方那一侧登记好
+        // 恋人就是家族册上的实人：同时把对方那一侧登记好
         label = name_of(found);
-        chara(found).chara.结婚对象 = SPOUSE_LOVER; // :287 CFLAG:601
-        chara(found).chara.结婚爱情 = 0; // :288 CFLAG:602
-        // :292-297 已婚 / 离婚 的状态各进一位
+        chara(found).chara.结婚对象 = SPOUSE_LOVER; // CFLAG:601
+        chara(found).chara.结婚爱情 = 0; // CFLAG:602
+        // 已婚 / 离婚 的状态各进一位
         const state = marriage_state(found);
         if (
           state === MARRIAGE_STATE_MARRIED ||
@@ -925,7 +918,7 @@ function resolve_groom(arg, groom_num, groom_type, partner, rand) {
       }
       return { label, groom_num, groom_type };
     }
-    // :299-301 一般恋人：NAME_LOVER,CFLAG:ARG:606,1
+    // 一般恋人：NAME_LOVER,CFLAG:ARG:606,1
     return {
       label: LOVER_NAMES.get(era.get(`cflag:${arg}:606`) || 0) ?? '',
       groom_num,
@@ -933,27 +926,27 @@ function resolve_groom(arg, groom_num, groom_type, partner, rand) {
     };
   }
   if (groom_type === 1000) {
-    // :303-321 奴隷との結婚
+    // 奴隷との結婚
     era.set(
       `cflag:${partner}:${SPOUSE_NAME_SLOT}`,
       era.get(`cflag:${arg}:6`) || 0,
-    ); // :306
+    );
     era.set(
       `cflag:${arg}:${SPOUSE_NAME_SLOT}`,
       era.get(`cflag:${partner}:6`) || 0,
-    ); // :307
+    );
     if (arg === 0) {
-      chara(partner).chara.结婚对象 = SPOUSE_YOU; // :312
+      chara(partner).chara.结婚对象 = SPOUSE_YOU;
     } else {
-      chara(partner).chara.结婚对象 = chara_id_output(arg) + 9; // :314-315
+      chara(partner).chara.结婚对象 = chara_id_output(arg) + 9;
     }
     return {
       label: name_of(partner),
-      groom_num: chara_id_output(partner) + 9, // :319-320
+      groom_num: chara_id_output(partner) + 9,
       groom_type,
     };
   }
-  // :322-326 ELSE：怪物。MONSTER_DATA 把陵辱类型写进 E:507（列头 500 + 7）
+  // ELSE：怪物。MONSTER_DATA 把陵辱类型写进 E:507（列头 500 + 7）
   monster_data(groom_num, 5, -1, -1, -1, rand);
   return {
     label: itemname(groom_num),
@@ -988,24 +981,24 @@ const MONSTER_RITUALS = new Map([
  */
 function virgin_roll(arg, groom_type, partner, rand) {
   let virgin_b = 0;
-  // :382 蟲、スライム、植物と結婚するの場合、ランダムで处女丧失
+  // 蟲、スライム、植物と結婚するの場合、ランダムで处女丧失
   if (groom_type === 2 || groom_type === 3 || groom_type === 4) {
     virgin_b = rand(9);
   }
   if (groom_type !== 1000) return virgin_b;
-  // :385-403 同じ女性の場合（五档性别组合）
+  // 同じ女性の場合（五档性别组合）
   const partner_male = talent(partner, 122);
   const partner_futa = talent(partner, 121);
   const arg_male = talent(arg, 122);
   const arg_futa = talent(arg, 121);
   if (!partner_male && !partner_futa && !arg_male && !arg_futa) {
-    return rand(5) + 3; // :387-389
+    return rand(5) + 3;
   }
-  if ((partner_male || partner_futa) && !arg_male) return rand(7); // :390-392
-  if (partner_male && arg_futa) return rand(9); // :393-395
-  if (partner_futa && arg_futa) return rand(5) + 1; // :396-398
+  if ((partner_male || partner_futa) && !arg_male) return rand(7);
+  if (partner_male && arg_futa) return rand(9);
+  if (partner_futa && arg_futa) return rand(5) + 1;
   if (!partner_male && talent(partner, 0) && arg_male) {
-    // :399-402 CHARA 为女性、ARG 为男性：直接让对方破处
+    // CHARA 为女性、ARG 为男性：直接让对方破处
     era.print(`${name_of(partner)}【处女丧失】`);
     era.set(`talent:${partner}:0`, 0);
   }
@@ -1029,15 +1022,13 @@ function apply_virgin_loss(arg, groom_type, virgin_b) {
   ) {
     return;
   }
-  era.print('【处女丧失】'); // :406
-  era.set(`talent:${arg}:0`, 0); // :407
+  era.print('【处女丧失】');
+  era.set(`talent:${arg}:0`, 0);
   const spouse = era.get(`cflag:${arg}:601`) || 0;
-  let code = FIRST_SEX_MONSTER; // :414-416 ELSE
-  if (spouse === SPOUSE_YOU)
-    code = FIRST_SEX_YOU; // :408-409
-  else if (spouse === SPOUSE_DOG)
-    code = FIRST_SEX_DOG; // :410-411
-  else if (spouse === SPOUSE_TENTACLE) code = FIRST_SEX_TENTACLE; // :412-413
+  let code = FIRST_SEX_MONSTER; // ELSE
+  if (spouse === SPOUSE_YOU) code = FIRST_SEX_YOU;
+  else if (spouse === SPOUSE_DOG) code = FIRST_SEX_DOG;
+  else if (spouse === SPOUSE_TENTACLE) code = FIRST_SEX_TENTACLE;
   chara(arg).train.初体验对象 = code; // CFLAG:15（train 域）
 }
 
@@ -1047,25 +1038,25 @@ function apply_virgin_loss(arg, groom_type, virgin_b) {
  */
 function apply_first_kiss(arg) {
   if ((era.get(`cflag:${arg}:16`) ?? 0) !== -1) return;
-  era.print('【初吻】'); // :420
+  era.print('【初吻】');
   const spouse = era.get(`cflag:${arg}:601`) || 0;
   const view = chara(arg).train;
   if (spouse === SPOUSE_YOU) {
-    // :422-423 原作先写 1 再写 NO:MASTER+1（NO:MASTER == 0，两次同值，
+    // 原作先写 1 再写 NO:MASTER+1（NO:MASTER == 0，两次同值，
     // 第一行是冗余赋值）；#21 起角色 ID 即 NO，故两次同值
     view.初吻对象 = FIRST_KISS_YOU;
-    view.初吻对象名 = name_of(0); // :424 CSTR:4
+    view.初吻对象名 = name_of(0); // CSTR:4
     if ((era.get('cflag:0:16') ?? 0) === -1) {
-      // :426-429 調教者の初吻（NO:ARG + 1）
+      // 調教者の初吻（NO:ARG + 1）
       chara(0).train.初吻对象 = arg + 1;
       chara(0).train.初吻对象名 = name_of(arg);
     }
   } else if (spouse === SPOUSE_DOG) {
-    view.初吻对象 = FIRST_KISS_DOG; // :430-431
+    view.初吻对象 = FIRST_KISS_DOG;
   } else if (spouse === SPOUSE_TENTACLE) {
-    view.初吻对象 = FIRST_KISS_TENTACLE; // :432-433
+    view.初吻对象 = FIRST_KISS_TENTACLE;
   } else {
-    view.初吻对象 = FIRST_KISS_OTHER; // :438-439
+    view.初吻对象 = FIRST_KISS_OTHER;
   }
 }
 
@@ -1095,11 +1086,11 @@ function apply_cross_marriage(arg) {
  *   2 = 不可结婚（按钮本不该显示）
  */
 async function marriage(arg, rand = default_rand) {
-  const able = check_able_to_marriage(arg); // :64 LOCAL
+  const able = check_able_to_marriage(arg); // LOCAL
   if (able !== 0) {
-    if (able === MARRIAGE_BLOCKED) return 2; // :66-68
-    if ((await enter_lover(arg)) === 1) return 1; // :69-74 成功でターンエンド
-    return 0; // :76-77（不可结婚与恋人线两条出口的收尾）
+    if (able === MARRIAGE_BLOCKED) return 2;
+    if ((await enter_lover(arg)) === 1) return 1; // 成功でターンエンド
+    return 0; // （不可结婚与恋人线两条出口的收尾）
   }
 
   let no_page = 0; // #DIM NO_PAGE
@@ -1108,68 +1099,68 @@ async function marriage(arg, rand = default_rand) {
   let partner = 0; // 原作 CHARA
 
   for (;;) {
-    print_marriage_menu(arg); // :80-168
+    print_marriage_menu(arg);
 
-    const result = await era.input(); // :173
-    groom_num = result; // :176
+    const result = await era.input();
+    groom_num = result;
 
-    if (result === 999) return 0; // :178-180
+    if (result === 999) return 0;
     if (result === SPOUSE_YOU) {
-      // :181-186 你と結婚
+      // 你と結婚
       if (arg === 0) {
         era.print('魔王大人，自恋也是要有限度的啦。');
         continue;
       }
     } else if (result === SPOUSE_LOVER) {
-      // :187-192 恋人设定（还没有恋人时才走）
+      // 恋人设定（还没有恋人时才走）
       if ((era.get(`cflag:${arg}:606`) || 0) === 0) {
         await enter_lover(arg);
         continue;
       }
     } else if (result === 903) {
-      // :193-197 恋人別れる
-      chara(arg).dungeon.恋人 = 0; // :195 CFLAG:ARG:606 = 0（dungeon 域）
+      // 恋人別れる
+      chara(arg).dungeon.恋人 = 0; // CFLAG:ARG:606 = 0（dungeon 域）
       era.print('与恋人分手了。');
       continue;
     } else if (result === 904) {
-      // :198-243 从奴隶中
+      // 从奴隶中
       const picked = await slave_sub_menu(arg, no_page);
       no_page = picked.no_page;
       if (picked.partner === null) continue;
       partner = picked.partner;
       groom_type = 1000;
     } else if (result === 998) {
-      // :245-248 離婚
+      // 離婚
       divorce(arg);
       return 0;
     } else if (!(era.get(`item:${result}`) || 0) && result !== SPOUSE_DOG) {
-      continue; // :249-251 いない怪物を指定（ere 侧结构性不可达）
+      continue; // いない怪物を指定（ere 侧结构性不可达）
     } else if (result === SPOUSE_DOG && (era.get('item:22') || 0) <= 0) {
-      continue; // :252-254 いない野狗を指定（同上）
+      continue; // いない野狗を指定（同上）
     } else if (result <= 99) {
-      era.print('恋物癖，请自重。'); // :255-257（同上）
+      era.print('恋物癖，请自重。'); // （同上）
       continue;
     } else if (result === (era.get(`cflag:${arg}:601`) || 0)) {
-      era.print('对象已婚了。'); // :258-260
+      era.print('对象已婚了。');
       return 0;
     } else if ((era.get(`cflag:${arg}:601`) || 0) > 0) {
-      era.print(`${name_of(arg)}已婚了。`); // :261-263
+      era.print(`${name_of(arg)}已婚了。`);
       return 0;
     }
 
-    settle_previous_marriage(arg); // :266-273
+    settle_previous_marriage(arg);
 
-    // :275-328 *X和Y举行了结婚典礼*
+    // *X和Y举行了结婚典礼*
     const resolved = resolve_groom(arg, groom_num, groom_type, partner, rand);
     groom_num = resolved.groom_num;
     groom_type = resolved.groom_type;
     era.print(`*${name_of(arg)}和${resolved.label}举行了结婚典礼*`);
 
-    // :332-334 結婚相手と結婚爱情の再設定
+    // 結婚相手と結婚爱情の再設定
     chara(arg).chara.结婚对象 = groom_num;
     chara(arg).chara.结婚爱情 = 0;
 
-    // :336-345 結婚状態の更新（重婚 +20000、再婚 +20000）
+    // 結婚状態の更新（重婚 +20000、再婚 +20000）
     const married_state = marriage_state(arg);
     if (
       married_state === MARRIAGE_STATE_MARRIED ||
@@ -1178,25 +1169,25 @@ async function marriage(arg, rand = default_rand) {
       shift_marriage_state(arg, REMARRIAGE_DELTA);
     }
 
-    // :347-379 結婚式（特殊三支按 GROOM_NUM、种族十二支与奴隶婚按 GROOM_TYPE）
+    // 結婚式（特殊三支按 GROOM_NUM、种族十二支与奴隶婚按 GROOM_TYPE）
     if (groom_num === SPOUSE_DOG) await marriage_dog(arg);
     else if (groom_num === SPOUSE_YOU) await marriage_you(arg);
     else if (groom_num === SPOUSE_LOVER) await marriage_lovers(arg);
     else if (groom_type === 1000) await slave_marriage(arg, partner);
     else {
       const ritual = MONSTER_RITUALS.get(groom_type);
-      if (ritual) await ritual(arg, groom_num); // :353-376
+      if (ritual) await ritual(arg, groom_num);
     }
 
     apply_virgin_loss(
       arg,
       groom_type,
       virgin_roll(arg, groom_type, partner, rand),
-    ); // :381-417
-    apply_first_kiss(arg); // :419-441
-    apply_cross_marriage(arg); // :443-449
+    );
+    apply_first_kiss(arg);
+    apply_cross_marriage(arg);
 
-    return 1; // :443-451 リターン１でターンエンドする
+    return 1; // リターン１でターンエンドする
   }
 }
 
@@ -1207,17 +1198,17 @@ async function marriage(arg, rand = default_rand) {
  * @returns {number} 原作的 RETURN 0
  */
 function divorce(arg) {
-  const found = search_family(arg, 'MARRIAGE'); // :884
-  // :885 `RESULT > 0 && RESULT < CHARANUM` 按 #21 的 ID 世界改写为「是个
+  const found = search_family(arg, 'MARRIAGE');
+  // `RESULT > 0 && RESULT < CHARANUM` 按 #21 的 ID 世界改写为「是个
   // 真角色」（ID 可以有缺口，见文件头）
   if (found > 0 && added_ids().includes(found)) {
-    era.set(`cflag:${found}:601`, 0); // :886
-    era.set(`cflag:${found}:609`, 0); // :887
+    era.set(`cflag:${found}:601`, 0);
+    era.set(`cflag:${found}:609`, 0);
   }
-  era.set(`cflag:${arg}:601`, 0); // :889
-  era.set(`cflag:${arg}:609`, 0); // :890
-  era.print(`${name_of(arg)}离婚了。`); // :891
-  // :892-901 結婚状態の更新（重婚/再婚 → 単婚）
+  era.set(`cflag:${arg}:601`, 0);
+  era.set(`cflag:${arg}:609`, 0);
+  era.print(`${name_of(arg)}离婚了。`);
+  // 結婚状態の更新（重婚/再婚 → 単婚）
   const state = marriage_state(arg);
   if (state === MARRIAGE_STATE_BIGAMY || state === MARRIAGE_STATE_REMARRIED) {
     shift_marriage_state(arg, -REMARRIAGE_DELTA);

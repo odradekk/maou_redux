@@ -1,9 +1,6 @@
 /**
  * @file ere/page/page-ability-up.js 的行为测试（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_2.ERB  @ABILITY_UP（:4-153）、
- *     @ABILITY_UP_CORE（:155-254）。
- *
  * 接缝 = test/helpers/era-fixture.js：驱动一整次界面（预置输入 → 收集本次
  * 新增的输出行 → 按「一次绘制」切段断言）。
  *
@@ -175,7 +172,7 @@ test('ABILITY_UP：表头按钮文案与等级门灰显（CFLAG:0:9 < 20 → #bb
     assert.equal(button_of(draw, 997).text, '▌勇者一览');
     assert.equal(button_of(draw, 997).color, undefined);
     assert.ok(texts(draw).includes('要提高谁的能力值？'), '标题行（:63）');
-    // :52-53 两个 PRINTBUTTON 那一行由 :56 的 PRINTL 收尾（按钮自成一行，
+    // 两个 PRINTBUTTON 那一行由 :56 的 PRINTL 收尾（按钮自成一行，
     // 见 CONTEXT.md「输出 API 与原作的对应」）：它与 :61 的 DRAWLINE 之间
     // 不夹空行——golden 的 sale-natural-log:88-93 为证（按钮行、分割线、
     // 标题行逐行相邻）

@@ -441,7 +441,7 @@ test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）
     lines.some((l) => l.includes('妓女买了春')),
     '娼婦購入演出',
   );
-  // :645 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
+  // CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
   assert.ok(
     lines.some((l) => l.includes('≪摸来摸去≫')),
     'COM0_AUTO 真身被调（:645）',
@@ -479,7 +479,7 @@ test('PARTY：少年风俗臂的爱抚自动调教接 COM0_AUTO 真身（:652）
     lines.some((l) => l.includes('少年')),
     '少年风俗演出',
   );
-  // :652 CALL COM0_AUTO——同一真身的第二个调用点
+  // CALL COM0_AUTO——同一真身的第二个调用点
   assert.ok(
     lines.some((l) => l.includes('≪摸来摸去≫')),
     'COM0_AUTO 真身被调（:652）',

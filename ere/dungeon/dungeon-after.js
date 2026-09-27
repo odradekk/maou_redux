@@ -1,9 +1,6 @@
 /**
  * @file 迷宫战果结算（issue #179，阶段 3 H10）：@DUNGEON_AFTER 与奖惩两臂。
  *
- * 源: target/ERB/迷宮/DUNGEON_AFTER.ERB  @DUNGEON_AFTER（:2-15）、
- *     @GOHOUBI（:19-322，奖赏 306 行）、@OSIOKI（:325-568，惩罚 264 行）
- *
  * 调用点：ere/system/turnend-settle.js 结算主循环（原作 SYSTEM
  * ver1.0.3.ERB:302，全角色每回合；本票接线）。
  *
@@ -151,25 +148,25 @@ function osioski_reward_levels(cid) {
  */
 async function gohoubi(cid) {
   const name = name_of(cid);
-  era.println(); // :23 PRINTL
+  era.println(); // PRINTL
   era.print(`${name}打倒了勇者，凯旋而归，来到你的身边，`);
   await era.waitAnyKey();
   era.print(`请赐予${name}奖励。`);
   await era.waitAnyKey();
 
-  // :27-29 选项菜单——三行选项升格为按钮（理由见文件头，#572）
+  // 选项菜单——三行选项升格为按钮（理由见文件头，#572）
   era.printButton('这是你应份的', 0);
   era.printButton('授予勋章', 1);
   era.printButton('赐予承诺的东西', 2);
-  // :30-36 $INPUT_LOOP（白名单＝上面三枚按钮，越界值由引擎拒收）
+  // $INPUT_LOOP（白名单＝上面三枚按钮，越界值由引擎拒收）
   const result = await input_choice(3);
 
-  // :40-62 LOCAL:10 = 顺从档位（点数增量）
+  // LOCAL:10 = 顺从档位（点数增量）
   const local10 = gohoubi_reward_level(cid);
   const lv = era.get(`cflag:${cid}:9`) || 0; // CFLAG:9 = 等级
 
   if (result === 0) {
-    // :66-70 应份——否定点数
+    // 应份——否定点数
     era.print(`${name}嘟着嘴回到了自己的房间。`);
     await era.waitAnyKey();
     era.print(`否定点数增加${lv * 60}`);
@@ -177,32 +174,32 @@ async function gohoubi(cid) {
     era.add(`juel:${cid}:100`, lv * 60); // JUEL:100 否定点数
     await gohoubi_after_koujo(cid, result);
   } else if (result === 1) {
-    // :72-80 勋章
+    // 勋章
     era.print(`${name}被授予了勋章，`);
     await era.waitAnyKey();
-    // :75-76 乳首穿孔位（CFLAG:7 & 1）立着 → 摘钉换勋章
+    // 乳首穿孔位（CFLAG:7 & 1）立着 → 摘钉换勋章
     if (((era.get(`cflag:${cid}:7`) || 0) & 1) === 1) {
       era.print(`${name}毫不犹豫地把乳钉换成了勋章，`);
       await era.waitAnyKey();
     }
-    era.print(`${name}自豪地把勋章戴在身上。`); // :77 PRINTFORML（不等键）
+    era.print(`${name}自豪地把勋章戴在身上。`); // PRINTFORML（不等键）
     era.print('勋章经验+1');
     await era.waitAnyKey();
     chara(cid).event.勋章经验 += 1; // EXP:81（event 域门面）
     await gohoubi_after_koujo(cid, result);
   } else if (result === 2) {
-    // :81-322 承诺之物——按 CFLAG:x:504 分档
+    // 承诺之物——按 CFLAG:x:504 分档
     const gift = era.get(`cflag:${cid}:504`) || 0; // CFLAG:504 要求的奖赏
     // 处女（TALENT:0）或男人（TALENT:122）→ 肛门臂（兽奸四档共用判据）
     const anal =
       (era.get(`talent:${cid}:0`) || 0) === 1 ||
       (era.get(`talent:${cid}:122`) || 0) === 1;
-    // :213/:291 性交・童贞狩的臂判据：私处感觉 > 肛门感觉
+    // 性交・童贞狩的臂判据：私处感觉 > 肛门感觉
     const vaginal_first =
       chara(cid).system.私处感觉 > chara(cid).system.肛门感觉;
 
     if (gift === 0) {
-      // :83-98 金币
+      // 金币
       if (era_flag.money >= lv * 100) {
         era.print(`你赐给${name}装满${lv * 100}金币的袋子。`);
         await era.waitAnyKey();
@@ -223,10 +220,10 @@ async function gohoubi(cid) {
         era.print(`否定点数增加${lv * 60}`);
         await era.waitAnyKey();
         era.add(`juel:${cid}:100`, lv * 60);
-        // :91-98 金库不足臂无口上调用（原作如此），不补
+        // 金库不足臂无口上调用（原作如此），不补
       }
     } else if (gift === 1) {
-      // :99-132 犬と兽奸
+      // 犬と兽奸
       if (anal) {
         era.print(`${name}全裸着，撑开尻穴在狗屋前勾引着狗，`);
         await era.waitAnyKey();
@@ -275,7 +272,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.兽奸经验 += 10;
       }
     } else if (gift === 2) {
-      // :133-165 豚と兽奸（两臂文本相同）
+      // 豚と兽奸（两臂文本相同）
       era.print(`${name}全裸身体冲进猪窝，着迷地贪求着钻头一样的猪阴茎，`);
       await era.waitAnyKey();
       era.print(
@@ -315,7 +312,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.兽奸经验 += 10;
       }
     } else if (gift === 3) {
-      // :166-202 馬と兽奸（扩张经验随臂）
+      // 馬と兽奸（扩张经验随臂）
       era.print(
         `${name}脸朝下被固定在台子上，想到接下来的变态性爱，爱液沿着大腿流下来，`,
       );
@@ -363,7 +360,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.兽奸经验 += 10;
       }
     } else if (gift === 4) {
-      // :203-209 接吻
+      // 接吻
       era.print(`${name}含情脉脉地闭上眼睛，张开双手，要求和你接吻，`);
       await era.waitAnyKey();
       era.print(`你牵起她的手，温柔地吻住了${name}的嘴唇。`);
@@ -373,7 +370,7 @@ async function gohoubi(cid) {
       await era.waitAnyKey();
       chara(cid).train.爱情经验 += 10; // EXP:23（train 域门面）
     } else if (gift === 5) {
-      // :210-239 セックス（私处/肛门感觉定臂）
+      // セックス（私处/肛门感觉定臂）
       era.print(`你抱住了${name}因为战斗而发热的身体，`);
       await era.waitAnyKey();
       if (vaginal_first) {
@@ -412,7 +409,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.绝顶经验 += 5;
       }
     } else if (gift === 6) {
-      // :240-250 ザーメン
+      // ザーメン
       era.print(
         `${name}顺从地跪下，张开嘴巴，伸出了舌头乞求着精液。看见她这个模样，你射出了精液。`,
       );
@@ -431,7 +428,7 @@ async function gohoubi(cid) {
       chara(cid).dungeon.口交经验 += 10;
       chara(cid).dungeon.精液经验 += 5;
     } else if (gift === 7) {
-      // :251-279 乱交
+      // 乱交
       era.print('怪物和魔族都齐聚的乱交派对开始了，');
       await era.waitAnyKey();
       era.print(
@@ -467,7 +464,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.绝顶经验 += 5;
       }
     } else if (gift === 8) {
-      // :280-287 おしっこ——魔王非扶她（121）非男人（122）时是秘裂
+      // おしっこ——魔王非扶她（121）非男人（122）时是秘裂
       const organ =
         !era.get('talent:0:121') && !era.get('talent:0:122') ? '秘裂' : '阴茎';
       era.print(`在吮吸着${organ}的${name}的嘴里，尿了出来。`);
@@ -481,7 +478,7 @@ async function gohoubi(cid) {
       await era.waitAnyKey();
       era.add(`juel:${cid}:5`, local10);
     } else if (gift === 9) {
-      // :288-319 童贞狩り——首行 PRINTFORM 不换行，与臂判词拼一行
+      // 童贞狩り——首行 PRINTFORM 不换行，与臂判词拼一行
       era.print(`${name}将被选中的魔族处男的肉棒`);
       if (vaginal_first) {
         era.print('用私处吞入了，');
@@ -523,7 +520,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.绝顶经验 += 5;
       }
     }
-    // :320-321 ELSE 空档（CFLAG:504 > 9 或负值）——无动作
+    // ELSE 空档（CFLAG:504 > 9 或负值）——无动作
   }
 }
 
@@ -540,13 +537,13 @@ async function gohoubi(cid) {
  */
 async function osioski(cid) {
   const name = name_of(cid);
-  era.println(); // :327 PRINTL
+  era.println(); // PRINTL
   era.print(`${name}没有发现勇者（或者是输了），失败而归`);
   await era.waitAnyKey();
   era.print(`要处罚${name}吗？`);
   await era.waitAnyKey();
 
-  // :331-339 选项菜单（源是 PRINT/PRINTL 三行拼行的纯文本，升格为按钮后
+  // 选项菜单（源是 PRINT/PRINTL 三行拼行的纯文本，升格为按钮后
   // 按按钮平铺逐行渲染——CONTEXT.md 的记名排版差异；行尾用于列对齐的
   // 全角空格随之失去意义，不保留）
   era.printButton('什么也不做', 0);
@@ -558,21 +555,21 @@ async function osioski(cid) {
   era.printButton('打扫厕所刑', 6);
   era.printButton('不给吃饭刑', 7);
   era.printButton('媚药放置刑', 8);
-  // :340-346 $INPUT_LOOP（白名单＝上面九枚按钮）
+  // $INPUT_LOOP（白名单＝上面九枚按钮）
   const result = await input_choice(9);
 
-  // :353-401 档位表：LOCAL:10 顺从（欲情）/ LOCAL:11 欲望（苦痛・屈服）
+  // 档位表：LOCAL:10 顺从（欲情）/ LOCAL:11 欲望（苦痛・屈服）
   const { ju: local10, desire: local11 } = osioski_reward_levels(cid);
-  const dabM = chara(cid).system.抖M气质 >= 3; // :413/:487 ABL:21
-  const exposure = chara(cid).system.露出癖; // :434/:463 ABL:17
+  const dabM = chara(cid).system.抖M气质 >= 3; // ABL:21
+  const exposure = chara(cid).system.露出癖; // ABL:17
 
   if (result === 0) {
-    // :404-408 什么也不做
+    // 什么也不做
     era.print(`${name}露出了放心的表情回到自己房间了。`);
     await era.waitAnyKey();
     await osioski_koujo(cid, result);
   } else if (result === 1) {
-    // :409-429 低压电椅刑
+    // 低压电椅刑
     era.print(`把${name}绑在电椅上，用较弱的电流进行折磨，`);
     await era.waitAnyKey();
     if (dabM) {
@@ -600,7 +597,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 2) {
-    // :430-458 当街自慰刑（露出癖 >= 4 定臂）
+    // 当街自慰刑（露出癖 >= 4 定臂）
     era.print(`让${name}全裸着，在地下城的主干道正中央自慰。`);
     await era.waitAnyKey();
     if (exposure >= 4) {
@@ -637,7 +634,7 @@ async function osioski(cid) {
       chara(cid).dungeon.调教自慰经验 += 1;
     }
   } else if (result === 3) {
-    // :459-482 当街脱粪刑（露出癖 >= 6 定臂）
+    // 当街脱粪刑（露出癖 >= 6 定臂）
     era.print(`让${name}全裸着，在地下城的主干道正中央脱粪。`);
     await era.waitAnyKey();
     if (exposure >= 6) {
@@ -669,7 +666,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 4) {
-    // :483-503 鞭刑（抖M气质 >= 3 定臂）
+    // 鞭刑（抖M气质 >= 3 定臂）
     era.print(`把${name}绑起来，用鞭子抽打，`);
     await era.waitAnyKey();
     if (dabM) {
@@ -697,7 +694,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 5) {
-    // :504-527 小便器刑（受虐狂 TALENT:88 或淫乱 TALENT:76 定臂）
+    // 小便器刑（受虐狂 TALENT:88 或淫乱 TALENT:76 定臂）
     era.print(`将${name}固定在小便器上，让使用者尽情地往她身上撒尿，`);
     await era.waitAnyKey();
     if (
@@ -734,7 +731,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 6) {
-    // :528-535 打扫厕所刑
+    // 打扫厕所刑
     era.print(`${name}的处罚是打扫厕所，`);
     await era.waitAnyKey();
     era.print(`${name}一脸不满地把厕所打扫干净了。`);
@@ -744,7 +741,7 @@ async function osioski(cid) {
     await era.waitAnyKey();
     era.add(`juel:${cid}:6`, local11);
   } else if (result === 7) {
-    // :536-543 不给吃饭刑
+    // 不给吃饭刑
     era.print(`${name}的处罚是不给饭食，`);
     await era.waitAnyKey();
     era.print(`${name}的肚子，发出咕咕的叫声。`);
@@ -754,7 +751,7 @@ async function osioski(cid) {
     await era.waitAnyKey();
     era.add(`juel:${cid}:6`, local11);
   } else if (result === 8) {
-    // :544-561 媚药放置刑
+    // 媚药放置刑
     era.print(`将${name}的身体固定住，注射了几乎是危险剂量的强力媚药，`);
     await era.waitAnyKey();
     era.print('药效马上就发作了，全身都成了敏感带，令人发狂地痒了起来。');
@@ -785,7 +782,7 @@ async function osioski(cid) {
     await era.waitAnyKey();
     chara(cid).dungeon.药物经验 += 10;
   }
-  // :562-566 ELSEIF RESULT == 9 是死分支（输入循环拦回 >= 9，文件头），
+  // ELSEIF RESULT == 9 是死分支（输入循环拦回 >= 9，文件头），
   // 0-8 全被上方覆盖——原作结构如此，不另设分支
   return 0;
 }

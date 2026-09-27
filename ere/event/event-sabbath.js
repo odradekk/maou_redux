@@ -1,9 +1,6 @@
 /**
  * @file 安息日事件（issue #405）：满月献祭与三日一次的信徒仪式。
  *
- * 源: target/ERB/EVENT/EVENT_SABBATH.ERB  @SABBATH（:2-229）、
- *     @SABBATH_DAY（:232-314）
- *
  * 调用点 EVENT_NEXTDAY.ERB:137/:139（每角色每日）在 #400（N16）范围内，
  * 本票只落两个函数的真身，不改调用点、不接线——`ere/event/event-nextday.js`
  *
@@ -74,24 +71,24 @@ const default_rand = (n) => Math.floor(Math.random() * n);
  * @returns {Promise<number>} 0（原作 RETURN 0；调用方不读）
  */
 async function sabbath(cid, rand = default_rand) {
-  // :12-14 调教状态以外排除（文件头 CFLAG:1 语义）
+  // 调教状态以外排除（文件头 CFLAG:1 语义）
   if (cflag(cid, 1) !== 0) {
     return 0;
   }
-  // :16-18 满月（当月 15 日）以外排除
+  // 满月（当月 15 日）以外排除
   if (era_flag.date <= 14 || era_flag.date >= 16) {
     return 0;
   }
-  // :20-22 无法术（242）且无咒术（250）排除
+  // 无法术（242）且无咒术（250）排除
   if (talent(cid, 242) === 0 && talent(cid, 250) === 0) {
     return 0;
   }
-  // :24-26 非淫乱（76）排除
+  // 非淫乱（76）排除
   if (talent(cid, 76) === 0) {
     return 0;
   }
 
-  // :28-34 各种经历次数：F 口交 A 肛门 B 胸 V 私处 S 精液 Z 兽奸
+  // 各种经历次数：F 口交 A 肛门 B 胸 V 私处 S 精液 Z 兽奸
   let count_a = 0;
   let count_v = 0;
   let count_s = 0;
@@ -101,7 +98,7 @@ async function sabbath(cid, rand = default_rand) {
   const is_futa = talent(cid, 121) !== 0; // 扶她
   const is_male = talent(cid, 122) !== 0; // 男奴隶
 
-  // :36-48 开场：全裸的魔族女性/女奴隶陪侍（男）｜阴茎勃起（扶她）｜邪恶服装（其余）
+  // 开场：全裸的魔族女性/女奴隶陪侍（男）｜阴茎勃起（扶她）｜邪恶服装（其余）
   const opening = is_male
     ? '全裸的魔族女性和女奴隶在陪侍着，'
     : is_futa
@@ -112,11 +109,11 @@ async function sabbath(cid, rand = default_rand) {
   );
 
   if (is_male) {
-    // :51-54 男奴隶：抱着魔族女人，将精液施舍给了她
+    // 男奴隶：抱着魔族女人，将精液施舍给了她
     era.print(`${name}抱着魔族女人，`);
     await era.printAndWait('将精液施舍给了她。');
   } else if (is_futa) {
-    // :55-77 扶她：抱着魔族女人，将精液施舍给了她（处女/私处封印分支侍奉方式不同）
+    // 扶她：抱着魔族女人，将精液施舍给了她（处女/私处封印分支侍奉方式不同）
     era.print(`${name}抱着魔族女人，`);
     await era.printAndWait('将精液施舍给了她。');
     if (talent(cid, 0) || talent(cid, 273)) {
@@ -137,7 +134,7 @@ async function sabbath(cid, rand = default_rand) {
       count_s += count_a + count_v + rand(10);
     }
   } else if (talent(cid, 0)) {
-    // :78-88 处女：肛门侍奉
+    // 处女：肛门侍奉
     era.print(`${name}纯洁的性器上被贴上了封条。`);
     await era.printAndWait('所以使用肛门不停地侍奉着阴茎。');
     if (talent(cid, 77)) {
@@ -147,7 +144,7 @@ async function sabbath(cid, rand = default_rand) {
     count_a += rand(10) + 1;
     count_s += count_a + rand(10);
   } else if (talent(cid, 273)) {
-    // :89-99 私处封印：肛门侍奉
+    // 私处封印：肛门侍奉
     era.print(`${name}因为性器被封印着，`);
     await era.printAndWait('所以使用肛门不停地侍奉着阴茎。');
     if (talent(cid, 77)) {
@@ -161,7 +158,7 @@ async function sabbath(cid, rand = default_rand) {
     (cflag(cid, 40) & 64) !== 0 &&
     get('flag:37')
   ) {
-    // :100-110 贞操带（装备 79，装饰位 40 第 64 位，FLAG:37 贞操带系统开关）
+    // 贞操带（装备 79，装饰位 40 第 64 位，FLAG:37 贞操带系统开关）
     era.print(`${name}因为带着贞操带，`);
     await era.printAndWait('菊穴和嘴巴被塞得满满的，不曾空闲。');
     if (talent(cid, 77)) {
@@ -171,7 +168,7 @@ async function sabbath(cid, rand = default_rand) {
     count_a += rand(10) + 1;
     count_s += count_a + rand(10);
   } else if (abl(cid, 39) >= 1 && rand(2) === 0) {
-    // :111-135 兽奸中毒：地下城野兽群交
+    // 兽奸中毒：地下城野兽群交
     if (abl(cid, 17) >= 1) {
       // 露出癖：慕名而来的人潮
       era.print(
@@ -193,7 +190,7 @@ async function sabbath(cid, rand = default_rand) {
     count_s += count_a + count_v + rand(10);
     count_z += count_s;
   } else {
-    // :136-166 其余：路过的怪物们轮流侵犯
+    // 其余：路过的怪物们轮流侵犯
     if (abl(cid, 17) >= 1) {
       era.print(`${name}在观众的欢呼声中，开始了乱交派对。`);
       count_v += abl(cid, 17);
@@ -221,7 +218,7 @@ async function sabbath(cid, rand = default_rand) {
     count_s += count_a + count_v + rand(10);
   }
 
-  // :168-225 经验结算
+  // 经验结算
   if (count_a > 0) {
     era.print(`肛门经验+${count_a}`); // %EXPNAME:1%
     add_exp(cid, 1, count_a);
@@ -259,7 +256,7 @@ async function sabbath(cid, rand = default_rand) {
     add_juel(cid, 8, shame);
   }
 
-  // :222-225 童贞丧失（男性初次同性仪式的副作用，随开场分支可能已非处）
+  // 童贞丧失（男性初次同性仪式的副作用，随开场分支可能已非处）
   if (talent(cid, 1)) {
     era.print('【童贞丧失】');
     chara(cid).train.童贞 = 0;
@@ -279,26 +276,26 @@ async function sabbath(cid, rand = default_rand) {
  * @returns {Promise<number>} 0（原作 RETURN 0）
  */
 async function sabbath_day(cid, rand = default_rand) {
-  // :237-241 每 3 日一次（当月日期 % 3 != 0 跳过）
+  // 每 3 日一次（当月日期 % 3 != 0 跳过）
   if (era_flag.date % 3 > 0) {
     return 0;
   }
-  // :243-245 无法术（242）且无咒术（250）排除
+  // 无法术（242）且无咒术（250）排除
   if (talent(cid, 242) === 0 && talent(cid, 250) === 0) {
     return 0;
   }
-  // :247-249 未陷落排除
+  // 未陷落排除
   if (cflag(cid, 0) === 0) {
     return 0;
   }
-  // :251-253 信仰值需 ≥40
+  // 信仰值需 ≥40
   if (cflag(cid, 152) < 40) {
     return 0;
   }
 
   const user = rand(4); // SABBATH_USER
   const name = chara_callname(cid);
-  // :232-314 的 @SABBATH_DAY：段首的 PRINTL（258 行）落在空行上——上游事件的
+  // 的 @SABBATH_DAY：段首的 PRINTL（258 行）落在空行上——上游事件的
   // 收尾已结束当前行，那一个是**真空行**
   era.println();
   // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后
@@ -306,7 +303,7 @@ async function sabbath_day(cid, rand = default_rand) {
   era.print(`${name}参与了献给无名的淫荡女神的仪式，`);
 
   if (user === 0 && get('item:22')) {
-    // :261-267 兽奸仪式（需持有「野良犬」道具 22）
+    // 兽奸仪式（需持有「野良犬」道具 22）
     await era.printAndWait(
       pick(
         [
@@ -318,7 +315,7 @@ async function sabbath_day(cid, rand = default_rand) {
       ),
     );
   } else if (user === 1 && cflag(cid, 152) > 80) {
-    // :268-274 乱交仪式
+    // 乱交仪式
     await era.printAndWait(
       pick(
         [
@@ -335,7 +332,7 @@ async function sabbath_day(cid, rand = default_rand) {
     talent(cid, 250) &&
     (talent(cid, 17) || talent(cid, 282))
   ) {
-    // :276-282 冒渎昔日信仰的死亡女神
+    // 冒渎昔日信仰的死亡女神
     era.print('向潜藏地底的死亡女神');
     await era.printAndWait(
       pick(['献上了她被侵犯着的淫荡画像……', '的圣器里自慰发泄着……'], rand),
@@ -346,7 +343,7 @@ async function sabbath_day(cid, rand = default_rand) {
     talent(cid, 242) &&
     (talent(cid, 17) || talent(cid, 282))
   ) {
-    // :284-289 冒渎昔日信仰的纯洁神圣女神
+    // 冒渎昔日信仰的纯洁神圣女神
     era.print('向纯洁的神圣女神');
     await era.printAndWait(
       pick(
@@ -355,8 +352,8 @@ async function sabbath_day(cid, rand = default_rand) {
       ),
     );
   } else {
-    // :291-304（315==11/12 种族分支）是死代码，不构造，见文件头
-    // :305-314 其余：泛用题材
+    // （315==11/12 种族分支）是死代码，不构造，见文件头
+    // 其余：泛用题材
     await era.printAndWait(
       pick(
         [

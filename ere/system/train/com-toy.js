@@ -3,20 +3,6 @@
  * 持续效果 + @COM_ABLE10–19 可用性 + TRAIN_MESSAGE_A/B 分支（issue #220，
  * J10——#209 裁定 6 的「四样装齐」）。
  *
- * 源: target/ERB/調教相關/COMF10_振動の宝石.ERB @COM10（:8-52）
- *     target/ERB/調教相關/COMF11_バイブ.ERB       @COM11（:7-171）+ @EQUIP_COM11（:177-334）
- *     target/ERB/調教相關/COMF12_振動の杖.ERB     @COM12（:9-53）
- *     target/ERB/調教相關/COMF13_アナルワーム.ERB @COM13（:7-198）+ @EQUIP_COM13（:204-377）
- *     target/ERB/調教相關/COMF14_クリキャップ.ERB @COM14（:7-67）+ @EQUIP_COM14（:73-139）
- *     target/ERB/調教相關/COMF15_二プルキャップ.ERB @COM15（:7-86）+ @EQUIP_COM15（:92-168）
- *     target/ERB/調教相關/COMF16_搾乳器.ERB       @COM16（:7-98）+ @EQUIP_COM16（:104-221）
- *     target/ERB/調教相關/COMF17_オナホール.ERB   @COM17（:7-70）+ @EQUIP_COM17（:76-153）
- *     target/ERB/調教相關/COMF18_シャワー.ERB     @COM18（:7-105）+ @EQUIP_COM18（:111-204）
- *     target/ERB/調教相關/COMF19_アナルビーズ.ERB @COM19（:7-155）+ @EQUIP_COM19（:161-310）
- *     target/ERB/調教相關/COMABLE.ERB             @COM_ABLE10–19（:382-859）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB   SELECTCOM 10–19（:783-1013）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB   SELECTCOM 10–14（:986-1149）
- *
  * == 变量承载 ==
  *
  * - SOURCE/UP/LOSEBASE 分别落 source/delta/deltabase；后者以负值累计，结算由
@@ -866,7 +852,7 @@ async function equip_com16() {
     // 显式 require 的族模块），顶层引用会让它的注册变成间接装载——main-loop
     // 那行被删也照样绿（#288 的守卫守着这一形态，同 kojo-k2/k3 引 com-hardcore）
     const { syokusyu_milk } = require('#/system/train/com-tentacle');
-    await syokusyu_milk(); // :218 CALL SYOKUSYU_MILK（#548 起真身）
+    await syokusyu_milk(); // CALL SYOKUSYU_MILK（#548 起真身）
   }
   return 1;
 }

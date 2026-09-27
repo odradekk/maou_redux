@@ -2,10 +2,6 @@
  * @file 高级 COM 升格分发：@GET_ADV_COM 的骨架与升格机制（issue #213——
  * 各族的升格规则随族票注册，这张票只立分发面）。
  *
- * 源: target/ERB/調教相關/COMF_JUMP.ERB  @GET_ADV_COM（:1-684 全文；
- *     SELECTCASE ARG 共 21 个 CASE——6/1/3/4/5/8/20/21/22/23/26/27/30/
- *     31/32/33/34/40/61/80/135，尾坠 RETURN ARG）
- *
  * == 原作的机制（升格 = 「前两回合序列 → 高级 COM」） ==
  *
  * @GET_ADV_COM(ARG) 按当前指令号查升格规则：规则读 PREVCOM（上回合指令）、

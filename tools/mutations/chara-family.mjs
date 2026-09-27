@@ -28,8 +28,8 @@ export default [
     ...make(
       6983,
       'K_11 漏接家族登记',
-      '  family_register(a, rand_n); // :205',
-      '  void a; // :205',
+      '  family_register(a, rand_n);',
+      '  void a;',
       'ere/event/enter-enemy.js',
       'K_11 FAMILY_REGISTER 接线',
     ),

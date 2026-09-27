@@ -2,13 +2,6 @@
  * @file 怪物状态生成与改造。issue #175（阶段 3 H6）实现 @MONSTER_DATA、
  *     骷髅兵和怪物名；issue #340（阶段 5a L9）补齐怪物改造菜单与判定。
  *
- * 源: target/ERB/怪物相關/MONSTER_DATA.ERB  @MONSTER_DATA（:2-461，
- *       分发器）、@SKELETON（:1994-2032，动态等级的骷髅兵）、
- *       @MONSTER_SETUP（:2479-2645，怪物改造菜单）、@MONSTER_SETUP_ABLE
- *       （:2648-2698，改造可用性判定）、
- *       @MONSTERNAME（:2701-2766，#FUNCTIONS 名字拼接）、@MONSTER_NAME
- *       （:2772-2878，打印型名字拼接）
- *
  * **为什么随 H6 落地（隐性硬前置，SOP §2 判据）**：H6 票面只有两个战斗
  * 文件的 22 个函数，但 @DUNGEON_PARTY_BATTLE 的怪物全靠本函数写进 E 数组
  * （怪物相關/MONSTER_DATA.ERB 是 E 数组的唯一写者）——存根化的后果实测
@@ -48,12 +41,6 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/**
- * 源: target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB
- *   @CAMPAIGN_DUNGEON_LV（:250-257）。FLAG:400 < 1 为 0，否则按战役号
- *   TRY 调用专属实现；专属函数缺失时保留预置 RESULT=0。当前唯一专属
- *   函数 CAMPAIGN_DUNGEON_LV_1 恒返 45（CAMPAIGN_1.ERB:278-282）。
- */
 function campaign_dungeon_lv() {
   const campaign = era.get('flag:400') || 0; // FLAG:400 当前战役编号
   return campaign === 1 ? 45 : 0;
@@ -183,7 +170,7 @@ function monstername(id) {
  * @returns {string} 拼接名（供调用方并入一次 era.print）
  */
 function monster_name(id) {
-  // :2861-2875 的 STRLENS 空格对齐段：ere 无字宽对齐通道，不移植
+  // 的 STRLENS 空格对齐段：ere 无字宽对齐通道，不移植
   return monstername(id);
 }
 
@@ -195,11 +182,11 @@ function monster_name(id) {
  * @returns {number} 1 = 可选，0 = 不可选
  */
 function monster_setup_able(id, selection, rand = default_rand) {
-  // :2648-2698 无改造、上级化对全种族可用；土地适应只限常规怪物。
+  // 无改造、上级化对全种族可用；土地适应只限常规怪物。
   if (selection === 0 || selection === 1) return 1;
   if (selection === 2 && id < 190) return 1;
 
-  // :2648-2698 怪物种族与法术取自 MONSTER_DATA 的第 0 防卫列。
+  // 怪物种族与法术取自 MONSTER_DATA 的第 0 防卫列。
   monster_data(id, 0, -1, -1, -1, rand);
   const type = e_get(7); // E:7 = 凌辱类型（怪物种族）
   const magic = e_get(6); // E:6 = 怪物固有魔法
@@ -248,7 +235,7 @@ const MONSTER_TROOP_LABELS = Object.freeze({
  * @returns {Promise<number>} 0；非法识别号返回 999
  */
 async function monster_setup(id, rand = default_rand) {
-  // :2479-2645 错误值直接退回。
+  // 错误值直接退回。
   if (id === 999 || id < 100 || id > 199) return 999;
 
   const floor = id < 190 ? Math.trunc((id - 100) / 10) + 1 : 0;
@@ -274,7 +261,7 @@ async function monster_setup(id, rand = default_rand) {
       }
     }
 
-    // :2479-2645 只有人形五种族显示兵种菜单。
+    // 只有人形五种族显示兵种菜单。
     monster_data(id, 0, -1, -1, -1, rand);
     if ([1, 6, 7, 8, 9].includes(e_get(7))) {
       era.print('--- 兵种 ---');

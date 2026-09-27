@@ -2,8 +2,6 @@
  * @file ere/chara/chara-make-inherit.js 的行为测试（issue #384）：
  * @CMI_SETTALENT / @CMI_MOM_COMPLEX / @CMI_CONFLICT_CHECK 三个存根换真身。
  *
- * 源: target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB:73-166。
- * 随机源一律经公开形参注入确定序列（seq，chara-self-call.test.js 先例）。
  */
 
 'use strict';
@@ -46,7 +44,7 @@ function load(fixture) {
 // —— @CMI_SETTALENT（:73-91）：三档概率继承 ——
 
 test('cmi_settalent：单亲（L_C <= 0）掷 RAND:4，非零即继承（3/4）', () => {
-  // :81-82 SIF RAND:4 → 掷出 1/2/3 时继承，0 时不继承
+  // SIF RAND:4 → 掷出 1/2/3 时继承，0 时不继承
   for (const [roll, inherited] of [
     [0, 0],
     [1, 1],
@@ -99,7 +97,7 @@ test('cmi_settalent：魔王为母（L_B == 0）掷 RAND:3，非零即继承（2
 });
 
 test('cmi_settalent：双亲掷 RAND:16，命中后再掷 RAND:2 选亲本', () => {
-  // :90 TALENT:A:L_I = RAND:2 ? TALENT:B:L_I # TALENT:C:L_I ——
+  // TALENT:A:L_I = RAND:2 ? TALENT:B:L_I # TALENT:C:L_I ——
   // Emuera 三目是 `cond ? 真值 # 假值`，故 RAND:2 非零取 L_B 侧（11）
   for (const [pick, expected] of [
     [0, 22],
@@ -269,14 +267,14 @@ test('cmi_mom_complex：亲本无任何相关素质时不掷任何骰', () => {
 
 test('cmi_conflict_check：PAIRS 表逐对检查——两侧都有时随机消掉一个', () => {
   const fixture = create_era_fixture();
-  // :133-151 的 PAIRS 常量表首对 10/12
+  // 的 PAIRS 常量表首对 10/12
   fixture.store.set('talent:8:10', 1);
   fixture.store.set('talent:8:12', 1);
   const { cmi_conflict_check } = load(fixture);
   const cap = seq_capture([1]);
   assert.equal(cmi_conflict_check(8, cap), 8, ':166 RETURN L_A');
   assert.deepEqual(cap.bounds, [2], '消哪个是 RAND:2');
-  // :157-162 真值支清 L_I（本对前一项，PAIRS:(L_II*2)）
+  // 真值支清 L_I（本对前一项，PAIRS:(L_II*2)）
   assert.equal(fixture.store.get('talent:8:10'), 0, 'RAND:2 = 1 消前者');
   assert.equal(fixture.store.get('talent:8:12'), 1, '后者保留');
 });
@@ -357,8 +355,8 @@ test('cmi_conflict_check：PAIRS 全表逐组——两侧置位时恰好消掉�
   const { cmi_conflict_check } = load(fixture);
   for (const [left, right] of pairs) {
     for (const [roll, cleared, kept] of [
-      [1, left, right], // :158-159 RAND:2 真值支清 L_I（本对前一项）
-      [0, right, left], // :160-161 假值支清 L_J（后一项）
+      [1, left, right], // RAND:2 真值支清 L_I（本对前一项）
+      [0, right, left], // 假值支清 L_J（后一项）
     ]) {
       fixture.store.set(`talent:8:${left}`, 1);
       fixture.store.set(`talent:8:${right}`, 1);
@@ -479,7 +477,7 @@ test('chara_make_inherit：继承候选表的四段与两类排除（每个区�
       `候选段成员 ${index} 应被继承`,
     );
   }
-  // :18 与 :35 的排除项一律不继承
+  // 与 :35 的排除项一律不继承
   for (const index of [74, 78, 121, 123, 130, 143, 85, 244, 247, 254]) {
     assert.notEqual(
       fixture.store.get(`talent:8:${index}`),

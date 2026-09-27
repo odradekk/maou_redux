@@ -1,8 +1,6 @@
 /**
  * @file ere/page/page-tailor.js 的行为测试（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_TAILOR.ERB 全 12 函数。
- *
  * 接缝 = test/helpers/era-fixture.js。四张物品表整表驱动（覆盖面标准：价格档、
  * 素质编号、顺从档这些字面量被改动时都要有红）：
  *   - 日常服饰 2 件、普通装备 42 件（5 页）、黑市 27 件（3 页）、装备品 43 件
@@ -188,14 +186,14 @@ test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价�
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
   for (const expected of [
-    '[0] - 日常服饰（100点）', // :78（原作写死价格，移植侧是插值）
-    '[1] - 普通装备（1000点）', // :79
-    '[2] - 其它', // :80
-    '[3] - 替换内衣（5点）', // :81
-    '[4] - 替换尿布（50点）', // :82-83
-    '[7] - 魔法装备', // :87
-    '[8] - 武器', // :88
-    '[999] - 返回', // :90
+    '[0] - 日常服饰（100点）', // （原作写死价格，移植侧是插值）
+    '[1] - 普通装备（1000点）',
+    '[2] - 其它',
+    '[3] - 替换内衣（5点）',
+    '[4] - 替换尿布（50点）',
+    '[7] - 魔法装备',
+    '[8] - 武器',
+    '[999] - 返回',
   ]) {
     assert.ok(rendered.includes(expected), `${expected}（SHOP_TAILOR.ERB）`);
   }
@@ -575,7 +573,7 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
       texts(fixture.lines).some((t) => t.includes(`挣了${gain}点钱`)),
       '变卖提示',
     );
-    // :196-205 内衣篇的固定清扫
+    // 内衣篇的固定清扫
     assert.equal(fixture.store.get('cflag:1:40'), 3);
     assert.equal(fixture.store.get('cflag:1:43'), 0);
     assert.equal(fixture.store.get('cflag:1:48'), 0);
@@ -818,7 +816,7 @@ test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有�
 });
 
 test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一起动', async () => {
-  // :836 的 install 与 :957 的强化各写一次 exflag:4444（累计消费），
+  // 的 install 与 :957 的强化各写一次 exflag:4444（累计消费），
   // 只断言所持金会漏掉这两句——两条路径各来一次
   const fixture = tailor_fixture({
     'item:300': 3,

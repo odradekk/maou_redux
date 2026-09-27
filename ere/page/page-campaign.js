@@ -1,9 +1,6 @@
 /**
  * @file 战役画面：@CAMPAIGN_MENU + @SELECT_CAMPAIGN（#469 起真身）。
  *
- * 源: target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB
- *   @CAMPAIGN_MENU（:6-127，无参）、@SELECT_CAMPAIGN（:130-152）
- *
  * 调用点：ere/page/page-invasion.js 的 post_conquest_menu [9]（#468 起接通）。
  *
  * 派发说明（#7 决议，DispatchFamily）：
@@ -95,7 +92,7 @@ const NUM_PAGE = 24;
 async function select_campaign() {
   era.drawLine();
   for (const slot of CAMPAIGN_SLOT_IDS) {
-    // :137 TRYCALLFORM CAMPAIGN_EXIST_{LOCAL}：返回值不被消费（打印副作用，
+    // TRYCALLFORM CAMPAIGN_EXIST_{LOCAL}：返回值不被消费（打印副作用，
     // 未实现的槽位静默不渲染，即 TRYCALLFORM 落空语义）
     await campaign_exist_family.call(slot, { whenMissing: 0, args: [slot] });
   }
@@ -106,13 +103,13 @@ async function select_campaign() {
   if (result === 999) {
     return 0;
   }
-  // :147 TRYCALLFORM CAMPAIGN_SET_{RESULT}：RESULT 来自按钮白名单，恒落在
+  // TRYCALLFORM CAMPAIGN_SET_{RESULT}：RESULT 来自按钮白名单，恒落在
   // 已渲染的槽位号内（1-20），但 DispatchFamily 的空间外判定是给「拼写
   // 错误」用的，不能替代这层范围保护——显式挡一次
   if (result >= 1 && result <= 20) {
     await campaign_set_family.call(result, { whenMissing: 0, args: [] });
   }
-  era_flag.campaign_story_progress = 0; // :150 FLAG:401 = 0 深度重置
+  era_flag.campaign_story_progress = 0; // FLAG:401 = 0 深度重置
   return 0;
 }
 
@@ -131,7 +128,7 @@ function render_dispatch_page(no_page, candidate_ids) {
     (no_page + 1) * NUM_PAGE,
   );
   for (const cid of window_ids) {
-    life_list_item(cid); // :75 CALL LIFE_LIST 的列表段（按命中序号开窗）
+    life_list_item(cid); // CALL LIFE_LIST 的列表段（按命中序号开窗）
   }
   era.printButton('- 上一页', 1000);
   era.printButton('返  回', 999);
@@ -146,7 +143,7 @@ function render_dispatch_page(no_page, candidate_ids) {
  * @returns {Promise<void>}
  */
 async function recruit_campaign_slave(rand) {
-  // :48-53 前置校验
+  // 前置校验
   if (chara(0).dungeon.气力 < 100) {
     era.print('*气力不足！*');
     await era.waitAnyKey();
@@ -157,7 +154,7 @@ async function recruit_campaign_slave(rand) {
     await era.waitAnyKey();
     return;
   }
-  // :55-57 赤森奴隶=1 CALL RAND_CHARA_MAKE 赤森奴隶=0 —— campaign_slave
+  // 赤森奴隶=1 CALL RAND_CHARA_MAKE 赤森奴隶=0 —— campaign_slave
   // 形参注入替代原作的全局开关置位/复位（chara-make.js #469）
   //
   // 第二个实参是 `CHAR_MAKE.ERB:57` 的 `CALL CHAR_MAKE_INPORT`：它在
@@ -176,7 +173,7 @@ async function recruit_campaign_slave(rand) {
   if (recruited === 0) {
     return;
   }
-  // :62-67 招募成功：扣气力、点亮本战役对应的招募素质位
+  // 招募成功：扣气力、点亮本战役对应的招募素质位
   era.print('消耗了100点气力……');
   chara(0).dungeon.气力 -= 100;
   const talent_slot = era_flag.hero_campaign_active + 360; // LOCAL = FLAG:400 + 360
@@ -215,7 +212,7 @@ async function dispatch_campaign_slave(no_page) {
       }
       continue;
     }
-    // :98-114 校验链。life_list_item 的按钮 accelerator 是角色真实 ID
+    // 校验链。life_list_item 的按钮 accelerator 是角色真实 ID
     // （page-life-list.js print_row，非序号），原作 :98 按 CHARANUM 做的
     // 上界比较在 ere 侧对应「是否在本页候选集内」；result 恒落在按钮白
     // 名单内，本分支因此不可达，1:1 保留结构
@@ -223,7 +220,7 @@ async function dispatch_campaign_slave(no_page) {
       continue;
     }
     if (chara(result).dungeon.体力 < 1) {
-      continue; // :101-102 临死中的角色排除
+      continue; // 临死中的角色排除
     }
     if ((era.get(`talent:${result}:${talent_slot}`) || 0) === 0) {
       const slot_name = era.get(`talentname:${talent_slot}`) || '';
@@ -246,7 +243,7 @@ async function dispatch_campaign_slave(no_page) {
       await era.waitAnyKey();
       continue;
     }
-    // :116-123 派遣：状态位 + 楼层/进度四个 CFLAG 重置
+    // 派遣：状态位 + 楼层/进度四个 CFLAG 重置
     chara(result).invasion.状态 = 12;
     chara(result).dungeon.侵攻阶层 = 1;
     chara(result).invasion.回城标志 = 0;
@@ -264,13 +261,13 @@ async function dispatch_campaign_slave(no_page) {
  * @returns {Promise<number>} RETURN 0（原作恒 0 出口，:36-37 的 [999] 直接返回；:127 末尾 GOTO 回到循环顶部）
  */
 async function campaign_menu(rand) {
-  // :8 #DIM NO_PAGE = 0——函数级，跨派遣子菜单的反复进出保留页码
+  // #DIM NO_PAGE = 0——函数级，跨派遣子菜单的反复进出保留页码
   let dispatch_page = 0;
   for (;;) {
     era.drawLine();
     const active = era_flag.hero_campaign_active;
     if (active > 0) {
-      // :16 TRYCALLFORM CAMPAIGN_NAME_{FLAG:400}：打印副作用，返回值不消费。
+      // TRYCALLFORM CAMPAIGN_NAME_{FLAG:400}：打印副作用，返回值不消费。
       // era.print 块级独占一行，「当前选择的行动」与战役名各占一行
       // （dev-guides/06-output.md，两行布局等效）
       era.print('当前选择的行动');
@@ -285,7 +282,7 @@ async function campaign_menu(rand) {
       era.printButton('奴隶选招（气力-100）', 1);
       era.printButton('派遣奴隶', 2);
     }
-    era.drawLine(); // :31-32 行动按钮与 [999] 之间的第二条分隔线
+    era.drawLine(); // 行动按钮与 [999] 之间的第二条分隔线
     era.printButton('返回', 999);
 
     const result = await era.input();

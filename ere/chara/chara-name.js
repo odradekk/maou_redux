@@ -1,14 +1,6 @@
 /**
  * @file 角色命名链：随机命名、固定名落地、名字重建与 NID 族（issue #384，N2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_NAME.ERB 全函数——
- *       @CHARA_NAME_RANDOM_DEFINE（:14-141）、@CHARA_NAME_DEFINE（:147-202）、
- *       @CHARA_NAME_RESET（:209-218）、@CN_REBUILD（:225-230）、
- *       @NID_FINDCHARAS（:236-250）、@NID_GET_TYPE（:255-265）、@NID（:270-276）、
- *       @NID_R（:278-285）、@CN_SPAN_COMBINE_NAME_NUM（:291-333）、
- *       @CN_SPAN_COMBINE_NAME（:339-604）
- *       target/ERB/キャラ関数/CHARA_NAME.ERH  五个计数声明（:7-22）
- *
  * 移植说明（有意偏离，均注明依据）：
  *
  *   - **@NID_GET_TYPE 自 ere/chara/chara-family.js 收拢回本文件**（#384）：
@@ -118,7 +110,7 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
   let name_type = type;
   const talent = (index) => era.get(`talent:${cid}:${index}`) || 0;
 
-  // :45-51 职业偏向：骑士偏洋名，巫女/忍者偏和名。
+  // 职业偏向：骑士偏洋名，巫女/忍者偏和名。
   if (name_type === -1) {
     if (talent(205) && rand(10) !== 0) {
       name_type = 1;
@@ -127,7 +119,7 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
     }
   }
 
-  // :55-93 种族偏向；人类、魔族及未知种族保持未指定。
+  // 种族偏向；人类、魔族及未知种族保持未指定。
   if (name_type === -1) {
     const race = era.get(`cflag:${cid}:314`) || 0; // CFLAG:314 种族
     if ([1, 3, 4, 5, 6, 7, 8, 10, 11].includes(race)) {
@@ -137,13 +129,13 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
     }
   }
 
-  // :95-96 和名有五分之三保持和名
+  // 和名有五分之三保持和名
   if (name_type === 0) {
     name_type = rand(5) % 2;
   }
 
   let nid;
-  // :98 $SPAN_NAME_NUM —— 原作以 GOTO 重掷；已加入角色为空时一轮结束。
+  // $SPAN_NAME_NUM —— 原作以 GOTO 重掷；已加入角色为空时一轮结束。
   for (;;) {
     const male = talent(122) !== 0; // TALENT:122 男人
     if (name_type === 0) {
@@ -164,7 +156,7 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
       }
     }
 
-    // :122-123 重复检查：先清自身 NID，再找同 NID 的其他角色。
+    // 重复检查：先清自身 NID，再找同 NID 的其他角色。
     //
     // 两个排除项都**不可观察**，因此不设变异条目（#384 返工记录）：
     //   - `other === cid` 与前一行 CFLAG:L_A:6 = -1 同效（自身这时读到 -1，
@@ -184,7 +176,7 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
       break;
     }
 
-    // :126-136 名字空间占满时改换类型
+    // 名字空间占满时改换类型
     const count = era.getAddedCharacters().length; // CHARANUM 的 ere 等价物
     if (name_type === 0 && int_div(count * 4, 10) > JAPANESE_NAME_COUNT) {
       name_type = 1;
@@ -207,7 +199,7 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
     }
   }
 
-  // :141 JUMP CHARA_NAME_DEFINE(L_A,L_NID)：只把执行流交给目标，不返回结果
+  // JUMP CHARA_NAME_DEFINE(L_A,L_NID)：只把执行流交给目标，不返回结果
   chara_name_define(cid, nid);
 }
 
@@ -221,54 +213,54 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
 function chara_name_define(cid, nid = -1) {
   const chara_no = cid; // NO:L_A——ere 的角色 ID 即原作 NO
 
-  // :153-162 特殊角色使用特定名字
+  // 特殊角色使用特定名字
   if ((chara_no >= 17 && chara_no <= 40) || chara_no === 0) {
     const csv = csv_callname(chara_no);
-    era.set(`callname:${cid}:-1`, csv); // :154 NAME:L_A '= CSVCALLNAME
-    era.set(`callname:${cid}:-2`, csv); // :155 CALLNAME:L_A '= CSVCALLNAME
-    // :159 定义 NID
+    era.set(`callname:${cid}:-1`, csv); // NAME:L_A '= CSVCALLNAME
+    era.set(`callname:${cid}:-2`, csv); // CALLNAME:L_A '= CSVCALLNAME
+    // 定义 NID
     era.set(`cflag:${cid}:6`, 10_000 + chara_no);
-    // :160 CALL RELATION_RENAME_REBUILD(L_A)
+    // CALL RELATION_RENAME_REBUILD(L_A)
     relation_rename_rebuild(cid);
-    return 0; // :161
+    return 0;
   }
 
-  // :165-170 NID 的取舍
+  // NID 的取舍
   let name_id = nid;
   if (name_id < 0) {
-    name_id = era.get(`cflag:${cid}:6`) || 0; // :166
+    name_id = era.get(`cflag:${cid}:6`) || 0;
   } else {
-    era.set(`cflag:${cid}:6`, name_id); // :168
-    relation_rename_rebuild(cid); // :169
+    era.set(`cflag:${cid}:6`, name_id);
+    relation_rename_rebuild(cid);
   }
 
-  // :173-202 固定名 或 随机名
+  // 固定名 或 随机名
   if (name_id < 1_000_000_000) {
-    // :175 固定名列表（判的是声明尺寸，不是注册表）
+    // 固定名列表（判的是声明尺寸，不是注册表）
     if (name_id < LIST_CHARA_NAME_SIZE) {
-      const fixed = get_fixed_chara_name(name_id); // :176 LIST_CHARA_NAME:L_NID
+      const fixed = get_fixed_chara_name(name_id); // LIST_CHARA_NAME:L_NID
       if (fixed.length > 0) {
-        era.set(`callname:${cid}:-1`, fixed); // :179
-        era.set(`callname:${cid}:-2`, fixed); // :180
+        era.set(`callname:${cid}:-1`, fixed);
+        era.set(`callname:${cid}:-2`, fixed);
       } else {
-        // :184-186 名字没有被记录
+        // 名字没有被记录
         era.set(`callname:${cid}:-1`, '佳奈美');
         era.set(`callname:${cid}:-2`, '佳奈美');
       }
     } else {
-      // :190-193 无效的 NID
+      // 无效的 NID
       era.set(`callname:${cid}:-1`, '佳奈美');
       era.set(`callname:${cid}:-2`, '佳奈美');
-      // :193 的钳位照抄，但它是**死写**：L_NID 在此之后不再被读，函数随即
+      // 的钳位照抄，但它是**死写**：L_NID 在此之后不再被读，函数随即
       // 结束（原作同样如此）——值写不进 cflag、也影响不了任何输出。因此
       // 这一行的变异不可观察，不设变异条目（#384 返工记录）。
-      name_id = LIST_CHARA_NAME_SIZE; // :193 L_NID = VARSIZE("LIST_CHARA_NAME")
+      name_id = LIST_CHARA_NAME_SIZE; // L_NID = VARSIZE("LIST_CHARA_NAME")
     }
   } else {
-    // :197-201 使用随机名
+    // 使用随机名
     const combined = cn_span_combine_name(name_id);
-    era.set(`callname:${cid}:-1`, combined); // :199 NAME:L_A '= RESULTS
-    era.set(`callname:${cid}:-2`, combined); // :200 CALLNAME:L_A '= RESULTS
+    era.set(`callname:${cid}:-1`, combined); // NAME:L_A '= RESULTS
+    era.set(`callname:${cid}:-2`, combined); // CALLNAME:L_A '= RESULTS
   }
   return undefined;
 }
@@ -282,10 +274,10 @@ function chara_name_define(cid, nid = -1) {
  */
 function chara_name_reset(cid) {
   const callname =
-    cid >= 17 && cid <= 40 // :212 INRANGE(NO:L_A, 17,40)
-      ? csv_callname(cid) // :213 CSVCALLNAME(NO:L_A)
-      : (era.get(`callname:${cid}:-1`) ?? ''); // :215 NAME:L_A
-  era.set(`callname:${cid}:-2`, callname); // :218 SAVESTR:L_A '= CALLNAME:L_A
+    cid >= 17 && cid <= 40 // INRANGE(NO:L_A, 17,40)
+      ? csv_callname(cid) // CSVCALLNAME(NO:L_A)
+      : (era.get(`callname:${cid}:-1`) ?? ''); // NAME:L_A
+  era.set(`callname:${cid}:-2`, callname); // SAVESTR:L_A '= CALLNAME:L_A
 }
 
 /**
@@ -299,9 +291,9 @@ function chara_name_reset(cid) {
 function cn_rebuild() {
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) {
-      continue; // :227-228 SIF LOCAL == 0 CONTINUE
+      continue; // SIF LOCAL == 0 CONTINUE
     }
-    era.set(`callname:${cid}:-2`, era.get(`callname:${cid}:-1`) ?? ''); // :229
+    era.set(`callname:${cid}:-2`, era.get(`callname:${cid}:-1`) ?? '');
   }
 }
 
@@ -320,14 +312,14 @@ function cn_rebuild() {
  * @returns {number} 首个同 NID 角色号；无命中时 -1
  */
 function nid_findcharas(nid) {
-  const found = []; // :241 VARSET RESULT —— 整份清零的等价物
+  const found = []; // VARSET RESULT —— 整份清零的等价物
   for (const cid of era.getAddedCharacters()) {
     if ((era.get(`cflag:${cid}:6`) || 0) === nid) {
-      found.push(cid); // :244-245 RESULT:L_I = LOCAL
+      found.push(cid); // RESULT:L_I = LOCAL
     }
   }
-  found.push(-1); // :249 RESULT:L_I = -1（L_I = 已写入条数）
-  // :250 RETURN RESULT:0——sentinel 保证数组非空，首元恒有值
+  found.push(-1); // RESULT:L_I = -1（L_I = 已写入条数）
+  // RETURN RESULT:0——sentinel 保证数组非空，首元恒有值
   return found[0];
 }
 
@@ -344,15 +336,15 @@ function nid_findcharas(nid) {
  */
 function nid_get_type(nid) {
   if (nid > 1_000_000_000) {
-    return 2; // :259 组合名
+    return 2; // 组合名
   }
   if (nid < 200 || nid >= 2000) {
-    return 1; // :261 洋名
+    return 1; // 洋名
   }
   if (nid < 1000 || nid >= 3000) {
-    return 0; // :263 和名
+    return 0; // 和名
   }
-  return 1; // :265
+  return 1;
 }
 
 /**
@@ -365,15 +357,15 @@ function nid_get_type(nid) {
  * @returns {number} 组合名编号（>= 2_000_000_000）
  */
 function cn_span_combine_name_num(rand = default_rand) {
-  // :299 L_L = 3 - RAND:2 - RAND:3 % 2 —— 3, 2, 1
+  // L_L = 3 - RAND:2 - RAND:3 % 2 —— 3, 2, 1
   const length = 3 - rand(2) - (rand(3) % 2);
-  let result = 0; // :298/:301 L_RET
+  let result = 0; // L_RET
 
   for (let i = 0; i < length; i += 1) {
-    result *= 1000; // :303
+    result *= 1000;
 
     let mode;
-    // :305-310 80% 的第一轮循环取两音段
+    // 80% 的第一轮循环取两音段
     if (i === 0 && length > 1 && rand(5) !== 0) {
       mode = 2;
     } else {
@@ -382,26 +374,25 @@ function cn_span_combine_name_num(rand = default_rand) {
 
     let piece;
     if (mode === 1) {
-      // :313-318 第一次循环
+      // 第一次循环
       if ((rand(3) === 0 && length !== 1) || (rand(2) === 0 && length === 3)) {
-        piece = rand(9) + 300; // :315 通用一音
+        piece = rand(9) + 300; // 通用一音
       } else {
-        piece = rand(30) + 200; // :317 通用两音
+        piece = rand(30) + 200; // 通用两音
       }
     } else if (rand(8) === 0 && length !== 1) {
-      // :320-321
-      piece = rand(2) + 500; // :321 终端的 ー/ン
+      piece = rand(2) + 500; // 终端的 ー/ン
     } else {
-      piece = rand(27) + 400; // :323 终端两音
+      piece = rand(27) + 400; // 终端两音
     }
-    result += piece; // :326
+    result += piece;
 
-    // :327-328 SIF L_I < 0 BREAK —— FOR 计数器恒非负，不可达（文件头）
-    // :329-330 SIF L_L == 1 && (L_N == 200 || …) L_I -= 10 —— 只由上一行放行，
+    // SIF L_I < 0 BREAK —— FOR 计数器恒非负，不可达（文件头）
+    // SIF L_L == 1 && (L_N == 200 || …) L_I -= 10 —— 只由上一行放行，
     //   同样不可达（:320 的守卫已排除 L_L == 1 落进 200 段）
   }
 
-  return result + 2_000_000_000; // :332
+  return result + 2_000_000_000;
 }
 
 /**
@@ -415,41 +406,41 @@ function cn_span_combine_name_num(rand = default_rand) {
  * @returns {string} 名字串（原作经 RESULTS 回传）
  */
 function cn_span_combine_name(arg) {
-  let acc = ''; // :340 LOCALS:9 =
-  let rest = arg % 1_000_000_000; // :342 N = ARG % 1000000000
+  let acc = ''; // LOCALS:9 =
+  let rest = arg % 1_000_000_000; // N = ARG % 1000000000
 
   if (arg > 2_000_000_000) {
     // ランダム名 ver0.2
-    // :346-497 的 IF 链没有 ELSE：段值不在表里时（唯一的实例是 RAND:27+400
+    // 的 IF 链没有 ELSE：段值不在表里时（唯一的实例是 RAND:27+400
     // 掷出的 401）LOCALS 保持**上一轮的值**，随后的拼接照常执行——本实现
     // 用一个跨轮的 `word` 承接这条语义（首轮落空时它是空串，等价于拼上空串）。
     let word = '';
     while (rest > 1) {
       const piece = rest % 1000;
       word = COMBINE_NAME_V2.get(piece) ?? word;
-      // :498-503 与前一段相接时，本段段首的 ア/イ/ウ/エ/オ/ン/ー 被吃掉
+      // 与前一段相接时，本段段首的 ア/イ/ウ/エ/オ/ン/ー 被吃掉
       // （吃掉首字，不是丢掉整段）。「相接」= 已累积有内容——首段没有
       // 前文可接，原样保留，否则单段名「アー」「オン」会整个变空。
       const first = word.slice(0, 1);
       const merged =
         acc !== '' && MERGE_HEAD_KANA.includes(first) ? word.slice(1) : word;
-      // :504-508 前一段以「ッ」结尾时，本段的「ー」段丢掉尾部两字
+      // 前一段以「ッ」结尾时，本段的「ー」段丢掉尾部两字
       if (acc.endsWith(SOKUON) && first === CHOON) {
         acc = acc.slice(0, -2);
       }
-      acc += merged; // :511 LOCALS:9 += LOCALS:1
-      rest = Math.trunc(rest / 1000); // :512
+      acc += merged; // LOCALS:9 += LOCALS:1
+      rest = Math.trunc(rest / 1000);
     }
   } else if (arg > 1_000_000_000) {
     // ランダム名 ver0.1（:515 的 ELSEIF B > 1000000000）
     while (rest > 1) {
       const piece = rest % 1000;
-      acc += COMBINE_NAME_V1.get(piece) ?? ''; // :518-598 逐档自拼
-      rest = Math.trunc(rest / 1000); // :599
+      acc += COMBINE_NAME_V1.get(piece) ?? ''; // 逐档自拼
+      rest = Math.trunc(rest / 1000);
     }
   }
 
-  return acc; // :603 RESULTS '= LOCALS:9
+  return acc; // RESULTS '= LOCALS:9
 }
 
 /**

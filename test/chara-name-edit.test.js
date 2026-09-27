@@ -2,8 +2,6 @@
  * @file ere/chara/chara-name-edit.js 的行为测试（issue #384，N2）：
  * @SHOW_BUTTON_NAME_EDIT / @CHECK_ABLE_TO_NAME_EDIT / @CHARA_INFO_NAME_EDIT。
  *
- * 源: target/ERB/キャラ関数/CHARA_NAME_EDIT.ERB 全三函数（:4-109）。
- *
  * 缝 = test/helpers/era-fixture.js。判定函数是纯的（只看 CFLAG:1），
  * 按钮外观断言看夹具的 `rendered` 字段（引擎的 `[加速键] ` 前缀与空白
  * 折叠都在那一层，只看 text 会漏掉手写前缀撞车）。
@@ -119,7 +117,7 @@ test('show_button_name_edit：奴隷不可改名时染灰并在按钮后复原�
       '[0] 改名 ',
       `状态 ${state} 仍渲染按钮`,
     );
-    // :21 SETCOLOR 0x646464 → era.setColor('#646464')、:29 RESETCOLOR →
+    // SETCOLOR 0x646464 → era.setColor('#646464')、:29 RESETCOLOR →
     // 空参（SDK「Set default text color」）。**染色本身在夹具里不可见**：
     // 夹具只记录 setColor 调用、不模拟「后续输出被染」的状态（见 color_calls
     // 的注释），故断言的是这对调用的次序。
@@ -150,7 +148,7 @@ test('show_button_name_edit：魔王档（返回值 1）不染灰', () => {
 // —— @CHARA_INFO_NAME_EDIT（:53-109）——
 
 test('chara_info_name_edit：魔王档（返回值 1）不走不可改名支，照常进改名循环', async () => {
-  // :61 的判据是 `LOCAL != 0 && LOCAL != 1`——魔王是**例外**，改名照做
+  // 的判据是 `LOCAL != 0 && LOCAL != 1`——魔王是**例外**，改名照做
   // （按钮那侧 :16-18 只是不染灰）。拆掉 `&& able !== NAME_EDIT_KING`
   // 这一半时，魔王会被当成不可改名：既没有「的新名字是？」也没有落名。
   const fixture = create_era_fixture();
@@ -168,10 +166,10 @@ test('chara_info_name_edit：魔王档（返回值 1）不走不可改名支，�
 
 test('chara_info_name_edit：不可改名的三档各自反馈，返回值区分 2 与 0', async () => {
   const cases = [
-    [7, 0, '苗床不可改变名字'], // :66-67
-    [1, 0, '角色处于不能变更名字的状态'], // :68-69
+    [7, 0, '苗床不可改变名字'],
+    [1, 0, '角色处于不能变更名字的状态'],
     [4, 0, '角色处于不能变更名字的状态'],
-    [2, 2, undefined], // :64-65 侵攻中：只回值、不播报
+    [2, 2, undefined], // 侵攻中：只回值、不播报
   ];
   for (const [state, expected, message] of cases) {
     const fixture = create_era_fixture();
@@ -243,7 +241,7 @@ test('chara_info_name_edit：输入 0 走原作的零长分支（#567：0 视为
 });
 
 test('chara_info_name_edit：零长输入落「名字没有变更」支（:100-101，不写任何键）', async () => {
-  // :92 SELECTCASE STRLENS(LOCALS) 的 CASEELSE。归一路径见上一条（引擎归一
+  // SELECTCASE STRLENS(LOCALS) 的 CASEELSE。归一路径见上一条（引擎归一
   // 后的 0），本例补的是「压根没有回传值」的缺值形态：`Number(undefined)`
   // = NaN → 原样回传，真机上渲染层拦住空提交、不会出现，夹具留作形态覆盖，
   // 移植侧以 `undefined/null → ''` 承接（utils/input-text.js）。没有这条

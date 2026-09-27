@@ -114,7 +114,7 @@ test('TRAP_PRICE：27 个陷阱的价格逐条正确（含 87 诈骗、86 空档
       `TRAP_PRICE(${id}) 应为 ${price}（:1465-1518 的 SIF 表逐条）`,
     );
   }
-  // :1520 兜底：86 空档与未登记 ID 都是 100
+  // 兜底：86 空档与未登记 ID 都是 100
   assert.equal(trap_price(86), 100, '86（空档）走兜底 100');
   assert.equal(trap_price(88), 100, '88（未登记）走兜底 100');
   assert.equal(trap_price(0), 100, '0（非陷阱）走兜底 100');
@@ -276,7 +276,7 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   assert.equal(fixture.store.get('cflag:1:11'), 0, '攻击力归零（:615）');
   assert.equal(fixture.store.get('cflag:1:12'), 0, '防御力归零（:616）');
   assert.equal(era_flag.target, 1, 'TARGET = A（:594）');
-  // :611 CALL COM3_AUTO——真身（ere/event/event-autotrain.js 的 com3_auto）。
+  // CALL COM3_AUTO——真身（ere/event/event-autotrain.js 的 com3_auto）。
   // 全素质 0 时 SOURCE:4 = 100（技巧 0 档的常量）、自慰经验 +1
   assert.ok(
     text_lines(fixture).some((line) => line.includes('≪自慰≫')),
@@ -394,7 +394,7 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
     '逃脱档提前返回，不走自动调教（:846-849）',
   );
   await slime_room_trap(1, seq(5)); // DICE=5 < 10 深档
-  // :882 CALL COM50_AUTO——真身（ere/event/event-autotrain.js 的 com50_auto）。
+  // CALL COM50_AUTO——真身（ere/event/event-autotrain.js 的 com50_auto）。
   // **这条身份断言排在第一**（#538）：调错变体（com3_auto）同样会把自动调教
   // 回数 +1、并让后面的气力/宝珠数值各自落在另一个值上，那些数值断言会先
   // 红在「气力 -25-10」这类派生量上，把「真身被调」这条结论盖掉（M10717 的
@@ -691,7 +691,7 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
     '两个提前返回档都不走自动调教',
   );
   await love_bug_trap(1, seq(10, 39)); // else 档：39+1 = 40
-  // :1283 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）。
+  // CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）。
   // **这条身份断言排在第一**（#538）：调用点退回占位或调错变体（com63_auto）
   // 时，本体的伤害照打，但 COM0_AUTO 的 LOSEBASE:0 = 1 不再进 BASE——下面
   // 那条合并了「本体伤害 + 本体损耗」的数值断言会先红在「体力 -= RAND:40+1…」
@@ -1135,7 +1135,7 @@ test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON�
       '爱虫（:1276-1277）',
       'love_bug_trap',
       async (mod, fixture) => {
-        // :1283 的 COM0_AUTO 真身要开调教域（#508），同 LOVE_BUG 主用例
+        // 的 COM0_AUTO 真身要开调教域（#508），同 LOVE_BUG 主用例
         fixture.load_module('event/source-check');
         fixture.era.beginTrain(0, 1);
         await mod.love_bug_trap(1, seq(10, 39));

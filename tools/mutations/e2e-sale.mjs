@@ -14,13 +14,7 @@ export default [
   {
     desc: 'M7803 USE_EX_ITEM 战斗后三个调用点删除',
     file: 'ere/dungeon/dungeon.js',
-    find: `  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // :736（A = ARG:0）
-  if (sidea > 0) {
-    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // :739（A = SIDEA）
-  }
-  if (sideb > 0) {
-    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // :743（A = SIDEB）
-  }`,
+    find: "  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）\n  if (sidea > 0) {\n    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // （A = SIDEA）\n  }\n  if (sideb > 0) {\n    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // （A = SIDEB）\n  }",
     replace: '  // 变异：战斗后三个 USE_EX_ITEM 调用删除',
     tests: ['event-ending2-e2e'],
     must_mention: 'USE_EX_ITEM 在 ENDING_2 战斗后调用点实际执行',
@@ -28,7 +22,7 @@ export default [
   {
     desc: 'M7804 SELL_MATURO_K0 成熟出售调用退回空存根',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '      await sell_maturo_k0(target, { rand: _rand }); // CALL SELL_MATURO_K0 // :6992',
+    find: '      await sell_maturo_k0(target, { rand: _rand }); // CALL SELL_MATURO_K0',
     replace: '      // 变异：SELL_MATURO_K0 退回空存根',
     tests: ['event-corrupt-e2e'],
     must_mention: 'SELL_MATURO_K0 必须进入低价自然态的黑市末路',

@@ -1,7 +1,6 @@
 /**
  * @file 博物馆处刑（issue #347）。
  *
- * 源: target/ERB/處刑相關/MUSEUM.ERB  @MUSEUM（:2-1107）
  */
 
 'use strict';

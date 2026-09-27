@@ -80,15 +80,15 @@ test('@COM_ABLE110：默认可执行；八条判据各挡一条', async () => {
   const { fixture, com_able_family } = seed_world(15, 5);
   assert.equal(await com_able_family.call(110), 1, '默认放行（:3684）');
 
-  fixture.store.set('tflag:224', 555); // :3664-3665 自动不可
+  fixture.store.set('tflag:224', 555); // 自动不可
   assert.equal(await com_able_family.call(110), 0);
   fixture.store.set('tflag:224', 0);
 
-  fixture.store.set('flag:37', 0); // :3666-3667 着衣設定未开
+  fixture.store.set('flag:37', 0); // 着衣設定未开
   assert.equal(await com_able_family.call(110), 0);
   fixture.store.set('flag:37', 1);
 
-  // :3668-3669 既定服装与特别服装均未设定（41=0 且 42=0）
+  // 既定服装与特别服装均未设定（41=0 且 42=0）
   const bare = seed_world(0, 0, 0);
   assert.equal(await bare.com_able_family.call(110), 0);
   // 42 单独设定即可（特别服装线）
@@ -96,7 +96,7 @@ test('@COM_ABLE110：默认可执行；八条判据各挡一条', async () => {
   assert.equal(await special_only.com_able_family.call(110), 1);
 
   for (const slot of [90, 55, 44, 58, 59]) {
-    fixture.store.set(`tequip:31:${slot}`, 1); // :3670-3675 五个装备位
+    fixture.store.set(`tequip:31:${slot}`, 1); // 五个装备位
     assert.equal(await com_able_family.call(110), 0, `TEQUIP:${slot} 挡下`);
     fixture.store.set(`tequip:31:${slot}`, 0);
   }
@@ -282,7 +282,7 @@ test('@COM110：ワンピース整件脱着（T:1 / W:1，41=201 连衣裙）', 
 });
 
 test('@COM110：ワンピース装着的上下两半守卫（W:1：上半洗着+下半洗着 → 不可）', async () => {
-  // :409-413 「上装穿着中或洗涤中」且「下装穿着中或洗涤中」→ RETURN 0——
+  // 「上装穿着中或洗涤中」且「下装穿着中或洗涤中」→ RETURN 0——
   // 衣装撕破后的「半件还在」情形才允许重穿整件
   const world = seed_world(PANTY | BRA, 201);
   world.fixture.store.set('cflag:31:45', 3); // 上装洗涤中

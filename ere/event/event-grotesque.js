@@ -1,7 +1,6 @@
 /**
  * @file 猎奇处刑（issue #348）。
  *
- * 源: target/ERB/處刑相關/GROTESQUE.ERB  @GROTESQUE（:2-222）
  */
 
 'use strict';

@@ -2,9 +2,6 @@
  * @file 角色离队与归队（issue #405）：调教对象/助手离队时的存档描述串序列化
  * + 队伍/据点引用清理 + 除名，以及归队时的反序列化与重建。
  *
- * 源: target/ERB/EVENT/EVENT_CHARA_LEAVE.ERB  @EVENT_CHARA_LEAVE（:1-70）、
- *     @EVENT_CHARA_RETURN（:71-160，截断，见下）
- *
  * 调用点 ENDINGDATA_ADDON1.ERB:434（`CALL EVENT_CHARA_LEAVE(85, GETCHARA(33))`）
  * 在 #404（N20）范围内，本票只落函数真身，签名定死：`event_chara_leave(arg,
  * cid)` 与该调用点的两个实参一一对应（ARG 字面量 85、cid = 扁平化角色 ID，
@@ -127,11 +124,11 @@ function decode_table(cid, table, segment, is_string = false) {
  */
 // eslint-disable-next-line no-unused-vars -- arg 仅为调用点签名占位，见文件头一
 function event_chara_leave(arg, cid) {
-  // :3-5 NO_等级_呼び名 前缀（#21：角色号本就是预设号，NO:CHARA = cid）
+  // NO_等级_呼び名 前缀（#21：角色号本就是预设号，NO:CHARA = cid）
   const level = get(`cflag:${cid}:9`);
   const nickname = era.get(`callname:${cid}:-2`) ?? '';
 
-  // :6-54 十张二维表按非零/非空条目归档
+  // 十张二维表按非零/非空条目归档
   const descriptor = [
     cid,
     level,
@@ -148,7 +145,7 @@ function event_chara_leave(arg, cid) {
     encode_table(cid, 'cstr', WALK_BOUND.cstr, true),
   ].join('_');
 
-  // :55-59 前回の助手・調教対象だった場合はフラグを空に（第二次「减算」
+  // 前回の助手・調教対象だった場合はフラグを空に（第二次「减算」
   // 调整是 DELCHARA 重排残留，按 dungeon-party.js 先例不移植，见文件头四）
   if (get('flag:1') === cid) {
     game.event.上次调教对象 = -1;
@@ -157,9 +154,9 @@ function event_chara_leave(arg, cid) {
     game.event.上次助手 = -1;
   }
 
-  // :67 队伍/据点引用清理（@PARTY_CHAR_DEL 已实现，issue #172）
+  // 队伍/据点引用清理（@PARTY_CHAR_DEL 已实现，issue #172）
   party_char_del(cid);
-  // :69 DELCHARA
+  // DELCHARA
   era.removeCharacter(cid);
 
   return descriptor;
@@ -185,16 +182,16 @@ function event_chara_return(descriptor, setlv = 0, rand) {
   const archived_level = Number(parts[1] || 0);
   const nickname = parts[2] ?? '';
 
-  // :79 空白キャラを作成 + NO 指定（ADDVOIDCHARA + NO:CHARA = … → ere
+  // 空白キャラを作成 + NO 指定（ADDVOIDCHARA + NO:CHARA = … → ere
   // 扁平化下即 addCharacter(cid)，复用原预设，#21）
   era.addCharacter(cid);
 
-  // :82-87 名前の設定（SAVESTR 与 CALLNAME 原作同源同值，#5 决议统一落
+  // 名前の設定（SAVESTR 与 CALLNAME 原作同源同值，#5 决议统一落
   // callname 表的 -1/-2 两槽）
   era.set(`callname:${cid}:-1`, nickname);
   era.set(`callname:${cid}:-2`, nickname);
 
-  // :89-138 十张二维表回填（CFLAG:9 等级另议，见下方 archived_level 注释）
+  // 十张二维表回填（CFLAG:9 等级另议，见下方 archived_level 注释）
   decode_table(cid, 'abl', parts[3]);
   decode_table(cid, 'base', parts[4]);
   decode_table(cid, 'maxbase', parts[5]);
@@ -209,13 +206,13 @@ function event_chara_return(descriptor, setlv = 0, rand) {
   // 实际写出位置补上，见文件头三
   chara(cid).chara.等级 = archived_level;
 
-  // :140-143 侵入階層/侵攻度/侵攻中設定リセット（前两个各归属 dungeon/
+  // 侵入階層/侵攻度/侵攻中設定リセット（前两个各归属 dungeon/
   // event 域，走门面已有具名字段；CFLAG:1 角色状态同样走门面具名字段）
   chara(cid).dungeon.侵攻阶层 = 0;
   chara(cid).event.侵攻度 = 0;
   chara(cid).invasion.状态 = 0;
 
-  // :145-151 SETLV に届かない場合はその差分だけ ST_UP
+  // SETLV に届かない場合はその差分だけ ST_UP
   const level = get(`cflag:${cid}:9`);
   if (level < setlv) {
     const times = setlv - level;
@@ -224,11 +221,11 @@ function event_chara_return(descriptor, setlv = 0, rand) {
     }
   }
 
-  // :153-154 HP/気力を上限まで回復
+  // HP/気力を上限まで回復
   chara(cid).dungeon.体力 = get(`maxbase:${cid}:0`);
   chara(cid).dungeon.气力 = get(`maxbase:${cid}:1`);
 
-  // :157-158 身体データ未生成なら生成（#385 起真身；此处照原作只判年龄，
+  // 身体データ未生成なら生成（#385 起真身；此处照原作只判年龄，
   // FLAG:5 位 12/15 的闸门在函数内部）
   if (get(`cflag:${cid}:451`) === 0) {
     char_body_generate_wapped(cid, rand);

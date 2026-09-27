@@ -1,13 +1,6 @@
 /**
  * @file 据点域的角色出售、估价与调教后零散结算（issue #335/#339）。
  *
- * 源: target/ERB/售卻相關/SELL_CHARA_ESTIMATE.ERB @ESTIMATE_CHARA（:109-899）
- *     target/ERB/售卻相關/SELL_CHARA.ERB（:6-451）
- *     @CHECK_SELLASSIABLE / @CHARA_SALE / @KILL_TARGET /
- *     @LONG_GOOD_BYE / @SALE_CHARA
- *     target/ERB/售卻相關/SELL_MILK.ERB @SELL_MILK（:6-57）
- *     target/ERB/售卻相關/SELL_FIGHTMONEY.ERB @SELL_FIGHTMONEY（:2-18）
- *
  * ESTIMATE_CHARA 的 A/B/E/T/O 临时数组改成带语义的返回对象，供后续
  * SALE_CHARA 原样渲染明细；每个百分比仍按原作顺序立即做整数除法，不能
  * 合并倍率。原作自定义 SAVEDATA「卖淫影响」自 #547 落 yml/ModSave.yml id 0

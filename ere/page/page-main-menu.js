@@ -1,13 +1,6 @@
 /**
  * @file 据点主菜单（菜单骨架：状态行 + 六个功能入口 + 四个子面板 + 指令面板）。
  *
- * 源: target/ERB/SHOP/DRAW_MAINMENU.ERB  @DRAW_MAINMENU（:5-325）/
- *     @DRAW_HAVEITEMS（:331-393，#395 起真身）/@DRAW_HAVETRAPS（:400-421，
- *     #395 起真身）/@DRAW_DUNGEON_OVERVIEW（:427-577，#180 起真身）/
- *     @DRAW_DUNGEON_DAILY（:583-601，#180 起真身；尾部的
- *     @DISPLAY_DUNGEON_DAILY（DUNGEON_DAILY.ERB:1）自 #179 起真身，
- *     page/page-dungeon-daily.js）
- *
  * 这张票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
  * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。#395 补全指令面板的
  * 渲染（:203-320 的 [100]-[888]，分发本体在 page-shop.js 的 usershop）与
@@ -71,11 +64,11 @@ function draw_panel(active_panel) {
  */
 function reset_out_of_range_pointers() {
   const added = era.getAddedCharacters();
-  // :20-21 SIF TARGET > CHARANUM - 1 → TARGET = -1
+  // SIF TARGET > CHARANUM - 1 → TARGET = -1
   if (!added.includes(era_flag.target)) {
     era_flag.target = -1;
   }
-  // :23-25 SIF ASSI > CHARANUM - 1 → ASSI = -1
+  // SIF ASSI > CHARANUM - 1 → ASSI = -1
   if (!added.includes(era_flag.assi)) {
     era_flag.assi = -1;
   }
@@ -91,11 +84,11 @@ function reset_out_of_range_pointers() {
  */
 function apply_bug_guards() {
   reset_out_of_range_pointers();
-  // :27-29 SIF ASSI == TARGET → ASSI = -1（同一人不能既当目标又当助手）
+  // SIF ASSI == TARGET → ASSI = -1（同一人不能既当目标又当助手）
   if (era_flag.assi === era_flag.target) {
     era_flag.assi = -1;
   }
-  // :31-34 IF TARGET >= 1: CFLAG:TARGET:1 != 0 → TARGET = -1（CFLAG:x:1 的
+  // IF TARGET >= 1: CFLAG:TARGET:1 != 0 → TARGET = -1（CFLAG:x:1 的
   // 1 = 不可选中态；角色 0 是魔王，不在其列。读未声明序号得 undefined，
   // 包装层风格 || 0 兜底，#13）
   if (
@@ -104,7 +97,7 @@ function apply_bug_guards() {
   ) {
     era_flag.target = -1;
   }
-  // :36-39 IF ASSI >= 1: 同上
+  // IF ASSI >= 1: 同上
   if (era_flag.assi >= 1 && (era.get(`cflag:${era_flag.assi}:1`) || 0) !== 0) {
     era_flag.assi = -1;
   }
@@ -135,22 +128,22 @@ function count_selectable_slaves() {
  * （Emuera 语义，DAY 非负 → Math.floor 等价）；「第 N 日」显示 DAY+1。
  */
 function draw_status_line() {
-  // :45 DRAWLINEFORM %UNICODE(0x2550)%（全宽 ═ 双线）。引擎 drawLine 的
+  // DRAWLINEFORM %UNICODE(0x2550)%（全宽 ═ 双线）。引擎 drawLine 的
   // content 是分隔线中央的标签文字、不是线型字符（app.asar 实证：el-divider
   // 的 border-style 只有 solid/dashed），故以 isSolid 近似双线、默认虚线近似
   // 单线；逐字比对归 #9。
   era.drawLine({ isSolid: true });
 
-  era.setAlign('right'); // :54 ALIGNMENT RIGHT（仅本行右对齐）
+  era.setAlign('right'); // ALIGNMENT RIGHT（仅本行右对齐）
   const fragments = [
     {
-      // :55-59 行首两枚全角空格，随后
+      // 行首两枚全角空格，随后
       // 第{DAY/365}年+全角空格+{DAY:1}月{DAY:2}日（第{DAY+1}日）
       content: `${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}第${Math.floor(era_flag.day_count / 365)}年${FULL_WIDTH_SPACE}${era_flag.month}月${era_flag.date}日（第${era_flag.day_count + 1}日）`,
-      fontWeight: 'bold', // :53 FONTBOLD（整行粗体，片段级携带）
+      fontWeight: 'bold', // FONTBOLD（整行粗体，片段级携带）
     },
   ];
-  // :60-62 SIF DAY:2 == 15 → PRINT 《满月》（SETCOLORBYNAME Yellow；'yellow'
+  // SIF DAY:2 == 15 → PRINT 《满月》（SETCOLORBYNAME Yellow；'yellow'
   // 是合法 CSS 颜色名，文本片段的 color 直通 span 样式，app.asar 实证）
   if (era_flag.date === 15) {
     fragments.push({
@@ -159,14 +152,14 @@ function draw_status_line() {
       fontWeight: 'bold',
     });
   }
-  // :64-71 TIME == 0 → 上午、ELSE → 下午（前导一个半角空格是 PRINT 的
+  // TIME == 0 → 上午、ELSE → 下午（前导一个半角空格是 PRINT 的
   // 分隔符后残文）；随后两枚全角空格 + (所持金：{MONEY} pts.) + 两枚全角空格
   fragments.push({
     content: ` ${era_flag.time === 0 ? '上午' : '下午'}${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}(所持金：${era_flag.money} pts.)${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}`,
     fontWeight: 'bold',
   });
   era.print(fragments);
-  era.setAlign('left'); // :72 ALIGNMENT LEFT（还原，后续行左对齐）
+  era.setAlign('left'); // ALIGNMENT LEFT（还原，后续行左对齐）
 }
 
 /**
@@ -179,7 +172,7 @@ function draw_status_line() {
  * （抑制逐行重绘防闪烁）无 ere 对应语义，不镜像。
  */
 function draw_main_menu() {
-  // :11-17 BGM 自 #69 起接通：IF 是否启用背景音乐 == 1 → PLAYBGM "据点2.mp3"
+  // BGM 自 #69 起接通：IF 是否启用背景音乐 == 1 → PLAYBGM "据点2.mp3"
   // （注册名即文件名，res/sound/sound.csv）+ SETBGMVOLUME 背景音乐音量。
   // 开关/音量落扩展普通表 yml/Audio.yml（ere/era-utils/era-audio.js；引擎侧
   // data 桶与存清语义见该表头注）。音量无引擎等价物（playMusic 只有
@@ -194,24 +187,24 @@ function draw_main_menu() {
 
   draw_status_line();
 
-  // :77 DRAWLINEFORM ─（单线，默认虚线近似）
+  // DRAWLINEFORM ─（单线，默认虚线近似）
   era.drawLine();
 
-  // :78-98 第一组入口：调教目标（496）/ 助手（497）。原作两钮同行、以空格
+  // 第一组入口：调教目标（496）/ 助手（497）。原作两钮同行、以空格
   // 分隔；ere 的按钮独占一行（dev-guides/06-output.md），同行排版归 #9。
   // 明暗判据照原作：亮当且仅当指针 >= 1（:80-85 / :88-93；-1 未选中、
   // 0 是魔王，都算未选中）。
   menu_button('调教目标', 496, era_flag.target < 1);
   menu_button('助手', 497, era_flag.assi < 1);
 
-  // :100-145 调教目标名/助手名按钮（498/499，点进各自状态画面，正文取
+  // 调教目标名/助手名按钮（498/499，点进各自状态画面，正文取
   // SAVESTR:TARGET/ASSI）与生命条（@LIFE_BAR）：随角色数据落地（#35 前
   // 实机无角色可显示，这张票留空；SAVESTR 的承载见 #5 已决的 callname）。
 
-  // :148 分隔线
+  // 分隔线
   era.drawLine();
 
-  // :149-188 第二组入口：四个信息面板切换钮（500/501/504/505）。亮 = 当前
+  // 第二组入口：四个信息面板切换钮（500/501/504/505）。亮 = 当前
   // 面板（FLAG:36），暗 = 未选中。FLAG:36 = 信息面板选择（0=物品/技能、
   // 1=持有陷阱、4=地城概况、5=地城日常），写入随 #24 的分发；未声明读值
   // undefined → || 0 兜底（#13）。
@@ -221,21 +214,21 @@ function draw_main_menu() {
   menu_button('地城概况', 504, active_panel !== 4);
   menu_button('地城日常', 505, active_panel !== 5);
 
-  // :190-200 四个子面板的分发（FLAG:36 → 专用函数，ELSE → 物品/技能）。
+  // 四个子面板的分发（FLAG:36 → 专用函数，ELSE → 物品/技能）。
   // 四支自 #180/#395 起全部真身（draw_panel 内分发）：地城概况/地城日常
   // 随 #180，物品/技能（DRAW_HAVEITEMS）与持有陷阱（DRAW_HAVETRAPS）随
   // 本票（:331-393/:400-421）。
   draw_panel(active_panel);
 
-  // :203-207 分隔线 + 指令面板标题（▌Commands，粗体）
+  // 分隔线 + 指令面板标题（▌Commands，粗体）
   era.drawLine();
-  // :206-207 行首一枚全角空格 + ▌Commands（粗体）
+  // 行首一枚全角空格 + ▌Commands（粗体）
   era.print([{ content: `${FULL_WIDTH_SPACE}▌Commands`, fontWeight: 'bold' }]);
 
-  // :211-219 A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
+  // A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
   // B（被调教过的奴隶数）在下方 [106] 入口消费。
   //
-  // :226-231 [100] 调教 —— 指令面板里**唯一已接入**的入口：分发本体在
+  // [100] 调教 —— 指令面板里**唯一已接入**的入口：分发本体在
   // page-shop.js 的 usershop（#24），调教域自 #44/#45/#47 起可用。原作
   // `PRINTLCD [100] 调教` 是列排版文本 + INPUT，ere 侧改按钮（PR #53 通则：
   // 纯文本行在实机上点不动）；正文不写 [100] 前缀，交给引擎的 showAcc
@@ -250,7 +243,7 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :232-234 [101] 能力显示 —— CALL CHARA_INFO（存根，随角色信息票）。
+  // [101] 能力显示 —— CALL CHARA_INFO（存根，随角色信息票）。
   // 守卫 CHARANUM >= 1：魔王自身即角色 0，恒真——照原作保留判据，不发明
   // 可用性规则（同 [109]/[200]/[300] 的处理原则）。
   if (era.getAddedCharacters().length >= 1) {
@@ -259,7 +252,7 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :239-243 [102] 地下城 —— 指令面板里第五个接通的真身入口（#180）：
+  // [102] 地下城 —— 指令面板里第五个接通的真身入口（#180）：
   // 分发在 page-shop.js 的 usershop（DUNGEON_INFO2 真身，ere/page/
   // page-dungeon-info2.js）。原作无 IF 守卫、无条件渲染（:239 的 IF 只切换
   // 文案），照搬；文案依 FLAG:502（2D 模式 =「场子」，普通 =「地下城」——
@@ -267,7 +260,7 @@ function draw_main_menu() {
   // 按钮（PR #53），正文不写 [102] 前缀（PR #30）。
   era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);
 
-  // :247-251 [103] 处刑 —— CALL 批量处刑（#543 起真身，ere/event/event-execution-batch.js）；守卫 A > 0
+  // [103] 处刑 —— CALL 批量处刑（#543 起真身，ere/event/event-execution-batch.js）；守卫 A > 0
   // （同 [100]/[104]，不发明可用性规则）。
   if (count_selectable_slaves() > 0) {
     era.printButton('处刑', 103);
@@ -275,19 +268,19 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :252-257 [104] 迎击 —— CALL INTERCEPT（存根，随迎击票）；守卫 A > 0。
+  // [104] 迎击 —— CALL INTERCEPT（存根，随迎击票）；守卫 A > 0。
   if (count_selectable_slaves() > 0) {
     era.printButton('迎击', 104);
   } else {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :259-265 [105] 能力值提升 —— CALL ABILITY_UP（存根，随能力票）。原作
+  // [105] 能力值提升 —— CALL ABILITY_UP（存根，随能力票）。原作
   // 判据整段被注释掉（`; IF A > 0` / `; ELSE` 两支均带 `;` 前缀失效），
   // 无条件渲染——照搬原作现状，不补一个原作自己都关掉的守卫。
   era.printButton('能力值提升', 105);
 
-  // :267-271 [106] 贩卖奴隶。B > 0 时显示按钮；B 只看
+  // [106] 贩卖奴隶。B > 0 时显示按钮；B 只看
   // CFLAG:0（是否达到出售资格），实际列表再排除濒死/影子/占用角色。
   const sellable_count = era
     .getAddedCharacters()
@@ -300,7 +293,7 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :272-273 [107] 购物 —— #395 置位、#399 起本体也是真身：BOUGHT = 1
+  // [107] 购物 —— #395 置位、#399 起本体也是真身：BOUGHT = 1
   // （分发在 usershop 的 107 分支），下一轮 @SHOW_SHOP 据此跳过主菜单、
   // 整屏画 ITEM_SHOP（BOUGHT ≥ 54 时画 ITEM_SHOP_TRAP，两个本体分别在
   // page/page-item-shop.js 与 page-shop-trap.js）。原作无条件渲染，照搬
@@ -308,7 +301,7 @@ function draw_main_menu() {
   // 教训）。
   era.printButton('购物', 107);
 
-  // :275-281 [108] 换装 —— CALL TAILOR_MAIN（存根，随换装票）；守卫
+  // [108] 换装 —— CALL TAILOR_MAIN（存根，随换装票）；守卫
   // A > 0 && FLAG:37 == 1（FLAG:37 未落表前未声明读值 undefined → || 0 →
   // 恒不成立，落表后随设定生效）。
   if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {
@@ -317,7 +310,7 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :282-283 [109] 侵略 —— 指令面板里第二个接通的真身入口：分发在
+  // [109] 侵略 —— 指令面板里第二个接通的真身入口：分发在
   // page-shop.js 的 usershop（#117 起 INVASION 真身 + BEGIN TURNEND 真转场）。
   // 原作无条件渲染（:283 前无 IF 守卫，对照 [100] 的 A > 0）——照搬，不发明
   // 可用性规则。形态同 [100]：原作 `PRINTLCD [109] 侵略` 是列排版文本 +
@@ -330,7 +323,7 @@ function draw_main_menu() {
   // 校验见 #130）。
   era.printButton('侵略', 109);
 
-  // :285-289 [110] 实验室 —— CALL SECRET_LABO（存根，随实验室票）；守卫
+  // [110] 实验室 —— CALL SECRET_LABO（存根，随实验室票）；守卫
   // TALENT:0:325 == 1（魔王的魔界知识，与 usershop 110 分支的分发守卫
   // 同源）。
   if ((era.get('talent:0:325') || 0) === 1) {
@@ -339,23 +332,23 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :290-292 [111] 设施·设备：肉便器或博物馆展品存在时才显示。
+  // [111] 设施·设备：肉便器或博物馆展品存在时才显示。
   if ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0) {
     era.printButton('设施·设备', 111);
   } else {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :298-299 [120] 召唤 —— CALL MONSTER_SHOP（存根，随怪物/召唤票）；
+  // [120] 召唤 —— CALL MONSTER_SHOP（存根，随怪物/召唤票）；
   // 无条件渲染。
   era.printButton('召唤', 120);
 
-  // :300-301 [199] 休息（回合结束）—— #395 起真身：内联文本 + FLAG:9 +=5
+  // [199] 休息（回合结束）—— #395 起真身：内联文本 + FLAG:9 +=5
   // （税金）+ BEGIN TURNEND，分发在 page-shop.js 的 usershop。原作无条件
   // 渲染，照搬——做完这一枚，引擎里第一次能把回合推过去（硬约束八）。
   era.printButton('休息', 199);
 
-  // :303 [200] 保存 / :306 [300] 读取 —— 指令面板里第三、四个接通的真身
+  // [200] 保存 / :306 [300] 读取 —— 指令面板里第三、四个接通的真身
   // 入口：分发在 page-shop.js 的 usershop（200 → save_game、300 →
   // load_game，#136 落地）。原作 `PRINTLCD [200] 保存` / `PRINTLCD [300]
   // 读取` 前均无 IF 守卫，无条件渲染，照搬（同 [109] 的处理，不发明可用性
@@ -368,15 +361,15 @@ function draw_main_menu() {
   era.printButton('保存', 200);
   era.printButton('读取', 300);
 
-  // :307-308 [777] 设定 —— CALL CONFIG（存根，随设定票）；无条件渲染。
+  // [777] 设定 —— CALL CONFIG（存根，随设定票）；无条件渲染。
   era.printButton('设定', 777);
 
-  // :309-311 [888] 通信 —— CALL MAOUNET（真身，#350）；无条件渲染——原作
+  // [888] 通信 —— CALL MAOUNET（真身，#350）；无条件渲染——原作
   // 与分发真身早已接通（#350），渲染侧此前从未画过按钮，跨作品数据交换
   // 入口在实机上因此不存在（同 [200]/[300] 的 #137 教训）。
   era.printButton('通信', 888);
 
-  // :320 底部双线
+  // 底部双线
   era.drawLine({ isSolid: true });
 }
 
@@ -492,16 +485,16 @@ function draw_have_traps() {
  * @returns {void}
  */
 function draw_dungeon_overview() {
-  // :432-433 头行读数：CFLAG:0:9（迷宫 Lv，魔王侧）、EXP:0:80（迷宫经验）、
+  // 头行读数：CFLAG:0:9（迷宫 Lv，魔王侧）、EXP:0:80（迷宫经验）、
   // FLAG:85（陷阱 Lv）、FLAG:60+1（勇者初期 Lv 的修正量 +1）
   era.print(
     `${FULL_WIDTH_SPACE}迷宫Lv： Lv${era.get('cflag:0:9') || 0} (经验值： ${era.get('exp:0:80') || 0})\u3000\u3000陷阱Lv：Lv${era.get('flag:85') || 0}\u3000\u3000现在的勇者初期Lv： Lv${(era.get('flag:60') || 0) + 1}`,
   );
-  // :434-438 统计桶清零 + 两个累计量
+  // 统计桶清零 + 两个累计量
   const temp = new Array(100).fill(0);
   let guard_count = 0; // L_近卫（EX_TALENT:x:1 的护卫计数）
   let slave_count = 0; // L_奴隶（非侵攻非9的在场计数）
-  // :441-467 逐角色统计（魔王 0 排除）
+  // 逐角色统计（魔王 0 排除）
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) {
       continue;
@@ -509,7 +502,7 @@ function draw_dungeon_overview() {
     const state = era.get(`cflag:${cid}:1`) || 0;
     if (state === 2 || state === 3) {
       if (state === 2) {
-        // :450-455 1 层以下且攻略度 0 → 「迷宫外」（TEMP:10）；否则按层计数
+        // 1 层以下且攻略度 0 → 「迷宫外」（TEMP:10）；否则按层计数
         const floor = era.get(`cflag:${cid}:501`) || 0;
         if (floor <= 1 && (era.get(`cflag:${cid}:502`) || 0) === 0) {
           temp[10] += 1;
@@ -519,28 +512,28 @@ function draw_dungeon_overview() {
         temp[97] += 1; // 勇者总数
       }
       if (state === 3) {
-        // :458-462 迎击按层计数（索引 +10 与勇者错开）
+        // 迎击按层计数（索引 +10 与勇者错开）
         temp[(era.get(`cflag:${cid}:501`) || 0) + 10] += 1;
         temp[96] += 1; // 迎击总数
       }
     }
-    // :465-466 近卫（EX_TALENT:x:1）与奴隶（非侵攻非 9）累计
+    // 近卫（EX_TALENT:x:1）与奴隶（非侵攻非 9）累计
     guard_count += (era.get(`ex_talent:${cid}:1`) || 0) > 0 ? 1 : 0;
     slave_count += state !== 2 && state !== 9 ? 1 : 0;
   }
-  // :471-569 逐层一览（Z 扫 100 个怪物槽，每 10 格一层；B/C 部下累计）
+  // 逐层一览（Z 扫 100 个怪物槽，每 10 格一层；B/C 部下累计）
   let total_minions = 0; // C（部下总数）
   for (let floor = 1; floor <= 10; floor += 1) {
-    // :509-511 B = 该层部下数（ITEM:(Z+100) 的 10 格和）
+    // B = 该层部下数（ITEM:(Z+100) 的 10 格和）
     let floor_minions = 0;
     for (let slot = 0; slot < 10; slot += 1) {
       floor_minions += era.get(`item:${(floor - 1) * 10 + slot + 100}`) || 0;
     }
     total_minions += floor_minions;
     if (floor !== 10) {
-      // :488-498 阶层按钮（[520+n]，USERSHOP → SHOW_FLOOR 的阶层信息入口）
+      // 阶层按钮（[520+n]，USERSHOP → SHOW_FLOOR 的阶层信息入口）
       era.printButton(`第${floor}阶层：`, floor + 520);
-      // :523-532 部下 N 只, 勇者：N 人, 迎击：N 人
+      // 部下 N 只, 勇者：N 人, 迎击：N 人
       const hero_count = temp[floor];
       const interceptor_count = temp[floor + 10];
       const fragments = [
@@ -555,7 +548,7 @@ function draw_dungeon_overview() {
           ...(interceptor_count >= 1 ? { color: '#64a0ff' } : {}),
         },
       ];
-      // :533-552 设施名（FLAG:(层+349)，500-507 的映射表）
+      // 设施名（FLAG:(层+349)，500-507 的映射表）
       const facility = era.get(`flag:${floor + 349}`) || 0;
       const facility_names = {
         500: '商店街\u3000',
@@ -572,7 +565,7 @@ function draw_dungeon_overview() {
       });
       era.print(fragments);
     } else {
-      // :556-558 近卫层：近卫兵 N 体（含 L_近卫）+ 迷宫外的勇者 N 人
+      // 近卫层：近卫兵 N 体（含 L_近卫）+ 迷宫外的勇者 N 人
       //（原文的两枚制表符以全角空格近似——span 渲染对 tab 无对齐语义）
       era.printButton('近卫兵：', floor + 520);
       era.print(
@@ -580,7 +573,7 @@ function draw_dungeon_overview() {
       );
     }
   }
-  // :570-575 空行 + 统计行（肉便器/展品读 FLAG:83/84）
+  // 空行 + 统计行（肉便器/展品读 FLAG:83/84）
   era.print(FULL_WIDTH_SPACE);
   era.print(
     ` 部下统计：${total_minions}只, 奴隶：${slave_count}人, 勇者：${temp[97]}人, 迎击：${temp[96]}人, 肉便器：${era.get('flag:83') || 0}个, 展品：${era.get('flag:84') || 0}个`,
@@ -595,11 +588,11 @@ function draw_dungeon_overview() {
  * @returns {void}
  */
 function draw_dungeon_daily() {
-  // :584-586 威望钳上界
+  // 威望钳上界
   if (era_exflag.prestige >= 100) {
     era_exflag.prestige = 100;
   }
-  // :589-599 五档评语（负值无评语——原作 ELSEIF 链未覆盖，照搬）
+  // 五档评语（负值无评语——原作 ELSEIF 链未覆盖，照搬）
   let grade = '';
   const prestige = era_exflag.prestige;
   if (prestige <= 20 && prestige >= 0) {
@@ -614,7 +607,7 @@ function draw_dungeon_daily() {
     grade = '【广受爱戴】';
   }
   era.print(`${FULL_WIDTH_SPACE}威望值：${prestige} ${grade}`);
-  // :601 CALL DISPLAY_DUNGEON_DAILY——#179（H10）起真身
+  // CALL DISPLAY_DUNGEON_DAILY——#179（H10）起真身
   //（page/page-dungeon-daily.js；随机的三次消费见该文件头）
   display_dungeon_daily();
 }

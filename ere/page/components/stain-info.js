@@ -1,8 +1,6 @@
 /**
  * @file 污渍一览（@STAIN_INFO）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB @STAIN_INFO（:1435-1556）
- *
  * 主人／调教对象／助手三方各六行（嘴巴/双手/阴茎/私处/肛门/乳房），每行按
  * STAIN 的位域标出沾了什么。
  *
@@ -80,7 +78,7 @@ function print_stain_block(head, cid) {
  * @returns {Promise<number>} 源 :1553-1556 RETURN 1
  */
 async function stain_info() {
-  // :1437-1438 换手（TARGET↔TARGET:1、ASSI↔ASSI:1）
+  // 换手（TARGET↔TARGET:1、ASSI↔ASSI:1）
   const swap = () => {
     const target = era_flag.target;
     era_flag.target = era_flag.target_record;
@@ -91,17 +89,17 @@ async function stain_info() {
   };
   swap();
 
-  // :1440-1474 主人（MASTER 恒 0，不受换手影响）
+  // 主人（MASTER 恒 0，不受换手影响）
   print_stain_block(chara_name(0), 0);
-  // :1476-1511 调教对象（换手后的 TARGET）
+  // 调教对象（换手后的 TARGET）
   print_stain_block(chara_callname(era_flag.target), era_flag.target);
-  // :1513-1550 助手（ASSI < 0 时整段跳过）
+  // 助手（ASSI < 0 时整段跳过）
   if (era_flag.assi >= 0) {
     print_stain_block(chara_callname(era_flag.assi), era_flag.assi);
   }
 
-  swap(); // :1552-1553
-  await era.waitAnyKey(); // :1551-1554 WAIT
+  swap();
+  await era.waitAnyKey(); // WAIT
   return 1;
 }
 

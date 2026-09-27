@@ -1,16 +1,6 @@
 /**
  * @file 单挑·迎击与潜入（issue #175，阶段 3 H6）：勇者与元勇者的战斗。
  *
- * 源: target/ERB/迷宮/DUNGEON_BATLLE2.ERB  @DUNGEON_BATTLE2_PARTY（:2-510，
- *       主流程）、@SELECT_SLAVE（:513-573）、@SPEED_PLUS2（:577-632）、
- *       @DUEL_ATTACK（:637-791，角色对角色的攻击）、
- *       @SLAVE_MONSTER_ATTACK_TO_ENEMY（:794-842）、
- *       @SLAVE_MONSTER_ATTACK_TO_SLAVE（:846-894）、
- *       @ATTACK_CHARA_EXTRA_DMG_BATTLE2（:897-993）、@DEATH_CHECK2
- *       （:996-1055）、@DUNGEON_SPY（:1058-1200，潜入工作）、@SPY_BATTLE
- *       （:1204-1298）
- *     target/ERB/其他/TATOO.ERB  @GET_TATOO、@TATOO_LOCATE_NAME
- *
  * 与 DUNGEON_BATLLE（ere/dungeon/dungeon-battle.js）是两套战斗：那边的
  * @DUNGEON_PARTY_BATTLE 是侵攻勇者 vs 迷宫怪物，这边是**迎击**（勇者 vs
  * 元勇者/奴隶，@DUNGEON 迎击臂 CFLAG:1 == 3 时调用）。防御怪物列（E:0-299）
@@ -118,7 +108,7 @@ function tatoo_locate_name(locate) {
  */
 function select_slave(arg0, arg1) {
   let member = 1;
-  // :536-540 仲間怪物（奴隶队伍扩展被注释掉，结构保留）
+  // 仲間怪物（奴隶队伍扩展被注释掉，结构保留）
   for (let monid = 0; monid < 300; monid += 1) {
     monid += 99;
     if (e_get(monid) > 0) {
@@ -126,12 +116,12 @@ function select_slave(arg0, arg1) {
     }
   }
 
-  const rest = arg1 % member; // :543
+  const rest = arg1 % member;
   if (rest === 0) {
     return arg0;
   }
   if (rest === 1) {
-    // :548-555 仲間怪物（全滅時も考える）
+    // 仲間怪物（全滅時も考える）
     for (let monid = 0; monid < 300; monid += 1) {
       monid += 99;
       if (e_get(monid) > 0) {
@@ -154,7 +144,7 @@ function select_slave(arg0, arg1) {
       }
     }
   }
-  return arg0; // :572 念のため
+  return arg0; // 念のため
 }
 
 /**
@@ -168,7 +158,7 @@ function speed_plus2(a, b, rand) {
   let speed_x = rand(6);
   let speed_y = rand(6);
 
-  // :585-609 双方同款素质（奇袭 243 / 恶魔翅膀 245 / 迅速 258 / 霍比特
+  // 双方同款素质（奇袭 243 / 恶魔翅膀 245 / 迅速 258 / 霍比特
   // 314==10 / 矮人 314==11）
   for (const [cid, side] of [
     [a, 'x'],
@@ -186,10 +176,10 @@ function speed_plus2(a, b, rand) {
     }
   }
 
-  // :610-618 奴隶的装备（速度UP 3 / 速度減 12）
+  // 奴隶的装备（速度UP 3 / 速度減 12）
   speed_x += equip_check(a, 3);
   speed_x -= equip_check(a, 12);
-  // :620-630 原作换手全局 A 查勇者装备——ere 侧直接对 b 查
+  // 原作换手全局 A 查勇者装备——ere 侧直接对 b 查
   speed_y += equip_check(b, 3);
   speed_y -= equip_check(b, 12);
 
@@ -218,7 +208,7 @@ function attack_chara_extra_dmg_battle2(
   rand,
 ) {
   const settings = era.get('flag:5') || 0;
-  // :911-920 ミス処理（失手率 W:11 + 忍术回避 15）
+  // ミス処理（失手率 W:11 + 忍术回避 15）
   let hit = w.失手率;
   if ((era.get(`talent:${arg2}:251`) || 0) === 1) {
     hit += 15;
@@ -230,31 +220,31 @@ function attack_chara_extra_dmg_battle2(
     return 0;
   }
 
-  // :922-925 気力回復（W:12，钳上限）
+  // 気力回復（W:12，钳上限）
   const max_wp = era.get(`maxbase:${arg0}:1`) || 0;
   chara(arg0).dungeon.气力 = Math.min(
     chara(arg0).dungeon.气力 + w.气力回复,
     max_wp,
   );
 
-  // :927-930 DEF = 相手の防御力（单臂 IF，无 ELSE——条件假时 DEF 保持入参
+  // DEF = 相手の防御力（单臂 IF，无 ELSE——条件假时 DEF 保持入参
   // dmg 计算前的 0 初值语义，1:1 保留）
   let def = 0;
   if (chara(arg2).dungeon.防御力 < chara(arg0).dungeon.攻击力) {
     def = chara(arg2).dungeon.防御力;
   }
 
-  // :932-935 防御値の減少（W:14 防御伤害%）
+  // 防御値の減少（W:14 防御伤害%）
   const def_loss = Math.floor(
     Math.floor(chara(arg2).dungeon.防御力 / 3) * (w.防御伤害 / 100),
   );
   chara(arg2).dungeon.防御力 -= def_loss;
 
-  // :937-940 DMG / MDMG
+  // DMG / MDMG
   dmg = (chara(arg0).dungeon.攻击力 - def) * 2;
   let mdmg = dmg;
 
-  // :942-951 ダメージ変動（弹药）
+  // ダメージ変動（弹药）
   const bullets = era.get(`cflag:${arg0}:571`) || 0;
   if (bullets > 0) {
     dmg = Math.floor((dmg * w.伤害强化) / 100);
@@ -266,13 +256,13 @@ function attack_chara_extra_dmg_battle2(
     }
     return 0;
   }
-  // :952 MDMG = MDMG * W:16 / 100（气力伤害比例）
+  // MDMG = MDMG * W:16 / 100（气力伤害比例）
   mdmg = Math.floor((mdmg * w.气力伤害) / 100);
 
-  // :954 CFLAG:571 -= W:10
+  // CFLAG:571 -= W:10
   era.set(`cflag:${arg0}:571`, bullets - w.弹药消耗);
 
-  // :956-962 連続攻撃処理（W:13）
+  // 連続攻撃処理（W:13）
   if (rand(100) - w.连击率 < 0) {
     if ((settings & 32) !== 0) {
       era.print(`${atktitle}发出了迅捷的2连击！！`);
@@ -284,7 +274,7 @@ function attack_chara_extra_dmg_battle2(
     );
   }
 
-  // :964-969 先手かつ奇襲なら防御値減少（:967 原作漏译「奇襲成功！！」，
+  // 先手かつ奇襲なら防御値減少（:967 原作漏译「奇襲成功！！」，
   // 按 #60 归一简体，文件头）
   if (arg1 === 0 && (era.get(`talent:${arg0}:243`) || 0) === 1) {
     if ((settings & 32) !== 0) {
@@ -293,7 +283,7 @@ function attack_chara_extra_dmg_battle2(
     chara(arg2).dungeon.防御力 = Math.floor(chara(arg2).dungeon.防御力 / 2);
   }
 
-  // :971-983 追加効果（毒：W:6 位 0 且 RAND:2 → CFLAG:503 位 4）
+  // 追加効果（毒：W:6 位 0 且 RAND:2 → CFLAG:503 位 4）
   if (w.特殊 & 1 && rand(2)) {
     if ((era.get(`cflag:${arg2}:503`) || 0) & 16) {
       if ((settings & 32) !== 0) {
@@ -308,12 +298,12 @@ function attack_chara_extra_dmg_battle2(
     }
   }
 
-  // :985-989 耐性処理（対人では一律 1.2 倍：火/冷/电任一）
+  // 耐性処理（対人では一律 1.2 倍：火/冷/电任一）
   if (w.特殊 & 2 || w.特殊 & 4 || w.特殊 & 8) {
     dmg += Math.floor(dmg / 5);
   }
 
-  // :991 気力ダメージ
+  // 気力ダメージ
   chara(arg2).dungeon.气力 -= mdmg;
 
   return dmg;
@@ -331,10 +321,10 @@ function attack_chara_extra_dmg_battle2(
  */
 async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
-  // :661-664 一応代入（A/B/TARGET）
+  // 一応代入（A/B/TARGET）
   era_flag.target = arg0;
 
-  // :668-672 肛门虫（TALENT:193）自动调教三连（:670 CALL COM13_AUTO——
+  // 肛门虫（TALENT:193）自动调教三连（:670 CALL COM13_AUTO——
   // 真身 ere/event/event-autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await battle.before_autotrain();
@@ -343,22 +333,22 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     await battle.source_check_auto();
   }
 
-  // :674-681 X:1 = 3/4，但后续没有读者。
+  // X:1 = 3/4，但后续没有读者。
   const reverse_ab = arg3 === 0 || arg3 === 2;
-  // :675-681 原作在 X:1 = 3 时交换 A/B。
+  // 原作在 X:1 = 3 时交换 A/B。
   const magic_a = reverse_ab ? arg2 : arg0;
   const magic_b = reverse_ab ? arg0 : arg2;
-  // :683-686 CALL MAGIC 省略形参，TARGET_TYPE 按 ERB 规则取 0。
+  // CALL MAGIC 省略形参，TARGET_TYPE 按 ERB 规则取 0。
   if ((await battle.magic(0, magic_a, magic_b, rand, move_ctx)) === 999) {
     return 999;
   }
 
-  // :688-691 精英部下的特技
+  // 精英部下的特技
   if ((await monster_skill_mod.slave_monster_skill(arg2, arg0, rand)) === 999) {
     return 999;
   }
 
-  // :693-701 称谓
+  // 称谓
   let atktitle;
   let punct = '';
   if (arg3 === 0) {
@@ -370,15 +360,15 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     punct = '·';
   }
 
-  // :703-704 戦闘前発動スキル（行内标签）
+  // 戦闘前発動スキル（行内标签）
   const skill_tag = battle.skill_extra_bonus(arg0, rand);
 
-  // :709-711 セリフ（口上存根，dungeon-battle.js 单点登记）
+  // セリフ（口上存根，dungeon-battle.js 单点登记）
   if ((settings & 32) !== 0) {
     await battle.attack_koujo(arg0);
   }
 
-  // :713-718 先手かつ奇袭：相手の防御値半減（行内 PRINT）
+  // 先手かつ奇袭：相手の防御値半減（行内 PRINT）
   let surprise_tag = '';
   if (arg1 === 0 && (era.get(`talent:${arg0}:243`) || 0) === 1) {
     if ((settings & 32) !== 0) {
@@ -387,14 +377,14 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     chara(arg2).dungeon.防御力 = Math.floor(chara(arg2).dungeon.防御力 / 2);
   }
 
-  // :720-726 武器（素手 → 40 号剑）
+  // 武器（素手 → 40 号剑）
   const w = { 存储编号: era.get(`cflag:${arg0}:550`) || 0 };
   if (w.存储编号 <= 0) {
     w.存储编号 = 40;
     chara(arg0).chara.武装 = 40; // CFLAG:550（跨域写走门面，#71/#72）
   }
 
-  // :728-731 攻击演出（行内拼接）。原作 CALL PRINT_EQUIPTYPE_WEAPON
+  // 攻击演出（行内拼接）。原作 CALL PRINT_EQUIPTYPE_WEAPON
   // （其他/EQUIP.ERB:784-790）自行从 W:0 解码前缀/识别号/強度——此处
   // equip_database 尚未执行、w 三段还是 undefined，按同一解码取值
   const show = decode_equip_no(w.存储编号);
@@ -433,11 +423,11 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     );
   }
 
-  // :734-735 查表与强化（原作对 ARG:2 调 POWERUP——1:1 保留）
+  // 查表与强化（原作对 ARG:2 调 POWERUP——1:1 保留）
   equip_database(w);
   equip_powerup(w, arg2);
 
-  // :737-755 奴隷vs潜入中奴隷なら攻撃をサボる
+  // 奴隷vs潜入中奴隷なら攻撃をサボる
   if (chara(arg0).invasion.状态 === 3 && chara(arg2).invasion.状态 === 3) {
     const roll = rand(3);
     if (roll === 0) {
@@ -461,11 +451,11 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     }
   }
 
-  // :761 DMG = (攻 - 防) × 2（BATTLE2 版的初值，随后被 EXTRA_DMG_BATTLE2
+  // DMG = (攻 - 防) × 2（BATTLE2 版的初值，随后被 EXTRA_DMG_BATTLE2
   // 重算——1:1 保留两次计算）
   let dmg = (chara(arg0).dungeon.攻击力 - chara(arg2).dungeon.防御力) * 2;
 
-  // :763-764 対人補正
+  // 対人補正
   dmg = attack_chara_extra_dmg_battle2(
     arg0,
     dmg,
@@ -476,10 +466,10 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     rand,
   );
 
-  // :766-767 キャラ補正（BATLLE 版共用）
+  // キャラ補正（BATLLE 版共用）
   dmg = battle.attack_chara_extra_dmg(arg0, dmg, arg1);
 
-  // :769-771 防御側补正（HP 扣减在此）
+  // 防御側补正（HP 扣减在此）
   dmg = battle.defence_chara_extra_dmg(arg2, dmg, rand);
 
   if (dmg > 0) {
@@ -488,7 +478,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
         `${surprise_tag}${atktitle}${punct}${name_of(arg0)}的攻击令${name_of(arg2)}受到${dmg}点伤害！`,
       );
     }
-    // :778 経験値
+    // 経験値
     era.set(
       `exp:${arg0}:80`,
       (era.get(`exp:${arg0}:80`) || 0) + (era.get(`cflag:${arg2}:9`) || 0),
@@ -519,7 +509,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
  */
 async function slave_monster_attack_to_enemy(arg0, arg1) {
   const settings = era.get('flag:5') || 0;
-  // :803-807 配下がいるかどうか（第 3 列 E:300）
+  // 配下がいるかどうか（第 3 列 E:300）
   if ((era.get(`cflag:${arg0}:570`) || 0) < 100) {
     return 0;
   }
@@ -527,13 +517,13 @@ async function slave_monster_attack_to_enemy(arg0, arg1) {
     return 0;
   }
 
-  // :809-814 怪物側の攻撃力（魔法补正 ×2）
+  // 怪物側の攻撃力（魔法补正 ×2）
   let damage = (era.get(`cflag:${arg0}:9`) || 0) * (e_get(302) + 1);
   if (e_get(306) !== 0) {
     damage *= 2;
   }
 
-  // :816-819 演出
+  // 演出
   if ((settings & 32) !== 0) {
     era.print(
       `服从于奴隶的${era.get(`itemname:${e_get(300)}`) ?? ''}发动了攻击！！`,
@@ -541,7 +531,7 @@ async function slave_monster_attack_to_enemy(arg0, arg1) {
   }
 
   if (chara(arg1).dungeon.防御力 < damage) {
-    // :821-833 防御を貫く
+    // 防御を貫く
     damage -= chara(arg1).dungeon.防御力;
     chara(arg1).dungeon.防御力 = Math.floor(
       Math.floor(chara(arg1).dungeon.防御力 / 3) * 2,
@@ -564,7 +554,7 @@ async function slave_monster_attack_to_enemy(arg0, arg1) {
     era.print(`勇者${name_of(arg1)}拼命忍受着怪物的攻击………`);
   }
 
-  // :837-838 防御衰减
+  // 防御衰减
   chara(arg1).dungeon.防御力 = Math.floor(
     Math.floor(chara(arg1).dungeon.防御力 / 3) * 2,
   );
@@ -583,7 +573,7 @@ async function slave_monster_attack_to_enemy(arg0, arg1) {
  */
 async function slave_monster_attack_to_slave(arg0, arg1) {
   const settings = era.get('flag:5') || 0;
-  // :855-859 配下がいるかどうか（第 4 列 E:400）
+  // 配下がいるかどうか（第 4 列 E:400）
   if ((era.get(`cflag:${arg1}:570`) || 0) < 100) {
     return 0;
   }
@@ -591,13 +581,13 @@ async function slave_monster_attack_to_slave(arg0, arg1) {
     return 0;
   }
 
-  // :861-866 怪物側の攻撃力
+  // 怪物側の攻撃力
   let damage = (era.get(`cflag:${arg1}:9`) || 0) * (e_get(402) + 1);
   if (e_get(406) !== 0) {
     damage *= 2;
   }
 
-  // :868-871 演出
+  // 演出
   if ((settings & 32) !== 0) {
     era.print(
       `服从于勇者的${era.get(`itemname:${e_get(400)}`) ?? ''}发动了攻击！！`,
@@ -605,7 +595,7 @@ async function slave_monster_attack_to_slave(arg0, arg1) {
   }
 
   if (chara(arg0).dungeon.防御力 < damage) {
-    // :873-885 防御を貫く
+    // 防御を貫く
     damage -= chara(arg0).dungeon.防御力;
     chara(arg0).dungeon.防御力 = Math.floor(
       Math.floor(chara(arg0).dungeon.防御力 / 3) * 2,
@@ -628,7 +618,7 @@ async function slave_monster_attack_to_slave(arg0, arg1) {
     era.print(`${name_of(arg0)}拼命忍受着怪物的攻击………`);
   }
 
-  // :889-890 防御衰减
+  // 防御衰减
   chara(arg0).dungeon.防御力 = Math.floor(
     Math.floor(chara(arg0).dungeon.防御力 / 3) * 2,
   );
@@ -646,7 +636,7 @@ async function slave_monster_attack_to_slave(arg0, arg1) {
  * @returns {number} 原作 RETURN：0 = 继续 / 1 = 魔王侧退场 / 2 = 勇者退场
  */
 function death_check2(arg0, arg1) {
-  // :1001-1014 勇者死亡判定
+  // 勇者死亡判定
   if (chara(arg1).dungeon.体力 <= 0) {
     era.print(`${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。`);
     chara(arg1).invasion.状态 = 0;
@@ -663,7 +653,7 @@ function death_check2(arg0, arg1) {
     return 2;
   }
 
-  // :1016-1037 魔王側（狂王线 FLAG:5 & 128：退场状态 9 = 成为狂王的东西）
+  // 魔王側（狂王线 FLAG:5 & 128：退场状态 9 = 成为狂王的东西）
   const crazy = (era.get('flag:5') || 0) & 128;
   if (chara(arg0).dungeon.体力 <= 0 && crazy) {
     era.print(`${name_of(arg0)}最终在潮湿的地下城中用尽了最后的气力。`);
@@ -696,7 +686,7 @@ function death_check2(arg0, arg1) {
     return 1;
   }
 
-  // :1039-1053 通常線（退场状态 0）
+  // 通常線（退场状态 0）
   if (chara(arg0).dungeon.体力 <= 0) {
     era.print(`${name_of(arg0)}最终在潮湿的地下城中用尽了最后的气力。`);
     chara(arg0).invasion.状态 = 0;
@@ -733,7 +723,7 @@ async function spy_battle(arg0, arg1, rand) {
   const technique = era.get(`abl:${arg0}:12`) || 0; // ABL:12 技巧
 
   if (rand(3) === 0) {
-    // :1219-1231 謎の薬投与
+    // 謎の薬投与
     if ((settings & 32) !== 0) {
       era.print(`${name_of(arg0)}对${name_of(arg1)}谎称说有去除疲劳的药，`);
       era.print(`给${battle.she(arg1)}煎服了桃色的草……`);
@@ -748,7 +738,7 @@ async function spy_battle(arg0, arg1, rand) {
       (era.get(`juel:${arg1}:5`) || 0) + 10 + technique * 8,
     );
   } else if (rand(2) === 0) {
-    // :1233-1260 マッサージ
+    // マッサージ
     const bi =
       (era.get(`talent:${arg1}:81`) || 0) !== 0 ||
       (era.get(`abl:${arg1}:22`) || 0) > 0; // 双性恋·百合气质
@@ -795,7 +785,7 @@ async function spy_battle(arg0, arg1, rand) {
       );
     }
   } else {
-    // :1263-1273 下剤投与
+    // 下剤投与
     if ((settings & 32) !== 0) {
       era.print(`${name_of(arg0)}在${name_of(arg1)}的饭菜里下了泻药，`);
       era.print(`${name_of(arg1)}吃坏了肚子，蹲在地下城的角落里额头冒汗……`);
@@ -806,13 +796,13 @@ async function spy_battle(arg0, arg1, rand) {
     kdmg += 1;
   }
 
-  // :1276-1280 [施虐狂]（TALENT:83）1.2 倍
+  // [施虐狂]（TALENT:83）1.2 倍
   if ((era.get(`talent:${arg0}:83`) || 0) !== 0) {
     hdmg = Math.floor((hdmg * 120) / 100);
     mdmg = Math.floor((mdmg * 120) / 100);
   }
 
-  // :1282-1283 善恶值を負の値にする
+  // 善恶值を負の値にする
   kdmg *= -1;
 
   if ((settings & 32) !== 0) {
@@ -820,11 +810,11 @@ async function spy_battle(arg0, arg1, rand) {
     era.print(`（善良值减少了:${kdmg}）`);
   }
 
-  // :1290-1291 ダメージ
+  // ダメージ
   chara(arg1).dungeon.体力 -= hdmg;
   chara(arg1).dungeon.气力 -= mdmg;
 
-  // :1293 CALL KARMA, ARG:1, KDMG
+  // CALL KARMA, ARG:1, KDMG
   const { karma } = require('#/dungeon/dungeon');
   karma(arg1, kdmg);
 
@@ -851,7 +841,7 @@ async function dungeon_spy(arg0, rand) {
     return 0;
   }
 
-  // :1073-1083 開場演出（コンフィグ「戦闘ログでのSKIP中断」位 9）
+  // 開場演出（コンフィグ「戦闘ログでのSKIP中断」位 9）
   if ((settings & 32) !== 0) {
     era.drawLine();
     era.print('*魔爪悄悄地伸向了勇者的队伍……*');
@@ -953,7 +943,7 @@ async function dungeon_spy(arg0, rand) {
       era.print('的样子，觉得正是时机，拔出了武器！');
       era.print('面对一脸茫然的勇者，');
       era.print(`${name_of(arg0)}`);
-      // :1131-1134 刺青炫耀。标签固定取第一项而非随机抽中项，是原作行为。
+      // 刺青炫耀。标签固定取第一项而非随机抽中项，是原作行为。
       const tatoos = get_tatoo(arg0);
       if (tatoos.length > 0 && (tatoos[0] !== 10 || tatoos.length >= 2)) {
         const picked =
@@ -979,23 +969,23 @@ async function dungeon_spy(arg0, rand) {
       era.print('拘束起来了……');
       era.println();
       era.print(`${name_of(leader)}被抓住了……`);
-      // :1148-1150 賞金（MONEY / EX_FLAG:4444 镜像）
+      // 賞金（MONEY / EX_FLAG:4444 镜像）
       const gain = 100 * (era.get(`cflag:${leader}:9`) || 0);
       era_flag.money += gain;
       era_exflag.legit_money += gain;
       era.print(`获得了${gain}G！`);
-      // :1151-1153 勇者討伐数
+      // 勇者討伐数
       era.set(`cflag:${arg0}:505`, (era.get(`cflag:${arg0}:505`) || 0) + 1);
       if (enemy !== 0 && (era.get(`cflag:${enemy}:500`) || 0) === 4) {
         era.set(`cflag:${enemy}:505`, (era.get(`cflag:${enemy}:505`) || 0) + 1);
       }
-      // :1154-1157 陷落处理
+      // 陷落处理
       chara(leader).invasion.新人 = 1; // CFLAG:506（门面）
       chara(leader).invasion.回城标志 = 0; // CFLAG:507（门面）
       chara(leader).invasion.状态 = 0;
       party_del(leader);
       era.println(); // 真空行：1150 行的 PRINTFORMW 已收尾（1158 行的 PRINTL 落在空行上）
-      // :1159-1162 要让其回来吗
+      // 要让其回来吗
       era.print(`要让${name_of(arg0)}`);
       if (enemy !== 0 && (era.get(`cflag:${enemy}:500`) || 0) === 4) {
         era.print(`和${name_of(enemy)}`);
@@ -1160,7 +1150,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     } else if ((era.get(`talent:${atker}:252`) || 0) === 1) {
       await duel_attack(atker, 2, defer, 1, rand_n, move_ctx);
     }
-    break; // :136
+    break;
   }
 
   // 勇者側の先制（:141-170）
@@ -1246,7 +1236,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     era_flag.target = atker; // A = RESULT
 
     if (atker >= 99) {
-      // :347-391 怪物が選択された場合、怪物戦闘と同じ処理になる
+      // 怪物が選択された場合、怪物戦闘と同じ処理になる
       atker = defer;
       era_flag.target = defer; // A = DEFER = 勇者
       // 先攻後攻決定
@@ -1378,7 +1368,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
       }
     }
 
-    // :461-468 循环尾的再判定
+    // 循环尾的再判定
     const dc = death_check2(atker, defer);
     if (dc === 2) {
       if ((settings & 1) !== 0) {

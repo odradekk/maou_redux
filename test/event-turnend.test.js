@@ -560,10 +560,10 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   const writes = fixture.var_writes;
   // 窗口开前的全部写入（逐条，含 #PRI 档与普通档头部）
   assert.deepEqual(writes.slice(0, 11), [
-    // :14 FOR TARGET,0,CHARANUM 写全局 TARGET（#401 起循环体内显式写回，
+    // FOR TARGET,0,CHARANUM 写全局 TARGET（#401 起循环体内显式写回，
     // 否则妊娠判定会读到上个角色的残留）
     { name: 'flag:10005', value: 0 },
-    // :23 IN_VAGINA_ALL 的九连调：TARGET = 0 落在主人位上，六组带守卫的
+    // IN_VAGINA_ALL 的九连调：TARGET = 0 落在主人位上，六组带守卫的
     // 各自早退，三组无守卫的（T_TO_M/KYOUOU_TO_M/SYOKU_TO_M）进
     // NAKADASHI_CHECK——本世界 FLAG:5 未开妊娠功能，走「清池后返回」支
     // （:204-210），故是三笔清池（kind 3 → CFLAG:104、kind 6 → 107、
@@ -571,9 +571,9 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'cflag:0:104', value: 0 },
     { name: 'cflag:0:107', value: 0 },
     { name: 'cflag:0:108', value: 0 },
-    // :26 CONCEPTION_CHECK_ALL：无妊娠相手可落定，零写入
-    { name: 'flag:10005', value: 0 }, // :29 TARGET = LOCAL（原值 0）
-    { name: 'flag:0', value: 0 }, // :54 休憩标志复位
+    // CONCEPTION_CHECK_ALL：无妊娠相手可落定，零写入
+    { name: 'flag:10005', value: 0 }, // TARGET = LOCAL（原值 0）
+    { name: 'flag:0', value: 0 }, // 休憩标志复位
     { name: 'flag:10003', value: 1 }, // TIME 0→1
     { name: 'flag:10005', value: -1 }, // #PRI 尾部 TARGET = -1
     { name: 'flag:10006', value: -1 }, // ASSI = -1
@@ -589,8 +589,8 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'base:0:4', value: 0 }, // 触手射精槽（:62）
     { name: 'deltabase:0:0', value: 0 }, // LOSEBASE:0 = 0（:64；负值通道）
     { name: 'deltabase:0:1', value: 0 }, // LOSEBASE:1 = 0（:65）
-    ...zero_span('tflag:', 200), // :68-70 REPEAT 200
-    ...zero_span('palam:0:', 17), // :73-75 FOR LOCAL,0,17
+    ...zero_span('tflag:', 200), // REPEAT 200
+    ...zero_span('palam:0:', 17), // FOR LOCAL,0,17
     ...zero_span('source:0:', 17), // BEFORE_AUTOTRAIN（:95-97）
     ...zero_span('delta:0:', 17), // BEFORE_AUTOTRAIN（:100-103）
     { name: 'tflag:402', value: 0 }, // 死斗场收入清零（:86）
@@ -615,7 +615,7 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'base:0:1', value: 1050 }, // 魔王气力 +1000
     { name: 'base:0:1', value: 300 }, // 超上限钳回 MAXBASE:0:1
     { name: 'flag:10005', value: -1 }, // TARGET = TARGET_POOL（暂存值）
-    // :740 AUTOTRAIN（#508 起真身）自身的指针簿记：PLAYER/ASSI 置调教态、
+    // AUTOTRAIN（#508 起真身）自身的指针簿记：PLAYER/ASSI 置调教态、
     // 逐角色指 TARGET（本世界 getAllCharacters 只有 0 号），收尾还原
     { name: 'flag:10008', value: 0 },
     { name: 'flag:10006', value: -1 },
@@ -1060,7 +1060,7 @@ test('#401 妊娠判定接入：IN_VAGINA_ALL/CONCEPTION_CHECK_ALL 逐角色跑�
   );
   assert.equal(fixture.store.get('cflag:0:102') ?? 0, 0, '角色 0 未被波及');
   // 循环内逐角色写回 TARGET（原作 FOR TARGET 就是写全局），循环后 :29 还原；
-  // :134 再清成 -1。这条序列同时钉住「没有写回」的退化（只消一次写）
+  // 再清成 -1。这条序列同时钉住「没有写回」的退化（只消一次写）
   assert.deepEqual(
     fixture.var_writes
       .filter((w) => w.name === 'flag:10005')
@@ -1108,10 +1108,10 @@ test('#401 妊娠判定接入：第二组（卖春/狂王兽奸/NTR）只在日�
       .slice(0, 4)
       .map((w) => [w.name, w.value]),
     [
-      ['cflag:31:102', 4], // :64 IN_VAGINA_EXTRA 命中（妊娠相手 = 4 客）
-      ['cflag:31:105', 0], // :274 清池
-      ['cflag:31:110', 10], // :65 CONCEPTION_CHECK_EXTRA：DAY(0) + 10 + 0
-      ['cflag:31:111', -1], // :385 卖春来源的孩子父亲码 -1
+      ['cflag:31:102', 4], // IN_VAGINA_EXTRA 命中（妊娠相手 = 4 客）
+      ['cflag:31:105', 0], // 清池
+      ['cflag:31:110', 10], // CONCEPTION_CHECK_EXTRA：DAY(0) + 10 + 0
+      ['cflag:31:111', -1], // 卖春来源的孩子父亲码 -1
     ],
     '第二组的六件按 :64-71 的顺序执行',
   );
@@ -1157,12 +1157,12 @@ test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接线后按原作拼「发
   }
 
   const texts = fixture.text_lines();
-  // :536-545 一行拼成：名字 + 美丽的 + 发色形容词 + 的 + 半长句
+  // 一行拼成：名字 + 美丽的 + 发色形容词 + 的 + 半长句
   assert(
     texts.includes('角色31美丽的红色的头发半长，到肩膀了。'),
     '头发半长播报必须含 GET_LOOK_INFO("发色(颜色)") 的「红色的」段',
   );
-  // :552-567 同理一行拼成：名字 + 艳丽 + 的阴阜上， + 发色 + 的 + 汗毛句
+  // 同理一行拼成：名字 + 艳丽 + 的阴阜上， + 发色 + 的 + 汗毛句
   assert(
     texts.includes('角色31艳丽的阴阜上，红色的汗毛长出来了。'),
     '阴毛播报必须按原作拼成单行（含发色段，不再拆两行/省「的」）',
@@ -1484,7 +1484,7 @@ test(
 test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAMEOVER', async () => {
   const { fixture, debug_check } = setup_debug();
   fixture.store.set('cflag:0:9', 5000);
-  fixture.set_inputs(0); // :330 INPUT
+  fixture.set_inputs(0); // INPUT
 
   await assert.rejects(() => debug_check(seq([])), /quit/, ':331 QUIT');
   assert.equal(fixture.store.get('exflag:2804'), 0, ':323 触发位复位');

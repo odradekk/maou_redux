@@ -1,9 +1,6 @@
 /**
  * @file 能力提升退出时的欲情/坦率检查共用子程序。
  *
- * 源: target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB
- *     @YOKUBO_UP_CHECK（:1092-1111）/@JUJUN_UP_CHECK（:1113-1123）
- *
  * JUEL_CHECK 的 $LABEL_EXIT（system/train/juel-check.js）与 ABILITY_UP_CORE
  * 的 RESULT===999 分支（page/page-ability-up.js）都会调用，因此不能各自
  * 复制或打桩。

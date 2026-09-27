@@ -2,12 +2,6 @@
  * @file 2D 地下城模式的野外推进（issue #181，阶段 3 H12）：
  * LABO_DUNGEON_MAP.ERB 五函数。
  *
- * 源: target/ERB/迷宮/LABO_DUNGEON_MAP.ERB  @DUNGEON_MAP（:5-78，野外
- *       推进主流程）、@UNIT_MOVE（:83-235，单位移动）、
- *       @CONFIG_LABO_MAP_STATUS（:238-247，模式状态显示）、
- *       @CONFIG_LABO_MAP_SETTING（:250-270，模式设置菜单）、@LABO_MAP_SET
- *       （:273-281，2D 地图初始化）
- *
  * 源文件头注（:1-3 逐字）：「フィールドでの戦闘；水面下での開発に戻しました；
  * この部分のコードが欲しいひとは0.310以前のバージョンを参照してください」
  * ——野外战斗被作者撤回开发：**@DUNGEON_BATTLE 与 @DUNGEON_BATTLE2 全库无
@@ -49,7 +43,7 @@ const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { use_ex_item } = require('#/dungeon/dungeon');
 const { ending_2 } = require('#/event/event-ending');
-const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch'); // :29-30（真身 #184；模块对象引用，测试可替换）
+const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch'); // （真身 #184；模块对象引用，测试可替换）
 const { da_get, db_set, geo_test } = require('#/dungeon/labo');
 const { unit_check, mon_check, set_vil } = require('#/dungeon/labo-map');
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 同款） */
@@ -83,7 +77,7 @@ function default_rand(n) {
 async function unit_move(a, walk20, rand) {
   const rand_n = rand ?? default_rand;
 
-  // :85-89 移动量——撤退中（CFLAG:507 != 0）反向
+  // 移动量——撤退中（CFLAG:507 != 0）反向
   let x;
   if (chara(a).invasion.回城标志 === 0) {
     x = rand_n(90);
@@ -91,16 +85,16 @@ async function unit_move(a, walk20, rand) {
     x = -90;
   }
 
-  // :92-95 装備効果(侵攻)（W:8 = 17，#174 真身）
+  // 装備効果(侵攻)（W:8 = 17，#174 真身）
   if (equip_check(a, 17) > 0) {
     x *= 2;
   }
-  // :98-101 装備効果(試練)（W:8 = 19）
+  // 装備効果(試練)（W:8 = 19）
   if (equip_check(a, 19) > 0) {
     x = Math.floor(x / 2);
   }
 
-  // :103-111 迷惑状態（CFLAG:509 == 1）：RAND:3 == 0 时解除，否则移动量 0
+  // 迷惑状態（CFLAG:509 == 1）：RAND:3 == 0 时解除，否则移动量 0
   if ((era.get(`cflag:${a}:509`) || 0) === 1) {
     if (rand_n(3) === 0) {
       // たまに回復（ハメを防ぐため先に判定する）
@@ -110,7 +104,7 @@ async function unit_move(a, walk20, rand) {
     }
   }
 
-  // :113-118 侵攻中（2）累加、其余（迎击 3）倒退两倍速
+  // 侵攻中（2）累加、其余（迎击 3）倒退两倍速
   if (chara(a).invasion.状态 === 2) {
     walk20 += x;
   } else {
@@ -128,7 +122,7 @@ async function unit_move(a, walk20, rand) {
     from_level = Math.trunc(da_get(my, mx) / 32); // LOCAL:2 = DA:(y):(x)/32（折叠约定见 labo.js 文件头）
 
     if (walk20 < 0) {
-      // :130-138 撤退方向：远离中心（16,16）
+      // 撤退方向：远离中心（16,16）
       if (mx > 16) {
         mx += rand_n(3) - 1;
       }
@@ -142,7 +136,7 @@ async function unit_move(a, walk20, rand) {
         my -= rand_n(3) - 1;
       }
     } else if (walk20 > 10) {
-      // :139-148 侵攻方向：先衰减压到十分位，再趋近中心
+      // 侵攻方向：先衰减压到十分位，再趋近中心
       walk20 = Math.floor(walk20 / 10);
       if (mx > 16) {
         mx -= rand_n(3) - 1;
@@ -158,7 +152,7 @@ async function unit_move(a, walk20, rand) {
       }
     }
 
-    // :151-155 領域外を避ける
+    // 領域外を避ける
     if (mx < 0 || mx > 31) {
       continue; // GOTO MOVE_LOOP
     }
@@ -166,7 +160,7 @@ async function unit_move(a, walk20, rand) {
       continue;
     }
 
-    // :157-161 高低差がある地形を避ける（20% 概率接受）
+    // 高低差がある地形を避ける（20% 概率接受）
     const to_level = Math.trunc(da_get(my, mx) / 32); // LOCAL:10 = DA:(y):(x)/32
     if (from_level !== to_level && rand_n(5) > 0) {
       continue;
@@ -175,21 +169,21 @@ async function unit_move(a, walk20, rand) {
     break; // 确定移动目标 (P:0, P:1) = (mx, my)
   }
 
-  // :171-177 移動先が中心——魔王城攻略へ（JUMP ENDING_2）
+  // 移動先が中心——魔王城攻略へ（JUMP ENDING_2）
   if (mx === 16 && my === 16) {
     chara(a).dungeon.侵攻阶层 = 2; // CFLAG:A:501 = 2（:172）
-    era.print('这里就是魔王城了吗………'); // :174 PRINTL（简体归一：這裡→这里、嗎→吗，#60）
-    await ending_2(); // :175 JUMP ENDING_2（#173 真身；quit 抛出后不返回）
+    era.print('这里就是魔王城了吗………'); // PRINTL（简体归一：這裡→这里、嗎→吗，#60）
+    await ending_2(); // JUMP ENDING_2（#173 真身；quit 抛出后不返回）
     return 0;
   }
 
-  // :179-202 撞上其他单位
+  // 撞上其他单位
   const other = unit_check(mx, my);
   if (other >= 0) {
     if ((era.get(`cflag:${other}:1`) || 0) === chara(a).invasion.状态) {
-      return 0; // :181-183 仲間の場合移動停止
+      return 0; // 仲間の場合移動停止
     } else if ((era.get(`cflag:${other}:1`) || 0) === 2) {
-      // :184-199 違う場合対戦（CALL DUNGEON_BATTLE2）：函数原作即缺失（文件头），
+      // 違う場合対戦（CALL DUNGEON_BATTLE2）：函数原作即缺失（文件头），
       // 调用点随 #638 删除——撞上敌方单位该回合移动即止，不发生战斗
       //（#574：LABO 迷宫不再触发战斗）；RESULT 的两个消费分支（陷落/击退）
       // 随之移除
@@ -197,24 +191,24 @@ async function unit_move(a, walk20, rand) {
     return 0;
   }
 
-  // :205-222 撞上怪物
+  // 撞上怪物
   const mon_lv = mon_check(mx, my);
   if (mon_lv > 0) {
     if (chara(a).invasion.状态 === 3) {
-      return 0; // :208-209 魔王軍は仲間
+      return 0; // 魔王軍は仲間
     }
-    // :211 CALL DUNGEON_BATTLE（原作缺失，文件头）随 #638 删除：撞上怪物该
+    // CALL DUNGEON_BATTLE（原作缺失，文件头）随 #638 删除：撞上怪物该
     // 回合移动即止，不发生战斗（#574：LABO 迷宫不再触发战斗）。其后的
     // 陷落结算（:213-220）读的是战斗改写后的状态——只有侵攻中（CFLAG:A:1==2）
     // 的单位能走到这里，战斗不再发生，该分支永假，一并移除
     return 0;
   }
 
-  // :226-227 移動を反映（坐标落笔；event 属主门面）
+  // 移動を反映（坐标落笔；event 属主门面）
   chara(a).event.X坐标 = mx;
   chara(a).event.Y坐标 = my;
 
-  // :229-233 侵攻度钳制（撤退到头回满 / 推进到头清零）
+  // 侵攻度钳制（撤退到头回满 / 推进到头清零）
   if (walk20 < 0) {
     walk20 = 100;
   } else if (walk20 > 100) {
@@ -236,7 +230,7 @@ async function unit_move(a, walk20, rand) {
 async function dungeon_map(a, rand) {
   const rand_n = rand ?? default_rand;
 
-  // :7-12 迎撃時体力が回復していると迎撃再開（HP/MP 均 > 80%）
+  // 迎撃時体力が回復していると迎撃再開（HP/MP 均 > 80%）
   if (chara(a).invasion.状态 === 3) {
     if (
       Math.floor(
@@ -250,16 +244,16 @@ async function dungeon_map(a, rand) {
     }
   }
 
-  // :14-15 フラグオフ（休憩标志复位）
+  // フラグオフ（休憩标志复位）
   chara(a).dungeon.休憩 = 0;
 
-  // :17 CALL UNIT_MOVE（D:20 经返回值换手，文件头）
+  // CALL UNIT_MOVE（D:20 经返回值换手，文件头）
   const walk20 = await unit_move(a, chara(a).event.侵攻度, rand_n);
 
-  // :19 BASE:A:1 -= RAND:6（冒険の疲れ）
+  // BASE:A:1 -= RAND:6（冒険の疲れ）
   chara(a).dungeon.气力 -= rand_n(6);
 
-  // :21-28 帰還するかどうか（HP/MP 任一 < 45% 立撤退旗）
+  // 帰還するかどうか（HP/MP 任一 < 45% 立撤退旗）
   if (
     Math.floor(
       (chara(a).dungeon.体力 * 100) / (era.get(`maxbase:${a}:0`) || 0),
@@ -272,46 +266,46 @@ async function dungeon_map(a, rand) {
       (chara(a).dungeon.气力 * 100) / (era.get(`maxbase:${a}:1`) || 0),
     ) < 45
   ) {
-    era.print(`${name_of(a)}决定返回了`); // :26
-    chara(a).invasion.回城标志 = 1; // :27
+    era.print(`${name_of(a)}决定返回了`);
+    chara(a).invasion.回城标志 = 1;
   }
-  // :29-30 偶发卖春（真身 #184；rand_n 透传，与 3D 路径 DUNGEON.ERB 行 718
+  // 偶发卖春（真身 #184；rand_n 透传，与 3D 路径 DUNGEON.ERB 行 718
   // 同款模块对象调用）
   if (rand_n(5) === 0) {
     await dungeon_bitch_mod.dungeon_bitch(a, rand_n);
   }
 
-  // :32-34 宝箱を見つける（侵攻中 2 且 1/4 概率；#174 真身）
+  // 宝箱を見つける（侵攻中 2 且 1/4 概率；#174 真身）
   if (chara(a).invasion.状态 === 2 && rand_n(4) === 0) {
     await equip_select(a, rand_n);
   }
 
-  // :36-37 アイテムの使用（3D 路径同款存根，单点登记）
+  // アイテムの使用（3D 路径同款存根，单点登记）
   await use_ex_item('战斗后', a);
 
-  // :39-40 移動を反映（D:20 写回 CFLAG:502，event 属主门面）
+  // 移動を反映（D:20 写回 CFLAG:502，event 属主门面）
   chara(a).event.侵攻度 = walk20;
 
   // —— 休憩フェイズ（:42-74）——
-  // :44-48 装備効果(キャンプ)（W:8 = 18）：休憩位 0 且 RESULT > 0 → +1
+  // 装備効果(キャンプ)（W:8 = 18）：休憩位 0 且 RESULT > 0 → +1
   if (!(chara(a).dungeon.休憩 & 1) && equip_check(a, 18) > 0) {
     chara(a).dungeon.休憩 += 1;
   }
 
-  // :50-54 装備効果(キャンプ禁止)（W:8 = 19）：休憩位 1 且 RESULT > 0 → -1
+  // 装備効果(キャンプ禁止)（W:8 = 19）：休憩位 1 且 RESULT > 0 → -1
   if (chara(a).dungeon.休憩 & 1 && equip_check(a, 19) > 0) {
     chara(a).dungeon.休憩 -= 1;
   }
 
-  // :56-74 休憩演出（FLAG:5 & 32 渲染守卫内）。第二臂（:64）条件与第一臂
+  // 休憩演出（FLAG:5 & 32 渲染守卫内）。第二臂（:64）条件与第一臂
   // 字面相同——原作复制粘贴产物，逻辑不可达，1:1 保留（文件头）
   if (chara(a).invasion.状态 === 2 && chara(a).dungeon.休憩 & 1) {
     if ((era.get('flag:5') || 0) & 32) {
-      era.println(); // :58 PRINTL（空行）
-      era.drawLine(); // :59
-      await era.printAndWait(`${name_of(a)}藏起来休息了`); // :60 PRINTFORMW（简体归一：來→来）
-      era.drawLine(); // :61
-      era.println(); // :62 真空行：60 行的 PRINTFORMW 已收尾
+      era.println(); // PRINTL（空行）
+      era.drawLine();
+      await era.printAndWait(`${name_of(a)}藏起来休息了`); // PRINTFORMW（简体归一：來→来）
+      era.drawLine();
+      era.println(); // 真空行：60 行的 PRINTFORMW 已收尾
     }
     // 第二臂（:64）条件与第一臂字面相同——原作复制粘贴产物，逻辑不可达，
     // 1:1 保留（check_status 的不可达分支先例）；该规则判的正是这类重复
@@ -320,17 +314,17 @@ async function dungeon_map(a, rand) {
     if ((era.get('flag:5') || 0) & 32) {
       era.println();
       era.drawLine();
-      await era.printAndWait(`${name_of(a)}在安全的地方扎营，休息了`); // :68（简体归一：紮營→扎营）
+      await era.printAndWait(`${name_of(a)}在安全的地方扎营，休息了`); // （简体归一：紮營→扎营）
       era.drawLine();
       era.println();
     }
   } else if (chara(a).invasion.状态 === 3) {
-    // :72-73 空体（原作如此）
+    // 空体（原作如此）
   }
   if ((era.get('flag:5') || 0) & 32) {
-    era.println(); // :75-76 SIF FLAG:5 & 32 PRINTL（空行）
+    era.println(); // SIF FLAG:5 & 32 PRINTL（空行）
   }
-  era_flag.target = -1; // :77 TARGET = -1
+  era_flag.target = -1; // TARGET = -1
   return 0;
 }
 
@@ -342,11 +336,11 @@ async function dungeon_map(a, rand) {
  */
 function config_labo_map_status() {
   if (game.dungeon.迷宫模式 === 1) {
-    era.print('２Ｄ'); // :243
+    era.print('２Ｄ');
   } else {
-    era.print('普通'); // :245（FLAG:502 == 0）
+    era.print('普通'); // （FLAG:502 == 0）
   }
-  // :247 的 PRINTL 只结束 :243/:245 的 `PRINT ２Ｄ` / `PRINT 普通` 那一行
+  // 的 PRINTL 只结束 :243/:245 的 `PRINT ２Ｄ` / `PRINT 普通` 那一行
   // （PRINT 不换行），**不是空行**——ere 的 print 一次调用即一行（#597）
 }
 
@@ -359,18 +353,18 @@ function config_labo_map_status() {
  */
 async function config_labo_map_setting(rand) {
   const rand_n = rand ?? default_rand;
-  era.print('普通'); // :253 PRINTL [0]普通——按钮化（first-setting 先例）
-  era.print('２Ｄ'); // :254
-  era.drawLine(); // :255
-  era.print('返回'); // :256 [100]
+  era.print('普通'); // PRINTL [0]普通——按钮化（first-setting 先例）
+  era.print('２Ｄ');
+  era.drawLine();
+  era.print('返回'); // [100]
 
   for (;;) {
     era.printButton('普通', 0);
     era.printButton('２Ｄ', 1);
     era.printButton('返回', 100);
-    const result = await era.input(); // :259
+    const result = await era.input();
     if (result === 0 || result === 1) {
-      // :261-265 CASE 0 TO 1
+      // CASE 0 TO 1
       game.dungeon.迷宫模式 = result; // FLAG:502 = RESULT（dungeon 属主门面）
       if (game.dungeon.迷宫模式 === 1) {
         await labo_map_set(rand_n); // SIF FLAG:502 == 1 → CALL LABO_MAP_SET
@@ -378,7 +372,7 @@ async function config_labo_map_setting(rand) {
       return 0;
     }
     if (result === 100) {
-      return 0; // :266-267
+      return 0;
     }
     // CLEARLINE 1（:269，无效输入清行）无 API——重问循环（文件头）
   }
@@ -395,11 +389,11 @@ async function config_labo_map_setting(rand) {
  */
 async function labo_map_set(rand) {
   const rand_n = rand ?? default_rand;
-  geo_test(rand_n); // :275 CALL GEO_TEST
-  set_vil(rand_n); // :276 CALL SET_VIL
+  geo_test(rand_n); // CALL GEO_TEST
+  set_vil(rand_n); // CALL SET_VIL
   for (let y = 0; y < 50; y += 1) {
     for (let x = 0; x < 50; x += 1) {
-      db_set(y, x, 0); // :277-281 DB 50×50 清零（折叠约定同 EVENTFIRST :69-73）
+      db_set(y, x, 0); // DB 50×50 清零（折叠约定同 EVENTFIRST :69-73）
     }
   }
   return 0;

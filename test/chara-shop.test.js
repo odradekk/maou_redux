@@ -138,7 +138,7 @@ test('CHARA_SIM_SHOP：召唤成功 —— 入队、性别素质、生成、成�
     ':68-69 男性档写 TALENT:A:122 = 1（随后 CHAR_MAKE 按预设覆写，原作同序）',
   );
   assert.equal(fixture.store.get('cflag:211:1'), 0, ':75 CFLAG:A:1 = 0');
-  // :120-124 成交：钱 1500、勋章 1、标记
+  // 成交：钱 1500、勋章 1、标记
   assert.equal(era_flag.money, 100000 - 1500);
   assert.equal(era_exflag.legit_money, -1500);
   assert.equal(fixture.store.get('exp:0:81'), 2);

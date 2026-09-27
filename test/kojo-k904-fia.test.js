@@ -1,8 +1,6 @@
 /**
  * 菲娅 K904 的 EX 注册路径测试（issue #250）。
  *
- * 源: target/ERB/口上/EVENT_K904_菲娅.ERB。正文与 K19 菲娅相同，
- * 本文件只锁 K904 独有的 EX_FLAG:104 / EX_TALENT:104 与族注册键 904。
  */
 
 'use strict';
@@ -137,7 +135,7 @@ test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 �
     const fixture = await setup_k904((f, era_flag) => {
       era_flag.selectcom = 56;
       f.store.set(`tequip:${CID}:53`, 1); // 摄影中
-      f.store.set(`abl:${CID}:17`, 5); // :4339 的 (TALENT:89 || ABL:17 >= 5)
+      f.store.set(`abl:${CID}:17`, 5); // 的 (TALENT:89 || ABL:17 >= 5)
       f.store.set(`abl:${CID}:31`, abl31);
       if (talked) {
         f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;

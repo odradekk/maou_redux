@@ -1,10 +1,6 @@
 /**
  * @file 外观定制页与外观编码分发（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_CUSTOM3.ERB 的 3 个函数：
- *     @CHAR_CUSTOM_LOOK_PAGE（:1-111）、@CHAR_CUSTOM_LOOK_DEAL（:118-182）、
- *     @PRINT_ARR_GROUP（:184-231）
- *
  * 调用面：同票的 ere/chara/chara-custom2.js 的 @CHAR_CUSTOM 主循环
  * （源 CHARA_CUSTOM2 ver1.0.1.ERB:28 的 `CALL CHAR_CUSTOM_LOOK_PAGE(L_PAGE-3)`
  * 与 :118-183 的 `CALL CHAR_CUSTOM_LOOK_DEAL(RESULT)`）。
@@ -404,26 +400,26 @@ function print_arr_group(arr, val, idx) {
     const name = arr[i];
     const length = disp_width(name);
     if (length < 1) {
-      blanks += 1; // :206
+      blanks += 1;
       if (blanks > MAX_BLANKS) {
-        break; // :207-208
+        break;
       }
-      continue; // :209
+      continue;
     }
-    line_len += length + 2; // :212
+    line_len += length + 2;
     if (line_len >= WRAP_WIDTH) {
-      flush(); // :184-231 PRINTL（换行）
-      line_len = length + 2; // :217
+      flush(); // PRINTL（换行）
+      line_len = length + 2;
     }
     row.push({
-      accelerator: idx * 100 + i, // :223
+      accelerator: idx * 100 + i,
       content: name,
-      color: i === val ? undefined : GRAY, // :220-226（选中项 RESETCOLOR）
+      color: i === val ? undefined : GRAY, // （选中项 RESETCOLOR）
     });
   }
   flush();
-  era.setColor(''); // :184-231 RESETCOLOR（原作的字符色复位）
-  // :231 的 PRINTL 只结束最后一格行（行首 :198 的 PRINTV "  " 起头、按钮逐格
+  era.setColor(''); // RESETCOLOR（原作的字符色复位）
+  // 的 PRINTL 只结束最后一格行（行首 :198 的 PRINTV "  " 起头、按钮逐格
   // 续拼），不产生空行——ere 的 printMultiColumns 自成一行。空表或 :207-208
   // 早退时原作剩下的是一条两空格行（本文件不搬运行首缩进，见文件头），ere
   // 侧零输出，属同一条记名排版差异
@@ -437,62 +433,62 @@ function print_arr_group(arr, val, idx) {
  */
 function char_custom_look_page(arg, cid = era_flag.target) {
   if (arg === 0) {
-    // :5 VARSET LOCALS——本地字符串数组，落 JS 常量，无运行时动作
+    // VARSET LOCALS——本地字符串数组，落 JS 常量，无运行时动作
 
-    era.print('■=== 发色 ===■'); // :7
-    print_arr_group(ARR_头发颜色2, talent(cid, T_头发颜色), 11); // :8
+    era.print('■=== 发色 ===■');
+    print_arr_group(ARR_头发颜色2, talent(cid, T_头发颜色), 11);
 
-    era.print('■=== 发型 ===■'); // :10
-    print_arr_group(ARR_发型, talent(cid, T_发型), 12); // :11
+    era.print('■=== 发型 ===■');
+    print_arr_group(ARR_发型, talent(cid, T_发型), 12);
 
-    era.print('■=== 头发长度 ===■'); // :13
-    // :15 `(TALENT:头发长度-1)/100`：长度 101-300 映到 0-2 档
+    era.print('■=== 头发长度 ===■');
+    // `(TALENT:头发长度-1)/100`：长度 101-300 映到 0-2 档
     print_arr_group(
       ARR_头发长度,
       Math.trunc((talent(cid, T_头发长度) - 1) / 100),
       13,
     );
 
-    era.print('■=== 状态 ===■'); // :17
-    print_arr_group(ARR_头发状态, talent(cid, T_头发状态), 14); // :18
+    era.print('■=== 状态 ===■');
+    print_arr_group(ARR_头发状态, talent(cid, T_头发状态), 14);
 
-    era.print('■=== 修剪 ===■'); // :20
-    print_arr_group(ARR_头发修剪方式, talent(cid, T_头发修剪方式), 15); // :21
+    era.print('■=== 修剪 ===■');
+    print_arr_group(ARR_头发修剪方式, talent(cid, T_头发修剪方式), 15);
 
-    // :24 `ELSEIF ARG == 1` 被注释掉——两屏在同一分支里，靠下面的 ELSEIF 分
+    // `ELSEIF ARG == 1` 被注释掉——两屏在同一分支里，靠下面的 ELSEIF 分
 
-    era.print('■=== 眼型 ===■'); // :27
-    print_arr_group(ARR_目, talent(cid, T_目), 21); // :28
+    era.print('■=== 眼型 ===■');
+    print_arr_group(ARR_目, talent(cid, T_目), 21);
 
-    era.print('■=== 瞳色 ===■'); // :30
-    print_arr_group(ARR_瞳色, talent(cid, T_瞳色), 22); // :31
+    era.print('■=== 瞳色 ===■');
+    print_arr_group(ARR_瞳色, talent(cid, T_瞳色), 22);
 
-    era.print('■=== 唇型 ===■'); // :33
-    print_arr_group(ARR_唇, talent(cid, T_唇), 23); // :34
+    era.print('■=== 唇型 ===■');
+    print_arr_group(ARR_唇, talent(cid, T_唇), 23);
 
-    era.print('■=== 体型 ===■'); // :36
-    print_arr_group(ARR_体型, Math.trunc((talent(cid, T_体型) - 1) / 100), 24); // :38
+    era.print('■=== 体型 ===■');
+    print_arr_group(ARR_体型, Math.trunc((talent(cid, T_体型) - 1) / 100), 24);
 
-    era.print('■=== 阴毛状态 ===■'); // :40
-    print_arr_group(ARR_阴毛状态, pubic_index(talent(cid, T_阴毛状态)), 25); // :60
+    era.print('■=== 阴毛状态 ===■');
+    print_arr_group(ARR_阴毛状态, pubic_index(talent(cid, T_阴毛状态)), 25);
 
-    era.print('■=== 乳头 ===■'); // :62
-    print_arr_group(ARR_乳头, talent(cid, T_乳头), 26); // :63
+    era.print('■=== 乳头 ===■');
+    print_arr_group(ARR_乳头, talent(cid, T_乳头), 26);
 
     return;
   }
 
-  // :66 ELSEIF ARG == 1
-  era.print('■=== 魅力点 ===■'); // :69
-  print_arr_group(ARR_魅力点, talent(cid, T_魅力点), 31); // :70
+  // ELSEIF ARG == 1
+  era.print('■=== 魅力点 ===■');
+  print_arr_group(ARR_魅力点, talent(cid, T_魅力点), 31);
 
-  era.print('■=== 癖 ===■'); // :72
-  print_arr_group(ARR_癖, talent(cid, T_癖), 32); // :73
+  era.print('■=== 癖 ===■');
+  print_arr_group(ARR_癖, talent(cid, T_癖), 32);
 
-  era.print('■=== 曾经喜欢的东西 ===■'); // :75
-  print_arr_group(ARR_喜欢的东西, talent(cid, T_喜欢的东西), 33); // :76
+  era.print('■=== 曾经喜欢的东西 ===■');
+  print_arr_group(ARR_喜欢的东西, talent(cid, T_喜欢的东西), 33);
 
-  // :1-117-85 三处标题同名换词（魔王 / 精英 / 其余）
+  // 三处标题同名换词（魔王 / 精英 / 其余）
   if (cid === 0) {
     era.print('■=== 成为魔王之前 ===■');
   } else if (talent(cid, T_精英)) {
@@ -500,28 +496,28 @@ function char_custom_look_page(arg, cid = era_flag.target) {
   } else {
     era.print('■=== 成为勇者之前 ===■');
   }
-  print_arr_group(ARR_成为勇者前的生活, talent(cid, T_成为勇者前的生活), 41); // :86
+  print_arr_group(ARR_成为勇者前的生活, talent(cid, T_成为勇者前的生活), 41);
 
   if (cid === 0) {
-    era.print('■=== 成为魔王的契机 ===■'); // :90
+    era.print('■=== 成为魔王的契机 ===■');
   } else if (talent(cid, T_精英)) {
-    era.print('■=== 回应召唤的理由 ===■'); // :92
+    era.print('■=== 回应召唤的理由 ===■');
   } else {
-    era.print('■=== 成为勇者的契机 ===■'); // :94
+    era.print('■=== 成为勇者的契机 ===■');
   }
-  print_arr_group(ARR_成为勇者的契机, talent(cid, T_成为勇者的契机), 42); // :96
+  print_arr_group(ARR_成为勇者的契机, talent(cid, T_成为勇者的契机), 42);
 
   if (cid === 0) {
-    // :1-117-100 魔王没有种族组
+    // 魔王没有种族组
   } else if (talent(cid, T_精英)) {
-    era.print('■=== 精英种族 ===■'); // :102
-    print_arr_group(ARR_种族2, talent(cid, T_种族2), 2); // :103
+    era.print('■=== 精英种族 ===■');
+    print_arr_group(ARR_种族2, talent(cid, T_种族2), 2);
   } else {
-    era.print('■=== 种族 ===■'); // :105
-    print_arr_group(ARR_种族, talent(cid, T_种族), 1); // :106
+    era.print('■=== 种族 ===■');
+    print_arr_group(ARR_种族, talent(cid, T_种族), 1);
   }
 
-  // :109-110 `IF TALENT:314 == 9` 是空块（原地注释），不落地
+  // `IF TALENT:314 == 9` 是空块（原地注释），不落地
 }
 
 /**
@@ -535,14 +531,14 @@ function char_custom_look_page(arg, cid = era_flag.target) {
  * @returns {number} ARR_阴毛状态 的表内序号（0-7；7 = CASEELSE 的越界档）
  */
 function pubic_index(value) {
-  if (value === 1) return 0; // :43-44
-  if (value >= 2 && value <= 20) return 1; // :45-46
-  if (value >= 20 && value <= 50) return 2; // :47-48
-  if (value >= 50 && value <= 100) return 3; // :49-50
-  if (value >= 100 && value <= 150) return 4; // :51-52
-  if (value >= 150 && value <= 200) return 5; // :53-54
-  if (value >= 201 && value <= 500) return 6; // :55-56
-  return 7; // :57-58 CASEELSE
+  if (value === 1) return 0;
+  if (value >= 2 && value <= 20) return 1;
+  if (value >= 20 && value <= 50) return 2;
+  if (value >= 50 && value <= 100) return 3;
+  if (value >= 100 && value <= 150) return 4;
+  if (value >= 150 && value <= 200) return 5;
+  if (value >= 201 && value <= 500) return 6;
+  return 7; // CASEELSE
 }
 
 /**
@@ -553,53 +549,53 @@ function pubic_index(value) {
  * @returns {number} 0 = 已处理；-1 = 未登记的组号（源 :180）
  */
 function char_custom_look_deal(arg, cid = era_flag.target) {
-  const idx = Math.trunc(arg / 100); // :122（Emuera 的整数除法向零截断）
-  const val = arg - idx * 100; // :123
+  const idx = Math.trunc(arg / 100); // （Emuera 的整数除法向零截断）
+  const val = arg - idx * 100;
 
   if (idx === 1) {
-    set_talent(cid, T_种族, val); // :126
+    set_talent(cid, T_种族, val);
   } else if (idx === 2) {
-    set_talent(cid, T_种族2, val); // :128
+    set_talent(cid, T_种族2, val);
   } else if (idx === 11) {
-    set_talent(cid, T_头发颜色, val); // :130
+    set_talent(cid, T_头发颜色, val);
   } else if (idx === 12) {
-    set_talent(cid, T_发型, val); // :132
+    set_talent(cid, T_发型, val);
   } else if (idx === 13) {
-    set_talent(cid, T_头发长度, val * 100 + 2); // :134
+    set_talent(cid, T_头发长度, val * 100 + 2);
   } else if (idx === 14) {
-    set_talent(cid, T_头发状态, val); // :136
+    set_talent(cid, T_头发状态, val);
   } else if (idx === 15) {
-    set_talent(cid, T_头发修剪方式, val); // :138
+    set_talent(cid, T_头发修剪方式, val);
   } else if (idx === 21) {
-    set_talent(cid, T_目, val); // :141
+    set_talent(cid, T_目, val);
   } else if (idx === 22) {
-    set_talent(cid, T_瞳色, val); // :143
+    set_talent(cid, T_瞳色, val);
   } else if (idx === 23) {
-    set_talent(cid, T_唇, val); // :145
+    set_talent(cid, T_唇, val);
   } else if (idx === 24) {
-    set_talent(cid, T_体型, val * 100 + 2); // :147
+    set_talent(cid, T_体型, val * 100 + 2);
   } else if (idx === 25) {
-    // :149-164 七档 SELECTCASE；无 CASEELSE——7 以上静默不写
+    // 七档 SELECTCASE；无 CASEELSE——7 以上静默不写
     const PUBIC_VALUES = [1, 2, 21, 51, 101, 151, 202];
     if (val >= 0 && val < PUBIC_VALUES.length) {
       set_talent(cid, T_阴毛状态, PUBIC_VALUES[val]);
     }
   } else if (idx === 26) {
-    set_talent(cid, T_乳头, val); // :166
+    set_talent(cid, T_乳头, val);
   } else if (idx === 31) {
-    set_talent(cid, T_魅力点, val); // :169
+    set_talent(cid, T_魅力点, val);
   } else if (idx === 32) {
-    set_talent(cid, T_癖, val); // :171
+    set_talent(cid, T_癖, val);
   } else if (idx === 33) {
-    set_talent(cid, T_喜欢的东西, val); // :173
+    set_talent(cid, T_喜欢的东西, val);
   } else if (idx === 41) {
-    set_talent(cid, T_成为勇者前的生活, val); // :176
+    set_talent(cid, T_成为勇者前的生活, val);
   } else if (idx === 42) {
-    set_talent(cid, T_成为勇者的契机, val); // :178
+    set_talent(cid, T_成为勇者的契机, val);
   } else {
-    return -1; // :179-180
+    return -1;
   }
-  return 0; // :182
+  return 0;
 }
 
 module.exports = {

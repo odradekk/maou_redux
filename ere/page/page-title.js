@@ -1,9 +1,6 @@
 /**
  * @file 标题画面。
  *
- * 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE
- * （根目录 ERB/TITLE.ERB 的同名函数被引擎忽略——#12 已用引擎级证据仲裁，勿参考。）
- *
  * 移植说明（对照原作行号）：
  *   - :2 LOADGLOBAL 不镜像：ere 引擎在每次脚本启动前自动读取公共存档
  *     （dev-guides/11-saves.md），原作的显式加载在 ere 侧是引擎行为。

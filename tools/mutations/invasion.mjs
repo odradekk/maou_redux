@@ -86,9 +86,9 @@ export default [
   {
     desc: 'M10309 999 的 BREAK 挪出显示守卫（BATTLE2 形态，显示关也中断）',
     file: 'ere/invasion/invasion-arcana-battle.js',
-    find: '// :79-85 RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1\n      if (result === 999 && (settings & 32) !== 0) {',
+    find: '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1\n      if (result === 999 && (settings & 32) !== 0) {',
     replace:
-      '// :79-85 RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1\n      if (result === 999) {',
+      '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头），1:1\n      if (result === 999) {',
     tests: ['invasion-arcana-battle'],
     must_mention: '显示关时 999 不退出循环',
   },
@@ -357,16 +357,17 @@ export default [
   {
     desc: 'M10342 史莱姆第一臂的侵攻点门槛 > 1 改 > 6',
     file: 'ere/invasion/invasion-ravish.js',
-    find: 'if (rand(4) === 0 && sinkou > 1) {\n    // :197-202',
-    replace: 'if (rand(4) === 0 && sinkou > 6) {\n    // :197-202',
+    find: '  if (rand(4) === 0 && sinkou > 1) {\n    await era.printAndWait(`成为俘虏的${l2}被往肛门里尽可能地注入了泥浆`);',
+    replace:
+      '  if (rand(4) === 0 && sinkou > 6) {\n    await era.printAndWait(`成为俘虏的${l2}被往肛门里尽可能地注入了泥浆`);',
     tests: ['invasion-ravish'],
     must_mention: '分支：',
   },
   {
     desc: 'M10343 女旁白的第一臂补上侵攻点门槛（原作没有）',
     file: 'ere/invasion/invasion-ravish.js',
-    find: 'if (rand(3) === 0) {\n    // :626-634',
-    replace: 'if (rand(3) === 0 && sinkou > 1) {\n    // :626-634',
+    find: '  if (rand(3) === 0) {',
+    replace: '  if (rand(3) === 0 && sinkou > 1) {',
     tests: ['invasion-ravish'],
     must_mention: '分支：',
   },
@@ -382,8 +383,9 @@ export default [
   {
     desc: 'M10345 马旁白的第一臂守卫反向（rand(2) === 0 改 === 1）',
     file: 'ere/invasion/invasion-ravish.js',
-    find: 'if (rand(2) === 0) {\n    // :768-774',
-    replace: 'if (rand(2) === 1) {\n    // :768-774',
+    find: "  if (rand(2) === 0) {\n    await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');",
+    replace:
+      "  if (rand(2) === 1) {\n    await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');",
     tests: ['invasion-ravish'],
     must_mention: '战场表：',
   },

@@ -330,7 +330,7 @@ test('MONSTER_SHOP：召唤成功——入队、性别素质、生成、确认�
     0, // 召唤确认（[0] 就是他了）
   );
   const era_flag = fixture.load_module('era-utils/era-flag');
-  // :122-133 入队与生成
+  // 入队与生成
   assert(
     fixture.era.getAddedCharacters().includes(202),
     'ADDCHARA 202 应把角色加入',
@@ -346,14 +346,14 @@ test('MONSTER_SHOP：召唤成功——入队、性别素质、生成、确认�
   const texts = history_texts(fixture);
   assert(texts.some((line) => line.includes('回应了你的召唤')));
   assert(texts.some((line) => line.includes('确定要召唤')));
-  // :150-155 的「他/她」读的是当时的 TALENT:A:122——CHAR_MAKE 已按预设
+  // 的「他/她」读的是当时的 TALENT:A:122——CHAR_MAKE 已按预设
   // 覆写过它，故按终值断言（原作同序）
   const male = (fixture.store.get('talent:202:122') || 0) !== 0;
   assert(
     button_rendered(fixture).includes(`[0] 就是${male ? '他' : '她'}了`),
     `性别词随 TALENT:122 走（当前 ${male ? '男' : '非男'}）`,
   );
-  // :349-350 结账：最低等级 15 × 135 的钱 + 三只祭品
+  // 结账：最低等级 15 × 135 的钱 + 三只祭品
   assert.equal(era_flag.money, 10000 - 15 * 135);
   assert.equal(fixture.store.get('item:101'), 0, '祭品被扣光（3 只全选）');
 });

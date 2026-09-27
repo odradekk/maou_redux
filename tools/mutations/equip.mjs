@@ -122,9 +122,9 @@ export default [
   {
     desc: 'M344 戒指显示的强度后缀删（SIF W:2 != 0 失效——换装播报缺 +2 红）',
     file: 'ere/system/equip/equip-print.js',
-    find: '  // :859-860 SIF W:2 != 0 → PRINTFORM +{W:2}（读 w.强度——ELSE 重置后为 0）\n  if (w.强度 !== 0) {',
+    find: '    w.识别号 = 0;\n    w.强度 = 0;\n  }\n  spans.push({ content: name, color: LIGHT_SALMON });\n\n  // SIF W:2 != 0 → PRINTFORM +{W:2}（读 w.强度——ELSE 重置后为 0）\n  if (w.强度 !== 0) {',
     replace:
-      '  // :859-860 SIF W:2 != 0 → PRINTFORM +{W:2}（读 w.强度——ELSE 重置后为 0）\n  if (false) {',
+      '    w.识别号 = 0;\n    w.强度 = 0;\n  }\n  spans.push({ content: name, color: LIGHT_SALMON });\n\n  // SIF W:2 != 0 → PRINTFORM +{W:2}（读 w.强度——ELSE 重置后为 0）\n  if (false) {',
     tests: ['equip-system'],
     must_mention: '换装播报（前缀空、强度后缀保留）',
   },
@@ -205,8 +205,8 @@ export default [
   {
     desc: 'M11525 CHECK_ABLE_TO_SHOW_EQUIP 不可见返回值改坏（return 1 改 return 0——五道全不满足也放行）',
     file: 'ere/system/equip/equip-show.js',
-    find: '  // :1113 見せられないよ\n  return 1;',
-    replace: '  // :1113 見せられないよ\n  return 0;',
+    find: '  // 見せられないよ\n  return 1;',
+    replace: '  // 見せられないよ\n  return 0;',
     tests: ['equip-system'],
     must_mention: '善恶值 1 且其余全不满足',
   },

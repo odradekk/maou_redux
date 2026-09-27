@@ -1,9 +1,6 @@
 /**
  * @file 角色数值的通用变动与识别函数（issue #332）。
  *
- * 源: target/ERB/キャラ関数/CHAR_ST.ERB  @KARMA（:71-89）、
- *       @FAITH（:90-108）、@CHARA_LV_CHECK（:109-128）、
- *       @CHARA_ID_OUTPUT（:129-150）
  */
 
 const era = require('#/era-electron');
@@ -21,7 +18,7 @@ function karma(cid, delta) {
     return 0; // CHAR_ST.ERB 77-78 行
   }
   const value = chara(cid).chara.善恶值 + delta; // CFLAG:151 善恶值
-  chara(cid).chara.善恶值 = Math.max(-200, Math.min(200, value)); // :82-86
+  chara(cid).chara.善恶值 = Math.max(-200, Math.min(200, value));
   return 0;
 }
 
@@ -36,7 +33,7 @@ function faith(cid, delta) {
     return 0; // CHAR_ST.ERB 96-97 行
   }
   const value = (era.get(`cflag:${cid}:152`) || 0) + delta; // CFLAG:152 信仰
-  era.set(`cflag:${cid}:152`, Math.max(0, Math.min(100, value))); // :101-105
+  era.set(`cflag:${cid}:152`, Math.max(0, Math.min(100, value)));
   return 0;
 }
 
@@ -47,20 +44,20 @@ function faith(cid, delta) {
  */
 async function chara_lv_check(cid) {
   if (chara(cid).dungeon.战斗经验 >= 0) {
-    return 0; // :114 IF EXP:CHARA:80 < 0
+    return 0; // IF EXP:CHARA:80 < 0
   }
 
   const view = chara(cid);
   const level = (era.get(`cflag:${cid}:9`) || 0) - 1; // CFLAG:9 等级
   era.set(`cflag:${cid}:9`, level);
-  view.dungeon.战斗经验 = level * 10; // :116 EXP:80 = 等级 * 10
+  view.dungeon.战斗经验 = level * 10; // EXP:80 = 等级 * 10
   view.dungeon.攻击力 -= 1; // CFLAG:11 攻击力
   view.dungeon.防御力 -= 1; // CFLAG:12 防御力
   view.chara.基础攻击 -= 1; // CFLAG:13 基础攻击
   view.chara.基础防御 -= 1; // CFLAG:14 基础防御
 
   if (((era.get('flag:5') || 0) & 32) !== 0) {
-    await era.printAndWait(`${chara_callname(cid)}下降了一级`); // :123-124
+    await era.printAndWait(`${chara_callname(cid)}下降了一级`);
   }
   return 0;
 }
@@ -79,7 +76,7 @@ function chara_id_output(cid) {
       break;
     }
   }
-  personality -= 1; // :141 LOCAL:1 -= 1（原作有意保留的偏移）
+  personality -= 1; // LOCAL:1 -= 1（原作有意保留的偏移）
   result += (personality - 160) * 1000;
   result += (era.get(`talent:${cid}:320`) || 0) * 100000; // 家族构成
   return result;

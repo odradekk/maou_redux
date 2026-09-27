@@ -1,14 +1,6 @@
 /**
  * @file 服饰店（裁缝）：SHOP_TAILOR.ERB 全 12 函数（issue #397 / N13 段 3）。
  *
- * 源: target/ERB/SHOP/SHOP_TAILOR.ERB  @TAILOR_MAIN（:6-59）/
- *     @TAILOR_CORE（:61-254）/@TAILOR_CASUAL（:259-303）/
- *     @TAILOR_NORMAL（:308-550）/@TAILOR_ACCESSORY（:556-862）/
- *     @TAILOR_UNDERWARE（:867-882）/@TAILOR_DIAPER（:887-901）/
- *     @CHASTITY_KEY（:906-928）/@LIFE_LIST_TAILOR（:933-979）/
- *     @EQUIP_MAGIC_ITEM（:982-1129）/@EQUIP_MAGIC_WEAPON（:1133-1292）/
- *     @TAILOR_NORMAL_SPECIAL（:1299-1461）。
- *
  * 调用点（本票接入）：page/page-shop.js 的 usershop [108] 分支、
  * page/page-chara-info.js 的 CHARA_INFO_INDIVIDUAL CASE 11（只调 CORE）。
  *
@@ -110,14 +102,14 @@ const SLOT_RING_B = 552;
 const SLOT_WEAPON = 550;
 /** 装饰品第三档（`:1124` 的 ITEM 编号偏移，300+ 是装备品） */
 const EQUIP_ITEM_BASE = 300;
-const EQUIP_ITEM_COUNT = 20; // :1024 的 REPEAT 20
+const EQUIP_ITEM_COUNT = 20; // 的 REPEAT 20
 /** 武器段的 ITEM 编号（:1153-1157 的 341-360，排除 349） */
 const WEAPON_ITEM_START = 341;
 const WEAPON_ITEM_COUNT = 19;
-const WEAPON_TENTACLE_ITEM = 90; // :1159 的武器化触手
-const WEAPON_TENTACLE_RESULT = 990; // :1160 的 [990]
-const WEAPON_TENTACLE_ID = 349; // :1160-1181 的 349 号装备
-const SWORD_ITEM = 340; // :1151 的 [340] 剑
+const WEAPON_TENTACLE_ITEM = 90; // 的武器化触手
+const WEAPON_TENTACLE_RESULT = 990; // 的 [990]
+const WEAPON_TENTACLE_ID = 349; // 的 349 号装备
+const SWORD_ITEM = 340; // 的 [340] 剑
 /** 强化开放所需等级（:1030/:1048/:1162/:1186） */
 const ENHANCE_LEVEL = 30;
 /** SETCOLOR 80,80,80（:1164，等级不足的灰显文本） */
@@ -177,7 +169,7 @@ const NORMAL_ITEMS = [
     label: '童装（女孩用）',
     a: KIND_CHILD,
     r: 22,
-    // :397-401：娇小/未成长/幼儿体质 → 免顺从；男性 → 至少 3
+    // ：娇小/未成长/幼儿体质 → 免顺从；男性 → 至少 3
     s: (cid) => {
       let s = 5;
       if (talent(cid, 132) || talent(cid, 135) || talent(cid, 131)) s = 0;
@@ -267,7 +259,7 @@ const ACCESSORY_ITEMS = [
     label: '护士帽',
     r: 53,
     c: 10000,
-    // :681-683：护士资质（TALENT:63）降一档，男性至少 3
+    // ：护士资质（TALENT:63）降一档，男性至少 3
     s: (cid) => {
       let s = 2 - talent(cid, 63);
       if (talent(cid, 122) && s < 3) s = 3;
@@ -299,7 +291,7 @@ const ACCESSORY_ITEMS = [
     label: '狗项圈',
     r: 71,
     c: 10000,
-    // :763-767：欲望（ABL:21）越高越难，奴隶气质/高感度各降一档
+    // ：欲望（ABL:21）越高越难，奴隶气质/高感度各降一档
     s: (cid) => {
       let s = 10 - abl(cid, 21);
       if (talent(cid, 124) && s > 5) s = 5;
@@ -325,7 +317,7 @@ const ACCESSORY_ITEMS = [
     label: '牛铃和鼻环',
     r: 73,
     c: 10000,
-    // :777-779：巨乳/爆乳 + 奶牛 → 降为 3
+    // ：巨乳/爆乳 + 奶牛 → 降为 3
     s: (cid) => {
       let s = 6;
       if ((talent(cid, 110) || talent(cid, 114)) && talent(cid, 130)) s = 3;
@@ -402,7 +394,7 @@ const ACCESSORY_ITEMS = [
     label: '尿布',
     r: 69,
     c: 100,
-    // :824-825：尿布爱好（TALENT:57）→ 1
+    // ：尿布爱好（TALENT:57）→ 1
     s: (cid) => (talent(cid, 57) ? 1 : 6),
   },
   {
@@ -411,7 +403,7 @@ const ACCESSORY_ITEMS = [
     label: '贞操带',
     r: 79,
     c: 100,
-    // :830-831：男性 → 99（等于穿不上）
+    // ：男性 → 99（等于穿不上）
     s: (cid) => (talent(cid, 122) ? 99 : 0),
   },
   { page: 3, n: 40, label: '长袍', r: 13, c: 10000, s: () => 0 },
@@ -422,7 +414,7 @@ const ACCESSORY_ITEMS = [
     label: '戒指',
     r: 92,
     c: 100000,
-    // :844-845：爱慕 → 1
+    // ：爱慕 → 1
     s: (cid) => (talent(cid, 85) ? 1 : 6),
   },
   { page: 4, n: 43, label: '神秘的尿道导管', r: 98, c: 3000, s: () => 3 },
@@ -490,12 +482,12 @@ const WEAPON_PREFIXES = [
  */
 function life_list_tailor() {
   for (const cid of era.getAddedCharacters()) {
-    if (cid === 0) continue; // :936-937 主人公は排除
-    if ((era.get(`base:${cid}:0`) || 0) < 1) continue; // :939-940 臨死中
-    if (cflag(cid, 1) !== 0) continue; // :942-943 調教中以外は排除
-    era_flag.target = cid; // :944 TARGET = COUNT（供 PRINT_CLOTHTYPE_* 读）
+    if (cid === 0) continue; // 主人公は排除
+    if ((era.get(`base:${cid}:0`) || 0) < 1) continue; // 臨死中
+    if (cflag(cid, 1) !== 0) continue; // 調教中以外は排除
+    era_flag.target = cid; // TARGET = COUNT（供 PRINT_CLOTHTYPE_* 读）
     const fragments = [{ content: `${chara_callname(cid)} ` }];
-    // :946-954 穿着状态：有上衣 → 「/ 穿着 上衣名」；否则内衣；否则全裸
+    // 穿着状态：有上衣 → 「/ 穿着 上衣名」；否则内衣；否则全裸
     if (cflag(cid, 41) && (cflag(cid, 45) >= 0 || cflag(cid, 46) >= 0)) {
       fragments.push({ content: `/ 穿着${clothtype_main2_text(cid)}` });
     } else if (cflag(cid, 41) && (cflag(cid, 43) >= 0 || cflag(cid, 44) >= 0)) {
@@ -503,11 +495,11 @@ function life_list_tailor() {
     } else {
       fragments.push({ content: '/ 全裸着' });
     }
-    // :955-959 特别服装
+    // 特别服装
     if (cflag(cid, 42) && cflag(cid, 47) >= 0) {
       fragments.push({ content: `/ 佩戴着${clothtype_special_text(cid)}` });
     }
-    // :960-977 武器与两枚戒指（W:0 = CFLAG:COUNT:550 等的 ere 等价物是
+    // 武器与两枚戒指（W:0 = CFLAG:COUNT:550 等的 ere 等价物是
     // 一次性的装备记录对象，见 equip-lookup.js 文件头）
     for (const [slot, span_of] of [
       [SLOT_WEAPON, equip_weapon_spans],
@@ -516,7 +508,7 @@ function life_list_tailor() {
     ]) {
       if (cflag(cid, slot) > 0) {
         fragments.push({ content: '/ [' });
-        fragments.push(...span_of({ 存储编号: cflag(cid, slot) })); // :962-970
+        fragments.push(...span_of({ 存储编号: cflag(cid, slot) }));
         fragments.push({ content: '] ' });
       }
     }
@@ -532,29 +524,29 @@ function life_list_tailor() {
  * @returns {Promise<{a: number, c: number, r: number, s: number}>}
  */
 async function tailor_casual(cid) {
-  const price = CASUAL_PRICE; // :261
+  const price = CASUAL_PRICE;
   if (era_flag.money < price) {
-    await print_wait('钱不够！'); // :264-268
+    await print_wait('钱不够！');
     return { a: 0, c: 0, r: 0, s: 0 };
   }
   for (;;) {
-    era.print('□日常着装'); // :272
-    era.print(`所持金：${era_flag.money}点`); // :273
+    era.print('□日常着装');
+    era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
     for (const item of CASUAL_ITEMS) {
-      era.printButton(`- ${item.label}`, item.n); // :276-277
+      era.printButton(`- ${item.label}`, item.n);
     }
     era.drawLine();
-    era.printButton('- 返回', 999); // :279
-    const result = await era.input(); // :281
+    era.printButton('- 返回', 999);
+    const result = await era.input();
     const item = CASUAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
       return { a: KIND_CLOTHES, c: price, r: item.r, s: item.s(cid) };
     }
     if (result === 999) {
-      return { a: 0, c: 0, r: 0, s: 0 }; // :291-296
+      return { a: 0, c: 0, r: 0, s: 0 };
     }
-    // :297-298 其余输入重绘
+    // 其余输入重绘
   }
 }
 
@@ -569,14 +561,14 @@ async function tailor_normal(cid) {
     await print_wait('钱不够！');
     return { a: 0, c: 0, r: 0, s: 0 };
   }
-  let page = 0; // :313 の P
+  let page = 0; // の P
   for (;;) {
     era.print('□普通的服装');
     era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
     for (const item of NORMAL_ITEMS) {
       if (item.page !== page) continue;
-      era.printButton(`- ${item.label}`, item.n); // :328 起（表驱动，前缀在调用点拼）
+      era.printButton(`- ${item.label}`, item.n); // 起（表驱动，前缀在调用点拼）
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
@@ -602,7 +594,7 @@ async function tailor_normal(cid) {
       continue;
     }
     if (result === 996) {
-      // :544-550 服装黑市：`CALL TAILOR_NORMAL_SPECIAL` 之后落到段尾的
+      // 服装黑市：`CALL TAILOR_NORMAL_SPECIAL` 之后落到段尾的
       // `RETURN 1`——黑市取消（A = 0）也照这条回去，由 @TAILOR_CORE 的
       // `A == 0 → GOTO INPUT_LOOP_02` 回主菜单（不是留在本画面）
       return tailor_normal_special(cid);
@@ -632,7 +624,7 @@ async function tailor_normal_special(cid) {
     era.drawLine();
     for (const item of SPECIAL_ITEMS) {
       if (item.page !== page) continue;
-      era.printButton(`- ${item.label}`, item.n); // :1320 起（表驱动，前缀在调用点拼）
+      era.printButton(`- ${item.label}`, item.n); // 起（表驱动，前缀在调用点拼）
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:1355（原文此处无「- 」）
@@ -641,7 +633,7 @@ async function tailor_normal_special(cid) {
     const result = await era.input();
     const item = SPECIAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
-      // :1301 A = 2（黑市的服装档）
+      // A = 2（黑市的服装档）
       return { a: 2, c: price, r: item.r, s: item.s(cid) };
     }
     if (result === 997) {
@@ -653,7 +645,7 @@ async function tailor_normal_special(cid) {
       continue;
     }
     if (result === 999) {
-      return { a: 0, c: 0, r: 0, s: 0 }; // :1370-1375（A/C/R/S/T 清零）
+      return { a: 0, c: 0, r: 0, s: 0 }; // （A/C/R/S/T 清零）
     }
   }
 }
@@ -664,15 +656,15 @@ async function tailor_normal_special(cid) {
  * @returns {Promise<object>}
  */
 async function tailor_accessory(cid) {
-  let page = 0; // :560 LOCAL:0
+  let page = 0; // LOCAL:0
   for (;;) {
-    // :566 `□装备品 ({(LOCAL:0)+1,2}/{(LOCAL:1/10)+1,2}页)`
+    // `□装备品 ({(LOCAL:0)+1,2}/{(LOCAL:1/10)+1,2}页)`
     era.print(`□装备品 (${page + 1}/ ${ACCESSORY_PAGE_MAX + 1}页)`);
     era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
     for (const item of ACCESSORY_ITEMS) {
       if (item.page !== page) continue;
-      era.printButton(`- ${item.label}（${item.c}点）`, item.n); // :571 起（表驱动）
+      era.printButton(`- ${item.label}（${item.c}点）`, item.n); // 起（表驱动）
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:628（原文此处无「- 」）
@@ -689,11 +681,11 @@ async function tailor_accessory(cid) {
       };
     }
     if (result === 997) {
-      page = page > ACCESSORY_PAGE_MAX - 1 ? 0 : page + 1; // :634-639
+      page = page > ACCESSORY_PAGE_MAX - 1 ? 0 : page + 1;
       continue;
     }
     if (result === 998) {
-      page = page < 1 ? ACCESSORY_PAGE_MAX : page - 1; // :640-645
+      page = page < 1 ? ACCESSORY_PAGE_MAX : page - 1;
       continue;
     }
     if (result === 999) {
@@ -709,10 +701,10 @@ async function tailor_accessory(cid) {
 async function tailor_underware() {
   const price = UNDERWARE_PRICE;
   if (era_flag.money < price) {
-    await print_wait('钱不够！'); // :873-879
+    await print_wait('钱不够！');
     return { a: 0, c: 0, r: 0, s: 0 };
   }
-  return { a: KIND_UNDERWARE, c: price, r: 0, s: 0 }; // :868-871
+  return { a: KIND_UNDERWARE, c: price, r: 0, s: 0 };
 }
 
 /**
@@ -733,31 +725,31 @@ async function tailor_diaper() {
  * @returns {Promise<object>} A 恒 0（:907）——只是演出 + 写 CFLAG:49 = 1
  */
 async function chastity_key() {
-  era.print(`${chara_callname(era_flag.target)}贞操带的钥匙丢掉的话，`); // :909
-  era.print(`就再也无法打开${chara_callname(0)}的贞操带了。`); // :910
-  era.print('丢掉钥匙，而且也没有后备匙，钥匙真的再也找不回来了哦！'); // :911
+  era.print(`${chara_callname(era_flag.target)}贞操带的钥匙丢掉的话，`);
+  era.print(`就再也无法打开${chara_callname(0)}的贞操带了。`);
+  era.print('丢掉钥匙，而且也没有后备匙，钥匙真的再也找不回来了哦！');
   for (;;) {
-    era.print(''); // :913 PRINTL
+    era.print(''); // PRINTL
     era.print(
       `当真当真要把${chara_callname(era_flag.target)}贞操带的钥匙丢掉吗？`,
-    ); // :914
-    era.printButton('- 丢掉！', 0); // :915
-    era.printButton('- 不丢。', 1); // :916
-    const result = await era.input(); // :917
+    );
+    era.printButton('- 丢掉！', 0);
+    era.printButton('- 不丢。', 1);
+    const result = await era.input();
     if (result === 0) {
-      era.print(`${chara_callname(era_flag.target)}呆若木鸡地看着前方，`); // :919
+      era.print(`${chara_callname(era_flag.target)}呆若木鸡地看着前方，`);
       era.print(
         `${chara_callname(0)}把贞操带的钥匙，丢到连接地下城迷宫各层的楼梯处。`,
-      ); // :920
-      era.print('到底掉到哪层，掉到哪里，再也没人知道了。'); // :921
-      await wait(); // :922
-      chara(era_flag.target).stronghold.贞操带钥匙已丢弃 = 1; // :923 CFLAG:49 = 1
+      );
+      era.print('到底掉到哪层，掉到哪里，再也没人知道了。');
+      await wait();
+      chara(era_flag.target).stronghold.贞操带钥匙已丢弃 = 1; // CFLAG:49 = 1
       return { a: 0, c: 0, r: 0, s: 0 };
     }
     if (result !== 1) {
-      continue; // :924-925
+      continue;
     }
-    return { a: 0, c: 0, r: 0, s: 0 }; // :912-926（不丢 → A 保持 0，回主菜单）
+    return { a: 0, c: 0, r: 0, s: 0 }; // （不丢 → A 保持 0，回主菜单）
   }
 }
 
@@ -775,7 +767,7 @@ function enhanced_value(current, amount) {
     Math.trunc((current % WEAPON_PREFIX_SCALE) / ENHANCE_SCALE) + amount;
   let pay = amount;
   if (strength > ENHANCE_MAX) {
-    pay += ENHANCE_MAX - strength; // :1103-1104 超限回退
+    pay += ENHANCE_MAX - strength; // 超限回退
   }
   return { value: current + ENHANCE_SCALE * pay, pay };
 }
@@ -788,28 +780,28 @@ async function pick_enhance_amount() {
   for (;;) {
     let max_amount = Math.trunc(era_flag.money / ENHANCE_UNIT); // X = MONEY / 10000
     if (max_amount > ENHANCE_MAX) {
-      max_amount = ENHANCE_MAX; // :1070-1071
+      max_amount = ENHANCE_MAX;
     }
-    // :1073 `PRINTFORML [0] [1] [2] [4] [6] [8] [{X}]` 是「可选档位一览 + 自由
+    // `PRINTFORML [0] [1] [2] [4] [6] [8] [{X}]` 是「可选档位一览 + 自由
     // 输入」；ere 引擎只回传已打印按钮的编号，故这里把这些档位逐个按钮化
     // （取值集合与原文逐字相同，去重后按原序）
     for (const amount of [...new Set([0, 1, 2, 4, 6, 8, max_amount])]) {
       era.printButton(String(amount), amount);
     }
-    era.printButton('- 不装备', 999); // :1074
-    const result = await era.input(); // :1076
+    era.printButton('- 不装备', 999);
+    const result = await era.input();
     if (result === 999) {
-      return null; // :1078-1079
+      return null;
     }
-    // :1080 原作判的是 X（所持金的档位数）而非 RESULT，1:1 保留这一判据
+    // 原作判的是 X（所持金的档位数）而非 RESULT，1:1 保留这一判据
     if (max_amount < 0 || max_amount > ENHANCE_MAX) {
       continue;
     }
     if (era_flag.money < result * ENHANCE_UNIT) {
-      await print_wait('钱不够！！'); // :1086-1088
+      await print_wait('钱不够！！');
       return null;
     }
-    return result; // :1081 Y:2 = RESULT
+    return result; // Y:2 = RESULT
   }
 }
 
@@ -818,19 +810,19 @@ async function pick_enhance_amount() {
  * @returns {Promise<number|null>} null = 返回（[999]）；其余非法输入按无前缀
  */
 async function pick_weapon_prefix() {
-  era.print('可以设定强化的前缀'); // :1253
+  era.print('可以设定强化的前缀');
   for (let index = 0; index <= WEAPON_PREFIX_MAX; index += 1) {
-    era.printButton(`- ${WEAPON_PREFIXES[index]}`, index); // :1254-1263（表驱动）
+    era.printButton(`- ${WEAPON_PREFIXES[index]}`, index); // （表驱动）
   }
-  era.printButton('- 返回', 999); // :1265
-  const result = await era.input(); // :1267
+  era.printButton('- 返回', 999);
+  const result = await era.input();
   if (result === 999) {
-    return null; // :1269-1270
+    return null;
   }
   if (result >= 0 && result <= WEAPON_PREFIX_MAX) {
-    return result; // :1271-1272 Y:3 = RESULT
+    return result; // Y:3 = RESULT
   }
-  return 0; // :1273-1274 原作回循环头；ere 侧按钮集即 0-9 与 999，等价
+  return 0; // 原作回循环头；ere 侧按钮集即 0-9 与 999，等价
 }
 
 /**
@@ -845,18 +837,18 @@ async function pick_weapon_prefix() {
  */
 function install_equip(cid, slot, item_no, amount, prefix) {
   const old = { 存储编号: cflag(cid, slot) };
-  equip_get(old); // :1116/:1190/:1278 CALL EQUIP_GET（旧装备回包）
-  era.set(`item:${item_no}`, (era.get(`item:${item_no}`) || 0) - 1); // :1120/:1282
-  era_flag.money -= amount * ENHANCE_UNIT; // :1122-1123 / :1284-1285
+  equip_get(old); // CALL EQUIP_GET（旧装备回包）
+  era.set(`item:${item_no}`, (era.get(`item:${item_no}`) || 0) - 1);
+  era_flag.money -= amount * ENHANCE_UNIT;
   era.set('exflag:4444', (era.get('exflag:4444') || 0) - amount * ENHANCE_UNIT);
   const w = { 备注: item_no }; // W:8 = Y:1
-  get_equip_num(w); // :1126 / :1288（编号 → 识别号）
+  get_equip_num(w); // （编号 → 识别号）
   era.set(
     `cflag:${cid}:${slot}`,
     w.存储编号 +
       ENHANCE_SCALE * amount +
       (prefix === 0 ? 0 : WEAPON_PREFIX_SCALE * prefix),
-  ); // :1127-1128 / :1289-1291
+  );
 }
 
 /**
@@ -866,40 +858,40 @@ function install_equip(cid, slot, item_no, amount, prefix) {
  */
 async function equip_magic_item(cid) {
   for (;;) {
-    // :988-1008 选槽（装饰 A [1] / 装饰 B [2]）——原作的 `PRINTFORM  [1] - 装饰A　:`
+    // 选槽（装饰 A [1] / 装饰 B [2]）——原作的 `PRINTFORM  [1] - 装饰A　:`
     // 是纯文本 + 自由输入，ere 侧按钮化（PR #53 通则），编号 1/2 保持
     for (const [result_id, slot] of [
       [1, SLOT_RING_A],
       [2, SLOT_RING_B],
     ]) {
-      const w = { 存储编号: cflag(cid, slot) }; // :990/:999 W:0 = CFLAG:…
+      const w = { 存储编号: cflag(cid, slot) }; // W:0 = CFLAG:…
       const label = result_id === 1 ? '装饰A' : '装饰B';
       if (w.存储编号 <= -1) {
-        era.printButton(`- ${label}　: 无`, result_id); // :992-993
+        era.printButton(`- ${label}　: 无`, result_id);
       } else {
         era.printButton(
           [
             { content: `- ${label}　: ` }, // SHOP_TAILOR.ERB:991/1000
-            ...equip_ring_spans(w), // :995 CALL PRINT_EQUIPTYPE_RING
+            ...equip_ring_spans(w), // CALL PRINT_EQUIPTYPE_RING
           ],
           result_id,
         );
       }
     }
-    era.printButton('- 返回', 999); // :1008
-    const result = await era.input(); // :1010
+    era.printButton('- 返回', 999);
+    const result = await era.input();
     if (result === 999) {
-      return { a: 0, c: 0, r: 0, s: 0 }; // :1012-1013
+      return { a: 0, c: 0, r: 0, s: 0 };
     }
     let slot;
     if (result === 1) {
-      slot = SLOT_RING_A; // :1014-1015 Y:0 = 551
+      slot = SLOT_RING_A; // Y:0 = 551
     } else if (result === 2) {
-      slot = SLOT_RING_B; // :1016-1017 Y:0 = 552
+      slot = SLOT_RING_B; // Y:0 = 552
     } else {
-      continue; // :1018-1019
+      continue;
     }
-    await pick_ring(cid, slot); // :1022-1129 的选件与强化
+    await pick_ring(cid, slot); // 的选件与强化
   }
 }
 
@@ -910,7 +902,7 @@ async function equip_magic_item(cid) {
  */
 async function pick_ring(cid, slot) {
   for (;;) {
-    // :1024-1028 列出持有的装备品（编号 300-319）
+    // 列出持有的装备品（编号 300-319）
     for (let index = 0; index < EQUIP_ITEM_COUNT; index += 1) {
       const item_no = EQUIP_ITEM_BASE + index; // X = COUNT + 300
       if ((era.get(`item:${item_no}`) || 0) > 0) {
@@ -922,66 +914,66 @@ async function pick_ring(cid, slot) {
         );
       }
     }
-    // :1030-1039 强化 / 取下
+    // 强化 / 取下
     if (cflag(0, 9) < ENHANCE_LEVEL) {
       // 原作 `[---] - 未开放（30级后才能装备强化）`（:1032）：`---` 是灰字项的
       // 假编号，照写整行（同款先例：page-intercept.js 的 `[---] （魔王等级不足）`）
       era.print([
         { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
-      ]); // :1032
+      ]);
     } else if (cflag(cid, slot) >= 0) {
       era.printButton('- 装备强化', 997); // SHOP_TAILOR.ERB:1035
     }
     if (cflag(cid, slot) >= 0) {
       era.printButton('- 取下', 998); // SHOP_TAILOR.ERB:1039
     }
-    era.printButton('- 返回', 999); // :1040
+    era.printButton('- 返回', 999);
 
-    const result = await era.input(); // :1042
-    let enhance_type = 0; // :1044 EQUIPTYPE = 0
+    const result = await era.input();
+    let enhance_type = 0; // EQUIPTYPE = 0
     let item_no = null;
     if (result === 999) {
-      return; // :1046-1047（回选槽）
+      return; // （回选槽）
     }
     if (result === 997 && cflag(0, 9) >= ENHANCE_LEVEL) {
-      enhance_type = 1; // :1048-1049
+      enhance_type = 1;
     } else if (result === 998) {
-      // :1050-1054 取下：装备回包、槽置 -1
+      // 取下：装备回包、槽置 -1
       const w = { 存储编号: cflag(cid, slot) };
       equip_get(w);
       era.set(`cflag:${cid}:${slot}`, -1);
       continue;
     } else if (result >= EQUIP_ITEM_BASE) {
-      item_no = result; // :1055-1056 Y:1 = RESULT
+      item_no = result; // Y:1 = RESULT
     } else {
-      continue; // :1057-1058
+      continue;
     }
 
-    // :1061-1065 确认行
+    // 确认行
     era.print(
       enhance_type === 1
         ? `要强化现在的装备吗？　每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`
         : `要装备${era.get(`itemname:${result}`) ?? ''}了吗？　请确认装备的提升。每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`,
     );
 
-    const amount = await pick_enhance_amount(); // :1067-1089
+    const amount = await pick_enhance_amount();
     if (amount === null) {
       continue;
     }
 
     if (enhance_type === 1) {
-      // :1094-1113 强化
+      // 强化
       const { value, pay } = enhanced_value(cflag(cid, slot), amount);
-      era_flag.money -= pay * ENHANCE_UNIT; // :1110-1111
+      era_flag.money -= pay * ENHANCE_UNIT;
       era.set(
         'exflag:4444',
         (era.get('exflag:4444') || 0) - pay * ENHANCE_UNIT,
       );
-      era.set(`cflag:${cid}:${slot}`, value); // :1112
+      era.set(`cflag:${cid}:${slot}`, value);
       continue;
     }
 
-    install_equip(cid, slot, item_no, amount, 0); // :1116-1128
+    install_equip(cid, slot, item_no, amount, 0);
     continue;
   }
 }
@@ -993,13 +985,13 @@ async function pick_ring(cid, slot) {
  */
 async function equip_magic_weapon(cid) {
   for (;;) {
-    const current = { 存储编号: cflag(cid, SLOT_WEAPON) }; // :1141 W:0
+    const current = { 存储编号: cflag(cid, SLOT_WEAPON) }; // W:0
     if (current.存储编号 <= -1) {
-      era.print('武器　: 空手'); // :1144-1145
+      era.print('武器　: 空手');
     } else {
-      era.print([{ content: '武器　: ' }, ...equip_weapon_spans(current)]); // :1146-1148
+      era.print([{ content: '武器　: ' }, ...equip_weapon_spans(current)]);
     }
-    era.printButton('- 剑', SWORD_ITEM); // :1151（[340]）
+    era.printButton('- 剑', SWORD_ITEM); // （[340]）
     for (let index = 0; index < WEAPON_ITEM_COUNT; index += 1) {
       const item_no = WEAPON_ITEM_START + index; // X = COUNT + 341
       if (
@@ -1011,78 +1003,78 @@ async function equip_magic_weapon(cid) {
         era.printButton(
           `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
           item_no,
-        ); // :1156
+        );
       }
     }
     if ((era.get(`item:${WEAPON_TENTACLE_ITEM}`) || 0) > 0) {
-      era.printButton('- 武器化触手', WEAPON_TENTACLE_RESULT); // :1159-1160（[990]）
+      era.printButton('- 武器化触手', WEAPON_TENTACLE_RESULT); // （[990]）
     }
     if (cflag(0, 9) < ENHANCE_LEVEL) {
       // 同 :1032 的灰字行（原作 :1164 逐字相同，含 `[---] - ` 假编号前缀）
       era.print([
         { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
-      ]); // :1163-1165
+      ]);
     } else if (current.存储编号 >= 0) {
-      era.printButton('- 装备强化', 997); // :1166-1168
+      era.printButton('- 装备强化', 997);
     }
     if (current.存储编号 >= 0) {
-      era.printButton('- 取下', 998); // :1170-1171
+      era.printButton('- 取下', 998);
     }
-    era.printButton('- 返回', 999); // :1172
+    era.printButton('- 返回', 999);
 
-    const result = await era.input(); // :1174
-    let enhance_type = 0; // :1176 EQUIPTYPE = 0
+    const result = await era.input();
+    let enhance_type = 0; // EQUIPTYPE = 0
     let item_no = result;
     if (result === 999) {
-      return { a: 0, c: 0, r: 0, s: 0 }; // :1178-1179
+      return { a: 0, c: 0, r: 0, s: 0 };
     }
     if (result === WEAPON_TENTACLE_RESULT) {
-      item_no = WEAPON_TENTACLE_ID; // :1180-1182 Y:1 = 349; RESULT = 349
+      item_no = WEAPON_TENTACLE_ID; // Y:1 = 349; RESULT = 349
     } else if (result === 997 && current.存储编号 <= -1) {
-      era.print('手无寸铁，强化啥子？'); // :1183-1185
+      era.print('手无寸铁，强化啥子？');
       continue;
     } else if (result === 997 && cflag(0, 9) >= ENHANCE_LEVEL) {
-      enhance_type = 1; // :1186-1187
+      enhance_type = 1;
     } else if (result === 998) {
-      // :1188-1192 取下
+      // 取下
       const w = { 存储编号: cflag(cid, SLOT_WEAPON) };
       equip_get(w);
       era.set(`cflag:${cid}:${SLOT_WEAPON}`, -1);
       continue;
     } else if (result < EQUIP_ITEM_BASE) {
-      continue; // :1193-1196
+      continue;
     }
 
-    // :1199-1203 确认行
+    // 确认行
     era.print(
       enhance_type === 1
         ? `要强化现在的装备吗？　每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`
         : `要装备${era.get(`itemname:${result}`) ?? ''}了吗？　请确认装备的提升。每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`,
     );
 
-    const amount = await pick_enhance_amount(); // :1205-1227
+    const amount = await pick_enhance_amount();
     if (amount === null) {
       continue;
     }
 
     if (enhance_type === 1) {
-      // :1230-1251 强化
+      // 强化
       const { value, pay } = enhanced_value(cflag(cid, SLOT_WEAPON), amount);
-      era_flag.money -= pay * ENHANCE_UNIT; // :1247-1248
+      era_flag.money -= pay * ENHANCE_UNIT;
       era.set(
         'exflag:4444',
         (era.get('exflag:4444') || 0) - pay * ENHANCE_UNIT,
       );
-      era.set(`cflag:${cid}:${SLOT_WEAPON}`, value); // :1249
+      era.set(`cflag:${cid}:${SLOT_WEAPON}`, value);
       continue;
     }
 
-    // :1253-1275 前缀档
+    // 前缀档
     const prefix = await pick_weapon_prefix();
     if (prefix === null) {
       continue;
     }
-    install_equip(cid, SLOT_WEAPON, item_no, amount, prefix); // :1277-1291
+    install_equip(cid, SLOT_WEAPON, item_no, amount, prefix);
     continue;
   }
 }
@@ -1102,19 +1094,19 @@ async function purchase_guard(cid, picked) {
   // 四道门的**次序照原作**（:116-127），它们在童装撑破询问（:129-163）之前：
   // 钱不够/顺从不够时不会被问「要不要强行套上」
   if (a === 0) {
-    return true; // :116-117 A == 0 → 回主菜单（各子菜单的取消都走这支）
+    return true; // A == 0 → 回主菜单（各子菜单的取消都走这支）
   }
   if (a === KIND_ACCESSORY && cflag(cid, 49)) {
-    await print_wait('不解开贞操带的话，无法穿戴其他装备！'); // :118-120
+    await print_wait('不解开贞操带的话，无法穿戴其他装备！');
     return true;
   }
   if (era_flag.money < c) {
-    era.print('钱不够！'); // :121-123
+    era.print('钱不够！');
     await wait();
     return true;
   }
   if (abl(cid, 10) < s) {
-    await print_wait('拒绝穿戴。'); // :124-126
+    await print_wait('拒绝穿戴。');
     return true;
   }
   return false;
@@ -1131,45 +1123,45 @@ async function apply_purchase(cid, picked) {
   const { a, c, r } = picked;
   const torn = picked.torn ?? 0; // F（:16 的着衣时损伤标志）
 
-  // :165-175 通常衣類（A <= 9）：换上衣
+  // 通常衣類（A <= 9）：换上衣
   if (a <= 9) {
-    era.print(chara_callname(cid)); // :166
+    era.print(chara_callname(cid));
     if (cflag(cid, 41) && (cflag(cid, 45) === 0 || cflag(cid, 46) === 0)) {
-      // :167-169 %GET_CLOTHTYPE_MAIN2(TARGET,"脱下")%——动词是实参的一部分
+      // %GET_CLOTHTYPE_MAIN2(TARGET,"脱下")%——动词是实参的一部分
       era.print(get_clothtype_main2(cid, '脱下'));
     }
-    chara(cid).train.上衣类型 = r; // :172
-    chara(cid).train.上衣上状态 = 0; // :173
-    chara(cid).train.上衣下状态 = 0; // :174
-    era.print(`${get_clothtype_main2(cid, '换上')}了。`); // :176
+    chara(cid).train.上衣类型 = r;
+    chara(cid).train.上衣上状态 = 0;
+    chara(cid).train.上衣下状态 = 0;
+    era.print(`${get_clothtype_main2(cid, '换上')}了。`);
   } else if (a === KIND_UNDERWARE) {
-    // :177-205 内衣：旧内衣卖掉换钱（:179-194）
+    // 内衣：旧内衣卖掉换钱（:179-194）
     era.print(`为${chara_callname(cid)}买了新内衣。`);
     if (cflag(cid, 43) >= 0 && cflag(cid, 48) >= 6) {
-      await wait(); // :180
-      let price = 50 * cflag(cid, 48); // :181
-      if (talent(cid, 74)) price = Math.trunc(price * 1.5); // :183-184 自慰狂
-      if (talent(cid, 92)) price = Math.trunc(price * 2.0); // :186-187 谜之魅力
-      if (talent(cid, 126)) price = Math.trunc(price * 1.5); // :189-190 高人气
-      era.print(`穿过的内裤被卖掉挣了${price}点钱。`); // :191
-      era_flag.money += price; // :192
-      era.set('exflag:4444', (era.get('exflag:4444') || 0) + price); // :193
+      await wait();
+      let price = 50 * cflag(cid, 48);
+      if (talent(cid, 74)) price = Math.trunc(price * 1.5); // 自慰狂
+      if (talent(cid, 92)) price = Math.trunc(price * 2.0); // 谜之魅力
+      if (talent(cid, 126)) price = Math.trunc(price * 1.5); // 高人气
+      era.print(`穿过的内裤被卖掉挣了${price}点钱。`);
+      era_flag.money += price;
+      era.set('exflag:4444', (era.get('exflag:4444') || 0) + price);
     }
     if (cflag(cid, 41) === 0) {
-      chara(cid).train.上衣类型 = 1; // :196-200
+      chara(cid).train.上衣类型 = 1;
       chara(cid).train.上衣上状态 = -3;
       chara(cid).train.上衣下状态 = -3;
     }
-    chara(cid).train.着衣状态 = 3; // :202-205
+    chara(cid).train.着衣状态 = 3;
     chara(cid).train.内裤状态 = 0;
     chara(cid).stronghold.胸罩状态 = 0;
     chara(cid).train.内裤穿着期间 = 0;
   } else if (a === KIND_DIAPER) {
-    // :206-208 尿布
+    // 尿布
     era.print(`${chara_callname(cid)}在房间的角落穿上了尿布。`);
     chara(cid).train.特别服装状态 = 0;
   } else if (a === KIND_ACCESSORY) {
-    // :209-229 装备品
+    // 装备品
     if (cflag(cid, 42) && cflag(cid, 47) === 0) {
       era.print(`${chara_callname(cid)}将`);
       era.print(clothtype_special_text(cid));
@@ -1177,37 +1169,37 @@ async function apply_purchase(cid, picked) {
     } else {
       era.print(`${chara_callname(cid)}穿上了`);
     }
-    chara(cid).chara.特别服装类型 = r; // :218
-    chara(cid).train.特别服装状态 = 0; // :219
+    chara(cid).chara.特别服装类型 = r;
+    chara(cid).train.特别服装状态 = 0;
     era.print(clothtype_special_text(cid));
-    era.print('穿上了。'); // :222
+    era.print('穿上了。');
     if (r === 99 || r === 98) {
-      era.print('穿衣的时候，因为尚未习惯的尿道导管的插入，'); // :226
-      era.print(`${chara_callname(cid)}不自觉的发出了声音，脸上也泛起了红潮。`); // :227
+      era.print('穿衣的时候，因为尚未习惯的尿道导管的插入，');
+      era.print(`${chara_callname(cid)}不自觉的发出了声音，脸上也泛起了红潮。`);
     }
   }
 
-  // :232-245 撑破（童装穿不下时的两支）
+  // 撑破（童装穿不下时的两支）
   if (torn === 1) {
     era.print('新买的');
     era.print(clothtype_main2_text(cid));
     era.print('的上半身被撑破了，');
     era.print(`${chara_callname(cid)}高耸入云的双峰，一览无遗。`);
-    chara(cid).stronghold.胸罩状态 = -3; // :237-238
+    chara(cid).stronghold.胸罩状态 = -3;
     chara(cid).train.上衣上状态 = -3;
   } else if (torn === 2) {
     era.print('新买的');
     era.print(clothtype_main2_text(cid));
     era.print('的下半身被撑破了，');
     era.print(`${chara_callname(cid)}的屁股暴露人前。`);
-    chara(cid).train.上衣下状态 = -3; // :244
+    chara(cid).train.上衣下状态 = -3;
   }
 
-  wearing_cloth_able(cid); // :247 CALL WEARING_CLOTH_ABLE（#215 真身）
-  era_flag.target = -1; // :249 TARGET = -1
-  era_flag.money -= c; // :250 MONEY -= C
-  era.set('exflag:4444', (era.get('exflag:4444') || 0) - c); // :251
-  await wait(); // :252 WAIT
+  wearing_cloth_able(cid); // CALL WEARING_CLOTH_ABLE（#215 真身）
+  era_flag.target = -1; // TARGET = -1
+  era_flag.money -= c; // MONEY -= C
+  era.set('exflag:4444', (era.get('exflag:4444') || 0) - c);
+  await wait(); // WAIT
 }
 
 /**
@@ -1217,30 +1209,30 @@ async function apply_purchase(cid, picked) {
  * @returns {Promise<number>} 0（:110-111 与 :249-251 的 RETURN 0）
  */
 async function tailor_core(arg) {
-  era_flag.target = arg; // :63 TARGET = ARG
+  era_flag.target = arg; // TARGET = ARG
 
   // $INPUT_LOOP_02（:65-127 的绘制与分发 + :232-254 的应用）
   for (;;) {
-    era.drawLine(); // :71-72（DRAWLINE + 所持金）
-    era.print(`所持金：${era_flag.money}点`); // :72
+    era.drawLine(); // （DRAWLINE + 所持金）
+    era.print(`所持金：${era_flag.money}点`);
     era.print(
       `${chara_callname(arg)}现在${get_clothtype_main2(arg, '身穿')}。`,
-    ); // :73 %GET_CLOTHTYPE_MAIN2(TARGET,"身穿")%
-    // :73-75 是两条 PRINTFORML 逐行相邻（中间那行是空白源码行，不含 PRINTL），
+    ); // %GET_CLOTHTYPE_MAIN2(TARGET,"身穿")%
+    // 是两条 PRINTFORML 逐行相邻（中间那行是空白源码行，不含 PRINTL），
     // 原作这里没有空行
-    era.print(`要让${chara_callname(arg)}穿上什么？`); // :75
-    era.drawLine(); // :76-78（DRAWLINE + 日常服饰项）
-    era.printButton(`- 日常服饰（${CASUAL_PRICE}点）`, 0); // :78
-    era.printButton(`- 普通装备（${NORMAL_PRICE}点）`, 1); // :79
-    era.printButton('- 其它', 2); // :80
-    era.printButton(`- 替换内衣（${UNDERWARE_PRICE}点）`, 3); // :81
+    era.print(`要让${chara_callname(arg)}穿上什么？`);
+    era.drawLine(); // （DRAWLINE + 日常服饰项）
+    era.printButton(`- 日常服饰（${CASUAL_PRICE}点）`, 0);
+    era.printButton(`- 普通装备（${NORMAL_PRICE}点）`, 1);
+    era.printButton('- 其它', 2);
+    era.printButton(`- 替换内衣（${UNDERWARE_PRICE}点）`, 3);
     // 原作的 `CFLAG:42` / `TALENT:0` 是单参形态 = **TARGET 的**读数
     // （TAILOR_CORE :63 已置 TARGET = ARG）
     if (
       cflag(arg, 42) === 69 &&
       ((cflag(arg, 40) & 64) === 0 || cflag(arg, 47) > 0)
     ) {
-      era.printButton(`- 替换尿布（${DIAPER_PRICE}点）`, 4); // :82-83
+      era.printButton(`- 替换尿布（${DIAPER_PRICE}点）`, 4);
     }
     if (
       cflag(arg, 42) === 79 &&
@@ -1248,26 +1240,26 @@ async function tailor_core(arg) {
       cflag(arg, 49) === 0 &&
       talent(arg, 0) !== 0
     ) {
-      era.printButton('- 扔掉贞操带的钥匙', 5); // :84-85（TALENT:0 = 処女，为真才给）
+      era.printButton('- 扔掉贞操带的钥匙', 5); // （TALENT:0 = 処女，为真才给）
     }
-    era.printButton('- 魔法装备', 7); // :87
-    era.printButton('- 武器', 8); // :88
+    era.printButton('- 魔法装备', 7);
+    era.printButton('- 武器', 8);
     era.drawLine();
-    era.printButton('- 返回', 999); // :90
+    era.printButton('- 返回', 999);
 
-    const result = await era.input(); // :92
+    const result = await era.input();
 
     let picked = null;
     if (result === 0) {
-      picked = await tailor_casual(arg); // :94-95
+      picked = await tailor_casual(arg);
     } else if (result === 1) {
-      picked = await tailor_normal(arg); // :96-97
+      picked = await tailor_normal(arg);
     } else if (result === 2) {
-      picked = await tailor_accessory(arg); // :98-99
+      picked = await tailor_accessory(arg);
     } else if (result === 3) {
-      picked = await tailor_underware(); // :100-101
+      picked = await tailor_underware();
     } else if (result === 4 && cflag(arg, 42) === 69) {
-      picked = await tailor_diaper(arg); // :102-103
+      picked = await tailor_diaper(arg);
     } else if (
       result === 5 &&
       cflag(arg, 42) === 79 &&
@@ -1276,23 +1268,23 @@ async function tailor_core(arg) {
       talent(arg, 0) !== 0 &&
       cflag(arg, 71) === 0
     ) {
-      picked = await chastity_key(); // :104-105
+      picked = await chastity_key();
     } else if (result === 7) {
-      picked = await equip_magic_item(arg); // :106-107
+      picked = await equip_magic_item(arg);
     } else if (result === 8) {
-      picked = await equip_magic_weapon(arg); // :108-109
+      picked = await equip_magic_weapon(arg);
     } else if (result === 999) {
-      return 0; // :110-111（返回键）
+      return 0; // （返回键）
     } else {
-      continue; // :112-113
+      continue;
     }
 
-    // :116-127 四道门（A == 0 / 贞操带锁 / 钱不够 / 顺从不够）——在撑破询问之前
+    // 四道门（A == 0 / 贞操带锁 / 钱不够 / 顺从不够）——在撑破询问之前
     if (await purchase_guard(arg, picked)) {
       continue;
     }
 
-    // :129-163 童装的撑破判定（【魁梧】/【巨乳】等穿不下童装）
+    // 童装的撑破判定（【魁梧】/【巨乳】等穿不下童装）
     let torn = 0;
     if (talent(arg, 99) && picked.a === KIND_CHILD) {
       const forced = await confirm_tear(
@@ -1301,9 +1293,9 @@ async function tailor_core(arg) {
       if (forced === false) {
         continue;
       }
-      era.print('强行套上的时候，把衣服的下半身撑破啦！'); // :137
+      era.print('强行套上的时候，把衣服的下半身撑破啦！');
       await wait();
-      torn = 2; // :140 F = 2
+      torn = 2; // F = 2
     } else if (
       talent(arg, 100) === 0 &&
       (talent(arg, 114) || talent(arg, 110) || talent(arg, 119)) &&
@@ -1315,13 +1307,13 @@ async function tailor_core(arg) {
       if (forced === false) {
         continue;
       }
-      era.print('强行套上的时候，把衣服的上半身撑破啦！'); // :154
+      era.print('强行套上的时候，把衣服的上半身撑破啦！');
       await wait();
-      torn = 1; // :157 F = 1
+      torn = 1; // F = 1
     }
 
-    await apply_purchase(arg, { ...picked, torn }); // :165-252（应用与收尾）
-    return 0; // :247-254（收尾：着衣重算 + TARGET 还原 + 扣款 + RETURN 0）
+    await apply_purchase(arg, { ...picked, torn }); // （应用与收尾）
+    return 0; // （收尾：着衣重算 + TARGET 还原 + 扣款 + RETURN 0）
   }
 }
 
@@ -1352,27 +1344,27 @@ async function confirm_tear(prompt) {
  */
 async function tailor_main() {
   for (;;) {
-    // :20-38 标题与日期
-    era.drawLine({ isSolid: true }); // :20-21 CUSTOMDRAWLINE = + 标题
-    era.print('服装设计师'); // :21
-    era.print('《这里是制作衣装的服饰店》'); // :22
-    era.drawLine(); // :23-24（DRAWLINE + PRINTV DAY+1）
+    // 标题与日期
+    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE = + 标题
+    era.print('服装设计师');
+    era.print('《这里是制作衣装的服饰店》');
+    era.drawLine(); // （DRAWLINE + PRINTV DAY+1）
     era.print(
       `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
-    ); // :24-30
-    era.print(`所持金：${era_flag.money}点`); // :32
-    era.drawLine(); // :33-34（DRAWLINE + 调整谁的衣装）
-    era.print('调整谁的衣装？'); // :34
-    era.drawLine(); // :35-36（DRAWLINE + LIFE_LIST_TAILOR）
-    life_list_tailor(); // :36 CALL LIFE_LIST_TAILOR
-    era.drawLine(); // :37 CUSTOMDRAWLINE ‥
-    era.printButton('- 返回', 999); // :38
+    );
+    era.print(`所持金：${era_flag.money}点`);
+    era.drawLine(); // （DRAWLINE + 调整谁的衣装）
+    era.print('调整谁的衣装？');
+    era.drawLine(); // （DRAWLINE + LIFE_LIST_TAILOR）
+    life_list_tailor(); // CALL LIFE_LIST_TAILOR
+    era.drawLine(); // CUSTOMDRAWLINE ‥
+    era.printButton('- 返回', 999);
 
-    const result = await era.input(); // :40
+    const result = await era.input();
     if (result === 999) {
-      return 0; // :42-46
+      return 0;
     }
-    // :47-54 三道守卫：范围外 / 濒死 / 非待机（均静默回循环头）
+    // 三道守卫：范围外 / 濒死 / 非待机（均静默回循环头）
     if (result < 1 || !era.getAddedCharacters().includes(result)) {
       continue;
     }
@@ -1382,8 +1374,8 @@ async function tailor_main() {
     if (cflag(result, 1) !== 0) {
       continue;
     }
-    await tailor_core(result); // :57 CALL TAILOR_CORE(RESULT)
-    // :59 RESTART：回到本函数头（重画成员列表）
+    await tailor_core(result); // CALL TAILOR_CORE(RESULT)
+    // RESTART：回到本函数头（重画成员列表）
   }
 }
 

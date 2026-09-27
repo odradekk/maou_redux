@@ -136,7 +136,7 @@ test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DU
   let target_during = null;
   dungeon_attack_family.register(3, async (...args) => {
     seen.push(args);
-    target_during = era_flag.target; // :327 TARGET = B
+    target_during = era_flag.target; // TARGET = B
     return 0;
   });
   const rand = always;

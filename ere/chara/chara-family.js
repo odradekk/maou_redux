@@ -1,10 +1,6 @@
 /**
  * @file 家族关系设置（issue #349，阶段 5a L18）。
  *
- * 源: target/ERB/キャラ関数/CHARA_FAMILY.ERB  @SEARCH_FAMILY（:12-355）
- *     target/ERB/關係設置/RELATION.ERB  全函数（:8-301）
- *     target/ERB/關係設置/RELATION_FAMILY.ERB  全函数（:24-1011）
- *
  * SEARCH_FAMILY 的 CFLAG:605/601/610 是十进制压缩数据：个位为关系，
  * 十位为成为勇者前的生活，千位为性格（TALENT-160），十万位起为家族
  * 构成。候选遍历使用 getAddedCharacters()，对应 Emuera 的 0..CHARANUM。

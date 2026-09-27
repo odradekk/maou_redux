@@ -4,13 +4,6 @@
  * 分支随 #219 归 com-caress.js，其余 SELECTCOM 分支随各自指令票在
  * com-<族>.js 注册）。
  *
- * 源: target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB  @TRAIN_MESSAGE_B
- *     （:12-3049 全文；公共头 :19-26 + 107 个 IF SELECTCOM == 分支 + 尾部
- *     :3041-3046 的 TFLAG:31 归一）
- *     target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB  @TRAIN_MESSAGE_A
- *     （:15-1351 全文；公共头 :22-26 + 公共段 :31-741 + 82 个 SELECTCOM
- *     分支 :746-1351）
- *
  * 原作 B 在前、A 在后（B 文件头 :10 的调用方注释）；ere 侧同为两次直调：
  * B 由各 @COMn 调（COMF0_愛撫.ERB:11 等），A 由 @SOURCE_CHECK 调
  * （SYSTEM_SOURCE.ERB:478）。
@@ -142,7 +135,7 @@ function emit_intercrural_ejaculation() {
   const target_name = chara_callname(target);
 
   if (tflag9 === 0) {
-    // :33-54 对象射精：只在 122/33/62 三支上有输出，且需 TFLAG:10 ≥ 1
+    // 对象射精：只在 122/33/62 三支上有输出，且需 TFLAG:10 ≥ 1
     if (tflag10 < 1) {
       return;
     }
@@ -150,23 +143,21 @@ function emit_intercrural_ejaculation() {
     if (selectcom === 122) {
       era.print(
         `${head}精液、将${chara_callname(player)}的阴茎用精液一吐为快了…`,
-      ); // :39
+      );
       return;
     }
     if (selectcom === 33 || selectcom === 62) {
       // 33 支补「精液、把〈主人〉的」；62 支没有这句（源侧如此）
       const line =
-        selectcom === 33
-          ? `${head}精液、把${chara_callname(player)}的` // :43
-          : head;
+        selectcom === 33 ? `${head}精液、把${chara_callname(player)}的` : head;
       const color = skin_color(target);
       if (color === undefined) {
         era.print(line); // 断句残留：源侧色名链无 ELSE
       } else {
-        era.print(`${line}${color}肌肤弄脏了…`); // :45/:47/:49
+        era.print(`${line}${color}肌肤弄脏了…`);
       }
       if (selectcom === 62) {
-        era.print('射出的精液、把两人的身体都弄脏了…'); // :52
+        era.print('射出的精液、把两人的身体都弄脏了…');
       }
     }
     return;
@@ -178,38 +169,38 @@ function emit_intercrural_ejaculation() {
   const heavy = tflag9 === 2; // 2 臂 = 大量射精，文案逐字不同
 
   if (selectcom === 122) {
-    // :58-65（1 臂）/ :87-94（2 臂）：主人与对象同为扶她且对象也射了 → 同时射精
+    // （1 臂）/ :87-94（2 臂）：主人与对象同为扶她且对象也射了 → 同时射精
     const both = tflag10 >= 1 && (tal(player, 122) || tal(player, 121));
     if (both) {
       era.print(
         heavy
-          ? '两人同时射精、对彼此的阴茎用大量的精液一吐为快…' // :90
-          : '两人同时射精、对彼此的阴茎用精液一吐为快了…', // :61
+          ? '两人同时射精、对彼此的阴茎用大量的精液一吐为快…'
+          : '两人同时射精、对彼此的阴茎用精液一吐为快了…',
       );
     } else {
       era.print(
         heavy
-          ? `${chara_callname(player)}射出大量的精液、把${target_name}的阴茎搞得黏黏糊糊…` // :93
-          : `射出的精液、把${target_name}的阴茎弄脏了…`, // :64
+          ? `${chara_callname(player)}射出大量的精液、把${target_name}的阴茎搞得黏黏糊糊…`
+          : `射出的精液、把${target_name}的阴茎弄脏了…`,
       );
     }
     return;
   }
 
-  // :67-80（1 臂）/ :96-109（2 臂）股间性交：33 与 62 各一句，互不排斥
+  // （1 臂）/ :96-109（2 臂）股间性交：33 与 62 各一句，互不排斥
   if (selectcom === 33) {
     const color = skin_color(target) ?? ''; // 色名链无 ELSE，缺色即空串
     era.print(
       heavy
-        ? `${target_name}的${color}肌肤被射出的大量精液沾满了…` // :98-106
-        : `射出的精液、把${target_name}的${color}肌肤弄脏了…`, // :69-77
+        ? `${target_name}的${color}肌肤被射出的大量精液沾满了…`
+        : `射出的精液、把${target_name}的${color}肌肤弄脏了…`,
     );
   }
   if (selectcom === 62) {
     era.print(
       heavy
-        ? '两人的身体被射出的大量精液沾满了…' // :108
-        : '射出的精液、把两人的身体都弄脏了…', // :79
+        ? '两人的身体被射出的大量精液沾满了…'
+        : '射出的精液、把两人的身体都弄脏了…',
     );
   }
 }
@@ -227,13 +218,13 @@ function emit_dog_ejaculation() {
   const target_name = chara_callname(era_flag.target);
   const selectcom = era_flag.selectcom;
   if (selectcom === 21 || selectcom === 34) {
-    era.print(`${target_name}的私处里、被狗灌入了那又臭又热的精液…`); // :153
+    era.print(`${target_name}的私处里、被狗灌入了那又臭又热的精液…`);
   } else if (selectcom === 27) {
-    era.print(`${target_name}的直肠里、被狗灌入了那又臭又热的精液…`); // :155
+    era.print(`${target_name}的直肠里、被狗灌入了那又臭又热的精液…`);
   } else if (selectcom === 31) {
-    era.print(`${target_name}的嘴里、被狗灌入了那又臭又热的精液…`); // :157
+    era.print(`${target_name}的嘴里、被狗灌入了那又臭又热的精液…`);
   } else if (selectcom === 30) {
-    era.print(`${target_name}的手上、沾满了狗那又臭又热的精液…`); // :159
+    era.print(`${target_name}的手上、沾满了狗那又臭又热的精液…`);
   }
 }
 
@@ -254,18 +245,18 @@ function emit_assistant_ejaculation() {
   const target_name = chara_callname(era_flag.target);
   const assi_name = chara_callname(era_flag.assi);
   if (flag === 1) {
-    era.print(`当着${target_name}的面、在${assi_name}的体内深处射出了精液…`); // :167
+    era.print(`当着${target_name}的面、在${assi_name}的体内深处射出了精液…`);
   }
   if (flag === 2) {
     era.print(
       `当着${target_name}的面、在${assi_name}的体内深处射满了精液、溢出来了……`,
-    ); // :169
+    );
   }
   if (
     (abl(era_flag.target, 11) > 3 || abl(era_flag.target, 32) > 2) &&
     tflag(899) <= 1
   ) {
-    era.print(`${target_name}用羡慕的眼光凝视着${assi_name}被内射的样子…`); // :171
+    era.print(`${target_name}用羡慕的眼光凝视着${assi_name}被内射的样子…`);
   }
 }
 
@@ -294,20 +285,20 @@ function emit_mouth_ejaculation(heavy) {
     if (addicted) {
       era.print(
         heavy
-          ? `${name}带着恍惚的表情、把口中的精液喝光了…` // :262
-          : `${name}带着恍惚的表情、把注入口中的精液喝光了…`, // :181
+          ? `${name}带着恍惚的表情、把口中的精液喝光了…`
+          : `${name}带着恍惚的表情、把注入口中的精液喝光了…`,
       );
     } else if (devoted) {
       era.print(
         heavy
-          ? `没喝完的精液、从${name}的嘴里溢出来了…` // :264
-          : `${name}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`, // :183
+          ? `没喝完的精液、从${name}的嘴里溢出来了…`
+          : `${name}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`,
       );
     } else {
       era.print(
         heavy
-          ? `满满的精液、把${name}的喉咙叩开了…` // :266
-          : `精液注入到${name}的嘴里了…`, // :185
+          ? `满满的精液、把${name}的喉咙叩开了…`
+          : `精液注入到${name}的嘴里了…`,
       );
     }
     return;
@@ -317,11 +308,11 @@ function emit_mouth_ejaculation(heavy) {
     const skin = skin_color(target);
     const tint = skin === undefined ? '' : `${skin}的`; // 色名链无 ELSE
     if (heavy) {
-      era.print(`大量的精液飞散而出、${name}${tint}胸部和脸之间、全被射满了…`); // :270-278
+      era.print(`大量的精液飞散而出、${name}${tint}胸部和脸之间、全被射满了…`);
     } else if (tal(target, 110) || tal(target, 114)) {
-      era.print(`${name}${tint}圆润挺拔的诱惑豪乳之间、积存着精液…`); // :190-198
+      era.print(`${name}${tint}圆润挺拔的诱惑豪乳之间、积存着精液…`);
     } else {
-      era.print(`${name}${tint}胸口到脸之间、精液四处飞散着…`); // :200-208
+      era.print(`${name}${tint}胸口到脸之间、精液四处飞散着…`);
     }
     return;
   }
@@ -329,8 +320,8 @@ function emit_mouth_ejaculation(heavy) {
   if (selectcom === 68) {
     era.print(
       heavy
-        ? `大量的精液倾泻在${name}和${assi_name}的脸上…` // :281
-        : `${name}和${assi_name}用嘴接住精液…`, // :212
+        ? `大量的精液倾泻在${name}和${assi_name}的脸上…`
+        : `${name}和${assi_name}用嘴接住精液…`,
     );
     return;
   }
@@ -338,37 +329,37 @@ function emit_mouth_ejaculation(heavy) {
   if (selectcom === 69) {
     era.print(
       heavy
-        ? `${name}因阴部的刺激全身颤抖着、然后把精液喝下去了…` // :284
-        : `${name}身体颤抖着、承受来自阴部的刺激、同时把精液咽下…`, // :215
+        ? `${name}因阴部的刺激全身颤抖着、然后把精液喝下去了…`
+        : `${name}身体颤抖着、承受来自阴部的刺激、同时把精液咽下…`,
     );
     return;
   }
 
   if (selectcom === 80 || selectcom === 124) {
-    // :218-226 / :287-295：失神 ≥ 2 只吃「抓头深喉」句，与中毒/侍奉两类分开
+    // ：失神 ≥ 2 只吃「抓头深喉」句，与中毒/侍奉两类分开
     if (tflag(899) >= 2) {
       era.print(
         heavy
-          ? `紧紧抓住${name}的头、在她喉咙深处放开精关…` // :288
-          : `紧紧抓住${name}的头、在她喉咙深处射出…`, // :219/:225
+          ? `紧紧抓住${name}的头、在她喉咙深处放开精关…`
+          : `紧紧抓住${name}的头、在她喉咙深处射出…`,
       );
     } else if (addicted) {
       era.print(
         heavy
-          ? `${name}带着恍惚的表情、把直接灌入喉咙的精液喝光了…` // :290
-          : `${name}带着恍惚的表情、把强行灌入喉咙的精液喝光了…`, // :221
+          ? `${name}带着恍惚的表情、把直接灌入喉咙的精液喝光了…`
+          : `${name}带着恍惚的表情、把强行灌入喉咙的精液喝光了…`,
       );
     } else if (devoted) {
       era.print(
         heavy
-          ? `${name}被呛到、一边忍住不把喉咙里的精液咳出来、一边把它喝光了…` // :292
-          : `${name}喝掉了直接叩开喉咙强行灌进来的精液…`, // :223
+          ? `${name}被呛到、一边忍住不把喉咙里的精液咳出来、一边把它喝光了…`
+          : `${name}喝掉了直接叩开喉咙强行灌进来的精液…`,
       );
     } else {
       era.print(
         heavy
-          ? `在${name}喉咙深处射出的精液、从口中溢出来了…` // :294
-          : `紧紧抓住${name}的头、在她喉咙深处射出…`, // :225
+          ? `在${name}喉咙深处射出的精液、从口中溢出来了…`
+          : `紧紧抓住${name}的头、在她喉咙深处射出…`,
       );
     }
     return;
@@ -378,18 +369,18 @@ function emit_mouth_ejaculation(heavy) {
     if (tal(target, 109)) {
       era.print(
         heavy
-          ? `${player_name}的阴茎、一边享受胸部的按摩、一边在${name}的嘴里倾泻了大量精液…` // :299
-          : `${player_name}的阴茎、一边享受胸部的按摩、一边在${name}的嘴里倾泻精液…`, // :230
+          ? `${player_name}的阴茎、一边享受胸部的按摩、一边在${name}的嘴里倾泻了大量精液…`
+          : `${player_name}的阴茎、一边享受胸部的按摩、一边在${name}的嘴里倾泻精液…`,
       );
     } else {
       era.print(
         heavy
-          ? `${player_name}的阴茎、一边被胸部紧紧夹住、一边在${name}的嘴里倾泻了大量精液…` // :301
-          : `${player_name}的阴茎、一边被胸部紧紧夹住、一边在${name}的嘴里倾泻精液…`, // :232
+          ? `${player_name}的阴茎、一边被胸部紧紧夹住、一边在${name}的嘴里倾泻了大量精液…`
+          : `${player_name}的阴茎、一边被胸部紧紧夹住、一边在${name}的嘴里倾泻精液…`,
       );
     }
     if (heavy) {
-      era.print('从嘴里溢出来的精液、把阴茎和胸部都染成白色了…'); // :303
+      era.print('从嘴里溢出来的精液、把阴茎和胸部都染成白色了…');
     }
     return;
   }
@@ -398,29 +389,29 @@ function emit_mouth_ejaculation(heavy) {
     if (devoted) {
       era.print(
         heavy
-          ? `没喝完的精液、从${name}的嘴里溢出了…` // :307
-          : `${name}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`, // :237
+          ? `没喝完的精液、从${name}的嘴里溢出了…`
+          : `${name}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`,
       );
     } else {
       era.print(
         heavy
-          ? `满满的精液、把${name}的喉咙叩开了…` // :309
-          : `精液注入到${name}的口中了…`, // :239
+          ? `满满的精液、把${name}的喉咙叩开了…`
+          : `精液注入到${name}的口中了…`,
       );
     }
     // 两句 SIF 相互独立：主人是男人（122）与主人是扶她（121）各一句，可同落
     if (addicted && tal(era_flag.player, 122)) {
       era.print(
         heavy
-          ? `满溢的精液、将${name}的嘴边搞得一塌糊涂。揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。` // :312
-          : `${name}揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`, // :242
+          ? `满溢的精液、将${name}的嘴边搞得一塌糊涂。揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`
+          : `${name}揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
       );
     }
     if (addicted && tal(era_flag.player, 121)) {
       era.print(
         heavy
-          ? `满溢的精液、将${name}的嘴边搞得一塌糊涂。撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。` // :314
-          : `${name}撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`, // :244
+          ? `满溢的精液、将${name}的嘴边搞得一塌糊涂。撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`
+          : `${name}撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
       );
     }
     return;
@@ -430,21 +421,21 @@ function emit_mouth_ejaculation(heavy) {
     if (devoted) {
       era.print(
         heavy
-          ? `${name}淫秽地吸啜着阴茎、在她嘴里、大量的精液喷涌而出…` // :318
-          : `${name}淫秽地吸啜着阴茎、在她口中开射出…`, // :248
+          ? `${name}淫秽地吸啜着阴茎、在她嘴里、大量的精液喷涌而出…`
+          : `${name}淫秽地吸啜着阴茎、在她口中开射出…`,
       );
     } else {
       era.print(
         heavy
-          ? `${name}吸啜着阴茎、在她嘴里、大量的精液喷涌而出…` // :320
-          : `${name}吸啜着阴茎、在她口中开放了精关…`, // :250
+          ? `${name}吸啜着阴茎、在她嘴里、大量的精液喷涌而出…`
+          : `${name}吸啜着阴茎、在她口中开放了精关…`,
       );
     }
     if (addicted) {
       era.print(
         heavy
-          ? `精液从嘴里溢出、${name}带着恍惚的表情、把阴茎上的精液吸吮干净…` // :323
-          : `${name}带着恍惚的表情、把阴茎上的精液吸吮干净了。`, // :253
+          ? `精液从嘴里溢出、${name}带着恍惚的表情、把阴茎上的精液吸吮干净…`
+          : `${name}带着恍惚的表情、把阴茎上的精液吸吮干净了。`,
       );
     }
   }
@@ -462,14 +453,14 @@ function emit_hand_ejaculation(heavy) {
   const name = chara_callname(target);
   let line = '';
   if (exp(target, 20) === 0 && tflag(899) <= 1) {
-    line += '带着惊讶的神情、'; // :330/:339
+    line += '带着惊讶的神情、';
   }
   if (abl(target, 32) > 2 && tflag(899) <= 1) {
-    line += '带着恍惚的表情、'; // :332/:341
+    line += '带着恍惚的表情、';
   }
   line += heavy
-    ? `${name}的脸上、手上、沾满了大量的精液…` // :342
-    : `精液射到${name}的身上了…`; // :333
+    ? `${name}的脸上、手上、沾满了大量的精液…`
+    : `精液射到${name}的身上了…`;
   era.print(line);
 }
 
@@ -484,13 +475,13 @@ function emit_hand_ejaculation(heavy) {
 function emit_foot_ejaculation(heavy) {
   const target = era_flag.target;
   const name = chara_callname(target);
-  let line = name; // :347/:355 PRINTFORM
+  let line = name; // PRINTFORM
   if ((tal(target, 83) || abl(target, 20) > 2) && tal(target, 85) === 0) {
-    line += '带着轻蔑的眼神、'; // :349/:357
+    line += '带着轻蔑的眼神、';
   }
   line += heavy
-    ? '看着你将大量热乎乎的精液射到她的脚上了…' // :358
-    : '看着你将热乎乎的精液射到她的脚上了…'; // :350
+    ? '看着你将大量热乎乎的精液射到她的脚上了…'
+    : '看着你将热乎乎的精液射到她的脚上了…';
   era.print(line);
 }
 
@@ -509,17 +500,17 @@ function emit_idle_play() {
     return;
   }
   const name = chara_callname(target);
-  let line = `${name}急促的呼吸着`; // :364
+  let line = `${name}急促的呼吸着`;
   if (palam(target, 5) >= PALAMLV[5]) {
-    line += '、用炽热地目光看向你'; // :366
+    line += '、用炽热地目光看向你';
   }
   if (palam(target, 5) >= PALAMLV[3] && tq(target, 21)) {
-    line += '、身体不断地颤抖着'; // :368
+    line += '、身体不断地颤抖着';
   }
   if (palam(target, 5) >= PALAMLV[4]) {
-    line += '、紧蹙摩擦的双腿已经捂不住流淌出的粘液了'; // :370
+    line += '、紧蹙摩擦的双腿已经捂不住流淌出的粘液了';
   }
-  era.print(`${line}……`); // :371
+  era.print(`${line}……`);
 }
 
 /**
@@ -574,13 +565,13 @@ function emit_sex_ejaculation() {
 
   if (level === 1 && milk_inside && selectcom === 90) {
     era.print(
-      `${player_name}的肉棒在${name}的乳房里激烈的颤抖着、在乳头肉穴的深处释放了精液…`, // :458
+      `${player_name}的肉棒在${name}的乳房里激烈的颤抖着、在乳头肉穴的深处释放了精液…`,
     );
     return;
   }
   if (level === 2 && milk_inside) {
     era.print(
-      `${player_name}的肉棒在乳房里射入了大量的精液、从乳头仅存的缝隙间、精液和母乳一齐喷了出来…`, // :524
+      `${player_name}的肉棒在乳房里射入了大量的精液、从乳头仅存的缝隙间、精液和母乳一齐喷了出来…`,
     );
     return;
   }
@@ -599,14 +590,14 @@ function emit_sex_ejaculation() {
     if (selectcom === 20 || selectcom === 22) {
       era.print(
         heavy
-          ? `阴茎拔出后、阴部处、${blood ? '处女的落红混合着' : ''}大量的精液渗出来了…` // :532
-          : `${with_blood('阴茎拔出后、阴部处')}精液渗出来了…`, // :463-466
+          ? `阴茎拔出后、阴部处、${blood ? '处女的落红混合着' : ''}大量的精液渗出来了…`
+          : `${with_blood('阴茎拔出后、阴部处')}精液渗出来了…`,
       );
     } else if (selectcom === 21 || selectcom === 23) {
       era.print(
         heavy
-          ? `阴茎拔出后、阴部处、${blood ? '处女的落红混合着' : ''}大量的精液滴出来了…` // :538
-          : `${with_blood('阴茎拔出后、阴部处')}精液滴出来了…`, // :469-472
+          ? `阴茎拔出后、阴部处、${blood ? '处女的落红混合着' : ''}大量的精液滴出来了…`
+          : `${with_blood('阴茎拔出后、阴部处')}精液滴出来了…`,
       );
     } else if (
       selectcom === 26 ||
@@ -617,44 +608,44 @@ function emit_sex_ejaculation() {
     ) {
       era.print(
         heavy
-          ? '从肛门里漏出大量的精液沿着股沟向下流………' // :541
-          : '从肛门里漏出来的精液沿着股沟向下流……', // :475
+          ? '从肛门里漏出大量的精液沿着股沟向下流………'
+          : '从肛门里漏出来的精液沿着股沟向下流……',
       );
     } else if (selectcom === 25) {
       era.print(
         heavy
-          ? `${player_name}射出的精液、把两人的身体都弄得粘稠不堪…` // :543
-          : `${player_name}射出的精液、把两人的身体都弄脏了…`, // :477
+          ? `${player_name}射出的精液、把两人的身体都弄得粘稠不堪…`
+          : `${player_name}射出的精液、把两人的身体都弄脏了…`,
       );
     } else if (selectcom === 34) {
       era.print(
         heavy
-          ? `阴茎拔出后、${blood ? '处女的落红混合着' : ''}大量的精液渗出来了…` // :546-549
-          : `${with_blood('阴茎拔出后、阴部处')}精液渗出来了…`, // :480-483
+          ? `阴茎拔出后、${blood ? '处女的落红混合着' : ''}大量的精液渗出来了…`
+          : `${with_blood('阴茎拔出后、阴部处')}精液渗出来了…`,
       );
     } else if (selectcom === 24) {
       era.print(
         heavy
-          ? `阴茎拔出后、${blood ? '渗出了处女的落红、混合着' : ''}大量的精液渗出来了…` // :552-555
-          : `${player_name}射出的精液、把两人的身体都弄脏了…`, // :486
+          ? `阴茎拔出后、${blood ? '渗出了处女的落红、混合着' : ''}大量的精液渗出来了…`
+          : `${player_name}射出的精液、把两人的身体都弄脏了…`,
       );
       if (heavy) {
-        era.print(`${player_name}射出的精液、把两人的身体都弄得粘稠不堪…`); // :556
+        era.print(`${player_name}射出的精液、把两人的身体都弄得粘稠不堪…`);
       }
     } else if (selectcom === 121 || selectcom === 130 || selectcom === 134) {
       era.print(
         heavy
-          ? `直接对${name}的子宫、注入了大量热乎乎的精液…` // :559
-          : `直接对${name}的子宫、注入了热乎乎的精液…`, // :489
+          ? `直接对${name}的子宫、注入了大量热乎乎的精液…`
+          : `直接对${name}的子宫、注入了热乎乎的精液…`,
       );
     } else if (selectcom === 120) {
       era.print(
         heavy
-          ? `对准${name}私处内那最敏感的那一点、${player_name}射出了大量的精液…` // :562
-          : `对准${name}私处内那最敏感的那一点、${player_name}射出了精液…`, // :492
+          ? `对准${name}私处内那最敏感的那一点、${player_name}射出了大量的精液…`
+          : `对准${name}私处内那最敏感的那一点、${player_name}射出了精液…`,
       );
     }
-    // :494-495 / :564-565：抽出臂写回归一（两处跨域写都经 event 域门面：
+    // ：抽出臂写回归一（两处跨域写都经 event 域门面：
     // TFLAG:31 = game.event.本次调教处女丧失、TFLAG:60 = game.event.插着不拔，
     // 后者与 train_message_b 的尾部同一变量）
     game.event.本次调教处女丧失 = 0;
@@ -666,8 +657,8 @@ function emit_sex_ejaculation() {
   if (selectcom === 27 && tq(target, 55)) {
     era.print(
       heavy
-        ? '直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把插入的阴茎紧紧夹住了…' // :569
-        : '精液溢出的直肠、细微地颤抖着、把插入的阴茎紧紧夹住了…', // :499
+        ? '直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把插入的阴茎紧紧夹住了…'
+        : '精液溢出的直肠、细微地颤抖着、把插入的阴茎紧紧夹住了…',
     );
   } else if (
     selectcom === 26 ||
@@ -678,38 +669,38 @@ function emit_sex_ejaculation() {
   ) {
     era.print(
       heavy
-        ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${player_name}的阴茎紧紧夹住了…` // :572
-        : `精液溢出的直肠、细微地颤抖着、把${player_name}的阴茎紧紧夹住了…`, // :502
+        ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${player_name}的阴茎紧紧夹住了…`
+        : `精液溢出的直肠、细微地颤抖着、把${player_name}的阴茎紧紧夹住了…`,
     );
   } else if (selectcom === 25) {
     era.print(
       heavy
-        ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${name}的阴茎紧紧夹住了…` // :574
-        : `精液溢出的直肠、细微地颤抖着、把${name}的阴茎紧紧夹住了…`, // :504
+        ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${name}的阴茎紧紧夹住了…`
+        : `精液溢出的直肠、细微地颤抖着、把${name}的阴茎紧紧夹住了…`,
     );
   } else if (selectcom === 121 || selectcom === 130 || selectcom === 134) {
     era.print(
       heavy
-        ? `直接对${name}快乐到生疼的子宫、注入了大量热乎乎的精液……` // :577
-        : `直接对${name}的子宫、注入了热乎乎的精液…`, // :507
+        ? `直接对${name}快乐到生疼的子宫、注入了大量热乎乎的精液……`
+        : `直接对${name}的子宫、注入了热乎乎的精液…`,
     );
   } else if (selectcom === 120) {
     era.print(
       heavy
-        ? `对准${name}私处内那最敏感的那一点、${player_name}射出了大量的精液…` // :580
-        : `对准${name}私处内那最敏感的那一点、${player_name}射出了精液…`, // :510
+        ? `对准${name}私处内那最敏感的那一点、${player_name}射出了大量的精液…`
+        : `对准${name}私处内那最敏感的那一点、${player_name}射出了精液…`,
     );
   } else if (selectcom === 24) {
     era.print(
       heavy
-        ? `${player_name}的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把${name}的阴茎紧紧夹住了…` // :583
-        : `${player_name}被精液灌满的私处、轻轻蠕动着、把${name}的阴茎紧紧缠住了…`, // :513
+        ? `${player_name}的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把${name}的阴茎紧紧夹住了…`
+        : `${player_name}被精液灌满的私处、轻轻蠕动着、把${name}的阴茎紧紧缠住了…`,
     );
   } else {
     era.print(
       heavy
-        ? `${name}的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把${player_name}的阴茎紧紧夹住了…` // :585
-        : `${name}被精液灌满的私处、轻轻蠕动着、把${player_name}的阴茎紧紧缠住了…`, // :515
+        ? `${name}的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把${player_name}的阴茎紧紧夹住了…`
+        : `${name}被精液灌满的私处、轻轻蠕动着、把${player_name}的阴茎紧紧缠住了…`,
     );
   }
 }
@@ -728,18 +719,18 @@ function emit_sex_orgasm_afterglow() {
   const orgasms = tflag(29);
   const cflag40 = era.get(`cflag:${target}:40`) || 0;
   const uncovered = (cflag40 & 16) === 0 && (cflag40 & 1) === 0;
-  const dripping = tflag(19) && (tq(target, 11) || tflag(60)) && uncovered; // :594/:596
+  const dripping = tflag(19) && (tq(target, 11) || tflag(60)) && uncovered;
   const name = chara_callname(target);
   if (orgasms >= 9 && dripping) {
-    era.print(`${name}的私处滴出了粘稠的液体、阴户一开一合不停持续着…`); // :595
+    era.print(`${name}的私处滴出了粘稠的液体、阴户一开一合不停持续着…`);
   } else if (orgasms >= 5 && dripping) {
-    era.print(`${name}的私处滴出了粘稠的液体、剧烈地不停喘息着…`); // :597
+    era.print(`${name}的私处滴出了粘稠的液体、剧烈地不停喘息着…`);
   } else if (orgasms >= 9) {
-    era.print(`${name}断断续续地不停高潮、身体不断抽搐、反复扭动着…`); // :599
+    era.print(`${name}断断续续地不停高潮、身体不断抽搐、反复扭动着…`);
   } else if (orgasms >= 5) {
-    era.print(`${name}断断续续地不停高潮、四肢无力、筋疲力尽了…`); // :601
+    era.print(`${name}断断续续地不停高潮、四肢无力、筋疲力尽了…`);
   } else if (orgasms >= 3) {
-    era.print(`${name}气息慌乱、沉浸在绝顶高潮的余韵之中…`); // :603
+    era.print(`${name}气息慌乱、沉浸在绝顶高潮的余韵之中…`);
   }
 }
 
@@ -769,11 +760,11 @@ function emit_incontinence() {
   const urine = diuretic || incontinent;
 
   if (tflag(899) >= 2 && orgasms >= 3 && urine) {
-    era.print(`${name}失去意识、尿到周围都是了…`); // :613
+    era.print(`${name}失去意识、尿到周围都是了…`);
     return;
   }
   if (tflag(899) >= 2 && orgasms >= 1 && urine) {
-    era.print(`${name}失去意识、尿液从阴部漏出来了…`); // :616
+    era.print(`${name}失去意识、尿液从阴部漏出来了…`);
     return;
   }
 
@@ -784,74 +775,74 @@ function emit_incontinence() {
   const doll_bit = (cflag40 & 64) !== 0; // 着ぐるみ位
 
   if (cflag42 === 69 && doll_bit && burst) {
-    era.print(`${name}的尿布里升起了热气、`); // :619
-    era.print('闻到了清晰的尿臭味、'); // :620
-    era.print('看来是太过兴奋、尿到尿布里去了…'); // :621
+    era.print(`${name}的尿布里升起了热气、`);
+    era.print('闻到了清晰的尿臭味、');
+    era.print('看来是太过兴奋、尿到尿布里去了…');
     return;
   }
   if (cflag42 === 69 && doll_bit && leak) {
-    era.print(`${name}的尿布里升起了热气、飘来了尿的味道…`); // :624
+    era.print(`${name}的尿布里升起了热气、飘来了尿的味道…`);
     return;
   }
   if (cflag42 === 11 && doll_bit && burst) {
     era.print(
       `${name}穿着${clothtype_special_text(target)}、但是、有尿臭味从里面飘散出来。`,
-    ); // :627-629
-    era.print(`看来是太过兴奋、尿到${clothtype_special_text(target)}里去了…`); // :630-632
+    );
+    era.print(`看来是太过兴奋、尿到${clothtype_special_text(target)}里去了…`);
     return;
   }
   if (cflag42 === 11 && doll_bit && leak) {
     era.print(
       `刚才激烈动作的${clothtype_special_text(target)}、突然动作停止了。`,
-    ); // :635-637
-    era.print('看来、里面是尿湿了…'); // :638
+    );
+    era.print('看来、里面是尿湿了…');
     return;
   }
   if (cflag40 & 16 && burst) {
     era.print(
-      `不堪快感冲击的${name}、把${clothtype_main2_text(target)}弄湿也不在乎了、情不自禁地尿了起来…`, // :641-643
+      `不堪快感冲击的${name}、把${clothtype_main2_text(target)}弄湿也不在乎了、情不自禁地尿了起来…`,
     );
     return;
   }
   if (cflag40 & 16 && leak) {
     era.print(
       `${clothtype_main2_text(target)}的股间冒起了热气、有黄色水迹在扩散…`,
-    ); // :646-647
+    );
     return;
   }
   if (cflag40 & 1 && burst) {
-    era.print(`${name}不堪快感的冲击、在内裤里大大方方地尿了…`); // :650
+    era.print(`${name}不堪快感的冲击、在内裤里大大方方地尿了…`);
     return;
   }
   if (cflag40 & 1 && leak) {
-    era.print(`${name}的内裤冒起了热气、有黄色水迹在扩散………`); // :653
+    era.print(`${name}的内裤冒起了热气、有黄色水迹在扩散………`);
     return;
   }
 
-  // :654-676 裸身十档（29 ≥ 7/5/3/1 × 尿具三态）
+  // 裸身十档（29 ≥ 7/5/3/1 × 尿具三态）
   if (orgasms >= 7 && diuretic && incontinent) {
-    era.print(`随着止不住的尿液滴落、${name}的身体、抽搐痉挛了起来、`); // :655
-    era.print('看来尿尿能让她有快感…'); // :656
+    era.print(`随着止不住的尿液滴落、${name}的身体、抽搐痉挛了起来、`);
+    era.print('看来尿尿能让她有快感…');
   } else if (orgasms >= 7 && diuretic) {
-    era.print(`痉挛中的${name}喷泉一样喷尿出来了…`); // :658
+    era.print(`痉挛中的${name}喷泉一样喷尿出来了…`);
   } else if (orgasms >= 7 && incontinent) {
-    era.print(`痉挛中的${name}尿出一道细细的弧线…`); // :660
+    era.print(`痉挛中的${name}尿出一道细细的弧线…`);
   } else if (orgasms >= 5 && diuretic && incontinent) {
-    era.print(`筋疲力尽的${name}喷泉一样喷尿出来了…`); // :662
+    era.print(`筋疲力尽的${name}喷泉一样喷尿出来了…`);
   } else if (orgasms >= 5 && diuretic) {
-    era.print(`筋疲力尽的${name}尿出一道细细的弧线…`); // :664
+    era.print(`筋疲力尽的${name}尿出一道细细的弧线…`);
   } else if (orgasms >= 5 && incontinent) {
-    era.print(`筋疲力尽的${name}不断滴尿、形成了个小水坑…`); // :666
+    era.print(`筋疲力尽的${name}不断滴尿、形成了个小水坑…`);
   } else if (orgasms >= 3 && diuretic && incontinent) {
-    era.print(`颤抖中的${name}尿出一道细细的弧线…`); // :668
+    era.print(`颤抖中的${name}尿出一道细细的弧线…`);
   } else if (orgasms >= 3 && diuretic) {
-    era.print(`震颤抖中的${name}不断滴尿、形成了个小水坑…`); // :670
+    era.print(`震颤抖中的${name}不断滴尿、形成了个小水坑…`);
   } else if (orgasms >= 3 && incontinent) {
-    era.print(`颤抖中的${name}从阴部漏出尿来了…`); // :672
+    era.print(`颤抖中的${name}从阴部漏出尿来了…`);
   } else if (orgasms >= 1 && diuretic && incontinent) {
-    era.print(`${name}不断滴尿、形成了个小水坑…`); // :674
+    era.print(`${name}不断滴尿、形成了个小水坑…`);
   } else if (orgasms >= 1 && diuretic) {
-    era.print(`${name}从阴部漏出尿来了…`); // :676
+    era.print(`${name}从阴部漏出尿来了…`);
   }
 }
 
@@ -885,10 +876,10 @@ function emit_virginity_and_cleanup() {
   const virgin = tflag(3);
 
   if (tflag(15) === 1 && virgin) {
-    era.print(`${name}的阴部上、处女落红和污液沿着丑陋的触手滴下来了…`); // :683
+    era.print(`${name}的阴部上、处女落红和污液沿着丑陋的触手滴下来了…`);
   }
   if (tflag(2) === 0 && tflag(15) === 0 && virgin) {
-    era.print(`${name}的阴部上、滴出了处女才有的落红…`); // :689
+    era.print(`${name}的阴部上、滴出了处女才有的落红…`);
   }
   if (
     virgin &&
@@ -900,35 +891,35 @@ function emit_virginity_and_cleanup() {
   ) {
     const titles = KIN_TITLES[tflag(14)] ?? ['', ''];
     const kin = tal(era_flag.player, 122) ? titles[0] : titles[1];
-    era.print(`${name}被${kin}${player_name}夺取了她的处女。`); // :694-716
+    era.print(`${name}被${kin}${player_name}夺取了她的处女。`);
   }
   if (virgin && tq(target, 89) && tflag(899) <= 1) {
-    era.print(`${name}把处女奉献给野狗了。`); // :722
+    era.print(`${name}把处女奉献给野狗了。`);
   }
 
-  // :727-741 口交射精后的清洁（TFLAG:8 == 1/2/3）
+  // 口交射精后的清洁（TFLAG:8 == 1/2/3）
   const fellatio = tflag(8);
   if (fellatio <= 0 || tflag(899) !== 0) {
     return;
   }
   if (tflag(0) && tflag(6)) {
     era.print(
-      `之后、${name}交替舔着${player_name}和${chara_callname(era_flag.assi)}的阴茎、清洁着上面的污垢…`, // :730
+      `之后、${name}交替舔着${player_name}和${chara_callname(era_flag.assi)}的阴茎、清洁着上面的污垢…`,
     );
   } else {
-    let line = '之后、'; // :728
+    let line = '之后、';
     if (fellatio >= 2) {
-      line += `${chara_callname(era_flag.assi)}和`; // :733
+      line += `${chara_callname(era_flag.assi)}和`;
     }
-    line += `${name}把`; // :734
+    line += `${name}把`;
     if (abl(target, 10) >= 3) {
-      line += '剩下的精液都舔干净、'; // :736
+      line += '剩下的精液都舔干净、';
     }
-    line += '阴茎里的污垢也漂亮地清洁了…'; // :737
+    line += '阴茎里的污垢也漂亮地清洁了…';
     era.print(line);
   }
   if (fellatio === 3) {
-    era.print('两人好像还不满足、意犹未尽地吸啜着彼此口中的积存精液…'); // :740
+    era.print('两人好像还不满足、意犹未尽地吸啜着彼此口中的积存精液…');
   }
 }
 
@@ -939,11 +930,11 @@ function emit_virginity_and_cleanup() {
  * @returns {Promise<void>}
  */
 async function train_message_b() {
-  // :19-21 調教テキスト省略設定（FLAG:6 & 1）→ 直接返回
+  // 調教テキスト省略設定（FLAG:6 & 1）→ 直接返回
   if ((era.get('flag:6') || 0) & 1) {
     return;
   }
-  // :23 CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线分隔（'‥' 点线是排版
+  // CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线分隔（'‥' 点线是排版
   // 近似，记名差异见 issue #45）
   era.drawLine();
 
@@ -954,7 +945,6 @@ async function train_message_b() {
   });
   // TFLAG:31 = 本次调教处女丧失：连续插入分支临时置 2，公共尾部归一回
   // 1；其余遗留值清零。FLAG:6 的早退在函数开头，不能越过它执行本段。
-  // 源: EVENT_TRAIN_MESSAGE_B.ERB :3041-3046
   const virgin_blood = game.event.本次调教处女丧失;
   game.event.本次调教处女丧失 = virgin_blood === 2 ? 1 : 0;
 }
@@ -966,15 +956,15 @@ async function train_message_b() {
  * @returns {Promise<void>}
  */
 async function train_message_a() {
-  // :22-24 調教テキスト省略設定（FLAG:6 & 1）→ 直接返回
+  // 調教テキスト省略設定（FLAG:6 & 1）→ 直接返回
   if ((era.get('flag:6') || 0) & 1) {
     return;
   }
-  // :26 CUSTOMDRAWLINE ‥（排版近似说明同 train_message_b）
+  // CUSTOMDRAWLINE ‥（排版近似说明同 train_message_b）
   era.drawLine();
 
   // —— 公共段（:31-741，按源侧执行顺序；SELECTCOM 分发在最后 :746 起）——
-  emit_intercrural_ejaculation(); // :31-110 股间性交射精（TFLAG:9 三臂）
+  emit_intercrural_ejaculation(); // 股间性交射精（TFLAG:9 三臂）
 
   // —— 公共头的 TFLAG:15（怪物/触手射精旗标）段（:110-146）——
   // 源形状 1:1：先两道 SIF（非死斗场触手臂，:113-125），再 IF/ELSEIF 链
@@ -985,10 +975,10 @@ async function train_message_a() {
   const tequip55 = era.get(`tequip:${era_flag.target}:55`) || 0;
   const target_name = chara_callname(era_flag.target);
   if (tflag15 === 1 && tequip55 !== 1) {
-    era.print(`${target_name}身上的触手、吐出了体液…`); // :113-116
+    era.print(`${target_name}身上的触手、吐出了体液…`);
   }
   if (tflag15 === 2 && tequip55 !== 1) {
-    era.print(`${target_name}全身上的触手、一起吐出了大量的体液…`); // :121-124
+    era.print(`${target_name}全身上的触手、一起吐出了大量的体液…`);
   }
   if (tflag15 > 0 && tequip55) {
     const com_site = { 31: '嘴里', 21: '私处里', 27: '直肠里' };
@@ -996,19 +986,19 @@ async function train_message_a() {
     if (site !== undefined) {
       era.print(
         tflag15 === 2
-          ? `${target_name}的${site}、被怪物大量的粘稠精液灌满了…` // :135-141
-          : `${target_name}的${site}、被灌入了怪物黏黏糊糊的精液…`, // :127-133
+          ? `${target_name}的${site}、被怪物大量的粘稠精液灌满了…`
+          : `${target_name}的${site}、被灌入了怪物黏黏糊糊的精液…`,
       );
     }
   } else if (tflag15 === 1) {
-    era.print(`${target_name}身上的触手、吐出了体液…`); // :143-144
+    era.print(`${target_name}身上的触手、吐出了体液…`);
   } else if (tflag15 === 2) {
-    era.print(`${target_name}全身上的触手、一起吐出了大量的体液…`); // :145-146
+    era.print(`${target_name}全身上的触手、一起吐出了大量的体液…`);
   }
 
-  emit_dog_ejaculation(); // :151-161 狗灌精（TFLAG:16）
-  emit_assistant_ejaculation(); // :165-172 当对象的面侵犯助手（TFLAG:7）
-  emit_ejaculation_chain(); // :177-373 口/手/足射精链 + 放置 PLAY 末支
+  emit_dog_ejaculation(); // 狗灌精（TFLAG:16）
+  emit_assistant_ejaculation(); // 当对象的面侵犯助手（TFLAG:7）
+  emit_ejaculation_chain(); // 口/手/足射精链 + 放置 PLAY 末支
 
   // —— 公共绝顶反应（:377-424）——
   // 这是所有指令共用的 TFLAG:29 消费点，必须先于 SELECTCOM 分支输出；
@@ -1065,7 +1055,7 @@ async function train_message_a() {
         : '露出快乐又淫媚的神色、绝顶高潮了……';
     era.print(line);
 
-    // :427-450 射精场合的后半（逆强姦／逆肛交／口交 × 普通与大量）：与上面
+    // 射精场合的后半（逆强姦／逆肛交／口交 × 普通与大量）：与上面
     // 的绝顶行同属一个 TFLAG:29 块，先落绝顶行再落这一句。TFLAG:31 的落红
     // 前缀只挂在 24 支上（源侧如此）；25 支的两档文案只差「大量」二字。
     const selectcom = era_flag.selectcom;
@@ -1073,27 +1063,27 @@ async function train_message_a() {
       const blood = tflag(31);
       if (selectcom === 24) {
         era.print(
-          `阴茎拔出后、阴部处${blood ? '渗出了处女的落红、混合着' : ''}${ejaculates === 2 ? '大量的' : ''}精液渗出来了…`, // :428-431/:440-443
+          `阴茎拔出后、阴部处${blood ? '渗出了处女的落红、混合着' : ''}${ejaculates === 2 ? '大量的' : ''}精液渗出来了…`,
         );
       } else if (selectcom === 25) {
         era.print(
           ejaculates === 2
-            ? '阴茎从肛门里拔出后、大量漏出来的精液沿着股沟向下流…' // :446
-            : '阴茎从肛门里拔出后、漏出来的精液沿着股沟向下流…', // :434
+            ? '阴茎从肛门里拔出后、大量漏出来的精液沿着股沟向下流…'
+            : '阴茎从肛门里拔出后、漏出来的精液沿着股沟向下流…',
         );
       } else if (selectcom === 4) {
         era.print(
           ejaculates === 2
-            ? `然后、满溢的精液、灌到了${chara_callname(era_flag.player)}的喉咙里了…` // :449
-            : `然后、精液流到了${chara_callname(era_flag.player)}的嘴里了…`, // :437
+            ? `然后、满溢的精液、灌到了${chara_callname(era_flag.player)}的喉咙里了…`
+            : `然后、精液流到了${chara_callname(era_flag.player)}的嘴里了…`,
         );
       }
     }
   }
 
-  emit_sex_ejaculation(); // :456-606 性交射精链 + 绝顶余韵
-  emit_incontinence(); // :611-677 失禁与放尿（TFLAG:899 / TFLAG:29 × 衣着）
-  emit_virginity_and_cleanup(); // :682-741 处女丧失三处 + 近亲链 + 口交清洁
+  emit_sex_ejaculation(); // 性交射精链 + 绝顶余韵
+  emit_incontinence(); // 失禁与放尿（TFLAG:899 / TFLAG:29 × 衣着）
+  emit_virginity_and_cleanup(); // 处女丧失三处 + 近亲链 + 口交清洁
 
   // 同 B：#402 收口后空间全数有主，缺失语义按原作归为零输出（#565）
   await train_message_a_family.call(era_flag.selectcom, {

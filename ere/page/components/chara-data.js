@@ -1,8 +1,6 @@
 /**
  * @file 角色信息的其余数据行（@SHOW_DATA）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB @SHOW_DATA（:1681-1760）
- *
  * 一行两段：`[使役魔兽:…][凌辱隶属/畏惧:…][结婚对象:…]` 与 `[善恶值:n|档]`。
  * 前半段的颜色只有使役魔兽的名字着 `SETCOLOR 0x63E390`（:1686-1688），其余
  * 默认色。
@@ -61,9 +59,9 @@ function show_data(cid, rand = default_rand) {
   const cflag = (index) => era.get(`cflag:${cid}:${index}`) || 0;
   const stone = [];
 
-  // :1683-1690 使役魔兽（CFLAG:570 是配下怪物的识别号）
+  // 使役魔兽（CFLAG:570 是配下怪物的识别号）
   if (cflag(570) > 0) {
-    monster_data(cflag(570), 3, cid, -1, -1, rand); // :1684
+    monster_data(cflag(570), 3, cid, -1, -1, rand);
     stone.push({ content: '[使役魔兽:' });
     stone.push({
       content: monster_name(era.get('e:300') || 0),
@@ -72,28 +70,28 @@ function show_data(cid, rand = default_rand) {
     stone.push({ content: ']' });
   }
 
-  // :1692-1702 凌辱隶属（CFLAG:131 高 = 隶属，低 = 畏惧）
+  // 凌辱隶属（CFLAG:131 高 = 隶属，低 = 畏惧）
   if (cflag(130) > 0) {
     stone.push({
       content: cflag(131) > SUBJUGATE_THRESHOLD ? '[凌辱隶属:' : '[凌辱畏惧:',
     });
-    stone.push({ content: monster_name(cflag(130)) }); // :1700
+    stone.push({ content: monster_name(cflag(130)) });
     stone.push({ content: ']' });
   }
 
-  // :1704-1739 结婚对象
+  // 结婚对象
   stone.push({ content: '[结婚对象:' });
   stone.push(...marriage_fragments(cid, cflag));
   stone.push({ content: ']' });
 
-  // :1741-1760 善恶值
+  // 善恶值
   const karma = cflag(151);
   stone.push({ content: '[善恶值:' });
   stone.push({ content: String(karma) });
   stone.push({
     content: `|${KARMA_BANDS.find((band) => karma > band.over).text}`,
   });
-  stone.push({ content: ']　' }); // :1757-1760 PRINTL ]\u3000（全角空格收尾）
+  stone.push({ content: ']　' }); // PRINTL ]\u3000（全角空格收尾）
   era.print(stone);
 }
 
@@ -106,18 +104,18 @@ function show_data(cid, rand = default_rand) {
 function marriage_fragments(cid, cflag) {
   const marry = cflag(601);
   if (marry === MARRY_DOG) {
-    return [{ content: '野狗' }]; // :1706
+    return [{ content: '野狗' }];
   }
   if (marry === MARRY_MASTER) {
-    return [{ content: chara_callname(0) }]; // :1708 %SAVESTR:MASTER%
+    return [{ content: chara_callname(0) }]; // %SAVESTR:MASTER%
   }
   if (marry === MARRY_LOVER) {
     if (cflag(606) === 200) {
-      // :1710-1716 家族关系为恋人的角色
+      // 家族关系为恋人的角色
       const found = search_family(cid, 'LOVE');
       return [{ content: found > 0 ? chara_callname(found) : '恋人' }];
     }
-    // :1718 原作 CALL NAME_LOVER（print_flag = 1）在**行内**追加 14 格名称；
+    // 原作 CALL NAME_LOVER（print_flag = 1）在**行内**追加 14 格名称；
     // ere 侧 name_lover 是整行出口（dungeon-lovers.js:54-60 的形态），本段要
     // 与前后拼成同一行，故取同一张表（LOVER_NAMES 已由 page-chara-info.js 消费）
     // 自己拼片段——表是唯一真相源，两处不各持一份名单。
@@ -125,13 +123,13 @@ function marriage_fragments(cid, cflag) {
     return name === undefined ? [] : [{ content: name.padEnd(14, '　') }];
   }
   if (marry === 0) {
-    // :1720-1723 未婚：有后代标记（EX_TALENT:2）时直接「无」
+    // 未婚：有后代标记（EX_TALENT:2）时直接「无」
     if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0) {
       return [{ content: '无' }];
     }
     return [{ content: get_look_info(cid, '婚史') }];
   }
-  // :1724-1737 其余编码：末位 9 = 家族婚姻，否则查物品名
+  // 其余编码：末位 9 = 家族婚姻，否则查物品名
   const local = marry % 10;
   if (local === 9) {
     const found = search_family(cid, 'MARRIAGE');

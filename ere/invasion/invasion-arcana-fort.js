@@ -1,8 +1,6 @@
 /**
  * @file 圣灵骑士堡垒攻略（issue #470，阶段 5c Q13 侵略残余·3）。
  *
- * 源: target/ERB/侵略/ARCANA_FORT.ERB  @ARCANA_FORT（:2-551，单一大函数）
- *
  * 东南西北四门各一名圣灵骑士守将（FLAG:92 位掩码：&1 东·黑方片 / &2 南·
  * 银黑桃 / &4 西·白梅花 / &8 北·金红桃，预设号东 22 西 23 南 21 北 20）。
  * 玩家选一个奴隶去攻打：赢了俘虏对方入队、拿钱、拿牌（FLAG:92 置位）；
@@ -109,7 +107,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   // === 入场叙述（:22-73） ===
   if (stage !== 0) {
     if (stage === 15) {
-      // :23-27 四门全破
+      // 四门全破
       era.print('圣灵骑士全部都被打倒了，四个据点也都被攻陷了。');
       await era.waitAnyKey();
       era.print('然后，你得到了四张独特的牌，有何作用呢？');
@@ -121,7 +119,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       return 0;
     }
     if (stage === 14 || stage === 13 || stage === 11 || stage === 7) {
-      // :29-39 捕獲３人：只剩一位（原作是 PRINT×N 接收尾的 PRINTW，
+      // 捕獲３人：只剩一位（原作是 PRINT×N 接收尾的 PRINTW，
       // **同一条显示行**，ere 侧拼成一串再打一次）
       let last_one = '';
       if ((stage & 1) === 0) {
@@ -147,11 +145,11 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       stage === 10 ||
       stage === 12
     ) {
-      // :41-42 捕獲２人
+      // 捕獲２人
       era.print('现在打倒了两位圣灵骑士，还剩下两个堡垒……');
       await era.waitAnyKey();
     } else if (stage === 1 || stage === 2 || stage === 4 || stage === 8) {
-      // :44-54 捕獲１人（同为 PRINT×N + PRINTW 串成的同一条显示行）
+      // 捕獲１人（同为 PRINT×N + PRINTW 串成的同一条显示行）
       let knight_name = '';
       if (stage === 1) {
         knight_name = '黑方片';
@@ -170,7 +168,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       );
     }
   } else {
-    // :56-72 初回：俘虏情报 + 有无可派刺客（:62-65 的侦察判据无妊娠项）
+    // 初回：俘虏情报 + 有无可派刺客（:62-65 的侦察判据无妊娠项）
     era.print(
       '有俘虏说，狂王的亲卫队【圣灵骑士】正在为进攻你的地下城而在东南西北四个堡垒里特训着。',
     );
@@ -230,24 +228,24 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   for (;;) {
     const result = await era.input();
     if (result === 4) {
-      return 0; // :107-108
+      return 0;
     }
     if (result >= 5 || result < 0) {
-      continue; // :109-113
+      continue;
     }
     if ((stage & 1) !== 0 && result === 0) {
-      continue; // :115-116
+      continue;
     }
     if ((stage & 4) !== 0 && result === 1) {
-      continue; // :117-118
+      continue;
     }
     if ((stage & 2) !== 0 && result === 2) {
-      continue; // :119-120
+      continue;
     }
     if ((stage & 8) !== 0 && result === 3) {
-      continue; // :121-122
+      continue;
     }
-    tmp_arcana = result; // :125 TMP_ARCANA = RESULT
+    tmp_arcana = result; // TMP_ARCANA = RESULT
     break;
   }
 
@@ -258,12 +256,12 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     .getAddedCharacters()
     .filter((cid) => is_candidate(cid, pregnant_ok));
   if (candidates.length === 0) {
-    // :148-151 / :245-248 *没有可以攻击的勇士*
+    // *没有可以攻击的勇士*
     era.print('*没有可以攻击的勇士*');
     await era.waitAnyKey();
     return 0;
   }
-  // :142-147 / :239-244 MAX_PAGE（0 起；翻转后不重算——文件头）
+  // MAX_PAGE（0 起；翻转后不重算——文件头）
   let max_page = Math.ceil(candidates.length / NUM_PAGE) - 1;
   let no_page = 0; // #DIM NO_PAGE = 0（:11）
 
@@ -280,7 +278,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     era.drawLine();
     candidates.forEach((cid, index) => {
       if (index >= no_page * NUM_PAGE && index < (no_page + 1) * NUM_PAGE) {
-        // :174-184 / :271-281 行文本（[可以攻击] 恒真并入，见文件头）
+        // 行文本（[可以攻击] 恒真并入，见文件头）
         era.printButton(
           `${name_of(cid)} LV${era.get(`cflag:${cid}:9`) || 0} 攻击${
             chara(cid).dungeon.攻击力
@@ -290,9 +288,9 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       }
     });
     era.drawLine();
-    era.printButton('- 上一页', 1000); // :193 / :290
-    era.printButton('- 返 回', 999); // :194 / :291 PRINTLC（原作两个空格，引擎折叠成一个）
-    era.printButton('- 下一页', 1001); // :195 / :292
+    era.printButton('- 上一页', 1000);
+    era.printButton('- 返 回', 999); // PRINTLC（原作两个空格，引擎折叠成一个）
+    era.printButton('- 下一页', 1001);
 
     const result = await era.input();
     if (result === 1000) {
@@ -310,14 +308,14 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       continue;
     }
     if (result === 999) {
-      return 0; // :214-215 / :311-312 返  回
+      return 0; // 返  回
     }
     if (result < 0 || result >= candidates.length) {
-      // :211-213 / :308-310 RESULT < 0 或超出本页计数 → GOTO INPUT_LOOP1
+      // RESULT < 0 或超出本页计数 → GOTO INPUT_LOOP1
       pregnant_ok = true;
       continue;
     }
-    y_arcana = candidates[result]; // :217-226 / :315-324 序号 → 角色号
+    y_arcana = candidates[result]; // 序号 → 角色号
     break;
   }
 
@@ -334,7 +332,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     await era.waitAnyKey();
   };
   if (tmp_arcana === 0) {
-    // :328-342 東の砦 黑方片
+    // 東の砦 黑方片
     if (former_hero) {
       await print_w('在东方堡垒遇到了黑方片，把剑插在地上，双臂交叉抱于胸前。');
       await print_w(`黑方片看着曾经是同伴的${name_of(y_arcana)}，皱起了眉头。`);
@@ -356,7 +354,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       await print_w('黑方片挥舞着黑亮的大剑发起了袭击。');
     }
   } else if (tmp_arcana === 1) {
-    // :343-358 西の砦 白梅花
+    // 西の砦 白梅花
     if (former_hero) {
       await print_w(
         '在西方堡垒遇到了白梅花，发现刺客的她把正在看的书塞回了长袍内。',
@@ -386,7 +384,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       );
     }
   } else if (tmp_arcana === 2) {
-    // :359-374 南の砦 银黑桃
+    // 南の砦 银黑桃
     if (former_hero) {
       await print_w(
         '在南方堡垒遇到了银黑桃，穿着全套黑色的忍者服，完全不像被偷袭的样子。',
@@ -414,7 +412,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       await print_w('银黑桃分出了分身袭击过来了！');
     }
   } else if (tmp_arcana === 3) {
-    // :375-390 北の砦 金红桃
+    // 北の砦 金红桃
     if (former_hero) {
       await print_w(
         '在北方堡垒遇到了作为亲卫队长的金红桃，金色的铠甲闪烁着犹如太阳一样的光芒，隐约可见有符文在光芒里浮动着。',
@@ -445,47 +443,47 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
 
   // === キャラ追加（:393-463） ===
   const KNIGHTS = {
-    0: { preset: 22, weapon: 40 + 9000 + 900000 }, // :395-408 東 黑方片：剑·強度9·暗黑
-    1: { preset: 23, weapon: 41 + 9000 + 600000 }, // :410-425 西 白梅花：法杖·強度9·寒冰
-    2: { preset: 21, weapon: 44 + 9000 + 300000 }, // :427-441 南 银黑桃：手里剑·強度9·致命
-    3: { preset: 20, weapon: 50 + 10000 + 400000 }, // :443-462 北 金红桃：细剑·強度10·强击
+    0: { preset: 22, weapon: 40 + 9000 + 900000 }, // 東 黑方片：剑·強度9·暗黑
+    1: { preset: 23, weapon: 41 + 9000 + 600000 }, // 西 白梅花：法杖·強度9·寒冰
+    2: { preset: 21, weapon: 44 + 9000 + 300000 }, // 南 银黑桃：手里剑·強度9·致命
+    3: { preset: 20, weapon: 50 + 10000 + 400000 }, // 北 金红桃：细剑·強度10·强击
   };
   const knight = KNIGHTS[tmp_arcana];
   const a_arcana = knight.preset; // A = CHARANUM-1（扁平化 = 预设号，文件头）
-  era.addCharacter(a_arcana); // :396 等 ADDCHARA 22
-  await add_chara_ex(a_arcana); // :397 等 ADDCHARA_EX(CHARANUM-1)
+  era.addCharacter(a_arcana); // 等 ADDCHARA 22
+  await add_chara_ex(a_arcana); // 等 ADDCHARA_EX(CHARANUM-1)
   // SAVESTR:A = %NAME:A% 是 no-op（文件头）；CSTR:1 照写
-  chara(a_arcana).chara.加入时名字 = name_of(a_arcana); // :400 等 CSTR:A:1
+  chara(a_arcana).chara.加入时名字 = name_of(a_arcana); // 等 CSTR:A:1
   if (tmp_arcana === 1) {
-    chara(a_arcana).train.自慰中毒 = 1; // :416 ABL:A:31 = 1
-    chara(a_arcana).dungeon.自慰经验 = 30; // :417 EXP:A:10 = 30
+    chara(a_arcana).train.自慰中毒 = 1; // ABL:A:31 = 1
+    chara(a_arcana).dungeon.自慰经验 = 30; // EXP:A:10 = 30
   }
   if (tmp_arcana === 2) {
-    chara(a_arcana).dungeon.自慰经验 = 10; // :433 EXP:A:10 = 10
+    chara(a_arcana).dungeon.自慰经验 = 10; // EXP:A:10 = 10
   }
   if (tmp_arcana === 3) {
-    chara(a_arcana).dungeon.私处经验 = 20; // :449 EXP:A:0 = 20
+    chara(a_arcana).dungeon.私处经验 = 20; // EXP:A:0 = 20
     if ((era.get('flag:500') || 0) === 0 || (era.get('flag:500') || 0) === 2) {
-      // :451-452 狂王が男か扶她ならば精液经验（EXP:A:5 = EXP:A:0）
+      // 狂王が男か扶她ならば精液经验（EXP:A:5 = EXP:A:0）
       chara(a_arcana).dungeon.性交经验 = chara(a_arcana).dungeon.私处经验;
     }
-    chara(a_arcana).train.初体验对象 = 105; // :454 初体験の相手は狂王
+    chara(a_arcana).train.初体验对象 = 105; // 初体験の相手は狂王
   }
-  chara(a_arcana).chara.武装 = knight.weapon; // :402/:419/:435/:456 等 初期装備（三段编码累加）
-  chara(a_arcana).chara.随机名编号 = rand(80); // :408/:425/:441/:462 名前決定
+  chara(a_arcana).chara.武装 = knight.weapon; // 等 初期装備（三段编码累加）
+  chara(a_arcana).chara.随机名编号 = rand(80); // 名前決定
 
   // === 衣装与身体（:465-468） ===
-  // :466 TARGET = A_ARCANA——全局换手被 wearing_cloth_able 的形参吸收
-  wearing_cloth_able(a_arcana); // :467
-  char_body_generate_wapped(a_arcana, rand); // :468
+  // TARGET = A_ARCANA——全局换手被 wearing_cloth_able 的形参吸收
+  wearing_cloth_able(a_arcana);
+  char_body_generate_wapped(a_arcana, rand);
 
   // === レベルアップ処理（:470-475） ===
   const level_ups = era.get('flag:60') || 0;
   for (let i = 0; i < level_ups; i += 1) {
-    st_up(a_arcana, rand); // :473
+    st_up(a_arcana, rand);
   }
 
-  // :477-478 体力/气力回满
+  // 体力/气力回满
   chara(a_arcana).dungeon.体力 = era.get(`maxbase:${a_arcana}:0`) || 0;
   chara(a_arcana).dungeon.气力 = era.get(`maxbase:${a_arcana}:1`) || 0;
 
@@ -496,14 +494,14 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   if (battle_result === 2) {
     era.drawLine();
     era.print(`圣灵骑士${name_of(a_arcana)}战败了…`);
-    // :490-492 赏金（MONEY / EX_FLAG:4444 镜像）
+    // 赏金（MONEY / EX_FLAG:4444 镜像）
     const gain = 1000 * (era.get(`cflag:${a_arcana}:9`) || 0);
     era_flag.money += gain;
     era_exflag.legit_money += gain;
     era.print(`获得了${gain}G！`);
     await era.waitAnyKey();
-    // :493-496 的 PRINT 而且 与各门的 PRINTW 牌是同一条显示行
-    // :494-521 各门的牌、台词与 FLAG:92 置位；CHAR_SIZE_GENERATE 的
+    // 的 PRINT 而且 与各门的 PRINTW 牌是同一条显示行
+    // 各门的牌、台词与 FLAG:92 置位；CHAR_SIZE_GENERATE 的
     // 人类换算年龄（東 21 / 西 27 / 南 24 / 北 18，:501/:508/:515/:521）
     const gate_age = { 0: 21, 1: 27, 2: 24, 3: 18 }[tmp_arcana];
     const gate_texts = {
@@ -521,12 +519,12 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     await print_w(`而且${gate_texts[0]}`);
     await print_w(`然后，被俘虏了的${name_of(a_arcana)}被带到你的地下城了………`);
     await print_w(gate_texts[1]);
-    // :499/:506/:513/:520 FLAG:92 |= 位
+    // FLAG:92 |= 位
     era_flag.arcana_fort_stage = stage | { 0: 1, 1: 4, 2: 2, 3: 8 }[tmp_arcana];
-    // :501/:508/:515/:521 CALL CHAR_SIZE_GENERATE（RESULT:0-6 带出）
+    // CALL CHAR_SIZE_GENERATE（RESULT:0-6 带出）
     const size = char_size_generate(a_arcana, gate_age, 0, rand);
 
-    // :523-531 GETBIT(FLAG:5,12)||GETBIT(FLAG:5,15)：体型回写 451-457
+    // GETBIT(FLAG:5,12)||GETBIT(FLAG:5,15)：体型回写 451-457
     if (((settings >> 12) & 1) === 1 || ((settings >> 15) & 1) === 1) {
       chara(a_arcana).chara.年龄 = size[0];
       chara(a_arcana).chara.种族年龄 = size[1];
@@ -539,7 +537,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   } else if (battle_result === 0) {
     // === 負け（:532-545） ===
     if ((settings & 128) !== 0) {
-      // :534-539 狂王线：前回の助手・調教対象だった場合はフラグを空に
+      // 狂王线：前回の助手・調教対象だった場合はフラグを空に
       if (game.event.上次调教对象 === y_arcana) {
         game.event.上次调教对象 = -1;
       }
@@ -547,13 +545,13 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
         game.event.上次助手 = -1;
       }
     }
-    // :541-544 临时骑士移除（A_ARCANA = CHARANUM-1，扁平化直传预设号）
+    // 临时骑士移除（A_ARCANA = CHARANUM-1，扁平化直传预设号）
     party_char_del(a_arcana);
     era.removeCharacter(a_arcana);
     cn_rebuild();
   }
 
-  // :547-550 A/B 清零（ere 侧为局部参数，无全局可清）+ DRAWLINE → RETURN 1
+  // A/B 清零（ere 侧为局部参数，无全局可清）+ DRAWLINE → RETURN 1
   era.drawLine();
   return 1;
 }

@@ -332,7 +332,7 @@ test('#597：aftertrain_analsex_check 的「回到床上做了…」之后不补
   satisfy_sex_gates(fixture, { abl_index: 3, abl_value: 4 });
   assert.equal(await aftertrain_analsex_check(), 1, '走完结算');
   // 源 :331 的 PRINTFORML 已结束那一行，:332 只是空源码行；下一行是
-  // :333 的 A 经验播报（#597）
+  // 的 A 经验播报（#597）
   assert_no_blank_after(fixture, '回到床上做了', 'aftertrain_analsex_check');
 });
 

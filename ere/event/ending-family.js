@@ -1,11 +1,6 @@
 /**
  * @file END 族分发：65 个 @END<n> 结局文本段的执行器（issue #404 / N20）。
  *
- * 源: target/ERB/EVENT/ENDING ver 1.0.1.ERB :344-349 的分派循环
- *     （`TRYCALLFORM END{LOCAL}_{EX_FLAG:(2800+LOCAL)/10}`）——
- *     数据在 ere/data/ending-scripts.js（65 段，从 ENDINGDATA.ERB 与
- *     ENDINGDATA_ADDON1.ERB 抽出）。
- *
  * 分发模型沿用 #7 决议的 DispatchFamily：**族号 = LOCAL（2..15），小节 =
  * 线值 / 10**。族 7/10/11/14 在本文件装载期注册；其余 10 族全库无定义
  * （#14 登记），空间内缺失 = TRYCALLFORM 落空静默跳过。
@@ -93,21 +88,21 @@ function op_finish() {
  * @param {number} cid 离队角色（22 黑方片 / 21 银黑桃）
  */
 async function op_leave(cid) {
-  // :929-930 SIF FLAG:1 == GETCHARA(cid) → FLAG:1 = -1（调教对象指针）
+  // SIF FLAG:1 == GETCHARA(cid) → FLAG:1 = -1（调教对象指针）
   if (get('flag:1') === cid) {
     game.event.上次调教对象 = -1;
   }
-  // :931-932 `SIF FLAG:2 == GETCHARA(cid) → G:2 = -1`：G 是未声明的表，
+  // `SIF FLAG:2 == GETCHARA(cid) → G:2 = -1`：G 是未声明的表，
   // 原作笔误（意图是 FLAG:2）——不落表，见文件头
-  // :934-938 「前回の助手・調教対象より前だった場合はフラグを減算」是
+  // 「前回の助手・調教対象より前だった場合はフラグを減算」是
   // DELCHARA 重排残留，ere 扁平化（#21）下角色号不重排，按先例不移植
-  era_flag.target = get('flag:1'); // :940 TARGET = FLAG:1
-  era_flag.assi = get('flag:2'); // :941 ASSI = FLAG:2
-  // :943 CALL PARTY_CHAR_DEL, EX_FLAG:2803——实参是「失控奴隶号」而非 cid，
+  era_flag.target = get('flag:1'); // TARGET = FLAG:1
+  era_flag.assi = get('flag:2'); // ASSI = FLAG:2
+  // CALL PARTY_CHAR_DEL, EX_FLAG:2803——实参是「失控奴隶号」而非 cid，
   // 原作即如此（疑为笔误），1:1 照抄
   party_char_del(era_exflag.runaway_slave_id);
-  era.removeCharacter(cid); // :944 DELCHARA GETCHARA(cid)
-  await name_reset(); // :945 CALL NAME_RESET
+  era.removeCharacter(cid); // DELCHARA GETCHARA(cid)
+  await name_reset(); // CALL NAME_RESET
 }
 
 /**
@@ -116,9 +111,9 @@ async function op_leave(cid) {
  * 以下才兜底）、全角色 BASE 扣减、金库损失 20%、嘉德除名归档。
  */
 async function op_rampage() {
-  era_exflag.route_33 = 540; // :419
-  era_exflag.prestige = era_exflag.prestige - 50; // :420 EX_FLAG:99 -= 50
-  // :421-425 FOR MONSTER, 100, 200（含头不含尾）/ ITEM:MONSTER /= 2（向零
+  era_exflag.route_33 = 540;
+  era_exflag.prestige = era_exflag.prestige - 50; // EX_FLAG:99 -= 50
+  // FOR MONSTER, 100, 200（含头不含尾）/ ITEM:MONSTER /= 2（向零
   // 截断），命中 <= 30 且 MONSTER < 190 时兜底 30
   for (let monster = 100; monster < 200; monster += 1) {
     let stock = Math.trunc(get(`item:${monster}`) / 2);
@@ -127,7 +122,7 @@ async function op_rampage() {
     }
     era.set(`item:${monster}`, stock);
   }
-  // :426-429 FOR CHARA, 1, CHARANUM（0 号魔王除外）：BASE:0 -= 800 / BASE:1 -= 1000
+  // FOR CHARA, 1, CHARANUM（0 号魔王除外）：BASE:0 -= 800 / BASE:1 -= 1000
   // （跨域写经 chara 域门面，ADR-0002）
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) {
@@ -136,13 +131,13 @@ async function op_rampage() {
     chara(cid).dungeon.体力 -= 800;
     chara(cid).dungeon.气力 -= 1000;
   }
-  // :430-433 金库损失：TIMES MONEY, 0.80（整数变量按向零截断落值），
+  // 金库损失：TIMES MONEY, 0.80（整数变量按向零截断落值），
   // 损失额同时从「非作弊资金」追踪器扣掉
   const before = era_flag.money;
   const after = Math.trunc(before * 0.8);
   era_flag.money = after;
   era_exflag.legit_money = era_exflag.legit_money - (before - after);
-  // :434 CALL EVENT_CHARA_LEAVE(85, GETCHARA(33))——描述串的归档点
+  // CALL EVENT_CHARA_LEAVE(85, GETCHARA(33))——描述串的归档点
   event_chara_leave(85, 33);
 }
 

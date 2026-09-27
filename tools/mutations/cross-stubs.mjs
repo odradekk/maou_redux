@@ -302,16 +302,16 @@ export default [
   {
     desc: 'M6598 PARTY_DEL 不再调用 SEARCH_FAMILY 真身',
     file: 'ere/dungeon/dungeon-party.js',
-    find: "    const partner = search_family(cid, 'MARRIAGE'); // :291",
-    replace: '    const partner = -1; // :291',
+    find: "    const partner = search_family(cid, 'MARRIAGE');",
+    replace: '    const partner = -1;',
     tests: ['cross-stubs'],
     must_mention: '队伍离队调用点会清掉找到的结婚对象',
   },
   {
     desc: 'M6599 慈爱来袭口上不再调用 SEARCH_FAMILY 真身',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '    const family_id = search_family(target); // :8082-8083',
-    replace: '    const family_id = -1; // :8082-8083',
+    find: '    const family_id = search_family(target);',
+    replace: '    const family_id = -1;',
     tests: ['cross-stubs'],
     must_mention: '慈爱来袭口上会找到家人并按关系称呼',
   },
@@ -326,8 +326,9 @@ export default [
   {
     desc: 'M6601 慈爱来袭口上的弟弟称呼分支文本改错',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: ': `「${chara_callname(family_id)}……等着我！」`; // :8093',
-    replace: ': `「${chara_callname(family_id)}……我来救你了！」`; // :8093',
+    find: "            ? '「可爱的弟弟……等着我！」'\n            : `「${chara_callname(family_id)}……等着我！」`;",
+    replace:
+      "            ? '「可爱的弟弟……等着我！」'\n            : `「${chara_callname(family_id)}……我来救你了！」`;",
     tests: ['cross-stubs'],
     must_mention: '慈爱来袭口上会找到家人并按关系称呼',
   },

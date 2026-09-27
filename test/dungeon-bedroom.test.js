@@ -1,12 +1,6 @@
 /**
  * @BEDROOM_BATTLE_MALE 的行为测试（#548 / S7：男魔王寝室战演出）。
  *
- * 源: target/ERB/EVENT/ENDING ver 1.0.1.ERB  @BEDROOM_BATTLE_MALE
- *     （:1042-1064）
- *     调用点: target/ERB/迷宮/DUNGEON.ERB:210（冒险者挑战臂，ere 侧
- *     ere/dungeon/dungeon.js 的 run_dungeon——本文件末用例经真身接线覆盖）。
- *     侵略/AGENT/AGENT.ERB:211 是 2014 旧快照的死代码（#103 判定），不移植。
- *
  * 缝 = test/helpers/era-fixture.js。
  *
  * MODE 组成（:1048-1053）：TALENT:0:122（魔王男人位）非 0 → +2；
@@ -108,7 +102,7 @@ test('接线：run_dungeon 挑战臂把两句合成同一行（MODE 1）', async
     texts.includes('但贝尔仍是向魔王发起了挑战。'),
     'RAND:4 == 0 → 挑战臂',
   );
-  // :209 的 PRINTFORM 与本体 :1058 的 PRINTFORM 都不换行 → 一句一行
+  // 的 PRINTFORM 与本体 :1058 的 PRINTFORM 都不换行 → 一句一行
   assert.equal(
     texts.filter(
       (line) => line === '你察觉到了贝尔的气息。你察觉到了贝尔的气息。',

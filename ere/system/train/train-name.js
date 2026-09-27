@@ -1,9 +1,6 @@
 /**
  * @file 自定义指令名表：@TRAIN_NAME_INIT 的播种与 TRAIN_NAME 的读助手。
  *
- * 源: target/ERB/調教相關/TRAIN_MAIN.ERB  @TRAIN_NAME_INIT（:783-910）
- *     target/ERB/其他/VARIABLES.ERH:13  #DIMS TRAIN_NAME,500（表声明）
- *
  * TRAIN_NAME 是静态名表（yml/TrainCommand.yml＝TRAINNAME，#43）之上的可写
  * 覆盖层：@TRAIN_NAME_INIT 在 @EVENTTRAIN 内一次性播种初值（TRAIN_MAIN.ERB
  * :53 的调用点），此后按存档定制（J4 的自定义菜单 SHOW_COMMENU、J19 的
@@ -178,7 +175,7 @@ function train_name_init() {
   for (const [id, name] of Object.entries(TRAIN_NAME_TABLE)) {
     era.set(`trainalias:${id}`, name);
   }
-  // :899 TRAIN_NAME:150 = %CSTR:7%調教（内插在播种时求值；TARGET 的癖好名，
+  // TRAIN_NAME:150 = %CSTR:7%調教（内插在播种时求值；TARGET 的癖好名，
   // 当前全库无写点、读值恒空——见文件头「已知差异」）
   era.set(
     `trainalias:150`,

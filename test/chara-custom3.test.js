@@ -1,10 +1,6 @@
 /**
  * ere/chara/chara-custom3.js 的行为测试（issue #392，N8 段 2）。
  *
- * 源: target/ERB/キャラ関数/CHARA_CUSTOM3.ERB 的 3 个函数：
- *     @CHAR_CUSTOM_LOOK_PAGE（:1-111）、@CHAR_CUSTOM_LOOK_DEAL（:118-182）、
- *     @PRINT_ARR_GROUP（:184-231）
- *
  * 缝 = test/helpers/era-fixture.js。被测量的是：按钮的快捷键编码
  * （`L_IDX*100 + 序号`，即 CHAR_CUSTOM2 页脚回传的编码面）、素质的写入、
  * 以及 PRINT_ARR_GROUP 的 80 宽换行与「空串累计超过 10 个即止」。
@@ -114,7 +110,7 @@ test('PRINT_ARR_GROUP：超宽首项先冲空行——row.length 为 0 的 flush
   print_arr_group(['甲'.repeat(50)], 0, 7);
 
   assert.deepEqual(accelerators(fixture), [700], '按钮恰好一枚');
-  // :198 的 PRINTV "  " 起头、按钮逐格续拼，:231 的 PRINTL 只收那一行——
+  // 的 PRINTV "  " 起头、按钮逐格续拼，:231 的 PRINTL 只收那一行——
   // 只有 1 个按钮行，末尾不再补空行（#596）
   assert.equal(
     fixture.era.getLineCount(),

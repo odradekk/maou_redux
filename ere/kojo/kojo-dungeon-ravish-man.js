@@ -1,13 +1,6 @@
 /**
  * @file 迷宫凌辱事件（男性对象）——11 种怪物的凌辱文本与状态推进（issue #183，阶段 3 H14）。
  *
- * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB  @ORC_RYOU男（:1-399）、
- *     @SLIME_RYOU男（:401-470）、@INSECT_RYOU男（:471-494）、
- *     @IVY_RYOU男（:495-519）、@SYOKUSYU_RYOU男（:520-557）、
- *     @FAILY_RYOU男（:558-586）、@GIANT_RYOU男（:587-709）、
- *     @MAN_RYOU男（:710-902）、@BEAST_RYOU男（:903-959）、
- *     @BRAIN_RYOU男（:960-1014）、@HORSE_RYOU男（:1015-1069）
- *
  * 调用点：target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 的 @RYOUZYOKU 主体
  * （:77-156）——按 `E:(MON_COUNT+7)`（凌辱类型 1-12）分发，其中
  * `TALENT:ARG:122`（男人）为真时 CALL 本文件的 `*_RYOU男`，否则 CALL
@@ -83,7 +76,7 @@ function arg_name_of(arg) {
   return chara_callname(arg);
 }
 
-// @ORC_RYOU男(ARG) // :1
+// @ORC_RYOU男(ARG)
 /**
  * 兽人凌辱（男性对象）。
  *
@@ -99,7 +92,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
   const t = (n) => era.get(`talent:${arg}:${n}`) || 0;
 
   if (rand_n(5) === 0) {
-    // :5-11 PRINTDATAW 口交三选一
+    // PRINTDATAW 口交三选一
     await era.printAndWait(
       pick(
         [
@@ -109,22 +102,22 @@ async function orc_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :7-10
+    );
 
     if (t(52)) {
-      // :13-19 擅用舌头
-      await era.printAndWait(`『呃……这家伙，简直就是经验丰富的娼妓嘛～』`); // :15
+      // 擅用舌头
+      await era.printAndWait(`『呃……这家伙，简直就是经验丰富的娼妓嘛～』`);
       await era.printAndWait(
         `${arg_name}拼命地用舌头侍奉着，展现出天赋般的好技术。`,
-      ); // :16
+      );
       await era.printAndWait(
         `兽人抵受不住他那灵活的舌头，射在${arg_name}的嘴里了。`,
-      ); // :17
-      mon_num *= 2; // :18 舌使いボーナス
+      );
+      mon_num *= 2; // 舌使いボーナス
     }
 
-    // :22..:31 原作是一整行：无头骑士前缀（:21 的 SIF + :22 的 PRINTFORM）、
-    // :24 的名字、:27/:29 的种族分档都不换行，到末段 :31 的 PRINTFORMW 才收行。
+    // 原作是一整行：无头骑士前缀（:21 的 SIF + :22 的 PRINTFORM）、
+    // 的名字、:27/:29 的种族分档都不换行，到末段 :31 的 PRINTFORMW 才收行。
     // 判据提到语句外当取值、片段文本留在输出语句里（#624）
     const headless = t('种族') === 4;
     await era.printAndWait(
@@ -132,73 +125,73 @@ async function orc_ryou_man(arg, mon_num, rand) {
         `${arg_name}` +
         (headless ? '身体被固定住了，只剩下脑袋来像飞机杯似的' : '全裸地') +
         '侍奉着兽人们的阴茎。',
-    ); // :22+:24+:27+:29+:31
+    );
     await era.printAndWait(
       `只要喝掉所有${mon_num}只兽人的精液的话，它们就答应不侵犯他的下体………`,
-    ); // :32
+    );
 
     if (era.get(`cflag:${arg}:131`) > 5) {
-      // :34-50 隷属状態
+      // 隷属状態
       if (t(13)) {
-        await era.print('毫无犹豫、'); // :38 素直
+        await era.print('毫无犹豫、'); // 素直
       } else if (t(14)) {
-        await era.print('小心翼翼地、'); // :41 大人しい
+        await era.print('小心翼翼地、'); // 大人しい
       } else if (t(17)) {
-        await era.print('一边土下座扭着腰部的'); // :44 プライド低い
+        await era.print('一边土下座扭着腰部的'); // プライド低い
       } else if (t(35)) {
-        await era.print('期待与羞耻将脸染红的'); // :47 恥じらい
+        await era.print('期待与羞耻将脸染红的'); // 恥じらい
       } else {
-        await era.print('面露期待的'); // :49
+        await era.print('面露期待的');
       }
     } else if (era.get(`cflag:${arg}:131`) > 2) {
-      // :51-67 中畏怖状態
+      // 中畏怖状態
       if (t(13)) {
-        await era.print('老实遵从于兽人的'); // :55 素直
+        await era.print('老实遵从于兽人的'); // 素直
       } else if (t(14)) {
-        await era.print('煞有其事地、'); // :58 大人しい
+        await era.print('煞有其事地、'); // 大人しい
       } else if (t(17)) {
-        await era.print('不住向阴茎献媚的'); // :61 プライド低い
+        await era.print('不住向阴茎献媚的'); // プライド低い
       } else if (t(35)) {
-        await era.print('面对阴茎羞红了脸的'); // :64 恥じらい
+        await era.print('面对阴茎羞红了脸的'); // 恥じらい
       } else {
-        await era.print('已然无法反抗的'); // :66
+        await era.print('已然无法反抗的');
       }
     } else {
-      // :68-88 初见的畏惧反应
+      // 初见的畏惧反应
       if (t(11)) {
-        // :69-73 反抗的
-        // :71 与 :72 原作 PRINTFORM + PRINTFORML，同一行（#584）
+        // 反抗的
+        // 与 :72 原作 PRINTFORM + PRINTFORML，同一行（#584）
         await era.print(
           `带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+${mon_num * 10}`,
-        ); // :71+:72
-        era.add(`juel:${arg}:10`, mon_num * 10); // :73 JUEL:ARG:10 恐怖
+        );
+        era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
       } else if (t(13)) {
-        // :74-78 素直
-        // :76 与 :77 原作 PRINTFORM + PRINTFORML，同一行（#584）
+        // 素直
+        // 与 :77 原作 PRINTFORM + PRINTFORML，同一行（#584）
         await era.print(
           `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,
-        ); // :76+:77
-        era.add(`juel:${arg}:8`, mon_num * 10); // :78 JUEL:ARG:8 耻情
+        );
+        era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
       }
-      // :81/:84/:87（大人しい・プライド低い・恥じらい）的初见分档文本已并进
+      // （大人しい・プライド低い・恥じらい）的初见分档文本已并进
       // 下面 :81..:105 的整行语句（前缀当取值表达式），此处不再单独输出——
       // 否则同一段会先自占一行、又出现在合并行里（#624 审查发现）
     }
 
-    // :93-99 PRINTDATA（:94-98 的五个候选）——原作的随机词条夹在这一行中间，
+    // PRINTDATA（:94-98 的五个候选）——原作的随机词条夹在这一行中间，
     // 提到语句外当取值（#624）
     const penis = pick(
       ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
       rand_n,
     );
 
-    // :81..:105 与 :112..:127 在原作里是同一行的两段互斥收行：:81/:84/:87 的
+    // 与 :112..:127 在原作里是同一行的两段互斥收行：:81/:84/:87 的
     // 初见分档、:91 的 `%SAVESTR:ARG%把`、上面的随机词条与 :101 的「含了下去，」
     // 都不换行；TALENT:52 命中时由 :105 的 PRINTW 收行，其余分支由 :112..:124
     // 的分档片段接 :127 的 PRINTL 收行。
     // 两条收行互斥，且拼接锚的区间不得跳过中间的 :105（它自带 W，也不能当拼接
     // 中段）：链上的 TALENT:52 支照旧把前半段写在语句里（拼接锚
-    // :81+:84+:87+:91+:101+:105 要按行核对文本），其余分支用语句外的前缀常量 +
+    // 要按行核对文本），其余分支用语句外的前缀常量 +
     // 自己的分档与收行合成一条（#624，同 kojo-k7-heart.js 的 talk_front_5485 写法）
     const tongue_front_81 =
       (t(14)
@@ -210,9 +203,9 @@ async function orc_ryou_man(arg, mon_num, rand) {
             : '') +
       `${arg_name}把` +
       penis +
-      '含了下去，'; // :81+:84+:87+:91+:101
+      '含了下去，';
     //
-    // :103-109 舌使い：TALENT:52 时由 :105 的 PRINTW 收行
+    // 舌使い：TALENT:52 时由 :105 的 PRINTW 收行
     if (t(52)) {
       await era.printAndWait(
         (t(14)
@@ -225,15 +218,15 @@ async function orc_ryou_man(arg, mon_num, rand) {
           `${arg_name}把` +
           penis +
           '含了下去，『呃……这家伙，简直就是经验丰富的娼妓嘛～』',
-      ); // :81+:84+:87+:91+:101+:105
+      );
       await era.printAndWait(
         `${arg_name}拼命地用舌头侍奉着，展现出天赋般的好技术。`,
-      ); // :106
+      );
       await era.printAndWait(
         `兽人抵受不住他那灵活的舌头，射在${arg_name}的嘴里了。`,
-      ); // :107
-      mon_num *= 2; // :109 舌使いボーナス
-      await era.print('奉仕持续了下去……'); // :127
+      );
+      mon_num *= 2; // 舌使いボーナス
+      await era.print('奉仕持续了下去……');
     } else {
       await era.print(
         tongue_front_81 +
@@ -249,21 +242,21 @@ async function orc_ryou_man(arg, mon_num, rand) {
                     ? '拼命地用舌头奉仕着，'
                     : '') +
           '奉仕持续了下去……',
-      ); // :112+:115+:118+:121+:124+:127
+      );
     }
 
-    await era.print(`口交经验+${mon_num}`); // :129
-    await era.print(`精液经验+${mon_num}`); // :130
-    chara(arg).dungeon.口交经验 += mon_num; // :131 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += mon_num; // :132 EXP:ARG:20 精液经验
+    await era.print(`口交经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.口交经验 += mon_num; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
 
-    // :134-136 初吻（SIF CFLAG:16 == -1）
+    // 初吻（SIF CFLAG:16 == -1）
     if ((era.get(`cflag:${arg}:16`) ?? 0) === -1) {
-      chara(arg).train.初吻对象 = 995; // :135 CFLAG:16 = 995（怪物的阴茎）
+      chara(arg).train.初吻对象 = 995; // CFLAG:16 = 995（怪物的阴茎）
     }
   } else if (rand_n(4) === 0) {
-    // :138-256 全穴奉仕
-    // :142-146 PRINTDATAW 三选一
+    // 全穴奉仕
+    // PRINTDATAW 三选一
     await era.printAndWait(
       pick(
         [
@@ -273,25 +266,25 @@ async function orc_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :143-145
+    );
 
     await era.printAndWait(
       `${arg_name}被${mon_num}只兽人用积存已久的精液，将嘴巴、肛门……所有能用的穴，注满了精液……`,
-    ); // :148
+    );
     await era.printAndWait(
       `他用空洞的眼神望向地下城那阴暗的天花板，眼里完全失去了焦点。`,
-    ); // :149
+    );
     await era.printAndWait(
       `${arg_name}的脸和性器都用精液化上了妆。兽人们看着他这样子，开怀大笑。`,
-    ); // :150
+    );
 
-    // :152..:175 原作是一整行：:152 的「兽人的」、PRINTDATA 的随机词条
+    // 原作是一整行：:152 的「兽人的」、PRINTDATA 的随机词条
     // （:154-160）、:162 与 :165..:173 的部位分档都不换行，末段 :175 的 PRINTL
     // 收行（本身无文本）。判据提到语句外当取值、片段文本留在输出语句里（#624）
     const penis = pick(
       ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
       rand_n,
-    ); // :154-160 PRINTDATA（:155-159 的 DATAFORM 五选一）
+    ); // PRINTDATA（:155-159 的 DATAFORM 五选一）
     // CFLAG:42 == 83（眼镜）是纯读，提到语句外当取值——语句内再写 era.get 会
     // 引入嵌套模板的 `${arg}` 槽位，保真锁 C/D 会把它当成插值记号（#624）
     const glasses = era.get(`cflag:${arg}:42`) === 83;
@@ -308,29 +301,29 @@ async function orc_ryou_man(arg, mon_num, rand) {
               : t('魅力点') === 22
                 ? '光鲜亮丽的头发上飞撒着……'
                 : '脸上飞撒着……'),
-    ); // :152+:162+:165+:167+:169+:171+:173+:175
+    );
 
     if (t(12)) {
-      // :176-181 刚强
-      await era.printAndWait(`${arg_name}咬着嘴唇忍受着凌辱……`); // :178
-      await era.printAndWait('在那刚强的脸上，精液无情地飞撒着。'); // :179
-      await era.print(`苦痛点数+${mon_num * 10}`); // :180
-      era.add(`juel:${arg}:9`, mon_num * 10); // :181 JUEL:ARG:9 苦痛
+      // 刚强
+      await era.printAndWait(`${arg_name}咬着嘴唇忍受着凌辱……`);
+      await era.printAndWait('在那刚强的脸上，精液无情地飞撒着。');
+      await era.print(`苦痛点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
     } else if (t(70) || t(73)) {
-      // :183-189 接受快感・容易陷落
-      await era.printAndWait('在凌辱开始不久后，渐渐地听到了妩媚的娇喘声。'); // :185
-      await era.printAndWait('『喔！这家伙有感觉了哦！』'); // :186
-      await era.printAndWait(`${arg_name}被快感冲击着，忍不住主动扭着腰。`); // :187
-      await era.print(`欲情点数+${mon_num * 10}`); // :188
-      era.add(`juel:${arg}:5`, mon_num * 10); // :189 JUEL:ARG:5 欲情
+      // 接受快感・容易陷落
+      await era.printAndWait('在凌辱开始不久后，渐渐地听到了妩媚的娇喘声。');
+      await era.printAndWait('『喔！这家伙有感觉了哦！』');
+      await era.printAndWait(`${arg_name}被快感冲击着，忍不住主动扭着腰。`);
+      await era.print(`欲情点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     } else {
       await era.printAndWait(
         `他用空洞的眼神望向地下城那阴暗的天花板，眼里完全失去了焦点。`,
-      ); // :192
+      );
     }
 
-    await era.printAndWait(''); // :197 PRINTW（空行等待）
-    // :198..:216 原作是一整行：:197 的 PRINTW 是空行，:198 的「兽人们把润滑液
+    await era.printAndWait(''); // PRINTW（空行等待）
+    // 原作是一整行：:197 的 PRINTW 是空行，:198 的「兽人们把润滑液
     // 涂在了…的」与 :201..:213 的分档片段都不换行，末段 :216 的 PRINTL 收行。
     // 判据提到语句外当取值、片段文本留在输出语句里（#624）
     // 阴毛状态是纯读，提到语句外当取值（`t('阴毛状态')` 里的字符串字面量会被
@@ -354,9 +347,9 @@ async function orc_ryou_man(arg, mon_num, rand) {
                       ? '长着茂盛的阴毛的'
                       : '') +
         '性器和肛门上',
-    ); // :198+:201+:203+:205+:207+:209+:211+:213+:216
+    );
 
-    // :217..:242 原作是一整行：:217 的「在…的」与 :221..:239 的体型分档都不
+    // 原作是一整行：:217 的「在…的」与 :221..:239 的体型分档都不
     // 换行，末段 :242 的 PRINTL 收行（#624）
     await era.print(
       `在${arg_name}的` +
@@ -376,28 +369,28 @@ async function orc_ryou_man(arg, mon_num, rand) {
                       ? '肉感的身体上'
                       : '身体上') +
         '像要挤爆他似的激烈地持续侵犯着……',
-    ); // :217+:221+:224+:227+:230+:233+:235+:237+:239+:242
+    );
 
     await era.printAndWait(
       `他用空洞的眼神望向地下城那阴暗的天花板，眼里完全失去了焦点。`,
-    ); // :244
+    );
 
-    await era.print(`苦痛点数+${mon_num * 10}`); // :246
-    era.add(`juel:${arg}:9`, mon_num * 10); // :247 JUEL:ARG:9 苦痛
-    await era.print(`肛门经验+${mon_num}`); // :248
-    await era.print(`口交经验+${mon_num}`); // :249
-    await era.print(`精液经验+${mon_num}`); // :250
-    chara(arg).dungeon.肛门经验 += mon_num; // :251 EXP:ARG:1 肛门经验
-    chara(arg).dungeon.口交经验 += mon_num; // :252 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += mon_num; // :253 EXP:ARG:20 精液经验
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`口交经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    chara(arg).dungeon.口交经验 += mon_num; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
 
-    // :255-256 初吻
+    // 初吻
     if ((era.get(`cflag:${arg}:16`) ?? 0) === -1) {
-      chara(arg).train.初吻对象 = 995; // :256
+      chara(arg).train.初吻对象 = 995;
     }
   } else if (rand_n(3) === 0) {
-    // :258-340 屈辱プレイ
-    // :262-266 PRINTDATAW 三选一
+    // 屈辱プレイ
+    // PRINTDATAW 三选一
     await era.printAndWait(
       pick(
         [
@@ -407,10 +400,10 @@ async function orc_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :263-265
+    );
 
-    // :268..:287 原作是一整行：:268 的「…全裸地四肢着地趴在地下、」与
-    // :272..:284 的素质分档都不换行，末段 :287 的 PRINTW 才收行。判据提到
+    // 原作是一整行：:268 的「…全裸地四肢着地趴在地下、」与
+    // 的素质分档都不换行，末段 :287 的 PRINTW 才收行。判据提到
     // 语句外当取值、片段文本留在输出语句里（#624）
     await era.printAndWait(
       `${arg_name}全裸地四肢着地趴在地下、` +
@@ -426,29 +419,29 @@ async function orc_ryou_man(arg, mon_num, rand) {
                   ? '羞红了脸、'
                   : '') +
         '屈辱地模仿猪叫……',
-    ); // :268+:272+:275+:278+:281+:284+:287
+    );
 
     await era.printAndWait(
       `${mon_num}只兽人看到这个情形都笑了。完全没有了光辉冒险者的样子，就是一只惨叫的猪而已。`,
-    ); // :289
+    );
 
     if (era.get(`abl:${arg}:17`)) {
-      // :291-297 露出癖
+      // 露出癖
       await era.printAndWait(
         `${arg_name}的脸犹如发烧一般，不停地重复着上述行为。`,
-      ); // :293
-      await era.printAndWait('好像因为被视奸，而有了感觉。'); // :294
-      await era.print(`耻情点数+${mon_num * 10}`); // :295
-      era.add(`juel:${arg}:8`, mon_num * 10); // :296 JUEL:ARG:8 耻情
+      );
+      await era.printAndWait('好像因为被视奸，而有了感觉。');
+      await era.print(`耻情点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
     }
 
     if (era.get(`abl:${arg}:21`)) {
-      // :299-306 抖M气质
-      await era.printAndWait(`${arg_name}好像因为被骂而有了感觉。`); // :301
-      await era.printAndWait('『明明就是母猪，还说自己是冒险者！』'); // :302
-      await era.printAndWait(`${arg_name}连眼神都湿润了～`); // :303
-      await era.print(`欲情点数+${mon_num * 10}`); // :304
-      era.add(`juel:${arg}:5`, mon_num * 10); // :305 JUEL:ARG:5 欲情
+      // 抖M气质
+      await era.printAndWait(`${arg_name}好像因为被骂而有了感觉。`);
+      await era.printAndWait('『明明就是母猪，还说自己是冒险者！』');
+      await era.printAndWait(`${arg_name}连眼神都湿润了～`);
+      await era.print(`欲情点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     }
 
     // 源 :308 起『猪…』整段是一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
@@ -457,105 +450,105 @@ async function orc_ryou_man(arg, mon_num, rand) {
     // 拼接锚＝一语句对应源一行的多段 PRINT，尾锚吃整行文本
     const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
       t(17) ? 1 : 5,
-    ); // :312/:315（プライド低い → 喜び、否则情けない）
+    ); // （プライド低い → 喜び、否则情けない）
     const gobi_pig2 = await require('#/kojo/kojo-system').gobi_koujo(
       t(17) ? 1 : 5,
-    ); // :322/:325
+    );
     await era.printAndWait(
       `『猪${gobi_pig}还自称冒险者……简直傻了${gobi_pig2}${'\u3000'}噗噗，噗嘻！』`,
-    ); // :308+:317+:328
+    );
 
     if (t(17)) {
-      // :330-335 プライド低い
-      await era.printAndWait(`${arg_name}抛弃了自尊心，拼命地求饶着。`); // :332
-      await era.print(`屈服点数+${mon_num * 10}`); // :333
-      era.add(`juel:${arg}:6`, mon_num * 10); // :334 JUEL:ARG:6 屈服
+      // プライド低い
+      await era.printAndWait(`${arg_name}抛弃了自尊心，拼命地求饶着。`);
+      await era.print(`屈服点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:6`, mon_num * 10); // JUEL:ARG:6 屈服
     }
 
-    await era.print(`耻情点数+${mon_num * 10}`); // :337
-    await era.print(`屈服点数+${mon_num * 10}`); // :338
-    era.add(`juel:${arg}:8`, mon_num * 10); // :339 JUEL:ARG:8 耻情
-    era.add(`juel:${arg}:6`, mon_num * 10); // :340 JUEL:ARG:6 屈服
+    await era.print(`耻情点数+${mon_num * 10}`);
+    await era.print(`屈服点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
+    era.add(`juel:${arg}:6`, mon_num * 10); // JUEL:ARG:6 屈服
   } else if (rand_n(2) === 0) {
-    // :341-369 武器捅后穴
-    await era.printAndWait('『来试试，看能放多粗的东西进去？』'); // :342
-    await era.printAndWait(`${arg_name}感受到了自己身上的危机，拼命地哀求着。`); // :343
+    // 武器捅后穴
+    await era.printAndWait('『来试试，看能放多粗的东西进去？』');
+    await era.printAndWait(`${arg_name}感受到了自己身上的危机，拼命地哀求着。`);
     await era.printAndWait(
       `不过，他的身体依旧被兽人们牢牢抓住。M字开脚地把不设防的性器和肛门展示在大家面前。`,
-    ); // :344
+    );
     await era.printAndWait(
       `其中一只兽人，拿起他的心爱的武器用柄的那端捅入他的后穴。`,
-    ); // :345
+    );
     await era.printAndWait(
       `${arg_name}的喊叫声，回响在${mon_num}只兽人的耳边。`,
-    ); // :346
+    );
 
     if (t(40)) {
-      // :348-354 害怕疼痛
-      await era.printAndWait('「好痛……不要啊……呜哇哇哇哇哇哇！」'); // :350
-      await era.printAndWait(`${arg_name}受不了痛楚，高声哭喊着。`); // :351
-      await era.print(`苦痛点数+${mon_num * 10}`); // :352
-      era.add(`juel:${arg}:9`, mon_num * 10); // :353 JUEL:ARG:9 苦痛
+      // 害怕疼痛
+      await era.printAndWait('「好痛……不要啊……呜哇哇哇哇哇哇！」');
+      await era.printAndWait(`${arg_name}受不了痛楚，高声哭喊着。`);
+      await era.print(`苦痛点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
     }
 
     if (era.get(`abl:${arg}:21`)) {
-      // :356-362 抖M气质
-      await era.printAndWait(`${arg_name}在痛楚中感到了愉悦。`); // :358
+      // 抖M气质
+      await era.printAndWait(`${arg_name}在痛楚中感到了愉悦。`);
       await era.printAndWait(
         `难道自己是个潜在的性变态？这么想着，${arg_name}对自身的反应感到害怕。`,
-      ); // :359
-      await era.print(`欲情点数+${mon_num * 10}`); // :360
-      era.add(`juel:${arg}:5`, mon_num * 10); // :361 JUEL:ARG:5 欲情
+      );
+      await era.print(`欲情点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     }
 
-    await era.print(`肛门经验+${mon_num}`); // :364
-    await era.print(`苦痛点数+${mon_num * 10}`); // :365
-    await era.print(`恐怖点数+${mon_num * 10}`); // :366
-    chara(arg).dungeon.肛门经验 += mon_num; // :367 EXP:ARG:1 肛门经验
-    era.add(`juel:${arg}:9`, mon_num * 10); // :368 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :369 JUEL:ARG:10 恐怖
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
   } else {
-    // :370-396 抬屁股
-    await era.printAndWait('『抬起屁股！然后说：请用！』'); // :371
+    // 抬屁股
+    await era.printAndWait('『抬起屁股！然后说：请用！』');
     await era.printAndWait(
       `${arg_name}用屈辱的姿势抬起了屁股，把手扶在地下城的墙壁上。`,
-    ); // :372
+    );
     await era.printAndWait(
       `他完全被淹没在${mon_num}只兽人之中，兽人们大笑着，轮流侵犯他的嘴巴和肛门。`,
-    ); // :373
+    );
     await era.printAndWait(
       `${arg_name}的呜咽，被兽人们的欢呼声掩埋在地下城的黑暗中。`,
-    ); // :374
+    );
 
     if (t(70) || t(73)) {
-      // :376-382 接受快感・容易陷落
+      // 接受快感・容易陷落
       await era.printAndWait(
         `随着凌辱的持续，${arg_name}的前端里渐渐滴出了体液。`,
-      ); // :378
+      );
       await era.printAndWait(
         '『别这么快就去了啊！老子都不知道操哭多少人了。』',
-      ); // :379
-      await era.printAndWait(`${arg_name}呼出了炽热的气息，双腿直抖着。`); // :380
-      await era.print(`欲情点数+${mon_num * 10}`); // :381
-      era.add(`juel:${arg}:5`, mon_num * 10); // :382 JUEL:ARG:5 欲情
+      );
+      await era.printAndWait(`${arg_name}呼出了炽热的气息，双腿直抖着。`);
+      await era.print(`欲情点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     } else if (t(11)) {
-      // :384-387 反抗心
-      await era.printAndWait('『喂！把腰抬起来！还没完呢！』'); // :386
-      await era.printAndWait(`${arg_name}用冰冷的目光瞪了兽人们一眼。`); // :387
+      // 反抗心
+      await era.printAndWait('『喂！把腰抬起来！还没完呢！』');
+      await era.printAndWait(`${arg_name}用冰冷的目光瞪了兽人们一眼。`);
     }
 
-    await era.print(`肛门经验+${mon_num}`); // :390
-    await era.print(`口交经验+${mon_num}`); // :391
-    await era.print(`精液经验+${mon_num}`); // :392
-    chara(arg).dungeon.肛门经验 += mon_num; // :393 EXP:ARG:1 肛门经验
-    chara(arg).dungeon.口交经验 += mon_num; // :394 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += mon_num; // :395 EXP:ARG:20 精液经验
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`口交经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    chara(arg).dungeon.口交经验 += mon_num; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
   }
-  await era.waitAnyKey(); // :397 WAIT
-  return 0; // :398
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @SLIME_RYOU男(ARG) // :401
+// @SLIME_RYOU男(ARG)
 /**
  * 史莱姆凌辱（男性对象）。
  *
@@ -569,86 +562,86 @@ async function slime_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
 
   if (rand_n(6) === 0) {
-    // :406-414 黏液侵犯
-    await era.printAndWait(`黏液侵犯着${arg_name}的嘴巴和肛门，并灌入了黏液。`); // :407
-    await era.print(`肛门经验+${mon_num}`); // :408
-    await era.print(`苦痛点数+${mon_num * 10}`); // :409
-    await era.print(`恐怖点数+${mon_num * 10}`); // :410
-    era.add(`juel:${arg}:9`, mon_num * 10); // :411 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :412 JUEL:ARG:10 恐怖
-    chara(arg).dungeon.肛门经验 += mon_num; // :413 EXP:ARG:1 肛门经验
+    // 黏液侵犯
+    await era.printAndWait(`黏液侵犯着${arg_name}的嘴巴和肛门，并灌入了黏液。`);
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   } else if (rand_n(5) === 0) {
-    // :416-422 黏液入嘴
-    await era.printAndWait('黏液杀到了冒险者的嘴巴里。'); // :417
+    // 黏液入嘴
+    await era.printAndWait('黏液杀到了冒险者的嘴巴里。');
     await era.printAndWait(
       `${arg_name}感觉呼吸困难，正挣扎着，突然呼吸又顺畅了。但一部分的黏液已经借机流入了他的内脏，从内部蹂躏着他。`,
-    ); // :418
-    await era.print(`苦痛点数+${mon_num * 10}`); // :419
-    await era.print(`恐怖点数+${mon_num * 10}`); // :420
-    era.add(`juel:${arg}:9`, mon_num * 10); // :421 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :422 JUEL:ARG:10 恐怖
+    );
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
   } else if (rand_n(4) === 0) {
-    // :423-443 黏液入肛
-    await era.printAndWait('黏液杀到了冒险者的肛门里。'); // :424
+    // 黏液入肛
+    await era.printAndWait('黏液杀到了冒险者的肛门里。');
     await era.printAndWait(
       `${arg_name}被肛门里大量逆流的黏液弄的苦不堪言，但是四肢都被黏液牢牢控制，无法反抗。`,
-    ); // :425
+    );
     if (era.get(`cflag:${arg}:131`) > 5) {
       await era.printAndWait(
         `${arg_name}反弓起腰来、似乎沉浸于粘液的杠虐快感之中……`,
-      ); // :428 隷属状態
+      ); // 隷属状態
     } else if (era.get(`cflag:${arg}:131`) > 3) {
-      await era.printAndWait(`${arg_name}已然被粘液攻陷了……`); // :431 強畏怖状態
+      await era.printAndWait(`${arg_name}已然被粘液攻陷了……`); // 強畏怖状態
     } else if (era.get(`cflag:${arg}:131`) > 0) {
-      await era.printAndWait(`${arg_name}开始习惯被粘液涌入的感觉……`); // :434 弱畏怖状態
+      await era.printAndWait(`${arg_name}开始习惯被粘液涌入的感觉……`); // 弱畏怖状態
     } else {
-      await era.printAndWait('冒险者在肛虐的痛苦中癫狂地惨叫着。'); // :436
+      await era.printAndWait('冒险者在肛虐的痛苦中癫狂地惨叫着。');
     }
-    await era.print(`肛门经验+${mon_num}`); // :438
-    await era.print(`苦痛点数+${mon_num * 10}`); // :439
-    await era.print(`恐怖点数+${mon_num * 10}`); // :440
-    era.add(`juel:${arg}:9`, mon_num * 10); // :441 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :442 JUEL:ARG:10 恐怖
-    chara(arg).dungeon.肛门经验 += mon_num; // :443 EXP:ARG:1 肛门经验
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   } else if (rand_n(3) === 0) {
-    // :444-450 四脚着地
-    await era.printAndWait('被全裸地四脚着地压在地上，黏液逆流到肛门里了。'); // :445
+    // 四脚着地
+    await era.printAndWait('被全裸地四脚着地压在地上，黏液逆流到肛门里了。');
     await era.printAndWait(
       `${arg_name}腹部运劲，将黏液喷出肛门，但依然有大量的黏液流入体内。`,
-    ); // :446
-    await era.print(`耻情点数+${mon_num * 10}`); // :447
-    await era.print(`屈服点数+${mon_num * 10}`); // :448
-    era.add(`juel:${arg}:8`, mon_num * 10); // :449 JUEL:ARG:8 耻情
-    era.add(`juel:${arg}:6`, mon_num * 10); // :450 JUEL:ARG:6 屈服
+    );
+    await era.print(`耻情点数+${mon_num * 10}`);
+    await era.print(`屈服点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
+    era.add(`juel:${arg}:6`, mon_num * 10); // JUEL:ARG:6 屈服
   } else if (rand_n(2) === 0) {
-    // :451-460 大量黏液
+    // 大量黏液
     await era.printAndWait(
       '黏液疯狂地凌辱着，大量的黏液灌入了直肠里让冒险者的肚子都膨胀了几分。',
-    ); // :452
-    await era.printAndWait(`${arg_name}坚强地试图站起来。`); // :453
+    );
+    await era.printAndWait(`${arg_name}坚强地试图站起来。`);
     await era.printAndWait(
       '但是大量的黏液一下子又从肛门里汹涌地喷出来了，膝盖一软又跪倒在地。',
-    ); // :454
-    await era.print(`肛门经验+${mon_num}`); // :455
-    await era.print(`苦痛点数+${mon_num * 10}`); // :456
-    await era.print(`恐怖点数+${mon_num * 10}`); // :457
-    chara(arg).dungeon.肛门经验 += mon_num; // :458 EXP:ARG:1 肛门经验
-    era.add(`juel:${arg}:9`, mon_num * 10); // :459 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :460 JUEL:ARG:10 恐怖
+    );
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
   } else {
-    // :461-466 治愈黏液
-    await era.printAndWait('冒险者被包在黏液里，只露出头部发出呜呜的呻吟。'); // :462
-    await era.printAndWait(`看来没人相救的话，${arg_name}要被消化在黏液里了。`); // :463
+    // 治愈黏液
+    await era.printAndWait('冒险者被包在黏液里，只露出头部发出呜呜的呻吟。');
+    await era.printAndWait(`看来没人相救的话，${arg_name}要被消化在黏液里了。`);
     await era.printAndWait(
       `黏液的麻痹成分，渐渐把${arg_name}遭受凌辱的苦痛身体治愈了。`,
-    ); // :465
-    chara(arg).dungeon.体力 += 100; // :466 BASE:ARG:0 += 100（体力回复）
+    );
+    chara(arg).dungeon.体力 += 100; // BASE:ARG:0 += 100（体力回复）
   }
-  await era.waitAnyKey(); // :468 WAIT
-  return 0; // :469
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @INSECT_RYOU男(ARG) // :471
+// @INSECT_RYOU男(ARG)
 /**
  * 昆虫凌辱（男性对象）。
  *
@@ -662,31 +655,31 @@ async function insect_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
 
   if (rand_n(2) === 0) {
-    // :476-482 嘴巴产卵
-    await era.printAndWait('『叽吱叽吱叽吱……』'); // :477
-    await era.printAndWait(`${arg_name}的嘴巴被输卵管插入了，被播下了卵。`); // :478
-    await era.print(`苦痛点数+${mon_num * 10}`); // :479
-    await era.print(`恐怖点数+${mon_num * 10}`); // :480
-    era.add(`juel:${arg}:9`, mon_num * 10); // :481 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :482 JUEL:ARG:10 恐怖
+    // 嘴巴产卵
+    await era.printAndWait('『叽吱叽吱叽吱……』');
+    await era.printAndWait(`${arg_name}的嘴巴被输卵管插入了，被播下了卵。`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
   } else {
-    // :484-490 肛门产卵
-    await era.printAndWait('『叽吱叽吱叽吱……』'); // :485
-    await era.printAndWait(`${arg_name}的肛门被输卵管插入了，被播下了卵。`); // :486
+    // 肛门产卵
+    await era.printAndWait('『叽吱叽吱叽吱……』');
+    await era.printAndWait(`${arg_name}的肛门被输卵管插入了，被播下了卵。`);
     await era.printAndWait(
       '不喝下打虫药剂的话，魔界的虫子就会从肛门里孵化了吧。',
-    ); // :487
+    );
     await era.printAndWait(
       `${mon_num}只节肢动物轮流扑在${arg_name}身上，从臀部到背部全被卵覆盖了。`,
-    ); // :488
-    await era.print(`肛门经验+${mon_num}`); // :489
-    chara(arg).dungeon.肛门经验 += mon_num; // :490 EXP:ARG:1 肛门经验
+    );
+    await era.print(`肛门经验+${mon_num}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   }
-  await era.waitAnyKey(); // :492 WAIT
-  return 0; // :493
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @IVY_RYOU男(ARG) // :495
+// @IVY_RYOU男(ARG)
 /**
  * 蔦触手凌辱（男性对象）。
  *
@@ -700,34 +693,34 @@ async function ivy_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
 
   if (rand_n(2) === 0) {
-    // :499-505 勒颈
-    await era.printAndWait('藤蔓勒住了冒险者的脖子。'); // :500
+    // 勒颈
+    await era.printAndWait('藤蔓勒住了冒险者的脖子。');
     await era.printAndWait(
       `${arg_name}呼吸困难，痛苦挣扎着，被开放的时候，忍不住粗声地喘息。`,
-    ); // :501
-    await era.print(`苦痛点数+${mon_num * 10}`); // :502
-    await era.print(`恐怖点数+${mon_num * 10}`); // :503
-    era.add(`juel:${arg}:9`, mon_num * 10); // :504 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :505 JUEL:ARG:10 恐怖
+    );
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
   } else {
-    // :506-515 肛门扎根
-    await era.printAndWait('藤蔓在冒险者的肛门里扎根了。'); // :507
+    // 肛门扎根
+    await era.printAndWait('藤蔓在冒险者的肛门里扎根了。');
     await era.printAndWait(
       `${arg_name}的肛门被蹂躏着，发出了喊破喉咙的惨叫声。`,
-    ); // :508
-    await era.printAndWait('藤蔓吸收到了足够的养分，一下子从直肠里连根拔走。'); // :509
-    await era.print(`肛门经验+${mon_num}`); // :510
-    await era.print(`苦痛点数+${mon_num * 10}`); // :511
-    await era.print(`恐怖点数+${mon_num * 10}`); // :512
-    era.add(`juel:${arg}:9`, mon_num * 10); // :513 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :514 JUEL:ARG:10 恐怖
-    chara(arg).dungeon.肛门经验 += mon_num; // :515 EXP:ARG:1 肛门经验
+    );
+    await era.printAndWait('藤蔓吸收到了足够的养分，一下子从直肠里连根拔走。');
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   }
-  await era.waitAnyKey(); // :517 WAIT
-  return 0; // :518
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @SYOKUSYU_RYOU男(ARG) // :520
+// @SYOKUSYU_RYOU男(ARG)
 /**
  * 触手凌辱（男性对象）。
  *
@@ -741,58 +734,58 @@ async function syokusyu_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
 
   if (rand_n(4) === 0) {
-    // :525-529 触手入嘴
-    await era.printAndWait('触手伸进了冒险者的嘴巴里。'); // :526
+    // 触手入嘴
+    await era.printAndWait('触手伸进了冒险者的嘴巴里。');
     await era.printAndWait(
       `${arg_name}的喉咙被大量的体液灌入，呛到了。不久，他的意识开始模糊了。`,
-    ); // :527
-    await era.print(`欲情点数+${mon_num * 10}`); // :528
-    era.add(`juel:${arg}:5`, mon_num * 10); // :529 JUEL:ARG:5 欲情
+    );
+    await era.print(`欲情点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
   } else if (rand_n(3) === 0) {
-    // :530-537 触手入肛
-    await era.printAndWait('触手伸进了冒险者的肛门里。'); // :531
+    // 触手入肛
+    await era.printAndWait('触手伸进了冒险者的肛门里。');
     await era.printAndWait(
       `${arg_name}的肛门被大量的体液灌入，直肠吸收了里面的成分。不久，他的意识开始模糊了。`,
-    ); // :532
+    );
     await era.printAndWait(
       '不一会儿，全身肌肉都松弛了，大量的浑浊体液从肛门流出。',
-    ); // :533
-    await era.print(`肛门经验+${mon_num}`); // :534
-    await era.print(`欲情点数+${mon_num * 10}`); // :535
-    era.add(`juel:${arg}:5`, mon_num * 10); // :536 JUEL:ARG:5 欲情
-    chara(arg).dungeon.肛门经验 += mon_num; // :537 EXP:ARG:1 肛门经验
+    );
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`欲情点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   } else if (rand_n(2) === 0) {
-    // :538-545 吊缚
-    await era.printAndWait('触手把冒险者绑了起来，吊在半空。'); // :539
+    // 吊缚
+    await era.printAndWait('触手把冒险者绑了起来，吊在半空。');
     await era.printAndWait(
       `${arg_name}的嘴巴也好，肛门也好，能被触手侵犯的地方都被灌入了大量的体液。`,
-    ); // :540
+    );
     await era.printAndWait(
       '……不久，地上滴落的液体里，开始出现了触手体液之外的东西。',
-    ); // :541
-    await era.print(`肛门经验+${mon_num}`); // :542
-    await era.print(`欲情点数+${mon_num * 10}`); // :543
-    era.add(`juel:${arg}:5`, mon_num * 10); // :544 JUEL:ARG:5 欲情
-    chara(arg).dungeon.肛门经验 += mon_num; // :545 EXP:ARG:1 肛门经验
+    );
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`欲情点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   } else {
-    // :546-553 榨乳
-    await era.printAndWait('冒险者被触手吸着乳头，不断的挤奶。'); // :547
+    // 榨乳
+    await era.printAndWait('冒险者被触手吸着乳头，不断的挤奶。');
     await era.printAndWait(
       `${arg_name}带着难以置信的表情，感受着触手的体液顺着乳头流入，最终融化到了脑髓里。`,
-    ); // :548
-    await era.printAndWait('不久之后他感到乳房发胀，触手顺势开始了榨乳。'); // :549
+    );
+    await era.printAndWait('不久之后他感到乳房发胀，触手顺势开始了榨乳。');
     await era.printAndWait(
       `不久之后，${arg_name}母乳开始无法抑制地从乳头喷出。`,
-    ); // :550
-    await era.print('喷奶经验+1'); // :551
-    chara(arg).train.喷奶经验 += 1; // :552 EXP:ARG:54 喷奶经验
+    );
+    await era.print('喷奶经验+1');
+    chara(arg).train.喷奶经验 += 1; // EXP:ARG:54 喷奶经验
   }
-  await era.printAndWait(`触手经验+${mon_num}`); // :554
-  chara(arg).dungeon.触手经验 += mon_num; // :555 EXP:ARG:55 触手经验
-  return 0; // :556
+  await era.printAndWait(`触手经验+${mon_num}`);
+  chara(arg).dungeon.触手经验 += mon_num; // EXP:ARG:55 触手经验
+  return 0;
 }
 
-// @FAILY_RYOU男(ARG) // :558
+// @FAILY_RYOU男(ARG)
 /**
  * 妖精凌辱（男性对象）。
  *
@@ -806,35 +799,35 @@ async function faily_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
 
   if (rand_n(2) === 0) {
-    // :563-573 假阳具
-    await era.printAndWait('『所谓的冒险者真是牢不可破啊！』'); // :564
-    await era.printAndWait('妖精拿出了一根和自己身高相等的假阳具。'); // :565
-    await era.printAndWait('『小哥哥来享受这边的穴吧！』'); // :566
-    await era.printAndWait(`${arg_name}的惨叫回响在洞窟里……`); // :567
-    await era.print(`肛门经验+${mon_num}`); // :568
-    await era.print(`苦痛点数+${mon_num * 10}`); // :569
-    await era.print(`恐怖点数+${mon_num * 10}`); // :570
-    era.add(`juel:${arg}:9`, mon_num * 10); // :571 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :572 JUEL:ARG:10 恐怖
-    chara(arg).dungeon.肛门经验 += mon_num; // :573 EXP:ARG:1 肛门经验
+    // 假阳具
+    await era.printAndWait('『所谓的冒险者真是牢不可破啊！』');
+    await era.printAndWait('妖精拿出了一根和自己身高相等的假阳具。');
+    await era.printAndWait('『小哥哥来享受这边的穴吧！』');
+    await era.printAndWait(`${arg_name}的惨叫回响在洞窟里……`);
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   } else {
-    // :574-582 后处玩弄
-    await era.printAndWait('『小哥哥的里面，是什么模样呢？』'); // :575
+    // 后处玩弄
+    await era.printAndWait('『小哥哥的里面，是什么模样呢？』');
     await era.printAndWait(
       `${arg_name}的后处被妖精钻入了。妖精对他的反应感到相当有趣，不断地玩弄着后处内的皱褶。`,
-    ); // :576
-    await era.print(`肛门经验+${mon_num}`); // :577
-    await era.print(`苦痛点数+${mon_num * 10}`); // :578
-    await era.print(`恐怖点数+${mon_num * 10}`); // :579
-    era.add(`juel:${arg}:9`, mon_num * 10); // :580 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :581 JUEL:ARG:10 恐怖
-    chara(arg).dungeon.肛门经验 += mon_num; // :582 EXP:ARG:1 肛门经验
+    );
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
   }
-  await era.waitAnyKey(); // :584 WAIT
-  return 0; // :585
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @GIANT_RYOU男(ARG) // :587
+// @GIANT_RYOU男(ARG)
 /**
  * 巨人凌辱（男性对象）。
  *
@@ -848,9 +841,9 @@ async function giant_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
   const c131 = era.get(`cflag:${arg}:131`);
 
-  // :591-619 畏怖阶段口上（PRINTDATAW 三档）
+  // 畏怖阶段口上（PRINTDATAW 三档）
   if (c131 > 5) {
-    // :592-599 隷属状態
+    // 隷属状態
     await era.printAndWait(
       pick(
         [
@@ -862,9 +855,9 @@ async function giant_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :594-598
+    );
   } else if (c131 > 3) {
-    // :600-610 強畏怖状態
+    // 強畏怖状態
     await era.printAndWait(
       pick(
         [
@@ -877,9 +870,9 @@ async function giant_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :604-609
+    );
   } else {
-    // :611-618 初见的畏惧
+    // 初见的畏惧
     await era.printAndWait(
       pick(
         [
@@ -891,125 +884,125 @@ async function giant_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :613-617
+    );
   }
 
   if (mon_num === 1) {
-    // :623-636 单只巨人
-    await era.print('『喝下去哦』'); // :624
+    // 单只巨人
+    await era.print('『喝下去哦』');
     await era.print(
       `${arg_name}侍奉着一只巨人，不过怎么张嘴都吞不进巨人的阴茎，只能舔舐着。`,
-    ); // :625
-    await era.print('绝顶了的巨人，把精液从头到脚浇了他一身。'); // :626
-    await era.print('口交经验+1'); // :627
-    await era.print('精液经验+1'); // :628
-    chara(arg).dungeon.口交经验 += 1; // :629 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += 1; // :630 EXP:ARG:20 精液经验
+    );
+    await era.print('绝顶了的巨人，把精液从头到脚浇了他一身。');
+    await era.print('口交经验+1');
+    await era.print('精液经验+1');
+    chara(arg).dungeon.口交经验 += 1; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += 1; // EXP:ARG:20 精液经验
 
-    // :632-633 初吻
+    // 初吻
     if ((era.get(`cflag:${arg}:16`) ?? 0) === -1) {
-      chara(arg).train.初吻对象 = 995; // :633
+      chara(arg).train.初吻对象 = 995;
     }
-    await era.waitAnyKey(); // :634 WAIT
-    return 0; // :635
+    await era.waitAnyKey(); // WAIT
+    return 0;
   }
 
   if (rand_n(3) === 0) {
-    // :639-657 舔舐
-    await era.printAndWait('『快点啊！』'); // :640
-    await era.printAndWait(`${arg_name}拼命地舔舐着巨人的阴茎。`); // :641
-    await era.printAndWait('他拼命地哀求着，请饶了他，不然一定会被玩坏。'); // :642
+    // 舔舐
+    await era.printAndWait('『快点啊！』');
+    await era.printAndWait(`${arg_name}拼命地舔舐着巨人的阴茎。`);
+    await era.printAndWait('他拼命地哀求着，请饶了他，不然一定会被玩坏。');
     await era.printAndWait(
       `必须快点搞定这${mon_num}只巨人，不然不知道他们什么时候会改变主意。`,
-    ); // :643
+    );
 
     if (era.get(`talent:${arg}:52`)) {
-      // :645-651 擅用舌头
-      await era.printAndWait('『哦！小东西，你很擅长用舌头嘛！』'); // :647
+      // 擅用舌头
+      await era.printAndWait('『哦！小东西，你很擅长用舌头嘛！』');
       await era.printAndWait(
         `${arg_name}拼命地用舌头侍奉着，展现出天赋般的好技术。`,
-      ); // :648
+      );
       await era.printAndWait(
         `巨人被他灵活的舌头弄射了，精液像喷泉一样，从${arg_name}的头顶淋到脚底。`,
-      ); // :649
-      mon_num *= 2; // :650
+      );
+      mon_num *= 2;
     }
 
-    await era.print(`口交经验+${mon_num}`); // :653
-    await era.print(`精液经验+${mon_num}`); // :654
-    chara(arg).dungeon.口交经验 += mon_num; // :655 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += mon_num; // :656 EXP:ARG:20 精液经验
+    await era.print(`口交经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.口交经验 += mon_num; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
 
-    // :658-659 初吻
+    // 初吻
     if ((era.get(`cflag:${arg}:16`) ?? 0) === -1) {
-      chara(arg).train.初吻对象 = 995; // :659
+      chara(arg).train.初吻对象 = 995;
     }
   } else if (rand_n(2) === 0) {
-    // :660-683 贯穿
-    await era.printAndWait('『哦！小东西，叫得不错嘛！』'); // :661
+    // 贯穿
+    await era.printAndWait('『哦！小东西，叫得不错嘛！』');
     await era.printAndWait(
       `${arg_name}的肛门被巨人强行用阴茎贯穿，撕裂的痛楚让他声嘶力竭地惨叫着，晕了过去。肛门处流出了鲜血。`,
-    ); // :662
-    await era.printAndWait('『又一个坏掉了吗？用点回复药或许可以再来几下。』'); // :663
+    );
+    await era.printAndWait('『又一个坏掉了吗？用点回复药或许可以再来几下。』');
     await era.printAndWait(
       `插坏了的肛门，用了回复药之后被继续玩弄着，直到满足了所有${mon_num}只巨人为止……`,
-    ); // :664
+    );
 
     if (era.get(`talent:${arg}:34`)) {
-      // :666-674 抵抗
+      // 抵抗
       await era.printAndWait(
         `${arg_name}竭尽全力地企图爬走，但是被轻易地抓了回来。`,
-      ); // :668
-      await era.printAndWait('『喂！这里有个想逃跑的！抓住他！』'); // :669
+      );
+      await era.printAndWait('『喂！这里有个想逃跑的！抓住他！』');
       await era.printAndWait(
         `${arg_name}被巨人抓着四肢，那不设防的肛门，又一次被巨人的巨根插入了……`,
-      ); // :670
-      await era.print(`恐怖点数+${mon_num * 10}`); // :671
-      era.add(`juel:${arg}:10`, mon_num * 10); // :672 JUEL:ARG:10 恐怖
+      );
+      await era.print(`恐怖点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
     }
 
-    await era.print(`肛门经验+${mon_num}`); // :676
-    await era.print(`精液经验+${mon_num}`); // :677
-    await era.print(`肛门扩张经验+${mon_num}`); // :678
-    await era.print('异常经验+1'); // :679
-    chara(arg).dungeon.肛门经验 += mon_num; // :680 EXP:ARG:1 肛门经验
-    chara(arg).dungeon.精液经验 += mon_num; // :681 EXP:ARG:20 精液经验
-    chara(arg).dungeon.异常经验 += 1; // :682 EXP:ARG:50 异常经验
-    chara(arg).dungeon.肛门扩张经验 += mon_num; // :683 EXP:ARG:53 肛门扩张经验
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    await era.print(`肛门扩张经验+${mon_num}`);
+    await era.print('异常经验+1');
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
+    chara(arg).dungeon.异常经验 += 1; // EXP:ARG:50 异常经验
+    chara(arg).dungeon.肛门扩张经验 += mon_num; // EXP:ARG:53 肛门扩张经验
   } else {
-    // :684-705 精液水盆
-    await era.printAndWait('『我想到好主意了』'); // :685
+    // 精液水盆
+    await era.printAndWait('『我想到好主意了』');
     await era.printAndWait(
       '巨人们不知为何开始集体打飞机，集中射在巨大的水盆里。',
-    ); // :686
-    await era.printAndWait(`${arg_name}对未知状况非常恐惧。`); // :687
-    await era.printAndWait('巨人端着一大盆精液，对他说，'); // :688
-    await era.printAndWait('『不想死的话，就全部喝光。』'); // :689
-    await era.printAndWait(`${arg_name}脸上血色褪尽。`); // :690
+    );
+    await era.printAndWait(`${arg_name}对未知状况非常恐惧。`);
+    await era.printAndWait('巨人端着一大盆精液，对他说，');
+    await era.printAndWait('『不想死的话，就全部喝光。』');
+    await era.printAndWait(`${arg_name}脸上血色褪尽。`);
 
     if (era.get(`talent:${arg}:11`)) {
-      // :692-702 反抗心
-      await era.printAndWait(`${arg_name}用冷淡的眼神瞪着巨人，表示不从。`); // :694
-      await era.printAndWait('『看来还不明白啊！』'); // :695
+      // 反抗心
+      await era.printAndWait(`${arg_name}用冷淡的眼神瞪着巨人，表示不从。`);
+      await era.printAndWait('『看来还不明白啊！』');
       await era.printAndWait(
         `巨人用巨大的手掌按着${arg_name}的头，直接把头按入水盆里。`,
-      ); // :696
-      await era.printAndWait('「咕噜，咕噜，咕咕噜」'); // :697
+      );
+      await era.printAndWait('「咕噜，咕噜，咕咕噜」');
       await era.printAndWait(
         `巨人把他的头抓起来，那张满脸精液的脸上，再也见不到反抗的意思了。`,
-      ); // :698
-      await era.print(`恐怖点数+${mon_num * 10}`); // :699
-      era.add(`juel:${arg}:10`, mon_num * 10); // :700 JUEL:ARG:10 恐怖
+      );
+      await era.print(`恐怖点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
     }
 
-    await era.print(`精液经验+${mon_num * 10}`); // :704
-    chara(arg).dungeon.精液经验 += mon_num * 10; // :705 EXP:ARG:20 精液经验
+    await era.print(`精液经验+${mon_num * 10}`);
+    chara(arg).dungeon.精液经验 += mon_num * 10; // EXP:ARG:20 精液经验
   }
-  await era.waitAnyKey(); // :707 WAIT
-  return 0; // :708
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @MAN_RYOU男(ARG) // :710
+// @MAN_RYOU男(ARG)
 /**
  * 魔族男人凌辱（男性对象）。
  *
@@ -1023,9 +1016,9 @@ async function man_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
   const c131 = era.get(`cflag:${arg}:131`);
 
-  // :714-742 畏怖阶段口上（PRINTDATAW 三档）
+  // 畏怖阶段口上（PRINTDATAW 三档）
   if (c131 > 5) {
-    // :715-722 隷属状態
+    // 隷属状態
     await era.printAndWait(
       pick(
         [
@@ -1037,9 +1030,9 @@ async function man_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :717-721
+    );
   } else if (c131 > 3) {
-    // :723-733 強畏怖状態
+    // 強畏怖状態
     await era.printAndWait(
       pick(
         [
@@ -1052,9 +1045,9 @@ async function man_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :727-732
+    );
   } else {
-    // :734-741 初见的畏惧
+    // 初见的畏惧
     await era.printAndWait(
       pick(
         [
@@ -1066,36 +1059,36 @@ async function man_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :736-740
+    );
   }
 
   if (rand_n(5) === 0) {
-    // :747-761 翘屁股
-    await era.printAndWait('『屁股露出来，抬高点！』'); // :749
+    // 翘屁股
+    await era.printAndWait('『屁股露出来，抬高点！』');
     await era.printAndWait(
       `${arg_name}露出了屈辱的神色，向魔族男人翘起了屁股。`,
-    ); // :750
+    );
     await era.printAndWait(
       `${arg_name}全裸地侍奉着兽人们的阴茎。只要喝掉所有${mon_num}个男人的精液的话，它们就答应不侵犯他的后穴………`,
-    ); // :751
-    await era.printAndWait('『嘴巴张开点！鸡鸡都被你弄脏了，弄干净！』'); // :752
-    await era.printAndWait(`${arg_name}依照吩咐，用嘴巴侍奉着阴茎……`); // :753
-    await era.print(`口交经验+${mon_num}`); // :754
-    await era.print(`精液经验+${mon_num}`); // :755
-    chara(arg).dungeon.口交经验 += mon_num; // :756 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += mon_num; // :757 EXP:ARG:20 精液经验
+    );
+    await era.printAndWait('『嘴巴张开点！鸡鸡都被你弄脏了，弄干净！』');
+    await era.printAndWait(`${arg_name}依照吩咐，用嘴巴侍奉着阴茎……`);
+    await era.print(`口交经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.口交经验 += mon_num; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
 
-    // :759-760 初吻
+    // 初吻
     if ((era.get(`cflag:${arg}:16`) ?? 0) === -1) {
-      chara(arg).train.初吻对象 = 995; // :760
+      chara(arg).train.初吻对象 = 995;
     }
   } else if (rand_n(4) === 0) {
-    // :762-828 肉便器
+    // 肉便器
     await era.printAndWait(
       `${arg_name}被强行宣布为肉便器，全身都被写满了淫秽的话语。`,
-    ); // :764
+    );
 
-    // :767..:804 原作是一整行：无后缀 PRINT 连续不换行，末行 PRINTFORMW 才收行。
+    // 原作是一整行：无后缀 PRINT 连续不换行，末行 PRINTFORMW 才收行。
     // 落書的追加档与末尾三选一都在行内，各 IF 的判据提到语句外当取值、
     // 文本留在输出语句里（保真锁按序核对 ERB 片段，#600）
     const cold = era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`); // 感情淡薄・冷漠
@@ -1118,139 +1111,139 @@ async function man_ryou_man(arg, mon_num, rand) {
             ? '【肛门免费】'
             : '【母猪】') +
         '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
-    ); // :767+:768+:771+:776+:781+:786+:791+:795+:797+:799+:802+:804
+    );
     await era.printAndWait(
       `当被最后一人抱着的时候，${arg_name}已经失去了任何表情，成为全身的穴都流出着精液的下流便器了。`,
-    ); // :805
+    );
     await era.printAndWait(
       `地下城里，充斥着${mon_num}人份的精液和体液的异样臭味。魔族男人对原冒险者重生成为肉便器相当欢迎。`,
-    ); // :806
+    );
 
-    // :809-818 肌の色で分岐
+    // 肌の色で分岐
     if (era.get(`talent:${arg}:244`)) {
-      await era.printAndWait(`${arg_name}的蓝色肌肤，被沾满了精液……`); // :811 恶魔肌肤
+      await era.printAndWait(`${arg_name}的蓝色肌肤，被沾满了精液……`); // 恶魔肌肤
     } else if (era.get(`talent:${arg}:253`)) {
       await era.printAndWait(
         `${arg_name}健康的褐色肌肤，与白浊的精液形成鲜明又淫靡的对比……`,
-      ); // :814 褐色肌肤
+      ); // 褐色肌肤
     } else if (era.get(`talent:${arg}:255`)) {
-      await era.printAndWait(`${arg_name}美丽的白皙肌肤被精液玷污了……`); // :817 白皙
+      await era.printAndWait(`${arg_name}美丽的白皙肌肤被精液玷污了……`); // 白皙
     }
 
-    await era.print(`肛门经验+${mon_num}`); // :820
-    await era.print(`口交经验+${mon_num}`); // :821
-    await era.print(`精液经验+${mon_num}`); // :822
-    chara(arg).dungeon.肛门经验 += mon_num; // :823 EXP:ARG:1 肛门经验
-    chara(arg).dungeon.口交经验 += mon_num; // :824 EXP:ARG:22 口交经验
-    chara(arg).dungeon.精液经验 += mon_num; // :825 EXP:ARG:20 精液经验
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`口交经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    chara(arg).dungeon.口交经验 += mon_num; // EXP:ARG:22 口交经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
 
-    // :827-828 初吻
+    // 初吻
     if ((era.get(`cflag:${arg}:16`) ?? 0) === -1) {
-      chara(arg).train.初吻对象 = 995; // :828
+      chara(arg).train.初吻对象 = 995;
     }
   } else if (rand_n(3) === 0) {
-    // :829-851 灌肠
-    await era.printAndWait('『明明是冒险者，却忍不住了吗？』'); // :830
+    // 灌肠
+    await era.printAndWait('『明明是冒险者，却忍不住了吗？』');
     await era.printAndWait(
       `${arg_name}的肛门被灌入了灌肠液，忍受着强烈的便意。`,
-    ); // :831
+    );
     await era.printAndWait(
       '『快点自慰！在漏出来之前自慰去了的话就带你上厕所！』',
-    ); // :832
+    );
     await era.printAndWait(
       `${arg_name}拼命地自慰着，但是在这异常的状况中，却无法兴奋起来。`,
-    ); // :833
-    await era.printAndWait('肛门里的污物，终于无法忍耐地飞散而出。'); // :834
+    );
+    await era.printAndWait('肛门里的污物，终于无法忍耐地飞散而出。');
     await era.printAndWait(
       `魔族男人们看到这样，毫不留情地说着侮蔑的话，${arg_name}在这份屈辱中泣不成声。`,
-    ); // :835
+    );
 
     if (era.get(`talent:${arg}:62`)) {
-      // :837-842 反感污臭
+      // 反感污臭
       await era.printAndWait(
         `${arg_name}因自己拉出的东西的味道而皱起眉头，羞愧欲死。`,
-      ); // :839
-      await era.print(`苦痛点数+${mon_num * 10}`); // :840
-      era.add(`juel:${arg}:9`, mon_num * 10); // :841 JUEL:ARG:9 苦痛
+      );
+      await era.print(`苦痛点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
     }
 
-    await era.print(`耻情点数+${mon_num * 10}`); // :844
-    await era.print(`屈服点数+${mon_num * 10}`); // :845
-    await era.print('自慰经验+1'); // :846
-    await era.print('调教自慰经验+1'); // :847
-    era.add(`juel:${arg}:8`, mon_num * 10); // :848 JUEL:ARG:8 耻情
-    era.add(`juel:${arg}:6`, mon_num * 10); // :849 JUEL:ARG:6 屈服
-    chara(arg).dungeon.自慰经验 += 1; // :850 EXP:ARG:10 自慰经验
-    chara(arg).dungeon.调教自慰经验 += 1; // :851 EXP:ARG:11 调教自慰经验
+    await era.print(`耻情点数+${mon_num * 10}`);
+    await era.print(`屈服点数+${mon_num * 10}`);
+    await era.print('自慰经验+1');
+    await era.print('调教自慰经验+1');
+    era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
+    era.add(`juel:${arg}:6`, mon_num * 10); // JUEL:ARG:6 屈服
+    chara(arg).dungeon.自慰经验 += 1; // EXP:ARG:10 自慰经验
+    chara(arg).dungeon.调教自慰经验 += 1; // EXP:ARG:11 调教自慰经验
   } else if (rand_n(2) === 0) {
-    // :852-874 舔肛
-    await era.printAndWait('『那个冒险者大人，在舔我的肛门哦！』'); // :853
+    // 舔肛
+    await era.printAndWait('『那个冒险者大人，在舔我的肛门哦！』');
     await era.printAndWait(
       `${arg_name}以舔肛门为代价，获得了魔族男人对于生命安全的保证。`,
-    ); // :854
-    await era.printAndWait('『你的尊严，真不值钱呢！』'); // :855
+    );
+    await era.printAndWait('『你的尊严，真不值钱呢！』');
     await era.printAndWait(
       `${arg_name}拼命地侍奉着，听到这话，心里想死的心都有了，泪水在眼眶中打转。`,
-    ); // :856
+    );
     await era.printAndWait(
       `侍奉结束之后，${arg_name}还被迫要说出淫秽的话语。他忍无可忍地大哭着，宣布自己喜欢舔肛。`,
-    ); // :857
+    );
 
     if (era.get(`talent:${arg}:17`)) {
-      // :859-863 低姿态
+      // 低姿态
       await era.printAndWait(
         `自尊心低下的${arg_name}，拼命地说着自己是舔肛用奴隶。`,
-      ); // :861
-      // :862 Y += 10 —— 死代码（Y 全库无初始化与读取，见文件头）
+      );
+      // Y += 10 —— 死代码（Y 全库无初始化与读取，见文件头）
     }
     if (era.get(`talent:${arg}:62`)) {
-      // :865-869 反感污臭
-      await era.printAndWait(`${arg_name}因为舔肛而恶心地吐了。`); // :867
-      // :868 Y += 10 —— 死代码（同上）
+      // 反感污臭
+      await era.printAndWait(`${arg_name}因为舔肛而恶心地吐了。`);
+      // Y += 10 —— 死代码（同上）
     }
 
-    await era.print(`苦痛点数+${mon_num * 10}`); // :871
-    await era.print(`恐怖点数+${mon_num * 10}`); // :872
-    era.add(`juel:${arg}:9`, mon_num * 10); // :873 JUEL:ARG:9 苦痛
-    era.add(`juel:${arg}:10`, mon_num * 10); // :874 JUEL:ARG:10 恐怖
+    await era.print(`苦痛点数+${mon_num * 10}`);
+    await era.print(`恐怖点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+    era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
   } else {
-    // :875-899 娼妓
-    await era.printAndWait('『这个为了保命就来者不拒的娼妓！』'); // :876
+    // 娼妓
+    await era.printAndWait('『这个为了保命就来者不拒的娼妓！』');
     await era.printAndWait(
       `${arg_name}屁股翘起，用屈辱的姿势承受着不知多少个魔族男人的肉棒。沐浴在他们的精液和骂声之中。`,
-    ); // :877
+    );
     await era.printAndWait(
       '『说！说我是个相对于做冒险者，更喜欢做娼妓的淫乱贱婊！』',
-    ); // :878
+    );
     await era.printAndWait(
       `${arg_name}在激烈的抽插中，不断地重复着屈辱的台词。`,
-    ); // :879
+    );
 
     if (era.get(`talent:${arg}:17`)) {
-      // :881-886 低姿态
+      // 低姿态
       await era.printAndWait(
         `${arg_name}拼命地重复着淫乱的话语乞求饶命，美丽的脸庞在恐惧和淫媚中扭曲了……`,
-      ); // :883
-      await era.print(`屈服点数+${mon_num * 10}`); // :884
-      era.add(`juel:${arg}:6`, mon_num * 10); // :885 JUEL:ARG:6 屈服
+      );
+      await era.print(`屈服点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:6`, mon_num * 10); // JUEL:ARG:6 屈服
     }
     if (era.get(`abl:${arg}:21`) > 0) {
-      // :888-893 抖M气质
-      await era.printAndWait(`说着过激的言语，${arg_name}的心里产生了情欲。`); // :890
-      await era.print(`欲情点数+${mon_num * 10}`); // :891
-      era.add(`juel:${arg}:5`, mon_num * 10); // :892 JUEL:ARG:5 欲情
+      // 抖M气质
+      await era.printAndWait(`说着过激的言语，${arg_name}的心里产生了情欲。`);
+      await era.print(`欲情点数+${mon_num * 10}`);
+      era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     }
 
-    await era.print(`肛门经验+${mon_num}`); // :895
-    await era.print(`精液经验+${mon_num}`); // :896
-    chara(arg).dungeon.肛门经验 += mon_num; // :897 EXP:ARG:1 肛门经验
-    chara(arg).dungeon.精液经验 += mon_num; // :898 EXP:ARG:20 精液经验
+    await era.print(`肛门经验+${mon_num}`);
+    await era.print(`精液经验+${mon_num}`);
+    chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+    chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
   }
-  await era.waitAnyKey(); // :900 WAIT
-  return 0; // :901
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @BEAST_RYOU男(ARG) // :903
+// @BEAST_RYOU男(ARG)
 /**
  * 魔兽凌辱（男性对象）。
  *
@@ -1264,9 +1257,9 @@ async function beast_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
   const c131 = era.get(`cflag:${arg}:131`);
 
-  // :907-935 畏怖阶段口上（PRINTDATAW 三档）
+  // 畏怖阶段口上（PRINTDATAW 三档）
   if (c131 > 5) {
-    // :908-915 隷属状態
+    // 隷属状態
     await era.printAndWait(
       pick(
         [
@@ -1278,9 +1271,9 @@ async function beast_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :910-914
+    );
   } else if (c131 > 3) {
-    // :916-926 強畏怖状態
+    // 強畏怖状態
     await era.printAndWait(
       pick(
         [
@@ -1293,9 +1286,9 @@ async function beast_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :920-925
+    );
   } else {
-    // :927-934 初见的畏惧
+    // 初见的畏惧
     await era.printAndWait(
       pick(
         [
@@ -1307,34 +1300,34 @@ async function beast_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :929-933
+    );
   }
 
-  await era.printAndWait('『噢！』'); // :939
-  await era.printAndWait(`野兽们，开始轮番兽奸${arg_name}。`); // :940
-  await era.printAndWait('「啊！呜！不要啊……啊啊啊！」'); // :941
+  await era.printAndWait('『噢！』');
+  await era.printAndWait(`野兽们，开始轮番兽奸${arg_name}。`);
+  await era.printAndWait('「啊！呜！不要啊……啊啊啊！」');
   await era.printAndWait(
     `${arg_name}无法面对自己被野兽轮奸的事实，保持着母狗的姿态，呆若木鸡……`,
-  ); // :942
+  );
 
   if (era.get(`talent:${arg}:314`) === 2) {
-    // :944-949 人狼
-    await era.printAndWait(`身为狼人的${arg_name}貌似不太反感和野兽做爱……`); // :946
-    await era.print(`欲情点数+${mon_num * 10}`); // :947
-    era.add(`juel:${arg}:5`, mon_num * 10); // :948 JUEL:ARG:5 欲情
+    // 人狼
+    await era.printAndWait(`身为狼人的${arg_name}貌似不太反感和野兽做爱……`);
+    await era.print(`欲情点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
   }
-  await era.print(`肛门经验+${mon_num}`); // :950
-  await era.print(`苦痛点数+${mon_num * 10}`); // :951
-  await era.print(`恐怖点数+${mon_num * 10}`); // :952
-  chara(arg).dungeon.肛门经验 += mon_num; // :953 EXP:ARG:1 肛门经验
-  era.add(`juel:${arg}:9`, mon_num * 10); // :954 JUEL:ARG:9 苦痛
-  era.add(`juel:${arg}:10`, mon_num * 10); // :955 JUEL:ARG:10 恐怖
-  await era.printAndWait(`兽奸经验+${mon_num}`); // :956
-  chara(arg).dungeon.兽奸经验 += mon_num; // :957 EXP:ARG:56 兽奸经验
-  return 0; // :958
+  await era.print(`肛门经验+${mon_num}`);
+  await era.print(`苦痛点数+${mon_num * 10}`);
+  await era.print(`恐怖点数+${mon_num * 10}`);
+  chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+  era.add(`juel:${arg}:9`, mon_num * 10); // JUEL:ARG:9 苦痛
+  era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
+  await era.printAndWait(`兽奸经验+${mon_num}`);
+  chara(arg).dungeon.兽奸经验 += mon_num; // EXP:ARG:56 兽奸经验
+  return 0;
 }
 
-// @BRAIN_RYOU男(ARG) // :960
+// @BRAIN_RYOU男(ARG)
 /**
  * 食脑魔凌辱（男性对象）。
  *
@@ -1348,9 +1341,9 @@ async function brain_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
   const c131 = era.get(`cflag:${arg}:131`);
 
-  // :964-991 畏怖阶段口上（PRINTDATAW 三档）
+  // 畏怖阶段口上（PRINTDATAW 三档）
   if (c131 > 5) {
-    // :965-972 隷属状態
+    // 隷属状態
     await era.printAndWait(
       pick(
         [
@@ -1362,9 +1355,9 @@ async function brain_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :967-971
+    );
   } else if (c131 > 3) {
-    // :973-982 強畏怖状態
+    // 強畏怖状態
     await era.printAndWait(
       pick(
         [
@@ -1376,9 +1369,9 @@ async function brain_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :977-981
+    );
   } else {
-    // :983-990 初见的畏惧
+    // 初见的畏惧
     await era.printAndWait(
       pick(
         [
@@ -1390,36 +1383,36 @@ async function brain_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :985-989
+    );
   }
 
   if (rand_n(2) === 0) {
-    // :995-1003 处女封印
-    await era.printAndWait('食脑魔咬住冒险者的头，开始支配他的精神。'); // :997
-    await era.printAndWait('「啊…啊…啊…啊…啊……」'); // :998
-    await era.printAndWait(`${arg_name}眼珠上翻，伸出舌头，脱粪了。`); // :999
-    await era.print(`肛门经验+${mon_num * 10}`); // :1000
-    await era.print('异常经验+1'); // :1001
-    chara(arg).dungeon.异常经验 += 1; // :1002 EXP:ARG:50 异常经验
-    chara(arg).dungeon.肛门经验 += mon_num * 10; // :1003 EXP:ARG:1 肛门经验
+    // 处女封印
+    await era.printAndWait('食脑魔咬住冒险者的头，开始支配他的精神。');
+    await era.printAndWait('「啊…啊…啊…啊…啊……」');
+    await era.printAndWait(`${arg_name}眼珠上翻，伸出舌头，脱粪了。`);
+    await era.print(`肛门经验+${mon_num * 10}`);
+    await era.print('异常经验+1');
+    chara(arg).dungeon.异常经验 += 1; // EXP:ARG:50 异常经验
+    chara(arg).dungeon.肛门经验 += mon_num * 10; // EXP:ARG:1 肛门经验
   } else {
-    // :1004-1010 触手入脑
+    // 触手入脑
     await era.printAndWait(
       '食脑魔的触手缠绕着冒险者，他死命地挣扎，却无法挣脱。',
-    ); // :1005
+    );
     await era.printAndWait(
       `食脑魔的触手，直接突入到${arg_name}的脑子里，往脑髓注入媚药成分。`,
-    ); // :1006
-    await era.printAndWait(`${arg_name}被过度的快感弄失禁了，成了废人。`); // :1007
-    await era.printAndWait('幸好，躯干还是完好的。'); // :1008
-    await era.print('异常经验+1'); // :1009
-    chara(arg).dungeon.异常经验 += 1; // :1010 EXP:ARG:50 异常经验
+    );
+    await era.printAndWait(`${arg_name}被过度的快感弄失禁了，成了废人。`);
+    await era.printAndWait('幸好，躯干还是完好的。');
+    await era.print('异常经验+1');
+    chara(arg).dungeon.异常经验 += 1; // EXP:ARG:50 异常经验
   }
-  await era.waitAnyKey(); // :1012 WAIT
-  return 0; // :1013
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
-// @HORSE_RYOU男(ARG) // :1015
+// @HORSE_RYOU男(ARG)
 /**
  * 马凌辱（男性对象）。
  *
@@ -1433,9 +1426,9 @@ async function horse_ryou_man(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
   const c131 = era.get(`cflag:${arg}:131`);
 
-  // :1019-1046 畏怖阶段口上（PRINTDATAW 三档）
+  // 畏怖阶段口上（PRINTDATAW 三档）
   if (c131 > 5) {
-    // :1020-1027 隷属状態
+    // 隷属状態
     await era.printAndWait(
       pick(
         [
@@ -1447,9 +1440,9 @@ async function horse_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :1022-1026
+    );
   } else if (c131 > 3) {
-    // :1028-1037 強畏怖状態
+    // 強畏怖状態
     await era.printAndWait(
       pick(
         [
@@ -1461,9 +1454,9 @@ async function horse_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :1032-1036
+    );
   } else {
-    // :1038-1045 初见的畏惧
+    // 初见的畏惧
     await era.printAndWait(
       pick(
         [
@@ -1475,31 +1468,31 @@ async function horse_ryou_man(arg, mon_num, rand) {
         ],
         rand_n,
       ),
-    ); // :1040-1044
+    );
   }
 
   await era.printAndWait(
     '养马人给马的阴茎施加了缩小的魔法，让它变小至适应肛门的大小。',
-  ); // :1050
+  );
   await era.printAndWait(
     '『你很有素质嘛～看在这个份上，就用魔法让你好受些。』',
-  ); // :1051
-  await era.printAndWait(`${arg_name}不得不用肛门承受着兽奸……`); // :1052
+  );
+  await era.printAndWait(`${arg_name}不得不用肛门承受着兽奸……`);
 
   if (era.get(`talent:${arg}:314`) === 2) {
-    // :1054-1059 人狼
-    await era.printAndWait(`身为狼人的${arg_name}貌似不太反感和马做爱……`); // :1056
-    await era.print(`欲情点数+${mon_num * 10}`); // :1057
-    era.add(`juel:${arg}:5`, mon_num * 10); // :1058 JUEL:ARG:5 欲情
+    // 人狼
+    await era.printAndWait(`身为狼人的${arg_name}貌似不太反感和马做爱……`);
+    await era.print(`欲情点数+${mon_num * 10}`);
+    era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
   }
-  await era.print(`肛门经验+${mon_num}`); // :1061
-  await era.print(`精液经验+${mon_num}`); // :1062
-  await era.printAndWait(`兽奸经验+${mon_num}`); // :1063
-  chara(arg).dungeon.肛门经验 += mon_num; // :1064 EXP:ARG:1 肛门经验
-  chara(arg).dungeon.精液经验 += mon_num; // :1065 EXP:ARG:20 精液经验
-  chara(arg).dungeon.兽奸经验 += mon_num; // :1066 EXP:ARG:56 兽奸经验
-  await era.waitAnyKey(); // :1067 WAIT
-  return 0; // :1068
+  await era.print(`肛门经验+${mon_num}`);
+  await era.print(`精液经验+${mon_num}`);
+  await era.printAndWait(`兽奸经验+${mon_num}`);
+  chara(arg).dungeon.肛门经验 += mon_num; // EXP:ARG:1 肛门经验
+  chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
+  chara(arg).dungeon.兽奸经验 += mon_num; // EXP:ARG:56 兽奸经验
+  await era.waitAnyKey(); // WAIT
+  return 0;
 }
 
 module.exports = {

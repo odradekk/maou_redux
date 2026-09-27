@@ -2,14 +2,6 @@
  * @file 调教状态画面：@SHOW_STATUS 的处理器 + 引擎内建 PRINT_PALAM 的移植
  * （issue #44；#74 起整页为画面组件、参数条换引擎原生进度条）。
  *
- * 源: target/ERB/調教相關/TRAIN_MAIN.ERB  @SHOW_STATUS（:60-259，无标记
- *     = 普通档事件）
- *     PRINT_PALAM（Emuera 内建命令，PRINT_STATUS 系——非 ERB 函数，ere 侧
- *     以本文件的 print_palam 承载）
- *     USERCOM.ERB :179-186 —— @SET_CLEAR_POINT/@CLEAR_TO_POINT：锚点跨度
- *     重绘的原作习语（@SHOW_STATUS 尾部记锚点、清回锚点重画），ere 侧由
- *     ScreenBlock（page/components/screen-block.js，#73）承载
- *
  * 骨架范围：@SHOW_STATUS 的子调用里 SHOW_EQUIP_1/2（#390 落地）与 PRINT_CLOTHTYPE（#215 落地）都已换真身
  * 化（J5 #215 服装与 TEQUIP 建模）；LIFE_BAR/VITAL_BAR（#212，组件在
  * ere/page/components/chara-bars.js）与射精/母乳/触手槽条段（:144-252，
@@ -110,7 +102,7 @@ function print_ex_counters(cid) {
     (_, i) => era.get(`ex:${cid}:${i}`) || 0,
   );
   const parts = [];
-  // :95-103 EX:0：阴茎（TALENT:121 扶她 / 122 男人）或阴蒂
+  // EX:0：阴茎（TALENT:121 扶她 / 122 男人）或阴蒂
   if (ex[0] > 0) {
     const organ =
       era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)
@@ -118,25 +110,25 @@ function print_ex_counters(cid) {
         : '阴蒂';
     parts.push(`[${organ}绝顶：${ex[0]}次]\u00A0\u00A0`);
   }
-  // :104-105 EX:1 私处
+  // EX:1 私处
   if (ex[1] > 0) {
     parts.push(`[私处绝顶：${ex[1]}次]\u00A0\u00A0`);
   }
-  // :106-107 EX:2 肛门
+  // EX:2 肛门
   if (ex[2] > 0) {
     parts.push(`[肛门绝顶：${ex[2]}次]\u00A0\u00A0`);
   }
-  // :108-109 EX:3 乳房
+  // EX:3 乳房
   if (ex[3] > 0) {
     parts.push(`[乳房绝顶：${ex[3]}次]\u00A0\u00A0`);
   }
-  // :110-111 EX:4（%CSTR:7% = 癖好名，未落表读空）
+  // EX:4（%CSTR:7% = 癖好名，未落表读空）
   if (ex[4] > 0) {
     parts.push(
       `[${era.get(`cstr:${cid}:7`) ?? ''}绝顶：${ex[4]}次]\u00A0\u00A0`,
     );
   }
-  // :112-122 EX:5：阴茎侧「射精（喷乳）」（TALENT:130 母乳体质）/「射精」，
+  // EX:5：阴茎侧「射精（喷乳）」（TALENT:130 母乳体质）/「射精」，
   // 否则「喷乳」
   if (ex[5] > 0) {
     if (era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)) {
@@ -150,7 +142,7 @@ function print_ex_counters(cid) {
     }
   }
   if (parts.length > 0) {
-    // :123-124 SIF EX 任一非零 → PRINTL（拼行 + 补换行；各段尾自带双空格，
+    // SIF EX 任一非零 → PRINTL（拼行 + 补换行；各段尾自带双空格，
     // 与原作逐字一致，比对归 #48）
     era.print(parts.join(''));
   }
@@ -188,14 +180,14 @@ let command_path_seen = false;
  * @param {number} target 调教目标角色 ID
  */
 async function draw_status_screen(target) {
-  // :61 DRAWLINE
+  // DRAWLINE
   era.drawLine();
-  // :62-68 {DAY+1}日 (午前/午后)（TIME：0=午前）
+  // {DAY+1}日 (午前/午后)（TIME：0=午前）
   era.print(
     `${era_flag.day_count + 1}日${era_flag.time === 0 ? '(午前)' : '(午后)'}`,
   );
 
-  // :69-82 %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
+  // %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
   // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格照原作）
   const header = [
     { content: `${chara_callname(target)} 调教中\u00A0\u00A0\u00A0调教者:` },
@@ -213,40 +205,40 @@ async function draw_status_screen(target) {
       content: `\u00A0\u00A0助手:${chara_callname(era_flag.assi)}`,
     });
   }
-  header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
+  header.push({ content: '   ' }); // PRINT（行尾三空格）
   era.print(header);
 
-  // :84 CALL SHOW_EQUIP_2 —— 调教装备显示（#390 真身：九个位一次铺完，
+  // CALL SHOW_EQUIP_2 —— 调教装备显示（#390 真身：九个位一次铺完，
   // 原先逐族点亮的临时实现随之作废；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1564）
   show_equip_2(target);
-  // :85-86 CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
+  // CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
   // chara-bars.js；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1129/:1175）
   life_bar(target);
   vital_bar(target);
 
-  // :87-91 調教時ステータス画面に服装表示を捻じ込んでみた：PRINT 【 /
+  // 調教時ステータス画面に服装表示を捻じ込んでみた：PRINT 【 /
   // CALL PRINT_CLOTHTYPE / PRINT 】——Emuera 三段拼一行，
-  // :93 PRINTL（空）收行——
+  // PRINTL（空）收行——
   // ere 合成一次 print（#215 真身：ere/page/page-clothtype.js；FLAG:37
   // 着衣模式的守卫在 clothtype_text 内部 :37，关闭时显示全裸——与原作
   // 状态屏恒出【】行的形态一致）
-  era.print(`【${clothtype_text(target)}】`); // :87-91 + :93
+  era.print(`【${clothtype_text(target)}】`);
 
-  // :95-124 绝顶计数（直线段，1:1）
+  // 绝顶计数（直线段，1:1）
   print_ex_counters(target);
 
-  // :126 PRINT_PALAM TARGET（引擎内建命令的移植，参数条——指令菜单之外
+  // PRINT_PALAM TARGET（引擎内建命令的移植，参数条——指令菜单之外
   // 玩家唯一的反馈，工单报出保留）
   print_palam(target);
 
-  // :128-142 MAXBASE 修正（目标/主人/助手三处；助手档判据差异见函数头）
+  // MAXBASE 修正（目标/主人/助手三处；助手档判据差异见函数头）
   fix_maxbase(target);
   fix_maxbase(0);
   if (era_flag.assi >= 0) {
     fix_maxbase(era_flag.assi, true);
   }
 
-  // :144-252 射精/母乳/触手槽条段（#212 落地）。守卫素质：121 扶她/
+  // 射精/母乳/触手槽条段（#212 落地）。守卫素质：121 扶她/
   // 122 男人（阴茎侧）、130 母乳体质、135 未熟。三处射精守卫的 135 臂
   // 形态各异，逐处 1:1：
   //   - 主人（:144）：(TALENT:135 || (TALENT:135 && BASE:2 >= 2000)) == 0
@@ -262,7 +254,7 @@ async function draw_status_screen(target) {
   // 返工修正：首版写成二段 tequip:3x，引擎侧读的是「角色 3x 的整行对象」/
   // undefined——避孕套恒显或恒不显，见返工报告）。
 
-  // :144-158 射精（主人）：TARGET != MASTER（自调教不显示）
+  // 射精（主人）：TARGET != MASTER（自调教不显示）
   if (
     (era.get('talent:0:121') || era.get('talent:0:122')) &&
     !era.get('talent:0:135') &&
@@ -278,7 +270,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :160-175 射精（助手）：仅助手调教时（IF ASSIPLAY）
+  // 射精（助手）：仅助手调教时（IF ASSIPLAY）
   if (
     era_flag.assiplay !== 0 &&
     (era.get(`talent:${era_flag.assi}:121`) ||
@@ -294,7 +286,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :177-188 射精（目标）
+  // 射精（目标）
   if (
     (era.get(`talent:${target}:121`) || era.get(`talent:${target}:122`)) &&
     (!era.get(`talent:${target}:135`) ||
@@ -308,7 +300,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :190-200 母乳（主人，TALENT:130 母乳体质）：MAXBASE:3 缺省补 10000
+  // 母乳（主人，TALENT:130 母乳体质）：MAXBASE:3 缺省补 10000
   if (era.get('talent:0:130')) {
     if (!(era.get('maxbase:0:3') > 0)) {
       era.set('maxbase:0:3', 10000);
@@ -320,7 +312,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :202-214 母乳（助手）：守卫 IF ASSI > 0（注意与射精段的 ASSI >= 0 不同，
+  // 母乳（助手）：守卫 IF ASSI > 0（注意与射精段的 ASSI >= 0 不同，
   // 原作两处写法不一致，1:1 保留）
   if (era_flag.assi > 0 && era.get(`talent:${era_flag.assi}:130`)) {
     if (!(era.get(`maxbase:${era_flag.assi}:3`) > 0)) {
@@ -333,7 +325,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :216-226 母乳（目标）
+  // 母乳（目标）
   if (era.get(`talent:${target}:130`)) {
     if (!(era.get(`maxbase:${target}:3`) > 0)) {
       era.set(`maxbase:${target}:3`, 10000);
@@ -345,7 +337,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :228-235 射精（犬）（TEQUIP:89 兽奸 PLAY）：BASE:MASTER:4 槽，缺省补 10000
+  // 射精（犬）（TEQUIP:89 兽奸 PLAY）：BASE:MASTER:4 槽，缺省补 10000
   if (era.get(`tequip:${target}:89`)) {
     if (!(era.get('maxbase:0:4') > 0)) {
       era.set('maxbase:0:4', 10000);
@@ -357,7 +349,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :237-244 射精（触手）（TEQUIP:90）
+  // 射精（触手）（TEQUIP:90）
   if (era.get(`tequip:${target}:90`)) {
     if (!(era.get('maxbase:0:4') > 0)) {
       era.set('maxbase:0:4', 10000);
@@ -369,7 +361,7 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :246-252 射精（死斗场・怪物）（TEQUIP:55）
+  // 射精（死斗场・怪物）（TEQUIP:55）
   if (era.get(`tequip:${target}:55`)) {
     if (!(era.get('maxbase:0:4') > 0)) {
       era.set('maxbase:0:4', 10000);
@@ -381,10 +373,10 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :253 CALL SHOW_EQUIP_1 —— 使用中道具一览（#390 真身；源 :1598）
+  // CALL SHOW_EQUIP_1 —— 使用中道具一览（#390 真身；源 :1598）
   show_equip_1(target);
 
-  // :255-256 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；这张票
+  // CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；这张票
   // 移植——引擎 LINECOUNT 的等价物 getLineCount 直通）
   era.set('tflag:999', era.getLineCount());
 }

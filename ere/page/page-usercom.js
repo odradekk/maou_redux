@@ -3,13 +3,6 @@
  * （issue #44；指令按钮 #45 挂载、#213 换紧凑序号与升格标签、#214 挂
  * 子菜单按钮组、自定义 COM 菜单与 @USERCOM 全分支分发）。
  *
- * 源: target/ERB/調教相關/USERCOM.ERB
- *     @SHOW_USERCOM（:7-100）/@USERCOM（:102-177）/@SET_CLEAR_POINT
- *     （:179-180，落点在 page-train.js 的 SHOW_STATUS 尾）/@CLEAR_TO_POINT
- *     （:182-186，见下方「清除语义」）/@SHOW_COMMENU（:188-216，自定义
- *     COM 菜单的方格渲染）
- *     target/ERB/調教相關/TRAIN_MAIN.ERB  @P_C（:771-780，上次的调教指令名）
- *
  * == 指令方格的两条渲染路径（#214 起，GETBIT(FLAG:5,34) 分流，:9-13） ==
  *
  *   - ON（FLAG:5 位 34 = 1）：@SHOW_COMMENU 的自定义菜单——标签先过
@@ -98,13 +91,13 @@ function show_advanced_names() {
  */
 function p_c() {
   const local = era_flag.prevcom;
-  // :773 TSTR:90 '= TRAINNAME:LOCAL（'= 是表达式赋值；TRAINNAME ＝静态名表）
+  // TSTR:90 '= TRAINNAME:LOCAL（'= 是表达式赋值；TRAINNAME ＝静态名表）
   let name = era.get(`traincommandname:${local}`) ?? '';
-  // :775-776 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）
+  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）
   if (name.length < 1) {
     name = read_train_name(local);
   }
-  // :778-779 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）
+  // 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）
   if (name.length < 1) {
     name = '　';
   }
@@ -122,14 +115,14 @@ function p_c() {
  */
 function command_button_label(adv, id) {
   if (adv === 64 && id !== 64) {
-    // :211 PRINTFORMC %TRAINNAME:64%・%TRAINNAME:L_I%（CSV 静态名）。
+    // PRINTFORMC %TRAINNAME:64%・%TRAINNAME:L_I%（CSV 静态名）。
     // ・ 是原作的复合动作分隔样式，逐字照抄——TRAIN_NAME:128-132 与
     // SHOW_STATUS 的射精行同款处置（lang-table 整串豁免，见 COMPOUND_SEP）
     return `${era.get('traincommandname:64') ?? ''}${COMPOUND_SEP}${
       era.get(`traincommandname:${id}`) ?? ''
     }`;
   }
-  // :213 PRINTFORMC %TRAIN_NAME:RESULT%（游戏自建数组，trainalias）
+  // PRINTFORMC %TRAIN_NAME:RESULT%（游戏自建数组，trainalias）
   return read_train_name(adv);
 }
 
@@ -148,12 +141,12 @@ async function show_commenu() {
   for (const id of DECLARED_TRAIN_IDS) {
     const able = await com_able_family.call(id, { whenMissing: 1 });
     if (able === 0) {
-      continue; // :202-203 SIF RESULT == 0 CONTINUE
+      continue; // SIF RESULT == 0 CONTINUE
     }
-    const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
+    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I
     era.printButton(command_button_label(adv, id), com_index(id));
   }
-  // :217 循环后的 PRINTL 只结束方格最后那一行（PRINTC 系不换行，见
+  // 循环后的 PRINTL 只结束方格最后那一行（PRINTC 系不换行，见
   // CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里不补空行——
   // golden 里方格与分割线之间只有一个空行（train-natural-log:108-114），
   // 那一个来自下一段的 :14 PRINTL。
@@ -200,9 +193,9 @@ const FILTER_BUTTONS = [
 function handover_guard_ok() {
   const assi_record = era.get('flag:10013') || 0;
   return {
-    // :20 ASSI > 0 && ASSI:1 > 0
+    // ASSI > 0 && ASSI:1 > 0
     can_handover: era_flag.assi > 0 && assi_record > 0,
-    // :28 (TARGET == MASTER || CFLAG:0 >= 2) && ASSI:1 > 0
+    // (TARGET == MASTER || CFLAG:0 >= 2) && ASSI:1 > 0
     can_swap:
       (era_flag.target === MASTER ||
         (era.get(`cflag:${era_flag.target}:0`) || 0) >= 2) &&
@@ -211,7 +204,7 @@ function handover_guard_ok() {
 }
 
 on('SHOW_USERCOM', async (usable = []) => {
-  // :9-13 指令方格：GETBIT(FLAG:5,34) → 自定义菜单（show_commenu），
+  // 指令方格：GETBIT(FLAG:5,34) → 自定义菜单（show_commenu），
   // 否则引擎内建列表（ere 侧 draw_builtin_comlist）——两条路径都是净追加
   // （清除语义见文件头「清除语义」节）
   if (show_advanced_names()) {
@@ -219,21 +212,21 @@ on('SHOW_USERCOM', async (usable = []) => {
   } else {
     draw_builtin_comlist(usable);
   }
-  era.println(); // :14 PRINTL（空行）
-  era.drawLine(); // :15 DRAWLINE
-  // :16 RESETCOLOR —— 无 ere 对应语义，不镜像
+  era.println(); // PRINTL（空行）
+  era.drawLine(); // DRAWLINE
+  // RESETCOLOR —— 无 ere 对应语义，不镜像
   // —— 子菜单按钮组（:17-91；PRINTC 三列 → 按钮平铺，记名差异）——
-  era.printButton('能力表示', 100); // :17
-  era.printButton('污秽表示', 101); // :18
+  era.printButton('能力表示', 100);
+  era.printButton('污秽表示', 101);
   const guards = handover_guard_ok();
   if (guards.can_handover) {
-    era.printButton('交代助手', 102); // :21（ASSI > 0 && ASSI:1 > 0）
+    era.printButton('交代助手', 102); // （ASSI > 0 && ASSI:1 > 0）
   }
   if (guards.can_swap) {
-    era.printButton('对换调教', 112); // :29（(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
+    era.printButton('对换调教', 112); // （(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
   }
-  era.printButton('避孕套设定', 103); // :36
-  // :38-84 过滤组：开启灰、未开启各系色（104 未开启 = 引擎默认色）
+  era.printButton('避孕套设定', 103);
+  // 过滤组：开启灰、未开启各系色（104 未开启 = 引擎默认色）
   for (const [acc, label, mask] of FILTER_BUTTONS) {
     const on = (game_train.指令过滤 & mask) !== 0;
     const off_color = FILTER_COLORS[acc];
@@ -247,19 +240,19 @@ on('SHOW_USERCOM', async (usable = []) => {
           : undefined,
     );
   }
-  // :85 起的四个 PRINTC（[990] 调教菜单登录 / [991] 表示 / [992] 实行 /
+  // 起的四个 PRINTC（[990] 调教菜单登录 / [991] 表示 / [992] 实行 /
   // [999] 调教结束）与 :86、:92 的两个 PRINTL：PRINTC 不换行，那两个 PRINTL
   // 只结束各自所在的那一行，不产生空行——golden 的 train-natural-log:115-118
   // 里网格行与 [990]/[999] 逐行相邻。ere 的 printButton 自成一行（＝ PRINTC
   // + 收尾的 PRINTL），按钮之间与页脚之后都不再补空行（语义与勘误见
   // CONTEXT.md「输出 API 与原作的对应」）。
-  era.printButton('调教菜单登录', 990); // :85（ENDIF 后无条件，缩进无语义）
+  era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）
   if (game_train.指令菜单长度 > 0) {
-    era.printButton('调教菜单表示', 991); // :88
-    era.printButton('调教菜单实行', 992); // :89
+    era.printButton('调教菜单表示', 991);
+    era.printButton('调教菜单实行', 992);
   }
-  era.printButton('调教结束', 999); // :91（正文不带 [999] 前缀，引擎自动拼）
-  // :93-100 PREVCOM > -1 → CALL P_C（置 TSTR:90）→ ＜上次的调教指令：…＞
+  era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）
+  // PREVCOM > -1 → CALL P_C（置 TSTR:90）→ ＜上次的调教指令：…＞
   // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
   if (era_flag.prevcom > -1) {
     p_c();
@@ -268,60 +261,60 @@ on('SHOW_USERCOM', async (usable = []) => {
 });
 
 on('USERCOM', async (result) => {
-  // :103 REDRAW 1 —— 不镜像；RETURN 1/0 引擎均忽略（见文件头）
+  // REDRAW 1 —— 不镜像；RETURN 1/0 引擎均忽略（见文件头）
   const guards = handover_guard_ok();
   if (result === 100) {
-    // :104-106 能力表示（#390 真身：ARG:1 缺省 -1，即调教时的信息）
+    // 能力表示（#390 真身：ARG:1 缺省 -1，即调教时的信息）
     await show_chara_info(era_flag.target);
     return;
   }
   if (result === 101) {
-    // :107-109 污秽表示（#390 真身）
+    // 污秽表示（#390 真身）
     await stain_info();
     return;
   }
   if (result === 102 && guards.can_handover) {
-    // :110-122 交代助手：视角/助手按 TARGET 归属三态切换
+    // 交代助手：视角/助手按 TARGET 归属三态切换
     const target = era_flag.target;
     const target_record = era.get('flag:10012') || 0; // TARGET:1
     const assi_record = era.get('flag:10013') || 0; // ASSI:1
     if (target === MASTER) {
-      // :111-113 PLAYER = PLAYER==TARGET:1 ? ASSI:1 : TARGET:1，ASSI = PLAYER
+      // PLAYER = PLAYER==TARGET:1 ? ASSI:1 : TARGET:1，ASSI = PLAYER
       era_flag.player =
         era_flag.player === target_record ? assi_record : target_record;
       era_flag.assi = era_flag.player;
     } else if (target === target_record) {
-      // :114-116 PLAYER = PLAYER==MASTER ? ASSI:1 : MASTER，ASSI = ASSI:1
+      // PLAYER = PLAYER==MASTER ? ASSI:1 : MASTER，ASSI = ASSI:1
       era_flag.player = era_flag.player === MASTER ? assi_record : MASTER;
       era_flag.assi = assi_record;
     } else {
-      // :117-119 PLAYER = PLAYER==MASTER ? TARGET:1 : MASTER，ASSI = TARGET:1
+      // PLAYER = PLAYER==MASTER ? TARGET:1 : MASTER，ASSI = TARGET:1
       era_flag.player = era_flag.player === MASTER ? target_record : MASTER;
       era_flag.assi = target_record;
     }
-    // :121 ASSIPLAY = PLAYER != MASTER ? 1 : 0
+    // ASSIPLAY = PLAYER != MASTER ? 1 : 0
     era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;
     return;
   }
   if (result === 112 && guards.can_swap) {
-    // :123-128 对换调教：TARGET ↔ PLAYER 对调，换入视角是记录者时助手归位
+    // 对换调教：TARGET ↔ PLAYER 对调，换入视角是记录者时助手归位
     const target = era_flag.target;
     const target_record = era.get('flag:10012') || 0;
     const assi_record = era.get('flag:10013') || 0;
     era_flag.target = era_flag.player;
     era_flag.player = target; // SWAP TARGET, PLAYER
     if (era_flag.player === assi_record || era_flag.player === target_record) {
-      era_flag.assi = era_flag.player; // :125-126
+      era_flag.assi = era_flag.player;
     }
-    era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0; // :127
+    era_flag.assiplay = era_flag.player !== MASTER ? 1 : 0;
     return;
   }
   if (result === 103) {
-    // :129-131 避孕套设定（#216 J6 真身，system/train/com-condom.js）
+    // 避孕套设定（#216 J6 真身，system/train/com-condom.js）
     await condom_settings();
     return;
   }
-  // :132-161 过滤位翻转（落尾 RETURN 0——重绘即反馈）；清位掩码 =
+  // 过滤位翻转（落尾 RETURN 0——重绘即反馈）；清位掩码 =
   // 31 ^ 位（源侧的 30/29/27/23/15 逐字值与 31^mask 等价，取位算式）
   for (const [acc, , mask] of FILTER_BUTTONS) {
     if (result === acc) {
@@ -334,12 +327,12 @@ on('USERCOM', async (result) => {
     }
   }
   if (result === 990) {
-    // :162-164 调教菜单登录（com-register.js 的登记循环）
+    // 调教菜单登录（com-register.js 的登记循环）
     await comseq_register();
     return;
   }
   if (result === 991 && game_train.指令菜单长度 > 0) {
-    // :165-170 调教菜单表示（DRAWLINE + 显示 + DRAWLINE + WAIT）
+    // 调教菜单表示（DRAWLINE + 显示 + DRAWLINE + WAIT）
     era.drawLine();
     await comseq_show();
     era.drawLine();
@@ -347,16 +340,16 @@ on('USERCOM', async (result) => {
     return;
   }
   if (result === 992 && game_train.指令菜单长度 > 0) {
-    // :171-172 调教菜单实行（无 RETURN 1，落尾 RETURN 0——重绘回合画面）
+    // 调教菜单实行（无 RETURN 1，落尾 RETURN 0——重绘回合画面）
     await comseq_train();
     return;
   }
   if (result === 999) {
-    // :173-175 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
+    // 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
     begin(STATE.AFTERTRAIN);
     return;
   }
-  // :177 RETURN 0：其余输入落到链尾，引擎重绘回合画面（不提示——与
+  // RETURN 0：其余输入落到链尾，引擎重绘回合画面（不提示——与
   // 主菜单对无效输入的处置一致）
 });
 

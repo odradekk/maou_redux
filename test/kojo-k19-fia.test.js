@@ -497,7 +497,7 @@ test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 �
   for (const [talked, abl31] of cases) {
     const fixture = await setup_k19((f) => {
       f.store.set(`tequip:${CID}:53`, 1); // 摄影中
-      f.store.set(`abl:${CID}:17`, 5); // :4339 的 (TALENT:89 || ABL:17 >= 5)
+      f.store.set(`abl:${CID}:17`, 5); // 的 (TALENT:89 || ABL:17 >= 5)
       f.store.set(`abl:${CID}:31`, abl31);
       if (talked) {
         f.load_module('facade/chara').chara(CID).kojo.交谈 = 1; // 二次以后
@@ -519,7 +519,7 @@ test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 �
 
 test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 / :4446 两处 × 两档）', async () => {
   // 原作 :4375+:4377+:4379+:4381（无 ELSE，两档都不满足时中间为空）与
-  // :4446+:4448+:4450+:4452 各是一整行，末行 PRINTFORML 收行；ere 侧曾各拆成
+  // 各是一整行，末行 PRINTFORML 收行；ere 侧曾各拆成
   // 四条 era.print（#625）。:4446 那一处还在 :4440 的 PLAYER 前缀行之后，
   // 行首要带前缀
   const cases = [
@@ -610,7 +610,7 @@ test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4
 
 test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
   // 原作 :6160+:6162+:6164+:6165、:6193+:6195+:6197+:6198、:6217+:6219+
-  // :6221+:6222 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
+  // 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
   // ere 侧曾把每行拆成四条 era.print（#625）。助手臂在 KOJO_MESSAGE_COM 的
   // ASSI 守卫之后、运行时不带助手才可达，直接调真身覆盖（同 K2/K4/K903）
   const cases = [

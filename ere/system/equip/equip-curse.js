@@ -1,10 +1,6 @@
 /**
  * @file 诅咒装备的解除与制造：@REMOVE_CURSE、@CURSE_EQUIP_RING。
  *
- * 源: target/ERB/其他/EQUIP.ERB  @REMOVE_CURSE（:89-155）
- *     @CURSE_EQUIP_RING（:157-203；调用点 EVENT_NEXTDAY:120，ere 侧在
- *     ere/event/event-nextday.js）
- *
  * 随机源以参数注入（RAND:N 语义 = 返回 0..N-1 的整数；juel-check 的先例），
  * 生产路径不传参、默认 Math.random。
  */
@@ -83,24 +79,24 @@ function pick_ring(table, d, fallback) {
  * @returns {Promise<number>} RESULT：0 不装备 / 1 装备
  */
 async function remove_curse(w, cid, rng = default_rand) {
-  // :95 W:8（道具号）→ W:0（识别号）
+  // W:8（道具号）→ W:0（识别号）
   get_equip_num(w);
 
-  // :97-98 入手阶层応じた強度：W:0 += CFLAG:A:501 * 1000
+  // 入手阶层応じた強度：W:0 += CFLAG:A:501 * 1000
   w.存储编号 += (era.get(`cflag:${cid}:501`) || 0) * 1000;
 
-  // :100-103 无效装备 → RETURN 0
+  // 无效装备 → RETURN 0
   if (!equip_database(w)) {
     return 0;
   }
 
-  // :105-107 呪われてないならリターン
+  // 呪われてないならリターン
   if (w.诅咒 === 0) {
     return 0;
   }
 
   const name = era.get(`callname:${cid}:-1`) ?? ''; // %SAVESTR:A%
-  // :109-112 神官（202）/忍者（207）以外高概率失败：RAND:3 == 0 → 呪い品装着
+  // 神官（202）/忍者（207）以外高概率失败：RAND:3 == 0 → 呪い品装着
   if (
     (era.get(`talent:${cid}:202`) || 0) === 0 &&
     (era.get(`talent:${cid}:207`) || 0) === 0 &&
@@ -110,26 +106,26 @@ async function remove_curse(w, cid, rng = default_rand) {
     await era.waitAnyKey();
     return 1;
   }
-  // :113-115 ELSEIF RAND:8 == 0 → 失败
+  // ELSEIF RAND:8 == 0 → 失败
   if (rng(8) === 0) {
     era.print(`${name}解咒失败了！`); // PRINTFORMW
     await era.waitAnyKey();
     return 1;
   }
 
-  era.print(`${name}解咒成功。`); // :118 PRINTFORMW
+  era.print(`${name}解咒成功。`); // PRINTFORMW
   await era.waitAnyKey();
 
-  // :120-147 解咒产物按 D = RAND:100 的阶梯换新识别号
+  // 解咒产物按 D = RAND:100 的阶梯换新识别号
   const d = rng(100);
   w.识别号 = pick_ring(UNCURSED_RING_TABLE, d, 0);
 
-  // :149-151 解咒品强度 +1（上限 10）
+  // 解咒品强度 +1（上限 10）
   if (w.强度 < 10) {
     w.强度 += 1;
   }
 
-  // :153-154 重新编码并查表（附魔清零——新编号不含前缀段）
+  // 重新编码并查表（附魔清零——新编号不含前缀段）
   w.存储编号 = w.识别号 + w.强度 * 1000;
   equip_database(w);
   return 1;
@@ -143,29 +139,29 @@ async function remove_curse(w, cid, rng = default_rand) {
  * @returns {Promise<number>} RESULT：0 = 库存耗尽（一个都没做），1 = 执行过
  */
 async function curse_equip_ring(rng = default_rand) {
-  // :163 REPEAT 10
+  // REPEAT 10
   for (let count = 0; count < 10; count += 1) {
-    // :164-165 SIF ITEM:300 <= 0 → RETURN 0
+    // SIF ITEM:300 <= 0 → RETURN 0
     if (game.stronghold.装饰戒指 <= 0) {
       return 0;
     }
 
-    // :167 ITEM:300 -= 1
+    // ITEM:300 -= 1
     game.stronghold.装饰戒指 -= 1;
 
-    // :169-194 新识别号按 D = RAND:100 阶梯；初期强度 0、无前缀
+    // 新识别号按 D = RAND:100 阶梯；初期强度 0、无前缀
     const d = rng(100);
     const w = { 存储编号: pick_ring(CURSED_RING_TABLE, d, 13), 强度: 0 };
 
-    // :196-198 你把装饰戒指制造成<戒指名>了（一次 print 共一行——引擎每次
+    // 你把装饰戒指制造成<戒指名>了（一次 print 共一行——引擎每次
     // print 调用即结束一行，ERB 的连续 PRINT 须合并成片段数组）
     era.print(['你把装饰戒指制造成', ...equip_ring_spans(w), '了']);
 
-    // :200 CALL EQUIP_GET
+    // CALL EQUIP_GET
     equip_get(w);
   }
 
-  await era.waitAnyKey(); // :202 WAIT
+  await era.waitAnyKey(); // WAIT
   return 1;
 }
 

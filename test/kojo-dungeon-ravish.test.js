@@ -496,10 +496,10 @@ test('#624 RYOUZYOKU 主框架：:16+:19 合成一条空行（含立绘分支的
   await mod.ryouzyoku(31, seq_rand(0));
   const lines = fixture.text_lines();
   assert.deepEqual(lines.slice(0, 4), [
-    '冒险者将被凌辱――', // :11
-    '', // :12 PRINTL
-    '[结婚对象:无][善恶值:0|中立]　', // :18 SHOW_DATA
-    '', // :16（立绘分支的空 PRINT）+ :19 的 PRINTL 合成的一条
+    '冒险者将被凌辱――',
+    '', // PRINTL
+    '[结婚对象:无][善恶值:0|中立]　', // SHOW_DATA
+    '', // （立绘分支的空 PRINT）+ :19 的 PRINTL 合成的一条
   ]);
   // 拆回多条会多出一条空行：整段输出里的空行数（[1] 的 :12 + 尾部 4 条）就是守卫
   assert.equal(

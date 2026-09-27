@@ -215,12 +215,12 @@ test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
   era_flag.target = 1;
   const { ending_2 } = fixture.load_module('event/event-ending');
 
-  fixture.set_inputs(0); // :55 INPUT（仪式性确认，结果不被消费）
+  fixture.set_inputs(0); // INPUT（仪式性确认，结果不被消费）
   let caught;
   await ending_2().catch((e) => {
     caught = e;
   });
-  // :56 QUIT：throw 型（#148）——异常炸穿本函数，无 RETURN
+  // QUIT：throw 型（#148）——异常炸穿本函数，无 RETURN
   assert(
     caught instanceof Error && caught.message === 'quit',
     'QUIT 的异常从 ending_2 炸出（真 GAMEOVER，无 RETURN）',
@@ -245,8 +245,8 @@ test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
     ],
     '横幅 6 行 + 封印播报 + 空行（两个尾随空格）+ GAMEOVER 分隔行（:46-54 逐字）',
   );
-  // :52 的名字来自 TARGET 指针（callname:1:-1，不是 2 的「贝丝」）
-  // :52 PRINTFORMW 的读键（waitAnyKey，print 置位 allowWait 后真等）在
+  // 的名字来自 TARGET 指针（callname:1:-1，不是 2 的「贝丝」）
+  // PRINTFORMW 的读键（waitAnyKey，print 置位 allowWait 后真等）在
   // 前、:55 INPUT（确认用）在后——顺序即 :52 → :55 → :56 的执行序
   assert.deepEqual(
     fixture.inputs_consumed.map(({ api, value }) =>
@@ -457,7 +457,7 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
   ]) {
     assert(buttons.includes(option), `:220-222 性格菜单 ${option}`);
   }
-  // :275 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 CHAR_MAKE 生成
+  // 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 CHAR_MAKE 生成
   // （:264-266）。生成链里的命名段（CHARA_MAKE.ERB:18-20 →
   // @CHARA_NAME_RANDOM_DEFINE，**#384 起为真身**）会把 ADDCHARA 从预设拷来的
   // 名字覆盖成随机名：夹具没种名字表（namelistkeys 为空），固定名分支
@@ -801,7 +801,7 @@ function setup_route(cid, { talent = {}, cflag = {} } = {}) {
 test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 300 档', async () => {
   // 表：起始档位 / CFLAG:2 好感 / CFLAG:515 计数器 / ABL 攻+敏 / 期望档位与计数器
   const CASES = [
-    // :157-158 起步：好感 >= 2000 且线值 < 10
+    // 起步：好感 >= 2000 且线值 < 10
     {
       stage: 9,
       c2: 2000,
@@ -820,7 +820,7 @@ test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 
       want515: 0,
       why: '好感 1999 不够',
     },
-    // :159-161 10→20 门槛 5000
+    // 10→20 门槛 5000
     {
       stage: 10,
       c2: 5000,
@@ -839,7 +839,7 @@ test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 
       want515: 0,
       why: '4999 不够',
     },
-    // :162-164 20→30 门槛 10000
+    // 20→30 门槛 10000
     {
       stage: 20,
       c2: 10000,
@@ -858,7 +858,7 @@ test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 
       want515: 0,
       why: '9999 不够',
     },
-    // :165-168 30→40 门槛 ABL:10 + ABL:16 >= 14（CFLAG:515 无条件清零）
+    // 30→40 门槛 ABL:10 + ABL:16 >= 14（CFLAG:515 无条件清零）
     { stage: 30, c2: 0, c515: 7, abl: 14, want: 40, want515: 0, why: '30→40' },
     {
       stage: 30,
@@ -869,7 +869,7 @@ test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 
       want515: 0,
       why: '13 不够',
     },
-    // :169-198 五段计数器阶梯（达标跳档 / 未达标 +1）
+    // 五段计数器阶梯（达标跳档 / 未达标 +1）
     { stage: 40, c2: 0, c515: 10, abl: 0, want: 50, want515: 10, why: '40→50' },
     {
       stage: 40,
@@ -936,7 +936,7 @@ test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 
       want515: 150,
       why: '80 差 1',
     },
-    // :199-206 300 档：RAND:5 命中 0 才 +10（无门槛、计数器不动）
+    // 300 档：RAND:5 命中 0 才 +10（无门槛、计数器不动）
     {
       stage: 300,
       c2: 0,
@@ -1090,7 +1090,7 @@ test('ENDCHECKSPADE 恋慕与淫乱双阶梯表驱动', async () => {
   const L = { 85: 1, 76: 0 }; // 恋慕素质
   const X = { 85: 0, 76: 1 }; // 淫乱素质
   const CASES = [
-    // :253-301 恋慕线（TALENT:85）
+    // 恋慕线（TALENT:85）
     {
       stage: 9,
       c2: 2000,
@@ -1190,7 +1190,7 @@ test('ENDCHECKSPADE 恋慕与淫乱双阶梯表驱动', async () => {
       t: L,
       why: '恋慕 300 差 1',
     },
-    // :303-351 淫乱线（TALENT:76）
+    // 淫乱线（TALENT:76）
     {
       stage: 9,
       c2: 2000,
@@ -1396,7 +1396,7 @@ test('ENDCHECKSPADE 151 档乳业收入：MONEY 与 EX_FLAG:4444 同步 +（含�
 
 test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫乱 170-220', async () => {
   const CASES = [
-    // :356-357 线值 0 → 10（初次会面）
+    // 线值 0 → 10（初次会面）
     {
       stage: 0,
       talent: {},
@@ -1406,7 +1406,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
       want515: 0,
       why: '初次会面',
     },
-    // :409-412 恋慕阶梯（CFLAG:2 门槛）
+    // 恋慕阶梯（CFLAG:2 门槛）
     { stage: 30, talent: { 85: 1 }, c2: 2000, c515: 0, want: 40, why: '30→40' },
     { stage: 40, talent: { 85: 1 }, c2: 5000, c515: 0, want: 50, why: '40→50' },
     {
@@ -1417,7 +1417,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
       want: 60,
       why: '50→60',
     },
-    // :397-408 淫乱阶梯（CFLAG:2 门槛）
+    // 淫乱阶梯（CFLAG:2 门槛）
     {
       stage: 130,
       talent: { 85: 0, 76: 1 },
@@ -1442,7 +1442,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
       want: 160,
       why: '150→160',
     },
-    // :414-418 CFLAG:601 == 901 的门槛
+    // CFLAG:601 == 901 的门槛
     {
       stage: 60,
       talent: { 85: 1 },
@@ -1463,7 +1463,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
       want515: 5,
       why: '601 不是 901',
     },
-    // :420-444 恋慕计数器阶梯（515 累积到阈值才跳档）
+    // 恋慕计数器阶梯（515 累积到阈值才跳档）
     {
       stage: 70,
       talent: { 85: 1 },
@@ -1518,7 +1518,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
       want515: 150,
       why: '110→120',
     },
-    // :448-478 淫乱计数器阶梯
+    // 淫乱计数器阶梯
     {
       stage: 170,
       talent: { 85: 0, 76: 1 },
@@ -1564,7 +1564,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
       want515: 150,
       why: '210→220',
     },
-    // :445-447 160-170 档是空分支（判定已移到 aftertrain）
+    // 160-170 档是空分支（判定已移到 aftertrain）
     {
       stage: 160,
       talent: { 85: 0, 76: 1 },
@@ -1772,7 +1772,7 @@ test('ENDCHECKGODNESS 淫乱阶梯：表驱动走完 110-190 与 300 档（DAY:1
 });
 
 test('ENDCHECKGODNESS 300 档：被素质互换重置抢先（:31-34），310 跳档不可达（1:1）', async () => {
-  // :138 的 `ELSEIF EX_FLAG:2810 == 300` 档要求 `TALENT:76 == 1`，而 :31-34
+  // 的 `ELSEIF EX_FLAG:2810 == 300` 档要求 `TALENT:76 == 1`，而 :31-34
   // 的重置块恰好也吃 76 素质的 [300,310] 区间——同一日内两者不可能同时成立，
   // 310 只在「线值 300 且 76 素质」这一条路上可达，被重置截胡。照抄不修。
   const fixture = setup_route(33, {
@@ -1791,7 +1791,7 @@ test('ENDCHECKGODNESS 300 档：被素质互换重置抢先（:31-34），310 �
 });
 
 test('ENDCHECKGODNESS 140/160/170/180 档的 GETCHARA 守卫：真值恒真（原作缺陷，1:1）', async () => {
-  // :105/:119/:126/:133 写作 `SIF DAY:1 >= 350 && GETCHARA(n)`。GETCHARA
+  // 写作 `SIF DAY:1 >= 350 && GETCHARA(n)`。GETCHARA
   // 返回列表位置或 -1（skill: character.md:136），**两者都非零**——Emuera
   // 的布尔上下文里恒真，本移植的 get_chara(n)（在场返回 cid、否则 -1）同样
   // 恒真。故「葵希罗/嘉德不在场」挡不住跳档，四个档位照跳。
@@ -2189,7 +2189,7 @@ test('ENDCHECKGODNESS 档位区间：九档 + 三处重置门槛的下界/上界
 });
 
 test('ENDCHECKGODNESS_SKY_TEMPLE：500/520/530 三档空转；540 档的 560 转移是死分支（原作缺陷，1:1）', async () => {
-  // :151-152 的守卫写作 `GETCHARA(33) == 0`。GETCHARA 返回的是**列表位置**
+  // 的守卫写作 `GETCHARA(33) == 0`。GETCHARA 返回的是**列表位置**
   // （skill: character.md:136，不存在为 -1），而 0 号魔王恒占位置 0——
   // 该条件在真机上永不成立，560 转移不可达。与「天神宫线整体不可达」
   // （EX_FLAG:101 无写入点，#102 查明）是同一片未完成区，照抄不修。

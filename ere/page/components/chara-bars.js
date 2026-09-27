@@ -2,11 +2,6 @@
  * @file 角色基础条组件：体力/气力条（@LIFE_BAR/@VITAL_BAR）与槽条 progress
  * 格助手（射精/母乳/触手段共用）。
  *
- * 源: target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB
- *       @LIFE_BAR（:1129-1168）/ @VITAL_BAR（:1175-1203）
- *     （存根登记原写「文件待核」，#212 核实并落地——这两个函数住在
- *     CHARA_INFO_SHOW，但 SHOW_STATUS 是它们的第一个消费者，归调教骨架票）
- *
  * 表现层（#74 裁定的 BASE 条版）：原作是 BAR 命令的字符条 + (cur/max) 数值
  * + 状态标；ere 侧换 printMultiColumns 的 progress 格——
  *   - 语义值＝条内文字（体力/气力/射精（名）…）+ 条后文字 `(cur/max)`，
@@ -73,19 +68,19 @@ function print_base_bar(
  */
 function life_bar(cid) {
   const max = era.get(`maxbase:${cid}:0`) || 0;
-  // :1137-1141 IF MAXBASE:0 <= 0 → RETURN 0（无输出）
+  // IF MAXBASE:0 <= 0 → RETURN 0（无输出）
   if (max <= 0) {
     return;
   }
   const cur = era.get(`base:${cid}:0`) || 0;
-  // :1159-1163 死亡/濒死标（缀在数值后）
+  // 死亡/濒死标（缀在数值后）
   let suffix = '';
   if (cur < 0) {
     suffix = '★死亡★';
   } else if (cur < 500) {
     suffix = '★濒死★';
   }
-  // :1143-1157 体力 BAR +（{BASE:0, 4}/{MAXBASE:0}）——数值宽 4
+  // 体力 BAR +（{BASE:0, 4}/{MAXBASE:0}）——数值宽 4
   print_base_bar('体力', cur, max, { value_width: 4, suffix });
 }
 
