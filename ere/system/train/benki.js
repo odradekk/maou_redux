@@ -24,7 +24,7 @@
  * 输出行与换行语义：PRINT 不换行、PRINTL/PRINTFORML 换行——同一显示行的
  * 拼接归并为一次 era.print（dungeon-battle 先例）；PRINTW = print + 等键
  * （printAndWait 内部即这两步，夹具统一走 waitAnyKey 观测）。WAIT 在
- * 演出中段出现（:491）——等键与分行 1:1 保留。
+ * 演出中段出现（:491）——等键与分行照演出原样保留。
  *
  * == 随机源 ==
  *
