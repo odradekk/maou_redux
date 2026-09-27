@@ -527,7 +527,7 @@ on(
 /**
  * @KOJO_MESSAGE_COM_4（:521-3092）：指令执行时的口上。
  *
- * 五道头部守卫（:526-543，见文件头）之后按 SELECTCOM 平铺。其他口上
+ * 五道头部守卫（见文件头）之后按 SELECTCOM 平铺。其他口上
  * 的 ASSI（助手调教跳过）与 TALENT:9（崩坏）两道守卫在 K4 模板从未
  * 成文，不补写：助手调教中与崩坏时口上照常播放。
  *
@@ -5987,7 +5987,7 @@ async function ntr_koujo_k4(p) {
 }
 
 /**
- * @EXUCUTION_KOUJO_K4（:5119-5133）：处刑口上（TFLAG:16 分派；7 记忆消除分支模板未填写，输出空行）。
+ * @EXUCUTION_KOUJO_K4：处刑口上（TFLAG:16 分派；7 记忆消除分支模板未填写，输出空行）。
  */
 async function exucution_koujo_k4() {
   if (era0('tflag:16') == 4) {
@@ -6004,7 +6004,7 @@ async function exucution_koujo_k4() {
 }
 
 /**
- * @MUSEUM_KOUJO_K4（:5136-5168）：博物馆口上（TFLAG:500 分派；3/4 有台词，其余分支模板未填写，各输出空行）。
+ * @MUSEUM_KOUJO_K4：博物馆口上（TFLAG:500 分派；3/4 有台词，其余分支模板未填写，各输出空行）。
  */
 async function museum_koujo_k4() {
   if (era0('tflag:500') == 0) {
@@ -6031,7 +6031,7 @@ async function museum_koujo_k4() {
 }
 
 /**
- * @BANISHMENT_KOUJO_K4（:5171-5189）：追放口上（TFLAG:510 分派；0 追放有台词，其余分支模板未填写，各输出空行）。
+ * @BANISHMENT_KOUJO_K4：追放口上（TFLAG:510 分派；0 追放有台词，其余分支模板未填写，各输出空行）。
  */
 async function banishment_koujo_k4() {
   if (era0('tflag:510') == 0) {
@@ -6048,7 +6048,7 @@ async function banishment_koujo_k4() {
 }
 
 /**
- * @PUBLIC_EXUCUTION_KOUJO_K4（:5192-5204）：公开处刑口上（TFLAG:520 分派；2 魂粉碎模板未填写，输出空行）。
+ * @PUBLIC_EXUCUTION_KOUJO_K4：公开处刑口上（TFLAG:520 分派；2 魂粉碎模板未填写，输出空行）。
  */
 async function public_exucution_koujo_k4() {
   if (era0('tflag:520') == 0) {
@@ -6063,7 +6063,7 @@ async function public_exucution_koujo_k4() {
 }
 
 /**
- * @GROTESQUE_KOUJO_K4（:5207-5231）：猎奇处刑口上（TFLAG:530 分派；全部分支模板未填写，各输出空行）。
+ * @GROTESQUE_KOUJO_K4：猎奇处刑口上（TFLAG:530 分派；全部分支模板未填写，各输出空行）。
  */
 async function grotesque_koujo_k4() {
   if (era0('tflag:530') == 0) {

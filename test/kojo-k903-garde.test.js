@@ -285,6 +285,30 @@ test('SELECTCOM 二次状态：爱抚淫乱推进到 6', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 6);
 });
 
+test('SELECTCOM 5 胸部爱抚二次各档推进 CFLAG:306 自身，不碰自己扒开 308', async () => {
+  const cases = [
+    [{ [`talent:${CID}:76`]: 1 }, 5],
+    [{ [`talent:${CID}:85`]: 1 }, 4],
+    [{ [`abl:${CID}:1`]: 3 }, 3],
+    [{}, 2],
+  ];
+  for (const [seed, expected] of cases) {
+    const fixture = await setup_k903((f) => {
+      for (const [address, value] of Object.entries(seed))
+        f.store.set(address, value);
+      f.store.set(`cflag:${CID}:306`, 1);
+      f.store.set(`cflag:${CID}:308`, 9);
+    }, 5);
+    await speak(fixture);
+    assert.equal(fixture.store.get(`cflag:${CID}:306`), expected);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:308`),
+      9,
+      'CFLAG:308（自己扒开）不被本指令写入',
+    );
+  }
+});
+
 test('PALAMCNG：221-229 的九个首超判据各自只置一次', async () => {
   const cases = [
     [221, `palam:${CID}:3`, 600],

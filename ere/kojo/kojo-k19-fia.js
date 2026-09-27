@@ -9392,6 +9392,5 @@ kojo_message_markcng_family.register(19, kojo_message_markcng_19);
 self_kojo_family.register(19, self_kojo_k19);
 
 // #625：colosseum_kojo_19 在 kojo_message_com_19 里的调用点位于助手守卫之后，
-// 带助手时运行时走不到它；导出只为行为测试能直接调用这具真身（同 K2/K4/K903
-// 的既有做法）。
+// 带助手时运行时走不到它；导出只为行为测试能直接调用这具真身。
 module.exports = { colosseum_kojo_19 };

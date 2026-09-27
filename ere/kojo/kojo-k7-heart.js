@@ -14110,7 +14110,7 @@ async function exucution_koujo_k7() {
 }
 
 /**
- * @MUSEUM_KOUJO_K7（:8556-8590）：博物馆展示口上。TFLAG:500 分档。
+ * @MUSEUM_KOUJO_K7：博物馆展示口上。TFLAG:500 分档。
  * 档位 2（蝋人形化）无台词（模板未填写），不设分支；3-9 档同为空槽，
  * 仅输出空行。
  * @returns {Promise<number>} 0

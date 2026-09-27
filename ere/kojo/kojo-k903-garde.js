@@ -884,7 +884,7 @@ async function kojo_message_com_903(rand = default_rand) {
           `「哈……本宫的胸部都要融化了……嘛你可以再刺激一点点的哦…♪ 哦！嗯嗯嗯……」`,
         );
         // CFLAG:306  = 5（变量语义：CFLAG 族，306）
-        chara(target).kojo.自己扒开 = 5;
+        chara(target).kojo.胸爱抚 = 5;
       } else if (
         era0(`talent:${target}:85`) == 1 &&
         (chara(target).kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
@@ -896,20 +896,20 @@ async function kojo_message_com_903(rand = default_rand) {
           `${target_name}陶醉地闭上双眼，夸张地昂首挺胸，胸部不断起伏配合着你的手，发出了让人血脉偾张的可爱呻吟。`,
         );
         // CFLAG:306  = 4（变量语义：CFLAG 族，306）
-        chara(target).kojo.自己扒开 = 4;
+        chara(target).kojo.胸爱抚 = 4;
       } else if (
         era0(`abl:${target}:1`) >= 3 &&
         (chara(target).kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「啊啊……胸部……有感觉了……？」`);
         // CFLAG:306  = 3（变量语义：CFLAG 族，306）
-        chara(target).kojo.自己扒开 = 3;
+        chara(target).kojo.胸爱抚 = 3;
       } else if (chara(target).kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(
           `「哼……哈！区区揉胸什么的，本宫怎么可能会有感觉的啦！」`,
         );
         // CFLAG:306  = 2（变量语义：CFLAG 族，306）
-        chara(target).kojo.自己扒开 = 2;
+        chara(target).kojo.胸爱抚 = 2;
       }
       return 0;
     }

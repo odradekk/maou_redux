@@ -1694,7 +1694,6 @@ test('乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 /
   }
 });
 
-// 改写：此用例无代码改动（原登记为读 363 写 365 的缺陷，复核属实）
 test('深喉（SELECTCOM 124）：二回目判据与写入都是 CFLAG:365', async () => {
   const first = await setup_k15(undefined, 124);
   await speak_k15(first, seq_rand(0));
