@@ -2472,8 +2472,8 @@ async function ablup16(cid, mode) {
 
   if (!mode) era.drawLine(); // （干跑不输出）
 
-  // 入口把关用 OR（:16）：任一素质缺失即挡。干跑不经过这里——DECIDE 的
-  // 复查用 AND，两者不等价，见下方 decide 分支与文件头。
+  // 入口把关用 OR：任一素质缺失即挡。decide 干跑的素质复查与这里同判据
+  // （见 decide 分支），两个调用点（`*` 标记与 auto_ablup）都不经过这里。
   if (
     !mode &&
     abl16() >= 5 &&
@@ -6111,10 +6111,10 @@ async function core_ablup99(cid) {
 }
 
 /**
- * decide_ablup 的分发目标。键集合 = 旧代码的 IF/ELSEIF 链
- * （0/1/2/3/10-17/20-23/30-33/37/39）+ 99/4/40 三处单独调用。
+ * decide_ablup 的分发目标。旧代码的 IF/ELSEIF 链覆盖
+ * 0/1/2/3/10-17/20-23/30-33/37/39，另有 99/4/40 三处单独调用；
  * 20-23/30-33 没有对应的判定函数（随 #466 各自落地时未补判定），
- * 落空时不打 `*`。
+ * 落空时不打 `*`——表里只登记已落地的编号。
  */
 const DECIDE_HANDLERS = {
   0: decide_ablup0,
@@ -6137,9 +6137,10 @@ const DECIDE_HANDLERS = {
 };
 
 /**
- * auto_ablup_core 的 CORE 分发表：编号集合 = 定义了 core_ablupN 的
- * 编号（0-3/10-17/20-23/30-33/37/39/99）。auto_ablup 的 REPEAT 40 不含
- * 4/40——旧代码也没有这两个 CORE。
+ * auto_ablup_core 的 CORE 分发表。旧代码给 20-23/30-33 也定义了 CORE，
+ * 但它们的 ere 主流程没有 core 干跑出口，表里只登记已落地的编号
+ * （0-3/10-17/37/39/99）。auto_ablup 的 REPEAT 40 不含 4/40——旧代码也
+ * 没有这两个 CORE。
  */
 const CORE_HANDLERS = {
   0: core_ablup0,

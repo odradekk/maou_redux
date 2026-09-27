@@ -10,7 +10,7 @@
  *
  * `*` 可提升标记（:78/:89/:94/:99/:105 的 `CALL DECIDE_ABLUP*` + `SIF
  * RESULT == 1 → PRINT *`）由 #467 接入：逐行调 system/train/ablup.js 的
- * decide_ablup（decide_ablup 分发），可提升时在按钮正文尾追一个空格加
+ * decide_ablup（decide_ablupN 分发），可提升时在按钮正文尾追一个空格加
  * `*`（原作是 PRINTFORM 之后 `PRINT *`，同一行）。编号 20-23/30-33 的
  * decide_ablupN 没有对应函数（20-23/30-33 未补判定），这几行不打标记。
  */
