@@ -10,7 +10,7 @@
  *   4. 分派循环：只巡有脚本的四族（7/10/11/14）、小节 = 线值 / 10、个位
  *      防重播、2801 == 99 短路、空间外抛错；
  *   5. ENDING_N 门槛（2801 == 99 && DAY == 500）；END31 死调用已删（2803
- *      非零静默）；菲娅线 -10 崩坏态当天命中 Bad Ending 占位演出（#649 用户裁定）。
+ *      非零静默）；菲娅线 -10 崩坏态当天命中 Bad Ending 占位演出（#649 用户决定）。
  */
 
 const assert = require('node:assert/strict');
@@ -428,7 +428,7 @@ test('分派循环：无脚本的族不再被巡（反作弊计数器与葵希�
 });
 
 test('分派循环：按族号调用、小节 = 线值 / 10、个位非 0 防重播、2801 == 99 短路', async () => {
-  // 观测靶用族 14（银黑桃线，EX_FLAG:2814）：其清场守卫 < 300 会清预置线值，
+  // 观测目标用族 14（银黑桃线，EX_FLAG:2814）：其清场守卫 < 300 会清预置线值，
   // 预置 300 段（守卫线外、个位为 0）可稳定存在；真实脚本的分发由
   // event-ending.test.js 的贯通用例覆盖，这里替换已注册实现来记录调用
   {
@@ -467,7 +467,7 @@ test('分派循环：按族号调用、小节 = 线值 / 10、个位非 0 防重
 });
 
 test('分派循环：四族各自的个位为 0 线值当天都命中对应族实现（表驱动）', async () => {
-  // 观测靶 = 替换已注册实现来记录调用（真实脚本的分发由 event-ending.test.js
+  // 观测目标 = 替换已注册实现来记录调用（真实脚本的分发由 event-ending.test.js
   // 的贯通用例覆盖）。每族的线值须能「稳定预置到分派那一刻」：
   //   族 7 菲娅（2807）/族 11 黑方片（2811）：ENDRESET 要求角色在场才免清，
   //     故入队角色；20 段的阶梯门槛要未播种的素质（love/lust）才推进，
@@ -585,7 +585,7 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
   }
 });
 
-// —— 菲娅线 -10 崩坏态（#649 用户裁定：触发 Bad Ending，内容占位）——
+// —— 菲娅线 -10 崩坏态（#649 用户决定：触发 Bad Ending，内容占位）——
 
 test('菲娅线 -10 崩坏态：当天命中 Bad Ending 占位演出、只播一次、线值停在 -9', async () => {
   // 复现：endcheck_princess 的 10-20 档里 MARK:1/2 == 3 且非处女（TALENT:0 == 0）
@@ -618,7 +618,9 @@ test('菲娅线 -10 崩坏态：当天命中 Bad Ending 占位演出、只播一
   await mod.run_endcheck();
   assert.equal(fixture.store.get('exflag:2807'), -9, '线值永停 -9');
   assert.equal(
-    texts.filter((line) => line.text.includes('菲娅线 Bad Ending')).length,
+    fixture.lines_history.filter(
+      (line) => line.type === 'text' && line.text.includes('菲娅线 Bad Ending'),
+    ).length,
     1,
     'Bad Ending 只播一次（个位守卫）',
   );

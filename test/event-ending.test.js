@@ -2262,7 +2262,7 @@ test('END 族分派：65 段全部注册进 END_FAMILY，线值个位为 0 时�
     '@END713 的段必须登记在节号 13 下',
   );
   assert.equal(END_SCRIPTS[7]['713'], undefined, "节号键 '713' 不得再出现");
-  // 小节 -1 = 菲娅线崩坏态的 Bad Ending 占位段（#649 用户裁定新增）
+  // 小节 -1 = 菲娅线崩坏态的 Bad Ending 占位段（#649 用户决定新增）
   assert.ok(
     END_SCRIPTS[7]['-1'] !== undefined,
     '崩坏态的 Bad Ending 占位段必须登记在节号 -1 下',
