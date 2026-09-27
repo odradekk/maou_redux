@@ -2255,9 +2255,18 @@ test('END 族分派：65 段全部注册进 END_FAMILY，线值个位为 0 时�
   for (const family of [2, 3, 4, 5, 6, 8, 9, 12, 13, 15]) {
     assert.ok(!END_FAMILY.has(family), `族 ${family} 全库无定义，不得注册`);
   }
-  // 小节键 '713' 是原作 @END713 的写法，分派拼出的是 13 → 落空（1:1）
-  assert.ok(END_SCRIPTS[7]['713'] !== undefined, '@END713 必须留在表里');
-  assert.equal(END_SCRIPTS[7]['13'], undefined, 'END7_13 不存在');
+  // 小节键 13 = 原作 @END713（原作函数名无下划线，:659）；分派按线值 / 10
+  // 拼节号，13 能命中（#649 把登记键从 713 挪正，该段是空段、命中后无输出）
+  assert.ok(
+    END_SCRIPTS[7]['13'] !== undefined,
+    '@END713 的段必须登记在节号 13 下',
+  );
+  assert.equal(END_SCRIPTS[7]['713'], undefined, "节号键 '713' 不得再出现");
+  // 小节 -1 = 菲娅线崩坏态的 Bad Ending 占位段（#649 用户决定新增）
+  assert.ok(
+    END_SCRIPTS[7]['-1'] !== undefined,
+    '崩坏态的 Bad Ending 占位段必须登记在节号 -1 下',
+  );
 });
 
 test('END 族分派贯通：菲娅线值 10 → run_endcheck 走 END7_1 → 文本 + 线值 +1', async () => {
@@ -2285,6 +2294,8 @@ test('效果表驱动：每段收尾对线值的写入（表里逐条独立写�
   // 起点统一预置 100。+1 的段是绝大多数，清零/加倍/加五的段逐条写出
   const CASES = [
     // 族 7（菲娅线，EX_FLAG:2807）
+    // 崩坏态 Bad Ending 占位段：收尾 += 1（起点 100 → 101），防重播置个位
+    [7, '-1', 101],
     [7, 1, 101],
     [7, 2, 101, [0]],
     [7, 3, 100],
@@ -2297,7 +2308,7 @@ test('效果表驱动：每段收尾对线值的写入（表里逐条独立写�
     [7, 10, 101],
     [7, 11, 101],
     [7, 12, 101, [1]],
-    [7, '713', 100],
+    [7, 13, 100],
     [7, 14, 101],
     [7, 15, 101],
     [7, 16, 101],
@@ -2806,65 +2817,40 @@ test('ENDINGINPUT CASE 7（菲娅线）：[1] 两条起线提示 + 线值与主�
   }
 });
 
-test('ENDINGINPUT CASE 16（双飞）与 CASEELSE（各角色线）：写的是 FLAG 侧与 2805 线', async () => {
-  {
-    // CASE 16：两个选项都只抬 2805（原作未完成），[3] 不动
-    for (const [input, want] of [
-      [1, 100],
-      [2, 100],
-      [3, 0],
-    ]) {
-      const fixture = create_era_fixture();
-      const { ending_input } = fixture.load_module('event/event-ending');
-      fixture.set_inputs(input);
-      await ending_input(16000); // local = 16
-      assert.equal(
-        fixture.store.get('exflag:2805') || 0,
-        want,
-        `CASE 16 输入 ${input}`,
-      );
-    }
-  }
-  {
-    // CASEELSE：LOCAL = 5（玛奥线）——[1] 写 FLAG:(2800+5) 侧（原作错位）+ 2801 += 2；
-    // `SIF LOCAL == (5 || 6)` 在 Emuera 里求值为 LOCAL == 1，恒假（见函数头）
+test('ENDINGINPUT CASE 16（双飞）：两个选项都只抬 2805（原作未完成），[3] 不动', async () => {
+  // CASE 16：两个选项都只抬 2805（未完成线），[3] 不动
+  for (const [input, want] of [
+    [1, 100],
+    [2, 100],
+    [3, 0],
+  ]) {
     const fixture = create_era_fixture();
     const { ending_input } = fixture.load_module('event/event-ending');
-    fixture.set_inputs(1);
-    await ending_input(5000 + 0); // local = 5
-    assert.equal(fixture.store.get('flag:2805'), 100, 'FLAG:2805 += 100');
-    assert.equal(fixture.store.get('exflag:2805') || 0, 0, 'EX_FLAG 侧不动');
+    fixture.set_inputs(input);
+    await ending_input(16000); // local = 16
     assert.equal(
-      fixture.store.get('exflag:2801'),
-      2,
-      '主线 += 2（SIF 未命中，不再 +1）',
-    );
-  }
-  {
-    const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
-    fixture.set_inputs(2);
-    await ending_input(5999); // local = 5
-    assert.equal(
-      fixture.store.get('flag:2805'),
-      100,
-      '[2] 跳过：同样写 FLAG 侧',
-    );
-    assert.equal(fixture.store.get('exflag:2801') || 0, 0, '[2] 不抬主线');
-  }
-  {
-    const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
-    fixture.set_inputs(3);
-    await ending_input(5000);
-    assert.equal(
-      fixture.store.get('flag:2805') || 0,
-      0,
-      '[3] 明天再见：什么都不写',
+      fixture.store.get('exflag:2805') || 0,
+      want,
+      `CASE 16 输入 ${input}`,
     );
   }
 });
 
+test('ENDINGINPUT 未分档的线号（5/6/8-14）：CASEELSE 已删，静默返回、不写 FLAG 侧', async () => {
+  // #649：原 CASEELSE（各角色线档）的后果写在 FLAG 侧无人读、活调用点
+  // （ENDING_N，LOCAL 恒 1）走不到，整档删除。未分档线号落进来不印
+  // 「此处剧情尚未做好」、不写 flag:(2800+线号)、不抬主线
+  const fixture = create_era_fixture();
+  const { ending_input } = fixture.load_module('event/event-ending');
+  fixture.set_inputs(1);
+  await ending_input(5000); // local = 5
+  assert.equal(fixture.store.get('flag:2805') || 0, 0, 'FLAG 侧不得写入');
+  assert.equal(fixture.store.get('exflag:2801') || 0, 0, '主线不得推进');
+  assert.ok(
+    !fixture.text_lines().some((line) => line.includes('此处剧情尚未做好')),
+    'CASEELSE 的演出文本不得出现',
+  );
+});
 // —— 引擎桥接（简报第 3 条）：夹具证明「调了」，引擎真方法证明「接受了」 ——
 // #21/#22 的教训：addCharacter 对无预设角色静默返回 false，夹具的记录层
 // 看不见这层短路。这里用引擎自己的装载循环 + addCharacter 方法体验证
