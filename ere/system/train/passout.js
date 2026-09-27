@@ -416,7 +416,9 @@ async function passout_message() {
     } else {
       era.print('尻穴');
     }
-    era.print(`给侵犯了，不顾失去意识的${name_of(cid)}，粗野地对待${she(cid)}。`);
+    era.print(
+      `给侵犯了，不顾失去意识的${name_of(cid)}，粗野地对待${she(cid)}。`,
+    );
     if (com === 101 || com === 102) {
       era.print('触手');
     } else {

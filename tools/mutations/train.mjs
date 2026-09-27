@@ -10407,7 +10407,8 @@ export default [
     desc: 'M13002 MILK 的 E1 判据退回增量 B（蓄积 S 越过上限也不喷乳）',
     file: 'ere/system/train/com-vaginasex.js',
     find: '  const ejac = era.get(`maxbase:${player}:3`) || 0;\n  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;',
-    replace: '  const ejac = era.get(`maxbase:${player}:3`) || 0;\n  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;',
+    replace:
+      '  const ejac = era.get(`maxbase:${player}:3`) || 0;\n  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;',
     tests: ['com-vaginasex'],
     must_mention: '喷乳后槽按 EJAC*2 扣减钳 0',
   },
@@ -10507,9 +10508,8 @@ export default [
   {
     desc: 'M13013 强制精饮绝顶以降支的代词回退成魔王性别（she(0)）',
     file: 'ere/system/train/seiin.js',
-    find: "    era.print(`强制地让${she(cid)}去了……`);\n  }",
-    replace:
-      "    era.print(`强制地让${she(0)}去了……`); // 变异：代词回退\n  }",
+    find: '    era.print(`强制地让${she(cid)}去了……`);\n  }',
+    replace: '    era.print(`强制地让${she(0)}去了……`); // 变异：代词回退\n  }',
     tests: ['seiin'],
     must_mention: '男性对象用「他」（以降支）',
   },

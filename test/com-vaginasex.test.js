@@ -276,7 +276,10 @@ test('MILK：E1 判据是蓄积 S——半衰后 B ≤ 上限但 S 越过即喷�
   await vs.com_ejac_player_milk(1000);
   assert.equal(fixture.store.get('base:0:3'), 0, '喷乳后槽按 EJAC*2 扣减钳 0');
   const lines = fixture.text_lines();
-  assert.ok(lines.some((t) => t.includes('流出了母乳')), '通常喷乳文案');
+  assert.ok(
+    lines.some((t) => t.includes('流出了母乳')),
+    '通常喷乳文案',
+  );
   assert.ok(lines.includes('喷奶经验＋1'));
   assert.equal(fixture.store.get('exp:0:54'), 1);
   assert.equal(fixture.store.get('nowex:0:5'), 1);

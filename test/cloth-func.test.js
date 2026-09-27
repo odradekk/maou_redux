@@ -285,8 +285,16 @@ test('AFTERTRAIN_CLOTH：尿布换洗分支（同上但选 1）→ 不置洗衣�
   fixture.set_inputs(1); // [1] 不要
   await cloth.aftertrain_cloth(31);
   assert.equal(era_flag.money, 100, '不换新不扣费');
-  assert.equal(fixture.store.get('cflag:31:47'), 0, '洗衣状态不再设置（洗过不留占用）');
-  assert.equal(fixture.store.get('tflag:45'), 0, 'TFLAG:45 -= 16（弄脏位照常清）');
+  assert.equal(
+    fixture.store.get('cflag:31:47'),
+    0,
+    '洗衣状态不再设置（洗过不留占用）',
+  );
+  assert.equal(
+    fixture.store.get('tflag:45'),
+    0,
+    'TFLAG:45 -= 16（弄脏位照常清）',
+  );
   assert.equal(fixture.store.get('cflag:31:40') & SPECIAL, 0, '位 64 剥除');
   cloth.wearing_cloth_able(31);
   assert.equal(
@@ -394,7 +402,11 @@ test('AFTERTRAIN_CLOTH：内裤丢弃（&2）→ 43=-2；洗涤（&1 且 43=0）
   wash.fixture.store.set('cflag:31:40', PANTS);
   wash.fixture.store.set('tflag:45', 1);
   await wash.cloth.aftertrain_cloth(31);
-  assert.equal(wash.fixture.store.get('cflag:31:43') ?? 0, 0, '洗衣状态不再设置');
+  assert.equal(
+    wash.fixture.store.get('cflag:31:43') ?? 0,
+    0,
+    '洗衣状态不再设置',
+  );
   wash.cloth.wearing_cloth_able(31);
   assert.equal(
     wash.fixture.store.get('cflag:31:40') & PANTS,
@@ -538,9 +550,7 @@ test('SOILING_CLOTH_NO2：三段双位置位（洗+废）与右书名号闭合�
   const mask = await cloth.soiling_cloth_no2(31);
   assert.equal(mask, 16 | 32 | 4 | 8 | 1 | 2, '大小便全置（:501-522）');
   assert(
-    fixture
-      .text_lines()
-      .some((l) => l.includes('的围裙沾满了污物》')),
+    fixture.text_lines().some((l) => l.includes('的围裙沾满了污物》')),
     '特别服装行右书名号闭合',
   );
 });
@@ -595,13 +605,13 @@ test('GET_CLOTHTYPE_MAIN2：CASE 9 = 胸甲＆透视裙子；未知编号兜底�
   const fixture = create_era_fixture();
   const { get_clothtype_main2 } = fixture.load_module('system/cloth-lookup');
   fixture.store.set('cflag:31:41', 9);
-  assert.equal(get_clothtype_main2(31), '胸甲＆透视裙子', '9 号补登（与 PRINT 版同名）');
-  fixture.store.set('cflag:31:41', 999);
   assert.equal(
     get_clothtype_main2(31),
-    '服',
-    '未知编号落 CASEELSE 兜底串',
+    '胸甲＆透视裙子',
+    '9 号补登（与 PRINT 版同名）',
   );
+  fixture.store.set('cflag:31:41', 999);
+  assert.equal(get_clothtype_main2(31), '服', '未知编号落 CASEELSE 兜底串');
 });
 
 test('GET_CLOTHTYPE_SPECIAL：98/99 取 PRINT 版简体名（#60），未知 → ERROR', () => {
