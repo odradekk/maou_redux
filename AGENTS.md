@@ -1,12 +1,12 @@
-# ere-game（EraElectron 移植项目）
+# ere-game（EraElectron 游戏《魔王 Redux》）
 
 **工作语言：简体中文。** 对话、提交信息、代码注释、文档、Issue 一律中文；代码标识符用英文（见「代码约定」）。
 
 ## 项目目标
 
-把 `target/` 里的 Emuera 游戏 《ERA魔王 年度版》（原作 eramaou，简体中文汉化版）移植到 EraElectron 4.8.0：eraBasic（`.ERB`/`.ERH` + Emuera CSV）重写为 JavaScript（`ere/*.js` + `yml/`）。
+《魔王 Redux》：运行在 EraElectron 4.8.0 上的 JavaScript 游戏。游戏源码为 `ere/*.js`（入口 `main.js`），静态数据表为 `yml/*.yml`，资源在 `res/`。
 
-移植需要重新实现游戏逻辑。Emuera 解释执行专用脚本，EraElectron 运行 Node/Electron 上的 JavaScript 模块；移植时必须按两种运行模型的差异处理控制流和状态。
+引擎不内置任何玩法系统：存读档界面、商店、调教、事件、日循环与主循环全部游戏侧自实现，引擎只提供输出、输入、变量、存档、角色、媒体与日志 API。
 
 ## 当前状态
 
@@ -17,9 +17,7 @@
 开始开发前阅读以下文档：
 
 - `docs/skeleton.md`：模块分层、注册机制、变量访问和测试约定，以及早期端到端验证的结论。
-- `CONTEXT.md`：日文原作、简体汉化和引擎 API 的术语对照。命名使用「本项目用词」一列；文档中的「写作约定」说明中文表达要求。
-
-**移植决策索引为 issue #1**，详细依据保存在对应工单中。索引保持只读；需要修正既有决策时，在原工单补充说明并引用新证据，保留历史记录。#3 被 #6 修正、#13 经端到端验证补充，均采用这种方式。
+- `CONTEXT.md`：游戏概念与引擎 API 的术语对照。命名使用「本项目用词」一列；文档中的「写作约定」说明中文表达要求。
 
 **`sav/global.sav` 由引擎生成，不纳入版本控制。** 其中保存的游戏标识（当前为 `931060`）必须与 `yml/GameBase.yml` 的【游戏标识】一致，否则引擎拒绝启动并报错。`dev-guides/11-saves.md:55` 说明了此行为；公共存档自动重置仅适用于版本号过低的情况。修改【游戏标识】后，需要删除旧的 `global.sav`，由引擎重新生成。
 
@@ -33,8 +31,7 @@
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
 ├── res/              # 图片/音频（#69 起启用，resource: true；六图 + 三首 BGM）
 ├── sav/              # 存档，*.sav 已 gitignore
-├── dev-guides/       # 引擎手册的本地副本，已按引擎行为修正
-└── target/           # 移植源：Emuera 版《ERA魔王》，只读输入
+└── dev-guides/       # 引擎手册的本地副本，已按引擎行为修正
 ```
 
 引擎运行时不进 git。Windows 发布包放在仓库内的 `ere-4.8.0-win-x64/`；Linux 运行时沿用 `~/.era-engine/`。测试共用的引擎包放在用户目录：
@@ -45,7 +42,7 @@
 └── runtime/          # 仅 Linux：Electron 34（npm install electron@^34.5.8）
 ```
 
-完成的移植代码和资源分别写入 `ere/`、`yml/`、`res/`。
+游戏代码和资源分别写入 `ere/`、`yml/`、`res/`。
 
 ## 运行与调试
 
@@ -104,7 +101,7 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 格式工具的使用要求：
 
 - 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则里**各写了一份且取值相同**。改格式约定必须同时改这两处，否则两条命令会给出互相矛盾的结果。
-- `.prettierignore` 是必需品：prettier 默认扫描全仓库，没有它 `--write` 会重写只读的 `target/`（68MB，且在其中的 Shift-JIS 日文 HTML 上直接报错退出），也会把 `yml/` 产物的双引号键名改成单引号。
+- `.prettierignore` 是必需品：prettier 默认扫描全仓库，没有它 `--write` 会把 `yml/` 产物的双引号键名改成单引号，也会重写仓库内不受 Git 跟踪的引擎发布包。
 - **先运行 `npm ci`，再使用仓库安装的 ESLint 和 Prettier。** 缺少本地依赖时，`npx` 可能下载其他版本：ESLint v9 不兼容当前配置格式；不同 Prettier 版本可能对 Markdown 表格对齐和循环尾部空格给出不同结果。工具版本以 `package-lock.json` 为准，不以 `package.json` 中的 `^` 范围为准。必须通过 `npx` 使用工具时，显式指定锁文件中的版本。
 
 ### CI
@@ -148,7 +145,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 - **`yml/_config.json` 必须提供完整的默认配置。** 文件存在且可解析时，`defaultConfig` 整体取自该文件，**缺少的键不会从引擎默认值补齐**。各使用位置对缺值的处理不同：`saveFiles` 使用 `||10`，`window.*` 交给渲染层，`resource` 按假值关闭。文件必须包含 `getEmptyConfigForm()` 的全部字段；`test/resource-media.test.js` 逐键与引擎默认配置比较，目前只允许 `resource` 的值不同。
 - **已有 `ere.config.json` 时，修改默认配置不会自动生效。** 代码中的 `||` 会直接使用已加载的 `this.config`，不读取 `_config.json` 的值。需要在本机应用新默认值时，修改 `ere.config.json` 中的对应键，或删除该文件后让引擎按新默认配置重建。
 - **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会直接崩溃或静默降级）放 `_fixed.json`，它优先于用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`，放进 `_fixed.json` 会让 UI 开关点了没反应。
-  - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 原作有 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。
+  - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 游戏提供 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。
   - erauma、ere-kanon、ere-example 所需槽位数未超过引擎默认范围，因此未设置 `saveFiles`。erauma 还会通过 `era.get('gameconfig')?.system.saveFiles` 读取生效配置，但 **4.8.0 不提供 `gameconfig` 键**，本项目不能使用这一方法。
 
 `yml/` 文件是静态数据的唯一来源，由人工维护（issue #10 迁移后接续）。键名一律加引号，避免含 `:`、`#` 或首尾空格的键产生解析问题；名称用简体（`tools/lang-table.js`，issue #60），引擎列名键如 素質/名前 保持原样。
@@ -156,11 +153,11 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 ## 引擎 API 与硬约束
 
 - 一切能力来自 `require('#/era-electron')`，权威清单 `dev-guides/A-api-docs.md`。分组：输出（`print` / `printAndWait` / `printMultiColumns` / `printInColRows` / `printButton` / `printImage`）、输入（`input` / `waitAnyKey`）、变量（`get` / `set` / `add`）、存档（`saveData` / `loadData` / `saveGlobal`）、角色（`getAllCharacters` / `addCharacter` / `beginTrain` / `endTrain`）、媒体（`playMusic`）、日志（`logger.*`）。
-- **手册与实测行为冲突时，以引擎代码为准。** `dev-guides/` 是本项目根据 `app.asar` 修正过的手册副本。发现差异后直接修正文段，不另建勘误表；上游原文可从 Git 历史查看（#163）。`.agents/skills/emuera-basic-agent-guide/` 仍需与外部上游同步，必须保持逐字不变。新确认的引擎行为按 `tools/engine-contract-facts.mjs` 文件头的说明增加检查：能直接执行的行为加入 engine-bundle 测试；只能通过源码片段定位的行为加入 `anchors` 表。
+- **手册与实测行为冲突时，以引擎代码为准。** `dev-guides/` 是本项目根据 `app.asar` 修正过的手册副本。发现差异后直接修正文段，不另建勘误表；上游原文可从 Git 历史查看（#163）。新确认的引擎行为按 `tools/engine-contract-facts.mjs` 文件头的说明增加检查：能直接执行的行为加入 engine-bundle 测试；只能通过源码片段定位的行为加入 `anchors` 表。
 - **游戏运行时仅可使用 `era` API 与 `crypto`。** 引擎禁止导入其他 Node 内置模块和第三方库（`dev-guides/18-tools.md`）；`tools/` 中的离线脚本不受此限制。
 - 异步 API 必须 `await`：`printAndWait`、`input`、`clear`、`waitAnyKey`、`delay`、存档系列。漏 `await` 造成的时序错乱极难排查。
 - 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读取未声明的序号返回 `undefined`，不是 0**（issue #13）；在名字表和数据容器存在时，写入未声明的下标不会报错，且会进入存档。因此必须检查下标是否正确，包装层的 getter 按项目约定使用 `|| 0` 处理缺值。
-- 文件编码用 UTF-8 或 UTF-8 BOM。`target/` 中的 `ERB/調教相關/COMF90_ニプルファック.ERB` 使用 Shift-JIS，仍参与游戏运行；批量读取脚本必须根据内容识别编码。
+- 文件编码用 UTF-8 或 UTF-8 BOM。
 - **写变量前，先确认它所属的静态表已存在于 `yml/`。** `setVar` 的行为由名字表和 `data` 容器是否存在共同决定，与地址是两段还是三段无关（PR #57）：两者都存在时写入成功，未声明下标按数字处理；只有名字表时静默丢弃写入；**只有数据容器时直接崩溃**。已出现过的问题包括 `item*`（PR #34）和 `stain`、`ex`、`cstr`、`tequip`、`tflag`（PR #57）。`test/static-table-coverage.test.js` 会提取源码中的变量类别并检查对应表，但只能识别 `era.get/set/add` 的字面量前缀；动态拼接的地址仍需人工检查。
 - **首次使用输出 API 前，检查引擎渲染层对参数的处理。** 手册未必描述最终显示效果，测试夹具也不完整模拟渲染。例如，`printButton` 的 `showAcc` 默认为真，引擎会添加 `[快捷键] `，并将正文中的连续空白合并为一个空格。**按钮正文不得自行添加 `[编号]` 前缀**，否则会显示为 `[0] [0] 旧的奴隶`（PR #30）。
   在 `~/.era-engine/app.asar` 中按 API 名或配置项名搜索，可找到 bundle 附带的未压缩源码。确认渲染规则后，将需要验证的结果补充到 `test/helpers/era-fixture.js` 的记录字段，并增加断言。
@@ -176,7 +173,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 
 - **文件名** kebab-case 带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
 
-- **文件名一律使用 ASCII，描述部分翻译为英文单词。** 例如，`EVENT_K3_高貴.ERB` 对应 `kojo-k3-noble.js`，`据点2.mp3` 对应 `stronghold-2.mp3`，不用日文罗马字或中文拼音代替翻译。人名无对应英文词时使用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上文件按同一约定命名（源文件名描述部分意译为英文单词，如 `EVENT_K3_高貴.ERB` → `kojo-k3-noble.js`）。
+- **文件名一律使用 ASCII，描述部分用英文单词。** 例如 `kojo-k3-noble.js`、`stronghold-2.mp3`，不用日文罗马字或中文拼音代替翻译。人名无对应英文词时使用拉丁转写（菲娅 → `fia`）。口上文件按同一约定命名。
   - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名是 `ere/` 里调用点正在使用的名字（如 `era.playMusic('据点2.mp3')`），不跟着磁盘文件名一起改；调用点按注册名取用资源，一行不动。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
@@ -188,38 +185,12 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
   set_lan(era.get('global:3') || era.set('global:3', 'zh-CN'));
   ```
 
-- **注释只写「为什么这样写」。** 不写来源标注（外部文件路径、行号），不写「同某处一致」这类脱离当前代码的说明；提到函数名时用当前代码的函数名，解释性注释用当前代码自身能说明的说法，例如「游戏提供 99 个手动存档槽」。口上里的日文分支注释（`それ以外`、`初めて` 等）是分支标记，保留。仓库里既有的 `源:` 文件头和 `// :1234` 行号注释由 #644 用脚本统一删除，不要手工删；其余提到原作的注释由各 C 工单按目录清理。#11 的 `源:` 文件头约定已废止（#639）。
+- **注释只写「为什么这样写」。** 不写来源标注（外部文件路径、行号），不写「同某处一致」这类脱离当前代码的说明；提到函数名时用当前代码的函数名，解释性注释用当前代码自身能说明的说法，例如「游戏提供 99 个手动存档槽」。口上里的日文分支注释（`それ以外`、`初めて` 等）是分支标记，保留。
 - **金额提示中的字面量 `$` 保留。** 游戏内金额按 `$` 加数值的格式显示（如 `所持金：$800点`），JavaScript 模板串要写成 `` `所持金：$${era_flag.money}点` ``——只写一个 `$` 会把它用作插值语法，输出里就少了货币符号。ESLint 发现不了这类语义差异，测试必须断言实际输出（#338 发现，M7700 验证对应测试能检测该错误）；其余金额提示（如生活费的扣款提示）同样处理。
 - **玩家可见文本一律使用简体**（issue #60）。字符映射、词语译法和整串豁免分别维护在 `tools/lang-table.js`；直接写简体，检查报错时按表手工改正。以下检查共同验证结果：
   - `test/output-lang-lock.test.js` 扫描 `ere/` 字符串字面量和 `yml/` 文本，检查归一表中的非简体字，以及 `tools/lang-simp-ref.js` 中的繁体字；后者由 OpenCC 字表派生，补充归一表未收录的字符（#188）。引擎列名按清单豁免。未收录的日文新字体仍需通过归一表处理；假名按字符区间检查。
   - 新增字符映射或词条只在检查漏报、误报时进行，提交说明写明触发它的文本位置。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
-
-## 移植源：`target/`
-
-Emuera 1.821.8 简体中文版运行的《ERA魔王 年度版（名字暂定）》，作者「人人为我，我为人人」，版本 93106。视为**只读输入**。
-
-规模（实测）：346 个 `.ERB`/`.ERH`，315,953 行；58 个 CSV；68.5 MB。按目录的行数分布决定优先级与工作量：
-
-| 目录                                                |     行数 | 内容                         |
-| --------------------------------------------------- | -------: | ---------------------------- |
-| `ERB/口上/`                                         |  149,037 | 角色台词文本，占全部代码 47% |
-| `ERB/調教相關/`                                     |   47,075 | 调教系统                     |
-| `ERB/迷宮/`                                         |   21,274 | 迷宫                         |
-| `ERB/キャラ関数/`                                   |   20,968 | 角色函数                     |
-| `ERB/EVENT/`                                        |   14,911 | 事件与日程                   |
-| `ERB/SHOP/`                                         |   10,275 | 商店与主菜单                 |
-| `ERB/ABL/`                                          |    8,829 | 能力                         |
-| `ERB/其他/`                                         |    8,700 | 杂项                         |
-| `ERB/侵略/`、`售卻相關/`、`SYSTEM/`、`怪物相關/` 等 | 各 3k–7k | 其余子系统                   |
-
-关键入口：`ERB/SYSTEM/TITLE ver1.0.8.ERB`（`@SYSTEM_TITLE`，标题画面；根目录的 `ERB/TITLE.ERB` 定义了同名函数，但被引擎忽略，确认过程见 issue #12）→ `ERB/SYSTEM/SYSTEM ver1.0.3.ERB`（`@EVENTFIRST`，全局初始化）→ `ERB/SHOP/DRAW_MAINMENU.ERB`（主菜单）→ `ERB/EVENT/EVENT_NEXTDAY.ERB`（日循环）、`ERB/調教相關/TRAIN_MAIN.ERB`（`@EVENTTRAIN`）。
-
-`target/資料_非必要無須解壓/` 是日文原作文档（readme、补丁历史、flag 说明），可作设计意图的原始依据。
-
-**口上包含文本、条件分支和状态变化，必须按状态机移植。** 实测输出语句占 31.4%，控制流占 33.1%，注释占 24.8%；25,091 个连续文本段的长度中位数为 1 行，90% 不超过 3 行。引擎的 `.kojo` 格式无法表达所需的嵌套分支、状态变化、数值修改和限时输入，因此**口上一律用 JS 实现**（issue #8）。
-
-移植方式：离线转译器产出初稿（约 98% 的行可机械转换），再人工逐段复核。转译器必须保留注释，那 29,724 行说明文字是理解语义的主要依据。
 
 ## 参考资料
 
@@ -238,10 +209,6 @@ Emuera 1.821.8 简体中文版运行的《ERA魔王 年度版（名字暂定）�
 erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`（事件）、`page/`（界面）、`system/`（系统逻辑，按域再分子目录）、`utils/`（工具）、`i18n/`（多语言）。但**代码层面以 `ere-example` 与 `ere-kanon` 为范例**：官方明确提醒 EraUma 代码缺注释、缺类型检查（`dev-guides/E-erauma-train.md`），它只值得参考设计思路与工程组织。
 
 ## 技能与流程文档
-
-### ERA Basic（ERB）语法与 API
-
-读取 `target/` 中的 ERB 前，查阅 `emuera-basic-agent-guide` 技能，按文档确认语法与 API。正文位于 `.agents/skills/emuera-basic-agent-guide/`，**属于持续同步的外部材料，必须保持逐字不变**。该技能对 `PRINTC` / `PRINTLC` 的说明有误（不是居中打印、也不换行），正确语义与 ere 侧的对应写法见 `CONTEXT.md` 的「输出 API 与原作的对应」；不向上游报告前不改本地副本。ante 按 `.claude` → `.agents` → `.ante` 的顺序发现项目技能，同名技能以后者为准；Claude Code 使用 `.claude/skills/` 下的转发文件，采用转发文件的原因见其注释。
 
 ### 工单流程
 

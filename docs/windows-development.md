@@ -92,4 +92,4 @@ try {
 }
 ```
 
-仓库路径参数推荐 `/`；定向测试与变异的 `--files` 也接受 Windows 的 `\`。Git 将自有 `.js`、`.mjs`、`.sh`、JSON、Markdown 等文件统一检出为 LF；`target/` 和引擎 SDK 保持原始字节，迁移时不做全库换行或编码转换。
+仓库路径参数推荐 `/`；定向测试与变异的 `--files` 也接受 Windows 的 `\`。Git 将自有 `.js`、`.mjs`、`.sh`、JSON、Markdown 等文件统一检出为 LF；引擎 SDK 保持原始字节，不做全库换行或编码转换。

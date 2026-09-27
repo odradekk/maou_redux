@@ -73,15 +73,9 @@
 
 ## 二、判断条件：什么时候纯文本是对的
 
-`ere/page/page-dungeon-info2.js:331-338`（#180 查实后的在案结论，逐字）：
+`ere/page/page-dungeon-info2.js` 的怪物行是 #180 查实后的在案结论：
 
-> `:460 PRINTFORML [{A}] {B}只%MONSTERNAME(A)%`——纯文本 + 自由输入（原作形态）。
-> **不**改按钮（PR #53 通则在此处的例外）：本界面的逐层 WAIT（:447）在 ere
-> 引擎里会清空按钮白名单（任何一次成功回传都把 rule 置空，waitAnyKey 内部走
-> `input({any:true})`），最后一个 WAIT 之前打印的按钮会整段拒收——怪物行改按钮
-> 会让早段怪物在实机上不可选。纯文本 + 无按钮轮 = 引擎的自由输入通道
-> （`dev-guides/05-interaction.md`），键盘键入 `[A]` 与 `[999]` 全程可达，
-> 1:1 于 Emuera 的键盘交互。
+> 怪物行保持**纯文本 + 自由输入，不改按钮**（PR #53 通则在此处的例外）：本界面的逐层 WAIT 在 ere 引擎里会清空按钮白名单（任何一次成功回传都把 `rule` 置空，`waitAnyKey` 内部走 `input({any:true})`），最后一个 WAIT 之前打印的按钮会整段拒收——怪物行改按钮会让早段怪物在实机上不可选。纯文本 + 无按钮轮 = 引擎的自由输入通道（`dev-guides/05-interaction.md`），键盘键入 `[A]` 与 `[999]` 全程可达，与键盘交互一致。
 
 `ere/dungeon/dungeon-after.js:14-17` 同款（奖惩两个分支的选项菜单）。
 
@@ -128,11 +122,10 @@ C 类更不要（按钮会把「敲任意数字」的通道堵死）。
 1. 引擎侧另有把 accelerator 推进 `rule` 的路径（离线读源码没找到，但压缩版
    与可读版的 `getButtonObject` 是打印时入集、`clear` 不清空，
    `resetData` 才重置——若渲染层因 `clear` 后的重绘重新入集，就会解释实机）。
-2. `ere/chara/chara-make.js:1908` 调 `show_chara_info(newchara, -1, rand_n)`，
-   而原作 `target/ERB/キャラ関数/CHAR_MAKE.ERB:150` 传的是 **`-2`**（贡品信息）。
-   `-1`（调教信息）多出两处 `await era.waitAnyKey()`。页码取错是**未登记的
-   移植偏离**（`page-chara-info-show.js` 文件头的六个页码分支里 `-2` = 贡品时、
-   `-1` = 调教时），本票按「不夹带无关修改」未动，登记在此备查。
+2. `ere/chara/chara-make.js:1908` 调 `show_chara_info(newchara, -1, rand_n)`，而贡品
+   场景应传 **`-2`**（贡品信息）。`-1`（调教信息）多出两处 `await era.waitAnyKey()`。
+   页码取错是**未登记的实现偏离**（`page-chara-info-show.js` 文件头的六个页码分支里
+   `-2` = 贡品时、`-1` = 调教时），本票按「不夹带无关修改」未动，登记在此备查。
 
 两者都不影响本票的修法：选项做成按钮后，`1/2/3` 无论 `rule` 里还有什么都在
 集内，输入必然回传。
@@ -181,8 +174,7 @@ C 类合计 **28 行**（`page-infrastructure` 16、`event-banishment` 5、
 扫描器里剥掉；插值编号那一支还要求「以 `[` 开头且后面跟正文」，把
 `[${talentname(243 + count)}]`（条件提示的标签）与 `体力[${'.'.repeat(32)}]`
 （死亡提示的装饰括号）挡在外面；数组形态 `era.print([{content: '[8] …'}])`
-是有意排除的排版片段（原作本身用 PRINTPLAINFORM）——理由都写在
-`tools/plaintext-options.mjs` 的判定面注释里。
+是有意排除的排版片段——理由都写在 `tools/plaintext-options.mjs` 的判定面注释里。
 
 ### 扫描面外的同类（已核出 17 行，不在棘轮里）
 
@@ -199,7 +191,7 @@ C 类合计 **28 行**（`page-infrastructure` 16、`event-banishment` 5、
 | `ere/chara/chara-custom.js:131`               |    1 | `build_rows` 拼 `[NN] 名`，由 `char_create` 打印后等输入                                                                        | 真选项（B 类）                                                                                                                |
 | `ere/event/event-ending.js:537`               |    1 | 选项文本是 `lines` 数组的元素，经 `era.print(line)` + `waitAnyKey` 循环打印                                                     | 真选项（B 类：循环里每行都隔一次 `WAIT`，白名单为空）                                                                         |
 | `ere/event/event-execution.js:116`            |    1 | 数组形态 `era.print([{content: '[101] 水晶球记录'}])`（同段的 `[100] 停止` 是首实参字面量，在扫描面内）                         | 真选项                                                                                                                        |
-| `ere/page/components/chara-info-title.js:151` |    1 | 数组形态 `{ content: '[8] 一人称重设 ' }`                                                                                       | **有意不是按钮**：原作此处用 `PRINTPLAINFORM`，是页码提示文字，不由 INPUT 消费（该行注释已写明）                              |
+| `ere/page/components/chara-info-title.js:151` |    1 | 数组形态 `{ content: '[8] 一人称重设 ' }`                                                                                       | **有意不是按钮**：是页码提示文字，不由输入消费（该行注释已写明）                                                              |
 
 合计 **17 行**（11 数据 + 6 代码）。把数据表也纳入棘轮会把「数据」和「打印调用点」
 混在一个判定面里，噪声大于收益；后续返工票按界面过的时候一并处理这张清单即可
