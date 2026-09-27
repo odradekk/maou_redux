@@ -1,8 +1,8 @@
 /**
  * ere/system/train/ablup.js（issue #464）的行为测试。
  *
- * 缝 = test/helpers/era-fixture.js。期望值全部对着 target/ERB/ABL/ABLUPn.ERB
- * 的梯子、加成与文案逐字比对（见 ablup.js 各函数的文件头/行号注释）。
+ * 缝 = test/helpers/era-fixture.js。期望值全部对着 ablup.js 各函数的
+ * 文件头注释登记的梯子、加成与文案逐字比对。
  */
 
 const assert = require('node:assert/strict');
@@ -907,14 +907,14 @@ test('ablup6：选项2（习得）只在 Lv0（C>0）渲染，Lv1 起 C=0 不再
   assert.equal(buttons(hidden).length, 3); // [0][1][100]，无 [2]
 });
 
-test('ablup6：选项2 的可否判定误用 JUEL:7<A（应为<C）——Lv0 时 A 恒等于 C，缺陷无法观测到偏差', async () => {
+test('ablup6：选项2 的可否判定用 JUEL:7<C（与按钮显示的×C、扣款 C 同变量；Lv0 时 A=C）', async () => {
   const fixture = create_era_fixture();
   const { ablup6 } = seed(fixture);
   fixture.store.set(`abl:${CID}:0`, 1);
-  fixture.store.set(`juel:${CID}:7`, 150); // 高于 A=C=100
+  fixture.store.set(`juel:${CID}:7`, 150); // 高于 C(=A)=100
   fixture.set_inputs(100);
   await ablup6(CID);
-  assert.ok(!buttons(fixture)[2].text.includes('点数不足')); // 按 A(=C) 判定为充足
+  assert.ok(!buttons(fixture)[2].text.includes('点数不足')); // 按 C 判定为充足
 });
 
 test('ablup6：三个成功购买路径各自扣对应珠、升级、显示变为LV', async () => {
@@ -965,7 +965,7 @@ test('ablup6：三个选项各自的"条件不足。请重新输入。"重试文
   assert.equal(retries.length, 2);
 });
 
-// ———— ABLUP7：单选项能力（耻情 JUEL:8），双重折扣缺陷 ————
+// ———— ABLUP7：单选项能力（耻情 JUEL:8），倒错的/爱表现两段折扣 ————
 
 function seed_ablup7_ok(fixture) {
   fixture.store.set(`abl:${CID}:1`, 1); // 满足欲望门槛（乳房感觉，见注释/代码不一致说明）
@@ -1004,12 +1004,12 @@ test('ablup7：Lv0-4 梯子字面值，戒备森严仅在 Lv3(×2.00)/Lv4(×3.00
   }
 });
 
-test('ablup7：双重折扣缺陷——倒错的单独生效×0.375；目立ちたがり单独完全无效；两者同时等同倒错的单独', async () => {
+test('ablup7：两段折扣各归其主——倒错的×0.75、爱表现×0.50，同时持有叠乘×0.375', async () => {
   const cases = [
     [{}, 100],
-    [{ 80: 1 }, 37], // 100*0.75=75，再*0.50=37（floor）
-    [{ 28: 1 }, 100], // 目立ちたがり本应折扣但代码判的仍是 TALENT:80，从未生效
-    [{ 80: 1, 28: 1 }, 37], // 两者同时＝倒错的单独
+    [{ 80: 1 }, 75], // 倒错的单独：100*0.75
+    [{ 28: 1 }, 50], // 爱表现单独：100*0.50
+    [{ 80: 1, 28: 1 }, 37], // 两者同时：100*0.75*0.50=37（floor）
   ];
   for (const [talents, expected] of cases) {
     const fixture = create_era_fixture();
@@ -1059,7 +1059,7 @@ test('ablup7：始终生效的第二条经验门槛——Lv<2 要求绝顶经验
   assert.ok(buttons(high)[0].text.endsWith('经验不足 '));
 });
 
-test('ablup7：Lv3/4 异常经验门槛，目立ちたがり可跳过（与折扣缺陷互不影响）', async () => {
+test('ablup7：Lv3/4 异常经验门槛，爱表现可跳过（与两段折扣相互独立）', async () => {
   const blocked = create_era_fixture();
   const { ablup7: a1 } = seed(blocked);
   blocked.store.set(`abl:${CID}:7`, 3);
@@ -1102,7 +1102,7 @@ test('ablup7：点数不足重试提示"条件不满足。"；成功购买扣珠
   assert.ok(buy.text_lines().includes('的等级提升到1级了。'));
 });
 
-// ———— ABLUP8：两选项能力，缺失哨兵的原作缺陷 ————
+// ———— ABLUP8：两选项能力，B=0 时选项0 不渲染（无哨兵，引擎层拒收未渲染选项） ————
 
 test('ablup8：已达MAX', async () => {
   const fixture = create_era_fixture();
@@ -1194,7 +1194,7 @@ test('ablup8：选项1 绝顶经验门槛正好等于 1 时判定为充足', asy
   assert.ok(buttons(fixture)[0].text.endsWith('ＯＫ'));
 });
 
-test('ablup8：缺失哨兵缺陷——B=0 时选项0 结构上不可能被选中（era.input 拒收未渲染的 0）', async () => {
+test('ablup8：B=0 时选项0 不渲染，结构上不可能被选中（era.input 拒收未渲染的 0，无哨兵不是缺陷）', async () => {
   const fixture = create_era_fixture();
   const { ablup8 } = seed(fixture);
   fixture.store.set(`abl:${CID}:8`, 3);
@@ -1601,7 +1601,7 @@ test('ablup12：已达最高级；技巧+话术组合上限单行 PRINTFORMW（�
   assert.ok(capped.text_lines().includes('技巧(8)＋话术(7)上限为15'));
 });
 
-test('ablup12：issue #14 缺陷——技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/I 维持清零，等于免费购买', async () => {
+test('ablup12：技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/I 维持清零，等于免费购买', async () => {
   const fixture = create_era_fixture();
   const { ablup12 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 8);
@@ -1644,7 +1644,7 @@ test('ablup12：自我训练（cid===MASTER）时额外收金钱与 EX_FLAG:4444
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-test('ablup12：issue #14 缺陷——bit2 用"经验不足"文案显示 ABL:MASTER:12 与 FLAG:30 的比较，与经验无关；bit2+bit4 无分隔符粘连', async () => {
+test('ablup12：自我训练 bit2 用"人数不足"文案显示魔王技巧超过爱或淫乱人数+1（与经验无关），与 bit4 之间有空格分隔', async () => {
   const fixture = create_era_fixture();
   seed(fixture);
   const { ablup12 } = require('#/system/train/ablup');
@@ -1655,8 +1655,8 @@ test('ablup12：issue #14 缺陷——bit2 用"经验不足"文案显示 ABL:MAS
   fixture.set_inputs(100);
   await ablup12(MASTER);
   assert.ok(
-    buttons(fixture)[0].text.includes('经验不足金钱不足\t'),
-    '两段文案应直接拼接，中间无分隔符',
+    buttons(fixture)[0].text.includes('人数不足 金钱不足\t'),
+    '两段文案应以空格分隔',
   );
 });
 
@@ -1700,11 +1700,11 @@ test('ablup13：Lv5 前后切换门槛提示文案（技巧→侍奉精神）', 
   assert.ok(later.text_lines().includes('侍奉精神LV7以上(现在LV6)且'));
 });
 
-test('ablup13：issue #14 缺陷——Lv5 以上的侍奉精神门槛检查在原作中被注释掉，不再拦截', async () => {
+test('ablup13：Lv5 以上不检查技巧门槛（被注释掉的功能不恢复），不再拦截', async () => {
   const fixture = create_era_fixture();
   const { ablup13 } = seed(fixture);
-  // abl16=5 满足入口把关（Lv5 单独门槛），但低于 abl13+1=7——若被注释掉
-  // 的门槛生效，本应判定不足
+  // abl16=5 满足入口把关（Lv5 单独门槛），但低于 abl13+1=7——若 Lv5 以上
+  // 也检查技巧门槛，本应判定不足
   fixture.store.set(`abl:${CID}:13`, 6);
   fixture.store.set(`abl:${CID}:16`, 5);
   fixture.store.set(`juel:${CID}:7`, 1000000);
@@ -1778,17 +1778,42 @@ test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个 NBSP+全角空�
   );
 });
 
-test('ablup14：issue #14 缺陷——DECIDE 的技巧门槛误比较 ABL:12<5（应比较 ABL:14<5），Lv6 时无渲染文案却仍可能被判能力不足', async () => {
-  const fixture = create_era_fixture();
-  const { ablup14 } = seed(fixture);
-  fixture.store.set(`abl:${CID}:14`, 6); // Lv>=5，渲染层不再显示技巧要求文案
-  fixture.store.set(`abl:${CID}:12`, 2); // 技巧远低，若比较 ABL:14<5 本不该生效，但比较的是 ABL:12<5
-  fixture.store.set(`juel:${CID}:7`, 1000000);
-  fixture.store.set(`exp:${CID}:5`, 1000000);
-  fixture.set_inputs(100);
-  await ablup14(CID);
-  assert.ok(!fixture.text_lines().some((t) => t.includes('技巧LV')));
-  assert.ok(buttons(fixture)[0].text.includes('能力不足'));
+test('ablup14：技巧门槛比较性交技术自身等级——Lv5 以上不再隐藏拦截，Lv5 前仍要求技巧≥性交技术+1', async () => {
+  // Lv>=5：渲染层不显示技巧要求行，判定也不再拦截（修复前此处有无提示的隐藏限制）
+  const high = create_era_fixture();
+  const { ablup14: a1 } = seed(high);
+  high.store.set(`abl:${CID}:14`, 6);
+  high.store.set(`abl:${CID}:12`, 2); // 技巧远低于 6+1，Lv5 以上不得再拦
+  high.store.set(`juel:${CID}:7`, 1000000);
+  high.store.set(`exp:${CID}:5`, 1000000);
+  high.set_inputs(100);
+  await a1(CID);
+  assert.ok(!high.text_lines().some((t) => t.includes('技巧LV')));
+  assert.ok(buttons(high)[0].text.endsWith('ＯＫ'));
+
+  // Lv<5：仍要求技巧≥性交技术+1，且渲染层显示同一条件
+  const low = create_era_fixture();
+  const { ablup14: a2 } = seed(low);
+  low.store.set(`abl:${CID}:14`, 3); // lv+1=4
+  low.store.set(`abl:${CID}:12`, 2); // 技巧 2 < 4
+  low.store.set(`juel:${CID}:7`, 1000000);
+  low.store.set(`exp:${CID}:5`, 1000000);
+  low.set_inputs(100);
+  await a2(CID);
+  assert.ok(low.text_lines().includes('技巧LV4以上(现在LV2)且'));
+  assert.ok(buttons(low)[0].text.includes('能力不足'));
+
+  // Lv5 恰好是第一子句的边界（abl14()==5 不小于 5）：技巧再低也不拦
+  const edge = create_era_fixture();
+  const { ablup14: a3 } = seed(edge);
+  edge.store.set(`abl:${CID}:14`, 5);
+  edge.store.set(`abl:${CID}:12`, 0);
+  edge.store.set(`juel:${CID}:7`, 1000000);
+  edge.store.set(`exp:${CID}:5`, 1000000);
+  edge.set_inputs(100);
+  await a3(CID);
+  assert.ok(!edge.text_lines().some((t) => t.includes('技巧LV')));
+  assert.ok(buttons(edge)[0].text.endsWith('ＯＫ'));
 });
 
 test('ablup14：性交中毒(ABL:30)分级折扣——<6 档 A×0.95/B×0.95', async () => {
@@ -1834,7 +1859,7 @@ test('ablup15：已达最高级；技巧+话术组合上限单行 PRINTFORMW', a
   assert.ok(capped.text_lines().includes('技巧(8)＋话术(7)上限为15'));
 });
 
-test('ablup15：issue #14 缺陷——技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/B/C/I 维持清零，等于免费购买', async () => {
+test('ablup15：技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/B/C/I 维持清零，等于免费购买', async () => {
   const fixture = create_era_fixture();
   const { ablup15 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 8);
@@ -1912,6 +1937,35 @@ test('ablup16：入口把关用 OR（三项素质任一缺失即挡），全部�
   set_talents(maxed, { 63: 1, 85: 1, 86: 1 }); // 绕过 Lv5+ 门槛，暴露第二档
   await a3(CID);
   assert.ok(maxed.text_lines().includes('已达最高级'));
+});
+
+test('ablup16：DECIDE 复核缺一即挡——只缺献身的/只缺爱慕的/只缺盲从的都被拦，三项齐全且可负担则通过', async () => {
+  // 三个用例各自只缺一项素质（另两项都有）、资源全够——OR 形态三者都必须
+  // 被拦；「缺两项才拦」的形态会漏过全部三例，某项漏判的形态漏过对应用例
+  for (const missing of [63, 85, 86]) {
+    const fixture = create_era_fixture();
+    const { decide_ablup } = seed(fixture);
+    fixture.store.set(`abl:${CID}:16`, 5);
+    const talents = { 63: 1, 85: 1, 86: 1 };
+    delete talents[missing];
+    set_talents(fixture, talents); // 只缺 missing，另两项都有
+    fixture.store.set(`abl:${CID}:10`, 6); // 顺从门槛
+    fixture.store.set(`juel:${CID}:6`, 50000); // A 轨道（Lv5：A=50000）
+    fixture.store.set(`exp:${CID}:2`, 80); // E 轨道门槛
+    fixture.store.set(`exp:${CID}:20`, 80);
+    assert.equal(await decide_ablup(CID, 16), 0, `只缺 ${missing} 时必须被拦`);
+  }
+
+  // 三项素质齐全且可负担 → 可提升（任一轨道满足即 1）
+  const full = create_era_fixture();
+  const { decide_ablup: decide_full } = seed(full);
+  full.store.set(`abl:${CID}:16`, 5);
+  set_talents(full, { 63: 1, 85: 1, 86: 1 });
+  full.store.set(`abl:${CID}:10`, 6); // 顺从门槛
+  full.store.set(`juel:${CID}:6`, 50000); // A 轨道（Lv5：A=50000）
+  full.store.set(`exp:${CID}:2`, 80); // E 轨道门槛
+  full.store.set(`exp:${CID}:20`, 80);
+  assert.equal(await decide_full(CID, 16), 1);
 });
 
 test('ablup16：Lv0 梯子字面值，三个选项皆渲染，选项0 恒渲染（无 IF 包裹）', async () => {
@@ -2052,12 +2106,13 @@ test('ablup17：C(绝顶经验)只在 Lv0→1 生效，D(调教自慰经验)只�
   assert.ok(!lv2.text_lines().some((t) => t.includes('调教自慰经验')));
 });
 
-test('ablup17：唯一带句号的重试文案"未满足条件。"（其余 ABLUP10～16 均无句号）', async () => {
+test('ablup17：重试文案"未满足条件"与 ABLUP10～16 统一（无句号）', async () => {
   const fixture = create_era_fixture();
   const { ablup17 } = seed(fixture);
   fixture.set_inputs(0, 100);
   await ablup17(CID);
-  assert.ok(fixture.text_lines().includes('未满足条件。'));
+  assert.ok(fixture.text_lines().includes('未满足条件'));
+  assert.ok(!fixture.text_lines().includes('未满足条件。'));
 });
 
 test('ablup17：成功购买写入 chara(cid).system.露出癖，扣珠、显示变为LV', async () => {
@@ -2072,6 +2127,7 @@ test('ablup17：成功购买写入 chara(cid).system.露出癖，扣珠、显示
   assert.equal(fixture.store.get(`juel:${CID}:8`), 0);
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
+
 // ———— ABLUP37：卖淫中毒（issue #467） ——
 
 test('ablup37：两档终止判定（特殊素质/已达最高级）', async () => {
@@ -2383,7 +2439,7 @@ test('ablup39：Lv0 梯子与需求行（A=B=2000/C=30，无 F 行）', async ()
   assert.ok(!fixture.text_lines().some((t) => t.includes('异常经验')));
 });
 
-test('ablup39：戒备森严读 ABL:37（卖淫中毒）——原作复制粘贴缺陷 1:1 保留', async () => {
+test('ablup39：戒备森严读 ABL:37（卖淫中毒）而非自身等级——复制粘贴残留，保留', async () => {
   // talent:27 的分档判 ABL:37==4 → ×2.0，与自身等级无关
   const fixture = create_era_fixture();
   const { ablup39 } = seed(fixture);
@@ -2492,7 +2548,7 @@ test('ablup40：已达上限文案是独有的「已达到MAX」', async () => {
   assert.ok(fixture.text_lines().includes('已达到MAX'));
 });
 
-test('ablup40：Lv0 需求行——欲望行显示 ABL:39+1（原作缺陷）且无「且」尾', async () => {
+test('ablup40：Lv0 需求行——欲望行显示 ABL:39+1（与判定不一致，保留）且无「且」尾', async () => {
   const fixture = create_era_fixture();
   const { ablup40 } = seed(fixture);
   fixture.store.set(`abl:${CID}:11`, 1);
@@ -2683,7 +2739,7 @@ test('ablup100：Lv1 需求行（A=2000，感觉门槛 mark10+5、战斗门槛 1
   assert.ok(
     fixture.text_lines().includes('战斗等级LV10以上(现在LV0)必要，然后'),
   );
-  // C=0 时 C-5 为负，感觉门槛数值上恒过（显示与判定脱节，原作照抄）；只剩
+  // C=0 时 C-5 为负，感觉门槛数值上恒过（显示与判定脱节，保留原样）；只剩
   // 战斗门槛不满足（M=1 不点亮能力位）与异界经验不足 → 只有经验位
   assert.equal(buttons(fixture)[0].text, '- 异界经验点数×0/2000 ……经验不足 ');
 });
@@ -3234,6 +3290,7 @@ test('ablup21：Lv3 戒备森严 C/D/E ×1.50（30→45、2800→4200、6000→9
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/9000'));
   assert.ok(fixture.text_lines().includes('　　　被虐快乐经验　0/45'));
 });
+
 test('ablup21：Lv4 梯子字面值（D=4300/E=12000/被虐快乐 80）与戒备森严 ×2.00', async () => {
   const plain = create_era_fixture();
   const { ablup21: a1 } = seed(plain);
@@ -4276,7 +4333,7 @@ test('ablup33：Lv2 异常经验 D=lv-1；成功购买扣三项珠（JUEL:0/5/6�
 //     `IF ABL:<n> == <lv>` 分支的 A/B/C/D/E 赋值，原文行号写在各行注释里；
 //   · 「素质倍率」抄自同一文件的 TIMES 行，行号同样写在注释里；
 //   · 合成按 TIMES 语义逐次截断（Math.floor(v * m)），不是一次乘完。
-// `refs` 是该等级实际打印的分母，按输出顺序排列；`a*3`、`c/2` 照抄原作的
+// `refs` 是该等级实际打印的分母，按输出顺序排列；`a*3`、`c/2` 保留原样的
 // `{A*3}`、`{C/2}`，用来核对 [1] 轨与整除半经验的分母。
 
 /** TIMES X, m 的语义：整数乘小数后截断。 */
@@ -4307,7 +4364,7 @@ function denominators(fixture) {
   return found;
 }
 
-/** 求 `refs` 里的一位分母：`a`、`a*3`、`c/2`（后者照抄原作的整除）。 */
+/** 求 `refs` 里的一位分母：`a`、`a*3`、`c/2`（后者保留原样的整除）。 */
 function ref_value(values, ref) {
   const [name, operator, operand] = ref.split(/([*/])/);
   if (operator === '*') return values[name] * Number(operand);
@@ -4887,9 +4944,9 @@ for (const spec of LADDER_SPECS) {
 
 /**
  * 戒备森严（TALENT:27）按 ABL 等级四档。ABLUP20 的 C/D/E 三列在 TIMES 时
- * 尚未赋值（原作的次序缺陷，见上文两段折扣用例），因此该文件里这一分支
- * 观测不到差异，不列表。ABLUP39 的分档判 ABL:37（原作复制粘贴缺陷 1:1
- * 保留），故其四行固定自身等级、只动 ABL:37。ABLUP40 原作没有这一分支。
+ * 尚未赋值（次序残留，见上文两段折扣用例），因此该文件里这一分支
+ * 观测不到差异，不列表。ABLUP39 的分档判 ABL:37（复制粘贴残留，保留），
+ * 故其四行固定自身等级、只动 ABL:37。ABLUP40 没有这一分支。
  *
  * 行里的 `abl` 是附加状态（默认只写 `abl[spec.id] = row.lv`），目前仅供
  * ABLUP39 写分档所读的 ABL:37。
@@ -5178,8 +5235,8 @@ const TIER_SPECS = [
   },
   {
     id: 39,
-    // 梯子 :107-147（A/B/C）；戒备森严 :154-169 按 **ABL:37** 分档（原作复制
-    // 粘贴缺陷 1:1 保留，见上文专属用例）。四行固定自身 Lv3、只动 ABL:37，
+    // 梯子 :107-147（A/B/C）；戒备森严 :154-169 按 **ABL:37** 分档（复制
+    // 粘贴残留，见上文专属用例）。四行固定自身 Lv3、只动 ABL:37，
     // 把分档来源与自身等级分开：gate 3/4/>=5 三档 → ×2.00/×2.50/×3.00
     rows: [
       {
