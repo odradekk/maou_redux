@@ -699,3 +699,33 @@ test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三�
     }
   }
 });
+
+// —— #688：SELECTCOM 30 手淫三档（原写法叠加爱慕与侍奉双要求，永远走不到）回正为只看爱慕 ——
+
+test('SELECTCOM 30 手淫：三档回正为只看爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k903((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${CID}:331`, 2);
+    f.store.set(`talent:${CID}:85`, 1);
+  }, 30);
+  await speak(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「本宫……知道了啊……稍微弄一下也不是不可以……为什么会要本宫做这种事……切」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_903 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k903((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${CID}:331`, 2);
+    f.store.set(`abl:${CID}:16`, 3);
+  }, 30);
+  const { dog_kojo_903 } = fixture.load_module('kojo/kojo-k903-garde');
+  await dog_kojo_903();
+  assert.deepEqual(fixture.text_lines(), [
+    '「为什么要强迫本宫……做这种肮脏的事情！」',
+    '「还是……给野狗………………」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
+});

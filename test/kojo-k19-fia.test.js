@@ -725,3 +725,56 @@ test('#625 GOHOUBI_REQUEST：空首尾夹着的兽名单独成行（CFLAG:504 �
     );
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k19((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${CID}:331`, 2);
+    f.store.set(`abl:${CID}:16`, 3);
+  }, 30);
+  await speak_k19(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「主人的兴趣……真是奇怪呢……」',
+    '虽然对H的事情还不是特别理解，但是菲娅还是乖乖的照做了。',
+    '「这样子……会舒服吗……？」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
+});
+
+// —— #688：肛珠五档档位误写尻穴狂，按同型模板改回肛门感觉 ——
+
+test('SELECTCOM 19 肛珠：五档档位不再要求尻穴狂（#688），口上开关关闭时在 CFLAG:320=4 命中推进到 5', async () => {
+  const fixture = await setup_k19((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`tequip:${CID}:19`, 1); // 肛珠已插入
+    f.store.set(`cflag:${CID}:320`, 4);
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`abl:${CID}:3`, 3);
+  }, 19);
+  await speak_k19(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「呼啊啊……主人……请……更多的……呜……玩弄……我吧……」',
+    '菲娅红着脸用纤细的小手分开菊穴，感受着肛珠被一颗一颗塞进去的异样的快感。',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${CID}:320`), 5, 'CFLAG:320 推进到 5');
+});
+
+// —— #688：SELF_KOJO 调教后自慰「尻穴狂」档不再叠加淫乱要求 ——
+
+test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=3 命中推进到 4', async () => {
+  const fixture = await setup_k19((f) => {
+    f.store.set('tflag:13', 1); // 初吻与自我口上 === 1 → 调教后自慰段
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${CID}:261`, 3);
+    f.store.set(`talent:${CID}:77`, 1); // 尻穴狂
+  });
+  await self_k19(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「主人……想被主人……疼爱后面……想和主人……更加的……亲热……」',
+    '菲娅轻弄着雏菊，朝你撒着娇。',
+    '「主人……哈啊……主人…………❤」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${CID}:261`), 4, 'CFLAG:261 推进到 4');
+});
