@@ -656,6 +656,7 @@ async function tailor_accessory(cid) {
   for (;;) {
     // 页码两边都不补位（本库分页显示的统一写法）
     era.print(`□装备品 (${page + 1}/${ACCESSORY_PAGE_MAX + 1}页)`);
+    era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
     for (const item of ACCESSORY_ITEMS) {
       if (item.page !== page) continue;

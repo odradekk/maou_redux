@@ -447,6 +447,10 @@ test('tailor_accessory：页码两边都不补位（(1/5页) 格式）', async (
   const titles = texts(draw).filter((t) => t.includes('□装备品'));
   assert.equal(titles[0], '□装备品 (1/5页)', '首页页码');
   assert.equal(titles[1], '□装备品 (2/5页)', '下一页页码');
+  assert.ok(
+    texts(draw).includes('所持金：10000000点'),
+    '装备品页保留所持金行',
+  );
 });
 
 test('tailor_accessory：r = 98/99（尿道导管 / 贞操带）的额外演出', async () => {
