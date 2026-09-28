@@ -63,10 +63,7 @@ test('11 种怪物分派：各自可调用、输出非空、返回 0', async () 
     const result = await mod[export_name](31, 5, seq_rand(0));
     assert.equal(result, 0, `${export_name} 应返回 0（RETURN 0）`);
     const lines = fixture.text_lines();
-    assert.ok(
-      lines.length > 0,
-      `${export_name}（${erb_name}）应输出文本`,
-    );
+    assert.ok(lines.length > 0, `${export_name}（${erb_name}）应输出文本`);
     assert.ok(
       lines.some((l) => l.includes('冒险者')),
       `${export_name} 应含被凌辱者名字（%SAVESTR:ARG%）`,

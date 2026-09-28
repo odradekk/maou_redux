@@ -152,7 +152,11 @@ test('KOJO_MESSAGE_MARKCNG：无存在判定（旧引擎的存在判定行是注
   kojo_message_markcng_family.register(3, probe(seen));
   const rand = always;
   await kojo_message_markcng(rand);
-  assert.deepEqual(seen, [[rand]], '没有存在判定这道闸（旧引擎里该行是注释态）');
+  assert.deepEqual(
+    seen,
+    [[rand]],
+    '没有存在判定这道闸（旧引擎里该行是注释态）',
+  );
 });
 
 // —— GOHOUBI_REQUEST_KOUJO ——
@@ -532,11 +536,7 @@ test('缺席语义：未命中一律静默（TRYCALLFORM 落空，#565 返工统
       `${row.entry}：缺 handler 时返回 ${JSON.stringify(missing_value)}（TRYCALL 落空）`,
     );
     // 未命中一律静默（#565 返工），各入口没有差别
-    assert.deepEqual(
-      lines,
-      [],
-      `${row.entry}：未命中静默（TRYCALLFORM 落空）`,
-    );
+    assert.deepEqual(lines, [], `${row.entry}：未命中静默（TRYCALLFORM 落空）`);
   }
 });
 

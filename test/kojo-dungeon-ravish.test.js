@@ -87,10 +87,7 @@ test('13 个函数（12 怪物 + PC_RYOU）分派：各自可调用、输出非�
     }
     assert.equal(result, 0, `${export_name} 应返回 0（RETURN 0）`);
     const lines = fixture.text_lines();
-    assert.ok(
-      lines.length > 0,
-      `${export_name}（${erb_name}）应输出文本`,
-    );
+    assert.ok(lines.length > 0, `${export_name}（${erb_name}）应输出文本`);
   }
 });
 
