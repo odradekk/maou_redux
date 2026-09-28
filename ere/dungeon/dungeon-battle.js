@@ -1,17 +1,14 @@
 /**
  * @file 队伍战斗（issue #175，阶段 3 H6）：勇者队伍 vs 怪物。
  *
- * H6 之前这里是 ere/dungeon/dungeon.js 的三处带记录存根之一（H3 留）：
- * 存根不改 CFLAG:1，勇者不掉血必然推到第 9 层（#168 结论 1 认可的中间
- * 状态）。本文件接上真身后勇者会掉 HP/气力、会投降（death_check 写
- * CFLAG:1 = 0）、run_dungeon 主循环据此刻 BREAK 并走 get_down_enemy。
- *
+ * 勇者会掉 HP/气力、会投降（death_check 写 CFLAG:1 = 0）、run_dungeon
+ * 主循环据此刻 BREAK 并走 get_down_enemy。
  * 说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 钉下）：名字承载一律 `callname:${id}:-1`
  *     （#5 决议），统一走本文件 name_of；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（run_dungeon
  *     第二参先例）。**死赋值处的 RAND 消费照掷**（ATK_TURN =
- *     RAND:3 之后无读者）——PRNG 序列逐位对齐是种子化对比测试的
+ *     RAND:3 之后无读者）——PRNG 序列逐位确定是种子化回归测试的
  *     前提（#173 mulberry32 先例）；
  *   - 全局 A/B/C/X/Y/Z/W/TURN 的换手改显式传参与返回值（#5 决议
  *     第六条）：A/ATKER → atker 参数，W 数组 → equip-lookup 的装备记录
@@ -53,8 +50,8 @@ const {
 const magic_mod = require('#/dungeon/magic');
 const monster_skill_mod = require('#/dungeon/monster-skill');
 // H9（#178）任务真身：QUEST_BATTLE_SET / RESULT_QUEST 经模块对象引用
-// （对比测试可替换导出）。dungeon-quest 对本文件的 CAMPAIGN_MONSTER_LIST
-// 存根是函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
+// （对比测试可替换导出）。dungeon-quest 回引本文件的 CAMPAIGN_MONSTER_LIST
+// 走函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
 // battle_mod 同构）。
 const quest_mod = require('#/dungeon/dungeon-quest');
 const {
@@ -89,7 +86,7 @@ function she(cid) {
   return (era.get(`talent:${cid}:122`) || 0) !== 0 ? '他' : '她';
 }
 
-// —— 存根层（#175 登记，归属见 docs/stub-registry.md）——
+// —— 跨域转发与缺省实现（真身在其它域，经模块对象引用避免循环依赖）——
 
 // quest_battle_set / result_quest：#178（H9）
 // 起为真身 ere/dungeon/dungeon-quest.js 的 quest_battle_set / result_quest
@@ -97,8 +94,7 @@ function she(cid) {
 
 /**
  * CAMPAIGN_MONSTER_LIST：战役迷宫的出现
- * 怪物表。RESULT 预置 190（骸骨缺省，非旧存根实际返回的 undefined
- * ——旧 JSDoc 写「恒 0」但 stub_line 本身无返回值，据实修正）。
+ * 怪物表。RESULT 预置 190（骸骨缺省）。
  * @param {number} floor 阶层
  * @param {(n: number) => number} [rand] RAND:N 随机源，透传给
  *   CAMPAIGN_MONSTER_LIST_1 的 DICE = RAND:3（缺省均匀随机，与调用方
@@ -128,9 +124,7 @@ async function before_autotrain() {
 
 /**
  * source_check_auto（调教域工单，#461 起真身）：自动调教结算。调用点同
- * before_autotrain 一族（曾散见迷宫域四文件，详见
- * docs/stub-registry.md）
- * 与真身分属迷宫域与 event 域，接入走
+ * before_autotrain 一族，调用点曾散见迷宫域四文件）
  * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
  * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
  *
@@ -562,7 +556,7 @@ function pick_defender_column() {
  * @param {number} arg1 先后手（0 先手 / 1 后手 / 2 先制）
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {Promise<number>} 0 = 通常 / 1 = 怪物（列）全灭 /
- *   999 = 战斗中断（magic 存根期不可达）
+ *   999 = 战斗中断（MAGIC 的 target_type 1 分支产物，当前战斗恒 0）
  */
 async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
@@ -594,7 +588,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 1;
   }
 
-  // B = C; CALL magic,1; C = B（magic 可重定向目标列——存根不动）
+  // B = C; CALL magic,1; C = B（magic 可重定向目标列——dungeon.js 转发不动目标）
   let target_head = c;
   if ((await magic_mod.magic(1, arg0, target_head, rand, move_ctx)) === 999) {
     return 999;
@@ -1049,7 +1043,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
   // IDを先頭に（数量槽 99/199/299 → 列头 0/100/200，与同构三处一致）
   monid -= 99;
 
-  // B = MONID; CALL magic,2（存根不动目标）
+  // B = MONID; CALL magic,2（dungeon.js 转发不动目标）
   if ((await magic_mod.magic(2, arg0, monid, rand, move_ctx)) === 999) {
     return 999;
   }
@@ -1231,11 +1225,11 @@ async function victory_get(arg0, rand) {
     await era.waitAnyKey();
   }
 
-  // CALL karma, (ARG:0), -5（dungeon.js 的既有存根，不动值）
+  // CALL karma, (ARG:0), -5（dungeon.js 的域内存根，不改值）
   const { karma } = require('#/dungeon/dungeon');
   karma(arg0, -5);
 
-  // CALL add_ex_item, -1, (ARG:0), 0（存根恒 0 = 没找到）
+  // CALL add_ex_item, -1, (ARG:0), 0（dungeon.js 的域内存根，缺省 0 = 没找到）
   const { add_ex_item } = require('#/dungeon/dungeon');
   const found = await add_ex_item(-1, arg0, 0);
 
@@ -1361,7 +1355,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
 
   // === 攻撃順 ===
   // ATK_TURN = RAND:3——全函数无读者，死赋值；
-  // 掷点照掷（PRNG 序列逐位对齐是种子化对比测试的前提，文件头），
+  // 掷点照掷（PRNG 序列逐位确定是种子化回归测试的前提，文件头），
   // 变量不写入
   rand_n(3);
 
@@ -1489,7 +1483,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     const atker = select_atker(arg0, turn);
     atker_slot = atker;
 
-    // 消耗品を使用するかチェック（存根）
+    // 消耗品を使用するかチェック（dungeon.js 转发）
     const { use_ex_item } = require('#/dungeon/dungeon');
     await use_ex_item('战斗中', atker);
 
@@ -1559,7 +1553,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     // ATK_TURN += 1——死赋值（无读者），不写入（文件头注释）
   }
 
-  // クエスト结算——#178 真身起两个分支第一次可达（存根期 QUEST_FLAG
+  // クエスト结算——#178 真身起两个分支第一次可达（此前 QUEST_FLAG
   // 恒 0）：任务战斗（quest_flag === 2）按战果 SUCCESS 走成功/失败结算
   if (quest_flag === 2 && success.v === 1) {
     await quest_mod.result_quest(arg0, '成功', rand);

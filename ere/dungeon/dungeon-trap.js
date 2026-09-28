@@ -23,8 +23,8 @@
  *   - D:1（帰還フラグ，六处写 1）：全库
  *     无读者（#172 已核，AGENT 版是死代码），
  *     不落变量、注释留痕；
- *   - TIMES X, 0.80 / 1.30 → Math.floor(x * 0.8 / 1.3)（截断，技能手册
- *     math-etc.md「整数乘以小数」）；
+ *   - TIMES X, 0.80 / 1.30 → Math.floor(x * 0.8 / 1.3)（截断——整数乘小数
+ *     后舍去小数部分）；
  *   - SETCOLORBYNAME / RESETCOLOR（A_WORM 段与诈骗陷阱多处）：
  *     配色不做、注释留痕（#175 同款结论——玩家可见的行序与文案完全一致）；
  *   - PLAYER = 0（A_WORM / LOVE_BUG 段）：_AUTO 本体不读（只读
@@ -36,8 +36,7 @@
  *   - KARMA（DARK_JUEL 段）经函数内延迟 require 引用 dungeon.js 的
  *     域内存根（避开循环初始化，#175 先例）；
  *   - BEFORE_AUTOTRAIN 经模块对象引用 dungeon-battle.js 的同名转发（该
- *     转发自 #508 起指向 ere/event/event-autotrain.js 的真身；原本只是
- *     #175 的占位），测试可替换；COM0_AUTO / COM3_AUTO / COM13_AUTO /
+ *     转发自 #508 起指向 ere/event/event-autotrain.js 的真身），测试可替换；
  *     COM50_AUTO 自 #500 起直调 ere/event/event-autotrain.js 的真身；
  *     CAMPAIGN_TRAP 是 #469 起的族真身；SUMMON_MONSTER 已复用
  *     monster-summon.js 真身；
@@ -89,7 +88,7 @@ function cbit(cid, idx, bit) {
   return ((era.get(`cflag:${cid}:${idx}`) || 0) & bit) !== 0;
 }
 
-// —— 战役陷阱槽（#469 起族真身，归属见 docs/stub-registry.md）——
+// —— 战役陷阱槽（#469 起族真身）——
 
 /**
  * campaign_trap：战役迷宫的陷阱槽读值。
@@ -1045,8 +1044,8 @@ async function imitater_trap(a, rand_n) {
 }
 
 /**
- * summon_trap：召唤陷阱（ITEM:69）。召唤怪物（存根）+
- * 高难度时体力损耗。
+ * summon_trap：召唤陷阱（ITEM:69）。召唤怪物
+ * （monster-summon.js 真身）+ 高难度时体力损耗。
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function summon_trap(a, rand_n) {

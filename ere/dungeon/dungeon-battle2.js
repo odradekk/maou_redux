@@ -52,7 +52,7 @@ function clitoris_word(cid) {
   return (era.get(`talent:${cid}:122`) || 0) !== 0 ? '阴茎' : '阴核';
 }
 
-// —— 存根层（#175 登记）——
+// —— 跨域转发与辅助函数 ——
 
 /**
  * pc_ryou（#182 H13）：败者被凌辱的演出
@@ -317,7 +317,7 @@ function attack_chara_extra_dmg_battle2(
  * @param {number} arg3 战斗种别（0 勇者→奴隶 / 1 奴隶→勇者 / 2 圣灵→奴隶 /
  *   3 奴隶→圣灵）
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 0 = 通常 / 999 = 中断（magic 存根期不可达）
+ * @returns {Promise<number>} 0 = 通常 / 999 = 中断（MAGIC 的 target_type 1 分支产物，当前战斗恒 0）
  */
 async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
@@ -363,7 +363,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   // 戦闘前発動スキル（行内标签）
   const skill_tag = battle.skill_extra_bonus(arg0, rand);
 
-  // セリフ（口上存根，dungeon-battle.js 单点登记）
+  // セリフ（口上走 dungeon-battle.js 的 attack_koujo，单点实现）
   if ((settings & 32) !== 0) {
     await battle.attack_koujo(arg0);
   }

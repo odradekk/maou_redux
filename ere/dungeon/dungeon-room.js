@@ -20,7 +20,7 @@
  *     Math.random，run_dungeon 第二参透传——迷宫/陷阱/房间共用同一随机源，
  *     #176 先例）。**注意店遭遇掷（RAND:10）在早退之后、无条件的
  *     掷点**：换真身后侵攻勇者的房间调用每次消费一枚随机数，其后的
- *     PRNG 序列相对存根期整体不一致（ending_2 e2e 的天数区间已为此留余量）；
+ *     PRNG 序列随之整体改变（ending_2 e2e 的天数区间已留余量）；
  *   - 全局 A / RESULT / D:20 的换手改显式传参与返回值（#5 决议第六条）：
  *     A → 各函数首参；RESULT → dungeon_room 返回值（1 = 店遭遇，该房间
  *     不发生战斗，run_dungeon 的 NO_BATTLE 累加）；D:20（侵攻度，
@@ -109,7 +109,7 @@ function expansion_text(extra, names) {
  *
  * 迎击中（CFLAG:1 == 3）是建設（ROOM_BUILD 后直接返回）；侵攻/战役中
  * （2/12）先掷 1/10 的店遭遇（RESULT 1 = 该房间不发生战斗——
- * run_dungeon 的 NO_BATTLE 累加，存根期恒 0），再按 FLAG:(阶层+349)
+ * run_dungeon 的 NO_BATTLE 累加），再按 FLAG:(阶层+349)
  * 分发八种设施。战役（12）的房间表来自 campaign_room / campaign_room_extra
  * 族（未注册战役时恒 0，无设施效果）。
  *
@@ -1134,7 +1134,8 @@ async function dungeon_museum(a, extra, rand_n) {
  * 低善恶百合素质 / 低善恶扶她 / 低善恶男人 → 4 女淫魔；正太控（143）→ 1；
  * 萝莉控（142）→ 2（最后两支最高优先）。MENU == 0（无性癖交集）直接
  * 离开；否则从勇者所持金扣 COST、魔王侧入账、善恶值 -1（karma 域内
- * 延迟 require 存根）。
+ * 离开；否则从勇者所持金扣 COST、魔王侧入账、善恶值 -1（karma 域内存根，
+ * 延迟 require）。
  *
  * @param {number} a 受者（全局 A）
  * @param {number} extra 扩张位域（ARG:0）
