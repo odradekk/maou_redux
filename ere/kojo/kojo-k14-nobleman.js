@@ -34,7 +34,7 @@
  * 六函数（EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/GROTESQUE）
  * 全部是**未填写的模板骨架**——保留完整的分支状态机（各
  * SELECTCOM 与 CFLAG 计数器写入齐全），但 PRINTFORMW 均为空参数（
- * `PRINTFORMW ` 后无任何正文，合计 942 处）。这不是转译器漏译——本文件
+ * `PRINTFORMW ` 后无任何正文，合计 942 处）。这不是转换漏译——本文件
  * 角色（貴公子/K14）就是只填了开头/结束/部分特殊指令口上、其余指令留空的
  * 模板残片；未填写的 PRINTFORMW 一律保留为 `await era.printAndWait('')`
  * （与 K9 相同，逐行核对确认，不补写台词）。
@@ -4885,7 +4885,7 @@ async function dog_kojo_14(rand) {
 /**
  * kojo_message_palamcng_14：参数变动口上（CFLAG:221-230
  * 首次超 Lv2/绝顶/处女丧失 事件口上）。本地 P/A 变量由复核补声明（见
- * 文件头转译器 review 清单）。空模板（1 处填空除外），保留计数器写入。
+ * 文件头 review 清单）。空模板（1 处填空除外），保留计数器写入。
  */
 async function kojo_message_palamcng_14(rand) {
   void rand;

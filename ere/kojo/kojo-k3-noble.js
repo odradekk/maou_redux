@@ -1,5 +1,5 @@
 /**
- * @file 高貴性格口上 K3：指令口上（issue #46 黄金样本切片 + issue #234 全量复核）。
+ * @file 高貴性格口上 K3：指令口上（issue #46 首批切片 + issue #234 全量复核）。
  *
  * == 状态机（CFLAG:301，注释「コマンド実行時のセリフ CFLAG 301～400
  *    を使用」） ==
@@ -416,7 +416,7 @@ async function kojo_message_com_3(rand) {
         }
       }
     } else if (
-      // それ以外（百位 2xx 阶段；黄金样本在此）
+      // それ以外（百位 2xx 阶段；典型样本在此）
       mark(2) <= 1 &&
       (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
     ) {
@@ -483,13 +483,13 @@ async function kojo_message_com_3(rand) {
         );
         kojo.爱抚 = 203;
       } else {
-        // ;;ランダムで口上が変化する——黄金样本 emuera.log:26
+        // ;;ランダムで口上が変化する——样本记录
         if (rand_n(3) === 0) {
           await era.printAndWait('「呀…啊、不要啊……请、请快住手，停下来吧…」');
         } else if (rand_n(2) === 0) {
           await era.printAndWait(
             `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,
-          ); // 黄金样本逐字比对（test/kojo-k3-noble.test.js）
+          ); // 与样本比对（test/kojo-k3-noble.test.js）
         } else {
           await era.printAndWait(
             '「嗯~、嗯~嗯~……明明…说了、快住手了……啊嗯~……」',
@@ -12626,7 +12626,7 @@ async function osioski_koujo_k3(rand, cid, choice) {
 }
 // #570 起返回语尾文字、不打印（PRINT 不换行，由调用方拼进同一行）。
 // 形参序修正为 (arg_0, rand)：#403 起曾写反成 (rand, arg_0 = 0)，族实参
-// [arg0, rand] 反接后真调用即 TypeError（登记在 docs/stub-registry.md 的
+// [arg0, rand] 反接后真调用即 TypeError（当时登记的
 // GOBI_KOUJO 行，随这张工单修正）。
 function gobi_koujo_k3(arg_0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));

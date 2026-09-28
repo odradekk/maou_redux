@@ -20,7 +20,7 @@
  * BENKI（肉便器）、GOHOUBI_REQUEST/AFTER、OSIOKI、NTR、处刑系五入口、
  * COLOSSEUM（死斗场）、DOG（兽奸）、GOBI（语尾）。
  *
- * 这张票存根（docs/stub-registry.md）：仅 KOJO_MESSAGE_COM_0 的
+ * 备注：仅 KOJO_MESSAGE_COM_0 的
  * SELECTCOM 尚未实现的其余指令分支（后续切片填文本）。其余 SELECTCOM：
  * 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
