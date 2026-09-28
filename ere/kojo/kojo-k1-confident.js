@@ -9,7 +9,7 @@
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
 
-/* eslint-disable no-irregular-whitespace -- 台词含源 ERB 全角空格（U+3000），1:1 保真 */
+/* eslint-disable no-irregular-whitespace -- 台词含全角空格（U+3000），按原样保留 */
 
 const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
@@ -53,7 +53,7 @@ const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 const MASTER = 0;
 
-// @EVENTTRAIN
+// EVENTTRAIN #PRI 档
 on(
   'EVENTTRAIN',
   () => {
@@ -68,7 +68,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND
+// EVENTEND #LATER 档
 on(
   'EVENTEND',
   () => {
@@ -79,7 +79,7 @@ on(
   TIER.LATER,
 );
 
-// @EVENTTRAIN
+// EVENTTRAIN NORMAL 档
 on(
   'EVENTTRAIN',
   async (rand) => {
@@ -857,7 +857,7 @@ on(
   TIER.NORMAL,
 );
 
-// @K1_KOJO2
+// k1_kojo2
 async function k1_kojo2(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -1154,7 +1154,7 @@ async function k1_kojo2(rand) {
   return 0;
 }
 
-// @EVENTEND
+// EVENTEND NORMAL 档
 on(
   'EVENTEND',
   async () => {
@@ -1286,7 +1286,7 @@ on(
   TIER.NORMAL,
 );
 
-// @KOJO_MESSAGE_COM_1
+// kojo_message_com_1
 async function kojo_message_com_1(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -6970,8 +6970,8 @@ async function kojo_message_com_1(rand) {
             rand_n(3) === 0 &&
             (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
           ) {
-            // 原作是一整行：无后缀 PRINTFORM + SIF 的 PRINTFORM
-            // + 收行的 PRINTFORML（#622）。SIF 判据提到语句外当条件、文本留在语句里
+            // 同一行输出：无后缀 PRINTFORM + SIF 的 PRINTFORM
+            // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里
             const masturbation = era.get(`abl:${target}:31`) >= 3;
             await era.print(
               `于是${target_name}将自己的本名、至今为止的性体验` +
@@ -7059,9 +7059,9 @@ async function kojo_message_com_1(rand) {
         } else {
           // 无后缀 PRINTFORM 前缀（%SAVESTR:PLAYER%），与 IF 链首支的收行
           // 同属一行（#622）。各支自带收行，前缀在分支外取值；首支那句把整行写在
-          // 一起（拼接锚的槽位序要含 %SAVESTR:PLAYER%）
+          // 一起（拼接基准的槽位序要含 %SAVESTR:PLAYER%）
           const chat_prefix = `一边与${player_name}`;
-          // 快感装备（11/13/14/15/16/17 任一）→「快乐的」、:4796 痛苦装备（44/49）
+          // 快感装备（11/13/14/15/16/17 任一）→「快乐的」、痛苦装备（44/49）
           const equip_pleasure =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -7096,7 +7096,7 @@ async function kojo_message_com_1(rand) {
               era.get(`talent:${target}:76`)) &&
             era.get(`palam:${target}:5`) >= PALAMLV[4]
           ) {
-            // 原作是一整行：无后缀 PRINTFORM + IF/ELSEIF 的
+            // 同一行输出：无后缀 PRINTFORM + IF/ELSEIF 的
             // PRINT（互斥两支）+ 收行的 PRINTFORML（#622）
             await era.print(
               chat_prefix +
@@ -7170,7 +7170,7 @@ async function kojo_message_com_1(rand) {
             rand_n(3) === 0 &&
             (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
           ) {
-            // 与 :4747+:4749+:4750 同型（#622）
+            // 与上一段同型（#622）
             const masturbation = era.get(`abl:${target}:31`) >= 3;
             await era.print(
               `于是${target_name}将自己的本名、至今为止的性体验` +
@@ -7256,10 +7256,10 @@ async function kojo_message_com_1(rand) {
         if (era_flag.assi > 0 && era_flag.assiplay) {
           await era.printAndWait('');
         } else {
-          // 与 :4786-4787 同型（#622）：无后缀 PRINTFORM 前缀与 IF 链首支
+          // 与上一段同型（#622）：无后缀 PRINTFORM 前缀与 IF 链首支
           // 的收行同属一行，各支自带收行、前缀在分支外取值
           const chat_prefix = `${player_name}让`;
-          // 快感装备（11/13/14/15/16/17 任一）→「快乐的」、:4882 痛苦装备（44/49）
+          // 快感装备（11/13/14/15/16/17 任一）→「快乐的」、痛苦装备（44/49）
           const equip_pleasure =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -7295,7 +7295,7 @@ async function kojo_message_com_1(rand) {
               era.get(`talent:${target}:76`)) &&
             era.get(`palam:${target}:5`) >= PALAMLV[4]
           ) {
-            // 原作是一整行（#622）
+            // 同一行输出（#622）
             await era.print(
               chat_prefix +
                 `${target_name}一边发出着` +
@@ -8360,7 +8360,7 @@ async function kojo_message_com_1(rand) {
   return 0;
 }
 
-// @DOG_KOJO_1
+// dog_kojo_1
 async function dog_kojo_1(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -9240,7 +9240,7 @@ async function dog_kojo_1(rand) {
           await era.printAndWait(
             `「初次见面请多关照！　${target_name}呢。放弃了继续作为${get_look_info(target, '种族')}的一员！」`,
           );
-          // 原作是一整行：无后缀 PRINTFORM + IF/ELSE 的
+          // 同一行输出：无后缀 PRINTFORM + IF/ELSE 的
           // PRINT（互斥两支）+ 收行的 PRINTFORMW（#622）
           await era.printAndWait(
             `「现在是优秀的` +
@@ -9253,9 +9253,9 @@ async function dog_kojo_1(rand) {
           await era.printAndWait(
             `「请看吧${sc()}真的交尾喽、小鸡鸡叽咕叽咕的做吧${heart(1)}」`,
           );
-          // 原作是一整行：无后缀
+          // 同一行输出：无后缀
           // PRINTFORM + IF/ELSEIF 的 PRINT（互斥六支）+ 收行的 PRINTFORMW（#622）。
-          // 判据提到语句外当条件、文本留在输出语句里
+          // 条件提到语句外当条件、文本留在输出语句里
           const former_life = era.get(`talent:${target}:成为勇者前的生活`);
           await era.printAndWait(
             `「在最后` +
@@ -9273,8 +9273,8 @@ async function dog_kojo_1(rand) {
               `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,
           );
         } else if (era.get(`talent:${target}:76`) === 1) {
-          // 原作是一整行：无后缀 PRINTFORM + SIF 的 PRINTFORM
-          // + 收行的 PRINTFORML（#622）。SIF 判据提到语句外当条件、文本留在语句里
+          // 同一行输出：无后缀 PRINTFORM + SIF 的 PRINTFORM
+          // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里
           const masturbation = era.get(`abl:${target}:31`) >= 3;
           await era.print(
             `${target_name}说出了自己的本名和至今为止关于性的体验` +
@@ -9285,7 +9285,7 @@ async function dog_kojo_1(rand) {
             `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,
           );
         } else if (era.get(`talent:${target}:85`) === 1) {
-          // 与 :6374+:6376+:6377 同型（#622）
+          // 与上一段同型（#622）
           const masturbation = era.get(`abl:${target}:31`) >= 3;
           await era.print(
             `${target_name}说出了自己的本名和至今为止关于性的体验` +
@@ -9320,7 +9320,7 @@ async function dog_kojo_1(rand) {
           await era.printAndWait(
             `「大家好！　${target_name}呢。放弃了继续作为${get_look_info(target, '种族')}的一员！」`,
           );
-          // 与 :6341+:6344+:6346+:6348 同型（#622）
+          // 与上一段同型（#622）
           await era.printAndWait(
             `「现在是优秀的` +
               (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +
@@ -9356,7 +9356,7 @@ async function dog_kojo_1(rand) {
           era.get(`talent:${target}:76`) === 1 &&
           (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 === 2)
         ) {
-          // 与 :6374+:6376+:6377 同型（#622）
+          // 与上一段同型（#622）
           const masturbation = era.get(`abl:${target}:31`) >= 3;
           await era.print(
             `${target_name}说出了自己的本名和至今为止关于性的体验` +
@@ -9372,7 +9372,7 @@ async function dog_kojo_1(rand) {
           era.get(`talent:${target}:85`) === 1 &&
           (chara(target).kojo.交谈 <= 2 || game.kojo.口上开关 === 2)
         ) {
-          // 与 :6374+:6376+:6377 同型（#622）
+          // 与上一段同型（#622）
           const masturbation = era.get(`abl:${target}:31`) >= 3;
           await era.print(
             `${target_name}说出了自己的本名和至今为止关于性的体验` +
@@ -9403,7 +9403,7 @@ async function dog_kojo_1(rand) {
   return 0;
 }
 
-// @KOJO_MESSAGE_PALAMCNG_1
+// kojo_message_palamcng_1
 async function kojo_message_palamcng_1() {
   const target = era_flag.target;
   const player = era_flag.player;
@@ -9648,7 +9648,7 @@ async function kojo_message_palamcng_1() {
   }
 }
 
-// @KOJO_MESSAGE_MARKCNG_1
+// kojo_message_markcng_1
 async function kojo_message_markcng_1() {
   const target = era_flag.target;
 
@@ -9717,7 +9717,7 @@ async function kojo_message_markcng_1() {
   }
 }
 
-// @SELF_KOJO_K1
+// self_kojo_k1
 async function self_kojo_k1(rand, q) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -9728,7 +9728,7 @@ async function self_kojo_k1(rand, q) {
   const master_name = chara_name(MASTER);
   const sc = () => self_call(target);
   const scf = () => self_call_first(target);
-  // ERB \@ 三元（TALENT:76 淫乱）：玩家可见的是展开后的一侧，不是 \@ 字面
+  // \@ 三元（TALENT:76 淫乱）：玩家可见的是展开后的一侧，不是 \@ 字面
   const master_or_you =
     era.get(`talent:${target}:76`) === 1 ? '主人大人' : '你';
   const master_suffix = era.get(`talent:${target}:76`) === 1 ? '大人' : '';
@@ -10168,7 +10168,7 @@ async function self_kojo_k1(rand, q) {
             `「这可是我和老公的孩子、一定会生下皮毛可爱的孩子来的」`,
           );
         } else {
-          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）
+          // 无后缀 PRINTFORM 前缀，与上一段同型（#622）
           const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;
           if (rand_n(9) === 0) {
             await era.printAndWait(
@@ -10344,7 +10344,7 @@ async function self_kojo_k1(rand, q) {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_K1
+// dungeon_ryouzyoku_k1
 async function dungeon_ryouzyoku_k1() {
   const target = era_flag.target;
   const sc = () => self_call(target);
@@ -10452,7 +10452,7 @@ async function dungeon_ryouzyoku_k1() {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_AFTER_K1
+// dungeon_ryouzyoku_after_k1
 async function dungeon_ryouzyoku_after_k1() {
   const target = era_flag.target;
 
@@ -10509,7 +10509,7 @@ async function dungeon_ryouzyoku_after_k1() {
   }
 }
 
-// @BENKI_KOUJO_K1
+// benki_koujo_k1
 async function benki_koujo_k1() {
   const target = era_flag.target;
   const a = target;
@@ -10608,7 +10608,7 @@ async function benki_koujo_k1() {
   return 0;
 }
 
-// @DUNGEON_VICTORY_K1
+// dungeon_victory_k1
 async function dungeon_victory_k1(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -10667,7 +10667,7 @@ async function dungeon_victory_k1(rand) {
   return 0;
 }
 
-// @DUNGEON_ATTACK_K1
+// dungeon_attack_k1
 async function dungeon_attack_k1(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -10754,7 +10754,7 @@ async function dungeon_attack_k1(rand) {
   return 0;
 }
 
-// @COLOSSEUM_KOJO_1
+// colosseum_kojo_1
 async function colosseum_kojo_1() {
   const target = era_flag.target;
   const assi = era_flag.assi;
@@ -10802,15 +10802,15 @@ async function colosseum_kojo_1() {
   if (era_flag.selectcom === 31) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊呜…呜嗯…嗯咕…嗯…呼啊……」`);
-      // 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT
-      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里
+      // 同一行输出：无后缀 PRINTFORM + 两条 SIF 的 PRINT
+      // + 收行的 PRINTFORMW（#622）。SIF 条件提到语句外当条件、文本留在输出语句里
       const assi_has_penis =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
       const assi_has_strap =
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+        era.get('item:4') === 1; // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
       await era.printAndWait(
         `${assi_name}因为` +
           (assi_has_penis ? `真正的小鸡鸡` : '') +
@@ -10844,14 +10844,14 @@ async function colosseum_kojo_1() {
   if (era_flag.selectcom === 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊啊啊…啊！这、这样的…不行了不行了～！」`);
-      // 与 :7763+:7765+:7767+:7768 同型（#622）
+      // 与上一段同型（#622）
       const assi_has_penis =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
       const assi_has_strap =
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+        era.get('item:4') === 1; // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
       await era.printAndWait(
         `${assi_name}一边听着悲鸣一边用` +
           (assi_has_penis ? `真正的小鸡鸡` : '') +
@@ -10875,14 +10875,14 @@ async function colosseum_kojo_1() {
       await era.printAndWait(
         `「啊啊啊…啊！屁、屁股坏掉了呜啊…不行了不行了～！」`,
       );
-      // 与 :7763+:7765+:7767+:7768 同型（#622）
+      // 与上一段同型（#622）
       const assi_has_penis =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
       const assi_has_strap =
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+        era.get('item:4') === 1; // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
       await era.printAndWait(
         `${assi_name}一边听着悲鸣一边用` +
           (assi_has_penis ? `真正的小鸡鸡` : '') +
@@ -10911,7 +10911,7 @@ async function colosseum_kojo_1() {
   return 0;
 }
 
-// @NTR_KOUJO_K1
+// ntr_koujo_k1
 async function ntr_koujo_k1(rand, P) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -11037,7 +11037,7 @@ async function ntr_koujo_k1(rand, P) {
   return 0;
 }
 
-// @EXUCUTION_KOUJO_K1
+// exucution_koujo_k1
 async function exucution_koujo_k1() {
   const target = era_flag.target;
   const sc = () => self_call(target);
@@ -11053,7 +11053,7 @@ async function exucution_koujo_k1() {
   }
 }
 
-// @MUSEUM_KOUJO_K1
+// museum_koujo_k1
 async function museum_koujo_k1() {
   if (game.event.博物馆口上 === 0) {
     await era.printAndWait(`「这种死法讨厌啊啊！」`);
@@ -11081,7 +11081,7 @@ async function museum_koujo_k1() {
   }
 }
 
-// @BANISHMENT_KOUJO_K1
+// banishment_koujo_k1
 async function banishment_koujo_k1() {
   const target = era_flag.target;
   const sc = () => self_call(target);
@@ -11099,7 +11099,7 @@ async function banishment_koujo_k1() {
   }
 }
 
-// @PUBLIC_EXUCUTION_KOUJO_K1
+// public_exucution_koujo_k1
 async function public_exucution_koujo_k1() {
   if (game.event.公开处刑口上 === 0) {
     await era.printAndWait(`「讨厌啊…咿…呀咿咿！再也不会被弄坏了！」`);
@@ -11110,7 +11110,7 @@ async function public_exucution_koujo_k1() {
   }
 }
 
-// @GROTESQUE_KOUJO_K1
+// grotesque_koujo_k1
 async function grotesque_koujo_k1() {
   if (game.event.猎奇处刑口上 === 0) {
     await era.printAndWait('');
@@ -11129,7 +11129,7 @@ async function grotesque_koujo_k1() {
   }
 }
 
-// @ENTERENEMY_KOUJO_K1
+// enterenemy_koujo_k1
 async function enterenemy_koujo_k1() {
   const target = era_flag.target;
   const a = target;
@@ -11156,7 +11156,7 @@ async function enterenemy_koujo_k1() {
   }
 }
 
-// @GOHOUBI_REQUEST_KOUJO_K1
+// gohoubi_request_koujo_k1
 async function gohoubi_request_koujo_k1(cid) {
   const target = era_flag.target;
   const a = cid ?? target;
@@ -11168,8 +11168,8 @@ async function gohoubi_request_koujo_k1(cid) {
     chara(a).stronghold.要求奖赏 === 2 ||
     chara(a).stronghold.要求奖赏 === 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM + IF/ELSEIF 的
-    // PRINT（互斥三支）+ 收行的 PRINTFORMW（#622）。判据提到语句外、文本留在语句里
+    // 同一行输出：无后缀 PRINTFORM + IF/ELSEIF 的
+    // PRINT（互斥三支）+ 收行的 PRINTFORMW（#622）。条件提到语句外、文本留在语句里
     const reward = chara(a).stronghold.要求奖赏;
     await era.printAndWait(
       `「胜利之后、想要和` +
@@ -11193,7 +11193,7 @@ async function gohoubi_request_koujo_k1(cid) {
   }
 }
 
-// @GOHOUBI_AFTER_KOUJO_K1
+// gohoubi_after_koujo_k1
 async function gohoubi_after_koujo_k1(cid, choice) {
   const target = era_flag.target;
   const a = cid ?? target;
@@ -11259,7 +11259,7 @@ async function gohoubi_after_koujo_k1(cid, choice) {
   }
 }
 
-// @OSIOKI_KOUJO_K1
+// osioski_koujo_k1
 async function osioski_koujo_k1(cid, choice) {
   const target = era_flag.target;
   const a = cid ?? target;
@@ -11317,7 +11317,7 @@ async function osioski_koujo_k1(cid, choice) {
   }
 }
 
-// @GOBI_KOUJO_K1, ARG:0
+// gobi_koujo_k1（ARG:0）
 function gobi_koujo_k1(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 

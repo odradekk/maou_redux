@@ -38,9 +38,9 @@ async function setup_k9(seed, selectcom = 0) {
   return fixture;
 }
 
-// —— @EVENTTRAIN：存在标志一对 ——
+// —— EVENTTRAIN：存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K9 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K9 一对）', async () => {
   const fixture = await setup_k9((f) => f.store.delete('flag:109'));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -50,7 +50,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K9 一对）',
   assert.equal(fixture.store.get('flag:109'), 0);
 });
 
-// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
 test('初調教（CFLAG:201 == 0）：人間分档，推进到 1', async () => {
   const fixture = await setup_k9();
@@ -111,12 +111,12 @@ test('崩坏（TALENT:9==1 && CFLAG:201<9）：推进到 9，只播一次', asyn
   assert.equal(
     fixture.text_lines()[0],
     '黑方片双眼毫无生气。',
-    '崩坏台词首句（守卫①放行才会执行到这里）',
+    '崩坏台词首句（检查①放行才会执行到这里）',
   );
   assert.equal(fixture.store.get('cflag:20:201'), 9, 'CFLAG:201 推进到 9');
 });
 
-test('NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕臂清 NTR 开关', async () => {
+test('NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕分支清 NTR 开关', async () => {
   const fixture = await setup_k9((f) => {
     f.store.set('cflag:20:201', 2);
     f.store.set('cflag:20:650', 1);
@@ -127,7 +127,7 @@ test('NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕臂清 NTR 开关',
   assert.equal(
     fixture.store.get('cflag:20:650'),
     0,
-    'NTR 开关清 0（守卫②放行才会执行到这里）',
+    'NTR 开关清 0（检查②放行才会执行到这里）',
   );
 });
 
@@ -143,7 +143,7 @@ test('简易助手（黑方片本人，NO:ASSI==20）首次：默认分支推进
   assert.equal(fixture.store.get('cflag:20:202'), 1, 'CFLAG:202 首次推进到 1');
 });
 
-// —— 家族注册接线（issue #240 自检 ④ top-level-wiring）——
+// —— 家族注册接入（issue #240 自检 ④ top-level-wiring）——
 
 test('20 个分发族全部注册了 K9（key 9）', async () => {
   const fixture = await setup_k9();
@@ -199,7 +199,7 @@ test('20 个分发族全部注册了 K9（key 9）', async () => {
   }
 });
 
-// —— @KOJO_MESSAGE_COM_9：指令口上族 + 头部七道守卫 ——
+// —— kojo_message_com_9：指令口上族 + 头部七道检查 ——
 
 async function speak_k9(fixture, rand) {
   const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
@@ -233,7 +233,7 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
 });
 
 test('SELECTCOM==22 爱慕支：CFLAG:16 >= 0（已初吻）才出那句亲吻，未初吻不出', async () => {
-  // 原作 :2438 与 :2448 都是 `SIF CFLAG:16 >= 0`——CFLAG:16 属 train 域
+  // 亲吻分支都是 `SIF CFLAG:16 >= 0`——CFLAG:16 属 train 域
   // （chara-train.js 的 初吻对象，未経験は -1 初期化）。#493 复核发现的第 14 处：
   // 修前经 kojo 域切片别名读不存在的「初吻对象」，`undefined >= 0` 恒假、
   // 两句恒不出。RAND:3 与 RAND:2 两支各走一处，两支都断言。
@@ -292,7 +292,7 @@ test('SELECTCOM==22 爱慕支：CFLAG:16 >= 0（已初吻）才出那句亲吻�
   }
 });
 
-test('头部守卫①-⑦：ASSIPLAY/口塞/失神/兽奸/死斗场/崩坏/触手 各自静默跳过或岔走真身', async () => {
+test('头部检查①-⑦：ASSIPLAY/口塞/失神/兽奸/死斗场/崩坏/触手 各自静默跳过或岔走真身', async () => {
   const assiplay = await setup_k9((f, era_flag) => {
     era_flag.assi = 21;
     era_flag.assiplay = 1;
@@ -316,7 +316,7 @@ test('头部守卫①-⑦：ASSIPLAY/口塞/失神/兽奸/死斗场/崩坏/触�
   assert.deepEqual(
     dog.text_lines(),
     [''],
-    '全篇为未填写模板，非头部守卫②等落到 SELECTCOM==0 的实际台词',
+    '全篇为未填写模板，非头部检查②等落到 SELECTCOM==0 的实际台词',
   );
 
   const colosseum = await setup_k9((f) => {
@@ -354,7 +354,7 @@ test('COLOSSEUM SELECTCOM==31：ITEM:PBAND(=4) 修正为 item:4，非字符串�
   );
 });
 
-// —— @KOJO_MESSAGE_PALAMCNG_9 / @KOJO_MESSAGE_MARKCNG_9 ——
+// —— kojo_message_palamcng_9 / kojo_message_markcng_9 ——
 
 test('KOJO_MESSAGE_PALAMCNG_9：P = PALAM:3 + UP:3 首次超过 PALAMLV:2 触发润滑首超', async () => {
   const fixture = await setup_k9();
@@ -382,7 +382,7 @@ test('KOJO_MESSAGE_MARKCNG_9：苦痛刻印变动==3 且 CFLAG:297==0 触发苦�
   assert.equal(fixture.store.get('cflag:20:297'), 1);
 });
 
-// —— @SELF_KOJO_K9 ——
+// —— self_kojo_k9 ——
 
 test('SELF_KOJO_K9 TFLAG:13==1（自慰）崩坏分支：TALENT:9==1 时走崩坏台词', async () => {
   const fixture = await setup_k9((f) => f.store.set('talent:20:9', 1));
@@ -401,7 +401,7 @@ test('SELF_KOJO_K9 TFLAG:13==4（调教后性交）：s 读 peek_aftertrain_s()�
   const era_flag = fixture.load_module('era-utils/era-flag');
   const aftertrain = fixture.load_module('event/event-aftertrain');
   era_flag.target = 20;
-  fixture.store.set('talent:20:85', 1); // 爱慕（AFTERTRAIN_SEX_CHECK 守卫）
+  fixture.store.set('talent:20:85', 1); // 爱慕（AFTERTRAIN_SEX_CHECK 检查）
   fixture.store.set('talent:20:0', 0); // 非处女
   fixture.store.set('talent:20:122', 0); // 非男性
   fixture.store.set('exp:20:5', 30);
@@ -496,7 +496,7 @@ test('GOBI_KOUJO_K9：ARG:0 取语尾编号（返回文字，#570）', async () 
   assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
 });
 
-test('BENKI_KOUJO_K9：门面 game.train.肉便器行动 判据', async () => {
+test('BENKI_KOUJO_K9：门面 game.train.肉便器行动 条件', async () => {
   const fixture = await setup_k9((f) => {
     f.store.set('talent:20:76', 1);
   });
@@ -577,18 +577,18 @@ test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且可
   assert.deepEqual(
     fixture.text_lines().slice(before),
     [''],
-    'GROTESQUE 分支路由错位（源无文本，PRINTFORMW 仍记空行）',
+    'GROTESQUE 分支路由错位（无文本，PRINTFORMW 仍记空行）',
   );
 });
 
-// —— #623 拆行合并：原作同一行输出合成一条 era.print（整行断言） ——
+// —— #623 拆行合并：同一行输出合成一条 era.print（整行断言） ——
 
 /** 含该片段的第一行（合并后整行断言用；找不到返回 undefined） */
 function line_with(fixture, fragment) {
   return fixture.text_lines().find((l) => l.includes(fragment));
 }
 
-test('#623 口塞初回：爱慕与それ以外两支的首段并入整行（:4146+:4148 / :4155+:4157）', async () => {
+test('#623 口塞初回：爱慕与それ以外两支的首段并入整行', async () => {
   const cases = [
     {
       label: '爱慕（TALENT:85）',
@@ -634,7 +634,7 @@ test('#623 口塞初回：爱慕与それ以外两支的首段并入整行（:41
   }
 });
 
-test('#623 口塞二回目：七档首段并入整行（:4169..:4236）', async () => {
+test('#623 口塞二回目：七档首段并入整行', async () => {
   const cases = [
     {
       label: '淫乱＋受虐狂Lv5',
@@ -705,7 +705,7 @@ test('#623 口塞二回目：七档首段并入整行（:4169..:4236）', async 
   }
 });
 
-test('#623 交谈录像：自我介绍整行合并（:4424+:4426+:4427 / :4475+:4477+:4478）', async () => {
+test('#623 交谈录像：自我介绍整行合并', async () => {
   for (const replay of [false, true]) {
     const cases = [
       {
@@ -734,7 +734,7 @@ test('#623 交谈录像：自我介绍整行合并（:4424+:4426+:4427 / :4475+:
   }
 });
 
-test('#623 交谈：六支各自并入前缀整行（:4440+:4442 / :4446.. / :4491+:4493 / :4497..）', async () => {
+test('#623 交谈：六支各自并入前缀整行', async () => {
   for (const replay of [false, true]) {
     const phase = replay ? '二回目' : '初回';
     // PALAMLV[4] 是内建常量 10000、PALAMLV[2] = 500（era-utils/palam-level）；
@@ -787,7 +787,7 @@ test('#623 交谈：六支各自并入前缀整行（:4440+:4442 / :4446.. / :44
       await speak_k9(fixture, () => 0);
       assert.ok(
         fixture.text_lines().includes(item.expected),
-        `${phase} ${item.label}：并入 :4440/:4491 前缀的整行`,
+        `${phase} ${item.label}：并入前缀的整行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === '你向她').length,
@@ -829,7 +829,7 @@ test('#623 交谈：六支各自并入前缀整行（:4440+:4442 / :4446.. / :44
   }
 });
 
-test('#623 死斗场：助手器具名并入整行（:7085.. / :7119.. / :7144..）', async () => {
+test('#623 死斗场：助手器具名并入整行', async () => {
   const groups = [
     {
       selectcom: 31,
@@ -877,7 +877,7 @@ test('#623 死斗场：助手器具名并入整行（:7085.. / :7119.. / :7144..
   }
 });
 
-test('#623 奖赏请求：野兽名并入整行（:7414+:7416+:7418+:7420+:7422）', async () => {
+test('#623 奖赏请求：野兽名并入整行', async () => {
   const cases = [
     { 要求: 1, beast: '狗' },
     { 要求: 2, beast: '猪' },

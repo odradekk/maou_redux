@@ -27,7 +27,7 @@ async function setup_k10(seed, selectcom = 0) {
   era_flag.assiplay = 0;
   era_flag.selectcom = selectcom;
   fixture.store.set('talent:20:170', 1); // 白梅花 → GET_KOJO_NUM = 110
-  fixture.store.set('talent:20:121', 1); // K10 EVENTTRAIN 自身第二道守卫（:83）
+  fixture.store.set('talent:20:121', 1); // K10 EVENTTRAIN 自身第二道检查
   fixture.store.set('flag:110', 1); // K10 存在标志
   fixture.store.set('flag:7', 2); // 口上总开关默认
   if (seed) {
@@ -38,9 +38,9 @@ async function setup_k10(seed, selectcom = 0) {
   return fixture;
 }
 
-// —— @EVENTTRAIN：存在标志一对 ——
+// —— EVENTTRAIN：存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K10 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K10 一对）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.delete('flag:110');
     f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机（避开 era.input() 分支）
@@ -54,7 +54,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K10 一对）'
   assert.equal(fixture.store.get('flag:110'), 0);
 });
 
-test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
+test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('flag:7', 0);
     f.store.set('cflag:20:201', 9); // 越过状态机（避开 era.input() 分支）
@@ -64,7 +64,7 @@ test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () =
   assert.equal(fixture.store.get('flag:7'), 2);
 });
 
-test('EVENTTRAIN 自身守卫①口上开关<0（玩家显式关掉）静默跳过', async () => {
+test('EVENTTRAIN 自身检查①口上开关<0（玩家显式关掉）静默跳过', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('flag:7', -1);
   });
@@ -74,7 +74,7 @@ test('EVENTTRAIN 自身守卫①口上开关<0（玩家显式关掉）静默跳�
   assert.equal(fixture.store.get('cflag:20:201'), undefined);
 });
 
-test('KOJO_MESSAGE_PALAMCNG_10 头部守卫①ASSI&&ASSIPLAY 静默跳过', async () => {
+test('KOJO_MESSAGE_PALAMCNG_10 头部检查①ASSI&&ASSIPLAY 静默跳过', async () => {
   const fixture = await setup_k10((f, era_flag) => {
     era_flag.assi = 21;
     era_flag.assiplay = 1;
@@ -86,7 +86,7 @@ test('KOJO_MESSAGE_PALAMCNG_10 头部守卫①ASSI&&ASSIPLAY 静默跳过', asyn
   assert.equal(fixture.store.get('cflag:20:221'), undefined);
 });
 
-test('KOJO_MESSAGE_MARKCNG_10 头部守卫①ASSI&&ASSIPLAY 静默跳过', async () => {
+test('KOJO_MESSAGE_MARKCNG_10 头部检查①ASSI&&ASSIPLAY 静默跳过', async () => {
   const fixture = await setup_k10((f, era_flag) => {
     era_flag.assi = 21;
     era_flag.assiplay = 1;
@@ -99,9 +99,9 @@ test('KOJO_MESSAGE_MARKCNG_10 头部守卫①ASSI&&ASSIPLAY 静默跳过', async
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
-test('EVENTTRAIN 自身双守卫：TALENT:170!=1 或 TALENT:121!=1 静默跳过', async () => {
+test('EVENTTRAIN 自身双检查：TALENT:170!=1 或 TALENT:121!=1 静默跳过', async () => {
   const fixture = await setup_k10((f) => f.store.set('talent:20:121', 0));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -140,7 +140,7 @@ test('屈服刻印 Lv1（CFLAG:201<2 && MARK:2==1）：推进到 2', async () =>
   assert.equal(fixture.store.get('cflag:20:201'), 2);
 });
 
-// —— @K10_KOJO2：二回目以降 ——
+// —— k10_kojo2：二回目以降 ——
 
 test('K10_KOJO2 崩坏（TALENT:9==1）：无值得期待的反应', async () => {
   const fixture = await setup_k10((f) => {
@@ -173,7 +173,7 @@ test('K10_KOJO2 MARK:3==3 分档：glasses_word 按 CFLAG:41 展开', async () =
   );
 });
 
-// —— 家族注册接线（issue #241 自检 ④ top-level-wiring）——
+// —— 家族注册接入（issue #241 自检 ④ top-level-wiring）——
 
 test('20 个分发族全部注册了 K10（key 10）', async () => {
   const fixture = await setup_k10();
@@ -229,7 +229,7 @@ test('20 个分发族全部注册了 K10（key 10）', async () => {
   }
 });
 
-// —— @KOJO_MESSAGE_COM_10：指令口上族 ——
+// —— kojo_message_com_10：指令口上族 ——
 
 async function speak_k10(fixture, rand) {
   const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
@@ -269,12 +269,12 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
   );
 });
 
-test('TEQUIP:89（兽奸PLAY）：头部守卫岔去 DOG_KOJO_10 真身', async () => {
+test('TEQUIP:89（兽奸PLAY）：头部检查岔去 DOG_KOJO_10 真身', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tequip:20:89', 1);
   }, 0);
   await speak_k10(fixture);
-  assert.deepEqual(fixture.text_lines(), ['']); // DOG_KOJO_10 平行状态机，源无文本，仍记空行
+  assert.deepEqual(fixture.text_lines(), ['']); // DOG_KOJO_10 平行状态机，无文本，仍记空行
   assert.equal(
     fixture.store.get('cflag:20:301'),
     1,
@@ -282,7 +282,7 @@ test('TEQUIP:89（兽奸PLAY）：头部守卫岔去 DOG_KOJO_10 真身', async 
   );
 });
 
-test('TEQUIP:55（死斗场）：头部守卫岔去 COLOSSEUM_KOJO_10 真身', async () => {
+test('TEQUIP:55（死斗场）：头部检查岔去 COLOSSEUM_KOJO_10 真身', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tequip:20:55', 1);
     f.store.set('base:20:1', 0);
@@ -291,9 +291,9 @@ test('TEQUIP:55（死斗场）：头部守卫岔去 COLOSSEUM_KOJO_10 真身', a
   assert.deepEqual(fixture.text_lines(), ['白梅花连站立的力气都没有了……']);
 });
 
-// —— 头部七道守卫的余下五道 ——
+// —— 头部七道检查的余下五道 ——
 
-test('ASSI>0 && ASSIPLAY：头部第 1 道守卫静默跳过', async () => {
+test('ASSI>0 && ASSIPLAY：头部第 1 道检查静默跳过', async () => {
   const fixture = await setup_k10((f, era_flag) => {
     era_flag.assi = 21;
     era_flag.assiplay = 1;
@@ -303,7 +303,7 @@ test('ASSI>0 && ASSIPLAY：头部第 1 道守卫静默跳过', async () => {
   assert.equal(fixture.store.get('cflag:20:301'), undefined);
 });
 
-test('TEQUIP:45（口塞）且 SELECTCOM!=45：头部第 2 道守卫静默跳过', async () => {
+test('TEQUIP:45（口塞）且 SELECTCOM!=45：头部第 2 道检查静默跳过', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tequip:20:45', 1);
   }, 0);
@@ -311,7 +311,7 @@ test('TEQUIP:45（口塞）且 SELECTCOM!=45：头部第 2 道守卫静默跳过
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('TFLAG:899（失神）：头部第 3 道守卫静默跳过', async () => {
+test('TFLAG:899（失神）：头部第 3 道检查静默跳过', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tflag:899', 1);
   }, 0);
@@ -319,7 +319,7 @@ test('TFLAG:899（失神）：头部第 3 道守卫静默跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('TALENT:9==1（崩坏）：头部第 6 道守卫静默跳过', async () => {
+test('TALENT:9==1（崩坏）：头部第 6 道检查静默跳过', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('talent:20:9', 1);
   }, 0);
@@ -327,7 +327,7 @@ test('TALENT:9==1（崩坏）：头部第 6 道守卫静默跳过', async () => 
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('TEQUIP:90（触手调教中）：头部第 7 道守卫静默跳过', async () => {
+test('TEQUIP:90（触手调教中）：头部第 7 道检查静默跳过', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tequip:20:90', 1);
   }, 0);
@@ -335,7 +335,7 @@ test('TEQUIP:90（触手调教中）：头部第 7 道守卫静默跳过', async
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-// —— @KOJO_MESSAGE_PALAMCNG_10 / @KOJO_MESSAGE_MARKCNG_10 ——
+// —— kojo_message_palamcng_10 / kojo_message_markcng_10 ——
 
 test('KOJO_MESSAGE_PALAMCNG_10：P1 = PALAM:3 + DELTA:3 首次超过 PALAMLV:2 触发润滑首超', async () => {
   const fixture = await setup_k10();
@@ -361,7 +361,7 @@ test('KOJO_MESSAGE_MARKCNG_10：苦痛刻印变动==3 且 CFLAG:297==0 触发苦
   assert.equal(fixture.store.get('cflag:20:297'), 1);
 });
 
-// —— @SELF_KOJO_K10 ——
+// —— self_kojo_k10 ——
 
 test('SELF_KOJO_K10 TFLAG:13==13（自我口上·孕育）：CSTR:2 插值', async () => {
   const fixture = await setup_k10();
@@ -538,7 +538,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K10：注册�
   before = fixture.text_lines().length;
   game.event.猎奇处刑口上 = 0;
   await grotesque_koujo_family.call(10, { args: [] });
-  assert.deepEqual(fixture.text_lines().slice(before), ['']); // 源无文本，PRINTFORMW 仍记空行
+  assert.deepEqual(fixture.text_lines().slice(before), ['']); // 无文本，PRINTFORMW 仍记空行
 });
 
 test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
@@ -552,9 +552,8 @@ test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
   ]);
 });
 
-// —— COLOSSEUM_KOJO_10：ITEM:PBAND → item:4（#552；源 :6767/:6801/:6827） ——
-// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
-// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
+// —— COLOSSEUM_KOJO_10：ITEM:PBAND → item:4（#552） ——
+// PBAND 是旧引擎的内建变量，开局脚本把它赋为 4 且不再改写，4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下列用例必须红。
 // sc21/sc27 两支的拼接词与尾部文案逐字相同，只有开场白能区分——每档断言各自
@@ -582,7 +581,7 @@ test('COLOSSEUM_KOJO_10：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   for (const { selectcom, open, line } of cases) {
     const fixture = await setup_k10((f) => {
       join_slave_chara(f, 17, '玛奥');
-      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      f.store.set('item:4', 1); // ITEM:PBAND（助手持有假阳具）
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.assi = 17;
       era_flag.assiplay = 1;

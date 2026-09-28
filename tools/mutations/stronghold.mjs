@@ -904,7 +904,7 @@ export default [
   {
     desc: 'M6832 K19 出售口上误读调教后性交次数',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: '  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的原作 S（售价）',
+    find: '  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的 S（售价）',
     replace:
       '  const sale_price = peek_aftertrain_s(); // 变异：误读另一条 S 通道',
     tests: ['sale-chara'],
@@ -913,7 +913,7 @@ export default [
   {
     desc: 'M6833 K904 出售口上误读调教后性交次数',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: '  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的原作 S（售价）',
+    find: '  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的 S（售价）',
     replace:
       '  const sale_price = peek_aftertrain_s(); // 变异：误读另一条 S 通道',
     tests: ['sale-chara'],

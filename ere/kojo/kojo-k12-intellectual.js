@@ -1,23 +1,23 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if */
 /**
- * @file 知的（博士型）口上 K12：存在标志一对 + @EVENTTRAIN 主体 + @K12_KOJO2 +
- *       @EVENTEND（issue #243，J33）。
+ * @file 知的（博士型）口上 K12：存在标志一对 + EVENTTRAIN 主体 + k12_kojo2 +
+ *       EVENTEND（issue #243，J33）。
  *
- * == 头部守卫（KOJO_MESSAGE_COM_12，源 :402-426 与 K3/K10 顺序不同） ==
+ * == 头部检查（KOJO_MESSAGE_COM_12，与 K3/K10 顺序不同） ==
  *
- * 源里助手跳过守卫整行被注释（:402-405 的 `;SIF ASSI > 0 && ASSIPLAY`），
- * 1:1 不启用——与 K10 的 ASSI 守卫不同，K12 助手调教不跳过、出台词。
- * 实际生效守卫（:407-425）：① TEQUIP:45 口塞（SELECTCOM!=45）→ 跳过；
- * ② TFLAG:899 失神 → 跳过；③ TEQUIP:89 → CALL DOG_KOJO_12；④ TEQUIP:55
- * → CALL COLOSSEUM_KOJO_12。DOG_KOJO_12/COLOSSEUM_KOJO_12 是本文件内
+ * 助手跳过检查整行被注释（`;SIF ASSI > 0 && ASSIPLAY`），按原样不启用——
+ * 与 K10 的 ASSI 检查不同，K12 助手调教不跳过、出台词。
+ * 实际生效检查：① TEQUIP:45 口塞（SELECTCOM!=45）→ 跳过；
+ * ② TFLAG:899 失神 → 跳过；③ TEQUIP:89 → DOG_KOJO_12 真身；④ TEQUIP:55
+ * → COLOSSEUM_KOJO_12 真身。DOG_KOJO_12/COLOSSEUM_KOJO_12 是本文件内
  * 本地函数（K3 dog_kojo_3/colosseum_kojo_3 同构先例），不进 family。
- * 无 TALENT:9 崩坏守卫、无 TEQUIP:90 守卫（源如此，1:1）。
+ * 无 TALENT:9 崩坏检查、无 TEQUIP:90 检查（实测如此）。
  *
  * == 状态机（CFLAG:301 起，K3/K10 同款惯例） ==
  *
  * 每条指令一个 CFLAG 计数器状态机，FLAG:7 == 2（默认）时上限旁路、每次
- * 都出声；FLAG:7 == 1 时逐阶段推进。源有 14-18 号指令的整段模板残骸
- * （:1140-1361 全注释），属未填写的模板骨架、非活代码，不落地（K11
+ * 都出声；FLAG:7 == 1 时逐阶段推进。14-18 号指令有整段模板残骸
+ * （全注释），属未填写的模板骨架、非活代码，不实现（K11
  * SELECTCOM 17 同款判定）。爱抚等带怀孕分支（TALENT:153 && CFLAG:111==0）
  * 的指令保留怀孕分支判断。
  *
@@ -29,11 +29,11 @@
  *
  * == 跨文件调用 ==
  *
- * SELL_MATURO_K0（:4743，成熟出售口上，随 #338 接通真身，K1/K3/K4/K6/
- * K9/K10 同款）直接调用；BENKI_PLAYER_NAME（:5106-5172 四处，真身
+ * SELL_MATURO_K0（成熟出售口上，随 #338 接通真身，K1/K3/K4/K6/
+ * K9/K10 同款）直接调用；BENKI_PLAYER_NAME（四处，真身
  * ere/system/train/benki.js 的 benki_player_name()，延迟 require 防
  * 顶层漏装遮蔽，K3 的延迟 require 同款先例）。四处的前缀行是 PRINTFORMW
- * （自带换行与等待），名字与后文属新的一行，故按原作拆成两条输出（#599）。
+ * （自带换行与等待），名字与后文属新的一行，故拆成两条输出（#599）。
  */
 'use strict';
 
@@ -74,7 +74,7 @@ const {
   gohoubi_request_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 
-// @EVENTTRAIN #PRI（:67-71）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -86,7 +86,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:73-75）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -95,7 +95,7 @@ on(
   TIER.LATER,
 );
 /**
- * @EVENTTRAIN（:81-235，普通档）：调教开始时的口上。守卫（:83-85）：
+ * EVENTTRAIN NORMAL 档：调教开始时的口上。头部检查：
  * FLAG:7 <= 0 跳过、TALENT:172 != 1 跳过；此后按 CFLAG:201 状态机推进：
  * 初调教（0，人狼分档）→ NTR 再捕获（>=1 && CFLAG:650==1）→ 屈服刻印
  * Lv1/2/3（各一次）→ 淫乱 → 爱慕 → 助手分支（ASSI<0 或无专属口上 →
@@ -234,7 +234,7 @@ on('EVENTTRAIN', async () => {
 });
 
 /**
- * @K12_KOJO2（:237-310）：二回目以降的调教开始口上。按反抗刻印 Lv3 /
+ * k12_kojo2：二回目以降的调教开始口上。按反抗刻印 Lv3 /
  * 屈服刻印 Lv0-3（爱/淫乱无）/ 淫乱 / 爱慕（淫乱与爱慕各含 RAND 三选一
  * + 人狼分档）取首个命中。
  * @param {(n: number) => number} [rand] RAND:N 的随机源（缺省均匀随机）
@@ -326,7 +326,7 @@ async function k12_kojo2(rand) {
 }
 
 /**
- * @EVENTEND（:312-399，普通档）：调教结束时的口上。死亡跳过（BASE:0<=0），
+ * EVENTEND NORMAL 档：调教结束时的口上。死亡跳过（BASE:0<=0），
  * 随后按反抗刻印 Lv3 / 屈服刻印 Lv0-3（爱无）/ 淫乱（体力 500 上下）/
  * 爱慕（体力 500 上下）取首个命中。
  */
@@ -442,12 +442,12 @@ on('EVENTEND', async () => {
 });
 
 /**
- * @KOJO_MESSAGE_COM_12（:401-3537，指令口上状态机）：SELECTCOM 指令台词，
- * CFLAG:301 起的计数器（kojo.<字段>）。守卫（:402-426 与 K3/K10 顺序
- * 不同）：助手跳过守卫整行被注释（1:1 不启用，K12 助手调教不跳过）；
+ * kojo_message_com_12（指令口上状态机）：SELECTCOM 指令台词，
+ * CFLAG:301 起的计数器（kojo.<字段>）。头部检查（与 K3/K10 顺序
+ * 不同）：助手跳过检查整行被注释（按原样不启用，K12 助手调教不跳过）；
  * 实际生效：① TEQUIP:45 口塞（SELECTCOM!=45）→ 跳过；② TFLAG:899
  * 失神 → 跳过；③ TEQUIP:89 → DOG_KOJO_12 真身；④ TEQUIP:55 →
- * COLOSSEUM_KOJO_12 真身。无崩坏/触手守卫（源如此，1:1）。
+ * COLOSSEUM_KOJO_12 真身。无崩坏/触手检查（实测如此）。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源（缺省均匀随机）
  * @returns {Promise<number>} 0（TRYCALLFORM 不读返回值）
@@ -460,12 +460,11 @@ async function kojo_message_com_12(rand) {
   const kojo = chara(target).kojo;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   const mark = (i) => era.get(`mark:${target}:${i}`) || 0;
-  // %阴核(TARGET)%（魔改新增/文本校正.ERB @阴核，K0 kojo-k0-tender.js:5484 同款）：
-  // TALENT:122 则「阴茎」否则「阴核」
+  // %阴核(TARGET)%：TALENT:122 则「阴茎」否则「阴核」
   const clitoris_word = (cid) =>
     (era.get(`talent:${cid}:122`) || 0) !== 0 ? '阴茎' : '阴核';
 
-  // 助手跳过守卫整行注释（1:1 不启用）
+  // 助手跳过检查整行注释（按原样不启用）
   if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {
     return 0;
   }
@@ -3814,7 +3813,7 @@ async function kojo_message_com_12(rand) {
   }
 
   if (era_flag.selectcom == 87) {
-    const p = piercing_state.p; // 跨 CALL TRAIN_MESSAGE_B 存活的全局单字母变量 p（com87() 写入，见 piercing-state.js，K10 kojo-k10-club.js:8942 同款先例）
+    const p = piercing_state.p; // 跨 CALL TRAIN_MESSAGE_B 存活的全局单字母变量 p（com87() 写入，见 piercing-state.js）
 
     if (kojo.穿环 == 0) {
       if (era_flag.assi > 0 && era_flag.assiplay) {
@@ -4012,8 +4011,8 @@ async function kojo_message_com_12(rand) {
   }
 }
 
-// @DOG_KOJO_12（:3538-4348）：兽奸专用口上（TEQUIP:89 时由 KOJO_MESSAGE_COM_12
-// 守卫岔来）。与主状态机共用 CFLAG:301-400 计数器（kojo 门面），但只覆盖兽奸
+// dog_kojo_12：兽奸专用口上（TEQUIP:89 时由 kojo_message_com_12
+// 检查岔来）。与主状态机共用 CFLAG:301-400 计数器（kojo 门面），但只覆盖兽奸
 // 语境下可用的指令（爱抚/舔阴/胸爱抚/接吻/舔肛/背后位/背后位肛交/肛珠/眼罩/
 // 口交/手淫/骑乘位/肛门侍奉/交谈等）。本地函数，不进 family 分发。
 async function dog_kojo_12(rand) {
@@ -4946,7 +4945,7 @@ async function dog_kojo_12(rand) {
   return 0;
 }
 
-// @KOJO_MESSAGE_PALAMCNG_12（源段）：参数变动口上（PALAM 首超 Lv2/首绝顶）→ kojo_message_palamcng_12
+// kojo_message_palamcng_12：参数变动口上（PALAM 首超 Lv2/首绝顶）
 // 家族分发：kojo_message_palamcng_family.register(12, …)
 async function kojo_message_palamcng_12(rand) {
   const target = era_flag.target;
@@ -4961,7 +4960,7 @@ async function kojo_message_palamcng_12(rand) {
     return 0;
   }
 
-  // PALAM:3 + UP:3（源 :4366）
+  // PALAM:3 + UP:3
   const P1 =
     (era.get(`palam:${target}:3`) || 0) + (era.get(`delta:${target}:3`) || 0);
   if (P1 > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {
@@ -4986,7 +4985,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次润滑Lv2 = 1;
   }
 
-  // PALAM:5 + UP:5（源 :4397）
+  // PALAM:5 + UP:5
   const P2 =
     (era.get(`palam:${target}:5`) || 0) + (era.get(`delta:${target}:5`) || 0);
   if (P2 > PALAMLV[2] && kojo.首次欲情Lv2 == 0) {
@@ -5007,7 +5006,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次欲情Lv2 = 1;
   }
 
-  // PALAM:8 + UP:8（源 :4424）
+  // PALAM:8 + UP:8
   const P3 =
     (era.get(`palam:${target}:8`) || 0) + (era.get(`delta:${target}:8`) || 0);
   if (P3 > PALAMLV[2] && kojo.首次耻情Lv2 == 0) {
@@ -5024,7 +5023,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次耻情Lv2 = 1;
   }
 
-  // PALAM:10 + UP:10（源 :4439）
+  // PALAM:10 + UP:10
   const P4 =
     (era.get(`palam:${target}:10`) || 0) + (era.get(`delta:${target}:10`) || 0);
   if (P4 > PALAMLV[2] && kojo.首次恐怖Lv2 == 0) {
@@ -5093,7 +5092,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次B绝顶 = 1;
   }
 
-  // UP:11 + UP:12（源 :4516）
+  // UP:11 + UP:12
   const A =
     (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0); // A = UP:11 + UP:12
   if (game.train.处女丧失 == 1 && kojo.处女丧失 == 0) {
@@ -5129,7 +5128,7 @@ async function kojo_message_palamcng_12(rand) {
   }
 }
 
-// @KOJO_MESSAGE_MARKCNG_12（源段）：参数变动口上（PALAM 首超 Lv2/首绝顶）→ kojo_message_palamcng_12
+// kojo_message_markcng_12：刻印取得后口上（苦痛/快乐/屈服/反抗 Lv3 首次取得）
 // 家族分发：kojo_message_palamcng_family.register(12, …)
 async function kojo_message_markcng_12(rand) {
   const target = era_flag.target;
@@ -5205,7 +5204,7 @@ ryouzyoku_after_kojo_family.register(12, dungeon_ryouzyoku_after_k12);
 dungeon_victory_family.register(12, dungeon_victory_k12);
 dungeon_attack_family.register(12, dungeon_attack_k12);
 
-// @SELF_KOJO_K12（:4614-4869）：事件口上（self_kojo family）。TFLAG:13 事件
+// self_kojo_k12：事件口上（self_kojo family）。TFLAG:13 事件
 // 类型分档：1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 /
 // 6 成熟出售（SELL_MATURO_K0，#338 接通）/ 9-10 妊娠发觉前段 / 11 妊娠发觉 /
 // 12 生产 / 999-998 育儿室·亲离。q 为自慰妄想对象（kojo-system.self_kojo 传）。
@@ -5441,7 +5440,7 @@ async function self_kojo_k12(rand, q) {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_K12（:4870-4959）：迷宫凌辱前口上（ryouzyoku family）。处女/非处女 × 性格素质分档（冷漠/低姿态/刚强/胆怯等），含 A敏感/口交经验追加句。
+// dungeon_ryouzyoku_k12：迷宫凌辱前口上（ryouzyoku family）。处女/非处女 × 性格素质分档（冷漠/低姿态/刚强/胆怯等），含 A敏感/口交经验追加句。
 async function dungeon_ryouzyoku_k12() {
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
@@ -5544,7 +5543,7 @@ async function dungeon_ryouzyoku_k12() {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_AFTER_K12（:4960-5023）：迷宫凌辱后口上。处女/非处女 × EXP 经验分档感想。
+// dungeon_ryouzyoku_after_k12：迷宫凌辱后口上。处女/非处女 × EXP 经验分档感想。
 async function dungeon_ryouzyoku_after_k12() {
   const target = era_flag.target;
   if (era.get(`talent:${target}:0`) == 1) {
@@ -5604,11 +5603,11 @@ async function dungeon_ryouzyoku_after_k12() {
   return 0;
 }
 
-// @DUNGEON_VICTORY_K12（:5278-5331）：迷宫胜利口上（victory family）。
+// dungeon_victory_k12：迷宫胜利口上（victory family）。
 async function dungeon_victory_k12(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
-  const a = era_flag.target; // 源 A（迷宫胜利时目标角色，K10 dungeon_victory_k10 同款）
+  const a = era_flag.target; // A（迷宫胜利时目标角色，K10 dungeon_victory_k10 同款）
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   await era.printAndWait(`「${sc()}的胜率达到了95％哦」`);
 
@@ -5664,7 +5663,7 @@ async function dungeon_victory_k12(rand) {
   return 0;
 }
 
-// @DUNGEON_ATTACK_K12（:5332-5420）：迷宫袭击口上（attack family）。
+// dungeon_attack_k12：迷宫袭击口上（attack family）。
 async function dungeon_attack_k12(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -5756,7 +5755,7 @@ async function dungeon_attack_k12(rand) {
   return 0;
 }
 
-// @EXUCUTION_KOUJO_K12（:5603-5620）：处刑口上。
+// exucution_koujo_k12：处刑口上。
 async function exucution_koujo_k12(rand) {
   void rand;
   const target = era_flag.target;
@@ -5772,7 +5771,7 @@ async function exucution_koujo_k12(rand) {
   }
 }
 
-// @MUSEUM_KOUJO_K12（:5621-5656）：博物馆口上（TFLAG:500 分档）。
+// museum_koujo_k12：博物馆口上（TFLAG:500 分档）。
 async function museum_koujo_k12(rand) {
   void rand;
   if (game.event.博物馆口上 == 0) {
@@ -5800,7 +5799,7 @@ async function museum_koujo_k12(rand) {
   }
 }
 
-// @BANISHMENT_KOUJO_K12（:5657-5677?）：流放口上（TFLAG:510）。
+// banishment_koujo_k12：流放口上（TFLAG:510）。
 async function banishment_koujo_k12(rand) {
   void rand;
   const target = era_flag.target;
@@ -5818,7 +5817,7 @@ async function banishment_koujo_k12(rand) {
   }
 }
 
-// @PUBLIC_EXUCUTION_KOUJO_K12（:5678-5692?）：公开处刑口上（TFLAG:520）。
+// public_exucution_koujo_k12：公开处刑口上（TFLAG:520）。
 async function public_exucution_koujo_k12(rand) {
   void rand;
   if (game.event.公开处刑口上 == 0) {
@@ -5830,7 +5829,7 @@ async function public_exucution_koujo_k12(rand) {
   }
 }
 
-// @GROTESQUE_KOUJO_K12（:5693-5719?）：猎奇处刑口上（TFLAG:530）。
+// grotesque_koujo_k12：猎奇处刑口上（TFLAG:530）。
 async function grotesque_koujo_k12(rand) {
   void rand;
   if (game.event.猎奇处刑口上 == 0) {
@@ -5850,11 +5849,11 @@ async function grotesque_koujo_k12(rand) {
   }
 }
 
-// @ENTERENEMY_KOUJO_K12（:5720-5737?）：遭遇敌人口上。
+// enterenemy_koujo_k12：遭遇敌人口上。
 async function enterenemy_koujo_k12(rand) {
   void rand;
   const target = era_flag.target;
-  const a = era_flag.target; // 源 A（目标角色）
+  const a = era_flag.target; // A（目标角色）
   const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
   if (era.get(`talent:${a}:21`) == 1 || era.get(`talent:${a}:22`) == 1) {
     await era.printAndWait(`「${sc(a)}的计算是不会错的」`);
@@ -5875,11 +5874,11 @@ async function enterenemy_koujo_k12(rand) {
   }
 }
 
-// @GOHOUBI_REQUEST_KOUJO_K12（:5738-5783?）：请求褒美口上。
+// gohoubi_request_koujo_k12：请求褒美口上。
 async function gohoubi_request_koujo_k12(rand) {
   void rand;
   const target = era_flag.target;
-  const a = era_flag.target; // 源 A（目标角色）
+  const a = era_flag.target; // A（目标角色）
   const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
   if (chara(a).stronghold.要求奖赏 == 0) {
     await era.printAndWait(`${chara_callname(a)}想要钱的样子`);
@@ -5889,9 +5888,9 @@ async function gohoubi_request_koujo_k12(rand) {
     chara(a).stronghold.要求奖赏 == 2 ||
     chara(a).stronghold.要求奖赏 == 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:5748/:5750/:5752）提到
-    // 语句外当取值、文本留在输出语句里（保真锁按序核对 ERB 片段，#625）
+    // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的条件提到
+    // 语句外当取值、文本留在输出语句里（保真锁按序核对台词片段，#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1
         ? '狗'
@@ -5923,7 +5922,7 @@ async function gohoubi_request_koujo_k12(rand) {
   }
 }
 
-// @GOHOUBI_AFTER_KOUJO_K12（:5784-5863）：奖赏结算后口上（choice 参数分档，原作 TFLAG:18 双语义槽裁定读 choice——kojo-dungeon-after.js:21）。
+// gohoubi_after_koujo_k12：奖赏结算后口上（choice 参数分档，TFLAG:18 改经 choice 参数传递——kojo-dungeon-after.js 头注结论）。
 async function gohoubi_after_koujo_k12(rand, cid, choice) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   void cid;
@@ -5990,7 +5989,7 @@ async function gohoubi_after_koujo_k12(rand, cid, choice) {
   }
 }
 
-// @OSIOKI_KOUJO_K12（:5864-5926）：惩罚结算后口上（choice 参数分档，同 gohoubi_after 裁定）。
+// osioki_koujo_k12：惩罚结算后口上（choice 参数分档，同 gohoubi_after 结论）。
 async function osioki_koujo_k12(rand, cid, choice) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   void cid;
@@ -6043,7 +6042,7 @@ async function osioki_koujo_k12(rand, cid, choice) {
   }
 }
 
-// @GOBI_KOUJO_K12（:5927-5957）：语尾口上（gobi family，ARG:0 → arg0 参数）。
+// gobi_koujo_k12：语尾口上（gobi family，ARG:0 → arg0 参数）。
 function gobi_koujo_k12(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   if (arg0 == 1) {
@@ -6067,7 +6066,7 @@ function gobi_koujo_k12(arg0, rand) {
   }
 }
 
-// @COLOSSEUM_KOJO_12（:5421-5525）：死斗场专用口上（TEQUIP:55 时由守卫岔来）。
+// colosseum_kojo_12：死斗场专用口上（TEQUIP:55 时由头部检查岔来）。
 // 本地函数不进 family 分发（同 dog_kojo_12）。
 async function colosseum_kojo_12(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -6150,7 +6149,7 @@ async function colosseum_kojo_12(rand) {
   return 0;
 }
 
-// @NTR_KOUJO_K12（:5526-5602）：NTR 事件口上（ntr_koujo_family）。P = NTR 事件
+// ntr_koujo_k12：NTR 事件口上（ntr_koujo_family）。P = NTR 事件
 // 类型（1 处女献出 / 2 肛门 / 3 家畜 / 4 授精 / 5+ 绝顶等），记位 CFLAG:650-657。
 async function ntr_koujo_k12(rand, P) {
   void rand;
@@ -6240,7 +6239,7 @@ async function ntr_koujo_k12(rand, P) {
   return 0;
 }
 
-// @BENKI_KOUJO_K12（:5024-5277）：肉便器行动口上（benki_koujo_family）。A = 目标角色
+// benki_koujo_k12：肉便器行动口上（benki_koujo_family）。A = 目标角色
 // （era_flag.target）。FLAG:62 行动类型 0-12 档 × 常识改写（FLAG:63==1）/淫乱/爱慕/
 // 侍奉Lv5/それ以外 五选一。CALL BENKI_PLAYER_NAME 输出玩家称呼——真身
 // ere/system/train/benki.js 的 benki_player_name() 返回字符串，调用点自行 print
@@ -6248,7 +6247,7 @@ async function ntr_koujo_k12(rand, P) {
 async function benki_koujo_k12(rand) {
   void rand;
   const target = era_flag.target;
-  const a = era_flag.target; // 源 A（肉便器行动对象）
+  const a = era_flag.target; // A（肉便器行动对象）
   const target_name = chara_callname(a); // %SAVESTR:A%（初稿已展开）
   const sc = (x = target) => self_call(x); // %SELF_CALL(A)%
   const benki_player_name = () =>
@@ -6312,8 +6311,8 @@ async function benki_koujo_k12(rand) {
   } else if (game.train.肉便器行动 == 3) {
     if (game.dungeon.肉便器常识改写 == 1) {
       // 前缀是 PRINTFORMW（自带换行与等待：本行到此为止），接着的 CALL
-      // BENKI_PLAYER_NAME（名字）与 :5107 的后文落在**新的一行**——拆成两条
-      // 语句按原作两行输出（同句式的 K0/K3 前缀是 PRINTFORM，那才是同一行）；
+      // BENKI_PLAYER_NAME（名字）与后文落在**新的一行**——拆成两条
+      // 语句按两行输出（同句式的 K0/K3 前缀是 PRINTFORM，那才是同一行）；
       // 名字按 #599 用插值接在 CALL 的位置
       await era.printAndWait(`「多亏`);
       await era.printAndWait(
@@ -6403,8 +6402,7 @@ async function benki_koujo_k12(rand) {
   } else if (game.train.肉便器行动 == 7) {
     if (game.dungeon.肉便器常识改写 == 1) {
       await era.printAndWait(`「大家好、元`);
-      // 原作 IF/ELSEIF 的勇者/冒险者段（:5195/:5197，:5198-5199 ENDIF），
-      // 与 :5199+:5200 同属一行——PRINTFORM 不换行（#584）
+      // IF/ELSEIF 的勇者/冒险者段与后文同属一行——PRINTFORM 不换行（#584）
       const hero_word =
         era.get(`talent:${a}:122`) == 0
           ? '勇者'
@@ -6435,8 +6433,7 @@ async function benki_koujo_k12(rand) {
   } else if (game.train.肉便器行动 == 9) {
     if (game.dungeon.肉便器常识改写 == 1) {
       await era.printAndWait(`「大家好、元`);
-      // 原作 IF/ELSEIF 的勇者/冒险者段（:5225/:5227，:5228-5229 ENDIF），
-      // 与 :5229+:5230 同属一行——PRINTFORM 不换行（#584）
+      // IF/ELSEIF 的勇者/冒险者段与后文同属一行——PRINTFORM 不换行（#584）
       const hero_word =
         era.get(`talent:${a}:122`) == 0
           ? '勇者'
@@ -6465,8 +6462,7 @@ async function benki_koujo_k12(rand) {
   } else if (game.train.肉便器行动 == 12) {
     if (game.dungeon.肉便器常识改写 == 1) {
       await era.printAndWait(`「大家好、元`);
-      // 原作 IF/ELSEIF 的勇者/冒险者段（:5252/:5254，:5255-5256 ENDIF），
-      // 与 :5256+:5257 同属一行——PRINTFORM 不换行（#584）
+      // IF/ELSEIF 的勇者/冒险者段与后文同属一行——PRINTFORM 不换行（#584）
       const hero_word =
         era.get(`talent:${a}:122`) == 0
           ? '勇者'

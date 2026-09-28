@@ -3,7 +3,7 @@
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：自信家素质 161 的奴隶入列
  * 调教。覆盖验收项「此行为有测试」：
- *   - 七道头部守卫（助手不跳过；死斗场/兽奸走真身；口塞/失神/崩坏/触手跳过）；
+ *   - 七道头部检查（助手不跳过；死斗场/兽奸走真身；口塞/失神/崩坏/触手跳过）；
  *   - CFLAG:301 爱抚个位数推进（初回 → 1；二回目以降按素质/刻印取首个命中）；
  *   - FLAG:7 == 1 阈值闸与 == 2 旁路；
  *   - PALAMCNG / MARKCNG 真身；
@@ -141,7 +141,7 @@ test('阈值闸：FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声
   assert.equal(repeat.store.get(`cflag:${CID}:301`), 2);
 });
 
-test('@EVENTTRAIN #PRI 置 FLAG:101、@EVENTEND #LATER 清 0', async () => {
+test('EVENTTRAIN #PRI 档置 FLAG:101、EVENTEND #LATER 档清 0', async () => {
   const fixture = await setup_k1((f) => {
     f.store.delete('flag:101');
     f.store.delete('flag:7');
@@ -364,8 +364,8 @@ test('DUNGEON_ATTACK：奴隶态 TALENT:11 真身', async () => {
 
 // —— #622：拆行合并后的整行断言（每组一处，覆盖该行的各分支组合） ——
 //
-// 组内各段在原作同属一行（无后缀 PRINTFORM 不换行），ere 曾拆成多条输出。
-// 行号是原作 ERB 行号，见 ere/kojo/kojo-k1-confident.js 的拼接锚。
+// 组内各段同属一行输出（无后缀 PRINTFORM 不换行），曾拆成多条输出。
+// 分组见 ere/kojo/kojo-k1-confident.js 的拼接基准。
 
 async function speak_self_kojo_k1(fixture, rand, q) {
   const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
@@ -400,7 +400,7 @@ function colosseum_seed(selectcom, extra) {
   };
 }
 
-test('SELECTCOM 56 交谈·初めて·视频·TALENT:89（RAND:3==0）：:4747+:4749+:4750 是一行（#622）', async () => {
+test('SELECTCOM 56 交谈·初めて·视频·TALENT:89（RAND:3==0）：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set(`tequip:${CID}:53`, 1);
     f.store.set(`talent:${CID}:89`, 1);
@@ -429,7 +429,7 @@ test('SELECTCOM 56 交谈·初めて·视频·TALENT:89（RAND:3==0）但 ABL:31
   );
 });
 
-test('SELECTCOM 56 交谈·初めて·无摄像·求爱档：:4787+:4789 是一行（#622）', async () => {
+test('SELECTCOM 56 交谈·初めて·无摄像·求爱档：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set(`talent:${CID}:85`, 1);
     f.store.set(`palam:${CID}:5`, 10000); // PALAMLV[4]
@@ -442,7 +442,7 @@ test('SELECTCOM 56 交谈·初めて·无摄像·求爱档：:4787+:4789 是一�
   ]);
 });
 
-test('SELECTCOM 56 交谈·初めて·无摄像·装备档：:4793+:4795+:4797+:4799 是一行（#622）', async () => {
+test('SELECTCOM 56 交谈·初めて·无摄像·装备档：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set(`tequip:${CID}:11`, 1); // 快感装备
     f.store.set(`palam:${CID}:4`, 10000);
@@ -468,7 +468,7 @@ test('SELECTCOM 56 交谈·初めて·无摄像·痛苦装备（TEQUIP:44）：�
   ]);
 });
 
-test('SELECTCOM 56 交谈·二回目·视频·TALENT:89（RAND:3==0）：:4833+:4835+:4836 是一行（#622）', async () => {
+test('SELECTCOM 56 交谈·二回目·视频·TALENT:89（RAND:3==0）：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set(`cflag:${CID}:357`, 1);
     f.store.set(`tequip:${CID}:53`, 1);
@@ -484,7 +484,7 @@ test('SELECTCOM 56 交谈·二回目·视频·TALENT:89（RAND:3==0）：:4833+:
   ]);
 });
 
-test('SELECTCOM 56 交谈·二回目·无摄像·求爱档：:4873+:4875 是一行（#622）', async () => {
+test('SELECTCOM 56 交谈·二回目·无摄像·求爱档：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set(`cflag:${CID}:357`, 1);
     f.store.set(`talent:${CID}:85`, 1);
@@ -498,7 +498,7 @@ test('SELECTCOM 56 交谈·二回目·无摄像·求爱档：:4873+:4875 是一�
   ]);
 });
 
-test('SELECTCOM 56 交谈·二回目·无摄像·装备档：:4879+:4881+:4883+:4885 是一行（#622）', async () => {
+test('SELECTCOM 56 交谈·二回目·无摄像·装备档：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set(`cflag:${CID}:357`, 1);
     f.store.set(`tequip:${CID}:11`, 1);
@@ -526,7 +526,7 @@ test('SELECTCOM 56 交谈·二回目·无摄像·痛苦装备（TEQUIP:44）：�
   ]);
 });
 
-test('DOG 兽奸会話·初めて·视频·牝犬：:6341..:6348 与 :6351..:6371 各是一行（#622）', async () => {
+test('DOG 兽奸会話·初めて·视频·牝犬：两段各是一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`tequip:${CID}:53`, 1);
@@ -559,7 +559,7 @@ test('DOG 兽奸会話·初めて·视频·牝犬·未与狗结婚：另一支�
   );
 });
 
-test('DOG 兽奸会話·二回目·视频·牝犬：:6403..:6410 与 :6413..:6433 各是一行（#622）', async () => {
+test('DOG 兽奸会話·二回目·视频·牝犬：两段各是一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`cflag:${CID}:357`, 1);
@@ -620,7 +620,7 @@ test('DOG 兽奸会話·二回目·视频·牝犬的「在最后」：另一档�
   );
 });
 
-test('DOG 兽奸会話·初めて·视频·淫乱：:6374+:6376+:6377 是一行（#622）', async () => {
+test('DOG 兽奸会話·初めて·视频·淫乱：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`tequip:${CID}:53`, 1);
@@ -635,7 +635,7 @@ test('DOG 兽奸会話·初めて·视频·淫乱：:6374+:6376+:6377 是一行�
   );
 });
 
-test('DOG 兽奸会話·初めて·视频·爱慕：:6381+:6383+:6384 是一行（#622）', async () => {
+test('DOG 兽奸会話·初めて·视频·爱慕：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`tequip:${CID}:53`, 1);
@@ -650,7 +650,7 @@ test('DOG 兽奸会話·初めて·视频·爱慕：:6381+:6383+:6384 是一行�
   );
 });
 
-test('DOG 兽奸会話·二回目·视频·淫乱：:6437+:6439+:6440 是一行（#622）', async () => {
+test('DOG 兽奸会話·二回目·视频·淫乱：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`cflag:${CID}:357`, 1);
@@ -666,7 +666,7 @@ test('DOG 兽奸会話·二回目·视频·淫乱：:6437+:6439+:6440 是一行�
   );
 });
 
-test('DOG 兽奸会話·二回目·视频·爱慕：:6445+:6447+:6448 是一行（#622）', async () => {
+test('DOG 兽奸会話·二回目·视频·爱慕：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`cflag:${CID}:357`, 1);
@@ -682,7 +682,7 @@ test('DOG 兽奸会話·二回目·视频·爱慕：:6445+:6447+:6448 是一行�
   );
 });
 
-test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（1回目）：:7040+:7042 是一行（#622）', async () => {
+test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（1回目）：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set('tflag:13', 11);
     f.store.set(`talent:${CID}:136`, 1);
@@ -698,7 +698,7 @@ test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（1回目）：:7040+:704
   );
 });
 
-test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（2回目）：:7106+:7108 是一行（#622）', async () => {
+test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（2回目）：同属一行（#622）', async () => {
   const fixture = await setup_k1((f) => {
     f.store.set('tflag:13', 11);
     f.store.set(`cflag:${CID}:271`, 1);
@@ -749,7 +749,7 @@ test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（2回目）：非首支�
   );
 });
 
-test('COLOSSEUM SC31 口交·助手在场：:7763+:7765+:7767+:7768 是一行（#622）', async () => {
+test('COLOSSEUM SC31 口交·助手在场：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     colosseum_seed(31, (f) => {
       const era_flag = f.load_module('era-utils/era-flag');
@@ -766,7 +766,7 @@ test('COLOSSEUM SC31 口交·助手在场：:7763+:7765+:7767+:7768 是一行（
   ]);
 });
 
-test('COLOSSEUM SC21 背后位·助手在场：:7796+:7798+:7800+:7801 是一行（#622）', async () => {
+test('COLOSSEUM SC21 背后位·助手在场：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     colosseum_seed(21, (f) => {
       const era_flag = f.load_module('era-utils/era-flag');
@@ -783,7 +783,7 @@ test('COLOSSEUM SC21 背后位·助手在场：:7796+:7798+:7800+:7801 是一行
   ]);
 });
 
-test('COLOSSEUM SC27 背后位アナル·助手在场：:7820+:7822+:7824+:7825 是一行（#622）', async () => {
+test('COLOSSEUM SC27 背后位アナル·助手在场：同属一行（#622）', async () => {
   const fixture = await setup_k1(
     colosseum_seed(27, (f) => {
       const era_flag = f.load_module('era-utils/era-flag');
@@ -835,7 +835,7 @@ test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688）
 test('DOG_KOJO_1 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
   const fixture = await setup_k1((f) => {
     f.load_module('era-utils/era-flag').selectcom = 30;
-    f.store.set(`tequip:${CID}:89`, 1); // 兽奸守卫岔去 DOG_KOJO_1（该函数不导出）
+    f.store.set(`tequip:${CID}:89`, 1); // 兽奸检查岔去 DOG_KOJO_1（该函数不导出）
     f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
     f.store.set(`cflag:${CID}:331`, 2);
     f.store.set(`abl:${CID}:16`, 3);

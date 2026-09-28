@@ -1,6 +1,6 @@
 // 变异条目表切片：ere/kojo/（口上状态机与文本插值）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 2709; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
@@ -57,7 +57,7 @@ export default [
     must_mention: '只出一句',
   },
   {
-    desc: 'M63 K5 淫乱素质判据错格（TALENT:76 改 77）',
+    desc: 'M63 K5 淫乱素质条件错格（TALENT:76 改 77）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: `      era.get(\`talent:\${target}:76\`) === 1 &&
       (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)`,
@@ -67,7 +67,7 @@ export default [
     must_mention: '淫乱分支',
   },
   {
-    desc: 'M64 K3 爱慕素质判据错格（TALENT:85 改 86）',
+    desc: 'M64 K3 爱慕素质条件错格（TALENT:85 改 86）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '      // 爱慕（TALENT:85）\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.爱抚 <= 499 || game.kojo.口上开关 === 2)',
     replace:
@@ -103,7 +103,7 @@ export default [
     must_mention: '淫乱分支',
   },
   {
-    desc: 'M69 @EVENTSHOP #PRI 总开关默认值（FLAG:7 = 2 改 1）',
+    desc: 'M69 EVENTSHOP #PRI 档总开关默认值（FLAG:7 = 2 改 1）',
     file: 'ere/kojo/kojo-system.js',
     find: "      era.set('flag:7', 2);",
     replace: "      era.set('flag:7', 1);",
@@ -111,7 +111,7 @@ export default [
     must_mention: 'EVENTSHOP',
   },
   {
-    desc: 'M70 K5 @EVENTEND #LATER 清标志删除',
+    desc: 'M70 K5 EVENTEND #LATER 档清标志删除',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '    game.kojo.口上存在_5 = 0;',
     replace: '    // 变异：清标志删除',
@@ -119,7 +119,7 @@ export default [
     must_mention: '清 0',
   },
   {
-    desc: 'M71 K3 失神守卫删除（TFLAG:899 改恒 false）',
+    desc: 'M71 K3 失神检查删除（TFLAG:899 改恒 false）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (game.train.失神) {',
     replace:
@@ -144,7 +144,7 @@ export default [
     must_mention: '自称',
   },
   {
-    desc: 'M74 K3 3xx 支的附加条件删除（MARK:1 == 3 臂拿掉）',
+    desc: 'M74 K3 3xx 支的附加条件删除（MARK:1 == 3 分支拿掉）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '      // 屈服刻印Lv2＆快乐刻印Lv3（百位 3xx 阶段）\n      mark(2) === 2 &&\n      mark(1) === 3 &&\n      (kojo.爱抚 <= 299 || game.kojo.口上开关 === 2)',
     replace:
@@ -153,7 +153,7 @@ export default [
     must_mention: 'MARK:1 == 3',
   },
   // M75（K3 :944 的 print/printAndWait 归类）随保真锁删除后无人可守（#640
-  // 实测：行为断言不覆盖 W/L 形态）——删条目不补。
+  // 实测：行为断言不覆盖 W/L 形式）——删条目不补。
   // M76（K3 :1076 插值槽位）随保真锁删除后无人可守（#640 实测：该分支无
   // 行为断言覆盖）——删条目不补。
   {
@@ -320,7 +320,7 @@ export default [
     must_mention: '勇者无中毒/债务 → 空闲',
   },
   {
-    desc: 'M521 LOG_TRY_BITCH 末段删除（:47「考虑着出卖肉体的事。」，#185 验收变异：与 FI_TRY_BITCH 区分）',
+    desc: 'M521 LOG_TRY_BITCH 末段删除（「考虑着出卖肉体的事。」，#185 验收变异：与 FI_TRY_BITCH 区分）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find: "      '考虑着出卖肉体的事。',",
     replace: "      '', // 变异：末段删（LOG_TRY_BITCH 不再输出收尾文本）",
@@ -347,7 +347,7 @@ export default [
   },
   // —— #235（J25）：K4 冷徹 口上模块（M1750-M1789 号段） ——
   {
-    desc: 'M1750 K4 COM 口塞守卫删（TEQUIP:45 不再跳过，#235）',
+    desc: 'M1750 K4 COM 口塞检查删（TEQUIP:45 不再跳过，#235）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
     return 0;
@@ -359,7 +359,7 @@ export default [
     must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
   {
-    desc: 'M1751 K4 COM 失神守卫删（TFLAG:899 不再跳过，#235）',
+    desc: 'M1751 K4 COM 失神检查删（TFLAG:899 不再跳过，#235）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: `  if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {
     return 0;
@@ -379,7 +379,7 @@ export default [
     must_mention: '失神（TFLAG:899）：静默跳过',
   },
   {
-    desc: 'M1752 K4 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_4，#235）',
+    desc: 'M1752 K4 兽奸检查岔路丢失（TEQUIP:89 不再调 DOG_KOJO_4，#235）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: '  if (era0(`tequip:${target}:89`)) {\n    await dog_kojo_4(); // CALL DOG_KOJO_4\n    return 0;\n  }',
     replace: `  if (era0(\`tequip:\${target}:89\`)) {
@@ -389,7 +389,7 @@ export default [
     must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_4',
   },
   {
-    desc: 'M1753 K4 触手守卫删（TEQUIP:90 不再跳过，#235）',
+    desc: 'M1753 K4 触手检查删（TEQUIP:90 不再跳过，#235）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: `  if (era0(\`tequip:\${target}:90\`)) {
     return 0;
@@ -401,7 +401,7 @@ export default [
     must_mention: '触手（TEQUIP:90）：静默跳过',
   },
   {
-    desc: 'M1754 K4 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_4，#235）',
+    desc: 'M1754 K4 死斗场检查岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_4，#235）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: '  if (era0(`tequip:${target}:55`)) {\n    await colosseum_kojo_4(); // CALL COLOSSEUM_KOJO_4\n    return 0;\n  }',
     replace: `  if (era0(\`tequip:\${target}:55\`)) {
@@ -411,7 +411,7 @@ export default [
     must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_4',
   },
   {
-    desc: 'M1755 K4 爱撫初回刻印分档删（MARK:2 >= 2 臂丢失，#235）',
+    desc: 'M1755 K4 爱撫初回刻印分档删（MARK:2 >= 2 分支丢失，#235）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: '      if (era0(`mark:${target}:2`) >= 2) {\n        await era.printAndWait(`「唔～唔……」「哼，这不挺配合的嘛！」`);\n      } else {',
     replace:
@@ -638,7 +638,7 @@ export default [
     must_mention: '爱抚推进到 4',
   },
   {
-    desc: 'M1654 K1 淫乱素质判据错格（TALENT:76 改 77）（#232）',
+    desc: 'M1654 K1 淫乱素质条件错格（TALENT:76 改 77）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '        era.get(`talent:${target}:76`) === 1 &&\n        (chara(target).kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)\n      ) {\n        await era.printAndWait(\n          `「啊哈…想要更多的爱抚…啊啊…留下更多的痕迹吧${heart(1)}」`,',
     replace:
@@ -647,7 +647,7 @@ export default [
     must_mention: '淫乱爱抚台词',
   },
   {
-    desc: 'M1655 K1 爱慕素质判据错格（TALENT:85 改 86）（#232）',
+    desc: 'M1655 K1 爱慕素质条件错格（TALENT:85 改 86）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '        era.get(`talent:${target}:85`) === 1 &&\n        (chara(target).kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        await era.printAndWait(`「啊…即使更加激烈…没关系的…真的♪」`);',
     replace:
@@ -674,7 +674,7 @@ export default [
     must_mention: 'FLAG:7 == 1 阶段耗尽不出声',
   },
   {
-    desc: 'M1658 K1 @EVENTTRAIN #PRI 存在标志写错（FLAG:101 = 1 改 2）（#232）',
+    desc: 'M1658 K1 EVENTTRAIN #PRI 档存在标志写错（FLAG:101 = 1 改 2）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  game.kojo.口上存在_1 = 1;',
     replace: '  game.kojo.口上存在_1 = 2; // （变异）',
@@ -682,7 +682,7 @@ export default [
     must_mention: 'K1 存在标志置 1',
   },
   {
-    desc: 'M1659 K1 @EVENTEND #LATER 清标志删除（#232）',
+    desc: 'M1659 K1 EVENTEND #LATER 档清标志删除（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  game.kojo.口上存在_1 = 0;',
     replace: '  // 变异：清标志删除',
@@ -699,7 +699,7 @@ export default [
     must_mention: '助手调教不跳过出台词',
   },
   {
-    desc: 'M1661 K1 口塞守卫删除（TEQUIP:45 改恒 false）（#232）',
+    desc: 'M1661 K1 口塞检查删除（TEQUIP:45 改恒 false）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
     replace: '  if (false && era_flag.selectcom !== 45) {\n    // 变异',
@@ -716,7 +716,7 @@ export default [
     must_mention: '口塞指令自己说话',
   },
   {
-    desc: 'M1663 K1 失神守卫删除（TFLAG:899 改恒 false）（#232）',
+    desc: 'M1663 K1 失神检查删除（TFLAG:899 改恒 false）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     replace:
@@ -725,7 +725,7 @@ export default [
     must_mention: '失神：跳过',
   },
   {
-    desc: 'M1664 K1 崩坏守卫错格（TALENT:9 改 8）（#232）',
+    desc: 'M1664 K1 崩坏检查错格（TALENT:9 改 8）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`talent:${target}:9`) === 1) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {\n    await dog_kojo_1(rand); // CALL DOG_KOJO_1',
     replace:
@@ -734,7 +734,7 @@ export default [
     must_mention: '崩坏：跳过',
   },
   {
-    desc: 'M1665 K1 触手守卫删除（TEQUIP:90 改恒 false）（#232）',
+    desc: 'M1665 K1 触手检查删除（TEQUIP:90 改恒 false）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era_flag.selectcom === 0) {',
     replace:
@@ -743,7 +743,7 @@ export default [
     must_mention: '触手：跳过',
   },
   {
-    desc: 'M1666 K1 死斗场守卫错位（TEQUIP:55 改 56）（#232）',
+    desc: 'M1666 K1 死斗场检查错位（TEQUIP:55 改 56）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    await colosseum_kojo_1(rand); // CALL COLOSSEUM_KOJO_1',
     replace:
@@ -760,7 +760,7 @@ export default [
     must_mention: '看到死斗场的热浪',
   },
   {
-    desc: 'M1668 K1 兽奸守卫错位（TEQUIP:89 改 88）（#232）',
+    desc: 'M1668 K1 兽奸检查错位（TEQUIP:89 改 88）（#232）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:89`)) {\n    await dog_kojo_1(rand); // CALL DOG_KOJO_1',
     replace:
@@ -971,7 +971,7 @@ export default [
     must_mention: '舔阴首次（CFLAG:302 == 0 且非处女）',
   },
   {
-    desc: 'M1701 K3 舔阴处女分档删（TALENT:0 臂拿掉）（#234）',
+    desc: 'M1701 K3 舔阴处女分档删（TALENT:0 分支拿掉）（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      if (era.get(`talent:${target}:0`) === 1) {\n        await era.printAndWait(\n          '「嗯啊啊~！那、那里才不是可以舔的地方…哈呜…很，很脏的…哈呜！」',\n        );\n      } else {",
     replace:
@@ -1089,7 +1089,7 @@ export default [
     must_mention: '接吻顺从Lv2推进到 3',
   },
   {
-    desc: 'M1715 K3 死斗场守卫删松（TEQUIP:55 恒 false）（#234）',
+    desc: 'M1715 K3 死斗场检查删松（TEQUIP:55 恒 false）（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 死斗场中は専用口上\n  if (era.get(`tequip:${target}:55`)) {',
     replace: '  // 死斗场中は専用口上\n  if (false) {',
@@ -1097,7 +1097,7 @@ export default [
     must_mention: '死斗场（TEQUIP:55）最先',
   },
   {
-    desc: 'M1716 K3 助手调教守卫删松（#234）',
+    desc: 'M1716 K3 助手调教检查删松（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 助手が調教した時に口上をスキップする\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace: '  // 助手が調教した時に口上をスキップする\n  if (false) {',
@@ -1105,7 +1105,7 @@ export default [
     must_mention: '助手调教：静默跳过',
   },
   {
-    desc: 'M1717 K3 口塞守卫删松（#234）',
+    desc: 'M1717 K3 口塞检查删松（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 口塞着用時（SELECTCOM == 45 自己说话不算）\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
     replace: '  // 口塞着用時（SELECTCOM == 45 自己说话不算）\n  if (false) {',
@@ -1113,7 +1113,7 @@ export default [
     must_mention: '口塞：静默跳过',
   },
   {
-    desc: 'M1718 K3 失神守卫删松（#234）',
+    desc: 'M1718 K3 失神检查删松（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (game.train.失神) {',
     replace:
@@ -1122,7 +1122,7 @@ export default [
     must_mention: '失神：静默跳过',
   },
   {
-    desc: 'M1719 K3 兽奸守卫删松（#234）',
+    desc: 'M1719 K3 兽奸检查删松（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 兽奸PLAY中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
     replace: '  // 兽奸PLAY中は専用口上\n  if (false) {',
@@ -1130,7 +1130,7 @@ export default [
     must_mention: '兽奸（TEQUIP:89）',
   },
   {
-    desc: 'M1720 K3 崩坏守卫删松（#234）',
+    desc: 'M1720 K3 崩坏检查删松（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 崩坏した場合（TALENT:9）\n  if (era.get(`talent:${target}:9`) === 1) {',
     replace: '  // 崩坏した場合（TALENT:9）\n  if (false) {',
@@ -1138,7 +1138,7 @@ export default [
     must_mention: '崩坏：静默跳过',
   },
   {
-    desc: 'M1721 K3 触手守卫删松（#234）',
+    desc: 'M1721 K3 触手检查删松（#234）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 触手調教中（TEQUIP:90）\n  if (era.get(`tequip:${target}:90`)) {',
     replace: '  // 触手調教中（TEQUIP:90）\n  if (false) {',
@@ -1213,11 +1213,11 @@ export default [
     find: '  if (id >= 0 && family.has(id)) {',
     replace: '  if (false) { // 变异：已注册也打占位',
     tests: ['kojo-k3-noble', 'benki'],
-    // #565 返工起未命中静默，红的形态是「K3 真身台词消失」而非「打占位行」
+    // #565 返工起未命中静默，红的形式是「K3 真身台词消失」而非「打占位行」
     must_mention: 'K3 肉便器常识改写真台词',
   },
   // M1730 已删（#565 返工）：try_kojo 未命中静默成为**正确语义**
-  // （原作 TRYCALLFORM 落空），它的「未注册打占位」前提反转；守卫转由
+  // （TRYCALLFORM 落空），它的「未注册打占位」前提反转；检查转由
   // M11636 与 test/kojo-family-coverage.test.js 承担。
   {
     desc: 'M11636 try_kojo 未命中复辟占位（静默语义丢失，一档一占位刷屏）',
@@ -1246,7 +1246,7 @@ export default [
     must_mention: '推进到 1',
   },
   {
-    desc: 'M1541 K2 淫乱素质判据错格（TALENT:76 改 77）（#233）',
+    desc: 'M1541 K2 淫乱素质条件错格（TALENT:76 改 77）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '      if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)\n      ) {',
     replace:
@@ -1276,7 +1276,7 @@ export default [
     must_mention: 'GET_KOJO_NUM',
   },
   {
-    desc: 'M1546 K2 死斗场守卫删除（TEQUIP:55 改恒 false）（#233）',
+    desc: 'M1546 K2 死斗场检查删除（TEQUIP:55 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    await colosseum_kojo_2(rand_n);',
     replace: '  if (false) {\n    await colosseum_kojo_2(rand_n);',
@@ -1284,7 +1284,7 @@ export default [
     must_mention: '死斗场（TEQUIP:55）最先',
   },
   {
-    desc: 'M1547 K2 助手调教守卫删除（ASSIPLAY 改恒 false）（#233）',
+    desc: 'M1547 K2 助手调教检查删除（ASSIPLAY 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
     replace:
@@ -1299,10 +1299,10 @@ export default [
     replace:
       '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 46) {',
     tests: ['kojo-k2-timid'],
-    must_mention: '口塞中的 45 指令不被头部守卫拦',
+    must_mention: '口塞中的 45 指令不被头部检查拦',
   },
   {
-    desc: 'M1549 K2 失神守卫删除（TFLAG:899 改恒 false）（#233）',
+    desc: 'M1549 K2 失神检查删除（TFLAG:899 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {\n    return 0;\n  }',
     replace:
@@ -1311,7 +1311,7 @@ export default [
     must_mention: '失神（TFLAG:899）：静默跳过',
   },
   {
-    desc: 'M1550 K2 崩坏守卫删除（TALENT:9 改恒 false）（#233）',
+    desc: 'M1550 K2 崩坏检查删除（TALENT:9 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`talent:${target}:9`) === 1) {\n    return 0;\n  }',
     replace:
@@ -1320,7 +1320,7 @@ export default [
     must_mention: '崩坏（TALENT:9）：静默跳过',
   },
   {
-    desc: 'M1551 K2 兽奸守卫删除（TEQUIP:89 改恒 false）（#233）',
+    desc: 'M1551 K2 兽奸检查删除（TEQUIP:89 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '  if (era.get(`tequip:${target}:89`)) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era_flag.selectcom === 0) {',
     replace:
@@ -1329,7 +1329,7 @@ export default [
     must_mention: '不调 DOG_KOJO_2',
   },
   {
-    desc: 'M1552 K2 触手守卫删除（TEQUIP:90 改恒 false）（#233）',
+    desc: 'M1552 K2 触手检查删除（TEQUIP:90 改恒 false）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era_flag.selectcom === 0) {',
     replace:
@@ -1338,7 +1338,7 @@ export default [
     must_mention: '触手（TEQUIP:90）：静默跳过',
   },
   {
-    desc: 'M1553 K2 爱慕素质判据错格（TALENT:85 改 86）（#233）',
+    desc: 'M1553 K2 爱慕素质条件错格（TALENT:85 改 86）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        await era.printAndWait(`「呼…呼呼…再…请随意…关照…${heart(1)}」`);',
     replace:
@@ -1347,7 +1347,7 @@ export default [
     must_mention: '爱慕分支',
   },
   {
-    desc: 'M1554 K2 屈服刻印 Lv3 判据错格（MARK:2 == 3 改 4）（#233）',
+    desc: 'M1554 K2 屈服刻印 Lv3 条件错格（MARK:2 == 3 改 4）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '        (era.get(`mark:${target}:2`) || 0) === 3 &&\n        (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        await era.printAndWait(`「请…再…再用力些…啊！」`);',
     replace:
@@ -1389,7 +1389,7 @@ export default [
     must_mention: 'CFLAG:201',
   },
   {
-    desc: 'M1559 K2 EVENTEND 屈服低档爱慕判据反相（TALENT:85 == 0 改 == 1）（#233）',
+    desc: 'M1559 K2 EVENTEND 屈服低档爱慕条件反相（TALENT:85 == 0 改 == 1）（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '    (era.get(`mark:${target}:2`) || 0) <= 1 &&\n    era.get(`talent:${target}:85`) === 0\n  ) {',
     replace:
@@ -1398,7 +1398,7 @@ export default [
     must_mention: 'EVENTEND 普通档必须出声',
   },
   {
-    desc: 'M1560 K2 @EVENTEND #LATER 清标志删除（#233）',
+    desc: 'M1560 K2 EVENTEND #LATER 档清标志删除（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '    game.kojo.口上存在_2 = 0;',
     replace: '    // 变异：清标志删除',
@@ -1476,7 +1476,7 @@ export default [
   // —— #237（J27）：K6 悪女 口上模块。原号段 M1780-M1806，与 #236/#288 撞号
   // 的一段（原 M1790-M1806）已改到 M2119/M2121-M2136（#295 消重，只改后来者）——
   {
-    desc: 'M1780 K6 COM 助手调教守卫删（ASSIPLAY 不再跳过，#237）',
+    desc: 'M1780 K6 COM 助手调教检查删（ASSIPLAY 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
     replace:
@@ -1485,7 +1485,7 @@ export default [
     must_mention: '助手调教（ASSI > 0 && ASSIPLAY）：静默跳过',
   },
   {
-    desc: 'M1781 K6 COM 口塞守卫删（TEQUIP:45 不再跳过，#237）',
+    desc: 'M1781 K6 COM 口塞检查删（TEQUIP:45 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }',
     replace:
@@ -1494,7 +1494,7 @@ export default [
     must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
   {
-    desc: 'M1782 K6 COM 失神守卫删（TFLAG:899 不再跳过，#237）',
+    desc: 'M1782 K6 COM 失神检查删（TFLAG:899 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if ((era.get(`talent:${target}:9`) || 0) === 1) {',
     replace:
@@ -1503,7 +1503,7 @@ export default [
     must_mention: '失神（TFLAG:899）：静默跳过',
   },
   {
-    desc: 'M1783 K6 COM 崩坏守卫删（TALENT:9 不再跳过，#237）',
+    desc: 'M1783 K6 COM 崩坏检查删（TALENT:9 不再跳过，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '  if ((era.get(`talent:${target}:9`) || 0) === 1) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
@@ -1512,7 +1512,7 @@ export default [
     must_mention: '崩坏（TALENT:9）：静默跳过',
   },
   {
-    desc: 'M1784 K6 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_6，#237）',
+    desc: 'M1784 K6 兽奸检查岔路丢失（TEQUIP:89 不再调 DOG_KOJO_6，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '  if (era.get(`tequip:${target}:89`)) {\n    await dog_kojo_6(rand_n); // CALL DOG_KOJO_6\n    return 0;\n  }',
     replace:
@@ -1521,7 +1521,7 @@ export default [
     must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_6',
   },
   {
-    desc: 'M1785 K6 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_6，#237）',
+    desc: 'M1785 K6 死斗场检查岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_6，#237）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    await colosseum_kojo_6(rand_n); // CALL COLOSSEUM_KOJO_6\n    return 0;\n  }',
     replace:
@@ -1846,7 +1846,7 @@ export default [
     must_mention: '人类初调教必须出声',
   },
   {
-    desc: 'M1807 K5 COM 口塞守卫删（TEQUIP:45 不再跳过）（#236）',
+    desc: 'M1807 K5 COM 口塞检查删（TEQUIP:45 不再跳过）（#236）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: `  if (era.get(\`tequip:\${target}:45\`) && era_flag.selectcom !== 45) {
     return 0;
@@ -1858,7 +1858,7 @@ export default [
     must_mention: 'SELECTCOM != 45 跳过',
   },
   {
-    desc: 'M1808 K5 COM 兽奸守卫删（TEQUIP:89 不再跳过）（#236）',
+    desc: 'M1808 K5 COM 兽奸检查删（TEQUIP:89 不再跳过）（#236）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '  // 獣姦プレイ中（K5 是静默跳过，无 DOG_KOJO 调用）\n  if (era.get(`tequip:${target}:89`)) {\n    return 0;\n  }',
     replace:
@@ -1940,7 +1940,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
 
   // —— #238（J28）：K7 ハート 口上模块（M2000-M2069 号段） ——
   {
-    desc: 'M2000 K7 @EVENTTRAIN #PRI 存在标志错值（FLAG:107 = 1 改 0，#238）',
+    desc: 'M2000 K7 EVENTTRAIN #PRI 档存在标志错值（FLAG:107 = 1 改 0，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: 'game.kojo.口上存在_7 = 1; // FLAG:107 = 1（K7 口上存在标志）',
     replace: 'game.kojo.口上存在_7 = 0; // （变异：存在标志错值）',
@@ -1948,7 +1948,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K7 一对',
   },
   {
-    desc: 'M2001 K7 @EVENTEND #LATER 清标志删除（#238）',
+    desc: 'M2001 K7 EVENTEND #LATER 档清标志删除（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: 'game.kojo.口上存在_7 = 0;',
     replace: `    // 变异：清标志删除`,
@@ -1965,7 +1965,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 1',
   },
   {
-    desc: 'M2003 K7 初調教魔族分档判据错格（TALENT:314 == 9 改 8，#238）',
+    desc: 'M2003 K7 初調教魔族分档条件错格（TALENT:314 == 9 改 8，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `    // 魔族
     if (era0(\`talent:\${target}:314\`) == 9) {`,
@@ -2032,7 +2032,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '崩坏',
   },
   {
-    desc: 'M2011 K7 崩坏只播一次守卫删松（CFLAG:201 < 9 改 <= 9，#238）',
+    desc: 'M2011 K7 崩坏只播一次检查删松（CFLAG:201 < 9 改 <= 9，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `era0(\`talent:\${target}:9\`) == 1 &&
     era0(\`cflag:\${target}:201\`) < 9
@@ -2046,7 +2046,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '崩坏只播一次',
   },
   {
-    desc: 'M2012 K7 无名助手判据错格（TALENT:MASTER:122 == 0 改 1，#238）',
+    desc: 'M2012 K7 无名助手条件错格（TALENT:MASTER:122 == 0 改 1，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `era0(\`talent:0:122\`) == 0) {`,
     replace: `era0(\`talent:0:122\`) == 1) {  // 变异`,
@@ -2054,24 +2054,24 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K7_KOJO2',
   },
   {
-    desc: 'M2013 K7 @EVENTEND 死亡守卫删松（BASE:0 <= 0 改 < 0，#238）',
+    desc: 'M2013 K7 EVENTEND 死亡检查删松（BASE:0 <= 0 改 < 0，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `era0(\`base:\${target}:0\`) <= 0) {`,
     replace: `era0(\`base:\${target}:0\`) < 0) {  // 变异`,
     tests: ['kojo-k7-heart'],
-    must_mention: '死亡守卫',
+    must_mention: '死亡检查',
   },
   {
-    desc: 'M2014 K7 @EVENTEND 崩坏判据错格（FLAG:7 == 2 改 3，#238）',
+    desc: 'M2014 K7 EVENTEND 崩坏条件错格（FLAG:7 == 2 改 3，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n    // 崩坏\n    era.drawLine();\n    await era.printAndWait(`「不…讨厌…怪物的孩子不要生下来…不要………」`);",
     replace:
       "if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 3) {\n    // 崩坏（变异：FLAG:7 判据错格）\n    era.drawLine();\n    await era.printAndWait(`「不…讨厌…怪物的孩子不要生下来…不要………」`);",
     tests: ['kojo-k7-heart'],
-    must_mention: '@EVENTEND 崩坏',
+    must_mention: 'EVENTEND 崩坏',
   },
   {
-    desc: 'M2015 K7 @EVENTEND 淫乱体力分档阈值错（BASE:0 >= 500 改 >= 700，#238）',
+    desc: 'M2015 K7 EVENTEND 淫乱体力分档阈值错（BASE:0 >= 500 改 >= 700，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `era0(\`talent:\${target}:76\`) == 1 &&
     era0(\`base:\${target}:0\`) >= 500
@@ -2094,7 +2094,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '爱取得済み分档',
   },
   {
-    desc: 'M2017 K7 助手白梅花守卫删除（TALENT:ASSI:121 == 0 改恒 false，#238）',
+    desc: 'M2017 K7 助手白梅花检查删除（TALENT:ASSI:121 == 0 改恒 false，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `if (era0(\`talent:\${assi}:121\`) == 0) {
       return 0;
@@ -2106,34 +2106,34 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '静默跳过',
   },
   {
-    desc: 'M2019 K7 头部守卫①：ASSI>0&&ASSIPLAY 删除（#238）',
+    desc: 'M2019 K7 头部检查①：ASSI>0&&ASSIPLAY 删除（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 助手调教时跳过\n  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }',
     replace:
       '// 助手调教时跳过\n  if (false) {  // 变异：助手调教守卫删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
-    must_mention: '头部第 1 道守卫',
+    must_mention: '头部第 1 道检查',
   },
   {
-    desc: 'M2020 K7 头部守卫②：TEQUIP:45 口塞守卫删除（#238）',
+    desc: 'M2020 K7 头部检查②：TEQUIP:45 口塞检查删除（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 口塞着用时跳过（SELECTCOM == 45 自己说话不算）\n  if (era0(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }',
     replace:
       '// 口塞着用时跳过（SELECTCOM == 45 自己说话不算）\n  if (false) {  // 变异：口塞守卫删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
-    must_mention: '头部第 2 道守卫',
+    must_mention: '头部第 2 道检查',
   },
   {
-    desc: 'M2021 K7 头部守卫③：TFLAG:899 失神删除（#238）',
+    desc: 'M2021 K7 头部检查③：TFLAG:899 失神删除（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "// 失神时跳过\n  if (era0('tflag:899')) {\n    return 0;\n  }",
     replace:
       '// 失神时跳过\n  if (false) {  // 变异：失神守卫删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
-    must_mention: '头部第 3 道守卫',
+    must_mention: '头部第 3 道检查',
   },
   {
-    desc: 'M2022 K7 头部守卫④：TEQUIP:89 不再岔去 DOG_KOJO_7（#238）',
+    desc: 'M2022 K7 头部检查④：TEQUIP:89 不再岔去 DOG_KOJO_7（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 兽奸PLAY中是专用口上——岔去本文件真身\n  if (era0(`tequip:${target}:89`)) {\n    await dog_kojo_7(rand_n);\n    return 0;\n  }',
     replace:
@@ -2142,7 +2142,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DOG_KOJO_7',
   },
   {
-    desc: 'M2023 K7 头部守卫⑤：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_7（#238）',
+    desc: 'M2023 K7 头部检查⑤：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_7（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 死斗场中是专用口上——岔去本文件真身\n  if (era0(`tequip:${target}:55`)) {\n    await colosseum_kojo_7(rand_n);\n    return 0;\n  }',
     replace:
@@ -2151,22 +2151,22 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COLOSSEUM_KOJO_7',
   },
   {
-    desc: 'M2024 K7 头部守卫⑥：TALENT:9 崩坏删除（#238）',
+    desc: 'M2024 K7 头部检查⑥：TALENT:9 崩坏删除（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 崩坏时跳过\n  if (era0(`talent:${target}:9`) == 1) {\n    return 0;\n  }',
     replace:
       '// 崩坏时跳过\n  if (false) {  // 变异：崩坏守卫删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
-    must_mention: '头部第 6 道守卫',
+    must_mention: '头部第 6 道检查',
   },
   {
-    desc: 'M2025 K7 头部守卫⑦：TEQUIP:90 触手删除（#238）',
+    desc: 'M2025 K7 头部检查⑦：TEQUIP:90 触手删除（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 触手调教中跳过\n  if (era0(`tequip:${target}:90`)) {\n    return 0;\n  }',
     replace:
       '// 触手调教中跳过\n  if (false) {  // 变异：触手守卫删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
-    must_mention: '头部第 7 道守卫',
+    must_mention: '头部第 7 道检查',
   },
   {
     desc: 'M2026 K7 SELECTCOM==0 爱抚初回推进值错（CFLAG:301 = 1 改 2，#238）',
@@ -2178,7 +2178,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 1',
   },
   {
-    desc: 'M2027 K7 SELECTCOM==87 穿环 p==1 判据错格（改 p==9，#238）',
+    desc: 'M2027 K7 SELECTCOM==87 穿环 p==1 条件错格（改 p==9，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '            `${target_name}因为皮肤第一次被打孔而痛的不禁皱着眉。`,\n          );\n\n          if (p == 1) {\n            await era.printAndWait(\n              `「啊啊…敏感度上升了啊…来吧拉一下试试吧…${heart(1)}」`,\n            );',
     replace:
@@ -2203,7 +2203,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '首次超过',
   },
   {
-    desc: 'M2030 K7 MARKCNG 苦痛刻印Lv3判据错格（TFLAG:22 == 3 改 4，#238）',
+    desc: 'M2030 K7 MARKCNG 苦痛刻印Lv3条件错格（TFLAG:22 == 3 改 4，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `if (era0('tflag:22') == 3 && era0(\`cflag:\${target}:297\`) == 0) {`,
     replace: `if (era0('tflag:22') == 4 && era0(\`cflag:\${target}:297\`) == 0) {  // 变异`,
@@ -2229,7 +2229,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '体力低于五成',
   },
   {
-    desc: 'M2033 K7 DUNGEON_RYOUZYOKU 处女判据错格（TALENT:0 == 1 改 2，#238）',
+    desc: 'M2033 K7 DUNGEON_RYOUZYOKU 处女条件错格（TALENT:0 == 1 改 2，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '  if (era0(`talent:${target}:0`) == 1) {\n    await era.printAndWait(`「能夺走我处女的幸运儿会是谁呢？」`);',
     replace:
@@ -2238,7 +2238,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '迷宫败北与凌辱结束口上',
   },
   {
-    desc: 'M2034 K7 GOHOUBI_REQUEST CFLAG:A:504 判据错格（== 0 改 1，#238）',
+    desc: 'M2034 K7 GOHOUBI_REQUEST CFLAG:A:504 条件错格（== 0 改 1，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: 'if (era0(`cflag:${cid}:504`) == 0) {\n    await era.printAndWait(`「说道奖励当然想要钱了」`);',
     replace:
@@ -2247,7 +2247,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '请求金钱',
   },
   {
-    desc: 'M2035 K7 GOHOUBI_AFTER choice==0 判据错格（改 choice==9，#238）',
+    desc: 'M2035 K7 GOHOUBI_AFTER choice==0 条件错格（改 choice==9，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `async function gohoubi_after_koujo_k7(cid, choice) {
   if (choice == 0) {`,
@@ -2257,7 +2257,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'TFLAG:18 改经 choice',
   },
   {
-    desc: 'M2036 K7 OSIOKI choice==6 判据错格（改 choice==16，#238）',
+    desc: 'M2036 K7 OSIOKI choice==6 条件错格（改 choice==16，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '} else if (choice == 6) {\n    await era.printAndWait(`「好臭啊………」`);',
     replace:
@@ -2266,7 +2266,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '好臭啊',
   },
   {
-    desc: 'M2037 K7 GOBI arg_0==3 判据错格（改 arg_0==13，#238）',
+    desc: 'M2037 K7 GOBI arg_0==3 条件错格（改 arg_0==13，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '} else if (arg_0 == 3) {\n    return `哦……。`;',
     replace: '} else if (arg_0 == 13) {  // 变异\n    return `哦……。`;',
@@ -2274,7 +2274,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'ARG:0 取语尾编号',
   },
   {
-    desc: 'M2038 K7 BENKI 门面 game.train.肉便器行动 判据错格（== 0 改 1，#238）',
+    desc: 'M2038 K7 BENKI 门面 game.train.肉便器行动 条件错格（== 0 改 1，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: `if (game.train.肉便器行动 == 0) {
     if (era0(\`talent:\${target}:76\`) == 1) {`,
@@ -2284,7 +2284,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '门面 game.train.肉便器行动',
   },
   {
-    desc: 'M2039 K7 ENTERENEMY 爱慕判据错格（TALENT:85 == 1 改 2，#238）',
+    desc: 'M2039 K7 ENTERENEMY 爱慕条件错格（TALENT:85 == 1 改 2，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '} else if (era0(`talent:${a}:85`) == 1) {\n    await era.printAndWait(\n      `「啊啊…魔王大人。现、现在就去见你了.....${heart(1)}」`,\n    );',
     replace:
@@ -2301,7 +2301,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '首次经 CFLAG:650 标记',
   },
   {
-    desc: 'M2041 K7 EXUCUTION TFLAG:16 判据错格（== 5 改 6，#238；6 支已有台词，改后仍会输出但文本不同，红在断言精确台词）',
+    desc: 'M2041 K7 EXUCUTION TFLAG:16 条件错格（== 5 改 6，#238；6 支已有台词，改后仍会输出但文本不同，红在断言精确台词）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "} else if (era0('tflag:16') == 5) {\n    await era.printAndWait(`「下达命令…主人………」`);",
     replace:
@@ -2310,7 +2310,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '注册且可调用',
   },
   {
-    desc: 'M2042 K7 BANISHMENT TFLAG:510 判据错格（== 0 改 1，#238）',
+    desc: 'M2042 K7 BANISHMENT TFLAG:510 条件错格（== 0 改 1，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "if (era0('tflag:510') == 0) {\n    await era.printAndWait(`「回不去了…狂王大人那里…已经回不去了………」`);",
     replace:
@@ -2319,7 +2319,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '回不去了',
   },
   {
-    desc: 'M2043 K7 PUBLIC_EXUCUTION TFLAG:520 判据错格（== 1 改 2，#238）',
+    desc: 'M2043 K7 PUBLIC_EXUCUTION TFLAG:520 条件错格（== 1 改 2，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "} else if (era0('tflag:520') == 1) {\n    await era.printAndWait(`「这里…这个绞刑台是我最后的舞台吗…」`);",
     replace:
@@ -2328,7 +2328,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '绞刑台',
   },
   {
-    desc: 'M2044 K7 GROTESQUE TFLAG:530 判据错格（== 0 改 1，#238；源全空，红在分支路由而非文本）',
+    desc: 'M2044 K7 GROTESQUE TFLAG:530 条件错格（== 0 改 1，#238；源全空，红在分支路由而非文本）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "async function grotesque_koujo_k7() {\n  if (era0('tflag:530') == 0) {\n    await era.printAndWait('');",
     replace:
@@ -2346,7 +2346,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       game.kojo.口上开关 = 2;`,
     tests: ['kojo-k11-lily'],
     must_mention:
-      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）',
+      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）',
   },
   {
     desc: 'M2341 K11 EVENTEND #LATER 存在标志清零丢失（#242）',
@@ -2357,10 +2357,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   TIER.LATER,`,
     tests: ['kojo-k11-lily'],
     must_mention:
-      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）',
+      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）',
   },
   {
-    desc: 'M2342 EVENTTRAIN 主体 FLAG:7 <= 0 守卫删（#242）',
+    desc: 'M2342 EVENTTRAIN 主体 FLAG:7 <= 0 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
     const kojo = chara(target).kojo;
@@ -2373,17 +2373,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
     const kojo = chara(target).kojo;
     if (false) {
-      // 变异：FLAG:7 <= 0 守卫删
+      // 变异：FLAG:7 <= 0 检查删
       return 0;
     }
     if (era0(\`talent:\${target}:171\`) != 1) {
       return 0;
     }`,
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTTRAIN 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
+    must_mention: 'EVENTTRAIN 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   },
   {
-    desc: 'M2343 EVENTTRAIN 主体 TALENT:171 != 1 守卫删（#242）',
+    desc: 'M2343 EVENTTRAIN 主体 TALENT:171 != 1 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
     const kojo = chara(target).kojo;
@@ -2399,12 +2399,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }
     if (false) {
-      // 变异：TALENT:171 != 1 守卫删
+      // 变异：TALENT:171 != 1 检查删
       return 0;
     }`,
     tests: ['kojo-k11-lily'],
     must_mention:
-      '@EVENTTRAIN 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
+      'EVENTTRAIN 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
   },
   {
     desc: 'M2344 姉妹判定 CFLAG:TARGET:21 姐姐标记写错（317 改 316）（#242）',
@@ -2460,14 +2460,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '魔族化（１回のみ）：CFLAG:201<5 且未魔族化时改造，CFLAG:400 = 2',
   },
   {
-    desc: 'M2348 NTR再捕获（爱慕/淫乱臂）清零丢失（#242）',
+    desc: 'M2348 NTR再捕获（爱慕/淫乱分支）清零丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "      if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {\n        era.drawLine();\n        await era.printAndWait(''); // PRINTFORMW 空行\n        kojo.NTR再捕获 = 0;\n      } else {",
     replace:
       "      if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {\n        era.drawLine();\n        await era.printAndWait(''); // PRINTFORMW 空行\n        // 变异：CFLAG:650 清零丢失\n      } else {",
     tests: ['kojo-k11-lily'],
     must_mention:
-      'NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕臂清 NTR 开关',
+      'NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕分支清 NTR 开关',
   },
   {
     desc: 'M2349 屈服刻印Lv1推进写错（2 改 3）（#242）',
@@ -2615,33 +2615,33 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n        return 1;',
     replace:
-      '        await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n        era.set(`cflag:${target}:202`, 2); // 变异：原作それ以外不推进\n        return 1;',
+      '        await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n        era.set(`cflag:${target}:202`, 2); // 变异：それ以外不推进\n        return 1;',
     tests: ['kojo-k11-lily'],
     must_mention:
       '助手玛奥それ以外（未持爱慕/淫乱、CFLAG:202==1）：拒绝分档，不改 CFLAG:202',
   },
   {
-    desc: 'M2364 K11_KOJO2 崩坏判据错格（TALENT:9==1 改 ==0）（#242）',
+    desc: 'M2364 K11_KOJO2 崩坏条件错格（TALENT:9==1 改 ==0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era0(\`talent:\${target}:9\`) == 1 && era0('flag:7') == 2) {
     // 崩坏
     era.drawLine();`,
     replace: `  if (era0(\`talent:\${target}:9\`) == 0 && era0('flag:7') == 2) {
-    // 变异：崩坏判据错格
+    // 变异：崩坏条件错格
     era.drawLine();`,
     tests: ['kojo-k11-lily'],
     must_mention:
       '崩坏后（TALENT:9==1 且 CFLAG:201==9）改走 K11_KOJO2，不再打崩坏台词',
   },
   {
-    desc: 'M2365 K11_KOJO2 反発刻印Lv3判据错格（MARK:3==3 改 ==2）（#242）',
+    desc: 'M2365 K11_KOJO2 反発刻印Lv3条件错格（MARK:3==3 改 ==2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    return 1;
   } else if (era0(\`mark:\${target}:3\`) == 3 && era0('flag:7') == 2) {
     // 反発刻印Lv3`,
     replace: `    return 1;
   } else if (era0(\`mark:\${target}:3\`) == 2 && era0('flag:7') == 2) {
-    // 变异：反発刻印Lv3判据错格`,
+    // 变异：反発刻印Lv3条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'K11_KOJO2：反発刻印Lv3',
   },
@@ -2664,29 +2664,29 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'K11_KOJO2：屈服刻印Lv3＋爱慕/淫乱無し，按 CFLAG:202 是否见过妹妹分档',
   },
   {
-    desc: 'M2367 K11_KOJO2 淫乱分支守卫错格（TALENT:76==1 改 ==0，#242）',
+    desc: 'M2367 K11_KOJO2 淫乱分支检查错格（TALENT:76==1 改 ==0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  } else if (era0(\`talent:\${target}:76\`) == 1 && era0('flag:7') == 2) {
     // 淫乱（含魔族化分支）`,
     replace: `  } else if (era0(\`talent:\${target}:76\`) == 0 && era0('flag:7') == 2) {
-    // 变异：淫乱分支守卫错格`,
+    // 变异：淫乱分支检查错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'K11_KOJO2：淫乱含魔族化分支',
   },
   {
-    desc: 'M2368 K11_KOJO2 爱慕分支守卫错格（TALENT:85==1 改 ==0，#242）',
+    desc: 'M2368 K11_KOJO2 爱慕分支检查错格（TALENT:85==1 改 ==0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  } else if (era0(\`talent:\${target}:85\`) == 1 && era0('flag:7') == 2) {
     // 爱慕（含魔族化分支）`,
     replace: `  } else if (era0(\`talent:\${target}:85\`) == 0 && era0('flag:7') == 2) {
-    // 变异：爱慕分支守卫错格`,
+    // 变异：爱慕分支检查错格`,
     tests: ['kojo-k11-lily'],
     must_mention:
       'K11_KOJO2：爱慕分档（RAND 三选一，落到隐式 RETURN 0 前提早覆盖为 return 1）',
   },
 
   {
-    desc: 'M2369 EVENTEND 主体 FLAG:7 <= 0 守卫删（#242）',
+    desc: 'M2369 EVENTEND 主体 FLAG:7 <= 0 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
     const kojo = chara(target).kojo;
@@ -2702,7 +2702,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
     const kojo = chara(target).kojo;
     if (false) {
-      // 变异：FLAG:7 <= 0 守卫删
+      // 变异：FLAG:7 <= 0 检查删
       return 0;
     }
     if (era0(\`talent:\${target}:171\`) != 1) {
@@ -2712,10 +2712,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }`,
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
+    must_mention: 'EVENTEND 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   },
   {
-    desc: 'M2370 EVENTEND 主体 TALENT:171 != 1 守卫删（#242）',
+    desc: 'M2370 EVENTEND 主体 TALENT:171 != 1 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
     const kojo = chara(target).kojo;
@@ -2734,17 +2734,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }
     if (false) {
-      // 变异：TALENT:171 != 1 守卫删
+      // 变异：TALENT:171 != 1 检查删
       return 0;
     }
     if (era0(\`base:\${target}:0\`) <= 0) {
       return 0;
     }`,
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
+    must_mention: 'EVENTEND 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
   },
   {
-    desc: 'M2371 EVENTEND 死亡守卫删（BASE:0 <= 0 不再跳过）（#242）',
+    desc: 'M2371 EVENTEND 死亡检查删（BASE:0 <= 0 不再跳过）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (era0(\`talent:\${target}:171\`) != 1) {
       return 0;
@@ -2756,20 +2756,20 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       return 0;
     }
     if (false) {
-      // 变异：BASE:0 <= 0 死亡守卫删
+      // 变异：BASE:0 <= 0 死亡检查删
       return 0;
     }`,
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND：角色死亡（BASE:0<=0）时跳过口上',
+    must_mention: 'EVENTEND：角色死亡（BASE:0<=0）时跳过口上',
   },
   {
-    desc: 'M2372 EVENTEND 崩坏判据错格（TALENT:9==1 改 ==0）（#242）',
+    desc: 'M2372 EVENTEND 崩坏条件错格（TALENT:9==1 改 ==0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "    if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n      // 崩坏\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
     replace:
       "    if (era0(`talent:${target}:9`) == 0 && era0('flag:7') == 2) {\n      // 变异：崩坏判据错格\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND：崩坏分档',
+    must_mention: 'EVENTEND：崩坏分档',
   },
   {
     desc: 'M2373 EVENTEND 反発刻印Lv3+爱慕无 CFLAG:202 分档条件颠倒（#242）',
@@ -2778,7 +2778,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace:
       '      era.drawLine();\n      if (kojo.简易助手_0 < 1) {\n        // 变异：条件颠倒\n        await era.printAndWait(`「我，我是绝对不会认输的……」`);',
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支',
+    must_mention: 'EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支',
   },
   {
     desc: 'M2374 EVENTEND 淫乱体力500分档阈值改错（>= 500 改 >= 700）（#242）',
@@ -2794,7 +2794,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 淫乱(体力500以上)`,
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND：淫乱按体力 500 分档',
+    must_mention: 'EVENTEND：淫乱按体力 500 分档',
   },
   {
     desc: 'M2375 EVENTEND 爱慕体力500分档阈值改错（>= 500 改 >= 700）（#242）',
@@ -2810,7 +2810,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 爱慕(体力500以上)`,
     tests: ['kojo-k11-lily'],
-    must_mention: '@EVENTEND：爱慕按体力 500 分档',
+    must_mention: 'EVENTEND：爱慕按体力 500 分档',
   },
   {
     desc: 'M2376 主启动图删 K11 莉莉口上注册（KOJO 11 不进实际运行图）（#242）',
@@ -2821,40 +2821,40 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention:
       '经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志',
   },
-  // —— #242（J32 续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 头部守卫 +
+  // —— #242（J32 续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 头部检查 +
   // SELECTCOM 0/1/2（M2377-M2401 号段） ——
   {
-    desc: 'M2377 COM_11 助手非玛奥守卫删（#242）',
+    desc: 'M2377 COM_11 助手非玛奥检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 助手マオ以外が調教した時に口上をスキップする\n  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    return 0;\n  }',
     replace: `  // 变异：助手非玛奥守卫删`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：助手非玛奥调教时静默跳过',
+    must_mention: 'COM_11 检查：助手非玛奥调教时静默跳过',
   },
   {
-    desc: 'M2378 COM_11 口塞守卫删（#242）',
+    desc: 'M2378 COM_11 口塞检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // ボールギャグ着用時には口上をスキップする（SELECTCOM==45 自己说话不算）\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }',
     replace: `  // 变异：口塞守卫删`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：口塞中（非口塞指令）静默跳过',
+    must_mention: 'COM_11 检查：口塞中（非口塞指令）静默跳过',
   },
   {
-    desc: 'M2379 COM_11 失神守卫删（#242）',
+    desc: 'M2379 COM_11 失神检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 失神時には口上をスキップする\n  if (game.train.失神) {\n    return 0;\n  }',
     replace: `  // 变异：失神守卫删`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：失神中静默跳过',
+    must_mention: 'COM_11 检查：失神中静默跳过',
   },
   {
-    desc: 'M2380 COM_11 兽奸守卫被删除（#242）',
+    desc: 'M2380 COM_11 兽奸检查被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 獣姦プレイ中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
       '  // 獣姦プレイ中は専用口上\n  if (false) { // 变异：删除兽奸守卫',
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：兽奸中改走 DOG_KOJO_11 真身',
+    must_mention: 'COM_11 检查：兽奸中改走 DOG_KOJO_11 真身',
   },
   {
     desc: 'M2381 COM_11 死斗场真身调用被删除（#242）',
@@ -2866,26 +2866,26 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     return 0; // 变异：删除死斗场真身调用
   }`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：死斗场中改走 COLOSSEUM_KOJO_11 真身',
+    must_mention: 'COM_11 检查：死斗场中改走 COLOSSEUM_KOJO_11 真身',
   },
   {
-    desc: 'M2382 COM_11 崩坏守卫删（#242）',
+    desc: 'M2382 COM_11 崩坏检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 崩坏した場合は口上をスキップする\n  if (era.get(`talent:${target}:9`) === 1) {\n    return 0;\n  }',
     replace: `  // 变异：崩坏守卫删`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：崩坏后静默跳过',
+    must_mention: 'COM_11 检查：崩坏后静默跳过',
   },
   {
-    desc: 'M2383 COM_11 触手守卫删（#242）',
+    desc: 'M2383 COM_11 触手检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 触手調教中は口上をスキップする\n  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }',
     replace: `  // 变异：触手守卫删`,
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM_11 守卫：触手调教中静默跳过',
+    must_mention: 'COM_11 检查：触手调教中静默跳过',
   },
   {
-    desc: 'M2384 COM0 初めて助手玛奥判据错格（ASSIPLAY 丢失，#242）',
+    desc: 'M2384 COM0 初めて助手玛奥条件错格（ASSIPLAY 丢失，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  const assi_mao =
     era_flag.assi > 0 && era_flag.assiplay && era_flag.assi === 17;`,
@@ -2894,12 +2894,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM0 初めて：ASSI 是玛奥但 ASSIPLAY 为 0 时不算助手玛奥分档',
   },
   {
-    desc: 'M2385 COM0 初めて屈服刻印Lv2以上判据错格（>=2 改 >=3，#242）',
+    desc: 'M2385 COM0 初めて屈服刻印Lv2以上条件错格（>=2 改 >=3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (mark(2) >= 2) {
         // 屈服刻印Lv2以上`,
     replace: `      } else if (mark(2) >= 3) {
-        // 变异：屈服刻印Lv2以上判据错格`,
+        // 变异：屈服刻印Lv2以上条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM0 初めて：屈服刻印恰为 Lv2（非 Lv3）也命中温柔分档',
   },
@@ -2913,7 +2913,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM0 初めて：それ以外（非助手玛奥、屈服刻印Lv2未満）推进到 1',
   },
   {
-    desc: 'M2387 COM0 二回目助手玛奥+淫乱上限判据错格（<=5 改 <=4，#242）',
+    desc: 'M2387 COM0 二回目助手玛奥+淫乱上限条件错格（<=5 改 <=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `『姐姐终于坦率地面对自己的欲望了呢，我真为你高兴${heart(1)}』`,\n        );',
     replace:
@@ -2923,12 +2923,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM0 二回目：助手玛奥+淫乱恰在 CFLAG:301==5 时仍命中（<=5 含边界）',
   },
   {
-    desc: 'M2388 COM0 二回目屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2388 COM0 二回目屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (mark(2) === 3 && (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)) {
       // 屈服刻印Lv3`,
     replace: `    } else if (mark(2) === 2 && (kojo.爱抚 <= 3 || game.kojo.口上开关 === 2)) {
-      // 变异：屈服刻印Lv3判据错格`,
+      // 变异：屈服刻印Lv3条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM0 二回目：非助手玛奥 + 屈服刻印Lv3 推进到 4',
   },
@@ -2942,7 +2942,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM0 二回目：非助手玛奥 + それ以外（RAND:2 追加句可控）',
   },
   {
-    desc: 'M2390 COM1 初めて处女判据错格（==1 改 ==0，#242）',
+    desc: 'M2390 COM1 初めて处女条件错格（==1 改 ==0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 1) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -2972,7 +2972,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM1 二回目：助手玛奥 + 淫乱，RAND:2 三目分岔可控',
   },
   {
-    desc: 'M2393 COM1 二回目反抗刻印Lv1以上判据错格（>=1 改 >=2，#242）',
+    desc: 'M2393 COM1 二回目反抗刻印Lv1以上条件错格（>=1 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(3) >= 1 &&
       mark(2) <= 2 &&
@@ -2986,21 +2986,21 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2394 COM1 二回目それ以外 CFLAG:302 写错（2 改 3，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '      kojo.舔阴 = 2;\n    }\n    return 0; // 隐式（原作 RETURN 0）',
+    find: '      kojo.舔阴 = 2;\n    }\n    return 0; // 隐式（RETURN 0）',
     replace:
-      '      kojo.舔阴 = 3; // 变异\n    }\n    return 0; // 隐式（原作 RETURN 0）',
+      '      kojo.舔阴 = 3; // 变异\n    }\n    return 0; // 隐式（RETURN 0）',
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM1 二回目：非助手玛奥 + それ以外（屈服刻印Lv3未満）推进到 2',
   },
   {
-    desc: 'M2395 COM2 初めて助手玛奥台词分档判据错格（#242）',
+    desc: 'M2395 COM2 初めて助手玛奥台词分档条件错格（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (kojo.肛门爱抚 === 0) {
       if (assi_mao) {`,
     replace: `    if (kojo.肛门爱抚 === 0) {
       if (!assi_mao) {
-        // 变异：助手玛奥判据颠倒`,
+        // 变异：助手玛奥条件颠倒`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM2 初めて：非助手玛奥推进到 1',
   },
@@ -3014,7 +3014,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM2 二回目：润滑增量（delta:3 / UP:3）与本体（palam:3）合计才达阈值',
   },
   {
-    desc: 'M2397 COM2 二回目淫乱+润滑高判据错格（PALAMLV[2] 改 [1]，#242）',
+    desc: 'M2397 COM2 二回目淫乱+润滑高条件错格（PALAMLV[2] 改 [1]，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (
       era.get(\`talent:\${target}:76\`) === 1 &&
@@ -3041,11 +3041,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM2 二回目：淫乱 + 润滑Lv2以上推进到 7',
   },
   {
-    desc: 'M2399 COM2 二回目それ以外判据错格（首次耻情Lv2 <=1 改 <=0，#242）',
+    desc: 'M2399 COM2 二回目それ以外条件错格（首次耻情Lv2 <=1 改 <=0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {`,
     replace: `    } else if (kojo.首次耻情Lv2 <= 0 || game.kojo.口上开关 === 2) {
-      // 变异：それ以外判据错格`,
+      // 变异：それ以外条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM2 二回目：それ以外恰在 CFLAG:223==1 时仍命中（<=1 含边界）',
@@ -3096,7 +3096,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:201 推进到 1',
   },
   {
-    desc: 'M2203 K9 初調教魔族分档判据错格（TALENT:314 == 9 改 8，#240）',
+    desc: 'M2203 K9 初調教魔族分档条件错格（TALENT:314 == 9 改 8，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '    if (era.get(`talent:${target}:314`) == 9) {\n      await era.printAndWait(`${target_name}在调教之前，被进行了魔族化改造。`);',
     replace:
@@ -3137,7 +3137,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:201 推进到 9',
   },
   {
-    desc: 'M2208 K9 崩坏只播一次守卫删松（CFLAG:201 < 9 改 <= 9，#240）',
+    desc: 'M2208 K9 崩坏只播一次检查删松（CFLAG:201 < 9 改 <= 9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  } else if (era.get(`talent:${target}:9`) == 1 && kojo.初调教 < 9) {',
     replace:
@@ -3154,34 +3154,34 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:202 首次推进到 1',
   },
   {
-    desc: 'M2210 K9 头部守卫①：ASSI>0&&ASSIPLAY 删除（#240）',
+    desc: 'M2210 K9 头部检查①：ASSI>0&&ASSIPLAY 删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     replace:
       '  if (false) { // 变异：ASSI>0&&ASSIPLAY 删除\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     tests: ['kojo-k9-diamond'],
-    must_mention: '头部守卫',
+    must_mention: '头部检查',
   },
   {
-    desc: 'M2211 K9 头部守卫②：TEQUIP:45 口塞守卫删除（#240）',
+    desc: 'M2211 K9 头部检查②：TEQUIP:45 口塞检查删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }',
     replace:
       '  if (false) { // 变异：TEQUIP:45 口塞守卫删除\n    return 0;\n  }',
     tests: ['kojo-k9-diamond'],
-    must_mention: '头部守卫',
+    must_mention: '头部检查',
   },
   {
-    desc: 'M2212 K9 头部守卫③：TFLAG:899 失神删除（#240）',
+    desc: 'M2212 K9 头部检查③：TFLAG:899 失神删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {\n    // 兽奸PLAY中は専用口上',
     replace:
       '  if (false) { // 变异：TFLAG:899 失神删除\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {\n    // 兽奸PLAY中は専用口上',
     tests: ['kojo-k9-diamond'],
-    must_mention: '头部守卫',
+    must_mention: '头部检查',
   },
   {
-    desc: 'M2213 K9 头部守卫④：TEQUIP:89 不再岔去 DOG_KOJO_9（#240）',
+    desc: 'M2213 K9 头部检查④：TEQUIP:89 不再岔去 DOG_KOJO_9（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`tequip:${target}:89`)) {\n    // 兽奸PLAY中は専用口上\n    await dog_kojo_9(rand_n);\n    return 0;\n  }',
     replace:
@@ -3190,7 +3190,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '全篇为未填写模板',
   },
   {
-    desc: 'M2214 K9 头部守卫⑤：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_9（#240）',
+    desc: 'M2214 K9 头部检查⑤：TEQUIP:55 不再岔去 COLOSSEUM_KOJO_9（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    // 死斗场中は専用口上\n    await colosseum_kojo_9(rand_n);\n    return 0;\n  }',
     replace:
@@ -3199,22 +3199,22 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '连站起来的力气都没有了',
   },
   {
-    desc: 'M2215 K9 头部守卫⑥：TALENT:9 崩坏删除（#240）',
+    desc: 'M2215 K9 头部检查⑥：TALENT:9 崩坏删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`talent:${target}:9`) == 1) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:90`)) {',
     replace:
       '  if (false) { // 变异：TALENT:9 崩坏删除\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:90`)) {',
     tests: ['kojo-k9-diamond'],
-    must_mention: '头部守卫',
+    must_mention: '头部检查',
   },
   {
-    desc: 'M2216 K9 头部守卫⑦：TEQUIP:90 触手删除（#240）',
+    desc: 'M2216 K9 头部检查⑦：TEQUIP:90 触手删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era_flag.selectcom == 0) {',
     replace:
       '  if (false) { // 变异：TEQUIP:90 触手删除\n    return 0;\n  }\n\n  if (era_flag.selectcom == 0) {',
     tests: ['kojo-k9-diamond'],
-    must_mention: '头部守卫',
+    must_mention: '头部检查',
   },
   {
     desc: 'M2217 K9 SELECTCOM==0 爱抚初回推进值错（CFLAG:301 = 1 改 2，#240）',
@@ -3226,7 +3226,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:301 推进到 1',
   },
   {
-    desc: 'M2218 K9 SELECTCOM==87 穿环 P==1 判据错格（改 P==9，#240）',
+    desc: 'M2218 K9 SELECTCOM==87 穿环 P==1 条件错格（改 P==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          );\n\n          if (P == 1) {\n            await era.printAndWait(\n              `「嗯哼哼~、怎样呀~…真是跟现在的我特别合适的装饰品呢…${heart(1)}」`,\n            );',
     replace:
@@ -3235,7 +3235,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'P==1 乳环文案缺失',
   },
   {
-    desc: 'M2219 K9 COLOSSEUM ITEM:4 回退成 ITEM:PBAND 具名寻址（#240；靶改到 #623 提取的 assi_band 判据上）',
+    desc: 'M2219 K9 COLOSSEUM ITEM:4 回退成 ITEM:PBAND 具名寻址（#240；目标改到 #623 提取的 assi_band 条件上）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '        era.get(`item:${PBAND}`) == 1;\n      await era.printAndWait(\n        `${assi_name}看着${target_name}舔着` +',
     replace:
@@ -3252,7 +3252,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:221 首超推进到 1',
   },
   {
-    desc: 'M2221 K9 MARKCNG 苦痛刻印Lv3判据错格（苦痛刻印变动 == 3 改 4，#240）',
+    desc: 'M2221 K9 MARKCNG 苦痛刻印Lv3条件错格（苦痛刻印变动 == 3 改 4，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {',
     replace:
@@ -3261,7 +3261,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '好痛呜呜',
   },
   {
-    desc: 'M2222 K9 SELF_KOJO TFLAG:13==1 崩坏分支判据错格（TALENT:9==1 改 TALENT:9==9，#240）',
+    desc: 'M2222 K9 SELF_KOJO TFLAG:13==1 崩坏分支条件错格（TALENT:9==1 改 TALENT:9==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '    if (era.get(`talent:${target}:9`) == 1) {\n      await era.printAndWait(`${target_name}就像被弄坏的玩具一样不停地自慰………`);\n    } else if (q == 1) {',
     replace:
@@ -3287,7 +3287,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '难看的胜利',
   },
   {
-    desc: 'M2225 K9 DUNGEON_ATTACK CFLAG:1（invasion.状态）判据错格（== 2 改 9，#240）',
+    desc: 'M2225 K9 DUNGEON_ATTACK CFLAG:1（invasion.状态）条件错格（== 2 改 9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (chara(target).invasion.状态 == 2) {',
     replace: '  if (chara(target).invasion.状态 == 9) { // 变异',
@@ -3295,7 +3295,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '接招吧',
   },
   {
-    desc: 'M2226 K9 DUNGEON_RYOUZYOKU 处女判据错格（TALENT:0 == 1 改 2，#240）',
+    desc: 'M2226 K9 DUNGEON_RYOUZYOKU 处女条件错格（TALENT:0 == 1 改 2，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`talent:${target}:0`) == 1) {\n    await era.printAndWait(`「不…不要…我是不会将第一次交给你们的！」`);',
     replace:
@@ -3304,7 +3304,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '不会将第一次交给你们',
   },
   {
-    desc: 'M2227 K9 GOHOUBI_REQUEST CFLAG:A:504 判据错格（== 0 改 1，#240）',
+    desc: 'M2227 K9 GOHOUBI_REQUEST CFLAG:A:504 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '\n  if (chara(a).stronghold.要求奖赏 == 0) {',
     replace: '\n  if (chara(a).stronghold.要求奖赏 == 1) { // 变异',
@@ -3312,7 +3312,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '我想要金钱作为奖励',
   },
   {
-    desc: 'M2228 K9 GOHOUBI_AFTER choice==0 判据错格（改 choice==9，#240）',
+    desc: 'M2228 K9 GOHOUBI_AFTER choice==0 条件错格（改 choice==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (choice == 0) {\n    await era.printAndWait(`「为、为什么啦！」`);',
     replace:
@@ -3321,7 +3321,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '为、为什么啦',
   },
   {
-    desc: 'M2229 K9 OSIOKI choice==0 判据错格（改 choice==9，#240）',
+    desc: 'M2229 K9 OSIOKI choice==0 条件错格（改 choice==9，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (choice == 0) {\n    await era.printAndWait(`「真、真是失礼了」`);',
     replace:
@@ -3330,7 +3330,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '真、真是失礼了',
   },
   {
-    desc: 'M2230 K9 GOBI arg_0==3 判据错格（改 arg_0==13，#240）',
+    desc: 'M2230 K9 GOBI arg_0==3 条件错格（改 arg_0==13，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  } else if (arg_0 == 3) {\n    return `来的……。`;',
     replace: '  } else if (arg_0 ==13) { // 变异\n    return `来的……。`;',
@@ -3338,7 +3338,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '来的……。',
   },
   {
-    desc: 'M2231 K9 BENKI 门面 game.train.肉便器行动 判据错格（== 0 改 1，#240）',
+    desc: 'M2231 K9 BENKI 门面 game.train.肉便器行动 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.train.肉便器行动 == 0) {',
     replace: '  if (game.train.肉便器行动 == 1) { // 变异',
@@ -3346,7 +3346,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '弄脏我吧',
   },
   {
-    desc: 'M2232 K9 ENTERENEMY 淫乱判据错格（TALENT:76 == 1 改 2，#240）',
+    desc: 'M2232 K9 ENTERENEMY 淫乱条件错格（TALENT:76 == 1 改 2，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`talent:${a}:76`) == 1) {\n    await era.printAndWait(',
     replace:
@@ -3364,7 +3364,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:650 首次标记写为 1',
   },
   {
-    desc: 'M2234 K9 EXUCUTION TFLAG:16 判据错格（== 4 改 5，#240）',
+    desc: 'M2234 K9 EXUCUTION TFLAG:16 条件错格（== 4 改 5，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.event.犬射精或处刑口上 == 4) {',
     replace: '  if (game.event.犬射精或处刑口上 == 5) { // 变异',
@@ -3372,7 +3372,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '不要成为怪物的安慰物',
   },
   {
-    desc: 'M2235 K9 MUSEUM TFLAG:500 判据错格（== 0 改 1，#240）',
+    desc: 'M2235 K9 MUSEUM TFLAG:500 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.event.博物馆口上 == 0) {',
     replace: '  if (game.event.博物馆口上 == 1) { // 变异',
@@ -3380,7 +3380,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '至少回到最初的故',
   },
   {
-    desc: 'M2236 K9 BANISHMENT TFLAG:510 判据错格（== 0 改 1，#240）',
+    desc: 'M2236 K9 BANISHMENT TFLAG:510 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.event.流放口上 == 0) {\n    await era.printAndWait(`「我失去作为战士的力量…已经………」`);',
     replace:
@@ -3389,7 +3389,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '我失去作为战士的力量',
   },
   {
-    desc: 'M2237 K9 PUBLIC_EXUCUTION TFLAG:520 判据错格（== 0 改 1，#240）',
+    desc: 'M2237 K9 PUBLIC_EXUCUTION TFLAG:520 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (game.event.公开处刑口上 == 0) {',
     replace: '  if (game.event.公开处刑口上 == 1) { // 变异',
@@ -3397,7 +3397,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '快杀了我吧',
   },
   {
-    desc: 'M2238 K9 GROTESQUE TFLAG:530 判据错格（== 0 改 1，#240；源全空，红在分支路由而非文本）',
+    desc: 'M2238 K9 GROTESQUE TFLAG:530 条件错格（== 0 改 1，#240；源全空，红在分支路由而非文本）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "  if (game.event.猎奇处刑口上 == 0) {\n    await era.printAndWait('');",
     replace:
@@ -3408,7 +3408,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   // —— #242（续轮）：K11 莉莉口上 KOJO_MESSAGE_COM_11 SELECTCOM 3
   // （M2402-M2417 号段） ——
   {
-    desc: 'M2402 COM3 初めて助手玛奥判据颠倒（#242）',
+    desc: 'M2402 COM3 初めて助手玛奥条件颠倒（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      // 初めて（CFLAG:304 == 0）\n      if (assi_mao) {',
     replace:
@@ -3425,7 +3425,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM3 初めて：非助手玛奥分档',
   },
   {
-    desc: 'M2404 COM3 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2404 COM3 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -3457,7 +3457,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM3 二回目：助手玛奥 + 爱慕 + 非处女推进到 5',
   },
   {
-    desc: 'M2407 COM3 二回目 非助手玛奥淫乱+处女判据错格（TALENT:0 丢失，#242）',
+    desc: 'M2407 COM3 二回目 非助手玛奥淫乱+处女条件错格（TALENT:0 丢失，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:76\`) === 1 &&
       era.get(\`talent:\${target}:0\`) === 1 &&
@@ -3481,7 +3481,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM3 二回目：非助手玛奥 + 淫乱+处女推进到 9',
   },
   {
-    desc: 'M2409 COM3 二回目 淫乱+自慰中毒Lv3以上判据错格（>=3 改 >=2，#242）',
+    desc: 'M2409 COM3 二回目 淫乱+自慰中毒Lv3以上条件错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:76\`) === 1 &&
       chara(target).train.自慰中毒 >= 3 &&
@@ -3504,7 +3504,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       if (rand_n(3) === 0) {`,
     replace: `      // 淫乱＋自慰中毒Lv3以上
       if (rand_n(3) === 1) {
-        // 变异：RAND:3 首支判据错格`,
+        // 变异：RAND:3 首支条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3以上，RAND:3 三选一可控',
@@ -3528,7 +3528,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM3 二回目：非助手玛奥 + 淫乱+自慰中毒Lv3未満，RAND:2 二选一可控',
   },
   {
-    desc: 'M2413 COM3 二回目 爱慕+处女判据错格（TALENT:0 丢失，#242）',
+    desc: 'M2413 COM3 二回目 爱慕+处女条件错格（TALENT:0 丢失，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:85\`) === 1 &&
       era.get(\`talent:\${target}:0\`) === 1 &&
@@ -3544,7 +3544,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM3 二回目：非助手玛奥 + 爱慕+自慰中毒Lv3以上，RAND:3 三选一可控',
   },
   {
-    desc: 'M2414 COM3 二回目 爱慕+自慰中毒Lv3以上判据错格（>=3 改 >=2，#242）',
+    desc: 'M2414 COM3 二回目 爱慕+自慰中毒Lv3以上条件错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:85\`) === 1 &&
       chara(target).train.自慰中毒 >= 3 &&
@@ -3570,7 +3570,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM3 二回目：非助手玛奥 + 爱慕+自慰中毒Lv3未満，RAND:2 二选一可控',
   },
   {
-    desc: 'M2416 COM3 二回目 屈服刻印Lv3+自慰中毒Lv1以上判据错格（MARK:2==3 改 ==2，#242）',
+    desc: 'M2416 COM3 二回目 屈服刻印Lv3+自慰中毒Lv1以上条件错格（MARK:2==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`mark:\${target}:2\`) === 3 &&
       chara(target).train.自慰中毒 >= 1 &&
@@ -3597,7 +3597,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   // （M2418-M2419 号段；原 M2420-M2429 十条撞了 #231 的 M2420-M2599 分配，
   // #295 唯一性门合并即红，已改号至 M2800-M2809，见文件后段） ——
   {
-    desc: 'M2418 COM5 初めて助手玛奥判据颠倒（#242）',
+    desc: 'M2418 COM5 初めて助手玛奥条件颠倒（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      // 初めて（CFLAG:306 == 0）\n      if (assi_mao) {',
     replace:
@@ -3616,7 +3616,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   // —— #242（续轮）：K11 莉莉口上 SELECTCOM 5 续段，改号自 M2420-M2429
   // （#295 唯一性门冲突 #231 的 M2420-M2599，见上方号段说明） ——
   {
-    desc: 'M2800 COM5 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2800 COM5 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -3640,7 +3640,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2802 COM5 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2802 COM5 二回目 助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -3656,7 +3656,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM5 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2803 COM5 二回目 助手玛奥B感覚Lv3以上判据错格（>=3 改 >=2，#242）',
+    desc: 'M2803 COM5 二回目 助手玛奥B感覚Lv3以上条件错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         chara(target).system.乳房感觉 >= 3 &&
@@ -3699,7 +3699,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM5 二回目：非助手玛奥 + 淫乱，RAND:2 三目分岔可控，推进到 5',
   },
   {
-    desc: 'M2807 COM5 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2807 COM5 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:85\`) === 1 &&
       (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
@@ -3732,7 +3732,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
 
   // —— #242（续轮）：K11 莉莉口上 SELECTCOM 6（接吻 CFLAG:307） ——
   {
-    desc: 'M2810 COM6 首吻 淫乱かつ主人判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2810 COM6 首吻 淫乱かつ主人条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -3752,7 +3752,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 首吻：淫乱且非助手陪玩',
   },
   {
-    desc: 'M2811 COM6 首吻 爱慕かつ主人判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2811 COM6 首吻 爱慕かつ主人条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -3772,19 +3772,19 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 首吻：爱慕且非助手陪玩',
   },
   {
-    desc: 'M2812 COM6 首吻 助手玛奥淫乱 sub-branch 判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2812 COM6 首吻 助手玛奥淫乱 sub-branch 条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        // それ以外 → 助手玛奥
         if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱`,
     replace: `        // それ以外 → 助手玛奥
         if (era.get(\`talent:\${target}:85\`) === 1) {
-          // 变异：判据错格（原 76）`,
+          // 变异：条件错格（原 76）`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 首吻：助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2813 COM6 首吻 助手玛奥爱慕 sub-branch 判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2813 COM6 首吻 助手玛奥爱慕 sub-branch 条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          );\n        } else if (era.get(`talent:${target}:85`) === 1) {\n          // 爱慕\n          await era.printAndWait(`『嘿嘿嘿，和姐姐亲亲了${heart(1)}呣呣呣呒』`);',
     replace:
@@ -3801,7 +3801,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 首吻：非助手玛奥 + それ以外',
   },
   {
-    desc: 'M2815 COM6 初めて 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2815 COM6 初めて 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (assi_mao) {\n        if (era.get(`talent:${target}:76`) === 1) {\n          // 淫乱\n          await era.printAndWait(`『最喜欢姐姐了♪』`);',
     replace:
@@ -3810,42 +3810,42 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 初めて：助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2816 COM6 初めて 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2816 COM6 初めて 助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
           await era.printAndWait(
             \`「不，不要啦，\${player_name}…这种事…一点都不想做」\`,`,
     replace: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
-          // 变异：判据错格（原 85）
+          // 变异：条件错格（原 85）
           await era.printAndWait(
             \`「不，不要啦，\${player_name}…这种事…一点都不想做」\`,`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 初めて：助手玛奥 + 爱慕',
   },
   {
-    desc: 'M2817 COM6 初めて 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2817 COM6 初めて 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
         // 淫乱
         await era.printAndWait(
           \`「呣呣呣…呣呒…魔王大人嘴里的味道…真好\${heart(1)}呣呣呣…」\`,`,
     replace: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
-        // 变异：判据错格（原 76）
+        // 变异：条件错格（原 76）
         await era.printAndWait(
           \`「呣呣呣…呣呒…魔王大人嘴里的味道…真好\${heart(1)}呣呣呣…」\`,`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 初めて：非助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2818 COM6 初めて 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2818 COM6 初めて 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
         // 爱慕
         await era.printAndWait(
           \`「唔？！呣呣呒…魔，魔王大人…呣啾啾\${heart(1)}」\`,`,
     replace: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
-        // 变异：判据错格（原 85）
+        // 变异：条件错格（原 85）
         await era.printAndWait(
           \`「唔？！呣呣呒…魔，魔王大人…呣啾啾\${heart(1)}」\`,`,
     tests: ['kojo-k11-lily'],
@@ -3861,7 +3861,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 初めて：非助手玛奥 + それ以外',
   },
   {
-    desc: 'M2820 COM6 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2820 COM6 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -3889,7 +3889,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2822 COM6 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2822 COM6 二回目 助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`『姐姐，好喜欢你…最喜欢了♪』`);',
     replace:
@@ -3906,7 +3906,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2824 COM6 二回目 助手玛奥従順Lv2以上判据错格（>=2 改 >=1，#242）',
+    desc: 'M2824 COM6 二回目 助手玛奥従順Lv2以上条件错格（>=2 改 >=1，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        chara(target).system.顺从 >= 2 &&\n        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 従順Lv2以上\n        await era.printAndWait(`『来、姐姐，来亲亲♪』`);',
     replace:
@@ -3933,7 +3933,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2827 COM6 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2827 COM6 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:76\`) === 1 &&
@@ -3961,7 +3961,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM6 二回目：非助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2829 COM6 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2829 COM6 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「唔——呣呣呒…魔，魔王大人…呣啾啾${heart(1)}」`);',
     replace:
@@ -3997,7 +3997,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
 
   // —— #242（续轮）：K11 莉莉口上 SELECTCOM 7（自己扒开 CFLAG:308） ——
   {
-    desc: 'M2833 COM7 初めて 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2833 COM7 初めて 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (assi_mao) {
         if (era.get(\`talent:\${target}:76\`) === 1) {
@@ -4006,28 +4006,28 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
             \`「啊啊…还是有点害羞呢\${heart(1)} 为什么老是要这么欺负姐姐呢\${heart(1)}」\`,`,
     replace: `      if (assi_mao) {
         if (era.get(\`talent:\${target}:85\`) === 1) {
-          // 变异：判据错格（原 76）
+          // 变异：条件错格（原 76）
           await era.printAndWait(
             \`「啊啊…还是有点害羞呢\${heart(1)} 为什么老是要这么欺负姐姐呢\${heart(1)}」\`,`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM7 初めて：助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2834 COM7 初めて 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2834 COM7 初めて 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
         // 淫乱
         await era.printAndWait(
           \`「哈啊、请吧，魔王大人，尽情欣赏少女最私密的地方吧………\${heart(1)}」\`,`,
     replace: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
-        // 变异：判据错格（原 76）
+        // 变异：条件错格（原 76）
         await era.printAndWait(
           \`「哈啊、请吧，魔王大人，尽情欣赏少女最私密的地方吧………\${heart(1)}」\`,`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM7 初めて：非助手玛奥 + 淫乱 + 处女',
   },
   {
-    desc: 'M2835 COM7 初めて 非助手玛奥淫乱处女分支写反（virgin 判据颠倒，#242）',
+    desc: 'M2835 COM7 初めて 非助手玛奥淫乱处女分支写反（virgin 条件颠倒，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        await era.printAndWait(\n          `${target_name}扬起眉毛，献媚般地向${player_name}展示着自己的蜜穴深处。`,\n        );\n        if (virgin) {',
     replace:
@@ -4044,7 +4044,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 初めて：非助手玛奥 + それ以外',
   },
   {
-    desc: 'M2837 COM7 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2837 COM7 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -4070,7 +4070,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 二回目：助手玛奥 + 淫乱 + 处女推进到 5',
   },
   {
-    desc: 'M2839 COM7 二回目 助手玛奥爱慕露出癖判据错格（>=3 改 >=2，#242）',
+    desc: 'M2839 COM7 二回目 助手玛奥爱慕露出癖条件错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          await era.printAndWait(`「不要开玩笑啦！」`);\n          if (chara(target).system.露出癖 >= 3) {',
     replace:
@@ -4089,7 +4089,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM7 二回目：助手玛奥 + 爱慕 + 非处女 + 露出癖Lv3以上推进到 4',
   },
   {
-    desc: 'M2841 COM7 二回目 助手玛奥露出癖Lv3以上判据错格（>=3 改 >=2，#242）',
+    desc: 'M2841 COM7 二回目 助手玛奥露出癖Lv3以上条件错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        chara(target).system.露出癖 >= 3 &&\n        (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 露出癖Lv3以上\n        await era.printAndWait(`「啊啊…这个姿势…能全部看清楚了吗？」`);',
     replace:
@@ -4115,7 +4115,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 二回目：助手玛奥 + それ以外 + 非处女推进到 2',
   },
   {
-    desc: 'M2844 COM7 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2844 COM7 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(`「哈啊…这个姿势就能全部看清了吧………${heart(1)}」`);',
     replace:
@@ -4132,7 +4132,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 二回目：非助手玛奥 + 淫乱 + 非处女推进到 5',
   },
   {
-    desc: 'M2846 COM7 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2846 COM7 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「魔，魔王大人，请…看个够吧…${heart(1)}」`);',
     replace:
@@ -4149,7 +4149,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 二回目：非助手玛奥 + 爱慕 + 处女推进到 4',
   },
   {
-    desc: 'M2848 COM7 二回目 非助手玛奥露出癖Lv3以上判据错格（>=3 改 >=2，#242）',
+    desc: 'M2848 COM7 二回目 非助手玛奥露出癖Lv3以上条件错格（>=3 改 >=2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       chara(target).system.露出癖 >= 3 &&
@@ -4187,7 +4187,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 二回目：非助手玛奥 + それ以外 + 处女推进到 2',
   },
   {
-    desc: 'M2851 COM7 处女判据错格（==1 改 ==0，#242）',
+    desc: 'M2851 COM7 处女条件错格（==1 改 ==0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 7) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -4197,7 +4197,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM7 初めて：非助手玛奥 + 淫乱 + 处女',
   },
   {
-    desc: 'M2852 COM8 初めて 淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2852 COM8 初めて 淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊${heart(1)} 感觉到了，你湿漉漉的手指${heart(1)}」`,\n        );',
     replace:
@@ -4206,7 +4206,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M2853 COM8 初めて 屈服刻印Lv3+爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2853 COM8 初めて 屈服刻印Lv3+爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (mark(2) === 3 && era.get(`talent:${target}:85`) === 1) {\n        // 屈服刻印Lv3+爱慕\n        await era.printAndWait(`「魔王大人的话…想怎么做什么都可以…嗯啊啊！」`);',
     replace:
@@ -4223,7 +4223,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M2855 COM8 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2855 COM8 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {
       if (
@@ -4247,7 +4247,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2857 COM8 二回目 助手玛奥爱慕＋屈服刻印Lv3判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2857 COM8 二回目 助手玛奥爱慕＋屈服刻印Lv3条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4273,7 +4273,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 二回目：助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
   },
   {
-    desc: 'M2859 COM8 二回目 助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2859 COM8 二回目 助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实得多了呢，是感觉到快感了吧？』`);',
     replace:
@@ -4298,7 +4298,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2862 COM8 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2862 COM8 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「哈啊${heart(1)} 蜜穴都湿透了，都是因为你${heart(1)}嗯啊」`,\n      );',
     replace:
@@ -4315,7 +4315,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 二回目：非助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2864 COM8 二回目 非助手玛奥爱慕＋屈服刻印Lv3判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2864 COM8 二回目 非助手玛奥爱慕＋屈服刻印Lv3条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4341,7 +4341,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 二回目：非助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
   },
   {
-    desc: 'M2866 COM8 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2866 COM8 二回目 非助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -4374,7 +4374,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM8 二回目：非助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2869 COM9 初めて 淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2869 COM9 初めて 淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 淫乱\n        await era.printAndWait(`「真是的！连那种地方也要舔，你真是变态！」`);',
     replace:
@@ -4383,7 +4383,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M2870 COM9 初めて 爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2870 COM9 初めて 爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 爱慕\n        await era.printAndWait(\n          `「不，不要舔那里，那里太…肮脏了啊！呜呜…嗯啊啊」`,\n        );',
     replace:
@@ -4400,7 +4400,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M2872 COM9 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2872 COM9 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {
       if (
@@ -4424,7 +4424,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2874 COM9 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2874 COM9 二回目 助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「啊啊…这样太羞耻了…快停下，${player_name}…嗯啊啊」`,\n        );',
     replace:
@@ -4441,7 +4441,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2876 COM9 二回目 助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2876 COM9 二回目 助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(\n          `「呃啊啊…姐姐一点都不觉得舒服…快，快点结束啦…嗯啊啊！」`,\n        );',
     replace:
@@ -4466,7 +4466,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2879 COM9 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2879 COM9 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「啊啊…魔王大人真是变态…喜欢…舔人家的肛门${heart(1)}哈啊」`,\n      );',
     replace:
@@ -4483,7 +4483,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 二回目：非助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2881 COM9 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2881 COM9 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4508,12 +4508,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2883 COM9 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2883 COM9 二回目 非助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (mark(2) === 3 && (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)) {
       // 屈服刻印Lv3`,
     replace: `    } else if (mark(2) === 2 && (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)) {
-      // 变异：判据错格`,
+      // 变异：条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM9 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
   },
@@ -4535,7 +4535,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM9 二回目：非助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2886 COM10 初めて 淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2886 COM10 初めて 淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 淫乱\n        await era.printAndWait(\n          `「啊啊，这样的震动…真让人…欲仙欲死${heart(1)}」`,\n        );',
     replace:
@@ -4544,7 +4544,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M2887 COM10 初めて 屈服刻印Lv3+爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2887 COM10 初めて 屈服刻印Lv3+爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (mark(2) === 3 && era.get(\`talent:\${target}:85\`) === 1) {
         // 屈服刻印Lv3+爱慕
@@ -4552,7 +4552,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
           \`「呜啊！这，这是什么？啊啊啊震得太…太厉害了！」\`,
         );`,
     replace: `      } else if (mark(2) === 3 && era.get(\`talent:\${target}:76\`) === 1) {
-        // 变异：判据错格
+        // 变异：条件错格
         await era.printAndWait(
           \`「呜啊！这，这是什么？啊啊啊震得太…太厉害了！」\`,
         );`,
@@ -4568,7 +4568,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M2889 COM10 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2889 COM10 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {
       if (
@@ -4592,7 +4592,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2891 COM10 二回目 助手玛奥爱慕＋屈服刻印Lv3判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2891 COM10 二回目 助手玛奥爱慕＋屈服刻印Lv3条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4618,7 +4618,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
   },
   {
-    desc: 'M2893 COM10 二回目 助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2893 COM10 二回目 助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实多了呢，是不是已经有快感了？』`);',
     replace:
@@ -4643,7 +4643,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2896 COM10 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2896 COM10 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「呜啊啊！好舒服……小豆豆…好舒服！哈啊…嗯啊啊${heart(1)}」`,\n      );',
     replace:
@@ -4660,7 +4660,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2898 COM10 二回目 非助手玛奥爱慕＋屈服刻印Lv3判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2898 COM10 二回目 非助手玛奥爱慕＋屈服刻印Lv3条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4686,7 +4686,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + 爱慕＋屈服刻印Lv3推进到 4',
   },
   {
-    desc: 'M4000 COM10 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M4000 COM10 二回目 非助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -4719,7 +4719,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM10 二回目：非助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M4003 COM11 初めて 处女判据错格（TALENT:0 == 1 改 == 0，#242）',
+    desc: 'M4003 COM11 初めて 处女条件错格（TALENT:0 == 1 改 == 0，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 11) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
@@ -4729,7 +4729,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 初めて（TEQUIP:11）：处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2904 COM11 初めて 处女＋助手玛奥＋淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2904 COM11 初めて 处女＋助手玛奥＋淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            if (era.get(`talent:${target}:76`) === 1) {\n              // 淫乱\n              await era.printAndWait(\n                `「哈啊，啊啊啊…虽说是这样…但是…还是…很舒服啊${heart(1)}哈……」`,\n              );',
     replace:
@@ -4738,41 +4738,41 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 初めて（TEQUIP:11）：处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2905 COM11 初めて 处女＋助手玛奥＋爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2905 COM11 初めて 处女＋助手玛奥＋爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `            } else if (era.get(\`talent:\${target}:85\`) === 1) {
               // 爱慕
               await era.printAndWait(
                 \`「你，你明明知道我的心情！为什么还要…还要说这么残酷的话？！把它拔出去，拔出去啊！求求你………」\`,`,
     replace: `            } else if (era.get(\`talent:\${target}:76\`) === 1) {
-              // 变异：判据错格
+              // 变异：条件错格
               await era.printAndWait(
                 \`「你，你明明知道我的心情！为什么还要…还要说这么残酷的话？！把它拔出去，拔出去啊！求求你………」\`,`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて：处女 + 助手玛奥 + 爱慕',
   },
   {
-    desc: 'M2906 COM11 初めて 处女＋非助手玛奥＋淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2906 COM11 初めて 处女＋非助手玛奥＋淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          } else if (era.get(\`talent:\${target}:76\`) === 1) {
             // 非助手玛奥・淫乱`,
     replace: `          } else if (era.get(\`talent:\${target}:85\`) === 1) {
-            // 变异：判据错格`,
+            // 变异：条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて：处女 + 非助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2907 COM11 初めて 处女＋非助手玛奥＋爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2907 COM11 初めて 处女＋非助手玛奥＋爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          } else if (era.get(\`talent:\${target}:85\`) === 1) {
             // 非助手玛奥・爱慕`,
     replace: `          } else if (era.get(\`talent:\${target}:76\`) === 1) {
-            // 变异：判据错格`,
+            // 变异：条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて：处女 + 非助手玛奥 + 爱慕',
   },
   {
-    desc: 'M2908 COM11 初めて 非处女＋助手玛奥判据错格（assi_mao 短路失效，#242）',
+    desc: 'M2908 COM11 初めて 非处女＋助手玛奥条件错格（assi_mao 短路失效，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (assi_mao) {\n          // 非处女・助手玛奥\n          await era.printAndWait(`『啊哈哈、姐姐看，虫子从你下面钻进去了♪』`);',
     replace:
@@ -4781,12 +4781,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 初めて：非处女 + 助手玛奥',
   },
   {
-    desc: 'M2909 COM11 初めて 非处女＋淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2909 COM11 初めて 非处女＋淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 非处女・淫乱`,
     replace: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
-          // 变异：判据错格`,
+          // 变异：条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて：非处女 + 非助手玛奥 + 淫乱',
   },
@@ -4799,7 +4799,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 初めて（TEQUIP:11）：处女 + 助手玛奥 + 淫乱',
   },
   {
-    desc: 'M2911 COM11 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2911 COM11 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (assi_mao) {
         if (
@@ -4823,7 +4823,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2913 COM11 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2913 COM11 二回目 助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』`,\n          );',
     replace:
@@ -4840,7 +4840,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2915 COM11 二回目 助手玛奥V感覚Lv3以上判据错格（>= 3 改 >= 4，#242）',
+    desc: 'M2915 COM11 二回目 助手玛奥V感覚Lv3以上条件错格（>= 3 改 >= 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (
           chara(target).system.私处感觉 >= 3 &&
@@ -4876,7 +4876,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2918 COM11 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2918 COM11 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊…啊！蜜穴被虫子…！啊啊…好…好舒服${heart(1)}」`,\n        );',
     replace:
@@ -4893,7 +4893,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 二回目：非助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2920 COM11 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2920 COM11 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`「哈啊…啊！进，进去了…虫子…蜜穴里…嗯啊啊」`);',
     replace:
@@ -4910,7 +4910,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2922 COM11 二回目 非助手玛奥V感覚Lv3以上判据错格（>= 3 改 >= 4，#242）',
+    desc: 'M2922 COM11 二回目 非助手玛奥V感覚Lv3以上条件错格（>= 3 改 >= 4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         chara(target).system.私处感觉 >= 3 &&
@@ -4947,7 +4947,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 二回目：非助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2925 COM11 脱着時 淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2925 COM11 脱着時 淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (
       era.get(\`talent:\${target}:76\`) === 1 &&
@@ -4969,7 +4969,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 脱着時（TEQUIP:11 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M2927 COM11 脱着時 爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2927 COM11 脱着時 爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -4999,7 +4999,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM11 脱着時：それ以外推进到 1',
   },
   {
-    desc: 'M2930 COM12 初めて 助手玛奥判据错格（assi_mao 短路失效，#242）',
+    desc: 'M2930 COM12 初めて 助手玛奥条件错格（assi_mao 短路失效，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (assi_mao) {\n        await era.printAndWait(\n          `『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』`,\n        );',
     replace:
@@ -5008,21 +5008,21 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M2931 COM12 初めて 淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2931 COM12 初めて 淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (era.get(\`talent:\${target}:76\`) === 1) {
         // 淫乱
         await era.printAndWait(
           \`「啊啊啊…这个震动的频率…太，太快……啊啊啊…好…好舒服啊…\${heart(1)}」\`,`,
     replace: `      } else if (era.get(\`talent:\${target}:85\`) === 1) {
-        // 变异：判据错格
+        // 变异：条件错格
         await era.printAndWait(
           \`「啊啊啊…这个震动的频率…太，太快……啊啊啊…好…好舒服啊…\${heart(1)}」\`,`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM12 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M2932 COM12 初めて 爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2932 COM12 初めて 爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 爱慕\n        await era.printAndWait(\n          `「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」`,\n        );',
     replace:
@@ -5039,7 +5039,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M2934 COM12 二回目 助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2934 COM12 二回目 助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {
       if (
@@ -5063,7 +5063,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 二回目：助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2936 COM12 二回目 助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2936 COM12 二回目 助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -5091,7 +5091,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2938 COM12 二回目 助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2938 COM12 二回目 助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -5127,7 +5127,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 二回目：助手玛奥 + それ以外推进到 2',
   },
   {
-    desc: 'M2941 COM12 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 :85，#242）',
+    desc: 'M2941 COM12 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 :85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:76\`) === 1 &&
@@ -5155,7 +5155,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 二回目：非助手玛奥 + 淫乱推进到 5',
   },
   {
-    desc: 'M2943 COM12 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 :76，#242）',
+    desc: 'M2943 COM12 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 :76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -5183,7 +5183,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM12 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M2945 COM12 二回目 非助手玛奥屈服刻印Lv3判据错格（==3 改 ==2，#242）',
+    desc: 'M2945 COM12 二回目 非助手玛奥屈服刻印Lv3条件错格（==3 改 ==2，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      mark(2) === 3 &&\n      (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)\n    ) {\n      // 屈服刻印Lv3\n      await era.printAndWait(`「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」`);',
     replace:
@@ -5210,7 +5210,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 13（肛门虫 CFLAG:314／着脱 CFLAG:374，#242） ----
   {
-    desc: 'M4004 COM13 TEQUIP:13 已装/未装判据取反（#242）',
+    desc: 'M4004 COM13 TEQUIP:13 已装/未装条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `if (era_flag.selectcom === 13) {
     if (era.get(\`tequip:\${target}:13\`)) {`,
@@ -5220,7 +5220,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて（TEQUIP:13）：助手玛奥推进到 1',
   },
   {
-    desc: 'M4005 COM13 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4005 COM13 初めて 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:76`) === 1) {\n          // 淫乱\n          await era.printAndWait(\n            `「哈啊…哈啊………肛门要被这样的东西侵犯了………这个感觉…嗯啊啊${heart(1)}」`,\n          );',
     replace:
@@ -5229,7 +5229,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M4006 COM13 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4006 COM13 初めて 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:85`) === 1) {\n          // 爱慕\n          await era.printAndWait(\n            `「如果…如果是魔王大人希望这样的话…我会…我会…呃呃…呃嗯…」`,\n          );',
     replace:
@@ -5238,7 +5238,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 初めて：非助手玛奥 + 爱慕推进到 1',
   },
   {
-    desc: 'M4007 COM13 初めて それ以外・A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4007 COM13 初めて それ以外・A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (chara(target).system.肛门感觉 >= 3) {
           // それ以外・A感覚Lv3以上`,
@@ -5257,7 +5257,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M4009 COM13 二回目 助手玛奥淫乱＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4009 COM13 二回目 助手玛奥淫乱＋A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          chara(target).system.肛门感觉 >= 3 &&\n          (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)\n        ) {\n          // 淫乱＋A感覚Lv3以上\n          await era.printAndWait(\n            `「哈啊…哈啊！虫子…完全进去了${heart(1)} 哈啊…呀呀…呀啊啊…姐姐的肛门……舒服得…要说不出话来了！」`,\n          );',
     replace:
@@ -5275,7 +5275,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6',
   },
   {
-    desc: 'M4011 COM13 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4011 COM13 二回目 助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)\n        ) {\n          // 淫乱\n          await era.printAndWait(\n            `「哎…哎哟…稍微，稍微温柔一点啦…哈啊…啊啊！」`,\n          );',
     replace:
@@ -5293,7 +5293,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M4013 COM13 二回目 助手玛奥爱慕＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4013 COM13 二回目 助手玛奥爱慕＋A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          chara(target).system.肛门感觉 >= 3 &&\n          (kojo.肛门虫 <= 4 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕＋A感覚Lv3以上\n          await era.printAndWait(\n            `「啊……哈啊…稍微…稍微慢一点…这样，这样就已经很舒服了！不，不需要再深入了！啊哈…啊啊…呀啊啊」`,\n          );',
     replace:
@@ -5310,7 +5310,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M4015 COM13 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4015 COM13 二回目 助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.肛门虫 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `「饶，饶了我吧，不要再欺负姐姐了…这样的东西…真的…不喜啊啊啊…啊哈…啊…！」`,\n          );',
     replace:
@@ -5327,7 +5327,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M4017 COM13 二回目 助手玛奥A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4017 COM13 二回目 助手玛奥A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          chara(target).system.肛门感觉 >= 3 &&\n          (kojo.肛门虫 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // A感覚Lv3以上\n          await era.printAndWait(\n            `「哈…哈啊…进，进来…不，不可以…哈啊…呀呀…呀啊啊！」`,\n          );',
     replace:
@@ -5354,7 +5354,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M4020 COM13 二回目 非助手玛奥淫乱＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4020 COM13 二回目 非助手玛奥淫乱＋A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.肛门虫 <= 6 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱＋A感覚Lv3以上\n        await era.printAndWait(\n          `「哈…哈啊${heart(1)} 全部，全部进到肛门里面了${heart(1)} 啊哈…啊啊…舒服得…要说不出话了${heart(1)}」`,\n        );',
     replace:
@@ -5372,7 +5372,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上推进到 6',
   },
   {
-    desc: 'M4022 COM13 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4022 COM13 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.肛门虫 <= 5 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊…再，再稍微温柔一些…还是有点…哈啊，啊啊${heart(1)}」`,\n        );',
     replace:
@@ -5390,7 +5390,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M4024 COM13 二回目 非助手玛奥爱慕＋A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4024 COM13 二回目 非助手玛奥爱慕＋A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.肛门虫 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕＋A感覚Lv3以上\n        await era.printAndWait(\n          `「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊…舒服得…要说不出话了${heart(1)}」`,\n        );',
     replace:
@@ -5407,7 +5407,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上推进到 5',
   },
   {
-    desc: 'M4026 COM13 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4026 COM13 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.肛门虫 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「呃…还，还是有点害怕，但如果是魔王大人的要求的话…我会，我会——嗯啊啊啊…啊啊！」`,\n        );',
     replace:
@@ -5424,7 +5424,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 二回目：非助手玛奥 + 爱慕推进到 4',
   },
   {
-    desc: 'M4028 COM13 二回目 非助手玛奥A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4028 COM13 二回目 非助手玛奥A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.肛门虫 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // A感覚Lv3以上\n        await era.printAndWait(\n          `「哈啊，呼呼…整，整只都钻，钻进去了…啊哈…啊啊${heart(1)}」`,\n        );',
     replace:
@@ -5451,7 +5451,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:13 == 0） ----
   {
-    desc: 'M4031 COM13 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4031 COM13 脱着時 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    // 脱着時（TEQUIP:13 == 0）\n    if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.肛门虫着脱 < 4 || game.kojo.口上开关 === 2)\n    ) {',
     replace:
@@ -5468,7 +5468,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時（TEQUIP:13 == 0）：淫乱推进到 4',
   },
   {
-    desc: 'M4033 COM13 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4033 COM13 脱着時 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -5490,7 +5490,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM13 脱着時：爱慕推进到 3',
   },
   {
-    desc: 'M4035 COM13 脱着時 A感覚Lv3以上判据错格（>=3 改 >=4，#242）',
+    desc: 'M4035 COM13 脱着時 A感覚Lv3以上条件错格（>=3 改 >=4，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       chara(target).system.肛门感觉 >= 3 &&
@@ -5521,7 +5521,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 14（阴蒂夹 CFLAG:315／着脱 CFLAG:375，#242） ----
   {
-    desc: 'M4038 COM14 TEQUIP:14 已装/未装判据取反（#242）',
+    desc: 'M4038 COM14 TEQUIP:14 已装/未装条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `if (era_flag.selectcom === 14) {
     if (era.get(\`tequip:\${target}:14\`)) {`,
@@ -5531,7 +5531,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M4039 COM14 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4039 COM14 初めて 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:76`) === 1) {\n          // 淫乱\n          await era.printAndWait(\n            `「啊哈…嗯啊啊啊啊${heart(1)} 这个小玩意，怎么这么…呃啊啊${heart(1)} 舒服啊啊啊${heart(1)}」`,\n          );',
     replace:
@@ -5540,7 +5540,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M4040 COM14 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4040 COM14 初めて 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:85`) === 1) {\n          // 爱慕\n          await era.printAndWait(\n            `「啊啊？！这…这是什么…额啊啊……太，太激烈了，魔王大人…能不能稍微…呃啊啊啊！」`,\n          );',
     replace:
@@ -5558,7 +5558,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M4042 COM14 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4042 COM14 二回目 助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.阴蒂夹 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 淫乱\n          await era.printAndWait(\n            `「哈啊…啊啊、还能不能…开得再强烈…一点点…啊啊…哈啊${heart(1)}」`,\n          );',
     replace:
@@ -5575,7 +5575,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M4044 COM14 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4044 COM14 二回目 助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.阴蒂夹 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `「哈啊…啊啊，这，这样就行了…不要再…加强了！」`,\n          );',
     replace:
@@ -5601,7 +5601,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M4047 COM14 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4047 COM14 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.阴蒂夹 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈…哈啊…又是这个${heart(1)} 阴蒂感觉…太棒了啊啊…整个人都要…嗯啊啊啊${heart(1)}」`,\n        );',
     replace:
@@ -5618,7 +5618,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M4049 COM14 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4049 COM14 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.阴蒂夹 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「请、请魔王大人随意调教…${target_name}的阴蒂…嗯啊啊…啊啊${heart(1)}…震动…太强了…整个人好像都要…融化了${heart(1)}」`,\n        );',
     replace:
@@ -5645,7 +5645,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:14 == 0） ----
   {
-    desc: 'M4052 COM14 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4052 COM14 脱着時 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    // 脱着時（TEQUIP:14 == 0）\n    if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.阴蒂夹着脱 < 3 || game.kojo.口上开关 === 2)\n    ) {',
     replace:
@@ -5662,7 +5662,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM14 脱着時（TEQUIP:14 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M4054 COM14 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4054 COM14 脱着時 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -5693,7 +5693,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 15（乳头夹 CFLAG:316／着脱 CFLAG:376，#242） ----
   {
-    desc: 'M4057 COM15 TEQUIP:15 已装/未装判据取反（#242）',
+    desc: 'M4057 COM15 TEQUIP:15 已装/未装条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `if (era_flag.selectcom === 15) {
     if (era.get(\`tequip:\${target}:15\`)) {`,
@@ -5703,7 +5703,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M4058 COM15 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4058 COM15 初めて 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:76`) === 1) {\n          // 淫乱\n          await era.printAndWait(\n            `「哈啊…啊啊${heart(1)} 这个是…？夹在乳头上…感觉还挺合适的…${heart(1)}」`,\n          );',
     replace:
@@ -5712,7 +5712,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M4059 COM15 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4059 COM15 初めて 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:85`) === 1) {\n          // 爱慕\n          await era.printAndWait(\n            `「哈，哈啊…这个…还会震动的…不过，好，好舒服…呼，呼，魔王大人…我这样…好看吗${heart(1)}」`,\n          );',
     replace:
@@ -5730,7 +5730,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M4061 COM15 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4061 COM15 二回目 助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 淫乱\n          await era.printAndWait(\n            `『很般配哦，姐姐粉红色的乳头，戴上这个夹子后更色情了♪』`,\n          );',
     replace:
@@ -5747,7 +5747,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M4063 COM15 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4063 COM15 二回目 助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `『这可是魔王大人赏赐的饰品哦，姐姐还不高高兴兴地戴上${heart(1)}』`,\n          );',
     replace:
@@ -5773,7 +5773,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M4066 COM15 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4066 COM15 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.乳头夹 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「啊啊…嗯啊啊${heart(1)} 我的乳头…要是坏掉了…你可要…负责人…哈啊…啊啊啊${heart(1)}」`,\n        );',
     replace:
@@ -5790,7 +5790,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M4068 COM15 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4068 COM15 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.乳头夹 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「${target_name}更…更希望魔王大人亲自…用嘴…和手指…调教…疼爱${target_name}的乳头${heart(1)}，这，这种道具…根本比不上…啊啊啊…哈啊」`,\n        );',
     replace:
@@ -5817,7 +5817,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:15 == 0） ----
   {
-    desc: 'M4071 COM15 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4071 COM15 脱着時 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    // 脱着時（TEQUIP:15 == 0）\n    if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.乳头夹着脱 < 3 || game.kojo.口上开关 === 2)\n    ) {',
     replace:
@@ -5834,7 +5834,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM15 脱着時（TEQUIP:15 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M4073 COM15 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4073 COM15 脱着時 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -5865,7 +5865,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 16（榨乳器 CFLAG:317／着脱 CFLAG:377，#242） ----
   {
-    desc: 'M4076 COM16 TEQUIP:16 已装/未装判据取反（#242）',
+    desc: 'M4076 COM16 TEQUIP:16 已装/未装条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `if (era_flag.selectcom === 16) {
     if (era.get(\`tequip:\${target}:16\`)) {`,
@@ -5875,7 +5875,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M4077 COM16 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4077 COM16 初めて 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:76`) === 1) {\n          // 淫乱\n          await era.printAndWait(\n            `「啊啊啊……分泌出乳汁了……不过感觉……好舒服${heart(1)}」`,\n          );',
     replace:
@@ -5884,7 +5884,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M4078 COM16 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4078 COM16 初めて 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:85`) === 1) {\n          // 爱慕\n          await era.printAndWait(\n            `「啊啊……乳汁，乳汁满满地出来了${heart(1)} 感觉……好奇怪……但是好舒服……${heart(1)}」`,\n          );',
     replace:
@@ -5902,7 +5902,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M4080 COM16 二回目 助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4080 COM16 二回目 助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 淫乱\n          await era.printAndWait(\n            `『哎嘿嘿，我又来给母牛姐姐挤奶了哦，这对淫乱的大胸部，不用来挤奶，真是太浪费了！』`,\n          );',
     replace:
@@ -5912,7 +5912,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
   },
   {
-    desc: 'M4081 COM16 二回目 助手玛奥淫乱 RAND:2 判据取反（#242）',
+    desc: 'M4081 COM16 二回目 助手玛奥淫乱 RAND:2 条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          if (rand_n(2)) {\n            await era.printAndWait(\n              `「请……请吧……姐姐的胸部……想要怎么玩都可以${heart(1)}」`,',
     replace:
@@ -5931,7 +5931,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM16 二回目：助手玛奥 + 淫乱 + RAND:2 命中（seq 1）推进到 4',
   },
   {
-    desc: 'M4083 COM16 二回目 助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4083 COM16 二回目 助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `『哎嘿嘿，姐姐的乳汁，一会儿我会全部好好喝光的哦♪』`,\n          );',
     replace:
@@ -5957,7 +5957,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M4086 COM16 二回目 非助手玛奥淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4086 COM16 二回目 非助手玛奥淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.榨乳器 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「啊啊……开始习惯这种感觉了呢${heart(1)} 其实……还挺舒服的${heart(1)} 」`,\n        );',
     replace:
@@ -5974,7 +5974,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 二回目：非助手玛奥 + 淫乱推进到 4',
   },
   {
-    desc: 'M4088 COM16 二回目 非助手玛奥爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4088 COM16 二回目 非助手玛奥爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.榨乳器 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「明明是给宝宝喝的东西、不过……如果魔王大人想要品尝的话，我也不介意啦${heart(1)}！」`,\n        );',
     replace:
@@ -6001,7 +6001,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:16 == 0） ----
   {
-    desc: 'M4091 COM16 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4091 COM16 脱着時 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    // 脱着時（TEQUIP:16 == 0）\n    if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.榨乳器着脱 < 3 || game.kojo.口上开关 === 2)\n    ) {',
     replace:
@@ -6018,7 +6018,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM16 脱着時（TEQUIP:16 == 0）：淫乱推进到 3',
   },
   {
-    desc: 'M4093 COM16 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4093 COM16 脱着時 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6049,7 +6049,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 19（肛珠 CFLAG:320／脱着 CFLAG:379，#242） ----
   {
-    desc: 'M4096 COM19 TEQUIP:19 已装/未装判据取反（#242）',
+    desc: 'M4096 COM19 TEQUIP:19 已装/未装条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `if (era_flag.selectcom === 19) {
     if (era.get(\`tequip:\${target}:19\`)) {`,
@@ -6059,7 +6059,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 初めて：助手玛奥推进到 1',
   },
   {
-    desc: 'M4097 COM19 初めて 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4097 COM19 初めて 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:76\`) === 1) {
           // 淫乱
@@ -6073,7 +6073,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 初めて：非助手玛奥 + 淫乱推进到 1',
   },
   {
-    desc: 'M4098 COM19 初めて 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4098 COM19 初めて 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        } else if (era.get(\`talent:\${target}:85\`) === 1) {
           // 爱慕
@@ -6096,7 +6096,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・助手玛奥 ----
   {
-    desc: 'M4100 COM19 二回目 助手玛奥淫乱＋A感覚判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4100 COM19 二回目 助手玛奥淫乱＋A感覚条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -6144,7 +6144,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M4104 COM19 二回目 助手玛奥爱慕＋A感覚判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4104 COM19 二回目 助手玛奥爱慕＋A感覚条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:85\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -6207,7 +6207,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 二回目以降・非助手玛奥 ----
   {
-    desc: 'M4110 COM19 二回目 非助手玛奥淫乱＋A感覚判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4110 COM19 二回目 非助手玛奥淫乱＋A感覚条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -6239,7 +6239,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 二回目：非助手玛奥 + 淫乱推进到 6',
   },
   {
-    desc: 'M4113 COM19 二回目 非助手玛奥爱慕＋A感覚判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4113 COM19 二回目 非助手玛奥爱慕＋A感覚条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:85\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -6289,7 +6289,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- 脱着時（TEQUIP:19 == 0） ----
   {
-    desc: 'M4118 COM19 脱着時 淫乱判据错格（TALENT:76 改 85，#242）',
+    desc: 'M4118 COM19 脱着時 淫乱条件错格（TALENT:76 改 85，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    // 脱着時（TEQUIP:19 == 0）\n    if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.肛珠着脱 < 4 || game.kojo.口上开关 === 2)\n    ) {',
     replace:
@@ -6306,7 +6306,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM19 脱着時（TEQUIP:19 == 0）：淫乱推进到 4',
   },
   {
-    desc: 'M4120 COM19 脱着時 爱慕判据错格（TALENT:85 改 76，#242）',
+    desc: 'M4120 COM19 脱着時 爱慕条件错格（TALENT:85 改 76，#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6359,7 +6359,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 20（正常位 CFLAG:321，#242） ----
   {
-    desc: 'M4125 COM20 weapon 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
+    desc: 'M4125 COM20 weapon 三目条件 && 改 ||（TALENT:121/122 条件松动）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const weapon =
       era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
@@ -6376,7 +6376,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：weapon 三目条件为 &&——TALENT:121/122 一 0 一 1 时须选阴茎',
   },
   {
-    desc: 'M4126 COM20 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4126 COM20 初めて 处女条件 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.正常位 === 0) {\n      // 初めて\n      const virgin = era.get(`talent:${target}:0`) === 1;',
     replace:
@@ -6476,7 +6476,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M4138 COM20 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4138 COM20 助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        mark(2) === 3 &&
         chara(target).system.私处感觉 >= 3 &&
@@ -6493,7 +6493,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M4139 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4139 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(2) === 3 &&
       chara(target).system.私处感觉 >= 3 &&
@@ -6510,7 +6510,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:3 分岔推进到 4',
   },
   {
-    desc: 'M4140 COM20 助手玛奥 屈服刻印Lv3＋V感覚层守卫 私处感觉>=3 改 >=4（#242）',
+    desc: 'M4140 COM20 助手玛奥 屈服刻印Lv3＋V感覚层检查 私处感觉>=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        mark(2) === 3 &&
         chara(target).system.私处感觉 >= 3 &&
@@ -6527,7 +6527,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M4141 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 私处感觉>=3 改 >=4（#242）',
+    desc: 'M4141 COM20 非助手玛奥 屈服刻印Lv3＋V感覚层检查 私处感觉>=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(2) === 3 &&
       chara(target).system.私处感觉 >= 3 &&
@@ -6544,7 +6544,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM20 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:3 分岔推进到 4',
   },
   {
-    desc: 'M4142 COM20 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4142 COM20 助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        mark(2) === 3 &&
         (kojo.正常位 <= 2 || game.kojo.口上开关 === 2)
@@ -6558,7 +6558,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM20 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4143 COM20 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4143 COM20 非助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      mark(2) === 3 &&
       (kojo.正常位 <= 2 || game.kojo.口上开关 === 2)
@@ -6608,7 +6608,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 21（背后位 CFLAG:322，#242） ----
   {
-    desc: 'M4147 COM21 weapon_doggy 三目条件 && 改 ||（TALENT:121/122 判据松动）（#242）',
+    desc: 'M4147 COM21 weapon_doggy 三目条件 && 改 ||（TALENT:121/122 条件松动）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    const weapon_doggy =
       era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0
@@ -6622,7 +6622,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 初めて：非处女 + 助手玛奥 + 爱慕',
   },
   {
-    desc: 'M4148 COM21 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4148 COM21 初めて 处女条件 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.背后位 === 0) {\n      // 初めて\n      const virgin = era.get(`talent:${target}:0`) === 1;',
     replace:
@@ -6725,7 +6725,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M4160 COM21 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4160 COM21 助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -6744,7 +6744,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M4161 COM21 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4161 COM21 非助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -6763,7 +6763,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M4162 COM21 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4162 COM21 助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -6779,7 +6779,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4163 COM21 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4163 COM21 非助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       mark(2) === 3 &&
@@ -6795,7 +6795,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM21 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4164 COM21 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4164 COM21 助手玛奥淫乱 talent:76 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -6812,7 +6812,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM21 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉分岔可控',
   },
   {
-    desc: 'M4165 COM21 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4165 COM21 非助手玛奥爱慕 talent:85 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    } else if (
       era.get(\`talent:\${target}:85\`) === 1 &&
@@ -6867,7 +6867,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 22（对面座位 CFLAG:323，#242） ----
   {
-    desc: 'M4169 COM22 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4169 COM22 初めて 处女条件 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.对面座位 === 0) {\n      // 初めて\n      const virgin = era.get(`talent:${target}:0`) === 1;',
     replace:
@@ -6973,7 +6973,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M4181 COM22 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4181 COM22 助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -6998,7 +6998,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M4182 COM22 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4182 COM22 非助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -7021,7 +7021,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，推进到 4',
   },
   {
-    desc: 'M4183 COM22 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4183 COM22 助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -7041,7 +7041,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4184 COM22 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4184 COM22 非助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.对面座位 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`「饶，饶了我吧……魔王大人……已经不行了……」`);',
     replace:
@@ -7050,7 +7050,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM22 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4185 COM22 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4185 COM22 助手玛奥淫乱 talent:76 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -7067,7 +7067,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM22 二回目：助手玛奥 + 淫乱，RAND:3 三选一 + ABL:2 私处感觉门槛可控',
   },
   {
-    desc: 'M4186 COM22 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4186 COM22 非助手玛奥爱慕 talent:85 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -7141,7 +7141,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // ---- SELECTCOM 23（背面座位 CFLAG:324，#242） ----
   {
-    desc: 'M4191 COM23 初めて 处女判据 === 1 改 === 0（#242）',
+    desc: 'M4191 COM23 初めて 处女条件 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.背面座位 === 0) {\n      // 初めて\n      const virgin = era.get(`talent:${target}:0`) === 1;',
     replace:
@@ -7248,7 +7248,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M4203 COM23 助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4203 COM23 助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        chara(target).system.私处感觉 >= 3 &&\n        (kojo.背面座位 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3＋V感覚Lv3以上\n        if (rand_n(2) === 0) {\n          await era.print(`「好舒服……已经没有办法思考了啊啊啊${heart(1)}」`);',
     replace:
@@ -7258,7 +7258,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，RAND:2 二选一可控',
   },
   {
-    desc: 'M4204 COM23 非助手玛奥 屈服刻印Lv3＋V感覚层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4204 COM23 非助手玛奥 屈服刻印Lv3＋V感覚层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -7283,7 +7283,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：非助手玛奥 + 屈服刻印Lv3＋V感覚Lv3以上，双独立 RAND:2 结构可控',
   },
   {
-    desc: 'M4205 COM23 助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4205 COM23 助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         mark(2) === 3 &&
@@ -7303,7 +7303,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4206 COM23 非助手玛奥 屈服刻印Lv3层守卫 mark(2)===3 改 ===2（#242）',
+    desc: 'M4206 COM23 非助手玛奥 屈服刻印Lv3层检查 mark(2)===3 改 ===2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.背面座位 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`「饶，饶了我吧……真的要……坏掉了！」`);',
     replace:
@@ -7312,7 +7312,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM23 二回目：非助手玛奥 + 屈服刻印Lv3，推进到 3',
   },
   {
-    desc: 'M4207 COM23 助手玛奥淫乱 talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4207 COM23 助手玛奥淫乱 talent:76 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (
         era.get(\`talent:\${target}:76\`) === 1 &&
@@ -7335,7 +7335,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM23 二回目：助手玛奥 + 淫乱，RAND:3==0 命中开场句，ABL:2 未达门槛走 else',
   },
   {
-    desc: 'M4208 COM23 非助手玛奥爱慕 talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4208 COM23 非助手玛奥爱慕 talent:85 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      } else if (
         era.get(\`talent:\${target}:85\`) === 1 &&
@@ -7581,7 +7581,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：それ以外，推进到 2',
   },
   {
-    desc: 'M4231 COM26 助手玛奥淫乱＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    desc: 'M4231 COM26 助手玛奥淫乱＋A感覚Lv3以上 ABL:3 检查 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        era.get(`talent:${target}:76`) === 1 &&\n        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱＋A感覚Lv3以上\n        if (rand_n(3) === 0) {\n          await era.print(\n            `「好舒服……已经舒服得……没有办法思考了啊啊啊${heart(1)}」`,\n          );',
     replace:
@@ -7591,7 +7591,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM26 二回目：助手玛奥 + 淫乱＋A感覚Lv3以上，RAND:3 三选一可控',
   },
   {
-    desc: 'M4232 COM26 助手玛奥爱慕＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    desc: 'M4232 COM26 助手玛奥爱慕＋A感覚Lv3以上 ABL:3 检查 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        era.get(`talent:${target}:85`) === 1 &&\n        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.正常位肛交 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕＋A感覚Lv3以上\n        if (rand_n(3) === 0) {\n          await era.print(\n            `「不，不行了……肛门……舒服得……要上天了啊啊啊${heart(1)}」`,\n          );',
     replace:
@@ -7600,7 +7600,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：助手玛奥 + 爱慕＋A感覚Lv3以上，推进到 5',
   },
   {
-    desc: 'M4233 COM26 非助手玛奥淫乱＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    desc: 'M4233 COM26 非助手玛奥淫乱＋A感覚Lv3以上 ABL:3 检查 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         chara(target).system.肛门感觉 >= 3 &&
@@ -7620,7 +7620,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：非助手玛奥 + 淫乱＋A感覚Lv3以上，推进到 7',
   },
   {
-    desc: 'M4234 COM26 非助手玛奥爱慕＋A感覚Lv3以上 ABL:3 守卫 >=3 改 >=4（#242）',
+    desc: 'M4234 COM26 非助手玛奥爱慕＋A感覚Lv3以上 ABL:3 检查 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        era.get(`talent:${target}:85`) === 1 &&\n        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.正常位肛交 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕＋A感覚Lv3以上\n        if (rand_n(3) === 0) {\n          await era.print(`「肛交……太棒了……真的是世界上最棒的事情了啊啊啊」`);',
     replace:
@@ -7629,7 +7629,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：非助手玛奥 + 爱慕＋A感覚Lv3以上，推进到 5',
   },
   {
-    desc: 'M4235 COM26 助手玛奥 A感覚Lv3以上守卫 肛门感觉>=3 改 >=4（#242）',
+    desc: 'M4235 COM26 助手玛奥 A感覚Lv3以上检查 肛门感觉>=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.正常位肛交 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // A感覚Lv3以上\n        await era.print(\n          `「好舒服……已经舒服得……没有办法思考了啊啊啊${heart(1)}」`,\n        );',
     replace:
@@ -7638,7 +7638,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：助手玛奥 + A感覚Lv3以上，推进到 3',
   },
   {
-    desc: 'M4236 COM26 非助手玛奥 A感覚Lv3以上守卫 肛门感觉>=3 改 >=4（#242）',
+    desc: 'M4236 COM26 非助手玛奥 A感覚Lv3以上检查 肛门感觉>=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        chara(target).system.肛门感觉 >= 3 &&\n        (kojo.正常位肛交 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // A感覚Lv3以上\n        await era.printAndWait(`「呜……呜啊啊……插……插进屁股里了……！」`);',
     replace:
@@ -7647,7 +7647,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：非助手玛奥 + A感覚Lv3以上，推进到 3',
   },
   {
-    desc: 'M4237 COM26 助手玛奥淫乱（非A感覚）talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4237 COM26 助手玛奥淫乱（非A感覚）talent:76 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
@@ -7665,7 +7665,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：助手玛奥 + 淫乱，推进到 6',
   },
   {
-    desc: 'M4238 COM26 助手玛奥爱慕（非A感覚）talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4238 COM26 助手玛奥爱慕（非A感覚）talent:85 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:85\`) === 1 &&
         (kojo.正常位肛交 <= 3 || game.kojo.口上开关 === 2)
@@ -7683,7 +7683,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：助手玛奥 + 爱慕，推进到 4',
   },
   {
-    desc: 'M4239 COM26 非助手玛奥淫乱（非A感覚）talent:76 守卫 === 1 改 === 0（#242）',
+    desc: 'M4239 COM26 非助手玛奥淫乱（非A感覚）talent:76 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:76\`) === 1 &&
         (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
@@ -7701,7 +7701,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：非助手玛奥 + 淫乱，推进到 6',
   },
   {
-    desc: 'M4240 COM26 非助手玛奥爱慕（非A感覚）talent:85 守卫 === 1 改 === 0（#242）',
+    desc: 'M4240 COM26 非助手玛奥爱慕（非A感覚）talent:85 检查 === 1 改 === 0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:85\`) === 1 &&
         (kojo.正常位肛交 <= 3 || game.kojo.口上开关 === 2)
@@ -7719,7 +7719,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 二回目：非助手玛奥 + 爱慕，推进到 4',
   },
   {
-    desc: 'M4241 COM26 初めて 非助手玛奥淫乱 肛门感觉守卫 >=3 改 >=4（#242）',
+    desc: 'M4241 COM26 初めて 非助手玛奥淫乱 肛门感觉检查 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          if (chara(target).system.肛门感觉 >= 3) {\n            await era.printAndWait(\n              `经过充分调教和开发的肛门，好像主动吸住了${player_name}的阴茎一般。`,\n            );',
     replace:
@@ -7728,7 +7728,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM26 初めて：非助手玛奥 + 淫乱，ABL:3 达门槛走 if',
   },
   {
-    desc: 'M4242 COM26 初めて 非助手玛奥それ以外 肛门感觉守卫 >=3 改 >=4（#242）',
+    desc: 'M4242 COM26 初めて 非助手玛奥それ以外 肛门感觉检查 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          if (chara(target).system.肛门感觉 >= 3) {
             await era.printAndWait(
@@ -7934,7 +7934,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM27 非助手玛奥爱慕 RAND 第一档',
   },
   {
-    desc: 'M4269 COM27 初次爱慕素质守卫 ===1 改 ===0（#242）',
+    desc: 'M4269 COM27 初次爱慕素质检查 ===1 改 ===0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (era.get(`talent:${target}:85`) === 1) {\n          if (chara(target).system.肛门感觉 >= 3) {\n            await era.printAndWait(\n              `${target_name}被充分调教，开发的肛门和直肠紧紧夹着${player_name}的阴茎，感受着来自背后的侵犯。`,\n            );\n            await era.printAndWait(\n              `「啊啊……啊啊啊……魔王大人全，全部插进来了……好……好厉害啊啊啊${heart(1)}」`,\n            );\n            await era.printAndWait(\n              `「尽，尽情侵，侵犯${target_name}的肛门吧${heart(1)}」`,\n            );\n            await era.printAndWait(\n              `在${target_name}一阵阵甘甜的娇喘声中、${player_name}前后动着腰抽插着………`,\n            );\n          } else {',
     replace:
@@ -7943,7 +7943,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM27 初次爱慕肛门感觉达标',
   },
   {
-    desc: 'M4270 COM27 助手爱慕素质守卫 ===1 改 ===0（#242）',
+    desc: 'M4270 COM27 助手爱慕素质检查 ===1 改 ===0（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          kojo.背后位肛交 = 5;\n        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.背后位肛交 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          await era.print(`『哎嘿嘿，姐姐的漂亮的小肛门……要开始侵犯了哦♪』`);',
     replace:
@@ -8230,12 +8230,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4555 COM64 非玛奥助手守卫判据取反（#242）',
+    desc: 'M4555 COM64 非玛奥助手检查条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: 'if (era_flag.assi > 0 && era_flag.assi !== 17) {',
     replace: 'if (era_flag.assi > 0 && era_flag.assi === 17) {',
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM64 守卫：助手不是玛奥时静默跳过',
+    must_mention: 'COM64 检查：助手不是玛奥时静默跳过',
   },
   {
     desc: 'M4556 COM64 首次 CFLAG:391 推进写错（#242）',
@@ -9374,7 +9374,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       find: 'kojo.兽奸眼罩 = 4;',
       replace: 'kojo.兽奸眼罩 = 99;',
       tests: ['kojo-k11-lily'],
-      must_mention: '眼罩着脱各档判据读 CFLAG:444 自身',
+      must_mention: '眼罩着脱各档条件读 CFLAG:444 自身',
     },
     {
       desc: 'M4685 DOG_KOJO_11 交谈后续高档写错（#242）',
@@ -9465,7 +9465,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '      if (f === 1) {',
     replace: '      if (f === 2) {\n        // 变异',
     tests: ['kojo-k11-lily'],
-    must_mention: '夜袭按原作单字母全局 F 选择蜜穴或肛门',
+    must_mention: '夜袭按单字母全局 F 选择蜜穴或肛门',
   },
   {
     desc: 'M4712 SELF_KOJO_K11 中出次数三回门槛改为四回（#242）',
@@ -9532,7 +9532,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '肉便器、胜利与攻击口上注册进各自分发族',
   },
   {
-    desc: 'M4720 K11 攻击口上迎击状态判据错位（#242）',
+    desc: 'M4720 K11 攻击口上迎击状态条件错位（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  if (chara(target).invasion.状态 === 2) {',
     replace: '  if (chara(target).invasion.状态 === 3) {\n    // 变异',
@@ -9556,7 +9556,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR P=1-7',
   },
   {
-    desc: 'M4723 K11 NTR 假阳具判据漏掉 FLAG:500==2（#242）',
+    desc: 'M4723 K11 NTR 假阳具条件漏掉 FLAG:500==2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  const king_has_penis =\n    game.system.狂王性别 === 0 || game.system.狂王性别 === 2;',
     replace:
@@ -9565,7 +9565,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'FLAG:500 在肉棒与假阳具称呼间分岔',
   },
   {
-    desc: 'M4724 K11 NTR 公开生育妊娠相手判据错位（#242）',
+    desc: 'M4724 K11 NTR 公开生育妊娠相手条件错位（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (chara(target).event.妊娠相手 === 1) {',
     replace: '      if (chara(target).event.妊娠相手 === 2) { // 变异',
@@ -9596,7 +9596,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'ENTERENEMY：淫乱、爱慕与寻妹三档',
   },
   {
-    desc: 'M4731 K11 ENTERENEMY 淫乱判据错位（#242）',
+    desc: 'M4731 K11 ENTERENEMY 淫乱条件错位（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  if (era0(`talent:${a}:76`) === 1) {',
     replace: '  if (era0(`talent:${a}:76`) === 9) { // 变异',
@@ -9613,7 +9613,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOHOUBI_REQUEST：十种要求',
   },
   {
-    desc: 'M4733 K11 GOHOUBI_REQUEST 兽种映射错位（#242；#600 起靶改成拼接行前的映射表）',
+    desc: 'M4733 K11 GOHOUBI_REQUEST 兽种映射错位（#242；#600 起目标改成拼接行前的映射表）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "    const animal = ['', '狗', '猪', '马'][request];",
     replace: "    const animal = ['', '猪', '狗', '马'][request]; // 变异",
@@ -9680,7 +9680,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '爱慕/淫乱使用心形连接',
   },
   {
-    desc: 'M4686 PALAMCNG_11 非玛奥助手守卫被删除（#242）',
+    desc: 'M4686 PALAMCNG_11 非玛奥助手检查被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "      : '阴茎';\n  void rand;\n\n  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {",
     replace:
@@ -9771,7 +9771,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4697 MARKCNG_11 非玛奥助手守卫被删除（#242）',
+    desc: 'M4697 MARKCNG_11 非玛奥助手检查被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  const kojo = chara(target).kojo;\n  void rand;\n\n  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {',
     replace:
@@ -10212,7 +10212,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM30 助手玛奥可达第 1 档推进',
   },
   {
-    desc: 'M4324 COM30 助手爱慕前档守卫收紧（#242，#688 后侍奉精神档递补命中）',
+    desc: 'M4324 COM30 助手爱慕前档检查收紧（#242，#688 后侍奉精神档递补命中）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
         ) {
@@ -10226,7 +10226,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM30 助手玛奥可达第 2 档推进',
   },
   {
-    desc: 'M4325 COM30 非助手爱慕前档守卫收紧（#242，#688 后侍奉精神档递补命中）',
+    desc: 'M4325 COM30 非助手爱慕前档检查收紧（#242，#688 后侍奉精神档递补命中）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `          (kojo.手淫 <= 3 || game.kojo.口上开关 === 2)
         ) {
@@ -10563,7 +10563,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4369 COM33 助手淫乱处女判据取反（#242）',
+    desc: 'M4369 COM33 助手淫乱处女条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `        era.get(\`talent:\${target}:0\`) === 1 &&
         (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
@@ -10579,7 +10579,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM33 助手玛奥第 1 档推进',
   },
   {
-    desc: 'M4370 COM33 非助手淫乱处女判据取反（#242）',
+    desc: 'M4370 COM33 非助手淫乱处女条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      era.get(\`talent:\${target}:0\`) === 1 &&
       (kojo.股间性交 <= 5 || game.kojo.口上开关 === 2)
@@ -10695,7 +10695,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4382 COM34 电动假阳具判据取反（#242）',
+    desc: 'M4382 COM34 电动假阳具条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // IF SELECTCOM == 34（骑乘位 CFLAG:335）\n  if (era_flag.selectcom === 34) {\n    const weapon =\n      era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0',
     replace:
@@ -10704,7 +10704,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COM34 初次第 3 档条件性器文本',
   },
   {
-    desc: 'M4383 COM34 初次处女助手玛奥判据取反（#242）',
+    desc: 'M4383 COM34 初次处女助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `      if (era.get(\`talent:\${target}:0\`) === 1) {
         if (assi_mao) {
@@ -10801,7 +10801,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4393 COM35 初次助手玛奥判据取反（#242）',
+    desc: 'M4393 COM35 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (kojo.全身擦洗 === 0) {
       if (assi_mao) {
@@ -10932,7 +10932,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4407 COM36 初次助手玛奥判据取反（#242）',
+    desc: 'M4407 COM36 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (kojo.骑乘位肛交 === 0) {
       if (assi_mao) {
@@ -11028,7 +11028,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4417 COM37 初次助手玛奥判据取反（#242）',
+    desc: 'M4417 COM37 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (kojo.肛门侍奉 === 0) {
       if (assi_mao) {
@@ -11121,7 +11121,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4427 COM40 初次助手玛奥判据取反（#242）',
+    desc: 'M4427 COM40 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.打屁股 === 0) {\n      if (assi_mao) {',
     replace: '    if (kojo.打屁股 === 0) {\n      if (!assi_mao) {',
@@ -11281,7 +11281,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4445 COM41 初次助手玛奥判据取反（#242）',
+    desc: 'M4445 COM41 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.鞭 === 0) {\n      if (assi_mao) {',
     replace: '    if (kojo.鞭 === 0) {\n      if (!assi_mao) {',
@@ -11442,7 +11442,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4463 COM42 初次助手玛奥判据取反（#242）',
+    desc: 'M4463 COM42 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.针 === 0) {\n      if (assi_mao) {',
     replace: '    if (kojo.针 === 0) {\n      if (!assi_mao) {',
@@ -11557,7 +11557,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4476 COM43 装上判据取反（#242）',
+    desc: 'M4476 COM43 装上条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 43 && era0(\`tequip:\${target}:43\`) !== 0) {`,
     replace: `  if (era_flag.selectcom === 43 && era0(\`tequip:\${target}:43\`) === 0) {`,
@@ -11744,7 +11744,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4497 COM44 初次助手玛奥判据取反（#242）',
+    desc: 'M4497 COM44 初次助手玛奥条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    if (kojo.绳子 === 0) {\n      if (assi_mao) {',
     replace: '    if (kojo.绳子 === 0) {\n      if (!assi_mao) {',
@@ -11850,7 +11850,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4510 COM45 装上判据取反（#242）',
+    desc: 'M4510 COM45 装上条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 45 && era0(\`tequip:\${target}:45\`) !== 0) {`,
     replace: `  if (era_flag.selectcom === 45 && era0(\`tequip:\${target}:45\`) === 0) {`,
@@ -11975,7 +11975,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     },
   ],
   {
-    desc: 'M4524 COM46 装上判据取反（#242）',
+    desc: 'M4524 COM46 装上条件取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `  if (era_flag.selectcom === 46 && era0(\`tequip:\${target}:46\`) !== 0) {`,
     replace: `  if (era_flag.selectcom === 46 && era0(\`tequip:\${target}:46\`) === 0) {`,
@@ -12090,7 +12090,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K10 一对',
   },
   {
-    desc: 'M2271 K10 EVENTTRAIN #PRI 口上开关补 0 判据改错（===0 改 ===1，#241）',
+    desc: 'M2271 K10 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;\n    }',
     replace:
@@ -12107,31 +12107,31 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K10 一对',
   },
   {
-    desc: 'M2273 K10 EVENTTRAIN 自身守卫①口上开关判据反转（<=0 改 >0，#241）',
+    desc: 'M2273 K10 EVENTTRAIN 自身检查①口上开关条件反转（<=0 改 >0，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: "  const time_word = era_flag.time == 0 ? '今日' : '今夜'; // TIME==0 ? 今日 # 今夜（K7 同款三目，page-main-menu.js 的 TIME 惯例）\n\n  if ((game.kojo.口上开关 || 0) <= 0) {\n    return 0;\n  }",
+    find: "  const time_word = era_flag.time == 0 ? '今日' : '今夜'; // 「TIME == 0 ? 今日 # 今夜」三目（K7 先例，page-main-menu.js 的 TIME 惯例）\n\n  if ((game.kojo.口上开关 || 0) <= 0) {\n    return 0;\n  }",
     replace:
-      "  const time_word = era_flag.time == 0 ? '今日' : '今夜'; // TIME==0 ? 今日 # 今夜（K7 同款三目，page-main-menu.js 的 TIME 惯例）\n\n  if ((game.kojo.口上开关 || 0)> 0) {  // 变异\n    return 0;\n  }",
+      "  const time_word = era_flag.time == 0 ? '今日' : '今夜'; // 「TIME == 0 ? 今日 # 今夜」三目（K7 先例，page-main-menu.js 的 TIME 惯例）\n\n  if ((game.kojo.口上开关 || 0)> 0) {  // 变异\n    return 0;\n  }",
     tests: ['kojo-k10-club'],
-    must_mention: '自身守卫①口上开关',
+    must_mention: '自身检查①口上开关',
   },
   {
-    desc: 'M2274 K10 EVENTTRAIN 自身守卫②TALENT:170 判据反转（!=1 改 ==1，#241）',
+    desc: 'M2274 K10 EVENTTRAIN 自身检查②TALENT:170 条件反转（!=1 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`talent:${target}:170`) != 1) {\n    return 0;\n  }\n\n  if (era.get(`talent:${target}:121`) != 1) {',
     replace:
       '  if (era.get(`talent:${target}:170`) == 1) {  // 变异\n    return 0;\n  }\n\n  if (era.get(`talent:${target}:121`) != 1) {',
 
     tests: ['kojo-k10-club'],
-    must_mention: '自身双守卫',
+    must_mention: '自身双检查',
   },
   {
-    desc: 'M2275 K10 EVENTTRAIN 自身守卫③TALENT:121 判据反转（!=1 改 ==1，#241）',
+    desc: 'M2275 K10 EVENTTRAIN 自身检查③TALENT:121 条件反转（!=1 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `  if (era.get(\`talent:\${target}:121\`) != 1) {`,
     replace: `  if (era.get(\`talent:\${target}:121\`) == 1) {  // 变异`,
     tests: ['kojo-k10-club'],
-    must_mention: '自身双守卫',
+    must_mention: '自身双检查',
   },
   {
     desc: 'M2276 K10 初调教==0 魔族分档推进值写错（=1 改 2，#241）',
@@ -12162,7 +12162,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '屈服刻印 Lv1',
   },
   {
-    desc: 'M2279 K10 屈服刻印 Lv1 判据改错（初调教<2 改 <1，#241）',
+    desc: 'M2279 K10 屈服刻印 Lv1 条件改错（初调教<2 改 <1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `  } else if (
     chara(target).kojo.初调教 < 2 &&
@@ -12176,7 +12176,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '屈服刻印 Lv1',
   },
   {
-    desc: 'M2280 K10 K10_KOJO2 崩坏分档守卫改错（TALENT:9==1 改 ==0，#241）',
+    desc: 'M2280 K10 K10_KOJO2 崩坏分档检查改错（TALENT:9==1 改 ==0，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`talent:${target}:9`) == 1 && game.kojo.口上开关 == 2) {\n    era.drawLine();\n    await era.printAndWait(`「啊……啊啊…啊………」`);',
     replace:
@@ -12195,7 +12195,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'glasses_word',
   },
   {
-    desc: 'M2282 K10 K10_KOJO2 MARK:3==3 判据改错（==3 改 ==2，#241）',
+    desc: 'M2282 K10 K10_KOJO2 MARK:3==3 条件改错（==3 改 ==2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '    if (era.get(`mark:${target}:3`) == 3 && game.kojo.口上开关 == 2) {\n      await era.printAndWait(\n        `「诶 那个…抱歉哦、是来找我做令人舒服的事情吗？」打开门${target_name}一副半梦半醒的样子，头发也乱糟糟的翘起了一堆呆毛`,',
     replace:
@@ -12204,35 +12204,35 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'glasses_word',
   },
   {
-    desc: 'M2283 K10 KOJO_MESSAGE_COM_10 头部守卫①ASSI&&ASSIPLAY 判据删松（#241）',
+    desc: 'M2283 K10 KOJO_MESSAGE_COM_10 头部检查①ASSI&&ASSIPLAY 条件删松（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     replace:
       '  if (era_flag.assi > 0 &&!era_flag.assiplay) {  // 变异\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     tests: ['kojo-k10-club'],
-    must_mention: '头部第 1 道守卫',
+    must_mention: '头部第 1 道检查',
   },
   {
-    desc: 'M2284 K10 KOJO_MESSAGE_COM_10 头部守卫②TEQUIP:45 判据改错（#241）',
+    desc: 'M2284 K10 KOJO_MESSAGE_COM_10 头部检查②TEQUIP:45 条件改错（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }',
     replace:
       '  if (era.get(`tequip:${target}:46`) && era_flag.selectcom != 45) {  // 变异\n    return 0;\n  }',
 
     tests: ['kojo-k10-club'],
-    must_mention: '头部第 2 道守卫',
+    must_mention: '头部第 2 道检查',
   },
   {
-    desc: 'M2285 K10 KOJO_MESSAGE_COM_10 头部守卫③失神判据反转（#241）',
+    desc: 'M2285 K10 KOJO_MESSAGE_COM_10 头部检查③失神条件反转（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }',
     replace:
       '  if (!game.train.失神) {  // 变异\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }',
     tests: ['kojo-k10-club'],
-    must_mention: '头部第 3 道守卫',
+    must_mention: '头部第 3 道检查',
   },
   {
-    desc: 'M2286 K10 KOJO_MESSAGE_COM_10 头部守卫④TEQUIP:89 分发对象改错（DOG 改 COLOSSEUM，#241）',
+    desc: 'M2286 K10 KOJO_MESSAGE_COM_10 头部检查④TEQUIP:89 分发对象改错（DOG 改 COLOSSEUM，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`tequip:${target}:89`)) {\n    await dog_kojo_10(rand_n);\n    return 0;\n  }',
     replace:
@@ -12241,7 +12241,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DOG_KOJO_10 真身',
   },
   {
-    desc: 'M2287 K10 KOJO_MESSAGE_COM_10 头部守卫⑤TEQUIP:55 分发对象改错（COLOSSEUM 改 DOG，#241）',
+    desc: 'M2287 K10 KOJO_MESSAGE_COM_10 头部检查⑤TEQUIP:55 分发对象改错（COLOSSEUM 改 DOG，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    await colosseum_kojo_10(rand_n);\n    return 0;\n  }',
     replace:
@@ -12250,22 +12250,22 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COLOSSEUM_KOJO_10 真身',
   },
   {
-    desc: 'M2288 K10 KOJO_MESSAGE_COM_10 头部守卫⑥TALENT:9 崩坏判据反转（#241）',
+    desc: 'M2288 K10 KOJO_MESSAGE_COM_10 头部检查⑥TALENT:9 崩坏条件反转（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`talent:${target}:9`) == 1) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:90`)) {',
     replace:
       '  if (era.get(`talent:${target}:9`) == 0) {  // 变异\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:90`)) {',
     tests: ['kojo-k10-club'],
-    must_mention: '头部第 6 道守卫',
+    must_mention: '头部第 6 道检查',
   },
   {
-    desc: 'M2289 K10 KOJO_MESSAGE_COM_10 头部守卫⑦TEQUIP:90 判据反转（#241）',
+    desc: 'M2289 K10 KOJO_MESSAGE_COM_10 头部检查⑦TEQUIP:90 条件反转（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era_flag.selectcom == 0) {',
     replace:
       '  if (!era.get(`tequip:${target}:90`)) {  // 变异\n    return 0;\n  }\n\n  if (era_flag.selectcom == 0) {',
     tests: ['kojo-k10-club'],
-    must_mention: '头部第 7 道守卫',
+    must_mention: '头部第 7 道检查',
   },
   {
     desc: 'M2290 K10 SELECTCOM==0 爱抚初回推进值写错（CFLAG:301=1 改 2，#241）',
@@ -12277,7 +12277,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARK:2>=2 分档',
   },
   {
-    desc: 'M2291 K10 SELECTCOM==0 爱抚初回判据改错（MARK:2>=2 改 >=3，#241）',
+    desc: 'M2291 K10 SELECTCOM==0 爱抚初回条件改错（MARK:2>=2 改 >=3，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '      if (era.get(`mark:${target}:2`) >= 2) {\n        await era.printAndWait(\n          `「啊～…嗯~…更、嗯更多的揉那里也可以哟…啊…就是这样」`,\n        );',
     replace:
@@ -12286,7 +12286,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARK:2>=2 分档',
   },
   {
-    desc: 'M2292 K10 SELECTCOM==87 穿环 p 位判据换错（&穿环状态 位判据改错，#241）',
+    desc: 'M2292 K10 SELECTCOM==87 穿环 p 位条件换错（&穿环状态 位条件改错，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '      } else if (era.get(`talent:${target}:76`) == 1) {\n        if (chara(target).train.穿环状态 & p) {\n          await era.printAndWait(`「咕～…啊啊～！」`);',
     replace:
@@ -12295,7 +12295,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '跨模块存活态',
   },
   {
-    desc: 'M2293 K10 TEQUIP:55 分发（COLOSSEUM_KOJO_10）SELECTCOM==55 体力判据反转（#241）',
+    desc: 'M2293 K10 TEQUIP:55 分发（COLOSSEUM_KOJO_10）SELECTCOM==55 体力条件反转（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '    if (era.get(`base:${target}:1`) <= 0) {\n      await era.printAndWait(`${target_name}连站立的力气都没有了……`);',
     replace:
@@ -12304,13 +12304,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'COLOSSEUM_KOJO_10 真身',
   },
   {
-    desc: 'M2294 K10 KOJO_MESSAGE_PALAMCNG_10 头部守卫①ASSI&&ASSIPLAY 判据反转（#241）',
+    desc: 'M2294 K10 KOJO_MESSAGE_PALAMCNG_10 头部检查①ASSI&&ASSIPLAY 条件反转（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  void rand;\n\n  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }',
     replace:
       '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  void rand;\n\n  if (era_flag.assi > 0 && !era_flag.assiplay) {  // 变异\n    return 0;\n  }',
     tests: ['kojo-k10-club'],
-    must_mention: '头部守卫①ASSI&&ASSIPLAY 静默跳过',
+    must_mention: '头部检查①ASSI&&ASSIPLAY 静默跳过',
   },
   {
     desc: 'M2295 K10 KOJO_MESSAGE_PALAMCNG_10 P1 首超润滑写错值（CFLAG:221=1 改 0，#241）',
@@ -12322,16 +12322,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'PALAMCNG_10',
   },
   {
-    desc: 'M2296 K10 KOJO_MESSAGE_MARKCNG_10 头部守卫①ASSI&&ASSIPLAY 判据反转（#241）',
+    desc: 'M2296 K10 KOJO_MESSAGE_MARKCNG_10 头部检查①ASSI&&ASSIPLAY 条件反转（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  const target_name = chara_callname(target); // %SAVESTR:TARGET%\n  void rand;\n\n  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }',
     replace:
       '  const target_name = chara_callname(target); // %SAVESTR:TARGET%\n  void rand;\n\n  if (era_flag.assi > 0 && !era_flag.assiplay) {  // 变异\n    return 0;\n  }',
     tests: ['kojo-k10-club'],
-    must_mention: '头部守卫①ASSI&&ASSIPLAY 静默跳过',
+    must_mention: '头部检查①ASSI&&ASSIPLAY 静默跳过',
   },
   {
-    desc: 'M2297 K10 KOJO_MESSAGE_MARKCNG_10 苦痛刻印Lv3 判据改错（==3 改 ==2，#241）',
+    desc: 'M2297 K10 KOJO_MESSAGE_MARKCNG_10 苦痛刻印Lv3 条件改错（==3 改 ==2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.system.苦痛刻印变动 == 3 && chara(target).kojo.苦痛刻印Lv3 == 0) {\n    if (era.get(`talent:${target}:85`) == 1) {',
     replace:
@@ -12349,7 +12349,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARKCNG_10',
   },
   {
-    desc: 'M2299 K10 SELF_KOJO_K10 育儿室（TFLAG:13==13）孕育文案判据丢失（TALENT:153 分支删台词，#241）',
+    desc: 'M2299 K10 SELF_KOJO_K10 育儿室（TFLAG:13==13）孕育文案条件丢失（TALENT:153 分支删台词，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '      if (era.get(`talent:${target}:153`)) {\n        await era.printAndWait(\n          `「很快就要生出来了、请安心期待吧、亲・爱・的${heart(1)}」`,\n        );',
     replace:
@@ -12376,7 +12376,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CSTR:2 插值',
   },
   {
-    desc: 'M2302 K10 DUNGEON_VICTORY_K10 体力低档追加台词判据删松（<50 改 <500，#241）',
+    desc: 'M2302 K10 DUNGEON_VICTORY_K10 体力低档追加台词条件删松（<50 改 <500，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `  if (
     (era.get(\`base:\${a}:0\`) * 100) / era.get(\`maxbase:\${a}:0\`) < 50 ||
@@ -12399,7 +12399,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DUNGEON_VICTORY_K10',
   },
   {
-    desc: 'M2304 K10 DUNGEON_RYOUZYOKU_K10 处女判据反转（TALENT:0==1，#241）',
+    desc: 'M2304 K10 DUNGEON_RYOUZYOKU_K10 处女条件反转（TALENT:0==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`talent:${target}:0`) == 1) {\n    await era.printAndWait(\n      `「请！请住手…哈啊～…求、求你们…人家还是处女…所以说…只有那里请…哈啊～！」`,\n    );',
     replace:
@@ -12408,7 +12408,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '迷宫败北与凌辱结束口上',
   },
   {
-    desc: 'M2305 K10 DUNGEON_RYOUZYOKU_AFTER_K10 处女判据反转（TALENT:0==1，#241）',
+    desc: 'M2305 K10 DUNGEON_RYOUZYOKU_AFTER_K10 处女条件反转（TALENT:0==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`talent:${target}:0`) == 1) {\n    await era.printAndWait(`「骗人…我竟然还是处女吗………」`);',
     replace:
@@ -12417,7 +12417,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '迷宫败北与凌辱结束口上',
   },
   {
-    desc: 'M2306 K10 DUNGEON_ATTACK_K10 侵略状态判据改错（==2 改 ==3，#241）',
+    desc: 'M2306 K10 DUNGEON_ATTACK_K10 侵略状态条件改错（==2 改 ==3，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (chara(target).invasion.状态 == 2) {\n    if (rand_n(3) == 0) {\n      await era.printAndWait(`「燃烧吧！」`);',
     replace:
@@ -12426,7 +12426,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DUNGEON_ATTACK_K10',
   },
   {
-    desc: 'M2307 K10 BENKI_KOUJO_K10 肉便器行动==0 淫乱分档判据反转（TALENT:76，#241）',
+    desc: 'M2307 K10 BENKI_KOUJO_K10 肉便器行动==0 淫乱分档条件反转（TALENT:76，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.train.肉便器行动 == 0) {\n    if (era.get(`talent:${a}:76`) == 1) {\n      await era.printAndWait(`「哈啊～…更多更多…用力干人家吧${heart(1)}」`);',
     replace:
@@ -12435,7 +12435,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '肉便器行动',
   },
   {
-    desc: 'M2308 K10 BENKI_KOUJO_K10 肉便器行动分档判据改错（==0 改 ==1，#241）',
+    desc: 'M2308 K10 BENKI_KOUJO_K10 肉便器行动分档条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.train.肉便器行动 == 0) {\n    if (era.get(`talent:${a}:76`) == 1) {',
     replace:
@@ -12444,7 +12444,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '肉便器行动',
   },
   {
-    desc: 'M2309 K10 ENTERENEMY_KOUJO_K10 淫乱/爱慕分岔顺序改错（TALENT:76 判据反转，#241）',
+    desc: 'M2309 K10 ENTERENEMY_KOUJO_K10 淫乱/爱慕分岔顺序改错（TALENT:76 条件反转，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (era.get(`talent:${a}:76`) == 1) {\n    await era.printAndWait(\n      `「把魔王大人蹂躏的凄惨兮兮变成人家的宠物什么的…说不定也很有趣呢♪」`,\n    );\n  } else if (era.get(`talent:${a}:85`) == 1) {\n    await era.printAndWait(`「不要逃跑哟、魔王大人${heart(1)}」`);',
     replace:
@@ -12471,7 +12471,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR_KOUJO_K10',
   },
   {
-    desc: 'M2312 K10 NTR_KOUJO_K10 P 分派判据①改错（==1 改 ==2，#241）',
+    desc: 'M2312 K10 NTR_KOUJO_K10 P 分派条件①改错（==1 改 ==2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (P == 1) {\n    if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {\n      await era.printAndWait(\n        `「不、不要…哈啊～…被你这样的人…人家的第一次…啊～…啊啊～！」`,\n      );',
     replace:
@@ -12480,7 +12480,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR_KOUJO_K10',
   },
   {
-    desc: 'M2313 K10 EXUCUTION_KOUJO_K10 犬射精或处刑口上判据改错（==4 改 ==5，#241）',
+    desc: 'M2313 K10 EXUCUTION_KOUJO_K10 犬射精或处刑口上条件改错（==4 改 ==5，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.event.犬射精或处刑口上 == 4) {\n    await era.printAndWait(\n      `「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」`,\n    );',
     replace:
@@ -12489,7 +12489,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '注册且可调用',
   },
   {
-    desc: 'M2314 K10 MUSEUM_KOUJO_K10 博物馆口上判据改错（==0 改 ==1，#241）',
+    desc: 'M2314 K10 MUSEUM_KOUJO_K10 博物馆口上条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.event.博物馆口上 == 0) {\n    await era.printAndWait(\n      `「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」`,\n    );',
     replace:
@@ -12498,7 +12498,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '八档，第一档有台词',
   },
   {
-    desc: 'M2315 K10 BANISHMENT_KOUJO_K10 流放口上判据改错（==0 改 ==1，#241）',
+    desc: 'M2315 K10 BANISHMENT_KOUJO_K10 流放口上条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.event.流放口上 == 0) {\n    await era.printAndWait(`「我的魔法连让小石头动一下都不行了…啊啊………」`);',
     replace:
@@ -12507,7 +12507,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '注册且可调用',
   },
   {
-    desc: 'M2316 K10 PUBLIC_EXUCUTION_KOUJO_K10 公开处刑口上判据改错（==0 改 ==1，#241）',
+    desc: 'M2316 K10 PUBLIC_EXUCUTION_KOUJO_K10 公开处刑口上条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (game.event.公开处刑口上 == 0) {\n    await era.printAndWait(\n      `「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」`,\n    );',
     replace:
@@ -12516,7 +12516,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '注册且可调用',
   },
   {
-    desc: 'M2318 K10 GOHOUBI_REQUEST_KOUJO_K10 要求奖赏判据改错（==0 改 ==1，#241）',
+    desc: 'M2318 K10 GOHOUBI_REQUEST_KOUJO_K10 要求奖赏条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (chara(a).stronghold.要求奖赏 == 0) {\n    await era.printAndWait(`「好麻烦，唔，那给我一些钱好了」`);',
     replace:
@@ -12525,7 +12525,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '请求金钱',
   },
   {
-    desc: 'M2319 K10 GOHOUBI_AFTER_KOUJO_K10 choice==0 判据改错（#241）',
+    desc: 'M2319 K10 GOHOUBI_AFTER_KOUJO_K10 choice==0 条件改错（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (choice == 0) {\n    await era.printAndWait(`「就这样不许动？哈？」`);',
     replace:
@@ -12534,7 +12534,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'choice 参数传递',
   },
   {
-    desc: 'M2320 K10 OSIOKI_KOUJO_K10 choice==6 判据改错（#241）',
+    desc: 'M2320 K10 OSIOKI_KOUJO_K10 choice==6 条件改错（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  } else if (choice == 6) {\n    await era.printAndWait(`「真是难以接受」`);',
     replace:
@@ -12543,7 +12543,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'choice 参数传递',
   },
   {
-    desc: 'M2321 K10 GOBI_KOUJO_K10 arg0==1 判据改错（#241）',
+    desc: 'M2321 K10 GOBI_KOUJO_K10 arg0==1 条件改错（#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '  if (arg0 == 1) {\n    return `所以呢♪`;',
     replace: '  if (arg0 ==2) {  // 变异\n    return `所以呢♪`;',
@@ -12560,7 +12560,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'ARG:0 取语尾编号',
   },
   {
-    desc: 'M2323 K10 家族接线：kojo_message_com_family 注册号错位（10 改 11，#241）',
+    desc: 'M2323 K10 家族接入：kojo_message_com_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `kojo_message_com_family.register(10, kojo_message_com_10);`,
     replace: `kojo_message_com_family.register(11, kojo_message_com_10); // 变异`,
@@ -12568,7 +12568,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2324 K10 家族接线：self_kojo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2324 K10 家族接入：self_kojo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `self_kojo_family.register(10, self_kojo_k10);`,
     replace: `self_kojo_family.register(11, self_kojo_k10); // 变异`,
@@ -12576,7 +12576,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2325 K10 家族接线：kojo_message_palamcng_family 注册号错位（10 改 11，#241）',
+    desc: 'M2325 K10 家族接入：kojo_message_palamcng_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `kojo_message_palamcng_family.register(10, kojo_message_palamcng_10);`,
     replace: `kojo_message_palamcng_family.register(11, kojo_message_palamcng_10); // 变异`,
@@ -12584,7 +12584,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2326 K10 家族接线：kojo_message_markcng_family 注册号错位（10 改 11，#241）',
+    desc: 'M2326 K10 家族接入：kojo_message_markcng_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `kojo_message_markcng_family.register(10, kojo_message_markcng_10);`,
     replace: `kojo_message_markcng_family.register(11, kojo_message_markcng_10); // 变异`,
@@ -12592,7 +12592,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2327 K10 家族接线：gohoubi_after_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2327 K10 家族接入：gohoubi_after_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `gohoubi_after_koujo_family.register(10, (cid, choice) =>
   gohoubi_after_koujo_k10(undefined, cid, choice),
@@ -12604,7 +12604,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2328 K10 家族接线：osioski_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2328 K10 家族接入：osioski_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `osioski_koujo_family.register(10, (cid, choice) =>
   osioki_koujo_k10(undefined, cid, choice),
@@ -12616,7 +12616,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2329 K10 家族接线：gohoubi_request_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2329 K10 家族接入：gohoubi_request_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `gohoubi_request_koujo_family.register(10, () => gohoubi_request_koujo_k10());`,
     replace: `gohoubi_request_koujo_family.register(11, () => gohoubi_request_koujo_k10()); // 变异`,
@@ -12624,7 +12624,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2330 K10 家族接线：ryouzyoku_kojo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2330 K10 家族接入：ryouzyoku_kojo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `ryouzyoku_kojo_family.register(10, dungeon_ryouzyoku_k10);`,
     replace: `ryouzyoku_kojo_family.register(11, dungeon_ryouzyoku_k10); // 变异`,
@@ -12632,7 +12632,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2331 K10 家族接线：ryouzyoku_after_kojo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2331 K10 家族接入：ryouzyoku_after_kojo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `ryouzyoku_after_kojo_family.register(10, dungeon_ryouzyoku_after_k10);`,
     replace: `ryouzyoku_after_kojo_family.register(11, dungeon_ryouzyoku_after_k10); // 变异`,
@@ -12640,7 +12640,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2332 K10 家族接线：gobi_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2332 K10 家族接入：gobi_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `gobi_koujo_family.register(10, gobi_koujo_k10);`,
     replace: `gobi_koujo_family.register(11, gobi_koujo_k10); // 变异`,
@@ -12648,7 +12648,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2333 K10 家族接线：benki_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2333 K10 家族接入：benki_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `benki_koujo_family.register(10, benki_koujo_k10);`,
     replace: `benki_koujo_family.register(11, benki_koujo_k10); // 变异`,
@@ -12656,7 +12656,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2334 K10 家族接线：enterenemy_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2334 K10 家族接入：enterenemy_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `enterenemy_koujo_family.register(10, enterenemy_koujo_k10);`,
     replace: `enterenemy_koujo_family.register(11, enterenemy_koujo_k10); // 变异`,
@@ -12664,7 +12664,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2335 K10 家族接线：dungeon_victory_family 注册号错位（10 改 11，#241）',
+    desc: 'M2335 K10 家族接入：dungeon_victory_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `dungeon_victory_family.register(10, dungeon_victory_k10);`,
     replace: `dungeon_victory_family.register(11, dungeon_victory_k10); // 变异`,
@@ -12672,7 +12672,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2336 K10 家族接线：dungeon_attack_family 注册号错位（10 改 11，#241）',
+    desc: 'M2336 K10 家族接入：dungeon_attack_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `dungeon_attack_family.register(10, dungeon_attack_k10);`,
     replace: `dungeon_attack_family.register(11, dungeon_attack_k10); // 变异`,
@@ -12680,7 +12680,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2337 K10 家族接线：ntr_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2337 K10 家族接入：ntr_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `ntr_koujo_family.register(10, ntr_koujo_k10);`,
     replace: `ntr_koujo_family.register(11, ntr_koujo_k10); // 变异`,
@@ -12688,7 +12688,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2338 K10 家族接线：exucution_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2338 K10 家族接入：exucution_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `exucution_koujo_family.register(10, exucution_koujo_k10);`,
     replace: `exucution_koujo_family.register(11, exucution_koujo_k10); // 变异`,
@@ -12696,7 +12696,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2339 K10 家族接线：museum_koujo_family 注册号错位（10 改 11，#241）',
+    desc: 'M2339 K10 家族接入：museum_koujo_family 注册号错位（10 改 11，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: `museum_koujo_family.register(10, museum_koujo_k10);`,
     replace: `museum_koujo_family.register(11, museum_koujo_k10); // 变异`,
@@ -12704,7 +12704,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '20 个分发族全部注册了 K10',
   },
   {
-    desc: 'M2500 K8 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_8，#239）',
+    desc: 'M2500 K8 兽奸检查岔路丢失（TEQUIP:89 不再调 DOG_KOJO_8，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (era0(`tequip:${target}:89`)) {\n    await dog_kojo_8(rand); // CALL DOG_KOJO_8\n    return 0;\n  }',
     replace: `  if (era0(\`tequip:\${target}:89\`)) {
@@ -12714,7 +12714,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DOG_KOJO_8 それ以外档打印一行空文本',
   },
   {
-    desc: 'M2501 K8 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_8，#239）',
+    desc: 'M2501 K8 死斗场检查岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_8，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (era0(`tequip:${target}:55`)) {\n    await colosseum_kojo_8(); // CALL COLOSSEUM_KOJO_8\n    return 0;\n  }',
     replace: `  if (era0(\`tequip:\${target}:55\`)) {
@@ -12741,7 +12741,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '反抗刻印Lv3',
   },
   {
-    desc: 'M1817 K8 SELECTCOM 0 爱撫初回刻印分档删（MARK:2 >= 2 臂丢失，#239）',
+    desc: 'M1817 K8 SELECTCOM 0 爱撫初回刻印分档删（MARK:2 >= 2 分支丢失，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      if (era0(`mark:${target}:2`) >= 2) {\n        await era.printAndWait(`「呵呵呵…就像稍微强一点的按摩一样呢」`);',
     replace:
@@ -12806,7 +12806,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 1',
   },
   {
-    desc: 'M1826 K8 SELECTCOM 8 それ以外分支删除（CFLAG:309 <= 1 守卫改 false，#239）',
+    desc: 'M1826 K8 SELECTCOM 8 それ以外分支删除（CFLAG:309 <= 1 检查改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 == 2) {\n      // それ以外',
     replace: '    } else if (false) {\n      // それ以外（变异：守卫删除）',
@@ -12901,7 +12901,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 4',
   },
   {
-    desc: 'M1838 K8 SELECTCOM 20 正常位それ以外守卫丢失（CFLAG:321 <= 1 改 false，#239）',
+    desc: 'M1838 K8 SELECTCOM 20 正常位それ以外检查丢失（CFLAG:321 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.正常位 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -12934,7 +12934,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 3',
   },
   {
-    desc: 'M1842 K8 SELECTCOM 21 背后位それ以外守卫丢失（CFLAG:322 <= 1 改 false，#239）',
+    desc: 'M1842 K8 SELECTCOM 21 背后位それ以外检查丢失（CFLAG:322 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      kojo.背后位 = 3; // CFLAG:322 = 3\n    } else if (kojo.背后位 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '      kojo.背后位 = 3; // CFLAG:322 = 3\n    } else if (false) {',
@@ -12958,7 +12958,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 4',
   },
   {
-    desc: 'M1847 K8 SELECTCOM 22 对面座位それ以外守卫丢失（CFLAG:323 <= 1 改 false，#239）',
+    desc: 'M1847 K8 SELECTCOM 22 对面座位それ以外检查丢失（CFLAG:323 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.对面座位 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -12982,7 +12982,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 3',
   },
   {
-    desc: 'M1851 K8 SELECTCOM 23 背面座位それ以外守卫丢失（CFLAG:324 <= 1 改 false，#239）',
+    desc: 'M1851 K8 SELECTCOM 23 背面座位それ以外检查丢失（CFLAG:324 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.背面座位 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -13006,7 +13006,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 6',
   },
   {
-    desc: 'M1854 K8 SELECTCOM 26 正常位肛交 A感觉Lv3以上（无好感）守卫丢失（ABL:3>=3 改 false，#239）',
+    desc: 'M1854 K8 SELECTCOM 26 正常位肛交 A感觉Lv3以上（无好感）检查丢失（ABL:3>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.正常位肛交 <= 2 || game.kojo.口上开关 == 2)',
     replace:
@@ -13015,7 +13015,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 3',
   },
   {
-    desc: 'M1855 K8 SELECTCOM 26 正常位肛交それ以外守卫丢失（CFLAG:327 <= 1 改 false，#239）',
+    desc: 'M1855 K8 SELECTCOM 26 正常位肛交それ以外检查丢失（CFLAG:327 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.正常位肛交 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -13023,7 +13023,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 2',
   },
   {
-    desc: 'M1856 K8 SELECTCOM 27 背后位アナル爱慕守卫丢失（CFLAG:328 <= 3 改 false，#239）',
+    desc: 'M1856 K8 SELECTCOM 27 背后位アナル爱慕检查丢失（CFLAG:328 <= 3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      kojo.背后位肛交 = 5; // CFLAG:328 = 5\n    } else if (\n      era0(`talent:${target}:85`) == 1 &&\n      (kojo.背后位肛交 <= 3 || game.kojo.口上开关 == 2)',
     replace:
@@ -13048,7 +13048,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 4',
   },
   {
-    desc: 'M1859 K8 SELECTCOM 27 背后位アナルそれ以外守卫丢失（CFLAG:328 <= 1 改 false，#239）',
+    desc: 'M1859 K8 SELECTCOM 27 背后位アナルそれ以外检查丢失（CFLAG:328 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      kojo.背后位肛交 = 3; // CFLAG:328 = 3\n    } else if (kojo.背后位肛交 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
@@ -13082,7 +13082,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 3',
   },
   {
-    desc: 'M1863 K8 SELECTCOM 28 对面座位アナルそれ以外守卫丢失（CFLAG:329 <= 1 改 false，#239）',
+    desc: 'M1863 K8 SELECTCOM 28 对面座位アナルそれ以外检查丢失（CFLAG:329 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.对面座位肛交 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -13090,7 +13090,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 2',
   },
   {
-    desc: 'M1865 K8 SELECTCOM 29 背面座位肛交それ以外守卫丢失（CFLAG:330 <= 1 改 false，#239）',
+    desc: 'M1865 K8 SELECTCOM 29 背面座位肛交それ以外检查丢失（CFLAG:330 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.背面座位肛交 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -13149,7 +13149,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 5',
   },
   {
-    desc: 'M1873 K8 SELECTCOM 31 口交爱慕守卫丢失（CFLAG:332 <= 3 改 false，#239）',
+    desc: 'M1873 K8 SELECTCOM 31 口交爱慕检查丢失（CFLAG:332 <= 3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`talent:${target}:85`) == 1 &&\n      (kojo.口交_奴 <= 3 || game.kojo.口上开关 == 2)',
     replace:
@@ -13166,7 +13166,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 3',
   },
   {
-    desc: 'M1875 K8 SELECTCOM 31 口交それ以外守卫丢失（CFLAG:332 <= 1 改 false，#239）',
+    desc: 'M1875 K8 SELECTCOM 31 口交それ以外检查丢失（CFLAG:332 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      kojo.口交_奴 = 3; // CFLAG:332 = 3\n    } else if (kojo.口交_奴 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
@@ -13208,7 +13208,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 6',
   },
   {
-    desc: 'M1880 K8 SELECTCOM 33 股间性交爱有り（无处女）守卫丢失（CFLAG:334 <= 2 改 false，#239）',
+    desc: 'M1880 K8 SELECTCOM 33 股间性交爱有り（无处女）检查丢失（CFLAG:334 <= 2 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`talent:${target}:85`) == 1 &&\n      (kojo.股间性交 <= 2 || game.kojo.口上开关 == 2)',
     replace:
@@ -13217,7 +13217,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 3',
   },
   {
-    desc: 'M1881 K8 SELECTCOM 33 股间性交それ以外守卫丢失（CFLAG:334 <= 1 改 false，#239）',
+    desc: 'M1881 K8 SELECTCOM 33 股间性交それ以外检查丢失（CFLAG:334 <= 1 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '} else if (kojo.股间性交 <= 1 || game.kojo.口上开关 == 2) {',
     replace: '} else if (false) {',
@@ -13242,7 +13242,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 8',
   },
   {
-    desc: 'M1884 K8 SELECTCOM 34 骑乘位屈服刻印Lv3+V感觉Lv3以上守卫丢失（ABL:2>=3 改 false，#239）',
+    desc: 'M1884 K8 SELECTCOM 34 骑乘位屈服刻印Lv3+V感觉Lv3以上检查丢失（ABL:2>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      kojo.骑乘位 = 5; // CFLAG:335 = 5\n    } else if (\n      era0(`mark:${target}:2`) == 3 &&\n      era0(`abl:${target}:2`) >= 3 &&\n      (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)',
     replace:
@@ -13320,7 +13320,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 5',
   },
   {
-    desc: 'M1893 K8 SELECTCOM 36 骑乘位肛交 A感觉Lv3以上守卫丢失（ABL:3>=3 改 false，#239）',
+    desc: 'M1893 K8 SELECTCOM 36 骑乘位肛交 A感觉Lv3以上检查丢失（ABL:3>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    } else if (\n      era0(`abl:${target}:3`) >= 3 &&\n      (kojo.骑乘位肛交 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // A感觉Lv3以上',
     replace:
@@ -13355,7 +13355,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 4',
   },
   {
-    desc: 'M1897 K8 SELECTCOM 37 肛门侍奉侍奉精神Lv3以上守卫丢失（ABL:16>=3 改 false，#239）',
+    desc: 'M1897 K8 SELECTCOM 37 肛门侍奉侍奉精神Lv3以上检查丢失（ABL:16>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      kojo.肛门侍奉 = 4; // CFLAG:338 = 4\n    } else if (\n      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.肛门侍奉 <= 2 || game.kojo.口上开关 == 2)\n    ) {\n      // 侍奉精神Lv3以上',
     replace:
@@ -13372,7 +13372,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 5',
   },
   {
-    desc: 'M1899 K8 SELECTCOM 40 打屁股苦痛刻印Lv3+屈服刻印Lv3守卫丢失（MARK:0==3 改 false，#239）',
+    desc: 'M1899 K8 SELECTCOM 40 打屁股苦痛刻印Lv3+屈服刻印Lv3检查丢失（MARK:0==3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`mark:${target}:0`) == 3 &&\n      era0(`mark:${target}:2`) == 3 &&\n      (kojo.打屁股 <= 2 || game.kojo.口上开关 == 2)',
     replace:
@@ -13389,7 +13389,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 9',
   },
   {
-    desc: 'M1901 K8 SELECTCOM 41 鞭受虐狂っ気Lv3以上守卫丢失（ABL:21>=3 改 false，#239）',
+    desc: 'M1901 K8 SELECTCOM 41 鞭受虐狂っ気Lv3以上检查丢失（ABL:21>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    } else if (\n      era0(`abl:${target}:21`) >= 3 &&\n      (kojo.鞭 <= 2 || game.kojo.口上开关 == 2)\n    ) {',
     replace:
@@ -13430,7 +13430,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 2',
   },
   {
-    desc: 'M1906 K8 SELECTCOM 45 口塞開始時 TEQUIP:43 分岔丢失（首档恒不进已戴分支，#239；#622 起靶在拼接语句上）',
+    desc: 'M1906 K8 SELECTCOM 45 口塞開始時 TEQUIP:43 分岔丢失（首档恒不进已戴分支，#239；#622 起目标在拼接语句上）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      if (era0(`tequip:${target}:43`)) {\n        await era.printAndWait(\n          `${target_name}自己戴上了口枷` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );',
     replace:
@@ -13456,7 +13456,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 7',
   },
   {
-    desc: 'M1909 K8 SELECTCOM 46 灌肠肛塞 A感觉Lv3以上＋受虐狂っ気Lv3以上守卫丢失（ABL:3>=3 改 false，#239）',
+    desc: 'M1909 K8 SELECTCOM 46 灌肠肛塞 A感觉Lv3以上＋受虐狂っ気Lv3以上检查丢失（ABL:3>=3 改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    } else if (\n      era0(`abl:${target}:3`) >= 3 &&\n      era0(`abl:${target}:21`) >= 3 &&\n      (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 == 2)\n    ) {',
     replace:
@@ -13620,16 +13620,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '咕…输给你了',
   },
   {
-    desc: 'M1930 K8 COLOSSEUM_KOJO_8 SC31 口交 阴茎判定失效（TALENT:121/122 改 == 9，#239；#622 起靶在语句外的取值变量上）',
+    desc: 'M1930 K8 COLOSSEUM_KOJO_8 SC31 口交 阴茎判定失效（TALENT:121/122 改 == 9，#239；#622 起目标在语句外的取值变量上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      // 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;',
+    find: '      // 同一行输出：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 条件提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;',
     replace:
-      '      // 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 9 || era0(`talent:${assi}:122`) == 9; // 变异：判定失效',
+      '      // 同一行输出：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 条件提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 9 || era0(`talent:${assi}:122`) == 9; // 变异：判定失效',
     tests: ['kojo-k8-spade'],
     must_mention: '阴茎',
   },
   {
-    desc: 'M1931 K8 COLOSSEUM_KOJO_8 SC5 胸爱撫 助手守卫失效（ASSI/ASSIPLAY 改 assi > 999，#239）',
+    desc: 'M1931 K8 COLOSSEUM_KOJO_8 SC5 胸爱撫 助手检查失效（ASSI/ASSIPLAY 改 assi > 999，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (era_flag.assi > 0 && era_flag.assiplay) {\n      await era.printAndWait(\n        `「嗯啊…啊啊拜托你了…因为我是后辈温柔点吧…啊…嗯嗯！」`,\n      );',
     replace:
@@ -13647,7 +13647,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '要、要坏掉了',
   },
   {
-    desc: 'M1933 K8 COLOSSEUM_KOJO_8 SC27 背后位アナル 助手守卫失效（ASSI/ASSIPLAY 改 assi > 999，#239）',
+    desc: 'M1933 K8 COLOSSEUM_KOJO_8 SC27 背后位アナル 助手检查失效（ASSI/ASSIPLAY 改 assi > 999，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (era_flag.assi > 0 && era_flag.assiplay) {\n      await era.printAndWait(\n        `「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」`,\n      );',
     replace:
@@ -13665,7 +13665,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '连这种地方都进来了',
   },
   {
-    desc: 'M1935 K8 PALAMCNG_8 头部守卫 TEQUIP:45（口塞）短路失效（#239）',
+    desc: 'M1935 K8 PALAMCNG_8 头部检查 TEQUIP:45（口塞）短路失效（#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     replace:
@@ -13766,7 +13766,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '用自己的手',
   },
   {
-    desc: 'M1947 K8 MARKCNG_8 头部守卫 TEQUIP:45（口塞）短路失效（#239）',
+    desc: 'M1947 K8 MARKCNG_8 头部检查 TEQUIP:45（口塞）短路失效（#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: 'async function kojo_message_markcng_8() {\n  const target = era_flag.target;\n  const target_name = chara_callname(target); // %SAVESTR:TARGET%\n  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n\n  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }',
     replace:
@@ -13855,12 +13855,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '调教后性交 CFLAG:264',
   },
   {
-    desc: 'M1958 K8 SELF_KOJO_K8 夜袭外层守卫丢失（CFLAG:265 < 1 改恒真，#239）',
+    desc: 'M1958 K8 SELF_KOJO_K8 夜袭外层检查丢失（CFLAG:265 < 1 改恒真，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (kojo.夜袭 < 1 || game.kojo.口上开关 === 2) {',
     replace: '    if (true) {',
     tests: ['kojo-k8-spade'],
-    must_mention: '外层 CFLAG:265 < 1 守卫应拦下整支',
+    must_mention: '外层 CFLAG:265 < 1 检查应拦下整支',
   },
   {
     desc: 'M1959 K8 SELF_KOJO_K8 夜袭 崩坏支写错（CFLAG:265 = 2 改 0，#239）',
@@ -13871,7 +13871,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '夜袭 CFLAG:265',
   },
   {
-    desc: 'M1960 K8 SELF_KOJO_K8 卖却扶她守卫取反（#239）',
+    desc: 'M1960 K8 SELF_KOJO_K8 卖却扶她检查取反（#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (era0(`talent:${target}:122`) !== 1) {\n      await sell_maturo_k0(',
     replace:
@@ -13949,7 +13949,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DUNGEON_VICTORY：RAND:3==0 决胜台词 + 残血险胜',
   },
   {
-    desc: 'M1973 K8 DUNGEON_ATTACK 侵攻/迎击守卫取反（CFLAG:1 == 2 改 != 2，#239）',
+    desc: 'M1973 K8 DUNGEON_ATTACK 侵攻/迎击检查取反（CFLAG:1 == 2 改 != 2，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (chara(target).invasion.状态 == 2) {',
     replace: '  if (chara(target).invasion.状态 != 2) {',
@@ -13957,7 +13957,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '侵攻中 CFLAG:1 == 2',
   },
   {
-    desc: 'M1974 K8 BENKI 档位守卫写错（FLAG:62 == 0 改 == 1，#239）',
+    desc: 'M1974 K8 BENKI 档位检查写错（FLAG:62 == 0 改 == 1，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (game.train.肉便器行动 == 0) {',
     replace: '  if (game.train.肉便器行动 == 1) {',
@@ -13991,7 +13991,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'BENKI：FLAG:62==4 淫乱支两处爱心',
   },
   {
-    desc: 'M1979 K8 BENKI 第 5 档守卫改恒真（FLAG:62 越界不再静默，#239）',
+    desc: 'M1979 K8 BENKI 第 5 档检查改恒真（FLAG:62 越界不再静默，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  } else if (game.train.肉便器行动 == 5) {',
     replace: '  } else {',
@@ -14007,7 +14007,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR 再捕获 CFLAG:650',
   },
   {
-    desc: 'M1981 K8 NTR 狂王性别判定漏掉扶她的 2（0 || 2 改只判 0，#239；#622 起靶在拼接语句上）',
+    desc: 'M1981 K8 NTR 狂王性别判定漏掉扶她的 2（0 || 2 改只判 0，#239；#622 起目标在拼接语句上）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  const futa = () => game.system.狂王性别 == 0 || game.system.狂王性别 == 2;',
     replace: '  const futa = () => game.system.狂王性别 == 0;',
@@ -14015,7 +14015,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR：P==2 陥落済支',
   },
   {
-    desc: 'M1982 K8 NTR P==1 それ以外支的按摩棒串成巨根（#239；#622 起靶在同一条输出的取值三元上）',
+    desc: 'M1982 K8 NTR P==1 それ以外支的按摩棒串成巨根（#239；#622 起目标在同一条输出的取值三元上）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find:
       '          (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
@@ -14035,7 +14035,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR：P==3 兽奸秀 TALENT:136 优先于淫乱/爱慕',
   },
   {
-    desc: 'M1985 K8 NTR P==5 只判 FLAG:500 == 0 的那处被「统一」成 0 或 2（#239；#622 补查起靶在拼接语句里的取值三元上）',
+    desc: 'M1985 K8 NTR P==5 只判 FLAG:500 == 0 的那处被「统一」成 0 或 2（#239；#622 补查起目标在拼接语句里的取值三元上）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          (game.system.狂王性别 == 0\n',
     replace: '          (futa()\n',
@@ -14060,7 +14060,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR：P==20 公开生产按 CFLAG:102 分岔，且本支不记位',
   },
   {
-    desc: 'M1988 K8 EXUCUTION 首档守卫写错（TFLAG:16 == 4 改 == 3，#239）',
+    desc: 'M1988 K8 EXUCUTION 首档检查写错（TFLAG:16 == 4 改 == 3，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (game.event.犬射精或处刑口上 == 4) {',
     replace: '  if (game.event.犬射精或处刑口上 == 3) {',
@@ -14073,10 +14073,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '  } else if (game.event.博物馆口上 == 21) {',
     replace: '  } else if (game.event.博物馆口上 == 2) {',
     tests: ['kojo-k8-spade'],
-    must_mention: '蜡人形档判据为 21',
+    must_mention: '蜡人形档条件为 21',
   },
   {
-    desc: 'M1990 K8 BANISHMENT 追放档守卫写错（TFLAG:510 == 0 改 == 1，#239）',
+    desc: 'M1990 K8 BANISHMENT 追放档检查写错（TFLAG:510 == 0 改 == 1，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (game.event.流放口上 == 0) {',
     replace: '  if (game.event.流放口上 == 1) {',
@@ -14092,7 +14092,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'TFLAG:530 七档全未填写，逐档只出空行',
   },
   {
-    desc: 'M1993 K8 ENTERENEMY 爱慕档守卫丢失（TALENT:85 == 1 改恒真，#239）',
+    desc: 'M1993 K8 ENTERENEMY 爱慕档检查丢失（TALENT:85 == 1 改恒真，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  } else if (era0(`talent:${a}:85`) == 1) {',
     replace: '  } else if (true) {',
@@ -14100,7 +14100,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'ENTERENEMY：淫乱 → 爱慕 → それ以外 三选一',
   },
   {
-    desc: 'M1994 K8 GOHOUBI_REQUEST 兽奸档合并守卫漏掉马（1||2||3 改 1||2，#239）',
+    desc: 'M1994 K8 GOHOUBI_REQUEST 兽奸档合并检查漏掉马（1||2||3 改 1||2，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  } else if (gohoubi == 1 || gohoubi == 2 || gohoubi == 3) {',
     replace: '  } else if (gohoubi == 1 || gohoubi == 2) {',
@@ -14108,7 +14108,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:504==3 兽奸要求',
   },
   {
-    desc: 'M1995 K8 GOHOUBI_REQUEST 兽名串档（猪 → 犬，#239；#622 起靶在同一条输出的取值三元上）',
+    desc: 'M1995 K8 GOHOUBI_REQUEST 兽名串档（猪 → 犬，#239；#622 起目标在同一条输出的取值三元上）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        (gohoubi == 1 ? `犬` : gohoubi == 2 ? `猪` : gohoubi == 3 ? `马` : '') +",
     replace:
@@ -14126,7 +14126,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'キス档只有一行（无旁白）',
   },
   {
-    desc: 'M1997 K8 GOHOUBI_AFTER 放置 PLAY 档守卫写错（choice == 0 改 == 1，#239）',
+    desc: 'M1997 K8 GOHOUBI_AFTER 放置 PLAY 档检查写错（choice == 0 改 == 1，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (choice == 0) {\n    // 放置PLAY\n    await era.printAndWait(`「………知道了、我就这样退下了」`);',
     replace:
@@ -14144,7 +14144,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一条）',
   },
   {
-    desc: 'M2502 K8 OSIOKI 脱粪刑门槛被「统一」成自慰刑的 4（源作是 6，#239）',
+    desc: 'M2502 K8 OSIOKI 脱粪刑门槛被「统一」成自慰刑的 4（应为 6，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (era0(`abl:${a}:17`) >= 6) {',
     replace: '    if (era0(`abl:${a}:17`) >= 4) {',
@@ -14152,7 +14152,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '脱粪刑门槛是 6，Lv4 不够',
   },
   {
-    desc: 'M2503 K8 OSIOKI 小便器刑的或判退化成只认受虐狂（TALENT:76 臂丢失，#239）',
+    desc: 'M2503 K8 OSIOKI 小便器刑的或判退化成只认受虐狂（TALENT:76 分支丢失，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (era0(`talent:${a}:88`) == 1 || era0(`talent:${a}:76`) == 1) {',
     replace: '    if (era0(`talent:${a}:88`) == 1) {',
@@ -14160,7 +14160,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'OSIOKI：小便器刑 受虐狂 TALENT:88 或淫乱 TALENT:76 任一即可',
   },
   {
-    desc: 'M2504 K8 OSIOKI 厕所打扫刑与断食刑串档（:7905 换成 :7908 的台词，#239）',
+    desc: 'M2504 K8 OSIOKI 厕所打扫刑与断食刑串档（两段台词互换，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    await era.printAndWait(`「这不是我应该做的事啊………」`);',
     replace:
@@ -14177,7 +14177,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'choice 9',
   },
   {
-    desc: 'M2506 K8 GOBI 悲伤档串成害羞档（:7929 换成 :7932 的语尾，#239）',
+    desc: 'M2506 K8 GOBI 悲伤档串成害羞档（两段语尾互换，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    return `唉……。`;',
     replace: '    return `嗯……。`; // （变异：串档）',
@@ -14188,7 +14188,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2507 K8 GOBI 默认支第二支被「去重」成第三支的语尾（两支同文，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      return `啊。`;\n    } else {',
-    replace: '      return `什么啊。`; // （变异：源作同文被改）\n    } else {',
+    replace: '      return `什么啊。`; // （变异：两支同文被改）\n    } else {',
     tests: ['kojo-k8-spade'],
     must_mention: '默认支（含 ARG:0==0）三选一，前两支同文',
   },
@@ -14220,7 +14220,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '老实支两句',
   },
   {
-    desc: 'M1602 K0 爱抚淫乱素质判据错格（TALENT:76 改 77）（#231）',
+    desc: 'M1602 K0 爱抚淫乱素质条件错格（TALENT:76 改 77）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '    // 淫乱（TALENT:76）\n    if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.爱抚 <= 5 || game.kojo.口上开关 === 2)',
     replace:
@@ -14237,7 +14237,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '阈值闸',
   },
   {
-    desc: 'M1604 K0 @EVENTEND #LATER 清标志删除（#231）',
+    desc: 'M1604 K0 EVENTEND #LATER 档清标志删除（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '    game.kojo.口上存在_0 = 0;',
     replace: '    // 变异：清标志删除',
@@ -14245,7 +14245,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K0 EVENTEND 清 FLAG:100',
   },
   {
-    desc: 'M1605 K0 失神守卫删除（TFLAG:899 改恒 false）（#231）',
+    desc: 'M1605 K0 失神检查删除（TFLAG:899 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (game.train.失神) {',
     replace:
@@ -14270,7 +14270,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '舔阴首次推进到 1',
   },
   {
-    desc: 'M1608 K0 舔阴处女素质判据错格（TALENT:0 改 1）（#231）',
+    desc: 'M1608 K0 舔阴处女素质条件错格（TALENT:0 改 1）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      // 处女（TALENT:0）\n      if (era.get(`talent:${target}:0`) === 1) {',
     replace:
@@ -14288,7 +14288,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '舔阴阈值闸',
   },
   {
-    desc: 'M1610 K0 死斗场守卫删除（TEQUIP:55 改恒 false）（#231）',
+    desc: 'M1610 K0 死斗场检查删除（TEQUIP:55 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 死斗场中は専用口上\n  if (era.get(`tequip:${target}:55`)) {',
     replace: '  if (false) { // 变异：死斗场守卫删除',
@@ -14296,7 +14296,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '死斗场（TEQUIP:55）',
   },
   {
-    desc: 'M1611 K0 助手调教守卫删除（ASSI/ASSIPLAY 改恒 false）（#231）',
+    desc: 'M1611 K0 助手调教检查删除（ASSI/ASSIPLAY 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 助手が調教した時に口上をスキップする\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
@@ -14305,7 +14305,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '助手调教中',
   },
   {
-    desc: 'M1612 K0 口塞守卫删除（TEQUIP:45 改恒 false）（#231）',
+    desc: 'M1612 K0 口塞检查删除（TEQUIP:45 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
     replace: '  if (false) { // 变异：口塞守卫删除',
@@ -14313,7 +14313,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '口塞（TEQUIP:45）',
   },
   {
-    desc: 'M1613 K0 崩坏守卫删除（TALENT:9 改恒 false）（#231）',
+    desc: 'M1613 K0 崩坏检查删除（TALENT:9 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前\n  if (era.get(`talent:${target}:9`) === 1) {\n    return 0;\n  }',
     replace:
@@ -14322,7 +14322,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '崩坏（TALENT:9）',
   },
   {
-    desc: 'M1614 K0 兽奸守卫删除（TEQUIP:89 改恒 false）（#231）',
+    desc: 'M1614 K0 兽奸检查删除（TEQUIP:89 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 兽奸PLAY中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
     replace: '  if (false) { // 变异：兽奸守卫删除',
@@ -14330,7 +14330,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '兽奸（TEQUIP:89）',
   },
   {
-    desc: 'M1615 K0 触手守卫删除（TEQUIP:90 改恒 false）（#231）',
+    desc: 'M1615 K0 触手检查删除（TEQUIP:90 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 触手調教中（TEQUIP:90）\n  if (era.get(`tequip:${target}:90`)) {',
     replace: '  if (false) { // 变异：触手守卫删除',
@@ -14338,7 +14338,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '触手（TEQUIP:90）',
   },
   {
-    desc: 'M1616 K0 @EVENTTRAIN #PRI 置 FLAG:100 删除（#231）',
+    desc: 'M1616 K0 EVENTTRAIN #PRI 档置 FLAG:100 删除（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '    game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）',
     replace: '    // 变异：置标志删除',
@@ -14346,7 +14346,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K0 EVENTTRAIN 置 FLAG:100',
   },
   {
-    desc: 'M1617 K0 爱抚爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    desc: 'M1617 K0 爱抚爱慕素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      // 爱慕（TALENT:85）\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.爱抚 <= 4 || game.kojo.口上开关 === 2)',
     replace:
@@ -14405,7 +14405,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'delta 把不足抬过 Lv2',
   },
   {
-    desc: 'M1625 K0 舔阴爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    desc: 'M1625 K0 舔阴爱慕素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      // 爱慕（TALENT:85）\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.舔阴 <= 3 || game.kojo.口上开关 === 2)',
     replace:
@@ -14422,7 +14422,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '自慰首次推进到 1',
   },
   {
-    desc: 'M1627 K0 自慰首次爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    desc: 'M1627 K0 自慰首次爱慕素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      // 爱＆淫乱\n      if (\n        era.get(`talent:${target}:85`) === 1 ||',
     replace:
@@ -14439,16 +14439,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '自慰阈值闸',
   },
   {
-    desc: 'M1629 K0 自慰淫乱拍摄守卫删除（TEQUIP:53 改恒 false）（#231）',
+    desc: 'M1629 K0 自慰淫乱拍摄检查删除（TEQUIP:53 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '      // 撮影中\n      if (filming) {\n        // 原作是一整行：:887 的 PRINTFORM、鸡鸡分档（:889/:891）与',
+    find: '      // 撮影中\n      if (filming) {\n        // 同一行输出：PRINTFORM、鸡鸡分档\n        // 与收尾都不换行（#624）',
     replace:
-      '      // 撮影中\n      if (false) {\n        // 原作是一整行：:887 的 PRINTFORM、鸡鸡分档（:889/:891）与',
+      '      // 撮影中\n      if (false) {\n        // 同一行输出：PRINTFORM、鸡鸡分档\n        // 与收尾都不换行（#624）',
     tests: ['kojo-k0-tender'],
     must_mention: '看吧～♡　噗咻噗咻勃起的',
   },
   {
-    desc: 'M1630 K0 自慰拍摄鸡鸡判据错格（TALENT:122 改 123）（#231）',
+    desc: 'M1630 K0 自慰拍摄鸡鸡条件错格（TALENT:122 改 123）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      era.get(`talent:${target}:122`) || era.get(`talent:${target}:121`);',
     replace:
@@ -14466,7 +14466,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '自慰二次淫乱+自慰中毒 Lv3',
   },
   {
-    desc: 'M1632 K0 自慰爱慕+处女素质判据错格（TALENT:85 改 86）（#231）',
+    desc: 'M1632 K0 自慰爱慕+处女素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      // 爱＋处女\n      era.get(`talent:${target}:85`) === 1 &&',
     replace: '      // 爱＋处女\n      era.get(`talent:${target}:86`) === 1 &&',
@@ -14483,7 +14483,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '如果这是你希望的话',
   },
   {
-    desc: 'M1634 K0 自慰爱慕拍摄守卫删除（TEQUIP:53 改恒 false）（#231）',
+    desc: 'M1634 K0 自慰爱慕拍摄检查删除（TEQUIP:53 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      // 撮影中\n      if (filming) {\n        // 与上一支同型：PRINTFORM + 鸡鸡分档 + PRINTFORMW 收行（#624）',
     replace:
@@ -14509,7 +14509,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '胸爱抚首次推进到 1',
   },
   {
-    desc: 'M1637 K0 胸爱抚母乳体质判据错格（TALENT:130 改 131）（#231）',
+    desc: 'M1637 K0 胸爱抚母乳体质条件错格（TALENT:130 改 131）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      era.get(`talent:${target}:130`) === 1 &&',
     replace: '      era.get(`talent:${target}:131`) === 1 &&',
@@ -14562,7 +14562,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '被含进嘴里舔得完全勃起了',
   },
   {
-    desc: 'M1643 K0 胸爱抚二次母乳爱慕素质判据错格（TALENT:85 改 86）（#231）',
+    desc: 'M1643 K0 胸爱抚二次母乳爱慕素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '        // 爱慕\n        era.get(`talent:${target}:85`) === 1 &&',
     replace: '        // 爱慕\n        era.get(`talent:${target}:86`) === 1 &&',
@@ -14579,7 +14579,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '接吻首次推进到 1',
   },
   {
-    desc: 'M1645 K0 接吻初吻故乡恋人判据错格（TALENT:317 == 4 改 == 5）（#231）',
+    desc: 'M1645 K0 接吻初吻故乡恋人条件错格（TALENT:317 == 4 改 == 5）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: `    const hometown_lover = era.get(\`talent:\${target}:317\`) === 4;
     const first_kiss = game.train.初吻与自我口上;`,
@@ -15597,7 +15597,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '灌肠+肛塞脱着：淫乱+A感觉拼句',
   },
   {
-    desc: 'M3095 K0 灌肠肛塞脱着壶虫守卫删除（TEQUIP:11 改恒 false）（#231）',
+    desc: 'M3095 K0 灌肠肛塞脱着壶虫检查删除（TEQUIP:11 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '        if (era.get(`tequip:${target}:11`)) {',
     replace: '        if (false) {',
@@ -15648,7 +15648,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '放置PLAY二次：淫乱+欲情写 6 / 阈值闸',
   },
   {
-    desc: 'M3101 K0 放置PLAY首次壶虫 SIF 守卫删除（TEQUIP:11 改恒 false）（#231）',
+    desc: 'M3101 K0 放置PLAY首次壶虫 SIF 检查删除（TEQUIP:11 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "        await era.printAndWait(`${target_name}偷偷看着这边………`);\n      }\n      era.print('');\n\n      if (era.get(`tequip:${target}:11`)) {",
     replace:
@@ -15675,9 +15675,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3104 K0 交谈录像自白 TFLAG:32 按位或改成赋值（|= 2 改 = 2）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "          // 当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 |= 2;",
+    find: "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 |= 2;",
     replace:
-      "          // 当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 = 2;",
+      "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 = 2;",
     tests: ['kojo-k0-tender'],
     must_mention: '录像自白 TFLAG:32 |= 2',
   },
@@ -15702,9 +15702,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3107 K0 交谈首次录像自白 RAND:3 旁路失效（=== 0 改 === 1）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '          rand_n(3) === 0 &&\n          (era.get(`talent:${target}:89`) === 1 ||\n            (era.get(`abl:${target}:17`) || 0) >= 5)\n        ) {\n          // 原作是一整行：无后缀 PRINTFORM 连续不换行，',
+    find: '          rand_n(3) === 0 &&\n          (era.get(`talent:${target}:89`) === 1 ||\n            (era.get(`abl:${target}:17`) || 0) >= 5)\n        ) {\n          // 同一行输出：无后缀 PRINTFORM 连续不换行，',
     replace:
-      '          rand_n(3) === 1 &&\n          (era.get(`talent:${target}:89`) === 1 ||\n            (era.get(`abl:${target}:17`) || 0) >= 5)\n        ) {\n          // 原作是一整行：无后缀 PRINTFORM 连续不换行，',
+      '          rand_n(3) === 1 &&\n          (era.get(`talent:${target}:89`) === 1 ||\n            (era.get(`abl:${target}:17`) || 0) >= 5)\n        ) {\n          // 同一行输出：无后缀 PRINTFORM 连续不换行，',
     tests: ['kojo-k0-tender'],
     must_mention: '交谈首次：淫乱推进到 1 / 录像自白写 TFLAG:32 |= 2',
   },
@@ -15734,7 +15734,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '乳夹口交二次：淫乱写 5 / 阈值闸',
   },
   {
-    desc: 'M3111 K0 乳夹口交首次巨乳 SIF 守卫删除（TALENT:110 改恒 false）（#231）',
+    desc: 'M3111 K0 乳夹口交首次巨乳 SIF 检查删除（TALENT:110 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      if (era.get(`talent:${target}:76`) === 1) {\n        await era.printAndWait(\n          `${target_name}用双乳夹住了${master_name}的阴茎并把前端含进嘴里开始细致的舔舐起来。`,\n        );\n        if (\n          era.get(`talent:${target}:110`) === 1 ||\n          era.get(`talent:${target}:114`) === 1 ||\n          era.get(`talent:${target}:119`) === 1\n        ) {',
     replace:
@@ -15980,7 +15980,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
   },
   {
-    desc: 'M3141 K0 穿环首次淫乱素质判据错格（TALENT:76 改 77）（#231）',
+    desc: 'M3141 K0 穿环首次淫乱素质条件错格（TALENT:76 改 77）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        if (train.穿环状态 & p) {',
     replace:
@@ -15989,7 +15989,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '穿环首次：淫乱 + 乳头位（P=1）装上，推进到 1',
   },
   {
-    desc: 'M3142 K0 EVENTTRAIN NORMAL 总开关守卫删松（<= 0 改 < 0）（#231）',
+    desc: 'M3142 K0 EVENTTRAIN NORMAL 总开关检查删松（<= 0 改 < 0）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "  const assi_name = assi >= 0 ? chara_callname(assi) : '';\n\n  if (game.kojo.口上开关 <= 0) {\n    return 0;\n  }",
     replace:
@@ -15998,7 +15998,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'FLAG:7 <= 0 静默',
   },
   {
-    desc: 'M3143 K0 EVENTTRAIN NORMAL 慈爱素质守卫错格（!== 1 改 !== 0）（#231）',
+    desc: 'M3143 K0 EVENTTRAIN NORMAL 慈爱素质检查错格（!== 1 改 !== 0）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  if (chara(target).chara.慈爱 !== 1) {\n    return 0;\n  }\n  if (kojo.初调教 === 0) {',
     replace:
@@ -16150,7 +16150,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '村娘助手二次 FLAG:7==1 静默',
   },
   {
-    desc: 'M3159 K0 EVENTEND NORMAL 死亡守卫 <= 0 改 < 0（#231）',
+    desc: 'M3159 K0 EVENTEND NORMAL 死亡检查 <= 0 改 < 0（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  if (chara(target).dungeon.体力 <= 0) {\n    return 0;\n  }',
     replace: '  if (chara(target).dungeon.体力 < 0) {\n    return 0;\n  }',
@@ -16177,7 +16177,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '淫乱体力 500 走 >= 不是 <',
   },
   {
-    desc: 'M3162 K0 EVENTEND NORMAL 慈爱素质守卫错格（!== 1 改 !== 0）（#231）',
+    desc: 'M3162 K0 EVENTEND NORMAL 慈爱素质检查错格（!== 1 改 !== 0）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  if (chara(target).chara.慈爱 !== 1) {\n    return 0;\n  }\n\n  if (chara(target).dungeon.体力 <= 0) {',
     replace:
@@ -16235,7 +16235,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'TFLAG:13==5 夜间（推进 CFLAG:265）',
   },
   {
-    desc: 'M3169 K0 SELF_KOJO 卖出爱慕支素质判据错格（TALENT:85 改 86）（#231）',
+    desc: 'M3169 K0 SELF_KOJO 卖出爱慕支素质条件错格（TALENT:85 改 86）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: `    if (
       era.get(\`talent:\${target}:85\`) &&
@@ -16278,7 +16278,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
 
   {
-    desc: 'M3173 K0 PALAMCNG 润滑首超守卫删松（P 阈值改恒 true）（#231）',
+    desc: 'M3173 K0 PALAMCNG 润滑首超检查删松（P 阈值改恒 true）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "  let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量;\n  if (\n    p > (era.get('palamlv:2') || 0) &&\n    (era.get(`cflag:${target}:221`) || 0) === 0\n  ) {",
     replace:
@@ -16305,7 +16305,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'PALAMCNG：总开关 FLAG:7 <= 0 静默',
   },
   {
-    desc: 'M3176 K0 PALAMCNG 助手调教守卫删松（ASSI/ASSIPLAY 改恒 false）（#231）',
+    desc: 'M3176 K0 PALAMCNG 助手调教检查删松（ASSI/ASSIPLAY 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
@@ -16341,7 +16341,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARKCNG：总开关 FLAG:7 <= 0 静默',
   },
   {
-    desc: 'M3180 K0 MARKCNG 助手调教守卫删松（ASSI/ASSIPLAY 改恒 false）（#231）',
+    desc: 'M3180 K0 MARKCNG 助手调教检查删松（ASSI/ASSIPLAY 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  const target = era_flag.target;\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
@@ -16528,7 +16528,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K13 一对',
   },
   {
-    desc: 'M3301 K13 EVENTTRAIN #PRI 口上开关补 0 判据改错（===0 改 ===1，#244）',
+    desc: 'M3301 K13 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;\n    }',
     replace:
@@ -16545,22 +16545,22 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K13 一对',
   },
   {
-    desc: 'M3303 K13 EVENTTRAIN 自身守卫①口上开关判据反转（<=0 改 >0，#244）',
+    desc: 'M3303 K13 EVENTTRAIN 自身检查①口上开关条件反转（<=0 改 >0，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '  const { rand_n, target, target_name, master_name, sc, kojo } = bind_ctx(rand);\n  if (game.kojo.口上开关 <= 0) {\n    return 0;\n  }',
     replace:
       '  const { rand_n, target, target_name, master_name, sc, kojo } = bind_ctx(rand);\n  if (game.kojo.口上开关 > 0) { // 变异\n    return 0;\n  }',
     tests: ['kojo-k13-protector'],
-    must_mention: '自身守卫①口上开关',
+    must_mention: '自身检查①口上开关',
   },
   {
-    desc: 'M3304 K13 EVENTTRAIN 自身守卫②TALENT:173 判据反转（!=1 改 ==1，#244）',
+    desc: 'M3304 K13 EVENTTRAIN 自身检查②TALENT:173 条件反转（!=1 改 ==1，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '  if (era0(`talent:${target}:173`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     replace:
       '  if (era0(`talent:${target}:173`) == 1) { // 变异\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     tests: ['kojo-k13-protector'],
-    must_mention: '自身守卫②TALENT:173',
+    must_mention: '自身检查②TALENT:173',
   },
   {
     desc: 'M3305 K13 初调教==0 推进值写错（=1 改 2，#244）',
@@ -16626,10 +16626,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '  } else if (kojo.初调教 < 3 && era0(`mark:${target}:2`) == 2) {\n    era.drawLine();\n    if (\n      era0(`talent:${target}:157`) &&\n      (era0(`talent:${target}:110`) ||\n        era0(`talent:${target}:114`) ||\n        era0(`talent:${target}:119`))\n    ) {',
     tests: ['kojo-k13-protector'],
     must_mention:
-      '源 :178 的 157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
+      '157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
   },
   {
-    desc: 'M3313 K13 K13_KOJO2 反抗刻印Lv3 判据改错（MARK:3==3 改 ==2，#244）',
+    desc: 'M3313 K13 K13_KOJO2 反抗刻印Lv3 条件改错（MARK:3==3 改 ==2，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: `  if (era0(\`mark:\${target}:3\`) == 3 && game.kojo.口上开关 == 2) {`,
     replace: `  if (era0(\`mark:\${target}:3\`) == 2 && game.kojo.口上开关 == 2) { // 变异`,
@@ -16637,7 +16637,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K13_KOJO2 反抗刻印Lv3',
   },
   {
-    desc: 'M3314 K13 EVENTEND 角色死亡守卫删松（BASE:0<=0 改恒 false，#244）',
+    desc: 'M3314 K13 EVENTEND 角色死亡检查删松（BASE:0<=0 改恒 false，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
     replace: '  if (false) { // 变异\n    return 0;\n  }',
@@ -16645,7 +16645,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'EVENTEND BASE:0<=0（角色死亡）静默跳过',
   },
   {
-    desc: 'M3316 K13 COM 口塞守卫删（TEQUIP:45 不再跳过，#244）',
+    desc: 'M3316 K13 COM 口塞检查删（TEQUIP:45 不再跳过，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }',
     replace:
@@ -16654,7 +16654,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
   {
-    desc: 'M3317 K13 COM 失神守卫删（TFLAG:899 不再跳过，#244）',
+    desc: 'M3317 K13 COM 失神检查删（TFLAG:899 不再跳过，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:89`)) {',
     replace:
@@ -16663,7 +16663,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '失神（TFLAG:899）：静默跳过',
   },
   {
-    desc: 'M3318 K13 兽奸守卫岔路丢失（TEQUIP:89 不再调 DOG_KOJO_13，#244）',
+    desc: 'M3318 K13 兽奸检查岔路丢失（TEQUIP:89 不再调 DOG_KOJO_13，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '    await dog_kojo_13(rand_n); // CALL DOG_KOJO_13\n    return 0;\n  }',
     replace: '    return 0; // （变异：不调 DOG_KOJO_13）\n  }',
@@ -16671,7 +16671,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_13',
   },
   {
-    desc: 'M3319 K13 死斗场守卫岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_13，#244）',
+    desc: 'M3319 K13 死斗场检查岔路丢失（TEQUIP:55 不再调 COLOSSEUM_KOJO_13，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '    await colosseum_kojo_13(rand_n); // CALL COLOSSEUM_KOJO_13\n    return 0;\n  }',
     replace: '    return 0; // （变异：不调 COLOSSEUM_KOJO_13）\n  }',
@@ -16759,13 +16759,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '主启动图漏装：kojo-k13-protector',
   },
   {
-    desc: 'M3330 K13 PALAMCNG 口塞守卫删（TEQUIP:45 不再跳过，#244）',
+    desc: 'M3330 K13 PALAMCNG 口塞检查删（TEQUIP:45 不再跳过，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     replace:
       '  if (false) { // 变异\n    return 0;\n  }\n\n  if (game.train.失神) {',
     tests: ['kojo-k13-protector'],
-    must_mention: 'PALAMCNG 口塞守卫',
+    must_mention: 'PALAMCNG 口塞检查',
   },
   {
     desc: 'M3331 K13 PALAMCNG 首次润滑推进写错（CFLAG:221=1 改 2，#244）',
@@ -16816,7 +16816,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DUNGEON_VICTORY 低体力追加',
   },
   {
-    desc: 'M3337 K13 DUNGEON_ATTACK 侵略状态==2 判据反转（==2 改 ==1，#244）',
+    desc: 'M3337 K13 DUNGEON_ATTACK 侵略状态==2 条件反转（==2 改 ==1，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: `  if (chara(target).invasion.状态 == 2) {`,
     replace: `  if (chara(target).invasion.状态 == 1) { // 变异`,
@@ -16914,7 +16914,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: 'game.kojo.口上存在_14 = 1; // FLAG:114 = 1（K14 口上存在标志）',
     replace: 'game.kojo.口上存在_14 = 2; // （变异）',
     tests: ['kojo-k14-nobleman'],
-    must_mention: 'EVENTTRAIN #PRI 置存在标志',
+    must_mention: 'EVENTTRAIN #PRI 档置存在标志',
   },
   {
     desc: 'M3401 K14 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#245）',
@@ -16922,7 +16922,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: 'game.kojo.口上存在_14 = 0;',
     replace: 'game.kojo.口上存在_14 = 1; // （变异）',
     tests: ['kojo-k14-nobleman'],
-    must_mention: 'EVENTTRAIN #PRI 置存在标志',
+    must_mention: 'EVENTTRAIN #PRI 档置存在标志',
   },
   {
     desc: 'M3402 K14 EVENTTRAIN 初调教通常男档写回值改错（初调教=1 改 2，#245）',
@@ -17095,7 +17095,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOBI 语尾 ARG:0==0',
   },
   {
-    desc: 'M3422 K14 EVENTTRAIN 守卫①口上开关判据反转（<=0 改 >0，#245）',
+    desc: 'M3422 K14 EVENTTRAIN 检查①口上开关条件反转（<=0 改 >0，#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  const scf = () => self_call_first(target); // %SELF_CALL_FIRST(TARGET)%\n\n  if ((game.kojo.口上开关 || 0) <= 0) {\n    return 0;',
     replace:
@@ -17104,7 +17104,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '口上开关<0（玩家显式关掉）',
   },
   {
-    desc: 'M3423 K14 COM 守卫①口塞判据删除（#245）',
+    desc: 'M3423 K14 COM 检查①口塞条件删除（#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     replace: '  if (false) { // 变异：口塞守卫删除',
@@ -17112,7 +17112,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '口塞（TEQUIP:45',
   },
   {
-    desc: 'M3424 K14 COM 守卫②失神判据删除（#245）',
+    desc: 'M3424 K14 COM 检查②失神条件删除（#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
@@ -17121,21 +17121,21 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '失神（TFLAG:899）',
   },
   {
-    desc: 'M3425 K14 COM 兽奸守卫岔路丢失（TEQUIP:89 不再调 dog，#245）',
+    desc: 'M3425 K14 COM 兽奸检查岔路丢失（TEQUIP:89 不再调 dog，#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  if (era.get(`tequip:${target}:89`)) {\n    await dog_kojo_14(rand_n); // CALL DOG_KOJO_14',
     replace: '  if (era.get(`tequip:${target}:89`)) {\n    // 变异：不调 DOG',
     tests: ['kojo-k14-nobleman'],
-    must_mention: '兽奸守卫（TEQUIP:89）',
+    must_mention: '兽奸检查（TEQUIP:89）',
   },
   {
-    desc: 'M3426 K14 COM 死斗场守卫岔路丢失（TEQUIP:55 不再调 colosseum，#245）',
+    desc: 'M3426 K14 COM 死斗场检查岔路丢失（TEQUIP:55 不再调 colosseum，#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    await colosseum_kojo_14(rand_n); // CALL COLOSSEUM_KOJO_14',
     replace:
       '  if (era.get(`tequip:${target}:55`)) {\n    // 变异：不调 COLOSSEUM',
     tests: ['kojo-k14-nobleman'],
-    must_mention: '死斗场守卫（TEQUIP:55）',
+    must_mention: '死斗场检查（TEQUIP:55）',
   },
   {
     desc: 'M3427 K14 DOG 兽奸爱抚初回写回值改错（爱抚=1 改 2，#245）',
@@ -17172,13 +17172,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K15 存在标志 FLAG:115',
   },
   {
-    desc: 'M3501 K15 EVENTTRAIN #PRI 口上开关补 0 判据改错（===0 改 ===1，#246）',
+    desc: 'M3501 K15 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;\n    }',
     replace:
       '    if (game.kojo.口上开关 === 1) {  // 变异\n      game.kojo.口上开关 = 2;\n    }',
     tests: ['kojo-k15-clever'],
-    must_mention: '@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）',
+    must_mention: 'EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）',
   },
   {
     desc: 'M3502 K15 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#246）',
@@ -17189,22 +17189,22 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'EVENTEND #LATER 清 FLAG:115',
   },
   {
-    desc: 'M3503 K15 EVENTTRAIN 自身守卫①口上开关判据反转（<=0 改 >0，#246）',
+    desc: 'M3503 K15 EVENTTRAIN 自身检查①口上开关条件反转（<=0 改 >0，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  const kojo = chara(target).kojo;\n\n  if ((game.kojo.口上开关 || 0) <= 0) {\n    return 0;\n  }',
     replace:
       '  const kojo = chara(target).kojo;\n\n  if ((game.kojo.口上开关 || 0) > 0) {  // 变异\n    return 0;\n  }',
     tests: ['kojo-k15-clever'],
-    must_mention: 'EVENTTRAIN 自身守卫①口上开关<0（玩家显式关掉）静默跳过',
+    must_mention: 'EVENTTRAIN 自身检查①口上开关<0（玩家显式关掉）静默跳过',
   },
   {
-    desc: 'M3504 K15 EVENTTRAIN 自身守卫②TALENT:175 判据反转（!=1 改 ==1，#246）',
+    desc: 'M3504 K15 EVENTTRAIN 自身检查②TALENT:175 条件反转（!=1 改 ==1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`talent:${target}:175`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     replace:
       '  if (era0(`talent:${target}:175`) == 1) {  // 变异\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     tests: ['kojo-k15-clever'],
-    must_mention: 'EVENTTRAIN 自身守卫②TALENT:175!=1 静默跳过',
+    must_mention: 'EVENTTRAIN 自身检查②TALENT:175!=1 静默跳过',
   },
   {
     desc: 'M3505 K15 初调教推进值写错（CFLAG:201=1 改 2，#246）',
@@ -17263,7 +17263,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '崩坏推进到 9',
   },
   {
-    desc: 'M3512 K15 NTR 再捕获爱慕臂解除值改错（CFLAG:650=0 改 1，#246）',
+    desc: 'M3512 K15 NTR 再捕获爱慕分支解除值改错（CFLAG:650=0 改 1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '      kojo.NTR再捕获 = 0;\n    } else {',
     replace: '      kojo.NTR再捕获 = 1; // （变异）\n    } else {',
@@ -17271,7 +17271,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR 开关解除',
   },
   {
-    desc: 'M3513 K15 EVENTEND 死亡守卫判据反转（BASE:0<=0 改 >0，#246）',
+    desc: 'M3513 K15 EVENTEND 死亡检查条件反转（BASE:0<=0 改 >0，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
     replace:
@@ -17280,7 +17280,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'EVENTEND 死亡（BASE:0<=0）静默跳过',
   },
   {
-    desc: 'M3514 K15 COM 头部守卫①TEQUIP:45 判据改错（#246）',
+    desc: 'M3514 K15 COM 头部检查①TEQUIP:45 条件改错（#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }',
     replace:
@@ -17289,16 +17289,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '口塞（TEQUIP:45 且非指令45）：静默跳过',
   },
   {
-    desc: 'M3515 K15 COM 头部守卫②失神判据反转（#246）',
+    desc: 'M3515 K15 COM 头部检查②失神条件反转（#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }',
     replace:
       '  if (!game.train.失神) {  // 变异\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }',
     tests: ['kojo-k15-clever'],
-    must_mention: '失神守卫跳过',
+    must_mention: '失神检查跳过',
   },
   {
-    desc: 'M3516 K15 COM 头部守卫③TEQUIP:89 分发对象改错（DOG 改 COLOSSEUM，#246）',
+    desc: 'M3516 K15 COM 头部检查③TEQUIP:89 分发对象改错（DOG 改 COLOSSEUM，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    await dog_kojo_15(rand_n); // CALL DOG_KOJO_15',
     replace: `    await colosseum_kojo_15(rand_n); // 变异：调用对象改错`,
@@ -17306,7 +17306,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_15',
   },
   {
-    desc: 'M3517 K15 COM 头部守卫④TEQUIP:55 分发对象改错（COLOSSEUM 改 DOG，#246）',
+    desc: 'M3517 K15 COM 头部检查④TEQUIP:55 分发对象改错（COLOSSEUM 改 DOG，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    await colosseum_kojo_15(rand_n); // CALL COLOSSEUM_KOJO_15',
     replace: `    await dog_kojo_15(rand_n); // 变异：调用对象改错`,
@@ -17314,7 +17314,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_15',
   },
   {
-    desc: 'M3518 K15 COM 头部被插入 ASSI 守卫（源 :408-410 整行注释，#246）',
+    desc: 'M3518 K15 COM 头部被插入 ASSI 检查（整行注释，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `  const kojo = chara(target).kojo;
 
@@ -17326,25 +17326,25 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   }
   if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {`,
     tests: ['kojo-k15-clever'],
-    must_mention: 'K15 无 ASSI 守卫，助手调教也出声',
+    must_mention: 'K15 无 ASSI 检查，助手调教也出声',
   },
   {
-    desc: 'M3519 K15 COM 头部被插入 TALENT:9 守卫（源无此道，#246）',
+    desc: 'M3519 K15 COM 头部被插入 TALENT:9 检查（源无此道，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    await colosseum_kojo_15(rand_n); // CALL COLOSSEUM_KOJO_15\n    return 0;\n  }\n\n  if (era_flag.selectcom == 0) {',
     replace:
       '    await colosseum_kojo_15(rand_n); // CALL COLOSSEUM_KOJO_15\n    return 0;\n  }\n  if (era0(`talent:${target}:9`) == 1) {\n    return 0; // 变异：插入 TALENT:9 守卫\n  }\n\n  if (era_flag.selectcom == 0) {',
     tests: ['kojo-k15-clever'],
-    must_mention: 'K15 无 TALENT:9 守卫',
+    must_mention: 'K15 无 TALENT:9 检查',
   },
   {
-    desc: 'M3520 K15 COM 头部被插入 TEQUIP:90 守卫（源无此道，#246）',
+    desc: 'M3520 K15 COM 头部被插入 TEQUIP:90 检查（源无此道，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }\n  if (era0(`tequip:${target}:89`)) {',
     replace:
       '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }\n  if (era0(`tequip:${target}:90`)) {\n    return 0; // 变异：插入 TEQUIP:90 守卫\n  }\n  if (era0(`tequip:${target}:89`)) {',
     tests: ['kojo-k15-clever'],
-    must_mention: 'K15 无 TEQUIP:90 守卫',
+    must_mention: 'K15 无 TEQUIP:90 检查',
   },
   {
     desc: 'M3521 K15 COM 族注册 key 改错（15 改 16，#246）',
@@ -17707,7 +17707,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '兽奸爱抚初回推进 CFLAG:301=1',
   },
   {
-    desc: 'M3567 K15 胸爱抚爱慕+ASSIPLAY 臂判据反转（源不写计数器，#246）',
+    desc: 'M3567 K15 胸爱抚爱慕+ASSIPLAY 分支条件反转（源不写计数器，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `        (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2) &&
         era_flag.assiplay`,
@@ -17725,16 +17725,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '兽奸眼罩着脱それ以外 → CFLAG:444=1',
   },
   {
-    desc: 'M3574 K15 PALAMCNG 口塞守卫判据改错（TEQUIP:45 改 46，#246）',
+    desc: 'M3574 K15 PALAMCNG 口塞检查条件改错（TEQUIP:45 改 46，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }\n\n  const P_lube =',
     replace:
       '  if (era0(`tequip:${target}:46`)) {  // 变异\n    return 0;\n  }\n\n  const P_lube =',
     tests: ['kojo-k15-clever'],
-    must_mention: 'PALAMCNG 口塞守卫跳过润滑',
+    must_mention: 'PALAMCNG 口塞检查跳过润滑',
   },
   {
-    desc: 'M3575 K15 PALAMCNG 首次润滑判据抬档（PALAMLV[2] 改 [3]，#246）',
+    desc: 'M3575 K15 PALAMCNG 首次润滑条件抬档（PALAMLV[2] 改 [3]，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `  if (P_lube > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {`,
     replace: `  if (P_lube > PALAMLV[3] && kojo.首次润滑Lv2 == 0) {  // 变异`,
@@ -17742,7 +17742,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '润滑首次超 LV2 → 221=1',
   },
   {
-    desc: 'M3576 K15 PALAMCNG C绝顶阴茎分档判据改错（TALENT:121 改 123，#246）',
+    desc: 'M3576 K15 PALAMCNG C绝顶阴茎分档条件改错（TALENT:121 改 123，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '      if (era0(`talent:${target}:121`) || era0(`talent:${target}:122`)) {\n        await era.printAndWait(`「不！不要！呜！要……要射了……唔!……啊…啊～♡」`);',
     replace:
@@ -17759,13 +17759,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '处女丧失 → 229=1',
   },
   {
-    desc: 'M3578 K15 MARKCNG 口塞守卫判据改错（TEQUIP:45 改 46，#246）',
+    desc: 'M3578 K15 MARKCNG 口塞检查条件改错（TEQUIP:45 改 46，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`tequip:${target}:45`)) {\n    return 0;\n  }\n\n  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {',
     replace:
       '  if (era0(`tequip:${target}:46`)) {  // 变异\n    return 0;\n  }\n\n  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {',
     tests: ['kojo-k15-clever'],
-    must_mention: 'MARKCNG 口塞守卫跳过苦痛',
+    must_mention: 'MARKCNG 口塞检查跳过苦痛',
   },
   {
     desc: 'M3579 K15 MARKCNG 苦痛刻印Lv3 推进值写错（CFLAG:297=1 改 2，#246）',
@@ -17800,7 +17800,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '反抗刻印Lv3 → 300=1',
   },
   {
-    desc: 'M3583 K15 SELF_KOJO leftover_q 助手判据改错（Q==1 改 ==2，#246）',
+    desc: 'M3583 K15 SELF_KOJO leftover_q 助手条件改错（Q==1 改 ==2，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `    } else if (Q == 1) {`,
     replace: `    } else if (Q == 2) {  // 变异`,
@@ -17848,7 +17848,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'SELF_KOJO 族缺 K15 注册',
   },
   {
-    desc: 'M3589 K15 DUNGEON_RYOUZYOKU 处女判据反转（TALENT:0==1 改 ==0，#246）',
+    desc: 'M3589 K15 DUNGEON_RYOUZYOKU 处女条件反转（TALENT:0==1 改 ==0，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`talent:${target}:0`) == 1) {\n    await era.printAndWait(\n      `「可恶！走…走开！为什么${sc()}的第一次要被你们这些残渣……呜！」`,',
     replace:
@@ -17857,7 +17857,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'DUNGEON_RYOUZYOKU 处女それ以外；AFTER 处女',
   },
   {
-    desc: 'M3590 K15 DUNGEON_RYOUZYOKU_AFTER 处女判据反转（TALENT:0==1 改 ==0，#246）',
+    desc: 'M3590 K15 DUNGEON_RYOUZYOKU_AFTER 处女条件反转（TALENT:0==1 改 ==0，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (era0(`talent:${target}:0`) == 1) {\n    await era.printAndWait(\n      `「还好${sc()}的处女还在…不然…一定要杀了你们…！！」`,',
     replace:
@@ -17866,7 +17866,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '凌辱后处女',
   },
   {
-    desc: 'M3591 K15 DUNGEON_VICTORY それ以外 RAND 判据改错（==0 改 ==1，#246）',
+    desc: 'M3591 K15 DUNGEON_VICTORY それ以外 RAND 条件改错（==0 改 ==1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    if (rand_n(3) == 0) {\n      await era.printAndWait(`「跟这种杂鱼战斗，根本没有悬念。」`);',
     replace:
@@ -17875,7 +17875,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '胜利それ以外 RAND:3==0',
   },
   {
-    desc: 'M3592 K15 DUNGEON_ATTACK 侵攻中判据改错（状态==2 改 ==1，#246）',
+    desc: 'M3592 K15 DUNGEON_ATTACK 侵攻中条件改错（状态==2 改 ==1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `  if (chara(target).invasion.状态 == 2) {`,
     replace: `  if (chara(target).invasion.状态 == 1) {  // 变异`,
@@ -17883,7 +17883,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '攻击侵攻中それ以外',
   },
   {
-    desc: 'M3593 K15 BENKI 肉便器行动判据改错（==0 改 ==99，#246）',
+    desc: 'M3593 K15 BENKI 肉便器行动条件改错（==0 改 ==99，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `  if (game.train.肉便器行动 == 0) {`,
     replace: `  if (game.train.肉便器行动 == 99) {  // 变异`,
@@ -17907,7 +17907,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR_651',
   },
   {
-    desc: 'M3596 K15 GOHOUBI_REQUEST 要求奖赏判据改错（==0 改 ==1，#246）',
+    desc: 'M3596 K15 GOHOUBI_REQUEST 要求奖赏条件改错（==0 改 ==1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '\n  if (chara(a).stronghold.要求奖赏 == 0) {',
     replace: '\n  if (chara(a).stronghold.要求奖赏 == 1) {  // 变异',
@@ -17915,7 +17915,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOHOUBI_REQUEST 钱',
   },
   {
-    desc: 'M3597 K15 GOHOUBI_AFTER choice==1 判据改错（#246）',
+    desc: 'M3597 K15 GOHOUBI_AFTER choice==1 条件改错（#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  } else if (choice == 1) {\n    await era.printAndWait(`「能得到您的肯定，是${sc()}最大的荣幸。」`);',
     replace:
@@ -17924,7 +17924,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOHOUBI_AFTER 勋章',
   },
   {
-    desc: 'M3598 K15 OSIOKI choice==0 判据改错（#246）',
+    desc: 'M3598 K15 OSIOKI choice==0 条件改错（#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (choice == 0) {\n    await era.printAndWait(`「您是如此的宽容！下次${sc()}一定会更加努力。」`);',
     replace:
@@ -18092,15 +18092,15 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'dog_kojo_12 SELECTCOM 5 二回目牝犬',
   },
   {
-    desc: 'M3224 K12 KOJO_MESSAGE_COM_12 口塞守卫删松',
+    desc: 'M3224 K12 KOJO_MESSAGE_COM_12 口塞检查删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: 'if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     replace: 'if (false) { // 变异：口塞守卫删松',
     tests: ['kojo-k12-intellectual'],
-    must_mention: '头部守卫① TEQUIP:45（口塞）',
+    must_mention: '头部检查① TEQUIP:45（口塞）',
   },
   {
-    desc: 'M3225 K12 KOJO_MESSAGE_COM_12 失神守卫删松',
+    desc: 'M3225 K12 KOJO_MESSAGE_COM_12 失神检查删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
@@ -18117,7 +18117,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'self_kojo_k12 TFLAG:13==1',
   },
   {
-    desc: 'M3227 K12 PALAMCNG 首次润滑 Lv2 判据删松',
+    desc: 'M3227 K12 PALAMCNG 首次润滑 Lv2 条件删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: 'if (P1 > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {',
     replace: 'if (false) { // 变异：首次润滑 Lv2 删松',
@@ -18141,23 +18141,23 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'benki_koujo_k12 FLAG:62==0（最下层奉仕）淫乱',
   },
   {
-    desc: 'M3230 K12 KOJO_MESSAGE_COM_12 守卫③ TEQUIP:89（兽奸岔入 DOG）删松',
+    desc: 'M3230 K12 KOJO_MESSAGE_COM_12 检查③ TEQUIP:89（兽奸岔入 DOG）删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (era.get(`tequip:${target}:89`)) {',
     replace: '  if (false) { // 变异：兽奸岔入守卫删松',
     tests: ['kojo-k12-intellectual'],
-    must_mention: '头部守卫③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身',
+    must_mention: '头部检查③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身',
   },
   {
-    desc: 'M3231 K12 KOJO_MESSAGE_COM_12 守卫④ TEQUIP:55（死斗场岔入 COLOSSEUM）删松',
+    desc: 'M3231 K12 KOJO_MESSAGE_COM_12 检查④ TEQUIP:55（死斗场岔入 COLOSSEUM）删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (era.get(`tequip:${target}:55`)) {',
     replace: '  if (false) { // 变异：死斗场岔入守卫删松',
     tests: ['kojo-k12-intellectual'],
-    must_mention: '头部守卫④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身',
+    must_mention: '头部检查④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身',
   },
   {
-    desc: 'M3232 K12 MARKCNG 苦痛刻印 Lv3 首超判据删松',
+    desc: 'M3232 K12 MARKCNG 苦痛刻印 Lv3 首超条件删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {',
     replace: '  if (false) { // 变异：苦痛刻印首超判据删松',
@@ -18171,7 +18171,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '    // 变异：存在标志置位删除',
     tests: ['kojo-k12-intellectual'],
     must_mention:
-      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）',
+      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）',
   },
   {
     desc: 'M3234 K12 EVENTEND #LATER 存在标志清除删除（FLAG:112 = 0）',
@@ -18180,7 +18180,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '    // 变异：存在标志清除删除',
     tests: ['kojo-k12-intellectual'],
     must_mention:
-      '@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）',
+      'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）',
   },
   {
     desc: 'M6400 K903 EVENTTRAIN EX_FLAG:103 置位删除（#249）',
@@ -18191,7 +18191,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'EX_FLAG:103 生命周期',
   },
   {
-    desc: 'M6401 K903 EVENTTRAIN EX_TALENT:103 守卫删除（#249）',
+    desc: 'M6401 K903 EVENTTRAIN EX_TALENT:103 检查删除（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`ex_talent:${target}:103`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     replace:
@@ -18257,46 +18257,46 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:201：初调教',
   },
   {
-    desc: 'M6409 K903 COM 守卫① TEQUIP:45 删松（#249）',
+    desc: 'M6409 K903 COM 检查① TEQUIP:45 删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     replace: '  if (false) { // 变异：TEQUIP:45 口塞守卫删松',
     tests: ['kojo-k903-garde'],
-    must_mention: 'COM 仅保留源中活动的五道守卫',
+    must_mention: 'COM 仅五道检查活动',
   },
   {
-    desc: 'M6410 K903 COM 守卫② TFLAG:899 失神删松（#249）',
+    desc: 'M6410 K903 COM 检查② TFLAG:899 失神删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:89`)) {',
     replace:
       '  if (false) { // 变异：TFLAG:899 失神守卫删松\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:89`)) {',
     tests: ['kojo-k903-garde'],
-    must_mention: 'COM 仅保留源中活动的五道守卫',
+    must_mention: 'COM 仅五道检查活动',
   },
   {
-    desc: 'M6411 K903 COM 守卫③ TEQUIP:89 DOG 分发删松（#249）',
+    desc: 'M6411 K903 COM 检查③ TEQUIP:89 DOG 分发删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:89`)) {',
     replace: '  if (false) { // 变异：TEQUIP:89 DOG 分发守卫删松',
     tests: ['kojo-k903-garde'],
-    must_mention: 'COM 仅保留源中活动的五道守卫',
+    must_mention: 'COM 仅五道检查活动',
   },
   {
-    desc: 'M6412 K903 COM 守卫④ TEQUIP:90 触手删松（#249）',
+    desc: 'M6412 K903 COM 检查④ TEQUIP:90 触手删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:90`)) {',
     replace: '  if (false) { // 变异：TEQUIP:90 触手守卫删松',
     tests: ['kojo-k903-garde'],
-    must_mention: 'COM 仅保留源中活动的五道守卫',
+    must_mention: 'COM 仅五道检查活动',
   },
   {
-    desc: 'M6413 K903 COM 守卫⑤ TEQUIP:55 竞技场分发删松（#249）',
+    desc: 'M6413 K903 COM 检查⑤ TEQUIP:55 竞技场分发删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:55`)) {\n    await colosseum_kojo_903(rand);\n    return 0;\n  }',
     replace:
       '  if (false) { // 变异：TEQUIP:55 竞技场分发守卫删松\n    await colosseum_kojo_903(rand);\n    return 0;\n  }',
     tests: ['kojo-k903-garde'],
-    must_mention: 'COM 仅保留源中活动的五道守卫',
+    must_mention: 'COM 仅五道检查活动',
   },
   {
     desc: 'M6414 K903 SELECTCOM:0 爱抚初回计数写错（1 改 2）（#249）',
@@ -18333,7 +18333,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'PALAMCNG：221-229',
   },
   {
-    desc: 'M6420 K903 PALAMCNG NOWEX:0 首次 C 绝顶判据删松（>0 改 >1）（#249）',
+    desc: 'M6420 K903 PALAMCNG NOWEX:0 首次 C 绝顶条件删松（>0 改 >1）（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`nowex:${target}:0`) > 0 && kojo.首次C绝顶 == 0) {',
     replace: '  if (era0(`nowex:${target}:0`) > 1 && kojo.首次C绝顶 == 0) {',
@@ -18341,7 +18341,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'PALAMCNG：221-229',
   },
   {
-    desc: 'M6421 K903 MARKCNG 苦痛刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    desc: 'M6421 K903 MARKCNG 苦痛刻印 Lv3 首超条件删松（==3 改 ==4）（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (game.system.苦痛刻印变动 == 3 && chara(target).kojo.苦痛刻印Lv3 == 0) {',
     replace:
@@ -18350,7 +18350,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARKCNG：297-300',
   },
   {
-    desc: 'M6422 K903 MARKCNG 快乐刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    desc: 'M6422 K903 MARKCNG 快乐刻印 Lv3 首超条件删松（==3 改 ==4）（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (game.system.快乐刻印变动 == 3 && chara(target).kojo.快乐刻印Lv3 == 0) {',
     replace:
@@ -18359,7 +18359,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARKCNG：297-300',
   },
   {
-    desc: 'M6423 K903 MARKCNG 屈服刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    desc: 'M6423 K903 MARKCNG 屈服刻印 Lv3 首超条件删松（==3 改 ==4）（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (game.system.屈服刻印变动 == 3 && chara(target).kojo.屈服刻印Lv3 == 0) {',
     replace:
@@ -18368,7 +18368,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARKCNG：297-300',
   },
   {
-    desc: 'M6424 K903 MARKCNG 反抗刻印 Lv3 首超判据删松（==3 改 ==4）（#249）',
+    desc: 'M6424 K903 MARKCNG 反抗刻印 Lv3 首超条件删松（==3 改 ==4）（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (game.system.反抗刻印变动 == 3 && chara(target).kojo.反抗刻印Lv3 == 0) {',
     replace:
@@ -18828,67 +18828,67 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'SELECTCOM 80 首回合推进 CFLAG:381',
   },
   {
-    desc: 'M6056 K19 头部助手调教守卫删松（#247）',
+    desc: 'M6056 K19 头部助手调教检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
       '  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));\n  if (false && era_flag.assi > 0 && era_flag.assiplay) {',
     tests: ['kojo-k19-fia'],
-    must_mention: '助手调教守卫无输出',
+    must_mention: '助手调教检查无输出',
   },
   {
-    desc: 'M6057 K19 头部口塞守卫删松（#247）',
+    desc: 'M6057 K19 头部口塞检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: 'if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     replace:
       'if (false && era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
     tests: ['kojo-k19-fia'],
-    must_mention: '口塞守卫无输出',
+    must_mention: '口塞检查无输出',
   },
   {
-    desc: 'M6058 K19 头部失神守卫删松（#247）',
+    desc: 'M6058 K19 头部失神检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     replace:
       '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }\n\n  if (false && game.train.失神) {',
     tests: ['kojo-k19-fia'],
-    must_mention: '失神守卫无输出',
+    must_mention: '失神检查无输出',
   },
   {
-    desc: 'M6059 K19 头部兽奸守卫删松（#247）',
+    desc: 'M6059 K19 头部兽奸检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
       '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {\n    return 0;\n  }\n\n  if (false && era.get(`tequip:${target}:89`)) {',
     tests: ['kojo-k19-fia'],
-    must_mention: '兽奸守卫无输出',
+    must_mention: '兽奸检查无输出',
   },
   {
-    desc: 'M6060 K19 头部触手守卫删松（#247）',
+    desc: 'M6060 K19 头部触手检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:55`)) {\n    return colosseum_kojo_19();',
     replace:
       '  if (false && era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:55`)) {\n    return colosseum_kojo_19();',
     tests: ['kojo-k19-fia'],
-    must_mention: '触手守卫无输出',
+    must_mention: '触手检查无输出',
   },
   {
-    desc: 'M6061 K19 头部死斗场守卫删松（#247）',
+    desc: 'M6061 K19 头部死斗场检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '  if (era.get(`tequip:${target}:55`)) {\n    return colosseum_kojo_19();',
     replace:
       '  if (false && era.get(`tequip:${target}:55`)) {\n    return colosseum_kojo_19();',
     tests: ['kojo-k19-fia'],
-    must_mention: '死斗场守卫转入专用口上',
+    must_mention: '死斗场检查转入专用口上',
   },
   {
-    desc: 'M6062 K19 头部崩坏守卫删松（#247）',
+    desc: 'M6062 K19 头部崩坏检查删松（#247）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '    return colosseum_kojo_19();\n  }\n\n  if (era.get(`talent:${target}:9`) == 1) {',
     replace:
       '    return colosseum_kojo_19();\n  }\n\n  if (false && era.get(`talent:${target}:9`) == 1) {',
     tests: ['kojo-k19-fia'],
-    must_mention: '崩坏守卫无输出',
+    must_mention: '崩坏检查无输出',
   },
   {
     desc: 'M6063 K19 PALAMCNG 首次润滑状态推进写错（#247）',
@@ -19674,7 +19674,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
   },
   {
-    desc: 'M6502 K904 EVENTTRAIN EX_TALENT:104 守卫错读 105（#250）',
+    desc: 'M6502 K904 EVENTTRAIN EX_TALENT:104 检查错读 105（#250）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: '  if (era0(`ex_talent:${target}:104`) != 1) {\n    return 0;\n  }\n\n  if (chara(target).kojo.初调教 == 0) {',
     replace:
@@ -19683,7 +19683,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K904 EVENTTRAIN：EX_TALENT:104 缺席时不推进初调教',
   },
   {
-    desc: 'M6503 K904 EVENTEND EX_TALENT:104 守卫错读 105（#250）',
+    desc: 'M6503 K904 EVENTEND EX_TALENT:104 检查错读 105（#250）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: '  if (era0(`ex_talent:${target}:104`) != 1) {\n    return 0;\n  }\n\n  if (era.get(`base:${target}:0`) <= 0) {',
     replace:
@@ -19716,7 +19716,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
   },
-  // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M9000 ——
+  // —— #403（N19）口上分发表：条目 M8941-M9000 ——
   {
     desc: 'M8941 分发窗口丢 EX 分支（LOCAL > 1000 不再分发，EX 性格全族静默）',
     file: 'ere/kojo/kojo-system.js',
@@ -19859,7 +19859,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M8957 GOHOUBI_REQUEST 族内实参丢 cid（K7 读不到 CFLAG:504）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    // #641 起调用去掉锚名实参（收成三参 family / arg / extra_args），find 随新文本
+    // #641 起调用去掉基准名实参（收成三参 family / arg / extra_args），find 随新文本
     find: '  await try_kojo(gohoubi_request_koujo_family, cid, [cid]);',
     replace: '  await try_kojo(gohoubi_request_koujo_family, cid, []);',
     tests: ['event-k-dispatch'],
@@ -20131,7 +20131,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M8994 try_kojo 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
     file: 'ere/kojo/kojo-system.js',
-    // #641 起签名去掉锚名实参（收成三参）——
+    // #641 起签名去掉基准名实参（收成三参）——
     // find 同步到新文本，变异仍是「缺省哨兵改 0」
     find: 'async function try_kojo(family, arg = -1, extra_args = []) {',
     replace:
@@ -20240,7 +20240,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '首次恐怖 Lv2 置 224=1',
   },
   {
-    desc: 'M10709 K9 对面座位爱慕支的初吻判据域写错（train 改别名上的 kojo，#493 复核发现的第 14 处：undefined >= 0 恒假，亲吻句恒不出）',
+    desc: 'M10709 K9 对面座位爱慕支的初吻条件域写错（train 改别名上的 kojo，#493 复核发现的第 14 处：undefined >= 0 恒假，亲吻句恒不出）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          );\n          if (chara(target).train.初吻对象 >= 0) {',
     replace: '          );\n          if (kojo.初吻对象 >= 0) {',
@@ -20248,7 +20248,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '湿润的舌头就立马从缝隙中钻进来',
   },
   {
-    desc: 'M10711 K9 对面座位爱慕支 RAND:2 臂的同一处初吻判据退回（:2449 的第 14 处第二站点）',
+    desc: 'M10711 K9 对面座位爱慕支 RAND:2 分支的同一处初吻条件退回（第 14 处第二站点）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          }\n          if (chara(target).train.初吻对象 >= 0) {',
     replace: '          }\n          if (kojo.初吻对象 >= 0) {',
@@ -20327,7 +20327,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
 
-  // —— #544（S3 强制肉偿）：魔改新增/强制肉偿.ERB → ere/kojo/kojo-forced-payment.js ——
+  // —— #544（S3 强制肉偿）：强制肉偿口上 → ere/kojo/kojo-forced-payment.js ——
 
   {
     desc: 'M11400 强制肉偿的分档条件 ABL:11 门槛放低（>= 3 改 >= 2，欲望 2 的勇者被误判为高档，#544）',
@@ -20532,8 +20532,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
     must_mention: '调用点与真身的抽取序',
   },
-  // #552 起口上按常量 4 读 item:4（原作 ITEM:PBAND = ITEM:4，PBAND 由
-  // SYSTEM ver1.0.3.ERB:42 赋 4）。下列条目把某处回退成字符串具名寻址
+  // #552 起口上按常量 4 读 item:4（ITEM:PBAND = 4 号假阳具，
+  // 开局脚本赋 4）。下列条目把某处回退成字符串具名寻址
   // era.get('item:PBAND')——Item.yml 名字表没有 PBAND 条目，该判定从此恒
   // undefined，对应分支必须不再出词，测试必须红。
   {
@@ -20587,7 +20587,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '拼接「大鸡巴」',
   },
   {
-    desc: 'M11604 K5 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552；#625 起判据提为 assi_has_toy，改钉变量版）',
+    desc: 'M11604 K5 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552；#625 起条件提为 assi_has_toy，改钉变量版）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "  const assi_has_toy = era.get('item:4') === 1;",
     replace:
@@ -20598,38 +20598,37 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11605 K6 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k6-wicked.js',
-    find: `      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:4') === 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）`,
+    find: `      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:4') === 1; // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）`,
     replace: `      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:PBAND') === 1; // 变异：回退字符串具名寻址（#552）`,
     tests: ['kojo-k6-wicked'],
     must_mention: '助手无 121/122 且 item:4 == 1',
   },
   {
-    desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552；#622 起靶在语句外的取值变量上）',
+    desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552；#622 起目标在语句外的取值变量上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: "      // 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era0(`talent:${assi}:121`) != 1 &&\n        era0(`talent:${assi}:122`) != 1 &&\n        era0('item:4') == 1;",
+    find: "      // 同一行输出：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 条件提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era0(`talent:${assi}:121`) != 1 &&\n        era0(`talent:${assi}:122`) != 1 &&\n        era0('item:4') == 1;",
     replace:
-      "      // 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era0(`talent:${assi}:121`) != 1 &&\n        era0(`talent:${assi}:122`) != 1 &&\n        era0('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552）",
+      "      // 同一行输出：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n      // + 收行的 PRINTFORMW（#622）。SIF 条件提到语句外当条件、文本留在输出语句里\n      const assi_has_penis =\n        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era0(`talent:${assi}:121`) != 1 &&\n        era0(`talent:${assi}:122`) != 1 &&\n        era0('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552）",
     tests: ['kojo-k8-spade'],
     must_mention: '拼接「假阴茎」',
   },
   {
-    desc: 'M11607 K10 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552；sc21/sc27 同词，只有开场白分得开；#622 起靶在语句外的取值变量上）',
+    desc: 'M11607 K10 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552；sc21/sc27 同词，只有开场白分得开；#622 起目标在语句外的取值变量上）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: "      await era.printAndWait(`「呀～！请住手～求你了～…啊啊～…啊～！」`);\n      // 与 :6763+:6765+:6767+:6768 同型（#622）\n      const assi_has_penis =\n        era.get(`talent:${assi}:121`) == 1 ||\n        era.get(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era.get(`talent:${assi}:121`) != 1 &&\n        era.get(`talent:${assi}:122`) != 1 &&\n        era.get('item:4') == 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）",
+    find: "      await era.printAndWait(`「呀～！请住手～求你了～…啊啊～…啊～！」`);\n      // 与初回同型（#622）\n      const assi_has_penis =\n        era.get(`talent:${assi}:121`) == 1 ||\n        era.get(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era.get(`talent:${assi}:121`) != 1 &&\n        era.get(`talent:${assi}:122`) != 1 &&\n        era.get('item:4') == 1; // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）",
     replace:
-      "      await era.printAndWait(`「呀～！请住手～求你了～…啊啊～…啊～！」`);\n      // 与 :6763+:6765+:6767+:6768 同型（#622）\n      const assi_has_penis =\n        era.get(`talent:${assi}:121`) == 1 ||\n        era.get(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era.get(`talent:${assi}:121`) != 1 &&\n        era.get(`talent:${assi}:122`) != 1 &&\n        era.get('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552） // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）",
+      "      await era.printAndWait(`「呀～！请住手～求你了～…啊啊～…啊～！」`);\n      // 与初回同型（#622）\n      const assi_has_penis =\n        era.get(`talent:${assi}:121`) == 1 ||\n        era.get(`talent:${assi}:122`) == 1;\n      const assi_has_strap =\n        era.get(`talent:${assi}:121`) != 1 &&\n        era.get(`talent:${assi}:122`) != 1 &&\n        era.get('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552） // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）",
     tests: ['kojo-k10-club'],
     must_mention: '同一行里拼「假阳具」',
   },
   {
     desc: 'M11608 K15 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: `      // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
-      //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+    find: `      // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
       const assi_has_toy = era0('item:4') == 1;`,
     replace: `      const assi_has_toy = era0('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552）`,
     tests: ['kojo-k15-clever'],
-    must_mention: 'item:4（原作 ITEM:PBAND）→ 假阳具',
+    must_mention: 'item:4（ITEM:PBAND）→ 假阳具',
   },
   {
     desc: 'M11609 K903 死斗场 SC27 的假阳具判定回退成具名寻址 item:PBAND（#552）',
@@ -20884,20 +20883,20 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-dungeon-ravish'],
     must_mention: '语尾两处都拼进『猪』行',
   },
-  // M11772（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
-  // M11773（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
+  // M11772（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
+  // M11773（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
   // —— #572：K10 初调教两处二选一的按钮化 ——
   {
     desc: 'M12035 K10 初调教的选项退回纯文本行（引擎里点不动）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: "      era.printButton('- 直不起来。', 0); // （「- 」是原作正文）\n      era.printButton('- 就是这样才好。', 1);",
+    find: "      era.printButton('- 直不起来。', 0); // （「- 」属于正文）\n      era.printButton('- 就是这样才好。', 1);",
     replace:
       "      era.print('[0] - 直不起来。'); // 变异\n      era.print('[1] - 就是这样才好。'); // 变异",
     tests: ['kojo-k10-club'],
     must_mention: '两处二选一是按钮',
   },
   {
-    desc: 'M11940 卖春失败（有客）行拆回两条（#584：:314+:315 的同一行被拆）',
+    desc: 'M11940 卖春失败（有客）行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    await era.printAndWait(\n      `${kyaku}人群的声音嘈杂着、交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,\n    );',
     replace:
@@ -20906,7 +20905,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '两句必须落在同一行',
   },
   {
-    desc: 'M11941 兽奸描写首行拆回两条（#584：:524+:525 的同一行被拆）',
+    desc: 'M11941 兽奸描写首行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  await era.printAndWait(`${name_of(arg)}无法压抑兽交的欲望悄悄寻找着兽穴...`);',
     replace:
@@ -20915,7 +20914,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'DUNGEON_ANIMAL 首行必须是整行',
   },
   {
-    desc: 'M11942 强制肉偿结算行拆回两条（#584：:78+…+:86 的同一行被拆）',
+    desc: 'M11942 强制肉偿结算行拆回两条（#584：多行合成的一整行被拆）',
     file: 'ere/kojo/kojo-forced-payment.js',
     find: '  await era.printAndWait(\n    `被强制用肉体偿债的${name_of(arg)}抵销了${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,\n  );',
     replace:
@@ -20924,7 +20923,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '结算行（#584 起是同一行）',
   },
   {
-    desc: 'M11943 BENKI 施舍首次台词拆回两条（#584：:7495+:7497 的同一行被拆；#599 起名字已接上，find 同步）',
+    desc: 'M11943 BENKI 施舍首次台词拆回两条（#584：两行合成的一整行被拆；#599 起名字已接上，find 同步）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,\n      );',
     replace:
@@ -20942,7 +20941,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '段必须与后句同一行',
   },
   {
-    desc: 'M11945 兽交卖春首行拆回两条（#584：:1459+:1464 的同一行被拆）',
+    desc: 'M11945 兽交卖春首行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find: '    await era.printAndWait(\n      `${name_of(arg)}在大家的眼前不知羞耻的进行着兽交表演...`,\n    );',
     replace:
@@ -20951,7 +20950,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TOWN 首行是名字 + 固定文的整行',
   },
   {
-    desc: 'M11946 男子迷宫凌辱「反抗的」行拆回两条（#584：:71+:72 的同一行被拆）',
+    desc: 'M11946 男子迷宫凌辱「反抗的」行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: '        await era.print(\n          `带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+${mon_num * 10}`,\n        );',
     replace:
@@ -20959,9 +20958,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-dungeon-ravish-man'],
     must_mention: '反抗的：恐怖点数与前置描写同一行',
   },
-  // M11947（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
+  // M11947（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
   {
-    desc: 'M11949 男版肉便器收尾行拆回两条（#584 的 :802+:804；#600 起目标在整行语句的末段）',
+    desc: 'M11949 男版肉便器收尾行拆回两条（#584 的两行合一段；#600 起目标在整行语句的末段）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "        (rand_n(3) === 0\n          ? '【操我】'\n          : rand_n(2) === 0\n            ? '【肛门免费】'\n            : '【母猪】') +\n        '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n    );",
     replace:
@@ -20970,7 +20969,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '肉便器行必须是整行',
   },
   {
-    desc: 'M11950 男版「素直」行拆回两条（#584：:76+:77 的同一行被拆）',
+    desc: 'M11950 男版「素直」行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: '        // 拼成一行：PRINTFORM + PRINTFORML（#584）\n        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
     replace:
@@ -20979,7 +20978,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '素直：耻情点数与前置描写同一行',
   },
   {
-    desc: 'M11951 K12 勇者/冒险者两档写反（#584：hero_word 的两臂互换）',
+    desc: 'M11951 K12 勇者/冒险者两档写反（#584：hero_word 的两分支互换）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: "      const hero_word =\n        era.get(`talent:${a}:122`) == 0\n          ? '勇者'\n          : era.get(`talent:${a}:122`)\n            ? '冒险者'\n            : '';\n      await era.printAndWait(\n        hero_word +\n          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,\n      );",
     replace:
@@ -20988,7 +20987,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '段必须与后句同一行',
   },
   {
-    desc: 'M11952 强制肉偿拍片结算行拆回两条（#584：:90+:92+:94 的同一行被拆）',
+    desc: 'M11952 强制肉偿拍片结算行拆回两条（#584：三行合成的一整行被拆）',
     file: 'ere/kojo/kojo-forced-payment.js',
     find: '    // 片酬只求值一次：显示与入账同一个数（RAND:100 只取一次）\n    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n    await era.printAndWait(\n      `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,\n    );',
     replace:
@@ -21007,7 +21006,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '不要凌辱',
   },
   {
-    desc: 'M12019 @PC_RYOU 的旁观/不要选择项退回纯文本行',
+    desc: 'M12019 pc_ryou 的旁观/不要选择项退回纯文本行',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "  // 主框架的两行，文本相同故测试没红）\n  era.printButton('- 旁观凌辱', 0);",
     replace:
@@ -21019,12 +21018,12 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #599：肉便器口上 BENKI_PLAYER_NAME 接入（M12130-M12139） ——
   // K0 四处（:7495+:7497 / :7516+:7518 / :7537+:7539 / :7558+:7560）三行一支
   // 合并成一条 era.printAndWait 后，名字位置必须插 ${benki_player_name()}；
-  // K12 四处的原作是两行（前缀 PRINTFORMW 自带换行/等待），拆成两条语句、
-  // 名字插在续行语句首位；K3 一处与 K0 同型，用拼接锚。行为测试守「名字出现
+  // K12 四处是两行（前缀 PRINTFORMW 自带换行/等待），拆成两条语句、
+  // 名字插在续行语句首位；K3 一处与 K0 同型，用拼接基准。行为测试守「名字出现
   // 在整行里」，保真锁（kojo-text-fidelity）守「插的是那个记号、位置对、
   // 该拆的行没被并」——两侧各钉几条。
   {
-    desc: 'M12130 K0 施舍首句（:7495+:7497）名字删除（缺对象名，与原作三行一支不符）（#599）',
+    desc: 'M12130 K0 施舍首句名字删除（缺对象名，与三行一支结构不符）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,\n      );',
     replace:
@@ -21034,7 +21033,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12131 K0 施舍首句（:7495+:7497）名字换成别的调用（保真锁认记号：benki_player_name() → sc()）（#599）',
+    desc: 'M12131 K0 施舍首句名字换成别的调用（保真锁认记号：benki_player_name() → sc()）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '`「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`',
     replace: '`「和${sc()}来同时用小穴和菊花来做爱了♪」`',
@@ -21042,7 +21041,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '首次台词必须是整行',
   },
   {
-    desc: 'M12132 K0 施舍首句（:7516+:7518）名字删除（缺对象名）（#599）',
+    desc: 'M12132 K0 施舍首句名字删除（缺对象名）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}用小穴做爱做到潮如泉涌咯♪」`,\n      );',
     replace:
@@ -21052,7 +21051,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12133 K0 施舍首句（:7537+:7539）名字删除（缺对象名）（#599）',
+    desc: 'M12133 K0 施舍首句名字删除（缺对象名）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}用菊花做爱做到湿滑不已咯♪」`,\n      );',
     replace:
@@ -21062,7 +21061,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12134 K0 施舍首句（:7558+:7560）名字删除（缺对象名）（#599）',
+    desc: 'M12134 K0 施舍首句名字删除（缺对象名）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「给予${benki_player_name()}先生的肉棒大人的『施舍』哦♪」`,\n      );',
     replace:
@@ -21072,7 +21071,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12135 K12 交配实验续行（:5107）名字删除（与 K0 同型的丢名字）（#599）',
+    desc: 'M12135 K12 交配实验续行名字删除（与 K0 同型的丢名字）（#599）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '      await era.printAndWait(`「多亏`);\n      await era.printAndWait(\n        `${benki_player_name()}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,\n      );',
     replace:
@@ -21082,7 +21081,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12136 K3 口交施舍首句（:8205+:8207）名字删除（K3 用拼接锚后同受本锁）（#599）',
+    desc: 'M12136 K3 口交施舍首句名字删除（K3 用拼接基准后同受本锁）（#599）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '      await era.printAndWait(\n        `「请${player_name_benki}大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,\n      );',
     replace:
@@ -21091,10 +21090,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention:
       '#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名',
   },
-  // M12137（保真锁记号表守卫）随 kojo-text-fidelity 删除（#640）。
-  // M12138（保真锁上方记号行守卫）随 kojo-text-fidelity 删除（#640）。
+  // M12137（保真锁记号表检查）随 kojo-text-fidelity 删除（#640）。
+  // M12138（保真锁上方记号行检查）随 kojo-text-fidelity 删除（#640）。
   {
-    desc: 'M12139 K12 两行并回一行（:5171+:5173 的前缀行被吞——行为断言的整行输出对账抓）（#599；#640 起由 kojo-k12-intellectual 守）',
+    desc: 'M12139 K12 两行并回一行（前缀行被吞——行为断言的整行输出对账抓）（#599；#640 起由 kojo-k12-intellectual 守）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '      await era.printAndWait(`「多亏`);\n      await era.printAndWait(\n        `${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,\n      );',
     replace:
@@ -21103,10 +21102,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '多亏',
   },
 
-  // —— #600：16 处「原作同一行被拆」的合并点，各配一条「拆回多条」变异 ——
+  // —— #600：16 处「同一行输出被拆」的合并点，各配一条「拆回多条」变异 ——
   // （每处合并后的整行断言见对应测试文件；条目按工单给的 M12140 起编号）
   {
-    desc: 'M12140 K8 穿环·舌先（:5233+:5234）拆回两条（#600：同一行又被拆开）',
+    desc: 'M12140 K8 穿环·舌先拆回两条（#600：同一行又被拆开）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '            await era.print(\n              `「啊啊…如果和你舌吻的话…会变得很舒服吧…？」${target_name}为了展示环而伸出了舌头………`,\n            );',
     replace:
@@ -21116,7 +21115,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '初めて·爱慕·P=16',
   },
   {
-    desc: 'M12141 K8 穿环·唇（:5237+:5238）拆回两条（#600）',
+    desc: 'M12141 K8 穿环·唇拆回两条（#600）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '            await era.print(\n              `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,\n            );',
     replace:
@@ -21126,7 +21125,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '初めて·爱慕·P=32',
   },
   {
-    desc: 'M12142 K8 穿环·二回目以降·舌先（:5374+:5375）拆回两条（#600）',
+    desc: 'M12142 K8 穿环·二回目以降·舌先拆回两条（#600）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          await era.print(\n            `「啊啊…如果和你舌吻的话…会变得很舒服吧…？」${target_name}为了展示环而伸出了舌头………`,\n          );',
     replace:
@@ -21136,7 +21135,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '二回目以降·爱慕·P=16',
   },
   {
-    desc: 'M12143 K8 穿环·二回目以降·唇（:5378+:5379）拆回两条（#600）',
+    desc: 'M12143 K8 穿环·二回目以降·唇拆回两条（#600）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          await era.print(\n            `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,\n          );',
     replace:
@@ -21146,7 +21145,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '二回目以降·爱慕·P=32',
   },
   {
-    desc: 'M12144 K11 兽交要求（:12915..:12923）拆回三条（#600：兽名与收行又各占一行）',
+    desc: 'M12144 K11 兽交要求拆回三条（#600：兽名与收行又各占一行）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    await era.printAndWait(`${name}提出了和` + animal + `进行兽交的请求`);',
     replace:
@@ -21157,7 +21156,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'GOHOUBI_REQUEST：兽交要求',
   },
   {
-    desc: 'M12145 K13 NTR·前缀段（:5518..:5526）在 :5531 支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
+    desc: 'M12145 K13 NTR·前缀段在 :5531 支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find:
       '      const rape_prefix =\n' +
@@ -21173,25 +21172,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀段与收行同属一行',
   },
   {
-    desc: 'M12146 K0 交谈首次·录像自白（:4652+:4654+:4655）拆回多条（#600）',
+    desc: 'M12146 K0 交谈首次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "          // 当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
+    find: "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
     replace:
-      '          // 当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验`,\n          ); // 变异：拆回\n          if (masturbation) {\n            era.print(`以及自慰时妄想的内容`); // 变异：拆回\n          }\n          era.print(\n            `开始愉快的说了起来……`,\n          ); // 变异：拆回',
+      '          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验`,\n          ); // 变异：拆回\n          if (masturbation) {\n            era.print(`以及自慰时妄想的内容`); // 变异：拆回\n          }\n          era.print(\n            `开始愉快的说了起来……`,\n          ); // 变异：拆回',
     tests: ['kojo-k0-tender'],
     must_mention: '交谈首次',
   },
   {
-    desc: 'M12147 K0 交谈二次·录像自白（:4711+:4713+:4714）拆回多条（#600）',
+    desc: 'M12147 K0 交谈二次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "          // 与 :4652+:4654+:4655 同型（SIF 的锚是 :4712-4713，#600）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
+    find: "          // 与上一段同型（SIF 的基准相同，#600）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
     replace:
-      '          // 与 :4652+:4654+:4655 同型（SIF 的锚是 :4712-4713，#600）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验`,\n          ); // 变异：拆回\n          if (masturbation) {\n            era.print(`以及自慰时妄想的内容`); // 变异：拆回\n          }\n          era.print(\n            `开始愉快的说了起来……`,\n          ); // 变异：拆回',
+      '          // 与上一段同型（SIF 的基准相同，#600）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验`,\n          ); // 变异：拆回\n          if (masturbation) {\n            era.print(`以及自慰时妄想的内容`); // 变异：拆回\n          }\n          era.print(\n            `开始愉快的说了起来……`,\n          ); // 变异：拆回',
     tests: ['kojo-k0-tender'],
     must_mention: '交谈二次·录像自白',
   },
   {
-    desc: 'M12148 K3 录像展示·五段 SIF 后缀（:1640..:1656）拆回七条（#600）',
+    desc: 'M12148 K3 录像展示·五段 SIF 后缀拆回七条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "        era.print(\n          `${'\\u3000'}只要是魔王大人的命令来的话、${sc()}一定会在这里…用这个` +\n            (devoted ? '魔王大人专用' : '') +\n            (lewd ? '淫乱' : '') +\n            (female_dog ? '牝犬' : '') +\n            (greedy ? '贪欲' : '') +\n            (virgin ? '处女' : '') +\n            `小穴来、给今天看到的大家侍奉也说不定呢。`,\n        );",
     replace:
@@ -21208,7 +21207,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 7 录像展示',
   },
   {
-    desc: 'M12149 K3 交谈首次·录像自白（:4995+:4997+:4998）拆回多条（#600）',
+    desc: 'M12149 K3 交谈首次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation ? '还有手淫时妄想的内容' : '') +\n              `之类的兴高采烈地说个不停……`,\n          );\n          era.print(\n            `${target_name}只是因为想象着水晶球在故乡传播开的画面股间就湿润了……`,",
     replace:
@@ -21217,7 +21216,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 初回·录像自白',
   },
   {
-    desc: 'M12150 K3 交谈首次·通常（:5032..:5038）拆回多条（#600：发出档二选一又各占一行）',
+    desc: 'M12150 K3 交谈首次·通常拆回多条（#600：发出档二选一又各占一行）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
     replace:
@@ -21226,7 +21225,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 初回·通常',
   },
   {
-    desc: 'M12151 K3 交谈二次·录像自白（:5067+:5069+:5070）拆回多条（#600）',
+    desc: 'M12151 K3 交谈二次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation ? '还有手淫时妄想的内容' : '') +\n              `之类的兴高采烈地说个不停……`,\n          );\n          era.print(\n            `${target_name}只是因为想象到水晶球在故乡传播开的样子股间就湿润了……`,",
     replace:
@@ -21235,16 +21234,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 二次·录像自白',
   },
   {
-    desc: 'M12152 K3 交谈二次·通常（:5104..:5110）拆回多条（#600）',
+    desc: 'M12152 K3 交谈二次·通常拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: "          // 与 :5032..:5038 同型（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
+    find: "          // 同一行输出：中段 IF/ELSEIF 二选一（\n          // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
     replace:
       '          // 与 :5032..:5038 同型（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(player_name + `向其搭话后，${target_name}发出了`); // 变异：拆回\n          if (excited) {\n            era.print(`欢喜的`); // 变异：拆回\n          } else if (painful) {\n            era.print(`苦痛的`); // 变异：拆回\n          }\n          era.print(`叫声，拼命地向你回话了。`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: 'SELECTCOM 56 二次·通常',
   },
   {
-    desc: 'M12153 男版迷宫凌辱·肉便器整行（:767..:804）拆回多条（#600：落書与收尾又各占一行）',
+    desc: 'M12153 男版迷宫凌辱·肉便器整行拆回多条（#600：落書与收尾又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "    await era.printAndWait(\n      `${arg_name}的身上，被写着` +\n        '【最喜欢阴茎】' +\n        (cold ? '【性冷淡便器】' : '') +\n        (modest ? '【看似忠贞的便器出道】' : '') +\n        (wet ? '【又粘又湿】' : '') +\n        (pleased ? '【愉悦的脸】' : '') +\n        (has_penis ? '【有鸡鸡的奴隶】' : '') +\n        (rand_n(3) === 0\n          ? '【操我】'\n          : rand_n(2) === 0\n            ? '【肛门免费】'\n            : '【母猪】') +\n        '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n    );",
     replace:
@@ -21269,7 +21268,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '男人凌辱·肉便器',
   },
   {
-    desc: 'M12154 女版卖春前后·LOG_TRY_BITCH 整行（:14..:47）拆回多条（#600：前缀与收行又各占一行）',
+    desc: 'M12154 女版卖春前后·LOG_TRY_BITCH 整行拆回多条（#600：前缀与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -21284,7 +21283,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_TRY_BITCH 的整段输出',
   },
   {
-    desc: 'M12155 卖春积极性按钮（:1157..:1167）拆回两条（#600：档位文案又占一行）',
+    desc: 'M12155 卖春积极性按钮拆回两条（#600：档位文案又占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  era.print(`[${num}] 卖春积极性 - ${level}`);',
     replace:
@@ -21294,11 +21293,11 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SHOW_BUTTON_BICH_LEVEL',
   },
 
-  // —— #623：C 组（K11 莉莉 16 处）「原作同一行被拆」的合并点，各配一条
+  // —— #623：C 组（K11 莉莉 16 处）「同一行输出被拆」的合并点，各配一条
   // 「拆回多条」变异（每处合并后的整行断言见 test/kojo-k11-lily.test.js 的
   // #623 段；条目编号按工单给的区间 M12600 起）——
   {
-    desc: 'M12600 K11 初回录像·自我介绍整行（:6842+:6844+:6845）拆回多条（#623）',
+    desc: 'M12600 K11 初回录像·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 是 SIF 的插入段，末行 PRINTFORML 才收行（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(\n            `${target_name}介绍了自己的名字和迄今为止的性经验` +\n              (masturbation_talk\n                ? '、自慰的时候幻想的内容和对象也说出来了'\n                : '') +\n              `说得自己都兴奋起来了……`,\n          );",
     replace:
@@ -21307,16 +21306,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回录像',
   },
   {
-    desc: 'M12601 K11 二回目录像·自我介绍整行（:6929+:6931+:6932）拆回多条（#623）',
+    desc: 'M12601 K11 二回目录像·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "          // 与初回 :6842+:6844+:6845 同型（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(\n            `${target_name}介绍了自己的名字和迄今为止的性经验` +\n              (masturbation_talk\n                ? '、自慰的时候幻想的内容和对象也说出来了'\n                : '') +\n              `说得自己都兴奋起来了……`,\n          );",
+    find: "          // 与初回同型（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(\n            `${target_name}介绍了自己的名字和迄今为止的性经验` +\n              (masturbation_talk\n                ? '、自慰的时候幻想的内容和对象也说出来了'\n                : '') +\n              `说得自己都兴奋起来了……`,\n          );",
     replace:
-      "          // 与初回 :6842+:6844+:6845 同型（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(`${target_name}介绍了自己的名字和迄今为止的性经验`); // 变异：拆回\n          if (masturbation_talk) {\n            await era.print('、自慰的时候幻想的内容和对象也说出来了'); // 变异：拆回\n          }\n          await era.print(`说得自己都兴奋起来了……`); // 变异：拆回",
+      "          // 与初回同型（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(`${target_name}介绍了自己的名字和迄今为止的性经验`); // 变异：拆回\n          if (masturbation_talk) {\n            await era.print('、自慰的时候幻想的内容和对象也说出来了'); // 变异：拆回\n          }\n          await era.print(`说得自己都兴奋起来了……`); // 变异：拆回",
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 二回目录像',
   },
   {
-    desc: 'M12602 K11 初回交谈·助手玛奥首支（:6867）拆回两条（#623）',
+    desc: 'M12602 K11 初回交谈·助手玛奥首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            );",
     replace:
@@ -21325,7 +21324,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12603 K11 初回交谈·非助手首支（:6895）拆回两条（#623）',
+    desc: 'M12603 K11 初回交谈·非助手首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          const line_head = `${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n            );',
     replace:
@@ -21334,7 +21333,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12604 K11 二回目交谈·助手玛奥首支（:6954）拆回两条（#623）',
+    desc: 'M12604 K11 二回目交谈·助手玛奥首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 前缀提到语句外共用（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            );",
     replace:
@@ -21343,7 +21342,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12605 K11 二回目交谈·非助手首支（:6982）拆回两条（#623）',
+    desc: 'M12605 K11 二回目交谈·非助手首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n            );',
     replace:
@@ -21352,7 +21351,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12606 K11 初回交谈·助手玛奥插入段（:6873+:6875+:6877+:6879）拆回多条（#623）',
+    desc: 'M12606 K11 初回交谈·助手玛奥插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '却乐在其中' : painful ? '无比痛苦' : '') +\n                `地回应着。`,\n            );",
     replace:
@@ -21368,16 +21367,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 助手玛奥：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12607 K11 初回交谈·非助手插入段（:6901+:6903+:6905+:6907）拆回多条（#623）',
+    desc: 'M12607 K11 初回交谈·非助手插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "            // 收支），:6907 的 PRINTFORML 收行（#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n                `地努力回答着`,\n            );",
+    find: "            // 同一行输出：无后缀 PRINTFORM 链，\n            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n                `地努力回答着`,\n            );",
     replace:
-      "            // 收支），:6907 的 PRINTFORML 收行（#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(line_head); // 变异：拆回\n            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n            if (excited) {\n              await era.print('乐在其中'); // 变异：拆回\n            } else if (painful) {\n              await era.print('无比痛苦'); // 变异：拆回\n            }\n            await era.print(`地努力回答着`); // 变异：拆回",
+      "            // 同一行输出：无后缀 PRINTFORM 链，\n            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(line_head); // 变异：拆回\n            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n            if (excited) {\n              await era.print('乐在其中'); // 变异：拆回\n            } else if (painful) {\n              await era.print('无比痛苦'); // 变异：拆回\n            }\n            await era.print(`地努力回答着`); // 变异：拆回",
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 非助手：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12608 K11 二回目交谈·助手玛奥插入段（:6960+:6962+:6964+:6966）拆回多条（#623）',
+    desc: 'M12608 K11 二回目交谈·助手玛奥插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '害羞' : painful ? '无比痛苦' : '') +\n                `地回应着`,\n            );",
     replace:
@@ -21393,16 +21392,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 助手玛奥：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12609 K11 二回目交谈·非助手插入段（:6988+:6990+:6992+:6994）拆回多条（#623）',
+    desc: 'M12609 K11 二回目交谈·非助手插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "            // 插入段到 :6992-6993 收支，#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n                `地努力回答着`,\n            );",
+    find: "            // 同一行输出（与上面互斥插入段同型，#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n                `地努力回答着`,\n            );",
     replace:
-      "            // 插入段到 :6992-6993 收支，#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(line_head); // 变异：拆回\n            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n            if (excited) {\n              await era.print('乐在其中'); // 变异：拆回\n            } else if (painful) {\n              await era.print('无比痛苦'); // 变异：拆回\n            }\n            await era.print(`地努力回答着`); // 变异：拆回",
+      "            // 同一行输出（与上面互斥插入段同型，#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(line_head); // 变异：拆回\n            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n            if (excited) {\n              await era.print('乐在其中'); // 变异：拆回\n            } else if (painful) {\n              await era.print('无比痛苦'); // 变异：拆回\n            }\n            await era.print(`地努力回答着`); // 变异：拆回",
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 非助手：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12610 K11 NTR P=1 处女丧失·陥落済（:12609+:12611+:12613+:12615）拆回多条（#623）',
+    desc: 'M12610 K11 NTR P=1 处女丧失·陥落済拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用` +\n          (king_has_penis ? `双腿之间的巨根` : `粗大的假阳具`) +\n          `径直插入了${target_name}的处女蜜穴之中。`,\n      );',
     replace:
@@ -21417,7 +21416,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=1',
   },
   {
-    desc: 'M12611 K11 NTR P=1 处女丧失·それ以外（:12622+:12624+:12626+:12628）拆回多条（#623）',
+    desc: 'M12611 K11 NTR P=1 处女丧失·それ以外拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用` +\n          (king_has_penis ? `双腿之间的巨根` : `粗大的假阳具`) +\n          `径直插入了${target_name}的蜜穴之中。`,\n      );',
     replace:
@@ -21432,7 +21431,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=1',
   },
   {
-    desc: 'M12612 K11 NTR P=2 肛门·陥落済（:12638+:12640+:12642+:12644）拆回多条（#623）',
+    desc: 'M12612 K11 NTR P=2 肛门·陥落済拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `${target_name}被` +\n          (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `撑开肛门，径直插了进去。在狂王的持续侵犯下，${target_name}不住地呻吟了起来。`,\n      );',
     replace:
@@ -21449,7 +21448,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=2',
   },
   {
-    desc: 'M12613 K11 NTR P=2 肛门·それ以外（:12655+:12657+:12659+:12661）拆回多条（#623）',
+    desc: 'M12613 K11 NTR P=2 肛门·それ以外拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `${target_name}的肛门被` +\n          (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `撑开了肛门，插了进去。`,\n      );',
     replace:
@@ -21464,7 +21463,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=2',
   },
   {
-    desc: 'M12614 K11 NTR P=4 V プレイ·陥落済（:12683+:12685+:12687）拆回多条（#623）',
+    desc: 'M12614 K11 NTR P=4 V プレイ·陥落済拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `持续地侵犯着${target_name}的蜜穴，${target_name}感受着交媾的快感，发出了甘甜的娇喘。`,\n      );',
     replace:
@@ -21480,7 +21479,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=4',
   },
   {
-    desc: 'M12615 K11 NTR P=4 V プレイ·それ以外（:12700+:12702+:12704）拆回多条（#623）',
+    desc: 'M12615 K11 NTR P=4 V プレイ·それ以外拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `持续地侵犯着${target_name}的蜜穴，${target_name}不住地呻吟着。`,\n      );',
     replace:
@@ -21496,10 +21495,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=4',
   },
 
-  // —— #623：C 组（K9 黑方片 19 处）「原作同一行被拆」的合并点，各配一条
+  // —— #623：C 组（K9 黑方片 19 处）「同一行输出被拆」的合并点，各配一条
   // 「拆回多条」变异（整行断言见 test/kojo-k9-diamond.test.js 的 #623 段）——
   {
-    desc: 'M12616 K9 口塞初回·爱慕首段（:4146+:4148）拆回两条（#623：前缀又占一行）',
+    desc: 'M12616 K9 口塞初回·爱慕首段拆回两条（#623：前缀又占一行）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n      } else {',
     replace:
@@ -21508,7 +21507,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞初回',
   },
   {
-    desc: 'M12617 K9 口塞初回·それ以外首段（:4155+:4157）拆回两条（#623）',
+    desc: 'M12617 K9 口塞初回·それ以外首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `左右甩起了脑袋………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n      }',
     replace:
@@ -21517,7 +21516,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞初回',
   },
   {
-    desc: 'M12618 K9 口塞二回目·淫乱受虐狂Lv5 首段（:4169+:4171）拆回两条（#623）',
+    desc: 'M12618 K9 口塞二回目·淫乱受虐狂Lv5 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 9（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21526,7 +21525,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12619 K9 口塞二回目·淫乱受虐狂Lv3 首段（:4179+:4181）拆回两条（#623）',
+    desc: 'M12619 K9 口塞二回目·淫乱受虐狂Lv3 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 8（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21535,7 +21534,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12620 K9 口塞二回目·爱慕受虐狂Lv5 首段（:4194+:4196）拆回两条（#623）',
+    desc: 'M12620 K9 口塞二回目·爱慕受虐狂Lv5 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子……………`);',
     replace:
@@ -21545,7 +21544,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12621 K9 口塞二回目·爱慕受虐狂Lv3 首段（:4204+:4206）拆回两条（#623）',
+    desc: 'M12621 K9 口塞二回目·爱慕受虐狂Lv3 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 5（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21554,7 +21553,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12622 K9 口塞二回目·爱慕首段（:4214+:4216）拆回两条（#623）',
+    desc: 'M12622 K9 口塞二回目·爱慕首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 4（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21563,7 +21562,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12623 K9 口塞二回目·受虐狂Lv3 首段（:4224+:4226）拆回两条（#623）',
+    desc: 'M12623 K9 口塞二回目·受虐狂Lv3 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子…………`);',
     replace:
@@ -21573,7 +21572,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12624 K9 口塞二回目·それ以外首段（:4234+:4236）拆回两条（#623）',
+    desc: 'M12624 K9 口塞二回目·それ以外首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `左右甩起了脑袋………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 2（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21582,7 +21581,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12625 K9 交谈录像·自我介绍整行（:4424+:4426+:4427）拆回多条（#623）',
+    desc: 'M12625 K9 交谈录像·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "          // 是 SIF 的插入段，末行 PRINTFORML 才收行（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation_talk ? '还有手淫时妄想的内容' : '') +\n              `十分兴奋地说了出来……`,\n          );",
     replace:
@@ -21591,7 +21590,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈录像',
   },
   {
-    desc: 'M12626 K9 交谈初回·首支（:4442）拆回两条（#623）',
+    desc: 'M12626 K9 交谈初回·首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '        const line_head = `${player_name}向她`;\n        if (spoke_first) {\n          await era.print(\n            line_head +\n              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n          );',
     replace:
@@ -21600,25 +21599,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12627 K9 交谈初回·第三支插入段整行（:4446+:4448+:4450+:4452）拆回多条（#623）',
+    desc: 'M12627 K9 交谈初回·第三支插入段整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: "          // （:4440-4451 是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            line_head +\n              `搭话后、${target_name}就发出了` +\n              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n              `娇喘声，拼命地回起话来了。`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 链，\n          // 是两个互斥插入段，末行 PRINTFORML 收行\n          // （这两段是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            line_head +\n              `搭话后、${target_name}就发出了` +\n              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n              `娇喘声，拼命地回起话来了。`,\n          );",
     replace:
-      "          // （:4440-4451 是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}就发出了`); // 变异：拆回\n          if (excited) {\n            await era.print('快乐的'); // 变异：拆回\n          } else if (painful) {\n            await era.print('苦痛的'); // 变异：拆回\n          }\n          await era.print(`娇喘声，拼命地回起话来了。`); // 变异：拆回",
+      "          // 同一行输出：无后缀 PRINTFORM 链，\n          // 是两个互斥插入段，末行 PRINTFORML 收行\n          // （这两段是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}就发出了`); // 变异：拆回\n          if (excited) {\n            await era.print('快乐的'); // 变异：拆回\n          } else if (painful) {\n            await era.print('苦痛的'); // 变异：拆回\n          }\n          await era.print(`娇喘声，拼命地回起话来了。`); // 变异：拆回",
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12628 K9 交谈二回目·自我介绍整行（:4475+:4477+:4478）拆回多条（#623）',
+    desc: 'M12628 K9 交谈二回目·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: "          // 与初回 :4424+:4426+:4427 同型（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation_talk ? '还有手淫时妄想的内容' : '') +\n              `十分兴奋地说了出来……`,\n          );",
+    find: "          // 与初回同型（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation_talk ? '还有手淫时妄想的内容' : '') +\n              `十分兴奋地说了出来……`,\n          );",
     replace:
-      "          // 与初回 :4424+:4426+:4427 同型（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(`${target_name}将自己的本名、接下来要进行的性体验`); // 变异：拆回\n          if (masturbation_talk) {\n            await era.print('还有手淫时妄想的内容'); // 变异：拆回\n          }\n          await era.print(`十分兴奋地说了出来……`); // 变异：拆回",
+      "          // 与初回同型（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(`${target_name}将自己的本名、接下来要进行的性体验`); // 变异：拆回\n          if (masturbation_talk) {\n            await era.print('还有手淫时妄想的内容'); // 变异：拆回\n          }\n          await era.print(`十分兴奋地说了出来……`); // 变异：拆回",
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 交谈录像',
   },
   {
-    desc: 'M12629 K9 交谈二回目·首支（:4493）拆回两条（#623）',
+    desc: 'M12629 K9 交谈二回目·首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '        const line_head = `${master_name}向她`;\n        if (spoke_first) {\n          await era.print(\n            line_head +\n              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n          );',
     replace:
@@ -21627,16 +21626,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12630 K9 交谈二回目·第三支插入段整行（:4497+:4499+:4501+:4503）拆回多条（#623）',
+    desc: 'M12630 K9 交谈二回目·第三支插入段整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: "          // （:4491-4502 是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            line_head +\n              `搭话后、${target_name}就发出了` +\n              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n              `娇喘声，拼命地回起话来了。`,\n          );",
+    find: "          // 与初回同型\n          // （这几段是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            line_head +\n              `搭话后、${target_name}就发出了` +\n              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n              `娇喘声，拼命地回起话来了。`,\n          );",
     replace:
-      "          // （:4491-4502 是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}就发出了`); // 变异：拆回\n          if (excited) {\n            await era.print('快乐的'); // 变异：拆回\n          } else if (painful) {\n            await era.print('苦痛的'); // 变异：拆回\n          }\n          await era.print(`娇喘声，拼命地回起话来了。`); // 变异：拆回",
+      "          // 与初回同型\n          // （这几段是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}就发出了`); // 变异：拆回\n          if (excited) {\n            await era.print('快乐的'); // 变异：拆回\n          } else if (painful) {\n            await era.print('苦痛的'); // 变异：拆回\n          }\n          await era.print(`娇喘声，拼命地回起话来了。`); // 变异：拆回",
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12631 K9 死斗场·口交器具名整行（:7085+:7087+:7089+:7090）拆回多条（#623）',
+    desc: 'M12631 K9 死斗场·口交器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "      await era.printAndWait(\n        `${assi_name}看着${target_name}舔着` +\n          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n          `露出了十分愉悦的表情……`,\n      );",
     replace:
@@ -21651,7 +21650,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场',
   },
   {
-    desc: 'M12632 K9 死斗场·背后位器具名整行（:7119+:7121+:7123+:7124）拆回多条（#623）',
+    desc: 'M12632 K9 死斗场·背后位器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "      await era.printAndWait(\n        `${assi_name}听着${target_name}的悲鸣继续用` +\n          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n          `来毫不留情地蹂蹑的${target_name}的小穴。`,\n      );",
     replace:
@@ -21666,7 +21665,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场',
   },
   {
-    desc: 'M12633 K9 死斗场·背后位肛门器具名整行（:7144+:7146+:7148+:7149）拆回多条（#623）',
+    desc: 'M12633 K9 死斗场·背后位肛门器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n          `毫不留情地继续蹂蹑${target_name}的屁眼。`,\n      );",
     replace:
@@ -21681,7 +21680,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场',
   },
   {
-    desc: 'M12634 K9 奖赏请求·野兽名整行（:7414+:7416+:7418+:7420+:7422）拆回多条（#623）',
+    desc: 'M12634 K9 奖赏请求·野兽名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '    await era.printAndWait(\n      `「呐~魔王大人、我想和` +\n        beast +\n        `交尾试一试呢~、能不能事先帮我准备好呢~？」`,\n    );',
     replace:
@@ -21692,10 +21691,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 奖赏请求',
   },
 
-  // —— #623：C 组（K3 温妮 17 处）「原作同一行被拆」的合并点，各配一条
+  // —— #623：C 组（K3 温妮 17 处）「同一行输出被拆」的合并点，各配一条
   // 「拆回多条」变异（整行断言见 test/kojo-k3-noble.test.js 的 #623 段）——
   {
-    desc: 'M12635 K3 强制排泄·出身首支整行（:4569+:4571+:4573+:4575+:4577）拆回多条（#623）',
+    desc: 'M12635 K3 强制排泄·出身首支整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '          await era.printAndWait(\n            (former_life === 5\n              ? `「从娼妇`\n              : former_life === 7\n                ? `「从乞丐`\n                : former_life === 9\n                  ? `「从贫民`\n                  : `「从奴隶`) + `成为了勇者，就能摆脱以前的生活…才对的啊…」`,\n          );',
     replace:
@@ -21710,7 +21709,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·出身两支的整行',
   },
   {
-    desc: 'M12636 K3 强制排泄·出身二支整行（:4589+:4591+:4593+:4595+:4597+:4599）拆回多条（#623）',
+    desc: 'M12636 K3 强制排泄·出身二支整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          await era.printAndWait(\n            `「不、不要啊！${'\\u3000'}这这这、这样子的、比` +\n              origin_word +\n              `还不如的待遇！！」`,\n          );",
     replace:
@@ -21721,7 +21720,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·出身两支的整行',
   },
   {
-    desc: 'M12637 K3 强制排泄·最深部遭遇整行（:4653+:4655+:4657+:4659+:4661）拆回多条（#623）',
+    desc: 'M12637 K3 强制排泄·最深部遭遇整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "                await era.printAndWait(\n                  `「…哈、啊哈${black_heart(1)}${'\\u3000'}一想到${sc()}拉出来的东西、要是让探索中的勇者` +\n                    (rand_n(3) === 0\n                      ? `找到`\n                      : rand_n(2) === 0\n                        ? `一不小心捡到`\n                        : `无意中踩到`) +\n                    `了的话…吼吼噢噢噢噢${black_heart(1)}」`,\n                );",
     replace:
@@ -21732,7 +21731,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·最深部遭遇三档整行',
   },
   {
-    desc: 'M12638 K3 强制排泄·两穴支首段（:4777）拆回两条（#623：前缀又占一行）',
+    desc: 'M12638 K3 强制排泄·两穴支首段拆回两条（#623：前缀又占一行）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '            await era.printAndWait(line_head + `着……竟然…」`);',
     replace:
@@ -21742,7 +21741,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12639 K3 强制排泄·屈辱支首段（:4812）拆回两条（#623）',
+    desc: 'M12639 K3 强制排泄·屈辱支首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '              await era.printAndWait(\n                line_head + `又要…出来了、出…快停下来啊……！！」`,\n              );',
     replace:
@@ -21752,7 +21751,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12640 K3 交谈·搭话首支（:5026+:5028）拆回两条（#623：锚里的前缀行又独立打印）',
+    desc: 'M12640 K3 交谈·搭话首支拆回两条（#623：基准里的前缀行又独立打印）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '          // ——#623 按各支的末行各记各的，其余支仍是各自的行）\n          era.print(\n            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,\n          );',
     replace:
@@ -21761,16 +21760,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈·搭话首支整行',
   },
   {
-    desc: 'M12641 K3 交谈二回目·搭话首支（:5098+:5100）拆回两条（#623）',
+    desc: 'M12641 K3 交谈二回目·搭话首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: '          // 与 :5026+:5028 同型（二回目，锚漏了 :5098，#623）\n          era.print(\n            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,\n          );',
+    find: '          // 与上一段同型（二回目，基准漏了一段，#623）\n          era.print(\n            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,\n          );',
     replace:
-      '          // 与 :5026+:5028 同型（二回目，锚漏了 :5098，#623）\n          era.print(`${player_name}`); // 变异：拆回\n          era.print(`向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`); // 变异：拆回',
+      '          // 与上一段同型（二回目，基准漏了一段，#623）\n          era.print(`${player_name}`); // 变异：拆回\n          era.print(`向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 交谈·搭话首支整行',
   },
   {
-    desc: 'M12642 K3 兽奸接吻·舌头缠绕整行（:6031+:6033+:6035+:6037）拆回多条（#623）',
+    desc: 'M12642 K3 兽奸接吻·舌头缠绕整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '        await era.printAndWait(\n          `${target_name}` +\n            (rand_n(2) === 0 ? `一脸陶醉的表情` : `专心地`) +\n            `和野狗用舌头缠绕在一起了。`,\n        );',
     replace:
@@ -21781,43 +21780,43 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 兽奸接吻·舌头缠绕整行',
   },
   {
-    desc: 'M12643 K3 兽奸录像·孩子称呼整行（:6717..:6751）拆回两条（#623）',
+    desc: 'M12643 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: '            await era.printAndWait(`「这是你的……新爸爸哦♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +',
+    find: '            await era.printAndWait(`「这是你的……新爸爸哦♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +',
     replace:
       '            await era.printAndWait(`「这是你的……新爸爸哦♪」`);\n          }\n\n          if (local_9 > 0) {\n            await era.print(`「${sc()}是有`); // 变异：拆回（前缀又占一行）\n            await era.printAndWait(\n              `` +',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12644 K3 兽奸录像·孩子称呼整行（:6796..:6830）拆回两条（#623）',
+    desc: 'M12644 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈服从于狗了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +",
+    find: "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈服从于狗了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +",
     replace:
       "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈服从于狗了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            await era.print(`「${sc()}是有`); // 变异：拆回（前缀又占一行）\n            await era.printAndWait(\n              `` +",
     tests: ['kojo-k3-noble'],
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12645 K3 兽奸录像·孩子称呼整行（:6900..:6934）拆回两条（#623）',
+    desc: 'M12645 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: '            );\n          }\n\n          if (local_9 > 0) {\n            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +',
+    find: '            );\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +',
     replace:
       '            );\n          }\n\n          if (local_9 > 0) {\n            await era.print(`「${sc()}是有`); // 变异：拆回（前缀又占一行）\n            await era.printAndWait(\n              `` +',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12646 K3 兽奸录像·孩子称呼整行（:6982..:7016）拆回两条（#623）',
+    desc: 'M12646 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈对狗发情了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +",
+    find: "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈对狗发情了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +",
     replace:
       "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈对狗发情了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            await era.print(`「${sc()}是有`); // 变异：拆回（前缀又占一行）\n            await era.printAndWait(\n              `` +",
     tests: ['kojo-k3-noble'],
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12647 K3 排卵·両穴整行（:7383+:7385+:7387+:7389）拆回多条（#623）',
+    desc: 'M12647 K3 排卵·両穴整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '        await era.printAndWait(\n          `「啊啊~…我的` +\n            (both_holes ? `两个小穴` : `小穴还有屁股`) +\n            `都要生出来、要生出来了啊~……啊啊~！！」`,\n        );',
     replace:
@@ -21828,7 +21827,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 排卵·両穴整行',
   },
   {
-    desc: 'M12648 K3 死斗场·口交器具名整行（:8492+:8494+:8496+:8497）拆回多条（#623）',
+    desc: 'M12648 K3 死斗场·口交器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      await era.printAndWait(\n        `${assi_name}用` +\n          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n          `让${target_name}吸着，露出了愉悦的表情……`,\n      );",
     replace:
@@ -21843,7 +21842,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场·助手器具名整行',
   },
   {
-    desc: 'M12649 K3 死斗场·背后位器具名整行（:8525+:8527+:8529+:8530）拆回多条（#623）',
+    desc: 'M12649 K3 死斗场·背后位器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n          `将${target_name}的小穴毫不留情地侵犯着……`,\n      );",
     replace:
@@ -21858,7 +21857,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场·助手器具名整行',
   },
   {
-    desc: 'M12650 K3 死斗场·背后位肛门器具名整行（:8549+:8551+:8553+:8554）拆回多条（#623）',
+    desc: 'M12650 K3 死斗场·背后位肛门器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n          `将${target_name}的肛穴毫不留情地侵犯着……`,\n      );",
     replace:
@@ -21873,7 +21872,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场·助手器具名整行',
   },
   {
-    desc: 'M12651 K3 奖赏请求·野兽名整行（:8803+:8805+:8807+:8809+:8811）拆回多条（#623）',
+    desc: 'M12651 K3 奖赏请求·野兽名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '    await era.printAndWait(\n      `「${self_call(a)}…这场战斗完后想要跟…` +\n        beast +\n        `交配想得受不了了~…！」`,\n    );',
     replace:
@@ -21889,7 +21888,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 拼前缀（M12652-M12659：每族一条拆回，覆盖非首支；整行断言见三份测试的同名
   // 用例）；M12660 钉住 :4810 前缀行尾全角空格（审查建议 11） ——
   {
-    desc: 'M12652 K11 初回交谈·助手玛奥第二支（:6870）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12652 K11 初回交谈·助手玛奥第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head +\n                `边侵犯边用语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );',
     replace:
@@ -21901,16 +21900,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12653 K11 初回交谈·非助手第二支（:6898）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12653 K11 初回交谈·非助手第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 原作是一整行：无后缀 PRINTFORM 链，",
+    find: "            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 同一行输出：无后缀 PRINTFORM 链，\n            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）",
     replace:
-      "            await era.print(line_head); // 变异：拆回\n            await era.print(\n              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            ); // 变异：拆回\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 原作是一整行：无后缀 PRINTFORM 链，",
+      "            await era.print(line_head); // 变异：拆回\n            await era.print(\n              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            ); // 变异：拆回\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 同一行输出：无后缀 PRINTFORM 链，\n            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）",
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12654 K11 二回目交谈·助手玛奥第二支（:6957）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12654 K11 二回目交谈·助手玛奥第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head +\n                `的语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );',
     replace:
@@ -21922,34 +21921,34 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12655 K11 二回目交谈·非助手第二支（:6985）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12655 K11 二回目交谈·非助手第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 原作是一整行（与 :6960.. 同型，",
+    find: "            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 同一行输出（与上面互斥插入段同型，#623）",
     replace:
-      "            await era.print(line_head); // 变异：拆回\n            await era.print(\n              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            ); // 变异：拆回\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 原作是一整行（与 :6960.. 同型，",
+      "            await era.print(line_head); // 变异：拆回\n            await era.print(\n              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            ); // 变异：拆回\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 同一行输出（与上面互斥插入段同型，#623）",
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12656 K9 交谈初回·第二支（:4444）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12656 K9 交谈初回·第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.print(\n            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n          );\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 原作是一整行：无后缀 PRINTFORM 链，',
+    find: '          await era.print(\n            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n          );\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 同一行输出：无后缀 PRINTFORM 链，\n          // 是两个互斥插入段，末行 PRINTFORML 收行\n          // （这两段是这个 ELSEIF 支的收尾，#623）',
     replace:
-      '          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // 变异：拆回\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 原作是一整行：无后缀 PRINTFORM 链，',
+      '          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // 变异：拆回\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 同一行输出：无后缀 PRINTFORM 链，\n          // 是两个互斥插入段，末行 PRINTFORML 收行\n          // （这两段是这个 ELSEIF 支的收尾，#623）',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12657 K9 交谈二回目·第二支（:4495）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12657 K9 交谈二回目·第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.print(\n            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n          );\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 与初回 :4446+:4448+:4450+:4452 同型',
+    find: '          await era.print(\n            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n          );\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 与初回同型\n          // （这几段是这个 ELSEIF 支的收尾，#623）',
     replace:
-      '          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // 变异：拆回\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 与初回 :4446+:4448+:4450+:4452 同型',
+      '          await era.print(line_head); // 变异：拆回\n          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // 变异：拆回\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 与初回同型\n          // （这几段是这个 ELSEIF 支的收尾，#623）',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12658 K3 强制排泄·两穴支 ELSEIF（:4779）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12658 K3 强制排泄·两穴支 ELSEIF拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '            await era.printAndWait(line_head + `着……唔！」`);',
     replace:
@@ -21959,7 +21958,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12659 K3 强制排泄·屈辱支 ELSEIF（:4814）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12659 K3 强制排泄·屈辱支 ELSEIF拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "              await era.printAndWait(\n                line_head +\n                  `请、请怜悯下…！${'\\u3000'}啊？${'\\u3000'}啊啊、不要啊啊……」`,\n              );",
     replace:
@@ -21969,7 +21968,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12660 K3 强制排泄·屈辱支前缀丢行尾全角空格（:4810，审查建议 11）',
+    desc: 'M12660 K3 强制排泄·屈辱支前缀丢行尾全角空格（审查建议 11）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "            const line_head = `「原、原谅我…啊啊啊啊！！${'\\u3000'}`;",
     replace:
@@ -21983,25 +21982,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 没人发现；这八处各配一条「丢前缀」变异，整行断言见 test/kojo-k11-lily.test.js
   // 两条「五支各自并入前缀整行」用例 ——
   {
-    desc: 'M12661 K11 初回交谈·助手玛奥第五支（:6885）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12661 K11 初回交谈·助手玛奥第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '            await era.print(\n              line_head + `的语言调戏、${target_name}小声地回答着`,\n            );\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面 :6865+:6867 同型：六支的 PRINTFORML 各自收行，',
+    find: '            await era.print(\n              line_head + `的语言调戏、${target_name}小声地回答着`,\n            );\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
-      '            await era.print(`的语言调戏、${target_name}小声地回答着`); // 变异：丢前缀\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面 :6865+:6867 同型：六支的 PRINTFORML 各自收行，',
+      '            await era.print(`的语言调戏、${target_name}小声地回答着`); // 变异：丢前缀\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12662 K11 初回交谈·助手玛奥第六支（:6888）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12662 K11 初回交谈·助手玛奥第六支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面 :6865+:6867 同型：六支的 PRINTFORML 各自收行，',
+    find: '            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
-      '            await era.print(\n              `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            ); // 变异：丢前缀\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面 :6865+:6867 同型：六支的 PRINTFORML 各自收行，',
+      '            await era.print(\n              `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            ); // 变异：丢前缀\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12663 K11 初回交谈·非助手第五支（:6913）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12663 K11 初回交谈·非助手第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}结结巴巴地回答着`,\n            );\n            await era.printAndWait(`「应，应该回答什么…？」`);\n          } else {\n            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      // CFLAG:357  = 1（变量语义：CFLAG 族，357）',
     replace:
@@ -22010,7 +22009,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12664 K11 初回交谈·非助手第六支（:6916）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12664 K11 初回交谈·非助手第六支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      // CFLAG:357  = 1（变量语义：CFLAG 族，357）',
     replace:
@@ -22019,25 +22018,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12665 K11 二回目交谈·助手玛奥第五支（:6972）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12665 K11 二回目交谈·助手玛奥第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '            await era.print(\n              line_head + `的语言调戏、${target_name}小声地回答着`,\n            );\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与 :6952+:6954 同型：六支的 PRINTFORML 各自收行，',
+    find: '            await era.print(\n              line_head + `的语言调戏、${target_name}小声地回答着`,\n            );\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与初回同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
-      '            await era.print(`的语言调戏、${target_name}小声地回答着`); // 变异：丢前缀\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与 :6952+:6954 同型：六支的 PRINTFORML 各自收行，',
+      '            await era.print(`的语言调戏、${target_name}小声地回答着`); // 变异：丢前缀\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与初回同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12666 K11 二回目交谈·助手玛奥第六支（:6975）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12666 K11 二回目交谈·助手玛奥第六支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与 :6952+:6954 同型：六支的 PRINTFORML 各自收行，',
+    find: '            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与初回同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
-      '            await era.print(\n              `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            ); // 变异：丢前缀\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与 :6952+:6954 同型：六支的 PRINTFORML 各自收行，',
+      '            await era.print(\n              `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            ); // 变异：丢前缀\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与初回同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12667 K11 二回目交谈·非助手第五支（:7000）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12667 K11 二回目交谈·非助手第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}结结巴巴地回答着`,\n            );\n            await era.printAndWait(`「应，应该回答什么…？」`);\n          } else {\n            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      return 0;',
     replace:
@@ -22046,7 +22045,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12668 K11 二回目交谈·非助手第六支（:7003）丢前缀（#623 第 2 轮返工，验收抽样同处）',
+    desc: 'M12668 K11 二回目交谈·非助手第六支丢前缀（#623 第 2 轮返工，验收抽样同处）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      return 0;',
     replace:
@@ -22055,10 +22054,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
 
-  // —— #624：口上剩余拆行第 D 组（迷宫四文件与 k0，59 组「原作同一行被拆」）——
+  // —— #624：口上剩余拆行第 D 组（迷宫四文件与 k0，59 组「同一行输出被拆」）——
   // 每处合并后的整行断言见对应测试文件；条目按工单给的 M12700 起编号。
   {
-    desc: 'M12700 女版卖春·LOG_BITCH_HAND 整行（:386..:403）拆回多条（#624：名字与收行又各占一行）',
+    desc: 'M12700 女版卖春·LOG_BITCH_HAND 整行拆回多条（#624：名字与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22073,7 +22072,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_HAND 整行',
   },
   {
-    desc: 'M12701 女版卖春·LOG_BITCH_ORAL 整行（:559..:574）拆回多条（#624）',
+    desc: 'M12701 女版卖春·LOG_BITCH_ORAL 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22088,7 +22087,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_ORAL 整行',
   },
   {
-    desc: 'M12702 女版卖春·LOG_BITCH_LES 整行（:729..:744）拆回多条（#624）',
+    desc: 'M12702 女版卖春·LOG_BITCH_LES 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22103,7 +22102,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_LES 整行',
   },
   {
-    desc: 'M12703 女版卖春·LOG_BITCH_ANAL 整行（:943..:960）拆回多条（#624）',
+    desc: 'M12703 女版卖春·LOG_BITCH_ANAL 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22118,7 +22117,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_ANAL 整行',
   },
   {
-    desc: 'M12704 女版卖春·LOG_BITCH_SEX 整行（:1182..:1207）拆回多条（#624）',
+    desc: 'M12704 女版卖春·LOG_BITCH_SEX 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22133,7 +22132,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_SEX 整行',
   },
   {
-    desc: 'M12705 男版迷宫凌辱·兽人口交整行（:22..:31）拆回多条（#624：无头骑士前缀与名字又各占一行）',
+    desc: 'M12705 男版迷宫凌辱·兽人口交整行拆回多条（#624：无头骑士前缀与名字又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22148,7 +22147,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '无头骑士前缀',
   },
   {
-    desc: 'M12706 男版迷宫凌辱·兽人口交整行（:81..:105）拆回多条（#624：名字与收行又各占一行）',
+    desc: 'M12706 男版迷宫凌辱·兽人口交整行拆回多条（#624：名字与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "          `${arg_name}把` +\n          penis +\n          '含了下去，『呃……这家伙，简直就是经验丰富的娼妓嘛～』',\n      );",
     replace:
@@ -22161,7 +22160,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TALENT:52 支',
   },
   {
-    desc: 'M12707 男版迷宫凌辱·兽人口交收行（:112..:127）拆回两条（#624：收行文本又占一行）',
+    desc: 'M12707 男版迷宫凌辱·兽人口交收行拆回两条（#624：收行文本又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "                    ? '拼命地用舌头奉仕着，'\n                    : '') +\n          '奉仕持续了下去……',\n      );",
     replace:
@@ -22173,7 +22172,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前半段与后半段合成一条',
   },
   {
-    desc: 'M12708 男版迷宫凌辱·全穴奉仕整行（:152..:175）拆回多条（#624：随机词条又占一行）',
+    desc: 'M12708 男版迷宫凌辱·全穴奉仕整行拆回多条（#624：随机词条又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.print(\n' +
@@ -22189,7 +22188,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人的阴茎插进了',
   },
   {
-    desc: 'M12709 男版迷宫凌辱·润滑液整行（:198..:216）拆回多条（#624）',
+    desc: 'M12709 男版迷宫凌辱·润滑液整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.print(\n' +
@@ -22202,7 +22201,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人们把润滑液涂在了',
   },
   {
-    desc: 'M12710 男版迷宫凌辱·体型分档整行（:217..:242）拆回多条（#624）',
+    desc: 'M12710 男版迷宫凌辱·体型分档整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: '    await era.print(\n' + '      `在${arg_name}的` +\n',
     replace:
@@ -22213,7 +22212,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「在冒险者的',
   },
   {
-    desc: 'M12711 男版迷宫凌辱·屈辱プレイ整行（:268..:287）拆回多条（#624）',
+    desc: 'M12711 男版迷宫凌辱·屈辱プレイ整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22226,7 +22225,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「冒险者全裸地四肢着地趴在地下',
   },
   {
-    desc: 'M12712 女版迷宫凌辱·主框架空行（:16+:19）拆回两条（#624：立绘分支的空 PRINT 又占一行）',
+    desc: 'M12712 女版迷宫凌辱·主框架空行拆回两条（#624：立绘分支的空 PRINT 又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "  // PRINTL 同属一行——合起来仍是空行。\n  await era.print(''); // PRINTL",
     replace:
@@ -22235,7 +22234,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '合成一条空行',
   },
   {
-    desc: 'M12713 女版兽人凌辱·单只整行（:302..:328）拆回多条（#624）',
+    desc: 'M12713 女版兽人凌辱·单只整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '    await era.print(\n' + "      '四肢着地趴在地上，' +\n",
     replace:
@@ -22246,7 +22245,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「四肢着地趴在地上',
   },
   {
-    desc: 'M12714 女版兽人凌辱·「脸上」与恥じらい分档（:330+:335）拆回两条（#624）',
+    desc: 'M12714 女版兽人凌辱·「脸上」与恥じらい分档拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '      await era.print(`脸上流露着沉浸在了羞耻与情欲之中的神色……`);',
     replace:
@@ -22256,7 +22255,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '两行前缀与描写合成一整行',
   },
   {
-    desc: 'M12715 女版兽人凌辱·口交整行（:410..:419）拆回多条（#624）',
+    desc: 'M12715 女版兽人凌辱·口交整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22269,7 +22268,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「无头骑士的冒险者身体被固定住了',
   },
   {
-    desc: 'M12716 女版兽人凌辱·素直耻情行（:470+:471）拆回两条（#624）',
+    desc: 'M12716 女版兽人凌辱·素直耻情行拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '          `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
     replace:
@@ -22280,7 +22279,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '耻情点数显示与前置描写合成整行',
   },
   {
-    desc: 'M12717 女版兽人凌辱·口交整行（:475..:502）拆回多条（#624：名字与收行又各占一行）',
+    desc: 'M12717 女版兽人凌辱·口交整行拆回多条（#624：名字与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "          `${arg_name}把` +\n          cock +\n          '含了下去，『呃……这家伙，简直就是经验丰富的妓女嘛～』',\n      );",
     replace:
@@ -22293,7 +22292,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TALENT:52 支',
   },
   {
-    desc: 'M12718 女版兽人凌辱·口交收行（:509..:524）拆回两条（#624）',
+    desc: 'M12718 女版兽人凌辱·口交收行拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "                    ? '拼命地用舌头奉仕着，'\n                    : '') +\n          '奉仕持续了下去……',\n      );",
     replace:
@@ -22305,7 +22304,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前半段与后半段合成一条',
   },
   {
-    desc: 'M12719 女版兽人凌辱·全穴奉仕整行（:549..:572）拆回多条（#624）',
+    desc: 'M12719 女版兽人凌辱·全穴奉仕整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '    await era.print(\n' + "      '兽人的' +\n" + '        cock +\n',
     replace:
@@ -22316,7 +22315,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人的阴茎插进了',
   },
   {
-    desc: 'M12720 女版兽人凌辱·润滑液整行（:595..:613）拆回多条（#624）',
+    desc: 'M12720 女版兽人凌辱·润滑液整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.print(\n' +
@@ -22329,7 +22328,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人们把润滑液涂在了',
   },
   {
-    desc: 'M12721 女版兽人凌辱·体型分档整行（:614..:639）拆回多条（#624）',
+    desc: 'M12721 女版兽人凌辱·体型分档整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '    await era.print(\n' + '      `在${arg_name}的` +\n',
     replace:
@@ -22340,7 +22339,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「在冒险者的',
   },
   {
-    desc: 'M12722 女版兽人凌辱·屈辱プレイ整行（:668..:687）拆回多条（#624）',
+    desc: 'M12722 女版兽人凌辱·屈辱プレイ整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22353,7 +22352,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「冒险者全裸地四肢着地趴在地下',
   },
   {
-    desc: 'M12723 女版男人凌辱·肉便器整行（:1514..:1562）拆回多条（#624）',
+    desc: 'M12723 女版男人凌辱·肉便器整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22367,7 +22366,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「冒险者的身上，被写着',
   },
   {
-    desc: 'M12724 女魔族凌辱·一人支整行（:1692..:1706）拆回多条（#624）',
+    desc: 'M12724 女魔族凌辱·一人支整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22382,7 +22381,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「紫色的长舌头',
   },
   {
-    desc: 'M12725 女魔族凌辱·多人口交支整行（:1733..:1747）拆回多条（#624）',
+    desc: 'M12725 女魔族凌辱·多人口交支整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22397,7 +22396,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「紫色的长舌头',
   },
   {
-    desc: 'M12726 女魔族凌辱·喂奶支整行（:1805..:1819）拆回多条（#624）',
+    desc: 'M12726 女魔族凌辱·喂奶支整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22412,7 +22411,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「紫色的手',
   },
   {
-    desc: 'M12727 女魔族凌辱·处女封印整行（:1889..:1895）拆回多条（#624）',
+    desc: 'M12727 女魔族凌辱·处女封印整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '        await era.printAndWait(\n' +
@@ -22427,7 +22426,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '→ 整行「『这边的穴',
   },
   {
-    desc: 'M12728 对人格斗·巨型假阳具整行（:2517..:2523）拆回多条（#624）',
+    desc: 'M12728 对人格斗·巨型假阳具整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22441,7 +22440,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '巨型假阳具行是一整行',
   },
   {
-    desc: 'M12729 对人格斗·头发压脸收句（:2646..:2650）拆回两条（#624）',
+    desc: 'M12729 对人格斗·头发压脸收句拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "        await era.printAndWait((winner_has_cock ? '阴茎' : '私处') + '。');",
     replace:
@@ -22451,7 +22450,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '二选一与句号合成一行',
   },
   {
-    desc: 'M12730 对人格斗·捆绑鞭打行（:2674+:2676）拆回两条（#624）',
+    desc: 'M12730 对人格斗·捆绑鞭打行拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '          await era.printAndWait(\n            `向伏在地上的${loser_name}的背上用鞭子不停地抽打着、`,\n          );',
     replace:
@@ -22461,7 +22460,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'RAND:2 = 0 → 鞭打行是一整行',
   },
   {
-    desc: 'M12734 内职·副业行（:504+:511）拆回多条（#624：随机副业名又占一行）',
+    desc: 'M12734 内职·副业行拆回多条（#624：随机副业名又占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    await era.printAndWait(\n      `${name_of(arg)}从事了` + job + `副业${local}点收入。`,\n    );',
     replace:
@@ -22472,7 +22471,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '副业行',
   },
   {
-    desc: 'M12735 自慰·妄想行（:571..:637）拆回多条（#624）',
+    desc: 'M12735 自慰·妄想行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "  await era.printAndWait(\n    (branch === 1\n      ? '想象着跟女人的交合'\n      : branch === 2\n        ? '陷入了跟野兽交尾的幻想'\n        : dream) +\n      (has_cock ? '握住肉棒捋了起来' : '') +\n      `自慰了${play}次。`,\n  );",
     replace:
@@ -22490,9 +22489,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '分档文本与收行是一整行',
   },
   {
-    desc: 'M12736 K0 自慰二次·拍摄（:887..:893）拆回多条（#624）',
+    desc: 'M12736 K0 自慰二次·拍摄拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "        await era.printAndWait(\n          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格\n          `「看吧～${heart(1)}　噗咻噗咻勃起的` +\n            (has_penis ? '鸡鸡～' : '假鸡鸡～') +\n            `${heart(1)}」`,\n        );",
+    find: "        await era.printAndWait(\n          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格\n          `「看吧～${heart(1)}　噗咻噗咻勃起的` +\n            (has_penis ? '鸡鸡～' : '假鸡鸡～') +\n            `${heart(1)}」`,\n        );",
     replace:
       '        era.print(`「看吧～${heart(1)}　噗咻噗咻勃起的`); // 变异：拆回\n' +
       "        era.print(has_penis ? '鸡鸡～' : '假鸡鸡～'); // 变异：拆回\n" +
@@ -22501,9 +22500,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '「看吧～♡',
   },
   {
-    desc: 'M12737 K0 自慰二次·爱慕拍摄（:922..:928）拆回多条（#624）',
+    desc: 'M12737 K0 自慰二次·爱慕拍摄拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "        await era.printAndWait(\n          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格\n          '「看见了吗？～♪　噗咻噗咻勃起的' +\n            (has_penis ? '鸡鸡……' : '假鸡鸡') +\n            '♪」',\n        );",
+    find: "        await era.printAndWait(\n          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格\n          '「看见了吗？～♪　噗咻噗咻勃起的' +\n            (has_penis ? '鸡鸡……' : '假鸡鸡') +\n            '♪」',\n        );",
     replace:
       "        era.print('「看见了吗？～♪　噗咻噗咻勃起的'); // 变异：拆回\n" +
       "        era.print(has_penis ? '鸡鸡……' : '假鸡鸡'); // 变异：拆回\n" +
@@ -22512,7 +22511,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '「看见了吗？～♪',
   },
   {
-    desc: 'M12738 K0 灌肠·淫乱（:4433..:4445）拆回多条（#624）',
+    desc: 'M12738 K0 灌肠·淫乱拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "        await era.printAndWait(\n          (rand_n(2) === 0\n            ? '「呀…嗯啊、啊、啊啊！　'\n            : '「啊啊～！、不行、不、不要看、') +\n            (rand_n(2) === 0 ? '出来了、' : '出来、要出来了、') +\n            (rand_n(3) === 0 ? '全部' : '') +\n            `要排出来了啊${heart(3)}」`,\n        );",
     replace:
@@ -22524,7 +22523,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '「呀…嗯啊',
   },
   {
-    desc: 'M12739 K0 灌肠·壶虫（:4448..:4452）拆回多条（#624）',
+    desc: 'M12739 K0 灌肠·壶虫拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.printAndWait(\n            (rand_n(2) === 0\n              ? `以Ｍ字的状态大开双腿的${target_name}那秘所之中`\n              : `四肢着地的${target_name}那股间之中`) +\n              '极粗的蠕虫正在蠢动着、',\n          );",
     replace:
@@ -22538,7 +22537,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TEQUIP:11 壶虫支要说出蠕虫',
   },
   {
-    desc: 'M12740 K0 灌肠·内壁（:4460..:4466）拆回多条（#624）',
+    desc: 'M12740 K0 灌肠·内壁拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.printAndWait(\n            '那扩张开来无法闭合的' +\n              (rand_n(2) === 0 ? '肛门' : '肛穴') +\n              '之中，可以看清那内壁正在痉挛着……',\n          );",
     replace:
@@ -22549,7 +22548,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'EXP:53 >= 5 支的一整行',
   },
   {
-    desc: 'M12741 K0 交谈·按捺（:4674..:4682）拆回两条（#624）',
+    desc: 'M12741 K0 交谈·按捺拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (holding ? '快乐的' : hurting ? '痛苦的' : '自己的') +\n              `声音，一边回应着${player_name}。`,\n          );",
     replace:
@@ -22559,10 +22558,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `声音，一边回应着${player_name}。`,\n' +
       '          ); // 变异：拆回',
     tests: ['kojo-k0-tender'],
-    must_mention: ':4674..:4682 是一整行',
+    must_mention: '是一整行',
   },
   {
-    desc: 'M12742 K0 交谈二回目·按捺（:4733..:4741）拆回两条（#624）',
+    desc: 'M12742 K0 交谈二回目·按捺拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (holding_b ? '快乐的' : hurting_b ? '痛苦的' : '自己的') +\n              `声音，一边回应着${player_name}。`,\n          );",
     replace:
@@ -22572,10 +22571,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `声音，一边回应着${player_name}。`,\n' +
       '          ); // 变异：拆回',
     tests: ['kojo-k0-tender'],
-    must_mention: ':4733..:4741 是一整行',
+    must_mention: '是一整行',
   },
   {
-    desc: 'M12743 K0 助手口交（:7782..:7787）拆回多条（#624）',
+    desc: 'M12743 K0 助手口交拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "      await era.printAndWait(\n        `${assi_name}让` +\n          (assi_has_cock\n            ? '吞咽着肉棒的'\n            : assi_with_band\n              ? '吞咽着假阳具的'\n              : '') +\n          `${target_name}露出了愉悦的表情……`,\n      );",
     replace:
@@ -22592,7 +22591,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '→ 整行「玛奥让',
   },
   {
-    desc: 'M12744 K0 助手后背位（:7815..:7820）拆回多条（#624）',
+    desc: 'M12744 K0 助手后背位拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边` +\n          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n      );",
     replace:
@@ -22605,7 +22604,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '的阴道……',
   },
   {
-    desc: 'M12745 K0 助手后背位肛门（:7839..:7844）拆回多条（#624）',
+    desc: 'M12745 K0 助手后背位肛门拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边` +\n          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n          `毫不留情地持续蹂躙着${target_name}的肛门……`,\n      );",
     replace:
@@ -22618,7 +22617,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '的肛门……',
   },
   {
-    desc: 'M12746 女版兽人凌辱·「脸上」前缀的兄弟支（:339）拆回两条（#624：前缀又单独成行）',
+    desc: 'M12746 女版兽人凌辱·「脸上」前缀的兄弟支拆回两条（#624：前缀又单独成行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "        await era.print(face_front + '的神情为屈服的喜悦与口水所浸染……');",
     replace:
@@ -22628,7 +22627,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '→ 整行「脸上的神情为屈服的喜悦与口水所浸染……',
   },
   {
-    desc: 'M12747 女版卖春·客行前缀（:213+:217）拆回两条（#624：名字又单独成行）',
+    desc: 'M12747 女版卖春·客行前缀拆回两条（#624：名字又单独成行）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "        await era.print(\n          (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,\n        );",
     replace:
@@ -22638,7 +22637,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀并进「以 LOCALS 为对手」那条',
   },
   {
-    desc: 'M12748 女版卖春·街中客行前缀（:233+:237）拆回两条（#624）',
+    desc: 'M12748 女版卖春·街中客行前缀拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "          await era.print(\n            (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,\n          );",
     replace:
@@ -22648,7 +22647,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀并进 :237 那条',
   },
   {
-    desc: 'M12749 K0 奖励请求·动物名（:8133..:8141）拆回多条（#624）',
+    desc: 'M12749 K0 奖励请求·动物名拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "    await era.printAndWait(\n      `「要是${sc()}打倒勇者的话…` +\n        (request_kind === 1\n          ? '可以奖励我与犬'\n          : request_kind === 2\n            ? '可以奖励我与猪'\n            : '可以奖励我与马') +\n        '做爱吗…？」',\n    );",
     replace:
@@ -22661,30 +22660,30 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "            : '可以奖励我与马') +\n" +
       "        '做爱吗…？」'); // 变异：拆回",
     tests: ['kojo-k0-tender'],
-    must_mention: ':8133..:8141 是一整行',
+    must_mention: '是一整行',
   },
   {
-    desc: 'M12750 K0 灌肠肛塞脱着·观赏支（:4484）拆回两条（#624）',
+    desc: 'M12750 K0 灌肠肛塞脱着·观赏支拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '          await era.printAndWait(front_4475 + dump_mid + `请您好好地观赏……」`);',
     replace:
       '          era.print(front_4475 + dump_mid); // 变异：拆回\n' +
       '          await era.printAndWait(`请您好好地观赏……」`); // 变异：拆回',
     tests: ['kojo-k0-tender'],
-    must_mention: ':4484 合成一条',
+    must_mention: '合成一条',
   },
   {
-    desc: 'M12752 K0 灌肠肛塞脱着·疼爱支（:4486）拆回两条（#624）',
+    desc: 'M12752 K0 灌肠肛塞脱着·疼爱支拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '          await era.printAndWait(front_4475 + dump_mid + `请您好好地疼爱……」`);',
     replace:
       '          era.print(front_4475 + dump_mid); // 变异：拆回\n' +
       '          await era.printAndWait(`请您好好地疼爱……」`); // 变异：拆回',
     tests: ['kojo-k0-tender'],
-    must_mention: ':4486 合成一条',
+    must_mention: '合成一条',
   },
   {
-    desc: 'M12753 K0 助手后背位·肉棒/假阳具两档写反（:7815）换档（#624 验收返工：有阴茎时不得拼假阳具词）',
+    desc: 'M12753 K0 助手后背位·肉棒/假阳具两档写反换档（#624 验收返工：有阴茎时不得拼假阳具词）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n      );",
     replace:
@@ -22693,7 +22692,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '21：肉棒词',
   },
   {
-    desc: 'M12751 对人格斗·捆绑蜡烛支（:2674+:2679）拆回两条（#624：前缀常量改用单占一行）',
+    desc: 'M12751 对人格斗·捆绑蜡烛支拆回两条（#624：前缀常量改用单占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "          await era.printAndWait(back_2674 + '将点燃的蜡烛倾倒了上去');",
     replace:
@@ -22703,29 +22702,29 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与蜡烛收行合成一条',
   },
 
-  // —— #622：口上剩余拆行第 B 组（kojo-k8-spade.js 26 处「原作同一行被拆」的
+  // —— #622：口上剩余拆行第 B 组（kojo-k8-spade.js 26 处「同一行输出被拆」的
   // 合并点，各配一条「拆回多条」变异；每组一条，M12500-M12525。整行文本断言见
   // test/kojo-k8-spade.test.js 同名用例） ——
   {
-    desc: 'M12500 K8 爱慕+魔族化·调教前从魔族（:278+:279）拆回两条（#622：SIF 的「全裸的」又占一行）',
+    desc: 'M12500 K8 爱慕+魔族化·调教前从魔族拆回两条（#622：SIF 的「全裸的」又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: "        // 判据提到语句外当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
+    find: "        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里（保真锁按序核对台词片段）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
     replace:
-      '        // 判据提到语句外当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+      '        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里（保真锁按序核对台词片段）\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
     must_mention: '爱慕+魔族化（调教前从魔族',
   },
   {
-    desc: 'M12501 K8 爱慕+魔族化·调教后从魔族（:301+:302）拆回两条（#622）',
+    desc: 'M12501 K8 爱慕+魔族化·调教后从魔族拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: "        // 与 :278+:279 同型（#622）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
+    find: "        // 与上一段同型（#622）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
     replace:
-      '        // 与 :278+:279 同型（#622）\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+      '        // 与上一段同型（#622）\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
     must_mention: '爱慕+魔族化（调教后从魔族',
   },
   {
-    desc: 'M12502 K8 二回目·メイド服的内衣色（:671+:678）拆回三条（#622：PRINTDATA 的随机色又占一行）',
+    desc: 'M12502 K8 二回目·メイド服的内衣色拆回三条（#622：PRINTDATA 的随机色又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        await era.printAndWait(\n          `${target_name}把裙子卷了起来露出内衣。今日的内衣的颜色是` +\n            ['白', '赤', '黑', '青'][rand_n(4)] +\n            `的样子。`,\n        );",
     replace:
@@ -22733,20 +22732,20 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "        await era.print(['白', '赤', '黑', '青'][rand_n(4)]); // 变异：拆回\n" +
       '        await era.printAndWait(`的样子。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':671+:678 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12503 K8 口塞·淫乱＋受虐狂Lv5以上（:4383+:4385）拆回两条（#622）',
+    desc: 'M12503 K8 口塞·淫乱＋受虐狂Lv5以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}自己戴上了口枷` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );',
     replace:
       '        await era.print(`${target_name}自己戴上了口枷`); // 变异：拆回\n' +
       '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: '眼罩已戴：:4383+:4385 是一行',
+    must_mention: '眼罩已戴：同一行输出一条',
   },
   {
-    desc: 'M12504 K8 口塞·淫乱＋受虐狂Lv3以上（:4393+:4395）拆回两条（#622）',
+    desc: 'M12504 K8 口塞·淫乱＋受虐狂Lv3以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     replace:
@@ -22755,53 +22754,53 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
   {
-    desc: 'M12505 K8 口塞·淫乱（:4403+:4405）拆回两条（#622）',
+    desc: 'M12505 K8 口塞·淫乱拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被戴上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );',
     replace:
       '        await era.print(`${target_name}被戴上了口塞`); // 变异：拆回\n' +
       '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4403+:4405',
+    must_mention: '淫乱＋受虐狂っ気Lv5以上，眼罩已戴：同一行输出一条',
   },
   {
-    desc: 'M12506 K8 口塞·爱＋受虐狂Lv5以上（:4413+:4415）拆回两条（#622）',
+    desc: 'M12506 K8 口塞·爱＋受虐狂Lv5以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 6; // CFLAG:TARGET:346 = 6',
     replace:
-      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        // 与上两档"眼神快融化了………"不同，此处缺"了"字（源作误写，1:1 保真）',
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        // 与上两档"眼神快融化了………"不同，此处缺"了"字（误写按原样保留）',
     tests: ['kojo-k8-spade'],
     must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
   {
-    desc: 'M12507 K8 口塞·爱＋受虐狂Lv3以上（:4423+:4425）拆回两条（#622）',
+    desc: 'M12507 K8 口塞·爱＋受虐狂Lv3以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
     replace:
       '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4423+:4425',
+    must_mention: '口塞·開始時，二回目以降·爱＋受虐狂っ気Lv5以上',
   },
   {
-    desc: 'M12508 K8 口塞·爱慕（:4433+:4435）拆回两条（#622）',
+    desc: 'M12508 K8 口塞·爱慕拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `皱着眉看着${player_name}………`);',
     replace:
       '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `皱着眉看着${player_name}………`);',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4433+:4435',
+    must_mention: '受虐狂っ気Lv3以上，眼罩已戴：同一行输出',
   },
   {
-    desc: 'M12509 K8 口塞·受虐狂Lv3以上（:4443+:4445）拆回两条（#622）',
+    desc: 'M12509 K8 口塞·受虐狂Lv3以上（同一行输出）拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     replace:
       '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4443+:4445',
+    must_mention: '受虐狂っ気Lv3以上，眼罩已戴：同一行输出',
   },
   {
-    desc: 'M12510 K8 交谈·初めて·求爱档（:4649+:4651）拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
+    desc: 'M12510 K8 交谈·初めて·求爱档拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          await era.print(\n            `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n          );',
     replace:
@@ -22810,10 +22809,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '            `刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n' +
       '          ); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4649+:4651 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12511 K8 交谈·二回目·求爱档（:4700+:4702）拆回两条（#622）',
+    desc: 'M12511 K8 交谈·二回目·求爱档拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.print(\n          `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n        );',
     replace:
@@ -22822,10 +22821,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          `刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n' +
       '        ); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4700+:4702 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12512 K8 交谈·初めて·视频自我介绍（:4633+:4635+:4636）拆回三条（#622：SIF 段又占一行）',
+    desc: 'M12512 K8 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "          await era.print(\n            `${target_name}把自己的本名和至今为止的性经验` +\n              (masturbation ? `甚至自慰时妄想的内容都` : '') +\n              `微笑的娓娓道来……`,\n          );",
     replace:
@@ -22835,10 +22834,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`微笑的娓娓道来……`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4633+:4635+:4636 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12513 K8 交谈·二回目·视频自我介绍（:4684+:4686+:4687）拆回三条（#622）',
+    desc: 'M12513 K8 交谈·二回目·视频自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        await era.print(\n          `${target_name}把自己的本名和至今为止的性经验` +\n            (masturbation ? `、甚至自慰时妄想的内容都` : '') +\n            `一边微笑一边喋喋不休的讲着……`,\n        );",
     replace:
@@ -22848,10 +22847,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        }\n' +
       '        await era.print(`一边微笑一边喋喋不休的讲着……`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4684+:4686+:4687 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12514 K8 交谈·初めて·装备档（:4655+:4657+:4659+:4661）拆回多条（#622：快乐/痛苦又各占一行）',
+    desc: 'M12514 K8 交谈·初めて·装备档拆回多条（#622：快乐/痛苦又各占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "          await era.print(\n            talk_prefix +\n              `刚和她交谈了几句、${target_name}就一边发出着` +\n              (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n              `声音，一边拼命忍耐着的回着话`,\n          );",
     replace:
@@ -22865,10 +22864,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`声音，一边拼命忍耐着的回着话`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4649+:4655..:4661 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12515 K8 交谈·二回目·装备档（:4706+:4708+:4710+:4712）拆回多条（#622）',
+    desc: 'M12515 K8 交谈·二回目·装备档拆回多条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        await era.print(\n          talk_prefix +\n            `刚和她交谈了几句、${target_name}就一边发出着` +\n            (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n            `声音、一边拼命忍耐着的回着话`,\n        );",
     replace:
@@ -22882,10 +22881,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        }\n' +
       '        await era.print(`声音、一边拼命忍耐着的回着话`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':4700+:4706..:4712 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12516 K8 死斗场·SC31 助手（:7351+:7353+:7355+:7356）拆回多条（#622：部位词又各占一行）',
+    desc: 'M12516 K8 死斗场·SC31 助手拆回多条（#622：部位词又各占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? `阴茎` : '') +\n          (assi_has_strap ? `假阴茎` : '') +\n          `被${target_name}舔着而露出了心旷神怡的表情……`,\n      );",
     replace:
@@ -22898,10 +22897,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      }\n' +
       '      await era.printAndWait(`被${target_name}舔着而露出了心旷神怡的表情……`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7351+:7353+:7355+:7356 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12517 K8 死斗场·SC21 助手（:7386+:7388+:7390+:7391）拆回多条（#622）',
+    desc: 'M12517 K8 死斗场·SC21 助手拆回多条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣用` +\n          (assi_has_penis ? `阴茎` : '') +\n          (assi_has_strap ? `假阴茎` : '') +\n          `毫不留情的蹂躏着${target_name}的腔内。`,\n      );",
     replace:
@@ -22917,7 +22916,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':7386..:7391 是一行',
   },
   {
-    desc: 'M12518 K8 死斗场·SC27 助手（:7413+:7415+:7417+:7418）拆回多条（#622）',
+    desc: 'M12518 K8 死斗场·SC27 助手拆回多条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣。一边用` +\n          (assi_has_penis ? `阴茎` : '') +\n          (assi_has_strap ? `假阴茎` : '') +\n          `一般毫不留情的继续蹂躏着${target_name}的肛门。`,\n      );",
     replace:
@@ -22933,7 +22932,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':7413..:7418 是一行',
   },
   {
-    desc: 'M12519 K8 NTR·P==1 陥落済（:7460+:7462+:7464）拆回两条（#622：武器名又占一行）',
+    desc: 'M12519 K8 NTR·P==1 陥落済拆回两条（#622：武器名又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `然后、狂王的巨根` : `然后、特大号的按摩棒`) +\n          `慢慢的插进了${target_name}的秘裂。在镜头下${target_name}还不知道男人的蜜壶被插进了深处。`,\n      );',
     replace:
@@ -22946,10 +22945,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        `慢慢的插进了${target_name}的秘裂。在镜头下${target_name}还不知道男人的蜜壶被插进了深处。`,\n' +
       '      ); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7460+:7462+:7464 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12520 K8 NTR·P==1 それ以外（:7468+:7470+:7472+:7474）拆回两条（#622）',
+    desc: 'M12520 K8 NTR·P==1 それ以外拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        `还是处女的${target_name}的秘裂被` +\n          (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `深深的插了进去。破瓜之血从秘裂里流了出来。`,\n      );',
     replace:
@@ -22961,28 +22960,28 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      }\n' +
       '      await era.printAndWait(`深深的插了进去。破瓜之血从秘裂里流了出来。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7468..:7474 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12521 K8 NTR·P==2 陥落済（:7488+:7490+:7492）拆回两条（#622）',
+    desc: 'M12521 K8 NTR·P==2 陥落済拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n      );\n    } else {',
     replace:
       '      if (futa()) {\n        await era.print(`狂王的巨根`); // 变异：拆回\n      } else {\n        await era.print(`特大号的按摩棒`); // 变异：拆回\n      }\n      await era.printAndWait(\n        `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n      ); // 变异：拆回\n    } else {',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7488+:7490+:7492 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12522 K8 NTR·P==2 それ以外（:7496+:7498+:7500）拆回两条（#622）',
+    desc: 'M12522 K8 NTR·P==2 それ以外拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      // 同上（#622）\n      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n      );',
     replace:
       '      // 同上（#622）\n      if (futa()) {\n        await era.print(`狂王的巨根`); // 变异：拆回\n      } else {\n        await era.print(`特大号的按摩棒`); // 变异：拆回\n      }\n      await era.printAndWait(\n        `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n      ); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7496+:7498+:7500 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12523 K8 NTR·P==4 淫乱（:7521+:7523+:7525）拆回两条（#622）',
+    desc: 'M12523 K8 NTR·P==4 淫乱拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了野兽一样的喘息。`,\n      );',
     replace:
@@ -22995,7 +22994,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了野兽一样的喘息。`,\n' +
       '      ); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7521+:7523+:7525 是一行',
+    must_mention: '是一行',
   },
   {
     desc: 'M12524 K8 NTR·P==4 それ以外（武器名与收行同属一行）拆回两条（#622）',
@@ -23014,7 +23013,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与收行同属一行',
   },
   {
-    desc: 'M12525 K8 迎击奖赏·兽奸要求（:7744..:7752）拆回多条（#622：兽名又占一行）',
+    desc: 'M12525 K8 迎击奖赏·兽奸要求拆回多条（#622：兽名又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "    await era.printAndWait(\n      `「我呢，想要和` +\n        (gohoubi == 1 ? `犬` : gohoubi == 2 ? `猪` : gohoubi == 3 ? `马` : '') +\n        `交尾的那种${heart(1)}」`,\n    );",
     replace:
@@ -23028,32 +23027,32 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    }\n' +
       '    await era.printAndWait(`交尾的那种${heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7744..:7752 是一行',
+    must_mention: '兽奸三档只换中间那个兽名',
   },
-  // —— #622：口上剩余拆行第 B 组（kojo-k1-confident.js 20 处「原作同一行被拆」的
+  // —— #622：口上剩余拆行第 B 组（kojo-k1-confident.js 20 处「同一行输出被拆」的
   // 合并点，各配一条「拆回多条」变异；M12526-M12545。整行文本断言见
   // test/kojo-k1-confident.test.js 同名用例） ——
   {
-    desc: 'M12526 K1 交谈·初めて·视频自我介绍（:4747+:4749+:4750）拆回三条（#622：SIF 段又占一行）',
+    desc: 'M12526 K1 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: "            // + 收行的 PRINTFORML（#622）。SIF 判据提到语句外当条件、文本留在语句里\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(\n              `于是${target_name}将自己的本名、至今为止的性体验` +\n                (masturbation ? `以及自慰时意淫的内容` : '') +\n                `津津有味的说了起来……`,\n            );",
+    find: "            // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(\n              `于是${target_name}将自己的本名、至今为止的性体验` +\n                (masturbation ? `以及自慰时意淫的内容` : '') +\n                `津津有味的说了起来……`,\n            );",
     replace:
-      '            // + 收行的 PRINTFORML（#622）。SIF 判据提到语句外当条件、文本留在语句里\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(`于是${target_name}将自己的本名、至今为止的性体验`); // 变异：拆回\n            if (masturbation) {\n              await era.print(`以及自慰时意淫的内容`); // 变异：拆回\n            }\n            await era.print(`津津有味的说了起来……`); // 变异：拆回',
+      '            // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(`于是${target_name}将自己的本名、至今为止的性体验`); // 变异：拆回\n            if (masturbation) {\n              await era.print(`以及自慰时意淫的内容`); // 变异：拆回\n            }\n            await era.print(`津津有味的说了起来……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':4747+:4749+:4750 是一行',
+    must_mention: '交谈·初めて·视频·TALENT:89（RAND:3==0）：同属一行',
   },
   {
-    desc: 'M12527 K1 交谈·初めて·无摄像·求爱档（:4787+:4789）拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
+    desc: 'M12527 K1 交谈·初めて·无摄像·求爱档拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '            await era.print(\n              `一边与${player_name}说着情话、${target_name}一边扭动着腰。`,\n            );',
     replace:
       '            await era.print(`一边与${player_name}`); // 变异：拆回\n' +
       '            await era.print(`说着情话、${target_name}一边扭动着腰。`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':4787+:4789 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12528 K1 交谈·初めて·无摄像·装备档（:4793+:4795+:4797+:4799）拆回多条（#622：快乐/痛苦又各占一行）',
+    desc: 'M12528 K1 交谈·初めて·无摄像·装备档拆回多条（#622：快乐/痛苦又各占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "            await era.print(\n              chat_prefix +\n                `聊天、${target_name}一边发出着` +\n                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n                `声音、一边拼命地回应着${player_name}。`,\n            );",
     replace:
@@ -23067,19 +23066,19 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '            }\n' +
       '            await era.print(`声音、一边拼命地回应着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':4793+:4795+:4797+:4799 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12529 K1 交谈·二回目·视频自我介绍（:4833+:4835+:4836）拆回三条（#622）',
+    desc: 'M12529 K1 交谈·二回目·视频自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: "            // 与 :4747+:4749+:4750 同型（#622）\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(\n              `于是${target_name}将自己的本名、至今为止的性体验` +\n                (masturbation ? `以及自慰时意淫的内容` : '') +\n                `津津有味的说了起来……`,\n            );",
+    find: "            // 与上一段同型（#622）\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(\n              `于是${target_name}将自己的本名、至今为止的性体验` +\n                (masturbation ? `以及自慰时意淫的内容` : '') +\n                `津津有味的说了起来……`,\n            );",
     replace:
-      '            // 与 :4747+:4749+:4750 同型（#622）\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(`于是${target_name}将自己的本名、至今为止的性体验`); // 变异：拆回\n            if (masturbation) {\n              await era.print(`以及自慰时意淫的内容`); // 变异：拆回\n            }\n            await era.print(`津津有味的说了起来……`); // 变异：拆回',
+      '            // 与上一段同型（#622）\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(`于是${target_name}将自己的本名、至今为止的性体验`); // 变异：拆回\n            if (masturbation) {\n              await era.print(`以及自慰时意淫的内容`); // 变异：拆回\n            }\n            await era.print(`津津有味的说了起来……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':4833+:4835+:4836 是一行',
+    must_mention: '交谈·二回目·视频·TALENT:89（RAND:3==0）：同属一行',
   },
   {
-    desc: 'M12530 K1 交谈·二回目·无摄像·求爱档（:4873+:4875）拆回两条（#622）',
+    desc: 'M12530 K1 交谈·二回目·无摄像·求爱档拆回两条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '            await era.print(\n              `${player_name}让${target_name}一边扭动着腰一边与${player_name}说着情话。`,\n            );',
     replace:
@@ -23088,10 +23087,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `${target_name}一边扭动着腰一边与${player_name}说着情话。`,\n' +
       '            ); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':4873+:4875 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12531 K1 交谈·二回目·无摄像·装备档（:4879+:4881+:4883+:4885）拆回多条（#622）',
+    desc: 'M12531 K1 交谈·二回目·无摄像·装备档拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "            await era.print(\n              chat_prefix +\n                `${target_name}一边发出着` +\n                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n                `声音、一边拼命地回应着${player_name}。`,\n            );",
     replace:
@@ -23105,10 +23104,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '            }\n' +
       '            await era.print(`声音、一边拼命地回应着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':4879+:4881+:4883+:4885 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12532 K1 兽奸会話·初めて·牝犬自我介绍（:6341+:6344+:6346+:6348）拆回三条（#622）',
+    desc: 'M12532 K1 兽奸会話·初めて·牝犬自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「现在是优秀的` +\n              (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +\n              `！快乐的作为家畜生活着${heart(1)}」`,\n          );',
     replace:
@@ -23120,19 +23119,19 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.printAndWait(`！快乐的作为家畜生活着${heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
+    must_mention: 'DOG 兽奸会話·初めて·视频·牝犬：两段各是一行',
   },
   {
-    desc: 'M12533 K1 兽奸会話·初めて·牝犬的「在最后」（:6351..:6371）拆回多条（#622）',
+    desc: 'M12533 K1 兽奸会話·初めて·牝犬的「在最后」拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「在最后` +\n              (former_life === 1\n                ? `同班同学的大家`\n                : former_life === 2\n                  ? `修道院的大家`\n                  : former_life === 15 || former_life === 18\n                    ? `在${sc()}的店里消费过的客人`\n                    : former_life === 19\n                      ? `部下的大家`\n                      : former_life === 21\n                        ? `最重要的你`\n                        : `爸爸、妈妈`) +\n              `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          );\n        } else if (era.get(`talent:${target}:76`) === 1) {',
     replace:
       '          await era.print(`「在最后`); // 变异：拆回\n          if (former_life === 1) {\n            await era.print(`同班同学的大家`); // 变异：拆回\n          } else if (former_life === 2) {\n            await era.print(`修道院的大家`); // 变异：拆回\n          } else if (former_life === 15 || former_life === 18) {\n            await era.print(`${sc()}的店里消费过的客人`); // 变异：拆回\n          } else if (former_life === 19) {\n            await era.print(`部下的大家`); // 变异：拆回\n          } else if (former_life === 21) {\n            await era.print(`最重要的你`); // 变异：拆回\n          } else {\n            await era.print(`爸爸、妈妈`); // 变异：拆回\n          }\n          await era.printAndWait(\n            `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          ); // 变异：拆回\n        } else if (era.get(`talent:${target}:76`) === 1) {',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
+    must_mention: 'DOG 兽奸会話·初めて·视频·牝犬：两段各是一行',
   },
   {
-    desc: 'M12534 K1 兽奸会話·二回目·牝犬自我介绍（:6403+:6406+:6408+:6410）拆回三条（#622）',
+    desc: 'M12534 K1 兽奸会話·二回目·牝犬自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「现在是优秀的` +\n              (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +\n              `、快乐的作为家畜生活着${heart(1)}」`,\n          );',
     replace:
@@ -23144,28 +23143,28 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.printAndWait(`、快乐的作为家畜生活着${heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
+    must_mention: 'DOG 兽奸会話·二回目·视频·牝犬：两段各是一行',
   },
   {
-    desc: 'M12535 K1 兽奸会話·二回目·牝犬的「在最后」（:6413..:6433）拆回多条（#622）',
+    desc: 'M12535 K1 兽奸会話·二回目·牝犬的「在最后」拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「在最后` +\n              (former_life === 1\n                ? `同班同学的大家`\n                : former_life === 2\n                  ? `修道院的大家`\n                  : former_life === 15 || former_life === 18\n                    ? `在${sc()}的店里消费过的客人`\n                    : former_life === 19\n                      ? `部下的大家`\n                      : former_life === 21\n                        ? `最重要的你`\n                        : `爸爸、妈妈`) +\n              `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          );\n          // CFLAG:357  = 5（变量语义：CFLAG 族，357）',
     replace:
       '          await era.print(`「在最后`); // 变异：拆回\n          if (former_life === 1) {\n            await era.print(`同班同学的大家`); // 变异：拆回\n          } else if (former_life === 2) {\n            await era.print(`修道院的大家`); // 变异：拆回\n          } else if (former_life === 15 || former_life === 18) {\n            await era.print(`${sc()}的店里消费过的客人`); // 变异：拆回\n          } else if (former_life === 19) {\n            await era.print(`部下的大家`); // 变异：拆回\n          } else if (former_life === 21) {\n            await era.print(`最重要的你`); // 变异：拆回\n          } else {\n            await era.print(`爸爸、妈妈`); // 变异：拆回\n          }\n          await era.printAndWait(\n            `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          ); // 变异：拆回\n          // CFLAG:357  = 5（变量语义：CFLAG 族，357）',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
+    must_mention: 'DOG 兽奸会話·二回目·视频·牝犬：两段各是一行',
   },
   {
-    desc: 'M12536 K1 兽奸会話·初めて·淫乱自我介绍（:6374+:6376+:6377）拆回三条（#622）',
+    desc: 'M12536 K1 兽奸会話·初めて·淫乱自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: "          // + 收行的 PRINTFORML（#622）。SIF 判据提到语句外当条件、文本留在语句里\n          const masturbation = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );",
+    find: "          // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里\n          const masturbation = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );",
     replace:
-      '          // + 收行的 PRINTFORML（#622）。SIF 判据提到语句外当条件、文本留在语句里\n          const masturbation = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n          if (masturbation) {\n            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n          }\n          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回',
+      '          // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里\n          const masturbation = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n          if (masturbation) {\n            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n          }\n          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6374+:6376+:6377 是一行',
+    must_mention: '兽奸会話·初めて·视频·淫乱：同属一行',
   },
   {
-    desc: 'M12537 K1 兽奸会話·初めて·爱慕自我介绍（:6381+:6383+:6384）拆回三条（#622）',
+    desc: 'M12537 K1 兽奸会話·初めて·爱慕自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `开始高兴地讲着……`,\n          );",
     replace:
@@ -23175,46 +23174,46 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`开始高兴地讲着……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6381+:6383+:6384 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12538 K1 兽奸会話·二回目·淫乱自我介绍（:6437+:6439+:6440）拆回三条（#622）',
+    desc: 'M12538 K1 兽奸会話·二回目·淫乱自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );\n          await era.print(\n            `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,\n          );\n          // CFLAG:357  = 4（变量语义：CFLAG 族，357）",
     replace:
       '          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n          if (masturbation) {\n            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n          }\n          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回\n          await era.print(\n            `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,\n          );\n          // CFLAG:357  = 4（变量语义：CFLAG 族，357）',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6437+:6439+:6440 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12539 K1 兽奸会話·二回目·爱慕自我介绍（:6445+:6447+:6448）拆回三条（#622）',
+    desc: 'M12539 K1 兽奸会話·二回目·爱慕自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );\n          await era.print(\n            `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,\n          );\n          // CFLAG:357  = 3（变量语义：CFLAG 族，357）",
     replace:
       '          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n          if (masturbation) {\n            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n          }\n          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回\n          await era.print(\n            `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,\n          );\n          // CFLAG:357  = 3（变量语义：CFLAG 族，357）',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6445+:6447+:6448 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12540 K1 妊娠発覚 1回目·牝犬野良犬（:7040+:7042）拆回两条（#622：名字又占一行）',
+    desc: 'M12540 K1 妊娠発覚 1回目·牝犬野良犬拆回两条（#622：名字又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          // 各支自带收行，前缀在分支外取值；首支那句把整行写在一起\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
     replace:
       '          // 各支自带收行，前缀在分支外取值；首支那句把整行写在一起\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          await era.print(\n            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n          ); // 变异：拆回\n          if (rand_n(9) === 0) {\n            await era.printAndWait(`波奇？」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':7040+:7042 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12541 K1 妊娠発覚 2回目以降·牝犬野良犬（:7106+:7108）拆回两条（#622）',
+    desc: 'M12541 K1 妊娠発覚 2回目以降·牝犬野良犬拆回两条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
+    find: '          // 无后缀 PRINTFORM 前缀，与下面 IF 链首支的收行同属一行（#622）。\n          // 各支自带收行，前缀在分支外取值；首支那句把整行写在一起\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
     replace:
       '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          await era.print(\n            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n          ); // 变异：拆回\n          if (rand_n(9) === 0) {\n            await era.printAndWait(`波奇？」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':7106+:7108 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12542 K1 死斗场·SC31 口交（:7763+:7765+:7767+:7768）拆回多条（#622：部位词又各占一行）',
+    desc: 'M12542 K1 死斗场·SC31 口交拆回多条（#622：部位词又各占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? `真正的小鸡鸡` : '') +\n          (assi_has_strap ? `假阳具` : '') +\n          `被${target_name}含了进去而露出了心旷神怡的表情……`,\n      );",
     replace:
@@ -23227,10 +23226,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      }\n' +
       '      await era.printAndWait(`被${target_name}含了进去而露出了心旷神怡的表情……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':7763+:7765+:7767+:7768 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12543 K1 死斗场·SC21 背后位（:7796+:7798+:7800+:7801）拆回多条（#622）',
+    desc: 'M12543 K1 死斗场·SC21 背后位拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_has_penis ? `真正的小鸡鸡` : '') +\n          (assi_has_strap ? `假阳具` : '') +\n          `毫不留情的继续蹂躏${target_name}的阴道……`,\n      );",
     replace:
@@ -23243,10 +23242,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      }\n' +
       '      await era.printAndWait(`毫不留情的继续蹂躏${target_name}的阴道……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':7796+:7798+:7800+:7801 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12544 K1 死斗场·SC27 背后位アナル（:7820+:7822+:7824+:7825）拆回多条（#622）',
+    desc: 'M12544 K1 死斗场·SC27 背后位アナル拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_has_penis ? `真正的小鸡鸡` : '') +\n          (assi_has_strap ? `假阳具` : '') +\n          `毫不留情的继续蹂躏${target_name}的肛门……`,\n      );",
     replace:
@@ -23259,10 +23258,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      }\n' +
       '      await era.printAndWait(`毫不留情的继续蹂躏${target_name}的肛门……`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':7820+:7822+:7824+:7825 是一行',
+    must_mention: '是一行',
   },
   {
-    desc: 'M12545 K1 迎击奖赏·兽奸要求（:8075..:8083）拆回多条（#622：兽名又占一行）',
+    desc: 'M12545 K1 迎击奖赏·兽奸要求拆回多条（#622：兽名又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "    await era.printAndWait(\n      `「胜利之后、想要和` +\n        (reward === 1 ? `狗` : reward === 2 ? `猪` : reward === 3 ? `马` : '') +\n        `交尾」`,\n    );",
     replace:
@@ -23278,11 +23277,11 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-k1-confident'],
     must_mention: ':8075..:8083 是一行',
   },
-  // —— #622：口上剩余拆行第 B 组（kojo-k10-club.js 11 处「原作同一行被拆」的
+  // —— #622：口上剩余拆行第 B 组（kojo-k10-club.js 11 处「同一行输出被拆」的
   // 合并点，各配一条「拆回多条」变异；M12546-M12556。整行文本断言见
   // test/kojo-k10-club.test.js 同名用例） ——
   {
-    desc: 'M12546 K10 肛门爱抚二回目（:1044+:1046）拆回两条（#622：首支台词又占一行）',
+    desc: 'M12546 K10 肛门爱抚二回目拆回两条（#622：首支台词又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '          await era.printAndWait(\n            `「啊嗯～、啊啊～${heart(1)} 更多的…摸那里…伸、伸进去…${heart(1)}」`,\n          );',
     replace:
@@ -23294,7 +23293,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':1044+:1046 是一行',
   },
   {
-    desc: 'M12547 K10 交谈·初めて·视频自我介绍（:4156+:4158+:4159）拆回三条（#622：SIF 段又占一行）',
+    desc: 'M12547 K10 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          await era.print(\n            `${target_name}将自己的本名、至今为止的性经验` +\n              (masturbation ? `甚至自慰时想的什么` : '') +\n              `都微笑地讲了出来……`,\n          );",
     replace:
@@ -23307,7 +23306,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4156+:4158+:4159 是一行',
   },
   {
-    desc: 'M12548 K10 交谈·初めて·无摄像·求爱档（:4172+:4174）拆回两条（#622：前缀又占一行）',
+    desc: 'M12548 K10 交谈·初めて·无摄像·求爱档拆回两条（#622：前缀又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '          await era.print(\n            `在和${player_name}会话的过程中，${target_name}扭动着腰呢喃着充满爱意的话语。`,\n          );',
     replace:
@@ -23319,7 +23318,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4172+:4174 是一行',
   },
   {
-    desc: 'M12549 K10 交谈·初めて·无摄像·装备档（:4178+:4180+:4182+:4184）拆回多条（#622：语调词又占一行）',
+    desc: 'M12549 K10 交谈·初めて·无摄像·装备档拆回多条（#622：语调词又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          // PRINT（互斥两支）+ 收行的 PRINTFORML（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
     replace:
@@ -23328,7 +23327,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4178+:4180+:4182+:4184 是一行',
   },
   {
-    desc: 'M12550 K10 交谈·二回目·视频自我介绍（:4207+:4209+:4210）拆回三条（#622）',
+    desc: 'M12550 K10 交谈·二回目·视频自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          await era.print(\n            `${target_name}将自己的本名、至今为止的性经验` +\n              (masturbation ? `甚至手淫时想到的什么` : '') +\n              `都微笑地讲了出来……`,\n          );",
     replace:
@@ -23341,7 +23340,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4207+:4209+:4210 是一行',
   },
   {
-    desc: 'M12551 K10 交谈·二回目·无摄像·求爱档（:4223+:4225）拆回两条（#622）',
+    desc: 'M12551 K10 交谈·二回目·无摄像·求爱档拆回两条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '          await era.print(\n            `在和${master_name}会话的过程中，${target_name}扭动着腰呢喃着充满爱意的话语。`,\n          );',
     replace:
@@ -23353,16 +23352,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4223+:4225 是一行',
   },
   {
-    desc: 'M12552 K10 交谈·二回目·无摄像·装备档（:4229+:4231+:4233+:4235）拆回多条（#622）',
+    desc: 'M12552 K10 交谈·二回目·无摄像·装备档拆回多条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: "          // 与 :4178+:4180+:4182+:4184 同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
+    find: "          // 与初回同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
     replace:
-      '          // 与 :4178+:4180+:4182+:4184 同型（#622）\n          await era.print(\n            chat_prefix + `会话的过程中，${target_name}`,\n          ); // 变异：拆回\n          if (equip_pleasure) {\n            await era.print(`带着快乐的语调`); // 变异：拆回\n          } else if (equip_pain) {\n            await era.print(`带着痛苦的语调`); // 变异：拆回\n          }\n          await era.print(`拼命地回应着。`); // 变异：拆回',
+      '          // 与初回同型（#622）\n          await era.print(\n            chat_prefix + `会话的过程中，${target_name}`,\n          ); // 变异：拆回\n          if (equip_pleasure) {\n            await era.print(`带着快乐的语调`); // 变异：拆回\n          } else if (equip_pain) {\n            await era.print(`带着痛苦的语调`); // 变异：拆回\n          }\n          await era.print(`拼命地回应着。`); // 变异：拆回',
     tests: ['kojo-k10-club'],
     must_mention: ':4229+:4231+:4233+:4235 是一行',
   },
   {
-    desc: 'M12553 K10 死斗场·SC31 口交（:6763+:6765+:6767+:6768）拆回多条（#622：部位词又各占一行）',
+    desc: 'M12553 K10 死斗场·SC31 口交拆回多条（#622：部位词又各占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "      await era.printAndWait(\n        `${assi_name}` +\n          (assi_has_penis ? `坚硬的雄性器` : '') +\n          (assi_has_strap ? `粗大的假阳具` : '') +\n          `让${target_name}一边舔一边露出了心旷神怡的表情……`,\n      );",
     replace:
@@ -23380,7 +23379,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '同一行里拼「假阳具」',
   },
   {
-    desc: 'M12554 K10 死斗场·SC21 背后位（:6797+:6799+:6801+:6802）拆回多条（#622）',
+    desc: 'M12554 K10 死斗场·SC21 背后位拆回多条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "      await era.printAndWait(\n        `${assi_name}听着${target_name}的悲鸣` +\n          (assi_has_penis ? `用坚硬的雄性器` : '') +\n          (assi_has_strap ? `用粗大的假阳具` : '') +\n          `${target_name}的肛门被无慈悲的继续蹂躏着。`,\n      );\n      await era.printAndWait(\n        `${target_name}的悲鸣传到观众席，让观客们欢呼了起来………`,\n      );\n    } else if (game.train.死斗场敌种 == 206) {\n      await era.printAndWait(`「咳哦…呜噗…咔呃…咳…喀呃哦」`);",
     replace:
@@ -23389,7 +23388,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '同一行里拼「假阳具」',
   },
   {
-    desc: 'M12555 K10 死斗场·SC27 背后位アナル（:6823+:6825+:6827+:6828）拆回多条（#622）',
+    desc: 'M12555 K10 死斗场·SC27 背后位アナル拆回多条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "      await era.printAndWait(\n        `${assi_name}听着${target_name}的悲鸣` +\n          (assi_has_penis ? `用坚硬的雄性器` : '') +\n          (assi_has_strap ? `用粗大的假阳具` : '') +\n          `${target_name}的肛门被无慈悲的继续蹂躏着。`,\n      );\n      await era.printAndWait(\n        `${target_name}的悲鸣传到观众席，让观客们欢呼了起来………`,\n      );\n    } else if (game.train.死斗场敌种 == 206) {\n      await era.printAndWait(`「啊嘎…咳…咔啊～…咕呃～…咔呃…咳咳～」`);",
     replace:
@@ -23398,7 +23397,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '同一行里拼「假阳具」',
   },
   {
-    desc: 'M12556 K10 迎击奖赏·兽奸要求（:7101..:7109）拆回多条（#622：兽名又占一行）',
+    desc: 'M12556 K10 迎击奖赏·兽奸要求拆回多条（#622：兽名又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "    await era.printAndWait(\n      `「人家想和` +\n        (reward == 1 ? `犬` : reward == 2 ? `猪` : reward == 3 ? `马` : '') +\n        `交尾试试看♪」`,\n    );",
     replace:
@@ -23426,9 +23425,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12558 K10 交谈·二回目·无摄像·语调两档写反（快乐 ↔ 痛苦，#622：换档变异，钉档位映射）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: "          // 与 :4178+:4180+:4182+:4184 同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
+    find: "          // 与初回同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
     replace:
-      "          // 与 :4178+:4180+:4182+:4184 同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着痛苦的语调`\n                : equip_pain\n                  ? `带着快乐的语调`\n                  : '') +\n              `拼命地回应着。`,\n          ); // （变异：两档写反）",
+      "          // 与初回同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着痛苦的语调`\n                : equip_pain\n                  ? `带着快乐的语调`\n                  : '') +\n              `拼命地回应着。`,\n          ); // （变异：两档写反）",
     tests: ['kojo-k10-club'],
     must_mention: '带着痛苦的语调',
   },
@@ -23444,9 +23443,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12560 K1 妊娠発覚 2回目以降·狗名链第二支漏拼前缀（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(dog_name_prefix + `哈娜？」`);',
+    find: '          // 无后缀 PRINTFORM 前缀，与上一段同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(dog_name_prefix + `哈娜？」`);',
     replace:
-      '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(`哈娜？」`); // （变异：漏拼前缀）',
+      '          // 无后缀 PRINTFORM 前缀，与上一段同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(`哈娜？」`); // （变异：漏拼前缀）',
     tests: ['kojo-k1-confident'],
     must_mention: '非首支也带前缀（2回目以降，漏拼前缀会红）',
   },
@@ -23454,80 +23453,73 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 每组一条：把合成后的那一条 era.print* 又拆成两条，对应测试的整行断言必须红
   // （条目按工单 #621 的组序编号 M12400-M12452）
   {
-    desc: 'M12400 K6 口塞初回·淫乱（:3953+:3955）拆回多条（#621）',
+    desc: 'M12400 K6 口塞初回·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_3954) {\n          await era.print(`配合地戴上口塞的${target_name}带着期待地晃动着………`);',
     replace:
       '        if (blindfold_3954) {\n          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n          await era.print(`带着期待地晃动着………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）',
+    must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12401 K6 口塞初回·爱慕（:3962+:3964）拆回多条（#621）',
+    desc: 'M12401 K6 口塞初回·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `配合地戴上口塞的${target_name}带着温柔的眼神晃动着………`,\n          );\n',
     replace:
       '          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n' +
       '          await era.print(`带着温柔的眼神晃动着………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）',
+    must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12402 K6 口塞初回·それ以外（:3971+:3973）拆回多条（#621）',
+    desc: 'M12402 K6 口塞初回·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_3972) {\n          await era.print(`戴上口塞的${target_name}左右摇着头………`);',
     replace:
       '        if (blindfold_3972) {\n          await era.print(`戴上口塞的${target_name}`); // 变异：拆回\n          await era.print(`左右摇着头………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）',
+    must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12403 K6 口塞二回目·淫乱受虐狂Lv5（:3985+:3987）拆回多条（#621）',
+    desc: 'M12403 K6 口塞二回目·淫乱受虐狂Lv5拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(`配合地戴上口塞的${target_name}粗重急促地喘息着………`);\n',
     replace:
       '          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n' +
       '          await era.print(`粗重急促地喘息着………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+    must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12404 K6 口塞二回目·淫乱（:4000+:4002）拆回多条（#621）',
+    desc: 'M12404 K6 口塞二回目·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_4001) {\n          await era.print(`配合地戴上口塞的${target_name}带着期待地晃动着………`);',
     replace:
       '        if (blindfold_4001) {\n          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n          await era.print(`带着期待地晃动着………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+    must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12405 K6 口塞二回目·受虐狂Lv3（:4025+:4027）拆回多条（#621）',
+    desc: 'M12405 K6 口塞二回目·受虐狂Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(`${target_name}习以为常地被口塞塞住嘴眼色朦胧………`);\n',
     replace:
       '          await era.print(`${target_name}习以`); // 变异：拆回\n' +
       '          await era.print(`为常地被口塞塞住嘴眼色朦胧………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+    must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12406 K6 口塞二回目·それ以外（:4035+:4037）拆回多条（#621）',
+    desc: 'M12406 K6 口塞二回目·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_4036) {\n          await era.print(`戴上口塞的${target_name}左右摇着头………`);',
     replace:
       '        if (blindfold_4036) {\n          await era.print(`戴上口塞的${target_name}`); // 变异：拆回\n          await era.print(`左右摇着头………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+    must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12407 K6 交谈初回·爱意（:4342+:4344）拆回多条（#621）',
+    desc: 'M12407 K6 交谈初回·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `在和${player_name}会话的过程中，${target_name}呢喃着充满爱意的话语。`,\n          );\n',
     replace:
@@ -23535,10 +23527,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          await era.print(`${target_name}呢喃着充满爱意的话语。`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12408 K6 交谈二回目·爱意（:4414+:4416）拆回多条（#621）',
+    desc: 'M12408 K6 交谈二回目·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `在和${player_name}会话的过程中，${target_name}呢喃着充满爱意的话语`,\n          );\n',
     replace:
@@ -23546,94 +23538,86 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          await era.print(`${target_name}呢喃着充满爱意的话语`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12409 K6 口交时自慰初回·淫乱（:4594+:4596）拆回多条（#621）',
+    desc: 'M12409 K6 口交时自慰初回·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}含住${player_name}的阴茎显得十分兴奋，用手摆弄着插入私处和肛门的蠕虫，激烈地抽插着……`,\n          );\n',
     replace:
       '          await era.print(`${target_name}含住${player_name}的阴`); // 变异：拆回\n' +
       '          await era.print(`茎显得十分兴奋，用手摆弄着插入私处和肛门的蠕虫，激烈地抽插着……`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12410 K6 口交时自慰初回·爱慕（:4607+:4609）拆回多条（#621）',
+    desc: 'M12410 K6 口交时自慰初回·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}用舌头纠缠着${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n          );\n',
     replace:
       '          await era.print(`${target_name}用舌头纠缠着${player_name}`); // 变异：拆回\n' +
       '          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12411 K6 口交时自慰初回·侍奉Lv3（:4620+:4622）拆回多条（#621）',
+    desc: 'M12411 K6 口交时自慰初回·侍奉Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4620 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`,\n          );',
     replace:
       '        const serve_front_4620 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12412 K6 口交时自慰初回·それ以外（:4633+:4635）拆回多条（#621）',
+    desc: 'M12412 K6 口交时自慰初回·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4633 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`,\n          );',
     replace:
       '        const serve_front_4633 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12413 K6 口交时自慰二回目·淫乱（:4651+:4653）拆回多条（#621）',
+    desc: 'M12413 K6 口交时自慰二回目·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}含住${player_name}的阴茎显得十分兴奋，两穴里的蠕虫蠕动着蠕动着，自慰激烈地继续………`,\n          );\n',
     replace:
       '          await era.print(`${target_name}含住${player_name}的`); // 变异：拆回\n' +
       '          await era.print(`阴茎显得十分兴奋，两穴里的蠕虫蠕动着蠕动着，自慰激烈地继续………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12414 K6 口交时自慰二回目·爱慕（:4667+:4669）拆回多条（#621）',
+    desc: 'M12414 K6 口交时自慰二回目·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}用舌头纠缠着${player_name}的阴茎，任两穴里的蠕虫蠕动着，摇动着纤腰………`,\n          );\n',
     replace:
       '          await era.print(`${target_name}用舌头纠缠着${player_name}`); // 变异：拆回\n' +
       '          await era.print(`的阴茎，任两穴里的蠕虫蠕动着，摇动着纤腰………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12415 K6 口交时自慰二回目·侍奉Lv3（:4683+:4685）拆回多条（#621）',
+    desc: 'M12415 K6 口交时自慰二回目·侍奉Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4683 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n          );',
     replace:
       '        const serve_front_4683 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12416 K6 口交时自慰二回目·それ以外（:4699+:4701）拆回多条（#621）',
+    desc: 'M12416 K6 口交时自慰二回目·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4699 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n          );',
     replace:
       '        const serve_front_4699 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`); // 变异：拆回\n\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+    must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12417 K6 百合PLAY·爱慕（:6516+:6518）拆回多条（#621）',
+    desc: 'M12417 K6 百合PLAY·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        await era.printAndWait(\n          `${assi_name}苦笑着和${target_name}以女人间特有的方式纠缠在一起，直到黄昏………`,\n        );\n',
     replace:
@@ -23641,10 +23625,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        await era.printAndWait(`以女人间特有的方式纠缠在一起，直到黄昏………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（:6516/:6526 组）',
+      '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（爱慕与百合中毒两组）',
   },
   {
-    desc: 'M12418 K6 百合PLAY·百合中毒Lv3（:6526+:6528）拆回多条（#621）',
+    desc: 'M12418 K6 百合PLAY·百合中毒Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        await era.printAndWait(\n          `尝到百合滋味的${target_name}嬉笑着和${assi_name}纠缠着，直到黄昏………`,\n        );\n',
     replace:
@@ -23652,10 +23636,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        await era.printAndWait(`和${assi_name}纠缠着，直到黄昏………`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（:6516/:6526 组）',
+      '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（爱慕与百合中毒两组）',
   },
   {
-    desc: 'M12419 K6 录像自我介绍初回（SIF ABL:31）（:4311+:4313+:4314）拆回多条（#621）',
+    desc: 'M12419 K6 录像自我介绍初回（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            `面带微笑的${target_name}介绍了自己的本名和性经验` +\n              (dirty_exp ? `，甚至还有手淫的时候想到的内容` : '') +\n              `……`,\n          );\n",
     replace:
@@ -23664,10 +23648,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `……`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:4311/:4383 组）',
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12420 K6 录像自我介绍二回目（SIF ABL:31）（:4383+:4385+:4386）拆回多条（#621）',
+    desc: 'M12420 K6 录像自我介绍二回目（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            `${target_name}面带微笑地介绍了自己的本名和性经验` +\n              (dirty_exp_4384 ? `，甚至还有手淫的时候想到的内容` : '') +\n              `……`,\n          );\n",
     replace:
@@ -23676,10 +23660,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `……`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:4311/:4383 组）',
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12421 K6 死斗场口交（助手性器两档）（:7491+:7493+:7495+:7496）拆回多条（#621）',
+    desc: 'M12421 K6 死斗场口交（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "      await era.printAndWait(\n        `${assi_name}将` +\n          (assi_has_penis_7493 ? `阴茎` : '') +\n          (assi_dildo_7495 ? `假阳具` : '') +\n          `塞入${target_name}的口中。她吞吐着，脸上带有几分愉悦的表情……`,\n      );\n",
     replace:
@@ -23689,7 +23673,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
   },
   {
-    desc: 'M12422 K6 死斗场后背位（助手性器两档）（:7524+:7526+:7528+:7529）拆回多条（#621）',
+    desc: 'M12422 K6 死斗场后背位（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "      await era.printAndWait(\n        `${assi_name}边听着惨叫边用` +\n          (assi_has_penis_7526 ? `阴茎` : '') +\n          (assi_dildo_7528 ? `假阳具` : '') +\n          `毫不留情地蹂躏着${target_name}的阴道……`,\n      );\n",
     replace:
@@ -23699,7 +23683,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
   },
   {
-    desc: 'M12423 K6 死斗场后背位アナル（助手性器两档）（:7548+:7550+:7552+:7553）拆回多条（#621）',
+    desc: 'M12423 K6 死斗场后背位アナル（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "      await era.printAndWait(\n        `${assi_name}边听着惨叫边用` +\n          (assi_has_penis_7550 ? `阴茎` : '') +\n          (assi_dildo_7552 ? `假阳具` : '') +\n          `蹂躏着${target_name}那鲜嫩的肛门……`,\n      );\n",
     replace:
@@ -23709,7 +23693,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
   },
   {
-    desc: 'M12424 K6 交谈初回·语调三档（:4348+:4350+:4352+:4354）拆回多条（#621）',
+    desc: 'M12424 K6 交谈初回·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            talk_front_4342 +\n              `会话的过程中，${target_name}` +\n              (excited_4349\n                ? `带着快乐的语调`\n                : painful_4351\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );\n",
     replace:
@@ -23723,10 +23707,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `拼命地回应着。`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12425 K6 交谈二回目·语调三档（:4420+:4422+:4424+:4426）拆回多条（#621）',
+    desc: 'M12425 K6 交谈二回目·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            talk_front_4414 +\n              `会话的过程中，${target_name}` +\n              (excited_4421\n                ? `带着快乐的语调`\n                : painful_4423\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );\n",
     replace:
@@ -23740,174 +23724,163 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `拼命地回应着。`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
     must_mention:
-      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12426 K6 迎击奖励请求·动物名三档（:7806+:7808+:7810+:7812）拆回多条（#621）',
+    desc: 'M12426 K6 迎击奖励请求·动物名三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '    await era.printAndWait(request_animal_7812 + `性交啦♪」`);\n',
     replace:
       '    await era.printAndWait(request_animal_7812); // 变异：拆回\n' +
       '    await era.printAndWait(`性交啦♪」`); // 变异：拆回\n',
     tests: ['kojo-k6-wicked'],
-    must_mention:
-      '#621 迎击奖励请求：动物名与收行段合成一条输出（:7806+:7808+:7810+:7812）',
+    must_mention: '#621 迎击奖励请求：动物名与收行段合成一条输出',
   },
   {
-    desc: 'M12427 K7 屈服刻印Lv3·靠近分档（:639+:641）拆回多条（#621）',
+    desc: 'M12427 K7 屈服刻印Lv3·靠近分档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        `${player_name}慢慢的靠近了${target_name}抓过她的金发嗅着。`,\n      );\n',
     replace:
       '      await era.printAndWait(`${player_name}慢慢的靠近了`); // 变异：拆回\n' +
       '      await era.printAndWait(`${target_name}抓过她的金发嗅着。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention: '#621 屈服刻印Lv3 的靠近分档（:639 组）：三支各合成一条输出',
+    must_mention: '#621 屈服刻印Lv3 的靠近分档：三支各合成一条输出',
   },
   {
-    desc: 'M12428 K7 口塞初回·淫乱（:5105+:5107）拆回多条（#621）',
+    desc: 'M12428 K7 口塞初回·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5105 = `${target_name}因为嘴被塞住而稍稍不满的`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,\n          );',
     replace:
       '        const mouth_front_5105 = `${target_name}因为嘴被塞住而稍稍不满的`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(`${target_name}因为`); // 变异：拆回\n          await era.printAndWait(`嘴被塞住而稍稍不满的动了起来………`); // 变异：拆回\n\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出',
+    must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12429 K7 口塞初回·爱慕（:5114+:5116）拆回多条（#621）',
+    desc: 'M12429 K7 口塞初回·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5114 = `${target_name}好像期待着什么就那样`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}好像期待着什么就那样动了起来………`,\n          );',
     replace:
       '        const mouth_front_5114 = `${target_name}好像期待着什么就那样`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(`${target_name}好`); // 变异：拆回\n          await era.printAndWait(`像期待着什么就那样动了起来………`); // 变异：拆回\n\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出',
+    must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12430 K7 口塞初回·それ以外（:5123+:5125）拆回多条（#621）',
+    desc: 'M12430 K7 口塞初回·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '          await era.printAndWait(`${target_name}的嘴被口枷塞住，左右摇着头………`);\n',
     replace:
       '          await era.printAndWait(`${target_name}的`); // 变异：拆回\n' +
       '          await era.printAndWait(`嘴被口枷塞住，左右摇着头………`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出',
+    must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12431 K7 口塞二回目·淫乱（:5147+:5149）拆回多条（#621）',
+    desc: 'M12431 K7 口塞二回目·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5147 = `${target_name}因为嘴被塞住而稍稍不满的`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,\n          );',
     replace:
       '        const mouth_front_5147 = `${target_name}因为嘴被塞住而稍稍不满的`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(`${target_name}因为`); // 变异：拆回\n          await era.printAndWait(`嘴被塞住而稍稍不满的动了起来………`); // 变异：拆回\n\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出',
+    must_mention: '#621 口塞二回目三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12432 K7 口塞二回目·爱慕（:5167+:5169）拆回多条（#621）',
+    desc: 'M12432 K7 口塞二回目·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5167 = `${target_name}好像期待着什么就那样`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}好像期待着什么就那样动了起来………`,\n          );',
     replace:
       '        const mouth_front_5167 = `${target_name}好像期待着什么就那样`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(`${target_name}好`); // 变异：拆回\n          await era.printAndWait(`像期待着什么就那样动了起来………`); // 变异：拆回\n\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出',
+    must_mention: '#621 口塞二回目三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12433 K7 口塞二回目·それ以外（:5182+:5184）拆回多条（#621）',
+    desc: 'M12433 K7 口塞二回目·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '          await era.printAndWait(`${target_name}的嘴被口枷塞住左右摇着头………`);\n',
     replace:
       '          await era.printAndWait(`${target_name}`); // 变异：拆回\n' +
       '          await era.printAndWait(`的嘴被口枷塞住左右摇着头………`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出',
+    must_mention: '#621 口塞二回目三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12434 K7 交谈初回·爱意（:5408+:5410）拆回多条（#621）',
+    desc: 'M12434 K7 交谈初回·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "        const talk_front_5408 = `被${player_name}`;\n        if (\n          era0(`palam:${target}:5`) >= era0('palamlv:4') &&\n          (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&\n          era0('tflag:60')\n        ) {\n          await era.print(\n            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,\n          );",
     replace:
       "        const talk_front_5408 = `被${player_name}`;\n        if (\n          era0(`palam:${target}:5`) >= era0('palamlv:4') &&\n          (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&\n          era0('tflag:60')\n        ) {\n          await era.print(`被${player_name}搭着话、`); // 变异：拆回\n          await era.print(`${target_name}摇着腰说出了爱的话语`); // 变异：拆回\n\n",
     tests: ['kojo-k7-heart'],
     must_mention:
-      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+      '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12435 K7 交谈二回目·爱意（:5485+:5487）拆回多条（#621）',
+    desc: 'M12435 K7 交谈二回目·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "        const talk_front_5485 = `被${player_name}`;\n        if (\n          era0(`palam:${target}:5`) >= era0('palamlv:4') &&\n          (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&\n          era0('tflag:60')\n        ) {\n          await era.print(\n            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,\n          );",
     replace:
       "        const talk_front_5485 = `被${player_name}`;\n        if (\n          era0(`palam:${target}:5`) >= era0('palamlv:4') &&\n          (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&\n          era0('tflag:60')\n        ) {\n          await era.print(`被${player_name}搭着话、`); // 变异：拆回\n          await era.print(`${target_name}摇着腰说出了爱的话语`); // 变异：拆回\n\n",
     tests: ['kojo-k7-heart'],
     must_mention:
-      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+      '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12436 K7 迷宫凌辱·「作为代替」（:8001+:8004）拆回多条（#621）',
+    desc: 'M12436 K7 迷宫凌辱·「作为代替」拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        `作为代替${target_name}的肛门被彻底侵犯，逆流出了分不清是精液还是粘液的液体。`,\n      );\n',
     replace:
       '      await era.printAndWait(`作为代替${target_name}的肛门被`); // 变异：拆回\n' +
       '      await era.printAndWait(`彻底侵犯，逆流出了分不清是精液还是粘液的液体。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 迷宫凌辱「作为代替」（:8001+:8004）：前缀与收行段合成一条输出',
+    must_mention: '#621 迷宫凌辱「作为代替」：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12437 K7 录像自我介绍初回（SIF ABL:31）（:5392+:5394+:5395）拆回多条（#621）',
+    desc: 'M12437 K7 录像自我介绍初回（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            `${target_name}把自己的本名和至今为止的性体验` +\n              (recall_dirty ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n",
     replace:
       "          await era.print(`${target_name}把自己的本名和至今为止的性体验`); // 变异：拆回\n          await era.print((recall_dirty ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`); // 变异：拆回\n",
     tests: ['kojo-k7-heart'],
     must_mention:
-      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:5392/:5469 组）',
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12438 K7 录像自我介绍二回目（SIF ABL:31）（:5469+:5471+:5472）拆回多条（#621）',
+    desc: 'M12438 K7 录像自我介绍二回目（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            `${target_name}把自己的本名和至今为止的性体验` +\n              (recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n",
     replace:
       "          await era.print(`${target_name}把自己的本名和至今为止的性体验`); // 变异：拆回\n          await era.print((recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`); // 变异：拆回\n",
     tests: ['kojo-k7-heart'],
     must_mention:
-      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:5392/:5469 组）',
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12439 K7 死斗场口交（助手性器两档）（:8254+:8256+:8258+:8259）拆回多条（#621）',
+    desc: 'M12439 K7 死斗场口交（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis_8255 ? `肉棒` : '') +\n          (assi_dildo_8257 ? `假阴茎` : '') +\n          `被${target_name}舔着而露出了心旷神怡的额表情……`,\n      );\n",
     replace:
       "      await era.printAndWait(`${assi_name}因为`); // 变异：拆回\n      await era.printAndWait((assi_has_penis_8255 ? `肉棒` : '') +\n          (assi_dildo_8257 ? `假阴茎` : '') +\n          `被${target_name}舔着而露出了心旷神怡的额表情……`); // 变异：拆回\n",
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）',
+    must_mention: '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12440 K7 死斗场正常位（助手性器两档）（:8289+:8291+:8293+:8294）拆回多条（#621）',
+    desc: 'M12440 K7 死斗场正常位（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n          (assi_has_penis_8290 ? `肉棒` : '') +\n          (assi_dildo_8292 ? `假阴茎` : '') +\n          `继续毫不留情的蹂躏着${target_name}的小穴。`,\n      );\n",
     replace:
       "      await era.printAndWait(`${assi_name}一边听着${target_name}的悲鸣一边用`); // 变异：拆回\n      await era.printAndWait((assi_has_penis_8290 ? `肉棒` : '') +\n          (assi_dildo_8292 ? `假阴茎` : '') +\n          `继续毫不留情的蹂躏着${target_name}的小穴。`); // 变异：拆回\n",
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）',
+    must_mention: '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12441 K7 死斗场后背位アナル（助手性器两档）（:8316+:8318+:8320+:8321）拆回多条（#621）',
+    desc: 'M12441 K7 死斗场后背位アナル（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n          (assi_has_penis_8317 ? `肉棒` : '') +\n          (assi_dildo_8319 ? `假阴茎` : '') +\n          `继续毫不留情的蹂躏着${target_name}的小穴。`,\n      );\n",
     replace:
       "      await era.printAndWait(`${assi_name}一边听着${target_name}的悲鸣一边用`); // 变异：拆回\n      await era.printAndWait((assi_has_penis_8317 ? `肉棒` : '') +\n          (assi_dildo_8319 ? `假阴茎` : '') +\n          `继续毫不留情的蹂躏着${target_name}的小穴。`); // 变异：拆回\n",
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）',
+    must_mention: '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12442 K7 交谈初回·语调三档（:5414+:5416+:5418+:5420）拆回多条（#621）',
+    desc: 'M12442 K7 交谈初回·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            talk_front_5408 +\n              `搭着话、${target_name}一边发出` +\n              (excited_5415 ? `快乐的` : painful_5417 ? `痛苦的` : '') +\n              `的声音、一边拼死的回着话`,\n          );\n",
     replace:
@@ -23917,10 +23890,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `的声音、一边拼死的回着话`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
     must_mention:
-      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+      '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12443 K7 交谈二回目·语调三档（:5491+:5493+:5495+:5497）拆回多条（#621）',
+    desc: 'M12443 K7 交谈二回目·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            talk_front_5485 +\n              `搭着话、${target_name}一边发出` +\n              (excited_5492 ? `快乐的` : painful_5494 ? `痛苦的` : '') +\n              `声音、一边拼死的回着话`,\n          );\n",
     replace:
@@ -23930,100 +23903,91 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `声音、一边拼死的回着话`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
     must_mention:
-      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+      '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12444 K7 NTR·P1 插进秘裂（:8362+:8364+:8366）拆回多条（#621）',
+    desc: 'M12444 K7 NTR·P1 插进秘裂拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8361 ? `然后、狂王的巨根` : `然后、特大号按摩棒`) +\n          `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`,\n      );\n',
     replace:
       '      await era.printAndWait((king_penis_8361 ? `然后、狂王的巨根` : `然后、特大号按摩棒`)); // 变异：拆回\n      await era.printAndWait(\n          `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12445 K7 NTR·P1 それ以外（:8375+:8377+:8379）拆回多条（#621）',
+    desc: 'M12445 K7 NTR·P1 それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`) +\n          `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`,\n      );\n',
     replace:
       '      await era.printAndWait((king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n      await era.printAndWait(\n          `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12446 K7 NTR·P2 肛门吞下（肛开Lv3）（:8388+:8390+:8392+:8394）拆回多条（#621）',
+    desc: 'M12446 K7 NTR·P2 肛门吞下（肛开Lv3）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        await era.printAndWait(\n          `${target_name}被开发了的肛门轻易地吞下了` +\n            (king_penis_8389 ? `狂王的巨根` : `特大号按摩棒`) +\n            `、${target_name}开始发出了呻吟声。`,\n        );\n',
     replace:
       '        await era.printAndWait(`${target_name}被开发了的肛门轻易地吞下了`); // 变异：拆回\n        await era.printAndWait((king_penis_8389 ? `狂王的巨根` : `特大号按摩棒`) +\n            `、${target_name}开始发出了呻吟声。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12447 K7 NTR·P2 肛门吞下（苦痛）（:8398+:8400+:8402+:8404）拆回多条（#621）',
+    desc: 'M12447 K7 NTR·P2 肛门吞下（苦痛）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        await era.printAndWait(\n          `${target_name}的肛门吞下了` +\n            (king_penis_8399 ? `狂王的巨根` : `特大号按摩棒`) +\n            `、${target_name}因为强烈的苦痛而悲鸣着。`,\n        );\n',
     replace:
       '        await era.printAndWait(`${target_name}的肛门吞下了`); // 变异：拆回\n        await era.printAndWait((king_penis_8399 ? `狂王的巨根` : `特大号按摩棒`) +\n            `、${target_name}因为强烈的苦痛而悲鸣着。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12448 K7 NTR·P2 それ以外（:8411+:8413+:8415）拆回多条（#621）',
+    desc: 'M12448 K7 NTR·P2 それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8410 ? `狂王的巨根` : `特大号按摩棒`) +\n          `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`,\n      );\n',
     replace:
       '      await era.printAndWait((king_penis_8410 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n      await era.printAndWait(\n          `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12449 K7 NTR·P4 性爱狂（:8437+:8439+:8441+:8443）拆回多条（#621）',
+    desc: 'M12449 K7 NTR·P4 性爱狂拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        `虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用` +\n          (king_penis_8438 ? `他的巨根` : `特大号按摩棒`) +\n          `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`,\n      );\n',
     replace:
       '      await era.printAndWait(`虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用`); // 变异：拆回\n      await era.printAndWait((king_penis_8438 ? `他的巨根` : `特大号按摩棒`) +\n          `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12450 K7 NTR·P4 爱慕（:8450+:8452+:8454）拆回多条（#621）',
+    desc: 'M12450 K7 NTR·P4 爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8449 ? `狂王的巨根` : `特大号按摩棒`) +\n          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`,\n      );\n',
     replace:
       '      await era.printAndWait((king_penis_8449 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n      await era.printAndWait(\n          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12451 K7 NTR·P4 それ以外（:8460+:8462+:8464）拆回多条（#621）',
+    desc: 'M12451 K7 NTR·P4 それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8459 ? `狂王的巨根` : `特大号按摩棒`) +\n          `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`,\n      );\n',
     replace:
       '      await era.printAndWait((king_penis_8459 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n      await era.printAndWait(\n          `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`); // 变异：拆回\n',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+    must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12452 K7 迎击奖励请求·动物名三档（:8680+:8682+:8684+:8686+:8688）拆回多条（#621）',
+    desc: 'M12452 K7 迎击奖励请求·动物名三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '    await era.printAndWait(\n      `「奖励？　我想尝试和` +\n        (beast_kind_8680 == 1 ? `犬` : beast_kind_8680 == 2 ? `豚` : `马`) +\n        `性交看看」`,\n    );',
     replace:
       '    await era.printAndWait(`「奖励？　我想尝试和`); // 变异：拆回\n    await era.printAndWait((beast_kind_8680 == 1\n          ? `犬`\n          : beast_kind_8680 == 2\n            ? `豚`\n            : `马`) +\n        `性交看看」`); // 变异：拆回',
     tests: ['kojo-k7-heart'],
-    must_mention:
-      '#621 迎击奖励请求：动物名与收行段合成一条输出（:8680+:8682+:8684+:8686+:8688）',
+    must_mention: '#621 迎击奖励请求：动物名与收行段合成一条输出',
   },
   {
-    desc: 'M12561 K8 NTR P==5 それ以外·蜜裂与肛门段（:7549+:7551+:7553）拆回三条（#622 补查：普查把这一组归一类误报，只并第一支会漏）',
+    desc: 'M12561 K8 NTR P==5 それ以外·蜜裂与肛门段拆回三条（#622 补查：普查把这一组归一类误报，只并第一支会漏）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      // 一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT\n      // （互斥两支，各支自带收尾，块后没有共同的收行语句）（#622 补查）。\n      // 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同）\n      await era.print(\n        `${target_name}的蜜裂和肛门被` +\n          (game.system.狂王性别 == 0\n            ? `阴茎搅动着、精液不停的溢了出来………`\n            : `假阳具搅动着、爱液不停的溢了出来………`),\n      );',
     replace:
@@ -24034,13 +23998,14 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        await era.print(`假阳具搅动着、爱液不停的溢了出来………`); // 变异：拆回\n' +
       '      }',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7549+:7551+:7553 是一行',
+    must_mention:
+      'P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具）：同一行输出',
   },
-  // —— #625：口上剩余拆行第 E 组（11 个文件 70 组「原作同一行被拆」的合并点），
+  // —— #625：口上剩余拆行第 E 组（11 个文件 70 组「同一行输出被拆」的合并点），
   // 各配一条「拆回多条」变异。（每处合并后的整行断言见对应测试文件；
   // 条目按工单给的 M12800 起编号）——
   {
-    desc: 'M12800 K12 褒美请求·兽名（:5747..:5755）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12800 K12 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '    await era.printAndWait(\n      `${chara_callname(a)}提出了与` + beast_word + `交尾的要求`,\n    );',
     replace:
@@ -24051,7 +24016,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12801 K14 褒美请求·兽名（:5738..:5746）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12801 K14 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '    await era.printAndWait(\n      `${chara_callname(a)}提出了想要和` + beast_word + `进行交配的奖励。`,\n    );',
     replace:
@@ -24062,7 +24027,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12802 K15 接吻初吻·擦嘴段（:758+:760+:761）拆回三条（#625：擦嘴段又占一行）',
+    desc: 'M12802 K15 接吻初吻·擦嘴段拆回三条（#625：擦嘴段又占一行）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: "        await era.printAndWait(\n          `${target_name}` +\n            (wiped\n              ? '像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，'\n              : '') +\n            `恼怒地说着挑衅着话语……`,\n        );",
     replace:
@@ -24075,7 +24040,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '擦嘴段与挑衅段落在同一行',
   },
   {
-    desc: 'M12803 K15 死斗场口交·武器名（:5843..:5848）拆回三条（#625：武器名又占一行）',
+    desc: 'M12803 K15 死斗场口交·武器名拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: "      await era.printAndWait(\n        `${assi_name}粗暴地拉起${target_name}的头发，得意地用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `侵犯着对方的口腔……`,\n      );",
     replace:
@@ -24090,7 +24055,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12804 K15 褒美请求·兽名（:6140..:6148）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12804 K15 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    await era.printAndWait(\n      `「迎击成功的话，请让${sc()}跟` + beast_word + `进行交配好吗？」`,\n    );',
     replace:
@@ -24101,7 +24066,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12805 K903 死斗场 SC31·武器名（:5390..:5395）拆回四条（#625：武器名又占一行）',
+    desc: 'M12805 K903 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: "      await era.printAndWait(\n        `${assi_name}把` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `粗暴地塞入${target_name}的嘴里，露出了心满意足的神情……`,\n      );",
     replace:
@@ -24118,7 +24083,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12806 K903 死斗场 SC21·武器名（:5423..:5428）拆回四条（#625）',
+    desc: 'M12806 K903 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的私处……`,\n      );",
     replace:
@@ -24133,7 +24098,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12807 K903 死斗场 SC27·武器名（:5447..:5452）拆回四条（#625）',
+    desc: 'M12807 K903 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24148,7 +24113,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12808 K903 褒美请求·兽名（:5699..:5707）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12808 K903 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '    await era.printAndWait(\n      `「魔王大人，你懂得的吧…让本宫和` + beast_word + `好好地玩・一・玩吧♪」`,\n    );',
     replace:
@@ -24159,7 +24124,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12809 K4 K4_KOJO2 眼镜段（:241+:244+:245）拆回三条（#625：眼镜段又占一行）',
+    desc: 'M12809 K4 K4_KOJO2 眼镜段拆回三条（#625：眼镜段又占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "    await era.printAndWait(\n      `${target_name}` + (glasses ? '眼镜下' : '') + `的目光异常冰冷…`,\n    );",
     replace:
@@ -24172,7 +24137,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '眼镜段与后半句落在同一行',
   },
   {
-    desc: 'M12810 K4 死斗场 SC31·武器名（:4952..:4957）拆回四条（#625：武器名又占一行）',
+    desc: 'M12810 K4 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "      await era.printAndWait(\n        `${assi_name}把` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `粗暴地塞入${target_name}的嘴里，露出了心满意足的神情……`,\n      );",
     replace:
@@ -24189,7 +24154,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12811 K4 死斗场 SC21·武器名（:4985..:4990）拆回四条（#625）',
+    desc: 'M12811 K4 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的私处……`,\n      );",
     replace:
@@ -24204,7 +24169,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12812 K4 死斗场 SC27·武器名（:5009..:5014）拆回四条（#625）',
+    desc: 'M12812 K4 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24219,7 +24184,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12813 K4 褒美请求·兽名（:5259..:5267）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12813 K4 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: '    await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`);',
     replace:
@@ -24230,7 +24195,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12814 K2 交谈首次·自我介绍（:3915+:3917+:3918）拆回三条（#625：自白段又占一行）',
+    desc: 'M12814 K2 交谈首次·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `于是${target_name}将自己的本名、之前的性体验` +\n              (masturbation_note ? '还有一个人手淫的时候想着谁之类的' : '') +\n              `面带微笑的说了出来……`,\n          );\n          await era.printAndWait(",
     replace:
@@ -24239,7 +24204,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '本名段与后文落在同一行',
   },
   {
-    desc: 'M12815 K2 交谈二次·自我介绍（:3988+:3990+:3991）拆回三条（#625）',
+    desc: 'M12815 K2 交谈二次·自我介绍拆回三条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `于是${target_name}将自己的本名、之前的性体验` +\n              (masturbation_note ? '还有一个人手淫的时候想着谁之类的' : '') +\n              `面带微笑的说了出来……`,\n          );\n          await era.print(",
     replace:
@@ -24248,42 +24213,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '本名段与后文落在同一行',
   },
   {
-    desc: 'M12816 K2 交谈首次·按捺住声音（:3951..:3959）拆回五条（#625：工具档又占一行）',
+    desc: 'M12816 K2 交谈首次·按捺住声音拆回五条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: "          // ELSE 三档互斥——判据提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
+    find: "          // ELSE 三档互斥——条件提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
     replace:
-      '          // ELSE 三档互斥——判据提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          } else {\n            await era.print(`自己的`); // 变异：拆回\n          }\n          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
+      '          // ELSE 三档互斥——条件提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          } else {\n            await era.print(`自己的`); // 变异：拆回\n          }\n          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k2-timid'],
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12817 K2 交谈二次·按捺住声音（:4024..:4032）拆回五条（#625）',
+    desc: 'M12817 K2 交谈二次·按捺住声音拆回五条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: "          // 同 :3951 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM/\n          // PRINT 连续不换行，末行 PRINTFORML 才收行。前段工具档与\n          // ELSE 三档互斥——条件提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
     replace:
-      '          const overwhelmed_by_tool =\n' +
-      '            era.get(`tequip:${target}:11`) ||\n' +
-      '            era.get(`tequip:${target}:13`) ||\n' +
-      '            era.get(`tequip:${target}:14`) ||\n' +
-      '            era.get(`tequip:${target}:15`) ||\n' +
-      '            era.get(`tequip:${target}:16`) ||\n' +
-      '            era.get(`tequip:${target}:17`);\n' +
-      '          const overwhelmed_by_pain =\n' +
-      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n' +
-      '          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n' +
-      '          if (overwhelmed_by_tool) {\n' +
-      '            await era.print(`快乐的`); // 变异：拆回\n' +
-      '          } else if (overwhelmed_by_pain) {\n' +
-      '            await era.print(`痛苦的`); // 变异：拆回\n' +
-      '          } else {\n' +
-      '            await era.print(`自己的`); // 变异：拆回\n' +
-      '          }\n' +
-      '          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
+      '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          } else {\n            await era.print(`自己的`); // 变异：拆回\n          }\n          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k2-timid'],
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12818 K2 死斗场 SC31·武器名（:6674..:6679）拆回四条（#625：武器名又占一行）',
+    desc: 'M12818 K2 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "      await era.printAndWait(\n        `${assi_name}把` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `塞入${target_name}的口中，她一脸愉悦的吞吐着肉棒……`,\n      );",
     replace:
@@ -24300,7 +24248,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12819 K2 死斗场 SC21·武器名（:6707..:6712）拆回四条（#625）',
+    desc: 'M12819 K2 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "      await era.printAndWait(\n        `${assi_name}仔细聆听传来的悲鸣，用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `将${target_name}的小穴无情地蹂躏着……`,\n      );",
     replace:
@@ -24315,7 +24263,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12820 K2 死斗场 SC27·武器名（:6731..:6736）拆回四条（#625）',
+    desc: 'M12820 K2 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "      await era.printAndWait(\n        `${assi_name}仔细聆听传来的悲鸣，用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `将${target_name}的肛门无情地蹂躏着……`,\n      );",
     replace:
@@ -24330,7 +24278,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12821 K2 褒美请求·兽名（:6984..:6992）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12821 K2 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '    await era.printAndWait(\n      `「那个…回来的话…能让` + beast_word + `来和我…做…吗」`,\n    );',
     replace:
@@ -24341,30 +24289,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12822 K19 交谈·自我介绍（:4340+:4342+:4343）拆回三条（#625：自白段又占一行）',
+    desc: 'M12822 K19 交谈·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: "          // 那一段——判据提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
+    find: "          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
-      '          // 那一段——判据提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
+      '          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
     tests: ['kojo-k19-fia'],
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12823 K19 交谈·自我介绍·二次（:4410+:4412+:4413）拆回三条（#625）',
+    desc: 'M12823 K19 交谈·自我介绍·二次拆回三条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: "          // 同 :4340 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，\n          // 末行 PRINTFORMW 才收行。SIF ABL:31 >= 3 只护住\n          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
-      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n' +
-      '          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n' +
-      '          if (masturbation_note) {\n' +
-      '            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n' +
-      '          }\n' +
-      '          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
+      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
     tests: ['kojo-k19-fia'],
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12824 K19 交谈·压抑着呼吸声（:4375..:4381）拆回四条（#625：工具档又占一行）',
+    desc: 'M12824 K19 交谈·压抑着呼吸声拆回四条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "          await era.print(\n            `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
@@ -24379,31 +24322,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12825 K19 交谈·压抑着呼吸声·二次（:4446..:4452）拆回四条（#625）',
+    desc: 'M12825 K19 交谈·压抑着呼吸声·二次拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: "          // 同 :4375 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
+    find: "          // 同组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
-      '          const overwhelmed_by_tool =\n' +
-      '            era.get(`tequip:${target}:11`) ||\n' +
-      '            era.get(`tequip:${target}:13`) ||\n' +
-      '            era.get(`tequip:${target}:14`) ||\n' +
-      '            era.get(`tequip:${target}:15`) ||\n' +
-      '            era.get(`tequip:${target}:16`) ||\n' +
-      '            era.get(`tequip:${target}:17`);\n' +
-      '          const overwhelmed_by_pain =\n' +
-      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n' +
-      '          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n' +
-      '          if (overwhelmed_by_tool) {\n' +
-      '            await era.print(`快乐的`); // 变异：拆回\n' +
-      '          } else if (overwhelmed_by_pain) {\n' +
-      '            await era.print(`痛苦的`); // 变异：拆回\n' +
-      '          }\n' +
-      '          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
+      '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          }\n          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
     tests: ['kojo-k19-fia'],
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12826 K19 交谈·PLAYER 前缀与尾段（:4440+:4442）拆回两条（#625）',
+    desc: 'M12826 K19 交谈·PLAYER 前缀与尾段拆回两条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '          await era.print(\n            `${player_name}${target_name}一边与${master_name}说着话，一边对着${master_name}露出了重要的地方。`,\n          );',
     replace:
@@ -24415,7 +24343,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'PLAYER 前缀与尾段落在同一行',
   },
   {
-    desc: 'M12827 K19 死斗场 SC31·武器名（:6160..:6165）拆回四条（#625：武器名又占一行）',
+    desc: 'M12827 K19 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阴茎' : '') +\n          `被${target_name}含住而露出了快乐的的表情……`,\n      );",
     replace:
@@ -24432,7 +24360,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12828 K19 死斗场 SC21·武器名（:6193..:6198）拆回四条（#625）',
+    desc: 'M12828 K19 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的腔内……`,\n      );",
     replace:
@@ -24447,7 +24375,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12829 K19 死斗场 SC27·武器名（:6217..:6222）拆回四条（#625）',
+    desc: 'M12829 K19 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24462,7 +24390,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12830 K19 褒美请求·兽名（:6525..:6533）拆回三条（#625：空首尾又各占一行）',
+    desc: 'M12830 K19 褒美请求·兽名拆回三条（#625：空首尾又各占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '    await era.printAndWait(beast_word);',
     replace:
@@ -24473,25 +24401,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '空首尾不再各占一行',
   },
   {
-    desc: 'M12831 K904 交谈·自我介绍（:4340+:4342+:4343）拆回三条（#625：自白段又占一行）',
+    desc: 'M12831 K904 交谈·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 那一段——判据提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
+    find: "          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
-      '          // 那一段——判据提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
+      '          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
     tests: ['kojo-k904-fia'],
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12832 K904 交谈·自我介绍·二次（:4410+:4412+:4413）拆回三条（#625）',
+    desc: 'M12832 K904 交谈·自我介绍·二次拆回三条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 同 :4340 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，\n          // 末行 PRINTFORMW 才收行。SIF ABL:31 >= 3 只护住\n          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
       '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
     tests: ['kojo-k904-fia'],
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12833 K904 交谈·压抑着呼吸声（:4375..:4381）拆回四条（#625：工具档又占一行）',
+    desc: 'M12833 K904 交谈·压抑着呼吸声拆回四条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "          await era.print(\n            `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
@@ -24500,16 +24428,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12834 K904 交谈·压抑着呼吸声·二次（:4446..:4452）拆回四条（#625）',
+    desc: 'M12834 K904 交谈·压抑着呼吸声·二次拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 同 :4375 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
+    find: "          // 同组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
       '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          }\n          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
     tests: ['kojo-k904-fia'],
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12835 K904 交谈·PLAYER 前缀与尾段（:4440+:4442）拆回两条（#625）',
+    desc: 'M12835 K904 交谈·PLAYER 前缀与尾段拆回两条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: '          await era.print(\n            `${player_name}${target_name}一边与${master_name}说着话，一边对着${master_name}露出了重要的地方。`,\n          );',
     replace:
@@ -24518,7 +24446,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'PLAYER 前缀与尾段落在同一行',
   },
   {
-    desc: 'M12836 K904 死斗场 SC31·武器名（:6160..:6165）拆回四条（#625：武器名又占一行）',
+    desc: 'M12836 K904 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阴茎' : '') +\n          `被${target_name}含住而露出了快乐的的表情……`,\n      );",
     replace:
@@ -24527,7 +24455,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12837 K904 死斗场 SC21·武器名（:6193..:6198）拆回四条（#625）',
+    desc: 'M12837 K904 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的腔内……`,\n      );",
     replace:
@@ -24536,7 +24464,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12838 K904 死斗场 SC27·武器名（:6217..:6222）拆回四条（#625）',
+    desc: 'M12838 K904 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24545,7 +24473,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12839 K904 褒美请求·兽名（:6525..:6533）拆回三条（#625：空首尾又各占一行）',
+    desc: 'M12839 K904 褒美请求·兽名拆回三条（#625：空首尾又各占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: '    await era.printAndWait(beast_word);',
     replace:
@@ -24554,7 +24482,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '空首尾不再各占一行',
   },
   {
-    desc: 'M12840 K13 正常位恳求·三档（:1562..:1570）拆回多条（#625：恳求段又占一行）',
+    desc: 'M12840 K13 正常位恳求·三档拆回多条（#625：恳求段又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(\n              `「亲爱的…请原谅……` +\n                (rand_n(3) == 0\n                  ? `啊啊啊…`\n                  : rand_n(2) == 0\n                    ? `不行…`\n                    : `噫噫…`) +\n                `${heart(3)}」`,\n            );',
     replace:
@@ -24571,7 +24499,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '恳求段与收行落在同一行',
   },
   {
-    desc: 'M12841 K13 背后位·把…弄乱（:1675..:1681）拆回三条（#625：把…段又占一行）',
+    desc: 'M12841 K13 背后位·把…弄乱拆回三条（#625：把…段又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '              await era.printAndWait(\n                moan_front +\n                  moan_act +\n                  moan_pat +\n                  `……` +\n                  `把${sc()}` +\n                  (rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`) +\n                  `${heart(3)}」`,\n              );',
     replace:
@@ -24587,7 +24515,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':1675 组必须出声',
   },
   {
-    desc: 'M12842 K13 背后位恳求·三档（:1690..:1698）拆回多条（#625）',
+    desc: 'M12842 K13 背后位恳求·三档拆回多条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(\n              `「亲爱的…请原谅……` +\n                (rand_n(3) == 0\n                  ? `啊啊啊啊啊`\n                  : rand_n(2) == 0\n                    ? `不行`\n                    : `噫噫`) +\n                `${heart(3)}」`,\n            );',
     replace:
@@ -24604,7 +24532,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '恳求段与收行落在同一行',
   },
   {
-    desc: 'M12843 K13 NTR·前缀与再生处女膜（:5518..:5529）拆回两条（#625）',
+    desc: 'M12843 K13 NTR·前缀与再生处女膜拆回两条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: "        await era.printAndWait(\n          `狂王毫不介意${sc()}的话、邪笑了起来、将` +\n            (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n            `刺穿了` +\n            `由魔王再生的处女膜。`,\n        );",
     replace:
@@ -24618,7 +24546,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀段与收行同属一行',
   },
   {
-    desc: 'M12844 K13 NTR·冷笑与一口气刺穿（:5547..:5554）拆回三条（#625：武器名又占一行）',
+    desc: 'M12844 K13 NTR·冷笑与一口气刺穿拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '      await era.print(\n        `狂王冷笑了一番、蹂躏了一番${sc()}的屁股、将` +\n          (king_has_penis ? `胯下的巨根` : `取出的极粗假阳具`) +\n          `一口气刺穿了`,\n      );',
     replace:
@@ -24629,7 +24557,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5547 组是一行',
   },
   {
-    desc: 'M12845 K13 NTR·处女膜段与赤印（:5557+:5559+:5561）拆回两条（#625）',
+    desc: 'M12845 K13 NTR·处女膜段与赤印拆回两条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '      await era.print(\n        (regen_hymen\n          ? `由魔王再生的处女膜、`\n          : `尚未经人事的小穴、蛮横地抽插着、`) + `纯洁的赤印将地板染红了。`,\n      );',
     replace:
@@ -24643,7 +24571,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5557 组是一行',
   },
   {
-    desc: 'M12846 K13 NTR·亲密接触整行（:5563..:5570）拆回多条（#625）',
+    desc: 'M12846 K13 NTR·亲密接触整行拆回多条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: "      await era.printAndWait(\n        (has_hymen ? `（老公……抱歉……最终还是……）` : '') +\n          `不仅无视了伴随着呜咽声求饶的${sc()}、狂王还愉快地将` +\n          (king_has_penis ? `腰` : `极粗假阳具`) +\n          `与${a_name}亲密接触的模样记录在了水晶球中。`,\n      );",
     replace:
@@ -24655,7 +24583,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5563 组是一行',
   },
   {
-    desc: 'M12847 K13 NTR P==4·昂与比魔王大人（:5593+:5595+:5596）拆回三条（#625）',
+    desc: 'M12847 K13 NTR P==4·昂与比魔王大人拆回三条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: "      await era.print(\n        `「昂${heart(1)}　` +\n          (has_hymen ? `比那个人、` : '') +\n          `比魔王大人${heart(3)}」`,\n      );",
     replace:
@@ -24666,7 +24594,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5593 组是一行',
   },
   {
-    desc: 'M12848 K13 褒美请求·兽名（:5790..:5798）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12848 K13 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '    await era.printAndWait(`${a_name}要求奖励与` + beast_word + `交尾`);',
     replace:
@@ -24677,7 +24605,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12849 K5 交谈·自我介绍（:4795+:4797+:4798）拆回三条（#625：自白段又占一行）',
+    desc: 'M12849 K5 交谈·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          // 语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
     replace:
@@ -24686,16 +24614,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12850 K5 交谈二次·自我介绍（:4841+:4843+:4844）拆回三条（#625）',
+    desc: 'M12850 K5 交谈二次·自我介绍拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
-    find: "          // 同 :4795 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，末行\n          // PRINTFORML 才收行。SIF ABL:31 >= 3 只护住前段——条件提到\n          // 语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
     replace:
       '          // 同 :4795 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`${target_name}将自己的本名和接下来要进行的性体验`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`、甚至是连自慰时妄想的事情`); // 变异：拆回\n          }\n          await era.print(`十分欣喜地全部说了出来……`); // 变异：拆回',
     tests: ['kojo-k5-mao'],
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12851 K5 交谈·发出了…的声音（:4818..:4824）拆回三条（#625：工具档又占一行）',
+    desc: 'M12851 K5 交谈·发出了…的声音拆回三条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          await era.print(\n            maid_front +\n              `向少女搭话后、${target_name}发出了` +\n              (overwhelmed_by_tool\n                ? `快乐的`\n                : overwhelmed_by_pain\n                  ? `痛苦的`\n                  : '') +\n              `的声音、拼命地向着${player_name}说了起来`,\n          );",
     replace:
@@ -24706,7 +24634,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与工具档、前后文落在同一行',
   },
   {
-    desc: 'M12852 K5 交谈二次·发出了…的声音（:4864..:4870）拆回三条（#625）',
+    desc: 'M12852 K5 交谈二次·发出了…的声音拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          await era.print(\n            maid_front_4858 +\n              `向少女搭话后，${target_name}发出了` +\n              (overwhelmed_by_tool\n                ? `快乐的`\n                : overwhelmed_by_pain\n                  ? `痛苦的`\n                  : '') +\n              `的声音、拼命地向着${player_name}说了起来`,\n          );",
     replace:
@@ -24717,7 +24645,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与工具档、前后文落在同一行',
   },
   {
-    desc: 'M12853 K5 六九式初回·淫乱（:5190..:5196）拆回三条（#625：武器名又占一行）',
+    desc: 'M12853 K5 六九式初回·淫乱拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '        await era.printAndWait(\n          `「啊嗯~…更加地…玩弄那里嘛~…那样的话我就会好好地吸主人的` +\n            (player_has_penis ? `大鸡巴` : `花蕾`) +\n            `的啦~${heart(1)}」`,\n        );',
     replace:
@@ -24730,7 +24658,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行拼接「假阳具」',
   },
   {
-    desc: 'M12854 K5 六九式初回·爱慕（:5201..:5209）拆回四条（#625）',
+    desc: 'M12854 K5 六九式初回·爱慕拆回四条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '        await era.printAndWait(\n          `${target_name}吮吸起${player_name}的` +\n            (player_has_penis\n              ? `阴茎`\n              : player_has_toy && rand_n(3) === 0\n                ? `假阳具`\n                : `阴唇`) +\n            `，而${player_name}也没有停下来继续着口腔侍奉。`,\n        );\n      } else if (era.get(`abl:${target}:16`) >= 3) {',
     replace:
@@ -24739,7 +24667,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行拼接「假阳具」',
   },
   {
-    desc: 'M12855 K5 六九式二回目·爱慕（:5233..:5241）拆回四条（#625）',
+    desc: 'M12855 K5 六九式二回目·爱慕拆回四条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '        await era.printAndWait(\n          `${target_name}吮吸起${player_name}的` +\n            (player_has_penis\n              ? `阴茎`\n              : player_has_toy && rand_n(3) === 0\n                ? `假阳具`\n                : `阴唇`) +\n            `，而${player_name}也没有停下来继续着口腔侍奉。`,\n        );\n        await era.printAndWait(',
     replace:
@@ -24748,7 +24676,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行拼接「假阳具」',
   },
   {
-    desc: 'M12856 K5 死斗场 SC31·武器名（:7274..:7279）拆回三条（#625：武器名又占一行）',
+    desc: 'M12856 K5 死斗场 SC31·武器名拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "      await era.printAndWait(\n        `舔着${assi_name}的` +\n          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n          `${target_name}露出心旷神怡的表情……`,\n      );",
     replace:
@@ -24759,7 +24687,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12857 K5 死斗场 SC21·武器名（:7307..:7312）拆回三条（#625）',
+    desc: 'M12857 K5 死斗场 SC21·武器名拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着哀嚎` +\n          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n          `继续毫不留情地蹂躏着${target_name}的阴道……`,\n      );",
     replace:
@@ -24770,7 +24698,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12858 K5 死斗场 SC27·武器名（:7331..:7336）拆回三条（#625）',
+    desc: 'M12858 K5 死斗场 SC27·武器名拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着哀嚎` +\n          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n          `继续毫不留情地蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24781,7 +24709,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12859 K5 褒美请求·兽名（:7574..:7582）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12859 K5 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '    await era.printAndWait(\n      `「如果打倒勇者姐姐的话请给我奖赏、好想和` + beast_word + `做爱啊♪」`,\n    );',
     replace:
@@ -24792,7 +24720,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12860 K5 交谈·前缀行（:4812+:4814 支）拆回两条（#625：前缀又单独占一行）',
+    desc: 'M12860 K5 交谈·前缀行（该分支）拆回两条（#625：前缀又单独占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            `${player_name}向少女搭话后、${target_name}晃动着腰部说起了充满爱意的话语`,\n          );',
     replace:
@@ -24804,7 +24732,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12861 K5 交谈二次·前缀行（:4858+:4860 支）拆回两条（#625）',
+    desc: 'M12861 K5 交谈二次·前缀行（该分支）拆回两条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            `${player_name}向少女搭话后，${target_name}晃动着腰部说起了充满爱意的话语`,\n          );',
     replace:
@@ -24816,7 +24744,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12862 K5 百合 PLAY·前缀与收行（:6150+:6152）拆回两条（#625）',
+    desc: 'M12862 K5 百合 PLAY·前缀与收行拆回两条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.printAndWait(\n            `${assi_name}看着那样的少女、感到很满意` +\n              `直到天黑一直都在玩弄着少女………`,\n          );',
     replace:
@@ -24826,7 +24754,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与收行落在同一行',
   },
   {
-    desc: 'M12863 K13 哈啊…请您·整段（:1656..:1670）拆回三条（#625：前缀与整段又各占一行）',
+    desc: 'M12863 K13 哈啊…请您·整段拆回三条（#625：前缀与整段又各占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '                await era.printAndWait(\n                  `「哈啊…请您` +\n                    (act_is_insert\n                      ? `抽插${sc()}的时候`\n                      : `侵犯${sc()}的时候`) +\n                    `${heart(1)}` +\n                    `……` +\n                    `再激烈一点…` +\n                    `才好啊${heart(3)}」`,\n                );',
     replace:
@@ -24841,7 +24769,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与整段落在同一行',
   },
   {
-    desc: 'M12864 K13 有感觉了什么的（:1709+:1711）拆回两条（#625：前缀又单独占一行）',
+    desc: 'M12864 K13 有感觉了什么的拆回两条（#625：前缀又单独占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(`「有感觉了什么的……」`);',
     replace:
@@ -24851,7 +24779,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与收行落在同一行',
   },
   {
-    desc: 'M12865 K13 这副模样／好羞耻（:1719..:1725）拆回三条（#625）',
+    desc: 'M12865 K13 这副模样／好羞耻拆回三条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '          await era.printAndWait(\n            (shame_if ? `「这副模样……` : `「`) +\n              `好羞耻……` +\n              (shame_heart ? `啊啊${heart(3)}」` : `」`),\n          );',
     replace:
@@ -24862,7 +24790,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '头部与收尾落在同一行',
   },
   {
-    desc: 'M12866 K5 交谈·下流的话语（:4816 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12866 K5 交谈·下流的话语（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front +\n              `向少女搭话后、${target_name}一边晃着腰一边不停地说着下流的话语`,\n          );',
     replace:
@@ -24874,7 +24802,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12867 K5 交谈二次·下流的话语（:4862 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12867 K5 交谈二次·下流的话语（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front_4858 +\n              `向少女搭话后，${target_name}一边晃着腰一边不停地说着下流的话语`,\n          );',
     replace:
@@ -24886,7 +24814,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12868 K5 交谈·牢骚（:4826 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12868 K5 交谈·牢骚（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front +\n              `向少女搭话后、${target_name}如同打发无聊一样发起了牢骚`,\n          );',
     replace:
@@ -24898,7 +24826,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12869 K5 交谈二次·牢骚（:4872 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12869 K5 交谈二次·牢骚（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front_4858 +\n              `向少女搭话后，${target_name}如同打发无聊一样发起了牢骚`,\n          );',
     replace:
@@ -24912,7 +24840,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #557：重叠检测直接报错的调用点变异（与 M11427 同一目标、独立条目：
   // 那条守的是随机数/顺序断言，这条守夹具的重叠抛错本身）——
   {
-    desc: 'M12356 强制肉偿调用点漏写 await（重叠检测直接报错：不等真身跑完，:78 的自慰判定与肉偿抢同一个输入，#557/#544）',
+    desc: 'M12356 强制肉偿调用点漏写 await（重叠检测直接报错：不等真身跑完，自慰判定与肉偿抢同一个输入，#557/#544）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    // CALL 强制肉偿(ARG)\n    await forced_payment(arg, rand);',
     replace:
@@ -24932,7 +24860,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '缺省与 -1 都吃 TARGET',
   },
 
-  // ===== #654 F8 缺陷修复守卫（M13300–）=====
+  // ===== #654 F8 缺陷修复检查（M13300–）=====
   {
     desc: 'M13300 K903 EVENTEND 第二次注册回归：调教结束正文又打两遍（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
@@ -24943,7 +24871,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'EVENTEND 调教结束正文只执行一次',
   },
   {
-    desc: 'M13301 K903 SELECTCOM:2 肛门爱抚兜底判据回退误读 CFLAG:223（#654）',
+    desc: 'M13301 K903 SELECTCOM:2 肛门爱抚保底条件回退误读 CFLAG:223（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '      } else if (chara(target).kojo.肛门爱抚 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
@@ -24988,7 +24916,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 30/32/40/41 门槛与计数器自洽',
   },
   {
-    desc: 'M13306 K903 SELECTCOM:40 兜底支回退 AND（#654）',
+    desc: 'M13306 K903 SELECTCOM:40 保底支回退 AND（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '      } else if (chara(target).kojo.打屁股 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
@@ -24997,7 +24925,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 30/32/40/41 门槛与计数器自洽',
   },
   {
-    desc: 'M13307 K903 SELECTCOM:41 鞭兜底回退误读骑乘位 CFLAG:335（#654）',
+    desc: 'M13307 K903 SELECTCOM:41 鞭保底回退误读骑乘位 CFLAG:335（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '      } else if (chara(target).kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
@@ -25006,7 +24934,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 30/32/40/41 门槛与计数器自洽',
   },
   {
-    desc: 'M13308 K903 KOJO2 露出狂判据回退误读 TALENT:83（#654）',
+    desc: 'M13308 K903 KOJO2 露出狂条件回退误读 TALENT:83（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '    if (era0(`talent:${target}:89`)) {\n      await era.printAndWait(\n        `「那个，能早点去外面吗？本宫好闷的啊……在房间里不够刺激啦～」`,\n      );',
     replace:
@@ -25015,7 +24943,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'KOJO2 开场素质链',
   },
   {
-    desc: 'M13309 K903 SELECTCOM:56 摄影支淫乱判据回退爱慕 TALENT:85（#654）',
+    desc: 'M13309 K903 SELECTCOM:56 摄影支淫乱条件回退爱慕 TALENT:85（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '      if (era0(`tequip:${target}:53`)) {\n        if (\n          era0(`talent:${target}:76`) == 1 &&\n          (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 == 2)',
     replace:
@@ -25024,7 +24952,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 淫乱二次档读 TALENT:76',
   },
   {
-    desc: 'M13310 K903 SELECTCOM:56 非摄影支淫乱判据回退爱慕 TALENT:85（#654）',
+    desc: 'M13310 K903 SELECTCOM:56 非摄影支淫乱条件回退爱慕 TALENT:85（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '      } else {\n        if (\n          era0(`talent:${target}:76`) == 1 &&\n          (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 == 2)',
     replace:
@@ -25033,7 +24961,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 淫乱二次档读 TALENT:76',
   },
   {
-    desc: 'M13311 K8 SELECTCOM:2 それ以外守卫回退误读 CFLAG:223（#654）',
+    desc: 'M13311 K8 SELECTCOM:2 それ以外检查回退误读 CFLAG:223（#654）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
@@ -25059,13 +24987,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'CFLAG:310 推进到 4',
   },
   {
-    desc: 'M13314 K8 SELECTCOM:16 爱慕+弄乳狂守卫回退误读 CFLAG:316（#654）',
+    desc: 'M13314 K8 SELECTCOM:16 爱慕+弄乳狂检查回退误读 CFLAG:316（#654）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`talent:${target}:85`) == 1 &&\n      era0(`talent:${target}:78`) == 1 &&\n      (kojo.榨乳器 <= 2 || game.kojo.口上开关 == 2)',
     replace:
       '      era0(`talent:${target}:85`) == 1 &&\n      era0(`talent:${target}:78`) == 1 &&\n      (kojo.乳头夹 <= 2 || game.kojo.口上开关 == 2) // 变异：回退误读 316',
     tests: ['kojo-k8-spade'],
-    must_mention: '各臂守卫读 CFLAG:317 自身',
+    must_mention: '各分支检查读 CFLAG:317 自身',
   },
   {
     desc: 'M13315 K8 SELECTCOM:22 处女支回退空白引号占位（#654）',
@@ -25077,7 +25005,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '输出空行',
   },
   {
-    desc: 'M13316 K8 DOG_KOJO_8 SC43 眼罩牝犬档守卫回退误读 CFLAG:338（#654）',
+    desc: 'M13316 K8 DOG_KOJO_8 SC43 眼罩牝犬档检查回退误读 CFLAG:338（#654）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`talent:${target}:136`) == 1 &&\n      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 == 2)\n    ) {\n      // 牝犬',
     replace:
@@ -25158,7 +25086,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '那才叫心情舒畅',
   },
 
-  // ===== #654 F8 缺陷修复守卫（M13325–，k3/k11/k12/k15）=====
+  // ===== #654 F8 缺陷修复检查（M13325–，k3/k11/k12/k15）=====
   {
     desc: 'M13325 K12 SELECTCOM:7 自己扒开二次写回胸爱抚 CFLAG:306（#654）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
@@ -25166,34 +25094,34 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '        // CFLAG:308  = 5（变量语义：CFLAG 族，308）\n        kojo.胸爱抚 = 5; // 变异：回退误写 306',
     tests: ['kojo-k12-intellectual'],
-    must_mention: '判据与写入都是 CFLAG:308',
+    must_mention: '条件与写入都是 CFLAG:308',
   },
   {
-    desc: 'M13326 K12 SELECTCOM:27 背后位肛交判据回退误读 CFLAG:327（#654）',
+    desc: 'M13326 K12 SELECTCOM:27 背后位肛交条件回退误读 CFLAG:327（#654）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:3`) >= 3 &&\n        (kojo.背后位肛交 <= 6 || game.kojo.口上开关 == 2)',
     replace:
       '        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:3`) >= 3 &&\n        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 == 2) // 变异：回退误读 327',
     tests: ['kojo-k12-intellectual'],
-    must_mention: '判据与写入都是 CFLAG:328',
+    must_mention: '条件与写入都是 CFLAG:328',
   },
   {
-    desc: 'M13327 K12 SELECTCOM:32 乳交判据回退误读 CFLAG:332（#654）',
+    desc: 'M13327 K12 SELECTCOM:32 乳交条件回退误读 CFLAG:332（#654）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.乳交 <= 5 || game.kojo.口上开关 == 2)',
     replace:
       '        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`abl:${target}:16`) >= 5 &&\n        (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2) // 变异：回退误读 332',
     tests: ['kojo-k12-intellectual'],
-    must_mention: '判据读 CFLAG:333',
+    must_mention: '条件读 CFLAG:333',
   },
   {
-    desc: 'M13328 K15 肛门爱抚それ以外判据回退误读 CFLAG:223（#654）',
+    desc: 'M13328 K15 肛门爱抚それ以外条件回退误读 CFLAG:223（#654）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '      } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
       '      } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 == 2) { // 变异：回退误读 223',
     tests: ['kojo-k15-clever'],
-    must_mention: 'それ以外判据读 CFLAG:303',
+    must_mention: 'それ以外条件读 CFLAG:303',
   },
   {
     desc: 'M13329 K15 自己扒开二次写回胸爱抚 CFLAG:306（#654）',
@@ -25204,61 +25132,61 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '二回目以降读写 CFLAG:308',
   },
   {
-    desc: 'M13330 K15 乳交二回目判据回退误读 CFLAG:332（#654）',
+    desc: 'M13330 K15 乳交二回目条件回退误读 CFLAG:332（#654）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '        (kojo.乳交 <= 5 || game.kojo.口上开关 == 2)',
     replace:
       '        (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2) // 变异：回退误读 332',
     tests: ['kojo-k15-clever'],
-    must_mention: '二回目判据读 CFLAG:333',
+    must_mention: '二回目条件读 CFLAG:333',
   },
   {
-    desc: 'M13331 K15 鞭それ以外判据回退误读骑乘位 CFLAG:335（#654）',
+    desc: 'M13331 K15 鞭それ以外条件回退误读骑乘位 CFLAG:335（#654）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '      } else if (kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {',
     replace:
       '      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) { // 变异：回退误读 335',
     tests: ['kojo-k15-clever'],
-    must_mention: 'それ以外判据读 CFLAG:342',
+    must_mention: 'それ以外条件读 CFLAG:342',
   },
   {
-    desc: 'M13332 K15 深喉二回目判据回退误读 CFLAG:363（#654）',
+    desc: 'M13332 K15 深喉二回目条件回退误读 CFLAG:363（#654）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '        (kojo.深喉 <= 4 || game.kojo.口上开关 == 2)',
     replace:
       '        (kojo.真空口交 <= 4 || game.kojo.口上开关 == 2) // 变异：回退误读 363',
     tests: ['kojo-k15-clever'],
-    must_mention: '二回目判据与写入都是 CFLAG:365',
+    must_mention: '二回目条件与写入都是 CFLAG:365',
   },
   {
-    desc: 'M13333 K15 兽奸眼罩着脱判据回退误读 CFLAG:338（#654）',
+    desc: 'M13333 K15 兽奸眼罩着脱条件回退误读 CFLAG:338（#654）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '      era0(`talent:${target}:136`) == 1 &&\n      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 == 2)',
     replace:
       '      era0(`talent:${target}:136`) == 1 &&\n      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2) // 变异：回退误读 338',
     tests: ['kojo-k15-clever'],
-    must_mention: '判据与写入都是 CFLAG:444',
+    must_mention: '条件与写入都是 CFLAG:444',
   },
   {
-    desc: 'M13334 K11 COM27 淫乱档判据回退误读 CFLAG:327（#654）',
+    desc: 'M13334 K11 COM27 淫乱档条件回退误读 CFLAG:327（#654）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (assi_mao) {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          chara(target).system.肛门感觉 >= 3 &&\n          (kojo.背后位肛交 <= 6 || game.kojo.口上开关 === 2)',
     replace:
       '      if (assi_mao) {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          chara(target).system.肛门感觉 >= 3 &&\n          (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2) // 变异：回退误读 327',
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM27 二回目：淫乱两档判据读本支 CFLAG:328',
+    must_mention: 'COM27 二回目：淫乱两档条件读本支 CFLAG:328',
   },
   {
-    desc: 'M13335 K11 COM32 助手玛奥淫乱档判据回退误读 CFLAG:332（#654）',
+    desc: 'M13335 K11 COM32 助手玛奥淫乱档条件回退误读 CFLAG:332（#654）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        (kojo.乳交 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        if (rand_n(2) === 0) {',
     replace:
       '        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2) // 变异：回退误读 332\n      ) {\n        if (rand_n(2) === 0) {',
     tests: ['kojo-k11-lily'],
-    must_mention: 'COM32 二回目：淫乱守卫判据读本支 CFLAG:333',
+    must_mention: 'COM32 二回目：淫乱检查条件读本支 CFLAG:333',
   },
   {
-    desc: 'M13336 K11 COM124 深喉判据回退误读 CFLAG:363（#654）',
+    desc: 'M13336 K11 COM124 深喉条件回退误读 CFLAG:363（#654）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (assi_mao) {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.深喉 <= 4 || game.kojo.口上开关 === 2)',
     replace:
@@ -25267,16 +25195,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'COM124 二回目门槛按深喉 CFLAG:365 分档',
   },
   {
-    desc: 'M13337 K11 DOG_KOJO_11 眼罩牝犬档判据回退误读 CFLAG:338（#654）',
+    desc: 'M13337 K11 DOG_KOJO_11 眼罩牝犬档条件回退误读 CFLAG:338（#654）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      era.get(`talent:${target}:136`) === 1 &&\n      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 === 2)',
     replace:
       '      era.get(`talent:${target}:136`) === 1 &&\n      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 === 2) // 变异：回退误读 338',
     tests: ['kojo-k11-lily'],
-    must_mention: '眼罩着脱各档判据读 CFLAG:444 自身',
+    must_mention: '眼罩着脱各档条件读 CFLAG:444 自身',
   },
   {
-    desc: 'M13338 K3 肛门爱抚それ以外判据回退误读 CFLAG:223（#654）',
+    desc: 'M13338 K3 肛门爱抚それ以外条件回退误读 CFLAG:223（#654）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '    } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 === 2) {',
     replace:
@@ -25285,9 +25213,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'それ以外',
   },
 
-  // ===== #654 F8 缺陷修复守卫（M13339–，k0）=====
+  // ===== #654 F8 缺陷修复检查（M13339–，k0）=====
   {
-    desc: 'M13339 K0 肛门爱抚末支判据回退误读 CFLAG:223（#654）',
+    desc: 'M13339 K0 肛门爱抚末支条件回退误读 CFLAG:223（#654）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      kojo.肛门爱抚 <= 1 ||\n      game.kojo.口上开关 === 2',
     replace:
@@ -25302,7 +25230,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '        `「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢${heart(1)}」`,\n      );\n      kojo.胸爱抚 = 5; // 变异：回退误写 306',
     tests: ['kojo-k0-tender'],
-    must_mention: '自己扒开二次：各档判据与推进都是 CFLAG:308',
+    must_mention: '自己扒开二次：各档条件与推进都是 CFLAG:308',
   },
   {
     desc: 'M13341 K0 背后位二次门槛回退误读 CFLAG:321（#654）',
@@ -25350,7 +25278,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:335',
   },
   {
-    desc: 'M13346 K0 鞭二次末支判据回退误读骑乘位 CFLAG:335（#654）',
+    desc: 'M13346 K0 鞭二次末支条件回退误读骑乘位 CFLAG:335（#654）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      } else if (kojo.鞭 <= 1 || game.kojo.口上开关 === 2) {\n        await era.printAndWait(`「啊啊～…求你了…快住手吧…求你了…」`);',
     replace:
@@ -25368,7 +25296,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '深喉二次：淫乱门槛读 CFLAG:365',
   },
 
-  // —— #655（F9）：强制肉偿片酬单次求值与经验实入账、巨人凌辱写入修正的守卫 ——
+  // —— #655（F9）：强制肉偿片酬单次求值与经验实入账、巨人凌辱写入修正的检查 ——
   {
     desc: 'M13350 强制肉偿的入账复用显示值被破坏（shown_price 入账改成减——片酬后的欠金与显示对不上，#655）',
     file: 'ere/kojo/kojo-forced-payment.js',
@@ -25412,24 +25340,24 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'EXP:52 私处扩张经验 +5',
   },
 
-  // ===== #654 返工新增守卫（M13348–）=====
+  // ===== #654 返工新增检查（M13348–）=====
   {
-    desc: 'M13348 K8 SELECTCOM:124 深喉判据回退误读 CFLAG:363（#654 返工）',
+    desc: 'M13348 K8 SELECTCOM:124 深喉条件回退误读 CFLAG:363（#654 返工）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      era0(`talent:${target}:76`) == 1 &&\n      (kojo.深喉 <= 4 || game.kojo.口上开关 == 2)\n    ) {\n      // 二回目以降·淫乱',
     replace:
       '      era0(`talent:${target}:76`) == 1 &&\n      (kojo.真空口交 <= 4 || game.kojo.口上开关 == 2) // 变异：回退误读 363\n      ) {\n        // 二回目以降·淫乱',
     tests: ['kojo-k8-spade'],
-    must_mention: 'SELECTCOM 124 深喉，二回目以降·四臂判据读 CFLAG:365 自身',
+    must_mention: '四分支条件读 CFLAG:365 自身',
   },
   {
-    desc: 'M13349 K8 SELECTCOM:41 鞭兜底判据回退误读骑乘位 CFLAG:335（#654 返工）',
+    desc: 'M13349 K8 SELECTCOM:41 鞭保底条件回退误读骑乘位 CFLAG:335（#654 返工）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    } else if (kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {\n      // それ以外\n      await era.printAndWait(\n        `「咕…啊啊！呵呵呵…真不愧是这个鞭子',
     replace:
       '    } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) { // 变异：回退误读 335\n      // それ以外\n      await era.printAndWait(\n        `「咕…啊啊！呵呵呵…真不愧是这个鞭子',
     tests: ['kojo-k8-spade'],
-    must_mention: 'SELECTCOM 41 鞭，それ以外分支判据读 CFLAG:342 自身',
+    must_mention: 'SELECTCOM 41 鞭，それ以外分支条件读 CFLAG:342 自身',
   },
   {
     desc: 'M13549 K8 SELECTCOM:30 手淫顶档推进上限退回 5，淫乱角色在 6 时无台词（#654 验收）',

@@ -9,8 +9,8 @@
  *   - 七道跳过判定（K0 顺序：死斗场最先、崩坏在兽奸前；死斗场/兽奸岔专用口上）；
  *   - 爱抚外指令落占位行；
  *   - 舔阴 / 肛门爱抚 / 自慰状态机（自慰含拍摄拼接与 RAND:3/RAND:2）；
- *   - @EVENTTRAIN #PRI / @EVENTEND #LATER 的存在标志；
- *   - @EVENTTRAIN / @EVENTEND NORMAL 与二次口上 k0_kojo2（CFLAG:201 / 370 / 650 / 202）；
+ *   - EVENTTRAIN #PRI 档 / EVENTEND #LATER 档的存在标志；
+ *   - EVENTTRAIN / EVENTEND NORMAL 档与二次口上 k0_kojo2（CFLAG:201 / 370 / 650 / 202）；
  */
 
 const assert = require('node:assert/strict');
@@ -156,7 +156,7 @@ test('阈值闸：FLAG:7 == 1 时上限生效（阶段耗尽后不出声），==
   assert.equal(repeat.store.get('cflag:31:301'), 6);
 });
 
-// —— 七道跳过判定（:676-699，K0 顺序：死斗场最先、崩坏在兽奸前） ——
+// —— 七道跳过判定（K0 顺序：死斗场最先、崩坏在兽奸前） ——
 
 test('死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_0 真身（selectcom 55 + 体力低）', async () => {
   const fixture = await setup_k0((f) => {
@@ -241,10 +241,10 @@ test('触手（TEQUIP:90）：不输出', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('ERB 无分支的 SELECTCOM（如 4）：静默返回（原作 COM 末尾 RETURN 0）', async () => {
+test('无分支的 SELECTCOM（如 4）：静默返回（COM 末尾 RETURN 0）', async () => {
   const fixture = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 4; // 原作 @KOJO_MESSAGE_COM_0 无 SELECTCOM == 4 分支
+    era_flag.selectcom = 4; // kojo_message_com_0 无 SELECTCOM == 4 分支
   });
   await speak_k0(fixture);
   assert.deepEqual(fixture.text_lines(), []);
@@ -607,7 +607,7 @@ test('自慰二次淫乱+自慰中毒 Lv3：拍摄拼接 / 三支随机', async 
   });
   await speak_k0(film);
   assert.deepEqual(film.text_lines(), [
-    // #624：:887..:893 原作是一整行（无后缀 PRINTFORM 不换行）
+    // #624：同一行输出（无后缀 PRINTFORM 不换行）
     '「看吧～♡　噗咻噗咻勃起的鸡鸡～♡」',
     '「我今天也是情绪高涨！请大家一起看我做舒服的事吧～♡」',
   ]);
@@ -723,7 +723,7 @@ test('自慰二次爱慕+自慰中毒 Lv3：拍摄拼接与随机支', async () 
   });
   await speak_k0(film);
   assert.deepEqual(film.text_lines(), [
-    // #624：:922..:928 原作是一整行（与 :887..:893 同型）
+    // #624：同一行输出（与前一处同型）
     '「看见了吗？～♪　噗咻噗咻勃起的假鸡鸡♪」',
     '「我呐，只有有爱的话，在大家面前也不觉得尴尬了……♪」',
   ]);
@@ -1077,7 +1077,7 @@ test('自己扒开首次淫乱 / 爱慕 / それ以外，推进到 1', async () 
   assert.deepEqual(other.text_lines(), ['「咕呜…这、这样…是不对的…」']);
 });
 
-test('自己扒开二次：各档判据与推进都是 CFLAG:308', async () => {
+test('自己扒开二次：各档条件与推进都是 CFLAG:308', async () => {
   // 淫乱档：308=1 过 <=4 门槛推进到 5；干扰项 306=7 按胸爱抚计数不应变动
   const lewd = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -1115,7 +1115,7 @@ test('自己扒开二次：各档判据与推进都是 CFLAG:308', async () => {
   await speak_k0(exhibition);
   assert.equal(exhibition.store.get('cflag:31:308'), 3, '露出癖档推进到 3');
 
-  // 兜底档：308=1 过 <=1 门槛推进到 2；306=9 不影响判据
+  // 保底档：308=1 过 <=1 门槛推进到 2；306=9 不影响条件
   const fallback = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 7;
@@ -1127,10 +1127,10 @@ test('自己扒开二次：各档判据与推进都是 CFLAG:308', async () => {
   assert.deepEqual(fallback.text_lines(), [
     '「咕呜～…求你了…别看了…不要看那种地方…」',
   ]);
-  assert.equal(fallback.store.get('cflag:31:308'), 2, '兜底档推进到 2');
+  assert.equal(fallback.store.get('cflag:31:308'), 2, '保底档推进到 2');
   assert.equal(fallback.store.get('cflag:31:306'), 9, '不动胸爱抚计数');
 
-  // 308=2 已越过兜底门槛：沉默（306=1 不应被本支读取）
+  // 308=2 已越过保底门槛：沉默（306=1 不应被本支读取）
   const quiet = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 7;
@@ -2190,7 +2190,7 @@ test('背后位二次爱慕 + V钝感附加句 / 阈值闸', async () => {
   assert.deepEqual(exhausted.text_lines(), []);
 });
 
-test('K0 @EVENTTRAIN #PRI 置 FLAG:100、@EVENTEND #LATER 清 FLAG:100', async () => {
+test('K0 EVENTTRAIN #PRI 档置 FLAG:100、EVENTEND #LATER 档清 FLAG:100', async () => {
   const fixture = await setup_k0((f) => {
     f.store.delete('flag:100');
     f.store.delete('flag:7');
@@ -2218,9 +2218,9 @@ test('K0 EVENTTRAIN NORMAL：FLAG:7 <= 0 静默', async () => {
   assert.equal(fixture.store.get('cflag:31:201'), undefined);
 });
 
-test('K0 EVENTTRAIN NORMAL：直调绕 #PRI，FLAG:7 <= 0 静默边界（==0 时守卫拦，M1957 隔离守卫）', async () => {
+test('K0 EVENTTRAIN NORMAL：直调绕 #PRI，FLAG:7 <= 0 静默边界（==0 时检查拦，M1957 隔离检查）', async () => {
   // #PRI 会把 0 补成 2，事件链里 0 到不了 NORMAL——直调导出的
-  // eventtrain_normal_k0 才能单测「总开关 == 0」这道守卫（变异改成 < 0
+  // eventtrain_normal_k0 才能单测「总开关 == 0」这道检查（变异改成 < 0
   // 后 0 不再拦 → 走初调教分支出声写 CFLAG:201，本断言必红）
   const fixture = await setup_k0((f) => {
     f.store.set('flag:7', 0);
@@ -2285,7 +2285,7 @@ test('K0 EVENTTRAIN NORMAL：魔族化二次写 CFLAG:370 = 2', async () => {
   );
 });
 
-test('K0 EVENTTRAIN NORMAL：魔族化二次边界 初调教=4（M1962 隔离守卫）', async () => {
+test('K0 EVENTTRAIN NORMAL：魔族化二次边界 初调教=4（M1962 隔离检查）', async () => {
   // 门槛 < 5：初调教 = 4 命中（4 < 5）；变异改成 < 4 后 4 不再拦 → 落
   // 后续分支、不写 CFLAG:370 = 2，本断言必红
   const fixture = await setup_k0((f) => {
@@ -4053,7 +4053,7 @@ test('灌肠+肛塞脱着：淫乱+A感觉拼句 / 壶虫 / 空 PRINTFORMW 仍�
   });
   await speak_k0(splice, seq_rand(0, 0, 0, 0, 0, 0));
   assert.deepEqual(splice.text_lines(), [
-    // #624：:4433..:4445 原作是一整行（:4433 的原文行尾带全角空格）
+    // #624：同一行输出（行尾带全角空格）
     '「呀…嗯啊、啊、啊啊！　出来了、全部要排出来了啊♡♡♡」',
     '琼露出欢愉又夹杂着苦痛的表情、因为排泄的快感而扭动着身体。',
   ]);
@@ -4069,7 +4069,7 @@ test('灌肠+肛塞脱着：淫乱+A感觉拼句 / 壶虫 / 空 PRINTFORMW 仍�
   });
   await speak_k0(worm, seq_rand(0, 0, 1, 0, 0, 0));
   assert.ok(
-    // #624：:4448+:4450+:4452 原作是一整行（末句 PRINTW 收行）
+    // #624：同一行输出（末句 PRINTW 收行）
     worm
       .text_lines()
       .includes('以Ｍ字的状态大开双腿的琼那秘所之中极粗的蠕虫正在蠢动着、'),
@@ -4087,7 +4087,7 @@ test('灌肠+肛塞脱着：淫乱+A感觉拼句 / 壶虫 / 空 PRINTFORMW 仍�
   });
   await speak_k0(stretched, seq_rand(0, 0, 0, 0, 1));
   assert.ok(
-    // #624：:4460+:4462+:4464+:4466 原作是一整行
+    // #624：同一行输出
     stretched
       .text_lines()
       .includes('那扩张开来无法闭合的肛穴之中，可以看清那内壁正在痉挛着……'),
@@ -4253,7 +4253,7 @@ test('交谈二次：不写 CFLAG / 插着不拔情话 / 沉默', async () => {
   assert.equal(silent.store.get('cflag:31:357'), 1, '交谈二次沉默也不写 CFLAG');
 });
 
-test('交谈二次·录像自白：:4711+:4713+:4714 的无后缀 PRINTFORM 是一行，输出一条（#600）', async () => {
+test('交谈二次·录像自白：无后缀 PRINTFORM 是一行，输出一条（#600）', async () => {
   const cases = [
     [
       3,
@@ -4776,7 +4776,7 @@ test('穿环二次：それ以外写 2', async () => {
 
 // —— SELF_KOJO_K0（调教后事件口上，TFLAG:13 分段） ——
 
-// 经 @SELF_KOJO 真身分发（TRYCALLFORM SELF_KOJO_K0 的等价物）
+// 经 SELF_KOJO 真身分发（TRYCALLFORM SELF_KOJO_K0 的等价物）
 async function self_kojo_k0(fixture, q, rand) {
   const { self_kojo } = fixture.load_module('kojo/kojo-system');
   return self_kojo(rand, q);
@@ -5081,7 +5081,7 @@ test('GOHOUBI_REQUEST：CFLAG:504==1 与犬做爱请求', async () => {
     fixture
       .text_lines()
       .includes('「要是我打倒勇者的话…可以奖励我与犬做爱吗…？」'),
-    `:8133..:8141 是一整行（动物名与收行段合成一条）；实际：${JSON.stringify(fixture.text_lines())}`,
+    `同一行输出（动物名与收行段合成一条）；实际：${JSON.stringify(fixture.text_lines())}`,
   );
 });
 
@@ -5148,7 +5148,7 @@ test('BENKI_KOUJO：FLAG:62=0 + FLAG:63=1 → 施舍工作台词', async () => {
 });
 
 test('#584 BENKI_KOUJO：施舍首次台词「和…」与后续是同一行（FLAG:62 = 3/4/5/6）', async () => {
-  // 原作 :7495-:7497 等四处同型：PRINTFORM 「和 + PRINTFORMW …，Emuera 里
+  // 四处同型：PRINTFORM 「和 + PRINTFORMW …，旧引擎里
   // 同属一行；ere 曾拆成两条 era.print（#584）。整行相等即「同一行」的断言。
   // #599：名字位置固定成空串（FLAG:64 = -2，相手無し档），本测试只守整行
   // 合并，名字的插值由下面两条 #599 用例覆盖
@@ -5174,9 +5174,8 @@ test('#584 BENKI_KOUJO：施舍首次台词「和…」与后续是同一行（F
 });
 
 test('#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名', async () => {
-  // 原作 :7495-:7497 / :7516-:7518 / :7537-:7539 / :7558-:7560 四处：
-  // PRINTFORM 「和 + CALL BENKI_PLAYER_NAME（:7496 等）+ PRINTFORMW …，
-  // 三行同属一行输出。#584 合并整行时这一段没接（#599），台词缺对象名。
+  // 四处同型：PRINTFORM 「和 + CALL BENKI_PLAYER_NAME + PRINTFORMW …，
+  // 三段同属一行输出。#584 合并整行时这一段没接入（#599），台词缺对象名。
   // 名字真身 ere/system/train/benki.js 的 benki_player_name()，同 K12 的
   // 延迟 require 接法；表驱动四处都断言，不能只抽一句
   const cases = [
@@ -5200,8 +5199,8 @@ test('#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 �
   }
 });
 
-test('#599 BENKI_KOUJO：FLAG:64 无名字档 + 未设定档 → 分别空串与眷属档（原作 IF/ELSEIF 链 1:1）', async () => {
-  // 原作 BENKI.ERB @BENKI_PLAYER_NAME（:1656-1681）是 IF FLAG:64 == … /
+test('#599 BENKI_KOUJO：FLAG:64 无名字档 + 未设定档 → 分别空串与眷属档（IF/ELSEIF 链按原样保留）', async () => {
+  // BENKI_PLAYER_NAME 是 IF FLAG:64 == … /
   // ELSEIF 链，覆盖 0-9 且**无 ELSE**：-2（相手無し）一类无对应档不输出
   // 任何字（空串）。FLAG:64 未设定时 era.get 返回 undefined（issue #13），
   // 真身 flag64() 的 `|| 0` 兜成 0 → 落到 0 档「居住在地下城深渊中散发着
@@ -5215,7 +5214,7 @@ test('#599 BENKI_KOUJO：FLAG:64 无名字档 + 未设定档 → 分别空串与
   await benki_koujo(31);
   assert.ok(
     no_name.text_lines().includes('「和用小穴做爱做到潮如泉涌咯♪」'),
-    'FLAG:64 = -2（无对应档）时名字为空串，与原作一致（#599）',
+    'FLAG:64 = -2（无对应档）时名字为空串（#599）',
   );
 
   const unset = await setup_k0((f) => {
@@ -5324,8 +5323,8 @@ test('COLOSSEUM：selectcom 31 + 助手调教 → 助手名插值', async () => 
   );
 });
 
-// —— COLOSSEUM：ITEM:PBAND → item:4（#552；源 :7786/:7819/:7843） ——
-// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// —— COLOSSEUM：ITEM:PBAND → item:4（#552） ——
+// PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）；
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND')
 // 在引擎里恒 undefined（test/variable-yml.test.js 的引擎用例），持有假阳具也
 // 判不出——地址写回 item:PBAND 时下列用例必须红。
@@ -5335,26 +5334,26 @@ test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4�
       selectcom: 31,
       word: '吞咽着假阳具的',
       tail: '露出了愉悦的表情',
-      line: '玛奥让吞咽着假阳具的琼露出了愉悦的表情……', // #624：:7782..:7787 一整行
+      line: '玛奥让吞咽着假阳具的琼露出了愉悦的表情……', // #624：同一行输出
     },
     {
       selectcom: 21,
       word: '用假阳具',
       tail: '的阴道',
-      line: '玛奥一边听着悲鸣一边用假阳具毫不留情地持续蹂躙着琼的阴道……', // #624：:7815..:7820
+      line: '玛奥一边听着悲鸣一边用假阳具毫不留情地持续蹂躙着琼的阴道……', // #624：同一行输出
     },
     {
       selectcom: 27,
       word: '用假阳具',
       tail: '的肛门',
-      line: '玛奥一边听着悲鸣一边用假阳具毫不留情地持续蹂躙着琼的肛门……', // #624：:7839..:7844
+      line: '玛奥一边听着悲鸣一边用假阳具毫不留情地持续蹂躙着琼的肛门……', // #624：同一行输出
     },
   ];
   for (const { selectcom, word, tail, line } of cases) {
     const fixture = await setup_k0((f) => {
       f.store.set('tequip:31:55', 1);
       join_slave_chara(f, 17, '玛奥');
-      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      f.store.set('item:4', 1); // ITEM:PBAND（助手持有假阳具）
     });
     const era_flag = fixture.load_module('era-utils/era-flag');
     era_flag.selectcom = selectcom;
@@ -5378,7 +5377,7 @@ test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4�
 
 // #624 验收返工：上面那条只覆盖假阳具一档（item:4），「用肉棒」写成「用假阳具」
 // 没有用例发现——这里补有阴茎档（助手 TALENT:121 / 122），并加「不得出现假阳具词」
-// 的负向守卫（换档写反时整行断言与守卫都会红）。
+// 的负向检查（换档写反时整行断言与检查都会红）。
 test('COLOSSEUM：SELECTCOM 31/21/27 助手有阴茎（TALENT:121/122）→ 拼接肉棒词', async () => {
   const cases = [
     {
@@ -5386,21 +5385,21 @@ test('COLOSSEUM：SELECTCOM 31/21/27 助手有阴茎（TALENT:121/122）→ 拼�
       selectcom: 31,
       word: '吞咽着肉棒的',
       tail: '露出了愉悦的表情',
-      line: '玛奥让吞咽着肉棒的琼露出了愉悦的表情……', // #624：:7782..:7787 一整行
+      line: '玛奥让吞咽着肉棒的琼露出了愉悦的表情……', // #624：同一行输出
     },
     {
       seed: { 'talent:17:122': 1 }, // 男人（TALENT:122）
       selectcom: 21,
       word: '用肉棒',
       tail: '的阴道',
-      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的阴道……', // #624：:7815..:7820
+      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的阴道……', // #624：同一行输出
     },
     {
       seed: { 'talent:17:121': 1 },
       selectcom: 27,
       word: '用肉棒',
       tail: '的肛门',
-      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的肛门……', // #624：:7839..:7844
+      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的肛门……', // #624：同一行输出
     },
   ];
   for (const { seed, selectcom, word, tail, line } of cases) {
@@ -5435,9 +5434,9 @@ test('COLOSSEUM：SELECTCOM 31/21/27 助手有阴茎（TALENT:121/122）→ 拼�
   }
 });
 
-// —— #624：两处「原作同一行被拆开」合回一条输出 ——
+// —— #624：两处「同一行被拆开」合回一条输出 ——
 
-test('#624 交谈：:4674..:4682 的「…一边竭力按捺住…」是一整行', async () => {
+test('#624 交谈：「…一边竭力按捺住…」是一整行', async () => {
   const cases = [
     [{}, '自己的'],
     [{ 'tequip:31:11': 1 }, '快乐的'],
@@ -5447,7 +5446,7 @@ test('#624 交谈：:4674..:4682 的「…一边竭力按捺住…」是一整�
     const fixture = await setup_k0((f) => {
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.selectcom = 56;
-      f.store.set('talent:31:76', 1); // 但 PALAM:5 达 PALAMLV[4] 时先走 :4673 支
+      f.store.set('talent:31:76', 1); // 但 PALAM:5 达 PALAMLV[4] 时先走 PALAM 达标支
       f.store.set('palam:31:5', 10000); // PALAMLV[4]
       f.store.set('palam:31:4', 10000);
       for (const [key, value] of Object.entries(seed)) {
@@ -5459,14 +5458,14 @@ test('#624 交谈：:4674..:4682 的「…一边竭力按捺住…」是一整�
       fixture
         .text_lines()
         .includes(`琼一边竭力按捺住${word}声音，一边回应着你。`),
-      `${JSON.stringify(seed)} → :4674..:4682 是一整行`,
+      `${JSON.stringify(seed)} → 同一行输出`,
     );
   }
 });
 
-test('#624 交谈二回目：:4733..:4741 的「…一边竭力按捺住…」是一整行', async () => {
+test('#624 交谈二回目：「…一边竭力按捺住…」是一整行', async () => {
   // 的 ELSE（通常会話）支：交谈二回目以降（CFLAG:357 == 1）且未插着不拔，
-  // PALAM:4/5 达 PALAMLV[4] 时由 :4732 的判据进 :4733。装备分档同 :4674 支
+  // PALAM:4/5 达 PALAMLV[4] 时由达标条件进通常会話支。装备分档同交谈首回支
   const cases = [
     [{}, '自己的'],
     [{ 'tequip:31:11': 1 }, '快乐的'],
@@ -5488,40 +5487,40 @@ test('#624 交谈二回目：:4733..:4741 的「…一边竭力按捺住…」�
       fixture
         .text_lines()
         .includes(`琼一边竭力按捺住${word}声音，一边回应着你。`),
-      `${JSON.stringify(seed)} → :4733..:4741 是一整行；实际：${JSON.stringify(fixture.text_lines())}`,
+      `${JSON.stringify(seed)} → 同一行输出；实际：${JSON.stringify(fixture.text_lines())}`,
     );
   }
 });
 
-test('#624 灌肠+肛塞脱着：:4475..:4484 的「主人…那…」是一整行', async () => {
-  // 抽数序同原作：三选一（:4476/:4478）先、收行二选一（:4483）后
+test('#624 灌肠+肛塞脱着：「主人…那…」是一整行', async () => {
+  // 抽数序：三选一先、收行二选一后
   const cases = [
     {
       rand: seq_rand(0, 0),
       lines: ['「主人…我那排泄的地方也请您好好地观赏……」'],
-      why: '三选一 = 排泄的地方也、收尾 = 观赏（:4484 合成一条）',
+      why: '三选一 = 排泄的地方也、收尾 = 观赏（合成一条）',
     },
     {
       rand: seq_rand(1, 0, 0),
       lines: ['「主人…我那肮脏的地方也请您好好地观赏……」'],
-      why: '三选一 = 肮脏的地方也、收尾 = 观赏（:4484 合成一条）',
+      why: '三选一 = 肮脏的地方也、收尾 = 观赏（合成一条）',
     },
     {
       rand: seq_rand(0, 1),
       lines: ['「主人…我那排泄的地方也请您好好地疼爱……」'],
-      why: '三选一 = 排泄的地方也、收尾 = 疼爱（:4486 合成一条）',
+      why: '三选一 = 排泄的地方也、收尾 = 疼爱（合成一条）',
     },
     {
       rand: seq_rand(1, 0, 1),
       lines: ['「主人…我那肮脏的地方也请您好好地疼爱……」'],
-      why: '三选一 = 肮脏的地方也、收尾 = 疼爱（:4486 合成一条）',
+      why: '三选一 = 肮脏的地方也、收尾 = 疼爱（合成一条）',
     },
   ];
   for (const { rand, lines, why } of cases) {
     const fixture = await setup_k0((f) => {
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.selectcom = 46; // 灌肠+肛塞脱着（TEQUIP:46 == 0）
-      f.store.set('talent:31:85', 1); // 愛（:4472 支；:4429 的淫乱支不命中）
+      f.store.set('talent:31:85', 1); // 愛（愛慕支；淫乱支不命中）
       f.store.set('abl:31:3', 3); // A感覚 Lv3
       f.store.set('abl:31:21', 3); // マゾっ気 Lv3
     });

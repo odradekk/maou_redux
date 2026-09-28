@@ -35,7 +35,7 @@ function setup_lily(seed, selectcom = 0) {
   fixture.store.set(`talent:${LILY}:171`, 1); // 村娘Ｂ → GET_KOJO_NUM = 111
   fixture.store.set('flag:111', 1); // K11 存在标志
   fixture.store.set('flag:7', 2); // 口上总开关默认（全量模式）
-  fixture.store.set('talent:0:122', 1); // MASTER 是男性（简易助手分支的守卫）
+  fixture.store.set('talent:0:122', 1); // MASTER 是男性（简易助手分支的检查）
   if (seed) {
     seed(fixture, era_flag);
   }
@@ -77,7 +77,7 @@ const seq_rand =
 
 // —— 存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）', async () => {
   const fixture = setup_lily((f) => f.store.delete('flag:111'));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -87,7 +87,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K11 一对）'
   assert.equal(fixture.store.get('flag:111'), 0);
 });
 
-test('@EVENTTRAIN 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过', async () => {
+test('EVENTTRAIN 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set('flag:7', -1));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -95,7 +95,7 @@ test('@EVENTTRAIN 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过
   assert.equal(fixture.store.get(`cflag:${LILY}:201`), undefined);
 });
 
-test('@EVENTTRAIN 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳过', async () => {
+test('EVENTTRAIN 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set(`talent:${LILY}:171`, 0));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -103,7 +103,7 @@ test('@EVENTTRAIN 守卫：TALENT:171 != 1（非莉莉专属素质）时静默�
   assert.equal(fixture.store.get(`cflag:${LILY}:201`), undefined);
 });
 
-// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
 test('初调教（CFLAG:201 == 0）：无玛奥助手时走寻妹对峙分档，推进到 1', async () => {
   const fixture = setup_lily();
@@ -154,7 +154,7 @@ test('魔族化（１回のみ）：CFLAG:201<5 且未魔族化时改造，CFLAG
   assert.equal(fixture.store.get(`cflag:${LILY}:400`), 2);
 });
 
-test('NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕臂清 NTR 开关', async () => {
+test('NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕分支清 NTR 开关', async () => {
   const fixture = setup_lily((f) => {
     f.store.set(`cflag:${LILY}:201`, 2);
     f.store.set(`cflag:${LILY}:650`, 1);
@@ -278,7 +278,7 @@ test('崩坏后（TALENT:9==1 且 CFLAG:201==9）改走 K11_KOJO2，不再打崩
   );
 });
 
-// —— @EVENTTRAIN：简易助手口上（助手是玛奥）——
+// —— EVENTTRAIN：简易助手口上（助手是玛奥）——
 
 test('无助手（ASSI < 0）时岔去 K11_KOJO2，不进简易助手分支', async () => {
   const fixture = setup_lily((f) => {
@@ -420,7 +420,7 @@ test('助手玛奥それ以外（未持爱慕/淫乱、CFLAG:202==1）：拒绝�
   assert.equal(fixture.store.get(`cflag:${LILY}:202`), 1);
 });
 
-// —— @K11_KOJO2：二回目以降通用分档 ——
+// —— k11_kojo2：二回目以降通用分档 ——
 
 test('K11_KOJO2：反発刻印Lv3', async () => {
   const fixture = setup_lily((f) => {
@@ -515,9 +515,9 @@ test('K11_KOJO2：爱慕分档（RAND 三选一，落到隐式 RETURN 0 前提�
   );
 });
 
-// —— @EVENTEND ——
+// —— EVENTEND ——
 
-test('@EVENTEND 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过', async () => {
+test('EVENTEND 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过', async () => {
   const fixture = setup_lily((f) => {
     f.store.set('flag:7', -1);
     f.store.set(`base:${LILY}:0`, 100);
@@ -527,7 +527,7 @@ test('@EVENTEND 守卫：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('@EVENTEND 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳过', async () => {
+test('EVENTEND 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过', async () => {
   const fixture = setup_lily((f) => {
     f.store.set(`talent:${LILY}:171`, 0);
     f.store.set(`base:${LILY}:0`, 100);
@@ -537,7 +537,7 @@ test('@EVENTEND 守卫：TALENT:171 != 1（非莉莉专属素质）时静默跳�
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('@EVENTEND：角色死亡（BASE:0<=0）时跳过口上', async () => {
+test('EVENTEND：角色死亡（BASE:0<=0）时跳过口上', async () => {
   const fixture = setup_lily((f) => {
     f.store.set(`base:${LILY}:0`, 0);
   });
@@ -546,7 +546,7 @@ test('@EVENTEND：角色死亡（BASE:0<=0）时跳过口上', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('@EVENTEND：崩坏分档', async () => {
+test('EVENTEND：崩坏分档', async () => {
   const fixture = setup_lily((f) => {
     f.store.set(`talent:${LILY}:9`, 1);
     f.store.set(`base:${LILY}:0`, 100);
@@ -559,7 +559,7 @@ test('@EVENTEND：崩坏分档', async () => {
   ]);
 });
 
-test('@EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支', async () => {
+test('EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支', async () => {
   const fixture = setup_lily((f) => {
     f.store.set(`mark:${LILY}:3`, 3);
     f.store.set(`base:${LILY}:0`, 100);
@@ -570,7 +570,7 @@ test('@EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支', async () =>
   assert.equal(fixture.text_lines()[0], '「我，我是绝对不会认输的……」');
 });
 
-test('@EVENTEND：淫乱按体力 500 分档', async () => {
+test('EVENTEND：淫乱按体力 500 分档', async () => {
   const above = setup_lily((f) => {
     f.store.set(`talent:${LILY}:76`, 1);
     f.store.set(`mark:${LILY}:2`, 4); // 越过前面 CFLAG:202 无关的 Lv1-3+爱慕无分支
@@ -593,7 +593,7 @@ test('@EVENTEND：淫乱按体力 500 分档', async () => {
   assert.equal(below.text_lines()[0], '「哈啊……哈啊……一本满足呢♡」');
 });
 
-test('@EVENTEND：爱慕按体力 500 分档', async () => {
+test('EVENTEND：爱慕按体力 500 分档', async () => {
   const above = setup_lily((f) => {
     f.store.set(`talent:${LILY}:85`, 1);
     f.store.set(`mark:${LILY}:2`, 4);
@@ -616,7 +616,7 @@ test('@EVENTEND：爱慕按体力 500 分档', async () => {
   );
 });
 
-// —— 主启动图接线（main-loop 是否真的 require 了本模块） ——
+// —— 主启动图接入（main-loop 是否真的 require 了本模块） ——
 
 test('经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志', async () => {
   const fixture = create_era_fixture();
@@ -637,11 +637,11 @@ test('经主启动图 main-loop 加载（而非直接 load_module），K11 EVENT
   assert.equal(
     fixture.store.get('flag:111'),
     1,
-    'K11 存在标志随主启动图接线置位',
+    'K11 存在标志随主启动图接入置位',
   );
 });
 
-// —— @KOJO_MESSAGE_COM_11：SELECTCOM 0（爱抚 CFLAG:301）——
+// —— kojo_message_com_11：SELECTCOM 0（爱抚 CFLAG:301）——
 
 test('COM0 初めて：それ以外（非助手玛奥、屈服刻印Lv2未満）推进到 1', async () => {
   const fixture = setup_lily();
@@ -792,11 +792,11 @@ test('COM2 二回目：それ以外（爱慕無し、润滑Lv2未満、A感覚Lv
   assert.equal(fixture.store.get(`cflag:${LILY}:303`), 2);
 });
 
-// —— 头部守卫（COM_11 专属，与 EVENTTRAIN/EVENTEND 的 FLAG:7/TALENT:171 两道
+// —— 头部检查（COM_11 专属，与 EVENTTRAIN/EVENTEND 的 FLAG:7/TALENT:171 两道
 //    分开——那两道在分发层 kojo-system.js 已核对，这里只测 COM_11 自身
 //    的七道） ——
 
-test('COM_11 守卫：助手非玛奥调教时静默跳过', async () => {
+test('COM_11 检查：助手非玛奥调教时静默跳过', async () => {
   const fixture = setup_lily((f, era_flag) => {
     era_flag.assi = 5;
     era_flag.assiplay = 1;
@@ -805,38 +805,38 @@ test('COM_11 守卫：助手非玛奥调教时静默跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('COM_11 守卫：兽奸中改走 DOG_KOJO_11 真身', async () => {
+test('COM_11 检查：兽奸中改走 DOG_KOJO_11 真身', async () => {
   const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:89`, 1));
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), ['']);
   assert.equal(fixture.store.get(`cflag:${LILY}:301`), 1);
 });
 
-test('COM_11 守卫：死斗场中改走 COLOSSEUM_KOJO_11 真身', async () => {
+test('COM_11 检查：死斗场中改走 COLOSSEUM_KOJO_11 真身', async () => {
   const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:55`, 1), 55);
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), ['']);
 });
 
-test('COM_11 守卫：口塞中（非口塞指令）静默跳过', async () => {
+test('COM_11 检查：口塞中（非口塞指令）静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:45`, 1));
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('COM_11 守卫：失神中静默跳过', async () => {
+test('COM_11 检查：失神中静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set(`tflag:899`, 1));
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('COM_11 守卫：崩坏后静默跳过', async () => {
+test('COM_11 检查：崩坏后静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set(`talent:${LILY}:9`, 1));
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('COM_11 守卫：触手调教中静默跳过', async () => {
+test('COM_11 检查：触手调教中静默跳过', async () => {
   const fixture = setup_lily((f) => f.store.set(`tequip:${LILY}:90`, 1));
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), []);
@@ -4964,7 +4964,7 @@ test('COM27 初めて：非助手玛奥 + 爱慕按肛门感觉分岔', async ()
   );
 });
 
-test('COM27 二回目：淫乱两档判据读本支 CFLAG:328（四处）', async () => {
+test('COM27 二回目：淫乱两档条件读本支 CFLAG:328（四处）', async () => {
   const cases = [
     { assi: true, abl: 3, expected: 7 },
     { assi: true, abl: 0, expected: 6 },
@@ -4991,7 +4991,7 @@ test('COM27 二回目：淫乱两档判据读本支 CFLAG:328（四处）', asyn
     assert.equal(
       fixture.store.get(`cflag:${LILY}:328`),
       item.expected,
-      `第 ${index + 1} 处：淫乱档判据读 328 推进`,
+      `第 ${index + 1} 处：淫乱档条件读 328 推进`,
     );
     assert.equal(
       fixture.store.get(`cflag:${LILY}:327`),
@@ -5783,7 +5783,7 @@ test('COM32 二回目：非助手玛奥四档推进', async () => {
   }
 });
 
-test('COM32 二回目：淫乱守卫判据读本支 CFLAG:333（助手玛奥 × 非助手玛奥）', async () => {
+test('COM32 二回目：淫乱检查条件读本支 CFLAG:333（助手玛奥 × 非助手玛奥）', async () => {
   const cases = [
     { oral: 5, paizuri: 4, fires: true },
     { oral: 4, paizuri: 5, fires: false },
@@ -5821,7 +5821,7 @@ test('COM32 二回目：淫乱守卫判据读本支 CFLAG:333（助手玛奥 × 
         assert.deepEqual(
           fixture.text_lines(),
           [],
-          `${label}：判据读 333>4 不出声`,
+          `${label}：条件读 333>4 不出声`,
         );
         assert.equal(
           fixture.store.get(`cflag:${LILY}:333`),
@@ -6863,9 +6863,9 @@ test('GOHOUBI_REQUEST：十种要求按 CFLAG:504 输出角色名与内容', asy
   }
 });
 
-test('GOHOUBI_REQUEST：兽交要求（CFLAG:504 = 1..3）的 :12915..:12923 是一行，输出一条（#600）', async () => {
-  // 原作 :12915「%SAVESTR:A%提出了和」+ IF/ELSEIF 的兽名（:12917/:12919/:12921）
-  // + :12923「进行兽交的请求」同属一行（无后缀 PRINTFORM 不换行），末行 PRINTFORMW 收行
+test('GOHOUBI_REQUEST：兽交要求（CFLAG:504 = 1..3）同属一行，输出一条（#600）', async () => {
+  // 「%SAVESTR:A%提出了和」+ IF/ELSEIF 的兽名
+  // +「进行兽交的请求」同属一行（无后缀 PRINTFORM 不换行），末行 PRINTFORMW 收行
   for (const [request, animal] of [
     [1, '狗'],
     [2, '猪'],
@@ -6886,7 +6886,7 @@ test('GOHOUBI_REQUEST：兽交要求（CFLAG:504 = 1..3）的 :12915..:12923 是
   }
 });
 
-test('GOHOUBI_AFTER 与 OSIOKI：choice 透传并保留原作空输出', async () => {
+test('GOHOUBI_AFTER 与 OSIOKI：choice 透传并保留空输出', async () => {
   const fixture = setup_lily((f) => f.store.set(`cflag:${LILY}:504`, 5));
   const { gohoubi_after_koujo_family, osioski_koujo_family } =
     fixture.load_module('kojo/kojo-dungeon-after');
@@ -6931,7 +6931,7 @@ test('AEGI：爱慕/淫乱使用心形连接与三选一结尾，未知部位返
 
 // —— SELECTCOM 64（3P CFLAG:391）——
 
-test('COM64 守卫：助手不是玛奥时静默跳过', async () => {
+test('COM64 检查：助手不是玛奥时静默跳过', async () => {
   const fixture = setup_lily((f, era_flag) => {
     f.seed_chara(18, { id: 18, name: '助手', callname: '助手' });
     f.era.addCharacter(18);
@@ -7545,7 +7545,7 @@ for (const assistant of [true, false]) {
 }
 
 test('COM124 二回目门槛按深喉 CFLAG:365 分档（助手玛奥 × 非助手玛奥）', async () => {
-  // 四臂（淫乱/爱慕/侍奉精神/それ以外）× 助手玛奥/非助手，各自判据读 365
+  // 四分支（淫乱/爱慕/侍奉精神/それ以外）× 助手玛奥/非助手，各自条件读 365
   const write_of = { lewd: 5, love: 4, serve: 3, other: 2 };
   const cases = [
     { assi: true, arm: 'lewd', low365: true },
@@ -7582,7 +7582,7 @@ test('COM124 二回目门槛按深喉 CFLAG:365 分档（助手玛奥 × 非助�
       assert.equal(
         fixture.store.get(`cflag:${LILY}:365`),
         write_of[item.arm],
-        '推进到本臂档值',
+        '推进到本分支档值',
       );
     } else {
       assert.deepEqual(fixture.text_lines(), [], '越过 365 门槛后静默');
@@ -7742,7 +7742,7 @@ test('COM87 二回目：三档遍历七种部位的装上与取下分支', async
   }
 });
 
-// —— @DOG_KOJO_11（汉化版对白全为空参数，验证状态机与路由）——
+// —— dog_kojo_11（对白全为空参数，验证状态机与路由）——
 
 test('DOG_KOJO_11 十三个 SELECTCOM 首次状态均推进到 1', async () => {
   const commands = [
@@ -7809,7 +7809,7 @@ test('DOG_KOJO_11 接吻首吻与普通首次两条入口都推进 CFLAG:307', a
   }
 });
 
-test('DOG_KOJO_11 眼罩着脱各档判据读 CFLAG:444 自身，不再读 CFLAG:338', async () => {
+test('DOG_KOJO_11 眼罩着脱各档条件读 CFLAG:444 自身，不再读 CFLAG:338', async () => {
   // 三档（牝犬/淫乱/爱慕）各按 444 自身门槛命中；越过门槛后静默
   const hit_of = { 136: 4, 76: 3, 85: 2 };
   const cases = [
@@ -7856,7 +7856,7 @@ test('DOG_KOJO_11 录像交谈后续牝犬档推进 CFLAG:357=5', async () => {
   assert.equal(fixture.store.get(`cflag:${LILY}:357`), 5);
 });
 
-// —— @KOJO_MESSAGE_PALAMCNG_11 ——
+// —— kojo_message_palamcng_11 ——
 
 test('PALAMCNG_11 四类参数首超由 PALAM+UP 严格越过 Lv2，并依次推进 221-224', async () => {
   const fixture = setup_lily((f) => {
@@ -7928,7 +7928,7 @@ test('PALAMCNG_11 非玛奥助手参与调教时整段静默跳过', async () =>
   assert.equal(fixture.store.get(`cflag:${LILY}:221`), undefined);
 });
 
-// —— @KOJO_MESSAGE_MARKCNG_11 ——
+// —— kojo_message_markcng_11 ——
 
 test('MARKCNG_11 四类 Lv3 刻印可在同轮依次取得并推进 CFLAG:297-300', async () => {
   const fixture = setup_lily((f) => {
@@ -7960,7 +7960,7 @@ test('MARKCNG_11 非玛奥助手参与调教时整段静默跳过', async () => 
   assert.equal(fixture.store.get(`cflag:${LILY}:297`), undefined);
 });
 
-// —— @SELF_KOJO_K11 ——
+// —— self_kojo_k11 ——
 
 test('SELF_KOJO_K11 九个事件阶段分别推进 CFLAG:261-265、271-274 并清 TFLAG:13', async () => {
   for (const [phase, flag] of [
@@ -7996,7 +7996,7 @@ test('SELF_KOJO_K11 调教后性交读取 aftertrain 的 S，并在三回以上�
   assert.equal(fixture.store.get(`cflag:${LILY}:264`), 2);
 });
 
-test('SELF_KOJO_K11 夜袭按原作单字母全局 F 选择蜜穴或肛门', async () => {
+test('SELF_KOJO_K11 夜袭按单字母全局 F 选择蜜穴或肛门', async () => {
   for (const [f_value, expected] of [
     [1, /湿透了的蜜穴/],
     [0, /爱液浸润的肛门/],
@@ -8021,8 +8021,8 @@ test('SELF_KOJO_K11 妊娠发觉按 CFLAG:102 与 CSTR:2 插入生父称呼', as
   assert.equal(fixture.store.get(`cflag:${LILY}:271`), 1);
 });
 
-test('SELF_KOJO_K11 妊娠发觉 野良犬支按 CFLAG:1 != 9 判牝犬：== 9 落回兜底', async () => {
-  // 原作 :12108/:12111/:12139/:12142 是 `CFLAG:102 == 5 && [TALENT:136 &&]
+test('SELF_KOJO_K11 妊娠发觉 野良犬支按 CFLAG:1 != 9 判牝犬：== 9 落回保底', async () => {
+  // 野良犬支的条件是 `CFLAG:102 == 5 && [TALENT:136 &&]
   // CFLAG:1 != 9`；CFLAG:1 属 invasion 域。（#493 修前读的是 kojo 域不存在的
   // 「状态」：undefined !== 9 恒真，两块都无条件走野良犬支。）
   const cases = [
@@ -8552,14 +8552,14 @@ for (const [label, assistant] of [
   });
 }
 
-// —— #623 拆行合并：原作同一行输出合成一条 era.print（整行断言） ——
+// —— #623 拆行合并：同一行输出合成一条 era.print（整行断言） ——
 
 /** 含该片段的第一行（合并后整行断言用；找不到返回 undefined） */
 function line_with(fixture, fragment) {
   return fixture.text_lines().find((l) => l.includes(fragment));
 }
 
-test('#623 COM56 初回录像：自我介绍整行合并（:6842+:6844+:6845）', async () => {
+test('#623 COM56 初回录像：自我介绍整行合并', async () => {
   const cases = [
     {
       masturbation: 3,
@@ -8586,7 +8586,7 @@ test('#623 COM56 初回录像：自我介绍整行合并（:6842+:6844+:6845）'
   }
 });
 
-test('#623 COM56 二回目录像：自我介绍整行合并（:6929+:6931+:6932）', async () => {
+test('#623 COM56 二回目录像：自我介绍整行合并', async () => {
   const cases = [
     {
       masturbation: 3,
@@ -8621,7 +8621,7 @@ for (const [label, assistant] of [
   ['助手玛奥', true],
   ['非助手', false],
 ]) {
-  test(`#623 COM56 初回通常（${label}）：五支各自并入 :6865/:6893 前缀整行`, async () => {
+  test(`#623 COM56 初回通常（${label}）：五支各自并入前缀整行`, async () => {
     const head = assistant ? '面对你' : '你';
     const seed = (f, era_flag) => {
       f.store.set('palamlv:2', 100);
@@ -8692,7 +8692,7 @@ for (const [label, assistant] of [
       assert.equal(
         line_with(fixture, item.tail.slice(0, 10)),
         head + item.tail,
-        `${label} ${item.label}：与 :6865/:6893 前缀合成一行`,
+        `${label} ${item.label}：与前缀合成一行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === head).length,
@@ -8702,7 +8702,7 @@ for (const [label, assistant] of [
     }
   });
 
-  test(`#623 COM56 二回目通常（${label}）：五支各自并入 :6952/:6980 前缀整行`, async () => {
+  test(`#623 COM56 二回目通常（${label}）：五支各自并入前缀整行`, async () => {
     const head = '面对你';
     const seed = (f, era_flag) => {
       f.store.set(`cflag:${LILY}:357`, 9);
@@ -8774,7 +8774,7 @@ for (const [label, assistant] of [
       assert.equal(
         line_with(fixture, item.tail.slice(0, 10)),
         head + item.tail,
-        `${label} ${item.label}：与 :6952/:6980 前缀合成一行`,
+        `${label} ${item.label}：与前缀合成一行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === head).length,
@@ -8785,15 +8785,14 @@ for (const [label, assistant] of [
   });
 }
 
-// （初回助手）/ :6901+:6903+:6905+:6907（初回非助手）/
-// （二回目助手）/ :6988+:6990+:6992+:6994（二回目非助手）：
+// 初回/二回目 × 助手/非助手共四段：
 // 无后缀 PRINTFORM 链 + 两个互斥插入段，末行 PRINTFORML 收行。
 for (const [label, assistant] of [
   ['助手玛奥', true],
   ['非助手', false],
 ]) {
   test(`#623 COM56 ${label}：语言调戏插入段并入整行（三档）`, async () => {
-    // 初回（:6873 / :6901）与二回目（:6960 / :6988）两段同型，各自的插入段
+    // 初回与二回目各两段同型，各自的插入段
     // 首档文案不同（初回助手「却乐在其中」、二回目助手「害羞」）。
     for (const [phase, replay, lively, tail] of [
       [
@@ -8847,7 +8846,7 @@ for (const [label, assistant] of [
   });
 }
 
-test('#623 NTR P=1：狂王插入处女一段整行合并（:12609+:12611+:12613+:12615）', async () => {
+test('#623 NTR P=1：狂王插入处女一段整行合并', async () => {
   const cases = [
     {
       seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
@@ -8889,7 +8888,7 @@ test('#623 NTR P=1：狂王插入处女一段整行合并（:12609+:12611+:12613
   }
 });
 
-test('#623 NTR P=2：肛门插入两段整行合并（:12638+… / :12655+…）', async () => {
+test('#623 NTR P=2：肛门插入两段整行合并', async () => {
   const cases = [
     {
       seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
@@ -8931,7 +8930,7 @@ test('#623 NTR P=2：肛门插入两段整行合并（:12638+… / :12655+…）
   }
 });
 
-test('#623 NTR P=4：V プレイ两段整行合并（:12683+… / :12700+…）', async () => {
+test('#623 NTR P=4：V プレイ两段整行合并', async () => {
   const cases = [
     {
       seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
@@ -9012,7 +9011,7 @@ test('DOG_KOJO_11 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#68
     f.store.set(`cflag:${LILY}:331`, 2);
     f.store.set(`abl:${LILY}:16`, 3);
     era_flag.selectcom = 30;
-    f.store.set(`tequip:${LILY}:89`, 1); // 兽奸守卫岔去 DOG_KOJO_11（该函数不导出，只能经守卫调用）
+    f.store.set(`tequip:${LILY}:89`, 1); // 兽奸检查岔去 DOG_KOJO_11（该函数不导出，只能经检查调用）
   });
   await speak_com11(fixture, seq_rand());
   assert.deepEqual(fixture.text_lines(), ['']);

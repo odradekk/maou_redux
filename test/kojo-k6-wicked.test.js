@@ -3,11 +3,10 @@
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：悪女（素质 166 →
  * GET_KOJO_NUM = 106 → 分发 key 6）。覆盖（验收清单逐项）：
- *   - @EVENTTRAIN 初調教（CFLAG:201 状态机）与 @EVENTEND 的调教终了分档；
- *   - @KOJO_MESSAGE_COM_6 的头部守卫（K6 源文六条：ASSIPLAY / TEQUIP:45 /
+ *   - EVENTTRAIN 初調教（CFLAG:201 状态机）与 EVENTEND 的调教终了分档；
+ *   - kojo_message_com_6 的头部检查（六条：ASSIPLAY / TEQUIP:45 /
  *     TFLAG:899 / TALENT:9 / TEQUIP:89→DOG_KOJO_6 / TEQUIP:55→COLOSSEUM；
- *     **无 TEQUIP:90**——按源 1:1，触手不跳过）；
- *   - SELECTCOM 0 爱抚 CFLAG:301 状态机 + 若干指令初回；
+ *     **无 TEQUIP:90**——按原样保留，触手不跳过）；
  *   - DOG_KOJO_6 / COLOSSEUM_KOJO_6 真身；
  *   - PALAMCNG 处女丧失、MARKCNG 刻印取得、SELF_KOJO、NTR、GOBI、
  *     GOHOUBI_AFTER；
@@ -57,9 +56,9 @@ async function speak_k6(fixture, rand) {
   return kojo_message_com_family.call(6, { args: [rand] });
 }
 
-// —— @EVENTTRAIN / @EVENTEND 存在标志 ——
+// —— EVENTTRAIN / EVENTEND 存在标志 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K6 一对）', async () => {
+test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（K6 一对）', async () => {
   const fixture = await setup_k6((f) => f.store.delete('flag:106'));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -92,7 +91,7 @@ test('初調教种族分档：精灵（TALENT:314 == 1）', async () => {
   assert.equal(fixture.store.get('cflag:31:201'), 1);
 });
 
-test('@EVENTEND 调教终了：反抗刻印Lv3 + 屈服无 + 爱无', async () => {
+test('EVENTEND 调教终了：反抗刻印Lv3 + 屈服无 + 爱无', async () => {
   const fixture = await setup_k6((f) => {
     f.store.set('mark:31:3', 3);
     f.store.set('mark:31:2', 0);
@@ -106,7 +105,7 @@ test('@EVENTEND 调教终了：反抗刻印Lv3 + 屈服无 + 爱无', async () =
   );
 });
 
-// —— @KOJO_MESSAGE_COM_6：头部守卫 ——
+// —— kojo_message_com_6：头部检查 ——
 
 test('助手调教（ASSI > 0 && ASSIPLAY）：静默跳过', async () => {
   const fixture = await setup_k6((f, era_flag) => {
@@ -165,12 +164,12 @@ test('死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_6', async 
   ]);
 });
 
-test('K6 无触手守卫：TEQUIP:90 仍出爱抚声（源 COM 头部无 TEQUIP:90）', async () => {
+test('K6 无触手检查：TEQUIP:90 仍出爱抚声（COM 头部无 TEQUIP:90）', async () => {
   const fixture = await setup_k6((f) => f.store.set('tequip:31:90', 1));
   await speak_k6(fixture, seq_rand(0));
   assert.ok(
     fixture.text_lines().length > 0,
-    'K6 无 TEQUIP:90 守卫，触手中也出声',
+    'K6 无 TEQUIP:90 检查，触手中也出声',
   );
 });
 
@@ -458,8 +457,8 @@ test('卖却分支（TFLAG:13 == 6）：进入 SELL_MATURO_K0 真身', async () 
   assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
 });
 
-// —— COLOSSEUM_KOJO_6：ITEM:PBAND → item:4（#552；源 :7495/:7528/:7552） ——
-// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// —— COLOSSEUM_KOJO_6：ITEM:PBAND → item:4（#552） ——
+// PBAND 是内建非角色变量（4 号 = 假阳具，赋 4），不再改写（#552）；
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 // K6 的 COM 头部助手跳过在死斗场岔之前，assiplay 下到不了真身——直接驱动
@@ -498,7 +497,7 @@ test('COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   for (const { selectcom, assi_penis, line } of cases) {
     const fixture = await setup_k6((f) => {
       join_slave_chara(f, 17, '玛奥');
-      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      f.store.set('item:4', 1); // ITEM:PBAND（助手持有假阳具）
       if (assi_penis) f.store.set('talent:17:121', 1);
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.assi = 17;
@@ -522,11 +521,11 @@ test('COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4�
 });
 
 // —— #621：普查二类清单（27 组）合并后的整行断言 ——
-// 源里一条输出由「无后缀 PRINTFORM 前缀 + 各互斥支的收行段」拼成，移植早期
-// 按段各打一行；本票把同一条输出的各段合成一句 era.print*（拼接锚 // :a+:b）。
-// 这里逐组断言整行文本，覆盖该行的各分支组合（判据两档 × 互斥支各一支）。
+// 一条输出由「无后缀 PRINTFORM 前缀 + 各互斥支的收行段」拼成，移植早期
+// 按段各打一行；这张工单把同一条输出的各段合成一句 era.print*（拼接基准）。
+// 这里逐组断言整行文本，覆盖该行的各分支组合（条件两档 × 互斥支各一支）。
 
-test('#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）', async () => {
+test('#621 口塞初回三档：前缀与收行段合成一条输出', async () => {
   const cases = [
     {
       label: '淫乱＋眼罩',
@@ -537,7 +536,7 @@ test('#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:39
       line: '配合地戴上口塞的悪女带着期待地晃动着………',
     },
     {
-      label: '淫乱＋无眼罩（ELSE 支 :3957）',
+      label: '淫乱＋无眼罩（ELSE 支）',
       seed: (f) => f.store.set('talent:31:76', 1),
       line: '配合地戴上口塞的悪女带着期待你………',
     },
@@ -550,7 +549,7 @@ test('#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:39
       line: '配合地戴上口塞的悪女带着温柔的眼神晃动着………',
     },
     {
-      label: '爱慕＋无眼罩（ELSE 支 :3966）',
+      label: '爱慕＋无眼罩（ELSE 支）',
       seed: (f) => f.store.set('talent:31:85', 1),
       line: '配合地戴上口塞的悪女带着温柔的眼神看着你………',
     },
@@ -560,7 +559,7 @@ test('#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:39
       line: '戴上口塞的悪女左右摇着头………',
     },
     {
-      label: 'それ以外＋无眼罩（ELSE 支 :3975）',
+      label: 'それ以外＋无眼罩（ELSE 支）',
       seed: () => {},
       line: '戴上口塞的悪女瞪着你………',
     },
@@ -578,7 +577,7 @@ test('#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:39
   }
 });
 
-test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）', async () => {
+test('#621 口塞二回目四档：前缀与收行段合成一条输出', async () => {
   const cases = [
     {
       label: '淫乱＋受虐狂Lv5＋眼罩',
@@ -591,7 +590,7 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
       line: '配合地戴上口塞的悪女粗重急促地喘息着………',
     },
     {
-      label: '淫乱＋受虐狂Lv5＋无眼罩（ELSE 支 :3989）',
+      label: '淫乱＋受虐狂Lv5＋无眼罩（ELSE 支）',
       seed: (f) => {
         f.store.set('talent:31:76', 1);
         f.store.set('abl:31:21', 5);
@@ -600,7 +599,7 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
       line: '配合地戴上口塞的悪女粗重急促地喘息着，眼中闪耀着畅快淋漓的神色………',
     },
     {
-      label: '淫乱（:4000+:4002）',
+      label: '淫乱',
       seed: (f) => {
         f.store.set('talent:31:76', 1);
         f.store.set('cflag:31:346', 7);
@@ -609,7 +608,7 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
       line: '配合地戴上口塞的悪女带着期待地晃动着………',
     },
     {
-      label: '受虐狂Lv3＋眼罩（:4025+:4027）',
+      label: '受虐狂Lv3＋眼罩',
       seed: (f) => {
         f.store.set('abl:31:21', 3);
         f.store.set('cflag:31:346', 3);
@@ -618,7 +617,7 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
       line: '悪女习以为常地被口塞塞住嘴眼色朦胧………',
     },
     {
-      label: '受虐狂Lv3＋无眼罩（ELSE 支 :4029）',
+      label: '受虐狂Lv3＋无眼罩（ELSE 支）',
       seed: (f) => {
         f.store.set('abl:31:21', 3);
         f.store.set('cflag:31:346', 3);
@@ -626,7 +625,7 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
       line: '悪女习以为常地被口塞塞住嘴看着你………',
     },
     {
-      label: 'それ以外＋眼罩（:4035+:4037）',
+      label: 'それ以外＋眼罩',
       seed: (f) => {
         f.store.set('cflag:31:346', 1);
         f.store.set('tequip:31:43', 1);
@@ -634,7 +633,7 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
       line: '戴上口塞的悪女左右摇着头………',
     },
     {
-      label: 'それ以外＋无眼罩（ELSE 支 :4039）',
+      label: 'それ以外＋无眼罩（ELSE 支）',
       seed: (f) => f.store.set('cflag:31:346', 1),
       line: '戴上口塞的悪女瞪着你………',
     },
@@ -652,11 +651,11 @@ test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/
   }
 });
 
-test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:4311/:4383 组）', async () => {
+test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）', async () => {
   const cases = [
-    { label: '含自慰妄想（初回 :4311+:4313+:4314）', cflag: 0, dirty: 1 },
+    { label: '含自慰妄想（初回）', cflag: 0, dirty: 1 },
     { label: '不含（初回）', cflag: 0, dirty: 0 },
-    { label: '含自慰妄想（二回目 :4383+:4385+:4386）', cflag: 1, dirty: 1 },
+    { label: '含自慰妄想（二回目）', cflag: 1, dirty: 1 },
     { label: '不含（二回目）', cflag: 1, dirty: 0 },
   ];
   for (const { label, cflag, dirty } of cases) {
@@ -667,7 +666,7 @@ test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条�
       f.store.set('abl:31:31', dirty ? 3 : 0); // SIF ABL:31 >= 3
     }, 56);
     await speak_k6(fixture, seq_rand(0));
-    // 二回目那处（:4383）的名字在句首，与初回（:4311）词序不同（源 1:1）
+    // 二回目那处的名字在句首，与初回词序不同（按原样保留）
     const line =
       (cflag === 0
         ? '面带微笑的悪女介绍了自己的本名和性经验'
@@ -681,113 +680,113 @@ test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条�
   }
 });
 
-test('#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）', async () => {
+test('#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）', async () => {
   // 两处链各七支（爱意 / 淫猥 / 语调三档 / 想要做爱 / 融洽 / 断断续续 / それ以外）
   const cases = [
     {
-      label: '初回（:4342 组）・爱意',
+      label: '初回・爱意',
       cflag: 0,
       seed: { 'palam:31:5': 10000, 'talent:31:85': 1, 'tflag:60': 1 },
       line: '在和你会话的过程中，悪女呢喃着充满爱意的话语。',
     },
     {
-      label: '初回（:4342 组）・淫猥',
+      label: '初回・淫猥',
       cflag: 0,
       seed: { 'palam:31:5': 10000, 'talent:31:76': 1, 'tflag:60': 1 },
       line: '在和你会话的过程中，悪女扭动着腰叫嚷着淫猥的话语。',
     },
     {
-      label: '初回（:4342 组）・语调・快乐',
+      label: '初回・语调・快乐',
       cflag: 0,
       seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:11': 1 },
       line: '在和你会话的过程中，悪女带着快乐的语调拼命地回应着。',
     },
     {
-      label: '初回（:4342 组）・语调・痛苦',
+      label: '初回・语调・痛苦',
       cflag: 0,
       seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:44': 1 },
       line: '在和你会话的过程中，悪女带着痛苦的语调拼命地回应着。',
     },
     {
-      label: '初回（:4342 组）・语调・无档',
+      label: '初回・语调・无档',
       cflag: 0,
       seed: { 'palam:31:5': 10000, 'palam:31:4': 10000 },
       line: '在和你会话的过程中，悪女拼命地回应着。',
     },
     {
-      label: '初回（:4342 组）・想要做爱',
+      label: '初回・想要做爱',
       cflag: 0,
       seed: { 'talent:31:76': 1 },
       line: '在和你会话的过程中，悪女一副想要做爱胜过说话的样子。',
     },
     {
-      label: '初回（:4342 组）・融洽',
+      label: '初回・融洽',
       cflag: 0,
       seed: { 'palam:31:4': 10000 },
       line: '在和你会话的过程中，悪女交谈还算融洽的样子。',
     },
     {
-      label: '初回（:4342 组）・断断续续',
+      label: '初回・断断续续',
       cflag: 0,
       seed: { 'palam:31:4': 600 },
       line: '在和你会话的过程中，悪女时不时会给出一些回应。',
     },
     {
-      label: '初回（:4342 组）・それ以外',
+      label: '初回・それ以外',
       cflag: 0,
       seed: {},
       line: '在和你会话的过程中，悪女一副心不在焉的样子…',
     },
     {
-      label: '二回目（:4414 组）・爱意',
+      label: '二回目・爱意',
       cflag: 1,
       seed: { 'palam:31:5': 10000, 'talent:31:85': 1, 'tflag:60': 1 },
       line: '在和你会话的过程中，悪女呢喃着充满爱意的话语',
     },
     {
-      label: '二回目（:4414 组）・淫猥',
+      label: '二回目・淫猥',
       cflag: 1,
       seed: { 'palam:31:5': 10000, 'talent:31:76': 1, 'tflag:60': 1 },
       line: '在和你会话的过程中，悪女扭动着腰叫嚷着淫猥的话语',
     },
     {
-      label: '二回目（:4414 组）・语调・快乐',
+      label: '二回目・语调・快乐',
       cflag: 1,
       seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:11': 1 },
       line: '在和你会话的过程中，悪女带着快乐的语调拼命地回应着。',
     },
     {
-      label: '二回目（:4414 组）・语调・痛苦',
+      label: '二回目・语调・痛苦',
       cflag: 1,
       seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:44': 1 },
       line: '在和你会话的过程中，悪女带着痛苦的语调拼命地回应着。',
     },
     {
-      label: '二回目（:4414 组）・语调・无档',
+      label: '二回目・语调・无档',
       cflag: 1,
       seed: { 'palam:31:5': 10000, 'palam:31:4': 10000 },
       line: '在和你会话的过程中，悪女拼命地回应着。',
     },
     {
-      label: '二回目（:4414 组）・想要做爱',
+      label: '二回目・想要做爱',
       cflag: 1,
       seed: { 'talent:31:76': 1 },
       line: '在和你会话的过程中，悪女露出一副想要做爱胜过说话的样子。',
     },
     {
-      label: '二回目（:4414 组）・融洽',
+      label: '二回目・融洽',
       cflag: 1,
       seed: { 'palam:31:4': 10000 },
       line: '在和你会话的过程中，与悪女的交谈还算融洽的样子。',
     },
     {
-      label: '二回目（:4414 组）・断断续续',
+      label: '二回目・断断续续',
       cflag: 1,
       seed: { 'palam:31:4': 600 },
       line: '在和你会话的过程中，悪女时不时会给出一些回应',
     },
     {
-      label: '二回目（:4414 组）・それ以外',
+      label: '二回目・それ以外',
       cflag: 1,
       seed: {},
       line: '在和你会话的过程中，悪女只是认真地听着…',
@@ -806,7 +805,7 @@ test('#621 交谈・通常会話七支：前缀与各支收行段合成一条输
   }
 });
 
-test('#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）', async () => {
+test('#621 口交时自慰八组：前缀与各支收行段合成一条输出', async () => {
   // 八条链各四支（两穴 / 私处 / 肛门 / 无装备）：32 支全覆盖，逐支断言整行
   const cases = [
     {
@@ -1049,10 +1048,10 @@ test('#621 口交时自慰八组：前缀与各支收行段合成一条输出（
   }
 });
 
-test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（:6516/:6526 组）', async () => {
+test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（爱慕与百合中毒两组）', async () => {
   const cases = [
     {
-      label: '爱慕＋黄昏（:6516+:6518）',
+      label: '爱慕＋黄昏',
       seed: (f) => {
         f.store.set('talent:31:85', 1);
         f.store.set('cflag:31:262', 4);
@@ -1061,7 +1060,7 @@ test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一
       line: '玛奥苦笑着和悪女以女人间特有的方式纠缠在一起，直到黄昏………',
     },
     {
-      label: '爱慕＋夜幕（ELSE 支 :6520）',
+      label: '爱慕＋夜幕（ELSE 支）',
       seed: (f) => {
         f.store.set('talent:31:85', 1);
         f.store.set('cflag:31:262', 4);
@@ -1070,7 +1069,7 @@ test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一
       line: '玛奥苦笑着和悪女以女人间特有的方式纠缠在一起，直到夜幕渐深………',
     },
     {
-      label: '百合中毒Lv3＋黄昏（:6526+:6528）',
+      label: '百合中毒Lv3＋黄昏',
       seed: (f) => {
         f.store.set('abl:31:33', 3);
         f.store.set('cflag:31:262', 3);
@@ -1079,7 +1078,7 @@ test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一
       line: '尝到百合滋味的悪女嬉笑着和玛奥纠缠着，直到黄昏………',
     },
     {
-      label: '百合中毒Lv3＋夜幕（ELSE 支 :6530）',
+      label: '百合中毒Lv3＋夜幕（ELSE 支）',
       seed: (f) => {
         f.store.set('abl:31:33', 3);
         f.store.set('cflag:31:262', 3);
@@ -1091,7 +1090,7 @@ test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一
   for (const { label, seed, time, line } of cases) {
     const fixture = await setup_k6((f) => {
       join_slave_chara(f, 17, '玛奥');
-      // 百合PLAY 段在 @SELF_KOJO_K6 的「初吻与自我口上 == 2」里（TFLAG:13 == 2）
+      // 百合PLAY 段在 self_kojo_k6 的「初吻与自我口上 == 2」里（TFLAG:13 == 2）
       f.store.set('tflag:13', 2);
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.assi = 17;
@@ -1109,8 +1108,8 @@ test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一
   }
 });
 
-test('#621 迎击奖励请求：动物名与收行段合成一条输出（:7806+:7808+:7810+:7812）', async () => {
-  // 是 PRINTFORMW（自带换行），本组从 :7806 起——合成后是独立的一行
+test('#621 迎击奖励请求：动物名与收行段合成一条输出', async () => {
+  // 是 PRINTFORMW（自带换行），合成后是独立的一行
   const cases = [
     { kind: 1, line: '狗性交啦♪」' },
     { kind: 2, line: '猪性交啦♪」' },
@@ -1127,7 +1126,7 @@ test('#621 迎击奖励请求：动物名与收行段合成一条输出（:7806+
     );
     assert.ok(
       fixture.text_lines().includes('「我想和…'),
-      `档位 ${kind}：:7804 的 PRINTFORMW 仍自成一行——${JSON.stringify(fixture.text_lines())}`,
+      `档位 ${kind}：首句 PRINTFORMW 仍自成一行——${JSON.stringify(fixture.text_lines())}`,
     );
   }
 });

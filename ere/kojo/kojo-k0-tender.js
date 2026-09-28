@@ -12,19 +12,19 @@
  * → 爱慕+处女 → 爱慕+中毒Lv3 → 爱慕+中毒不足 → 屈服Lv3+中毒Lv1 → それ以外」
  * 取首个命中；中毒 Lv3 支含拍摄拼接与 RAND:3/RAND:2。
  *
- * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
- * 崩坏 → 兽奸（专用口上）→ 触手。与 K3（兽奸在崩坏前）不同，各文件 1:1。
+ * 头部检查顺序：死斗场 → 助手调教 → 口塞 → 失神 →
+ * 崩坏 → 兽奸（专用口上）→ 触手。与 K3（兽奸在崩坏前）不同，各文件保持自己的顺序。
  *
- * 非调教入口已全部落地：PALAMCNG/MARKCNG（参数/刻印变动）、SELF_KOJO_K0
+ * 非调教入口已全部实现：PALAMCNG/MARKCNG（参数/刻印变动）、SELF_KOJO_K0
  * （调教后事件）、DUNGEON_RYOUZYOKU/AFTER/VICTORY/ATTACK（迷宫）、
  * BENKI（肉便器）、GOHOUBI_REQUEST/AFTER、OSIOKI、NTR、处刑系五入口、
  * COLOSSEUM（死斗场）、DOG（兽奸）、GOBI（语尾）。
  *
- * 这张票存根（docs/stub-registry.md）：仅 KOJO_MESSAGE_COM_0 的
- * SELECTCOM 尚未落地的其余指令分支（后续切片填文本）。其余 SELECTCOM：
+ * 备注：仅 KOJO_MESSAGE_COM_0 的
+ * SELECTCOM 尚未实现的其余指令分支（后续切片填文本）。其余 SELECTCOM：
  * 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22,
  * 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43,
- * 44, 45, 46, 55, 56（17 在原文已注释；口系 69/80/123–127 与穿环 87 已落地）。
+ * 44, 45, 46, 55, 56（17 已注释；口系 69/80/123–127 与穿环 87 已实现）。
  */
 
 const era = require('#/era-electron');
@@ -74,7 +74,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
-// @EVENTTRAIN #PRI（:73-77）：存在标志 + 总开关补 0
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -86,7 +86,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:79-81）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -96,7 +96,7 @@ on(
 );
 
 /**
- * @K0_KOJO2（:489-595）：无助手 / 非村娘助手时的二次调教开始口上。
+ * k0_kojo2：无助手 / 非村娘助手时的二次调教开始口上。
  *
  * 崩坏 → 反抗刻印 Lv3 → 屈服 Lv0–3（均可叠故乡恋人 TALENT:317 == 4）→
  * 淫乱 RAND:3/RAND:2 → 爱慕 RAND:3/RAND:2。各支都要 FLAG:7 == 2。
@@ -264,10 +264,10 @@ async function k0_kojo2(rand) {
   return 0;
 }
 
-// @EVENTTRAIN NORMAL（:87-483）：初调教 / 魔族化 / NTR 再捕获 / 屈服刻印 /
+// EVENTTRAIN NORMAL 档：初调教 / 魔族化 / NTR 再捕获 / 屈服刻印 /
 // 淫乱 / 爱慕 / 崩坏 / 村娘助手 / 二次口上。抽成命名函数导出，测试可直调
-// 单测守卫（M1957：EVENTTRAIN 的 #PRI 会把 0 补成 2，事件链里 0 到不了
-// NORMAL，只有直调才能隔离「总开关 == 0」这道守卫）。
+// 单测检查（M1957：EVENTTRAIN 的 #PRI 会把 0 补成 2，事件链里 0 到不了
+// NORMAL，只有直调才能隔离「总开关 == 0」这道检查）。
 async function eventtrain_normal_k0(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -787,10 +787,10 @@ async function eventtrain_normal_k0(rand) {
   }
 }
 
-// @EVENTTRAIN NORMAL 注册（直调函数上方；测试可经导出函数绕 #PRI 单测守卫）
+// EVENTTRAIN NORMAL 档注册（直调函数上方；测试可经导出函数绕 #PRI 单测检查）
 on('EVENTTRAIN', eventtrain_normal_k0);
 
-// @EVENTEND NORMAL（:601-668）：调教结束口上。死亡（BASE:0 <= 0）跳过。
+// EVENTEND NORMAL 档：调教结束口上。死亡（BASE:0 <= 0）跳过。
 on('EVENTEND', async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -885,10 +885,10 @@ on('EVENTEND', async () => {
 });
 
 /**
- * @SELF_KOJO_K0（:6832-7209）：调教后事件口上。按 TFLAG:13 分段：
+ * self_kojo_k0：调教后事件口上。按 TFLAG:13 分段：
  *   1 自慰（Q 1=助手/2=野狗/0=主人，CFLAG:261）、2 百合（CFLAG:262）、
  *   3 口交（CFLAG:263）、4 性交（CFLAG:264）、5 夜间（CFLAG:265）、
- *   6 卖出（:6970-6990）、998 寿命消灭（空 PRINTFORMW）。
+ *   6 卖出、998 寿命消灭（空 PRINTFORMW）。
  * 各段按素质分档、FLAG:7==2 旁路，推进 CFLAG:26x（个位数）。
  *
  * @param {number} [q] 自慰对象（EVENT_AFTERTRAIN 的 Q：1=助手/2=野狗/0=主人）
@@ -1348,7 +1348,7 @@ async function self_kojo_k0(_rand, q = 0) {
 self_kojo_family.register(0, self_kojo_k0);
 
 /**
- * @DUNGEON_RYOUZYOKU_K0（:7236-7299）：迷宫凌辱前的口上。
+ * dungeon_ryouzyoku_k0：迷宫凌辱前的口上。
  *
  * 处女（TALENT:0）与非处女分支；每支按 淫乱/献身（21/22）→
  * 胆怯/淫荡/易陷落（17/31/36）→ 强气/男胜/好色（11/12/15/30/34）→
@@ -1357,7 +1357,7 @@ self_kojo_family.register(0, self_kojo_k0);
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function dungeon_ryouzyoku_k0() {
-  /* eslint-disable no-irregular-whitespace -- 原文全角空格（DUNGEON_RYOUZYOKU 台词，多行模板内无法逐行 disable） */
+  /* eslint-disable no-irregular-whitespace -- 台词含全角空格（DUNGEON_RYOUZYOKU 段，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   if (era.get(`talent:${target}:0`) === 1) {
@@ -1461,7 +1461,7 @@ async function dungeon_ryouzyoku_k0() {
 /* eslint-enable no-irregular-whitespace */
 
 /**
- * @DUNGEON_RYOUZYOKU_AFTER_K0（:7302-7358）：迷宫凌辱后的口上。
+ * dungeon_ryouzyoku_after_k0：迷宫凌辱后的口上。
  *
  * 处女/非处女分支；EXP:0/1/20/22 超 20 的追加台词（肛门崩坏、
  * 吞精、喝尿等）。
@@ -1536,7 +1536,7 @@ async function dungeon_ryouzyoku_after_k0() {
 ryouzyoku_kojo_family.register(0, dungeon_ryouzyoku_k0);
 ryouzyoku_after_kojo_family.register(0, dungeon_ryouzyoku_after_k0);
 /**
- * @GOHOUBI_REQUEST_KOUJO（K0 慈爱）：奖赏请求口上（:8102-8160，CFLAG:504 分档 0-9）。
+ * gohoubi_request_koujo_k0：奖赏请求口上（CFLAG:504 分档 0-9）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1551,8 +1551,8 @@ async function gohoubi_request_koujo_k0() {
     (era.get(`cflag:${target}:504`) || 0) === 2 ||
     (era.get(`cflag:${target}:504`) || 0) === 3
   ) {
-    // 原作是一整行：:8133 的「…打倒勇者的话…」、504 的三选一与
-    // 的 PRINTFORMW 收行都不换行。判据是纯读，提到语句外当取值（#624）
+    // 同一行输出：「…打倒勇者的话…」、504 的三选一
+    // 与收尾都不换行。条件是纯读，提到语句外当取值（#624）
     const request_kind = era.get(`cflag:${target}:504`) || 0;
     await era.printAndWait(
       `「要是${sc()}打倒勇者的话…` +
@@ -1581,7 +1581,7 @@ async function gohoubi_request_koujo_k0() {
 }
 
 /**
- * @GOHOUBI_AFTER_KOUJO（K0 慈爱）：奖赏结算后口上（:8163-8238，choice 分档 0-9，CFLAG:504 追加）。
+ * gohoubi_after_koujo_k0：奖赏结算后口上（choice 分档 0-9，CFLAG:504 追加）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1650,7 +1650,7 @@ async function gohoubi_after_koujo_k0(cid, choice) {
 }
 
 /**
- * @OSIOSKI_KOUJO（K0 慈爱）：惩罚口上（:8240-8298，choice 分档 0-9，ABL 门槛分档）。
+ * osioski_koujo_k0：惩罚口上（choice 分档 0-9，ABL 门槛分档）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1725,22 +1725,22 @@ gohoubi_request_koujo_family.register(0, gohoubi_request_koujo_k0);
 gohoubi_after_koujo_family.register(0, gohoubi_after_koujo_k0);
 osioski_koujo_family.register(0, osioski_koujo_k0);
 /**
- * @BENKI_KOUJO_K0（K0 慈爱）：肉便器配信口上（:7415-7634，FLAG:62 分档 0-10 × FLAG:63/素质）。
+ * benki_koujo_k0：肉便器配信口上（FLAG:62 分档 0-10 × FLAG:63/素质）。
  *
- * 常识改写四支（FLAG:62 = 3/4/5/6）的首句在原作由三行拼成一行输出：
- * 前三处是 PRINTFORM 「和…（:7495/:7516/:7537）、第四处是 PRINTFORM 「给予（:7558），
- * 接 CALL BENKI_PLAYER_NAME（:7496/:7517/:7538/:7559，对象名）、
- * 再 PRINTFORMW 收尾。ere 一次 era.printAndWait 输出整行，名字按
+ * 常识改写四支（FLAG:62 = 3/4/5/6）的首句由三行拼成一行输出：
+ * 前三处前缀是「和…」、第四处是「给予」，
+ * 对象名经 BENKI_PLAYER_NAME、
+ * 收尾再换行。ere 一次 era.printAndWait 输出整行，名字按
  * ${benki_player_name()} 插进 CALL 的位置（#599；真身 ere/system/train/benki.js，
  * K12 同款延迟 require）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function benki_koujo_k0() {
-  /* eslint-disable no-irregular-whitespace -- 原文全角空格（BENKI 台词，多行模板内无法逐行 disable） */
+  /* eslint-disable no-irregular-whitespace -- 台词含全角空格（BENKI 段，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
-  // CALL BENKI_PLAYER_NAME（:7496/:7517/:7538/:7559）：对象名真身，延迟
+  // benki_player_name()：对象名真身，延迟
   // require 是 K12/K3 同款（防顶层漏装遮蔽），名字表只有一份
   const benki_player_name = () =>
     require('#/system/train/benki').benki_player_name();
@@ -1793,9 +1793,8 @@ async function benki_koujo_k0() {
     }
   } else if (era.get('flag:62') === 3) {
     if (era.get('flag:63') === 1) {
-      // 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7496）→ PRINTFORMW …
-      // 三行同属一行输出。名字按 #599 接上：${benki_player_name()} 插在
-      // 的位置（拼接锚）
+      // 「和」、对象名与收尾同属一行输出。名字按 #599 接上：
+      // ${benki_player_name()} 插在名字调用的位置（拼接基准）
       await era.printAndWait(
         `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,
       );
@@ -1813,8 +1812,7 @@ async function benki_koujo_k0() {
     }
   } else if (era.get('flag:62') === 4) {
     if (era.get('flag:63') === 1) {
-      // 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7517）→
-      // PRINTFORMW …，三行同属一行输出；名字按 #599 接上
+      // 「和」、对象名与收尾三行同属一行输出；名字按 #599 接上
       await era.printAndWait(
         `「和${benki_player_name()}用小穴做爱做到潮如泉涌咯♪」`,
       );
@@ -1832,8 +1830,7 @@ async function benki_koujo_k0() {
     }
   } else if (era.get('flag:62') === 5) {
     if (era.get('flag:63') === 1) {
-      // 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7538）→
-      // PRINTFORMW …，三行同属一行输出；名字按 #599 接上
+      // 「和」、对象名与收尾三行同属一行输出；名字按 #599 接上
       await era.printAndWait(
         `「和${benki_player_name()}用菊花做爱做到湿滑不已咯♪」`,
       );
@@ -1851,8 +1848,7 @@ async function benki_koujo_k0() {
     }
   } else if (era.get('flag:62') === 6) {
     if (era.get('flag:63') === 1) {
-      // 原作 PRINTFORM 「给予 → CALL BENKI_PLAYER_NAME（:7559）→
-      // PRINTFORMW …，三行同属一行输出；名字按 #599 接上
+      // 「给予」、对象名与收尾三行同属一行输出；名字按 #599 接上
       await era.printAndWait(
         `「给予${benki_player_name()}先生的肉棒大人的『施舍』哦♪」`,
       );
@@ -1931,12 +1927,12 @@ async function benki_koujo_k0() {
 /* eslint-enable no-irregular-whitespace */
 
 /**
- * @DUNGEON_VICTORY_K0（K0 慈爱）：战斗胜利口上（:7361-7412，素质分档 + 体力比判定）。
+ * dungeon_victory_k0：战斗胜利口上（素质分档 + 体力比判定）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function dungeon_victory_k0(_cid, rand) {
-  /* eslint-disable no-irregular-whitespace -- 原文全角空格（VICTORY 台词，多行模板内无法逐行 disable） */
+  /* eslint-disable no-irregular-whitespace -- 台词含全角空格（VICTORY 段，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
@@ -1993,12 +1989,12 @@ async function dungeon_victory_k0(_cid, rand) {
 }
 
 /**
- * @DUNGEON_ATTACK_K0（K0 慈爱）：战斗攻击口上（:7637-7729，CFLAG:1 分档 + 素质/随机）。
+ * dungeon_attack_k0：战斗攻击口上（CFLAG:1 分档 + 素质/随机）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function dungeon_attack_k0(_cid, rand) {
-  /* eslint-disable no-irregular-whitespace -- 原文全角空格（ATTACK 台词，多行模板内无法逐行 disable） */
+  /* eslint-disable no-irregular-whitespace -- 台词含全角空格（ATTACK 段，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
@@ -2093,9 +2089,9 @@ async function dungeon_attack_k0(_cid, rand) {
 /* eslint-enable no-irregular-whitespace */
 
 /**
- * @GOBI_KOUJO_K0（K0 慈爱）：语尾口上（:8301-8329，ARG:0 分档 0-5）。
+ * gobi_koujo_k0：语尾口上（ARG:0 分档 0-5）。
  *
- * #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）；
+ * #570 起返回语尾文字、不打印（PRINT 不换行，由调用方拼进同一行）；
  * rand 形参对齐族实参 [arg0, rand]（默认支三选一可注入）。
  *
  * @param {number} arg_0 情绪档位
@@ -2127,7 +2123,7 @@ function gobi_koujo_k0(arg_0, rand) {
 }
 
 /**
- * @ENTERENEMY_KOUJO_K0（K0 慈爱）：迷宫来袭口上（:8063-8076 素质分档；:8079-8121 家人检索）。
+ * enterenemy_koujo_k0：迷宫来袭口上（素质分档 + 家人检索）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2218,7 +2214,7 @@ dungeon_attack_family.register(0, dungeon_attack_k0);
 gobi_koujo_family.register(0, gobi_koujo_k0);
 enterenemy_koujo_family.register(0, enterenemy_koujo_k0);
 /**
- * @NTR_KOUJO_K0（K0 慈爱）：NTR 事件口上（:7866-7943，P 分档 1-7/20，CFLAG:650-657 记录）。
+ * ntr_koujo_k0：NTR 事件口上（P 分档 1-7/20，CFLAG:650-657 记录）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2343,7 +2339,7 @@ async function ntr_koujo_k0(p) {
 }
 
 /**
- * @EXUCUTION_KOUJO_K0（K0 慈爱）：处刑口上（:7946-7962，事件类型 4-7 分档）。
+ * exucution_koujo_k0：处刑口上（事件类型 4-7 分档）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2362,7 +2358,7 @@ async function exucution_koujo_k0(event_type) {
 }
 
 /**
- * @MUSEUM_KOUJO_K0（K0 慈爱）：雕像馆口上（:7963-7999，事件类型 0-9 分档）。
+ * museum_koujo_k0：雕像馆口上（事件类型 0-9 分档）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2396,7 +2392,7 @@ async function museum_koujo_k0(event_type) {
 }
 
 /**
- * @BANISHMENT_KOUJO_K0（K0 慈爱）：追放处刑口上（:7998-8020，事件类型 0-4 分档）。
+ * banishment_koujo_k0：追放处刑口上（事件类型 0-4 分档）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2418,7 +2414,7 @@ async function banishment_koujo_k0(event_type) {
 }
 
 /**
- * @PUBLIC_EXUCUTION_KOUJO_K0（K0 慈爱）：公开处刑口上（:8019-8035，事件类型 0-2 分档）。
+ * public_exucution_koujo_k0：公开处刑口上（事件类型 0-2 分档）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2438,7 +2434,7 @@ async function public_exucution_koujo_k0(event_type) {
 }
 
 /**
- * @GROTESQUE_KOUJO_K0（K0 慈爱）：猎奇处刑口上（:8034-8061，事件类型 0-6 分档）。
+ * grotesque_koujo_k0：猎奇处刑口上（事件类型 0-6 分档）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2461,7 +2457,7 @@ async function grotesque_koujo_k0(event_type) {
 }
 
 /**
- * @COLOSSEUM_KOJO_0（K0 慈爱）：死斗场口上（:7735-7863，SELECTCOM 55/56/31/5/21/27/51 分派）。
+ * colosseum_kojo_0：死斗场口上（SELECTCOM 55/56/31/5/21/27/51 分派）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2515,8 +2511,8 @@ async function colosseum_kojo_0() {
   if (era_flag.selectcom === 31) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「嗯咕呜～…嗯噗～…嗯～嗯呼呜……」`);
-      // 原作是一整行：助手名 + 两个互斥的 SIF 分档 + :7787 的
-      // PRINTFORMW 收行。判据是纯读，提到语句外当取值（#624）
+      // 同一行输出：助手名 + 两个互斥的 SIF 分档 +
+      // PRINTFORMW 收行。条件是纯读，提到语句外当取值（#624）
       const assi_has_cock =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -2555,7 +2551,7 @@ async function colosseum_kojo_0() {
       await era.printAndWait(
         `「啊啊～…嗯！不要～…不要～…请、请饶了我吧～…嗯！」`,
       );
-      // 与 :7782..:7787 同型的一整行（#624）
+      // 与上一段同型的一整行（#624）
       const assi_has_cock =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -2582,7 +2578,7 @@ async function colosseum_kojo_0() {
       await era.printAndWait(
         `「啊啊～…嗯！不要～…不要～…请、请饶了我吧～…嗯！！」`,
       );
-      // 与 :7815..:7820 同型的一整行（#624）
+      // 与上一段同型的一整行（#624）
       const assi_has_cock =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -2621,15 +2617,15 @@ grotesque_koujo_family.register(0, grotesque_koujo_k0);
 colosseum_kojo_family.register(0, colosseum_kojo_0);
 
 /**
- * @DOG_KOJO_0（K0 慈爱）：兽奸专用口上（:5481-6500，SELECTCOM 0/1/5/6/9/
+ * dog_kojo_0：兽奸专用口上（SELECTCOM 0/1/5/6/9/
  * 21/27/30/31/34/37/43/56 分派，CFLAG:301-357 兽奸状态机 + RAND 随机分支）。
  *
- * COM 守卫 TEQUIP:89 岔出（:693-695）；与 COM 状态机同编号但兽奸场景。
+ * 经 COM 头部检查 TEQUIP:89 岔出；与 COM 状态机同编号但兽奸场景。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function dog_kojo_0(rand) {
-  /* eslint-disable no-irregular-whitespace -- 原文全角空格（DOG 台词，多行模板内无法逐行 disable） */
+  /* eslint-disable no-irregular-whitespace -- 台词含全角空格（DOG 段，多行模板内无法逐行 disable） */
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -4195,11 +4191,11 @@ async function dog_kojo_0(rand) {
 dog_kojo_family.register(0, dog_kojo_0);
 
 /**
- * @KOJO_MESSAGE_PALAMCNG_0（:6505-6754）：参数变动后口上。
+ * kojo_message_palamcng_0：参数变动后口上。
  *
- * 六道守卫（:6510-6528）：助手调教 → 口塞 → 失神 → 崩坏 → 兽奸 → 触手 → 死斗场
- * （草稿缺死斗场？原文 :6527-6528 有，见产物）。之后按 PALAM 首次超过 LV2
- * （:6537-6710，CFLAG:221-228 记录首次）与处女丧失（:6715-6749，
+ * 六道检查：助手调教 → 口塞 → 失神 → 崩坏 → 兽奸 → 触手 → 死斗场
+ * （草稿缺死斗场段，已补）。之后按 PALAM 首次超过 LV2
+ * （CFLAG:221-228 记录首次）与处女丧失（
  * CFLAG:229）触发首次口上；素质 85（爱慕）/76（淫乱）分档；selectcom
  * 50/51 给药分支。
  *
@@ -4504,12 +4500,12 @@ async function kojo_message_palamcng_0() {
   }
 }
 
-// @KOJO_MESSAGE_MARKCNG_0
+// kojo_message_markcng_0
 
 /**
- * @KOJO_MESSAGE_MARKCNG_0（:6756-6826）：刻印取得后口上。
+ * kojo_message_markcng_0：刻印取得后口上。
  *
- * 六道守卫（:6759-6774）：助手调教 → 口塞 → 失神 → 兽奸 → 触手 → 崩坏。
+ * 六道检查：助手调教 → 口塞 → 失神 → 兽奸 → 触手 → 崩坏。
  * 按刻印变动 TFLAG:21-24 == 3（取得）触发首次口上（CFLAG:297-300 记录）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
@@ -4603,9 +4599,9 @@ async function kojo_message_markcng_0() {
 }
 
 /**
- * @KOJO_MESSAGE_COM_0（:674-5475）：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈 / 乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 深喉 / 强制口交 / 穿环。
+ * kojo_message_com_0：七道跳过判定 + 爱抚 / 舔阴 / 肛门爱抚 / 自慰 / 胸爱抚 / 接吻 / 自己扒开 / 插入手指 / 舔肛 / 振动宝石 / 壶虫 / 振动杖 / 肛门虫 / 阴蒂夹 / 乳头夹 / 榨乳器 / 肛珠 / 正常位 / 背后位 / 对面座位 / 背面座位 / 正常位肛交 / 背后位肛交 / 对面座位肛交 / 背面座位肛交 / 手淫 / 口交 / 乳交 / 股间性交 / 骑乘位 / 全身擦洗 / 骑乘位肛交 / 肛门侍奉 / 打屁股 / 鞭 / 针 / 眼罩 / 绳子 / 口塞 / 灌肠+肛塞 / 放置PLAY / 交谈 / 乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 / 深喉 / 强制口交 / 穿环。
  *
- * 守卫顺序照 K0 原文（:676-699）：死斗场 → 助手调教 → 口塞 → 失神 →
+ * 头部检查顺序：死斗场 → 助手调教 → 口塞 → 失神 →
  * 崩坏 → 兽奸（专用口上）→ 触手。
  *
  * 分发族以 args: [rand] 统一传随机源（自慰支 RAND:3 / RAND:2）。
@@ -4620,7 +4616,7 @@ async function kojo_message_com_0(rand) {
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
   const scf = () => self_call_first(target); // %SELF_CALL_FIRST(TARGET)%
-  // %阴核(TARGET)%（魔改新增/文本校正.ERB @阴核）：TALENT:122 则「阴茎」否则「阴核」
+  // %阴核(TARGET)%：TALENT:122 则「阴茎」否则「阴核」
   const clitoris_word = (cid) =>
     (era.get(`talent:${cid}:122`) || 0) !== 0 ? '阴茎' : '阴核';
   const master_name = chara_name(0); // %NAME:MASTER%（MASTER 恒角色 0）
@@ -4941,10 +4937,10 @@ async function kojo_message_com_0(rand) {
     ) {
       // 撮影中
       if (filming) {
-        // 原作是一整行：:887 的 PRINTFORM、鸡鸡分档（:889/:891）与
-        // 的 PRINTFORMW 收行都不换行（#624）
+        // 同一行输出：PRINTFORM、鸡鸡分档
+        // 与收尾都不换行（#624）
         await era.printAndWait(
-          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           `「看吧～${heart(1)}　噗咻噗咻勃起的` +
             (has_penis ? '鸡鸡～' : '假鸡鸡～') +
             `${heart(1)}」`,
@@ -5003,7 +4999,7 @@ async function kojo_message_com_0(rand) {
       if (filming) {
         // 与上一支同型：PRINTFORM + 鸡鸡分档 + PRINTFORMW 收行（#624）
         await era.printAndWait(
-          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           '「看见了吗？～♪　噗咻噗咻勃起的' +
             (has_penis ? '鸡鸡……' : '假鸡鸡') +
             '♪」',
@@ -5015,7 +5011,7 @@ async function kojo_message_com_0(rand) {
         await era.printAndWait('「好、爽～！　啊哈哈…哈哈…好爽～！」');
       } else if (rand_n(2) === 0) {
         await era.printAndWait(
-          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           `「看吧！　看看下贱的${sc()}…看看自慰地发狂的${sc()}、再多看我吧！」`,
         );
       } else {
@@ -5949,7 +5945,7 @@ async function kojo_message_com_0(rand) {
       if (filming) {
         // 撮影中
         await era.printAndWait(
-          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           `「请看吧${heart(1)}　这么粗的蠕虫要插进${sc()}屁股眼里去了哦～${heart(1)}」`,
         );
         await era.printAndWait(`${target_name}妖艳的那期蠕虫、舔了舔嘴唇。`);
@@ -5989,7 +5985,7 @@ async function kojo_message_com_0(rand) {
       if (filming) {
         // 撮影中
         await era.printAndWait(
-          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           `「见请看吧♪　这么粗的蠕虫要被${sc()}的屁股眼吞下去了呦♪」`,
         );
         await era.printAndWait(
@@ -7116,7 +7112,7 @@ async function kojo_message_com_0(rand) {
       } else {
         if (era.get(`talent:${target}:76`) === 1) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「是～…请尽管从后面来吧${heart(1)}　哈啊～～…果然被侵犯真是最棒了～${heart(1)}」`,
           );
           await era.printAndWait(`「再来啊…把我侵犯到坏掉吧～！」`);
@@ -7859,7 +7855,7 @@ async function kojo_message_com_0(rand) {
       ) {
         if (rand_n(3) === 0) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「啊～啊～♪哈啊～～${heart_black(1)}　大肉棒扑哧扑哧的插进小穴里的样子全部都看到了～${heart(1)}」`,
           );
           await era.printAndWait(
@@ -8769,17 +8765,17 @@ async function kojo_message_com_0(rand) {
           await era.printAndWait(`「好雄伟的肉棒…两只手都抓不住${heart(1)}」`);
         } else if (penis === 2) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「小孩子似的鲜肉棒，很有活力地勃起着呢${heart(1)}　好可爱${heart(1)}　想咻咻地射出来吗${heart(1)}」`,
           );
         } else if (penis === 3) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「啊……${heart(1)}　包茎肉棒，剥开就满是雄性的味道……好高兴${heart(1)}」`,
           );
         } else if (penis === 4) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「马肉棒好厉害……${heart(1)}　脑袋要变得奇怪了${heart(1)}」`,
           );
         }
@@ -8821,17 +8817,17 @@ async function kojo_message_com_0(rand) {
           await era.printAndWait(`「好雄伟的棒棒…两只手都抓不住${heart(1)}」`);
         } else if (penis === 2) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「小孩子似的鲜肉棒棒，很有活力地勃起着呢${heart(1)}　好可爱${heart(1)}　想咻咻地射出来吗${heart(1)}」`,
           );
         } else if (penis === 3) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「啊……${heart(1)}　包茎棒棒，剥开就满是雄性的味道……好高兴${heart(1)}」`,
           );
         } else if (penis === 4) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「马棒棒好厉害……${heart(1)}　脑袋要变得奇怪了${heart(1)}」`,
           );
         }
@@ -8930,17 +8926,17 @@ async function kojo_message_com_0(rand) {
           await era.printAndWait(`「啊，雄伟的肉棒……我开动了${heart(1)}」`);
         } else if (penis === 2) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「小孩子似的鲜肉棒啊，努力地勃起着呢${heart(1)}　真可爱${heart(1)}　这就好好给你……一点一点拨开来哦${heart(1)}　啊呜……」`,
           );
         } else if (penis === 3) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「满是男人味包皮肉棒啊……心跳加速了呢${heart(1)}　我开动咯……哈呣${heart(1)}」`,
           );
         } else if (penis === 4) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「巨大的马肉棒……下巴可得脱臼了吧${heart(1)}　我开动咯${heart(1)}」`,
           );
         }
@@ -8984,17 +8980,17 @@ async function kojo_message_com_0(rand) {
           await era.printAndWait(`「啊…雄伟的棒棒…被迷倒了${heart(1)}」`);
         } else if (penis === 2) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「小孩子似的鲜肉棒棒，努力地勃起着呢${heart(1)}　真可爱${heart(1)}　这就好好给你……一点一点拨开来哦${heart(1)}　啊呜……」`,
           );
         } else if (penis === 3) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「满是男人味包皮棒棒……心跳加速了呢${heart(1)}　我开动咯……哈呣${heart(1)}」`,
           );
         } else if (penis === 4) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「巨大的马棒棒……下巴可得脱臼了吧${heart(1)}　我开动咯${heart(1)}」`,
           );
         }
@@ -9043,7 +9039,7 @@ async function kojo_message_com_0(rand) {
     if (kojo.乳交 === 0) {
       if (era.get(`talent:${target}:76`) === 1) {
         await era.printAndWait(
-          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           `「额呵呵～…用乳房做舒服吗${heart(1)}　请尽情的射精吧${heart(1)}」`,
         );
       } else if (era.get(`talent:${target}:85`) === 1) {
@@ -9511,7 +9507,7 @@ async function kojo_message_com_0(rand) {
           }
         } else if (rand_n(3) === 0) {
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「哈啊啊～…嗯呼呜${heart(1)}　这样子插得好深啊～…${heart(1)}」`,
           );
           await era.printAndWait(
@@ -9535,7 +9531,7 @@ async function kojo_message_com_0(rand) {
             `「不过～…腰…停不下来啊～…小穴太淫乱了真是对不起～${heart(1)}」`,
           );
           await era.printAndWait(
-            // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+            // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
             `「啊啊～…主人～${heart(1)}　更多的…更多的欺负我吧～～！」`,
           );
 
@@ -10677,7 +10673,7 @@ async function kojo_message_com_0(rand) {
 
     if (era.get(`talent:${target}:76`) === 1) {
       if (a_sense >= 3 && masochism >= 3) {
-        // 原作是一整行：三段二选一/追加分档与 :4445 的 PRINTFORMW
+        // 同一行输出：三段二选一/追加分档与 PRINTFORMW
         // 收行都不换行；三处 RAND 抽数留在语句内惰性求值（#624）
         await era.printAndWait(
           (rand_n(2) === 0
@@ -10688,7 +10684,7 @@ async function kojo_message_com_0(rand) {
             `要排出来了啊${heart(3)}」`,
         );
         if (era.get(`tequip:${target}:11`)) {
-          // 原作是一整行：二选一与 :4452 的 PRINTW 收行（#624）
+          // 同一行输出：二选一与 PRINTW 收行（#624）
           await era.printAndWait(
             (rand_n(2) === 0
               ? `以Ｍ字的状态大开双腿的${target_name}那秘所之中`
@@ -10706,7 +10702,7 @@ async function kojo_message_com_0(rand) {
           );
         }
         if (era.get(`exp:${target}:53`) >= 5) {
-          // 原作是一整行：二选一与 :4466 的 PRINTFORMW 收行（#624）
+          // 同一行输出：二选一与 PRINTFORMW 收行（#624）
           await era.printAndWait(
             '那扩张开来无法闭合的' +
               (rand_n(2) === 0 ? '肛门' : '肛穴') +
@@ -10718,18 +10714,17 @@ async function kojo_message_com_0(rand) {
       }
     } else if (era.get(`talent:${target}:85`) === 1) {
       if (a_sense >= 3 && masochism >= 3) {
-        // 原作是一整行：前缀（:4475）与三选一（:4477/:4479/
-        // ，判据 :4476/:4478）都不换行，到 :4484（观赏支）/ :4486
-        // （疼爱支）的 PRINTFORMW 才收行（#624）。前缀与中段提到语句外共用，
-        // 两条收尾支各写一条「前缀 + 中段 + 收尾」、锚只写本支的收行；抽数按
-        // 原作序先抽（三选一 → 收尾二选一 :4483），个数与先后都不变
+        // 同一行输出：前缀与三选一（条件）都不换行，到观赏支/疼爱支的
+        // PRINTFORMW 才收行（#624）。前缀与中段提到语句外共用，
+        // 两条收尾支各写一条「前缀 + 中段 + 收尾」、基准只写本支的收行；抽数按
+        // 原序先抽（三选一 → 收尾二选一），个数与先后都不变
         const front_4475 = `「主人…${sc()}那`;
         const dump_mid =
           rand_n(3) === 0
             ? '排泄的地方也'
             : rand_n(2) === 0
               ? '肮脏的地方也'
-              : '出来的地方也'; // 判据、:4477/:4479/:4480-4481 三档
+              : '出来的地方也'; // 条件 + 三档
         if (rand_n(2) === 0) {
           await era.printAndWait(front_4475 + dump_mid + `请您好好地观赏……」`);
         } else {
@@ -10955,9 +10950,9 @@ async function kojo_message_com_0(rand) {
           (era.get(`talent:${target}:89`) === 1 ||
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 连续不换行，
-          // 末行 PRINTFORML 才收行（#600）。SIF（:4653-4654）的判据提到语句外
-          // 当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）
+          // 同一行输出：无后缀 PRINTFORM 连续不换行，
+          // 末行 PRINTFORML 才收行（#600）。SIF 的条件提到语句外
+          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）
           const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
           era.print(
             `于是${target_name}就将自己的本名、至今为止的性体验` +
@@ -11010,8 +11005,8 @@ async function kojo_message_com_0(rand) {
             era.get(`talent:${target}:76`) === 1) &&
           (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4]
         ) {
-          // 原作是一整行：:4674 的「…一边竭力按捺住」、装备分档
-          // （:4676/:4678/:4680）与 :4682 的收行都不换行。装备判据是纯读，提到
+          // 同一行输出：「…一边竭力按捺住」、装备分档
+          // 与收行都不换行。装备条件是纯读，提到
           // 语句外当取值（语句内再写 era.get 会引入嵌套模板的 `${target}`）（#624）
           const holding =
             era.get(`tequip:${target}:11`) ||
@@ -11079,7 +11074,7 @@ async function kojo_message_com_0(rand) {
           (era.get(`talent:${target}:89`) === 1 ||
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
-          // 与 :4652+:4654+:4655 同型（SIF 的锚是 :4712-4713，#600）
+          // 与上一段同型（SIF 的基准相同，#600）
           const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
           era.print(
             `于是${target_name}就将自己的本名、至今为止的性体验` +
@@ -11132,7 +11127,7 @@ async function kojo_message_com_0(rand) {
             era.get(`talent:${target}:76`) === 1) &&
           (era.get(`palam:${target}:5`) || 0) >= PALAMLV[4]
         ) {
-          // 与 :4674..:4682 同型的一整行（装备判据同样提到语句外）（#624）
+          // 与上一段同型的一整行（装备条件同样提到语句外）（#624）
           const holding_b =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -12359,7 +12354,7 @@ async function kojo_message_com_0(rand) {
     return 0;
   }
 
-  // 其余（ERB 无分支的 SELECTCOM）静默返回——原作 COM 末尾 RETURN 0
+  // 其余（无分支的 SELECTCOM）静默返回——COM 末尾 RETURN 0
   return 0;
 }
 

@@ -8,7 +8,7 @@
  *   - FLAG:7 == 1 的阈值闸（每阶段一次）与 == 2 的旁路（每次出声）；
  *   - 七道跳过判定（含 K5 特有：兽奸静默无 DOG_KOJO、死斗场真身）；
  *   - SELECTCOM 1/2/5/20/45/87 初回与 CFLAG 推进；
- *   - @EVENTTRAIN 初调教 / PALAMCNG / MARKCNG / SELF_KOJO / NTR / GOBI /
+ *   - EVENTTRAIN 初调教 / PALAMCNG / MARKCNG / SELF_KOJO / NTR / GOBI /
  *     GOHOUBI / OSIOKI / 死斗场 / 迷宫胜利；
  *   - 插值（%SAVESTR:TARGET/PLAYER% 与心形 ♡）；
  */
@@ -156,7 +156,7 @@ test('阈值闸：FLAG:7 == 1 时上限生效（阶段耗尽后不出声），==
   assert.equal(repeat.store.get('cflag:17:301'), 6);
 });
 
-// —— 七道跳过判定（:771-793，顺序与判据各文件 1:1） ——
+// —— 七道跳过判定（顺序与条件各文件一致） ——
 
 test('助手调教中（ASSI > 0 && ASSIPLAY）：不输出', async () => {
   const fixture = await setup_k5((f) => {
@@ -223,7 +223,7 @@ test('死斗场（TEQUIP:55）：SELECTCOM==0 静默、==55 走真身', async ()
   assert.deepEqual(fixture.text_lines(), ['玛奥连站起来的力气都没有了……']);
 });
 
-test('@EVENTTRAIN #PRI 置 FLAG:105、@EVENTEND #LATER 清 0', async () => {
+test('EVENTTRAIN #PRI 置 FLAG:105、EVENTEND #LATER 清 0', async () => {
   const fixture = await setup_k5((f) => f.store.set('flag:105', 0));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -232,7 +232,7 @@ test('@EVENTTRAIN #PRI 置 FLAG:105、@EVENTEND #LATER 清 0', async () => {
   assert.equal(fixture.store.get('flag:105'), 0);
 });
 
-test('@EVENTTRAIN 普通档：人类初调教台词 + 推进 CFLAG:201', async () => {
+test('EVENTTRAIN NORMAL 档：人类初调教台词 + 推进 CFLAG:201', async () => {
   const fixture = await setup_k5();
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -436,16 +436,15 @@ test('迷宫胜利淫乱档：决め台词 + 随机第一句', async () => {
 });
 
 // —— SELECTCOM 69 六九式 & COLOSSEUM_KOJO_5：ITEM:PBAND → item:4（#552） ——
-// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// PBAND 是内建非角色变量（4 号 = 假阳具，赋 4），不再改写（#552）；
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
-// 源：六九式 :5191/:5204/:5236（PLAYER 侧判 121/122/PBAND）、死斗场
-// （ASSI 侧判 121/122/PBAND）。
+// 六九式（PLAYER 侧判 121/122/PBAND）、死斗场（ASSI 侧判 121/122/PBAND）。
 test('六九式初回·淫乱（TALENT:76）：调教者无 121/122 且 item:4 → 「大鸡巴」而非「花蕾」', async () => {
   const fixture = await setup_k5((f) => {
-    f.store.set('talent:17:76', 1); // 淫乱 → :5189 分支
+    f.store.set('talent:17:76', 1); // 淫乱分支
     f.store.set('talent:0:122', 0); // 调教者（PLAYER = 0）无男性器（unset 读 undefined，=== 0 不成立，须显式 0）
-    f.store.set('item:4', 1); // 原作 ITEM:PBAND
+    f.store.set('item:4', 1); // ITEM:PBAND
   });
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.selectcom = 69;
@@ -463,7 +462,7 @@ test('六九式初回·淫乱（TALENT:76）：调教者无 121/122 且 item:4 �
 
 test('六九式初回·爱慕（TALENT:85）：调教者无 121/122 且 item:4、RAND:3 == 0 → 「假阳具」而非「阴唇」', async () => {
   const fixture = await setup_k5((f) => {
-    f.store.set('talent:17:85', 1); // 爱慕 → :5199 分支
+    f.store.set('talent:17:85', 1); // 爱慕分支
     f.store.set('talent:0:122', 0);
     f.store.set('item:4', 1);
   });
@@ -498,8 +497,8 @@ test('六九式二回目·爱慕（CFLAG:364 == 1）：同条件复现「假阳�
 });
 
 test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行拼接「假阳具」', async () => {
-  // K5 的 COM 头部助手跳过在死斗场岔之前（:772-773 先于 :787），assiplay 下
-  // 到不了真身——与 K8 同款直接驱动 colosseum_kojo_5（原作死代码路径，1:1 保留）
+  // K5 的 COM 头部助手跳过在死斗场岔之前，assiplay 下
+  // 到不了真身——与 K8 同款直接驱动 colosseum_kojo_5（死代码路径，按原样保留）
   const cases = [
     {
       selectcom: 31,
@@ -517,7 +516,7 @@ test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   for (const { selectcom, line } of cases) {
     const fixture = await setup_k5((f) => {
       join_slave_chara(f, 5, '奴隶5');
-      f.store.set('item:4', 1); // 原作 ITEM:PBAND
+      f.store.set('item:4', 1); // ITEM:PBAND
     });
     const era_flag = fixture.load_module('era-utils/era-flag');
     era_flag.selectcom = selectcom;
@@ -532,11 +531,11 @@ test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   }
 });
 
-// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+// —— #625：同一行输出被拆成多条 era.print 的合并点 ——
 
-test('#625 交谈·自我介绍：名字段与后续同一行（:4795 / :4841 两处 × ABL:31 两档）', async () => {
-  // 原作 :4795（PRINTFORM）+ :4797（SIF ABL:31 >= 3 只护这一段）+ :4798
-  // （PRINTFORML 收行）是一整行，:4841+ 是二次以后的同型行（#625）
+test('#625 交谈·自我介绍：名字段与后续同一行（首次与二次两处 × ABL:31 两档）', async () => {
+  // 名字段（PRINTFORM）+ SIF ABL:31 >= 3 只护这一段 + 收行
+  // （PRINTFORML）是同一行输出，二次以后是同型行（#625）
   const cases = [
     [0, 0],
     [0, 3],
@@ -566,7 +565,7 @@ test('#625 交谈·自我介绍：名字段与后续同一行（:4795 / :4841 �
   }
 });
 
-test('#625 交谈·发出了…的声音：工具档与前后文同一行（:4818 / :4864 两处 × 两档）', async () => {
+test('#625 交谈·发出了…的声音：工具档与前后文同一行（首次与二次两处 × 两档）', async () => {
   const cases = [
     { talked: 0, tequip: 11 },
     { talked: 0, tequip: 44 },
@@ -600,7 +599,7 @@ test('#625 交谈·发出了…的声音：工具档与前后文同一行（:481
   }
 });
 
-test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支）', async () => {
+test('#625 交谈·前缀行并入各互斥分支（首次与二次两处的六支）', async () => {
   // 的 `PRINTFORM %SAVESTR:PLAYER%` 是各自那条链上各互斥分支共同的
   // 前缀行：前缀提到语句外当局部量，各支都拼同一份前缀——玩家在**每一支**上
   // 都只看一行（#625）
@@ -687,10 +686,10 @@ test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支�
   }
 });
 
-test('#625 百合 PLAY·前缀行并入两条互斥终点（:6150+:6152 / :6154）', async () => {
-  // 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与 :6152/:6154
-  // 两条互斥 PRINTFORMW 终点同属一行（#625）；该链在 SELF_KOJO（:6129 起的
-  // 「初吻与自我口上」段），不在 COM 的助手守卫之后
+test('#625 百合 PLAY·前缀行并入两条互斥终点（TIME == 0 / 1 两条）', async () => {
+  // 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与两条互斥
+  // PRINTFORMW 终点同属一行（#625）；该链在 SELF_KOJO 的
+  // 「初吻与自我口上」段，不在 COM 的助手检查之后
   const cases = [
     [0, '直到天黑一直都在玩弄着少女………'],
     [1, '整个晚上都在玩弄着少女………'],
@@ -698,7 +697,7 @@ test('#625 百合 PLAY·前缀行并入两条互斥终点（:6150+:6152 / :6154�
   for (const [time, tail] of cases) {
     const fixture = await setup_k5((f) => {
       join_slave_chara(f, 5, '奴隶5');
-      f.store.set('talent:17:85', 1); // 爱慕档 → :6137 分支
+      f.store.set('talent:17:85', 1); // 爱慕档分支
       f.store.set('cflag:17:262', 3); // 百合 PLAY < 4
       f.load_module('facade/game').game.train.初吻与自我口上 = 2; // 入口
       const era_flag = f.load_module('era-utils/era-flag');
