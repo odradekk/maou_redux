@@ -505,8 +505,8 @@ export default [
   make(
     9468,
     'GIVEN_HUMAN_LIFE 的 `EXP <= 0` 改 `< 0`（没勋章也放行）',
-    "  if (exp_of(MASTER, 81) <= 0) {\n    era.print('人的生命是金钱无法购买的……'); // PRINTW :2451",
-    "  if (exp_of(MASTER, 81) < 0) {\n    era.print('人的生命是金钱无法购买的……'); // PRINTW :2451",
+    "  if (exp_of(MASTER, 81) <= 0) {\n    era.print('人的生命是金钱无法购买的……'); // PRINTW",
+    "  if (exp_of(MASTER, 81) < 0) {\n    era.print('人的生命是金钱无法购买的……'); // PRINTW",
     'EXP:MASTER:81 <= 0 时的提示',
   ),
   make(

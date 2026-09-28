@@ -1710,9 +1710,9 @@ export default [
   {
     desc: 'M9712 圣灵骑士堡垒按钮文案互换（FLAG:92 == 15）',
     file: 'ere/page/page-invasion.js',
-    find: "    era_flag.arcana_fort_stage === 15\n      ? '- 巡视圣灵骑士的卖春堡垒（已征服）' // INVASION.ERB:69\n      : '- 攻略圣灵骑士的堡垒', // INVASION.ERB:71",
+    find: "    era_flag.arcana_fort_stage === 15\n      ? '- 巡视圣灵骑士的卖春堡垒（已征服）'\n      : '- 攻略圣灵骑士的堡垒',",
     replace:
-      "    era_flag.arcana_fort_stage === 15\n      ? '- 攻略圣灵骑士的堡垒' // INVASION.ERB:69（变异：标签互换）\n      : '- 巡视圣灵骑士的卖春堡垒（已征服）', // INVASION.ERB:71",
+      "    era_flag.arcana_fort_stage === 15\n      ? '- 攻略圣灵骑士的堡垒' // 变异：标签互换\n      : '- 巡视圣灵骑士的卖春堡垒（已征服）',",
     tests: ['page-invasion'],
     must_mention: '的 [4] 按钮文案',
   },
@@ -1768,7 +1768,7 @@ export default [
     replace:
       '    if (result === 8) { // 变异：分派条件改坏\n      // CALL ARCANA_FORT',
     tests: ['page-invasion'],
-    must_mention: '[4] 转发到 ARCANA_FORT 真身',
+    must_mention: '[4] 转发到 arcana_fort 真身',
   },
   {
     desc: 'M9719 [5] 拒收条件反向（route_33 <= 500 改 > 500）',
@@ -1777,7 +1777,7 @@ export default [
     replace:
       '    if (result === 5 && era_exflag.route_33 > 500) { // 变异：拒收条件反向',
     tests: ['page-invasion'],
-    must_mention: '守卫之后的分派一行都不许发生',
+    must_mention: '检查之后的分派一行都不许发生',
   },
   {
     desc: 'M9720 shrine_stage >= 3 副作用门槛挪走（改 > 3）',
@@ -1831,7 +1831,7 @@ export default [
     replace:
       '    if (result >= 600 || result < -100) {\n      continue; // 变异：门槛挪走\n    }',
     tests: ['page-invasion'],
-    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+    must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
     desc: 'M9727 水晶球按钮分子分母颠倒（返工#2 P4）',
@@ -2127,7 +2127,7 @@ export default [
     find: '  { over: 5, bonus: 101 },',
     replace: '  { over: 4, bonus: 101 }, // 变异：阈值挪一格',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 档位',
+    must_mention: 'medal_bonus 档位',
   },
   {
     desc: 'M10727 勋章最高档数值 160 改 150（501 枚的补正少一档，#502）',
@@ -2135,7 +2135,7 @@ export default [
     find: '  { over: 500, bonus: 160 },',
     replace: '  { over: 500, bonus: 150 }, // 变异：数值改坏',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 档位',
+    must_mention: 'medal_bonus 档位',
   },
   {
     desc: 'M10728 勋章分档条件方向改坏（medals > over 改 >=，档界整体下移一档，#502）',
@@ -2143,7 +2143,7 @@ export default [
     find: '  const tier = MEDAL_TIERS.find((t) => medals > t.over);',
     replace: '  const tier = MEDAL_TIERS.find((t) => medals >= t.over);',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 档位',
+    must_mention: 'medal_bonus 档位',
   },
   {
     desc: 'M10729 勋章补正提示不打印（PRINTFORMW 整支删除，#502）',
@@ -2187,7 +2187,7 @@ export default [
     replace:
       '        // 变异：流行度不累加\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
     tests: ['page-invasion'],
-    must_mention: ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+    must_mention: 'EX_FLAG:9012 += 加成后的 RESULT',
   },
   {
     desc: 'M10734 投放成败条件放宽（placed >= 1 改 >= 0：0 部也算成功，#502）',
@@ -2222,7 +2222,7 @@ export default [
     replace:
       '  if (rand(3) === 1) placed = times(placed, 0.8); // 变异：骰点条件改坏',
     tests: ['page-invasion'],
-    must_mention: ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+    must_mention: 'EX_FLAG:9012 += 加成后的 RESULT',
   },
   {
     desc: 'M10738 增强效果的封顶改坏（M*2 改 M*3，#502）',
@@ -2554,18 +2554,18 @@ export default [
   {
     desc: 'M10779 [3] 派遣条件：孕妇开关的位号改坏（FLAG:5 位 10 改位 11）',
     file: 'ere/page/page-invasion.js',
-    find: "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
+    find: "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
     replace:
-      "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 11) === 0\n  ) {",
+      "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 11) === 0\n  ) {",
     tests: ['page-invasion'],
     must_mention: '1 号进列表',
   },
   {
     desc: 'M10780 [3] 派遣条件：孕妇开关的取值条件反向（=== 0 改 === 1）',
     file: 'ere/page/page-invasion.js',
-    find: "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
+    find: "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
     replace:
-      "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 1\n  ) {",
+      "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 1\n  ) {",
     tests: ['page-invasion'],
     must_mention: '预置输入已耗尽',
   },
@@ -2600,7 +2600,7 @@ export default [
     find: '    let t_lcount = NUM_PAGE * state.no_page + 1;',
     replace: '    let t_lcount = NUM_PAGE * state.no_page; // 变异：起点少一',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
     desc: 'M10785 [3] 页窗上界放宽（>= 改 >）',
@@ -2608,7 +2608,7 @@ export default [
     find: '        t_lcount >= (state.no_page + 1) * NUM_PAGE ||',
     replace: '        t_lcount > (state.no_page + 1) * NUM_PAGE ||',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
     desc: 'M10786 [3] 列表窗口起点条件改坏（cid < list_pos 改 <=）',
@@ -2616,7 +2616,7 @@ export default [
     find: '      if (cid < state.list_pos) continue; // FOR COUNT, LIST_POS, CHARANUM',
     replace: '      if (cid <= state.list_pos) continue; // 变异：判据改坏',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
     desc: 'M10787 [3] 列表游标不推进（LIST_POS = cid 整行删除）',
@@ -2624,7 +2624,7 @@ export default [
     find: '      life_list_item(cid);\n      t_lcount += 1;\n      state.list_pos = cid;',
     replace: '      life_list_item(cid);\n      t_lcount += 1;',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
     desc: 'M10788 @INVASION_EVENT 分发骰的上界改坏（RAND:10 改 RAND:9）',
@@ -3032,7 +3032,7 @@ export default [
     replace:
       '  if (((era_exflag.defeated_heroes_bits || 0) ^ info.bit) !== 0) {',
     tests: ['page-invasion'],
-    must_mention: '位守卫',
+    must_mention: '位检查',
   },
   {
     desc: 'M10836 invasion_event_challenge 开挂取胜档的条件改坏（LOCAL >= 2 改 >= 3）',
@@ -3169,7 +3169,7 @@ export default [
     replace: '    area: 86,\n    sindo: 89, // 变异：SINDO 改坏',
     tests: ['page-invasion'],
     must_mention:
-      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
+      '已征服分支（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品分支）',
   },
   {
     desc: 'M10852 侵攻度累加写到 EX_FLAG 侧（FLAG:AREA → EX_FLAG:AREA）',
@@ -3220,7 +3220,7 @@ export default [
     replace:
       '    ravish_area: 5,\n    kyoten_arg: 1, // 变异：天神宫也调 KYOTEN',
     tests: ['page-invasion'],
-    must_mention: 'KYOTEN_EVENT 分派没有 101 臂',
+    must_mention: 'kyoten_event 分派没有 101 分支',
   },
   {
     desc: 'M10863 征服后菜单的地区续接丢地区（CAMPAIGN_REGIONS[result] 删去）',
@@ -3262,7 +3262,7 @@ export default [
     replace:
       '    if ((era.get(`flag:${region.sindo}`) || 0) >= 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // 变异：条件恒真',
     tests: ['page-invasion'],
-    must_mention: 'ELSE 臂不封顶',
+    must_mention: 'ELSE 分支不封顶',
   },
   {
     desc: 'M10871 出兵流程的默认地区改坏（HUMAN_WORLD 改 CAMPAIGN_REGIONS[1]）',
@@ -3297,7 +3297,7 @@ export default [
     find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {',
     replace: "    if ((era.get('flag:82') || 0) !== 0) { // 变异：条件写死",
     tests: ['page-invasion'],
-    must_mention: '判据读 FLAG:87（写死 FLAG:82 会误封顶）',
+    must_mention: '条件读 FLAG:87（写死 FLAG:82 会误封顶）',
   },
   {
     desc: 'M11100 招募上限差一边界：>80 改 >79（恰好 80 人被误拦，#521 返工）',
@@ -3344,7 +3344,7 @@ export default [
     tests: ['page-invasion'],
     test_name:
       '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
-    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+    must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
     desc: 'M11261 越界检查下界挪一格（< 0 改 < -1——-1 落进地区分派，#538）',
@@ -3354,7 +3354,7 @@ export default [
     tests: ['page-invasion'],
     test_name:
       '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
-    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+    must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
     desc: 'M11262 [5] 拒收上界挪一格（route_33 <= 500 改 < 500——500 落进天神宫出兵菜单，#538）',
@@ -3365,7 +3365,7 @@ export default [
     tests: ['page-invasion'],
     test_name:
       '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
-    must_mention: '守卫之后的分派一行都不许发生',
+    must_mention: '检查之后的分派一行都不许发生',
   },
   {
     desc: 'M11480 SHOW_FLOOR 漏 LIMIT 钳制（ARG 直用：0 与 99 不再落到边界层）',
@@ -4171,7 +4171,7 @@ export default [
   {
     desc: 'M12296 设施确认的 [0] 好的丢掉「- 」（同一行并排两个选项的写法）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: "era.printButton('- 好的', 0); // DUNGEON_INFO2.ERB:180 [0]",
+    find: "era.printButton('- 好的', 0); // [0]",
     replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
     tests: ['page-dungeon-info'],
     must_mention: '[0] - 好的',
@@ -4179,7 +4179,7 @@ export default [
   {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
-    find: "era.printButton('- 返 回', 999); // PRINTLC（原作两个空格，引擎折叠成一个）",
+    find: "era.printButton('- 返 回', 999); // PRINTLC（正文两个空格，引擎折叠成一个）",
     replace: "era.printButton('返 回', 999); // 变异：丢掉「- 」",
     tests: ['page-intercept'],
     must_mention: '页脚三键正文',
@@ -4187,18 +4187,18 @@ export default [
   {
     desc: 'M12299 征服后菜单的 [999] 退出丢掉「- 」',
     file: 'ere/page/page-invasion.js',
-    find: "era.printButton('- 退出', 999); // INVASION.ERB:82",
+    find: "era.printButton('- 退出', 999);",
     replace:
-      "era.printButton('退出', 999); // INVASION.ERB:82（变异：丢掉「- 」）",
+      "era.printButton('退出', 999); // 变异：丢掉「- 」",
     tests: ['page-invasion'],
     must_mention: 'INVASION.ERB',
   },
   {
     desc: 'M12300 征服后菜单 [1] 的未征服分支丢掉「- 」（三元分支只改一支）',
     file: 'ere/page/page-invasion.js',
-    find: "? '- 巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54",
+    find: "? '- 巡视黑暗精灵的领土（已征服）'",
     replace:
-      "? '巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54（变异：丢掉「- 」）",
+      "? '巡视黑暗精灵的领土（已征服）' // 变异：丢掉「- 」",
     tests: ['page-invasion'],
     must_mention: 'INVASION.ERB',
   },
@@ -4601,7 +4601,7 @@ export default [
     replace:
       '  // 变异：三分支恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
     tests: ['page-invasion'],
-    must_mention: '三臂空转不打星号',
+    must_mention: '三分支空转不打星号',
   },
   {
     desc: 'M13201 侵攻度读点对天神宫读回 EX_FLAG 侧（#652 统一的 FLAG 读点被拆）',
@@ -4620,7 +4620,7 @@ export default [
       'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90]; // 变异：漏列 101 复原',
     tests: ['page-invasion'],
     must_mention:
-      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
+      '已征服分支（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品分支）',
   },
   {
     desc: 'M13203 invasion_check 的天神宫死分支复活（#652 删除的 EX_FLAG:101 条件被接回）',
