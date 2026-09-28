@@ -149,7 +149,7 @@ export default [
     find: '    // 其余\n    need = lv * 10 + 10;',
     replace: '    // 其余\n    need = lv * 10 + 5;',
     tests: ['juel-check'],
-    must_mention: 'SHOW_INFO_EXP 的经验行',
+    must_mention: 'show_info_exp 的经验行与等级行逐字一致',
   },
   {
     desc: 'M56 指令按钮渲染删掉（#214 起目标 = 内建分支：位 34 关的静态名按钮——e2e 与单测都走它）',
@@ -872,7 +872,8 @@ export default [
     find: '    out += `穿戴着${clothtype_special_text(cid)}的模样`;',
     replace: '    // 变异：特别服装句删',
     tests: ['cloth-func'],
-    must_mention: '基本 + 特别复合句（:49-56）',
+    must_mention:
+      'clothtype_text：着衣模式关 / 无基本服装 → 全裸；史莱姆特装；特别服装句',
   },
   {
     desc: 'M811 乳房外露条件删（breasts_exposed 恒假 → 一律上半身裸露）',
@@ -1102,7 +1103,7 @@ export default [
     find: '  if (state.column >= 5) {',
     replace: '  if (state.column >= 6) {',
     tests: ['page-main-menu'],
-    must_mention: 'DRAW_HAVEITEMS：5 个一行，第 6 个换行',
+    must_mention: 'draw_have_items：5 个一行，第 6 个换行',
   },
   {
     desc: 'M7908 DRAW_HAVEITEMS 第一段起点错一格（0 改 1，item:0 漏画）',
@@ -1111,7 +1112,7 @@ export default [
     replace: '  for (let id = 1; id <= 58; id += 1) {',
     tests: ['page-main-menu'],
     must_mention:
-      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+      'draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
   {
     desc: 'M7909 DRAW_HAVEITEMS 第二段起点错一格（300 改 301，item:300 漏画）',
@@ -1120,7 +1121,7 @@ export default [
     replace: '  for (let id = 301; id <= 339; id += 1) {',
     tests: ['page-main-menu'],
     must_mention:
-      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+      'draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
   {
     desc: 'M8104 ITEM_SHOP_TRAP 陷阱网格上界改错（end 92 → 91，漏掉 91 号）',
@@ -3514,7 +3515,8 @@ export default [
       // 变异：不播种默认表
       await race_config(rand);`,
     tests: ['page-config-age'],
-    must_mention: ':889-892 先播种',
+    must_mention:
+      'CONFIG_AGE_SETTING [9]：种族年龄表未设时先播种默认表，再进 RACE_CONFIG',
   },
   {
     desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
@@ -3526,7 +3528,7 @@ export default [
         return 0;
       }`,
     tests: ['page-config-age'],
-    must_mention: ':1043-1044 回默认',
+    must_mention: 'RACE_CONFIG [98]：确认后整表回默认并直接返回',
   },
   {
     desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
@@ -3645,7 +3647,8 @@ export default [
           // 变异：不跳过魔王
           for (const cid of era.getAllCharacters()) {`,
     tests: ['page-config-age'],
-    must_mention: ':1069-1070 魔王跳过',
+    must_mention:
+      'RACE_CONFIG [99]：打包先于确认（取消也写回编辑态），确认后按新表重算全体种族年龄',
   },
   {
     desc: 'M11567 设置页 [27] 冒险者性别循环不写入（#547）',
@@ -4343,7 +4346,8 @@ export default [
     replace:
       "  era.print(`${prompt}\\n`); // 变异：尾换行\n  era.print('确认吗？');",
     tests: ['page-config-age'],
-    must_mention: ':1036 的正文不带尾换行',
+    must_mention:
+      '#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按钮位置正确',
   },
   {
     desc: 'M12241 [98]/[99] 确认页询问行补回尾换行（PRINTL 只收行）',

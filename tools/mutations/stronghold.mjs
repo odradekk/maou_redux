@@ -1399,7 +1399,8 @@ export default [
     find: 'const IKAI_MOD = 10000;',
     replace: 'const IKAI_MOD = 1000;',
     tests: ['chara-shop'],
-    must_mention: 'CHARA_IKAI_COST',
+    must_mention:
+      'chara_ikai_cost：勋章 = L_I % 10000 / 5（截断、下限 3），金钱 = 勋章 × 2000',
   },
   {
     desc: 'M8910 强行召唤的勋章下限错一档（3 → 4）',
@@ -1779,7 +1780,8 @@ export default [
     find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
     replace: 'const IKAI_IDS = { start: 10000, end: 99999 };',
     tests: ['chara-shop'],
-    must_mention: 'INRANGE 的上界',
+    must_mention:
+      'char_ikai_create：编号段的上界是闭区间（100000 也查在场，不重复收费）',
   },
   {
     desc: 'M9115 异界召唤性别选择的上限少一档（SEX_MAX 3 → 2）',
@@ -1848,7 +1850,8 @@ export default [
     find: 'await show_chara_info(a, -2, rand);',
     replace: 'await show_chara_info(a, -1, rand);',
     tests: ['chara-shop'],
-    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+    must_mention:
+      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
   },
   {
     desc: 'M9123 异界召唤的角色信息传错角色（A → 0）',
@@ -1856,7 +1859,8 @@ export default [
     find: 'await show_chara_info(a, -2, rand);',
     replace: 'await show_chara_info(0, -2, rand);',
     tests: ['chara-shop'],
-    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+    must_mention:
+      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
   },
   {
     desc: 'M9124 异界召唤不调角色信息屏（去掉调用）',
@@ -1864,7 +1868,8 @@ export default [
     find: 'await show_chara_info(a, -2, rand);',
     replace: 'await Promise.resolve(); // 变异：不调角色信息屏',
     tests: ['chara-shop'],
-    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+    must_mention:
+      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
   },
   // —— #399 接线返工（第二轮）：随机源透传 ——
   // 形参带缺省值时，实参一去掉就静静落回 downstream 的 default_rand
@@ -2051,7 +2056,7 @@ export default [
     find: "    era.printButton('扶她', 3);",
     replace: "    era.print('[3]扶她'); // 变异",
     tests: ['chara-shop'],
-    must_mention: ':30 的性别菜单与 :36 的返回',
+    must_mention: 'chara_sim_shop：性别菜单是按钮 —— 999 清在售位退出（#572）',
   },
   {
     desc: 'M12026 异界勇者召唤确认退回纯文本行',
@@ -2059,7 +2064,8 @@ export default [
     find: "    era.printButton('再换一个（花费1500）', 1);",
     replace: "    era.print('[1] 再换一个（花费1500）'); // 变异",
     tests: ['chara-shop'],
-    must_mention: ':90-96 的两项',
+    must_mention:
+      'chara_sim_shop：再换一个（[1]）——退人扣 1500 重来；钱不够则只报错',
   },
   {
     desc: 'M12027 异界勇者列表轮的 [999] 返回改成按钮（同上，列表轮不打按钮）',

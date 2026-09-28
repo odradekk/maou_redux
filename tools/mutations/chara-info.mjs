@@ -164,7 +164,7 @@ export default [
     replace: `  return a > b ? -1 : 1;`,
     tests: ['page-chara-info'],
     must_mention:
-      'COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
+      'compare_chara_act：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
   },
   {
     desc: 'M7864 COMPARE_CHARA_ACT 侵攻/异层迎击的楼层比较支整支短路',
@@ -176,7 +176,7 @@ export default [
     replace: `  if (false) {`,
     tests: ['page-chara-info'],
     must_mention:
-      'COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
+      'compare_chara_act：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
   },
   {
     desc: 'M7865 CHARA_MARRIGE_BEFORE category 0（未婚）不再归「无」',
@@ -184,7 +184,7 @@ export default [
     find: `  if (category === 0 || category === 2) return '无';`,
     replace: `  if (category === 2) return '无';`,
     tests: ['page-chara-info'],
-    must_mention: 'CHARA_MARRIGE_BEFORE：%10==0 早退、category 0/2/6 分档',
+    must_mention: 'chara_marriage_before：%10==0 早退、category 0/2/6 分档',
   },
   {
     desc: 'M7866 marriage_bracket_text 野狗条件改 901（配偶 900 落到道具名回落）',
@@ -201,7 +201,7 @@ export default [
     replace: `        cmp = compare_chara_act(count, other, 2);`,
     tests: ['page-chara-info'],
     must_mention:
-      'SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（按楼层，不是按状态排名）',
+      'show_chara_act_list：双方都在侵攻/迎击时改走 enemy_compare（按楼层，不是按状态排名）',
   },
   // —— #393 三动作接线（page-chara-info.js 的 37 行：三个按钮 ＋ 三条返回值分流）——
   // 按钮条目杀「快捷键/实参写错」，分流条目杀「0/1 与 2 的分档写错」。
@@ -629,7 +629,8 @@ export default [
     replace:
       '      const second_ids = swap_candidates().slice(\n        no_page * NUM_PAGE,\n        (no_page + 1) * NUM_PAGE,\n      );',
     tests: ['page-chara-info'],
-    must_mention: '第二屏剃除 CN:1 的行',
+    must_mention:
+      '换号：只交换排序编号——角色 ID 与角色数据一件不搬，名册排列顺序跟着变（#545 返工）',
   },
   {
     desc: 'M11453 换号行体：[SP] 判定的 TALENT 表丢了村娘 165',
@@ -729,7 +730,7 @@ export default [
     find: '  swap_page: for (;;) {',
     replace: '  no_page = 0; // 变异：跨次进入复位\n  swap_page: for (;;) {',
     tests: ['page-chara-info'],
-    must_mention: '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
+    must_mention: '换号页：页码跨次进入沿用（模块级 no_page）——#545 返工',
   },
   {
     desc: 'M11465 排序表头：[1200] 编号视图的快捷键写成 1201（白名单拒收，按编号切不回去）',

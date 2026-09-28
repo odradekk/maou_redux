@@ -93,7 +93,7 @@ export default [
     SHOW,
     'const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }];',
     'const title = [{ content: `NO.${pad_display(String(cid), 4)} ` }];',
-    'SHOW_INFO_TITLE',
+    'show_info_title：等号线 + 编号/名字/年龄行的逐字复现',
   ),
   make(
     8705,
@@ -101,7 +101,7 @@ export default [
     SHOW,
     '  title.push({ content: pad_display(name, 12) });',
     '  title.push({ content: pad_display(name, 10) });',
-    'SHOW_INFO_TITLE',
+    'show_info_title：等号线 + 编号/名字/年龄行的逐字复现',
   ),
   make(
     8706,
@@ -113,7 +113,7 @@ export default [
     `  if (talent(cid, TALENT_INRAN) !== 0) {
     title.push({ content: '　<淫乱>　', color: ENAMORED_COLOR });
   } else if (talent(cid, TALENT_AIBA) !== 0) {`,
-    'SHOW_INFO_TITLE',
+    'show_info_title：爱慕优先于淫乱，两者都不命中时补五个全角空格',
   ),
   make(
     8707,
@@ -121,7 +121,7 @@ export default [
     SHOW,
     '  title.push({ content: pad_left(age_str, 48) });',
     '  title.push({ content: pad_left(age_str, 36) });',
-    'SHOW_INFO_TITLE',
+    'show_info_title：等号线 + 编号/名字/年龄行的逐字复现',
   ),
   make(
     8708,
@@ -129,7 +129,7 @@ export default [
     SHOW,
     'const BIT_AGE = 12; // 显示角色的年龄',
     'const BIT_AGE = 13; // 显示角色的年龄',
-    'SHOW_INFO_TITLE',
+    'show_info_title：等号线 + 编号/名字/年龄行的逐字复现',
   ),
   make(
     8709,
@@ -137,7 +137,7 @@ export default [
     SHOW,
     '    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {\n      // 寿命倒计时（{CFLAG:820, 3} 同样右对齐宽 3）\n      age_str += ` [寿命还有${pad_left(String(era.get(`cflag:${cid}:820`) || 0), 3)} 天]`;\n    }',
     '    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {\n      // 寿命倒计时（变异：整段删掉）\n    }',
-    'SHOW_INFO_TITLE',
+    'show_info_title：TALENT:292 魔王之影追加寿命倒计时',
   ),
   make(
     8710,
@@ -145,7 +145,7 @@ export default [
     SHOW,
     '  const show_size = getbit(BIT_SIZE) && is_not_master;',
     '  const show_size = getbit(BIT_AGE) && is_not_master;',
-    'SHOW_BLOCK',
+    'show_block：三处收行只结束所在行，全程零空行（#596）',
   ),
   make(
     8711,
@@ -153,7 +153,7 @@ export default [
     SHOW,
     '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) });',
     '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 8) });',
-    'SHOW_BLOCK',
+    'show_block：身高/胸围行与罩杯括号，男性位改补 8 空格',
   ),
   make(
     8712,
@@ -161,7 +161,7 @@ export default [
     SHOW,
     '    (era.get(`cflag:${cid}:534`) || 0) === 1 &&',
     '    (era.get(`cflag:${cid}:534`) || 0) === 0 &&',
-    'SHOW_BLOCK',
+    'show_block：受注任务三段的条件（CFLAG:534 / CFLAG:1 / FLAG:8 位 3）',
   ),
   make(
     8713,
@@ -169,7 +169,7 @@ export default [
     TALENTS,
     'const PER_ROW = 8;',
     'const PER_ROW = 6;',
-    'SHOW_TALENT',
+    'show_talent：每 8 项换行、续行补 4 个全角空格（9 项分两行）',
   ),
   make(
     8714,
@@ -177,7 +177,7 @@ export default [
     TALENTS,
     "const ROW_INDENT = '　　　　';",
     "const ROW_INDENT = '　　';",
-    'SHOW_TALENT',
+    'show_talent：每 8 项换行、续行补 4 个全角空格（9 项分两行）',
   ),
   make(
     8715,
@@ -225,7 +225,7 @@ export default [
     ABLMARK,
     '  for (let abl = 0; abl < 41; abl += 1) {',
     '  for (let abl = 0; abl < 40; abl += 1) {',
-    'SHOW_INFO_ABL',
+    'show_info_abl：编号空洞整组跳过（五段 INRANGE 与 38）',
   ),
   make(
     8722,
@@ -241,7 +241,7 @@ export default [
     ABLMARK,
     '    row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;',
     '    row += `${NBSP.repeat(2)}${pad_display(name, 6)} - LV${pad_display(String(level), 2)}`;',
-    'SHOW_INFO_ABL',
+    'show_info_abl：黄金样本 train-upgrade 的能力行逐字复现',
   ),
   make(
     8724,
@@ -249,7 +249,7 @@ export default [
     ABLMARK,
     '    row += NBSP.repeat(2);',
     "    row += '';",
-    'SHOW_INFO_ABL',
+    'show_info_abl：黄金样本 train-upgrade 的能力行逐字复现',
   ),
   make(
     8725,
@@ -257,7 +257,7 @@ export default [
     ABLMARK,
     "  return `[${'*'.repeat(filled)}${'.'.repeat(len - filled)}]`;",
     "  return `[${'#'.repeat(filled)}${'.'.repeat(len - filled)}]`;",
-    'BAR_TEXT',
+    'show_info_mark：等级取自 MARK:0-3，条的填充随等级变化',
   ),
   make(
     8726,
@@ -265,7 +265,7 @@ export default [
     ABLMARK,
     'const MARK_BAR_MAX = 3;',
     'const MARK_BAR_MAX = 4;',
-    'SHOW_INFO_MARK',
+    'show_info_mark：等级取自 MARK:0-3，条的填充随等级变化',
   ),
   make(
     8727,
@@ -281,7 +281,7 @@ export default [
     APPEAR,
     'const BIT_TOPS_OFF = 6; // 上半身赤裸（位 1 + 位 2）',
     'const BIT_TOPS_OFF = 4; // 上半身赤裸（位 1 + 位 2）',
-    'SHOW_APPEARACE',
+    'show_appearance：六处刺青逐条按 CSTR:10-17 出现（表驱动）',
   ),
   make(
     8729,
@@ -317,7 +317,7 @@ export default [
       10 +`,
     `    const remaining =
       20 +`,
-    'SHOW_EQUIP_2',
+    'show_equip_2：摄影位的剩余次数公式 10 + 4*499 - 491 + 1',
   ),
   make(
     8733,
@@ -341,7 +341,7 @@ export default [
     COND,
     'const STC_PRINT_WIDTH = 15;',
     'const STC_PRINT_WIDTH = 16;',
-    'STC_PRINTC',
+    'show_talent_condition：黄金样本 daycycle-max 的 20 行逐字复现',
   ),
   make(
     8736,
@@ -349,7 +349,7 @@ export default [
     COND,
     'const SEIIN_BASE = 50;',
     'const SEIIN_BASE = 60;',
-    'STC_SEIIN_CHECK',
+    'show_talent_condition：黄金样本 daycycle-max 的 20 行逐字复现',
   ),
   make(
     8738,
@@ -357,7 +357,7 @@ export default [
     MAIN,
     '  const value = average <= 128 ? 255 : 0;',
     '  const value = average <= 100 ? 255 : 0;',
-    'ColorJudgmentWorB',
+    'color_judgment_wor_b：背景均值 ≤ 128 落白字，否则落黑字',
   ),
   make(
     8739,
@@ -477,7 +477,7 @@ export default [
     WIDTH,
     '    width += ch.charCodeAt(0) > 0xff ? 2 : 1;',
     '    width += ch.charCodeAt(0) > 0x7f ? 2 : 1;',
-    'DISPLAY_WIDTH',
+    'show_info_title：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱动）',
   ),
   make(
     8754,
@@ -485,7 +485,7 @@ export default [
     WIDTH,
     '    if (used + w > width) break;',
     '    if (used + w >= width) break;',
-    'SLICE_DISPLAY',
+    'show_talent_condition：黄金样本 daycycle-max 的 20 行逐字复现',
   ),
   make(
     8755,
@@ -509,7 +509,7 @@ export default [
     EQUIP,
     '  if (t(53)) {',
     '  if (t(52)) {',
-    'SHOW_EQUIP_2',
+    'show_equip_2：摄影位的剩余次数公式 10 + 4*499 - 491 + 1',
   ),
   make(
     8758,
@@ -636,7 +636,7 @@ export default [
     MAIN,
     '      const restart = await sacrifice_flow(cid, background);\n      if (restart) continue; // 重画一轮',
     '      const restart = await sacrifice_flow(cid, background);\n      if (restart) return 1; // 变异：RESTART 改成直接退到首页',
-    'RESTART 后出口轮重画',
+    'show_chara_info：祭品名单的返回是真按钮（名单轮次白名单非空，#530）',
   ),
   // —— #593：同屏固定编号核对的鉴别力（不认特定写法、`A + index` 展开、登记项失效） ——
   make(
