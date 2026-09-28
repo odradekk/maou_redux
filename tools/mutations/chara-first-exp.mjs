@@ -1,6 +1,6 @@
 // 变异条目表分片：chara 域收尾（issue #394，N10）。
-// 靶文件：ere/chara/chara-first-exp.js（CHARA_FIRST_EXP 真身）、
-//         ere/chara/chara-make-inport.js（CHARA_MAKE_INPORT 真身）。
+// 目标文件：ere/chara/chara-first-exp.js（chara_first_exp 真身）、
+//         ere/chara/chara-make-inport.js（chara_make_inport 真身）。
 // 守护测试：test/chara-first-exp.test.js、test/chara-make-inport.test.js。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。
 
@@ -10,7 +10,7 @@ export default [
   // —— ere/chara/chara-first-exp.js ——
 
   {
-    desc: 'M8341 :22 的性别判据取反（男人也走「未体验」修正）',
+    desc: 'M8341 性别判断取反（男人也走「未体验」修正）',
     file: 'ere/chara/chara-first-exp.js',
     find: 'if (t(122) === 0 && not_virgin() && first_sex === -1) {',
     replace: 'if (t(122) !== 0 && not_virgin() && first_sex === -1) {',
@@ -18,7 +18,7 @@ export default [
     must_mention: 'male=0 virgin=0',
   },
   {
-    desc: 'M8342 :25 的性交经验下界 0 改 -1（无不经验也拉回初吻）',
+    desc: 'M8342 性交经验下界 0 改 -1（无不经验也拉回初吻）',
     file: 'ere/chara/chara-first-exp.js',
     find: 'if ((dungeon.性交经验 > 0 || dungeon.卖淫经验 > 0) && first_kiss === -1) {',
     replace:
@@ -35,20 +35,20 @@ export default [
     must_mention: '996',
   },
   {
-    desc: 'M8344 侵入阶层写 0（:106 CFLAG:501 的定值）',
+    desc: 'M8344 侵入阶层写 0（CFLAG:501 的定值）',
     file: 'ere/chara/chara-make-inport.js',
     find: '  chara(cid).dungeon.侵攻阶层 = 1; // CFLAG:501',
     replace: '  chara(cid).dungeon.侵攻阶层 = 0; // CFLAG:501',
     tests: ['chara-make-inport'],
-    must_mention: ':106 CFLAG:501 侵入阶层',
+    must_mention: 'cflag:501 侵入阶层',
   },
   {
-    desc: 'M8345 FLAG:77 分支里的战斗经验不清零（:112）',
+    desc: 'M8345 FLAG:77 分支里的战斗经验不清零',
     file: 'ere/chara/chara-make-inport.js',
     find: '    chara(cid).dungeon.战斗经验 = 0; // EXP:80',
     replace: '    chara(cid).dungeon.战斗经验 = 1; // EXP:80',
     tests: ['chara-make-inport'],
-    must_mention: ':112 EXP:80 清零',
+    must_mention: 'exp:80 清零',
   },
   {
     desc: 'M8346 兽姦的第一档概率上界 20 改 19（极稀有的取法变了）',
@@ -77,7 +77,7 @@ export default [
     must_mention: '三档都不掷',
   },
   {
-    desc: 'M8349 家族设定有无取个位改取十位（:53 的 % 10）',
+    desc: 'M8349 家族设定有无取个位改取十位（% 10）',
     file: 'ere/chara/chara-first-exp.js',
     find: '  const family_flag = family % 10;',
     replace: '  const family_flag = family % 100;',
@@ -85,7 +85,7 @@ export default [
     must_mention: '家族',
   },
   {
-    desc: 'M8350 婚姻状态的万位截取 10000 改 1000（:61 的位数错位）',
+    desc: 'M8350 婚姻状态的万位截取 10000 改 1000（位数错位）',
     file: 'ere/chara/chara-first-exp.js',
     find: '    const marriage = Math.trunc((family % 100000) / 10000);',
     replace: '    const marriage = Math.trunc((family % 100000) / 1000);',
@@ -183,7 +183,7 @@ export default [
     must_mention: '亲属段开掷',
   },
   {
-    desc: 'M8362 故郷の恋人的喜好取值 4 改 5（:208 的判据）',
+    desc: 'M8362 故郷の恋人的喜好取值 4 改 5（判断条件）',
     file: 'ere/chara/chara-first-exp.js',
     find: '  if (t(317) === 4) {',
     replace: '  if (t(317) === 5) {',
@@ -191,7 +191,7 @@ export default [
     must_mention: '故乡的恋人',
   },
   {
-    desc: 'M8363 性别待定标记 4 改 3（:599 整段不跑）',
+    desc: 'M8363 性别待定标记 4 改 3（整段不跑）',
     file: 'ere/chara/chara-first-exp.js',
     find: '    candidate_gender = 4;',
     replace: '    candidate_gender = 3;',
@@ -215,7 +215,7 @@ export default [
     must_mention: 'ペニス',
   },
   {
-    desc: 'M8366 职业段男表「軍人」的兜底称呼改错（:438 的长官的女儿）',
+    desc: 'M8366 职业段男表「軍人」的缺省称呼改错（长官的女儿）',
     file: 'ere/chara/chara-first-exp.js',
     find: "        fallback: '长官的女儿',",
     replace: "        fallback: '部下的女儿',",
@@ -247,7 +247,7 @@ export default [
     must_mention: '女朋友',
   },
   {
-    desc: 'M8370 性别待定的扶她短链上界 10 改 11（:601）',
+    desc: 'M8370 性别待定的扶她短链上界 10 改 11',
     file: 'ere/chara/chara-first-exp.js',
     find: '    if (rand(10) === 0 && is_futa) {',
     replace: '    if (rand(11) === 0 && is_futa) {',
@@ -255,7 +255,7 @@ export default [
     must_mention: 'RAND:10 命中',
   },
   {
-    desc: 'M8371 性别待定的男性短链上界 20 改 21（:611）',
+    desc: 'M8371 性别待定的男性短链上界 20 改 21',
     file: 'ere/chara/chara-first-exp.js',
     find: '    } else if (rand(20) === 0 && is_male) {',
     replace: '    } else if (rand(21) === 0 && is_male) {',
@@ -263,15 +263,15 @@ export default [
     must_mention: 'RAND:20 命中',
   },
   {
-    desc: 'M8372 气力补满时读错槽位（maxbase:1 → maxbase:0，:120）',
+    desc: 'M8372 气力补满时读错槽位（maxbase:1 → maxbase:0）',
     file: 'ere/chara/chara-make-inport.js',
     find: '  chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;',
     replace: '  chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:0`) || 0;',
     tests: ['chara-make-inport'],
-    must_mention: ':120 BASE:1 = MAXBASE:1',
+    must_mention: 'base:1 = maxbase:1',
   },
   {
-    desc: 'M8373 白纸规则的上界 300 改 400（:637 的 ペニス 区间变宽）',
+    desc: 'M8373 白纸规则的上界 300 改 400（ペニス 区间变宽）',
     file: 'ere/chara/chara-first-exp.js',
     find: '  if (first_kiss >= 100 && first_kiss < 300 && matched_gender === 2) {',
     replace:
@@ -280,7 +280,7 @@ export default [
     must_mention: '白纸',
   },
   {
-    desc: 'M8374 白纸规则的另一半性别判据 1 改 3（:640 的 ヴァギナ 区间）',
+    desc: 'M8374 白纸规则的另一半性别条件 1 改 3（ヴァギナ 区间）',
     file: 'ere/chara/chara-first-exp.js',
     find: '  if (first_kiss >= 300 && first_kiss < 400 && matched_gender === 1) {',
     replace:
@@ -289,7 +289,7 @@ export default [
     must_mention: '白纸',
   },
   {
-    desc: 'M8375 初吻部位的第一臂上界 30 改 31（:644 的嘴唇概率）',
+    desc: 'M8375 初吻部位的第一分支上界 30 改 31（嘴唇概率）',
     file: 'ere/chara/chara-first-exp.js',
     find: "  if (kiss_name !== '' && first_kiss === 0 && rand(30) > 0) {",
     replace: "  if (kiss_name !== '' && first_kiss === 0 && rand(31) > 0) {",
@@ -297,7 +297,7 @@ export default [
     must_mention: 'RAND:30',
   },
   {
-    desc: 'M8376 初吻部位的アナル编码 401 改 402（:647）',
+    desc: 'M8376 初吻部位的アナル编码 401 改 402',
     file: 'ere/chara/chara-first-exp.js',
     find: '    first_kiss = 401; // アナル',
     replace: '    first_kiss = 402; // アナル',
@@ -305,7 +305,7 @@ export default [
     must_mention: '401',
   },
   {
-    desc: 'M8377 初吻部位的ヴァギナ编码 301 改 302（:653）',
+    desc: 'M8377 初吻部位的ヴァギナ编码 301 改 302',
     file: 'ere/chara/chara-first-exp.js',
     find: '    first_kiss = 301; // 女でヴァギナ',
     replace: '    first_kiss = 302; // 女でヴァギナ',
@@ -329,7 +329,7 @@ export default [
     find: "  const pieces = segment.split('/').slice(0, -1);",
     replace: "  const pieces = segment.split('/');",
     tests: ['chara-make-inport'],
-    must_mention: 'MAXBASE',
+    must_mention: 'maxbase',
   },
   {
     desc: 'M8380 等级上限的早退阈值 0 改 -1（FLAG:76 未设也开跑）',

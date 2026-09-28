@@ -1,5 +1,5 @@
 /**
- * MARRIAGE_DAY.ERB 十七函数的行为测试（issue #342，阶段 5a L11）。
+ * ere/dungeon/marriage-day.js 十七函数的行为测试（issue #342，阶段 5a L11）。
  */
 
 'use strict';
@@ -44,7 +44,7 @@ function texts(fixture) {
     .map((line) => line.text);
 }
 
-test('十七个原作函数全部通过模块公开', () => {
+test('十七个函数全部通过模块公开', () => {
   const { api } = setup();
   assert.deepEqual(
     Object.keys(api).sort(),
@@ -136,7 +136,7 @@ test('主函数：种族分支修改后的 Y 用于售乳双账本', async () =>
   assert.equal(fixture.store.get('exflag:4444'), 1500);
 });
 
-test('主函数：种类零按原作回退到默认角色的同居正文', async () => {
+test('主函数：种类零回退到默认角色的同居正文', async () => {
   const { fixture, api } = setup();
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   fixture.store.set('cflag:1:601', 104);
@@ -169,7 +169,7 @@ test('角色与恋人配偶分支沿用现有名字并执行等待', async () =>
   assert.equal(texts(fixture)[0], '莉莉和一起生活着。');
 });
 
-test('DOG/YOU：身体分流写入不同经验，YOU 另有显式等待', async () => {
+test('marriage_day_dog / marriage_day_you：身体分流写入不同经验，后者另有显式等待', async () => {
   const dog = setup();
   await dog.api.marriage_day_dog(0, 3, seq([]));
   assert.equal(dog.fixture.store.get('exp:0:0'), 3);
@@ -192,7 +192,7 @@ test('DOG/YOU：身体分流写入不同经验，YOU 另有显式等待', async 
   assert.equal(you.fixture.waits.length, 1);
 });
 
-test('ORC/SLIME：种族正文按确定性随机源结算经验', async () => {
+test('orc_marriage_day / slime_marriage_day：种族正文按确定性随机源结算经验', async () => {
   const orc = setup();
   await orc.api.orc_marriage_day(1, 3, seq([0]));
   assert.equal(orc.fixture.store.get('exp:1:0'), 3);
@@ -206,7 +206,7 @@ test('ORC/SLIME：种族正文按确定性随机源结算经验', async () => {
   assert.equal(slime.fixture.store.get('exp:1:2'), 1);
 });
 
-test('INSECT：母乳进化经属主门面写素质与寄生经验', async () => {
+test('insect_marriage_day：母乳进化经属主门面写素质与寄生经验', async () => {
   const { fixture, api } = setup();
   fixture.store.set('abl:1:11', 5);
   fixture.store.set('talent:1:0', 0);
@@ -218,7 +218,7 @@ test('INSECT：母乳进化经属主门面写素质与寄生经验', async () =>
   assert.equal(fixture.store.get('exp:1:50'), 3);
 });
 
-test('IVY/SYOKUSYU：高欲望与身体分流分别结算', async () => {
+test('ivy_marriage_day / syokusyu_marriage_day：高欲望与身体分流分别结算', async () => {
   const ivy = setup();
   ivy.fixture.store.set('abl:1:11', 4);
   ivy.fixture.store.set('abl:1:16', 1);
@@ -234,7 +234,7 @@ test('IVY/SYOKUSYU：高欲望与身体分流分别结算', async () => {
   assert.equal(tentacle.fixture.store.get('exp:1:0') || 0, 0);
 });
 
-test('FAILY：依次授予魅惑，并用同一随机源决定教学', async () => {
+test('faily_marriage_day：依次授予魅惑，并用同一随机源决定教学', async () => {
   const { fixture, api } = setup();
   fixture.store.set('abl:1:11', 1);
   assert.equal(await api.faily_marriage_day(1, 3, seq([0])), 4);
@@ -242,7 +242,7 @@ test('FAILY：依次授予魅惑，并用同一随机源决定教学', async () 
   assert.equal(fixture.store.get('talent:1:92') || 0, 0);
 });
 
-test('GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算', async () => {
+test('giant_marriage_day / man_marriage_day / girl_marriage_day：三种人形配偶都执行可区分的初婚结算', async () => {
   const giant = setup();
   await giant.api.giant_marriage_day(0, 3, seq([]));
   assert.equal(giant.fixture.store.get('exp:0:0'), 3);
@@ -261,7 +261,7 @@ test('GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算', asy
   assert.equal(girl.fixture.store.get('exp:1:3'), 1);
 });
 
-test('BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态', async () => {
+test('beast_marriage_day / brain_marriage_day / horse_marriage_day：兽类、脑寄生与马匹分支写各自状态', async () => {
   const beast = setup();
   await beast.api.beast_marriage_day(0, 3);
   assert.equal(beast.fixture.store.get('cflag:0:107'), 3);
@@ -280,7 +280,7 @@ test('BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态', asy
   assert.equal(horse.fixture.store.get('exp:0:56'), 30);
 });
 
-test('ORC：低爱情的随机分支不会误跳高爱情标签', async () => {
+test('orc_marriage_day：低爱情的随机分支不会误跳高爱情标签', async () => {
   const { fixture, api } = setup();
   fixture.store.set('cflag:0:602', 35);
   await api.orc_marriage_day(0, 3, seq([1]));
@@ -288,14 +288,14 @@ test('ORC：低爱情的随机分支不会误跳高爱情标签', async () => {
   assert.equal(fixture.store.get('exp:0:20'), 3);
 });
 
-test('SLIME：低欲望不会获得自慰经验', async () => {
+test('slime_marriage_day：低欲望不会获得自慰经验', async () => {
   const { fixture, api } = setup();
   fixture.store.set('abl:1:11', 2);
   await api.slime_marriage_day(1, 3);
   assert.equal(fixture.store.get('exp:1:10') || 0, 0);
 });
 
-test('INSECT：男性不会进入母乳进化分支', async () => {
+test('insect_marriage_day：男性不会进入母乳进化分支', async () => {
   const { fixture, api } = setup();
   fixture.store.set('abl:1:11', 5);
   fixture.store.set('talent:1:0', 0);
@@ -304,7 +304,7 @@ test('INSECT：男性不会进入母乳进化分支', async () => {
   assert.equal(fixture.store.get('talent:1:130') || 0, 0);
 });
 
-test('IVY：低欲望不会进入主动侍奉分支', async () => {
+test('ivy_marriage_day：低欲望不会进入主动侍奉分支', async () => {
   const { fixture, api } = setup();
   fixture.store.set('abl:1:11', 3);
   fixture.store.set('abl:1:16', 1);
@@ -314,20 +314,20 @@ test('IVY：低欲望不会进入主动侍奉分支', async () => {
   assert.equal(fixture.store.get('exp:1:10') || 0, 0);
 });
 
-test('SYOKUSYU：未封印女性获得私处经验', async () => {
+test('syokusyu_marriage_day：未封印女性获得私处经验', async () => {
   const { fixture, api } = setup();
   await api.syokusyu_marriage_day(1, 3);
   assert.equal(fixture.store.get('exp:1:0'), 3);
   assert.equal(fixture.store.get('juel:1:1'), 10);
 });
 
-test('FAILY：教学随机未命中时不会授予魅惑', async () => {
+test('faily_marriage_day：教学随机未命中时不会授予魅惑', async () => {
   const { fixture, api } = setup();
   await api.faily_marriage_day(1, 3, seq([1]));
   assert.equal(fixture.store.get('talent:1:91') || 0, 0);
 });
 
-test('GIANT：高爱情展示的肛交分支增加肛门经验', async () => {
+test('giant_marriage_day：高爱情展示的肛交分支增加肛门经验', async () => {
   const { fixture, api } = setup();
   fixture.store.set('cflag:1:602', 51);
   fixture.store.set('talent:1:122', 1);
@@ -336,7 +336,7 @@ test('GIANT：高爱情展示的肛交分支增加肛门经验', async () => {
   assert.equal(fixture.store.get('exp:1:0') || 0, 0);
 });
 
-test('MAN：高爱情夫妻分支尊重私处封印', async () => {
+test('man_marriage_day：高爱情夫妻分支尊重私处封印', async () => {
   const { fixture, api } = setup();
   fixture.store.set('cflag:1:602', 51);
   fixture.store.set('talent:1:273', 1);
@@ -345,7 +345,7 @@ test('MAN：高爱情夫妻分支尊重私处封印', async () => {
   assert.equal(fixture.store.get('exp:1:0') || 0, 0);
 });
 
-test('GIRL：百合气质角色接受妻子且不进入惩罚分支', async () => {
+test('girl_marriage_day：百合气质角色接受妻子且不进入惩罚分支', async () => {
   const { fixture, api } = setup();
   fixture.store.set('abl:1:22', 1);
   await api.girl_marriage_day(1, 3, seq([]));
@@ -353,14 +353,14 @@ test('GIRL：百合气质角色接受妻子且不进入惩罚分支', async () =
   assert.equal(fixture.store.get('exp:1:2') || 0, 0);
 });
 
-test('BEAST：高爱情角色进入高收益兽奸分支', async () => {
+test('beast_marriage_day：高爱情角色进入高收益兽奸分支', async () => {
   const { fixture, api } = setup();
   fixture.store.set('cflag:1:602', 41);
   await api.beast_marriage_day(1, 3);
   assert.equal(fixture.store.get('exp:1:56'), 6);
 });
 
-test('BRAIN：漏尿随机未命中时进入脑侵与幻觉分支', async () => {
+test('brain_marriage_day：漏尿随机未命中时进入脑侵与幻觉分支', async () => {
   const { fixture, api } = setup();
   fixture.store.set('talent:1:57', 0);
   fixture.store.set('abl:1:11', 2);
@@ -370,7 +370,7 @@ test('BRAIN：漏尿随机未命中时进入脑侵与幻觉分支', async () => 
   assert.equal(fixture.store.get('exp:1:65'), 1);
 });
 
-test('HORSE：饮精分支获得五倍口交与兽奸经验', async () => {
+test('horse_marriage_day：饮精分支获得五倍口交与兽奸经验', async () => {
   const { fixture, api } = setup();
   await api.horse_marriage_day(0, 3, seq([1]));
   assert.equal(fixture.store.get('exp:0:22'), 15);

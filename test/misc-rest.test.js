@@ -147,7 +147,7 @@ async function run_sensation_offer({
   };
 }
 
-test('EXCOM：扩展口上编号取最后命中项并保留静态局部，名称只初始化一次', () => {
+test('chara_ex：扩展口上编号取最后命中项并保留静态局部，名称只初始化一次', () => {
   const fixture = create_era_fixture();
   const ex = fixture.load_module('chara/chara-ex');
 
@@ -167,7 +167,7 @@ test('EXCOM：扩展口上编号取最后命中项并保留静态局部，名称
   assert.equal(ex.ex_talentname_init(), false, '已有名称时整段早退');
 });
 
-test('ADDCHARA_EX：16 被守卫拦截，17 从精确下界进入分发', async () => {
+test('add_chara_ex：16 被检查拦截，17 从精确下界进入分发', async () => {
   const fixture = create_era_fixture();
   const { add_chara_ex, chara_ex } = fixture.load_module('chara/chara-ex');
   const called = [];
@@ -180,7 +180,7 @@ test('ADDCHARA_EX：16 被守卫拦截，17 从精确下界进入分发', async 
   assert.deepEqual(called, [17]);
 });
 
-test('EXCOM：名称表与八个 CHARA_EX 写槽逐项对应', async () => {
+test('chara_ex：名称表与八个写槽逐项对应', async () => {
   const fixture = create_era_fixture();
   const ex = fixture.load_module('chara/chara-ex');
   assert.equal(ex.ex_talentname_init(), true);

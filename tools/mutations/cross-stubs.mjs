@@ -209,7 +209,7 @@ export default [
     must_mention: '剂量、体型和排卵药共同决定掷骰上界',
   },
   {
-    desc: 'M6587 NAKADASHI_CHECK 预产日守卫阈值改错',
+    desc: 'M6587 NAKADASHI_CHECK 预产日检查阈值改错',
     file: 'ere/event/event-pregnancy.js',
     find: '  if (view.event.预产日 > 0 || view.chara.妊娠 || view.chara.育儿中) {',
     replace:
@@ -218,7 +218,7 @@ export default [
     must_mention: '已有预产日或正在妊娠时清池但不改妊娠相手',
   },
   {
-    desc: 'M6588 MONSTER_DATA 把侵略兵调用范围缩窄到有数据编号',
+    desc: 'M6588 monster_data 把侵略兵调用范围缩窄到有数据编号',
     file: 'ere/dungeon/monster-data.js',
     find: '  } else if (inum >= 1000 && inum < 2000) {',
     replace: '  } else if (inum >= 1000 && inum <= 1009) {',
@@ -226,7 +226,7 @@ export default [
     must_mention: '1010-1999 仍走 ENEMY_DATA_CHECK',
   },
   {
-    desc: 'M6589 ENEMY_DATA_CHECK 不再保留源函数的无操作行为',
+    desc: 'M6589 enemy_data_check 不再保留未绑定局部变量造成的无操作行为',
     file: 'ere/dungeon/monster-data.js',
     find: '  void top;',
     replace: '  e_set(top, inum);',
@@ -234,7 +234,7 @@ export default [
     must_mention: '原作未绑定局部变量造成的无操作行为',
   },
   {
-    desc: 'M6590 CAMPAIGN_DUNGEON_LV 战役 1 等级常量改错',
+    desc: 'M6590 campaign_dungeon_lv 战役 1 等级常量改错',
     file: 'ere/dungeon/monster-data.js',
     find: '  return campaign === 1 ? 45 : 0;',
     replace: '  return campaign === 1 ? 44 : 0;',
@@ -242,7 +242,7 @@ export default [
     must_mention: '战役 1 为 45',
   },
   {
-    desc: 'M6591 CAMPAIGN_DUNGEON_LV 忽略当前战役编号',
+    desc: 'M6591 campaign_dungeon_lv 忽略当前战役编号',
     file: 'ere/dungeon/monster-data.js',
     find: '  return campaign === 1 ? 45 : 0;',
     replace: '  return campaign > 0 ? 45 : 0;',
@@ -300,7 +300,7 @@ export default [
     must_mention: 'K2 与 K4 真身按统一的 rand、P 参数注册',
   },
   {
-    desc: 'M6598 PARTY_DEL 不再调用 SEARCH_FAMILY 真身',
+    desc: 'M6598 party_del 不再调用 search_family 真身',
     file: 'ere/dungeon/dungeon-party.js',
     find: "    const partner = search_family(cid, 'MARRIAGE');",
     replace: '    const partner = -1;',
@@ -334,20 +334,20 @@ export default [
   },
   // —— #596：print 之后多补的空行普查（角色家族调试/输出） ——
   {
-    desc: 'M12081 关系调试表每行之后补回空行（:298 的 PRINTL 只结束那一串 PRINTFORM 拼出的行）',
+    desc: 'M12081 关系调试表每行之后补回空行（PRINTL 只结束那一串 PRINTFORM 拼出的行）',
     file: 'ere/chara/chara-family.js',
-    find: '    era.print(parts);\n    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行',
+    find: '    era.print(parts);\n    // 一名角色一行，行间不额外产生空行',
     replace:
-      '    era.print(parts);\n    era.println(); // 变异：多补一条空行\n    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行',
+      '    era.print(parts);\n    era.println(); // 变异：多补一条空行\n    // 一名角色一行，行间不额外产生空行',
     tests: ['chara-family'],
     must_mention: '两行相邻，没有空行',
   },
   {
-    desc: 'M12082 家族信息行之后补回空行（RELATION_FAMILY :422-423 的 !LINEISEMPTY → PRINTL 只收尾那一行）',
+    desc: 'M12082 家族信息行之后补回空行（!LINEISEMPTY → PRINTL 只收尾那一行）',
     file: 'ere/chara/chara-family.js',
-    find: '  // RELATION_FAMILY.ERB:422-423 的',
+    find: '  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：',
     replace:
-      '  if (displayed > 0) era.println(); // 变异：多补一条空行\n  // RELATION_FAMILY.ERB:422-423 的',
+      '  if (displayed > 0) era.println(); // 变异：多补一条空行\n  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：',
     tests: ['chara-family'],
     must_mention: '家族片段行逐段相邻，没有空行',
   },

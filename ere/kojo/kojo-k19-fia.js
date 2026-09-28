@@ -2493,7 +2493,7 @@ async function kojo_message_com_19(rand) {
         chara(target).kojo.肛珠 = 6;
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
-        era.get(`talent:${target}:77`) == 1 &&
+        era.get(`abl:${target}:3`) >= 3 &&
         (chara(target).kojo.肛珠 <= 4 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(
@@ -4550,7 +4550,6 @@ async function kojo_message_com_19(rand) {
         // CFLAG:331  = 4（变量语义：CFLAG 族，331）
         chara(target).kojo.手淫 = 4;
       } else if (
-        era.get(`talent:${target}:85`) == 1 &&
         era.get(`abl:${target}:16`) >= 3 &&
         (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
       ) {
@@ -7951,7 +7950,6 @@ async function self_kojo_k19() {
         // CFLAG:261  = 5（变量语义：CFLAG 族，261）
         chara(target).kojo.调教后自慰 = 5;
       } else if (
-        era.get(`talent:${target}:76`) == 1 &&
         era.get(`talent:${target}:77`) == 1 &&
         (chara(target).kojo.调教后自慰 <= 4 || game.kojo.口上开关 == 2)
       ) {

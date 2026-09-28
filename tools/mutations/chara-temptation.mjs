@@ -1,6 +1,6 @@
-// 变异条目表切片：#393（N9）魔的诱惑（ere/chara/chara-temptation.js ↔ CHARA_TEMPTATION.ERB）。
+// 变异条目表切片：#393（N9）魔的诱惑（ere/chara/chara-temptation.js）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
-// 分配、只作引用锚点，但全表必须唯一（#295）。
+// 分配、只作引用编号，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 41; // #393 返工 +13；返工二 +5；返工三 +3（M9054-M9056 三条下标表）
 
@@ -11,15 +11,15 @@ export default [
     find: '  if (state_of(arg) !== 2) return TEMPTATION_NOT_HERO;',
     replace: '  if (state_of(arg) !== 3) return TEMPTATION_NOT_HERO;',
     tests: ['chara-temptation'],
-    must_mention: 'CHECK_ABLE_TO_TEMPTATION：三档',
+    must_mention: 'check_able_to_temptation：三档',
   },
   {
-    desc: 'M8842 狂王的 CFLAG:800 判据由 4 改成 5（狂王也能被诱惑）',
+    desc: 'M8842 狂王的 CFLAG:800 条件由 4 改成 5（狂王也能被诱惑）',
     file: 'ere/chara/chara-temptation.js',
     find: '=== 4) return TEMPTATION_CRAZY_KING;',
     replace: '=== 5) return TEMPTATION_CRAZY_KING;',
     tests: ['chara-temptation'],
-    must_mention: 'CHECK_ABLE_TO_TEMPTATION：三档',
+    must_mention: 'check_able_to_temptation：三档',
   },
   {
     desc: 'M8843 诱惑按钮改为「可诱惑时不渲染」（判定方向反了）',
@@ -27,7 +27,7 @@ export default [
     find: '  if (check_able_to_temptation(arg) !== 0) return;',
     replace: '  if (check_able_to_temptation(arg) === 0) return;',
     tests: ['chara-temptation'],
-    must_mention: 'SHOW_BUTTON_TEMPTATION：只有可诱惑（0）才渲染按钮',
+    must_mention: 'show_button_temptation：只有可诱惑（0）才渲染按钮',
   },
   {
     desc: 'M8844 每次诱惑的魔力消耗 2000 改成 2001',
@@ -111,7 +111,7 @@ export default [
     find: '  if (rand(20) < 5 && (ring1 === 20 || ring2 === 20)) return 1;',
     replace: '  if (rand(20) < 4 && (ring1 === 20 || ring2 === 20)) return 1;',
     tests: ['chara-temptation'],
-    must_mention: '指轮的两条强制判据与主抽签的上界',
+    must_mention: '指轮的两条强制条件与主抽签的上界',
   },
   {
     desc: 'M8854 結界の指轮的强制失败门由 <5 改成 <6',
@@ -119,10 +119,10 @@ export default [
     find: '  if (rand(10) < 5 && (ring1 === 18 || ring2 === 18)) return 0;',
     replace: '  if (rand(10) < 6 && (ring1 === 18 || ring2 === 18)) return 0;',
     tests: ['chara-temptation'],
-    must_mention: '指轮的两条强制判据与主抽签的上界',
+    must_mention: '指轮的两条强制条件与主抽签的上界',
   },
   {
-    desc: 'M8855 主抽签的判据由「小于成功签」改成「小于等于」（成功侧多一格）',
+    desc: 'M8855 主抽签的条件由「小于成功签」改成「小于等于」（成功侧多一格）',
     file: 'ere/chara/chara-temptation.js',
     find: '  return rand(seikou + sippai) < seikou ? 1 : 0;',
     replace: '  return rand(seikou + sippai) <= seikou ? 1 : 0;',
@@ -143,7 +143,7 @@ export default [
     find: "  let seikou = 99 + (era.get('cflag:0:9') || 0);",
     replace: "  let seikou = 100 + (era.get('cflag:0:9') || 0);",
     tests: ['chara-temptation'],
-    must_mention: 'PREPARE_TEMPTATION：成功签的九项加成',
+    must_mention: 'prepare_temptation：成功签的九项加成',
   },
   {
     desc: 'M8858 失败签基数由 50 改成 51',
@@ -151,7 +151,7 @@ export default [
     find: '    50 + (era.get(`cflag:${arg}:9`) || 0)',
     replace: '    51 + (era.get(`cflag:${arg}:9`) || 0)',
     tests: ['chara-temptation'],
-    must_mention: 'PREPARE_TEMPTATION：成功签的九项加成',
+    must_mention: 'prepare_temptation：成功签的九项加成',
   },
   {
     desc: 'M8859 担保人的援助额 10000 改成 10001',
@@ -159,7 +159,7 @@ export default [
     find: 'const SPONSOR_AMOUNT = 10000;',
     replace: 'const SPONSOR_AMOUNT = 10001;',
     tests: ['chara-temptation'],
-    must_mention: '赞助机会三支各按自己的判据命中',
+    must_mention: '赞助机会三支各按自己的条件命中',
   },
   {
     desc: 'M8860 肉芽诅咒那一支写好素质后不解锁（素质 326 恒 0）',
@@ -167,7 +167,7 @@ export default [
     find: '      chara(arg).stronghold.肉芽诅咒 = 1;',
     replace: '      chara(arg).stronghold.肉芽诅咒 = 0;',
     tests: ['chara-temptation'],
-    must_mention: '赞助机会三支各按自己的判据命中',
+    must_mention: '赞助机会三支各按自己的条件命中',
   },
   // —— #393 返工：阈值/倍率/随机上界的边界值（全部取等号那一侧） ——
   {
@@ -248,7 +248,7 @@ export default [
     find: '  if (rand(10) < 5 && (ring1 === 18 || ring2 === 18)) return 0;',
     replace: '  if (rand(10) < 6 && (ring1 === 18 || ring2 === 18)) return 0;',
     tests: ['chara-temptation'],
-    must_mention: '指轮的两条强制判据',
+    must_mention: '指轮的两条强制条件',
   },
   {
     desc: 'M9024 不幸指轮的判定条件由 ring === 20 改成 19',
@@ -256,7 +256,7 @@ export default [
     find: '  if (rand(20) < 5 && (ring1 === 20 || ring2 === 20)) return 1;',
     replace: '  if (rand(20) < 5 && (ring1 === 19 || ring2 === 20)) return 1;',
     tests: ['chara-temptation'],
-    must_mention: '指轮的两条强制判据',
+    must_mention: '指轮的两条强制条件',
   },
   {
     desc: 'M9054 高级素质两项的下标表 [10,11] → [10,12]',
@@ -331,7 +331,7 @@ export default [
     replace:
       '    (era.get(`cflag:${arg}:582`) || 0) < SPONSOR_AMOUNT * -1 - 1 &&',
     tests: ['chara-temptation'],
-    must_mention: '赞助机会三支各按自己的判据命中',
+    must_mention: '赞助机会三支各按自己的条件命中',
   },
   {
     desc: 'M9033 默认随机源偏移一位（default_rand 的 Math.floor 结果 +1）',

@@ -61,7 +61,7 @@ test('公开怪物技能四个函数', () => {
   ]);
 });
 
-test('MONSTER_SKILL：三分之一不发动；粘液捕获按未强化等级扣气力', async () => {
+test('monster_skill：三分之一不发动；粘液捕获按未强化等级扣气力', async () => {
   const fixture = setup();
   const { monster_skill } = load(fixture);
 
@@ -72,7 +72,7 @@ test('MONSTER_SKILL：三分之一不发动；粘液捕获按未强化等级扣�
   assert.equal(fixture.store.get('base:1:1'), 970, 'E 等级 20 + 魔王等级 10');
 });
 
-test('MONSTER_SKILL：十八种技能逐项改变原作指定的数值', async () => {
+test('monster_skill：十八种技能逐项改变既定的数值', async () => {
   const cases = [
     [1, 'base:1:1', 970],
     [2, 'base:1:0', 1970],
@@ -102,7 +102,7 @@ test('MONSTER_SKILL：十八种技能逐项改变原作指定的数值', async (
   }
 });
 
-test('MONSTER_SKILL：强化伤害与参数下降分别钳在 400 和 50', async () => {
+test('monster_skill：强化伤害与参数下降分别钳在 400 和 50', async () => {
   const fixture = setup();
   const { monster_skill } = load(fixture);
   fixture.store.set('e:1', 500);
@@ -114,7 +114,7 @@ test('MONSTER_SKILL：强化伤害与参数下降分别钳在 400 和 50', async
   assert.equal(fixture.store.get('cflag:1:11'), 30);
 });
 
-test('MONSTER_SKILL：诱惑经角色域真身修改好感度与善恶值', async () => {
+test('monster_skill：诱惑经角色域真身修改好感度与善恶值', async () => {
   const fixture = setup();
   fixture.store.set('cflag:1:151', 10);
 
@@ -124,7 +124,7 @@ test('MONSTER_SKILL：诱惑经角色域真身修改好感度与善恶值', asyn
   assert.equal(fixture.store.get('cflag:1:151'), 8);
 });
 
-test('MONSTER_SKILL：经验吸取跌破零时调用等级检查并同步四维', async () => {
+test('monster_skill：经验吸取跌破零时调用等级检查并同步四维', async () => {
   const fixture = setup();
   fixture.store.set('exp:1:80', 10);
   fixture.store.set('cflag:1:13', 20);
@@ -140,7 +140,7 @@ test('MONSTER_SKILL：经验吸取跌破零时调用等级检查并同步四维'
   assert.equal(fixture.store.get('cflag:1:14'), 29);
 });
 
-test('MONSTER_ROOM_SKILL：七种房间逐项应用地形效果', async () => {
+test('monster_room_skill：七种房间逐项应用地形效果', async () => {
   const cases = [
     [500, null, 'base:1:0', 1940],
     [501, null, 'base:1:1', 940],
@@ -160,7 +160,7 @@ test('MONSTER_ROOM_SKILL：七种房间逐项应用地形效果', async () => {
   }
 });
 
-test('MONSTER_ROOM_SKILL：沼地增加攻击，冰室同时增加攻防', async () => {
+test('monster_room_skill：沼地增加攻击，冰室同时增加攻防', async () => {
   const swamp = setup();
   swamp.store.set('cflag:1:501', 501);
   await load(swamp).monster_room_skill(1, 0);
@@ -173,7 +173,7 @@ test('MONSTER_ROOM_SKILL：沼地增加攻击，冰室同时增加攻防', async
   assert.equal(ice.store.get('e:3'), 42, '冰室防御 +2');
 });
 
-test('MONSTER_ROOM_SKILL：牧场与博物馆没有库存时不发动，热砂不把低防御再减一', async () => {
+test('monster_room_skill：牧场与博物馆没有库存时不发动，热砂不把低防御再减一', async () => {
   for (const room of [502, 506]) {
     const fixture = setup();
     fixture.store.set('cflag:1:501', room);
@@ -190,7 +190,7 @@ test('MONSTER_ROOM_SKILL：牧场与博物馆没有库存时不发动，热砂�
   assert.equal(fixture.store.get('e:3'), 2);
 });
 
-test('MONSTER_SKILL：战斗日志开启时等待输出，破铠吐息文案与实伤一致', async () => {
+test('monster_skill：战斗日志开启时等待输出，破铠吐息文案与实伤一致', async () => {
   const fixture = setup();
   fixture.store.set('flag:5', 32);
 
@@ -201,7 +201,7 @@ test('MONSTER_SKILL：战斗日志开启时等待输出，破铠吐息文案与�
   assert.equal(fixture.store.get('base:1:0'), 1933, '实际扣 67，文案同值');
 });
 
-test('USE_MONSTER_SKILL：十八种技能保留精英版的数值差异与写入位置', async () => {
+test('use_monster_skill：十八种技能保留精英版的数值差异与写入位置', async () => {
   const cases = [
     [1, 'base:1:1', 950],
     [2, 'base:1:0', 1950],
@@ -232,7 +232,7 @@ test('USE_MONSTER_SKILL：十八种技能保留精英版的数值差异与写入
   }
 });
 
-test('USE_MONSTER_SKILL：传入的精英等级会被 E 槽重算覆盖', async () => {
+test('use_monster_skill：传入的精英等级会被 E 槽重算覆盖', async () => {
   const fixture = setup();
 
   await load(fixture).use_monster_skill(1, 1, 2, 999, 2, '贝丝', seq(0));
@@ -244,7 +244,7 @@ test('USE_MONSTER_SKILL：传入的精英等级会被 E 槽重算覆盖', async 
   );
 });
 
-test('SLAVE_MONSTER_SKILL：先判发动，再从 401–499 的素质池选技能', async () => {
+test('slave_monster_skill：先判发动，再从 401–499 的素质池选技能', async () => {
   const fixture = setup();
   fixture.store.set('talent:2:471', 1);
   const { slave_monster_skill } = load(fixture);
@@ -256,7 +256,7 @@ test('SLAVE_MONSTER_SKILL：先判发动，再从 401–499 的素质池选技�
   assert.equal(fixture.store.get('base:1:1'), 950, '471 - 470 = 粘液捕获');
 });
 
-test('SLAVE_MONSTER_SKILL：随机选中 401–469 时减 470 为负并浪费行动', async () => {
+test('slave_monster_skill：随机选中 401–469 时减 470 为负并浪费行动', async () => {
   const fixture = setup();
   fixture.store.set('talent:2:401', 1);
   fixture.store.set('talent:2:471', 1);
@@ -266,7 +266,7 @@ test('SLAVE_MONSTER_SKILL：随机选中 401–469 时减 470 为负并浪费行
   assert.equal(fixture.store.get('base:1:1'), 1000);
 });
 
-test('SLAVE_MONSTER_SKILL：没有值严格为 1 的素质时不发动', async () => {
+test('slave_monster_skill：没有值严格为 1 的素质时不发动', async () => {
   const fixture = setup();
   fixture.store.set('talent:2:471', 2);
 
@@ -275,7 +275,7 @@ test('SLAVE_MONSTER_SKILL：没有值严格为 1 的素质时不发动', async (
   assert.equal(fixture.store.get('base:1:1'), 1000);
 });
 
-test('USE_MONSTER_SKILL：怪物类型写 E 防御，未知类型只演出不增益', async () => {
+test('use_monster_skill：怪物类型写 E 防御，未知类型只演出不增益', async () => {
   const monster = setup();
   await load(monster).use_monster_skill(1, 5, 0, 0, 1, '狗头人', seq(0));
   assert.equal(monster.store.get('e:3'), 42);
@@ -285,7 +285,7 @@ test('USE_MONSTER_SKILL：怪物类型写 E 防御，未知类型只演出不增
   assert.equal(unknown.store.get('e:3'), 40);
 });
 
-test('USE_MONSTER_SKILL：精英射击沿用 E 槽怪物名而非传入名字', async () => {
+test('use_monster_skill：精英射击沿用 E 槽怪物名而非传入名字', async () => {
   const fixture = setup();
   fixture.store.set('flag:5', 32);
   fixture.store.set('itemname:30', '错位怪物名');

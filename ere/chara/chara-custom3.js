@@ -1,32 +1,32 @@
 /**
  * @file 外观定制页与外观编码分发（issue #392，N8 段 2）。
  *
- * 调用面：同票的 ere/chara/chara-custom2.js 的 @CHAR_CUSTOM 主循环
- * （源 CHARA_CUSTOM2 ver1.0.1.ERB:28 的 `CALL CHAR_CUSTOM_LOOK_PAGE(L_PAGE-3)`
- * 与 :118-183 的 `CALL CHAR_CUSTOM_LOOK_DEAL(RESULT)`）。
+ * 调用面：同一工单的 ere/chara/chara-custom2.js 的 char_custom 主循环
+ * （`char_custom_look_page(page - 3)` 与
+ * `char_custom_look_deal(result)` 两处调用）。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 移植说明（有意偏离既有行为，均注明依据）：
  *
- *   - **TARGET 隐式读写显式化**：源里 `TALENT:头发颜色` 这类无角色段的寻址
- *     一律指 TARGET，本文件以 cid 形参承载；只有 :1-117/:1-117/:1-117 三处
- *     `IF TARGET == MASTER` 的原作判据按 cid === 0 落地。
- *   - **按钮正文不写 `[...]` 包装**：源 :223 是
- *     `PRINTBUTTON @"[%LOCALS%]", L_IDX * 100 + L_I`——Emuera 的按钮正文
- *     原样显示（print-system.md「虽非必须但建议保留 [0] 等标记」），
+ *   - **TARGET 隐式读写显式化**：`TALENT:头发颜色` 这类无角色段的寻址
+ *     一律指 TARGET，本文件以 cid 形参承载；只有三处
+ *     `IF TARGET == MASTER` 的判断条件按 cid === 0 实现。
+ *   - **按钮正文不写 `[...]` 包装**：旧写法是
+ *     `PRINTBUTTON @"[%LOCALS%]", L_IDX * 100 + L_I`——这种按钮的正文
+ *     原样显示，
  *     EraElectron 的 `era.printButton` 则**自动**拼 `[快捷键] 正文`
  *     （夹具 make_button_entry 的 rendered 公式）。手写方括号会渲染成
  *     `[1100] [金色]`，故正文只给名字（与 menu-button.js 文件头第 1 条同款）。
- *   - **`PRINTV "  "` 的行首缩进不搬运**：那是 Emuera 字符流里的两格缩进，
+ *   - **`PRINTV "  "` 的行首缩进不搬运**：那是字符流排版里的两格缩进，
  *     EraElectron 的 `printMultiColumns` 是栅格布局，行首空格没有对应位置。
- *     列的排布改由 :212-218 的 80 宽换行决定（每行一个 Row，见下）。
- *   - **一次换行 = 一个 `printMultiColumns` Row**：源里每个 `PRINTL` 断行
+ *     列的排布改由 80 宽换行决定（每行一个 Row，见下）。
+ *   - **一次换行 = 一个 `printMultiColumns` Row**：每个 `PRINTL` 断行
  *     对应 EraElectron 的一行；按钮在 `printMultiColumns` 里以 GridObject
  *     承载（page-save-load.js 的 PRINTFORMLC 先例），每格宽度按本行格数均分
  *     24 列（栅格满行 24 列，`?? 24` 是引擎缺省，见夹具 make_grid_entry）。
  *     三个量都可断言：本行几格（Row 分组）、何时换行（80 宽阈值）、每格宽度
  *     （夹具按钮格的 `grid_width`，引擎 getValidWidth 的实测同源）。
- *   - **选中态用 `config.color`**：源 :220-226 的 `RESETCOLOR` /
- *     `SETCOLORBYNAME GRAY` 是 Emuera 的字符色，EraElectron 按钮色的等价物
+ *   - **选中态用 `config.color`**：`RESETCOLOR` /
+ *     `SETCOLORBYNAME GRAY` 是字符流排版的字符色，EraElectron 按钮色的等价物
  *     是 el-button 的 --el-button-text-color（page-ablup.js 的 GRAY 同值
  *     #808080；menu-button.js 文件头第 2 条：命名色在 hover 态会拼出非法值，
  *     必须十六进制串）。
@@ -40,18 +40,18 @@ const era_flag = require('#/era-utils/era-flag');
 /** `SETCOLORBYNAME GRAY` 的十六进制（page-ablup.js 同值） */
 const GRAY = '#808080';
 
-/** `L_LEN >= 80` 的换行阈值（源 :214） */
+/** `L_LEN >= 80` 的换行阈值 */
 const WRAP_WIDTH = 80;
 
-/** `L_EXCEED > 10` 的早退阈值（源 :207） */
+/** `L_EXCEED > 10` 的早退阈值 */
 const MAX_BLANKS = 10;
 
 /** 栅格的满行宽度（引擎 24 列，夹具 make_grid_entry 的 `?? 24`） */
 const GRID_COLUMNS = 24;
 
-// —— 外观看板的字面量表（源 target/ERB/其他/VARIABLES.ERH，逐表标注出处）——
+// —— 外观看板的字面量表 ——
 
-/** ARR_头发颜色2（:22）——注意与 look-info.js 的 HAIR_COLOR_MAP（ARR_HAIRCOLOR，:1-117）是两张表 */
+/** ARR_头发颜色2——注意与 look-info.js 的 HAIR_COLOR_MAP 是两张表 */
 const ARR_头发颜色2 = [
   '',
   '金色',
@@ -67,7 +67,7 @@ const ARR_头发颜色2 = [
   '粉色',
 ];
 
-/** ARR_发型（:31） */
+/** ARR_发型 */
 const ARR_发型 = [
   '',
   '自然',
@@ -84,10 +84,10 @@ const ARR_发型 = [
   '卷发',
 ];
 
-/** 头发长度档（源 :14 的 `LOCALS '= "短", "半长", "长"`，三档） */
+/** 头发长度档（`LOCALS '= "短", "半长", "长"`，三档） */
 const ARR_头发长度 = ['短', '半长', '长'];
 
-/** ARR_头发状态（:25） */
+/** ARR_头发状态 */
 const ARR_头发状态 = [
   '',
   '直发',
@@ -98,10 +98,10 @@ const ARR_头发状态 = [
   '大波浪',
 ];
 
-/** ARR_头发修剪方式（:28） */
+/** ARR_头发修剪方式 */
 const ARR_头发修剪方式 = ['', '基本剪法', '齐剪', '层剪', '碎发'];
 
-/** ARR_目（:34） */
+/** ARR_目 */
 const ARR_目 = [
   '',
   '细长眼',
@@ -114,22 +114,22 @@ const ARR_目 = [
   '下垂眼',
 ];
 
-/** ARR_瞳色（:37） */
+/** ARR_瞳色 */
 const ARR_瞳色 = ['', '蓝色', '棕色', '灰色', '金色', '红色', '黑色'];
 
-/** ARR_唇（:40） */
+/** ARR_唇 */
 const ARR_唇 = ['', '肉感的', '薄的', '丰润的', '标准'];
 
-/** 体型档（源 :37 的 `LOCALS '= "纤细", "标准", "丰满"`，三档） */
+/** 体型档（`LOCALS '= "纤细", "标准", "丰满"`，三档） */
 const ARR_体型 = ['纤细', '标准', '丰满'];
 
-/** 阴毛状态档（源 :41 的 `LOCALS '=` 七档） */
+/** 阴毛状态档（`LOCALS '=` 七档） */
 const ARR_阴毛状态 = ['白虎', '胎毛', '新长的', '稀薄', '标准', '浓密', '硬毛'];
 
-/** ARR_乳头（:43） */
+/** ARR_乳头 */
 const ARR_乳头 = ['', '粉红色', '褐色', '标准', '凹陷'];
 
-/** ARR_魅力点（:46） */
+/** ARR_魅力点 */
 const ARR_魅力点 = [
   '',
   '皮肤',
@@ -162,7 +162,7 @@ const ARR_魅力点 = [
   '寝癖',
 ];
 
-/** ARR_癖（:49） */
+/** ARR_癖 */
 const ARR_癖 = [
   '',
   '舔嘴唇',
@@ -201,7 +201,7 @@ const ARR_癖 = [
   '舔手背',
 ];
 
-/** ARR_喜欢的东西（:63） */
+/** ARR_喜欢的东西 */
 const ARR_喜欢的东西 = [
   '',
   '甜食',
@@ -226,7 +226,7 @@ const ARR_喜欢的东西 = [
   '游泳',
 ];
 
-/** ARR_成为勇者前的生活（:52）——**无空串首项**，0 号是「不明」 */
+/** ARR_成为勇者前的生活——**无空串首项**，0 号是「不明」 */
 const ARR_成为勇者前的生活 = [
   '不明',
   '学生',
@@ -257,7 +257,7 @@ const ARR_成为勇者前的生活 = [
   '魔族的孽种',
 ];
 
-/** ARR_成为勇者的契机（:55）——同样**无空串首项** */
+/** ARR_成为勇者的契机——同样**无空串首项** */
 const ARR_成为勇者的契机 = [
   '不明',
   '命运的引导',
@@ -287,7 +287,7 @@ const ARR_成为勇者的契机 = [
   '被恶魔诱惑',
 ];
 
-/** ARR_种族（:58）——**无空串首项**，0 号是「人类」 */
+/** ARR_种族——**无空串首项**，0 号是「人类」 */
 const ARR_种族 = [
   '人类',
   '精灵',
@@ -303,7 +303,7 @@ const ARR_种族 = [
   '矮人',
 ];
 
-/** ARR_种族2（:61） */
+/** ARR_种族2 */
 const ARR_种族2 = [
   '',
   '兽人',
@@ -338,7 +338,7 @@ const T_成为勇者的契机 = 316;
 const T_喜欢的东西 = 317;
 const T_种族2 = 319;
 
-/** 读取素质（#13：未声明下标读回 undefined，兜底 0） */
+/** 读取素质（#13：未声明下标读回 undefined，默认 0） */
 function talent(cid, index) {
   return era.get(`talent:${cid}:${index}`) || 0;
 }
@@ -358,15 +358,15 @@ function disp_width(text) {
 }
 
 /**
- * @PRINT_ARR_GROUP（:184-231）：把一张名字表摆成按钮组。
+ * print_arr_group：把一张名字表摆成按钮组。
  *
- * 两个可观察的排版常量：`L_LEN >= 80` 换行（:214，宽度按显示宽度累加，
- * 每项额外 +2 的间隔）与 `L_EXCEED > 10` 早退（:207，**累计**空串数，
- * 不是连续段——源里的 L_EXCEED 从不在非空项上重置）。
+ * 两个可观察的排版常量：`L_LEN >= 80` 换行（宽度按显示宽度累加，
+ * 每项额外 +2 的间隔）与 `L_EXCEED > 10` 早退（**累计**空串数，
+ * 不是连续段——L_EXCEED 从不在非空项上重置）。
  *
- * @param {string[]} arr 名字表（源 L_ARR，`#DIMS REF`）
- * @param {number} val 选中项的表内序号（源 L_VAL；越界即无选中项）
- * @param {number} idx 组号（源 L_IDX；按钮快捷键 = idx * 100 + 序号）
+ * @param {string[]} arr 名字表（`#DIMS REF`）
+ * @param {number} val 选中项的表内序号（越界即无选中项）
+ * @param {number} idx 组号（按钮快捷键 = idx * 100 + 序号）
  */
 function print_arr_group(arr, val, idx) {
   let blanks = 0;
@@ -418,18 +418,18 @@ function print_arr_group(arr, val, idx) {
     });
   }
   flush();
-  era.setColor(''); // RESETCOLOR（原作的字符色复位）
-  // 的 PRINTL 只结束最后一格行（行首 :198 的 PRINTV "  " 起头、按钮逐格
-  // 续拼），不产生空行——ere 的 printMultiColumns 自成一行。空表或 :207-208
-  // 早退时原作剩下的是一条两空格行（本文件不搬运行首缩进，见文件头），ere
-  // 侧零输出，属同一条记名排版差异
+  era.setColor(''); // RESETCOLOR（字符色复位）
+  // 的 PRINTL 只结束最后一格行（行首 PRINTV "  " 起头、按钮逐格
+  // 续拼），不产生空行——ere 的 printMultiColumns 自成一行。空表或
+  // 早退时旧写法剩下的是一条两空格行（本文件不搬运行首缩进，见文件头），ere
+  // 侧零输出，属同一条登记在案的排版差异
 }
 
 /**
- * @CHAR_CUSTOM_LOOK_PAGE（:1-111）：外观定制页的两屏。
+ * char_custom_look_page：外观定制页的两屏。
  *
- * @param {number} arg 页号（源 ARG：0 = 头发与外观，1 = 魅力/癖好/来历）
- * @param {number} cid 角色 ID（源里是 TARGET）
+ * @param {number} arg 页号（0 = 头发与外观，1 = 魅力/癖好/来历）
+ * @param {number} cid 角色 ID
  */
 function char_custom_look_page(arg, cid = era_flag.target) {
   if (arg === 0) {
@@ -517,15 +517,14 @@ function char_custom_look_page(arg, cid = era_flag.target) {
     print_arr_group(ARR_种族, talent(cid, T_种族), 1);
   }
 
-  // `IF TALENT:314 == 9` 是空块（原地注释），不落地
+  // `IF TALENT:314 == 9` 是空块（原地注释），不移植
 }
 
 /**
- * 阴毛状态的档位换算（源 :42-59 的 SELECTCASE）。
+ * 阴毛状态的档位换算。
  *
- * 重叠区间按 Emuera 的「先匹配先取」：20 归 `CASE 2 TO 20`、50 归
- * `CASE 20 TO 50`……链尾的 `CASEELSE` 接 0 与 500 以上（原表的 501-500 空档
- * 之外还有 0 号）。
+ * 重叠区间按「先匹配先取」：20 归 `CASE 2 TO 20`、50 归
+ * `CASE 20 TO 50`……链尾的 `CASEELSE` 接 0 与 500 以上。
  *
  * @param {number} value TALENT:阴毛状态（1-500+）
  * @returns {number} ARR_阴毛状态 的表内序号（0-7；7 = CASEELSE 的越界档）
@@ -542,14 +541,14 @@ function pubic_index(value) {
 }
 
 /**
- * @CHAR_CUSTOM_LOOK_DEAL（:118-182）：把编码（组号 × 100 + 序号）落到素质上。
+ * char_custom_look_deal：把编码（组号 × 100 + 序号）落到素质上。
  *
- * @param {number} arg 编码（源 ARG）
- * @param {number} cid 角色 ID（源里是 TARGET）
- * @returns {number} 0 = 已处理；-1 = 未登记的组号（源 :180）
+ * @param {number} arg 编码
+ * @param {number} cid 角色 ID
+ * @returns {number} 0 = 已处理；-1 = 未登记的组号
  */
 function char_custom_look_deal(arg, cid = era_flag.target) {
-  const idx = Math.trunc(arg / 100); // （Emuera 的整数除法向零截断）
+  const idx = Math.trunc(arg / 100); // （整数除法向零截断）
   const val = arg - idx * 100;
 
   if (idx === 1) {

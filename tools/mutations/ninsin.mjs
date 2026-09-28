@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 74; // #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）；#653 -3 +5（删反向变异 M7200/M7201/M7203，新增 M13250-M13254 守卫修复后行为）
+export const COUNT = 74; // #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）；#653 -3 +5（删反向变异 M7200/M7201/M7203，新增 M13250-M13254 检查修复后的行为）
 
 export default [
   {
@@ -44,9 +44,9 @@ export default [
     must_mention: '钳到库存上限',
   },
   {
-    desc: 'M7185 PREGNANCY_MASTER 自跳缺陷被静默吞掉',
+    desc: 'M7185 pregnancy_master 自跳缺陷被静默吞掉',
     file: 'ere/dungeon/monster-summon.js',
-    find: "  throw new Error('原作 PREGNANCY_MASTER 会无限尾调用自身');",
+    find: "  throw new Error('pregnancy_master 会无限尾调用自身');",
     replace: '  return 0;',
     tests: ['chara-pregnancy'],
     must_mention: '自跳缺陷以明确错误终止',
@@ -563,10 +563,9 @@ export default [
     find: '  return Math.trunc((cid - FIRST_CHILD_ID) / CHILD_ID_BLOCK_SIZE) + 1;',
     replace: '  return Math.trunc((cid - 1000) / CHILD_ID_BLOCK_SIZE) + 1;',
     tests: ['event-execution-batch'],
-    must_mention:
-      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
-  // —— #653（F7）：近卫模板窗 201-211、超乳降档、生育部位按生产角色（修复守卫） ——
+  // —— #653（F7）：近卫模板窗 201-211、超乳降档、生育部位按生产角色（修复检查） ——
   {
     desc: 'M13250 近卫后代随机模板退回 200 起（缺预设报错中断）',
     file: 'ere/chara/chara-pregnancy.js',

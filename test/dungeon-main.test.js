@@ -1,6 +1,6 @@
 /**
- * ere/dungeon/dungeon.js @DUNGEON + @CHECK_STATUS + @GET_JUNK_ITEM +
- * @GET_DOWN_ENEMY 的行为测试（issue #172，阶段 3 H3）。
+ * ere/dungeon/dungeon.js run_dungeon / check_status / get_junk_item /
+ * get_down_enemy 的行为测试（issue #172，阶段 3 H3）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
  * run_dungeon / get_junk_item 的 rand 参数注入（enter-enemy.js 先例）：
@@ -8,12 +8,12 @@
  *   - max = (n) => n - 1（WALK = 19 + 6×9 = 73：每次调用稳定推进）
  *
  * 验收对应（#172 清单）：
- *   - turnend-settle 两处守卫（探索 :116 / 战役 :93）实测能被勇者触发；
+ *   - turnend-settle 两处检查（探索 / 战役）实测能被勇者触发；
  *   - 层数从 1 推进到 9 有测试，第 9 层且 TALENT:122 == 0 时走到 ENDING_2
- *     接入存根；
- *   - TALENT:122（冒险者）为真时不走向结局（回头臂 + 挑战臂）；
+ *     接入点；
+ *   - TALENT:122（冒险者）为真时不走向结局（回头分支 + 挑战分支）；
  *   - CFLAG:530 == 1 的提前返回、CFLAG:1 == 3 的迎击分叉各有测试；
- *   - @GET_DOWN_ENEMY 复活后的资金结算（9 处调用点的公共本体）。
+ *   - get_down_enemy 复活后的资金结算（9 处调用点的公共本体）。
  */
 
 const assert = require('node:assert/strict');
@@ -25,7 +25,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const zero = () => 0;
 /** 所有掷骰恒最大（RAND:N == N-1；WALK = 19 + 6×9 = 73：稳定推进） */
 const max = (n) => n - 1;
-/** 所有掷骰恒 1（RAND:N == 1；GET_JUNK_ITEM 的乘数项用） */
+/** 所有掷骰恒 1（RAND:N == 1；get_junk_item 的乘数项用） */
 const one = () => 1;
 
 function load(fixture) {
@@ -38,16 +38,9 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-/** 占位行按「原作 @函数名，」精确计数 */
-function stub_count(fixture, name) {
-  return text_lines(fixture).filter((line) => line.includes(`原作 @${name}，`))
-    .length;
-}
-
 /**
- * 最小世界：魔王 0 + 勇者 1（阿尔）。体力气力全满（CHECK_STATUS 恒判
- * 元气满满、踏破后的体力富余检查恒通过——本票存根下勇者不掉血，推进
- * 不受阻碍正是预期行为，#168 裁定 1）。
+ * 最小世界：魔王 0 + 勇者 1（阿尔）。体力气力全满（check_status 恒判
+ * 元气满满、踏破后的体力富余检查恒通过，#168 结论 1）。
  */
 function setup_world() {
   const fixture = create_era_fixture();
@@ -77,12 +70,12 @@ async function emit_turnend(fixture) {
   await emit('EVENTTURNEND');
 }
 
-// —— 接入点之一（turnend-settle :116，勇者探索）——
+// —— 接入点之一（turnend-settle，勇者探索）——
 
-test('接入点·探索臂：CFLAG:1 == 2 的勇者让 run_dungeon 真跑（侵攻度推进）', async () => {
+test('接入点·探索分支：CFLAG:1 == 2 的勇者让 run_dungeon 真跑（侵攻度推进）', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
-  // 关闭勇者来袭（#168 裁定 4 的隔离开关：本用例只要既有勇者推进，不要
+  // 关闭勇者来袭（#168 结论 4 的隔离开关：本用例只要既有勇者推进，不要
   // 日推进再生成新的）
   fixture.disable_enter_enemy();
 
@@ -104,7 +97,7 @@ test('接入点·探索臂：CFLAG:1 == 2 的勇者让 run_dungeon 真跑（侵�
   );
 });
 
-test('接入点·战役臂：CFLAG:1 == 12 的角色让 :93 守卫为真（战役用词）', async () => {
+test('接入点·战役分支：CFLAG:1 == 12 的角色让检查为真（战役用词）', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.disable_enter_enemy();
@@ -112,7 +105,7 @@ test('接入点·战役臂：CFLAG:1 == 12 的角色让 :93 守卫为真（战�
 
   era_flag.time = 1;
   await emit_turnend(fixture);
-  // 战役臂 run_dungeon 跑过：MAPC 是「迷宫」（战役用词）的踏破演出不会
+  // 战役分支 run_dungeon 跑过：MAPC 是「迷宫」（战役用词）的踏破演出不会
   // 出现（单次 WALK ≤ 73 层数不够），但结算后 flag:400 == 0 的复位块把 12 → 0，
   // 侵攻度被写。断言复位与写径都发生过。
   assert.equal(
@@ -123,7 +116,7 @@ test('接入点·战役臂：CFLAG:1 == 12 的角色让 :93 守卫为真（战�
   const degree = fixture.store.get('cflag:1:502');
   assert(
     typeof degree === 'number' && degree >= 0 && degree <= 73,
-    `战役臂的 run_dungeon 写过侵攻度（实测 ${degree}）`,
+    `战役分支的 run_dungeon 写过侵攻度（实测 ${degree}）`,
   );
 });
 
@@ -183,30 +176,30 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
     texts.includes(
       '-------------------------------GAMEOVER---------------------------------',
     ),
-    'GAMEOVER 分隔行（:54）',
+    'GAMEOVER 分隔行',
   );
-  // JUMP 语义：ENDING_2 的 QUIT 之后本回合不再执行——:749 的侵攻度写回
+  // JUMP 语义：ENDING_2 的 QUIT 之后本回合不再执行——侵攻度写回
   // 不可达，502 停在上一次（第 17 次）调用写回的 73，而不是本次踏破的
   // 0 或 146
   assert.equal(
     fixture.store.get('cflag:1:502'),
     73,
-    'ENDING_2 后 :749 的侵攻度写回不可达',
+    'ENDING_2 后的侵攻度写回不可达',
   );
 });
 
 test('贯通·战斗真身（H6）：推进全程战斗确实发生、勇者气力被消耗，直到结局', async () => {
   const fixture = setup_world();
-  // 第 1 层放毒沼（H8 房间真身的确定性输出锚点）：勇者恰在第 1 层滞留一
-  // 次（第 1 次调用 walk = 73 ∈ (0,100) 滞留臂；第 2 次踏破后房间读的是
+  // 第 1 层放毒沼（H8 房间真身的确定性输出证据）：勇者恰在第 1 层滞留一
+  // 次（第 1 次调用 walk = 73 ∈ (0,100) 滞留分支；第 2 次踏破后房间读的是
   // 已推进的第 2 层），毒沼的 10 点伤害（DMG = CFLAG:0:9 + 10）是
-  // DUNGEON_ROOM 真身跑过的直接证据——存根期此锚点靠占位行计数
+  // dungeon_room 真身跑过的直接证据
   fixture.store.set('flag:350', 501);
   const { run_dungeon } = load(fixture);
-  // H6（#175）起 DUNGEON_PARTY_BATTLE 是真身：每轮滞留都发生战斗、
+  // H6（#175）起 dungeon_party_battle 是真身：每轮滞留都发生战斗、
   // 战斗的逃跑段（TURN > 5，max 下 rand(3) = 2 ≠ 0 必成）扣勇者气力
   // RAND:30 = 29。第 18 次调用踏破第 9 层 → ENDING_2 真身 quit（#173）。
-  // 判据换正向：战斗确实扣了气力（存根态此值为满值 1000），推进本身
+  // 判断条件换正向：战斗确实扣了气力，推进本身
   // 不受阻挡（max 下 WALK 恒 73，层数轨迹与 H3 相同——随机源注入与
   // 序列无关，见下一条对比测试的论证）
   fixture.set_inputs(0);
@@ -232,30 +225,19 @@ test('贯通·战斗真身（H6）：推进全程战斗确实发生、勇者气�
     typeof wp === 'number' && wp < 1000,
     `战斗确实扣了勇者气力（实测 ${wp} < 满值 1000；逃跑段 -RAND:30 × 战斗数）`,
   );
-  // 存根占位行已退场（真身不产占位行）
-  assert.equal(
-    stub_count(fixture, 'DUNGEON_PARTY_BATTLE'),
-    0,
-    '队伍战斗真身（无占位行）',
-  );
-  // H8（#177）房间真身的正向锚点：第 1 层毒沼恰结算一次（第 1 次调用的
-  // 滞留臂后），2000 - 10 = 1990——本世界无防御怪物，怪物攻击不触发，
+  // H8（#177）房间真身的正向证据：第 1 层毒沼恰结算一次（第 1 次调用的
+  // 滞留分支后），2000 - 10 = 1990——本世界无防御怪物，怪物攻击不触发，
   // HP 无其他写者，精确等值
   assert.equal(
     fixture.store.get('base:1:0'),
     1990,
     '房间设施真身（毒沼 10 点伤害恰一次）',
   );
-  assert.equal(
-    stub_count(fixture, 'DUNGEON_ROOM'),
-    0,
-    '房间设施真身（无占位行）',
-  );
 });
 
-// —— TALENT:122（冒险者）不走结局（验收「另一条臂有测试」）——
+// —— TALENT:122（冒险者）不走结局（验收「另一条分支有测试」）——
 
-test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，不进 ENDING_2', async () => {
+test('冒险者·回头分支：RAND:4 != 0 时放弃英雄梦，写挫折记忆，不进 ENDING_2', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:122', 1); // 冒险者（男人位非零）
   const { run_dungeon } = load(fixture);
@@ -264,9 +246,8 @@ test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，
     await run_dungeon(1, max);
   }
   assert.equal(fixture.store.get('cflag:1:501'), 9, '冒险者同样推进到第 9 层');
-  assert.equal(stub_count(fixture, 'ENDING_2'), 0, '无 ENDING_2 占位行');
-  // 真身（#173）后的守卫判据：不抛 quit、无 quit 调用——冒险者
-  // （TALENT:122 真）到第 9 层也不进结局（回头/挑战臂，验收线）
+  // 真身（#173）后的检查条件：不抛 quit、无 quit 调用——冒险者
+  // （TALENT:122 真）到第 9 层也不进结局（回头/挑战分支，验收线）
   assert(
     !fixture.calls.some(({ api }) => api === 'quit'),
     '冒险者不走结局（TALENT:122 真 → 无 QUIT）',
@@ -278,7 +259,7 @@ test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，
   );
   assert(
     texts.includes('阿尔放弃了成为英雄的念头，开始回头了。'),
-    'RAND:4 != 0 → 回头臂（max 下 RAND:4 = 3 ≠ 0）',
+    'RAND:4 != 0 → 回头分支（max 下 RAND:4 = 3 ≠ 0）',
   );
   // 挫折记忆四连写
   assert.equal(fixture.store.get('cflag:1:507'), 1, 'CFLAG:507 = 1 撤退中');
@@ -287,12 +268,12 @@ test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，
   assert.equal(fixture.store.get('cflag:1:520'), 8, 'CFLAG:520 = 8');
 });
 
-test('冒险者·回头臂：再起点分支的 CFLAG:520 = 8 真的落进变量（#484）', async () => {
+test('冒险者·回头分支：再起点分支的 CFLAG:520 = 8 真的落进变量（#484）', async () => {
   const fixture = setup_world();
-  fixture.store.set('talent:1:122', 1); // 冒险者（回头臂入口）
+  fixture.store.set('talent:1:122', 1); // 冒险者（回头分支入口）
   // 直接摆在第 9 层、侵攻度 50：max 下本轮 WALK = 73，50 + 73 ≥ 100 →
-  // 首次调用即进勇者臂的「魔王的房间」段，不进体力富余臂。刻意避开那条
-  // 路径上的 CFLAG:520 = FLOOR（DUNGEON.ERB :228-247）：在既有用例的推进
+  // 首次调用即进勇者分支的「魔王的房间」段，不进体力富余分支。刻意避开那条
+  // 路径上的 CFLAG:520 = FLOOR：在既有用例的推进
   // 路径上它恰好把 520 写成 8，末尾断言于是读的是残留值、对写点零分辨力
   // ——#484 的既有断言正是这样失效的
   fixture.store.set('cflag:1:501', 9);
@@ -313,7 +294,7 @@ test('冒险者·回头臂：再起点分支的 CFLAG:520 = 8 真的落进变量
   );
 });
 
-test('冒险者·挑战臂：RAND:4 == 0 且魔王欲望不足 → 失败成为奴隶（CFLAG:1 = 0）', async () => {
+test('冒险者·挑战分支：RAND:4 == 0 且魔王欲望不足 → 失败成为奴隶（CFLAG:1 = 0）', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:122', 1);
   const { run_dungeon } = load(fixture);
@@ -323,17 +304,16 @@ test('冒险者·挑战臂：RAND:4 == 0 且魔王欲望不足 → 失败成为�
   for (let i = 0; i < 8 * 2 + 2; i += 1) {
     await run_dungeon(1, mixed);
   }
-  assert.equal(stub_count(fixture, 'ENDING_2'), 0, '不走结局');
   assert(
     !fixture.calls.some(({ api }) => api === 'quit'),
-    '挑战臂同样无 QUIT（TALENT:122 真）',
+    '挑战分支同样无 QUIT（TALENT:122 真）',
   );
   const texts = text_lines(fixture);
   assert(
     texts.includes('但阿尔仍是向魔王发起了挑战。'),
-    'RAND:4 == 0 → 挑战臂',
+    'RAND:4 == 0 → 挑战分支',
   );
-  // 魔王 abl:0:11 欲望 0（未 seed）→ 不满足寝取条件 → 失败臂
+  // 魔王 abl:0:11 欲望 0（未 seed）→ 不满足寝取条件 → 失败分支
   assert(
     texts.includes('可想而知阿尔失败了、成为了地下城里众多奴隶的一员。'),
     '挑战失败演出',
@@ -352,10 +332,10 @@ test('行动完了：CFLAG:530 == 1 直接返回，不推进不打演出', async
   assert.equal(ret, 0, 'RETURN 0');
   assert.equal(fixture.store.get('cflag:1:502') ?? 0, 0, '侵攻度不动');
   const texts = text_lines(fixture);
-  assert.equal(texts.length, 0, '无任何演出行（连开场段都在守卫之后）');
+  assert.equal(texts.length, 0, '无任何演出行（连开场段都在检查之后）');
 });
 
-test('行动完了·迎击：CFLAG:1 == 3 时先走 DUNGEON_SPY 真身（H6）再返回', async () => {
+test('行动完了·迎击：CFLAG:1 == 3 时先走 dungeon_spy 真身（H6）再返回', async () => {
   const fixture = setup_world();
   // 潜入奴隶 2：迎击中、行动完了（以同伴身份追随队长勇者 1）
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
@@ -372,13 +352,8 @@ test('行动完了·迎击：CFLAG:1 == 3 时先走 DUNGEON_SPY 真身（H6）�
   const { run_dungeon } = load(fixture);
 
   await run_dungeon(2, max);
-  // DUNGEON_SPY 真身：对队长勇者 1 的工作活动（SPY_BATTLE 三分支）扣
+  // dungeon_spy 真身：对队长勇者 1 的工作活动（spy_battle 三分支）扣
   // HP/气力 10 起（max 下走「下剤投与」分支：HDMG = 10、MDMG = 10）
-  assert.equal(
-    stub_count(fixture, 'DUNGEON_SPY'),
-    0,
-    '迎击潜入真身（无占位行）',
-  );
   const hero_hp = fixture.store.get('base:1:0');
   const hero_wp = fixture.store.get('base:1:1');
   assert(
@@ -388,16 +363,16 @@ test('行动完了·迎击：CFLAG:1 == 3 时先走 DUNGEON_SPY 真身（H6）�
   assert.equal(fixture.store.get('cflag:2:502') ?? 0, 0, '奴隶不推进侵攻度');
 });
 
-test('迎击分叉：侵攻度倒退（D:20 -= WALK），踏破臂走「回到阶层」', async () => {
+test('迎击分叉：侵攻度倒退（D:20 -= WALK），踏破分支走「回到阶层」', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:1', 3); // 迎击中
   fixture.store.set('cflag:1:502', 200); // 侵攻度已满
   const { run_dungeon } = load(fixture);
 
   await run_dungeon(1, max);
-  // 200 - 73 = 127 ≥ 100 → 迎击踏破臂：FLOOR(1) < 9 → 501 + 1
+  // 200 - 73 = 127 ≥ 100 → 迎击踏破分支：FLOOR(1) < 9 → 501 + 1
   assert.equal(fixture.store.get('cflag:1:501'), 2, '迎击方回到第 2 阶层');
-  assert.equal(fixture.store.get('cflag:1:502'), 10, 'D:20 = 10（:275）');
+  assert.equal(fixture.store.get('cflag:1:502'), 10, 'D:20 = 10');
   assert(
     text_lines(fixture).includes('阿尔回到了第2阶层。'),
     '迎击踏破演出（回到阶层）',
@@ -414,7 +389,7 @@ test('迎击分叉·魔王的房间：FLOOR >= 9 的踏破写 502 = 100、507 = 
   await run_dungeon(1, max);
   assert(
     text_lines(fixture).includes('阿尔返回了魔王的房间。'),
-    ':268 迎击方的终点演出',
+    '迎击方的终点演出',
   );
   assert.equal(fixture.store.get('cflag:1:502'), 100, 'D:20 = 100');
   assert.equal(fixture.store.get('cflag:1:507'), 0, 'CFLAG:507 = 0');
@@ -425,11 +400,11 @@ test('迎击分叉·被推出：D:20 <= 0 且 FLOOR <= 1 → 走出迷宫回城�
   fixture.store.set('cflag:1:1', 3);
   const { run_dungeon } = load(fixture);
 
-  // zero 下 WALK = 0，D:20 = 0 → <= 0 臂 → 迎击子臂「踏破了这一层！」
+  // zero 下 WALK = 0，D:20 = 0 → <= 0 分支 → 迎击子分支「踏破了这一层！」
   await run_dungeon(1, zero);
   assert(
     text_lines(fixture).includes('阿尔踏破了这一层！'),
-    ':329 迎击方的「踏破」（收回）演出',
+    '迎击方的「踏破」（收回）演出',
   );
   assert.equal(fixture.store.get('cflag:1:1'), 6, 'CFLAG:505 == 0 → 状态 6');
 });
@@ -440,8 +415,8 @@ test('迎击分叉·方向辨析：D:20 = 50 时倒退穿 0 被推出（+= 变�
   fixture.store.set('cflag:1:502', 50);
   const { run_dungeon } = load(fixture);
 
-  // max 下 WALK = 73：50 - 73 = -23 ≤ 0 → 被推出臂（floor 1 → 回城）；
-  // 若方向被改坏（+=），50 + 73 = 123 ≥ 100 会走踏破臂推到第 2 层
+  // max 下 WALK = 73：50 - 73 = -23 ≤ 0 → 被推出分支（floor 1 → 回城）；
+  // 若方向被改坏（+=），50 + 73 = 123 ≥ 100 会走踏破分支推到第 2 层
   await run_dungeon(1, max);
   assert.equal(
     fixture.store.get('cflag:1:1'),
@@ -451,11 +426,11 @@ test('迎击分叉·方向辨析：D:20 = 50 时倒退穿 0 被推出（+= 变�
   assert.equal(fixture.store.get('cflag:1:501'), 1, '不推进层数');
   assert(
     text_lines(fixture).includes('再往前走就走出地下城了………'),
-    ':340 走出迷宫演出',
+    '走出迷宫演出',
   );
 });
 
-test('迎击分叉·战斗：0 < D:20 < 100 滞留时走 DUNGEON_BATTLE2_PARTY 真身（H6）', async () => {
+test('迎击分叉·战斗：0 < D:20 < 100 滞留时走 dungeon_battle2_party 真身（H6）', async () => {
   const fixture = setup_world();
   // 迎击奴隶 1 找同层的侵攻勇者 2 决斗（对象选择的 1/3 跳过用 rand(3) = 1
   // 避开——zero 会命中跳过分支）
@@ -478,36 +453,28 @@ test('迎击分叉·战斗：0 < D:20 < 100 滞留时走 DUNGEON_BATTLE2_PARTY �
 
   const not_first = (n) => (n === 3 ? 1 : 0); // rand(3) = 1（不跳过）、其余 0
   await run_dungeon(1, not_first); // WALK = 0 → D:20 = 50 滞留 → 迎击战斗
-  assert.equal(
-    stub_count(fixture, 'DUNGEON_BATTLE2_PARTY'),
-    0,
-    '迎击战斗真身（无占位行）',
-  );
   const enemy_wp = fixture.store.get('base:2:1');
   assert(
     typeof enemy_wp === 'number' && enemy_wp < 1000,
-    `对人格斗扣了勇者气力（实测 ${enemy_wp} < 1000；DUEL_ATTACK 的 MDMG）`,
+    `对人格斗扣了勇者气力（实测 ${enemy_wp} < 1000；duel_attack 的 MDMG）`,
   );
   assert.equal(fixture.store.get('cflag:1:514'), 1, '阶层滞在计数 +1');
 });
 
-// —— 撤退臂（勇者 D:20 <= 0）——
+// —— 撤退分支（勇者 D:20 <= 0）——
 
-test('勇者撤退：D:20 <= 0 且 FLOOR <= 1 → 走到迷宫外（DUNGEON_TOWN 真身）', async () => {
+test('勇者撤退：D:20 <= 0 且 FLOOR <= 1 → 走到迷宫外（dungeon_town 真身）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:502', 0);
   const { run_dungeon } = load(fixture);
 
   await run_dungeon(1, zero);
-  assert(
-    text_lines(fixture).includes('阿尔回到了地下城外面。'),
-    ':291 撤到迷宫外',
-  );
+  assert(text_lines(fixture).includes('阿尔回到了地下城外面。'), '撤到迷宫外');
   // #178 起城镇事件走真身（ere/dungeon/dungeon-town.js）：zero 随机下
-  // 受注段必达（SET_QUEST 的 534 = 1）——以受注播报钉「真身被调用」
+  // 受注段必达（set_quest 的 534 = 1）——以受注播报钉「真身被调用」
   assert(
     text_lines(fixture).some((l) => l.includes('阿尔接受了任务！')),
-    ':295 城镇事件真身（受注播报）',
+    '城镇事件真身（受注播报）',
   );
   assert.equal(fixture.store.get('cflag:1:502'), 0, 'D:20 = 0');
 });
@@ -521,7 +488,7 @@ test('勇者撤退·第 5 层：FLOOR == 5 直接视为 1（中转层）', async
   await run_dungeon(1, zero);
   assert(
     text_lines(fixture).includes('阿尔回到了地下城外面。'),
-    ':288-289 第 5 层撤退直接按 1 层处理（回到外面）',
+    '第 5 层撤退直接按 1 层处理（回到外面）',
   );
 });
 
@@ -534,10 +501,10 @@ test('勇者撤退·深层：FLOOR > 1 时退一层、侵攻度回 90', async ()
   await run_dungeon(1, zero);
   assert.equal(fixture.store.get('cflag:1:501'), 2, 'CFLAG:501 -= 1');
   assert.equal(fixture.store.get('cflag:1:502'), 90, 'D:20 = 90（快速再入）');
-  assert(text_lines(fixture).includes('阿尔回到了第2阶层。'), ':319 撤退演出');
+  assert(text_lines(fixture).includes('阿尔回到了第2阶层。'), '撤退演出');
 });
 
-// —— 滞留臂与奴隶归还 ——
+// —— 滞留分支与奴隶归还 ——
 
 test('迎击奴隶滞留：514 > 15 时归还（状态 5/6 分档）', async () => {
   const fixture = setup_world();
@@ -550,15 +517,15 @@ test('迎击奴隶滞留：514 > 15 时归还（状态 5/6 分档）', async () 
   await run_dungeon(1, zero);
   assert(
     text_lines(fixture).includes('阿尔在此长期滞留感到十分疲乏……'),
-    ':362 滞留疲乏演出',
+    '滞留疲乏演出',
   );
   assert.equal(fixture.store.get('cflag:1:1'), 5, 'CFLAG:505 > 0 → 状态 5');
   assert.equal(fixture.store.get('cflag:1:514'), 0, '滞在计数复位');
 });
 
-// —— @GET_DOWN_ENEMY（复活，依据 #103；9 处调用点的公共本体）——
+// —— get_down_enemy（复活，依据 #103；9 处调用点的公共本体）——
 
-test('GET_DOWN_ENEMY：所持金百分之一充公、新人标志、演出', async () => {
+test('get_down_enemy：所持金百分之一充公、新人标志、演出', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:580', 12345);
   fixture.store.set('flag:10004', 500); // MONEY（包装层）
@@ -567,8 +534,8 @@ test('GET_DOWN_ENEMY：所持金百分之一充公、新人标志、演出', asy
 
   await get_down_enemy(1);
   const texts = text_lines(fixture);
-  assert(texts.includes('阿尔被抓住了…'), ':1082 通常演出（善恶 0 > -150）');
-  assert(texts.includes('获得123G！'), ':1086 充公播报');
+  assert(texts.includes('阿尔被抓住了…'), '通常演出（善恶 0 > -150）');
+  assert(texts.includes('获得123G！'), '充公播报');
   assert.equal(fixture.store.get('flag:10004'), 623, 'MONEY += 580/100');
   assert.equal(fixture.store.get('exflag:4444'), 223, 'EX_FLAG:4444 镜像');
   assert.equal(fixture.store.get('cflag:1:580'), 0, '所持金清零');
@@ -576,7 +543,7 @@ test('GET_DOWN_ENEMY：所持金百分之一充公、新人标志、演出', asy
   assert.equal(fixture.store.get('cflag:1:507'), 0, 'CFLAG:507 = 0');
 });
 
-test('GET_DOWN_ENEMY·投诚臂：善恶 <= -150 且侵攻中', async () => {
+test('get_down_enemy·投诚分支：善恶 <= -150 且侵攻中', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:151', -200);
   const { get_down_enemy } = load(fixture);
@@ -584,13 +551,13 @@ test('GET_DOWN_ENEMY·投诚臂：善恶 <= -150 且侵攻中', async () => {
   await get_down_enemy(1);
   assert(
     text_lines(fixture).includes('阿尔背叛了使命，向魔王军投诚了……'),
-    ':1080 投诚演出',
+    '投诚演出',
   );
 });
 
-// —— @GET_JUNK_ITEM ——
+// —— get_junk_item ——
 
-test('GET_JUNK_ITEM：基数 = 100 + 等级 × RAND(√(魔王等级 + 等级 + 1))，乘阶层', async () => {
+test('get_junk_item：基数 = 100 + 等级 × RAND(√(魔王等级 + 等级 + 1))，乘阶层', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:0:9', 25); // 魔王等级（CFLAG:MASTER:9）
   fixture.store.set('cflag:1:9', 10); // 勇者等级
@@ -601,7 +568,7 @@ test('GET_JUNK_ITEM：基数 = 100 + 等级 × RAND(√(魔王等级 + 等级 + 
   assert.equal(fixture.store.get('cflag:1:581'), 110, '基础公式（阶层 1）');
 });
 
-test('GET_JUNK_ITEM：好奇心 +10、为钱 +20、霍比特/矮人 +30、盗贼 1.5 倍', async () => {
+test('get_junk_item：好奇心 +10、为钱 +20、霍比特/矮人 +30、盗贼 1.5 倍', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:0:9', 0);
   fixture.store.set('cflag:1:9', 0);
@@ -615,7 +582,7 @@ test('GET_JUNK_ITEM：好奇心 +10、为钱 +20、霍比特/矮人 +30、盗贼
   assert.equal(fixture.store.get('cflag:1:581'), 320, '四项素质补正');
 });
 
-test('GET_JUNK_ITEM：盗贼 1.5 倍与下限 1', async () => {
+test('get_junk_item：盗贼 1.5 倍与下限 1', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:0:9', 0);
   fixture.store.set('cflag:1:9', 0);
@@ -631,12 +598,12 @@ test('GET_JUNK_ITEM：盗贼 1.5 倍与下限 1', async () => {
   fixture2.store.set('cflag:1:501', 0);
   const { get_junk_item: gj2 } = load(fixture2);
   await gj2(1, one);
-  assert.equal(fixture2.store.get('cflag:1:581'), 1, ':1066-1067 下限 1');
+  assert.equal(fixture2.store.get('cflag:1:581'), 1, '下限 1');
 });
 
-// —— @CHECK_STATUS ——
+// —— check_status ——
 
-test('CHECK_STATUS：满状态判元气满满（CFLAG:534 = 1，STATUS[0]）', async () => {
+test('check_status：满状态判元气满满（CFLAG:534 = 1，STATUS[0]）', async () => {
   const fixture = setup_world();
   const { check_status } = load(fixture);
 
@@ -647,7 +614,7 @@ test('CHECK_STATUS：满状态判元气满满（CFLAG:534 = 1，STATUS[0]）', a
   assert(text_lines(fixture).includes('阿尔元气满满。'), '演出行');
 });
 
-test('CHECK_STATUS：HP 半血判轻伤（首分支吞并，原作现状）', async () => {
+test('check_status：HP 半血判轻伤（首分支吞并，有意保留）', async () => {
   const fixture = setup_world();
   fixture.store.set('base:1:0', 1000); // 50% < 60
   const { check_status } = load(fixture);
@@ -658,7 +625,7 @@ test('CHECK_STATUS：HP 半血判轻伤（首分支吞并，原作现状）', as
   assert(status[7] >= 1, '评级计入轻伤 +1');
 });
 
-test('CHECK_STATUS：mode = 1 静默（AGENT 版新增的 MODE 参数）', async () => {
+test('check_status：mode = 1 静默（AGENT 版新增的 MODE 参数）', async () => {
   const fixture = setup_world();
   const { check_status } = load(fixture);
 
@@ -666,7 +633,7 @@ test('CHECK_STATUS：mode = 1 静默（AGENT 版新增的 MODE 参数）', async
   assert.equal(text_lines(fixture).length, 0, '非 0 MODE 不打演出');
 });
 
-test('CHECK_STATUS：待机角色（CFLAG:1 == 0）不判定不写档', async () => {
+test('check_status：待机角色（CFLAG:1 == 0）不判定不写档', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('base:1:0', 100);
@@ -676,12 +643,12 @@ test('CHECK_STATUS：待机角色（CFLAG:1 == 0）不判定不写档', async ()
   assert.equal(
     fixture.store.get('cflag:1:534') ?? 0,
     0,
-    '未写档（undefined 兜底 0）',
+    '未写档（undefined 默认 0）',
   );
   assert.equal(status[0], 0, '无判定计数');
 });
 
-// —— 撤退决议（单人队的 534 × 素质臂）——
+// —— 撤退决议（单人队的 534 × 素质分支）——
 
 test('撤退决议：轻伤 + 胆小（TALENT:10）提前撤退并写 520', async () => {
   const fixture = setup_world();
@@ -690,19 +657,15 @@ test('撤退决议：轻伤 + 胆小（TALENT:10）提前撤退并写 520', asyn
   fixture.store.set('talent:1:10', 1); // 胆小
   const { run_dungeon } = load(fixture);
 
-  await run_dungeon(1, zero); // WALK 0 → 滞留 → 战斗（存根）→ 判定 → 决议
+  await run_dungeon(1, zero); // WALK 0 → 滞留 → 战斗 → 判定 → 决议
   assert(
     text_lines(fixture).includes(
       '胆小的阿尔虽然只是受到轻伤，依然决定撤退。（现在第1层）',
     ),
-    ':686 胆小撤退演出',
+    '胆小撤退演出',
   );
   assert.equal(fixture.store.get('cflag:1:507'), 1, 'CFLAG:507 = 1');
-  assert.equal(
-    fixture.store.get('cflag:1:520'),
-    1,
-    '520 = FLOOR - 1 钳到 1（:703-704）',
-  );
+  assert.equal(fixture.store.get('cflag:1:520'), 1, '520 = FLOOR - 1 钳到 1');
 });
 
 test('撤退决议：满状态继续前进', async () => {
@@ -718,12 +681,12 @@ test('撤退决议：满状态继续前进', async () => {
   assert.equal(fixture.store.get('cflag:1:507') ?? 0, 0, '不立撤退标志');
 });
 
-// —— 勇者臂·体力富余（:225-264 的 CFLAG:520 = FLOOR 写点；#484 抽查补位）——
+// —— 勇者分支·体力富余（CFLAG:520 = FLOOR 写点；#484 抽查补位）——
 
-test('体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一层', async () => {
+test('体力富余分支：状态良好时 CFLAG:520 记下当前阶层并下潜一层', async () => {
   const fixture = setup_world();
-  // 第 3 层、侵攻度 50：max 下本轮 WALK = 73，50 + 73 ≥ 100 进勇者臂，
-  // FLOOR 3 < 9 → 体力富余臂（队长满血满气，tired 恒 0）
+  // 第 3 层、侵攻度 50：max 下本轮 WALK = 73，50 + 73 ≥ 100 进勇者分支，
+  // FLOOR 3 < 9 → 体力富余分支（队长满血满气，tired 恒 0）
   fixture.store.set('cflag:1:501', 3);
   fixture.store.set('cflag:1:502', 50);
   const { run_dungeon } = load(fixture);
@@ -737,19 +700,19 @@ test('体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一
   assert.equal(
     fixture.store.get('cflag:1:520'),
     3,
-    'CFLAG:520 = FLOOR（:247 裸寻址写）',
+    'CFLAG:520 = FLOOR（裸寻址写）',
   );
   assert.equal(fixture.store.get('cflag:1:501'), 4, '同一轮下潜到第 4 层');
 });
 
-// —— #184 返工 1：H3 留的 DUNGEON_BITCH 存根换真身（运行时可达）——
+// —— #184 返工 1：H3 留的 dungeon_bitch 存根换真身（运行时可达）——
 
-test('战后探索：run_dungeon 调用卖春真身（#184 接线，非存根占位行）', async () => {
+test('战后探索：run_dungeon 调用卖春真身（#184 接入，非存根占位行）', async () => {
   const fixture = setup_world();
   const { run_dungeon } = load(fixture);
 
   // 替换真身模块导出为 spy（dungeon.js 不解构、属性查找在调用时——与
-  // disable_enter_enemy 同款手法）：断言 :718 真的调用到 kojo-dungeon-bitch
+  // disable_enter_enemy 同款手法）：断言真的调用到 kojo-dungeon-bitch
   // 的真身，而不是 #172 遗留的本地存根占位行
   const mod = fixture.load_module('kojo/kojo-dungeon-bitch');
   const calls = [];
@@ -767,7 +730,7 @@ test('战后探索：run_dungeon 调用卖春真身（#184 接线，非存根占
     mod.dungeon_bitch = orig; // 还原，避免污染同文件后续用例
   }
 
-  assert.equal(calls.length, 1, ':718 恰好调用一次真身');
+  assert.equal(calls.length, 1, '恰好调用一次真身');
   assert.equal(calls[0].cid, 1, '受者 = arg0（无 SIDEA/SIDEB 时）');
   assert.equal(
     typeof calls[0].rand,
@@ -776,7 +739,7 @@ test('战后探索：run_dungeon 调用卖春真身（#184 接线，非存根占
   );
 });
 
-// —— CAMPAIGN_QUEST / CAMPAIGN_STORY / CAMPAIGN_ENDING（#469 起真身）——
+// —— campaign_quest / campaign_story / campaign_ending（#469 起真身）——
 
 test('campaign_quest()：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
   const fixture = create_era_fixture();
@@ -784,29 +747,29 @@ test('campaign_quest()：FLAG:400 < 1 时恒 0（未在战役中）', async () =
   assert.equal(await campaign_quest(1), 0);
 });
 
-test('campaign_quest()：楼层超过剧情进度时推进 CAMPAIGN_STORY，随后派发 CAMPAIGN_QUEST_1', async () => {
+test('campaign_quest()：楼层超过剧情进度时推进 campaign_story，随后派发 campaign_quest_1', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
   fixture.store.set('flag:400', 1);
   fixture.store.set('flag:401', 0); // 剧情进度 0
   fixture.store.set('cflag:1:501', 1); // 队长楼层 1 > 0
-  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  fixture.load_module('page/page-campaign-1'); // 触发战役 1 的 register()
   const { campaign_quest } = load(fixture);
   const ret = await campaign_quest(1);
-  assert.equal(ret, 1, 'CAMPAIGN_QUEST_1 恒成功');
-  assert.equal(fixture.store.get('flag:401'), 1, ':196 FLAG:401 += 1');
+  assert.equal(ret, 1, 'campaign_quest_1 恒成功');
+  assert.equal(fixture.store.get('flag:401'), 1, 'FLAG:401 += 1');
   assert.ok(
     fixture.lines_history.some(
       (l) => l.type === 'text' && l.text.includes('―STORY―'),
     ),
-    ':192 剧情标题行',
+    '剧情标题行',
   );
   assert.ok(
     fixture.lines_history.some(
       (l) => l.type === 'text' && l.text.includes('奇形怪状的植物'),
     ),
-    'CAMPAIGN_STORY_1 进度 0 段文本',
+    'campaign_story_1 进度 0 段文本',
   );
 });
 
@@ -816,7 +779,7 @@ test('campaign_quest()：楼层未超过剧情进度时不重复推进剧情', a
   fixture.era.addCharacter(0);
   fixture.store.set('flag:400', 1);
   fixture.store.set('flag:401', 3);
-  // 队长楼层与剧情进度相等（严格 > 判据的边界：楼层 3 不「超过」进度 3）
+  // 队长楼层与剧情进度相等（严格 > 判断条件的边界：楼层 3 不「超过」进度 3）
   fixture.store.set('cflag:1:501', 3);
   fixture.load_module('page/page-campaign-1');
   const { campaign_quest } = load(fixture);
@@ -831,8 +794,8 @@ test('campaign_quest()：楼层未超过剧情进度时不重复推进剧情', a
 });
 
 test('campaign_story_1()：按进度 0-5 六档打印对应剧情，六档都以「报告结束」收尾', async () => {
-  // [进度, 首行（逐字，原作 :315/:322/:329/:336/:343/:350）, 本档行数]
-  // 行数按原作各档 PRINTFORMW 条数：0-4 档 6 行、5 档 5 行（:354 的收尾行
+  // [进度, 首行（逐字）, 本档行数]
+  // 行数按各档 PRINTFORMW 条数：0-4 档 6 行、5 档 5 行（收尾行
   // 同样在 5 档内——#469 首版漏了它，本用例的行数断言即为此设）
   const CASES = [
     [0, '真是奇妙的森林。奇形怪状的植物、还有与其共生进化而来的动物和昆虫', 6],
@@ -872,7 +835,7 @@ test('campaign_story_1()：按进度 0-5 六档打印对应剧情，六档都以
       '――水晶球映出的报告到这就结束了',
       `${progress} 档以收尾行结束`,
     );
-    // 每档都带一个 waitAnyKey（原作 PRINTFORMW 自带等待）
+    // 每档都带一个 waitAnyKey（PRINTFORMW 自带等待）
     assert.equal(
       fixture.waits.filter((w) => w.waited).length,
       line_count,
@@ -881,7 +844,7 @@ test('campaign_story_1()：按进度 0-5 六档打印对应剧情，六档都以
   }
 });
 
-test('campaign_ending()：FLAG:400 < 1 时不派发也不清零，但仍无条件取消全员派遣（:304-312）', async () => {
+test('campaign_ending()：FLAG:400 < 1 时不派发也不清零，但仍无条件取消全员派遣', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -896,21 +859,21 @@ test('campaign_ending()：FLAG:400 < 1 时不派发也不清零，但仍无条�
   assert.equal(fixture.store.get('cflag:1:507'), 0, '回城标志清零');
 });
 
-test('campaign_ending()：FLAG:400 = 1 时派发 CAMPAIGN_ENDING_1 并清零 FLAG:400（#469）', async () => {
+test('campaign_ending()：FLAG:400 = 1 时派发 campaign_ending_1 并清零 FLAG:400（#469）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
   fixture.store.set('flag:400', 1);
-  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  fixture.load_module('page/page-campaign-1'); // 触发战役 1 的 register()
   const { campaign_ending } = load(fixture);
   const ret = await campaign_ending();
-  assert.equal(ret, 1, 'CAMPAIGN_ENDING_1 恒 RETURN 1');
-  assert.equal(fixture.store.get('flag:400'), 0, ':317 战役结束清零');
+  assert.equal(ret, 1, 'campaign_ending_1 恒 RETURN 1');
+  assert.equal(fixture.store.get('flag:400'), 0, '战役结束清零');
   assert.ok(
     fixture.lines_history.some(
       (l) => l.type === 'text' && l.text.includes('神像之力竟不奏效'),
     ),
-    'CAMPAIGN_ENDING_1 的开场白',
+    'campaign_ending_1 的开场白',
   );
   assert.ok(
     fixture.lines_history.some(

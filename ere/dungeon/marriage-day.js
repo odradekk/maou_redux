@@ -1,7 +1,7 @@
 /**
  * @file 结婚日事件（issue #342，阶段 5a L11）。
  *
- * Emuera 的全局单字母 y 在主分发中掷出后由分支共用，ere 侧改为显式参数；
+ * 全局单字母 y 在主分发中掷出后由分支共用，ere 侧改为显式参数；
  * 所有随机分支均接受注入的随机源，确保测试与回放可复现。
  */
 
@@ -28,7 +28,7 @@ const default_rand = (n) => Math.floor(Math.random() * n);
 const name_of = (cid) => chara_callname(cid);
 const marriage_name = (cid) => item_name(chara(cid).chara.结婚对象 || 0);
 const talent_name = (index) => era.get(`talentname:${index}`) ?? '';
-// ITEM[怪物编号] = 当前持有的对应怪物数量（婚后事件的配偶存在判据）。
+// ITEM[怪物编号] = 当前持有的对应怪物数量（婚后事件的配偶存在判断条件）。
 const monster_stock = (monster_id) => era.get(`item:${monster_id}`) || 0;
 const power = (base, exponent) => base ** exponent;
 const pick = (items, rand) => items[rand(items.length)];
@@ -39,7 +39,7 @@ const lover_display_name = (lover_type) => {
 
 // CFLAG[603] = 结婚对象状态（0 普通、1 出轨、2 私通、3 私通妊娠）；
 const marriage_partner_status = (cid) => era.get(`cflag:${cid}:603`) || 0;
-// CFLAG[609] = 结婚对象采用角色数据的标志；原作同名“结婚对象名字”槽。
+// CFLAG[609] = 结婚对象采用角色数据的标志；同名“结婚对象名字”槽。
 const marriage_partner_character = (cid) => era.get(`cflag:${cid}:609`) || 0;
 // JUEL[4]/[5]/[6] = 欲情／恭顺／屈服点数。
 const desire_points = (cid) => era.get(`juel:${cid}:4`) || 0;
@@ -49,7 +49,7 @@ const submission_points = (cid) => era.get(`juel:${cid}:6`) || 0;
 const has_regular_customer = (cid) => era.get(`talent:${cid}:183`) || 0;
 const is_courting = (cid) => era.get(`talent:${cid}:184`) || 0;
 
-// 源范围 :4-152
+// marriage_day
 async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
   const view = chara(cid);
   const marriage_type = view.chara.结婚对象; // CFLAG[601] = 结婚对象
@@ -167,14 +167,14 @@ async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
     era_flag.money += final_y * 100;
     era_exflag.legit_money += final_y * 100;
   }
-  // 原作从子程序 BEGIN TURNEND 会结束本次婚后事件。事件注册表以异常表达
+  // 子程序内 BEGIN TURNEND 会结束本次婚后事件。事件注册表以异常表达
   // BEGIN；若已在 TURNEND 处理器内仍抛出，会中断余下结算并无限重进本状态。
-  // 正常调用保留转场；TURNEND 接线显式关闭同状态重入后，等价地顺接后文。
+  // 正常调用保留转场；TURNEND 接入显式关闭同状态重入后，等价地顺接后文。
   if (restart_turnend) begin(STATE.TURNEND);
   return 1;
 }
 
-// 源范围 :153-330
+// marriage_day_dog
 async function marriage_day_dog(cid, y = 1, rand = default_rand) {
   await era.printAndWait(`${name_of(cid)}和野狗在狗屋生活着。`);
 
@@ -408,8 +408,8 @@ async function marriage_day_dog(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @MARRIAGE_DAY_YOU,cid
-// 源范围 :331-513
+// marriage_day_you,cid
+//
 async function marriage_day_you(cid, y = 1) {
   if (chara(cid).invasion.状态 != 0 || chara(0).invasion.状态 != 0) {
     return y;
@@ -731,8 +731,8 @@ async function marriage_day_you(cid, y = 1) {
   return y;
 }
 
-// @MARRIAGE_DAY_LOVERS,cid[0],cid[1]
-// 源范围 :514-526
+// marriage_day_lovers,cid[0],cid[1]
+//
 async function marriage_day_lovers(lover_type, cid, rand = default_rand) {
   const lover_name = lover_display_name(lover_type);
   era.print(`${name_of(cid)}和${lover_name}一起生活着。`);
@@ -741,7 +741,7 @@ async function marriage_day_lovers(lover_type, cid, rand = default_rand) {
   return 0;
 }
 
-// 源范围 :527-554
+// marriage_day_slave
 async function marriage_day_slave(cid, spouse) {
   era.print(
     `${name_of(cid)}和${spouse < 0 ? '奴隶' : name_of(spouse)}一起生活着。`,
@@ -750,7 +750,7 @@ async function marriage_day_slave(cid, spouse) {
   return 0;
 }
 
-// 源范围 :555-753
+// orc_marriage_day
 async function orc_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(
     `${name_of(cid)}和${marriage_name(cid)}在洞穴里生活着。`,
@@ -1091,8 +1091,8 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @SLIME_MARRIAGE_DAY,cid
-// 源范围 :754-784
+// slime_marriage_day,cid
+//
 async function slime_marriage_day(cid, y = 1) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
@@ -1142,8 +1142,8 @@ async function slime_marriage_day(cid, y = 1) {
   return y;
 }
 
-// @INSECT_MARRIAGE_DAY,cid
-// 源范围 :785-1053
+// insect_marriage_day,cid
+//
 async function insect_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
@@ -1712,8 +1712,8 @@ async function insect_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @IVY_MARRIAGE_DAY,cid
-// 源范围 :1054-1126
+// ivy_marriage_day,cid
+//
 async function ivy_marriage_day(cid, y = 1) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
@@ -1832,8 +1832,8 @@ async function ivy_marriage_day(cid, y = 1) {
   return y;
 }
 
-// @SYOKUSYU_MARRIAGE_DAY,cid
-// 源范围 :1127-1168
+// syokusyu_marriage_day,cid
+//
 async function syokusyu_marriage_day(cid, y = 1) {
   era.print(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
   await era.printAndWait(
@@ -1902,8 +1902,8 @@ async function syokusyu_marriage_day(cid, y = 1) {
   return y;
 }
 
-// @FAILY_MARRIAGE_DAY,cid
-// 源范围 :1169-1291
+// faily_marriage_day,cid
+//
 async function faily_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
@@ -2157,8 +2157,8 @@ async function faily_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @GIANT_MARRIAGE_DAY,cid
-// 源范围 :1292-1573
+// giant_marriage_day,cid
+//
 async function giant_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
   y +=
@@ -2663,8 +2663,8 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @MAN_MARRIAGE_DAY,cid
-// 源范围 :1574-1865
+// man_marriage_day,cid
+//
 async function man_marriage_day(cid, y = 1, rand = default_rand) {
   const partner_age = chara(cid).chara.恋父情结
     ? '中年'
@@ -3068,8 +3068,8 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @GIRL_MARRIAGE_DAY,cid
-// 源范围 :1866-2090
+// girl_marriage_day,cid
+//
 async function girl_marriage_day(cid, y = 1, rand = default_rand) {
   const partner_age = chara(cid).chara.恋母情结
     ? '熟女'
@@ -3386,8 +3386,8 @@ async function girl_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @BEAST_MARRIAGE_DAY,cid
-// 源范围 :2091-2194
+// beast_marriage_day,cid
+//
 async function beast_marriage_day(cid, y = 1) {
   await era.printAndWait(`${name_of(cid)}和${marriage_name(cid)}一同生活着。`);
 
@@ -3557,8 +3557,8 @@ async function beast_marriage_day(cid, y = 1) {
   return y;
 }
 
-// @BRAIN_MARRIAGE_DAY,cid
-// 源范围 :2195-2250
+// brain_marriage_day,cid
+//
 async function brain_marriage_day(cid, y = 1, rand = default_rand) {
   let fantasy;
   if (chara(cid).stronghold.淫乱 || chara(cid).stronghold.爱慕) {
@@ -3638,8 +3638,8 @@ async function brain_marriage_day(cid, y = 1, rand = default_rand) {
   return y;
 }
 
-// @HORSE_MARRIAGE_DAY,cid
-// 源范围 :2251-2352
+// horse_marriage_day,cid
+//
 async function horse_marriage_day(cid, y = 1, rand = default_rand) {
   await era.printAndWait(
     `${name_of(cid)}和${marriage_name(cid)}一起在马厩里生活着。`,

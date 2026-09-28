@@ -2,50 +2,33 @@
  * @file 灵魂转移：把魔王的灵魂转移进出击中的角色体内，与之互换身份和部分
  * 能力；日程推进里的灵魂错位判定。
  *
- * 调用方：キャラ関数/CHARA_INFO ver1.0.1.ERB:1039 的 CASE 17（本域
- * page-chara-info.js）；EVENT/EVENT_NEXTDAY.ERB:50 每角色每日调用
- * @SOUL_DISLOCATION（ere/event/event-nextday.js，本票接真身、原存根撤下）。
+ * 调用方：ere/page/page-chara-info.js 的身份互换入口（case 17）；
+ * ere/event/event-nextday.js 每角色每日调用 soul_dislocation（这张工单
+ * 接入真身、撤下原存根）。
  *
- * BODYLOCK 判定不实现：全库没有生效调用点——唯一提及处是被注释掉的
- * `;CALL BODYLOCK, ARG`（紧邻真正生效的 `CALL PERSONALOCK, ARG`）；本体自含
- * 两处零迭代循环（FOR 起始值大于结束值）与失效的范围注释，是自相矛盾的
- * 废弃段落，无可移植语义。
+ * swap_chara() 覆盖范围：`ere/` 没有通用的「角色全部变量」枚举 API（不像
+ * 引擎能反射出全部已注册表），因此只交换本项目目前实际使用的角色数值表
+ * （cflag/talent/ex_talent/base/maxbase/abl/exp/mark/stain/tequip/source/
+ * palam/juel/gotjuel，按各表声明的元素上限）与两个字符串表（cstr/tstr）。
+ * 不覆盖 portcflag/c_relation/c_relation_sub——后两者是按 [角色][角色] 二维
+ * 矩阵寻址的关系表，交换语义需要同时改写矩阵里所有指向这两个角色的行，
+ * 不是按 cid 整表互换。范围表不含 callname：姓名（callname:cid:-1）与
+ * 称呼（callname:cid:-2）两槽由调用方显式处理（transferapp 的称呼互换）。
  *
- * SWAPCHARA 说明（有意偏离，理由如下）：Emuera 的 `SWAPCHARA A, B` 是引擎
- * 内建命令，交换两个角色的全部数据；`ere/` 没有通用的"角色全部变量"枚举
- * API（不像引擎能反射出全部已注册表），因此 swap_chara() 只交换本项目
- * 目前实际使用的角色数值表（cflag/talent/ex_talent/base/maxbase/abl/exp/
- * mark/stain/tequip/source/palam/juel/gotjuel，含 VariableSize.csv 的声明
- * 上限）与两个字符串表（cstr/tstr）。不覆盖 portcflag/c_relation/
- * c_relation_sub——后两者是按 [角色][角色] 二维矩阵寻址的关系表，交换语义
- * 需要同时改写矩阵里所有指向这两个角色的行，不是按 cid 整表互换。
+ * **换号不走数据互换（#545 返工）**：ere 的角色 ID 即身份，搬数据互换会把
+ * 身份与人拆开（读点如 kojo-k1-confident.js 的 `(no:assi || assi) === 17`
+ * 会落到另一个人身上）。换号只交换自建的排序编号——见
+ * ere/page/page-chara-number-swap.js 文件头与该字段的实现
+ * ere/chara/chara-portcflag.js。先前那版在此实现的 swap_chara_numbers()
+ * 随之删除。
  *
- * **SWAPCHARA 覆盖 NAME/CALLNAME、不覆盖 SAVESTR**（指南 commands/
- * character.md「交换两个角色的所有数据」＋ #545 逐行核）：SAVESTR 是普通
- * SAVEDATA 字符串数组、不是 CHARADATA，所以 魔改新增/角色編號交換.ERB:112-116
- * 才要手工换回它（先暂存两个名字、SWAPCHARA 之后写回）——净效果是「名字与
- * 数据作为整体互换编号」。先前一版注释由该手法反推「SWAPCHARA 不覆盖
- * NAME」，方向错了（SAVESTR 与 NAME 在本作共用存储是 ere 侧的巧合，原作里
- * 是两套）；结论不变：swap_chara() 范围表不含 callname，姓名两槽由调用方
- * 显式处理（transferapp 的呼び名互换）。
- *
- * **换号（角色編號交換.ERB @換號）不走 SWAPCHARA**（#545 返工）：原作用它
- * 换「编号」，而 ere 的角色 ID 即身份，搬数据会把身份与人拆开（读点如
- * kojo-k1-confident.js 的 `(no:assi || assi) === 17` 会落到另一个人身上）。
- * ere 侧的换号只交换移植自建的排序编号——见 ere/page/page-chara-number-swap.js
- * 文件头与该字段的实现 ere/chara/chara-portcflag.js。先前那版在此实现的
- * swap_chara_numbers() 随之删除。
- *
- * 二次互换互相抵消：TRANSFER_SOUL 先 `SWAPCHARA MASTER, ARG` 整表互换
- * cflag/talent/base/maxbase/abl/ex_talent 等，随后 CALL TRANSFERAPP 又对
- * 同一批字段（CFLAG:9/11-14 等级攻防、婚姻用的 CFLAG:601/609、PERSONALOCK
+ * 二次互换互相抵消：transfer_soul 先 swap_chara(0, cid) 整表互换
+ * cflag/talent/base/maxbase/abl/ex_talent 等，随后 transferapp(cid) 又对
+ * 同一批字段（CFLAG:9/11-14 等级攻防、婚姻用的 CFLAG:601/609、personalock
  * 覆盖的大段 TALENT/ABL 区间）逐个再换一次——同一对字段被换了两次，净效果
- * 是这些字段维持原值，只有不在 swap_chara() 覆盖范围内的字段（呼び名
+ * 是这些字段维持原值，只有不在 swap_chara() 覆盖范围内的字段（称呼
  * callname:-2、灵魂错位 debuff 的最终赋值）才真正变化。「等级/攻防/婚姻
- * 状态随身体留下、只有呼び名与错位素质跟灵魂走」是既定可观测语义。
- * SAVESTR 是普通 SAVEDATA 字符串数组、SWAPCHARA 不动它（NAME/CALLNAME 与
- * 覆盖范围见上段）。本文件的 swap_chara() 范围表不含 callname，姓名两槽
- * 由调用方显式处理。
+ * 状态随身体留下、只有称呼与错位素质跟灵魂走」是既定可观测语义。
  */
 
 const era = require('#/era-electron');
@@ -65,14 +48,14 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-// 呼び名（CALLNAME:x，callname:cid:-2）：确认对话仅这一处用它，其余
-// 全用 NAME/SAVESTR（两者在本作里同一份存储，见 name_of）
+// 称呼（callname:cid:-2）：确认对话仅这一处用它，其余
+// 全用姓名（callname:cid:-1，见 name_of）
 function nickname_of(cid) {
   return era.get(`callname:${cid}:-2`) ?? '';
 }
 
-/** 数值型角色表：[表名, VariableSize.csv 声明的元素数]。ex_talent 无 CSV
- * 声明（本项目扩展表），取本库实测最大下标 901 的宽松上界。 */
+/** 数值型角色表：[表名, 声明的元素数]。ex_talent 无声明（本项目扩展表），
+ * 取 ere 侧实测最大下标 901 的宽松上界。 */
 const NUMERIC_CHARA_TABLES = [
   ['cflag', 1000],
   ['talent', 10000],
@@ -105,7 +88,7 @@ function swap_var(table, a, b, index, empty = 0) {
 }
 
 /**
- * SWAPCHARA A, B 的等价物（覆盖范围见文件头）。
+ * swap_chara：交换两个角色在范围表内的全部数据（覆盖范围见文件头）。
  * @param {number} a 角色 ID
  * @param {number} b 角色 ID
  */
@@ -119,12 +102,11 @@ function swap_chara(a, b) {
 }
 
 /**
- * @PERSONALOCK（:140-287）：互换一大批个人特质与能力（跟随身份走的"人格"
- * 部分，与 swap_chara 覆盖的"身体"部分互补）。
+ * personalock：互换一大批个人特质与能力（跟随身份走的"人格"部分，与
+ * swap_chara 覆盖的"身体"部分互补）。
  *
- * TALENT 区间（Emuera FOR 结束值不含本身）：见各行注释；50-58 跳过 55
- * （原作 SIF TC == 55 CONTINUE）。
- * @param {number} cid 角色 ID（原作 ARG）
+ * talent 区间为左闭右开（结束下标不含本身）：见各行注释；50-58 跳过 55。
+ * @param {number} cid 角色 ID
  */
 function personalock(cid) {
   const talent_ranges = [
@@ -173,9 +155,9 @@ function personalock(cid) {
 }
 
 /**
- * @TRANSFERAPP（:47-99）：身份互换收尾——等级/攻防/体力气力/勇者履历/
- * 好感与调教次数/PERSONALOCK 大量特质/关系表重建/姓名。
- * @param {number} cid 角色 ID（原作 ARG）
+ * transferapp：身份互换收尾——等级/攻防/体力气力/勇者履历/好感与调教
+ * 次数/personalock 大量特质/关系表重建/姓名。
+ * @param {number} cid 角色 ID
  */
 function transferapp(cid) {
   for (const idx of [9, 11, 12, 13, 14]) swap_var('cflag', 0, cid, idx);
@@ -188,11 +170,8 @@ function transferapp(cid) {
   chara(0).invasion.状态 = 0;
   chara(cid).invasion.状态 = 0;
 
-  // 姓名交换：原作对 NAME/CALLNAME/SAVESTR 各做一次 SWAP，随后又
-  // 用（已互换的）CALLNAME 覆盖 SAVESTR。ere 侧 NAME/SAVESTR 共享同一份
-  // 存储（callname:cid:-1，见 utils/callname-utils.js 文件头），若逐句
-  // 照搬会把姓名换回原值——只落最终可观察效果：互换呼び名（:-2），
-  // 再各自把显示名（:-1）改写成新的呼び名
+  // 姓名交换只落最终可观察效果：互换称呼（:-2），再各自把姓名（:-1）
+  // 改写成新的称呼——两槽的语义见 utils/callname-utils.js 文件头
   swap_var('callname', 0, cid, -2);
   era.set('callname:0:-1', era.get('callname:0:-2') ?? '');
   era.set(`callname:${cid}:-1`, era.get(`callname:${cid}:-2`) ?? '');
@@ -202,9 +181,8 @@ function transferapp(cid) {
 }
 
 /**
- * @BODYCHECK_MAOU（:102-138）：魔王身体数据缺省时的兜底生成（种族/肉体
- * 年龄、三围、外貌五官素质）。原作声明了 ARG 参数但函数体只读写
- * MASTER（恒为角色 0），本函数因此不取参数。
+ * bodycheck_maou：魔王身体数据缺省时的默认值生成（种族/肉体年龄、三围、
+ * 外貌五官素质）。只读写角色 0，因此不取参数。
  */
 function bodycheck_maou() {
   if (
@@ -270,18 +248,14 @@ function bodycheck_maou() {
 }
 
 /**
- * @TRANSFER_SOUL（:1-45）：灵魂转移主流程。
+ * transfer_soul：灵魂转移主流程。
  *
- * @param {number} cid 转移对象（原作 ARG）
+ * @param {number} cid 转移对象
  * @param {number} [mode=0] 0 = 先问一次确认，非 0 = 跳过确认直接执行
- *   （原作 `SIF MODE GOTO TSTAG`；全库唯一调用点固定传 0，此形参为完整
- *   1:1 移植保留）
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 玩家拒绝时返回 cid（原作 `RETURN ARG`）；成功
- *   转移后原作没有显式 RETURN，但 CALL TRANSFERAPP, ARG 内部以
- *   `RETURN MASTER` 收尾（:99），之后 TRANSFER_SOUL 再未写 RESULT——RESULT
- *   就此停在 0 直到函数隐式结束，调用方（CASE 17）据此把画面焦点转回
- *   角色 0，这里直接返回 0 对应这个可观察效果
+ *   （event-nextday.js 的调用传 1）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 玩家拒绝时返回 cid；成功转移后返回 0，调用方
+ *   （page-chara-info.js）据此把画面焦点转回角色 0
  */
 async function transfer_soul(cid, mode = 0, rand = default_rand) {
   if (!mode) {
@@ -290,7 +264,7 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
     era.printButton('否', 1);
     const result = await era.input();
     if (result !== 0) {
-      return cid; // SIF RESULT != 0 / RETURN ARG（拒绝）
+      return cid; // 玩家拒绝
     }
   }
 
@@ -303,9 +277,7 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
   } else {
     era.set('cflag:0:621', marriage);
     const partner = search_family(cid, 'MARRIAGE');
-    // 三分支 IF/ELSEIF/ELSE 前两支皆空，判据都以 RESULT<0 为条件之
-    // 一（EX_TALENT:ARG:2 那一支的条件恒不会单独成立——它要求 RESULT<0 同时
-    // 成立，与第二支重叠），实际效果等价于「partner<0 时跳过，否则执行」
+    // partner<0（查无婚姻对象）时跳过，否则执行
     if (partner >= 0) {
       era.set(`cflag:${partner}:621`, era.get(`cflag:${partner}:601`) || 0);
       era.set(`cflag:${partner}:601`, 901);
@@ -313,10 +285,10 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
     }
   }
 
-  swap_chara(0, cid); // SWAPCHARA MASTER, ARG
-  transferapp(cid); // CALL TRANSFERAPP, ARG（返回值 MASTER 未被读取）
+  swap_chara(0, cid);
+  transferapp(cid);
 
-  // 灵魂错位素质叠加（有 debuff）：本次转移让 ARG 背上 1-5 级，
+  // 灵魂错位素质叠加（有 debuff）：本次转移让转移对象背上 1-5 级，
   // 若魔王身上已带着旧的错位素质则继承并 +1 级、魔王自己清零
   let debuff = rand(5) + 1;
   if (era.get('ex_talent:0:0')) {
@@ -330,20 +302,17 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
 }
 
 /**
- * @SOUL_DISLOCATION（:438-452）：灵魂错位自然恢复判定（每角色每日调用）。
+ * soul_dislocation：灵魂错位自然恢复判定（每角色每日调用一次）。
  *
- * EX_TALENT:0（灵魂错位等级，TRANSFER_SOUL 施加）每日有 1/(min(等级,3)+1)
- * 概率降 1 级，降到 0 时播报康复。原作寻址省略角色号（`EX_TALENT:0`），
- * 按 Emuera「既是角色变量又是数组变量」省略首参的约定省略的是 TARGET；
- * 调用方 EVENT_NEXTDAY.ERB:12 在 `FOR NEXTDAY_COUNT` 循环起手即
- * `TARGET = NEXTDAY_COUNT`，ere 侧一律显式传参，等价于该 TARGET。
+ * EX_TALENT:0（灵魂错位等级，transfer_soul 施加）每日有 1/(min(等级,3)+1)
+ * 概率降 1 级，降到 0 时播报康复。ere 侧显式传参，对每个角色各判一次。
  *
- * @param {number} cid 角色 ID（原作省略参数对应的 TARGET）
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand] 随机源
  */
 function soul_dislocation(cid, rand = default_rand) {
   const level = era.get(`ex_talent:${cid}:0`) || 0;
-  const cap = level > 3 ? 3 : level; // TEMP = MIN(EX_TALENT:0, 3)
+  const cap = level > 3 ? 3 : level; // 等级超过 3 按 3 计
   if (level && !rand(cap + 1)) {
     let next = level - 1;
     if (next < 0) next = 0;

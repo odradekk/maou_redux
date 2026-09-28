@@ -1,10 +1,10 @@
 /**
  * @file EX 道具的入手、出售与使用（issue #344，阶段 5a L13）。
  *
- * 移植说明：
- *   - 原作全局 A / RESULT 改为显式 cid / 返回值；库存仍是 CFLAG:560-564；
+ * 说明：
+ *   - 全局 A / RESULT 改为显式 cid / 返回值；库存仍是 CFLAG:560-564；
  *   - RAND 经参数注入（缺省 Math.random），供迷宫共用随机序列并可测试；
- *   - ADD_EX_ITEM 的 W 数组改为按次创建的装备记录，复用阶段 3 的装备查表；
+ *   - add_ex_item 的 W 数组改为按次创建的装备记录，复用阶段 3 的装备查表；
  *   - 13 条 dungeon → chara 跨域写均经 chara(cid).chara 具名门面；
  *   - PRINT/PRINTFORM 的行内片段合成一次 era.print；PRINTW 另 await 等键。
  */
@@ -67,14 +67,14 @@ function item_line(cid, appraise, known, unknown, verb, result) {
   }
 }
 
-/** @EX_ITEM_NAME（:999-1010）：行内名称由调用方拼接。 */
+/** ex_item_name：行内名称由调用方拼接。 */
 function ex_item_name(item_no) {
   return item_no > 1000
     ? '【未鉴定品】'
     : (era.get(`itemname:${item_no}`) ?? '');
 }
 
-/** @HARB_ITEM（:331-370）：草药。 */
+/** harb_item：草药。 */
 function harb_item(cid, appraise, rand = default_rand) {
   const cursed = appraise === 1 && rand(2) === 0;
   if (cursed) {
@@ -97,7 +97,7 @@ function harb_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @POTION_ITEM（:373-411）：回复药水。 */
+/** potion_item：回复药水。 */
 function potion_item(cid, appraise, rand = default_rand) {
   const cursed = appraise === 1 && rand(2) === 0;
   if (cursed) {
@@ -120,7 +120,7 @@ function potion_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @HEAL_ROD_ITEM（:414-468）：回复之杖，正常品仅 1/3 损坏。 */
+/** heal_rod_item：回复之杖，正常品仅 1/3 损坏。 */
 function heal_rod_item(cid, appraise, rand = default_rand) {
   const cursed = appraise === 1 && rand(2) === 0;
   if (cursed) {
@@ -154,7 +154,7 @@ function heal_rod_item(cid, appraise, rand = default_rand) {
   return rand(3) > 0 ? 0 : 1;
 }
 
-/** @MIND_ROD_ITEM（:471-532）：精神之杖；无肛门经验时诅咒不发动。 */
+/** mind_rod_item：精神之杖；无肛门经验时诅咒不发动。 */
 function mind_rod_item(cid, appraise, rand = default_rand) {
   let cursed = appraise === 1 && rand(2) === 0;
   if ((era.get(`exp:${cid}:1`) || 0) === 0) {
@@ -193,7 +193,7 @@ function mind_rod_item(cid, appraise, rand = default_rand) {
   return rand(3) > 0 ? 0 : 1;
 }
 
-/** @POWER_SEED_ITEM（:535-584）：力量种子。 */
+/** power_seed_item：力量种子。 */
 function power_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
@@ -224,7 +224,7 @@ function power_seed_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @DEF_SEED_ITEM（:587-632）：守护种子。 */
+/** def_seed_item：守护种子。 */
 function def_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
@@ -250,7 +250,7 @@ function def_seed_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @EXP_MEDAL_ITEM（:635-671）：经验硬币。 */
+/** exp_medal_item：经验硬币。 */
 function exp_medal_item(cid, appraise, rand = default_rand) {
   const cursed = appraise === 1 && rand(2) === 0;
   if (cursed) {
@@ -269,7 +269,7 @@ function exp_medal_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @HP_SEED_ITEM（:674-724）：命之种子。 */
+/** hp_seed_item：命之种子。 */
 function hp_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   let cursed = appraise === 1 && rand(4) === 0;
@@ -298,7 +298,7 @@ function hp_seed_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @MP_SEED_ITEM（:727-772）：心之种子。 */
+/** mp_seed_item：心之种子。 */
 function mp_seed_item(cid, appraise, rand = default_rand) {
   const view = chara(cid);
   const cursed = appraise === 1 && rand(4) === 0;
@@ -324,7 +324,7 @@ function mp_seed_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @EXP_SILVER_ITEM（:775-812）：经验银币（文本 +10、实际数值 +30 原样保留）。 */
+/** exp_silver_item：经验银币（文本 +10、实际数值 +30 原样保留）。 */
 function exp_silver_item(cid, appraise, rand = default_rand) {
   const cursed = appraise === 1 && rand(2) === 0;
   if (cursed) {
@@ -343,7 +343,7 @@ function exp_silver_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @DETOX_WORM_ITEM（:815-871）：圣水。 */
+/** detox_worm_item：圣水。 */
 async function detox_worm_item(cid, appraise, rand = default_rand) {
   const former_saint = (era.get(`talent:${cid}:315`) || 0) === 12;
   const cursed = appraise === 1 && rand(2) === 0;
@@ -379,7 +379,7 @@ async function detox_worm_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @JUEL_BOX_ITEM（:874-901）：堕落的宝石箱。 */
+/** juel_box_item：堕落的宝石箱。 */
 function juel_box_item(cid, appraise) {
   item_line(
     cid,
@@ -393,7 +393,7 @@ function juel_box_item(cid, appraise) {
   return (era.get(`cflag:${cid}:1`) || 0) === 3 ? 1 : 0;
 }
 
-/** @INVISIBLE_POTION_ITEM（:904-951）：透明化之药。 */
+/** invisible_potion_item：透明化之药。 */
 function invisible_potion_item(cid, appraise, rand = default_rand) {
   const cursed = appraise === 1 && rand(3) === 0;
   if (show_log()) {
@@ -422,7 +422,7 @@ function invisible_potion_item(cid, appraise, rand = default_rand) {
   return 1;
 }
 
-/** @HERO_POTION_ITEM（:954-996）：英雄之药。 */
+/** hero_potion_item：英雄之药。 */
 function hero_potion_item(cid, appraise, rand = default_rand) {
   const up_value = Math.trunc((era.get(`cflag:${cid}:9`) || 0) / 10) + 10;
   const cursed = appraise === 1 && rand(3) === 0;
@@ -463,7 +463,7 @@ const ITEM_HANDLERS = {
   413: hero_potion_item,
 };
 
-/** @USE_EX_ITEM（:4-71）：检查五个槽，处理器返回非零才消耗。 */
+/** use_ex_item：检查五个槽，处理器返回非零才消耗。 */
 async function use_ex_item(timing, cid, rand = default_rand) {
   for (let offset = 0; offset < ITEM_SLOT_COUNT; offset += 1) {
     const slot = ITEM_FIRST_SLOT + offset;
@@ -508,7 +508,7 @@ async function use_ex_item(timing, cid, rand = default_rand) {
   return 0;
 }
 
-/** @SELL_EX_ITEM（:74-124）：未鉴定品必卖，其余每槽 1/10。 */
+/** sell_ex_item：未鉴定品必卖，其余每槽 1/10。 */
 function sell_ex_item(cid, rand = default_rand) {
   let sold = 0;
   let money = 0;
@@ -535,7 +535,7 @@ function sell_ex_item(cid, rand = default_rand) {
   return 0;
 }
 
-/** @ADD_EX_ITEM（:127-244）：取得武器或消耗品，返回取得的道具号。 */
+/** add_ex_item：取得武器或消耗品，返回取得的道具号。 */
 async function add_ex_item(kind, cid, source, rand = default_rand) {
   let item_no = kind;
   if (item_no === -1) {

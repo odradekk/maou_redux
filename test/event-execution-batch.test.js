@@ -1,19 +1,19 @@
 /**
  * @file 批量处刑与自动处刑的行为测试（issue #543，阶段 6 S2）。
  *
- * 覆盖 魔改新增/處刑改寫.ERB 三函数的玩家可见契约：
- *   - @批量处刑（:3-417）：复选标签列表、收藏自动剃除、方法 0-7 的分支
- *     与守卫、水晶球开关、口上对处分方式（TFLAG:16）的改写、取消路径
+ * 覆盖 魔改新增/处刑改写三函数的玩家可见契约：
+ *   - @批量处刑：复选标签列表、收藏自动剃除、方法 0-7 的分支
+ *     与检查、水晶球开关、口上对处分方式（TFLAG:16）的改写、取消路径
  *     （TFLAG:16 = -1 → 整界面重启）；
- *   - @自動處刑（:419-433）：新人标签 × 顺从 × 收藏的三岔判定；
- *   - @自動處刑1（:435-498）：装备回收、除名、勋章与经验结算；
- *   - 两个入口接线：主菜单 [103]（page-shop.js 的 usershop）与
- *     @EVENTTURNEND 的 FLAG:5 位 3 开关（turnend-settle.js）。
+ *   - @自動處刑：新人标签 × 顺从 × 收藏的三岔判定；
+ *   - @自動處刑1：装备回收、除名、勋章与经验结算；
+ *   - 两个入口接入：主菜单 [103]（page-shop.js 的 usershop）与
+ *     eventturnend 的 FLAG:5 位 3 开关（turnend-settle.js）。
  *
  * 随机源：处刑改写本体不掷随机；方法 0-3 的下游（BANISHMENT 等）要——
  * 一律传 seq([...]) 确定性随机源（#344 的教训）。
  *
- * #561 第 1/2 条起：处刑归档的两处寻址各按自己的口径换算——录像书架
+ * #561 第 1/2 条起：处刑归档的两处寻址各按自己的标准换算——录像书架
  * （SUISEI_STR）的槽位是**角色在已加入列表中的位置**（`archive_slot_of`），
  * `FLAG:(NO + 199)` 的 NO 对后代取**来源模板号**（`template_no_of`）。本文件
  * 的 seed_world(31) 是 [0, 31]，故槽位 1 = 31 号；seed_world(17, 47, 52) 是
@@ -121,7 +121,7 @@ test('批量处刑列表：过滤魔王与示众台，按条件展示标签与�
 });
 
 test('列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的七种组合', async () => {
-  // 表驱动覆盖 listable（:33）与 print_roster 的跳过支：每行一个世界，
+  // 表驱动覆盖 listable与 print_roster 的跳过支：每行一个世界，
   // 只断言「31 号是否作为按钮列出」
   const cases = [
     { name: '状态 0', set: {}, listed: true },
@@ -166,7 +166,7 @@ test('列表标签：[SP] 覆盖性格素质与 EX 素质两侧', async () => {
   const worlds = [
     { set: { 'talent:31:165': 1 }, expected: true },
     { set: { 'talent:31:171': 1 }, expected: true },
-    { set: { 'talent:31:166': 1 }, expected: false }, // 恶女不在 @SP 名单
+    { set: { 'talent:31:166': 1 }, expected: false }, // 恶女不在 sp 名单
     { set: { 'ex_talent:31:104': 1 }, expected: true },
     { set: { 'ex_talent:31:4': 1 }, expected: true },
     { set: { 'ex_talent:31:105': 1 }, expected: false },
@@ -221,7 +221,7 @@ test('批量处刑列表：【造型王】实绩达成后不再显示提醒行',
 
   assert(
     !history_texts(fixture).some((line) => line.includes('将解锁实绩')),
-    'TALENT:MASTER:329 置位后提醒行消失（處刑改寫.ERB:18 的第三条件）',
+    'TALENT:MASTER:329 置位后提醒行消失（处刑改写体系的第三条件）',
   );
 });
 
@@ -230,7 +230,7 @@ test('复选标签：按钮切换 777 位，收藏目标被自动剃除并重启
   fixture.store.set('cflag:47:700', 1); // 收藏
   fixture.store.set('cflag:47:777', 1); // 且被标了处刑标签
   // 52 号在示众台（状态 8）且同样「收藏 + 带标签」：扫描先按状态剃除，
-  // 不播报、不清标签（:54-65 的扫描内）
+  // 不播报、不清标签（的扫描内）
   fixture.store.set('cflag:52:1', 8);
   fixture.store.set('cflag:52:700', 1);
   fixture.store.set('cflag:52:777', 1);
@@ -279,7 +279,7 @@ test('[121] 选择处刑方式仅在存在可处刑目标时出现', async () =>
   );
 });
 
-test('翻页：[2000]/[2001] 的页首/页尾守卫（NUM_PAGE = 25）', async () => {
+test('翻页：[2000]/[2001] 的页首/页尾检查（NUM_PAGE = 25）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -292,13 +292,13 @@ test('翻页：[2000]/[2001] 的页首/页尾守卫（NUM_PAGE = 25）', async (
     fixture.era.addCharacter(cid);
   }
   // 第一页已含 1-25；先在页首按 [2000]（不得退到 -1 页），[2001] 进第二页
-  // （26-30），页尾再按不再进
+  // ，页尾再按不再进
   fixture.set_inputs(2000, 2001, 2001, 1999);
   const { batch_execution } = load_batch(fixture);
 
   await batch_execution(seq([0]));
 
-  // 首轮列表行数 = 页宽（NUM_PAGE = 25，:10）：25↔26 一类页宽改动
+  // 首轮列表行数 = 页宽（NUM_PAGE = 25）↔26 一类页宽改动
   // 单看「谁在第几页」看不出来（两页各画两轮，计数同构），必须钉行数
   const history = fixture.lines_history;
   const first_nav = history.findIndex(
@@ -320,7 +320,7 @@ test('翻页：[2000]/[2001] 的页首/页尾守卫（NUM_PAGE = 25）', async (
   assert.equal(
     page2_rows.length,
     2,
-    '翻到第二页（两次 [2001]：第二次被页尾守卫拦下但仍重绘同一页）',
+    '翻到第二页（两次 [2001]：第二次被页尾检查拦下但仍重绘同一页）',
   );
   assert.equal(
     buttons(fixture).filter((b) => b.accelerator === 1).length,
@@ -330,7 +330,7 @@ test('翻页：[2000]/[2001] 的页首/页尾守卫（NUM_PAGE = 25）', async (
 });
 
 test('方法 4 肉便器：扶她阴茎四支与魅力点五支各自播报', async () => {
-  // 表驱动覆盖 :236-290 的两组分支。扶她支的前置是 TALENT:121 且
+  // 表驱动覆盖的两组分支。扶她支的前置是 TALENT:121 且
   // FLAG:83 >= 2——预置 1 让 +1 后过门
   const cases = [
     { set: { 'talent:31:121': 1, 'talent:31:318': 1 }, fragment: '扶她巨根的' },
@@ -405,7 +405,7 @@ test('方法 4 肉便器：素质条件句逐条触发，缺素质时一条都�
   const futanari_texts = history_texts(futanari);
   assert(
     futanari_texts.some((line) => line.includes('阴茎膨胀了起来')),
-    '扶她走阴茎文案（:246-252 的 TALENT:121/122 支）',
+    '扶她走阴茎文案（的 TALENT:121/122 支）',
   );
   assert(
     !futanari_texts.some((line) => line.includes('阴蒂又大又肿')),
@@ -443,13 +443,13 @@ test('方法 4 做成肉便器：计数、威望、录像归档、除名与经�
   assert.equal(
     fixture.store.get('videoarchive:1'),
     '肉便器温妮',
-    'SUISEI_STR:A 归档末路标题（:303，槽位 = 列表位置）',
+    'SUISEI_STR:A 归档末路标题（槽位 = 列表位置）',
   );
   assert.equal(fixture.store.get('tstr:30'), '', 'VIDEO_MATURO 消费 TSTR:30');
   assert.equal(
     fixture.store.get('videoarchive:0'),
     '肉便器温妮',
-    '开水晶球时 TSTR:30 的标题真的入架（VIDEO_MATURO 读的是它，:303）',
+    '开水晶球时 TSTR:30 的标题真的入架（VIDEO_MATURO 读的是它）',
   );
   assert.equal(
     fixture.store.get('exflag:9010'),
@@ -470,7 +470,7 @@ test('方法 4 做成肉便器：计数、威望、录像归档、除名与经�
     '批量路径的经验播报（区别于迷你处刑文案）',
   );
   assert(
-    history_texts(fixture).some((line) => line.includes('现在的肉便器数量：1')),
+    history_texts(fixture).some((line) => line.includes('现在的肉便器数量')),
     '肉便器计数播报',
   );
 });
@@ -497,7 +497,7 @@ test('处刑归档的槽位与 NO（#561）：后代按列表位置写书架、�
   assert.equal(
     fixture.store.get('videoarchive:2'),
     `肉便器${name}`,
-    'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（:303 的 A = 角色下标）',
+    'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（A = 角色下标）',
   );
   assert.equal(
     fixture.store.get(`videoarchive:${child}`),
@@ -507,7 +507,7 @@ test('处刑归档的槽位与 NO（#561）：后代按列表位置写书架、�
   assert.equal(
     fixture.store.get('flag:200'),
     1,
-    'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   );
   assert.equal(
     fixture.store.get(`flag:${child + 199}`),
@@ -537,7 +537,7 @@ test('方法 5 士兵化：战力减半、刻印与称号，不除名；受限�
   assert.equal(
     fixture.store.get('cflag:47:777'),
     1,
-    '士兵化不清处刑标签（原作如此）',
+    '士兵化不清处刑标签（既有行为）',
   );
   assert.equal(fixture.store.get('cstr:47:30'), `魔王傀儡${name}`);
   assert.equal(fixture.store.get('tstr:30'), '', 'VIDEO_MATURO2 消费 TSTR:30');
@@ -571,11 +571,11 @@ test('方法 5 士兵化：战力减半、刻印与称号，不除名；受限�
     texts.some((line) => line.includes('可以于迎击名单中派遣出场了')),
     '士兵化完成播报',
   );
-  // 三轮扫描：17 号每轮都提示不受洗脑；47/52 士兵化后各再提示一次
+  // 三轮扫描 号每轮都提示不受洗脑；47/52 士兵化后各再提示一次
   assert.equal(
     texts.filter((line) => line.includes('拥有【不受洗脑】')).length,
     3,
-    '17 号在每轮扫描都播报（原作每轮重扫都提示）',
+    '17 号在每轮扫描都播报（每轮重扫都提示）',
   );
   assert.equal(
     texts.filter((line) => line.includes('已经士兵化了')).length,
@@ -696,7 +696,7 @@ test('方法 0 流放：透传随机源，取消输入让整界面重启（TFLAG
       line.includes('请选出处刑对象(可复选)'),
     ).length,
     3,
-    'BANISHMENT 的取消 JUMP 回批量处刑：界面整重启（:43 的等价物）',
+    'BANISHMENT 的取消 JUMP 回批量处刑：界面整重启（的等价物）',
   );
 });
 
@@ -723,7 +723,7 @@ test('方法 0 流放：确认后角色被处刑除名', async () => {
 });
 
 test('口上可改写处分方式：批量循环按改写值分发', async () => {
-  // 47 号（NO 47 在 17-40 段外——31 号走方法 5 会先被「不受洗脑」守卫拦下）
+  // 47 号（NO 47 在 17-40 段外——31 号走方法 5 会先被「不受洗脑」检查拦下）
   const fixture = seed_world(47);
   fixture.store.set('talent:47:163', 1); // 高贵性格 → K3 处刑口上
   // 输入 5（士兵化）而口上改写为 7（释放）：两个结果的落点不同，能区分
@@ -791,13 +791,13 @@ test('自動處刑1：装备回收、除名、威望、勋章与经验、称呼�
   assert.equal(
     fixture.store.get('callname:47:-2'),
     '艾达',
-    '自動處刑1 调用 NAME_RESET（:477）——在场角色称呼被重建（与 EXECUTION_MINI 的差异）',
+    '自動處刑1 调用 NAME_RESET——在场角色称呼被重建（与 EXECUTION_MINI 的差异）',
   );
   assert(
     history_texts(fixture).some((line) =>
       line.includes('《封印吸收了力量，使你获得了250的经验值！》'),
     ),
-    '经验播报文案（:485）',
+    '经验播报文案',
   );
 });
 test('自動處刑：新人×顺从×收藏三岔，逐个处刑并重复求饶播报', async () => {
@@ -904,10 +904,10 @@ test('方法界面：[0]-[7] 八个处刑方式与 [100] 的按钮文案', async
       [6, '固定示众：将奴隶绑在示众台上，任怪物凌辱'],
       [7, '消除记忆后释放：此项可没收此奴隶身上所有的现金'],
     ],
-    '八个处刑方式按钮的编号（原作 CASE 0 TO 7）与文案逐条对齐',
+    '八个处刑方式按钮的编号（CASE 0 TO 7）与文案逐条对齐',
   );
   const stop = buttons(fixture).find((b) => b.accelerator === 100);
-  assert.equal(stop.text, '停止', '[100] 停止（原作 :108）');
+  assert.equal(stop.text, '停止', '[100] 停止');
   for (const [acc, text] of [
     [2000, '上一页'],
     [1999, '结束处刑'],
@@ -916,19 +916,19 @@ test('方法界面：[0]-[7] 八个处刑方式与 [100] 的按钮文案', async
     assert.equal(
       buttons(fixture).find((b) => b.accelerator === acc).text,
       text,
-      `[${acc}] 的按钮文案（原作 :70-72）`,
+      `[${acc}] 的按钮文案`,
     );
   }
   assert(
     history_texts(fixture).some((line) =>
       line.includes('开启水晶球的话，则可记录0～6项的处刑影像'),
     ),
-    '方法界面说明行（:97）',
+    '方法界面说明行',
   );
 });
 
-test('下一页守卫：页宽整数倍（50 人）时把窗口推到空页', async () => {
-  // 原作 :82 的判据是 (NO_PAGE+1)*NUM_PAGE <= CHARANUM（含等号）：50 人的
+test('下一页检查：页宽整数倍（50 人）时把窗口推到空页', async () => {
+  // 条件是 (NO_PAGE+1)*NUM_PAGE <= CHARANUM（含等号） 人的
   // 世界在第 2 页再按 [2001] 会翻到没有行的第 3 页（`<` 会停在第 2 页）
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
@@ -949,11 +949,11 @@ test('下一页守卫：页宽整数倍（50 人）时把窗口推到空页', as
   assert.equal(
     buttons(fixture).filter((b) => b.accelerator === 26).length,
     1,
-    '页宽整数倍（50 人）时 [2001] 翻到空页（原作 :82 的 <= 判据）',
+    '页宽整数倍（50 人）时 [2001] 翻到空页（<= 条件）',
   );
 });
 
-test('方法 4 肉便器：有家族对手时把末路标题写进 CSTR:<家族>:5', async () => {
+test('方法 4 肉便器：有家族对手时把末路标题写进 CSTR:<家族>', async () => {
   // TALENT:165（村娘 A）与 TALENT:171（村娘 B）不走压缩家族照，search_family
   // 直接互找；31 号（温妮，165）与 47 号（艾达，171）构成一对
   const pair = seed_world(31, 47);
@@ -965,7 +965,7 @@ test('方法 4 肉便器：有家族对手时把末路标题写进 CSTR:<家族>
   assert.equal(
     pair.store.get('cstr:47:5'),
     '肉便器温妮',
-    '家族档归档（:300-301：CSTR:(FAMILY:2):5）',
+    '家族档归档（CSTR:(FAMILY:2):5）',
   );
 
   // 反照：没有家族对手时 family_id = -1，家族槽不动
@@ -976,12 +976,12 @@ test('方法 4 肉便器：有家族对手时把末路标题写进 CSTR:<家族>
   assert.equal(
     lone.store.get('cstr:31:5') ?? '',
     '',
-    '无家族对手时不写 CSTR（:300 的 SIF FAMILY:2 >= 0）',
+    '无家族对手时不写 CSTR（的 SIF FAMILY:2 >= 0）',
   );
 });
 
 test('翻页位置是函数静态变量：重启与再次进入处刑都保留当前页', async () => {
-  // 原作 #DIM NO_PAGE = 0（:8）是静态变量；JUMP 批量处刑 只重执行 :11-14，
+  // #DIM NO_PAGE = 0是静态变量；JUMP 批量处刑 只重执行 ，
   // 其中只显式重置 处刑中/可处刑/TFLAG:16（技能指南「静态变量」：函数退出
   // 之后值不会被重置，需要重置的要在函数开头显式初始化）
   const fixture = create_era_fixture();
@@ -997,8 +997,8 @@ test('翻页位置是函数静态变量：重启与再次进入处刑都保留�
   }
   const { batch_execution } = load_batch(fixture);
 
-  // 第 2 页（26-30）上标记 30 号 → [121] 走方法 0 → BANISHMENT 里取消
-  // （TFLAG:16 = -1）→ 整界面重启（原作 JUMP 批量处刑）
+  // 第 2 页上标记 30 号 → [121] 走方法 0 → BANISHMENT 里取消
+  // （TFLAG:16 = -1）→ 整界面重启（JUMP 批量处刑）
   fixture.set_inputs(2001, 30, 121, 0, 100, 1999);
   await batch_execution(seq([0, 0]));
   // 名册行按「角色<ID> + 空格」认：方法界面的 [0]-[7] 也有 1 号快捷键
@@ -1009,24 +1009,20 @@ test('翻页位置是函数静态变量：重启与再次进入处刑都保留�
   assert.equal(
     rows(30).length,
     3,
-    '重启（取消流放）后仍在第 2 页：26-30 号画三次（翻页、标记后、重启后）',
+    '重启（取消流放）后仍在第 2 页 号画三次（翻页、标记后、重启后）',
   );
   assert.equal(rows(1).length, 1, '第 1 页只在开场画过一次');
 
-  // 再次进入处刑：首屏仍是第 2 页（静态变量跨调用保留，原作无重置点）
+  // 再次进入处刑：首屏仍是第 2 页（静态变量跨调用保留，无重置点）
   fixture.set_inputs(1999);
   await batch_execution(seq([0]));
-  assert.equal(
-    rows(30).length,
-    4,
-    '再次进入处刑保留上次的页（静态变量，原作 :8）',
-  );
+  assert.equal(rows(30).length, 4, '再次进入处刑保留上次的页（静态变量）');
   assert.equal(rows(1).length, 1, '再次进入不会退回第 1 页');
 });
 
 test('[121] 的可见性是函数静态变量：清标签后仍保留到整界面重启', async () => {
-  // 原作 #DIM 可处刑（:7）是静态变量：只在进入函数（:13）与 JUMP 批量处刑
-  // （重执行 :11-14）时清零；GOTO 处刑介面（翻页、标签切换、[101] 重绘）
+  // #DIM 可处刑是静态变量：只在进入函数与 JUMP 批量处刑
+  // （重执行）时清零；GOTO 处刑介面（翻页、标签切换、[101] 重绘）
   // 不清零——本次调用中一旦有角色带过标签，[121] 就一直在
   const fixture = seed_world(31);
   fixture.set_inputs(31, 31, 1999); // 打标签 → 取消标签 → 结束
@@ -1041,9 +1037,9 @@ test('[121] 的可见性是函数静态变量：清标签后仍保留到整界�
   );
 });
 
-test('[121] 后的空行数与原作一致（PRINTLC 不换行：:68 收行、:69 空行）', async () => {
-  // 显示 [121] 时：printButton 自成一行（等价 :67+:68），按钮后只有 :69 的
-  // 一个空行；不显示 [121] 时 :68/:69 两个 PRINTL 都落成空行
+test('[121] 后的空行数与既有界面一致（PRINTLC 不换行： 收行、 空行）', async () => {
+  // 显示 [121] 时：printButton 自成一行（等价 +），按钮后只有的
+  // 一个空行；不显示 [121] 时 / 两个 PRINTL 都落成空行
   const shown = seed_world(31);
   shown.store.set('cflag:31:777', 1);
   shown.set_inputs(1999);
@@ -1056,7 +1052,7 @@ test('[121] 后的空行数与原作一致（PRINTLC 不换行：:68 收行、:6
   assert.deepEqual(
     [shown_rows[shown_index + 1].type, shown_rows[shown_index + 2].accelerator],
     ['br', 2000],
-    '[121] 之后只有 :69 一个空行，再下一条是 [2000] 上一页',
+    '[121] 之后只有一个空行，再下一条是 [2000] 上一页',
   );
 
   const hidden = seed_world(31);
@@ -1070,7 +1066,7 @@ test('[121] 后的空行数与原作一致（PRINTLC 不换行：:68 收行、:6
   assert.deepEqual(
     [hidden_rows[hidden_index - 2].type, hidden_rows[hidden_index - 1].type],
     ['br', 'br'],
-    '没有 [121] 时是 :68/:69 两个空行',
+    '没有 [121] 时是 / 两个空行',
   );
 });
 
@@ -1090,13 +1086,13 @@ test('可处刑每次进入函数复位：清标签结束、再进入时 [121] �
   assert.equal(
     count_121(),
     first_round,
-    '再次进入时 可处刑 已复位（:13），不再显示 [121]',
+    '再次进入时 可处刑 已复位，不再显示 [121]',
   );
 });
 
 test('可处刑在 JUMP 批量处刑 后复位：剃除收藏目标重启界面时 [121] 消失', async () => {
   // 标记 31 再取消，[121] 按静态语义保留；再标记收藏目标 47，重绘时扫描到它
-  // → 播报、剃除、JUMP 批量处刑。JUMP 重跑 :13，重启后的界面没有带标签的
+  // → 播报、剃除、JUMP 批量处刑。JUMP 重跑 ，重启后的界面没有带标签的
   // 目标，[121] 不再显示
   const fixture = seed_world(31, 47);
   fixture.store.set('cflag:47:700', 1); // 收藏
@@ -1120,13 +1116,13 @@ test('可处刑在 JUMP 批量处刑 后复位：剃除收藏目标重启界面�
     !rows
       .slice(jump_index)
       .some((line) => line.type === 'button' && line.accelerator === 121),
-    'JUMP 批量处刑 之后 可处刑 已复位（:13），不再显示 [121]',
+    'JUMP 批量处刑 之后 可处刑 已复位，不再显示 [121]',
   );
 });
 
 test('分隔线：顶部不画 CUSTOMDRAWLINE 线，普通 DRAWLINE 用默认线型', async () => {
-  // 原作 :11 的 `CUSTOMDRAWLINE =` 只画一条线，随即被 :16 的
-  // `CLEARLINE LINECOUNT` 清掉；:21/:24/:53 是普通 DRAWLINE（默认线型）
+  // `CUSTOMDRAWLINE =` 只画一条线，随即被
+  // `CLEARLINE LINECOUNT` 清掉；// 是普通 DRAWLINE（默认线型）
   const fixture = seed_world(31);
   fixture.set_inputs(1999);
   const { batch_execution } = load_batch(fixture);
@@ -1139,16 +1135,16 @@ test('分隔线：顶部不画 CUSTOMDRAWLINE 线，普通 DRAWLINE 用默认线
   assert.notEqual(
     fixture.lines_history[0]?.type,
     'divider',
-    '顶部不再多画 :11 的 CUSTOMDRAWLINE 线',
+    '顶部不再多画 CUSTOMDRAWLINE 线',
   );
-  assert.equal(dividers.length, 3, '名单屏三条普通分隔线（:21/:24/:53）');
+  assert.equal(dividers.length, 3, '名单屏三条普通分隔线');
   assert(
     dividers.every((line) => line.border === 'dashed'),
     '普通 DRAWLINE 用默认线型（isSolid 只对 CUSTOMDRAWLINE = 那一类，本屏不镜像）',
   );
 });
 
-test('列表行的等级带冒号（原作 :34 的 LV:{CFLAG:COUNT:9}）', async () => {
+test('列表行的等级带冒号（LV:{CFLAG:COUNT:9}）', async () => {
   const fixture = seed_world(31);
   fixture.set_inputs(1999);
   const { batch_execution } = load_batch(fixture);
@@ -1181,7 +1177,7 @@ test('主菜单 [103]：usershop 接通批量处刑真身', async () => {
   assert(!texts.some((line) => line.includes('@批量处刑')), '不再打存根占位');
 });
 
-test('EVENTTURNEND 接线：FLAG:5 位 3 开启时洗脑陷落的勇者被自动处刑', async () => {
+test('EVENTTURNEND 接入：FLAG:5 位 3 开启时洗脑陷落的勇者被自动处刑', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -1195,7 +1191,7 @@ test('EVENTTURNEND 接线：FLAG:5 位 3 开启时洗脑陷落的勇者被自动
   fixture.store.set('base:31:1', 1000);
   fixture.store.set('maxbase:31:1', 1000);
   fixture.store.set('flag:5', 8); // 勇者自动处刑 ON
-  // 金钱不变量（@DEBUG_CHECK 的判据，见 event-turnend.test.js 的 setup 说明）
+  // 金钱不变量（debug_check 的条件，见 event-turnend.test.js 的 setup 说明）
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
   fixture.load_module('event/event-turnend');
@@ -1223,7 +1219,7 @@ test('EVENTTURNEND 接线：FLAG:5 位 3 开启时洗脑陷落的勇者被自动
   );
 });
 
-test('EVENTTURNEND 接线：开关关闭时不处刑', async () => {
+test('EVENTTURNEND 接入：开关关闭时不处刑', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);

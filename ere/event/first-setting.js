@@ -1,21 +1,21 @@
 /**
- * @file 开局设置 @FIRST_SETTING（issue #463 起全量实现，除丽塔/卡拉隐藏分支）。
+ * @file 开局设置 first_setting（issue #463 起全量实现，除丽塔/卡拉隐藏分支）。
  *
- * 原作是一个可反复重选的总菜单（$INPUT_LOOP，:787-941）：玩家可任意顺序
- * 多次修改各问答案，最后点 [100] 决定退出；未点开的问维持 Emuera 零值
+ * 旧引擎里这是一个可反复重选的总菜单：玩家可任意顺序
+ * 多次修改各问答案，最后点 [100] 决定退出；未点开的问维持零值
  * 默认。ask_initial_slave/ask_dungeon_mode（#50/#181）已确立「强制逐问作答、
- * 不做总菜单」的偏离并经审查落地——本票新增的三问延续同一形态，不追加
+ * 不做总菜单」的偏离并经审查实现——这张工单新增的三问延续同一形式，不追加
  * 总菜单：各问单独用一个重问循环强制作答，first_setting() 按固定顺序问完
  * 全部五问。
  *
- * CFLAG:0:16 = -1（初吻对象）在原作四个魔王性别分支与函数入口（:784）写的
+ * CFLAG:0:16 = -1（初吻对象）在四个魔王性别分支与函数入口写的
  * 都是同一个值——挪到 first_setting() 只写一次，语义不变（不引入新行为）。
  *
- * QUE2MK（:785）恒 RETURN 0（SYSTEM_MODEINT.ERB，本票一并落地）：
- * `IF !RESULT`（:786）恒真，:942 起以 `ELSEIF RESULT` 开头的假支路
+ * que2mk 恒 RETURN 0（这张工单一并实现）：
+ * `IF !RESULT`恒真，:942 起以 `ELSEIF RESULT` 开头的假支路
  * （$INPUT_LOOP2）不可达，不移植。
  *
- * [7] 丽塔/卡拉隐藏开关（:841 起，原作连菜单文字都被注释掉）不移植：
+ * [7] 丽塔/卡拉隐藏开关（菜单文字都被注释掉）不移植：
  * 丽塔启动！/卡拉启动！是 MOD SAVEDATA 变量，本项目无 ere 存储（同
  * docs/stub-registry.md「开局设置票」行的既有登记）。
  */
@@ -25,16 +25,16 @@ const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 
 /**
- * @QUE2MK（SYSTEM_MODEINT.ERB:1-2）：恒定函数，非占位——真实翻译源码。
+ * que2mk：恒定函数，非占位——真实翻译源码。
  */
 function que2mk() {
   return 0;
 }
 
 /**
- * 「魔王性别」一问：@FIRST_SETTING RESULT == 0 子问（:855-889）的移植。
+ * 「魔王性别」一问：first_setting 的 RESULT == 0 子问的移植。
  *
- * 无重试豁免——原作本身无效输入即落回总菜单重绘、不作答；本切片强制作答
+ * 无重试豁免——旧引擎本身无效输入即落回总菜单重绘、不作答；本切片强制作答
  * （同 ask_initial_slave 的既有偏离），故循环至有效值。
  *
  * @returns {Promise<number>} 玩家的选择（0 男性/1 女性/2 扶她/3 少年）
@@ -76,11 +76,11 @@ async function ask_maou_sex() {
 }
 
 /**
- * 「肉棒尺寸」一问：@FIRST_SETTING RESULT == 1 子问（:891-898）的移植。
- * 仅当魔王性别 ≠ 女性时由 first_setting() 调用（原作 :800 IF MAOUSEX != 1）。
+ * 「肉棒尺寸」一问：first_setting 的 RESULT == 1 子问的移植。
+ * 仅当魔王性别 ≠ 女性时由 first_setting() 调用（IF MAOUSEX != 1）。
  *
- * @returns {Promise<number>} 玩家的选择（0-4），已写入
- *   chara(0).chara.阴茎的状态（TALENT:0:318，与 CONFIG.ERB 的
+ * @returns {Promise<number>} 玩家的选择，已写入
+ *   chara(0).chara.阴茎的状态（TALENT:0:318，与配置页的
  *   config_penis_you_setting 共用门面）
  */
 async function ask_penis_size() {
@@ -100,7 +100,7 @@ async function ask_penis_size() {
 }
 
 /**
- * 「狂王性别」一问：@FIRST_SETTING RESULT == 2 子问（:900-908）的移植。
+ * 「狂王性别」一问：first_setting 的 RESULT == 2 子问的移植。
  *
  * game.system.狂王性别（FLAG:500）属主 system——event 域裸写会被域检查
  * 判定为新增跨域裸写（tools/domain-ledger.mjs 已冻结、不接受新条目），
@@ -126,21 +126,21 @@ async function ask_kuangwang_sex() {
 }
 
 /**
- * 「初期奴隶」一问：@FIRST_SETTING RESULT == 3 子问（:910-916）的移植。
+ * 「初期奴隶」一问：first_setting 的 RESULT == 3 子问的移植。
  *
- * 原作里这一问是总菜单（:787-941）的一个子分支：无效输入不落笔、
- * 控制流回总菜单重绘。本切片没有总菜单，等价收敛为「重问本题」的循环；
- * 差异（原作可经 [100] 决定跳过此问、留下 FLAG:501 未置）已记录：跳过时
- * Emuera 零值与显式 0 同义，本切片强制作答，两值仍都可达。
+ * 这一问在总菜单里是一个子分支：无效输入不落笔、
+ * 控制流回总菜单重绘。本切片没有总菜单，等价改写为「重问本题」的循环；
+ * 差异（可经 [100] 决定跳过此问、留下 FLAG:501 未置）已记录：跳过时
+ * 零值与显式 0 同义，本切片强制作答，两值仍都可达。
  *
  * 选项渲染遵循按钮约定（PR #30）：正文不写 [编号] 前缀，引擎 showAcc 会
- * 自动拼 `[快捷键] 正文`；accelerator 沿用原作编号 0/1。
+ * 自动拼 `[快捷键] 正文`；accelerator 沿用既有编号 0/1。
  *
  * @returns {Promise<number>} 玩家的选择（0 随机 / 1 村娘），已写入 flag:501
  */
 async function ask_initial_slave() {
   // PRINTL [0] 随机  [1] 村娘 —— 纯文本 + INPUT 改按钮（先例：
-  // page-title.js 的 [0]/[1]）；ere 按钮独占一行，同行排版归 #9。原作无效
+  // page-title.js 的 [0]/[1]）；ere 按钮独占一行，同行排版归 #9。旧引擎里无效
   // 输入经 GOTO INPUT_LOOP 回总菜单重绘，本切片等价为重渲染本题再问。
   for (;;) {
     era.print('初期奴隶：');
@@ -155,12 +155,12 @@ async function ask_initial_slave() {
 }
 
 /**
- * 「地下城模式」一问：@FIRST_SETTING RESULT == 4 子问（:918-924）的移植
- * （#181 H12 加进，#168 裁定 5）。
+ * 「地下城模式」一问：first_setting 的 RESULT == 4 子问的移植
+ * （#181 H12 加进，#168 结论 5）。
  *
- * 与 ask_initial_slave 同形态（总菜单未移植 → 重问循环收敛；[100] 跳过
- * 与显式 0 同义——FLAG:502 的 Emuera 零值就是「普通」模式）。原作菜单行
- * 带开发中标记（:833 `[4] 地下城模式 [锐意制作中]`），问句保持原文语义。
+ * 与 ask_initial_slave 同形式（总菜单未移植 → 重问循环；[100] 跳过
+ * 与显式 0 同义——FLAG:502 的零值就是「普通」模式）。菜单行
+ * 带开发中标记（该选项带「锐意制作中」标注），问句保持原文语义。
  *
  * @returns {Promise<number>} 玩家的选择（0 普通 / 1 2D），已写入 flag:502
  *   （dungeon 属主，走 game 门面）
@@ -180,7 +180,7 @@ async function ask_dungeon_mode() {
 }
 
 /**
- * @FIRST_SETTING（:781-950）：整问答的顺序编排。原作是可反复重选的总
+ * first_setting：整问答的顺序编排。旧引擎里是可反复重选的总
  * 菜单，本切片按固定顺序强制逐问作答一次（偏离依据见文件头）。
  */
 async function first_setting() {

@@ -1,5 +1,5 @@
 /**
- * @file 安息日事件 @SABBATH / @SABBATH_DAY 的行为测试（issue #405）。
+ * @file 安息日事件 sabbath / sabbath_day 的行为测试（issue #405）。
  */
 
 'use strict';
@@ -26,7 +26,7 @@ function seed_world() {
   return fixture;
 }
 
-// —— @SABBATH 守卫 ——
+// —— sabbath 检查 ——
 
 test('SABBATH：非调教状态（CFLAG:1 != 0）直接跳过', async () => {
   const fixture = seed_world();
@@ -74,7 +74,7 @@ test('SABBATH：非淫乱跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-// —— @SABBATH 开场分支与经历分支 ——
+// —— sabbath 开场分支与经历分支 ——
 
 function seed_sabbath_ready(fixture) {
   fixture.store.set('flag:10002', 15);
@@ -296,7 +296,7 @@ test('SABBATH：性交/欲情/耻情点数按肛门+私处求和结算', async (
   );
 });
 
-// —— @SABBATH_DAY 守卫 ——
+// —— sabbath_day 检查 ——
 
 function seed_sabbath_day_ready(fixture) {
   fixture.store.set('flag:10002', 3); // date % 3 === 0
@@ -345,7 +345,7 @@ test('SABBATH_DAY：信仰值不足 40 跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-// —— @SABBATH_DAY 四类题材分派（RAND:4） ——
+// —— sabbath_day 四类题材分派（RAND:4） ——
 
 test('SABBATH_DAY：user=0 且持有「野良犬」道具走兽奸仪式', async () => {
   const fixture = seed_world();
@@ -415,7 +415,7 @@ test('SABBATH_DAY：user=2 持法术（非咒术）且有阅历走圣洁女神�
   assert(fixture.text_lines().includes('唱起了她被人侵犯着的歌词……'));
 });
 
-test('SABBATH_DAY：user=2 且种族匹配大地/大海女神但无法术咒术时落到默认题材（原作死代码，见 event-sabbath.js 文件头）', async () => {
+test('SABBATH_DAY：user=2 且种族匹配大地/大海女神但无法术咒术时落到默认题材（死代码，见 event-sabbath.js 文件头）', async () => {
   const fixture = seed_world();
   const { sabbath_day } = fixture.load_module('event/event-sabbath');
   seed_sabbath_day_ready(fixture);
@@ -425,7 +425,7 @@ test('SABBATH_DAY：user=2 且种族匹配大地/大海女神但无法术咒术�
   fixture.store.set('talent:31:315', 11);
   fixture.store.set('talent:31:17', 1);
 
-  // 入口守卫要求 TALENT:242||TALENT:250，两者都清零时函数在此前已 RETURN 0，
+  // 入口检查要求 TALENT:242||TALENT:250，两者都清零时函数在此前已 RETURN 0，
   // 根本到不了 user===2 的种族分支——不会出现"展示着她的信徒被兽人侵犯的模样"
   assert.equal(await sabbath_day(31, seq([2, 0])), 0);
   assert.deepEqual(fixture.text_lines(), []);
@@ -458,7 +458,7 @@ test('SABBATH_DAY：user=3 直接落到默认题材', async () => {
   );
 });
 
-test('#597：SABBATH_DAY 的仪式播报旁不补空行（:258 是真空行、:260 不是 PRINTL）', async () => {
+test('#597：SABBATH_DAY 的仪式播报旁不补空行（是空行、 不是 PRINTL）', async () => {
   const fixture = seed_world();
   const { sabbath_day } = fixture.load_module('event/event-sabbath');
   seed_sabbath_day_ready(fixture);
@@ -469,10 +469,10 @@ test('#597：SABBATH_DAY 的仪式播报旁不补空行（:258 是真空行、:2
   const blanks = fixture.lines.filter(
     (line) => line.type === 'br' || (line.type === 'text' && line.text === ''),
   );
-  // 源 :258 的 `PRINTL  ` 落在段首、上一行已被上游事件收尾——那一个是真空行
-  assert.equal(blanks.length, 1, '整段只有段首那一个空行（:258）');
+  // `PRINTL  ` 落在段首、上一行已被上一事件收尾——那一个是空行
+  assert.equal(blanks.length, 1, '整段只有段首那一个空行');
   assert.equal(blanks[0].row, 0, '空行就是第一行');
-  // 源 :259 PRINTFORML 之后的 :260 是**空源码行**、没有 PRINTL，故仪式播报
+  // PRINTFORML 之后的是**空源码行**、没有 PRINTL，故仪式播报
   // 之后紧接题材文案，中间不夹空行（#597）
   const index = fixture.lines.findIndex(
     (line) =>

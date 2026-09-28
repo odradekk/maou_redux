@@ -1,16 +1,16 @@
 /**
- * ere/dungeon/dungeon-lvup.js @LVUP + @ST_UP 的行为测试（issue #179，H10）。
+ * ere/dungeon/dungeon-lvup.js lvup + st_up 的行为测试（issue #179，H10）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
  * st_up / lvup 的 rand 参数注入（dungeon-trap.test.js 的 seq/counting 先例）。
  *
  * 验收对应（#179 清单）：
- *   - @LVUP 三条经验曲线（魔王 / 精英翻倍 / 通常勇者）与循环保底多升；
+ *   - lvup 三条经验曲线（魔王 / 精英翻倍 / 通常勇者）与循环保底多升；
  *   - 升级播报与初心者（TALENT:291）到 LV30 的剥离；
- *   - @ST_UP 的等级/攻防增量、RAND:2 二选一、种族补正、DAY >= 100 补强、
+ *   - st_up 的等级/攻防增量、RAND:2 二选一、种族补正、DAY >= 100 补强、
  *     体力/气力上限 +10；
- *   - 接线面的守卫（侵攻中的勇者不升级）在 event-turnend.test.js
- *     （守卫住在调用方 turnend-settle.js）。
+ *   - 接入面的检查（侵攻中的勇者不升级）在 event-turnend.test.js
+ *     （检查逻辑在调用方 turnend-settle.js）。
  */
 
 const assert = require('node:assert/strict');
@@ -48,9 +48,9 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— @ST_UP ——
+// —— st_up ——
 
-test('ST_UP 基础档：等级 +1、攻防各 +1，RAND:2 掷 0 再攻 +1，上限各 +10', () => {
+test('st_up 基础档：等级 +1、攻防各 +1，RAND:2 掷 0 再攻 +1，上限各 +10', () => {
   const fixture = setup_world();
   const { st_up } = load(fixture);
   st_up(1, () => 0);
@@ -69,7 +69,7 @@ test('ST_UP 基础档：等级 +1、攻防各 +1，RAND:2 掷 0 再攻 +1，上�
   assert.equal(fixture.store.get('maxbase:1:1'), 10, '气力上限 +10');
 });
 
-test('ST_UP 的种族补正族：竜族 314=5 攻防各补、矮人 314=11 / 史莱姆 261 只补防、触手 262 只补攻', () => {
+test('st_up 的种族补正族：竜族 314=5 攻防各补、矮人 314=11 / 史莱姆 261 只补防、触手 262 只补攻', () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:314', 5); // 竜族（攻防各 RAND:2）
   fixture.store.set('talent:1:261', 1); // 史莱姆（防 RAND:2）
@@ -86,7 +86,7 @@ test('ST_UP 的种族补正族：竜族 314=5 攻防各补、矮人 314=11 / 史
   assert.equal(fixture.store.get('cflag:1:14'), 3, '防 1 + 竜族 1 + 史莱姆 1');
 });
 
-test('ST_UP 的 DAY >= 100 补强与战术/肌肉型素质（各 RAND:3 / RAND:2）', () => {
+test('st_up 的 DAY >= 100 补强与战术/肌肉型素质（各 RAND:3 / RAND:2）', () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:240', 1); // 战术（攻防各 RAND:3）
   fixture.store.set('talent:1:248', 1); // 肌肉型（攻防各 RAND:2）
@@ -108,9 +108,9 @@ test('ST_UP 的 DAY >= 100 补强与战术/肌肉型素质（各 RAND:3 / RAND:2
   );
 });
 
-// —— @LVUP ——
+// —— lvup ——
 
-test('LVUP 通常勇者曲线：LV*10+10，够一级升一级并扣经验、播报一行', () => {
+test('lvup 通常勇者曲线：LV*10+10，够一级升一级并扣经验、播报一行', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:9', 3); // LV3 → 必要 40
   fixture.store.set('exp:1:80', 45); // 够一级（剩 5，不够二级 50）
@@ -126,7 +126,7 @@ test('LVUP 通常勇者曲线：LV*10+10，够一级升一级并扣经验、播�
   );
 });
 
-test('LVUP 循环多升：经验充足时连升、曲线随等级重算', () => {
+test('lvup 循环多升：经验充足时连升、曲线随等级重算', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:9', 1); // LV1→2 需 20、LV2→3 需 30
   fixture.store.set('exp:1:80', 50); // 20 + 30 = 50 恰好两级
@@ -137,7 +137,7 @@ test('LVUP 循环多升：经验充足时连升、曲线随等级重算', () => 
   assert.equal(fixture.store.get('exp:1:80'), 0);
 });
 
-test('LVUP 精英曲线（TALENT:220）：LV*20+10（勇者两倍）', () => {
+test('lvup 精英曲线（TALENT:220）：LV*20+10（勇者两倍）', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:9', 3);
   fixture.store.set('talent:1:220', 1);
@@ -155,7 +155,7 @@ test('LVUP 精英曲线（TALENT:220）：LV*20+10（勇者两倍）', () => {
   );
 });
 
-test('LVUP 魔王曲线（cid 0）：与通常同式（代码为准，注释 LV*100 失真）', () => {
+test('lvup 魔王曲线（cid 0）：与通常同式（代码为准，注释 LV*100 失真）', () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -176,7 +176,7 @@ test('LVUP 魔王曲线（cid 0）：与通常同式（代码为准，注释 LV*
   assert.equal(fixture.store.get('cflag:0:9'), 6);
 });
 
-test('LVUP 经验不足时不播报、不动等级', () => {
+test('lvup 经验不足时不播报、不动等级', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:9', 2);
   fixture.store.set('exp:1:80', 29); // 需 30，差 1
@@ -193,7 +193,7 @@ test('LVUP 经验不足时不播报、不动等级', () => {
   );
 });
 
-test('LVUP 初心者剥离：TALENT:291 且 LV >= 30 时清 0 并播报成长', () => {
+test('lvup 初心者剥离：TALENT:291 且 LV >= 30 时清 0 并播报成长', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:9', 29);
   fixture.store.set('talent:1:291', 1);
@@ -207,7 +207,7 @@ test('LVUP 初心者剥离：TALENT:291 且 LV >= 30 时清 0 并播报成长', 
   assert(lines.some((l) => l.includes('失去了[初心者]')));
 });
 
-test('LVUP 初心者未到 LV30 不剥离', () => {
+test('lvup 初心者未到 LV30 不剥离', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:9', 29);
   fixture.store.set('talent:1:291', 1);
@@ -217,4 +217,4 @@ test('LVUP 初心者未到 LV30 不剥离', () => {
   assert.equal(fixture.store.get('talent:1:291'), 1);
 });
 
-// —— chara-init 等级段的接入已在 test/chara-init.test.js（ST_UP 真身断言）——
+// —— chara-init 等级段的接入已在 test/chara-init.test.js（st_up 真身断言）——

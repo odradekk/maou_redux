@@ -394,7 +394,7 @@ test('妊娠状态重置区分超乳与普通胸部，并独立清除泌乳和�
   }
 });
 
-test('异常生产部位四种文案与无异常兜底逐一对应', () => {
+test('异常生产部位四种文案与无异常默认逐一对应', () => {
   const cases = [
     ['乳内妊娠', '从巨大的乳房中'],
     ['精巢妊娠', '从巨大的阴囊，通过阴茎'],
@@ -462,9 +462,9 @@ test('临月处理覆盖狂王早退、迎击召回随机两侧与设定位两�
     assert.equal(fixture.store.get('flag:2'), -1);
     assert.equal(view.invasion.状态, setting ? 3 : 10);
     assert.equal(view.invasion.回城标志, callback ? 7 : 0);
-    // CHARA_INFO_CALLBACK 真身已随 #391 接入：本用例两侧都未设等级
-    // （CFLAG:9 恒 0），传送召回一进函数就撞上「等级不够」守卫（:90-93）
-    // 提前 RETURN——只需确认「有没有被调用」，chara_info_callback 自身的
+    // chara_info_callback 真身已随 #391 接入：本用例两侧都未设等级
+    // （CFLAG:9 恒 0），传送召回一进函数就撞上「等级不够」检查
+    // 提前返回——只需确认「有没有被调用」，chara_info_callback 自身的
     // 等级/气力判定与确认流程见 test/chara-info-actions.test.js
     assert.equal(
       fixture.lines_history.some((line) =>
@@ -816,15 +816,15 @@ test('同一预设连续生成两个后代不覆盖，种族字段使用 319/321
     -4,
     seq(new Array(300).fill(0)),
   );
-  // 第二个后代的随机源**不能全 0**：#384 起 CHARA_NAME_DEFINE 是真身，第一个
-  // 后代的 NID 会真的落地（旧存根下不落地，撞不上）。全 0 时第二个后代走
+  // 第二个后代的随机源**不能全 0**：#384 起 chara_name_define 是真身，第一个
+  // 后代的 NID 会真的写入（旧存根下不写入，撞不上）。全 0 时第二个后代走
   // 组合名表恒得 4500、与第一个撞车，而「占满」四条规则在 type 2 上只会再
-  // 判一次 type 2——原作同款死循环。这里只把组合名那一掷（RAND:789）拨到 1，
+  // 判一次 type 2——既有行为里的同款死循环。这里只把组合名那一掷（rand(789)）拨到 1，
   // 其余掷骰保持 0，与 #384 之前的用例语义一致。
   const second = await pregnancy.gb_add_slave(
     1,
     -4,
-    (n) => (n === 789 ? 1 : 0), // 组合名那一掷拨到 1（RAND:789 → 4501，不与 4500 撞）
+    (n) => (n === 789 ? 1 : 0), // 组合名那一掷拨到 1（rand(789) → 4501，不与 4500 撞）
   );
 
   assert.equal(first, 100000);

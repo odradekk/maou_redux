@@ -2,13 +2,13 @@
 // ere/chara/chara-soul-transfer.js、ere/page/page-chara-info.js 的核心判定
 // 与计算函数）＋ ere/kojo/kojo-dungeon-bitch-log.js 的四个 get_look_info
 // 分支（#391 补）。字段与运行方式见 tools/mutation-check.mjs 头注释。desc
-// 里的 M 编号不人工分配，只作引用锚点，但全表必须唯一（#295；M117 曾被
+// 里的 M 编号不人工分配，只作引用编号，但全表必须唯一（#295；M117 曾被
 // 两票撞号，已改正）——重号由 gate_shape 随 --verify 秒级核对。
-// must_mention 按主流写法逐字等于（或为片段于）守护用例的测试名——
+// must_mention 按主流写法逐字等于（或为片段于）盯守用例的测试名——
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 94; // #641 验收 +1（M12910：提升能力按钮编号）；#641 起 -4（M11315–M11317 立绘入口守卫与 M11543 名单守卫随入口删除与 STUBBED_CALLS 机制移除）；#557 +2（M12357/M12358：名册两处漏 await 的重叠检测直接报错条目）；#389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接线、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）；#653 +1（M13260：等级购买播报主语的修复守卫）
+export const COUNT = 94; // #641 验收 +1（M12910：提升能力按钮编号）；#641 起 -4（M11315–M11317 立绘入口检查与 M11543 名单检查随入口删除与 STUBBED_CALLS 机制移除）；#557 +2（M12357/M12358：名册两处漏 await 的重叠检测直接报错条目）；#389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接线、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）；#653 +1（M13260：等级购买播报主语的修复守卫）
 
 export default [
   {
@@ -33,7 +33,7 @@ export default [
       'IS_ABLE_TO_ABILITY_UP：状态 0/7 且有体力则可，2/3 需魔王 LV>=20',
   },
   {
-    desc: 'M7849 IS_ABLE_TO_CLOTH 砍掉状态守卫（侵攻/迎击/苗床中也能换装）',
+    desc: 'M7849 is_able_to_cloth 砍掉状态检查（侵攻/迎击/苗床中也能换装）',
     file: 'ere/chara/chara-info-actions.js',
     find: `  return state === 0 && hp >= 1;`,
     replace: `  return hp >= 1;`,
@@ -69,7 +69,7 @@ export default [
     must_mention: 'CHARA_INFO_UP_LEVEL：三条经验曲线',
   },
   {
-    desc: 'M7853 CHARA_INFO_CALLBACK 砍掉等级差守卫（对不低于魔王的角色也放行传送）',
+    desc: 'M7853 chara_info_callback 砍掉等级差检查（对不低于魔王的角色也放行传送）',
     file: 'ere/chara/chara-info-actions.js',
     find: `  if (target_lv >= master_lv) {`,
     replace: `  if (false) {`,
@@ -82,35 +82,35 @@ export default [
     find: `  era.set(key_b, val_a === undefined ? empty : val_a);`,
     replace: `  era.set(key_b, val_b === undefined ? empty : val_a);`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'SWAP_CHARA：数值表与字符串表双向互换',
+    must_mention: 'swap_chara：数值表与字符串表双向互换',
   },
   {
-    desc: 'M7855 PERSONALOCK 的 [50,58) 段守卫反转折掉 55（只交换调合知识，其余全跳）',
+    desc: 'M7855 personalock 的 [50,58) 段检查反转折掉 55（只交换调合知识，其余全跳）',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `    if (tc === 55) continue;`,
     replace: `    if (tc !== 55) continue;`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'PERSONALOCK：区间左闭右开',
+    must_mention: 'personalock：区间左闭右开',
   },
   {
-    desc: 'M7856 TRANSFERAPP 收尾不再把双方 CFLAG:1 复位为 0',
+    desc: 'M7856 transferapp 收尾不再把双方 CFLAG:1 复位为 0',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `  chara(0).invasion.状态 = 0;
   chara(cid).invasion.状态 = 0;`,
     replace: `  // 变异：不把双方状态复位为 0`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'TRANSFERAPP：等级/攻防互换、双侧状态清零',
+    must_mention: 'transferapp：等级/攻防互换、双侧状态清零',
   },
   {
-    desc: 'M7857 BODYCHECK_MAOU 魔族缺省种族年龄 666 改 667',
+    desc: 'M7857 bodycheck_maou 魔族缺省种族年龄 666 改 667',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `    era.set('cflag:0:452', 666);`,
     replace: `    era.set('cflag:0:452', 667);`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'BODYCHECK_MAOU：种族>0 用 666',
+    must_mention: 'bodycheck_maou：种族>0 用 666',
   },
   {
-    desc: 'M7858 TRANSFER_SOUL 旧错位素质继承支被短路（魔王带着 debuff 转移时不 +1 继承）',
+    desc: 'M7858 transfer_soul 旧错位素质继承支被短路（魔王带着 debuff 转移时不 +1 继承）',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `  if (era.get('ex_talent:0:0')) {
     debuff = (era.get('ex_talent:0:0') || 0) + 1;
@@ -119,26 +119,26 @@ export default [
     debuff = (era.get('ex_talent:0:0') || 0) + 1;
   }`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'TRANSFER_SOUL：错位等级继承',
+    must_mention: 'transfer_soul：错位等级继承',
   },
   {
-    desc: 'M7859 TRANSFER_SOUL 婚姻守卫砍掉未婚臂（601 == 0 的角色错走配偶迁移分支）',
+    desc: 'M7859 transfer_soul 婚姻检查砍掉未婚分支（601 == 0 的角色错走配偶迁移分支）',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `  if ((marriage >= 900 && marriage <= 902) || marriage === 0) {`,
     replace: `  if (marriage >= 900 && marriage <= 902) {`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'TRANSFER_SOUL：确认后返回 0，双重 SWAP 抵消',
+    must_mention: 'transfer_soul：确认后返回 0，双重互换抵消',
   },
   {
-    desc: 'M7860 SOUL_DISLOCATION 命中条件取反（未命中反而降级、命中反而不降）',
+    desc: 'M7860 soul_dislocation 命中条件取反（未命中反而降级、命中反而不降）',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `  if (level && !rand(cap + 1)) {`,
     replace: `  if (level && rand(cap + 1)) {`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'SOUL_DISLOCATION：命中降级',
+    must_mention: 'soul_dislocation：命中降级',
   },
   {
-    desc: 'M7861 SOUL_DISLOCATION 归零康复播报被短路',
+    desc: 'M7861 soul_dislocation 归零康复播报被短路',
     file: 'ere/chara/chara-soul-transfer.js',
     find: `    if (next === 0) {
       era.print(\`\${name_of(cid)}从【\${ex_talentname(0)}】中恢复了\`);
@@ -147,7 +147,7 @@ export default [
       era.print(\`\${name_of(cid)}从【\${ex_talentname(0)}】中恢复了\`);
     }`,
     tests: ['chara-soul-transfer'],
-    must_mention: 'SOUL_DISLOCATION：命中降级，降到 0 时播报康复',
+    must_mention: 'soul_dislocation：命中降级，降到 0 时播报康复',
   },
   {
     desc: 'M7862 show_chara_act 状态 0 徽章条件改 1（可调教角色落到行尾 -F 字面量）',
@@ -203,7 +203,7 @@ export default [
     must_mention:
       'show_chara_act_list：双方都在侵攻/迎击时改走 enemy_compare（按楼层，不是按状态排名）',
   },
-  // —— #393 三动作接线（page-chara-info.js 的 37 行：三个按钮 ＋ 三条返回值分流）——
+  // —— #393 三动作接入（page-chara-info.js 的 37 行：三个按钮 ＋ 三条返回值分流）——
   // 按钮条目杀「快捷键/实参写错」，分流条目杀「0/1 与 2 的分档写错」。
   // 分流的三条各有两个方向：`!== 2 → !== 3`（2 被误当结果上浮）由防御支
   // 用例守（era.input 就地替换喂 2——未渲染按钮的编号进不了引擎渲染层，
@@ -846,7 +846,7 @@ export default [
     tests: ['page-chara-info'],
     must_mention: '[10] 提升能力的按钮编号必须是 10',
   },
-  // —— #653（F7）：等级购买播报主语修复守卫 ——
+  // —— #653（F7）：等级购买播报主语修复检查 ——
   {
     desc: 'M13260 等级购买播报改回写魔王名字（奴隶升级也播「你花费了」）',
     file: 'ere/chara/chara-info-actions.js',

@@ -815,3 +815,32 @@ test('GOHOUBI_REQUEST 兽奸要求：:8075..:8083 是一行，兽名三档（#62
     );
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕（TALENT:85 为模板笔误） ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k1((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 30;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${CID}:331`, 2);
+    f.store.set(`abl:${CID}:16`, 3);
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「哈…不要…摩擦主人的小鸡鸡…变得快乐起来了…嗯」',
+  ]);
+  assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_1 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k1((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 30;
+    f.store.set(`tequip:${CID}:89`, 1); // 兽奸守卫岔去 DOG_KOJO_1（该函数不导出）
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set(`cflag:${CID}:331`, 2);
+    f.store.set(`abl:${CID}:16`, 3);
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「我做……我做就好了吧……」']);
+  assert.equal(fixture.store.get(`cflag:${CID}:331`), 3, 'CFLAG:331 推进到 3');
+});

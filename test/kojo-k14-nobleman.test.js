@@ -595,3 +595,58 @@ test('GOBI 语尾 ARG:0==0 随机三选（rand=0 → 啦。）（返回文字）
   const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
   assert.equal(await gobi_koujo_k14(0, () => 0), '啦。', 'GOBI 默认档首支原文');
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 30;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:331', 2);
+    f.store.set('abl:20:16', 3);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:20:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_14 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 30;
+    f.store.set('tequip:20:89', 1); // 兽奸守卫岔去 DOG_KOJO_14
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:331', 2);
+    f.store.set('abl:20:16', 3);
+  });
+  const { kojo_message_com_14 } = fixture.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:20:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+// —— #688：SELECTCOM 56 交谈无摄像分支首档回正为淫乱（TALENT:76），爱慕二档不再被遮蔽 ——
+
+test('SELECTCOM 56 交谈无摄像分支：首档回正为淫乱（#688），淫乱与爱慕档在口上开关关闭时各命中推进', async () => {
+  const lewd = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 56;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:357', 3);
+    f.store.set('talent:20:76', 1);
+  });
+  const { kojo_message_com_14 } = lewd.load_module('kojo/kojo-k14-nobleman');
+  await kojo_message_com_14(() => 0);
+  assert.deepEqual(lewd.text_lines(), ['']);
+  assert.equal(lewd.store.get('cflag:20:357'), 4, '淫乱首档推进到 4');
+
+  const love = await setup_k14((f, era_flag) => {
+    era_flag.selectcom = 56;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:20:357', 2);
+    f.store.set('talent:20:85', 1);
+  });
+  const mod = love.load_module('kojo/kojo-k14-nobleman');
+  await mod.kojo_message_com_14(() => 0);
+  assert.deepEqual(love.text_lines(), ['']);
+  assert.equal(love.store.get('cflag:20:357'), 3, '爱慕二档推进到 3');
+});

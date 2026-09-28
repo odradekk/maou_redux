@@ -1,6 +1,6 @@
-// 变异条目表切片：#393（N9）婚姻（ere/chara/chara-marriage.js ↔ CHARA_MARRIAGE.ERB）。
+// 变异条目表切片：#393（N9）婚姻（ere/chara/chara-marriage.js）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
-// 分配、只作引用锚点，但全表必须唯一（#295）。
+// 分配、只作引用编号，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 41; // #393 返工 +13；返工二 +2；返工三 +6（M9059-M9064 素质编号与记录码）
 
@@ -12,7 +12,7 @@ export default [
     replace:
       '  if ((era.get(`cflag:${arg}:1`) || 0) === 3) return MARRIAGE_HERO;',
     tests: ['chara-marriage'],
-    must_mention: 'CHECK_ABLE_TO_MARRIAGE：侵攻中单独一档',
+    must_mention: 'check_able_to_marriage：侵攻中单独一档',
   },
   {
     desc: 'M8862 CHECK_ABLE_TO_MARRIAGE 把苗床（7）也算成可结婚',
@@ -20,7 +20,7 @@ export default [
     find: '  if (state !== 0 && state !== 3 && state !== 7) return MARRIAGE_BLOCKED;',
     replace: '  if (state !== 0 && state !== 3) return MARRIAGE_BLOCKED;',
     tests: ['chara-marriage'],
-    must_mention: 'CHECK_ABLE_TO_MARRIAGE：侵攻中单独一档',
+    must_mention: 'check_able_to_marriage：侵攻中单独一档',
   },
   {
     desc: 'M8863 侵攻中的按钮正文由「恋人设定」改成「结婚」',
@@ -28,10 +28,10 @@ export default [
     find: "    print_choice('恋人设定\\u3000', num);",
     replace: "    print_choice('结婚\\u3000', num);",
     tests: ['chara-marriage'],
-    must_mention: 'SHOW_BUTTON_MARRIAGE：不可结婚不渲染',
+    must_mention: 'show_button_marriage：不可结婚不渲染',
   },
   {
-    desc: 'M8864 菜单的「与恋人结婚」判据由 lover > 0 改成 lover >= 0（没恋人也亮）',
+    desc: 'M8864 菜单的「与恋人结婚」条件由 lover > 0 改成 lover >= 0（没恋人也亮）',
     file: 'ere/chara/chara-marriage.js',
     find: "  if (lover > 0) {\n    print_choice('与恋人结婚', SPOUSE_LOVER);",
     replace:
@@ -40,7 +40,7 @@ export default [
     must_mention: '菜单按钮集',
   },
   {
-    desc: 'M8865 野狗的持有判据由 item:22 >= 1 改成 >= 2',
+    desc: 'M8865 野狗的持有条件由 item:22 >= 1 改成 >= 2',
     file: 'ere/chara/chara-marriage.js',
     find: "  if ((era.get('item:22') || 0) >= 1) {\n    print_choice('野狗', SPOUSE_DOG);",
     replace:
@@ -49,7 +49,7 @@ export default [
     must_mention: '菜单按钮集',
   },
   {
-    desc: 'M8866 离婚项的判据由「已婚」改成「未婚」（有配偶时反而点不到）',
+    desc: 'M8866 离婚项的条件由「已婚」改成「未婚」（有配偶时反而点不到）',
     file: 'ere/chara/chara-marriage.js',
     find: "  if (married) {\n    print_choice('离婚', 998);",
     replace: "  if (!married) {\n    print_choice('离婚', 998);",
@@ -66,7 +66,7 @@ export default [
     must_mention: '菜单尾部画出「目前结婚对象」的一行',
   },
   {
-    desc: 'M8868 目前结婚对象：「在故乡等待的伴侣」的素质判据由 315 == 21 改成 == 22',
+    desc: 'M8868 目前结婚对象：「在故乡等待的伴侣」的素质条件由 315 == 21 改成 == 22',
     file: 'ere/chara/chara-marriage.js',
     find: '    if (talent(cid, 315) === 21 || talent(cid, T_HOMETOWN_WIFE)) {',
     replace:
@@ -81,10 +81,10 @@ export default [
     replace:
       '    if ((await enter_lover(arg)) === 2) return 1; // 成功でターンエンド',
     tests: ['chara-marriage'],
-    must_mention: '侵攻中的勇者走 ENTER_LOVER',
+    must_mention: '侵攻中的勇者走 enter_lover',
   },
   {
-    desc: 'M8870 魔王自恋那一档的守卫被删（选 [901] 直接和自己结婚）',
+    desc: 'M8870 魔王自恋那一档的检查被删（选 [901] 直接和自己结婚）',
     file: 'ere/chara/chara-marriage.js',
     find: "      if (arg === 0) {\n        era.print('魔王大人，自恋也是要有限度的啦。');",
     replace:
@@ -95,14 +95,14 @@ export default [
   {
     desc: 'M8871 [903] 与恋人分手时忘了清 CFLAG:606',
     file: 'ere/chara/chara-marriage.js',
-    find: '      chara(arg).dungeon.恋人 = 0; // CFLAG:ARG:606 = 0（dungeon 域）',
+    find: '      chara(arg).dungeon.恋人 = 0; // CFLAG:606 = 0（dungeon 域）',
     replace:
-      '      chara(arg).dungeon.恋人 = 1; // CFLAG:ARG:606 = 0（dungeon 域）',
+      '      chara(arg).dungeon.恋人 = 1; // CFLAG:606 = 0（dungeon 域）',
     tests: ['chara-marriage'],
     must_mention: '[903] 与恋人分手',
   },
   {
-    desc: 'M8872 奴隶子菜单：侵攻中（状态 2）的拒绝判据改成状态 3',
+    desc: 'M8872 奴隶子菜单：侵攻中（状态 2）的拒绝条件改成状态 3',
     file: 'ere/chara/chara-marriage.js',
     find: '    if ((era.get(`cflag:${pick}:1`) || 0) === 2) {\n      era.print(`${name_of(pick)}尚未在支配之下。`);',
     replace:
@@ -111,7 +111,7 @@ export default [
     must_mention: '奴隶子菜单的四条拒绝与返回',
   },
   {
-    desc: 'M8873 奴隶子菜单：选中者已婚的拒绝判据读到 609 上（永远不拦）',
+    desc: 'M8873 奴隶子菜单：选中者已婚的拒绝条件读到 609 上（永远不拦）',
     file: 'ere/chara/chara-marriage.js',
     find: '    if ((era.get(`cflag:${pick}:601`) || 0) !== 0) {\n      era.print(`${name_of(pick)}已婚了。`);',
     replace:
@@ -156,9 +156,9 @@ export default [
   {
     desc: 'M8878 初吻：与你结婚那一档不再记魔王的初吻对象',
     file: 'ere/chara/chara-marriage.js',
-    find: "    if ((era.get('cflag:0:16') ?? 0) === -1) {\n      // 調教者の初吻（NO:ARG + 1）\n      chara(0).train.初吻对象 = arg + 1;",
+    find: "    if ((era.get('cflag:0:16') ?? 0) === -1) {\n      // 調教者の初吻（NO:ARG + 1 编码）\n      chara(0).train.初吻对象 = arg + 1;",
     replace:
-      '    if (false) {\n      // 調教者の初吻（NO:ARG + 1）\n      chara(0).train.初吻对象 = arg + 1;',
+      '    if (false) {\n      // 調教者の初吻（NO:ARG + 1 编码）\n      chara(0).train.初吻对象 = arg + 1;',
     tests: ['chara-marriage'],
     must_mention: '初吻的记录码按对象分档',
   },
@@ -177,9 +177,9 @@ export default [
     replace:
       '  if (state === MARRIAGE_STATE_MARRIED || state === MARRIAGE_STATE_DIVORCED) {',
     tests: ['chara-marriage'],
-    must_mention: 'DIVORCE：重婚（位 3）与再婚（位 4）各回落 20000',
+    must_mention: 'divorce：重婚（位 3）与再婚（位 4）各回落 20000',
   },
-  // —— #393 返工：清旧账段（:266-273）的两侧 ——
+  // —— #393 返工：清旧账段的两侧 ——
   {
     desc: 'M9012 清旧账的门槛由 > 0 改成 > 1（配偶名槽 = 1 时整段不跑）',
     file: 'ere/chara/chara-marriage.js',
@@ -189,7 +189,7 @@ export default [
     must_mention: '婚前清旧账的两侧',
   },
   {
-    desc: 'M9013 清旧账的内层判据整支短路（家族册上找得到人也不离）',
+    desc: 'M9013 清旧账的内层条件整支短路（家族册上找得到人也不离）',
     file: 'ere/chara/chara-marriage.js',
     find: '    if (!(era.get(`ex_talent:${arg}:2`) && found < 0)) {\n      divorce(found);\n    }',
     replace: '    if (false) {\n      divorce(found);\n    }',
@@ -197,7 +197,7 @@ export default [
     must_mention: '婚前清旧账的两侧',
   },
   {
-    desc: 'M9025 已婚守卫由 CFLAG:601 > 0 改成 > 1（登记值 1 时照办婚礼）',
+    desc: 'M9025 已婚检查由 CFLAG:601 > 0 改成 > 1（登记值 1 时照办婚礼）',
     file: 'ere/chara/chara-marriage.js',
     find: '    } else if ((era.get(`cflag:${arg}:601`) || 0) > 0) {',
     replace: '    } else if ((era.get(`cflag:${arg}:601`) || 0) > 1) {',
@@ -222,7 +222,7 @@ export default [
     must_mention: '取家族册上的名字',
   },
   {
-    desc: 'M9032 魔王配偶的判据由相等改成不等（普通婚礼显示成「你」）',
+    desc: 'M9032 魔王配偶的判断由相等改成不等（普通婚礼显示成「你」）',
     file: 'ere/chara/chara-marriage.js',
     find: `  if ((era.get('cflag:0:601') || 0) === (era.get(\`cflag:\${cid}:6\`) || 0)) {`,
     replace: `  if ((era.get('cflag:0:601') || 0) !== (era.get(\`cflag:\${cid}:6\`) || 0)) {`,
@@ -300,12 +300,12 @@ export default [
     must_mention: '翻页边界',
   },
   {
-    desc: 'M9059 特殊服装判据由 79 改成 80',
+    desc: 'M9059 特殊服装条件由 79 改成 80',
     file: 'ere/chara/chara-marriage.js',
     find: 'const CLOTH_SEX_MARK = 79;',
     replace: 'const CLOTH_SEX_MARK = 80;',
     tests: ['chara-marriage'],
-    must_mention: '处女丧失的四道守卫',
+    must_mention: '处女丧失的四道检查',
   },
   {
     desc: 'M9060 故乡妻子的素质由 157 改成 158',
@@ -364,11 +364,11 @@ export default [
     must_mention: '清旧账',
   },
   {
-    desc: 'M9041 处女丧失的素质 273 守卫由「非零」改成「等于 1」',
+    desc: 'M9041 处女丧失的素质 273 检查由「非零」改成「等于 1」',
     file: 'ere/chara/chara-marriage.js',
     find: '    talent(arg, 273) !== 0 ||',
     replace: '    talent(arg, 273) !== 1 ||',
     tests: ['chara-marriage'],
-    must_mention: '处女丧失的四道守卫',
+    must_mention: '处女丧失的四道检查',
   },
 ];

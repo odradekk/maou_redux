@@ -3625,6 +3625,16 @@ test('DOG_KOJO_8 SC43 眼罩 終了時·牝犬：正常触发，CFLAG:444 推进
   assert.equal(fixture.store.get('cflag:31:444'), 4, 'CFLAG:444 推进到 4');
 });
 
+test('DOG_KOJO_8 SC43 眼罩 終了時·それ以外：CFLAG:444 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 43;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:444'), 1, 'CFLAG:444 推进到 1');
+});
+
 test('DOG_KOJO_8 SC56 会話 初めて·无摄像（TEQUIP:53 == 0）：不打印任何文本，CFLAG:357 仍推进到 1', async () => {
   const fixture = await setup_k8((f, ef) => {
     ef.selectcom = 56;
@@ -5402,4 +5412,33 @@ test('GOBI：默认支（含 ARG:0==0）三选一，前两支同文（返回文�
     '什么啊。',
     'ARG:0 不在 1-5 内也走默认支',
   );
+});
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+  }, 30);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「这样就好了吗？………呵呵呵、真的露出了好像很舒服似的脸啊、你」',
+    '银黑桃一边舔着嘴唇，一边侍奉着你的阴茎………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_8 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+    ef.selectcom = 30;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
 });

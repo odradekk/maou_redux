@@ -1,19 +1,19 @@
 // 变异条目表切片：ere/dungeon/（迷宫主循环与队伍编组，#172 H3）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 305; // #641 起 -2+1（M6743/M6881 名单复辟守卫随 STUBBED_CALLS 机制移除；+1 M12906 LABO 战斗删除守卫）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 守卫）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 305; // #641 起 -2+1（M6743/M6881 名单复辟检查随 STUBBED_CALLS 机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
-// 男人位判据、欲望门槛、睡着分支文案；M11489：挑战臂漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
+// 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
-// 计数、全员取消派遣判据、三个 FLAG:400 早退守卫、MONSTER_LIST 的两处
+// 计数、全员取消派遣判断条件、三个 FLAG:400 早退检查、MONSTER_LIST 的两处
 // whenMissing 骸骨缺省）；#484 起 +3（M10620/M10621 再起点分支的 CFLAG:520
-// 写点：门面名与目标值；M10622 体力富余臂的 CFLAG:520 写值，交付前
+// 写点：门面名与目标值；M10622 体力富余分支的 CFLAG:520 写值，交付前
 // 十项区分力抽查的补位项）；#500 起 +13（M10713-M10725，四个 _AUTO 变体的
-// 九处调用点接线：退回占位按调用点各一条、调错变体按变体各一条——号段见
+// 九处调用点接入：退回占位按调用点各一条、调错变体按变体各一条——号段见
 // #500 完成报告）；#508 起 +1（M11007，source_check_auto 的 UPCHECK 等价步）
 
 export default [
@@ -45,17 +45,17 @@ export default [
     must_mention: '八次踏破后到达第 9 层',
   },
   {
-    desc: 'M378 ENDING_2 接入条件取反（TALENT:122 == 0 → != 0：真勇者反而不进结局）',
+    desc: 'M378 ending_2 接入条件取反（TALENT:122 == 0 → != 0：真勇者反而不进结局）',
     file: 'ere/dungeon/dungeon.js',
     find: '          if ((era.get(`talent:${arg0}:122`) || 0) === 0) {',
     replace: '          if ((era.get(`talent:${arg0}:122`) || 0) !== 0) {',
     tests: ['dungeon-main'],
     // must_mention 随 #173 的用例翻修同步：贯通用例断言从「接入存根」改为
-    // 「quit 炸穿」（ENDING_2 真身落地），锚串换新断言消息（#133 先例）
+    // 「quit 炸穿」（ENDING_2 真身实现），定位串换新断言消息（#133 先例）
     must_mention: 'QUIT 异常炸穿',
   },
   {
-    desc: 'M379 冒险者回头臂的挫折记忆改坏（507 = 1 删——撤退标志不立）',
+    desc: 'M379 冒险者回头分支的挫折记忆改坏（507 = 1 删——撤退标志不立）',
     file: 'ere/dungeon/dungeon.js',
     find: `              era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
               era.print('再次鼓起勇气来到这里可能会花些时间了。');
@@ -92,7 +92,7 @@ export default [
     must_mention: 'CFLAG:507 = 0',
   },
   {
-    desc: 'M383 GET_DOWN_ENEMY 充公删坏（MONEY 不加算）',
+    desc: 'M383 get_down_enemy 充公删坏（MONEY 不加算）',
     file: 'ere/dungeon/dungeon.js',
     find: `  const gain = Math.floor(chara(arg0).dungeon.所持金 / 100);
   era_flag.money += gain;
@@ -103,7 +103,7 @@ export default [
     must_mention: 'MONEY += 580/100',
   },
   {
-    desc: 'M384 CHECK_STATUS 首分支阈值改坏（S1_HP 60 → 40：半血不再判轻伤）',
+    desc: 'M384 check_status 首分支阈值改坏（S1_HP 60 → 40：半血不再判轻伤）',
     file: 'ere/dungeon/dungeon.js',
     find: '  if (hp_pct < 60 || wp_pct < 50) {',
     replace: '  if (hp_pct < 40 || wp_pct < 50) {',
@@ -111,7 +111,7 @@ export default [
     must_mention: '状态档 2（轻伤）',
   },
   {
-    desc: 'M385 PARTY_UNITE 队长核对删坏（同伴不再置行动完了）',
+    desc: 'M385 party_unite 队长核对删坏（同伴不再置行动完了）',
     file: 'ere/dungeon/dungeon-party.js',
     find: `        if (leader === charid) {
           // 合っていたら行動終了になる（同伴以行动完了追随队长）
@@ -123,7 +123,7 @@ export default [
     must_mention: '引用正确的同伴置行动完了',
   },
   {
-    desc: 'M386 SEARCH_FREE 同层判定改坏（阶层过滤删——异层勇者被吸收）',
+    desc: 'M386 search_free 同层判定改坏（阶层过滤删——异层勇者被吸收）',
     file: 'ere/dungeon/dungeon-party.js',
     find: `    // 同階層以外を除く（CFLAG:501 侵攻阶层）
     if (floor !== (era.get(\`cflag:\${charid}:501\`) || 0)) {
@@ -134,7 +134,7 @@ export default [
     must_mention: '不同层的布莱克被跳过',
   },
   {
-    desc: 'M387 PARTY_DEL 队长解散复位删坏（533 不清）',
+    desc: 'M387 party_del 队长解散复位删坏（533 不清）',
     file: 'ere/dungeon/dungeon-party.js',
     find: `    era.set(\`cflag:\${leader}:530\`, 0);
     era.set(\`cflag:\${leader}:531\`, 0);
@@ -158,7 +158,7 @@ export default [
     must_mention: '队长 1:533 清零',
   },
   {
-    desc: 'M388 GET_JUNK_ITEM 阶层乘算删坏（LOCAL *= CFLAG:501 删）',
+    desc: 'M388 get_junk_item 阶层乘算删坏（LOCAL *= CFLAG:501 删）',
     file: 'ere/dungeon/dungeon.js',
     find: '  // LOCAL *= CFLAG:ARG:501（阶层）\n  local *= chara(cid).dungeon.侵攻阶层;',
     replace: '  // LOCAL *= CFLAG:ARG:501（阶层）——变异：乘算删除',
@@ -167,7 +167,7 @@ export default [
   },
   // —— #173（H4）：ENDING_2 贯通终点的演出行（M446）——
   {
-    desc: 'M446 魔王房间演出行删除（:200「这里是魔王的房间………」）',
+    desc: 'M446 魔王房间演出行删除（「这里是魔王的房间………」）',
     file: 'ere/dungeon/dungeon.js',
     find: "          era.print('这里是魔王的房间………');",
     replace: '          // 变异：魔王房间演出删',
@@ -176,16 +176,16 @@ export default [
   },
   // —— #175（H6）：迷宫战斗（M480-M487）——
   {
-    desc: 'M480 勇者臂的战斗调用删除（dungeon_party_battle 不再发生）',
+    desc: 'M480 勇者分支的战斗调用删除（dungeon_party_battle 不再发生）',
     file: 'ere/dungeon/dungeon.js',
     find: '        // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）\n        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される\n        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);',
     replace:
-      '        // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）\n        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される\n        // 变异：勇者臂的战斗调用删（勇者不遇敌、不掉气力）',
+      '        // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）\n        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される\n        // 变异：勇者分支的战斗调用删（勇者不遇敌、不掉气力）',
     tests: ['dungeon-main', 'dungeon-battle'],
     must_mention: '真身态实际进入过战斗',
   },
   {
-    desc: 'M481 DEATH_CHECK 投降臂的陷落写入删（CFLAG:1 = 0 不写）',
+    desc: 'M481 death_check 投降分支的陷落写入删（CFLAG:1 = 0 不写）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `    era.print(\`\${name_of(arg0)}感觉到生命垂危，投降求饶了。\`);
     chara(arg0).invasion.状态 = 0;
@@ -197,7 +197,7 @@ export default [
     must_mention: '投降（CFLAG:1 = 0）',
   },
   {
-    desc: 'M482 DEATH_CHECK2 勇者侧退场的陷落写入删',
+    desc: 'M482 death_check2 勇者侧退场的陷落写入删',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: `    era.print(\`\${name_of(arg1)}最终在潮湿的地下城中用尽了最后的气力。\`);
     chara(arg1).invasion.状态 = 0;
@@ -209,7 +209,7 @@ export default [
     must_mention: '勇者 CFLAG:1 = 0',
   },
   {
-    desc: 'M483 SPY 迎击入口删除（CFLAG:1 == 3 的提前返回内不再调 dungeon_spy）',
+    desc: 'M483 dungeon_spy 迎击入口删除（CFLAG:1 == 3 的提前返回内不再调 dungeon_spy）',
     file: 'ere/dungeon/dungeon.js',
     find: `    if (chara(arg0).invasion.状态 === 3) {
       await battle2_mod.dungeon_spy(arg0, rand_n);
@@ -233,7 +233,7 @@ export default [
     must_mention: '等级 = 基础 1 + 4',
   },
   {
-    desc: 'M485 BATTLE2 的败者号传参坏（loser 恒 0）',
+    desc: 'M485 dungeon_battle2_party 的败者号传参坏（loser 恒 0）',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: `  if (chara(enemy).invasion.状态 === 0) {
     return { result: 2, loser: enemy };
@@ -245,7 +245,7 @@ export default [
     must_mention: '败者号 = 勇者 2',
   },
   {
-    desc: 'M487 BATTLE2 勇者退场的 result 分流坏（return 2 → 0）',
+    desc: 'M487 dungeon_battle2_party 勇者退场的 result 分流坏（return 2 → 0）',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: `  if (chara(enemy).invasion.状态 === 0) {
     return { result: 2, loser: enemy };
@@ -257,7 +257,7 @@ export default [
     must_mention: '勇者被打退',
   },
 
-  // —— #176 H7 陷阱（ere/dungeon/dungeon-trap.js 与 dungeon.js 的接线）——
+  // —— #176 H7 陷阱（ere/dungeon/dungeon-trap.js 与 dungeon.js 的接入）——
   {
     desc: 'M540 陷阱 A 槽基址错位（+299 → +300：槽寻位读空列）',
     file: 'ere/dungeon/dungeon-trap.js',
@@ -276,24 +276,24 @@ export default [
     must_mention: '回避演出',
   },
   {
-    desc: 'M542 陷阱消耗守卫改坏（TRAP_NOUSE == 0 → != 0：未作动反消耗）',
+    desc: 'M542 陷阱消耗检查改坏（TRAP_NOUSE == 0 → != 0：未作动反消耗）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '        trap_nouse === 0 &&\n        place === 2\n      ) {',
     replace:
-      '        trap_nouse !== 0 &&\n        place === 2\n      ) { // 变异：消耗守卫反',
+      '        trap_nouse !== 0 &&\n        place === 2\n      ) { // 变异：消耗检查反',
     tests: ['dungeon-trap'],
     must_mention: '作动消耗一个库存',
   },
   {
-    desc: 'M543 TRAP_PRICE 价格表错（63 号 100 → 101）',
+    desc: 'M543 trap_price 价格表错（63 号 100 → 101）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '    63: 100,',
     replace: '    63: 101, // 变异：价格错',
     tests: ['dungeon-trap'],
-    must_mention: 'TRAP_PRICE(63) 应为 100',
+    must_mention: 'trap_price(63) 应为 100',
   },
   {
-    desc: 'M544 PIT 重伤档的两倍伤害删（dice *= 2）',
+    desc: 'M544 pit_trap 重伤档的两倍伤害删（dice *= 2）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '    dice = rand_n(40) + diff * 10 + 1;\n    dice *= 2;',
     replace: '    dice = rand_n(40) + diff * 10 + 1; // 变异：两倍伤害删',
@@ -301,24 +301,24 @@ export default [
     must_mention: '要害两倍伤害',
   },
   {
-    desc: 'M545 TELEPORT 的侵攻度写回删（ctx.d20 = 1 的起点档）',
+    desc: 'M545 teleport_trap 的侵攻度写回删（ctx.d20 = 1 的起点档）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '    ctx.d20 = 1; // D:20 = 1',
-    replace: '    // 变异：ctx.d20 = 1 删（:330）',
+    replace: '    // 变异：ctx.d20 = 1 删',
     tests: ['dungeon-trap'],
-    must_mention: 'D:20 = 1（:330）',
+    must_mention: 'D:20 = 1',
   },
   {
-    desc: 'M546 SHOOT 的下坠一层删（侵攻阶层 += 1）',
+    desc: 'M546 shoot_trap 的下坠一层删（侵攻阶层 += 1）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '    chara(a).dungeon.侵攻阶层 += 1;\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
     replace:
       '    // 变异：侵攻阶层 += 1 删\n    if (show) {\n      era.print(`掉到了下一层，${name}迷路了…`);',
     tests: ['dungeon-trap'],
-    must_mention: '下坠一层（:1066）',
+    must_mention: '下坠一层',
   },
   {
-    desc: 'M547 SUCCUBUS 的百合经验档删（EXP:40 += 6）',
+    desc: 'M547 succubus_trap 的百合经验档删（EXP:40 += 6）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '    if (yuri) {\n      chara(a).train.百合经验 += 6; // EXP:A:40（train 域门面）\n    }',
     replace:
@@ -333,7 +333,7 @@ export default [
     replace:
       '          // 变异：金库扣款删\n          era_exflag.legit_money -= price;',
     tests: ['dungeon-trap'],
-    must_mention: 'MONEY -= TRAP_PRICE（:175）',
+    must_mention: 'MONEY -= trap_price',
   },
   {
     desc: 'M549 诈骗剧情3 的双倍欠条改坏（582 -= COST×2 → -= COST）',
@@ -341,31 +341,31 @@ export default [
     find: '  chara(a).patch.借款 -= cost * 2; // CFLAG:582（patch 域门面「借款」）',
     replace: '  chara(a).patch.借款 -= cost; // 变异：双倍欠条改单倍',
     tests: ['dungeon-trap'],
-    must_mention: '债务 COST×2（:231）',
+    must_mention: '债务 COST×2',
   },
   {
-    desc: 'M550 SLAVE_TRAP_SET 的补充增量删（stock + 1 → stock）',
+    desc: 'M550 slave_trap_set 的补充增量删（stock + 1 → stock）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '      if (stock > 0 && stock < 99) {\n        era.set(`item:${trap_id}`, stock + 1);\n      }',
     replace:
       '      if (stock > 0 && stock < 99) {\n        era.set(`item:${trap_id}`, stock); // 变异：补充增量删\n      }',
     tests: ['dungeon-trap'],
-    must_mention: '库存 5 → 补 1（:1440）',
+    must_mention: '库存 5 → 补 1',
   },
   {
     desc: 'M551 dungeon.js 的 D:20 收线删（walk20 = trap_ctx.d20）',
     file: 'ere/dungeon/dungeon.js',
-    find: '    // TELEPORT 的 D:20 写回（:330/:335）——:748 的 CFLAG:502 = D:20 用它\n    walk20 = trap_ctx.d20;',
+    find: '    // teleport_trap 的 D:20 写回——移動反映段的 CFLAG:502 = D:20 用它\n    walk20 = trap_ctx.d20;',
     replace:
-      '    // TELEPORT 的 D:20 写回（:330/:335）——变异：收线删\n    // walk20 = trap_ctx.d20;',
+      '    // teleport_trap 的 D:20 写回——变异：收线删\n    // walk20 = trap_ctx.d20;',
     tests: ['dungeon-trap'],
-    must_mention: 'CFLAG:502 = D:20 = 1（:748）',
+    must_mention: 'CFLAG:502 = D:20 = 1',
   },
-  // —— #181（H12 2D 地下城）：LABO 三文件 + FIRST_SETTING 一问 + turnend
+  // —— #181（H12 2D 地下城）：LABO 三文件 + first_setting 一问 + turnend
   //    else 分支。M580 起编（#182/#185/#176/#180 占 M500/M520/M540/M560 段）——
 
   {
-    desc: 'M580 余弦系数表偏移 1 改坏（4 → 5：三条插值曲线的起点权重漂移）',
+    desc: 'M580 余弦系数表偏移 1 改坏（4 → 5：三条插值曲线的起点权重偏移）',
     file: 'ere/dungeon/labo.js',
     find: 'const COS_TABLE = { 1: 4, 2: 15, 3: 31, 4: 50, 5: 69, 6: 85, 7: 96 };',
     replace:
@@ -374,7 +374,7 @@ export default [
     must_mention: '负差向零截断',
   },
   {
-    desc: 'M581 GEO_CALC_INTERP 的对角项分母改坏（10000 → 1000：块内插值的交叉项放大十倍）',
+    desc: 'M581 geo_calc_interp 的对角项分母改坏（10000 → 1000：块内插值的交叉项放大十倍）',
     file: 'ere/dungeon/labo.js',
     find: '    idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +',
     replace:
@@ -383,7 +383,7 @@ export default [
     must_mention: '对称四角的中心值',
   },
   {
-    desc: 'M582 GEO_TEST 点阵写入的维度转置（da[y][x] → da[x][y]：行主序破坏）',
+    desc: 'M582 geo_test 点阵写入的维度转置（da[y][x] → da[x][y]：行主序破坏）',
     file: 'ere/dungeon/labo.js',
     find: '      da_set(y, x, rand_n(256)); // ランダマイズ',
     replace:
@@ -392,7 +392,7 @@ export default [
     must_mention: '第一行第 5 个点',
   },
   {
-    desc: 'M583 MON_CHECK 的兵力阈值改坏（> 20 → >= 20：兵力恰 20 的怪物凭空在场）',
+    desc: 'M583 mon_check 的兵力阈值改坏（> 20 → >= 20：兵力恰 20 的怪物凭空在场）',
     file: 'ere/dungeon/labo-map.js',
     find: '  if (troops > 20) {',
     replace: '  if (troops >= 20) { // 变异：阈值 > 20 → >= 20',
@@ -400,7 +400,7 @@ export default [
     must_mention: '兵力 20 不满足',
   },
   {
-    desc: 'M584 UNIT_MOVE 的中心判定偏移（16,16 → 15,16：魔王城挪一格，2D 路径到不了终点）',
+    desc: 'M584 unit_move 的中心判定偏移（16,16 → 15,16：魔王城挪一格，2D 路径到不了终点）',
     file: 'ere/dungeon/labo-dungeon-map.js',
     find: '  if (mx === 16 && my === 16) {',
     replace: '  if (mx === 15 && my === 16) { // 变异：中心判定偏移一格',
@@ -408,7 +408,7 @@ export default [
     must_mention: '炸穿 unit_move',
   },
   {
-    desc: 'M585 DUNGEON_MAP 的侵攻度写回改坏（D:20 丢失——2D 单位的推进状态不再持久）',
+    desc: 'M585 dungeon_map 的侵攻度写回改坏（D:20 丢失——2D 单位的推进状态不再持久）',
     file: 'ere/dungeon/labo-dungeon-map.js',
     find: '  chara(a).event.侵攻度 = walk20;',
     replace: '  chara(a).event.侵攻度 = 0; // 变异：写回值丢成 0',
@@ -447,7 +447,7 @@ export default [
     must_mention: '正向差：0 + trunc',
   },
   {
-    desc: 'M587 FIRST_SETTING 地下城模式一问的置位蒸发（FLAG:502 恒 0——2D 模式不可达）',
+    desc: 'M587 first_setting 地下城模式一问的置位蒸发（FLAG:502 恒 0——2D 模式不可达）',
     file: 'ere/event/first-setting.js',
     find: '      game.dungeon.迷宫模式 = result; // FLAG:502 = RESULT',
     replace:
@@ -460,12 +460,12 @@ export default [
     desc: 'M620 升级检查删（place !== 2 改恒真——侵攻中的勇者也升级）',
     file: 'ere/system/turnend-settle.js',
     find: '    if (place !== 2) {',
-    replace: '    if (true) { // 变异：守卫删',
+    replace: '    if (true) { // 变异：检查删',
     tests: ['event-turnend'],
-    must_mention: 'SIF CFLAG:A:1 != 2 守卫',
+    must_mention: '升级检查（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级',
   },
   {
-    desc: 'M621 LVUP 精英曲线翻倍删（LV*20+10 → LV*10+10）',
+    desc: 'M621 lvup 精英曲线翻倍删（LV*20+10 → LV*10+10）',
     file: 'ere/dungeon/dungeon-lvup.js',
     find: '      need = local0 * 2 + 10;',
     replace: '      need = local0; // 变异：精英翻倍删',
@@ -473,7 +473,7 @@ export default [
     must_mention: '勇者两倍',
   },
   {
-    desc: 'M622 ST_UP 基础攻防增量删（各 +1）',
+    desc: 'M622 st_up 基础攻防增量删（各 +1）',
     file: 'ere/dungeon/dungeon-lvup.js',
     find: '  chara(cid).chara.基础攻击 += 1; // CFLAG:13\n  chara(cid).chara.基础防御 += 1; // CFLAG:14',
     replace:
@@ -482,7 +482,7 @@ export default [
     must_mention: '基础攻击 1 + RAND:2=0 的 1',
   },
   {
-    desc: 'M623 ST_UP 的体力/气力上限 +10 删',
+    desc: 'M623 st_up 的体力/气力上限 +10 删',
     file: 'ere/dungeon/dungeon-lvup.js',
     find: '  era.add(`maxbase:${cid}:0`, 10);\n  era.add(`maxbase:${cid}:1`, 10);',
     replace:
@@ -491,7 +491,7 @@ export default [
     must_mention: '体力上限 +10',
   },
   {
-    desc: 'M624 LVUP 初心者剥离删（TALENT:291 清 0 改坏）',
+    desc: 'M624 lvup 初心者剥离删（TALENT:291 清 0 改坏）',
     file: 'ere/dungeon/dungeon-lvup.js',
     find: '    chara(cid).chara.初心者 = 0; // TALENT:291（chara 域门面）',
     replace: '    // 变异：初心者剥离删',
@@ -499,23 +499,23 @@ export default [
     must_mention: '失去初心者',
   },
   {
-    desc: 'M625 DUNGEON_AFTER 奖赏臂分派改坏（状态 5 改 7）',
+    desc: 'M625 dungeon_after 奖赏分支分派改坏（状态 5 改 7）',
     file: 'ere/dungeon/dungeon-after.js',
     find: '  if (chara(cid).invasion.状态 === 5) {',
     replace: '  if (chara(cid).invasion.状态 === 7) { // 变异：分派改坏',
     tests: ['dungeon-after', 'event-turnend'],
-    must_mention: 'CFLAG:1 == 5 → 奖赏臂',
+    must_mention: 'CFLAG:1 == 5 → 奖赏分支',
   },
   {
-    desc: 'M626 DUNGEON_AFTER 惩罚臂分派改坏（状态 6 改 7）',
+    desc: 'M626 dungeon_after 惩罚分支分派改坏（状态 6 改 7）',
     file: 'ere/dungeon/dungeon-after.js',
     find: '  } else if (chara(cid).invasion.状态 === 6) {',
     replace: '  } else if (chara(cid).invasion.状态 === 7) { // 变异：分派改坏',
     tests: ['dungeon-after', 'event-turnend'],
-    must_mention: 'CFLAG:1 == 6 → 惩罚臂',
+    must_mention: 'CFLAG:1 == 6 → 惩罚分支',
   },
   {
-    desc: 'M627 GOHOUBI 金币档的金库扣款删（MONEY 与非作弊资金）',
+    desc: 'M627 gohoubi 金币档的金库扣款删（MONEY 与非作弊资金）',
     file: 'ere/dungeon/dungeon-after.js',
     find: '        era_flag.money -= lv * 100;\n        era_exflag.legit_money -= lv * 100; // EX_FLAG:4444 非作弊资金',
     replace:
@@ -524,7 +524,7 @@ export default [
     must_mention: 'MONEY -= 500',
   },
   {
-    desc: 'M628 OSIOKI 电椅刑恍惚臂的屈服点数删（JUEL:6 加算）',
+    desc: 'M628 osioski 电椅刑恍惚分支的屈服点数删（JUEL:6 加算）',
     file: 'ere/dungeon/dungeon-after.js',
     find: '      era.print(`屈服点数+${local11}`);\n      await era.waitAnyKey();\n      era.add(`juel:${cid}:6`, local11); // JUEL:6 屈服\n    } else {\n      era.print(`${name}哭叫着，在电击的痛苦中漏出了小便。`);',
     replace:
@@ -558,7 +558,7 @@ export default [
     must_mention: '150 → 钳 100 → -2',
   },
   {
-    desc: 'M632 CHARA_INIT 等级段的逐级 ST_UP 删（循环体空转）',
+    desc: 'M632 char_init 等级段的逐级 st_up 删（循环体空转）',
     file: 'ere/chara/chara-init.js',
     find: '    for (let i = 0; i < lv; i += 1) {\n      st_up(cid, rand_n);\n    }',
     replace:
@@ -568,7 +568,7 @@ export default [
   },
   // —— #177（H8）：迷宫房间与设施（M600-M619 + M633/M634）——
   {
-    desc: 'M600 ROOM 分发·店遭遇的 RESULT 1 改坏（战斗照发生）',
+    desc: 'M600 dungeon_room 分发·店遭遇的 RESULT 1 改坏（战斗照发生）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '    await dungeon_shop_itemsell(arg0, rand_n);\n    return 1;',
     replace:
@@ -577,7 +577,7 @@ export default [
     must_mention: 'RESULT 1 = 戦闘が発生しないフラグ',
   },
   {
-    desc: 'M601 ROOM 分发·店遭遇掷删（RAND:10 == 0 恒不中）',
+    desc: 'M601 dungeon_room 分发·店遭遇掷删（RAND:10 == 0 恒不中）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  if (rand_n(10) === 0) {\n    await dungeon_shop_itemsell(arg0, rand_n);',
     replace:
@@ -586,7 +586,7 @@ export default [
     must_mention: 'RESULT 1 = 戦闘が発生しないフラグ',
   },
   {
-    desc: 'M602 SWAMP 的伤害基数 +10 删（DMG 少 10 点）',
+    desc: 'M602 dungeon_swamp 的伤害基数 +10 删（DMG 少 10 点）',
     file: 'ere/dungeon/dungeon-room.js',
     find: "  let dmg = (era.get('cflag:0:9') || 0) + 10;",
     replace: "  let dmg = era.get('cflag:0:9') || 0; // 变异：+10 删",
@@ -594,7 +594,7 @@ export default [
     must_mention: 'DMG = 0（魔王等级）+ 10',
   },
   {
-    desc: 'M603 ICE 的攻击衰减改坏（×9/10 → ×10/10 不衰减）',
+    desc: 'M603 dungeon_ice 的攻击衰减改坏（×9/10 → ×10/10 不衰减）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  const atk = era.get(`cflag:${a}:11`) || 0;\n  era.set(`cflag:${a}:11`, Math.floor((atk * 9) / 10));',
     replace:
@@ -603,7 +603,7 @@ export default [
     must_mention: 'CFLAG:11 = floor(945/10)',
   },
   {
-    desc: 'M604 HEAT 的防御衰减改坏（×9/10 → ×10/10 不衰减）',
+    desc: 'M604 dungeon_heat 的防御衰减改坏（×9/10 → ×10/10 不衰减）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  const def = era.get(`cflag:${a}:12`) || 0;\n  era.set(`cflag:${a}:12`, Math.floor((def * 9) / 10));',
     replace:
@@ -612,24 +612,24 @@ export default [
     must_mention: 'CFLAG:12 = floor(945/10)',
   },
   {
-    desc: 'M605 MASE 的 D:20 写删（ctx 不再回写 -BACK）',
+    desc: 'M605 dungeon_mase 的 D:20 写删（ctx 不再回写 -BACK）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  // D:20 -= BACK（ctx 回写，文件头）\n  if (ctx) {\n    ctx.d20 -= back;\n  }',
     replace:
       '  // D:20 -= BACK——变异：写删\n  // if (ctx) {\n  //   ctx.d20 -= back;\n  // }',
     tests: ['dungeon-room'],
-    must_mention: 'MASE 的 -10 从房间段活到',
+    must_mention: 'dungeon_mase 的 -10 从房间段活到写回',
   },
   {
-    desc: 'M606 MASE 的迷惑状態立位删（CFLAG:509 不写）',
+    desc: 'M606 dungeon_mase 的迷惑状態立位删（CFLAG:509 不写）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  era.set(`cflag:${a}:509`, 1);',
     replace: '  // era.set(`cflag:${a}:509`, 1); // 变异：立位删',
     tests: ['dungeon-room'],
-    must_mention: '迷惑状態（:844）',
+    must_mention: '迷惑状態',
   },
   {
-    desc: 'M607 MUSEUM 的陈列架位 5 立起删（CFLAG:503 不 +32）',
+    desc: 'M607 dungeon_museum 的陈列架位 5 立起删（CFLAG:503 不 +32）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '      era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) + 32);',
     replace:
@@ -638,13 +638,13 @@ export default [
     must_mention: '位 5（32）立起',
   },
   {
-    desc: 'M608 HOTEL 的入账删（MONEY += COST 不写）',
+    desc: 'M608 dungeon_hotel 的入账删（MONEY += COST 不写）',
     file: 'ere/dungeon/dungeon-room.js',
-    find: '  era_flag.money += cost;\n  era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL KARMA, A, -1（域内延迟 require，文件头）',
+    find: '  era_flag.money += cost;\n  era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1（域内延迟 require，文件头）',
     replace:
-      '  // era_flag.money += cost; // 变异：入账删\n  // era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL KARMA, A, -1（域内延迟 require，文件头）',
+      '  // era_flag.money += cost; // 变异：入账删\n  // era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1（域内延迟 require，文件头）',
     tests: ['dungeon-room'],
-    must_mention: 'MONEY += COST（:1008）',
+    must_mention: 'MONEY += COST',
   },
   {
     desc: 'M609 SHOP 逛街档的体力 +20 删',
@@ -652,10 +652,10 @@ export default [
     find: '  chara(a).dungeon.体力 += 20; // BASE:A:0 += 20',
     replace: '  // chara(a).dungeon.体力 += 20; // 变异：+20 删',
     tests: ['dungeon-room'],
-    must_mention: '体力 +20（:257）',
+    must_mention: '体力 +20',
   },
   {
-    desc: 'M610 SHOP_DAY 岌岌可危档的归零删（低收入仍入账）',
+    desc: 'M610 dungeon_shop_day 岌岌可危档的归零删（低收入仍入账）',
     file: 'ere/dungeon/dungeon-room.js',
     find: "    era.print('威望值是【岌岌可危】'); // PRINTL\n    income = 0;",
     replace:
@@ -664,16 +664,16 @@ export default [
     must_mention: '岌岌可危 → 税入 0',
   },
   {
-    desc: 'M611 ROOM_DAY 的牧场臂删（502 不再走 FARM）',
+    desc: 'M611 dungeon_room_day 的牧场分支删（502 不再走 dungeon_farm）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '    } else if (room === 502) {\n      await dungeon_farm(extra, rand_n);\n    }',
     replace:
-      '    } // 变异：牧场臂删\n    // } else if (room === 502) {\n    //   await dungeon_farm(extra, rand_n);\n    // }',
+      '    } // 变异：牧场分支删\n    // } else if (room === 502) {\n    //   await dungeon_farm(extra, rand_n);\n    // }',
     tests: ['dungeon-room'],
     must_mention: '牧场播报',
   },
   {
-    desc: 'M612 FARM 的只数写回删（ITEM:MON_ID 不写）',
+    desc: 'M612 dungeon_farm 的只数写回删（ITEM:MON_ID 不写）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  era.set(`item:${mon_id}`, mon_num);',
     replace: '  // era.set(`item:${mon_id}`, mon_num); // 变异：写回删',
@@ -681,16 +681,16 @@ export default [
     must_mention: 'ITEM:100 += 5',
   },
   {
-    desc: 'M615 ROOM_BUILD 的拡張位写入删（FLAG:ROOMID 不 +1）',
+    desc: 'M615 dungeon_room_build 的拡張位写入删（FLAG:ROOMID 不 +1）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '    era.set(`flag:${room_id + 10}`, extra + 1); // FLAG:ROOMID += 1',
     replace:
       '    // era.set(`flag:${room_id + 10}`, extra + 1); // 变异：写入删',
     tests: ['dungeon-room'],
-    must_mention: 'FLAG:360 += 1（:111）',
+    must_mention: 'FLAG:360 += 1',
   },
   {
-    desc: 'M616 ITEMSSELL 的否定の珠换钱删（JUEL/580 不动）',
+    desc: 'M616 dungeon_shop_itemsell 的否定の珠换钱删（JUEL/580 不动）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '    era.set(`juel:${a}:100`, (era.get(`juel:${a}:100`) || 0) - 500);\n    chara(a).dungeon.所持金 += 500;',
     replace:
@@ -699,7 +699,7 @@ export default [
     must_mention: 'JUEL:100 -= 500',
   },
   {
-    desc: 'M617 HEAT 绿洲臂的 TARGET 写删（JUEL:6 / 好感度不动）',
+    desc: 'M617 dungeon_heat 绿洲分支的 TARGET 写删（JUEL:6 / 好感度不动）',
     file: 'ere/dungeon/dungeon-room.js',
     find: "    const target = era_flag.target;\n    era.set(\n      `juel:${target}:6`,\n      (era.get(`juel:${target}:6`) || 0) + (era.get('cflag:0:9') || 0) * 4,\n    );\n    chara(target).chara.好感度 += 20; // CFLAG:TARGET:2 += 20",
     replace:
@@ -708,16 +708,16 @@ export default [
     must_mention: 'JUEL:TARGET:6 += 16',
   },
   {
-    desc: 'M618 MUSEUM 的气力伤害删（BASE:A:1 不减 MDMG）',
+    desc: 'M618 dungeon_museum 的气力伤害删（BASE:A:1 不减 MDMG）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  chara(a).dungeon.气力 -= mdmg;\n  if (dmg > 0) {',
     replace:
       '  // chara(a).dungeon.气力 -= mdmg; // 变异：伤害删\n  if (dmg > 0) {',
     tests: ['dungeon-room'],
-    must_mention: 'BASE:A:1 -= 50（:904）',
+    must_mention: 'BASE:A:1 -= 50',
   },
   {
-    desc: 'M619 event-nextday 的 ROOM_DAY 调用删（日结算不接线）',
+    desc: 'M619 event-nextday 的 ROOM_DAY 调用删（日结算不接入）',
     file: 'ere/event/event-nextday.js',
     find: '  await room_day_mod.dungeon_room_day();',
     replace: '  // await room_day_mod.dungeon_room_day(); // 变异：调用删',
@@ -725,7 +725,7 @@ export default [
     must_mention: '日循环真的结了设施账',
   },
   {
-    desc: 'M633 dungeon.js 的房间调用删（:386 不再进设施）',
+    desc: 'M633 dungeon.js 的房间调用删（不再进设施）',
     file: 'ere/dungeon/dungeon.js',
     find: '    const move_ctx = { d20: walk20 };\n    no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);\n    walk20 = move_ctx.d20;',
     replace:
@@ -734,7 +734,7 @@ export default [
     must_mention: '房间设施真身（毒沼 10 点伤害恰一次）',
   },
   {
-    desc: 'M634 滞留臂的階層滞在カウント +1 删（event-turnend 新观测锚点自证）',
+    desc: 'M634 滞留分支的階層滞在カウント +1 删（event-turnend 新观测点自证）',
     file: 'ere/dungeon/dungeon.js',
     find: '      // 階層滞在カウントを+1（CFLAG:514）\n      era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);',
     replace:
@@ -778,7 +778,7 @@ export default [
     must_mention: '（260 + 善恶）面骰 < 50 借入 1000',
   },
   {
-    desc: 'M644 FI_FUNDING 补正改读 ARG（TARGET 语义改坏）',
+    desc: 'M644 fi_funding 补正改读 ARG（TARGET 语义改坏）',
     file: 'ere/dungeon/dungeon-town.js',
     find: '  let local = 0; // VARSET LOCAL\n  // 故郷や家族からの補助金（以下全读 TARGET，文件头）\n  const t = era_flag.target;',
     replace:
@@ -787,7 +787,7 @@ export default [
     must_mention: '按 TARGET（勇者）算，不按 ARG（贝丝）',
   },
   {
-    desc: 'M645 宴会预算收集改读本人（收集/支付不对称的原作行为改坏）',
+    desc: 'M645 宴会预算收集改读本人（收集/支付不对称的有意行为改坏）',
     file: 'ere/dungeon/dungeon-town.js',
     find: '    const cash = era.get(`cflag:${budget_target}:580`) || 0; // CFLAG:580（TARGET）',
     replace:
@@ -821,7 +821,7 @@ export default [
     must_mention: 'LV5 × 10 + 100',
   },
   {
-    desc: 'M651 RESULT_QUEST 的 E 列匹配删（无讨伐对象也结算）',
+    desc: 'M651 result_quest 的 E 列匹配删（无讨伐对象也结算）',
     file: 'ere/dungeon/dungeon-quest.js',
     find: '    if (found === 0) {\n      continue;\n    }\n\n    // PRINTW *クエスト結果*',
     replace:
@@ -839,7 +839,7 @@ export default [
     must_mention: '534 置成功完结位',
   },
   {
-    desc: 'M653 QUEST_BITCH 失贞判定改读 ARG（TARGET 语义改坏）',
+    desc: 'M653 quest_bitch 失贞判定改读 ARG（TARGET 语义改坏）',
     file: 'ere/dungeon/dungeon-quest.js',
     find: '  const t = era_flag.target;\n  if (\n    (era.get(`exp:${t}:0`) || 0) > 0 &&',
     replace:
@@ -895,7 +895,7 @@ export default [
     find: '  return [0, 3, 2, 1, 4, 5, 5][magic_lv];',
     replace: '  return [0, 3, 2, 1, 3, 5, 5][magic_lv]; // 变异',
     tests: ['dungeon-magic'],
-    must_mention: 'MAGIC_SELECT',
+    must_mention: 'magic_select',
   },
   {
     desc: 'M6728 魔力暴走的 HP 扣减方向改坏',
@@ -911,7 +911,7 @@ export default [
     find: '  return [0, 3, 7, 1, 8, 9, 9][magic_lv];',
     replace: '  return [0, 3, 6, 1, 8, 9, 9][magic_lv]; // 变异',
     tests: ['dungeon-magic'],
-    must_mention: 'SHAMAN_SELECT',
+    must_mention: 'shaman_select',
   },
   {
     desc: 'M6730 法术编号 3 的调度改坏（魔法箭改魔法吸收）',
@@ -930,9 +930,9 @@ export default [
     must_mention: '写回侵攻度',
   },
   {
-    desc: 'M6732 勇者对奴隶传送的原作 CFLAG:3 写入删坏',
+    desc: 'M6732 勇者对奴隶传送的 CFLAG:3 写入删坏',
     file: 'ere/dungeon/magic.js',
-    find: '    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3，原作第 431 行',
+    find: '    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3',
     replace: '    // 变异：CFLAG:3 写入删除',
     tests: ['dungeon-magic'],
     must_mention: 'CFLAG:3',
@@ -1000,7 +1000,7 @@ export default [
     must_mention: '最后一个重伤成员',
   },
   {
-    desc: 'M6740 无参 SHIELD_MAGIC 被擅自赋予效果',
+    desc: 'M6740 无参 shield_magic 被擅自赋予效果',
     file: 'ere/dungeon/magic.js',
     find: 'async function shield_magic() {\n  return 0;\n}',
     replace:
@@ -1025,13 +1025,13 @@ export default [
     must_mention: '一半经验给魔王',
   },
   {
-    desc: 'M6744 决斗的无参 MAGIC 被擅自传成 X:1 战斗类型',
+    desc: 'M6744 决斗的无参 magic 被擅自传成 X:1 战斗类型',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: '  if ((await battle.magic(0, magic_a, magic_b, rand, move_ctx)) === 999) {',
     replace:
       '  if ((await battle.magic(reverse_ab ? 3 : 4, magic_a, magic_b, rand, move_ctx)) === 999) { // 变异',
     tests: ['dungeon-magic'],
-    must_mention: '无参 MAGIC 保留 TARGET_TYPE=0',
+    must_mention: '无参 magic 保留 target_type=0',
   },
   {
     desc: 'M6745 群体法术过量击杀按理论值播报（不钳现存怪物数）',
@@ -1063,9 +1063,9 @@ export default [
   {
     desc: 'M6748 治疗术把未知 TARGET_TYPE 当成角色 3 分支',
     file: 'ere/dungeon/magic.js',
-    find: '  if (target_type !== 3) {\n    return 0;\n  }\n  // 原作第 895 行的条件方向如此：低于六成反而直接返回。',
+    find: '  if (target_type !== 3) {\n    return 0;\n  }\n  // 条件方向如此：低于六成反而直接返回。',
     replace:
-      '  if (false) { // 变异：未知类型落进治疗\n    return 0;\n  }\n  // 原作第 895 行的条件方向如此：低于六成反而直接返回。',
+      '  if (false) { // 变异：未知类型落进治疗\n    return 0;\n  }\n  // 条件方向如此：低于六成反而直接返回。',
     tests: ['dungeon-magic'],
     must_mention: '未命中任何法术分支',
   },
@@ -1079,29 +1079,29 @@ export default [
     must_mention: '魔法减益',
   },
   {
-    desc: 'M6750 怪物目标误入 SHAMAN_SELECT 的角色随机分派',
+    desc: 'M6750 怪物目标误入 shaman_select 的角色随机分派',
     file: 'ere/dungeon/magic.js',
     find: '  if (target_type === 2) {\n    return 0;\n  }\n  let magic_lv = 0;',
     replace:
-      '  if (false) { // 变异：怪物目标守卫删除\n    return 0;\n  }\n  let magic_lv = 0;',
+      '  if (false) { // 变异：怪物目标检查删除\n    return 0;\n  }\n  let magic_lv = 0;',
     tests: ['dungeon-magic'],
-    must_mention: 'SHAMAN_SELECT',
+    must_mention: 'shaman_select',
   },
   {
-    desc: 'M6751 SLEEP_MAGIC 角色对怪物分支的返回值改坏',
+    desc: 'M6751 sleep_magic 角色对怪物分支的返回值改坏',
     file: 'ere/dungeon/magic.js',
-    find: "      await print_wait('咒语的效果消失了'); // 原作 Y 默认 0，文件头\n    }\n    return 0;\n  }\n  if (target_type === 2) {",
+    find: "      await print_wait('咒语的效果消失了'); // Y 默认 0，文件头\n    }\n    return 0;\n  }\n  if (target_type === 2) {",
     replace:
-      "      await print_wait('咒语的效果消失了'); // 原作 Y 默认 0，文件头\n    }\n    return 1; // 变异\n  }\n  if (target_type === 2) {",
+      "      await print_wait('咒语的效果消失了'); // Y 默认 0，文件头\n    }\n    return 1; // 变异\n  }\n  if (target_type === 2) {",
     tests: ['dungeon-magic'],
-    must_mention: 'SLEEP_MAGIC',
+    must_mention: 'sleep_magic',
   },
   {
-    desc: 'M6752 ENERGY_DRAIN_MAGIC 把未知目标当角色对角色分支',
+    desc: 'M6752 energy_drain_magic 把未知目标当角色对角色分支',
     file: 'ere/dungeon/magic.js',
     find: '  if (target_type !== 3 && target_type !== 4) {\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法吸取！`);',
     replace:
-      '  if (false) { // 变异：目标守卫删除\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法吸取！`);',
+      '  if (false) { // 变异：目标检查删除\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法吸取！`);',
     tests: ['dungeon-magic'],
     must_mention: '未命中任何法术分支',
   },
@@ -1182,7 +1182,7 @@ export default [
     must_mention: '按目标削经验与体力并给施法者经验',
   },
   {
-    desc: 'M6682 ENTER_LOVER 自由输入改回按钮限制（隐藏 200 不可达）',
+    desc: 'M6682 enter_lover 自由输入改回按钮限制（隐藏 200 不可达）',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    selected = await era.input({ useRule: false });',
     replace:
@@ -1191,7 +1191,7 @@ export default [
     must_mention: '自由输入保留隐藏的角色恋人编号 200',
   },
   {
-    desc: 'M6683 ENTER_LOVER 重置爱情的类型比较取反',
+    desc: 'M6683 enter_lover 重置爱情的类型比较取反',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  if (selected !== previous) {',
     replace: '  if (selected === previous) { // 变异：换人反而不重置',
@@ -1286,14 +1286,14 @@ export default [
     desc: 'M6695 未知恋人类型错误提前返回',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: "  if (!profile) return 'ERROR';",
-    replace: '  if (!profile) return null; // 变异：原作继续结算改成早退',
+    replace: '  if (!profile) return null; // 变异：继续结算改成早退',
     tests: ['dungeon-lovers'],
     must_mention: '未知正数沿用 ERROR 并继续结算',
   },
   {
     desc: 'M6696 城镇日常删除恋人真身调用',
     file: 'ere/dungeon/dungeon-town.js',
-    find: '    await lovers_mod.dungeon_town_lover(pm[lcount]); // CALL DUNGEON_TOWN_LOVER',
+    find: '    await lovers_mod.dungeon_town_lover(pm[lcount]); // CALL dungeon_town_lover',
     replace: '    // 变异：DUNGEON_TOWN_LOVER 调用删除',
     tests: ['dungeon-town'],
     must_mention: '日常段换手 TARGET 并调用恋人真身',
@@ -1307,191 +1307,191 @@ export default [
     must_mention: '侵攻中必须处于同一队伍',
   },
   {
-    desc: 'M6698 LOVE_EXP 接吻十日档累计删除',
+    desc: 'M6698 love_exp 接吻十日档累计删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  if (love_lv >= 10) love_exp[0] += 1;',
     replace: '  if (love_lv >= 10) love_exp[0] += 0; // 变异',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：0 接吻累计',
+    must_mention: '恋人加成维度表：0 接吻累计',
   },
   {
-    desc: 'M6699 LOVE_EXP 口交四项能力加成删除',
+    desc: 'M6699 love_exp 口交四项能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    love_exp[3] += abl(12) + abl(13) + abl(16) + abl(32);',
     replace: '    love_exp[3] += 0; // 变异：四项能力加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：3 口交加成',
+    must_mention: '恋人加成维度表：3 口交加成',
   },
   {
-    desc: 'M6700 LOVE_EXP 口交舌使加成删除',
+    desc: 'M6700 love_exp 口交舌使加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (talent(52)) love_exp[3] += 1;',
     replace: '    if (false) love_exp[3] += 1; // 变异：舌使加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：3 口交加成',
+    must_mention: '恋人加成维度表：3 口交加成',
   },
   {
-    desc: 'M6701 LOVE_EXP 污臭敏感与精液中毒复合加成删除',
+    desc: 'M6701 love_exp 污臭敏感与精液中毒复合加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (talent(62) && abl(32) > 0) love_exp[3] += abl(32) * 3;',
     replace: '    if (false) love_exp[3] += abl(32) * 3; // 变异',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：3 口交加成',
+    must_mention: '恋人加成维度表：3 口交加成',
   },
   {
-    desc: 'M6702 LOVE_EXP 私处感觉能力加成删除',
+    desc: 'M6702 love_exp 私处感觉能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    love_exp[4] += abl(2);',
     replace: '    love_exp[4] += 0; // 变异：私处感觉加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：4 私处性交加成',
+    must_mention: '恋人加成维度表：4 私处性交加成',
   },
   {
-    desc: 'M6703 LOVE_EXP 淫壶私处加成删除',
+    desc: 'M6703 love_exp 淫壶私处加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (talent(232)) love_exp[4] += 1;',
     replace: '    if (false) love_exp[4] += 1; // 变异：淫壶加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：4 私处性交加成',
+    must_mention: '恋人加成维度表：4 私处性交加成',
   },
   {
-    desc: 'M6704 LOVE_EXP 肛门感觉能力加成删除',
+    desc: 'M6704 love_exp 肛门感觉能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    love_exp[5] += abl(3);',
     replace: '    love_exp[5] += 0; // 变异：肛门感觉加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：5 肛门性交加成',
+    must_mention: '恋人加成维度表：5 肛门性交加成',
   },
   {
-    desc: 'M6705 LOVE_EXP 淫肛加成删除',
+    desc: 'M6705 love_exp 淫肛加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (talent(233)) love_exp[5] += 1;',
     replace: '    if (false) love_exp[5] += 1; // 变异：淫肛加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：5 肛门性交加成',
+    must_mention: '恋人加成维度表：5 肛门性交加成',
   },
   {
-    desc: 'M6706 LOVE_EXP 百合两项能力加成删除',
+    desc: 'M6706 love_exp 百合两项能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    love_exp[6] += abl(22) + abl(33);',
     replace: '    love_exp[6] += 0; // 变异：百合能力加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：6 百合加成',
+    must_mention: '恋人加成维度表：6 百合加成',
   },
   {
-    desc: 'M6707 LOVE_EXP 厌男百合加成删除',
+    desc: 'M6707 love_exp 厌男百合加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (talent(82)) love_exp[6] += 1;',
     replace: '    if (false) love_exp[6] += 1; // 变异：厌男加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：6 百合加成',
+    must_mention: '恋人加成维度表：6 百合加成',
   },
   {
-    desc: 'M6708 LOVE_EXP 人狼兽奸加成删除',
+    desc: 'M6708 love_exp 人狼兽奸加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: "    if (talent('种族') === 2) love_exp[7] += 1;",
     replace: '    if (false) love_exp[7] += 1; // 变异：人狼加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：7 兽奸加成及口交回填',
+    must_mention: '恋人加成维度表：7 兽奸加成及口交回填',
   },
   {
-    desc: 'M6709 LOVE_EXP 兽奸中毒能力加成删除',
+    desc: 'M6709 love_exp 兽奸中毒能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    love_exp[7] += abl(39);',
     replace: '    love_exp[7] += 0; // 变异：兽奸中毒加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：7 兽奸加成及口交回填',
+    must_mention: '恋人加成维度表：7 兽奸加成及口交回填',
   },
   {
-    desc: 'M6710 LOVE_EXP 兽奸对口交的回填删除',
+    desc: 'M6710 love_exp 兽奸对口交的回填删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (love_exp[3] > 0) love_exp[3] += love_exp[7];',
     replace: '    if (love_exp[3] > 0) love_exp[3] += 0; // 变异',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：7 兽奸加成及口交回填',
+    must_mention: '恋人加成维度表：7 兽奸加成及口交回填',
   },
   {
-    desc: 'M6711 LOVE_EXP 胆怯拍摄减分删除',
+    desc: 'M6711 love_exp 胆怯拍摄减分删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  if (talent(10)) love_exp[8] -= 1;',
     replace: '  if (false) love_exp[8] -= 1; // 变异：胆怯减分删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：8 拍摄倾向',
+    must_mention: '恋人加成维度表：8 拍摄倾向',
   },
   {
-    desc: 'M6712 LOVE_EXP 露出狂拍摄加成删除',
+    desc: 'M6712 love_exp 露出狂拍摄加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  if (talent(89)) love_exp[8] += 3;',
     replace: '  if (false) love_exp[8] += 3; // 变异：露出狂加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：8 拍摄倾向',
+    must_mention: '恋人加成维度表：8 拍摄倾向',
   },
   {
-    desc: 'M6713 LOVE_EXP 露出癖能力加成删除',
+    desc: 'M6713 love_exp 露出癖能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  love_exp[8] += abl(17);',
     replace: '  love_exp[8] += 0; // 变异：露出癖加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：8 拍摄倾向',
+    must_mention: '恋人加成维度表：8 拍摄倾向',
   },
   {
-    desc: 'M6714 LOVE_EXP 前戏基础三维合计删除',
+    desc: 'M6714 love_exp 前戏基础三维合计删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  love_exp[9] += love_exp[5] + love_exp[4] + love_exp[6];',
     replace: '  love_exp[9] += 0; // 变异：A、V、百合不再计入前戏',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：9 前戏加成',
+    must_mention: '恋人加成维度表：9 前戏加成',
   },
   {
-    desc: 'M6715 LOVE_EXP 淫核前戏加成误读成淫乳',
+    desc: 'M6715 love_exp 淫核前戏加成误读成淫乳',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (talent(230)) love_exp[9] += 1;',
     replace: '    if (talent(231)) love_exp[9] += 1; // 变异：读错素质',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：9 淫核独立加成',
+    must_mention: '恋人加成维度表：9 淫核独立加成',
   },
   {
-    desc: 'M6716 LOVE_EXP 吸烟次数结算删除',
+    desc: 'M6716 love_exp 吸烟次数结算删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  if (love_exp[1] > 0) summary.push(`吸烟：${love_exp[1]}根 `);',
     replace: '  if (false) summary.push(`吸烟：${love_exp[1]}根 `); // 变异',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：1 吸烟次数',
+    must_mention: '恋人加成维度表：1 吸烟次数',
   },
   {
-    desc: 'M6717 LOVE_EXP 暗黑精灵的药物经验删除',
+    desc: 'M6717 love_exp 暗黑精灵的药物经验删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '            [1, 2],\n            [2, 1],',
     replace: '            [1, 2],\n            [2, 0], // 变异：药物经验删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：2 药物经验',
+    must_mention: '恋人加成维度表：2 药物经验',
   },
   {
-    desc: 'M6718 LOVE_EXP 男性错误取得百合加成',
+    desc: 'M6718 love_exp 男性错误取得百合加成',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '  if (love_exp[6] > 0 && talent(122) === 0) {',
     replace: '  if (love_exp[6] > 0) { // 变异：删除非男性限制',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：6 男性不吃百合加成',
+    must_mention: '恋人加成维度表：6 男性不吃百合加成',
   },
   {
-    desc: 'M6719 LOVE_EXP 兽奸对私处性交的回填删除',
+    desc: 'M6719 love_exp 兽奸对私处性交的回填删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    if (love_exp[4] > 0) love_exp[4] += love_exp[7];',
     replace: '    if (love_exp[4] > 0) love_exp[4] += 0; // 变异',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：7 兽奸加成及口交回填',
+    must_mention: '恋人加成维度表：7 兽奸加成及口交回填',
   },
   {
-    desc: 'M6720 LOVE_EXP 前戏两项感觉能力加成删除',
+    desc: 'M6720 love_exp 前戏两项感觉能力加成删除',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    love_exp[9] += abl(0) + abl(1);',
     replace: '    love_exp[9] += 0; // 变异：感觉能力加成删除',
     tests: ['dungeon-lovers'],
-    must_mention: 'LOVE_EXP 维度表：9 前戏加成',
+    must_mention: '恋人加成维度表：9 前戏加成',
   },
   {
-    desc: 'M6842 MONSTER_SETUP 错误放行 99 号物品',
+    desc: 'M6842 monster_setup 错误放行 99 号物品',
     file: 'ere/dungeon/monster-data.js',
     find: '  if (id === 999 || id < 100 || id > 199) return 999;',
     replace: '  if (id === 999 || id < 99 || id > 199) return 999;',
@@ -1499,7 +1499,7 @@ export default [
     must_mention: 'MONSTER_SETUP 拒绝非法编号',
   },
   {
-    desc: 'M6843 MONSTER_SETUP 楼层设施槽偏移一位',
+    desc: 'M6843 monster_setup 楼层设施槽偏移一位',
     file: 'ere/dungeon/monster-data.js',
     find: 'era.get(`flag:${floor + 349}`)',
     replace: 'era.get(`flag:${floor + 350}`)',
@@ -1523,7 +1523,7 @@ export default [
     must_mention: 'MONSTER_SETUP_ABLE 按种族',
   },
   {
-    desc: 'M6846 装甲化判据反转为仅史莱姆',
+    desc: 'M6846 装甲化判断条件反转为仅史莱姆',
     file: 'ere/dungeon/monster-data.js',
     find: '  if (type !== 2 && selection === 5) return 1;',
     replace: '  if (type === 2 && selection === 5) return 1;',
@@ -1663,9 +1663,9 @@ export default [
   {
     desc: 'M6863 魔兽受精计数错写野狗计数',
     file: 'ere/dungeon/monster-play.js',
-    find: '  era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数\n  return 0;\n}\n\n/** @HORSE_MONSTER_PLAY',
+    find: '  era.add(`cflag:${cid}:107`, y); // CFLAG:A:107 = 阴道内射精计数\n  return 0;\n}\n\n/** horse_monster_play',
     replace:
-      '  era.add(`cflag:${cid}:106`, y); // 变异：写错计数\n  return 0;\n}\n\n/** @HORSE_MONSTER_PLAY',
+      '  era.add(`cflag:${cid}:106`, y); // 变异：写错计数\n  return 0;\n}\n\n/** horse_monster_play',
     tests: ['monster-play'],
     must_mention: '野狗、魔兽与马分支',
   },
@@ -1698,18 +1698,18 @@ export default [
   {
     desc: 'M6867 史莱姆肛门经验写到私处',
     file: 'ere/dungeon/monster-play.js',
-    find: '    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** @INSECT_MONSTER_PLAY',
+    find: '    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** insect_monster_play',
     replace:
-      '    era.add(`exp:${cid}:0`, y); // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** @INSECT_MONSTER_PLAY',
+      '    era.add(`exp:${cid}:0`, y); // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** insect_monster_play',
     tests: ['monster-play'],
     must_mention: '史莱姆、昆虫、藤蔓与触手',
   },
   {
     desc: 'M6868 昆虫产卵经验写到私处',
     file: 'ere/dungeon/monster-play.js',
-    find: '    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** @IVY_MONSTER_PLAY',
+    find: '    era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** ivy_monster_play',
     replace:
-      '    era.add(`exp:${cid}:0`, y); // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** @IVY_MONSTER_PLAY',
+      '    era.add(`exp:${cid}:0`, y); // 变异：写错经验\n  }\n  await era.waitAnyKey();\n  return 0;\n}\n\n/** ivy_monster_play',
     tests: ['monster-play'],
     must_mention: '史莱姆、昆虫、藤蔓与触手',
   },
@@ -1764,7 +1764,7 @@ export default [
     must_mention: '食脑魔保留无条件返回',
   },
   {
-    desc: 'M6875 MONSTER_PLAY 怪物数据写入第 4 列',
+    desc: 'M6875 monster_play 怪物数据写入第 4 列',
     file: 'ere/dungeon/monster-play.js',
     find: '    monster_data(selected, 5, -1, -1, -1, rand);',
     replace: '    monster_data(selected, 4, -1, -1, -1, rand);',
@@ -1772,7 +1772,7 @@ export default [
     must_mention: 'MONSTER_PLAY 非狗先生成第 5 列',
   },
   {
-    desc: 'M6876 MONSTER_PLAY 经验增量下界少一',
+    desc: 'M6876 monster_play 经验增量下界少一',
     file: 'ere/dungeon/monster-play.js',
     find: '  const y = rand(5) + 3; // Y = RAND:5 + 3',
     replace: '  const y = rand(5) + 2; // 变异：增量下界',
@@ -1780,7 +1780,7 @@ export default [
     must_mention: 'MONSTER_PLAY 取消返回 0',
   },
   {
-    desc: 'M6877 MONSTER_PLAY 处女丧失门槛错误抬高',
+    desc: 'M6877 monster_play 处女丧失门槛错误抬高',
     file: 'ere/dungeon/monster-play.js',
     find: 'chara(cid).chara.处女 === 1 && (era.get(`exp:${cid}:0`) || 0) > 0',
     replace:
@@ -1789,9 +1789,9 @@ export default [
     must_mention: 'MONSTER_PLAY 取消返回 0',
   },
   {
-    desc: 'M6878 MONSTER_PLAY 回合结束错转据点',
+    desc: 'M6878 monster_play 回合结束错转据点',
     file: 'ere/dungeon/monster-play.js',
-    find: '  begin(STATE.TURNEND); // ；其后的 RETURN 1 因 BEGIN 立即结束而不可达',
+    find: '  begin(STATE.TURNEND); // 其后的 RETURN 1 因 BEGIN 立即结束而不可达',
     replace: '  begin(STATE.SHOP); // 变异：错转据点',
     tests: ['monster-play'],
     must_mention: 'MONSTER_PLAY 取消返回 0',
@@ -1829,7 +1829,7 @@ export default [
     replace:
       'async function marriage_day_dog(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：野狗结算删除',
     tests: ['marriage-day'],
-    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+    must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
     desc: 'M6884 魔王配偶婚后结算删除',
@@ -1838,7 +1838,7 @@ export default [
     replace:
       'async function marriage_day_you(cid, y = 1) {\n  return 0; // 变异：魔王配偶结算删除',
     tests: ['marriage-day'],
-    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+    must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
     desc: 'M6885 恋人配偶婚后结算删除',
@@ -1865,7 +1865,7 @@ export default [
     replace:
       'async function orc_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：兽人结算删除',
     tests: ['marriage-day'],
-    must_mention: 'ORC/SLIME：种族正文按确定性随机源结算经验',
+    must_mention: '种族正文按确定性随机源结算经验',
   },
   {
     desc: 'M6888 史莱姆婚后结算删除',
@@ -1874,7 +1874,7 @@ export default [
     replace:
       'async function slime_marriage_day(cid, y = 1) {\n  return 0; // 变异：史莱姆结算删除',
     tests: ['marriage-day'],
-    must_mention: 'ORC/SLIME：种族正文按确定性随机源结算经验',
+    must_mention: '种族正文按确定性随机源结算经验',
   },
   {
     desc: 'M6889 虫族婚后结算删除',
@@ -1883,7 +1883,7 @@ export default [
     replace:
       'async function insect_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：虫族结算删除',
     tests: ['marriage-day'],
-    must_mention: 'INSECT：母乳进化经属主门面写素质与寄生经验',
+    must_mention: '母乳进化经属主门面写素质与寄生经验',
   },
   {
     desc: 'M6890 藤蔓婚后结算删除',
@@ -1892,7 +1892,7 @@ export default [
     replace:
       'async function ivy_marriage_day(cid, y = 1) {\n  return 0; // 变异：藤蔓结算删除',
     tests: ['marriage-day'],
-    must_mention: 'IVY/SYOKUSYU：高欲望与身体分流分别结算',
+    must_mention: '高欲望与身体分流分别结算',
   },
   {
     desc: 'M6891 触手婚后结算删除',
@@ -1901,7 +1901,7 @@ export default [
     replace:
       'async function syokusyu_marriage_day(cid, y = 1) {\n  return 0; // 变异：触手结算删除',
     tests: ['marriage-day'],
-    must_mention: 'IVY/SYOKUSYU：高欲望与身体分流分别结算',
+    must_mention: '高欲望与身体分流分别结算',
   },
   {
     desc: 'M6892 妖精婚后结算删除',
@@ -1910,7 +1910,7 @@ export default [
     replace:
       'async function faily_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：妖精结算删除',
     tests: ['marriage-day'],
-    must_mention: 'FAILY：依次授予魅惑，并用同一随机源决定教学',
+    must_mention: '依次授予魅惑，并用同一随机源决定教学',
   },
   {
     desc: 'M6893 巨人婚后结算删除',
@@ -1919,7 +1919,7 @@ export default [
     replace:
       'async function giant_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：巨人结算删除',
     tests: ['marriage-day'],
-    must_mention: 'GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算',
+    must_mention: '三种人形配偶都执行可区分的初婚结算',
   },
   {
     desc: 'M6894 男性婚后结算删除',
@@ -1928,7 +1928,7 @@ export default [
     replace:
       'async function man_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：男性结算删除',
     tests: ['marriage-day'],
-    must_mention: 'GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算',
+    must_mention: '三种人形配偶都执行可区分的初婚结算',
   },
   {
     desc: 'M6895 女性婚后结算删除',
@@ -1937,7 +1937,7 @@ export default [
     replace:
       'async function girl_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：女性结算删除',
     tests: ['marriage-day'],
-    must_mention: 'GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算',
+    must_mention: '三种人形配偶都执行可区分的初婚结算',
   },
   {
     desc: 'M6896 兽类婚后结算删除',
@@ -1946,7 +1946,7 @@ export default [
     replace:
       'async function beast_marriage_day(cid, y = 1) {\n  return 0; // 变异：兽类结算删除',
     tests: ['marriage-day'],
-    must_mention: 'BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态',
+    must_mention: '兽类、脑寄生与马匹分支写各自状态',
   },
   {
     desc: 'M6897 脑寄生婚后结算删除',
@@ -1955,7 +1955,7 @@ export default [
     replace:
       'async function brain_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：脑寄生结算删除',
     tests: ['marriage-day'],
-    must_mention: 'BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态',
+    must_mention: '兽类、脑寄生与马匹分支写各自状态',
   },
   {
     desc: 'M6898 马匹婚后结算删除',
@@ -1964,7 +1964,7 @@ export default [
     replace:
       'async function horse_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：马匹结算删除',
     tests: ['marriage-day'],
-    must_mention: 'BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态',
+    must_mention: '兽类、脑寄生与马匹分支写各自状态',
   },
   {
     desc: 'M6899 TURNEND 结婚日调用断线',
@@ -1972,7 +1972,7 @@ export default [
     find: '    await marriage_day(cid, undefined, false);',
     replace: '    // 变异：结婚日调用断线',
     tests: ['event-turnend'],
-    must_mention: '结婚日接线：普通档逐角色调用真身，妊娠角色看到婚后生活',
+    must_mention: '结婚日接入：普通档逐角色调用真身，妊娠角色看到婚后生活',
   },
   {
     desc: 'M6900 怪物库存零仍执行婚后事件',
@@ -2015,7 +2015,7 @@ export default [
     replace:
       '    cid >= 0 && // 变异：所有角色都视为 A == 0\n    chara(cid).event.牝犬 == 0 &&\n    (chara(cid).train.兽奸中毒 <= 1 || chara(cid).chara.结婚爱情 < 50)',
     tests: ['marriage-day'],
-    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+    must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
     desc: 'M6905 TURNEND 接入未关闭同状态重入',
@@ -2023,15 +2023,15 @@ export default [
     find: '    await marriage_day(cid, undefined, false);',
     replace: '    await marriage_day(cid); // 变异：重新抛出同状态转场',
     tests: ['event-turnend'],
-    must_mention: '结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP',
+    must_mention: '结婚日接入：完成婚后事件后顺接剩余结算并回到 SHOP',
   },
   {
     desc: 'M6906 种类零漏掉角色配偶回退',
     file: 'ere/dungeon/marriage-day.js',
     find: '    else await marriage_day_slave(cid, marriage_chara);',
-    replace: '    // 变异：漏掉原作最终 ELSE 的角色配偶回退',
+    replace: '    // 变异：漏掉最终 ELSE 的角色配偶回退',
     tests: ['marriage-day'],
-    must_mention: '主函数：种类零按原作回退到默认角色的同居正文',
+    must_mention: '主函数：种类零回退到默认角色的同居正文',
   },
   {
     desc: 'M6907 未知恋人类型错误补齐空白',
@@ -2048,7 +2048,7 @@ export default [
     replace:
       "  } else if (chara(cid).event.牝犬 == 1) {\n    era.print(name_of(cid));\n    let description = ''; // 变异：拆开同一显示行",
     tests: ['marriage-day'],
-    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+    must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
     desc: 'M6909 主标题只输出结婚生活后缀',
@@ -2056,7 +2056,7 @@ export default [
     find: '  await era.printAndWait(`*${name_of(cid)}和${spouse_name}的结婚生活*`);',
     replace: "  await era.printAndWait('的结婚生活*'); // 变异：标题前段丢失",
     tests: ['marriage-day'],
-    must_mention: '主函数：种类零按原作回退到默认角色的同居正文',
+    must_mention: '主函数：种类零回退到默认角色的同居正文',
   },
   {
     desc: 'M6910 魔王未声明状态误阻断共同生活',
@@ -2065,7 +2065,7 @@ export default [
     replace:
       "  if (chara(cid).invasion.状态 != 0 || era.get('cflag:0:1') != 0) { // 变异：未声明值不兜零",
     tests: ['marriage-day'],
-    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+    must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
     desc: 'M6911 兽人低爱情误跳高爱情标签',
@@ -2074,7 +2074,7 @@ export default [
     replace:
       '    } else if (chara(cid).chara.结婚爱情 > 30) {\n      // 变异：低爱情误跳高爱情标签',
     tests: ['marriage-day'],
-    must_mention: 'ORC：低爱情的随机分支不会误跳高爱情标签',
+    must_mention: '低爱情的随机分支不会误跳高爱情标签',
   },
   {
     desc: 'M6912 巨人高爱情展示漏加肛门经验',
@@ -2083,7 +2083,7 @@ export default [
     replace:
       '        era.print(`肛门扩张经验+1`);\n        // 变异：漏加肛门经验\n        // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）',
     tests: ['marriage-day'],
-    must_mention: 'GIANT：高爱情展示的肛交分支增加肛门经验',
+    must_mention: '高爱情展示的肛交分支增加肛门经验',
   },
   {
     desc: 'M6913 男性配偶高爱情分支颠倒私处封印',
@@ -2092,7 +2092,7 @@ export default [
     replace:
       "      description += '和睦地相拥着，';\n    }\n\n    if (\n      chara(cid).chara.私处封印 == 0 || // 变异：颠倒私处封印",
     tests: ['marriage-day'],
-    must_mention: 'MAN：高爱情夫妻分支尊重私处封印',
+    must_mention: '高爱情夫妻分支尊重私处封印',
   },
   {
     desc: 'M6914 女性配偶百合气质门槛抬高',
@@ -2100,7 +2100,7 @@ export default [
     find: '  } else if (chara(cid).chara.百合气质 >= 1) {',
     replace: '  } else if (chara(cid).chara.百合气质 > 1) { // 变异：门槛抬高',
     tests: ['marriage-day'],
-    must_mention: 'GIRL：百合气质角色接受妻子且不进入惩罚分支',
+    must_mention: '百合气质角色接受妻子且不进入惩罚分支',
   },
   {
     desc: 'M6915 史莱姆低欲望误加自慰经验',
@@ -2109,7 +2109,7 @@ export default [
     replace:
       '  if (chara(cid).system.欲望 >= 2) { // 变异：低欲望也加自慰经验\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
     tests: ['marriage-day'],
-    must_mention: 'SLIME：低欲望不会获得自慰经验',
+    must_mention: '低欲望不会获得自慰经验',
   },
   {
     desc: 'M6916 虫族男性误入母乳进化分支',
@@ -2118,7 +2118,7 @@ export default [
     replace:
       '  if (chara(cid).chara.处女 == 0 && chara(cid).chara.男人 == 1) { // 变异：男性误入',
     tests: ['marriage-day'],
-    must_mention: 'INSECT：男性不会进入母乳进化分支',
+    must_mention: '男性不会进入母乳进化分支',
   },
   {
     desc: 'M6917 藤蔓低欲望误入主动侍奉分支',
@@ -2126,7 +2126,7 @@ export default [
     find: '  if (chara(cid).system.欲望 >= 4) {',
     replace: '  if (chara(cid).system.欲望 >= 3) { // 变异：降低主动侍奉门槛',
     tests: ['marriage-day'],
-    must_mention: 'IVY：低欲望不会进入主动侍奉分支',
+    must_mention: '低欲望不会进入主动侍奉分支',
   },
   {
     desc: 'M6918 触手把未封印女性误判为封印分支',
@@ -2135,7 +2135,7 @@ export default [
     replace:
       '    chara(cid).chara.男人 == 0 // 变异：颠倒身体分流\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
     tests: ['marriage-day'],
-    must_mention: 'SYOKUSYU：未封印女性获得私处经验',
+    must_mention: '未封印女性获得私处经验',
   },
   {
     desc: 'M6919 妖精教学随机范围扩大',
@@ -2144,7 +2144,7 @@ export default [
     replace:
       '  if (rand(10) <= 1) { // 变异：扩大教学随机范围\n    await era.printAndWait(\n      `${marriage_name(cid)}对${name_of(cid)}淫荡的身体非常满意',
     tests: ['marriage-day'],
-    must_mention: 'FAILY：教学随机未命中时不会授予魅惑',
+    must_mention: '教学随机未命中时不会授予魅惑',
   },
   {
     desc: 'M6920 兽类高爱情错误要求同时具备兽奸中毒',
@@ -2153,7 +2153,7 @@ export default [
     replace:
       '  } else if (chara(cid).train.兽奸中毒 >= 1 && chara(cid).chara.结婚爱情 > 40) { // 变异：错用且\n    if (\n      chara(cid).chara.私处封印 == 1 ||\n      (chara(cid).chara.特别服装类型 == 79 &&\n        chara(cid).train.着衣状态 & 64 &&\n        game.system.着衣系统) ||\n      chara(cid).chara.男人 == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
     tests: ['marriage-day'],
-    must_mention: 'BEAST：高爱情角色进入高收益兽奸分支',
+    must_mention: '高爱情角色进入高收益兽奸分支',
   },
   {
     desc: 'M6921 脑寄生扩大漏尿随机命中范围',
@@ -2162,7 +2162,7 @@ export default [
     replace:
       '  if (chara(cid).event.漏尿癖 == 1 || rand(20) <= 1) { // 变异：扩大漏尿随机范围',
     tests: ['marriage-day'],
-    must_mention: 'BRAIN：漏尿随机未命中时进入脑侵与幻觉分支',
+    must_mention: '漏尿随机未命中时进入脑侵与幻觉分支',
   },
   {
     desc: 'M6922 马匹把饮精随机误判为交合',
@@ -2171,10 +2171,10 @@ export default [
     replace:
       '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) <= 1) { // 变异：饮精随机误入交合\n      if (',
     tests: ['marriage-day'],
-    must_mention: 'HORSE：饮精分支获得五倍口交与兽奸经验',
+    must_mention: '饮精分支获得五倍口交与兽奸经验',
   },
   {
-    desc: 'M10116 CAMPAIGN_QUEST：剧情推进门槛 off-by-one（> 改 >=，重复推进，#469）',
+    desc: 'M10116 campaign_quest：剧情推进门槛 off-by-one（> 改 >=，重复推进，#469）',
     file: 'ere/dungeon/dungeon.js',
     find: `  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {`,
     replace: `  if (chara(cid).dungeon.侵攻阶层 >= era_flag.campaign_story_progress) {`,
@@ -2182,17 +2182,17 @@ export default [
     must_mention: '楼层未超过剧情进度时不重复推进剧情',
   },
   {
-    desc: 'M10117 CAMPAIGN_QUEST：剧情进度计数删除（FLAG:401 停在 0，#469）',
+    desc: 'M10117 campaign_quest：剧情进度计数删除（FLAG:401 停在 0，#469）',
     file: 'ere/dungeon/dungeon.js',
     find: `    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
     era_flag.campaign_story_progress += 1;`,
     replace: `    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
     // 变异：进度计数删除`,
     tests: ['dungeon-main'],
-    must_mention: ':196 FLAG:401 += 1',
+    must_mention: 'FLAG:401 += 1',
   },
   {
-    desc: 'M10118 CAMPAIGN_ENDING：全员取消派遣判据失效（=== 12 改 === 1200，#469）',
+    desc: 'M10118 campaign_ending：全员取消派遣判断条件失效（=== 12 改 === 1200，#469）',
     file: 'ere/dungeon/dungeon.js',
     find: `  for (const cid of era.getAddedCharacters()) {
     if (chara(cid).invasion.状态 === 12) {
@@ -2203,7 +2203,7 @@ export default [
   }`,
     replace: `  for (const cid of era.getAddedCharacters()) {
     if (chara(cid).invasion.状态 === 1200) {
-      // 变异：判据失效
+      // 变异：判断条件失效
       party_del(cid);
       chara(cid).invasion.状态 = 0;
       chara(cid).invasion.回城标志 = 0;
@@ -2213,7 +2213,7 @@ export default [
     must_mention: '无条件取消全员派遣',
   },
   {
-    desc: 'M10119 CAMPAIGN_ROOM：FLAG:400 早退守卫失效（<1 改 <0，#469）',
+    desc: 'M10119 campaign_room：FLAG:400 早退检查失效（<1 改 <0，#469）',
     file: 'ere/dungeon/dungeon.js',
     find: `async function campaign_room(floor) {
   const active = era_flag.hero_campaign_active;
@@ -2223,14 +2223,14 @@ export default [
     replace: `async function campaign_room(floor) {
   const active = era_flag.hero_campaign_active;
   if (active < 0) {
-    // 变异：守卫失效
+    // 变异：检查失效
     return 0;
   }`,
     tests: ['dungeon-room'],
     must_mention: 'FLAG:400 < 1 时恒 0（未在战役中）',
   },
   {
-    desc: 'M10120 CAMPAIGN_ROOM_EXTRA：FLAG:400 早退守卫失效（<1 改 <0，#469）',
+    desc: 'M10120 campaign_room_extra：FLAG:400 早退检查失效（<1 改 <0，#469）',
     file: 'ere/dungeon/dungeon-room.js',
     find: `async function campaign_room_extra(floor) {
   const active = era_flag.hero_campaign_active;
@@ -2240,14 +2240,14 @@ export default [
     replace: `async function campaign_room_extra(floor) {
   const active = era_flag.hero_campaign_active;
   if (active < 0) {
-    // 变异：守卫失效
+    // 变异：检查失效
     return 0;
   }`,
     tests: ['dungeon-room'],
     must_mention: 'FLAG:400 < 1 时恒 0（未在战役中）',
   },
   {
-    desc: 'M10121 CAMPAIGN_TRAP：whenMissing 从原作预置值 0 改回旧存根的 -1（#469）',
+    desc: 'M10121 campaign_trap：whenMissing 从预置值 0 改回旧存根的 -1（#469）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: `  return campaign_trap_family.call(active, {
     whenMissing: 0,
@@ -2258,10 +2258,10 @@ export default [
     args: [trap_num],
   });`,
     tests: ['dungeon-trap'],
-    must_mention: 'FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回陷阱 ID',
+    must_mention: '按 campaign_trap_1 的映射表返回陷阱 ID',
   },
   {
-    desc: 'M10122 CAMPAIGN_MONSTER_LIST：FLAG:400 未置位时骸骨缺省改错（190 改 0，#469）',
+    desc: 'M10122 campaign_monster_list：FLAG:400 未置位时骸骨缺省改错（190 改 0，#469）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `  const active = era_flag.hero_campaign_active;
   if (active < 1) {
@@ -2275,7 +2275,7 @@ export default [
     must_mention: '骸骨缺省',
   },
   {
-    desc: 'M10123 CAMPAIGN_MONSTER_LIST：whenMissing 骸骨缺省改错（190 改 0，#469）',
+    desc: 'M10123 campaign_monster_list：whenMissing 骸骨缺省改错（190 改 0，#469）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `  return campaign_monster_list_family.call(active, {
     whenMissing: 190,
@@ -2289,7 +2289,7 @@ export default [
     must_mention: 'whenMissing 骸骨缺省',
   },
   {
-    desc: 'M9882 SOURCE_CHECK_AUTO 接线退回存根（source_check_auto 不再转发真实处理器）',
+    desc: 'M9882 source_check_auto 接入退回存根（不再转发真实处理器）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `async function source_check_auto() {
   await emit('SOURCE_CHECK_AUTO');
@@ -2318,118 +2318,120 @@ export default [
     must_mention: '再起点分支的 CFLAG:520 = 8 真的落进变量',
   },
   {
-    desc: 'M10622 体力富余臂：CFLAG:520 的写值改错（FLOOR 改 FLOOR + 1，#484 抽查补位）',
+    desc: 'M10622 体力富余分支：CFLAG:520 的写值改错（FLOOR 改 FLOOR + 1，#484 抽查补位）',
     file: 'ere/dungeon/dungeon.js',
     find: `            era.set(\`cflag:\${arg0}:520\`, floor); // CFLAG:520 = FLOOR`,
     replace: `            era.set(\`cflag:\${arg0}:520\`, floor + 1); // 变异：写值改错`,
     tests: ['dungeon-main'],
-    must_mention: '体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一层',
+    must_mention: '体力富余分支：状态良好时 CFLAG:520 记下当前阶层并下潜一层',
   },
 
-  // —— #500 四个 _AUTO 变体的调用点接线（守两类：调用点退回占位、
+  // —— #500 四个 _AUTO 变体的调用点接入（守两类：调用点退回占位、
   //    调错变体）。九处调用点里两处战斗入口各一条、淫虫/史莱姆/肛门虫
   //    各一条、催眠两档各一条、宴会风俗两条；「调错变体」按变体各给一条
   //    （换成一个效果可区分的同类变体，测试的输出/常量断言当场红）——
   {
-    desc: 'M10713 COM3_AUTO 深档调用点退回占位（:611 不再执行真身——自动调教回数与专属文本都不出）',
+    desc: 'M10713 com3_auto 深档调用点退回占位（不再执行真身——自动调教回数与专属文本都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL COM3_AUTO\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
     replace:
       '    // 变异：调用点退回占位（不执行 COM3_AUTO 真身）\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
     tests: ['dungeon-trap'],
-    must_mention: 'COM3_AUTO 真身被调（:611）',
+    must_mention: 'com3_auto 真身被调',
   },
   {
-    desc: 'M10714 COM3_AUTO 深档调错变体（com3_auto 换成 com0_auto——自动调教回数照涨，文本与常量露馅）',
+    desc: 'M10714 com3_auto 深档调错变体（com3_auto 换成 com0_auto——自动调教回数照涨，文本与常量露馅）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL COM3_AUTO\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
     replace:
       "    const { com0_auto } = require('#/event/event-autotrain'); // 变异：调错变体\n    com0_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
     tests: ['dungeon-trap'],
-    must_mention: 'COM3_AUTO 真身被调（:611）',
+    must_mention: 'com3_auto 真身被调',
   },
   {
-    desc: 'M10715 COM3_AUTO 浅档调用点退回占位（:624 不再执行真身——浅度催眠档的回数停在 1）',
+    desc: 'M10715 com3_auto 浅档调用点退回占位（不再执行真身——浅度催眠档的回数停在 1）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL COM3_AUTO\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,",
+    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,",
     replace:
       '    // 变异：浅度档的调用点退回占位\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,',
     tests: ['dungeon-trap'],
-    must_mention: '浅度档同样接真身（:624 是第二个调用点）',
+    must_mention: '浅度档同样接真身',
   },
   {
-    desc: 'M10716 COM50_AUTO 调用点退回占位（:882 不再执行真身——液体追加/露出与专属文本都不出）',
+    desc: 'M10716 com50_auto 调用点退回占位（不再执行真身——液体追加/露出与专属文本都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "  const { com50_auto } = require('#/event/event-autotrain'); // CALL COM50_AUTO\n  com50_auto();",
+    find: "  const { com50_auto } = require('#/event/event-autotrain'); // CALL com50_auto\n  com50_auto();",
     replace: `  // 变异：调用点退回占位（不执行 COM50_AUTO 真身）`,
     tests: ['dungeon-trap'],
-    must_mention: 'COM50_AUTO 真身被调（:882）',
+    must_mention: 'com50_auto 真身被调',
   },
   {
-    desc: 'M10717 COM50_AUTO 调错变体（com50_auto 换成 com3_auto——回数照涨，液体追加/露出落空）',
+    desc: 'M10717 com50_auto 调错变体（com50_auto 换成 com3_auto——回数照涨，液体追加/露出落空）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "  const { com50_auto } = require('#/event/event-autotrain'); // CALL COM50_AUTO\n  com50_auto();",
+    find: "  const { com50_auto } = require('#/event/event-autotrain'); // CALL com50_auto\n  com50_auto();",
     replace: `  const { com3_auto } = require('#/event/event-autotrain'); // 变异：调错变体
   com3_auto();`,
     tests: ['dungeon-trap'],
-    must_mention: 'COM50_AUTO 真身被调（:882）',
+    must_mention: 'com50_auto 真身被调',
   },
   {
-    desc: 'M10718 COM13_AUTO 肛门虫陷阱调用点退回占位（:1221 不再执行真身——losebase 与逃离常量都不出）',
+    desc: 'M10718 com13_auto 肛门虫陷阱调用点退回占位（不再执行真身——losebase 与逃离常量都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: `    const { com13_auto } = require('#/event/event-autotrain');
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-trap'],
-    must_mention: 'COM13_AUTO 真身被调（:1221',
+    must_mention:
+      'com13_auto 真身被调（本体只在 TEQUIP:90 时改说「肛门触手」）',
   },
   {
-    desc: 'M10719 COM13_AUTO 调错变体（com13_auto 换成 com0_auto——回数照涨，本体文本换人）',
+    desc: 'M10719 com13_auto 调错变体（com13_auto 换成 com0_auto——回数照涨，本体文本换人）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: `    const { com13_auto } = require('#/event/event-autotrain');
     com13_auto();`,
     replace: `    const { com0_auto } = require('#/event/event-autotrain'); // 变异：调错变体
     com0_auto();`,
     tests: ['dungeon-trap'],
-    must_mention: 'COM13_AUTO 真身被调（:1221',
+    must_mention:
+      'com13_auto 真身被调（本体只在 TEQUIP:90 时改说「肛门触手」）',
   },
   {
-    desc: 'M10720 COM0_AUTO 淫虫陷阱调用点退回占位（:1283 不再执行真身——性行为 60 与 losebase 常量都不出）',
+    desc: 'M10720 com0_auto 淫虫陷阱调用点退回占位（不再执行真身——性行为 60 与 losebase 常量都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: `  const { com0_auto } = require('#/event/event-autotrain');
   com0_auto();`,
     replace: `  // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
     tests: ['dungeon-trap'],
-    must_mention: 'COM0_AUTO 真身被调（:1283）',
+    must_mention: 'com0_auto 真身被调',
   },
   {
-    desc: 'M10721 COM0_AUTO 调错变体（com0_auto 换成 com63_auto——回数照涨，专属文本与常量落空）',
+    desc: 'M10721 com0_auto 调错变体（com0_auto 换成 com63_auto——回数照涨，专属文本与常量落空）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: `  const { com0_auto } = require('#/event/event-autotrain');
   com0_auto();`,
     replace: `  const { com63_auto } = require('#/event/event-autotrain'); // 变异：调错变体
   com63_auto();`,
     tests: ['dungeon-trap'],
-    must_mention: 'COM0_AUTO 真身被调（:1283）',
+    must_mention: 'com0_auto 真身被调',
   },
   {
-    desc: 'M10722 COM0_AUTO 宴会风俗（娼婦購入臂）调用点退回占位（:645 不再执行真身）',
+    desc: 'M10722 com0_auto 宴会风俗（娼婦購入分支）调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-town.js',
-    find: "          const { com0_auto } = require('#/event/event-autotrain'); // CALL COM0_AUTO\n          com0_auto();",
-    replace: `          // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
+    find: "          const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto\n          com0_auto();",
+    replace: `          // 变异：调用点退回占位（不执行 com0_auto 真身）`,
     tests: ['dungeon-town'],
-    must_mention: 'COM0_AUTO 真身被调（:645）',
+    must_mention: 'com0_auto 真身被调',
   },
   {
-    desc: 'M10723 COM0_AUTO 宴会风俗（少年风俗臂）调用点退回占位（:652 不再执行真身）',
+    desc: 'M10723 com0_auto 宴会风俗（少年风俗分支）调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-town.js',
-    find: "        const { com0_auto } = require('#/event/event-autotrain'); // CALL COM0_AUTO\n        com0_auto();",
-    replace: `        // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
+    find: "        const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto\n        com0_auto();",
+    replace: `        // 变异：调用点退回占位（不执行 com0_auto 真身）`,
     tests: ['dungeon-town'],
-    must_mention: 'COM0_AUTO 真身被调（:652）',
+    must_mention: 'com0_auto 真身被调',
   },
   {
-    desc: 'M10724 COM13_AUTO 勇者侧攻击调用点退回占位（DUNGEON_BATLLE.ERB:572 不再执行真身）',
+    desc: 'M10724 com13_auto 勇者侧攻击调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `    const { com13_auto } = require('#/event/event-autotrain');
     com13_auto();`,
@@ -2438,7 +2440,7 @@ export default [
     must_mention: 'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
   },
   {
-    desc: 'M10725 COM13_AUTO 角色对角色的攻击调用点退回占位（DUNGEON_BATLLE2.ERB:670 不再执行真身）',
+    desc: 'M10725 com13_auto 角色对角色的攻击调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: `    const { com13_auto } = require('#/event/event-autotrain');
     com13_auto();`,
@@ -2456,15 +2458,15 @@ export default [
     must_mention: '已被第三站清零',
   },
   {
-    desc: 'M11485 BEDROOM_BATTLE_MALE 男人位判据取反（TALENT:0:122 非 0 改成取反：男女魔王的 MODE 互换）',
+    desc: 'M11485 bedroom_battle_male 男人位判断条件取反（TALENT:0:122 非 0 改成取反：男女魔王的 MODE 互换）',
     file: 'ere/dungeon/dungeon.js',
     find: "  if (era.get('talent:0:122')) {",
-    replace: "  if (!era.get('talent:0:122')) { // 变异：判据取反",
+    replace: "  if (!era.get('talent:0:122')) { // 变异：判断条件取反",
     tests: ['dungeon-bedroom'],
     must_mention: 'MODE 2',
   },
   {
-    desc: 'M11486 BEDROOM_BATTLE_MALE 欲望门槛 > 8 改成 > 7（8 档被错升一档）',
+    desc: 'M11486 bedroom_battle_male 欲望门槛 > 8 改成 > 7（8 档被错升一档）',
     file: 'ere/dungeon/dungeon.js',
     find: "  if ((era.get('abl:0:11') || 0) > 8) {",
     replace: "  if ((era.get('abl:0:11') || 0) > 7) { // 变异：门槛错",
@@ -2472,7 +2474,7 @@ export default [
     must_mention: '欲望恰为 8',
   },
   {
-    desc: 'M11487 BEDROOM_BATTLE_MALE 睡着分支文案错（MODE 0 也返回「察觉到了气息」）',
+    desc: 'M11487 bedroom_battle_male 睡着分支文案错（MODE 0 也返回「察觉到了气息」）',
     file: 'ere/dungeon/dungeon.js',
     find: '    ? `${name_of(0)}从睡梦中醒了过来。`',
     replace:
@@ -2481,7 +2483,7 @@ export default [
     must_mention: 'MODE 0',
   },
   {
-    desc: 'M11489 BEDROOM_BATTLE_MALE 挑战臂漏掉函数返回的后半句（只打调用方那一句——两句本应同一行，#548）',
+    desc: 'M11489 bedroom_battle_male 挑战分支漏掉函数返回的后半句（只打调用方那一句——两句本应同一行，#548）',
     file: 'ere/dungeon/dungeon.js',
     find: '                    (await bedroom_battle_male(arg0)),',
     replace: "                    '', // 变异：漏掉函数返回的后半句",
@@ -2505,17 +2507,16 @@ export default [
     tests: ['dungeon-after'],
     must_mention: '白名单＝九枚按钮',
   },
-  // —— #597：收尾的 PRINTL 只结束上一行，不是空行（语义见 CONTEXT.md
-  //    「输出 API 与原作的对应」）。十一条各把空行补回去（旧形态），
-  //    三条守真空行不许删 ——
+  // —— #597：收尾的 PRINTL 只结束上一行，不是空行。十一条各把空行
+  //    补回去（旧写法），三条守真空行不许删 ——
   {
-    desc: 'M12100 落穴段收尾补回空行（:259-260 的 PRINTL 只收 :240/:250/:255 那串 PRINTFORM）',
+    desc: 'M12100 落穴段收尾补回空行（收尾 PRINTL 只收那串 PRINTFORM 拼出的一行）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: '  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * @ARROW_TRAP（:265-310）：射箭陷阱（ITEM:61）。',
+    find: '  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * arrow_trap：射箭陷阱（ITEM:61）。',
     replace:
-      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧形态\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * @ARROW_TRAP（:265-310）：射箭陷阱（ITEM:61）。',
+      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧写法\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * arrow_trap：射箭陷阱（ITEM:61）。',
     tests: ['dungeon-trap'],
-    must_mention: '落穴（:259-260）：收尾的 PRINTL 不是空行',
+    must_mention: '落穴：收尾的 PRINTL 不是空行',
   },
   {
     desc: 'M12101 瞬移段收尾无条件补空行（去掉 FLAG:85 > 0 条件——主路径多出一个空行）',
@@ -2524,16 +2525,16 @@ export default [
     replace:
       '  if (show) {\n    era.println(); // 变异：真空行改成无条件（条件分支丢掉）',
     tests: ['dungeon-trap'],
-    must_mention: '瞬移（:351-352）：收尾的 PRINTL 不是空行',
+    must_mention: '瞬移：收尾的 PRINTL 不是空行',
   },
   {
-    desc: 'M12102 单向通行段收尾补回空行（:400-401 的 PRINTL 只收 :386/:390/:396 那串 PRINTFORM）',
+    desc: 'M12102 单向通行段收尾补回空行（收尾 PRINTL 只收那串 PRINTFORM 拼出的一行）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: '  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * @LOVE_GAS_TRAP（:406-459）：催淫陷阱（ITEM:64）——淫堕型。',
+    find: '  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * love_gas_trap：催淫陷阱（ITEM:64）——淫堕型。',
     replace:
-      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧形态\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * @LOVE_GAS_TRAP（:406-459）：催淫陷阱（ITEM:64）——淫堕型。',
+      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧写法\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM\n  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）\n\n  return 0;\n}\n\n/**\n * love_gas_trap：催淫陷阱（ITEM:64）——淫堕型。',
     tests: ['dungeon-trap'],
-    must_mention: '单向通行（:400-401）：收尾的 PRINTL 不是空行',
+    must_mention: '单向通行：收尾的 PRINTL 不是空行',
   },
   {
     desc: 'M12103 催情气体收尾无条件补空行（去掉 TALENT:60 条件——主路径多出一个空行）',
@@ -2542,95 +2543,94 @@ export default [
     replace:
       '  if (show) {\n    era.println(); // 变异：真空行改成无条件（条件分支丢掉）',
     tests: ['dungeon-trap'],
-    must_mention: '催情气体（:453-454）：收尾的 PRINTL 不是空行',
+    must_mention: '催情气体：收尾的 PRINTL 不是空行',
   },
   {
-    desc: 'M12104 蜘蛛网段收尾补回空行（:915-916 的 PRINTL 只收 :901/:911 那串 PRINTFORM）',
+    desc: 'M12104 蜘蛛网段收尾补回空行（收尾 PRINTL 只收那串 PRINTFORM 拼出的一行）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '    chara(a).dungeon.体力 -= local;\n  }\n\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
     replace:
-      '    chara(a).dungeon.体力 -= local;\n  }\n\n  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧形态\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+      '    chara(a).dungeon.体力 -= local;\n  }\n\n  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧写法\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
     tests: ['dungeon-trap'],
-    must_mention: '蜘蛛网（:915-916）：收尾的 PRINTL 不是空行',
+    must_mention: '蜘蛛网：收尾的 PRINTL 不是空行',
   },
   {
-    desc: 'M12105 爱虫段收尾补回空行（:1276-1277 的 PRINTL 只收 :1268/:1272 那串 PRINTFORM）',
+    desc: 'M12105 爱虫段收尾补回空行（收尾 PRINTL 只收那串 PRINTFORM 拼出的一行）',
     file: 'ere/dungeon/dungeon-trap.js',
     find: '  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行\n  // （PRINTFORM 不换行），**不是空行**——ere 侧每段各自一次 print，',
     replace:
-      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧形态\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行\n  // （PRINTFORM 不换行），**不是空行**——ere 侧每段各自一次 print，',
+      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧写法\n  // 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行\n  // （PRINTFORM 不换行），**不是空行**——ere 侧每段各自一次 print，',
     tests: ['dungeon-trap'],
-    must_mention: '爱虫（:1276-1277）：收尾的 PRINTL 不是空行',
+    must_mention: '爱虫：收尾的 PRINTL 不是空行',
   },
   {
-    desc: 'M12106 2D 地图每行补回空行（:18 的 PRINTL 只收本行 32 个 CHIP_DRAW 的 PRINT）',
+    desc: 'M12106 2D 地图每行补回空行（行尾 PRINTL 只收本行 32 个 chip_draw 的 PRINT）',
     file: 'ere/dungeon/labo-map.js',
-    find: '    // 的 PRINTL 只结束这一行的 32 个 CHIP_DRAW `PRINT` 串（PRINT 不换',
+    find: '    // 的 PRINTL 只结束这一行的 32 个 chip_draw `PRINT` 串（PRINT 不换',
     replace:
-      '    era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n    // 的 PRINTL 只结束这一行的 32 个 CHIP_DRAW `PRINT` 串（PRINT 不换',
+      '    era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧写法\n    // 的 PRINTL 只结束这一行的 32 个 chip_draw `PRINT` 串（PRINT 不换',
     tests: ['dungeon-labo'],
-    must_mention: ':18 的 PRINTL 只结束本行，不是空行（#597）',
+    must_mention: 'PRINTL 只结束本行，不是空行（#597）',
   },
   {
-    desc: 'M12107 调色测试行尾补回空行（:54 的 PRINTL 只收 8 个 C_OUT 的 PRINT）',
+    desc: 'M12107 调色测试行尾补回空行（行尾 PRINTL 只收 8 个 c_out 的 PRINT）',
     file: 'ere/dungeon/labo.js',
-    find: '  // 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换',
+    find: '  // 的 PRINTL 只结束段里那 8 个 c_out 的 `PRINT` 串（PRINT 不换',
     replace:
-      '  era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n  // 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换',
+      '  era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧写法\n  // 的 PRINTL 只结束段里那 8 个 c_out 的 `PRINT` 串（PRINT 不换',
     tests: ['dungeon-labo'],
-    must_mention: ':54 的 PRINTL 不是空行',
+    must_mention: 'PRINTL 不是空行',
   },
   {
-    desc: 'M12108 GEO_OUTPUT 每行补回空行（:106 的 PRINTL 只收本行 32 个 C_OUT 的 PRINT）',
+    desc: 'M12108 geo_output 每行补回空行（行尾 PRINTL 只收本行 32 个 c_out 的 PRINT）',
     file: 'ere/dungeon/labo.js',
-    find: '    // 的 PRINTL 只结束这一行的 32 个 C_OUT `PRINT` 串（PRINT 不换',
+    find: '    // 的 PRINTL 只结束这一行的 32 个 c_out `PRINT` 串（PRINT 不换',
     replace:
-      '    era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n    // 的 PRINTL 只结束这一行的 32 个 C_OUT `PRINT` 串（PRINT 不换',
+      '    era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧写法\n    // 的 PRINTL 只结束这一行的 32 个 c_out `PRINT` 串（PRINT 不换',
     tests: ['dungeon-labo'],
-    must_mention: ':106 的 PRINTL 不是空行',
+    must_mention: 'PRINTL 不是空行',
   },
   {
-    desc: 'M12109 LABO [007] 图片之后补回空行（:33 的 PRINTL 只收 :32 的 PRINT_IMG）',
+    desc: 'M12109 LABO [007] 图片之后补回空行（PRINTL 只收 PRINT_IMG 那一行）',
     file: 'ere/dungeon/labo.js',
-    find: '      // 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），',
+    find: '      // 的 PRINTL 只结束 PRINT_IMG 那一行（PRINT_IMG 不换行），',
     replace:
-      '      era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n      // 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），',
+      '      era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧写法\n      // 的 PRINTL 只结束 PRINT_IMG 那一行（PRINT_IMG 不换行），',
     tests: ['dungeon-labo'],
     must_mention: '[007] 图片之后不补空行（#597）',
   },
   {
-    desc: 'M12110 地下城模式状态行补回空行（:247 的 PRINTL 只收 :243/:245 的 PRINT）',
+    desc: 'M12110 地下城模式状态行补回空行（状态行 PRINTL 只收状态那一行的 PRINT）',
     file: 'ere/dungeon/labo-dungeon-map.js',
-    find: '  // 的 PRINTL 只结束 :243/:245 的 `PRINT ２Ｄ` / `PRINT 普通` 那一行',
+    find: '  // 的 PRINTL 只结束 `PRINT ２Ｄ` / `PRINT 普通` 那一行',
     replace:
-      '  era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n  // 的 PRINTL 只结束 :243/:245 的 `PRINT ２Ｄ` / `PRINT 普通` 那一行',
+      '  era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧写法\n  // 的 PRINTL 只结束 `PRINT ２Ｄ` / `PRINT 普通` 那一行',
     tests: ['dungeon-labo'],
-    must_mention: ':247 的 PRINTL 不是空行（#597）',
+    must_mention: 'PRINTL 不是空行（#597）',
   },
   {
-    desc: 'M12111 休憩演出的 :62 真空行删除（:60 PRINTFORMW 已收尾，空行由它来）',
+    desc: 'M12111 休憩演出的真空行删除（PRINTFORMW 已收尾，空行由它来）',
     file: 'ere/dungeon/labo-dungeon-map.js',
-    find: '      era.drawLine();\n      era.println(); // 真空行：60 行的 PRINTFORMW 已收尾',
-    replace: '      era.drawLine();\n      // 变异：:62 的真空行删除',
+    find: '      era.drawLine();\n      era.println(); // 真空行：PRINTFORMW 已收尾',
+    replace: '      era.drawLine();\n      // 变异：真空行删除',
     tests: ['dungeon-labo'],
-    must_mention:
-      ':62 的真空行紧随其后、段尾 :75-76 的真空行紧跟（删掉或补多都算错）',
+    must_mention: '段中真空行紧随其后、段尾真空行紧跟（删掉或补多都算错）',
   },
   {
-    desc: 'M12112 商店街税入前的 :362 真空行删除（:343 的 PRINTL 已收尾，空行由它来）',
+    desc: 'M12112 商店街税入前的真空行删除（威望行的 PRINTL 已收尾，空行由它来）',
     file: 'ere/dungeon/dungeon-room.js',
-    find: '  era.println(); // PRINTL 真空行：343/346/351/355/359 行的威望行已收尾',
-    replace: '  // 变异：:362 的真空行删除',
+    find: '  era.println(); // PRINTL 真空行：威望行已收尾',
+    replace: '  // 变异：真空行删除',
     tests: ['dungeon-room'],
-    must_mention: ':362 的真空行在税入行之前',
+    must_mention: '真空行在税入行之前',
   },
   {
-    desc: 'M12113 背叛提问前的 :1158 真空行删除（:1150 的 PRINTFORMW 已收尾）',
+    desc: 'M12113 背叛提问前的真空行删除（PRINTFORMW 已收尾）',
     file: 'ere/dungeon/dungeon-battle2.js',
-    find: '      party_del(leader);\n      era.println(); // 真空行：1150 行的 PRINTFORMW 已收尾（1158 行的 PRINTL 落在空行上）',
-    replace: '      party_del(leader);\n      // 变异：:1158 的真空行删除',
+    find: '      party_del(leader);\n      era.println(); // 真空行：PRINTFORMW 已收尾（PRINTL 落在空行上）',
+    replace: '      party_del(leader);\n      // 变异：真空行删除',
     tests: ['dungeon-battle'],
-    must_mention: ':1158 的真空行在提问行之前',
+    must_mention: '真空行在提问行之前',
   },
   {
     desc: 'M12122 瞬移段 FLAG:85 > 0 支的真空行删除（347 行的 PRINTFORML 已收尾）',
@@ -2650,16 +2650,16 @@ export default [
   },
 
   {
-    desc: 'M12906 LABO 野外战斗调用复活（dungeon_battle 调用点打回——#638 删除的原作缺失调用不得回潮；函数已删，回潮即 ReferenceError）',
+    desc: 'M12906 LABO 野外战斗调用复活（dungeon_battle 调用点打回——#638 删除的缺失调用不得回潮；函数已删，回潮即 ReferenceError）',
     file: 'ere/dungeon/labo-dungeon-map.js',
-    find: '      return 0; // 魔王軍は仲間\n    }\n    // CALL DUNGEON_BATTLE',
+    find: '      return 0; // 魔王軍は仲間\n    }\n    // 野外战斗调用（函数缺失，文件头）随 #638 删除：撞上怪物该',
     replace:
-      "      return 0; // 魔王軍は仲間\n    }\n    era.print('野外战斗（DUNGEON_BATTLE）开始……'); // 变异：野外战斗行复活\n    // CALL DUNGEON_BATTLE",
+      "      return 0; // 魔王軍は仲間\n    }\n    era.print('野外战斗（DUNGEON_BATTLE）开始……'); // 变异：野外战斗行复活\n    // 野外战斗调用（函数缺失，文件头）随 #638 删除：撞上怪物该",
     tests: ['dungeon-labo'],
     must_mention: '不再打印任何战斗行',
   },
   {
-    desc: 'M13150 MONSTER_ATTACK 换算回退 -100（修好不回潮，#651）',
+    desc: 'M13150 monster_attack 换算回退 -100（修好不回潮，#651）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: '  // IDを先頭に（数量槽 99/199/299 → 列头 0/100/200，与同构三处一致）\n  monid -= 99;',
     replace:
@@ -2668,7 +2668,7 @@ export default [
     must_mention: 'HP -10',
   },
   {
-    desc: 'M13151 VICTORY_GET 骄傲低扣减重印段复活（#651 删的重复段不回潮）',
+    desc: 'M13151 victory_get 骄傲低扣减重印段复活（#651 删的重复段不回潮）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: '  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // プライド低い\n  }',
     replace:
@@ -2677,33 +2677,33 @@ export default [
     must_mention: 'will 6 > 5，RETURN 0',
   },
   {
-    desc: 'M13152 DEFENCE_CHARA_EXTRA_DMG 的低位判据回退 CFLAG:681（#651 修好的笔误不回潮）',
+    desc: 'M13152 defence_chara_extra_dmg 的低位判断条件回退 CFLAG:681（#651 修好的笔误不回潮）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: '  } else if (debuff > 0) {\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
     replace:
-      '  } else if ((era.get(`cflag:${arg0}:681`) || 0) > 0) { // 变异：判据回退 681\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
+      '  } else if ((era.get(`cflag:${arg0}:681`) || 0) > 0) { // 变异：判断条件回退 681\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
     tests: ['dungeon-battle'],
     must_mention: 'DMG 100 × 110%',
   },
   {
-    desc: 'M13153 FARM 卖孩子守卫失效（无条件加钱回归，#651 修好的 SIF 作用域事故不回潮）',
+    desc: 'M13153 dungeon_farm 卖孩子检查失效（无条件加钱回归，#651 修好的 SIF 作用域事故不回潮）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  if (sell_baby) {\n    era_flag.money += meat_count * 10;',
     replace:
-      '  if (true) { // 变异：卖孩子守卫失效\n    era_flag.money += meat_count * 10;',
+      '  if (true) { // 变异：卖孩子检查失效\n    era_flag.money += meat_count * 10;',
     tests: ['dungeon-room'],
     must_mention: 'FLAG:614 = 0 不加钱',
   },
   {
-    desc: 'M13154 FARM_RESCUE 战役守卫删（恒救走，#651 修好的按本人状态判定不回潮）',
+    desc: 'M13154 dungeon_farm_rescue 战役检查删（恒救走，#651 修好的按本人状态判定不回潮）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {\n    era_flag.meat_toilet_count -= 1;\n  }',
-    replace: '  era_flag.meat_toilet_count -= 1; // 变异：战役守卫删（恒救走）',
+    replace: '  era_flag.meat_toilet_count -= 1; // 变异：战役检查删（恒救走）',
     tests: ['dungeon-room'],
     must_mention: '战役中的勇者不停留',
   },
   {
-    desc: 'M13155 FARM_RESCUE 分发实参回退扩张位域（#651 修好的实参不回潮）',
+    desc: 'M13155 dungeon_farm_rescue 分发实参回退扩张位域（#651 修好的实参不回潮）',
     file: 'ere/dungeon/dungeon-room.js',
     find: '    await dungeon_farm_rescue(arg0);',
     replace: '    await dungeon_farm_rescue(extra); // 变异：实参回退扩张位域',
@@ -2711,25 +2711,25 @@ export default [
     must_mention: '实参是勇者 1（侵攻中）→ 救走一只',
   },
   {
-    desc: 'M13156 PLANNING 重度借债 GOAL 赋值收回调试守卫（#651 修好的笔误不回潮）',
+    desc: 'M13156 town_pt_planning 重度借债 GOAL 赋值收回调试检查（#651 修好的笔误不回潮）',
     file: 'ere/dungeon/dungeon-town.js',
     find: "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n      }\n      goal = floor_max + 1;\n      start_floor = floor_max + 1;",
     replace:
-      "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n        goal = floor_max + 1; // 变异：赋值收回守卫内（守卫关 → 闲逛）\n        start_floor = floor_max + 1;\n      }",
+      "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n        goal = floor_max + 1; // 变异：赋值收回显示开关内（开关关 → 闲逛）\n        start_floor = floor_max + 1;\n      }",
     tests: ['dungeon-town'],
     must_mention: 'GOAL = FLOOR_MAX + 1',
   },
   {
-    desc: 'M13157 SET_QUEST 受注计数判据回退 bit3（#651 修好的笔误不回潮）',
+    desc: 'M13157 set_quest 受注计数判断条件回退 bit3（#651 修好的笔误不回潮）',
     file: 'ere/dungeon/dungeon-quest.js',
     find: '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) {',
     replace:
-      '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) { // 变异：判据回退 bit3',
+      '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) { // 变异：判断条件回退 bit3',
     tests: ['dungeon-quest'],
     must_mention: 'bit2（时限）',
   },
   {
-    desc: 'M13158 LOVERS 前戏珠回退遗留字面量 250（#651 修好的 LOCAL×5 不回潮）',
+    desc: 'M13158 settle_love_exp 前戏珠回退遗留字面量 250（#651 修好的 LOCAL×5 不回潮）',
     file: 'ere/dungeon/dungeon-lovers.js',
     find: '    era.add(`juel:${cid}:0`, love_exp[9] * 5);',
     replace: '    era.add(`juel:${cid}:0`, 250); // 变异：回退遗留字面量',
@@ -2737,11 +2737,11 @@ export default [
     must_mention: '前戏数 2 × 5',
   },
   {
-    desc: 'M13159 ENERGY_BOLT 收口删（kill_monsters 改裸算，怪物数可负，#651 修好的负怪物数不回潮）',
+    desc: 'M13159 energy_bolt_magic 封顶删（kill_monsters 改裸算，怪物数可负，#651 修好的负怪物数不回潮）',
     file: 'ere/dungeon/magic.js',
-    find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    // 过量击杀按现存怪物数收口（kill_monsters 内 min）：怪物数不跌破 0\n    const killed = kill_monsters(a, b, damage);',
+    find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0\n    const killed = kill_monsters(a, b, damage);',
     replace:
-      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv(damage, e_get(b + 99)); // 变异：收口删（怪物数可负）',
+      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv(damage, e_get(b + 99)); // 变异：封顶删（怪物数可负）',
     tests: ['dungeon-magic'],
     must_mention: '怪物数不跌破 0',
   },

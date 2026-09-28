@@ -1,27 +1,25 @@
 /**
  * @file 初吻与初体验的初始化（issue #394，N10）。
  *
- * 调用面：唯一调用点是 ere/chara/chara-make.js 的 cm_ns_exp（源
- * CHARA_MAKE.ERB:1103 `CALL CHARA_FIRST_EXP, A`，角色生成管线 @CM_NS_EXP
- * 段的初体验一句）。函数没有返回值出口（原作 `RETURN 0`），产物全在四个
- * 「初体验/初吻」变量上。
+ * 调用面：唯一调用点是 ere/chara/chara-make.js 的 cm_ns_exp（角色生成管线
+ * 里设置初体验的一句）。函数没有返回值，产物全在四个「初体验/初吻」变量上。
  *
- * 局部量与产物对照（原作局部量在 ere 侧一律落 JS 局部，不进变量表）：
+ * 局部量与产物对照（局部量一律落 JS 局部，不进变量表）：
  *
- *   | 原作            | 含义                                          | ere 落点                      |
- *   | ---             | ---                                           | ---                           |
- *   | `FIRST_KISS`    | 初吻部位编码（-1 未初始化、0 未体验）          | CFLAG:cid:16（写回，train 域）|
- *   | `FIRST_SEX`     | 初体验对象编码（同上）                         | CFLAG:cid:15（写回，train 域）|
- *   | `LOCALS`        | 初吻对象的称呼串                               | CSTR:cid:4（写回，train 域）  |
- *   | `LOCALS:1`      | 初体验对象的称呼串                             | CSTR:cid:3（写回，train 域）  |
- *   | `LOCALS:2`      | 当前候选对象的称呼（一次性暂存）               | `candidate`                   |
- *   | `KISS_POINT`    | 「预约」的初吻部位编码                         | `kiss_point`                  |
- *   | `MEN_OR_GIRL`   | 候选对象的性别（1 男 / 2 女 / 3 扶她 / 4 随机） | `candidate_gender`            |
- *   | `MEN_OR_GIRL:1` | 已被采纳的性别（0 = 尚无）                     | `matched_gender`              |
- *   | `LOCAL:1`       | 家族编码的分位截取（反复覆写）                 | `scratch`                     |
- *   | `LOCAL:3`       | 家族编码                                       | `family`                      |
- *   | `LOCAL:4`       | 家族设定有无（编码个位）                       | `family_flag`                 |
- *   | `LOCAL:2`       | 家族编码的低十位（配偶性别数字位）              | `family_low`                  |
+ *   | 含义                                          | 落点                          |
+ *   | ---                                           | ---                           |
+ *   | 初吻部位编码（-1 未初始化、0 未体验）          | CFLAG:cid:16（写回，train 域）|
+ *   | 初体验对象编码（同上）                         | CFLAG:cid:15（写回，train 域）|
+ *   | 初吻对象的称呼串                               | CSTR:cid:4（写回，train 域）  |
+ *   | 初体验对象的称呼串                             | CSTR:cid:3（写回，train 域）  |
+ *   | 当前候选对象的称呼（一次性暂存）               | `candidate`                   |
+ *   | 「预约」的初吻部位编码                         | `kiss_point`                  |
+ *   | 候选对象的性别（1 男 / 2 女 / 3 扶她 / 4 随机） | `candidate_gender`            |
+ *   | 已被采纳的性别（0 = 尚无）                     | `matched_gender`              |
+ *   | 家族编码的分位截取（反复覆写）                 | `scratch`                     |
+ *   | 家族编码                                       | `family`                      |
+ *   | 家族设定有无（编码个位）                       | `family_flag`                 |
+ *   | 家族编码的低十位（配偶性别数字位）              | `family_low`                  |
  *
  * 移植说明（有意偏离，均注明依据）：
  *
@@ -29,16 +27,14 @@
  *     train 域（跨域写下标，逐条登记在案），写一律经 `chara(cid).train`
  *     的具名访问器；四项产物的初值也走同一组 getter 取回，其余读是裸寻址
  *     （#70 跨域读放行）。
- *   - **原作 `CASE 0,4,8` / `CASE 1,5,7` / `CASEELSE` 的三分数字位**（:67-129
- *     五处婚姻段）抽成查表 `MARRIAGE_PARTNER`，判定内容一字不改：键是
- *     `LOCAL:1 / 10000` 的五个婚姻状态，值是内层三臂。
- *   - **男／扶她两段逐字相同**（:224-302 与 :304-382，逐行比对确认），落成
- *     同一张职业表 `JOB_PARTNER_MALE_LIKE`；女的那段（:384-464）另立一张。
- *     两段原文确实一字不差，共用表不改变任何一条判定的结果。
- *   - **"貴族" 在女那一段没有 `ELSE`**（:406-412）：链全不中时 `LOCALS:2`
- *     保留上一轮的值。表里用 `fallback: null` 表达这处不同。
- *   - 原作无随机源缝（`RAND:N` 直接内联在表达式里），ere 侧按 chara-init.js
- *     先例把它提成 `rand` 形参，调用方注入定值序；缺省均匀随机。
+ *   - **婚姻段的配偶数字位三分支**抽成查表 `MARRIAGE_PARTNER`：键是家族
+ *     编码万位的婚姻状态，值是内层三分支的 [称呼, 性别] 行。
+ *   - 男／扶她共用一张职业表 `JOB_PARTNER_MALE_LIKE`，女另立一张
+ *     `JOB_PARTNER_FEMALE`；候选集与性别限定（gender 字段）各自维护。
+ *   - **职业 8（貴族）在女表不设默认值**：链全不中时保留上一轮的候选，
+ *     表里用 `fallback: null` 表达。
+ *   - 随机源提成 `rand` 形参（chara-init.js 先例），调用方可注入定值序；
+ *     缺省均匀随机。
  */
 
 'use strict';
@@ -49,12 +45,11 @@ const { chara } = require('#/facade/chara');
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
- * 婚姻段的配偶称呼与性别（:64-130 的外层 `SELECTCASE LOCAL:1 / 10000` ×
- * 内层 `SELECTCASE LOCAL:2 / 1000000000`）。
+ * 婚姻段的配偶称呼与性别。
  *
- * 键 = `LOCAL:1 / 10000`（1 已婚 / 2 离婚 / 3 重婚 / 4 再婚 / 5 未亡人）；
- * 值是内层三臂的 `[称呼, 性别]`：数字位 ∈ {0,4,8} → 男、∈ {1,5,7} → 扶她、
- * 其余 → 女。
+ * 键 = 婚姻状态（家族编码万位，1 已婚 / 2 离婚 / 3 重婚 / 4 再婚 / 5 未亡人）；
+ * 值是内层三分支的 `[称呼, 性别]`：配偶性别数字位 ∈ {0,4,8} → 男、
+ * ∈ {1,5,7} → 扶她、其余 → 女。
  */
 const MARRIAGE_PARTNER = new Map([
   [
@@ -100,8 +95,8 @@ const MARRIAGE_PARTNER = new Map([
 ]);
 
 /**
- * 内层三臂的取法（:68-76 等的 `CASE 0,4,8` / `CASE 1,5,7` / `CASEELSE`）。
- * @param {number} digit `LOCAL:2 / 1000000000`
+ * 内层三分支的取法：按配偶性别数字位选 `[称呼, 性别]` 行。
+ * @param {number} digit 配偶性别数字位（family_low / 1000000000）
  * @returns {number} 0 = 男、1 = 扶她、2 = 女（`MARRIAGE_PARTNER` 行下标）
  */
 function marriage_branch(digit) {
@@ -111,13 +106,12 @@ function marriage_branch(digit) {
 }
 
 /**
- * `IF RAND:N == 0 … ELSEIF RAND:M == 0 …` 链：逐条掷，命中即返回。
- * 掷的顺序与原作一致——前一条不中才掷下一条（emuera-basic-agent-guide
- * operators.md「短路求值」）。
+ * 随机链：逐条掷（rand(n) == 0 即命中），命中即返回该条的值——前一条
+ * 不中才掷下一条（短路求值）。
  *
  * @param {Array<[number, number]>} chain [分母, 命中值] 列表
- * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {number|undefined} undefined = 全不中（`ELSE` 由调用方接）
+ * @param {(n: number) => number} rand [0,n) 整数随机源
+ * @returns {number|undefined} undefined = 全不中（默认值由调用方接）
  */
 function roll_chain(chain, rand) {
   for (const [denominator, value] of chain) {
@@ -127,7 +121,7 @@ function roll_chain(chain, rand) {
 }
 
 /**
- * 职业段的单个 `CASE`：固定称呼，或一条 RAND 链加兜底。
+ * 职业段的单个候选：固定称呼，或一条随机链加默认值。
  * @param {object} spec `{ label }` 或 `{ chain, fallback }`
  * @param {string} previous 上一轮的候选称呼
  * @param {(n: number) => number} rand
@@ -146,8 +140,8 @@ function resolve_case_label(spec, previous, rand) {
 
 /**
  * 「キスしたかもしれない職業」段的职业 → 候选对象表（键 = `TALENT:315`
- * 成为勇者前的生活）。男／扶她共用一张（:225-300 与 :305-380 逐字相同），
- * 女另一张（:385-462）。`kiss` 是该 CASE 顺带预约的初吻部位。
+ * 成为勇者前的生活）。男／扶她共用一张，女另一张。`kiss` 是该条目顺带
+ * 预约的初吻部位。
  */
 const JOB_PARTNER_MALE_LIKE = {
   gender: 2, // とりあえず女限定
@@ -291,7 +285,7 @@ const JOB_PARTNER_FEMALE = {
 };
 
 /**
- * `SELECTCASE RAND:3` 的三臂（`CASE 0` / `CASE 1` / `CASEELSE`）。
+ * 三选一：rand(3) 掷 0 / 1 / 其余。
  * @param {string[]} options 三选项
  * @param {(n: number) => number} rand
  * @returns {string}
@@ -304,13 +298,12 @@ function pick_three(options, rand) {
 }
 
 /**
- * @CHARA_FIRST_EXP（:2-670）：按角色的性别、家族与职业设定初吻与初体验的
+ * chara_first_exp：按角色的性别、家族与职业设定初吻与初体验的
  * 对象与部位，写回 CFLAG:15/16 与 CSTR:3/4。
  *
- * @param {number} cid 角色 ID（原作 ARG）
- * @param {(n: number) => number} [rand] 原作 `RAND:N`（[0,n) 整数）的随机源，
- *   缺省均匀随机
- * @returns {void} 原作 `RETURN 0`，调用点不读返回值
+ * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand] [0,n) 整数随机源，缺省均匀随机
+ * @returns {void} 无返回值，调用点不读返回值
  */
 function chara_first_exp(cid, rand = default_rand) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
@@ -320,15 +313,14 @@ function chara_first_exp(cid, rand = default_rand) {
 
   // 四项产物的初值（写回在函数末）
   let first_kiss = train.初吻对象; // CFLAG:16
-  let kiss_name = train.初吻对象名; // CSTR:4（原作 LOCALS）
+  let kiss_name = train.初吻对象名; // CSTR:4
   let first_sex = train.初体验对象; // CFLAG:15
-  let sex_name = train.初体验对象名; // CSTR:3（原作 LOCALS:1）
-  // KISS_POINT = 0 / MEN_OR_GIRL:1 = 0
+  let sex_name = train.初体验对象名; // CSTR:3
   let kiss_point = 0;
   let matched_gender = 0;
-  // MEN_OR_GIRL（元素 0）：候选对象的性别，1 男 / 2 女 / 3 扶她 / 4 随机
+  // 候选对象的性别，1 男 / 2 女 / 3 扶她 / 4 随机
   let candidate_gender = 0;
-  // LOCALS:2 —— 当前候选对象的称呼，每个「换人」的段头重置
+  // 当前候选对象的称呼，每个「换人」的段头重置
   let candidate = '';
 
   // 不是男人又不是处女 → 谈不上「未体验」
@@ -377,7 +369,7 @@ function chara_first_exp(cid, rand = default_rand) {
     }
   }
 
-  // LOCAL:3 = TALENT:320 家族构成 / LOCAL:4 = 家族设定的有无
+  // family = TALENT:320 家族构成 / family_flag = 个位（家族设定的有无）
   const family = t(320);
   const family_flag = family % 10;
 
@@ -469,7 +461,7 @@ function chara_first_exp(cid, rand = default_rand) {
     candidate_gender = 4;
   }
 
-  // 再掷一次（家族段没选中时的兜底）
+  // 再掷一次（家族段没选中时的保底处理）
   if (kiss_name === '' && first_kiss === 0 && rand(2) === 0) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
@@ -504,8 +496,7 @@ function chara_first_exp(cid, rand = default_rand) {
     sex_name += candidate;
   }
 
-  // 不幸なキス：男／扶她（:477-494 与 :496-513 逐字相同）与女
-  // 各一组三选项（SELECTCASE RAND:3），并预约部位
+  // 不幸なキス：男／扶她与女各一组三选项（rand(3)），并预约部位
   const unlucky =
     is_male || is_futa
       ? {
@@ -551,7 +542,7 @@ function chara_first_exp(cid, rand = default_rand) {
   candidate = pick_three(any_kiss.options, rand);
   candidate_gender = any_kiss.gender;
 
-  // 兜底：初吻必定有位对象
+  // 保底处理：初吻必定有位对象
   if (kiss_name === '' && first_kiss === 0) {
     kiss_name += candidate;
     matched_gender = candidate_gender;
@@ -596,7 +587,7 @@ function chara_first_exp(cid, rand = default_rand) {
     first_kiss = 0;
   }
 
-  // 初吻部位：多半是嘴唇（RAND:30 > 0），否则按对象性别定
+  // 初吻部位：多半是嘴唇（rand(30) > 0），否则按对象性别定
   if (kiss_name !== '' && first_kiss === 0 && rand(30) > 0) {
     first_kiss = 1; // 唇
   } else if (kiss_name !== '' && first_kiss === 0 && rand(3) === 0) {

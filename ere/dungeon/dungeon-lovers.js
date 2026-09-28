@@ -1,10 +1,10 @@
 /**
  * @file 恋人系统（issue #341，阶段 5a L10）。
  *
- * `DUNGEON_TOWN_LOVER` 的 :201-1043 是二十种恋人的文本密集分支；这里把
- * 每个叶子的正文与 LOVE_EXP 增量收成静态表，选择顺序仍与原作一致。结算段
- * 保留 Emuera 整数除法的向零截断。原作 `JUEL += LOCAL * 5` 在 :1526/:1528
- * 读的是精液经验计算前遗留的 LOCAL，而非刚打印的 LOVE_EXP:9；该缺陷 1:1
+ * `dungeon_town_lover` 是二十种恋人的文本密集分支；这里把
+ * 每个叶子的正文与 LOVE_EXP 增量收成静态表，选择顺序不变。结算段
+ * 保留整数除法的向零截断。`JUEL += LOCAL * 5` 读的是精液经验计算前
+ * 遗留的 LOCAL，而非刚打印的 LOVE_EXP:9；该缺陷有意
  * 保留为固定值 50。
  */
 
@@ -46,7 +46,7 @@ const LOVER_NAMES = new Map([
   [200, '恋人'],
 ]);
 
-/** @NAME_LOVER（:73-143）：返回登记状态；print_flag=1 时打印 14 格名称。 */
+/** name_lover：返回登记状态；print_flag=1 时打印 14 格名称。 */
 function name_lover(lover, print_flag = 0) {
   const name = LOVER_NAMES.get(lover) ?? '';
   if (!name) return 0;
@@ -54,7 +54,7 @@ function name_lover(lover, print_flag = 0) {
   return 1;
 }
 
-/** @ENTER_LOVER（:7-72）：选择派去接近勇者的恋人类型。 */
+/** enter_lover：选择派去接近勇者的恋人类型。 */
 async function enter_lover(cid) {
   if (cid < 0) return 0;
   era.print('派遣魔王的手下外出，设下恋爱陷阱诱惑对象勇者堕落');
@@ -74,7 +74,7 @@ async function enter_lover(cid) {
 
   let selected;
   for (;;) {
-    // Emuera INPUT 是自由数值输入；保留隐藏的 200 与无效值重问语义。
+    // era.input 是自由数值输入（useRule: false）；保留隐藏的 200 与无效值重问语义。
     selected = await era.input({ useRule: false });
     if (selected === 999) return 0;
     if (selected === 0 || LOVER_NAMES.has(selected)) break;
@@ -905,7 +905,7 @@ function paired_text(hero, lover, both, self_only, other_only, neither) {
   return neither;
 }
 
-/** :1044-1291 CASE 200，返回 null 表示继续结算，0 表示原作提前 RETURN。 */
+/** CASE 200，返回 null 表示继续结算，0 表示提前 RETURN。 */
 function play_character_lover_scene(cid, love_exp) {
   const lover_id = search_family(cid, 'LOVE');
   if (lover_id < 0) return 0;
@@ -1223,7 +1223,7 @@ async function settle_love_exp(
   }
 }
 
-/** @DUNGEON_TOWN_LOVER（:144-1616）：城镇恋人事件与经验结算。 */
+/** dungeon_town_lover：城镇恋人事件与经验结算。 */
 async function dungeon_town_lover(cid, rand = default_rand) {
   if (cid <= 0) return 0;
   let lover = chara(cid).dungeon.恋人;
@@ -1257,7 +1257,7 @@ async function dungeon_town_lover(cid, rand = default_rand) {
   return 1;
 }
 
-/** @DUNGEON_TOWN_LOVER_CHARA_ENTER（:1617-1708）：随机撮合两名在场角色。 */
+/** dungeon_town_lover_chara_enter：随机撮合两名在场角色。 */
 async function dungeon_town_lover_chara_enter(cid, rand = default_rand) {
   if (((era.get('flag:8') || 0) & 4) === 0) return 0; // FLAG:8 bit2 = 角色间恋爱
   const source = chara(cid);
@@ -1265,7 +1265,7 @@ async function dungeon_town_lover_chara_enter(cid, rand = default_rand) {
 
   const added = era.getAddedCharacters();
   if (added.length === 0) return 0;
-  const candidate = added[rand(added.length)]; // 原作 RAND:CHARANUM；允许抽到自己
+  const candidate = added[rand(added.length)]; // RAND:CHARANUM；允许抽到自己
   const target = chara(candidate);
   if (target.invasion.状态 !== source.invasion.状态) return 0;
   if (target.dungeon.恋人 > 0 || target.chara.结婚对象 > 0) return 0;

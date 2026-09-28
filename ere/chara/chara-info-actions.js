@@ -2,27 +2,26 @@
  * @file 角色信息个别画面的动作函数：能力提升/换装资格判定、拘束台解放、金钱
  * 回复体力气力、金钱购买等级、传送召回。
  *
- * 调用方：キャラ関数/CHARA_INFO ver1.0.1.ERB（本域 page-chara-info.js）的
- * CASE 10/11/12/14/15/13，以及外部两处：其他/NINSIN.ERB:286（临盆迎击角色
- * 请求传送召回，ere/chara/chara-pregnancy.js 的 ninsin_reach_term）。
+ * 调用方：本域 page-chara-info.js 的动作分发（case 10/11/12/13/14/15），
+ * 以及外部 ere/chara/chara-pregnancy.js 的 ninsin_reach_term（临盆迎击
+ * 角色请求传送召回）。
  *
- * 硬约束七（MOD 重名歧义）落在这三个函数：@CHARA_INFO_CALLBACK、
- * @CHARA_INFO_RECOVER_HP、@CHARA_INFO_UP_LEVEL 在 `MOD/一键升级/CHARA_INFO_FUNC.ERB`
- * 各有一份同名定义，调用方 `CALL`（非 `CALLEVENT`）使 Emuera 取哪一份取决于
- * 装载顺序。逐字节比对两份文件的结论（本票实测，推翻 #381/#391 的初步判断）：
- *   - IS_ABLE_TO_ABILITY_UP/IS_ABLE_TO_CLOTH/CHARA_INFO_RESTORE_STATE/
- *     CHARA_INFO_RECOVER_HP：两版逐字节相同（`diff` 零差异）；
- *   - CHARA_INFO_CALLBACK：两版起始行号不同（キャラ関数 :89、MOD :119），
- *     但那只是因为前一个函数（UP_LEVEL）长度不同——函数体本身逐字节相同；
- *   - CHARA_INFO_UP_LEVEL：**两版内容真正不同**。基础版每次固定购买 1 级；
+ * 硬约束七（MOD 重名歧义）落在这三个函数：chara_info_callback、
+ * chara_info_recover_hp、chara_info_up_level 在 MOD「一键升级」目录里各有
+ * 一份同名定义，而调用按名字直呼，执行哪一份取决于装载顺序。逐字节比对
+ * 两份定义的结论（实测，推翻 #381/#391 的初步判断）：
+ *   - is_able_to_ability_up / is_able_to_cloth / chara_info_restore_state /
+ *     chara_info_recover_hp：两版逐字节相同（`diff` 零差异）；
+ *   - chara_info_callback：两版函数体逐字节相同（起始位置不同只是因为
+ *     前一个函数（up_level）长度不同）；
+ *   - chara_info_up_level：**两版内容真正不同**。基础版每次固定购买 1 级；
  *     MOD 版（目录名「一键升级」）改成批量购买 0/1/5/10/100/500/1000 级。
- * 真正的歧义只在 CHARA_INFO_UP_LEVEL 一处，而 `MOD/` 与 `魔改新增/` 已由
- * #329 裁定 6 整体排除在阶段 5 之外、留给阶段 6（"MOD/ 到底加不加载"仍是
- * 阶段 6 待裁的开放问题，见 #101 阶段 6 行）。本环境没有 Emuera 运行时可用
- * （`target/` 只含源码与说明文档，不含可执行的 Emuera 本体），无法实测装载
- * 顺序——按硬约束七"不许猜"的二选一，本票选择显式划界：只移植阶段 5 范围内
- * 的キャラ関数（基础）版本，MOD 版"一键升级"批量购买变体不在本票实现，
- * 留给阶段 6 处理 MOD/ 加载问题时一并裁定。
+ * 真正的歧义只在 chara_info_up_level 一处，而 `MOD/` 与 `魔改新增/` 已由
+ * #329 决定整体排除在阶段 5 之外、留给阶段 6（「MOD/ 到底加不加载」仍是
+ * 阶段 6 待决的开放问题，见 #101 阶段 6 行）。装载顺序无法实测，按硬约束七
+ * 「不许猜」的二选一，这张工单选择显式划界：只移植阶段 5 范围内的基础
+ * 版本，MOD 版「一键升级」批量购买变体不在本工单实现，留给阶段 6 处理
+ * MOD/ 加载问题时一并决定。
  */
 
 const era = require('#/era-electron');
@@ -37,7 +36,7 @@ function name_of(cid) {
 }
 
 /**
- * @IS_ABLE_TO_ABILITY_UP（:3-6，#FUNCTION 式中函数）：能力提升资格判定。
+ * is_able_to_ability_up：能力提升资格判定。
  * CFLAG:ARG:1 = 角色状态（0 可调教/2 侵攻中/3 迎击中/7 苗床）；
  * CFLAG:0:9 = 魔王等级；BASE:ARG:0 = 体力。
  * @param {number} cid 角色 ID
@@ -57,7 +56,7 @@ function is_able_to_ability_up(cid) {
 }
 
 /**
- * @IS_ABLE_TO_CLOTH（:9-11，#FUNCTION 式中函数）：更换服装资格判定。
+ * is_able_to_cloth：更换服装资格判定。
  * @param {number} cid 角色 ID
  * @returns {boolean}
  */
@@ -68,10 +67,10 @@ function is_able_to_cloth(cid) {
 }
 
 /**
- * @CHARA_INFO_RESTORE_STATE（:14-18）：状态复位（迎击中先离队再清状态）。
+ * chara_info_restore_state：状态复位（迎击中先离队再清状态）。
  *
- * 全库零调用者（原作与 `ere/` 均无调用点）——为完整移植 CHARA_INFO_FUNC.ERB
- * 六个函数之一而实现，等待方随将来接线该函数的调用点出现时补。
+ * ere 侧没有任何调用点——为把本文件六个函数移植完整而实现，待将来出现
+ * 调用点时接入。
  * @param {number} cid 角色 ID
  */
 function chara_info_restore_state(cid) {
@@ -82,7 +81,7 @@ function chara_info_restore_state(cid) {
 }
 
 /**
- * @CHARA_INFO_RECOVER_HP（:20-46）：花钱回满体力气力。
+ * chara_info_recover_hp：花钱回满体力气力。
  *
  * @param {number} cid 角色 ID
  * @returns {Promise<void>}
@@ -116,16 +115,15 @@ async function chara_info_recover_hp(cid) {
     chara(cid).dungeon.体力 = max_hp;
     chara(cid).dungeon.气力 = max_mp;
   }
-  // CASEELSE GOTO INPUT_LOOP1（:33/:35）：白名单外输入到不了游戏，不模拟
+  // 白名单外的输入到不了游戏，不模拟重试循环
 }
 
 /**
- * @CHARA_INFO_UP_LEVEL（:48-88，キャラ関数/基础版）：花钱购买 1 级经验。
+ * chara_info_up_level（基础版）：花钱购买 1 级经验。
  *
- * 每次调用固定升 1 级（曲线取自 @LVUP：魔王 LV*100+10、精英 LV*20+10、
- * 通常 LV*10+10；此处只算差额判定花费，真正的升级结算仍交给 @LVUP）。
- * MOD 版的批量购买（0/1/5/10/100/500/1000 级）不在本票范围，见文件头。
- *
+ * 每次调用固定升 1 级（魔王 LV*100+10、精英 LV*20+10、通常 LV*10+10；
+ * 此处只算差额判定花费，真正的升级结算仍交给 dungeon-lvup.js 的 lvup）。
+ * MOD 版的批量购买（0/1/5/10/100/500/1000 级）不在本工单范围，见文件头。
  * @param {number} cid 角色 ID
  * @returns {Promise<void>}
  */
@@ -168,10 +166,10 @@ async function chara_info_up_level(cid) {
 }
 
 /**
- * @CHARA_INFO_CALLBACK（:89-122）：耗费魔王气力，把出击中的角色传送召回。
+ * chara_info_callback：耗费魔王气力，把出击中的角色传送召回。
  *
- * 等级差判定（LOCAL = (对方等级*100/魔王等级)^2 * 魔王气力上限 / 10000）
- * 与气力是否足够两道守卫，均不足时静默失败（打印原因后 RETURN）。
+ * 等级差判定（cost = (对方等级*100/魔王等级)^2 * 魔王气力上限 / 10000）
+ * 与气力是否足够两道检查，均不足时静默失败（打印原因后返回）。
  *
  * @param {number} cid 角色 ID
  * @returns {Promise<void>}

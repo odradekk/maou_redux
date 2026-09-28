@@ -1,11 +1,11 @@
 /**
  * @file 怪物召唤与怪物编号抽选（issue #346，阶段 5a L15）。
  *
- * 移植说明：
- *   - 原作 RAND:N 全部经 rand 参数注入；缺省均匀随机。
+ * 说明：
+ *   - RAND:N 全部经 rand 参数注入；缺省均匀随机。
  *   - ARG == -1 是弱召唤：召唤轮数按整数除法折半，保留陷阱调用实参。
- *   - @PREGNANCY_MASTER 的唯一语句是 JUMP 自身并把参数改为 MASTER。
- *     这是原作的无限尾调用缺陷；函数保留为显式抛错，避免 JS 栈溢出掩盖
+ *   - pregnancy_master 的唯一语句是 JUMP 自身并把参数改为 MASTER。
+ *     这是无限尾调用的缺陷；函数保留为显式抛错，避免 JS 栈溢出掩盖
  *     原因。当前无调用点。
  */
 
@@ -18,7 +18,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** @MONSTER_TOTAL_COUNT（:169-182）：45 种常规怪物的库存总数。 */
+/** monster_total_count：45 种常规怪物的库存总数。 */
 function monster_total_count() {
   let total = 0;
   for (let kind = 0; kind < 5; kind += 1) {
@@ -30,7 +30,7 @@ function monster_total_count() {
 }
 
 /**
- * @RAND_MONSTER_NUMBER（:185-219）：从 100-184 抽选未满 999 只的怪物。
+ * rand_monster_number：从 100-184 抽选未满 999 只的怪物。
  * 只有全部 45 种均满时才允许返回已满种类。
  */
 function rand_monster_number(rand = default_rand) {
@@ -47,7 +47,7 @@ function add_monsters(id, count) {
   era.set(`item:${id}`, Math.min(999, (era.get(`item:${id}`) || 0) + count));
 }
 
-/** @SUMMON_MONSTER_MASTER（:154-166）：魔王生产固定近卫兵。 */
+/** summon_monster_master：魔王生产固定近卫兵。 */
 function summon_monster_master(arg = 0, rand = default_rand) {
   era.print('');
   era.drawLine();
@@ -60,7 +60,7 @@ function summon_monster_master(arg = 0, rand = default_rand) {
 }
 
 /**
- * @SUMMON_MONSTER（:5-148）：通常/弱召唤，或由指定角色生产怪物。
+ * summon_monster：通常/弱召唤，或由指定角色生产怪物。
  * @param {number} [arg=0] 0=通常召唤，-1=弱召唤，正数=生产者角色 ID
  * @param {(n:number)=>number} [rand] RAND:N 随机源
  */
@@ -87,7 +87,7 @@ async function summon_monster(arg = 0, rand = default_rand) {
       if ((era.get('talent:0:327') || 0) === 1) count += 1; // 淫魔知识
 
       const added = era.getAddedCharacters();
-      // 原作 GETCHARA(35) <= 0 的条件会把不在场与 0 号都跳过。
+      // GETCHARA(35) <= 0 的条件会把不在场与 0 号都跳过。
       if (added.includes(35) && (era.get('talent:35:1254') || 0) === 1) {
         count = Math.trunc((count * 150) / 100);
       }
@@ -156,9 +156,9 @@ async function summon_monster(arg = 0, rand = default_rand) {
   return 0;
 }
 
-/** @PREGNANCY_MASTER（:151-152）：原作自身 JUMP 自身的已知缺陷。 */
+/** pregnancy_master：自身 JUMP 自身的已知缺陷。 */
 function pregnancy_master() {
-  throw new Error('原作 PREGNANCY_MASTER 会无限尾调用自身');
+  throw new Error('pregnancy_master 会无限尾调用自身');
 }
 
 module.exports = {

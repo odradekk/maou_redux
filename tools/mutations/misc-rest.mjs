@@ -8,7 +8,7 @@ const make = (id, desc, file, find, replace, must_mention) => ({
   must_mention,
 });
 
-const ex = 'EXCOM：扩展口上编号取最后命中项并保留静态局部';
+const ex = 'chara_ex：扩展口上编号取最后命中项并保留静态局部';
 const tatoo = 'TATOO：只收集 10..19 的非空刺青';
 const draw = 'DRAW_EXT_COMM：两种彩条保留填充宽度';
 const menu_button = 'MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎';
@@ -29,8 +29,8 @@ const ntr_routes = 'NTR_PLAY：特别服装和私处封印';
 const transport = 'MAOUNET：INPORT_B 按字段格式写入通信记录';
 const menu = 'MAOUNET：菜单可切换通信勇者等级规则并清空公共记录';
 const hooks = 'MAOUNET：据点 888 接入真身';
-const chara_boundary = 'ADDCHARA_EX：16 被守卫拦截，17 从精确下界进入分发';
-const chara_table = 'EXCOM：名称表与八个 CHARA_EX 写槽逐项对应';
+const chara_boundary = 'add_chara_ex：16 被检查拦截，17 从精确下界进入分发';
+const chara_table = 'chara_ex：名称表与八个写槽逐项对应';
 const tattoo_show = 'DUNGEON_SPY：刺青炫耀只在有可选图案时输出';
 const gradient = 'PRINT_COLORBAR2：临界值、空格颜色与 1/32 步长可观测';
 const colors = 'BARCOLORSET：十种命名色与默认色逐项对应';
@@ -85,7 +85,7 @@ export default [
   ),
   make(
     7224,
-    'EX 名表重复初始化守卫失效',
+    'EX 名表重复初始化检查失效',
     'ere/chara/chara-ex.js',
     '    return false;\n  }\n  Object.assign(ex_talent_names, {',
     '    void 0;\n  }\n  Object.assign(ex_talent_names, {',
@@ -1222,7 +1222,7 @@ export default [
   },
   make(
     7526,
-    'CHARA_EX 守卫下界下移',
+    'add_chara_ex 分发检查下界下移',
     'ere/chara/chara-ex.js',
     'chara_id >= 17',
     'chara_id >= 16',
@@ -1230,7 +1230,7 @@ export default [
   ),
   make(
     7527,
-    'CHARA_EX 丢失魔王编号特例',
+    'add_chara_ex 丢失魔王编号特例',
     'ere/chara/chara-ex.js',
     'chara_id >= 17 || chara_id === 0',
     'chara_id >= 17',
@@ -1262,7 +1262,7 @@ export default [
   ),
   make(
     7531,
-    'CHARA_EX_32 写槽改错',
+    'EX 注册 32 写槽改错',
     'ere/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:102`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
@@ -1270,7 +1270,7 @@ export default [
   ),
   make(
     7532,
-    'CHARA_EX_33 写槽改错',
+    'EX 注册 33 写槽改错',
     'ere/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:103`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
@@ -1278,7 +1278,7 @@ export default [
   ),
   make(
     7533,
-    'CHARA_EX_35 写槽改错',
+    'EX 注册 35 写槽改错',
     'ere/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:104`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
@@ -1286,7 +1286,7 @@ export default [
   ),
   make(
     7534,
-    'CHARA_EX_223 写槽改错',
+    'EX 注册 223 写槽改错',
     'ere/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:223`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
@@ -1294,7 +1294,7 @@ export default [
   ),
   make(
     7535,
-    'CHARA_EX_777 写槽改错',
+    'EX 注册 777 写槽改错',
     'ere/chara/chara-ex.js',
     'era.set(`ex_talent:${cid}:777`, 1);',
     'era.set(`ex_talent:${cid}:101`, 1);',
@@ -1302,7 +1302,7 @@ export default [
   ),
   make(
     7536,
-    'CHARA_EX_34 丢失无双写入',
+    'EX 注册 34 丢失无双写入',
     'ere/chara/chara-ex.js',
     '  era.set(`ex_talent:${cid}:801`, 1);',
     '  void cid;',
@@ -1310,7 +1310,7 @@ export default [
   ),
   make(
     7537,
-    'CHARA_EX_34 丢失一人军团写入',
+    'EX 注册 34 丢失一人军团写入',
     'ere/chara/chara-ex.js',
     '  era.set(`ex_talent:${cid}:901`, 1);',
     '  void cid;',
@@ -1318,7 +1318,7 @@ export default [
   ),
   make(
     7538,
-    'CHARA_EX 声明空间丢失 777',
+    'chara_ex 声明空间丢失 777',
     'ere/chara/chara-ex.js',
     '  208, 209, 210, 211, 223, 777,',
     '  208, 209, 210, 211, 223,',
@@ -1358,7 +1358,7 @@ export default [
   ),
   make(
     7543,
-    '脸部标签的随机选择臂反转',
+    '脸部标签的随机选择分支反转',
     'ere/dungeon/dungeon-battle2.js',
     '            tatoos[0] === 10',
     '            tatoos[0] !== 10',

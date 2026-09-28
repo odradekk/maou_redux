@@ -1,5 +1,5 @@
 /**
- * @file 迷宫房间与设施（issue #177，阶段 3 H8）：DUNGEON_ROOM.ERB 十四函数。
+ * @file 迷宫房间与设施（issue #177，阶段 3 H8）：十四函数。
  *
  * 局部变量语义（各函数共用的词汇表）：
  *   ARG:0 / A = 受设施效果者（调用方 1/3 掷选）   ROOM = 设施番号 500-507
@@ -8,39 +8,39 @@
  *   MON_ID / MON_NUM = 怪物番号 / 只数   TALK = 牧场台词掷选（位段编码）
  *
  * 房间表：FLAG:350-358 = 第 1-9 层的设施番号，FLAG:360-368 = 对应的扩张
- * 位域（ROOMID = CFLAG:501 + 349 与 +10，:40-48）。八种设施：500 商店街 /
+ * 位域（ROOMID = CFLAG:501 + 349 与 +10）。八种设施：500 商店街 /
  * 501 沼地 / 502 人类牧场 / 503 冰室 / 504 热砂 / 505 迷宫 / 506 博物馆 /
- * 507 娼馆街（名字表 yml/Item.yml）。只有 500（DUNGEON_SHOP_DAY）与 502
- * （DUNGEON_FARM）有日结算（:159-163）。
+ * 507 娼馆街（名字表 yml/Item.yml）。只有 500（dungeon_shop_day）与 502
+ * （dungeon_farm）有日结算。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 钉下）：名字承载一律 `callname:${id}:-1`
- *     （#5 决议），本文件 name_of 收口；
+ *     （#5 决议），本文件统一由 name_of 承担；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
  *     Math.random，run_dungeon 第二参透传——迷宫/陷阱/房间共用同一随机源，
- *     #176 先例）。**注意 :21 的店遭遇掷（RAND:10）在早退之后、无条件的
- *     掷点**：换真身后侵攻勇者的房间调用每次消费一枚随机数，:386 之后的
- *     PRNG 序列相对存根期整体漂移（ENDING_2 e2e 的天数区间已为此留余量）；
- *   - 原作全局 A / RESULT / D:20 的换手改显式传参与返回值（#5 决议第六条）：
+ *     #176 先例）。**注意店遭遇掷（RAND:10）在早退之后、无条件的
+ *     掷点**：换真身后侵攻勇者的房间调用每次消费一枚随机数，其后的
+ *     PRNG 序列相对存根期整体不一致（ending_2 e2e 的天数区间已为此留余量）；
+ *   - 全局 A / RESULT / D:20 的换手改显式传参与返回值（#5 决议第六条）：
  *     A → 各函数首参；RESULT → dungeon_room 返回值（1 = 店遭遇，该房间
- *     不发生战斗，DUNGEON.ERB :386 的 NO_BATTLE 累加）；D:20（侵攻度，
- *     MASE :835 写）经 ctx 对象回写，与陷阱侧 trap_ctx 同一形态（#176
+ *     不发生战斗，run_dungeon 的 NO_BATTLE 累加）；D:20（侵攻度，
+ *     dungeon_mase 写）经 ctx 对象回写，与陷阱侧 trap_ctx 同一形式（#176
  *     先例；调用点 dungeon.js 在房间与陷阱两段间共享同一 ctx）；
- *   - TARGET（DUNGEON_HEAT :772-773 绿洲臂的 JUEL:TARGET:6 / CFLAG:TARGET:2）
- *     经 era_flag.target（run_dungeon :37 置位；直调需先置）；
+ *   - TARGET（dungeon_heat 绿洲分支的 JUEL:TARGET:6 / CFLAG:TARGET:2）
+ *     经 era_flag.target（run_dungeon 开头置位；直调需先置）；
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon.js 先例）；EX_FLAG:99（威望）→ era_exflag.prestige；
- *   - KARMA / CAMPAIGN_ROOM 经函数内延迟 require 复用 dungeon.js 的域内
- *     存根（避开循环初始化，#175/#176 先例）；ADD_EX_ITEM / SELL_EX_ITEM /
- *     EX_ITEM_NAME 随 #344 复用 ex-item.js 真身；RAND_MONSTER_NUMBER
- *     复用 monster-summon.js 真身；CAMPAIGN_ROOM_EXTRA 仍是域内存根；
+ *   - karma / campaign_room 经函数内延迟 require 复用 dungeon.js 的域内
+ *     存根（避开循环初始化，#175/#176 先例）；add_ex_item / sell_ex_item /
+ *     ex_item_name 随 #344 复用 ex-item.js 真身；rand_monster_number
+ *     复用 monster-summon.js 真身；campaign_room_extra 仍是域内存根；
  *   - CFLAG:503 是位域（门面名「休憩」只覆盖位 0；#176 约定）：本文件
- *     只动位 5（32 = 博物馆陈列架的先制封印，:900），位操作裸寻址；
+ *     只动位 5（32 = 博物馆陈列架的先制封印），位操作裸寻址；
  *   - TIMES COST, 1.1 → Math.floor(cost * 1.1)（截断，#176 同款）；
- *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行的
+ *   - PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行的
  *     拼接归并为一次 era.print（引擎 print 每调用一行，dungeon.js 先例）；
  *     PRINTW/PRINTFORMW 是 print + 读键；设施头部的「扩张：○」三连拼为
- *     同一行（:121-135 等七处）；
+ *     同一行（七处）；
  *   - 设施日结算的显示怪癖保留（见各处注释）：SHOP_DAY 的 PRINTW 収入
  *     减少（原文日文汉字「収」，#60 归一为「收」）。
  */
@@ -56,7 +56,7 @@ const ex_item_mod = require('#/dungeon/ex-item');
 const summon_mod = require('#/dungeon/monster-summon');
 
 /**
- * @CAMPAIGN_ROOM_EXTRA_{FLAG:400} 族：战役迷宫房间的扩张位域（#469，
+ * CAMPAIGN_ROOM_EXTRA_{FLAG:400} 族：战役迷宫房间的扩张位域（#469，
  * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
  * 依据）；实现在 ere/page/page-campaign-1.js 注册。
  */
@@ -70,15 +70,15 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
 /**
- * @CAMPAIGN_ROOM_EXTRA（CAMPAIGN_EVENT.ERB:169-179）：战役迷宫房间的
+ * campaign_room_extra：战役迷宫房间的
  * 扩张位域。
- * @param {number} floor 阶层（原作 ARG:0）
+ * @param {number} floor 阶层（ARG:0）
  * @returns {Promise<number>} 扩张位域（FLAG:400 < 1 时恒 0）
  */
 async function campaign_room_extra(floor) {
@@ -92,7 +92,7 @@ async function campaign_room_extra(floor) {
   });
 }
 
-/** 设施头部的「扩张：○」段（:121-135 等七处同构的 SIF 三连，文件头） */
+/** 设施头部的「扩张：○」段（七处同构的 SIF 三连，文件头） */
 function expansion_text(extra, names) {
   let out = extra === 0 ? '：无' : '';
   if (extra & 1) {
@@ -105,19 +105,19 @@ function expansion_text(extra, names) {
 }
 
 /**
- * @DUNGEON_ROOM（:2-73）：房间分发。
+ * dungeon_room：房间分发。
  *
  * 迎击中（CFLAG:1 == 3）是建設（ROOM_BUILD 后直接返回）；侵攻/战役中
  * （2/12）先掷 1/10 的店遭遇（RESULT 1 = 该房间不发生战斗——
- * DUNGEON.ERB :386 的 NO_BATTLE 累加，存根期恒 0），再按 FLAG:(阶层+349)
- * 分发八种设施。战役（12）的房间表来自 CAMPAIGN_ROOM/EXTRA 存根（恒 0，
- * 无设施效果）。
+ * run_dungeon 的 NO_BATTLE 累加，存根期恒 0），再按 FLAG:(阶层+349)
+ * 分发八种设施。战役（12）的房间表来自 campaign_room / campaign_room_extra
+ * 族（未注册战役时恒 0，无设施效果）。
  *
- * @param {number} arg0 受设施效果者（原作 ARG:0；调用方 1/3 掷选的 A）
+ * @param {number} arg0 受设施效果者（ARG:0；调用方 1/3 掷选的 A）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @param {{d20?: number}} [ctx] 侵攻度 D:20 的共享槽（MASE :835 写；调用
- *   点在返回后收回。缺省时 MASE 的写丢弃——仅测试直调场景）
- * @returns {Promise<number>} 原作 RESULT（1 = 店遭遇，不发生战斗；其余 0）
+ * @param {{d20?: number}} [ctx] 侵攻度 D:20 的共享槽（dungeon_mase 写；调用
+ *   点在返回后收回。缺省时 dungeon_mase 的写丢弃——仅测试直调场景）
+ * @returns {Promise<number>} RESULT（1 = 店遭遇，不发生战斗；其余 0）
  */
 async function dungeon_room(arg0, rand, ctx) {
   const rand_n = rand ?? default_rand;
@@ -140,12 +140,12 @@ async function dungeon_room(arg0, rand, ctx) {
     return 1;
   }
 
-  // 施設番号（;ITEM:ROOM -= 1 原作即注释态）
+  // 施設番号（;ITEM:ROOM -= 1 即注释态）
   let room;
   let extra;
   if (place === 12) {
-    // 戦役：CAMPAIGN_ROOM（延迟 require dungeon.js，防环）/
-    // CAMPAIGN_ROOM_EXTRA（域内真身，#469 起）
+    // 戦役：campaign_room（延迟 require dungeon.js，防环）/
+    // campaign_room_extra（域内真身，#469 起）
     const dungeon_mod = require('#/dungeon/dungeon');
     room = await dungeon_mod.campaign_room(chara(arg0).dungeon.侵攻阶层);
     extra = await campaign_room_extra(chara(arg0).dungeon.侵攻阶层);
@@ -183,18 +183,18 @@ async function dungeon_room(arg0, rand, ctx) {
 }
 
 /**
- * @DUNGEON_ROOM_BUILD（:76-141）：迎击方的设施扩张（原作读全局 A）。
+ * dungeon_room_build：迎击方的设施扩张（读全局 A）。
  *
  * 迎击者带着扩张指令（CFLAG:500 == 3）进入本层时掷扩张：RAND:4 == 0 掷
  * 扩张位 0（+1），否则 RAND:3 == 0 掷扩张位 1（+2）。**已有该扩张位时原
- * 地返回、不清指令**（CFLAG:500 仍 3——下轮 DUNGEON 主循环的「扩张失败」
- * 臂据此收尾，DUNGEON.ERB :331-337）；成功才清指令（:139）。
- * 原作注释：全ての拡張を同一に行うので、拡張を追加する際は全部の数を
- * 増やすこと（:82-84；SHOP_2.ERB@INTERCEPT 也持有必要设置，いまは2個だけ）。
+ * 地返回、不清指令**（CFLAG:500 仍 3——下轮 run_dungeon 主循环的「扩张失败」
+ * 分支据此收尾）；成功才清指令。
+ * 注释：全ての拡張を同一に行うので、拡張を追加する際は全部の数を
+ * 増やすこと（いまは2個だけ）。
  *
- * @param {number} a 受者（原作全局 A，由 dungeon_room 置为 ARG:0）
+ * @param {number} a 受者（全局 A，由 dungeon_room 置为 ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_room_build(a, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -232,7 +232,7 @@ async function dungeon_room_build(a, rand_n) {
     return 0;
   }
 
-  // 建成播报（FLAG:5 & 32 守卫）
+  // 建成播报（FLAG:5 & 32 显示开关）
   if (show) {
     era.println(); // PRINTL
     era.print(
@@ -249,20 +249,20 @@ async function dungeon_room_build(a, rand_n) {
 }
 
 /**
- * @DUNGEON_ROOM_DAY（:145-167）：设施的每日结算循环。
+ * dungeon_room_day：设施的每日结算循环。
  *
- * 扫第 1-9 层（FLAG:350-358），商店街（500）走 DUNGEON_SHOP_DAY、人类
- * 牧场（502）走 DUNGEON_FARM——其余六种无日结算。EVENT_NEXTDAY:126 的
- * 无条件调用点由 ere/event/event-nextday.js 接入。
+ * 扫第 1-9 层（FLAG:350-358），商店街（500）走 dungeon_shop_day、人类
+ * 牧场（502）走 dungeon_farm——其余六种无日结算。ere/event/event-nextday.js
+ * 的调用点无条件执行。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机；
  *   只有 SHOP_DAY 的税额掷消费）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_room_day(rand) {
   const rand_n = rand ?? default_rand;
 
-  // FOR ROOMID, 350, 359（Emuera FOR 区间 [350, 359) = 九层）
+  // FOR ROOMID, 350, 359（FOR 区间 [350, 359) = 九层）
   for (let room_id = 350; room_id < 359; room_id += 1) {
     const room = era.get(`flag:${room_id}`) || 0;
     const extra = era.get(`flag:${room_id + 10}`) || 0;
@@ -278,18 +278,18 @@ async function dungeon_room_day(rand) {
 }
 
 /**
- * @DUNGEON_SHOP（:170-265）：商店街。僅かながら現金収入（:173）。
- * 拡張& 1=武具屋、& 2=道具屋（:174-175）。
+ * dungeon_shop：商店街。僅かながら現金収入。
+ * 拡張& 1=武具屋、& 2=道具屋。
  *
- * 三臂：扩张位 0 且 1/3 掷中 → 武器屋（COST ×8/20 档，买武器 ADD_EX_ITEM
+ * 三分支：扩张位 0 且 1/3 掷中 → 武器屋（COST ×8/20 档，买武器 add_ex_item
  * -2）；否则扩张位 1 且 1/2 掷中 → 道具屋（×6/20 档，-3）；都没掷中 →
- * 逛街吃喝（体力 +20 / 气力 +50）。三臂都从勇者所持金（CFLAG:580）扣、
+ * 逛街吃喝（体力 +20 / 气力 +50）。三分支都从勇者所持金（CFLAG:580）扣、
  * 魔王侧 MONEY 加（EX_FLAG:4444 镜像）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_shop(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -322,7 +322,7 @@ async function dungeon_shop(a, extra, rand_n) {
       return 0;
     }
 
-    // CALL ADD_EX_ITEM, -2, A, 1
+    // CALL add_ex_item, -2, A, 1
     const result = await ex_item_mod.add_ex_item(-2, a, 1, rand_n);
     if (show && result > 0) {
       era.print(`现金收入+${cost}`);
@@ -353,7 +353,7 @@ async function dungeon_shop(a, extra, rand_n) {
       return 0;
     }
 
-    // CALL ADD_EX_ITEM, -3, A, 1
+    // CALL add_ex_item, -3, A, 1
     const result = await ex_item_mod.add_ex_item(-3, a, 1, rand_n);
     if (show && result > 0) {
       era.print(`现金收入+${cost}`);
@@ -395,16 +395,16 @@ async function dungeon_shop(a, extra, rand_n) {
 }
 
 /**
- * @DUNGEON_SHOP_ITEMSELL（:268-325）：ダンジョン内にあるアイテムを売る
- * 店（:271-272，不思議のダンジョン系で床にアイテム置いて売ってるやつ）。
+ * dungeon_shop_itemsell：ダンジョン内にあるアイテムを売る
+ * 店（不思議のダンジョン系で床にアイテム置いて売ってるやつ）。
  *
- * 店遭遇（dungeon_room 的 1/10 掷，:21）时调用：否定の珠（JUEL:100）
+ * 店遭遇（dungeon_room 的 1/10 掷）时调用：否定の珠（JUEL:100）
  * 2000 以上换 500 所持金；反発刻印（MARK:3）1 点换 1000 经验值
  * （EXP:80）；卖掉身上 EX 道具；钱够再买一件补给（ADD_EX_ITEM -3）。
  * RESULT 语义由调用方转成「不发生战斗」。
  *
- * @param {number} a 受者（原作全局 A）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} a 受者（全局 A）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_shop_itemsell(a, rand_n = default_rand) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -458,7 +458,7 @@ async function dungeon_shop_itemsell(a, rand_n = default_rand) {
     return 0;
   }
 
-  // CALL ADD_EX_ITEM, -3, A, 1
+  // CALL add_ex_item, -3, A, 1
   const result = await ex_item_mod.add_ex_item(-3, a, 1, rand_n);
   if (show && result > 0) {
     era.print(`现金收入+${cost}`); // PRINTFORML（无读键）
@@ -474,17 +474,17 @@ async function dungeon_shop_itemsell(a, rand_n = default_rand) {
 }
 
 /**
- * @DUNGEON_SHOP_DAY（:328-368）：商店街的每日税收入。
- * 拡張& 1=武具屋、& 2=道具屋（:332-333，各加 CFLAG:0:9 + 20）。
+ * dungeon_shop_day：商店街的每日税收入。
+ * 拡張& 1=武具屋、& 2=道具屋（各加 CFLAG:0:9 + 20）。
  *
  * 税基 = 魔王等级（CFLAG:0:9，MASTER 恒角色 0）× RAND(10)+5；按威望值
  * （EX_FLAG:99）五档打折（岌岌可危归零 / 动荡不安 ×3/10 / 略受质疑 ×3/4 /
  * 相安无事 ×6/5 / 广受爱戴 ×2；区间外的威望无折扣——负值与 >100 都直落）。
- * 播报不走 FLAG:5 守卫，每日无条件可见（:343-363）。
+ * 播报不走 FLAG:5 显示开关，每日无条件可见。
  *
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_shop_day(extra, rand_n) {
   // INCOME = CFLAG:0:9 * (RAND:10 + 5)
@@ -520,7 +520,7 @@ async function dungeon_shop_day(extra, rand_n) {
     income *= 2;
   }
 
-  era.println(); // PRINTL 真空行：343/346/351/355/359 行的威望行已收尾
+  era.println(); // PRINTL 真空行：威望行已收尾
   era.print(`从商店街征收了今天的税金。（现金收入+${income}）`);
   await era.waitAnyKey();
 
@@ -531,13 +531,13 @@ async function dungeon_shop_day(extra, rand_n) {
 }
 
 /**
- * @DUNGEON_SWAMP（:371-414）：毒沼。機能していないようなので毒沼に変更
- * （:374，原注释）。拡張& 1=毒草（相手が強いほど強化：+ 勇者等级）、
+ * dungeon_swamp：毒沼。機能していないようなので毒沼に変更
+ * （原注释）。拡張& 1=毒草（相手が強いほど強化：+ 勇者等级）、
  * & 2=毒蟲（陷阱レベルで強化：+ FLAG:85 × 2）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_swamp(a, extra) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -577,11 +577,11 @@ async function dungeon_swamp(a, extra) {
 }
 
 /**
- * 牧场台词表（:495-616 SELECTCASE TALK 的 CASE → 文本，位段编码：
+ * 牧场台词表（SELECTCASE TALK 的 CASE → 文本，位段编码：
  * 个位 = RAND:6 随机段，十位 = 设施拡張（10 搾乳 / 20 ふたなり），
  * 百位 = 肉便器数档（100/200/300/400/500）。SELECTCASE 无 ELSE——
  * 组合全覆盖（个位 0-5 × 十位 {0,10,20} × 百位七档均有 CASE），未命中
- * 不打印，照搬）
+ * 不打印，有意保留）
  */
 const FARM_TALK = {
   0: '「嗯…嗯…」',
@@ -695,7 +695,7 @@ const FARM_TALK = {
 };
 
 /**
- * @DUNGEON_FARM（:417-648）：人类牧场的日结算。怪物が増える（:424）。
+ * dungeon_farm：人类牧场的日结算。怪物が増える。
  * 拡張& 1=搾乳設備（+FLAG:83 G）、& 2=扶她種付け奴隷（+FLAG:83 经验）。
  *
  * 肉便器数 FLAG:83 只数为正才结算；RAND_MONSTER_NUMBER 抽怪物、只数
@@ -704,9 +704,9 @@ const FARM_TALK = {
  *
  * 卖孩子开启时出生只数不增加库存、直接折现金（只计一次）。
  *
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0（:429-430 早退后无显式 RETURN）
+ * @returns {Promise<number>} 恒 return 0（早退后无显式 RETURN）
  */
 async function dungeon_farm(extra, rand_n) {
   // 肉便器ないとダメ
@@ -752,7 +752,7 @@ async function dungeon_farm(extra, rand_n) {
   }
 
   // FOR LOCAL:0, 0, FLAG:83——台词段（≤10 条，LOG_OFF 即断）
-  // （每条 PRINT 后跟 PRINT 空格，全部拼一行，:622 的 PRINTL 收行）
+  // （每条 PRINT 后跟 PRINT 空格，全部拼一行，PRINTL 收行）
   let talk_line = '';
   if (!log_off) {
     for (let local0 = 0; local0 < meat_count; local0 += 1) {
@@ -785,12 +785,12 @@ async function dungeon_farm(extra, rand_n) {
         talk += 100;
       }
 
-      talk_line += `${FARM_TALK[talk] ?? ''} `; // （+ :618 空格）
+      talk_line += `${FARM_TALK[talk] ?? ''} `; // （+ 拼接空格）
     }
   }
   era.print(talk_line); // PRINTL（LOG_OFF 时为空行）
 
-  // 播报（原作的 SIF 守卫行被注释，无条件打印——LOG_OFF 也打）
+  // 播报（SIF 检查行被注释，无条件打印——LOG_OFF 也打）
   era.print(
     `人类牧场的肉便器生了${meat_count}只${era.get(`itemname:${mon_id}`) ?? ''}。`,
   );
@@ -824,13 +824,13 @@ async function dungeon_farm(extra, rand_n) {
 }
 
 /**
- * @DUNGEON_FARM_RESCUE（:650-680）：勇者到达牧场时肉便器被救走一只。
- * 拡張& 1=搾乳設備、& 2=扶她種付け奴隷（:653-654，仅头部播报用）。
+ * dungeon_farm_rescue：勇者到达牧场时肉便器被救走一只。
+ * 拡張& 1=搾乳設備、& 2=扶她種付け奴隷（仅头部播报用）。
  *
  * 战役中（CFLAG:1 == 12）的勇者不停留救走肉便器；侵攻中（== 2）救走一只。
  *
  * @param {number} arg0 到达牧场的勇者
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_farm_rescue(arg0) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -862,14 +862,14 @@ async function dungeon_farm_rescue(arg0) {
 }
 
 /**
- * @DUNGEON_ICE（:683-735）：冰室。勇者の攻撃力が1割下がる（:686）。
+ * dungeon_ice：冰室。勇者の攻撃力が1割下がる。
  * 拡張& 1=吹雪（アイテム破壊：RAND:6 == 0 时破坏 CFLAG:560-564 的一件
  * EX 道具）、& 2=積雪（精神ダメージ：+ CFLAG:0:9 + 2）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_ice(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -909,7 +909,7 @@ async function dungeon_ice(a, extra, rand_n) {
     era.print(
       `${name_of(a)}在冰室的严寒中哆嗦着身体………（攻击力下降一成！）` +
         `${mdmg > 0 ? `（${mdmg}点气力下降！）` : ''}`,
-    ); // 拼行 + :730 PRINTW
+    ); // 拼行 + PRINTW
     await era.waitAnyKey();
   }
 
@@ -917,15 +917,15 @@ async function dungeon_ice(a, extra, rand_n) {
 }
 
 /**
- * @DUNGEON_HEAT（:738-801）：热砂。勇者の防御力が1割下がる（:741）。
+ * dungeon_heat：热砂。勇者の防御力が1割下がる。
  * 拡張& 1=オアシス（回復点：RAND:6 == 0 时气力 +50 上限封顶、TARGET 的
  * JUEL:6 与好感度 CFLAG:2 上升、直接返回——防御衰减不发生）、& 2=火柱
  * （体力ダメージ：+ CFLAG:0:9 + 10）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_heat(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -951,7 +951,7 @@ async function dungeon_heat(a, extra, rand_n) {
     }
 
     // JUEL:TARGET:6 += CFLAG:0:9 * 4；CFLAG:TARGET:2 += 20
-    // （TARGET 经 era_flag.target，run_dungeon :37 置位，文件头）
+    // （TARGET 经 era_flag.target，run_dungeon 开头置位，文件头）
     const target = era_flag.target;
     era.set(
       `juel:${target}:6`,
@@ -985,7 +985,7 @@ async function dungeon_heat(a, extra, rand_n) {
     era.print(
       `${name_of(a)}由于热砂的暑气，集中力下降了……（防御力下降一成！）` +
         `${dmg > 0 ? `（火柱造成了${dmg}点伤害！）` : ''}`,
-    ); // 拼行 + :798 PRINTW
+    ); // 拼行 + PRINTW
     await era.waitAnyKey();
   }
 
@@ -993,16 +993,16 @@ async function dungeon_heat(a, extra, rand_n) {
 }
 
 /**
- * @DUNGEON_MASE（:804-846）：迷阵。たまに迷う（:807）。
+ * dungeon_mase：迷阵。たまに迷う。
  * 拡張& 1=回転床、& 2=ダークゾーン（各 +5 侵攻度减少）。RAND:3 == 0
  * （1/3）不迷路直接返回；否则侵攻度 D:20 -= BACK（经 ctx 回写）并立
- * 迷惑状態 CFLAG:509 = 1（下轮 WALK 归零，DUNGEON.ERB :111-122 消费）。
+ * 迷惑状態 CFLAG:509 = 1（下轮 WALK 归零，run_dungeon 消费）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @param {{d20?: number}} [ctx] 侵攻度 D:20 的共享槽（:835 写）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {{d20?: number}} [ctx] 侵攻度 D:20 的共享槽（本函数写）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_mase(a, extra, rand_n, ctx) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -1048,15 +1048,15 @@ async function dungeon_mase(a, extra, rand_n, ctx) {
 }
 
 /**
- * @DUNGEON_MUSEUM（:849-912）：博物馆。石像と剥製の数に応じて最大1/4
- * 気力が減る（:853）。拡張& 1=巡回ゴーレム（体力伤害 + FLAG:84 × 2）、
+ * dungeon_museum：博物馆。石像と剥製の数に応じて最大1/4
+ * 気力が減る。拡張& 1=巡回ゴーレム（体力伤害 + FLAG:84 × 2）、
  * & 2=陳列棚（RAND:4 == 0 时 CFLAG:503 位 5 立起——先制封印，已在位则
  * 播报「已经无法先发制人了」不重复加）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_museum(a, extra, rand_n) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -1127,18 +1127,18 @@ async function dungeon_museum(a, extra, rand_n) {
 }
 
 /**
- * @DUNGEON_HOTEL（:915-1013）：娼館街。性癖に合致すれば高額収入（:919）。
+ * dungeon_hotel：娼館街。性癖に合致すれば高額収入。
  * 拡張& 1=アナルOK、& 2=本番OK（各 COST × 1.1，TIMES 截断）。
  *
- * MENU 判定（:939-963，SIF 链后者覆盖前者）：低善恶非处女 → 3 男淫魔；
+ * MENU 判定（SIF 链后者覆盖前者）：低善恶非处女 → 3 男淫魔；
  * 低善恶百合素质 / 低善恶扶她 / 低善恶男人 → 4 女淫魔；正太控（143）→ 1；
  * 萝莉控（142）→ 2（最后两支最高优先）。MENU == 0（无性癖交集）直接
- * 离开；否则从勇者所持金扣 COST、魔王侧入账、善恶值 -1（KARMA 域内
+ * 离开；否则从勇者所持金扣 COST、魔王侧入账、善恶值 -1（karma 域内
  * 延迟 require 存根）。
  *
- * @param {number} a 受者（原作全局 A）
- * @param {number} extra 扩张位域（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} a 受者（全局 A）
+ * @param {number} extra 扩张位域（ARG:0）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_hotel(a, extra) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
@@ -1230,7 +1230,7 @@ async function dungeon_hotel(a, extra) {
   era_exflag.legit_money += cost;
   chara(a).dungeon.所持金 -= cost;
 
-  // CALL KARMA, A, -1（域内延迟 require，文件头）
+  // CALL karma, A, -1（域内延迟 require，文件头）
   const dungeon_mod = require('#/dungeon/dungeon');
   dungeon_mod.karma(a, -1);
 

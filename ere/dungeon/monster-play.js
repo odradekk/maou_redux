@@ -10,12 +10,12 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { chara } = require('#/facade/chara');
 const { e_get, monster_data } = require('#/dungeon/monster-data');
 
-/** 原作 RAND:N（0..N-1）的缺省实现。 */
+/** RAND:N（0..N-1）的缺省实现。 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** ITEM:N 怪物库存；未声明槽按 Emuera 初值 0 处理。 */
+/** ITEM:N 怪物库存；未声明槽按初值 0 处理。 */
 function item_count(id) {
   return era.get(`item:${id}`) || 0;
 }
@@ -36,9 +36,9 @@ async function print_wait(text) {
 }
 
 /**
- * @MONSTERPLAY_LIST（:77-96）：列出库存非零的 100-199 号怪物。
- * 原作是三项一行的自由输入文本；ere 以同编号按钮承载可达输入。
- * @returns {number} 原作 RETURN 0
+ * monsterplay_list：列出库存非零的 100-199 号怪物。
+ * 三项一行的自由输入文本；ere 以同编号按钮承载可达输入。
+ * @returns {number} 恒 return 0
  */
 function monsterplay_list() {
   let row = [];
@@ -60,7 +60,7 @@ function monsterplay_list() {
   return 0;
 }
 
-/** @MONSTER_PLAY_DOG（:99-117）：野狗。 */
+/** monster_play_dog：野狗。 */
 async function monster_play_dog(cid, y) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('你为狗做了点心。');
@@ -78,7 +78,7 @@ async function monster_play_dog(cid, y) {
   return 0;
 }
 
-/** @ORC_MONSTER_PLAY（:121-167）：亚人。 */
+/** orc_monster_play：亚人。 */
 async function orc_monster_play(cid, y, rand = default_rand) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('『魔王大人，请饶了我吧…』');
@@ -124,7 +124,7 @@ async function orc_monster_play(cid, y, rand = default_rand) {
   return 0;
 }
 
-/** @SLIME_MONSTER_PLAY（:170-203）：史莱姆。 */
+/** slime_monster_play：史莱姆。 */
 async function slime_monster_play(cid, y, rand = default_rand) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('你把双脚放入黏液里，充分地感受那冷冷的触感。');
@@ -136,8 +136,8 @@ async function slime_monster_play(cid, y, rand = default_rand) {
     await print_wait('…黏黏糊糊的！');
     era.print(`耻情点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // 原作 JUEL:A:5（文案称耻情，1:1）
-    era.add(`juel:${cid}:8`, y * 10); // 原作 JUEL:A:8（文案称欲情，1:1）
+    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5（文案称耻情，有意保留）
+    era.add(`juel:${cid}:8`, y * 10); // JUEL:A:8（文案称欲情，有意保留）
   } else {
     await print_wait(`${name_of(cid)}享受着黏液浴。`);
     await print_wait(
@@ -146,15 +146,15 @@ async function slime_monster_play(cid, y, rand = default_rand) {
     era.print(`肛门经验+${y}`);
     era.print(`耻情点数+${y * 10}`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 原作耻情点数写入槽
-    era.add(`juel:${cid}:8`, y * 10); // JUEL:A:8 = 原作欲情点数写入槽
+    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 耻情点数写入槽
+    era.add(`juel:${cid}:8`, y * 10); // JUEL:A:8 = 欲情点数写入槽
     era.add(`exp:${cid}:1`, y); // EXP:A:1 = 肛门经验
   }
   await era.waitAnyKey();
   return 0;
 }
 
-/** @INSECT_MONSTER_PLAY（:206-234）：昆虫。 */
+/** insect_monster_play：昆虫。 */
 async function insect_monster_play(cid, y, rand = default_rand) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('你充满兴趣地观察了昆虫。');
@@ -165,7 +165,7 @@ async function insect_monster_play(cid, y, rand = default_rand) {
     await print_wait('『嗯…嗯…嗯嗯……』');
     await print_wait(`${name_of(cid)}用嘴吸啜了输卵管。`);
     era.print(`欲情点数+${y * 10}`);
-    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 原作欲情点数写入槽
+    era.add(`juel:${cid}:5`, y * 10); // JUEL:A:5 = 欲情点数写入槽
   } else {
     await print_wait('『咦～～呀～～』');
     await print_wait(`${name_of(cid)}的肛门被输卵管贯通，在里面产卵了。`);
@@ -178,7 +178,7 @@ async function insect_monster_play(cid, y, rand = default_rand) {
   return 0;
 }
 
-/** @IVY_MONSTER_PLAY（:237-268）：藤蔓。 */
+/** ivy_monster_play：藤蔓。 */
 async function ivy_monster_play(cid, y, rand = default_rand) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('你充满兴趣地观察了植物。');
@@ -205,7 +205,7 @@ async function ivy_monster_play(cid, y, rand = default_rand) {
   return 0;
 }
 
-/** @SYOKUSYU_MONSTER_PLAY（:271-317）：触手。 */
+/** syokusyu_monster_play：触手。 */
 async function syokusyu_monster_play(cid, y, rand = default_rand) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('触手蜿蜒地动着…');
@@ -252,7 +252,7 @@ async function syokusyu_monster_play(cid, y, rand = default_rand) {
   return 0;
 }
 
-/** @FAILY_MONSTER_PLAY（:320-346）：妖精（函数名按原作拼写）。 */
+/** fairy_monster_play：妖精（原拼写 FAILY）。 */
 async function fairy_monster_play(cid, y) {
   const male = (era.get(`talent:${cid}:122`) || 0) === 1;
   const futanari = (era.get(`talent:${cid}:121`) || 0) === 1;
@@ -276,14 +276,14 @@ async function fairy_monster_play(cid, y) {
   return 0;
 }
 
-/** @GIANT_MONSTER_PLAY（:349-377）：巨人；原作 X 恒为 0。 */
+/** giant_monster_play：巨人；X 恒为 0。 */
 async function giant_monster_play(cid, y) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('『魔王大人，请饶了我吧…』');
     return 0;
   }
   await print_wait('『魔王大人，被弄坏了也可以么？』');
-  // X = 0；其余三臂恒不达，1:1 不引入随机源。
+  // X = 0；其余三分支恒不达，不引入随机源。
   await print_wait('『洒家这辈子值了！！！』');
   await print_wait(`${name_of(cid)}的腰被巨人抓着，雄壮的阴茎在体内抽插着，`);
   await print_wait('『嗯！魔王大人！真舒服！！』');
@@ -299,7 +299,7 @@ async function giant_monster_play(cid, y) {
   return 0;
 }
 
-/** @MAN_MONSTER_PLAY（:380-418）：男魔族。 */
+/** man_monster_play：男魔族。 */
 async function man_monster_play(cid, y, rand = default_rand) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('『魔王大人真会开玩笑……』');
@@ -332,7 +332,7 @@ async function man_monster_play(cid, y, rand = default_rand) {
   return 0;
 }
 
-/** @GIRL_MONSTER_PLAY（:421-456）：女魔族。 */
+/** girl_monster_play：女魔族。 */
 async function girl_monster_play(cid, y) {
   const male = (era.get(`talent:${cid}:122`) || 0) === 1;
   await print_wait(
@@ -368,8 +368,8 @@ async function girl_monster_play(cid, y) {
 }
 
 /**
- * @BRAIN_MONSTER_PLAY（:478-507）：食脑魔。
- * :478-507 中无条件 RETURN 0 后的 RAND:40、死亡和异常经验全不可达。
+ * brain_monster_play：食脑魔。
+ * 无条件 RETURN 0 后的 RAND:40、死亡和异常经验全不可达。
  */
 async function brain_monster_play(cid, y, rand = default_rand) {
   void cid;
@@ -380,7 +380,7 @@ async function brain_monster_play(cid, y, rand = default_rand) {
 }
 
 /**
- * @MONSTER_PLAY（:5-74）：选择怪物、执行对应种族场景并转入回合结束。
+ * monster_play：选择怪物、执行对应种族场景并转入回合结束。
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 999 取消时返回 0；成功路径发出 BEGIN TURNEND
  */
@@ -396,7 +396,7 @@ async function monster_play(rand = default_rand) {
 
   let selected;
   for (;;) {
-    // 原作列表是 PRINT + INPUT，可输入未显示但有库存的编号；按钮不应把
+    // 列表是 PRINT + INPUT，可输入未显示但有库存的编号；按钮不应把
     // 这个行为收紧，故显式关闭引擎的按钮白名单。
     selected = await era.input({ useRule: false });
     if (selected === 999) return 0;
@@ -412,7 +412,7 @@ async function monster_play(rand = default_rand) {
 
   let type = 0;
   if (selected !== 900) {
-    // X 列取数。与 Y/场景共用随机序列，保留 MONSTER_DATA 的消费顺序。
+    // X 列取数。与 Y/场景共用随机序列，保留 monster_data 的消费顺序。
     monster_data(selected, 5, -1, -1, -1, rand);
     type = e_get(507); // E:507 = 凌辱类型（怪物种族）
   }
@@ -445,10 +445,10 @@ async function monster_play(rand = default_rand) {
     await print_wait('【处女丧失】');
     chara(cid).chara.处女 = 0;
   }
-  begin(STATE.TURNEND); // ；其后的 RETURN 1 因 BEGIN 立即结束而不可达
+  begin(STATE.TURNEND); // 其后的 RETURN 1 因 BEGIN 立即结束而不可达
 }
 
-/** @BEAST_MONSTER_PLAY（:459-475）：魔兽。 */
+/** beast_monster_play：魔兽。 */
 async function beast_monster_play(cid, y) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('你把魔兽拉进怀里，尽情地抚摸着它的毛发。');
@@ -466,7 +466,7 @@ async function beast_monster_play(cid, y) {
   return 0;
 }
 
-/** @HORSE_MONSTER_PLAY（:510-531）：马。 */
+/** horse_monster_play：马。 */
 async function horse_monster_play(cid, y) {
   if ((era.get('talent:0:122') || 0) === 1) {
     await print_wait('你充分享受了骑马的乐趣。');

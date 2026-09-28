@@ -1566,12 +1566,12 @@ export default [
     must_mention: '直抬 LV3',
   },
   {
-    desc: 'M906 LOST_VIRGIN_CHECK 守卫的 TFLAG:19 判据删（恒早退）',
+    desc: 'M906 LOST_VIRGIN_CHECK 早退检查的 TFLAG:19 条件删（恒早退）',
     file: 'ere/event/source-check.js',
     find: 'function lost_virgin_check() {\n  if (!tal(0) || tflag(19) === 0) {\n    return;\n  }',
     replace: `function lost_virgin_check() {
   if (!tal(0)) {
-    return; // 变异：TFLAG:19 判据删（恒早退）
+    return; // 变异：TFLAG:19 条件删（恒早退）
   }`,
     tests: ['source-check'],
     must_mention: 'TFLAG:19 = 0',
@@ -2901,18 +2901,18 @@ export default [
   },
 
   {
-    desc: 'M1270 AFTERTRAIN: self_check 失神守卫失效（tflag:899 不再拦截）（#218）',
+    desc: 'M1270 AFTERTRAIN: self_check 失神检查失效（tflag:899 不再拦截）（#218）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 失神中に調教終了したらスルー
   if ((era.get('tflag:899') || 0) >= 1) {
     return 0;
   }`,
-    replace: `  // 变异：失神守卫删除
+    replace: `  // 变异：失神检查删除
   if (false) {
     return 0;
   }`,
     tests: ['event-aftertrain'],
-    must_mention: '失神跳过守卫',
+    must_mention: '失神跳过检查',
   },
   {
     desc: 'M1271 AFTERTRAIN: sex_check 未成熟闸失效（TALENT:135 放行）（#218）',
@@ -3035,7 +3035,7 @@ export default [
     must_mention: '第 N 次调教——崩坏分支',
   },
   {
-    desc: 'M1281 BEFORETRAIN: noclothes 反抗心分支失效（TALENT:11 落兜底）（#218）',
+    desc: 'M1281 BEFORETRAIN: noclothes 反抗心分支失效（TALENT:11 落保底处理）（#218）',
     file: 'ere/event/event-beforetrain.js',
     find: `  } else if (era.get(\`talent:\${target}:11\`)) {
     // 反抗心
@@ -3508,32 +3508,32 @@ export default [
   {
     desc: 'M1311 AFTERTRAIN: sex_check 缺 TFLAG:13=4 与 SELF_KOJO（#270）',
     file: 'ere/event/event-aftertrain.js',
-    find: `  // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
+    find: `  // 口上事件码 TFLAG:13 = 4 后调 SELF_KOJO（在私处经验播报之前）
   leftover_s = s;
   game.train.初吻与自我口上 = 4;
   await self_kojo();`,
     replace: `  leftover_s = s;
-  // 变异：性交臂不设 tflag:13、不调 self_kojo`,
+  // 变异：性交分支不设 tflag:13、不调 self_kojo`,
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_sex_check 通常性交与 ABL 判定',
   },
   {
-    desc: 'M1312 AFTERTRAIN: lesbian 臂漏设 tflag:13=2（#270）',
+    desc: 'M1312 AFTERTRAIN: lesbian 分支漏设 tflag:13=2（#270）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
   game.train.初吻与自我口上 = 2;`,
-    replace: `  // 变异：百合臂不设 tflag:13
+    replace: `  // 变异：百合分支不设 tflag:13
   // game.train.初吻与自我口上 = 2;`,
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_lesbiansex_check 百合性交',
   },
   {
-    desc: 'M1313 AFTERTRAIN: masturbation 臂漏设 tflag:13=1（#270）',
+    desc: 'M1313 AFTERTRAIN: masturbation 分支漏设 tflag:13=1（#270）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
   leftover_q = q;
   game.train.初吻与自我口上 = 1;`,
-    replace: `  // 变异：自慰臂不设 tflag:13
+    replace: `  // 变异：自慰分支不设 tflag:13
   leftover_q = q;
   // game.train.初吻与自我口上 = 1;`,
     tests: ['event-aftertrain'],
@@ -4978,7 +4978,7 @@ export default [
     must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
   },
   {
-    desc: 'M9589 TARGET_EJAC_CHECK 早退守卫的 TALENT:122 判据删（只剩 121）',
+    desc: 'M9589 TARGET_EJAC_CHECK 早退检查的 TALENT:122 条件删（只剩 121）',
     file: 'ere/event/source-check.js',
     find: `function target_ejac_check() {
   if (!tal(121) && !tal(122)) {
@@ -4986,13 +4986,13 @@ export default [
   }`,
     replace: `function target_ejac_check() {
   if (!tal(121)) {
-    return; // 变异：TALENT:122 判据删
+    return; // 变异：TALENT:122 条件删
   }`,
     tests: ['source-check'],
-    must_mention: '守卫（TALENT:121/122 均 0）',
+    must_mention: '检查（TALENT:121/122 均 0）',
   },
   {
-    desc: 'M9590 TARGET_EJAC_CHECK 未熟随机修正 tal(135) 判据焊死为恒假',
+    desc: 'M9590 TARGET_EJAC_CHECK 未熟随机修正 tal(135) 条件焊死为恒假',
     file: 'ere/event/source-check.js',
     find: `  const is_mijyuku = !!tal(135);
   const mijyuku = is_mijyuku
@@ -5238,7 +5238,7 @@ export default [
     must_mention: 'BASE:2 恰等于 EJAC*2 时归入普通档',
   },
   {
-    desc: 'M9599 TARGET_EJAC_CHECK 大量射精档 EXPLV 最低档判据删',
+    desc: 'M9599 TARGET_EJAC_CHECK 大量射精档 EXPLV 最低档条件删',
     file: 'ere/event/source-check.js',
     find: `  const ejac = era.get(\`maxbase:\${cid}:2\`) || 0;
   let grade;
@@ -5278,12 +5278,12 @@ export default [
     add_lose(0, 20);
     add_lose(1, 100);
     if (false) {
-      // 变异：EXPLV[1] 判据删`,
+      // 变异：EXPLV[1] 条件删`,
     tests: ['source-check'],
     must_mention: '大量射精档（BASE:2 > EJAC*2）',
   },
   {
-    desc: 'M9600 TARGET_EJAC_CHECK 异常经验条件的 TALENT:122 判据删',
+    desc: 'M9600 TARGET_EJAC_CHECK 异常经验条件的 TALENT:122 条件删',
     file: 'ere/event/source-check.js',
     find: `    era.print(\`\${callname}大量射精\`);
     era.print('精液经验+1');
@@ -5296,7 +5296,7 @@ export default [
     era.print('精液经验+1');
     era.print('射精经验+2');
     if (exp3 === 0) {
-      // 变异：!tal(122) 判据删
+      // 变异：!tal(122) 条件删
       chara(cid).dungeon.异常经验 += 1;
       era.print('异常经验+1');
     }`,
@@ -5330,7 +5330,7 @@ export default [
     must_mention: '扶她非男人 → 异常经验+1',
   },
   {
-    desc: 'M9603 TARGET_WORMBABY_CHECK 早退守卫的 TALENT:191 判据删（只剩 190）',
+    desc: 'M9603 TARGET_WORMBABY_CHECK 早退检查的 TALENT:191 条件删（只剩 190）',
     file: 'ere/event/source-check.js',
     find: `async function target_wormbaby_check() {
   if (!tal(190) && !tal(191)) {
@@ -5338,10 +5338,10 @@ export default [
   }`,
     replace: `async function target_wormbaby_check() {
   if (!tal(190)) {
-    return; // 变异：TALENT:191 判据删
+    return; // 变异：TALENT:191 条件删
   }`,
     tests: ['source-check'],
-    must_mention: '守卫（TALENT:190/191 均 0）',
+    must_mention: '检查（TALENT:190/191 均 0）',
   },
   {
     desc: 'M9604 TARGET_WORMBABY_CHECK 大量出产档阈值 25000 错改 30000',
@@ -5561,15 +5561,15 @@ export default [
     must_mention: '克制/接受快感/淫乱化/否定快感/媚药',
   },
   {
-    desc: 'M9611 TARGET_WORMBABY_CHECK 输出部位文案 both 分支判据删',
+    desc: 'M9611 TARGET_WORMBABY_CHECK 输出部位文案 both 分支条件删',
     file: 'ere/event/source-check.js',
     find: `  const site = tal(190) && tal(191) ? '膣内和直肠' : tal(190) ? '膣内' : '直肠';`,
-    replace: `  const site = tal(190) ? '膣内' : '直肠'; // 变异：both 分支判据删`,
+    replace: `  const site = tal(190) ? '膣内' : '直肠'; // 变异：both 分支条件删`,
     tests: ['source-check'],
     must_mention: '私处+直肠同时产卵',
   },
   {
-    desc: 'M9612 TARGET_WORMBABY_CHECK 大量出产档 EXPLV 最低档判据删',
+    desc: 'M9612 TARGET_WORMBABY_CHECK 大量出产档 EXPLV 最低档条件删',
     file: 'ere/event/source-check.js',
     find: `  if (grade === 2) {
     add_lose(0, 20);
@@ -5600,7 +5600,7 @@ export default [
     add_lose(0, 20);
     add_lose(1, 100);
     if (false) {
-      // 变异：EXPLV[1] 判据删
+      // 变异：EXPLV[1] 条件删
       set_src(12, src(12) + 20000);
       set_src(13, src(13) + 10000);
     } else if (exp3 < EXPLV[2]) {
@@ -5640,7 +5640,7 @@ export default [
     must_mention: '大量出产档（LOCAL > 25000）',
   },
   {
-    desc: 'M9614 TARGET_WORMBABY_CHECK TFLAG:120/121 双写的 both 分支判据删',
+    desc: 'M9614 TARGET_WORMBABY_CHECK TFLAG:120/121 双写的 both 分支条件删',
     file: 'ere/event/source-check.js',
     find: `  if (tal(190) && tal(191)) {
     game.system.V虫产卵 = grade;
@@ -5651,7 +5651,7 @@ export default [
     game.system.A虫产卵 = grade;
   }`,
     replace: `  if (tal(190)) {
-    // 变异：both 分支判据删，TALENT:191 单独分支不再写 A 虫产卵
+    // 变异：both 分支条件删，TALENT:191 单独分支不再写 A 虫产卵
     game.system.V虫产卵 = grade;
   } else {
     game.system.A虫产卵 = grade;
@@ -5660,7 +5660,7 @@ export default [
     must_mention: '私处+直肠同时产卵',
   },
   {
-    desc: 'M9615 PISSING_ECST_CHECK 守卫 grade===0 早退判据改错（漏尿经验恒记 0 档）',
+    desc: 'M9615 PISSING_ECST_CHECK 检查 grade===0 早退条件改错（漏尿经验恒记 0 档）',
     file: 'ere/event/source-check.js',
     find: `  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
     grade = 1;
@@ -5672,14 +5672,14 @@ export default [
     grade = 1;
   }
   if (grade < 0) {
-    // 变异：grade===0 早退判据改为恒假（grade 从不为负）
+    // 变异：grade===0 早退条件改为恒假（grade 从不为负）
     return;
   }`,
     tests: ['source-check'],
-    must_mention: '守卫（TFLAG:29=0）',
+    must_mention: '检查（TFLAG:29=0）',
   },
   {
-    desc: 'M9616 PISSING_ECST_CHECK grade5 的 TALENT:57 判据删',
+    desc: 'M9616 PISSING_ECST_CHECK grade5 的 TALENT:57 条件删',
     file: 'ere/event/source-check.js',
     find: `  let grade = 0;
   if (t29 >= 7 && tequip22 && tal57) {
@@ -5687,11 +5687,11 @@ export default [
   } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {`,
     replace: `  let grade = 0;
   if (t29 >= 7 && tequip22) {
-    // 变异：TALENT:57 判据删，grade5 与 grade4 分支重叠
+    // 变异：TALENT:57 条件删，grade5 与 grade4 分支重叠
     grade = 5;
   } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {`,
     tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
+    must_mention: '五档级联按条件优先级依次命中',
   },
   {
     desc: 'M9617 PISSING_ECST_CHECK grade4 的 TFLAG:29≥7 门槛错改 ≥10',
@@ -5706,7 +5706,7 @@ export default [
   } else if (
     (t29 >= 7 && tal57) ||`,
     tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
+    must_mention: '五档级联按条件优先级依次命中',
   },
   {
     desc: 'M9618 PISSING_ECST_CHECK grade3 的 (t29≥7&&tal57) 分支删',
@@ -5724,7 +5724,7 @@ export default [
     // 变异：(t29≥7&&tal57) 分支删
     grade = 3;`,
     tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
+    must_mention: '五档级联按条件优先级依次命中',
   },
   {
     desc: 'M9619 PISSING_ECST_CHECK grade2 的 (t29≥3&&tequip22) 分支删',
@@ -5742,7 +5742,7 @@ export default [
     // 变异：(t29≥3&&tequip22) 分支删
     grade = 2;`,
     tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
+    must_mention: '五档级联按条件优先级依次命中',
   },
   {
     desc: 'M9620 PISSING_ECST_CHECK grade1 的 (t29≥3&&tal57) 分支删',
@@ -5761,7 +5761,7 @@ export default [
     return;
   }`,
     tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
+    must_mention: '五档级联按条件优先级依次命中',
   },
   {
     desc: 'M9621 PISSING_ECST_CHECK 放尿经验累加 +=grade 错改固定 +=1',
@@ -5771,7 +5771,7 @@ export default [
     replace: `  era.print(\`放尿经验+\${grade}\`);
   chara(cid).system.放尿经验 += 1; // 变异：+=grade 错改固定 +=1`,
     tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
+    must_mention: '五档级联按条件优先级依次命中',
   },
   {
     desc: 'M9622 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade≥3 门槛错改 ≥4',
@@ -5787,14 +5787,14 @@ export default [
     must_mention: 'TEQUIP:22 清零规则',
   },
   {
-    desc: 'M9623 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade===2 分支的 !TALENT:57 判据删',
+    desc: 'M9623 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade===2 分支的 !TALENT:57 条件删',
     file: 'ere/event/source-check.js',
     find: `  if (grade >= 3 || (grade === 2 && !tal57)) {
     chara(cid).system.利尿剂 = 0;
   }
   chara(cid).train.阴茎污渍 |= 32;`,
     replace: `  if (grade >= 3 || grade === 2) {
-    // 变异：!TALENT:57 判据删
+    // 变异：!TALENT:57 条件删
     chara(cid).system.利尿剂 = 0;
   }
   chara(cid).train.阴茎污渍 |= 32;`,
@@ -5827,7 +5827,7 @@ export default [
   }
 }
 
-// @EXP_GOT_CHECK`,
+// exp_got_check`,
     replace: `  chara(cid).train.阴茎污渍 |= 32;
   chara(cid).train.阴道污渍 |= 16; // 变异：位 32 错改 16
   if (grade >= 2) {
@@ -5835,7 +5835,7 @@ export default [
   }
 }
 
-// @EXP_GOT_CHECK`,
+// exp_got_check`,
     tests: ['source-check'],
     must_mention: 'STAIN:2/3 弄脏标记（阴茎/阴道污渍位 32）',
   },
@@ -5859,7 +5859,7 @@ export default [
     must_mention: 'STAIN:2/3 弄脏标记（阴茎/阴道污渍位 32）',
   },
   {
-    desc: 'M9627 EXP_GOT_CHECK 段 1 的 UP:7<100 强制归零判据删',
+    desc: 'M9627 EXP_GOT_CHECK 段 1 的 UP:7<100 强制归零条件删',
     file: 'ere/event/source-check.js',
     find: `    let local = up(0) + up(1) + up(2) + up(14);
     const up7 = up(7);
@@ -5869,14 +5869,14 @@ export default [
     replace: `    let local = up(0) + up(1) + up(2) + up(14);
     const up7 = up(7);
     if (false) {
-      // 变异：UP:7<100 强制归零判据删
+      // 变异：UP:7<100 强制归零条件删
       local = 0;
     } else if (up7 < 300) {`,
     tests: ['source-check'],
-    must_mention: '守卫（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0',
+    must_mention: '检查（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0',
   },
   {
-    desc: 'M9628 EXP_GOT_CHECK 段 1 的 TFLAG:100 守卫判据删',
+    desc: 'M9628 EXP_GOT_CHECK 段 1 的 TFLAG:100 检查条件删',
     file: 'ere/event/source-check.js',
     find: `    if (tflag(100)) {
       let grade = 0;
@@ -5885,14 +5885,14 @@ export default [
         set_up(11, times(up(11), 0.65));
         set_up(12, times(up(12), 0.3));`,
     replace: `    if (true) {
-      // 变异：TFLAG:100 守卫判据删
+      // 变异：TFLAG:100 检查条件删
       let grade = 0;
       if (local >= 12000) {
         grade = 16;
         set_up(11, times(up(11), 0.65));
         set_up(12, times(up(12), 0.3));`,
     tests: ['source-check'],
-    must_mention: '守卫（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0',
+    must_mention: '检查（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0',
   },
   {
     desc: 'M9629 EXP_GOT_CHECK 段 1 最低档阈值 1000 错改 2500',
@@ -5938,7 +5938,7 @@ export default [
     must_mention: '最低/最高档级联，UP:11/UP:12 各自折减',
   },
   {
-    desc: 'M9631 EXP_GOT_CHECK 段 1 主从爱情经验的 TEQUIP:88 判据删',
+    desc: 'M9631 EXP_GOT_CHECK 段 1 主从爱情经验的 TEQUIP:88 条件删',
     file: 'ere/event/source-check.js',
     find: `      if (era.get(\`tequip:\${cid}:88\`) && grade) {
         era.print(\`主从爱情经验+\${grade}\`);
@@ -5947,7 +5947,7 @@ export default [
       if (grade) {
         era.print(\`侍奉快乐经验+\${grade}\`);`,
     replace: `      if (grade) {
-        // 变异：TEQUIP:88 判据删，主从爱情经验恒随 grade 触发
+        // 变异：TEQUIP:88 条件删，主从爱情经验恒随 grade 触发
         era.print(\`主从爱情经验+\${grade}\`);
         chara(cid).stronghold.主从爱情经验 += grade;
       }
@@ -6050,7 +6050,7 @@ export default [
     must_mention: 'UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减',
   },
   {
-    desc: 'M9636 EXP_GOT_CHECK 段 3 快乐 UP 总和为 0 时回退 UP:5 判据删',
+    desc: 'M9636 EXP_GOT_CHECK 段 3 快乐 UP 总和为 0 时回退 UP:5 条件删',
     file: 'ere/event/source-check.js',
     find: `    let local = up(0) + up(1) + up(2) + up(14);
     if (local === 0) {
@@ -6058,13 +6058,13 @@ export default [
     }
     const up9 = up(9);`,
     replace: `    let local = up(0) + up(1) + up(2) + up(14);
-    // 变异：回退 UP:5 判据删
+    // 变异：回退 UP:5 条件删
     const up9 = up(9);`,
     tests: ['source-check'],
     must_mention: '快乐 UP 总和为 0 时回退 UP:5',
   },
   {
-    desc: 'M9637 EXP_GOT_CHECK 段 3 最低档的 UP:9 双阈值判据删',
+    desc: 'M9637 EXP_GOT_CHECK 段 3 最低档的 UP:9 双阈值条件删',
     file: 'ere/event/source-check.js',
     find: `    } else if (local >= 600 && up9 >= 300) {
       grade = 2;
@@ -6077,7 +6077,7 @@ export default [
       grade = 2;
       set_up(11, times(up(11), 0.85));
     } else if (local >= 300) {
-      // 变异：UP:9 双阈值判据删（up9 >= 100 不再要求）
+      // 变异：UP:9 双阈值条件删（up9 >= 100 不再要求）
       grade = 1;
       set_up(11, times(up(11), 0.9));
     }`,
@@ -6085,7 +6085,7 @@ export default [
     must_mention: '快乐 UP 总和为 0 时回退 UP:5',
   },
   {
-    desc: 'M9638 EXP_GOT_CHECK 段 3 从属快乐经验的 TEQUIP:88 判据删',
+    desc: 'M9638 EXP_GOT_CHECK 段 3 从属快乐经验的 TEQUIP:88 条件删',
     file: 'ere/event/source-check.js',
     find: `    if (grade) {
       if (era.get(\`tequip:\${cid}:88\`)) {
@@ -6094,7 +6094,7 @@ export default [
       }
       era.print(\`被虐快乐经验+\${grade}\`);`,
     replace: `    if (grade) {
-      // 变异：TEQUIP:88 判据删，从属快乐经验恒随 grade 触发
+      // 变异：TEQUIP:88 条件删，从属快乐经验恒随 grade 触发
       era.print(\`从属快乐经验+\${grade}\`);
       chara(cid).stronghold.从属快乐经验 += grade;
       era.print(\`被虐快乐经验+\${grade}\`);`,
@@ -6181,7 +6181,7 @@ export default [
     must_mention: '跳过边界 LOCAL≥11 && LOCAL!=14',
   },
   {
-    desc: 'M9644 AUTO_NUM_CHECK 例外条件 i!==14 判据删（下标 14 被误跳过）',
+    desc: 'M9644 AUTO_NUM_CHECK 例外条件 i!==14 条件删（下标 14 被误跳过）',
     file: 'ere/event/source-check.js',
     find: `  for (let i = 0; i <= 16; i += 1) {
     if (i >= 11 && i !== 14) {
@@ -6190,7 +6190,7 @@ export default [
     era.set(`,
     replace: `  for (let i = 0; i <= 16; i += 1) {
     if (i >= 11) {
-      // 变异：i!==14 例外判据删
+      // 变异：i!==14 例外条件删
       continue;
     }
     era.set(`,
@@ -6198,7 +6198,7 @@ export default [
     must_mention: '跳过边界 LOCAL≥11 && LOCAL!=14',
   },
   {
-    desc: 'M9645 AUTO_NUM_CHECK CFLAG:667 阈值 5 档判据改错为 6',
+    desc: 'M9645 AUTO_NUM_CHECK CFLAG:667 阈值 5 档条件改错为 6',
     file: 'ere/event/source-check.js',
     find: `  const rate = chara(target).event.自动调教回数;
   let m;
@@ -6857,19 +6857,19 @@ export default [
 
   // —— SOKUOCHI_CHECK（#462）——
   {
-    desc: 'M9836 SOKUOCHI_CHECK 早退守卫删除（TALENT:73=0 时也会执行 12 组升级）',
+    desc: 'M9836 SOKUOCHI_CHECK 早退检查删除（TALENT:73=0 时也会执行 12 组升级）',
     file: 'ere/event/source-check.js',
     find: `function sokuochi_check() {
   if (!tal(73)) {
     return;
   }`,
     replace: `function sokuochi_check() {
-  // 变异：容易陷落守卫被删
+  // 变异：容易陷落检查被删
   if (false) {
     return;
   }`,
     tests: ['source-check'],
-    must_mention: 'SOKUOCHI_CHECK：守卫（TALENT:73=0）→ 早退，ABL 不变',
+    must_mention: 'SOKUOCHI_CHECK：检查（TALENT:73=0）→ 早退，ABL 不变',
   },
   {
     desc: 'M9837 SOKUOCHI_CHECK TIERS LV1 门槛 1 错改 2',
@@ -6982,19 +6982,19 @@ export default [
 
   // —— TARGET_MILK_CHECK（#462，验收返工）——
   {
-    desc: 'M9849 TARGET_MILK_CHECK 早退守卫删除（TALENT:130=0 时也会执行喷乳结算）',
+    desc: 'M9849 TARGET_MILK_CHECK 早退检查删除（TALENT:130=0 时也会执行喷乳结算）',
     file: 'ere/event/source-check.js',
     find: `function target_milk_check() {
   if (!chara(cid).chara.母乳体质) {
     return;
   }`,
     replace: `function target_milk_check() {
-  // 变异：容易陷落式守卫被删
+  // 变异：容易陷落式检查被删
   if (false) {
     return;
   }`,
     tests: ['source-check'],
-    must_mention: 'TARGET_MILK_CHECK：守卫（TALENT:130=0）→ 早退，无喷乳结算',
+    must_mention: 'TARGET_MILK_CHECK：检查（TALENT:130=0）→ 早退，无喷乳结算',
   },
   {
     desc: 'M9850 TARGET_MILK_CHECK 克制折减删',
@@ -7203,12 +7203,12 @@ export default [
     replace: `  const ejac = era.get(\`maxbase:\${cid}:3\`) || 0;
   let grade;
   if (chara(cid).train.母乳槽 >= ejac * 2) {
-    // 变异：判据 > 错改 >=`,
+    // 变异：条件 > 错改 >=`,
     tests: ['source-check'],
     must_mention: 'TARGET_MILK_CHECK：三档判定边界',
   },
   {
-    desc: 'M9862 TARGET_MILK_CHECK 大量档 EXPLV 最低档判据删',
+    desc: 'M9862 TARGET_MILK_CHECK 大量档 EXPLV 最低档条件删',
     file: 'ere/event/source-check.js',
     find: `  if (grade === 2) {
     add_lose(0, 20);
@@ -7218,7 +7218,7 @@ export default [
     add_lose(0, 20);
     add_lose(1, 100);
     if (false) {
-      // 变异：EXPLV[1] 判据删`,
+      // 变异：EXPLV[1] 条件删`,
     tests: ['source-check'],
     must_mention: '恒加异常经验',
   },
@@ -7264,7 +7264,7 @@ export default [
     must_mention: 'TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）',
   },
   {
-    desc: 'M9866 TARGET_MILK_CHECK 搾乳器检查 TEQUIP:90 判据删（覆盖时仍会累加）',
+    desc: 'M9866 TARGET_MILK_CHECK 搾乳器检查 TEQUIP:90 条件删（覆盖时仍会累加）',
     file: 'ere/event/source-check.js',
     find: `    game.system.对象喷乳 += 1;
     if (era.get(\`tequip:\${cid}:16\`) && !era.get(\`tequip:\${cid}:90\`)) {
@@ -7272,7 +7272,7 @@ export default [
     }`,
     replace: `    game.system.对象喷乳 += 1;
     if (era.get(\`tequip:\${cid}:16\`)) {
-      // 变异：TEQUIP:90 判据删
+      // 变异：TEQUIP:90 条件删
       game.system.榨乳中 += 1;
     }`,
     tests: ['source-check'],
@@ -7317,7 +7317,7 @@ export default [
     must_mention: 'AUTO 专属门槛',
   },
   {
-    desc: 'M9770 AUTO ANTI/LIKE 门槛：PLAYER==MASTER 判据删（助手调教也能结算 ANTI/LIKE）',
+    desc: 'M9770 AUTO ANTI/LIKE 门槛：PLAYER==MASTER 条件删（助手调教也能结算 ANTI/LIKE）',
     file: 'ere/event/source-check.js',
     find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0 && player === MASTER) {`,
     replace: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0) {`,
@@ -7325,7 +7325,7 @@ export default [
     must_mention: 'AUTO 专属门槛',
   },
   {
-    desc: 'M9771 AUTO ANTI/LIKE 门槛：CFLAG:1==0 判据取反（反抗刻印生效时反而结算）',
+    desc: 'M9771 AUTO ANTI/LIKE 门槛：CFLAG:1==0 条件取反（反抗刻印生效时反而结算）',
     file: 'ere/event/source-check.js',
     find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0 && player === MASTER) {`,
     replace: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) !== 0 && player === MASTER) {`,
@@ -7391,36 +7391,36 @@ export default [
   {
     desc: 'M9779 AUTO handler Block A：UP:0 减半行删（气力 0 时快乐不再减半）',
     file: 'ere/event/source-check.js',
-    find: '  // 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(0, idiv(up(0), 2));\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
+    find: '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(0, idiv(up(0), 2));\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
     replace:
-      '  // 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
+      '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9780 AUTO handler Block A：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半）',
     file: 'ere/event/source-check.js',
-    find: '  // 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {',
+    find: '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {',
     replace:
-      '  // 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0 && tflag(201) !== 1) {',
+      '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0 && tflag(201) !== 1) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9781 AUTO handler Block B：减半数组漏 UP:9（AUTO_NUM_CHECK 放大后不再减半）',
     file: 'ere/event/source-check.js',
-    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
-      '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
+      '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9782 AUTO handler Block B：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半加倍）',
     file: 'ere/event/source-check.js',
-    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
-      '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+      '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },

@@ -1,5 +1,5 @@
 /**
- * @file 自动调教系统（EVENT_AUTOTRAIN.ERB 与各 COMF AUTO 移植）。
+ * @file 自动调教系统（comN_auto 一族与自动调教随机表）。
  *
  */
 
@@ -11,7 +11,7 @@ const { clothtype_text } = require('#/page/page-clothtype');
 const { juel_check_main } = require('#/system/train/juel-check');
 const { auto_ablup } = require('#/system/train/ablup');
 const { chara } = require('#/facade/chara');
-/** 本文件存根化的原作调用名（空：#467 起 AUTO_ABLUP 已接真身） */
+/** 本文件预留的调用名（空：#467 起 AUTO_ABLUP 已接真身） */
 
 /**
  * LOSEBASE → `deltabase:${cid}:${i}` 的负向累加（全项目同款写法，见
@@ -21,13 +21,13 @@ const { chara } = require('#/facade/chara');
  * 夹具对未知二段族照收，故此前测试看不出来。
  * @param {number} cid
  * @param {number} i LOSEBASE 下标（0 体力 / 1 气力）
- * @param {number} v 原作 `LOSEBASE:i += v` 的 v（正数＝损耗量）
+ * @param {number} v 损耗量（正数＝损耗量）
  * @returns {unknown} era.add 的返回值
  */
 const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
 
 /**
- * 获取角色称呼（SAVESTR / CALLNAME）
+ * 获取角色称呼（callname:${id}:-1）
  * @param {number} cid
  * @returns {string}
  */
@@ -36,15 +36,15 @@ function chara_name(cid) {
 }
 
 /**
- * @BEFORE_AUTOTRAIN（:91-104）：自动调教前的重置
+ * before_autotrain：自动调教前的重置
  *
- * 原作 `SOURCE:LOCAL = 0` / `UP:LOCAL = 0` 的单下标写法在 Emuera 里就是
+ * `SOURCE:LOCAL = 0` / `UP:LOCAL = 0` 的单下标写法在旧引擎里就是
  * 「当前 TARGET 的那一格」（角色变量 + 单下标 = TARGET）。#508 订正：
  * 原写 `era.set('source:${local}', 0)` 是二段寻址——引擎对角色桶表
  * （source/palam/base/… 非 tflag 族）的二段写入**静默忽略**（app.asar
  * 寻址层，engine-bundle 探针实证：`set source:1 = 42` 返回桶对象、不落值），
  * 所以这条重置在真机上一直没生效。改按 3 段写 TARGET 那一格；
- * TARGET 未指（< 0）时无格可清，跳过——与下面 delta 的同款守卫。
+ * TARGET 未指（< 0）时无格可清，跳过——与下面 delta 的同款检查。
  */
 function before_autotrain() {
   const target = era_flag.target;
@@ -60,7 +60,7 @@ function before_autotrain() {
 }
 
 /**
- * @FORMAT_AUTOTRAIN（:51-87）：自动调教初始化格式化
+ * format_autotrain：自动调教初始化格式化
  */
 function format_autotrain() {
   const target = era_flag.target;
@@ -99,7 +99,7 @@ function format_autotrain() {
 }
 
 /**
- * @AFTER_AUTOTRAIN（:108-159）：自动调教后处理
+ * after_autotrain：自动调教后处理
  * @param {number} target
  */
 async function after_autotrain(target) {
@@ -149,7 +149,7 @@ async function after_autotrain(target) {
 }
 
 /**
- * @AUTOTRAIN（:11-47）：全角色自动调教遍历
+ * autotrain：全角色自动调教遍历
  */
 async function autotrain() {
   const keep_target = era_flag.target;
@@ -185,7 +185,7 @@ async function autotrain() {
 }
 
 /**
- * @COM0_AUTO：爱抚自动调教（COMF0_愛撫.ERB:174-257）
+ * com0_auto：爱抚自动调教
  */
 function com0_auto() {
   const target = era_flag.target;
@@ -255,7 +255,7 @@ function com0_auto() {
 }
 
 /**
- * @COM3_AUTO：自慰自动调教（COMF3_自慰.ERB:872-1010）
+ * com3_auto：自慰自动调教
  */
 function com3_auto() {
   const target = era_flag.target;
@@ -391,7 +391,7 @@ function com3_auto() {
 }
 
 /**
- * @COM13_AUTO：肛门虫自动调教（COMF13_アナルワーム.ERB:384-554）
+ * com13_auto：肛门虫自动调教
  */
 function com13_auto() {
   const target = era_flag.target;
@@ -539,7 +539,7 @@ function com13_auto() {
 }
 
 /**
- * @COM50_AUTO：润滑液自动调教（COMF50_ローション.ERB:30-47）
+ * com50_auto：润滑液自动调教
  */
 function com50_auto() {
   const target = era_flag.target;
@@ -556,7 +556,7 @@ function com50_auto() {
 }
 
 /**
- * @COM63_AUTO：磨镜自动调教（COMF63_貝あわせ.ERB:157-274）
+ * com63_auto：磨镜自动调教
  */
 function com63_auto() {
   const target = era_flag.target;
@@ -649,8 +649,8 @@ function com63_auto() {
 }
 
 /**
- * @RAND_AUTOTRAIN（DUNGEON_TOWN.ERB:705-710）：自动调教随机表（β）
- * 原作只有 TURNS = RAND:5 等未完工空壳，移植保持原样并返回 0。
+ * rand_autotrain：自动调教随机表（β）
+ * 只有 TURNS = RAND:5 等未完工空壳，保持原样并返回 0。
  * @returns {number} 0
  */
 function rand_autotrain() {

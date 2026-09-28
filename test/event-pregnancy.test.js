@@ -1,14 +1,14 @@
 /**
- * `ere/event/event-pregnancy.js` 的行为测试（issue #401：EVENT_PREGNANCY.ERB
- * 31 个函数全量 + 育儿室三函数 + 页面接线）。
+ * `ere/event/event-pregnancy.js` 的行为测试（issue #401：妊娠判定一族
+ * 31 个函数全量 + 育儿室三函数 + 页面接入）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  *
  * **12 组成对函数是维度型分支，用表驱动一个用例走完整个维度**（工单点名的
  * 返工点）：`IN_VAGINA_<源>_TO_<目标>` 与同名 `CONCEPTION_CHECK_<源>_TO_<目标>`
  * 形状相同、只差「受检主体、妊娠相手码、是否另查 158、孩子父亲码」四个维度。
- * `PAIRS` 表里的期望值直接来自 `target/ERB/EVENT/EVENT_PREGNANCY.ERB` 的
- * 对应行（行号写在每条注释里），不复算实现。
+ * `PAIRS` 表里的期望值直接来自 EVENT_PREGNANCY 函数的
+ * 对应行（源函数名写在每条注释里），不复算实现。
  *
  * 随机源：受检函数带 `rand` 形参，用例一律注入确定性序列（本文件 seq()），
  * 不走 Math.random——工单验收项（#344 的漏网教训：漏给就落到真随机，用例
@@ -17,17 +17,17 @@
  * 覆盖：
  *   1. 12 组 IN_VAGINA 侧：主体在场且未妊娠时按精液池掷受胎，命中写
  *      CFLAG:102 = 妊娠相手码并清池；其余角色不被波及；
- *   2. 12 组的存在性守卫：主体指针落到主人位（0）时整组早退，**连精液池
+ *   2. 12 组的存在性检查：主体指针落到主人位时整组早退，**连精液池
  *      都不碰**（早退发生在 NAKADASHI_CHECK 之外，与它内部的清池早退不同）；
- *   3. 12 组的 158（同族不育）守卫：kin 组跳过且不碰池、非 kin 组照写；
+ *   3. 12 组的 158（同族不育）检查：kin 组跳过且不碰池、非 kin 组照写；
  *   4. 12 组 CONCEPTION 侧：妊娠相手码相符且无预产日时落定产日与父亲；
  *      码不符 / 已有预产日 / 已妊娠三种反例各走一遍；
  *   5. 全角色组（kyouou_to_t / ntrd_to_t / extra）的 REPEAT CHARANUM 语义：
  *      自角色 0 起、逐角色独立掷、妊娠中的角色跳过；
  *   6. 四个非成对函数：CHECK_ABLE_TO_CHILD_CARE（#FUNCTION 四档）、
- *      SHOW_BUTTON_CHILD_CARE（:466 的 SETCOLOR 在 RETURN 0 之后 = 死代码）、
+ *      SHOW_BUTTON_CHILD_CARE（的 SETCOLOR 在 RETURN 0 之后 = 死代码）、
  *      CHILD_CARE_CHARA（三条早退与正常支）、IN_VAGINA_ALL /
- *      CONCEPTION_CHECK_ALL 的九连调顺序与整体守卫。
+ *      CONCEPTION_CHECK_ALL 的九连调顺序与整体检查。
  */
 
 const assert = require('node:assert/strict');
@@ -52,31 +52,31 @@ function seq(values) {
   };
 }
 
-/** 精液池槽位：CFLAG:101/103-108（kind → 下标，见 EVENT_PREGNANCY.ERB:200-201） */
+/** 精液池槽位：CFLAG:101/103-108（kind → 下标，见 EVENT_PREGNANCY 的声明） */
 const POOL = { 1: 101, 2: 103, 3: 104, 4: 105, 5: 106, 6: 107, 7: 108 };
 
-/** 靶场里的三个角色：主人 0（MASTER）与两名奴隶 31/32 */
+/** 目标场里的三个角色：主人 0（MASTER）与两名奴隶 31/32 */
 const MASTER = 0;
 const SLAVE = 31;
 const ASSI = 32;
 const ALL_CIDS = [MASTER, SLAVE, ASSI];
 
 /**
- * 12 组的维度表：期望值全部来自 `target/ERB/EVENT/EVENT_PREGNANCY.ERB`。
+ * 12 组的维度表：期望值全部来自 EVENT_PREGNANCY 函数体。
  *
  *   name      函数名后缀（IN_VAGINA_<name> / CONCEPTION_CHECK_<name>）
  *   kind      NAKADASHI_CHECK 的 ARG:1，亦即妊娠相手码 CFLAG:102 的目标值
- *   iv        IN_VAGINA 侧的最外层存在性守卫（:85-194）
- *   cc        CONCEPTION_CHECK 侧的存在性守卫（:305-444）——**T_TO_A 两侧
- *             不对称**（:127 只查助手、:357 另查目标），故分两列
+ *   iv        IN_VAGINA 侧的最外层存在性检查
+ *   cc        CONCEPTION_CHECK 侧的存在性检查——**T_TO_A 两侧
+ *             不对称**（只查助手、 另查目标），故分两列
  *   kin       IN_VAGINA 侧是否另查 TALENT:158（同族不育）
  *   father     CONCEPTION 落定时的 CFLAG:111。数字码与 NID 码两组：
  *              NID(cid) = 10000 + cid（cid 为 0 或 17-40 时，chara-family.js
- *              的 @NID），故父为角色 31 时孩子父亲码 = 10031 + 1 = 10032
- *   father_name 有值的组同时写 CSTR:<受检者>:2 = SAVESTR(父)
- *   dog        kind 5 的两组要先过 NAKADASHI_CHECK 的兽耳守卫（:224）
- *   world      让两侧都点火的靶场（TARGET / ASSI 指针）
- *   hit        该靶场下真正收到写入的受检者；'each' = 全角色组
+ *              的 nid），故父为角色 31 时孩子父亲码 = 10031 + 1 = 10032（节录）
+ *   father_name 有值的组同时写 CSTR:<受检者> = SAVESTR(父)
+ *   dog        kind 5 的两组要先过 NAKADASHI_CHECK 的兽耳检查
+ *   world      让两侧都点火的目标场（TARGET / ASSI 指针）
+ *   hit        该目标场下真正收到写入的受检者；'each' = 全角色组
  */
 const PAIRS = [
   // 主人 → 奴隶
@@ -101,7 +101,7 @@ const PAIRS = [
     world: { target: SLAVE, assi: ASSI },
     hit: ASSI,
   },
-  // 奴隶 → 主人（守卫是 MASTER == 0 的恒真式）
+  // 奴隶 → 主人（检查是 MASTER == 0 的恒真式）
   {
     name: 't_to_m',
     kind: 3,
@@ -218,13 +218,13 @@ const PAIRS = [
   },
 ];
 
-/** 一条维度行在靶场里实际受检的角色号 */
+/** 一条维度行在目标场里实际受检的角色号 */
 function hit_cid(pair) {
   return pair.hit === 'each' ? SLAVE : pair.hit;
 }
 
 /**
- * 靶场：主人 0 与两名奴隶 31/32 已加入，妊娠出产功能开启。
+ * 目标场：主人 0 与两名奴隶 31/32 已加入，妊娠出产功能开启。
  * @param {{target?: number, assi?: number, pools?: Object<string, number>,
  *   dog?: boolean}} opts
  */
@@ -238,7 +238,7 @@ function setup_world({ target = -1, assi = -1, pools = {}, dog = false } = {}) {
     });
     fixture.era.addCharacter(cid);
     if (dog) {
-      fixture.store.set(`talent:${cid}:124`, 1); // 动物耳朵（:224 的兽奸守卫）
+      fixture.store.set(`talent:${cid}:124`, 1); // 动物耳朵（的兽奸检查）
     }
   }
   fixture.store.set('flag:5', 4); // GETBIT(FLAG:5,2)：妊娠出产功能 ON
@@ -252,7 +252,7 @@ function setup_world({ target = -1, assi = -1, pools = {}, dog = false } = {}) {
   return { fixture, era_flag, pregnancy };
 }
 
-/** 把一条维度行灌成「受检者的精液池有货」的靶场 */
+/** 把一条维度行灌成「受检者的精液池有货」的目标场 */
 function pair_world(pair, extra = {}) {
   const cid = hit_cid(pair);
   return setup_world({
@@ -267,12 +267,12 @@ test('IN_VAGINA 十二组：主体在场且未妊娠时按精液池掷受胎，�
   for (const pair of PAIRS) {
     const { fixture, pregnancy } = pair_world(pair);
     const cid = hit_cid(pair);
-    // 池 = 1 → 落分档 [6, 2]（:268-270 的 ELSEIF 支）；HAIRANZAI = 3 - 0*2 = 3、
+    // 池 = 1 → 落分档 [6, 2]（的 ELSEIF 支）；HAIRANZAI = 3 - 0*2 = 3、
     // 娇小 0 → 掷骰上界 (6 + 0) * 3 = 18；rand 取 0 <= 2 必命中
     assert.equal(
       pregnancy[`in_vagina_${pair.name}`](seq([0])),
       0,
-      `${pair.name}：原作函数一律 RETURN 0`,
+      `${pair.name}：函数一律 RETURN 0`,
     );
     assert.equal(
       fixture.store.get(`cflag:${cid}:102`),
@@ -282,7 +282,7 @@ test('IN_VAGINA 十二组：主体在场且未妊娠时按精液池掷受胎，�
     assert.equal(
       fixture.store.get(`cflag:${cid}:${POOL[pair.kind]}`),
       0,
-      `${pair.name}：判定过后精液池清零（:274）`,
+      `${pair.name}：判定过后精液池清零`,
     );
     // 单主体组只碰自己的受检者；全角色组另行断言
     if (pair.hit !== 'each') {
@@ -298,10 +298,10 @@ test('IN_VAGINA 十二组：主体在场且未妊娠时按精液池掷受胎，�
   }
 });
 
-test('IN_VAGINA 十二组：主体指针落到主人位（0）时整组早退，连精液池都不碰', () => {
+test('IN_VAGINA 十二组：主体指针落到主人位时整组早退，连精液池都不碰', () => {
   for (const pair of PAIRS) {
-    if (pair.iv.length === 0) continue; // 无守卫的六组另有用例
-    // 守卫是 `TARGET >= 1` / `ASSI >= 1`：指针取 0（主人位）恰好卡在边界上
+    if (pair.iv.length === 0) continue; // 无检查的六组另有用例
+    // 检查是 `TARGET >= 1` / `ASSI >= 1`：指针取 0（主人位）恰好卡在边界上
     // ——把 `>= 1` 写成 `>= 0` 时本用例必红，而指针取 -1 抓不到这一档
     const world = { ...pair.world };
     if (pair.iv.includes('target')) world.target = 0;
@@ -313,8 +313,8 @@ test('IN_VAGINA 十二组：主体指针落到主人位（0）时整组早退，
       pools: {
         [`cflag:${hit_cid(pair)}:${POOL[pair.kind]}`]: 1,
         [`cflag:${SLAVE}:${POOL[pair.kind]}`]: 1,
-        // 关键：把货也压在「守卫指针所指的那个角色」上（角色 0 主人位）。
-        // 守卫若被删或被放宽（`>= 1` 写成 `>= 0`），它就会被当成受检者、
+        // 关键：把货也压在「检查指针所指的那个角色」上（角色 0 主人位）。
+        // 检查若被删或被放宽（`>= 1` 写成 `>= 0`），它就会被当成受检者、
         // 消费掉这份池——那时本断言红。只压受检者的池抓不到这一档
         [`cflag:${MASTER}:${POOL[pair.kind]}`]: 1,
       },
@@ -329,7 +329,7 @@ test('IN_VAGINA 十二组：主体指针落到主人位（0）时整组早退，
     assert.equal(
       fixture.store.get(`cflag:${MASTER}:${POOL[pair.kind]}`),
       1,
-      `${pair.name}：守卫指针所指的角色不得被当成受检者`,
+      `${pair.name}：检查指针所指的角色不得被当成受检者`,
     );
     assert.equal(
       fixture.store.get(`cflag:${hit_cid(pair)}:102`) ?? 0,
@@ -350,7 +350,7 @@ test('IN_VAGINA 十二组：已妊娠的主体整组早退（妊娠中不再受�
     assert.equal(
       fixture.store.get(`cflag:${cid}:${POOL[pair.kind]}`),
       pool_before,
-      `${pair.name}：妊娠中的主体不得消费精液池（TALENT:153 守卫在调用之外）`,
+      `${pair.name}：妊娠中的主体不得消费精液池（TALENT:153 检查在调用之外）`,
     );
     assert.equal(
       fixture.store.get(`cflag:${cid}:102`) ?? 0,
@@ -360,7 +360,7 @@ test('IN_VAGINA 十二组：已妊娠的主体整组早退（妊娠中不再受�
   }
 });
 
-test('IN_VAGINA 十二组：158（同族不育）只拦 kin 组，非 kin 组照常受胎', () => {
+test('IN_VAGINA 十二组（同族不育）只拦 kin 组，非 kin 组照常受胎', () => {
   for (const pair of PAIRS) {
     const { fixture, pregnancy } = pair_world(pair);
     const cid = hit_cid(pair);
@@ -392,7 +392,7 @@ test('IN_VAGINA 全角色组：REPEAT CHARANUM 自角色 0 起，逐角色独立
   for (const pair of PAIRS) {
     if (pair.hit !== 'each') continue;
     const { fixture, pregnancy } = pair_world(pair);
-    // 角色 0 也备货：REPEAT CHARANUM 自 0 起（:172/:181/:190）
+    // 角色 0 也备货：REPEAT CHARANUM 自 0 起
     fixture.store.set(`cflag:${MASTER}:${POOL[pair.kind]}`, 1);
     // 角色 32 妊娠中 → 必须被跳过，它的池保持不动
     fixture.store.set(`talent:${ASSI}:153`, 1);
@@ -440,9 +440,9 @@ test('CONCEPTION_CHECK 十二组：妊娠相手为本组码且无预产日时落
         return 5;
       }),
       0,
-      `${pair.name}：原作函数一律 RETURN 0`,
+      `${pair.name}：函数一律 RETURN 0`,
     );
-    assert.equal(span, 6, `${pair.name}：预产日的随机跨度是 RAND:6（:365）`);
+    assert.equal(span, 6, `${pair.name}：预产日的随机跨度是 RAND:6`);
     assert.equal(
       fixture.store.get(`cflag:${cid}:110`),
       7 + 10 + 5,
@@ -481,7 +481,7 @@ test('CONCEPTION_CHECK 十二组：已有预产日或已妊娠时不重复落定
   for (const pair of PAIRS) {
     const cid = hit_cid(pair);
 
-    // 已有预产日（:110 > 0）
+    // 已有预产日（> 0）
     const a = pair_world(pair);
     a.fixture.store.set(`cflag:${cid}:102`, pair.kind);
     a.fixture.store.set(`cflag:${cid}:110`, 99);
@@ -505,7 +505,7 @@ test('CONCEPTION_CHECK 十二组：已有预产日或已妊娠时不重复落定
   }
 });
 
-test('CONCEPTION_CHECK 十二组：主体指针落到主人位（0）时整组早退', () => {
+test('CONCEPTION_CHECK 十二组：主体指针落到主人位时整组早退', () => {
   for (const pair of PAIRS) {
     if (pair.cc.length === 0) continue;
     const world = { ...pair.world };
@@ -526,8 +526,8 @@ test('CONCEPTION_CHECK 十二组：主体指针落到主人位（0）时整组�
   }
 });
 
-test('CONCEPTION_CHECK：T_TO_A 的 CONCEPTION 侧另查目标（:357 比 :127 严）', () => {
-  // 不对称守卫的专职用例：助手在场、目标不在场——IN_VAGINA 侧照掷，
+test('CONCEPTION_CHECK：T_TO_A 的 CONCEPTION 侧另查目标（比严）', () => {
+  // 不对称检查的专职用例：助手在场、目标不在场——IN_VAGINA 侧照掷，
   // CONCEPTION 侧整组早退。两侧混为一谈时本用例必红
   const first = pair_world(
     PAIRS.find((p) => p.name === 't_to_a'),
@@ -539,7 +539,7 @@ test('CONCEPTION_CHECK：T_TO_A 的 CONCEPTION 侧另查目标（:357 比 :127 �
   assert.equal(
     first.fixture.store.get(`cflag:${ASSI}:102`),
     3,
-    'IN_VAGINA_T_TO_A 只查助手在场（:127），目标不在场也照掷',
+    'IN_VAGINA_T_TO_A 只查助手在场，目标不在场也照掷',
   );
 
   const second = pair_world(
@@ -554,7 +554,7 @@ test('CONCEPTION_CHECK：T_TO_A 的 CONCEPTION 侧另查目标（:357 比 :127 �
   assert.equal(
     second.fixture.store.get(`cflag:${ASSI}:110`) ?? 0,
     0,
-    'CONCEPTION_CHECK_T_TO_A 另查目标在场（:357），目标不在场即早退',
+    'CONCEPTION_CHECK_T_TO_A 另查目标在场，目标不在场即早退',
   );
 });
 
@@ -562,7 +562,7 @@ test('IN_VAGINA_ALL：九连调顺序与逐组痕迹（写入序列逐项钉死�
   const { fixture, pregnancy } = setup_world({
     target: SLAVE,
     assi: ASSI,
-    dog: true, // 的 D_TO_T 是 kind 5，先过兽耳守卫（:224）
+    dog: true, // 的 D_TO_T 是 kind 5，先过兽耳检查
   });
   // 九组各自的池都备货，让每一组都留下可辨认的痕迹
   for (const kind of [1, 2, 3, 4, 5, 6, 7]) {
@@ -572,7 +572,7 @@ test('IN_VAGINA_ALL：九连调顺序与逐组痕迹（写入序列逐项钉死�
   }
   // 每组的掷都取 0（必命中）；上界最小的一组是池 = 1 的 [6,2] 支 → 18
   assert.equal(pregnancy.in_vagina_all(seq([0, 0, 0, 0, 0, 0, 0, 0, 0])), 0);
-  // 九连调的顺序（:48-56）只由「最后写入者胜出」可见——逐项钉死
+  // 九连调的顺序只由「最后写入者胜出」可见——逐项钉死
   assert.deepEqual(
     fixture.var_writes
       .filter((w) => w.name.endsWith(':102'))
@@ -615,21 +615,21 @@ test('CONCEPTION_CHECK_ALL：九连调按受检者各自落定，写入序列逐
   assert.equal(
     fixture.store.get(`cflag:${SLAVE}:111`),
     0,
-    '主人来源的孩子父亲码是 0（:312）',
+    '主人来源的孩子父亲码是 0',
   );
   assert.equal(
     fixture.store.get(`cflag:${ASSI}:111`),
     10032,
-    '奴隶来源的孩子父亲 = NID(TARGET)+1（:361）',
+    '奴隶来源的孩子父亲 = NID(TARGET)+1',
   );
   assert.equal(
     fixture.store.get(`cflag:${MASTER}:111`),
     -4,
-    '狂王来源的孩子父亲码是 -4（:420）',
+    '狂王来源的孩子父亲码是 -4',
   );
 });
 
-test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九组一个都不跑', () => {
+test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体检查：指针越界时九组一个都不跑', () => {
   const stocked = (fixture) => {
     for (const kind of [1, 2, 3, 4, 5, 6, 7]) {
       for (const cid of ALL_CIDS) {
@@ -638,12 +638,12 @@ test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九�
     }
   };
 
-  // 序列给足九组（守卫删掉时九组都会掷），断言落在「一笔都没写」上——
+  // 序列给足九组（检查删掉时九组都会掷），断言落在「一笔都没写」上——
   // 比 seq([]) 的「不该有抽取」多钉一层：那次红是抽取超界的红，看不出
   // 写入面被打开了
   const full_seq = () => seq([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
-  // TARGET 指向不存在的位置（:44 TARGET < 0 || TARGET >= CHARANUM）
+  // TARGET 指向不存在的位置（TARGET < 0 || TARGET >= CHARANUM）
   const bad_target = setup_world({ target: 99, assi: ASSI, dog: true });
   stocked(bad_target.fixture);
   bad_target.pregnancy.in_vagina_all(full_seq());
@@ -653,7 +653,7 @@ test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九�
     'TARGET 越界时 IN_VAGINA_ALL 整组早退',
   );
 
-  // ASSI 指向不存在的位置（:46 ASSI >= CHARANUM）
+  // ASSI 指向不存在的位置（ASSI >= CHARANUM）
   const bad_assi = setup_world({ target: SLAVE, assi: 99, dog: true });
   stocked(bad_assi.fixture);
   bad_assi.pregnancy.in_vagina_all(full_seq());
@@ -663,7 +663,7 @@ test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九�
     'ASSI 越界时 IN_VAGINA_ALL 整组早退（连 TARGET 组也不跑）',
   );
 
-  // ASSI = -1 是「没有助手」，不是「越界」：守卫放行，助手相关的五组
+  // ASSI = -1 是「没有助手」，不是「越界」：检查放行，助手相关的五组
   // 各自被自己那一层的 `ASSI >= 1` 拦下，其余四组照跑
   const no_assi = setup_world({ target: SLAVE, assi: -1, dog: true });
   stocked(no_assi.fixture);
@@ -680,10 +680,10 @@ test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九�
       [`cflag:${MASTER}:102`, 6], // SYOKU_TO_M
       [`cflag:${MASTER}:102`, 7], // KYOUOU_TO_M
     ],
-    'ASSI = -1 放行：非助手组照跑，:49/:51/:52 三组被各自的 `ASSI >= 1` 拦下',
+    'ASSI = -1 放行：非助手组照跑，// 三组被各自的 `ASSI >= 1` 拦下',
   );
 
-  // CONCEPTION_CHECK_ALL 同款守卫（同样给足序列，断言落在零写入上）：
+  // CONCEPTION_CHECK_ALL 同款检查（同样给足序列，断言落在零写入上）：
   // ASSI 越界时连 TARGET 组也不跑
   const cc_bad = setup_world({ target: SLAVE, assi: 99 });
   cc_bad.fixture.store.set(`cflag:${SLAVE}:102`, 1);
@@ -706,15 +706,15 @@ test('IN_VAGINA_ALL / CONCEPTION_CHECK_ALL 的整体守卫：指针越界时九�
   );
 });
 
-// —— 育儿室三函数（:452-514）与页面接线（#401） ——
+// —— 育儿室三函数与页面接入（#401） ——
 
-/** 只要「一个可用的角色表」的靶场（育儿室三函数不碰精液池） */
+/** 只要「一个可用的角色表」的目标场（育儿室三函数不碰精液池） */
 function setup_care() {
   const { fixture, era_flag, pregnancy } = setup_world({ target: SLAVE });
   return { fixture, era_flag, pregnancy };
 }
 
-test('CHECK_ABLE_TO_CHILD_CARE：四档返回值各走一次，且档序照原作先判 ARG == 0', () => {
+test('CHECK_ABLE_TO_CHILD_CARE：四档返回值各走一次，且档序先判 ARG == 0', () => {
   const { fixture, pregnancy } = setup_care();
   const able = pregnancy.check_able_to_child_care;
 
@@ -733,7 +733,7 @@ test('CHECK_ABLE_TO_CHILD_CARE：四档返回值各走一次，且档序照原�
   assert.equal(able(0), 1, '角色 0 恒走第一档——「你不在育儿室」优先于状态位');
 });
 
-test('SHOW_BUTTON_CHILD_CARE：只有判定为 0 才渲染按钮（:466 的 SETCOLOR 在 RETURN 0 之后，是死代码）', () => {
+test('SHOW_BUTTON_CHILD_CARE：只有判定为 0 才渲染按钮（的 SETCOLOR 在 RETURN 0 之后，是死代码）', () => {
   const { fixture, pregnancy } = setup_care();
   const buttons = () => fixture.lines.filter((line) => line.type === 'button');
 
@@ -741,7 +741,7 @@ test('SHOW_BUTTON_CHILD_CARE：只有判定为 0 才渲染按钮（:466 的 SETC
   assert.deepEqual(
     buttons(),
     [],
-    '不在育儿室的角色不渲染按钮（:464 的 ELSEIF LOCAL != 0 → RETURN 0）',
+    '不在育儿室的角色不渲染按钮（的 ELSEIF LOCAL != 0 → RETURN 0）',
   );
 
   fixture.store.set(`cflag:${ASSI}:1`, 10);
@@ -752,7 +752,7 @@ test('SHOW_BUTTON_CHILD_CARE：只有判定为 0 才渲染按钮（:466 的 SETC
     '可访问时渲染按钮；正文不带手写 [编号] 前缀（引擎自己拼，见 AGENTS.md）',
   );
 
-  // 侵攻中的勇者同样不渲染（:459-461 的第一档）
+  // 侵攻中的勇者同样不渲染（的第一档）
   fixture.store.set(`cflag:${SLAVE}:1`, 2);
   fixture.lines.length = 0;
   pregnancy.show_button_child_care(5, SLAVE);
@@ -762,14 +762,14 @@ test('SHOW_BUTTON_CHILD_CARE：只有判定为 0 才渲染按钮（:466 的 SETC
 test('CHILD_CARE_CHARA：三条早退分支——不在育儿室 / 侵攻中的勇者 / 角色不在育儿室', async () => {
   const { fixture, pregnancy } = setup_care();
 
-  // 角色 0：你不在育儿室（:498-499）
+  // 角色 0：你不在育儿室
   assert.equal(await pregnancy.child_care_chara(0), 0);
   assert(
     fixture.lines_history.some((line) => line.text === '你不在育儿室。'),
     ':499 的播报',
   );
 
-  // 侵攻中的勇者：返回 2 是原作的防御支（:500-502），且不打印任何话术
+  // 侵攻中的勇者：返回 2 是防御支，且不打印任何话术
   fixture.store.set(`cflag:${SLAVE}:1`, 2);
   const before = fixture.lines_history.length;
   assert.equal(await pregnancy.child_care_chara(SLAVE), 2);
@@ -779,7 +779,7 @@ test('CHILD_CARE_CHARA：三条早退分支——不在育儿室 / 侵攻中的�
     '侵攻中的勇者支不打印任何东西（按钮本不该显示）',
   );
 
-  // 角色不在育儿室（:503-504）
+  // 角色不在育儿室
   assert.equal(await pregnancy.child_care_chara(ASSI), 0);
   assert(
     fixture.lines_history.some((line) => line.text === '该角色不在育儿室。'),
@@ -790,7 +790,7 @@ test('CHILD_CARE_CHARA：三条早退分支——不在育儿室 / 侵攻中的�
 test('CHILD_CARE_CHARA：可访问时进入育儿室，TARGET 指向该角色并带事件码 13 调 SELF_KOJO', async () => {
   const { fixture, era_flag, pregnancy } = setup_care();
   fixture.store.set(`cflag:${SLAVE}:1`, 10); // 在育儿室
-  // 先把 TARGET 挪到别的角色：不挪的话「:511 TARGET = ARG 没落地」也看不出来
+  // 先把 TARGET 挪到别的角色：不挪的话「 TARGET = ARG 没实现」也看不出来
   fixture.store.set('flag:10005', ASSI);
 
   // 口上探针：口上族按 GET_KOJO_NUM() - 100 分发，素质 160 档 → 编号 100 → 族内 0
@@ -862,7 +862,7 @@ test('IN_VAGINA：男性或未熟的主体在 NAKADASHI_CHECK 里早退，且不
     assert.equal(
       fixture.store.get(`cflag:${SLAVE}:101`),
       1,
-      `${label} 的早退不清池（:220 是 RETURN 0，没有清池那一笔）`,
+      `${label} 的早退不清池（是 RETURN 0，没有清池那一笔）`,
     );
   }
 });
@@ -877,7 +877,7 @@ test('IN_VAGINA：兽奸（kind 5）在非兽耳主体上早退且不清池', ()
   assert.equal(
     fixture.store.get(`cflag:${SLAVE}:102`) ?? 0,
     0,
-    '非兽耳（TALENT:124 == 0）时兽奸不受胎（:224）',
+    '非兽耳（TALENT:124 == 0）时兽奸不受胎',
   );
   assert.equal(fixture.store.get(`cflag:${SLAVE}:106`), 1, '该早退同样不清池');
 });
@@ -907,7 +907,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
   const none = () => {};
 
   // 六档：系数 6/5/4/3/2/1（池 1/5/10/15/20/25），HAIRANZAI = 3；
-  // 第三列是成功阈值（:256 的 `rand(upper) <= success`）
+  // 第三列是成功阈值（的 `rand(upper) <= success`）
   const LADDER = [
     [1, 18, 2],
     [4, 18, 2], // 池 < 5 仍在最低档（边界另一侧）
@@ -932,7 +932,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
 
   // 同一张 LADDER 再走一遍量成功阈值那一列。上面那一趟的 rand 恒回实参 n，
   // `n <= success` 在 n <= 1 的档位恒真、在 n >= 3 的档位恒假——比较从不
-  // 依赖 success 的取值，六档的阈值改一个都不红（#401 验收探针：:295 的
+  // 依赖 success 的取值，六档的阈值改一个都不红（#401 验收探针： 的
   // `[3, 2]` 改成 `[3, 3]` 全绿）。这里取值恰等于阈值 / 阈值 + 1 各一次：
   // 命中侧把 success 钉在 `>= 取值`、未命中侧钉在 `< 取值 + 1`，两合起来
   // success 只等于表里那个数。
@@ -940,7 +940,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
     assert.equal(
       hit_probe(pool, success),
       1,
-      `池 ${pool}：取值 = 成功阈值 ${success} 时必须受胎（:256 的 <=）`,
+      `池 ${pool}：取值 = 成功阈值 ${success} 时必须受胎（的 <=）`,
     );
     assert.equal(
       hit_probe(pool, success + 1),
@@ -965,7 +965,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
   );
 
   // 人狼（TALENT:314 == 2）在 DAY:2 14-16 日：无排卵剂 → 2，有 → 1；
-  // 窗口两侧的日子（13 / 17）走常规 3
+  // 窗口两侧的日子走常规 3
   const wolf = (f, date) => {
     f.store.set(`talent:${SLAVE}:314`, 2);
     f.store.set('flag:10002', date);
@@ -1005,7 +1005,7 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
   );
 });
 
-test('IN_VAGINA：命中判据是「上界内取值 ≤ 成功阈值」（阈值那一侧）', () => {
+test('IN_VAGINA：命中条件是「上界内取值 ≤ 成功阈值」（阈值那一侧）', () => {
   // 池 20 → 系数 2、成功阈值 2、上界 6：rand 取 2 时 `<= 2` 命中、`< 2` 不命中。
   // 取到上界 6 的档位（最高档上界 3、阈值 3）永远命中，分不出这个边界
   const hit = pair_world(PAIRS[0]);
@@ -1028,8 +1028,8 @@ test('IN_VAGINA：命中判据是「上界内取值 ≤ 成功阈值」（阈值
 });
 
 test('NAKADASHI_CHECK：已有预产日 / 妊娠中 / 育儿中三者任一都清池且不受胎', () => {
-  // 三个条件是同一支 OR（:232/:238）：三侧各走一次——只测一侧时，
-  // 另外两侧的判据被删也看不出来
+  // 三个条件是同一支 OR：三侧各走一次——只测一侧时，
+  // 另外两侧的条件被删也看不出来
   for (const [label, setup] of [
     [
       '已有预产日（CFLAG:110 > 0）',
@@ -1045,7 +1045,7 @@ test('NAKADASHI_CHECK：已有预产日 / 妊娠中 / 育儿中三者任一都�
     assert.equal(
       fixture.store.get(`cflag:${SLAVE}:101`),
       0,
-      `${label}：清池（:208/:239 的「妊娠不可でも膣射のリセット」）`,
+      `${label}：清池（/ 的「妊娠不可でも膣射のリセット」）`,
     );
     assert.equal(
       fixture.store.get(`cflag:${SLAVE}:102`) ?? 0,
