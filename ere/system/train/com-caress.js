@@ -3406,7 +3406,7 @@ com_able_family.register(1, async () => {
 });
 
 // 2 号可用性检查：肛门爱抚。助手调教且润滑不足时，
-// 顺从 <= 3 且百合气质 <= 3 可放行，保留这一条件。
+// 需施虐狂，或顺从与百合气质均 ≥4 才放行。
 com_able_family.register(2, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3424,15 +3424,15 @@ com_able_family.register(2, async () => {
   if (era_flag.assiplay === 0) {
     return 1; // 主人调教时自动成功
   }
-  // 助手调教：润滑不足时需施虐狂，或顺从与百合气质均 ≤3
+  // 助手调教：润滑不足时需施虐狂，或顺从与百合气质均 ≥4
   if ((era.get(`palam:${target}:3`) || 0) < PALAMLV[2]) {
     const assi = era_flag.assi;
     if (era.get(`talent:${assi}:83`)) {
       return 1;
     }
     if (
-      (era.get(`abl:${assi}:10`) || 0) <= 3 &&
-      (era.get(`abl:${assi}:22`) || 0) <= 3
+      (era.get(`abl:${assi}:10`) || 0) >= 4 &&
+      (era.get(`abl:${assi}:22`) || 0) >= 4
     ) {
       return 1;
     }

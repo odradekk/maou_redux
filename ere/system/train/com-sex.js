@@ -1268,6 +1268,7 @@ function able27() {
   if (tq(cid, 13)) return 0;
   if (tq(cid, 19)) return 0;
   if (tq(cid, 46)) return 0;
+  if (tq(cid, 49)) return 0;
   if (!tal(player, 121) && !tal(player, 122) && !has_pband() && !tq(cid, 89))
     return 0;
   if (assi_v_guard(cid, 4)) return 0;
