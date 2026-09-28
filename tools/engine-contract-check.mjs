@@ -1,5 +1,5 @@
-// 引擎契约检查器（issue #91，ADR-0005 第二层）：锚点校核 + 调用点规则 +
-// 待办条目表两项检查。锚失配的含义是「引擎变了、镜像要重核」，处置是修
+// 引擎契约检查器（issue #91，ADR-0005 第二层）：基准校核 + 调用点规则 +
+// 待办条目表两项检查。基准失配的含义是「引擎变了、镜像要重核」，处置是修
 // 记录或重属实测；退出码语义独立，不与其它检查器合并。
 
 //
@@ -7,22 +7,21 @@
 //   A 调用点规则（无需引擎，永远跑）：按 tools/engine-contract-facts.mjs 里
 //     带 rule 的事实，静态扫 ere/ 的输出 API 调用点。首日唯一一条：progress
 //     格必须显式传 1..23 的 barWidth（不传 = 引擎缺省 24 = 条后数值整列
-//     不渲染，#74 实机缺陷形态）。
-//   B 锚点校核（需要 app.asar）：断言渲染层源码（js/app.*.js.map 的
+//     不渲染，#74 实机缺陷形式）。
+//   B 基准校核（需要 app.asar）：断言渲染层源码（js/app.*.js.map 的
 //     sourcesContent）仍含每条事实的字面。定位器按模式匹配渲染包，不写死
-//     带内容哈希的文件名（引擎升版即变）。
 //   C 条目表两项检查（无需引擎）：tools/engine-contract-ledger.mjs 的条目只能
 //     变短（#91 基线内嵌在本工具）、不许过期失效（witness 必须仍在夹具注释里）。
 //
 // 退出码与三种环境的语义（与自述一致，测试驱动工具看退出码）：
-//   全绿 0；任何失配 1。**引擎缺失不是失配**——找不到 app.asar 时锚点校核
+//   全绿 0；任何失配 1。**引擎缺失不是失配**——找不到 app.asar 时基准校核
 //   跳过并留警告（加强项语义，与 engine-bundle / test 侧的 skip 同一标准），
-//   规则与条目表照跑照红。**锚点失配与渲染包漂移是直接判失败**，文案以「引擎变了」
+//   规则与条目表照跑照红。**基准失配与渲染包不一致是直接判失败**，文案以「引擎变了」
 //   开头并指路重读——静默 skip 会让守护在引擎升版当天无声消失。
 //
 // 用法：node tools/engine-contract-check.mjs [--asar <path>]
 //   --asar 显式指路（测试与诊断用）：给了就不再三址回落；所指不存在按
-//   「引擎缺失」处理（跳过锚点检查并警告，不静默换一个引擎来查）。
+//   「引擎缺失」处理（跳过基准检查并警告，不静默换一个引擎来查）。
 //
 // 测试用法：import { run } from './engine-contract-check.mjs'，await run({
 // root, asar })——不再 spawnSync 出子进程跑（#449：子进程卡在 Node 自己的
@@ -68,7 +67,7 @@ const LEDGER_BASELINE = [
 //    目录 pickle 的长度 framing，偏移 12 是头 JSON 的字节长度） ——
 
 /** 候选位置与 test/helpers/engine-bundle.js 同款，逐条理由见那里的注释；
- *  漂移由 test/asar-candidates.test.js 判红 */
+ *  不一致由 test/asar-candidates.test.js 判红 */
 const ASAR_CANDIDATES = () =>
   [
     process.env.ERE_ENGINE_ASAR,
@@ -108,7 +107,7 @@ function list_asar_files(asar_path) {
   return { buf, header_size, files: out };
 }
 
-// —— 门 A：调用点规则（静态扫 ere/，无需引擎） ——
+// —— 检查 A：调用点规则（静态扫 ere/，无需引擎） ——
 
 function list_js_files(root, rel_dir) {
   const out = [];
@@ -185,7 +184,7 @@ function resolve_number(src, file_text) {
 }
 
 /**
- * 门 A 实测：对每条带 rule 的事实，扫 ere/ 收集全部 progress 调用点
+ * 检查 A 实测：对每条带 rule 的事实，扫 ere/ 收集全部 progress 调用点
  * （printProgress 调用 + 多列 progress 格），逐处判定 barWidth 显式且在界内。
  * 返回 violations: [{ at, message }]。
  */
@@ -199,7 +198,7 @@ function check_call_site_rules(root, engine_facts) {
     }
     const text = fs.readFileSync(path.join(root, rel), 'utf8');
     const targets = [];
-    // 形态一：era.printProgress(...)——配平取实参全文
+    // 写法一：era.printProgress(...)——配平取实参全文
     const call_re = /era\.printProgress\s*\(/g;
     for (const fact of facts_with_rule) {
       if (fact.rule.targets.includes('printProgress-call')) {
@@ -214,7 +213,7 @@ function check_call_site_rules(root, engine_facts) {
           });
         }
       }
-      // 形态二：多列格对象 { type: 'progress', …, config: { barWidth } }
+      // 写法二：多列格对象 { type: 'progress', …, config: { barWidth } }
       if (fact.rule.targets.includes('progress-grid-object')) {
         const grid_re = /type:\s*'progress'/g;
         let m;
@@ -256,7 +255,7 @@ function check_call_site_rules(root, engine_facts) {
   return { violations, facts_with_rule, targets_checked: count };
 }
 
-// —— 门 B：锚点校核（app.asar 渲染层源码） ——
+// —— 检查 B：基准校核（app.asar 渲染层源码） ——
 
 /**
  * @returns {{ status: 'ok', facts: number, anchors: number }
@@ -269,7 +268,7 @@ function check_anchors(asar_path, engine_facts) {
     return {
       status: 'drift',
       message:
-        '引擎变了：app.asar 里找不到渲染包源映射（期望 js/app.*.js.map，模式匹配——文件名带内容哈希，不能写死）。重新核读新版引擎的渲染包结构，更新本工具与 tools/engine-contract-facts.mjs 的定位/锚点',
+        '引擎变了：app.asar 里找不到渲染包源映射（期望 js/app.*.js.map，模式匹配——文件名带内容哈希，不能写死）。重新核读新版引擎的渲染包结构，更新本工具与 tools/engine-contract-facts.mjs 的定位/基准',
     };
   }
   const [map_name, entry] = map_entry;
@@ -290,7 +289,7 @@ function check_anchors(asar_path, engine_facts) {
       if (!renderer_source.includes(anchor)) {
         return {
           status: 'drift',
-          message: `引擎变了：事实「${fact.id}」的锚点字面 ${JSON.stringify(anchor)} 在渲染层源码（${map_name} 的 sourcesContent）里找不到了。重新核读新版引擎，更新 tools/engine-contract-facts.mjs 的锚点与夹具镜像（${fact.mirror}）`,
+          message: `引擎变了：事实「${fact.id}」的基准字面 ${JSON.stringify(anchor)} 在渲染层源码（${map_name} 的 sourcesContent）里找不到了。重新核读新版引擎，更新 tools/engine-contract-facts.mjs 的基准与夹具镜像（${fact.mirror}）`,
         };
       }
     }
@@ -302,7 +301,7 @@ function check_anchors(asar_path, engine_facts) {
   };
 }
 
-// —— 门 C：条目表两项检查 ——
+// —— 检查 C：条目表两项检查 ——
 
 function check_ledger(root, ledger) {
   const violations = [];
@@ -349,7 +348,7 @@ export async function run({ root = REPO, asar } = {}) {
 
   let failures = 0;
 
-  // 门 A：调用点规则
+  // 检查 A：调用点规则
   const {
     violations: rule_violations,
     facts_with_rule,
@@ -360,12 +359,12 @@ export async function run({ root = REPO, asar } = {}) {
     failures += 1;
   }
 
-  // 门 B：锚点校核（引擎缺失 → 跳过并警告，不是失配）
-  let anchor_report = '锚点校核跳过';
+  // 检查 B：基准校核（引擎缺失 → 跳过并警告，不是失配）
+  let anchor_report = '基准校核跳过';
   const asar_path = locate_asar(asar);
   if (!asar_path) {
     warn(
-      '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / ~/.era-engine 四处都没命中）——锚点校核跳过（引擎比对是加强项，与 test 侧 skip 同一标准）；调用点规则与条目表两项检查照跑',
+      '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / ~/.era-engine 四处都没命中）——基准校核跳过（引擎比对是加强项，与 test 侧 skip 同一标准）；调用点规则与条目表两项检查照跑',
     );
   } else {
     const result = check_anchors(asar_path, ENGINE_FACTS);
@@ -373,11 +372,11 @@ export async function run({ root = REPO, asar } = {}) {
       log(`✗ ${result.message}`);
       failures += 1;
     } else {
-      anchor_report = `锚点 ${result.facts} 事实 / ${result.anchors} 字面全中`;
+      anchor_report = `基准 ${result.facts} 事实 / ${result.anchors} 字面全中`;
     }
   }
 
-  // 门 C：条目表两项检查
+  // 检查 C：条目表两项检查
   for (const message of check_ledger(root, ENGINE_CONTRACT_LEDGER)) {
     log(`✗ ${message}`);
     failures += 1;
@@ -395,7 +394,7 @@ export async function run({ root = REPO, asar } = {}) {
   return { failures, output: lines.join('\n') };
 }
 
-// 只有直接以 CLI 形式运行（node tools/engine-contract-check.mjs）才落地
+// 只有直接以 CLI 形式运行（node tools/engine-contract-check.mjs）才打印
 // 到真实 stdout 并带退出码；被 import()/require() 当库用时（测试）这个
 // 分支不执行。用 .then() 而非顶层 await——require(esm) 按语法面识别顶层
 // await，哪怕分支运行期从不进入，含顶层 await 的模块也会被直接拒绝加载

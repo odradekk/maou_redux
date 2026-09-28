@@ -26,8 +26,8 @@ import process from 'node:process';
 const PRESET_PATCHES = {
   campaign: {
     // 人间界：侵攻度满 + 征服标记。FLAG:82 是 post_conquest_menu 的唯一闸门
-    // （ere/era-utils/era-flag.js 的 human_realm_fallen）；原作 INVASION_EVENT.ERB:215
-    // 的 `#DIM SINDO` 注释写「0 未完成 2 完成」，故取 2。
+    // （ere/era-utils/era-flag.js 的 human_realm_fallen）；旧游戏变量注释写
+    // 「0 未完成 2 完成」，故取 2。
     'flag:81': 10000,
     'flag:82': 2,
     // 所持金（flag:10004 ↔ MONEY，见 era-flag.js 的 money 访问器）。犒赏奸商、

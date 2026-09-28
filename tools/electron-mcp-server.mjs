@@ -1,6 +1,6 @@
 /**
  * 项目级 MCP 服务器：让 Claude Code 能直接操作 EraElectron 引擎窗口（issue #406
- * 判定三的补充手段——阶段收口时的「引擎手工验收」，见
+ * 判定三的补充手段——阶段收尾时的「引擎手工验收」，见
  * docs/agents/ticket-sop.md §5.6）。
  *
  * 只包一层薄壳：Electron 自动化本身是 Playwright 官方支持的能力
