@@ -852,7 +852,8 @@ function source_check_up_b() {
   if (tal(108)) {
     set_src(17, times(src(17), 2.0));
   }
-  // 胸围对 SOURCE:1 的乘算——写的就是 V 源（可疑但按原样保留）
+  // 胸围素质组按档乘算乳房快感的源；乘算先于 local0/local1 取值，
+  // 快Ｂ/欲情/抑鬱三路同随胸围增减，一档命中即停
   const BUST_RATES = [
     [253, 2.5],
     [252, 2.15],
@@ -865,7 +866,7 @@ function source_check_up_b() {
   ];
   for (const [t, rate] of BUST_RATES) {
     if (tal(t)) {
-      set_src(1, times(src(1), rate));
+      set_src(17, times(src(17), rate));
       break;
     }
   }

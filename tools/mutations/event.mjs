@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 402; // #660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 修复守卫；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的守卫）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 405; // #702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 修复守卫；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的守卫）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
@@ -3670,5 +3670,45 @@ export default [
     replace: `    if (result === 1) {`,
     tests: ['event-execution'],
     must_mention: '施予男性化的诅咒',
+  },
+  {
+    desc: 'M14150 source_check_up_b 胸围素质组乘算改回私处源（SOURCE:17 → SOURCE:1）',
+    file: 'ere/event/source-check.js',
+    find: `  for (const [t, rate] of BUST_RATES) {
+    if (tal(t)) {
+      set_src(17, times(src(17), rate));
+      break;
+    }
+  }`,
+    replace: `  for (const [t, rate] of BUST_RATES) {
+    if (tal(t)) {
+      set_src(1, times(src(1), rate));
+      break;
+    }
+  }`,
+    tests: ['source-check'],
+    test_name:
+      'source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）',
+    must_mention: '胸围素质 253 档乘算乳房源',
+  },
+  {
+    desc: 'M14151 BUST_RATES 253 档倍率 2.5 改 2.6',
+    file: 'ere/event/source-check.js',
+    find: '    [253, 2.5],',
+    replace: '    [253, 2.6],',
+    tests: ['source-check'],
+    test_name:
+      'source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）',
+    must_mention: '胸围素质 253 档乘算乳房源',
+  },
+  {
+    desc: 'M14152 BUST_RATES 119 档倍率 0.7 改 0.6',
+    file: 'ere/event/source-check.js',
+    find: '    [119, 0.7],',
+    replace: '    [119, 0.6],',
+    tests: ['source-check'],
+    test_name:
+      'source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）',
+    must_mention: '胸围素质 119 档乘算乳房源',
   },
 ];
