@@ -205,7 +205,7 @@ async function com_ejac_player_sex(rand) {
     } else if ((era.get(`cflag:${cid}:113`) || 0) === 2) {
       era.print(suffix);
       era.print(
-        `${name_of(cid)}的精巢似乎感受到了${heavy ? '强烈的' : '的'}冲击`,
+        `${name_of(cid)}的精巢似乎感受到了${heavy ? '强烈的' : ''}冲击`,
       );
     } else if ((era.get(`cflag:${cid}:113`) || 0) === 3) {
       era.print(`肠内${suffix}`);

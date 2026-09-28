@@ -677,22 +677,25 @@ test('1 号可用性检查 的助手污物判断条件（性器精液 + 反感�
   assert.equal(await com_able_family.call(1), 1);
 });
 
-test('2 号可用性检查：主人放行；兽奸挡；助手 + 润滑不足的双 ≤3 放行', async () => {
+test('2 号可用性检查：主人放行；兽奸挡；助手 + 润滑不足需顺从与百合气质双 ≥4（施虐狂豁免）', async () => {
   const { fixture, com_able_family } = able_world();
   assert.equal(await com_able_family.call(2), 1, '主人调教自动成功');
   fixture.store.set('tequip:31:89', 1);
   assert.equal(await com_able_family.call(2), 0, '兽奸中');
   fixture.store.delete('tequip:31:89');
-  // 助手调教 + 润滑不足：顺从 ≤3 且百合 ≤3 → 返回 1
+  // 助手调教 + 润滑不足：顺从与百合气质均 ≥4 才放行
   fixture.store.set('flag:10007', 1);
   fixture.store.set('flag:10006', 31);
   fixture.store.set('abl:31:10', 3);
   fixture.store.set('abl:31:22', 3);
-  assert.equal(await com_able_family.call(2), 1, '双 ≤3 放行');
-  fixture.store.set('abl:31:10', 4); // 顺从 4 → 不满足 ≤3 组合
-  assert.equal(await com_able_family.call(2), 0);
+  assert.equal(await com_able_family.call(2), 0, '双 3 仍挡');
+  fixture.store.set('abl:31:10', 4);
+  assert.equal(await com_able_family.call(2), 0, '顺从 4、百合 3 不满足双 ≥4');
   fixture.store.set('talent:31:83', 1); // 施虐狂 → 放行
-  assert.equal(await com_able_family.call(2), 1);
+  assert.equal(await com_able_family.call(2), 1, '施虐狂豁免双 ≥4');
+  fixture.store.set('talent:31:83', 0);
+  fixture.store.set('abl:31:22', 4);
+  assert.equal(await com_able_family.call(2), 1, '双 4 放行');
 });
 
 test('3 号可用性检查：失神/从不自慰/绳子/着衣挡；助手双低挡（小恶魔豁免）', async () => {

@@ -1,42 +1,38 @@
 /**
- * @file 迷宫凌辱事件——DUNGEON_RYOUZYOKU.ERB 二十八函数（issue #182，阶段 3 H13）。
+ * @file 迷宫凌辱事件——二十八函数的凌辱主框架与怪物文本（issue #182，阶段 3 H13）。
  *
  * 调用点：
- *   - @RYOUZYOKU —— DUNGEON_BATLLE.ERB:346（CALL RYOUZYOKU，FLAG:5 & 1
- *     陵辱許可配置位内；#175 起真身内）——战斗循环里勇者败北（DEATH_CHECK
- *     == 2）后进入。原作函数开头 `ARG = A`（A = 当前攻击者 = 勇者），
- *     ere 侧由 dungeon-battle.js 的 ryouzyoku(atker) 显式传参。
- *   - @PC_RYOU —— DUNGEON_BATLLE2.ERB:385/:422/:444/:463（CALL PC_RYOU,
- *     ARG:0, ARG:1；FLAG:5 & 1 配置位内）——对人格斗（勇者队 vs 魔王队）
+ *   - ryouzyoku —— 迷宫战斗（#175 起真身内；FLAG:5 & 1 陵辱許可配置位内）
+ *     ——战斗循环里勇者败北（DEATH_CHECK == 2）后进入。函数开头从全局 A
+ *     取当前攻击者（= 勇者），ere 侧由 dungeon-battle.js 的
+ *     ryouzyoku(atker) 显式传参。
+ *   - pc_ryou —— 对人格斗（勇者队 vs 魔王队；FLAG:5 & 1 配置位内）
  *     败北演出。ARG:0 = 魔王側、ARG:1 = 勇者側。
- *   - @VICTORY_RYOUZYOKU —— DUNGEON_BATLLE.ERB:355（勇者胜利后）——
- *     原作 `ARG = -1` 缺省、`SIF ARG < 0 → ARG = A`，ere 侧由
+ *   - victory_ryouzyoku —— 勇者胜利后——
+ *     旧引擎 `ARG = -1` 缺省、`SIF ARG < 0 → ARG = A`，ere 侧由
  *     dungeon-battle.js 的 victory_ryouzyoku(atker) 显式传参。
- *   - @DUNGEON_RYOUZYOKU_ESCAPE —— @RYOUZYOKU 结尾（CALL
+ *   - DUNGEON_RYOUZYOKU_ESCAPE —— ryouzyoku 结尾（CALL
  *     DUNGEON_RYOUZYOKU_ESCAPE,ARG）——畏怖记忆的机会太少，追加逃跑分支。
  *
  * == 移植说明（有意偏离，均注明依据） ==
  *
  *   - **`MON_NUM = E:(B + 99)` 以参数注入**（#5 决议第六条「指针不隐式读
- *     全局」）：B 是 @RYOUZYOKU 主循环的全局单字母变量（0/100/200，即
- *     三列怪物的队列号），`E:(B+99)` 是「该列怪物数量」（怪物相關/
- *     MONSTER_DATA.ERB 的 E 数组语义：E:Y+99 == 数量）。E 表由迷宫战斗
- *     系统（H5/H6）经 @MONSTER_DATA 建桶写入，ere 的 `era.get('e:99')`
+ *     全局」）：B 是 ryouzyoku 主循环的全局单字母变量（0/100/200，即
+ *     三列怪物的队列号），`E:(B+99)` 是「该列怪物数量」（E:Y+99 == 数量）。
+ *     E 表由迷宫战斗系统（H5/H6）建桶写入，ere 的 `era.get('e:99')`
  *     在桶缺失时报 key error（#183 引擎实测）；本文件各函数以 mon_num
- *     形参接收该值，由 @RYOUZYOKU 分派时读出传入（#183 同款处置）。
+ *     形参接收该值，由 ryouzyoku 分派时读出传入（#183 同款处置）。
  *     分派循环的 E 表读（E:MON_COUNT 怪物号 / E:(MON_COUNT+7) 凌辱类型 /
- *     E:(MON_COUNT+99) 数量）随本文件经 e_get 收口——E 表由战斗系统
- *     建桶（yml/E.yml，#175 落表），e_get 读未写槽兜 0。
+ *     E:(MON_COUNT+99) 数量）随本文件经 e_get 读——E 表由战斗系统
+ *     建桶（yml/E.yml），e_get 读未写槽按 0 缺省。
  *   - **%SAVESTR:ARG% 经 chara_callname(arg) 承载**（#5 决议：SAVESTR 无
  *     引擎通道，#171 实测三段完全静默丢弃）：ARG 是参数角色号（被凌辱者），
  *     与口上文件的 TARGET 不同源，本文件用独立的 arg_name 变量。
- *   - **PRINTDATA/PRINTDATAW（DATAFORM 随机数组）**：原作在块内随机取一
- *     条输出。转译器把 DATAFORM 行落成注释（未覆盖方言，见 #182 返工），
- *     复核时改写成 `pick(list, rand_n(n))`——随机取一条（#117：无全局
+ *   - **PRINTDATA/PRINTDATAW（DATAFORM 随机数组）**：在块内随机取一
+ *     条输出，此处改写成 `pick(list, rand_n(n))`——随机取一条（#117：无全局
  *     RAND 序列，随机经注入的 rand_n 掷出，测试注入定值序；#183 同款）。
- *   - **`JUEL:ARG:n += v` / `EXP:ARG:n += v` 转 era.add**：转译器把 `+=`
- *     错拼进下标（`juel:${arg}:9 +`），复核修正为 `era.add('juel:${arg}:9', v)`
- *     （era.add 语义 = 引擎的 +=，juel-check.js 先例；#183 同款）。
+ *   - **`JUEL:ARG:n += v` / `EXP:ARG:n += v` 转 era.add**：
+ *     `era.add` 语义 = 引擎的 +=（juel-check.js 先例；#183 同款）。
  *   - **跨域写走门面（#71）**：exp/base/cflag 的裸写改
  *     `chara(arg).dungeon.*`（dungeon 域访问器）与 `chara(arg).train.*`
  *     （train 域访问器，如 初吻对象 cflag:16 / 初体验对象 cflag:15）与
@@ -47,85 +43,86 @@
  *     tools/facade-names.js 补名并 node tools/gen-facade.js --force 重生成，
  *     本文件读用裸寻址、写走门面（读放行 #70；写必须具名 #72）。
  *   - **CSTR:(ARG):3 = %SAVESTR:(ARG:0)%（初体验对象名）**：CSTR:3-4 属主
- *     train（ownership/cstr-ownership.yml），无既有门面访问器——本票经
+ *     train（ownership/cstr-ownership.yml），无既有门面访问器——经
  *     tools/facade-names.js 补名（初体验对象名）并重生成门面，
  *     `chara(arg1).train.初体验对象名 = name_of(arg0)`。
  *   - **`SIF CFLAG:16 == -1 → CFLAG:16 = 995`**：初吻对象标记（995 = 怪物
  *     的阴茎，#47 的 page-info-exp.js 值域注释）。CFLAG:16 是 train 域跨域
- *     写（#71 门面规则），但门面 getter 的 `|| 0` 会吞 -1（未经历）判据，
+ *     写（#71 门面规则），但门面 getter 的 `|| 0` 会吞 -1（未经历）的取值，
  *     读用裸寻址 `era.get('cflag:${arg}:16') ?? 0`，写走门面
  *     `chara(arg).train.初吻对象 = 995`（#183 同款处置）。
- *   - **`CALL GOBI_KOUJO` 真身接通（#570）**：语尾口上分派（EVENT_K.ERB 的
- *     @GOBI_KOUJO）返回语尾文字——原作『猪…』整段是一行（PRINTFORM 夹两处
+ *   - **`CALL GOBI_KOUJO` 真身接通（#570）**：语尾口上分派（gobi_koujo）
+ *     返回语尾文字——『猪…』整段拼成一行（PRINTFORM 夹两处
  *     GOBI 后 PRINTFORMW 收尾），ere 一次 print 即一行，故拼成整串一次
  *     printAndWait。分支 TALENT:17（プライド低い）→ 1 / 否则 5。
- *   - **`Y += 10` / `Y = 10` 是死代码**：Y 是原作全局单字母变量（100000
- *     维），全库无初始化、函数内也无读取者（#183 同款：MAN 版 :862/:868，
- *     本文件 :1622/:1628/:2378）。ere 侧无单字母变量通道，注释保留不落
- *     变量（DUNGEON.ERB 的 X *= 2 同款处置）。
+ *   - **`Y += 10` / `Y = 10` 是死代码**：Y 是旧引擎全局单字母变量（100000
+ *     维），全库无初始化、函数内也无读取者（#183 同款处置）。
+ *     ere 侧无单字母变量通道，注释保留不落变量。
  *   - **`WAIT` → `await era.waitAnyKey()`**（PRINTW 的等待语义，#73；
- *     enter-enemy.js:86 先例）。
+ *     enter-enemy.js 先例）。
+ *   - **一行输出的拼接**：旧引擎的无后缀 PRINTFORM/PRINT 不换行，连续多段
+ *     输出拼成一条显示行，末段带 W/L 的语句才收行。本文件按
+ *     「一条 JS 输出语句 = 一条显示行」合成，函数内的注释只标
+ *     「拼成一行：…」的段落构成。
  *   - **旁观凌辱 / 不要凌辱的选择项改 `era.printButton`**（#572，PR #53
  *     通则）：正文不写 [编号]（引擎按 showAcc 拼）、原文的「- 」照写；
- *     两处各两枚——主框架 :21-22 与 @PC_RYOU :2358-2359。原作的
+ *     两处各两枚。
  *     `RESULT < 0 || RESULT >= 2 → GOTO INPUT_LOOP` 随白名单收紧（0/1）
  *     在实机上不可达，保留结构、不补用例（page-ability-up.js 同款）。
  *   - **`VIRGIN`（#DIM :3）是死变量**：声明并赋值（VIRGIN = TALENT:ARG:0）
  *     后全文件无读取，注释保留不落变量（与 #183 的 Y 同款判定）。
  *   - **`RAND:n` → rand_n(n)**（#117：随机源注入，缺省均匀随机）。
- *   - **`RAND:FEAR`（:2937 等，变量上界）** → `rand_n(fear)`——RAND 的
- *     变量参数形态（emuera-basic-agent-guide in-expression-functions
- *     .md：RAND(x) 取 [0, x)），转译器 #184 已支持 RAND:(expr)，REVIEW
- *     时人工定 fear 变量（#183 的 MON_NUM 先例）。
+ *   - **`RAND:FEAR`（变量上界）** → `rand_n(fear)`——RAND 的
+ *     变量参数写法（RAND(x) 取 [0, x)）；
+ *     人工定 fear 变量（#183 的 MON_NUM 先例）。
  *   - **TALENT:ARG:种族 / 阴毛状态 / 魅力点 等中文下标**：yml/Talent.yml
  *     的名字表有「种族」（id 314）等条目，引擎列名寻址
  *     `talent:${cid}:种族` 可用（#183 引擎实测 setVar 通过中文名翻译）。
- *   - **`CALL DUNGEON_RYOUZYOKU` / `CALL DUNGEON_RYOUZYOKU_AFTER`**
- *     （EVENT_K.ERB 的 @DUNGEON_RYOUZYOKU / @DUNGEON_RYOUZYOKU_AFTER）：
- *     口上前置/后置分派（TRYCALLFORM DUNGEON_RYOUZYOKU_K{LOCAL-100} /
+ *   - **`CALL DUNGEON_RYOUZYOKU` / `CALL DUNGEON_RYOUZYOKU_AFTER`**：口上前置/后置
+ *     分派（TRYCALLFORM DUNGEON_RYOUZYOKU_K{LOCAL-100} /
  *     DUNGEON_RYOUZYOKU_AFTER_K{LOCAL-100}）。20 个角色口上文件定义了
- *     这些钩子（K0-K15/K19/K902-K904），随各自口上票落地；本文件用
+ *     这些钩子（K0-K15/K19/K902-K904），随各自口上票实现；本文件用
  *     DispatchFamily 声明同款编号空间（普通口上 0-39 + EX 口上 901-1600），
  *     当前零注册 → 族调用返回 whenMissing（TRYCALL 落空语义），角色口上
- *     落地后在模块里 register。TARGET = ARG（原作 @RYOUZYOKU :57 在
- *     分派前置 TARGET）经 era_flag.target 设置——GET_KOJO_NUM 缺省读它。
- *   - **`CALL CHA_IMG2(ARG)` / `IF 立绘`（:14/:2353）**：立绘显示（魔改
- *     新增/img.ERB @CHA_IMG2）未移植（HTML_PRINT 无通道，dungeon-battle
- *     .js:34 同款）；`立绘` 是 SAVEDATA 开关（魔改使用.ERH:6，未入 yml），
+ *     实现后在模块里 register。TARGET = ARG（分派前置 TARGET）经
+ *     era_flag.target 设置——GET_KOJO_NUM 缺省读它。
+ *   - **`CALL CHA_IMG2(ARG)` / `IF 立绘`**：立绘显示
+ *     未移植（HTML_PRINT 无通道，dungeon-battle.js 同款）；
+ *     `立绘` 是 SAVEDATA 开关（未入 yml），
  *     CHA_IMG2 无引擎通道。`IF 立绘` 分支保留结构注释、不移植调用。
- *   - **`CALL SHOW_DATA(ARG)`（:18）**：角色状态显示（キャラ関数/
- *     CHARA_INFO_SHOW ver1.1.2.ERB @SHOW_DATA）已随 #390 落地，真身在
+ *   - **`CALL SHOW_DATA`**：角色状态显示
+ *     已随 #390 实现，真身在
  *     ere/page/components/chara-data.js。
- *   - **`CALL EQUIP_DATABASE`（:2379）与 W:0/W:1 装备记录**：@PC_RYOU 的
+ *   - **`CALL EQUIP_DATABASE` 与 W:0/W:1 装备记录**：pc_ryou 的
  *     武器检查（W:0 = CFLAG:550 存储编号，素手时装剑 40；CALL
  *     EQUIP_DATABASE 填 W:1 识别号）。ERE 侧用 #174 真身
  *     equip_database(w)（ere/system/equip/equip-lookup.js），装备记录
  *     为普通对象（键 = W 列中文语义，#174 数据文件头注）；W:1 识别号
  *     49 = 触手武器分支。素手（存储编号 <= 0）时写入 CFLAG:550（chara
- *     域跨域写——cflag:550 属主 chara，无门面访问器，本票经
+ *     域跨域写——cflag:550 属主 chara，无门面访问器，经
  *     tools/facade-names.js 补名「武器存储编号」并重生成门面）。
- *   - **`CALL MONSTER_DATA`（:2464）**：PC_RYOU 里裸 CALL（无实参，读
- *     全局 A/B/C 上下文）——原作此时 B/C 是上一段残留（PC_RYOU 的
+ *   - **`CALL MONSTER_DATA`**：pc_ryou 里裸 CALL（无实参，读
+ *     全局 A/B/C 上下文）——此时 B/C 是上一段残留（pc_ryou 的
  *     分派上下文之外），函数体未消费其 RESULT（后续直接按 TALENT 分支）。
  *     #182 复核判为**死调用**（B/C 在该点无定义读取方、RESULT 无消费），
  *     注释保留不落调用（#103 的同款死调用判定）。
- *   - **`CALL CHECK_STATUS, ARG, 1`（:2930）**：队伍伤势判定（#172 真身，
+ *   - **`CALL CHECK_STATUS, ARG, 1`**：队伍伤势判定（#172 真身，
  *     ere/dungeon/dungeon.js 的 check_status）——返回 8 槽数组，RESULT:7
  *     = 队伍当前状态评级（> 9 时同伴无力救援）。
- *   - **`CALL KARMA, ARG, -10`（:2791）**：善恶值增减（阶段 5 存根，
+ *   - **`CALL KARMA, ARG, -10`**：善恶值增减（阶段 5 存根，
  *     ere/dungeon/dungeon.js 的 karma 存根，#172 登记）。
- *   - **`$INPUT_LOOP` / `INPUT` / `GOTO`（:23-29/:2359-2365）**：旁观/不
+ *   - **`$INPUT_LOOP` / `INPUT` / `GOTO`**：旁观/不
  *     凌辱的选择循环。ERE 侧以 while 循环 + era.input() 重写（输入 < 0
  *     或 >= 2 重来；== 1 返回 0——page-save-load 的 input 先例）。
  *
  * == 与本文件同名的函数 ==
  *
- * H14（#183）的 DUNGEON_RYOUZYOKU_MAN.ERB 前 11 段是 `@*_RYOU男`（带
+ * H14（#183）的同名带「男」版前 11 段是 `@*_RYOU男`（带
  * 「男」字）——两组函数名不同，不触发 #12 的首个加载生效遮蔽。本文件
- * 的 @RYOUZYOKU 分派（:77-156）按 `TALENT:ARG:122`（男人）分发：为真 →
- * CALL *_RYOU男（H14 文件），否则 → CALL *_RYOU（本文件）。本票交付
- * 无「男」版 + 主框架（@RYOUZYOKU / @PC_RYOU / @VICTORY_RYOUZYOKU /
- * @*_RYOU_YUSYA / @DUNGEON_RYOUZYOKU_ESCAPE）。
+ * 的分派按 `TALENT:ARG:122`（男人）分发：为真 →
+ * CALL *_RYOU男（H14 文件），否则 → CALL *_RYOU（本文件）。这张工单交付
+ * 无「男」版 + 主框架（ryouzyoku / pc_ryou / victory_ryouzyoku /
+ * *_ryou_yusya / dungeon_ryouzyoku_escape）。
  *
  * @module
  */
@@ -144,7 +141,7 @@ const { monstername } = require('#/dungeon/monster-data');
 const { equip_database } = require('#/system/equip/equip-lookup');
 // 注意：check_status / karma 来自 #/dungeon/dungeon，而 dungeon.js 顶层
 // require dungeon-battle/-battle2，后者将 require 本文件——顶层引用会成环。
-// 本文件在函数体内延迟 require（dungeon-battle.js :1273 的 karma 先例）。
+// 本文件在函数体内延迟 require（dungeon-battle.js 的 karma 先例）。
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -157,7 +154,7 @@ function arg_name_of(arg) {
 }
 
 /**
- * SHE(ARG) 代词（%SHE(x)% 的等价物；魔改新增/文本校正.ERB :1-7 的三行
+ * SHE(ARG) 代词（%SHE(x)% 的等价物；魔改新增的三行
  * 纯函数，dungeon-battle.js 同款内联）。TALENT:122 = 男人 → 他，否则 她。
  * @param {number} cid 角色号
  * @returns {string}
@@ -167,7 +164,7 @@ function she(cid) {
 }
 
 /**
- * 声明的编号空间：分发守卫（EVENT_K.ERB :256/:270）能拼出的全部
+ * 声明的编号空间：分发检查能拼出的全部
  * DUNGEON_RYOUZYOKU_K{N} / DUNGEON_RYOUZYOKU_AFTER_K{N} 名（与
  * kojo-system 的 KOJO_MESSAGE_COM 同款）。普通口上 0-39 + EX 口上
  * 901-1600；空间内缺失 = TRYCALL 落空（合法）。
@@ -177,26 +174,26 @@ const DECLARED_KOJO_IDS = [
   ...Array.from({ length: 700 }, (_, i) => i + 901),
 ];
 
-/** @DUNGEON_RYOUZYOKU_K{N}：凌辱前的角色口上钩子（口上票落地后注册） */
+/** DUNGEON_RYOUZYOKU_K{N} 族：凌辱前的角色口上钩子（口上票实现后注册） */
 const ryouzyoku_kojo_family = new DispatchFamily(
   'DUNGEON_RYOUZYOKU_K',
   DECLARED_KOJO_IDS,
 );
 
-/** @DUNGEON_RYOUZYOKU_AFTER_K{N}：凌辱后的角色口上钩子（口上票落地后注册） */
+/** DUNGEON_RYOUZYOKU_AFTER_K{N} 族：凌辱后的角色口上钩子（口上票实现后注册） */
 const ryouzyoku_after_kojo_family = new DispatchFamily(
   'DUNGEON_RYOUZYOKU_AFTER_K',
   DECLARED_KOJO_IDS,
 );
 
 /**
- * 迷宫凌辱两钩子的共同分发体（原件 :249-258 与 :263-272 逐字同构）：
- * `LOCAL = GET_KOJO_NUM()`（缺省读当前 TARGET——@RYOUZYOKU :57 的
- * `TARGET = ARG` 已在调用前置好，本分发体不碰 TARGET）→ 守卫
+ * 迷宫凌辱两钩子的共同分发体：
+ * `LOCAL = GET_KOJO_NUM()`（缺省读当前 TARGET——分派前已
+ * `TARGET = ARG`，本分发体不碰 TARGET）→ 检查
  * `in_kojo_window(LOCAL)`（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`
- * 的收口，全库只此一处定义，边界用例在 test/kojo-system.test.js）→
- * `TRYCALLFORM DUNGEON_RYOUZYOKU[_AFTER]_K{LOCAL - 100}`（:257/:271）。
- * 存在判定在原作是注释态，不判。缺席语义 = 静默（TRYCALL 落空）。
+ * ，全库只此一处定义，边界用例在 test/kojo-system.test.js）→
+ * `TRYCALLFORM DUNGEON_RYOUZYOKU[_AFTER]_K{LOCAL - 100}`。
+ * 不做存在判定。缺席语义 = 静默（TRYCALL 落空）。
  *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标族（前 = ryouzyoku_kojo_family / 后 = ryouzyoku_after_kojo_family）
@@ -211,10 +208,10 @@ async function dispatch_ryouzyoku_kojo(family) {
 }
 
 /**
- * @DUNGEON_RYOUZYOKU（EVENT_K.ERB:249-258）：迷宫凌辱**前**的角色口上钩子。
+ * dungeon_ryouzyoku：迷宫凌辱**前**的角色口上钩子。
  *
- * #403 把这段从 @RYOUZYOKU 的内联块收口成本入口（分发点归分发表，
- * 行为不变），调用点仍是 :58。
+ * #403 把这段从 ryouzyoku 的内联块整合成本入口（分发点归分发表，
+ * 行为不变）。
  *
  * @returns {Promise<number>} 0（调用方不读）
  */
@@ -223,8 +220,8 @@ async function dungeon_ryouzyoku() {
 }
 
 /**
- * @DUNGEON_RYOUZYOKU_AFTER（EVENT_K.ERB:263-272）：迷宫凌辱**后**的角色口上
- * 钩子；调用点是 @RYOUZYOKU 的 :168。
+ * dungeon_ryouzyoku_after：迷宫凌辱**后**的角色口上
+ * 钩子。
  *
  * @returns {Promise<number>} 0（调用方不读）
  */
@@ -233,7 +230,7 @@ async function dungeon_ryouzyoku_after() {
 }
 
 /**
- * @RYOUZYOKU（:2-175）：败者的凌辱事件主框架。
+ * ryouzyoku：败者的凌辱事件主框架。
  *
  * 流程：选择（旁观/不要，INPUT 循环）→ 凌辱畏怖记忆扫描（CFLAG:130 记录
  * 上次凌辱的怪物 ID、CFLAG:131 计数递增）→ 口上前置钩子（TARGET = ARG）→
@@ -241,24 +238,24 @@ async function dungeon_ryouzyoku_after() {
  * *_RYOU男，否则 → 本文件 *_RYOU）→ 处女丧失判定（EXP:0 > 0 且 TALENT:0
  * == 1，魔王 0 的专属）→ 口上后置钩子 → 逃脱分支。
  *
- * @param {number} arg 败北勇者角色号（原作 ARG，开头 `ARG = A`）
+ * @param {number} arg 败北勇者角色号（脚本开头 `ARG = A`）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function ryouzyoku(arg, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
-  // VIRGIN = TALENT:ARG:0 —— 死变量（#DIM :3 声明后全文件无读取，见文件头）
+  // VIRGIN = TALENT:ARG:0 —— 死变量（#DIM 声明后全文件无读取，见文件头）
   // PRINTFORML %SAVESTR:ARG%将被凌辱――
   await era.print(`${arg_name_of(arg)}将被凌辱――`);
   await era.print(''); // PRINTL
   era.drawLine();
 
-  // 立绘（CALL CHA_IMG2(ARG)，未移植——见文件头）
-  // CALL SHOW_DATA(ARG)（#390 真身）
+  // 立绘（CALL CHA_IMG2，未移植——见文件头）
+  // CALL SHOW_DATA（#390 真身）
   show_data(arg); // （#390 真身）
-  // 是 `IF 立绘` 分支里的空 PRINT（未移植），不带后缀不换行，与 :19 的
-  // PRINTL 同属一行——合起来仍是空行（#624）
+  // 是 `IF 立绘` 分支里的空 PRINT（未移植），不带后缀不换行，与下面的
+  // PRINTL 同属一行——合起来仍是空行。
   await era.print(''); // PRINTL
 
   // 选择循环：旁观凌辱 / 不要凌辱（#572：升格为按钮，正文不写 [编号]，
@@ -276,8 +273,8 @@ async function ryouzyoku(arg, rand) {
     break;
   }
 
-  // —— 凌辱畏怖記憶があるか（:34-54）——
-  // MON_COUNT / MON_FEAR 是函数局部变量（#DIM :4/:5）
+  // —— 凌辱畏怖記憶があるか ——
+  // MON_COUNT / MON_FEAR 是函数局部变量（#DIM）
   let mon_count = 0;
   let mon_fear = 0;
   // 第一轮扫描：找 E 表里哪一列有怪物、且 CFLAG:130（上次凌辱怪物 ID）
@@ -302,9 +299,9 @@ async function ryouzyoku(arg, rand) {
   // TARGET = ARG（口上钩子的 GET_KOJO_NUM 缺省读它）
   era_flag.target = arg;
 
-  // CALL DUNGEON_RYOUZYOKU（EVENT_K.ERB:249-258：按 GET_KOJO_NUM 分派）
+  // CALL DUNGEON_RYOUZYOKU（按 GET_KOJO_NUM 分派）
   await dungeon_ryouzyoku();
-  // —— 主循环（:60-160）：逐列处理怪物凌辱 ——
+  // —— 主循环：逐列处理怪物凌辱 ——
   mon_count = 0;
   while (mon_count < 300) {
     const local = mon_count + 7;
@@ -437,7 +434,7 @@ async function ryouzyoku(arg, rand) {
     chara(0).train.初体验对象 = 104; // CFLAG:15 = 104（怪物）
   }
 
-  // CALL DUNGEON_RYOUZYOKU_AFTER（EVENT_K.ERB:263-272：按 GET_KOJO_NUM 分派）
+  // CALL DUNGEON_RYOUZYOKU_AFTER（按 GET_KOJO_NUM 分派）
   await dungeon_ryouzyoku_after();
   // CALL DUNGEON_RYOUZYOKU_ESCAPE,ARG
   await dungeon_ryouzyoku_escape(arg, rand_n);
@@ -445,12 +442,12 @@ async function ryouzyoku(arg, rand) {
   return 0;
 }
 
-// @ORC_RYOU(ARG)
+// orc_ryou(arg)
 /**
  * 兽人凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列兽人数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列兽人数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -459,8 +456,8 @@ async function orc_ryou(arg, mon_num, rand) {
   const arg_name = arg_name_of(arg);
   const c131 = era.get(`cflag:${arg}:131`) || 0;
 
-  // 男人の場合（TALENT:122）——本文件只服务女性对象；分派已在
-  // @RYOUZYOKU 按 TALENT:122 分流，此守卫保留结构（防御性）
+  // 男人の場合（TALENT:122）——本文件只服务女性对象；分派已
+  // 按 TALENT:122 分流，此检查保留结构（防御性）
   if (era.get(`talent:${arg}:122`)) {
     await era.printAndWait('『把这家伙绑起来…』');
     return 0;
@@ -616,10 +613,10 @@ async function orc_ryou(arg, mon_num, rand) {
       await era.printAndWait(`${arg_name}耷拉着头，`);
     }
 
-    // 原作是一整行：:302「四肢着地趴在地上，」、:305/:307 的阴毛
-    // 分档、:312/:315/:317 的屁股分档、PRINTDATA 的随机词条（:320-326）与
-    // 的 PRINTL 收行都不换行。判据提到语句外当取值、片段文本留在输出
-    // 语句里（#624）
+    // 拼成一行：「四肢着地趴在地上，」、阴毛
+    // 分档、屁股分档、PRINTDATA 的随机词条与
+    // PRINTL 收行都不换行。条件提到语句外当取值、片段文本留在输出
+    // 语句里。
     const pubic = era.get(`talent:${arg}:阴毛状态`) || 0;
     const charm = era.get(`talent:${arg}:魅力点`) || 0;
     const cock = pick(
@@ -638,9 +635,8 @@ async function orc_ryou(arg, mon_num, rand) {
         '便插了进去，',
     );
 
-    // 的「脸上」是这一行的前缀：:335 与其余分档（:339/:347/:351/:358/:363/
-    // ）各自与它合一条输出——前缀提到语句外共用、锚只写该分支自己的
-    // 行号（#624；只并第一支的话其余分支上玩家仍看到两行）
+    // 的「脸上」是这一行的前缀：与其余分档
+    // 各自与它合一条输出——前缀提到语句外共用。
     const face_front = '脸上';
     const shy = (era.get(`talent:${arg}:35`) || 0) !== 0;
     if (c131 > 5 && shy) {
@@ -732,8 +728,8 @@ async function orc_ryou(arg, mon_num, rand) {
       mon_num *= 2; // 舌使いボーナス
     }
 
-    // 原作是一整行：种族 == 4 的 SIF 前缀（:410）、:412 的名字、
-    // 的种族分档都不换行，到末段 :419 的 PRINTFORMW 才收行（#624）
+    // 拼成一行：种族 == 4 的 SIF 前缀、名字、
+    // 种族分档都不换行，到末段的 PRINTFORMW 才收行。
     const headless = (era.get(`talent:${arg}:种族`) || 0) === 4;
     await era.printAndWait(
       (headless ? '无头骑士的' : '') +
@@ -780,30 +776,29 @@ async function orc_ryou(arg, mon_num, rand) {
         await era.print(`恐怖点数+${mon_num * 10}`);
         era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
       } else if (era.get(`talent:${arg}:13`)) {
-        // 原作 PRINTFORM + PRINTFORML，同一行（#584）
+        // 拼成一行：PRINTFORM + PRINTFORML（#584）
         await era.print(
           `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,
         );
         era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
       }
       // （大人しい・プライド低い・恥じらい・処女）的初见分档
-      // 文本已并进下面 :475..:498 的整行语句（前缀当取值表达式），此处不再单独
-      // 输出——否则同一段会先自占一行、又出现在合并行里（#624 审查发现）
+      // 文本已并进下面的整行语句（前缀当取值表达式），此处不再单独
+      // 输出——否则同一段会先自占一行、又出现在合并行里。
     }
 
-    // PRINTDATA（:489-495 的五个候选）——原作的随机词条夹在这一行
-    // 中间，提到语句外当取值（#624）
+    // PRINTDATA 的随机词条夹在这一行
+    // 中间，提到语句外当取值。
     const cock = pick(
       ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
       rand_n,
     ); // PRINTDATA
 
-    // 与 :509..:524 在原作里是同一行的两段互斥收行：:475/:478/
-    // 的初见分档、:488 的 `%SAVESTR:ARG%把`、上面的随机词条与 :498
-    // 的「含了下去，」都不换行；TALENT:52 命中时由 :502 的 PRINTW 收行，其余
-    // 分支由 :509..:521 的分档片段接 :524 的 PRINTL 收行。
-    // 两条收行互斥，且拼接锚的区间不得跳过中间的 :502（它自带 W，也不能当拼接
-    // 中段），所以 :475..:498 的前半段在两条路径上各写一次（#624）
+    // 整行的两段互斥收行：初见分档、`%SAVESTR:ARG%把`、随机词条与
+    // 「含了下去，」都不换行；TALENT:52 命中时由 PRINTW 收行，其余
+    // 分支由后面的分档片段接 PRINTL 收行。
+    // 两条收行互斥，且中间的 PRINTW（它自带 W）不能跳过：
+    // 前半段在两条路径上各写一次。
     const quiet = era.get(`talent:${arg}:14`) || 0;
     const proud = era.get(`talent:${arg}:17`) || 0;
     const ashamed = era.get(`talent:${arg}:35`) || 0;
@@ -813,10 +808,10 @@ async function orc_ryou(arg, mon_num, rand) {
     const quick = era.get(`talent:${arg}:50`) || 0;
     const smelly = era.get(`talent:${arg}:62`) || 0;
     const devoted = era.get(`talent:${arg}:63`) || 0;
-    // 的初见分档 + :488/:498 的前半段：链上的 TALENT:52 支
-    // 照旧把文本写在语句里（拼接锚 :475+:478+:481+:484+:488+:498+:502 要按行
-    // 核对文本）；其余分支用这个语句外的前缀常量 + 自己的分档与收行合成一条
-    //（#624，同 kojo-k7-heart.js 的 talk_front_5485 写法）
+    // 初见分档 + 前半段：链上的 TALENT:52 支
+    // 照旧把文本写在语句里；
+    // 其余分支用这个语句外的前缀常量 + 自己的分档与收行合成一条
+    //（同 kojo-k7-heart.js 的 talk_front_5485 写法）
     const tongue_front_475 =
       (quiet
         ? '提心吊胆地'
@@ -831,7 +826,7 @@ async function orc_ryou(arg, mon_num, rand) {
       cock +
       '含了下去，';
     //
-    // 舌使い：TALENT:52 时由 :502 的 PRINTW 收行
+    // 舌使い：TALENT:52 时由 PRINTW 收行
     if (era.get(`talent:${arg}:52`)) {
       await era.printAndWait(
         (quiet
@@ -905,9 +900,9 @@ async function orc_ryou(arg, mon_num, rand) {
       `${arg_name}的脸和性器都用精液化上了妆。兽人们看着她这样子，开怀大笑。`,
     );
 
-    // 原作是一整行：:549 的「兽人的」、PRINTDATA 的随机词条
-    // （:552-556）、:559 与 :562..:570 的部位分档都不换行，末段 :572 的 PRINTL
-    // 收行（本身无文本）（#624）
+    // 拼成一行：「兽人的」、PRINTDATA 的随机词条
+    // 与部位分档都不换行，末段的 PRINTL
+    // 收行（本身无文本）。
     const cock = pick(
       ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
       rand_n,
@@ -950,8 +945,8 @@ async function orc_ryou(arg, mon_num, rand) {
 
     await era.printAndWait(''); // PRINTW（空行等待）
 
-    // 原作是一整行：:595 的「兽人们把润滑液涂在了…的」与
-    // 的部位分档都不换行，末段 :613 的 PRINTL 收行（#624）
+    // 拼成一行：「兽人们把润滑液涂在了…的」与
+    // 部位分档都不换行，末段的 PRINTL 收行。
     const charm_b = era.get(`talent:${arg}:魅力点`) || 0;
     const pubic = era.get(`talent:${arg}:阴毛状态`) || 0;
     const nimble = era.get(`talent:${arg}:125`) || 0;
@@ -976,8 +971,8 @@ async function orc_ryou(arg, mon_num, rand) {
         '性器和肛门上',
     );
 
-    // 原作是一整行：:614 的「在…的」与 :618..:636 的体型分档都不
-    // 换行，末段 :639 的 PRINTL 收行（#624）
+    // 拼成一行：「在…的」与体型分档都不
+    // 换行，末段的 PRINTL 收行。
     const burly = era.get(`talent:${arg}:99`) || 0;
     const petite = era.get(`talent:${arg}:100`) || 0;
     const fat = era.get(`talent:${arg}:115`) || 0;
@@ -1035,8 +1030,8 @@ async function orc_ryou(arg, mon_num, rand) {
       ),
     ); // PRINTDATAW
 
-    // 原作是一整行：:668 的「…全裸地四肢着地趴在地下、」与
-    // 的素质分档都不换行，末段 :687 的 PRINTW 才收行（#624）
+    // 拼成一行：「…全裸地四肢着地趴在地下、」与
+    // 素质分档都不换行，末段的 PRINTW 才收行。
     const timid = era.get(`talent:${arg}:10`) || 0;
     const quiet = era.get(`talent:${arg}:14`) || 0;
     const rebel = era.get(`talent:${arg}:11`) || 0;
@@ -1082,10 +1077,8 @@ async function orc_ryou(arg, mon_num, rand) {
       era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     }
 
-    // 源 :708 起『猪…』整段是一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
+    // 『猪…』整段拼成一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
     // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
-    // 尾锚 :708+:717+:728 是拼接锚（一语句对应一行的多段 PRINT），语义见
-    // 拼接锚＝一语句对应源一行的多段 PRINT，尾锚吃整行文本
     const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
       era.get(`talent:${arg}:17`) ? 1 : 5,
     ); // （プライド低い → 喜び、否则情けない）
@@ -1188,12 +1181,12 @@ async function orc_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @SLIME_RYOU(ARG)
+// slime_ryou(arg)
 /**
  * 史莱姆凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列史莱姆数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列史莱姆数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1315,12 +1308,12 @@ async function slime_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @INSECT_RYOU(ARG)
+// insect_ryou(arg)
 /**
  * 昆虫凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列昆虫数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列昆虫数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1445,12 +1438,12 @@ async function insect_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @IVY_RYOU(ARG)
+// ivy_ryou(arg)
 /**
  * 蔦触手凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列蔦触手数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列蔦触手数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1525,12 +1518,12 @@ async function ivy_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @SYOKUSYU_RYOU(ARG)
+// syokusyu_ryou(arg)
 /**
  * 触手凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列触手数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列触手数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1672,12 +1665,12 @@ async function syokusyu_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @FAILY_RYOU(ARG)
+// faily_ryou(arg)
 /**
  * 妖精凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列妖精数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列妖精数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -1790,12 +1783,12 @@ async function faily_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @GIANT_RYOU(ARG)
+// giant_ryou(arg)
 /**
  * 巨人凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列巨人数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列巨人数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2018,12 +2011,12 @@ async function giant_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @MAN_RYOU(ARG)
+// man_ryou(arg)
 /**
  * 魔族男人凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列魔族男人数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列魔族男人数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2163,11 +2156,11 @@ async function man_ryou(arg, mon_num, rand) {
       `${arg_name}被强行宣布为肉便器，全身都被写满了淫秽的话语。`,
     );
 
-    // 原作是一整行：:1514 的「…的身上，被写着」、落書各追加档
-    // （:1517/:1519 处女二选一、:1524/:1529/:1534/:1539/:1544/:1549）、
-    // 末尾三选一（:1553/:1555/:1557）与 :1560 的「之类的话。」都不换行，
-    // 到 :1562 的 PRINTFORMW 才收行。判据提到语句外当取值、片段文本留在输出
-    // 语句里；末尾三选一的 RAND 抽数留在语句内惰性求值（#624，与 #600 的
+    // 拼成一行：「…的身上，被写着」、落書各追加档
+    //（处女二选一等）、
+    // 末尾三选一与「之类的话。」都不换行，
+    // 到 PRINTFORMW 才收行。条件提到语句外当取值、片段文本留在输出
+    // 语句里；末尾三选一的 RAND 抽数留在语句内惰性求值（与
     // 男版肉便器行同款）
     const dull = era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`);
     const modest = era.get(`talent:${arg}:24`) || era.get(`talent:${arg}:30`);
@@ -2331,12 +2324,12 @@ async function man_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @GIRL_RYOU(ARG)
+// girl_ryou(arg)
 /**
  * 女魔族凌辱（女性对象；兼男性对象的防御分支）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列女魔族数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列女魔族数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2370,8 +2363,8 @@ async function girl_ryou(arg, mon_num, rand) {
       // 一人
       await era.printAndWait('『独占你了！难道这是第一次？』');
       await era.printAndWait(`${arg_name}被魔界的女人口交着，`);
-      // 原作是一整行：:1692 的「紫色的长舌头，在…的」与
-      // 的阴茎分档都不换行，末段 :1706 的 PRINTFORMW 才收行（#624）
+      // 拼成一行：「紫色的长舌头，在…的」与
+      // 阴茎分档都不换行，末段的 PRINTFORMW 才收行。
       const p318 = era.get(`talent:${arg}:318`) || 0; // 阴茎分档
       await era.printAndWait(
         `紫色的长舌头，在${arg_name}的` +
@@ -2411,8 +2404,8 @@ async function girl_ryou(arg, mon_num, rand) {
         '『大家一起来帮他含，一下就射的话，就要好好处罚你喔！』',
       );
       await era.printAndWait(`${arg_name}被魔界的女人口交着，`);
-      // 与上一个分支同型：:1733 的「紫色的长舌头，在…的」与
-      // 的阴茎分档都不换行，末段 :1747 的 PRINTFORMW 才收行（#624）
+      // 与上一个分支同型：「紫色的长舌头，在…的」与
+      // 阴茎分档都不换行，末段 PRINTFORMW 才收行（#624）
       const p318b = era.get(`talent:${arg}:318`) || 0; // 阴茎分档
       await era.printAndWait(
         `紫色的长舌头，在${arg_name}的` +
@@ -2476,8 +2469,8 @@ async function girl_ryou(arg, mon_num, rand) {
       // 喂奶
       await era.printAndWait('『胸部，味道好吗？舔个没完呢～』');
       await era.printAndWait(`${arg_name}被魔界的女性一边喂奶，一边被撸着。`);
-      // 与上面两支同型：:1805 的「紫色的手，温柔地在…的」与
-      // 的阴茎分档都不换行，末段 :1819 的 PRINTFORMW 才收行（#624）
+      // 与上面两支同型：「紫色的手，温柔地在…的」与
+      // 阴茎分档都不换行，末段 PRINTFORMW 才收行（#624）
       const p318d = era.get(`talent:${arg}:318`) || 0; // 阴茎分档
       await era.printAndWait(
         `紫色的手，温柔地在${arg_name}的` +
@@ -2575,9 +2568,9 @@ async function girl_ryou(arg, mon_num, rand) {
           '『真是较真。这样的孩子反而容易觉醒后面的快感呢～』',
         );
       } else {
-        // 原作是一整行：:1889 的「『这边的穴」与 RAND:2 的
-        // 二选一都不换行，末段 :1895 的 PRINTW 才收行。
-        // RAND 抽数有状态，留在语句内惰性求值（#624）
+        // 拼成一行：「『这边的穴」与 RAND:2 的
+        // 二选一都不换行，末段的 PRINTW 才收行。
+        // RAND 抽数有状态，留在语句内惰性求值。
         await era.printAndWait(
           '『这边的穴' +
             (rand_n(2) === 0 ? '才有的' : '也有的') +
@@ -2596,7 +2589,7 @@ async function girl_ryou(arg, mon_num, rand) {
         `${arg_name}肛门里的皱褶，被魔族女性仔细地舔舐着。`,
       );
     } else {
-      // 空分支（原作 ELSE 无内容）
+      // 空分支（ELSE 支无内容）
     }
 
     if ((era.get(`abl:${arg}:22`) || 0) > 0 || era.get(`talent:${arg}:81`)) {
@@ -2615,10 +2608,10 @@ async function girl_ryou(arg, mon_num, rand) {
   if (mon_num === 1) {
     // 单只女魔族
     // 两个分支条件是重复的（IF RAND:3 == 0 / ELSEIF RAND:3 == 0），
-    // 第二臂恒不达——两条文本都并在第一分支，结构收拢成单条件
+    // 第二分支恒不达——两条文本都并在第一分支，结构收拢成单条件
     if (rand_n(3) === 0) {
       await era.print('『弄得好的话就好好奖励你』');
-      await era.print('『那样子弄，完全不舒服嘛』'); // （原作第二臂，恒不达）
+      await era.print('『那样子弄，完全不舒服嘛』'); // （第二分支恒不达，见上注）
     } else {
       await era.print('『再好好努力哦』');
     }
@@ -2769,12 +2762,12 @@ async function girl_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @BEAST_RYOU(ARG)
+// beast_ryou(arg)
 /**
  * 魔兽凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列魔兽数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列魔兽数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2904,12 +2897,12 @@ async function beast_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @BRAIN_RYOU(ARG)
+// brain_ryou(arg)
 /**
  * 食脑魔凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列食脑魔数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列食脑魔数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -3022,12 +3015,12 @@ async function brain_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @HORSE_RYOU(ARG)
+// horse_ryou(arg)
 /**
  * 马凌辱（女性对象）。
  *
- * @param {number} arg 被凌辱者角色号（原作 ARG）
- * @param {number} mon_num 该列马数量（原作 E:(B+99)）
+ * @param {number} arg 被凌辱者角色号
+ * @param {number} mon_num 该列马数量（由分派方传入）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -3159,17 +3152,17 @@ async function horse_ryou(arg, mon_num, rand) {
   return 0;
 }
 
-// @PC_RYOU, ARG:0, ARG:1
+// pc_ryou(arg0, arg1)
 /**
- * PC 被凌辱的演出（对人格斗败北时，DUNGEON_BATLLE2.ERB 调用）。
+ * PC 被凌辱的演出（对人格斗败北时调用）。
  *
  * ARG:0 = 魔王側（胜者）、ARG:1 = 勇者側（败者）。流程：旁观/不要选择 →
  * 武器检查（W:0 = 魔王武装存储编号；素手时装剑 40，CALL EQUIP_DATABASE）→
  * 按武器识别号（W:1）分四大支：49 触手 / 50 圣剑？→ 默认（魔界武器）→
  * 三连 REPEAT 随机凌辱 → 收尾百合判定。
  *
- * @param {number} arg0 魔王側角色号（原作 ARG:0）
- * @param {number} arg1 勇者側角色号（原作 ARG:1）
+ * @param {number} arg0 魔王側角色号
+ * @param {number} arg1 勇者側角色号
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -3177,9 +3170,9 @@ async function pc_ryou(arg0, arg1, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const winner_name = arg_name_of(arg0); // %SAVESTR:(ARG:0)%
   const loser_name = arg_name_of(arg1); // %SAVESTR:(ARG:1)%
-  // MON_NUM：本函数无 E 表读取（原作 #DIM 但未赋值——CALL MONSTER_DATA
-  // 在 :2464 是死调用，不产生 MON_NUM 写入，见文件头）。所有 {MON_NUM}
-  // 显示插值原作即为 0（JS 侧 mon_num 参数缺省 0，行为一致）。
+  // MON_NUM：本函数无 E 表读取（#DIM 声明了但从未赋值——CALL MONSTER_DATA
+  // 是死调用，不产生 MON_NUM 写入，见文件头）。所有 {MON_NUM}
+  // 显示插值在脚本里即为 0（JS 侧 mon_num 参数缺省 0，行为一致）。
   const mon_num = 0;
 
   await era.print(''); // PRINTL
@@ -3190,8 +3183,8 @@ async function pc_ryou(arg0, arg1, rand) {
   // PRINTL 空格行并入占位注释，不单独输出）
   await era.print(''); // PRINTL
 
-  // 选择循环：旁观凌辱 / 不要凌辱（#572：升格为按钮；行锚订正为
-  // PC_RYOU 段自己的两行——此前误写成主框架的 :21/:22，文本相同故锁没红）
+  // 选择循环：旁观凌辱 / 不要凌辱（#572：升格为按钮；注释此前误写成
+  // 主框架的两行，文本相同故测试没红）
   era.printButton('- 旁观凌辱', 0);
   era.printButton('- 不要凌辱', 1);
   for (;;) {
@@ -3387,8 +3380,8 @@ async function pc_ryou(arg0, arg1, rand) {
     } else if (rand_n(6) === 0 && !era.get(`talent:${arg1}:122`)) {
       // 巨型假阳具
       await era.printAndWait(`${winner_name}拿来小臂般粗的巨型假阳具。`);
-      // 原作是一整行：:2517 的「…的」与 :2519/:2521 的二选一
-      // 都不换行，末段 :2523 的 PRINTFORMW 才收行（#624）
+      // 拼成一行：「…的」与二选一
+      // 都不换行，末段的 PRINTFORMW 才收行。
       const loser_is_man = era.get(`talent:${arg1}:122`);
       await era.printAndWait(
         `${loser_name}的` +
@@ -3558,8 +3551,8 @@ async function pc_ryou(arg0, arg1, rand) {
         await era.print(
           `${loser_name}谦卑地用狗一样的神态舔舐着${winner_name}的`,
         );
-        // 原作是一整行：:2646/:2648 的阴茎/私处二选一与 :2650 的
-        // 「。」（PRINTFORMW）都不换行（#624）
+        // 拼成一行：阴茎/私处二选一与
+        // 「。」（PRINTFORMW）都不换行。
         const winner_has_cock =
           era.get(`talent:${arg0}:121`) === 1 || era.get(`talent:${arg0}:122`);
         await era.printAndWait((winner_has_cock ? '阴茎' : '私处') + '。');
@@ -3591,11 +3584,11 @@ async function pc_ryou(arg0, arg1, rand) {
       await era.printAndWait(`${winner_name}用绳子将${loser_name}紧紧捆住`);
       if (rand_n(3) === 0) {
         // 鞭打/蜡烛
-        // 与 :2676/:2679 是同一行的两段互斥收行（RAND:2）：两条收行都自带
-        // W，拼接锚的区间又绕不过中间的 :2677（自带 W）。链上的鞭子支照旧把
-        // 写在语句里（拼接锚 :2674+:2676 要按行核对文本）；蜡烛支用语句外
-        // 的前缀常量 + 自己的收行 :2679 合成一条（#624，同 kojo-k7-heart.js 的
-        // talk_front_5485 写法）。RAND 抽数有状态，提到语句外只抽一次（#624）
+        // 同一行的两段互斥收行（RAND:2）：两条收行都自带
+        // W，中间的 PRINTW（自带 W）绕不过。链上的鞭子支照旧把
+        // 写在语句里；蜡烛支用语句外
+        // 的前缀常量 + 自己的收行合成一条（同 kojo-k7-heart.js 的
+        // talk_front_5485 写法）。RAND 抽数有状态，提到语句外只抽一次。
         const whip = rand_n(2) === 0;
         const back_2674 = `向伏在地上的${loser_name}的背上`;
         if (whip) {
@@ -3727,17 +3720,17 @@ async function pc_ryou(arg0, arg1, rand) {
   return 0;
 }
 
-// @VICTORY_RYOUZYOKU, ARG = -1
+// victory_ryouzyoku(arg = -1)
 /**
  * 胜利后的凌辱事件（勇者胜后「間違いが起こる」）。
  *
- * 原作 `ARG = -1` 缺省、`SIF ARG < 0 → ARG = A`（A = 当前攻击者 = 勇者）。
+ * 旧引擎 `ARG = -1` 缺省、`SIF ARG < 0 → ARG = A`（A = 当前攻击者 = 勇者）。
  * 门槛：善恶值（CFLAG:ARG:151）必须 <= -50（善恶低才发生），且 RAND:12 != 0。
  * 命中后按 E 表第 1 列（B = RAND:3 * 100 列头）的凌辱类型分派到 *_RYOU_YUSYA
- * （勇者版演出）；原作仅 SLIME_RYOU_YUSYA（E:C == 2）与 GIRL_RYOU_YUSYA
- * （E:C == 9）未注释，其余分支全在注释内（死代码）。
+ *（勇者版演出）；仅 slime_ryou_yusya（E:C == 2）与 girl_ryou_yusya
+ *（E:C == 9）两个分支有活代码，其余全在注释内（死代码）。
  *
- * @param {number} [arg] 胜者（原作 ARG；缺省 -1 → A）
+ * @param {number} [arg] 胜者（缺省 -1 → A）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -3746,7 +3739,7 @@ async function victory_ryouzyoku(arg = -1, rand) {
 
   // SIF ARG < 0 → ARG = A（当前攻击者，调用方已传）
   if (arg < 0) {
-    return 0; // 无调用方传参时不做任何事（原作读全局 A，ere 侧由调用方保证）
+    return 0; // 无调用方传参时不做任何事（旧引擎读全局 A，ere 侧由调用方保证）
   }
   // （arg_name 未用——本函数台词无 %SAVESTR:ARG% 插值，见 :2791 用 MONSTERNAME）
 
@@ -3785,30 +3778,30 @@ async function victory_ryouzyoku(arg = -1, rand) {
     await girl_ryou_yusya(arg, rand_n);
   }
   // 其余分支（ORC/INSECT/IVY/SYOKUSYU/
-  // FAILY/GIANT/BEAST/BRAIN/HORSE）在原作是注释（死代码），不移植——结构
-  // 注释见 :2798-2821。
+  // FAILY/GIANT/BEAST/BRAIN/HORSE）原本是注释（死代码），不移植——结构
+  // 注释保留。
 
   await era.print(''); // PRINTL
   return 0;
 }
 
-// @ORC_RYOU_YUSYA(ARG)
+// orc_ryou_yusya(arg)
 /**
- * 勇者版胜利演出：兽人（原作空实现，RETURN 0）。
+ * 勇者版胜利演出：兽人（空实现，RETURN 0）。
  * @returns {Promise<number>} 0
  */
 async function orc_ryou_yusya() {
   return 0;
 }
 
-// @SLIME_RYOU_YUSYA(ARG)
+// slime_ryou_yusya(arg)
 /**
  * 勇者版胜利演出：史莱姆。
  *
  * PLAY = RAND:10 + 5（次数）；TALENT:121/122/326（扶她/男人/性癖）命中时
  * 打印并加欲情点数。
  *
- * @param {number} arg 角色号（原作 ARG）
+ * @param {number} arg 角色号
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */
@@ -3834,49 +3827,49 @@ async function slime_ryou_yusya(arg, rand) {
   return 0;
 }
 
-// @INSECT_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：昆虫（原作空实现）。@returns {Promise<number>} 0 */
+// insect_ryou_yusya(arg)
+/** 勇者版胜利演出：昆虫（空实现）。@returns {Promise<number>} 0 */
 async function insect_ryou_yusya() {
   return 0;
 }
 
-// @IVY_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：蔦触手（原作空实现）。@returns {Promise<number>} 0 */
+// ivy_ryou_yusya(arg)
+/** 勇者版胜利演出：蔦触手（空实现）。@returns {Promise<number>} 0 */
 async function ivy_ryou_yusya() {
   return 0;
 }
 
-// @SYOKUSYU_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：触手（原作空实现）。@returns {Promise<number>} 0 */
+// syokusyu_ryou_yusya(arg)
+/** 勇者版胜利演出：触手（空实现）。@returns {Promise<number>} 0 */
 async function syokusyu_ryou_yusya() {
   return 0;
 }
 
-// @FAILY_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：妖精（原作空实现）。@returns {Promise<number>} 0 */
+// faily_ryou_yusya(arg)
+/** 勇者版胜利演出：妖精（空实现）。@returns {Promise<number>} 0 */
 async function faily_ryou_yusya() {
   return 0;
 }
 
-// @GIANT_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：巨人（原作空实现）。@returns {Promise<number>} 0 */
+// giant_ryou_yusya(arg)
+/** 勇者版胜利演出：巨人（空实现）。@returns {Promise<number>} 0 */
 async function giant_ryou_yusya() {
   return 0;
 }
 
-// @MAN_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：魔族男人（原作空实现）。@returns {Promise<number>} 0 */
+// man_ryou_yusya(arg)
+/** 勇者版胜利演出：魔族男人（空实现）。@returns {Promise<number>} 0 */
 async function man_ryou_yusya() {
   return 0;
 }
 
-// @GIRL_RYOU_YUSYA(ARG)
+// girl_ryou_yusya(arg)
 /**
  * 勇者版胜利演出：女魔族。
  *
  * PLAY = RAND:10 + 5；TALENT:121/122/326 命中时打印并加欲情点数。
  *
- * @param {number} arg 角色号（原作 ARG）
+ * @param {number} arg 角色号
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */
@@ -3902,25 +3895,25 @@ async function girl_ryou_yusya(arg, rand) {
   return 0;
 }
 
-// @BEAST_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：魔兽（原作空实现）。@returns {Promise<number>} 0 */
+// beast_ryou_yusya(arg)
+/** 勇者版胜利演出：魔兽（空实现）。@returns {Promise<number>} 0 */
 async function beast_ryou_yusya() {
   return 0;
 }
 
-// @BRAIN_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：食脑魔（原作空实现）。@returns {Promise<number>} 0 */
+// brain_ryou_yusya(arg)
+/** 勇者版胜利演出：食脑魔（空实现）。@returns {Promise<number>} 0 */
 async function brain_ryou_yusya() {
   return 0;
 }
 
-// @HORSE_RYOU_YUSYA(ARG)
-/** 勇者版胜利演出：马（原作空实现）。@returns {Promise<number>} 0 */
+// horse_ryou_yusya(arg)
+/** 勇者版胜利演出：马（空实现）。@returns {Promise<number>} 0 */
 async function horse_ryou_yusya() {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_ESCAPE,ARG
+// dungeon_ryouzyoku_escape(arg)
 /**
  * 逃脱分支：被凌辱的勇者被同伴发现并救援。
  *
@@ -3929,7 +3922,7 @@ async function horse_ryou_yusya() {
  * 分档决定救援成功（RAND:FEAR == 0）与否。成功时：队长回城标志 507 = 1、
  * 勇者体力/气力 +100、状态回侵攻中（CFLAG:1 = 2）。
  *
- * @param {number} arg 被凌辱勇者角色号（原作 ARG）
+ * @param {number} arg 被凌辱勇者角色号
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */

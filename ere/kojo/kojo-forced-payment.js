@@ -1,5 +1,5 @@
 /**
- * @file 强制肉偿（issue #544，S3）：魔改新增/强制肉偿.ERB 单函数移植。
+ * @file 强制肉偿（issue #544，S3）：债务过高时的强制卖春口上。
  *
  * == 入口 ==
  *
@@ -14,28 +14,26 @@
  *      经验、性交经验 上升了 PLAY」「肛门或私处点数＋PLAY*10、欲情点数
  *      ＋PLAY*20、习得点数＋PLAY」，写入逐一对应（男人 TALENT:122 走肛门档，
  *      非男人走私处档）。此前版本把结算委托给卖春系统的 exp_bitch、但玩法
- *      参数传的是从未赋值的空串，SELECTCASE 不落任何臂——文案声称的增加
+ *      参数传的是从未赋值的空串，SELECTCASE 不落任何分支——文案声称的增加
  *      实际不发生；本文件直接入账，不经 exp_bitch。
  *   2. 拍片片酬 `COST*1/3 + RAND:100` 只求值一次：显示多少入账多少。此前
  *      版本显示与入账各取一次随机数，两个金额几乎总不相等。
  *
- * == PRINTFORM 的拼接 ==
+ * == 不换行输出的拼接 ==
  *
- * 原作 PRINTFORM 不换行，一串 PRINTFORM 拼成**一条**显示行。本文件与
- * kojo-dungeon-bitch.js（#184）同款，**逐条 ERB 输出语句一次 era.print**
- * ——按「一条源 PRINT 行 ↔ 一条 JS 输出语句」的配对纪律逐条对应
- *（同 kojo-dungeon-bitch.js）。代价是结算行（:78-86）、片酬
- * 行（:90-94、:96-100）这类拼接线在 ere 里各占一行：有意偏离，与 #184
- * 对 DUNGEON_BITCH.ERB:212-217 的既有处理一致。SETCOLORBYNAME /
- * RESETCOLOR（:79/:81/:83/:85、:91/:93/:97/:99）配色不做、逐条注释留痕
- * （#175 先例）。
+ * 旧引擎的 PRINTFORM 不换行，一串 PRINTFORM 拼成**一条**显示行。本文件与
+ * kojo-dungeon-bitch.js（#184）同款，**逐条输出语句一次 era.print**
+ * ——按「一条源输出语句 ↔ 一条 JS 输出语句」的配对纪律逐条对应。
+ * 代价是结算行、片酬行这类拼接输出在 ere 里各占一行：有意偏离，与 #184
+ * 对卖春口上结算段的既有处理一致。SETCOLORBYNAME / RESETCOLOR 配色不做、
+ * 逐条注释留痕（#175 先例）。
  *
  * == 变量与依赖 ==
  *
  *   - CFLAG:ARG:582（欠金，负数）→ chara(arg).patch.借款（patch 域门面，
  *     dungeon-trap.js 的诈骗陷阱同款）；
  *   - EXP:70 拍摄经验属 train 域（ere/facade/chara-train.js 的访问器），
- *     跨域写与 ere/dungeon/dungeon-lovers.js:1203 同款；EXP:50 异常经验、
+ *     跨域写与 ere/dungeon/dungeon-lovers.js 同款；EXP:50 异常经验、
  *     EXP:0/1/5/20/22/74 走 dungeon 域访问器；
  *   - KARMA → ere/chara/chara-stats.js 的 karma；EXPNAME / PALAMNAME →
  *     ere/kojo/kojo-dungeon-bitch-log.js 的两个查表口。
@@ -57,7 +55,7 @@ const name_of = (cid) => chara_callname(cid);
 const debt_of = (cid) => chara(cid).patch.借款;
 
 /**
- * :16 / :30 / :47 / :62 的分档条件（四档共用同一条件，三项析取）：
+ * 四档叙事的分档条件（四档共用同一条件，三项析取）：
  * ABL:11（欲望）>= 3、ABL:37（卖淫中毒）非零、EXP:20（精液经验）>= 30。
  *
  * @param {number} arg 角色 ID
@@ -72,12 +70,12 @@ function is_veteran(arg) {
 }
 
 /**
- * @强制肉偿（:2-117）：债务过高时的强制卖春。四档叙事 + 债务抵销 + 1/3
+ * 强制肉偿：债务过高时的强制卖春。四档叙事 + 债务抵销 + 1/3
  * 拍片 + 经验/点数显示 + 善恶值下调。
  *
  * @param {number} arg 角色 ID
  * @param {(n: number) => number} [rand] RAND 随机源
- * @returns {Promise<number>} 0（原作无 RETURN 语句，Emuera 的缺省返回值）
+ * @returns {Promise<number>} 0（无 RETURN 语句，缺省返回值）
  */
 async function forced_payment(arg, rand = default_rand) {
   const rand_n = rand;
@@ -89,7 +87,7 @@ async function forced_payment(arg, rand = default_rand) {
     `由于${name_of(arg)}欠的债务实在太高了，在休息的时候${name_of(arg)}被某位的债主绑架了！`,
   );
 
-  // SELECTCASE RAND:4（:12/:25/:41/:58 四档，RAND:4 恒在 0-3）
+  // SELECTCASE RAND:4（四档，RAND:4 恒在 0-3）
   switch (rand_n(4)) {
     // 第一档：乱交派对
     case 0:
@@ -219,8 +217,8 @@ async function forced_payment(arg, rand = default_rand) {
     chara(arg).patch.借款 += cost;
   }
 
-  // 结算行：原作五条 PRINTFORM/PRINTFORMW 拼成一行（#584；
-  // 中间行 :79 SETCOLORBYNAME SkyBlue / :83 LightSalmon 的染色本作未建模）
+  // 结算行：五条 PRINTFORM/PRINTFORMW 拼成一行（#584；
+  // 中间行 SETCOLORBYNAME SkyBlue / LightSalmon 的染色本作未建模）
   await era.printAndWait(
     `被强制用肉体偿债的${name_of(arg)}抵销了${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,
   );
@@ -228,14 +226,14 @@ async function forced_payment(arg, rand = default_rand) {
   // 1/3 机率被拍片纪录，增加还债的金额
   if (!rand_n(3)) {
     await era.printAndWait(`${name_of(arg)}用肉体还债的过程被人拍下来了！`);
-    // 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:91 SkyBlue 染色未建模）
+    // 两条 PRINTFORM + PRINTFORMW 拼成一行（#584；SkyBlue 染色未建模）
     // 片酬只求值一次：显示与入账同一个数（RAND:100 只取一次）
     const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);
     await era.printAndWait(
       `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,
     );
     chara(arg).patch.借款 += shown_price;
-    // 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:97 LightSalmon 染色未建模）
+    // 两条 PRINTFORM + PRINTFORMW 拼成一行（#584；LightSalmon 染色未建模）
     await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`);
     era.print(`${name_of(arg)}的${expname(50)}，${expname(70)} 经验值上升了 1`);
     chara(arg).dungeon.异常经验 += 1; // EXP:ARG:50
@@ -271,7 +269,7 @@ async function forced_payment(arg, rand = default_rand) {
     );
   }
 
-  // 善恶值下调（Emuera 的整数除法向零截断）
+  // 善恶值下调（除法向零截断）
   const local = Math.trunc((-1 * play) / 4);
   await era.printAndWait(`（善恶值减少了：${local}）`);
   karma(arg, local);

@@ -2,23 +2,23 @@
  * @file 单元测试：EVENT_AFTERTRAIN 与调教后行为检查。
  *
  * 覆盖（issue #218 补轮）：
- *   - @AFTERTRAIN_SEX_CHECK：每道独立闸各一条负例（未成熟/无爱慕淫乱/
+ *   - aftertrain_sex_check：每道独立闸各一条负例（未成熟/无爱慕淫乱/
  *     经验不足/处女/男人/贞操带/贞操封印/主人非男/濒死/S≤0），以及
- *     S 计算的数值锚（V感觉分档、性交中毒、欲望+侍奉+欲情、爱慕/淫乱/
+ *     S 计算的数值基准（V感觉分档、性交中毒、欲望+侍奉+欲情、爱慕/淫乱/
  *     性爱狂、接受/否定快感）；
- *   - @AFTERTRAIN_ANALSEX_CHECK：同形态（无爱慕淫乱/经验不足/主人非男/
- *     濒死/S≤0）+ A感觉分档数值锚；
- *   - @AFTERTRAIN_LESBIANSEX_CHECK：对象/助手指针、男性双方、四项素质
+ *   - aftertrain_analsex_check：同形式（无爱慕淫乱/经验不足/主人非男/
+ *     濒死/S≤0）+ A感觉分档数值基准；
+ *   - aftertrain_lesbiansex_check：对象/助手指针、男性双方、四项素质
  *     门槛、百合中毒、濒死、N≤0 等闸，以及 N 计算（百合中毒档位、相性
  *     乘算、保守/戒备森严、双性恋/淫乱、接受/否定快感）与分支输出
  *     （sex_result 前缀、助手扶她、助手抖S、目标扶她、双扶她吮吸）；
- *   - @AFTERTRAIN_MASTURBATION_CHECK：阴蒂/欲望门槛、从不自慰、濒死、
+ *   - aftertrain_masturbation_check：阴蒂/欲望门槛、从不自慰、濒死、
  *     A≤0 等闸，自慰次数档位与加成，以及妄想对象三分支（q=0 主人 /
  *     q=1 助手 / q=2 野狗）与报告/欲求不满分支；
- *   - @AFTERTRAIN_BEASTSEX_CHECK：未成熟/经验不足/处女男人/贞操带/
+ *   - aftertrain_beastsex_check：未成熟/经验不足/处女男人/贞操带/
  *     贞操封印/无野狗/濒死/B≤0 等闸，兽奸次数档位与报告分支；
- *   - @SELF_CHECK 五条派发臂的互斥与优先次序（男性→肛门、女性 V<A→肛门、
- *     处女+A感觉≥3→肛门、其余→性交），以及失神守卫与逆强暴复位。
+ *   - self_check 五条派发分支的互斥与优先次序（男性→肛门、女性 V<A→肛门、
+ *     处女+A感觉≥3→肛门、其余→性交），以及失神检查与逆强暴复位。
  *
  * 已修缺陷（#270）：aftertrain_beastsex_check 报告分支的二次累加曾用自慰
  * 回数（leftover_a）结算，显示点数（B*200）与实得不符——现按兽奸回数 B
@@ -89,7 +89,7 @@ test('AFTERTRAIN: aftertrain_sex_check 通常性交与 ABL 判定', async () => 
   assert.equal(fixture.store.get('exp:17:5'), 37);
   assert.equal(fixture.store.get('exp:17:0'), 2); // 私处经验 EXP:0
   assert.equal(fixture.store.get('juel:17:1'), 400);
-  assert.equal(fixture.store.get('tflag:13'), 4); // 源 :231 TFLAG:13 = 4
+  assert.equal(fixture.store.get('tflag:13'), 4); // 口上事件码 TFLAG:13 = 4
 });
 
 test('AFTERTRAIN: aftertrain_sex_check 逐道门槛负例（只关一道闸，结果就变）', async () => {
@@ -141,7 +141,7 @@ test('AFTERTRAIN: aftertrain_sex_check 逐道门槛负例（只关一道闸，�
   }
 });
 
-test('AFTERTRAIN: aftertrain_sex_check 的 S 计算数值锚', async () => {
+test('AFTERTRAIN: aftertrain_sex_check 的 S 计算数值基准', async () => {
   const { fixture } = seed_aftertrain_world();
   const { aftertrain_sex_check } = fixture.load_module(
     'event/event-aftertrain',
@@ -312,27 +312,27 @@ function assert_no_blank_after(fixture, needle, label) {
   );
 }
 
-test('#597：aftertrain_sex_check 的「回到床上做了…」之后不补空行（:229 是空源码行）', async () => {
+test('#597：aftertrain_sex_check 的「回到床上做了…」之后不补空行（是空源码行）', async () => {
   const { fixture } = seed_aftertrain_world();
   const { aftertrain_sex_check } = fixture.load_module(
     'event/event-aftertrain',
   );
   satisfy_sex_gates(fixture, { abl_index: 2, abl_value: 4 });
   assert.equal(await aftertrain_sex_check(), 1, '走完结算');
-  // 源 :228 的 PRINTFORML 已结束那一行，:229 只是空源码行、没有 PRINTL；
-  // 下一行是 :231-232 的口上或 :234 的经验播报，中间不夹空行（#597）
+  // PRINTFORML 已结束那一行，其后只是空源码行、没有 PRINTL；
+  // 下一行是口上或经验播报，中间不夹空行（#597）
   assert_no_blank_after(fixture, '回到床上做了', 'aftertrain_sex_check');
 });
 
-test('#597：aftertrain_analsex_check 的「回到床上做了…」之后不补空行（:332 是空源码行）', async () => {
+test('#597：aftertrain_analsex_check 的「回到床上做了…」之后不补空行（是空源码行）', async () => {
   const { fixture } = seed_aftertrain_world();
   const { aftertrain_analsex_check } = fixture.load_module(
     'event/event-aftertrain',
   );
   satisfy_sex_gates(fixture, { abl_index: 3, abl_value: 4 });
   assert.equal(await aftertrain_analsex_check(), 1, '走完结算');
-  // 源 :331 的 PRINTFORML 已结束那一行，:332 只是空源码行；下一行是
-  // 的 A 经验播报（#597）
+  // PRINTFORML 已结束那一行，其后只是空源码行；下一行是
+  // A 经验播报（#597）
   assert_no_blank_after(fixture, '回到床上做了', 'aftertrain_analsex_check');
 });
 
@@ -371,7 +371,7 @@ test('AFTERTRAIN: aftertrain_lesbiansex_check 百合性交', async () => {
   const res = await aftertrain_lesbiansex_check(0);
   assert.equal(res, 1);
   assert(fixture.store.get('juel:17:0') > 0);
-  assert.equal(fixture.store.get('tflag:13'), 2); // 源 :480 TFLAG:13 = 2
+  assert.equal(fixture.store.get('tflag:13'), 2); // 口上事件码 TFLAG:13 = 2
 });
 
 test('AFTERTRAIN: aftertrain_lesbiansex_check 逐道门槛负例', async () => {
@@ -587,7 +587,7 @@ test('AFTERTRAIN: aftertrain_masturbation_check 自慰检查', async () => {
   const res = await aftertrain_masturbation_check(0, 0, () => 0);
   assert.equal(res, 1);
   assert.equal(fixture.store.get('exp:17:10'), 2);
-  assert.equal(fixture.store.get('tflag:13'), 1); // 源 :669 TFLAG:13 = 1
+  assert.equal(fixture.store.get('tflag:13'), 1); // 口上事件码 TFLAG:13 = 1
 });
 
 test('AFTERTRAIN: aftertrain_masturbation_check 逐道门槛负例', async () => {
@@ -882,7 +882,7 @@ test('AFTERTRAIN: aftertrain_beastsex_check 报告分支（顺从+露出+抖M≥
   assert.equal(fixture.store.get('juel:17:8'), 800);
 });
 
-test('AFTERTRAIN: self_check 失神跳过守卫与五条派发臂', async () => {
+test('AFTERTRAIN: self_check 失神跳过检查与五条派发分支', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.seed_chara(0, { name: '魔王', callname: '魔王' });
@@ -895,7 +895,7 @@ test('AFTERTRAIN: self_check 失神跳过守卫与五条派发臂', async () => 
 
   const { self_check } = fixture.load_module('event/event-aftertrain');
 
-  // 1. 失神守卫 TFLAG:899 >= 1
+  // 1. 失神检查 TFLAG:899 >= 1
   fixture.store.set('tflag:899', 1);
   assert.equal(await self_check(), 0);
 
@@ -917,7 +917,7 @@ test('AFTERTRAIN: self_check 失神跳过守卫与五条派发臂', async () => 
   assert.equal(fixture.store.get('exp:17:10'), 3); // masturbation_check 增加自慰经验 (abl:31=2 -> a=2 + talent:76 淫乱 a+=1 -> a=3)
 });
 
-test('AFTERTRAIN: self_check 失神守卫——满足全部条件也不得执行任何派发', async () => {
+test('AFTERTRAIN: self_check 失神检查——满足全部条件也不得执行任何派发', async () => {
   const { fixture } = seed_aftertrain_world();
   const { self_check } = fixture.load_module('event/event-aftertrain');
   // 全部条件满足（性交 + 自慰都会执行）
@@ -1006,7 +1006,7 @@ test('AFTERTRAIN: self_check 派发——其余（非男非处女且 V≥A）→
   assert.equal(fixture.store.get('tflag:13'), 4);
 });
 
-test('AFTERTRAIN: self_check 逆强暴复位与目标为空守卫', async () => {
+test('AFTERTRAIN: self_check 逆强暴复位与目标为空检查', async () => {
   const { fixture, era_flag } = seed_aftertrain_world();
   const { self_check } = fixture.load_module('event/event-aftertrain');
   fixture.store.set('cflag:0:61', 1); // 逆强暴标志

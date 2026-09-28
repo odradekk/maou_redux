@@ -2,18 +2,22 @@
  * @file 地下城卖春日志与文本函数（issue #185，H16）：卖春记录与日志
  * 分支十一个函数的移植。卖春主流程（ere/kojo/kojo-dungeon-bitch.js，#184）的
  *
- * @DUNGEON_SEX_LOG / @DUNGEON_ANAL_LOG / @DUNGEON_LES_LOG 三个客台词函数
+ * DUNGEON_SEX_LOG / DUNGEON_ANAL_LOG / DUNGEON_LES_LOG 三个客台词函数
  * 没有任何活调用方（唯一调用点所在的分支自身不可达），不移植。
  * == 文本 ==
  *
- * 口上正文统一为简体（issue #60 的归一表裁定），新增文本受
+ * 口上正文统一为简体（issue #60 的归一表决定），新增文本受
  * tools/lang-check.js 检查。
+ *
+ * 一行输出的拼接：旧引擎的无后缀 PRINTFORM/PRINT 不换行，连续多段输出
+ * 拼成一条显示行，末段带 W/L 的语句才收行。本文件把同一显示行的多段
+ * 合成一条输出语句，函数内的注释只标「拼成一行：…」的段落构成。
  *
  * == GET_LOOK_INFO ==
  *
- * `%GET_LOOK_INFO(ARG, "头发颜色")%` 是 LOOK.ERB:2885 的式中函数。本文件
- * 的 @FS_BITCH "LOOKS" 用到其中 7 个 kind。**#389 起该函数的真身在
- * ere/chara/look-info.js（整函数落地），本文件改为 require**——#185 时期
+ * `%GET_LOOK_INFO(ARG, "头发颜色")%` 是旧引擎 LOOK 的式中函数。本文件
+ * 的 FS_BITCH "LOOKS" 用到其中 7 个 kind。**#389 起该函数的真身在
+ * ere/chara/look-info.js（整函数迁入），本文件改为 require**——#185 时期
  * 那份 11 个 kind 的子集实现已随 #389 搬走，全项目只剩一份（调用面不留
  * 两份，见该文件头）。
  *
@@ -55,7 +59,7 @@ function palamname(idx) {
 }
 
 /**
- * @FS_BITCH（:51-277，#FUNCTIONS 返回字符串）：卖春用各种文字列取得函数。
+ * FS_BITCH（#FUNCTIONS 返回字符串）：卖春用各种文字列取得函数。
  *
  * 分档：
  *   "PLAY"     玩法内容（1-7 → HAND/ORAL/LES/ANAL/SEX/ANIMAL/SELF）
@@ -206,7 +210,7 @@ function fs_bitch(type, arg, rand = default_rand) {
       overwrite(t(arg, 73), '水性杨花的');
       // `SIF CFLAG:ARG:509 == 1`——**CFLAG 不是 TALENT**。#389 返工勘误：
       // 这里原先读 `t(arg, 509)`（talent），而 509 在 yml/Talent.yml 里不存在、
-      // 全库无人写，这一行因此永不触发；真身是 dungeon-room.js:1060 写入的
+      // 全库无人写，这一行因此永不触发；真身是 dungeon-room.js 写入的
       // 「迷惑状態」（下轮 WALK 归零）
       overwrite((era.get(`cflag:${arg}:509`) || 0) === 1, '迷路的');
       // INRANGE(ABL:ARG:37, 1, 3)
@@ -247,13 +251,13 @@ function fs_bitch(type, arg, rand = default_rand) {
   }
 }
 
-/** FS_BITCH 里 LOOKS 用的素质读取助手（带 || 0 兜底） */
+/** FS_BITCH 里 LOOKS 用的素质读取助手（带 || 0 缺省处理） */
 function t(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
 }
 
 /**
- * @FS_LOG_BITCH（:279-316，#FUNCTIONS 返回字符串）：卖春ログ表示文字列。
+ * FS_LOG_BITCH（#FUNCTIONS 返回字符串）：卖春ログ表示文字列。
  *
  * 把客数/次数按序号拼成「N人的%FS_BITCH(TYPE, N)%」串，逗号分隔。
  *
@@ -291,14 +295,14 @@ function getbit(bits, n) {
 }
 
 /**
- * @LOG_TRY_BITCH（:8-49）：卖春直前の文章（还没开始、正否回数不明）。
+ * LOG_TRY_BITCH：卖春直前の文章（还没开始、正否回数不明）。
  *
  * :14..:47 **是一整行**（#600）：首段是 %FS_BITCH("LOOKS", ARG)%（本人描写），
  * 中段按场所（DUNGEON/其他=TOWN）与角色状态拼「无法压抑自己的性欲，」等片段，
  * 末段「考虑着出卖肉体的事。」是 PRINTFORMW（换行等待）——所以整函数只输出
  * 一条 `printAndWait`，片段由分支取值表达式在两段之间拼出。
  *
- * 注意与 H15 的 @FI_TRY_BITCH（玩法抽选，返回玩法号）**不同函数**：
+ * 注意与 H15 的 FI_TRY_BITCH（玩法抽选，返回玩法号）**不同函数**：
  * 本函数只输出文本、不改状态、无返回值；FI_TRY_BITCH 只返回玩法号、
  * 不输出（测试区分两者，见 test/kojo-dungeon-bitch-log.test.js）。
  *
@@ -307,10 +311,10 @@ function getbit(bits, n) {
  * @returns {Promise<void>}
  */
 async function log_try_bitch(arg, place) {
-  // 原作是一整行：无后缀 PRINTFORM 连续不换行，末行 PRINTFORMW 才收行。
-  // 各分支都是这一行上的片段——DUNGEON 的 :16-35 侵入中链（:18-26 侵攻中的勇者、
-  // 卖春指示）与 TOWN 的 :36-46 卖淫中毒か淫乱——判据提到语句外当取值、
-  // 片段文本留在输出语句里（保真锁按序核对 ERB 片段，#600）
+  // 拼成一行：无后缀 PRINTFORM 连续不换行，末行 PRINTFORMW 才收行。
+  // 各分支都是这一行上的片段——DUNGEON 的侵入中链（侵攻中的勇者、
+  // 卖春指示）与 TOWN 的卖淫中毒か淫乱——条件提到语句外当取值、
+  // 片段文本留在输出语句里。
   const cflag1 = era.get(`cflag:${arg}:1`) || 0;
   const horny =
     (era.get(`abl:${arg}:37`) || 0) >= 1 ||
@@ -350,7 +354,7 @@ async function log_try_bitch(arg, place) {
 }
 
 /**
- * @LOG_AFTER_BITCH（:318-378）：卖春描写函数呼出函数。
+ * log_after_bitch：卖春描写函数呼出函数。
  *
  * 卖春全部结束后（CHECK 位记录玩法与客种类）挑一种玩法与一个客，按
  * CHECK bit0 的场所调 LOG_BITCH_%PLAY%(ARG, DUNGEON/TOWN, KYAKU)。
@@ -422,7 +426,7 @@ async function log_after_bitch(arg, check, rand = default_rand) {
 }
 
 /**
- * @LOG_BITCH_HAND（:380-552）：手交卖春描写。
+ * log_bitch_hand：手交卖春描写。
  *
  * 按 ABL:13（手淫经验）分档前缀 → 「进行着手交卖春...」→ 场所/客种类
  * 分档（客名 + PRINTDATAL 随机一条客人台词）→ 两行固定地の文。
@@ -435,10 +439,10 @@ async function log_after_bitch(arg, check, rand = default_rand) {
  */
 async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // 原作是一整行：开场 `%SAVESTR:ARG%`（:386）与手淫经验分档文案
-  // （SELECTCASE + 无后缀 PRINTFORM，:389/:391/:393/:395/:397/:399/:401）
-  // 都不换行，到末段 :403 的 PRINTFORMW 才收行。档位判据提到语句外当取值、
-  // 片段文本留在输出语句里（#624）
+  // 拼成一行：开场的 `%SAVESTR:ARG%` 与手淫经验分档文案
+  // （SELECTCASE + 无后缀 PRINTFORM）
+  // 都不换行，到末段的 PRINTFORMW 才收行。档位条件提到语句外当取值、
+  // 片段文本留在输出语句里。
   const abl13 = era.get(`abl:${arg}:13`) || 0;
   await era.printAndWait(
     `${name_of(arg)}` +
@@ -560,7 +564,7 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
 }
 
 /**
- * @LOG_BITCH_ORAL（:554-722）：口交卖春描写。
+ * log_bitch_oral：口交卖春描写。
  *
  * 按 ABL:32（口交经验）分档前缀 → 「进行着收费口交...」→ 场所/客种类
  * 分档（客名 + PRINTDATAL 随机一条客人台词）→ 三行固定地の文。
@@ -573,9 +577,8 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // 原作是一整行：开场 `%SAVESTR:ARG%`（:559）与口交经验分档文案
-  // （:562/:564/:566/:568/:570/:572）都不换行，到末段 :574 的 PRINTFORMW
-  // 才收行（#624）
+  // 拼成一行：开场的 `%SAVESTR:ARG%` 与口交经验分档文案
+  // 都不换行，到末段的 PRINTFORMW 才收行。
   const abl32 = era.get(`abl:${arg}:32`) || 0;
   await era.printAndWait(
     `${name_of(arg)}` +
@@ -683,7 +686,7 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
 }
 
 /**
- * @LOG_BITCH_LES（:724-936）：百合卖春描写。
+ * log_bitch_les：百合卖春描写。
  *
  * 按 ABL:33（百合经验）分档前缀 → 「进行着百合卖春...」→ 场所/客种类
  * 分档（女性客 + PRINTDATAL 随机一条客人台词）→ 两行固定地の文。
@@ -696,9 +699,8 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // 原作是一整行：开场 `%SAVESTR:ARG%`（:729）与百合经验分档文案
-  // （:732/:734/:736/:738/:740/:742）都不换行，到末段 :744 的 PRINTFORMW
-  // 才收行（#624）
+  // 拼成一行：开场的 `%SAVESTR:ARG%` 与百合经验分档文案
+  // 都不换行，到末段的 PRINTFORMW 才收行。
   const abl33 = era.get(`abl:${arg}:33`) || 0;
   await era.printAndWait(
     `${name_of(arg)}` +
@@ -865,12 +867,11 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
       await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // 固定地の文（源文本只有这两行；:744-745 已在上方）
-  // —— 源 :934 无输出；:935-936 是空行/下一函数 ——
+  // 固定地の文（上文已覆盖）
 }
 
 /**
- * @LOG_BITCH_ANAL（:938-1174）：肛交卖春描写。
+ * log_bitch_anal：肛交卖春描写。
  *
  * 按 ABL:3（肛门经验）分档前缀 → 「进行着肛交卖春...」→ 场所/客种类
  * 分档（客名 + PRINTDATAL 随机一条客人台词）→ 四行固定地の文。
@@ -883,9 +884,8 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // 原作是一整行：开场 `%SAVESTR:ARG%`（:943）与肛门经验分档文案
-  // （:946/:948/:950/:952/:954/:956/:958）都不换行，到末段 :960 的
-  // PRINTFORMW 才收行（#624）
+  // 拼成一行：开场的 `%SAVESTR:ARG%` 与肛门经验分档文案
+  // 都不换行，到末段的 PRINTFORMW 才收行。
   const abl3 = era.get(`abl:${arg}:3`) || 0;
   await era.printAndWait(
     `${name_of(arg)}` +
@@ -1086,7 +1086,7 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
 }
 
 /**
- * @LOG_BITCH_SEX（:1176-1449）：性交卖春描写。
+ * log_bitch_sex：性交卖春描写。
  *
  * 按 ABL:2（性交经验）分档前缀（7-8/9-10 档内 RAND:2 分支）→ 「进行着
  * 性交卖春」→ 场所/客种类分档（客名 + PRINTDATAL 随机一条客人台词）→
@@ -1100,12 +1100,11 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  // 原作是一整行：开场 `%SAVESTR:ARG%`（:1182）与性交经验分档
-  // 文案（:1185/:1187/:1189/:1191/:1193，以及 7-8/9-10 档内 IF/ELSE 的
-  // ）都不换行，到末段 :1207 的 PRINTFORMW 才收行。
-  // 档内 IF 的 `RAND:2` 有状态、只在命中该档时才抽取，所以留在档位判据里
-  // 惰性求值；ABL:14 是纯读，提到语句外当取值（语句内再写 `era.get` 会引入
-  // 嵌套模板的 `${arg}` 槽位，保真锁 C/D 按字面量槽位核对时误判为插值）（#624）
+  // 拼成一行：开场的 `%SAVESTR:ARG%` 与性交经验分档
+  // 文案（含 7-8/9-10 档内 IF/ELSE）
+  // 都不换行，到末段的 PRINTFORMW 才收行。
+  // 档内 IF 的 `RAND:2` 有状态、只在命中该档时才抽取，所以留在档位条件里
+  // 惰性求值；ABL:14 是纯读，提到语句外当取值。
   const abl2 = era.get(`abl:${arg}:2`) || 0;
   const abl14 = era.get(`abl:${arg}:14`) || 0;
   await era.printAndWait(
@@ -1321,9 +1320,9 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
 }
 
 /**
- * @LOG_BITCH_ANIMAL（:1451-1483）：兽交卖春描写。
+ * log_bitch_animal：兽交卖春描写。
  *
- * 特殊处理（源注释）：DUNGEON 里无金钱授受、自主进行；TOWN 里 ARG:1 无
+ * 特殊处理：DUNGEON 里无金钱授受、自主进行；TOWN 里 ARG:1 无
  * 意义（公衆プレイ）。TOWN 分支有固定三行地の文；DUNGEON 分支为空。
  * 函数签名 (ARG, PLACE, ARG:1) 的第三参在本函数未使用（:1451 声明，
  * 实际只按 PLACE 分）。
@@ -1334,7 +1333,7 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_animal(arg, place) {
   if (place === 'TOWN') {
-    // 原作 PRINTFORM %SAVESTR:ARG% + PRINTFORMW，同一行（#584）
+    // 拼成一行：PRINTFORM %SAVESTR:ARG% + PRINTFORMW（#584）
     await era.printAndWait(
       `${name_of(arg)}在大家的眼前不知羞耻的进行着兽交表演...`,
     );
@@ -1351,7 +1350,7 @@ async function log_bitch_animal(arg, place) {
 }
 
 /**
- * @LOG_BITCH_SELF（:1485-1519）：自慰日志（口上向き——「姑且留着，但
+ * log_bitch_self：自慰日志（口上向き——「姑且留着，但
  * 觉得是给口上向的；调用侧已带分岐描写，优先级放低」）。本函数体为空：
  * DUNGEON/TOWN × PLAY(1-5) 的所有分支都没有输出。
  *

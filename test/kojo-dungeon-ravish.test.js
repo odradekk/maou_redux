@@ -3,14 +3,14 @@
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：被凌辱者 = 角色 31（通用奴隶
  * 编号），由 join_slave_chara 预置并加入。覆盖：
- *   - 13 种怪物分派（`*_ryou` 女性版）+ 主框架 @RYOUZYOKU（E 表读取、
+ *   - 13 种怪物分派（`*_ryou` 女性版）+ 主框架 ryouzyoku（E 表读取、
  *     凌辱畏怖记忆 CFLAG:130/131 推进、按 TALENT:122 分流到 H14 男版）；
- *   - @PC_RYOU（武器检查 EQUIP_DATABASE、触手武器分支、REPEAT 三连随机、
+ *   - pc_ryou（武器检查 EQUIP_DATABASE、触手武器分支、REPEAT 三连随机、
  *     处女丧失推进 CFLAG:15/16/CSTR:3）；
- *   - @VICTORY_RYOUZYOKU（善恶值门槛、E 表分派到 *_RYOU_YUSYA）；
- *   - @DUNGEON_RYOUZYOKU_ESCAPE（队伍解析、CHECK_STATUS 评级、救援成功
+ *   - victory_ryouzyoku（善恶值门槛、E 表分派到 *_ryou_yusya）；
+ *   - dungeon_ryouzyoku_escape（队伍解析、CHECK_STATUS 评级、救援成功
  *     时回城标志/体力气力回复/状态回侵攻）；
- *   - 口上钩子分发（#403 收口）：窗口两侧（LOCAL 0 拒绝、100-139 与 EX
+ *   - 口上钩子分发（#403 整合）：窗口两侧（LOCAL 0 拒绝、100-139 与 EX
  *     放行）与键 = LOCAL - 100 的偏移，前后两族各归各；
  *   - 数值副作用（JUEL/EXP/BASE 的 era.add / 门面累加）与畏怖阶段分档；
  *   - 随机分支可控可重复（rand 定值序注入，RAND:n 按函数内出现序消费）；
@@ -52,7 +52,7 @@ function fixture_module(fixture) {
   return fixture.load_module('kojo/kojo-dungeon-ravish');
 }
 
-// 全部 13 个怪物函数（导出名 → 源文件里的 @ 原名）
+// 全部 13 个怪物函数（导出名 → 族名标记）
 const FUNCS = [
   ['orc_ryou', 'ORC_RYOU'],
   ['slime_ryou', 'SLIME_RYOU'],
@@ -87,10 +87,7 @@ test('13 个函数（12 怪物 + PC_RYOU）分派：各自可调用、输出非�
     }
     assert.equal(result, 0, `${export_name} 应返回 0（RETURN 0）`);
     const lines = fixture.text_lines();
-    assert.ok(
-      lines.length > 0,
-      `${export_name}（原作 @${erb_name}）应输出文本`,
-    );
+    assert.ok(lines.length > 0, `${export_name}（${erb_name}）应输出文本`);
   }
 });
 
@@ -111,7 +108,7 @@ test('GIANT_RYOU 贯穿分支：显示「阴道扩张经验」写入 EXP:52 私�
   );
 });
 
-test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾（源 :708-:728，#570）', async () => {
+test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾（#570）', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('talent:31:17', 1); // プライド低い → 语尾档 1（喜び）
     f.store.set('talent:31:163', 1); // K3 高貴
@@ -127,7 +124,7 @@ test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾
     fixture
       .text_lines()
       .includes('『猪的噢~♪还自称冒险者……简直傻了的噢~♪　噗噗，噗嘻！』'),
-    '源 :708-:728 的整段在 ere 是一行（语尾两处都拼进『猪』行）',
+    '『猪…』整段在 ere 是一行（语尾两处都拼进『猪』行）',
   );
   assert.ok(
     !fixture.text_lines().some((l) => l === '的噢~♪'),
@@ -146,7 +143,7 @@ test('#584 男人凌辱（女性版）：肉便器收尾行「之类的话。」
       .includes(
         '冒险者的身上，被写着【最喜欢阴茎】【操我】之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',
       ),
-    '肉便器行必须是整行（#584 合了 :1560+:1562，#624 把 :1514..:1557 也并了进来）',
+    '肉便器行必须是整行（#584 合了两段，#624 把更多段落也并了进来）',
   );
 });
 
@@ -157,7 +154,7 @@ test('RYOUZYOKU 主框架：选择[1]不要凌辱 → 直接返回 0', async () 
   const result = await mod.ryouzyoku(31, seq_rand(0));
   assert.equal(result, 0);
   assert.ok(fixture.text_lines().some((l) => l.includes('将被凌辱')));
-  // #572：两枚选项是按钮（源 :21-22，正文含「- 」；引擎按 showAcc 拼 [N]）
+  // #572：两枚选项是按钮（正文含「- 」；引擎按 showAcc 拼 [N]）
   assert.deepEqual(
     fixture.lines
       .filter((line) => line.type === 'button')
@@ -206,7 +203,7 @@ test('RYOUZYOKU 主框架：同一怪物再来 → CFLAG:131 递增（畏怖计�
     f.store.set('cflag:31:131', 2);
     // 狗头人（ID 100）放第 2 列（列头 100）——扫描记 MON_FEAR = 100（列头），
     // 主循环 LOCAL:1 = 100（怪物号）→ MON_FEAR == LOCAL:1 → CFLAG:131++
-    // （原作的列头/怪物号近似判定，:72 的 CFLAG:ARG:131++）
+    // （列头/怪物号近似判定）
     f.store.set('e:100', 100);
     f.store.set('e:107', 1);
     f.store.set('e:199', 5);
@@ -243,7 +240,7 @@ test('PC_RYOU：选择[1]不要凌辱 → 直接返回 0', async () => {
   fixture.era.input = async () => 1;
   const result = await mod.pc_ryou(0, 31, seq_rand(0));
   assert.equal(result, 0);
-  // #572：选项是按钮（源 :2358-2359；行锚此前误写成主框架的 :21/:22，已订正）
+  // #572：选项是按钮（注释此前误写成主框架的两行，已订正）
   assert.deepEqual(
     fixture.lines
       .filter((line) => line.type === 'button')
@@ -285,7 +282,7 @@ test('PC_RYOU：处女丧失推进 CFLAG:15（初体验对象）与 CSTR:3（初
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
   await mod.pc_ryou(0, 31, seq_rand(0));
-  // 触手无封印私处路线 :2442-2446：TALENT:31:0 = 0、CFLAG:15 = NO:0 + 1 = 1、
+  // 触手无封印私处路线：TALENT:31:0 = 0、CFLAG:15 = NO:0 + 1 = 1、
   // CSTR:3 = 胜者名（你）
   assert.equal(fixture.store.get('talent:31:0'), 0, '处女丧失');
   assert.equal(fixture.store.get('cflag:31:15'), 1, '初体验对象 = NO:0 + 1');
@@ -378,7 +375,7 @@ test('DUNGEON_RYOUZYOKU_ESCAPE：同伴发现 + 畏怖低（FEAR <= 3）救援�
   assert.equal(fixture.store.get('cflag:31:1'), 2);
 });
 
-// —— 口上钩子分发（EVENT_K.ERB:249-272；#403 收口成本文件的两个入口）——
+// —— 口上钩子分发（#403 整合成本文件的两个入口）——
 
 test('DUNGEON_RYOUZYOKU/_AFTER 钩子：窗口按 LOCAL - 100 拼键，前后两族各归各', async () => {
   const fixture = await setup_ravish((f) => {
@@ -386,7 +383,7 @@ test('DUNGEON_RYOUZYOKU/_AFTER 钩子：窗口按 LOCAL - 100 拼键，前后两
   });
   const mod = fixture_module(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31; // @RYOUZYOKU :57 的 TARGET = ARG 由调用方置好
+  era_flag.target = 31; // 分派前置 TARGET = ARG 由调用方置好
   const seen_before = [];
   const seen_after = [];
   mod.ryouzyoku_kojo_family.register(3, async (...args) => {
@@ -405,7 +402,7 @@ test('DUNGEON_RYOUZYOKU/_AFTER 钩子：窗口按 LOCAL - 100 拼键，前后两
   assert.equal(era_flag.target, 31, '分发体不碰 TARGET（调用方管）');
 });
 
-test('DUNGEON_RYOUZYOKU 钩子：EX 性格走 LOCAL > 1000 臂（1002 → 键 902）', async () => {
+test('DUNGEON_RYOUZYOKU 钩子：EX 性格走 LOCAL > 1000 分支（1002 → 键 902）', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('ex_talent:31:102', 1); // EX 口上 → LOCAL 1002 → 键 902
   });
@@ -419,7 +416,7 @@ test('DUNGEON_RYOUZYOKU 钩子：EX 性格走 LOCAL > 1000 臂（1002 → 键 90
   });
 
   assert.equal(await mod.dungeon_ryouzyoku(), 0);
-  assert.deepEqual(seen, [[]], '窗口的 > 1000 臂可达');
+  assert.deepEqual(seen, [[]], '窗口的 > 1000 分支可达');
 });
 
 test('DUNGEON_RYOUZYOKU 钩子：无性格编号（LOCAL 0）窗口拒绝，不拼键、不输出', async () => {
@@ -492,11 +489,11 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
   }
 });
 
-// —— #624：女版迷宫凌辱里十九处「原作同一行被拆开」合回一条输出 ——
+// —— #624：女版迷宫凌辱里十九处「同一行被拆开」合回一条输出 ——
 //
 // 形状与男版同款：无后缀 PRINTFORM/PRINT 连续不换行，中间夹 SELECTCASE / IF
-// 的分档片段与 PRINTDATA 随机词条，末段才带 W/L 收行。判据提到语句外当取值、
-// 片段文本留在输出语句里，锚写成拼接锚 `:a+:b+…`。
+// 的分档片段与 PRINTDATA 随机词条，末段才带 W/L 收行。条件提到语句外当取值、
+// 片段文本留在输出语句里。
 // **断言一律钉整行**（`.includes(整行)`）：旧的 `.some(includes(片段))` 在
 // 「拆回多条」时照样绿。
 //
@@ -506,7 +503,7 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
 //   girl_ryou：TALENT:122 支内先走 娇小/一人/RAND 链，再消费畏怖档 pick
 //   pc_ryou ：开场演出 4 掷 → RAND:7/6/5/4/3/2 链
 
-test('#624 RYOUZYOKU 主框架：:16+:19 合成一条空行（含立绘分支的空 PRINT）', async () => {
+test('#624 RYOUZYOKU 主框架：立绘分支的空 PRINT 与 PRINTL 合成一条空行', async () => {
   const fixture = await setup_ravish();
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
@@ -516,17 +513,17 @@ test('#624 RYOUZYOKU 主框架：:16+:19 合成一条空行（含立绘分支的
     '冒险者将被凌辱――',
     '', // PRINTL
     '[结婚对象:无][善恶值:0|中立]　', // SHOW_DATA
-    '', // （立绘分支的空 PRINT）+ :19 的 PRINTL 合成的一条
+    '', // （立绘分支的空 PRINT）+ PRINTL 合成的一条
   ]);
-  // 拆回多条会多出一条空行：整段输出里的空行数（[1] 的 :12 + 尾部 4 条）就是守卫
+  // 拆回多条会多出一条空行：整段输出里的空行数（开场 PRINTL 的一条 + 尾部 4 条）就是检查
   assert.equal(
     lines.filter((l) => l === '').length,
     5,
-    ':16 与 :19 合成一条空行（拆回多条即多一行）',
+    '空 PRINT 与 PRINTL 合成一条空行（拆回多条即多一行）',
   );
 });
 
-test('#624 兽人凌辱·单只：:302..:328 的阴毛/屁股分档与随机词条同属一行', async () => {
+test('#624 兽人凌辱·单只：阴毛/屁股分档与随机词条同属一行', async () => {
   // mon_num == 1 → 单只兽人支；draws：[畏怖 pick, 单只 pick, 随机词条]
   const cases = [
     [{}, '四肢着地趴在地上，屁股从后露了出来阴茎便插了进去，'],
@@ -559,8 +556,8 @@ test('#624 兽人凌辱·单只：:302..:328 的阴毛/屁股分档与随机词�
   }
 });
 
-test('#624 兽人凌辱·单只：:330+:335 的「脸上」与恥じらい分档同属一行', async () => {
-  // c131 > 5 且 TALENT:35 → :335 分档并进 :330 的「脸上」
+test('#624 兽人凌辱·单只：「脸上」前缀与恥じらい分档同属一行', async () => {
+  // c131 > 5 且 TALENT:35 → 恥じらい分档并进「脸上」前缀
   const with_shy = await setup_ravish((f) => {
     f.store.set('cflag:31:131', 6);
     f.store.set('talent:31:35', 1);
@@ -568,11 +565,11 @@ test('#624 兽人凌辱·单只：:330+:335 的「脸上」与恥じらい分档
   await fixture_module(with_shy).orc_ryou(31, 1, seq_rand(0, 0, 0));
   assert.ok(
     with_shy.text_lines().includes('脸上流露着沉浸在了羞耻与情欲之中的神色……'),
-    'TALENT:35 → :330+:335 是一整行',
+    'TALENT:35 → 两行前缀与描写合成一整行',
   );
 
-  // 其余分档各自与 :330 的「脸上」合成一条（前缀提到语句外共用，锚写该分支
-  // 自己的行号——只并第一支的话其余分支上玩家仍看到两行，#624）
+  // 其余分档各自与「脸上」合成一条（前缀提到语句外共用。
+  // 只并第一支的话其余分支上玩家仍看到两行，#624）
   const cases = [
     [{ 'cflag:31:131': 6 }, '脸上的神情为屈服的喜悦与口水所浸染……'],
     [
@@ -599,7 +596,7 @@ test('#624 兽人凌辱·单只：:330+:335 的「脸上」与恥じらい分档
   }
 });
 
-test('#624 兽人凌辱·口交：:410..:419 的种族分档与名字同属一行', async () => {
+test('#624 兽人凌辱·口交：种族分档与名字同属一行', async () => {
   const cases = [
     [
       4,
@@ -621,7 +618,7 @@ test('#624 兽人凌辱·口交：:410..:419 的种族分档与名字同属一�
   }
 });
 
-test('#624 兽人凌辱·口交：:470+:471 的耻情点数与前置描写同属一行', async () => {
+test('#624 兽人凌辱·口交：耻情点数与前置描写同属一行', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('talent:31:13', 1); // 素直
   });
@@ -633,14 +630,14 @@ test('#624 兽人凌辱·口交：:470+:471 的耻情点数与前置描写同属
       .includes(
         '迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+50',
       ),
-    ':470（PRINTFORM）+ :471（PRINTFORML）整行',
+    '耻情点数显示与前置描写合成整行',
   );
   assert.equal(fixture.store.get('juel:31:8'), 50);
 });
 
-test('#624 兽人凌辱·口交：:475..:502 与 :509..:524 两条收行路径各自成整行', async () => {
-  // TALENT:52 命中：:475/:478/:481/:484 的初见分档 + :488 + 随机词条 + :498
-  // + :502 的 PRINTW 收行
+test('#624 兽人凌辱·口交：两条收行路径各自成整行', async () => {
+  // TALENT:52 命中：初见分档 + 名字 + 随机词条 + 猪台词
+  // + PRINTW 收行
   const t52 = await setup_ravish((f) => {
     f.store.set('talent:31:14', 1); // 大人しい → 「提心吊胆地」
     f.store.set('talent:31:52', 1);
@@ -651,19 +648,19 @@ test('#624 兽人凌辱·口交：:475..:502 与 :509..:524 两条收行路径�
     lines_t52.includes(
       '提心吊胆地冒险者把阴茎含了下去，『呃……这家伙，简直就是经验丰富的妓女嘛～』',
     ),
-    'TALENT:52 支：:475..:502 是一整行',
+    'TALENT:52 支：前半段是一整行',
   );
   assert.ok(
     !lines_t52.includes('提心吊胆地'),
-    ':475 的初见分档不得再单独成行（#624 审查发现：前缀重复）',
+    '前半段的初见分档不得再单独成行（#624 审查发现：前缀重复）',
   );
   assert.ok(
     lines_t52.includes('兽人抵受不住她那灵活的舌头，射在冒险者的嘴里了。'),
-    ':504 自占一行',
+    '后续行自占一行',
   );
-  assert.ok(lines_t52.includes('奉仕持续了下去……'), ':524 自占一行');
+  assert.ok(lines_t52.includes('奉仕持续了下去……'), '后续行自占一行');
 
-  // 其余支：:509..:521 的分档片段接 :524 的 PRINTL 收行
+  // 其余支：分档片段接 PRINTL 收行
   const cases = [
     [[14], '提心吊胆地', ''],
     [[17], '嘿嘿媚笑着', ''],
@@ -689,7 +686,7 @@ test('#624 兽人凌辱·口交：:475..:502 与 :509..:524 两条收行路径�
     const line = `${prefix}冒险者把阴茎含了下去，${tail}奉仕持续了下去……`;
     assert.ok(
       lines.includes(line),
-      `TALENT ${JSON.stringify(talents)} → :475..:498 与 :509..:524 合成一条「${line}」`,
+      `TALENT ${JSON.stringify(talents)} → 前半段与后半段合成一条「${line}」`,
     );
     assert.ok(
       !lines.includes(`${prefix}冒险者把阴茎含了下去，`),
@@ -698,7 +695,7 @@ test('#624 兽人凌辱·口交：:475..:502 与 :509..:524 两条收行路径�
   }
 });
 
-test('#624 兽人凌辱·全穴奉仕：:549..:572 的随机词条与部位分档同属一行', async () => {
+test('#624 兽人凌辱·全穴奉仕：随机词条与部位分档同属一行', async () => {
   const cases = [
     [{ cflag42: 83 }, '眼镜上飞撒着……'],
     [{ 魅力点: 2 }, '可爱的眼睛上飞撒着……'],
@@ -728,7 +725,7 @@ test('#624 兽人凌辱·全穴奉仕：:549..:572 的随机词条与部位分�
   }
 });
 
-test('#624 兽人凌辱·全穴奉仕：:595..:613 的润滑液与部位分档同属一行', async () => {
+test('#624 兽人凌辱·全穴奉仕：润滑液与部位分档同属一行', async () => {
   const cases = [
     [{ 魅力点: 21 }, '漂亮的'],
     [{ 魅力点: 14 }, '漂亮的屁股的缝隙中的'],
@@ -755,7 +752,7 @@ test('#624 兽人凌辱·全穴奉仕：:595..:613 的润滑液与部位分档�
   }
 });
 
-test('#624 兽人凌辱·全穴奉仕：:614..:639 的体型分档与收行同属一行', async () => {
+test('#624 兽人凌辱·全穴奉仕：体型分档与收行同属一行', async () => {
   const cases = [
     [{ 99: 1 }, '魁梧的身体上'],
     [{ 100: 1 }, '娇小的身体上'],
@@ -783,7 +780,7 @@ test('#624 兽人凌辱·全穴奉仕：:614..:639 的体型分档与收行同�
   }
 });
 
-test('#624 兽人凌辱·屈辱プレイ：:668..:687 的素质分档与猪叫同属一行', async () => {
+test('#624 兽人凌辱·屈辱プレイ：素质分档与猪叫同属一行', async () => {
   const cases = [
     [{ 10: 1 }, '浑身颤抖着、'],
     [{ 14: 1 }, '浑身颤抖着、'],
@@ -810,7 +807,7 @@ test('#624 兽人凌辱·屈辱プレイ：:668..:687 的素质分档与猪叫�
   }
 });
 
-test('#624 男人凌辱（女性版）·肉便器：:1514..:1562 的落書与收尾同属一行', async () => {
+test('#624 男人凌辱（女性版）·肉便器：落書与收尾同属一行', async () => {
   const cases = [
     [{}, [1, 1, 0], '【最喜欢阴茎】【操我】'],
     [{}, [1, 1, 0, 1, 0], '【最喜欢阴茎】【肛门免费】'],
@@ -840,7 +837,7 @@ test('#624 男人凌辱（女性版）·肉便器：:1514..:1562 的落書与收
   }
 });
 
-test('#624 女魔族凌辱·一人：:1692..:1706 的阴茎分档与长舌头同属一行', async () => {
+test('#624 女魔族凌辱·一人：阴茎分档与长舌头同属一行', async () => {
   const cases = [
     [0, '阴茎'],
     [1, '巨根'],
@@ -850,7 +847,7 @@ test('#624 女魔族凌辱·一人：:1692..:1706 的阴茎分档与长舌头同
   ];
   for (const [p318, part] of cases) {
     const fixture = await setup_ravish((f) => {
-      f.store.set('talent:31:122', 1); // 男人支（本函数的 :1673-1779 段）
+      f.store.set('talent:31:122', 1); // 男人支
       if (p318 !== 0) {
         f.store.set('talent:31:318', p318);
       }
@@ -866,7 +863,7 @@ test('#624 女魔族凌辱·一人：:1692..:1706 的阴茎分档与长舌头同
   }
 });
 
-test('#624 女魔族凌辱·多人口交：:1733..:1747 与一人支同型的一整行', async () => {
+test('#624 女魔族凌辱·多人口交：与一人支同型的一整行', async () => {
   const cases = [
     [0, '阴茎'],
     [1, '巨根'],
@@ -892,7 +889,7 @@ test('#624 女魔族凌辱·多人口交：:1733..:1747 与一人支同型的一
   }
 });
 
-test('#624 女魔族凌辱·喂奶：:1805..:1819 的阴茎分档与紫色手同属一行', async () => {
+test('#624 女魔族凌辱·喂奶：阴茎分档与紫色手同属一行', async () => {
   const cases = [
     [0, '阴茎'],
     [1, '巨根'],
@@ -918,7 +915,7 @@ test('#624 女魔族凌辱·喂奶：:1805..:1819 的阴茎分档与紫色手同
   }
 });
 
-test('#624 女魔族凌辱·处女封印：:1889..:1895 的 RAND:2 二选一同属一行', async () => {
+test('#624 女魔族凌辱·处女封印：RAND:2 二选一同属一行', async () => {
   const cases = [
     [0, '『这边的穴才有的个中滋味 好好感・受・吧』'],
     [1, '『这边的穴也有的个中滋味 好好感・受・吧』'],
@@ -937,9 +934,9 @@ test('#624 女魔族凌辱·处女封印：:1889..:1895 的 RAND:2 二选一同�
   }
 });
 
-test('#624 对人格斗·巨型假阳具：:2517..:2523 的穴二选一同属一行', async () => {
-  // 该支的判据含 `!(TALENT:(ARG:1):122)`（:2515），所以 :2519 的「后穴」臂
-  // 在原作里不可达（ARG:1 是男人时不进这一支）——只钉可达的「前后两穴都」
+test('#624 对人格斗·巨型假阳具：穴二选一同属一行', async () => {
+  // 该支的条件含 `!(TALENT:(ARG:1):122)`——ARG:1 是男人时不进这一支，
+  // 「后穴」分支不可达——只钉可达的「前后两穴都」
   const fixture = await setup_ravish();
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
@@ -949,11 +946,11 @@ test('#624 对人格斗·巨型假阳具：:2517..:2523 的穴二选一同属一
     fixture
       .text_lines()
       .includes('冒险者的前后两穴都被巨型假阳具插入了，你用手抚摸着入口周边。'),
-    ':2517..:2523 是一整行',
+    '巨型假阳具行是一整行',
   );
 });
 
-test('#624 对人格斗·头发压脸：:2646..:2650 的阴茎/私处二选一同属一行', async () => {
+test('#624 对人格斗·头发压脸：阴茎/私处二选一同属一行', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('talent:31:17', 1); // 低姿态
   });
@@ -964,12 +961,12 @@ test('#624 对人格斗·头发压脸：:2646..:2650 的阴茎/私处二选一�
   const lines = fixture.text_lines();
   assert.ok(
     lines.includes('冒险者谦卑地用狗一样的神态舔舐着你的'),
-    ':2644 自占一行（PRINTFORML 收行）',
+    '前置描写自占一行（PRINTFORML 收行）',
   );
-  assert.ok(lines.includes('私处。'), ':2646/:2648 与 :2650 合成一行');
+  assert.ok(lines.includes('私处。'), '二选一与句号合成一行');
 });
 
-test('#624 对人格斗·捆绑：:2674+:2676 与 :2679 两条收行路径各自成整行', async () => {
+test('#624 对人格斗·捆绑：两条收行路径各自成整行', async () => {
   // draws：[开场 4 掷, rand_n(7..3) 全不中, rand_n(2)=0 捆绑, rand_n(3)=0 鞭打,
   // 行内 rand_n(2) 决定鞭子/蜡烛]
   const whip = await setup_ravish();
@@ -978,7 +975,7 @@ test('#624 对人格斗·捆绑：:2674+:2676 与 :2679 两条收行路径各自
   await mod_whip.pc_ryou(0, 31, seq_rand(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0));
   assert.ok(
     whip.text_lines().includes('向伏在地上的冒险者的背上用鞭子不停地抽打着、'),
-    'RAND:2 = 0 → :2674+:2676 是一整行',
+    'RAND:2 = 0 → 鞭打行是一整行',
   );
 
   const candle = await setup_ravish();
@@ -988,16 +985,16 @@ test('#624 对人格斗·捆绑：:2674+:2676 与 :2679 两条收行路径各自
   const lines = candle.text_lines();
   assert.ok(
     lines.includes('向伏在地上的冒险者的背上将点燃的蜡烛倾倒了上去'),
-    'RAND:2 = 1 → :2674 与 :2679 合成一条（语句外前缀常量 + 该分支自己的收行）',
+    'RAND:2 = 1 → 前缀与蜡烛收行合成一条（语句外前缀常量 + 该分支自己的收行）',
   );
   assert.ok(
     !lines.includes('向伏在地上的冒险者的背上'),
-    'RAND:2 = 1 → :2674 不得再单独成行',
+    'RAND:2 = 1 → 前缀不得再单独成行',
   );
   assert.ok(
     lines.includes(
       '过热的刺痛让冒险者的身体不住地抽搐着、身上更是被滴上了更多的蜡',
     ),
-    ':2680 自占一行',
+    '后续行自占一行',
   );
 });

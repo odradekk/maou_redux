@@ -1,5 +1,5 @@
 /**
- * ere/page/page-dungeon-daily.js @DISPLAY_DUNGEON_DAILY + @CAL_DUNGEON_DAILY
+ * ere/page/page-dungeon-daily.js display_dungeon_daily + cal_dungeon_daily
  * 的行为测试（issue #179，H10）。
  *
  * 缝 = test/helpers/era-fixture.js。随机消费经 display_dungeon_daily 的
@@ -9,9 +9,9 @@
  * 验收对应（#179 清单）：
  *   - 奴隶日常的 STORAGE 扫描（空闲 + 爱慕/淫乱）与随机目标；
  *   - 显示行的拼装（类型标签链 + 爱慕日常/淫乱日常）；
- *   - 怪物日常段零输出、地城日常段恒一个空行（768 行原作的真实输出面，
- *     逐段核对见源文件头）；
- *   - @CAL_DUNGEON_DAILY 的威望钳制与每日 -2（原作无调用点、不接线，
+ *   - 怪物日常段零输出、地城日常段恒一个空行（真实输出面，
+ *     逐段核对见该模块文件头）；
+ *   - cal_dungeon_daily 的威望钳制与每日 -2（无调用方、不接入，
  *     函数体直测）。
  */
 
@@ -66,7 +66,7 @@ test('奴隶日常扫描：空闲且爱慕/淫乱者入池，其余不入；计�
     '占位头 + 计数 2（STORAGE:0）',
   );
   // 消费序（有候选）：目标掷选(n=2) → 怪物段(49) → 地城段(20)
-  assert.deepEqual(calls, [2, 49, 20], '三次随机消费，顺序与上界 1:1');
+  assert.deepEqual(calls, [2, 49, 20], '三次随机消费，顺序与上界一致');
 });
 
 test('随机目标：掷 1 → 池第二人（贝塔），显示行带淫乱日常', () => {
@@ -85,7 +85,7 @@ test('随机目标：掷 1 → 池第二人（贝塔），显示行带淫乱日�
   );
 });
 
-test('爱慕优先于淫乱（:61-65 的 ELSEIF 序）：爱慕奴隶显示爱慕日常', () => {
+test('爱慕优先于淫乱（ELSEIF 序）：爱慕奴隶显示爱慕日常', () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:76', 1); // 阿尔同时有爱慕与淫乱
   const { display_dungeon_daily } = load(fixture);
@@ -118,7 +118,7 @@ test('性格素质段（160-180）：命中者取 TALENTNAME（最后命中胜�
   display_dungeon_daily(() => 0);
   assert.ok(
     text_lines(fixture).includes('阿尔自信家爱慕日常'),
-    '170 的名字（自信家）覆盖 163（高贵）——原作 FOR 无 BREAK',
+    '170 的名字（自信家）覆盖 163（高贵）——FOR 无 BREAK',
   );
 });
 
@@ -129,11 +129,11 @@ test('无候选：DAILYTARGET = 0（魔王），两段照常消费随机、显�
   const calls = [];
   const { display_dungeon_daily } = load(fixture);
   display_dungeon_daily(counting(calls));
-  // 池空：无掷选，直接怪物段(49) + 地城段(20)——原作 IF STORAGE != 0 不进
+  // 池空：无掷选，直接怪物段(49) + 地城段(20)——IF STORAGE != 0 不进
   assert.deepEqual(calls, [49, 20], '无候选时只有两段消费');
   assert.ok(
     text_lines(fixture).includes('你'),
-    'DAILYTARGET = 0 → 显示段读角色 0（原作行为：SIF 守卫只拦 >= CHARANUM）',
+    'DAILYTARGET = 0 → 显示段读角色 0（SIF 检查只拦 >= CHARANUM）',
   );
 });
 
@@ -157,7 +157,7 @@ test('CAL_DUNGEON_DAILY：威望 > 100 钳 100 后 -2；未超只 -2', () => {
   assert.equal(era_exflag.prestige, 48, '50 → -2');
 });
 
-test('主菜单接线：FLAG:36 = 5 的面板轮尾部打出日程头（#179 起）', () => {
+test('主菜单接入：FLAG:36 = 5 的面板轮尾部打出日程头（#179 起）', () => {
   const fixture = setup_world();
   fixture.store.set('flag:36', 5);
   const menu = fixture.load_module('page/page-main-menu');
@@ -166,7 +166,7 @@ test('主菜单接线：FLAG:36 = 5 的面板轮尾部打出日程头（#179 起
     fixture
       .text_lines()
       .some((line) => line.includes('Space for further docuement')),
-    'DISPLAY_DUNGEON_DAILY 真身在 draw_dungeon_daily 尾部执行',
+    'display_dungeon_daily 真身在 draw_dungeon_daily 尾部执行',
   );
   assert(
     !fixture

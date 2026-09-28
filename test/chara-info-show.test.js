@@ -1,6 +1,6 @@
 /**
- * 角色信息显示链的行为测试（issue #390，N6 段 2）——本票全部生产模块共用
- * 一个测试文件（内环按票跑）。
+ * 角色信息显示链的行为测试（issue #390，N6 段 2）——全部生产模块共用
+ * 一个测试文件（内环按工单跑）。
  *
  * 被测模块：components/chara-info-title.js / chara-talents.js /
  * chara-info-abl-mark.js / chara-appearance.js / stain-info.js /
@@ -18,7 +18,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** RAND:N 恒 0 的随机源 */
+/** 恒 0 的随机源 */
 const always = () => 0;
 
 /**
@@ -62,14 +62,14 @@ function text_at(fixture, index) {
   return fixture.lines[index]?.text;
 }
 
-test('SHOW_INFO_TITLE：等号线 + 编号/名字/年龄行的逐字形态', () => {
+test('show_info_title：等号线 + 编号/名字/年龄行的逐字复现', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:7:451', 16); // CFLAG:451 人类年龄
   fixture.store.set('cflag:7:452', 16); // CFLAG:452 种族年龄
   show_info_title(7, always);
 
   assert.equal(fixture.lines[0].type, 'divider');
-  assert.equal(fixture.lines[0].border, 'solid', ':326 CUSTOMDRAWLINE =');
+  assert.equal(fixture.lines[0].border, 'solid', '实线分割行');
   // —— 编号宽 3 左对齐（"7  " + 一个空格）、名字宽 12、
   // 五个全角空格、年龄右对齐 48
   assert.equal(
@@ -78,7 +78,7 @@ test('SHOW_INFO_TITLE：等号线 + 编号/名字/年龄行的逐字形态', () 
   );
 });
 
-test('SHOW_INFO_TITLE：爱慕优先于淫乱，两者都不命中时补五个全角空格', () => {
+test('show_info_title：爱慕优先于淫乱，两者都不命中时补五个全角空格', () => {
   // [TALENT 位, 期望片段, 说明]
   const cases = [
     [85, '　<爱慕>　', 'TALENT:85 爱慕'],
@@ -109,7 +109,7 @@ test('SHOW_INFO_TITLE：爱慕优先于淫乱，两者都不命中时补五个�
   }
 });
 
-test('SHOW_INFO_TITLE：85 与 76 同设时爱慕胜出（IF/ELSEIF 顺序）', () => {
+test('show_info_title：85 与 76 同设时爱慕胜出（IF/ELSEIF 顺序）', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:7:451', 16);
   fixture.store.set('talent:7:85', 1);
@@ -119,7 +119,7 @@ test('SHOW_INFO_TITLE：85 与 76 同设时爱慕胜出（IF/ELSEIF 顺序）', 
   assert.doesNotMatch(text_at(fixture, 1), /<淫乱>/);
 });
 
-test('SHOW_INFO_TITLE：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱动）', () => {
+test('show_info_title：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱动）', () => {
   // [FLAG:5 位组合, 期望年龄串（已右对齐到 48）, 说明]
   const cases = [
     [0, '\u00A0'.repeat(48), '位 12 关：年龄串为空 → 48 空格'],
@@ -145,7 +145,7 @@ test('SHOW_INFO_TITLE：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱
   }
 });
 
-test('SHOW_INFO_TITLE：位 14 开但两年龄相同时不追加换算（第三个条件）', () => {
+test('show_info_title：位 14 开但两年龄相同时不追加换算（第三个条件）', () => {
   const { fixture, show_info_title } = title_fixture(
     bit(12) | bit(13) | bit(14),
   );
@@ -158,7 +158,7 @@ test('SHOW_INFO_TITLE：位 14 开但两年龄相同时不追加换算（第三�
   );
 });
 
-test('SHOW_INFO_TITLE：TALENT:292 魔王之影追加寿命倒计时', () => {
+test('show_info_title：TALENT:292 魔王之影追加寿命倒计时', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:7:451', 16);
   fixture.store.set('cflag:7:820', 7); // CFLAG:820 寿命剩余天数
@@ -168,7 +168,7 @@ test('SHOW_INFO_TITLE：TALENT:292 魔王之影追加寿命倒计时', () => {
   assert.match(text_at(fixture, 1), /16 岁 \[寿命还有\u00A0{2}7 天\]$/);
 });
 
-test('SHOW_INFO_TITLE：魔王（cid 0）不显示年龄行但编号行照出', () => {
+test('show_info_title：魔王（cid 0）不显示年龄行但编号行照出', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:0:451', 999);
   show_info_title(0, always);
@@ -178,7 +178,7 @@ test('SHOW_INFO_TITLE：魔王（cid 0）不显示年龄行但编号行照出', 
   assert.equal(line.slice(-48), '\u00A0'.repeat(48));
 });
 
-test('SHOW_INFO_TITLE：CFLAG:451 缺失时现调 CHAR_BODY_GENERATE_WAPPED 补生成', () => {
+test('show_info_title：CFLAG:451 缺失时现调 char_body_generate_wapped 补生成', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   assert.equal(fixture.store.get('cflag:7:451'), undefined);
   show_info_title(7, seq([7]));
@@ -186,7 +186,7 @@ test('SHOW_INFO_TITLE：CFLAG:451 缺失时现调 CHAR_BODY_GENERATE_WAPPED 补�
   assert.match(text_at(fixture, 1), /岁$/);
 });
 
-test('SHOW_INFO_TITLE：CFLAG:451 已有值时不再生成（不消费随机源）', () => {
+test('show_info_title：CFLAG:451 已有值时不再生成（不消费随机源）', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:7:451', 20);
   fixture.store.set('cflag:7:452', 20);
@@ -196,7 +196,7 @@ test('SHOW_INFO_TITLE：CFLAG:451 已有值时不再生成（不消费随机源�
   assert.match(text_at(fixture, 1), /20 岁$/);
 });
 
-// —— @SHOW_BLOCK（:372-427） ——
+// —— @show_block（:372-427） ——
 
 function block_fixture(flag5 = 0, flag8 = 0) {
   const fixture = create_era_fixture();
@@ -209,13 +209,13 @@ function block_fixture(flag5 = 0, flag8 = 0) {
   };
 }
 
-test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设真按钮（#546）', async () => {
+test('show_block：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设真按钮（#546）', async () => {
   const { fixture, show_block } = block_fixture();
   fixture.store.set('cstr:7:60', '人家'); // CSTR:60 自称
   await show_block(7);
-  // 原作 :374-375 是 PRINTPLAINFORM + PRINTFORM 的同一行文字提示；ere 的
+  // 提示文字与 [8] 按钮同在一段；ere 的
   // input 只接受已打印按钮的快捷键（#129），[8] 升级为真按钮才能点进
-  // RANDOM_SELF_CALL 的 MODE 1——按钮自成一行（项目通例，见 #384 先例）
+  // random_self_call 的 mode 1——按钮自成一行（项目通例，见 #384 先例）
   assert.equal(text_at(fixture, 0), `一人称：${'人家' + '\u00A0'.repeat(22)}`);
   const buttons = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator === 8,
@@ -224,10 +224,10 @@ test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设�
   assert.equal(buttons[0].rendered, '[8] 一人称重设 ');
 });
 
-test('SHOW_BLOCK：三处收行 PRINTL 只结束所在行，全程零空行（#596）', async () => {
-  // 原作 :395-396/:405-408/:416-419 的 PRINTL 都只结束上一行（一人称/身高行、
-  // 体重行/LIFE_BAR 的未收行、臀围行/VITAL_BAR 的未收行），不产生空行。
-  // 魔王臂里 :395 的守卫不成立、:408/:419 落在两条 bar 的未收行上——三种
+test('show_block：三处收行只结束所在行，全程零空行（#596）', async () => {
+  // 三处收行都只结束上一行（一人称/身高行、
+  // 体重行/体力条的未收行、臀围行/气力条的未收行），不产生空行。
+  // 魔王分支里一人称行不出、另两处落在两条条的未收行上——三种
   // 组合都不该多出空行。
   const cases = [
     [7, bit(15), '非魔王 + 三围开'],
@@ -237,14 +237,14 @@ test('SHOW_BLOCK：三处收行 PRINTL 只结束所在行，全程零空行（#5
   for (const [cid, flag5, label] of cases) {
     const { fixture, show_block } = block_fixture(flag5);
     await show_block(cid);
-    // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
+    // 空行的两种写法都算（println 落 br、print('') 落 text 空串）
     assert.equal(
       fixture.lines.filter(
         (line) =>
           line.type === 'br' || (line.type === 'text' && line.text === ''),
       ).length,
       0,
-      `${label}：SHOW_BLOCK 零空行（三处 PRINTL 只收行）`,
+      `${label}：show_block 零空行（三处都只收行）`,
     );
   }
   // 段落逐行相邻：一人称 → [8] → 身高 → 体力条 → 体重 → 气力条 → 臀围
@@ -257,11 +257,11 @@ test('SHOW_BLOCK：三处收行 PRINTL 只结束所在行，全程零空行（#5
   assert.deepEqual(
     fixture.lines.map((line) => line.type),
     ['text', 'button', 'text', 'progress', 'text', 'progress', 'text'],
-    '段落序列（:395-396/:405-408/:416-419 三处都不插空行）',
+    '段落序列（三处都不插空行）',
   );
 });
 
-test('SHOW_BLOCK：魔王（cid 0）不打印一人称行与 [8] 按钮（:373 的 ARG != MASTER）', async () => {
+test('show_block：魔王（cid 0）不打印一人称行与 [8] 按钮', async () => {
   const { fixture, show_block } = block_fixture();
   await show_block(0);
   assert.equal(fixture.text_lines().length, 0, '魔王没有一人称行');
@@ -272,12 +272,12 @@ test('SHOW_BLOCK：魔王（cid 0）不打印一人称行与 [8] 按钮（:373 �
   );
 });
 
-test('SHOW_BLOCK：三围行只在 FLAG:5 位 15 且非魔王时出现（两侧）', () => {
+test('show_block：三围行只在 FLAG:5 位 15 且非魔王时出现（两侧）', () => {
   // [FLAG:5, cid, 是否出现, 说明]
   const cases = [
     [bit(15), 7, true, '位 15 开 + 非魔王'],
     [0, 7, false, '位 15 关'],
-    [bit(15), 0, false, '魔王：两个判据的第二个不成立'],
+    [bit(15), 0, false, '魔王：两个条件的第二个不成立'],
   ];
   return (async () => {
     for (const [flag5, cid, shown, label] of cases) {
@@ -293,7 +293,7 @@ test('SHOW_BLOCK：三围行只在 FLAG:5 位 15 且非魔王时出现（两侧�
   })();
 });
 
-test('SHOW_BLOCK：身高/胸围行与罩杯括号，男性位改补 8 空格', () => {
+test('show_block：身高/胸围行与罩杯括号，男性位改补 8 空格', () => {
   // [TALENT:122, 行尾, 说明]；身高 160.0 → 下胸围 689，胸围 800 → CAL_VAR 4 → A
   const cases = [
     [0, '(A)\u00A0\u00A0\u00A0\u00A0', '女性：罩杯括号补到 7 列'],
@@ -315,7 +315,7 @@ test('SHOW_BLOCK：身高/胸围行与罩杯括号，男性位改补 8 空格', 
   })();
 });
 
-test('SHOW_BLOCK：体力条后接体重/腰围行、气力条后接臀围行', () => {
+test('show_block：体力条后接体重/腰围行、气力条后接臀围行', () => {
   const { fixture, show_block } = block_fixture(bit(15));
   fixture.store.set('maxbase:7:0', 1000);
   fixture.store.set('base:7:0', 800);
@@ -336,7 +336,7 @@ test('SHOW_BLOCK：体力条后接体重/腰围行、气力条后接臀围行', 
   });
 });
 
-test('SHOW_BLOCK：魔王（cid 0）不出三围行，但体力/气力条照出', () => {
+test('show_block：魔王（cid 0）不出三围行，但体力/气力条照出', () => {
   const { fixture, show_block } = block_fixture(bit(15));
   fixture.store.set('maxbase:0:0', 1000);
   fixture.store.set('base:0:0', 500);
@@ -348,7 +348,7 @@ test('SHOW_BLOCK：魔王（cid 0）不出三围行，但体力/气力条照出'
   });
 });
 
-test('SHOW_BLOCK：受注任务三段的守卫（CFLAG:534 / CFLAG:1 / FLAG:8 位 3）', () => {
+test('show_block：受注任务三段的条件（CFLAG:534 / CFLAG:1 / FLAG:8 位 3）', () => {
   // [CFLAG:534, CFLAG:1, FLAG:8 位 3, 期望段数, 说明]
   const cases = [
     [
@@ -356,7 +356,7 @@ test('SHOW_BLOCK：受注任务三段的守卫（CFLAG:534 / CFLAG:1 / FLAG:8 �
       2,
       bit(3),
       2,
-      '三个判据全中：任务名 + 障碍聚合（怪物编号 0 → 讨伐对象段直返）',
+      '三个条件全中：任务名 + 障碍聚合（怪物编号 0 → 讨伐对象段直返）',
     ],
     [1, 2, 0, 0, 'FLAG:8 位 3 关：整段不出'],
     [1, 0, bit(3), 0, 'CFLAG:1 非 2（不在任务中）'],
@@ -382,7 +382,7 @@ test('SHOW_BLOCK：受注任务三段的守卫（CFLAG:534 / CFLAG:1 / FLAG:8 �
   })();
 });
 
-test('SHOW_BLOCK：任务三段的顺序是 任务名 → 障碍聚合 → 讨伐对象', () => {
+test('show_block：任务三段的顺序是 任务名 → 障碍聚合 → 讨伐对象', () => {
   const { fixture, show_block } = block_fixture(0, bit(3));
   fixture.store.set('cflag:7:534', 1);
   fixture.store.set('cflag:7:1', 2);
@@ -402,7 +402,7 @@ test('SHOW_BLOCK：任务三段的顺序是 任务名 → 障碍聚合 → 讨�
   });
 });
 
-// —— @SHOW_TALENT / @SHOW_TALENT_GROUP（:428-921） ——
+// —— show_talent / show_talent_group ——
 
 const { parse_yml_ids } = require('./helpers/static-names');
 
@@ -469,8 +469,8 @@ const T = {
   魔虫知识: 328,
 };
 
-test('SHOW_TALENT：黄金样本 daycycle-max 的分类显示七行逐字复现', () => {
-  // 素质取自 daycycle-max-log:186-191 的勇者考狄利亚；组内顺序即
+test('show_talent：黄金样本 daycycle-max 的分类显示七行逐字复现', () => {
+  // 素质取自 daycycle-max-log 的勇者考狄利亚；组内顺序即
   // SECTIONS 的扫描顺序（伶俐 175 属 160-179 档，排在 戒备森严 27 之前）
   const { fixture, show_talent } = talent_fixture({
     flag5: 1 << 8,
@@ -500,7 +500,7 @@ test('SHOW_TALENT：黄金样本 daycycle-max 的分类显示七行逐字复现'
   ]);
 });
 
-test('SHOW_TALENT：性别行按 男/扶她/女 三档，男与扶她追加阴茎状态标', () => {
+test('show_talent：性别行按 男/扶她/女 三档，男与扶她追加阴茎状态标', () => {
   // [TALENT:122, TALENT:121, TALENT:318, 期望行, 说明]
   const cases = [
     [0, 0, 0, '　性别：[女]', '女性'],
@@ -520,7 +520,7 @@ test('SHOW_TALENT：性别行按 男/扶她/女 三档，男与扶她追加阴�
   }
 });
 
-test('SHOW_TALENT：性别行末尾三个素质标只出已得的（处女/童贞/私处封印）', () => {
+test('show_talent：性别行末尾三个素质标只出已得的（处女/童贞/私处封印）', () => {
   const { fixture, show_talent } = talent_fixture({
     flag5: 1 << 8,
     talents: { [T.童贞]: 1 },
@@ -529,7 +529,7 @@ test('SHOW_TALENT：性别行末尾三个素质标只出已得的（处女/童�
   assert.equal(fixture.text_lines()[0], '　性别：[女][童贞]');
 });
 
-test('SHOW_TALENT：每 8 项换行、续行补 4 个全角空格（9 项分两行）', () => {
+test('show_talent：每 8 项换行、续行补 4 个全角空格（9 项分两行）', () => {
   const talents = {};
   for (let id = 200; id <= 208; id += 1) talents[id] = 1; // 职业 200-212 连号
   talents[T.接受快感] = 1; // 性癖段有输出 → 收行，战斗段得以独占一行
@@ -545,20 +545,20 @@ test('SHOW_TALENT：每 8 项换行、续行补 4 个全角空格（9 项分两�
   assert.equal(continuation.split('[').length - 1, 1, '续行 1 项');
 });
 
-test('SHOW_TALENT：分组色按源 SELECTCASE 逐条落地（表驱动）', () => {
-  // [素质编号, 期望色, 说明]；色串取源 SETCOLOR/SETCOLORBYNAME 的等价物
+test('show_talent：分组色逐条核对（表驱动）', () => {
+  // [素质编号, 期望色, 说明]；色串按染色的三通道数值记录
   const cases = [
-    [74, 'DarkSeaGreen', '自慰狂（CASE 101,102,230,74）'],
+    [74, 'DarkSeaGreen', '自慰狂（色档 101,102,230,74）'],
     [230, 'DarkSeaGreen', '绝伦'],
-    [75, '#ffa500', '性爱狂（SETCOLOR 255,165,0）'],
+    [75, '#ffa500', '性爱狂（rgb(255,165,0)）'],
     [232, '#ffa500', '淫壶'],
-    [77, '#db7093', '尻穴狂（SETCOLOR 219,112,147）'],
+    [77, '#db7093', '尻穴狂（rgb(219,112,147)）'],
     [233, '#db7093', '淫肛'],
-    [78, '#66b3ff', '弄乳狂（SETCOLOR 102,179,255）'],
+    [78, '#66b3ff', '弄乳狂（rgb(102,179,255)）'],
     [114, '#66b3ff', '爆乳'],
-    [153, '#64ff64', '妊娠（SETCOLOR 100,255,100）'],
+    [153, '#64ff64', '妊娠（rgb(100,255,100)）'],
     [130, '#64ff64', '母乳体质'],
-    [76, 'Salmon', '淫乱（SETCOLORBYNAME Salmon）'],
+    [76, 'Salmon', '淫乱（色名 Salmon）'],
     [85, 'Salmon', '爱慕'],
     [200, '#64ff64', '职业档下沿'],
     [208, '#64ff64', '职业档 200-212'],
@@ -572,16 +572,16 @@ test('SHOW_TALENT：分组色按源 SELECTCASE 逐条落地（表驱动）', () 
   }
 });
 
-test('SHOW_TALENT：EX 素质的第二组配色覆盖第一组（表驱动）', () => {
+test('show_talent：EX 素质的第二组配色覆盖第一组（表驱动）', () => {
   // [EX 编号, 期望色, 说明]
   const cases = [
-    [101, '#ffd700', 'EX 性格 101-800（SETCOLOR 255,215,0）'],
+    [101, '#ffd700', 'EX 性格 101-800（rgb(255,215,0)）'],
     [800, '#ffd700', '上沿'],
-    [801, undefined, 'EX 战斗 801-900：RESETCOLOR'],
+    [801, undefined, 'EX 战斗 801-900：默认色'],
     [900, undefined, '上沿'],
-    [901, '#64ff64', 'EX 职业 901-999（SETCOLOR 100,255,100）'],
+    [901, '#64ff64', 'EX 职业 901-999（rgb(100,255,100)）'],
     [999, '#64ff64', '上沿'],
-    [100, undefined, '100 不在任何 EX 档（CASE 101 TO 800 的下界不含）'],
+    [100, undefined, '100 不在任何 EX 档（101-800 的下界不含）'],
   ];
   for (const [id, color, label] of cases) {
     const { talent_color } = talent_fixture();
@@ -589,7 +589,7 @@ test('SHOW_TALENT：EX 素质的第二组配色覆盖第一组（表驱动）', 
   }
 });
 
-test('SHOW_TALENT：模式 2 取 EX 名字表、模式 1 取感觉封锁名', () => {
+test('show_talent：模式 2 取 EX 名字表、模式 1 取感觉封锁名', () => {
   const { fixture, talent_label } = talent_fixture();
   fixture.load_module('chara/chara-ex').ex_talentname_init();
   // 模式 2：EX_TALENTNAME 的运行时表
@@ -605,7 +605,7 @@ test('SHOW_TALENT：模式 2 取 EX 名字表、模式 1 取感觉封锁名', ()
   assert.equal(talent_label(7, 99, 1), tname(99), '其余编号不改名');
 });
 
-test('SHOW_TALENT：男体下 101/102/230 三个素质改用阴茎侧名字', () => {
+test('show_talent：男体下 101/102/230 三个素质改用阴茎侧名字', () => {
   const man = talent_fixture({ talents: { [T.男人]: 1 } });
   assert.equal(man.talent_label(7, 101, 0), '阴茎钝感');
   assert.equal(man.talent_label(7, 102, 0), '阴茎敏感');
@@ -621,7 +621,7 @@ test('SHOW_TALENT：男体下 101/102/230 三个素质改用阴茎侧名字', ()
   assert.equal(woman.talent_label(7, 101, 1), '阴核感觉封锁');
 });
 
-test('SHOW_TALENT：TALENT:206 恒以「巫者」显示（覆盖其余改名结论）', () => {
+test('show_talent：TALENT:206 恒以「巫者」显示（覆盖其余改名结论）', () => {
   const { fixture, show_talent } = talent_fixture({
     flag5: 1 << 8,
     talents: { [T.巫者]: 1 },
@@ -630,13 +630,13 @@ test('SHOW_TALENT：TALENT:206 恒以「巫者」显示（覆盖其余改名结�
   assert(fixture.text_lines().some((t) => t.includes('[巫者]')));
 });
 
-test('SHOW_TALENT：体质段无输出时标签与下一段同拼一行，有输出才收行', () => {
+test('show_talent：体质段无输出时标签与下一段同拼一行，有输出才收行', () => {
   const empty = talent_fixture({ flag5: 1 << 8 });
   empty.show_talent(7);
   assert.deepEqual(
     empty.fixture.text_lines().filter((t) => t.includes('　技术：')),
     ['　性格：　体质：　技术：'],
-    '前三段全空时三个标签依次拼在同一行（源的两条收行判据）',
+    '前三段全空时三个标签依次拼在同一行（两条收行条件）',
   );
 
   const with_body = talent_fixture({
@@ -650,7 +650,7 @@ test('SHOW_TALENT：体质段无输出时标签与下一段同拼一行，有输
   );
 });
 
-test('SHOW_TALENT：魔虫知识（328）按自身判据显示', () => {
+test('show_talent：魔虫知识（328）按自身条件显示', () => {
   const only327 = talent_fixture({
     flag5: 1 << 8,
     talents: { [T.淫魔知识]: 1 },
@@ -671,7 +671,7 @@ test('SHOW_TALENT：魔虫知识（328）按自身判据显示', () => {
   );
 });
 
-test('SHOW_TALENT：早泄（133）的守卫是扶她或男人，且要求自身已得', () => {
+test('show_talent：早泄（133）的条件是扶她或男人，且要求自身已得', () => {
   const cases = [
     [{ [T.早泄]: 1 }, false, '女性：不出'],
     [{ [T.早泄]: 1, [T.男人]: 1 }, true, '男人：出'],
@@ -689,10 +689,10 @@ test('SHOW_TALENT：早泄（133）的守卫是扶她或男人，且要求自身
   }
 });
 
-test('SHOW_TALENT：扫描区间的上界是不含的（边界两侧）', () => {
+test('show_talent：扫描区间的上界是不含的（边界两侧）', () => {
   // 取两个只被单一区间覆盖的编号带：499/500/599（性格的 EX 性格档）与
   // 469/470/489（战斗的精英技能档）——其余档位与别的段重叠，测不出边界。
-  // 这四个编号在原作名字表里没有条目（该档位靠 EX_TALENTNAME 之类运行期
+  // 这四个编号在名字表里没有条目（该档位靠 EX_TALENTNAME 之类运行期
   // 命名），用例就地播种合成名，使断言认得住。
   const cases = [
     [499, false, '500-599 的下界-1'],
@@ -717,7 +717,7 @@ test('SHOW_TALENT：扫描区间的上界是不含的（边界两侧）', () => 
   }
 });
 
-test('SHOW_TALENT：简单臂无标签、起始计数 U = 6（首行只放 2 项）', () => {
+test('show_talent：简单分支无标签、起始计数 U = 6（首行只放 2 项）', () => {
   const talents = {};
   for (const id of [200, 201, 202, 203]) talents[id] = 1;
   const { fixture, show_talent } = talent_fixture({ flag5: 0, talents });
@@ -729,7 +729,7 @@ test('SHOW_TALENT：简单臂无标签、起始计数 U = 6（首行只放 2 项
   assert(lines[1].startsWith('　　　　'), '续行缩进');
 });
 
-test('SHOW_TALENT：简单臂跳过 300-324，其余照扫', () => {
+test('show_talent：简单分支跳过 300-324，其余照扫', () => {
   const talents = {};
   for (const id of [294, 300, 324, 325]) talents[id] = 1;
   const { fixture, show_talent } = talent_fixture({ flag5: 0, talents });
@@ -741,12 +741,12 @@ test('SHOW_TALENT：简单臂跳过 300-324，其余照扫', () => {
   assert(text.includes(`[${tname(325)}]`), '325 在上界上，照出');
 });
 
-test('SHOW_TALENT：简单臂补一趟 470-489 的精英魔物技能', () => {
+test('show_talent：简单分支补一趟 470-489 的精英魔物技能', () => {
   const { fixture, show_talent } = talent_fixture({
     flag5: 0,
     talents: { 471: 1, 485: 1, 486: 1, 489: 1, 490: 1 },
   });
-  // 486-490 在原作名字表里没有条目，就地播种合成名以便断言
+  // 486-490 在名字表里没有条目，就地播种合成名以便断言
   for (const id of [486, 489, 490])
     fixture.store.set(`talentname:${id}`, `档${id}`);
   show_talent(7);
@@ -758,7 +758,7 @@ test('SHOW_TALENT：简单臂补一趟 470-489 的精英魔物技能', () => {
   assert(!text.includes('[档490]'), '490 越出额外趟上界');
 });
 
-test('SHOW_TALENT：简单臂里 133 的守卫同样生效', () => {
+test('show_talent：简单分支里 133 的条件同样生效', () => {
   const female = talent_fixture({ flag5: 0, talents: { [T.早泄]: 1 } });
   female.show_talent(7);
   assert(!female.fixture.text_lines().join('').includes('[早泄]'));
@@ -771,7 +771,7 @@ test('SHOW_TALENT：简单臂里 133 的守卫同样生效', () => {
   assert(male.fixture.text_lines().join('').includes('[早泄]'));
 });
 
-test('SHOW_TALENT：EX 素质走分类臂的 EX 段（性格 100-800 与战斗 801-899）', () => {
+test('show_talent：EX 素质走分类分支的 EX 段（性格 100-800 与战斗 801-899）', () => {
   const { fixture, show_talent } = talent_fixture({
     flag5: 1 << 8,
     ex_talents: { 101: 1, 801: 1, 901: 1 },
@@ -784,7 +784,7 @@ test('SHOW_TALENT：EX 素质走分类臂的 EX 段（性格 100-800 与战斗 8
   assert(!text.includes('[一人军团]'), 'EX 901 不在任何扫描区间内');
 });
 
-test('SHOW_TALENT_GROUP：8 项换行的判定点是「第 9 项先收行再落项」', () => {
+test('show_talent_group：8 项换行的判定点是「第 9 项先收行再落项」', () => {
   const { fixture, show_talent_group } = talent_fixture({ flag5: 1 << 8 });
   seed_talent_names(fixture);
   const line = { fragments: [{ content: '　标签：' }], count: 0 };
@@ -796,7 +796,7 @@ test('SHOW_TALENT_GROUP：8 项换行的判定点是「第 9 项先收行再落�
   assert.equal(line.count, 9);
 });
 
-test('SHOW_TALENT_GROUP：101-108 的模式取自素质自身的第 2 位', () => {
+test('show_talent_group：101-108 的模式取自素质自身的第 2 位', () => {
   // TALENT:101 = 2（封锁位）→ 模式 2 → 走 EX 名字表
   const two = talent_fixture({ talents: { 101: 2 } });
   two.fixture.load_module('chara/chara-ex').ex_talentname_init();
@@ -812,7 +812,7 @@ test('SHOW_TALENT_GROUP：101-108 的模式取自素质自身的第 2 位', () =
   assert.equal(line2.fragments[0].content, `[${tname(101)}]`);
 });
 
-test('SHOW_TALENT：每一段的首项都能被驱动出来（表驱动全段）', () => {
+test('show_talent：每一段的首项都能被驱动出来（表驱动全段）', () => {
   const { SECTIONS } = talent_fixture();
   for (const section of SECTIONS) {
     const first = section.entries.find((e) => e.guard === undefined);
@@ -826,12 +826,12 @@ test('SHOW_TALENT：每一段的首项都能被驱动出来（表驱动全段）
         .text_lines()
         .join('')
         .includes(`[${tname(first.id)}]`),
-      `${section.label} 的首个无守卫项 ${first.id} 未出现`,
+      `${section.label} 的首个无条件项 ${first.id} 未出现`,
     );
   }
 });
 
-// —— @SHOW_INFO_ABL / @SHOW_INFO_MARK（:927-1016） ——
+// —— show_info_abl / show_info_mark ——
 
 /** yml/Abl.yml 的 序号 → 名 */
 const ABL_NAMES = parse_yml_ids('Abl.yml');
@@ -863,8 +863,8 @@ function abl_line(name, level) {
   return `\u00A0\u00A0${name}${'\u00A0'.repeat(8 - name.length * 2)} - LV${lv}${'\u00A0'.repeat(2 - lv.length + 2)}`;
 }
 
-test('SHOW_INFO_ABL：黄金样本 train-upgrade 的能力行逐字复现', () => {
-  // train-upgrade-log:157 是魔王（cid 0）能力画面唯一的非空能力行：
+test('show_info_abl：黄金样本 train-upgrade 的能力行逐字复现', () => {
+  // train-upgrade-log 里魔王（cid 0）能力画面唯一的非空能力行：
   // 2 个前导空格 + 名字宽 8 + " - LV" + 等级宽 2 + 2 个标记位空格
   const { fixture, show_info_abl } = abl_fixture({ abls: { 12: 3 } });
   show_info_abl(7);
@@ -881,7 +881,7 @@ test('SHOW_INFO_ABL：黄金样本 train-upgrade 的能力行逐字复现', () =
   ]);
 });
 
-test('SHOW_INFO_ABL：零值能力不出、每 4 项收行、末组不足 4 也收行', () => {
+test('show_info_abl：零值能力不出、每 4 项收行、末组不足 4 也收行', () => {
   // [能力表, 期望行数, 期望首行的项数, 说明]
   const cases = [
     [{ 10: 3 }, 1, 1, '1 项 → 1 行'],
@@ -905,7 +905,7 @@ test('SHOW_INFO_ABL：零值能力不出、每 4 项收行、末组不足 4 也�
   }
 });
 
-test('SHOW_INFO_ABL：编号空洞整组跳过（五段 INRANGE 与 38）', () => {
+test('show_info_abl：编号空洞整组跳过（五段 INRANGE 与 38）', () => {
   const skipped = [
     5, 6, 7, 8, 9, 18, 19, 24, 25, 26, 27, 28, 29, 34, 35, 36, 38,
   ];
@@ -926,7 +926,7 @@ test('SHOW_INFO_ABL：编号空洞整组跳过（五段 INRANGE 与 38）', () =
   assert.deepEqual(fixture.text_lines(), [], 'ABL:41 在循环上界之外');
 });
 
-test('SHOW_INFO_ABL：性别过滤（男无私处感觉/百合，女无断背）', () => {
+test('show_info_abl：性别过滤（男无私处感觉/百合，女无断背）', () => {
   // [TALENT:122, TALENT:121, 能力编号, 是否出现, 说明]
   const cases = [
     [1, 0, 2, false, '男：私处感觉不出'],
@@ -951,7 +951,7 @@ test('SHOW_INFO_ABL：性别过滤（男无私处感觉/百合，女无断背）
   }
 });
 
-test('SHOW_INFO_ABL：男体与扶她下阴蒂感觉（ABL:0）改名阴茎感觉', () => {
+test('show_info_abl：男体与扶她下阴蒂感觉（ABL:0）改名阴茎感觉', () => {
   const cases = [
     [{ [T.男人]: 1 }, '阴茎感觉', '男体'],
     [{ 121: 1 }, '阴茎感觉', '扶她'],
@@ -964,7 +964,7 @@ test('SHOW_INFO_ABL：男体与扶她下阴蒂感觉（ABL:0）改名阴茎感�
   }
 });
 
-test('SHOW_INFO_ABL：等级宽 2 左对齐（两位数不截断、一位数补 1 空格）', () => {
+test('show_info_abl：等级宽 2 左对齐（两位数不截断、一位数补 1 空格）', () => {
   const one = abl_fixture({ abls: { 12: 3 } });
   one.show_info_abl(7);
   assert.equal(
@@ -980,7 +980,7 @@ test('SHOW_INFO_ABL：等级宽 2 左对齐（两位数不截断、一位数补 
   );
 });
 
-test('SHOW_INFO_MARK：黄金样本 train-upgrade 的四枚刻印行逐字复现', () => {
+test('show_info_mark：黄金样本 train-upgrade 的四枚刻印行逐字复现', () => {
   // train-upgrade-log:159：四枚全 LV0，条是 3 格的 BAR（_replace.csv
   // 缺省字符 * 与 .，方括号由 BAR 命令加）
   const { fixture, show_info_mark } = abl_fixture();
@@ -990,7 +990,7 @@ test('SHOW_INFO_MARK：黄金样本 train-upgrade 的四枚刻印行逐字复现
   ]);
 });
 
-test('SHOW_INFO_MARK：等级取自 MARK:0-3，条的填充随等级变化', () => {
+test('show_info_mark：等级取自 MARK:0-3，条的填充随等级变化', () => {
   // [MARK:0 的值, 期望条, 说明]
   const cases = [
     [0, '...', 'LV0：全空'],
@@ -1010,7 +1010,7 @@ test('SHOW_INFO_MARK：等级取自 MARK:0-3，条的填充随等级变化', () 
   }
 });
 
-test('SHOW_INFO_MARK：四枚刻印各自独立取值，顺序是 苦痛/快乐/屈服/反抗', () => {
+test('show_info_mark：四枚刻印各自独立取值，顺序是 苦痛/快乐/屈服/反抗', () => {
   const { fixture, show_info_mark } = abl_fixture({
     marks: { 0: 1, 1: 2, 2: 3, 3: 0 },
     // 名字表里的名字与硬编码标签不同（苦痛刻印 vs 苦痛），行里用的是后者
@@ -1022,7 +1022,7 @@ test('SHOW_INFO_MARK：四枚刻印各自独立取值，顺序是 苦痛/快乐/
   );
 });
 
-test('BAR_TEXT：条长与最大值的边界（表驱动）', () => {
+test('bar_text：条长与最大值的边界（表驱动）', () => {
   const { bar_text } = abl_fixture();
   const cases = [
     [0, 3, 3, '[...]', '空'],
@@ -1040,7 +1040,7 @@ test('BAR_TEXT：条长与最大值的边界（表驱动）', () => {
   }
 });
 
-// —— @SHOW_APPEARACE / @SHOW_RING（:1209-1430） ——
+// —— show_appearance / show_ring ——
 
 function appearance_fixture({
   flag37 = 0,
@@ -1070,8 +1070,8 @@ function appearance_fixture({
   };
 }
 
-test('SHOW_APPEARACE：六处刺青逐条按 CSTR:10-17 出现（表驱动）', () => {
-  // [CSTR 下标, 标记文案, 期望行, 说明]；CSTR:11-13 受「上半身赤裸」守卫
+test('show_appearance：六处刺青逐条按 CSTR:10-17 出现（表驱动）', () => {
+  // [CSTR 下标, 标记文案, 期望行, 说明]；CSTR:11-13 受「上半身赤裸」条件
   const cases = [
     [10, '脸纹', ' 脸上刻着『脸纹』样的刺青。', '脸部（段首，独立行）'],
     [11, '胸纹', ' 胸部上刻着『胸纹』样的刺青。', '胸部'],
@@ -1083,7 +1083,7 @@ test('SHOW_APPEARACE：六处刺青逐条按 CSTR:10-17 出现（表驱动）', 
     [17, '腿纹', ' 大腿上刻着『腿纹』样的刺青。', '大腿'],
   ];
   for (const [index, mark, expected, label] of cases) {
-    // CFLAG:40 位 1 关 + 非裙装：让 :1257/:1269 的两条提前 RETURN 不命中
+    // CFLAG:40 位 1 关 + 非裙装：让两条提前返回不命中
     const { fixture, show_appearance } = appearance_fixture({
       cstrs: { [index]: mark },
       cflags: { 40: 0, 1: 1 },
@@ -1107,7 +1107,7 @@ test('SHOW_APPEARACE：六处刺青逐条按 CSTR:10-17 出现（表驱动）', 
   }
 });
 
-test('SHOW_APPEARACE：现着装行只在 FLAG:37 打开时出现', () => {
+test('show_appearance：现着装行只在 FLAG:37 打开时出现', () => {
   // [FLAG:37, 是否出现, 说明]
   const cases = [
     [1, true, '服装系统打开'],
@@ -1128,13 +1128,13 @@ test('SHOW_APPEARACE：现着装行只在 FLAG:37 打开时出现', () => {
       assert.equal(
         fixture.text_lines()[0],
         ' 考狄利亚现在的样子是全裸。',
-        '形状串来自 PRINT_CLOTHTYPE（全裸）',
+        '形状串来自服装类型表（全裸）',
       );
     }
   }
 });
 
-test('SHOW_APPEARACE：玩偶装（CFLAG:42 = 11 且位 64）提前收尾并 RETURN 1', () => {
+test('show_appearance：玩偶装（CFLAG:42 = 11 且位 64）提前收尾并返回 1', () => {
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 64, 42: 11, 1: 1 },
   });
@@ -1147,23 +1147,23 @@ test('SHOW_APPEARACE：玩偶装（CFLAG:42 = 11 且位 64）提前收尾并 RET
   assert.deepEqual(other.fixture.text_lines(), []);
 });
 
-test('SHOW_APPEARACE：裙装未穿内裤的一句，与三条提前 RETURN 的守卫', () => {
+test('show_appearance：裙装未穿内裤的一句，与三条提前返回的条件', () => {
   // CFLAG:40 位 8（裙装）+ 位 1 关 → 「貌似没穿内裤」
   const no_panties = appearance_fixture({ cflags: { 40: 8, 1: 0 } });
   no_panties.show_appearance(7);
   assert(no_panties.fixture.text_lines().includes(' 貌似没穿内裤。'));
 
-  // CFLAG:40 & 17 → RETURN 0
+  // CFLAG:40 & 17 → 提前返回
   const hidden = appearance_fixture({ cflags: { 40: 16, 1: 1 } });
   assert.equal(hidden.show_appearance(7), 0);
   assert.deepEqual(hidden.fixture.text_lines(), []);
 
-  // (CFLAG:40 & 64) && CFLAG:42 == 69 → RETURN 0
+  // (CFLAG:40 & 64) && CFLAG:42 == 69 → 提前返回
   const diaper = appearance_fixture({ cflags: { 40: 64, 42: 69, 1: 1 } });
   assert.equal(diaper.show_appearance(7), 0);
   assert.deepEqual(diaper.fixture.text_lines(), []);
 
-  // 裙装且 顺从+露出度 < 3 → RETURN 0（「没穿内裤」那句已在守卫之前打出）
+  // 裙装且 顺从+露出度 < 3 → 提前返回（「没穿内裤」那句已在条件之前打出）
   const skirt_shy = appearance_fixture({
     cflags: { 40: 8, 1: 0 },
     abls: { 10: 1, 17: 1 },
@@ -1178,15 +1178,15 @@ test('SHOW_APPEARACE：裙装未穿内裤的一句，与三条提前 RETURN 的�
   assert.equal(
     enough.show_appearance(7),
     0,
-    '仍可能在别的守卫上返回，但没被这一条拦',
+    '仍可能在别的条件上返回，但没被这一条拦',
   );
   assert(
     enough.fixture.text_lines().some((t) => t.includes('考狄利亚')),
-    '和恰好为 3 时越过 :1269 的守卫（阴毛段的名字打出来了）',
+    '和恰好为 3 时越过该条件（阴毛段的名字打出来了）',
   );
 });
 
-test('SHOW_APPEARACE：阴毛七档 + 白虎（TALENT:125）优先级', () => {
+test('show_appearance：阴毛七档 + 白虎（TALENT:125）优先级', () => {
   // [TALENT:310, 期望片段, 说明]；TALENT:125 不设
   const cases = [
     [1, '的性器完全没有长毛。', '第一档（= 1）'],
@@ -1223,7 +1223,7 @@ test('SHOW_APPEARACE：阴毛七档 + 白虎（TALENT:125）优先级', () => {
   );
 });
 
-test('SHOW_APPEARACE：TALENT:310 为 0 时行不收（无 ELSE 兜底的旧版显示缺陷，出口收行是 ere 侧的等价承载）', () => {
+test('show_appearance：TALENT:310 为 0 时行不收（无默认分支的显示缺陷，出口收行是 ere 侧的等价承载）', () => {
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 0, 1: 1 },
   });
@@ -1232,9 +1232,9 @@ test('SHOW_APPEARACE：TALENT:310 为 0 时行不收（无 ELSE 兜底的旧版�
   assert.deepEqual(fixture.text_lines(), [' 考狄利亚']);
 });
 
-test('SHOW_APPEARACE：穿环的位序、间隔与收尾用语（S 计数）', () => {
+test('show_appearance：穿环的位序、间隔与收尾用语（S 计数）', () => {
   // [CFLAG:7, 期望行尾, 期望间隔, 说明]
-  // 阴毛那行收行后穿环另起一行，行首没有名字（源的两条 PRINTL 之间无名字）
+  // 阴毛那行收行后穿环另起一行，行首没有名字（两条收行之间无名字）
   const cases = [
     [8, ' 阴蒂被穿环了。', 'S == 1：单数用语'],
     [8 | 64, ' 阴蒂、鼻子都被穿环了。', 'S == 2：复数用语'],
@@ -1255,7 +1255,7 @@ test('SHOW_APPEARACE：穿环的位序、间隔与收尾用语（S 计数）', (
   }
 });
 
-test('SHOW_APPEARACE：生殖器那枚穿环按性别取名（阴茎/阴蒂）', () => {
+test('show_appearance：生殖器那枚穿环按性别取名（阴茎/阴蒂）', () => {
   const cases = [
     [{}, ' 阴蒂被穿环了。', '女体：阴蒂'],
     [{ [T.男人]: 1 }, ' 阴茎被穿环了。', '男体：阴茎'],
@@ -1271,7 +1271,7 @@ test('SHOW_APPEARACE：生殖器那枚穿环按性别取名（阴茎/阴蒂）',
   }
 });
 
-test('SHOW_APPEARACE：乳头穿环在上半身赤裸（CFLAG:40 & 6）时不显示', () => {
+test('show_appearance：乳头穿环在上半身赤裸（CFLAG:40 & 6）时不显示', () => {
   const covered = appearance_fixture({
     cflags: { 40: 0, 1: 1, 7: 1 },
     talents: { 310: 1 },
@@ -1290,7 +1290,7 @@ test('SHOW_APPEARACE：乳头穿环在上半身赤裸（CFLAG:40 & 6）时不显
   );
 });
 
-test('SHOW_APPEARACE：掀起下摆段（裙装 + 顺从露出度达标）', () => {
+test('show_appearance：掀起下摆段（裙装 + 顺从露出度达标）', () => {
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 8, 1: 1 },
     abls: { 10: 2, 17: 2 },
@@ -1302,7 +1302,7 @@ test('SHOW_APPEARACE：掀起下摆段（裙装 + 顺从露出度达标）', () 
   assert(line.includes('的下摆，'), '下摆串来自 PRINT_CLOTHTYPE_MAIN2');
 });
 
-test('SHOW_RING：三个装备位的空手/无与装备名（表驱动）', () => {
+test('show_ring：三个装备位的空手/无与装备名（表驱动）', () => {
   // [CFLAG:550, CFLAG:551, CFLAG:552, 期望行, 说明]
   const cases = [
     [-1, -1, -1, ' 【武器】: 空手　 【装饰A】: 无　 【装饰B】: 无', '三空位'],
@@ -1317,18 +1317,18 @@ test('SHOW_RING：三个装备位的空手/无与装备名（表驱动）', () =
   }
 });
 
-test('SHOW_RING：装饰B 有装备时行尾补一个半角空格', () => {
+test('show_ring：装饰B 有装备时行尾补一个半角空格', () => {
   const { fixture, show_ring } = appearance_fixture({
     cflags: { 550: -1, 551: -1, 552: 0 },
   });
   show_ring(7);
   assert(
     fixture.text_lines().at(-1).endsWith(' 【装饰B】: 装饰戒指 '),
-    '非空位走 equip_ring_spans，尾部补空格（源 :1427 PRINTL 两个空格减分隔符）',
+    '非空位走 equip_ring_spans，尾部补空格（两个空格减分隔符）',
   );
 });
 
-// —— @STAIN_INFO（:1435-1556） ——
+// —— stain_info ——
 
 function stain_fixture({
   flag_target = 0,
@@ -1342,7 +1342,7 @@ function stain_fixture({
   fixture.store.set('flag:10012', flag_target);
   fixture.store.set('flag:10013', flag_assi);
   fixture.store.set('flag:10006', flag_assi); // era_flag.assi 的底层键
-  // stain 属调教域的表（夹具镜像引擎「beginTrain 才可寻址」，见 era-fixture.js:494）
+  // stain 属调教域的表（夹具镜像引擎「beginTrain 才可寻址」，见 era-fixture.js）
   fixture.era.beginTrain(0, 1, 2);
   for (const [key, value] of Object.entries(stains)) {
     fixture.store.set(key, value);
@@ -1358,7 +1358,7 @@ function stain_fixture({
   };
 }
 
-test('STAIN_INFO：主人/对象/助手三方各五行（无扶她男人时跳过阴茎位）', async () => {
+test('stain_info：主人/对象/助手三方各五行（无扶她男人时跳过阴茎位）', async () => {
   const { fixture, stain_info } = stain_fixture();
   await stain_info();
   const lines = fixture.text_lines();
@@ -1366,7 +1366,7 @@ test('STAIN_INFO：主人/对象/助手三方各五行（无扶她男人时跳�
   assert(lines[0].startsWith('魔王'), '第一方是主人（NAME:MASTER）');
 });
 
-test('STAIN_INFO：污渍位逐条落标记、顺序固定（表驱动）', async () => {
+test('stain_info：污渍位逐条落标记、顺序固定（表驱动）', async () => {
   // [STAIN 位, 期望标记, 说明]
   const cases = [
     [1, '<爱液>', '位 1'],
@@ -1391,7 +1391,7 @@ test('STAIN_INFO：污渍位逐条落标记、顺序固定（表驱动）', asyn
   assert.equal(fixture.text_lines()[0], '魔王的嘴巴：<爱液><精液><尿液>');
 });
 
-test('STAIN_INFO：部位名六档与三方的跳过规则（扶她/男人）', async () => {
+test('stain_info：部位名六档与三方的跳过规则（扶她/男人）', async () => {
   const { fixture, stain_info } = stain_fixture({
     flag_target: 0,
     flag_assi: 0,
@@ -1431,20 +1431,20 @@ test('STAIN_INFO：部位名六档与三方的跳过规则（扶她/男人）', 
   );
 });
 
-test('STAIN_INFO：换手把第二方换成 flag:10012，尾部换回', async () => {
+test('stain_info：换手把第二方换成 flag:10012，尾部换回', async () => {
   const { fixture, era_flag, stain_info } = stain_fixture({ flag_target: 7 });
   assert.equal(era_flag.target, 0, '进入前 TARGET 未设 → 0');
   await stain_info();
   const lines = fixture.text_lines();
   assert(
     lines.some((t) => t.startsWith('考狄利亚')),
-    '第二方用 TARGET:1（flag:10012 = 7）的存档名',
+    '第二方用 target_record（flag:10012 = 7）的存档名',
   );
   assert.equal(era_flag.target, 0, '退出后换回');
-  assert.equal(era_flag.target_record, 7, '退出后 TARGET:1 换回');
+  assert.equal(era_flag.target_record, 7, '退出后 target_record 换回');
 });
 
-test('STAIN_INFO：ASSI < 0 时第三方整段跳过，末尾等一次键', async () => {
+test('stain_info：ASSI < 0 时第三方整段跳过，末尾等一次键', async () => {
   const { fixture, era_flag, stain_info } = stain_fixture({ flag_assi: -1 });
   era_flag.assi = -1; // 助手槽（flag:10006）
   await stain_info();
@@ -1454,13 +1454,13 @@ test('STAIN_INFO：ASSI < 0 时第三方整段跳过，末尾等一次键', asyn
   assert.equal(era_flag.assi, -1, '退出后助手的换手也复原');
 });
 
-test('STAIN_INFO：ASSI >= 0 时第三方照出（0 也算一方）', async () => {
+test('stain_info：ASSI >= 0 时第三方照出（0 也算一方）', async () => {
   const { fixture, stain_info } = stain_fixture();
   await stain_info();
   assert.equal(fixture.text_lines().length, 15, '三方 × 5 行');
 });
 
-// —— @SHOW_EQUIP_1 / @SHOW_EQUIP_2（:1564-1676） ——
+// —— @show_equip_1 / @show_equip_2（:1564-1676） ——
 
 function equip_fixture({ tequips = {}, cflags = {}, tflags = {} } = {}) {
   const fixture = create_era_fixture();
@@ -1481,10 +1481,10 @@ function equip_fixture({ tequips = {}, cflags = {}, tflags = {} } = {}) {
   };
 }
 
-/** 粉色片段（整段的着色判据） */
+/** 粉色片段（整段的着色条件） */
 const PINK = '#ff1493';
 
-test('SHOW_EQUIP_2：九个位的标记与顺序（表驱动）', () => {
+test('show_equip_2：九个位的标记与顺序（表驱动）', () => {
   // [TEQUIP 位, 期望片段, 说明]
   const cases = [
     [54, '[野外PLAY中]', '野外'],
@@ -1503,12 +1503,12 @@ test('SHOW_EQUIP_2：九个位的标记与顺序（表驱动）', () => {
     assert(line.startsWith(' '), '每段前有一个前导空格');
     assert(
       fixture.lines.at(-1).content.every((f) => f.color === PINK),
-      `${label}：整行粉色（SETCOLOR 0xff1493）`,
+      `${label}：整行粉色（#ff1493）`,
     );
   }
 });
 
-test('SHOW_EQUIP_2：摄影位的剩余次数公式 10 + 4*499 - 491 + 1', () => {
+test('show_equip_2：摄影位的剩余次数公式 10 + 4*499 - 491 + 1', () => {
   // [CFLAG:499, CFLAG:491, 期望, 说明]
   const cases = [
     [0, 0, 11, '两个都未设'],
@@ -1529,7 +1529,7 @@ test('SHOW_EQUIP_2：摄影位的剩余次数公式 10 + 4*499 - 491 + 1', () =>
   }
 });
 
-test('SHOW_EQUIP_2：使役魔兽的名字取自 E:300，位关时整行只有一个空格', () => {
+test('show_equip_2：使役魔兽的名字取自 E:300，位关时整行只有一个空格', () => {
   const on = equip_fixture({ tequips: { 88: 1 } });
   on.fixture.store.set('e:300', 3);
   on.fixture.store.set('itemname:3', '史莱姆');
@@ -1544,14 +1544,14 @@ test('SHOW_EQUIP_2：使役魔兽的名字取自 E:300，位关时整行只有�
   assert.deepEqual(off.fixture.text_lines(), [' '], '无位命中：只打一个空格');
 });
 
-test('SHOW_EQUIP_1：十八个位与两个 TFLAG 是整段的守卫（表驱动）', () => {
+test('show_equip_1：十八个位与两个 TFLAG 是整段的条件（表驱动）', () => {
   // [键, 值, 是否出整段, 说明]
   const cases = [
     [{ tequips: { 11: 1 } }, true, 'TEQUIP:11'],
     [{ tequips: { 98: 1 } }, true, 'TEQUIP:98'],
     [{ tflags: { 60: 1 } }, true, 'TFLAG:60'],
     [{ tflags: { 899: 1 } }, true, 'TFLAG:899'],
-    [{ tequips: { 12: 1 } }, false, 'TEQUIP:12 不在守卫名单里'],
+    [{ tequips: { 12: 1 } }, false, 'TEQUIP:12 不在条件名单里'],
     [{ tequips: {} }, false, '全空'],
   ];
   for (const [setup, shown, label] of cases) {
@@ -1561,7 +1561,7 @@ test('SHOW_EQUIP_1：十八个位与两个 TFLAG 是整段的守卫（表驱动�
   }
 });
 
-test('SHOW_EQUIP_1：头行是默认色、其后整段粉色', () => {
+test('show_equip_1：头行是默认色、其后整段粉色', () => {
   const { fixture, show_equip_1 } = equip_fixture({
     tequips: { 11: 1 },
     tflags: { 60: 1 },
@@ -1569,12 +1569,12 @@ test('SHOW_EQUIP_1：头行是默认色、其后整段粉色', () => {
   show_equip_1(7);
   const fragments = fixture.lines.at(-1).content;
   assert.equal(fragments[0].content, '使用中(考狄利亚) ');
-  assert.equal(fragments[0].color, undefined, '头行在 SETCOLOR 之前');
+  assert.equal(fragments[0].color, undefined, '头行在染色之前');
   assert(fragments[1].content.includes('[蠕虫]'));
   assert.equal(fragments[1].color, PINK);
 });
 
-test('SHOW_EQUIP_1：八个位的触手形态优先于常态形态', () => {
+test('show_equip_1：八个位的触手名优先于常态名', () => {
   // [位, 无触手时, 有触手时]
   const cases = [
     [11, '[蠕虫]', '[触手插入]'],
@@ -1597,12 +1597,12 @@ test('SHOW_EQUIP_1：八个位的触手形态优先于常态形态', () => {
     const with90 = equip_fixture({ tequips: { [bit]: 1, 90: 1 } });
     with90.show_equip_1(7);
     const line = with90.fixture.text_lines().at(-1);
-    assert(line.includes(tentacle), `位 ${bit} 触手形态（实际：${line}）`);
-    assert(!line.includes(normal), `位 ${bit}：触手形态时不打常态名`);
+    assert(line.includes(tentacle), `位 ${bit} 触手名（实际：${line}）`);
+    assert(!line.includes(normal), `位 ${bit}：触手名时不打常态名`);
   }
 });
 
-test('SHOW_EQUIP_1：单形态的八个位与插入中/失神中', () => {
+test('show_equip_1：单名的八个位与插入中/失神中', () => {
   const singles = [
     [98, '[触手口辱]'],
     [43, '[眼罩]'],
@@ -1620,11 +1620,11 @@ test('SHOW_EQUIP_1：单形态的八个位与插入中/失神中', () => {
   }
 });
 
-test('SHOW_EQUIP_1：[插入中] 只在 TFLAG:60 == 1 且上次指令不是 56 时出', () => {
+test('show_equip_1：[插入中] 只在 TFLAG:60 == 1 且上次指令不是 56 时出', () => {
   // [TFLAG:60, PREVCOM, 是否出, 说明]
   const cases = [
     [1, 55, true, 'TFLAG:60 恰为 1'],
-    [2, 55, false, 'TFLAG:60 >= 2 不算（判据是 == 1）'],
+    [2, 55, false, 'TFLAG:60 >= 2 不算（条件是 == 1）'],
     [1, 56, false, '上次指令 56（不显示）'],
   ];
   for (const [t60, prevcom, shown, label] of cases) {
@@ -1639,7 +1639,7 @@ test('SHOW_EQUIP_1：[插入中] 只在 TFLAG:60 == 1 且上次指令不是 56 �
   }
 });
 
-test('SHOW_EQUIP_1：失神中的判据是 TFLAG:899 >= 1', () => {
+test('show_equip_1：失神中的条件是 TFLAG:899 >= 1', () => {
   const one = equip_fixture({ tflags: { 899: 1 } });
   one.show_equip_1(7);
   assert(one.fixture.text_lines().at(-1).includes('[失神中]'));
@@ -1649,7 +1649,7 @@ test('SHOW_EQUIP_1：失神中的判据是 TFLAG:899 >= 1', () => {
   assert.deepEqual(zero.fixture.text_lines(), [], 'TFLAG:899 = 0 时整段不出');
 });
 
-// —— @SHOW_DATA（:1681-1760） ——
+// —— show_data ——
 
 function data_fixture({ cflags = {}, ex_talents = {}, items = {} } = {}) {
   const fixture = create_era_fixture();
@@ -1668,7 +1668,7 @@ function data_fixture({ cflags = {}, ex_talents = {}, items = {} } = {}) {
   return { fixture, ...fixture.load_module('page/components/chara-data') };
 }
 
-test('SHOW_DATA：无色段与底色——使役魔兽的名字着 #63e390', () => {
+test('show_data：无色段与底色——使役魔兽的名字着 #63e390', () => {
   // CFLAG:570 是配下怪物的识别号；< 100 时 MONSTER_DATA（:384 的
   // `if (inum < 100) { E:300 = 0; return 0 }`）会把 E:300 清成 0，
   // 于是名字取 0 号怪物的名字——这一步也一并钉住。
@@ -1684,7 +1684,7 @@ test('SHOW_DATA：无色段与底色——使役魔兽的名字着 #63e390', () 
   assert.equal(colored[0].content, '史莱姆');
 });
 
-test('SHOW_DATA：凌辱隶属/畏惧按 CFLAG:131 > 5 分档，且都要求 CFLAG:130 > 0', () => {
+test('show_data：凌辱隶属/畏惧按 CFLAG:131 > 5 分档，且都要求 CFLAG:130 > 0', () => {
   // [CFLAG:130, CFLAG:131, 期望片段, 说明]
   const cases = [
     [0, 9, null, 'CFLAG:130 = 0：整段不出'],
@@ -1706,7 +1706,7 @@ test('SHOW_DATA：凌辱隶属/畏惧按 CFLAG:131 > 5 分档，且都要求 CFL
   }
 });
 
-test('SHOW_DATA：结婚对象的六个分支（表驱动）', () => {
+test('show_data：结婚对象的六个分支（表驱动）', () => {
   // [CFLAG:601, CFLAG:606, 期望片段, 说明]
   const cases = [
     [900, 0, '[结婚对象:野狗]', '野狗'],
@@ -1736,7 +1736,7 @@ test('SHOW_DATA：结婚对象的六个分支（表驱动）', () => {
   }
 });
 
-test('SHOW_DATA：未婚时按 EX_TALENT:2 分叉（有后代标记 → 无，否则查婚史）', () => {
+test('show_data：未婚时按 EX_TALENT:2 分叉（有后代标记 → 无，否则查婚史）', () => {
   const with_child = data_fixture({ ex_talents: { 2: 1 } });
   with_child.show_data(7, () => 0);
   assert(with_child.fixture.text_lines().at(-1).includes('[结婚对象:无]'));
@@ -1752,7 +1752,7 @@ test('SHOW_DATA：未婚时按 EX_TALENT:2 分叉（有后代标记 → 无，�
   );
 });
 
-test('SHOW_DATA：善恶值七档（表驱动全维度）', () => {
+test('show_data：善恶值七档（表驱动全维度）', () => {
   // [CFLAG:151, 期望档, 说明]
   const cases = [
     [200, '纯洁', '> 150'],
@@ -1780,13 +1780,13 @@ test('SHOW_DATA：善恶值七档（表驱动全维度）', () => {
   }
 });
 
-test('SHOW_DATA：整行以「]　」（全角空格）收尾', () => {
+test('show_data：整行以「]　」（全角空格）收尾', () => {
   const { fixture, show_data } = data_fixture();
   show_data(7, () => 0);
   assert(fixture.text_lines().at(-1).endsWith(']　'));
 });
 
-// —— SHOW_TALENT_CONDITION 族（CHARA_INFO_SHOW_TALENT.ERB） ——
+// —— show_talent_condition 族 ——
 
 function condition_fixture({
   cflags = {},
@@ -1831,15 +1831,15 @@ function condition_fixture({
   };
 }
 
-test('SHOW_TALENT_CONDITION：黄金样本 daycycle-max 的 20 行逐字复现', () => {
-  // daycycle-max-log:203-222（20 行）。样本里的勇者考狄利亚四枚性感素质全未得
-  // （74/75/77/78），故四处封面图那一臂都不进；助手条件行也不在（无 76/85）。
+test('show_talent_condition：黄金样本 daycycle-max 的 20 行逐字复现', () => {
+  // daycycle-max-log 的 20 行。样本里的勇者考狄利亚四枚性感素质全未得
+  // （74/75/77/78），故四处封面图那一分支都不进；助手条件行也不在（无 76/85）。
   // 坐「喜欢精液」行的饮精绝顶基准是 50（SEIIN_BASE 无修正），样本记 51 是因为
   // 那位勇者带着 戒备森严(+5) / 乐观的(−2) / 开放(−2) 三枚素质——那条公式的
-  // 组合覆盖在 STC_SEIIN_CHECK 的用例里（黄金组合单独一条）。
-  // 唯一与样本的差异在末行行尾：样本记的 `[反抗刻印]` 没有 STC_PRINTC 补的
-  // 两个空格，源里 :405-406 的 CALL 与 PRINTL 之间没有任何东西会吃掉它，
-  // 判定为录制侧的截断（比对工具的分类路径不看行尾空白），实现按源保留。
+  // 组合覆盖在 stc_seiin_check 的用例里（黄金组合单独一条）。
+  // 唯一与样本的差异在末行行尾：样本记的 `[反抗刻印]` 没有 stc_printc 补的
+  // 两个空格，stc_printc 与收行之间没有任何东西会吃掉它，
+  // 判定为录制侧的截断（比对工具的分类路径不看行尾空白），实现保留现状。
   const { fixture, show_talent_condition } = condition_fixture();
   show_talent_condition(7);
   assert.deepEqual(fixture.text_lines(), [
@@ -1866,7 +1866,7 @@ test('SHOW_TALENT_CONDITION：黄金样本 daycycle-max 的 20 行逐字复现',
   ]);
 });
 
-test('STC_PRINTC：补位长度按 Shift-JIS 字节算（含方括号）', () => {
+test('stc_printc：补位长度按 Shift-JIS 字节算（含方括号）', () => {
   const { stc_printc } = condition_fixture();
   const row = { fragments: [] };
   // [文本, 期望总字节, 说明]
@@ -1890,7 +1890,7 @@ test('STC_PRINTC：补位长度按 Shift-JIS 字节算（含方括号）', () =>
   assert(row.fragments.length === 0);
 });
 
-test('SHOW_TALENT_CONDITION：助手条件行只在有 爱慕 或 淫乱 时出现', () => {
+test('show_talent_condition：助手条件行只在有 爱慕 或 淫乱 时出现', () => {
   // [已设素质, 是否出行, 说明]
   const cases = [
     [{}, false, '两者皆无'],
@@ -1908,7 +1908,7 @@ test('SHOW_TALENT_CONDITION：助手条件行只在有 爱慕 或 淫乱 时出�
   }
 });
 
-test('SHOW_TALENT_CONDITION：性感素质的四档需求随已得数上浮（表驱动）', () => {
+test('show_talent_condition：性感素质的四档需求随已得数上浮（表驱动）', () => {
   // [已得数, 自慰狂档的「调教自慰」需求（sexskill_1）, 「绝顶经验」需求（sexskill_2）, 说明]
   const cases = [
     [0, 100, 100, '一枚都没有：基础档'],
@@ -1918,7 +1918,7 @@ test('SHOW_TALENT_CONDITION：性感素质的四档需求随已得数上浮（�
   ];
   for (const [count, need, need2, label] of cases) {
     const talents = {};
-    // 只点 75/77/78 三枚：自慰狂（74）自身保持未得，走条件臂而不是封面图臂
+    // 只点 75/77/78 三枚：自慰狂（74）自身保持未得，走条件分支而不是封面图分支
     const ids = [75, 77, 78];
     for (let i = 0; i < Math.min(count, ids.length); i += 1)
       talents[ids[i]] = 1;
@@ -1936,20 +1936,20 @@ test('SHOW_TALENT_CONDITION：性感素质的四档需求随已得数上浮（�
   }
 });
 
-test('SHOW_TALENT_CONDITION：四枚性感素质全得 → 四处 COVER_WHITE', () => {
+test('show_talent_condition：四枚性感素质全得 → 四处 COVER_WHITE', () => {
   const { fixture, show_talent_condition } = condition_fixture({
     talents: { 74: 1, 75: 1, 77: 1, 78: 1 },
   });
   show_talent_condition(7);
   const images = fixture.lines.filter((l) => l.type === 'image');
-  assert.equal(images.length, 4, '四个臂各一处');
+  assert.equal(images.length, 4, '四个分支各一处');
   assert(
     images.every((l) => l.names[0] === 'COVER_WHITE'),
     '资源名一致',
   );
 });
 
-test('SHOW_TALENT_CONDITION：性感素质已得的那一行换成 COVER_WHITE 封面图', () => {
+test('show_talent_condition：性感素质已得的那一行换成 COVER_WHITE 封面图', () => {
   const { fixture, show_talent_condition } = condition_fixture({
     talents: { 74: 1 },
   });
@@ -1968,10 +1968,10 @@ test('SHOW_TALENT_CONDITION：性感素质已得的那一行换成 COVER_WHITE �
   );
 });
 
-test('SHOW_TALENT_CONDITION：强化素质与时常发情两组受 FLAG:73 / FLAG:75 控制', () => {
+test('show_talent_condition：强化素质与时常发情两组受 FLAG:73 / FLAG:75 控制', () => {
   // [FLAG:73, FLAG:75, 强化组在否, 时常发情组在否, 说明]
   const cases = [
-    [0, 0, true, true, '两位都关：两组都在（判据是 <= 0）'],
+    [0, 0, true, true, '两位都关：两组都在（条件是 <= 0）'],
     [1, 0, false, true, 'FLAG:73 开：强化组消失'],
     [0, 1, true, false, 'FLAG:75 开：时常发情消失'],
     [1, 1, false, false, '两位都开：两组都不在'],
@@ -1991,7 +1991,7 @@ test('SHOW_TALENT_CONDITION：强化素质与时常发情两组受 FLAG:73 / FLA
   }
 });
 
-test('SHOW_TALENT_CONDITION：妓女/倾城两臂与元妓女（TALENT:315 == 5）', () => {
+test('show_talent_condition：妓女/倾城两分支与元妓女（TALENT:315 == 5）', () => {
   // [TALENT:180, TALENT:315, 行首, 期望需求, 说明]
   const cases = [
     [0, 0, '妓女条件：', '[卖淫经验\u00A0100]', '未得 妓女：普通档'],
@@ -2010,7 +2010,7 @@ test('SHOW_TALENT_CONDITION：妓女/倾城两臂与元妓女（TALENT:315 == 5�
   }
 });
 
-test('SHOW_TALENT_CONDITION：淫乱条件行在已得 爱慕 时不出现（两条臂的分叉）', () => {
+test('show_talent_condition：淫乱条件行在已得 爱慕 时不出现（两条分支的分叉）', () => {
   const with_aiba = condition_fixture({ talents: { 85: 1 } });
   with_aiba.show_talent_condition(7);
   assert(
@@ -2023,7 +2023,7 @@ test('SHOW_TALENT_CONDITION：淫乱条件行在已得 爱慕 时不出现（两
   );
 });
 
-test('SHOW_TALENT_CONDITION：TALENT:184（求爱）挡掉爱慕条件行', () => {
+test('show_talent_condition：TALENT:184（求爱）挡掉爱慕条件行', () => {
   const { fixture, show_talent_condition } = condition_fixture({
     talents: { 184: 1 },
   });
@@ -2032,7 +2032,7 @@ test('SHOW_TALENT_CONDITION：TALENT:184（求爱）挡掉爱慕条件行', () =
   assert(fixture.text_lines().some((t) => t.startsWith('淫乱条件：')));
 });
 
-test('STC_SEIIN_CHECK：基础 50 与十四条素质修正（表驱动）', () => {
+test('stc_seiin_check：基础 50 与十四条素质修正（表驱动）', () => {
   const { stc_seiin_check } = condition_fixture();
   assert.equal(stc_seiin_check(7), 50, '无修正');
   // [素质编号, 增量, 说明]
@@ -2059,12 +2059,12 @@ test('STC_SEIIN_CHECK：基础 50 与十四条素质修正（表驱动）', () =
     assert.equal(check(7), 50 + delta, label);
     assert.equal(fixture.store.get(`talent:7:${id}`), 1);
   }
-  // 黄金样本 daycycle-max:222 的 51 = 50 + 5（戒备森严）− 2（乐观的）− 2（开放）
+  // 黄金样本 daycycle-max 的 51 = 50 + 5（戒备森严）− 2（乐观的）− 2（开放）
   const golden = condition_fixture({ talents: { 27: 1, 25: 1, 33: 1 } });
   assert.equal(golden.stc_seiin_check(7), 51, '黄金样本的组合');
 });
 
-test('SHOW_TALENT_CONDITION：男体下四处走阴茎侧分支', () => {
+test('show_talent_condition：男体下四处走阴茎侧分支', () => {
   // TALENT:122 男人：弄乳狂/性爱狂的条件表换列
   const woman = condition_fixture();
   woman.show_talent_condition(7);
@@ -2083,7 +2083,7 @@ test('SHOW_TALENT_CONDITION：男体下四处走阴茎侧分支', () => {
   assert(!man_line.includes('[私处感觉'), '男体不打私处感觉');
 });
 
-test('SHOW_TALENT_CONDITION：性豪条件列四枚强化素质', () => {
+test('show_talent_condition：性豪条件列四枚强化素质', () => {
   const { fixture, show_talent_condition } = condition_fixture();
   show_talent_condition(7);
   const line = fixture.text_lines().find((t) => t.startsWith('性豪条件：'));
@@ -2093,7 +2093,7 @@ test('SHOW_TALENT_CONDITION：性豪条件列四枚强化素质', () => {
   );
 });
 
-// —— @SHOW_CHARA_INFO 主分发与两个十六进制帮手（:7-321 / :1765-1833） ——
+// —— show_chara_info 主分发与两个十六进制帮手 ——
 
 function main_fixture({ flag5 = 0, cflags = {}, talents = {} } = {}) {
   const fixture = create_era_fixture();
@@ -2118,14 +2118,14 @@ function main_fixture({ flag5 = 0, cflags = {}, talents = {} } = {}) {
   return { fixture, ...fixture.load_module('page/page-chara-info-show') };
 }
 
-test('SHOW_CHARA_INFO：五个页码臂各自的段组合（表驱动）', async () => {
+test('show_chara_info：五个页码分支各自的段组合（表驱动）', async () => {
   // [页码, 必须出现的行首片段, 不该出现的行首片段, 说明]
   const cases = [
     [
       -2,
       '　性别：',
       '一人称：',
-      '贡品时：素质行在、无人称行（-2 臂无 SHOW_BLOCK）',
+      '贡品时：素质行在、无人称行（-2 分支无 show_block）',
     ],
     [-1, '\u00A0苦痛:LV', '一人称：', '调教时：刻印行在、无人称行'],
     [
@@ -2138,7 +2138,7 @@ test('SHOW_CHARA_INFO：五个页码臂各自的段组合（表驱动）', async
       1,
       '一人称：',
       ' 【武器】: ',
-      '状态页：人称行在（SHOW_BLOCK 在 CASE 1 里）、外观段不在',
+      '状态页：人称行在（show_block 在 case 1 里）、外观段不在',
     ],
     [2, ' 【武器】: ', '一人称：', '外观页：武器行在、无人称行'],
     [3, '※', '一人称：', '素质条件页：以 ※ 两行收尾'],
@@ -2162,7 +2162,7 @@ test('SHOW_CHARA_INFO：五个页码臂各自的段组合（表驱动）', async
   }
 });
 
-test('SHOW_CHARA_INFO：页码 3 的四个素质名按源序 74/78/75/77', async () => {
+test('show_chara_info：页码 3 的四个素质名按源序 74/78/75/77', async () => {
   const { fixture, show_chara_info } = main_fixture();
   await show_chara_info(7, 3, always);
   const line = fixture
@@ -2183,7 +2183,7 @@ test('SHOW_CHARA_INFO：页码 3 的四个素质名按源序 74/78/75/77', async
   );
 });
 
-test('SHOW_CHARA_INFO：末尾补白到 27 行（含本页已出的行）', async () => {
+test('show_chara_info：末尾补白到 27 行（含本页已出的行）', async () => {
   const { fixture, show_chara_info } = main_fixture({
     flag5: (1 << 8) | (1 << 12),
     cflags: { 451: 16 },
@@ -2193,11 +2193,11 @@ test('SHOW_CHARA_INFO：末尾补白到 27 行（含本页已出的行）', asyn
   const used = fixture.lines.length - before;
   assert(
     used >= 27,
-    `从进入本函数起至少 27 行（实际 ${used}；末尾补白按 LINECOUNT 差算）`,
+    `从进入本函数起至少 27 行（实际 ${used}；末尾补白按行数差算）`,
   );
 });
 
-test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与两个出口', async () => {
+test('show_chara_info：献祭完成分支（CFLAG:1 == 11）走近三十项与两个出口', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10, 801: 10 }, // 合计 20 < 30：未满，走两个出口
   });
@@ -2224,19 +2224,19 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
     !lines.some((t) => t.includes('查看符合条件的奴隶或勇者')),
     '出口不是纯文本行',
   );
-  assert.equal(result, 1, '返回首页（directToHomePage 的返回值形态）');
+  assert.equal(result, 1, '返回首页（directToHomePage 的返回值约定）');
 });
 
-test('SHOW_CHARA_INFO：献祭完成演出（合计 ≥ 30）的两句前导补位是 NBSP（#577）', async () => {
+test('show_chara_info：献祭完成演出（合计 ≥ 30）的两句前导补位是 NBSP（#577）', async () => {
   const { fixture, show_chara_info } = main_fixture({
-    cflags: { 1: 11, 800: 15, 801: 15 }, // 合计 30：满，走 :48-77 的演出
+    cflags: { 1: 11, 800: 15, 801: 15 }, // 合计 30：满，走完成演出
   });
   fixture.set_inputs(100);
   await show_chara_info(7, -1, always, 0x000000);
   const lines = fixture.text_lines();
   assert.ok(
     lines.includes('\u00A0'.repeat(16) + '向这伟力的降临献上喝彩！'),
-    '第二句的 16 格前导（PRINTS "\\s"*16 的内容空格，#577 起 NBSP）',
+    '第二句的 16 格前导（内容空格，#577 起 NBSP）',
   );
   assert.ok(
     lines.includes('\u00A0'.repeat(32) + '为至高无双的魔王尽瘁效忠！'),
@@ -2244,17 +2244,17 @@ test('SHOW_CHARA_INFO：献祭完成演出（合计 ≥ 30）的两句前导补�
   );
 });
 
-test('SHOW_CHARA_INFO：出口轮的空行按原作（#596）——[10] 之前两行、两钮之间一行、返回之后没有', async () => {
+test('show_chara_info：出口轮的空行（#596）——[10] 之前两行、两钮之间一行、返回之后没有', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 }, // 合计 10 < 30：未满，走两个出口
   });
   fixture.set_inputs(100);
   await show_chara_info(7, -1, always, 0x000000);
 
-  // 原作 :79-80 是两句 `PRINTS "\n"*2 + 按钮文本`：第一句的两个换行落在
-  // 上一行（:41 合计行）已收尾之后 = 两个真空行；第二句的首个换行只结束
+  // 两句「空两行 + 按钮文本」：第一句的两个换行落在
+  // 上一行（合计行）已收尾之后 = 两个真空行；第二句的首个换行只结束
   // [10] 那一行（ere 的 printButton 自成一行），余下一个是真空行；
-  // 的返回文本之后停在 INPUT，没有 PRINTL
+  // 返回文本之后停在输入，没有换行
   const row_of = (accelerator) => {
     const line = fixture.lines.find(
       (entry) => entry.type === 'button' && entry.accelerator === accelerator,
@@ -2275,13 +2275,13 @@ test('SHOW_CHARA_INFO：出口轮的空行按原作（#596）——[10] 之前�
   assert.equal(
     fixture.lines.at(-1).row,
     back,
-    ':127 的返回文本之后不补空行（下一行就是 INPUT）',
+    '返回文本之后不补空行（下一行就是输入）',
   );
 });
 
-test('SHOW_CHARA_INFO：名单轮的 [999] 返回之后不补空行（#596）', async () => {
-  // 原作 :127 的 `PRINTS "\n"*2 + " [100] 返回 "` 是名单轮的收尾：返回文本
-  // 之后直接 `$SacrificeListInputReacquisition` + INPUT，没有 PRINTL。
+test('show_chara_info：名单轮的 [999] 返回之后不补空行（#596）', async () => {
+  // 「空两行 + 返回文本」是名单轮的收尾：返回文本
+  // 之后直接进输入，没有换行。
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
   });
@@ -2296,18 +2296,18 @@ test('SHOW_CHARA_INFO：名单轮的 [999] 返回之后不补空行（#596）', 
   const next = fixture.lines[at + 1];
   assert.ok(
     !(next?.type === 'br' || (next?.type === 'text' && next.text === '')),
-    ":127 的返回文本之后不补空行（println 与 print('') 两种形态都不许）",
+    "返回文本之后不补空行（println 与 print('') 两种写法都不许）",
   );
 });
 
-test('SHOW_CHARA_INFO：祭品名单的返回是真按钮（名单轮次白名单非空，#530）', async () => {
+test('show_chara_info：祭品名单的返回是真按钮（名单轮次白名单非空，#530）', async () => {
   // 名单轮次的白名单本来就非空——名单行自身是按钮（角色号），六个条件键是
   // 按钮（1000+下标）。此时若「返回」仍是纯文本行，玩家敲它的编号会被
   // 引擎拒收（renderFromButton 按 rule.indexOf 判定），夹具同款抛
   // 「输入不合法」：本用例在修好之前必定红。
   // 名单轮的返回编号自 #586 起是 [999]（该轮的 [100] 要让给 100 号预设角色，
   // 见「名单里 100 号角色行可选…」用例）；出口轮不打角色行，它的 [100] 保持
-  // 原作。
+  // 不动。
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
   });
@@ -2316,7 +2316,7 @@ test('SHOW_CHARA_INFO：祭品名单的返回是真按钮（名单轮次白名�
   fixture.era.addCharacter(victim);
   fixture.store.set(`cflag:${victim}:1`, 8);
   fixture.store.set('callname:7:-1', '考狄利亚'); // 名单只列同条件的角色
-  // 进名单 → 名单里 [999] 返回 → RESTART 回到「两个出口」→ 再 [100] 返回首页
+  // 进名单 → 名单里 [999] 返回 → 重画回到「两个出口」→ 再 [100] 返回首页
   fixture.set_inputs(10, 999, 100);
   const result = await show_chara_info(7, -1, always, 0x000000);
 
@@ -2326,29 +2326,29 @@ test('SHOW_CHARA_INFO：祭品名单的返回是真按钮（名单轮次白名�
     rendered.some((text) => text === '[999] 返回'),
     `名单轮有一枚 [999] 返回（实显：${JSON.stringify(rendered)}）`,
   );
-  // 出口轮在本流程里被重画两次（名单轮的 RESTART 一次），每次都是 [10] 与
+  // 出口轮在本流程里被重画两次（名单轮的重画一次），每次都是 [10] 与
   // [100] 成对；名单轮两枚都不打——数量不相等即名单轮混进了 [100]
   assert.equal(
     rendered.filter((text) => text === '[100] 返回').length,
     rendered.filter((text) => text === '[10] 查看符合条件的奴隶或勇者').length,
-    `原作的 [100] 返回只留在出口轮（实显：${JSON.stringify(rendered)}）`,
+    `[100] 返回只留在出口轮（实显：${JSON.stringify(rendered)}）`,
   );
-  // 名单轮的返回走 RESTART（回到「两个出口」重画），不是直接退到首页：
+  // 名单轮的返回走重画（回到「两个出口」），不是直接退到首页：
   // 出口轮的 [10] 必须在 [999] 之后**再出现一次**（改成 return 1 即红）
   assert.ok(
     rendered.lastIndexOf('[10] 查看符合条件的奴隶或勇者') >
       rendered.indexOf('[999] 返回'),
-    `RESTART 后出口轮重画（实显：${JSON.stringify(rendered)}）`,
+    `重画后出口轮再次出现（实显：${JSON.stringify(rendered)}）`,
   );
 });
 
-test('SHOW_CHARA_INFO：名单里 100 号角色行可选、返回仍可用（预设 100 × [100] 撞号，#586）', async () => {
-  // 预设 100「怪物的女儿」能以 ID 100 加入：生命摇篮 @CHAR_CREATE 在输入不落进
-  // 1-16 / 21-30 / 37-60 三段时把它原样当预设编号（`CASEELSE`）、经 EXISTCSV
+test('show_chara_info：名单里 100 号角色行可选、返回仍可用（预设 100 × [100] 撞号，#586）', async () => {
+  // 预设 100「怪物的女儿」能以 ID 100 加入：生命摇篮 char_create 在输入不落进
+  // 1-16 / 21-30 / 37-60 三段时直接当预设编号、查表
   // 放行（yml/Chara100.yml 在库），随后 `era.addCharacter(100)`
-  // （chara-custom.js 的 char_append；原作同样如此，见
-  // test/chara-outer.test.js:11-16）。名单轮的角色行以角色 ID 作快捷键，
-  // 而返回按钮原作也是 [100]——修好之前，敲 100 命中的是返回分支，这个角色
+  // （chara-custom.js 的 char_append，见
+  // test/chara-outer.test.js）。名单轮的角色行以角色 ID 作快捷键，
+  // 返回按钮的编号原本也是 100——修好之前，敲 100 命中的是返回分支，这个角色
   // 选不中（#586）。本用例在修好之前必定红：喂进去的 100 会走返回而非行。
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
@@ -2387,7 +2387,7 @@ test('SHOW_CHARA_INFO：名单里 100 号角色行可选、返回仍可用（预
   );
 });
 
-test('SHOW_CHARA_INFO：条件键 [1005]/[1000] 两端都切页并按新条件重筛名单（#586 探针补）', async () => {
+test('show_chara_info：条件键 [1005]/[1000] 两端都切页并按新条件重筛名单（#586 探针补）', async () => {
   // 六个条件键的编号是 1000 + 下标，两端是 [1000]（种族）与 [1005]（瞳色）。
   // 9 号与 7 号的「种族」相同（都未设 → 人类），「瞳色」不同（9 号 TALENT:306
   // = 1 → 蓝色，7 号未设 → ERROR）——切到瞳色页它不再符合条件，切回种族页
@@ -2419,8 +2419,8 @@ test('SHOW_CHARA_INFO：条件键 [1005]/[1000] 两端都切页并按新条件�
   );
 });
 
-test('SHOW_CHARA_INFO：名单里勇者档（状态 2）的行打开贡品信息页（#586 探针补）', async () => {
-  // 源 :140 的 CASE 2：勇者档点开的是贡品信息页（SHOW_CHARA_INFO(…, -2)），
+test('show_chara_info：名单里勇者档（状态 2）的行打开贡品信息页（#586 探针补）', async () => {
+  // 勇者档点开的是贡品信息页（show_chara_info(…, -2)），
   // 不是献祭确认，也不是「该状态不可操作」。
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
@@ -2435,7 +2435,7 @@ test('SHOW_CHARA_INFO：名单里勇者档（状态 2）的行打开贡品信息
 
   assert.equal(result, 1);
   const texts = fixture.text_lines();
-  // 贡品信息页（-2 臂）自己的可认标志：9 号的标题行 + 刻印行（-1/-2 两臂共有的
+  // 贡品信息页（-2 分支）自己的可认标志：9 号的标题行 + 刻印行（-1/-2 两分支共有的
   // 段）——名单页与献祭分支都不会打这两样
   assert.ok(
     texts.some((t) => /^NO\.9\s/.test(t)),
@@ -2443,7 +2443,7 @@ test('SHOW_CHARA_INFO：名单里勇者档（状态 2）的行打开贡品信息
   );
   assert.ok(
     texts.some((t) => t.startsWith('\u00A0苦痛:LV')),
-    `-2 臂的刻印行在（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
+    `-2 分支的刻印行在（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
   );
   assert.ok(
     !texts.some((t) => t.includes('该状态不可操作')),
@@ -2451,7 +2451,7 @@ test('SHOW_CHARA_INFO：名单里勇者档（状态 2）的行打开贡品信息
   );
 });
 
-test('SHOW_CHARA_INFO：名单不列献祭对象自身（源 :98 的 temp != shadow；#586 探针补）', async () => {
+test('show_chara_info：名单不列献祭对象自身（#586 探针补）', async () => {
   // 献祭对象自己也在场、条件与自己也相同——若不排除自身，名单里会出现它的行，
   // 点下去是自献祭。
   const { fixture, show_chara_info } = main_fixture({
@@ -2477,7 +2477,7 @@ test('SHOW_CHARA_INFO：名单不列献祭对象自身（源 :98 的 temp != sha
   );
 });
 
-test('SHOW_CHARA_INFO：献祭满足时走「完全召唤」演出并清零状态位', async () => {
+test('show_chara_info：献祭满足时走「完全召唤」演出并清零状态位', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 30 },
   });
@@ -2488,14 +2488,14 @@ test('SHOW_CHARA_INFO：献祭满足时走「完全召唤」演出并清零状�
     `演出首句（实际前几句：${JSON.stringify(texts.slice(0, 3))}）`,
   );
   assert(texts.some((t) => t.includes('魔王之影 『 考狄利亚 』')));
-  // #615 起横幅第二行与两串 `"-"*16` 同占一行（原作 :66-68）
+  // #615 起横幅第二行与两串 `"-"*16` 同占一行
   assert(texts.some((t) => t.includes('< 完 全 召 唤 >')));
   assert.equal(fixture.store.get('cflag:7:1'), 0, '状态位清零');
   assert.equal(fixture.store.get('cflag:7:700'), 1, '收藏位置 1');
   assert.equal(fixture.store.get('cflag:7:820'), 666666, '影の寿命置满');
 });
 
-test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、之后两个真空行', async () => {
+test('#615 show_chara_info：完全召唤横幅两行、之间一个真空行、之后两个真空行', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 30 },
   });
@@ -2506,7 +2506,7 @@ test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、
     (l) => l.type === 'text' && l.text.includes('魔王之影 『 考狄利亚 』'),
   );
   assert.ok(banner1 >= 0, '横幅第一行在场');
-  // ：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16 + "\s"*2 + "\n"*2`
+  // 横幅第一行：分割线 + ` 魔王之影 『 … 』 ` + 分割线与尾随两个空格
   // —— 一次 print 一行（自带 2 个尾随空格），末尾第二个 \n 是真空行
   assert.equal(
     lines[banner1].text,
@@ -2516,26 +2516,26 @@ test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、
   assert.equal(
     lines[banner1 + 1].type,
     'br',
-    ':65 的第二个 \\n：两行横幅之间的真空行',
+    '第二个 \\n：两行横幅之间的真空行',
   );
-  // ：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2 + "\n"` —— 第二行
+  // 横幅第二行：分割线 + `< 完 全 召 唤 >` + 分割线与尾随两个空格
   assert.equal(
     lines[banner1 + 2].text,
     `${'-'.repeat(16)}< 完 全 召 唤 >${'-'.repeat(16)}  `,
     '横幅第二行（不再被拆成三段）',
   );
-  // WAIT → :76 `PRINTS "\n"*2`：第二行横幅之后的两个真空行（横幅票补一个）
-  assert.equal(lines[banner1 + 3].type, 'br', ':76 的第一个 \\n');
-  assert.equal(lines[banner1 + 4].type, 'br', ':76 的第二个 \\n');
-  // 演出到此为止（:77 RESTART → 外层 for(;;) 重画一屏，下一行是新一屏的行）
+  // 等键后两个换行：第二行横幅之后的两个真空行（横幅票补一个）
+  assert.equal(lines[banner1 + 3].type, 'br', '第一个 \\n');
+  assert.equal(lines[banner1 + 4].type, 'br', '第二个 \\n');
+  // 演出到此为止（外层 for(;;) 重画一屏，下一行是新一屏的行）
   assert.notEqual(
     lines[banner1 + 5]?.type,
     'br',
-    ':76 的两个空行之后直接进下一次重画',
+    '两个空行之后直接进下一次重画',
   );
 });
 
-test('HEXtoDEC：六位十六进制按 ×16 合成三段（#652 改正进制位权）', () => {
+test('hex_to_dec：六位十六进制按 ×16 合成三段（#652 改正进制位权）', () => {
   const { hex_to_dec } = main_fixture();
   // [颜色整数, 期望三段, 说明]
   const cases = [
@@ -2551,12 +2551,12 @@ test('HEXtoDEC：六位十六进制按 ×16 合成三段（#652 改正进制位�
   }
 });
 
-test('ColorJudgmentWorB：背景均值 ≤ 128 落白字，否则落黑字', () => {
+test('color_judgment_wor_b：背景均值 ≤ 128 落白字，否则落黑字', () => {
   const { color_judgment_wor_b } = main_fixture();
   // [输入三段, 期望 dec[1..3], 说明]
   const cases = [
     [[0, 0, 0], 255, '纯黑背景 → 白字'],
-    [[128, 128, 128], 255, '均值恰 128 → 白字（判据是 <= 128）'],
+    [[128, 128, 128], 255, '均值恰 128 → 白字（条件是 <= 128）'],
     [[129, 129, 129], 0, '均值 129 → 黑字'],
     [[255, 255, 255], 0, '纯白背景 → 黑字'],
   ];
@@ -2568,7 +2568,7 @@ test('ColorJudgmentWorB：背景均值 ≤ 128 落白字，否则落黑字', () 
       [expected, expected, expected],
       label,
     );
-    assert.equal(dec[0], input[0], 'dec[0] 不被改写（读写错开一位是原作自身）');
+    assert.equal(dec[0], input[0], 'dec[0] 不被改写（读写错开一位是既有行为）');
   }
 });
 
@@ -2581,7 +2581,7 @@ function stc_run(stc, cid, args) {
   return row.fragments;
 }
 
-test('STC_LAB_TAL：三档配色 + 「条件」补字的判据（表驱动）', () => {
+test('stc_lab_tal：三档配色 + 「条件」补字的条件（表驱动）', () => {
   // [已设素质, 取用编号, 期望 color, 期望行首标签, 说明]
   const cases = [
     [
@@ -2596,7 +2596,7 @@ test('STC_LAB_TAL：三档配色 + 「条件」补字的判据（表驱动）', 
       85,
       '#66b3ff',
       '爱慕条件： ',
-      '已获得：达成色（SETCOLOR 102,179,255）',
+      '已获得：达成色（rgb(102,179,255)）',
     ],
     [
       { 85: 1, 9: 1 },
@@ -2636,7 +2636,7 @@ test('STC_LAB_TAL：三档配色 + 「条件」补字的判据（表驱动）', 
   }
 });
 
-test('STC_LAB_TAL：「条件」二字的补字阈值是 4 字节（表驱动边界）', () => {
+test('stc_lab_tal：「条件」二字的补字阈值是 4 字节（表驱动边界）', () => {
   // [素质编号, 期望标签, 说明]——名字字节数刚好卡在 4 的两侧
   const cases = [
     [85, '爱慕条件： ', '爱慕 = 4 字节（含上沿）→ 补'],
@@ -2650,7 +2650,7 @@ test('STC_LAB_TAL：「条件」二字的补字阈值是 4 字节（表驱动边
   }
 });
 
-test('STC_SAY_TAL：名字 4 字节以下补「素质」并补到 12 列', () => {
+test('stc_say_tal：名字 4 字节以下补「素质」并补到 12 列', () => {
   // [素质编号, 期望文本, 说明]
   const cases = [
     [85, '[爱慕素质]\u00A0\u00A0', '爱慕（4 字节）→ 补「素质」，再补到 12'],
@@ -2664,14 +2664,14 @@ test('STC_SAY_TAL：名字 4 字节以下补「素质」并补到 12 列', () =>
   }
 });
 
-test('STC_SAY_MARK：刻印名的宽度判据是 6（短名补位、长名原样）', () => {
+test('stc_say_mark：刻印名的宽度条件是 6（短名补位、长名原样）', () => {
   // 四枚真实刻印名都是 8 字节（XX刻印），补位路径只有合成短名才碰得到
   const { fixture, stc_say_mark } = condition_fixture();
   fixture.store.set('markname:9', '苦痛'); // 4 字节 ≤ 6 → 右补到 6
   assert.equal(
     stc_run(stc_say_mark, 7, [9, 3])[0].content,
     '[苦痛\u00A0\u00A0 Lv3]\u00A0\u00A0\u00A0',
-    '短名按 6 列补位；整段再补到 15（源 :489 用的是 STC_PRINTC 缺省列宽）',
+    '短名按 6 列补位；整段再补到 15（stc_printc 的缺省列宽）',
   );
   assert.equal(
     stc_run(stc_say_mark, 7, [2, 3])[0].content,
@@ -2750,7 +2750,7 @@ test('STC_SAYNO_*：right / alert 两档配色（表驱动，两侧都站）', (
   }
 });
 
-test('STC_SAYSUM_EXP：三项之和的判据与标签拼接（两侧都站）', () => {
+test('stc_saysum_exp：三项之和的条件与标签拼接（两侧都站）', () => {
   // [EXP 三项, 期望 color, 期望标签, 说明]
   const cases = [
     [
@@ -2781,7 +2781,7 @@ test('STC_SAYSUM_EXP：三项之和的判据与标签拼接（两侧都站）', 
   }
 });
 
-test('STC_SAY_ABCV：四级感觉之和的判据（两侧都站）', () => {
+test('stc_say_abcv：四级感觉之和的条件（两侧都站）', () => {
   const cases = [
     [{ 0: 3, 1: 3, 2: 2, 3: 2 }, 'White', '和恰好 10 ≥ 10'],
     [{ 0: 3, 1: 3, 2: 2, 3: 1 }, 'Gray', '和 9 差一点'],
@@ -2794,7 +2794,7 @@ test('STC_SAY_ABCV：四级感觉之和的判据（两侧都站）', () => {
   }
 });
 
-test('STC_SAYSUM_ABL：四项之和的判据与标签（本文件无调用点，直驱）', () => {
+test('stc_saysum_abl：四项之和的条件与标签（本文件无调用点，直驱）', () => {
   const cases = [
     [{ 10: 2, 11: 1 }, 'White', '和恰好 3 ≥ 3'],
     [{ 10: 2 }, 'Gray', '和 2 差一点'],
@@ -2810,9 +2810,9 @@ test('STC_SAYSUM_ABL：四项之和的判据与标签（本文件无调用点，
   }
 });
 
-test('STC_SAY_EXP：经验名按 8 字节截断（全角 4 字），整段补到 15 的整数倍', () => {
+test('stc_say_exp：经验名按 8 字节截断（全角 4 字），整段补到 15 的整数倍', () => {
   // 调教自慰经验（6 字 = 12 字节）截成前 4 字；口交经验（4 字 = 8 字节）不截。
-  // 文本 + STC_PRINTC 的补位同落一个片段（源里 RESETCOLOR 在 STC_PRINTC 之后）。
+  // 文本 + stc_printc 的补位同落一个片段（复原颜色在 stc_printc 之后）。
   const long = condition_fixture({ exps: { 11: 100 } });
   assert.equal(
     stc_run(long.stc_say_exp, 7, [11, 100])[0].content,
@@ -2834,7 +2834,7 @@ test('STC_SAY_EXP：经验名按 8 字节截断（全角 4 字），整段补到
 
 // —— 跨文件：display-width（其余模块的公共底座） ——
 
-test('DISPLAY_WIDTH：全角 2 列 / 半角 1 列', () => {
+test('display_width：全角 2 列 / 半角 1 列', () => {
   const { display_width } = condition_fixture().fixture.load_module(
     'utils/display-width',
   );
@@ -2851,7 +2851,7 @@ test('DISPLAY_WIDTH：全角 2 列 / 半角 1 列', () => {
   }
 });
 
-test('PAD_DISPLAY / PAD_LEFT：按显示宽度补位，超宽不截断', () => {
+test('pad_display / pad_left：按显示宽度补位，超宽不截断', () => {
   const { pad_display, pad_left } = condition_fixture().fixture.load_module(
     'utils/display-width',
   );
@@ -2869,7 +2869,7 @@ test('PAD_DISPLAY / PAD_LEFT：按显示宽度补位，超宽不截断', () => {
   assert.equal(pad_left('7', 3), '\u00A0\u00A07', '数字右对齐');
 });
 
-test('SLICE_DISPLAY：按字节截断，不切半全角字', () => {
+test('slice_display：按字节截断，不切半全角字', () => {
   const { slice_display } = condition_fixture().fixture.load_module(
     'utils/display-width',
   );
@@ -2895,9 +2895,9 @@ function color_of(fixture, text) {
   return undefined;
 }
 
-test('STC_LAB_TAL：「条件」补字的阈值在 4 与 5 之间（宽度 5 的名字不补）', () => {
+test('stc_lab_tal：「条件」补字的阈值在 4 与 5 之间（宽度 5 的名字不补）', () => {
   // 真实名字里没有 5 列宽的（全角 2 字节成对），用合成名把边界钉死：
-  // 判据是 STRLENS ≤ 4，5 列的 'AAA级' 必须**不**补「条件」
+  // 条件是宽度 ≤ 4，5 列的 'AAA级' 必须**不**补「条件」
   const { fixture, stc_lab_tal } = condition_fixture();
   fixture.store.set('talentname:900', 'AAA级'); // 宽 5（3 个半角 + 1 个全角）
   assert.equal(
@@ -2913,7 +2913,7 @@ test('STC_LAB_TAL：「条件」补字的阈值在 4 与 5 之间（宽度 5 的
   );
 });
 
-test('STC_LAB_TAL：男体下 230 那一行改称「绝伦」', () => {
+test('stc_lab_tal：男体下 230 那一行改称「绝伦」', () => {
   const man = condition_fixture({ talents: { 122: 1 } });
   assert.equal(
     stc_run(man.stc_lab_tal, 7, [230])[0].content,
@@ -2929,7 +2929,7 @@ test('STC_LAB_TAL：男体下 230 那一行改称「绝伦」', () => {
   assert.equal(tname(230), '淫核');
 });
 
-test('SHOW_TALENT_CONDITION：助手条件行的行首配色三档（默认 / 达成 / 崩坏）', () => {
+test('show_talent_condition：助手条件行的行首配色三档（默认 / 达成 / 崩坏）', () => {
   const base = { talents: { 85: 1 } };
   const cases = [
     [{ ...base, cflags: { 2: 0 } }, undefined, '好感度非 2 且未崩坏 → 默认色'],
@@ -2947,7 +2947,7 @@ test('SHOW_TALENT_CONDITION：助手条件行的行首配色三档（默认 / �
   }
 });
 
-test('SHOW_TALENT_CONDITION：[好感度 200%] 格的两侧配色与文案', () => {
+test('show_talent_condition：[好感度 200%] 格的两侧配色与文案', () => {
   const cases = [
     [1999, 'Gray', '好感度 1999 < 2000 → 灰'],
     [2000, 'White', '好感度 2000 ≥ 2000 → 白'],
@@ -2962,7 +2962,7 @@ test('SHOW_TALENT_CONDITION：[好感度 200%] 格的两侧配色与文案', () 
   }
 });
 
-test('SHOW_TALENT_CONDITION：时常发情行的两个阈值配色（700 / 2250）', () => {
+test('show_talent_condition：时常发情行的两个阈值配色（700 / 2250）', () => {
   // [CFLAG:81, CFLAG:82, 润滑色, 欲情色, 说明]
   const cases = [
     [699, 2249, 'Gray', 'Gray', '两个都差一点'],
@@ -2979,7 +2979,7 @@ test('SHOW_TALENT_CONDITION：时常发情行的两个阈值配色（700 / 2250�
   }
 });
 
-test('SHOW_TALENT_CONDITION：性爱狂第二档的 sexskill_3（私处经验 300+50*N）', () => {
+test('show_talent_condition：性爱狂第二档的 sexskill_3（私处经验 300+50*N）', () => {
   // 只点尻穴狂（77）：sexskill_count = 1，性爱狂（75）自身未得 → 走上浮档
   const { fixture, show_talent_condition } = condition_fixture({
     talents: { 77: 1 },
@@ -2996,7 +2996,7 @@ test('SHOW_TALENT_CONDITION：性爱狂第二档的 sexskill_3（私处经验 30
   );
 });
 
-test('SHOW_TALENT_CONDITION：尻穴狂第二档走 sexskill_3（两侧都站）', () => {
+test('show_talent_condition：尻穴狂第二档走 sexskill_3（两侧都站）', () => {
   const cases = [
     [
       { talents: { 75: 1 } },
@@ -3019,7 +3019,7 @@ test('SHOW_TALENT_CONDITION：尻穴狂第二档走 sexskill_3（两侧都站）
 
 // —— 覆盖面补齐（#390 返工第二轮：探针打出的四处盲区） ——
 
-test('SHOW_DATA：结婚对象末位 9 的取法是 %10（119 也走家族婚姻）', () => {
+test('show_data：结婚对象末位 9 的取法是 %10（119 也走家族婚姻）', () => {
   // 119 % 10 = 9 → 家族婚姻档；若写成 % 100 会得 19 → 落到 ITEMNAME 档
   const { fixture, show_data } = data_fixture({
     cflags: { 601: 119 },
@@ -3034,8 +3034,8 @@ test('SHOW_DATA：结婚对象末位 9 的取法是 %10（119 也走家族婚姻
   assert(!text.includes('不该出现的物品名'), '不得落到 ITEMNAME 档');
 });
 
-test('SHOW_APPEARACE：内裤位（CFLAG:40 位 1）也算「私处不可见」提前收尾', () => {
-  // 判据是 CFLAG:40 & 17（位 1 + 位 16）；只穿内裤时同样看不到记录阴毛那一段
+test('show_appearance：内裤位（CFLAG:40 位 1）也算「私处不可见」提前收尾', () => {
+  // 条件是 CFLAG:40 & 17（位 1 + 位 16）；只穿内裤时同样看不到记录阴毛那一段
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 1 }, // 只有内裤位，非裙装
   });
@@ -3051,7 +3051,7 @@ test('SHOW_APPEARACE：内裤位（CFLAG:40 位 1）也算「私处不可见」�
   );
 });
 
-test('SHOW_CHARA_INFO：名单里点可献祭的角色（状态 0/7/8）走确认流程', async () => {
+test('show_chara_info：名单里点可献祭的角色（状态 0/7/8）走确认流程', async () => {
   // 状态在 SACRIFICABLE_STATES 里 → 出「确定要将…献祭？」；不在 → 「该状态不可操作：N」
   const cases = [
     [8, true, '状态 8（拘束台）也算可献祭'],
@@ -3085,7 +3085,7 @@ test('SHOW_CHARA_INFO：名单里点可献祭的角色（状态 0/7/8）走确�
   }
 });
 
-test('SHOW_TALENT：性別行的阴茎状态标带 #a1d8e6 着色', () => {
+test('show_talent：性別行的阴茎状态标带 #a1d8e6 着色', () => {
   const cases = [
     [{ [T.男人]: 1 }, 0, '#a1d8e6', '男体 + TALENT:318 = 0 → 带色'],
     [{ 121: 1 }, 4, '#a1d8e6', '扶她 + 马阴茎 → 带色'],
@@ -3107,8 +3107,8 @@ test('SHOW_TALENT：性別行的阴茎状态标带 #a1d8e6 着色', () => {
   }
 });
 
-test('SHOW_APPEARACE：编号 1 的角色照样显名（NO 判据的两侧）', () => {
-  // 判据是 NO:x != 0——番号 1 的角色与番号 7 一样要出名字
+test('show_appearance：编号 1 的角色照样显名（NO 条件的两侧）', () => {
+  // 条件是 NO:x != 0——番号 1 的角色与番号 7 一样要出名字
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 0 },
     talents: { 310: 1 },
@@ -3121,7 +3121,7 @@ test('SHOW_APPEARACE：编号 1 的角色照样显名（NO 判据的两侧）', 
   );
 });
 
-test('SHOW_CHARA_INFO：献祭后代时死亡标记按来源模板号落位（#561 第 2 条）', async () => {
+test('show_chara_info：献祭后代时死亡标记按来源模板号落位（#561 第 2 条）', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
   });
@@ -3144,7 +3144,7 @@ test('SHOW_CHARA_INFO：献祭后代时死亡标记按来源模板号落位（#5
   assert(!fixture.era.getAddedCharacters().includes(victim), '被献祭者除名');
 });
 
-test('SHOW_CHARA_INFO：献祭成功后对应的分项计数 +100', async () => {
+test('show_chara_info：献祭成功后对应的分项计数 +100', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
   });
@@ -3154,11 +3154,7 @@ test('SHOW_CHARA_INFO：献祭成功后对应的分项计数 +100', async () => 
   fixture.store.set(`cflag:${victim}:1`, 8);
   fixture.set_inputs(10, victim, 1); // 进名单 → 点 victim → [1] 献祭
   await show_chara_info(7, -1, always, 0x000000).catch(() => {});
-  assert.equal(
-    fixture.store.get('cflag:7:800'),
-    110,
-    'CFLAG:800 += 100（源 :157）',
-  );
+  assert.equal(fixture.store.get('cflag:7:800'), 110, 'CFLAG:800 += 100');
   assert.equal(fixture.store.get(`cflag:${victim}:1`), 0, '被献祭者状态清零');
   // 确认对话的两个选项是真按钮（#530）：上面喂的 `1` 之所以能被夹具放行，
   // 正是因为它是本轮打印过的按钮快捷键——纯文本行会被白名单当场拒收

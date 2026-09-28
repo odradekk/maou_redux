@@ -1,94 +1,88 @@
 /**
  * @file 角色信息主屏：角色名册（四种排序视图）+ 个别角色详情页的骨架与
- * 导航（列表内容渲染真身；SHOW_CHARA_INFO 详情正文属 CHARA_INFO_SHOW
- * ver1.1.2.ERB，已随 #390 落地，本文件只调用）。
+ * 导航（列表内容渲染真身；详情正文由 page-chara-info-show.js 的
+ * show_chara_info 承载，#390 起实现，本文件只调用）。
  *
- * 调用方：page-shop.js 的 USERSHOP 分发（result===101 → CHARA_INFO，
- * result===498/499 → CHARA_INFO_INDIVIDUAL_WAPPED(target/assi)）。
+ * 调用方：page-shop.js 的 usershop 分发（result===101 → chara_info，
+ * result===498/499 → chara_info_individual_wrapped（当前调教目标/助手））。
  *
- * 移植说明（有意偏离，均注明依据）：
- *   - CHARANUM/序号世界改写为角色 ID 世界（issue #21 通例，
+ * 实现说明（取舍点均注明依据）：
+ *   - 序号世界改写为角色 ID 世界（issue #21 通例，
  *     page-select-target.js/page-dungeon-info2.js 同款）：四个列表函数的
  *     翻页与排序数组一律基于 `era.getAddedCharacters()`（已加入角色 ID，
- *     天然无缺口），不再用 `LIST_HEADER/LIST_FOOTER` 之类的序号算术，
- *     也不需要原作「跳过魔王插入位、行数不足补空行」那套只服务序号世界
- *     的补丁；
+ *     天然无缺口），不做按下标的序号算术；魔王行经 added_chara_ids 滤掉、
+ *     由表头单独打印，不需要「跳过魔王插入位、行数不足补空行」这类序号
+ *     世界特有的补丁；
  *   - 「编号」视图的顺序按移植自建的排序编号（#545 返工：number_view_order，
- *     PORTCFLAG:角色:排序编号，默认＝角色 ID）。原作的编号就是序号/数组
- *     下标，「换号」靠 SWAPCHARA 搬角色数据来换编号；ere 里 ID 即身份，换号
+ *     PORTCFLAG:角色:排序编号，默认＝角色 ID）。ere 里 ID 即身份，换号
  *     只交换排序编号这一个值，行内编号格显示的仍是角色 ID（＝可点击可手输的
  *     快捷键），细节与该取舍的依据见 page-chara-number-swap.js 文件头；
- *   - 名册自己的 NO_PAGE/SORT_SELECT/SORT_ACT 是本函数的局部变量（原作是
- *     静态变量）：子流程返回后不归零靠的是「同一轮循环 continue 重绘」，与
- *     JUMP CHARA_INFO 同效果；但**从名册之外重进**（主菜单 → 名单）会回初值，
- *     原作不会——#391 起的既有取舍，本票不动它（#606 起这一差异还决定结婚
- *     是否结束本回合：1200 视图走包装入口恒回 0，原作停在上次的非 1200 视图
- *     时才结束，见 chara_info_individual_wrapped；换号页的 NO_PAGE 是另一个
- *     函数里的独立静态变量，那个已按原作提到模块级，见该文件头）；
- *   - REDRAW 0/1、CLEARLINE 局部重绘不镜像（page-dungeon-info2.js/
- *     page-select-target.js 同款先例）：本文件的 CHARA_INFO 与
- *     CHARA_INFO_INDIVIDUAL 都是「每轮整屏重绘」的 `for(;;)` 循环；
- *   - 行首编号从「PRINTFORM 拼出的定宽文字」升级为真 PRINTBUTTON（本项目
- *     通例：`[N] 文字`+INPUT 惯用法升级为 `era.printButton`）——上一页/
- *     返回/下一页等原本就是 PRINTLC 按钮，这里额外把角色行本身也做成
- *     按钮，比原作的「肉眼看号、手动敲号」更符合本引擎的点击交互；
+ *   - 名册的页码与排序选择是本函数的局部变量：子流程返回后不归零靠的是
+ *     「同一轮循环 continue 重绘」；但**从名册之外重进**（主菜单 → 名单）
+ *     会回初值——#391 起的既有取舍，保持不动（#606 曾让包装入口恒回 0、
+ *     使这一取舍决定结婚是否结束本回合，#652 起包装入口改正为透传内层
+ *     返回值，见 chara_info_individual_wrapped；换号页的页码是另一个
+ *     模块级变量，跨次进入沿用，见 page-chara-number-swap.js 文件头）；
+ *   - 「清掉刚画的几行就地重画」的局部重绘不做（page-dungeon-info2.js/
+ *     page-select-target.js 同款先例）：本文件的 chara_info 与
+ *     chara_info_individual 都是「每轮整屏重绘」的 `for(;;)` 循环；
+ *   - 行首编号从「拼定宽文字」升级为真按钮（本项目通例：`[N] 文字`+键盘
+ *     输入的惯用法升级为 `era.printButton`）——上一页/返回/下一页等原本
+ *     就是按钮，这里额外把角色行本身也做成按钮，比「肉眼看号、手动敲号」
+ *     更符合引擎的点击交互；
  *     **按钮正文不写编号**：`[N]` 由引擎按 showAcc 拼成 `[N] ` 一层
  *     （AGENTS.md 硬约束，PR #30 实机撞见 `[0] [0]`；#530 纠正魔王行、
- *     #535 纠正角色行）。原作的编号是 `[{n,MAX_NUM_LEN}]` 定宽右对齐，
- *     引擎这条前缀不补齐、正文空白又被折叠成一个空格，故补齐做不到；
+ *     #535 纠正角色行）。定宽右对齐的编号（`[{n,MAX_NUM_LEN}]` 格式）
+ *     做不到：引擎这条前缀不补齐位数、正文空白又被折叠成一个空格；
  *     排版在引擎里实测核对过（#535 验收评论）：各格是 el-col、`config.width`
  *     被引擎钳成 24 列网格的跨度（1-24），格的横向位置由跨度决定、不随前一格
  *     文本长度变化——编号格写成 `[1] `/`[11] ` 只影响本格自身填空的长度，
  *     不会带着后列左移；可见的姓名列只由姓名格内部的偏移决定，所以魔王行的
  *     名字格空档取 9 格（4 个全角空格 + 1 个半角空格），与角色行的「徽章
  *     8 格 + 1 个半角空格」同宽（原来给 10 格，实测「你」比角色行的名字
- *     右一个半角字符；本票改成同宽的 9 格）；
- *   - HP/MP 双槽（原作 `BARSTR(...,8)` 文本条）保留为纯文字 `HP{cur}/{max}`，
- *     不升级成 `printMultiColumns` 的原生进度条格：一行要同时容纳编号按钮、
- *     状态徽章、姓名等级、攻防或种族性格、双槽、爱慕/淫乱/收藏/组队/归还
- *     六七个字段，原生进度条格占用独立网格列且不支持塞进彩色文字片段，
- *     硬凑会挤爆一行的可用宽度；`page-invasion.js`「BARSTR → 原生进度条」
- *     的升级先例只适用于「一行一条」的场景，这里不适用。已知局限，留给
- *     真正在引擎里核对排版时调整；
+ *     右一个半角字符；#535 改成同宽的 9 格）；
+ *   - HP/MP 双槽显示为纯文字 `HP{cur}/{max}`，不升级成 `printMultiColumns`
+ *     的原生进度条格：一行要同时容纳编号按钮、状态徽章、姓名等级、攻防或
+ *     种族性格、双槽、爱慕/淫乱/收藏/组队/归还六七个字段，原生进度条格
+ *     占用独立网格列且不支持塞进彩色文字片段，硬凑会挤爆一行的可用宽度；
+ *     `page-invasion.js`「文本条 → 原生进度条」的升级先例只适用于「一行
+ *     一条」的场景，这里不适用。已知局限，留给真正在引擎里核对排版时调整；
  *   - 四个列表的行内彩色片段（爱慕/淫乱/组队/归还/侵攻迎击徽章）用
  *     `{content,color}` 片段数组承载（page-dungeon-info2.js 同款 fragments
- *     写法），颜色为 `SETCOLOR r,g,b` 的十六进制等价；
+ *     写法），颜色写成 `#rrggbb` 十六进制色值；
  *   - 角色行的按钮快捷键 = 角色 ID，与同屏的固定编号（表头 [1200]-[1500]、
  *     一并积极性 [1600]、换号 [1700]、上一页/返回/下一页 [997]-[999]）共存
  *     ——后代 ID 因此必须落在固定编号之上（chara-pregnancy.js 的
- *     FIRST_CHILD_ID = 100000，issue #560 的裁定；静态守卫见
+ *     FIRST_CHILD_ID = 100000，issue #560 的决定；静态检查见
  *     test/child-id-collision.test.js）；
- *   - CASE 8 / CASE 16 的分发（:1062/:1070-1074）沿用项目按钮输入通例：
- *     原作两支 CASE 无前置判断、Emuera 的 INPUT 接受任意整数（手输 8/16 在
- *     任何分页都进得去，含魔王与按钮不显示的场合）；ere 只接受已打印按钮
- *     的快捷键（#129），[8]/[16] 的可见性判定因此变成访问限制——两处
- *     case 内的注释写明，行为保持（第 1 轮验收补记）；
- *   - 立绘更换按钮 `[20]`（:870-871）：立绘系统判不移植（#542，#540 范围
- *     决定 4——开关默认关、素材不在仓库、只增强显示），#638 起按「缺内容的
- *     去掉入口」删除按钮与 CASE 20：原作守卫「立绘开关 && CFLAG:ARG:1 == 0
- *     && ARG != MASTER」的开关项恒假，按钮本就永远按不到。`:883 CALL
- *     PTJ_BUTTON` 同票落判——打工 MOD 不移植，默认态分支
- *     （[18] 卖春积极性按钮，SHOW_BUTTON_BICH_LEVEL）换真身接线；
- *   - `[IF_DEBUG][99] 修改角色[ENDIF]` 调试按钮（分发端 :934 的 CASE 99 →
- *     `CHAR_DEBUG`）：本项目未移植 Emuera 的编译期调试开关概念，直接按
+ *   - case 8 / case 16 的分发沿用项目按钮输入通例：ere 的 input 只接受
+ *     本轮已打印按钮的快捷键（#129），[8]/[16] 只在满足条件的分页打印，
+ *     其余场合（含魔王页与按钮不显示的分页）键入会被输入层弹回——按钮的
+ *     可见性判定因此变成访问限制。两处 case 内的注释写明，行为保持
+ *     （第 1 轮验收补记）；
+ *   - 立绘更换按钮 `[20]`：立绘系统判不移植（#542，#540 范围决定 4——
+ *     开关默认关、素材不在仓库、只增强显示），#638 起按「缺内容的去掉
+ *     入口」删除按钮与对应分支：显示条件里的立绘开关恒假，按钮本就永远
+ *     按不到。打工 MOD 按钮同样判不移植，只保留默认态的 [18] 卖春积极性
+ *     按钮（真身实现，分发见 chara_info_individual 的 case 18）；
+ *   - 调试按钮 `[99] 修改角色`：本项目没有编译期调试开关的概念，按
  *     「非调试构建」处理——按钮本就不渲染；#638 起调试面板判不移植的
  *     处理分支一并删除；
- *   - `CASE 500`（前一人）/`CASE 600`（后一人）原作各含一支
- *     `... && MASTER` 的判据，`MASTER` 是恒为 0 的角色号常量、逻辑与运算
- *     里恒假，两支分支实际不可达——1:1 精简为可达分支，不逐字保留死分支；
- *   - `RESULT == 0 && MASTER` 分支（角色行选中处）同理恒假，不需要代码，
- *     仅在注释中说明；
- *   - `CALL 換號` 的 `@換號` 定义在 `target/ERB/魔改新增/角色編號交換.ERB`
- *     （130 行换号界面）。先前一版票据记录曾把它当 MOD 内容只登记占位；
- *     #540 开图后按「魔改新增/ 其余部分照常移植」随 #545 落地真身——
- *     @換號 见 ere/page/page-chara-number-swap.js（含「换号只换排列键」的
- *     做法与依据），@统一卖春积极性 见 ere/page/page-uniform-bitch-level.js。
+ *   - case 500（前一人）/ case 600（后一人）的分发各有一支以魔王号
+ *     （恒为 0 的角色号）为合取项的条件，逻辑与运算里恒假、实际不可达
+ *     ——不保留死分支，只实现可达分支；
+ *   - 「选中值为 0 时改写为魔王号」的分支（角色行选中处）同理恒假（魔王号
+ *     就是 0），不需要代码，仅在注释中说明；
+ *   - 换号与统一卖春积极性两个子流程曾按 MOD 内容登记占位；#540 起按
+ *     「新增内容照常移植」处理，随 #545 实现真身——换号见
+ *     ere/page/page-chara-number-swap.js（含「换号只换排列键」的做法与
+ *     依据），统一卖春积极性见 ere/page/page-uniform-bitch-level.js。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 // 导入分组按 AGENTS.md（system 在 page 前；本文件存量的 chara-before-page
-// 顺序是历史形态，本票新增行按约定位置放）
+// 顺序是历史写法，新增行按约定位置放）
 const {
   show_button_equip,
   equip_st_show,
@@ -142,7 +136,7 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-// —— @SHOW_CHARA_ACT（:758-797） ——
+// —— show_chara_act ——
 
 /**
  * 行动状态徽章：8 格右对齐色块（本文件不做定宽对齐，见文件头局限说明）。
@@ -159,17 +153,17 @@ function show_chara_act(cid) {
   if (state === 8) return { content: '[拘束台]', color: '#64ff64' };
   if (state === 9) return { content: '[ NTR中]', color: '#ff0000' };
   if (state === 10) return { content: '[育儿室]', color: '#64ff64' };
-  // LOCALS = -F\u3000―\u3000（未登记状态的回显串，"F" 是残留字符，字面量有意保留）
+  // 未登记状态的回显串 -F\u3000―\u3000（"F" 是残留字符，字面量有意保留）
   return { content: '-F\u3000\u2015\u3000' };
 }
 
-// —— @COMPARE_CHARA_ACT（:798-819，#FUNCTION） ——
+// —— compare_chara_act ——
 
 /**
- * @param {number} a 角色 a（原作 ARG）
- * @param {number} b 角色 b（原作 ARG:1）
- * @param {number} [act=2] 原作 ARG:2（全库调用点恒传字面量 2，与
- *   CHARA_INFO 里控制排序模式切换的 SORT_ACT/ACT 变量是两回事）
+ * @param {number} a 角色 a
+ * @param {number} b 角色 b
+ * @param {number} [act=2] 名次的基准状态（调用点恒传字面量 2；与
+ *   chara_info 里控制排序模式切换的 sort_act 是两回事）
  * @returns {number} -1/0/1
  */
 function compare_chara_act(a, b, act = 2) {
@@ -179,10 +173,9 @@ function compare_chara_act(a, b, act = 2) {
   const rank_a = (state_a + 11 - act) % 11;
   const rank_b = (state_b + 11 - act) % 11;
   if (rank_a !== rank_b) return rank_a < rank_b ? -1 : 1;
-  // `CFLAG:ARG:1==2 || CFLAG:ARG:1==3 && CFLAG:ARG:501!=CFLAG:(ARG:1):501`
-  // 按 Emuera 的「&& 与 || 同优先级、左结合」读作
-  // `(CFLAG:ARG:1 ∈ {2,3}) && 楼层不等`——两态都吃楼层判据，楼层相等时
-  // 整支不命中，落到末行的 `a < b ? -1 # 1`（#517）。
+  // 这一支的条件按「(状态 ∈ {2,3}) && 楼层不等」结合，不是「状态 2 直
+  // 接过、状态 3 才比楼层」——两态都吃楼层条件，楼层相等时整支不命中，
+  // 落到末行的 `a < b ? -1 : 1`（#517）。
   if (
     (state_a === 2 || state_a === 3) &&
     (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0)
@@ -194,15 +187,14 @@ function compare_chara_act(a, b, act = 2) {
   return a < b ? -1 : 1;
 }
 
-// —— @CHARA_MARRIGE_BEFORE（:383-433） ——
+// —— chara_marriage_before ——
 
 /**
  * 压缩家族码（TALENT:320）的「未婚前家族关系」描述，仅供
  * `CFLAG:x:601 == 0`（无配偶登记）时的婚姻括号列使用。
  *
- * 原作用 `PRINT`（副作用输出）；本函数改为返回字符串以便拼进行内片段，
- * 观测到的文本完全一致。CASE 5 / CASEELSE 只赋值 `LOCALS` 未打印（无输
- * 出），此处 `return ''` 即等价。
+ * 本函数返回字符串供拼进行内片段，不直接输出；类别 5 与未列举的类别
+ * 无文本，返回空串。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -219,11 +211,11 @@ function chara_marriage_before(cid) {
     if ([1, 5, 7].includes(kind)) return '故乡扶她';
     return '故乡妻子';
   }
-  return ''; // CASE 5 / CASEELSE：无输出（只赋值不打印）
+  return ''; // 其余类别：无文本（空串）
 }
 
 /**
- * ACT_LIST 专用的婚姻括号文本（`[婚: ... ]` 内部，:333-375 五路分支）。
+ * show_chara_act_list 行的婚姻括号文本（`[婚: ... ]` 内部，五路分支）。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -233,12 +225,12 @@ function marriage_bracket_text(cid) {
   if (spouse === 901) return name_of(0);
   if (spouse === 0) return chara_marriage_before(cid);
   if (spouse === 902) {
-    // CALL NAME_LOVER,CFLAG:COUNT:606,1（原函数按 print_flag=1 直接打印
-    // 14 格填充；此处只需裸文本，改读同一张登记表）
+    // 情人（CFLAG:606）：读同一张登记表取裸文本（整行打印的场合另有
+    // 14 格填充，此处拼进行内片段）
     return LOVER_NAMES.get(era.get(`cflag:${cid}:606`) || 0) ?? '';
   }
-  // ELSE 分支：其内两支 `CFLAG:COUNT:601==0` 判据在此处恒假
-  // （外层已排除 spouse==0），两支判据恒假、无输出，保留其余可达分支
+  // 其余配偶值：内部两支 `cflag:601==0` 条件在此处恒假
+  // （外层已排除 spouse==0），无输出，只实现其余可达分支
   const partner = search_family(cid, 'MARRIAGE');
   if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0 && partner < 0) return '无';
   if ((era.get('cflag:0:601') || 0) === (era.get(`cflag:${cid}:6`) || 0)) {
@@ -251,16 +243,16 @@ function marriage_bracket_text(cid) {
   return era.get(`itemname:${spouse}`) ?? '';
 }
 
-// —— 列表行的共享渲染（四个 SHOW_CHARA_*_LIST 共用的行结构） ——
+// —— 列表行的共享渲染（四个列表函数共用的行结构） ——
 
 /**
- * 名册第一行的魔王（源 :141-143）：编号做成**真按钮**（#530）。
+ * 名册第一行的魔王：编号做成**真按钮**（#530）。
  *
  * 名册这一轮的白名单非空——角色行按角色号、排序表头 1200-1700、翻页
  * 997/998、返回 999 都在同屏打印过，而 `added_chara_ids()` 把 0 滤掉了，
  * **没有别的按钮编号是 0**。纯文本的 `[0] …` 玩家因此敲不进编号（引擎只认
- * 本轮打印过的按钮快捷键），主循环里 `result === 0` 那条分支（原作
- * `:91-94 CASE 0 TO CHARANUM-1`，主循环内的注释已引）会成为死支路。编号由
+ * 本轮打印过的按钮快捷键），主循环里 `result === 0` 那条分支（主循环内
+ * 的注释已引）会成为死支路。编号由
  * 引擎按 showAcc 拼成 `[0] `，正文不写 `[N]`（AGENTS.md 硬约束）。
  *
  * 名字格的空档是**姓名列的定位**：9 格 = 4 个全角空格 + 1 个半角空格，与
@@ -409,13 +401,13 @@ function page_slice(ids, no_page) {
   return ids.slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE);
 }
 
-// —— @SHOW_CHARA_INFO_LIST（:114-217） ——
+// —— show_chara_info_list ——
 
 /**
  * @param {number} no_page 页码（0 起）
- * @returns {number[]} 本视图的角色 ID 顺序（原作 CHARA_SORT 的 ere 等价，
- *   供 CHARA_INFO_INDIVIDUAL_WAPPED 的前一人/后一人导航复用）；本视图是
- *   「编号」视图，顺序按排序编号（#545 返工，见 number_view_order）
+ * @returns {number[]} 本视图的角色 ID 顺序，供 chara_info_individual_wrapped
+ *   的前一人/后一人导航复用；本视图是「编号」视图，顺序按排序编号
+ *   （#545 返工，见 number_view_order）
  */
 function show_chara_info_list(no_page) {
   const order = number_view_order();
@@ -426,13 +418,13 @@ function show_chara_info_list(no_page) {
   return order;
 }
 
-// —— @SHOW_CHARA_ACT_LIST（:218-382） ——
+// —— show_chara_act_list ——
 
 /**
- * 插入排序重建 CHARA_SORT（原作 :243-262 的「扫描已填槽位、首个 RESULT<0
- * 处 ARRAYSHIFT 插入」算法逐字等价——比较器不保证严格全序，必须复现同一
- * 套插入过程，不能替换成通用 `Array.prototype.sort`）。
- * @param {number} act 0/1（SORT_ACT % 2，由 CHARA_INFO 维护）
+ * 插入排序重建「状态」视图的顺序（逐个扫描已填槽位、在首个比较结果为
+ * 负处插入）——比较器不保证严格全序，必须保持同一套插入过程，不能替换
+ * 成通用 `Array.prototype.sort`。
+ * @param {number} act 0/1（chara_info 的 sort_act % 2）
  * @returns {number[]}
  */
 function build_act_sort_order(act) {
@@ -483,12 +475,12 @@ function show_chara_act_list(no_page, act) {
   return order;
 }
 
-// —— @SHOW_CHARA_MONEY_LIST（:434-595） ——
+// —— show_chara_money_list ——
 
 /**
- * 原作是「反复取当前最大值」的选择排序，效果等价于按 CFLAG:580 降序、
- * 原始 ID 升序（迭代顺序）为次序的稳定排序——用 `Array.prototype.sort`
- * （规范保证稳定）复现同一结果，不需要逐字重演选择排序循环。
+ * 按 CFLAG:580 降序、原始 ID 升序（迭代顺序）为次序的稳定排序——
+ * `Array.prototype.sort` 规范保证稳定，直接实现即可，效果与「反复取
+ * 当前最大值」的选择排序一致。
  * @param {number} no_page 页码
  * @returns {number[]}
  */
@@ -507,10 +499,10 @@ function show_chara_money_list(no_page) {
   return order;
 }
 
-// —— @SHOW_CHARA_DEBT_LIST（:596-757） ——
+// —— show_chara_debt_list ——
 
 /**
- * 与 show_chara_money_list 同构，取 CFLAG:582（借金，原作按负值存储）
+ * 与 show_chara_money_list 同构，取 CFLAG:582（借金，按负值存储）
  * 升序（数值越负债务越多，越靠前）。
  * @param {number} no_page 页码
  * @returns {number[]}
@@ -562,12 +554,12 @@ function print_sort_header_row() {
   era.printButton('换号', 1700);
 }
 
-// —— @CHARA_INFO（:4-113） ——
+// —— chara_info ——
 
 /**
  * 角色名册主屏。
- * @returns {Promise<number>} 0 = 回到主菜单（原作 RETURN 0）；1 = 回合结束
- *   （原作 RETURN 1，个别页触发的 BEGIN TURNEND 上浮）
+ * @returns {Promise<number>} 0 = 回到主菜单；1 = 回合结束（个别页触发的
+ *   回合结束转场上浮）
  */
 async function chara_info() {
   let no_page = 0;
@@ -603,18 +595,17 @@ async function chara_info() {
     const result = await era.input();
 
     if (result === 1600) {
-      // CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
-      // 被调函数尾 JUMP CHARA_INFO：原作的 NO_PAGE/SORT_SELECT/SORT_ACT 是静态
-      // 变量（指南 user-defined-variables.md:67-69），重进名册沿用现值；本函数里
-      // 它们是局部变量，靠「同一轮循环 continue 重绘」复现该效果——子流程返回后
-      // 页码与排序不归零（从名册之外重进会回初值，见文件头的有意偏离）
+      // uniform_bitch_level（#545 真身：page-uniform-bitch-level.js）。
+      // 被调函数结束后回到名册循环：页码与排序选择在本函数里是局部
+      // 变量，靠「同一轮循环 continue 重绘」在子流程返回后不归零（从名册
+      // 之外重进会回初值，见文件头的取舍说明）
       await uniform_bitch_level();
       continue;
     }
     if (result === 1700) {
-      // CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
-      // [1999] 結束换号 → JUMP CHARA_INFO（同上：同一轮 continue 沿用现值）；
-      // RETURN 0 出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
+      // chara_number_swap（#545 真身：page-chara-number-swap.js）。唯一出口
+      // [1999] 结束换号 → 回到名册循环（同上：同一轮 continue 沿用现值）；
+      // 「返回 0」出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
       // （该文件文件头）
       await chara_number_swap();
       continue;
@@ -644,11 +635,10 @@ async function chara_info() {
       continue;
     }
     if (result === 0 || added_chara_ids().includes(result)) {
-      // CASE 0 TO CHARANUM-1（改写为 ID 语义：0=魔王或已加入
-      // 角色）。`SIF RESULT==0 && MASTER: RESULT=MASTER` 恒假（MASTER 是
-      // 恒 0 常量，逻辑与运算里恒假），无需代码
-      // SORT_SELECT==1200 走包装入口（透传内层返回值，见该函数注释）；
-      // 其余视图直调内层：两路的返回值都直达回合结束判据
+      // 选中角色行的范围判断（ID 语义：0=魔王或已加入角色）。「选中值
+      // 为 0 时改写为魔王号」的分支恒假（魔王号就是 0），无需代码
+      // sort_select === 1200 走包装入口（透传内层返回值，见该函数注释）；
+      // 其余视图直调内层：两路的返回值都直达回合结束判断
       const sub_result =
         sort_select === 1200
           ? await chara_info_individual_wrapped(result)
@@ -658,17 +648,16 @@ async function chara_info() {
       }
       continue;
     }
-    // CASEELSE：无效输入，整屏重绘（本项目每轮天然重绘，直接回到循环头）
+    // 无效输入：整屏重绘（本项目每轮天然重绘，直接回到循环头）
   }
 }
 
 /**
- * @CHARA_INFO_INDIVIDUAL_WAPPED（:820-832）：SORT_SELECT==1200 视图下打开
- * 个别信息页的入口——原作现建的是 `LOCAL:COUNT = COUNT + 1`（1..CHARANUM）
- * 的序号顺位表，即「编号」视图那套顺序；ere 侧换成同一套排列键
- * （number_view_order，按移植自建的排序编号）。
+ * chara_info_individual_wrapped：「编号」视图（sort_select === 1200）下
+ * 打开个别信息页的入口——传入 number_view_order 的顺序（按移植自建
+ * 的排序编号）作为前一人/后一人导航依据。
  *
- * 包装透传内层返回值：内层返回 1（婚礼完成 / ENTER_LOVER 成功）即上浮
+ * 包装透传内层返回值：内层返回 1（婚礼完成 / enter_lover 成功）即上浮
  * 结束本回合，与其余视图一致。
  * @param {number} cid 角色 ID
  * @returns {Promise<number>} 内层的返回值（0 = 回到名册；1 = 回合结束）
@@ -677,14 +666,14 @@ async function chara_info_individual_wrapped(cid) {
   return chara_info_individual(cid, number_view_order());
 }
 
-// —— @CHARA_INFO_INDIVIDUAL（:833-1100） ——
+// —— chara_info_individual ——
 
 /**
  * 个别角色信息页：详情正文存根 + 操作按钮 + 分页/换人导航。
  * @param {number} arg 角色 ID
  * @param {number[]} chara_sort 本次前一人/后一人导航所依据的顺序（调用方
- *   传入，页内不重算——与原作 CHARA_SORT 作为 REF 只读参数同构）
- * @returns {Promise<number>} 0 = 回到名册；1 = 回合结束（上浮给 CHARA_INFO）
+ *   传入，页内不重算）
+ * @returns {Promise<number>} 0 = 回到名册；1 = 回合结束（上浮给 chara_info）
  */
 async function chara_info_individual(arg, chara_sort) {
   let current = arg;
@@ -693,7 +682,7 @@ async function chara_info_individual(arg, chara_sort) {
   for (;;) {
     const l_indx = current !== 0 ? chara_sort.indexOf(current) : -1;
 
-    // #390 起正文换真身（CASE 0-4 五页；原作的 TARGET 换手由显式 cid 承载）
+    // #390 起正文换真身（sub_page 0-4 五页；正文的当前角色由显式 cid 承载）
     await show_chara_info(current, sub_page);
 
     const state = era.get(`cflag:${current}:1`) || 0;
@@ -702,7 +691,7 @@ async function chara_info_individual(arg, chara_sort) {
     const mp = era.get(`base:${current}:1`) || 0;
     const max_mp = era.get(`maxbase:${current}:1`) || 0;
 
-    // 操作按钮块（:858-884）：sub_page 0-2 各按守卫出一批按钮、sub_page 3 零按钮。
+    // 操作按钮块：sub_page 0-2 各按条件出一批按钮、sub_page 3 零按钮。
     // 记下行数差判断这一轮有没有打过按钮（块内只有 printButton，见 #596）
     const button_anchor = era.getLineCount();
     if (sub_page === 0) {
@@ -713,7 +702,7 @@ async function chara_info_individual(arg, chara_sort) {
       show_button_job_change(2, current);
       show_button_temptation(3, current);
       show_button_marriage(4, current);
-      // CALL SHOW_BUTTON_CHILD_CARE(5,ARG)（#401 真身，ere/event/event-pregnancy.js）
+      // show_button_child_care（#401 真身，ere/event/event-pregnancy.js）
       show_button_child_care(5, current);
       if (is_able_to_ability_up(current)) era.printButton('提升能力', 10);
       if (current !== 0) {
@@ -722,19 +711,18 @@ async function chara_info_individual(arg, chara_sort) {
           9,
         );
       }
-      // [20] 更换立绘（:870-871）随 #638 删除：立绘系统判不移植（#542），
-      // 按「缺内容的去掉入口」处理——按钮与 CASE 20 一并移除（见文件头）
+      // [20] 更换立绘随 #638 删除：立绘系统判不移植（#542），
+      // 按「缺内容的去掉入口」处理——按钮与对应分支一并移除（见文件头）
     } else if (sub_page === 1 || sub_page === 2) {
       if (is_trainable(current) === 0) era.printButton('设为目标', 6);
       if (is_assistable(current) === 0) era.printButton('设为助手', 7);
-      // CALL SHOW_BUTTON_EQUIP(16,ARG)（#546 真身：system/equip/
+      // show_button_equip（#546 真身：system/equip/
       // equip-show.js——五道 OR 判定放行才渲染按钮，不放行时零输出）
       show_button_equip(16, current);
-      // CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
-      // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE =
-      // SHOW_BUTTON_BICH_LEVEL(18,ARG) 的 [18] 卖春积极性按钮（档位文案
-      // kojo-dungeon-bitch.js；按本页通例升级 printButton，引擎只送达已打印
-      // 按钮的编号），打工变体（SHOW_PTJ_BUTTON_LEVEL）不渲染
+      // 打工 MOD（EX_FLAG:9000 第 2 位）判不移植（#542），只保留默认态的
+      // [18] 卖春积极性按钮（档位文案
+      // kojo-dungeon-bitch.js；引擎只送达已打印按钮的编号），打工变体
+      // 按钮不渲染
       era.printButton('卖春积极性 - ' + bich_level_text(current), 18);
       if (is_able_to_cloth(current)) era.printButton('更换服装', 11);
       if (state === 8) era.printButton('解除固定', 12);
@@ -744,13 +732,14 @@ async function chara_info_individual(arg, chara_sort) {
       }
       if (state === 0) era.printButton('提升等级', 15);
       if (state === 0) era.printButton('灵魂转移', 17);
-      // [99] 修改角色（[IF_DEBUG]）：不移植调试开关概念，不渲染（文件头）
+      // [99] 修改角色（调试构建限定）：本项目没有编译期调试开关的概念，
+      // 不渲染（文件头）
     }
-    // sub_page === 3：原作两支 IF/ELSEIF 都不命中，无操作按钮
+    // sub_page === 3：条件都不命中，无操作按钮
 
-    // 的 PRINTL：打过按钮时只结束那一行（train-upgrade-log:171-172 里按钮
+    // 块尾的 println：打过按钮时只结束那一行（按钮
     // 行与分割线逐行相邻）；一个按钮都没打时它落在已收行的空行上 = 真空行
-    // （sub_page 3，以及所有守卫都不放行的角色页）
+    // （sub_page 3，以及所有条件都不放行的角色页）
     if (era.getLineCount() === button_anchor) {
       era.println();
     }
@@ -759,11 +748,11 @@ async function chara_info_individual(arg, chara_sort) {
     era.printButton('返回', 100);
     era.printButton('后页', 102);
     if (current > 0) era.printButton('前一人', 500);
-    // `L_INDX >= CHARANUM - 2`：CHARANUM 含魔王（总数=chara_sort.length+1），
-    // 换算成不含魔王的 chara_sort.length 得 `l_indx >= chara_sort.length - 1`；
-    // 原作没有额外要求 `L_INDX>=0`——魔王行（l_indx=-1）同样受这条判据支配，
-    // 且 -1 通常小于 chara_sort.length-1，所以魔王行也会画出「后一人」（对应
-    // CASE 600 分发端 `current===0` 分支跳到 chara_sort[0] 的既有逻辑）。
+    // 显示条件按「角色总数含魔王（chara_sort.length+1）」换算成不含魔王的
+    // `l_indx >= chara_sort.length - 1`；这里不额外要求 `l_indx >= 0`——
+    // 魔王行（l_indx=-1）同样受这条条件支配，且 -1 通常小于
+    // chara_sort.length-1，所以魔王行也会画出「后一人」（对应 case 600
+    // 分发端 `current===0` 分支跳到 chara_sort[0] 的既有逻辑）。
     // 此前一版误加了 `l_indx>=0` 前缀、把魔王行的按钮吞掉，#391 复核修正。
     if (l_indx < chara_sort.length - 1) era.printButton('后一人', 600);
 
@@ -779,13 +768,13 @@ async function chara_info_individual(arg, chara_sort) {
         if (sub_page < 3) sub_page += 1;
         continue;
       case 500:
-        // 前一人（原作另一支 `L_INDX==MASTER && CHARA_SORT && MASTER` 恒
-        // 假，1:1 精简为可达分支，文件头）
+        // 前一人（另一支分发条件以魔王号为合取项、恒假不可达，
+        // 只实现可达分支，见文件头）
         if (l_indx > 0) current = chara_sort[l_indx - 1];
         else if (l_indx === 0) current = 0;
         continue;
       case 600:
-        // 后一人（原作首支 `... && MASTER` 同上恒假，精简为可达分支）
+        // 后一人（首支分发条件同上恒假，只实现可达分支）
         if (current === 0) {
           if (chara_sort.length > 0) current = chara_sort[0];
         } else if (l_indx >= 0 && l_indx + 1 < chara_sort.length) {
@@ -807,20 +796,20 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 10:
-        // CALL ABILITY_UP_CORE（#397 真身：page/page-ability-up.js）
+        // ability_up_core（#397 真身：page/page-ability-up.js）
         if (is_able_to_ability_up(current)) {
           await ability_up_core(current);
         }
         continue;
       case 11:
-        // CALL TAILOR_CORE（#397 真身：page/page-tailor.js）
+        // tailor_core（#397 真身：page/page-tailor.js）
         if (is_able_to_cloth(current)) {
           await tailor_core(current);
         }
         continue;
       case 12:
-        // 拘束台解放（:1012-1017）：原作此后落到 RESULT==0 的「返回名册」
-        // 出口，不是 GOTO DRAW_PAGE——与 13 同款
+        // 拘束台解放：此后直接走「返回名册」出口，
+        // 不留在页内重画——与 case 13 同款
         if (state === 8) {
           chara(current).invasion.状态 = 0;
           if (era.get(`cflag:${current}:77`))
@@ -858,43 +847,40 @@ async function chara_info_individual(arg, chara_sort) {
         await chara_info_name_edit(current, 1);
         continue;
       case 2: {
-        // CALL CHARA_INFO_JOB_CHANGE(ARG)（#393 真身）
+        // chara_info_job_change（#393 真身）
         const job_result = await chara_info_job_change(current);
-        if (job_result !== 2) return job_result; // 的收尾
+        if (job_result !== 2) return job_result; // 2 以外的返回值上浮
         continue;
       }
       case 3: {
-        // CALL TEMPTATION(ARG)（#393 真身）。原作 :1094-1099 的收尾
-        // 按被调方的 RESULT 分流：0/1 上浮给 CHARA_INFO（0 = 回名册、
-        // 1 = 回合结束），其余落回 INPUT_LOOP 重画——三支「动作」都照此接
-        // （CASE 0/1/5 等其它 case 的「留在页内」是各自票据的既有处置，
-        // 不在本票改动面内）
+        // temptation（#393 真身）。收尾按被调方的返回值
+        // 分流：0/1 上浮给名册（0 = 回名册、1 = 回合结束），其余落回本页
+        // 重画——三支「动作」都照此接（case 0/1/5 等其它 case 的「留在
+        // 页内」是各自工单的既有处置，不在本张工单改动面内）
         const temptation_result = await temptation(current);
         if (temptation_result !== 2) return temptation_result;
         continue;
       }
       case 4: {
-        // CALL MARRIAGE(ARG)（#393 真身；1 = 回合结束，上浮给
-        // CHARA_INFO——原作 MARRIAGE 的「結婚するとターンエンド」是最初
-        // 就写明的出口）
+        // marriage（#393 真身；1 = 回合结束，上浮给
+        // 名册——「结婚即结束本回合」是最初就写明的出口）
         const marriage_result = await marriage(current);
         if (marriage_result !== 2) return marriage_result;
         continue;
       }
       case 5:
-        // CALL CHILD_CARE_CHARA(ARG)（#401 真身；返回 2 是「侵攻中的
+        // child_care_chara（#401 真身；返回 2 是「侵攻中的
         // 勇者」防御支，此处与其它 case 同款忽略返回值，留在页内继续导航）
         await child_care_chara(current);
         continue;
       case 8:
-        // CALL RANDOM_SELF_CALL(ARG,1)（#546 真身：chara/chara-
-        // self-call.js 的 MODE 1——自定义输入分支；[8] 按钮由 SHOW_BLOCK
+        // random_self_call（#546 真身：chara/chara-
+        // self-call.js）第 3 参传 1——自定义输入分支；[8] 按钮由 show_block
         // 渲染，见 components/chara-info-title.js）。
-        // 有意偏离（第 1 轮验收补记）：原作 CASE 8 无前置判断，任何分页手输
-        // 8（含魔王、[8] 按钮不显示的第 2/3 页）都能重设一人称；ere 的
-        // input 只接受本轮已打印按钮的快捷键（#129），[8] 又只在非魔王的
-        // 页 0/1 打印——SHOW_BLOCK 的可见性判定在这里变成了**访问限制**
-        //（魔王的一人称无法自定义）。行为保持，与项目按钮输入通例一致
+        // 有意偏离（第 1 轮验收补记）：[8] 只在非魔王的页 0/1 打印，ere 的
+        // input 又只接受本轮已打印按钮的快捷键（#129）——可见性判定在这里
+        // 变成了**访问限制**（魔王与第 2/3 页的一人称无法自定义）。行为
+        // 保持，与项目按钮输入通例一致
         await random_self_call(current, undefined, 1);
         continue;
       case 9:
@@ -903,20 +889,18 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 16:
-        // LOCAL = LINECOUNT（死赋值，无人再读）→ CALL
-        // EQUIP_ST_SHOW, ARG（#546 真身：system/equip/equip-show.js）→ WAIT
-        // → GOTO DRAW_PAGE（本循环天然整页重绘，continue 即是）。
-        // 有意偏离（第 1 轮验收补记）：原作 CASE 16 同样无前置判断——
-        // CHECK_ABLE_TO_SHOW_EQUIP 返回 1 时只是不显示 [16] 按钮，手输 16
-        // 在任何分页仍能看装备；ere 只接受已打印按钮，判定不放行 = 完全
+        // equip_st_show（#546 真身：system/equip/equip-show.js）同步输出
+        // 后等键，再 continue 回页首重画（本循环天然整页重绘）。
+        // 有意偏离（第 1 轮验收补记）：装备查看条件不放行时只是不显示
+        // [16] 按钮；ere 只接受已打印按钮的快捷键，不放行 = 完全
         // 不可达。行为保持，与项目按钮输入通例一致
-        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行
+        equip_st_show(current); // 同步纯输出，无等待；等待按键在下一行
         await era.waitAnyKey();
         continue;
       case 18:
         await set_bich_level(current);
         continue;
-      // case 20（更换立绘）与 case 99（CHAR_DEBUG 调试面板）随 #638 删除：
+      // case 20（更换立绘）与 case 99（调试面板）随 #638 删除：
       // 两者均判不移植（#542），按钮不渲染、引擎输入白名单送不到这两值，
       // 分支只有直调可达——按「缺内容的去掉入口」一并移除
       default:

@@ -2,14 +2,14 @@
  * @file 单元测试：EVENT_BEFORETRAIN 与调教前叙事。
  *
  * 覆盖（issue #218 补轮）：
- *   - @PRITRAIN_MESSAGE：省略设定（FLAG:6 & 1）早退、初调教（着衣关/开，
+ *   - pritrain_message：省略设定（FLAG:6 & 1）早退、初调教（着衣关/开，
  *     好奇心 TALENT:23，助手抖S/坦率分支）、第 N 次调教的素质叙述分支
  *     （崩坏/土下座/问候/其他），ズーコ着ぐるみ早退、妊娠（三档 + 娇小
  *     体型）、胸部真空/乳房穿孔/无内裤/下半身穿孔等状态叙述、助手三分支；
- *   - @PRITRAIN_MESSAGE_NOCLOTHES：全部素质分支（感情淡薄/幼稚+未成熟/
+ *   - pritrain_message_noclothes：全部素质分支（感情淡薄/幼稚+未成熟/
  *     坚强/反抗心/自尊心高/幼稚/自制心/胆怯/自尊心低/悲观/坦率/老实/
- *     自大/兜底）；
- *   - @PRITRAIN_MESSAGE_CLOTHED：同形态的着衣分支。
+ *     自大/保底处理）；
+ *   - pritrain_message_clothed：同形式的着衣分支。
  */
 
 const assert = require('node:assert/strict');
@@ -22,9 +22,9 @@ const {
   assert_one_blank_before,
 } = require('./helpers/blank-lines');
 
-test('#597：初调教叙述的两处真空行（原作 :35 与 :44）', async () => {
-  // 初调教开场（:34 的 PRINTFORML 之后）与「好奇心」那一句之前，原作各有一个
-  // 独立 PRINTL；两处都是真空行，删掉即少一行
+test('#597：初调教叙述的两处空行', async () => {
+  // 初调教开场（首句之后）与「好奇心」那一句之前，各有一个
+  // 独立 PRINTL；两处都是空行，删掉即少一行
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.seed_chara(0, { name: '魔王', callname: '魔王' });
@@ -41,8 +41,8 @@ test('#597：初调教叙述的两处真空行（原作 :35 与 :44）', async (
 
   await pritrain_message();
 
-  assert_one_blank_after(fixture, '的第一次调教开始了', '初调教开场（:35）');
-  assert_one_blank_before(fixture, '的眼神最深处', '好奇心那一句之前（:44）');
+  assert_one_blank_after(fixture, '的第一次调教开始了', '初调教开场');
+  assert_one_blank_before(fixture, '的眼神最深处', '好奇心那一句之前');
 });
 
 /**
@@ -475,8 +475,8 @@ test('BEFORETRAIN: 第 N 次调教——助手三分支', async () => {
   }
 });
 
-// —— @PRITRAIN_MESSAGE_NOCLOTHES 全分支 ——
-// 每支对应一个素质组合与一段台词锚（取首行断言——分支互斥，首行即分支标识）。
+// —— pritrain_message_noclothes 全分支 ——
+// 每支对应一个素质组合与一段台词基准（取首行断言——分支互斥，首行即分支标识）。
 
 const NOCLOTHES_CASES = [
   ['感情淡薄 TALENT:22', { 22: 1 }, '依魔王的命令脱掉了衣服'],
@@ -496,7 +496,7 @@ const NOCLOTHES_CASES = [
   ['坦率 TALENT:13', { 13: 1 }, '对自己现在的处境难以接受'],
   ['老实 TALENT:14', { 14: 1 }, '乖乖地把自己的衣服脱光了'],
   ['自大 TALENT:16', { 16: 1 }, '投以挑衅的目光'],
-  ['兜底（无素质）', {}, '被剥光了'],
+  ['保底处理（无素质）', {}, '被剥光了'],
 ];
 
 for (const [name, talents, expect] of NOCLOTHES_CASES) {
@@ -531,7 +531,7 @@ const CLOTHED_CASES = [
   ['坦率 TALENT:13', { 13: 1 }, '对自己现在的处境难以接受'],
   ['老实 TALENT:14', { 14: 1 }, '老老实实的'],
   ['自大 TALENT:16', { 16: 1 }, '投以挑衅的目光'],
-  ['兜底（无素质）', {}, '被带到调教室了'],
+  ['保底处理（无素质）', {}, '被带到调教室了'],
 ];
 
 for (const [name, talents, expect] of CLOTHED_CASES) {

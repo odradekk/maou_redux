@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 85; // #546 起 +7（M11532-M11538，random_self_call 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 cm_gender 接通 global:3——由 test/chara-make.test.js 盯守）；#548 返工轮 +2（M11478/M11479 的目标位置从 enter-enemy.js 搬到 chara_ex 的 34 号注册回调——补偿写在所有加入路径都过的 add_chara_ex 里）；#565 起 +2（M11614/M11615，cm_st/cm_st_ace 的 st_up 接入）+ 审查轮 +2（M11624/M11625，show_chara_info 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟检查、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：这张工单 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 目标改为共享判断条件调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
+export const COUNT = 86; // #696 +1（M14109：组合名单段名不宜独存段值的追加段回归检查）；#546 起 +7（M11532-M11538，random_self_call 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 cm_gender 接通 global:3——由 test/chara-make.test.js 盯守）；#548 返工轮 +2（M11478/M11479 的目标位置从 enter-enemy.js 搬到 chara_ex 的 34 号注册回调——补偿写在所有加入路径都过的 add_chara_ex 里）；#565 起 +2（M11614/M11615，cm_st/cm_st_ace 的 st_up 接入）+ 审查轮 +2（M11624/M11625，show_chara_info 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟检查、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：这张工单 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 目标改为共享判断条件调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
 
 export default [
   // —— #565 st_up 接入（cm_st / cm_st_ace） ——
@@ -842,5 +842,14 @@ export default [
   const adventurer_gender = 0;`,
     tests: ['chara-make'],
     must_mention: '六分支按 global:3 冒险者性别分派',
+  },
+  // —— #696（F12）：组合名单段名追加段 ——
+  {
+    desc: 'M14109 组合名单段名追加段删除（不宜独存段值照单全收）',
+    file: 'ere/chara/chara-name.js',
+    find: '    // 单段名落在不宜独存的段值时追加一段通用两音段后停止：追加一轮仍先\n    // 消耗一音段判定的两个骰子（rand(3)/rand(2)），length == 1 时两个条件\n    // 都不成立，段值取通用两音段。\n    if (length === 1 && SINGLE_BAD_PIECES.has(piece)) {\n      result *= 1000;\n      const one_sound =\n        (rand(3) === 0 && length !== 1) || (rand(2) === 0 && length === 3);\n      result += one_sound ? rand(9) + 300 : rand(30) + 200;\n      break;\n    }\n',
+    replace: '',
+    tests: ['chara-name'],
+    must_mention: '227 后追加 202',
   },
 ];

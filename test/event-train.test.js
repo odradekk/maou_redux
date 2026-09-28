@@ -1,5 +1,5 @@
 /**
- * ere/event/event-train.js 的行为测试（issue #44：@EVENTTRAIN 真身）。
+ * ere/event/event-train.js 的行为测试（issue #44：eventtrain 真身）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  *
@@ -17,7 +17,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：魔王 + 奴隶 31，目标 31、无助手（ASSI = -1）、主人亲自调教
-//（ASSIPLAY = 0）。tflag/palam 寻址有夹具守卫，先 beginTrain 开表。
+//（ASSIPLAY = 0）。tflag/palam 寻址有夹具检查，先 beginTrain 开表。
 function seed_world(fixture) {
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -27,7 +27,7 @@ function seed_world(fixture) {
   return era_flag;
 }
 
-// @TRAIN_NAME_INIT 的播种写入（TRAIN_MAIN.ERB:788-908；TRAIN_NAME_TABLE
+// train_name_init 的播种写入（TRAIN_MAIN 链；TRAIN_NAME_TABLE
 // 的键升序，150 号槽在循环后单独内插写入——实现见 train-name.js）
 function expected_train_name_writes(train_name_table) {
   return [
@@ -40,9 +40,9 @@ function expected_train_name_writes(train_name_table) {
   ];
 }
 
-// @EVENTTRAIN 直线赋值的完整期望（TRAIN_MAIN.ERB:15-55 按语句顺序；含
-// @TRAIN_NAME_INIT 播种与 @PRITRAIN_MESSAGE 承载头部的三笔，
-// EVENT_BEFORETRAIN.ERB:7-14）。train_name_table 由用例侧经夹具装载传入
+// eventtrain 直线赋值的完整期望（按语句顺序；含
+// train_name_init 播种与 pritrain_message 承载头部的三笔，
+// EVENT_BEFORETRAIN 一份）。train_name_table 由用例侧经夹具装载传入
 //（播种表以实现为准——表内容错漏由 train-name.test.js 的逐条断言守）。
 function expected_train_writes(train_name_table) {
   return [
@@ -60,7 +60,7 @@ function expected_train_writes(train_name_table) {
     { name: 'flag:10012', value: 31 }, // TARGET:1 = TARGET（记录目标）
     // SIF TALENT:TARGET:271 → PALAM 3/5 = 3000（无素质，不写）
     { name: 'tflag:402', value: 0 }, // 死斗场收入初始化
-    // CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，守卫空过）
+    // CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 播种，检查空过）
     ...expected_train_name_writes(train_name_table),
     // PRITRAIN_MESSAGE（真身写入）：
     { name: 'cflag:31:10', value: 1 }, // CFLAG:TARGET:10 += 1（调教回数）
@@ -71,7 +71,7 @@ function expected_train_writes(train_name_table) {
   ];
 }
 
-test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外写入当场暴露）', async () => {
+test('eventtrain 直线赋值：与既有清单逐项一致（全量断言，意外写入当场暴露）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { TRAIN_NAME_TABLE } = fixture.load_module('system/train/train-name');
@@ -80,11 +80,11 @@ test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外�
 
   const pending = await emit('EVENTTRAIN');
 
-  // 无 BEGIN：@EVENTTRAIN 的定义不发转场（转场由回合循环的输入驱动）
+  // 无 BEGIN：eventtrain 的定义不发转场（转场由回合循环的输入驱动）
   assert.equal(pending, undefined);
-  // 世界底座的指针写入（seed_world 侧）不计：从 @EVENTTRAIN 第一笔写起看
+  // 世界底座的指针写入（seed_world 侧）不计：从 eventtrain 第一笔写起看
   const start = fixture.var_writes.findIndex((w) => w.name === 'base:0:2');
-  assert.ok(start >= 0, '@EVENTTRAIN 必须先清主人的射精槽');
+  assert.ok(start >= 0, 'eventtrain 必须先清主人的射精槽');
   assert.deepEqual(
     fixture.var_writes.slice(start),
     expected_train_writes(TRAIN_NAME_TABLE),
@@ -124,7 +124,7 @@ test('助手参与（ASSIPLAY = 1）：PLAYER = ASSI，助手射精槽一并清�
   await emit('EVENTTRAIN');
 
   const writes = fixture.var_writes;
-  // 世界底座的指针写入（seed_world 侧）不计：从 @EVENTTRAIN 第一笔写起看
+  // 世界底座的指针写入（seed_world 侧）不计：从 eventtrain 第一笔写起看
   const start = writes.findIndex((w) => w.name === 'base:0:2');
   // SIF ASSI >= 0 → BASE:ASSI:2 = 0（插在目标射精之后、母乳槽之前）
   assert.deepEqual(writes.slice(start, start + 4), [
@@ -133,7 +133,7 @@ test('助手参与（ASSIPLAY = 1）：PLAYER = ASSI，助手射精槽一并清�
     { name: 'base:32:2', value: 0 },
     { name: 'base:31:3', value: 0 },
   ]);
-  // ELSE → PLAYER = ASSI；:13-14 SIF ASSI → T:12 = ASSI
+  // ELSE → PLAYER = ASSI； SIF ASSI → T:12 = ASSI
   assert(
     writes.some((w) => w.name === 'flag:10008' && w.value === 32),
     'PLAYER 必须是助手 32',
@@ -173,10 +173,10 @@ test('调教域 flag 槽位：包装层寻址钉在 yml/Flag.yml 的保留区 id
   ]);
 });
 
-// —— #401：@EVENTTRAIN 的无属性档（EVETRAIN.ERB） ——
+// —— #401：eventtrain 的无属性档（EVETRAIN 档） ——
 
 /**
- * 同时装载两份 @EVENTTRAIN 定义（#PRI 的 event-train 与无属性的
+ * 同时装载两份 eventtrain 定义（#PRI 的 event-train 与无属性的
  * event-train-normal），模拟 main-loop.js 的装载序。
  */
 function seed_world_both_tiers(fixture) {
@@ -202,7 +202,7 @@ test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不
     writes_named('tflag:200').length,
     1,
     'TFLAG:200 只被无属性档清（#PRI 档的 REPEAT 200 只到 199）——它的写入是' +
-      '「无属性档真的跑了」的判据',
+      '「无属性档真的跑了」的条件',
   );
   assert.equal(
     writes_named('tflag:199').length,
@@ -279,4 +279,4 @@ test('#401 无属性档：调教者选择的两个分支（ASSIPLAY 是调教域
   assert.equal(duo_flag.player, 32, 'ASSIPLAY != 0 → PLAYER = ASSI');
 });
 
-test('#401 无属性档：存根名单为空（EVETRAIN.ERB 整份落真身）', () => {});
+test('#401 无属性档：存根名单为空（EVETRAIN 整份落真身）', () => {});

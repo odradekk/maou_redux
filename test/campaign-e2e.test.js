@@ -1,6 +1,6 @@
 /**
  * 战役 1「赤蛮咒森」端到端验收（issue #469）：
- * CAMPAIGN_MENU → SELECT_CAMPAIGN → CAMPAIGN_SET_1 → 招募 → 派遣 →
+ * campaign_menu → select_campaign → campaign_set_1 → 招募 → 派遣 →
  * run_dungeon 驱动的真实推进（CAMPAIGN_ROOM/ROOM_EXTRA/TRAP/EQUIP_SELECT/
  * MONSTER_LIST/QUEST/STORY 全部经真实调用链触达）→ 第 6 层踏破 →
  * CAMPAIGN_ENDING_1 → FLAG:400 归零。
@@ -9,7 +9,7 @@
  * test/page-campaign.test.js、各域文件自己的单元测试的差别：本文件不
  * 直接调用任何 campaign_* 函数，全程只驱动 campaign_menu() 与
  * run_dungeon()（page-invasion.js post_conquest_menu [9] 与 dungeon.js
- * 的既有入口），验证的是接线本身，不是各函数各自的正确性（那些已在
+ * 的既有入口），验证的是接入本身，不是各函数各自的正确性（那些已在
  * 各自文件的测试里覆盖）。
  */
 
@@ -32,7 +32,7 @@ function texts(fixture) {
     .map((l) => l.text);
 }
 
-test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进 → CAMPAIGN_ENDING_1', async () => {
+test('战役 1 全链：campaign_menu 招募/派遣 → run_dungeon 真实推进 → campaign_ending_1', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -48,12 +48,12 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   fixture.seed_chara(1, { id: 1, name: '候补者', callname: '候补者' });
   fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名重掷
 
-  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  fixture.load_module('page/page-campaign-1'); // 触发战役 1 的 register()
   const { campaign_menu } = fixture.load_module('page/page-campaign');
   const { run_dungeon } = fixture.load_module('dungeon/dungeon');
 
   // —— 第一段：CAMPAIGN_MENU 里选战役、招募（两轮菜单 + [999] 退出）——
-  // 第一轮 [0] 选战役 → SELECT_CAMPAIGN 选 [1] → CAMPAIGN_SET_1 跑完；
+  // 第一轮 [0] 选战役 → select_campaign 选 [1] → campaign_set_1 跑完；
   // 第二轮 [1] 招募 → rand_chara_make 的形象确认 [100]（继续）→ 收下 [2]；
   // 第三轮 [999] 退出菜单（派遣分批在下面单独驱动，中间要插入体力预置）
   // 菜单段用恒 0 的随机源：战役招募要命中候选表首位，即预设的角色 1
@@ -65,7 +65,7 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   assert.equal(fixture.store.get('flag:400'), 1, '战役进行中');
   assert.ok(
     texts(fixture).some((t) => t.includes('极东之地')),
-    'CAMPAIGN_SET_1 的开场白',
+    'campaign_set_1 的开场白',
   );
   // 招募的收尾（rand_chara_make 的返回值）必须是**角色号 1**：#487 之前按
   // 「已加入数 - 1」取号，这里会落到 2 号（既不是候选角色、也不在编制里）
@@ -82,8 +82,8 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
 
   // rand_chara_make 走 CM_BASE 时按角色数据随机生成体力/气力，未必落在
   // 「不算临死」的门槛之上，且 run_dungeon 的战斗（H6 真身）会消耗气力——
-  // 派遣分支排除体力 < 1 的候选（:101-102），气力耗尽则被战斗判定撤退/
-  // 归还（迎击奴隶滞留分档，#172 既有）。派遣与战斗判定本身都不是本票
+  // 派遣分支排除体力 < 1 的候选，气力耗尽则被战斗判定撤退/
+  // 归还（迎击奴隶滞留分档，#172 既有）。派遣与战斗判定本身都不是这张工单
   // 新逻辑，这里补满体力气力只为让流程稳定推进到 CAMPAIGN_ENDING
   fixture.store.set('base:1:0', 100000);
   fixture.store.set('maxbase:1:0', 100000);
@@ -118,19 +118,19 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   }
 
   assert.ok(ending_fired, `CAMPAIGN_ENDING 未在 ${CALL_LIMIT} 次调用内触发`);
-  assert.equal(fixture.store.get('flag:400'), 0, ':317 战役结束清零');
+  assert.equal(fixture.store.get('flag:400'), 0, '战役结束清零');
   assert.ok(
     texts(fixture).some((t) => t.includes('神像之力竟不奏效')),
-    'CAMPAIGN_ENDING_1 的开场白',
+    'campaign_ending_1 的开场白',
   );
   assert.ok(
     texts(fixture).some((t) => t.includes('赤森谜路')),
-    'CAMPAIGN_ENDING_1 收尾重现战役名',
+    'campaign_ending_1 收尾重现战役名',
   );
   // 推进途中确实走过战役剧情文本（CAMPAIGN_QUEST → CAMPAIGN_STORY），
-  // 证明不是靠 whenMissing 兜底空转到终局
+  // 证明不是靠 whenMissing 缺省处理空转到终局
   assert.ok(
     texts(fixture).some((t) => t.includes('奇形怪状的植物')),
-    '途中打过 CAMPAIGN_STORY_1 进度 0 段文本',
+    '途中打过 campaign_story_1 进度 0 段文本',
   );
 });

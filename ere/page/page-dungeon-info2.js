@@ -1,37 +1,36 @@
 /**
- * @file 地下城情报界面（情报向）：@DUNGEON_INFO2 的主循环 + @ENEMY_COMPARE
- * 比较器 + @ENEMY_EXIST2 部下一行的 1:1 移植（issue #180，阶段 3 H11）。
+ * @file 地下城情报界面（情报向）：dungeon_info2 的主循环 + enemy_compare
+ * 比较器 + enemy_exist2 部下一行（issue #180，阶段 3 H11）。
  *
- * 入口：主菜单 [102] 地下城（SHOP ver1.0.2.ERB:109 的 CALL DUNGEON_INFO2，
- * ere 侧 page-shop.js usershop 的 102 分支）。
+ * 入口：主菜单 [102] 地下城（ere 侧 page-shop.js usershop 的 102 分支）。
  *
- * 建设向的地下城设定界面（@DUNGEON_INFO 一族：逐层设定的列表界面 + 2D 模式
- * 分流）全库没有调用方，已删除；本文件是游戏内唯一的地下城界面，
+ * 建设向的地下城设定界面（逐层设定的列表界面 + 2D 模式
+ * 分流）无调用方，未移植；本文件是游戏内唯一的地下城界面，
  * 情报向（三标签页：陷阱 / 设施 / 宝物 + 部下总览）。
  *
- * 原作 → ere 的映射（本文件语义依据集中在此）：
- *   - REDRAW 0/1（:12/:491，抑制逐行重绘防闪烁）无 ere 对应语义，不镜像
+ * 移植映射（本文件语义依据集中在此）：
+ *   - REDRAW 0/1（抑制逐行重绘防闪烁）无 ere 对应语义，不镜像
  *     （page-main-menu.js 同款先例）；
- *   - LINE_COUNT 预计算块（:20-46）与 DISPLAY_LINE 计数（:18 及全文）的唯一
+ *   - LINE_COUNT 预计算块与 DISPLAY_LINE 计数的唯一
  *     目的是算 CLEARLINE 的清行数（下半区高度可变，先算空白填充对齐）——
- *     ere 侧行数由 ScreenBlock 运行时测量（#73 裁定），整块省略；
- *   - 原作 PRINTFORM 拼行的多按钮布局（每层一行：阶层钮 + 三列陷阱）→
+ *     ere 侧行数由 ScreenBlock 运行时测量（#73 结论），整块省略；
+ *   - PRINTFORM 拼行的多按钮布局（每层一行：阶层钮 + 三列陷阱）→
  *     一行一钮（ere 的按钮独占一行，#73 两条 UI 结论的排版近似；功能面
  *     等价——每个可输入项都是按钮，快捷键集合不变）；
  *   - %名,18,LEFT% 一类的等宽填充省略：引擎 showAcc 会把按钮正文里的连续
  *     空白折叠成一个空格（PR #30），填充不 survive 渲染；
  *   - 按钮 [100] 的状态文案「關閉/開啟」按 #60 归一为简体「关闭/开启」；
- *   - 局部变量 DISPLAY_FLAG/SELECT_FLAG/DIALOGUE 在原作是跨调用持久的
- *     #DIM（:483-488 尾部手工复位），ere 侧是函数局部变量，天然复位；
- *   - @ENEMY_EXIST2 尾部的护卫名单按阶层实参判断，只出在近卫层
+ *   - 局部变量 DISPLAY_FLAG/SELECT_FLAG/DIALOGUE 是跨调用持久的
+ *     #DIM（尾部手工复位），ere 侧是函数局部变量，天然复位；
+ *   - enemy_exist2 尾部的护卫名单按阶层实参判断，只出在近卫层
  *     （floor 10）——从地城概况点开 1-9 层时不追加；
- *   - @ENEMY_EXIST2 的 MAX_NAME_LEN 补齐（:551/:569/:627/:637）按原作移植：
+ *   - enemy_exist2 的 MAX_NAME_LEN 补齐：
  *     静态保留 + 显示宽度计（全角 2 格，STRLENS 同尺），见 max_name_len
  *     的声明注释。勇者行/护卫行是普通文本行（era.print），字符串层不经
  *     printButton 的正文合并；实机上 HTML 默认换行规则仍会折叠连续半角
  *     空格、列对齐不成立——全项目共有的表现层差异（page-invasion.js 文件
- *     头同款结论，#535 实测；比对工具两侧同款归一化），不在本票处理；
- *   - KAI_LIST = RESULT（:439）是死写（全库零读者），省略。
+ *     头同款结论，#535 实测；比对工具两侧同款归一化），不在这张工单处理；
+ *   - KAI_LIST = RESULT 是死写（写后无人读），省略。
  */
 
 const era = require('#/era-electron');
@@ -64,22 +63,21 @@ const COLOR_FLEE = 'rgb(200, 200, 100)';
 const COLOR_INTERCEPT = 'rgb(100, 255, 255)';
 // SETCOLOR 255,100,100（侵攻中）
 const COLOR_INVASION = 'rgb(255, 100, 100)';
-// SETCOLOR 255,255,0（@ENEMY_EXIST 同款家族色，部下名黄）
+// SETCOLOR 255,255,0（部下行的家族色，部下名黄）
 const COLOR_SUBORDINATE = 'rgb(255, 255, 0)';
 
 /**
- * @ENEMY_EXIST2 的 `#DIM MAX_NAME_LEN = 0`（:551）：Emuera 函数级静态量，
- * 初值只在程序开始时生效一次，跨调用保留；:569 `MAX(STRLENS(…),
- * MAX_NAME_LEN)` 只增不减——一次游戏中见过的最长名字（按显示宽度，全角
- * 2 格）一直决定之后所有调用的补齐宽度，勇者行（:627）与护卫行
- * （:637）共用。ere 用模块级变量实现即得同语义（模块只加载一次）。
- * **读档或回标题时 Emuera 是否清空这类静态量未核实**（#563；与 #565 对
- * CHAR_MAKE.ERB 静态量的处理一致），ere 按「不清」落地——测试夹具逐用例
+ * enemy_exist2 的 `#DIM MAX_NAME_LEN = 0`：函数级静态量，
+ * 初值只在程序开始时生效一次，跨调用保留；`MAX(STRLENS(…),
+ * 2 格）一直决定之后所有调用的补齐宽度，勇者行与护卫行
+ * 共用。ere 用模块级变量实现即得同语义（模块只加载一次）。
+ * **读档或回标题时这类静态量是否被清空未核实**（#563；与 #565 对
+ * CHAR_MAKE 静态量的处理一致），ere 按「不清」实现——测试夹具逐用例
  * purge_ere_cache，两边的差异只出现在跨存档的长会话里，且只影响排版。
  */
 let max_name_len = 0;
 
-/** FLAG:N 读：未声明下标 undefined → 0 兜底（#13） */
+/** FLAG:N 读：未声明下标 undefined → 0（#13） */
 function flag_get(i) {
   return era.get(`flag:${i}`) || 0;
 }
@@ -105,14 +103,14 @@ function name_of(cid) {
 }
 
 /**
- * @ENEMY_COMPARE（:496-541，#FUNCTION）：部下列表的排序比较器。
+ * enemy_compare（#FUNCTION）：部下列表的排序比较器。
  *
  * 键序（依次）：所在阶层（CFLAG:x:501，低层靠前）→ 状态类（勇者奴隶的
  * 队长 / 迎击者本体）→ 队伍攻略度（CFLAG:x:502）→ 队长优先 → 队员次序
  * （CFLAG:x:531）。
  *
- * @param {number} a 角色 a（原作 ARG）
- * @param {number} b 角色 b（原作 ARG:1）
+ * @param {number} a 角色 a
+ * @param {number} b 角色 b
  * @returns {number} -1 / 0 / 1（a 排前 / 同位 / b 排前）
  */
 function enemy_compare(a, b) {
@@ -160,28 +158,28 @@ function enemy_compare(a, b) {
 }
 
 /**
- * @ENEMY_EXIST2（:545-645）：打印一层楼的部下（勇者侧）按队伍分组的一行。
+ * enemy_exist2：打印一层楼的部下（勇者侧）按队伍分组的一行。
  * 筛选：CFLAG:x:501 == floor 且（侵攻 2 / 迎击 3 / TALENT:x:221 的奴隶），
  * 排序经 enemy_compare 插入。纯输出、不输入。
  *
- * 首行空行（:595 / :629-630）：调用方进入本函数时行已经落了（SHOW_FLOOR 与
- * DUNGEON_INFO2 的 $PRINT 段都在 CALL 前 DRAWLINE/PRINTL），所以第一支队伍
- * 前的 `PRINTL`（:595）落出一个空行；没有队伍时 :595 不执行，同一个空行由
- * 尾部的 `PRINTL`（:629-630）落出。#615 起按这两个分支分开写（此前固定先落
- * 一个空行，两处的行数相同但代码结构与原作对不上）。
+ * 首行空行：调用方进入本函数时行已经落了（show_floor 与
+ * dungeon_info2 的 $PRINT 段都在 CALL 前 DRAWLINE/PRINTL），所以第一支队伍
+ * 前的 `PRINTL` 落出一个空行；没有队伍时不执行，同一个空行由
+ * 尾部的 `PRINTL` 落出。#615 起按这两个分支分开写（此前固定先落
+ * 一个空行，两处的行数相同但代码结构对不上）。
  *
- * **护卫名单（:632-645）只出在近卫层**：判据是阶层实参 `floor == 10`，
+ * **护卫名单只出在近卫层**：判断条件是阶层实参 `floor == 10`，
  * 1-9 层一律不追加。
  * @param {number} floor 阶层（1-9；10 = 近卫层）
  * @returns {Promise<void>}
  */
 async function enemy_exist2(floor) {
   // VARSET LOCAL + L_LEN = 0（插入排序的缓冲区与长度）；MAX_NAME_LEN
-  // 不在此复位——原作 :551 的静态量跨调用保留，见 max_name_len 的声明注释
+  // 不在此复位——静态量跨调用保留，见 max_name_len 的声明注释
   const sorted = [];
   // 筛选并排序
   for (const cid of era.getAddedCharacters()) {
-    // 原作 FOR L_CHAR, 1, CHARANUM 从 1 起（0 = 魔王不在其列）
+    // FOR L_CHAR, 1, CHARANUM 从 1 起（0 = 魔王不在其列）
     if (cid < 1) {
       continue;
     }
@@ -220,12 +218,12 @@ async function enemy_exist2(floor) {
       sorted.push(cid);
     }
   }
-  // 逐个打印：同队（CFLAG:533 相同）同行——原作靠「新队伍才
+  // 逐个打印：同队（CFLAG:533 相同）同行——旧引擎靠「新队伍才
   // PRINTL」把一队收在一行，ere 的 print 一次一行，按队归并片段数组
   let last_char = 0;
   let row_fragments = null;
   // 第一支队伍前的 PRINTL：调用方的行已落，这一条落出的是空行。
-  // 名单为空时 :595 不执行，同一个空行改由尾部 :629-630 落（见 JSDoc）
+  // 名单为空时队首 PRINTL 不执行，同一个空行改由尾部落（见 JSDoc）
   if (sorted.length > 0) {
     era.println();
   }
@@ -286,14 +284,14 @@ async function enemy_exist2(floor) {
   // 护卫名单：只出在近卫层（floor 10），1-9 层不追加
   if (floor === 10) {
     for (const cid of era.getAddedCharacters()) {
-      // 原作 FOR COUNT, 0, CHARANUM 从 0 起
+      // FOR COUNT, 0, CHARANUM 从 0 起
       if (
         cflag_get(cid, 1) === 0 &&
         (era.get(`ex_talent:${cid}:1`) || 0) !== 0
       ) {
         const fragments = [
           { content: '[护卫中]\u3000', color: COLOR_SUBORDINATE },
-          // [{COUNT,2}]——宽度 2 的右对齐（Emuera 的 {n,w} 缺省右对齐）
+          // [{COUNT,2}]——宽度 2 的右对齐（{n,w} 格式缺省右对齐）
           {
             content: `[${pad_left(String(cid), 2)}]`,
             color: COLOR_SUBORDINATE,
@@ -316,9 +314,9 @@ async function enemy_exist2(floor) {
 }
 
 /**
- * 部下状态总览（@DUNGEON_INFO2 的 $PRINT 块 :421-477，输入面 [100-199] +
+ * 部下状态总览（dungeon_info2 的 $PRINT 块，输入面 [100-199] +
  * [999]）：打印所选区段的楼层头 + 怪物库存 + ENEMY_EXIST2 的勇侧行，等输入。
- * 原作 GOTO PRINT 的重画收在调用方（主循环 continue 触发 ScreenBlock.redraw
+ * GOTO PRINT 的重画收在调用方（主循环 continue 触发 ScreenBlock.redraw
  * 之前，先经本函数重建画面）。
  *
  * @param {number} kai_result 主菜单输入（10-14：总览 / 1-3 层 / 4-6 层 /
@@ -364,14 +362,14 @@ async function print_subordinates(kai_result) {
     const a = z + 100;
     const b = item_count(a);
     if (b > 0) {
-      // PRINTFORML [{A}] {B}只%MONSTERNAME(A)%——纯文本 + 自由输入
-      //（原作形态）。**不**改按钮（PR #53 通则在此处的例外）：本界面的
-      // 逐层 WAIT（:447）在 ere 引擎里会清空按钮白名单（任何一次成功
+      // PRINTFORML [{A}] {B}只%MONSTERNAME(A)%——纯文本 + 自由输入。
+      // **不**改按钮（PR #53 通则在此处的例外）：本界面的
+      // 逐层 WAIT 在 ere 引擎里会清空按钮白名单（任何一次成功
       // 回传都把 rule 置空，waitAnyKey 内部走 input({any:true})），最后
       // 一个 WAIT 之前打印的按钮会整段拒收——怪物行改按钮会让早段怪物
       // 在实机上不可选。纯文本 + 无按钮轮 = 引擎的自由输入通道（dev-
       // guides/05-interaction.md），键盘键入 [A] 与 [999] 全程可达，
-      // 1:1 于 Emuera 的键盘交互。
+      // 键盘交互行为保持一致。
       era.print(`[${a}] ${b}只${monstername(a)}`);
     }
     z += 1;
@@ -387,18 +385,18 @@ async function print_subordinates(kai_result) {
 }
 
 /**
- * @DUNGEON_INFO2（:2-492）：地下城情报界面主循环。
+ * dungeon_info2：地下城情报界面主循环。
  *
  * 三标签页（DISPLAY_FLAG 0/1/2 = 陷阱/设施/宝物，[900]-[902] 切换）；每页
  * 上半区是 9 层的布置矩阵（选中位图 SELECT_FLAG[0..2]，每层一位，行/列/
  * 单元/全部四类选择），下半区是当前页的库存列表或设施确认对话；尾部
  * [10]-[14] 部下总览、[100] 怪物迎击开关、[999] 返回。
  *
- * @returns {Promise<void>} 原作无 RESULT 消费（CALL 方即主菜单分发）
+ * @returns {Promise<void>} 无返回值消费（CALL 方即主菜单分发）
  */
 async function dungeon_info2() {
-  // #DIM 局部（DISPLAY_FLAG/SELECT_FLAG/COMPARE_BIT/DIALOGUE——原作
-  // 跨调用持久 + :483-488 尾部复位，ere 侧函数局部天然复位）
+  // #DIM 局部（DISPLAY_FLAG/SELECT_FLAG/COMPARE_BIT/DIALOGUE——旧
+  // 引擎里跨调用持久、靠尾部复位，ere 侧函数局部天然复位）
   let display_flag = 0;
   const select_flag = [0, 0, 0];
   // DIALOGUE[0] = 选中的设施号（0 = 通路）；DIALOGUE[1] = 对话状态
@@ -492,7 +490,7 @@ async function dungeon_info2() {
       select_flag[0] === 0 && select_flag[1] === 0 && select_flag[2] === 0;
     // 下半区（当前页的库存 / 确认对话）
     if (display_flag === 0) {
-      // 陷阱库存列表（:136-166）
+      // 陷阱库存列表
       if (dialogue[1] === 0) {
         // [  0] 解除陷阱
         era.printButton(
@@ -532,8 +530,8 @@ async function dungeon_info2() {
             '\u3000\u3000合计花费\u3000\u00A0\u00A0\u00A0\u00A00p ，确认执行吗？',
           );
         }
-        era.printButton('- 好的', 0); // DUNGEON_INFO2.ERB:180 [0]
-        era.printButton('- 不要', 1); // DUNGEON_INFO2.ERB:180 [1]（同行并排两个选项）
+        era.printButton('- 好的', 0); // [0]
+        era.printButton('- 不要', 1); // [1]（同行并排两个选项）
       } else if (dialogue[1] === -1) {
         era.print([
           { content: '\u3000\u3000* 还没有选择对象！！ *', color: COLOR_DIM },
@@ -559,7 +557,7 @@ async function dungeon_info2() {
         }
       }
     } else {
-      // 宝物库存列表（:214-245）
+      // 宝物库存列表
       if (dialogue[1] === 0) {
         era.printButton(
           '取下宝物',
@@ -587,7 +585,7 @@ async function dungeon_info2() {
     era.printButton('4～6层', 12);
     era.printButton('7～9层', 13);
     era.printButton('近卫兵', 14);
-    // PRINTPLAIN 显示部下（尾部全角空格填充只服务原作对齐，ere 版式
+    // PRINTPLAIN 显示部下（尾部全角空格填充只服务对齐，ere 版式
     // 已不同，取语义文本）
     era.print('显示部下');
     // [100]怪物迎击 现在开启/关闭（FLAG:5 位 4 toggle；#60 归一简体）
@@ -681,7 +679,7 @@ async function dungeon_info2() {
       if (dialogue[1] > 0) {
         // 确认对话的输入
         if (result === 0) {
-          // 通路免费；设施 10000p/层（MONEY 与 EX_FLAG:4444 双减 :334-335）
+          // 通路免费；设施 10000p/层（MONEY 与 EX_FLAG:4444 双减）
           if (
             (era_flag.money >= 10000 * dialogue[1] && dialogue[0] !== 0) ||
             dialogue[0] === 0
@@ -780,7 +778,7 @@ async function dungeon_info2() {
           await monster_setup(sub_result);
           continue;
         }
-        // [999] 返回（或其它值——原作 INPUT 后只判 100-199，其余落空回到
+        // [999] 返回（或其它值——INPUT 后只判 100-199，其余落空回到
         // 主循环 CONTINUE）
         break;
       }

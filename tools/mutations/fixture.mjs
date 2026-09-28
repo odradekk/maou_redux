@@ -536,7 +536,7 @@ export default [
     tests: ['enter-enemy'],
     // 变异下开关用例第一条断言（勇者入队）先红，第二条不再执行——
     // must_mention 取先红断言的消息（M275 先例）
-    must_mention: '开关短路了 :93 的调用——勇者没有入队',
+    must_mention: '开关短路了早退检查的调用——勇者没有入队',
   },
   // —— #557：等待重叠检测（input / waitAnyKey / printAndWait 的漏写 await 守卫）——
   {

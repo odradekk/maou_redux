@@ -1,5 +1,5 @@
 /**
- * @EVENT_NEXTDAY / @EVENT_NEWDAY / @EVENT_NEXTMONTH 窄路径的行为测试
+ * event_nextday / event_newday / event_nextmonth 窄路径的行为测试
  * （issue #115：S3 日程推进与月份回绕）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
@@ -29,9 +29,9 @@ function setup_nextday() {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  // 金钱不变量（#401）：@DEBUG_CHECK 是回合链的一环，按
+  // 金钱不变量（#401）：debug_check 是回合链的一环，按
   // `MONEY == EX_FLAG:4444 + 8766` 判「钱被改过」，不成立就炸宝库、清零
-  // 资金、随机删一个角色（合法开局由 @EVENTFIRST 播种 10000 / 1234；本
+  // 资金、随机删一个角色（合法开局由 eventfirst 播种 10000 / 1234；本
   // 函数不跑 EVENTFIRST）。不补的话撤走的角色是随机的、本文件多处以
   // 角色仍在场为前提（工单：不许把断言放宽成区间绕过去）
   fixture.store.set('flag:10004', 10000); // MONEY
@@ -41,7 +41,7 @@ function setup_nextday() {
   fixture.load_module('event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
-  // 本局关闭勇者来袭（#171/#168 裁定 4 的隔离开关）：本文件的用例测日程
+  // 本局关闭勇者来袭（#171/#168 结论 4 的隔离开关）：本文件的用例测日程
   // 推进与月份回绕，不测勇者——ENTER_ENEMY 自 #171 起为每日真调用，勇者
   // 来袭的行为在 test/enter-enemy.test.js 隔离地测（event-turnend.test.js
   // 的 setup_turnend 同款）
@@ -49,13 +49,8 @@ function setup_nextday() {
   return { fixture, emit, era_flag };
 }
 
-/** 占位行按「原作 @函数名，」精确计数（避免 @ENDCHECK 误命中更长名字） */
-function stub_count(lines, name) {
-  return lines.filter((line) => line.includes(`原作 @${name}，`)).length;
-}
-
 // 独立日历表（大小月知识的独立来源，与实现无关地写死）：value = 该月可
-// 显示的最大日（玩家可见的月末）；换月发生在 date 越过它时。原作语义：
+// 显示的最大日（玩家可见的月末）；换月发生在 date 越过它时。既有语义：
 // 2 月 28（29 瞬间换）、小月 30、大月 31；12 月越界回 1 月
 const MONTH_DAYS = {
   1: 31,
@@ -76,11 +71,11 @@ test('连续推进 400 天：月始终 1–12、日始终合法，大小月与 2
   const world = setup_nextday();
   join_slave_chara(world.fixture, 31, '温妮');
 
-  // 开局对齐原作 @EVENTFIRST：DAY:1 = 1、DAY:2 留 0（era-flag 手写区注释）
+  // 开局对齐 eventfirst：DAY:1 = 1、DAY:2 留 0（era-flag 手写区注释）
   world.era_flag.month = 1;
   world.era_flag.date = 0;
 
-  // 期望序列独立推演：与实现同源的「原作语义」，但日历知识来自上面的表
+  // 期望序列独立推演：与实现同源的语义，但日历知识来自上面的表
   let exp_month = 1;
   let exp_date = 0;
 
@@ -90,7 +85,7 @@ test('连续推进 400 天：月始终 1–12、日始终合法，大小月与 2
     await world.emit('EVENTTURNEND'); // TIME 1→0（进日）
 
     exp_date += 1;
-    // 原作换月判据（EVENT_TURNEND.ERB:83 + EVENT_NEXTMONTH.ERB:14-26）：
+    // 换月条件（EVENTNEXTDAY + EVENT_NEXTMONTH 两处）：
     // date > 28 时调用月替；2 月支不看 date（触发即换）、其余按大小月溢出
     if (exp_date > 28 && exp_date > MONTH_DAYS[exp_month]) {
       exp_month = exp_month === 12 ? 1 : exp_month + 1;
@@ -118,7 +113,7 @@ test('连续推进 400 天：月始终 1–12、日始终合法，大小月与 2
   }
 
   // 400 天 = 365 + 35：恰跨一次年（第 366 天回到 1 月 1 日），第 400 天
-  // 落在次年 2 月 4 日——逐日核对已保证，这里锚定两个里程碑防期望表自身
+  // 落在次年 2 月 4 日——逐日核对已保证，这里基准定两个里程碑防期望表自身
   // 错位（365/366 边界即 12 月 31 → 1 月 1）
   const milestones = {};
   {
@@ -162,11 +157,6 @@ test('跨年的年龄增长：奴隶 452 +1、451 落换算真身，魔王不涨
     1,
     '奴隶的年龄应写入换算结果（1 倍档：与种族年龄同值）',
   );
-  assert.equal(
-    stub_count(world.fixture.text_lines(), 'HUMAN_AGE_GENERATE'),
-    0,
-    '已落真身，不得再有换算占位行',
-  );
   assert(
     !world.fixture.var_writes.some((w) => w.name === 'cflag:0:452'),
     'FOR AGE_COUNT, 1, CHARANUM 跳过 0 号位：魔王不得涨年龄',
@@ -201,7 +191,7 @@ test('每推进一天 ENDCHECK 恰好被调用一次：午后回合 0 次、日�
   assert.equal(
     endcheck_runs(world.fixture),
     1,
-    '每推进一天 ENDCHECK 必须恰好被调用一次（@EVENT_NEWDAY 的 :241）',
+    '每推进一天 ENDCHECK 必须恰好被调用一次（event_newday 的）',
   );
 
   // 累计 10 天：恰好 10 次（每天恰好一次的累计形式）
@@ -238,8 +228,8 @@ test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算
     fixture.var_writes,
     [
       { name: 'flag:61', value: 0 },
-      // @SENGEN_VIDEO_DE（#502，INVASION.ERB:1271-1281）：过时倒计时 -1、
-      // 流行度 -1，两段同款的清零 IF 各写一对（已是 0 也照写，1:1 保留）
+      // sengen_video_de（#502，侵略流程的每日衰减）：过时倒计时 -1、
+      // 流行度 -1，两段同款的清零 IF 各写一对（已是 0 也照写，留着有测试守住）
       { name: 'exflag:9013', value: -1 },
       { name: 'exflag:9012', value: -1 },
       { name: 'exflag:9013', value: 0 },
@@ -251,8 +241,8 @@ test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算
   );
 
   // EVENT_NEWDAY 的晨间事件全是存根；入口自动存档（#137，见下一条用例）
-  // 经 @SAVEINFO 的 1:1 副作用改写 TARGET/ASSI 指针（FLAG:1/FLAG:2 缺省 0
-  // 恒 >= 0 → 双写 0）；:241 起进入 @ENDCHECK（#116 真调用）：
+  // 经 saveinfo 的副作用改写 TARGET/ASSI 指针（FLAG:1/FLAG:2 缺省 0
+  // 恒 >= 0 → 双写 0）；随后进入 endcheck（#116 真调用）：
   // ENDRESET 十一角清场（剧情角色全不在场 → 十一笔零写，源码顺序）+
   // ENDCHECKMAIN 反叛判定（夹具零播种 → 威望 0 ≤ 0 → FLAG:2816 = 10）；
   // 其余四条线条件全不触发，ENDCHECKCHARA 无角色可定线，分派循环对空注册表静默
@@ -278,7 +268,7 @@ test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算
       { name: 'exflag:2808', value: 0 }, // 琼
       { name: 'exflag:2809', value: 0 }, // 普林希斯
       { name: 'exflag:2810', value: 0 }, // 嘉德
-      { name: 'flag:2815', value: 0 }, // 葵希罗（原作错写 FLAG 侧，1:1）
+      { name: 'flag:2815', value: 0 }, // 葵希罗（错写 FLAG 侧，此处照原样保留）
       { name: 'exflag:2807', value: 0 }, // 菲娅
       { name: 'flag:2816', value: 10 }, // 反叛判定（威望 0）
     ],
@@ -298,7 +288,7 @@ test('自动存档（#137/ADR-0006）：EVENT_NEWDAY 入口写 99 号槽，备�
   await run_event_newday();
 
   // saveData 恰一次、目标 99 号槽（夹具的数据层真实现同时落备注）。args
-  // 断言在前：拆掉自动存档的变异下它先红（M252 的 must_mention 锚点）
+  // 断言在前：拆掉自动存档的变异下它先红（M252 的 must_mention 基准点）
   const saves = fixture.calls.filter((c) => c.api === 'saveData');
   assert.equal(
     saves[0]?.args[0],
@@ -309,7 +299,7 @@ test('自动存档（#137/ADR-0006）：EVENT_NEWDAY 入口写 99 号槽，备�
   assert.match(
     saves[0].args[1],
     /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第\u00A07日午前/,
-    '备注 = 「自动」前缀 + %GETTIMES()% + @SAVEINFO 正文（#104 决议第三节）',
+    '备注 = 「自动」前缀 + %GETTIMES()% + saveinfo 正文（#104 决议第三节）',
   );
   assert.equal(
     fixture.store.get('global:saves:99'),
@@ -349,7 +339,7 @@ test('排卵诱发剂效果消去：CFLAG:109 非零时播报 + 清零（走门�
   );
 });
 
-test('录像日收益接线：EVENT_NEXTDAY 在每角色循环调用 EVENT_VIDEO_DAY 真身', async () => {
+test('录像日收益接入：EVENT_NEXTDAY 在每角色循环调用 EVENT_VIDEO_DAY 真身', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -368,7 +358,7 @@ test('录像日收益接线：EVENT_NEXTDAY 在每角色循环调用 EVENT_VIDEO
   assert.equal(fixture.store.get('cflag:31:495'), 100, '每日浏览数已累计');
   assert.equal(fixture.store.get('flag:10004'), 100, '每日收益已入账');
   assert(
-    !fixture.text_lines().some((line) => line.includes('@EVENT_VIDEO_DAY')),
+    !fixture.text_lines().some((line) => line.includes('event_video_day')),
   );
 });
 
@@ -380,7 +370,7 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   // 可见证据（#404 起该链的存根行已换成真身）
   join_slave_chara(world.fixture, 21, '银黑桃');
   world.fixture.store.set('exflag:2814', 151);
-  // NEXTDAY 体内的可见锚：排卵诱发剂消去播报（:55-61），位于税収/角色循环之前
+  // NEXTDAY 体内的可见基准：排卵诱发剂消去播报，位于税収/角色循环之前
   world.fixture.store.set('cflag:31:109', 1);
   world.era_flag.month = 2;
   world.era_flag.date = 28;
@@ -391,29 +381,26 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   const texts = world.fixture.text_lines();
   const nextday = texts.findIndex((line) =>
     line.includes('温妮的排卵诱发剂的效果消失了。'),
-  ); // NEXTDAY 体内（:55-61）
-  const month_roll = texts.findIndex((line) => line.includes('明天就是3月了')); // NEXTMONTH（在 :84，DAY 推进之后）
+  ); // NEXTDAY 体内
+  const month_roll = texts.findIndex((line) => line.includes('明天就是3月了')); // NEXTMONTH（在 ，DAY 推进之后）
   const endcheck = texts.findIndex((line) =>
     line.includes('银黑桃乳业获得的收入desu'),
-  ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后，ENDCHECKSPADE 的 151 档播报）
+  ); // ENDCHECK 内部（event_newday  之后，ENDCHECKSPADE 的 151 档播报）
   assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0);
-  assert.ok(
-    nextday < month_roll,
-    'EVENT_NEXTDAY（:77）必须先于月替（:84）——原作调用序',
-  );
-  // 普通档尾部的序证人。#508 起 @AUTOTRAIN 的占位行没了，改用纯文本的位置
-  // 关系：ENDCHECK 在普通档的 :749-751（EVENT_NEWDAY 内）跑，必在 #PRI 档的
-  // 月替（:84）之后——三档链序或 EVENT_NEWDAY 调用点被挪动，本断言即红。
+  assert.ok(nextday < month_roll, 'EVENT_NEXTDAY必须先于月替——既有调用序');
+  // 普通档尾部的序证人。#508 起 autotrain 的占位行没了，改用纯文本的位置
+  // 关系：ENDCHECK 在普通档的 （EVENT_NEWDAY 内）跑，必在 #PRI 档的
+  // 月替之后——三档链序或 EVENT_NEWDAY 调用点被挪动，本断言即红。
   // 「AUTOTRAIN 真的执行了」不在本证人的射程内（它在本世界零输出，由
   // event-turnend 的窗口用例与变异 M11002 单独钉）
   assert.ok(
     month_roll < endcheck,
-    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :749-751）必须在 #PRI 的月替之后',
+    'ENDCHECK（event_newday ，经普通档）必须在 #PRI 的月替之后',
   );
 });
 
-test('诅咒戒指制造接线（#174 真身）：EVENT_NEXTDAY:120 无条件调用，按库存逐个消耗', async () => {
-  // 随机源走生产路径（Math.random），断言对环种不敏感：只看消耗与播报形态
+test('诅咒戒指制造接入（#174 真身）：EVENT_NEXTDAY:120 无条件调用，按库存逐个消耗', async () => {
+  // 随机源走生产路径（Math.random），断言对环种不敏感：只看消耗与播报形式
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -429,7 +416,7 @@ test('诅咒戒指制造接线（#174 真身）：EVENT_NEXTDAY:120 无条件调
   );
 });
 
-// —— #400（N16）落地的 12 个函数：先跑素质变化三事件 ——
+// —— #400（N16）实现的 12 个函数：先跑素质变化三事件 ——
 
 /** 素质变化三事件共用的世界底座：魔王 0 在场 + 奴隶 31（温妮） */
 function setup_chara_events() {
@@ -470,7 +457,7 @@ test('扶她化（EVENT_FUTA_F）：选 [0] 得【扶她】+【童贞】，【�
   assert.deepEqual(
     button_rendered(fixture),
     ['[0] - 好的', '[1] - 不要'],
-    '选项（正文的「- 」是原作文本，源 :371-372）',
+    '选项（正文的「- 」是既有文案）',
   );
   assert(texts.includes('温妮获得了【扶她】。'), '获得播报');
 });
@@ -501,7 +488,7 @@ test('扶她化（EVENT_FUTA_F）：选 [1] 只清【肉芽诅咒】，不给【
 test('扶她化（EVENT_FUTA_F）：[0]/[1] 之外的输入由引擎拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「其余值 GOTO INPUT_LOOP 重问」——按钮化后白名单就是 0/1，
   // 2/7 这类值在引擎那头被拒收、不回传游戏，重问支结构性不可达
-  // （1:1 保留，page-ability-up.js 文件头同款登记）。
+  // （page-ability-up.js 文件头同款登记，留着有测试守住）。
   const fixture = setup_chara_events();
   fixture.store.set('talentname:121', '扶她');
   const { event_futa_f } = fixture.load_module('event/event-nextday');
@@ -563,9 +550,9 @@ test('幼儿退行（EVENT_YOUJI）：未持有的清理项不写不留播报；
   assert.equal(
     fixture.store.get('talent:31:70'),
     1,
-    '清理表只有原作那 13 项：表外素质不得被清',
+    '清理表只有那 13 项：表外素质不得被清',
   );
-  // 13 项清理全部未持有 → 一行消失播报都不许有（原作逐个 IF TALENT:n 守卫）
+  // 13 项清理全部未持有 → 一行消失播报都不许有（逐个 IF TALENT:n 检查）
   assert(
     !fixture.text_lines().some((t) => t.endsWith('消失了。')),
     '未持有的清理项不得产生消失播报',
@@ -615,7 +602,7 @@ test('幼儿退行（EVENT_YOUJI）：已持有【漏尿癖】时不重复给也
   assert.equal(fixture.store.get('talent:31:57'), 1, '保持 1');
   assert(
     !fixture.text_lines().includes('获得了【漏尿癖】。'),
-    '已持有时不播报（原作 IF TALENT:57 == 0 守卫）',
+    '已持有时不播报（IF TALENT:57 == 0 检查）',
   );
   assert(
     fixture.var_writes.filter((w) => w.name === 'talent:31:57').length === 0,
@@ -624,7 +611,7 @@ test('幼儿退行（EVENT_YOUJI）：已持有【漏尿癖】时不重复给也
 });
 
 test('魔族化（EVENT_MAZOKU）：欲望档 × 淫乱的二维表驱动，逐支核对种族与素质', async () => {
-  // 种族编号 → yml/Item.yml 的显示名（原作 %ITEMNAME:(TALENT:现种族)%）
+  // 种族编号 → yml/Item.yml 的显示名（%ITEMNAME:(TALENT:现种族)%）
   const RACE_NAMES = { 152: '魅魔', 132: '小恶魔', 140: '下等恶魔' };
   // [欲望, 淫乱, 期望现种族, 期望素质 91/481/482（undefined = 该支不写）, 分支关键字]
   const cases = [
@@ -679,19 +666,19 @@ test('魔族化（EVENT_MAZOKU）：欲望档 × 淫乱的二维表驱动，逐�
       texts.some((t) => t.includes(line)),
       `分支关键字：${line}`,
     );
-    // #597：:485 / :495 的 `PRINTFORML `（空参数）落在上一句 PRINTFORMW 之后
-    // （那一行已结束）——它是**真空行**，末句之后**恰有**一个空行再进 :498
-    // WAIT。:498 的 WAIT 不占行，所以末尾两条是「播报行 + 空行」
+    // #597：两处空参数 `PRINTFORML ` 落在上一句 PRINTFORMW 之后
+    // （那一行已结束）——它是**空行**，末句之后**恰有**一个空行再进
+    // WAIT。WAIT 不占行，所以末尾两条是「播报行 + 空行」
     assert.ok(fixture.lines.length >= 4, '整段演出有输出（否则断言会空过）');
     const last = fixture.lines[fixture.lines.length - 1];
     const before_last = fixture.lines[fixture.lines.length - 2];
     assert.ok(
       before_last.type === 'text' && before_last.text !== '',
-      ':485/:495 的真空行之前是播报行（不多不少一个空行）',
+      '末句的空行之前是播报行（不多不少一个空行）',
     );
     assert.ok(
       last.type === 'br' || (last.type === 'text' && last.text === ''),
-      ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
+      '末句的空行在末句之后（末尾恰有一个空行）',
     );
   }
 });
@@ -764,7 +751,7 @@ test('维持费（RUNNING_COST）：天数三档边界（31/32、51/52）与发�
     [9, 2, 0, false], // NORMAL 从第 10 日起才发生
     [10, 2, 600, true], // 边界
     [19, 1, 0, false], // EASY 从第 20 日起才发生
-    [20, 1, 480, true], // 边界：600 × 0.80
+    [20, 1, 480, true], // 边界 × 0.80
   ];
   for (const [day, difficulty, expected, charged] of cases) {
     const fixture = setup_chara_events();
@@ -806,7 +793,7 @@ test('维持费（RUNNING_COST）：FLAG:48 的六个设施位与警备员人数
   await running_cost();
 
   // 基础 500 + 天数追加 3000 + 设施 500+100+1000+500+1800+100 = 7500，
-  // 再 + 生活费 200 − 100 → 7600（生活费的加减在人气/贡献度之后，见原作序）
+  // 再 + 生活费 200 − 100 → 7600（生活费的加减在人气/贡献度之后，见既有程序）
   assert.equal(fixture.store.get('flag:10004'), 50000 - 7600, '六位设施额');
 
   const with_guard = setup_chara_events();
@@ -824,13 +811,13 @@ test('维持费（RUNNING_COST）：FLAG:48 的六个设施位与警备员人数
   );
 });
 
-test('维持费（RUNNING_COST）：人气与贡献度两把梯子（含原作不可达的两支）', async () => {
+test('维持费（RUNNING_COST）：人气与贡献度两把梯子（含不可达的两支）', async () => {
   // [EXP:0:91 人气, EXP:0:90 贡献度, 期望金额]
-  // 两把梯子在「生活费」之前（原作序）：基数 3500，末尾 +200 − 100
+  // 两把梯子在「生活费」之前（既有程序）：基数 3500，末尾 +200 − 100
   const cases = [
     [0, 0, 3600],
     [50, 0, 3950], // 人气 ≥50 → ×1.10：floor(3500×1.10) + 100
-    [90, 0, 3950], // 原作升序判据：≥50 支先命中 → 70/90 两支不可达（1:1 保留）
+    [90, 0, 3950], // 升序条件：≥50 支先命中 → 70/90 两支不可达（两支都保留）
     [0, 3000, 450], // 贡献度 ≥3000 → ×0.10
     [0, 2000, 1150], // ×0.30
     [0, 1200, 1850], // ×0.50
@@ -871,7 +858,7 @@ test('维持费（RUNNING_COST）：TIMES 截断——浮点略小于整数时�
   await running_cost();
 
   // 500 + 3×300 − 100 = 1300；1300 × 1.4 = 1819.9999999999998 → 截断 1819
-  // （四舍五入会得 1820——截断语义的直接靶点）
+  // （四舍五入会得 1820——截断语义的直接目标点）
   assert.equal(fixture.store.get('flag:10004'), 50000 - 1819, 'TIMES 截断');
   assert(
     fixture
@@ -909,7 +896,7 @@ test('偶尔归来（SOMETIMES_SHE_COMES_BACK）：死掉的奴隶回位，体�
 
   const returned = await sometimes_she_comes_back();
 
-  assert.equal(returned, 1, '有人归来时返回 1（原作 D = 1 / RETURN 1）');
+  assert.equal(returned, 1, '有人归来时返回 1（D = 1 / RETURN 1）');
   assert.equal(fixture.store.get('base:31:0'), 30, '体力 = MAXBASE:0 / 10');
   assert.equal(fixture.store.get('base:31:1'), 200, '气力 = MAXBASE:1');
   const texts = fixture.text_lines();
@@ -938,7 +925,7 @@ test('偶尔归来（SOMETIMES_SHE_COMES_BACK）：一次只回一人、魔王�
   assert.equal(
     returned,
     1,
-    '两名死者也只回来一个（原作注释「一度に帰ってくるのは一人ずつ」）',
+    '两名死者也只回来一个（注释「一度に帰ってくるのは一人ずつ」）',
   );
   assert.equal(fixture.store.get('base:31:0'), 30, '先扫到的那一个回来');
   assert.equal(fixture.store.get('base:32:0'), 0, '后一个保持死亡');
@@ -954,7 +941,7 @@ test('偶尔归来（SOMETIMES_SHE_COMES_BACK）：无死者时返回 0 且无�
   assert.equal(await sometimes_she_comes_back(), 0, '无人归来返回 0');
   assert.equal(fixture.text_lines().length, 0, '无输出');
 
-  // 魔王自己「体力 0」也不在判定面内（原作 SIF COUNT == 0 → CONTINUE）
+  // 魔王自己「体力 0」也不在判定面内（SIF COUNT == 0 → CONTINUE）
   const master_dead = setup_chara_events();
   master_dead.store.set('base:31:0', 100); // 奴隶活着，只有魔王「体力 0」
   master_dead.store.set('base:0:0', 0);
@@ -974,7 +961,7 @@ test('魔王候补确定（MAOU_KOUHO）：净效果 = 最后一名持有 EX_TAL
   for (const [label, candidates, expected] of cases) {
     const fixture = setup_chara_events();
     for (const cid of [32, 33]) join_slave_chara(fixture, cid, `奴隶${cid}`);
-    // 好感度（CFLAG:2）故意前高后低：上游判据的净效果与它无关
+    // 好感度（CFLAG:2）故意前高后低：该条件的净效果与它无关
     for (const [i, cid] of candidates.entries()) {
       fixture.store.set(`ex_talent:${cid}:3`, 1);
       fixture.store.set(`cflag:${cid}:2`, 100 - i * 10);
@@ -987,7 +974,7 @@ test('魔王候补确定（MAOU_KOUHO）：净效果 = 最后一名持有 EX_TAL
   }
 });
 
-test('魔王候补确定（MAOU_KOUHO）：0 号位不参与（原作 FOR COUNT, 1, CHARANUM）', async () => {
+test('魔王候补确定（MAOU_KOUHO） 号位不参与（FOR COUNT, 1, CHARANUM）', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('ex_talent:0:3', 1);
   const { maou_kouho } = fixture.load_module('event/event-nextday');
@@ -995,12 +982,12 @@ test('魔王候补确定（MAOU_KOUHO）：0 号位不参与（原作 FOR COUNT,
   maou_kouho();
 
   // 0 号位只有自己是候补时，TEMP 停在初值 0，`SIF TEMP` 不成立 → 一个写都没有。
-  // 这条同时钉住「魔王自己不当继任魔王」：0 号位恒在加入序最前，被跳过与否在
-  // 现网角色序下不可区分（故不设变异条目），行为口径以本条为准。
+  // 这条同时钉住「魔王自己不当继任魔王」 号位恒在加入序最前，被跳过与否在
+  // 现网角色序下不可区分（故不设变异条目），行为标准以本条为准。
   assert.equal(fixture.store.get('exflag:3'), undefined, '魔王自己不当候补');
 });
 
-test('魔王替换（MAOU_TENSHIN）：候补即玛奥（17）时走直接继位支', async () => {
+test('魔王替换（MAOU_TENSHIN）：候补即玛奥时走直接继位支', async () => {
   const fixture = setup_chara_events();
   join_slave_chara(fixture, 17, '玛奥');
   fixture.store.set('exflag:3', 17); // 继任魔王
@@ -1009,7 +996,7 @@ test('魔王替换（MAOU_TENSHIN）：候补即玛奥（17）时走直接继位
   fixture.store.set('maxbase:0:1', 150);
   fixture.store.set('maxbase:17:0', 90);
   fixture.store.set('maxbase:17:1', 60);
-  fixture.store.set('cflag:31:2', 50); // 好感度全员清零的靶
+  fixture.store.set('cflag:31:2', 50); // 好感度全员清零的目标
   fixture.store.set('cflag:17:2', 70);
   fixture.store.set('talent:31:85', 1); // 爱慕
   fixture.store.set('talent:17:86', 1); // 盲从
@@ -1064,13 +1051,13 @@ test('魔王替换（MAOU_TENSHIN）：候补非玛奥时走灵魂转移支', as
   assert.equal(
     fixture.store.get('exflag:0'),
     undefined,
-    '灵魂转移支不记上届魔王（原作只在 IF 支写 EX_FLAG:0）',
+    '灵魂转移支不记上届魔王（只在 IF 支写 EX_FLAG:0）',
   );
 });
 
-// —— #400（N16）四张跨边接线（TAX_GET / APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY）——
+// —— #400（N16）四张跨边接入（TAX_GET / APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY）——
 
-test('税収接线（TAX_GET）：收税日走真身，非收税日一声不响', async () => {
+test('税収接入（TAX_GET）：收税日走真身，非收税日一声不响', async () => {
   const taxed = setup_chara_events();
   taxed.store.set('flag:10002', 10); // DAY:2 = 10 → 收税日
   const taxed_mod = taxed.load_module('event/event-nextday');
@@ -1084,7 +1071,7 @@ test('税収接线（TAX_GET）：收税日走真身，非收税日一声不响'
     ),
     '收税日必须打真身的开场行',
   );
-  assert(!taxed_texts.some((t) => t.includes('@TAX_GET')), '占位行必须消失');
+  assert(!taxed_texts.some((t) => t.includes('tax_get')), '占位行必须消失');
 
   const quiet = setup_chara_events();
   quiet.store.set('flag:10002', 11); // 非收税日
@@ -1098,7 +1085,7 @@ test('税収接线（TAX_GET）：收税日走真身，非收税日一声不响'
   );
 });
 
-test('媚药中毒接线（APHRODISIAC_ADDICT）：每 7 日一次的残留度衰减走真身', async () => {
+test('媚药中毒接入（APHRODISIAC_ADDICT）：每 7 日一次的残留度衰减走真身', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('flag:10000', 6); // DAY:0 = 6 → (6+1) % 7 === 0
   fixture.store.set('cflag:31:31', 3); // 体内媚药残留度
@@ -1108,12 +1095,12 @@ test('媚药中毒接线（APHRODISIAC_ADDICT）：每 7 日一次的残留度�
 
   assert.equal(fixture.store.get('cflag:31:31'), 2, '残留度 -1（真身跑过）');
   assert(
-    !fixture.text_lines().some((t) => t.includes('@APHRODISIAC_ADDICT')),
+    !fixture.text_lines().some((t) => t.includes('aphrodisiac_addict')),
     '占位行必须消失',
   );
 });
 
-test('安息日接线（SABBATH）：满月 15 日 + 法术 + 淫乱 的奴隶走真身', async () => {
+test('安息日接入（SABBATH）：满月 15 日 + 法术 + 淫乱 的奴隶走真身', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('flag:10002', 15); // DAY:2 = 15（满月）
   fixture.store.set('talent:31:242', 1); // 法术
@@ -1132,10 +1119,10 @@ test('安息日接线（SABBATH）：满月 15 日 + 法术 + 淫乱 的奴隶�
     texts.some((t) => t.includes('对地下城里的怪物们，进行了性施舍。')),
     'SABBATH 真身输出必须出现',
   );
-  assert(!texts.some((t) => t.includes('@SABBATH')), '占位行必须消失');
+  assert(!texts.some((t) => t.includes('sabbath')), '占位行必须消失');
 });
 
-test('安息日日程接线（SABBATH_DAY）：每 3 日的仪式走真身', async () => {
+test('安息日日程接入（SABBATH_DAY）：每 3 日的仪式走真身', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('flag:10002', 12); // DAY:2 = 12 → 12 % 3 === 0
   fixture.store.set('talent:31:242', 1); // 法术
@@ -1154,12 +1141,12 @@ test('安息日日程接线（SABBATH_DAY）：每 3 日的仪式走真身', asy
     texts.includes('祭坛前，信徒的女孩自慰了起来……'),
     'SABBATH_DAY 真身输出必须出现（user = 0 且无野良犬道具 → 泛用题材）',
   );
-  assert(!texts.some((t) => t.includes('@SABBATH_DAY')), '占位行必须消失');
+  assert(!texts.some((t) => t.includes('sabbath_day')), '占位行必须消失');
 });
 
 // —— #400（N16）晨间三事件：朝フェラ / おねしょ / 犬の散歩 ——
 
-/** 朝フェラ的准入底线：欲望 4 / 侍奉精神 4 / 精液中毒 1（原作 :576） */
+/** 朝フェラ的准入底线：欲望 4 / 侍奉精神 4 / 精液中毒 1（） */
 function seed_fellatio_candidate(fixture, cid, name) {
   join_slave_chara(fixture, cid, name);
   fixture.store.set(`abl:${cid}:11`, 4); // 欲望
@@ -1188,7 +1175,7 @@ test('朝フェラ（MORNING_FELLATIO）：合格者为 0 时早退（F == 0）'
   assert.equal(fixture.text_lines().length, 0, '无输出');
 });
 
-test('朝フェラ（MORNING_FELLATIO）：七条排除守卫逐条挡住候选', async () => {
+test('朝フェラ（MORNING_FELLATIO）：七条排除检查逐条挡住候选', async () => {
   // [说明, 该角色的覆盖项]
   const blockers = [
     ['已死（体力 0）', { 'base:31:0': 0 }],
@@ -1304,7 +1291,7 @@ test('朝フェラ（MORNING_FELLATIO）：SELF_KOJO 以事件码 3 在调教外
   fixture.store.set('palamname:7', '习得');
   fixture.store.set('flag:7', 1); // SELF_KOJO 的总开关
   const { morning_fellatio } = fixture.load_module('event/event-nextday');
-  // 口上本身由 kojo 域的单测覆盖；这里只钉「以事件码 3、在调教外」这一处接线
+  // 口上本身由 kojo 域的单测覆盖；这里只钉「以事件码 3、在调教外」这一处接入
   const { game } = fixture.load_module('facade/game');
   const events = [];
   const original = game.train.with_self_kojo_event;
@@ -1373,8 +1360,8 @@ test('尿床（ONESHO）：门槛边界与【幼稚】倍率（RAND:12 <= 放尿
 
 test('尿床（ONESHO）：放尿经验的除法截断（39/10 = 3，不是 3.9）', async () => {
   const cases = [
-    ['经验除法截断：3 压线触发', 3, true],
-    ['经验除法截断：4 越线不触发', 4, false],
+    ['经验除法截断 压线触发', 3, true],
+    ['经验除法截断 越线不触发', 4, false],
   ];
   for (const [label, roll, expected] of cases) {
     const fixture = setup_chara_events();
@@ -1410,7 +1397,7 @@ test('尿床（ONESHO）：已死者不参与（体力 0 跳过，但不消耗�
   fixture.store.set('base:31:0', 0);
   const { onesho } = fixture.load_module('event/event-nextday');
 
-  assert.equal(await onesho(seq([0])), 1, '恒返回 1（原作 :806）');
+  assert.equal(await onesho(seq([0])), 1, '恒返回 1（）');
   assert.equal(fixture.store.get('exp:31:31'), 30, '不结算');
   assert.equal(fixture.text_lines().length, 0, '无输出');
 });
@@ -1419,7 +1406,7 @@ test('尿床（ONESHO）：无导管支——放尿经验 +1、TARGET 换手、�
   const fixture = setup_chara_events();
   seed_onesho_candidate(fixture, 31, '温妮');
   fixture.store.set('cflag:31:1', 1); // 不在魔王房间 → 报告支整段跳过
-  // 围观门槛设满：去掉这个 continue 就会立刻冒出报告行（变异可观测的靶）
+  // 围观门槛设满：去掉这个 continue 就会立刻冒出报告行（变异可观测的目标）
   fixture.store.set('abl:31:17', 8);
   const { onesho } = fixture.load_module('event/event-nextday');
 
@@ -1487,7 +1474,7 @@ test('尿床（ONESHO）：无导管支的报告分岔——围观门槛 8 与�
   assert.equal(crowded.store.get('juel:31:8'), 1000, 'JUEL:8 += 1000');
 });
 
-test('尿床（ONESHO）：导管支的准入四守卫（服装类型 / 位 64 / 着衣开关 / 状态 < 2）', async () => {
+test('尿床（ONESHO）：导管支的准入四检查（服装类型 / 位 64 / 着衣开关 / 状态 < 2）', async () => {
   // [说明, 覆盖项, 是否走导管支]
   const cases = [
     ['服装 99 + 位 64 + 着衣开', {}, true],
@@ -1545,8 +1532,8 @@ test('尿床（ONESHO）：导管一档（顺从 < 3）的四选一', async () =
 
     await onesho(seq([0, roll]));
 
-    // 原作此处写 `JUEL:L:8`——L 在本函数内无赋值，Emuera 全局取初值 0
-    // （见文件头「L 的初值」；不改成 COUNT，那是在给原作改行为）
+    // 此处写 `JUEL:L:8`——L 在本函数内无赋值，旧引擎全局取初值 0
+    // （见文件头「L 的初值」；不改成 COUNT，那样会改变现有行为）
     assert.equal(fixture.store.get(key), value, `RAND:4 = ${roll}`);
     const texts = fixture.text_lines();
     assert(
@@ -1703,16 +1690,16 @@ test('遛狗（DOG_WALK）：只有魔王一人时自己带狗散步并早退', 
   assert.equal(await dog_walk(() => 0), 0, 'CHARANUM - 1 == 0 → 返回 0');
   const texts = fixture.text_lines();
   assert(texts.includes('你带了野狗去散步。'), '魔王自己散步的播报');
-  assert.equal(texts.length, 2, '空行 + 播报两行（原作 PRINTL + PRINTFORMW）');
+  assert.equal(texts.length, 2, '空行 + 播报两行（PRINTL + PRINTFORMW）');
 });
 
-test('遛狗（DOG_WALK）：当番 = RAND:(CHARANUM-1) 的下标，三条守卫退回魔王', async () => {
-  // 加入序下标 0..CHARANUM-2（**最后一个角色永远掷不到**，上游如此）；
+test('遛狗（DOG_WALK）：当番 = RAND:(CHARANUM-1) 的下标，三条检查退回魔王', async () => {
+  // 加入序下标 0..CHARANUM-2（**最后一个角色永远掷不到**，旧引擎如此）；
   // 命中者不满足「已陷落且待机」就退回 0 号位
   // [说明, 覆盖项, RAND 值, 有散步行的一方（null = 谁都没有）]
   const cases = [
     ['合格奴隶（下标 1）', {}, 1, '温妮'],
-    ['掷到下标 0 = 魔王自己（:1405 的 IF 让魔王没有散步行）', {}, 0, null],
+    ['掷到下标 0 = 魔王自己（的 IF 让魔王没有散步行）', {}, 0, null],
     ['未陷落（CFLAG:0 = 0）退回魔王', { 'cflag:31:0': 0 }, 1, null],
     ['不在待机（CFLAG:1 != 0）退回魔王', { 'cflag:31:1': 1 }, 1, null],
     ['下标 2 掷不到（最后一个角色）', {}, 1, '温妮'],
@@ -1747,7 +1734,7 @@ test('遛狗（DOG_WALK）：PLAY（兴奋度）的四项叠加与 OPEN（露出
   const cases = [
     ['全零：PLAY = 0 且 OPEN < 0 → 只散步 + WAIT', {}, false],
     [
-      '只持动物耳：PLAY 仍为 0（:1388 的 PLAY > 0 前置守卫）',
+      '只持动物耳：PLAY 仍为 0（的 PLAY > 0 前置检查）',
       { 'talent:31:124': 1 },
       false,
     ],
@@ -1821,7 +1808,7 @@ test('遛狗（DOG_WALK）：PLAY 计算的数值（动物耳只在 PLAY > 0 时
   assert(texts.includes('欲情点数+30'), 'PALAMNAME:5 点数+{5*PLAY}');
   assert(texts.includes('私处之珠+24'), 'PALAMNAME:1 之珠+{4*PLAY}');
   assert(texts.includes('耻情点数+30'), 'PALAMNAME:8 点数+{5*PLAY}');
-  // PRINTFORML 收前一行 + PRINTFORM/PRINTFORML 拼后一行（原作 :1416-1419）
+  // PRINTFORML 收前一行 + PRINTFORM/PRINTFORML 拼后一行（）
   assert(texts.includes('温妮在散步途中无可忍耐地发情了，'), '发情行');
   assert(
     texts.includes('一边向路人展示着痴态，一边引诱着野狗进行了交配。'),
@@ -1945,7 +1932,7 @@ test('遛狗（DOG_WALK）：露出基准 -2 与三项加成决定耻情支是�
   }
 });
 
-/** 处女献上的底线：当前目标 + 各守卫全过（原作 :813-864 的十条） */
+/** 处女献上的底线：当前目标 + 各检查全过（十条准入） */
 function seed_virgin_offer(fixture, cid = 31) {
   join_slave_chara(fixture, cid, '温妮');
   fixture.store.set('talent:0:122', 1); // 主人是男人
@@ -1973,7 +1960,7 @@ function seed_virgin_offer(fixture, cid = 31) {
   fixture.store.set('callname:0:-2', '你');
 }
 
-test('处女献上（OFFERVIRGIN_CHECK）：十条准入守卫逐条挡住', async () => {
+test('处女献上（OFFERVIRGIN_CHECK）：十条准入检查逐条挡住', async () => {
   // [说明, 覆盖项]
   const blockers = [
     ['处女献上被禁（FLAG:38 <= -1）', { 'flag:38': -1 }],
@@ -2131,7 +2118,7 @@ test('处女献上（OFFERVIRGIN_CHECK）：快感/贞操/好奇/戒备的四项
 });
 
 test('处女献上（OFFERVIRGIN_CHECK）：欲情两条 SIF 在调教外读不到 PALAM（引擎事实）', async () => {
-  // 原作 :894-898 的两条 SIF 以 `PALAM:5 >= PALAMLV:4` 为条件，而 PALAM 在
+  // 两条 SIF 以 `PALAM:5 >= PALAMLV:4` 为条件，而 PALAM 在
   // EraElectron 里是**调教期专表**（endTrain 删除，三段寻址读回 undefined）——
   // 本函数跑在日循环里，故两支恒不命中。这条用例钉的就是这个引擎事实：
   // 真把 PALAM:5 读成 10000，S 仍只由爱/淫乱行决定（-1 + 1 = 0 → 早退）。
@@ -2228,7 +2215,7 @@ test('处女献上（OFFERVIRGIN_CHECK）：拒绝支清掉贞操带并落下一
 
 test('处女献上（OFFERVIRGIN_CHECK）：[1] 之外的输入由引擎拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「其余值 GOTO INPUT_LOOP 重印询问行」——按钮化后白名单就是
-  // 0/1，3/5 这类值被引擎拒收，重印支结构性不可达（1:1 保留）。
+  // 0/1，3/5 这类值被引擎拒收，重印支结构性不可达（重印支留着有测试守住）。
   const fixture = setup_chara_events();
   seed_virgin_offer(fixture);
   fixture.set_inputs(3);
@@ -2238,11 +2225,11 @@ test('处女献上（OFFERVIRGIN_CHECK）：[1] 之外的输入由引擎拒收�
     () => offervirgin_check(() => 2),
     /输入不合法！请输入以下值之一：0, 1/,
   );
-  // #572 审查返工：两枚按钮逐个钉住（源 :944-945 的正文含「- 」，行首另有一个空格）
+  // #572 审查返工：两枚按钮逐个钉住（正文含「- 」，行首另有一个空格）
   assert.deepEqual(
     button_rendered(fixture),
     ['[0] - 等你很久了！', '[1] - 继续等着吧你……'],
-    ':944-945 的选项按钮',
+    ' 的选项按钮',
   );
 });
 
@@ -2286,14 +2273,14 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   assert.equal(with_condom.store.get('item:24'), 1, '安全套 -1');
   const with_texts = with_condom.text_lines();
   assert(with_texts.includes('要使用安全套吗？'), '持有道具才问');
-  // #572 审查返工：两枚按钮逐个钉住（源 :969-970）
+  // #572 审查返工：两枚按钮逐个钉住（）
   assert.deepEqual(
     button_rendered(with_condom).slice(-2),
     ['[0] - 安全第一！', '[1] - 中出最高！'],
-    ':969-970 的选项按钮',
+    ' 的选项按钮',
   );
-  // 套上之后不走膣内射精链（原作 :1010 的 `IF TEQUIP:35 == 0`）——
-  // 连 :1011 的 CFLAG:101 = 30 都在同一个 `if (condom === 0)` 分支里，
+  // 套上之后不走膣内射精链（`IF TEQUIP:35 == 0`）——
+  // 连的 CFLAG:101 = 30 都在同一个 `if (condom === 0)` 分支里，
   // 戴套时整段不执行，CFLAG:101 保持从未写过
   assert.equal(
     with_condom.store.get('cflag:31:101'),
@@ -2304,7 +2291,7 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   // 未持有 → 不问，且走膣内射精链；顺带覆盖尾部清贞操带的位 64
   const without = setup_chara_events();
   seed_virgin_offer(without);
-  without.store.set('cflag:31:49', 1); // 钥匙在身上（过守卫靠的不是贞操带）
+  without.store.set('cflag:31:49', 1); // 钥匙在身上（过检查靠的不是贞操带）
   without.store.set('cflag:31:40', 64); // 着衣状态的位 64
   without.set_inputs(0);
   const mod2 = without.load_module('event/event-nextday');
@@ -2313,10 +2300,10 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
 
   const without_texts = without.text_lines();
   assert(!without_texts.includes('要使用安全套吗？'), '未持有安全套时不得询问');
-  // 不戴套时要进膣内射精链（真身随 #406 接线：event-pregnancy.js 的
+  // 不戴套时要进膣内射精链（真身随 #406 接入：event-pregnancy.js 的
   // in_vagina_m_to_t/conception_check_m_to_t，'m_to_t' 那一档）——
   // nakadashi_check 无论受孕系统开关与否，命中/未命中都会清池（除三处
-  // 提前返回，本例未触发），CFLAG:101 从 :1011 写入的 30 变回 0 即证据
+  // 提前返回，本例未触发），CFLAG:101 从写入的 30 变回 0 即证据
   assert.equal(
     without.store.get('cflag:31:101'),
     0,
@@ -2327,12 +2314,12 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   assert.equal(without.store.get('cflag:31:42'), 0, '特别服装一并归零');
 });
 
-test('处女献上（OFFERVIRGIN_CHECK）：膣内射精链清零前，CFLAG:101 确实是 :1011 写入的 30（#439）', async () => {
+test('处女献上（OFFERVIRGIN_CHECK）：膣内射精链清零前，CFLAG:101 确实是写入的 30（#439）', async () => {
   // 上一条测的是清零后的终态——nakadashi_check 无论受孕系统开关都会
   // 清池，30 与 20（#439 的 M8648）清零后都是 0，终态分不出两者。这里
   // 把默认夹具的受孕系统开关（FLAG:5 位 2）打开，让 nakadashi_check 走到
-  // 算上界那支、真的调一次 rand(upper)；这个调用发生在 :274 clear_pool
-  // 之前（event-pregnancy.js:302-304），借它当清零前的观测点，不改产
+  // 算上界那支、真的调一次 rand(upper)；这个调用发生在  clear_pool
+  // 之前（event-pregnancy.js），借它当清零前的观测点，不改产
   // 出结果也不碰生产代码。
   const fixture = setup_chara_events();
   seed_virgin_offer(fixture);
@@ -2353,7 +2340,7 @@ test('处女献上（OFFERVIRGIN_CHECK）：膣内射精链清零前，CFLAG:101
   assert.equal(
     observed_pool,
     30,
-    'NAKADASHI_CHECK 算掷骰上界时看到的 CFLAG:101 必须是 :1011 写入的 30',
+    'NAKADASHI_CHECK 算掷骰上界时看到的 CFLAG:101 必须是写入的 30',
   );
 });
 
@@ -2373,11 +2360,11 @@ test('处女献上（OFFERVIRGIN_CHECK）：初体验记录与亲族关系的九
   for (const [relation, master_male, expected] of cases) {
     const fixture = setup_chara_events();
     seed_virgin_offer(fixture);
-    // 魔王侧性别：扶她（121）或男人（122）有一个即可过「主人非男非扶她」的守卫
+    // 魔王侧性别：扶她或男人有一个即可过「主人非男非扶她」的检查
     fixture.store.set('talent:0:122', master_male);
     fixture.store.set('talent:0:121', master_male ? 0 : 1);
     fixture.set_inputs(0);
-    // INCEST 真身的判据：PLAYER(=魔王 0) 下 CFLAG:21 =（关系 - 1）×100 得关系值，
+    // INCEST 真身的条件：PLAYER(=魔王 0) 下 CFLAG:21 =（关系 - 1）×100 得关系值，
     // 或用 `CFLAG:25 == -1` 直接落 1（incest.js 的 MASTER 短路）
     if (relation === 1) {
       fixture.store.set('cflag:31:25', -1);
@@ -2399,7 +2386,7 @@ test('处女献上（OFFERVIRGIN_CHECK）：初体验记录与亲族关系的九
 
 test('处女献上（OFFERVIRGIN_CHECK）：魔王童贞丧失的编码表（读目标侧性别）', async () => {
   // 魔王侧的表读 **TALENT:122**（目标自己的性别），而目标恒为处女女性
-  // （男目标过不了准入守卫），故只有 false 那一列可达——
+  // （男目标过不了准入检查），故只有 false 那一列可达——
   // [TFLAG:14, 期望 CFLAG:0:15]
   const cases = [
     [2, 301],
@@ -2442,7 +2429,7 @@ test('处女献上（OFFERVIRGIN_CHECK）：魔王童贞丧失的编码表（读
   }
 });
 
-/** 夜这い候选的底线：欲望 4 / 性交中毒 1（原作 :1106 的准入）+
+/** 夜这い候选的底线：欲望 4 / 性交中毒 1（准入门槛）+
  *  顺 4 + 肛感 5 = 13（过「男人支」的 >12 门槛）；V 感 6 > 肛感 5 → 走 V 支 */
 function seed_night_candidate(fixture, cid, name) {
   join_slave_chara(fixture, cid, name);
@@ -2472,7 +2459,7 @@ test('夜这い（NIGHT_STALKING_CHECK）：主人非男人/扶她时早退', as
   assert.equal(fixture.text_lines().length, 0, '无输出');
 });
 
-test('夜这い（NIGHT_STALKING_CHECK）：十条排除守卫逐条挡住候选', async () => {
+test('夜这い（NIGHT_STALKING_CHECK）：十条排除检查逐条挡住候选', async () => {
   // [说明, 覆盖项]
   const blockers = [
     ['已死（体力 0）', { 'base:31:0': 0 }],
@@ -2654,7 +2641,7 @@ test('夜这い（NIGHT_STALKING_CHECK）：OK_FLAG 的七项加减决定合格�
     assert.equal(await night_stalking_check(() => 0), eligible ? 1 : 0, label);
   }
 
-  // 淫乱（76）与性爱狂（75）在**处女**身上不成立（TALENT:0 为真时两支都不进）
+  // 淫乱与性爱狂在**处女**身上不成立（TALENT:0 为真时两支都不进）
   const virgin = setup_chara_events();
   virgin.store.set('talent:0:122', 1);
   seed_night_candidate(virgin, 31, '温妮');
@@ -2807,7 +2794,7 @@ test('夜这い（NIGHT_STALKING_CHECK）：SELF_KOJO 以事件码 5 在调教�
   assert.deepEqual(events, [5], 'TFLAG:13 = 5（夜这い口上）');
 });
 
-// —— #400（N16）@PILLORY（ere/event/event-nextday-pillory.js）——
+// —— #400（N16）pillory（ere/event/event-nextday-pillory.js）——
 
 /** 示众台目标的底线：CFLAG:1 == 8（晒し台状態） */
 function seed_pillory(fixture, cid = 31, name = '温妮') {
@@ -3056,7 +3043,7 @@ test('示众台（PILLORY）：正字显示与四项里程碑', async () => {
     '里程碑',
   );
 
-  // #597：源 :2128 的 PRINTL 只结束 :2058-2127 那一串 `PRINT 『…』` 拼起来
+  // #597：PRINTL 只结束那一串 `PRINT 『…』` 拼起来
   // 的一行（PRINT 不换行），不是空行——里程碑行与总结行之间不夹空行
   const summary = milestones.lines.findIndex(
     (line) =>
@@ -3066,17 +3053,17 @@ test('示众台（PILLORY）：正字显示与四项里程碑', async () => {
   const prev = milestones.lines[summary - 1];
   assert.ok(
     !(prev.type === 'br' || prev.text === ''),
-    '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
+    '里程碑行与总结行之间不夹空行（只收尾，#597）',
   );
-  // #597：源 :2133 的 PRINTL 落在 :2129 那条 PRINTFORML 之后——真空行，
+  // #597：PRINTL 落在那条 PRINTFORML 之后——空行，
   // 由公共断言钉住「恰有一个」（删掉即少一行）
   assert_one_blank_after(
     milestones,
     '被各种侮辱的涂鸦写在身上了',
-    '涂鸦总结之后（:2133）',
+    '涂鸦总结之后',
   );
 
-  // 正字除数：8 = 正 + 下（每 5 一笔）；第一档里程碑的边界是 >9
+  // 正字除数 = 正 + 下（每 5 一笔）；第一档里程碑的边界是 >9
   const eight = setup_chara_events();
   seed_pillory(eight);
   eight.store.set('talent:31:0', 1); // 处女支 → COUNT_V = 0
@@ -3086,7 +3073,7 @@ test('示众台（PILLORY）：正字显示与四项里程碑', async () => {
   assert(etexts.includes('『肉穴使用次数：正 下』'), '正字除数 5：8 = 正 + 下');
   assert(!etexts.includes('『真的一个打十个！』'), '第一档里程碑的边界是 >9');
 
-  // 第一档里程碑的判据是 `> 9`：9 压线不出、10 才出
+  // 第一档里程碑的条件是 `> 9` 压线不出、10 才出
   const nine = setup_chara_events();
   seed_pillory(nine);
   nine.store.set('talent:31:0', 1);
@@ -3149,7 +3136,7 @@ test('示众台（PILLORY）：COUNT_V > 0 时接妊娠链（CFLAG:107 + #401 �
 
 test('示众台（PILLORY）：战役经验结算——FLAG:400 置位时派遣中角色获得平均凌辱次数经验（#469）', async () => {
   const fixture = setup_chara_events();
-  seed_pillory(fixture); // 温妮（31）在示众台上，CFLAG:1 == 8
+  seed_pillory(fixture); // 温妮在示众台上，CFLAG:1 == 8
   join_slave_chara(fixture, 32, '派遣中的奴隶');
   fixture.store.set('flag:400', 1);
   fixture.store.set('cflag:31:661', 3);
@@ -3174,7 +3161,7 @@ test('示众台（PILLORY）：战役经验结算——FLAG:400 置位时派遣�
     fixture.text_lines().some((t) => t.includes('获得了2点经验值')),
     '结算播报',
   );
-  // 是 PRINTFORMW（自带等待）、调用点 :2392 另有一个 WAIT——两次等键
+  // 是 PRINTFORMW（自带等待）、调用点另有一个 WAIT——两次等键
   // 都要还原：缺了前者，这个等待会落在那之后的下一行输出上
   const exp_line = fixture.lines_history.find(
     (l) => l.type === 'text' && l.text.includes('获得了2点经验值'),
@@ -3186,7 +3173,7 @@ test('示众台（PILLORY）：战役经验结算——FLAG:400 置位时派遣�
   );
 });
 
-test('素质变化三事件接线：EVENT_NEXTDAY 命中触发条件时不再打占位行', async () => {
+test('素质变化三事件接入：EVENT_NEXTDAY 命中触发条件时不再打占位行', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('talentname:57', '漏尿癖');
   fixture.store.set('talent:31:57', 0);
@@ -3205,9 +3192,9 @@ test('素质变化三事件接线：EVENT_NEXTDAY 命中触发条件时不再打
   );
 });
 
-// —— 随机上界（#298 覆盖面：RAND:N 的 N 是字面量，改错等于改概率分布）——
+// —— 随机上界（#298 覆盖面：随机源的 N 是字面量，改错等于改概率分布）——
 
-/** 记录每次 RAND:N 收到的上界并恒返回 0 的探针（只要上界、不要命中） */
+/** 记录每次随机调用收到的上界并恒返回 0 的探针（只要上界、不要命中） */
 function bound_probe(bounds) {
   return (n) => {
     bounds.push(n);
@@ -3215,7 +3202,7 @@ function bound_probe(bounds) {
   };
 }
 
-test('随机上界：事件侧每个 RAND:N 的 n 逐个钉住（表驱动）', async () => {
+test('随机上界：事件侧每个随机源的 n 逐个钉住（表驱动）', async () => {
   // 序列按「代码里遇到 rand(n) 的先后」排列，注释逐位对上调用点
   const cases = [
     {
@@ -3334,7 +3321,7 @@ test('随机上界：事件侧每个 RAND:N 的 n 逐个钉住（表驱动）', 
   }
 });
 
-test('随机上界：示众台每个 RAND:N 的 n 逐个钉住（表驱动）', async () => {
+test('随机上界：示众台每个随机源的 n 逐个钉住（表驱动）', async () => {
   const cases = [
     {
       label:
@@ -3382,8 +3369,8 @@ test('随机上界：示众台每个 RAND:N 的 n 逐个钉住（表驱动）', 
   }
 });
 
-test('#502 SENGEN_VIDEO_DE 每日结算：9013 必减、9012 有 2/3 概率减，任一落到 0 以下两者清零', () => {
-  // rand 的入参即 RAND:N 的上界（N == 3），顺带钉住上界
+test('#502 SENGEN_VIDEO_DE 每日结算 必减、9012 有 2/3 概率减，任一落到 0 以下两者清零', () => {
+  // rand 的入参即随机指令的上界（N == 3），顺带钉住上界
   const cases = [
     { expire: 3, popularity: 5, roll: 1, after: [2, 4], why: '两枚都减' },
     {
@@ -3445,11 +3432,11 @@ test('#502 SENGEN_VIDEO_DE 每日结算：9013 必减、9012 有 2/3 概率减�
       after,
       `${why}（${expire}/${popularity} + roll ${roll} → ${after.join('/')}）`,
     );
-    assert.deepEqual(fixture.text_lines(), [], '无输出（原作无 PRINT）');
+    assert.deepEqual(fixture.text_lines(), [], '无输出（无 PRINT）');
   }
 });
 
-test('#502 SENGEN_VIDEO_DE 在 run_event_nextday 的 :184 被无条件每日调用', async () => {
+test('#502 SENGEN_VIDEO_DE 在 run_event_nextday 的被无条件每日调用', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);

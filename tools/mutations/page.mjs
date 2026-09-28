@@ -3,42 +3,42 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+18 新守卫 M13200-M13217）
-// 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
+export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+// 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
 // 快捷键、M11329 page-config 的提示检索键——由 test/page-config.test.js、
 // test/page-shop.test.js 与 test/page-chara-info.test.js 守护）；此前 380，其中 #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
-// 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
+// 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界检查、
 // 水晶球分子分母）
 // #463 起 +9（M10200-M10208，page-config.js 全量新增）
 // #469 起 +17（M10100-M10115、M10124，page-campaign.js / page-campaign-1.js：
-// 招募/派遣校验链、SELECT_CAMPAIGN 的范围守卫与深度重置、战役 1 的四张映射表、
+// 招募/派遣校验链、select_campaign 的范围检查与深度重置、战役 1 的四张映射表、
 // 剧情 5 档收尾行）
 // #494 起 +1（M10125，page-campaign.js：招募分支把 char_make_inport 注入
-// rand_chara_make，源 CHAR_MAKE.ERB:57 在开局与战役两条路径上都会跑）
+// rand_chara_make，在开局与战役两条路径上都会跑）
 // #502 起 +18（M10726-M10743，page-invasion.js：MEDAL_BONUS
-// 十一档与提示、SENGEN_VIDEO 的定宽/守卫/入账/成败判据与 [2][3][4] 三档的
+// 十一档与提示、sengen_video 的定宽/检查/入账/成败条件与 [2][3][4] 三档的
 // 金额与封顶、SENGEN_VIDEO_BONUS 的两档随机序列与系数；M10742/M10743 是
 // 「十处自查」发现的上界缺口补钉）
 // #503 起 +38（M10752-M10789，page-invasion.js 的出兵路线 [0] 怪物出兵与
 // [3] 勇者掠夺：战力累加与系数、怪物减半、威望失败早退、两条结果段的金额/
-// 封顶/经验/善恶值、掠夺的五条派遣判据、翻页游标与页窗、@INVASION_EVENT
-// 的 RAND:10 真分发与两臂守卫；无法用变异守住的引擎死路径（越界/选中不合法
+// 封顶/经验/善恶值、掠夺的五条派遣条件、翻页游标与页窗、invasion_event
+// 的 RAND:10 真分发与两分支检查；无法用变异守住的引擎死路径（越界/选中不合法
 // 分支、列表未渲染值）在测试与源码注释里逐条登记，不入本表——不可达分支
 // 没有能失败的红）
-// #504 起 +60（M10790-M10849，page-invasion.js 的 [2] 勇者出兵、@INVASION_EVENT
-// 的 SEIEI 战斗体 / @_INV_DEATH_CHECK / FORT / CHALLENGE 两臂：回合数与超时线、
-// 两处档位除数的不对称、会心与倍率、四条退场判据的阈值与退场状态、[2] 的
-// 三分之一消耗与结果段金额/经验/善恶值/抓捕、FORT 的三路线各档判据与减员
-// 比例、CHALLENGE 的位域守卫/开挂档/人数上限/三选项分支）
+// #504 起 +60（M10790-M10849，page-invasion.js 的 [2] 勇者出兵、invasion_event
+// 的 seiei 战斗体 / inv_death_check / fort / challenge 两分支：回合数与超时线、
+// 两处档位除数的不对称、会心与倍率、四条退场条件的阈值与退场状态、[2] 的
+// 三分之一消耗与结果段金额/经验/善恶值/抓捕、fort 的三路线各档条件与减员
+// 比例、challenge 的位域检查/开挂档/人数上限/三选项分支）
 // #505 起 +25（M10850-M10874，page-invasion.js 的地区续接与地区泛化：
 // CAMPAIGN_REGIONS 的 AREA/SINDO/标签/凌辱地区号/KYOTEN 实参五组表项、
-// 累加写侧与读点表选择、[0] 已征服臂漏列 101、结果段的地区名与进度条表、
-// 魔力结果段的已征服封顶与判据（含判据写死字面量）、征服后菜单传参与出货
-// 流程默认地区、KYOTEN_EVENT 三臂的命中判据/不推进状态字/精灵臂守卫、
+// 累加写侧与读点表选择、[0] 已征服分支漏列 101、结果段的地区名与进度条表、
+// 魔力结果段的已征服封顶与条件（含条件写死字面量）、征服后菜单传参与出货
+// 流程默认地区、kyoten_event 三分支的命中条件/不推进状态字/精灵分支检查、
 // [2] 与 [0] 两处凌辱地区号）
 // #521 返工起 +1（M11100，page-campaign.js：招募上限 >80 的差一边界——验收
 // 抽样发现 >79 放行，两条边界用例夹住 80/81 两个方向）
@@ -49,19 +49,19 @@ export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dun
 // .then(m => m.default.length)` 的数——两侧都不含对方的条目，故不是任一单侧的
 // 数、也不在两侧声明上相加；#515 在其上实测 374；#530 起 +3（M11204-M11206，
 // page-chara-info-show.js 的献祭选项与 [100] 返回）实测 377；#538 起 +3
-// （M11260-M11262，post_conquest_menu() 两个守卫的边界各挪一格——越界守卫的
+// （M11260-M11262，post_conquest_menu() 两个检查的边界各挪一格——越界检查的
 // 上下界与 [5] 拒收的 route_33 上界）实测 380
 //；#547 起 +25（M11550-M11574，page-config-age.js 的 CONFIG_AGE_SETTING/RACE_CONFIG 全量与 page-config.js 的 [15]/[27]/[29]/[30]/状态文案/存根名单——由 test/page-config-age.test.js 与 test/page-config.test.js 守护）；返工轮 +5（M11584-M11588：网格门/[101] 清值/空行/全角空格——验收 6 条中的 1、2、5、6）
-// #612 起 +19（M12296-M12317：按钮正文补回原作的「- 」分隔符——补回点被改回时
+// #612 起 +19（M12296-M12317：按钮正文补回「- 」分隔符——补回点被改回时
 // 对应的 rendered 断言必须红；返工轮 M12307-M12315 补的是数据表驱动的七个调用点
 // （五张表 ＋ 戒指页/武器页两个持有行）、苏生名单，以及反向那条——部位菜单误加
 // 「- 」也必须红；M12316/M12317 是两处灰字行的假编号前缀「[---] - 」）
 
 export default [
   {
-    desc: 'M3 999 出口：@USERCOM 不再发起 BEGIN AFTERTRAIN',
+    desc: 'M3 999 出口：USERCOM 不再发起 AFTERTRAIN 转场',
     file: 'ere/page/page-usercom.js',
-    find: '  if (result === 999) {\n    // 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）\n    begin(STATE.AFTERTRAIN);\n    return;\n  }',
+    find: '  if (result === 999) {\n    // 调教结束 → begin(STATE.AFTERTRAIN) 转场（事件链暂存，回合循环提交）\n    begin(STATE.AFTERTRAIN);\n    return;\n  }',
     replace: `  if (result === 999) {
     // 变异：不发起转场
     return;
@@ -70,9 +70,9 @@ export default [
     must_mention: '端到端',
   },
   {
-    desc: 'M8 SELECT_TARGET 取消：999 返回 1（假选中）',
+    desc: 'M8 select_target 取消：999 返回 1（假选中）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 返回 → RETURN 0\n      return 0;\n    }',
+    find: '    if (result === 999) {\n      // 返回 → 0\n      return 0;\n    }',
     replace: `    if (result === 999) {
       // 变异：返回 1
       return 1;
@@ -92,12 +92,12 @@ export default [
     must_mention: 'FLAG:1',
   },
   {
-    desc: 'M10 IS_TRAINABLE：删掉占用判据（CFLAG:x:1）',
+    desc: 'M10 is_trainable：删掉占用条件（CFLAG:x:1）',
     file: 'ere/page/page-select-target.js',
-    find: '  // SIF CFLAG:ARG:1 != 0 → 2\n  if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {\n    return 2;\n  }',
+    find: '  // 占用中（CFLAG:x:1 != 0）→ 2\n  if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {\n    return 2;\n  }',
     replace: '  // 变异：删掉占用判据',
     tests: ['page-select-target'],
-    must_mention: 'IS_TRAINABLE',
+    must_mention: 'is_trainable',
   },
   {
     desc: 'M11 PRINT_PALAM 百分比：满刻度改用当前等级阈值（而非下一级）',
@@ -116,18 +116,18 @@ export default [
     must_mention: '条后数值',
   },
   {
-    desc: 'M16 SELECT_TARGET 翻页：开窗判据边界错一格（下界改开区间）',
+    desc: 'M16 select_target 翻页：开窗条件边界错一格（下界改开区间）',
     file: 'ere/page/page-select-target.js',
     // #395 起 show_list_assistable 复制了同一条件表达式，find 收窄到
-    // trainable.forEach 起始的整段（含两行注释）以恰中一处
-    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
+    // trainable.forEach 起始的整段（含注释行）以恰中一处
+    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口按可训练序号开（修正按角色号开窗的错位，见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
     replace:
-      '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
+      '  trainable.forEach((cid, index) => {\n    // 显示窗口按可训练序号开（修正按角色号开窗的错位，见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
     tests: ['page-select-target'],
     must_mention: '翻页',
   },
   {
-    desc: 'M18 100 分支守卫：育儿室判据取反（10 改 11，守卫永不成立）',
+    desc: 'M18 100 分支检查：育儿室条件取反（10 改 11，检查永不成立）',
     file: 'ere/page/page-shop.js',
     find: "    if ((era.get('cflag:0:1') || 0) === 10) {",
     replace: "    if ((era.get('cflag:0:1') || 0) === 11) {",
@@ -149,10 +149,10 @@ export default [
     find: '    // 其余\n    need = lv * 10 + 10;',
     replace: '    // 其余\n    need = lv * 10 + 5;',
     tests: ['juel-check'],
-    must_mention: 'SHOW_INFO_EXP 的经验行',
+    must_mention: 'show_info_exp 的经验行与等级行逐字一致',
   },
   {
-    desc: 'M56 指令按钮渲染删掉（#214 起靶 = 内建臂：GETBIT=0 的静态名按钮——e2e 与单测都走它）',
+    desc: 'M56 指令按钮渲染删掉（#214 起目标 = 内建分支：位 34 关的静态名按钮——e2e 与单测都走它）',
     file: 'ere/page/page-usercom.js',
     find: "    era.printButton(era.get(`traincommandname:${id}`) ?? '', com_index(id));",
     replace: '    // 变异：按钮渲染删除',
@@ -162,7 +162,7 @@ export default [
   {
     desc: 'M109 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
     file: 'ere/page/page-title.js',
-    find: `      // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+    find: `      // 移植版自建（issue #67）：给刚加入的角色盖移植数据版本戳
       // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
       init_portcflag(0);`,
     replace: '      // 变异：portcflag 版本戳不盖',
@@ -178,7 +178,7 @@ export default [
     must_mention: 'TFM-003A_17',
   },
   {
-    desc: 'M117 标题音乐丢循环（{loop:true} → {}——Emuera PLAYBGM 默认循环）',
+    desc: 'M117 标题音乐丢循环（{loop:true} → {}——标题曲应循环播放）',
     file: 'ere/page/page-title.js',
     find: "    era.playMusic('TFM-003A_17.mp3', { loop: true });",
     replace: "    era.playMusic('TFM-003A_17.mp3', {});",
@@ -186,7 +186,7 @@ export default [
     must_mention: '（循环）',
   },
   {
-    desc: 'M118 主菜单 BGM 守卫删掉（开关恒真，新档也播）',
+    desc: 'M118 主菜单 BGM 检查删掉（开关恒真，新档也播）',
     file: 'ere/page/page-main-menu.js',
     find: `  if (era_audio.bgm_enabled === 1) {
     era.playMusic('据点2.mp3', { loop: true });
@@ -196,17 +196,17 @@ export default [
     must_mention: '新档默认',
   },
   {
-    desc: 'M121 标题图守卫删掉（资源未启用也硬输出图片行）',
+    desc: 'M121 标题图检查删掉（资源未启用也硬输出图片行）',
     file: 'ere/page/page-title.js',
     find: `  if (era.checkImage('TITLE')) {
     era.printWholeImage('TITLE');
   }`,
     replace: "  era.printWholeImage('TITLE');",
     tests: ['page-title'],
-    must_mention: '纯文本兜底',
+    must_mention: '缺席时回退纯文本',
   },
   {
-    desc: 'M137 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
+    desc: 'M137 重绘清行改「本次行数」而非基准行跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
     file: 'ere/page/components/screen-block.js',
     find: '    const span = era.getLineCount() - this.anchor_row;',
     replace: '    const span = this.row_count;',
@@ -224,7 +224,7 @@ export default [
     must_mention: '上方内容完好',
   },
   {
-    desc: 'M139 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
+    desc: 'M139 基准行挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
     file: 'ere/page/components/screen-block.js',
     find: `    this.anchor_row = era.getLineCount();
     await this.draw_content();`,
@@ -250,7 +250,7 @@ export default [
     must_mention: '调暗',
   },
   {
-    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
+    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，同 PR #30）',
     file: 'ere/page/components/menu-button.js',
     find: '    `▌${label}`,',
     replace: '    `[${accelerator}] ▌${label}`,',
@@ -269,7 +269,7 @@ export default [
     must_mention: '不涨屏',
   },
   {
-    desc: 'M144 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
+    desc: 'M144 菜单块提为模块级单例（跨会话复用旧基准——转场后清掉新局上方内容）',
     file: 'ere/page/page-shop.js',
     find: '  const main_menu = create_main_menu();',
     replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
@@ -278,7 +278,7 @@ export default [
     must_mention: '跨会话',
   },
   {
-    desc: 'M150 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
+    desc: 'M150 重绘条件反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
     file: 'ere/page/page-train.js',
     find: '  if (command_path_seen) {',
     replace: '  if (!command_path_seen) { // 变异：判据反接',
@@ -286,7 +286,7 @@ export default [
     must_mention: '指令轮追加绘制',
   },
   {
-    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
+    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧基准清掉新局内容）',
     file: 'ere/page/page-train.js',
     find: `on('EVENTTRAIN', () => {
   status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
@@ -300,7 +300,7 @@ export default [
     must_mention: '跨会话',
   },
   {
-    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不记录）',
+    desc: 'M152 旁路清行自校验删除（重绘行数未回基准不记录）',
     file: 'ere/page/components/screen-block.js',
     find: `      const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {
@@ -343,7 +343,7 @@ export default [
     must_mention: '条后数值列必须真实渲染',
   },
   {
-    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155 形态）',
+    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155）',
     file: 'ere/page/page-train.js',
     find: '      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },',
     replace: '      // 变异：config 删除，吃引擎缺省 24',
@@ -351,7 +351,7 @@ export default [
     must_mention: '条后数值列必须真实渲染',
   },
   {
-    desc: 'M2101 出兵公式：气力 /25 改 /30（INVASION.ERB:267）',
+    desc: 'M2101 出兵公式：气力 /25 改 /30',
     file: 'ere/page/page-invasion.js',
     find: '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     replace:
@@ -422,7 +422,7 @@ export default [
     must_mention: '占领了村庄',
   },
   {
-    desc: 'M2109 首次侵略传闻守卫删掉（FLAG:AREA == 0 恒假，INVASION_EVENT.ERB:257）',
+    desc: 'M2109 首次侵略传闻检查删掉（FLAG:AREA == 0 恒假）',
     file: 'ere/page/page-invasion.js',
     find: '  const progress = era.get(`flag:${area}`) || 0; // FLAG:AREA\n  // FLAG:AREA == 0：狂王组织精锐部队的传闻（PRINTFORMW → 等键）\n  if (progress === 0) {',
     replace:
@@ -448,7 +448,7 @@ export default [
     must_mention: 'EXP:0:80 += SINKOU/2',
   },
   {
-    desc: 'M2112 [109] 出兵成功不转场（BEGIN TURNEND 删除，SHOP ver1.0.2.ERB:127）',
+    desc: 'M2112 [109] 出兵成功不转场（TURNEND 转场删除）',
     file: 'ere/page/page-shop.js',
     find: '    if ((await invasion()) === 1) {\n      begin(STATE.TURNEND);\n    }',
     replace: '    await invasion(); // 变异：不转场',
@@ -456,7 +456,7 @@ export default [
     must_mention: 'TURNEND',
   },
   {
-    desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，#129 形态）',
+    desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，同 #129）',
     file: 'ere/page/page-main-menu.js',
     find: "  era.printButton('侵略', 109);",
     replace: "  era.printButton('侵略', 1090); // 变异：accelerator 改坏",
@@ -464,7 +464,7 @@ export default [
     must_mention: '侵略必须是按钮',
   },
   {
-    desc: 'M2115 人间界结局判据删掉防重复半边（FLAG:82 == 0）',
+    desc: 'M2115 人间界结局条件删掉防重复半边（FLAG:82 == 0）',
     file: 'ere/page/page-invasion.js',
     find: `  if (
     era_flag.human_realm_invasion >= 10000 &&
@@ -475,14 +475,14 @@ export default [
     must_mention: '横幅只出现一次',
   },
   {
-    // #120 端到端的专属靶：M196（删防重复半边）在端到端路径上不可观察——
+    // #120 端到端的专属改动点：M196（删防重复半边）在端到端路径上不可观察——
     // FLAG:82 置 1 后 invasion() 开头的「地上征服后」分支（#118 取舍 4，
     // 有意登记的待办）挡住再次出兵，invasion_check 不再被调。端到端能守
-    // 的是判据整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
-    desc: 'M220 人间界结局判据整支删除（#120 端到端：新档循环永不停止）',
+    // 的是条件整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
+    desc: 'M220 人间界结局条件整支删除（#120 端到端：新档循环永不停止）',
     file: 'ere/page/page-invasion.js',
     find: '  // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1\n  if (\n    era_flag.human_realm_invasion >= 10000 &&\n    era_flag.human_realm_fallen === 0\n  ) {\n    // QUIT 是 throw 型（#148，引擎 quit() 抛 Error("quit")）：选 [1] 退出\n    // 时异常在 ending_1 内部炸穿，下面两行不可达——QUIT 之后的收尾同样\n    // 同样不可达，靠的也是异常炸穿而非哨兵短路（旧写法 ended !== 1 是夹具\n    // 降格期发明的机制，#148 拆除；真机上该判断唯一可达的出口只有「正常\n    // 返回 0」——见 event-ending.js 的 JSDoc）。调用链上任何一层都不得\n    // try/catch 吞掉这个异常，夹具同款 throw 由测试钉住\n    await ending_1();\n    era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10\n    era.print(\'声望+10\'); // PRINTL\n    return;\n  }',
-    replace: `  // 变异：人间界判据整支删除
+    replace: `  // 变异：人间界条件整支删除
   if (false) {
     return;
   }`,
@@ -490,7 +490,7 @@ export default [
     must_mention: '仍未通关',
   },
   {
-    desc: 'M2116 人间界结局门槛 10000 改 9999（INVASION.ERB:1001）',
+    desc: 'M2116 人间界结局门槛 10000 改 9999',
     file: 'ere/page/page-invasion.js',
     find: `    era_flag.human_realm_invasion >= 10000 &&
     era_flag.human_realm_fallen === 0`,
@@ -500,7 +500,7 @@ export default [
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M2117 精灵领域判据门槛改成恒真（FLAG:86，INVASION.ERB:1005）',
+    desc: 'M2117 精灵领域条件门槛改成恒真（FLAG:86）',
     file: 'ere/page/page-invasion.js',
     find: `    era_flag.elf_realm_invasion >= 10000 &&
     era_flag.elf_realm_conquered === 0`,
@@ -510,13 +510,13 @@ export default [
     // '空转零输出' 是断言消息，但门槛松开后 ending_3 会在断言执行前就
     // 因 char_gift 等待未预置的输入而炸穿，断言永远走不到——旧
     // must_mention 因此从未真正命中。真正专门测「五组门槛全未达标 → 零
-    // 输出」这条判据（含精灵领域默认值 0）的用例是同名测试；改用它自己
-    // 的名字做锚点，跑该测试即会因这条判据被松开而红（#440 实测）。
+    // 输出」这条条件（含精灵领域默认值 0）的用例是同名测试；改用它自己
+    // 的名字做基准，跑该测试即会因这条条件被松开而红（#440 实测）。
     test_name: '五组全不满足',
     must_mention: '五组全不满足',
   },
   {
-    desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿（SYSTEM_DATA.ERB:309-310）',
+    desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿',
     file: 'ere/page/page-save-load.js',
     find: "    // SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）\n    if (i === era_flag.last_save_no) {\n      color = 'lightgreen';\n    }",
     replace: '    // 变异：删掉 LASTSAVE_NO 高亮',
@@ -524,7 +524,7 @@ export default [
     must_mention: '上次存档号高亮 LIGHTGREEN',
   },
   {
-    desc: 'M224 覆盖确认整段跳过（存在槽不再问，SYSTEM_DATA.ERB:163-171）',
+    desc: 'M224 覆盖确认整段跳过（存在槽不再问）',
     file: 'ere/page/page-save-load.js',
     find: "      if (has_valid_save(comment)) {\n        era.print('存档已经存在，确定要覆盖么？');",
     replace:
@@ -533,7 +533,7 @@ export default [
     must_mention: '取消时不得存档',
   },
   {
-    desc: 'M225 故事命名截断放宽（32 → 33 字符，SYSTEM_DATA.ERB:202）',
+    desc: 'M225 故事命名截断放宽（32 → 33 字符）',
     file: 'ere/page/page-save-load.js',
     find: '    chara(0).system.故事名 = name.substring(0, 32);',
     replace:
@@ -542,7 +542,7 @@ export default [
     must_mention: 'CSTR:MASTER:99 只存前 32 字符',
   },
   {
-    desc: 'M226 存档界面翻页步长改坏（+20 → +19，SYSTEM_DATA.ERB:140-146）',
+    desc: 'M226 存档界面翻页步长改坏（+20 → +19）',
     file: 'ere/page/page-save-load.js',
     find: '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === 200) {',
     replace:
@@ -551,7 +551,7 @@ export default [
     must_mention: '翻页往返后回到首页起点 0',
   },
   {
-    desc: 'M227 删除存档：rmData 调用移除（SYSTEM_DATA.ERB:284）',
+    desc: 'M227 删除存档：rmData 调用移除',
     file: 'ere/page/page-save-load.js',
     find: '        await era.rmData(result);',
     replace: '        // 变异：删除调用移除',
@@ -559,16 +559,16 @@ export default [
     must_mention: '确认后必须调 era.rmData(5)',
   },
   {
-    desc: 'M228 SAVEINFO 时段判据反转（TIME == 0 改 == 1，SYSTEM ver1.0.3.ERB:955）',
+    desc: 'M228 SAVEINFO 时段条件反转（TIME == 0 改 == 1）',
     file: 'ere/page/page-save-load.js',
     find: "  const day_half = era_flag.time === 0 ? '午前' : '午后';",
     replace:
-      "  const day_half = era_flag.time === 1 ? '午前' : '午后'; // 变异：判据反转",
+      "  const day_half = era_flag.time === 1 ? '午前' : '午后'; // 变异：条件反转",
     tests: ['page-save-load'],
     must_mention: '正在调教:玛奥',
   },
   {
-    desc: 'M229 LASTSAVE_NO 压栈不滑动（ARRAYSHIFT 退化为只写 [0]，SYSTEM_DATA.ERB:186）',
+    desc: 'M229 LASTSAVE_NO 压栈不滑动（ARRAYSHIFT 退化为只写 [0]）',
     file: 'ere/page/page-save-load.js',
     find: `  for (let i = 9; i > 0; i -= 1) {
     era.set(\`flag:\${10019 + i}\`, era.get(\`flag:\${10019 + i - 1}\`) ?? -1);
@@ -580,7 +580,7 @@ export default [
     must_mention: '旧 [0] 移到 [1]',
   },
   {
-    desc: 'M230 读档成功不写 LASTLOAD_NO（SYSTEM_DATA.ERB:73 的引擎行为等价物）',
+    desc: 'M230 读档成功不写 LASTLOAD_NO',
     file: 'ere/page/page-save-load.js',
     find: `        era_flag.last_load_no = result;`,
     replace: `        // 变异：漏写 LASTLOAD_NO`,
@@ -588,7 +588,7 @@ export default [
     must_mention: 'LASTLOAD_NO = 本次槽号',
   },
   {
-    desc: 'M231 EX_FLAG:2801 钳制阈值改坏（< 10 改 < 4，SYSTEM_DATA.ERB:74）',
+    desc: 'M231 EX_FLAG:2801 钳制阈值改坏（< 10 改 < 4）',
     file: 'ere/page/page-save-load.js',
     find: `        if (era_exflag.first_run_deadline < 10) {
           era_exflag.first_run_deadline = 10;
@@ -639,17 +639,17 @@ export default [
       '保存必须是按钮——没有 [200]，据点存档入口在实机上不存在（#137）',
   },
   {
-    desc: 'M253 读档后仍执行 @EVENTSHOP（skip_eventshop 开关被拆——读回来的在售状态被初始化覆盖，system-flow.md:51-53）',
+    desc: 'M253 读档后仍执行 EVENTSHOP 链（skip_eventshop 开关被拆——读回来的在售状态被初始化覆盖，见 system-flow.md）',
     file: 'ere/page/page-shop.js',
     find: `  if (!skip_eventshop) {
-    // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
-    // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
+    // EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
+    // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）
     await emit('EVENTSHOP');
   }`,
-    replace: `  // 变异：跳过开关被拆，一律执行 @EVENTSHOP
+    replace: `  // 变异：跳过开关被拆，一律执行 EVENTSHOP 链
   await emit('EVENTSHOP');`,
     tests: ['page-shop'],
-    must_mention: '读档后的进入路径不得执行 @EVENTSHOP',
+    must_mention: '读档后的进入路径不得执行 EVENTSHOP 链',
   },
   {
     desc: 'M256 读档钩子链被拆（load_game 成功分支不再 emit EVENTLOAD——钩子存在但从不被调用）',
@@ -665,7 +665,7 @@ export default [
     find: `  [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),`,
     replace: `  [STATE.SHOP_AFTER_LOAD]: run_shop, // 变异：映射指回原样`,
     tests: ['page-shop'],
-    must_mention: '经主循环进入 SHOP_AFTER_LOAD 同样不跑 @EVENTSHOP',
+    must_mention: '经主循环进入 SHOP_AFTER_LOAD 同样不跑 EVENTSHOP 链',
   },
   {
     desc: 'M282 has_valid_save 的 FILE LOST 前缀分支被拆（丢失槽被当有效档可点——#147 点名的无钉住缺口）',
@@ -734,7 +734,7 @@ export default [
     must_mention: '阶层 2 排在阶层 5 前',
   },
   {
-    desc: 'M567 OVERVIEW「迷宫外」判定改坏（501 <= 1 且 502 == 0 → 502 判据删）',
+    desc: 'M567 OVERVIEW「迷宫外」判定改坏（501 <= 1 且 502 == 0 → 502 条件删）',
     file: 'ere/page/page-main-menu.js',
     find: `        if (floor <= 1 && (era.get(\`cflag:\${cid}:502\`) || 0) === 0) {
           temp[10] += 1;`,
@@ -765,9 +765,9 @@ export default [
 
   // —— #212（J2 调教回合骨架）：M704-M712 ——
   {
-    desc: 'M705 @P_C 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
+    desc: 'M705 p_c 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
     file: 'ere/page/page-usercom.js',
-    find: "  let name = era.get(`traincommandname:${local}`) ?? '';\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }",
+    find: "  let name = era.get(`traincommandname:${local}`) ?? '';\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }",
     replace: `  let name = read_train_name(local);
   if (name.length < 1) {
     name = era.get(\`traincommandname:\${local}\`) ?? '';
@@ -776,9 +776,9 @@ export default [
     must_mention: 'TRAINNAME 非空时不得读 TRAIN_NAME',
   },
   {
-    desc: 'M706 @P_C 第三级回落的全角空格改空串（STRLENSU >= 1 语义丢）',
+    desc: 'M706 p_c 第三级回落的全角空格改空串（非空占位语义丢）',
     file: 'ere/page/page-usercom.js',
-    find: "  // 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）\n  if (name.length < 1) {\n    name = '　';\n  }",
+    find: "  // 仍空 → 全角空格（占位非空串——显示宽度 ≥ 1）\n  if (name.length < 1) {\n    name = '　';\n  }",
     replace:
       "  // 变异：占位改空串\n  if (name.length < 1) {\n    name = '';\n  }",
     tests: ['page-usercom'],
@@ -805,7 +805,7 @@ export default [
     must_mention: '★气力０★',
   },
   {
-    desc: 'M709 主人射精档的 135 守卫补上 >=2000 臂（三处守卫差异抹平）',
+    desc: 'M709 主人射精档的 135 检查补上 >=2000 分支（三处检查差异抹平）',
     file: 'ere/page/page-train.js',
     find: `    (era.get('talent:0:121') || era.get('talent:0:122')) &&
     !era.get('talent:0:135') &&
@@ -817,7 +817,7 @@ export default [
     must_mention: '主人档 TALENT:135 置位即不显示',
   },
   {
-    desc: 'M710 目标射精档的 135 >=2000 臂删（守卫差异反向抹平）',
+    desc: 'M710 目标射精档的 135 >=2000 分支删（检查差异反向抹平）',
     file: 'ere/page/page-train.js',
     find: `    (era.get(\`talent:\${target}:121\`) || era.get(\`talent:\${target}:122\`)) &&
     (!era.get(\`talent:\${target}:135\`) ||
@@ -828,7 +828,7 @@ export default [
     must_mention: '135 置位但 BASE >= 2000 → 显示',
   },
   {
-    desc: 'M711 母乳（目标）MAXBASE:3 缺省补 10000 删（:217-218 SIF 写入）',
+    desc: 'M711 母乳（目标）MAXBASE:3 缺省补 10000 删（缺省时的条件写入）',
     file: 'ere/page/page-train.js',
     find: `  if (era.get(\`talent:\${target}:130\`)) {
     if (!(era.get(\`maxbase:\${target}:3\`) > 0)) {
@@ -849,7 +849,7 @@ export default [
     must_mention: '(2500/10000)避孕套使用中',
   },
   {
-    desc: 'M716 避孕套守卫回退成二段（tequip:TARGET:35 → tequip:35——守卫真树用例的靶心）',
+    desc: 'M716 避孕套检查回退成二段（tequip:TARGET:35 → tequip:35——检查用例正中此处）',
     file: 'ere/page/page-train.js',
     find: "      suffix: era.get(`tequip:${target}:35`) ? '避孕套使用中' : '',",
     replace: "      suffix: era.get('tequip:35') ? '避孕套使用中' : '',",
@@ -857,7 +857,7 @@ export default [
     must_mention: '角色表二段寻址',
   },
   {
-    desc: 'M713 主人档的 TARGET != MASTER 判据删（自调教双条）',
+    desc: 'M713 主人档的 TARGET != MASTER 条件删（自调教双条）',
     file: 'ere/page/page-train.js',
     find: `    !era.get('talent:0:135') &&
     target !== 0`,
@@ -872,10 +872,11 @@ export default [
     find: '    out += `穿戴着${clothtype_special_text(cid)}的模样`;',
     replace: '    // 变异：特别服装句删',
     tests: ['cloth-func'],
-    must_mention: '基本 + 特别复合句（:49-56）',
+    must_mention:
+      'clothtype_text：着衣模式关 / 无基本服装 → 全裸；史莱姆特装；特别服装句',
   },
   {
-    desc: 'M811 乳房外露判据删（breasts_exposed 恒假 → 一律上半身裸露）',
+    desc: 'M811 乳房外露条件删（breasts_exposed 恒假 → 一律上半身裸露）',
     file: 'ere/page/page-clothtype.js',
     find: `  return (
     talent(cid, 122) === 0 &&
@@ -902,27 +903,29 @@ export default [
     replace: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
     game.stronghold.税金修正 += 4; // 变异：税金少算 1`,
     tests: ['page-shop'],
-    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND',
+    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
-    desc: 'M7889 199 休息：BEGIN TURNEND 删（回合推不动，本票到站标记失守）',
+    desc: 'M7889 199 休息：TURNEND 转场删（回合推不动，这张工单的到站标记失守）',
     file: 'ere/page/page-shop.js',
     find: `    game.stronghold.税金修正 += 5;
     begin(STATE.TURNEND);`,
     replace: `    game.stronghold.税金修正 += 5;
-    // 变异：BEGIN TURNEND 删`,
+    // 变异：TURNEND 转场删`,
     tests: ['page-shop'],
-    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND',
+    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
-    desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转判据永不成立）',
+    desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转条件永不成立）',
     file: 'ere/page/page-shop.js',
-    find: `    // （show_shop 的 0-53 支，#399 起本体是真身 page/page-item-shop.js）
+    find: `    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
+    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
     era_flag.bought = 1;`,
-    replace: `    // （show_shop 的 0-53 支，#399 起本体是真身 page/page-item-shop.js）
+    replace: `    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
+    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
     era_flag.bought = -1; // 变异：不再触发商店跳转`,
     tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店',
+    must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
   },
   {
     desc: 'M7891 show_shop：BOUGHT 54 边界错一格（>= 改 >，#396 重构后重钉）',
@@ -939,10 +942,10 @@ export default [
     replace:
       '  if (era_flag.bought >= 54 && era_flag.bought < 54) { // 变异：支不可达',
     tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店',
+    must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
   },
   {
-    desc: 'M7893 SELECT_ASSI [1002]：ASSI 复位删（旧指针残留）',
+    desc: 'M7893 select_assi [1002]：ASSI 复位删（旧指针残留）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
@@ -951,10 +954,10 @@ export default [
       return 0; // 变异：ASSI 未复位`,
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+      'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
   },
   {
-    desc: 'M7894 SELECT_ASSI [1002]：FLAG:2 写错值（0 代替 -1）',
+    desc: 'M7894 select_assi [1002]：FLAG:2 写错值（0 代替 -1）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = -1;
       game.event.上次助手 = -1;`,
@@ -962,10 +965,10 @@ export default [
       game.event.上次助手 = 0; // 变异：写错值`,
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+      'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
   },
   {
-    desc: 'M7895 SELECT_ASSI [1002]：返回值改 2（误判为取消，与 999 混淆）',
+    desc: 'M7895 select_assi [1002]：返回值改 2（误判为取消，与 999 混淆）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
@@ -979,20 +982,20 @@ export default [
     if (result === 999) {`,
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+      'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
   },
   {
-    desc: 'M7896 SELECT_ASSI [999]：返回值改 0（误判为非取消，与 1002 混淆）',
+    desc: 'M7896 select_assi [999]：返回值改 0（误判为非取消，与 1002 混淆）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）\n      return 2;\n    }',
+    find: '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
     replace:
-      '    if (result === 999) {\n      // 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
+      '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我先想想（999）：返回 2（取消，与 SELECT_TARGET 的 999=0 不同码），不置 ASSI',
+      'select_assi 我先想想（999）：返回 2（取消，与 select_target 的 999=0 不同码），不置 ASSI',
   },
   {
-    desc: 'M7897 SELECT_ASSI 正常选中：ASSI 未写（选中的人选丢失）',
+    desc: 'M7897 select_assi 正常选中：ASSI 未写（选中的人选丢失）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = result;
       game.event.上次助手 = result;
@@ -1000,10 +1003,10 @@ export default [
     replace: `      game.event.上次助手 = result;
       return 1; // 变异：ASSI 未写`,
     tests: ['page-select-target'],
-    must_mention: 'SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
+    must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
   {
-    desc: 'M7898 SELECT_ASSI 正常选中：FLAG:2（上次助手）未写',
+    desc: 'M7898 select_assi 正常选中：FLAG:2（上次助手）未写',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = result;
       game.event.上次助手 = result;
@@ -1015,19 +1018,18 @@ export default [
     }
     if (result === 1000) {`,
     tests: ['page-select-target'],
-    must_mention: 'SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
+    must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
   {
-    desc: 'M7899 [101] 能力显示：CHARANUM 守卫边界错一格（>= 1 改 >= 2）',
+    desc: 'M7899 [101] 能力显示：角色数检查边界错一格（>= 1 改 >= 2）',
     file: 'ere/page/page-main-menu.js',
     find: '  if (era.getAddedCharacters().length >= 1) {',
     replace: '  if (era.getAddedCharacters().length >= 2) {',
     tests: ['page-main-menu'],
-    must_mention:
-      '[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰色 [---]',
+    must_mention: '[101] 能力显示：角色数 >= 1 时是可点按钮',
   },
   {
-    desc: 'M7900 [103] 处刑：A > 0 守卫取反',
+    desc: 'M7900 [103] 处刑：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if (count_selectable_slaves() > 0) {
     era.printButton('处刑', 103);`,
@@ -1038,7 +1040,7 @@ export default [
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
   },
   {
-    desc: 'M7901 [104] 迎击：A > 0 守卫取反',
+    desc: 'M7901 [104] 迎击：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if (count_selectable_slaves() > 0) {
     era.printButton('迎击', 104);`,
@@ -1049,7 +1051,7 @@ export default [
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
   },
   {
-    desc: 'M7902 [108] 换装：FLAG:37 == 1 守卫取反',
+    desc: 'M7902 [108] 换装：FLAG:37 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: "  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {",
     replace:
@@ -1059,7 +1061,7 @@ export default [
       '[108] 换装：A > 0 且 FLAG:37 == 1 才渲染（未落表前恒不成立）',
   },
   {
-    desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 守卫取反',
+    desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if ((era.get('talent:0:325') || 0) === 1) {
     era.printButton('实验室', 110);`,
@@ -1101,7 +1103,7 @@ export default [
     find: '  if (state.column >= 5) {',
     replace: '  if (state.column >= 6) {',
     tests: ['page-main-menu'],
-    must_mention: 'DRAW_HAVEITEMS：5 个一行，第 6 个换行',
+    must_mention: 'draw_have_items：5 个一行，第 6 个换行',
   },
   {
     desc: 'M7908 DRAW_HAVEITEMS 第一段起点错一格（0 改 1，item:0 漏画）',
@@ -1110,7 +1112,7 @@ export default [
     replace: '  for (let id = 1; id <= 58; id += 1) {',
     tests: ['page-main-menu'],
     must_mention:
-      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+      'draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
   {
     desc: 'M7909 DRAW_HAVEITEMS 第二段起点错一格（300 改 301，item:300 漏画）',
@@ -1119,7 +1121,7 @@ export default [
     replace: '  for (let id = 301; id <= 339; id += 1) {',
     tests: ['page-main-menu'],
     must_mention:
-      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+      'draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
   {
     desc: 'M8104 ITEM_SHOP_TRAP 陷阱网格上界改错（end 92 → 91，漏掉 91 号）',
@@ -1160,7 +1162,7 @@ export default [
     replace:
       '  60, 61, 62, 63, 69, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85,',
     tests: ['shop-trap'],
-    must_mention: '三个判据的八种组合整表驱动',
+    must_mention: '三个条件的八种组合整表驱动',
   },
   {
     desc: 'M8109 SALEITEM_CHECK_TRAP 淫魔知识位改错（54 → 53）',
@@ -1168,7 +1170,7 @@ export default [
     find: 'const SALES_SUCCUBUS_KNOWLEDGE = [54]; // 淫魔知识',
     replace: 'const SALES_SUCCUBUS_KNOWLEDGE = [53]; // 变异：淫魔知识位',
     tests: ['shop-trap'],
-    must_mention: '三个判据的八种组合整表驱动',
+    must_mention: '三个条件的八种组合整表驱动',
   },
   {
     desc: 'M8110 SALEITEM_CHECK_TRAP 魔虫知识分支反转（== 0 改 == 1）',
@@ -1176,15 +1178,15 @@ export default [
     find: "  if ((era.get('talent:0:328') || 0) === 0) {",
     replace: "  if ((era.get('talent:0:328') || 0) === 1) {",
     tests: ['shop-trap'],
-    must_mention: '三个判据的八种组合整表驱动',
+    must_mention: '三个条件的八种组合整表驱动',
   },
   {
-    desc: 'M8111 SALEITEM_CHECK_TRAP 陷阱等级判据错一格（< 改 <=）',
+    desc: 'M8111 saleitem_check_trap 陷阱等级条件错一格（< 改 <=）',
     file: 'ere/page/page-shop-trap.js',
     find: "  if (game.stronghold.陷阱等级 < (era.get('cflag:0:9') || 0)) {",
     replace: "  if (game.stronghold.陷阱等级 <= (era.get('cflag:0:9') || 0)) {",
     tests: ['shop-trap'],
-    must_mention: '陷阱等级判据是严格小于',
+    must_mention: '陷阱等级条件是严格小于',
   },
   {
     desc: 'M8112 ITEM_SHOP_TRAP 日期行的午前午后互换',
@@ -1195,9 +1197,9 @@ export default [
     must_mention: '日期行两态',
   },
   {
-    desc: 'M8113 USERSHOP 998：切了陷阱商店却不重画（JUMP 的目标删）',
+    desc: 'M8113 USERSHOP 998：切了陷阱商店却不重画（跳转目标删）',
     file: 'ere/page/page-shop.js',
-    find: '    await item_shop_trap(); // JUMP ITEM_SHOP_TRAP（切陷阱商店并立即重画）',
+    find: '    await item_shop_trap(); // 切陷阱商店并立即重画',
     replace: '    // 变异：切了不画',
     tests: ['shop-trap'],
     must_mention: '切陷阱商店并立即重画',
@@ -1205,18 +1207,18 @@ export default [
   {
     desc: 'M8114 USERSHOP 999：购物态下不清 BOUGHT（退出商店失效）',
     file: 'ere/page/page-shop.js',
-    find: '    era_flag.bought = -1;\n    return; // 支的出口：原作 :226-229 的 RETURN 0（#592）',
+    find: '    era_flag.bought = -1;\n    return; // 支的出口：回主菜单（#592）',
     replace:
-      '    // 变异：不退出购物态\n    return; // 支的出口：原作 :226-229 的 RETURN 0（#592）',
+      '    // 变异：不退出购物态\n    return; // 支的出口：回主菜单（#592）',
     tests: ['shop-trap'],
     must_mention: '999 退出商店',
   },
   {
-    desc: 'M8115 USERSHOP 购物态守卫失效（其它输入落到主菜单分发）',
+    desc: 'M8115 USERSHOP 购物态检查失效（其它输入落到主菜单分发）',
     file: 'ere/page/page-shop.js',
-    find: '  } else if (era_flag.bought >= 0) {\n    return; // 的 RETURN 0',
+    find: '  } else if (era_flag.bought >= 0) {\n    return; // 购物态下其它输入无反应，回循环重绘',
     replace: `  } else if (era_flag.bought >= 100000) {
-    return; // 变异：购物态守卫失效`,
+    return; // 变异：购物态检查失效`,
     tests: ['shop-trap'],
     must_mention: '购物态下的其它输入一律 RETURN 0',
   },
@@ -1226,24 +1228,24 @@ export default [
     find: "return { content: '<爱\\u00A0\\u00A0慕>', color: COLOR_LOVE };",
     replace: "return { content: '<爱慕>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
-    desc: 'M8382 LIFE_LIST 淫乱标签判据错位（76 → 78）',
+    desc: 'M8382 life_list 淫乱标签条件错位（76 → 78）',
     file: 'ere/page/page-life-list.js',
     find: "  if (talent(cid, 76) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     replace:
       "  if (talent(cid, 78) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
-    desc: 'M8383 LIFE_LIST 妊娠判据漏掉乳内妊娠（341）',
+    desc: 'M8383 life_list 妊娠条件漏掉乳内妊娠（341）',
     file: 'ere/page/page-life-list.js',
     find: '    talent(cid, 153) !== 0 ||\n    talent(cid, 341) !== 0 ||\n    talent(cid, 342) !== 0',
     replace: '    talent(cid, 153) !== 0 ||\n    talent(cid, 342) !== 0',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8384 LIFE_LIST_ITEM_E 肛内妊娠下标错位（343 → 344）',
@@ -1254,7 +1256,7 @@ export default [
     must_mention: '妊娠段多一支 343',
   },
   {
-    desc: 'M8385 LIFE_LIST 收藏标记判据错位（700 → 701）',
+    desc: 'M8385 life_list 收藏标记条件错位（700 → 701）',
     file: 'ere/page/page-life-list.js',
     find: 'if (cflag(cid, 700) !== 0) {',
     replace: 'if (cflag(cid, 701) !== 0) {',
@@ -1262,12 +1264,12 @@ export default [
     must_mention: '占位',
   },
   {
-    desc: 'M8386 LIFE_LIST 可被卖判据放宽（> 0 → >= 0）',
+    desc: 'M8386 life_list 可被卖条件放宽（> 0 → >= 0）',
     file: 'ere/page/page-life-list.js',
     find: '    cflag(cid, 0) > 0 &&\n    cid !== 0 &&',
     replace: '    cflag(cid, 0) >= 0 &&\n    cid !== 0 &&',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8387 LIFE_LIST 可作为助手的助手役编号错（2 → 3）',
@@ -1275,7 +1277,7 @@ export default [
     find: '    cflag(cid, 0) === 2 &&\n    cid !== 0 &&',
     replace: '    cflag(cid, 0) === 3 &&\n    cid !== 0 &&',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8388 LIFE_LIST 虫寄生素质表多收一个（193 → 194）',
@@ -1283,7 +1285,7 @@ export default [
     find: '[190, 191, 192, 193].some((idx) => talent(cid, idx) !== 0)',
     replace: '[190, 191, 192, 194].some((idx) => talent(cid, idx) !== 0)',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8389 LIFE_LIST 派遣状态编号错（12 → 13）',
@@ -1291,7 +1293,7 @@ export default [
     find: '  if (cflag(cid, 1) === 12) {',
     replace: '  if (cflag(cid, 1) === 13) {',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8390 LIFE_LIST 名字字段宽多一格（+8 → +9）',
@@ -1353,7 +1355,7 @@ export default [
     must_mention: '调教回数 / 种族性格 / 性别三列',
   },
   {
-    desc: 'M8397 LIFE_LIST_ITEM_E 性别主判据错位（122 → 121）',
+    desc: 'M8397 life_list_item_e 性别主条件错位（122 → 121）',
     file: 'ere/page/page-life-list.js',
     find: "  const gender = talent(arg, 122)\n    ? { content: '\\u00A0\\u00A0<男>' }\n    : talent(arg, 121)",
     replace:
@@ -1370,7 +1372,7 @@ export default [
     must_mention: '六种状态整表驱动',
   },
   {
-    desc: 'M8399 MAX_PAGE_ENEMY 敌人数判据错位（2 → 1）',
+    desc: 'M8399 max_page_enemy 敌人数条件错位（2 → 1）',
     file: 'ere/page/page-life-list.js',
     find: '    cflag(cid, 1) === 2 && // 侵攻中',
     replace: '    cflag(cid, 1) === 1 && // 变异：判据错位',
@@ -1378,11 +1380,11 @@ export default [
     must_mention: '页数算式在整除与余数两侧',
   },
   {
-    desc: 'M8400 MAX_PAGE_ENEMY 整除分支多算一页',
+    desc: 'M8400 max_page_enemy 整除分支多算一页',
     file: 'ere/page/page-life-list.js',
-    find: '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 1;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * @LIFE_LIST_SALAVE',
+    find: '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 1;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * life_list_salave：可作为奴隶出售角色的分页列表。',
     replace:
-      '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 2;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * @LIFE_LIST_SALAVE',
+      '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 2;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * life_list_salave：可作为奴隶出售角色的分页列表。',
     tests: ['page-life-list'],
     must_mention: '页数算式在整除与余数两侧',
   },
@@ -1420,7 +1422,7 @@ export default [
     must_mention: '跨域消费同步扣',
   },
   {
-    desc: 'M8420 PAGE-TAILOR 戒指强化漏掉跨域消费（:957）',
+    desc: 'M8420 PAGE-TAILOR 戒指强化漏掉跨域消费',
     file: 'ere/page/page-tailor.js',
     find: "      era.set(\n        'exflag:4444',\n        (era.get('exflag:4444') || 0) - pay * ENHANCE_UNIT,\n      );\n      era.set(`cflag:${cid}:${slot}`, value);",
     replace: '      era.set(`cflag:${cid}:${slot}`, value);',
@@ -1428,7 +1430,7 @@ export default [
     must_mention: '跨域消费',
   },
   {
-    desc: 'M8421 PAGE-TAILOR 武器强化漏掉跨域消费（:1049）',
+    desc: 'M8421 PAGE-TAILOR 武器强化漏掉跨域消费',
     file: 'ere/page/page-tailor.js',
     find: "      era.set(\n        'exflag:4444',\n        (era.get('exflag:4444') || 0) - pay * ENHANCE_UNIT,\n      );\n      era.set(`cflag:${cid}:${SLOT_WEAPON}`, value);",
     replace: '      era.set(`cflag:${cid}:${SLOT_WEAPON}`, value);',
@@ -1436,7 +1438,7 @@ export default [
     must_mention: '跨域消费',
   },
   {
-    desc: 'M8426 PAGE-TAILOR 旧内衣变卖漏掉跨域进账（:1132）',
+    desc: 'M8426 PAGE-TAILOR 旧内衣变卖漏掉跨域进账',
     file: 'ere/page/page-tailor.js',
     find: "      era.set('exflag:4444', (era.get('exflag:4444') || 0) + price);",
     replace: '      // 变异：漏掉变卖的跨域进账',
@@ -1444,7 +1446,7 @@ export default [
     must_mention: '同步进账',
   },
   {
-    desc: 'M8429 PAGE-TAILOR 买入漏掉跨域扣款（:1185）',
+    desc: 'M8429 PAGE-TAILOR 买入漏掉跨域扣款',
     file: 'ere/page/page-tailor.js',
     find: "  era.set('exflag:4444', (era.get('exflag:4444') || 0) - c);",
     replace: '  // 变异：漏掉买入的跨域扣款',
@@ -1452,7 +1454,7 @@ export default [
     must_mention: '跨域消费同步扣',
   },
   {
-    desc: 'M8431 PAGE-TAILOR 旧内衣变卖的判据收紧（>= 0 → > 0）',
+    desc: 'M8431 PAGE-TAILOR 旧内衣变卖的条件收紧（>= 0 → > 0）',
     file: 'ere/page/page-tailor.js',
     find: '    if (cflag(cid, 43) >= 0 && cflag(cid, 48) >= 6) {',
     replace: '    if (cflag(cid, 43) > 0 && cflag(cid, 48) >= 6) {',
@@ -1600,12 +1602,12 @@ export default [
     must_mention: '道具补给',
   },
   {
-    desc: 'M8422 INTERCEPT 魔王判据错位（0 → 1）',
+    desc: 'M8422 intercept 魔王条件错位（0 → 1）',
     file: 'ere/page/page-intercept.js',
     find: "  if (cid === 0) return 'MASTER';",
     replace: "  if (cid === 1) return 'MASTER'; // 变异",
     tests: ['page-intercept'],
-    must_mention: '派遣判据 reject_reason',
+    must_mention: '派遣判断 reject_reason',
   },
   {
     desc: 'M8423 INTERCEPT 孕妇出征位错一位（位 10 → 位 11）',
@@ -1614,7 +1616,7 @@ export default [
     replace:
       "  if (talent(cid, 153) === 1 && getbit(era.get('flag:5') || 0, 11) === 0) {",
     tests: ['page-intercept'],
-    must_mention: '派遣判据 reject_reason',
+    must_mention: '派遣判断 reject_reason',
   },
   {
     desc: 'M8424 INTERCEPT 后代出征位错一位（位 1 → 位 2）',
@@ -1622,7 +1624,7 @@ export default [
     find: "    getbit(era.get('exflag:9000') || 0, 1) === 0",
     replace: "    getbit(era.get('exflag:9000') || 0, 2) === 0",
     tests: ['page-intercept'],
-    must_mention: '派遣判据 reject_reason',
+    must_mention: '派遣判断 reject_reason',
   },
   {
     desc: 'M8425 PAGE-TAILOR 日常服饰价格（100 → 101）',
@@ -1630,7 +1632,7 @@ export default [
     find: 'const CASUAL_PRICE = 100;',
     replace: 'const CASUAL_PRICE = 101;',
     tests: ['page-tailor'],
-    must_mention: 'TAILOR_CASUAL',
+    must_mention: 'tailor_casual',
   },
   {
     desc: 'M8427 PAGE-TAILOR 黑市价格（30000 → 30001）',
@@ -1662,7 +1664,7 @@ export default [
     find: 'const ENHANCE_LEVEL = 30;',
     replace: 'const ENHANCE_LEVEL = 31;',
     tests: ['page-tailor'],
-    must_mention: '等级门的灰显',
+    must_mention: '等级不足的灰显',
   },
   {
     desc: 'M8433 PAGE-TAILOR 武器前缀档数（9 → 8）',
@@ -1681,7 +1683,7 @@ export default [
     must_mention: '装备武器带前缀档',
   },
   {
-    desc: 'M9709 精灵领域状态行标签互换（FLAG:87，INVASION.ERB:31）',
+    desc: 'M9709 精灵领域状态行标签互换（FLAG:87）',
     file: 'ere/page/page-invasion.js',
     find: "    era_flag.elf_realm_conquered >= 1\n      ? '黑暗精灵的领土侵攻度'\n      : '精灵族的领域侵攻度',",
     replace:
@@ -1690,7 +1692,7 @@ export default [
     must_mention: 'flag:87',
   },
   {
-    desc: 'M9710 龙之山状态行标签互换（FLAG:89，INVASION.ERB:33）',
+    desc: 'M9710 龙之山状态行标签互换（FLAG:89）',
     file: 'ere/page/page-invasion.js',
     find: "    era_flag.dragon_realm_conquered >= 1\n      ? '混沌龙之山侵攻度'\n      : '龙之山脉侵攻度',",
     replace:
@@ -1699,7 +1701,7 @@ export default [
     must_mention: 'flag:89',
   },
   {
-    desc: 'M9711 天界状态行标签互换（FLAG:91，INVASION.ERB:35）',
+    desc: 'M9711 天界状态行标签互换（FLAG:91）',
     file: 'ere/page/page-invasion.js',
     find: "    era_flag.heaven_conquered >= 1 ? '堕天使的淫界侵攻度' : '天界侵攻度',",
     replace:
@@ -1708,16 +1710,16 @@ export default [
     must_mention: 'flag:91',
   },
   {
-    desc: 'M9712 圣灵骑士堡垒按钮文案互换（FLAG:92 == 15，INVASION.ERB:68-72）',
+    desc: 'M9712 圣灵骑士堡垒按钮文案互换（FLAG:92 == 15）',
     file: 'ere/page/page-invasion.js',
-    find: "    era_flag.arcana_fort_stage === 15\n      ? '- 巡视圣灵骑士的卖春堡垒（已征服）' // INVASION.ERB:69\n      : '- 攻略圣灵骑士的堡垒', // INVASION.ERB:71",
+    find: "    era_flag.arcana_fort_stage === 15\n      ? '- 巡视圣灵骑士的卖春堡垒（已征服）'\n      : '- 攻略圣灵骑士的堡垒',",
     replace:
-      "    era_flag.arcana_fort_stage === 15\n      ? '- 攻略圣灵骑士的堡垒' // INVASION.ERB:69（变异：标签互换）\n      : '- 巡视圣灵骑士的卖春堡垒（已征服）', // INVASION.ERB:71",
+      "    era_flag.arcana_fort_stage === 15\n      ? '- 攻略圣灵骑士的堡垒' // 变异：标签互换\n      : '- 巡视圣灵骑士的卖春堡垒（已征服）',",
     tests: ['page-invasion'],
     must_mention: '的 [4] 按钮文案',
   },
   {
-    desc: 'M9713 天神宫已征服门槛挪走（shrine_stage >= 4 改 > 4，INVASION.ERB:73-76）',
+    desc: 'M9713 天神宫已征服门槛挪走（shrine_stage >= 4 改 > 4）',
     file: 'ere/page/page-invasion.js',
     find: "    if (era_exflag.shrine_stage >= 4) {\n      era.printButton('- 巡视淫乱意志的神宫（已征服）', 5);",
     replace:
@@ -1726,7 +1728,7 @@ export default [
     must_mention: '[5] 按钮文案',
   },
   {
-    desc: 'M9714 天神宫开窗判据弱化（route_33 双区间 || 改 &&，INVASION.ERB:45/77）',
+    desc: 'M9714 天神宫开窗条件弱化（route_33 双区间 || 改 &&）',
     file: 'ere/page/page-invasion.js',
     find: '  const route_33_open =\n    (era_exflag.route_33 >= 501 && era_exflag.route_33 < 540) ||\n    (era_exflag.route_33 >= 541 && era_exflag.route_33 < 560);',
     replace:
@@ -1735,7 +1737,7 @@ export default [
     must_mention: '：进度条应渲染',
   },
   {
-    desc: 'M9715 [999] 取消误报成功（征服后菜单，INVASION.ERB:88-89）',
+    desc: 'M9715 [999] 取消误报成功（征服后菜单）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result === 999) {\n      return 0;\n    }',
     replace:
@@ -1750,10 +1752,10 @@ export default [
       return 0;`,
     replace: `      return 0; // 变异：SENGEN_VIDEO 调用丢失`,
     tests: ['page-invasion'],
-    must_mention: '[1000] 转发到 SENGEN_VIDEO 真身（#502）',
+    must_mention: '[1000] 转发到 sengen_video 真身（#502）',
   },
   {
-    desc: 'M9717 [9] CAMPAIGN_MENU 调用丢失（INVASION.ERB:97-99）',
+    desc: 'M9717 [9] campaign_menu 调用丢失',
     file: 'ere/page/page-invasion.js',
     find: '    if (result === 9) {\n      await campaign_menu();\n      return 0;\n    }',
     replace:
@@ -1762,25 +1764,25 @@ export default [
     must_mention: '[9] 调用 campaign_menu()',
   },
   {
-    desc: 'M9718 [4] ARCANA_FORT 的分派条件改坏（result === 4 → 8，INVASION.ERB:125-131）',
+    desc: 'M9718 [4] arcana_fort 的分派条件改坏（result === 4 → 8）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result === 4) {\n      // CALL ARCANA_FORT',
     replace:
       '    if (result === 8) { // 变异：分派条件改坏\n      // CALL ARCANA_FORT',
     tests: ['page-invasion'],
-    must_mention: '[4] 转发到 ARCANA_FORT 真身',
+    must_mention: '[4] 转发到 arcana_fort 真身',
   },
   {
-    desc: 'M9719 [5] 拒收判据反向（route_33 <= 500 改 > 500，INVASION.ERB:100-101）',
+    desc: 'M9719 [5] 拒收条件反向（route_33 <= 500 改 > 500）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result === 5 && era_exflag.route_33 <= 500) {',
     replace:
-      '    if (result === 5 && era_exflag.route_33 > 500) { // 变异：拒收判据反向',
+      '    if (result === 5 && era_exflag.route_33 > 500) { // 变异：拒收条件反向',
     tests: ['page-invasion'],
-    must_mention: '守卫之后的分派一行都不许发生',
+    must_mention: '检查之后的分派一行都不许发生',
   },
   {
-    desc: 'M9720 shrine_stage >= 3 副作用门槛挪走（改 > 3，INVASION.ERB:136-137）',
+    desc: 'M9720 shrine_stage >= 3 副作用门槛挪走（改 > 3）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result === 5 && era_exflag.shrine_stage >= 3) {\n      era_exflag.shrine_stage = era_exflag.shrine_stage + 1;\n    }',
     replace:
@@ -1789,16 +1791,16 @@ export default [
     must_mention: 'shrine_stage=3 → 4',
   },
   {
-    desc: 'M9721 [0] 委派 start_campaign() 丢失（INVASION.ERB:109-111）',
+    desc: 'M9721 [0] 委派 start_campaign() 丢失',
     file: 'ere/page/page-invasion.js',
-    find: '    if (result === 0) {\n      // 人间界：复用出兵流程；其内部的 RESTART（原作出兵路线里的\n      // [999] 返回等）原样透传，由 invasion() 的外层循环回到 :6 的分派\n      return await start_campaign(rand, HUMAN_WORLD);\n    }',
+    find: '    if (result === 0) {\n      // 人间界：复用出兵流程；其内部的 RESTART（出兵路线里的\n      // [999] 返回等）原样透传，由 invasion() 的外层循环回到入口分派\n      return await start_campaign(rand, HUMAN_WORLD);\n    }',
     replace:
       '    if (result === 0) {\n      return 0; // 变异：委派丢失\n    }',
     tests: ['page-invasion'],
     must_mention: '[0] 经 post_conquest_menu 委派 start_campaign()',
   },
   {
-    desc: 'M9722 invasion() 分派条件反向（FLAG:82，INVASION.ERB:25）',
+    desc: 'M9722 invasion() 分派条件反向（FLAG:82）',
     file: 'ere/page/page-invasion.js',
     find: '      era_flag.human_realm_fallen !== 0\n        ? await post_conquest_menu(rand) // IF FLAG:82：地上征服后菜单（#468）\n        : await start_campaign(rand); // ELSE：目标区域默认人间界',
     replace:
@@ -1816,7 +1818,7 @@ export default [
     must_mention: '的状态条数值列取自',
   },
   {
-    desc: 'M9725 天神宫状态条优先级改成和按钮一样（返工#2 P2，INVASION.ERB:45）',
+    desc: 'M9725 天神宫状态条优先级改成和按钮一样（返工#2 P2）',
     file: 'ere/page/page-invasion.js',
     find: "  if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era.get('flag:101') || 0, 10000);\n  } else if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era.get('flag:101') || 0,\n      10000,\n    );\n  }",
     replace:
@@ -1825,16 +1827,16 @@ export default [
     must_mention: '进度条应渲染',
   },
   {
-    desc: 'M9726 越界守卫门槛挪走（>=6||<0 改 >=600||<-100，返工#2 P3，INVASION.ERB:102-105）',
+    desc: 'M9726 越界检查门槛挪走（>=6||<0 改 >=600||<-100，返工#2 P3）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result >= 6 || result < 0) {\n      continue;\n    }',
     replace:
       '    if (result >= 600 || result < -100) {\n      continue; // 变异：门槛挪走\n    }',
     tests: ['page-invasion'],
-    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+    must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
-    desc: 'M9727 水晶球按钮分子分母颠倒（返工#2 P4，INVASION.ERB:83）',
+    desc: 'M9727 水晶球按钮分子分母颠倒（返工#2 P4）',
     file: 'ere/page/page-invasion.js',
     find: '`向城里投放水晶球[${era_exflag.crystal_ball_deployed}/${era_exflag.crystal_ball_stock}]`,',
     replace:
@@ -1843,7 +1845,7 @@ export default [
     must_mention: '分子分母取自 exflag:9011/9010',
   },
   {
-    desc: 'M10100 招募：气力不足守卫失效（<100 改 <0，#469）',
+    desc: 'M10100 招募：气力不足检查失效（<100 改 <0，#469）',
     file: 'ere/page/page-campaign.js',
     find: `  if (chara(0).dungeon.气力 < 100) {
     era.print('*气力不足！*');
@@ -1859,7 +1861,7 @@ export default [
     must_mention: '气力不足（BASE:MASTER:1 < 100）拒绝',
   },
   {
-    desc: 'M10101 招募：奴隶数上限守卫失效（>80 改 >800，#469）',
+    desc: 'M10101 招募：奴隶数上限检查失效（>80 改 >800，#469）',
     file: 'ere/page/page-campaign.js',
     find: `  if (era.getAddedCharacters().length > 80) {`,
     replace: `  if (era.getAddedCharacters().length > 800) {`,
@@ -1877,28 +1879,28 @@ export default [
     must_mention: 'TALENT:(400+360)=361 点亮',
   },
   {
-    desc: 'M10103 派遣：临死中角色排除守卫失效（<1 改 <0，#469）',
+    desc: 'M10103 派遣：临死中角色排除检查失效（<1 改 <0，#469）',
     file: 'ere/page/page-campaign.js',
     find: '    if (chara(result).dungeon.体力 < 1) {\n      continue; // 临死中的角色排除\n    }',
     replace:
-      '    if (chara(result).dungeon.体力 < 0) {\n      continue; // 变异：临死守卫失效\n    }',
+      '    if (chara(result).dungeon.体力 < 0) {\n      continue; // 变异：临死检查失效\n    }',
     tests: ['page-campaign'],
     must_mention: '临死中（BASE:0 < 1）',
   },
   {
-    desc: 'M10104 派遣：魔王之影守卫删除（#469）',
+    desc: 'M10104 派遣：魔王之影检查删除（#469）',
     file: 'ere/page/page-campaign.js',
     find: `    if (chara(result).stronghold.魔王之影) {
       era.print(\`由于\${chara_callname(result)}是魔王之影而无法派遣\`);
       await era.waitAnyKey();
       continue;
     }`,
-    replace: `    // 变异：魔王之影守卫删除`,
+    replace: `    // 变异：魔王之影检查删除`,
     tests: ['page-campaign'],
     must_mention: '魔王之影',
   },
   {
-    desc: 'M10105 派遣：已派遣守卫失效（=== 12 改 === 120，#469）',
+    desc: 'M10105 派遣：已派遣检查失效（=== 12 改 === 120，#469）',
     file: 'ere/page/page-campaign.js',
     find: `    if (chara(result).invasion.状态 === 12) {
       era.print(\`\${chara_callname(result)}已经被派遣了\`);
@@ -1906,7 +1908,7 @@ export default [
       continue;
     }`,
     replace: `    if (chara(result).invasion.状态 === 120) {
-      era.print(\`\${chara_callname(result)}已经被派遣了\`); // 变异：判据失效
+      era.print(\`\${chara_callname(result)}已经被派遣了\`); // 变异：条件失效
       await era.waitAnyKey();
       continue;
     }`,
@@ -1914,7 +1916,7 @@ export default [
     must_mention: '已经被派遣了',
   },
   {
-    desc: 'M10106 派遣：其他状态守卫反转（!== 0 改 === 0，把待机者误挡、其他状态放行，#469）',
+    desc: 'M10106 派遣：其他状态检查反转（!== 0 改 === 0，把待机者误挡、其他状态放行，#469）',
     file: 'ere/page/page-campaign.js',
     find: `    if (chara(result).invasion.状态 !== 0) {
       era.print(\`\${chara_callname(result)}当前无法被派遣\`);
@@ -1922,7 +1924,7 @@ export default [
       continue;
     }`,
     replace: `    if (chara(result).invasion.状态 === 0) {
-      era.print(\`\${chara_callname(result)}当前无法被派遣\`); // 变异：判据反转
+      era.print(\`\${chara_callname(result)}当前无法被派遣\`); // 变异：条件反转
       await era.waitAnyKey();
       continue;
     }`,
@@ -1935,7 +1937,7 @@ export default [
     find: `    chara(result).dungeon.目标阶层 = 0;`,
     replace: `    chara(result).dungeon.目标阶层 = 1; // 变异：应归 0`,
     tests: ['page-campaign'],
-    must_mention: ':121 目标阶层重置',
+    must_mention: '目标阶层重置',
   },
   {
     desc: 'M10108 SELECT_CAMPAIGN：深度重置（FLAG:401 = 0）删除（#469）',
@@ -1944,10 +1946,10 @@ export default [
     replace: `  // 变异：深度重置删除
   return 0;`,
     tests: ['page-campaign'],
-    must_mention: ':150 深度重置',
+    must_mention: '深度重置',
   },
   {
-    desc: 'M10109 SELECT_CAMPAIGN：CAMPAIGN_SET 范围守卫失效（<= 20 改 <= 2000，#469）',
+    desc: 'M10109 select_campaign：campaign_set 范围检查失效（<= 20 改 <= 2000，#469）',
     file: 'ere/page/page-campaign.js',
     find: `  if (result >= 1 && result <= 20) {`,
     replace: `  if (result >= 1 && result <= 2000) {`,
@@ -1955,19 +1957,19 @@ export default [
     must_mention: '超出 1-20 声明空间的输入不派发 CAMPAIGN_SET',
   },
   {
-    desc: 'M10110 菜单头部：战役进行中的按钮分支判据反转（=== 0 改 !== 0，#469）',
+    desc: 'M10110 菜单头部：战役进行中的按钮分支条件反转（=== 0 改 !== 0，#469）',
     file: 'ere/page/page-campaign.js',
     find: `    if (active === 0) {
       era.printButton('行动选择', 0);
     } else {`,
     replace: `    if (active !== 0) {
-      era.printButton('行动选择', 0); // 变异：分支判据反转
+      era.printButton('行动选择', 0); // 变异：分支条件反转
     } else {`,
     tests: ['page-campaign'],
     must_mention: 'FLAG:400 == 0 时只显示',
   },
   {
-    desc: 'M10111 CAMPAIGN_ROOM_1：楼层门槛 off-by-one（> 3 改 >= 3，#469）',
+    desc: 'M10111 campaign_room_1：楼层门槛 off-by-one（> 3 改 >= 3，#469）',
     file: 'ere/page/page-campaign-1.js',
     find: `function campaign_room_1(floor) {
   return floor > 3 ? 502 : 0;
@@ -1976,10 +1978,10 @@ export default [
   return floor >= 3 ? 502 : 0; // 变异：off-by-one
 }`,
     tests: ['dungeon-room'],
-    must_mention: 'ROOM_1',
+    must_mention: 'campaign_room_1',
   },
   {
-    desc: 'M10112 CAMPAIGN_ROOM_EXTRA_1：位 1（种付奴隶）累加值改错（+= 2 改 += 1，#469）',
+    desc: 'M10112 campaign_room_extra_1：位 1（种付奴隶）累加值改错（+= 2 改 += 1，#469）',
     file: 'ere/page/page-campaign-1.js',
     find: `  if (floor > 5) {
     extra += 2;
@@ -1992,7 +1994,7 @@ export default [
   return extra;
 }`,
     tests: ['dungeon-room'],
-    must_mention: 'ROOM_EXTRA_1',
+    must_mention: 'campaign_room_extra_1',
   },
   {
     desc: 'M10113 CAMPAIGN_TRAP_1：6 层火炎放射档漏登记（删 [305, 78]，#469）',
@@ -2040,7 +2042,7 @@ export default [
     must_mention: '5 档的行数',
   },
   {
-    desc: 'M10125 招募：调用点不传 char_make_inport（退回 #494 前的形态，异国勇者判定在战役路径上恒不通过）',
+    desc: 'M10125 招募：调用点不传 char_make_inport（退回 #494 前的写法，异国勇者判定在战役路径上恒不通过）',
     file: 'ere/page/page-campaign.js',
     find: '    () => char_make_inport(1, rand_n),',
     replace: '    undefined, // 变异：不注入异国勇者判定',
@@ -2056,7 +2058,7 @@ export default [
     must_mention: 'virgin_conceded_mode = RESULT-1',
   },
   {
-    desc: 'M10201 PAGE-CONFIG 阴茎形态回显文案错位（巨根 → 短小）',
+    desc: 'M10201 PAGE-CONFIG 阴茎档位回显文案错位（巨根 → 短小）',
     file: 'ere/page/page-config.js',
     find: "'《巨根》',",
     replace: "'《短小》',",
@@ -2120,14 +2122,14 @@ export default [
     tests: ['page-config'],
     must_mention: '首屏渲染 page 0',
   },
-  // —— #502：MEDAL_BONUS 与 SENGEN_VIDEO 族（INVASION.ERB:1026-1266）——
+  // —— #502：medal_bonus 与 sengen_video 族 ——
   {
     desc: 'M10726 勋章首档阈值 5 改 4（6 枚落 100 档的边界被吃掉，#502）',
     file: 'ere/page/page-invasion.js',
     find: '  { over: 5, bonus: 101 },',
     replace: '  { over: 4, bonus: 101 }, // 变异：阈值挪一格',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 档位',
+    must_mention: 'medal_bonus 档位',
   },
   {
     desc: 'M10727 勋章最高档数值 160 改 150（501 枚的补正少一档，#502）',
@@ -2135,15 +2137,15 @@ export default [
     find: '  { over: 500, bonus: 160 },',
     replace: '  { over: 500, bonus: 150 }, // 变异：数值改坏',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 档位',
+    must_mention: 'medal_bonus 档位',
   },
   {
-    desc: 'M10728 勋章分档判据方向改坏（medals > over 改 >=，档界整体下移一档，#502）',
+    desc: 'M10728 勋章分档条件方向改坏（medals > over 改 >=，档界整体下移一档，#502）',
     file: 'ere/page/page-invasion.js',
     find: '  const tier = MEDAL_TIERS.find((t) => medals > t.over);',
     replace: '  const tier = MEDAL_TIERS.find((t) => medals >= t.over);',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 档位',
+    must_mention: 'medal_bonus 档位',
   },
   {
     desc: 'M10729 勋章补正提示不打印（PRINTFORMW 整支删除，#502）',
@@ -2153,7 +2155,7 @@ export default [
   );`,
     replace: '  // 变异：补正提示不打印',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 提示',
+    must_mention: 'medal_bonus 提示',
   },
   {
     desc: 'M10730 {值,N} 定宽少一列（padStart(width) 改 width - 1，#502）',
@@ -2164,21 +2166,21 @@ export default [
     must_mention: '顶栏：库存 7-3=4、已投放 3 各补到 3 位',
   },
   {
-    desc: 'M10731 无库存守卫反向（!== 999 改 === 999：无库存时反而放行未知输入、[999] 被吃掉，#502）',
+    desc: 'M10731 无库存检查反向（!== 999 改 === 999：无库存时反而放行未知输入、[999] 被吃掉，#502）',
     file: 'ere/page/page-invasion.js',
     find: '    if (stock === 0 && result !== 999) {',
-    replace: '    if (stock === 0 && result === 999) { // 变异：守卫反向',
+    replace: '    if (stock === 0 && result === 999) { // 变异：检查反向',
     tests: ['page-invasion'],
     must_mention: '预置输入已耗尽',
   },
   {
     desc: 'M10732 投放数量的入账改坏（9011 += count 改 += 1，#502）',
     file: 'ere/page/page-invasion.js',
-    find: '      era_exflag.crystal_ball_deployed += count; // EX_FLAG:9011 += RESULT\n      // CALL SENGEN_VIDEO_BONUS, RESULT（RESULT 按引用回写）',
+    find: '      era_exflag.crystal_ball_deployed += count; // EX_FLAG:9011 += RESULT\n      // sengen_video_bonus 的返回值即回写后的投放数',
     replace:
-      '      era_exflag.crystal_ball_deployed += 1; // 变异：只记 1 部\n      // CALL SENGEN_VIDEO_BONUS, RESULT（RESULT 按引用回写）',
+      '      era_exflag.crystal_ball_deployed += 1; // 变异：只记 1 部\n      // sengen_video_bonus 的返回值即回写后的投放数',
     tests: ['page-invasion'],
-    must_mention: ':1109 EX_FLAG:9011 += RESULT',
+    must_mention: 'EX_FLAG:9011 += RESULT',
   },
   {
     desc: 'M10733 加成后的数漏写流行度（9012 += placed 整行删除，#502）',
@@ -2187,10 +2189,10 @@ export default [
     replace:
       '        // 变异：流行度不累加\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
     tests: ['page-invasion'],
-    must_mention: ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+    must_mention: 'EX_FLAG:9012 += 加成后的 RESULT',
   },
   {
-    desc: 'M10734 投放成败判据放宽（placed >= 1 改 >= 0：0 部也算成功，#502）',
+    desc: 'M10734 投放成败条件放宽（placed >= 1 改 >= 0：0 部也算成功，#502）',
     file: 'ere/page/page-invasion.js',
     find: '      const placed = sengen_video_bonus(count, 0, rand);\n      if (placed >= 1) {',
     replace:
@@ -2199,10 +2201,10 @@ export default [
     must_mention: '加成为 0 走失败支',
   },
   {
-    desc: 'M10735 加成模式判据反向（mode !== 0 改 === 0：#502 两档的随机序列互换）',
+    desc: 'M10735 加成模式条件反向（mode !== 0 改 === 0：#502 两档的随机序列互换）',
     file: 'ere/page/page-invasion.js',
     find: '  if (mode !== 0) {',
-    replace: '  if (mode === 0) { // 变异：模式判据反向',
+    replace: '  if (mode === 0) { // 变异：模式条件反向',
     tests: ['page-invasion'],
     must_mention: '随机序列耗尽或越界',
   },
@@ -2216,13 +2218,13 @@ export default [
     must_mention: 'MODE 0 的缩水系数：10 × 0.80 = 8',
   },
   {
-    desc: 'M10737 缩水的骰点判据改坏（rand(3) === 0 改 === 1，#502）',
+    desc: 'M10737 缩水的骰点条件改坏（rand(3) === 0 改 === 1，#502）',
     file: 'ere/page/page-invasion.js',
     find: '  if (rand(3) === 0) placed = times(placed, 0.8);',
     replace:
-      '  if (rand(3) === 1) placed = times(placed, 0.8); // 变异：骰点判据改坏',
+      '  if (rand(3) === 1) placed = times(placed, 0.8); // 变异：骰点条件改坏',
     tests: ['page-invasion'],
-    must_mention: ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+    must_mention: 'EX_FLAG:9012 += 加成后的 RESULT',
   },
   {
     desc: 'M10738 增强效果的封顶改坏（M*2 改 M*3，#502）',
@@ -2231,7 +2233,7 @@ export default [
     replace:
       '      if (grown > before * 3) grown = before * 3; // 变异：封顶放宽',
     tests: ['page-invasion'],
-    must_mention: ':1195-1196 封顶 M*2',
+    must_mention: '封顶 M*2',
   },
   {
     desc: 'M10739 延长时长的保底删除（(9013 - M) < 1 → M + 1 整支删掉，#502）',
@@ -2239,7 +2241,7 @@ export default [
     find: '      if (grown - before < 1) grown = before + 1;',
     replace: '      // 变异：保底删除',
     tests: ['page-invasion'],
-    must_mention: ':1226-1227 保底 +1',
+    must_mention: '保底 +1',
   },
   {
     desc: 'M10740 奸商的犒赏扣款倍率改坏（M*5000 改 M*500，#502）',
@@ -2247,7 +2249,7 @@ export default [
     find: '            era_flag.money -= base * 5000; // MONEY -= (M * 5000)',
     replace: '            era_flag.money -= base * 500; // 变异：少扣一个零',
     tests: ['page-invasion'],
-    must_mention: ':1151 MONEY -= M*5000',
+    must_mention: 'MONEY -= M*5000',
   },
   {
     desc: 'M10741 增强效果的支付金额改坏（50000 改 5000，#502）',
@@ -2256,7 +2258,7 @@ export default [
     replace:
       "          era.print('犒赏了奸商50000G');\n          era_flag.money -= 5000; // 变异：支付金额改坏",
     tests: ['page-invasion'],
-    must_mention: ':1179 MONEY -= 50000',
+    must_mention: 'MONEY -= 50000',
   },
   {
     desc: 'M10742 增强段第一枚骰子的上界改坏（RAND:5 改 RAND:10，#502）',
@@ -2276,7 +2278,7 @@ export default [
     tests: ['page-invasion'],
     must_mention: '延长段的两枚骰子与增强段同款',
   },
-  // —— #502 追加：PRINTFORMW 等键的四条守卫（验收抽样发现缺号段后补，M10748-M10751）——
+  // —— #502 追加：PRINTFORMW 等键的四条检查（验收抽样发现缺号段后补，M10748-M10751）——
   {
     desc: 'M10748 MEDAL_BONUS 的补正提示后不等键（PRINTFORMW 的 WAIT 删除）',
     file: 'ere/page/page-invasion.js',
@@ -2285,7 +2287,7 @@ export default [
     replace: `  // 变异：补正提示后不等键
   return tier.bonus;`,
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 提示后等键（PRINTFORMW）',
+    must_mention: 'medal_bonus 提示后等键（PRINTFORMW）',
   },
   {
     desc: 'M10749 [1] 投放成功支不等键（:1112 的 PRINTFORMW 删除）',
@@ -2294,7 +2296,7 @@ export default [
     replace:
       '        // 变异：成功投放后不等键\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
     tests: ['page-invasion'],
-    must_mention: ':1112 成功投放后等键（PRINTFORMW）',
+    must_mention: '成功投放后等键（PRINTFORMW）',
   },
   {
     desc: 'M10750 [1] 投放失败支不等键（:1116 的 PRINTFORMW 删除）',
@@ -2303,7 +2305,7 @@ export default [
     replace:
       "        era_exflag.crystal_ball_expire += placed;\n      } else {\n        era.print('投放，似乎失败了。');\n        // 变异：投放失败后不等键",
     tests: ['page-invasion'],
-    must_mention: ':1116 投放失败后等键（PRINTFORMW）',
+    must_mention: '投放失败后等键（PRINTFORMW）',
   },
   {
     desc: 'M10751 [2] 奸商代理成功支不等键（:1140 的 PRINTFORMW 删除）',
@@ -2312,7 +2314,7 @@ export default [
     replace:
       '        // 变异：奸商成功投放后不等键\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n        if (base * 5000 < era_flag.money) {',
     tests: ['page-invasion'],
-    must_mention: ':1140 奸商成功投放后等键（PRINTFORMW）',
+    must_mention: '奸商成功投放后等键（PRINTFORMW）',
   },
   {
     desc: 'M10752 [0] 怪物出兵：怪物减半写成三等分（/2 改 /3）',
@@ -2344,9 +2346,9 @@ export default [
   {
     desc: 'M10755 [0] 怪物出兵：战力归一的分母改坏（/20 改 /10）',
     file: 'ere/page/page-invasion.js',
-    find: '      sinkou = Math.trunc(sinkou / 20);\n      // 威望修正（与魔力分支 :270-293 同构，共用一套五档）',
+    find: '      sinkou = Math.trunc(sinkou / 20);\n      // 威望修正（与魔力分支同构，共用一套五档）',
     replace:
-      '      sinkou = Math.trunc(sinkou / 10); // 变异：分母改坏\n      // 威望修正（与魔力分支 :270-293 同构，共用一套五档）',
+      '      sinkou = Math.trunc(sinkou / 10); // 变异：分母改坏\n      // 威望修正（与魔力分支同构，共用一套五档）',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },
@@ -2359,20 +2361,20 @@ export default [
     must_mention: '599 只仍不够 600',
   },
   {
-    desc: 'M10757 [0] 特殊兵种的 E:1 加成判据反向（!= 0 改 == 0）',
+    desc: 'M10757 [0] 特殊兵种的 E:1 加成条件反向（!= 0 改 == 0）',
     file: 'ere/page/page-invasion.js',
     find: '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) !== 0) mon_atk += e_get(1); // 特殊',
     replace:
-      '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) === 0) mon_atk += e_get(1); // 变异：判据反向',
+      '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) === 0) mon_atk += e_get(1); // 变异：条件反向',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },
   {
-    desc: 'M10758 [0] 魔法兵种的 E:1 加成判据反向（!= 0 改 == 0）',
+    desc: 'M10758 [0] 魔法兵种的 E:1 加成条件反向（!= 0 改 == 0）',
     file: 'ere/page/page-invasion.js',
     find: '        if (e_get(6) !== 0) mon_atk += e_get(1); // 魔法\n        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);',
     replace:
-      '        if (e_get(6) === 0) mon_atk += e_get(1); // 变异：判据反向\n        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);',
+      '        if (e_get(6) === 0) mon_atk += e_get(1); // 变异：条件反向\n        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },
@@ -2504,7 +2506,7 @@ export default [
     find: '  karma(yusya_i, -5); // CALL KARMA, YUSYA_I, -5',
     replace: '  karma(yusya_i, -1); // 变异：减量改坏',
     tests: ['page-invasion'],
-    must_mention: 'KARMA, YUSYA_I, -5',
+    must_mention: 'karma -5',
   },
   {
     desc: 'M10774 [3] 掠夺结算的封顶值改坏（10000*10 改 10000*9）',
@@ -2516,7 +2518,7 @@ export default [
     must_mention: '封到 100000',
   },
   {
-    desc: 'M10775 [3] 派遣判据：体力门槛反向（< 1 改 < 0）',
+    desc: 'M10775 [3] 派遣条件：体力门槛反向（< 1 改 < 0）',
     file: 'ere/page/page-invasion.js',
     find: '  if ((era.get(`base:${cid}:0`) || 0) < 1) return true; // 体力为 0\n  if (cid === 0) return true; // COUNT == 0（魔王自己）',
     replace:
@@ -2525,7 +2527,7 @@ export default [
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M10776 [3] 派遣判据：漏掉「魔王自己」（cid === 0 整行删除）',
+    desc: 'M10776 [3] 派遣条件：漏掉「魔王自己」（cid === 0 整行删除）',
     file: 'ere/page/page-invasion.js',
     find: '  if (cid === 0) return true; // COUNT == 0（魔王自己）\n  if (chara(cid).invasion.状态 !== 0) return true; // CFLAG:1 != 0',
     replace:
@@ -2534,16 +2536,16 @@ export default [
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M10777 [3] 派遣判据：待机判据反向（!== 0 改 === 0）',
+    desc: 'M10777 [3] 派遣条件：待机条件反向（!== 0 改 === 0）',
     file: 'ere/page/page-invasion.js',
     find: '  if (chara(cid).invasion.状态 !== 0) return true; // CFLAG:1 != 0',
     replace:
-      '  if (chara(cid).invasion.状态 === 0) return true; // 变异：判据反向',
+      '  if (chara(cid).invasion.状态 === 0) return true; // 变异：条件反向',
     tests: ['page-invasion'],
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M10778 [3] 派遣判据：未驯服的 AND 改 OR（持有魔之刻印也被筛掉）',
+    desc: 'M10778 [3] 派遣条件：未驯服的 AND 改 OR（持有魔之刻印也被筛掉）',
     file: 'ere/page/page-invasion.js',
     find: '  if (\n    (era.get(`cflag:${cid}:0`) || 0) === 0 &&\n    (era.get(`talent:${cid}:254`) || 0) === 0\n  ) {\n    return true;\n  }',
     replace:
@@ -2552,25 +2554,25 @@ export default [
     must_mention: '1 号进列表',
   },
   {
-    desc: 'M10779 [3] 派遣判据：孕妇开关的位号改坏（FLAG:5 位 10 改位 11）',
+    desc: 'M10779 [3] 派遣条件：孕妇开关的位号改坏（FLAG:5 位 10 改位 11）',
     file: 'ere/page/page-invasion.js',
-    find: "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
+    find: "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
     replace:
-      "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 11) === 0\n  ) {",
+      "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 11) === 0\n  ) {",
     tests: ['page-invasion'],
     must_mention: '1 号进列表',
   },
   {
-    desc: 'M10780 [3] 派遣判据：孕妇开关的取值判据反向（=== 0 改 === 1）',
+    desc: 'M10780 [3] 派遣条件：孕妇开关的取值条件反向（=== 0 改 === 1）',
     file: 'ere/page/page-invasion.js',
-    find: "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
+    find: "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
     replace:
-      "  // CONFIG.ERB:167 的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 1\n  ) {",
+      "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 1\n  ) {",
     tests: ['page-invasion'],
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M10781 [3] 无候选早退的判据反向（=== 0 改 < 0）',
+    desc: 'M10781 [3] 无候选早退的条件反向（=== 0 改 < 0）',
     file: 'ere/page/page-invasion.js',
     find: "  if (candidates === 0) {\n    era.print('没有勇者可进行侵攻。');",
     replace: "  if (candidates < 0) {\n    era.print('没有勇者可进行侵攻。');",
@@ -2586,7 +2588,7 @@ export default [
     must_mention: 'max_page == 0',
   },
   {
-    desc: 'M10783 [3] 下一页的页码守卫放宽（< max_page 改 < max_page + 1）',
+    desc: 'M10783 [3] 下一页的页码检查放宽（< max_page 改 < max_page + 1）',
     file: 'ere/page/page-invasion.js',
     find: '      if (state.no_page < max_page) {\n        state.no_page += 1;\n      }',
     replace:
@@ -2600,7 +2602,7 @@ export default [
     find: '    let t_lcount = NUM_PAGE * state.no_page + 1;',
     replace: '    let t_lcount = NUM_PAGE * state.no_page; // 变异：起点少一',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
     desc: 'M10785 [3] 页窗上界放宽（>= 改 >）',
@@ -2608,15 +2610,15 @@ export default [
     find: '        t_lcount >= (state.no_page + 1) * NUM_PAGE ||',
     replace: '        t_lcount > (state.no_page + 1) * NUM_PAGE ||',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
-    desc: 'M10786 [3] 列表窗口起点判据改坏（cid < list_pos 改 <=）',
+    desc: 'M10786 [3] 列表窗口起点条件改坏（cid < list_pos 改 <=）',
     file: 'ere/page/page-invasion.js',
     find: '      if (cid < state.list_pos) continue; // FOR COUNT, LIST_POS, CHARANUM',
-    replace: '      if (cid <= state.list_pos) continue; // 变异：判据改坏',
+    replace: '      if (cid <= state.list_pos) continue; // 变异：条件改坏',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
     desc: 'M10787 [3] 列表游标不推进（LIST_POS = cid 整行删除）',
@@ -2624,10 +2626,10 @@ export default [
     find: '      life_list_item(cid);\n      t_lcount += 1;\n      state.list_pos = cid;',
     replace: '      life_list_item(cid);\n      t_lcount += 1;',
     tests: ['page-invasion'],
-    must_mention: '页窗判据',
+    must_mention: '页窗条件',
   },
   {
-    desc: 'M10788 @INVASION_EVENT 分发骰的上界改坏（RAND:10 改 RAND:9）',
+    desc: 'M10788 invasion_event 分发骰的上界改坏（RAND:10 改 RAND:9）',
     file: 'ere/page/page-invasion.js',
     find: '  const local = rand(10); // LOCAL = RAND:10',
     replace: '  const local = rand(9); // 变异：上界改坏',
@@ -2635,7 +2637,7 @@ export default [
     must_mention: 'RAND:10',
   },
   {
-    desc: 'M10789 FORT 守卫按 C 式「&& 优先」读错（左结合改先 || 后 &&，#503 审查订正）',
+    desc: 'M10789 invasion_event_fort 检查按 C 式「&& 优先」读错（左结合改先 || 后 &&，#503 审查订正）',
     file: 'ere/page/page-invasion.js',
     find: '    ((era.get(`flag:${sindo}`) || 0) !== 0 || inv_type !== 0) &&\n    inv_type !== 2 &&\n    inv_type !== 3',
     replace:
@@ -2644,16 +2646,16 @@ export default [
     must_mention: '左结合读法',
   },
   {
-    desc: 'M10790 @INVASION_EVENT 分发：FORT 与 CHALLENGE 两臂对调',
+    desc: 'M10790 invasion_event 分发：fort 与 challenge 两分支对调',
     file: 'ere/page/page-invasion.js',
     find: '  if (local === 9) {\n    return await invasion_event_fort(area, sindo, inv_type, state, rand);\n  }',
     replace:
-      '  if (local === 8) {\n    return await invasion_event_fort(area, sindo, inv_type, state, rand); // 变异：臂对调\n  }',
+      '  if (local === 8) {\n    return await invasion_event_fort(area, sindo, inv_type, state, rand); // 变异：分支对调\n  }',
     tests: ['page-invasion'],
     must_mention: '9 → FORT',
   },
   {
-    desc: 'M10791 SEIEI 出敌判据的上界放宽（RAND:FLAG:AREA > 2000 改 > 2001）',
+    desc: 'M10791 invasion_event_seiei 出敌条件的上界放宽（RAND:FLAG:AREA > 2000 改 > 2001）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll > 2000) {',
     replace: '    if (roll > 2001) {',
@@ -2670,11 +2672,11 @@ export default [
     must_mention: '整段跳过',
   },
   {
-    desc: 'M10793 SEIEI 的精锐类型判据反转（防御型 18 / 攻击型 19 互换）',
+    desc: 'M10793 invasion_event_seiei 的精锐类型条件反转（防御型 18 / 攻击型 19 互换）',
     file: 'ere/page/page-invasion.js',
     find: '  if (rand(2) === 0) {\n    era.addCharacter(SEIEI_DEFENDER);',
     replace:
-      '  if (rand(2) !== 0) {\n    era.addCharacter(SEIEI_DEFENDER); // 变异：判据反转',
+      '  if (rand(2) !== 0) {\n    era.addCharacter(SEIEI_DEFENDER); // 变异：条件反转',
     tests: ['page-invasion'],
     must_mention: '攻击型 19',
   },
@@ -2687,7 +2689,7 @@ export default [
     must_mention: 'REPEAT 21',
   },
   {
-    desc: 'M10795 SEIEI 超时判据改坏（TIME_I > 19 改 > 18）',
+    desc: 'M10795 invasion_event_seiei 超时条件改坏（TIME_I > 19 改 > 18）',
     file: 'ere/page/page-invasion.js',
     find: 'const SEIEI_TIMEOUT_AT = 19;',
     replace: 'const SEIEI_TIMEOUT_AT = 18;',
@@ -2695,7 +2697,7 @@ export default [
     must_mention: 'REPEAT 21',
   },
   {
-    desc: 'M10796 SEIEI 先制守卫的档位除数改坏（SINKOU/2048 改 /1024）',
+    desc: 'M10796 invasion_event_seiei 先制检查的档位除数改坏（SINKOU/2048 改 /1024）',
     file: 'ere/page/page-invasion.js',
     find: '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);',
     replace:
@@ -2738,7 +2740,7 @@ export default [
     must_mention: '血量/攻防套算',
   },
   {
-    desc: 'M10801 SEIEI 忍术守卫反转（TALENT:251 == 0 改 != 0，削攻防的条件反过来）',
+    desc: 'M10801 invasion_event_seiei 忍术检查反转（TALENT:251 == 0 改 != 0，削攻防的条件反过来）',
     file: 'ere/page/page-invasion.js',
     find: '      if ((era.get(`talent:${seiei}:251`) || 0) === 0) {',
     replace: '      if ((era.get(`talent:${seiei}:251`) || 0) !== 0) {',
@@ -2801,7 +2803,7 @@ export default [
     find: '  if (elite_hp <= 100) {',
     replace: '  if (elite_hp <= 101) {',
     tests: ['page-invasion'],
-    must_mention: '三条退场判据',
+    must_mention: '三条退场条件',
   },
   {
     desc: 'M10809 @_INV_DEATH_CHECK 魔王侧的俘虏线改坏（<= 1000 改 <= 999）',
@@ -2809,7 +2811,7 @@ export default [
     find: '    hero_mp <= 1000 &&',
     replace: '    hero_mp <= 999 &&',
     tests: ['page-invasion'],
-    must_mention: '魔王侧四条退场判据',
+    must_mention: '魔王侧四条退场条件',
   },
   {
     desc: 'M10810 @_INV_DEATH_CHECK 魔王军的溃败线改坏（<= 300 改 <= 299）',
@@ -2817,7 +2819,7 @@ export default [
     find: '      : hero_hp <= 300',
     replace: '      : hero_hp <= 299',
     tests: ['page-invasion'],
-    must_mention: '魔王侧四条退场判据',
+    must_mention: '魔王侧四条退场条件',
   },
   {
     desc: 'M10811 @_INV_DEATH_CHECK 的退场状态对调（被狂王带走 9 / 逃回 0）',
@@ -2864,9 +2866,9 @@ export default [
   {
     desc: 'M10816 [2] 结果段的经验除数改坏（SINKOU / 2 改 / 4）',
     file: 'ere/page/page-invasion.js',
-    find: '    const exp_gain = Math.trunc(sinkou / 2);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain;\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:860）',
+    find: '    const exp_gain = Math.trunc(sinkou / 2);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain;\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）',
     replace:
-      '    const exp_gain = Math.trunc(sinkou / 4);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain; // 变异：除数改坏\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:860）',
+      '    const exp_gain = Math.trunc(sinkou / 4);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain; // 变异：除数改坏\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）',
     tests: ['page-invasion'],
     must_mention: '结果段',
   },
@@ -2914,28 +2916,28 @@ export default [
     must_mention: '封顶',
   },
   {
-    desc: 'M10822 [2] 的候选判据放宽（CFLAG:1 不属于 {0,7} 改只挡 7）',
+    desc: 'M10822 [2] 的候选条件放宽（CFLAG:1 不属于 {0,7} 改只挡 7）',
     file: 'ere/page/page-invasion.js',
     find: '  if (status !== 0 && status !== 7) return true; // 待机 / 苗床之外一律淘汰',
-    replace: '  if (status === 7) return true; // 变异：判据放宽',
+    replace: '  if (status === 7) return true; // 变异：条件放宽',
     tests: ['page-invasion'],
     must_mention: '候选资格六条',
   },
   {
-    desc: 'M10823 FORT 强攻成功档的判据改坏（LOCAL >= 6 改 >= 5）',
+    desc: 'M10823 invasion_event_fort 强攻成功档的条件改坏（LOCAL >= 6 改 >= 5）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll >= 6) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`,',
     replace:
-      '    if (roll >= 5) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`, // 变异：判据改坏',
+      '    if (roll >= 5) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`, // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '全军强攻',
   },
   {
-    desc: 'M10824 FORT 强攻惨胜档的判据改坏（LOCAL >= 2 改 >= 3）',
+    desc: 'M10824 invasion_event_fort 强攻惨胜档的条件改坏（LOCAL >= 2 改 >= 3）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll >= 2) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`);',
     replace:
-      '    if (roll >= 3) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`); // 变异：判据改坏',
+      '    if (roll >= 3) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`); // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '全军强攻',
   },
@@ -2967,10 +2969,10 @@ export default [
     must_mention: '全军强攻',
   },
   {
-    desc: 'M10828 FORT 潜入成功档的判据改坏（LOCAL >= 5 改 >= 4）',
+    desc: 'M10828 invasion_event_fort 潜入成功档的条件改坏（LOCAL >= 5 改 >= 4）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll >= 5 || native) {\n      // 潜入成功 50%',
-    replace: '    if (roll >= 4 || native) {\n      // 变异：判据改坏',
+    replace: '    if (roll >= 4 || native) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '亲自潜入',
   },
@@ -2992,7 +2994,7 @@ export default [
     must_mention: '亲自潜入',
   },
   {
-    desc: 'M10831 FORT 绕路平安档的判据改坏（LOCAL > 0 改 >= 0）',
+    desc: 'M10831 invasion_event_fort 绕路平安档的条件改坏（LOCAL > 0 改 >= 0）',
     file: 'ere/page/page-invasion.js',
     find: '    const roll = rand(10);\n    if (roll > 0) {',
     replace: '    const roll = rand(10);\n    if (roll >= 0) {',
@@ -3026,16 +3028,16 @@ export default [
     must_mention: '选项渲染',
   },
   {
-    desc: 'M10835 CHALLENGE 位域守卫的判据改坏（& bit 改 ^ bit）',
+    desc: 'M10835 invasion_event_challenge 位域检查的条件改坏（& bit 改 ^ bit）',
     file: 'ere/page/page-invasion.js',
     find: '  if (((era_exflag.defeated_heroes_bits || 0) & info.bit) !== 0) {',
     replace:
       '  if (((era_exflag.defeated_heroes_bits || 0) ^ info.bit) !== 0) {',
     tests: ['page-invasion'],
-    must_mention: '位守卫',
+    must_mention: '位检查',
   },
   {
-    desc: 'M10836 CHALLENGE 开挂取胜档的判据改坏（LOCAL >= 2 改 >= 3）',
+    desc: 'M10836 invasion_event_challenge 开挂取胜档的条件改坏（LOCAL >= 2 改 >= 3）',
     file: 'ere/page/page-invasion.js',
     find: '    if (choice === 1 && local >= 2) {',
     replace: '    if (choice === 1 && local >= 3) {',
@@ -3043,7 +3045,7 @@ export default [
     must_mention: '开挂取胜',
   },
   {
-    desc: 'M10837 CHALLENGE 以流程掷出的 LOCAL 直接当判据（漏掉人数上限归零）',
+    desc: 'M10837 invasion_event_challenge 以流程掷出的 LOCAL 直接当条件（漏掉人数上限归零）',
     file: 'ere/page/page-invasion.js',
     find: '    const local = hero_cap_reached() ? 0 : roll;',
     replace: '    const local = roll; // 变异：漏掉人数上限归零',
@@ -3078,18 +3080,18 @@ export default [
     must_mention: '开挂取胜',
   },
   {
-    desc: 'M10841 CHALLENGE 亲自处理取胜档的判据改坏（LOCAL < 2 改 < 3）',
+    desc: 'M10841 invasion_event_challenge 亲自处理取胜档的条件改坏（LOCAL < 2 改 < 3）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll < 2) {\n      // 奴隶取胜 20%',
-    replace: '    if (roll < 3) {\n      // 变异：判据改坏',
+    replace: '    if (roll < 3) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '20/40/40',
   },
   {
-    desc: 'M10842 CHALLENGE 亲自处理不分胜负档的判据改坏（LOCAL < 6 改 < 5）',
+    desc: 'M10842 invasion_event_challenge 亲自处理不分胜负档的条件改坏（LOCAL < 6 改 < 5）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll < 6) {\n      // 奴隶不分胜负 40%',
-    replace: '    if (roll < 5) {\n      // 变异：判据改坏',
+    replace: '    if (roll < 5) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '20/40/40',
   },
@@ -3155,7 +3157,7 @@ export default [
   },
   // —— #505：地区续接与 start_campaign 的地区泛化 ——
   {
-    desc: 'M10850 地区表的 AREA 改坏（精灵族领域 86 → 88，INVASION.ERB:113-115）',
+    desc: 'M10850 地区表的 AREA 改坏（精灵族领域 86 → 88）',
     file: 'ere/page/page-invasion.js',
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 88,\n    sindo: 87, // 变异：AREA 改坏',
@@ -3163,13 +3165,13 @@ export default [
     must_mention: '1900 + 400：累加进 FLAG:',
   },
   {
-    desc: 'M10851 地区表的 SINDO 改坏（精灵族领域 87 → 89，INVASION.ERB:114-115）',
+    desc: 'M10851 地区表的 SINDO 改坏（精灵族领域 87 → 89）',
     file: 'ere/page/page-invasion.js',
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 86,\n    sindo: 89, // 变异：SINDO 改坏',
     tests: ['page-invasion'],
     must_mention:
-      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
+      '已征服分支（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品分支）',
   },
   {
     desc: 'M10852 侵攻度累加写到 EX_FLAG 侧（FLAG:AREA → EX_FLAG:AREA）',
@@ -3203,7 +3205,7 @@ export default [
     replace:
       '  // 变异：凌辱地区号写死 1\n  await invasion_ryouzyoku(1, sinkou, rand);',
     tests: ['page-invasion'],
-    must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
+    must_mention: '传给 invasion_ryouzyoku 的地区号',
   },
   {
     desc: 'M10860 地区表的凌辱地区号改坏（精灵族领域 2 → 4，:674）',
@@ -3211,16 +3213,16 @@ export default [
     find: '    ravish_area: 2,\n    kyoten_arg: 2,',
     replace: '    ravish_area: 4,\n    kyoten_arg: 2, // 变异：凌辱地区号改坏',
     tests: ['page-invasion'],
-    must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
+    must_mention: '传给 invasion_ryouzyoku 的地区号',
   },
   {
-    desc: 'M10862 天神宫补上 KYOTEN 实参（原作 :983-994 没有 101 臂）',
+    desc: 'M10862 天神宫补上 kyoten 实参（旧写法 :983-994 没有 101 分支）',
     file: 'ere/page/page-invasion.js',
     find: '    ravish_area: 5,\n    kyoten_arg: null,',
     replace:
       '    ravish_area: 5,\n    kyoten_arg: 1, // 变异：天神宫也调 KYOTEN',
     tests: ['page-invasion'],
-    must_mention: 'KYOTEN_EVENT 分派没有 101 臂',
+    must_mention: 'kyoten_event 分派没有 101 分支',
   },
   {
     desc: 'M10863 征服后菜单的地区续接丢地区（CAMPAIGN_REGIONS[result] 删去）',
@@ -3256,13 +3258,13 @@ export default [
     must_mention: 'MIN(SINKOU, 100000) 之后 / 2',
   },
   {
-    desc: 'M10870 魔力结果段的已征服判据恒真（!== 0 改 >= 0，:712-732）',
+    desc: 'M10870 魔力结果段的已征服条件恒真（!== 0 改 >= 0）',
     file: 'ere/page/page-invasion.js',
     find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10);',
     replace:
-      '    if ((era.get(`flag:${region.sindo}`) || 0) >= 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // 变异：判据恒真',
+      '    if ((era.get(`flag:${region.sindo}`) || 0) >= 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // 变异：条件恒真',
     tests: ['page-invasion'],
-    must_mention: 'ELSE 臂不封顶',
+    must_mention: 'ELSE 分支不封顶',
   },
   {
     desc: 'M10871 出兵流程的默认地区改坏（HUMAN_WORLD 改 CAMPAIGN_REGIONS[1]）',
@@ -3289,15 +3291,15 @@ export default [
     replace:
       '  await invasion_ryouzyoku(1, sinkou, rand); // 变异：凌辱地区号写死\n  // 9% 概率抓到负隅顽抗的勇者（比 [0] 的 5% 高；GET_ENEMY 之后',
     tests: ['page-invasion'],
-    must_mention: '[2] 传给 @INVASION_RYOUZYOKU 的地区号也是 2',
+    must_mention: '[2] 传给 invasion_ryouzyoku 的地区号也是 2',
   },
   {
-    desc: 'M10874 魔力结果段的已征服判据写死（region.sindo 改字面量 82）',
+    desc: 'M10874 魔力结果段的已征服条件写死（region.sindo 改字面量 82）',
     file: 'ere/page/page-invasion.js',
     find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {',
-    replace: "    if ((era.get('flag:82') || 0) !== 0) { // 变异：判据写死",
+    replace: "    if ((era.get('flag:82') || 0) !== 0) { // 变异：条件写死",
     tests: ['page-invasion'],
-    must_mention: '判据读 FLAG:87（写死 FLAG:82 会误封顶）',
+    must_mention: '条件读 FLAG:87（写死 FLAG:82 会误封顶）',
   },
   {
     desc: 'M11100 招募上限差一边界：>80 改 >79（恰好 80 人被误拦，#521 返工）',
@@ -3316,7 +3318,7 @@ export default [
     must_mention: '输入不合法！请输入以下值之一',
   },
   {
-    desc: 'M11205 献祭确认的两个选项一起退回纯文本（#530 的原形态：该轮白名单因此为空，1/0 走自由输入照样能过——只有按钮断言拦得住）',
+    desc: 'M11205 献祭确认的两个选项一起退回纯文本（#530 之前的写法：该轮白名单因此为空，1/0 走自由输入照样能过——只有按钮断言拦得住）',
     file: 'ere/page/page-chara-info-show.js',
     find: `      era.printButton('献祭', 1);
       era.println();
@@ -3330,31 +3332,31 @@ export default [
   {
     desc: 'M11206 献祭两个出口的 [100] 返回退回纯文本（白名单里有 [10]，100 被引擎拒收，#530）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // INPUT",
+    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // 输入",
     replace:
-      "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // INPUT",
+      "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // 输入",
     tests: ['chara-info-show'],
     must_mention: '输入不合法！请输入以下值之一',
   },
   {
-    desc: 'M11260 越界守卫上界挪一格（>= 6 改 >= 7——6 落进地区分派，#538）',
+    desc: 'M11260 越界检查上界挪一格（>= 6 改 >= 7——6 落进地区分派，#538）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result >= 6 || result < 0) {',
     replace: '    if (result >= 7 || result < 0) { // 变异：上界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
-    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收',
+    must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
-    desc: 'M11261 越界守卫下界挪一格（< 0 改 < -1——-1 落进地区分派，#538）',
+    desc: 'M11261 越界检查下界挪一格（< 0 改 < -1——-1 落进地区分派，#538）',
     file: 'ere/page/page-invasion.js',
     find: '    if (result >= 6 || result < 0) {',
     replace: '    if (result >= 6 || result < -1) { // 变异：下界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
-    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收',
+    must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
     desc: 'M11262 [5] 拒收上界挪一格（route_33 <= 500 改 < 500——500 落进天神宫出兵菜单，#538）',
@@ -3364,13 +3366,13 @@ export default [
       '    if (result === 5 && era_exflag.route_33 < 500) { // 变异：上界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
-    must_mention: '守卫之后的分派一行都不许发生',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收',
+    must_mention: '检查之后的分派一行都不许发生',
   },
   {
-    desc: 'M11480 SHOW_FLOOR 漏 LIMIT 钳制（ARG 直用：0 与 99 不再落到边界层）',
+    desc: 'M11480 show_floor 漏入参钳制（arg 直用：0 与 99 不再落到边界层）',
     file: 'ere/page/page-shop.js',
-    find: '  arg = Math.min(Math.max(arg, 1), 10); // ARG = LIMIT(ARG,1,10)',
+    find: '  arg = Math.min(Math.max(arg, 1), 10); // 钳到 1-10',
     replace: '  // 变异：漏 LIMIT 钳制',
     tests: ['page-shop-floor'],
     must_mention: '钳制',
@@ -3393,7 +3395,7 @@ export default [
     must_mention: '楼层头与设施后缀合一行',
   },
   {
-    desc: 'M11483 SHOW_FLOOR 近卫护卫判据取反（EX_TALENT:x:1 非 0 改成 == 0：名单整段空）',
+    desc: 'M11483 show_floor 近卫护卫条件取反（EX_TALENT:x:1 非 0 改成 == 0：名单整段空）',
     file: 'ere/page/page-shop.js',
     find: '        (era.get(`ex_talent:${cid}:1`) || 0) !== 0',
     replace: '        (era.get(`ex_talent:${cid}:1`) || 0) === 0',
@@ -3418,7 +3420,7 @@ export default [
     must_mention: '宽度 2 右对齐的编号',
   },
   {
-    desc: 'M11492 ENEMY_EXIST2 的首行空行删掉（原作 :595/:630 的 PRINTL，两个调用方都受影响，#548/#180）',
+    desc: 'M11492 enemy_exist2 的首行空行删掉（两处 PRINTL，两个调用方都受影响，#548/#180）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '  if (sorted.length > 0) {\n    era.println();\n  }',
     replace: '  // 变异：漏掉首行空行（:595 的 PRINTL）',
@@ -3426,12 +3428,12 @@ export default [
     must_mention: '开头的空行',
   },
   {
-    desc: 'M11493 SHOW_FLOOR 末尾的无参 PRINTW 只等键不落空行（printAndWait → waitAnyKey，:500 少一行）',
+    desc: 'M11493 show_floor 末尾改成只等键不落空行（printAndWait → waitAnyKey，少一行）',
     file: 'ere/page/page-shop.js',
     find: "  await era.printAndWait('');",
     replace: '  await era.waitAnyKey(); // 变异：少一个空行',
     tests: ['page-shop-floor'],
-    must_mention: 'PRINTW 的空行',
+    must_mention: 'printAndWait 的空行',
   },
   {
     desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
@@ -3486,24 +3488,24 @@ export default [
     must_mention: '村娘Ｂ 年龄 = RAND:5 + 14',
   },
   {
-    desc: 'M11555 CONFIG_AGE_SETTING 退出块「已生成的跳过」守卫取反（CFLAG:451 ≠ 0 才重算，#547）',
+    desc: 'M11555 CONFIG_AGE_SETTING 退出块「已生成的跳过」检查取反（CFLAG:451 ≠ 0 才重算，#547）',
     file: 'ere/page/page-config-age.js',
     find: '      if (chara(cid).chara.年龄 !== 0) {\n        continue; // 已生成的跳过\n      }',
     replace: `      if (chara(cid).chara.年龄 === 0) {
         continue; // 变异：守卫取反
       }`,
     tests: ['page-config-age'],
-    must_mention: ':911 CFLAG:451≠0 跳过',
+    must_mention: 'CFLAG:451≠0 跳过',
   },
   {
-    desc: 'M11556 CONFIG_AGE_SETTING 退出块的魔王跳过守卫挪位（cid === 0 → cid === 1，#547）',
+    desc: 'M11556 CONFIG_AGE_SETTING 退出块的魔王跳过检查挪位（cid === 0 → cid === 1，#547）',
     file: 'ere/page/page-config-age.js',
     find: '      if (cid === 0) {\n        continue; // 魔王跳过\n      }',
     replace: `      if (cid === 1) {
         continue; // 变异：守卫挪位
       }`,
     tests: ['page-config-age'],
-    must_mention: ':909-910 LCOUNT==0 跳过',
+    must_mention: 'LCOUNT==0 跳过',
   },
   {
     desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
@@ -3513,7 +3515,8 @@ export default [
       // 变异：不播种默认表
       await race_config(rand);`,
     tests: ['page-config-age'],
-    must_mention: ':889-892 先播种',
+    must_mention:
+      'CONFIG_AGE_SETTING [9]：种族年龄表未设时先播种默认表，再进 RACE_CONFIG',
   },
   {
     desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
@@ -3525,10 +3528,10 @@ export default [
         return 0;
       }`,
     tests: ['page-config-age'],
-    must_mention: ':1043-1044 回默认',
+    must_mention: 'RACE_CONFIG [98]：确认后整表回默认并直接返回',
   },
   {
-    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（原作时序：取消也写回编辑态，#547）',
+    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
     file: 'ere/page/page-config-age.js',
     find: "    } else if (result === 99 || result === 100) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === 99) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
     replace: `    } else if (result === 99 || result === 100) {
@@ -3542,10 +3545,10 @@ export default [
             (i) => cla[i] * 100 + deg[i] * 10 + num[i],
           );`,
     tests: ['page-config-age'],
-    must_mention: ':1050-1057 在确认 INPUT 之前',
+    must_mention: '表已打包（打包先于确认）',
   },
   {
-    desc: 'M11560 RACE_CONFIG [110]-[112] 的 SET_VAR:4>0 守卫删除（未选上限也切随机档，#547）',
+    desc: 'M11560 RACE_CONFIG [110]-[112] 的 SET_VAR:4>0 检查删除（未选上限也切随机档，#547）',
     file: 'ere/page/page-config-age.js',
     find: `          sv[3] = sub - 108;
           if (sv[4] > 0) {
@@ -3644,40 +3647,41 @@ export default [
           // 变异：不跳过魔王
           for (const cid of era.getAllCharacters()) {`,
     tests: ['page-config-age'],
-    must_mention: ':1069-1070 魔王跳过',
+    must_mention:
+      'RACE_CONFIG [99]：打包先于确认（取消也写回编辑态），确认后按新表重算全体种族年龄',
   },
   {
-    desc: 'M11567 设置页 [27] 冒险者性别循环不落地（#547）',
+    desc: 'M11567 设置页 [27] 冒险者性别循环不写入（#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 27) {
-    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（:253-264，GLOBAL 变量）
+    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（era_global 公共存档变量）
     era_global.cycle_adventurer_gender();`,
     replace: `  } else if (local === 27) {
     // 变异：不写`,
     tests: ['page-config'],
-    must_mention: '三个魔改存档变量的切换落地',
+    must_mention: '三个魔改存档变量的切换写入',
   },
   {
-    desc: 'M11568 设置页 [29] 卖淫影响循环不落地（#547）',
+    desc: 'M11568 设置页 [29] 卖淫影响循环不写入（#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 29) {
-    // [29] 卖淫影响：0→1→2→0 三档循环（:273-278）
+    // [29] 卖淫影响：0→1→2→0 三档循环（era_modsave 存档变量）
     era_modsave.cycle_prostitution_effect();`,
     replace: `  } else if (local === 29) {
     // 变异：不写`,
     tests: ['page-config'],
-    must_mention: '三个魔改存档变量的切换落地',
+    must_mention: '三个魔改存档变量的切换写入',
   },
   {
-    desc: 'M11569 设置页 [30] 反作弊翻转不落地（#547）',
+    desc: 'M11569 设置页 [30] 反作弊翻转不写入（#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 30) {
-    // [30] 反作弊：0↔1（:281-285；1 = 关闭 DEBUG_CHECK，可开修改）
+    // [30] 反作弊：0↔1（1 = 关闭反作弊检查，可开修改）
     era_modsave.toggle_anti_cheat();`,
     replace: `  } else if (local === 30) {
     // 变异：不写`,
     tests: ['page-config'],
-    must_mention: '三个魔改存档变量的切换落地',
+    must_mention: '三个魔改存档变量的切换写入',
   },
   {
     desc: 'M11570 冒险者性别状态行的 4 档文案串成 -1 档（全是扶她 → 女多男少，#547）',
@@ -3687,9 +3691,9 @@ export default [
     replace: `    case 4:
       return '女多男少'; // 变异：串档`,
     tests: ['page-config'],
-    must_mention: '六档文案（global:3，@EVENTFIRST 开局 -1）',
+    must_mention: '六档文案（global:3，EVENTFIRST 开局 -1）',
     test_name:
-      'adventurer_gender_status_text：六档文案（global:3，@EVENTFIRST 开局 -1）',
+      'adventurer_gender_status_text：六档文案（global:3，EVENTFIRST 开局 -1）',
   },
   {
     desc: 'M11571 卖淫影响状态行的 1 档文案串成 0 档（正面 → 负面，#547）',
@@ -3720,7 +3724,7 @@ export default [
     await config_age_setting();`,
     replace: `  } else if (local === 15) {
     // 变异：退回占位（打一行字，不进子菜单）
-    era.print('@CONFIG_AGE_SETTING 占位\\n');`,
+    era.print('CONFIG_AGE_SETTING 占位\\n');`,
     tests: ['page-config'],
     must_mention: '年龄菜单首行',
   },
@@ -3746,13 +3750,13 @@ export default [
           sv[1] = 0;
           sv[2] = 1;
           sv[3] = -1;
-          sv[4] = -1; // 变异：多清上限两值（原作 :1279-1284 只设 0-3）
+          sv[4] = -1; // 变异：多清上限两值（只该设 0-3）
           sv[5] = -1;`,
     tests: ['page-config-age'],
-    must_mention: '旧实现误存 001',
+    must_mention: '修正前误存 001',
   },
   {
-    desc: 'M11586 编辑头重画前的空行被删（:1111 PRINTL 丢失，#547 返工 5）',
+    desc: 'M11586 编辑头重画前的空行被删（PRINTL 丢失，#547 返工 5）',
     file: 'ere/page/page-config-age.js',
     find: '        era.println(); // 的空行（重画首拍）',
     replace: `        // 变异：漏 :1111 的重画前空行`,
@@ -3760,7 +3764,7 @@ export default [
     must_mention: '编辑头前一拍是空行（PRINTL）',
   },
   {
-    desc: 'M11587 「■ 下限」丢前导两个全角空格（:1215，#547 返工 6）',
+    desc: 'M11587 「■ 下限」丢前导两个全角空格（#547 返工 6）',
     file: 'ere/page/page-config-age.js',
     find: `          era.print('　　■ 下限');`,
     replace: `          era.print('■ 下限'); // 变异：丢前导全角空格`,
@@ -3768,7 +3772,7 @@ export default [
     must_mention: '「■ 下限」带前导两个全角空格',
   },
   {
-    desc: 'M11588 「■ 上限」丢前导两个全角空格（:1233，#547 返工 6）',
+    desc: 'M11588 「■ 上限」丢前导两个全角空格（#547 返工 6）',
     file: 'ere/page/page-config-age.js',
     find: `          era.print('　　■ 上限');`,
     replace: `          era.print('■ 上限'); // 变异：丢前导全角空格`,
@@ -3777,7 +3781,7 @@ export default [
   },
   // —— #549（S8）自动处刑端到端（M11640 起）——
   {
-    desc: 'M11640 设置页 [3] 状态行读位错（位 3 → 位 4，#549 e2e 唯一守卫）',
+    desc: 'M11640 设置页 [3] 状态行读位错（位 3 → 位 4，#549 e2e 唯一检查）',
     file: 'ere/page/page-config.js',
     find: `      '勇者自动处刑机能　　　　　现在：' + (getbit(v5, 3) ? 'ON' : 'OFF'),`,
     replace: `      '勇者自动处刑机能　　　　　现在：' + // 变异：读位错
@@ -3800,7 +3804,7 @@ export default [
     file: 'ere/page/page-dungeon-info2.js',
     find: '  const sorted = [];',
     replace:
-      '  max_name_len = 0; // 变异：每次调用复位，丢原作 #DIM 静态语义\n  const sorted = [];',
+      '  max_name_len = 0; // 变异：每次调用复位，丢旧引擎 #DIM 静态语义\n  const sorted = [];',
     tests: ['page-dungeon-info'],
     must_mention: '静态宽度不回落',
   },
@@ -3860,7 +3864,7 @@ export default [
   },
   // —— #567：故事命名的空输入语义（0 ＝ 空输入，消名支恢复可达） ——
   {
-    desc: 'M11838 故事命名改回 A 语义（输入 0 落成故事名「0」，:207-209 消名支不可达）',
+    desc: 'M11838 故事命名改回 A 语义（输入 0 落成故事名「0」，消名支不可达）',
     file: 'ere/page/page-save-load.js',
     find: '  const name = input_text(await era.input());',
     replace:
@@ -3873,7 +3877,7 @@ export default [
   // :222 调试菜单提示」，而 #641 已整段删除 DEBUG_MENU_U 入口，提示行不复
   // 存在、变异无行为面；退出语义由同段的 M11971/M11972 守。
   {
-    desc: 'M11971 店内 999 不清在售位（:45 CALL CLEAR_SHOP 删——退出商店时货架不撤）',
+    desc: 'M11971 店内 999 不清在售位（clear_shop 调用删——退出商店时货架不撤）',
     file: 'ere/page/page-shop.js',
     find: '    clear_shop();\n    era_flag.bought = -1;',
     replace: '    era_flag.bought = -1; // （变异：:45 的 CLEAR_SHOP 删）',
@@ -3896,13 +3900,13 @@ export default [
     replace:
       '  if (result === 998 && era_flag.bought >= 0) { // 变异：退出键改 998',
     tests: ['page-shop'],
-    must_mention: '999 退出商店（:46）',
+    must_mention: '999 退出商店',
   },
   // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
   // 四条各补回一处空行：按钮自成一行（＝ PRINTLC + 收尾的 PRINTL），多补
-  // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+  // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
   {
-    desc: 'M11860 陷阱商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    desc: 'M11860 陷阱商店页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-shop-trap.js',
     find: "  era.printButton('- 返回', 999);\n  era.setAlign('left');",
     replace:
@@ -3920,7 +3924,7 @@ export default [
     must_mention: '能力值提升页脚按钮之后不应有空行',
   },
   {
-    desc: 'M11862 子菜单按钮之间补回空行（:86 的 PRINTL 只收 [990] 那一行，golden 里按钮逐行相邻）',
+    desc: 'M11862 子菜单按钮之间补回空行（PRINTL 只收 [990] 那一行，golden 里按钮逐行相邻）',
     file: 'ere/page/page-usercom.js',
     find: "  era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）",
     replace:
@@ -3929,7 +3933,7 @@ export default [
     must_mention: '子菜单按钮逐行相邻，按钮之间不夹空行',
   },
   {
-    desc: 'M11863 子菜单页脚之后补回空行（同上，:92 的 PRINTL 只收 [999] 那一行）',
+    desc: 'M11863 子菜单页脚之后补回空行（同上，PRINTL 只收 [999] 那一行）',
     file: 'ere/page/page-usercom.js',
     find: "  era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）",
     replace:
@@ -3938,19 +3942,19 @@ export default [
     must_mention: '子菜单页脚按钮之后不应有空行',
   },
   {
-    desc: 'M11869 方格之后补回空行（:217 的 PRINTL 只收方格最后那一行，golden 里方格与分割线之间只有一个空行）',
+    desc: 'M11869 方格之后补回空行（PRINTL 只收方格最后那一行，golden 里方格与分割线之间只有一个空行）',
     file: 'ere/page/page-usercom.js',
-    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // 循环后的',
+    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个',
     replace:
-      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // 循环后的',
+      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
   {
-    desc: 'M11870 子菜单 :14 的真空行删除（那一个是真行——:217 的 PRINTL 不产生空行，空行全由它来）',
+    desc: 'M11870 子菜单开头的真空行删除（那一个是真行——收行不产生空行，空行全由它来）',
     file: 'ere/page/page-usercom.js',
     find: '  era.println(); // PRINTL（空行）\n  era.drawLine(); // DRAWLINE',
-    replace: '  era.drawLine(); // 变异：:14 的真空行删除',
+    replace: '  era.drawLine(); // 变异：开头的真空行删除',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
@@ -3993,7 +3997,7 @@ export default [
     must_mention: '直接调内层的视图：返回 1 结束本回合',
   },
   {
-    desc: 'M12205 名册上浮判据错位（sub_result === 1 改 === 2，1 不再结束本回合）',
+    desc: 'M12205 名册上浮条件错位（sub_result === 1 改 === 2，1 不再结束本回合）',
     file: 'ere/page/page-chara-info.js',
     find: '      if (sub_result === 1) {',
     replace: '      if (sub_result === 2) { // 变异：判据错位',
@@ -4008,26 +4012,26 @@ export default [
   // 差别的位置——内层 case 2 的守卫（守卫一破，2 直达名册，那种放宽的
   // 判断即会误结束回合）；另配一条纯删守卫。
   {
-    desc: 'M12206 转职 2 档的守卫删除（job_result 直返——2 外泄直达名册，#606 返工）',
+    desc: 'M12206 转职 2 档的检查删除（job_result 直返——2 外泄直达名册，#606 返工）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾\n        continue;',
-    replace: '        return job_result; // 变异：守卫删除，2 外泄直达名册',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮\n        continue;',
+    replace: '        return job_result; // 变异：检查删除，2 外泄直达名册',
     tests: ['page-chara-info'],
     must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
   },
   {
-    desc: 'M12207 守卫写成 >= 1（2 也外泄、0 变页内重画——>= 1 放在唯一有语义差别的位置，名册行本身等价，#606 返工）',
+    desc: 'M12207 检查写成 >= 1（2 也外泄、0 变页内重画——>= 1 放在唯一有语义差别的位置，名册行本身等价，#606 返工）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮',
     replace:
       '        if (job_result >= 1) return job_result; // 变异：>= 1，2 外泄',
     tests: ['page-chara-info'],
     must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
   },
   {
-    desc: 'M12208 守卫写成 truthy（if (job_result)——同 M12207 的真值形态，#606 返工）',
+    desc: 'M12208 检查写成 truthy（if (job_result)——同 M12207 的真值写法，#606 返工）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮',
     replace:
       '        if (job_result) return job_result; // 变异：truthy，2 外泄',
     tests: ['page-chara-info'],
@@ -4062,7 +4066,7 @@ export default [
     must_mention: '末行后有空行',
   },
   {
-    desc: 'M12073 个别信息页操作按钮之后补回空行（:907 的 PRINTL 只收那一串 PRINT 拼出的按钮行）',
+    desc: 'M12073 个别信息页操作按钮之后补回空行（PRINTL 只收那一串 PRINT 拼出的按钮行）',
     file: 'ere/page/page-chara-info.js',
     find: "    era.drawLine();\n    era.printButton('前页', 101);",
     replace:
@@ -4074,25 +4078,25 @@ export default [
   // 汉化及制作名单整段删除，find 串已无输出点；空行普查由 M12075 与
   // test/page-title.test.js 的空行普查用例（#596）继续守住。
   {
-    desc: 'M12075 标题画面联系按钮之后补回空行（:86-87 的 PRINTFORML 只结束上一行）',
+    desc: 'M12075 标题画面联系按钮之后补回空行（PRINTFORML 只结束上一行）',
     file: 'ere/page/page-title.js',
-    find: '  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    find: '  era.drawLine(); // 按钮区上方的分隔线',
     replace:
-      '  era.println(); // 变异：多补一条空行\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+      '  era.println(); // 变异：多补一条空行\n  era.drawLine(); // 按钮区上方的分隔线',
     tests: ['page-title'],
-    must_mention: '年份行后恰一个空行（:41）即分割线',
+    must_mention: '年份行后恰一个空行即分割线',
   },
   {
-    desc: 'M12076 服饰店现状行与追问行之间补回空行（:74 是空白源码行，不产生输出）',
+    desc: 'M12076 服饰店现状行与追问行之间补回空行（空白源码行不产生输出）',
     file: 'ere/page/page-tailor.js',
     find: '    era.print(`要让${chara_callname(arg)}穿上什么？`);',
     replace:
       "    era.print(''); // 变异：多补一条空行\n    era.print(`要让${chara_callname(arg)}穿上什么？`);",
     tests: ['page-tailor'],
-    must_mention: ':72 所持金 → :73 现状行 → :75 追问行',
+    must_mention: '现状行与追问行之间不夹空行',
   },
   {
-    desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（:80 的首个换行只收 [10] 那一行）',
+    desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（首个换行只收 [10] 那一行）',
     file: 'ere/page/page-chara-info-show.js',
     find: "  era.println();\n  era.printButton('返回', 100);",
     replace:
@@ -4101,16 +4105,16 @@ export default [
     must_mention: '三个真空行',
   },
   {
-    desc: 'M12078 献祭名单轮 [999] 返回之后补回空行（:127 的返回文本之后没有 PRINTL）',
+    desc: 'M12078 献祭名单轮 [999] 返回之后补回空行（返回文本之后不收行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "    era.printButton('返回', LIST_RETURN);\n    // 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行",
+    find: "    era.printButton('返回', LIST_RETURN);\n    // 返回文本之后不补空行（输入停在这一行）",
     replace:
-      "    era.printButton('返回', LIST_RETURN);\n    era.println(); // 变异：多补一条空行\n    // 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行",
+      "    era.printButton('返回', LIST_RETURN);\n    era.println(); // 变异：多补一条空行\n    // 返回文本之后不补空行（输入停在这一行）",
     tests: ['chara-info-show'],
-    must_mention: ':127 的返回文本之后不补空行',
+    must_mention: '名单轮的 [999] 返回之后不补空行',
   },
   {
-    desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（:79 的两个换行都是真行）',
+    desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（两个换行都是真行）',
     file: 'ere/page/page-chara-info-show.js',
     find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
     replace:
@@ -4132,92 +4136,90 @@ export default [
     must_mention: '按钮行之间不夹空行',
   },
   {
-    desc: 'M12087 角色状态块的一人称段之后补回空行（:395-396 的 PRINTL 只收行）',
+    desc: 'M12087 角色状态块的一人称段之后补回空行（该段的收行只结束所在行）',
     file: 'ere/page/components/chara-info-title.js',
-    find: '  // 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是',
+    find: '  // 条自身成行，此处不补空行',
     replace:
-      '  if (is_not_master) era.println(); // 变异：多补一条空行\n  // 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是',
+      '  if (is_not_master) era.println(); // 变异：多补一条空行\n  // 条自身成行，此处不补空行',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
-    desc: 'M12088 角色状态块的体重行之后补回空行（:405-408 的 PRINTL 只收行）',
+    desc: 'M12088 角色状态块的体重行之后补回空行（该段的收行只结束所在行）',
     file: 'ere/page/components/chara-info-title.js',
-    find: '  // 的 PRINTL 同理（只收体重行/LIFE_BAR 行）',
+    find: '  // 同上，条自身成行\n  // 气力条',
     replace:
-      '  era.println(); // 变异：多补一条空行\n  // 的 PRINTL 同理（只收体重行/LIFE_BAR 行）',
+      '  era.println(); // 变异：多补一条空行\n  // 同上，条自身成行\n  // 气力条',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
-    desc: 'M12089 角色状态块的臀围行之后补回空行（:416-419 的 PRINTL 只收行）',
+    desc: 'M12089 角色状态块的臀围行之后补回空行（该段的收行只结束所在行）',
     file: 'ere/page/components/chara-info-title.js',
-    find: '  // 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）\n}',
-    replace:
-      '  era.println(); // 变异：多补一条空行\n  // 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）\n}',
+    find: '  // 同上，条自身成行\n}',
+    replace: '  era.println(); // 变异：多补一条空行\n  // 同上，条自身成行\n}',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
-    desc: 'M12090 个别信息页无操作按钮的子页把 :907 的真空行删掉（那一支落在空行上）',
+    desc: 'M12090 个别信息页无操作按钮的子页把块尾真空行删掉（那一支落在空行上）',
     file: 'ere/page/page-chara-info.js',
     find: '    if (era.getLineCount() === button_anchor) {\n      era.println();\n    }',
     replace: '    // 变异：无按钮子页的真空行删掉',
     tests: ['page-chara-info'],
-    must_mention: '无按钮子页里 :907 的空行在补白之后',
+    must_mention: '无按钮子页里块尾的空行在补白之后',
   },
 
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
   {
-    desc: 'M12296 设施确认的 [0] 好的丢掉「- 」（同一行并排两个选项的原作形态）',
+    desc: 'M12296 设施确认的 [0] 好的丢掉「- 」（同一行并排两个选项的写法）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: "era.printButton('- 好的', 0); // DUNGEON_INFO2.ERB:180 [0]",
+    find: "era.printButton('- 好的', 0); // [0]",
     replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
     tests: ['page-dungeon-info'],
-    must_mention: '原作 :180 的 [0] - 好的',
+    must_mention: '[0] - 好的',
   },
   {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
-    find: "era.printButton('- 返 回', 999); // PRINTLC（原作两个空格，引擎折叠成一个）",
+    find: "era.printButton('- 返 回', 999); // PRINTLC（正文两个空格，引擎折叠成一个）",
     replace: "era.printButton('返 回', 999); // 变异：丢掉「- 」",
     tests: ['page-intercept'],
-    must_mention: 'SHOP_2.ERB:346-348',
+    must_mention: '页脚三键正文',
   },
   {
     desc: 'M12299 征服后菜单的 [999] 退出丢掉「- 」',
     file: 'ere/page/page-invasion.js',
-    find: "era.printButton('- 退出', 999); // INVASION.ERB:82",
-    replace:
-      "era.printButton('退出', 999); // INVASION.ERB:82（变异：丢掉「- 」）",
+    find: "era.printButton('- 退出', 999);",
+    replace: "era.printButton('退出', 999); // 变异：丢掉「- 」",
     tests: ['page-invasion'],
-    must_mention: 'INVASION.ERB',
+    must_mention: '七个按钮的正文照写「- 」',
   },
   {
     desc: 'M12300 征服后菜单 [1] 的未征服分支丢掉「- 」（三元分支只改一支）',
     file: 'ere/page/page-invasion.js',
-    find: "? '- 巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54",
-    replace:
-      "? '巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54（变异：丢掉「- 」）",
+    find: "? '- 巡视黑暗精灵的领土（已征服）'",
+    replace: "? '巡视黑暗精灵的领土（已征服）' // 变异：丢掉「- 」",
     tests: ['page-invasion'],
-    must_mention: 'INVASION.ERB',
+    must_mention: '七个按钮的正文照写「- 」',
   },
   {
     desc: 'M12301 技巧等级道具买光确认的 [0] 丢掉「- 」',
     file: 'ere/page/page-item-shop.js',
-    find: "era.printButton('- 好的', 0); // SHOP_ITEM.ERB:752",
-    replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
+    find: "  era.printButton('- 好的', 0);\n  era.printButton('- 不要', 1);",
+    replace:
+      "  era.printButton('好的', 0); // 变异：丢掉「- 」\n  era.printButton('- 不要', 1);",
     tests: ['item-shop'],
-    must_mention: 'SHOP_ITEM.ERB:752',
+    must_mention: '#612 technique_of_master',
   },
   {
-    desc: 'M12302 换装铺主菜单的 [0] 丢掉「- 」（原作写死数字、移植侧是插值的那一项）',
+    desc: 'M12302 换装铺主菜单的 [0] 丢掉「- 」（价格插值四项之一）',
     file: 'ere/page/page-tailor.js',
     find: 'era.printButton(`- 日常服饰（${CASUAL_PRICE}点）`, 0);',
     replace:
       'era.printButton(`日常服饰（${CASUAL_PRICE}点）`, 0); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB',
+    must_mention: '#612 tailor_core 主菜单：按钮正文带「- 」前缀',
   },
   {
     desc: 'M12303 换装铺主菜单的 [7] 魔法装备丢掉「- 」',
@@ -4225,7 +4227,7 @@ export default [
     find: "era.printButton('- 魔法装备', 7);",
     replace: "era.printButton('魔法装备', 7); // 变异：丢掉「- 」",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB',
+    must_mention: '#612 tailor_core 主菜单：按钮正文带「- 」前缀',
   },
   // —— #612 返工轮：数据表驱动的调用点（渲染前缀留在调用点，不塞进数据表——
   //    label 是数据字段，前缀拼在调用点，变异条目才能逐个调用点打）——
@@ -4236,34 +4238,34 @@ export default [
     replace:
       '      era.printButton(`${item.label}`, item.n); // 变异：丢掉「- 」\n    }',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:276',
+    must_mention: 'tailor_casual',
   },
   {
     desc: 'M12308 普通装备表（NORMAL_ITEMS）丢掉「- 」',
     file: 'ere/page/page-tailor.js',
-    find: '    for (const item of NORMAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // 起（表驱动，前缀在调用点拼）',
+    find: '    for (const item of NORMAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // （表驱动，前缀在调用点拼）',
     replace:
       '    for (const item of NORMAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`${item.label}`, item.n); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:328',
+    must_mention: 'tailor_normal',
   },
   {
     desc: 'M12309 黑市特殊服表（SPECIAL_ITEMS）丢掉「- 」',
     file: 'ere/page/page-tailor.js',
-    find: '    for (const item of SPECIAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // 起（表驱动，前缀在调用点拼）',
+    find: '    for (const item of SPECIAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // （表驱动，前缀在调用点拼）',
     replace:
       '    for (const item of SPECIAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`${item.label}`, item.n); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1320',
+    must_mention: 'tailor_normal_special',
   },
   {
     desc: 'M12310 装备品表（ACCESSORY_ITEMS，价格印在正文里）丢掉「- 」',
     file: 'ere/page/page-tailor.js',
-    find: 'era.printButton(`- ${item.label}（${item.c}点）`, item.n); // 起（表驱动）',
+    find: 'era.printButton(`- ${item.label}（${item.c}点）`, item.n); // （表驱动）',
     replace:
       'era.printButton(`${item.label}（${item.c}点）`, item.n); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:571',
+    must_mention: 'tailor_accessory',
   },
   {
     desc: 'M12311 强化前缀表（WEAPON_PREFIXES）丢掉「- 」',
@@ -4272,27 +4274,28 @@ export default [
     replace:
       'era.printButton(`${WEAPON_PREFIXES[index]}`, index); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1254',
+    must_mention: 'equip_magic_weapon',
   },
   {
-    // :1027 与 :1156 两处调用点逐字相同，只靠行尾的 `// :1156` 区分；下面这条的
-    // find 以 `);\n` 收尾（另一处是 `); // :1156`），故恰好命中 1 次
-    desc: 'M12312 戒指页的持有装备行（:1027）丢掉「- 」',
+    // 戒指页与武器页两处持有行的调用点逐字相同，find 以其后继语句区分：下面
+    // 这条收在「强化 / 取下」注释前（戒指页），另一条收在武器化触手的 if 前
+    // （武器页），各恰好命中 1 次
+    desc: 'M12312 戒指页的持有装备行丢掉「- 」',
     file: 'ere/page/page-tailor.js',
     find: "        era.printButton(\n          `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    // 强化 / 取下",
     replace:
       "        era.printButton(\n          `${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    // 强化 / 取下",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1027',
+    must_mention: 'equip_magic_item',
   },
   {
-    desc: 'M12313 武器页的持有装备行（:1156）丢掉「- 」',
+    desc: 'M12313 武器页的持有装备行丢掉「- 」',
     file: 'ere/page/page-tailor.js',
     find: "        era.printButton(\n          `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    if ((era.get(`item:${WEAPON_TENTACLE_ITEM}`) || 0) > 0) {",
     replace:
       "        era.printButton(\n          `${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    if ((era.get(`item:${WEAPON_TENTACLE_ITEM}`) || 0) > 0) {",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1156',
+    must_mention: 'equip_magic_weapon',
   },
   {
     desc: 'M12314 苏生名单丢掉「- 」（:2594 的正文前缀）',
@@ -4315,22 +4318,22 @@ export default [
   {
     // 灰字行的假编号前缀也照写原作（`:1032` / `:1164` 逐字相同，靠行尾注释区分）；
     // 两处都是文本行，去掉 `[---] - ` 时对应断言必须红
-    desc: 'M12316 戒指页的灰字行（:1032）丢掉「[---] - 」',
+    desc: 'M12316 戒指页的灰字行丢掉「[---] - 」',
     file: 'ere/page/page-tailor.js',
     find: "        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (cflag(cid, slot) >= 0) {",
     replace:
       "        { content: '未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (cflag(cid, slot) >= 0) {",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1032',
+    must_mention: 'equip_magic_item',
   },
   {
-    desc: 'M12317 武器页的灰字行（:1164）丢掉「[---] - 」',
+    desc: 'M12317 武器页的灰字行丢掉「[---] - 」',
     file: 'ere/page/page-tailor.js',
     find: "        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (current.存储编号 >= 0) {",
     replace:
       "        { content: '未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (current.存储编号 >= 0) {",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1163-1165',
+    must_mention: 'equip_magic_weapon',
   },
 
   // —— #615：print 正文的尾换行（page-config-age.js 的 7 处） ——
@@ -4341,27 +4344,28 @@ export default [
     replace:
       "  era.print(`${prompt}\\n`); // 变异：尾换行\n  era.print('确认吗？');",
     tests: ['page-config-age'],
-    must_mention: ':1036 的正文不带尾换行',
+    must_mention:
+      '#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按钮位置正确',
   },
   {
-    desc: 'M12241 [98]/[99] 确认页询问行补回尾换行（:1037 的 PRINTL 只收行）',
+    desc: 'M12241 [98]/[99] 确认页询问行补回尾换行（PRINTL 只收行）',
     file: 'ere/page/page-config-age.js',
     find: "  era.print('确认吗？');",
     replace: "  era.print('确认吗？\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1037 的行紧随其后',
+    must_mention: '确认页两行正文不相连、真空行与按钮位置正确',
   },
   {
-    desc: 'M12242 RACE_CONFIG 表头补回尾换行（:972-974 是 PRINTFORM + PRINTFORML 的同一行）',
+    desc: 'M12242 RACE_CONFIG 表头补回尾换行（表头与收尾是同一显示行）',
     file: 'ere/page/page-config-age.js',
     find: "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',",
     replace:
       "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄\\n', // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':972-974 的 PRINTFORM + PRINTFORML 是一条显示行',
+    must_mention: '表头行不带尾换行，紧接八种族按钮行',
   },
   {
-    desc: 'M12243 编辑头档位说明行补回尾换行（:1131-1143 的收尾 PRINTFORML）',
+    desc: 'M12243 编辑头档位说明行补回尾换行（整段是同一显示行）',
     file: 'ere/page/page-config-age.js',
     find: '        era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}`);',
     replace:
@@ -4370,7 +4374,7 @@ export default [
     must_mention: '档位说明行不带尾换行',
   },
   {
-    desc: 'M12244 编辑头 17 岁预览行补回尾换行（:1146-1162 的收尾 PRINTFORML）',
+    desc: 'M12244 编辑头 17 岁预览行补回尾换行（整段是同一显示行）',
     file: 'ere/page/page-config-age.js',
     find: "        era.print('　 换算人类 17 岁左右 ' + edit_age);",
     replace:
@@ -4379,23 +4383,23 @@ export default [
     must_mention: '预览行不带尾换行',
   },
   {
-    desc: 'M12245 随机档「■ 下限」标签补回尾换行（:1215 的 PRINTL 自成一行）',
+    desc: 'M12245 随机档「■ 下限」标签补回尾换行（PRINTL 自成一行）',
     file: 'ere/page/page-config-age.js',
     find: "          era.print('　　■ 下限');",
     replace: "          era.print('　　■ 下限\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1215 的 PRINTL 自成一行',
+    must_mention: 'PRINTL 自成一行',
   },
   {
-    desc: 'M12246 随机档「■ 上限」标签补回尾换行（:1233 的 PRINTL 自成一行）',
+    desc: 'M12246 随机档「■ 上限」标签补回尾换行（PRINTL 自成一行）',
     file: 'ere/page/page-config-age.js',
     find: "          era.print('　　■ 上限');",
     replace: "          era.print('　　■ 上限\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1233 的 PRINTL 自成一行',
+    must_mention: 'PRINTL 自成一行',
   },
   {
-    desc: 'M12247 兵器标题行补回两个尾换行（CONFIG.ERB:88 的 PRINTFORML 自成一行）',
+    desc: 'M12247 兵器标题行补回两个尾换行（PRINTFORML 自成一行）',
     file: 'ere/page/page-config.js',
     find: "  era.print('魔王的兵器是如意金箍棒，可大也可小！！');",
     replace:
@@ -4404,7 +4408,7 @@ export default [
     must_mention: '正文不带尾换行（多写',
   },
   {
-    desc: 'M12248 鸡鸡状态回显补回尾换行（:103 PRINT + :105 PRINTW 是一条显示行）',
+    desc: 'M12248 鸡鸡状态回显补回尾换行（PRINT + PRINTW 是一条显示行）',
     file: 'ere/page/page-config.js',
     find: '    await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}`);',
     replace:
@@ -4414,15 +4418,15 @@ export default [
   },
   // —— #615：完全召唤横幅两行 + 前后空行数（CHARA_INFO_SHOW:63-68 / :76） ——
   {
-    desc: 'M12250 两行横幅之间的真空行删掉（:65 的第二个 \\n 落空行）',
+    desc: 'M12250 两行横幅之间的真空行删掉（第二个换行落空行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: '    era.println(); // 的第二个 \\n：横幅之间的真空行',
+    find: '    era.println(); // 第二个 \\n：横幅之间的真空行',
     replace: '    // 变异：横幅之间的真空行删掉',
     tests: ['chara-info-show'],
-    must_mention: ':65 的第二个 \\n',
+    must_mention: '第二个 \\n：两行横幅之间的真空行',
   },
   {
-    desc: 'M12251 横幅第二行拆回三段（:66-68 是同一显示行）',
+    desc: 'M12251 横幅第二行拆回三段（三段是同一显示行）',
     file: 'ere/page/page-chara-info-show.js',
     find: '    era.print(`${dashes()}< 完 全 召 唤 >${dashes()}  `);',
     replace:
@@ -4431,7 +4435,7 @@ export default [
     must_mention: '横幅第二行（不再被拆成三段）',
   },
   {
-    desc: 'M12252 横幅第一行的首段短横线删掉（:63-65 拼接的开头那一段）',
+    desc: 'M12252 横幅第一行的首段短横线删掉（拼接的开头那一段）',
     file: 'ere/page/page-chara-info-show.js',
     find: '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,',
     replace:
@@ -4440,7 +4444,7 @@ export default [
     must_mention: '横幅第一行',
   },
   {
-    desc: 'M12269 横幅第一行的尾随两个空格删掉（:65 的 "\\s"*2 是原作拼行的一部分）',
+    desc: 'M12269 横幅第一行的尾随两个空格删掉（两个空格是拼行的一部分）',
     file: 'ere/page/page-chara-info-show.js',
     find: '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,',
     replace:
@@ -4449,14 +4453,14 @@ export default [
     must_mention: '横幅第一行',
   },
   {
-    desc: 'M12253 :76 的两个空行只留一个（RESTART 之前是 \\n*2）',
+    desc: 'M12253 两个空行只留一个（重画之前是两个换行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: '    era.println(); // 的第一个 \\n\n    era.println(); // 的第二个 \\n',
-    replace: '    era.println(); // 变异：:76 的两个 \\n 只留一个',
+    find: '    era.println(); // 第一个 \\n\n    era.println(); // 第二个 \\n',
+    replace: '    era.println(); // 变异：两个空行只留一个',
     tests: ['chara-info-show'],
-    must_mention: ':76 的第二个 \\n',
+    must_mention: '完全召唤横幅两行、之间一个真空行、之后两个真空行',
   },
-  // —— #615：ENEMY_EXIST2 的空行落在原作的分支上（:595 与 :629-630） ——
+  // —— #615：enemy_exist2 的空行落在分支上 ——
   {
     desc: 'M12254 首行空行改回无条件（名单为空时 :595 与 :630 各落一个空行）',
     file: 'ere/page/page-dungeon-info2.js',
@@ -4464,7 +4468,7 @@ export default [
     replace:
       '  if (sorted.length >= 0) { // 变异：恒真\n    era.println();\n  }',
     tests: ['page-dungeon-info', 'page-shop-floor'],
-    must_mention: '名单为空只有 :630 的一个空行',
+    must_mention: '名单为空只有尾部的一个空行',
   },
   {
     desc: 'M12255 名单为空时尾部的空行删掉（:630 的 PRINTL）',
@@ -4472,7 +4476,7 @@ export default [
     find: '  } else {\n    // 名单为空：:595 未执行，这一条 PRINTL 落出那个空行\n    era.println();\n  }',
     replace: '  }',
     tests: ['page-dungeon-info', 'page-shop-floor'],
-    must_mention: '名单为空只有 :630 的一个空行',
+    must_mention: '名单为空只有尾部的一个空行',
   },
   {
     desc: 'M12256 首行空行的条件反转（有队伍时不落 :595 的空行、空名单反而落两个）',
@@ -4480,7 +4484,7 @@ export default [
     find: '  if (sorted.length > 0) {',
     replace: '  if (sorted.length === 0) { // 变异：条件反转',
     tests: ['page-dungeon-info'],
-    must_mention: ':595 的首行空行 + 队伍行',
+    must_mention: '首行空行 + 队伍行',
   },
 
   {
@@ -4497,10 +4501,9 @@ export default [
   {
     desc: 'M12901 主菜单 999 调试入口复活（提示行+等键打回——#638 删除的 DEBUG_MENU_U 分支不得回潮）',
     file: 'ere/page/page-shop.js',
-    find: `  // 原作的 :222-223 调试菜单（DEBUG_MENU_U，原作者的调试工具）自 #542 判不
-  // 移植、#638 起随存根清单一并删除入口：主菜单不印 [999] 按钮，引擎的输入
-  // 白名单（#130）本就送不到这里；店内的 999 在上面的购物段早退（#592），
-  // 也不会落到链尾`,
+    find: `  // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随存根
+  // 清单一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
+  // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾`,
     replace: `  if (result === 999) {
     era.print('（调试菜单不在移植范围。）');
     await era.waitAnyKey();
@@ -4512,11 +4515,11 @@ export default [
   {
     desc: 'M12908 征服后菜单 [1001] AGENT_MENU 分支复活（提示行打回——#638 删除的入口不得回潮）',
     file: 'ere/page/page-invasion.js',
-    find: '    // 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：',
+    find: '    // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：',
     replace:
-      "    if (result === 1001) {\n      era.print('（代理人菜单不在移植范围。）');\n      await era.waitAnyKey();\n      return 0;\n    }\n    // 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：",
+      "    if (result === 1001) {\n      era.print('（代理人菜单不在移植范围。）');\n      await era.waitAnyKey();\n      return 0;\n    }\n    // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：",
     tests: ['page-invasion'],
-    must_mention: '落到 :102 的 >=6 拒收重问',
+    must_mention: '>=6 拒收重问',
   },
   {
     desc: 'M12909 主菜单 400 LABO 隐入口复活（提示行+等键打回——#638 删除的分支不得回潮）',
@@ -4527,7 +4530,7 @@ export default [
     await era.waitAnyKey();
   } else if (result === 496 && selectable_count > 0) { // 变异：400 入口复活`,
     tests: ['page-shop'],
-    must_mention: 'LABO 隐入口不得等待读键',
+    must_mention: '实验室隐入口不得等待读键',
   },
   {
     desc: 'M12930 标题画面硬编码旧游戏名（gamebase.title 改旧字面量，#642）',
@@ -4547,7 +4550,7 @@ export default [
     must_mention: '标题画面必须显示 yml 的作者 odradekk',
   },
   {
-    desc: 'M12932 追加信息守卫拆成无条件输出（留空也打空串行，#642）',
+    desc: 'M12932 追加信息检查拆成无条件输出（留空也打空串行，#642）',
     file: 'ere/page/page-title.js',
     find: '  if (gamebase.info) {\n    era.print(gamebase.info);\n  }',
     replace: '  era.print(gamebase.info); // 变异：守卫拆除',
@@ -4555,7 +4558,7 @@ export default [
     must_mention: '【追加信息】为空时不得输出空串行',
   },
   {
-    desc: 'M12933 年份守卫拆成无条件输出（空年份也打「()」，#642）',
+    desc: 'M12933 年份检查拆成无条件输出（空年份也打「()」，#642）',
     file: 'ere/page/page-title.js',
     find: "  if (gamebase.year) {\n    era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]);\n  }",
     replace:
@@ -4578,30 +4581,29 @@ export default [
   {
     desc: 'M12941 联系方式段复活（联系行与 [8] 钮加回，#642 返工）',
     file: 'ere/page/page-title.js',
-    find: '  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    find: '  era.drawLine(); // 按钮区上方的分隔线',
     replace:
-      "  era.print('版本推进出问题 '); // 变异：联系方式段复活\n  era.printButton('>>', 8);\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）",
+      "  era.print('版本推进出问题 '); // 变异：联系方式段复活\n  era.printButton('>>', 8);\n  era.drawLine(); // 按钮区上方的分隔线",
     tests: ['page-title'],
     must_mention: '联系方式段已删除：「版本推进出问题」不得出现',
   },
   {
     desc: 'M12942 标题画面整屏居中改成左对齐（#642 验收抽样补的断言）',
     file: 'ere/page/page-title.js',
-    find: "  era.setAlign('center'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
-    replace:
-      "  era.setAlign('left'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
+    find: "  era.setAlign('center'); // 本屏全部居中",
+    replace: "  era.setAlign('left'); // 本屏全部居中",
     tests: ['page-title'],
     must_mention: '标题画面整屏居中：首个 setAlign 必须是 center',
   },
-  // —— #652：F6 界面缺陷修复的新行为守卫 ——
+  // —— #652：F6 界面缺陷修复的新行为检查 ——
   {
-    desc: 'M13200 据点事件三臂恢复星号输出（#652 删掉的反复弹星号复原）',
+    desc: 'M13200 据点事件三分支恢复星号输出（#652 删掉的反复弹星号复原）',
     file: 'ere/page/page-invasion.js',
-    find: '  // 精灵/龙/天界三臂：不输出、不推进（见函数头注释）\n  return 0;',
+    find: '  // 精灵/龙/天界三分支：不输出、不推进（见函数头注释）\n  return 0;',
     replace:
-      '  // 变异：三臂恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
+      '  // 变异：三分支恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
     tests: ['page-invasion'],
-    must_mention: '三臂空转不打星号',
+    must_mention: '三分支空转不打星号',
   },
   {
     desc: 'M13201 侵攻度读点对天神宫读回 EX_FLAG 侧（#652 统一的 FLAG 读点被拆）',
@@ -4613,17 +4615,17 @@ export default [
     must_mention: '出兵菜单的进度条读 FLAG:101',
   },
   {
-    desc: 'M13202 [0] 已征服臂漏列天神宫复原（#652 补上的 101 被删掉）',
+    desc: 'M13202 [0] 已征服分支漏列天神宫复原（#652 补上的 101 被删掉）',
     file: 'ere/page/page-invasion.js',
     find: 'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];',
     replace:
       'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90]; // 变异：漏列 101 复原',
     tests: ['page-invasion'],
     must_mention:
-      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
+      '已征服分支（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品分支）',
   },
   {
-    desc: 'M13203 invasion_check 的天神宫死分支复活（#652 删除的 EX_FLAG:101 判据被接回）',
+    desc: 'M13203 invasion_check 的天神宫死分支复活（#652 删除的 EX_FLAG:101 条件被接回）',
     file: 'ere/page/page-invasion.js',
     find: "    era.print('声望+10'); // PRINTL\n    return;\n  }\n}",
     replace:
@@ -4650,19 +4652,19 @@ export default [
     must_mention: '平安支 RETURN 0',
   },
   {
-    desc: 'M13206 [2] 候选资格的助手可守卫删除（#652 按意图补的淘汰被拆）',
+    desc: 'M13206 [2] 候选资格的助手可检查删除（#652 按意图补的淘汰被拆）',
     file: 'ere/page/page-invasion.js',
     find: '  // 只有助手可（CFLAG:0 == 2）能带队\n  if ((era.get(`cflag:${cid}:0`) || 0) !== 2) return true;',
-    replace: '  // 变异：助手可守卫删除',
+    replace: '  // 变异：助手可检查删除',
     tests: ['page-invasion'],
     must_mention: '资格位空（CFLAG:0 == 0）→ 排除：列表不该渲染',
   },
   {
-    desc: 'M13207 征服后菜单 [5] 的渲染守卫删除（#652 外提的 route_33 守卫被拆）',
+    desc: 'M13207 征服后菜单 [5] 的渲染检查删除（#652 外提的 route_33 检查被拆）',
     file: 'ere/page/page-invasion.js',
     find: '  if (era_exflag.route_33 > 500) {\n    if (era_exflag.shrine_stage >= 4) {',
     replace:
-      '  if (true) { // 变异：渲染守卫删除\n    if (era_exflag.shrine_stage >= 4) {',
+      '  if (true) { // 变异：渲染检查删除\n    if (era_exflag.shrine_stage >= 4) {',
     tests: ['page-invasion'],
     must_mention: '窗口外键入 5：引擎白名单拒收',
   },
@@ -4676,11 +4678,11 @@ export default [
     must_mention: '进度条读 FLAG:101 = 777',
   },
   {
-    desc: 'M13210 ENEMY_EXIST2 护卫名单判据改坏（#652 的 floor === 10 被拆，近卫层也不出）',
+    desc: 'M13210 enemy_exist2 护卫名单条件改坏（#652 的 floor === 10 被拆，近卫层也不出）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '  // 护卫名单：只出在近卫层（floor 10），1-9 层不追加\n  if (floor === 10) {',
     replace:
-      '  // 变异：护卫名单判据改坏（近卫层也不出）\n  if (floor === 10 && false) {',
+      '  // 变异：护卫名单条件改坏（近卫层也不出）\n  if (floor === 10 && false) {',
     tests: ['page-dungeon-info', 'page-shop-floor'],
     must_mention: 'floor 10 追加护卫名单',
   },
@@ -4702,7 +4704,7 @@ export default [
     must_mention: '按 ×16 合成三段',
   },
   {
-    desc: 'M13213 SHOW_TALENT 魔虫知识（328）的守卫退回笔误形态（读回 327，#652 改正被拆）',
+    desc: 'M13213 show_talent 魔虫知识（328）的检查退回笔误写法（读回 327，#652 改正被拆）',
     file: 'ere/page/components/chara-talents.js',
     find: '      { id: 328 },',
     replace: '      { id: 327 }, // 变异：魔虫知识行换成 327',
@@ -4718,11 +4720,11 @@ export default [
     must_mention: '绕路掷的是 RAND:10',
   },
   {
-    desc: 'M13215 SEIEI 先制守卫的档位除数改坏（SINKOU/2048 改 /1024，守卫与伤害同档）',
+    desc: 'M13215 invasion_event_seiei 先制检查的档位除数改坏（SINKOU/2048 改 /1024，检查与伤害同档）',
     file: 'ere/page/page-invasion.js',
     find: '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);',
     replace:
-      '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1); // 变异：守卫除数改坏',
+      '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1); // 变异：检查除数改坏',
     tests: ['page-invasion'],
     must_mention: '随机序列耗尽或越界',
   },

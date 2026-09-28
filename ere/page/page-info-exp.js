@@ -1,16 +1,13 @@
 /**
- * @file 经验一览的渲染（@JUEL_CHECK 的 $INPUT_LOOP_1 首屏调用，issue #47）。
+ * @file 经验一览的渲染（juel-check.js 交互循环的首屏调用，issue #47）。
  *
- * 原作签名 @SHOW_INFO_EXP(ARG:0 = -1) 带换角色形态（:1024-1029，ARG 为
- * 角色番号时临时切换 TARGET）——那是别的调用方（角色信息画面）用的，
- * @JUEL_CHECK 不带实参调用（= TARGET 形态），本文件以显式 cid 形参承载，
- * 换角色形态随角色信息票。
+ * 切换角色的调用（临时换目标）归别的调用方（角色信息画面）；
+ * juel-check.js 侧不带实参调用（= 当前目标），本文件以显式 cid 形参
+ * 承载，切换角色随角色信息票。
  *
- * 初吻/初体验括号行的守卫值语义：CFLAG:16（初吻对象）原作在角色生成
- * 路径置 -1（SYSTEM ver1.0.3.ERB:118 村娘块 / CHARA_CUSTOM ver1.0.1.ERB
- * :135）——ere 侧该初始化随 RAND_CHARA_MAKE 落地前，未声明读值 undefined
- * 按 Emuera 零值语义当 0 处理（显示「[初吻对象：不明]」，黄金样本差异
- * 登记 #47）。
+ * 初吻/初体验括号行的检查值语义：CFLAG:16（初吻对象）在角色生成路径
+ * 置 -1；角色生成的 -1 置位实现前，未声明读值 undefined 经 `|| 0`
+ * 当 0 处理（显示「[初吻对象：不明]」，黄金样本差异登记 #47）。
  */
 
 const era = require('#/era-electron');
@@ -27,7 +24,7 @@ const {
  * @returns {string}
  */
 function kiss_bracket(cid) {
-  const flag = era.get(`cflag:${cid}:16`) || 0; // 未声明 → Emuera 零值
+  const flag = era.get(`cflag:${cid}:16`) || 0; // 未声明 → 按 0
   if (flag <= -1) {
     return ''; // IF CFLAG:16 > -1
   }
@@ -59,7 +56,7 @@ function kiss_bracket(cid) {
   if (flag === 999) {
     return '[初吻对象：触手]';
   }
-  // %CSTR:4%的 + 部位（按值域），无命中部位则无闭括号（原样）
+  // %CSTR:4%的 + 部位（按值域）；无命中部位则不带闭括号
   const part =
     flag < 100
       ? '唇]'
@@ -107,15 +104,14 @@ function first_experience_bracket(cid) {
 }
 
 /**
- * @SHOW_INFO_EXP（:1022-1122）：非零经验一览（4 列）+ 等级行 + 初吻/
- * 初体验括号行。
+ * show_info_exp：非零经验一览（4 列）+ 等级行 + 初吻/初体验括号行。
  *
- * @param {number} cid 调教目标（原作隐式 TARGET）
+ * @param {number} cid 调教目标
  */
 function show_info_exp(cid) {
   let row = '';
   let shown = 0;
-  // REPEAT 82：序号 0-81 逐项过（原作如此——名字表的断档处
+  // 序号 0-81 逐项过（82 项固定上界——名字表的断档处
   // EXP 恒 0，被零值检查跳过；ere 侧名字表缺的序号直接跳，等价）
   const keys = era.get('expkeys') || [];
   for (let id = 0; id < 82; id += 1) {
@@ -166,8 +162,8 @@ function show_info_exp(cid) {
     `\u3000${chara_callname(cid)}当前是Lv${lv}，战斗经验值总计${total}点，本级经验：${battle_exp}/${need}`,
   );
 
-  // 初吻/初体验括号行。两者皆无时原作 PRINT 全角空格 + PRINTL
-  // 后 CLEARLINE 1 整行收回（:1118-1122）——等价于不输出，此处直接判空跳过
+  // 初吻/初体验括号行。两者皆无时的空行会被整行收回，等价于不输出
+  // ——此处直接判空跳过
   const kiss = kiss_bracket(cid);
   const first = first_experience_bracket(cid);
   if (kiss || first) {

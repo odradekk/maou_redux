@@ -1,6 +1,6 @@
 /**
  * ere/page/page-usercom.js 的行为测试（issue #44 建面；#214 扩：子菜单
- * 按钮组、@USERCOM 全分支分发、GETBIT(FLAG:5,34) 渲染分流）。
+ * 按钮组、USERCOM 全分支分发、FLAG:5 位 34 渲染分流）。
  *
  * 缝 = test/helpers/era-fixture.js。按钮白名单（#130）由夹具的 input
  * 校验承担——本文件每个「输入 → 分发」用例都在白名单内驱动，喂进
@@ -17,15 +17,15 @@ function load_page(fixture) {
   return fixture.load_module('system/event/registry');
 }
 
-/** 播种自定义菜单开关（FLAG:5 位 34；开局值 event-first.js:110） */
+/** 播种自定义菜单开关（FLAG:5 位 34；开局值见 event-first.js） */
 function seed_flag5(fixture, bit34) {
   const base = 17179934119; // 开局值（bit34 = 1）
   fixture.store.set('flag:5', bit34 ? base : base - 2 ** 34);
 }
 
-// —— 子菜单按钮组（#214：@SHOW_USERCOM :17-91 的按钮挂载） ——
+// —— 子菜单按钮组（#214：SHOW_USERCOM 的按钮挂载） ——
 
-test('子菜单按钮组全挂载：默认态 9 个按钮，守卫组不出现', async () => {
+test('子菜单按钮组全挂载：默认态 9 个按钮，条件按钮不出现', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   const { emit } = load_page(fixture);
@@ -49,22 +49,19 @@ test('子菜单按钮组全挂载：默认态 9 个按钮，守卫组不出现',
   ]);
 });
 
-test('子菜单按钮组：PRINTLC 串不换行——按钮之间、页脚之后与方格之后都没有多出的空行', async () => {
-  // 两条渲染臂都走一遍：自定义菜单（GETBIT(FLAG:5,34) = 1）与内建列表
+test('子菜单按钮组：按钮串不换行——按钮之间、页脚之后与方格之后都没有多出的空行', async () => {
+  // 两条渲染路径都走一遍：自定义菜单（FLAG:5 位 34 = 1）与内建列表
   for (const advanced of [false, true]) {
-    const label = advanced ? '自定义菜单臂' : '内建列表臂';
+    const label = advanced ? '自定义菜单路径' : '内建列表路径';
     const fixture = create_era_fixture();
     seed_flag5(fixture, advanced);
     const { emit } = load_page(fixture);
 
     await emit('SHOW_USERCOM');
 
-    // 原作 :17-91 是一串 PRINTC（三列排版），:85-86 与 :91-92 各是一个
-    // PRINTC 跟一个 PRINTL：PRINTC 不换行（语义与勘误见 CONTEXT.md「输出 API
-    // 与原作的对应」），那两个 PRINTL 只结束各自所在的那一行，不产生空行——
-    // train-natural-log:115-118 里网格行与 [990]/[999] 逐行相邻，就是这条的
-    // 直接证据。ere 的 printButton 自成一行（＝ PRINTC + 收尾的 PRINTL），
-    // 按钮之间与页脚之后都不应再补空行。
+    // 按钮串的排版语义（CONTEXT.md「输出 API 的排版与对齐」）：printButton
+    // 自成一行，按钮之间与页脚之后都不应再补空行——golden 里网格行与
+    // [990]/[999] 逐行相邻，就是这条的直接证据。
     const divider = fixture.lines.find((line) => line.type === 'divider');
     const rows = fixture.lines
       .filter((line) => line.type === 'button' && line.row > divider.row)
@@ -74,9 +71,9 @@ test('子菜单按钮组：PRINTLC 串不换行——按钮之间、页脚之后
       Array.from({ length: rows.length }, (_, i) => rows[0] + i),
       `${label}：子菜单按钮逐行相邻，按钮之间不夹空行`,
     );
-    // 方格与分割线之间恰有一个空行：:217（循环后的 PRINTL）只结束方格最后
-    // 那一行，空行来自下一段的 :14 PRINTL（train-natural-log:108-114）。
-    // 多一个（照「PRINTLC 自带换行」翻译的 :217）或少一个都是错的。
+    // 方格与分割线之间恰有一个空行：循环收尾只结束方格最后那一行，空行
+    // 来自下一段的 println。
+    // 多一个或少一个都是错的。
     assert.equal(
       fixture.lines.filter(
         (line) =>
@@ -84,7 +81,7 @@ test('子菜单按钮组：PRINTLC 串不换行——按钮之间、页脚之后
           (line.type === 'br' || (line.type === 'text' && line.text === '')),
       ).length,
       1,
-      `${label}：COM 菜单与分割线之间恰有一个空行（:14 的 PRINTL）`,
+      `${label}：COM 菜单与分割线之间恰有一个空行（来自下一段的换行）`,
     );
     const footer = fixture.lines.find(
       (line) => line.type === 'button' && line.accelerator === 999,
@@ -100,7 +97,7 @@ test('子菜单按钮组：PRINTLC 串不换行——按钮之间、页脚之后
   }
 });
 
-test('守卫组：ASSI>0 且 ASSI:1>0 时交代助手[102]出现', async () => {
+test('显示条件：ASSI>0 且 ASSI:1>0 时交代助手[102]出现', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   fixture.store.set('flag:10006', 31); // ASSI
@@ -115,7 +112,7 @@ test('守卫组：ASSI>0 且 ASSI:1>0 时交代助手[102]出现', async () => {
   assert.ok(labels.includes('交代助手'));
 });
 
-test('守卫组：TARGET==MASTER 且 ASSI:1>0 时对换调教[112]出现（CFLAG:0 免）', async () => {
+test('显示条件：TARGET==MASTER 且 ASSI:1>0 时对换调教[112]出现（CFLAG:0 免）', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   fixture.store.set('flag:10005', 0); // TARGET = MASTER（角色 0）
@@ -133,7 +130,7 @@ test('守卫组：TARGET==MASTER 且 ASSI:1>0 时对换调教[112]出现（CFLAG
   );
 });
 
-test('守卫组：TARGET≠MASTER 时需 CFLAG:0 >= 2 才出现对换调教', async () => {
+test('显示条件：TARGET≠MASTER 时需 CFLAG:0 >= 2 才出现对换调教', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   fixture.store.set('flag:10005', 31); // TARGET = 31（非 MASTER）
@@ -154,7 +151,7 @@ test('守卫组：TARGET≠MASTER 时需 CFLAG:0 >= 2 才出现对换调教', as
   assert.ok(labels.includes('对换调教'), 'CFLAG:0 = 2 放行');
 });
 
-test('守卫组：FLAG:550 > 0 时调教菜单表示[991]/实行[992]出现', async () => {
+test('显示条件：FLAG:550 > 0 时调教菜单表示[991]/实行[992]出现', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   fixture.store.set('flag:550', 2);
@@ -191,9 +188,9 @@ test('过滤按钮染色：开启灰 #646464、未开启各系色、104 未开�
   assert.equal(colors[108], '#FF6347', 'ＳＭ系未开启番茄红 255,99,71');
 });
 
-// —— @USERCOM 分发（#214：:104-176 全分支） ——
+// —— USERCOM 分发（#214：全分支） ——
 
-test('@USERCOM：999 → BEGIN AFTERTRAIN（链内暂存，最后一个胜出）', async () => {
+test('USERCOM：999 → 转场 AFTERTRAIN（链内暂存，最后一个胜出）', async () => {
   const fixture = create_era_fixture();
   const { emit } = load_page(fixture);
 
@@ -202,7 +199,7 @@ test('@USERCOM：999 → BEGIN AFTERTRAIN（链内暂存，最后一个胜出）
   assert.equal(pending, 'AFTERTRAIN');
 });
 
-test('@USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）', async () => {
+test('USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -225,8 +222,8 @@ test('@USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）
   );
 });
 
-test('@USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面）', async () => {
-  // 100 → SHOW_CHARA_INFO（ARG:1 缺省 -1 = 调教时形态）：标题行 + 两次 WAIT
+test('USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面）', async () => {
+  // 100 → SHOW_CHARA_INFO（ARG:1 缺省 -1 = 调教时样式）：标题行 + 两次 WAIT
   {
     const fixture = create_era_fixture();
     fixture.store.set('callname:0:-1', '魔王');
@@ -236,13 +233,13 @@ test('@USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面�
 
     assert.ok(
       fixture.text_lines().some((t) => t.startsWith('NO.0\u00A0\u00A0')), // #577：标题行补位 NBSP
-      '100 打出角色信息标题行（:104-106 的真身）',
+      '100 打出角色信息标题行（真身）',
     );
     assert.ok(
       fixture.text_lines().some((t) => t.startsWith('\u00A0苦痛:LV')),
-      '调教时形态含刻印行（SHOW_INFO_MARK）',
+      '调教时样式含刻印行（SHOW_INFO_MARK）',
     );
-    assert.equal(fixture.waits.length, 2, ':247 与 :250 两次 WAIT');
+    assert.equal(fixture.waits.length, 2, '两次 WAIT');
     assert(fixture.waits.every((w) => w.waited === true));
   }
   // 101 → STAIN_INFO：三方污渍行 + 末尾一次 WAIT
@@ -255,14 +252,14 @@ test('@USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面�
 
     assert.ok(
       fixture.text_lines().some((t) => t.endsWith('的嘴巴：')),
-      '101 打出污渍行（:107-109 的真身）',
+      '101 打出污渍行（真身）',
     );
     assert.equal(fixture.waits.length, 1, 'STAIN_INFO 末尾 WAIT 一次');
     assert.equal(fixture.waits[0].waited, true);
   }
 });
 
-test('@USERCOM：102 交代助手三分支的视角/助手切换（:110-122）', async () => {
+test('USERCOM：102 交代助手三分支的视角/助手切换', async () => {
   // 分支一：TARGET == MASTER → PLAYER 在 TARGET:1/ASSI:1 间翻转，ASSI = PLAYER
   {
     const fixture = create_era_fixture();
@@ -308,30 +305,30 @@ test('@USERCOM：102 交代助手三分支的视角/助手切换（:110-122）',
   }
 });
 
-test('@USERCOM：102 守卫不满足时落链尾（无输出无切换）', async () => {
+test('USERCOM：102 条件不满足时落链尾（无输出无切换）', async () => {
   const fixture = create_era_fixture();
   const { emit } = load_page(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
-  fixture.store.set('flag:10006', 0); // ASSI = 0：:110 的 ELSEIF 条件不满足
+  fixture.store.set('flag:10006', 0); // ASSI = 0：ELSEIF 条件不满足
   fixture.store.set('flag:10013', 32);
   era_flag.player = 7;
 
   await emit('USERCOM', 102);
 
-  assert.equal(era_flag.player, 7, '守卫不满足不得切换');
+  assert.equal(era_flag.player, 7, '条件不满足不得切换');
   assert.deepEqual(
     fixture.lines.filter((l) => l.type !== 'wait'),
     [],
   );
 });
 
-test('@USERCOM：112 对换调教（SWAP TARGET/PLAYER + 助手归位 + ASSIPLAY）', async () => {
+test('usercom：112 对换调教（SWAP TARGET/PLAYER + 助手归位 + ASSIPLAY）', async () => {
   const fixture = create_era_fixture();
   const { emit } = load_page(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
-  fixture.store.set('cflag:31:0', 2); // TARGET≠MASTER 的守卫：调教状态 ≥ 2
+  fixture.store.set('cflag:31:0', 2); // TARGET≠MASTER 的条件：调教状态 ≥ 2
   fixture.store.set('flag:10005', 31); // TARGET
   fixture.store.set('flag:10012', 99); // TARGET:1（异于双方，不触发归位歧义）
   fixture.store.set('flag:10013', 31); // ASSI:1——换入视角 31 正是它 → 归位
@@ -340,15 +337,11 @@ test('@USERCOM：112 对换调教（SWAP TARGET/PLAYER + 助手归位 + ASSIPLAY
 
   assert.equal(era_flag.target, 33, 'SWAP：TARGET ← 原 PLAYER');
   assert.equal(era_flag.player, 31, 'SWAP：PLAYER ← 原 TARGET');
-  assert.equal(
-    era_flag.assi,
-    31,
-    '换入视角 == ASSI:1 → ASSI 归位到它（:125-126）',
-  );
+  assert.equal(era_flag.assi, 31, '换入视角 == ASSI:1 → ASSI 归位到它');
   assert.equal(era_flag.assiplay, 1);
 });
 
-test('@USERCOM：104-108 过滤位翻转（开 ↔ 关；掩码逐位独立）', async () => {
+test('USERCOM：104-108 过滤位翻转（开 ↔ 关；掩码逐位独立）', async () => {
   const cases = [
     [104, 1],
     [105, 2],
@@ -373,7 +366,7 @@ test('@USERCOM：104-108 过滤位翻转（开 ↔ 关；掩码逐位独立）',
   assert.equal(fixture.store.get('flag:25'), 0b01001, '只清位 1，位 0/3 保留');
 });
 
-test('@USERCOM：991 调教菜单表示（DRAWLINE + 序列行 + DRAWLINE + 等键）', async () => {
+test('USERCOM：991 调教菜单表示（DRAWLINE + 序列行 + DRAWLINE + 等键）', async () => {
   const fixture = create_era_fixture();
   const { emit } = load_page(fixture);
   fixture.store.set('flag:550', 1);
@@ -394,7 +387,7 @@ test('@USERCOM：991 调教菜单表示（DRAWLINE + 序列行 + DRAWLINE + 等�
   assert.equal(fixture.waits.at(-1)?.waited, true, 'WAIT 等键');
 });
 
-test('@USERCOM：991/992 在 FLAG:550 = 0 时落链尾（守卫）', async () => {
+test('USERCOM：991/992 在 FLAG:550 = 0 时落链尾（条件不满足）', async () => {
   for (const acc of [991, 992]) {
     const fixture = create_era_fixture();
     const { emit } = load_page(fixture);
@@ -407,7 +400,7 @@ test('@USERCOM：991/992 在 FLAG:550 = 0 时落链尾（守卫）', async () =>
   }
 });
 
-test('@USERCOM：未定义编号（555）落到链尾，无输出无转场', async () => {
+test('USERCOM：未定义编号（555）落到链尾，无输出无转场', async () => {
   const fixture = create_era_fixture();
   const { emit } = load_page(fixture);
 
@@ -417,9 +410,9 @@ test('@USERCOM：未定义编号（555）落到链尾，无输出无转场', asy
   assert.deepEqual(fixture.lines, [], '未挂载输入不得有任何反馈（重绘即反馈）');
 });
 
-// —— 指令方格的两条渲染路径（#214：GETBIT(FLAG:5,34) 分流） ——
+// —— 指令方格的两条渲染路径（#214：FLAG:5 位 34 分流） ——
 
-test('GETBIT=1（开局默认）：自定义菜单，标签取 TRAIN_NAME、编号印 L_IDX', async () => {
+test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、编号印 L_IDX', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
   const { train_name_init } = fixture.load_module('system/train/train-name');
@@ -444,12 +437,12 @@ test('GETBIT=1（开局默认）：自定义菜单，标签取 TRAIN_NAME、编�
   assert.equal(last?.text, '媚药史莱姆', '末位 207→100（L_IDX 空间上界）');
 });
 
-test('GETBIT=0：内建渲染臂，标签取 TRAINNAME 静态名（不升格）', async () => {
+test('位 34 关：内建渲染路径，标签取 TRAINNAME 静态名（不升格）', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   const { emit } = load_page(fixture);
-  // trainalias 播种与静态名不同的槽：160 号不在 Train.csv——用 150（动态槽，
-  // TRAIN_NAME 播种名 ≠ CSV 静态名）区分两臂的取表
+  // trainalias 播种与静态名不同的槽：160 号不在静态表——用 150（动态槽，
+  // TRAIN_NAME 播种名 ≠ 静态名）区分两条路径的取表
   fixture.store.set('traincommandname:0', '静态爱抚');
   fixture.store.set('trainalias:0', '定制爱抚');
 
@@ -461,11 +454,11 @@ test('GETBIT=0：内建渲染臂，标签取 TRAINNAME 静态名（不升格）'
   assert.deepEqual(
     buttons.map((b) => [b.accelerator, b.text]),
     [[0, '静态爱抚']],
-    'OFF 臂读 traincommandname（引擎内建列表的 1:1），不吃 trainalias',
+    'OFF 路径读 traincommandname（内建列表的等价移植），不吃 trainalias',
   );
 });
 
-test('GETBIT=1 的自定义菜单对 COM_ABLE=0 的指令不渲染（:200-203）', async () => {
+test('位 34 开的自定义菜单对 COM_ABLE=0 的指令不渲染', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
   const { com_able_family } = fixture.load_module('system/train/com-family');
@@ -481,7 +474,7 @@ test('GETBIT=1 的自定义菜单对 COM_ABLE=0 的指令不渲染（:200-203）
   assert.ok(accs.includes(1), '其余指令照常（L_IDX 1 在场）');
 });
 
-test('command_button_label：升格后的号取名字；64 合成臂读 CSV 静态名', async () => {
+test('command_button_label：升格后的号取名字；64 合成分支读静态名', async () => {
   const fixture = create_era_fixture();
   const { command_button_label } = fixture.load_module('page/page-usercom');
   const { train_name_init } = fixture.load_module('system/train/train-name');
@@ -493,13 +486,13 @@ test('command_button_label：升格后的号取名字；64 合成臂读 CSV 静�
   assert.equal(command_button_label(0, 0), '爱抚');
   // 升格（8 → 84 刺激Ｇ点）：名字用升格后的号，编号仍用升格前的位次
   assert.equal(command_button_label(84, 8), '刺激Ｇ点');
-  // 64 合成臂（RESULT == 64 且 L_I != 64）：%TRAINNAME:64%・%TRAINNAME:L_I%
+  // 64 合成分支（RESULT == 64 且 L_I != 64）：%TRAINNAME:64%・%TRAINNAME:L_I%
   assert.equal(command_button_label(64, 20), '３Ｐ・正常位');
-  // 64 本尊不走合成臂（L_I == 64）
+  // 64 本尊不走合成分支（L_I == 64）
   assert.equal(command_button_label(64, 64), '３Ｐ');
 });
 
-test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 实证形态）', async () => {
+test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 实证样式）', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
   const { train_name_init } = fixture.load_module('system/train/train-name');
@@ -508,7 +501,7 @@ test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 
   const { emit } = load_page(fixture);
   train_name_init();
 
-  // 测试内注册 CASE 8 形状的升格规则（#213 骨架态零生产规则；J9 落地真
+  // 测试内注册 CASE 8 形状的升格规则（#213 骨架态零生产规则；J9 实现真
   // 规则时本用例按新语义改读生产规则）
   adv_com_family.register(8, async () => (era_flag.prevcom === 8 ? 84 : 8));
 
@@ -518,7 +511,7 @@ test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 
   const button = fixture.lines.find(
     (l) => l.type === 'button' && l.accelerator === 8,
   );
-  // （train-upgrade-log:348 实证形态：名字用升格 id、编号用位次）
+  // （train-upgrade-log 实证：名字用升格 id、编号用位次）
   assert.deepEqual([button.accelerator, button.text], [8, '刺激Ｇ点']);
 });
 
@@ -538,7 +531,7 @@ test('按钮白名单：子菜单按钮驱动输入必须可送达（#130 的夹
   }
 });
 
-// —— @P_C 与「上次的调教指令」行（#212：TSTR:90 承载，TRAIN_MAIN.ERB:771-780）——
+// —— p_c 与「上次的调教指令」行（#212：TSTR:90 承载）——
 
 /** 预置 prevcom 后绘制指令菜单，返回「上次的调教指令」行文本与 tstr:90 */
 async function draw_with_prevcom(fixture, prevcom) {
@@ -553,7 +546,7 @@ async function draw_with_prevcom(fixture, prevcom) {
   return { line, tstr: fixture.store.get('tstr:90') };
 }
 
-test('@P_C 第一级：静态名表命中 → TSTR:90 = TRAINNAME', async () => {
+test('p_c 第一级：静态名表命中 → TSTR:90 = TRAINNAME', async () => {
   const fixture = create_era_fixture();
   // traincommandname:12（振动杖，yml/TrainCommand.yml 的静态名）
   fixture.store.set('traincommandname:12', '振动杖');
@@ -562,7 +555,7 @@ test('@P_C 第一级：静态名表命中 → TSTR:90 = TRAINNAME', async () => 
   assert.equal(line, '＜上次的调教指令：振动杖＞');
 });
 
-test('@P_C 第二级：静态名空 → TRAIN_NAME 定制名（trainalias 覆盖层）', async () => {
+test('p_c 第二级：静态名空 → TRAIN_NAME 定制名（trainalias 覆盖层）', async () => {
   const fixture = create_era_fixture();
   // 999 不是静态表编号：traincommandname 未播种 → 回落 trainalias
   fixture.store.set('trainalias:999', '自定义名');
@@ -571,10 +564,10 @@ test('@P_C 第二级：静态名空 → TRAIN_NAME 定制名（trainalias 覆盖
   assert.equal(line, '＜上次的调教指令：自定义名＞');
 });
 
-test('@P_C 第三级：两级皆空 → 全角空格占位（STRLENSU ≥ 1）', async () => {
+test('p_c 第三级：两级皆空 → 全角空格占位（非空占位）', async () => {
   const fixture = create_era_fixture();
   const { line, tstr } = await draw_with_prevcom(fixture, 998);
-  assert.equal(tstr, '　', '第三级回落必须落全角空格占位（STRLENSU >= 1）');
+  assert.equal(tstr, '　', '第三级回落必须落全角空格占位（非空）');
   assert.equal(line, '＜上次的调教指令：　＞');
 });
 

@@ -1,23 +1,23 @@
 /**
- * @file 示众台 @PILLORY（issue #400 / N16）。
+ * @file 示众台 pillory（issue #400 / N16）。
  *
- * 调用点 EVENT_NEXTDAY.ERB:135（每角色每日、在日循环的角色事件段内）——
+ * 调用点 event-nextday.js 的角色事件段（每角色每日）——
  * `ere/event/event-nextday.js` 的 run_event_nextday 逐角色调用本函数。
- * 单独成文件是因为 §949 行里绝大部分是**文本表**（涂鸦、素质台词、叙述），
- * 与主文件的判定逻辑不同类；追溯锚在 tools/trace-refs/event-nextday.mjs。
+ * 单独成文件是因为行里绝大部分是**文本表**（涂鸦、素质台词、叙述），
+ * 与主文件的判定逻辑不同类。
  *
  * 移植说明：
  *   - 状态门：`CFLAG:1 != 8`（示众台状态以外）即早退；
  *   - 使用次数（COUNT_F/A/B/V/S/Z）是 #DIM 局部量，按 JS 局部处理；
  *     `RAND:N` 一律经形参注入（缺省 Math.random，测试注入定值序）；
  *   - 涂鸦与台词的 SELECTCASE 一律按表驱动（同一维度一条表），表序即 CASE 序；
- *   - `LOCALS`（局部字符串）跨「职业十连」与尾部 SELECTCASE 使用（原作靠
+ *   - `LOCALS`（局部字符串）跨「职业十连」与尾部 SELECTCASE 使用（靠
  *     LOCAL/LOCALS 这两个内建局部量传递），此处落一个 JS 局部变量；
- *   - `%SHE()%` 是招式函数（男人→他 / 其余→她，魔改新增/文本校正.ERB 的三行
- *     纯函数，随本票内联）；
- *   - 跨边：`CALL CAMPAIGN_EXP_PILLORY`（:2390）真身未交付 → 存根 + 登记；
- *     `CALL IN_VAGINA_SYOKU_TO_T` / `CONCEPTION_CHECK_SYOKU_TO_T`（:2421/:2422）
- *     在 ere/event/event-pregnancy.js 已有真身 → 直接调用（#400 接线）。
+ *   - `%SHE()%` 是招式函数（男人→他 / 其余→她；文本校正的
+ *     纯函数，随这张工单内联）；
+ *   - 跨边：`CALL CAMPAIGN_EXP_PILLORY` 真身未交付 → 存根 + 登记；
+ *     `CALL IN_VAGINA_SYOKU_TO_T` / `CONCEPTION_CHECK_SYOKU_TO_T`
+ *     在 ere/event/event-pregnancy.js 已有真身 → 直接调用（#400 接入）。
  */
 
 'use strict';
@@ -33,7 +33,7 @@ const {
   in_vagina_syoku_to_t,
 } = require('#/event/event-pregnancy');
 
-/** 原作 RAND:N（0..N-1）的缺省随机源 */
+/** 随机源（[0,n) 整数）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -130,13 +130,13 @@ const BEAST_USERS = [null, '魔兽', '猪', '小马', '狗'];
 const HUMAN_USERS = [null, '魔族男人', '暗精灵的少年', '下等恶魔', '兽人'];
 
 /**
- * @PILLORY（:1465-2426）：示众台的每日凌辱结算。
+ * pillory：示众台的每日凌辱结算。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 恒 0（原作 :2419-2426 `RETURN 0`）
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 恒 0
  */
 async function pillory(rand = default_rand) {
-  const cid = era_flag.target; // 原作隐式 TARGET
+  const cid = era_flag.target; // 隐式指向 TARGET
   if ((era.get(`cflag:${cid}:1`) || 0) !== 8) {
     return 0; // 晒し台状態以外は除外
   }
@@ -522,12 +522,12 @@ async function pillory(rand = default_rand) {
   if (cflag(661) > 29) era.print('『突破三十！！』');
   if (cflag(661) > 49) era.print('『祝贺！达成了五十！！！』');
   if (cflag(661) > 99) era.print('『正字写太多了，有点恶心』');
-  // 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来
+  // 的 PRINTL 只结束上面那一串 `PRINT 『…』` 拼起来
   // 的一行（PRINT 不换行），**不是空行**（#597）。ere 侧每段涂鸦各自一次
-  // print，「同一条涂鸦行被拆成多行」是既有记名差异（不在本票范围）
+  // print，「同一条涂鸦行被拆成多行」是既有写法差异（不在这张工单范围）
   era.print(`${name}被各种侮辱的涂鸦写在身上了……`);
   await era.waitAnyKey(); // WAIT
-  era.print(''); // 真空行：2129 行的 PRINTFORML 已收尾（2133 行的 PRINTL 落在空行上）
+  era.print(''); // 空行
 
   // 侵犯叙述（兽奸 / A&V / A / 其余四支）
   const user_name = BEAST_USERS[user] ?? BEAST_USERS[4];
@@ -544,7 +544,7 @@ async function pillory(rand = default_rand) {
     }
   } else if (count_a > 0 && count_v > 0) {
     era.print(`被拘束着的${name}，抬起了屁股，被${human_name}侵犯着。`);
-    // 高姿态之类时换成「猪」的名字表（原作 SIF TALENT:143 → USER = 2）
+    // 高姿态之类时换成「猪」的名字表（按 TALENT:143 → USER = 2）
     const ranked = talent(143) ? 2 : user;
     const partner = HUMAN_USERS[ranked] ?? HUMAN_USERS[4];
     if (ranked === 1) {
@@ -682,7 +682,7 @@ async function pillory(rand = default_rand) {
     `${name}的身体，被弄了${cflag(661) + cflag(662) + cflag(663) + cflag(664) + cflag(665)}次，精液流得到处都是……`,
   );
 
-  // 战役经验结算（CAMPAIGN_EVENT.ERB:284-300，#469 起真身）：全体
+  // 战役经验结算（#469 起真身）：全体
   // 派遣中（CFLAG:1 == 12）的角色按本次示众台平均凌辱次数获得战斗经验
   if (era_flag.hero_campaign_active >= 1) {
     const exp_gain =
@@ -695,13 +695,13 @@ async function pillory(rand = default_rand) {
       }
     }
     era.print(`通过榨取攻略中的奴隶的能量获得了${exp_gain}点经验值`);
-    // 原作 :298 是 PRINTFORMW（自带等待），调用点 :2392 另有一个 WAIT——
+    // 上一行自带等待，调用点另有一个等待——
     // 两次等键都要还原，少一次玩家就少一次确认
     await era.waitAnyKey();
   }
   await era.waitAnyKey(); // WAIT
 
-  // 精神达到极限则解放（第二支判据被第一支吞掉，不可达，照写）
+  // 精神达到极限则解放（第二支条件被第一支吞掉，不可达，照写）
   if ((era.get(`juel:${cid}:100`) || 0) > 120 + cflag(9) * 40) {
     era.print(`${name}的精神达到极限了……`);
     await era.printAndWait('*从示众台解放*');
@@ -721,7 +721,7 @@ async function pillory(rand = default_rand) {
   }
 
   if (count_v > 0) {
-    // 妊娠チェック（被调方是 #401 交付的真身，本票接线）
+    // 妊娠チェック（被调方是 #401 交付的真身，这张工单接入）
     chara(cid).dungeon.怪物膣内射精 += count_v; // CFLAG:107 += COUNT_V
     in_vagina_syoku_to_t(rand);
     conception_check_syoku_to_t(rand);

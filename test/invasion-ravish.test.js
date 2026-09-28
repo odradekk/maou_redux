@@ -2,15 +2,15 @@
  * ere/invasion/invasion-ravish.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
- *   1. 分发层（:13-64）：三列各抽一个怪物（X = (RAND:9+1)*10+100+RAND:5）、
- *      MONSTER_DATA 写列、按凌辱类型（E:列头+7）调旁白、每列末尾一行空行。
- *      怪物 110 = 兽人（凌辱类型 1，ere/data/monster-database.js 的 @ORC），
- *      用 knob 把 X 定到 110、item:110 置 1 只，即可让三列都走 @ORC_INV。
+ *   1. 分发层：三列各抽一个怪物（X = (RAND:9+1)*10+100+RAND:5）、
+ *      monster_data 写列、按凌辱类型（E:列头+7）调旁白、每列末尾一行空行。
+ *      怪物 110 = 兽人（凌辱类型 1，ere/data/monster-database.js 的 110 号条目），
+ *      用 knob 把 X 定到 110、item:110 置 1 只，即可让三列都走 orc_inv。
  *   2. 旁白层：12 个函数各自「战场表 5 档 + ELSE」× 「随机分支 × 侵攻点
- *      门槛」。战场表用 ELSE 臂的探针行逐个断言（area 1-5 与 6 的回落），
+ *      门槛」。战场表用 ELSE 分支的探针行逐个断言（area 1-5 与 6 的回落），
  *      随机分支与嵌套门槛用表驱动逐条给值。
  *
- * knob 缺省返回 1：所有 `== 0` 的守卫都不命中、`> N` 门槛一律要显式给点。
+ * knob 缺省返回 1：所有 `== 0` 的检查都不命中、`> N` 门槛一律要显式给点。
  *
  * **战场表是手抄的**：#470 独立审查抓到一处「龙族女神官 → 龙族神官」的抄漏，
  * 而期望值也手抄同一份、两侧同步错，测试照样绿。改称呼表时逐字核一遍
@@ -23,7 +23,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** 按上界取值的确定性随机源（缺省 1 = 所有 `RAND:N == 0` 守卫不命中） */
+/** 按上界取值的确定性随机源（缺省 1 = 所有 `RAND:N == 0` 检查不命中） */
 function knob(overrides = {}) {
   return (n) => {
     const value = overrides[n] ?? 1;
@@ -47,7 +47,7 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
   fixture.store.set('itemname:110', '兽人');
   const mod = fixture.load_module('invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
-  assert.equal(r, 0, '原作 :66 RETURN 0');
+  assert.equal(r, 0, '恒 return 0');
 
   // X = (RAND:9 + 1) * 10 + 100 + RAND:5 = 110 → 三列同怪
   for (const top of [0, 100, 200]) {
@@ -59,24 +59,21 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
   assert.equal(
     texts.filter((line) => line === '兽人的凌辱开始了。').length,
     3,
-    '%ITEMNAME:ID%的凌辱开始了。每列一次（:24）',
+    '%ITEMNAME:ID%的凌辱开始了。每列一次',
   );
-  // 侵攻点 0 → 兽人的第一臂（sinkou > 1）不走，knob 又让其余守卫全落空 → ELSE
-  assert(
-    texts.includes('「新人，就在里面！」'),
-    '凌辱类型 1 → @ORC_INV（:26-28）',
-  );
+  // 侵攻点 0 → 兽人的第一分支（sinkou > 1）不走，knob 又让其余检查全落空 → ELSE
+  assert(texts.includes('「新人，就在里面！」'), '凌辱类型 1 → orc_inv');
   assert.equal(
     texts.filter((line) => line === '').length,
     3,
-    ':63 PRINTL 每列一行空行',
+    'PRINTL 每列一行空行',
   );
 });
 
 test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场行、也不调旁白', async () => {
   const fixture = create_era_fixture();
   // 不持有 110 → MONSTER_DATA 的「全滅」早退把它换成 190 骷髅（凌辱类型 0），
-  // 本用例覆盖的就是这条回退路径；就地清零守卫在 ere 侧不可达（依据见
+  // 本用例覆盖的就是这条回退路径；就地清零检查在 ere 侧不可达（依据见
   // invasion-ravish.js 文件头），没有用例守着它。
   const mod = fixture.load_module('invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
@@ -90,7 +87,7 @@ test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场�
   assert(!texts.includes('「新人，就在里面！」'), '也不调任何旁白');
 });
 
-test('分发：侵攻点 ÷5000 归一（:10）——门槛按归一后的档位开合', async () => {
+test('分发：侵攻点 ÷5000 归一——门槛按归一后的档位开合', async () => {
   const make = () => {
     const fixture = create_era_fixture();
     fixture.store.set('item:110', 1);
@@ -99,20 +96,20 @@ test('分发：侵攻点 ÷5000 归一（:10）——门槛按归一后的档位
   };
   const arm_line = '被亚人群所包围的女骑士的部队、被迫做出了决断';
 
-  // 10000 / 5000 = 2 > 1 → 兽人第一臂
+  // 10000 / 5000 = 2 > 1 → 兽人第一分支
   const yes = make();
   await yes
     .load_module('invasion/invasion-ravish')
     .invasion_ryouzyoku(1, 10000, knob({ 9: 0, 5: 0 }));
   assert(yes.text_lines().includes(arm_line), '10000 → 2 档，跨过 > 1');
 
-  // 4999 / 5000 = 0（整数除算）→ 档位不到，第一臂不走
+  // 4999 / 5000 = 0（整数除算）→ 档位不到，第一分支不走
   const no = make();
   await no
     .load_module('invasion/invasion-ravish')
     .invasion_ryouzyoku(1, 4999, knob({ 9: 0, 5: 0 }));
   assert(!no.text_lines().includes(arm_line), '4999 → 0 档');
-  assert(no.text_lines().includes('「新人，就在里面！」'), '落 ELSE 臂');
+  assert(no.text_lines().includes('「新人，就在里面！」'), '落 ELSE 分支');
 });
 
 // —— 2. 旁白层的战场表（5 档 + ELSE 回落）——
@@ -273,7 +270,7 @@ const AREA_PROBES = [
   ],
 ];
 
-/** 每个函数「跑遍全部分支」要用的 knob 集合（空对象 = ELSE 臂） */
+/** 每个函数「跑遍全部分支」要用的 knob 集合（空对象 = ELSE 分支） */
 const BRANCH_KNOBS = {
   orc_inv: [
     { 5: 0 },
@@ -309,7 +306,7 @@ test('战场表：12 个旁白函数的 area 1-5 与 ELSE 回落逐个可区分'
 });
 
 test('战场表逐格：每一格都出现在该战场的输出里（防手抄漏字）', async () => {
-  // 上面那条探针每个函数只够得着一格（ELSE 臂用的那个字母）；#470 审查抓到
+  // 上面那条探针每个函数只够得着一格（ELSE 分支用的那个字母）；#470 审查抓到
   // 的「龙族女神官 → 龙族神官」正落在够不着的格上。这里把该函数所有分支
   // （侵攻点给满 7，让嵌套门槛也开）的输出并起来，逐格点名。
   for (const [name, , areas] of AREA_PROBES) {
@@ -333,7 +330,7 @@ test('战场表逐格：每一格都出现在该战场的输出里（防手抄�
 
 // —— 3. 随机分支与侵攻点门槛 ——
 
-test('随机分支：12 个函数的第一臂、后续臂与 ELSE 逐条可区分', async () => {
+test('随机分支：12 个函数的第一分支、后续分支与 ELSE 逐条可区分', async () => {
   const cases = [
     // [函数名, 覆盖 knob, 侵攻点, 命中行]
     ['orc_inv', { 5: 0 }, 2, '被亚人群所包围的女骑士的部队、被迫做出了决断'],
@@ -460,7 +457,7 @@ test('随机分支：12 个函数的第一臂、后续臂与 ELSE 逐条可区�
       0,
       '年轻的女战士投降了，当然魔王军可不接受人类的法律。',
     ],
-    // 女 / 兽 / 脑奸 / 马的第一臂没有侵攻点门槛（:626/:681/:721/:768）
+    // 女 / 兽 / 脑奸 / 马的第一分支没有侵攻点门槛
     ['girl_inv', { 3: 0 }, 0, '据点被攻陷，女司令官成功地突围逃命，不过'],
     ['girl_inv', { 3: 1, 2: 0 }, 0, '前线的女司令官和秘书一起被抓住了。'],
     ['girl_inv', { 3: 1, 2: 1 }, 0, '『舔…呃呃…舔…』'],
@@ -587,10 +584,10 @@ test('侵攻点门槛：嵌套的两档在边界两侧各自开合', async () =>
   }
 });
 
-// —— 4. @IVY_INV 的天神宫档（战场表第二臂） ——
+// —— 4. ivy_inv 的天神宫档（战场表第二分支） ——
 
-test('@IVY_INV 的战场表：天神宫（5）有专属称呼（十字军/十字军军官），未知道场落 ELSE', async () => {
-  // 战场表第二臂按天神宫（5）取称呼，与相邻表格的 5 档命名一致；未知道场
+test('ivy_inv 的战场表：天神宫（5）有专属称呼（十字军/十字军军官），未知道场落 ELSE', async () => {
+  // 战场表第二分支按天神宫（5）取称呼，与相邻表格的 5 档命名一致；未知道场
   // （如 6）仍落 ELSE 拿人间界的名字。
   const fixture = create_era_fixture();
   const lines = await run_plain(fixture, 'ivy_inv', 5, 0, knob());

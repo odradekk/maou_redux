@@ -5,9 +5,10 @@
  * 不断言模块内部辅助函数。一行 = 网格的两个格（编号按钮格 + 正文文本格，
  * 共享同一 row 号）；断言按行取格拼接。
  *
- * 维度型判据一律表驱动走完整维度（覆盖面标准，阶段 5a 的实测差异所在）：
- *   - 三类分页（LIFE_LIST 全量 / ENEMY 的 CFLAG:1==2 / SALAVE 的六种状态）
- *     的判据整表走完，SALAVE 的六放行 + 七拦截逐档验证；
+ * 维度型条件一律表驱动走完整维度（覆盖面标准，阶段 5a 的实测差异所在）：
+ *   - 三类分页（life_list 全量 / life_list_enemy 的 CFLAG:1==2 /
+ *     life_list_salave 的六种状态）的条件整表走完，SALAVE 的六放行 +
+ *     七拦截逐档验证；
  *   - 行尾标签（爱慕/淫乱/未沦陷 × ☆ × 可被卖 × 可作为助手 × 虫寄生四种
  *     素质 × 妊娠 153/341/342/343 × 派遣）逐维走完；
  *   - 页数算式（MAX_PAGE_*）含整除与余数两侧边界。
@@ -73,17 +74,17 @@ function text_lines(fixture) {
   return fixture.lines.filter((l) => l.type === 'text').map((l) => l.text);
 }
 
-/** 空白折叠（定宽填充的断言看 squeeze 形态，逐字宽度另有专项用例） */
+/** 空白折叠（定宽填充的断言看 squeeze 后的结果，逐字宽度另有专项用例） */
 function squeeze(s) {
   return s.replace(/\s+/g, ' ').trim();
 }
 
 /** 定宽填充的 F(n 个空格) 写法，读用例时看得出字段宽 */
-const SP = (n) => '\u00A0'.repeat(n); // #577：对齐补位 NBSP 化后的期望形态
+const SP = (n) => '\u00A0'.repeat(n); // #577：对齐补位 NBSP 化后的期望串
 
-// —— @LIFE_LIST：表头三档（:23-32）——
+// —— life_list：表头三档 ——
 
-test('LIFE_LIST：MODE 三档表头整表驱动（0 可强化地下城 / 1 普通 / 2 无表头）', () => {
+test('life_list：MODE 三档表头整表驱动（0 可强化地下城 / 1 普通 / 2 无表头）', () => {
   // MODE 0 = 表头写「你（可强化地下城）」字面量；1（缺省）= 写魔王名；
   // 2 = 只画列表、不画表头。三档各跑一遍。
   for (const mode of [0, 1, 2]) {
@@ -108,9 +109,9 @@ test('LIFE_LIST：MODE 三档表头整表驱动（0 可强化地下城 / 1 普�
   }
 });
 
-test('LIFE_LIST：字段宽随数据变化（名字字段 = 最长名 + 8，等级右对齐取值位宽）', () => {
+test('life_list：字段宽随数据变化（名字字段 = 最长名 + 8，等级右对齐取值位宽）', () => {
   // MAX_NAME_LEN 取全体已加入角色名字的显示宽度最大值、MAX_LV_LEN 取等级
-  // 字符串长度最大值（原作 :15-21 的 MAX/STRLENS 循环）。
+  // 字符串长度最大值（对全体角色取最大）。
   const fixture = three_chara();
   fixture.store.set('cflag:1:9', 123); // 等级 123 → 宽 3
   const { life_list } = fixture.load_module('page/page-life-list');
@@ -128,11 +129,11 @@ test('LIFE_LIST：字段宽随数据变化（名字字段 = 最长名 + 8，等�
   );
 });
 
-// —— @LIFE_LIST / @LIFE_LIST_ITEM：行尾标签逐维（:46-85 / :99-139）——
+// —— life_list / life_list_item：行尾标签逐维 ——
 
-test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖 × 助手 × 虫寄生 × 妊娠 × 派遣）', () => {
+test('life_list：行尾标签按条件逐维驱动（沦陷 × ☆ × 可被卖 × 助手 × 虫寄生 × 妊娠 × 派遣）', () => {
   // 行尾 = 沦陷标签 →（无 ☆ 时 5 空格占位）→ 可被卖 → 可作为助手 →
-  // 虫寄生 → 妊娠 → 派遣，逐条判据独立开关，故整表按「本条用例期望的
+  // 虫寄生 → 妊娠 → 派遣，逐条条件独立开关，故整表按「本条用例期望的
   // 完整行尾」写（含占位空格），不做空白折叠。
   const CASES = [
     // [用例名, 预置, 期望的行尾]
@@ -148,10 +149,10 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
     ],
     ['☆ 顶掉占位空格', { 'cflag:1:700': 1 }, '<未沦陷> [☆]'],
     ['可被卖', { 'cflag:1:0': 1, 'base:1:0': 1 }, `<未沦陷>${SP(5)}[可被卖]`],
-    // CFLAG:0 == 0（未驯服）时没有 [可被卖]——判据是 > 0 而非 >= 0
+    // CFLAG:0 == 0（未驯服）时没有 [可被卖]——条件是 > 0 而非 >= 0
     ['未驯服不出可被卖', { 'cflag:1:0': 0, 'base:1:0': 1 }, `<未沦陷>${SP(5)}`],
     // CFLAG:0 == 2（助手役）同时满足『可被卖』的 CFLAG:0 > 0，两条 SIF
-    // 独立判定、tags 叠加（原作 :67-70 是两个 SIF，不是二选一）
+    // 独立判定、tags 叠加（两个 SIF 各自独立，不是二选一）
     [
       '可作为助手（同时命中可被卖）',
       { 'cflag:1:0': 2, 'base:1:0': 1 },
@@ -166,7 +167,7 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
     ['妊娠342', { 'talent:1:342': 1 }, `<未沦陷>${SP(5)}[妊娠]`],
     ['肛内妊娠343（列表版无此支）', { 'talent:1:343': 1 }, `<未沦陷>${SP(5)}`],
     ['派遣', { 'cflag:1:1': 12 }, `<未沦陷>${SP(5)}[派遣]`],
-    // 多标签叠加：次序 1:1（☆ → 可被卖 → 虫寄生 → 妊娠 → 派遣）。
+    // 多标签叠加：次序固定（☆ → 可被卖 → 虫寄生 → 妊娠 → 派遣）。
     // 可被卖要 CFLAG:1 == 0、派遣要 CFLAG:1 == 12，两者互斥，故分两条。
     [
       '全标签叠加（待机态：可被卖 + 助手）',
@@ -208,8 +209,8 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
   }
 });
 
-test('LIFE_LIST：爱慕/淫乱标签的两格内补位是 NBSP（#577 实机对齐的前置）', () => {
-  // 源里这两格（`PRINT <爱  慕>`）把标签补到 `<未沦陷>` 的 8 列，后面的
+test('life_list：爱慕/淫乱标签的两格内补位是 NBSP（#577 实机对齐的前置）', () => {
+  // 这两格（`PRINT <爱  慕>`）把标签补到 `<未沦陷>` 的 8 列，后面的
   // [☆] 一族才与未沦陷行同列；退回半角空格会被引擎合并成一格，整段左移
   const fixture = three_chara();
   fixture.store.set('talent:1:85', 1); // 爱慕
@@ -232,7 +233,7 @@ test('LIFE_LIST：爱慕/淫乱标签的两格内补位是 NBSP（#577 实机对
   );
 });
 
-test('LIFE_LIST：濒死（BASE:0 == 0）不出「可被卖 / 可作为助手」', () => {
+test('life_list：濒死（BASE:0 == 0）不出「可被卖 / 可作为助手」', () => {
   const fixture = three_chara();
   fixture.store.set('cflag:1:0', 2);
   fixture.store.set('base:1:0', 0);
@@ -241,7 +242,7 @@ test('LIFE_LIST：濒死（BASE:0 == 0）不出「可被卖 / 可作为助手」
   assert.equal(squeeze(row_text(fixture, 1)), '玛奥 LV0<未沦陷>');
 });
 
-test('LIFE_LIST：标签配色（爱慕/淫乱红、未沦陷灰、妊娠绿、派遣绿）', () => {
+test('life_list：标签配色（爱慕/淫乱红、未沦陷灰、妊娠绿、派遣绿）', () => {
   const fixture = three_chara();
   fixture.store.set('talent:1:85', 1);
   fixture.store.set('talent:1:153', 1);
@@ -275,7 +276,7 @@ test('LIFE_LIST：标签配色（爱慕/淫乱红、未沦陷灰、妊娠绿、�
   );
 });
 
-test('LIFE_LIST：无 ☆ 时留 5 空格占位、有 ☆ 时占位消失（:62-66）', () => {
+test('life_list：无 ☆ 时留 5 空格占位、有 ☆ 时占位消失', () => {
   // 占位空格插在沦陷标签之后、其余标签之前（对照两行并存逐字比对）
   const fixture = three_chara();
   fixture.store.set('cflag:2:700', 1);
@@ -293,9 +294,9 @@ test('LIFE_LIST：无 ☆ 时留 5 空格占位、有 ☆ 时占位消失（:62-
   );
 });
 
-test('LIFE_LIST：窗口只含本页，空位补空行（:34-38）', () => {
+test('life_list：窗口只含本页，空位补空行', () => {
   // 四人档（魔王 + 三名奴隶）、每页 2 行：第 0 页两行、第 1 页一行 + 一个
-  // 空位（原作 `COUNT >= CHARANUM → PRINTL` 支）
+  // 空位（列表不足一页时补满空行）
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '玛奥');
@@ -320,9 +321,9 @@ test('LIFE_LIST：窗口只含本页，空位补空行（:34-38）', () => {
   );
 });
 
-// —— @LIFE_LIST_ITEM / @LIFE_LIST_ITEM_E（:95-141 / :214-276）——
+// —— life_list_item / life_list_item_e ——
 
-test('LIFE_LIST_ITEM：定宽字段逐字比对（编号宽 2 / 名字 12 / 职业 8 / 等级 4）', () => {
+test('life_list_item：定宽字段逐字比对（编号宽 2 / 名字 12 / 职业 8 / 等级 4）', () => {
   const fixture = three_chara();
   fixture.store.set('cflag:2:0', 1);
   fixture.store.set('base:2:0', 1);
@@ -339,8 +340,8 @@ test('LIFE_LIST_ITEM：定宽字段逐字比对（编号宽 2 / 名字 12 / 职�
   );
 });
 
-test('LIFE_LIST_ITEM：0 号（魔王）不出「可被卖 / 可作为助手」', () => {
-  // 的 `ARG != 0` 判据——列表版的行永远非 0，这条只在单项版可达
+test('life_list_item：0 号（魔王）不出「可被卖 / 可作为助手」', () => {
+  // 单项版的 ARG != 0 条件——列表版的行永远非 0，这条只在单项版可达
   const fixture = three_chara();
   fixture.store.set('cflag:0:0', 2);
   fixture.store.set('base:0:0', 1);
@@ -349,11 +350,11 @@ test('LIFE_LIST_ITEM：0 号（魔王）不出「可被卖 / 可作为助手」'
   assert.equal(
     row_text(fixture, 0),
     `你${SP(10)}  ${SP(7)} LV${SP(3)}0<未沦陷>${SP(5)}`,
-    '魔王不出可卖/助手标签（:121/:123 的 ARG != 0）',
+    '魔王不出可卖/助手标签（ARG != 0）',
   );
 });
 
-test('LIFE_LIST_ITEM_E：调教回数 / 种族性格 / 性别三列（:216-244）', () => {
+test('life_list_item_e：调教回数 / 种族性格 / 性别三列', () => {
   const fixture = three_chara();
   fixture.store.set('talent:1:314', 2); // 种族 = 狼人
   fixture.store.set('cflag:1:10', 5); // 调教回数
@@ -365,12 +366,12 @@ test('LIFE_LIST_ITEM_E：调教回数 / 种族性格 / 性别三列（:216-244�
   assert.equal(
     row_text(fixture, 1),
     // 种族性格字段宽 20 按显示宽度填充：`[狼人 - 不明]` 显示宽 13 → 补 7
-    // 性别行照原作 PRINT 的两格字面量：男/女 前各两格（:239/:243），扶她无
+    // 性别行的两格字面量：男/女 前各两格，扶她无
     `玛奥${SP(8)}  ${SP(7)} LV${SP(3)}3${SP(2)}调教回数:5${SP(2)} [狼人 - 不明]${SP(7)}<未沦陷>${SP(2)}<女>`,
   );
 });
 
-test('LIFE_LIST_ITEM_E：性别三态表驱动（男/扶她/女）', () => {
+test('life_list_item_e：性别三态表驱动（男/扶她/女）', () => {
   const CASES = [
     [{ 'talent:1:122': 1 }, '<男>'],
     [{ 'talent:1:121': 1 }, '<扶她>'],
@@ -392,8 +393,8 @@ test('LIFE_LIST_ITEM_E：性别三态表驱动（男/扶她/女）', () => {
   }
 });
 
-test('LIFE_LIST_ITEM_E：妊娠段多一支 343 → [肛内妊娠]（:264-265）', () => {
-  // 列表版（@LIFE_LIST / @LIFE_LIST_ITEM）只有 [妊娠] 一支，343 不触发；
+test('life_list_item_e：妊娠段多一支 343 → [肛内妊娠]', () => {
+  // 列表版（life_list / life_list_item）只有 [妊娠] 一支，343 不触发；
   // E 版在其后多一支 343 → [肛内妊娠]，且此时不再打 [妊娠]。
   const CASES = [
     ['153 妊娠', { 'talent:1:153': 1 }, '[妊娠]'],
@@ -421,7 +422,7 @@ test('LIFE_LIST_ITEM_E：妊娠段多一支 343 → [肛内妊娠]（:264-265）
   }
 });
 
-test('LIFE_LIST_ITEM_E：☆ 无前导空格、无 ☆ 时不补占位（:246-249）', () => {
+test('life_list_item_e：☆ 无前导空格、无 ☆ 时不补占位', () => {
   const fixture = three_chara();
   const { life_list_item_e } = fixture.load_module('page/page-life-list');
   life_list_item_e(1);
@@ -429,21 +430,21 @@ test('LIFE_LIST_ITEM_E：☆ 无前导空格、无 ☆ 时不补占位（:246-24
     row_text(fixture, 1).endsWith(`<未沦陷>${SP(2)}<女>`),
     `E 版无 ☆ 支不打占位空格，实得 ${JSON.stringify(row_text(fixture, 1))}`,
   );
-  // 有 ☆：E 版的 PRINT [☆]（:248）没有前导空格，与 :63/:117 的两个旧版不同
+  // 有 ☆：E 版的 PRINT [☆] 没有前导空格，与另两个列表不同
   const starred = three_chara();
   starred.store.set('cflag:1:700', 1);
   const mod = starred.load_module('page/page-life-list');
   mod.life_list_item_e(1);
-  // 次序照原作：沦陷 → 性别（:237-244）→ ☆（:246-249）
+  // 次序：沦陷 → 性别 → ☆
   assert.ok(
     row_text(starred, 1).includes('<女>[☆]'),
-    `E 版 ☆ 紧贴且排在性别之后（:248），实得 ${JSON.stringify(row_text(starred, 1))}`,
+    `E 版 ☆ 紧贴且排在性别之后，实得 ${JSON.stringify(row_text(starred, 1))}`,
   );
 });
 
-// —— @MAX_PAGE_ENEMY / @LIFE_LIST_ENEMY（:144-176）——
+// —— max_page_enemy / life_list_enemy ——
 
-test('MAX_PAGE_ENEMY：页数算式在整除与余数两侧（含空表）', () => {
+test('max_page_enemy：页数算式在整除与余数两侧（含空表）', () => {
   const CASES = [
     // [敌人数, NUM_PAGE, 期望页数]
     [0, 20, 0],
@@ -475,7 +476,7 @@ test('MAX_PAGE_ENEMY：页数算式在整除与余数两侧（含空表）', () 
   }
 });
 
-test('LIFE_LIST_ENEMY：CFLAG:1 状态维度整表驱动（只放行 == 2）', () => {
+test('life_list_enemy：CFLAG:1 状态维度整表驱动（只放行 == 2）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   const STATES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
@@ -492,7 +493,7 @@ test('LIFE_LIST_ENEMY：CFLAG:1 状态维度整表驱动（只放行 == 2）', (
   assert.deepEqual(row_ids(fixture), [102], '只有 CFLAG:1 == 2 的一人');
 });
 
-test('LIFE_LIST_ENEMY：BASE:0 == 0（濒死）不显示', () => {
+test('life_list_enemy：BASE:0 == 0（濒死）不显示', () => {
   const fixture = three_chara();
   for (const cid of [1, 2]) {
     fixture.store.set(`cflag:${cid}:1`, 2);
@@ -504,7 +505,7 @@ test('LIFE_LIST_ENEMY：BASE:0 == 0（濒死）不显示', () => {
   assert.deepEqual(row_ids(fixture), [2]);
 });
 
-test('LIFE_LIST_ENEMY：每页上限由第 2 参决定，超出不再渲染；不补空行', () => {
+test('life_list_enemy：每页上限由第 2 参决定，超出不再渲染；不补空行', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (const cid of [1, 2, 3]) {
@@ -518,11 +519,11 @@ test('LIFE_LIST_ENEMY：每页上限由第 2 参决定，超出不再渲染；�
   assert.deepEqual(
     text_lines(fixture).filter((t) => t === ''),
     [],
-    '补齐交给调用方（1:1，本函数不补）',
+    '补齐交给调用方（本函数不补）',
   );
 });
 
-test('LIFE_LIST_ENEMY：按命中序号开窗，翻页真正翻页（第 7 条修正）', () => {
+test('life_list_enemy：按命中序号开窗，翻页真正翻页（第 7 条修正）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (const cid of [1, 2, 3, 4, 5]) {
@@ -545,9 +546,9 @@ test('LIFE_LIST_ENEMY：按命中序号开窗，翻页真正翻页（第 7 条�
   assert.deepEqual(row_ids(last), [5], '第 3 页只剩 1 行（不补空行）');
 });
 
-// —— @LIFE_LIST_SALAVE / @MAX_PAGE_SALAVE（:178-212）——
+// —— life_list_salave / max_page_salave ——
 
-test('LIFE_LIST_SALAVE：六种状态整表驱动（0/3/5/6/7/10 放行，其余不放行）', () => {
+test('life_list_salave：六种状态整表驱动（0/3/5/6/7/10 放行，其余不放行）', () => {
   const ALLOWED = [0, 3, 5, 6, 7, 10];
   const BLOCKED = [1, 2, 4, 8, 9, 11, 12];
   const fixture = create_era_fixture();
@@ -569,7 +570,7 @@ test('LIFE_LIST_SALAVE：六种状态整表驱动（0/3/5/6/7/10 放行，其余
   );
 });
 
-test('LIFE_LIST_SALAVE：濒死不列；按命中序号开窗（第 7 条修正）', () => {
+test('life_list_salave：濒死不列；按命中序号开窗（第 7 条修正）', () => {
   const fixture = three_chara();
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('cflag:2:1', 0);
@@ -591,7 +592,7 @@ test('LIFE_LIST_SALAVE：濒死不列；按命中序号开窗（第 7 条修正�
   assert.deepEqual(row_ids(second), [2], '第 2 页 = 第 2 个命中项');
 });
 
-test('MAX_PAGE_SALAVE：页数算式与 ENEMY 同构，判据换六状态', () => {
+test('max_page_salave：页数算式与 enemy 同构，条件换六状态', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (let i = 1; i <= 7; i += 1) {
@@ -607,9 +608,9 @@ test('MAX_PAGE_SALAVE：页数算式与 ENEMY 同构，判据换六状态', () =
   assert.equal(max_page_salave(20), 1, '不足一页 → 1 页');
 });
 
-// —— @SELECT_YES_NO（:278-292，既有行为随本票回归）——
+// —— select_yes_no（既有行为随这张工单回归）——
 
-test('SELECT_YES_NO：只接受 0/1，其余输入重问', async () => {
+test('select_yes_no：只接受 0/1，其余输入重问', async () => {
   const fixture = create_era_fixture();
   fixture.set_inputs(7, 2, 0);
   const { select_yes_no } = fixture.load_module('page/page-life-list');

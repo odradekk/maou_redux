@@ -1,9 +1,8 @@
 /**
- * @file 地下城卖春系统（issue #184，H15）：DUNGEON_BITCH.ERB 二十四函数
- * 中**活代码十二函数**的移植。四组同名（DUNGEON_BITCH / HEROINE_BITCH /
+ * @file 地下城卖春系统（issue #184，H15）：二十四函数中**活代码十二函数**的移植。四组同名（DUNGEON_BITCH / HEROINE_BITCH /
  * DUNGEON_ANIMAL / DUNGEON_WORK）的旧版定义全在死代码块（旧構文）里——
  * 那些函数不进入函数空间、不构成同名遮蔽（#12 仲裁的 AGENT 先例：
- * 用同一机制禁掉旧版 @CHECK_STATUS 后「不参与同名仲裁」）。SKIP 块内
+ * 用同一机制禁掉旧版 check_status 后「不参与同名仲裁」）。SKIP 块内
  * 12 个旧版函数没有任何活调用方，不移植。
  *
  * == 跨文件调用 ==
@@ -14,21 +13,24 @@
  * == 随机源 ==
  * 每个函数接受可选的 rand 参数（[0, n) 整数，缺省均匀随机），测试注入
  * 定值序固定随机分支（与 kojo-k3-noble / kojo-system 同款）。RAND:N →
- * rand_n(N)；RAND(min, max) → min + rand_n(max - min)（emuera-basic-agent-guide
- * in-expression-functions.md:96：双参数返回 [min, max)）。
+ * rand_n(N)；RAND(min, max) → min + rand_n(max - min)（双参数返回 [min, max)）。
  *
  * == 文本 ==
  *
- * 口上正文统一为简体（issue #60 的归一表裁定），新增文本受
+ * 口上正文统一为简体（issue #60 的归一表决定），新增文本受
  * tools/lang-check.js 检查。
  *
- * == #572 复核：@SET_BICH_LEVEL 的裸编号行保持纯文本 ==
+ * 一行输出的拼接：旧引擎的无后缀 PRINTFORM/PRINT 不换行，连续多段输出
+ * 拼成一条显示行，末段带 W/L 的语句才收行。本文件把同一显示行的多段
+ * 合成一条输出语句，函数内的注释只标「拼成一行：…」的段落构成。
  *
- * 源 :1176 是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
- * （等级 0-5，选中的等级由 :1188-1192 的播报补述）。按钮化要走两条路之一：
- * 拆成六条语句（保真锁 A/D 的「一条 JS 语句 ↔ 一行 PRINT」绑定不成立）或改用
+ * == #572 复核：SET_BICH_LEVEL 的裸编号行保持纯文本 ==
+ *
+ * 那一轮是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
+ * （等级 0-5，选中的等级由后续的播报补述）。按钮化要走两条路之一：
+ * 拆成六条语句（「一条 JS 语句 ↔ 一行输出」的配对纪律不成立）或改用
  * 多列网格按钮（`printMultiColumns`/`printInColRows` 的按钮格，本项目尚无
- * 先例、须先在引擎里核渲染）。本票按「其他」保留纯文本：该轮没有按钮＝引擎
+ * 先例、须先在引擎里核渲染）。这张工单按「其他」保留纯文本：该轮没有按钮＝引擎
  * 的自由输入通道，玩家键入 0-5 照常可达，丢的只是「点得动」；留给后续按
  * 界面统一处理（docs/research/plaintext-options.md 第六节）。
  */
@@ -58,7 +60,7 @@ const default_rand = (n) => Math.floor(Math.random() * n);
 const name_of = (cid) => chara_callname(cid);
 
 /**
- * @DUNGEON_BITCH（:3-50）：地下城内卖春入口。
+ * dungeon_bitch：地下城内卖春入口。
  *
  * 流程：体力/气力门槛（BASE:0 < 300 || BASE:1 < 100 → RETURN 0）→
  * FI_CULC_BITCH 算成败 → 勇者（CFLAG:1 == 2）两道额外门槛（EXP:74 非零、
@@ -129,7 +131,7 @@ async function dungeon_bitch(arg, rand = default_rand) {
 }
 
 /**
- * @HEROINE_BITCH（:53-82）：城镇（迷宫外）勇者卖春入口。
+ * heroine_bitch：城镇（迷宫外）勇者卖春入口。
  *
  * 与 DUNGEON_BITCH 同构但场所为 TOWN；额外有债务过高强制卖春
  * （CFLAG:582 < -10000 且非处女且 !RAND:3）。
@@ -184,7 +186,7 @@ async function heroine_bitch(arg, rand = default_rand) {
 }
 
 /**
- * @SELL_BITCH（:97-329）：卖春执行函数。
+ * sell_bitch：卖春执行函数。
  *
  * 流程：客数 KYAKU → 记录卖春前 EXP/JUEL/KARMA/金钱 → 客循环（每客成败
  * 判定 → 玩法抽选 FI_TRY_BITCH → 收益 PROFIT_BITCH → 经验 EXP_BITCH）→
@@ -201,7 +203,7 @@ async function heroine_bitch(arg, rand = default_rand) {
  */
 async function sell_bitch(arg, place, rand = default_rand) {
   const rand_n = rand;
-  // ERB 局部变量（#DIM，见 :98-112）：
+  // 局部变量（#DIM）：
   //   LCOUNT 循环计数；KYAKU 客数；SEIKOU/SIPPAI 成败值；PLAY[7] 各玩法
   //   次数（1-6）；MAN[6]/GIRL[6] 各客种类计数；PREV_EXP[100]/PREV_JUEL[20]
   //   卖春前快照；PREV_KARMA 善恶值快照；PREV_MONEY 金钱快照；CHECK 位记录
@@ -325,12 +327,10 @@ async function sell_bitch(arg, place, rand = default_rand) {
           );
         }
         // 的 %SAVESTR:ARG% 是这一行的前缀：
-        // - GIRL && MAN 时它与 :212 合成一条（:212 的 PRINTFORML 收行）；
-        // - 其余情况 :212 不执行、行继续到 :217，此时前缀并进 :217 那条
-        //   （前缀提到语句外共用、锚写该分支自己的行号，见 #624；只并第一支的话
-        //   其余分支上玩家仍看到两行）
-        // 前缀是「内联在 :205+:212 的拼接锚语句里」（锁 C 要求 ARGNAME、LOCALS
-        // 两个槽位按序出现），其余分支用 name_of(arg) 直接调用（不是模板槽位）。
+        // - GIRL && MAN 时它与客名合计合成一条（PRINTFORML 收行）；
+        // - 其余情况那条不执行、行继续，此时前缀并进「以 LOCALS 为对手」那条
+        //   （前缀提到语句外共用）。
+        // 前缀是「内联在收行语句的模板里」，其余分支用 name_of(arg) 直接调用（不是模板槽位）。
         if (girl[0] && man[0]) {
           era.print(`${name_of(arg)}${locals}、`);
         }
@@ -344,8 +344,8 @@ async function sell_bitch(arg, place, rand = default_rand) {
             girl[5],
           );
         }
-        // 原作是一整行：:213 的「于是」（只在 GIRL && MAN 时输出，
-        // 那时前缀已由上面那条收行）与 :217 的「以%LOCALS%为对手」都不换行（#624）
+        // 拼成一行：「于是」（只在 GIRL && MAN 时输出，
+        // 那时前缀已由上面那条收行）与「以%LOCALS%为对手」都不换行。
         await era.print(
           (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
         );
@@ -362,9 +362,8 @@ async function sell_bitch(arg, place, rand = default_rand) {
       } else {
         // 街中
         // 的 %SAVESTR:ARG% 是这一行的前缀，两条路径各并一次：
-        // - PLAY == PLAY:6 时与 :226 合成一条（拼接锚）；
-        // - 其余情况行继续，前缀并进 :232（GIRL && MAN）或 :237 那一条（锚写该
-        //   分支自己的行号，见 #624；只并第一支的话其余分支上仍看到两行）
+        // - PLAY == PLAY:6 时与兽交秀那句合成一条；
+        // - 其余情况行继续，前缀并进 GIRL && MAN 的那条或「以 LOCALS 为对手」那条。
         locals = '';
         if (play[0] === play[6]) {
           await era.printAndWait(`${name_of(arg)}进行了${play[6]}次兽交秀。`);
@@ -392,8 +391,8 @@ async function sell_bitch(arg, place, rand = default_rand) {
               girl[5],
             );
           }
-          // 原作是一整行：:233 的「于是」（只在 GIRL && MAN 时输出，
-          // 那时前缀已由上面那条收行）与 :237 的「以%LOCALS%为对手」都不换行（#624）
+          // 拼成一行：「于是」（只在 GIRL && MAN 时输出，
+          // 那时前缀已由上面那条收行）与「以%LOCALS%为对手」都不换行。
           await era.print(
             (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
           );
@@ -512,7 +511,7 @@ async function sell_bitch(arg, place, rand = default_rand) {
 }
 
 /**
- * 卖春失败/无客时的台词（:306-328 两个分档共用四支）。
+ * 卖春失败/无客时的台词（两个分档共用四支）。
  * @param {number} arg 角色 ID
  * @param {number} kyaku 客数
  * @param {boolean} has_kyaku 有客（客循环后失败）
@@ -531,8 +530,7 @@ async function fail_message(arg, kyaku, has_kyaku, no_kyaku) {
       '然而，根本没有勇气发出声音，说自己在卖春的这种事情。',
     );
   } else if (has_kyaku) {
-    // 与 :315 原作是 PRINTFORM（不换行）+ PRINTFORMW，Emuera 里同属一行；
-    // 拼接锚 :314+:315 表达「这一条语句 = 这两行构成的一行输出」（#584）
+    // 拼成一行：PRINTFORM（不换行）+ PRINTFORMW（#584）
     await era.printAndWait(
       `${kyaku}人群的声音嘈杂着、交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,
     );
@@ -542,7 +540,7 @@ async function fail_message(arg, kyaku, has_kyaku, no_kyaku) {
 }
 
 /**
- * @EXP_BITCH（:334-417）：卖春经验/点数结算。
+ * exp_bitch：卖春经验/点数结算。
  *
  * 按玩法类型分档增加 EXP/JUEL；DUNGEON 场所的倍率高于 TOWN。
  * EXP:74（卖淫经验）与 EXP:80（战斗经验）在卖春入口处另计，此处按玩法。
@@ -640,12 +638,12 @@ function exp_bitch(arg, place, type, play) {
       }
       break;
 
-    // ANIMAL 兽交奉侍（场所差异在原作注释中说明无差异）
+    // ANIMAL 兽交奉侍（各场所的描写相同）
     case 'ANIMAL':
       chara(arg).dungeon.兽奸经验 += play; // EXP:56 += PLAY（兽奸经验）
       chara(arg).dungeon.私处经验 += play; // EXP:0 += PLAY
       chara(arg).dungeon.性交经验 += play; // EXP:5 += PLAY
-      // （#212 返工修正：原作 JUEL:N 省略位 == TARGET，此处即 arg——首版
+      // （#212 返工修正：旧引擎 JUEL:N 省略位 == TARGET，此处即 arg——首版
       // 写成二段，era.add 打在「角色 1 的整行对象」上，加算从未生效）
       era.add(`juel:${arg}:1`, play * 200); // JUEL:1 += PLAY * 200
       era.add(`juel:${arg}:6`, play * 300); // JUEL:6 += PLAY * 300
@@ -658,9 +656,9 @@ function exp_bitch(arg, place, type, play) {
 }
 
 /**
- * @PROFIT_BITCH（:420-495）：卖春收益结算，返回 [客种类, 客号]。
+ * profit_bitch：卖春收益结算，返回 [客种类, 客号]。
  *
- * 返回值（原作 RESULT:0 / RESULT:1）：客种类 1=男性 / 2=女性 / 0=兽交无客；
+ * 返回值（RESULT:0 / RESULT:1）：客种类 1=男性 / 2=女性 / 0=兽交无客；
  * 客号 1-5（客种类分档）。金额按场所/身份/玩法费率计算。
  *
  * @param {number} arg 角色 ID
@@ -770,7 +768,7 @@ function profit_bitch(arg, place, type, play, rand = default_rand) {
 }
 
 /**
- * @DUNGEON_WORK（:497-516）：内职（副业）。
+ * dungeon_work：内职（副业）。
  *
  * 收入 = CFLAG:9 * 20 + 100（潜入中 CFLAG:0 == 0 时 ÷10）；FLAG:5 位 32
  * 调试位开启时显示随机副业名（PRINTDATA 随机选一）。
@@ -787,11 +785,11 @@ async function dungeon_work(arg, rand = default_rand) {
   }
   // 调试位（FLAG:5 & 32）显示随机副业名
   if (era.get('flag:5') & 32) {
-    // PRINTDATA 随机选一（提到语句外当取值，锚留在注释里）
+    // PRINTDATA 随机选一（提到语句外当取值）
     const jobs = ['研磨宝石的', '制作工艺品的', '抄写书籍的', '制作手工的'];
     const job = jobs[rand(jobs.length)]; // PRINTDATA
-    // 原作是一整行：:504 的「…从事了」、上面的随机副业名与 :511 的
-    // PRINTFORMW 收行都不换行（#624）
+    // 拼成一行：「…从事了」、随机副业名与
+    // PRINTFORMW 收行都不换行。
     await era.printAndWait(
       `${name_of(arg)}从事了` + job + `副业${local}点收入。`,
     );
@@ -802,7 +800,7 @@ async function dungeon_work(arg, rand = default_rand) {
 }
 
 /**
- * @DUNGEON_ANIMAL（:519-558）：自主兽奸。
+ * dungeon_animal：自主兽奸。
  *
  * 只在 DUNGEON 场所由 DUNGEON_BITCH 调用；PLAY 次数由 FI_CULC_BITCH 算。
  *
@@ -813,7 +811,7 @@ async function dungeon_animal(arg, rand = default_rand) {
   // PLAY（兽交次数）
   const play = fi_culc_bitch(arg, 'PLAY', 'ANIMAL', rand);
 
-  // 描写（:524 与 :525 原作 PRINTFORM + PRINTFORMW，同一行——#584）
+  // 描写（拼成一行：PRINTFORM + PRINTFORMW——#584）
   await era.printAndWait(`${name_of(arg)}无法压抑兽交的欲望悄悄寻找着兽穴...`);
   // PRINTFORMW %SAVESTR:ARG%进入了野兽的巢穴…
   await era.printAndWait(
@@ -860,7 +858,7 @@ async function dungeon_animal(arg, rand = default_rand) {
 }
 
 /**
- * @SELF_BITCH（:560-670）：自慰。
+ * self_bitch：自慰。
  *
  * 妄想对象分档（レズ/兽/主人/梦中/克制），PLAY 次数由 FI_CULC_BITCH 算。
  *
@@ -877,8 +875,8 @@ async function self_bitch(arg, place, rand = default_rand) {
 
   // 妄想对象分档（调教后自慰的妄想对象）
   // レズ（无爱慕且百合气质 > RAND:5）
-  // 分档的文本与 :634 的追加、:637 的收行同属一行（:571..:637 之间只有
-  // PRINTDATA 块，不是 PRINT 行）——:571/:575 的字面量留在输出语句里，
+  // 分档的文本与追加、收行同属一行（中间的 PRINTDATA 块不是 PRINT 行）——
+  // 字面量留在输出语句里，
   // PRINTDATA 的随机词条提到语句外当取值，RAND 抽数在条件与语句内惰性消费（#624）
   let branch = 0;
   let dream = '';
@@ -954,8 +952,8 @@ async function self_bitch(arg, place, rand = default_rand) {
     local = 5;
   }
 
-  // 原作是一整行：分档文本（:571/:575 或上面的 PRINTDATA 词条）
-  // + :634 的扶她/男人追加 + :637 的 PRINTFORMW 收行（#624）
+  // 拼成一行：分档文本（或 PRINTDATA 词条）
+  // + 扶她/男人追加 + PRINTFORMW 收行。
   const has_cock =
     era.get(`talent:${arg}:121`) === 1 ||
     era.get(`talent:${arg}:122`) === 1 ||
@@ -1005,7 +1003,7 @@ async function self_bitch(arg, place, rand = default_rand) {
 }
 
 /**
- * @FI_TRY_BITCH（:673-723）：卖春玩法抽选函数（#FUNCTION，返回玩法号）。
+ * fi_try_bitch：卖春玩法抽选函数（#FUNCTION，返回玩法号）。
  *
  * 返回值：0=失败, 1=HAND, 2=ORAL, 3=LES, 4=ANAL, 5=SEX, 6=ANIMAL。
  * 按场所（TOWN 7 种 / DUNGEON 6 种无 SELF）累计概率权重，再按随机数落点。
@@ -1060,7 +1058,7 @@ function fi_try_bitch(arg, place, rand = default_rand) {
     }
   }
 
-  // 权重非正时兜底为 1（保证随机落点不越界）
+  // 权重非正时缺省置 1（保证随机落点不越界）
   if (play[0] <= 0) {
     play[0] = 1;
   }
@@ -1077,7 +1075,7 @@ function fi_try_bitch(arg, place, rand = default_rand) {
 }
 
 /**
- * @FI_CULC_BITCH（:727-1148）：卖春相关判定函数（#FUNCTION）。
+ * fi_culc_bitch：卖春相关判定函数（#FUNCTION）。
  *
  * 按 ARGS 分档（"SIPPAI"/"SEIKOU"/"KYAKU"/"ABLE"/"PLAY"/"KAKURITU"/"RATE"）
  * 返回判定值。ARGS:1 是场所（"TOWN"/"DUNGEON"）或玩法名。
@@ -1654,28 +1652,28 @@ function fi_culc_bitch(arg, args, args1 = '', rand = default_rand) {
 }
 
 /**
- * @SHOW_BUTTON_BICH_LEVEL（:1150-1170）：角色能力显示中的卖春积极性按钮。
+ * show_button_bich_level：角色能力显示中的卖春积极性按钮。
  *
- * 显示 `[NUM] 卖春积极性 - 没有/普通/N等级`。原作此按钮在 CHARA_INFO
- * ver1.0.1.ERB:882 被注释（卖春积极性改走 PTJ_BUTTON），本函数保留供
- * MOD/PartTimeJob/PTJ.ERB 使用。
+ * 显示 `[NUM] 卖春积极性 - 没有/普通/N等级`。此按钮在角色信息页被注释
+ * （卖春积极性改走 PTJ_BUTTON），本函数保留给
+ * 打工 MOD 使用。
  *
  * @param {number} num 按钮数值
  * @param {number} arg 角色 ID
  */
 function show_button_bich_level(num, arg) {
-  // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-  // 不换行，档位文案由 IF/ELSEIF/ELSE 三档拼进来。末段 :1167 的 `PRINT  `
-  // 关键字后只有空白，参数为空（不输出字符），因此只进锚、不加文本（#600）
+  // 拼成一行：无后缀 PRINTFORM/PRINT 连续
+  // 不换行，档位文案由 IF/ELSEIF/ELSE 三档拼进来。末段的 `PRINT  `
+  // 关键字后只有空白，参数为空（不输出字符），因此不加文本。
   const level = bich_level_text(arg); // 三档
   era.print(`[${num}] 卖春积极性 - ${level}`);
   return 0;
 }
 
 /**
- * 卖春积极性按钮的档位文案（SHOW_BUTTON_BICH_LEVEL 的 :1160-1164 段）。
+ * 卖春积极性按钮的档位文案（SHOW_BUTTON_BICH_LEVEL 段）。
  * #542 起另一处在 ere/page/page-chara-info.js——PTJ_BUTTON 的默认态分支
- * （打工 MOD 判不移植，PTJ.ERB:5 的 ELSE 就是本按钮）按本页通例升级成
+ * （打工 MOD 判不移植，其默认分支就是本按钮）按本页通例升级成
  * printButton，按钮正文共用这份档位文案。
  * @param {number} arg 角色 ID
  * @returns {string}
@@ -1692,9 +1690,9 @@ function bich_level_text(arg) {
 }
 
 /**
- * @SET_BICH_LEVEL（:1172-1196）：设置卖春积极性。
+ * set_bich_level：设置卖春积极性。
  *
- * 原作经 INPUT 读键（[0]-[5]），输入无效（< 0 或 > 5）直接返回。
+ * 经 INPUT 读键（[0]-[5]），输入无效（< 0 或 > 5）直接返回。
  *
  * @param {number} arg 角色 ID
  */

@@ -1,26 +1,26 @@
 /**
- * @file 素质达成条件的明细画面（@SHOW_TALENT_CONDITION 与 19 个 STC_* 辅助）。
+ * @file 素质达成条件的明细画面（show_talent_condition 与 19 个 stc_* 辅助）。
  *
- * **这个文件的唯一调用方是 CHARA_INFO_SHOW**（:252 与 :300 两处），所以它与
- * 那个文件同票——拆开会让一张票交付一个没人调的文件（#390 的立项理由）。
+ * **这个文件的唯一调用方是 show_chara_info**（page-chara-info-show.js），所以
+ * 它与那个文件同一张工单——拆开会让一张工单交付一个没人调的文件（#390 的
+ * 立项理由）。
  *
- * 版面由黄金样本钉死（daycycle-max-log:203-222，勇者考狄利亚的整屏）：
+ * 版面由黄金样本钉死（勇者考狄利亚的整屏）：
  *   `爱慕条件： [好感度 100%]  [顺从   Lv3]   [侍奉精神 Lv3] …`
  * 用例逐字复现那 19 行。
  *
- * **`@STC_PRINTC` 的补位长度按 Shift-JIS 字节算**（`:415 STRLENS`）：全角 2、
- * 半角 1（含方括号本身）——`[好感度 100%]` 是 13 字节，补到 15 得 2 个空格，
- * 与黄金样本一致；按字符数算会得到 5 个空格。等价物就是 display-width 的
- * `display_width`（同一把尺子）。
+ * **stc_printc 的补位长度按 Shift-JIS 字节算**：全角 2、半角 1（含方括号
+ * 本身）——`[好感度 100%]` 是 13 字节，补到 15 得 2 个空格，与黄金样本一致；
+ * 按字符数算会得到 5 个空格。等价物就是 display-width 的 `display_width`
+ * （同一把尺子）。
  *
  * 有意偏离：
- *   - `SETCOLOR`/`RESETCOLOR` 的有状态配色按「每个片段自带色」承载
+ *   - 染色/复位的有状态配色按「每个片段自带色」承载
  *     （look.js 的 Spans、equip-print.js 的两种出口同款）；补位空格与被补的
- *     文本同色（源里 RESETCOLOR 在 STC_PRINTC 之后），`STC_COLOR_DEFAULT` 与
- *     `RESETCOLOR` 都是「不染」，落成不写 color；
- *   - `PRINT_IMG "COVER_WHITE"`（:176/:212/:238/:256）改用引擎的
- *     `era.printImage`（res/img.csv:15 已登记该资源）；源在四处后面各跟一个
- *     `PRINTL`（:178/:214/:240/:258），图片出口自带换行，故不再补。
+ *     文本同色（复位本来就在补位输出之后），`COLOR.default` 与复位一样
+ *     都是「不染」，实现为不写 color；
+ *   - 封面图改用引擎的 `era.printImage`（res/img.csv 已登记该资源）；
+ *     源在四处图片后面各跟一个收行输出，图片出口自带换行，故不再补。
  */
 
 const era = require('#/era-electron');
@@ -33,10 +33,10 @@ const {
   slice_display,
 } = require('#/utils/display-width');
 
-/** `@STC_PRINTC` 的缺省列宽（源 :414 `ARG = 15`） */
+/** stc_printc 的缺省列宽（15） */
 const STC_PRINT_WIDTH = 15;
 
-/** 七个 @STC_COLOR_*（源 :585-606）的色串；DEFAULT 是 RESETCOLOR = 不染 */
+/** 七个配色档的色串；default 档是「不染」 */
 const COLOR = {
   true: 'White', // SETCOLORBYNAME White
   false: 'Gray', // SETCOLORBYNAME Gray
@@ -53,9 +53,9 @@ const TALENT_INRAN = 76; // 淫乱
 const TALENT_AIBA = 85; // 爱慕
 const TALENT_MAN = 122; // 男人
 const TALENT_LABEL_LIMIT = 4; // 名字 4 字节以下才补「条件」/「素质」二字
-const TALENT_FAMILY_GUARD = 184; // 挡掉爱慕条件行的第二判据（:40）
+const TALENT_FAMILY_GUARD = 184; // 挡掉爱慕条件行的第二个条件
 
-/** STC_* 实参用到的素质编号（名字表见 yml/Talent.yml） */
+/** stc_* 实参用到的素质编号（名字表见 yml/Talent.yml） */
 const T_LEARN_SLOW = 51; // 学习缓慢
 const T_LICK = 52; // 擅用舌头
 const T_MASTURBATE = 74; // 自慰狂
@@ -79,8 +79,8 @@ const T_LIKE_SPERM = 47; // 喜欢精液
 const T_EXPERIENCE = 315; // 成为勇者前的生活（== 5 是元妓女档）
 
 /**
- * `@STC_SEIIN_CHECK` 的素质修正表（源 :620-660 的十四条 SIF）。
- * 每项：`[素质编号, 增量]`，基础值 50（:616）。
+ * stc_seiin_check 的素质修正表（十四条条件增量）。
+ * 每项：`[素质编号, 增量]`，基础值 50。
  * 13 刚强 +4 / 24 保守的 +4 / 25 乐观的 −2 / 26 悲观的 +2 / 27 戒备森严 +5 /
  * 32 压抑 +4 / 33 开放 −2 / 61 不怕污臭 −2 / 62 反感污臭 +2 / 70 接受快感 −2 /
  * 71 否定快感 +4 / 72 容易上瘾 −5 / 80 倒错的 −2 / 76 淫乱 −20。
@@ -103,11 +103,11 @@ const SEIIN_ADJUST = [
   [TALENT_INRAN, -20],
 ];
 
-/** 四枚「特殊性感素质」的已得数决定三档需求的上浮（源 :149-161） */
+/** 四枚「特殊性感素质」的已得数决定三档需求的上浮 */
 const SEXSKILL_IDS = [T_MASTURBATE, T_SEX_ADDICT, T_ANAL_ADDICT, T_BREAST_PLAY];
 
 /**
- * 行缓冲。源里的 `PRINT`/`PRINTFORM` 一路追加、`PRINTL` 收行，`SETCOLOR` 与
+ * 行缓冲。`PRINT`/`PRINTFORM` 一路追加、`PRINTL` 收行，`SETCOLOR` 与
  * `RESETCOLOR` 之间换色——片段数组天然承载这两件事。
  * @returns {{fragments: Array}}
  */
@@ -124,7 +124,7 @@ function put(row, content, color) {
   row.fragments.push(color === undefined ? { content } : { content, color });
 }
 
-/** 收行（源里每一处 `PRINTL`） */
+/** 收行（每一处 `PRINTL`） */
 function end_row(row) {
   era.print(row.fragments);
   row.fragments = [];
@@ -142,14 +142,14 @@ function exp_of(cid, index) {
   return era.get(`exp:${cid}:${index}`) || 0;
 }
 
-/** 名字 8 字节截断（`%SUBSTRING(EXPNAME:N,0,8)%`，:479/:540/:543） */
+/** 名字 8 字节截断（`%SUBSTRING(EXPNAME:N,0,8)%`） */
 function exp_label(index) {
   return slice_display(era.get(`expname:${index}`) ?? '', 8);
 }
 
 /**
- * @STC_PRINTC（:414-420）：打一段文本并补空格到 `width` 的整数倍。
- * 长度按 Shift-JIS 字节算（`STRLENS`，见文件头）；补位空格同色。
+ * stc_printc：打一段文本并补空格到 `width` 的整数倍。
+ * 长度按 Shift-JIS 字节算（见文件头）；补位空格同色。
  * @param {{fragments: Array}} row 行缓冲
  * @param {string} text
  * @param {string} [color] 颜色（与文本同色）
@@ -162,7 +162,7 @@ function stc_printc(row, text, color, width = STC_PRINT_WIDTH) {
 }
 
 /**
- * @STC_LAB_TAL（:425-440）：条件行行首的素质名 + 「：」。
+ * stc_lab_tal：条件行行首的素质名 + 「：」。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 素质编号
@@ -179,12 +179,12 @@ function stc_lab_tal(row, cid, id) {
   if (display_width(label) <= TALENT_LABEL_LIMIT) {
     label = `${pad_display(label, 4)}条件`;
   }
-  // PRINTFORM %LOCALS,8,LEFT%：（源里的全角冒号后跟一个半角空格）
+  // PRINTFORM %LOCALS,8,LEFT%：（全角冒号后跟一个半角空格）
   put(row, `${pad_display(label, 8)}： `, color);
 }
 
 /**
- * @STC_SAY_ABL（:445-455）：`[能力名 LvN]`。
+ * stc_say_abl：`[能力名 LvN]`。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 能力编号
@@ -201,7 +201,7 @@ function stc_say_abl(row, cid, id, level) {
 }
 
 /**
- * @STC_SAY_EXP（:471-480）：`[经验名 需求值]`。
+ * stc_say_exp：`[经验名 需求值]`。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 经验编号
@@ -217,7 +217,7 @@ function stc_say_exp(row, cid, id, need) {
 }
 
 /**
- * @STC_SAY_MARK（:483-489）：`[刻印名 LvN]`。
+ * stc_say_mark：`[刻印名 LvN]`。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 刻印编号
@@ -231,7 +231,7 @@ function stc_say_mark(row, cid, id, need = 0) {
 }
 
 /**
- * @STC_SAY_TAL（:492-503）：`[素质名]`（名字 4 字节以下补「素质」）。
+ * stc_say_tal：`[素质名]`（名字 4 字节以下补「素质」）。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 素质编号
@@ -245,7 +245,7 @@ function stc_say_tal(row, cid, id) {
 }
 
 /**
- * @STC_SAYNO_MARK（:507-513）：`[刻印名]`（值 ≤ 上限才是「达标」色）。
+ * stc_sayno_mark：`[刻印名]`（值 ≤ 上限才是「达标」色）。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 刻印编号
@@ -258,7 +258,7 @@ function stc_sayno_mark(row, cid, id, limit = 0) {
 }
 
 /**
- * @STC_SAYNO_TAL（:516-522）：`[素质名]`（值 ≤ 上限才是「达标」色）。
+ * stc_sayno_tal：`[素质名]`（值 ≤ 上限才是「达标」色）。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} id 素质编号
@@ -270,7 +270,7 @@ function stc_sayno_tal(row, cid, id, limit = 0) {
 }
 
 /**
- * @STC_SAYSUM_EXP（:526-545）：`[经验名|经验名|经验名 合计需求]`。
+ * stc_saysum_exp：`[经验名|经验名|经验名 合计需求]`。
  * `ARG:1` 必有，`ARG:2`/`ARG:3` 为 0 时既不入和也不入标签。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
@@ -290,12 +290,12 @@ function stc_saysum_exp(row, cid, need, first, second = 0, third = 0) {
   for (const id of [second, third]) {
     if (id > 0) label += `|${exp_label(id)}`;
   }
-  // PRINTFORM %LOCALS%{ARG,4}]（不补位，没有 STC_PRINTC）
+  // PRINTFORM %LOCALS%{ARG,4}]（不补位，不走 stc_printc）
   put(row, `${label}${pad_left(String(need), 4)}]`, color);
 }
 
 /**
- * @STC_SAY_ABCV（:549-559）：`[四点感觉LvN]`（0-3 号能力之和）。
+ * stc_say_abcv：`[四点感觉LvN]`（0-3 号能力之和）。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} need 合计要求
@@ -308,8 +308,8 @@ function stc_say_abcv(row, cid, need) {
 }
 
 /**
- * @STC_SAYSUM_ABL（:562-580）：`[能力名|能力名 LvN]`（四项之和）。
- * 本文件没有调用点（:65-68/:75 的调用都被注释掉了），按签名完整实现。
+ * stc_saysum_abl：`[能力名|能力名 LvN]`（四项之和）。
+ * 本文件没有调用点（调用都被注释掉了），按签名完整实现。
  * @param {{fragments: Array}} row 行缓冲
  * @param {number} cid 角色 ID
  * @param {number} need 合计要求
@@ -341,7 +341,7 @@ function stc_saysum_abl(
 }
 
 /**
- * @STC_SEIIN_CHECK（:612-662）：强制精饮绝顶的基准次数 + 素质修正。
+ * stc_seiin_check：强制精饮绝顶的基准次数 + 素质修正。
  * @param {number} cid 角色 ID
  * @returns {number}
  */
@@ -354,12 +354,10 @@ function stc_seiin_check(cid) {
 }
 
 /**
- * 四枚「特殊性感素质」已得的行（源 :173-177/:209-213/:235-239/:253-257）：
- * 这一臂不写条件，改为封面图 `PRINT_IMG "COVER_WHITE"`。
+ * 四枚「特殊性感素质」已得的行：这一分支不写条件，改为输出封面图。
  *
- * 行首标签先收成一行、图片另起一行——原作 `PRINT_IMG` 是与标签同一行的行内
- * 元素，引擎的图片出口自带换行，接不回标签那一行（equip-print.js 的两种出口
- * 同一类取舍）。
+ * 行首标签先收成一行、图片另起一行——引擎的图片出口自带换行，接不回标签
+ * 那一行（equip-print.js 的两种出口同一类取舍）。
  * @param {{fragments: Array}} row 行缓冲
  */
 function cover_white(row) {
@@ -368,7 +366,7 @@ function cover_white(row) {
 }
 
 /**
- * @SHOW_TALENT_CONDITION（:2-409）：各素质的达成条件明细。
+ * show_talent_condition：各素质的达成条件明细。
  * @param {number} cid 角色 ID
  */
 function show_talent_condition(cid) {
@@ -377,7 +375,7 @@ function show_talent_condition(cid) {
   const affection = era.get(`cflag:${cid}:2`) || 0; // CFLAG:2 好感度
   const man = t(TALENT_MAN) !== 0;
 
-  // —— :13-37 助手条件（有 爱慕 或 淫乱 时才有这一行）——
+  // —— 助手条件（有 爱慕 或 淫乱 时才有这一行）——
   if (t(TALENT_INRAN) !== 0 || t(TALENT_AIBA) !== 0) {
     let lab_color = COLOR.default;
     if (t(TALENT_BREAK) !== 0) lab_color = COLOR.invalid;
@@ -398,7 +396,7 @@ function show_talent_condition(cid) {
     end_row(row); // PRINTL
   }
 
-  // —— :39-60 爱慕条件（未获得 爱慕 与 求爱 时）——
+  // —— 爱慕条件（未获得 爱慕 与 求爱 时）——
   if (t(TALENT_AIBA) === 0 && t(TALENT_FAMILY_GUARD) === 0) {
     stc_lab_tal(row, cid, TALENT_AIBA);
     stc_printc(
@@ -414,7 +412,7 @@ function show_talent_condition(cid) {
     end_row(row);
   }
 
-  // —— :62-83 淫乱条件（未获得 爱慕 时）——
+  // —— 淫乱条件（未获得 爱慕 时）——
   if (t(TALENT_AIBA) === 0) {
     stc_lab_tal(row, cid, TALENT_INRAN);
     stc_printc(
@@ -431,7 +429,7 @@ function show_talent_condition(cid) {
     end_row(row);
   }
 
-  // —— :90-105 擅用舌头（学习缓慢 51 走严一档）——
+  // —— 擅用舌头（学习缓慢 51 走严一档）——
   stc_lab_tal(row, cid, T_LICK);
   if (t(T_LEARN_SLOW) !== 0) {
     stc_say_abl(row, cid, 12, 7);
@@ -444,7 +442,7 @@ function show_talent_condition(cid) {
   }
   end_row(row);
 
-  // —— :108-143 四个特殊性癖 ——
+  // —— 四个特殊性癖 ——
   stc_lab_tal(row, cid, T_SADIST);
   stc_say_abl(row, cid, 20, 4);
   stc_say_abl(row, cid, 12, 4);
@@ -469,7 +467,7 @@ function show_talent_condition(cid) {
   stc_say_exp(row, cid, 56, 300);
   end_row(row);
 
-  // —— :145-258 四个特殊性感素质 ——
+  // —— 四个特殊性感素质 ——
   // SEXSKILL_COUNT = 74/75/77/78 的已得数，三档需求随它上浮
   let sexskill_count = 0;
   for (const id of SEXSKILL_IDS) {
@@ -572,7 +570,7 @@ function show_talent_condition(cid) {
     cover_white(row);
   }
 
-  // —— :262-309 四枚强化素质（FLAG:73 关闭时才有这一组）——
+  // —— 四枚强化素质（FLAG:73 关闭时才有这一组）——
   if ((era.get('flag:73') || 0) <= 0) {
     stc_lab_tal(row, cid, T_SUPER_CLIT);
     stc_say_abl(row, cid, 0, 5);
@@ -606,7 +604,7 @@ function show_talent_condition(cid) {
     end_row(row);
   }
 
-  // —— :312-333 时常发情（FLAG:75 关闭时才有）——
+  // —— 时常发情（FLAG:75 关闭时才有）——
   if ((era.get('flag:75') || 0) <= 0) {
     stc_lab_tal(row, cid, T_AROUSED_ALWAYS);
     stc_printc(
@@ -622,7 +620,7 @@ function show_talent_condition(cid) {
     end_row(row);
   }
 
-  // —— :335-347 喜欢精液（强制精饮绝顶的基准次数）——
+  // —— 喜欢精液（强制精饮绝顶的基准次数）——
   stc_lab_tal(row, cid, T_LIKE_SPERM);
   put(
     row,
@@ -631,7 +629,7 @@ function show_talent_condition(cid) {
   );
   end_row(row); // PRINTFORML
 
-  // —— :350-382 妓女 / 倾城 ——
+  // —— 妓女 / 倾城 ——
   if (t(T_PROSTITUTE) === 0) {
     stc_lab_tal(row, cid, T_PROSTITUTE);
     if (t(T_EXPERIENCE) === 5) {
@@ -653,7 +651,7 @@ function show_talent_condition(cid) {
   }
   end_row(row); // PRINTL
 
-  // —— :384-407 盲从（两段素质条件各用【】包起来）——
+  // —— 盲从（两段素质条件各用【】包起来）——
   stc_lab_tal(row, cid, T_OBEDIENT);
   put(row, '', t(T_OBEDIENT) !== 0 ? COLOR.true : COLOR.false);
   put(row, '【');

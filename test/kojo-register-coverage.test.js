@@ -6,7 +6,7 @@
  * 分发表按编号找实现，找不到就静默（TRYCALL 落空的等价物；#565 返工起
  * 所有族都如此）。该响不响是玩家可见的错。
  *
- * 为什么这条锁必须存在：#514 发现 K2/K4 两个模块自 #233/#235 落地起就整批
+ * 为什么这条锁必须存在：#514 发现 K2/K4 两个模块自 #233/#235 实现起就整批
  * 漏注册（`dungeon_victory`/`dungeon_attack` 只是其中两处），而这两个模块的
  * 单测走 `mod.<fn>(…)` **直调本体、绕过族**——注册与否单测看不见，于是一路
  * 绿到 #501 的登记表普查才被翻出来。逐性格补用例拦不住下一次；能拦住的只有
@@ -20,25 +20,24 @@
  * 两条来源取并集，都由代码导出，不手工维护：
  *   1. `EVENT_K_DISPATCH_TABLE` 的 family 字段——#403 的 22 条分发表是口上
  *      分发的权威目录（表里含 GOHOUBI_AFTER_KOUJO 与 OSIOKI_KOUJO 两条；它们
- *      的**族实例**住在 kojo-dungeon-after.js，与此不矛盾），表与原件对不对得
- *      上由 test/event-k-dispatch.test.js 守。**当前全部有调用点的口上族都在
+ *      的**族实例**住在 kojo-dungeon-after.js，与此不矛盾），表内行为由
+ *      test/event-k-dispatch.test.js 守。**当前全部有调用点的口上族都在
  *      表内**，本条即覆盖面（21 个族）；
  *   2. 全库（`ere/` 全体 `.js`，不只 `kojo/`）有 `<family>.call(` 调用点的族
  *      ——相对第 1 条今天**没有增量**（`_family.call(` 只出现在 kojo-system.js
  *      与 kojo-dungeon-after.js，涉及的族都在表内）。留着它是给将来不进分发表
- *      的族兜底，不是当前覆盖面的来源；把族当参数传的写法（`try_kojo`、
- *      `dispatch_execution_koujo`）本条也认不出来，同样靠第 1 条覆盖。
- * 于是 `dog_kojo_family` / `colosseum_kojo_family` 自然落在范围外：原作这两族
+ *      的族保底处理，不是当前覆盖面的来源；把族当参数传的写法（`try_kojo`、
+ * 于是 `dog_kojo_family` / `colosseum_kojo_family` 自然落在范围外：这两族
  * 是文件内直接 `CALL DOG_KOJO_N` / `CALL COLOSSEUM_KOJO_N`（全库扫过，无一处
- * TRYCALLFORM；如 `target/ERB/口上/EVENT_K4_冷徹.ERB:533`/:541），ere 侧同形
- * 直调（如 kojo-k2-timid.js:1304），族本身没有调用者——K0/K1/K6 往族里的既有
- * 注册（#231/#237 等口上票落的）因此是死接线，补全它们没有意义、也不是本契约
+ * TRYCALLFORM），ere 侧同形直调（如 kojo-k2-timid.js），族本身没有调用者——
+ * K0/K1/K6 往族里的既有注册（#231/#237 等口上票实现的）因此是没有调用方的
+ * 接入，补全它们没有意义、也不是本契约
  * 要守的东西。范围纯由「有没有调用路径」推出，**不写豁免清单**；将来真给这两族
  * 加调用点时，本文件的自检（下面第二节「范围外」那条）会先红，提示把豁免改成
  * 核对——不是自动纳入，那条断言是刻意留的闸。
  *
  * == 本体函数的前缀从哪来（不写死映射） ==
- * 表里的族：用该族分发表的 `dispatch` 字段小写化——它就是原作 TRYCALLFORM
+ * 表里的族：用该族分发表的 `dispatch` 字段小写化——它就是 TRYCALLFORM
  * 拼名前缀，也正好是 ere 侧本体名（`DUNGEON_VICTORY_K` → `dungeon_victory_k`）。
  * 表外的族：从该族**已有的注册实参**反推——取 `register(N, fn)` 的 `fn` 尾部
  * 数字去掉后的部分。一个族可以有多个拼写（`osioski_koujo_family` 下
@@ -312,7 +311,7 @@ test('扫描器自检：覆盖族、前缀、本体三样都不为空', () => {
     `扫到的本体只有 ${found.length} 条，扫描器可能读空了`,
   );
   // 本体只认顶层 function 声明。别种写法（`const X = () => …` 等）会让本锁静默
-  // 漏扫该本体——见到「族前缀 + 尾号」被赋值的形态就当场报，逼来源显式纳入
+  // 漏扫该本体——见到「族前缀 + 尾号」被赋值的写法就当场报，逼定义方显式纳入
   // 扫描器（#274/#282 同款约定：解析不了新写法必须红，不能假装看不见）。
   const prefix_union = [...coverage_cached().values()].flat();
   for (const file of KOJO_FILES) {

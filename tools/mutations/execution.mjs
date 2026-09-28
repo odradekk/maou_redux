@@ -164,7 +164,7 @@ export default [
     replace: `    era.print('（设施·设备不在移植范围。）');
     await era.waitAnyKey(); // 变异：入口退回提示`,
     tests: ['page-shop'],
-    must_mention: '守卫成立应进设施真身',
+    must_mention: '条件成立应进设施真身',
   },
   {
     desc: 'M7280 回合结算：漏调苗床业务',
@@ -175,7 +175,7 @@ export default [
     must_mention: '苗床角色进入真实业务',
   },
   {
-    desc: 'M7281 流放：肉体改造末路判据错位',
+    desc: 'M7281 流放：肉体改造末路条件错位',
     file: 'ere/event/event-banishment.js',
     find: '    if (get(`talent:${cid}:317`) === 13) {',
     replace: '    if (get(`talent:${cid}:317`) === 14) {',
@@ -427,7 +427,7 @@ export default [
     must_mention: '回归前世叙述覆盖全部职业与可选句开关',
   },
   {
-    desc: 'M7310 动物末路：马分支判据错位',
+    desc: 'M7310 动物末路：马分支条件错位',
     file: 'ere/event/event-banishment.js',
     find: '  if (rand_n(8) === 0) selected = animals[0];',
     replace: '  if (rand_n(8) === 1) selected = animals[0];',
@@ -435,7 +435,7 @@ export default [
     must_mention: '动物末路逐支重掷并覆盖马犬鸟兔羊狐猫',
   },
   {
-    desc: 'M7311 动物末路：狐狸分支判据错位',
+    desc: 'M7311 动物末路：狐狸分支条件错位',
     file: 'ere/event/event-banishment.js',
     find: '  else if (rand_n(8) === 5) selected = animals[5];',
     replace: '  else if (rand_n(8) === 6) selected = animals[5];',
@@ -515,7 +515,7 @@ export default [
     must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
   },
   {
-    desc: 'M7321 普通流放：原贫民兜底错判编号',
+    desc: 'M7321 普通流放：原贫民保底处理错判编号',
     file: 'ere/event/event-banishment.js',
     find: '  if (former === 9) {',
     replace: '  if (former === 8) {',
@@ -596,7 +596,7 @@ export default [
     must_mention: '动物放生保留主角名与失去人类记忆的结句',
   },
   {
-    desc: 'M7330 流放口上：K0 处理器也误传随机源（#403 收口到入口后仍打在调用实参上）',
+    desc: 'M7330 流放口上：K0 处理器也误传随机源（#403 收尾到入口后仍打在调用实参上）',
     file: 'ere/event/event-banishment.js',
     find: '  await banishment_koujo(cid, result, rand_n);',
     replace: '  await banishment_koujo(cid, rand_n, rand_n);',
@@ -686,7 +686,7 @@ export default [
     find: '      position > (no_page + 1) * NUM_PAGE',
     replace: '      position > (no_page + 1) * NUM_PAGE + 1',
     tests: ['event-execution-batch'],
-    must_mention: '翻页：[2000]/[2001] 的页首/页尾守卫（NUM_PAGE = 25）',
+    must_mention: '翻页：[2000]/[2001] 的页首/页尾检查（NUM_PAGE = 25）',
   },
   {
     desc: 'M11342 批量处刑列表：状态 7（苗床）不再列出',
@@ -730,7 +730,7 @@ export default [
     must_mention: '批量处刑列表：过滤魔王与示众台',
   },
   {
-    desc: 'M11347 @SP：漏 EX_TALENT:4',
+    desc: 'M11347 sp：漏 EX_TALENT:4',
     file: 'ere/event/event-execution-batch.js',
     find: '    [4, 101, 102, 103, 104].some((id) => get(`ex_talent:${cid}:${id}`))',
     replace:
@@ -747,7 +747,7 @@ export default [
     must_mention: '提醒行边界：DAY 59/60 与展品 19/20 两侧',
   },
   {
-    desc: 'M11349 提醒行：【造型王】实绩判据取反',
+    desc: 'M11349 提醒行：【造型王】实绩条件取反',
     file: 'ere/event/event-execution-batch.js',
     find: "          !get('talent:0:329') // TALENT:MASTER:329【造型王】",
     replace: "          get('talent:0:329') // TALENT:MASTER:329【造型王】",
@@ -781,34 +781,34 @@ export default [
   {
     desc: 'M11353 [121] 按钮无条件渲染',
     file: 'ere/event/event-execution-batch.js',
-    find: "        if (executable) {\n          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
+    find: "        if (executable) {\n          era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示",
     replace:
-      "        if (true) {\n          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
+      "        if (true) {\n          era.printButton('选择处刑方式', 121); // SIF 可处刑",
     tests: ['event-execution-batch'],
     must_mention: '[121] 选择处刑方式仅在存在可处刑目标时出现',
   },
-  // M11354：可处刑的静态语义——原作 :7 的 #DIM 只在 :13（进入函数与
+  // M11354：可处刑的静态语义——#DIM 只在进入函数与
   // JUMP 批量处刑）清零，GOTO 处刑介面 不清，本条目把它改成每轮重算
   {
-    desc: 'M11354 可处刑改成每轮重算（原作是静态变量，清标签后 [121] 应仍保留）',
+    desc: 'M11354 可处刑改成每轮重算（静态变量，清标签后 [121] 应仍保留）',
     file: 'ere/event/event-execution-batch.js',
     find: '        const added = era.getAddedCharacters();\n        const charanum = added.length; // CHARANUM',
     replace:
-      '        executable = false; // 变异：每轮重算（原作只在 :13 清零）\n        const added = era.getAddedCharacters();\n        const charanum = added.length; // CHARANUM',
+      '        executable = false; // 变异：每轮重算（只在进入函数清零）\n        const added = era.getAddedCharacters();\n        const charanum = added.length; // CHARANUM',
     tests: ['event-execution-batch'],
     must_mention: '[121] 出现两次（标记后一次、取消标记后重绘仍显示一次',
   },
-  // M11354 编号空缺：下一页守卫的 `<=` → `<` 起初被当作「不可区分」而没立
+  // M11354 编号空缺：下一页检查的 `<=` → `<` 起初被当作「不可区分」而没立
   // 条目（页宽整数倍处才分得出）。补了 50 人（页宽整数倍）边界用例后，
   // 这条由 M11391 直接打，编号不再占用。
 
   {
-    desc: 'M11355 上一页守卫放宽（页首也能退）',
+    desc: 'M11355 上一页检查放宽（页首也能退）',
     file: 'ere/event/event-execution-batch.js',
     find: '          if (no_page > 0) no_page -= 1;',
     replace: '          if (no_page >= 0) no_page -= 1;',
     tests: ['event-execution-batch'],
-    must_mention: '翻页：[2000]/[2001] 的页首/页尾守卫（NUM_PAGE = 25）',
+    must_mention: '翻页：[2000]/[2001] 的页首/页尾检查（NUM_PAGE = 25）',
   },
   {
     desc: 'M11356 复选切换：标签位反向',
@@ -822,9 +822,9 @@ export default [
   {
     desc: 'M11357 [101] 水晶球开关位号错',
     file: 'ere/event/event-execution-batch.js',
-    find: '      era_exflag.mod_switch_bits ^= 4; // INVERTBIT EX_FLAG:9000,2（:143）',
+    find: '      era_exflag.mod_switch_bits ^= 4; // INVERTBIT EX_FLAG:9000,2',
     replace:
-      '      era_exflag.mod_switch_bits ^= 2; // INVERTBIT EX_FLAG:9000,2（:143）',
+      '      era_exflag.mod_switch_bits ^= 2; // INVERTBIT EX_FLAG:9000,2',
     tests: ['event-execution-batch'],
     must_mention: '[101] 水晶球记录：开关位翻转并重绘方法界面',
   },
@@ -847,7 +847,7 @@ export default [
     must_mention: '方法 5 士兵化：战力减半、刻印与称号',
   },
   {
-    desc: 'M11360 士兵化受限段：已士兵化判据反向',
+    desc: 'M11360 士兵化受限段：已士兵化条件反向',
     file: 'ere/event/event-execution-batch.js',
     find: '      const soldiered = get(`talent:${cid}:254`) !== 0;',
     replace: '      const soldiered = get(`talent:${cid}:254`) === 0;',
@@ -857,7 +857,7 @@ export default [
   {
     desc: 'M11361 肉便器：漏计肉便器数',
     file: 'ere/event/event-execution-batch.js',
-    find: '  game.invasion.肉便器数 += 1; // FLAG:83（:192）',
+    find: '  game.invasion.肉便器数 += 1; // FLAG:83',
     replace: '  // 变异：漏计肉便器数',
     tests: ['event-execution-batch'],
     must_mention: '方法 4 做成肉便器：计数、威望、录像归档、除名与经验',
@@ -865,7 +865,7 @@ export default [
   {
     desc: 'M11362 肉便器：漏威望结算',
     file: 'ere/event/event-execution-batch.js',
-    find: '  apply_prestige(cid); // EX_FLAG:99（:193-199）',
+    find: '  apply_prestige(cid); // EX_FLAG:99',
     replace: '  // 变异：漏威望结算',
     tests: ['event-execution-batch'],
     must_mention: '方法 4 做成肉便器：计数、威望、录像归档、除名与经验',
@@ -930,7 +930,7 @@ export default [
   {
     desc: 'M11370 释放：没收金不同步 EX_FLAG:4444',
     file: 'ere/event/event-execution-batch.js',
-    find: '  era_exflag.legit_money += money; // EX_FLAG:4444（:340）',
+    find: '  era_exflag.legit_money += money; // EX_FLAG:4444',
     replace: '  // 变异：不同步 EX_FLAG:4444',
     tests: ['event-execution-batch'],
     must_mention: '方法 7 释放：没收所持金、复位状态、夹持善恶与好感并清标签',
@@ -1012,23 +1012,23 @@ export default [
   {
     desc: 'M11380 自動處刑1：漏 NAME_RESET',
     file: 'ere/event/event-execution-batch.js',
-    find: '    reset_names: true, // CALL NAME_RESET（:482-483）',
-    replace: '    reset_names: false, // CALL NAME_RESET（:482-483）',
+    find: '    reset_names: true, // CALL NAME_RESET',
+    replace: '    reset_names: false, // CALL NAME_RESET',
     tests: ['event-execution-batch'],
     must_mention: '自動處刑1：装备回收、除名、威望、勋章与经验、称呼重建',
   },
   {
     desc: 'M11381 自動處刑1：漏勋章结算',
     file: 'ere/event/event-execution-batch.js',
-    find: '    medal: true, // 勋章三行播报 + EXP:0:81（:488-491）',
-    replace: '    medal: false, // 勋章三行播报 + EXP:0:81（:488-491）',
+    find: '    medal: true, // 勋章三行播报 + EXP:0:81',
+    replace: '    medal: false, // 勋章三行播报 + EXP:0:81',
     tests: ['event-execution-batch'],
     must_mention: '自動處刑1：装备回收、除名、威望、勋章与经验、称呼重建',
   },
   {
     desc: 'M11382 自動處刑1：漏装备回收',
     file: 'ere/event/event-execution-batch.js',
-    find: '  release_equipment(cid); // 武装/装饰回收（:438-452）',
+    find: '  release_equipment(cid); // 武装/装饰回收',
     replace: '  // 变异：漏装备回收',
     tests: ['event-execution-batch'],
     must_mention: '自動處刑1：装备回收、除名、威望、勋章与经验、称呼重建',
@@ -1048,7 +1048,8 @@ export default [
     find: "  if ((era.get('flag:5') || 0) & 8) {",
     replace: "  if ((era.get('flag:5') || 0) & 4) {",
     tests: ['event-execution-batch'],
-    must_mention: 'EVENTTURNEND 接线：FLAG:5 位 3 开启时',
+    must_mention:
+      'EVENTTURNEND 接入：FLAG:5 位 3 开启时洗脑陷落的勇者被自动处刑',
   },
   {
     desc: 'M11385 回合结算：漏调自动处刑',
@@ -1056,7 +1057,8 @@ export default [
     find: '    await auto_execution();',
     replace: '    // 变异：漏自动处刑',
     tests: ['event-execution-batch'],
-    must_mention: 'EVENTTURNEND 接线：FLAG:5 位 3 开启时',
+    must_mention:
+      'EVENTTURNEND 接入：FLAG:5 位 3 开启时洗脑陷落的勇者被自动处刑',
   },
   // 以下两条由交付前的十个独立探针补出（示众三分支文案、方法界面八个方式
   // 文案原先没有断言，探针 P2/P10 漏网后补测试再立条目）
@@ -1074,11 +1076,11 @@ export default [
     find: "      '博物馆展品',",
     replace: "      '博物馆藏品',",
     tests: ['event-execution-batch'],
-    must_mention: '八个处刑方式按钮的编号（原作 CASE 0 TO 7）与文案逐条对齐',
+    must_mention: '八个处刑方式按钮的编号（CASE 0 TO 7）与文案逐条对齐',
   },
-  // 以下五条由只读审查的整改补出：NO_PAGE 的静态变量语义（#543 首版按
+  // 以下五条由只读审查的修正补出：NO_PAGE 的静态变量语义（#543 首版按
   // 「JUMP 重入即复位」实现，与技能指南「静态变量」节相反）、导航按钮文案、
-  // 下一页守卫的页宽整数倍边界、家族归档分支——原先都没有断言或条目。
+  // 下一页检查的页宽整数倍边界、家族归档分支——原先都没有断言或条目。
   {
     desc: 'M11388 批量处刑：每次进入处刑都把页号复位（静态变量被当局部变量）',
     file: 'ere/event/event-execution-batch.js',
@@ -1086,14 +1088,14 @@ export default [
     replace:
       'async function batch_execution(rand_n = default_rand) {\n  no_page = 0;\n  // 处刑会话的调教窗口（文件头「tflag 通道」节）\n  era.beginTrain(0);',
     tests: ['event-execution-batch'],
-    must_mention: '再次进入处刑保留上次的页（静态变量，原作 :8）',
+    must_mention: '再次进入处刑保留上次的页（静态变量）',
   },
   {
     desc: 'M11389 批量处刑：重启（JUMP 批量处刑）时把页号复位',
     file: 'ere/event/event-execution-batch.js',
-    find: '      let executable = false; // 可处刑 = 0（:13）\n      screen: for (;;) {',
+    find: '      let executable = false; // 可处刑 = 0\n      screen: for (;;) {',
     replace:
-      '      let executable = false; // 可处刑 = 0（:13）\n      no_page = 0;\n      screen: for (;;) {',
+      '      let executable = false; // 可处刑 = 0\n      no_page = 0;\n      screen: for (;;) {',
     tests: ['event-execution-batch'],
     must_mention: '重启（取消流放）后仍在第 2 页',
   },
@@ -1103,16 +1105,15 @@ export default [
     find: "        era.printButton('结束处刑', 1999); // 原文「結束处刑」",
     replace: "        era.printButton('终止处刑', 1999); // 原文「結束处刑」",
     tests: ['event-execution-batch'],
-    must_mention: '[1999] 的按钮文案（原作 :70-72）',
+    must_mention: '[1999] 的按钮文案',
   },
   {
-    desc: 'M11391 批量处刑：下一页守卫放宽（<= 改 <，页宽整数倍处翻不动页）',
+    desc: 'M11391 批量处刑：下一页检查放宽（<= 改 <，页宽整数倍处翻不动页）',
     file: 'ere/event/event-execution-batch.js',
     find: '          if ((no_page + 1) * NUM_PAGE <= charanum) no_page += 1;',
     replace: '          if ((no_page + 1) * NUM_PAGE < charanum) no_page += 1;',
     tests: ['event-execution-batch'],
-    must_mention:
-      '页宽整数倍（50 人）时 [2001] 翻到空页（原作 :82 的 <= 判据）',
+    must_mention: '页宽整数倍（50 人）时 [2001] 翻到空页（<= 条件）',
   },
   {
     desc: 'M11392 肉便器：漏写家族档（CSTR:(FAMILY:2):5）',
@@ -1120,13 +1121,13 @@ export default [
     find: '  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);',
     replace: '  // 变异：漏写家族档',
     tests: ['event-execution-batch'],
-    must_mention: '家族档归档（:300-301：CSTR:(FAMILY:2):5）',
+    must_mention: '家族档归档（CSTR:(FAMILY:2):5）',
   },
-  // 以下六条由第 1 轮验收的逐行对照补出（列表行的 LV 冒号、:206-209 的
-  // 不等待、:299 的等待、:11 的 CUSTOMDRAWLINE 线、普通 DRAWLINE 的线型、
+  // 以下六条由第 1 轮验收的逐行对照补出（列表行的 LV 冒号、等待行为、
+  // CUSTOMDRAWLINE 线、普通 DRAWLINE 的线型、
   // [121] 后的空行数）
   {
-    desc: 'M11393 列表行：LV 后的冒号丢失（原作 :34 是 LV:）',
+    desc: 'M11393 列表行：LV 后的冒号丢失（既有写法是 LV:）',
     file: 'ere/event/event-execution-batch.js',
     find: ' LV:${get(`cflag:${cid}:9`)}`;',
     replace: ' LV${get(`cflag:${cid}:9`)}`;',
@@ -1135,12 +1136,12 @@ export default [
       '等级前缀是「LV:」——page-select-target 没有冒号是它自己原文如此',
   },
   {
-    desc: 'M11396 名单屏：把 :11 的 CUSTOMDRAWLINE 线画回顶部（原作画完即被 CLEARLINE 清掉）',
+    desc: 'M11396 名单屏：把 CUSTOMDRAWLINE 线画回顶部（画完即被 CLEARLINE 清掉）',
     file: 'ere/event/event-execution-batch.js',
-    find: '        // 第 11 行的 CUSTOMDRAWLINE = 画的那条线立刻被第 16 行 CLEARLINE 清掉，不镜像\n        if (',
+    find: '        // CUSTOMDRAWLINE 画的那条线立刻被 CLEARLINE 清掉，不镜像\n        if (',
     replace: '        era.drawLine({ isSolid: true });\n        if (',
     tests: ['event-execution-batch'],
-    must_mention: '顶部不再多画 :11 的 CUSTOMDRAWLINE 线',
+    must_mention: '顶部不再多画 CUSTOMDRAWLINE 线',
   },
   {
     desc: 'M11397 名单屏：普通 DRAWLINE 画成实线（isSolid 只对 CUSTOMDRAWLINE 那一类）',
@@ -1153,24 +1154,24 @@ export default [
   {
     desc: 'M11398 名单屏：[121] 显示时多画一个空行（PRINTLC 不换行，按钮后只该有一个）',
     file: 'ere/event/event-execution-batch.js',
-    find: "          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）\n          era.println(); // PRINTL（:67-69）\n        } else {",
+    find: "          era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示\n          era.println(); // PRINTL\n        } else {",
     replace:
-      "          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）\n          era.println(); // PRINTL（:67-69）\n          era.println(); // 变异：多一个空行\n        } else {",
+      "          era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示\n          era.println(); // PRINTL\n          era.println(); // 变异：多一个空行\n        } else {",
     tests: ['event-execution-batch'],
-    must_mention: '[121] 之后只有 :69 一个空行，再下一条是 [2000] 上一页',
+    must_mention: '[121] 之后只有一个空行，再下一条是 [2000] 上一页',
   },
-  // M11399：可处刑的复位——初值不回到 0（模块级时代的「漏复位」形态）；
+  // M11399：可处刑的复位——初值不回到 0（模块级时代的「漏复位」形式）；
   // 局部声明让「整行删掉」变成 ReferenceError，可用等价的「初值不复位」钉住
   {
     desc: 'M11399 可处刑初值不复位（false → true：进入函数/重启后 [121] 仍显示）',
     file: 'ere/event/event-execution-batch.js',
-    find: '      let executable = false; // 可处刑 = 0（:13）',
+    find: '      let executable = false; // 可处刑 = 0',
     replace: '      let executable = true; // 变异：初值不复位',
     tests: ['event-execution-batch'],
-    must_mention: '再次进入时 可处刑 已复位（:13），不再显示 [121]',
+    must_mention: '再次进入时 可处刑 已复位，不再显示 [121]',
   },
   // M11428：剃除收藏目标后的 JUMP 批量处刑 当成 GOTO 处刑介面——ere 里两者
-  // 唯一的差别是 :13 的可处刑复位。编号取自未分配的 M11428（本票区间已用满）
+  // 唯一的差别是 :13 的可处刑复位。编号取自未分配的 M11428（这张工单区间已用满）
   {
     desc: 'M11428 剃除收藏目标后不重启界面（JUMP 当 GOTO：可处刑不复位，[121] 仍显示）',
     file: 'ere/event/event-execution-batch.js',
@@ -1179,11 +1180,11 @@ export default [
     replace: `            chara(cid).patch.待处刑标签 = 0;
             continue screen; // 变异：JUMP 当 GOTO`,
     tests: ['event-execution-batch'],
-    must_mention: 'JUMP 批量处刑 之后 可处刑 已复位（:13），不再显示 [121]',
+    must_mention: 'JUMP 批量处刑 之后 可处刑 已复位，不再显示 [121]',
   },
   // —— #549（S8）自动处刑端到端（M11641 起）——
   {
-    desc: 'M11641 自動處刑1：漏「继续处刑」播报（#549 e2e 唯一守卫）',
+    desc: 'M11641 自動處刑1：漏「继续处刑」播报（#549 e2e 唯一检查）',
     file: 'ere/event/event-execution-batch.js',
     find: `  await era.printAndWait('继续处刑');`,
     replace: `  // 变异：漏继续处刑播报`,
@@ -1191,7 +1192,7 @@ export default [
     must_mention: '自動處刑1 的继续播报（与烙印句同源）',
   },
   {
-    desc: 'M11642 流放：非 4 号支漏发勋章（#549 e2e 唯一守卫）',
+    desc: 'M11642 流放：非 4 号支漏发勋章（#549 e2e 唯一检查）',
     file: 'ere/event/event-banishment.js',
     find: `  if (result !== 4) {`,
     replace: `  if (result === 4) { // 变异：非 4 号漏发勋章`,
@@ -1199,7 +1200,7 @@ export default [
     must_mention: '流放结算发勋章（BANISHMENT 非 4 号支）',
   },
   // —— #561（与 #560 同票）：处刑归档的槽位/NO 寻址与旧文件的等待次数
-  //    （M11782 起）。两处寻址各按自己的口径：SUISEI_STR 的槽位 = 角色在
+  //    （M11782 起）。两处寻址各按自己的标准：SUISEI_STR 的槽位 = 角色在
   //    已加入列表中的位置（archive_slot_of），FLAG:(NO+199) 对后代取来源
   //    模板号（template_no_of）——每一对「按角色 ID 直加」的变异都要红。
   {
@@ -1209,7 +1210,7 @@ export default [
     replace: '  return cid;',
     tests: ['event-execution-batch'],
     must_mention:
-      'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（:303 的 A = 角色下标）',
+      'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（A = 角色下标）',
   },
   {
     desc: 'M11783 处刑済 FLAG 回退成角色 ID 直加（后代写到 100199 以上）',
@@ -1217,23 +1218,24 @@ export default [
     find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
     replace: '  era.set(`flag:${cid + 199}`, 1);',
     tests: ['event-execution-batch'],
-    must_mention:
-      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
   {
     desc: 'M11784 肉便器归档槽位回退成角色 ID',
     file: 'ere/event/event-execution-batch.js',
-    find: '  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:303）',
-    replace: '  era.set(`videoarchive:${cid}`, title); // SUISEI_STR:A（:303）',
+    find: "  const title = `肉便器${name}`;\n  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A",
+    replace:
+      "  const title = `肉便器${name}`;\n  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${cid}`, title); // 变异：槽位回退成角色 ID",
     tests: ['event-execution-batch'],
     must_mention:
-      'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（:303 的 A = 角色下标）',
+      'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（A = 角色下标）',
   },
   {
     desc: 'M11785 士兵化归档槽位回退成角色 ID',
     file: 'ere/event/event-execution-batch.js',
-    find: 'videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:315-317）',
-    replace: 'videoarchive:${cid}`, title); // SUISEI_STR:A（:315-317）',
+    find: "  era.set(`cstr:${cid}:30`, title); // CSTR:30（无下标 = TARGET）\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A",
+    replace:
+      "  era.set(`cstr:${cid}:30`, title); // CSTR:30（无下标 = TARGET）\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${cid}`, title); // 变异：槽位回退成角色 ID",
     tests: ['event-execution-batch'],
     test_name: '方法 5 士兵化',
     must_mention: 'SUISEI_STR 槽位 = 角色在已加入列表中的位置（#561）',
@@ -1241,8 +1243,9 @@ export default [
   {
     desc: 'M11786 固定示众归档槽位回退成角色 ID',
     file: 'ere/event/event-execution-batch.js',
-    find: 'videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:332）',
-    replace: 'videoarchive:${cid}`, title); // SUISEI_STR:A（:332）',
+    find: "  const title = `魔族公厕${name}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A",
+    replace:
+      "  const title = `魔族公厕${name}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${cid}`, title); // 变异：槽位回退成角色 ID",
     tests: ['event-execution-batch'],
     test_name: '方法 6 固定示众：状态切 8',
     must_mention: 'SUISEI_STR 槽位 = 角色在已加入列表中的位置（#561）',
@@ -1299,7 +1302,7 @@ export default [
     must_mention: '五选一菜单是按钮',
   },
   {
-    desc: 'M11991 流放消费点去掉 useRule: false（原作受理的未显示 100 被锁死）',
+    desc: 'M11991 流放消费点去掉 useRule: false（被注释掉的 100 仍受理，锁死后不可达）',
     file: 'ere/event/event-banishment.js',
     find: '    result = await era.input({ useRule: false });',
     replace: '    result = await era.input(); // 变异：收紧白名单',
@@ -1374,24 +1377,24 @@ export default [
   {
     desc: 'M11985 批量处刑的选择处刑方式退回预设 ID 段内的 [150]',
     file: 'ere/event/event-execution-batch.js',
-    find: "era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
-    replace: "era.printButton('选择处刑方式', 150); // SIF 可处刑（:66-67）",
+    find: "era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示",
+    replace: "era.printButton('选择处刑方式', 150); // 有可处刑目标时才显示",
     tests: ['child-id-collision'],
     must_mention: '同一轮里与角色行同屏的固定编号不得等于预设 ID',
   },
-  // —— #597：:22 的 PRINTL 只结束 :18 的 `PRINT 请选择处刑对象` 那一行 ——
+  // —— #597：表头那一行的 PRINTL 只结束「请选择处刑对象」那一行 ——
   {
-    desc: 'M12121 处刑对象列表的表头之后补回空行（:22 的 PRINTL 不是空行，只收 :18）',
+    desc: 'M12121 处刑对象列表的表头之后补回空行（PRINTL 不是空行，只收前一行）',
     file: 'ere/event/event-execution.js',
-    find: '    // 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
+    find: '    // IF/ELSE 两分支：ELSE 支原本只换行结束「请选择处刑对象」那一行',
     replace:
-      '    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n    // 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
+      '    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形式\n    // IF/ELSE 两分支：ELSE 支原本只换行结束「请选择处刑对象」那一行',
     tests: ['event-execution'],
     must_mention: 'ELSE 支（无实绩提示）：表头之后不补空行',
   },
-  // —— #597：公开处刑的勋章空行只属于 :56/:76 两支（:129 只收尾） ——
+  // —— #597：公开处刑的勋章空行只属于前两支（魂粉碎支只收尾） ——
   {
-    desc: 'M12124 魂粉碎支补回空行（把 :56/:76 的真空行挪回共用尾部＝旧形态）',
+    desc: 'M12124 魂粉碎支补回空行（把前两支的空行挪回共用尾部＝旧形式）',
     file: 'ere/event/event-public-execution.js',
     find: '  chara(0).event.勋章经验 += 1;\n',
     replace:
@@ -1400,29 +1403,29 @@ export default [
     must_mention: '魂粉碎支：这一支不该有空行',
   },
   {
-    desc: 'M12125 凌辱致死支的 :56 真空行删除（:55 的 PRINTFORMW 已收尾，空行由它来）',
+    desc: 'M12125 凌辱致死分支的空行删除（上一行已收尾，空行由它来）',
     file: 'ere/event/event-public-execution.js',
-    find: "    // 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的\n    // PRINTFORMW 之后（那一行已结束）——真空行（#597）\n    era.println();\n    fate = '凌辱致死';\n",
-    replace: "    // 变异：:56 的真空行删除\n    fate = '凌辱致死';\n",
+    find: "    // 凌辱致死支的空行：上一行已带等待结束，这里补一个空行（#597）\n    era.println();\n    fate = '凌辱致死';\n",
+    replace: "    // 变异：凌辱致死分支的空行删除\n    fate = '凌辱致死';\n",
     tests: ['event-execution'],
-    must_mention: '凌辱致死支（:56）：勋章播报之前的空行是真空行',
+    must_mention: '凌辱致死支：勋章播报之前的空行不许删',
   },
-  // —— #597 返工：容易被误删的真空行（这一批的代表处；同类分组成员见
+  // —— #597 返工：容易被误删的空行（这一批的代表处；同类分组成员见
   //    issue 的返工评论）——
   {
-    desc: 'M12126 流放开场的 :21 真空行删除（:20 的 PRINTW 已收尾，空行由它来）',
+    desc: 'M12126 流放开场的空行删除（开场句已收尾，空行由它来）',
     file: 'ere/event/event-banishment.js',
-    find: '  era.println(); // 真空行：20 行的 PRINTW 已收尾（21 行的 PRINTL 落在空行上）',
-    replace: '  // 变异：流放开场的真空行删除',
+    find: '  era.println(); // 空行：开场句之后隔一行',
+    replace: '  // 变异：流放开场的空行删除',
     tests: ['event-execution'],
-    must_mention: '流放开场（:21）：这一行之后是真空行（不许删）',
+    must_mention: '流放开场：这一行之后是真空行（不许删）',
   },
   {
-    desc: 'M12127 处置菜单末项之后的 :89 真空行删除（:88 的 PRINTL 已收尾，空行由它来）',
+    desc: 'M12127 处置菜单末项之后的空行删除（菜单已收尾，空行由它来）',
     file: 'ere/event/event-execution.js',
-    find: '  era.println(); // 真空行：88 行的 PRINTL 已收尾（89 行的 PRINTL 落在空行上）',
-    replace: '  // 变异：处置菜单末项之后的真空行删除',
+    find: '  era.println(); // 空行：处置菜单与 [100]/[101] 按钮隔开',
+    replace: '  // 变异：处置菜单末项之后的空行删除',
     tests: ['event-execution'],
-    must_mention: '处置菜单末项（:89）：这一行之后是真空行（不许删）',
+    must_mention: '处置菜单末项：这一行之后是真空行（不许删）',
   },
 ];
