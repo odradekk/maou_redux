@@ -1,4 +1,4 @@
-# TStr 表：Emuera 内置变量 TSTR（回合字符串表）的 ere 落点（issue #212 认领
+# TStr 表：旧引擎内置变量 TSTR（回合字符串表）的 ere 落点（issue #212 认领
 # #5 的三个遗留建模项之一，结论经 engine-bundle 两情形探针钉死，见
 # test/tstr-train-table.test.js 与下方事实清单）。
 #
@@ -16,10 +16,10 @@
 #     手工预建桶而不登记也救不了——写入路径要求 normal 登记，只读回落后
 #     仍是静默丢弃（探针情形二）。
 #
-# 与 Emuera 语义的**唯一刻意差异**：TSTR 在 Emuera 是回合域变量（BEGIN TRAIN
+# 与旧引擎语义的**唯一刻意差异**：TSTR 在旧引擎是回合域变量（BEGIN TRAIN
 # 时引擎整族清空）；ere 的 tstr 桶是**持久普通表**（beginTrain/endTrain 不碰
-# 它），「BEGIN TRAIN 清空」由 train-loop.js 的初始化段手动镜像（原作
-# TRAIN_MAIN.ERB:29-30 那行被注释掉的 ;TSTR:90 = 　 正是因为引擎替它清了；
+# 它），「BEGIN TRAIN 清空」由 train-loop.js 的初始化段手动镜像（旧代码
+# 里那行被注释掉的 ;TSTR:90 = 　 正是因为引擎替它清了；
 # ere 侧引擎不清，改由循环补写）。清哪些槽：只有被消费过的槽——当前 90。
 #
 # 空表即够用（yml/TFlag.yml 同款先例）：下标是数字，引擎的
@@ -28,7 +28,7 @@
 # 消费者的空串判定就被破坏了。
 #
 # 槽位账（随消费者增补）：
-#   90  前回指令名：@P_C 写（TRAIN_MAIN.ERB:771-780），@SHOW_USERCOM 的
-#       「＜上次的调教指令：…＞」读（USERCOM.ERB:93-100）；
+#   90  前回指令名：@P_C 写，@SHOW_USERCOM 的
+#       「＜上次的调教指令：…＞」读；
 #   30  售卖物名暂存：售卻/處刑一族写（SELL_MATURO/EXECUTION 等）、
 #       SELL_VIDEO 读后清（#336 已实现）——同表承载，直接寻址。

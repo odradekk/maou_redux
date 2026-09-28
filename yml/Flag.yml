@@ -1,115 +1,107 @@
-# flag 表：Emuera 内置 FLAG 数组 + 并入 flag 的 Emuera 内置变量（#5 决议）。
+# flag 表：旧引擎内置 FLAG 数组 + 并入 flag 的旧引擎内置变量（#5 决议）。
 #
 # id 分配约定（两层，互不重叠）：
-#   - 原作 FLAG:N 条目按原下标 1:1 落表（实用下标 104 个、最大 9001，随各
+#   - FLAG:N 条目沿用既有下标落表（实用下标 104 个、最大 9001，随各
 #     子系统票渐进声明——已立：调教路径（#44）、侵略线（#113，9/81/82/
 #     86-91/400/502））；
-#   - 10000 起为保留区：ere 无对应表的 Emuera 内置变量并入 flag（DAY/TIME/
+#   - 10000 起为保留区：ere 无对应表的旧引擎内置变量并入 flag（DAY/TIME/
 #     MONEY）与角色指针占 flag 槽位（TARGET/ASSI，ere-kanon 同做法，#5
-#     决议第六条）。原作 FLAG 实用下标最大 9001，10000 起无撞号风险。
+#     决议第六条）。FLAG 实用下标最大 9001，10000 起无撞号风险。
 #
-# 本表为人工产出（与 Global.yml 同一先例，issue #18）：target/CSV 没有
-# flag 名表，原作 flag 语义只散见于注释与 資料_非必要無須解壓/ 的说明。
+# 本表为人工产出（与 Global.yml 同一先例，issue #18）：没有现成的 flag 名表，
+# flag 语义只散见于旧代码注释与游戏内 flag 说明文档。
 # 包装层产物：ere/era-utils/era-flag.js（tools/gen-wrapper.js 生成初稿）。
-# 各变量在原作中的语义与来源见该文件手写区补注。
+# 各变量的语义与来源见该文件手写区补注。
 #
-# —— 侵略线一段（issue #113，语义依据逐条注明原作文件与行号）——
-# 魔王特别税加成（百分比）：主菜单「休息」每次 +5（SHOP ver1.0.2.ERB:137），
-# 征税时 TAX:3 = TAX:0 × (本值 + 100) / 100 − TAX:0，征毕清零（TAX.ERB:205-213）
+# —— 侵略线一段（issue #113，语义依据逐条注明）——
+# 魔王特别税加成（百分比）：主菜单「休息」每次 +5，
+# 征税时 TAX:3 = TAX:0 × (本值 + 100) / 100 − TAX:0，征毕清零
 "特别税加成":
   id: 9
   name: "tax_surcharge"
   type: "number"
-# 人间界侵攻度（0-10000）。出兵累加（INVASION.ERB 的 AREA 循环）、每日自然
-# 衰减 RAND:100（SYSTEM ver1.0.3.ERB:625-626）；≥10000 触发 ENDING_1
-# （INVASION.ERB:1001-1002）；税单按 /10 折殖民地数（TAX.ERB:89-91）
+# 人间界侵攻度（0-10000）。出兵累加（AREA 循环）、每日自然衰减 RAND:100；
+# ≥10000 触发 ENDING_1；税单按 /10 折殖民地数
 "人间界侵攻度":
   id: 81
   name: "human_realm_invasion"
   type: "number"
-# ENDING_1（魔王掌握世界）已演出标记：演出内置 1（ENDING ver 1.0.1.ERB:38），
-# 亦是「人间界已陷落」的世界状态读点（EVENT_K.ERB:171 闲聊差分、
-# ENTER_ENEMY.ERB:35/332 勇者数量守卫）
+# ENDING_1（魔王掌握世界）已演出标记：演出内置 1，
+# 亦是「人间界已陷落」的世界状态读点（闲聊差分、勇者数量检查）
 "人间界陷落":
   id: 82
   name: "human_realm_fallen"
   type: "number"
-# 人间界侵略事件进度（@KYOTEN_EVENT 的状态机，INVASION_EVENT.ERB:15-104）：
+# 人间界侵略事件进度（@KYOTEN_EVENT 的状态机）：
 # 0=未占、1=占村、2=占港、3=陷堡垒、4=占街道、5=占城市；侵攻度回落时按档
-# 回退（:60-104）。角色线读数点：嘉德线判定 == 3（ENDINGDATA_ADDON1.ERB:151）
+# 回退。角色线读数点：嘉德线判定 == 3
 "人间界侵略事件进度":
   id: 93
   name: "human_realm_event_stage"
   type: "number"
-# 精灵族领域侵攻度（衰减与税单同 FLAG:81 型，SYSTEM ver1.0.3.ERB:644-648、
-# TAX.ERB:97-99）；满值触发 ENDING_3
+# 精灵族领域侵攻度（衰减与税单同 FLAG:81 型）；满值触发 ENDING_3
 "精灵领域侵攻度":
   id: 86
   name: "elf_realm_invasion"
   type: "number"
 # 精灵领域征服标记：ENDING_3 演出前置 =1、献上圣女（CHAR_GIFT）毕 =2
-# （ENDING ver 1.0.1.ERB:70-72）；ENTER_ENEMY.ERB:37-41 按三区征服数限勇者
+# ；按三区征服数限勇者
 "精灵领域征服":
   id: 87
   name: "elf_realm_conquered"
   type: "number"
-# 龙之山脉侵攻度（SYSTEM ver1.0.3.ERB:663-667、TAX.ERB:105-107）；满值触发
+# 龙之山脉侵攻度；满值触发
 # ENDING_4
 "龙之山脉侵攻度":
   id: 88
   name: "dragon_realm_invasion"
   type: "number"
-# 龙之山脉征服标记（ENDING_4 演出 =1 → CHAR_GIFT 献上龙族公主 → =2，
-# ENDING ver 1.0.1.ERB:88-90）
+# 龙之山脉征服标记（ENDING_4 演出 =1 → CHAR_GIFT 献上龙族公主 → =2）
 "龙之山脉征服":
   id: 89
   name: "dragon_realm_conquered"
   type: "number"
-# 天界侵攻度（SYSTEM ver1.0.3.ERB:682-686、TAX.ERB:113-115）；满值触发
+# 天界侵攻度；满值触发
 # ENDING_5
 "天界侵攻度":
   id: 90
   name: "heaven_invasion"
   type: "number"
-# 天界征服标记（ENDING_5 演出 =1 → CHAR_GIFT 献下代主神天使 → =2，
-# ENDING ver 1.0.1.ERB:108-110）
+# 天界征服标记（ENDING_5 演出 =1 → CHAR_GIFT 献下代主神天使 → =2）
 "天界征服":
   id: 91
   name: "heaven_conquered"
   type: "number"
-# 圣灵骑士堡垒攻略进度：位掩码（ARCANA_FORT.ERB:20/:76），&1 东 &2 南
+# 圣灵骑士堡垒攻略进度：位掩码，&1 东 &2 南
 # &4 西 &8 北，本体按门逐个累加置位；15 = 四门全破即已攻陷
-# （INVASION.ERB:68 的「已征服」判断条件），不是线性阶段数，不能写成
-# >= 15 或 += 1。内部推进逻辑属 ARCANA_FORT.ERB（未移植，阶段 5 范围），
+# （「已征服」的判断条件），不是线性阶段数，不能写成
+# >= 15 或 += 1。内部推进逻辑未移植（阶段 5 范围），
 # 本表仅登记读点所需的下标与含义
 "圣灵骑士堡垒攻略进度":
   id: 92
   name: "arcana_fort_stage"
   type: "number"
-# 勇者战役进行中：CAMPAIGN_1.ERB:62 置 1、CAMPAIGN_EVENT.ERB:269/317 战役
-# 结束清 0。为 1 时每回合魔王气力回复改为 -10（SYSTEM ver1.0.3.ERB:713-715）、
-# 战役角色（CFLAG:x:1 == 12）在战役结束后复位（:281-284/:732-735）
+# 勇者战役进行中：置 1、战役结束清 0。为 1 时每回合魔王气力回复改为 -10、
+# 战役角色（CFLAG:x:1 == 12）在战役结束后复位
 "勇者战役中":
   id: 400
   name: "hero_campaign_active"
   type: "number"
-# 战役剧情进度：SELECT_CAMPAIGN 选定战役时归零（CAMPAIGN_EVENT.ERB:150），
-# CAMPAIGN_QUEST 判定角色所在楼层（CFLAG:501）超过本值时推进剧情、本值 +1
-# （:190-196）；CAMPAIGN_STORY_1 按本值 0-5 六档分支打印对应剧情文本
+# 战役剧情进度：SELECT_CAMPAIGN 选定战役时归零，
+# CAMPAIGN_QUEST 判定角色所在楼层（CFLAG:501）超过本值时推进剧情、本值 +1；
+# CAMPAIGN_STORY_1 按本值 0-5 六档分支打印对应剧情文本
 "战役剧情进度":
   id: 401
   name: "campaign_story_progress"
   type: "number"
-# 2D 地图模式开关（设定菜单写入，SYSTEM ver1.0.3.ERB:924、
-# LABO_DUNGEON_MAP.ERB:262）：迷宫走 2D 地图（:66/:287-295）还是文本探索
+# 2D 地图模式开关（设定菜单写入）：迷宫走 2D 地图还是文本探索
 "二维地图模式":
   id: 502
   name: "map_2d_mode"
   type: "number"
-# —— 勇者来袭的特殊登场（issue #171 H2，语义依据 ENTER_ENEMY.ERB）——
+# —— 勇者来袭的特殊登场（issue #171 H2）——
 # 狂王替身（葵希罗替身，角色号 34）登场済标志：@K_34_crazylord 的防重复
-# 触发判据（ENTER_ENEMY.ERB:228 SIF FLAG:224 == 1 RETURN），登场即置 1
-# （:252）。属主 chara（ownership/flag-ownership.yml "224"）——跨域写须
+# 触发判断条件（SIF FLAG:224 == 1 RETURN），登场即置 1。属主 chara（ownership/flag-ownership.yml "224"）——跨域写须
 # 具名，故进本表生成包装层（era_flag.crazylord_entered）；同函数族的
 # FLAG:223（莉莉登场済，:173）属主 event、域内裸写，不进表
 "狂王替身登场":
@@ -117,20 +109,20 @@
   name: "crazylord_entered"
   type: "number"
 # —— 结局线区间（issue #116）——
-# 原作把结局线区间 2801-2820 声明在 EX_FLAG（@ENDCHECK 头注释），但两条
-# 实际写进了 FLAG 侧（ENDCHECK 链 1:1 照搬写点，见 yml/ExFlag.yml 头注的
+# 结局线区间 2801-2820 声明在 EX_FLAG（@ENDCHECK 头注释），但两条实际
+# 写进了 FLAG 侧（ENDCHECK 链逐条按原写点移植，见 yml/ExFlag.yml 头注的
 # 错写登记；ExFlag.yml 同 id 的 2815/2816 条目是语义登记，真值归属由
 # ENDING_1 演出票 #118 定夺——两侧均无读者，写侧必须与 ENDCHECKCHARA 的
-# 读点同侧才保原作状态机行为）。
+# 读点同侧才保既有状态机行为）。
 # 葵希罗（角色号 34）线进度：TALENT:85 恋慕 → 10、TALENT:76 淫乱 → 20
-# （ENDINGDATA.ERB:130-137）；不在队清零（:30-32）。分派循环读的是
+# 不在队清零。分派循环读的是
 # EX_FLAG:2815（族错位，恒 0 → END15_0 静默），FLAG 侧永不被分派消费
 "葵希罗线":
   id: 2815
   name: "route_34"
   type: "number"
-# 反叛结局标记：威望（EX_FLAG:99）≤ 0 时置 10（ENDINGDATA.ERB:61-63）。
-# 全库无消费点（死代码），1:1 保留写入
+# 反叛结局标记：威望（EX_FLAG:99）≤ 0 时置 10。
+# 全库无消费点（死代码），原样保留写入
 "反叛结局":
   id: 2816
   name: "rebellion_ending"
@@ -163,7 +155,7 @@
   id: 10006
   name: "assi"
   type: "number"
-# 以下七项 + 三项暂存是调教域的 Emuera 内置变量（ASSIPLAY/PLAYER/PREVCOM/
+# 以下七项 + 三项暂存是调教域的旧引擎内置变量（ASSIPLAY/PLAYER/PREVCOM/
 # NEXTCOM/SELECTCOM 与指针数组元素 TARGET:1/ASSI:1、单字母数组 T:10-12 的
 # 调教路径用法），随 #44（T14 调教回合骨架）并入保留区；语义注释见
 # ere/era-utils/era-flag.js 手写区。
@@ -215,7 +207,7 @@
   type: "number"
 # —— 存读档域（#136 返工登记）：两组变量来源不同，初值语义见
 # ere/era-utils/era-flag.js 手写区——
-# 上次读取存档（10018）：Emuera 内建只读变量 LASTLOAD_NO（LOADDATA 后更新，
+# 上次读取存档（10018）：旧引擎内建只读变量 LASTLOAD_NO（LOADDATA 后更新，
 # RESETDATA 或返回标题后恢复初值 -1，技能 data-save-load.md「LASTLOAD 变量」）。
 # ere 无内建等价物，读档成功后由 ere/page/page-save-load.js 写入。
 "上次读取存档":
@@ -265,21 +257,20 @@
   id: 10028
   name: "last_save_no_9"
   type: "number"
-# 购入品指针（BOUGHT，Emuera 内置标量，issue #395 落表）：SHOP ver1.0.2.ERB
-# @EVENTSHOP 每轮进商店时重置为 -1（:20）；@USERSHOP 的 107 分支（购物）
+# 购入品指针（BOUGHT，旧引擎内置标量，issue #395 落表）：
+# @EVENTSHOP 每轮进商店时重置为 -1；@USERSHOP 的 107 分支（购物）
 # 置 1，下一轮 @SHOW_SHOP 据此跳过主菜单、改向道具/陷阱商店（0-53 = 道具、
-# >=54 = 陷阱商店，SHOP_ITEM.ERB/SHOP_TRAP.ERB，商店票 #399 落真身）；
+# >=54 = 陷阱商店，商店票 #399 落真身）；
 # 新档不落表默认 0（fillData 语义，#13），必须显式初始化为 -1（event-first.js），
 # 否则新档第一次进商店会被误判为「正在购物道具 0 号」
 "购入品指针":
   id: 10029
   name: "bought"
   type: "number"
-# —— 迷宫情报与建设一段（issue #180，语义依据 DUNGEON_INFO2.ERB /
-#     DUNGEON_SETUP.ERB / DRAW_MAINMENU.ERB @DRAW_DUNGEON_OVERVIEW）——
+# —— 迷宫情报与建设一段（issue #180）——
 # 迷宫布置区（寻址 FLAG:(层-1 + 列*10 + 300)，层 1-9、列 A/B/C 即 +0/+10/+20）。
 # 槽值语义：陷阱槽存 Item.yml 的陷阱 id（60-88；-1 = 未布置，显示侧把
-# ITEM 查无的值也归 -1——DUNGEON_INFO2.ERB:70-77）；宝物槽存宝物 id
+# ITEM 查无的值也归 -1）；宝物槽存宝物 id
 # （300-320，-1 = 无）；设施槽存设施 id（500-507）或 0（通路）。
 "第1层陷阱A":
   id: 300
@@ -461,8 +452,8 @@
   id: 358
   name: "floor_9_facility"
   type: "number"
-# 肉便器数 / 展品数：主菜单 [111] 设施·设备的可用性判据（SHOP ver1.0.2.ERB
-# :132-133）与地城概况统计行的读数（DRAW_MAINMENU.ERB:571）
+# 肉便器数 / 展品数：主菜单 [111] 设施·设备的可用性判断条件
+# 与地城概况统计行的读数
 "肉便器数":
   id: 83
   name: "meat_toilet_count"
@@ -473,15 +464,15 @@
   type: "number"
 # —— CONFIG 残余票（issue #463）——
 # 陷落之后处女主动献身的后续发生方式：菜单 0/1/2 → -1/0/1（从不发生/每人
-# 一次/持续触发，CONFIG.ERB:47-67 设定/:70-82 状态）。属主 system 的
+# 一次/持续触发，设定菜单写入）。属主 system 的
 # FLAG:37 与本 id 同属合并区间「37-38」（ownership/flag-ownership.yml），
 # 跨域写须具名，故进本表生成包装层（era_flag.virgin_conceded_mode）
 "处女献上后续发生方式":
   id: 38
   name: "virgin_conceded_mode"
   type: "number"
-# 勇者相关杂项开关（位掩码，CONFIG.ERB:243-245 INVERTBIT FLAG:8,LOCAL-22）：
-# &1 男冒险者许可（:182 菜单文字原作即注释掉，未公开隐藏分支）、&2 勇者
+# 勇者相关杂项开关（位掩码，INVERTBIT FLAG:8,LOCAL-22）：
+# &1 男冒险者许可（菜单文字本就注释掉，未公开隐藏分支）、&2 勇者
 # 出現时的素质表示（:184）、&4 勇者的恋爱发展（:185）、&8 勇者的任务揭示板
 # （:186，显示语义反向——置位＝禁止）。FLAG:8 无归属条目，仍需具名
 # （tools/domain-ledger.mjs 已冻结、不接受新裸写）

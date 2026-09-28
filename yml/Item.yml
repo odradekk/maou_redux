@@ -1,5 +1,4 @@
-# 转换自 target/CSV/Item.csv（tools/csv-to-yml.js，issue #38）
-# 本文件归人工维护：转换器重跑默认不覆盖，需要重新生成请加 --force --table item
+# 本表由人工维护。
 #
 # 重名合并（yml 以名称为键，同名双序号无法表达；引擎 name→id 语义是
 # 后者覆盖，故保留较大序号，依据见 issue #38 评论）：
