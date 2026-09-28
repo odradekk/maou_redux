@@ -19,7 +19,7 @@ const make = (id, desc, find, replace, must_mention, extra = {}) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 54;
+export const COUNT = 55; // #696 +1（M14108：WOMAN 表 P97 行 12 岁档修正值回归检查）
 
 export default [
   // —— char_body_generate_wapped ——
@@ -417,5 +417,12 @@ export default [
     '  era.set(`cflag:${cid}:455`, int(bust / 100));',
     '  era.set(`cflag:${cid}:455`, int(bust));',
     'CFLAG:455 = 结果/100',
+  ),
+  make(
+    14108,
+    '12 岁女性身高 P97 改回落值（164500 → 154500，低于 11 岁档）',
+    '    152700, 159200, 164500, 167600,',
+    '    152700, 159200, 154500, 167600,',
+    '12 岁女性身高 P97 = 164.5cm，不低于 11 岁档的 159.2cm',
   ),
 ];

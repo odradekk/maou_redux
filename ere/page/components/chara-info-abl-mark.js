@@ -1,34 +1,31 @@
 /**
- * @file 角色信息的能力一览与刻印行（@SHOW_INFO_ABL / @SHOW_INFO_MARK）。
+ * @file 角色信息的能力一览与刻印行（show_info_abl / show_info_mark）。
  *
- * 两段的形态都由黄金样本钉住（train-upgrade-log:157 与 159，魔王的能力
+ * 两段的写法都由黄金样本钉住（train-upgrade-log:157 与 159，魔王的能力
  * 画面）：`  技巧     - LV3   ` 与 ` 苦痛:LV0 [...]   快乐:LV0 [...]`——用例
  * 逐字复现这两行。
  *
- * **Emuera 的命令行前导空格规则**（本文件的排版依据，两行样本都验过）：
+ * **命令行前导空格规则**（本文件的排版依据，两行样本都验过）：
  * `PRINTFORM X` 里命令名后的**第一个空格是命令与表达式之间的分隔符**，不算
- * 正文。所以 `PRINTFORM  技巧` 输出 ` 技巧`（一个前导空格）、`PRINTFORM   快乐`
- * 输出 `   快乐`（三个）。逐字抄源时必须把这一格减掉，否则整行右移一格——
+ * 正文。所以 `PRINTFORM  技巧` 对应 ` 技巧`（一个前导空格）、`PRINTFORM   快乐`
+ * 对应 `   快乐`（三个）。逐字转写时必须把这一格减掉，否则整行右移一格——
  * 分类素质那七行（chara-talents.js）与标题行同此规则。
  *
- * 有意偏离（登记在案，不随本票）：
- *   - `CALL DECIDE_ABLUP`（:969）与其后的 `*` 可提升标记、`CALL DECIDE_ABLUP99`
- *     （:1010-1012）的 `PRINT *` 都不随本票移植：判定本体在
- *     `ERB/ABL/ABLUP*.ERB`（26 则）与 `ABL/ABL.ERB:115-201`，属「能力提升」
- *     票的范围（docs/stub-registry.md:76 与 :78-81，两条的状态列都写着
- *     「登记（未接入：列表已渲染、无 `*` 标记）」——page-ablup.js 的
- *     @SHOW_ABLUP_SELECT 同样处理）。本文件按「判定结果为 0」渲染，即
+ * 有意偏离（登记在案，不随这张工单）：
+ *   - 可提升判定与其后的 `*` 标记都不随这张工单移植：判定本体
+ *     属「能力提升」票的范围（page-ablup.js 同样按「判定结果为 0」处理）。
+ *     本文件按「判定结果为 0」渲染，即
  *     ABL 行尾 2 个空格、MARK 行尾不缀 `*`，与黄金样本的魔王行一致；
- *   - 感觉封锁的灰显（`@SHOW_ABLUP_SELECT` :60-64 的 `[―]` 与灰字）是那个
- *     画面的形态，本函数源里没有，不引入；
- *   - `BAR` 命令的等价物见 bar_text——源的 BAR 只在 SHOW_INFO_MARK 还有
- *     消费点（LIFE_BAR/VITAL_BAR 已改 progress 格）。
+ *   - 感觉封锁的灰显（能力提升画面 `[―]` 与灰字）是那个
+ *     画面自己的写法，这里没有，不引入；
+ *   - 字符条写法的等价物见 bar_text——只有刻印行还用它
+ *     （体力/气力条已改 progress 格）。
  */
 
 const era = require('#/era-electron');
 const { NBSP, pad_display } = require('#/utils/display-width');
 
-/** 素质编号（yml/Talent.yml 的名字表；原件以名字寻址，此处用编号 + 注释） */
+/** 素质编号（yml/Talent.yml 的名字表；编号 + 注释寻址） */
 const TALENT_FUTA = 121; // 扶她
 const TALENT_MAN = 122; // 男人
 
@@ -44,22 +41,21 @@ const ABL_HOMO_ADDICT = 34; // 断背中毒
 const MARKS = [0, 1, 2, 3];
 const MARK_LABELS = ['苦痛', '快乐', '屈服', '反抗'];
 
-/** 刻印条的满级（源 :1003 等四条 `BAR MARK:n, 3, 3` 的第二个实参） */
+/** 刻印条的满级（四条字符条调用的第二个实参） */
 const MARK_BAR_MAX = 3;
 /** 刻印条的格数（同上的第三个实参） */
 const MARK_BAR_LEN = 3;
 
 /**
- * `BAR 当前值, 最大值, 长度` 的等价物（源 :1003/:1005/:1007/:1009）。
+ * 「当前值, 最大值, 长度」字符条的等价物。
  *
- * 形态由 _replace.csv 定：`BAR文字1`（填充侧，缺省 `*`）与 `BAR文字2`
- * （空白侧，缺省 `.`）——target/CSV/_replace.csv:38-45 两条都被注释掉，即
- * 取缺省。方括号是 BAR 命令自己加的（黄金样本 train-upgrade-log:159 的
+ * 写法：填充字符 `*`、空白字符 `.`（两条字符配置都取缺省）。
+ * 方括号是字符条自己带的（黄金样本 train-upgrade-log:159 的
  * `[...]` 就是 0/3/3 的输出，bar 字符只有三个点、括号另计）。
  *
  * 填充格数取 `cur * len / max` 的整数商并夹到 [0, len]；`max <= 0` 或
- * `cur <= 0` 时全空。**只有全空形态有黄金样本**（三份样本的刻印都是 LV0），
- * 非零形态按上式实现，登记于此。
+ * `cur <= 0` 时全空。**只有全空写法有黄金样本**（三份样本的刻印都是 LV0），
+ * 非零写法按上式实现，登记于此。
  *
  * @param {number} cur 当前值
  * @param {number} max 最大值
@@ -75,10 +71,9 @@ function bar_text(cur, max, len) {
 }
 
 /**
- * @SHOW_INFO_ABL（:927-986）：非零能力的一览（4 列）。
+ * show_info_abl：非零能力的一览（4 列）。
  *
- * 原作的 `ARG:0` 是「换角色」形态（:936-939 与 :984-986 的 TARGET 换出换入），
- * ere 侧一律显式传 cid（chara-bars.js 同款），两处换手不移植。
+ * ere 侧一律显式传 cid（chara-bars.js 同款），TARGET 换出换入不移植。
  *
  * @param {number} cid 角色 ID
  */
@@ -86,12 +81,12 @@ function show_info_abl(cid) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
   const male = t(TALENT_MAN) !== 0;
   const penis = male || t(TALENT_FUTA) !== 0;
-  let element_count = 0; // ELEMENT_COUNT = 0
+  let element_count = 0;
 
   let row = '';
   for (let abl = 0; abl < 41; abl += 1) {
-    // 跳过空洞编号（源用五个 INRANGE 串联）
     if (
+      // 跳过空洞编号（五段区间）
       (abl >= 5 && abl <= 9) ||
       (abl >= 18 && abl <= 19) ||
       (abl >= 24 && abl <= 29) ||
@@ -114,15 +109,15 @@ function show_info_abl(cid) {
     if (level === 0) {
       continue; // 零值不显示
     }
-    // 男体的阴蒂感觉改名（源里是字面量 "阴茎感觉"）
     const name =
+      // 男体的阴蒂感觉改名（字面量「阴茎感觉」）
       penis && abl === ABL_CLITORIS
         ? '阴茎感觉'
         : (era.get(`ablname:${abl}`) ?? '');
     // 两个前导空格（命令名后的第一个空格是分隔符，见文件头）
     row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;
-    // CALL DECIDE_ABLUP：可提升标记未移植（见文件头），按结果 0 补 2 空格
     row += NBSP.repeat(2);
+    // 可提升标记未移植（见文件头），按判定 0 补 2 空格
 
     element_count += 1;
     if (element_count % 4 === 0) {
@@ -136,26 +131,26 @@ function show_info_abl(cid) {
 }
 
 /**
- * @SHOW_INFO_MARK（:992-1016）：苦痛/快乐/屈服/反抗四枚刻印一行。
+ * show_info_mark：苦痛/快乐/屈服/反抗四枚刻印一行。
  * @param {number} cid 角色 ID
  */
 function show_info_mark(cid) {
   const fragments = [];
   for (const [index, mark_id] of MARKS.entries()) {
     const level = era.get(`mark:${cid}:${mark_id}`) || 0;
-    // PRINTFORM 的间距：首项 1 个前导空格、
-    // 其余 4 个「快乐:」之间 3 个（命令后的第一个空格是分隔符，见文件头）。
+    // 间距：首项 1 个前导空格、
+    // 其余各项 3 个（命令后的第一个空格是分隔符，见文件头）。
     // 首项那 1 格同样计入四枚刻印的列对齐，故一并用 NBSP（#577）
     fragments.push({
       content: `${NBSP.repeat(index === 0 ? 1 : 3)}${MARK_LABELS[index]}:LV${level} `,
     });
-    // BAR MARK:n, 3, 3
+    // 刻印字符条（满级 3、3 格）
     fragments.push({
       content: bar_text(level, MARK_BAR_MAX, MARK_BAR_LEN),
     });
   }
-  // CALL DECIDE_ABLUP99 的 `*` 未移植（见文件头）
-  era.print(fragments); // PRINTL
+  // 可提升的 `*` 未移植（见文件头）
+  era.print(fragments);
 }
 
 module.exports = { bar_text, show_info_abl, show_info_mark };

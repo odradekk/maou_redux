@@ -70,7 +70,7 @@ export default [
     must_mention: '5 空格占位',
   },
   {
-    desc: 'M12216 调教表头的「调教中」后 3 格补位退回半角空格（TRAIN_MAIN :69 内容空格）',
+    desc: 'M12216 调教表头的「调教中」后 3 格补位退回半角空格（内容的空格是全角）',
     file: TRAIN,
     find: '    { content: `${chara_callname(target)} 调教中\\u00A0\\u00A0\\u00A0调教者:` },',
     replace:
@@ -89,7 +89,7 @@ export default [
     must_mention: '算式五段全宽',
   },
   {
-    desc: 'M12218 SHOW_INFO_MARK 刻印行的 3 格列间隙退回半角空格（:1004-1008）',
+    desc: 'M12218 show_info_mark 刻印行的 3 格列间隙退回半角空格',
     file: ABLMARK,
     find: '      content: `${NBSP.repeat(index === 0 ? 1 : 3)}${MARK_LABELS[index]}:LV${level} `,',
     replace:
@@ -132,7 +132,7 @@ export default [
     must_mention: '道具行的列补位须是 NBSP',
   },
   {
-    desc: 'M12223 名册爱慕标签的两格内补位退回半角空格（LIFE_LIST :49/:53，标签列塌一格）',
+    desc: 'M12223 名册爱慕标签的两格内补位退回半角空格（标签列塌一格）',
     file: LIFE_LIST,
     find: "    return { content: '<爱\\u00A0\\u00A0慕>', color: COLOR_LOVE };",
     replace:

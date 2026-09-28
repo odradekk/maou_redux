@@ -294,6 +294,21 @@ test('com64/com69/com70：升格抵达时显式回填 SELECTCOM', async () => {
   }
 });
 
+test('com66：助手射精旗——通常射精 tflag:6 = 1，大量射精 = 2', async () => {
+  // 助手无 121/122 时 add_gauge 不动槽，射精档完全由预设槽位决定
+  const world = seed_world();
+  world.fixture.store.set('maxbase:17:2', 1000);
+  world.fixture.store.set('base:17:2', 1001); // ejac < s ≤ 2×ejac → 通常
+  await run_com(world, 66);
+  assert.equal(world.fixture.store.get('tflag:6'), 1, '助手通常射精旗为 1');
+
+  const heavy = seed_world();
+  heavy.fixture.store.set('maxbase:17:2', 1000);
+  heavy.fixture.store.set('base:17:2', 2001); // s > 2×ejac → 大量
+  await run_com(heavy, 66);
+  assert.equal(heavy.fixture.store.get('tflag:6'), 2, '助手大量射精旗为 2');
+});
+
 test('CASE 61：上回合舔阴/口交/六九式且同调教者 → 升格 69', async () => {
   const world = seed_world();
   const { era_flag, fixture, adv_com_family } = world;

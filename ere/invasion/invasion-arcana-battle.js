@@ -2,31 +2,28 @@
  * @file 圣灵骑士堡垒的一对一对战（issue #470，阶段 5c Q13 侵略残余·3）。
  *
  * 元勇者（ATKER，玩家派出的奴隶）对圣灵骑士（DEFER）。攻击本体不重写：
- * 主循环调用的 @DUEL_ATTACK 已由 ere/dungeon/dungeon-battle2.js 的
- * duel_attack 真身覆盖（arg3 = 3 奴隶→圣灵 / 2 圣灵→奴隶，泛化时连
- * 伤害修正链一起带走）。@SPEED_PLUS3 与 @SPEED_PLUS2
- * （迷宮/DUNGEON_BATLLE2.ERB:577-632）逐条同构——同一组素质判定
+ * 主循环调用的 duel_attack 已由 ere/dungeon/dungeon-battle2.js 的
+ * 真身覆盖（arg3 = 3 奴隶→圣灵 / 2 圣灵→奴隶，泛化时连
+ * 伤害修正链一起带走）。速度补正的两份变体逐条同构——同一组素质判定
  * （243 奇袭 / 245 恶魔翅膀 / 258 俊足 / 314==10 霍比特 / 314==11 矮人）、
- * 同一对装备效果（3 速度UP / 12 速度減），仅 X/Y 掷点位置不同（原作由
- * 调用方掷、补正函数改全局，ere 侧随 speed_plus2 内聚），直接复用
+ * 同一对装备效果（3 速度UP / 12 速度減），仅 X/Y 掷点位置不同（旧引擎
+ * 由调用方掷、补正函数改全局，ere 侧随 speed_plus2 内聚），直接复用
  * speed_plus2。两处主循环的差异只剩平局方向：BATTLE2 是 `IF RESULT > 0`
- * （平局勇者先攻），本文件是 `IF X >= Y`（:73，平局奴隶先攻）。
+ * （平局勇者先攻），本文件是 `IF X >= Y`（平局奴隶先攻）。
+ * 旧引擎侧的另两个攻击变体（泛化前的旧实现）没有任何活调用方
+ * （零引用，含文件内部互调），不移植、不建存根行。
  *
- * @ENEMY_ATTACK3（:182-353）与 @MONSTER_ATTACK3（:356-525）没有任何
- * 活调用方（全库零调用点，含文件内部互调），是 @DUEL_ATTACK 泛化前的旧
- * 实现，不移植、不建存根行。
- *
- * 移植说明（有意保留的形态差异）：
- *   - 主循环 :79-85 的 `IF RESULT == 999` 里 BREAK 嵌在 `IF FLAG:5 & 32`
+ * 移植说明（有意保留的写法差异）：
+ *   - 主循环的 `IF RESULT == 999` 里 BREAK 嵌在 `IF FLAG:5 & 32`
  *     内——显示关闭时「战斗中断」（999）不退出循环；BATTLE2 同位置的
- *     BREAK 在守卫外。当前依赖下 999 不可达
+ *     BREAK 在该检查外。当前依赖下 999 不可达
  *     （duel_attack 的 999 只能出自 MAGIC 的 target_type 1 分支，本战斗
  *     恒 0），该差异暂无实跑面，测试用可替换的 duel_attack 钉住。
- *   - 弹药补充 15（:21-22），不是 BATTLE2 的 7——各文件字面量分别保留。
- *   - 先制（:24-27/:29-32）只看 TALENT:252，没有 BATTLE2 先制段的 CFLAG:503
+ *   - 弹药补充 15，不是 BATTLE2 的 7——各文件字面量分别保留。
+ *   - 先制只看 TALENT:252，没有 BATTLE2 先制段的 CFLAG:503
  *     位 5「先制不可」判定。
- *   - @DEATH_CHECK4 比 @DEATH_CHECK2 少一档：狂王分支没有
- *     `TALENT:280 && 气力 <= 1000` 的提前丧失战意档（DEATH_CHECK2 有）。
+ *   - death_check4 比 death_check2 少一档：狂王分支没有
+ *     `TALENT:280 && 气力 <= 1000` 的提前丧失战意档（death_check2 有）。
  *   - 弹药（CFLAG:571）属 dungeon 域，invasion 侧写走 chara 门面的
  *     dungeon.弹药（tools/facade-names.js 的 571 号存取器，#470）。
  */
@@ -36,7 +33,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
-// 模块对象引用（dungeon-battle.test.js / dungeon-magic.test.js:151 先例）：
+// 模块对象引用（dungeon-battle.test.js / dungeon-magic.test.js 先例）：
 // duel_attack / speed_plus2 在测试里整体可替换
 const battle2 = require('#/dungeon/dungeon-battle2');
 
@@ -44,12 +41,12 @@ const battle2 = require('#/dungeon/dungeon-battle2');
 const { name_of } = battle2;
 
 /**
- * @DEATH_CHECK4（:531-584）：圣灵骑士对战的中断判定。圣灵（B）先判、
+ * death_check4：圣灵骑士对战的中断判定。圣灵（B）先判、
  * 元勇者（A）后判；狂王线（FLAG:5 位 7）下元勇者退场状态 9（被带回
  * 狂王的城堡），通常线状态 0（被赶到堡垒外）。
- * @param {number} atker 元勇者（原作全局 A）
- * @param {number} defer 圣灵骑士（原作全局 B）
- * @returns {Promise<number>} 原作 RETURN：0 = 继续 / 1 = 元勇者退场 /
+ * @param {number} atker 元勇者
+ * @param {number} defer 圣灵骑士
+ * @returns {Promise<number>} 0 = 继续 / 1 = 元勇者退场 /
  *   2 = 圣灵骑士退场
  */
 async function death_check4(atker, defer) {
@@ -94,7 +91,7 @@ async function death_check4(atker, defer) {
     return 1;
   }
 
-  // 通常線（退场状态 0；HP≤0 档无第二行——原作如此）
+  // 通常線（退场状态 0；HP≤0 档无第二行）
   if (chara(atker).dungeon.体力 <= 0) {
     era.print(`${name_of(atker)}在圣灵骑士前力竭倒下了。`);
     chara(atker).invasion.状态 = 0;
@@ -118,12 +115,12 @@ async function death_check4(atker, defer) {
 }
 
 /**
- * @ARCANA_BATTLE（:2-121）：元勇者对圣灵骑士的一对一对战主循环。
- * @param {number} atker 元勇者（原作全局 A，ARCANA_FORT 换手传入）
- * @param {number} defer 圣灵骑士（原作全局 B）
+ * arcana_battle：元勇者对圣灵骑士的一对一对战主循环。
+ * @param {number} atker 元勇者（arcana_fort 换手传入）
+ * @param {number} defer 圣灵骑士
  * @param {(n: number) => number} rand RAND:N 随机源
  * @param {object} [move_ctx] 战斗上下文（透传 duel_attack，迷宫侧先例）
- * @returns {Promise<number>} 原作 RETURN：2 = 圣灵骑士退场（胜）、
+ * @returns {Promise<number>} 2 = 圣灵骑士退场（胜）、
  *   0 = 未分胜负（元勇者被击退或超时）
  */
 async function arcana_battle(atker, defer, rand, move_ctx = {}) {
@@ -181,13 +178,13 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
       await era.waitAnyKey();
     }
 
-    // 先制（旧処理の場所）——只剩守卫内的一条 DRAWLINE
+    // 先制（旧処理の場所）——只剩显示检查内的一条 DRAWLINE
     if ((settings & 32) !== 0) {
       era.drawLine();
     }
 
-    // 先攻後攻決定（X = RAND:6、Y = RAND:6 + @SPEED_PLUS3 补正，
-    // 真身即 speed_plus2，文件头）。X >= Y（含平局）→ 奴隶先攻。
+    // 先攻後攻決定（X = RAND:6、Y = RAND:6 + speed_plus2 补正）。
+    // X >= Y（含平局）→ 奴隶先攻。
     const speed = battle2.speed_plus2(atker, defer, rand);
     if (speed >= 0) {
       // 奴隷先攻
@@ -241,7 +238,7 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
   }
 
   // 圣灵骑士仍在任（CFLAG:1 == 2）→ 元勇者被击退的叙述
-  // （PRINTFORML，无显示开关守卫——原样保留）
+  // （PRINTFORML，无显示开关检查——原样保留）
   if (chara(defer).invasion.状态 === 2) {
     era.print(`${name_of(atker)}被圣灵骑士击败了………`);
   }

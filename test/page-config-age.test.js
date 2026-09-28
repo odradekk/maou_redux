@@ -46,7 +46,7 @@ function texts_of(fixture, accelerator) {
     .map(([, text]) => text);
 }
 
-// —— @CONFIG_AGE_SETTING（:853-929）：年龄/三围显示开关 ——
+// —— config_age_setting：年龄/三围显示开关 ——
 
 test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用种族年龄）开时渲染', async () => {
   const fixture = create_era_fixture();
@@ -60,7 +60,7 @@ test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用�
   assert.ok(accelerators.has(1));
   assert.ok(accelerators.has(2));
   assert.ok(accelerators.has(3));
-  assert.ok(!accelerators.has(9), '位 13 关：[9] 不渲染（原作 :865-866）');
+  assert.ok(!accelerators.has(9), '位 13 关：[9] 不渲染');
   // 四个开关的初始状态文案（flag:5 未设 → 全 OFF）
   assert.ok(
     texts_of(fixture, 0).some((t) => t.includes('OFF')),
@@ -75,7 +75,7 @@ test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用�
   const { config_age_setting: again } = load(fixture2);
   seed_race_table(fixture2);
   fixture2.store.set('flag:5', 2 ** 13);
-  // 位 13 单开（位 12 关）：[9] 立即渲染且种族年龄文案 ON——与位 12 区分（:865-866）
+  // 位 13 单开（位 12 关）：[9] 立即渲染且种族年龄文案 ON——与位 12 区分
   fixture2.set_inputs(100);
   await again(always);
   assert.ok(
@@ -94,7 +94,7 @@ test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用�
   const fixture3 = create_era_fixture();
   const { config_age_setting: third } = load(fixture3);
   seed_race_table(fixture3);
-  fixture3.store.set('flag:5', 2 ** 12); // 只开位 12（年龄显示），[9] 门在位 13
+  fixture3.store.set('flag:5', 2 ** 12); // 只开位 12（年龄显示），[9] 的显示条件在位 13
   fixture3.set_inputs(100);
   await third(always);
   assert.ok(
@@ -132,11 +132,7 @@ test('CONFIG_AGE_SETTING [9]：种族年龄表未设时先播种默认表，再�
   fixture.set_inputs(9, 100, 100);
   await config_age_setting(always);
 
-  assert.deepEqual(
-    fixture.store.get('flag:26'),
-    RACE_TABLE_0,
-    ':889-892 先播种',
-  );
+  assert.deepEqual(fixture.store.get('flag:26'), RACE_TABLE_0, '先播种');
   assert.deepEqual(fixture.store.get('flag:27'), RACE_TABLE_1);
   // RACE_CONFIG 顶层真的渲染过（八种族行）
   assert.ok(texts_of(fixture, 0).some((text) => text.includes('精灵')));
@@ -155,7 +151,7 @@ test('CONFIG_AGE_SETTING 退出块：位 12 开时为 CFLAG:451==0 的角色生�
   await config_age_setting((n) => (n === 5 ? 4 : 0)); // RAND:5 = 4 → 年龄 15
 
   // 对照组：同一世界直调 char_size_generate（三围算法本体在
-  // test/chara-body.test.js 覆盖，这里只核对接线与年龄实参）
+  // test/chara-body.test.js 覆盖，这里只核对接入与年龄实参）
   const control = create_era_fixture();
   seed_race_table(control);
   control.seed_chara(21, { id: 21, name: '村娘A', callname: '村娘A' });
@@ -169,7 +165,7 @@ test('CONFIG_AGE_SETTING 退出块：位 12 开时为 CFLAG:451==0 的角色生�
     assert.equal(
       fixture.store.get(`cflag:21:${451 + offset}`),
       expected[offset],
-      `CFLAG:${451 + offset} 接住 RESULT:${offset}（:920-926）`,
+      `CFLAG:${451 + offset} 接住 RESULT:${offset}`,
     );
   }
 });
@@ -218,7 +214,7 @@ function seq_first_only() {
   };
 }
 
-test('CONFIG_AGE_SETTING 退出块守卫：位 12/15 全关时不生成、不播种', async () => {
+test('CONFIG_AGE_SETTING 退出块检查：位 12/15 全关时不生成、不播种', async () => {
   const fixture = create_era_fixture();
   const { config_age_setting } = load(fixture);
   fixture.seed_chara(21, { id: 21, name: '村娘A', callname: '村娘A' });
@@ -229,7 +225,7 @@ test('CONFIG_AGE_SETTING 退出块守卫：位 12/15 全关时不生成、不播
   assert.equal(
     fixture.store.get('flag:26'),
     undefined,
-    ':900 位 12/15 全关 → 不播种',
+    '位 12/15 全关 → 不播种',
   );
   assert.equal(fixture.store.get('cflag:21:451'), undefined, '不生成身体数据');
 });
@@ -247,19 +243,15 @@ test('CONFIG_AGE_SETTING 退出块：魔王（0）与已有 CFLAG:451 的角色�
   fixture.set_inputs(100);
   await config_age_setting(always);
 
-  assert.equal(
-    fixture.store.get('cflag:0:451'),
-    undefined,
-    ':909-910 LCOUNT==0 跳过',
-  );
+  assert.equal(fixture.store.get('cflag:0:451'), undefined, 'LCOUNT==0 跳过');
   assert.equal(
     fixture.store.get('cflag:24:453'),
     undefined,
-    ':911 CFLAG:451≠0 跳过',
+    'CFLAG:451≠0 跳过',
   );
 });
 
-// —— @RACE_CONFIG（:931-1333）：种族年龄编辑器 ——
+// —— race_config：种族年龄编辑器 ——
 
 test('RACE_CONFIG 顶层：默认表下八个种族行的档位文案', async () => {
   const fixture = create_era_fixture();
@@ -330,7 +322,7 @@ test('RACE_CONFIG 顶层：默认表下八个种族行的档位文案', async ()
   assert.ok(accelerators.has(100));
 });
 
-test('RACE_CONFIG [98]：确认后整表回默认并直接返回（:1035-1048）', async () => {
+test('RACE_CONFIG [98]：确认后整表回默认并直接返回', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   fixture.store.set('flag:26', [12, 115, 431, 325, 15, 232]);
@@ -338,13 +330,9 @@ test('RACE_CONFIG [98]：确认后整表回默认并直接返回（:1035-1048）
   fixture.set_inputs(98, 0);
   await race_config(always);
 
-  assert.deepEqual(
-    fixture.store.get('flag:26'),
-    RACE_TABLE_0,
-    ':1043-1044 回默认',
-  );
+  assert.deepEqual(fixture.store.get('flag:26'), RACE_TABLE_0, '回默认');
   assert.deepEqual(fixture.store.get('flag:27'), RACE_TABLE_1);
-  // 确认页文案（:1036-1040）
+  // 确认页文案
   assert(
     fixture.text_lines().some((t) => t.includes('全种族的年龄均返回默认值。')),
     '确认页首行',
@@ -364,8 +352,8 @@ test('RACE_CONFIG [98]：取消（[1]）回顶层不写表', async () => {
   fixture.set_inputs(98, 1, 100);
   await race_config(always);
 
-  // 取消后回顶层、[100] 退出仍会打包（原作 [100] 分支），但 [98] 的「回默认」
-  // 不执行：编辑态原样保留（引用换新是打包的正常行为，值不变）
+  // 取消后回顶层、[100] 退出仍会打包（[100] 分支），但 [98] 的「回默认」
+  // 不执行：编辑态保留不动（引用换新是打包的正常行为，值不变）
   assert.deepEqual(
     fixture.store.get('flag:26'),
     [12, 115, 431, 325, 15, 232],
@@ -409,7 +397,7 @@ test('RACE_CONFIG 编辑流：小数倍 [0]（0.0 倍，种族寿命 1 年以内
   assert.equal(fixture.store.get('flag:26')[0], 100, 'cla 1 / deg 0 / num 0');
 });
 
-test('RACE_CONFIG 编辑流：随机档 [104]+[112]+上限 25 → 槽位 425（:1295-1317）', async () => {
+test('RACE_CONFIG 编辑流：随机档 [104]+[112]+上限 25 → 槽位 425', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -437,11 +425,11 @@ test('RACE_CONFIG 编辑流：[110]（下限 0）与 [111]（上限 1/2）两档
   }
 });
 
-test('RACE_CONFIG 编辑页：和人类一样（DIS_FLAG -1）不打印任何网格（:1214 ELSEIF DIS_FLAG > 1）', async () => {
+test('RACE_CONFIG 编辑页：和人类一样（DIS_FLAG -1）不打印任何网格（ELSEIF DIS_FLAG > 1）', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
-  // 槽 6 霍比特人默认就是「和人类一样」（001）——旧实现进了 else 分支，
+  // 槽 6 霍比特人默认就是「和人类一样」（001）——实现进了 else 分支，
   // 可见按钮就能把 SET_VAR:0 写成 -1、写坏种族年龄表（#547 验收第 1 条）
   fixture.set_inputs(6, 100, 100);
   await race_config(always);
@@ -459,7 +447,7 @@ test('RACE_CONFIG 编辑页：和人类一样（DIS_FLAG -1）不打印任何网
   }
 });
 
-test('RACE_CONFIG 编辑流：吸血鬼 [101]→[104]→[110]→[999] 保存为 231（[101] 不清 SET_VAR:4/5，:1279-1284）', async () => {
+test('RACE_CONFIG 编辑流：吸血鬼 [101]→[104]→[110]→[999] 保存为 231（[101] 不清 SET_VAR:4/5）', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -471,11 +459,11 @@ test('RACE_CONFIG 编辑流：吸血鬼 [101]→[104]→[110]→[999] 保存为 
   assert.equal(
     fixture.store.get('flag:26')[2],
     231,
-    '下限 0 岁 + 原上限 1000 岁 → cla 2 / deg 3 / num 1（旧实现误存 001）',
+    '下限 0 岁 + 原上限 1000 岁 → cla 2 / deg 3 / num 1（修正前误存 001）',
   );
 });
 
-test('RACE_CONFIG 怪癖：[112] 在未选上限时不切算法档（SET_VAR:4 > 0 守卫，:1311-1317）', async () => {
+test('RACE_CONFIG 怪癖：[112] 在未选上限时不切算法档（SET_VAR:4 > 0 检查）', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -487,7 +475,7 @@ test('RACE_CONFIG 怪癖：[112] 在未选上限时不切算法档（SET_VAR:4 >
   assert.equal(
     fixture.store.get('flag:26')[0],
     11,
-    '照原作：只按了下限、未选上限时不落随机档',
+    '只按了下限、未选上限时不落随机档',
   );
 });
 
@@ -510,19 +498,11 @@ test('RACE_CONFIG [99]：打包先于确认（取消也写回编辑态），确�
   await race_config(always);
 
   // 槽 1 = 012（20 倍）→ 种族年龄 = 20 × 20 + RAND:20（恒 0）
-  assert.equal(
-    fixture.store.get('flag:26')[1],
-    12,
-    ':1050-1057 打包（在确认前）',
-  );
-  assert.equal(
-    fixture.store.get('cflag:21:452'),
-    400,
-    ':1071-1073 重算种族年龄',
-  );
-  assert.equal(fixture.store.get('cflag:0:452'), 999, ':1069-1070 魔王跳过');
+  assert.equal(fixture.store.get('flag:26')[1], 12, '打包（在确认前）');
+  assert.equal(fixture.store.get('cflag:21:452'), 400, '重算种族年龄');
+  assert.equal(fixture.store.get('cflag:0:452'), 999, '魔王跳过');
 });
-test('RACE_CONFIG [99] 取消：表已打包（原作时序），但不算年龄、回顶层', async () => {
+test('RACE_CONFIG [99] 取消：表已打包（打包先于确认），但不算年龄、回顶层', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -534,15 +514,11 @@ test('RACE_CONFIG [99] 取消：表已打包（原作时序），但不算年龄
   fixture.set_inputs(1, 102, 12, 999, 99, 1, 100);
   await race_config(always);
 
-  assert.equal(
-    fixture.store.get('flag:26')[1],
-    12,
-    ':1050-1057 在确认 INPUT 之前',
-  );
+  assert.equal(fixture.store.get('flag:26')[1], 12, '在确认 INPUT 之前');
   assert.equal(fixture.store.get('cflag:21:452'), undefined, '取消不重算');
 });
 
-test('RACE_CONFIG 编辑循环 [100]：不保存 SET_VAR 直接回顶层（:1276-1277）', async () => {
+test('RACE_CONFIG 编辑循环 [100]：不保存 SET_VAR 直接回顶层', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -618,7 +594,7 @@ test('RACE_CONFIG 编辑循环：小数倍网格（DIS_FLAG 1，含 0.0 倍按�
   assert.ok(has(0, '0.0 倍'));
   assert.ok(has(0, '种族的寿命1年以内'));
   assert.ok(has(1, '0.1 倍'));
-  assert.ok(has(10, '1.0 倍'), ':1258 十的倍数仅小数档可用');
+  assert.ok(has(10, '1.0 倍'), '十的倍数仅小数档可用');
   assert.ok(has(14, '1.4 倍'));
   assert.ok(has(15, '1.5 倍'));
   assert.ok(has(20, '2.0 倍'));
@@ -652,7 +628,7 @@ test('RACE_CONFIG 编辑循环的档位说明行（当前设定与 17 岁换算�
   );
 });
 
-test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断，:1151-1152）', async () => {
+test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断）', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
   seed_race_table(fixture);
@@ -671,11 +647,11 @@ test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断，
   );
 });
 
-// —— #615：print 正文不带尾换行（CONTEXT.md「输出 API 与原作的对应」）——
+// —— #615：print 正文不带尾换行（CONTEXT.md「输出 API 的排版与对齐」）——
 //
 // `era.print` 自成一行：正文里再写 `\n` 只会多出一个显示行（引擎手册 06-output
 // 的「在字符串中输出 '\n' 可将文本分割为两行」）。本文件内所有 `...\n` 的尾换行
-// 都是这类多补，原作对应处一律是 `PRINTFORM(L)` 收尾，故按行拆开断言。
+// 都是这类多补，对应处一律是 `PRINTFORM(L)` 收尾，故按行拆开断言。
 
 test('#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按钮位置正确', async () => {
   const fixture = create_era_fixture();
@@ -687,11 +663,11 @@ test('#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按�
   const idx = lines.findIndex((l) => l.text === '全种族的年龄均返回默认值。');
   assert.ok(
     idx >= 0,
-    `:1036 的正文不带尾换行，实际 ${JSON.stringify(fixture.text_lines())}`,
+    `正文不带尾换行，实际 ${JSON.stringify(fixture.text_lines())}`,
   );
-  assert.equal(lines[idx + 1].text, '确认吗？', ':1037 的行紧随其后');
-  assert.equal(lines[idx + 2].type, 'br', ':1038 的 PRINTL 是真空行');
-  assert.equal(lines[idx + 3].type, 'button', ':1039 的按钮行不再多空一行');
+  assert.equal(lines[idx + 1].text, '确认吗？', '行紧随其后');
+  assert.equal(lines[idx + 2].type, 'br', 'PRINTL 是真空行');
+  assert.equal(lines[idx + 3].type, 'button', '按钮行不再多空一行');
   assert.equal(lines[idx + 3].accelerator, 0);
 });
 
@@ -710,12 +686,12 @@ test('#615 RACE_CONFIG 顶层：表头行不带尾换行，紧接八种族按钮
   assert.equal(
     header.text,
     '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',
-    ':972-974 的 PRINTFORM + PRINTFORML 是一条显示行，不再自带尾换行',
+    'PRINTFORM + PRINTFORML 是一条显示行，不再自带尾换行',
   );
   assert.equal(
     lines[lines.indexOf(header) + 1].type,
     'button',
-    '八种族按钮行紧随表头（:978 起）',
+    '八种族按钮行紧随表头',
   );
 });
 
@@ -737,13 +713,9 @@ test('#615 RACE_CONFIG 编辑头：两行正文各自成行，重画首拍是真
     '■ 种族 [精灵] 的年龄设定：换算成人类年龄的\u00A0\u00A010 倍',
     '档位说明行不带尾换行',
   );
-  assert.equal(lines[lines.indexOf(desc) - 1].type, 'br', ':1111 的重画首拍');
+  assert.equal(lines[lines.indexOf(desc) - 1].type, 'br', '重画首拍');
   const preview = lines[lines.indexOf(desc) + 1];
-  assert.equal(
-    preview.type,
-    'text',
-    '预览行紧随说明行（:1146-1161 是同一行的拼接）',
-  );
+  assert.equal(preview.type, 'text', '预览行紧随说明行（同一行的拼接）');
   assert.equal(
     preview.text,
     // #577：两个年龄字段（`p4` 的宽 4 右对齐）补位是 NBSP；「左右」后的
@@ -772,11 +744,11 @@ test('#615 RACE_CONFIG 随机档：■ 下限 / ■ 上限 两行标签不带尾
   const upper = lines.find(
     (l) => l.type === 'text' && l.text.startsWith('　　■ 上限'),
   );
-  assert.equal(lower?.text, '　　■ 下限', ':1215 的 PRINTL 自成一行');
-  assert.equal(upper?.text, '　　■ 上限', ':1233 的 PRINTL 自成一行');
-  // 下限标签 → 三个下限按钮 → 真空行（:1232 PRINTL）→ 上限标签
+  assert.equal(lower?.text, '　　■ 下限', 'PRINTL 自成一行');
+  assert.equal(upper?.text, '　　■ 上限', 'PRINTL 自成一行');
+  // 下限标签 → 三个下限按钮 → 真空行（PRINTL）→ 上限标签
   const lower_idx = lines.indexOf(lower);
   assert.equal(lines[lower_idx + 1].type, 'button', '[110] 紧随下限标签');
-  assert.equal(lines[lower_idx + 4].type, 'br', ':1232 的 PRINTL 是真空行');
+  assert.equal(lines[lower_idx + 4].type, 'br', 'PRINTL 是真空行');
   assert.equal(lines[lower_idx + 5], upper, '上限标签紧随真空行');
 });

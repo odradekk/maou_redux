@@ -8,10 +8,10 @@
  *
  * 覆盖（对应 #73 验收项）：
  *   1. 行数 = 绘制前后 getLineCount() 差值，不静态声明；内容行数随数据变
- *      （角色列表/参数条形态的合成块——print_palam 的抽象容纳性证明）；
+ *      （角色列表/参数条样式的合成块——print_palam 的抽象容纳性证明）；
  *   2. Row 的计法：一次 printMultiColumns 的多格 = 1 Row（条目数不是行数）；
- *   3. 重绘 = 清锚点跨度 + 重画；重绘后其上方内容完好（直接断言——Row
- *      标准错误的破坏形态正是上方内容被连带抹掉）；
+ *   3. 重绘 = 清基准点跨度 + 重画；重绘后其上方内容完好（直接断言——Row
+ *      标准错误的破坏形式正是上方内容被连带抹掉）；
  *   4. input 回显行计入清行跨度；hideUserInput 无回显时跨度自适应；
  *   5. menu_button：正文不写 [编号] 前缀（引擎自动拼）、未选中调暗
  *      #bbbbbb（两条既有 UI 结论在新落点的直接断言）。
@@ -36,7 +36,7 @@ test('行数测量：占几行 = 绘制前后差值，内容行数随数据变�
     screen_block: { ScreenBlock },
   } = load_components(fixture);
 
-  // 可变高度内容的合成形态（角色列表/参数条同类）：行数是数据的函数
+  // 可变高度内容的合成样式（角色列表/参数条同类）：行数是数据的函数
   const items = { names: ['甲', '乙', '丙'] };
   const list = new ScreenBlock(() => {
     items.names.forEach((name) => fixture.era.print(name));
@@ -72,7 +72,7 @@ test('Row 的计法：一次 printMultiColumns 的多格 = 1 Row（条目数不�
   assert.equal(fixture.lines.length, 4);
 });
 
-test('重绘后其上方内容完好（Row 的计法错误的破坏形态，直接断言）', async () => {
+test('重绘后其上方内容完好（Row 的计法错误的破坏形式，直接断言）', async () => {
   const fixture = create_era_fixture();
   const {
     screen_block: { ScreenBlock },
@@ -94,12 +94,12 @@ test('重绘后其上方内容完好（Row 的计法错误的破坏形态，直�
 
   await block.redraw();
 
-  // 上方两行原样还在：锚点跨度只清块自身与回显，不越过锚点
+  // 上方两行原样还在：基准点跨度只清块自身与回显，不越过基准点
   assert.deepEqual(
     fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
     ['上方一', '上方二'],
   );
-  // 回显行被锚点跨度消费：总行数回到 上方 2 + 块 3
+  // 回显行被基准点跨度消费：总行数回到 上方 2 + 块 3
   assert.equal(fixture.era.getLineCount(), 5);
   // 块内容是重画后的新条目（row 2-4）
   assert.deepEqual(
@@ -109,7 +109,7 @@ test('重绘后其上方内容完好（Row 的计法错误的破坏形态，直�
 });
 
 test('回显两态：计行与不计行（hideUserInput）下重绘都稳定', async () => {
-  // 默认：回显 +1 Row，锚点跨度含它——重绘后屏幕回到块自身
+  // 默认：回显 +1 Row，基准点跨度含它——重绘后屏幕回到块自身
   const with_echo = create_era_fixture();
   const {
     screen_block: { ScreenBlock: BlockA },
@@ -137,14 +137,14 @@ test('回显两态：计行与不计行（hideUserInput）下重绘都稳定', a
   assert.equal(without_echo.era.getLineCount(), 1);
 });
 
-test('容纳可变行数的参数条形态（print_palam 的抽象容纳性，#74 同款节奏）', async () => {
+test('容纳可变行数的参数条样式（print_palam 的抽象容纳性，#74 同款节奏）', async () => {
   const fixture = create_era_fixture();
   const {
     screen_block: { ScreenBlock },
   } = load_components(fixture);
 
   fixture.era.print('画面标题（上方内容）');
-  // page-train print_palam 的同款形态：条目按每行 3 条排布，行数随条目数变
+  // page-train print_palam 的同款样式：条目按每行 3 条排布，行数随条目数变
   const stats = { names: ['润滑', '屈服', '欲望', '恭顺'] };
   const bars = new ScreenBlock(() => {
     const rows = Math.ceil(stats.names.length / 3);

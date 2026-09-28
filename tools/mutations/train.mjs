@@ -1,9 +1,9 @@
-// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
+﻿// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1018; // 合并 #650 后实测 1018（#650 +2 −2、#647 返工 +3、#647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的守卫）；#650 起 +2 −2（M13100/M13101 修复守卫；M1314/M9783 反向变异随缺陷修复删除）；#648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归守卫）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1025; // #696 起净 +7（M14100-M14106/M14110 守 F12 修复点：com56 显示实加一致、com66 助手通常射精旗、able27 电极检查、equip_com49 重复除块、精巢文案、able2 双 ≥4；M1195 com56 反向变异随缺陷修复删除）；合并 #650 后实测 1018（#650 +2 −2、#647 返工 +3、#647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的检查）；#650 起 +2 −2（M13100/M13101 回归检查；M1314/M9783 反向变异随缺陷修复删除）；#648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归检查）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接入）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接入；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装检查读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -401,9 +401,9 @@ export default [
   {
     desc: 'M744 按钮编号印回 L_I（渲染侧映射删——方格与玩家输入错位）',
     file: 'ere/page/page-usercom.js',
-    find: '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), com_index(id));',
+    find: '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), com_index(id));',
     replace:
-      '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
+      '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
@@ -420,13 +420,13 @@ export default [
     must_mention: '标签换、编号不换',
   },
   {
-    desc: 'M746 64 合成臂删（%TRAINNAME:64%・%TRAINNAME:L_I% 的合成标签不再成形）',
+    desc: 'M746 64 合成分支删（%TRAINNAME:64%・%TRAINNAME:L_I% 的合成标签不再成形）',
     file: 'ere/page/page-usercom.js',
     find: `  if (adv === 64 && id !== 64) {`,
     replace: `  if (false) {
     // 变异：合成臂删（64 合成时直接落 TRAIN_NAME）`,
     tests: ['page-usercom'],
-    must_mention: '64 合成臂',
+    must_mention: '64 合成分支',
   },
   {
     desc: 'M747 get_adv_com 的缺失语义改 0（RETURN ARG 变 RETURN 0——无规则的指令被升格去 0 号）',
@@ -505,14 +505,14 @@ export default [
   {
     desc: 'M760 SHOW_COMMENU 的 L_IDX 位次换成 L_I（升格前的号直印——位次映射在渲染处旁路）',
     file: 'ere/page/page-usercom.js',
-    find: '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), com_index(id));',
+    find: '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), com_index(id));',
     replace:
-      '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
+      '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
   {
-    desc: 'M761 GETBIT 分流恒 OFF（自定义菜单臂删除——flag:5 开局态失灵）',
+    desc: 'M761 位测试分流恒 OFF（自定义菜单分支删除——flag:5 开局态失灵）',
     file: 'ere/page/page-usercom.js',
     find: `  if (show_advanced_names()) {
     await show_commenu();
@@ -524,7 +524,7 @@ export default [
     must_mention: '自定义菜单，标签取 TRAIN_NAME',
   },
   {
-    desc: 'M762 GETBIT 分流恒 ON（内建臂删除——OFF 态吃 trainalias 不吃静态名）',
+    desc: 'M762 位测试分流恒 ON（内建分支删除——OFF 态吃 trainalias 不吃静态名）',
     file: 'ere/page/page-usercom.js',
     find: `  if (show_advanced_names()) {
     await show_commenu();
@@ -533,7 +533,7 @@ export default [
   }`,
     replace: `  await show_commenu(); // 变异：恒自定义臂`,
     tests: ['page-usercom'],
-    must_mention: 'OFF 臂读 traincommandname',
+    must_mention: '内建渲染路径',
   },
   {
     desc: 'M763 SHOW_COMMENU 的 COM_ABLE 过滤删（不可用指令也渲染）',
@@ -544,7 +544,7 @@ export default [
     must_mention: 'COM_ABLE=0 的指令不得渲染',
   },
   {
-    desc: 'M764 子菜单按钮守卫删（交代助手/对换调教恒显示）',
+    desc: 'M764 子菜单按钮检查删（交代助手/对换调教恒显示）',
     file: 'ere/page/page-usercom.js',
     find: "  if (guards.can_handover) {\n    era.printButton('交代助手', 102); // （ASSI > 0 && ASSI:1 > 0）\n  }",
     replace: `  era.printButton('交代助手', 102); // 变异：无守卫`,
@@ -552,7 +552,7 @@ export default [
     must_mention: '默认态 9 个按钮',
   },
   {
-    desc: 'M765 FLAG:550 守卫删（991/992 无菜单也显示）',
+    desc: 'M765 FLAG:550 检查删（991/992 无菜单也显示）',
     file: 'ere/page/page-usercom.js',
     find: "  if (game_train.指令菜单长度 > 0) {\n    era.printButton('调教菜单表示', 991);\n    era.printButton('调教菜单实行', 992);\n  }",
     replace: `  era.printButton('调教菜单表示', 991); // 变异：无守卫
@@ -2631,12 +2631,12 @@ export default [
     must_mention: '内裤/下装在身',
   },
   {
-    desc: 'M911 able2 助手双低放行删（顺从 ≤3 且百合 ≤3 → 直接 RETURN 1）',
+    desc: 'M911 able2 助手双高放行删（顺从 ≥4 且百合 ≥4 → 直接 RETURN 1）',
     file: 'ere/system/train/com-caress.js',
-    find: '    if (\n      (era.get(`abl:${assi}:10`) || 0) <= 3 &&\n      (era.get(`abl:${assi}:22`) || 0) <= 3\n    ) {\n      return 1;\n    }',
-    replace: '    // 变异：双低放行删除',
+    find: '    if (\n      (era.get(`abl:${assi}:10`) || 0) >= 4 &&\n      (era.get(`abl:${assi}:22`) || 0) >= 4\n    ) {\n      return 1;\n    }',
+    replace: '    // 变异：双高放行删除',
     tests: ['com-caress'],
-    must_mention: '双 ≤3 放行',
+    must_mention: '双 4 放行',
   },
   {
     desc: 'M912 com3 判定不过仍进 B 文（A < V 的 RETURN 0 删）',
@@ -3308,20 +3308,82 @@ export default [
     must_mention: '放置PLAY',
   },
   {
-    desc: 'M1195 com56 歌唱经验实际值改为显示值（差 1 消失）',
-    file: 'ere/system/train/com-special.js',
-    find: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 3;',
-    replace: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 2;',
-    tests: ['com-special'],
-    must_mention: '显示 +6，实际加 E+ABL-3 = 5',
-  },
-  {
     desc: 'M1196 com57 爱情经验露出门槛 3 降为 2',
     file: 'ere/system/train/com-special.js',
     find: '    abl(cid, 17) >= 3 &&',
     replace: '    abl(cid, 17) >= 2 &&',
     tests: ['com-special'],
     must_mention: 'com57：开关、爱情经验与持续效果',
+  },
+  {
+    desc: 'M14100 com56 歌唱经验实加值改回比显示少 1（-2 → -3）',
+    file: 'ere/system/train/com-special.js',
+    find: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 2;',
+    replace: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 3;',
+    tests: ['com-special'],
+    must_mention: '显示 +6，实际加 E+ABL-2 = 6',
+  },
+  {
+    desc: 'M14101 com56 舞蹈经验实加值改回比显示少 1（-2 → -3）',
+    file: 'ere/system/train/com-special.js',
+    find: '    chara(cid).train.舞蹈经验 += gain + abl(cid, 72) - 2;',
+    replace: '    chara(cid).train.舞蹈经验 += gain + abl(cid, 72) - 3;',
+    tests: ['com-special'],
+    must_mention: '舞蹈与歌唱同式，E+ABL-2 = 6',
+  },
+  {
+    desc: 'M14102 com66 助手通常射精旗改回 2（同族写法是大量 2、通常 1）',
+    file: 'ere/system/train/com-assistant.js',
+    find: "    era.print('射精（助手）');\n    chara(assi).train.射精经验 += 1;\n    chara(target).dungeon.精液经验 += 1;\n    era.print('精液经验＋１');\n    mark_penis_stain(assi);\n    consume_gauge(assi, 1, assi_ejac.ejac);\n    era.set('tflag:6', 1);",
+    replace:
+      "    era.print('射精（助手）');\n    chara(assi).train.射精经验 += 1;\n    chara(target).dungeon.精液经验 += 1;\n    era.print('精液经验＋１');\n    mark_penis_stain(assi);\n    consume_gauge(assi, 1, assi_ejac.ejac);\n    era.set('tflag:6', 2);",
+    tests: ['com-assistant'],
+    must_mention: '助手通常射精旗为 1',
+  },
+  {
+    desc: 'M14103 able27 肛门电极检查删（COM26/28/29 都有）',
+    file: 'ere/system/train/com-sex.js',
+    find: '  if (tq(cid, 46)) return 0;\n  if (tq(cid, 49)) return 0;\n  if (!tal(player, 121) && !tal(player, 122) && !has_pband() && !tq(cid, 89))',
+    replace:
+      '  if (tq(cid, 46)) return 0;\n  if (!tal(player, 121) && !tal(player, 122) && !has_pband() && !tq(cid, 89))',
+    tests: ['com-sex'],
+    must_mention: 'COM27 电极使用中挡',
+  },
+  {
+    desc: 'M14104 equip_com49 看重贞操的 S13/=3 再叠一次（同条件重复执行）',
+    file: 'ere/system/train/com-sm.js',
+    find: "  // 看重贞操的处女 → S13 /= 3\n  if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {\n    set_src(target, 13, Math.floor(src(target, 13) / 3));\n  }\n\n  // —— 经验上升 ——\n  chara(target).dungeon.肛门经验 += 5;\n  era.print('肛门经验＋５');\n  same_sex_exp(target, player, 1);",
+    replace:
+      "  // 看重贞操的处女 → S13 /= 3\n  if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {\n    set_src(target, 13, Math.floor(src(target, 13) / 3));\n  }\n\n  // 看重贞操的处女 → S13 /= 3\n  if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {\n    set_src(target, 13, Math.floor(src(target, 13) / 3));\n  }\n\n  // —— 经验上升 ——\n  chara(target).dungeon.肛门经验 += 5;\n  era.print('肛门经验＋５');\n  same_sex_exp(target, player, 1);",
+    tests: ['com-sm'],
+    must_mention: 'floor(2000/3) 一次；重复执行会是 222',
+  },
+  {
+    desc: 'M14105 精巢射精文案通常支加回悬空的「的」',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: "`${name_of(cid)}的精巢似乎感受到了${heavy ? '强烈的' : ''}冲击`",
+    replace:
+      "`${name_of(cid)}的精巢似乎感受到了${heavy ? '强烈的' : '的'}冲击`",
+    tests: ['com-vaginasex'],
+    must_mention: '通常射精读得通',
+  },
+  {
+    desc: 'M14106 able2 助手双高放行改回双低放行（≥4 → ≤3）',
+    file: 'ere/system/train/com-caress.js',
+    find: '    if (\n      (era.get(`abl:${assi}:10`) || 0) >= 4 &&\n      (era.get(`abl:${assi}:22`) || 0) >= 4\n    ) {\n      return 1;\n    }',
+    replace:
+      '    if (\n      (era.get(`abl:${assi}:10`) || 0) <= 3 &&\n      (era.get(`abl:${assi}:22`) || 0) <= 3\n    ) {\n      return 1;\n    }',
+    tests: ['com-caress'],
+    must_mention: '双 3 仍挡',
+  },
+  {
+    desc: 'M14110 able2 助手双高放行从且改成或（单项达标即放行）',
+    file: 'ere/system/train/com-caress.js',
+    find: '    if (\n      (era.get(`abl:${assi}:10`) || 0) >= 4 &&\n      (era.get(`abl:${assi}:22`) || 0) >= 4\n    ) {\n      return 1;\n    }',
+    replace:
+      '    if (\n      (era.get(`abl:${assi}:10`) || 0) >= 4 ||\n      (era.get(`abl:${assi}:22`) || 0) >= 4\n    ) {\n      return 1;\n    }',
+    tests: ['com-caress'],
+    must_mention: '顺从 4、百合 3 不满足双 ≥4',
   },
   {
     desc: 'M1197 com58 关闭时先清浴室再清淋浴',

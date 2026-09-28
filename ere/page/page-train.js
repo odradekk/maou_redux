@@ -1,19 +1,20 @@
 /**
- * @file 调教状态画面：@SHOW_STATUS 的处理器 + 引擎内建 PRINT_PALAM 的移植
+ * @file 调教状态画面：SHOW_STATUS 的处理器＋参数条画面 print_palam 的移植
  * （issue #44；#74 起整页为画面组件、参数条换引擎原生进度条）。
  *
- * 骨架范围：@SHOW_STATUS 的子调用里 SHOW_EQUIP_1/2（#390 落地）与 PRINT_CLOTHTYPE（#215 落地）都已换真身
- * 化（J5 #215 服装与 TEQUIP 建模）；LIFE_BAR/VITAL_BAR（#212，组件在
- * ere/page/components/chara-bars.js）与射精/母乳/触手槽条段（:144-252，
- * #212 就地实现）已写真身。其余直线代码（日期行、目标行、绝顶计数、
- * MAXBASE 修正）1:1 照搬。
+ * 骨架范围：SHOW_STATUS 的子调用里 SHOW_EQUIP_1/2（#390 实现）与
+ * PRINT_CLOTHTYPE（#215 实现）都已换真身（J5 #215 服装与 TEQUIP 建模）；
+ * LIFE_BAR/VITAL_BAR（#212，组件在
+ * ere/page/components/chara-bars.js）与射精/母乳/触手槽条段（#212 就地
+ * 实现）已写真身。其余直线代码（日期行、目标行、绝顶计数、
+ * MAXBASE 修正）按表保留。
  *
  * #74 的两条换表现层（比对都在旁边看着——本画面在黄金样本覆盖内）：
  *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
  *     语义值（参数名 + palam 原值）在条内/条后文字里，归一化器零解析直取
  *     （progress 格的条内/条后文字即全部语义）；percentage 纯表现。
- *   - 整页＝一个 ScreenBlock（@SHOW_STATUS 函数粒度，原作锚点也在函数尾）。
- *     重绘时机见 SHOW_STATUS 处理器的 prevcom 判据。
+ *   - 整页＝一个 ScreenBlock（SHOW_STATUS 函数粒度，清除点也定在函数尾）。
+ *     重绘时机见 SHOW_STATUS 处理器的 prevcom 条件。
  */
 
 const era = require('#/era-electron');
@@ -34,37 +35,36 @@ const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NB
 // PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/page/page-clothtype.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
 const { clothtype_text } = require('#/page/page-clothtype');
-// PALAMLV/palam_level 自 #45 起收敛在 era-utils/palam-level.js（SOURCE_CHECK
+// PALAMLV/palam_level 自 #45 起集中在 era-utils/palam-level.js（SOURCE_CHECK
 // 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
 const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
 
 // 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
 //   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的
-//     数值（原作 PRINT_PALAM 数值列的同款形状，log 实测）；
+//     数值（数值列形状按 golden log 实测）；
 //   - PALAM_PROGRESS_BAR_WIDTH：24 格网格里条占 16、条后文字占 8——
 //     ProgressConfig 的 barWidth 取 24 时**不显示条后文字**（dev-guides/08），
 //     语义值必须玩家可见，故 < 24；
-//   - 每行 3 格（printMultiColumns 一次 3 格＝1 Row，与原作三列排版同构）。
+//   - 每行 3 格（printMultiColumns 一次 3 格＝1 Row，三列排版）。
 const PALAM_COLUMNS = 3;
 const PALAM_PROGRESS_BAR_WIDTH = 16;
 const PALAM_VALUE_WIDTH = 5;
 
 /**
- * PRINT_PALAM（引擎内建命令）的移植：一角色的参数条画面。
+ * 一角色的参数条画面（PRINT_PALAM 的移植）。
  *
  * 渲染规则（#74 换表现层：printMultiColumns 的 progress 格）：
  *   - 枚举 palam 名字表从 0 起的连续序号（Palam.yml 的 0..15；100「否定」
  *     是珠侧专用，参数条不显示——连续段在 16 断开即止）；
  *   - 每格：条内文字＝参数名、条后文字＝右对齐宽 5 的数值、percentage＝
- *     100 × 值 / 下一等级阈值（LV9 满档 100，连续值不取整——原作
- *     floor(10*值/下一阈值) 的格数填充没有等价物，也不需要）；
- *   - 每行 3 格。
+ *     100 × 值 / 下一等级阈值（LV9 满档 100，连续值不取整——手绘字符条
+ *     按 floor(10*值/下一阈值) 填格的写法不再需要）；
  *
  * percentage 是**纯表现**：比对两侧归一的语义值＝条后数值（palam 原值），
  * 条形几何（字符条格数 vs 百分比）是纯表现，不进事件流——换渲染字符集
  * 不动语义值（条内/条后文字才是契约）。
  *
- * @param {number} cid 角色 ID（原作实参 TARGET）
+ * @param {number} cid 角色 ID（实参 TARGET）
  */
 function print_palam(cid) {
   // 'palamkeys'：引擎寻址的名字表全部序号（含断档后的 100），连续段取完
@@ -94,7 +94,7 @@ function print_palam(cid) {
   }
 }
 
-// @SHOW_STATUS 的绝顶计数段（:95-124）：EX:0-5 的方括号行，有任一非零才成行
+// SHOW_STATUS 的绝顶计数段：EX:0-5 的方括号行，有任一非零才成行
 function print_ex_counters(cid) {
   // 未声明读值 undefined → || 0（#13）；EX 全零（零指令空转）时整段静默
   const ex = Array.from(
@@ -142,16 +142,15 @@ function print_ex_counters(cid) {
     }
   }
   if (parts.length > 0) {
-    // SIF EX 任一非零 → PRINTL（拼行 + 补换行；各段尾自带双空格，
-    // 与原作逐字一致，比对归 #48）
+    // SIF EX 任一非零 → 拼行输出（各段尾自带双空格，逐字一致，比对归 #48）
     era.print(parts.join(''));
   }
 }
 
-// @SHOW_STATUS 的 MAXBASE 修正段（:128-142）：射精槽（BASE:2）上限缺省
-// 10000、早泄（TALENT:133）压到 5000；三处（目标/主人/助手）判据各有微差
+// SHOW_STATUS 的 MAXBASE 修正段：射精槽（BASE:2）上限缺省
+// 10000、早泄（TALENT:133）压到 5000；三处（目标/主人/助手）条件各有微差
 // （助手档是 ELSEIF MAXBASE:2 != 0 && TALENT:133，与另两处的 != 5000 不同，
-// 三处守卫的写法差异是既有行为）
+// 三处检查的写法差异是既有行为）
 function fix_maxbase(cid, assi_variant = false) {
   const gauge = era.get(`maxbase:${cid}:2`) || 0;
   if (gauge === 0) {
@@ -163,11 +162,11 @@ function fix_maxbase(cid, assi_variant = false) {
 
 // —— 状态画面组件（#74）：整页一个 ScreenBlock ——
 //
-// 会话态：BEGIN TRAIN 的事件链（EVENTTRAIN）重建——锚点跨会话复用会拿上一
-// 局的锚点清掉本局内容（#73 主菜单同款裁定，跨会话测试固定住）。本处理器不
+// 会话态：进调教（EVENTTRAIN 事件链）时重建——基准点跨会话复用会拿上一
+// 局的基准点清掉本局内容（#73 主菜单同款结论，跨会话测试固定住）。本处理器不
 // 输出任何行，与链上其他 EVENTTRAIN 处理器（PRITRAIN 头部等）无序依赖。
 let status_block = null;
-// 「本轮指令路径执行过」探针（重绘判据）。PREVCOM 的**值差**不能当判据：
+// 「本轮指令路径执行过」探针（重绘条件）。PREVCOM 的**值差**不能当条件：
 // 重复执行同一指令时 train-loop 步骤 13 同值直写，值不变的指令轮会被误判
 // 成无指令轮、重绘吃掉当轮叙述（评审探针实证）。EVENTCOM 是指令路径的
 // 必经事件（步骤 11：输入命中可执行指令即发射，与指令编号无关）；本
@@ -175,7 +174,7 @@ let status_block = null;
 let command_path_seen = false;
 
 /**
- * @SHOW_STATUS 的绘制内容（:60-256 的直线段；ScreenBlock 的 draw_content，
+ * SHOW_STATUS 的绘制内容（直线段；ScreenBlock 的 draw_content，
  * 只输出、不清屏——清行归 redraw）。
  * @param {number} target 调教目标角色 ID
  */
@@ -188,7 +187,7 @@ async function draw_status_screen(target) {
   );
 
   // %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
-  // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格照原作）
+  // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格保留）
   const header = [
     { content: `${chara_callname(target)} 调教中\u00A0\u00A0\u00A0调教者:` },
   ];
@@ -208,50 +207,48 @@ async function draw_status_screen(target) {
   header.push({ content: '   ' }); // PRINT（行尾三空格）
   era.print(header);
 
-  // CALL SHOW_EQUIP_2 —— 调教装备显示（#390 真身：九个位一次铺完，
-  // 原先逐族点亮的临时实现随之作废；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1564）
+  // show_equip_2 —— 调教装备显示（#390 真身：九个位一次铺完，
+  // 原先逐族点亮的临时实现随之作废）
   show_equip_2(target);
-  // CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
-  // chara-bars.js；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1129/:1175）
+  // life_bar / vital_bar（#212 真身，ere/page/components/chara-bars.js）
   life_bar(target);
   vital_bar(target);
 
   // 調教時ステータス画面に服装表示を捻じ込んでみた：PRINT 【 /
-  // CALL PRINT_CLOTHTYPE / PRINT 】——Emuera 三段拼一行，
-  // PRINTL（空）收行——
+  // 服装显示行：PRINT 【 / clothtype_text / PRINT 】三段拼一行、PRINTL（空）收行；
   // ere 合成一次 print（#215 真身：ere/page/page-clothtype.js；FLAG:37
-  // 着衣模式的守卫在 clothtype_text 内部 :37，关闭时显示全裸——与原作
-  // 状态屏恒出【】行的形态一致）
+  // 着衣模式的检查在 clothtype_text 内部，关闭时显示全裸——状态屏恒出
+  // 【】行）
   era.print(`【${clothtype_text(target)}】`);
 
-  // 绝顶计数（直线段，1:1）
+  // 绝顶计数（直线段，保留实现）
   print_ex_counters(target);
 
-  // PRINT_PALAM TARGET（引擎内建命令的移植，参数条——指令菜单之外
+  // PRINT_PALAM TARGET 的移植（参数条——指令菜单之外
   // 玩家唯一的反馈，工单报出保留）
   print_palam(target);
 
-  // MAXBASE 修正（目标/主人/助手三处；助手档判据差异见函数头）
+  // MAXBASE 修正（目标/主人/助手三处；助手档条件差异见函数头）
   fix_maxbase(target);
   fix_maxbase(0);
   if (era_flag.assi >= 0) {
     fix_maxbase(era_flag.assi, true);
   }
 
-  // 射精/母乳/触手槽条段（#212 落地）。守卫素质：121 扶她/
-  // 122 男人（阴茎侧）、130 母乳体质、135 未熟。三处射精守卫的 135 臂
-  // 形态各异，逐处 1:1：
-  //   - 主人（:144）：(TALENT:135 || (TALENT:135 && BASE:2 >= 2000)) == 0
+  // 射精/母乳/触手槽条段（#212 实现）。检查素质：121 扶她/
+  // 122 男人（阴茎侧）、130 母乳体质、135 未熟。三处射精检查的 135 分支
+  // 写法各异，逐处保留：
+  //   - 主人：(TALENT:135 || (TALENT:135 && BASE:2 >= 2000)) == 0
   //     经布尔化简（A || A&&B ≡ A）恒等于 !TALENT:135——主人独缺
-  //     「≥2000 也放行」臂；
-  //   - 助手（:161）/目标（:177）：TALENT:135 == 0 || (TALENT:135 &&
-  //     BASE:2 >= 2000)——有 ≥2000 臂。
+  //     「≥2000 也放行」分支；
+  //   - 助手/目标：TALENT:135 == 0 || (TALENT:135 &&
+  //     BASE:2 >= 2000)——有 ≥2000 分支。
   // 名字后的全角对齐衬垫（STRLENSU < 4 补全角空格）是字符条排版，progress
   // 格不镜像（见 chara-bars.js 文件头）。SETCOLOR 的名字着色（主人浅蓝/
-  // 助手粉）为纯表现，不镜像（与头行着色同为记名差异）。
-  // TEQUIP:35/36/37 缀「避孕套使用中」——注意省略角色位在 Emuera 里恒指
+  // 助手粉）为纯表现，不移植（与头行着色同类的有意偏离）。
+  // TEQUIP:35/36/37 缀「避孕套使用中」——注意省略角色位的 tequip 地址恒指
   // TARGET（不是各段自己的角色），三段读的都是 tequip:TARGET:3x（#212
-  // 返工修正：首版写成二段 tequip:3x，引擎侧读的是「角色 3x 的整行对象」/
+  // 返工修正：首版写成二段 tequip:3x，读回的是「角色 3x 的整行对象」/
   // undefined——避孕套恒显或恒不显，见返工报告）。
 
   // 射精（主人）：TARGET != MASTER（自调教不显示）
@@ -312,8 +309,8 @@ async function draw_status_screen(target) {
     );
   }
 
-  // 母乳（助手）：守卫 IF ASSI > 0（注意与射精段的 ASSI >= 0 不同，
-  // 两处守卫写法不一致是既有行为）
+  // 母乳（助手）：检查 IF ASSI > 0（注意与射精段的 ASSI >= 0 不同，
+  // 两处检查写法不一致是既有行为）
   if (era_flag.assi > 0 && era.get(`talent:${era_flag.assi}:130`)) {
     if (!(era.get(`maxbase:${era_flag.assi}:3`) > 0)) {
       era.set(`maxbase:${era_flag.assi}:3`, 10000);
@@ -373,46 +370,45 @@ async function draw_status_screen(target) {
     );
   }
 
-  // CALL SHOW_EQUIP_1 —— 使用中道具一览（#390 真身；源 :1598）
+  // show_equip_1 —— 使用中道具一览（#390 真身）
   show_equip_1(target);
 
-  // CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；这张票
-  // 移植——引擎 LINECOUNT 的等价物 getLineCount 直通）
+  // 设置清除点：TFLAG:999 = LINECOUNT（ScreenBlock 基准；这张工单
+  // 移植——LINECOUNT 的等价物 getLineCount 直通）
   era.set('tflag:999', era.getLineCount());
 }
 
-// BEGIN TRAIN 初始化链（run_train 步骤 3，先于首个 SHOW_STATUS）：重建
-// 本会话的状态画面组件
+// 进调教（EVENTTRAIN）的初始化（run_train 步骤 3，先于首个 SHOW_STATUS）：
+// 重建本会话的状态画面组件
 on('EVENTTRAIN', () => {
   status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
   command_path_seen = false;
 });
 
-// 指令路径探针（步骤 11）：输入命中可执行指令即翻标志——含 @COMxx 未
-// 实现的编号（引擎「重新要求输入」路径，原作同样整屏重画 @SHOW_STATUS）
+// 指令路径探针（步骤 11）：输入命中可执行指令即翻标志——含未实现指令
+// 的编号（无效输入回环，同样整屏重画 SHOW_STATUS）
 on('EVENTCOM', () => {
   command_path_seen = true;
 });
 
 on('SHOW_STATUS', async () => {
-  // 首绘兜底：未经 EVENTTRAIN 直发 SHOW_STATUS（如测试直驱）时惰性建块；
-  // 真实流程恒经 EVENTTRAIN 重建（跨会话锚点作废）
+  // 首绘缺省处理：未经 EVENTTRAIN 直发 SHOW_STATUS（如测试直驱）时惰性建块；
+  // 真实流程恒经 EVENTTRAIN 重建（跨会话基准点作废）
   status_block ??= new ScreenBlock(() => draw_status_screen(era_flag.target));
 
   if (command_path_seen) {
-    // 指令轮（含重复同指令）：追加绘制（原作 @SHOW_STATUS 本款是追加
-    // 滚动，无 CLEARLINE）。就地重绘会清掉玩家还没读的指令结果（叙述/
-    // 算式行在锚点跨度内）——「分发期输出必须被玩家看到再被重绘清掉」
-    //（#73 确定）要求等键，而等键属叙述所属的指令模块（train-message/
-    // SOURCE_CHECK，这张票边界外），状态画面侧不加每轮按键（工单事实 7）
-    // 就只能不吃叙述。
+    // 指令轮（含重复同指令）：追加绘制（同款追加滚动，无清行）。就地重绘
+    // 会清掉玩家还没读的指令结果（叙述/算式行在基准点跨度内）——「分发期
+    // 输出必须被玩家看到再被重绘清掉」（#73 确定）要求等键，而等键属叙述
+    // 所属的指令模块（train-message/SOURCE_CHECK，该工单边界外），状态画面
+    // 侧不加每轮按键（工单事实 7）就只能不吃叙述。
     await status_block.draw();
   } else {
-    // 无指令轮（无效输入回环）：锚点跨度内只有指令菜单与输入回显——
-    // 都已被那一次输入消费，就地重绘（#73 锚点跨度；重绘只发生在玩家
+    // 无指令轮（无效输入回环）：基准点跨度内只有指令菜单与输入回显——
+    // 都已被那一次输入消费，就地重绘（#73 基准点跨度；重绘只发生在玩家
     // 交互之后——本重入必经一次输入）。首绘（组件未画过）时 redraw
     // 等价 draw，不清屏、保住上方内容。未来 USERCOM 分支若输出子画面，
-    // 其可见性归它自己的输出（#73 锚点跨度习语），不归本判据。
+    // 其可见性归它自己的输出（#73 基准点跨度习语），不归本条件。
     await status_block.redraw();
   }
   command_path_seen = false;

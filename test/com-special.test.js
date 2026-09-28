@@ -541,7 +541,7 @@ test('TRAIN_MESSAGE_B：COM51/52 触手及 COM53/54/58/59 关闭分支', async (
   }
 });
 
-test('com56：话术读取目标自身，歌唱显示量与实际加值保留差 1', async () => {
+test('com56：话术读取目标自身，歌唱/舞蹈显示量与实际加值一致', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('abl:31:10', 3);
@@ -550,6 +550,8 @@ test('com56：话术读取目标自身，歌唱显示量与实际加值保留差
   fixture.store.set('abl:31:16', 3);
   fixture.store.set('palam:31:4', 10000);
   fixture.store.set('abl:31:71', 3);
+  fixture.store.set('abl:31:72', 3);
+  fixture.store.set('tequip:31:54', 1); // 舞蹈（TEQUIP:54）
 
   assert.equal(await run_com(world, 56), 1);
   assert.equal(
@@ -560,10 +562,16 @@ test('com56：话术读取目标自身，歌唱显示量与实际加值保留差
   assert.equal(fixture.store.get('exp:31:73'), 5);
   assert.equal(
     fixture.store.get('exp:31:71'),
-    5,
-    '显示 +6，实际加 E+ABL-3 = 5',
+    6,
+    '显示 +6，实际加 E+ABL-2 = 6',
+  );
+  assert.equal(
+    fixture.store.get('exp:31:72'),
+    6,
+    '舞蹈与歌唱同式，E+ABL-2 = 6',
   );
   assert.ok(fixture.text_lines().includes('歌唱经验+6'));
+  assert.ok(fixture.text_lines().includes('舞蹈经验+6'));
 });
 
 test('com57：单行条件只约束下一条语句，开启与持续的无素质路径均保留后续效果', async () => {

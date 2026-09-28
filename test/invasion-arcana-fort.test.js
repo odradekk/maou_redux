@@ -61,7 +61,7 @@ const KNIGHT_PRESETS = {
   23: { name: '白梅花', level: 315, atk: 831, def: 831, hp: 7950, wp: 9150 },
 };
 
-/** 预置四骑士：预设数据（addCharacter 守卫）+ ADDCHARA 会带进来的那些键 */
+/** 预置四骑士：预设数据（addCharacter 预设检查）+ ADDCHARA 会带进来的那些键 */
 function seed_knights(fixture) {
   for (const [id, k] of Object.entries(KNIGHT_PRESETS)) {
     const cid = Number(id);
@@ -86,7 +86,7 @@ function setup_fort_world({ win = true, talent = 85 } = {}) {
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(1);
-  // 候选判据：状态 0/7 + 爱(85)或淫乱(76) + CFLAG:0 == 2 + 非魔王
+  // 候选条件：状态 0/7 + 爱(85)或淫乱(76) + CFLAG:0 == 2 + 非魔王
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set(`talent:1:${talent}`, 1);
   fixture.store.set('cflag:1:0', 2);
@@ -127,7 +127,7 @@ function add_pregnant_bess(fixture) {
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
   fixture.era.addCharacter(2);
   fixture.store.set('cflag:2:1', 0);
-  fixture.store.set('talent:2:76', 1); // 淫乱（候选判据二选一）
+  fixture.store.set('talent:2:76', 1); // 淫乱（候选条件二选一）
   fixture.store.set('cflag:2:0', 2);
   fixture.store.set('cflag:2:9', 9);
   fixture.store.set('talent:2:153', 1); // 妊娠
@@ -175,7 +175,7 @@ test('FLAG:92 == 15：四门全破的总结叙述后 RETURN 0', async () => {
 
 test('捕获进度的三种叙述：剩一位拼名、两位、一位点名', async () => {
   const cases = [
-    // 原作 :29-39 / :44-54 是 PRINT×N 接收尾 PRINTW 的**同一条显示行**，
+    // PRINT×N 接收尾 PRINTW 是**同一条显示行**，
     // 断言按拼好的整行写（拆成多行会让这里变红）
     // 14 = 1110：东未破 → 黑方片
     [14, ['最后只剩下黑方片一位圣灵骑士，决战时刻临近了……']],
@@ -203,9 +203,9 @@ test('捕获进度的三种叙述：剩一位拼名、两位、一位点名', as
 });
 
 test('门选择：已攻占的门渲染为 [*] 文本占位，[0] 被引擎拒收', async () => {
-  // 原作 :80-84 已攻占的门走 PRINTL [*]（不是按钮）——引擎的 input() 只
-  // 送达本轮已打印按钮的快捷键，键入 0 在渲染层就被弹回；原作 :115-116
-  // 的游戏侧重问守卫因此是引擎死路径（page-invasion.test.js:177 同款裁定）。
+  // 已攻占的门走 PRINTL [*]（不是按钮）——引擎的 input() 只
+  // 送达本轮已打印按钮的快捷键，键入 0 在渲染层就被弹回；游戏侧的
+  // 重问检查因此是引擎死路径（page-invasion.test.js 同款结论）。
   const fixture = stage_zero_world();
   fixture.store.set('flag:92', 1); // 东已破
   const mod = fixture.load_module('invasion/invasion-arcana-fort');
@@ -234,7 +234,7 @@ test('门选择：已攻占的门渲染为 [*] 文本占位，[0] 被引擎拒�
   assert(texts.includes('要向哪个堡垒派遣刺客呢？必须打倒圣灵骑士才算胜利。'));
 });
 
-test('#612 门菜单：四门与撤退的按钮正文照写原作的「- 」', async () => {
+test('#612 门菜单：四门与撤退的按钮正文照写「- 」分隔符', async () => {
   const fixture = stage_zero_world(); // 四门全在
   fixture.reset_inputs(4); // 撤退
   const mod = fixture.load_module('invasion/invasion-arcana-fort');
@@ -250,7 +250,7 @@ test('#612 门菜单：四门与撤退的按钮正文照写原作的「- 」', a
       '[3] - 北方堡垒',
       '[4] - 撤退',
     ],
-    'ARCANA_FORT.ERB:83-103 的分隔符照写',
+    '门菜单的分隔符照写',
   );
 });
 
@@ -317,7 +317,7 @@ test('胜利：四门表驱动——武器编码、经验/初体验、FLAG:92 �
     assert.equal(
       fixture.store.get(`cflag:${preset}:571`),
       ammo,
-      '战斗补弹 15 起算（arcana_battle :19-22），骑士只在自己那一击消耗',
+      '战斗补弹 15 起算，骑士只在自己那一击消耗',
     );
 
     // 门特化数值
@@ -363,7 +363,7 @@ test('胜利：四门表驱动——武器编码、经验/初体验、FLAG:92 �
       'EX_FLAG:4444 镜像',
     );
 
-    // 胜利叙述（:493 的 PRINT 而且 与 :496 的 PRINTW 牌是同一条显示行）
+    // 胜利叙述（「而且」与牌名是同一条显示行）
     const texts = fixture.text_lines();
     assert(texts.includes(`圣灵骑士${knight_name}战败了…`));
     assert(texts.includes(`获得了${1000 * level}G！`));
@@ -387,7 +387,7 @@ test('FLAG:60 的追加强化：逐级 ST_UP（2 级）后再算赏金', async (
   assert.equal(
     fixture.store.get('flag:10004'),
     107000,
-    '赏金按升级后的等级算（:490 在 ST_UP 段之后）',
+    '赏金按升级后的等级算（ST_UP 段之后）',
   );
 });
 
@@ -469,7 +469,7 @@ test('体型回写（GETBIT(FLAG:5,12)）：451-457 = CHAR_SIZE_GENERATE 返回�
   assert.equal(fixture.store.get('cflag:20:457'), size[6], '臀围');
 
   // 对照世界：位 12/15 都不开 → CHAR_BODY_GENERATE_WAPPED 整体早退
-  // （chara-body.js:18-19 的闸门），战后回写也不进（:523）——451-457
+  // （chara-body.js 的早退检查），战后回写也不进——451-457
   // 七个下标一个都不落
   const fixture2 = stage_zero_world();
   fixture2.reset_inputs(3, 0);
@@ -513,13 +513,13 @@ test('败北狂王线（FLAG:5 位 7）：状态 9，上一次调教对象/助�
 });
 
 test('候选过滤：非妊娠模式（FLAG:5 位 10 关）把妊娠者挡在列表外', async () => {
-  // 原作 :234（非妊娠版判据）比妊娠版多一条 TALENT:153 == 0。两位候选
+  // 非妊娠版条件比妊娠版多一条 TALENT:153 == 0。两位候选
   // 里贝丝带妊娠 → 本轮只打出一个按钮（阿尔 0 号），索引 1 根本不在引擎
   // 的白名单里。
   //
-  // 原作 :308-309 的越界 GOTO INPUT_LOOP1（「翻到妊娠允许再重画」的复制
+  // 越界 GOTO INPUT_LOOP1（「翻到妊娠允许再重画」的复制
   // 粘贴事故）因此是引擎死路径：引擎渲染层先拒收，游戏代码拿不到 1，
-  // 翻转分支不可达。按 page-invasion.test.js:177 的裁定保留这个形态、
+  // 翻转分支不可达。按 page-invasion.test.js 的同款结论保留这个写法、
   // 测试钉「被拦」的引擎等价物（拒收且画面不重绘）。
   const fixture = setup_fort_world();
   add_pregnant_bess(fixture);

@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 94; // #641 验收 +1（M12910：提升能力按钮编号）；#641 起 -4（M11315–M11317 立绘入口检查与 M11543 名单检查随入口删除与 STUBBED_CALLS 机制移除）；#557 +2（M12357/M12358：名册两处漏 await 的重叠检测直接报错条目）；#389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接线、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）；#653 +1（M13260：等级购买播报主语的修复守卫）
+export const COUNT = 94; // #696 起净 0（M7852 反向变异随魔王计费缺陷修复删除，新增 M14107 回归检查）；#641 验收 +1（M12910：提升能力按钮编号）；#641 起 -4（M11315–M11317 立绘入口检查与 M11543 名单检查随入口删除与 STUBBED_CALLS 机制移除）；#557 +2（M12357/M12358：名册两处漏 await 的重叠检测直接报错条目）；#389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两分支检查、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接入、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）；#653 +1（M13260：等级购买播报主语的修复回归检查）
 
 export default [
   {
@@ -59,14 +59,6 @@ export default [
     replace: `  const cost = Math.trunc(((max_hp - hp) * 10) / 3 + ((max_mp - mp) * 4) / 3);`,
     tests: ['chara-info-actions'],
     must_mention: 'CHARA_INFO_RECOVER_HP：确认后按公式扣双资金并回满',
-  },
-  {
-    desc: 'M7852 CHARA_INFO_UP_LEVEL 魔王计费曲线 100 改 10（按通常角色计差额）',
-    file: 'ere/chara/chara-info-actions.js',
-    find: `    need = lv * 100 + 10; // 魔王`,
-    replace: `    need = lv * 10 + 10; // 魔王`,
-    tests: ['chara-info-actions'],
-    must_mention: 'CHARA_INFO_UP_LEVEL：三条经验曲线',
   },
   {
     desc: 'M7853 chara_info_callback 砍掉等级差检查（对不低于魔王的角色也放行传送）',
@@ -150,12 +142,12 @@ export default [
     must_mention: 'soul_dislocation：命中降级，降到 0 时播报康复',
   },
   {
-    desc: 'M7862 SHOW_CHARA_ACT 状态 0 徽章守卫改 1（可调教角色落到行尾 -F 字面量）',
+    desc: 'M7862 show_chara_act 状态 0 徽章条件改 1（可调教角色落到行尾 -F 字面量）',
     file: 'ere/page/page-chara-info.js',
     find: `  if (state === 0) return { content: '[可调教]', color: '#6464ff' };`,
     replace: `  if (state === 1) return { content: '[可调教]', color: '#6464ff' };`,
     tests: ['page-chara-info'],
-    must_mention: 'SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射',
+    must_mention: 'show_chara_act：状态码到徽章文本/颜色的映射',
   },
   {
     desc: 'M7863 COMPARE_CHARA_ACT 同分末位判定反转（平局时按 ID 降序）',
@@ -164,7 +156,7 @@ export default [
     replace: `  return a > b ? -1 : 1;`,
     tests: ['page-chara-info'],
     must_mention:
-      'COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
+      'compare_chara_act：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
   },
   {
     desc: 'M7864 COMPARE_CHARA_ACT 侵攻/异层迎击的楼层比较支整支短路',
@@ -176,7 +168,7 @@ export default [
     replace: `  if (false) {`,
     tests: ['page-chara-info'],
     must_mention:
-      'COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
+      'compare_chara_act：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜',
   },
   {
     desc: 'M7865 CHARA_MARRIGE_BEFORE category 0（未婚）不再归「无」',
@@ -184,16 +176,15 @@ export default [
     find: `  if (category === 0 || category === 2) return '无';`,
     replace: `  if (category === 2) return '无';`,
     tests: ['page-chara-info'],
-    must_mention: 'CHARA_MARRIGE_BEFORE：%10==0 早退、category 0/2/6 分档',
+    must_mention: 'chara_marriage_before：%10==0 早退、category 0/2/6 分档',
   },
   {
-    desc: 'M7866 MARRIAGE_BRACKET_TEXT 野狗守卫改 901（配偶 900 落到道具名回落）',
+    desc: 'M7866 marriage_bracket_text 野狗条件改 901（配偶 900 落到道具名回落）',
     file: 'ere/page/page-chara-info.js',
     find: `  if (spouse === 900) return '野狗';`,
     replace: `  if (spouse === 901) return '野狗';`,
     tests: ['page-chara-info'],
-    must_mention:
-      'MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 + ELSE 内四条支线',
+    must_mention: 'marriage_bracket_text：spouse 分支串',
   },
   {
     desc: 'M7867 BUILD_ACT_SORT_ORDER 双出击对不再按敌方序（enemy_compare 退回通用比较）',
@@ -202,7 +193,7 @@ export default [
     replace: `        cmp = compare_chara_act(count, other, 2);`,
     tests: ['page-chara-info'],
     must_mention:
-      'SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（按楼层，不是按状态排名）',
+      'show_chara_act_list：双方都在侵攻/迎击时改走 enemy_compare（按楼层，不是按状态排名）',
   },
   // —— #393 三动作接入（page-chara-info.js 的 37 行：三个按钮 ＋ 三条返回值分流）——
   // 按钮条目杀「快捷键/实参写错」，分流条目杀「0/1 与 2 的分档写错」。
@@ -243,15 +234,16 @@ export default [
     must_mention: '灰值 setColor 次数',
   },
   {
-    desc: 'M9205 转职接线把 2 也上浮（!== 2 → !== 3）',
+    desc: 'M9205 转职接入把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾',
-    replace: '        if (job_result !== 3) return job_result; // 的收尾',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮',
+    replace:
+      '        if (job_result !== 3) return job_result; // 2 以外的返回值上浮',
     tests: ['page-chara-info'],
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
   {
-    desc: 'M9206 诱惑接线把 2 也上浮（!== 2 → !== 3）',
+    desc: 'M9206 诱惑接入把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (temptation_result !== 2) return temptation_result;`,
     replace: `        if (temptation_result !== 3) return temptation_result;`,
@@ -259,7 +251,7 @@ export default [
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
   {
-    desc: 'M9207 结婚接线把 2 也上浮（!== 2 → !== 3）',
+    desc: 'M9207 结婚接入把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result !== 3) return marriage_result;`,
@@ -267,15 +259,16 @@ export default [
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
   {
-    desc: 'M9208 转职接线把 0 当 2 落回重画（!== 2 → === 2）',
+    desc: 'M9208 转职接入把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾',
-    replace: '        if (job_result === 2) return job_result; // 的收尾',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮',
+    replace:
+      '        if (job_result === 2) return job_result; // 2 以外的返回值上浮',
     tests: ['page-chara-info'],
     must_mention: '转职返回 0 时上浮回名册',
   },
   {
-    desc: 'M9209 诱惑接线把 0 当 2 落回重画（!== 2 → === 2）',
+    desc: 'M9209 诱惑接入把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (temptation_result !== 2) return temptation_result;`,
     replace: `        if (temptation_result === 2) return temptation_result;`,
@@ -283,7 +276,7 @@ export default [
     must_mention: '诱惑返回 0 时上浮回名册',
   },
   {
-    desc: 'M9210 结婚接线把 0 当 2 落回重画（!== 2 → === 2）',
+    desc: 'M9210 结婚接入把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result === 2) return marriage_result;`,
@@ -315,15 +308,15 @@ export default [
     must_mention: '名册每页 24 行',
   },
   {
-    desc: 'M9211 结婚接线丢掉上浮值（return marriage_result → return 0）',
+    desc: 'M9211 结婚接入丢掉上浮值（return marriage_result → return 0）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result !== 2) return 0;`,
     tests: ['page-chara-info'],
-    must_mention: '个别信息页把 1 上浮给 CHARA_INFO（回合结束）',
+    must_mention: '结婚成功的 1 透传上浮',
   },
   {
-    desc: 'M11141 COMPARE_CHARA_ACT 按 C 式「&& 优先」读错（状态 2 不再吃楼层判据，源 :813 左结合，#517）',
+    desc: 'M11141 compare_chara_act 按 C 式「&& 优先」读错（状态 2 不再吃楼层条件——左结合，#517）',
     file: 'ere/page/page-chara-info.js',
     find: '    (state_a === 2 || state_a === 3) &&\n    (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0)',
     replace:
@@ -433,7 +426,7 @@ export default [
     must_mention: '魔王行的两格 ＋ 两名角色各四格',
   },
   {
-    desc: 'M11430 统一卖春积极性：侵攻档的状态判据 2 改 3（勇者档去写迎击奴隶）',
+    desc: 'M11430 统一卖春积极性：侵攻档的状态条件 2 改 3（勇者档去写迎击奴隶）',
     file: 'ere/page/page-uniform-bitch-level.js',
     find: "    scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' };",
     replace:
@@ -442,7 +435,7 @@ export default [
     must_mention: 'scope=2000：角色 1 应写入',
   },
   {
-    desc: 'M11431 统一卖春积极性：迎击档的状态判据 3 改 2',
+    desc: 'M11431 统一卖春积极性：迎击档的状态条件 3 改 2',
     file: 'ere/page/page-uniform-bitch-level.js',
     find: "    scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' };",
     replace:
@@ -451,7 +444,7 @@ export default [
     must_mention: 'scope=2001：角色 1 不应写入',
   },
   {
-    desc: 'M11432 统一卖春积极性：全部档丢掉迎击臂（只剩侵攻）',
+    desc: 'M11432 统一卖春积极性：全部档丢掉迎击分支（只剩侵攻）',
     file: 'ere/page/page-uniform-bitch-level.js',
     find: '      states: [2, 3],',
     replace: '      states: [2],',
@@ -459,7 +452,7 @@ export default [
     must_mention: 'scope=2002：角色 2 应写入',
   },
   {
-    desc: 'M11433 统一卖春积极性：魔王跳过守卫写坏（COUNT==MASTER 不再 CONTINUE）',
+    desc: 'M11433 统一卖春积极性：魔王跳过检查写坏（COUNT==MASTER 不再 CONTINUE）',
     file: 'ere/page/page-uniform-bitch-level.js',
     find: '    if (cid === 0) continue;',
     replace: '    if (cid === -1) continue;',
@@ -504,7 +497,7 @@ export default [
     must_mention: '预置输入已耗尽',
   },
   {
-    desc: 'M11438 换号显示守卫：苗床（状态 7）不再列出',
+    desc: 'M11438 换号显示检查：苗床（状态 7）不再列出',
     file: 'ere/page/page-chara-number-swap.js',
     find: '      (state === 0 || state === 7) &&',
     replace: '      state === 0 &&',
@@ -512,7 +505,7 @@ export default [
     must_mention: '铁石心肠关：角色 3 应列出',
   },
   {
-    desc: 'M11439 换号显示守卫：近卫（EX_TALENT:1）排除臂被短路',
+    desc: 'M11439 换号显示检查：近卫（EX_TALENT:1）排除分支被短路',
     file: 'ere/page/page-chara-number-swap.js',
     find: '      (!(era.get(`ex_talent:${cid}:1`) || 0) ||',
     replace: '      (true ||',
@@ -520,7 +513,7 @@ export default [
     must_mention: '铁石心肠关：角色 4 不应列出',
   },
   {
-    desc: 'M11440 换号显示守卫：铁石心肠位 &2 读成 &4（打工位）',
+    desc: 'M11440 换号显示检查：铁石心肠位 &2 读成 &4（打工位）',
     file: 'ere/page/page-chara-number-swap.js',
     find: '          (era_exflag.mod_switch_bits & 2) !== 0))',
     replace: '          (era_exflag.mod_switch_bits & 4) !== 0))',
@@ -536,7 +529,7 @@ export default [
     must_mention: '页首按上一页后仍停在第 1 页',
   },
   {
-    desc: 'M11442 换号第一屏：下一页守卫 <= 写成 <（恰 25 人时进不了空尾页）',
+    desc: 'M11442 换号第一屏：下一页条件 <= 写成 <（恰 25 人时进不了空尾页）',
     file: 'ere/page/page-chara-number-swap.js',
     find: '    if (first === 2001) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
     replace:
@@ -545,7 +538,7 @@ export default [
     must_mention: '第 2 页没有第 1 人',
   },
   {
-    desc: 'M11443 换号第二屏：下一页守卫 <= 写成 <（同一边界）',
+    desc: 'M11443 换号第二屏：下一页条件 <= 写成 <（同一边界）',
     file: 'ere/page/page-chara-number-swap.js',
     find: '      if (picked === 3001) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
     replace:
@@ -554,7 +547,7 @@ export default [
     must_mention: '角色 2 出现在第一屏初始',
   },
   {
-    desc: 'M11444 换号第一屏：上一页守卫 > 0 写成 >= 0（页首落到 -1、整屏空）',
+    desc: 'M11444 换号第一屏：上一页条件 > 0 写成 >= 0（页首落到 -1、整屏空）',
     file: 'ere/page/page-chara-number-swap.js',
     find: '      // 上一页（页首不动，仅重绘）\n      if (no_page > 0) no_page -= 1;',
     replace:
@@ -597,7 +590,7 @@ export default [
     must_mention: '换号不搬角色数据：等级仍属 ID 1',
   },
   {
-    desc: 'M11449 换号互换：TARGET 复位写成 0（原作 -1）',
+    desc: 'M11449 换号互换：TARGET 复位写成 0（应为 -1）',
     file: 'ere/page/page-chara-number-swap.js',
     find: '      era_flag.target = -1;',
     replace: '      era_flag.target = 0;',
@@ -605,9 +598,9 @@ export default [
     must_mention: 'TARGET = -1',
   },
   {
-    desc: 'M11450 换号：误加页码复位（NO_PAGE 是静态变量，RESTART 不归零）',
+    desc: 'M11450 换号：误加页码复位（no_page 提在模块级，重画不归零）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      continue; // RESTART（页码是静态变量，不归零）',
+    find: '      continue; // 重画第一屏（no_page 不归零）',
     replace: '      no_page = 0; // 变异：误加复位\n      continue;',
     tests: ['page-chara-info'],
     must_mention: '互换后重画仍在第 2 页',
@@ -628,7 +621,8 @@ export default [
     replace:
       '      const second_ids = swap_candidates().slice(\n        no_page * NUM_PAGE,\n        (no_page + 1) * NUM_PAGE,\n      );',
     tests: ['page-chara-info'],
-    must_mention: '第二屏剃除 CN:1 的行',
+    must_mention:
+      '换号：只交换排序编号——角色 ID 与角色数据一件不搬，名册排列顺序跟着变（#545 返工）',
   },
   {
     desc: 'M11453 换号行体：[SP] 判定的 TALENT 表丢了村娘 165',
@@ -728,7 +722,7 @@ export default [
     find: '  swap_page: for (;;) {',
     replace: '  no_page = 0; // 变异：跨次进入复位\n  swap_page: for (;;) {',
     tests: ['page-chara-info'],
-    must_mention: '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
+    must_mention: '换号页：页码跨次进入沿用（模块级 no_page）——#545 返工',
   },
   {
     desc: 'M11465 排序表头：[1200] 编号视图的快捷键写成 1201（白名单拒收，按编号切不回去）',
@@ -756,7 +750,7 @@ export default [
     must_mention: '收藏标记读 cflag:cid:700',
   },
   {
-    desc: 'M11318 卖春积极性按钮快捷键错位（18 改 81——原作编号 [18] 的分发落在白名单外，#542）',
+    desc: 'M11318 卖春积极性按钮快捷键错位（18 改 81——编号 [18] 的分发落在白名单外，#542）',
     file: 'ere/page/page-chara-info.js',
     find: "      era.printButton('卖春积极性 - ' + bich_level_text(current), 18);",
     replace:
@@ -767,13 +761,13 @@ export default [
   {
     desc: 'M11468 换号第二屏：取消支路被删（[3002] 落到 CN:2，只剩一名候选时又卡死——#545 第 2 轮返工）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      if (picked === 3002) {\n        // 回第一屏重选 CN:1（原作那条兜底的净效果，见文件头）＝ GOTO 换号页\n        continue swap_page;\n      }\n',
+    find: '      if (picked === 3002) {\n        // 回第一屏重选（见文件头）——跳到外层循环头\n        continue swap_page;\n      }\n',
     replace: '',
     tests: ['page-chara-info'],
     must_mention: '取消后回到第一屏重画',
   },
   {
-    desc: 'M11469 换号行体：等级列的左对齐宽度 4 改 3（原作 :21/:72 的 ,4,LEFT——#545 第 2 轮返工）',
+    desc: 'M11469 换号行体：等级列的左对齐宽度 4 改 3（定宽 4 左对齐的列——#545 第 2 轮返工）',
     file: 'ere/page/page-chara-number-swap.js',
     find: '        String(era.get(`cflag:${cid}:9`) || 0),\n        4,',
     replace: '        String(era.get(`cflag:${cid}:9`) || 0),\n        3,',
@@ -782,17 +776,17 @@ export default [
   },
   // —— #546：装备详情与自定义一人称的接入（ere/page/page-chara-info.js）——
   {
-    desc: 'M11539 [16] 装备情报按钮接线删（SHOW_BUTTON_EQUIP 调用改空——判定放行也不渲染按钮）',
+    desc: 'M11539 [16] 装备情报按钮接入删（调用改空——装备查看条件放行也不渲染按钮）',
     file: 'ere/page/page-chara-info.js',
     find: '      show_button_equip(16, current);',
     replace: '      // 变异：不调 show_button_equip',
     tests: ['page-chara-info'],
-    must_mention: 'CHECK_ABLE_TO_SHOW_EQUIP 放行才渲染',
+    must_mention: '装备查看条件放行才渲染',
   },
   {
-    desc: 'M11540 CASE 16 的装备详情调用删（EQUIP_ST_SHOW 不跑——状态行整段消失）',
+    desc: 'M11540 case 16 的装备详情调用删（equip_st_show 不跑——状态行整段消失）',
     file: 'ere/page/page-chara-info.js',
-    find: '        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行',
+    find: '        equip_st_show(current); // 同步纯输出，无等待；等待按键在下一行',
     replace: '        // 变异：不调 equip_st_show',
     tests: ['page-chara-info'],
     must_mention: '装备状态行随 [16] 印出',
@@ -800,11 +794,11 @@ export default [
   {
     desc: 'M11541 CASE 16 的 WAIT 删（详情印完不等键直接重绘）',
     file: 'ere/page/page-chara-info.js',
-    find: '        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行\n        await era.waitAnyKey();',
+    find: '        equip_st_show(current); // 同步纯输出，无等待；等待按键在下一行\n        await era.waitAnyKey();',
     replace:
-      '        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行',
+      '        equip_st_show(current); // 同步纯输出，无等待；等待按键在下一行',
     tests: ['page-chara-info'],
-    must_mention: '详情后 WAIT 至少一次',
+    must_mention: '详情后等键至少一次',
   },
   {
     desc: 'M11542 CASE 8 的 MODE 实参丢失（random_self_call 落回 MODE 0——没有输入提示，直接随机重掷）',
@@ -853,5 +847,14 @@ export default [
       '    await era.printAndWait(\n      `${name_of(0)}花费了${cost}G，购买了经验${need}点`,\n    );',
     tests: ['chara-info-actions'],
     must_mention: '购买播报用被升级角色的名字',
+  },
+  // —— #696（F12）：魔王升级购买曲线与升级结算对齐 ——
+  {
+    desc: 'M14107 魔王升级购买曲线改回 10 倍（LV*10+10 → LV*100+10）',
+    file: 'ere/chara/chara-info-actions.js',
+    find: '    need = lv * 10 + 10; // 魔王（与升级结算同曲线）',
+    replace: '    need = lv * 100 + 10; // 魔王（与升级结算同曲线）',
+    tests: ['chara-info-actions'],
+    must_mention: '魔王：LV*10+10',
   },
 ];
