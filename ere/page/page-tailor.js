@@ -862,12 +862,8 @@ async function equip_magic_item(cid) {
       if (w.存储编号 <= -1) {
         era.printButton(`- ${label}　: 无`, result_id);
       } else {
-        // prettier-ignore
         era.printButton(
-          [
-            { content: `- ${label}　: ` },
-            ...equip_ring_spans(w),
-          ],
+          [{ content: `- ${label}　: ` }, ...equip_ring_spans(w)],
           result_id,
         );
       }
