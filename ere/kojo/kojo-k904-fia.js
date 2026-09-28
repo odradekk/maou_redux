@@ -50,14 +50,14 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 
-const PBAND = 4; // ITEM:PBAND = ITEM:4（SYSTEM ver1.0.3.ERB:42）
+const PBAND = 4; // ITEM:PBAND = ITEM:4（4 号 = 假阳具）
 const era0 = (key) => era.get(key) || 0;
 
-// 反复出现的原作变量语义：TALENT:9/76/85/314 = 崩坏/淫乱/爱慕/魔族种族；
+// 反复出现的变量语义：TALENT:9/76/85/314 = 崩坏/淫乱/爱慕/魔族种族；
 // EX_TALENT:104 = 菲娅 K904 口上素质；MARK:2 = 屈服刻印；TEQUIP:45/55/89/90 =
 // 口塞/死斗场/兽奸/触手；TFLAG:899 = 失神状态。
 
-// @EVENTTRAIN
+// EVENTTRAIN #PRI 档
 on(
   'EVENTTRAIN',
   async () => {
@@ -72,7 +72,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND
+// EVENTEND #LATER 档
 on(
   'EVENTEND',
   async () => {
@@ -83,7 +83,7 @@ on(
   TIER.LATER,
 );
 
-// @EVENTTRAIN
+// EVENTTRAIN NORMAL 档
 on('EVENTTRAIN', async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -453,7 +453,7 @@ on('EVENTTRAIN', async () => {
   }
 });
 
-// @k904_kojo2
+// k904_kojo2
 async function k904_kojo2() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -801,7 +801,7 @@ async function k904_kojo2() {
   }
 }
 
-// @k904_fuku
+// k904_fuku
 async function k904_fuku() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -929,7 +929,7 @@ async function k904_fuku() {
   return 0;
 }
 
-// @EVENTEND
+// EVENTEND NORMAL 档
 on('EVENTEND', async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -1060,7 +1060,7 @@ on('EVENTEND', async () => {
   return 0;
 });
 
-// @kojo_message_com_904
+// kojo_message_com_904
 async function kojo_message_com_904(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -6586,9 +6586,9 @@ async function kojo_message_com_904(rand) {
           rand_n(3) == 0 &&
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 连续不换行，
-          // 末行 PRINTFORMW 才收行。:4341 的 SIF ABL:31 >= 3 只护住 :4342
-          // 那一段——判据提到语句外当取值，文本留在输出语句里（#625）
+          // 同一行输出：无后缀 PRINTFORM 连续不换行，
+          // 末行 PRINTFORMW 才收行。SIF ABL:31 >= 3 只护住
+          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）
           const masturbation_note = era.get(`abl:${target}:31`) >= 3;
           await era.printAndWait(
             `于是${target_name}将自己的名字、喜欢的H的方式` +
@@ -6682,9 +6682,9 @@ async function kojo_message_com_904(rand) {
             era.get(`talent:${target}:76`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-          // 不换行，末行 PRINTFORML 才收行。:4376/:4378 的工具档互斥且无
-          // ELSE——判据提到语句外当取值，文本留在输出语句里（#625）
+          // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+          // 不换行，末行 PRINTFORML 才收行。工具档互斥且无
+          // ELSE——条件提到语句外当取值，文本留在输出语句里（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -6829,9 +6829,9 @@ async function kojo_message_com_904(rand) {
         }
       } else {
         // 的 `PRINTFORM %SAVESTR:PLAYER%` 与随后互斥分支的 PRINTFORML
-        // 尾段（:4442/:4444/… 各自收行）在 Emuera 里同属一行。前缀行归第一条
-        // 分支的拼接锚 :4440+:4442；其余互斥分支改用同一个前缀变量——保真锁
-        // 按锚逐条核对插值记号，非前缀行的语句里不许再出现 PLAYER 记号（#625）
+        // 尾段（各自收行）在旧引擎里同属一行。前缀行归第一条
+        // 分支的拼接基准；其余互斥分支改用同一个前缀变量——保真锁
+        // 按基准逐条核对插值记号，非前缀行的语句里不许再出现 PLAYER 记号（#625）
         const player_prefix = `${player_name}`;
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -7380,7 +7380,7 @@ async function kojo_message_com_904(rand) {
   }
 }
 
-// @kojo_message_palamcng_904
+// kojo_message_palamcng_904
 async function kojo_message_palamcng_904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -7770,7 +7770,7 @@ async function kojo_message_palamcng_904() {
   }
 }
 
-// @kojo_message_markcng_904
+// kojo_message_markcng_904
 async function kojo_message_markcng_904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -7887,14 +7887,14 @@ async function kojo_message_markcng_904() {
   }
 }
 
-// @self_kojo_k904
+// self_kojo_k904
 async function self_kojo_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const assi_name = chara_callname(era_flag.assi); // %SAVESTR:ASSI%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
   const sc = (cid = target) => self_call(cid);
-  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的原作 S（售价）
+  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的 S（售价）
   if (game.train.初吻与自我口上 == 1) {
     if (peek_aftertrain_q() == 1) {
       await era.print(
@@ -8530,7 +8530,7 @@ async function self_kojo_k904() {
   return 0;
 }
 
-// @dungeon_ryouzyoku_k904
+// dungeon_ryouzyoku_k904
 async function dungeon_ryouzyoku_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -8551,7 +8551,7 @@ async function dungeon_ryouzyoku_k904() {
   return 0;
 }
 
-// @dungeon_ryouzyoku_after_k904
+// dungeon_ryouzyoku_after_k904
 async function dungeon_ryouzyoku_after_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -8606,10 +8606,10 @@ async function dungeon_ryouzyoku_after_k904() {
   return 0;
 }
 
-// @benki_koujo_k904
+// benki_koujo_k904
 async function benki_koujo_k904() {
   const target = era_flag.target;
-  const a = target; // 原作 A：当前处理角色
+  const a = target; // A：当前处理角色
   const sc = (cid = target) => self_call(cid);
   if (game.train.肉便器行动 == 0) {
     if (era.get(`talent:${a}:76`) == 1) {
@@ -8694,10 +8694,10 @@ async function benki_koujo_k904() {
   return 0;
 }
 
-// @dungeon_victory_k904
+// dungeon_victory_k904
 async function dungeon_victory_k904(rand) {
   const target = era_flag.target;
-  const a = target; // 原作 A：当前战斗角色
+  const a = target; // A：当前战斗角色
   const sc = (cid = target) => self_call(cid);
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   if (era.get(`talent:${a}:76`) == 1) {
@@ -8769,7 +8769,7 @@ async function dungeon_victory_k904(rand) {
   return 0;
 }
 
-// @dungeon_attack_k904
+// dungeon_attack_k904
 async function dungeon_attack_k904(rand) {
   const target = era_flag.target;
   const sc = (cid = target) => self_call(cid);
@@ -8803,15 +8803,15 @@ async function dungeon_attack_k904(rand) {
   return 0;
 }
 
-// @colosseum_kojo_904
+// colosseum_kojo_904
 async function colosseum_kojo_904() {
   const target = era_flag.target;
   const assi = era_flag.assi;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const assi_name = chara_callname(era_flag.assi); // %SAVESTR:ASSI%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
-  // 死斗场 SC31/21/27 三处同型的武器名（源 :6161-:6164、:6194-:6197、
-  // ）：TALENT:ASSI:121/122 有则「阴茎」/「肉棒」，否则持假阴茎
+  // 死斗场 SC31/21/27 三处同型的武器名：
+  // TALENT:ASSI:121/122 有则「阴茎」/「肉棒」，否则持假阴茎
   // （ITEM:PBAND = ITEM:4）时补「假阴茎」，两段都不出时为空串（#625）
   const assi_has_penis =
     era.get(`talent:${assi}:121`) == 1 || era.get(`talent:${assi}:122`) == 1;
@@ -8860,8 +8860,8 @@ async function colosseum_kojo_904() {
       await era.printAndWait(
         `「啊唔…我、我会好好舔的…不要做很痛的事……嗯咕……」`,
       );
-      // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-      // 不换行，末行 PRINTFORMW 才收行。:6161/:6163 两条 SIF 互斥——判据提到
+      // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+      // 不换行，末行 PRINTFORMW 才收行。两条 SIF 互斥——条件提到
       // 语句外当取值（assi_has_penis/assi_has_toy），文本留在输出语句里（#625）
       await era.printAndWait(
         `${assi_name}因为` +
@@ -8938,7 +8938,7 @@ async function colosseum_kojo_904() {
   return 0;
 }
 
-// @ntr_koujo_k904
+// ntr_koujo_k904
 async function ntr_koujo_k904(p) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -9046,7 +9046,7 @@ async function ntr_koujo_k904(p) {
   return 0;
 }
 
-// @exucution_koujo_k904
+// exucution_koujo_k904
 async function exucution_koujo_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -9076,7 +9076,7 @@ async function exucution_koujo_k904() {
   }
 }
 
-// @museum_koujo_k904
+// museum_koujo_k904
 async function museum_koujo_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -9092,7 +9092,7 @@ async function museum_koujo_k904() {
   return 0;
 }
 
-// @banishment_koujo_k904
+// banishment_koujo_k904
 async function banishment_koujo_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -9126,7 +9126,7 @@ async function banishment_koujo_k904() {
   }
 }
 
-// @PUBLIC_exucution_koujo_k904
+// public_exucution_koujo_k904
 async function public_exucution_koujo_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -9154,7 +9154,7 @@ async function public_exucution_koujo_k904() {
   }
 }
 
-// @grotesque_koujo_k904
+// grotesque_koujo_k904
 async function grotesque_koujo_k904() {
   if (game.event.猎奇处刑口上 == 0) {
     await era.printAndWait('');
@@ -9173,9 +9173,9 @@ async function grotesque_koujo_k904() {
   }
 }
 
-// @enterenemy_koujo_k904
+// enterenemy_koujo_k904
 async function enterenemy_koujo_k904() {
-  const a = era_flag.target; // 原作 A：进入敌阵的角色
+  const a = era_flag.target; // A：进入敌阵的角色
   if (era.get(`talent:${a}:76`)) {
     await era.printAndWait(
       `「啊～～被击败以后会被怎样侵犯呢，有点期待呢～～❤」`,
@@ -9187,10 +9187,10 @@ async function enterenemy_koujo_k904() {
   }
 }
 
-// @gohoubi_request_koujo_k904
+// gohoubi_request_koujo_k904
 async function gohoubi_request_koujo_k904() {
   const target = era_flag.target;
-  const a = target; // 原作 A：请求奖赏的角色
+  const a = target; // A：请求奖赏的角色
   const sc = (cid = target) => self_call(cid);
   if (chara(a).stronghold.要求奖赏 == 0) {
     await era.printAndWait('');
@@ -9199,8 +9199,8 @@ async function gohoubi_request_koujo_k904() {
     chara(a).stronghold.要求奖赏 == 2 ||
     chara(a).stronghold.要求奖赏 == 3
   ) {
-    // 原作是一整行：:6525 的 PRINTFORM 与
-    // 的 PRINTFORMW 参数都是空串，中间是 IF/ELSEIF 三档兽名——合并成
+    // 同一行输出：PRINTFORM 与
+    // PRINTFORMW 参数都是空串，中间是 IF/ELSEIF 三档兽名——合并成
     // 一条 printAndWait 只输出兽名（#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1
@@ -9224,13 +9224,13 @@ async function gohoubi_request_koujo_k904() {
   }
 }
 
-// @gohoubi_after_koujo_k904
+// gohoubi_after_koujo_k904
 async function gohoubi_after_koujo_k904(rand, cid, choice) {
   void rand;
   void cid;
   void choice;
   const target = era_flag.target;
-  const a = target; // 原作 A：接受奖赏的角色
+  const a = target; // A：接受奖赏的角色
   const sc = (cid = target) => self_call(cid);
   if (game.dungeon.足交射精或处遇口上 == 0) {
     await era.printAndWait('');
@@ -9287,12 +9287,12 @@ async function gohoubi_after_koujo_k904(rand, cid, choice) {
   }
 }
 
-// @osioki_koujo_k904
+// osioki_koujo_k904
 async function osioki_koujo_k904(rand, cid, choice) {
   void rand;
   void cid;
   void choice;
-  const a = era_flag.target; // 原作 A：受处罚的角色
+  const a = era_flag.target; // A：受处罚的角色
   if (game.dungeon.足交射精或处遇口上 == 0) {
     await era.printAndWait('');
   } else if (game.dungeon.足交射精或处遇口上 == 1) {
@@ -9336,7 +9336,7 @@ async function osioki_koujo_k904(rand, cid, choice) {
   }
 }
 
-// @gobi_koujo_k904, ARG:0
+// gobi_koujo_k904（ARG:0）
 function gobi_koujo_k904(arg0, rand) {
   const target = era_flag.target;
   const sc = (cid = target) => self_call(cid);
@@ -9387,6 +9387,6 @@ kojo_message_palamcng_family.register(904, kojo_message_palamcng_904);
 kojo_message_markcng_family.register(904, kojo_message_markcng_904);
 self_kojo_family.register(904, self_kojo_k904);
 
-// #625：colosseum_kojo_904 在 kojo_message_com_904 里的调用点位于助手守卫之后，
+// #625：colosseum_kojo_904 在 kojo_message_com_904 里的调用点位于助手检查之后，
 // 带助手时运行时走不到它；导出只为行为测试能直接调用这具真身。
 module.exports = { colosseum_kojo_904 };

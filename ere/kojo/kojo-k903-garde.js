@@ -46,10 +46,10 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
-// Emuera 数值变量未声明时为 0；EraElectron 原始 API 返回 undefined（#13）。
+// 旧引擎数值变量未声明时为 0；EraElectron 原始 API 返回 undefined（#13）。
 const era0 = (key) => era.get(key) || 0;
 
-// @EVENTTRAIN #PRI（:59-63）：设置嘉德口上存在标志。
+// EVENTTRAIN #PRI 档：设置嘉德口上存在标志。
 on(
   'EVENTTRAIN',
   () => {
@@ -61,10 +61,10 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:65-67）：清嘉德口上存在标志。
+// EVENTEND #LATER 档：清嘉德口上存在标志。
 on('EVENTEND', () => (era_exflag.kojo_gade_session = 0), TIER.LATER);
 
-// @EVENTTRAIN（:73-233）：调教开始口上。
+// EVENTTRAIN NORMAL 档：调教开始口上。
 on('EVENTTRAIN', async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -217,7 +217,7 @@ on('EVENTTRAIN', async () => {
   }
 });
 
-// @K903_KOJO2
+// k903_kojo2
 async function k903_kojo2() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -492,7 +492,7 @@ async function k903_kojo2() {
   return 0;
 }
 
-// @EVENTEND：调教结束口上正文。
+// eventend_kojo_903：调教结束口上正文（EVENTEND NORMAL 档）。
 async function eventend_kojo_903() {
   const target = era_flag.target;
 
@@ -513,7 +513,7 @@ async function eventend_kojo_903() {
 
 on('EVENTEND', eventend_kojo_903);
 
-// @KOJO_MESSAGE_COM_903
+// kojo_message_com_903
 async function kojo_message_com_903(rand = default_rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -4202,7 +4202,7 @@ async function kojo_message_com_903(rand = default_rand) {
   }
 }
 
-// @dog_kojo_903
+// dog_kojo_903
 async function dog_kojo_903(rand) {
   const rand_n = rand ?? default_rand;
   const target = era_flag.target;
@@ -5988,7 +5988,7 @@ async function dog_kojo_903(rand) {
   return 0;
 }
 
-// @kojo_message_palamcng_903
+// kojo_message_palamcng_903
 async function kojo_message_palamcng_903() {
   const target = era_flag.target;
   const kojo = chara(target).kojo;
@@ -6180,7 +6180,7 @@ async function kojo_message_palamcng_903() {
   }
 }
 
-// @kojo_message_markcng_903
+// kojo_message_markcng_903
 async function kojo_message_markcng_903() {
   const target = era_flag.target;
   if (era0(`tequip:${target}:45`)) {
@@ -6239,7 +6239,7 @@ async function kojo_message_markcng_903() {
   }
 }
 
-// @self_kojo_k903
+// self_kojo_k903
 async function self_kojo_k903(rand) {
   void rand;
   const target = era_flag.target;
@@ -6569,7 +6569,7 @@ async function self_kojo_k903(rand) {
   return 0;
 }
 
-// @dungeon_ryouzyoku_k903
+// dungeon_ryouzyoku_k903
 async function dungeon_ryouzyoku_k903() {
   const target = era_flag.target;
   if (era0(`talent:${target}:0`) == 1) {
@@ -6661,7 +6661,7 @@ async function dungeon_ryouzyoku_k903() {
   return 0;
 }
 
-// @dungeon_ryouzyoku_after_k903
+// dungeon_ryouzyoku_after_k903
 async function dungeon_ryouzyoku_after_k903() {
   const target = era_flag.target;
   if (era0(`talent:${target}:0`) == 1) {
@@ -6716,7 +6716,7 @@ async function dungeon_ryouzyoku_after_k903() {
   return 0;
 }
 
-// @benki_koujo_k903
+// benki_koujo_k903
 async function benki_koujo_k903(rand) {
   void rand;
   const a = era_flag.target;
@@ -6791,7 +6791,7 @@ async function benki_koujo_k903(rand) {
   return 0;
 }
 
-// @dungeon_victory_k903
+// dungeon_victory_k903
 async function dungeon_victory_k903(rand) {
   const rand_n = rand ?? default_rand;
   const target = era_flag.target;
@@ -6845,7 +6845,7 @@ async function dungeon_victory_k903(rand) {
   return 0;
 }
 
-// @dungeon_attack_k903
+// dungeon_attack_k903
 async function dungeon_attack_k903(rand) {
   const rand_n = rand ?? default_rand;
   const target = era_flag.target;
@@ -6930,18 +6930,17 @@ async function dungeon_attack_k903(rand) {
   return 0;
 }
 
-// @colosseum_kojo_903
+// colosseum_kojo_903
 async function colosseum_kojo_903() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const master_name = chara_nickname(0);
   const assi = era_flag.assi;
   const assi_name = chara_callname(assi);
-  // 死斗场 SC31/21/27 三处同型的武器名（源 :5391-:5394、:5424-:5427、
-  // ）：TALENT:ASSI:121/122 有则「阴茎」，否则持假阳具时补
+  // 死斗场 SC31/21/27 三处同型的武器名：
+  // TALENT:ASSI:121/122 有则「阴茎」，否则持假阳具时补
   // 「假阳具」，两段都不出时为空串。
-  // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
-  //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+  // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
   const assi_has_penis =
     era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
   const assi_has_toy = era0('item:4') == 1;
@@ -6988,8 +6987,8 @@ async function colosseum_kojo_903() {
   if (era_flag.selectcom == 31) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊…唔……唔唔………就……就在这里吗？…咳……！」`);
-      // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-      // 不换行，末行 PRINTFORMW 才收行。:5391/:5393 两条 SIF 互斥——判据提到
+      // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+      // 不换行，末行 PRINTFORMW 才收行。两条 SIF 互斥——条件提到
       // 语句外当取值（assi_has_penis/assi_has_toy），文本留在输出语句里（#625）
       await era.printAndWait(
         `${assi_name}把` +
@@ -7076,7 +7075,7 @@ async function colosseum_kojo_903() {
   return 0;
 }
 
-// @ntr_koujo_k903
+// ntr_koujo_k903
 async function ntr_koujo_k903(rand, P) {
   void rand;
   const target = era_flag.target;
@@ -7186,7 +7185,7 @@ async function ntr_koujo_k903(rand, P) {
   return 0;
 }
 
-// @exucution_koujo_k903
+// exucution_koujo_k903
 async function exucution_koujo_k903() {
   if (game.event.犬射精或处刑口上 == 4) {
     await era.printAndWait(`「放，放开本宫！…侍奉怪物什么的………呜…呜哇哇！！」`);
@@ -7203,7 +7202,7 @@ async function exucution_koujo_k903() {
   }
 }
 
-// @museum_koujo_k903
+// museum_koujo_k903
 async function museum_koujo_k903() {
   if (game.event.博物馆口上 == 0) {
     await era.printAndWait('');
@@ -7228,7 +7227,7 @@ async function museum_koujo_k903() {
   }
 }
 
-// @banishment_koujo_k903
+// banishment_koujo_k903
 async function banishment_koujo_k903() {
   if (game.event.流放口上 == 0) {
     await era.printAndWait(`「本宫的…力量…被那样地………骗人…吧…………」`);
@@ -7241,7 +7240,7 @@ async function banishment_koujo_k903() {
   }
 }
 
-// @public_exucution_koujo_k903
+// public_exucution_koujo_k903
 async function public_exucution_koujo_k903() {
   if (game.event.公开处刑口上 == 0) {
     await era.printAndWait(`「到死为止都要被侵犯？呃……有趣…来试试呗！！」`);
@@ -7254,7 +7253,7 @@ async function public_exucution_koujo_k903() {
   }
 }
 
-// @grotesque_koujo_k903
+// grotesque_koujo_k903
 async function grotesque_koujo_k903() {
   if (game.event.猎奇处刑口上 == 0) {
     await era.printAndWait('');
@@ -7273,7 +7272,7 @@ async function grotesque_koujo_k903() {
   }
 }
 
-// @enterenemy_koujo_k903
+// enterenemy_koujo_k903
 async function enterenemy_koujo_k903(rand) {
   void rand;
   const a = era_flag.target;
@@ -7294,11 +7293,11 @@ async function enterenemy_koujo_k903(rand) {
   }
 }
 
-// @gohoubi_request_koujo_k903
+// gohoubi_request_koujo_k903
 async function gohoubi_request_koujo_k903(rand) {
   void rand;
   const a = era_flag.target;
-  // 源 :5660/:5662 读取从未赋值的 public static Y；清洁调用时其值为 0。
+  // 从未赋值的 public static Y，清洁调用时其值为 0。
   const y = 0;
   if (chara(a).stronghold.要求奖赏 == 0) {
     await era.printAndWait(`「钱钱钱！嘻嘻嘻～」`);
@@ -7307,9 +7306,9 @@ async function gohoubi_request_koujo_k903(rand) {
     chara(a).stronghold.要求奖赏 == 2 ||
     chara(a).stronghold.要求奖赏 == 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-    // 不换行，末行 PRINTFORMW 才收行。兽名三档（:5700/:5702/:5704）里后两档读
-    // 的是从未赋值的 Y（= 0，源缺陷 1:1）——判据提到语句外当取值、文本留在
+    // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档里后两档读
+    // 的是从未赋值的 Y（= 0，缺陷按原样保留）——条件提到语句外当取值、文本留在
     // 输出语句里（#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1
@@ -7337,7 +7336,7 @@ async function gohoubi_request_koujo_k903(rand) {
   }
 }
 
-// @gohoubi_after_koujo_k903
+// gohoubi_after_koujo_k903
 async function gohoubi_after_koujo_k903(rand, cid, choice) {
   void rand;
   void cid;
@@ -7749,7 +7748,7 @@ async function gohoubi_after_koujo_k903(rand, cid, choice) {
   }
 }
 
-// @osioki_koujo_k903
+// osioki_koujo_k903
 async function osioki_koujo_k903(rand, cid, choice) {
   void rand;
   void cid;
@@ -7805,7 +7804,7 @@ async function osioki_koujo_k903(rand, cid, choice) {
   }
 }
 
-// @gobi_koujo_k903, ARG:0
+// gobi_koujo_k903（ARG:0）
 function gobi_koujo_k903(arg0, rand = default_rand) {
   const rand_n = rand;
   if (arg0 == 1) {

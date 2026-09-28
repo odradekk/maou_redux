@@ -13,36 +13,36 @@
  *
  * == 已性转（CFLAG:70）的跨域读 ==
  *
- * 性転換済（male→female 改造完成标志）由 SHOP_LABO ver1.0.2.ERB:2310
- * 写入（CFLAG:T:70 = 1），属主 stronghold（ownership/cflag-ownership.yml
+ * 性転換済（male→female 改造完成标志）由据点改造流程写入
+ * （CFLAG:T:70 = 1），属主 stronghold（ownership/cflag-ownership.yml
  * "70-71"）。本文件全篇在「性転換済み」分支里**只读**它（与 TALENT:122 == 0
  * 一起判「原本是男人、现已变为女性的身体」），走
  * `chara(target).stronghold.已性转` 门面（tools/facade-names.js #245 补名）。
  *
- * == 整句日文残留（:319 / :5300） ==
+ * == 整句日文残留（两处） ==
  *
- * :319（愛+魔族化・性転換済み・調教前から魔族分档的过场白）与 :5300
+ * 一处（愛+魔族化・性転換済み・調教前から魔族分档的过场白）与另一处
  * （DUNGEON_VICTORY_K14 臆病・悲観分档台词）两句是汉化未译的整句日文残留
  * （全库 PRINT 行仅此两处超过 7 个假名的整句）。词级整句译作简体对白
- * （tools/lang-table.js #245 收录），保真锁 D 的 ERB 侧归一靠 WORD_MAP
- * 整句映射对上 JS 译文，玩家可见文本由此统一为简体。
+ * （tools/lang-table.js #245 收录），保真锁 D 靠 WORD_MAP 整句映射把
+ * 日文原句对上 JS 译文，玩家可见文本由此统一为简体。
  *
- * == 空模板骨架（K9 DOG_KOJO_9 同款判定，#251 先例） ==
+ * == 空模板骨架（与 K9 DOG_KOJO_9 相同的判定，#251 先例） ==
  *
- * @KOJO_MESSAGE_COM_14（:603-3561）、@DOG_KOJO_14（:3563-4366）、
- * @COLOSSEUM_KOJO_14（:5416-5519）、@NTR_KOUJO_K14（:5521-5596）与处刑
- * 六函数（EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/GROTESQUE，
- * :5598-5710）全部是**未填写的模板骨架**——保留完整的分支状态机（各
- * SELECTCOM 与 CFLAG 计数器写入齐全），但 PRINTFORMW 均为空参数（源行
+ * kojo_message_com_14、dog_kojo_14、
+ * colosseum_kojo_14、ntr_koujo_k14 与处刑
+ * 六函数（EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/GROTESQUE）
+ * 全部是**未填写的模板骨架**——保留完整的分支状态机（各
+ * SELECTCOM 与 CFLAG 计数器写入齐全），但 PRINTFORMW 均为空参数（
  * `PRINTFORMW ` 后无任何正文，合计 942 处）。这不是转译器漏译——本文件
  * 角色（貴公子/K14）就是只填了开头/结束/部分特殊指令口上、其余指令留空的
- * 模板残片；未填写的 PRINTFORMW 一律保留为 `await era.printAndWait('')`（K9
- * 同款，逐行核对确认，不补写台词）。
+ * 模板残片；未填写的 PRINTFORMW 一律保留为 `await era.printAndWait('')`
+ * （与 K9 相同，逐行核对确认，不补写台词）。
  *
- * @BENKI_KOUJO_K14（:5039-5271）只有 FLAG:62 == 9（野外露出配信）的
- * 常識改変两档填了台词（:5160-5175），其余档位留空。
+ * benki_koujo_k14 只有 FLAG:62 == 9（野外露出配信）的
+ * 常識改変两档填了台词，其余档位留空。
  *
- * @SELF_KOJO_K14（:4629-4882）TFLAG:13 分派各支的 PRINTFORMW 亦全空
+ * self_kojo_k14 TFLAG:13 分派各支的 PRINTFORMW 亦全空
  * （调教后自慰/百合PLAY/朝口交/调教后性交/夜袭/卖却/妊娠发觉/生产/育儿室/
  * 亲离/死亡/寿命 十二支保留状态机骨架）。
  *
@@ -50,35 +50,35 @@
  *
  * - 简易助手口上（CFLAG:202 段）未实现：EVENTTRAIN 里无助手与有助手
  *   都落 k14_kojo2（二回目以降）。
- * - KOJO_MESSAGE_COM_14 无助手跳过守卫，助手调教时照常出声。
+ * - KOJO_MESSAGE_COM_14 无助手跳过的检查，助手调教时照常出声。
  * - EVENTTRAIN 状态机没有崩坏（TALENT:9）分档，也没有「淫乱且魔族化」
  *   的组合档：这两类角色走链上其余分档。
  *
  * 分片进度（issue #245 分片合入）：
  *   S1（95a2ef6）：EVENTTRAIN/EVENTEND/K14_KOJO2/存在标志一对。
- *   S2（c6255cb）：KOJO_MESSAGE_COM_14 全篇（:603-3561，空模板骨架，525
- *     处空 PRINTFORMW；含穿环 SELECTCOM 87 的 piercing_state 读、:719 的
- *     P 声明补写）。
- *   S3（本片）：DOG_KOJO_14（:3563-4366）/KOJO_MESSAGE_PALAMCNG_14
- *     （:4368-4564，P1-P4/A 局部声明补写）/KOJO_MESSAGE_MARKCNG_14
- *     （:4566-4627）/SELF_KOJO_K14（:4629-4882）/DUNGEON_RYOUZYOKU_K14
- *     与 _AFTER_K14（:4884-5037）/BENKI_KOUJO_K14（:5039-5271，填了
+ *   S2（c6255cb）：KOJO_MESSAGE_COM_14 全篇（空模板骨架，525
+ *     处空 PRINTFORMW；含穿环 SELECTCOM 87 的 piercing_state 读、P
+ *     声明补写）。
+ *   S3（本片）：DOG_KOJO_14/KOJO_MESSAGE_PALAMCNG_14
+ *     （P1-P4/A 局部声明补写）/KOJO_MESSAGE_MARKCNG_14
+ *     /SELF_KOJO_K14/DUNGEON_RYOUZYOKU_K14
+ *     与 _AFTER_K14/BENKI_KOUJO_K14（填了
  *     常识改写与野外露出配信档，%SELF_CALL(A)% 转 self_call(a)）/
- *     DUNGEON_VICTORY_K14（:5273-5326，含 :5300 臆病档整句日文归一）/
- *     DUNGEON_ATTACK_K14（:5327-5411）/COLOSSEUM_KOJO_14（:5416-5519）。
- *     COM 守卫的 DOG/COLOSSEUM CALL 由注释改真实调用。
- *   S4（本片）：NTR_KOUJO_K14（:5521-5596，P 参数分档，CFLAG:650-657 旗
+ *     DUNGEON_VICTORY_K14（含臆病档整句日文归一）/
+ *     DUNGEON_ATTACK_K14/COLOSSEUM_KOJO_14。
+ *     COM 检查的 DOG/COLOSSEUM CALL 由注释改真实调用。
+ *   S4（本片）：NTR_KOUJO_K14（P 参数分档，CFLAG:650-657 旗
  *     标）+ 处刑系五入口（EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/
- *     GROTESQUE，:5598-5710，TFLAG:16/500/510/520/530 分档空模板）+
- *     ENTERENEMY_KOUJO_K14（:5712-5728，台词已填）+ GOHOUBI_REQUEST
- *     （:5730-5767，按 CFLAG:A:504 要求奖赏分档，台词已填，%SAVESTR:A% →
- *     chara_callname(a)）+ GOHOUBI_AFTER（:5768-5846）/OSIOKI
- *     （:5848-5909，读 TFLAG:18，choice 参数传入不使用）+ GOBI
- *     （:5911-5944，语尾 PRINTFORM，ARG:0 分档 + 随机三选）。
- *   S5（本片）：全家族注册（key 14）+ main-loop require 接线 +
+ *     GROTESQUE，TFLAG:16/500/510/520/530 分档空模板）+
+ *     ENTERENEMY_KOUJO_K14（台词已填）+ GOHOUBI_REQUEST
+ *     （按 CFLAG:A:504 要求奖赏分档，台词已填，%SAVESTR:A% →
+ *     chara_callname(a)）+ GOHOUBI_AFTER/OSIOKI
+ *     （读 TFLAG:18，choice 参数传入不使用）+ GOBI
+ *     （语尾 PRINTFORM，ARG:0 分档 + 随机三选）。
+ *   S5（本片）：全家族注册（key 14）+ main-loop require 接入 +
  *     gen-facade strict-list 补 kojo-k14-nobleman.js。
  *
- * 本票无 SELL_MATURO_K0 调用（SELF_KOJO 卖却分支为空模板，无 CALL 行）。
+ * 这张工单无 SELL_MATURO_K0 调用（SELF_KOJO 卖却分支为空模板，无 CALL 行）。
  */
 
 'use strict';
@@ -119,7 +119,7 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 
-// @EVENTTRAIN #PRI（:39-44）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -131,7 +131,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:45-48）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -141,22 +141,22 @@ on(
 );
 
 /**
- * @EVENTTRAIN（:53-425，普通档）：调教开始时的口上。
+ * EVENTTRAIN NORMAL 档：调教开始时的口上。
  *
- * 守卫（:54-57）：FLAG:7 <= 0 跳过、TALENT:174 != 1 跳过；此后按 CFLAG:201
+ * 检查：FLAG:7 <= 0 跳过、TALENT:174 != 1 跳过；此后按 CFLAG:201
  * 状态机推进：
- *   - 初调教（201 == 0，:62-106）：男魔族（TALENT:122 && 魔族 314==9）/
+ *   - 初调教（201 == 0）：男魔族（TALENT:122 && 魔族 314==9）/
  *     魔族+已性转（314==9 && CFLAG:70 && !122）/ 通常男（122）/ 已性转
  *     （CFLAG:70 && !122）四档，置 201=1；前两档另置 370=1（魔族スイッチ１），
  *     已性转档 RETURN 1（性転換済み的初调教有完整过场）。
- *   - 魔族化（201<5 && 370==0 && 魔族 && 无爱无淫乱，:110-117）：仅一次，
+ *   - 魔族化（201<5 && 370==0 && 魔族 && 无爱无淫乱）：仅一次，
  *     置 370=2。
- *   - NTR 再捕获（201>=1 && CFLAG:650==1，:121-134）：爱/淫乱与それ以外
+ *   - NTR 再捕获（201>=1 && CFLAG:650==1）：爱/淫乱与それ以外
  *     两档，清 650=0。
- *   - 屈服刻印 Lv1/2/3（:139-167）：各一次，201 推进 2/3/4。
- *   - 淫乱（201<5 && 76 && !85，:170-179）：201=5。
- *   - 爱（201<6 && 85，:247-267）：男/已性转两档，201=6。
- *   - 爱+魔族化（314==9 && 201<8 && 85 && !76，:270-347）：370==1（調教前
+ *   - 屈服刻印 Lv1/2/3：各一次，201 推进 2/3/4。
+ *   - 淫乱（201<5 && 76 && !85）：201=5。
+ *   - 爱（201<6 && 85）：男/已性转两档，201=6。
+ *   - 爱+魔族化（314==9 && 201<8 && 85 && !76）：370==1（調教前
  *     から魔族）/370==2（調教後に魔族）/それ以外（陥落後に魔族）三档 ×
  *     男/已性转两分档，201=8。
  *   - 无崩坏（TALENT:9）分档：崩坏角色走链上其余分档（见文件头）。
@@ -622,7 +622,7 @@ on('EVENTTRAIN', async () => {
 });
 
 /**
- * @k14_kojo2（:427-494）：调教开始口上的二回目以降。
+ * k14_kojo2：调教开始口上的二回目以降。
  *
  * 分档（各带 FLAG:7 == 2 门槛）：反抗刻印Lv3（MARK:3==3）→ 屈服刻印
  * Lv0/1/2/3（MARK:2 按档，Lv2/3 各含男/已性转两分档）→ 淫乱（TALENT:76，
@@ -721,9 +721,9 @@ async function k14_kojo2(rand) {
 }
 
 /**
- * @EVENTEND（:500-597，普通档）：调教结束时的口上。
+ * EVENTEND NORMAL 档：调教结束时的口上。
  *
- * 守卫（:501-508）：FLAG:7 <= 0 跳过、TALENT:174 != 1 跳过、角色死亡
+ * 检查：FLAG:7 <= 0 跳过、TALENT:174 != 1 跳过、角色死亡
  * （BASE:0 <= 0）跳过；此后按反抗刻印Lv3/屈服刻印Lv1以下/屈服刻印Lv2/
  * 屈服刻印Lv3（各无爱）/淫乱/爱 分档，淫乱与爱各按体力（BASE:0）高低
  * （>=500 / <=500）再分两支，魔族（314==9）与男/已性转再细分。
@@ -884,19 +884,19 @@ on('EVENTEND', async () => {
 });
 
 /**
- * @KOJO_MESSAGE_COM_14（:603-3561）：调教中「指令口上」入口。
+ * kojo_message_com_14：调教中「指令口上」入口。
  *
  * 空模板骨架（见文件头「空模板骨架」）：全篇 PRINTFORMW 均为空参数（525
- * 处，含二回目以降与守卫分支），保留完整的分支状态机与 CFLAG 计数器写入
- * 集合（301-400 计数器、7 穿环位域、223 首次耻情Lv2 读档）。守卫与 K10
+ * 处，含二回目以降与检查分支），保留完整的分支状态机与 CFLAG 计数器写入
+ * 集合（301-400 计数器、7 穿环位域、223 首次耻情Lv2 读档）。检查与 K10
  * 同构：口塞（TEQUIP:45 && SELECTCOM!=45）→ 失神（TFLAG:899）→ 兽奸
- * （TEQUIP:89，CALL DOG_KOJO_14——DOG 为本地函数，S3 落地后改真实调用）
- * → 死斗场（TEQUIP:55，CALL COLOSSEUM_KOJO_14——同上，S3 落地）。
+ * （TEQUIP:89，CALL DOG_KOJO_14——DOG 为本地函数，S3 实现后改真实调用）
+ * → 死斗场（TEQUIP:55，CALL COLOSSEUM_KOJO_14——同上，S3 实现）。
  *
- * 本函数经 kojo_message_com_family 分发（key 14），S5 合入接线；分片期间
+ * 本函数经 kojo_message_com_family 分发（key 14），S5 合入接入；分片期间
  * 直接导出供测试驱动。
  *
- * 无助手跳过守卫，助手调教时照常出声（见文件头「未实现的功能段」）。
+ * 无助手跳过的检查，助手调教时照常出声（见文件头「未实现的功能段」）。
  * 局部变量 P = 润滑 PALAM:3 + 增量 delta:3；穿环（SELECTCOM 87）处的 P
  * 是 piercing_state.p（跨指令存活的单字母变量，com87 写入）。
  *
@@ -3779,7 +3779,7 @@ async function kojo_message_com_14(rand) {
   }
 
   if (era_flag.selectcom == 87) {
-    const P = piercing_state.p; // 跨 CALL TRAIN_MESSAGE_B 存活的全局单字母变量 P（com87() 写入，见 piercing-state.js，K7/K10 同款先例）
+    const P = piercing_state.p; // 跨 CALL TRAIN_MESSAGE_B 存活的全局单字母变量 P（com87() 写入，见 piercing-state.js，K7/K10 已有先例）
 
     if (kojo.穿环 == 0) {
       if (era_flag.assi > 0 && era_flag.assiplay) {
@@ -3978,8 +3978,8 @@ async function kojo_message_com_14(rand) {
 }
 
 /**
- * @DOG_KOJO_14（:3563-4366）：兽奸专用口上（KOJO_MESSAGE_COM_14 的
- * TEQUIP:89 守卫 CALL 的本地函数，不进 family）。
+ * dog_kojo_14：兽奸专用口上（KOJO_MESSAGE_COM_14 的
+ * TEQUIP:89 检查 CALL 的本地函数，不进 family）。
  *
  * 空模板骨架：SELECTCOM 0-10 等分支保留完整状态机与 CFLAG 计数器写入，
  * PRINTFORMW 全空（155 处）。
@@ -4883,10 +4883,9 @@ async function dog_kojo_14(rand) {
 }
 
 /**
- * @KOJO_MESSAGE_PALAMCNG_14（:4368-4564）：参数变动口上（CFLAG:221-230
- * 首次超 Lv2/绝顶/处女丧失 事件口上）。本地 P/A 变量由复核补声明（:4385/
- * :4412/:4439/:4454/:4531，见文件头转译器 review 清单）。空模板（1 处填
- * 空除外），保留计数器写入。
+ * kojo_message_palamcng_14：参数变动口上（CFLAG:221-230
+ * 首次超 Lv2/绝顶/处女丧失 事件口上）。本地 P/A 变量由复核补声明（见
+ * 文件头转译器 review 清单）。空模板（1 处填空除外），保留计数器写入。
  */
 async function kojo_message_palamcng_14(rand) {
   void rand;
@@ -5042,7 +5041,7 @@ async function kojo_message_palamcng_14(rand) {
 }
 
 /**
- * @KOJO_MESSAGE_MARKCNG_14（:4566-4627）：刻印变动口上（TFLAG:21-24 == 3
+ * kojo_message_markcng_14：刻印变动口上（TFLAG:21-24 == 3
  * 时各首次 Lv3 事件）。空模板骨架。
  */
 async function kojo_message_markcng_14(rand) {
@@ -5096,7 +5095,7 @@ async function kojo_message_markcng_14(rand) {
 }
 
 /**
- * @SELF_KOJO_K14（:4629-4882）：调教后自慰/百合/朝口交/调教后性交/夜袭/
+ * self_kojo_k14：调教后自慰/百合/朝口交/调教后性交/夜袭/
  * 卖却/妊娠发觉/生产/育儿室/亲离/死亡/寿命 十二支（TFLAG:13 分派）——
  * 空模板骨架。Q 由调用方传入（AFTERTRAIN_MASTURBATION_CHECK 的
  * Q==1 百合/ Q==2 野犬 判定）。
@@ -5321,7 +5320,7 @@ async function self_kojo_k14(rand, q) {
 }
 
 /**
- * @DUNGEON_RYOUZYOKU_K14（:4884-5037）：迷宫凌辱开场口上。空模板骨架
+ * dungeon_ryouzyoku_k14：迷宫凌辱开场口上。空模板骨架
  * （处刑前的一言按 TALENT:0/21/22/17/31/36 等分档）。
  */
 async function dungeon_ryouzyoku_k14() {
@@ -5419,7 +5418,7 @@ async function dungeon_ryouzyoku_k14() {
 }
 
 /**
- * @DUNGEON_RYOUZYOKU_AFTER_K14（:4884-5037 内）：迷宫凌辱事后口上。空模板骨架。
+ * dungeon_ryouzyoku_after_k14：迷宫凌辱事后口上。空模板骨架。
  */
 async function dungeon_ryouzyoku_after_k14() {
   const target = era_flag.target;
@@ -5483,9 +5482,9 @@ async function dungeon_ryouzyoku_after_k14() {
 }
 
 /**
- * @BENKI_KOUJO_K14（:5039-5271）：肉便器行动口上。FLAG:62 十二档（0-12），
- * 仅 FLAG:63==1（常识改写）与野外露出配信（FLAG:62==9）部分档位填了台词
- * （:5160-5175 一带），其余空模板。A = 肉便器对象（era_flag.target）。
+ * benki_koujo_k14：肉便器行动口上。FLAG:62 十二档（0-12），
+ * 仅 FLAG:63==1（常识改写）与野外露出配信（FLAG:62==9）部分档位填了
+ * 台词，其余空模板。A = 肉便器对象（era_flag.target）。
  */
 async function benki_koujo_k14(rand) {
   void rand;
@@ -5678,7 +5677,7 @@ async function benki_koujo_k14(rand) {
 }
 
 /**
- * @DUNGEON_VICTORY_K14（:5273-5326）：迷宫战斗胜利口上。填了台词；按
+ * dungeon_victory_k14：迷宫战斗胜利口上。填了台词；按
  * TALENT 分档（無関心/反抗的/臆病等）决胜台词 + 血量判定。A = 参战角色
  * （era_flag.target）。
  */
@@ -5740,7 +5739,7 @@ async function dungeon_victory_k14(rand) {
 }
 
 /**
- * @DUNGEON_ATTACK_K14（:5327-5411）：迷宫战斗攻击口上。填了台词；按
+ * dungeon_attack_k14：迷宫战斗攻击口上。填了台词；按
  * CFLAG:1 侵攻中分档 + TALENT 性格分档。
  */
 async function dungeon_attack_k14(rand) {
@@ -5829,8 +5828,8 @@ async function dungeon_attack_k14(rand) {
 }
 
 /**
- * @COLOSSEUM_KOJO_14（:5416-5519）：死斗场专用口上（KOJO_MESSAGE_COM_14
- * 的 TEQUIP:55 守卫 CALL 的本地函数，不进 family）。SELECTCOM 55/56 分支，
+ * colosseum_kojo_14：死斗场专用口上（KOJO_MESSAGE_COM_14
+ * 的 TEQUIP:55 检查 CALL 的本地函数，不进 family）。SELECTCOM 55/56 分支，
  * 空模板骨架。
  */
 async function colosseum_kojo_14(rand) {
@@ -5912,7 +5911,7 @@ async function colosseum_kojo_14(rand) {
 }
 
 /**
- * @NTR_KOUJO_K14（:5521-5596）：NTR 再捕获口上。P 由调用方传入（1-7 =
+ * ntr_koujo_k14：NTR 再捕获口上。P 由调用方传入（1-7 =
  * NTR 场景编号，20 = 特殊），按 CFLAG:650-657 记录场景已演。空模板骨架。
  * 首行 `SIF CFLAG:650 == 0 → CFLAG:650 = 1`（NTR 总标志开启）。
  */
@@ -5994,7 +5993,7 @@ async function ntr_koujo_k14(rand, P) {
 }
 
 /**
- * @EXUCUTION_KOUJO_K14（:5598-5615）：公开处刑（斩首系）口上。TFLAG:16
+ * exucution_koujo_k14：公开处刑（斩首系）口上。TFLAG:16
  * 分档，空模板骨架。
  */
 async function exucution_koujo_k14(rand) {
@@ -6012,7 +6011,7 @@ async function exucution_koujo_k14(rand) {
 }
 
 /**
- * @MUSEUM_KOUJO_K14（:5616-5629）：博物馆（陈列）口上。TFLAG:500 分档，
+ * museum_koujo_k14：博物馆（陈列）口上。TFLAG:500 分档，
  * 空模板骨架。
  */
 async function museum_koujo_k14(rand) {
@@ -6042,7 +6041,7 @@ async function museum_koujo_k14(rand) {
 }
 
 /**
- * @BANISHMENT_KOUJO_K14（:5631-5644）：流放口上。TFLAG:510 分档，空模板骨架。
+ * banishment_koujo_k14：流放口上。TFLAG:510 分档，空模板骨架。
  */
 async function banishment_koujo_k14(rand) {
   void rand;
@@ -6059,7 +6058,7 @@ async function banishment_koujo_k14(rand) {
 }
 
 /**
- * @PUBLIC_EXUCUTION_KOUJO_K14（:5646-5683）：公开处刑口上。TFLAG:520 分档，
+ * public_exucution_koujo_k14：公开处刑口上。TFLAG:520 分档，
  * 空模板骨架。
  */
 async function public_exucution_koujo_k14(rand) {
@@ -6075,7 +6074,7 @@ async function public_exucution_koujo_k14(rand) {
 }
 
 /**
- * @GROTESQUE_KOUJO_K14（:5685-5710）：猎奇处刑口上。TFLAG:530 分档，空模板骨架。
+ * grotesque_koujo_k14：猎奇处刑口上。TFLAG:530 分档，空模板骨架。
  */
 async function grotesque_koujo_k14(rand) {
   void rand;
@@ -6098,7 +6097,7 @@ async function grotesque_koujo_k14(rand) {
 }
 
 /**
- * @ENTERENEMY_KOUJO_K14（:5712-5728）：勇者来袭时的迎击口上（ENTER_ENEMY
+ * enterenemy_koujo_k14：勇者来袭时的迎击口上（ENTER_ENEMY
  * 调用）。按 TALENT 性格分档，台词已填。
  */
 async function enterenemy_koujo_k14(rand) {
@@ -6123,7 +6122,7 @@ async function enterenemy_koujo_k14(rand) {
 }
 
 /**
- * @GOHOUBI_REQUEST_KOUJO_K14（:5730-5767）：迎击战果奖赏请求口上。按
+ * gohoubi_request_koujo_k14：迎击战果奖赏请求口上。按
  * CFLAG:A:504（要求奖赏）分档，台词已填（%SAVESTR:A% → chara_callname(a)）。
  */
 async function gohoubi_request_koujo_k14(rand) {
@@ -6137,9 +6136,9 @@ async function gohoubi_request_koujo_k14(rand) {
     chara(a).stronghold.要求奖赏 == 2 ||
     chara(a).stronghold.要求奖赏 == 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:5739/:5741/:5743）提到
-    // 语句外当取值、文本留在输出语句里（保真锁按序核对 ERB 片段，#625）
+    // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的条件提到
+    // 语句外当取值、文本留在输出语句里（保真锁按序核对台词片段，#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1
         ? '狗'
@@ -6167,7 +6166,7 @@ async function gohoubi_request_koujo_k14(rand) {
 }
 
 /**
- * @GOHOUBI_AFTER_KOUJO_K14（:5768-5846）：战果奖赏口上（TARGET = A 后按
+ * gohoubi_after_koujo_k14：战果奖赏口上（TARGET = A 后按
  * GET_KOJO_NUM 分派）。源直接读 TFLAG:18（choice 由调用方传入但不使用——
  * K14 与 K10 不同，源在函数体内读 TFLAG:18）。空模板骨架。
  */
@@ -6233,7 +6232,7 @@ async function gohoubi_after_koujo_k14(rand, cid, choice) {
 }
 
 /**
- * @OSIOKI_KOUJO_K14（:5848-5909）：迎击失败惩罚口上。源直接读 TFLAG:18
+ * osioski_koujo_k14：迎击失败惩罚口上。直接读 TFLAG:18
  * 分档（choice 传入不使用）。空模板骨架。
  */
 async function osioski_koujo_k14(rand, cid, choice) {
@@ -6286,7 +6285,7 @@ async function osioski_koujo_k14(rand, cid, choice) {
 }
 
 /**
- * @GOBI_KOUJO_K14（:5911-5944）：语尾口上（PRINTFORM 输出行尾语气词）。
+ * gobi_koujo_k14：语尾口上（PRINTFORM 输出行尾语气词）。
  * ARG:0 分档：1 得意/2 愤怒/3 悲伤/4 害羞/5 狼狈，其余（含 0）随机三选。
  */
 function gobi_koujo_k14(arg, rand) {

@@ -2,9 +2,9 @@
 /**
  * @file 伶俐性格口上 K15：EVENTTRAIN 存在标志 + 主体（issue #246）。
  *
- * == 守卫（K15 与模板七条不同，逐文件 1:1） ==
+ * == 头部检查（K15 与模板七条不同，逐文件不同） ==
  *
- * @KOJO_MESSAGE_COM_15 的守卫（:408-425，源实测）：
+ * kojo_message_com_15 的检查（实测）：
  *   1. TEQUIP:45 && SELECTCOM != 45（口塞）→ 跳过；
  *   2. TFLAG:899（失神）→ 跳过；
  *   3. TEQUIP:89（兽奸）→ 岔去本文件真身 DOG_KOJO_15；
@@ -53,10 +53,10 @@ const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 
-/** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
+/** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律以 || 0 作缺省处理 */
 const era0 = (k) => era.get(k) || 0;
 
-// @EVENTTRAIN #PRI（:29-33）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -68,7 +68,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:35-37）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -78,9 +78,9 @@ on(
 );
 
 /**
- * @K15_KOJO2（:245-310）：调教开始口上的二回目以降（助手无口上时）。
+ * k15_kojo2：调教开始口上的二回目以降（助手无口上时）。
  * 按「反抗刻印Lv3 → 屈服刻印Lv0/1/2/3 → 淫乱 → 爱慕」取首个命中。
- * PRINTDATAL / RAND:2 走 Math.random（K4 同款，事件链无 rand 形参）。
+ * PRINTDATAL / RAND:2 走 Math.random（与 K4 相同，事件链无 rand 形参）。
  */
 async function k15_kojo2() {
   const target = era_flag.target;
@@ -131,7 +131,7 @@ async function k15_kojo2() {
   } else if (era0(`talent:${target}:76`) == 1 && kojo_on == 2) {
     era.drawLine();
     if (rand_n(2)) {
-      // IF RAND:2（非 0 走本臂）
+      // IF RAND:2（非 0 走本分支）
 
       await era.printAndWait(
         `「今天要玩些什么呢？不瞒您说，${sc()}这淫乱的身体早已经等不及了……」`,
@@ -171,9 +171,9 @@ async function k15_kojo2() {
 }
 
 /**
- * @EVENTTRAIN（:43-239，普通档）：调教开始时的口上。
+ * EVENTTRAIN NORMAL 档：调教开始时的口上。
  *
- * 守卫（:43-47）：FLAG:7 <= 0 跳过、TALENT:175 != 1 跳过；此后按
+ * 检查：FLAG:7 <= 0 跳过、TALENT:175 != 1 跳过；此后按
 
  * CFLAG:201 状态机推进：初调教（0，含暗器 TINPUT）→ NTR 再捕获
  * （>=1 && CFLAG:650 == 1）→ 屈服刻印Lv1/2/3（各一次）→ 淫乱 → 爱慕
@@ -386,7 +386,7 @@ on('EVENTTRAIN', async () => {
 });
 
 /**
- * @EVENTEND（:316-400，普通档）：调教结束时的口上。死亡跳过，随后按
+ * EVENTEND NORMAL 档：调教结束时的口上。死亡跳过，随后按
  * 反抗刻印 Lv3、屈服刻印 Lv1 以下/2/3、淫乱/爱慕（各含体力高低分档）
  * 取首个命中。PRINTDATAL 走 Math.random。
  */
@@ -521,8 +521,8 @@ on('EVENTEND', async () => {
 });
 
 /**
- * @DOG_KOJO_15（:4027 起）：兽奸 PLAY 专用口上（TEQUIP:89 时由
- * kojo_message_com_15 头部守卫岔入）。
+ * dog_kojo_15：兽奸 PLAY 专用口上（TEQUIP:89 时由
+ * kojo_message_com_15 头部检查岔入）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
@@ -1542,8 +1542,8 @@ async function dog_kojo_15(rand) {
 }
 
 /**
- * @COLOSSEUM_KOJO_15（:5796 起）：死斗场本地函数（非 family 分发，由
- * kojo_message_com_15 头部守卫 TEQUIP:55 直接调用）。
+ * colosseum_kojo_15：死斗场本地函数（非 family 分发，由
+ * kojo_message_com_15 头部检查 TEQUIP:55 直接调用）。
  *
  * @returns {Promise<number>} 0
  */
@@ -1599,13 +1599,12 @@ async function colosseum_kojo_15() {
   if (era_flag.selectcom == 31) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「不…唔……唔唔……嗯……啊……不！呜！」`);
-      // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-      // 不换行，末行 PRINTFORMW 才收行。:5844/:5846 两条 SIF 互斥（TALENT:121/
-      // 122 的「有」与「无」）——判据提到语句外当取值，文本留在输出语句里（#625）
+      // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+      // 不换行，末行 PRINTFORMW 才收行。两条 SIF 互斥（TALENT:121/122 的
+      // 「有」与「无」）——条件提到语句外当取值，文本留在输出语句里（#625）
       const assi_has_penis =
         era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
-      // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
-      //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+      // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
       const assi_has_toy = era0('item:4') == 1;
       await era.printAndWait(
         `${assi_name}粗暴地拉起${target_name}的头发，得意地用` +
@@ -1689,8 +1688,8 @@ async function colosseum_kojo_15() {
 }
 
 /**
- * @KOJO_MESSAGE_COM_15（:406 起）：指令口上。本切片落地四道头部守卫 +
- * SELECTCOM 0–87；DOG / COLOSSEUM 全量已落地。其余随后续切片。
+ * kojo_message_com_15：指令口上。本切片实现四道头部检查 +
+ * SELECTCOM 0–87；DOG / COLOSSEUM 全量已实现。其余随后续切片。
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0
  */
@@ -2214,9 +2213,9 @@ async function kojo_message_com_15(rand) {
         await era.printAndWait(
           `「是不是没人想跟你接吻，所以只能用强迫的手段？真是卑劣！」`,
         );
-        // 原作是一整行：无后缀 PRINTFORM 连续不换行，末行
-        // PRINTFORMW 才收行。:759 的 SIF !TEQUIP:44 只护住 :760 那一段——
-        // 判据提到语句外当取值，文本留在输出语句里（#625）
+        // 同一行输出：无后缀 PRINTFORM 连续不换行，末行
+        // PRINTFORMW 才收行。SIF !TEQUIP:44 只护住下一段——
+        // 条件提到语句外当取值，文本留在输出语句里（#625）
         const wiped = !era0(`tequip:${target}:44`);
         await era.printAndWait(
           `${target_name}` +
@@ -6099,8 +6098,8 @@ async function kojo_message_com_15(rand) {
 }
 
 /**
- * @KOJO_MESSAGE_PALAMCNG_15（:4894 起）：参数变动口上。ASSI/ASSIPLAY
- * 整行注释，仅 TEQUIP:45 口塞守卫。P = PALAM+UP vs PALAMLV[2]。
+ * kojo_message_palamcng_15：参数变动口上。ASSI/ASSIPLAY
+ * 整行注释，仅 TEQUIP:45 口塞检查。P = PALAM+UP vs PALAMLV[2]。
  *
  * @returns {Promise<number>} 0
  */
@@ -6295,8 +6294,8 @@ async function kojo_message_palamcng_15() {
 }
 
 /**
- * @KOJO_MESSAGE_MARKCNG_15（:5105 起）：刻印变动口上。ASSI/ASSIPLAY
- * 整行注释，仅 TEQUIP:45 口塞守卫。
+ * kojo_message_markcng_15：刻印变动口上。ASSI/ASSIPLAY
+ * 整行注释，仅 TEQUIP:45 口塞检查。
  *
  * @returns {Promise<number>} 0
  */
@@ -6349,7 +6348,7 @@ async function kojo_message_markcng_15() {
 }
 
 /**
- * @SELF_KOJO_K15（:5168 起）：事件口上。TFLAG:13 分派调教后自慰 /
+ * self_kojo_k15：事件口上。TFLAG:13 分派调教后自慰 /
  * 百合 PLAY / 朝口交 / 调教后性交 / 夜袭 / 出售 / 妊娠发觉 / 生产 /
  * 育儿室 / 亲离 / 死亡 / 寿命。Q 走 peek_aftertrain_q()。
  *
@@ -7205,8 +7204,8 @@ async function gohoubi_request_koujo_k15(rand) {
     chara(a).stronghold.要求奖赏 == 2 ||
     chara(a).stronghold.要求奖赏 == 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:6141/:6143/:6145）提到
+    // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的条件提到
     // 语句外当取值、文本留在输出语句里（#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1

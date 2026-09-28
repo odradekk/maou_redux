@@ -1,19 +1,19 @@
 /* eslint-disable no-irregular-whitespace, no-dupe-else-if, no-unused-vars */
 /**
- * @file 悪女性格口上 K6：整份 EVENT_K6_悪女.ERB 复核落地（issue #237）。
+ * @file 悪女性格口上 K6（issue #237）。
  *
  * 转译初稿 products/kojo/kojo-k6-wicked.js（#107）经逐段复核后移入。
  *
- * == 守卫（K6 与 K2/K5 不同，逐文件 1:1） ==
+ * == 头部检查（K6 与 K2/K5 不同，逐文件不同） ==
  *
- * @KOJO_MESSAGE_COM_6 的守卫（:681-700，源实测）：
+ * kojo_message_com_6 的检查（实测）：
  *   1. ASSI > 0 && ASSIPLAY（助手调教）→ 跳过；
  *   2. TEQUIP:45 && SELECTCOM != 45（口塞）→ 跳过；
  *   3. TFLAG:899（失神）→ 跳过；
  *   4. TALENT:9（崩坏）→ 跳过；
- *   5. TEQUIP:89（兽奸）→ **岔去本文件真身 DOG_KOJO_6**；
- *   6. TEQUIP:55（死斗场）→ **岔去本文件真身 COLOSSEUM_KOJO_6**。
- * **无 TEQUIP:90 头部守卫**（触手只在 COM 6 内部出现）。
+ *   5. TEQUIP:89（兽奸）→ **岔去本文件真身 dog_kojo_6**；
+ *   6. TEQUIP:55（死斗场）→ **岔去本文件真身 colosseum_kojo_6**。
+ * **无 TEQUIP:90 头部检查**（触手只在 COM 6 内部出现）。
  *
  * == 状态机（CFLAG:301～400，个位数推进） ==
  *
@@ -97,7 +97,7 @@ function bind_ctx(rand) {
   };
 }
 
-// @EVENTTRAIN #PRI（:73-77）：存在标志 + 总开关补 0
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -109,7 +109,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:79-81）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -731,7 +731,7 @@ async function eventtrain_k6(rand) {
   }
 }
 
-// @K6_KOJO2
+// k6_kojo2
 
 async function k6_kojo2(rand) {
   const {
@@ -866,7 +866,7 @@ async function k6_kojo2(rand) {
   return 0;
 }
 
-// @EVENTEND
+// eventend_k6：EVENTEND NORMAL 档
 
 async function eventend_k6(rand) {
   const {
@@ -1002,7 +1002,7 @@ async function eventend_k6(rand) {
   return 0;
 }
 
-// @KOJO_MESSAGE_COM_6
+// kojo_message_com_6
 
 async function kojo_message_com_6(rand) {
   const {
@@ -6621,9 +6621,9 @@ async function kojo_message_com_6(rand) {
     if (kojo.口塞 === 0) {
       if ((era.get(`talent:${target}:76`) || 0) === 1) {
         await era.printAndWait(`「呜呼…呜啊…呜啊${heart(1)}」`);
-        // 原作是一整行：无后缀 PRINTFORM :3953 不换行，:3955 的
-        // PRINTL 才收行；ELSE 支 :3957 是同一行的另一支。前缀（:3953）提到语句外
-        // 共用——ELSE 那条语句只列 :3957，前缀留在它里面会被保真锁 C 当成多出来的
+        // 同一行输出：无后缀 PRINTFORM 不换行，末行
+        // PRINTL 才收行；ELSE 支是同一行的另一支。前缀提到语句外
+        // 共用——ELSE 那条语句只列本支，前缀留在它里面会被保真锁 C 当成多出来的
         // 插值记号（#621）
         const mouth_front_3953 = `配合地戴上口塞的${target_name}带着期待`;
         const blindfold_3954 = era.get(`tequip:${target}:43`);
@@ -7193,8 +7193,8 @@ async function kojo_message_com_6(rand) {
             0 ||
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 连续不换行，:4314 的
-          // PRINTFORML 才收行；:4313 是 SIF ABL:31 >= 3 的条件片段，判据提到语句外
+          // 同一行输出：无后缀 PRINTFORM 连续不换行，末行
+          // PRINTFORML 才收行；SIF ABL:31 >= 3 的条件片段提到语句外
           // 取值（#621）
           const dirty_exp = (era.get(`abl:${target}:31`) || 0) >= 3;
           await era.print(
@@ -7252,9 +7252,9 @@ async function kojo_message_com_6(rand) {
           await era.printAndWait(`${target_name}侧过脸去，沉默不语。`);
         }
       } else {
-        // 起是一整行：无后缀 PRINTFORM :4342 不换行，各支的 PRINTL/W 才收行。
-        // 前缀（:4342）提到语句外共用——除了 :4342+:4344 这条合成的语句，各支自己
-        // 的语句只列本支的行号，前缀留在里面会被保真锁 C 当成多出来的插值记号（#621）
+        // 起是一整行：无后缀 PRINTFORM 不换行，各支的 PRINTL/W 才收行。
+        // 前缀提到语句外共用——除了第一条合成的语句，各支自己
+        // 的语句只列本支，前缀留在里面会被保真锁 C 当成多出来的插值记号（#621）
         const talk_front_4342 = `在和${player_name}`;
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -7287,7 +7287,7 @@ async function kojo_message_com_6(rand) {
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // 也同属一行：三条无后缀 PRINT 连续不换行，
-          // 的 PRINTFORML 才收行；两档语调的判据提到语句外取值（#621）
+          // 的 PRINTFORML 才收行；两档语调的条件提到语句外取值（#621）
           const excited_4349 =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -7371,8 +7371,8 @@ async function kojo_message_com_6(rand) {
             0 ||
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
-          // 同型：三条无后缀 PRINTFORM/PRINT 连续不换行，:4386 的
-          // PRINTFORML 才收行；:4385 是 SIF ABL:31 >= 3 的条件片段（#621）
+          // 同型：三条无后缀 PRINTFORM/PRINT 连续不换行，末行
+          // PRINTFORML 才收行；SIF ABL:31 >= 3 的条件片段（#621）
           const dirty_exp_4384 = (era.get(`abl:${target}:31`) || 0) >= 3;
           await era.print(
             `${target_name}面带微笑地介绍了自己的本名和性经验` +
@@ -7461,7 +7461,7 @@ async function kojo_message_com_6(rand) {
             0) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 也同属一行；两档语调的判据提到语句外取值（#621）
+          // 也同属一行；两档语调的条件提到语句外取值（#621）
           const excited_4421 =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -7790,9 +7790,9 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「呜咕噜…才、才没有…喜欢这么做呢…啊呜…呜咕噜${heart(1)} 唔啊啊${heart(1)} 哈啊啊${heart(1)} 好舒服${heart(1)}」`,
         );
-        // 原作是一整行：无后缀 PRINTFORM :4594 不换行，:4596 的 PRINTL
-        // 才收行；ELSEIF/ELSE 三支（:4598/:4600/:4602）是同一行的另三支。前缀提到
-        // 语句外共用——各支自己的语句只列本支的行号，前缀留在里面会被保真锁 C
+        // 同一行输出：无后缀 PRINTFORM 不换行，末行 PRINTL
+        // 才收行；ELSEIF/ELSE 三支是同一行的另三支。前缀提到
+        // 语句外共用——各支自己的语句只列本支，前缀留在里面会被保真锁 C
         // 当成多出来的插值记号（#621）
         const mouth_front_4594 = `${target_name}含住${player_name}的阴茎显得十分兴奋，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
@@ -8855,7 +8855,7 @@ async function kojo_message_com_6(rand) {
   }
 }
 
-// @DOG_KOJO_6
+// dog_kojo_6
 
 async function dog_kojo_6(rand) {
   const {
@@ -9825,7 +9825,7 @@ async function dog_kojo_6(rand) {
   return 0;
 }
 
-// @KOJO_MESSAGE_PALAMCNG_6
+// kojo_message_palamcng_6
 
 async function kojo_message_palamcng_6(rand) {
   const {
@@ -10199,7 +10199,7 @@ async function kojo_message_palamcng_6(rand) {
   }
 }
 
-// @KOJO_MESSAGE_MARKCNG_6
+// kojo_message_markcng_6
 
 async function kojo_message_markcng_6(rand) {
   const {
@@ -10289,7 +10289,7 @@ async function kojo_message_markcng_6(rand) {
   }
 }
 
-// @SELF_KOJO_K6
+// self_kojo_k6
 
 async function self_kojo_k6(rand) {
   const {
@@ -10401,8 +10401,8 @@ async function self_kojo_k6(rand) {
       await era.printAndWait(
         `${target_name}一边用秘密作为借口，一边用手在${assi_name}的敏感部位抚摸。`,
       );
-      // 原作是一整行：无后缀 PRINTFORM :6516 不换行，:6518 的
-      // PRINTFORMW 才收行；ELSE 支 :6520 是同一行的另一支，前缀提到语句外共用（#621）
+      // 同一行输出：无后缀 PRINTFORM 不换行，末行
+      // PRINTFORMW 才收行；ELSE 支是同一行的另一支，前缀提到语句外共用（#621）
       const lily_front_6516 = `${assi_name}苦笑着和${target_name}以女人间特有的方式纠缠在一起，`;
       if (era_flag.time === 0) {
         await era.printAndWait(
@@ -10921,7 +10921,7 @@ async function self_kojo_k6(rand) {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_K6
+// dungeon_ryouzyoku_k6
 
 async function dungeon_ryouzyoku_k6(rand) {
   const {
@@ -11033,7 +11033,7 @@ async function dungeon_ryouzyoku_k6(rand) {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_AFTER_K6
+// dungeon_ryouzyoku_after_k6
 
 async function dungeon_ryouzyoku_after_k6(rand) {
   const {
@@ -11108,7 +11108,7 @@ async function dungeon_ryouzyoku_after_k6(rand) {
   return 0;
 }
 
-// @BENKI_KOUJO_K6
+// benki_koujo_k6
 
 async function benki_koujo_k6(rand) {
   const {
@@ -11289,7 +11289,7 @@ async function benki_koujo_k6(rand) {
   return 0;
 }
 
-// @DUNGEON_VICTORY_K6
+// dungeon_victory_k6
 
 async function dungeon_victory_k6(rand) {
   const {
@@ -11377,7 +11377,7 @@ async function dungeon_victory_k6(rand) {
   return 0;
 }
 
-// @DUNGEON_ATTACK_K6
+// dungeon_attack_k6
 
 async function dungeon_attack_k6(rand) {
   const {
@@ -11475,7 +11475,7 @@ async function dungeon_attack_k6(rand) {
   return 0;
 }
 
-// @COLOSSEUM_KOJO_6
+// colosseum_kojo_6
 
 async function colosseum_kojo_6(rand) {
   const {
@@ -11537,13 +11537,13 @@ async function colosseum_kojo_6(rand) {
       await era.printAndWait(
         `「啊啊啊…已经…已经不能再应付更多的肉棒了…会痛的啊……哇啊…呜咕噜…！」`,
       );
-      // 原作是一整行：三条无后缀 PRINTFORM/PRINT 连续不换行，:7496 的
-      // PRINTFORMW 才收行。两条 SIF（助手有阴茎 / 持假阳具）的判据提到语句外取值，
+      // 同一行输出：三条无后缀 PRINTFORM/PRINT 连续不换行，末行
+      // PRINTFORMW 才收行。两条 SIF（助手有阴茎 / 持假阳具）的条件提到语句外取值，
       // 片段文本留在输出语句里（#621）
       const assi_has_penis_7493 =
         (era.get(`talent:${assi}:121`) || 0) === 1 ||
         (era.get(`talent:${assi}:122`) || 0) === 1;
-      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:4') === 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:4') === 1; // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
       await era.printAndWait(
         `${assi_name}将` +
           (assi_has_penis_7493 ? `阴茎` : '') +
@@ -11577,11 +11577,11 @@ async function colosseum_kojo_6(rand) {
       await era.printAndWait(
         `「你、你怎么能这样对我啊…不要…这样激烈的话…啊啊啊啊…饶、饶了我吧！！～！」`,
       );
-      // 同型（三条无后缀连写，:7529 的 PRINTFORMW 收行；#621）
+      // 同型（三条无后缀连写，末行 PRINTFORMW 收行；#621）
       const assi_has_penis_7526 =
         (era.get(`talent:${assi}:121`) || 0) === 1 ||
         (era.get(`talent:${assi}:122`) || 0) === 1;
-      const assi_dildo_7528 = !assi_has_penis_7526 && era.get('item:4') === 1; // 原作 ITEM:PBAND（#552）
+      const assi_dildo_7528 = !assi_has_penis_7526 && era.get('item:4') === 1; // ITEM:PBAND = 4 号假阳具（#552）
       await era.printAndWait(
         `${assi_name}边听着惨叫边用` +
           (assi_has_penis_7526 ? `阴茎` : '') +
@@ -11607,11 +11607,11 @@ async function colosseum_kojo_6(rand) {
       await era.printAndWait(
         `「你、你怎么能这样对我啊…不要…这样侵犯我的屁股的话…啊啊啊啊…这样下去屁股会坏掉的啊！」`,
       );
-      // 同型（三条无后缀连写，:7553 的 PRINTFORMW 收行；#621）
+      // 同型（三条无后缀连写，末行 PRINTFORMW 收行；#621）
       const assi_has_penis_7550 =
         (era.get(`talent:${assi}:121`) || 0) === 1 ||
         (era.get(`talent:${assi}:122`) || 0) === 1;
-      const assi_dildo_7552 = !assi_has_penis_7550 && era.get('item:4') === 1; // 原作 ITEM:PBAND（#552）
+      const assi_dildo_7552 = !assi_has_penis_7550 && era.get('item:4') === 1; // ITEM:PBAND = 4 号假阳具（#552）
       await era.printAndWait(
         `${assi_name}边听着惨叫边用` +
           (assi_has_penis_7550 ? `阴茎` : '') +
@@ -11642,7 +11642,7 @@ async function colosseum_kojo_6(rand) {
   return 0;
 }
 
-// @NTR_KOUJO_K6
+// ntr_koujo_k6
 
 async function ntr_koujo_k6(rand, P) {
   const {
@@ -11817,7 +11817,7 @@ async function ntr_koujo_k6(rand, P) {
   return 0;
 }
 
-// @EXUCUTION_KOUJO_K6
+// exucution_koujo_k6
 
 async function exucution_koujo_k6(rand) {
   const {
@@ -11849,7 +11849,7 @@ async function exucution_koujo_k6(rand) {
   }
 }
 
-// @MUSEUM_KOUJO_K6
+// museum_koujo_k6
 
 async function museum_koujo_k6(rand) {
   const {
@@ -11898,7 +11898,7 @@ async function museum_koujo_k6(rand) {
   }
 }
 
-// @BANISHMENT_KOUJO_K6
+// banishment_koujo_k6
 
 async function banishment_koujo_k6(rand) {
   const {
@@ -11930,7 +11930,7 @@ async function banishment_koujo_k6(rand) {
   }
 }
 
-// @PUBLIC_EXUCUTION_KOUJO_K6
+// public_exucution_koujo_k6
 
 async function public_exucution_koujo_k6(rand) {
   const {
@@ -11960,7 +11960,7 @@ async function public_exucution_koujo_k6(rand) {
   }
 }
 
-// @GROTESQUE_KOUJO_K6
+// grotesque_koujo_k6
 
 async function grotesque_koujo_k6(rand) {
   const {
@@ -11994,7 +11994,7 @@ async function grotesque_koujo_k6(rand) {
   }
 }
 
-// @ENTERENEMY_KOUJO_K6
+// enterenemy_koujo_k6
 
 async function enterenemy_koujo_k6(rand) {
   const {
@@ -12037,7 +12037,7 @@ async function enterenemy_koujo_k6(rand) {
   }
 }
 
-// @GOHOUBI_REQUEST_KOUJO_K6
+// gohoubi_request_koujo_k6
 
 async function gohoubi_request_koujo_k6(cid, rand) {
   const {
@@ -12063,8 +12063,8 @@ async function gohoubi_request_koujo_k6(cid, rand) {
     chara(a).stronghold.要求奖赏 === 3
   ) {
     await era.printAndWait(`「${self_call(a)}想和…`);
-    // 原作是一整行：三条无后缀 PRINT 互斥（狗/猪/马），
-    // 的 PRINTFORMW 才收行（#621）
+    // 同一行输出：三条无后缀 PRINT 互斥（狗/猪/马），
+    // PRINTFORMW 收行（#621）
     const request_animal_7812 =
       chara(a).stronghold.要求奖赏 === 1
         ? `狗`
@@ -12087,7 +12087,7 @@ async function gohoubi_request_koujo_k6(cid, rand) {
   }
 }
 
-// @GOHOUBI_AFTER_KOUJO_K6
+// gohoubi_after_koujo_k6
 
 async function gohoubi_after_koujo_k6(cid, choice, rand) {
   const {
@@ -12170,7 +12170,7 @@ async function gohoubi_after_koujo_k6(cid, choice, rand) {
   }
 }
 
-// @OSIOKI_KOUJO_K6
+// osioski_koujo_k6
 
 async function osioki_koujo_k6(cid, choice, rand) {
   const {
@@ -12252,7 +12252,7 @@ async function osioki_koujo_k6(cid, choice, rand) {
   }
 }
 
-// @GOBI_KOUJO_K6, ARG:0
+// gobi_koujo_k6（ARG:0）
 
 function gobi_koujo_k6(arg_0, rand) {
   const { rand_n } = bind_ctx(rand);

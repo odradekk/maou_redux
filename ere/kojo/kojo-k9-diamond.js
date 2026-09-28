@@ -9,30 +9,30 @@
  * 角色专属的留空而非漏译。全部落为 `await era.printAndWait('')`
  * （空行输出），不代填台词。
  *
- * == 穿环 CFLAG:348 的跨模块共享标量 P（:5070-5072/:5115-5117/:5160-5162） ==
+ * == 穿环 CFLAG:348 的跨模块共享标量 P ==
  *
- * `IF CFLAG:7 & P` 与 `IF P == n` 在 ERB 侧读的是一个没有本地赋值的全局
+ * `IF CFLAG:7 & P` 与 `IF P == n` 在旧脚本里读的是一个没有本地赋值的全局
  * 标量 P——真正的赋值发生在 COM111（着脱指令）处理穿环切换时，本文件只
  * 读值。ere 侧用共享模块 `piercing-state.js` 的单例承接（先例见
- * kojo-k1-confident.js:9322 的 `const P = piercing_state.p;`）。
+ * kojo-k1-confident.js 的 `const P = piercing_state.p;`）。
  *
  * == CSTR:2 / SAVESTR:A 插值 ==
  *
- * SELF_KOJO_K9 的孩子生父段（:6633/:6637/:6664/:6668）`%CSTR:2%` 是角色域
+ * self_kojo_k9 的孩子生父段 `%CSTR:2%` 是角色域
  * 二维表（cstr:cid:2，孩子生父的自定义称呼），K3 先例见
- * kojo-k3-noble.js:12553。GOHOUBI_REQUEST_KOUJO_K9 的 `%SAVESTR:A%`
- * （:7423/7433/7437/7441/7445）里的 A 即该函数的角色形参（此处恒等于
+ * kojo-k3-noble.js。gohoubi_request_koujo_k9 的 `%SAVESTR:A%`
+ * 里的 A 即该函数的角色形参（此处恒等于
  * TARGET），落 `chara_callname(a)`。
  *
- * == 假名残留（:434） ==
+ * == 假名残留 ==
  *
  * `ﾌﾞﾂﾌﾞﾂﾌﾞﾂ`（半角片假名拟声词，忽视/嘟囔之意）归一后仍未转换，语料内
- * 孤例（整个 ERB 目录仅此一处），不满足进归一表的复现门槛，人工译作
+ * 孤例，不满足进归一表的复现门槛，人工译作
  * 「嘟囔嘟囔嘟囔」。
  *
- * == 未知语句（:186） ==
+ * == 未知语句 ==
  *
- * 小写 `printformw`（源文件唯一一处小写变体）未被转译器关键词匹配命中，
+ * 小写 `printformw`（全文件唯一一处小写变体）未被转译器关键词匹配命中，
  * 原样落成注释；人工按同段其余 W 后缀语句补译为 `printAndWait`。
  */
 
@@ -79,7 +79,7 @@ const {
   peek_sale_price,
 } = require('#/event/event-aftertrain');
 
-// @EVENTTRAIN #PRI（:54-58）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -91,7 +91,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:60-62）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -100,14 +100,11 @@ on(
   TIER.LATER,
 );
 
-/**
- * @EVENTTRAIN（:67-582，普通档）：调教开始时的口上。
- *
- * 守卫（:65-69/:70-73）：FLAG:7 <= 0 跳过、TALENT:169 != 1 跳过；此后按
- * CFLAG:201 状态机推进：初调教（0）→ 魔族化仅一次（<5 且未魔族化）→
- * 崩坏（TALENT:9）→ 崩坏后二回目以降 → 无助手时二回目以降 → 简易助手分支
- * （TALENT:MASTER:122==0 或无名助手 → k9_kojo2）。
- */
+// EVENTTRAIN NORMAL 档：调教开始时的口上。
+// 头部检查：FLAG:7 <= 0 跳过、TALENT:169 != 1 跳过；此后按
+// CFLAG:201 状态机推进：初调教（0）→ 魔族化仅一次（<5 且未魔族化）→
+// 崩坏（TALENT:9）→ 崩坏后二回目以降 → 无助手时二回目以降 → 简易助手分支
+// （TALENT:MASTER:122==0 或无名助手 → k9_kojo2）。
 on('EVENTTRAIN', async () => {
   if (game.kojo.口上开关 <= 0) {
     return 0;
@@ -680,9 +677,8 @@ on('EVENTTRAIN', async () => {
       }
       return 1;
     } else if (
-      // EVENT_K9_ダイヤ.ERB:381
       // `CFLAG:202 == 1 && FLAG:7 == 2 && TALENT:85 == 1 || TALENT:76 == 1`
-      // 同层混写：Emuera 的 && 与 || 同优先级、左结合，读作
+      // 同层混写：旧引擎的 && 与 || 同优先级、左结合，读作
       // `(三项 && ) || 淫乱`——`||` 之后没有 `&&`，两种读法同值（#517）。
       // 本文件另两处同形（202/203/204 三阶）。
       (kojo.简易助手_0 == 1 &&
@@ -852,7 +848,7 @@ on('EVENTTRAIN', async () => {
         // CFLAG:203  = 2（变量语义：CFLAG 族，203）
         kojo.简易助手_1 = 2;
       } else if (era.get(`talent:${target}:76`) == 1) {
-        const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目（:469）
+        const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目
         await era.printAndWait(
           `「${time_word}很期待3人一起来、喂…这个主意不错吧？」`,
         );
@@ -995,7 +991,7 @@ on('EVENTTRAIN', async () => {
         // CFLAG:204  = 2（变量语义：CFLAG 族，204）
         kojo.简易助手_2 = 2;
       } else if (era.get(`talent:${target}:76`) == 1) {
-        const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目（:548）
+        const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目
         await era.printAndWait(
           `「${time_word}很期待3人一起来、喂…这个主意不错吧？」`,
         );
@@ -1061,10 +1057,10 @@ on('EVENTTRAIN', async () => {
 });
 
 /**
- * @k9_kojo2（:588-793，调教开始口上的二回目以降）：崩坏 / 反抗刻印Lv3 /
- * それ以外(MARK:2) / 淫乱(自选服装分支) 各出一次固定台词，随机三选一兜底。
+ * k9_kojo2：调教开始口上的二回目以降。崩坏 / 反抗刻印Lv3 /
+ * それ以外(MARK:2) / 淫乱(自选服装分支) 各出一次固定台词，随机三选一保底处理。
  * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @returns {Promise<number>} 1（RETURN 1）或 undefined（源无 RETURN 的支）
+ * @returns {Promise<number>} 1（RETURN 1）或 undefined（无 RETURN 的支）
  */
 async function k9_kojo2(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -1163,7 +1159,7 @@ async function k9_kojo2(rand) {
             chara(target).train.着衣状态 & 28 &&
             chara(target).train.上衣类型 == 209
           ) {
-            const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目（:649）
+            const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目
             await era.printAndWait(
               `「呵呵、我的主人。${time_word}就让${target_name}来服侍您吧」`,
             );
@@ -1198,7 +1194,7 @@ async function k9_kojo2(rand) {
             chara(target).train.着衣状态 & 28 &&
             chara(target).train.上衣类型 == 254
           ) {
-            const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目（:663）
+            const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目
             await era.printAndWait(
               `「${time_word}在你面前穿着兔女郎的衣服${heart(1)}」`,
             );
@@ -1351,7 +1347,7 @@ async function k9_kojo2(rand) {
             chara(target).train.着衣状态 & 28 &&
             chara(target).train.上衣类型 == 254
           ) {
-            const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目（:740）
+            const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目
             await era.printAndWait(
               `「${time_word}今天我是你的小兔子。但是、这件衣服真的合适吗？」`,
             );
@@ -1455,13 +1451,10 @@ async function k9_kojo2(rand) {
   return 0;
 }
 
-/**
- * @EVENTEND（:797-871，调教结束时的口上）。
- *
- * 守卫（:799-803/:801-803/:804-805）：FLAG:7 <= 0 跳过、TALENT:169 != 1 跳过、
- * 角色死亡（BASE:0 <= 0）跳过；此后按崩坏/反抗刻印Lv3/それ以外(MARK:3)
- * /淫乱(76)/爱慕(85) 分档，各按体力(BASE:0)高低再分两支。
- */
+// EVENTEND NORMAL 档：调教结束时的口上。
+// 头部检查：FLAG:7 <= 0 跳过、TALENT:169 != 1 跳过、
+// 角色死亡（BASE:0 <= 0）跳过；此后按崩坏/反抗刻印Lv3/それ以外(MARK:3)
+// /淫乱(76)/爱慕(85) 分档，各按体力(BASE:0)高低再分两支。
 on('EVENTEND', async () => {
   if (game.kojo.口上开关 <= 0) {
     return 0;
@@ -1567,7 +1560,7 @@ on('EVENTEND', async () => {
 });
 
 /**
- * @kojo_message_com_9（:877-6014）：七道跳过判定 + SELECTCOM 状态机主体
+ * kojo_message_com_9：七道跳过判定 + SELECTCOM 状态机主体
  * （CFLAG:301-390，见文件头「状态机」小节）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
@@ -7417,8 +7410,8 @@ async function kojo_message_com_9(rand) {
         await era.printAndWait(`${target_name}稍微有些不满的样子………`);
       } else if (era.get(`talent:${target}:85`) == 1) {
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`);
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7428,9 +7421,9 @@ async function kojo_message_com_9(rand) {
         }
       } else {
         await era.printAndWait(`「这是什么啊…嗯唔~…嗯~…嗯呜~~！」`);
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}抗议的`;
         if (gagged) {
@@ -7451,9 +7444,9 @@ async function kojo_message_com_9(rand) {
         await era.printAndWait(
           `「啊啊…是要做要发出很大声悲鸣的事情对吧…${heart(1)} 嗯噗…嗯~………」`,
         );
-        // 与初回 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7471,9 +7464,9 @@ async function kojo_message_com_9(rand) {
         await era.printAndWait(
           `「啊啊…是要做要发出很大声悲鸣的事情对吧…${heart(1)} 嗯噗…嗯~………」`,
         );
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7499,9 +7492,9 @@ async function kojo_message_com_9(rand) {
         (kojo.口塞 <= 5 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`);
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7517,9 +7510,9 @@ async function kojo_message_com_9(rand) {
         (kojo.口塞 <= 4 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`);
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7534,9 +7527,9 @@ async function kojo_message_com_9(rand) {
         (kojo.口塞 <= 3 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`);
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7551,9 +7544,9 @@ async function kojo_message_com_9(rand) {
         (kojo.口塞 <= 2 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「哈啊…哈啊…要被束缚起来了呀………♪」`);
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}好像在期待着什么`;
         if (gagged) {
@@ -7565,9 +7558,9 @@ async function kojo_message_com_9(rand) {
         kojo.口塞 = 3;
       } else if (kojo.口塞 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(`「这是什么啊…嗯唔~…嗯~…嗯呜~~！」`);
-        // 与 :4146+:4148 同型（两支都拼前缀，#623）
-        // 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
-        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
+        // 与初回同型（两支都拼前缀，#623）
+        // 无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接基准只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
         const line_head = `${target_name}抗议的`;
         if (gagged) {
@@ -7854,7 +7847,7 @@ async function kojo_message_com_9(rand) {
           era.get(`talent:${target}:89`) ||
           era.get(`abl:${target}:17`) >= 5
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 不换行，
+          // 同一行输出：无后缀 PRINTFORM 不换行，
           // 是 SIF 的插入段，末行 PRINTFORML 才收行（#623）
           const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;
           await era.print(
@@ -7887,8 +7880,8 @@ async function kojo_message_com_9(rand) {
           await era.print(`${target_name}转过了头什么都没说`);
         }
       } else {
-        // 原作是一整行：:4440 的 PRINTFORM 不换行，六支的
-        // PRINTFORML 各自收行。前缀提到语句外共用——各支语句只列本支行号，
+        // 同一行输出：无后缀 PRINTFORM 不换行，六支的
+        // PRINTFORML 各自收行。前缀提到语句外共用——
         // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）
         const spoke_first =
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -7916,9 +7909,9 @@ async function kojo_message_com_9(rand) {
             era.get(`talent:${target}:85`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 链，
-          // 是两个互斥插入段，:4452 的 PRINTFORML 收行
-          // （:4440-4451 是这个 ELSEIF 支的收尾，#623）
+          // 同一行输出：无后缀 PRINTFORM 链，
+          // 是两个互斥插入段，末行 PRINTFORML 收行
+          // （这两段是这个 ELSEIF 支的收尾，#623）
           const excited =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -7984,7 +7977,7 @@ async function kojo_message_com_9(rand) {
           rand_n(3) == 0 &&
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
-          // 与初回 :4424+:4426+:4427 同型（#623）
+          // 与初回同型（#623）
           const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;
           await era.print(
             `${target_name}将自己的本名、接下来要进行的性体验` +
@@ -8016,7 +8009,7 @@ async function kojo_message_com_9(rand) {
           await era.print(`${target_name}转过了头什么都没说`);
         }
       } else {
-        // 与初回 :4440+:4442 同型：六支的 PRINTFORML 各自收行，
+        // 与初回同型：六支的 PRINTFORML 各自收行，
         // 前缀提到语句外共用（#623）
         const spoke_first =
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -8044,8 +8037,8 @@ async function kojo_message_com_9(rand) {
             era.get(`talent:${target}:85`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 与初回 :4446+:4448+:4450+:4452 同型
-          // （:4491-4502 是这个 ELSEIF 支的收尾，#623）
+          // 与初回同型
+          // （这几段是这个 ELSEIF 支的收尾，#623）
           const excited =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -8801,7 +8794,7 @@ async function kojo_message_com_9(rand) {
 
   if (era_flag.selectcom == 87) {
     // P 取当次 COM111 着脱切换的位域（跨文件共享，piercing-state 先例见
-    // kojo-k1-confident.js:9322）
+    // kojo-k1-confident.js）
     const P = piercing_state.p;
 
     if (kojo.穿环 == 0) {
@@ -9212,8 +9205,8 @@ async function kojo_message_com_9(rand) {
 }
 
 /**
- * @dog_kojo_9（:5211-6014，兽奸PLAY中专用口上）：TEQUIP:89 时由
- * kojo_message_com_9 头部守卫岔入。
+ * dog_kojo_9：兽奸PLAY中专用口上。TEQUIP:89 时由
+ * kojo_message_com_9 头部检查岔入。
  * @param {(n: number) => number} [rand] RAND:N 随机源
  */
 async function dog_kojo_9(rand) {
@@ -10115,7 +10108,7 @@ async function dog_kojo_9(rand) {
 }
 
 /**
- * @kojo_message_palamcng_9（:6015-6307）：七道跳过判定 + 参数首超阈值判据
+ * kojo_message_palamcng_9：七道跳过判定 + 参数首超阈值条件
  * （CFLAG:221-229，各自「首次」标记只置一次）。
  */
 async function kojo_message_palamcng_9() {
@@ -10123,8 +10116,8 @@ async function kojo_message_palamcng_9() {
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
   const kojo = chara(target).kojo;
-  let P; // PALAM+UP 门槛判定的临时和，各分支覆写（原作全局标量 P 的等价物）
-  let A; // 反抗刻印回避阈值判定的临时和（原作全局标量 A 的等价物）
+  let P; // PALAM+UP 门槛判定的临时和，各分支覆写（承接全局单字母变量 P）
+  let A; // 反抗刻印回避阈值判定的临时和（承接全局单字母变量 A）
 
   if (era_flag.assi > 0 && era_flag.assiplay) {
     return 0;
@@ -10503,7 +10496,7 @@ async function kojo_message_palamcng_9() {
 }
 
 /**
- * @kojo_message_markcng_9（:6308-6395）：七道跳过判定 + 刻印 Lv3 首达判据
+ * kojo_message_markcng_9：七道跳过判定 + 刻印 Lv3 首达条件
  * （CFLAG:297-300）。
  */
 async function kojo_message_markcng_9() {
@@ -10613,9 +10606,9 @@ async function kojo_message_markcng_9() {
 }
 
 /**
- * @self_kojo_k9（:6396-6799）：SELF 分发（Q 参数）+ 育儿室 CFLAG:273 +
+ * self_kojo_k9：SELF 分发（Q 参数）+ 育儿室 CFLAG:273 +
  * 亲离 CFLAG:274 + 妊娠发觉 CFLAG:271（含 CSTR:2 生父自定义称呼插值）+
- * 生产 CFLAG:272 + 卖春（CALL SELL_MATURO_K0，#338 接通）。
+ * 生产 CFLAG:272 + 卖春（sell_maturo_k0，#338 接通）。
  */
 async function self_kojo_k9() {
   const target = era_flag.target;
@@ -10625,7 +10618,7 @@ async function self_kojo_k9() {
   const assi = era_flag.assi;
   const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
   const kojo = chara(target).kojo;
-  const s = peek_aftertrain_s(); // TFLAG:13==4 支的 SIF s >= 3 需要（原作跨函数全局 S，K7 先例）
+  const s = peek_aftertrain_s(); // TFLAG:13==4 支的 SIF s >= 3 需要（跨函数全局 S，K7 先例）
   const S = peek_sale_price(); // TFLAG:13==6 卖却分支的 IF S >= 500000 需要（同名不同义，K5 先例）
   const cstr2 = era.get(`cstr:${target}:2`) || ''; // %CSTR:2%（孩子生父的自定义称呼，K3 先例）
   const q = 0; // event-aftertrain 尚未把 Q 传入 SELF_KOJO（K3 kojo-k3-noble.js 先例）
@@ -11232,7 +11225,7 @@ async function self_kojo_k9() {
   return 0;
 }
 
-// @dungeon_ryouzyoku_k9（:6800-6815，H14 迷宫凌辱入口）
+// dungeon_ryouzyoku_k9：H14 迷宫凌辱入口
 async function dungeon_ryouzyoku_k9(rand) {
   void rand;
   const target = era_flag.target;
@@ -11259,7 +11252,7 @@ async function dungeon_ryouzyoku_k9(rand) {
   return 0;
 }
 
-// @dungeon_ryouzyoku_after_k9（:6818-6874，H14 迷宫凌辱结算后口上）
+// dungeon_ryouzyoku_after_k9：H14 迷宫凌辱结算后口上
 async function dungeon_ryouzyoku_after_k9(rand) {
   void rand;
   const target = era_flag.target;
@@ -11331,7 +11324,7 @@ async function dungeon_ryouzyoku_after_k9(rand) {
   return 0;
 }
 
-// @dungeon_victory_k9（:6876-6900，死斗场获胜口上）
+// dungeon_victory_k9：死斗场获胜口上
 async function dungeon_victory_k9(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -11359,7 +11352,7 @@ async function dungeon_victory_k9(rand) {
   return 0;
 }
 
-// @dungeon_attack_k9（:6903-6932，死斗场攻击口上，CFLAG:1 = 状态 分侵攻/非侵攻）
+// dungeon_attack_k9：死斗场攻击口上，CFLAG:1 = 状态 分侵攻/非侵攻
 async function dungeon_attack_k9(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const target = era_flag.target;
@@ -11387,7 +11380,7 @@ async function dungeon_attack_k9(rand) {
   return 0;
 }
 
-// @benki_koujo_k9（:6933-7037，肉便器行动口上）
+// benki_koujo_k9：肉便器行动口上
 async function benki_koujo_k9(rand) {
   void rand;
   const a = era_flag.target;
@@ -11486,8 +11479,8 @@ async function benki_koujo_k9(rand) {
 }
 
 /**
- * @colosseum_kojo_9（:7038-7176，死斗场中专用口上）：TEQUIP:55 时由
- * kojo_message_com_9 头部守卫岔入。
+ * colosseum_kojo_9：死斗场中专用口上。TEQUIP:55 时由
+ * kojo_message_com_9 头部检查岔入。
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数无 RAND 分支，
  *   仅为与同族签名一致保留）
  */
@@ -11541,8 +11534,8 @@ async function colosseum_kojo_9(rand) {
       await era.printAndWait(
         `「嗯哼~…嗯嗯~！…哈啊…嗯~…嗯啾…呜~…哈啊哈啊…呸咯…呸咯呸咯………」`,
       );
-      // 原作是一整行：无后缀 PRINTFORM 链，
-      // 是两个 SIF 插入段（可都为假），:7090 的 PRINTFORMW 收行（#623）
+      // 同一行输出：无后缀 PRINTFORM 链，
+      // 是两个 SIF 插入段（可都为假），末行 PRINTFORMW 收行（#623）
       const assi_penis =
         era.get(`talent:${assi}:121`) == 1 ||
         era.get(`talent:${assi}:122`) == 1;
@@ -11587,7 +11580,7 @@ async function colosseum_kojo_9(rand) {
       await era.printAndWait(
         `「啊啊~…哈呜~…啊啊！不要~…不要…再这样羞辱我了…啊~…啊啊~！」`,
       );
-      // 与 :7085+:7087+:7089+:7090 同型（#623）
+      // 与初回同型（#623）
       const assi_penis =
         era.get(`talent:${assi}:121`) == 1 ||
         era.get(`talent:${assi}:122`) == 1;
@@ -11624,7 +11617,7 @@ async function colosseum_kojo_9(rand) {
       await era.printAndWait(
         `「啊啊~！这样…被看着被侵犯屁股什么的…啊啊…拜托了原谅我吧！」`,
       );
-      // 与 :7085+:7087+:7089+:7090 同型（#623）
+      // 与初回同型（#623）
       const assi_penis =
         era.get(`talent:${assi}:121`) == 1 ||
         era.get(`talent:${assi}:122`) == 1;
@@ -11669,8 +11662,8 @@ async function colosseum_kojo_9(rand) {
 }
 
 /**
- * @NTR_KOUJO_K9（:7177-7276，NTR 再捕获口上，CFLAG:650-657 状态机）。
- * P 是原作的全局单字母变量，取分派方式编号（#5 决议：显式形参，K7 先例）。
+ * ntr_koujo_k9：NTR 再捕获口上，CFLAG:650-657 状态机。
+ * P 取分派方式编号，按 #5 决议从全局单字母变量改为显式形参（K7 先例）。
  */
 async function ntr_koujo_k9(rand, P) {
   void rand;
@@ -11838,7 +11831,7 @@ async function ntr_koujo_k9(rand, P) {
   return 0;
 }
 
-// @exucution_koujo_k9（:7277-7293，处刑口上，TFLAG:16 分档）
+// exucution_koujo_k9：处刑口上，TFLAG:16 分档
 async function exucution_koujo_k9(rand) {
   void rand;
 
@@ -11857,7 +11850,7 @@ async function exucution_koujo_k9(rand) {
   }
 }
 
-// @museum_koujo_k9（:7294-7328，博物馆口上，TFLAG:500 分档）
+// museum_koujo_k9：博物馆口上，TFLAG:500 分档
 async function museum_koujo_k9(rand) {
   void rand;
 
@@ -11888,7 +11881,7 @@ async function museum_koujo_k9(rand) {
   }
 }
 
-// @banishment_koujo_k9（:7329-7349，流放口上，TFLAG:510 分档）
+// banishment_koujo_k9：流放口上，TFLAG:510 分档
 async function banishment_koujo_k9(rand) {
   void rand;
 
@@ -11905,7 +11898,7 @@ async function banishment_koujo_k9(rand) {
   }
 }
 
-// @public_exucution_koujo_k9（:7350-7364，公开处刑口上，TFLAG:520 分档）
+// public_exucution_koujo_k9：公开处刑口上，TFLAG:520 分档
 async function public_exucution_koujo_k9(rand) {
   void rand;
 
@@ -11922,7 +11915,7 @@ async function public_exucution_koujo_k9(rand) {
   }
 }
 
-// @grotesque_koujo_k9（:7365-7391，猎奇处刑口上，TFLAG:530 分档）
+// grotesque_koujo_k9：猎奇处刑口上，TFLAG:530 分档
 async function grotesque_koujo_k9(rand) {
   void rand;
 
@@ -11943,7 +11936,7 @@ async function grotesque_koujo_k9(rand) {
   }
 }
 
-// @enterenemy_koujo_k9（:7392-7405，入侵敌方遭遇口上）
+// enterenemy_koujo_k9：入侵敌方遭遇口上
 async function enterenemy_koujo_k9(rand) {
   void rand;
   const a = era_flag.target;
@@ -11959,7 +11952,7 @@ async function enterenemy_koujo_k9(rand) {
   }
 }
 
-// @gohoubi_request_koujo_k9（:7406-7446，迎击胜利后奖赏请求口上）
+// gohoubi_request_koujo_k9：迎击胜利后奖赏请求口上
 async function gohoubi_request_koujo_k9(rand) {
   void rand;
   const a = era_flag.target;
@@ -11974,9 +11967,9 @@ async function gohoubi_request_koujo_k9(rand) {
     chara(a).stronghold.要求奖赏 == 2 ||
     chara(a).stronghold.要求奖赏 == 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM 链，
-    // 是三选一的野兽名 IF 链
-    // （:7420-7421 ENDIF），:7422 的 PRINTFORMW 收行（#623）
+    // 同一行输出：无后缀 PRINTFORM 链，
+    // 是三选一的野兽名 IF 链，
+    // 末行 PRINTFORMW 收行（#623）
     const beast =
       chara(a).stronghold.要求奖赏 == 1
         ? `狗`
@@ -12016,7 +12009,7 @@ async function gohoubi_request_koujo_k9(rand) {
   }
 }
 
-// @gohoubi_after_koujo_k9（:7448-7523，迎击胜利后奖赏兑现口上）
+// gohoubi_after_koujo_k9：迎击胜利后奖赏兑现口上
 async function gohoubi_after_koujo_k9(rand, cid, choice) {
   void rand;
   void cid;
@@ -12105,7 +12098,7 @@ async function gohoubi_after_koujo_k9(rand, cid, choice) {
   }
 }
 
-// @osioki_koujo_k9（:7524-7583，迎击失败惩罚口上，TFLAG:18 分档同 gohoubi_after 复用）
+// osioki_koujo_k9：迎击失败惩罚口上，TFLAG:18 分档同 gohoubi_after 复用
 async function osioki_koujo_k9(rand, cid, choice) {
   void rand;
   void cid;
@@ -12173,18 +12166,18 @@ async function osioki_koujo_k9(rand, cid, choice) {
 }
 
 /**
- * @gobi_koujo_k9（:7585-7613）：语尾口上。ARG:0 取 1-5 五档固定语尾，
+ * gobi_koujo_k9：语尾口上。ARG:0 取 1-5 五档固定语尾，
  * 其余随机三选一。
  *
- * #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）。
+ * #570 起返回语尾文字、不打印（无后缀 PRINT 不换行，由调用方拼进同一行）。
  *
- * @param {number} arg0 语尾编号（原作 ARG:0）
+ * @param {number} arg0 语尾编号（ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @returns {string} 语尾文字
  */
 function gobi_koujo_k9(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
-  const arg_0 = arg0; // 原作 ARG:0 → JS 形参 arg0，再 alias 为 arg_0
+  const arg_0 = arg0; // ARG:0 → JS 形参 arg0，再 alias 为 arg_0
 
   if (arg_0 == 1) {
     return `的噢${heart(1)}`;

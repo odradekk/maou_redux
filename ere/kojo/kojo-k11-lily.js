@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 /**
  * @file 村娘口上 K11 莉莉：EVENTTRAIN / EVENTEND、全指令口上、兽奸与
- *       死斗场专用口上、参数/刻印/事件口上及非调教族全量移植（issue #242）。
+ *       死斗场专用口上、参数/刻印/事件口上及非调教族全覆盖（issue #242）。
  *
  * 门面迁移（issue #242 复核补做）：既有前段 CFLAG:21/201/202/400/650
  * 原 cflag 字面量模板串寻址（共 50 处）已全部改走
@@ -11,102 +11,88 @@
  *
  * == 姉妹判定（TARGET 是姐姐莉莉，NO:ASSI == 17 是妹妹玛奥） ==
  *
- * 助手是玛奥（角色 17）时，:126-129 先互标肉亲关系（CFLAG:TARGET:21 = 317
- * 姐姐、CFLAG:ASSI:21 = 224 妹妹），随后 :130 起的 CFLAG:201 状态机在初调教
+ * 助手是玛奥（角色 17）时，先互标肉亲关系（CFLAG:TARGET:21 = 317
+ * 姐姐、CFLAG:ASSI:21 = 224 妹妹），随后 CFLAG:201 状态机在初调教
  * （0）与简易助手分支都对「ASSI 是否玛奥」分叉出姉妹相认/寻妹对峙两套
  * 台词。此后素质分档（屈服刻印/淫乱/爱慕/崩坏）与其余口上文件同构。
  *
  * == CALL K11_KOJO2 四处（转译器初稿留成注释，本次复核改回真实调用） ==
  *
- * :370-371（崩坏后二回目以降）、:373-374（无助手）、:383-384
- * （TALENT:MASTER:122==0，主人非男性）、:507-508（助手非玛奥且无专属口上）——
- * 四处 ELSEIF 臂在原作里只有一句 CALL K11_KOJO2，落地为 `await k11_kojo2();`，
+ * 崩坏后二回目以降、无助手、主人非男性（TALENT:MASTER:122==0）、助手非玛奥
+ * 且无专属口上——四处 ELSEIF 分支只有一句 CALL K11_KOJO2，实现为 `await k11_kojo2();`，
  * 返回值不读（同 kojo-k4-stoic.js k4_kojo2 先例）。
  *
- * == 锚鉴别力自查（#242 复核补做，判据见 issue 讨论，工具化见 #298） ==
+ * == 基准鉴别力自查（#242 复核补做，条件见 issue 讨论，工具化见 #298） ==
  *
- * trace-refs/kojo-k11-lily.mjs 的 2008 条锚里，SELECTCOM 0/1/2/3/5 沿用整段
+ * trace-refs/kojo-k11-lily.mjs 的 2008 条基准里，SELECTCOM 0/1/2/3/5 沿用整段
  * 字面量拼接的旧生成法；SELECTCOM 6/7/8/9/10/11/12/13/14/15/16（本轮新增十一支）起改用
- * K10（#241）的逐行独立锚定法——区间内每条非空白源码行各自包一层
+ * K10（#241）的逐行独立定位法——区间内每条非空白代码行各自包一层
  * `^\s*...\s*$`（大区间只取开头 8 行），真正多行、鉴别力更强，两种生成法
- * 在文件内并存，旧锚未随本轮重新生成（避免无关格式化改动）。全部锚对每
- * 条锚在源全文里做精确子串计数：1744 条恰好命中 1 行/1 段，可视为具备真实
+ * 在文件内并存，旧基准未随本轮重新生成（避免无关格式化改动）。全部基准逐条
+ * 在全文里做精确子串计数：1744 条恰好命中 1 行/1 段，可视为具备真实
  * 鉴别力。余下
  * 264 条命中 >1 处，且经验证无法在不破坏 text-fidelity 逐句绑定
  * （find_printform 要求 n..m 窗口内首条 PRINTFORM 系行即目标句，向前/
  * 向后扩窗只要越过相邻语句自身的 PRINTFORM 行就会误绑定）的前提下继续
- * 收窄——60 条来自既有前段（存在标志/@EVENTTRAIN/@K11_KOJO2/
- * @EVENTEND，:100-748），落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档
+ * 收窄——60 条来自既有前段（存在标志/EVENTTRAIN/K11_KOJO2/
+ * EVENTEND），落在 CFLAG:400 魔族化分支与 K11_KOJO2 RAND 分档
  * 里逐句复现的对白段落内，按 issue 讨论保持现状、不再动；4 条来自
- * SELECTCOM 0/1/2（:811/818/826/1022，姉妹相认/魔族化前后两套台词在平行
- * 分支里逐字复现）；4 条来自 SELECTCOM 6（:1304/1310/1314/1389，首吻/
+ * SELECTCOM 0/1/2（姉妹相认/魔族化前后两套台词在平行
+ * 分支里逐字复现）；4 条来自 SELECTCOM 6（首吻/
  * 二回目以降两层里各一对逐字重复的对白句）；6 条来自 SELECTCOM 7
- * （:1485/1486/1534/1547/1586/1587，处女/非处女子分档与二回目以降两层
- * 里各一对逐字重复的对白句）；4 条来自 SELECTCOM 9（:1709/1713/1748/
- * 1770，初めて层淫乱/爱慕两支、二回目以降助手玛奥/非助手玛奥それ以外
- * 分档里各一对逐字重复的对白句）；2 条来自 SELECTCOM 11（:1927/1932，
- * 助手玛奥二回目以降淫乱/爱慕两支共用同一句反问台词）；2 条来自 SELECTCOM
- * 14（:2209/2246，淫乱初めて分支与二回目以降非助手玛奥分支共用同一句
- * 阴蒂夹刺激描写）；7 条来自 SELECTCOM 16（:2382/2386/2390/2407/2413/2419/
- * 2438，「夹在……乳房上的榨乳机，正在毫不留情地挤榨着母乳………」这句通用描写
+ * （处女/非处女子分档与二回目以降两层
+ * 里各一对逐字重复的对白句）；4 条来自 SELECTCOM 9（初めて层淫乱/爱慕两支、二回目以降助手玛奥/非助手玛奥それ以外
+ * 分档里各一对逐字重复的对白句）；2 条来自 SELECTCOM 11（助手玛奥二回目以降淫乱/爱慕两支共用同一句反问台词）；2 条来自 SELECTCOM
+ * 14（淫乱初めて分支与二回目以降非助手玛奥分支共用同一句
+ * 阴蒂夹刺激描写）；7 条来自 SELECTCOM 16（
+ * 「夹在……乳房上的榨乳机，正在毫不留情地挤榨着母乳………」这句通用描写
  * 在初めて/二回目以降助手玛奥/非助手玛奥六个分支里逐字复现，且各自跟随不同
- * 的 CFLAG:317 写值，无法合并）；49 条来自 SELECTCOM 20（:2662/2663/2664/
- * 2669/2671/2672/2673/2678/2680/2681/2682/2689/2692/2696/2699/2714/2715/
- * 2717/2718/2721/2722/2728/2729/2738/2739/2744/2745/2766/2768/2769/2774/
- * 2775/2784/2797/2805/2806/2813/2814/2828/2834/2846/2866/2871/2881/2891/
- * 2892/2918/2923/2928，初めて层处女/非处女×助手玛奥/非助手玛奥×淫乱/爱慕/
+ * 的 CFLAG:317 写值，无法合并）；49 条来自 SELECTCOM 20（初めて层处女/非处女×助手玛奥/非助手玛奥×淫乱/爱慕/
  * それ以外多支共用同一句「被…一口气突入了」「处女的蜜穴被…贯通到底」
  * 「插进姐姐的小穴里了」等动作描写，二回目以降层助手玛奥/非助手玛奥两支的
  * 淫乱/爱慕/屈服刻印各档 RAND:3 分岔内同样共用「压在身下…一口气贯通到底」
- * 等描写，各自跟随不同的 CFLAG:321 写值与素质判据，无法合并）；53 条来自
- * SELECTCOM 21（:2966/2967/2970/2974/2975/2977/2978/2985/2986/2993/2996/
- * 3000/3003/3018/3019/3025/3026/3032/3033/3042/3043/3048/3049/3054/3095/
- * 3096/3110/3120/3121/3135/3136/3140/3151/3157/3164/3171/3172/3179/3191/
- * 3192/3195/3211/3215/3225/3226/3235/3249/3259/3264/3265/3269/3277/3284，
- * 初めて层处女×助手玛奥/非助手玛奥×淫乱/爱慕/それ以外多支与二回目以降层
+ * 等描写，各自跟随不同的 CFLAG:321 写值与素质条件，无法合并）；53 条来自
+ * SELECTCOM 21（初めて层处女×助手玛奥/非助手玛奥×淫乱/爱慕/それ以外多支与二回目以降层
  * 助手玛奥/非助手玛奥两支的淫乱/爱慕/屈服刻印各档 RAND:3/RAND:2 分岔内，
  * 共用「扶着…的腰，从背后进入了…的蜜穴之中」「一口气贯入到了最里面」等
  * 后背位动作描写的段落，且部分与 SELECTCOM 20 的正常位描写逐字重复，各自
- * 跟随不同的 CFLAG:322 写值与素质判据，无法合并）；11 条来自 SELECTCOM 22
- * （:3300-3340 为初めて层段级概览锚，前 8 行与其余口上文件里同样未填写的
- * 处女支模板骨架逐字相同，属已知的跨文件模板重复；:3302 为该模板骨架自身
- * 的空 PRINTFORMW 行，源文件里空 PRINTFORMW 出现 285 处，按 #235 先例整行
- * 锚定即可、不强求唯一；:3311/3316/3321 为初めて层非处女支助手玛奥三档
+ * 跟随不同的 CFLAG:322 写值与素质条件，无法合并）；11 条来自 SELECTCOM 22
+ * （初めて层段级概览基准，前 8 行与其余口上文件里同样未填写的
+ * 处女支模板骨架逐字相同，属已知的跨文件模板重复；该模板骨架自身
+ * 的空 PRINTFORMW 行按 #235 先例整行定位即可、不强求唯一（空 PRINTFORMW
+ * 在全文件出现 285 处）；初めて层非处女支助手玛奥三档
  * 共用同一句「被…抱在腿上，吸吮着乳头的同时侵犯着蜜穴……」收尾描写；
- * :3426/3432 为二回目以降层助手玛奥それ以外档与非助手玛奥それ以外档共用
+ * 二回目以降层助手玛奥それ以外档与非助手玛奥それ以外档共用
  * 同一句「被…抱在腿上，肆意玩弄着双乳，蜜穴也被持续侵犯着……」；
- * :3446/3448/3468/3470 为二回目以降层非助手玛奥淫乱/爱慕两档共用同一对
+ * 二回目以降层非助手玛奥淫乱/爱慕两档共用同一对
  * ABL:2 二态追问句「不，不行了……小穴……舒服得……要上天了啊啊啊」/
  * 「呜啊……小穴……实在是太舒服了啊啊啊」，各自跟随不同的 CFLAG:323 写值
- * 与素质判据，无法合并）；35 条来自 SELECTCOM 23（:3515 为初めて层处女支
- * 空模板骨架，跨文件已知模式；:3529/3531/3537/3549/3553 为初めて层爱慕/
+ * 与素质条件，无法合并）；35 条来自 SELECTCOM 23（初めて层处女支
+ * 空模板骨架，跨文件已知模式；初めて层爱慕/
  * それ以外档的下双腿展露描写句，与 COM20/21 的对应描写逐字或近逐字重复；
- * :3588/3592/3594、:3604/3606/3608、:3612/3614/3618、:3623 为二回目以降层
+ * 二回目以降层
  * 助手玛奥淫乱/爱慕档 RAND:3/RAND:2 各分支内嵌套的 ABL:2 追问句/双腿展露
- * 描写句，与本文件其余 SELECTCOM 的同款素质分档句式重复；:3638、:3649/
- * :3656 为屈服刻印/それ以外档收尾句与双腿展露描写句重复；:3665/3669/3675/
- * 3686/3689/3690、:3699/3709/3713/3719/3723/3724 为二回目以降层非助手玛奥
- * 淫乱/爱慕档三选一开场句各分支下嵌套的 ABL:2 追问句重复；:3731/3733 为
- * 非助手玛奥屈服刻印Lv3＋V感覚档双独立 RAND:2 结构里第一次抽样的两支收尾
- * 句重复；:3747/3752 为屈服刻印Lv3/それ以外档双腿被用手（强行）分开展露
- * 描写句重复，各自跟随不同的 CFLAG:324 写值与素质判据，无法合并）；27 条
- * 来自 SELECTCOM 26（:3770/3774/3777/3784 为初めて层三档共用同一句开场
+ * 描写句，与本文件其余 SELECTCOM 的同款素质分档句式重复；屈服刻印/それ以外
+ * 档收尾句与双腿展露描写句重复；二回目以降层非助手玛奥
+ * 淫乱/爱慕档三选一开场句各分支下嵌套的 ABL:2 追问句重复；非助手玛奥
+ * 屈服刻印Lv3＋V感覚档双独立 RAND:2 结构里第一次抽样的两支收尾
+ * 句重复；屈服刻印Lv3/それ以外档双腿被用手（强行）分开展露
+ * 描写句重复，各自跟随不同的 CFLAG:324 写值与素质条件，无法合并）；27 条
+ * 来自 SELECTCOM 26（初めて层三档共用同一句开场
  * 邀约台词『姐姐还没体会过肛交吗♡ 保证会让你舒服上天的♡ 嘿嘿嘿！』，仅
- * 助手玛奥支特有；:3778/3785 为非淫乱两档共用的贯入动作描写句；:3835/
- * 3840/3868/3873/3900/3935 为「好舒服……已经舒服得……没有办法思考了
+ * 助手玛奥支特有；非淫乱两档共用的贯入动作描写句；「好舒服……已经舒服得……没有办法思考了
  * 啊啊啊♡」一类跨文件反复出现的高潮通用句，与本文件其余 SELECTCOM
- * 同款素质分档重复；:3842/3845/3848/3854/3863/3875/3878/3879/3887/
- * 3902/3914/3932/3940/3963/3967 为二回目以降层 RAND:3 三选一各分支内的
+ * 同款素质分档重复；二回目以降层 RAND:3 三选一各分支内的
  * 过程描写/追问句，跨助手玛奥与非助手玛奥、跨淫乱/爱慕/それ以外/A感覚
- * Lv3以上多档重复出现，各自跟随不同的 CFLAG:327 写值与素质判据，无法
+ * Lv3以上多档重复出现，各自跟随不同的 CFLAG:327 写值与素质条件，无法
  * 合并）。SELECTCOM
  * 3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22/23/26 内非 print 语句
- * 自身收尾行的锚（守卫 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
- * commit 9716dee）的整改法向外扩窗到唯一邻行——只有 era.print(/
- * era.printAndWait( 语句自己收尾行的 `:N` 锚绝不参与扩窗（kojo-text-
+ * 自身收尾行的基准（检查 SIF/RETURN、CFLAG 计数器赋值）已仿 K9（#240
+ * commit 9716dee）的修正法向外扩窗到唯一邻行——只有 era.print(/
+ * era.printAndWait( 语句自己收尾行的 `:N` 基准绝不参与扩窗（kojo-text-
  * fidelity 靠它做逐语句字面量绑定，扩窗会误绑邻行台词）。这 264 条即便
- * 行号漂移，落点也只会落到另一处内容完全相同的复现段落，不会静默通过
- * 成不相关文本——风险画像与结构性关键字锚（如裸 `RETURN 0`）不同，后者
+ * 行号变动，落点也只会落到另一处内容完全相同的复现段落，不会静默通过
+ * 成不相关文本——风险画像与结构性关键字基准（如裸 `RETURN 0`）不同，后者
  * 才是真正的零鉴别力。
  */
 
@@ -151,14 +137,14 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 
-/** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
+/** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 保底处理 */
 const era0 = (k) => era.get(k) || 0;
 /** RAND:N 的默认随机源（本文件的 on() 事件处理器不经分发注入 rand） */
 const rand_n = (n) => Math.floor(Math.random() * n);
 /** MASTER 恒为角色 0（K1 kojo-k1-confident.js 同款先例） */
 const MASTER = 0;
 
-// @EVENTTRAIN #PRI（:100-105）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -170,7 +156,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:106-113）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -180,9 +166,9 @@ on(
 );
 
 /**
- * @EVENTTRAIN（:114-514，普通档）：调教开始时的口上。
+ * EVENTTRAIN NORMAL 档：调教开始时的口上。
  *
- * 守卫（:114-118）：FLAG:7 <= 0 跳过、TALENT:171 != 1 跳过；此后按
+ * 检查：FLAG:7 <= 0 跳过、TALENT:171 != 1 跳过；此后按
  * CFLAG:201 状态机推进：初调教（0，姉妹相认/寻妹对峙分档）→ 魔族化仅
  * 一次（<5 且 TALENT:314==9 未魔族化）→ NTR 再捕获（>=1 && CFLAG:650==1）
  * → 屈服刻印 Lv1/2/3（各一次）→ 淫乱（含魔族化分支）→ 爱慕（含魔族化
@@ -853,7 +839,7 @@ on(
 );
 
 /**
- * @K11_KOJO2（:515-650）：调教开始口上的二回目以降（助手无专属口上时，或
+ * k11_kojo2：调教开始口上的二回目以降（助手无专属口上时，或
  * 简易助手三阶都命中默认档时的通用分档）。按「崩坏 → 反抗刻印Lv3 →
  * 屈服刻印Lv0/1/2/3（Lv3 再按 CFLAG:202 是否见过妹妹分档）→ 淫乱（含
  * 魔族化分支）→ 爱慕（含魔族化分支）」取首个命中；FLAG:7 == 2（全量模式）
@@ -1082,13 +1068,13 @@ async function k11_kojo2() {
     }
     return 1;
   }
-  return 0; // 隐式（原作 ENDIF 后 RETURN 0，见文件头 :515-650）
+  return 0; // 隐式（ENDIF 后 RETURN 0，见文件头）
 }
 
 /**
- * @EVENTEND（:651-748，普通档）：调教结束时的口上。
+ * EVENTEND NORMAL 档：调教结束时的口上。
  *
- * 守卫（:651-659，含角色死亡 BASE:0 <= 0 跳过）：FLAG:7 <= 0 跳过、TALENT:171
+ * 检查（含角色死亡 BASE:0 <= 0 跳过）：FLAG:7 <= 0 跳过、TALENT:171
  * != 1 跳过、角色已死亡跳过。
  * 无 → 屈服刻印Lv1以下+爱慕无 → 屈服刻印Lv2+爱慕无 → 屈服刻印Lv3+爱慕
  * 无 → 淫乱（按体力 500 分档）→ 爱慕（按体力 500 分档）」取首个命中，均
@@ -1240,41 +1226,41 @@ on(
       await era.printAndWait(`「现在，魔王大人知道我比我妹妹要更好了吧…？」`);
       return 1;
     }
-    return 0; // 隐式（原作 ENDIF 后 RETURN 0，见文件头 :651-748）
+    return 0; // 隐式（ENDIF 后 RETURN 0，见文件头）
   },
   TIER.NORMAL,
 );
 
 /**
- * @KOJO_MESSAGE_COM_11（:749-10657）：指令口上全量（本轮先落头部守卫 +
+ * kojo_message_com_11：指令口上全量（本轮先落头部检查 +
  * SELECTCOM 0/1/2/3/5/6/7/8/9，其余编号留续轮）。
  *
- * 头部七道守卫（:754-778，源 1:1 顺序）：ASSI 非玛奥助手调教 → 跳过；口塞
+ * 头部七道检查：ASSI 非玛奥助手调教 → 跳过；口塞
  * （TEQUIP:45 且非口塞指令）→ 跳过；失神（TFLAG:899）→ 跳过；兽奸
  * （TEQUIP:89）→ 专用口上（DOG_KOJO_11）；死斗场（TEQUIP:55）
  * → 专用口上（COLOSSEUM_KOJO_11）；崩坏（TALENT:9）→ 跳过；
  * 触手（TEQUIP:90）→ 跳过。
  *
- * SELECTCOM 0（爱抚 CFLAG:301，:786-861）：初めて按「助手玛奥／屈服刻印
+ * SELECTCOM 0（爱抚 CFLAG:301）：初めて按「助手玛奥／屈服刻印
  * Lv2以上／それ以外」三分档写 1；二回目以降先分「助手玛奥」再各自按
- * 「淫乱→爱慕→（それ以外，仅助手玛奥臂无写点，源作原样）／屈服刻印
+ * 「淫乱→爱慕→（それ以外，仅助手玛奥分支无写点，按原样）／屈服刻印
  * Lv3→Lv2→それ以外」写 6/5/4/3/2。
  *
- * SELECTCOM 1（舔阴 CFLAG:302，:866-947）：初めて按「处女/それ以外 ×
+ * SELECTCOM 1（舔阴 CFLAG:302）：初めて按「处女/それ以外 ×
  * 助手玛奥/否」四分档写 1；二回目以降先分「助手玛奥」（内部淫乱→爱慕→
  * それ以外三选，それ以外无写点）再各自按「淫乱→爱慕→屈服刻印Lv3→
  * 反抗刻印Lv1以上（且屈服Lv2以下）→それ以外」写 5/4/3/2/2。
  *
- * SELECTCOM 2（肛门爱抚 CFLAG:303，:952-1043）：初めて按「助手玛奥／否」
+ * SELECTCOM 2（肛门爱抚 CFLAG:303）：初めて按「助手玛奥／否」
  * 二分档写 1；二回目以降按润滑（P = PALAM:3 + UP:3 对 PALAMLV:2）叠加素质
  * 分档：「淫乱+润滑Lv2以上→淫乱+润滑Lv2未満→爱慕+润滑Lv2以上→爱慕+
  * 润滑Lv2未満→润滑Lv2以上+A感覚Lv3以上→それ以外」写 7/6/5/4/3/2，每档
  * 再按「助手玛奥/否」二分。
  *
- * SELECTCOM 3（自慰 CFLAG:304，:1048-1198）：初めて按「助手玛奥／否」二
+ * SELECTCOM 3（自慰 CFLAG:304）：初めて按「助手玛奥／否」二
  * 分档写 1；二回目以降先判「助手玛奥」——命中则走自身内部「淫乱（含处女
  * 子分档）→爱慕（含处女子分档）→それ以外（无写点）」三选，写 7/5/－；
- * 未命中则走扁平九支 ELSEIF 链（与助手玛奥支互斥、彼此独立判据，非
+ * 未命中则走扁平九支 ELSEIF 链（与助手玛奥支互斥、彼此独立条件，非
  * 「各档再按助手玛奥二分」的对称结构）：淫乱+处女→
  * 淫乱+自慰中毒Lv3以上（RAND:3 三选一台词）→淫乱+自慰中毒Lv3未満（RAND:2
  * 二选一）→爱慕+处女→爱慕+自慰中毒Lv3以上（RAND:3 三选一）→爱慕+自慰
@@ -1282,26 +1268,26 @@ on(
  * 一）→それ以外（RAND:2 二选一），写 9/8/7/6/5/4/3/2。ABL:31 自慰中毒经
  * `chara(target).train.自慰中毒` 门面读取。
  *
- * SELECTCOM 5（胸爱抚 CFLAG:306，:1203-1278）：初めて按「助手玛奥／否」
+ * SELECTCOM 5（胸爱抚 CFLAG:306）：初めて按「助手玛奥／否」
  * 二分档写 1；二回目以降先分「助手玛奥」再各自按「淫乱→爱慕→B感覚Lv3
  * 以上→それ以外」写 5/4/3/2，两支结构对称（与 SELECTCOM 0 同款）；助手
  * 玛奥支的淫乱台词有一处 RAND:2 裸真值三目（源无 == 0，预算 moan_word
  * 变量，同 SELECTCOM 1 的 lick_line_* 先例）。ABL:1 乳房感觉经
  * `chara(target).system.乳房感觉` 门面读取。
  *
- * SELECTCOM 6（接吻 CFLAG:307，:1283-1433）：三层结构。首吻专属分档
+ * SELECTCOM 6（接吻 CFLAG:307）：三层结构。首吻专属分档
  * （CFLAG:307 == 0 && TFLAG:13 初吻与自我口上）按「淫乱且非助手陪玩／
  * 爱慕且非助手陪玩／助手玛奥（内部再按淫乱→爱慕→それ以外）／それ以外」
- * 四分档写 1，前两支另受 TEQUIP:89/90（兽奸/触手）排除，但头部守卫已把
+ * 四分档写 1，前两支另受 TEQUIP:89/90（兽奸/触手）排除，但头部检查已把
  * 这两条已在头部分别路由兽奸专用口上或静默跳过，本分支执行时恒为 0
  * （判断冗余，保留无害）；普通初めて
  * （CFLAG:307 == 0 非首吻）按「助手玛奥（内部淫乱→爱慕→それ以外）／
  * 淫乱→爱慕→それ以外」写 1；二回目以降先分「助手玛奥」再各自按
  * 「淫乱→爱慕→従順Lv2以上→それ以外」写 5/4/3/2，两支结构对称（与
- * SELECTCOM 0/5 同款）。本支起 trace-refs 新锚改用 K10 逐行独立锚定法
- * （见文件头「锚鉴别力自查」）。
+ * SELECTCOM 0/5 同款）。本支起 trace-refs 新基准改用 K10 逐行独立定位法
+ * （见文件头「基准鉴别力自查」）。
  *
- * SELECTCOM 7（自己扒开 CFLAG:308，:1438-1611）：不含首吻专属层。初めて
+ * SELECTCOM 7（自己扒开 CFLAG:308）：不含首吻专属层。初めて
  * （CFLAG:308 == 0）按「助手玛奥（内部淫乱→爱慕→それ以外，无处女分档）／
  * 非助手玛奥（内部淫乱、爱慕两支各再按 TALENT:0 处女/非处女分岔文案，
  * それ以外无处女分档）」写 1；二回目以降先分「助手玛奥」再各自按「淫乱
@@ -1309,25 +1295,25 @@ on(
  * 文案分岔）→露出癖Lv3以上（内层再按处女分岔追加一句）→それ以外（内层
  * 再按处女分岔追加一句）」写 5/4/3/2，两支结构对称。
  *
- * SELECTCOM 8（指挿入 CFLAG:309，:1616-1692）：不含处女分岔。初めて
+ * SELECTCOM 8（指挿入 CFLAG:309）：不含处女分岔。初めて
  * （CFLAG:309 == 0）按「助手玛奥／淫乱／屈服刻印Lv3+爱慕／それ以外」四选
  * 写 1；二回目以降先分「助手玛奥」再各自按「淫乱→爱慕＋屈服刻印Lv3→
  * 屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构对称，MARK:2 屈服刻印经
  * `mark(2)` 局部帮手读取。
  *
- * SELECTCOM 9（舔肛 CFLAG:310，:1697-1776）：不含处女分岔、不含屈服刻印
- * 与爱慕的组合判据（与 SELECTCOM 8 的差异点）。初めて（CFLAG:310 == 0）
+ * SELECTCOM 9（舔肛 CFLAG:310）：不含处女分岔、不含屈服刻印
+ * 与爱慕的组合条件（与 SELECTCOM 8 的差异点）。初めて（CFLAG:310 == 0）
  * 按「助手玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手
  * 玛奥」再各自按「淫乱→爱慕→屈服刻印Lv3→それ以外」写 5/4/3/2，两支
  * 结构对称。
  *
- * SELECTCOM 10（振动宝石 CFLAG:311，:1781-1853）：与 SELECTCOM 8 同构，含
- * 屈服刻印Lv3+爱慕的组合判据。初めて（CFLAG:311 == 0）按「助手玛奥／淫乱／
+ * SELECTCOM 10（振动宝石 CFLAG:311）：与 SELECTCOM 8 同构，含
+ * 屈服刻印Lv3+爱慕的组合条件。初めて（CFLAG:311 == 0）按「助手玛奥／淫乱／
  * 屈服刻印Lv3+爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
  * 按「淫乱→爱慕＋屈服刻印Lv3→屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构
  * 对称。
  *
- * SELECTCOM 11（壶虫 CFLAG:312／着脱 CFLAG:372，:1859-1987）：唯一同时含
+ * SELECTCOM 11（壶虫 CFLAG:312／着脱 CFLAG:372）：唯一同时含
  * TEQUIP:11 装备/脱着两态判定的分支。装备态（TEQUIP:11 真）初めて
  * （CFLAG:312 == 0）先按 TALENT:0 处女/非处女分岔文案，处女层再各按
  * 「助手玛奥（内部再按淫乱/爱慕/それ以外三选文案）／非助手玛奥・淫乱／
@@ -1336,12 +1322,12 @@ on(
  * 写 5/4/3/2，两支结构对称。脱着态（TEQUIP:11 == 0）是独立三选一（淫乱/
  * 爱慕/それ以外），用另一枚 CFLAG:372 计数，写 3/2/1，无助手玛奥分档。
  *
- * SELECTCOM 12（振动杖 CFLAG:313，:1992-2066）：结构与 SELECTCOM 9 同构
- * （不含组合判据）。初めて（CFLAG:313 == 0）按「助手玛奥／淫乱／爱慕／
+ * SELECTCOM 12（振动杖 CFLAG:313）：结构与 SELECTCOM 9 同构
+ * （不含组合条件）。初めて（CFLAG:313 == 0）按「助手玛奥／淫乱／爱慕／
  * それ以外」四选写 1；二回目以降先分「助手玛奥」再各自按「淫乱→爱慕→
  * 屈服刻印Lv3→それ以外」写 5/4/3/2，两支结构对称。
  *
- * SELECTCOM 13（肛门虫 CFLAG:314／着脱 CFLAG:374，:2072-2191）：TEQUIP:13
+ * SELECTCOM 13（肛门虫 CFLAG:314／着脱 CFLAG:374）：TEQUIP:13
  * 装备/脱着两态。已装（初めて，CFLAG:314 == 0）按「助手玛奥／淫乱／爱慕／
  * それ以外・ABL:3（肛门感觉）Lv3以上／それ以外・それ以外」五选写 1；二回目
  * 以降先分「助手玛奥」再各自按「淫乱＋ABL:3 Lv3以上→淫乱→爱慕＋ABL:3
@@ -1349,37 +1335,37 @@ on(
  * 脱着态（TEQUIP:13 == 0）是独立四选一（淫乱/爱慕/ABL:3 Lv3以上/それ以外），
  * 用另一枚 CFLAG:374 计数，写 4/3/2/1，无助手玛奥分档。
  *
- * SELECTCOM 14（阴蒂夹 CFLAG:315／着脱 CFLAG:375，:2197-2278）：结构与
- * SELECTCOM 9/12 同构（不含组合判据）。初めて（CFLAG:315 == 0）按「助手
+ * SELECTCOM 14（阴蒂夹 CFLAG:315／着脱 CFLAG:375）：结构与
+ * SELECTCOM 9/12 同构（不含组合条件）。初めて（CFLAG:315 == 0）按「助手
  * 玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
  * 按「淫乱→爱慕→それ以外」写 4/3/2，两支结构对称。脱着态（TEQUIP:14 ==
  * 0）是独立三选一（淫乱/爱慕/それ以外），用另一枚 CFLAG:375 计数，写
  * 3/2/1，无助手玛奥分档。
  *
- * SELECTCOM 15（乳头夹 CFLAG:316／着脱 CFLAG:376，:2284-2364）：结构与
- * SELECTCOM 9/12/14 同构（不含组合判据）。初めて（CFLAG:316 == 0）按「助手
+ * SELECTCOM 15（乳头夹 CFLAG:316／着脱 CFLAG:376）：结构与
+ * SELECTCOM 9/12/14 同构（不含组合条件）。初めて（CFLAG:316 == 0）按「助手
  * 玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手玛奥」再各自
  * 按「淫乱→爱慕→それ以外」写 4/3/2，两支结构对称。脱着态（TEQUIP:15 ==
  * 0）是独立三选一（淫乱/爱慕/それ以外），用另一枚 CFLAG:376 计数，写
  * 3/2/1，无助手玛奥分档。
  *
- * SELECTCOM 16（榨乳器 CFLAG:317／着脱 CFLAG:377，:2371-2460）：结构与
- * SELECTCOM 9/12 同构（不含组合判据）。初めて（TEQUIP:16 已装且 CFLAG:317
+ * SELECTCOM 16（榨乳器 CFLAG:317／着脱 CFLAG:377）：结构与
+ * SELECTCOM 9/12 同构（不含组合条件）。初めて（TEQUIP:16 已装且 CFLAG:317
  * == 0）按「助手玛奥／淫乱／爱慕／それ以外」四选写 1；二回目以降先分「助手
  * 玛奥」再各自按「淫乱→爱慕→それ以外」写 4/3/2，助手玛奥+淫乱支下另有
- * RAND:2 二选一台词分岔（`rand_n(2)` 落地，不影响 CFLAG:317 写值）。脱着态
+ * RAND:2 二选一台词分岔（`rand_n(2)` 实现，不影响 CFLAG:317 写值）。脱着态
  * （TEQUIP:16 == 0）是独立三选一（淫乱/爱慕/それ以外），用另一枚 CFLAG:377
  * 计数，写 3/2/1，无助手玛奥分档。
  *
- * SELECTCOM 17（オナホール CFLAG:318／着脱 CFLAG:378，:2464-2519）在原作里
+ * SELECTCOM 17（オナホール CFLAG:318／着脱 CFLAG:378）
  * 整段以 `;` 注释掉（连 `IF SELECTCOM == 17` 本身也被注释），SELECTCOM 数字
- * 因此从未被判定为真，属于死代码——PRINTFORMW 台词也全部留空未填。原作从未
- * 执行过此分支，本移植按证据不落地任何行为，直接跳过、不占用真实指令号。
+ * 因此从未被判定为真，属于死代码——PRINTFORMW 台词也全部留空未填。从未
+ * 执行过此分支，本文件按证据不实现任何行为，直接跳过、不占用真实指令号。
  *
- * SELECTCOM 19（肛珠 CFLAG:320／脱着 CFLAG:379，:2521-2644）：结构与
+ * SELECTCOM 19（肛珠 CFLAG:320／脱着 CFLAG:379）：结构与
  * SELECTCOM 13 同构（TEQUIP:19 装备/脱着两态，脱着时用独立 CFLAG:379
  * 计数）。初めて（TEQUIP:19 已装且 CFLAG:320 == 0）按「助手玛奥／淫乱／
- * 爱慕／それ以外」简单四选写 1（不含 A感覚 组合判据）；二回目以降先分
+ * 爱慕／それ以外」简单四选写 1（不含 A感覚 组合条件）；二回目以降先分
  * 「助手玛奥」再各自按「淫乱＋A感覚Lv3以上→淫乱→爱慕＋A感覚Lv3以上→
  * 爱慕→A感覚Lv3以上→それ以外」六选一档写 7/6/5/4/3/2，助手玛奥/非助手
  * 玛奥两支结构对称。脱着态（TEQUIP:19 == 0）是独立四选一（淫乱/爱慕/
@@ -1491,7 +1477,7 @@ async function kojo_message_com_11(rand) {
         );
         kojo.爱抚 = 5;
       } else {
-        // それ以外（CFLAG:301 不推进——源作原样，助手玛奥臂唯一无写点档）
+        // それ以外（CFLAG:301 不推进——按原样，助手玛奥分支唯一无写点档）
         await era.printAndWait(`『呀呀，姐姐的身体再放松一点嘛…♪』`);
         await era.printAndWait(
           `${player_name}用手指驾轻就熟地爱抚着${target_name}全身上下。`,
@@ -1549,7 +1535,7 @@ async function kojo_message_com_11(rand) {
       }
       kojo.爱抚 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 1（舔阴 CFLAG:302）
@@ -1633,7 +1619,7 @@ async function kojo_message_com_11(rand) {
         );
         kojo.舔阴 = 4;
       } else {
-        // それ以外（CFLAG:302 不推进——源作原样，助手玛奥臂唯一无写点档）
+        // それ以外（CFLAG:302 不推进——按原样，助手玛奥分支唯一无写点档）
         const lick_line_3 = rand_n(2)
           ? '姐姐感觉舒服吗？'
           : '姐姐觉得我舔得舒服吗？♪';
@@ -1703,7 +1689,7 @@ async function kojo_message_com_11(rand) {
       );
       kojo.舔阴 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 2（肛门爱抚 CFLAG:303）
@@ -1883,7 +1869,7 @@ async function kojo_message_com_11(rand) {
       }
       kojo.肛门爱抚 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 3（自慰 CFLAG:304）
@@ -1997,7 +1983,7 @@ async function kojo_message_com_11(rand) {
         );
         await era.printAndWait(
           `${target_name}不敢忤逆${player_name}的命令，泪流满面地继续再度张开双腿，在妹妹面前自慰着………`,
-        ); // （それ以外无 CFLAG:304 推进，源作原样）
+        ); // （それ以外无 CFLAG:304 推进，按原样）
       }
     } else if (
       era.get(`talent:${target}:76`) === 1 &&
@@ -2183,7 +2169,7 @@ async function kojo_message_com_11(rand) {
       );
       kojo.自慰 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 5（胸爱抚 CFLAG:306）
@@ -2338,7 +2324,7 @@ async function kojo_message_com_11(rand) {
       );
       kojo.胸爱抚 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 6（接吻 CFLAG:307）
@@ -2615,7 +2601,7 @@ async function kojo_message_com_11(rand) {
       );
       kojo.接吻 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 7（自己扒开 CFLAG:308）
@@ -2931,7 +2917,7 @@ async function kojo_message_com_11(rand) {
       }
       kojo.自己扒开 = 2;
     }
-    return 0; // 隐式（原作 RETURN 0）
+    return 0; // 隐式（RETURN 0）
   }
 
   // IF SELECTCOM == 8（指挿入 CFLAG:309）
@@ -4325,10 +4311,10 @@ async function kojo_message_com_11(rand) {
     return 0;
   }
 
-  // SELECTCOM 17（オナホール CFLAG:318／着脱 CFLAG:378）在原作
-  // 里整段以 `;` 注释掉（连 `IF SELECTCOM == 17` 本身也被注释），SELECTCOM 数字
-  // 因此从未被判定为真，属于死代码——PRINTFORMW 台词也全部留空未填。原作
-  // 从未执行过此分支，本移植按证据不落地任何行为，直接跳过、不占用真实指令号。
+  // SELECTCOM 17（オナホール CFLAG:318／着脱 CFLAG:378）
+  // 整段以 `;` 注释掉（连 `IF SELECTCOM == 17` 本身也被注释），SELECTCOM 数字
+  // 因此从未被判定为真，属于死代码——PRINTFORMW 台词也全部留空未填。
+  // 从未执行过此分支，本文件按证据不实现任何行为，直接跳过、不占用真实指令号。
 
   // IF SELECTCOM == 19（肛珠 CFLAG:320／脱着 CFLAG:379，
   // TEQUIP:19 判定已装/未装两态）
@@ -4571,7 +4557,7 @@ async function kojo_message_com_11(rand) {
 
   // IF SELECTCOM == 20（正常位 CFLAG:321）
   if (era_flag.selectcom === 20) {
-    // \@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\@
+    // 「TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎」
     const weapon =
       era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
         ? '电动假阳具'
@@ -5225,12 +5211,12 @@ async function kojo_message_com_11(rand) {
 
   // IF SELECTCOM == 21（背后位 CFLAG:322）
   if (era_flag.selectcom === 21) {
-    // \@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\@
+    // 「TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎」
     const weapon =
       era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
         ? '电动假阳具'
         : '阴茎';
-    // \@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 震动假阳具 # 阴茎\@
+    // 「TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 震动假阳具 # 阴茎」
     const weapon_doggy =
       era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
         ? '震动假阳具'
@@ -5928,7 +5914,7 @@ async function kojo_message_com_11(rand) {
       // 初めて
       const virgin = era.get(`talent:${target}:0`) === 1;
       if (virgin) {
-        // 处女（原作模板骨架未填写，PRINTFORMW 无正文）
+        // 处女（模板骨架未填写，PRINTFORMW 无正文）
         await era.printAndWait('');
       } else {
         // 非处女
@@ -6308,7 +6294,7 @@ async function kojo_message_com_11(rand) {
   }
   // IF SELECTCOM == 23（背面座位 CFLAG:324）
   if (era_flag.selectcom === 23) {
-    // \@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\@
+    // 「TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎」
     const weapon =
       era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
         ? '电动假阳具'
@@ -6317,7 +6303,7 @@ async function kojo_message_com_11(rand) {
       // 初めて
       const virgin = era.get(`talent:${target}:0`) === 1;
       if (virgin) {
-        // 处女（原作模板骨架未填写，PRINTFORMW 无正文）
+        // 处女（模板骨架未填写，PRINTFORMW 无正文）
         await era.printAndWait(''); // PRINTFORMW 空行
       } else {
         // 非处女
@@ -6771,7 +6757,7 @@ async function kojo_message_com_11(rand) {
   }
   // IF SELECTCOM == 26（正常位肛交 CFLAG:327）
   if (era_flag.selectcom === 26) {
-    // \@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\@
+    // 「TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎」
     // 本节无独立声明行，三目宏内联出现于各 PRINTFORMW 语句里，首次出现
     // 在初めて层助手玛奥淫乱支
     const weapon =
@@ -7236,7 +7222,7 @@ async function kojo_message_com_11(rand) {
         await era.print(`「侵犯得……太激烈了……但，但是……感觉……又好奇怪啊啊！」`);
         await era.printAndWait(
           `感受着肛交的快感，${target_name}后仰着头，呻吟了起来。。`,
-        ); // 原作有连续两个句号，1:1 保真
+        ); // 连续两个句号，按原样保留
         await era.printAndWait(`「为，为什么……屁股也会……这么舒服的啊啊！」`);
         kojo.正常位肛交 = 3;
       } else if (kojo.正常位肛交 <= 1 || game.kojo.口上开关 === 2) {
@@ -12428,7 +12414,7 @@ async function kojo_message_com_11(rand) {
           era.get(`talent:${target}:89`) ||
           chara(target).system.露出癖 >= 5
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 不换行，
+          // 同一行输出：无后缀 PRINTFORM 不换行，
           // 是 SIF 的插入段，末行 PRINTFORML 才收行（#623）
           const masturbation_talk = chara(target).train.自慰中毒 >= 3;
           await era.print(
@@ -12479,8 +12465,8 @@ async function kojo_message_com_11(rand) {
         }
       } else {
         if (assi_mao) {
-          // 原作是一整行：:6865 的 PRINTFORM 不换行，六支的
-          // PRINTFORML 各自收行。前缀提到语句外共用——各支语句只列本支行号，
+          // 同一行输出：PRINTFORM 不换行，六支的
+          // PRINTFORML 各自收行。前缀提到语句外共用，
           // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
@@ -12516,9 +12502,8 @@ async function kojo_message_com_11(rand) {
               era.get(`talent:${target}:85`)) &&
             chara(target).train.欲情 >= era0('palamlv:4')
           ) {
-            // 原作是一整行：无后缀 PRINTFORM 链，
-            // 是两个互斥插入段（:6874/:6876 的 IF/ELSEIF，
-            // 收支），:6879 的 PRINTFORML 收行（#623）
+            // 同一行输出：无后缀 PRINTFORM 链，
+            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）
             const excited =
               era.get(`tequip:${target}:11`) ||
               era.get(`tequip:${target}:13`) ||
@@ -12565,7 +12550,7 @@ async function kojo_message_com_11(rand) {
             await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);
           }
         } else {
-          // 与上面 :6865+:6867 同型：六支的 PRINTFORML 各自收行，
+          // 与上面同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
@@ -12601,9 +12586,8 @@ async function kojo_message_com_11(rand) {
               era.get(`talent:${target}:85`)) &&
             chara(target).train.欲情 >= era0('palamlv:4')
           ) {
-            // 原作是一整行：无后缀 PRINTFORM 链，
-            // 是两个互斥插入段（:6902/:6904 的 IF/ELSEIF，
-            // 收支），:6907 的 PRINTFORML 收行（#623）
+            // 同一行输出：无后缀 PRINTFORM 链，
+            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）
             const excited =
               era.get(`tequip:${target}:11`) ||
               era.get(`tequip:${target}:13`) ||
@@ -12661,7 +12645,7 @@ async function kojo_message_com_11(rand) {
           era.get(`talent:${target}:89`) ||
           chara(target).system.露出癖 >= 5
         ) {
-          // 与初回 :6842+:6844+:6845 同型（#623）
+          // 与初回同型（#623）
           const masturbation_talk = chara(target).train.自慰中毒 >= 3;
           await era.print(
             `${target_name}介绍了自己的名字和迄今为止的性经验` +
@@ -12711,7 +12695,7 @@ async function kojo_message_com_11(rand) {
         }
       } else {
         if (assi_mao) {
-          // 与初回 :6865+:6867 同型：六支的 PRINTFORML 各自收行，
+          // 与初回同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
@@ -12747,8 +12731,7 @@ async function kojo_message_com_11(rand) {
               era.get(`talent:${target}:85`)) &&
             chara(target).train.欲情 >= era0('palamlv:4')
           ) {
-            // 原作是一整行（与 :6873.. 同型，
-            // 插入段到 :6964-6965 收支，#623）
+            // 同一行输出（与上面互斥插入段同型，#623）
             const excited =
               era.get(`tequip:${target}:11`) ||
               era.get(`tequip:${target}:13`) ||
@@ -12795,7 +12778,7 @@ async function kojo_message_com_11(rand) {
             await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);
           }
         } else {
-          // 与 :6952+:6954 同型：六支的 PRINTFORML 各自收行，
+          // 与上面同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
@@ -12831,8 +12814,7 @@ async function kojo_message_com_11(rand) {
               era.get(`talent:${target}:85`)) &&
             chara(target).train.欲情 >= era0('palamlv:4')
           ) {
-            // 原作是一整行（与 :6960.. 同型，
-            // 插入段到 :6992-6993 收支，#623）
+            // 同一行输出（与上面互斥插入段同型，#623）
             const excited =
               era.get(`tequip:${target}:11`) ||
               era.get(`tequip:${target}:13`) ||
@@ -18774,7 +18756,7 @@ async function kojo_message_com_11(rand) {
   let locals_2 = ''; // LOCALS:2，莉莉性器
   let locals_3 = ''; // LOCALS:3，莉莉敏感部位
 
-  // K11 原作把 CFLAG:370 复用于六九式口上计数；该角色的魔族化另存 CFLAG:400。
+  // K11 把 CFLAG:370 复用于六九式口上计数；该角色的魔族化另存 CFLAG:400。
   if (era_flag.selectcom === 69) {
     if (kojo.魔族化 === 0) {
       if (
@@ -21053,7 +21035,7 @@ async function dog_kojo_11(rand) {
 }
 
 /**
- * @KOJO_MESSAGE_PALAMCNG_11（:11463-11793）：参数变动口上。
+ * kojo_message_palamcng_11：参数变动口上。
  * 首超润滑/欲情/耻情/恐怖 Lv2、四类首次绝顶与处女丧失。
  */
 async function kojo_message_palamcng_11(rand) {
@@ -21510,7 +21492,7 @@ async function kojo_message_palamcng_11(rand) {
   }
 }
 
-/** @KOJO_MESSAGE_MARKCNG_11（:11794-11880）：四类 Lv3 刻印取得口上。 */
+/** kojo_message_markcng_11：四类 Lv3 刻印取得口上。 */
 async function kojo_message_markcng_11(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -21641,7 +21623,7 @@ async function kojo_message_markcng_11(rand) {
   }
 }
 
-/** @SELF_KOJO_K11（:11881-12261）：调教后、晨间与妊娠事件口上。 */
+/** self_kojo_k11：调教后、晨间与妊娠事件口上。 */
 async function self_kojo_k11(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -21651,7 +21633,7 @@ async function self_kojo_k11(rand) {
   const kojo = chara(target).kojo;
   const q = peek_aftertrain_q();
   const s = peek_aftertrain_s();
-  // 原作 F 是无专用生产者的单字母全局；按 Emuera 全局本身读取，保留两条夜袭分支。
+  // F 是无专用生产者的单字母全局；按旧引擎全局本身读取，保留两条夜袭分支。
   const f = era0('f:0');
   const cstr2 = era.get(`cstr:${target}:2`) || '';
   const random = rand ?? rand_n;
@@ -22196,7 +22178,7 @@ async function dungeon_ryouzyoku_k11() {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_AFTER_K11
+// dungeon_ryouzyoku_after_k11
 async function dungeon_ryouzyoku_after_k11() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -22272,7 +22254,7 @@ async function dungeon_ryouzyoku_after_k11() {
   return 0;
 }
 
-// @BENKI_KOUJO_K11
+// benki_koujo_k11
 async function benki_koujo_k11(rand) {
   const a = era_flag.target;
   void rand;
@@ -22342,7 +22324,7 @@ async function benki_koujo_k11(rand) {
   return 0;
 }
 
-// @DUNGEON_VICTORY_K11
+// dungeon_victory_k11
 async function dungeon_victory_k11(rand) {
   const random = rand ?? rand_n;
   const a = era_flag.target;
@@ -22367,7 +22349,7 @@ async function dungeon_victory_k11(rand) {
   return 0;
 }
 
-// @DUNGEON_ATTACK_K11
+// dungeon_attack_k11
 async function dungeon_attack_k11(rand) {
   const random = rand ?? rand_n;
   const target = era_flag.target;
@@ -22392,7 +22374,7 @@ async function dungeon_attack_k11(rand) {
   return 0;
 }
 
-// @COLOSSEUM_KOJO_11
+// colosseum_kojo_11
 async function colosseum_kojo_11(rand) {
   const target = era_flag.target;
   void rand;
@@ -22471,7 +22453,7 @@ async function colosseum_kojo_11(rand) {
   return 0;
 }
 
-// @NTR_KOUJO_K11
+// ntr_koujo_k11
 
 // NTR 再捕获场景：P 是外部事件传入的场景编号（1-7、20）。
 async function ntr_koujo_k11(_rand, p = 0) {
@@ -22488,8 +22470,8 @@ async function ntr_koujo_k11(_rand, p = 0) {
   if (p === 1) {
     if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
       await era.printAndWait(`「住，住手啊……我只是附近的村姑啊啊！」`);
-      // 原作是一整行：无后缀 PRINTFORM 链，
-      // 是互斥插入段（:12610 的 IF），:12615 的 PRINTFORMW 收行（#623）
+      // 同一行输出：无后缀 PRINTFORM 链，
+      // 是互斥插入段（IF），PRINTFORMW 收行（#623）
       await era.printAndWait(
         `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用` +
           (king_has_penis ? `双腿之间的巨根` : `粗大的假阳具`) +
@@ -22509,7 +22491,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
         `旁边的水晶球忠实地记录着${target_name}被用各种体位侵犯的全过程……`,
       );
     } else {
-      // 与 :12609.. 同型（#623）
+      // 与上面同型（#623）
       await era.printAndWait(
         `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用` +
           (king_has_penis ? `双腿之间的巨根` : `粗大的假阳具`) +
@@ -22531,7 +22513,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
       await era.printAndWait(
         `「”只有下贱的女人才会有肛门快感”这种事情什么……怎么可能…呜啊……啊啊啊！」`,
       );
-      // 与 :12609.. 同型（#623）
+      // 与上面同型（#623）
       await era.printAndWait(
         `${target_name}被` +
           (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +
@@ -22559,7 +22541,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
       await era.printAndWait(
         `「呜……呜啊啊……不，不可以这样……侵犯……肛门啊……屁股，会合不上的啊啊啊！」`,
       );
-      // 与 :12609.. 同型（#623）
+      // 与上面同型（#623）
       await era.printAndWait(
         `${target_name}的肛门被` +
           (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +
@@ -22599,7 +22581,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
       await era.printAndWait(
         `「哈……哈啊……插到……最里面了……子宫口……啊啊……嗯啊啊${heart(1)}」`,
       );
-      // 原作是一整行：两互斥插入段 + PRINTFORMW 收行（#623）
+      // 同一行输出：两互斥插入段 + PRINTFORMW 收行（#623）
       await era.printAndWait(
         (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +
           `持续地侵犯着${target_name}的蜜穴，${target_name}感受着交媾的快感，发出了甘甜的娇喘。`,
@@ -22627,7 +22609,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
       }
     } else {
       await era.printAndWait(`「呜……啊啊！太，太激烈……了，要坏掉了啊啊♪」`);
-      // 与 :12683.. 同型（#623）
+      // 与上面同型（#623）
       await era.printAndWait(
         (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +
           `持续地侵犯着${target_name}的蜜穴，${target_name}不住地呻吟着。`,
@@ -22753,7 +22735,7 @@ async function ntr_koujo_k11(_rand, p = 0) {
   return 0;
 }
 
-/** 处刑/展示类原作仅保留空台词槽；按各自事件编号输出一行空文本。 */
+/** 处刑/展示类仅保留空台词槽；按各自事件编号输出一行空文本。 */
 async function exucution_koujo_k11() {
   if ([4, 5, 6, 7].includes(game.event.犬射精或处刑口上)) {
     await era.printAndWait('');
@@ -22808,7 +22790,7 @@ async function gohoubi_request_koujo_k11() {
   if (request === 0) {
     await era.printAndWait(`${name}要求了金钱`);
   } else if (request >= 1 && request <= 3) {
-    // + IF/ELSEIF 的兽名分档（:12916-12922）+ :12923 原作是一整行：
+    // IF/ELSEIF 的兽名分档 + 同一行输出：
     // 两条无后缀 PRINTFORM 不换行，末行 PRINTFORMW 才收行。兽名提到语句外，
     // 免得它落进模板字面量被保真锁当成插值记号（#600）
     const animal = ['', '狗', '猪', '马'][request];
@@ -22828,7 +22810,7 @@ async function gohoubi_request_koujo_k11() {
   }
 }
 
-/** 奖赏结果原作各档均为空台词槽；choice 即源 TFLAG:18。 */
+/** 奖赏结果各档均为空台词槽；choice 即 TFLAG:18。 */
 async function gohoubi_after_koujo_k11(_rand, _cid, choice) {
   const request = chara(era_flag.target).stronghold.要求奖赏;
   if (
@@ -22841,7 +22823,7 @@ async function gohoubi_after_koujo_k11(_rand, _cid, choice) {
   return 0;
 }
 
-/** 迎击失败惩罚原作各档均为空；6/7 使用 PRINT，其余使用 PRINTFORMW。 */
+/** 迎击失败惩罚各档均为空；6/7 使用 PRINT，其余使用 PRINTFORMW。 */
 async function osioki_koujo_k11(_rand, _cid, choice) {
   if (choice === 6 || choice === 7) {
     await era.print('');
@@ -22850,7 +22832,7 @@ async function osioki_koujo_k11(_rand, _cid, choice) {
   }
 }
 
-// @AEGI_K11（:13090-13468）：索引与原作 SELECTCASE RAND:56 完全同序。
+// aegi_k11 的呻吟表：索引与 SELECTCASE RAND:56 完全同序。
 const VAGINAL_MOANS = [
   '更加…请更加激烈的侵犯这里…啊~…',
   '好厉害……好棒……啊啊~…',
@@ -22971,7 +22953,7 @@ const ANAL_MOANS = [
 
 /**
  * 生成阴道/肛门呻吟串。arg=0 时先改为 2，再按 RAND:2 增加一段；其余
- * arg 同样增加 0 或 1 段。未知部位保持原作 SELECTCASE 落空语义。
+ * arg 同样增加 0 或 1 段。未知部位保持 SELECTCASE 落空语义。
  */
 function aegi_k11(args, arg = 0, rand) {
   const random = rand ?? rand_n;
