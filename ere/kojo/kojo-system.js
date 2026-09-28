@@ -562,7 +562,7 @@ async function self_kojo(rand, q, outside_train = false) {
  *
  * #585：占位语义取消后，原来的 stub_desc / stub_ticket / wait 三个形参只剩
  * `void` 压着，随改名一并删除（函数名的 or_stub 后缀已名不副实）；#638 删
- * 存根清单时，仅服务静态核对的 stub_name 形参随之删除。
+ * 占位机制时，仅服务静态核对的 stub_name 形参随之删除。
  *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标分发族

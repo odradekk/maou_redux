@@ -5890,7 +5890,7 @@ async function gohoubi_request_koujo_k12(rand) {
   ) {
     // 同一行输出：无后缀 PRINTFORM/PRINT 连续
     // 不换行，末行 PRINTFORMW 才收行。兽名三档的条件提到
-    // 语句外当取值、文本留在输出语句里（保真锁按序核对台词片段，#625）
+    // 语句外当取值、文本留在输出语句里（一条输出语句对应一整行台词，#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1
         ? '狗'

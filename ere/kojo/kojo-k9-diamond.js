@@ -7882,7 +7882,7 @@ async function kojo_message_com_9(rand) {
       } else {
         // 同一行输出：无后缀 PRINTFORM 不换行，六支的
         // PRINTFORML 各自收行。前缀提到语句外共用——
-        // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）
+        // 前缀留在里面会多出一段不属于本支的插值记号（#623）
         const spoke_first =
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:85`) ||

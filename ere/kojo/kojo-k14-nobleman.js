@@ -24,7 +24,7 @@
  * 一处（愛+魔族化・性転換済み・調教前から魔族分档的过场白）与另一处
  * （DUNGEON_VICTORY_K14 臆病・悲観分档台词）两句是汉化未译的整句日文残留
  * （全库 PRINT 行仅此两处超过 7 个假名的整句）。词级整句译作简体对白
- * （tools/lang-table.js #245 收录），保真锁 D 靠 WORD_MAP 整句映射把
+ * （tools/lang-table.js #245 收录）：WORD_MAP 的整句映射把
  * 日文原句对上 JS 译文，玩家可见文本由此统一为简体。
  *
  * == 空模板骨架（与 K9 DOG_KOJO_9 相同的判定，#251 先例） ==
@@ -6138,7 +6138,7 @@ async function gohoubi_request_koujo_k14(rand) {
   ) {
     // 同一行输出：无后缀 PRINTFORM/PRINT 连续
     // 不换行，末行 PRINTFORMW 才收行。兽名三档的条件提到
-    // 语句外当取值、文本留在输出语句里（保真锁按序核对台词片段，#625）
+    // 语句外当取值、文本留在输出语句里（一条输出语句对应一整行台词，#625）
     const beast_word =
       chara(a).stronghold.要求奖赏 == 1
         ? '狗'

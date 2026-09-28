@@ -1408,7 +1408,7 @@ async function kojo_message_com_3(rand) {
         }
         // 同一行输出：无后缀 PRINTFORM 五段 SIF 后缀连续不换行，
         // 末行 PRINTFORML 才收行（#600）。五条 SIF 的条件提到语句外当条件、
-        // 文本留在输出语句里（保真锁按序核对台词片段）
+        // 文本留在输出语句里
         const devoted = era.get(`talent:${target}:85`) === 1; // 爱慕
         const lewd = era.get(`talent:${target}:76`) === 1; // 淫乱
         const female_dog = era.get(`talent:${target}:136`) === 1; // 牝犬
@@ -6370,7 +6370,7 @@ async function kojo_message_com_3(rand) {
         } else {
           // 同一行输出：PRINTFORM 不换行，三支的
           // PRINTFORMW 各自收行。前缀提到语句外共用——各支语句只列本支的基准，
-          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（抽签顺序不变，#623）
+          // 前缀留在里面会多出一段不属于本支的插值记号（抽签顺序不变，#623）
           const crying_out = rand_n(3) === 0;
           const line_head = `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`;
           if (crying_out) {

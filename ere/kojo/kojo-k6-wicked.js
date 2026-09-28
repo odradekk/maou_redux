@@ -6623,8 +6623,8 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(`「呜呼…呜啊…呜啊${heart(1)}」`);
         // 同一行输出：无后缀 PRINTFORM 不换行，末行
         // PRINTL 才收行；ELSE 支是同一行的另一支。前缀提到语句外
-        // 共用——ELSE 那条语句只列本支，前缀留在它里面会被保真锁 C 当成多出来的
-        // 插值记号（#621）
+        // 共用——ELSE 那条语句只列本支，前缀留在里面会多出一段
+        // 不属于本支的插值记号（#621）
         const mouth_front_3953 = `配合地戴上口塞的${target_name}带着期待`;
         const blindfold_3954 = era.get(`tequip:${target}:43`);
         if (blindfold_3954) {
@@ -7254,7 +7254,7 @@ async function kojo_message_com_6(rand) {
       } else {
         // 起是一整行：无后缀 PRINTFORM 不换行，各支的 PRINTL/W 才收行。
         // 前缀提到语句外共用——除了第一条合成的语句，各支自己
-        // 的语句只列本支，前缀留在里面会被保真锁 C 当成多出来的插值记号（#621）
+        // 的语句只列本支，前缀留在里面会多出一段不属于本支的插值记号（#621）
         const talk_front_4342 = `在和${player_name}`;
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -7792,8 +7792,8 @@ async function kojo_message_com_6(rand) {
         );
         // 同一行输出：无后缀 PRINTFORM 不换行，末行 PRINTL
         // 才收行；ELSEIF/ELSE 三支是同一行的另三支。前缀提到
-        // 语句外共用——各支自己的语句只列本支，前缀留在里面会被保真锁 C
-        // 当成多出来的插值记号（#621）
+        // 语句外共用——各支自己的语句只列本支，前缀留在里面会多出一段
+        // 不属于本支的插值记号（#621）
         const mouth_front_4594 = `${target_name}含住${player_name}的阴茎显得十分兴奋，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(

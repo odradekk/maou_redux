@@ -519,7 +519,7 @@ on(
       if (kojo.魔族化 == 1) {
         // 調教前から魔族
         // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。
-        // 条件提到语句外当条件、文本留在输出语句里（保真锁按序核对台词片段）
+        // 条件提到语句外当条件、文本留在输出语句里
         await era.printAndWait(
           (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +
             `${target_name}单膝跪地，好像是在等待着${player_name}。`,
@@ -1194,7 +1194,7 @@ async function k8_kojo2() {
         );
         await era.printAndWait(`「主人、${today_or_eve}的侍奉要怎么样呢？」`);
         // 同一行输出：无后缀 PRINTFORM + PRINTDATA 随机色 + PRINTW 收行（#622）。
-        // 随机色夹在中间，不能进 ${} 槽（保真锁的槽位序只认 %…% 记号），按串接取值
+        // 随机色夹在中间，不能进 ${} 槽（槽位序只认 %…% 记号），按串接取值
         // PRINTDATA/DATAFORM 白/赤/黒/青/ENDDATA（等概率随机选一）
         await era.printAndWait(
           `${target_name}把裙子卷了起来露出内衣。今日的内衣的颜色是` +

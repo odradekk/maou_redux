@@ -6285,7 +6285,7 @@ async function kojo_message_com_0(rand) {
     const b_sense = era.get(`abl:${target}:1`) || 0;
     const b_insensible = era.get(`talent:${target}:107`) === 1;
 
-    // 初めて（CFLAG:317 == 0；:1771 RETURN 0 被注释，JS 仍须显式返回以免落到 stub_line）
+    // 初めて（CFLAG:317 == 0；旧脚本此处的 RETURN 0 被注释，JS 仍须显式返回以免落入后续分支）
     if (kojo.榨乳器 === 0) {
       // 淫乱
       if (era.get(`talent:${target}:76`) === 1) {
@@ -10952,7 +10952,7 @@ async function kojo_message_com_0(rand) {
         ) {
           // 同一行输出：无后缀 PRINTFORM 连续不换行，
           // 末行 PRINTFORML 才收行（#600）。SIF 的条件提到语句外
-          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）
+          // 当条件、文本留在输出语句里
           const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
           era.print(
             `于是${target_name}就将自己的本名、至今为止的性体验` +
