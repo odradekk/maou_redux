@@ -1,5 +1,5 @@
 /**
- * @file 角色离队/归队 @EVENT_CHARA_LEAVE / @EVENT_CHARA_RETURN 的行为测试
+ * @file 角色离队/归队 event_chara_leave / event_chara_return 的行为测试
  *   （issue #405）。
  */
 
@@ -182,7 +182,7 @@ test('EVENT_CHARA_RETURN：身体数据未生成但 FLAG:5 位 12/15 关 → 闸
   const { event_chara_leave, event_chara_return } = fixture.load_module(
     'event/event-chara-leave',
   );
-  // FLAG:5 未开（默认 0）：原作 CHAR_BODY_GENERATE_WAPPED 的守卫在此返回
+  // FLAG:5 未开（默认 0）：CHAR_BODY_GENERATE_WAPPED 的检查在此返回
 
   const descriptor = event_chara_leave(85, 31);
   event_chara_return(descriptor, 0, () => 0);

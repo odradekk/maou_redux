@@ -145,7 +145,7 @@ export default [
     must_mention: '欲望戒指的陷落事件',
   },
   {
-    desc: 'M347 日循环的诅咒戒指接线删（curse_equip_ring 调用改空——接线用例红）',
+    desc: 'M347 日循环删掉诅咒戒指调用（curse_equip_ring 调用改空——接入用例红）',
     file: 'ere/event/event-nextday.js',
     find: '  await curse_equip_ring();',
     replace: '  // 变异：不调 curse_equip_ring',

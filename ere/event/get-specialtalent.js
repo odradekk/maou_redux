@@ -2,24 +2,23 @@
  * @file 特殊素质获得判定（issue #405）：调教/据点侧信息达标后追加素质与
  * 强制体变的检查。
  *
- * 调用点 EVENT_TURNEND.ERB:20、調教相關/TRAIN_MAIN.ERB:544（`ere/system/
- * train/juel-check.js` 的调用点自 #565 起接真身）都在
- * #400/#401 范围内，签名定死为
- * 的默认参数写法逐字对应），不改任何调用点。
+ * 两处调用（回合结算与调教主循环，见下方调用点注释）都传 SEIIN（有无射精，
+ * 后续 `EXP:0` 增量判定用），本文件函数签名与既有调用一致（默认参数按原样保留），
+ * 不改任何调用点。
  *
  * 移植说明：
- *   - `SIF TARGET < 0 || TARGET >= CHARANUM` 按 #21 扁平化的 ID 语义改写
+ *   - 「TARGET 不是已加入角色」的越界检查按 #21 扁平化的 ID 语义改写
  *     （page-select-target.js 先例）：判「cid 不在已加入角色列表」；
  *   - 全篇 `%TALENTNAME:n%`/`%EX_TALENTNAME:n%` 一律走名字表运行时查询
- *     （`talentname:n`/`ex_talentname(n)`），不硬编码中文标签——原作即是
- *     数据驱动查表，硬编码等于另开一份可能与 `yml/Talent.yml` 漂移的
+ *     （`talentname:n`/`ex_talentname(n)`），不硬编码中文标签——
+ *     数据驱动查表，硬编码等于另开一份可能与 `yml/Talent.yml` 不一致的
  *     真相源；
  *   - **闘姫の修得段（`EXP:76 → TALENT:188`）是死代码**：它紧邻的上一句是
  *     无条件 `CALL CHECK_SPECIALSKIL_BODYSHIFT` + `RETURN 0`（核对过其上
  *     全部 IF/ENDIF 均已闭合，两行是顶层无条件语句），此后的闘姫判定永远
  *     执行不到；全库唯一给 `TALENT:188` 赋值的地方就是这段死代码，「争斗
  *     女王」素质因此在旧实现里事实上从未被授予。移植不构造这段不可达
- *     逻辑（与 `END31`/`KOJO_EVENT_COM` 同类死代码处置口径一致：不实现，
+ *     逻辑（与 `END31` 同类死代码处置方式一致：不实现，
  *     登记说明）；
  *   - `PRECIPITATE_WITHDRAWAL_BE_A_WRECK` 式的「门槛与生效素质错位」在本
  *     文件不存在，但**「強化素質」段的 101/103 两个移除走 PRINTFORMW（等
@@ -97,7 +96,7 @@ function remove_talent_now(cid, id) {
 }
 
 /**
- * 【克制(20)】【冷漠(21)】的组合消失渲染（:65-79 / :146-160 同形两处）：
+ * 【克制(20)】【冷漠(21)】的组合消失渲染（同形式两处）：
  * 一行内拼出「的【…】【…】失去了。」+「否定点数减半。」+ JUEL:100 减半。
  */
 function remove_dislike_talents_20_21(cid) {
@@ -144,14 +143,14 @@ function remove_dislike_talents_32_34_84(cid) {
 }
 
 /**
- * 【贞操封印(273)】力量消失后的解封选择（:106-125 / :213-232 同形两处，
- * `$INPUT_LOOP_SEAL`/`$INPUT_LOOP_SEAL_2`）。
+ * 【贞操封印(273)】力量消失后的解封选择（同形式两处，
+ * 两个输入循环各一份）。
  */
 async function offer_release_seal(cid) {
   const name = chara_callname(cid);
   await era.printAndWait(`${name}的【${talent_name(273)}】的力量消失了……`);
   await era.printAndWait('如果是现在的话，可以解开封印。要解开封印吗？');
-  era.println(); // 真空行：109 行的 PRINTFORMW 已收尾（110 行的 PRINTL 落在空行上）
+  era.println(); // 空行：前一句已收尾，此处落在空行上
   for (;;) {
     era.print(' [0] - 保留封印');
     era.print(' [1] - 解开封印');
@@ -166,7 +165,7 @@ async function offer_release_seal(cid) {
   }
 }
 
-/** 玛奥（预设角色 17）的替身判定（:127-131 / :234-238 同形两处） */
+/** 玛奥（预设角色 17）的替身判定（同形式两处） */
 async function check_mao_avatar(cid) {
   if (cid === 17) {
     // #21：角色号=预设号，NO:TARGET==17 直译为 cid===17
@@ -178,7 +177,7 @@ async function check_mao_avatar(cid) {
 }
 
 /**
- * $STEP1 内【爱慕(85)】的觉醒分支（:39-132）：顺从经验 1000 以上、条件
+ * $STEP1 内【爱慕(85)】的觉醒分支：顺从经验 1000 以上、条件
  * 达标时授予【爱慕】，并清理一批互斥/负面素质。
  */
 async function love_awakening(cid) {
@@ -230,7 +229,7 @@ async function love_awakening(cid) {
 }
 
 /**
- * $STEP1 内【淫乱(76)】的觉醒分支（:134-239）：欲望与感觉综合值达标时
+ * $STEP1 内【淫乱(76)】的觉醒分支：欲望与感觉综合值达标时
  * 授予【淫乱】，并清理一批互斥/负面素质与种族堕落转化。
  */
 async function lewdness_awakening(cid) {
@@ -246,7 +245,7 @@ async function lewdness_awakening(cid) {
 
   remove_dislike_talents_20_21(cid);
   await remove_talent_wait(cid, 27); // 一线不越
-  remove_dislike_talents_32_34_84(cid); // 压抑/抵抗/嫉妒（原作 bug 保留）
+  remove_dislike_talents_32_34_84(cid); // 压抑/抵抗/嫉妒（bug 按原样保留）
   await remove_talent_wait(cid, 71); // 否定快感
   await remove_talent_wait(cid, 150); // 从不自慰
 
@@ -277,7 +276,7 @@ async function lewdness_awakening(cid) {
   await check_mao_avatar(cid);
 }
 
-/** $STEP1（:23-256）：MARK:3==0（无反抗刻印）时的忠诚度进阶判定 */
+/** $STEP1：MARK:3==0（无反抗刻印）时的忠诚度进阶判定 */
 async function step1(cid) {
   const name = chara_callname(cid);
   if (
@@ -489,7 +488,7 @@ async function fetish_talents(cid) {
 
 /**
  * :355-456 特殊性感素质：阴蒂/私处/肛门/乳房「狂」系四选一（SEXSKILL
- * 系统）。原作两重「已集齐四个」守卫（外层 SIF、内层 SEXSKILL_COUNT==4）
+ * 系统）。两重「已集齐四个」检查（外层 SIF、内层 SEXSKILL_COUNT==4）
  * 效果相同，合并为一次判定。
  */
 async function arousal_specialty(cid) {
@@ -716,7 +715,7 @@ async function enhanced_talents(cid) {
     set_talent(cid, 272, 1);
     // TALENT:101/TALENT:103 走 PRINTFORMW（等键），TALENT:105/TALENT:107 走
     // PRINTFORM（不等键，:523-538）——
-    // 原作字面量不对称，逐字保留
+    // 字面量不对称，按原样保留
     await remove_talent_wait(cid, 101);
     await remove_talent_wait(cid, 103);
     remove_talent_now(cid, 105);
@@ -767,12 +766,12 @@ async function constant_arousal(cid) {
 /** :607-624 喜欢精液の习得（TFLAG:110 强制精饮绝顶触发 + seiin 参数） */
 async function forced_semen_liking(cid, seiin) {
   // 逐字是 `IF TFLAG:110 && TALENT:47 == 0 && SEIIN`。**ERE 侧有意调整
-  // 了三个操作数的次序**：EraElectron 的 tflag 桶随 endTrain 销毁（Emuera
-  // 里它始终在场），而 `@EVENTTURNEND`（EVENT_TURNEND.ERB:20）正是调教外
-  // 的调用点、SEIIN 取默认 0——照原序先读 TFLAG:110 会直接抛 key error。
+  // 了三个操作数的次序**：EraElectron 的 tflag 桶随 endTrain 销毁（旧引擎
+  // 里它始终在场），而回合结算 EVENTTURNEND 正是调教外的调用点、SEIIN 取
+  // 默认 0——照原序先读 TFLAG:110 会直接抛 key error。
   // `&&` 的结论与次序无关，先判 SEIIN 的短路结果与原序逐字等价（SEIIN 为 0
   // 时两支都是「不习得」），顺带把「调教外不读 tflag」这条引擎约束显式化。
-  // 另一处调用点 TRAIN_MAIN.ERB:544 传 SEIIN = 1，在调教期内、tflag 在场。
+  // 另一处调用点（调教主循环）传 SEIIN = 1，在调教期内、tflag 在场。
   if (!seiin || !game.event.精爱味觉 || talent(cid, 47) !== 0) {
     return;
   }
@@ -896,7 +895,7 @@ async function blind_faith(cid) {
   }
 }
 
-/** $STEP2（:261-710）：与反抗刻印无关、每次调用都要跑的其余素质判定 */
+/** $STEP2：与反抗刻印无关、每次调用都要跑的其余素质判定 */
 async function step2(cid, seiin) {
   await semen_liking(cid);
   await skilled_tongue(cid);
@@ -912,11 +911,11 @@ async function step2(cid, seiin) {
 }
 
 /**
- * @CHECK_SPECIALSKIL_BODYSHIFT（:740-752）：不受本人意志左右的强制体变
- * 判定（【崩坏】状态下也会作用，:14-17 的守卫即为此调用它）。
+ * check_specialskil_bodyshift：不受本人意志左右的强制体变
+ * 判定（【崩坏】状态下也会作用，入口检查即为此调用它）。
  *
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @returns {Promise<number>} 0（原作 RETURN 0）
+ * @param {number} cid 角色 ID（事件循环的当前目标）
+ * @returns {Promise<number>} 0
  */
 async function check_specialskil_bodyshift(cid) {
   if (exp(cid, 62) >= 20 && talent(cid, 158) === 0) {
@@ -932,16 +931,16 @@ async function check_specialskil_bodyshift(cid) {
 }
 
 /**
- * @CHECK_SPECIALSKIL（:7-716，:719-734 死代码不构造，见文件头）：调教/据点
+ * check_specialskil（闘姫死代码段不构造，见文件头）：调教/据点
  * 侧信息达标后的特殊素质获得总入口。
  *
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @param {number} [seiin=0] 原作 `SEIIN = 0` 的默认参数（强制精饮绝顶次数
- *   超过阈值时由调用方置真，见 :607 的门槛判定）
- * @returns {Promise<number>} 0（原作全部 RETURN 0）
+ * @param {number} cid 角色 ID（事件循环的当前目标）
+ * @param {number} [seiin=0] 有无射精（默认 0；强制精饮绝顶次数
+ *   超过阈值时由调用方置真，见 forced_semen_liking 的门槛判定）
+ * @returns {Promise<number>} 0
  */
 async function check_specialskil(cid, seiin = 0) {
-  // SIF TARGET < 0 || TARGET >= CHARANUM —— #21 扁平化后按「不在已加入
+  // 「TARGET 不是已加入角色」的越界检查——#21 扁平化后按「不在已加入
   // 角色列表」判定（page-select-target.js 先例）
   if (!era.getAddedCharacters().includes(cid)) {
     return 0;

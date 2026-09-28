@@ -27,22 +27,21 @@ function default_rand(n) {
 async function public_execution(cid, rand_n = default_rand) {
   if (cid === 0) return 0;
   const family_id = search_family(cid);
-  // 原作 :19-21 是 `PRINTFORML [0]`…`[2]` 的纯文本选项、:22 的空行、:26 的
-  // INPUT（PR #53 通则：升格为按钮，正文不写 [编号] 前缀，引擎按 showAcc
-  // 自动拼）。
+  // 三个选项原是纯文本列表（PR #53 通则：升格为按钮，正文不写 [编号] 前缀，
+  // 引擎按 showAcc 自动拼）。
   era.printButton('凌辱刑', 0);
   era.printButton('绞刑', 1);
   era.printButton('魂粉碎', 2);
-  era.println(); // 的空行（PRINTFORML  的尾随空格）
+  era.println(); // 空行
 
   let result;
   do {
-    // 保留 useRule: false 以留住 :23 被注释掉的 `[100] 算了`（见下）。
+    // 保留 useRule: false 以留住被注释掉的 `[100] 算了`（见下）。
     result = await era.input({ useRule: false });
   } while (result < 0 || (result >= 3 && result !== 100));
-  // 的 `;PRINTFORML [100] 算了` 被注释掉、界面上不显示，但 :31-33 的
-  // `ELSEIF RESULT == 100` 仍受理它（原作置 TFLAG:16 = -1 后 JUMP 批量处刑；
-  // ere 没有该魔改入口，本函数以「不执行」返回表达同一出口）。
+  // 的 `[100] 算了` 被注释掉、界面上不显示，但后面的
+  // `ELSEIF RESULT == 100` 仍受理它（置 TFLAG:16 = -1 后跳回批量处刑；
+  // ere 没有该入口，本函数以「不执行」返回表达同一出口）。
   if (result === 100) {
     game.event.犬射精或处刑口上 = -1;
     return 0;
@@ -51,9 +50,9 @@ async function public_execution(cid, rand_n = default_rand) {
   era_flag.target = cid;
   apply_prestige(cid);
   game.event.公开处刑口上 = result;
-  // EVENT_K.ERB:402-412 的 @PUBLIC_EXUCUTION_KOUJO（#403 收口到分发入口）
+  // 公开处刑口上（public_exucution_koujo，#403 收到分发入口）
   await public_exucution_koujo(cid, result, rand_n);
-  // PUBLIC_EXECUTION_KOUJO 可改写 TFLAG:520；原作在 CALL 后读取。
+  // 口上可改写 TFLAG:520；下面在调用后读取。
   result = game.event.公开处刑口上;
 
   const name = chara_callname(cid);
@@ -70,8 +69,7 @@ async function public_execution(cid, rand_n = default_rand) {
     if (get(`talent:${cid}:85`)) {
       await era.printAndWait(`${name}的尸体，作为祭品被怪物郑重地奉献给你了。`);
     }
-    // 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的
-    // PRINTFORMW 之后（那一行已结束）——真空行（#597）
+    // 凌辱致死支的空行：上一行已带等待结束，这里补一个空行（#597）
     era.println();
     fate = '凌辱致死';
   } else if (result === 1) {
@@ -93,8 +91,7 @@ async function public_execution(cid, rand_n = default_rand) {
         `${name}的尸体，被悬挂示众三天之后，${chara_callname(0)}亲自将${she(cid)}火化了。`,
       );
     }
-    // 的淫行悬挂支：空 `PRINTFORML`（原作 76 行）落在 75 行的
-    // PRINTFORMW 之后（那一行已结束）——真空行（#597）
+    // 淫行悬挂支的空行：上一行已带等待结束，这里补一个空行（#597）
     era.println();
     fate = '淫行悬挂';
   } else {
@@ -128,8 +125,8 @@ async function public_execution(cid, rand_n = default_rand) {
   }
 
   chara(0).event.勋章经验 += 1;
-  // 的魂粉碎支没有空行：129 行的 `PRINTFORMW  ` 只收尾 89-128 行那串
-  // 未换行的 `PRINTFORM`；前两支的空行各写在上面两支的末尾（#597）
+  // 魂粉碎支没有空行：上一行的带等待输出只收尾前面那串未换行的 print；
+  // 前两支的空行各写在上面两支的末尾（#597）
   era.print('得到了用勇者力量形成的勋章');
   era.print('勋章经验+1');
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, fate);

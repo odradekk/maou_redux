@@ -31,7 +31,7 @@ export default [
       '  family_register(a, rand_n);',
       '  void a;',
       'ere/event/enter-enemy.js',
-      'K_11 FAMILY_REGISTER 接线',
+      'K_11 FAMILY_REGISTER 接入：莉莉登记为玛奥的妹妹',
     ),
     tests: ['enter-enemy'],
   },

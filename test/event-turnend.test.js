@@ -1,5 +1,5 @@
 /**
- * @EVENTTURNEND 三档链的行为测试（issue #114：S2 日循环骨架）。
+ * eventturnend 三档链的行为测试（issue #114：S2 日循环骨架）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  * 直接驱动 emit('EVENTTURNEND')（与主循环进入 TURNEND 状态后同一入口），
@@ -9,7 +9,7 @@
  * 覆盖（对应工单验收清单）：
  *   1. 时段与日期推进：一次调用 TIME 0→1 不进日；连续两次回到同时段且
  *      DAY:0 += 1（含 DAY:2 月替与 DAY:3 星期回绕）；
- *   2. CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调（阶段 3 的接入点），
+ *   2. CFLAG:1 检查：不在 2/3/12 时 DUNGEON 一次都不调（阶段 3 的接入点），
  *      并以 12/2/3 的正向用例分开两支（防空用例——两分支在测试世界里必须
  *      分开过，#10 的教训）；
  *   3. 侵攻度自然衰减：FLAG:81 有余量时每日 RAND:100、下限 0；
@@ -28,10 +28,10 @@ function setup_turnend() {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  // 金钱不变量（#401）：@DEBUG_CHECK 是回合链的一环，按
+  // 金钱不变量（#401）：debug_check 是回合链的一环，按
   // `MONEY == EX_FLAG:4444 + 8766` 判「钱被改过」，不成立就炸宝库、清零
-  // 资金、随机删一个角色（原作的合法开局满足它：SYSTEM ver1.0.3.ERB:55-56
-  // 的 10000 / 1234，由 @EVENTFIRST 播种；本函数不跑 EVENTFIRST，故在此
+  // 资金、随机删一个角色（合法开局满足它：SYSTEM ver1.0.3 的 10000 / 1234，
+  // 由 eventfirst 播种；本函数不跑 EVENTFIRST，故在此
   // 补齐）。缺了它不是「断言太严」，是这个夹具世界不合法——爆炸事件会
   // 污染整条链的输出与写入清单，还会多掷几次随机数。
   fixture.store.set('flag:10004', 10000); // MONEY
@@ -42,7 +42,7 @@ function setup_turnend() {
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
-  // 本局关闭勇者来袭（#171/#168 裁定 4 的隔离开关）：本文件的用例测时段/
+  // 本局关闭勇者来袭（#171/#168 结论 4 的隔离开关）：本文件的用例测时段/
   // 日期/衰减/KYOTEN/结算，不测勇者——ENTER_ENEMY 自 #171 起为每日真调用，
   // 在本世界（1-16 号无预设）会反复给孤儿号跑生成管线，干扰既有断言；
   // 勇者来袭自身的行为在 test/enter-enemy.test.js 隔离地测
@@ -53,8 +53,8 @@ function setup_turnend() {
 test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次回到同时段且 DAY:0 += 1', async () => {
   const { fixture, emit, STATE, era_flag } = setup_turnend();
   // EVENT_NEXTDAY 的无条件可见副作用：FLAG:61（熏香使用次数）清零。
-  // #400（N16）起该函数走全路径，原先借用的 @TAX_GET 占位行已随真身撤下，
-  // 改用这个不需要任何角色预置的写点当锚
+  // #400（N16）起该函数走全路径，原先借用的 tax_get 占位行已随真身撤下，
+  // 改用这个不需要任何角色预置的写点当基准
   fixture.store.set('flag:61', 3);
 
   assert.equal(era_flag.time, 0, '开局应为午前');
@@ -93,7 +93,7 @@ test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次�
 test('日推进的月替与星期回绕：DAY:2 超 28 触发 EVENT_NEXTMONTH、DAY:3 超 6 回 0', async () => {
   const { fixture, emit, era_flag } = setup_turnend();
   era_flag.time = 1; // 直接站在日推进回合
-  era_flag.month = 1; // 1 月（大月：32 日溢出才换）
+  era_flag.month = 1; // 1 月（大月 日溢出才换）
   era_flag.date = 28; // 明日 29 → 触发调用（大月不换月，只走日历推进）
   era_flag.weekday = 6; // 日曜 → 次日回月曜
 
@@ -108,7 +108,7 @@ test('日推进的月替与星期回绕：DAY:2 超 28 触发 EVENT_NEXTMONTH、
     '大月 29 日不得换月',
   );
 
-  // 正向：2 月 28 日 → 29 即换 3 月（#PRI 的月替调用点 → EVENT_NEXTMONTH 真身）
+  // 正向 月 28 日 → 29 即换 3 月（#PRI 的月替调用点 → EVENT_NEXTMONTH 真身）
   const feb = setup_turnend();
   feb.era_flag.time = 1;
   feb.era_flag.month = 2;
@@ -124,21 +124,21 @@ test('日推进的月替与星期回绕：DAY:2 超 28 触发 EVENT_NEXTMONTH、
   );
 });
 
-test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走各的分支', async () => {
-  // 守卫是阶段 3 的接入点（工单单独要求的测试）。中立世界（状态位 0）下
-  // 迷宫整体绕开；再以 12/2/3 的正向用例分开两支——守卫删坏（比如恒放行）
-  // 在正向用例上无差异、在本用例红；守卫写反（恒拦截）则在正向用例红。
-  // #177（H8）起 DUNGEON_ROOM 也是真身（无占位行），观测锚点换成
-  // CFLAG:514（階層滞在カウント，DUNGEON.ERB :358——全库唯一写者是
-  // run_dungeon 的滞留臂，:167/:286 两臂则清零）：一次 emit 恰走一次滞留
-  // 臂 → 514 恰为 1。注意原作 :386 的 CALL DUNGEON_ROOM **不是必经**
+test('CFLAG:1 检查：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走各的分支', async () => {
+  // 检查是阶段 3 的接入点（工单单独要求的测试）。中立世界（状态位 0）下
+  // 迷宫整体绕开；再以 12/2/3 的正向用例分开两支——检查删坏（比如恒放行）
+  // 在正向用例上无差异、在本用例红；检查写反（恒拦截）则在正向用例红。
+  // #177（H8）起 DUNGEON_ROOM 也是真身（无占位行），观测基准点换成
+  // CFLAG:514（階層滞在カウント，dungeon-room 域——全库唯一写者是
+  // run_dungeon 的滞留分支，/ 两分支则清零）：一次 emit 恰走一次滞留
+  // 分支 → 514 恰为 1。注意 CALL DUNGEON_ROOM **不是必经**
   // （#195 勘误，此前此处写反；对 514 同样成立）：它之前有行動完了早退
-  // （CFLAG:530）、魔王房间 ENDING_2 收口、撤退臂走出迷宫、迎击奴隶滞留
+  // （CFLAG:530）、魔王房间 ENDING_2 收尾、撤退分支走出迷宫、迎击奴隶滞留
   // 归还等多处 return 0 / break 出口，落到哪个出口由随机掷选决定——如
-  // walk = RAND:20 + 6×RAND:10 七掷全 0 时侵攻度不增，走撤退臂在迷宫外
-  // break，滞留臂不经过、514 为 0。故正向两世界注入恒 0.5 随机源钉住滞留
-  // 臂（walk = 40，侵攻度 0 + 40 ∈ (0, 100)），:358 恰经过一次、514 恰为
-  // 1；注入不挑分支，#175/#177 改滞留臂之后的行为不影响本观测
+  // walk = RAND:20 + 6×RAND:10 七掷全 0 时侵攻度不增，走撤退分支在迷宫外
+  // break，滞留分支不经过、514 为 0。故正向两世界注入恒 0.5 随机源钉住滞留
+  // 分支（walk = 40，侵攻度 0 + 40 ∈ (0, 100)）， 恰经过一次、514 恰为
+  // 1；注入不挑分支，#175/#177 改滞留分支之后的行为不影响本观测
   const neutral = setup_turnend();
   join_slave_chara(neutral.fixture, 31, '温妮');
   await neutral.emit('EVENTTURNEND');
@@ -156,7 +156,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     'CFLAG:1 = 0 时 DUNGEON_MAP 不得被调用',
   );
 
-  // 状态 12（战役）：WEAPON_RESTORE 循环内的 :271 调用点火
+  // 状态 12（战役）：WEAPON_RESTORE 循环内的调用点火
   const campaign = setup_turnend();
   join_slave_chara(campaign.fixture, 31, '温妮');
   campaign.fixture.store.set('cflag:31:1', 12);
@@ -172,7 +172,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
     '状态 12 恰好一次 DUNGEON（战役结束后状态复位，结算循环内不再触发）',
   );
 
-  // 状态 2（探索）且非 2D 模式：结算循环内的 :290 调用点火
+  // 状态 2（探索）且非 2D 模式：结算循环内的调用点火
   const explore = setup_turnend();
   join_slave_chara(explore.fixture, 31, '温妮');
   explore.fixture.store.set('cflag:31:1', 2);
@@ -190,7 +190,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
 
   // 状态 2 且 2D 模式：改走 DUNGEON_MAP 真身（#181 H12 换上），不走迷宫
   // 本体。观测点换成真身的确定性后果：HP 预置 10%（< 45%）必触发
-  // 「决定返回了」播报 + CFLAG:507 = 1（DUNGEON_MAP 的 :21-28 撤退决议）；
+  // 「决定返回了」播报 + CFLAG:507 = 1（DUNGEON_MAP 的撤退决议）；
   // 3D 的 DUNGEON_ROOM 占位行 0 计数佐证迷宫本体未被调用。恒定 0.5 随机
   // 源：unit_move 的抖动 ±0（坐标不动）、dungeon_bitch（RAND:5）与
   // equip_select（RAND:4）均不触发（floor(0.5*n) 恒 ≥ 1），退出路径确定
@@ -201,7 +201,7 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   field.fixture.store.set('base:31:0', 100);
   field.fixture.store.set('maxbase:31:0', 1000); // HP 10% < 45% → 必撤退
   field.fixture.store.set('base:31:1', 1000);
-  field.fixture.store.set('maxbase:31:1', 1000); // MP 100% → 不走第二臂
+  field.fixture.store.set('maxbase:31:1', 1000); // MP 100% → 不走第二分支
   field.fixture.override_math_random(() => 0.5);
   try {
     await field.emit('EVENTTURNEND');
@@ -210,12 +210,12 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   }
   assert(
     field.fixture.text_lines().some((line) => line.includes('温妮决定返回了')),
-    '状态 2 且 FLAG:502 == 1 走野外地图（DUNGEON_MAP 真身的撤退播报 :23）',
+    '状态 2 且 FLAG:502 == 1 走野外地图（DUNGEON_MAP 真身的撤退播报）',
   );
   assert.equal(
     field.fixture.store.get('cflag:31:507'),
     1,
-    '撤退旗立起（CFLAG:507 = 1，DUNGEON_MAP :24）',
+    '撤退旗立起（CFLAG:507 = 1，DUNGEON_MAP）',
   );
   assert.equal(
     field.fixture.store.get('cflag:31:514') ?? 0,
@@ -225,8 +225,8 @@ test('CFLAG:1 守卫：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
 });
 
 test('侵攻度自然衰减：人间界有余量时每日 RAND:100，下限 0，无余量不衰减', async () => {
-  // 衰减直接决定通关天数（#112 的天数估算依据），1:1 有测试守住。
-  // 单回合 RAND:100 可能为 0（原作语义），故用多回合累计断言：衰减被删
+  // 衰减直接决定通关天数（#112 的天数估算依据），这段衰减本就有测试守住。
+  // 单回合 RAND:100 可能为 0（既有语义），故用多回合累计断言：衰减被删
   // （恒不减）在「严格变小」上必红，不会因单回合抽到 0 而侥幸通过
   const world = setup_turnend();
   world.fixture.store.set('flag:82', 0); // 人间界未征服
@@ -265,16 +265,16 @@ test('侵攻度自然衰减：人间界有余量时每日 RAND:100，下限 0，
     '长期推进必被 0 吸收（每日 RAND:100 的期望衰减约 50）',
   );
 
-  // 无余量：0 时不打印衰减播报
+  // 无余量 时不打印衰减播报
   const empty = setup_turnend();
   await empty.emit('EVENTTURNEND');
   assert(
     !empty.fixture.text_lines().some((line) => line.includes('侵略度减少了')),
-    'FLAG:81 = 0 不得打印衰减播报（守卫 FLAG:81 > 0）',
+    'FLAG:81 = 0 不得打印衰减播报（检查 FLAG:81 > 0）',
   );
 });
 
-test('KYOTEN_EVENT 经日循环触发（#119 接线）：未征服衰减后推进档恰好一次', async () => {
+test('KYOTEN_EVENT 经日循环触发（#119 接入）：未征服衰减后推进档恰好一次', async () => {
   // FLAG:81 = 2100：衰减 RAND:100 后落 [2100, 2000]，任何取值都 >= 2000，
   // 推进档（stage 0 → 1）必命中——用例对 rand 的任何取值确定
   const world = setup_turnend();
@@ -286,7 +286,7 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：未征服衰减后推�
   assert.equal(
     world.fixture.store.get('flag:93'),
     1,
-    '衰减后 CALL KYOTEN_EVENT, 1 推进 FLAG:93 0→1（SYSTEM ver1.0.3.ERB:631）',
+    '衰减后 CALL KYOTEN_EVENT, 1 推进 FLAG:93 0→1（SYSTEM ver1.0.3 档）',
   );
   const banners = world.fixture.lines_history
     .filter((line) => line.type === 'text')
@@ -312,7 +312,7 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：未征服衰减后推�
   );
 });
 
-test('KYOTEN_EVENT 经日循环触发（#119 接线）：衰减跌破回退阈值打夺回横幅', async () => {
+test('KYOTEN_EVENT 经日循环触发（#119 接入）：衰减跌破回退阈值打夺回横幅', async () => {
   // FLAG:81 = 300：衰减后落 [300, 200]，任何取值都 <= 500，回退档必命中
   const world = setup_turnend();
   world.fixture.store.set('flag:82', 0);
@@ -323,7 +323,7 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：衰减跌破回退阈�
   assert.equal(
     world.fixture.store.get('flag:93'),
     0,
-    '衰减到 500 以下时 FLAG:93 回退 1→0（INVASION_EVENT.ERB:60-66）',
+    '衰减到 500 以下时 FLAG:93 回退 1→0（INVASION_EVENT 档）',
   );
   assert(
     world.fixture.lines_history.some(
@@ -334,7 +334,7 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：衰减跌破回退阈�
   );
 });
 
-test('KYOTEN_EVENT 经日循环触发（#119 接线）：已征服的反抗臂走同一调用点', async () => {
+test('KYOTEN_EVENT 经日循环触发（#119 接入）：已征服的反抗分支走同一调用点', async () => {
   // FLAG:82 = 1：每回合 RAND:6 == 0 才反抗（衰减 RAND:100、保底 100）后调用。
   // #119 验收时记录的已知非确定性（60 回合循环等 1/6 命中，约 1.8e-5 概率
   // 挂）：#120 起夹具提供 Math.random 注入（override_math_random，选择依据
@@ -371,11 +371,11 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：已征服的反抗臂�
       (line) =>
         line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
     ),
-    '夺回横幅经已征服反抗臂打出（调用点 :640）',
+    '夺回横幅经已征服反抗分支打出（调用点）',
   );
 });
 
-test('已征服反抗臂的保底钳制：衰减跌破 100 时钳回 100（SYSTEM :636-637）', async () => {
+test('已征服反抗分支的保底钳制：衰减跌破 100 时钳回 100（SYSTEM）', async () => {
   // flag:81 = 120、反抗命中后 rand(100) = 50 → 70 < 100 → 钳回 100。
   // 随机源确定构造同上一条用例（rand(6) = 0 命中反抗、rand(100) = 50）
   const world = setup_turnend();
@@ -396,21 +396,21 @@ test('已征服反抗臂的保底钳制：衰减跌破 100 时钳回 100（SYSTE
   assert.equal(
     world.fixture.store.get('flag:81'),
     100,
-    '120 - 50 = 70 跌破保底，钳回 100（原作 SIF FLAG:81 < 100 的钳制）',
+    '120 - 50 = 70 跌破保底，钳回 100（SIF FLAG:81 < 100 的钳制）',
   );
 });
 
-test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 ARG 2 臂，按领域号不误读人间界状态（#652 起三臂空转）', async () => {
+test('KYOTEN_EVENT 经日循环触发（#119 接入）：精灵领域衰减走 ARG 2 分支，按领域号不误读人间界状态（#652 起三分支空转）', async () => {
   // 两手构造：FLAG:86 = 2100 让精灵衰减块执行（证明该块的调用点真的跑到，
   // 且它调的 KYOTEN_EVENT 实参应是 2）；FLAG:81 = 300 + FLAG:93 = 2 让人间界
   // 块先回退一档到 1——若精灵块把领域号误传成 1，会以 FLAG:81（<= 500，
   // stage 1）再回退一档到 0 并打出夺回横幅，本用例当场红
   //
-  // #505 起三臂是真身（判定由「不可达」改判为可达）：衰减后的 FLAG:86 = 2050
-  // 三臂命中档也空转不打星号——本用例钉「日循环这条调用族真的走到
-  // 三臂的行为体、且传参按领域号」靠 FLAG:93 只退一档与星号 0 行共同鉴別
+  // #505 起三分支是真身（判定由「不可达」改判为可达）：衰减后的 FLAG:86 = 2050
+  // 三分支命中档也空转不打星号——本用例钉「日循环这条调用族真的走到
+  // 三分支的行为体、且传参按领域号」靠 FLAG:93 只退一档与星号 0 行共同鉴別
   //
-  // #195 随机源注入（恒 0.5，选择依据同「已征服的反抗臂」用例，issue #120
+  // #195 随机源注入（恒 0.5，选择依据同「已征服的反抗分支」用例，issue #120
   // 评论）：真实随机下精灵块首掷 RAND:100 = 0（约 1%）会让循环进第 2 轮，
   // 人间界块跟着再跑一次、FLAG:93 再退一档到 0，断言随机红——mutation-check
   // 副本对照「环境破损」误报的来源之一。恒 0.5 下两处衰减每轮必掷 50：精灵
@@ -442,28 +442,28 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 A
   );
   assert.ok(
     (world.fixture.store.get('flag:86') ?? 0) < 2100,
-    'FLAG:86 已衰减（调用点 :650 之后的 KYOTEN_EVENT, 2 已被调用）',
+    'FLAG:86 已衰减（调用点之后的 KYOTEN_EVENT, 2 已被调用）',
   );
   assert.equal(
     world.fixture.store.get('flag:93'),
     1,
-    '人间界只回退一档到 1；ARG 2 臂不得误读人间界状态再退一档（传参须按领域号）',
+    '人间界只回退一档到 1；ARG 2 分支不得误读人间界状态再退一档（传参须按领域号）',
   );
   assert.equal(
     world.fixture.store.get('flag:94'),
     undefined,
-    'ARG 2 臂不推进状态字：不创建 FLAG:94（汉化版三臂无状态推进，见 issue #119）',
+    'ARG 2 分支不推进状态字：不创建 FLAG:94（汉化版三分支无状态推进，见 issue #119）',
   );
   assert(
     !world.fixture.lines_history.some(
       (line) =>
         line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
     ),
-    'ARG 2 臂不走人间界臂：不打夺回横幅',
+    'ARG 2 分支不走人间界分支：不打夺回横幅',
   );
 
-  // 单起一条最小世界钉住「ARG 2 臂的行为体确实被走到、但不再输出星号」
-  // （三臂空转不打星号；上面那条世界里人间界臂会打自己的七行横幅，
+  // 单起一条最小世界钉住「ARG 2 分支的行为体确实被走到、但不再输出星号」
+  // （三分支空转不打星号；上面那条世界里人间界分支会打自己的七行横幅，
   // 两支混在一起数不清）：FLAG:81 = 0 → 人间界块整块跳过，只剩精灵块跑一次
   const only_elf = setup_turnend();
   only_elf.fixture.store.set('flag:82', 0);
@@ -482,7 +482,7 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 A
       (line) => line.type === 'text' && line.text === '*'.repeat(91),
     ).length,
     0,
-    'FLAG:86 衰减到 2050 仍过首档 2000 → ARG 2 臂命中但空转不打星号（#652）',
+    'FLAG:86 衰减到 2050 仍过首档 2000 → ARG 2 分支命中但空转不打星号（#652）',
   );
 });
 
@@ -538,7 +538,7 @@ test('奴隶的体力气力回复：午后结算 MAX/10 与回满两档（结算
   assert.equal(world.fixture.store.get('base:31:0'), before + 1000);
 });
 
-test('全量写入断言：只有魔王的最小世界走一回合，写入清单与原作逐项一致', async () => {
+test('全量写入断言：只有魔王的最小世界走一回合，写入清单与既有清单逐项一致', async () => {
   const { fixture, emit } = setup_turnend();
   fixture.store.set('maxbase:0:0', 5000);
   fixture.store.set('base:0:0', 100);
@@ -547,10 +547,10 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
 
   await emit('EVENTTURNEND');
   // #508：FORMAT_AUTOTRAIN / BEFORE_AUTOTRAIN 换真身后，窗口内多出三段批量
-  // 零写（原作全在 EVENT_AUTOTRAIN.ERB：TFLAG 0..199 与 PALAM 0..16 在
-  // @FORMAT_AUTOTRAIN :68-75，SOURCE 0..16 与 UP/DOWN 0..16 在
-  // @BEFORE_AUTOTRAIN :91-104）。
-  // 逐条展开 260 行不可读，按原作 :64-104 的 FOR 循环区间生成；生成式不
+  // 零写（TFLAG 0..199 与 PALAM 0..16 在
+  // format_autotrain ，SOURCE 0..16 与 UP/DOWN 0..16 在
+  // before_autotrain）。
+  // 逐条展开 260 行不可读，按 FOR 循环区间生成；生成式不
   // 掩盖「少写/多写」——区间条数在下面单独断言，区间之外仍逐条列出
   const zero_span = (prefix, count) =>
     Array.from({ length: count }, (_, i) => ({
@@ -563,10 +563,10 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     // FOR TARGET,0,CHARANUM 写全局 TARGET（#401 起循环体内显式写回，
     // 否则妊娠判定会读到上个角色的残留）
     { name: 'flag:10005', value: 0 },
-    // IN_VAGINA_ALL 的九连调：TARGET = 0 落在主人位上，六组带守卫的
-    // 各自早退，三组无守卫的（T_TO_M/KYOUOU_TO_M/SYOKU_TO_M）进
+    // IN_VAGINA_ALL 的九连调：TARGET = 0 落在主人位上，六组带检查的
+    // 各自早退，三组无检查的（T_TO_M/KYOUOU_TO_M/SYOKU_TO_M）进
     // NAKADASHI_CHECK——本世界 FLAG:5 未开妊娠功能，走「清池后返回」支
-    // （:204-210），故是三笔清池（kind 3 → CFLAG:104、kind 6 → 107、
+    // ，故是三笔清池（kind 3 → CFLAG:104、kind 6 → 107、
     // kind 7 → 108；M_TO_T/M_TO_A 被 `TARGET >= 1` 挡在调用之外）
     { name: 'cflag:0:104', value: 0 },
     { name: 'cflag:0:107', value: 0 },
@@ -583,28 +583,28 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   // 调教窗口内的写入（逐条 + 三段区间），共 262 笔
   assert.deepEqual(writes.slice(11, 273), [
     { name: 'flag:10005', value: 0 }, // #508：FORMAT 循环逐角色指 TARGET 指针
-    { name: 'base:0:2', value: 0 }, // 魔王射精槽（:56）
-    { name: 'base:0:2', value: 0 }, // 目标射精槽（:58；本世界 TARGET=0）
-    { name: 'base:0:3', value: 0 }, // 母乳槽（:61）
-    { name: 'base:0:4', value: 0 }, // 触手射精槽（:62）
-    { name: 'deltabase:0:0', value: 0 }, // LOSEBASE:0 = 0（:64；负值通道）
-    { name: 'deltabase:0:1', value: 0 }, // LOSEBASE:1 = 0（:65）
+    { name: 'base:0:2', value: 0 }, // 魔王射精槽
+    { name: 'base:0:2', value: 0 }, // 目标射精槽（；本世界 TARGET=0）
+    { name: 'base:0:3', value: 0 }, // 母乳槽
+    { name: 'base:0:4', value: 0 }, // 触手射精槽
+    { name: 'deltabase:0:0', value: 0 }, // LOSEBASE:0 = 0（；负值通道）
+    { name: 'deltabase:0:1', value: 0 }, // LOSEBASE:1 = 0
     ...zero_span('tflag:', 200), // REPEAT 200
     ...zero_span('palam:0:', 17), // FOR LOCAL,0,17
-    ...zero_span('source:0:', 17), // BEFORE_AUTOTRAIN（:95-97）
-    ...zero_span('delta:0:', 17), // BEFORE_AUTOTRAIN（:100-103）
-    { name: 'tflag:402', value: 0 }, // 死斗场收入清零（:86）
+    ...zero_span('source:0:', 17), // BEFORE_AUTOTRAIN
+    ...zero_span('delta:0:', 17), // BEFORE_AUTOTRAIN
+    { name: 'tflag:402', value: 0 }, // 死斗场收入清零
     { name: 'cflag:0:506', value: 0 }, // 新人标志消去
     { name: 'cflag:0:666', value: 0 }, // 自动调教标志消去
     { name: 'flag:10005', value: -1 }, // #508：TARGET 指针还原暂存值
   ]);
   // 窗口关闭之后的写入（逐条）
   assert.deepEqual(writes.slice(273), [
-    // PARTY_UNITE（#172 真身）行动完了复位：原作 FOR CHARID, 0 起，魔王
+    // PARTY_UNITE（#172 真身）行动完了复位：FOR CHARID, 0 起，魔王
     // 的 CFLAG:530 也清（行 263，先于 WEAPON_RESTORE）
     { name: 'cflag:0:530', value: 0 },
     // WEAPON_RESTORE（#174 真身，全角色循环含魔王；基础攻防 0 → 六笔 0 写，
-    // 写序 = 原作 :16-19 的两步赋值 × 攻/防 + :34-35 的 ÷(RESULT+1)）
+    // 写序 = 两步赋值 × 攻/防 + 随后的 ÷(RESULT+1)）
     { name: 'cflag:0:11', value: 0 },
     { name: 'cflag:0:11', value: 0 },
     { name: 'cflag:0:12', value: 0 },
@@ -622,13 +622,13 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'flag:10005', value: 0 },
     { name: 'flag:10005', value: -1 },
     { name: 'flag:10006', value: -1 },
-    // PARTY_JOIN（#172 真身）内联的 PARTY_UNITE 复调（行 743 → :98），
+    // PARTY_JOIN（#172 真身）内联的 PARTY_UNITE 复调（行 743 →），
     // 魔王的 530 再清一次
     { name: 'cflag:0:530', value: 0 },
     { name: 'flag:10005', value: 0 }, // TARGET = FLAG:1（开局 0）
     { name: 'flag:10006', value: 0 }, // ASSI = FLAG:2（开局 0）
   ]);
-  // 区间条数（生成式不掩盖少写）：200 + 17×3
+  // 区间条数（生成式不掩盖少写） + 17×3
   assert.equal(
     writes.filter((w) => w.name.startsWith('tflag:') && w.value === 0).length,
     201,
@@ -642,18 +642,18 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   // 普通档结算循环跳过魔王：cflag:0:570 一类结算写入不得出现
   assert(
     !fixture.var_writes.some((w) => w.name === 'cflag:0:570'),
-    '结算主循环必须跳过魔王（原作 A = 1 起）',
+    '结算主循环必须跳过魔王（A = 1 起）',
   );
-  // 结算中段的原作 WAIT 恰好一次。#508 前这里断言的是「消费了一次输入」，
+  // 结算中段的 WAIT 恰好一次。#508 前这里断言的是「消费了一次输入」，
   // 那是两条占位行把它前面垫满（引擎语义：有可读输出才真等键）；换真身后
   // 本世界窗口内零输出，WAIT 仍被调用、但不消费——两项都钉住
-  assert.equal(fixture.waits.length, 1, '结算中段的原作 WAIT 恰一次');
+  assert.equal(fixture.waits.length, 1, '结算中段的 WAIT 恰一次');
   assert.equal(fixture.waits[0].waited, false, '之前无可读输出：不消费输入');
   assert.deepEqual(fixture.inputs_consumed, []);
 });
 
 test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与死之戒指的回复减衰', async () => {
-  // 原作 :314-326：W:8 = 4 乘、W:8 = 13 除。存根时代倍率恒 ×1/÷1，此处
+  // W:8 = 4 乘、W:8 = 13 除。存根时代倍率恒 ×1/÷1，此处
   // 钉住真身取值——再生+3（效果 4）→ ×(3+1)；死之+2（效果 13）→ ÷(2+1)
   const world = setup_turnend();
   join_slave_chara(world.fixture, 31, '温妮');
@@ -668,7 +668,7 @@ test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与�
 });
 
 test('装备效果接入（#174 真身）：欲望戒指的陷落事件随 RESULT > 0 可达', async () => {
-  // 原作 :390-413（W:8 = 6）：存根 RESULT 0 整支不达。真身按佩戴强度取值，
+  // （W:8 = 6）：存根 RESULT 0 整支不达。真身按佩戴强度取值，
   // 无素质 69/73 的角色走第一支：获得容易陷落（TALENT:73）并加欲情珠
   const world = setup_turnend();
   join_slave_chara(world.fixture, 31, '温妮');
@@ -706,7 +706,7 @@ test('回合结算：苗床角色进入真实业务，不再停在 NAEDOKO 存�
   const anal = world.fixture.store.get('juel:31:2') || 0;
   assert.equal(penis + anal, 30, 'NAEDOKO 真身按魔王等级结算点数');
   assert(
-    !world.fixture.text_lines().some((line) => line.includes('@NAEDOKO')),
+    !world.fixture.text_lines().some((line) => line.includes('naedoko')),
     '回合结算不得再输出 NAEDOKO 存根',
   );
 });
@@ -727,12 +727,12 @@ test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', asyn
       .text_lines()
       .some(
         (line) =>
-          line.includes('@FORMAT_AUTOTRAIN') || line.includes('@AUTOTRAIN'),
+          line.includes('format_autotrain') || line.includes('autotrain'),
       ),
     '两条占位行必须消失（#508 起都是真身）',
   );
   // #PRI 档的尾观测点在 #401 之后不再有存根文本（AUTO_BUYING/DEBUG_CHECK
-  // 已落真身、两者在本世界都零写入），改用写入序作序证人：:135 的
+  // 已落真身、两者在本世界都零写入），改用写入序作序证人： 的
   // `ASSI = -1` 是该档最后两笔写之一、普通档开头的 `PLAYER = 0` 记其后
   const pri_tail = fixture.var_writes.findIndex(
     (w) => w.name === 'flag:10006' && w.value === -1,
@@ -771,7 +771,7 @@ test('调教窗口（#508）：FORMAT_AUTOTRAIN 的 PALAM 重置落得下，窗�
   const close = calls.indexOf('endTrain');
   assert.ok(open >= 0 && close > open, '开窗在关窗之前');
   // 关窗即删调教域表（引擎 endTrain 语义）：窗口外的读者仍读回空，
-  // event-nextday.js:442 的「PALAM 读回来恒空」判据不受影响
+  // event-nextday.js:442 的「PALAM 读回来恒空」条件不受影响
   assert.equal(fixture.store.get('palam:31:3'), undefined);
 });
 
@@ -782,11 +782,11 @@ test('调教窗口（#508）：AUTOTRAIN 在窗口里跑真身，PALAM → 珠�
   const real_autotrain = mod.autotrain;
   let palam_inside_window;
   mod.autotrain = async () => {
-    // 站在 AUTOTRAIN（:740）的位置：窗口开着的话这一格写得进
+    // 站在 AUTOTRAIN的位置：窗口开着的话这一格写得进
     fixture.era.set('palam:31:5', 12345);
     palam_inside_window = fixture.store.get('palam:31:5');
     // 迷宫域的 COM*_AUTO 会把 CFLAG:666 拉起来（本世界不跑迷宫，替身模拟
-    // 它的产物；AUTOTRAIN 的入列判据就是它）
+    // 它的产物；AUTOTRAIN 的入列条件就是它）
     fixture.era.set('cflag:31:666', 1);
     return real_autotrain();
   };
@@ -835,9 +835,9 @@ test('CAMPAIGN_GAMEOVER：不在战役中时气力扣到 0 也不触发', async 
 });
 
 test('#502 宣言数 SENGEN 真读 EX_FLAG:9012：衰减后的流行度决定追加遇敌次数', async () => {
-  // 数一次日推进回合里的 ENTER_ENEMY 调用：:93 的无条件一次 + :121-125 的
+  // 数一次日推进回合里的 ENTER_ENEMY 调用：无条件一次 +
   // FOR EFFECT, 0, SENGEN（SENGEN = EX_FLAG:9012 - 2，DAY < 100 档）。
-  // 同一回合里 SENGEN_VIDEO_DE 先跑（:418 的 run_event_nextday），所以读到
+  // 同一回合里 sengen_video_de 先跑（event-nextday 的入口），所以读到
   // 的是当日衰减后的流行度——常数 0.5 让 RAND:3 = 1（非零）必减 1；过时
   // 倒计时预置成 10，避免它归零时把流行度一并清零
   const count_calls = async (popularity) => {
@@ -860,21 +860,17 @@ test('#502 宣言数 SENGEN 真读 EX_FLAG:9012：衰减后的流行度决定追
   };
 
   const none = await count_calls(0);
-  assert.equal(
-    none.length,
-    1,
-    '流行度 0：只有 :93 的无条件一次（:119-120 归零）',
-  );
+  assert.equal(none.length, 1, '流行度 0：只有的无条件一次（归零）');
   const some = await count_calls(6);
   assert.equal(
     some.length,
     4,
-    '流行度 6 → 当日衰减为 5 → 一次 + FOR EFFECT 循环 3 次（5 - 2）',
+    '流行度 6 → 当日衰减为 5 → 一次 + FOR EFFECT 循环 3 次',
   );
-  assert.deepEqual(some, [0, 0, 0, 0], '全部无实参（原作 CALL ENTER_ENEMY）');
+  assert.deepEqual(some, [0, 0, 0, 0], '全部无实参（CALL ENTER_ENEMY）');
 });
 
-test('结婚日接线：普通档逐角色调用真身，妊娠角色看到婚后生活', async () => {
+test('结婚日接入：普通档逐角色调用真身，妊娠角色看到婚后生活', async () => {
   const { fixture, emit, STATE } = setup_turnend();
   fixture.store.set('cflag:0:601', 900); // CFLAG:601 = 结婚对象（野狗）
   fixture.store.set('talent:0:153', 1); // TALENT:153 = 妊娠（在随机分派前返回）
@@ -890,7 +886,7 @@ test('结婚日接线：普通档逐角色调用真身，妊娠角色看到婚�
   );
 });
 
-test('结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP', async () => {
+test('结婚日接入：完成婚后事件后顺接剩余结算并回到 SHOP', async () => {
   const { fixture, emit, STATE } = setup_turnend();
   fixture.store.set('cflag:0:601', 900); // CFLAG:601 = 结婚对象（野狗）
 
@@ -907,9 +903,9 @@ test('结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP', 
   );
 });
 
-// —— #179（H10）升级结算与战果结算的接线 ——
+// —— #179（H10）升级结算与战果结算的接入 ——
 
-test('升级守卫（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级，其他角色照常升级', async () => {
+test('升级检查（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级，其他角色照常升级', async () => {
   const { fixture, emit } = setup_turnend();
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.seed_chara(2, { id: 2, name: '贝塔', callname: '贝塔' });
@@ -919,8 +915,8 @@ test('升级守卫（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级，其�
     fixture.store.set(`maxbase:${cid}:0`, 100);
     fixture.store.set(`maxbase:${cid}:1`, 100);
   }
-  // 2D 模式（FLAG:502 = 1）：侵攻中的阿尔走 DUNGEON_MAP 存根臂而非迷宫
-  // 真身——本用例只测升级守卫，迷宫推进的行为在 dungeon-main.test.js
+  // 2D 模式（FLAG:502 = 1）：侵攻中的阿尔走 DUNGEON_MAP 存根分支而非迷宫
+  // 真身——本用例只测升级检查，迷宫推进的行为在 dungeon-main.test.js
   fixture.store.set('flag:502', 1);
   // 阿尔：侵攻中（CFLAG:1 = 2，H2 写入的状态）+ 足量经验（LV3 需 40）
   fixture.store.set('cflag:1:1', 2);
@@ -936,18 +932,18 @@ test('升级守卫（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级，其�
   assert.equal(
     fixture.store.get('cflag:1:9'),
     3,
-    '侵攻中的勇者不升级（原作 :298 的 SIF CFLAG:A:1 != 2 守卫，1:1）',
+    '侵攻中的勇者不升级（SIF CFLAG:A:1 != 2 检查，这里按原样保留）',
   );
   assert.equal(
     fixture.store.get('exp:1:80'),
     45,
-    '守卫在 LVUP 之前：经验也不扣',
+    '检查在 LVUP 之前：经验也不扣',
   );
   assert.equal(fixture.store.get('cflag:2:9'), 4, '空闲角色升级 LV3 → 4');
   assert.equal(fixture.store.get('exp:2:80'), 5, '经验扣 40');
 });
 
-test('魔王升级（:619 CALL LVUP,0）：经验够则升级并播报', async () => {
+test('魔王升级（CALL LVUP,0）：经验够则升级并播报', async () => {
   const { fixture, emit } = setup_turnend();
   fixture.store.set('cflag:0:9', 5); // 魔王 LV5 → 需 60
   fixture.store.set('exp:0:80', 60);
@@ -960,7 +956,7 @@ test('魔王升级（:619 CALL LVUP,0）：经验够则升级并播报', async (
   );
 });
 
-test('战果结算分派（:302 CALL DUNGEON_AFTER）：凯旋（5）与败北（6）各进各臂', async () => {
+test('战果结算分派（CALL DUNGEON_AFTER）：凯旋与败北各进各分支', async () => {
   const { fixture, emit } = setup_turnend();
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.seed_chara(2, { id: 2, name: '贝塔', callname: '贝塔' });
@@ -973,19 +969,19 @@ test('战果结算分派（:302 CALL DUNGEON_AFTER）：凯旋（5）与败北�
   }
   fixture.store.set('cflag:1:1', 5); // 凯旋 → 奖赏
   fixture.store.set('cflag:2:1', 6); // 败北 → 惩罚
-  fixture.set_inputs(0, 0); // 两臂各选 [0]
+  fixture.set_inputs(0, 0); // 两分支各选 [0]
 
   await emit('EVENTTURNEND');
 
   assert(
     fixture.text_lines().some((line) => line.includes('打倒了勇者，凯旋而归')),
-    '凯旋的奖赏臂',
+    '凯旋的奖赏分支',
   );
   assert(
     fixture
       .text_lines()
       .some((line) => line.includes('没有发现勇者（或者是输了）')),
-    '败北的惩罚臂',
+    '败北的惩罚分支',
   );
   assert.equal(fixture.store.get('cflag:1:1'), 0, '凯旋结算后状态清 0');
   assert.equal(fixture.store.get('cflag:2:1'), 0, '败北结算后状态清 0');
@@ -1007,7 +1003,7 @@ function seq(values) {
   };
 }
 
-/** 妊娠链靶场：主人 0 与奴隶 31/32，妊娠功能开启、金钱不变量成立 */
+/** 妊娠链目标场：主人 0 与奴隶 31/32，妊娠功能开启、金钱不变量成立 */
 function setup_pregnancy({ time = 0 } = {}) {
   const fixture = create_era_fixture();
   for (const cid of [0, 31, 32]) {
@@ -1059,7 +1055,7 @@ test('#401 妊娠判定接入：IN_VAGINA_ALL/CONCEPTION_CHECK_ALL 逐角色跑�
     'CONCEPTION_CHECK_ALL 落定预产日 = DAY(0) + 10 + rand(6)(0)',
   );
   assert.equal(fixture.store.get('cflag:0:102') ?? 0, 0, '角色 0 未被波及');
-  // 循环内逐角色写回 TARGET（原作 FOR TARGET 就是写全局），循环后 :29 还原；
+  // 循环内逐角色写回 TARGET（FOR TARGET 就是写全局），循环后还原；
   // 再清成 -1。这条序列同时钉住「没有写回」的退化（只消一次写）
   assert.deepEqual(
     fixture.var_writes
@@ -1067,7 +1063,7 @@ test('#401 妊娠判定接入：IN_VAGINA_ALL/CONCEPTION_CHECK_ALL 逐角色跑�
       .map((w) => w.value)
       .slice(0, 5),
     [0, 31, 32, -1, -1],
-    ':14 逐角色写回 → :29 还原 → :134 清空（之后的普通档还会改 TARGET，故此处只钉前五笔）',
+    '目标逐角色写回 → 还原 → 清空（之后的普通档还会改 TARGET，故此处只钉前五笔）',
   );
 });
 
@@ -1085,12 +1081,12 @@ test('#401 妊娠判定接入：第二组（卖春/狂王兽奸/NTR）只在日�
   assert.equal(
     noon.fixture.store.get('cflag:31:105'),
     1,
-    '午前回合不得跑第二组（:57 的 TIME == 1 分支才含 :61-74）',
+    '午前回合不得跑第二组（的 TIME == 1 分支才含）',
   );
   assert.equal(noon.fixture.store.get('cflag:31:102') ?? 0, 0);
 
-  // TIME = 1 → 第二组照跑，REPEAT CHARANUM 自角色 0 起；六件按 :64-71 的
-  // 顺序执行，落定的预产日用第二组跑时的 DAY:0（日推进在 :79 才发生）
+  // TIME = 1 → 第二组照跑，REPEAT CHARANUM 自角色 0 起；六件按的
+  // 顺序执行，落定的预产日用第二组跑时的 DAY:0（日推进在才发生）
   const afternoon = setup_pregnancy({ time: 1 });
   afternoon.fixture.store.set('cflag:31:105', 1);
   afternoon.fixture.override_math_random(() => 0);
@@ -1099,7 +1095,7 @@ test('#401 妊娠判定接入：第二组（卖春/狂王兽奸/NTR）只在日�
   } finally {
     afternoon.fixture.restore_math_random();
   }
-  // 断言看写入序列而非终态：紧随其后的 :77 EVENT_NEXTDAY 会把刚落定的
+  // 断言看写入序列而非终态：紧随其后的 EVENT_NEXTDAY 会把刚落定的
   // 妊娠推进成「妊娠中」（ninsin_main 消费 CFLAG:102/110 并置 TALENT:153，
   // 那是 #115 的职责），终态已不是第二组留下的样子
   assert.deepEqual(
@@ -1113,12 +1109,12 @@ test('#401 妊娠判定接入：第二组（卖春/狂王兽奸/NTR）只在日�
       ['cflag:31:110', 10], // CONCEPTION_CHECK_EXTRA：DAY(0) + 10 + 0
       ['cflag:31:111', -1], // 卖春来源的孩子父亲码 -1
     ],
-    '第二组的六件按 :64-71 的顺序执行',
+    '第二组的六件按的顺序执行',
   );
 });
 
-test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接线后按原作拼「发色的」（:536-582）', async () => {
-  // 靶场同 setup_pregnancy：全链随机源取常数 0（生长判定与播报本身不吃
+test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接入后按既有格式拼「发色的」', async () => {
+  // 目标场同 setup_pregnancy：全链随机源取常数 0（生长判定与播报本身不吃
   // 随机，链上其余段落需要定值才能走完）
   const fixture = create_era_fixture();
   for (const cid of [0, 31]) {
@@ -1140,8 +1136,8 @@ test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接线后按原作拼「发
   fixture.store.set('flag:10005', -1); // TARGET
   fixture.store.set('flag:10003', 0); // TIME（午前）
 
-  // 头发：50 → 51 触发半长播报；魅力点 22（美丽的）、发色 4（红色，
-  // LOOK.ERB:2895-2917 的形容词表）；阴毛：1 → 2 触发汗毛播报，生长极限
+  // 头发 → 51 触发半长播报；魅力点 22（美丽的）、发色 4（红色，
+  // LOOK_INFO 的形容词表）；阴毛 → 2 触发汗毛播报，生长极限
   // 200 未达、非白虎（125 未设）
   fixture.store.set('talent:31:302', 50);
   fixture.store.set('talent:31:300', 4);
@@ -1165,13 +1161,13 @@ test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接线后按原作拼「发
   // 同理一行拼成：名字 + 艳丽 + 的阴阜上， + 发色 + 的 + 汗毛句
   assert(
     texts.includes('角色31艳丽的阴阜上，红色的汗毛长出来了。'),
-    '阴毛播报必须按原作拼成单行（含发色段，不再拆两行/省「的」）',
+    '阴毛播报必须拼成单行（含发色段，不再拆两行/省「的」）',
   );
   assert(
-    !texts.some((line) => line.includes('@GET_LOOK_INFO')),
+    !texts.some((line) => line.includes('get_look_info')),
     'GET_LOOK_INFO 已接真身，不得再出现占位行',
   );
-  // 生长确实发生（51 / 2，钳制未触发——311 = 200 远未达）
+  // 生长确实发生（钳制未触发——311 = 200 远未达）
   assert.equal(fixture.store.get('talent:31:302'), 51);
   assert.equal(fixture.store.get('talent:31:310'), 2);
 });
@@ -1195,7 +1191,7 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   assert.equal(money(), 800, '扣 200');
   assert.equal(legit(), 1034, 'EX_FLAG:4444 同步扣 200');
   await auto_buying();
-  assert.equal(money(), 800, 'ITEM:25 != 0 时不再买（守卫 ITEM:25 == 0）');
+  assert.equal(money(), 800, 'ITEM:25 != 0 时不再买（检查 ITEM:25 == 0）');
 
   // 位 1 的边界：恰好 200 买得起、199 买不起（`>= 200` 的等号那一侧）
   const exact = create_era_fixture();
@@ -1240,7 +1236,7 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   broke.store.set('flag:34', 8);
   broke.store.set('flag:10004', 950); // 只够 9 个
   await buy_broke();
-  assert.equal(broke.store.get('item:24'), 9, '钱限：950 点只买到 9 个');
+  assert.equal(broke.store.get('item:24'), 9, '钱限 点只买到 9 个');
   assert.equal(broke.store.get('flag:10004'), 50, '剩下的 50 点不够再买');
 
   // 钱管够时一次买满 10 个（REPEAT 的次数与 ITEM:24 < 10 的上限各钉一处：
@@ -1263,7 +1259,7 @@ test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async (
   assert.equal(nearly.store.get('flag:10004'), 4900, '实扣 1 × 100');
 });
 
-/** DEBUG_CHECK 靶场：主人 0 + 两名奴隶，金钱不变量成立（不触发任何事件） */
+/** DEBUG_CHECK 目标场：主人 0 + 两名奴隶，金钱不变量成立（不触发任何事件） */
 function setup_debug() {
   const fixture = create_era_fixture();
   for (const cid of [0, 31, 32]) {
@@ -1290,7 +1286,7 @@ test('#401 DEBUG_CHECK：不变量成立时整支空转（不写一个字节、�
 
 test('#401 DEBUG_CHECK 第一段：钱被改过 → 宝库爆炸、资金清零、随机炸死一名奴隶', async () => {
   const { fixture, debug_check } = setup_debug();
-  fixture.store.set('flag:10004', 5000); // 改钱：5000 ≠ 1234 + 8766
+  fixture.store.set('flag:10004', 5000); // 改钱 ≠ 1234 + 8766
   fixture.store.set('flag:1', 31); // 上次调教对象 = 将要被炸死的角色
   fixture.store.set('flag:2', 32); // 上次助手（不是受害者，不该被清）
 
@@ -1309,8 +1305,8 @@ test('#401 DEBUG_CHECK 第一段：钱被改过 → 宝库爆炸、资金清零�
   );
   assert.equal(fixture.store.get('exflag:2802'), 0, ':234 触发位复位');
   assert(!fixture.chara_no.includes(31), ':226 DELCHARA——角色 31 被炸死');
-  assert.equal(fixture.store.get('flag:1'), -1, ':210-211 上次调教对象被清');
-  assert.equal(fixture.store.get('flag:2'), 32, ':212-213 上次助手不受影响');
+  assert.equal(fixture.store.get('flag:1'), -1, ' 上次调教对象被清');
+  assert.equal(fixture.store.get('flag:2'), 32, ' 上次助手不受影响');
   const texts = fixture.text_lines();
   assert(
     texts.some((line) => line.includes('一些贪婪的魔物')),
@@ -1336,7 +1332,7 @@ test('#401 DEBUG_CHECK：一周目主线进了结局档（EX_FLAG:2801 % 100 >= 
   assert.equal(fixture.store.get('exflag:2802'), 1, '检测位仍然被置起');
   assert.deepEqual(fixture.text_lines(), []);
 
-  // 第二段/第三段共用这道守卫（:237/:310），三处各走一次：只测第一段时，
+  // 第二段/第三段共用这道检查，三处各走一次：只测第一段时，
   // 后两段的 `&& not_in_ending` 被删同样看不出
   const second = setup_debug();
   second.fixture.store.set('exflag:2801', 10); // 结局档
@@ -1390,13 +1386,13 @@ test('#401 DEBUG_CHECK 第二段：等级超 5000 的奴隶暴走，自身与近
 });
 
 test(
-  '#401 DEBUG_CHECK 第二段：抽不到可炸角色时按 5000 次上限退出（原作此处是死循环）',
+  '#401 DEBUG_CHECK 第二段：抽不到可炸角色时按 5000 次上限退出（旧引擎此处是死循环）',
   {
     timeout: 10000,
   },
   async () => {
     // 只有一个角色（主人 0）时，`RAND:CHARANUM` 永远抽到 0、`LOCAL:1 > 0`
-    // 恒假——原作的 ELSEIF 空体不置 -1，DO 循环因此永不终止。本移植按意图
+    // 恒假——ELSEIF 空体不置 -1，DO 循环因此永不终止。本移植按意图
     // 补齐退出（文件头偏离二）：本用例在 5000 次抽样后正常返回，改回原样
     // 则由下方自守抛出（同步死循环挂不住 timeout，见第一段的说明）
     const { fixture, debug_check } = setup_debug();
@@ -1411,23 +1407,23 @@ test(
       draws += 1;
       assert.ok(
         draws <= 5000,
-        '抽取次数超过 5000（放弃支被删或被改；原作此处会死循环）',
+        '抽取次数超过 5000（放弃支被删或被改；旧引擎此处会死循环）',
       );
       return 0;
     };
     assert.equal(await debug_check(rand), 0);
-    assert.equal(draws, 5000, '恰好抽 5000 次后放弃（LOCAL:5 < 5000 的守卫）');
+    assert.equal(draws, 5000, '恰好抽 5000 次后放弃（LOCAL:5 < 5000 的检查）');
     assert.equal(fixture.store.get('exflag:2803'), 0);
   },
 );
 
 test(
-  '#401 DEBUG_CHECK 第一段：抽不到可炸角色时按 5000 次上限退出（原作此处是死循环）',
+  '#401 DEBUG_CHECK 第一段：抽不到可炸角色时按 5000 次上限退出（旧引擎此处是死循环）',
   {
     timeout: 10000,
   },
   async () => {
-    // 第一段的同款出口（:230-231 有 LOCAL:1 = -1，与第二段不同、原作在此是
+    // 第一段的同款出口（有 LOCAL:1 = -1，与第二段不同、旧引擎在此是
     // 正确的）：全场只剩主人一个时 RAND 恒抽到 0、`LOCAL:1 > 0` 恒假
     const { fixture, debug_check } = setup_debug();
     fixture.era.removeCharacter(31);
@@ -1441,12 +1437,12 @@ test(
       draws += 1;
       assert.ok(
         draws <= 5000,
-        '抽取次数超过 5000（放弃支被删或被改；原作此处会死循环）',
+        '抽取次数超过 5000（放弃支被删或被改；旧引擎此处会死循环）',
       );
       return 0;
     };
     assert.equal(await debug_check(rand), 0);
-    assert.equal(draws, 5000, '恰好抽 5000 次后放弃（LOCAL:5 < 5000 的守卫）');
+    assert.equal(draws, 5000, '恰好抽 5000 次后放弃（LOCAL:5 < 5000 的检查）');
     assert.equal(fixture.store.get('exflag:2802'), 0, '触发位仍要复位');
   },
 );
@@ -1457,7 +1453,7 @@ test(
     timeout: 10000,
   },
   async () => {
-    // 原作两段 DO 都在自增 LOCAL:5（:204 / :276），第二段的 5000 次预算接着
+    // 两段 DO 都在自增 LOCAL:5，第二段的 5000 次预算接着
     // 第一段算。两支拆成独立计数器时本题会掷 10000 次，这里只允许 5001：
     // 第二段是 DO 循环，先抽一次再看预算，故多一掷
     const { fixture, debug_check } = setup_debug();
@@ -1501,13 +1497,13 @@ test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAME
   );
 });
 
-// —— :137-138 反作弊开关（SIF !反作弊 → DEBUG_CHECK，#547 落 modsave:1）——
+// —— 反作弊开关（SIF !反作弊 → DEBUG_CHECK，#547 落 modsave:1）——
 
 test('EVENTTURNEND：反作弊 1 时跳过 DEBUG_CHECK（modsave:1，设置页 [30] 可切）', async () => {
   const { fixture, emit } = setup_turnend();
   fixture.seed_chara(31, { id: 31, name: '奴隶31', callname: '角色31' });
   fixture.era.addCharacter(31);
-  // 改钱 + 指定受害者：反作弊开着（0）时 DEBUG_CHECK 第一段会炸宝库、清零、
+  // 改钱 + 指定受害者：反作弊开着时 DEBUG_CHECK 第一段会炸宝库、清零、
   // 炸死角色 31；反作弊 1 时整支跳过，什么都不发生
   fixture.store.set('flag:10004', 5000);
   fixture.store.set('flag:1', 31);

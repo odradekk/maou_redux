@@ -1,8 +1,8 @@
 /**
- * @CHARADEAD_CHECK 的行为测试（#548 / S7：调教后死亡检查）。
+ * charadead_check 的行为测试（#548 / S7：调教后死亡检查）。
  *
  * 缝 = test/helpers/era-fixture.js。真身在 ere/event/event-aftertrain.js
- * （该文件头自 #44 起就登记着本函数，本票落地）。
+ * （该文件头自 #44 起就登记着本函数，这张工单实现）。
  *
  * 覆盖：
  *   - 存活（BASE:0 > 0）→ RETURN 0 零输出；
@@ -10,12 +10,12 @@
  *   - 菲娅线推进（EX_FLAG:2807 ∈ [160,170) 且 TARGET == 菲娅 → 170）；
  *   - 魔王死亡无候补 → GAMEOVER 横幅 + INPUT + QUIT（throw 型，#148）；
  *   - 魔王死亡有候补 → MAOU_KOUHO + 横幅 ×4 + 四分支叙事（候补是
- *     PLAYER/ASSI、他人、17 号三种可达形态）；
- *   - 死亡口上事件码（TFLAG:13 = 999）与「X死掉了……」行——原作
+ *     PLAYER/ASSI、他人、17 号三种可达形式）；
+ *   - 死亡口上事件码（TFLAG:13 = 999）与「X死掉了……」行——
  *     #DIM TEMP 恒 0、ELSEIF 分支不可达（#14 登记，见实现注释）；
  *   - BASE:0 = -1、FLAG:(NO+999) = -2 死亡旗、FLAG:31 杀害数累计；
  *   - 杀害数 ≥ 3 → 魔王获得【威压感】；
- *   - @EVENTEND 接线：死亡删除分支真调 party_char_del（队伍复位）。
+ *   - eventend 接入：死亡删除分支真调 party_char_del（队伍复位）。
  */
 
 'use strict';
@@ -35,7 +35,7 @@ function text_lines(fixture) {
 
 /**
  * 死亡检查的世界底座：魔王 0 + 调教目标（默认 31 温妮）在场、调教表开着
- * （TFLAG:13 的写需要 beginTrain 开表）。target 为 0 时是魔王自虐的形态。
+ * （TFLAG:13 的写需要 beginTrain 开表）。target 为 0 时是魔王自虐的形式。
  */
 function seed_world({ target = 31, target_name = '温妮' } = {}) {
   const fixture = create_era_fixture();
@@ -83,7 +83,7 @@ test('濒死自动结束（FLAG:35）：体力 < 1 钳到 1，RETURN 0 不判死
   assert.deepEqual(text_lines(fixture), []);
 });
 
-test('菲娅线推进：EX_FLAG:2807 ∈ [160,170) 且目标是菲娅 → 170（:10-12）', async () => {
+test('菲娅线推进：EX_FLAG:2807 ∈ [160,170) 且目标是菲娅 → 170', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -100,7 +100,7 @@ test('菲娅线推进：EX_FLAG:2807 ∈ [160,170) 且目标是菲娅 → 170（
   assert.equal(fixture.store.get('exflag:2807'), 170);
 });
 
-test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后 QUIT 抛出（:26-29）', async () => {
+test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后 QUIT 抛出', async () => {
   const { fixture } = seed_world({ target: 0 });
   fixture.store.set('base:0:0', 0); // 魔王倒下
   fixture.store.set('exflag:3', 0); // EX_FLAG:3 无继任
@@ -152,11 +152,11 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
   assert(texts.includes('你似乎明白了什么……'));
   assert(texts.includes('从一旁的镜子中映出的是温妮的身影……'));
   assert(texts.includes('「果然…我……死了呢」'), 'SELF_CALL 回落「我」');
-  // 横幅 ×4（:35-38：GAMEOVER + 三条长线）
+  // 横幅 ×4（GAMEOVER + 三条长线）
   assert.equal(
     texts.filter((line) => line.startsWith('-----')).length,
     5,
-    '横幅五连（:35-39：GAMEOVER + 三条长线 + @@@@@@@@）',
+    '横幅五连（GAMEOVER + 三条长线 + @@@@@@@@）',
   );
   // 共通死亡段：魔王自己死了（%SAVESTR:TARGET%）
   assert(texts.includes('你死掉了……'));
@@ -168,7 +168,7 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
   assert.equal(fixture.store.get('flag:31'), 1, '杀害数 +1');
 });
 
-test('魔王死亡·候补是 PLAYER：巨镜叙事（原本属于自己的身体，:39-40）', async () => {
+test('魔王死亡·候补是 PLAYER：巨镜叙事（原本属于自己的身体）', async () => {
   const { fixture } = seed_maou_death({ successor: 31, player: 31 });
 
   await run_check(fixture);
@@ -180,7 +180,7 @@ test('魔王死亡·候补是 PLAYER：巨镜叙事（原本属于自己的身�
   assert(texts.includes('从一旁的巨大镜子中映出的是温妮的身影……'), '巨大镜子');
 });
 
-test('魔王死亡·候补是 17 号且不在身旁：第四支（突然瘫坐，:54-57）', async () => {
+test('魔王死亡·候补是 17 号且不在身旁：第四支（突然瘫坐）', async () => {
   const { fixture } = seed_maou_death({ successor: 17 });
 
   await run_check(fixture);
@@ -195,7 +195,7 @@ test('魔王死亡·候补是 17 号且不在身旁：第四支（突然瘫坐�
   assert(!texts.includes('心中有些怅然若失……'), '不走第三支');
 });
 
-test('魔王死亡·候补是 17 号且在身旁（PLAYER）：第三支（看着倒在眼前的东西，:46-50）', async () => {
+test('魔王死亡·候补是 17 号且在身旁（PLAYER）：第三支（看着倒在眼前的东西）', async () => {
   const { fixture } = seed_maou_death({ successor: 17, player: 17 });
 
   await run_check(fixture);
@@ -210,7 +210,7 @@ test('魔王死亡·候补是 17 号且在身旁（PLAYER）：第三支（看�
   );
 });
 
-test('魔王死亡·候补是 17 号且在身旁（ASSI）：第三支（:46-50）', async () => {
+test('魔王死亡·候补是 17 号且在身旁（ASSI）：第三支', async () => {
   const { fixture, era_flag } = seed_maou_death({ successor: 17 });
   era_flag.assi = 17; // 的 (== PLAYER || == ASSI) 另一半
 
@@ -220,7 +220,7 @@ test('魔王死亡·候补是 17 号且在身旁（ASSI）：第三支（:46-50�
   assert(!texts.includes('玛奥突然像丢了魂似的瘫坐在地上……'), '不走第四支');
 });
 
-test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数（:59-92）', async () => {
+test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数', async () => {
   const { fixture } = seed_world();
   fixture.store.set('base:31:0', 0);
 
@@ -230,8 +230,8 @@ test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数（:59-92�
   assert.equal(fixture.store.get('tflag:13'), 999, '死亡口上事件码');
   // TEMP 恒 0 → !TEMP 恒真，「X死掉了……」（ELSEIF 不可达，#14 登记）
   assert(texts.includes('温妮死掉了……'));
-  // #597：:74 的 PRINTL 落在 :69 的 PRINTFORML 之后（那一行已结束）——真空行
-  assert_one_blank_after(fixture, '温妮死掉了……', '奴隶死亡（:74）');
+  // #597： 的 PRINTL 落在的 PRINTFORML 之后（那一行已结束）——空行
+  assert_one_blank_after(fixture, '温妮死掉了……', '奴隶死亡');
   assert.equal(fixture.store.get('base:31:0'), -1);
   assert.equal(fixture.store.get('flag:1030'), -2, 'FLAG:(31+999) = -2');
   assert.equal(fixture.store.get('flag:31'), 1);
@@ -240,7 +240,7 @@ test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数（:59-92�
   assert.equal(fixture.store.get('talent:0:93'), undefined);
 });
 
-test('威压感：杀害数累计到 3 → 魔王获得并播报（:85-90）', async () => {
+test('威压感：杀害数累计到 3 → 魔王获得并播报', async () => {
   const { fixture } = seed_world();
   fixture.store.set('base:31:0', 0);
   fixture.store.set('flag:31', 2); // 本次 +1 后 = 3
@@ -256,7 +256,7 @@ test('威压感：杀害数累计到 3 → 魔王获得并播报（:85-90）', a
   );
 });
 
-test('威压感已持有时不重复播报（TALENT:MASTER:93 判据）', async () => {
+test('威压感已持有时不重复播报（TALENT:MASTER:93 条件）', async () => {
   const { fixture } = seed_world();
   fixture.store.set('base:31:0', 0);
   fixture.store.set('flag:31', 2);
@@ -266,9 +266,9 @@ test('威压感已持有时不重复播报（TALENT:MASTER:93 判据）', async 
   assert(!fixture.text_lines().some((line) => line.includes('威压感')));
 });
 
-// —— @EVENTEND 的接线（TRAIN_MAIN.ERB:339/:372 的两个 CALL）——
+// —— eventend 的接入（两处 CALL）——
 
-test('接线：@EVENTEND 死亡删除分支真调 party_char_del（队伍复位后再除名）', async () => {
+test('接入：eventend 死亡删除分支真调 party_char_del（队伍复位后再除名）', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -297,12 +297,12 @@ test('接线：@EVENTEND 死亡删除分支真调 party_char_del（队伍复位�
     'DELCHARA 在 party_char_del 之后执行',
   );
   assert(
-    !text_lines(fixture).some((line) => line.includes('@PARTY_CHAR_DEL')),
+    !text_lines(fixture).some((line) => line.includes('party_char_del')),
     '不再打 party_char_del 占位行',
   );
 });
 
-test('接线：存活路径 RESULT == 0 → SELF_CHECK 照常执行（:341-345）', async () => {
+test('接入：存活路径 RESULT == 0 → SELF_CHECK 照常执行', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -316,7 +316,7 @@ test('接线：存活路径 RESULT == 0 → SELF_CHECK 照常执行（:341-345�
   fixture.store.set('base:31:0', 2000);
   fixture.era.beginTrain(0, 31);
   fixture.load_module('event/event-end');
-  fixture.set_inputs(999); // @JUEL_CHECK 交互循环退出键
+  fixture.set_inputs(999); // juel_check 交互循环退出键
 
   const { emit } = fixture.load_module('system/event/registry');
   const pending = await emit('EVENTEND');

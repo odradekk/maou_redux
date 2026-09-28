@@ -2,9 +2,9 @@
  * @file 流放处刑（issue #348）。
  *
  * 移植说明（有意偏离，注明依据）：
- *   - @BANISHMENT 的五选一菜单（源 :22-30）升格为 `era.printButton`
+ *   - 流放的五选一菜单升格为 `era.printButton`
  *     （PR #53 通则，正文不写 [编号]）；消费点保留 `useRule: false`——
- *     源 :32 的 `[100] 返回` 被注释掉却仍被 :41 受理，收紧白名单会锁死
+ *     `[100] 返回` 被注释掉却仍被受理，收紧白名单会锁死
  *     这条未显示路径（#572）。逐处说明见函数内注释。
  */
 
@@ -33,7 +33,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 // 肉便器/精英；244–247 = 恶魔外观；314–320 = 种族、前生活、成为勇者的
 // 契机、喜好、阴茎状态及家族构成。ABL:3/11/13/17/21/22/32/39 = 肛门
 // 感觉/欲望/侍奉技术/露出癖/抖M/百合/精液中毒/兽奸中毒；EXP:56/70/74
-// = 兽奸/拍摄/卖淫经验。其余 TALENT 数字是原作分支直接判定的素质位。
+// = 兽奸/拍摄/卖淫经验。其余 TALENT 数字是分支条件直接判定的素质位。
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -605,24 +605,24 @@ async function banishment(cid, rand_n = default_rand) {
   era_flag.target = cid;
   const family_id = search_family(cid);
   await era.printAndWait('要来点有意思的放逐吗？');
-  era.println(); // 真空行：20 行的 PRINTW 已收尾（21 行的 PRINTL 落在空行上）
-  // 原作 :22-30 是 `PRINTL [0]`…`[4]` 的纯文本选项 + INPUT（PR #53 通则：
-  // 升格为按钮，正文不写 [编号] 前缀，引擎按 showAcc 自动拼）。
-  // **保留 useRule: false**：原作 :32 的 `;PRINTL [100] 返回` 被注释掉、
-  // 界面上不显示，但 :41 的 `ELSEIF RESULT == 100` 仍受理它（TFLAG:16 = -1
-  // → JUMP 批量处刑，本移植落成下面的 return 0）——收紧白名单会把这条
+  era.println(); // 空行：开场句之后隔一行
+  // 五个选项原是纯文本列表 + 数字输入（PR #53 通则：升格为按钮，
+  // 正文不写 [编号] 前缀，引擎按 showAcc 自动拼）。
+  // **保留 useRule: false**：`[100] 返回` 被注释掉、界面上不显示，
+  // 但后面的 `ELSEIF RESULT == 100` 仍受理它（置 TFLAG:16 = -1
+  // 后跳回批量处刑，本移植落成下面的 return 0）——收紧白名单会把这条
   // 未显示路径锁死，故沿用「按钮 + 自由输入」的既有处置
-  // （先例：ere/event/event-museum.js:83-85）。
+  // （先例：ere/event/event-museum.js 的收藏列表）。
   era.printButton('就这样流放掉', 0);
   era.printButton('施予男性化的诅咒', 1);
   era.printButton('消去之前的记忆', 2);
   era.printButton('变成小动物后放生', 3);
   era.printButton(`让${she(cid)}回到成为勇者前的生活`, 4);
-  era.println(); // 真空行：30 行的 PRINTFORML 已收尾（31 行的 PRINTL 落在空行上）
+  era.println(); // 空行：选项列表与输入提示隔开
 
   let result;
   for (;;) {
-    // 0-4 可点可键入，100（未显示）只能键入；其余值走原作的重问循环。
+    // 0-4 可点可键入，100（未显示）只能键入；其余值走重问循环。
     result = await era.input({ useRule: false });
     if (result < 0 || (result >= 5 && result !== 100)) continue;
     // 选项 1 只对已是男性（TALENT:122）的角色拒绝——提示语就是「已经是
@@ -642,9 +642,9 @@ async function banishment(cid, rand_n = default_rand) {
 
   apply_prestige(cid);
   game.event.流放口上 = result;
-  // EVENT_K.ERB:387-397 的 @BANISHMENT_KOUJO（#403 收口到分发入口）
+  // 流放口上（banishment_koujo，#403 收到分发入口）
   await banishment_koujo(cid, result, rand_n);
-  // BANISHMENT_KOUJO 可改写 TFLAG:510；原作在 CALL 后才按该值分支。
+  // 口上可改写 TFLAG:510；下面在调用后才按该值分支。
   result = game.event.流放口上;
 
   const name = chara_callname(cid);
@@ -656,7 +656,7 @@ async function banishment(cid, rand_n = default_rand) {
       await printw(
         `${name}不知所措地被放逐了，嘴中还在重复着你的名字。${name}带着一副快要崩溃的悲伤表情，慢慢地消失在远方的森林中…………`,
       );
-      // 原作 ELSEIF 把 TALENT:85 放在前一支之后，故这个“怀孕且依恋”支永不可达。
+      // 源分支把 TALENT:85 放在前一支之后，故这个“怀孕且依恋”支永不可达。
       // eslint-disable-next-line no-dupe-else-if
     } else if (has(cid, 'talent', 85) && has(cid, 'talent', 153)) {
       await printw(
@@ -736,7 +736,7 @@ async function banishment(cid, rand_n = default_rand) {
       `${name}所有的力量都在被${chara_callname(0)}打上烙印的那一瞬间封印了，`,
     );
     await era.printAndWait('被放逐回成为勇者前的生活');
-    // 源 :613 先清空函数静态 MATURO；JS 中以本次局部 fate 取代该残值。
+    // 调用前先清空函数静态 MATURO；JS 中以本次局部 fate 取代该残值。
     await narrate_former_life(cid);
     fate = former_life_fate(cid);
     await era.printAndWait(`——下场：${fate}`);

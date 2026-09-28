@@ -1,27 +1,27 @@
 /**
- * @file 勇者来袭（issue #171，阶段 3 H2）：@ENTER_ENEMY 与三个附属函数。
+ * @file 勇者来袭（issue #171，阶段 3 H2）：enter_enemy 与三个附属函数。
  *
- * 调用频率是**每日**：@EVENTTURNEND 的 CALL ENTER_ENEMY,0 每次换日都跑，
+ * 调用频率是**每日**：回合结算每次换日都跑，
  * 另有四处按 DAY 的追加调用（ere/event/event-turnend.js 的五个调用点）。
- * 月末休战的守卫在原作里就被注释掉，移植不恢复（#574 第 4 条），勇者每日
+ * 月末休战的检查在原流程里就被注释掉，移植不恢复（#574 第 4 条），勇者每日
  * 来袭。
  * 移植说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**：EraElectron 4.8.0 的 bundle 里没有 savestr
  *     表（app.asar 全文零命中；寻址 `savestr:N` 经 engine-bundle 驱动引擎
  *     寻址层实测走 era.error「key error in getter/setter!」后静默丢弃）。
- *     原作 SAVESTR:A 的角色名承载按 #5 决议落到 callname:${id}:-1
+ *     原流程 SAVESTR:A 的角色名承载按 #5 决议落到 callname:${id}:-1
  *     （addCharacter 从预设写入，test/chara-yml.test.js 锁定）：
  *     `SAVESTR:A = %NAME:A%` 化解为读该键（写入是 no-op——callname:-1 已
  *     是该值），`PRINTS SAVESTR:A` 同读。CSTR:A:1 = %NAME:A% 照写（引擎
  *     有 cstr 表，子桶由 addCharacter 建，engine-bundle 实测可写）；
- *   - 原作经全局 A / RESULT / LOCAL 换手（A = CHARANUM - 1、A = RESULT、
+ *   - 原流程经全局 A / RESULT / LOCAL 换手（A = CHARANUM - 1、A = RESULT、
  *     LOCAL 判异国），ere 侧显式传参（#5 决议第六条）。`A = CHARANUM - 1`
  *     取注册序末位＝刚加入者，ere 扁平化（#21）直接用刚 addCharacter 的
- *     角色号；RESULT 即 CHAR_MAKE 的返回值；
+ *     角色号；RESULT 即 char_make 的返回值；
  *   - ere 无全局 RAND 序列（#117 决议），随机经注入的 rand_n 掷出（缺省
  *     Math.random，测试注入定值序——chara-make.js 先例），并透传给
- *     CHAR_MAKE / CHAR_MAKE_INPORT。RAND(1,17) 是双参形式，值域
- *     [1,17)＝1..16（emuera-basic-agent-guide：双参数返回 [min,max)），
+ *     char_make / char_make_inport。RAND(1,17) 是双参形式，值域
+ *     [1,17)＝1..16（双参 RAND 返回 [min,max)），
  *     不含 17（玛奥）——勇者池正是 Chara1-16；
  *   - GETBIT(FLAG:5,32)：JS 位运算符按 32 位截断（x >> 32 === x >> 0），
  *     位 32 用除法取位（Math.floor(v / 2**32) % 2）；FLAG:5 & 2 等 31 位
@@ -34,15 +34,15 @@
  *     chara(cid).event.侵攻度；
  *   - 初期座標 CFLAG:510/511 两行照写（K_34 与 GET_ENEMY 各有一份复制
  *     段，三处同源）：这两行原本是死变量备注「現在は死んでいる変数です／
- *     気が変わったときのために残しています」，但裁定 5（#168）让 2D 模式
+ *     気が変わったときのために残しています」，但结论 5（#168）让 2D 模式
  *     变可达——按死代码删掉会在那张票埋坑；
- *   - 原作 PRINT/PRINTS 不换行、PRINTL 换行，同一显示行的拼接在 ere 侧
+ *   - 原流程 PRINT/PRINTS 不换行、PRINTL 换行，同一显示行的拼接在 ere 侧
  *     归并为一次 era.print（引擎 print 每调用一行，dev-guides/06）；
  *   - CHAR_MAKE_INPORT 判定（RAND(ARG:0)）缺省 ARG:0 = 1 → RAND(1) 恒 0，
  *     恒进异国判定。#394 起判定通过后进的是真身（ere/chara/chara-
  *     make-inport.js），它只在 `FLAG:76 > 0` 且有可用通信记录时才建角色；
  *     默认档（FLAG:76 = 0，MAOUNET 菜单设定）下恒早退 0，「异国的勇者」
- *     前缀仍不可达——与 #170 时的可观察行为相同，但成因换成了真身的判据。
+ *     前缀仍不可达——与 #170 时的可观察行为相同，但成因换成了真身的条件。
  */
 
 const era = require('#/era-electron');
@@ -57,11 +57,11 @@ const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起
 const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
 const { enterenemy_koujo } = require('#/kojo/kojo-system');
 
-/** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
+/** 在场角色数上限（MAX_CHARANUM = 90） */
 const MAX_CHARANUM = 90;
 
 /**
- * 原作 GETCHARA(n) 单参形态的等价物（event-endcheck.js 同款扁平化）：
+ * GETCHARA(n) 单参形式的等价物（event-endcheck.js 同款扁平化）：
  * 在场返回角色号（= cid，#21），不在场 -1。
  * @param {number} no 角色定义编号
  * @returns {number}
@@ -71,10 +71,9 @@ function get_chara(no) {
 }
 
 /**
- * 原作 GETCHARA(キャラ番号, 0) 双参形态的 SP=0 语义（源 :51-52 的注释是
- * 该形态在全库的唯一用例与说明）：在场且该角色 CFLAG:0 == 0 → 注册番号；
- * 不在场、或 CFLAG:0 为 1（売却可）/2（助手可）→ -1——后一场合同一角色
- * 号的勇者会再次来袭。
+ * GETCHARA(キャラ番号, 0) 双参形式的 SP=0 语义：在场且该角色
+ * CFLAG:0 == 0 → 注册番号；不在场、或 CFLAG:0 为 1（売却可）/2（助手可）
+ * → -1——后一场合同一角色号的勇者会再次来袭。
  * @param {number} no 角色定义编号
  * @returns {number}
  */
@@ -121,8 +120,8 @@ function chara_cap_reached() {
 
 /**
  * 初期座標段（K_34_crazylord 与 GET_ENEMY 各有一份同构复制，三处各自
- * 照写——裁定 5 让 2D 模式可达，勿删）。
- * @param {(n: number) => number} rand_n RAND:N 随机源
+ * 照写——结论 5 让 2D 模式可达，勿删）。
+ * @param {(n: number) => number} rand_n 随机源
  * @returns {[number, number]} [CFLAG:510（X 座標）, CFLAG:511（Y 座標）]
  */
 function roll_initial_position(rand_n) {
@@ -142,21 +141,21 @@ function roll_initial_position(rand_n) {
 }
 
 /**
- * @ENTER_ENEMY（:1-164）：勇者来袭的主体。
+ * enter_enemy：勇者来袭的主体。
  *
- * 每日（换日）调用。ARG:0 = 0 通常来袭；> 0 为「知り合い・家族確定
- * エントリー」——该角色号确定登场，CHAR_MAKE 收 998（性格无指定）与
- * ARG:0（种族设定）。
+ * 每日（换日）调用。arg0 = 0 通常来袭；> 0 为「知り合い・家族確定
+ * エントリー」——该角色号确定登场，char_make 收 998（性格无指定）与
+ * arg0（种族设定）。
  *
- * @param {number} [arg0] 原作 ARG:0（缺省 0）
- * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN：1 = 有人来袭，0 = 早退
+ * @param {number} [arg0] 来袭模式（缺省 0）
+ * @param {(n: number) => number} [rand] 随机源（缺省均匀随机）
+ * @returns {Promise<number>} 1 = 有人来袭，0 = 早退
  *   （人数上限六分支 / 出于对魔王的恐惧）
  */
 async function enter_enemy(arg0 = 0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
-  // LOCAL = 10 写死（早退阈值用）：原月末守卫要求 DAY:2 > LOCAL，该守卫
+  // LOCAL = 10 写死（早退阈值用）：原月末检查要求 DAY:2 > LOCAL，该检查
   // 被注释掉的功能不恢复，每日来袭（#574 第 4 条）
 
   // 莉莉出現（ARG:0 == 0 的通常来袭，或对方持 TALENT:村娘Ａ）
@@ -176,24 +175,24 @@ async function enter_enemy(arg0 = 0, rand) {
     return 0;
   }
 
-  // キャラのNOを選定——RAND(1,17) 双参 = [1,17) = 1..16（文件头）
+  // キャラのNOを選定——值域 [1,17) = 1..16（文件头）
   const chara_id = 1 + rand_n(16);
 
-  // GETBIT(FLAG:5,32)（原作调试位）|| GETCHARA(CHARA,0) == -1（不在场
+  // GETBIT(FLAG:5,32)（调试位）|| GETCHARA(CHARA,0) == -1（不在场
   // 或已売却/助手化）才生成。FLAG:5 的位 32 超出 JS 位运算的 31 位界，
   // 按文件头用除法取位
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
   const debug_bit32 = Math.floor(settings / 2 ** 32) % 2;
-  // 原作 LOCAL / RESULT 跨 :53 的 IF 块存活（:99 A = RESULT 在 ENDIF 后），
+  // LOCAL / RESULT 跨段存活（A = RESULT 在 ENDIF 后），
   // 声明随之外提
   let foreign;
-  let result; // 原作 RESULT：CHAR_MAKE 的返回（角色号）
+  let result; // char_make 的返回（角色号）
   if (debug_bit32 === 1 || getchara_sp0(chara_id) === -1) {
     if (arg0 > 0) {
       // 知り合い確定エントリー
       foreign = false; // LOCAL = 0
       era.addCharacter(chara_id); // ADDCHARA CHARA
-      await add_chara_ex(chara_id); // CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）
+      await add_chara_ex(chara_id); // add_chara_ex（扁平化直传）
       result = await char_make(chara_id, 998, arg0, rand_n);
     } else {
       // 異国の勇者の判定をする（缺省判定恒非异国，文件头）
@@ -221,7 +220,7 @@ async function enter_enemy(arg0 = 0, rand) {
     }
     // 冒险者（TALENT:RESULT:122 男人位非 0）/ 勇者
     head += (era.get(`talent:${result}:122`) || 0) !== 0 ? '冒险者' : '勇者';
-    // PRINTS SAVESTR:RESULT → callname:-1（#5 决议，文件头）
+    // 角色名读 callname:-1（#5 决议，文件头）
     const name = era.get(`callname:${result}:-1`) ?? '';
     era.print(`${head}${name}开始了地下城的攻略！`);
     era.print('*****************************************');
@@ -241,7 +240,7 @@ async function enter_enemy(arg0 = 0, rand) {
     return 0;
   }
 
-  // PRINTL（空行）
+  // 空行
   era.println();
   // A = RESULT（生成角色的号；扁平化下即上面一路带下来的 result）
   const a = result;
@@ -251,9 +250,9 @@ async function enter_enemy(arg0 = 0, rand) {
     chara(a).chara.善恶值 = -100;
   }
 
-  // 来袭口上（向 21 个口上文件的 @ENTERENEMY_KOUJO_K<n> 分派）
+  // 来袭口上（向 21 个口上文件的 ENTERENEMY_KOUJO_K<n> 分派）
   await enterenemy_koujo(a);
-  // 初期金钱（Ref DUNGEON_TOWN.ERB；七条修正 + 等级补正 + 下限）
+  // 初期金钱（七条修正 + 等级补正 + 下限）
   let money = 0; // LOCAL = 0
   const tv = (n) => era.get(`talent:${a}:${n}`) || 0;
   if (tv(126) !== 0) {
@@ -285,22 +284,22 @@ async function enter_enemy(arg0 = 0, rand) {
   // GETBIT(FLAG:8,1) 时显示角色信息（FLAG:8 = 开局设置位图 2）
   const settings2 = era.get('flag:8') || 0;
   if (((settings2 >> 1) & 1) !== 0) {
-    era.println(); // 真空行：85/90 行已收尾（159 行的 PRINTL 落在空行上）
+    era.println(); // 空行：信息展示前隔一行
     await show_chara_info(arg0, -1, rand); // （#390 真身）
-    era.println(); // 真空行：160 行的 show_chara_info 自带收尾（161 行的 PRINTL 落在空行上）
+    era.println(); // 空行：信息展示后隔一行
   }
 
   return 1;
 }
 
 /**
- * @K_11_LILY（:169-221）：村娘姐姐（莉莉，角色 24）的特殊来袭。
+ * k_11_lily：村娘姐姐（莉莉，角色 24）的特殊来袭。
  *
- * 条件：开局 200 日以上、玛奥（17）在场且持【爱】或【淫乱】、玛奥待机中、
+ * 条件：开局 200 日以上、玛奥在场且持【爱】或【淫乱】、玛奥待机中、
  * 莉莉本人不在场、无登场済标志（FLAG:223）。登场后与普通勇者同样置
- * CFLAG:1 = 2（:209），但**不设**再起点 CFLAG:508（1:1 照搬原作）。
+ * CFLAG:1 = 2，但**不设**再起点 CFLAG:508（按原样保留）。
  *
- * @returns {Promise<number>} 原作无显式 RETURN（隐式 0）
+ * @returns {Promise<number>} 隐式 0
  */
 async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
   // エントリーフラグが立っていると出ない（FLAG:223 莉莉登场済，
@@ -330,8 +329,7 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
 
   era.addCharacter(24);
   await add_chara_ex(24);
-  // エントリーフラグを使用（SELL_CHARA.ERB の @KILL_TARGET 参照——
-  // キャラが重複することはない）
+  // エントリーフラグを使用（登场済标志，防重复登场）
   era.set('flag:223', 1);
   const a = 24; // A = CHARANUM-1（扁平化：刚加入的 24）
   // SAVESTR:A = %NAME:A% → callname:-1 承载（文件头，写入 no-op）
@@ -356,9 +354,9 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
   );
   era.print(
     '又过了半年，姐姐终于下定了决心，前往魔王的地下城。一只手拿着提灯，另一只手握着勇者丢弃的旧剑。',
-  ); // PRINTW
+  );
   await era.waitAnyKey();
-  era.println(); // 真空行：214 行的 PRINTW 已收尾
+  era.println(); // 空行：叙述与点名之间隔一行
   era.print(`村娘${name}开始了地下城的攻略！`);
   era.print('*****************************************');
   await enterenemy_koujo(a);
@@ -367,13 +365,13 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
 }
 
 /**
- * @K_34_crazylord（:224-323）：狂王替身（葵希罗，角色 34）的特殊来袭。
+ * k_34_crazylord：狂王替身（葵希罗，角色 34）的特殊来袭。
  *
- * 条件：350 日以上、金红桃（20）在场且持【爱】或【淫乱】、金红桃待机中、
+ * 条件：350 日以上、金红桃在场且持【爱】或【淫乱】、金红桃待机中、
  * 替身不在场、四方堡垒全陷落（FLAG:92 == 15）、无登场済标志（FLAG:224）。
  *
- * @param {(n: number) => number} [rand_n] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 1（全部早退口 RETURN 0）
+ * @param {(n: number) => number} [rand_n] 随机源（缺省均匀随机）
+ * @returns {Promise<number>} 1（全部早退口 0）
  */
 async function k_34_crazylord(rand_n) {
   const roll = rand_n ?? ((n) => Math.floor(Math.random() * n));
@@ -408,7 +406,7 @@ async function k_34_crazylord(rand_n) {
 
   era.addCharacter(34);
   await add_chara_ex(34);
-  // MARK,4,3 的预设补偿不在这里：它写在 @CHARA_EX_34（chara-ex.js）里，
+  // MARK,4,3 的预设补偿不在这里：它写在 chara-ex.js 的 34 号扩展里，
   // 因为所有加入 34 号的路径都要过 ADDCHARA_EX——研究所复活也是（#548 返工）
   era_flag.crazylord_entered = 1;
   const a = 34; // A = CHARANUM-1（扁平化：刚加入的 34）
@@ -448,8 +446,8 @@ async function k_34_crazylord(rand_n) {
   );
   era.print(''); // PRINTW（空）
   await era.waitAnyKey();
-  era.println(); // 真空行：285 行的 PRINTW 已收尾
-  era.print(`狂王的替身${name}`); // PRINT 狂王的替身 + PRINTL 葵希罗
+  era.println(); // 空行：叙述与点名之间隔一行
+  era.print(`狂王的替身${name}`); // 称号与名字同一行
   era.print('开始了地下城的攻略！');
   era.print(
     '*****************************************************************************',
@@ -480,14 +478,14 @@ async function k_34_crazylord(rand_n) {
 }
 
 /**
- * @GET_ENEMY（:326-405）：奴隷確定入手（俘虏一名勇者直接入库）。
+ * get_enemy：奴隷確定入手（俘虏一名勇者直接入库）。
  *
- * 与 @ENTER_ENEMY 的差异：异国判定掷 RAND(10)（十分之一概率）；生成后
- * CFLAG:1 = 0（**不**侵攻——是被俘虏的奴隶，:384）；无口上调用、无初期
- * 金钱段。调用方在侵略线（INVASION.ERB:688/:884，阶段 5 接线）。
+ * 与 enter_enemy 的差异：异国判定掷十分之一概率；生成后
+ * CFLAG:1 = 0（**不**侵攻——是被俘虏的奴隶）；无口上调用、无初期
+ * 金钱段。调用方在侵略线（阶段 5 接入）。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN A（生成角色号）；人数上限早退 0
+ * @param {(n: number) => number} [rand] 随机源（缺省均匀随机）
+ * @returns {Promise<number>} 生成角色号；人数上限早退 0
  */
 async function get_enemy(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -516,13 +514,13 @@ async function get_enemy(rand) {
   era.print('*****************************************');
   let head = '';
   if (inport !== 0) {
-    head += '异国的'; // SIF LOCAL
+    head += '异国的'; // 异国路径
   }
   if ((era.get(`talent:${result}:1000`) || 0) !== 0) {
     head += '异界的';
   }
   head += (era.get(`talent:${result}:122`) || 0) !== 0 ? '冒险者' : '勇者';
-  const name = era.get(`callname:${result}:-1`) ?? ''; // PRINTS SAVESTR:RESULT
+  const name = era.get(`callname:${result}:-1`) ?? ''; // 角色名
   era.print(`${head}${name}被俘虏了！`);
   era.print('*****************************************');
   await era.waitAnyKey(); // WAIT
