@@ -1,10 +1,10 @@
 // issue #351：阶段 5a 奴隶出售全链与 ENDING_2 真身接入证明。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 4; // #641 起 -2（M7800/M7801 名单复辟守卫随 STUBBED_CALLS 机制移除）
+export const COUNT = 4; // #641 起 -2（M7800/M7801 名单复辟检查随 STUBBED_CALLS 机制移除）
 
 export default [
   {
-    desc: 'M7802 USE_EX_ITEM 战斗中调用点删除',
+    desc: 'M7802 use_ex_item 战斗中调用点删除',
     file: 'ere/dungeon/dungeon-battle.js',
     find: "    await use_ex_item('战斗中', atker);",
     replace: '    // 变异：战斗中 USE_EX_ITEM 调用删除',
@@ -12,7 +12,7 @@ export default [
     must_mention: 'USE_EX_ITEM 在 ENDING_2 战斗中调用点实际执行',
   },
   {
-    desc: 'M7803 USE_EX_ITEM 战斗后三个调用点删除',
+    desc: 'M7803 use_ex_item 战斗后三个调用点删除',
     file: 'ere/dungeon/dungeon.js',
     find: "  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）\n  if (sidea > 0) {\n    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // （A = SIDEA）\n  }\n  if (sideb > 0) {\n    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // （A = SIDEB）\n  }",
     replace: '  // 变异：战斗后三个 USE_EX_ITEM 调用删除',

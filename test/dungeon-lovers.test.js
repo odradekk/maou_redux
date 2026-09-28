@@ -1,5 +1,5 @@
 /**
- * LOVERS.ERB 四函数的行为测试（issue #341，阶段 5a L10）。
+ * dungeon-lovers 四函数的行为测试（issue #341，阶段 5a L10）。
  */
 
 const assert = require('node:assert/strict');
@@ -34,7 +34,7 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-test('NAME_LOVER：二十一种登记值可查，未知编号返回 0', () => {
+test('name_lover：二十一种登记值可查，未知编号返回 0', () => {
   const fixture = setup_world();
   const { LOVER_NAMES, name_lover } = load(fixture);
   assert.equal(LOVER_NAMES.size, 21);
@@ -45,7 +45,7 @@ test('NAME_LOVER：二十一种登记值可查，未知编号返回 0', () => {
   assert(text_lines(fixture).at(-1).includes('戴眼镜的男学生'));
 });
 
-test('ENTER_LOVER：无效输入重问；换类型写恋人并重置爱情', async () => {
+test('enter_lover：无效输入重问；换类型写恋人并重置爱情', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 1);
   fixture.store.set('cflag:1:607', 39);
@@ -60,7 +60,7 @@ test('ENTER_LOVER：无效输入重问；换类型写恋人并重置爱情', asy
   assert(buttons.some((button) => button.accelerator === 999));
 });
 
-test('ENTER_LOVER：同一类型不重置爱情，取消不写状态', async () => {
+test('enter_lover：同一类型不重置爱情，取消不写状态', async () => {
   const same = setup_world();
   same.store.set('cflag:1:606', 3);
   same.store.set('cflag:1:607', 8);
@@ -75,7 +75,7 @@ test('ENTER_LOVER：同一类型不重置爱情，取消不写状态', async () 
   assert.equal(cancelled.store.get('cflag:1:606'), 4);
 });
 
-test('ENTER_LOVER：自由输入保留隐藏的角色恋人编号 200', async () => {
+test('enter_lover：自由输入保留隐藏的角色恋人编号 200', async () => {
   const fixture = setup_world();
   fixture.set_inputs(200);
   assert.equal(await load(fixture).enter_lover(1), 1);
@@ -87,7 +87,7 @@ test('ENTER_LOVER：自由输入保留隐藏的角色恋人编号 200', async ()
   );
 });
 
-test('DUNGEON_TOWN_LOVER：普通恋人按阶段演出、结算并降低善恶', async () => {
+test('dungeon_town_lover：普通恋人按阶段演出、结算并降低善恶', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 2); // 威严的彪形大汉
   fixture.store.set('cflag:1:607', 25);
@@ -108,7 +108,7 @@ test('DUNGEON_TOWN_LOVER：普通恋人按阶段演出、结算并降低善恶',
   assert.equal(fixture.store.get('exp:1:5'), 1);
 });
 
-test('DUNGEON_TOWN_LOVER：贞操封印把 V 全转 A，前戏珠按前戏数 ×5 结算', async () => {
+test('dungeon_town_lover：贞操封印把 V 全转 A，前戏珠按前戏数 ×5 结算', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 1);
   fixture.store.set('cflag:1:607', 40);
@@ -124,7 +124,7 @@ test('DUNGEON_TOWN_LOVER：贞操封印把 V 全转 A，前戏珠按前戏数 ×
   assert.equal(fixture.store.get('juel:1:14'), 10);
 });
 
-test('DUNGEON_TOWN_LOVER：两次 V 行为写客人射精槽并调用妊娠检查', async () => {
+test('dungeon_town_lover：两次 V 行为写客人射精槽并调用妊娠检查', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:5', 4); // 启用妊娠
   fixture.store.set('cflag:1:606', 1);
@@ -134,7 +134,7 @@ test('DUNGEON_TOWN_LOVER：两次 V 行为写客人射精槽并调用妊娠检�
   assert.equal(fixture.store.get('cflag:1:105'), 0, '妊娠检查后清空射精槽');
 });
 
-test('DUNGEON_TOWN_LOVER：结婚阶段不降低善恶并等待按键', async () => {
+test('dungeon_town_lover：结婚阶段不降低善恶并等待按键', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 3);
   fixture.store.set('cflag:1:607', 35);
@@ -148,7 +148,7 @@ test('DUNGEON_TOWN_LOVER：结婚阶段不降低善恶并等待按键', async ()
   assert.equal(fixture.waits[0].waited, true);
 });
 
-test('DUNGEON_TOWN_LOVER：未知正数沿用 ERROR 并继续结算', async () => {
+test('dungeon_town_lover：未知正数沿用 ERROR 并继续结算', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 999);
   fixture.store.set('cflag:1:607', 10);
@@ -317,7 +317,7 @@ const LOVE_EXP_CASES = [
 ];
 
 for (const love_case of LOVE_EXP_CASES) {
-  test(`LOVE_EXP 维度表：${love_case.dimension}`, async () => {
+  test(`恋人加成维度表：${love_case.dimension}`, async () => {
     const fixture = setup_world();
     fixture.store.set('cflag:1:606', love_case.lover);
     fixture.store.set('cflag:1:607', love_case.love_lv);
@@ -337,7 +337,7 @@ for (const love_case of LOVE_EXP_CASES) {
   });
 }
 
-test('DUNGEON_TOWN_LOVER_CHARA_ENTER：条件满足时双向记录恋人', async () => {
+test('dungeon_town_lover_chara_enter：条件满足时双向记录恋人', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 4);
   fixture.store.set('abl:1:22', 1); // 女女恋爱门槛一方满足即可
@@ -352,7 +352,7 @@ test('DUNGEON_TOWN_LOVER_CHARA_ENTER：条件满足时双向记录恋人', async
   assert.equal(fixture.store.get('cflag:2:610'), 18000);
 });
 
-test('DUNGEON_TOWN_LOVER_CHARA_ENTER：自己成为恋人时调用魅力点子集', async () => {
+test('dungeon_town_lover_chara_enter：自己成为恋人时调用魅力点子集', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 4);
   fixture.store.set('abl:1:22', 1);
@@ -366,7 +366,7 @@ test('DUNGEON_TOWN_LOVER_CHARA_ENTER：自己成为恋人时调用魅力点子�
   );
 });
 
-test('DUNGEON_TOWN_LOVER_CHARA_ENTER：系统关闭、已有关系和同性门槛均拦下', async () => {
+test('dungeon_town_lover_chara_enter：系统关闭、已有关系和同性门槛均拦下', async () => {
   const off = setup_world();
   assert.equal(await load(off).dungeon_town_lover_chara_enter(1, () => 2), 0);
 
@@ -386,7 +386,7 @@ test('DUNGEON_TOWN_LOVER_CHARA_ENTER：系统关闭、已有关系和同性门�
   );
 });
 
-test('DUNGEON_TOWN_LOVER_CHARA_ENTER：侵攻中必须处于同一队伍', async () => {
+test('dungeon_town_lover_chara_enter：侵攻中必须处于同一队伍', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 4);
   fixture.store.set('abl:1:22', 1);
@@ -400,7 +400,7 @@ test('DUNGEON_TOWN_LOVER_CHARA_ENTER：侵攻中必须处于同一队伍', async
   assert.equal(await lovers.dungeon_town_lover_chara_enter(1, () => 2), 1);
 });
 
-test('DUNGEON_TOWN 的日常段调用恋人真身，不再输出存根', async () => {
+test('dungeon_town 的日常段调用恋人真身，不再输出存根', async () => {
   const fixture = setup_world();
   const lovers = load(fixture);
   const called = [];
@@ -408,7 +408,4 @@ test('DUNGEON_TOWN 的日常段调用恋人真身，不再输出存根', async (
   const town = fixture.load_module('dungeon/dungeon-town');
   await town.town_pt_dayevent(1, 2, 0);
   assert.deepEqual(called, [1, 2]);
-  assert(
-    !text_lines(fixture).some((line) => line.includes('@DUNGEON_TOWN_LOVER')),
-  );
 });

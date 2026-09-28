@@ -1,17 +1,17 @@
 /**
  * @file 战斗魔法（issue #343，阶段 5a L12）。
  *
- * 移植说明：
- *   - 原作全局 A/B 与 D:20 改为显式参数和 `move_ctx.d20`；B 在 type 1/2
+ * 说明：
+ *   - 全局 A/B 与 D:20 改为显式参数和 `move_ctx.d20`；B 在 type 1/2
  *     表示怪物列头，在 type 3/4 表示对手角色 ID。
- *   - Emuera 整数除法向零截断，所有可能非整除的算式统一走 idiv。
+ *   - 整数除法向零截断，所有可能非整除的算式统一走 idiv。
  *   - SAVESTR 无引擎通道，沿用战斗模块约定，以 callname 承载名字。
- *   - @SHIELD_MAGIC 没有形参，却声明了私有 TARGET_TYPE；其初值恒 0，三个
+ *   - shield_magic 没有形参，却声明了私有 TARGET_TYPE；其初值恒 0，三个
  *     分支均不可达。这里保留这个行为，不把调用者的 target_type 偷渡进去。
- *   - @SLEEP_MAGIC 第 467/545 行读取全局 Y，但两个调用点在施法前都没有为它
+ *   - sleep_magic 读取全局 Y，但两个调用点在施法前都没有为它
  *     建立本次语义；显式状态迁移后按数值默认值 0 保留其输出分支。它不影响数值。
- *   - @TELEPORT_MAGIC 第 431 行把 RAND:100 写进 CFLAG:B:3（公开自慰经验），
- *     虽与注释不符仍按原作保留，并经 train 域门面写入。
+ *   - teleport_magic 把 RAND:100 写进 CFLAG:B:3（公开自慰经验），
+ *     虽与注释不符仍有意保留，并经 train 域门面写入。
  */
 
 'use strict';
@@ -79,7 +79,7 @@ function talent(cid, index) {
   return era.get(`talent:${cid}:${index}`) || 0;
 }
 
-/** @MAGIC_DAMAGE_CAP：等级差调整封顶，最低效果为 1。 */
+/** magic_damage_cap：等级差调整封顶，最低效果为 1。 */
 function magic_damage_cap(chara_lv, enemy_lv, damage, dmg_cap) {
   let cap_bonus = chara_lv - enemy_lv;
   if (cap_bonus <= -100) {
@@ -92,7 +92,7 @@ function magic_damage_cap(chara_lv, enemy_lv, damage, dmg_cap) {
   return damage <= 0 ? 1 : damage;
 }
 
-/** @MAGIC_BONUS_C_TO_M：角色对怪物的种族、畏怖与 Boss 补正。 */
+/** magic_bonus_c_to_m：角色对怪物的种族、畏怖与 Boss 补正。 */
 function magic_bonus_c_to_m(cid, damage, monster_head) {
   if (talent(cid, 314) === 1 || talent(cid, 314) === 7) {
     damage += idiv(damage, 2);
@@ -124,7 +124,7 @@ function magic_bonus_c_to_m(cid, damage, monster_head) {
   return damage;
 }
 
-/** @MAGIC_BONUS_M_TO_C：怪物对角色的 Boss、耐性、减益与畏怖补正。 */
+/** magic_bonus_m_to_c：怪物对角色的 Boss、耐性、减益与畏怖补正。 */
 function magic_bonus_m_to_c(cid, damage, monster_head) {
   if (e_get(monster_head + 8) === 1) {
     damage += idiv(damage, 2);
@@ -167,7 +167,7 @@ function magic_bonus_m_to_c(cid, damage, monster_head) {
   return damage;
 }
 
-/** @MAGIC_BONUS_C_TO_C：角色对角色的施法者种族、目标耐性与施法者减益补正。 */
+/** magic_bonus_c_to_c：角色对角色的施法者种族、目标耐性与施法者减益补正。 */
 function magic_bonus_c_to_c(cid, damage, defender) {
   if (talent(cid, 314) === 1 || talent(cid, 314) === 7) {
     damage += idiv(damage, 2);
@@ -185,7 +185,7 @@ function magic_bonus_c_to_c(cid, damage, defender) {
         era.print('魔法耐性！　');
       }
     }
-    // 原作第 360 行检查的是施法者 CHARA，而非 DEF_CHARA。
+    // 检查的是施法者 CHARA，而非 DEF_CHARA。
     if (talent(cid, 253)) {
       damage -= idiv(damage, 5);
     }
@@ -217,7 +217,7 @@ async function apply_magic_scatter(target_type, a, b) {
   }
 }
 
-/** @MAGIC_SELECT：选择普通魔法。 */
+/** magic_select：选择普通魔法。 */
 async function magic_select(target_type, a, b, rand = default_rand) {
   if (
     ((target_type === 1 || target_type === 4) && !talent(a, 241)) ||
@@ -240,7 +240,7 @@ async function magic_select(target_type, a, b, rand = default_rand) {
   return [0, 3, 2, 1, 4, 5, 5][magic_lv];
 }
 
-/** @SHAMAN_SELECT：选择咒术。 */
+/** shaman_select：选择咒术。 */
 async function shaman_select(target_type, a, b, rand = default_rand) {
   if (
     ((target_type === 1 || target_type === 4) && !talent(a, 250)) ||
@@ -263,7 +263,7 @@ async function shaman_select(target_type, a, b, rand = default_rand) {
   return [0, 3, 7, 1, 8, 9, 9][magic_lv];
 }
 
-/** @TELEPORT_MAGIC：重伤时脱离战斗。 */
+/** teleport_magic：重伤时脱离战斗。 */
 async function teleport_magic(
   target_type,
   a,
@@ -299,13 +299,13 @@ async function teleport_magic(
     }
     await print_wait(`${name_of(b)}在危机关头使出传送术脱离了！`);
     add_base(b, 1, -10);
-    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3，原作第 431 行
+    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3
     return 999;
   }
   return 0;
 }
 
-/** @SLEEP_MAGIC：睡眠削减怪物攻击或角色攻击力。 */
+/** sleep_magic：睡眠削减怪物攻击或角色攻击力。 */
 async function sleep_magic(target_type, a, b, rand = default_rand) {
   let damage;
   if (target_type === 1) {
@@ -319,7 +319,7 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
     if (value < 0) {
       await print_wait('怪物完全睡着了…');
     } else {
-      await print_wait('咒语的效果消失了'); // 原作 Y 默认 0，文件头
+      await print_wait('咒语的效果消失了'); // Y 默认 0，文件头
     }
     return 0;
   }
@@ -367,7 +367,7 @@ function kill_monsters(a, b, damage) {
   return 0;
 }
 
-/** @ENERGY_BOLT_MAGIC：魔法箭。 */
+/** energy_bolt_magic：魔法箭。 */
 async function energy_bolt_magic(target_type, a, b) {
   let damage;
   if (target_type === 1) {
@@ -376,7 +376,7 @@ async function energy_bolt_magic(target_type, a, b) {
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 5, b);
     damage -= idiv(e_get(b + 1), 20);
     damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);
-    // 过量击杀按现存怪物数收口（kill_monsters 内 min）：怪物数不跌破 0
+    // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0
     const killed = kill_monsters(a, b, damage);
     await print_wait(
       killed <= 0 ? '魔法箭好像完全没有效果' : `魔法箭贯穿了${killed}只怪物！`,
@@ -409,7 +409,7 @@ async function energy_bolt_magic(target_type, a, b) {
   return 0;
 }
 
-/** @ENERGY_DRAIN_MAGIC：吸取气力并按原作回复体力。 */
+/** energy_drain_magic：吸取气力并回复体力。 */
 async function energy_drain_magic(target_type, a, b) {
   let damage;
   if (target_type === 1) {
@@ -456,7 +456,7 @@ async function energy_drain_magic(target_type, a, b) {
   return 0;
 }
 
-/** @FIREBALL_MAGIC：火球术。 */
+/** fireball_magic：火球术。 */
 async function fireball_magic(target_type, a, b) {
   let damage;
   if (target_type === 1) {
@@ -500,7 +500,7 @@ async function fireball_magic(target_type, a, b) {
   return 0;
 }
 
-/** @HEAL_MAGIC：治疗角色队伍或增加怪物数量。 */
+/** heal_magic：治疗角色队伍或增加怪物数量。 */
 async function heal_magic(target_type, a, b) {
   let damage;
   if (target_type === 1 || target_type === 4) {
@@ -540,7 +540,7 @@ async function heal_magic(target_type, a, b) {
   if (target_type !== 3) {
     return 0;
   }
-  // 原作第 895 行的条件方向如此：低于六成反而直接返回。
+  // 条件方向如此：低于六成反而直接返回。
   if (idiv(get_base(b, 0) * 100, era.get(`maxbase:${b}:0`) || 1) < 60) {
     return 0;
   }
@@ -552,12 +552,12 @@ async function heal_magic(target_type, a, b) {
   return 0;
 }
 
-/** @SHIELD_MAGIC：原作无参函数的私有 TARGET_TYPE 恒 0，故无效果。 */
+/** shield_magic：无参函数的私有 TARGET_TYPE 恒 0，故无效果。 */
 async function shield_magic() {
   return 0;
 }
 
-/** @CURSE_MAGIC：诅咒削减怪物防御或角色防御力。 */
+/** curse_magic：诅咒削减怪物防御或角色防御力。 */
 async function curse_magic(target_type, a, b, rand = default_rand) {
   let damage;
   if (target_type === 1) {
@@ -569,14 +569,14 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
     e_set(b + 3, value);
     if (value <= 0) {
       await print_wait('怪物完全被诅咒了…');
-      e_set(b, 1); // 原作 E:C，调用点的 C 与 B 同为怪物列头
+      e_set(b, 1); // E:C，调用点的 C 与 B 同为怪物列头
     } else {
       await print_wait('怪物仍然被诅咒着…');
     }
     return 0;
   }
   if (target_type === 2) {
-    // 原作第 1003 行无 FLAG:5 守卫。
+    // 此处打印无 FLAG:5 检查。
     await era.printAndWait(`${monster_name(b)}咏唱了诅咒术！`);
     damage = magic_bonus_m_to_c(a, e_get(b + 1) + get_cflag(0, 9), b);
     damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 200);
@@ -609,7 +609,7 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
   return 0;
 }
 
-/** @MIND_DRAIN_MAGIC：吸取气力并回复施法者气力。 */
+/** mind_drain_magic：吸取气力并回复施法者气力。 */
 async function mind_drain_magic(target_type, a, b) {
   let damage;
   if (target_type === 1) {
@@ -658,7 +658,7 @@ async function mind_drain_magic(target_type, a, b) {
   return 0;
 }
 
-/** @LV_DRAIN_MAGIC：吸取经验；角色经验为负时同步等级与四维。 */
+/** lv_drain_magic：吸取经验；角色经验为负时同步等级与四维。 */
 async function lv_drain_magic(target_type, a, b) {
   let damage;
   if (target_type === 1) {
@@ -676,7 +676,7 @@ async function lv_drain_magic(target_type, a, b) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了经验吸取！`);
-    // 原作第 1217 行确实调用 C_TO_M，而非 M_TO_C。
+    // 确实调用 magic_bonus_c_to_m，而非 magic_bonus_m_to_c。
     damage = magic_bonus_c_to_m(a, e_get(b + 1) + get_cflag(0, 9), b);
     damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 400);
     await apply_level_drain(a, damage);
@@ -703,7 +703,7 @@ async function lv_drain_magic(target_type, a, b) {
   } else {
     add_exp(defender, -damage);
     add_base(defender, 0, -damage * 10);
-    await chara_lv_check(defender); // 第 1296-1306 行的手动降级整段在原作被注释
+    await chara_lv_check(defender); // 手动降级整段被注释掉，不移植
   }
   add_exp(caster, idiv(damage, 2));
   await print_wait(`${name_of(caster)}得到${idiv(damage, 2)}经验值！`);
@@ -729,7 +729,7 @@ async function apply_level_drain(cid, damage) {
   await chara_lv_check(cid);
 }
 
-/** @MAGIC_USE：按选择结果分发法术。 */
+/** magic_use：按选择结果分发法术。 */
 async function magic_use(
   spell,
   target_type,
@@ -752,7 +752,7 @@ async function magic_use(
   return calls[spell] ? calls[spell]() : 0;
 }
 
-/** @MAGIC：普通魔法、咒术、法术三段调度。 */
+/** magic：普通魔法、咒术、法术三段调度。 */
 async function magic(
   target_type = 0,
   a = 0,

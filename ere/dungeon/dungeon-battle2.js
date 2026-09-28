@@ -1,23 +1,23 @@
 /**
  * @file 单挑·迎击与潜入（issue #175，阶段 3 H6）：勇者与元勇者的战斗。
  *
- * 与 DUNGEON_BATLLE（ere/dungeon/dungeon-battle.js）是两套战斗：那边的
- * @DUNGEON_PARTY_BATTLE 是侵攻勇者 vs 迷宫怪物，这边是**迎击**（勇者 vs
- * 元勇者/奴隶，@DUNGEON 迎击臂 CFLAG:1 == 3 时调用）。防御怪物列（E:0-299）
- * 在本战斗里承载「奴隶的援护怪物」（:71-86 生成，恒 boss 化一只）。
+ * 与 ere/dungeon/dungeon-battle.js 是两套战斗：那边的
+ * dungeon_party_battle 是侵攻勇者 vs 迷宫怪物，这边是**迎击**（勇者 vs
+ * 元勇者/奴隶，run_dungeon 迎击分支 CFLAG:1 == 3 时调用）。防御怪物列（E:0-299）
+ * 在本战斗里承载「奴隶的援护怪物」（生成时恒 boss 化一只）。
  *
- * 移植说明（有意偏离，均注明依据；通用条目见 dungeon-battle.js 文件头）：
- *   - 原作 RETURN 的多值出口（RETURN 2 时以全局 B 带出败者号）改为返回
- *     `{ result, loser }`（#5 决议第六条：全局换手显式传参）；@DUNGEON 的
- *     消费点据此取 battle2.loser（原作 :569 的 B）；
- *   - @SPEED_PLUS2 的「A/B 换手查装备」（:620-630，原作靠改写全局 A 让
- *     EQUIP_CHECK 查对手）改为对两人各查一次；
- *   - @DUEL_ATTACK 的 X:1（:675-681 的 3/4）无读者；随后 CALL MAGIC
+ * 说明（有意偏离，均注明依据；通用条目见 dungeon-battle.js 文件头）：
+ *   - RETURN 的多值出口（RETURN 2 时以全局 B 带出败者号）改为返回
+ *     `{ result, loser }`（#5 决议第六条：全局换手显式传参）；run_dungeon 的
+ *     消费点据此取 battle2.loser（B，败者号）；
+ *   - speed_plus2 的「A/B 换手查装备」（靠改写全局 A 让 equip_check
+ *     查对手的写法）改为对两人各查一次；
+ *   - duel_attack 的 X:1（3/4）无读者；随后 CALL magic
  *     省略参数，TARGET_TYPE 因此为 0。#343 显式传 A/B，但保留这两个缺陷；
- *   - :967 的「奇襲成功！！」是原作漏译（同函数 :716 已译「偷袭成功！！」），
+ *   - 「奇襲成功！！」是漏译（同函数已译「偷袭成功！！」），
  *     按 #60 归一为简体「奇袭成功！！」；
- *   - %SHE(ARG)% / %阴核(ARG)%（魔改新增/文本校正.ERB 的三行纯函数）
- *     随本票内联（dungeon-battle.js 的 she 与本文件的阴核词）。
+ *   - %SHE(ARG)% / %阴核(ARG)%（三行纯函数）
+ *     已内联（dungeon-battle.js 的 she 与本文件的阴核词）。
  */
 
 'use strict';
@@ -42,12 +42,12 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** 阴核(ARG) 称呼（魔改新增/文本校正.ERB :9-15，随本票内联） */
+/** 阴核(ARG) 称呼（已内联） */
 function clitoris_word(cid) {
   return (era.get(`talent:${cid}:122`) || 0) !== 0 ? '阴茎' : '阴核';
 }
@@ -55,13 +55,13 @@ function clitoris_word(cid) {
 // —— 存根层（#175 登记）——
 
 /**
- * @PC_RYOU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：败者被凌辱的演出
+ * pc_ryou（#182 H13）：败者被凌辱的演出
  * （对人格斗败北，FLAG:5 & 1 配置位）。真身在 ere/kojo/kojo-dungeon-ravish
  * .js，经模块对象调用。
- * @param {number} arg0 魔王側（原作 ARG:0）
- * @param {number} arg1 勇者側（原作 ARG:1）
+ * @param {number} arg0 魔王側
+ * @param {number} arg1 勇者側
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * @returns {Promise<void>} 无 RESULT 消费
  */
 async function pc_ryou(arg0, arg1, rand) {
   const mod = require('#/kojo/kojo-dungeon-ravish');
@@ -69,10 +69,10 @@ async function pc_ryou(arg0, arg1, rand) {
 }
 
 /**
- * @GET_TATOO（其他/TATOO.ERB:14-25）：列出角色身上 10..19 号位置的
+ * get_tatoo：列出角色身上 10..19 号位置的
  * 自定义刺青；狂王纹章不算在内。
  * @param {number} cid 角色 ID
- * @returns {number[]} 刺青位置（原作 RESULT:1..RESULT）
+ * @returns {number[]} 刺青位置（RESULT:1..RESULT）
  */
 function get_tatoo(cid) {
   const positions = [];
@@ -83,7 +83,7 @@ function get_tatoo(cid) {
   return positions;
 }
 
-/** @TATOO_LOCATE_NAME（其他/TATOO.ERB:28-49） */
+/** tatoo_locate_name */
 function tatoo_locate_name(locate) {
   return (
     {
@@ -100,10 +100,10 @@ function tatoo_locate_name(locate) {
 }
 
 /**
- * @SELECT_SLAVE（:513-573）：选出攻击的奴隶（或其配下怪物）。
- * @param {number} arg0 奴隶（原作 ARG:0）
- * @param {number} arg1 回合数（原作 ARG:1）
- * @returns {number} 原作 RETURN：奴隶号，或 99/199/299（选中配下怪物——
+ * select_slave：选出攻击的奴隶（或其配下怪物）。
+ * @param {number} arg0 奴隶
+ * @param {number} arg1 回合数
+ * @returns {number} 奴隶号，或 99/199/299（选中配下怪物——
  *   作者注释「怪物数のID（99,199,299）が返る」，主循环以 >= 99 分流）
  */
 function select_slave(arg0, arg1) {
@@ -148,9 +148,9 @@ function select_slave(arg0, arg1) {
 }
 
 /**
- * @SPEED_PLUS2（:577-632）：对人格斗的先攻后攻（正 = 奴隶侧先攻）。
- * @param {number} a 奴隶（原作全局 A）
- * @param {number} b 勇者（原作全局 B）
+ * speed_plus2：对人格斗的先攻后攻（正 = 奴隶侧先攻）。
+ * @param {number} a 奴隶（全局 A）
+ * @param {number} b 勇者（全局 B）
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {number} SPEED_X - SPEED_Y
  */
@@ -179,7 +179,7 @@ function speed_plus2(a, b, rand) {
   // 奴隶的装备（速度UP 3 / 速度減 12）
   speed_x += equip_check(a, 3);
   speed_x -= equip_check(a, 12);
-  // 原作换手全局 A 查勇者装备——ere 侧直接对 b 查
+  // 换手全局 A 查勇者装备的写法——ere 侧直接对 b 查
   speed_y += equip_check(b, 3);
   speed_y -= equip_check(b, 12);
 
@@ -187,12 +187,12 @@ function speed_plus2(a, b, rand) {
 }
 
 /**
- * @ATTACK_CHARA_EXTRA_DMG_BATTLE2（:897-993）：对人格斗的伤害补正
+ * attack_chara_extra_dmg_battle2：对人格斗的伤害补正
  * （失手/防御削減/弹药/连击/毒/耐性），气力伤害（MDMG × W:16）在此扣。
- * @param {number} arg0 攻击者（原作 ARG:0）
- * @param {number} dmg 伤害（原作 DMG）
+ * @param {number} arg0 攻击者
+ * @param {number} dmg 伤害（DMG）
  * @param {number} arg1 先后手（0 先手 / 1 后手 / 2 先制）
- * @param {number} arg2 被攻击者（原作 ARG:2）
+ * @param {number} arg2 被攻击者
  * @param {string} atktitle 称谓（勇者 / 奴隶 / 圣灵骑士）
  * @param {object} w 攻击者的装备记录（equip_database 已填充）
  * @param {(n: number) => number} rand RAND:N 随机源
@@ -227,7 +227,7 @@ function attack_chara_extra_dmg_battle2(
     max_wp,
   );
 
-  // DEF = 相手の防御力（单臂 IF，无 ELSE——条件假时 DEF 保持入参
+  // DEF = 相手の防御力（单分支 IF，无 ELSE——条件假时 DEF 保持入参
   // dmg 计算前的 0 初值语义，保留）
   let def = 0;
   if (chara(arg2).dungeon.防御力 < chara(arg0).dungeon.攻击力) {
@@ -274,7 +274,7 @@ function attack_chara_extra_dmg_battle2(
     );
   }
 
-  // 先手かつ奇襲なら防御値減少（:967 原作漏译「奇襲成功！！」，
+  // 先手かつ奇襲なら防御値減少（漏译「奇襲成功！！」，
   // 按 #60 归一简体，文件头）
   if (arg1 === 0 && (era.get(`talent:${arg0}:243`) || 0) === 1) {
     if ((settings & 32) !== 0) {
@@ -310,21 +310,21 @@ function attack_chara_extra_dmg_battle2(
 }
 
 /**
- * @DUEL_ATTACK（:637-791）：角色对角色的攻击。
- * @param {number} arg0 攻击者（原作 ARG:0）
+ * duel_attack：角色对角色的攻击。
+ * @param {number} arg0 攻击者
  * @param {number} arg1 先后手（0 先手 / 1 后手 / 2 先制）
- * @param {number} arg2 对象（原作 ARG:2）
+ * @param {number} arg2 对象
  * @param {number} arg3 战斗种别（0 勇者→奴隶 / 1 奴隶→勇者 / 2 圣灵→奴隶 /
  *   3 奴隶→圣灵）
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 999 = 中断（存根下不达）
+ * @returns {Promise<number>} 0 = 通常 / 999 = 中断（magic 存根期不可达）
  */
 async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
   // 一応代入（A/B/TARGET）
   era_flag.target = arg0;
 
-  // 肛门虫（TALENT:193）自动调教三连（:670 CALL COM13_AUTO——
+  // 肛门虫（TALENT:193）自动调教三连（CALL com13_auto——
   // 真身 ere/event/event-autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await battle.before_autotrain();
@@ -335,10 +335,10 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
 
   // X:1 = 3/4，但后续没有读者。
   const reverse_ab = arg3 === 0 || arg3 === 2;
-  // 原作在 X:1 = 3 时交换 A/B。
+  // X:1 = 3 时交换 A/B。
   const magic_a = reverse_ab ? arg2 : arg0;
   const magic_b = reverse_ab ? arg0 : arg2;
-  // CALL MAGIC 省略形参，TARGET_TYPE 按 ERB 规则取 0。
+  // CALL magic 省略形参，TARGET_TYPE 因此取 0。
   if ((await battle.magic(0, magic_a, magic_b, rand, move_ctx)) === 999) {
     return 999;
   }
@@ -384,8 +384,8 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     chara(arg0).chara.武装 = 40; // CFLAG:550（跨域写走门面，#71/#72）
   }
 
-  // 攻击演出（行内拼接）。原作 CALL PRINT_EQUIPTYPE_WEAPON
-  // （其他/EQUIP.ERB:784-790）自行从 W:0 解码前缀/识别号/強度——此处
+  // 攻击演出（行内拼接）。ere 不经 PRINT_EQUIPTYPE_WEAPON，
+  // 自行从 W:0 解码前缀/识别号/強度——此处
   // equip_database 尚未执行、w 三段还是 undefined，按同一解码取值
   const show = decode_equip_no(w.存储编号);
   if ((settings & 32) !== 0) {
@@ -445,7 +445,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
       return 0;
     }
     if (roll === 1) {
-      // 1/3でダメージ補正三分の一に（原作改 W:9 全局——ere 侧记在 w 上）
+      // 1/3でダメージ補正三分の一に（改 W:9 全局的写法——ere 侧记在 w 上）
       w.伤害强化 = Math.floor(w.伤害强化 / 3);
       era.print(`${atktitle}${punct}${name_of(arg0)}假装攻击……其实在放水……`);
     }
@@ -501,11 +501,11 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
 }
 
 /**
- * @SLAVE_MONSTER_ATTACK_TO_ENEMY（:794-842）：奴隶配下怪物的攻击（打勇者，
+ * slave_monster_attack_to_enemy：奴隶配下怪物的攻击（打勇者，
  * HP 与气力一起扣）。
- * @param {number} arg0 奴隶（原作 ARG:0）
- * @param {number} arg1 勇者（原作 ARG:1）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} arg0 奴隶
+ * @param {number} arg1 勇者
+ * @returns {Promise<number>} 恒 return 0
  */
 async function slave_monster_attack_to_enemy(arg0, arg1) {
   const settings = era.get('flag:5') || 0;
@@ -566,10 +566,10 @@ async function slave_monster_attack_to_enemy(arg0, arg1) {
 }
 
 /**
- * @SLAVE_MONSTER_ATTACK_TO_SLAVE（:846-894）：勇者配下怪物的攻击（打奴隶）。
- * @param {number} arg0 奴隶（原作 ARG:0，被打方）
- * @param {number} arg1 勇者（原作 ARG:1，配下方）
- * @returns {Promise<number>} 原作 RETURN 0
+ * slave_monster_attack_to_slave：勇者配下怪物的攻击（打奴隶）。
+ * @param {number} arg0 奴隶（被打方）
+ * @param {number} arg1 勇者（配下方）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function slave_monster_attack_to_slave(arg0, arg1) {
   const settings = era.get('flag:5') || 0;
@@ -630,10 +630,10 @@ async function slave_monster_attack_to_slave(arg0, arg1) {
 }
 
 /**
- * @DEATH_CHECK2（:996-1055）：对人格斗的中断判定。
- * @param {number} arg0 魔王侧（奴隶；原作 ARG:0）
- * @param {number} arg1 勇者侧（原作 ARG:1）
- * @returns {number} 原作 RETURN：0 = 继续 / 1 = 魔王侧退场 / 2 = 勇者退场
+ * death_check2：对人格斗的中断判定。
+ * @param {number} arg0 魔王侧（奴隶）
+ * @param {number} arg1 勇者侧
+ * @returns {number} 0 = 继续 / 1 = 魔王侧退场 / 2 = 勇者退场
  */
 function death_check2(arg0, arg1) {
   // 勇者死亡判定
@@ -708,11 +708,11 @@ function death_check2(arg0, arg1) {
 }
 
 /**
- * @SPY_BATTLE（:1204-1298）：潜入工作的单项（谜药 / 按摩 / 泻药）。
- * @param {number} arg0 潜入奴隶（原作 ARG:0）
- * @param {number} arg1 对象勇者（原作 ARG:1）
+ * spy_battle：潜入工作的单项（谜药 / 按摩 / 泻药）。
+ * @param {number} arg0 潜入奴隶
+ * @param {number} arg1 对象勇者
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<void>} 原作 RETURN 0
+ * @returns {Promise<void>} 恒 return 0
  */
 async function spy_battle(arg0, arg1, rand) {
   const settings = era.get('flag:5') || 0;
@@ -814,7 +814,7 @@ async function spy_battle(arg0, arg1, rand) {
   chara(arg1).dungeon.体力 -= hdmg;
   chara(arg1).dungeon.气力 -= mdmg;
 
-  // CALL KARMA, ARG:1, KDMG
+  // CALL karma, ARG:1, KDMG
   const { karma } = require('#/dungeon/dungeon');
   karma(arg1, kdmg);
 
@@ -824,13 +824,13 @@ async function spy_battle(arg0, arg1, rand) {
 }
 
 /**
- * @DUNGEON_SPY（:1058-1200）：潜入中奴隶的特别行动（不直接攻击，专念
- * 工作活动）。@DUNGEON 的 CFLAG:530 == 1 且 CFLAG:1 == 3 提前返回内调用
- * （dungeon.js :29-30 的接入点），@DUNGEON_BATTLE2_PARTY 的
+ * dungeon_spy：潜入中奴隶的特别行动（不直接攻击，专念
+ * 工作活动）。run_dungeon 的 CFLAG:530 == 1 且 CFLAG:1 == 3 提前返回内调用
+ * （dungeon.js 的接入点），dungeon_battle2_party 的
  * CFLAG:500 == 4 分支也调这里。
- * @param {number} arg0 潜入奴隶（原作 ARG:0）
+ * @param {number} arg0 潜入奴隶
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_spy(arg0, rand) {
   const rand_n = rand ?? default_rand;
@@ -849,7 +849,7 @@ async function dungeon_spy(arg0, rand) {
     era.drawLine();
   }
 
-  // === パーティを裏切って陥落させる処理（:1085-1181）===
+  // === パーティを裏切って陥落させる処理 ===
   // もう一人の仲間
   const enemy =
     arg0 === (era.get(`cflag:${leader}:531`) || 0)
@@ -899,7 +899,7 @@ async function dungeon_spy(arg0, rand) {
 
   const roll = rand_n(100);
   if (roll < betray) {
-    // === 背叛分支（:1108-1179）===
+    // === 背叛分支 ===
     if (
       (era.get(`cflag:${arg0}:151`) || 0) >= 100 &&
       ((era.get(`talent:${arg0}:160`) || 0) !== 0 ||
@@ -943,7 +943,7 @@ async function dungeon_spy(arg0, rand) {
       era.print('的样子，觉得正是时机，拔出了武器！');
       era.print('面对一脸茫然的勇者，');
       era.print(`${name_of(arg0)}`);
-      // 刺青炫耀。标签固定取第一项而非随机抽中项，是原作行为。
+      // 刺青炫耀。标签固定取第一项而非随机抽中项，有意保留。
       const tatoos = get_tatoo(arg0);
       if (tatoos.length > 0 && (tatoos[0] !== 10 || tatoos.length >= 2)) {
         const picked =
@@ -984,7 +984,7 @@ async function dungeon_spy(arg0, rand) {
       chara(leader).invasion.回城标志 = 0; // CFLAG:507（门面）
       chara(leader).invasion.状态 = 0;
       party_del(leader);
-      era.println(); // 真空行：1150 行的 PRINTFORMW 已收尾（1158 行的 PRINTL 落在空行上）
+      era.println(); // 真空行：PRINTFORMW 已收尾（PRINTL 落在空行上）
       // 要让其回来吗
       era.print(`要让${name_of(arg0)}`);
       if (enemy !== 0 && (era.get(`cflag:${enemy}:500`) || 0) === 4) {
@@ -1008,7 +1008,7 @@ async function dungeon_spy(arg0, rand) {
     era.println();
   }
 
-  // === 工作活动（:1184-1197）===
+  // === 工作活动 ===
   await spy_battle(arg0, leader, rand_n);
 
   // 仲間A / 仲間B（魔王でない、かつ潜入奴隷でもない場合）
@@ -1032,26 +1032,26 @@ async function dungeon_spy(arg0, rand) {
 }
 
 /**
- * @DUNGEON_BATTLE2_PARTY（:2-510）：勇者与元勇者（迎击方）的战斗主流程。
+ * dungeon_battle2_party：勇者与元勇者（迎击方）的战斗主流程。
  *
- * @param {number} arg0 迎击队长（原作 ARG:0）
+ * @param {number} arg0 迎击队长
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<{result: number, loser: number}>} 原作 RETURN 与全局 B：
+ * @returns {Promise<{result: number, loser: number}>} RETURN 与全局 B：
  *   result 1 = 迎击方败北（CFLAG:1 == 0 或 9）/ 2 = 勇者侧败者（loser =
- *   败者号，@DUNGEON :569 的 B）/ 0 = 无事结束。loser 仅在 result == 2 时
- *   有意义（显式传参替代原作全局 B 换手，#5 决议第六条）
+ *   败者号，run_dungeon 读的 B）/ 0 = 无事结束。loser 仅在 result == 2 时
+ *   有意义（显式传参替代全局 B 换手，#5 决议第六条）
  */
 async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
   const rand_n = rand ?? default_rand;
   const settings = era.get('flag:5') || 0;
 
-  // === 潜入中は直接戦闘ではなく工作活動（:24-27）===
+  // === 潜入中は直接戦闘ではなく工作活動 ===
   if ((era.get(`cflag:${arg0}:500`) || 0) === 4) {
     await dungeon_spy(arg0, rand_n);
     return { result: 0, loser: 0 };
   }
 
-  // === 対象選択フェイズ（:29-49；リーダーのみを探す）===
+  // === 対象選択フェイズ（リーダーのみを探す）===
   let enemy = 0;
   for (const count of era.getAddedCharacters()) {
     if (count === 0 || chara(count).invasion.状态 !== 2) {
@@ -1071,7 +1071,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     break;
   }
 
-  // === 対象選択失敗時（:51-62）===
+  // === 対象選択失敗時 ===
   if (enemy === 0) {
     if ((settings & 32) !== 0) {
       if ((era.get(`cflag:${arg0}:507`) || 0) === 1) {
@@ -1084,11 +1084,11 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     return { result: 0, loser: 0 };
   }
 
-  // === 戦闘開始前の準備（:64-100）===
+  // === 戦闘開始前の準備 ===
   const sidea = era.get(`cflag:${enemy}:531`) || 0;
   const sideb = era.get(`cflag:${enemy}:532`) || 0;
 
-  // 奴隷を援護する怪物（:71-86；前三列，恒 boss 化一只）
+  // 奴隷を援護する怪物（前三列，恒 boss 化一只）
   for (let turn = 0; turn < 3; turn += 1) {
     let local = (chara(arg0).dungeon.侵攻阶层 - 1) * 10 + 100 + rand_n(5);
     if (chara(arg0).dungeon.侵攻阶层 >= 8 && rand_n(10) === 0) {
@@ -1109,7 +1109,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     era.drawLine();
   }
 
-  // 弾の補充（:93-100；四方各 7）
+  // 弾の補充（四方各 7）
   era.set(`cflag:${arg0}:571`, 7);
   era.set(`cflag:${enemy}:571`, 7);
   if (sidea > 0) {
@@ -1119,9 +1119,9 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     era.set(`cflag:${sideb}:571`, 7);
   }
 
-  // === 先制攻撃フェイズ（:102-170）===
-  // 奴隷側の先制（:105-138；現在奴隷同士でパーティーを組まないため
-  // 最初の一人で抜ける——:136 的 BREAK）
+  // === 先制攻撃フェイズ ===
+  // 奴隷側の先制（現在奴隷同士でパーティーを組まないため
+  // 最初の一人で抜ける——BREAK）
   for (let turn = 0; turn < 3; turn += 1) {
     let atker;
     if (turn === 0) {
@@ -1138,7 +1138,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     }
     // 対象決定（现在の仕様ではリーダーのみを狙う）
     const defer = battle.select_atker(enemy, turn);
-    era_flag.target = defer; // B = RESULT（原作全局 B）
+    era_flag.target = defer; // B = RESULT（全局 B）
     if (
       (era.get(`talent:${atker}:252`) || 0) === 1 &&
       (era.get(`cflag:${atker}:503`) || 0) & 32
@@ -1153,7 +1153,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     break;
   }
 
-  // 勇者側の先制（:141-170）
+  // 勇者側の先制
   for (let turn = 0; turn < 3; turn += 1) {
     let defer;
     if (turn === 0) {
@@ -1168,7 +1168,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     if (defer <= 0) {
       continue;
     }
-    // SELECT_SLAVE 的注释段（:155-160）——现在の仕様では奴隷配下が盾に
+    // select_slave 的注释段——现在の仕様では奴隷配下が盾に
     // なるためコメントアウト，结构保留不移植
     if (
       (era.get(`talent:${defer}:252`) || 0) === 1 &&
@@ -1183,9 +1183,9 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     }
   }
 
-  // === メインフェイズ（:174-471）===
+  // === メインフェイズ ===
   for (let turn = 0; turn < 20; turn += 1) {
-    // 時間切れ（:176-181）
+    // 時間切れ
     if (turn > 15) {
       if ((settings & 32) !== 0) {
         era.print(`${name_of(arg0)}逃跑了………`);
@@ -1194,7 +1194,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
       break;
     }
 
-    // パラメータ表示（:183-333；FLAG:5 & 32，近似同 BATLLE）
+    // パラメータ表示（FLAG:5 & 32，近似同 dungeon-battle 版）
     if ((settings & 32) !== 0) {
       era.drawLine();
       era.print(` ${name_of(arg0)}`);
@@ -1230,7 +1230,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
       era.drawLine();
     }
 
-    // 戦闘を行うキャラの選択（:335-345）
+    // 戦闘を行うキャラの選択
     const defer = battle.select_atker(enemy, turn);
     let atker = select_slave(arg0, turn);
     era_flag.target = atker; // A = RESULT
@@ -1285,7 +1285,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
       continue;
     }
 
-    // === 配下怪物データの取得·怪物の攻撃（:393-401）===
+    // === 配下怪物データの取得·怪物の攻撃 ===
     if ((era.get(`cflag:${atker}:570`) || 0) >= 100) {
       monster_data(
         era.get(`cflag:${atker}:570`) || 0,
@@ -1313,7 +1313,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
       era.drawLine();
     }
 
-    // === 先攻後攻決定（:412-459；ATKER = 奴隷 / DEFER = 勇者）===
+    // === 先攻後攻決定（ATKER = 奴隷 / DEFER = 勇者）===
     const speed = speed_plus2(atker, defer, rand_n);
     let interrupted = false;
     if (speed > 0) {
@@ -1329,7 +1329,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
       if (dc === 1) {
         break;
       }
-      // 勇者後攻（SIF RESULT == 0——DEATH_CHECK2 返回 0 时才打）
+      // 勇者後攻（SIF RESULT == 0——death_check2 返回 0 时才打）
       if (dc === 0) {
         if ((await duel_attack(defer, 1, atker, 0, rand_n, move_ctx)) === 999) {
           interrupted = true;
@@ -1383,7 +1383,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     chara(defer).dungeon.气力 -= rand_n(20);
   }
 
-  // === 装備の回復（:473-484；四方）===
+  // === 装備の回復（四方）===
   await weapon_restore(arg0);
   await weapon_restore(enemy);
   let mate = era.get(`cflag:${enemy}:531`) || 0;
@@ -1395,7 +1395,7 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     await weapon_restore(mate);
   }
 
-  // === 返り値（:486-510；B = 败者号，显式传出）===
+  // === 返り値（B = 败者号，显式传出）===
   era_flag.target = arg0; // A = ARG:0
   if (chara(arg0).invasion.状态 === 0) {
     era.print(`${name_of(arg0)}败给了勇者，回到了魔王身边。`);

@@ -151,7 +151,7 @@ export default [
     must_mention: '骑士攻防重算',
   },
   {
-    desc: 'M10317 DUEL_ATTACK 攻击演出的解码回退（show 改空对象，+undefined 复现）',
+    desc: 'M10317 duel_attack 攻击演出的解码回退（show 改空对象，+undefined 复现）',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: 'const show = decode_equip_no(w.存储编号);',
     replace: 'const show = {};',

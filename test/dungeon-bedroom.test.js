@@ -1,19 +1,19 @@
 /**
- * @BEDROOM_BATTLE_MALE 的行为测试（#548 / S7：男魔王寝室战演出）。
+ * bedroom_battle_male 的行为测试（#548 / S7：男魔王寝室战演出）。
  *
  * 缝 = test/helpers/era-fixture.js。
  *
- * MODE 组成（:1048-1053）：TALENT:0:122（魔王男人位）非 0 → +2；
- * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 文案相同（原作三支同文），
+ * MODE 组成：TALENT:0:122（魔王男人位）非 0 → +2；
+ * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 文案相同（三支同文），
  * CASE 0 独有「从睡梦中醒了过来」。
  *
- * **本函数只返回台词、不打印**（#548 订正）：调用方 :209 的 PRINTFORM 与本体
- * :1056/:1058 的 PRINTFORM 都不换行，两句是同一显示行——调用方合成一次输出。
+ * **本函数只返回台词、不打印**（#548 订正）：调用方与本体的 PRINTFORM 都
+ * 不换行，两句是同一显示行——调用方合成一次输出。
  *
  * 覆盖：
  *   - 四个 MODE 各自的返回值（表驱动）＋「不打印」；
  *   - %SAVESTR:0% / %SAVESTR:(ARG:0)% 的 callname 承载（#5 决议）；
- *   - run_dungeon 挑战臂的**单行**合成（MODE 1 时前半句与后半句同句）。
+ *   - run_dungeon 挑战分支的**单行**合成（MODE 1 时前半句与后半句同句）。
  */
 
 'use strict';
@@ -63,7 +63,7 @@ for (const [male, desire, expected, label] of MODE_TABLE) {
   });
 }
 
-test('边界：欲望恰为 8 不加档（> 8 判据）、恰为 0 的男人位走 MODE +2', async () => {
+test('边界：欲望恰为 8 不加档（> 8 判断条件）、恰为 0 的男人位走 MODE +2', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:0:122', 1);
   fixture.store.set('abl:0:11', 8);
@@ -76,7 +76,7 @@ test('边界：欲望恰为 8 不加档（> 8 判据）、恰为 0 的男人位�
   );
 });
 
-test('接线：run_dungeon 挑战臂把两句合成同一行（MODE 1）', async () => {
+test('接入：run_dungeon 挑战分支把两句合成同一行（MODE 1）', async () => {
   const fixture = setup_world();
   // 勇者 7：冒险者（TALENT:122）、侵攻中、第 9 层、侵攻度 50（一轮即达房间）
   fixture.store.set('talent:7:122', 1);
@@ -89,10 +89,10 @@ test('接线：run_dungeon 挑战臂把两句合成同一行（MODE 1）', async
     fixture.store.set(`base:${cid}:0`, 2000);
     fixture.store.set(`base:${cid}:1`, 1000);
   }
-  // 魔王欲望条件（:207 的三选一）：女魔王欲望 > 3 即可；再抬到 > 8 走 MODE 1
+  // 魔王欲望条件（三选一）：女魔王欲望 > 3 即可；再抬到 > 8 走 MODE 1
   fixture.store.set('abl:0:11', 9);
   const { run_dungeon } = fixture.load_module('dungeon/dungeon');
-  // 混合随机：WALK 计算要大（19/9 段与 10 段），RAND:4 恒 0 → 挑战臂
+  // 混合随机：WALK 计算要大（19/9 段与 10 段），RAND:4 恒 0 → 挑战分支
   const mixed = (n) => (n === 4 ? 0 : n - 1);
 
   await run_dungeon(7, mixed);
@@ -100,9 +100,9 @@ test('接线：run_dungeon 挑战臂把两句合成同一行（MODE 1）', async
   const texts = text_lines(fixture);
   assert(
     texts.includes('但贝尔仍是向魔王发起了挑战。'),
-    'RAND:4 == 0 → 挑战臂',
+    'RAND:4 == 0 → 挑战分支',
   );
-  // 的 PRINTFORM 与本体 :1058 的 PRINTFORM 都不换行 → 一句一行
+  // 的 PRINTFORM 与本体的 PRINTFORM 都不换行 → 一句一行
   assert.equal(
     texts.filter(
       (line) => line === '你察觉到了贝尔的气息。你察觉到了贝尔的气息。',

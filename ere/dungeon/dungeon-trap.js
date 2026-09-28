@@ -1,39 +1,39 @@
 /**
- * @file 迷宫陷阱（issue #176，阶段 3 H7）：@DUNGEON_TRAP 与全部陷阱段。
+ * @file 迷宫陷阱（issue #176，阶段 3 H7）：dungeon_trap 与全部陷阱段。
  *
- * 局部变量语义（:3-13 词汇表）：
+ * 局部变量语义（词汇表）：
  *   A = 受陷阱者（调用方掷选）   TRAP_COUNT = 陷阱试行计数
  *   TRAP_NUM = 陷阱的 FLAG 槽号（300-308/310-318/320-328 = 各层 A/B/C）
  *   TRAP_ID = 陷阱的道具编号（60-85、87）   TRAP_NOUSE = 未作动标志
  *   D:4 = 陷阱试行次数（装备「陷阱誘発」强度，调用方给出）
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 钉下）：名字承载一律 `callname:${id}:-1`
- *     （#5 决议），本文件 name_of 收口；
+ *     （#5 决议），统一走本文件 name_of；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand_n 掷出（缺省
  *     Math.random，run_dungeon 第二参透传——迷宫与陷阱共用同一随机源，
  *     #175 对比测试与 ENDING_2 e2e 的种子确定性依赖这一点）；
- *   - 原作全局 A / TARGET / RESULT / D:4 / D:20 的换手改显式传参与返回值
+ *   - 全局 A / TARGET / RESULT / D:4 / D:20 的换手改显式传参与返回值
  *     （#5 决议第六条）：A 与 D:4 → dungeon_trap 前两参；TARGET →
  *     era_flag.target；各陷阱段的 RETURN → 陷阱函数返回值（1 = 未作动，
  *     调用方据此跳过消耗与补货）；D:20（侵攻度）经 ctx 对象回写——
- *     TELEPORT 写、ONE_WAY/SHOOT 读，调用点（dungeon.js 陷阱段，原作
- *     DUNGEON.ERB :390-413）在
- *     调用后把 ctx.d20 收回 walk20，等价原作的全局 D 槽共享；
- *   - D:1（帰還フラグ，:331/:336/:388/:1052/:1064/:1072 六处 = 1）：全库
- *     无读者（#172 已核：DUNGEON.ERB:39 只清零，AGENT 版是死代码），
+ *     TELEPORT 写、ONE_WAY/SHOOT 读；调用点（dungeon.js 陷阱段）在
+ *     调用后把 ctx.d20 收回 walk20，等价于以全局 D 槽
+ *     共享侵攻度；
+ *   - D:1（帰還フラグ，六处写 1）：全库
+ *     无读者（#172 已核，AGENT 版是死代码），
  *     不落变量、注释留痕；
  *   - TIMES X, 0.80 / 1.30 → Math.floor(x * 0.8 / 1.3)（截断，技能手册
  *     math-etc.md「整数乘以小数」）；
- *   - SETCOLORBYNAME / RESETCOLOR（A_WORM :1211-1214、诈骗陷阱多处）：
- *     配色不做、注释留痕（#175 同款裁定——玩家可见的行序与文案 1:1）；
- *   - PLAYER = 0（A_WORM :1217、LOVE_BUG :1279）：_AUTO 本体不读（只读
+ *   - SETCOLORBYNAME / RESETCOLOR（A_WORM 段与诈骗陷阱多处）：
+ *     配色不做、注释留痕（#175 同款结论——玩家可见的行序与文案完全一致）；
+ *   - PLAYER = 0（A_WORM / LOVE_BUG 段）：_AUTO 本体不读（只读
  *     TARGET），三连第三站的结算读（source-check.js 的
  *     player = era_flag.player → player_skill_check 连乘）——迷宫路径上
- *     1:1 不落变量、注释留痕（#175 先例）；
+ *     不落变量、注释留痕（#175 先例）；
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon.js 先例）；
- *   - KARMA（DARK_JUEL :1344）经函数内延迟 require 引用 dungeon.js 的
+ *   - KARMA（DARK_JUEL 段）经函数内延迟 require 引用 dungeon.js 的
  *     域内存根（避开循环初始化，#175 先例）；
  *   - BEFORE_AUTOTRAIN 经模块对象引用 dungeon-battle.js 的同名转发（该
  *     转发自 #508 起指向 ere/event/event-autotrain.js 的真身；原本只是
@@ -41,14 +41,14 @@
  *     COM50_AUTO 自 #500 起直调 ere/event/event-autotrain.js 的真身；
  *     CAMPAIGN_TRAP 是 #469 起的族真身；SUMMON_MONSTER 已复用
  *     monster-summon.js 真身；
- *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
+ *   - PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
  *     的拼接归并为一次 era.print（引擎 print 每调用一行，dungeon.js
  *     先例）；PRINTW/PRINTFORMW 是 print + 读键；
  *   - CFLAG:503 是位域（门面名「休憩」只覆盖位 0）：位 1 = 诅咒、位 3 =
  *     润滑（ヌルヌル）、位 6 = 落下、位 9 = 欲情——位操作一律裸寻址；
  *   - 诈骗陷阱的数值效果（MONEY/CFLAG:580/582 转移）整体在 FLAG:5 & 32
- *     守卫内（关日志时整个陷阱不触发）——保留现状；
- *   - RETURN 01（LOVE_BUG :1257）是十进制 1 的前导零写法，非八进制。
+ *     显示开关内（关日志时整个陷阱不触发）——保留现状；
+ *   - RETURN 01（LOVE_BUG 段）是十进制 1 的前导零写法，非八进制。
  */
 
 'use strict';
@@ -68,7 +68,7 @@ const battle = require('#/dungeon/dungeon-battle');
 const summon_mod = require('#/dungeon/monster-summon');
 
 /**
- * @CAMPAIGN_TRAP_{FLAG:400} 族：战役迷宫的陷阱槽读值（#469，决议 #7）。
+ * CAMPAIGN_TRAP_{FLAG:400} 族：战役迷宫的陷阱槽读值（#469，决议 #7）。
  * 键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款依据）；实现在
  * ere/page/page-campaign-1.js 注册。
  */
@@ -79,7 +79,7 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -92,14 +92,14 @@ function cbit(cid, idx, bit) {
 // —— 战役陷阱槽（#469 起族真身，归属见 docs/stub-registry.md）——
 
 /**
- * @CAMPAIGN_TRAP（CAMPAIGN_EVENT.ERB:203-212）：战役迷宫的陷阱槽读值。
+ * campaign_trap：战役迷宫的陷阱槽读值。
  *
- * 原作 RESULT 预置 0（非 -1）：CAMPAIGN_TRAP_1 的 SELECTCASE 对未登记的
- * trap_num 也是落 TRAP_ID = 0（CAMPAIGN_1.ERB:121 默认值），与「陷阱槽
- * 无陷阱」同值——DUNGEON_TRAP.ERB 的三处 `TRAP_ID < 0` 判据（:42-49 /
- * :60-69 / :67）因此在战役分支同样不可达（与非战役分支同构，era.get 也从不
+ * RESULT 预置 0（非 -1）：CAMPAIGN_TRAP_1 的 SELECTCASE 对未登记的
+ * trap_num 也是落 TRAP_ID = 0（默认值），与「陷阱槽
+ * 无陷阱」同值——本文件的三处 `TRAP_ID < 0` 判断条件因此在战役分支
+ * 同样不可达（与非战役分支同构，era.get 也从不
  * 产生负值）。
- * @param {number} trap_num FLAG 槽号（原作 ARG:0）
+ * @param {number} trap_num FLAG 槽号
  * @returns {Promise<number>} 该槽的陷阱 ID（FLAG:400 < 1 时恒 0）
  */
 async function campaign_trap(trap_num) {
@@ -114,10 +114,10 @@ async function campaign_trap(trap_num) {
 }
 
 /**
- * @TRAP_PRICE（:1460-1520）：陷阱的价格表（SIF 逐条 RETURN；:1520 兜底
- * 100——86 号空档与其余未登记 ID 都走兜底）。原作经全局 P 传参、RESULT
- * 返回；ere 侧改参数与返回值（#5 决议第六条）。
- * @param {number} p 陷阱的道具编号（原作 P）
+ * trap_price：陷阱的价格表（SIF 逐条 RETURN，末条
+ * 100——86 号空档与其余未登记 ID 都取 100）。经全局 P 传参、RESULT
+ * 返回的写法改为参数与返回值（#5 决议第六条）。
+ * @param {number} p 陷阱的道具编号
  * @returns {number} 价格
  */
 function trap_price(p) {
@@ -151,11 +151,11 @@ function trap_price(p) {
     85: 100,
     87: 100,
   };
-  return PRICES[p] ?? 100; // 兜底
+  return PRICES[p] ?? 100; // 未登记的默认价
 }
 
 /**
- * @DUNGEON_TRAP（:2-193）：陷阱处理主循环。
+ * dungeon_trap：陷阱处理主循环。
  *
  * 每轮试行：迎击方先补充陷阱（SLAVE_TRAP_SET），非侵攻勇者直接返回；
  * 按 A→B→C 槽（FLAG:300-308/310-318/320-328，槽号 = 层数 + 299/309/319）
@@ -165,15 +165,15 @@ function trap_price(p) {
  * 陷阱」配置（FLAG:5 位 6）开着时按价补回一个。全部试行结束后 WAIT。
  *
  * 全空槽的世界（新档 FLAG:300-328 全 0）不消费任何随机数——e2e 与对比
- * 测试的 PRNG 序列不因本函数换真身而漂移（TRAP_ID = 0 命中 ITEM:0 < 1
- * 分支，:94 的 ELSEIF 短路掉 RAND:20）。
+ * 测试的 PRNG 序列不因本函数换真身而改变（TRAP_ID = 0 命中 ITEM:0 < 1
+ * 分支，ELSEIF 链短路掉 RAND:20）。
  *
- * @param {number} a 受陷阱者（原作全局 A；调用方掷选）
- * @param {number} tries 试行次数（原作 D:4；装备「陷阱誘発」强度）
+ * @param {number} a 受陷阱者（全局 A；调用方掷选）
+ * @param {number} tries 试行次数（D:4；装备「陷阱誘発」强度）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
  * @param {{d20: number}} ctx 侵攻度 D:20 的共享槽（TELEPORT 写、
  *   ONE_WAY/SHOOT 读；调用点在返回后收回）
- * @returns {Promise<{d20: number}>} 原作 RETURN 0（ctx 随引用带回）
+ * @returns {Promise<{d20: number}>} 恒 return 0（ctx 随引用带回）
  */
 async function dungeon_trap(a, tries, rand, ctx) {
   const rand_n = rand ?? default_rand;
@@ -215,7 +215,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
       }
     }
 
-    // $TRAP_LOOP（:180-184 TRAP_NUM += 10 → < 330 则回到 :53）
+    // $TRAP_LOOP（TRAP_NUM += 10 → < 330 则回循环头）
     for (;;) {
       trap_id = era.get(`flag:${trap_num}`) || 0;
       if (place === 12) {
@@ -377,16 +377,16 @@ async function dungeon_trap(a, tries, rand, ctx) {
   return ctx;
 }
 
-// —— 26 个陷阱段（:196-1420）。签名统一 (a, rand_n, ctx)：a = 受者（原作
-//    全局 A）、rand_n = 随机源、ctx = { d20 }（侵攻度共享槽，文件头）。
-//    返回值 = 原作 RETURN（1 = 未作动——调用方跳过消耗与补货）。——
+// —— 26 个陷阱段。签名统一 (a, rand_n, ctx)：a = 受者（全局
+//    A）、rand_n = 随机源、ctx = { d20 }（侵攻度共享槽，文件头）。
+//    返回值 = RETURN（1 = 未作动——调用方跳过消耗与补货）。——
 
 /**
- * @PIT_TRAP（:196-262）：落穴（ITEM:60）。
+ * pit_trap：落穴（ITEM:60）。
  * @param {number} a 受者
  * @param {(n: number) => number} rand_n 随机源
  * @param {{d20: number}} ctx 侵攻度共享槽（本段不读写）
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function pit_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -472,8 +472,8 @@ async function pit_trap(a, rand_n) {
 }
 
 /**
- * @ARROW_TRAP（:265-310）：射箭陷阱（ITEM:61）。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * arrow_trap：射箭陷阱（ITEM:61）。
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function arrow_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -494,8 +494,8 @@ async function arrow_trap(a, rand_n) {
     }
     return 1;
   } else if (dice >= 80) {
-    // 要害（两倍 + 追加）——:283 先印两倍值、:284 再加追加值，
-    // 印追加时 DICE 已含本体（显示口径如此，保留）
+    // 要害（两倍 + 追加）——先印两倍值、再加追加值，
+    // 印追加时 DICE 已含本体（显示效果如此，保留）
     dice *= 2;
     if (show) {
       era.print(`${name}的要害被射中了，受到${dice}点伤害！ `);
@@ -513,7 +513,7 @@ async function arrow_trap(a, rand_n) {
       chara(a).dungeon.气力 -= 30;
     }
   } else {
-    // ——:298 印追加 {FLAG:85 * 10}（字面，与 :296 的 DICE 相加
+    // ——印追加 {FLAG:85 * 10}（字面，与 DICE 相加
     // 结果一致；保留字面）
     if (show) {
       era.print(`${name}受到${dice}点的伤害！`);
@@ -531,15 +531,15 @@ async function arrow_trap(a, rand_n) {
     }
   }
 
-  // 尾部空行在原作是注释态，不移植
+  // 尾部空行是注释态，不移植
 
   return 0;
 }
 
 /**
- * @TELEPORT_TRAP（:313-354）：传送陷阱（ITEM:62）。侵攻度 D:20 被重置
+ * teleport_trap：传送陷阱（ITEM:62）。侵攻度 D:20 被重置
  * （z < 20 时回本层起点 1，否则 RAND:100）——经 ctx.d20 写回调用方。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function teleport_trap(a, rand_n, ctx) {
   const settings = era.get('flag:5') || 0;
@@ -564,7 +564,7 @@ async function teleport_trap(a, rand_n, ctx) {
       era.print(`${name}被传送到这一层的起点了！ `);
     }
     ctx.d20 = 1; // D:20 = 1
-    // D:1 = 1（帰還フラグ）——全库无读者，不落变量（#172 裁定）
+    // D:1 = 1（帰還フラグ）——全库无读者，不落变量（#172 结论）
   } else {
     // 被传送走（侵攻度随机重置）
     if (show) {
@@ -591,8 +591,8 @@ async function teleport_trap(a, rand_n, ctx) {
   }
 
   // 的 PRINTL：**只在 FLAG:85 > 0 那支里是真空行**——那支的上一条
-  // 原作输出是 347 行的 PRINTFORML（已结束当前行），它落上去就是空行；
-  // FLAG:85 == 0 时它只收尾 334/341 行那串未换行的 `PRINTFORM`，
+  // 输出是 PRINTFORML（已结束当前行），它落上去就是空行；
+  // FLAG:85 == 0 时它只收尾那串未换行的 `PRINTFORM`，
   // 不产生空行（#597）
   if (diff > 0 && show) {
     era.println();
@@ -602,8 +602,8 @@ async function teleport_trap(a, rand_n, ctx) {
 }
 
 /**
- * @ONE_WAY_TRAP（:357-403）：单向通行陷阱（ITEM:63）。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * one_way_trap：单向通行陷阱（ITEM:63）。
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function one_way_trap(a, rand_n, ctx) {
   const settings = era.get('flag:5') || 0;
@@ -612,7 +612,7 @@ async function one_way_trap(a, rand_n, ctx) {
   const diff = era.get('flag:85') || 0;
 
   // 侵攻度不足 40 时不作动（不消耗：以 RETURN 1 实现，而非
-  // 原作注释态的 ITEM:63 += 1 帳尻合わせ）
+  // 注释态的 ITEM:63 += 1 帳尻合わせ）
   if (ctx.d20 < 40) {
     return 1;
   }
@@ -645,7 +645,7 @@ async function one_way_trap(a, rand_n, ctx) {
     era.print(`${name}迷路了… `);
   }
   era.set(`cflag:${a}:509`, 1);
-  // D:1 = 1——全库无读者，不落变量（#172 裁定）
+  // D:1 = 1——全库无读者，不落变量（#172 结论）
   if (show) {
     era.print(`${name}心急如焚 （气力-${20 + diff}） `);
   }
@@ -666,8 +666,8 @@ async function one_way_trap(a, rand_n, ctx) {
 }
 
 /**
- * @LOVE_GAS_TRAP（:406-459）：催淫陷阱（ITEM:64）——淫堕型。
- * @returns {Promise<number>} 原作 RETURN（屏息跑开也是 0 = 作动、消耗）
+ * love_gas_trap：催淫陷阱（ITEM:64）——淫堕型。
+ * @returns {Promise<number>} RETURN（屏息跑开也是 0 = 作动、消耗）
  */
 async function love_gas_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -738,8 +738,8 @@ async function love_gas_trap(a, rand_n) {
 }
 
 /**
- * @SYOKUSYU_FLOOR_TRAP（:462-521）：触手地板陷阱（ITEM:65）——淫堕型。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动；注意本段不立欲情位）
+ * syokusyu_floor_trap：触手地板陷阱（ITEM:65）——淫堕型。
+ * @returns {Promise<number>} RETURN（1 = 未作动；注意本段不立欲情位）
  */
 async function syokusyu_floor_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -812,8 +812,8 @@ async function syokusyu_floor_trap(a, rand_n) {
 }
 
 /**
- * @LOVE_BATH_TRAP（:525-581）：媚药泥沼陷阱（ITEM:66）——淫堕型。
- * @returns {Promise<number>} 原作 RETURN（必中，恒 0）
+ * love_bath_trap：媚药泥沼陷阱（ITEM:66）——淫堕型。
+ * @returns {Promise<number>} RETURN（必中，恒 0）
  */
 async function love_bath_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -884,11 +884,11 @@ async function love_bath_trap(a, rand_n) {
 }
 
 /**
- * @SELF_SAIMIN_TRAP（:585-632）：自慰催眠陷阱（ITEM:67）——淫堕型。
+ * self_saimin_trap：自慰催眠陷阱（ITEM:67）——淫堕型。
  * 欲情中（位 9）时 DICE ×0.80 更易中招。两档催眠自慰走自动调教三连
- * （:611/:624 CALL COM3_AUTO——真身 ere/event/event-autotrain.js，同族
+ * （CALL com3_auto——真身 ere/event/event-autotrain.js，同族
  * com63_auto 在 dungeon-town.js:775 的先例）。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function self_saimin_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -920,7 +920,7 @@ async function self_saimin_trap(a, rand_n) {
       );
     }
     await battle.before_autotrain();
-    const { com3_auto } = require('#/event/event-autotrain'); // CALL COM3_AUTO
+    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto
     com3_auto();
     await battle.source_check_auto();
     if (show) {
@@ -938,7 +938,7 @@ async function self_saimin_trap(a, rand_n) {
       );
     }
     await battle.before_autotrain();
-    const { com3_auto } = require('#/event/event-autotrain'); // CALL COM3_AUTO
+    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto
     com3_auto();
     await battle.source_check_auto();
     if (show) {
@@ -954,9 +954,9 @@ async function self_saimin_trap(a, rand_n) {
 }
 
 /**
- * @IMITATER_TRAP（:635-708）：拟态房间陷阱（ITEM:68）——淫堕型。五种
+ * imitater_trap：拟态房间陷阱（ITEM:68）——淫堕型。五种
  * 宝珠齐涨 + 绝顶经验 + 攻防弱化。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function imitater_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -964,7 +964,7 @@ async function imitater_trap(a, rand_n) {
   const name = name_of(a);
   const diff = era.get('flag:85') || 0;
 
-  // 掷骰在落下判定之前（1:1 顺序）
+  // 掷骰在落下判定之前（顺序有意保留）
   let z = rand_n(100);
 
   // 落下フラグ
@@ -1045,9 +1045,9 @@ async function imitater_trap(a, rand_n) {
 }
 
 /**
- * @SUMMON_TRAP（:711-737）：召唤陷阱（ITEM:69）。召唤怪物（存根）+
+ * summon_trap：召唤陷阱（ITEM:69）。召唤怪物（存根）+
  * 高难度时体力损耗。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function summon_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1084,9 +1084,9 @@ async function summon_trap(a, rand_n) {
 }
 
 /**
- * @SUCCUBUS_TRAP（:740-823）：梦魔陷阱（ITEM:70）——淫堕型。欲情中
+ * succubus_trap：梦魔陷阱（ITEM:70）——淫堕型。欲情中
  * （位 9）时 DICE ×0.80；非男人（TALENT:122 == 0）加百合经验。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function succubus_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1196,10 +1196,10 @@ async function succubus_trap(a, rand_n) {
 }
 
 /**
- * @SLIME_ROOM_TRAP（:826-887）：史莱姆房间陷阱（ITEM:71）——淫堕型。
+ * slime_room_trap：史莱姆房间陷阱（ITEM:71）——淫堕型。
  * 落下时 DICE -20 更易中招；中招后润滑位（位 3）立起；走自动调教三连
- * （:882 CALL COM50_AUTO——真身 ere/event/event-autotrain.js）。
- * @returns {Promise<number>} 原作 RETURN（逃脱也是 0 = 作动、消耗）
+ * （CALL com50_auto——真身 ere/event/event-autotrain.js）。
+ * @returns {Promise<number>} RETURN（逃脱也是 0 = 作动、消耗）
  */
 async function slime_room_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1275,7 +1275,7 @@ async function slime_room_trap(a, rand_n) {
 
   // ローション自動調教
   await battle.before_autotrain();
-  const { com50_auto } = require('#/event/event-autotrain'); // CALL COM50_AUTO
+  const { com50_auto } = require('#/event/event-autotrain'); // CALL com50_auto
   com50_auto();
   await battle.source_check_auto();
 
@@ -1286,11 +1286,11 @@ async function slime_room_trap(a, rand_n) {
 }
 
 /**
- * @NET_TRAP（:890-918）：蜘蛛网（ITEM:72）。气力损耗按上限 1/20 封顶；
+ * net_trap：蜘蛛网（ITEM:72）。气力损耗按上限 1/20 封顶；
  * MASTER 有魔虫知识（TALENT:0:328）时追加 HP 损耗（1.5 倍、上限 1/20）。
  * 本段无随机消费（RAND 不掷——分发调用点的 rand_n 实参被忽略，e2e 的
  * PRNG 序列不受影响）。
- * @returns {Promise<number>} 原作 RETURN（恒 0）
+ * @returns {Promise<number>} RETURN（恒 0）
  */
 async function net_trap(a) {
   const settings = era.get('flag:5') || 0;
@@ -1331,11 +1331,11 @@ async function net_trap(a) {
 }
 
 /**
- * @SHOP_TRAP（:921-965）：奸商（ITEM:73）。勇者被兜售偏贵商品，花掉的
+ * shop_trap：奸商（ITEM:73）。勇者被兜售偏贵商品，花掉的
  * 钱进魔王金库（MONEY/EX_FLAG:4444 双记）、扣的是勇者的购物预算
- * （CFLAG:582——:953 的 CFLAG:580 扣款在原作是注释态），HP 按消费额
+ * （CFLAG:582——CFLAG:580 扣款是注释态），HP 按消费额
  * 恢复、气力全恢复。
- * @returns {Promise<number>} 原作 RETURN（1 = 没买 / 钱不够）
+ * @returns {Promise<number>} RETURN（1 = 没买 / 钱不够）
  */
 async function shop_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1375,7 +1375,7 @@ async function shop_trap(a, rand_n) {
     era.print(`全部销售额为${cost}点！`);
   }
 
-  // （:953 的 CFLAG:580 扣款是注释态，1:1 不落）
+  // （CFLAG:580 扣款是注释态，不落）
   era_flag.money += cost;
   era_exflag.legit_money += cost;
   chara(a).patch.借款 -= cost; // CFLAG:582（patch 域门面「借款」）
@@ -1395,9 +1395,9 @@ async function shop_trap(a, rand_n) {
 }
 
 /**
- * @BLACKOUT_TRAP（:969-1007）：黑暗的陷阱（ITEM:74）。攻减半 + 气力
+ * blackout_trap：黑暗的陷阱（ITEM:74）。攻减半 + 气力
  * 损耗（仅 DICE == 1 档）+ 高难度时毒箭。
- * @returns {Promise<number>} 原作 RETURN（逃脱也是 0 = 作动、消耗）
+ * @returns {Promise<number>} RETURN（逃脱也是 0 = 作动、消耗）
  */
 async function blackout_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1449,10 +1449,10 @@ async function blackout_trap(a, rand_n) {
 }
 
 /**
- * @SHOOT_TRAP（:1011-1081）：弹射（ITEM:75）。侵攻度不足 40 不作动；
+ * shoot_trap：弹射（ITEM:75）。侵攻度不足 40 不作动；
  * 掷中后按楼层分三档：第 9 层砸向最底层（不分断队伍）、第 8 层与中间层
  * 下坠一层并分断队伍（PARTY_DEL）、立起迷惑位。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function shoot_trap(a, rand_n, ctx) {
   const settings = era.get('flag:5') || 0;
@@ -1506,7 +1506,7 @@ async function shoot_trap(a, rand_n, ctx) {
       era.print(`${name}迷路了…`);
     }
     era.set(`cflag:${a}:509`, 1);
-    // D:1 = 1——全库无读者，不落变量（#172 裁定）
+    // D:1 = 1——全库无读者，不落变量（#172 结论）
   } else if (chara(a).dungeon.侵攻阶层 === 8) {
     // 第 8 层：下坠一层 + 分断
     chara(a).dungeon.侵攻阶层 += 1;
@@ -1545,9 +1545,9 @@ async function shoot_trap(a, rand_n, ctx) {
 }
 
 /**
- * @DISPELL_TRAP（:1085-1118）：魔力扩散陷阱（ITEM:76）。诅咒位（位 1）
+ * dispell_trap：魔力扩散陷阱（ITEM:76）。诅咒位（位 1）
  * 立起 + 高难度时气力损耗。
- * @returns {Promise<number>} 原作 RETURN（解除也是 0 = 作动、消耗）
+ * @returns {Promise<number>} RETURN（解除也是 0 = 作动、消耗）
  */
 async function dispell_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1595,10 +1595,10 @@ async function dispell_trap(a, rand_n) {
 }
 
 /**
- * @OIL_TRAP（:1121-1147）：油壶陷阱（ITEM:77）。气力损耗 + 油位（位 3
- * 之一，:1143 写 8）立起——FIRE 的追加伤害读它（:1169 & 8，与润滑位
- * 同一位，原作如此）。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * oil_trap：油壶陷阱（ITEM:77）。气力损耗 + 油位（位 3
+ * 之一，写 8）立起——FIRE 的追加伤害读它（& 8，与润滑位
+ * 同一位，有意保留）。
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function oil_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1635,9 +1635,9 @@ async function oil_trap(a, rand_n) {
 }
 
 /**
- * @FIRE_TRAP（:1150-1178）：火箭发射陷阱（ITEM:78）。命中时若油位
+ * fire_trap：火箭发射陷阱（ITEM:78）。命中时若油位
  * （CFLAG:503 & 8）立起则追加伤害。
- * @returns {Promise<number>} 原作 RETURN（回避也是 0 = 作动、消耗）
+ * @returns {Promise<number>} RETURN（回避也是 0 = 作动、消耗）
  */
 async function fire_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1673,11 +1673,11 @@ async function fire_trap(a, rand_n) {
 }
 
 /**
- * @A_WORM_TRAP（:1181-1229）：肛门虫陷阱（ITEM:79）——淫堕型。润滑中
+ * a_worm_trap：肛门虫陷阱（ITEM:79）——淫堕型。润滑中
  * （位 3）威力 ×1.30；A 经验 > 30 且未寄生时寄生（TALENT:193）；已寄生
- * 时走肛门虫自动调教三连（:1221 CALL COM13_AUTO——真身
+ * 时走肛门虫自动调教三连（CALL com13_auto——真身
  * ere/event/event-autotrain.js）。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function a_worm_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1727,7 +1727,7 @@ async function a_worm_trap(a, rand_n) {
     // PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
     // 三连第三站的结算读）
     era_flag.target = a; // TARGET = A
-    // アナルワーム自動調教（:1221 CALL COM13_AUTO——真身）
+    // アナルワーム自動調教（CALL com13_auto——真身）
     await battle.before_autotrain();
     const { com13_auto } = require('#/event/event-autotrain');
     com13_auto();
@@ -1743,11 +1743,11 @@ async function a_worm_trap(a, rand_n) {
 }
 
 /**
- * @LOVE_BUG_TRAP（:1232-1292）：淫虫陷阱（ITEM:80）——淫堕型。伤害后
- * 走爱抚自动调教三连（:1283 CALL COM0_AUTO——真身
- * ere/event/event-autotrain.js）。:1257 的 RETURN 01
- * 是十进制 1 的前导零写法（Emuera 无八进制字面量），非八进制。
- * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
+ * love_bug_trap：淫虫陷阱（ITEM:80）——淫堕型。伤害后
+ * 走爱抚自动调教三连（CALL com0_auto——真身
+ * ere/event/event-autotrain.js）。RETURN 01
+ * 是十进制 1 的前导零写法（数值按十进制字面量），非八进制。
+ * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function love_bug_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1810,7 +1810,7 @@ async function love_bug_trap(a, rand_n) {
   // PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
   // 三连第三站的结算读）
   era_flag.target = a; // TARGET = A
-  // 愛撫自動調教（:1283 CALL COM0_AUTO——真身）
+  // 愛撫自動調教（CALL com0_auto——真身）
   await battle.before_autotrain();
   const { com0_auto } = require('#/event/event-autotrain');
   com0_auto();
@@ -1828,10 +1828,10 @@ async function love_bug_trap(a, rand_n) {
 }
 
 /**
- * @DARK_JUEL_TRAP（:1295-1346）：宝石陷阱（ITEM:81）。善恶值 > 150 有
+ * dark_juel_trap：宝石陷阱（ITEM:81）。善恶值 > 150 有
  * 1/4 概率克服；中招时掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶值 -1
  * （KARMA 走 dungeon.js 的域内存根，延迟 require 避开循环）。
- * @returns {Promise<number>} 原作 RETURN（1 = 克服）
+ * @returns {Promise<number>} RETURN（1 = 克服）
  */
 async function dark_juel_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1898,10 +1898,10 @@ async function dark_juel_trap(a, rand_n) {
 }
 
 /**
- * @DEF_DOWN_TRAP（:1349-1364）：攻击效果陷阱（ITEM:82）——防御值弱化
- * （CFLAG:680）。原作段名是「攻撃陣地の罠」、演出写「攻击效果上升」，
+ * def_down_trap：攻击效果陷阱（ITEM:82）——防御值弱化
+ * （CFLAG:680）。段名是「攻撃陣地の罠」、演出写「攻击效果上升」，
  * 实际落到 680（防御）——文案与效果的错位保留。
- * @returns {Promise<number>} 原作 RETURN（恒 0）
+ * @returns {Promise<number>} RETURN（恒 0）
  */
 async function def_down_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1925,9 +1925,9 @@ async function def_down_trap(a, rand_n) {
 }
 
 /**
- * @ATK_DOWN_TRAP（:1367-1382）：防御效果陷阱（ITEM:83）——伤害值弱化
+ * atk_down_trap：防御效果陷阱（ITEM:83）——伤害值弱化
  * （CFLAG:681）。同款文案错位保留。
- * @returns {Promise<number>} 原作 RETURN（恒 0）
+ * @returns {Promise<number>} RETURN（恒 0）
  */
 async function atk_down_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1951,9 +1951,9 @@ async function atk_down_trap(a, rand_n) {
 }
 
 /**
- * @MAG_DOWN_TRAP（:1385-1400）：魔法伤害陷阱（ITEM:84）——受到的魔法
+ * mag_down_trap：魔法伤害陷阱（ITEM:84）——受到的魔法
  * 伤害上升（CFLAG:682）。
- * @returns {Promise<number>} 原作 RETURN（恒 0）
+ * @returns {Promise<number>} RETURN（恒 0）
  */
 async function mag_down_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -1977,9 +1977,9 @@ async function mag_down_trap(a, rand_n) {
 }
 
 /**
- * @ALL_DOWN_TRAP（:1403-1420）：鬼手陷阱（ITEM:85）——三项弱化同值
+ * all_down_trap：鬼手陷阱（ITEM:85）——三项弱化同值
  * （680/681/682，掷骰减半 +1）。
- * @returns {Promise<number>} 原作 RETURN（恒 0）
+ * @returns {Promise<number>} RETURN（恒 0）
  */
 async function all_down_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -2004,11 +2004,11 @@ async function all_down_trap(a, rand_n) {
   return 0;
 }
 
-// —— 诈骗陷阱（魔改新增/诈骗陷阱.ERB :3-231）：TRAP_ID 87 的效果体。
+// —— 诈骗陷阱：TRAP_ID 87 的效果体。
 //    三个剧情段各自按善恶值（CFLAG:151）分档定价，骗来的钱进魔王金库
 //    （MONEY / EX_FLAG:4444 双记）、扣勇者的所持金（CFLAG:580）或购物
-//    预算（CFLAG:582，签借条的场合）。数值效果整体在 FLAG:5 & 32 守卫内
-//    ——关日志时整个陷阱不触发（演出与数值同在守卫内），保留现状。
+//    预算（CFLAG:582，签借条的场合）。数值效果整体在 FLAG:5 & 32 显示开关内
+//    ——关日志时整个陷阱不触发（演出与数值同在开关内），保留现状。
 
 /** PRINTDATAL 的随机文本掷选（rand_n(4) 四选一） */
 function pick_data(rand_n, options) {
@@ -2016,8 +2016,8 @@ function pick_data(rand_n, options) {
 }
 
 /**
- * @诈骗剧情1（:16-86）：求救的弱势者。
- * @returns {Promise<void>} 原作无 RETURN
+ * 诈骗剧情1：求救的弱势者。
+ * @returns {Promise<void>} 无 RETURN
  */
 async function fraud_story1(a, rand_n) {
   const name = name_of(a);
@@ -2089,9 +2089,9 @@ async function fraud_story1(a, rand_n) {
 }
 
 /**
- * @诈骗剧情2（:87-188）：募捐的组织者。小额时签借条（扣 CFLAG:582 购物
+ * 诈骗剧情2：募捐的组织者。小额时签借条（扣 CFLAG:582 购物
  * 预算），大额时直接扣所持金（CFLAG:580）。
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无 RETURN
  */
 async function fraud_story2(a, rand_n) {
   const name = name_of(a);
@@ -2190,9 +2190,9 @@ async function fraud_story2(a, rand_n) {
 }
 
 /**
- * @诈骗剧情3（:189-231）：送钱的冒险者——双倍欠条。收下 COST、背上
+ * 诈骗剧情3：送钱的冒险者——双倍欠条。收下 COST、背上
  * COST×2 的债（CFLAG:582）。
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无 RETURN
  */
 async function fraud_story3(a, rand_n) {
   const name = name_of(a);
@@ -2238,9 +2238,9 @@ async function fraud_story3(a, rand_n) {
 }
 
 /**
- * @诈骗陷阱（魔改新增/诈骗陷阱.ERB :3-15）：TRAP_ID 87 的分发体。三分
- * 之一概率各演一段；整个效果（含数值）在 FLAG:5 & 32 守卫内（文件头）。
- * @returns {Promise<number>} 原作 RETURN 0（恒作动、消耗）
+ * 诈骗陷阱：TRAP_ID 87 的分发体。三分
+ * 之一概率各演一段；整个效果（含数值）在 FLAG:5 & 32 显示开关内（文件头）。
+ * @returns {Promise<number>} 恒 return 0（恒作动、消耗）
  */
 async function fraud_trap(a, rand_n) {
   const settings = era.get('flag:5') || 0;
@@ -2259,11 +2259,11 @@ async function fraud_trap(a, rand_n) {
 }
 
 /**
- * @SLAVE_TRAP_SET（:1422-1457）：迎击方补充陷阱。迎击行动是「补充」
+ * slave_trap_set：迎击方补充陷阱。迎击行动是「补充」
  * （CFLAG:500 == 2）时，遍历本层 A/B/C 三槽：库存 < 99 的补一个、
  * ≥ 99 的按价换金。
- * @param {number} a 迎击者（原作全局 A）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} a 迎击者（全局 A）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function slave_trap_set(a) {
   const settings = era.get('flag:5') || 0;
@@ -2276,7 +2276,7 @@ async function slave_trap_set(a) {
 
   let local = chara(a).dungeon.侵攻阶层 + 299;
 
-  // $TRAP_LOOP_2（:1452-1455 LOCAL += 10 → < 330 则回起）
+  // $TRAP_LOOP_2（LOCAL += 10 → < 330 则回起）
   for (;;) {
     const trap_id = era.get(`flag:${local}`) || 0;
 
