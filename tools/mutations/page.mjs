@@ -475,7 +475,7 @@ export default [
     must_mention: '横幅只出现一次',
   },
   {
-    // #120 端到端的专属靶：M196（删防重复半边）在端到端路径上不可观察——
+    // #120 端到端的专属改动点：M196（删防重复半边）在端到端路径上不可观察——
     // FLAG:82 置 1 后 invasion() 开头的「地上征服后」分支（#118 取舍 4，
     // 有意登记的待办）挡住再次出兵，invasion_check 不再被调。端到端能守
     // 的是条件整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
@@ -2363,7 +2363,7 @@ export default [
     file: 'ere/page/page-invasion.js',
     find: '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) !== 0) mon_atk += e_get(1); // 特殊',
     replace:
-      '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) === 0) mon_atk += e_get(1); // 变异：判据反向',
+      '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) === 0) mon_atk += e_get(1); // 变异：条件反向',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },
@@ -2614,7 +2614,7 @@ export default [
     desc: 'M10786 [3] 列表窗口起点条件改坏（cid < list_pos 改 <=）',
     file: 'ere/page/page-invasion.js',
     find: '      if (cid < state.list_pos) continue; // FOR COUNT, LIST_POS, CHARANUM',
-    replace: '      if (cid <= state.list_pos) continue; // 变异：判据改坏',
+    replace: '      if (cid <= state.list_pos) continue; // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '页窗条件',
   },
@@ -2627,7 +2627,7 @@ export default [
     must_mention: '页窗条件',
   },
   {
-    desc: 'M10788 @INVASION_EVENT 分发骰的上界改坏（RAND:10 改 RAND:9）',
+    desc: 'M10788 invasion_event 分发骰的上界改坏（RAND:10 改 RAND:9）',
     file: 'ere/page/page-invasion.js',
     find: '  const local = rand(10); // LOCAL = RAND:10',
     replace: '  const local = rand(9); // 变异：上界改坏',
@@ -2926,7 +2926,7 @@ export default [
     file: 'ere/page/page-invasion.js',
     find: '    if (roll >= 6) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`,',
     replace:
-      '    if (roll >= 5) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`, // 变异：判据改坏',
+      '    if (roll >= 5) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`, // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '全军强攻',
   },
@@ -2935,7 +2935,7 @@ export default [
     file: 'ere/page/page-invasion.js',
     find: '    if (roll >= 2) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`);',
     replace:
-      '    if (roll >= 3) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`); // 变异：判据改坏',
+      '    if (roll >= 3) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`); // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '全军强攻',
   },
@@ -2970,7 +2970,7 @@ export default [
     desc: 'M10828 invasion_event_fort 潜入成功档的条件改坏（LOCAL >= 5 改 >= 4）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll >= 5 || native) {\n      // 潜入成功 50%',
-    replace: '    if (roll >= 4 || native) {\n      // 变异：判据改坏',
+    replace: '    if (roll >= 4 || native) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '亲自潜入',
   },
@@ -3081,7 +3081,7 @@ export default [
     desc: 'M10841 invasion_event_challenge 亲自处理取胜档的条件改坏（LOCAL < 2 改 < 3）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll < 2) {\n      // 奴隶取胜 20%',
-    replace: '    if (roll < 3) {\n      // 变异：判据改坏',
+    replace: '    if (roll < 3) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '20/40/40',
   },
@@ -3089,7 +3089,7 @@ export default [
     desc: 'M10842 invasion_event_challenge 亲自处理不分胜负档的条件改坏（LOCAL < 6 改 < 5）',
     file: 'ere/page/page-invasion.js',
     find: '    if (roll < 6) {\n      // 奴隶不分胜负 40%',
-    replace: '    if (roll < 5) {\n      // 变异：判据改坏',
+    replace: '    if (roll < 5) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
     must_mention: '20/40/40',
   },
@@ -3256,7 +3256,7 @@ export default [
     must_mention: 'MIN(SINKOU, 100000) 之后 / 2',
   },
   {
-    desc: 'M10870 魔力结果段的已征服条件恒真（!== 0 改 >= 0，:712-732）',
+    desc: 'M10870 魔力结果段的已征服条件恒真（!== 0 改 >= 0）',
     file: 'ere/page/page-invasion.js',
     find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10);',
     replace:
@@ -3343,7 +3343,7 @@ export default [
     replace: '    if (result >= 7 || result < 0) { // 变异：上界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收',
     must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
@@ -3353,7 +3353,7 @@ export default [
     replace: '    if (result >= 6 || result < -1) { // 变异：下界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收',
     must_mention: '白名单清空后仍应被越界检查拒收重问',
   },
   {
@@ -3364,7 +3364,7 @@ export default [
       '    if (result === 5 && era_exflag.route_33 < 500) { // 变异：上界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收',
     must_mention: '检查之后的分派一行都不许发生',
   },
   {
@@ -3900,7 +3900,7 @@ export default [
   },
   // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
   // 四条各补回一处空行：按钮自成一行（＝ PRINTLC + 收尾的 PRINTL），多补
-  // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+  // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
   {
     desc: 'M11860 陷阱商店页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-shop-trap.js',
