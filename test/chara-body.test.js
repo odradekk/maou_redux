@@ -626,7 +626,7 @@ test('char_body_generate_wapped：默认支走年龄生成（CFLAG:451 = 生成�
   assert.equal(fixture.store.get('cflag:21:452'), 18, 'CFLAG:452 种族年龄');
 });
 
-test('char_size_generate：12 岁女性身高 P97 取修正值（P97 行不回落到 P50 之下）', () => {
+test('char_size_generate：12 岁女性身高 P97 取修正值（同一行随年龄不回落）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('talent:21:99', 1); // 魁梧：身高中值直接取 P97 行
   const body = fixture.load_module('chara/chara-body');
@@ -636,7 +636,7 @@ test('char_size_generate：12 岁女性身高 P97 取修正值（P97 行不回�
   assert.equal(
     size[2],
     1645,
-    '12 岁女性身高 P97 = 164.5cm，不低于 P50 行的 159.2cm',
+    '12 岁女性身高 P97 = 164.5cm，不低于 11 岁档的 159.2cm',
   );
 });
 // —— cup_size（#390 随角色信息显示实现） ——
