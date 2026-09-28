@@ -736,3 +736,40 @@ test('#625 GOHOUBI_REQUEST_KOUJO_K5：兽名与前后文同一行（CFLAG:504 �
     );
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k5((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 30;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:17:331', 2);
+    f.store.set('abl:17:16', 3);
+  });
+  await speak_k5(fixture, seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), [
+    '「呜、呜嗯…会变得舒服起来的地方…差不多搞懂了呢…」',
+    '玛奥好想觉得有些有趣地样子继续地撸着你的阴茎。',
+    '「啊~、刚刚跳了一下呢…原来是这呀…这里很舒服来的啊……」',
+  ]);
+  assert.equal(fixture.store.get('cflag:17:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+// —— #688：SELF_KOJO 调教后自慰「尻穴狂」档不再叠加淫乱要求 ——
+
+test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=4（本档上限）命中推进到 4', async () => {
+  const fixture = await setup_k5((f) => {
+    f.load_module('facade/game').game.train.初吻与自我口上 = 1; // 入口：调教后自慰段
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:17:261', 4);
+    f.store.set('talent:17:77', 1); // 尻穴狂
+  });
+  const mod = fixture.load_module('kojo/kojo-k5-mao');
+  await mod.self_kojo_k5();
+  assert.deepEqual(fixture.text_lines(), [
+    '「屁、屁股小穴♡…屁股小穴好舒服哟♡…我…已、已经不行了…要疯了啊…屁股小穴要翻开了啊♡」',
+    '或许是主人看不到的原因、玛奥激烈地肛门自慰着、完全停不下来。',
+    '「哦♡…哦哦哦♡…快感蔓延开来了♡…蔓延开来啦♡…这里…想要粗大的肉棒啊♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:17:261'), 4, 'CFLAG:261 推进到 4');
+});

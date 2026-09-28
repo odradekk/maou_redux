@@ -1470,3 +1470,20 @@ test('#623 奖赏请求·野兽名整行（:8803+:8805+:8807+:8809+:8811）', as
     );
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k3((f) => {
+    f.load_module('era-utils/era-flag').selectcom = 30;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+  });
+  await speak_k3(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊~…大鸡巴…居然那么热…啊啊…总觉得…气氛好奇怪了呢~♪」',
+    '「这样做的话…就会变舒服起来对吧~…？」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
+});

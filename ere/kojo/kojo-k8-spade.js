@@ -5924,11 +5924,10 @@ async function kojo_message_com_8(rand) {
       );
       kojo.手淫 = 4; // CFLAG:331 = 4
     } else if (
-      era0(`talent:${target}:85`) == 1 &&
       era0(`abl:${target}:16`) >= 3 &&
       (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 侍奉精神Lv3以上（与上一档共用 TALENT:85+ABL:16>=3，仅门槛 CFLAG 不同）
+      // 侍奉精神Lv3以上
       await era.printAndWait(
         `「这样就好了吗？………呵呵呵、真的露出了好像很舒服似的脸啊、你」`,
       );
@@ -9891,11 +9890,10 @@ async function dog_kojo_8(rand) {
       await era.printAndWait('');
       kojo.手淫 = 4;
     } else if (
-      era0(`talent:${target}:85`) == 1 &&
       era0(`abl:${target}:16`) >= 3 &&
       (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 侍奉精神Lv3以上（要求 TALENT:85，与上一档条件几乎重复，实际不可达）
+      // 侍奉精神Lv3以上
       await era.printAndWait('');
       kojo.手淫 = 3;
     } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {

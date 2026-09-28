@@ -1170,3 +1170,53 @@ test('#625 GOHOUBI_REQUEST_KOUJO_K13：兽名与前后文同一行（CFLAG:504 �
     );
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k13((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+  }, 30);
+  await speak_k13(fixture);
+  assert.deepEqual(fixture.text_lines(), ['「舒服吗？加油。……」']);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+test('DOG_KOJO_13 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k13((f, ef) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+    ef.selectcom = 30;
+  });
+  const { dog_kojo_13 } = fixture.load_module('kojo/kojo-k13-protector');
+  await dog_kojo_13();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
+});
+
+// —— #688：SELECTCOM 56 交谈无摄像分支首档回正为淫乱（TALENT:76），爱慕二档不再被遮蔽 ——
+
+test('SELECTCOM 56 交谈无摄像分支：首档回正为淫乱（#688），淫乱与爱慕档在口上开关关闭时各命中推进', async () => {
+  const lewd = await setup_k13((f, era_flag) => {
+    era_flag.selectcom = 56;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:357', 3);
+    f.store.set('talent:31:76', 1);
+  });
+  await speak_k13(lewd);
+  assert.deepEqual(lewd.text_lines(), ['']);
+  assert.equal(lewd.store.get('cflag:31:357'), 4, '淫乱首档推进到 4');
+
+  const love = await setup_k13((f, era_flag) => {
+    era_flag.selectcom = 56;
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:357', 2);
+    f.store.set('talent:31:85', 1);
+  });
+  await speak_k13(love);
+  assert.deepEqual(love.text_lines(), ['']);
+  assert.equal(love.store.get('cflag:31:357'), 3, '爱慕二档推进到 3');
+});
