@@ -172,6 +172,8 @@ function transferapp(cid) {
 
   // 姓名交换只落最终可观察效果：互换称呼（:-2），再各自把姓名（:-1）
   // 改写成新的称呼——两槽的语义见 utils/callname-utils.js 文件头
+  // 两侧称呼槽都由 addCharacter 初始化（无称呼预设时回落姓名），不存在
+  // undefined 侧，swap_var 的数值缺省值不会写入。
   swap_var('callname', 0, cid, -2);
   era.set('callname:0:-1', era.get('callname:0:-2') ?? '');
   era.set(`callname:${cid}:-1`, era.get(`callname:${cid}:-2`) ?? '');

@@ -293,6 +293,19 @@ test('村娘登记直接互连，后代与特殊角色不进入随机家族登�
   assert.deepEqual(family.family_register(43, seq([])), [0, 0]);
 });
 
+test('特殊角色 17 号不进随机家族登记：候选齐备时过滤仍然生效', () => {
+  const fixture = create_era_fixture();
+  for (const cid of [17, 44]) add_chara(fixture, cid);
+  // 44 号与 17 号同种族、同经历相容，名字编号同型（≥3000），人妻拉开年龄差：
+  // 若 17 号不被过滤，family_register_slave 会给两人登记出家族。
+  fixture.store.set('talent:44:157', 1); // 人妻：相对年龄 +6
+  fixture.store.set('cflag:44:6', 3044); // 与 17 号的固定 10017 同为 ≥3000 型
+  const family = fixture.load_module('chara/chara-family');
+
+  assert.deepEqual(family.family_register(17, seq([])), [0, 0]);
+  assert.equal(family.rf_get(17, 44), 0, '17 与 44 无关系');
+  // 过滤条件被改成 >= 18（M7011）时，上两条断言必红
+});
 test('随机家族登记跳过作为候选的后代', () => {
   const fixture = create_era_fixture();
   for (const cid of [0, 41, 42, 43]) add_chara(fixture, cid);
