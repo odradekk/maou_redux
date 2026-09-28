@@ -1,29 +1,29 @@
 /**
- * @file 秘密实验室：SHOP_LABO ver1.0.2.ERB 全 52 函数（issue #398 / N14 段 3）。
+ * @file 秘密实验室：全 52 函数（issue #398 / N14 段 3）。
  *
- * 调用点（本票接入）：page/page-shop.js 的 usershop [110] 分支（守卫
- * TALENT:0:325 == 1，原作 SHOP ver1.0.2.ERB:131 的 `CALL SECRET_LABO`）。
- * 本文件是**单入口的树**：除 @SECRET_LABO 外 51 个函数只被本文件内部调用。
+ * 调用点（这张工单接入）：page/page-shop.js 的 usershop [110] 分支（检查
+ * TALENT:0:325 == 1，即 `CALL SECRET_LABO` 的调用位）。
+ * 本文件是**单入口的树**：除 secret_labo 外 51 个函数只被本文件内部调用。
  *
  * 移植说明（有意偏离，均注明依据）：
  *
  * 1. **选人骨架收成一处**（`pick_slave`）：本文件 40 余个函数各写一遍同一段
  *    `$INPUT_LOOP`（画提示 → LIFE_LIST → 三个页脚键 → INPUT → 999/1000/1001/
- *    越界/濒死五道公共守卫 → 各自的追加守卫）。判据只有一处真相，页数与列表
- *    不会分家（page-life-list.js 文件头第 4b 条同款处置）。各函数的追加守卫走
+ *    越界/濒死五道公共检查 → 各自的追加检查）。判断条件只有一处真相，页数与列表
+ *    不会分家（page-life-list.js 文件头第 4b 条同款处置）。各函数的追加检查走
  *    `guard` 钩子，仍逐条保留原文案与提前返回语义。
  *
  * 2. **MODIFY_* 族表驱动**（工单「共同形状做对，剩下的是数据」）：形状完全
- *    相同的条目落成 `run_modify` + 数据表（价格、提示串、守卫、应用），
- *    每条目仍按原作函数名导出（modify_bonyu_erase 等），1:1 可追溯。形状
+ *    相同的条目落成 `run_modify` + 数据表（价格、提示串、检查、应用），
+ *    每条目仍按独立函数导出（modify_bonyu_erase 等），可逐条追溯。形状
  *    有额外菜单/输入/加价的（BUSTUP/BUSTDOWN/FUTANARI/HAIR_COLOR/SKIN_COLOR/
  *    BLOCK_FEELING/DEMON_REBIRTH/ST_UP_LABO/SUMMON_SLAVE/SET_FREE_TRAIN/
  *    TATOO/AMNESIA/RESULECTION/TRANS_SPECIALTALENT/GIVEN_HUMAN_LIFE/
  *    BOUGT_TENTACLES/肉棒改造）各自单写。
  *
- * 3. **固定选项按钮化；需要自由输入的用 `useRule: false`**：原作
+ * 3. **固定选项按钮化；需要自由输入的用 `useRule: false`**：
  *    `PRINTL [n] - …` 之类的固定选项在 ere 侧是 `era.printButton(…, n)`
- *    （PR #53 通则，page-tailor.js 先例；**正文里的 `- ` 照写**，它是原作文本
+ *    （PR #53 通则，page-tailor.js 先例；**正文里的 `- ` 照写**，它是显示正文
  *    的一部分，见 page-ability-up.js:184）；需要玩家敲任意数字/字符串的输入
  *    （SUMMON_SLAVE 的收录编号 150-199、ST_UP_LABO 的强化次数 1-D、TATOO 的
  *    刺青文字）保留正文为普通文本并用 `era.input({ useRule: false })`——那一轮
@@ -33,24 +33,23 @@
  *    `input-userule-false-keeps-buttons`）。**它不能反过来读成「打了按钮自由
  *    输入就进不去」**——那是 #530 的旧推断，#572 已纠正（详见
  *    docs/research/plaintext-options.md 第二节 C 类）。
- *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的兜底支
+ *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的缺省分支
  *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，结构保留
  *    不补用例（page-ability-up.js 文件头同款）。
- *    **两处自由文字输入（刺青 :1864、自由局部调教 :4131）的 0 ＝ 空输入**
- *    （#567）：原作靠「留空」表达消去/重置，ere 侧经共享判据
+ *    **两处自由文字输入（刺青、自由局部调教）的 0 ＝ 空输入**
+ *    （#567）：旧引擎靠「留空」表达消去/重置，ere 侧经共享判断条件
  *    `#/utils/input-text` 把引擎归一后的 0 还原成空串（引擎把 `''` 与 `"0"`
- *    都归一成 0，判据与依据见该模块文件头），两处提示后各补一句输入 0 的说明。
+ *    都归一成 0，条件与依据见该模块文件头），两处提示后各补一句输入 0 的说明。
  *
  * 4. **段落跳转（GOTO）用循环标签复刻**，`CLEARLINE`（局部重绘）不镜像
  *    （ere 是滚动视图，page-ability-up.js / page-tailor.js 同款），`PRINTW`
  *    按既有约定显式组合 `era.print + era.waitAnyKey`，
  *    `WAIT` 用 `era.waitAnyKey()`。
  *
- * 5. **`[SKIPSTART]`…`[SKIPEND]` 两段死代码不移植**：:1246-1372 的「旧ソース」
- *    与 :3419-3434 的追加素质段被引擎跳过（`SKIPSTART` 语义），本移植不落。
- *    注意登记在案的跨域写 152 条里**有 62 条落在
- *    :1246-1372 这一段**（MARK/ABL/PALAM/EXP/CFLAG:15,16/CFLAG:2/TALENT:75,78
- *    在 :1298/:1301/:1308/:1309/:1312/:1313/:1321/:1324 的 VARSET 与赋值）
+ * 5. **`[SKIPSTART]`…`[SKIPEND]` 两段死代码不移植**：「旧ソース」段与追加
+ *    素质段按 `SKIPSTART` 语义被跳过，本移植不收。
+ *    注意登记在案的跨域写 152 条里**有 62 条落在「旧ソース」段**
+ *    （MARK/ABL/PALAM/EXP/CFLAG:15,16/CFLAG:2/TALENT:75,78 的 VARSET 与赋值）
  *    ——扫描器只剥注释、不剥 SKIPSTART 块，故那 62 条是登记在册的死代码，
  *    活代码只有 90 条（下表逐条对照）。
  *
@@ -58,67 +57,67 @@
  *    ownership 里的 writer 是 stronghold，而 `ere/page/` 文件的域是 page，
  *    故所有落到有属主下标的写都必须经 `chara(cid).<域>.<字段>` / `game.<域>.<字段>`。
  *    152 条里活着的 90 条逐条对照如下（表:下标 → 门面字段；cflag 420/454/455/71
- *    与 cstr 7 五个访问器随本票补进 tools/facade-names.js 后重新生成）：
+ *    与 cstr 7 五个访问器随这张工单补进 tools/facade-names.js 后重新生成）：
  *
- *    | 源行 | 写 | 属主域 | 门面 |
- *    | --- | --- | --- | --- |
- *    | :360-390 | talent 116/109/110/114/119、cflag 454/455 | chara | `chara(cid).chara.绝壁/贫乳/巨乳/爆乳/超乳`、`.体重/.胸围` |
- *    | :466-494 | 同上（贫乳化） | chara | 同上 |
- *    | :575 | talent 130 | chara | `chara(cid).chara.母乳体质` |
- *    | :670-673 | talent 121/318/1 | chara/train | `chara(cid).chara.扶她/阴茎的状态`、`chara(cid).train.童贞` |
- *    | :753 | talent 121 | chara | `chara(cid).chara.扶她` |
- *    | :834/:913 | talent 124 | chara | `chara(cid).chara.动物耳朵` |
- *    | :989-990 | talent 310/311 | chara | `chara(cid).chara.阴毛状态/阴毛生长极限` |
- *    | :1066 | talent 135 | train | `chara(cid).train.未熟` |
- *    | :1077-1087 | talent 318、cflag 454/455 | chara | `…阴茎的状态`、`…体重/胸围` |
- *    | :1163 | flag 2 | event | `game.event.上次助手` |
- *    | :1192 | talent 86 | event | `chara(cid).event.盲从` |
- *    | :1202 | cflag 2 | chara | `chara(cid).chara.好感度` |
- *    | :1447 | talent 130 | chara | `…母乳体质` |
- *    | :1522-1523 | talent 57、exp 31 | event/system | `chara(cid).event.漏尿癖`、`chara(cid).system.放尿经验` |
- *    | :1602-1603 | talent 0、cflag 71 | chara/stronghold | `…处女`、`chara(cid).stronghold.处女膜已再生` |
- *    | :1677/:1752 | talent 273 | chara | `…私处封印` |
- *    | :1972 | talent 300 | chara | `…头发颜色` |
- *    | :2062-2068 | talent 255/253/244 | chara | `…白皙/褐色肌肤/恶魔肌肤` |
- *    | :2292-2305 | talent 122/0/121/1 | chara/train | `…男人/处女/扶她`、`chara(cid).train.童贞` |
- *    | :2309 | exp 50 | dungeon | `chara(cid).dungeon.异常经验` |
- *    | :2516 | talent 124 | chara | `…动物耳朵` |
- *    | :2524 | tflag 13 | train | `game.train.初吻与自我口上`（调教外走 `with_self_kojo_event`） |
- *    | :2531/:2626/:2706/:2781 | exp 81 | event | `chara(0).event.勋章经验` |
- *    | :2699 | talent 123 | event | `chara(cid).event.疯狂` |
- *    | :2853 | talent 264 | chara | `…角` |
- *    | :2960-2962 | talent 244/253/255 | chara | `…恶魔肌肤/褐色肌肤/白皙` |
- *    | :3037/:3113/:3189 | talent 245/246/247 | chara | `…恶魔翅膀/恶魔尾巴/恶魔眼睛` |
- *    | :3404-3406 | talent 321/314/322 | chara | `…原种族/种族/现种族` |
- *    | :3458 | talent 300 | chara | `…头发颜色`（@LABO_DR_CHANGE_HAIR_COLOR） |
- *    | :3816/:3819 | cflag 13/14 | chara | `…基础攻击/基础防御` |
- *    | :3899 | talent 257 | chara | `…魔法耐性` |
- *    | :4132 | cstr 7 | stronghold | `chara(cid).stronghold.自由调教内容` |
- *    | :4133-4134 | abl 4/40（动态 cid） | train | `chara(local).train.局部感觉/局部中毒` |
- *    | :4282 | cstr 1 | chara | `chara(new).chara.加入时名字` |
- *    | :4295-4298 | talent 292、cflag 1/420 | stronghold/invasion/chara | `…魔王之影`、`chara(new).invasion.状态`、`…命名检查` |
- *    | :4304-4305 | cflag 9、flag 83 | chara/invasion | `chara(0).chara.等级`、`game.invasion.肉便器数` |
- *    | :4385-4386 | cflag 451/452 | chara | `…年龄/种族年龄` |
- *    | :4488-4491 | talent 121/318/1 | chara/train | `…扶她/阴茎的状态`、`…童贞` |
+ *    | 写 | 属主域 | 门面 |
+ *    | --- | --- | --- |
+ *    | talent 116/109/110/114/119、cflag 454/455 | chara | `chara(cid).chara.绝壁/贫乳/巨乳/爆乳/超乳`、`.体重/.胸围` |
+ *    | 同上（贫乳化） | chara | 同上 |
+ *    | talent 130 | chara | `chara(cid).chara.母乳体质` |
+ *    | talent 121/318/1 | chara/train | `chara(cid).chara.扶她/阴茎的状态`、`chara(cid).train.童贞` |
+ *    | talent 121 | chara | `chara(cid).chara.扶她` |
+ *    | talent 124（两处） | chara | `chara(cid).chara.动物耳朵` |
+ *    | talent 310/311 | chara | `chara(cid).chara.阴毛状态/阴毛生长极限` |
+ *    | talent 135 | train | `chara(cid).train.未熟` |
+ *    | talent 318、cflag 454/455 | chara | `…阴茎的状态`、`…体重/胸围` |
+ *    | flag 2 | event | `game.event.上次助手` |
+ *    | talent 86 | event | `chara(cid).event.盲从` |
+ *    | cflag 2 | chara | `chara(cid).chara.好感度` |
+ *    | talent 130（第二处） | chara | `…母乳体质` |
+ *    | talent 57、exp 31 | event/system | `chara(cid).event.漏尿癖`、`chara(cid).system.放尿经验` |
+ *    | talent 0、cflag 71 | chara/stronghold | `…处女`、`chara(cid).stronghold.处女膜已再生` |
+ *    | talent 273（两处） | chara | `…私处封印` |
+ *    | talent 300 | chara | `…头发颜色` |
+ *    | talent 255/253/244 | chara | `…白皙/褐色肌肤/恶魔肌肤` |
+ *    | talent 122/0/121/1 | chara/train | `…男人/处女/扶她`、`chara(cid).train.童贞` |
+ *    | exp 50 | dungeon | `chara(cid).dungeon.异常经验` |
+ *    | talent 124（第三处） | chara | `…动物耳朵` |
+ *    | tflag 13 | train | `game.train.初吻与自我口上`（调教外走 `with_self_kojo_event`） |
+ *    | exp 81（四处分发） | event | `chara(0).event.勋章经验` |
+ *    | talent 123 | event | `chara(cid).event.疯狂` |
+ *    | talent 264 | chara | `…角` |
+ *    | talent 244/253/255 | chara | `…恶魔肌肤/褐色肌肤/白皙` |
+ *    | talent 245/246/247（三处体征） | chara | `…恶魔翅膀/恶魔尾巴/恶魔眼睛` |
+ *    | talent 321/314/322 | chara | `…原种族/种族/现种族` |
+ *    | talent 300（转生改发色） | chara | `…头发颜色`（labo_dr_change_hair_color） |
+ *    | cflag 13/14 | chara | `…基础攻击/基础防御` |
+ *    | talent 257 | chara | `…魔法耐性` |
+ *    | cstr 7 | stronghold | `chara(cid).stronghold.自由调教内容` |
+ *    | abl 4/40（动态 cid） | train | `chara(local).train.局部感觉/局部中毒` |
+ *    | cstr 1 | chara | `chara(new).chara.加入时名字` |
+ *    | talent 292、cflag 1/420 | stronghold/invasion/chara | `…魔王之影`、`chara(new).invasion.状态`、`…命名检查` |
+ *    | cflag 9、flag 83 | chara/invasion | `chara(0).chara.等级`、`game.invasion.肉便器数` |
+ *    | cflag 451/452 | chara | `…年龄/种族年龄` |
+ *    | talent 121/318/1（肉棒改造） | chara/train | `…扶她/阴茎的状态`、`…童贞` |
  *
  *    其余属主（talent 9/76/85/125/271/272/280/326/340、cflag 0/10/49/70、
- *    base 10、item 90）都是 stronghold 域：原作里 writer 也是 stronghold，
+ *    base 10、item 90）都是 stronghold 域：ownership 里 writer 也是 stronghold，
  *    在 cross-domain 清单里不出现；但 ere 侧本文件属 page 域，照样一律走门面。
  *    无属主产物的写（maxbase 0/1、juel、mark/abl/talent/flag 的动态下标段、
  *    cstr 10-19 的刺青位）按 domain-check 的既定政策直写，逐处注明。
  *
- * 7. **原作一处调用实参写错，按显见意图修正**：@MODIFY_AMNESIA 的育儿支
- *    （:1232）写 `CALL CHILD_CARE_CHANGE_NURSE(C)`，而同一函数的 C 是价格
- *    （:1101 `C = 100000`）、角色号在 D —— 对照 :1246-1372 的**旧ソース**那一版
- *    （:1284 `C = RESULT` 正是角色号），可知新版改名时漏改了调用点。本移植按
+ * 7. **一处调用实参与意图不符，按显见意图修正**：modify_amnesia 的育儿支写
+ *    `CALL CHILD_CARE_CHANGE_NURSE(C)`，而同一函数的 C 是价格
+ *    （`C = 100000`）、角色号在 D —— 对照**旧ソース**那一版
+ *    （`C = RESULT` 正是角色号），可知改名时漏改了调用点。本移植按
  *    意图传角色号（`child_care_change_nurse(d)`），否则会把 100000 当角色号
- *    去写数据。1:1 的读者请以本条为准。
+ *    去写数据。
  *
- * 8. **序号世界 → 角色 ID 世界**（issue #21 通例）：原作的「角色号」在 ere 侧
+ * 8. **序号世界 → 角色 ID 世界**（issue #21 通例）：「角色号」在 ere 侧
  *    是「角色 ID」，分页窗按位置开（page-life-list.js 文件头第 1 条），
- *    越界判据 `RESULT >= CHARANUM` 相应改为「不在 getAddedCharacters() 里」，
+ *    越界判断 `RESULT >= CHARANUM` 相应改为「不在 getAddedCharacters() 里」，
  *    翻页上界仍按 `(NO_PAGE+1)*NUM_PAGE <= charanum()`（角色数含魔王，
- *    与原作 CHARANUM 是同一个判定标准）。
+ *    与 CHARANUM 是同一个判定标准）。
  */
 
 'use strict';
@@ -150,7 +149,7 @@ const {
 } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
 
-/** MASTER 常量（Emuera 内置，恒 0） */
+/** MASTER 常量（内置常量，恒 0） */
 const MASTER = 0;
 /** 选人列表的每页行数（45 处 `#DIM NUM_PAGE = 23`） */
 const NUM_PAGE = 23;
@@ -159,23 +158,23 @@ const default_rand = (n) => Math.floor(Math.random() * n);
 
 // —— 读数助手（跨域读放行，#70 决议）——
 
-/** CFLAG 读数兜底（未声明下标 undefined → 0，#13） */
+/** CFLAG 读数缺省（未声明下标 undefined → 0，#13） */
 const cflag = (cid, idx) => era.get(`cflag:${cid}:${idx}`) || 0;
-/** TALENT 读数兜底 */
+/** TALENT 读数缺省 */
 const talent = (cid, idx) => era.get(`talent:${cid}:${idx}`) || 0;
-/** ABL 读数兜底 */
+/** ABL 读数缺省 */
 const abl = (cid, idx) => era.get(`abl:${cid}:${idx}`) || 0;
-/** EXP 读数兜底 */
+/** EXP 读数缺省 */
 const exp_of = (cid, idx) => era.get(`exp:${cid}:${idx}`) || 0;
-/** MARK 读数兜底 */
+/** MARK 读数缺省 */
 const mark = (cid, idx) => era.get(`mark:${cid}:${idx}`) || 0;
-/** CSTR 读数兜底（空串） */
+/** CSTR 读数缺省（空串） */
 const cstr = (cid, idx) => era.get(`cstr:${cid}:${idx}`) ?? '';
-/** BASE 读数兜底 */
+/** BASE 读数缺省 */
 const base = (cid, idx) => era.get(`base:${cid}:${idx}`) || 0;
-/** MAXBASE 读数兜底（无属主产物，读写都不经门面） */
+/** MAXBASE 读数缺省（无属主产物，读写都不经门面） */
 const maxbase = (cid, idx) => era.get(`maxbase:${cid}:${idx}`) || 0;
-/** 角色数（原作 CHARANUM，含魔王） */
+/** 角色数（CHARANUM，含魔王） */
 const charanum = () => era.getAddedCharacters().length;
 /** `%TALENTNAME:n%`（引擎静态表 talent 的列名） */
 const talentname = (id) => era.get(`talentname:${id}`) ?? '';
@@ -200,7 +199,7 @@ function bust_regen_enabled() {
 }
 
 /**
- * 付费（原作成对的 `MONEY -= X` 与 `EX_FLAG:4444 -= X`）。
+ * 付费（成对的 `MONEY -= X` 与 `EX_FLAG:4444 -= X`）。
  * @param {number} amount 金额
  */
 function pay(amount) {
@@ -232,10 +231,10 @@ async function require_money(price, poor) {
 }
 
 /**
- * 选人画面的一帧（原作 `$INPUT_LOOP` 段的绘制半）。
+ * 选人画面的一帧（`$INPUT_LOOP` 段的绘制半）。
  *
  * `CUSTOMDRAWLINE =` 以 solid 分割线近似（page-shop-trap.js 文件头的布局
- * 映射先例）；三个页脚键的正文照原作 `- 上一页 / - 返  回 / - 下一页`。
+ * 映射先例）；三个页脚键的正文是 `- 上一页 / - 返  回 / - 下一页`。
  *
  * @param {string[]} intro 提示行
  * @param {number} no_page 页码
@@ -250,26 +249,26 @@ function draw_pick(intro, no_page, mode, cancel) {
   era.drawLine(); // DRAWLINE
   life_list(no_page, mode, NUM_PAGE); // CALL LIFE_LIST(NO_PAGE,,NUM_PAGE)
   // 页脚三个 PRINTLC（`[1000] - 上一页` / `[999] - 返  回` / `[1001] - 下一页`）
-  // 打在同一行，紧随的 PRINTL（:45）只结束它们那一行——PRINTLC 左对齐补位、
+  // 打在同一行，紧随的 PRINTL 只结束它们那一行——PRINTLC 左对齐补位、
   // **不换行**，故不产生空行。ere 的 printButton 自成一行（＝ PRINTLC +
-  // 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md「输出 API 与原作
-  // 的对应」）。
+  // 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md「输出 API 的排版
+  // 与对齐」）。
   era.printButton('- 上一页', 1000); // PRINTLC [1000] - 上一页
   era.printButton(`- ${cancel}`, 999); // PRINTLC [999] - 返  回
   era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页
 }
 
 /**
- * 选人循环（原作各 `$INPUT_LOOP` 段的公共骨架，见文件头第 1 条）。
+ * 选人循环（各 `$INPUT_LOOP` 段的公共骨架，见文件头第 1 条）。
  *
  * @param {object} cfg 配置
  * @param {string[]} cfg.intro 提示行
  * @param {number} [cfg.mode] LIFE_LIST 的 MODE
- * @param {boolean} [cfg.master] 是否接受魔王（原作有 `SIF RESULT == 0 → RESULT = MASTER`
+ * @param {boolean} [cfg.master] 是否接受魔王（`SIF RESULT == 0 → RESULT = MASTER`
  *   的档为真；SOULBOUND 族等 `RESULT < 1` 的档为假）
  * @param {string} [cfg.cancel] 取消键正文
  * @param {(cid: number) => (null | string | {text: string, wait: boolean})} [cfg.guard]
- *   追加守卫：null 放行；字符串 = 提示后等键并 RETURN 0；对象可关掉等待
+ *   追加检查：null 放行；字符串 = 提示后等键并 RETURN 0；对象可关掉等待
  * @returns {Promise<{cancelled: boolean, cid?: number}>}
  */
 async function pick_slave(cfg) {
@@ -311,14 +310,14 @@ async function pick_slave(cfg) {
       if (typeof verdict === 'string' || verdict.wait !== false) {
         await era.waitAnyKey(); // PRINTFORMW / PRINTW
       }
-      return { cancelled: true }; // 各守卫的 RETURN 0
+      return { cancelled: true }; // 各检查的 RETURN 0
     }
     return { cancelled: false, cid: result };
   }
 }
 
 /**
- * 是非确认（原作各 `PRINTL  [0] - 好的` / `PRINTL  [1] - 不要` + INPUT）。
+ * 是非确认（各 `PRINTL  [0] - 好的` / `PRINTL  [1] - 不要` + INPUT）。
  * @param {string} [yes] 肯定键正文
  * @param {string} [no] 否定键正文
  * @returns {Promise<number>} 0 或 1
@@ -332,13 +331,12 @@ async function ask_yes_no(yes = '好的', no = '不要') {
 /**
  * 族的公共驱动：钱的初检 → 选人 → 确认 → 应用 → 扣款。
  *
- * 对应原作每个 MODIFY_* 的同一形状（以 @MODIFY_BONYU :503-583 为例）：:507
- * `C = 50000` → :509-512 钱不够 → :514 `$INPUT_LOOP` 选人 → :571-578 确认 →
- * :574-575 应用 → :580-581 扣款 → :577-583 `RETURN 1`。
+ * 对应每个 modify_* 条目的同一形状（以 modify_bonyu 为例）：定价 →
+ * 钱不够则退出 → `$INPUT_LOOP` 选人 → 确认 → 应用 → 扣款 → `RETURN 1`。
  *
  * @param {object} item 条目（price/poor/intro/guard/confirm/apply 等）
  * @param {(n: number) => number} rand 随机源（透传给需要重算身体的条目）
- * @returns {Promise<number>} 1 成交 / 0 取消或守卫拦下
+ * @returns {Promise<number>} 1 成交 / 0 取消或检查拦下
  */
 async function run_modify(item, rand) {
   if (!(await require_money(item.price, item.poor))) {
@@ -379,10 +377,9 @@ async function run_modify(item, rand) {
 }
 
 /**
- * 胸围重算（@MODIFY_BUSTUP/BUSTDOWN/DEIMMATURITY 的公共尾段）。
+ * 胸围重算（modify_bustup/bustdown/deimmaturity 的公共尾段）。
  *
- * 原作 :383-390（「対象があなたでなく、コンフィグ設定してあるならバスト
- * サイズ更新」）：角色不是魔王且 FLAG:5 的位 12/15 任一开时，跑
+ * 角色不是魔王且 FLAG:5 的位 12/15 任一开时，跑
  * `CALL CHAR_SIZE_GENERATE, T, CFLAG:T:451, 1` 并把返回值 3/4 写回
  * CFLAG:454（体重）/455（胸围）。
  *
@@ -405,10 +402,10 @@ function regenerated_bust(cid, rand) {
 // MODIFY_* 族（形状相同的一批，见文件头第 2 条）
 // ————————————————————————————————————————————————
 
-/** 阳具形状的显示名（:659-668 的 `《巨根》` 等，0 = 普通） */
+/** 阳具形状的显示名（`《巨根》` 等，0 = 普通） */
 const FUTANARI_SHAPES = ['普通', '巨根', '短小包茎', '包茎', '马阴茎'];
 
-/** @MODIFY_BUSTUP（:283-392）：丰胸改造（已有巨乳/爆乳时加价到 50000）。 */
+/** modify_bustup：丰胸改造（已有巨乳/爆乳时加价到 50000）。 */
 async function modify_bustup(rand = default_rand) {
   if (!(await require_money(20000, '钱不多，胸不大'))) {
     return 0; // （C = 20000）
@@ -433,7 +430,7 @@ async function modify_bustup(rand = default_rand) {
     const cid = picked.cid;
     let cost = 20000; // C = 20000
     if (talent(cid, 110) || talent(cid, 114)) {
-      // 已是大胸：先报加价（:340），钱不够则回选人（GOTO INPUT_LOOP，
+      // 已是大胸：先报加价，钱不够则回选人（GOTO INPUT_LOOP，
       // 「这样还要继续么？」在 SIF 之后，钱不够时打不出来）
       era.print(`${savestr(cid)}胸部伟岸，要更上一层楼，需要50000点。`);
       cost = 50000;
@@ -478,7 +475,7 @@ async function modify_bustup(rand = default_rand) {
   }
 }
 
-/** @MODIFY_BUSTDOWN（:397-498）：平胸改造。 */
+/** modify_bustdown：平胸改造。 */
 async function modify_bustdown(rand = default_rand) {
   if (!(await require_money(10000, '钱不够'))) {
     return 0; // （C = 10000）
@@ -535,7 +532,7 @@ async function modify_bustdown(rand = default_rand) {
   }
 }
 
-/** @MODIFY_BONYU（:503-583）：母乳体质化。 */
+/** modify_bonyu：母乳体质化。 */
 const MODIFY_BONYU_ITEM = {
   price: 50000,
   poor: '有钱的孩子才有奶喝',
@@ -561,12 +558,12 @@ const MODIFY_BONYU_ITEM = {
   after: (cid, rand) => n_breast_grow(cid, rand), // CALL N_BREAST_GROW, T
 };
 
-/** @MODIFY_BONYU（:503-583） */
+/** modify_bonyu */
 async function modify_bonyu(rand = default_rand) {
   return run_modify(MODIFY_BONYU_ITEM, rand);
 }
 
-/** @MODIFY_FUTANARI（:588-680）：扶她化（附阳具形状菜单）。 */
+/** modify_futanari：扶她化（附阳具形状菜单）。 */
 async function modify_futanari() {
   if (!(await require_money(50000, '这么穷，就不要这么变态啦。'))) {
     return 0; // （C = 50000）
@@ -615,7 +612,7 @@ async function modify_futanari() {
   }
 }
 
-/** @MODIFY_FUTANARI_ERASE（:685-760）：去扶她化。 */
+/** modify_futanari_erase：去扶她化。 */
 const MODIFY_FUTANARI_ERASE_ITEM = {
   price: 10000,
   poor: '钱不够，快快去挣钱',
@@ -637,12 +634,12 @@ const MODIFY_FUTANARI_ERASE_ITEM = {
   },
 };
 
-/** @MODIFY_FUTANARI_ERASE（:685-760） */
+/** modify_futanari_erase */
 async function modify_futanari_erase() {
   return run_modify(MODIFY_FUTANARI_ERASE_ITEM);
 }
 
-/** @MODIFY_ANIMAL（:765-841）：赋予动物耳朵。 */
+/** modify_animal：赋予动物耳朵。 */
 const MODIFY_ANIMAL_ITEM = {
   price: 2000,
   poor: '钱不够',
@@ -667,12 +664,12 @@ const MODIFY_ANIMAL_ITEM = {
   },
 };
 
-/** @MODIFY_ANIMAL（:765-841） */
+/** modify_animal */
 async function modify_animal() {
   return run_modify(MODIFY_ANIMAL_ITEM);
 }
 
-/** @MODIFY_ANIMAL_ERASE（:846-920）：去除动物耳朵。 */
+/** modify_animal_erase：去除动物耳朵。 */
 const MODIFY_ANIMAL_ERASE_ITEM = {
   price: 1000,
   poor: '钱不够',
@@ -692,12 +689,12 @@ const MODIFY_ANIMAL_ERASE_ITEM = {
   },
 };
 
-/** @MODIFY_ANIMAL_ERASE（:846-920） */
+/** modify_animal_erase */
 async function modify_animal_erase() {
   return run_modify(MODIFY_ANIMAL_ERASE_ITEM);
 }
 
-/** @MODIFY_REMOVEHAIR（:925-997）：永久脱毛（白虎）。 */
+/** modify_removehair：永久脱毛（白虎）。 */
 const MODIFY_REMOVEHAIR_ITEM = {
   price: 5000,
   poor: '钱不够',
@@ -713,12 +710,12 @@ const MODIFY_REMOVEHAIR_ITEM = {
   },
 };
 
-/** @MODIFY_REMOVEHAIR（:925-997） */
+/** modify_removehair */
 async function modify_removehair() {
   return run_modify(MODIFY_REMOVEHAIR_ITEM);
 }
 
-/** @MODIFY_DEIMMATURITY（:1003-1091）：消去未熟。 */
+/** modify_deimmaturity：消去未熟。 */
 const MODIFY_DEIMMATURITY_ITEM = {
   price: 10000,
   poor: '钱不够',
@@ -752,12 +749,12 @@ const MODIFY_DEIMMATURITY_ITEM = {
   },
 };
 
-/** @MODIFY_DEIMMATURITY（:1003-1091） */
+/** modify_deimmaturity */
 async function modify_deimmaturity(rand = default_rand) {
   return run_modify(MODIFY_DEIMMATURITY_ITEM, rand);
 }
 
-/** @MODIFY_AMNESIA（:1096-1243）：记忆消去（ABL/MARK/JUEL 全清）。 */
+/** modify_amnesia：记忆消去（ABL/MARK/JUEL 全清）。 */
 async function modify_amnesia() {
   if (!(await require_money(100000, '钱不够'))) {
     return 0; // （C = 100000）
@@ -850,8 +847,8 @@ async function modify_amnesia() {
       era.print(
         `自己的乳房被陌生的婴儿含在嘴里、${chara_nickname(d)}露出了惊异莫名的神情`,
       );
-      // 原作写 CALL CHILD_CARE_CHANGE_NURSE(C)——C 是价格、角色号在 D，
-      // 对照旧ソース（:1284/:1359）可知是改名漏改，按意图传角色号（文件头第 7 条）
+      // CALL CHILD_CARE_CHANGE_NURSE(C) 的实参写错——C 是价格、角色号在 D，
+      // 改名时漏改了调用点，按意图传角色号（文件头第 7 条）
       await child_care_change_nurse(d);
     }
   }
@@ -860,7 +857,7 @@ async function modify_amnesia() {
   return 1;
 }
 
-/** @MODIFY_BONYU_ERASE（:1379-1455）：消去母乳体质。 */
+/** modify_bonyu_erase：消去母乳体质。 */
 const MODIFY_BONYU_ERASE_ITEM = {
   price: 10000,
   poor: '钱不够',
@@ -886,12 +883,12 @@ const MODIFY_BONYU_ERASE_ITEM = {
   after: (cid, rand) => n_breast_reverse(cid, rand), // CALL N_BREAST_REVERSE, T
 };
 
-/** @MODIFY_BONYU_ERASE（:1379-1455） */
+/** modify_bonyu_erase */
 async function modify_bonyu_erase(rand = default_rand) {
   return run_modify(MODIFY_BONYU_ERASE_ITEM, rand);
 }
 
-/** @MODIFY_OMORASHI_ERASE（:1460-1530）：消除漏尿癖。 */
+/** modify_omorashi_erase：消除漏尿癖。 */
 const MODIFY_OMORASHI_ERASE_ITEM = {
   price: 10000,
   poor: '钱不够',
@@ -906,12 +903,12 @@ const MODIFY_OMORASHI_ERASE_ITEM = {
   },
 };
 
-/** @MODIFY_OMORASHI_ERASE（:1460-1530） */
+/** modify_omorashi_erase */
 async function modify_omorashi_erase() {
   return run_modify(MODIFY_OMORASHI_ERASE_ITEM);
 }
 
-/** @SHOJO_SAISEI（:1535-1610）：处女膜再生术。 */
+/** shojo_saisei：处女膜再生术。 */
 const SHOJO_SAISEI_ITEM = {
   price: 100000,
   poor: '钱不够',
@@ -935,12 +932,12 @@ const SHOJO_SAISEI_ITEM = {
   },
 };
 
-/** @SHOJO_SAISEI（:1535-1610） */
+/** shojo_saisei */
 async function shojo_saisei() {
   return run_modify(SHOJO_SAISEI_ITEM);
 }
 
-/** @SHOJO_SEAL（:1614-1684）：施加私处封印。 */
+/** shojo_seal：施加私处封印。 */
 const SHOJO_SEAL_ITEM = {
   price: 10000,
   poor: '钱不够',
@@ -957,12 +954,12 @@ const SHOJO_SEAL_ITEM = {
   },
 };
 
-/** @SHOJO_SEAL（:1614-1684） */
+/** shojo_seal */
 async function shojo_seal() {
   return run_modify(SHOJO_SEAL_ITEM);
 }
 
-/** @SHOJO_SEAL_OFF（:1689-1759）：解除私处封印。 */
+/** shojo_seal_off：解除私处封印。 */
 const SHOJO_SEAL_OFF_ITEM = {
   price: 10000,
   poor: '穷鬼玩啥处女啊！',
@@ -979,7 +976,7 @@ const SHOJO_SEAL_OFF_ITEM = {
   },
 };
 
-/** @SHOJO_SEAL_OFF（:1689-1759） */
+/** shojo_seal_off */
 async function shojo_seal_off() {
   return run_modify(SHOJO_SEAL_OFF_ITEM);
 }
@@ -988,7 +985,7 @@ async function shojo_seal_off() {
 // 带专属输入流程的条目
 // ————————————————————————————————————————————————
 
-/** 刺青部位表（:1779-1786 的 TATOO_NAME:10-17，下标即 CSTR 位） */
+/** 刺青部位表（TATOO_NAME:10-17，下标即 CSTR 位） */
 const TATOO_NAME = {
   10: '脸',
   11: '胸',
@@ -1001,7 +998,7 @@ const TATOO_NAME = {
 };
 
 /**
- * @TATOO_SET_OFF（:1765-1894）：刺青的刻印/消去（部位 ＋ 自由文字两段输入）。
+ * tatoo_set_off：刺青的刻印/消去（部位 ＋ 自由文字两段输入）。
  *
  * 刺青位 CSTR:10-19 在 ownership 里无测量事实（cstr 表实测下标 11 个，
  * 不含 10-19），且寻址含变量段、本就是动态下标——按 domain-check 的既定
@@ -1055,7 +1052,7 @@ async function tatoo_set_off() {
     era.print('现在雕刻的刺青是：没有');
   }
 
-  // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+  // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的等价输入）
   era.print('（输入 0 消去刺青）');
   const results = input_text(await era.input({ useRule: false })); // INPUTS
   if (results !== '') {
@@ -1081,7 +1078,7 @@ async function tatoo_set_off() {
   return 1;
 }
 
-/** @MODIFY_HAIR_COLOR（:1899-1977）：头发颜色改变（角色 ＋ 颜色两段菜单）。 */
+/** modify_hair_color：头发颜色改变（角色 ＋ 颜色两段菜单）。 */
 async function modify_hair_color() {
   if (!(await require_money(5000, '金钱不足'))) {
     return 0; // （C = 5000）
@@ -1141,7 +1138,7 @@ async function modify_hair_color() {
   }
 }
 
-/** @MODIFY_SKIN_COLOR（:1982-2075）：肤色改变（普通/白皙/褐色三档）。 */
+/** modify_skin_color：肤色改变（普通/白皙/褐色三档）。 */
 async function modify_skin_color() {
   if (!(await require_money(5000, '没钱还想整容？！'))) {
     return 0; // （C = 5000）
@@ -1213,21 +1210,21 @@ async function modify_skin_color() {
   }
 }
 
-/** 部位号 → 钝感素质下标（:2187 的 `PID * 2 + 101`） */
+/** 部位号 → 钝感素质下标（`PID * 2 + 101`） */
 const PID_TALENT = [101, 103, 105, 107];
-/** 部位号 → 能力下标（:2176-2179 的 PAID 映射：0→0、1→2、2→3、3→1） */
+/** 部位号 → 能力下标（PAID 映射：0→0、1→2、2→3、3→1） */
 const PID_ABL = [0, 2, 3, 1];
-/** 部位号 → 默认名（:2140-2163 的阴核感觉/私处感觉/肛门感觉/乳房感觉） */
+/** 部位号 → 默认名（阴核感觉/私处感觉/肛门感觉/乳房感觉） */
 const PID_NAMES = ['阴核感觉', '私处感觉', '肛门感觉', '乳房感觉'];
 /** 部位号 → 钝感素质的访问器名（与 PID_TALENT 同序） */
 const PID_TALENT_NAMES = ['阴蒂钝感', '私处钝感', '肛门钝感', '乳房钝感'];
-/** 部位号 → 男性文案（:2205） */
+/** 部位号 → 男性文案 */
 const PID_LABEL_MALE = ['阴茎', '私处', '肛门', '乳房'];
-/** 部位号 → 女性文案（:2207） */
+/** 部位号 → 女性文案 */
 const PID_LABEL_FEMALE = ['阴核', '私处', '肛门', '乳房'];
 
 /**
- * @BLOCK_FEELING（:2081-2221）：感觉封锁（角色 → 部位两段菜单）。
+ * block_feeling：感觉封锁（角色 → 部位两段菜单）。
  *
  * 部位的钝感位是 TALENT:101/103/105/107 的第 2 位（`|= 2`），经门面读改写。
  */
@@ -1254,7 +1251,7 @@ async function block_feeling() {
       era.print(`封锁${savestr(cid)}哪个部位？`);
       era.print(''); // PRINTL
 
-      // 四个部位的按钮（已封锁 = bit2，原作以灰显标注）
+      // 四个部位的按钮（已封锁 = bit2，以灰显标注）
       for (let pid = 0; pid < 4; pid += 1) {
         if (pid === 1 && talent(cid, 122)) {
           continue; // SIF !TALENT:CID:122（男性不画私处行）
@@ -1267,11 +1264,11 @@ async function block_feeling() {
             : PID_NAMES[pid];
         const blocked = (talent(cid, PID_TALENT[pid]) & 2) !== 0;
         if (blocked) {
-          // 原作封锁后把编号换成 `-`（灰显 + 点不动）：按钮化会
-          // 把编号原样留着，于是「点已封锁部位」变成可达——这里照原作打文本行
+          // 封锁后把编号换成 `-`（灰显 + 点不动）：按钮化会
+          // 把编号原样留着，于是「点已封锁部位」变成可达——这里仍打文本行
           era.print(`　[-] ${label}　已经封锁`);
         } else {
-          // 未封锁时原作渲染的是 `　[0] 阴茎感觉`：那个 `-` 在方括号**内**，
+          // 未封锁时渲染的是 `　[0] 阴茎感觉`：那个 `-` 在方括号**内**，
           // 是 `\@ FLAG_B ? - # 0 \@` 三元式的真分支（编号替身），**不是分隔符**
           // ——正文不能再写 `- `（#612 反向普查改正）
           era.printButton(label, pid);
@@ -1323,12 +1320,12 @@ async function block_feeling() {
       if (era_flag.money >= 20000) {
         continue; // SIF MONEY >= C → GOTO PART_TOP
       }
-      return 0; // 落到底部（原作隐式返回 0）
+      return 0; // 落到函数底（隐式返回 0）
     }
   }
 }
 
-/** @TRANS_SEX（:2227-2317）：变性。 */
+/** trans_sex：变性。 */
 const TRANS_SEX_ITEM = {
   price: 200000,
   poor: '钱不够',
@@ -1369,15 +1366,15 @@ const TRANS_SEX_ITEM = {
   },
 };
 
-/** @TRANS_SEX（:2227-2317） */
+/** trans_sex */
 async function trans_sex() {
   return run_modify(TRANS_SEX_ITEM);
 }
 
 /**
- * @BRAIN_WASHING（:2325-2404）：洗脑。
+ * brain_washing：洗脑。
  *
- * 费用与附加素质由主分发传入（:104-119 的 `C` 与 `B`）。
+ * 费用与附加素质由主分发传入（`C` 与 `B`）。
  * @param {number} cost 费用
  * @param {number} b 追加的素质编号
  */
@@ -1424,7 +1421,7 @@ async function brain_washing(cost, b) {
   return 1;
 }
 
-/** @BOUGT_TENTACLES（:2409-2441）：购买触手生物。 */
+/** bougt_tentacles：购买触手生物。 */
 async function bougt_tentacles() {
   if (!(await require_money(50000, '钱不够'))) {
     return 0; // （C = 50000）
@@ -1450,11 +1447,11 @@ async function bougt_tentacles() {
 }
 
 /**
- * `CALL ADDCHARA_EX`（原作 `TRYCALLFORM CHARA_EX_{NO:ARG}` 的分发入口）：
- * 对没有 `CHARA*.ERB` 的编号，原作是**静默落空**，而 `chara-ex.js` 的分发
+ * `CALL ADDCHARA_EX`（`TRYCALLFORM CHARA_EX_{NO:ARG}` 的分发入口）：
+ * 对没有分发实现的编号，旧引擎按缺省静默跳过，而 `chara-ex.js` 的分发
  * 家族把「声明空间外」判成拼写错误会抛。本文件两处调用点的编号来自玩家输入
  * 或数据表（召唤 150-199、苏生 1-100），不是代码里的字面量，先问声明空间，
- * 不在里面就按原作落空跳过。
+ * 不在里面就照旧静默跳过。
  * @param {number} cid 角色 ID
  * @returns {Promise<void>}
  */
@@ -1475,10 +1472,10 @@ function with_self_kojo(event, callback) {
   return game.train.with_self_kojo_event(event, callback);
 }
 
-/** @GIVEN_HUMAN_LIFE（:2446-2534）：赋予生命（延长寿命，消耗勋章）。 */
+/** given_human_life：赋予生命（延长寿命，消耗勋章）。 */
 async function given_human_life(rand = default_rand) {
   if (exp_of(MASTER, 81) <= 0) {
-    era.print('人的生命是金钱无法购买的……'); // PRINTW :2451
+    era.print('人的生命是金钱无法购买的……'); // PRINTW
     await era.waitAnyKey();
     return 0;
   }
@@ -1491,7 +1488,7 @@ async function given_human_life(rand = default_rand) {
     ],
     mode: 2, // CALL LIFE_LIST(NO_PAGE,2,NUM_PAGE)
     cancel: '取  消', // PRINTLC [999] - 取  消
-    master: true, // 的判据是 RESULT < 0（魔王 0 可被选中）
+    master: true, // 条件是 RESULT < 0（魔王 0 可被选中）
     guard: (cid) => {
       if (talent(cid, 85) === 0) {
         return `${savestr(cid)}已经没有继续留在人间的理由了。`;
@@ -1540,10 +1537,10 @@ async function given_human_life(rand = default_rand) {
   return 1;
 }
 
-/** @RESULECTION（:2539-2629）：死者苏生（消耗勋章，复活 1000-1099 号标记的亡者）。 */
+/** resulection：死者苏生（消耗勋章，复活 1000-1099 号标记的亡者）。 */
 async function resulection() {
   if (exp_of(MASTER, 81) <= 0) {
-    era.print('人的生命可是无法购买的……'); // PRINTW :2544
+    era.print('人的生命可是无法购买的……'); // PRINTW
     await era.waitAnyKey();
     return 0;
   }
@@ -1565,7 +1562,7 @@ async function resulection() {
     }
   }
   if (d === 0) {
-    era.print('找不到想要唤醒的人'); // PRINTW :2564
+    era.print('找不到想要唤醒的人'); // PRINTW
     await era.waitAnyKey();
     return 0;
   }
@@ -1596,7 +1593,7 @@ async function resulection() {
       const c = count + 1000;
       const idx = count + 100;
       if ((era.get(`flag:${c}`) || 0) <= -2) {
-        // 正文带原作的「- 」（:2594 `PRINTFORML  [{D}] - %ITEMNAME:D%`，#612）
+        // 正文带「- 」（`PRINTFORML  [{D}] - %ITEMNAME:D%`，#612）
         era.printButton(`- ${itemname(idx)}`, idx);
       }
     }
@@ -1612,7 +1609,7 @@ async function resulection() {
     if ((era.get(`flag:${c}`) || 0) >= 0) {
       continue; // 的 ELSE GOTO INPUT_LOOP_01（标记不为负 = 不可复活）
     }
-    // 加入角色并做专属初始化：原作 `ADDCHARA D`（D = RESULT - 99，
+    // 加入角色并做专属初始化：`ADDCHARA D`（D = RESULT - 99，
     // 即预设编号），`C = CHARANUM - 1` 在新加入即末位的序号世界等于 D——
     // ere 侧角色 ID 就是预设编号（文件头第 8 条）
     const preset = result - 99; // D = RESULT - 99
@@ -1631,7 +1628,7 @@ async function resulection() {
   return 1;
 }
 
-/** @CURE_INSANE（:2634-2709）：安抚崩坏的心（消耗 30 勋章）。 */
+/** cure_insane：安抚崩坏的心（消耗 30 勋章）。 */
 const CURE_INSANE_ITEM = {
   price: 0, // 消耗的是勋章（30 枚），不走 MONEY 支
   poor: '',
@@ -1641,7 +1638,7 @@ const CURE_INSANE_ITEM = {
     '消耗三十个勋章，恢复谁的理智？',
   ],
   mode: 2, // CALL LIFE_LIST(NO_PAGE,2,NUM_PAGE)
-  master: true, // 的判据是 RESULT < 0（0 可选中）
+  master: true, // 条件是 RESULT < 0（0 可选中）
   guard: (cid) => {
     if (talent(cid, 9) === 0 && talent(cid, 123) === 0) {
       return `${savestr(cid)}的精神没有崩坏。`;
@@ -1661,10 +1658,10 @@ const CURE_INSANE_ITEM = {
   },
 };
 
-/** @CURE_INSANE（:2634-2709）：勋章门槛在 run 里单独判。 */
+/** cure_insane：勋章门槛在 run 里单独判。 */
 async function cure_insane() {
   if (exp_of(MASTER, 81) <= 30) {
-    era.print('勋章，是最好的药啊魔王大人！'); // PRINTW :2639
+    era.print('勋章，是最好的药啊魔王大人！'); // PRINTW
     await era.waitAnyKey();
     return 0;
   }
@@ -1677,17 +1674,17 @@ async function cure_insane() {
   return ret;
 }
 
-/** @REGET_CHASTITY_KEY（:2716-2784）：寻访贞操带钥匙（消耗 1 枚勋章）。 */
+/** reget_chastity_key：寻访贞操带钥匙（消耗 1 枚勋章）。 */
 async function reget_chastity_key() {
   if (exp_of(MASTER, 81) <= 0) {
-    era.print('穷……是世上最无可奈何的事…………'); // PRINTW :2721
+    era.print('穷……是世上最无可奈何的事…………'); // PRINTW
     await era.waitAnyKey();
     return 0;
   }
   const picked = await pick_slave({
     intro: ['把那该死的贞操带钥匙找回来！', '要寻找谁的贞操带钥匙呢？'],
     mode: 2, // CALL LIFE_LIST(NO_PAGE,2,NUM_PAGE)
-    master: true, // 的判据是 RESULT < 0（0 可选中）
+    master: true, // 条件是 RESULT < 0（0 可选中）
     guard: (cid) => {
       if (cflag(cid, 49) === 0) {
         return `没有${chara_nickname(cid)}贞操带钥匙的必要。`;
@@ -1715,7 +1712,7 @@ async function reget_chastity_key() {
   return 1;
 }
 
-/** @HORN（:2787-2859）：赋予犄角。 */
+/** horn：赋予犄角。 */
 const HORN_ITEM = {
   price: 20000,
   poor: '角可是很贵的',
@@ -1737,12 +1734,12 @@ const HORN_ITEM = {
   },
 };
 
-/** @HORN（:2787-2859） */
+/** horn */
 async function horn() {
   return run_modify(HORN_ITEM);
 }
 
-/** 四改造的「已经有了」措辞（:2936/:3017/:3093/:3168，名字之后的部分） */
+/** 四改造的「已经有了」措辞（名字之后的部分） */
 const EVIL_ALREADY = {
   244: '的肌肤已经是蓝色的了。',
   245: '已经长着恶魔的翅膀了。',
@@ -1750,7 +1747,7 @@ const EVIL_ALREADY = {
   247: '已经有恶魔的眼睛了。',
 };
 
-/** 恶魔四改造的共同守卫（:2935-2941 / :3016-3022 / :3092-3098 / :3167-3173） */
+/** 恶魔四改造的共同检查 */
 function evil_body_guard(index) {
   return (cid) => {
     if (talent(cid, index) === 1) {
@@ -1763,7 +1760,7 @@ function evil_body_guard(index) {
   };
 }
 
-/** @EVILAPP（:2862-2886）：恶魔体征改造的分发菜单。 */
+/** evilapp：恶魔体征改造的分发菜单。 */
 async function evilapp() {
   era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
   era.print('要进行什么样的恶魔改造呢？？');
@@ -1774,7 +1771,7 @@ async function evilapp() {
   era.printButton('- 恶魔的眼睛', 4);
   era.printButton('- 返  回', 999); // PRINTLC
   // 的 PRINTL 只结束 [999] 那一行（PRINTLC 不换行，见 CONTEXT.md
-  // 「输出 API 与原作的对应」）；ere 的 printButton 自成一行（＝ PRINTLC +
+  // 「输出 API 的排版与对齐」）；ere 的 printButton 自成一行（＝ PRINTLC +
   // 收尾的 PRINTL），不再补空行。
   const result = await era.input();
   if (result === 999) {
@@ -1795,7 +1792,7 @@ async function evilapp() {
   return 0; // 无 ELSE（按钮外输入不可达）
 }
 
-/** @BLUESKIN（:2889-2968）：恶魔的蓝色肌肤。 */
+/** blueskin：恶魔的蓝色肌肤。 */
 const BLUESKIN_ITEM = {
   price: 20000,
   poor: '钱不够',
@@ -1817,12 +1814,12 @@ const BLUESKIN_ITEM = {
   },
 };
 
-/** @BLUESKIN（:2889-2968） */
+/** blueskin */
 async function blueskin() {
   return run_modify(BLUESKIN_ITEM);
 }
 
-/** @EVILWING（:2971-3043）：恶魔的翅膀。 */
+/** evilwing：恶魔的翅膀。 */
 const EVILWING_ITEM = {
   price: 20000,
   poor: '钱不够',
@@ -1836,12 +1833,12 @@ const EVILWING_ITEM = {
   },
 };
 
-/** @EVILWING（:2971-3043） */
+/** evilwing */
 async function evilwing() {
   return run_modify(EVILWING_ITEM);
 }
 
-/** @EVILTAIL（:3047-3119）：恶魔的尾巴。 */
+/** eviltail：恶魔的尾巴。 */
 const EVILTAIL_ITEM = {
   price: 20000,
   poor: '钱不够',
@@ -1855,12 +1852,12 @@ const EVILTAIL_ITEM = {
   },
 };
 
-/** @EVILTAIL（:3047-3119） */
+/** eviltail */
 async function eviltail() {
   return run_modify(EVILTAIL_ITEM);
 }
 
-/** @EVILSIGHT（:3122-3195）：恶魔的眼睛。 */
+/** evilsight：恶魔的眼睛。 */
 const EVILSIGHT_ITEM = {
   price: 20000,
   poor: '钱不够',
@@ -1874,12 +1871,12 @@ const EVILSIGHT_ITEM = {
   },
 };
 
-/** @EVILSIGHT（:3122-3195） */
+/** evilsight */
 async function evilsight() {
   return run_modify(EVILSIGHT_ITEM);
 }
 
-/** 魔族类型表（:3268-3288 的 TYPEDATA，11 行 × 若干列） */
+/** 魔族类型表（TYPEDATA，11 行 × 若干列） */
 const DEMON_TYPES = [
   [133, 143, 153, 163, 160, 170], // 男巫/女巫/男祭司/女忍/黑暗骑士/女祭司
   [104, 113, 114, 172, 181], // 丧尸/丧尸虫/丧尸猎犬/吸血鬼/死亡领主
@@ -1894,7 +1891,7 @@ const DEMON_TYPES = [
   [154, 152, 182], // 夜少女/魅魔/莉莉丝
 ];
 
-/** 转生附加素质（:3414-3417 的两条活代码；SKIPSTART 段不移植，见文件头第 5 条） */
+/** 转生附加素质（两条活代码；SKIPSTART 段不移植，见文件头第 5 条） */
 const DEMON_BONUS = {
   狗头人: [124, '头上长出【动物耳】了！'],
   丧尸猎犬: [124, '头上长出【动物耳】了！'],
@@ -1906,9 +1903,9 @@ const DEMON_BONUS = {
 };
 
 /**
- * 类型条件表（:3290-3313 的 COND）：0 = 条件不满足（灰显 + 拒绝）。
+ * 类型条件表（COND）：0 = 条件不满足（灰显 + 拒绝）。
  * 只有 1（恶魔肌肤）、2（魁梧）、9（四件恶魔体征）、10（四件 + 淫乱）四行
- * 有判据，其余行恒 1。
+ * 有条件，其余行恒 1。
  * @param {number} cid 角色 ID
  * @returns {number[]} 11 行的条件位
  */
@@ -1940,7 +1937,7 @@ function demon_conditions(cid) {
   return cond;
 }
 
-/** @LABO_DR_GET_TALENT（:3448-3453）：转生时补一项素质（缺了才补并报文案）。 */
+/** labo_dr_get_talent：转生时补一项素质（缺了才补并报文案）。 */
 function labo_dr_get_talent(cid, index, message) {
   if (!talent(cid, index)) {
     era.set(`talent:${cid}:${index}`, 1); // （参数化下标，直写）
@@ -1949,7 +1946,7 @@ function labo_dr_get_talent(cid, index, message) {
   }
 }
 
-/** @LABO_DR_CHANGE_HAIR_COLOR（:3455-3460）：转生时改发色。 */
+/** labo_dr_change_hair_color：转生时改发色。 */
 function labo_dr_change_hair_color(cid, color) {
   if (talent(cid, 300) !== color) {
     era.print(`${savestr(cid)}的头发颜色从${hair_color_name(cid)}`); // PRINTFORM
@@ -1959,7 +1956,7 @@ function labo_dr_change_hair_color(cid, color) {
 }
 
 /**
- * @DEMON_REBIRTH（:3198-3446）：转生的秘法（选魔族类型 → 确认 → 转生）。
+ * demon_rebirth：转生的秘法（选魔族类型 → 确认 → 转生）。
  */
 async function demon_rebirth(rand = default_rand) {
   if (!(await require_money(50000, '没钱还想换壳？'))) {
@@ -1995,8 +1992,8 @@ async function demon_rebirth(rand = default_rand) {
       era.print(`要让${savestr(t)}转生为何种魔族？`);
     }
     era.drawLine(); // DRAWLINE
-    // 类型按钮（原作按 PRINTCPERLINE 折行，ere 侧一个按钮一行；
-    // 条件不满足/等级不够的项在原作是 SETCOLORBYNAME GRAY 灰显，仍可点）
+    // 类型按钮：ere 侧一个按钮一行（PRINTCPERLINE 折行不镜像）；
+    // 条件不满足/等级不够的项按 SETCOLORBYNAME GRAY 灰显，仍可点
     const cond = demon_conditions(t);
     for (const [row, ids] of DEMON_TYPES.entries()) {
       for (const [col, id] of ids.entries()) {
@@ -2083,7 +2080,7 @@ async function demon_rebirth(rand = default_rand) {
   }
 }
 
-/** @SOULBOUND（:3464-3536）：魂缚的诅咒。 */
+/** soulbound：魂缚的诅咒。 */
 const SOULBOUND_ITEM = {
   price: 10000,
   poor: '金钱不足',
@@ -2110,12 +2107,12 @@ const SOULBOUND_ITEM = {
   },
 };
 
-/** @SOULBOUND（:3464-3536） */
+/** soulbound */
 async function soulbound() {
   return run_modify(SOULBOUND_ITEM);
 }
 
-/** @SOULBOUND_ERASE（:3539-3610）：魂缚的解咒。 */
+/** soulbound_erase：魂缚的解咒。 */
 const SOULBOUND_ERASE_ITEM = {
   price: 50000,
   poor: '金钱不足',
@@ -2138,12 +2135,12 @@ const SOULBOUND_ERASE_ITEM = {
   },
 };
 
-/** @SOULBOUND_ERASE（:3539-3610） */
+/** soulbound_erase */
 async function soulbound_erase() {
   return run_modify(SOULBOUND_ERASE_ITEM);
 }
 
-/** @ENCHARMED_ERASE（:3613-3685）：狂王俘虏的消去。 */
+/** encharmed_erase：狂王俘虏的消去。 */
 const ENCHARMED_ERASE_ITEM = {
   price: 50000,
   poor: '金钱不足',
@@ -2165,18 +2162,18 @@ const ENCHARMED_ERASE_ITEM = {
   },
 };
 
-/** @ENCHARMED_ERASE（:3613-3685） */
+/** encharmed_erase */
 async function encharmed_erase() {
   return run_modify(ENCHARMED_ERASE_ITEM);
 }
 
-/** ST_UP_LABO 的四项名称（:3703-3709 的 PRINT HP / 气力 / 攻击 / 防御） */
+/** st_up_labo 的四项名称（PRINT HP / 气力 / 攻击 / 防御） */
 const ST_UP_NAMES = ['HP', '气力', '攻击', '防御'];
 
 /**
- * @ST_UP_LABO（:3688-3830）：能力值强化（HP/气力/攻击/防御，次数手输）。
+ * st_up_labo：能力值强化（HP/气力/攻击/防御，次数手输）。
  *
- * 费用与项目由主分发传入（:166-179 的 `C = 5000` 与 `B = 0..3`）。
+ * 费用与项目由主分发传入（`C = 5000` 与 `B = 0..3`）。
  * @param {number} cost 单价
  * @param {number} b 项目（0 = HP / 1 = 气力 / 2 = 攻击 / 3 = 防御）
  */
@@ -2256,7 +2253,7 @@ async function st_up_labo(cost, b) {
   }
 }
 
-/** @MAGICRESIST（:3833-3905）：赋予魔法耐性。 */
+/** magicresist：赋予魔法耐性。 */
 const MAGICRESIST_ITEM = {
   price: 50000,
   poor: '钱不够',
@@ -2278,12 +2275,12 @@ const MAGICRESIST_ITEM = {
   },
 };
 
-/** @MAGICRESIST（:3833-3905） */
+/** magicresist */
 async function magicresist() {
   return run_modify(MAGICRESIST_ITEM);
 }
 
-/** @EXTRA_PREG_MARK（:3908-3980）：赋予异常妊娠体质。 */
+/** extra_preg_mark：赋予异常妊娠体质。 */
 const EXTRA_PREG_MARK_ITEM = {
   price: 20000,
   poor: '钱不够',
@@ -2305,12 +2302,12 @@ const EXTRA_PREG_MARK_ITEM = {
   },
 };
 
-/** @EXTRA_PREG_MARK（:3908-3980） */
+/** extra_preg_mark */
 async function extra_preg_mark() {
   return run_modify(EXTRA_PREG_MARK_ITEM);
 }
 
-/** @EXTRA_PREG_ERASE（:3983-4055）：消除异常妊娠体质。 */
+/** extra_preg_erase：消除异常妊娠体质。 */
 const EXTRA_PREG_ERASE_ITEM = {
   price: 35000,
   poor: '钱不够',
@@ -2332,12 +2329,12 @@ const EXTRA_PREG_ERASE_ITEM = {
   },
 };
 
-/** @EXTRA_PREG_ERASE（:3983-4055） */
+/** extra_preg_erase */
 async function extra_preg_erase() {
   return run_modify(EXTRA_PREG_ERASE_ITEM);
 }
 
-/** @SET_FREE_TRAIN（:4058-4145）：自由局部调教设定（自由文字输入）。 */
+/** set_free_train：自由局部调教设定（自由文字输入）。 */
 async function set_free_train() {
   if (!(await require_money(20000, '钱不够'))) {
     return 0; // （C = 20000）
@@ -2365,7 +2362,7 @@ async function set_free_train() {
   }
   era.print('请输入新的自由局部调教项目。');
   era.print('发送空白将会重置。');
-  // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+  // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的等价输入）
   era.print('（输入 0 重置）');
   const results = input_text(await era.input({ useRule: false })); // INPUTS
   chara(local).stronghold.自由调教内容 = results; // CSTR:LOCAL:7 = %RESULTS%
@@ -2381,7 +2378,7 @@ async function set_free_train() {
   return 1;
 }
 
-/** @TRANS_SPECIALTALENT（:4150-4227）：淫乱 ⇄ 爱慕互换。 */
+/** trans_specialtalent：淫乱 ⇄ 爱慕互换。 */
 async function trans_specialtalent() {
   if (!(await require_money(500000, '钱不够'))) {
     return 0; // （C = 500000）
@@ -2402,7 +2399,7 @@ async function trans_specialtalent() {
     }
     const t = picked.cid; // T = RESULT
     era.print(`要改变${savestr(t)}吗？`);
-    // 两条互换支（判据逐字保留）
+    // 两条互换支（条件逐字保留）
     if (
       talent(t, 85) &&
       abl(t, 11) >= 3 &&
@@ -2447,7 +2444,7 @@ async function trans_specialtalent() {
 }
 
 /**
- * @SUMMON_SLAVE（:4230-4314）：召唤影之仆从（自由输入收录编号 150-199）。
+ * summon_slave：召唤影之仆从（自由输入收录编号 150-199）。
  */
 async function summon_slave() {
   if (!(await require_money(100000, '召唤资金可是很贵的'))) {
@@ -2459,12 +2456,12 @@ async function summon_slave() {
     era.print('还需要消耗30的等级和30个肉便器');
     era.drawLine(); // DRAWLINE
     if (cflag(MASTER, 9) < 30) {
-      era.print('等级不足'); // PRINTW :4246
+      era.print('等级不足'); // PRINTW
       await era.waitAnyKey();
       return 0;
     }
     if (game.invasion.肉便器数 < 30) {
-      era.print('肉便器数量不足'); // PRINTW :4251
+      era.print('肉便器数量不足'); // PRINTW
       await era.waitAnyKey();
       return 0;
     }
@@ -2476,14 +2473,14 @@ async function summon_slave() {
       return 0;
     }
     if (result > 199 || result < 150) {
-      era.print('请确认对象的收录编号在150以上199以下'); // PRINTW :4265
+      era.print('请确认对象的收录编号在150以上199以下'); // PRINTW
       await era.waitAnyKey();
       continue; // GOTO INPUT_LOOP
     }
     const local = result; // LOCAL = RESULT
     // EXISTCSV LOCAL：预设不存在则不生成
     if (!era.getAllCharacters().includes(local)) {
-      era.print('所选奴隶并不存在'); // PRINTW :4274
+      era.print('所选奴隶并不存在'); // PRINTW
       await era.waitAnyKey();
       continue; // GOTO INPUT_LOOP
     }
@@ -2523,7 +2520,7 @@ async function summon_slave() {
   }
 }
 
-/** @ANTI_AGING（:4317-4392）：减龄魔药（10 岁一档）。 */
+/** anti_aging：减龄魔药（10 岁一档）。 */
 const ANTI_AGING_ITEM = {
   price: 20000,
   poor: '没钱就别想这些事情',
@@ -2531,7 +2528,7 @@ const ANTI_AGING_ITEM = {
   master: true,
   guard: (cid) => {
     // `CFLAG:RESULT:451 < 18 || GETBIT(FLAG:5,13) && CFLAG:RESULT:452 < 18`
-    // 按 Emuera 的「&& 与 || 同优先级、左结合」读作
+    // 按旧引擎「&& 与 || 同优先级、左结合」的语义读作
     // `(年龄 < 18 || 长命种) && 种族年龄 < 18`——种族年龄不低时整支不命中，
     // 年龄 < 18 也照样放行（#517）。
     const long_lived = ((settings_bitmap() >> 13) & 1) !== 0;
@@ -2551,12 +2548,12 @@ const ANTI_AGING_ITEM = {
   },
 };
 
-/** @ANTI_AGING（:4317-4392） */
+/** anti_aging */
 async function anti_aging() {
   return run_modify(ANTI_AGING_ITEM);
 }
 
-/** @肉棒改造（:4397-4498）：年度版新增的阴茎大小改造（形状菜单）。 */
+/** penis_remodel：年度版新增的阴茎大小改造（形状菜单）。 */
 async function penis_remodel() {
   if (!(await require_money(20000, '没钱还想让肉棒变大？噗噗杂鱼~'))) {
     return 0; // （C = 20000）
@@ -2620,10 +2617,10 @@ async function penis_remodel() {
 }
 
 // ————————————————————————————————————————————————
-// 主入口与四页菜单（@SECRET_LABO + @LABO_PAGE1-4）
+// 主入口与四页菜单（secret_labo + labo_page1-4）
 // ————————————————————————————————————————————————
 
-/** 第 1 页的文本行（:201-215） */
+/** 第 1 页的文本行 */
 function labo_page1() {
   era.print(''); // PRINTL
   era.print('□肉体改造');
@@ -2642,7 +2639,7 @@ function labo_page1() {
   era.printButton('- 消除漏尿癖             （10000点）', 11);
 }
 
-/** 第 2 页的文本行（:220-236） */
+/** 第 2 页的文本行 */
 function labo_page2() {
   era.print(''); // PRINTL
   era.print('□肉体改造');
@@ -2663,7 +2660,7 @@ function labo_page2() {
   era.printButton('- 肉棒改造               （20000点）', 25);
 }
 
-/** 第 3 页的文本行（:240-258） */
+/** 第 3 页的文本行 */
 function labo_page3() {
   era.print('□其他');
   era.print(''); // PRINTL
@@ -2689,7 +2686,7 @@ function labo_page3() {
   );
 }
 
-/** 第 4 页的文本行（:264-278） */
+/** 第 4 页的文本行 */
 function labo_page4() {
   era.print(''); // PRINTL
   era.print('□战斗');
@@ -2709,7 +2706,7 @@ function labo_page4() {
 }
 
 /**
- * 洗脑四项的「费用 × 素质」（原作 :104-119 在分发里现置 C/B）。
+ * 洗脑四项的「费用 × 素质」（分发里现置 C/B）。
  * 键 = 菜单编号，值 = [费用, 追加素质]。
  */
 const WASHING_MENU = {
@@ -2719,22 +2716,22 @@ const WASHING_MENU = {
   33: [10000, 83], // 【抖Ｓ】
 };
 
-/** ST_UP_LABO 四项的菜单编号（:165-179 的 `C = 5000` 与 `B = 0..3`） */
+/** st_up_labo 四项的菜单编号（`C = 5000` 与 `B = 0..3`） */
 const ST_UP_MENU = { 70: 0, 71: 1, 72: 2, 73: 3 };
 
 /**
- * @SECRET_LABO（:4-196）：秘密实验室的主循环（本文件唯一的外部调用面）。
+ * secret_labo：秘密实验室的主循环（本文件唯一的外部调用面）。
  *
- * 结构 1:1：`$DRAW_PAGE`（绘制 + 输入）/ `$INPUT_LOOP`（输入分发）两个标签，
- * 页号 P 在 0-3 之间循环（:186-190 的 `P += 3; P %= 4` 与 `P += 1; P %= 4`）。
+ * `$DRAW_PAGE`（绘制 + 输入）/ `$INPUT_LOOP`（输入分发）两个标签，
+ * 页号 P 在 0-3 之间循环（`P += 3; P %= 4` 与 `P += 1; P %= 4`）。
  *
  * @param {(n: number) => number} rand 随机源（透传给各改造条目）
- * @returns {Promise<number>} 0（:178-184 的 `RETURN 0`）
+ * @returns {Promise<number>} 0（`RETURN 0`）
  */
 async function secret_labo(rand = default_rand) {
   let p = 0; // P = 0
   for (;;) {
-    // $DRAW_PAGE（:8-47；REDRAW/CLEARLINE 的局部重绘不镜像）
+    // $DRAW_PAGE（REDRAW/CLEARLINE 的局部重绘不镜像）
     era.print('魔界的大门');
     era.print('《可以对奴隶进行肉体和精神的魔改》');
     era.drawLine(); // DRAWLINE
@@ -2756,12 +2753,12 @@ async function secret_labo(rand = default_rand) {
     // 起的三个 PRINTLC 页脚键打在同一行，紧随的 PRINTL 只结束那一行——
     // PRINTLC 左对齐补位、**不换行**，故不产生空行。ere 的 printButton
     // 自成一行（＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见
-    // CONTEXT.md「输出 API 与原作的对应」）。
+    // CONTEXT.md「输出 API 的排版与对齐」）。
     era.printButton('- 前一页', 997); // PRINTLC  [997] - 前一页
     era.printButton('- 返回', 999); // PRINTLC  [999] - 返回
     era.printButton('- 后一页', 998); // PRINTLC  [998] - 后一页
 
-    // $INPUT_LOOP（:48-196）
+    // $INPUT_LOOP
     const result = await era.input(); // INPUT
     if (result === 0) {
       await modify_bustup(rand);
@@ -2816,7 +2813,7 @@ async function secret_labo(rand = default_rand) {
     } else if (result === 25) {
       await penis_remodel(); // （年度版新增的功能）
     } else if (WASHING_MENU[result]) {
-      // 洗脑四档（C/B 现置后进 @BRAIN_WASHING）
+      // 洗脑四档（C/B 现置后进 brain_washing）
       const [cost, b] = WASHING_MENU[result];
       await brain_washing(cost, b);
     } else if (result === 50 && game.stronghold.触手生物 === 0) {
@@ -2844,8 +2841,8 @@ async function secret_labo(rand = default_rand) {
     } else if (result === 67) {
       await encharmed_erase();
     } else if (result === 68) {
-      // 生命摇篮：勇者数量与上限的六道守卫（过了才进 @CHAR_CREATE）。
-      // 六支的判据与阈值各支互不相同，有意不抽成表：抽表反而看不清
+      // 生命摇篮：勇者数量与上限的六道检查（过了才进 char_create）。
+      // 六支的条件与阈值各支互不相同，有意不抽成表：抽表反而看不清
       // 「哪一支在拦」
       if (game.event.人间界征服完了 === 0 && charanum() > 60) {
         era.print('勇者数量过多');
@@ -2884,7 +2881,7 @@ async function secret_labo(rand = default_rand) {
         await char_create(0, rand); // CALL CHAR_CREATE(0)（付费定制路径）
       }
     } else if (ST_UP_MENU[result] !== undefined) {
-      // 能力值强化四档（C = 5000 与 B 现置后进 @ST_UP_LABO）
+      // 能力值强化四档（C = 5000 与 B 现置后进 st_up_labo）
       await st_up_labo(5000, ST_UP_MENU[result]);
     } else if (result === 74) {
       await magicresist();

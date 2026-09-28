@@ -9,24 +9,24 @@
  *   2. 主分发整表：逐编号进一次，钉住「哪个编号进哪个函数」（价格在各自
  *      的成交用例里钉）；
  *   3. MODIFY 族整表：每个条目一遍「成交 / 取消 / 钱不够」三段；
- *   4. 守卫整表：每条守卫各触发一次（文案 + 不扣款）；
+ *   4. 检查整表：每条检查各触发一次（文案 + 不扣款）；
  *   5. 特殊流程各自一段（多段菜单逐支）；
  *   6. 随机上界用 seq_probe 捕获实参（RAND:2 / RAND:3 / RAND:7）。
  *
- * **不可达支**（按钮化之后输入集 = 本轮已打印按钮，逐条 1:1 保留不补用例，
+ * **不可达支**（按钮化之后输入集 = 本轮已打印按钮，逐条保留结构不补用例，
  * 与 page-ability-up.js 文件头同款登记）：
  *   - 各确认菜单的 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`（输入只有 0/1）；
  *   - 选人处的 `RESULT < 0 || RESULT >= CHARANUM`（列表按钮即输入集）；
  *   - FUTANARI / 肉棒改造的形状菜单、TATOO 的部位表、DEMON_REBIRTH 的类型表
- *     的兜底支（`shape < 0 || shape > 4`、`result < 0 || result > 6/2`、
+ *     的缺省分支（`shape < 0 || shape > 4`、`result < 0 || result > 6/2`、
  *     `pid < 0 || pid > 3`、转生类型表的 `id <= 0`）。
  *
- * **取不了等号侧的判据**（第六节的例外，逐条给理由——不是漏掉）：
+ * **取不了等号侧的条件**（第六节的例外，逐条给理由——不是漏掉）：
  *   - 死者苏生选中检查的 `(FLAG || 0) >= 0`：列表只列 `FLAG <= -2` 的槽，
  *     且画面恒有 [999]（输入集非空、自由输入进不来），所以 flag == 0（`|| 0`
- *     兜底值）的槽选不中——该支在实机上不可达；能站等号侧的是列表判据
- *     `<= -2` 与扫描判据 `< 0`（两条都有用例）。
- *   - `talent(318) < 0`（原作「念のため」的钳制）：上一句 `> 1` 已挡掉，
+ *     缺省值）的槽选不中——该支在实机上不可达；能站等号侧的是列表条件
+ *     `<= -2` 与扫描条件 `< 0`（两条都有用例）。
+ *   - `talent(318) < 0`（「念のため」的钳制）：上一句 `> 1` 已挡掉，
  *     掷骰后不可能为负，故取不了等号侧。
  *   - `base(t, 10) > 0` 的 `>= 0`：改写发生在 BASE == 0 的分支里（同分支内
  *     写 0 与不写不可区分），能站的是 `> 0` 那侧与 `BASE == 0` 的走法。
@@ -110,8 +110,8 @@ const all_text = (lines) =>
 /**
  * 最后一个按钮所在的行号（页脚空行断言的取证面：页脚是本屏最后打印的一组）。
  *
- * 原作本文件的页脚一律是「若干 `PRINTLC` 串 + 一个 `PRINTL`」：`PRINTLC`
- * 不换行（按 CONTEXT.md「输出 API 与原作的对应」），那个 `PRINTL` 只结束
+ * 本文件的页脚一律是「若干 `PRINTLC` 串 + 一个 `PRINTL`」：`PRINTLC`
+ * 不换行（按 CONTEXT.md「输出 API 的排版与对齐」），那个 `PRINTL` 只结束
  * 它所在的那一行。ere 的 `printButton` 自成一行（＝ `PRINTLC` + 收尾的
  * `PRINTL`），故页脚按钮之后不应再出现空行。
  * @param {object[]} lines 输出行
@@ -138,14 +138,14 @@ async function run(fixture, name, inputs, { args = [], rand = always } = {}) {
   return { ret, added: fixture.lines.slice(before) };
 }
 
-/** 跑一次 @SECRET_LABO（主循环） */
+/** 跑一次 secret_labo（主循环） */
 function run_labo(fixture, inputs, rand = always) {
   return run(fixture, 'secret_labo', inputs, { rand });
 }
 
 /**
  * 编号所在的页号（0 起）：第 1 页 0-11、第 2 页 12-25、第 3 页 50-68、
- * 第 4 页 30-33 与 70-74（LABO_PAGE1-4 的落点，:204-278）。
+ * 第 4 页 30-33 与 70-74（labo_page1-4 的落点）。
  * @param {number} id 编号
  * @returns {number} 页号
  */
@@ -171,7 +171,7 @@ function turns_to(id) {
 // 一、四页菜单与主循环
 // ————————————————————————————————————————————————
 
-test('LABO_PAGE1：条目编号与价格逐个钉住（页 0）', async () => {
+test('labo_page1：条目编号与价格逐个钉住（页 0）', async () => {
   const fixture = make_fixture({ seed: { 'exp:0:81': 0 } });
   const { ret, added } = await run_labo(fixture, [999]);
   assert.equal(ret, 0, '999 退出主循环');
@@ -206,27 +206,27 @@ test('LABO_PAGE1：条目编号与价格逐个钉住（页 0）', async () => {
     '页脚三键 [997]/[999]/[998]',
   );
   // 的标题与所持金
-  assert.ok(texts(added).includes('魔界的大门'), '标题在 :13');
+  assert.ok(texts(added).includes('魔界的大门'), '标题在');
   assert.ok(
     texts(added).includes('《可以对奴隶进行肉体和精神的魔改》'),
-    '副标题在 :14',
+    '副标题在',
   );
   assert.ok(
     texts(added).includes('所持金：100000000点'),
     '所持金行读 era_flag.money（flag:10004）',
   );
-  // 源 :16-22 是 PRINTV DAY+1 + PRINT 日 + PRINTL  午前：内容一个半角空格。
+  // 日期行是 PRINTV DAY+1 + PRINT 日 + PRINTL  午前：内容一个半角空格。
   // 同族的 page-item-shop / page-chara-shop / page-tailor / page-shop-trap
   // 四处都写 1 格；本处原先多写一格，随 #577 的普查一并改正
   assert.ok(texts(added).includes('1日 午前'), '日期行（DAY+1 与 TIME==0）');
 });
 
-test('SECRET_LABO：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行，:45 的 PRINTL 只收那一行）', async () => {
+test('secret_labo：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行，收尾的 PRINTL 只收那一行）', async () => {
   const fixture = make_fixture({ seed: { 'exp:0:81': 0 } });
   const { added } = await run_labo(fixture, [999]);
 
-  // 每页 $DRAW_PAGE 的页脚（:41-45）是三个 PRINTLC 加一个 PRINTL：PRINTLC
-  // 不换行（见 CONTEXT.md「输出 API 与原作的对应」），那个 PRINTL 只结束它
+  // 每页 $DRAW_PAGE 的页脚是三个 PRINTLC 加一个 PRINTL：PRINTLC
+  // 不换行（见 CONTEXT.md「输出 API 的排版与对齐」），那个 PRINTL 只结束它
   // 所在的那一行，不产生空行。ere 的 printButton 自成一行（＝ PRINTLC +
   // 收尾的 PRINTL），页脚之后再补一条就是多出来的空行。
   assert.deepEqual(
@@ -236,7 +236,7 @@ test('SECRET_LABO：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行�
   );
 });
 
-test('SECRET_LABO：前/后页与 4 页循环（997 退一页、998 进一页）', async () => {
+test('secret_labo：前/后页与 4 页循环（997 退一页、998 进一页）', async () => {
   const fixture = make_fixture({ seed: { 'exp:0:81': 0 } });
   // 后翻一页 → 页 1；再前翻一页 → 页 0；再前翻（P=0 时退到 3）→ 页 3
   const { added } = await run_labo(fixture, [998, 997, 997, 999]);
@@ -258,7 +258,7 @@ test('SECRET_LABO：前/后页与 4 页循环（997 退一页、998 进一页）
   assert.ok(!accs(last_page).includes(0), '页 3 不含编号 0');
 });
 
-test('LABO_PAGE3：勋章五项按 EXP:MASTER:81 开合，[50] 按 ITEM:90 开合', async () => {
+test('labo_page3：勋章五项按 EXP:MASTER:81 开合，[50] 按 ITEM:90 开合', async () => {
   // 无勋章、无触手：只剩 56/59/60/64/65/66/67/68
   const poor = make_fixture({ seed: { 'exp:0:81': 0 } });
   const poor_run = await run_labo(poor, [998, 998, 999]);
@@ -281,7 +281,7 @@ test('LABO_PAGE3：勋章五项按 EXP:MASTER:81 开合，[50] 按 ITEM:90 开�
   assert.ok(!accs(bought_run.added).includes(50), 'ITEM:90 != 0 时不画 [50]');
 });
 
-test('LABO_PAGE4：洗脑四项的按钮正文价格（8000 与 10000 两个档）', async () => {
+test('labo_page4：洗脑四项的按钮正文价格（8000 与 10000 两个档）', async () => {
   const fixture = make_fixture({ seed: { 'exp:0:81': 0 } });
   const { added } = await run_labo(fixture, [998, 998, 998, 999]);
   assert.ok(button_of(added, 30).rendered.includes('5000点'));
@@ -293,7 +293,7 @@ test('LABO_PAGE4：洗脑四项的按钮正文价格（8000 与 10000 两个档�
     [70, 71, 72, 73, 74],
     '战斗段五项',
   );
-  // 的 PRINTL 是独立的一行（:271 `PRINTL [74] - 赋予魔法耐性` 整行自成
+  // 的 PRINTL 是独立的一行（`PRINTL [74] - 赋予魔法耐性` 整行自成
   // 一行，不是 PRINTLC 串）——所以 [74] 与「□洗脑」之间恰有一个真空行。
   // 它不属于 #562 修的那一类（PRINTLC 收尾 PRINTL 不多补空行），删掉即错。
   const magic_row = button_of(added, 74).row;
@@ -308,7 +308,7 @@ test('LABO_PAGE4：洗脑四项的按钮正文价格（8000 与 10000 两个档�
         (line.type === 'br' || (line.type === 'text' && line.text === '')),
     ).length,
     1,
-    ':272 的独立 PRINTL 仍是一个真空行',
+    '独立 PRINTL 仍是一个真空行',
   );
 });
 
@@ -319,7 +319,7 @@ test('LABO_PAGE4：洗脑四项的按钮正文价格（8000 与 10000 两个档�
 /**
  * 形状相同的 MODIFY 条目整表。
  *
- * 每条：`fn` 导出名、`price` 价格、`poor` 钱不够的原文、`seed` 让守卫放行的
+ * 每条：`fn` 导出名、`price` 价格、`poor` 钱不够的原文、`seed` 让检查放行的
  * 预置、`applied` 成交后的写入断言、`extra` 额外的输入（选择/确认之外的）。
  */
 const MODIFY_ITEMS = [
@@ -621,7 +621,7 @@ test('选人画面：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行
   const { added } = await run(fixture, 'modify_bonyu', [999], {});
 
   // 选人骨架（本文件第 1 条移植说明）的页脚是三个 PRINTLC 加一个 PRINTL：
-  // PRINTLC 不换行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」），
+  // PRINTLC 不换行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」），
   // 那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的 printButton 自成
   // 一行（＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条就是多出来的空行。
   assert.deepEqual(
@@ -655,7 +655,7 @@ test('MODIFY 族：选人列表的翻页（1001 进、1000 退、上界按 CHARA
 });
 
 // ————————————————————————————————————————————————
-// 三、守卫整表：每条守卫各触发一次（文案 + 不扣款）
+// 三、检查整表：每条检查各触发一次（文案 + 不扣款）
 // ————————————————————————————————————————————————
 
 /** 测试用到的素质名（引擎名字表 talentname 的预置；fixture 不读 yml） */
@@ -699,7 +699,7 @@ function seed_talentnames(fixture) {
 }
 
 /**
- * 守卫表：每条给 fn、让守卫成立的 seed、以及原文案。
+ * 检查表：每条给 fn、让检查成立的 seed、以及原文案。
  * `input` 缺省 [1]（选奴隶 1）；`wait` 表示是否等键（PRINTFORM 的档不等）。
  */
 const GUARDS = [
@@ -816,7 +816,7 @@ const GUARDS = [
   {
     fn: 'trans_sex',
     seed: { 'cflag:1:70': 1 },
-    // 守卫若不成立会继续走到确认画面：补两个输入让它能干净退出，
+    // 检查若不成立会继续走到确认画面：补两个输入让它能干净退出，
     // 否则失败会落在夹具的「输入耗尽」上，断言消息到不了输出里
     input: [1, 1],
     text: '奴隶1已经被性转过了。',
@@ -950,12 +950,12 @@ const GUARDS = [
   {
     fn: 'modify_amnesia',
     seed: { 'base:1:0': 0 },
-    input: [1, 999], // 濒死守卫无提示，只重画；随后 999 退出
+    input: [1, 999], // 濒死检查无提示，只重画；随后 999 退出
     missing: true,
   },
 ];
 
-test('守卫整表：触发一次、提示原文、不扣款、不写入', async () => {
+test('检查整表：触发一次、提示原文、不扣款、不写入', async () => {
   for (const entry of GUARDS) {
     const fixture = make_fixture({ seed: entry.seed });
     seed_talentnames(fixture);
@@ -963,11 +963,11 @@ test('守卫整表：触发一次、提示原文、不扣款、不写入', async
     const { ret, added } = await run(fixture, entry.fn, entry.input ?? [1], {
       args: entry.args ?? [],
     });
-    assert.equal(ret, 0, `${entry.fn}：守卫拦下返回 0`);
+    assert.equal(ret, 0, `${entry.fn}：检查拦下返回 0`);
     assert.equal(
       fixture.store.get('flag:10004'),
       money,
-      `${entry.fn}：守卫拦下不扣款`,
+      `${entry.fn}：检查拦下不扣款`,
     );
     if (!entry.missing) {
       assert.ok(
@@ -978,9 +978,9 @@ test('守卫整表：触发一次、提示原文、不扣款、不写入', async
   }
 });
 
-test('anti_aging 守卫：种族年龄门是整个条件的合取项（源 :4364 左结合）', async () => {
-  // 源 :4364 `CFLAG:RESULT:451 < 18 || GETBIT(FLAG:5,13) && CFLAG:RESULT:452 < 18`
-  // ——Emuera 的 && 与 || 同优先级、左结合，读作
+test('anti_aging 检查：种族年龄门是整个条件的合取项（左结合）', async () => {
+  // `CFLAG:RESULT:451 < 18 || GETBIT(FLAG:5,13) && CFLAG:RESULT:452 < 18`
+  // ——旧引擎语义：&& 与 || 同优先级、左结合，读作
   // `(年龄 < 18 || 长命种) && 种族年龄 < 18`（#517）。年龄 < 18 但种族年龄
   // 不低时整支不命中，药水照常可用。
   const fixture = make_fixture({
@@ -988,7 +988,7 @@ test('anti_aging 守卫：种族年龄门是整个条件的合取项（源 :4364
   });
   seed_talentnames(fixture);
   const money = fixture.store.get('flag:10004');
-  // 选人 1 → 确认画面答「不要」（守卫不拦时才会走到确认）
+  // 选人 1 → 确认画面答「不要」（检查不拦时才会走到确认）
   const { added } = await run(fixture, 'anti_aging', [1, 1], {});
   assert.ok(
     !all_text(added).includes('无法再变得更年轻了'),
@@ -1049,7 +1049,7 @@ test('MODIFY 族：濒死角色被排除（BASE:x:0 < 1 回选人循环）', asy
 // 四、特殊流程
 // ————————————————————————————————————————————————
 
-test('MODIFY_BUSTUP：乳房档位递升整表（绝壁→贫乳→普通→巨乳→爆乳→超乳）', async () => {
+test('modify_bustup：乳房档位递升整表（绝壁→贫乳→普通→巨乳→爆乳→超乳）', async () => {
   const cases = [
     // 当前有的素质 → 期望的写入
     [{ 'talent:1:116': 1 }, { 116: 0, 109: 1 }],
@@ -1080,14 +1080,14 @@ test('MODIFY_BUSTUP：乳房档位递升整表（绝壁→贫乳→普通→巨�
   }
 });
 
-test('MODIFY_BUSTUP：已有巨乳/爆乳时加价 50000；钱不够则回选人（不成交）', async () => {
+test('modify_bustup：已有巨乳/爆乳时加价 50000；钱不够则回选人（不成交）', async () => {
   // 有巨乳且钱恰好 50000 → 走加价档
   const rich = make_fixture({ money: 50001, seed: { 'talent:1:110': 1 } });
   const { ret, added } = await run(rich, 'modify_bustup', [1, 0], {});
   assert.equal(ret, 1);
   assert.ok(
     texts(added).includes('奴隶1胸部伟岸，要更上一层楼，需要50000点。'),
-    '加价档先报加价（:340）',
+    '加价档先报加价',
   );
   assert.ok(
     texts(added).includes('这样还要继续么？'),
@@ -1109,7 +1109,7 @@ test('MODIFY_BUSTUP：已有巨乳/爆乳时加价 50000；钱不够则回选人
   );
 });
 
-test('MODIFY_BUSTDOWN：乳房档位递降整表', async () => {
+test('modify_bustdown：乳房档位递降整表', async () => {
   const cases = [
     [{ 'talent:1:119': 1 }, { 119: 0, 114: 1 }],
     [{ 'talent:1:114': 1 }, { 114: 0, 110: 1 }],
@@ -1170,7 +1170,7 @@ test('胸围重算：FLAG:5 位 12/15 开才写 CFLAG:454/455（随机上界由 
   }
 });
 
-test('MODIFY_FUTANARI：形状菜单整表（0-4 → TALENT:318）与 [999] 退出', async () => {
+test('modify_futanari：形状菜单整表（0-4 → TALENT:318）与 [999] 退出', async () => {
   for (let shape = 0; shape <= 4; shape += 1) {
     const fixture = make_fixture({ seed: {} });
     const { ret, added } = await run(
@@ -1196,7 +1196,7 @@ test('MODIFY_FUTANARI：形状菜单整表（0-4 → TALENT:318）与 [999] 退�
   assert.equal(stop.store.get('flag:10004'), 100000000, '[999] 不扣款');
 });
 
-test('MODIFY_AMNESIA：全清清单（ABL/MARK/JUEL 各 100 项、TALENT 74-78、85/86、CFLAG 0/2/10）', async () => {
+test('modify_amnesia：全清清单（ABL/MARK/JUEL 各 100 项、TALENT 74-78、85/86、CFLAG 0/2/10）', async () => {
   const fixture = make_fixture({ seed: {} });
   fixture.store.set('abl:1:0', 7);
   fixture.store.set('abl:1:99', 7);
@@ -1226,11 +1226,11 @@ test('MODIFY_AMNESIA：全清清单（ABL/MARK/JUEL 各 100 项、TALENT 74-78�
   assert.equal(
     fixture.store.get('exp:1:50'),
     undefined,
-    'EXP 不清（原作注释明示）',
+    'EXP 不清（注释明示）',
   );
 });
 
-test('MODIFY_AMNESIA：助手（ASSI）与上次助手（FLAG:2）一并解除', async () => {
+test('modify_amnesia：助手（ASSI）与上次助手（FLAG:2）一并解除', async () => {
   const fixture = make_fixture({ seed: { 'flag:10006': 1 } }); // era_flag.assi
   fixture.store.set('flag:2', 1);
   const { ret } = await run(fixture, 'modify_amnesia', [1, 0], {});
@@ -1239,7 +1239,7 @@ test('MODIFY_AMNESIA：助手（ASSI）与上次助手（FLAG:2）一并解除',
   assert.equal(fixture.store.get('flag:2'), -1, 'FLAG:2 == D → 置 -1');
 });
 
-test('MODIFY_AMNESIA：妊娠分支两档与育儿分支两档', async () => {
+test('modify_amnesia：妊娠分支两档与育儿分支两档', async () => {
   // 妊娠 + 无母性无刚强 → 崩坏
   const pregnant = make_fixture({ seed: { 'talent:1:153': 1 } });
   const first = await run(pregnant, 'modify_amnesia', [1, 0], {});
@@ -1272,7 +1272,7 @@ test('MODIFY_AMNESIA：妊娠分支两档与育儿分支两档', async () => {
   );
 });
 
-test('TATOO_SET_OFF：部位菜单 + 自由文字（刻印与消去两支）', async () => {
+test('tatoo_set_off：部位菜单 + 自由文字（刻印与消去两支）', async () => {
   // 刻印：部位 11（胸）→ 文字「爱」
   const tattoo = make_fixture({ seed: {} });
   const first = await run(tattoo, 'tatoo_set_off', [1, 11, '爱', 0], {});
@@ -1291,7 +1291,7 @@ test('TATOO_SET_OFF：部位菜单 + 自由文字（刻印与消去两支）', a
     all_text(first.added).includes('（输入 0 消去刺青）'),
     'ere 侧补的输入 0 说明（#567）',
   );
-  // 消去：输入 0（引擎归一后的空输入形态）→ 清空
+  // 消去：输入 0（引擎归一后的空输入）→ 清空
   const erase = make_fixture({ seed: { 'cstr:1:11': '爱' } });
   const second = await run(erase, 'tatoo_set_off', [1, 11, 0, 0], {});
   assert.equal(second.ret, 1);
@@ -1309,7 +1309,7 @@ test('TATOO_SET_OFF：部位菜单 + 自由文字（刻印与消去两支）', a
   assert.equal((await run(stop, 'tatoo_set_off', [1, 999], {})).ret, 0);
 });
 
-test('MODIFY_HAIR_COLOR：颜色菜单七档 + [999] 回角色选择', async () => {
+test('modify_hair_color：颜色菜单七档 + [999] 回角色选择', async () => {
   for (let color = 0; color <= 6; color += 1) {
     const fixture = make_fixture({ seed: {} });
     const { ret } = await run(fixture, 'modify_hair_color', [1, color, 0], {});
@@ -1346,7 +1346,7 @@ test('MODIFY_HAIR_COLOR：颜色菜单七档 + [999] 回角色选择', async () 
   );
 });
 
-test('MODIFY_SKIN_COLOR：三档 + 现状识别（白皙/褐色/恶魔/普通）', async () => {
+test('modify_skin_color：三档 + 现状识别（白皙/褐色/恶魔/普通）', async () => {
   const cases = [
     [{}, '普通肤色', 1, 255],
     [{ 'talent:1:255': 1 }, '白皙', 2, 253],
@@ -1381,7 +1381,7 @@ test('MODIFY_SKIN_COLOR：三档 + 现状识别（白皙/褐色/恶魔/普通）
   }
 });
 
-test('BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两道门）', async () => {
+test('block_feeling：部位维度表驱动（四部位 × 钝感位与 ABL 两道门）', async () => {
   const parts = [0, 1, 2, 3];
   for (const pid of parts) {
     const fixture = make_fixture({ seed: {} });
@@ -1406,7 +1406,7 @@ test('BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两�
     all_text(blocked.added).includes('已经超过LV1以上的部位无法封锁'),
     'ABL > 0 时拒绝',
   );
-  // 已封锁（bit2）：照原作把编号换成 `-`（文本行，不是按钮）——于是
+  // 已封锁（bit2）：把编号换成 `-`（文本行，不是按钮）——于是
   // 「点已封锁部位」在实机上不可达，那一支的提示也就不再出现
   const locked = make_fixture({ seed: {} });
   locked.store.set('talent:1:101', 2);
@@ -1420,7 +1420,7 @@ test('BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两�
   );
   assert.ok(
     locked_rows.length > 0 && locked_rows.every((line) => line.type === 'text'),
-    '已封锁的部位是文本行而非按钮（原作把编号换成 -）',
+    '已封锁的部位是文本行而非按钮（编号换成 -）',
   );
   assert.ok(
     !all_text(again.added).includes('已经封锁过了'),
@@ -1443,7 +1443,7 @@ test('BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两�
   // #612 反向普查：下面这行里的 `-` 在方括号**内**（`\@ FLAG_B ? - # 0 \@`
   // 三元式的真分支），是编号替身而不是分隔符——正文不能写成 `- 阴茎感觉`
   // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
-  // 原作 :2140 渲染的是 `　[0] 阴茎感觉`（编号后紧跟正文，无「- 」）
+  // 渲染的是 `　[0] 阴茎感觉`（编号后紧跟正文，无「- 」）
   assert.deepEqual(
     button_texts(added).filter((text) => text.includes('感觉')),
     ['[0] 阴茎感觉', '[2] 肛门感觉', '[3] 乳房感觉'],
@@ -1451,11 +1451,11 @@ test('BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两�
   );
 });
 
-test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () => {
+test('brain_washing：四档「费用 × 素质」整表 + 三道检查', async () => {
   const menu = [
     // [菜单号, 费用, 附加素质, 说话名, 额外预置]
     [30, 5000, 64, '无视污垢', {}],
-    // B == 133 需要对象已有男/扶她（:2373-2375），否则守卫拦下
+    // B == 133 需要对象已有男/扶她，否则检查拦下
     [31, 8000, 133, '早泄', { 'talent:1:122': 1 }],
     [32, 10000, 132, '幼稚', {}],
     [33, 10000, 83, '抖Ｓ', {}],
@@ -1477,7 +1477,7 @@ test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () 
       `[${id}] 扣 ${cost}`,
     );
   }
-  // 守卫一：已有该素质
+  // 检查一：已有该素质
   const has = make_fixture({ seed: { 'talent:1:64': 1, 'cflag:1:0': 2 } });
   seed_talentnames(has);
   const first = await run_labo(has, [998, 998, 998, 30, 1, 999], {});
@@ -1485,7 +1485,7 @@ test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () 
     all_text(first.added).includes('已经有【】了。'),
     '已有素质时拒绝（素质名未预置的编号显示为空串）',
   );
-  // 守卫二：不能做助手的角色（CFLAG:0 < 2）
+  // 检查二：不能做助手的角色（CFLAG:0 < 2）
   const no_assist = make_fixture({ seed: {} });
   seed_talentnames(no_assist);
   const second = await run_labo(no_assist, [998, 998, 998, 30, 1, 999], {});
@@ -1493,7 +1493,7 @@ test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () 
     all_text(second.added).includes('不能洗脑不可做助手的角色。'),
     'CFLAG:0 < 2 时拒绝',
   );
-  // 守卫三：B == 133 需要扶她或男人
+  // 检查三：B == 133 需要扶她或男人
   const not_equipped = make_fixture({ seed: { 'cflag:1:0': 2 } });
   seed_talentnames(not_equipped);
   const third = await run_labo(not_equipped, [998, 998, 998, 31, 1, 999], {});
@@ -1501,7 +1501,7 @@ test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () 
     all_text(third.added).includes('没有相应设备。'),
     'B == 133 且非男非扶她时拒绝',
   );
-  // 守卫四：[152] 的人不能被洗脑
+  // 检查四：[152] 的人不能被洗脑
   const special = make_fixture({ seed: { 'cflag:1:0': 2, 'talent:1:152': 1 } });
   seed_talentnames(special);
   const fourth = await run_labo(special, [998, 998, 998, 30, 1, 999], {});
@@ -1511,7 +1511,7 @@ test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () 
   );
 });
 
-test('BOUGT_TENTACLES：买与不买两支（ITEM:90 与 50000 点）', async () => {
+test('bougt_tentacles：买与不买两支（ITEM:90 与 50000 点）', async () => {
   const buy = make_fixture({ seed: { 'exp:0:81': 0 } });
   const first = await run(buy, 'bougt_tentacles', [0], {});
   assert.equal(first.ret, 1);
@@ -1526,7 +1526,7 @@ test('BOUGT_TENTACLES：买与不买两支（ITEM:90 与 50000 点）', async ()
   assert.equal(no.store.get('item:90'), undefined);
 });
 
-test('GIVEN_HUMAN_LIFE：非人类支只提示不返回 + 勋章清零 + 口上事件 15', async () => {
+test('given_human_life：非人类支只提示不返回 + 勋章清零 + 口上事件 15', async () => {
   const fixture = make_fixture({
     seed: {
       'exp:0:81': 5,
@@ -1564,7 +1564,7 @@ test('GIVEN_HUMAN_LIFE：非人类支只提示不返回 + 勋章清零 + 口上�
   );
 });
 
-test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）与复活流程', async () => {
+test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）与复活流程', async () => {
   // 无勋章
   const no_medal = make_fixture({ seed: {} });
   assert.equal(
@@ -1586,10 +1586,10 @@ test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   const second = await run(no_dead, 'resulection', [1], {});
   assert.ok(
     texts(second.added).includes('找不到想要唤醒的人'),
-    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 兜底 = 0，不算亡者）',
+    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 的缺省值是 0，不算亡者）',
   );
   // 有亡者：确认 → 选 100 → 复活
-  // 亡者位 1099 → 按钮 199 → 预设编号 100（原作 ADDCHARA D，D = RESULT - 99；
+  // 亡者位 1099 → 按钮 199 → 预设编号 100（ADDCHARA D，D = RESULT - 99；
   // 显示名的 ITEM 编号 = COUNT + 100，即 RESULT）
   const revive = make_fixture({ seed: { 'exp:0:81': 5, 'flag:1099': -2 } });
   revive.seed_chara(100, { id: 100, name: '亡者', callname: '亡者' });
@@ -1599,7 +1599,7 @@ test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   assert.equal(revive.store.get('flag:1099'), -1, '购买标记 FLAG:C = -1');
   assert.equal(revive.store.get('exp:0:81'), 0, '勋章清零');
   assert.ok(all_text(third.added).includes('被从彼岸召唤回来了'), '复活文案');
-  // #612：名单正文带原作的「- 」（:2593-2594 `PRINTFORML  [{D}] - %ITEMNAME:D%`）
+  // #612：名单正文带「- 」（`PRINTFORML  [{D}] - %ITEMNAME:D%`）
   assert.deepEqual(
     button_texts(third.added).filter((text) => text.includes('亡者')),
     ['[199] - 亡者'],
@@ -1610,7 +1610,7 @@ test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   assert.equal((await run(cancel, 'resulection', [1], {})).ret, 0);
 });
 
-test('CURE_INSANE：崩坏与疯狂两支各清一项 + 勋章 -30', async () => {
+test('cure_insane：崩坏与疯狂两支各清一项 + 勋章 -30', async () => {
   const both = make_fixture({
     seed: { 'exp:0:81': 40, 'talent:1:9': 1, 'talent:1:123': 1 },
   });
@@ -1631,11 +1631,11 @@ test('CURE_INSANE：崩坏与疯狂两支各清一项 + 勋章 -30', async () =>
   const third = await run(edge, 'cure_insane', [1, 0], {});
   assert.ok(
     texts(third.added).includes('勋章，是最好的药啊魔王大人！'),
-    'EXP == 30 时仍被拒绝（判据是 <= 30）',
+    'EXP == 30 时仍被拒绝（条件是 <= 30）',
   );
 });
 
-test('EVILAPP：四项分发整表（1-4 → 各自界面，999 返回）', async () => {
+test('evilapp：四项分发整表（1-4 → 各自界面，999 返回）', async () => {
   const expected = {
     1: '改造成为恶魔的蓝色肌肤',
     2: '给对象赋予恶魔的翅膀。',
@@ -1651,12 +1651,12 @@ test('EVILAPP：四项分发整表（1-4 → 各自界面，999 返回）', asyn
   assert.equal((await run(back, 'evilapp', [999], {})).ret, 0);
 });
 
-test('EVILAPP：页脚 PRINTLC 之后没有空行（PRINTLC 不换行，:2872 的 PRINTL 只收那一行）', async () => {
+test('evilapp：页脚 PRINTLC 之后没有空行（PRINTLC 不换行，收尾的 PRINTL 只收那一行）', async () => {
   const fixture = make_fixture({ seed: {} });
   const { added } = await run(fixture, 'evilapp', [999], {});
 
-  // 原作 :2867-2872 是四个 PRINTL 项 + 一个 PRINTLC（[999] - 返  回）+ 一个
-  // PRINTL：PRINTLC 不换行（见 CONTEXT.md「输出 API 与原作的对应」），那个
+  // 四个 PRINTL 项 + 一个 PRINTLC（[999] - 返  回）+ 一个
+  // PRINTL：PRINTLC 不换行（见 CONTEXT.md「输出 API 的排版与对齐」），那个
   // PRINTL 只结束它所在的那一行，不产生空行。ere 的 printButton 自成一行
   // （＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条就是多出来的空行。
   assert.deepEqual(
@@ -1666,7 +1666,7 @@ test('EVILAPP：页脚 PRINTLC 之后没有空行（PRINTLC 不换行，:2872 �
   );
 });
 
-test('DEMON_REBIRTH：类型表整表 + 等级门 + 附加素质 + 随机上界 3/7', async () => {
+test('demon_rebirth：类型表整表 + 等级门 + 附加素质 + 随机上界 3/7', async () => {
   // 11 行 6 列的类型表；此处逐行取第 0 列各跑一次（等级给到位）
   const TYPES = [
     [133, 143, 153, 163, 160, 170],
@@ -1742,7 +1742,7 @@ test('DEMON_REBIRTH：类型表整表 + 等级门 + 附加素质 + 随机上界 
   }
 });
 
-test('DEMON_REBIRTH：等级不够时的提示与素质清单', async () => {
+test('demon_rebirth：等级不够时的提示与素质清单', async () => {
   const fixture = make_fixture({ seed: { 'cflag:1:9': 1 } });
   fixture.store.set('itemprice:104', 400); // 需要 Lv20
   fixture.store.set('itemname:104', '丧尸');
@@ -1757,7 +1757,7 @@ test('DEMON_REBIRTH：等级不够时的提示与素质清单', async () => {
   assert.ok(all_text(added).includes('[恶魔肌肤]'), '素质清单带方括号');
 });
 
-test('DEMON_REBIRTH：现种族不能选（跳过同族）与转生附加素质', async () => {
+test('demon_rebirth：现种族不能选（跳过同族）与转生附加素质', async () => {
   // 狗头人（100）：转生后补 TALENT:124（动物耳朵）
   const fixture = make_fixture({ seed: { 'cflag:1:9': 99, 'cflag:1:1': 0 } });
   fixture.store.set('itemname:100', '狗头人');
@@ -1769,7 +1769,7 @@ test('DEMON_REBIRTH：现种族不能选（跳过同族）与转生附加素质'
   assert.equal(fixture.store.get('talent:1:124'), 1, '附加素质：动物耳朵');
   assert.ok(all_text(added).includes('头上长出'), '附加素质的文案');
   // 现种族与某个类型相同时，那个类型的按钮被跳过（:3328-3329 CONTINUE）——
-  // 原作里还能手敲编号走到「已经是…了」那一支，按钮化之后不可达（文件头第 3 条）
+  // 按钮化之前还能手敲编号走到「已经是…了」那一支，按钮化之后不可达（文件头第 3 条）
   const same = make_fixture({ seed: { 'cflag:1:9': 99, 'cflag:1:1': 0 } });
   same.store.set('itemname:100', '狗头人');
   same.store.set('itemprice:100', 20);
@@ -1783,7 +1783,7 @@ test('DEMON_REBIRTH：现种族不能选（跳过同族）与转生附加素质'
   );
 });
 
-test('ST_UP_LABO：四项整表（价格 5000 × 次数）与上限分支', async () => {
+test('st_up_labo：四项整表（价格 5000 × 次数）与上限分支', async () => {
   const items = [
     [0, 'HP', (f) => assert.equal(f.store.get('maxbase:1:0'), 10 * 3)],
     [1, '气力', (f) => assert.equal(f.store.get('maxbase:1:1'), 10 * 3)],
@@ -1841,7 +1841,7 @@ test('ST_UP_LABO：四项整表（价格 5000 × 次数）与上限分支', asyn
   );
 });
 
-test('SET_FREE_TRAIN：写入 CSTR:7 与两项 ABL + 两档提示', async () => {
+test('set_free_train：写入 CSTR:7 与两项 ABL + 两档提示', async () => {
   const set = make_fixture({ seed: {} });
   set.store.set('abl:1:4', 5);
   set.store.set('abl:1:40', 5);
@@ -1857,7 +1857,7 @@ test('SET_FREE_TRAIN：写入 CSTR:7 与两项 ABL + 两档提示', async () => 
     all_text(added).includes('（输入 0 重置）'),
     'ere 侧补的输入 0 说明（#567）',
   );
-  // 输入 0（引擎归一后的空输入形态）→ 重置提示
+  // 输入 0（引擎归一后的空输入）→ 重置提示
   const reset = make_fixture({ seed: { 'cstr:1:7': '旧内容' } });
   const second = await run(reset, 'set_free_train', [1, 0, 0], {});
   assert.equal(second.ret, 1);
@@ -1866,7 +1866,7 @@ test('SET_FREE_TRAIN：写入 CSTR:7 与两项 ABL + 两档提示', async () => 
   assert.ok(all_text(second.added).includes('自由局部调教重置完毕。'));
 });
 
-test('TRANS_SPECIALTALENT：两支互换、失败重试与条件边界', async () => {
+test('trans_specialtalent：两支互换、失败重试与条件边界', async () => {
   // 爱慕 → 淫乱
   const to_lewd = make_fixture({
     seed: {
@@ -1911,7 +1911,7 @@ test('TRANS_SPECIALTALENT：两支互换、失败重试与条件边界', async (
   assert.equal(fail.store.get('flag:10004'), 100000000, '失败不扣款');
 });
 
-test('SUMMON_SLAVE：四道前置与生成流程（等级 / 肉便器 / 编号范围 / 存在性）', async () => {
+test('summon_slave：四道前置与生成流程（等级 / 肉便器 / 编号范围 / 存在性）', async () => {
   // 等级不足
   const low_level = make_fixture({ seed: { 'cflag:0:9': 29 } });
   const first = await run(low_level, 'summon_slave', [], {});
@@ -1955,7 +1955,7 @@ test('SUMMON_SLAVE：四道前置与生成流程（等级 / 肉便器 / 编号�
   assert.ok(all_text(fifth.added).includes('召唤了出来'));
 });
 
-test('肉棒改造：形状菜单（0-4 与 999 停止）', async () => {
+test('penis_remodel：形状菜单（0-4 与 999 停止）', async () => {
   for (const shape of [0, 1, 2, 3, 4]) {
     const fixture = make_fixture({ seed: { 'talent:1:122': 1 } });
     const { ret } = await run(fixture, 'penis_remodel', [1, shape], {});
@@ -1979,7 +1979,7 @@ test('肉棒改造：形状菜单（0-4 与 999 停止）', async () => {
   );
 });
 
-test('MODIFY_ANIMAL / _ERASE：种族 2（人狼）时换文案', async () => {
+test('modify_animal / _erase：种族 2（人狼）时换文案', async () => {
   const wolf = make_fixture({ seed: { 'talent:1:314': 2 } });
   seed_talentnames(wolf);
   const first = await run(wolf, 'modify_animal', [1, 0], {});
@@ -1997,7 +1997,7 @@ test('MODIFY_ANIMAL / _ERASE：种族 2（人狼）时换文案', async () => {
   assert.ok(all_text(third.added).includes('失去了人狼的象征'));
 });
 
-test('MODIFY_BONYU：N_BREAST_GROW 副作用（巨乳 → 爆乳；绝壁被守卫拦下）', async () => {
+test('modify_bonyu：N_BREAST_GROW 副作用（巨乳 → 爆乳；绝壁被检查拦下）', async () => {
   const fixture = make_fixture({ seed: { 'talent:1:110': 1 } });
   seed_talentnames(fixture);
   const { ret } = await run(fixture, 'modify_bonyu', [1, 0], {});
@@ -2005,7 +2005,7 @@ test('MODIFY_BONYU：N_BREAST_GROW 副作用（巨乳 → 爆乳；绝壁被守�
   assert.equal(fixture.store.get('talent:1:130'), 1, '母乳体质');
   assert.equal(fixture.store.get('talent:1:110'), 0, 'N_BREAST_GROW 升档');
   assert.equal(fixture.store.get('talent:1:114'), 1);
-  // 绝壁（116）被守卫拦下，N_BREAST_GROW 的绝壁支到不了
+  // 绝壁（116）被检查拦下，N_BREAST_GROW 的绝壁支到不了
   const flat = make_fixture({ seed: { 'talent:1:116': 1 } });
   seed_talentnames(flat);
   const blocked = await run(flat, 'modify_bonyu', [1], {});
@@ -2013,7 +2013,7 @@ test('MODIFY_BONYU：N_BREAST_GROW 副作用（巨乳 → 爆乳；绝壁被守�
   assert.ok(all_text(blocked.added).includes('要挤奶也无从下手'));
 });
 
-test('MODIFY_BONYU_ERASE：N_BREAST_REVERSE 副作用（巨乳 → 普通）', async () => {
+test('modify_bonyu_erase：N_BREAST_REVERSE 副作用（巨乳 → 普通）', async () => {
   const fixture = make_fixture({
     seed: { 'talent:1:130': 1, 'talent:1:110': 1 },
   });
@@ -2024,7 +2024,7 @@ test('MODIFY_BONYU_ERASE：N_BREAST_REVERSE 副作用（巨乳 → 普通）', a
   assert.equal(fixture.store.get('talent:1:110'), 0, '巨乳降为普通');
 });
 
-test('DEIMMATURITY：阴茎状态降一档（RAND:2 上界捕获）与下限钳制', async () => {
+test('modify_deimmaturity：阴茎状态降一档（RAND:2 上界捕获）与下限钳制', async () => {
   const fixture = make_fixture({
     seed: { 'talent:1:135': 1, 'talent:1:122': 1, 'talent:1:318': 3 },
   });
@@ -2055,7 +2055,7 @@ test('DEIMMATURITY：阴茎状态降一档（RAND:2 上界捕获）与下限钳�
   );
 });
 
-test('守卫：等键的档等一次、PRINTFORM 的档不等（SHOJO_SAISEI 两支）', async () => {
+test('检查：等键的档等一次、PRINTFORM 的档不等（shojo_saisei 两支）', async () => {
   // PRINTW（男人）→ 等键
   const wait_fixture = make_fixture({ seed: { 'talent:1:122': 1 } });
   seed_talentnames(wait_fixture);
@@ -2180,9 +2180,9 @@ async function assert_dispatch(id, exits, text, extra) {
   );
 }
 
-test('主分发守卫：不成立的分支连按钮都不画（[50] 已买 / [51] 无勋章）', async () => {
+test('主分发检查：不成立的分支连按钮都不画（[50] 已买 / [51] 无勋章）', async () => {
   // 按钮不画 ⇒ 玩家点不到 ⇒ 分发链的对应支在实机上不可达（文件头第 3 条）。
-  // 这里钉的是「按钮有没有画」，也就是守卫在绘制侧的落点。
+  // 这里钉的是「按钮有没有画」，也就是检查在绘制侧的落点。
   const bought = make_fixture({ seed: { 'item:90': 1, 'exp:0:81': 40 } });
   const first = await run_labo(bought, [...turns_to(50), 999], {});
   assert.ok(
@@ -2198,8 +2198,8 @@ test('主分发守卫：不成立的分支连按钮都不画（[50] 已买 / [51
   assert.ok(!accs(second.added).includes(54), '54 同');
 });
 
-test('主分发：[68] 生命摇篮的六道勇者数量守卫与 CHAR_CREATE 入口', async () => {
-  // 守卫全过：flags 摆成「各领域已征服 + 亲卫队砦 >= 15」→ 进 CHAR_CREATE
+test('主分发：[68] 生命摇篮的六道勇者数量检查与 char_create 入口', async () => {
+  // 检查全过：flags 摆成「各领域已征服 + 亲卫队砦 >= 15」→ 进 CHAR_CREATE
   const pass = make_fixture({
     slaves: 2,
     seed: {
@@ -2213,17 +2213,17 @@ test('主分发：[68] 生命摇篮的六道勇者数量守卫与 CHAR_CREATE �
   const first = await run_labo(pass, [...turns_to(68), 68, 999, 999], {});
   assert.ok(
     texts(first.added).includes('使用神奇的生命摇篮，凭空创造出一体生物'),
-    '守卫全过 → 进 @CHAR_CREATE（付费定制路径）',
+    '检查全过 → 进 char_create（付费定制路径）',
   );
-  // 守卫一：FLAG:82 == 0 且角色数 > 60
+  // 检查一：FLAG:82 == 0 且角色数 > 60
   const many = make_fixture({ slaves: 60, seed: {} });
   const second = await run_labo(many, [...turns_to(68), 68, 999, 999], {});
   assert.ok(
     texts(second.added).includes('勇者数量过多'),
     '角色数 > 60 且人间界未征服 → 勇者数量过多',
   );
-  assert.equal(second.ret, 0, '守卫拦下后仍在主循环里（随后 999 退出）');
-  // 守卫六：CHARANUM >= MAX_CHARANUM（90）
+  assert.equal(second.ret, 0, '检查拦下后仍在主循环里（随后 999 退出）');
+  // 检查六：CHARANUM >= MAX_CHARANUM（90）
   const full = make_fixture({
     slaves: 89,
     seed: {
@@ -2243,7 +2243,7 @@ test('主分发：[68] 生命摇篮的六道勇者数量守卫与 CHAR_CREATE �
     !texts(third.added).includes('使用神奇的生命摇篮，凭空创造出一体生物'),
     '拦下时不进 CHAR_CREATE',
   );
-  // 守卫五：FLAG:92 < 15 且角色数 > 80（角色数 85 时只有这一条拦得住）
+  // 检查五：FLAG:92 < 15 且角色数 > 80（角色数 85 时只有这一条拦得住）
   const mid = make_fixture({
     slaves: 84,
     seed: {
@@ -2251,7 +2251,7 @@ test('主分发：[68] 生命摇篮的六道勇者数量守卫与 CHAR_CREATE �
       'flag:87': 1,
       'flag:89': 1,
       'flag:91': 1,
-      'flag:92': 15, // 亲卫队砦侵攻度：不小于 15 → 守卫五不成立
+      'flag:92': 15, // 亲卫队砦侵攻度：不小于 15 → 检查五不成立
     },
   });
   const fourth = await run_labo(mid, [...turns_to(68), 68, 999, 999], {});
@@ -2272,7 +2272,7 @@ test('主分发：[68] 生命摇篮的六道勇者数量守卫与 CHAR_CREATE �
 //
 // 字面量本身（价格、素质编号、随机上界、页高、范围端点）另有整表用例；本节
 // 专门钉「那个数与它两边的关系」——`>= N` 与 `> N`、`<= N` 与 `< N` 的差别
-// 只落在取值恰好等于 N 的那一侧，而 `|| 0` 兜底的读法里，兜底值 0 几乎总是
+// 只落在取值恰好等于 N 的那一侧，而 `|| 0` 的缺省读法里，缺省值 0 几乎总是
 // 落在等号这一侧（未设置的标记就是 0）。
 // ————————————————————————————————————————————————
 
@@ -2290,7 +2290,7 @@ function split_pick_draws(lines) {
   return draws;
 }
 
-test('等号侧：濒死判据 BASE:0 < 1 的等号侧（BASE == 1 仍可选）', async () => {
+test('等号侧：濒死条件 BASE:0 < 1 的等号侧（BASE == 1 仍可选）', async () => {
   const fixture = make_fixture({ seed: {} });
   fixture.store.set('base:1:0', 1); // 恰好 1：不算濒死
   fixture.store.set('base:2:0', 0); // 0：濒死，选不中
@@ -2304,7 +2304,7 @@ test('等号侧：濒死判据 BASE:0 < 1 的等号侧（BASE == 1 仍可选）'
   );
 });
 
-test('等号侧：寿命判据 base(10) > 0 的两侧（人类有寿命才清零）', async () => {
+test('等号侧：寿命条件 base(10) > 0 的两侧（人类有寿命才清零）', async () => {
   // 人类且寿命 > 0：成交时把 BASE:10 清零
   const human = make_fixture({
     seed: { 'exp:0:81': 5, 'talent:1:85': 1, 'base:1:10': 100 },
@@ -2398,13 +2398,13 @@ test('等号侧：(NO_PAGE+1)*NUM_PAGE == 角色数时允许翻页', async () =>
   );
 });
 
-test('等号侧：死者苏生的列表判据（<= -2 列出；-1、0、正数都不列）', async () => {
+test('等号侧：死者苏生的列表条件（<= -2 列出；-1、0、正数都不列）', async () => {
   const fixture = make_fixture({
     seed: {
       'exp:0:81': 5,
       'flag:1000': -2, // 列出
       'flag:1001': -1, // 已买回（不列）
-      'flag:1002': 0, // 未设置（`|| 0` 兜底那条路，不列）
+      'flag:1002': 0, // 未设置（`|| 0` 的缺省那条路，不列）
       'flag:1003': 5, // 正值（不列）
       'flag:1004': -3, // 列出
     },

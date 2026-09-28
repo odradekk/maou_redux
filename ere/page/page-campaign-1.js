@@ -1,5 +1,5 @@
 /**
- * @file 战役1「赤蛮咒森」：CAMPAIGN_1.ERB 的 13 个编号函数（#469）。
+ * @file 战役1「赤蛮咒森」：战役 1 的 13 个编号函数（#469）。
  *
  * 本文件向 page-campaign.js（CAMPAIGN_NAME/EXIST/SET）与各域文件
  * （dungeon.js 等）声明的 DispatchFamily 注册战役 1 的实现，只 register(1,
@@ -7,11 +7,10 @@
  * 声明的族注册同构（该文件头有先例说明）。注册是顶层副作用，必须由
  * system/flow/main-loop.js 显式 require 才会触发。
  *
- * `CAMPAIGN_DUNGEON_LV_1`（:278-281，RETURN 45）已在
+ * * 战役 1 的迷宫等级（RETURN 45）已在
  * ere/dungeon/monster-data.js 真身实现（按 FLAG:400 手写 if/else，非
- * DispatchFamily），不在本文件重复。`CAMPAIGN_MONSTER_EXTRA_1`（:261-275）
- * 登记不实现：唯一潜在调用方 `@CAMPAIGN_MONSTER_EXTRA` 全库零调用点，
- * 原作本身不可达（issue #469 实测范围评论）。
+ * DispatchFamily），不在本文件重复。战役 1 的怪物追加登记不实现：
+ * 唯一潜在调用方在 ere 里零调用点，本身不可达（issue #469 实测范围评论）。
  */
 
 'use strict';
@@ -35,17 +34,17 @@ const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
 const { campaign_monster_list_family } = require('#/dungeon/dungeon-battle');
 const { chara_callname } = require('#/utils/callname-utils');
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** 战役名两段展示文本（:76/:78/:80 FONTBOLD 段 + FONTREGULAR 段） */
+/** 战役名两段展示文本（FONTBOLD 段 + FONTREGULAR 段） */
 const NAME_BOLD = '赤森谜路 ';
 const NAME_REGULAR = '-ROAD・to・CRIMSON・FOREST-';
 
 /**
- * @CAMPAIGN_NAME_1（:73-81）：战役名展示（菜单头部，随 CAMPAIGN_MENU 调用）。
+ * campaign_name_1：战役名展示（菜单头部，随 campaign_menu 调用）。
  * @returns {number} RETURN 0
  */
 function campaign_name_1() {
@@ -58,9 +57,9 @@ function campaign_name_1() {
 campaign_name_family.register(1, campaign_name_1);
 
 /**
- * @CAMPAIGN_EXIST_1（:51-57）：战役选择菜单的列表项。
+ * campaign_exist_1：战役选择菜单的列表项。
  *
- * 移植说明：原作 `PRINT [1] ` + `CALL CAMPAIGN_NAME_1` 拼在同一行；本移植
+ * 移植说明：旧引擎里 `PRINT [1] ` 与 CAMPAIGN_NAME_1 拼在同一行；本移植
  * 按钮化（PR #53 通则，见 page-campaign.js 文件头），FONTBOLD 加粗在按钮
  * 场景丢失（printButton 的 content 只接受纯字符串）。
  * @param {number} slot 战役槽位号（来自 SELECT_CAMPAIGN 的 FOR 循环，本
@@ -74,7 +73,7 @@ function campaign_exist_1(slot) {
 campaign_exist_family.register(1, campaign_exist_1);
 
 /**
- * @CAMPAIGN_SET_1（:59-71）：选中战役后的初始设置。
+ * campaign_set_1：选中战役后的初始设置。
  * @returns {number} RETURN 1
  */
 async function campaign_set_1() {
@@ -98,8 +97,8 @@ async function campaign_set_1() {
 campaign_set_family.register(1, campaign_set_1);
 
 /**
- * @CAMPAIGN_ROOM_1（:84-95）：楼层设施。4 层以上是人类牧场（502）。
- * @param {number} floor 阶层（原作 ARG:0）
+ * campaign_room_1：楼层设施。4 层以上是人类牧场（502）。
+ * @param {number} floor 阶层
  * @returns {number} 房间类型（0 = 无设施）
  */
 function campaign_room_1(floor) {
@@ -108,9 +107,9 @@ function campaign_room_1(floor) {
 campaign_room_family.register(1, campaign_room_1);
 
 /**
- * @CAMPAIGN_ROOM_EXTRA_1（:98-112）：楼层设施扩张位域。5 层以上 +1（位 0，
+ * campaign_room_extra_1：楼层设施扩张位域。5 层以上 +1（位 0，
  * 搾乳设备），6 层以上再 +2（位 1，种付奴隶）。
- * @param {number} floor 阶层（原作 ARG:0）
+ * @param {number} floor 阶层
  * @returns {number} 扩张位域（0-3）
  */
 function campaign_room_extra_1(floor) {
@@ -125,7 +124,7 @@ function campaign_room_extra_1(floor) {
 }
 campaign_room_extra_family.register(1, campaign_room_extra_1);
 
-/** @CAMPAIGN_TRAP_1（:115-168）的 TRAP_NUM → TRAP_ID 映射表 */
+/** campaign_trap_1 的 TRAP_NUM → TRAP_ID 映射表 */
 const TRAP_ID_BY_NUM = new Map([
   [301, 60],
   [302, 60],
@@ -142,8 +141,8 @@ const TRAP_ID_BY_NUM = new Map([
 ]);
 
 /**
- * @CAMPAIGN_TRAP_1（:115-168）：楼层陷阱槽的具体陷阱 ID。
- * @param {number} trap_num FLAG 槽号（原作 ARG:0）
+ * campaign_trap_1：楼层陷阱槽的具体陷阱 ID。
+ * @param {number} trap_num FLAG 槽号
  * @returns {number} 陷阱 ID（未登记的槽号恒 0）
  */
 function campaign_trap_1(trap_num) {
@@ -151,7 +150,7 @@ function campaign_trap_1(trap_num) {
 }
 campaign_trap_family.register(1, campaign_trap_1);
 
-/** @CAMPAIGN_EQUIP_SELECT_1（:171-189）的楼层 → 戒指 ID 映射表 */
+/** campaign_equip_select_1 的楼层 → 戒指 ID 映射表 */
 const RING_BY_FLOOR = new Map([
   [3, 313], // 死の指輪
   [4, 314], // 衰弱の指輪
@@ -159,8 +158,8 @@ const RING_BY_FLOOR = new Map([
 ]);
 
 /**
- * @CAMPAIGN_EQUIP_SELECT_1（:171-189）：楼层指轮宝箱的道具号。
- * @param {number} floor 阶层（原作 ARG:0）
+ * campaign_equip_select_1：楼层指轮宝箱的道具号。
+ * @param {number} floor 阶层
  * @returns {number} 道具号（未登记的楼层恒 0）
  */
 function campaign_equip_select_1(floor) {
@@ -169,7 +168,7 @@ function campaign_equip_select_1(floor) {
 campaign_equip_select_family.register(1, campaign_equip_select_1);
 
 /**
- * @CAMPAIGN_MONSTER_LIST_1（:192-258）的楼层 → 三选一怪物 ID 表
+/** campaign_monster_list_1 的楼层 → 三选一怪物 ID 表
  * （DICE = RAND:3 的下标 0/1/2 对应 IF/ELSEIF/ELSE 三支）。
  */
 const MONSTER_IDS_BY_FLOOR = new Map([
@@ -182,14 +181,14 @@ const MONSTER_IDS_BY_FLOOR = new Map([
 ]);
 
 /**
- * @CAMPAIGN_MONSTER_LIST_1（:192-258）：楼层出现怪物（随机三选一）。
- * @param {number} floor 阶层（原作 ARG:0）
+ * campaign_monster_list_1：楼层出现怪物（随机三选一）。
+ * @param {number} floor 阶层
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {number} 怪物 ID（未登记的楼层恒 0）
  */
 function campaign_monster_list_1(floor, rand = default_rand) {
   // DICE = RAND:3——无条件掷（即使楼层不在表内也照掷），保持 PRNG
-  // 序列与原作对齐（dungeon-battle.js 文件头同款纪律）
+  // 序列与旧引擎对齐（dungeon-battle.js 文件头同款纪律）
   const dice = rand(3);
   const ids = MONSTER_IDS_BY_FLOOR.get(floor);
   return ids ? ids[dice] : 0;
@@ -197,20 +196,19 @@ function campaign_monster_list_1(floor, rand = default_rand) {
 campaign_monster_list_family.register(1, campaign_monster_list_1);
 
 /**
- * @CAMPAIGN_QUEST_1（:284-307）：楼层踏破判定。
+ * campaign_quest_1：楼层踏破判定。
  *
- * 原作按楼层（CFLAG 的 501 下标）分 6 个 IF/ELSEIF 分支，但每支都是空
- * 语句（原作注释「今回はギミック無し」——本战役未设置楼层专属机关），
+ * 按楼层（CFLAG 的 501 下标）分 6 个 IF/ELSEIF 分支，但每支都是空
+ * 语句（旧注释「今回はギミック無し」——本战役未设置楼层专属机关），
  * 与恒 RETURN 1 等价，不逐支复刻空分支。
- * @returns {number} RETURN 1（恒成功；原作 ARG:0 只用于 :292 读楼层，
- *   六个分支体全空，读数不产生效果）
+ * @returns {number} RETURN 1（恒成功；六个分支体全空，楼层读数不产生效果）
  */
 function campaign_quest_1() {
   return 1;
 }
 campaign_quest_family.register(1, campaign_quest_1);
 
-/** @CAMPAIGN_STORY_1（:310-357）按 FLAG:401（0-5）六档分支的剧情文本 */
+/** campaign_story_1 按 FLAG:401（0-5）六档分支的剧情文本 */
 const STORY_LINES_BY_PROGRESS = [
   [
     '真是奇妙的森林。奇形怪状的植物、还有与其共生进化而来的动物和昆虫',
@@ -262,7 +260,7 @@ const STORY_LINES_BY_PROGRESS = [
 ];
 
 /**
- * @CAMPAIGN_STORY_1（:310-357）：按剧情进度打印对应段落。
+ * campaign_story_1：按剧情进度打印对应段落。
  * @returns {Promise<number>} RETURN 1
  */
 async function campaign_story_1() {
@@ -278,7 +276,7 @@ async function campaign_story_1() {
 }
 campaign_story_family.register(1, campaign_story_1);
 
-/** @CAMPAIGN_ENDING_1（:360-380）的固定结局文本（:363-368 六段） */
+/** campaign_ending_1 的固定结局文本（六段） */
 const ENDING_LINES = [
   '「为何、为何这个女人……不受诱惑！？　神像之力竟不奏效……竟有这种事」',
   '女王对于猥神雕像无法控制感到了恐慌。也难怪了。毕竟是一直处在受着邪恶的淫荡之神加护的魔王的支配下的奴隶啊',
@@ -289,7 +287,7 @@ const ENDING_LINES = [
 ];
 
 /**
- * @CAMPAIGN_ENDING_1（:360-380）：固定结局演出。
+ * campaign_ending_1：固定结局演出。
  * @returns {Promise<number>} RETURN 1
  */
 async function campaign_ending_1() {
@@ -310,7 +308,7 @@ async function campaign_ending_1() {
   await era.waitAnyKey();
   era.print('――'); // PRINTW
   await era.waitAnyKey();
-  // FONTBOLD 战役名 + FONTREGULAR 副标题（終）——与 CAMPAIGN_NAME_1
+  // FONTBOLD 战役名 + FONTREGULAR 副标题（終）——与 campaign_name_1
   // 共用两段文本常量，此处额外拼「（终）」收尾
   era.print([
     { content: NAME_BOLD, fontWeight: 'bold' },

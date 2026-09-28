@@ -5,30 +5,30 @@
  * 银黑桃 / &4 西·白梅花 / &8 北·金红桃，预设号东 22 西 23 南 21 北 20）。
  * 玩家选一个奴隶去攻打：赢了俘虏对方入队、拿钱、拿牌（FLAG:92 置位）；
  * 四门全下（FLAG:92 == 15）后菜单只剩总结叙述。战斗本体是
- * ere/invasion/invasion-arcana-battle.js 的 arcana_battle（本票同批落地）。
+ * ere/invasion/invasion-arcana-battle.js 的 arcana_battle（同一张工单一并实现）。
  *
- * 移植说明（有意保留的原作形态，均注明出处）：
- *   - 勇者选择列表的非妊娠分支（:227-325）无效输入 GOTO INPUT_LOOP1
- *     （:294-295 RESULT<0、:308-309 越界）——跳进**妊娠出撃可**分支的
- *     循环头（:153），列表改按无妊娠过滤重渲染、且后续选择也按该过滤
+ * 移植说明（有意保留的写法差异）：
+ *   - 勇者选择列表的非妊娠分支里，无效输入（RESULT < 0、越界）GOTO
+ *     INPUT_LOOP1——跳进**妊娠出撃可**分支的循环头，列表改按无妊娠
+ *     过滤重渲染、且后续选择也按该过滤
  *     映射。这是菜单代码的复制粘贴事故，保留为「无效输入把列表模式翻到
- *     妊娠允许」（mode 翻转）；MAX_PAGE 在进入列表前算一次（:239-244）、
+ *     妊娠允许」（mode 翻转）；MAX_PAGE 在进入列表前算一次、
  *     翻转后不重算，同样保留。
- *     **这两条守卫与妊娠分支内的同款（:197-198 / :211-212）在
- *     EraElectron 都是引擎死路径**：列表项与 1000/999/1001 都经
- *     printButton 落地，引擎渲染层只回传本轮已打印按钮的快捷键，越界值
- *     根本送不到游戏代码（#130；page-invasion.js 的同款裁定见
- *     test/page-invasion.test.js:177）。保留原形态不是为了实跑。
- *   - 候选行的 [可以攻击] 着色段（:179-182 SETCOLOR 255,100,100）无引擎
- *     通道；原作判据 CFLAG:0 > 1 && COUNT != 0 对候选过滤（CFLAG:0 == 2）
+ *     **这两条检查与妊娠分支内的同款在
+ *     EraElectron 都是引擎死路径**：列表项与 1000/999/1001 都以
+ *     printButton 输出，引擎渲染层只回传本轮已打印按钮的快捷键，越界值
+ *     根本送不到游戏代码（#130；page-invasion.js 的同款结论见
+ *     test/page-invasion.test.js）。保留该写法不是为了实跑。
+ *   - 候选行的 [可以攻击] 着色段（SETCOLOR 255,100,100）无引擎
+ *     通道；条件 CFLAG:0 > 1 && COUNT != 0 对候选过滤（CFLAG:0 == 2）
  *     恒真，按恒真并入行文本。列宽对齐（%SAVESTR:COUNT,12,LEFT% 等）
  *     不镜像，page-select-target.js 的行文本先例。
- *   - :466 TARGET = A_ARCANA 的全局换手被 wearing_cloth_able 的形参吸收
+ *   - TARGET = A_ARCANA 的全局换手被 wearing_cloth_able 的形参吸收
  *     （#5 决议第六条）；战斗侧 duel_attack 自管 target。
- *   - SAVESTR:A = %NAME:A%（:399/:414/:431/:447）在 ere 侧是 no-op——
+ *   - SAVESTR:A = %NAME:A% 在 ere 侧是 no-op——
  *     callname:-1 已是名前（#5 决议；enter-enemy.js 文件头同款说明），
- *     CSTR:1（:400 等）照写。
- *   - A_ARCANA = CHARANUM - 1（:398/:413/:430/:446、敗北側 :541）在扁平化
+ *     CSTR:1 照写。
+ *   - A_ARCANA = CHARANUM - 1（敗北側同式）在扁平化
  *     模型（#21）下角色号 = 预设号，直接用 a_arcana（chara-custom.js
  *     char_append 先例）。
  *   - 跨域写一律走门面（#71；本文件属 invasion 域）：FLAG:92（era_flag.
@@ -57,7 +57,7 @@ const { st_up } = require('#/dungeon/dungeon-lvup');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { arcana_battle } = require('#/invasion/invasion-arcana-battle');
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** 名字承载（#5 决议：SAVESTR:x ↔ callname:x:-1） */
@@ -65,13 +65,13 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 每页候选数（#DIM NUM_PAGE = 26，:12） */
+/** 每页候选数（#DIM NUM_PAGE = 26） */
 const NUM_PAGE = 26;
 
 /**
- * 勇者选择候选判据（:138/:174/:220 妊娠允许版；:234/:271/:318 非妊娠版加
+ * 勇者选择候选条件（非妊娠版比妊娠允许版多一条
  * TALENT:153 == 0）：状态 0/7 + 爱(85)或淫乱(76) + 种族(CFLAG:0) == 2 +
- * 非魔王。开场侦察（:62-65）用同一判据、无妊娠项（:63）。
+ * 非魔王。开场侦察用同一条件、无妊娠项。
  * @param {number} cid 候选角色
  * @param {boolean} pregnant_ok 妊娠者可出击（GETBIT(FLAG:5,10)，:131）
  * @returns {boolean}
@@ -94,17 +94,17 @@ function is_candidate(cid, pregnant_ok) {
 }
 
 /**
- * @ARCANA_FORT（:2-551）：圣灵骑士堡垒攻略主体。
+ * arcana_fort：圣灵骑士堡垒攻略主体。
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
  * @param {object} [move_ctx] 战斗上下文（透传 arcana_battle）
- * @returns {Promise<number>} 原作 RETURN：1 = 回合已耗（打了一仗），
+ * @returns {Promise<number>} 1 = 回合已耗（打了一仗），
  *   0 = 取消（撤退/无候选/已全破）
  */
 async function arcana_fort(rand = default_rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
   const stage = era_flag.arcana_fort_stage;
 
-  // === 入场叙述（:22-73） ===
+  // === 入场叙述 ===
   if (stage !== 0) {
     if (stage === 15) {
       // 四门全破
@@ -119,7 +119,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       return 0;
     }
     if (stage === 14 || stage === 13 || stage === 11 || stage === 7) {
-      // 捕獲３人：只剩一位（原作是 PRINT×N 接收尾的 PRINTW，
+      // 捕獲３人：只剩一位（PRINT×N 接收尾的 PRINTW 是
       // **同一条显示行**，ere 侧拼成一串再打一次）
       let last_one = '';
       if ((stage & 1) === 0) {
@@ -168,7 +168,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       );
     }
   } else {
-    // 初回：俘虏情报 + 有无可派刺客（:62-65 的侦察判据无妊娠项）
+    // 初回：俘虏情报 + 有无可派刺客（侦察条件无妊娠项）
     era.print(
       '有俘虏说，狂王的亲卫队【圣灵骑士】正在为进攻你的地下城而在东南西北四个堡垒里特训着。',
     );
@@ -195,35 +195,35 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     }
   }
 
-  // === 東西南北の門（:75-125） ===
+  // === 東西南北の門 ===
   era.drawLine();
   era.print('要向哪个堡垒派遣刺客呢？必须打倒圣灵骑士才算胜利。');
   await era.waitAnyKey();
-  // 已攻占的门不是按钮（原作 :80-84 的 PRINTL [*]），输入对应编号会被
+  // 已攻占的门不是按钮（PRINTL [*] 文本行），输入对应编号会被
   // 引擎拒收（#130；文件头「引擎死路径」条）
   if ((stage & 1) !== 0) {
     era.print('[*] - 东方堡垒（已攻占）');
   } else {
-    era.printButton('- 东方堡垒', 0); // ARCANA_FORT.ERB:83
+    era.printButton('- 东方堡垒', 0);
   }
   if ((stage & 4) !== 0) {
     era.print('[*] - 西方堡垒（已攻占）');
   } else {
-    era.printButton('- 西方堡垒', 1); // ARCANA_FORT.ERB:89
+    era.printButton('- 西方堡垒', 1);
   }
   if ((stage & 2) !== 0) {
     era.print('[*] - 南方堡垒（已攻占）');
   } else {
-    era.printButton('- 南方堡垒', 2); // ARCANA_FORT.ERB:95
+    era.printButton('- 南方堡垒', 2);
   }
   if ((stage & 8) !== 0) {
     era.print('[*] - 北方堡垒（已攻占）');
   } else {
-    era.printButton('- 北方堡垒', 3); // ARCANA_FORT.ERB:101
+    era.printButton('- 北方堡垒', 3);
   }
-  era.printButton('- 撤退', 4); // ARCANA_FORT.ERB:103
+  era.printButton('- 撤退', 4);
 
-  // $INPUT_LOOP :105-125（GOTO 重问不重画）
+  // $INPUT_LOOP（GOTO 重问不重画）
   let tmp_arcana = -1;
   for (;;) {
     const result = await era.input();
@@ -249,8 +249,8 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     break;
   }
 
-  // === 勇者選択（:127-325） ===
-  // GETBIT(FLAG:5,10) 妊娠出撃可（:131）→ 允许妊娠（TALENT:153）者出击
+  // === 勇者選択 ===
+  // GETBIT(FLAG:5,10) 妊娠出撃可 → 允许妊娠（TALENT:153）者出击
   let pregnant_ok = ((settings >> 10) & 1) === 1;
   let candidates = era
     .getAddedCharacters()
@@ -263,12 +263,12 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   }
   // MAX_PAGE（0 起；翻转后不重算——文件头）
   let max_page = Math.ceil(candidates.length / NUM_PAGE) - 1;
-  let no_page = 0; // #DIM NO_PAGE = 0（:11）
+  let no_page = 0; // #DIM NO_PAGE = 0
 
   let y_arcana = 0;
-  // $INPUT_LOOP1（:153）/ $INPUT_LOOP2（:250）的合并循环：模式即所在分支
+  // $INPUT_LOOP1 / $INPUT_LOOP2 的合并循环：模式即所在分支
   for (;;) {
-    // 每轮重扫（原作 REPEAT CHARANUM 重过滤）；无效输入会把模式翻到
+    // 每轮重扫（REPEAT CHARANUM 重过滤）；无效输入会把模式翻到
     // 妊娠允许（GOTO INPUT_LOOP1，文件头）
     candidates = era
       .getAddedCharacters()
@@ -289,19 +289,19 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     });
     era.drawLine();
     era.printButton('- 上一页', 1000);
-    era.printButton('- 返 回', 999); // PRINTLC（原作两个空格，引擎折叠成一个）
+    era.printButton('- 返 回', 999); // PRINTLC（写两个空格也会被引擎折叠成一个，故只写一个）
     era.printButton('- 下一页', 1001);
 
     const result = await era.input();
     if (result === 1000) {
-      // 上一页（:199-204 / :296-301）；页首不进，停留在本分支
+      // 上一页；页首不进，停留在本分支
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
     if (result === 1001) {
-      // 下一页（:205-210 / :302-307）；页尾不进，停留在本分支
+      // 下一页；页尾不进，停留在本分支
       if (no_page < max_page) {
         no_page += 1;
       }
@@ -319,7 +319,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     break;
   }
 
-  // === 東西南北の遭遇叙述（:327-391） ===
+  // === 東西南北の遭遇叙述 ===
   // 曾为勇者（TALENT:167-170）走「曾经的同伴」分支；CFLAG:40 == 0 全裸
   const former_hero =
     (era.get(`talent:${y_arcana}:167`) || 0) !== 0 ||
@@ -441,7 +441,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     }
   }
 
-  // === キャラ追加（:393-463） ===
+  // === キャラ追加 ===
   const KNIGHTS = {
     0: { preset: 22, weapon: 40 + 9000 + 900000 }, // 東 黑方片：剑·強度9·暗黑
     1: { preset: 23, weapon: 41 + 9000 + 600000 }, // 西 白梅花：法杖·強度9·寒冰
@@ -472,12 +472,12 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   chara(a_arcana).chara.武装 = knight.weapon; // 等 初期装備（三段编码累加）
   chara(a_arcana).chara.随机名编号 = rand(80); // 名前決定
 
-  // === 衣装与身体（:465-468） ===
+  // === 衣装与身体 ===
   // TARGET = A_ARCANA——全局换手被 wearing_cloth_able 的形参吸收
   wearing_cloth_able(a_arcana);
   char_body_generate_wapped(a_arcana, rand);
 
-  // === レベルアップ処理（:470-475） ===
+  // === レベルアップ処理 ===
   const level_ups = era.get('flag:60') || 0;
   for (let i = 0; i < level_ups; i += 1) {
     st_up(a_arcana, rand);
@@ -487,10 +487,10 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   chara(a_arcana).dungeon.体力 = era.get(`maxbase:${a_arcana}:0`) || 0;
   chara(a_arcana).dungeon.气力 = era.get(`maxbase:${a_arcana}:1`) || 0;
 
-  // === 戦闘（:480-484） ===
+  // === 戦闘 ===
   const battle_result = await arcana_battle(y_arcana, a_arcana, rand, move_ctx);
 
-  // === 勝ち（:486-531） ===
+  // === 勝ち ===
   if (battle_result === 2) {
     era.drawLine();
     era.print(`圣灵骑士${name_of(a_arcana)}战败了…`);
@@ -502,7 +502,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     await era.waitAnyKey();
     // 的 PRINT 而且 与各门的 PRINTW 牌是同一条显示行
     // 各门的牌、台词与 FLAG:92 置位；CHAR_SIZE_GENERATE 的
-    // 人类换算年龄（東 21 / 西 27 / 南 24 / 北 18，:501/:508/:515/:521）
+    // 人类换算年龄（東 21 / 西 27 / 南 24 / 北 18）
     const gate_age = { 0: 21, 1: 27, 2: 24, 3: 18 }[tmp_arcana];
     const gate_texts = {
       0: ['获得了黑方片持有的【方片Ａ】牌。', '「我居然输了………」'],
@@ -535,7 +535,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       chara(a_arcana).chara.臀围 = size[6];
     }
   } else if (battle_result === 0) {
-    // === 負け（:532-545） ===
+    // === 負け ===
     if ((settings & 128) !== 0) {
       // 狂王线：前回の助手・調教対象だった場合はフラグを空に
       if (game.event.上次调教对象 === y_arcana) {

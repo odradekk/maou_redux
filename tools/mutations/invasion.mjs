@@ -1,14 +1,14 @@
 // issue #470（Q13 侵略残余·3）：ARCANA_BATTLE / ARCANA_FORT /
-// INVASION_RYOUZYOKU 的变异条目与 GROUP_BATTLE 判死登记的守护。
+// INVASION_RYOUZYOKU 的变异条目与 GROUP_BATTLE 判死登记的回归检查。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 50; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
-// 1 条 dungeon-battle2.js 攻击演出解码修复的回退守护）+ 第二批
+// 1 条 dungeon-battle2.js 攻击演出解码修复的回退检查）+ 第二批
 // M10318-M10345（ARCANA_FORT 15 条 + INVASION_RYOUZYOKU 13 条；
-// GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的守护）+ 第三批
-// M10346-M10348（独立审查整改后补钉的三条：拼名、FLAG:500 档、FLAG:60 循环）
-// #612 起 +1（M12305：按钮正文补回原作的「- 」分隔符——补回点被改回时
+// GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的检查）+ 第三批
+// M10346-M10348（独立审查后补钉的三条：拼名、FLAG:500 档、FLAG:60 循环）
+// #612 起 +1（M12305：按钮正文补回「- 」分隔符——补回点被改回时
 // 对应的 rendered 断言必须红）；#655（F9）净 0：删反向变异 M10344（藤蔓旁白
-// 战场表重复臂已修正为天神宫 5 档），+1 M13355 守修正后的 5 档称呼；
+// 战场表重复分支已修正为天神宫 5 档），+1 M13355 守修正后的 5 档称呼；
 
 export default [
   {
@@ -85,7 +85,7 @@ export default [
     must_mention: '元勇者通常线三档',
   },
   {
-    desc: 'M10309 999 的 BREAK 挪出显示守卫（BATTLE2 形态，显示关也中断）',
+    desc: 'M10309 999 的 BREAK 挪出显示检查（BATTLE2 写法，显示关也中断）',
     file: 'ere/invasion/invasion-arcana-battle.js',
     find: '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头）\n      if (result === 999 && (settings & 32) !== 0) {',
     replace:
@@ -225,7 +225,7 @@ export default [
     must_mention: '白梅花 自慰中毒',
   },
   {
-    desc: 'M10326 候选判据的淫乱素质 76 改 86（贝丝的资格消失）',
+    desc: 'M10326 候选条件的淫乱素质 76 改 86（贝丝的资格消失）',
     file: 'ere/invasion/invasion-arcana-fort.js',
     find: '(era.get(`talent:${cid}:76`) || 0) !== 1',
     replace: '(era.get(`talent:${cid}:86`) || 0) !== 1',
@@ -328,7 +328,7 @@ export default [
     find: 'await orc_inv(area, point, rand);',
     replace: 'await slime_inv(area, point, rand);',
     tests: ['invasion-ravish'],
-    must_mention: '凌辱类型 1 → @ORC_INV',
+    must_mention: '凌辱类型 1 → orc_inv',
   },
   {
     desc: 'M10339 兽人战场表的人间界三名字次序颠倒',
@@ -339,7 +339,7 @@ export default [
     must_mention: '战场表：',
   },
   {
-    desc: 'M10340 兽人第一臂的侵攻点门槛 > 1 改 > 6',
+    desc: 'M10340 兽人第一分支的侵攻点门槛 > 1 改 > 6',
     file: 'ere/invasion/invasion-ravish.js',
     find: 'if (rand(5) === 0 && sinkou > 1) {',
     replace: 'if (rand(5) === 0 && sinkou > 6) {',
@@ -347,7 +347,7 @@ export default [
     must_mention: '10000 → 2 档',
   },
   {
-    desc: 'M10341 兽人第二臂的妊娠数上档 > 7 改 > 6',
+    desc: 'M10341 兽人第二分支的妊娠数上档 > 7 改 > 6',
     file: 'ere/invasion/invasion-ravish.js',
     find: 'if (sinkou > 7) {\n      era.print(`${l1}的妊娠数已经超过了三位数',
     replace:
@@ -356,7 +356,7 @@ export default [
     must_mention: '门槛：',
   },
   {
-    desc: 'M10342 史莱姆第一臂的侵攻点门槛 > 1 改 > 6',
+    desc: 'M10342 史莱姆第一分支的侵攻点门槛 > 1 改 > 6',
     file: 'ere/invasion/invasion-ravish.js',
     find: '  if (rand(4) === 0 && sinkou > 1) {\n    await era.printAndWait(`成为俘虏的${l2}被往肛门里尽可能地注入了泥浆`);',
     replace:
@@ -365,7 +365,7 @@ export default [
     must_mention: '分支：',
   },
   {
-    desc: 'M10343 女旁白的第一臂补上侵攻点门槛（其它函数同位置都有，唯独这里缺）',
+    desc: 'M10343 女旁白的第一分支补上侵攻点门槛（其它函数同位置都有，唯独这里缺）',
     file: 'ere/invasion/invasion-ravish.js',
     find: '  if (rand(3) === 0) {',
     replace: '  if (rand(3) === 0 && sinkou > 1) {',
@@ -373,7 +373,7 @@ export default [
     must_mention: '分支：',
   },
   {
-    desc: 'M10345 马旁白的第一臂守卫反向（rand(2) === 0 改 === 1）',
+    desc: 'M10345 马旁白的第一分支检查反向（rand(2) === 0 改 === 1）',
     file: 'ere/invasion/invasion-ravish.js',
     find: "  if (rand(2) === 0) {\n    await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');",
     replace:
@@ -381,7 +381,7 @@ export default [
     tests: ['invasion-ravish'],
     must_mention: '战场表：',
   },
-  // —— 第三批：独立审查整改后的补钉（M10346-M10348）——
+  // —— 第三批：独立审查后的补钉（M10346-M10348）——
   {
     desc: 'M10346 捕获三人行里西门的拼名改坏（白梅花 → 金红桃）',
     file: 'ere/invasion/invasion-arcana-fort.js',
@@ -391,7 +391,7 @@ export default [
     must_mention: '进度：',
   },
   {
-    desc: 'M10347 金红桃精液经验档的判据改坏（FLAG:500 == 0 改 == 3）',
+    desc: 'M10347 金红桃精液经验档的条件改坏（FLAG:500 == 0 改 == 3）',
     file: 'ere/invasion/invasion-arcana-fort.js',
     find: "if ((era.get('flag:500') || 0) === 0 || (era.get('flag:500') || 0) === 2) {",
     replace:
@@ -412,13 +412,13 @@ export default [
   {
     desc: 'M12305 圣灵骑士堡垒的 [0] 东方堡垒丢掉「- 」',
     file: 'ere/invasion/invasion-arcana-fort.js',
-    find: "era.printButton('- 东方堡垒', 0); // ARCANA_FORT.ERB:83",
+    find: "era.printButton('- 东方堡垒', 0);",
     replace: "era.printButton('东方堡垒', 0); // 变异：丢掉「- 」",
     tests: ['invasion-arcana-fort'],
-    must_mention: 'ARCANA_FORT.ERB:83-103 的分隔符照写',
+    must_mention: '门菜单的分隔符照写',
   },
 
-  // —— #655（F9）：@IVY_INV 天神宫档的守卫 ——
+  // —— #655（F9）：ivy_inv 天神宫档的检查 ——
   {
     desc: 'M13355 藤蔓旁白的战场表删掉天神宫档（5 档移除，天神宫落回 ELSE 拿人间界称呼，#655 修正回退）',
     file: 'ere/invasion/invasion-ravish.js',

@@ -1,12 +1,12 @@
 /**
- * 怪物商店测试（issue #399 / N15 段 3）：SHOP_MONSTER.ERB 的四个函数
- * （@MONSTER_SHOP / @SHOW_SHOP_MONSTER / @SELECT_MONSTER / @BUY_MONSTER）。
+ * 怪物商店测试（issue #399 / N15 段 3）：四个函数
+ * （monster_shop / show_shop_monster / select_monster / buy_monster）。
  *
- * 缝 = ere/page/page-monster-shop.js 导出的函数 + 商店轮的 120 分支；
+ * 接缝 = ere/page/page-monster-shop.js 导出的函数 + 商店轮的 120 分支；
  * 经唯一夹具观察玩家输出行、变量读写与角色列表，不断言模块内部辅助函数。
  *
  * 随机源一律显式注入（`() => 0`，与 chara-make.test.js 的 always 同款）：
- * @MONSTER_DATA 的两处骰子与 CHAR_MAKE 的名字/身体生成都吃随机，漏给就落到
+ * monster_data 的两处骰子与 CHAR_MAKE 的名字/身体生成都吃随机，漏给就落到
  * 真随机、用例只在一部分抽样里真的守住行为。
  */
 
@@ -36,7 +36,7 @@ function button_rendered(fixture) {
     .map((line) => line.rendered);
 }
 
-// —— 排版助手（原作 %…,N,LEFT/RIGHT% 的显示宽度填充）——
+// —— 排版助手（%…,N,LEFT/RIGHT% 的显示宽度填充）——
 // 本屏的三个排版字面量（名字宽、等级/数量字段宽、每行几格）在下面每一格里
 // 各写一份：它们改了玩家那边就不对，用例按整格字符串钉住。
 
@@ -48,22 +48,22 @@ function display_width(text) {
   );
 }
 
-/** 左对齐补到 width 显示宽（`%str,N,LEFT%` 的形态） */
+/** 左对齐补到 width 显示宽（`%str,N,LEFT%` 的写法） */
 function pad_left(text, width) {
   const pad = width - display_width(text);
   return pad > 0 ? text + '\u00A0'.repeat(pad) : text; // #577：补位 NBSP
 }
 
-/** 右对齐补到 width 显示宽（`%n,N,RIGHT%` 的形态） */
+/** 右对齐补到 width 显示宽（`%n,N,RIGHT%` 的写法） */
 function pad_right(text, width) {
   const pad = width - display_width(text);
   return pad > 0 ? '\u00A0'.repeat(pad) + text : text; // #577：补位 NBSP
 }
 
 /**
- * 商品一览的一格（:238）：`[编号] ` + 名字补 22 + 半角空格 + `最低等级：`
+ * 商品一览的一格：`[编号] ` + 名字补 22 + 半角空格 + `最低等级：`
  * + 价格右对齐 5 + 两个全角空格。
- * 编号字段原作是 `TOSTR(LCOUNT,"000")`（零填充 3 位），段内编号恒 3 位，
+ * 编号字段是 `TOSTR(LCOUNT,"000")`（零填充 3 位），段内编号恒 3 位，
  * 与 `pad_left(id, 3)` 同值。
  */
 function goods_cell(id, name, price) {
@@ -75,7 +75,7 @@ function goods_cell(id, name, price) {
 }
 
 /**
- * 祭品行（:334/:368）：名字补 22 + ` LV:` + 等级 + ` ` + 已选数右对齐 7
+ * 祭品行：名字补 22 + ` LV:` + 等级 + ` ` + 已选数右对齐 7
  * + `只` + 两个 U+3000。
  */
 function sacrifice_cell(name, level, picked) {
@@ -86,7 +86,7 @@ function sacrifice_cell(name, level, picked) {
 }
 
 /**
- * 可选祭品行（:381-382）：`[编号] ` + 名字补 20 + ` LV:` + 等级 + ` `
+ * 可选祭品行：`[编号] ` + 名字补 20 + ` LV:` + 等级 + ` `
  * + 持有数右对齐 5 + ` - ` + 已选数 + ` 只` + 制表符（格尾是实参里的 \t）。
  */
 function pick_cell(id, name, level, stock, picked) {
@@ -114,7 +114,7 @@ function assert_has_line(texts, expected, message) {
  * 铺一个可召唤的世界。
  *
  * 默认世界＝亚人档（种族 1）：精英怪 202（Chara202 的 319 = 1，与 yml 同值）
- * 在售、价格 15；祭品侧的怪物 101（@MONSTER_DATA 的基础等级 1 + 4 = 5、
+ * 在售、价格 15；祭品侧的怪物 101（monster_data 的基础等级 1 + 4 = 5、
  * 凌辱类型 1 —— 与 yml 同值，见 ere/data/monster-database.js）。
  */
 function monster_world(seed = {}) {
@@ -134,7 +134,7 @@ function monster_world(seed = {}) {
     fixture.store.set(name, value);
   }
   // 引擎的 addCharacter 对无预设的角色直接返回 false（test/helpers 的
-  // chara_presets 守卫）：召唤链要能把 202 真的加进来，预设必须经
+  // chara_presets 检查）：召唤链要能把 202 真的加进来，预设必须经
   // seed_chara 提供（夹具不读 yml/）
   fixture.seed_chara(202, { id: 202, name: '精英狗头人' });
   fixture.load_module('era-utils/era-flag').bought = -1;
@@ -142,8 +142,8 @@ function monster_world(seed = {}) {
 }
 
 /**
- * 走一遍 @MONSTER_SHOP：预置输入，跑到输入耗尽或正常返回。
- * 两条终止形态都合法（999 退出是正常返回），只拒绝别的异常。
+ * 走一遍 monster_shop：预置输入，跑到输入耗尽或正常返回。
+ * 两种终止都合法（999 退出是正常返回），只拒绝别的异常。
  */
 async function run_monster_shop(seed = {}, ...inputs) {
   const fixture = monster_world(seed);
@@ -157,9 +157,9 @@ async function run_monster_shop(seed = {}, ...inputs) {
   return fixture;
 }
 
-// —— @SHOW_SHOP_MONSTER（:178-196） ——
+// —— show_shop_monster ——
 
-test('SHOW_SHOP_MONSTER：头行 1:1（标题/两行说明/日期/所持金）与两处分隔线', () => {
+test('show_shop_monster：头行逐字一致（标题/两行说明/日期/所持金）与两处分隔线', () => {
   const fixture = monster_world({ 'flag:10000': 6, 'flag:10004': 1234 });
   const { show_shop_monster } = fixture.load_module('page/page-monster-shop');
   show_shop_monster();
@@ -170,7 +170,7 @@ test('SHOW_SHOP_MONSTER：头行 1:1（标题/两行说明/日期/所持金）�
     '所持金：1234点',
   ]);
   const dividers = fixture.lines.filter((line) => line.type === 'divider');
-  assert.equal(dividers.length, 2, ':186 与 :196 两处 DRAWLINE');
+  assert.equal(dividers.length, 2, '两处 DRAWLINE');
   assert(dividers.every((line) => line.border === 'solid'));
 });
 
@@ -186,9 +186,9 @@ test('SHOW_SHOP_MONSTER：日期行两态（TIME 0 午前 / 1 午后）', () => 
   }
 });
 
-// —— @MONSTER_SHOP（:18-173） ——
+// —— monster_shop ——
 
-test('MONSTER_SHOP：入口菜单是按钮 —— [1] 召唤 / [999] 返回；999 清在售位并退出', async () => {
+test('monster_shop：入口菜单是按钮 —— [1] 召唤 / [999] 返回；999 清在售位并退出', async () => {
   const fixture = monster_world({ 'itemsales:202': 1 });
   fixture.set_inputs(999);
   const { monster_shop } = fixture.load_module('page/page-monster-shop');
@@ -206,10 +206,10 @@ test('MONSTER_SHOP：入口菜单是按钮 —— [1] 召唤 / [999] 返回；99
     !history_texts(fixture).includes('请选择要召唤的魔物从者的性别'),
     '999 应直接退出，不进性别选择',
   );
-  assert.equal(fixture.store.get('itemsales:202'), 0, ':40 CALL CLEAR_SHOP');
+  assert.equal(fixture.store.get('itemsales:202'), 0, 'CALL CLEAR_SHOP');
 });
 
-test('MONSTER_SHOP：从者数达上限（TALENT:220 计 30）时拒绝召唤', async () => {
+test('monster_shop：从者数达上限（TALENT:220 计 30）时拒绝召唤', async () => {
   // 29 个从者：放行；30 个：拒绝
   for (const [count, rejected] of [
     [29, false],
@@ -240,14 +240,14 @@ test('MONSTER_SHOP：从者数达上限（TALENT:220 计 30）时拒绝召唤', 
   }
 });
 
-test('MONSTER_SHOP：性别菜单是按钮，越界输入由引擎拒收（#572）', async () => {
+test('monster_shop：性别菜单是按钮，越界输入由引擎拒收（#572）', async () => {
   // 1 → 入口；2 → 性别成立（随后在种族选择处 999 退出）
   const ok = await run_monster_shop({}, 1, 2, 999);
   // 前两枚是入口菜单，接着是性别菜单的四枚（种族菜单的十枚在更后面）
   assert.deepEqual(
     button_rendered(ok).slice(2, 6),
     ['[1] 男性', '[2] 女性', '[3] 扶她', '[999] 返回'],
-    ':71 的三个选项与 :73 的返回都是按钮（正文不带 [N]，空白按引擎折叠）',
+    '三个选项与返回都是按钮（正文不带 [N]，空白按引擎折叠）',
   );
 
   // 4 不在本轮白名单（1/2/3/999）里：引擎当场拒收，不再有「打回重开一轮」
@@ -260,7 +260,7 @@ test('MONSTER_SHOP：性别菜单是按钮，越界输入由引擎拒收（#572�
   );
 });
 
-test('MONSTER_SHOP：种族菜单是按钮，越界输入由引擎拒收（#572）', async () => {
+test('monster_shop：种族菜单是按钮，越界输入由引擎拒收（#572）', async () => {
   const ok = await run_monster_shop({}, 1, 1, 999);
   assert.deepEqual(
     button_rendered(ok).slice(-10),
@@ -276,7 +276,7 @@ test('MONSTER_SHOP：种族菜单是按钮，越界输入由引擎拒收（#572�
       '[9] 魔兽类',
       '[999] 返回',
     ],
-    ':97-101 的九档与返回都是按钮（正文不带 [N]）',
+    '九档与返回都是按钮（正文不带 [N]）',
   );
 
   // 10 不在本轮白名单（1-9/999）里：引擎当场拒收
@@ -289,8 +289,8 @@ test('MONSTER_SHOP：种族菜单是按钮，越界输入由引擎拒收（#572�
   );
 });
 
-test('MONSTER_SHOP：种族选择失败（SELECT_MONSTER 返回 0）回到种族菜单重画', async () => {
-  // 种族 1 → 商品一览（本世界无在售位）→ 202 被守卫打回 → 999 退出 → 外层
+test('monster_shop：种族选择失败（select_monster 返回 0）回到种族菜单重画', async () => {
+  // 种族 1 → 商品一览（本世界无在售位）→ 202 被检查打回 → 999 退出 → 外层
   // 重画一轮种族菜单 → 再 999 退出。这是 select_monster 返回 0 的 continue 支。
   const fixture = await run_monster_shop({}, 1, 1, 1, 202, 999, 999);
   assert(
@@ -300,10 +300,10 @@ test('MONSTER_SHOP：种族选择失败（SELECT_MONSTER 返回 0）回到种族
   );
 });
 
-test('MONSTER_SHOP：种族选择里 999 清在售位并退出', async () => {
+test('monster_shop：种族选择里 999 清在售位并退出', async () => {
   const fixture = await run_monster_shop({ 'itemsales:202': 1 }, 1, 1, 999);
-  assert.equal(fixture.store.get('itemsales:202'), 0, ':107 CALL CLEAR_SHOP');
-  // 三个屏各有一枚 [999] 返回按钮（入口 :37、性别 :73、种族 :101）——按次数
+  assert.equal(fixture.store.get('itemsales:202'), 0, 'CALL CLEAR_SHOP');
+  // 三个屏各有一枚 [999] 返回按钮（入口、性别、种族）——按次数
   // 钉住，删/改任意一屏的那一枚都会红（#572 起是按钮，实显文本与原行同文）
   assert.equal(
     button_rendered(fixture).filter((line) => line === '[999] 返回').length,
@@ -316,7 +316,7 @@ test('MONSTER_SHOP：种族选择里 999 清在售位并退出', async () => {
   );
 });
 
-test('MONSTER_SHOP：召唤成功——入队、性别素质、生成、确认与结账全链', async () => {
+test('monster_shop：召唤成功——入队、性别素质、生成、确认与结账全链', async () => {
   const fixture = await run_monster_shop(
     { 'item:101': 3 },
     1, // 入口
@@ -339,15 +339,15 @@ test('MONSTER_SHOP：召唤成功——入队、性别素质、生成、确认�
     fixture.var_writes.some(
       (w) => w.name === 'talent:202:122' && w.value === 1,
     ),
-    ':126-127 男性档写 TALENT:A:122 = 1（随后 CHAR_MAKE 按预设覆写它，' +
-      '与原作同序——所以这里查写出时刻而不是终值）',
+    '男性档写 TALENT:A:122 = 1（随后 CHAR_MAKE 按预设覆写它，' +
+      '所以这里查写出时刻而不是终值）',
   );
-  assert.equal(fixture.store.get('cflag:202:1'), 0, ':133 CFLAG:A:1 = 0');
+  assert.equal(fixture.store.get('cflag:202:1'), 0, 'CFLAG:A:1 = 0');
   const texts = history_texts(fixture);
   assert(texts.some((line) => line.includes('回应了你的召唤')));
   assert(texts.some((line) => line.includes('确定要召唤')));
-  // 的「他/她」读的是当时的 TALENT:A:122——CHAR_MAKE 已按预设
-  // 覆写过它，故按终值断言（原作同序）
+  // 「他/她」读的是当时的 TALENT:A:122——CHAR_MAKE 已按预设
+  // 覆写过它，故按终值断言（写出在覆写之前）
   const male = (fixture.store.get('talent:202:122') || 0) !== 0;
   assert(
     button_rendered(fixture).includes(`[0] 就是${male ? '他' : '她'}了`),
@@ -358,7 +358,7 @@ test('MONSTER_SHOP：召唤成功——入队、性别素质、生成、确认�
   assert.equal(fixture.store.get('item:101'), 0, '祭品被扣光（3 只全选）');
 });
 
-test('MONSTER_SHOP：扶她档写 TALENT:121（与男性档互斥）', async () => {
+test('monster_shop：扶她档写 TALENT:121（与男性档互斥）', async () => {
   const fixture = await run_monster_shop(
     { 'item:101': 3 },
     1,
@@ -375,7 +375,7 @@ test('MONSTER_SHOP：扶她档写 TALENT:121（与男性档互斥）', async () 
     fixture.var_writes.some(
       (w) => w.name === 'talent:202:121' && w.value === 1,
     ),
-    ':128-129 扶她档写 TALENT:A:121 = 1（随后 CHAR_MAKE 覆写，同上）',
+    '扶她档写 TALENT:A:121 = 1（随后 CHAR_MAKE 覆写，同上）',
   );
   assert(
     !fixture.var_writes.some(
@@ -385,11 +385,11 @@ test('MONSTER_SHOP：扶她档写 TALENT:121（与男性档互斥）', async () 
   );
   assert(
     button_rendered(fixture).some((line) => line.startsWith('[0] 就是')),
-    ':149-155 的召唤确认按钮',
+    '召唤确认按钮',
   );
 });
 
-test('MONSTER_SHOP：再换一个（[1]）——钱够则退人扣 1500 重来，不够则只报「金钱不够！」', async () => {
+test('monster_shop：再换一个（[1]）——钱够则退人扣 1500 重来，不够则只报「金钱不够！」', async () => {
   {
     // 钱够：第一次 [1] 退人扣钱重来，第二次 [0] 成交
     const fixture = await run_monster_shop(
@@ -433,8 +433,8 @@ test('MONSTER_SHOP：再换一个（[1]）——钱够则退人扣 1500 重来�
   }
 });
 
-test('MONSTER_SHOP：召唤确认处只认 0/1，越界输入由引擎拒收（#572）', async () => {
-  // 旧行为是「其余输入落到函数尾返回」（源 :172-173 只认 1，别的都返回）——
+test('monster_shop：召唤确认处只认 0/1，越界输入由引擎拒收（#572）', async () => {
+  // 旧行为是「其余输入落到函数尾返回」（只认 1，别的都返回）——
   // 按钮化后白名单是 0/1，7 在引擎那头就被拒收，不再回传游戏。
   const fixture = monster_world({ 'item:101': 3 });
   fixture.set_inputs(1, 1, 1, 202, 101, 101, 101, 0, 7);
@@ -454,9 +454,9 @@ test('MONSTER_SHOP：召唤确认处只认 0/1，越界输入由引擎拒收（#
   );
 });
 
-// —— @SELECT_MONSTER（:200-285） ——
+// —— select_monster ——
 
-/** 直接跑一次 @SELECT_MONSTER（不经 @MONSTER_SHOP） */
+/** 直接跑一次 select_monster（不经 monster_shop） */
 async function run_select(arg0, seed = {}, ...inputs) {
   const fixture = monster_world(seed);
   fixture.set_inputs(...inputs);
@@ -465,7 +465,7 @@ async function run_select(arg0, seed = {}, ...inputs) {
   return { fixture, result };
 }
 
-test('SELECT_MONSTER：种族的九档映射整表（含 CASEELSE 的 0/10 两值）', async () => {
+test('select_monster：种族的九档映射整表（含 CASEELSE 的 0/10 两值）', async () => {
   // 每档的第二个值决定哪些商品出场：给三个候选（202 → 1、208 → 9、
   // 203 → 11——第二档那一路的探针，5 档的 [5, 11] 与 8 档的 [8, 9] 都靠它）
   const cases = [
@@ -517,7 +517,7 @@ test('SELECT_MONSTER：种族的九档映射整表（含 CASEELSE 的 0/10 两�
   }
 });
 
-test('SELECT_MONSTER：商品一览的四个判据——价格非 0、两个种族档之一、按 2 格一行', async () => {
+test('select_monster：商品一览的四个条件——价格非 0、两个种族档之一、按 2 格一行', async () => {
   // 202（319 = 1）与 203（319 = 1）在档内；201（319 = 2）与 204（价格 0）不在
   const { fixture } = await run_select(
     1, // 亚人档 → [1, 1]，看 202/203 出场
@@ -536,10 +536,10 @@ test('SELECT_MONSTER：商品一览的四个判据——价格非 0、两个种�
   const texts = history_texts(fixture);
   const list_line = texts.find((line) => line.includes('精英狗头人'));
   assert(list_line, '在售的 202 应出场');
-  assert(list_line.includes('[202]'), ':238 的 [编号] 字段');
+  assert(list_line.includes('[202]'), '[编号] 字段');
   assert(
     list_line.includes('最低等级：' + '\u00A0'.repeat(3) + '15'),
-    ':238 的右对齐等级字段',
+    '右对齐等级字段',
   );
   assert(list_line.includes('精英蚁怪'), '同为档内的 203 与 202 同行');
   assert(
@@ -550,11 +550,11 @@ test('SELECT_MONSTER：商品一览的四个判据——价格非 0、两个种�
     !texts.some((line) => line.includes('精英芽怪')),
     'ITEMPRICE 为 0 的 204 出场不了',
   );
-  assert.equal(fixture.store.get('itemsales:202'), 1, ':240 点亮在售位');
+  assert.equal(fixture.store.get('itemsales:202'), 1, '点亮在售位');
   assert.equal(fixture.store.get('itemsales:201') ?? 0, 0, '档外不点亮');
 });
 
-test('SELECT_MONSTER：商品一览的排版字面量（名字补 22、等级右对齐 5、每行 2 格）', async () => {
+test('select_monster：商品一览的排版字面量（名字补 22、等级右对齐 5、每行 2 格）', async () => {
   // 三件在售（202/203/205 同属亚人档）：两格一行 → 第二行只剩第三件。
   // 整格比对同时钉住名字字段宽、等级字段宽与「每行 2 格」——任何一处改动
   // 都会让这一行的字符串对不上
@@ -579,7 +579,7 @@ test('SELECT_MONSTER：商品一览的排版字面量（名字补 22、等级右
   ]);
 });
 
-test('SELECT_MONSTER：空表与提示行（没有能召唤的魔物从者 / 请选择…）', async () => {
+test('select_monster：空表与提示行（没有能召唤的魔物从者 / 请选择…）', async () => {
   {
     // 档内一件都没有：把 202 的 319 抹掉（其余世界不动）
     const { fixture } = await run_select(
@@ -619,8 +619,8 @@ test('SELECT_MONSTER：空表与提示行（没有能召唤的魔物从者 / 请
   }
 });
 
-test('SELECT_MONSTER：五道输入守卫——999 退出、段外、未点亮、钱不够', async () => {
-  // 999 → RETURN 0（回到 @MONSTER_SHOP 的种族选择）
+test('select_monster：五道输入检查——999 退出、段外、未点亮、钱不够', async () => {
+  // 999 → RETURN 0（回到 monster_shop 的种族选择）
   {
     const { result } = await run_select(1, {}, 999);
     assert.equal(result, 0);
@@ -648,10 +648,10 @@ test('SELECT_MONSTER：五道输入守卫——999 退出、段外、未点亮�
       history_texts(fixture).includes(
         '虽然魔物从者都不是物质的女孩，但必要的金钱总是要准备的吧～贫穷的魔王大人哦！',
       ),
-      ':268 的金钱守卫文案',
+      '金钱不足文案',
     );
   }
-  // 恰好 2025：放行（进入 @BUY_MONSTER 的祭品段）
+  // 恰好 2025：放行（进入 buy_monster 的祭品段）
   {
     const { fixture } = await run_select(
       1,
@@ -664,12 +664,12 @@ test('SELECT_MONSTER：五道输入守卫——999 退出、段外、未点亮�
     assert(
       history_texts(fixture).includes('现在被选择的怪物') ||
         history_texts(fixture).includes('请选择满足最低等级要求的怪物作为祭品'),
-      '恰好够钱应进 @BUY_MONSTER',
+      '恰好够钱应进 buy_monster',
     );
   }
 });
 
-test('SELECT_MONSTER：买定返回 1（@BUY_MONSTER 成交）', async () => {
+test('select_monster：买定返回 1（buy_monster 成交）', async () => {
   const { result } = await run_select(
     1,
     { 'item:101': 3 },
@@ -679,15 +679,15 @@ test('SELECT_MONSTER：买定返回 1（@BUY_MONSTER 成交）', async () => {
     101,
     0,
   );
-  assert.equal(result, 1, ':285 RETURN 1');
+  assert.equal(result, 1, 'RETURN 1');
 });
 
-// —— @BUY_MONSTER（:288-410） ——
+// —— buy_monster ——
 
-/** 直接跑一次 @BUY_MONSTER（先把 TFLAG:102 的选中项立起来） */
+/** 直接跑一次 buy_monster（先把 TFLAG:102 的选中项立起来） */
 async function run_buy(seed = {}, ...inputs) {
   const fixture = monster_world(seed);
-  // 第一个输入选中 202（亚人档的在售商品），其余是 @BUY_MONSTER 的输入
+  // 第一个输入选中 202（亚人档的在售商品），其余是 buy_monster 的输入
   fixture.set_inputs(202, ...inputs);
   const { select_monster } = fixture.load_module('page/page-monster-shop');
   let result;
@@ -700,14 +700,14 @@ async function run_buy(seed = {}, ...inputs) {
   return { fixture, result };
 }
 
-test('BUY_MONSTER：无祭品与等级不足两个早退', async () => {
+test('buy_monster：无祭品与等级不足两个早退', async () => {
   // 无祭品：RETURN 0（外层重问）
   {
     const { fixture, result } = await run_buy({}, 999);
     assert.equal(result, 0);
     assert(
       history_texts(fixture).includes('没有能作为祭品的怪物'),
-      ':313 的文案',
+      '无祭品文案',
     );
   }
   // 等级不足：祭品 2 只（10 级）< 15
@@ -715,12 +715,12 @@ test('BUY_MONSTER：无祭品与等级不足两个早退', async () => {
     const { fixture } = await run_buy({ 'item:101': 2 }, 999);
     assert(
       history_texts(fixture).includes('＊作为祭品的怪物等级不足＊'),
-      ':316 的文案',
+      '等级不足文案',
     );
   }
 });
 
-test('BUY_MONSTER：等级足够时直接进确认，[0] 成交扣钱扣祭品', async () => {
+test('buy_monster：等级足够时直接进确认，[0] 成交扣钱扣祭品', async () => {
   const { fixture, result } = await run_buy(
     { 'item:101': 3 },
     101,
@@ -731,23 +731,23 @@ test('BUY_MONSTER：等级足够时直接进确认，[0] 成交扣钱扣祭品',
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
   assert.equal(result, 1, '成交返回 1');
-  assert.equal(era_flag.money, 10000 - 15 * 135, ':349 MONEY -= 价 × 135');
-  assert.equal(era_exflag.legit_money, -15 * 135, ':350 记账同步');
-  assert.equal(fixture.store.get('item:101'), 0, ':354 祭品扣除');
+  assert.equal(era_flag.money, 10000 - 15 * 135, 'MONEY -= 价 × 135');
+  assert.equal(era_exflag.legit_money, -15 * 135, '记账同步');
+  assert.equal(fixture.store.get('item:101'), 0, '祭品扣除');
   const texts = history_texts(fixture);
   assert(texts.includes('现在被选择的怪物'));
-  assert(texts.includes('合计等级：15'), ':341');
+  assert(texts.includes('合计等级：15'), '合计等级行');
   assert(
     texts.some(
       (line) =>
         line.includes('要以这些怪物为代价，加上') &&
         line.includes('2025点金钱'),
     ),
-    ':343 的确认行（价 × 135）',
+    '确认行（价 × 135）',
   );
 });
 
-test('BUY_MONSTER：确认处 [1] 不要则返回 0（不扣钱不扣货）', async () => {
+test('buy_monster：确认处 [1] 不要则返回 0（不扣钱不扣货）', async () => {
   const { fixture, result } = await run_buy(
     { 'item:101': 3 },
     101,
@@ -762,7 +762,7 @@ test('BUY_MONSTER：确认处 [1] 不要则返回 0（不扣钱不扣货）', as
   assert.equal(fixture.store.get('item:101'), 3, '不扣祭品');
 });
 
-test('BUY_MONSTER：祭品不足时逐只挑（剩余等级递减、库存告罄、999 退出）', async () => {
+test('buy_monster：祭品不足时逐只挑（剩余等级递减、库存告罄、999 退出）', async () => {
   // 100（5 级 1 只）+ 110（6 级 2 只）：合计 17 >= 15 可召，但挑的时候
   // 100 只有一只——第二次挑它撞「已经没有了」
   const { fixture } = await run_buy(
@@ -778,18 +778,21 @@ test('BUY_MONSTER：祭品不足时逐只挑（剩余等级递减、库存告罄
     999,
   );
   const texts = history_texts(fixture);
-  assert(texts.includes('请选择满足最低等级要求的怪物作为祭品'), ':359');
+  assert(
+    texts.includes('请选择满足最低等级要求的怪物作为祭品'),
+    '祭品挑选提示',
+  );
   assert(texts.includes('剩余等级：15'), '首次剩余 = 价 15');
   assert(texts.includes('剩余等级：10'), '挑掉 5 级后剩余 10');
-  assert(texts.includes('合计等级：5'), ':375 的已选合计');
-  assert(texts.includes('已经没有了'), ':404 的库存告罄文案');
+  assert(texts.includes('合计等级：5'), '已选合计');
+  assert(texts.includes('已经没有了'), '库存告罄文案');
   assert(
     texts.includes('剩余等级：4'),
     '再挑一只 6 级的 110 后剩余 4（仍未凑够）',
   );
 });
 
-test('BUY_MONSTER：挑祭品的输入守卫——段外与未持有都打回', async () => {
+test('buy_monster：挑祭品的输入检查——段外与未持有都打回', async () => {
   const { fixture } = await run_buy({ 'item:101': 3 }, 99, 199, 102, 999);
   const texts = history_texts(fixture);
   assert.equal(
@@ -801,13 +804,13 @@ test('BUY_MONSTER：挑祭品的输入守卫——段外与未持有都打回', 
   );
 });
 
-test('BUY_MONSTER：跨两种祭品凑够等级（选择不限于一只）', async () => {
+test('buy_monster：跨两种祭品凑够等级（选择不限于一只）', async () => {
   // 101 与 102 各 2 只：102 的凌辱类型 2（史莱姆）不在亚人档 → 只有 101 可用
   const { fixture, result } = await run_buy(
     { 'item:101': 3, 'item:102': 5, 'itemname:102': '史莱姆' },
     102, // 102 不在亚人档 → 打回
-    999, // 退出 @BUY_MONSTER
-    999, // 退出 @SELECT_MONSTER
+    999, // 退出 buy_monster
+    999, // 退出 select_monster
   );
   assert.equal(result, 0);
   const texts = history_texts(fixture);
@@ -817,20 +820,20 @@ test('BUY_MONSTER：跨两种祭品凑够等级（选择不限于一只）', asy
   );
 });
 
-test('BUY_MONSTER：多只同种祭品按已选数递增（:408-409 的两行）', async () => {
+test('buy_monster：多只同种祭品按已选数递增（两行）', async () => {
   const { fixture } = await run_buy({ 'item:101': 3 }, 101, 101, 101, 0);
   const texts = history_texts(fixture);
   assert(
     texts.some((line) => line.includes('狗头人') && line.includes('1只')),
-    ':334 的祭品行（已选 1 只）',
+    '祭品行（已选 1 只）',
   );
   assert(
     texts.some((line) => line.includes('LV:5')),
-    '等级来自 @MONSTER_DATA 的 E:501',
+    '等级来自 monster_data 的 E:501',
   );
 });
 
-test('BUY_MONSTER：祭品行与可选行的排版字面量（名补 22/20、数右对齐 7/5、每行 2 格）', async () => {
+test('buy_monster：祭品行与可选行的排版字面量（名补 22/20、数右对齐 7/5、每行 2 格）', async () => {
   // 三件同档祭品（100/101/110，等级 5/5/6，各持一件）挑满 → 16 >= 15 进确认屏，
   // 于是挑选取与确认屏的祭品行都留下整行证据。名字用 yml/Item.yml 的登记名
   const { fixture, result } = await run_buy(
@@ -849,7 +852,7 @@ test('BUY_MONSTER：祭品行与可选行的排版字面量（名补 22/20、数
   );
   assert.equal(result, 1, '三只凑够 16 级成交');
   const texts = history_texts(fixture);
-  // 可选行（:381-382）：两格一行，第三件另起一行；格尾是制表符
+  // 可选行：两格一行，第三件另起一行；格尾是制表符
   assert_has_line(
     texts,
     pick_cell(100, '狗头人', 5, 1, 0) + pick_cell(101, '哥布林', 5, 1, 0),
@@ -861,7 +864,7 @@ test('BUY_MONSTER：祭品行与可选行的排版字面量（名补 22/20、数
     pick_cell(100, '狗头人', 5, 1, 1) + pick_cell(101, '哥布林', 5, 1, 1),
     '已选数进格（- 1 只）',
   );
-  // 祭品行（:334/:368）：两格一行，第三件另起一行
+  // 祭品行：两格一行，第三件另起一行
   assert_has_line(
     texts,
     sacrifice_cell('狗头人', 5, 1) + sacrifice_cell('哥布林', 5, 1),
@@ -870,7 +873,7 @@ test('BUY_MONSTER：祭品行与可选行的排版字面量（名补 22/20、数
   assert_has_line(texts, sacrifice_cell('兽人', 6, 1), '第三件另起一行');
 });
 
-test('BUY_MONSTER：确认处只认 0/1，越界输入由引擎拒收（#572）', async () => {
+test('buy_monster：确认处只认 0/1，越界输入由引擎拒收（#572）', async () => {
   // 挑够祭品后键入 5：本轮白名单是 0/1，引擎当场拒收（旧行为是落回祭品
   // 选择的输入重画，那条路径在实机上不可达）——钱与祭品都不动。
   const fixture = monster_world({ 'item:101': 3 });
@@ -885,8 +888,8 @@ test('BUY_MONSTER：确认处只认 0/1，越界输入由引擎拒收（#572）'
   assert.equal(fixture.store.get('item:101'), 3, '未成交，祭品不动');
 });
 
-test('SELECT_MONSTER：名录的编号段端点——201（首个在册）与 210（末个在册）都出场', async () => {
-  // 扫描面是 201-280（:232 的 FOR），但在册商品只有 201-210（Item.yml 的
+test('select_monster：名录的编号段端点——201（首个在册）与 210（末个在册）都出场', async () => {
+  // 扫描面是 201-280 的 FOR，但在册商品只有 201-210（Item.yml 的
   // 2xx 段）：两端各站一条。211+ 没名字没价位，改 `end` 到 211/279 的输出
   // 相同（等价变异，见条目注释）
   {
@@ -923,7 +926,7 @@ test('SELECT_MONSTER：名录的编号段端点——201（首个在册）与 21
   }
 });
 
-test('MONSTER_SHOP：种族选择收下 9（RACE_MAX 的最后一个）并进魔兽档', async () => {
+test('monster_shop：种族选择收下 9（RACE_MAX 的最后一个）并进魔兽档', async () => {
   // 九档的最后一档：走菜单路径（不是直调 SELECT_MONSTER），把 RACE_MAX = 9
   // 的端点站住——改成 8 时 9 会打回重问，这一条红
   const fixture = await run_monster_shop(
@@ -945,8 +948,8 @@ test('MONSTER_SHOP：种族选择收下 9（RACE_MAX 的最后一个）并进魔
   );
 });
 
-test('BUY_MONSTER：祭品扫描的编号段端点——193（100-199 段末个在册）能当祭品', async () => {
-  // 扫描面是 100-199（:301 的 FOR），在怪物数据表里到 193 为止（混沌龙，
+test('buy_monster：祭品扫描的编号段端点——193（100-199 段末个在册）能当祭品', async () => {
+  // 扫描面是 100-199 的 FOR，在怪物数据表里到 193 为止（混沌龙，
   // 凌辱类型 10 = 魔兽档、等级 30 + 4）；194-199 没有数据 → 上界改到 199 与
   // 200 的输出相同（等价，见条目注释），砍到 ≤ 193 才是红
   const fixture = monster_world({
@@ -972,7 +975,7 @@ test('BUY_MONSTER：祭品扫描的编号段端点——193（100-199 段末个�
   );
 });
 
-// —— 存根接线：召唤确认段的 @SHOW_CHARA_INFO（#390 真身落地后换接） ——
+// —— 存根接入：召唤确认段的 show_chara_info（#390 真身实现后换接） ——
 
 test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 召唤出的角色 A、页码 -2）', async () => {
   const fixture = await run_monster_shop(
@@ -988,24 +991,24 @@ test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 召唤出的角色 A�
     0, // 召唤确认
   );
   const texts = history_texts(fixture);
-  // 真身的三个判据（页码判据与 test/chara-info-show.test.js 的页码表同款）
+  // 真身的三个条件（页码条件与 test/chara-info-show.test.js 的页码表同款）
   assert(
     texts.some((line) => line.startsWith('NO.202 ')),
     '标题行 NO.<cid> 带的是被召唤的角色号 A',
   );
-  // 页码 = -2 的判据取「经验段 ∧ 外貌段」：经验段在 -2/-1/1 三臂、外貌段在
-  // -2/2 两臂，交集只有 -2（EX: 0/1/3/4 两段都没有或只有一段）
+  // 页码 = -2 的条件取「经验段 ∧ 外貌段」：经验段在 -2/-1/1 三支、外貌段在
+  // -2/2 两支，交集只有 -2（EX: 0/1/3/4 两段都没有或只有一段）
   assert(
     texts.some((line) => line.includes('本级经验：')),
-    '-2 臂的经验段在（占位行只有一行，没有这一段）',
+    '-2 页的经验段在（占位行只有一行，没有这一段）',
   );
   assert(
     texts.some((line) => line.includes('[发色：')),
-    '-2 臂的外貌段在（页码传错时这一行不在）',
+    '-2 页的外貌段在（页码传错时这一行不在）',
   );
   assert(
     !texts.some((line) => line.startsWith('一人称：')),
-    '-2 臂无 SHOW_BLOCK 的人称行',
+    '-2 页无 SHOW_BLOCK 的人称行',
   );
   assert(
     !texts.some((line) => line.includes('尚未移植')),
@@ -1013,8 +1016,8 @@ test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 召唤出的角色 A�
   );
 });
 
-// —— 随机源透传（接线验收返工）：形参有缺省值时，实参被去掉会静静落回
-//    Math.random（#344 的形态：本机跑一次绿、CI 抽中才红） ——
+// —— 随机源透传（接入验收返工）：形参有缺省值时，实参被去掉会静静落回
+//    Math.random（#344 的写法：本机跑一次绿、CI 抽中才红） ——
 
 /**
  * 把缺省随机源换成会抛的桩，再跑 fn。任何一环没把 `rand` 往下传、下游落回
@@ -1064,7 +1067,7 @@ test('随机源透传：BUY_MONSTER 的独立出口也吃注入的源', async ()
     'page/page-monster-shop',
   );
   // TFLAG:100/101 的种族两档与 TFLAG:102 的选中项（独立出口绕开
-  // SELECT_MONSTER，这三格要手工立起来）
+  // select_monster，这三格要手工立起来）
   shop_state.race = 1;
   shop_state.race2 = 1;
   shop_state.chosen = 202;

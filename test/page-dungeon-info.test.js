@@ -9,10 +9,10 @@
  * 每个新界面的每个按钮都在引擎的按钮白名单里——此行为必须有测试）。
  *
  * 验收对应（#180 清单）：
- *   - INFO2 三函数 1:1（tab 切换 / 位图选择四类 / 陷阱设施宝物三路写入 /
+ *   - INFO2 三函数（tab 切换 / 位图选择四类 / 陷阱设施宝物三路写入 /
  *     设施确认对话与双扣款 / 部下一览与 MONSTER_SETUP 存根）；
- *   - @ENEMY_COMPARE 的排序键序（阶层 → 攻略度 → 队长优先）；
- *   - @ENEMY_EXIST2 的队伍行分组与近卫层护卫名单（与 SETUP 版两套分立）；
+ *   - enemy_compare 的排序键序（阶层 → 攻略度 → 队长优先）；
+ *   - enemy_exist2 的队伍行分组与近卫层护卫名单（与 SETUP 版两套分立）；
  *   - 主菜单读数：OVERVIEW 的头行/统计行/阶层按钮，DAILY 的威望五档与
  *     上界钳制；
  *   - [102] 地下城按钮在主菜单渲染（实机可达性——#129 型缺口的防复发）；
@@ -64,7 +64,7 @@ function seed_invasion_party(fixture) {
   fixture.store.set('cflag:2:531', 1); // 队长引用 = 勇者甲
 }
 
-// —— @ENEMY_COMPARE（纯函数）——
+// —— enemy_compare（纯函数）——
 
 test('ENEMY_COMPARE：同位返回 0，阶层低者靠前', () => {
   const fixture = setup_world();
@@ -99,7 +99,7 @@ test('ENEMY_COMPARE：同队时队长优先于队员', () => {
   assert.equal(enemy_compare(2, 1), 1);
 });
 
-// —— @ENEMY_EXIST2（纯输出）——
+// —— enemy_exist2（纯输出）——
 
 test('ENEMY_EXIST2：同队一行、状态前缀与颜色，异队分行', async () => {
   const fixture = setup_world();
@@ -122,7 +122,7 @@ test('ENEMY_EXIST2：同队一行、状态前缀与颜色，异队分行', async
   assert.ok(invasion_line.includes('勇者乙'), '同队队员同行');
   assert.ok(intercept_line.includes('贝丝'), '迎击队行含贝丝');
   assert.equal(texts.length, 2, '两支队伍恰好两行');
-  // 首行空行来自 :595 / :630 的 PRINTL（#180 补）——夹具把 println 记为 'br'
+  // 首行空行来自 PRINTL（#180 补）——夹具把 println 记为 'br'
   assert.equal(
     fixture.lines_history.filter((l) => l.type === 'br').length,
     1,
@@ -163,7 +163,7 @@ test('ENEMY_EXIST2：近卫层（floor 10）追加护卫中名单（EX_TALENT + 
   assert.ok(guard_line.includes('勇者乙'));
   assert.ok(
     guard_line.includes('[\u00A02]'),
-    '护卫行含宽度 2 右对齐的编号（原文 :636 的 {COUNT,2}）',
+    '护卫行含宽度 2 右对齐的编号（{COUNT,2}）',
   );
   assert.ok(guard_line.includes('剑术'), '护卫行含 TALENTNAME 素质名');
 });
@@ -236,7 +236,7 @@ test('ENEMY_EXIST2：MAX_NAME_LEN 跨调用只增不减——先长后短，宽�
   );
 
   // 第二轮：本层不再有勇者行（CFLAG:1 归 0），勇者乙改当护卫——护卫行
-  //（:637）与勇者行（:627）用同一个静态宽度
+  //（护卫行）与勇者行用同一个静态宽度
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('cflag:2:1', 0);
   fixture.store.set('ex_talent:2:1', 1);
@@ -252,7 +252,7 @@ test('ENEMY_EXIST2：宽度按本层全部筛出角色取最长——迎击中�
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
-  // 迎击中的另一队（12 列），侵攻队两人都只有 6 列——原作 :569 的 MAX 对
+  // 迎击中的另一队（12 列），侵攻队两人都只有 6 列——MAX 对
   // 每一个筛出的角色（侵攻/迎击/奴隶）更新 MAX_NAME_LEN，不是只对侵攻中
   fixture.seed_chara(3, {
     id: 3,
@@ -273,18 +273,18 @@ test('ENEMY_EXIST2：宽度按本层全部筛出角色取最长——迎击中�
   );
 });
 
-// —— #615：空行落在原作的分支上（DUNGEON_INFO2.ERB:595 / :629-630）——
+// —— #615：空行的两个落点分支 ——
 
-test('#615 ENEMY_EXIST2：名单为空时只有一个空行（改由尾部 :630 落）', async () => {
+test('#615 ENEMY_EXIST2：名单为空时只有一个空行（改由尾部落）', async () => {
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
-  // 两位角色都不在第 3 层 → 名单为空：:595 不执行，空行来自尾部 :630 的 PRINTL
+  // 两位角色都不在第 3 层 → 名单为空：队首 PRINTL 不执行，空行来自尾部
   await enemy_exist2(3);
 
   assert.deepEqual(
     fixture.lines.map((l) => l.type),
     ['br'],
-    '名单为空只有 :630 的一个空行（不多不少）',
+    '名单为空只有尾部的一个空行（不多不少）',
   );
 });
 
@@ -302,7 +302,7 @@ test('#615 ENEMY_EXIST2：名单为空但有护卫时，空行在护卫行之前
   assert.ok(fixture.text_lines()[0].includes('[护卫中]'));
 });
 
-test('#615 ENEMY_EXIST2：有队伍时首行空行来自 :595、队伍行紧随', async () => {
+test('#615 ENEMY_EXIST2：有队伍时首行空行来自队首 PRINTL、队伍行紧随', async () => {
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
@@ -311,12 +311,12 @@ test('#615 ENEMY_EXIST2：有队伍时首行空行来自 :595、队伍行紧随'
   assert.deepEqual(
     fixture.lines.map((l) => l.type),
     ['br', 'text'],
-    ':595 的首行空行 + 队伍行（末行由 :630 的 PRINTL 收尾，不再多空行）',
+    '首行空行 + 队伍行（末行由 PRINTL 收尾，不再多空行）',
   );
   assert.ok(fixture.text_lines()[0].startsWith('[侵攻中]'));
 });
 
-// —— @DUNGEON_INFO2 主界面 ——
+// —— dungeon_info2 主界面 ——
 
 test('INFO2：三标签页切换按钮在白名单内，陷阱列显示「无」', async () => {
   const fixture = setup_world();
@@ -432,7 +432,7 @@ test('INFO2 设施路：选择层 + 设施 → 确认对话 → 确认执行（�
   );
 });
 
-test('#612 INFO2 设施确认：两键正文照写原作的「- 」（DUNGEON_INFO2.ERB:180）', async () => {
+test('#612 INFO2 设施确认：两键正文带「- 」前缀照写', async () => {
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
   fixture.store.set('flag:10004', 50000);
@@ -442,8 +442,8 @@ test('#612 INFO2 设施确认：两键正文照写原作的「- 」（DUNGEON_IN
   const rendered = fixture.lines_history
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
-  assert.ok(rendered.includes('[0] - 好的'), '原作 :180 的 [0] - 好的');
-  assert.ok(rendered.includes('[1] - 不要'), '原作 :180 的 [1] - 不要');
+  assert.ok(rendered.includes('[0] - 好的'), '[0] - 好的');
+  assert.ok(rendered.includes('[1] - 不要'), '[1] - 不要');
 });
 
 test('INFO2 设施路：钱不够 → 提示「钱不够」且不写槽', async () => {
@@ -631,7 +631,7 @@ test('DRAW_DUNGEON_OVERVIEW：迷宫外（501<=1 且 502==0）与第 1 层（502
     texts.some((t) => t.includes('迷宫外的勇者：1人')),
     `迷宫外恰 1 人（勇者甲），实际 ${texts}`,
   );
-  // 勇者乙按层计数（第 1 层勇者 1 人）——502 判据删掉时她会落进迷宫外，
+  // 勇者乙按层计数（第 1 层勇者 1 人）——502 判断条件删掉时她会落进迷宫外，
   // 上面那行变 2 人（此断言与上一行共同把两个分支分开）
   assert.ok(
     texts.some((t) => t.includes('勇者：1人') && t.includes('迎击：0人')),
