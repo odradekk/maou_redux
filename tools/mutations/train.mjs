@@ -2421,7 +2421,7 @@ export default [
     replace:
       'const noop_branch = undefined; // 变异：无操作注册废（register 会炸）',
     tests: ['com-colosseum'],
-    must_mention: '两张表的输出都应为空',
+    must_mention: 'B/A 对 201-207 注册显式无操作：无消息分支',
   },
   {
     desc: 'M1019 A 公共头 TFLAG:15 死斗场两分支删',
@@ -6410,7 +6410,7 @@ export default [
     find: "  if (lv >= 5 && talent(78) === 0) return { blocked: 'talent' };",
     replace: "  if (lv > 5 && talent(78) === 0) return { blocked: 'talent' };",
     tests: ['ablup'],
-    must_mention: 'ablup1：两档终止判定',
+    must_mention: 'ablup1：三档终止判定',
   },
   {
     desc: 'M9658 ablup1：巨乳倍率',
@@ -6452,7 +6452,7 @@ export default [
     replace:
       '  if (r.blocked === null && r.i === 0) era.add(`juel:${cid}:14`, -r.a - 1);',
     tests: ['ablup'],
-    must_mention: 'ablup1：两档终止判定',
+    must_mention: 'ablup1：三档终止判定',
   },
   {
     desc: 'M9663 ablup2：男人却下检查',

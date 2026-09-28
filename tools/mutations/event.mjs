@@ -2649,7 +2649,7 @@ export default [
     replace: '    chara(cid).system.主人膣内射精 = 20; // CFLAG:101 = 30',
     tests: ['event-nextday'],
     must_mention:
-      'NAKADASHI_CHECK 算掷骰上界时看到的 CFLAG:101 必须是 :1011 写入的 30',
+      'NAKADASHI_CHECK 算掷骰上界时看到的 CFLAG:101 必须是写入的 30',
   },
   {
     desc: 'M8649 破处支尾部：着衣状态的位 64 扣减写成位 32',
