@@ -409,14 +409,6 @@ test('交互循环：选 999 退出，收尾三查全走真身（#565：check_sp
     1,
     'check_specialskil 的实参链要落到目标角色',
   );
-  assert.ok(
-    !fixture.text_lines().some((line) => line.includes('check_specialskil')),
-    'check_specialskil 已接真身，不应再打占位行',
-  );
-  assert.ok(
-    !fixture.text_lines().some((line) => line.includes('yokubo_up_check')),
-    'yokubo_up_check 已接真身，不应再打占位行',
-  );
   // [999] 按钮按 PR #53 通则断言 rendered（正文不写编号前缀，引擎拼）
   const exit_button = fixture.lines.find(
     (line) => line.type === 'button' && line.accelerator === 999,
@@ -447,16 +439,12 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
   const fixture = create_era_fixture();
   seed_world(fixture);
   // #467 起 ablup37 也接了真身（0-4/10-17/20-23/30-33/37/39/40/99 全部实现），
-  // 主循环里已没有「命中占位行」的编号：喂 37 → 真身的子菜单（[0]/[100]）→
+  // 主循环里已没有未实现的编号：喂 37 → 真身的子菜单（[0]/[100]）→
   // 喂 100（停止）回主循环 → 999 退出
   fixture.set_inputs(37, 100, 999);
 
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
-  assert(
-    !fixture.text_lines().some((line) => line.includes('@ablup37')),
-    'ablup37 已落真身，不应再打占位行',
-  );
   assert.ok(
     fixture.text_lines().some((line) => line.includes('卖淫经验')),
     '真身分支的需求画面应被渲染（decide_ablup37 的 D 行）',
@@ -469,9 +457,8 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
   );
 });
 
-// 原「交互循环：能力分支命中表默认回落」用例（删 handler 触发 ABLUP 存根
-// 占位）已删（#638）：STUBBED_ABLUP_NAMES 与占位回落随存根机制一并删除，
-// 默认分支不再有实体；ABLUP_IDS 与 ABLUP_HANDLERS 的一一对应由下一文件的
+// 原「交互循环：能力分支命中表默认回落」用例已删（#638）：占位回落随
+// 占位机制删除一并移除，默认分支不再有实体；ABLUP_IDS 与 ABLUP_HANDLERS 的一一对应由下一文件的
 // 分发表覆盖用例钉住。
 
 // 原「交互循环：无分支输入静默重绘」用例（喂 7）已删（#130）：7 不是
@@ -503,14 +490,6 @@ test('自动升级（FLAG:5 位 35）：不吃输入，auto_ablup 真身三连�
   assert.ok(
     fixture.var_reads.some((read) => read.name === 'abl:0:0'),
     'MASTER 那一连确实执行了',
-  );
-  assert.ok(
-    !fixture.text_lines().some((line) => line.includes('auto_ablup')),
-    'auto_ablup 不再是存根，占位行必须消失',
-  );
-  assert(
-    !fixture.text_lines().some((line) => line.includes('check_specialskil')),
-    'check_specialskil 已接真身（#565），占位行必须消失',
   );
   // 位 34 不得误触发（相邻位防串）
   const other = create_era_fixture();

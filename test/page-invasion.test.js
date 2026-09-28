@@ -1451,10 +1451,6 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块'
     '[1000] 转发到 sengen_video 真身（#502）',
   );
   assert(
-    !history_texts(crystal_ball).some((line) => line.includes('@SENGEN_VIDEO')),
-    '存根占位行已撤',
-  );
-  assert(
     crystal_ball.lines_history.some(
       (line) =>
         line.type === 'button' &&
@@ -1496,10 +1492,6 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块'
   assert(
     fort_texts.includes('圣灵骑士全部都被打倒了，四个据点也都被攻陷了。'),
     '[4] 转发到 arcana_fort 真身（#470）',
-  );
-  assert(
-    !fort_texts.some((line) => line.includes('@ARCANA_FORT')),
-    '存根行已撤，不再是占位输出',
   );
   assert(
     !entered_campaign_menu(fort),

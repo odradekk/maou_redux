@@ -394,7 +394,7 @@ test('口上族：gohoubi_after / osioski 无性格编号（get_kojo_num = 0）�
 
   assert.equal(await gohoubi_after_koujo(1, 0), 0);
   assert.equal(await osioski_koujo(1, 1), 0);
-  assert.deepEqual(text_lines(fixture), [], '窗口拒绝即无输出（占位行也不打）');
+  assert.deepEqual(text_lines(fixture), [], '窗口拒绝即无输出');
 });
 
 test('口上族：命中已注册 → 实现收 (cid, choice)、TARGET 暂存还原；未注册落空', async () => {

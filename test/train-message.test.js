@@ -136,7 +136,7 @@ test('B 省略设定（FLAG:6 & 1）：整函数短路，无任何输出', async
 
 test('B 其他指令（未装载族模块）：零输出（#565 起缺号回落为零）', async () => {
   // 12 号属 com-toy 族——本测试世界未装载它，族表缺失。无分支的号什么
-  // 都不输出；ere 自 #45 起给缺号打占位行、#565 起还原为零输出（全量
+  // 都不输出；缺号一律零输出（全量
   // 装载后 121 段全数有主，这一情形只在模块未装载的测试世界可达）
   const { fixture, era_flag, train_message_b } = seed_message_world();
   era_flag.selectcom = 12;
@@ -1642,7 +1642,7 @@ URINE_CASES.forEach(([desc, extra, lines], index) => {
       world,
       () => {
         // 基线：TFLAG:29 = 0 把公共绝顶段与失禁段一并关掉；失神行另把
-        // TFLAG:899 固定成两侧同态（它决定 A0 分支的占位行，不能只在一侧）
+        // TFLAG:899 固定成两侧同态（它决定 A0 分支的输出，不能只在一侧）
         world.fixture.store.set('tflag:29', 0);
         if (extra['tflag:899'] !== undefined) {
           world.fixture.store.set('tflag:899', 2);
@@ -1824,7 +1824,7 @@ test('A 处女丧失段：野狗夺处（TFLAG:3 && TEQUIP:89）', async () => {
     ['温妮的阴部上、滴出了处女才有的落红…', '温妮把处女奉献给野狗了。'],
   );
 
-  // 失神中（TFLAG:899 ≥ 2）不发：同态压掉 A0 的占位行差异后，只剩「无射精
+  // 失神中（TFLAG:899 ≥ 2）不发：同态压掉 A0 分支的输出差异后，只剩「无射精
   // 夺处」那一支（它不受 TFLAG:899 约束），野狗句必须不在
   const fainted = seed_message_world();
   fainted.fixture.store.set('tflag:3', 1);
@@ -1895,7 +1895,7 @@ test('A 口交清洁段：双人口交支与普通支的四档拼法（TFLAG:8�
     ],
   );
 
-  // TFLAG:899 != 0 → 整段静默（两侧同置 899，避开 A0 占位行的差异）
+  // TFLAG:899 != 0 → 整段静默（两侧同置 899，避开 A0 分支的差异）
   const fainted = seed_message_world({ assi: 17 });
   await expect_common_lines(
     fainted,
@@ -1932,7 +1932,7 @@ test('A 绝顶子链：逆强奸/逆肛交/口交 × 普通与大量六支', asy
     await expect_common_lines(
       world,
       () => {
-        // 指令两侧同态（它决定族分发落不落占位行）
+        // 指令两侧同态（它决定族分发落不落输出）
         world.era_flag.selectcom = com;
         world.fixture.store.set('tflag:29', 0);
       },

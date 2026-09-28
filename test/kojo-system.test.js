@@ -494,7 +494,7 @@ test('#213 契约：七道头部检查对已注册的全部 handler 逐条跳过
         assert.match(
           line,
           /尚未移植，此处为占位/,
-          `KOJO_MESSAGE_COM_${num} 检查「${name}」只允许存根占位行，` +
+          `KOJO_MESSAGE_COM_${num} 检查「${name}」不得有输出，` +
             `实际输出：${line}`,
         );
       }

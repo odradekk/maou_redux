@@ -140,7 +140,7 @@ test('KOJO_MESSAGE_PALAMCNG：两道存在标志都为 0 时静默早退（EX �
   kojo_message_palamcng_family.register(902, probe(seen));
   await kojo_message_palamcng(always);
   assert.deepEqual(seen, [], 'FLAG:LOCAL == 0 && EX_FLAG == 0 → 早期返回');
-  assert.deepEqual(fixture.text_lines(), [], '早退连占位行也不打');
+  assert.deepEqual(fixture.text_lines(), [], '早退无输出');
 });
 
 test('KOJO_MESSAGE_MARKCNG：无存在判定（存在判定行是注释态）→ FLAG:LOCAL == 0 也派发', async () => {
@@ -278,7 +278,7 @@ test('处刑首五族：K0（键 0）收事件编号而不是随机源——K0 �
   }
 });
 
-test('处刑首五族：无性格编号（键 -1）→ 静默（TRYCALL 落空，不打占位行）', async () => {
+test('处刑首五族：无性格编号（键 -1）→ 静默（TRYCALL 落空）', async () => {
   for (const [label, entry] of EXECUTION_DISPATCH) {
     const fixture = setup_kojo();
     const kojo = fixture.load_module('kojo/kojo-system');
@@ -401,7 +401,7 @@ test('21 行逐条驱动：注册 handler 后按 LOCAL-100 命中，实参形状
     assert.deepEqual(
       fixture.text_lines(),
       [],
-      `${row.entry}：命中 handler 时不打占位行`,
+      `${row.entry}：命中 handler 时无输出`,
     );
     assert.equal(
       result,
@@ -497,7 +497,7 @@ test('FLAG:7 = 0（口上总开关关）：flag_guard 行不派发，其余行�
       assert.deepEqual(
         fixture.text_lines(),
         [],
-        `${row.entry}：检查命中连占位行也不打`,
+        `${row.entry}：检查命中时无输出`,
       );
     } else {
       assert.equal(

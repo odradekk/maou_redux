@@ -15,7 +15,7 @@
  *     肛门或私处点数 +PLAY*10、欲情 +PLAY*20、习得 +PLAY（男人走肛门档，
  *     非男人走私处档）；
  *   - KARMA：LOCAL = -1 * PLAY / 4（向零截断）；
- *   - HEROINE_BITCH 调用点接真身（占位行消失）。
+ *   - HEROINE_BITCH 调用点接真身。
  *
  * 随机源注入：seq_rand / recorder 两式（与 kojo-dungeon-bitch 同款）。
  */
@@ -478,7 +478,7 @@ test('强制肉偿：LOCAL = -1 * PLAY / 4 向零截断，KARMA 实际下调', a
 
 // —— 调用点接真身 ——
 
-test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', async () => {
+test('强制肉偿：HEROINE_BITCH 的调用点接真身', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -515,11 +515,7 @@ test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', 
     ),
     '真身开场',
   );
-  assert.ok(
-    !lines.some((l) => l.includes('强制肉偿') && l.includes('债务过高')),
-    '占位行已消失',
-  );
-  // 顺序断言放最后：门槛不成立（M11420）时上面两条先红，漏 await（M11427）
+  // 顺序断言放最后：门槛不成立（M11420）时上面的开场行先红，漏 await（M11427）
   // 时开场行照打、只有这里能拦
   assert.deepEqual(uppers, [3, 4, 10, 500, 3, 36], '调用点与真身的抽取序');
 });

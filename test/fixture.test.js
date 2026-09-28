@@ -22,11 +22,11 @@ const {
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 
-test('加载的是真实 SDK：注入守卫已绕过', () => {
+test('加载的是真实 SDK：注入检查已绕过', () => {
   const fixture = create_era_fixture();
   const { era } = fixture;
 
-  // era-electron.js 尾部守卫：version.engine 为 undefined 时拒绝执行一切 API
+  // era-electron.js 尾部检查：version.engine 为 undefined 时拒绝执行一切 API
   assert.notEqual(era.version.engine, undefined);
   // 来自真实 SDK 文件的标识，而非夹具自造的替身对象
   assert.equal(era.isEra, true);
@@ -57,7 +57,7 @@ test('两次夹具拿到的是不同 SDK 实例（ere/ 模块缓存已清）', (
   assert.notEqual(first.era, second.era);
 });
 
-test('无专门实现的 API 走兜底记录，不抛错', () => {
+test('无专门实现的 API 走缺省记录，不抛错', () => {
   const fixture = create_era_fixture();
   fixture.era.setAlign('center');
   fixture.era.setTitle('ERA魔王');
@@ -173,7 +173,7 @@ test('loadGlobal 版本闸门用 undefined 判空（#147）：version 0 低于�
   );
 });
 
-test('loadData 版本闸门用 truthy 判空（#137 落地、#147 钉写法）：version 0 即便不低于下限也拒读', async () => {
+test('loadData 版本闸门用 truthy 判空（#137 实现、#147 钉写法）：version 0 即便不低于下限也拒读', async () => {
   const fixture = create_era_fixture();
   const { era, store } = fixture;
 
@@ -280,7 +280,7 @@ test('resetGlobal 整份重建（#147）：旧值清 0、备注丢失的槽按�
   );
 });
 
-test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预设才加（issue #35）', () => {
+test('addCharacter 镜像引擎检查：无预设返回 false 且不加，有预设才加（issue #35）', () => {
   const fixture = create_era_fixture();
 
   // #21/#22 漏过的场景：调了 addCharacter，但（当时的）yml/ 没有角色表，
@@ -298,7 +298,7 @@ test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预
   assert.equal(fixture.era.addCharacter(0), true);
   assert.deepEqual(fixture.chara_no, [0]);
 
-  // 双参数形态 [目标号, 源数据号]：以 1 号预设重建 0 号，仍是 0 号
+  // 双参数写法 [目标号, 源数据号]：以 1 号预设重建 0 号，仍是 0 号
   fixture.seed_chara(1, { id: 1, name: '壹' });
   assert.equal(fixture.era.addCharacter([0, 1]), true);
   assert.deepEqual(fixture.chara_no, [0]);
@@ -307,7 +307,7 @@ test('addCharacter 镜像引擎守卫：无预设返回 false 且不加，有预
 test('角色列表的顺序语义（#150）：三个 get 按数值升序，容器保持插入序', () => {
   const fixture = create_era_fixture();
   // 非升序喂法：seed/加入/入列全部先大号后小号——现有其余用例恰好都是
-  // 升序加入，改不改实现都绿，这条是唯一的非升序判据（G4 的潜伏缺口本体）
+  // 升序加入，改不改实现都绿，这条是唯一的非升序用例（G4 的潜伏缺口本体）
   fixture.seed_chara(31, { id: 31, name: '琼' });
   fixture.seed_chara(0, { id: 0, name: '你' });
   fixture.seed_chara(5, { id: 5, name: '五号' }); // 只 seed 不加入
@@ -382,7 +382,7 @@ test('removeCharacter 镜像引擎：过滤删除且恒返回 undefined（DELCHA
   ]);
 
   // 二次删除同一 ID（已不在列表）：引擎同样静默 undefined——布尔返回值
-  // 复辟的形态下这里会拿到 true（「不在列表」而非「删掉了」），语义错乱
+  // 复辟的形式下这里会拿到 true（「不在列表」而非「删掉了」），语义错乱
   assert.equal(fixture.era.removeCharacter(31), undefined);
   assert.deepEqual(fixture.chara_no, [0]);
 });
@@ -458,7 +458,7 @@ engine_test(
     assert.equal(adder.remove(31), undefined, '引擎无 return，恒 undefined');
     assert.deepEqual(adder.data.no, [0]);
 
-    // 票面验收点：幸存者指向被删者的条目被引擎真删（读回 undefined）
+    // 工单验收点：幸存者指向被删者的条目被引擎真删（读回 undefined）
     assert.equal(
       adder.data.relation[0][31],
       undefined,
@@ -513,7 +513,7 @@ engine_test(
     assert.deepEqual(adder.get_added(), [0, 31]);
     // staticData.chara 的键升序，含未加入的 5
     assert.deepEqual(adder.get_all(), [0, 5, 31]);
-    // data.tequip 缺失：引擎 `|| {}` 兜底空表
+    // data.tequip 缺失：引擎 `|| {}` 缺省空表
     assert.deepEqual(adder.get_in_train(), []);
 
     // 按 beginTrain(31, 0) 的参数序建 tequip 桶（addCharacterForTrain
@@ -540,7 +540,7 @@ engine_test('引擎 getNumber（模块 65）：input 回传归一的边界值（
   assert.ok(getNumber(null) === 0);
   assert.ok(getNumber(3) === 3);
   assert.ok(getNumber(undefined) === undefined);
-  // Number 特有形态的文档性快照：整串解析吃十六进制与科学计数法、
+  // Number 特有行为的文档性快照：整串解析吃十六进制与科学计数法、
   // 纯空白等同空串——parseInt/parseFloat 在这些取值上全部偏离
   assert.ok(getNumber('0x10') === 16);
   assert.ok(getNumber('1e2') === 100);
@@ -558,7 +558,7 @@ engine_test(
       const t = Object.create(era_api.prototype);
       // staticData.tflag 只被 Object.values 消费（值成为 data.tflag 的键），
       // 给两个声明条目即可，与名字表的方向性无关。base 空表：addCharacterForTrain
-      // 建桶时对 staticData.base 无守卫地 Object.values（空表 → 不建键）
+      // 建桶时对 staticData.base 无检查地 Object.values（空表 → 不建键）
       Object.defineProperty(t, 'staticData', {
         value: { base: {}, tflag: { a: '第一条', b: '第二条' } },
         writable: true,
@@ -598,13 +598,13 @@ engine_test(
     // addCharacterForTrain 已被 beginTrain 尾调：tequip 建角色桶（裸键是字符串）
     assert.deepEqual(Object.keys(t.data.tequip), ['31']);
 
-    // 重复 beginTrain（tequip 已存在）：守卫跳过重建，已写值保留
+    // 重复 beginTrain（tequip 已存在）：检查跳过重建，已写值保留
     t.data.tflag['第一条'] = 7;
     era_api.prototype.beginTrain.call(t, 31);
     assert.equal(
       t.data.tflag['第一条'],
       7,
-      '表已存在时重复 beginTrain 不清 tflag（守卫逐字）',
+      '表已存在时重复 beginTrain 不清 tflag（检查逐字）',
     );
 
     // endTrain：结算 gotjuel→juel 后删 11 张表
@@ -635,11 +635,11 @@ engine_test(
   },
 );
 
-test('调教域表守卫（#44）：beginTrain 前后与角色入列的寻址边界', () => {
+test('调教域表检查（#44）：beginTrain 前后与角色入列的寻址边界', () => {
   const fixture = create_era_fixture();
 
   // 引擎寻址层（app.asar 模块 648）的镜像：二段 tflag 在 data.tflag 不存在
-  // 时落到兜底分支报 key error；三段 palam 在角色子表缺失时静默丢弃。
+  // 时落到缺省分支报 key error；三段 palam 在角色子表缺失时静默丢弃。
   // 引擎侧证据由 test/train-loop.test.js 的引擎比对用例锁定
   assert.throws(() => fixture.era.set('tflag:0', 1), /key error/);
   assert.equal(fixture.era.set('palam:31:3', 1), undefined);
@@ -678,7 +678,7 @@ test('跨调教场不残留（#152）：endTrain 删表、下一场 beginTrain �
   fixture.era.endTrain();
 
   // 场 2：整表重建后读不到上一场的值。夹具残留可读 = 掩盖「忘清
-  // tflag/palam」类真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形态，
+  // tflag/palam」类真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形式，
   // 消费点如 event-end.js 的 tflag:860 / palam:3·5 结算读）
   fixture.era.beginTrain(0, 31);
   assert.equal(
@@ -708,17 +708,17 @@ test('跨调教场不残留（#152）：endTrain 删表、下一场 beginTrain �
   );
 });
 
-test('同场重复 beginTrain 不重建（#152）：tequip 守卫逐字，已写值保留', () => {
+test('同场重复 beginTrain 不重建（#152）：tequip 检查逐字，已写值保留', () => {
   const fixture = create_era_fixture();
   fixture.era.beginTrain(0, 31);
   fixture.era.set('tflag:860', 1);
-  // 引擎守卫：this.data.tequip ||（表已存在）→ 跳过重建，tflag 不清。
+  // 引擎检查：this.data.tequip ||（表已存在）→ 跳过重建，tflag 不清。
   // 无条件清会错杀 train-loop 的同场幂等 beginTrain（补入角色不重置状态）
   fixture.era.beginTrain(0, 31);
   assert.equal(
     fixture.era.get('tflag:860'),
     1,
-    '表已存在时重复 beginTrain 不重建（引擎 tequip 守卫逐字）',
+    '表已存在时重复 beginTrain 不重建（引擎 tequip 检查逐字）',
   );
 });
 
@@ -729,7 +729,7 @@ test('resetData 清调教态（#152，D4 登记的分歧闭合）：列表清空
   assert.deepEqual(fixture.era.getCharactersInTrain(), [0, 31]);
 
   // 引擎 resetData 整份重建 data：tequip 消失 → getCharactersInTrain 恒 []
-  // （D4 #150 登记给本票的分歧：夹具此前只清 chara_no 不清 chars_in_train）
+  // （D4 #150 登记给本工单的分歧：夹具此前只清 chara_no 不清 chars_in_train）
   fixture.era.resetData();
   assert.deepEqual(
     fixture.era.getCharactersInTrain(),
@@ -892,11 +892,11 @@ test('等待重叠：等待自身抛错后窗口已清，后续等待不连带�
 
 test('等待重叠：外层函数漏 await 内层等待、自身立即返回 → 调用方再等待时抛错', async () => {
   const fixture = create_era_fixture();
-  // #542 设置页的形态：dispatch_config 漏 await not_ported_line_wait 后自身
+  // #542 设置页的形式：dispatch_config 漏 await not_ported_line_wait 后自身
   // 立即 resolve，调用方 await 外层、再开始下一轮等待——清除在宏任务边界，
   // 中间隔多少次微任务跳转都不关窗口
   const outer = async () => {
-    fixture.era.printAndWait('内层等待'); // 故意不 await（外层漏写的形态）
+    fixture.era.printAndWait('内层等待'); // 故意不 await（外层漏写的形式）
     return '外层返回值';
   };
   assert.equal(await outer(), '外层返回值');
@@ -941,7 +941,7 @@ test('clear 清空输出', async () => {
 
 test('已加入角色列表：addCharacter 追加、resetData 清空（CHARANUM 等价物）', () => {
   const fixture = create_era_fixture();
-  // 严格夹具：先预置才加得进（#35 的引擎守卫）
+  // 严格夹具：先预置才加得进（#35 的引擎检查）
   fixture.seed_chara(0, { id: 0, name: '你' });
   fixture.seed_chara(31, { id: 31, name: '琼' });
   fixture.era.addCharacter(0);
@@ -999,7 +999,7 @@ test('文本行保留原始片段（样式断言的落点，text 是压平结果
 });
 
 // —— 多列输出族的录制（#48 比对录制器：print 系全部输出 API 有专门记录，
-//    不落兜底 calls——「文本层录制器覆盖 print 系全部输出 API」的落点） ——
+//    不落缺省 calls——「文本层录制器覆盖 print 系全部输出 API」的落点） ——
 
 test('printMultiColumns：GridObject 逐格压平成既有条目类型', () => {
   const fixture = create_era_fixture();
@@ -1020,7 +1020,7 @@ test('printMultiColumns：GridObject 逐格压平成既有条目类型', () => {
   assert.equal(fixture.lines[0].rendered, '[0] 爱抚');
   assert.equal(fixture.lines[2].border, 'solid');
   assert.deepEqual(fixture.lines[3].names, 'res-a');
-  // 已实现集：不落兜底 calls
+  // 已实现集：不落缺省 calls
   assert.deepEqual(fixture.calls, []);
 });
 
@@ -1131,7 +1131,7 @@ test('playMusic：config 非对象重置为 {loop:false}、取第一个注册音
     },
   ]);
 
-  // config 缺省 → 引擎重置为 {loop: false}（Emuera PLAYBGM 默认循环，ere 相反）
+  // config 缺省 → 引擎重置为 {loop: false}（旧引擎 PLAYBGM 默认循环，ere 相反）
   fixture.era.playMusic('据点2.mp3');
   assert.deepEqual(fixture.music[1].config, { loop: false });
 
@@ -1146,7 +1146,7 @@ test('stopMusic / resumeMusic 记录（音乐事件记录面）', () => {
   fixture.era.resumeMusic();
 
   assert.deepEqual(fixture.music, [{ api: 'stop' }, { api: 'resume' }]);
-  // 已实现集：不落兜底 calls
+  // 已实现集：不落缺省 calls
   assert.deepEqual(fixture.calls, []);
 });
 
@@ -1331,13 +1331,13 @@ test('replaceInColRows 与 replaceText 同一标准：整行换、不增行', ()
   );
 });
 
-test('printProgress 记 progress 条目并占一个 Row（顶层形态）', () => {
+test('printProgress 记 progress 条目并占一个 Row（顶层调用）', () => {
   const fixture = create_era_fixture();
   fixture.era.printProgress(50, '内部文本', '外部文本');
 
   // 不传 config → 引擎缺省 barWidth 24 物化进记录，且条后文字**不渲染**
   //（el-col-0 = display:none）——危险的默认值，夹具按 app.vue 渲染层逐字
-  // 镜像（#74 发回整改）
+  // 镜像（#74 发回返工）
   assert.deepEqual(fixture.lines, [
     {
       type: 'progress',
@@ -1353,7 +1353,7 @@ test('printProgress 记 progress 条目并占一个 Row（顶层形态）', () =
   assert.deepEqual(fixture.calls, []);
 });
 
-// —— barWidth 镜像（#74 发回整改）：app.vue 渲染层公式 ——
+// —— barWidth 镜像（#74 发回返工）：app.vue 渲染层公式 ——
 
 test('progress 的 barWidth 镜像：顶层与多列格两条路径、空 out 的 v-if', () => {
   const fixture = create_era_fixture();
@@ -1407,7 +1407,7 @@ test('空 printMultiColumns 仍占一个 Row（引擎无条件 addTotalLines）'
   assert.deepEqual(fixture.text_lines(), ['a']);
 });
 
-// —— input 回显计行（#68 整改）——
+// —— input 回显计行（#68 返工）——
 // 引擎主进程 input()（app.asar）：
 //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
 //     || this.print(i)
@@ -1457,8 +1457,8 @@ test('input 回显三段短路：hideInput / any / system.hideUserInput 任一�
 // —— input 按钮白名单（#130）：引擎只把已打印按钮的快捷键回传给游戏 ——
 //
 // 引擎机制（app.vue 两处逐字，非手册推断）：按钮行构造把 accelerator 去重
-// 累积进 inputParam.rule；回传时 useRule 默认开、数组非空才设限，判据
-// Number(值) ∈ rule，未命中弹「输入不合法！请输入以下值之一：…」且不
+// 累积进 inputParam.rule；回传时 useRule 默认开、数组非空才设限，判断条件
+// 是 Number(值) ∈ rule，未命中弹「输入不合法！请输入以下值之一：…」且不
 // 回传；任何一次成功回传清空 rule。此前夹具的 set_inputs 照单全收，#129
 // （[109] 按钮缺失）与 PR #53（[100]）两次都靠人开引擎才发现——这组用例
 // 是防复发锁，锁对后来者不失明。
@@ -1478,15 +1478,15 @@ test('input 白名单（#130 自证）：喂未打印按钮的值必须抛错，
     '白名单必须拒收未打印按钮的值（#130）',
   );
 
-  // 命中即放行；引擎判据是 Number(值) ∈ rule——字符串 '0' 同样命中。
-  // 放行的证据用送达记录（拒收＝0 条），回传值的归一形态由 #151 的正主
+  // 命中即放行；引擎条件是 Number(值) ∈ rule——字符串 '0' 同样命中。
+  // 放行的证据用送达记录（拒收＝0 条），回传值的归一写法由 #151 的正主
   // 用例专测——白名单语义与归一语义不共用断言
   fixture.set_inputs('0');
   await era.input();
   assert.equal(
     fixture.inputs_consumed.length,
     1,
-    '字符串 "0" 命中白名单被放行（引擎判据 Number(值) ∈ rule）',
+    '字符串 "0" 命中白名单被放行（引擎条件 Number(值) ∈ rule）',
   );
 });
 
@@ -1553,7 +1553,7 @@ test('input 白名单：useRule:false 跳过校验；config.rule 走正则分支
   // 引擎 waitAnyKey 内部正是 input({any:true, useRule:false})——不设限
   assert.equal(await era.input({ useRule: false }), 99);
 
-  // config.rule（字符串）把合法集合换成 RegExp（引擎 showInput），判据
+  // config.rule（字符串）把合法集合换成 RegExp（引擎 showInput），判断
   // 用原始字符串而非 Number
   fixture.set_inputs('abc');
   assert.equal(await era.input({ rule: '[a-z]+' }), 'abc');
@@ -1603,7 +1603,7 @@ test('input 回传值过引擎 getNumber 归一（#151）：字符串预置回�
   // Number(null) === 0——引擎只看 Number() 的结果，不看输入类型
   fixture.set_inputs(null);
   assert.equal(await era.input(), 0, 'null 也过同一条归一');
-  // 数字预置直通（既有用例形态不受扰）
+  // 数字预置直通（既有用例不受扰）
   fixture.set_inputs(3);
   assert.equal(await era.input(), 3, '数字预置原样回传');
 });

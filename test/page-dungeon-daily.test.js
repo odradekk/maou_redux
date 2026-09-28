@@ -168,10 +168,4 @@ test('主菜单接入：FLAG:36 = 5 的面板轮尾部打出日程头（#179 起
       .some((line) => line.includes('Space for further docuement')),
     'display_dungeon_daily 真身在 draw_dungeon_daily 尾部执行',
   );
-  assert(
-    !fixture
-      .text_lines()
-      .some((line) => line.includes('@DISPLAY_DUNGEON_DAILY')),
-    '不再打存根占位行',
-  );
 });

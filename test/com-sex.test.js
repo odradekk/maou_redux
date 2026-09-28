@@ -402,10 +402,6 @@ test('升格到已实现目标：执行 COM64 真身，不打占位（跳转语�
     world.fixture.text_lines().some((line) => line.includes('３Ｐ')),
     '升格命中已注册的 COM64 真身（#225）',
   );
-  assert.ok(
-    !world.fixture.text_lines().some((line) => line.includes('升格目标')),
-    '升格目标全部实现，不再有占位行（#638）',
-  );
 });
 
 test('可用性检查：特殊检查保持各指令的差异', async () => {

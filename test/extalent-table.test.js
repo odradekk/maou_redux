@@ -9,11 +9,11 @@
  * 验证面：
  *   - 登记契约（无引擎也跑）：Ex_Talent.yml 在场 ⇔ ex_talent 已登记
  *     （portcflag 的同款实害：有表没登记 → 引擎按一维自动生效，角色桶
- *     永不建、写入静默丢弃——正是本票要修的 #21 已知缺口）。
+ *     永不建、写入静默丢弃——正是本工单要修的 #21 已知缺口）。
  *   - 版本轴（无引擎也跑）：#138 破坏性改动两条命中（ADR-0006 判定表：
  *     extendedCharaTables 加表 + 角色预设内容变更），0.0.0 → 0.0.1。
  *   - 常规批装载：27 张库内产物经引擎 yml 路径装载（逐字段比对随转换器删除，
- *     内容守卫由 test/chara-load.test.js 的全量装载与逐项固定承接）；
+ *     内容检查由 test/chara-load.test.js 的全量装载与逐项固定承接）；
  *   - 消费验证：base/talent/abl/mark 预设落 data 可读；#118 定夺的边界
  *     （cflag/cstr 预设不随 addCharacter 落 data）如实钉住，另有两处同族
  *     缺口（Chara34 的 MARK:4、Chara24 的相性预设，见各用例注释）。
@@ -52,7 +52,7 @@ const BATCH_IDS = [
   24, 31, 32, 33, 34,
 ];
 
-// 本票登记的两张二维扩展表（_fixed.json 的登记集）
+// 本工单登记的两张二维扩展表（_fixed.json 的登记集）
 const EXTENDED_TABLES = { portcflag: 2, ex_talent: 2 };
 
 function read_yml(name) {
@@ -199,7 +199,7 @@ engine_test(
 
     // #118 定夺：引擎 initCharaTable 只对名字表内登记的下标建槽抄预设，
     // CFlag/CStr 名字表为空表 → 预设整组不落 data。装载层预设仍在
-    // （static_data.chara[id].cflag），子系统落地需要时按 CFlag.yml 头注
+    // （static_data.chara[id].cflag），子系统实现时按 CFlag.yml 头注
     // 指路补名条目。
     assert.equal(adder.add(1), true);
     assert.deepEqual(
@@ -226,8 +226,8 @@ engine_test(
 
     // 缺口二（相性预设）：Chara24 的 相性,17,150 落静态 relationship 表
     // （"24|17"），引擎 addCharacter 不把它搬进 data.relation——
-    // relation:24:17 读出 undefined（Emuera 的 ADDCHARA 会拷，ere 不会）。
-    // 等相性子系统落地时在加入点搬运，本票钉住现状。
+    // relation:24:17 读出 undefined（旧引擎的 ADDCHARA 会拷，ere 不会）。
+    // 等相性子系统实现时在加入点搬运，本工单钉住现状。
     assert.equal(adder.add(24), true);
     assert.deepEqual(adder.data.relation[24], {});
     assert.equal(loader.static_data.relationship.relation['24|17'], 150);
@@ -242,8 +242,8 @@ engine_test(
       extended_tables: EXTENDED_TABLES,
     });
     assert.equal(adder.add(31), true);
-    // #21 已知缺口的修复证明：表落地前这句写入静默丢弃（chara-ex.js 头注），
-    // 落地后 data.ex_talent[31] 在、写入落值
+    // #21 已知缺口的修复证明：表落库前这句写入静默丢弃（chara-ex.js 头注），
+    // 落库后 data.ex_talent[31] 在、写入落值
     assert.deepEqual(adder.data.ex_talent[31], {}, 'addCharacter 必须建桶');
     assert.equal(
       engine.set_var.call(

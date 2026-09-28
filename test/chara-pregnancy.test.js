@@ -1474,7 +1474,7 @@ test('端到端：怪物妊娠从发觉、临月推进到生产并清理状态',
   );
 });
 
-test('日循环入口调用妊娠与通常召唤真身，不再产生对应存根行', async () => {
+test('日循环入口调用妊娠与通常召唤真身', async () => {
   const fixture = create_era_fixture();
   const pregnancy = fixture.load_module('chara/chara-pregnancy');
   const summon = fixture.load_module('dungeon/monster-summon');
@@ -1485,11 +1485,4 @@ test('日循环入口调用妊娠与通常召唤真身，不再产生对应存�
   await fixture.load_module('event/event-nextday').run_event_nextday();
 
   assert.deepEqual(calls, ['pregnancy', 'summon:0']);
-  assert.ok(
-    !fixture.lines_history.some(
-      (line) =>
-        line.text?.includes('原作 @NINSIN_MAIN') ||
-        line.text?.includes('原作 @SUMMON_MONSTER'),
-    ),
-  );
 });

@@ -1492,11 +1492,6 @@ test('育儿室接入（#401）：在育儿室的角色渲染 [5] 按钮，按�
     '按下 [5] 后走真身的到访播报',
   );
   assert.equal(era_flag.target, 1, 'child_care_chara 的 TARGET = ARG');
-  assert.equal(
-    printed_includes(fixture, '@CHILD_CARE_CHARA'),
-    false,
-    '不再打 child_care_chara 的占位行',
-  );
 });
 
 test('三动作接入（#393）：结婚成功后 marriage 的返回 1 上浮为「回合结束」', async () => {

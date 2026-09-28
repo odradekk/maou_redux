@@ -1,18 +1,17 @@
 /**
  * @file 语尾口上（GOBI_KOUJO）的返回值契约（issue #570）。
  *
- * 原作 @GOBI_KOUJO_K{n} 用**不换行 PRINT** 把语尾写进调用方的当前行——
- * LOOK.ERB:875-878 的 `PRINTFORM 的%SAVESTR%` → `CALL GOBI_KOUJO` →
- * `PRINT 」` 在 Emuera 里是一行。ere 引擎一次 era.print 即一行（引擎源
+ * @GOBI_KOUJO_K{n} 用**不换行 PRINT** 把语尾写进调用方的当前行——
+ * `PRINTFORM 的%SAVESTR%` → `CALL GOBI_KOUJO` → `PRINT 」` 在旧引擎里是一行。ere 引擎一次 era.print 即一行（引擎源
  * `print(...e){…this.text("print",…e),this.addTotalLines()}`，见
- * page-shop-trap.js 头注的同一结论），「插入后再续写」没有对应形态，
+ * page-shop-trap.js 头注的同一结论），「插入后再续写」没有对应写法，
  * #570 起真身改为**返回语尾文字**、由调用方拼进行内。本文件锁：
  *
  *   - 各档位（ARG:0 1-5）与默认三选一的**返回文字**逐字锁定（表驱动，
  *     全部 18 个真身；默认支用注入随机源钉住三选一）；
  *   - 真身不得有任何输出（era.print 一次即一行；行内拼接只能由调用方做）；
- *   - 分发入口 kojo-system.gobi_koujo 转交真身返回值；未命中（原作
- *     TRYCALLFORM 落空——如 K11 原作就没有语尾函数，两侧同缺）返回空串；
+ *   - 分发入口 kojo-system.gobi_koujo 转交真身返回值；未命中
+ *     （TRYCALLFORM 落空——如 K11 就没有语尾函数，两侧同缺）返回空串；
  *   - K3 形参序回归：#403 起真身签名 (rand, arg_0) 与族实参 [arg0, rand]
  *     反接，真调用即 TypeError（#403 修正为 (arg_0, rand)）。
  *
@@ -212,7 +211,7 @@ test('GOBI 真身：五档与默认三选一逐字返回（表驱动，18 真身
         `K${row.key} 默认支 ${JSON.stringify(draws)}`,
       );
     }
-    // 越界档（99）与 0 同走默认支（源 else 兜底）
+    // 越界档（99）与 0 同走默认支（else 缺省支）
     const oob = await gobi_koujo_family.call(row.key, {
       args: [99, seq_rand(0)],
     });
@@ -253,7 +252,7 @@ test('GOBI 分发入口：kojo-system.gobi_koujo 转交真身返回值', async (
   );
 });
 
-test('GOBI 未命中返回空串：K11 原作就没有语尾函数（两侧同缺，行照常结束）', async () => {
+test('GOBI 未命中返回空串：K11 就没有语尾函数（两侧同缺，行照常结束）', async () => {
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
   const { gobi_koujo } = fixture.load_module('kojo/kojo-system');
@@ -262,11 +261,7 @@ test('GOBI 未命中返回空串：K11 原作就没有语尾函数（两侧同�
   fixture.era.addCharacter(31);
   era_flag.target = 31;
   fixture.store.set('talent:31:171', 1); // K11（COUNT 171 − 60 = 111 → 族内 11）
-  assert.equal(
-    await gobi_koujo(1),
-    '',
-    '族内缺号（原作同样没有）→ 空串，不是 0 也不是占位行',
-  );
+  assert.equal(await gobi_koujo(1), '', '族内缺号（同样没有）→ 空串，不是 0');
   assert.deepEqual(fixture.text_lines(), [], '落空不得输出任何内容');
 
   // 窗口外（target 无口上性格 → GET_KOJO_NUM = 0）同样空串
@@ -280,7 +275,7 @@ test('GOBI K3 形参序回归：族实参 [arg0, rand] 不再反接（#403 登�
   const fixture = create_era_fixture();
   load_all_kojo(fixture);
   const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
-  // 反接形态（rand 收到数字 1）会在默认支把 rand_n(3) 调成 TypeError；
+  // 反接写法（rand 收到数字 1）会在默认支把 rand_n(3) 调成 TypeError；
   // 五档文字逐字对上即证明 arg0 落在首位
   for (const [tier, expected] of [
     [1, '的噢~♪'],

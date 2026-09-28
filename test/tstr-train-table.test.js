@@ -1,9 +1,9 @@
 /**
  * @file 工单 #212 的引擎比对探针：TSTR 建模（#5 三个遗留建模项之一
- * 「TSTR 对应 ere 哪个调教期表」的定论）与 TRAIN_NAME 表名裁定。
+ * 「TSTR 对应 ere 哪个调教期表」的定论）与 TRAIN_NAME 表名结论。
  *
  * 验证路线与 test/exflag-chara35.test.js（#113/#179 先例）同构：不用夹具
- * （记录层证明不了「引擎接受」），不自写镜像（会漂移），全部经
+ * （记录层证明不了「引擎接受」），不自写镜像（会不一致），全部经
  * test/helpers/engine-bundle.js 驱动 app.asar 里的 setVar（模块 648）与
  * beginTrain/endTrain（模块 183 原型方法，真方法 + 最小假 this）。
  *
@@ -14,7 +14,7 @@
  *      比 key error 更危险：不报错）；
  *   3. yml/TStr.yml 在场 → eraStart 登记 tableType.normal → fillData 建
  *      **持久**桶（beginTrain/endTrain 不碰它）→ tstr:90 可写可读（情形三）；
- *      Emuera 的「BEGIN TRAIN 整族清空」由 train-loop.js 手动镜像；
+ *      旧引擎的「BEGIN TRAIN 整族清空」由 train-loop.js 手动镜像；
  *   4. 表名不能叫 trainname：setVar 二段分支对 *name 后缀有只读拦截，
  *      登记 normal + 建桶照样 key error（情形四）——TrainAlias.yml 得名。
  *
@@ -62,7 +62,7 @@ engine_test(
 
 // 情形一补：beginTrain/endTrain 真方法——引擎的调教期表清单里没有 tstr。
 // tflag 作正对照（随 beginTrain 建、随 endTrain 删）；预种的 tstr 桶跨
-// endTrain 存活（持久表），Emuera 回合域语义的缺口由 train-loop.js 手动补。
+// endTrain 存活（持久表），旧引擎回合域语义的缺口由 train-loop.js 手动补。
 engine_test(
   '引擎 beginTrain/endTrain：调教期表清单无 tstr——桶不建不删，预种桶跨 endTrain 存活',
   () => {
@@ -152,7 +152,7 @@ engine_test(
   },
 );
 
-// 情形四：表名裁定——trainname 撞 setVar 的 *name 只读拦截。即使名字表、
+// 情形四：表名结论——trainname 撞 setVar 的 *name 只读拦截。即使名字表、
 // 桶、normal 登记三者在场，二段分支照样把它截去 name 后缀去查
 // fieldNames.train（不存在），落 key error。TrainAlias.yml 得名的依据。
 engine_test(

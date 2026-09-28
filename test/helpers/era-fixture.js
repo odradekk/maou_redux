@@ -8,7 +8,7 @@
  * 三条已实测的约束（直接采纳）：
  *   1. 纯 Node 不认 '#/' 前缀（package.json imports 会抛
  *      ERR_INVALID_MODULE_SPECIFIER），须像引擎一样替换 Module.prototype.require；
- *   2. SDK 尾部守卫在 version.engine === undefined 时拒绝执行（era-electron.js:616），
+ *   2. SDK 尾部检查在 version.engine === undefined 时拒绝执行（era-electron.js），
  *      须先把它置为非 undefined；
  *   3. SDK 是普通可变对象、无 Object.freeze，可在 require 之后就地替换函数。
  *
@@ -82,7 +82,7 @@ function create_era_fixture() {
   // 故意经 '#/' 加载真实 SDK 文件（与游戏代码同一路径）
   const era = require('#/era-electron');
 
-  // 绕过 SDK 尾部的「未注入」守卫
+  // 绕过 SDK 尾部的「未注入」检查
   era.version.engine = era.version.sdk;
 
   // —— 记录层状态（每个夹具独立） ——
@@ -91,13 +91,13 @@ function create_era_fixture() {
   // 在这里——#73 起主菜单就地重绘，终态只留最后一轮，「哪轮画过什么」的
   // 取证看这份（与 var_reads 同类的观测记录，不影响 lines 的比对语义）
   const lines_history = [];
-  const calls = []; // 无专门实现的 API 的兜底调用记录
+  const calls = []; // 无专门实现的 API 的缺省调用记录
   const var_reads = []; // 变量读记录
   const var_writes = []; // 变量写记录
   const logs = []; // logger 记录
   const inputs_consumed = []; // 已消费的输入
   const input_queue = []; // 预置输入队列，等待输入的 API 依次消费
-  // 本轮合法输入集（#130）：= 引擎渲染层 inputParam.rule 的数组形态——
+  // 本轮合法输入集（#130）：= 引擎渲染层 inputParam.rule 的数组形式——
   // 已打印按钮的快捷键去重累积。任何一次成功回传（input / waitAnyKey 的
   // any 键 / printAndWait 的内部等待）都把它清空；clear 不碰它（app.vue
   // 的 clear 处理只删行，returnFromButton 才重置 rule）。era.input 消费
@@ -125,10 +125,10 @@ function create_era_fixture() {
   //     input({any:true})，e.any 命中回显短路。
   // 以下已查实但本夹具暂不实现（游戏代码未用，随用随补）：printLineChart /
   //   setToBottom（各 +1 Row）、notify（无行）。printWholeImage 自 #69 起随
-  //   媒体资源落地（+1 Row，见「媒体资源」段）。
+  //   媒体资源实现（+1 Row，见「媒体资源」段）。
   let total_rows = 0; // 引擎 totalLines 的等价物：计数器，非从 lines 派生
 
-  // —— allowWait 镜像（app.asar 逐字，#73 发回整改）——
+  // —— allowWait 镜像（app.asar 逐字，#73 发回返工）——
   // 引擎（EraApi 主进程侧）：
   //   addTotalLines(){return this.allowWait=!0,++this.totalLines}
   //     —— 任何输出（addTotalLines 收尾的 print 系）都置位
@@ -165,7 +165,7 @@ function create_era_fixture() {
   // 这里给每个真的等待留一个窗口：进入时置标记，清除推迟到宏任务边界
   //（setImmediate）；标记还在时新的等待开始即抛错。窗口跨整个微任务链：
   // 漏写 await 的代码路径（含外层函数漏 await 内层等待、自身立即 resolve 的
-  // 包装形态）只要在宏任务边界前发起下一次等待，都会撞上；正常 await 的
+  // 包装形式）只要在宏任务边界前发起下一次等待，都会撞上；正常 await 的
   // 调用方要等 settle 的 promise resolve 才恢复，而 resolve 在清除之后，
   // 顺序等待不误伤。已 await 调用的记录面（waits / inputs_consumed / 行数 /
   // allowWait）仍在同步段完成（#91 契约测试逐步比对的轨迹不动）。
@@ -258,13 +258,13 @@ function create_era_fixture() {
       // 禁用态（#393 补记录）：引擎 app.vue 的 getButtonObject 里 `disabled`
       // 只做两件事——不进合法输入集（上方已镜像）、原样带进行对象；**渲染
       // 公式不看它**，所以禁用按钮照常显示 `[编号] 正文`，只是点不动、
-      // 编号也不被 input() 回传（原作 `[666]` 灰字项正是这个语义）。
+      // 编号也不被 input() 回传（`[666]` 灰字项正是这个语义）。
       disabled: config?.disabled === true,
     };
   };
 
   // printProgress 与多列进度条对象共用：inContent/outContent 都留字段。
-  // barWidth 镜像（#74 发回整改，app.vue 渲染层原始源码副本逐字）：
+  // barWidth 镜像（#74 发回返工，app.vue 渲染层原始源码副本逐字）：
   //   <el-col :span="line.barWidth"><el-progress>条内文字</el-progress></el-col>
   //   <el-col v-if="line.outContent" :span="24 - line.barWidth">条后文字</el-col>
   //   barWidth: data.config.barWidth ?? 24        ← 引擎缺省 24
@@ -272,7 +272,7 @@ function create_era_fixture() {
   // 不渲染，而 24 正是缺省值**：不传 config 就吞掉数值（AGENTS.md「输出类
   // API 会二次加工参数」的又一例）。故夹具把默认物化进记录（bar_width 恒为
   // 数字、不留 undefined——留 undefined 等于没镜像），并派生 out_visible＝
-  // 「条后文字真的会渲染出来」的可断言形态：span>0（barWidth<24）且引擎的
+  // 「条后文字真的会渲染出来」的可断言依据：span>0（barWidth<24）且引擎的
   // v-if="line.outContent" 命中（out 非空）。
   const make_progress_entry = (percentage, in_content, out_content, config) => {
     const out = normalize_content(out_content ?? '');
@@ -307,7 +307,7 @@ function create_era_fixture() {
         type: 'divider',
         text: normalize_content(config?.content ?? ''),
         // 引擎渲染层（app.asar）：content 是分隔线中央的标签文字而非线型字符，
-        // isSolid 决定 el-divider 的 border-style（solid/dashed）。原作
+        // isSolid 决定 el-divider 的 border-style（solid/dashed）。
         // DRAWLINEFORM 的双线 ═ / 单线 ─ 以 solid/dashed 近似，断言线型看这里。
         border: config?.isSolid ? 'solid' : 'dashed',
       },
@@ -322,7 +322,7 @@ function create_era_fixture() {
   //    渲染层把整次调用装进一个行对象，见 Row 记账注释），getLineCount /
   //    clear / replace 系按 Row 计——画面组件要知道自己占几行，看的是这层。
   //    替换系（replaceInColRows）与顶层 printProgress 虽暂无游戏代码调用，
-  //    仍先落地：它们是 Row 语义（整行替换 / +1 Row）的直接断言靶点，
+  //    仍先实现：它们是 Row 语义（整行替换 / +1 Row）的直接断言目标，
   //    #68 命中「替换系、进度条」查明即录。
   const make_grid_entry = (obj) => {
     if (obj?.type === 'button') {
@@ -395,7 +395,7 @@ function create_era_fixture() {
   //     查名同样先小写——HEART 注册进引擎就是 'heart'，checkImage('HEART')
   //     能否命中取决于小写后的键；
   //   - playMusic(names, config)：config 非对象一律重置为 {loop: false}——
-  //     引擎的「缺省不循环」，与 Emuera PLAYBGM 默认循环相反，想循环必须
+  //     引擎的「缺省不循环」，与旧引擎 PLAYBGM 默认循环相反，想循环必须
   //     显式 {loop: true}；names 收 String 或 String[]，逐个小写后取第一个
   //     注册为音频的条目播放，命中返回 true，全落空返回 false（不报错）；
   //   - 计行（#68 的 Row 的计法，app.asar 逐字实测）：playMusic / stopMusic /
@@ -473,8 +473,8 @@ function create_era_fixture() {
   era.getLineCount = () => total_rows;
   era.clear = async (line_count) => {
     // 引擎 clear 的第一段短路（app.asar 逐字）：system.disableClear 配置开着
-    // 时整体无操作、返回当前行数——不清、不等、不置位。#68 时裁定「已查实
-    // 不镜像」，#91 起进注入点（契约测试逐步比对守卫链，缺它第一层对不齐），
+    // 时整体无操作、返回当前行数——不清、不等、不置位。#68 时结论「已查实
+    // 不镜像」，#91 起进注入点（契约测试逐步比对检查链，缺它第一层对不齐），
     // 旋钮在 system_config.disableClear（默认 false，与引擎默认一致）
     if (system_config.disableClear) {
       return total_rows;
@@ -482,7 +482,7 @@ function create_era_fixture() {
     // 引擎 clear 的 isContinue 短路（app.asar 逐字）：0!==e && isContinue →
     // 清屏前强制等键（waitAnyKey(!0)——右键快进在清屏前的打断点，ADR-0003
     // 「快进遇 era.clear 会停下」的机制本体）。e 是原始实参（clear(0) 不等，
-    // clear(undefined)/clear(n) 在快进态等），判据不用 Number 归一。
+    // clear(undefined)/clear(n) 在快进态等），判断不用 Number 归一。
     if (line_count !== 0 && is_continue) {
       await era.waitAnyKey(true);
     }
@@ -513,16 +513,16 @@ function create_era_fixture() {
   };
 
   // —— 变量 ——
-  // 调教域表的引擎守卫镜像（app.asar 寻址层 648 的实测语义，issue #44）：
+  // 调教域表的引擎检查镜像（app.asar 寻址层 648 的实测语义，issue #44）：
   //   - tflag/tequip/tcvar/palam/param/delta/gotjuel/deltabase/ex/nowex/stain
-  //     在 beginTrain 前不存在：二段寻址（tflag:0）落到兜底分支，引擎报
+  //     在 beginTrain 前不存在：二段寻址（tflag:0）落到缺省分支，引擎报
   //     「key error in getter/setter」——夹具同款抛错；
   //   - 三段寻址（palam:0:3）在角色未入调教时静默丢弃写入（引擎
   //     `if(!this.data[a]||!this.data[a][c])return;`），source 表虽随 resetData
-  //     预建、角色子表仍只有 addCharacterForTrain 才建——同一守卫；
+  //     预建、角色子表仍只有 addCharacterForTrain 才建——同一检查；
   //   - juel/flag/base 等常驻表不受限。
   // 「我们调了 era.set」证明不了「引擎接受了」——#21/#22 的教训，此处镜像
-  // 引擎侧守卫，让 beginTrain 的时序错误在夹具里同样炸出来。
+  // 引擎侧检查，让 beginTrain 的时序错误在夹具里同样炸出来。
   const TRAIN_ONLY_TABLES = new Set([
     'tflag',
     'tequip',
@@ -553,7 +553,7 @@ function create_era_fixture() {
     return table;
   }
 
-  // 按引擎守卫检查一次寻址：越界抛错 / 静默丢弃返回 false，正常放行 true
+  // 按引擎检查逻辑核一次寻址：越界抛错 / 静默丢弃返回 false，正常放行 true
   function train_table_allows(var_name) {
     const table = normalize_table_name(var_name);
     if (!TRAIN_CHAR_GUARD_TABLES.has(table)) {
@@ -561,7 +561,7 @@ function create_era_fixture() {
     }
     const segments = String(var_name).split(':');
     if (!train_open) {
-      // 二段 tflag:0 → 引擎兜底分支报错；三段 palam:0:3 → data.palam 整表
+      // 二段 tflag:0 → 引擎缺省分支报错；三段 palam:0:3 → data.palam 整表
       // 缺失，同样走 `if(!this.data[a]||...)return;` 静默丢弃
       if (segments.length <= 2) {
         throw new Error(`key error in getter/setter! key (${var_name})`);
@@ -628,7 +628,7 @@ function create_era_fixture() {
   //      `r.version` 的 truthy 短路；
   //   2. 整体替换：`this.era.data = r` + fillData()——读档成功后变量表
   //      整个换成存档时的快照。
-  // 快照口径：global:* 键与 gamebase（静态表）不随档走（global 存
+  // 快照范围：global:* 键与 gamebase（静态表）不随档走（global 存
   // global.sav、gamebase 是静态数据），快照与灌回都跳过；其余平表全量。
   // 备注（global:saves:n）由 saveData 落、rmData 删，与引擎一致（11-saves）。
   //
@@ -698,7 +698,7 @@ function create_era_fixture() {
   };
 
   // —— global 系存档 API（#147）：saveGlobal / loadGlobal / resetGlobal ——
-  // 普查报告 G1（docs/research/fixture-engine-gap.md）与工单 #147 落地，
+  // 普查报告 G1（docs/research/fixture-engine-gap.md）与工单 #147 实现，
   // 引擎（app.asar 模块 183，逐字，压缩名已还原）：
   //   async saveGlobal(){const e=l(this.era.path,"./sav");s(e)||o(e);try{
   //     this.global.version=this.staticData.gamebase.version,
@@ -747,7 +747,7 @@ function create_era_fixture() {
   //     表——loadGlobal 灌回后 store 里不在文件中的旧键直接删（引擎整份替换
   //     `this.era.global=n`，未声明键同样消失）；resetGlobal 对现存 global:*
   //     变量键一律置 0（声明键的引擎语义；未声明键引擎置 undefined，夹具以 0
-  //     代之——getter 一律 || 0 兜底，两侧可观察等价）。
+  //     代之——getter 一律 || 0 缺省，两侧可观察等价）。
   //   - 槽位对账 list_save_files（引擎内部 listSaveFiles，不在 SDK 面上，
   //     ere/era-electron.js 无此方法）：文件在 = save_files 有该槽。文件在＋
   //     备注缺 → 'UNNAMED SAVE FILE'；文件在＋备注带前缀 → 剥前缀（引擎
@@ -848,7 +848,7 @@ function create_era_fixture() {
       } else {
         restore_global(global_sav);
         // 声明槽补 0（引擎 forEach）：夹具无声明表，缺失即 undefined，
-        // getter || 0 兜底等价（见段首「镜像要点」）
+        // getter || 0 缺省等价（见段首「镜像要点」）
       }
       if (mismatch) {
         // 引擎逐字 `throw new Error`——裸抛无 message，装载循环按报错
@@ -917,7 +917,7 @@ function create_era_fixture() {
   // （test/fixture.test.js 逐条钉住）：空串与 null 都归一成 0（最反直觉
   // 的一条）、非数字串原样、前后空白照样解析、部分数字的串不截断。
   // 归一只在白名单校验之后发生——引擎渲染层 returnFromButton 校验的就是
-  // 原始 val（#130 段）。回显的条目层仍不推（设计裁定）：print 的归一后值
+  // 原始 val（#130 段）。回显的条目层仍不推（设计结论）：print 的归一后值
   // 在夹具只计行（上方回显计数），条目层不回显输入，勿在此补。
   const get_number = (val) => {
     const num = Number(val);
@@ -925,16 +925,16 @@ function create_era_fixture() {
   };
   era.input = async (config) => {
     // 重叠检测的窗口先行（#557）：上一次等待没完成就到这，是漏写 await 的
-    // 形态，当场抛；窗口未清前不消费预置输入
+    // 形式，当场抛；窗口未清前不消费预置输入
     begin_wait('input');
     let result;
     try {
       const value = take_input();
       // —— 按钮白名单校验（#130）：镜像引擎渲染层 returnFromButton 的拒收 ——
-      // 引擎（app.vue，两处逐字）：useRule 默认开（safeUndefinedCheck 兜底
+      // 引擎（app.vue，两处逐字）：useRule 默认开（safeUndefinedCheck 缺省
       // true）；config.rule（字符串）先把合法集合换成 RegExp（showInput），
-      // 判据 !rule.test(val.toString())，文案「输入不合法！输入规范：…」；
-      // 数组分支（按钮快捷键）非空才设限，判据 rule.indexOf(Number(val))
+      // 判断 !rule.test(val.toString())，文案「输入不合法！输入规范：…」；
+      // 数组分支（按钮快捷键）非空才设限，判断 rule.indexOf(Number(val))
       // === -1，文案「输入不合法！请输入以下值之一：a, b, c」——拒收即弹
       // 错且**不回传**，游戏逻辑拿不到该值。夹具同款抛错：喂进引擎永远不会
       // 送达的输入（如 #129 的 [109]、PR #53 的 [100]）当场红，不再靠人开
@@ -1005,7 +1005,7 @@ function create_era_fixture() {
   // 引擎语义（app.asar 的 EraApi.addCharacter）：第一步就是
   // `!!staticData.chara[源编号]` 的短路——无预设数据时返回 false、一个字段
   // 都不写、不报错。#21/#22 的验收正是被空壳夹具放过：断言只证「调了」，
-  // 证不了「引擎接受了」。夹具镜像这条守卫与加入动作；预设数据由用例经
+  // 证不了「引擎接受了」。夹具镜像这条检查与加入动作；预设数据由用例经
   // seed_chara 提供（夹具不读 yml/——静态表正确性由 test/chara-yml.test.js
   // 直接驱动引擎代码比对，两层不重复）。
   const chara_presets = new Map(); // 源编号 → 预设对象（对应引擎 staticData.chara）
@@ -1013,7 +1013,7 @@ function create_era_fixture() {
   era.addCharacter = (...chara_ids) => {
     calls.push({ api: 'addCharacter', args: chara_ids });
     const results = chara_ids.map((arg) => {
-      // 双参数形态 [目标号, 源数据号]；单参数两者同号
+      // 双参数写法 [目标号, 源数据号]；单参数两者同号
       const [target, source] = Array.isArray(arg) ? arg : [arg, arg];
       if (!chara_presets.has(source)) {
         return false; // 引擎短路：无预设数据不加
@@ -1058,8 +1058,8 @@ function create_era_fixture() {
   era.getAddedCharacters = () => [...chara_no].sort(by_id_ascending);
 
   // 引擎读静态预设表（staticData.chara）的键，与是否已加入无关——含
-  // seed 过但从未 addCharacter 的源编号。此前夹具无实现，走兜底记录桩
-  // 恒 undefined（#150 一并补上：同一形态的同一缺口）。
+  // seed 过但从未 addCharacter 的源编号。此前夹具无实现，走缺省记录层
+  // 恒 undefined（#150 一并补上：同一缺口的同一补法）。
   era.getAllCharacters = () => [...chara_presets.keys()].sort(by_id_ascending);
 
   // —— 调教 API：镜像引擎 beginTrain/endTrain 一族的数据层语义（#44）——
@@ -1083,14 +1083,14 @@ function create_era_fixture() {
   // bundle 用例（test/train-loop.test.js 的寻址锁、test/juel-check.test.js
   // 的 endTrain 结算锁）。这里只镜像「何时可寻址」与调用记录，让时序错误
   // （beginTrain 之前写 tflag）当场暴露、跨场残留不再掩盖「忘清 tflag」类
-  // 真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形态）。
+  // 真缺陷（夹具读旧值、引擎读 0——#152 的逃逸形式）。
   // 已登记偏差：引擎重建时把**静态声明**的 tflag 条目补 0，夹具无声明表
   // ——删键后读 undefined（未声明条目引擎侧同样是 undefined；声明条目是
-  // 0，getter 一律 || 0 兜底，对游戏代码可观察等价）。
+  // 0，getter 一律 || 0 缺省，对游戏代码可观察等价）。
   era.beginTrain = (...chara_ids) => {
     calls.push({ api: 'beginTrain', args: chara_ids });
     if (!train_open) {
-      // 引擎守卫逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
+      // 引擎检查逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
       // 不清 tflag（train-loop 的 beginTrain 幂等语义依赖它）
       delete_train_table_keys();
     }
@@ -1104,7 +1104,7 @@ function create_era_fixture() {
     return undefined;
   };
   // beginTrain 入列序＝参数序（Set 插入序），但 get 的返回序是键升序（见
-  // 上方「角色列表的顺序语义」段）；tequip 缺失时引擎 `|| {}` 兜底空表，
+  // 上方「角色列表的顺序语义」段）；tequip 缺失时引擎 `|| {}` 缺省空表，
   // Set 空集天然同构。
   era.getCharactersInTrain = () => [...chars_in_train].sort(by_id_ascending);
   era.nextTurnInTrain = () => {
@@ -1112,7 +1112,7 @@ function create_era_fixture() {
     // 回合结算把 SOURCE 逐键置 0。**依据是引擎代码本身**，不是手册：
     // test/fixture.test.js 的 engine_test「引擎 nextTurnInTrain」驱动真方法，
     // 已断言 `data.source[31][7] === 0` 且键仍在（置 0 不删表）——夹具此前
-    // 少了这一件，是与引擎的实打实偏离（#219 在对拍里撞出来）。
+    // 少了这一件，是与引擎的实打实偏离（#219 在与引擎的比对中撞出来）。
     // 游戏代码依赖它：COMF 头部的零化只覆盖各自用到的位（COMF6 等不写
     // SOURCE:0），上回合残留若不清会被下回合的共用闸再乘再转一遍。
     // 同一 engine_test 的末两条断言「只结算在训角色」——所以这里也只清
@@ -1140,11 +1140,11 @@ function create_era_fixture() {
 
   // 引擎 resetData 整份重建 data：tequip/tflag 等调教表全部消失，
   // getCharactersInTrain 从此恒 []（D4 #150 登记的分歧在此闭合）、调教域
-  // 寻址守卫关闭。夹具同清 train 态与调教域键；store 里静态预置与存档
+  // 寻址检查关闭。夹具同清 train 态与调教域键；store 里静态预置与存档
   // 数据的全面分离是 G2 锐边（docs/research/fixture-engine-gap.md），
-  // 不属本票——已加入列表之外的数据键维持既定简化。
+  // 不属本工单——已加入列表之外的数据键维持既定简化。
   era.resetData = () => {
-    // 与 addCharacter 同样记录：有专门实现的 API 不走兜底记录层，不显式
+    // 与 addCharacter 同样记录：有专门实现的 API 不走缺省记录层，不显式
     // push 的话 fixture.calls 里就看不见它（用例断言「先清档」要读这里）
     calls.push({ api: 'resetData', args: [] });
     chara_no.length = 0;
@@ -1174,7 +1174,7 @@ function create_era_fixture() {
         return false;
       }
       // 引擎幸存者分支逐字：按**参数**删（参数里出现即删，无论该 ID
-      // 是否真被移出列表——与删除循环按实际移出者删是两套口径）
+      // 是否真被移出列表——与删除循环按实际移出者删是两套标准）
       for (const target of chara_ids) {
         store.delete(`relation:${id}:${target}`);
         store.delete(`callname:${id}:${target}`);
@@ -1194,7 +1194,7 @@ function create_era_fixture() {
   // Promise 链被炸穿、QUIT 之后的所有语句（含各层调用方的后续）不可达。
   // 夹具同构：先记录调用（关窗 IPC 的观测面），再抛同 message 的 Error——
   // era.quit() 的调用点从此在测试里拿到与真机一致的控制流；拆掉 throw 就
-  // 是把它降格回「恒值成功」的无害桩（普查报告第四节纪律 2 所禁的形态）。
+  // 是把它降格回「恒值成功」的无害桩（普查报告第四节纪律 2 所禁的形式）。
   era.quit = () => {
     calls.push({ api: 'quit', args: [] });
     throw new Error('quit');
@@ -1202,7 +1202,7 @@ function create_era_fixture() {
 
   // —— logger：必须整对象替换。
   // 只置 version.engine 不够：SDK 自带的 logger 在 engine 非空时会自调用
-  // （era-electron.js:291-295），形成无限递归
+  // （era-electron.js），形成无限递归
   era.logger = {
     debug: (msg) => logs.push({ level: 'debug', msg }),
     info: (msg) => logs.push({ level: 'info', msg }),
@@ -1212,7 +1212,7 @@ function create_era_fixture() {
       logs.push({ level: 'assert', msg: { check_val, aim_val } }),
   };
 
-  // —— 其余 API 兜底：只记录、不抛错，保证未覆盖的调用可见且无害 ——
+  // —— 其余 API 缺省处理：只记录、不抛错，保证未覆盖的调用可见且无害 ——
   const implemented = new Set([
     'print',
     'printAndWait',
@@ -1258,7 +1258,7 @@ function create_era_fixture() {
   Object.keys(era).forEach((key) => {
     if (
       typeof era[key] === 'function' &&
-      // delay 自带真实实现（带 _s 标记、不经守卫包装），保留不动
+      // delay 自带真实实现（带 _s 标记、不经检查包装），保留不动
       key !== 'delay' &&
       !implemented.has(key)
     ) {
@@ -1282,7 +1282,7 @@ function create_era_fixture() {
     /** 全量行史（含已被 clear/replace 删掉的条目；#73 起就地重绘的取证层）。
      *  条目形状与 lines 相同；比对归一化器只读 lines，不看这里 */
     lines_history,
-    /** 兜底调用记录 [{api, args}] */
+    /** 缺省调用记录 [{api, args}] */
     calls,
     /** 变量读记录 [{name, value}] */
     var_reads,
@@ -1332,7 +1332,7 @@ function create_era_fixture() {
       return dropped;
     },
     /**
-     * 替换全局 Math.random 为给定函数（#120）：ere 侧原作 RAND:N 的等价物
+     * 替换全局 Math.random 为给定函数（#120）：ere 侧 RAND:N 的等价物
      * 散布在 turnend-settle / event-nextday / chara-init / kojo / juel-check
      * 的**事件处理器体内**，外部无参数通道（chara-init 的函数参数注入先例
      * 只适用于被显式调用的函数）；在 ere/ 开随机源缝会破坏「游戏代码零
@@ -1351,15 +1351,15 @@ function create_era_fixture() {
       Math.random = real_math_random;
     },
     /**
-     * 关闭勇者来袭（#171 / #168 裁定 4，端到端的隔离开关）：把
-     * #/event/enter-enemy 的 enter_enemy 导出就地替换为无操作（返回原作
+     * 关闭勇者来袭（#171 / #168 结论 4，端到端的隔离开关）：把
+     * #/event/enter-enemy 的 enter_enemy 导出就地替换为无操作（返回
      * 早退值 0）。阶段 1 的 ENDING_1 路径与阶段 3 的 ENDING_2 路径在同一
      * 条日循环上竞速——ENTER_ENEMY 是每日调用，勇者一旦真的生成，通关
-     * 天数就从确定值变成概率问题，两条 e2e 各自隔离才能保留回归判据。
+     * 天数就从确定值变成概率问题，两条 e2e 各自隔离才能保留回归断言。
      *
-     * 不用游戏内置位的理由（#168 裁定 4）：FLAG:5 位 32 是原作调试位，
-     * DUNGEON.ERB 至少 4 处 IF FLAG:5 & 32 是渲染守卫，开了它整个迷宫的
-     * 输出形态都变；把角色数顶到 61（触发人数上限早退）要凭空造 61 个
+     * 不用游戏内置位的理由（#168 结论 4）：FLAG:5 位 32 是调试位，
+     * 至少 4 处 IF FLAG:5 & 32 是渲染检查，开了它整个迷宫的
+     * 输出都变；把角色数顶到 61（触发人数上限早退）要凭空造 61 个
      * 角色，还会改变一堆按 CHARANUM 循环的结算。
      *
      * 生效前提（游戏侧零修改）：event-turnend 经**模块对象**调用
@@ -1391,7 +1391,7 @@ function create_era_fixture() {
      *  先降 current_version 再 saveData，或 saveData 后改 record（不推荐）；
      *  造「异游戏 global.sav」：saveGlobal 后改 game_code 再 loadGlobal */
     save_gate,
-    /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 守卫放行 */
+    /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 检查放行 */
     seed_chara(chara_id, preset) {
       chara_presets.set(chara_id, preset);
     },

@@ -1111,23 +1111,6 @@ test('A40-42：装着灌肠塞时的排泄段（分支体内）', async () => {
   );
 });
 
-test('A43-49：无 A 分支 → 显式无操作，不出占位行（#402 收尾）', async () => {
-  // #45 起 A43-49 打的是「族级工单未实现」占位行；#402 查实分发从
-  // 42 直跳 72、43-49 从来没有 A 支，故在 train-message.js 注册显式空
-  // handler（同款先例 com-tentacle.js 的 A 100-109/208）——占位行从此只
-  // 表示「族级工单未实现」，而这几个号永远不该出现它。
-  const world = seed_world();
-  world.era_flag.selectcom = 45;
-  const { train_message_a } = world.fixture.load_module(
-    'system/train/train-message',
-  );
-  await train_message_a();
-  assert.ok(
-    !world.fixture.text_lines().some((l) => l.includes('指令 45 的参数反应')),
-    '无分支的号不得出占位行',
-  );
-});
-
 // —— CASE 40 升格规则与跳转目标 ——
 
 test('CASE 40：同调教者 + 上回合后背位族 → 升格 132（132 号可用性检查未实现时视为可）', async () => {
@@ -1207,7 +1190,7 @@ test('com40 的跳转目标：升格目标已注册 → 执行 COM132 真身；�
 
 test('口塞装上（COM45 真身）→ K3 检查跳过；selectcom = 45 豁免（第 3 项检查）', async () => {
   // 判别器：口塞检查（selectcom != 45）静默；selectcom = 45 豁免后落到
-  // 口塞着脱真台词（#234 起 K3 口上已是真身，不再打占位行）。
+  // 口塞着脱真台词（#234 起 K3 口上已是真身）。
   const world = seed_world({ assi: -1 });
   world.fixture.load_module('kojo/kojo-k3-noble');
   const { kojo_message_com_3 } =
@@ -1252,10 +1235,6 @@ test('source-check 链循环：装备位按链序全部走真身（链上无缺�
   assert.ok(
     lines.some((l) => l.includes('＜蠕虫插入中＞')),
     '振动器位真身执行（equip_com11 已注册）',
-  );
-  assert.ok(
-    !lines.some((l) => l.includes('尚未移植')),
-    '链上不再有占位行（#638）',
   );
   assert.equal(world.fixture.store.get('source:31:12'), 1000, '眼罩持续位写入');
 });

@@ -472,7 +472,7 @@ test('LOG_BITCH_SELF：空壳（所有 CASE 无输出）', async () => {
   assert.deepEqual(fixture.text_lines(), [], 'LOG_BITCH_SELF 无输出');
 });
 
-test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BITCH 真身文本）', async () => {
+test('【验收】卖春主流程调用日志真身（LOG_TRY_BITCH 真身文本）', async () => {
   const { fixture } = setup_log((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
@@ -488,10 +488,6 @@ test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BIT
   const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
   await bitch.dungeon_bitch(31, seq_rand(0, 0, 0, 0, 0, 0, 0, 0));
   const lines = fixture.text_lines();
-  assert.ok(
-    !lines.some((l) => l.includes('LOG_TRY_BITCH')),
-    '不再打 LOG_TRY_BITCH 占位行',
-  );
   assert.ok(
     lines.some((l) => l.includes('考虑着出卖肉体的事。')),
     'LOG_TRY_BITCH 真身文本出现',

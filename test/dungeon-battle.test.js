@@ -147,7 +147,7 @@ test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMis
 // —— source_check_auto 接入（#461：真身落在 event/source-check.js，
 //    dungeon-battle.js 的 source_check_auto 只转发事件）——
 
-test('source_check_auto 接入：转发到 event/source-check 的真实处理器（不再是占位行）', async () => {
+test('source_check_auto 接入：转发到 event/source-check 的真实处理器', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
@@ -171,13 +171,13 @@ test('source_check_auto 接入：转发到 event/source-check 的真实处理器
   assert.equal(
     fixture.store.get('palam:1:0'),
     1000,
-    '首次调用：EX_CHECK_UP 触发 DOWN:0=9000，结算为 10000-9000——真实处理器执行，不是占位行',
+    '首次调用：EX_CHECK_UP 触发 DOWN:0=9000，结算为 10000-9000——真实处理器执行',
   );
   await battle.source_check_auto();
   assert.equal(
     fixture.store.get('palam:1:0'),
     1000,
-    '第二次调用：down_map 已清空（同一事件处理器持续生效，不是各自独立的占位调用）',
+    '第二次调用：down_map 已清空（同一事件处理器持续生效）',
   );
 });
 
@@ -512,7 +512,7 @@ test('dungeon_battle2_party：找不到对手 → result 0 且无演出推进', 
 
 // —— 核心验收：对比测试（同种子下真身态与存根态的层数轨迹不同）——
 
-test('对比：同一种子下，接入战斗后勇者到达的层数与 H3 存根态不同（核心验收）', async () => {
+test('对比：同一种子下，接入战斗后勇者到达的层数与战斗短路态不同（核心验收）', async () => {
   const SEED = 20250601;
   const ROUNDS = 14; // e2e 实测 28 个半天轮的一半足够分层
 
@@ -523,7 +523,7 @@ test('对比：同一种子下，接入战斗后勇者到达的层数与 H3 存�
     const battle = load(fixture, 'dungeon/dungeon-battle');
     let battle_calls = 0;
     if (stub_battle) {
-      // H3 存根行为：占位 + return 0（不改任何状态）——替换模块导出即短路
+      // 战斗短路行为：直接 return 0（不改任何状态）——替换模块导出即短路
       // （disable_enter_enemy 的先例：调用点经模块对象属性查找）
       battle.dungeon_party_battle = async () => {
         battle_calls += 1;

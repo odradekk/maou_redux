@@ -956,11 +956,6 @@ test('BENKI_KOUJO：肉便器行动 0 常识改写真身', async () => {
     '「『就算对象是污秽的贱民也会做最高级的侍奉』…在我家里可是『当然』的啊」',
     '「来、向我掏出那丑陋脏污的鸡巴吧♪好啦、快点嘛♡」',
   ]);
-  assert.equal(
-    fixture.text_lines().filter((l) => l.includes('@BENKI_KOUJO')).length,
-    0,
-    'K3 真身不打占位行',
-  );
 });
 
 test('#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名', async () => {

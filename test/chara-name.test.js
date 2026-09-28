@@ -857,14 +857,14 @@ test('chara_name_random_define：末端尾调用 chara_name_define 真身（名�
   assert.equal(
     fixture.store.get('callname:9:-1'),
     '佳奈美',
-    '固定名 0 未注册名字 → 佳奈美（真身已执行，不再是占位行）',
+    '固定名 0 未注册名字 → 佳奈美（真身已执行）',
   );
 });
 
 // —— rand_chara_make（ere/chara/chara-make.js）——
 //
-// 这条线的 UI 依赖（chara-and-hair.js 的性格/发色交互函数与 show_chara_info）以
-// stub_line_wait 占位，故断言分两层：可观测的状态变化（新角色入库、
+// 这条线的 UI 依赖（chara-and-hair.js 的性格/发色交互函数与 show_chara_info）不在
+// 本文件的断言面内，故断言分两层：可观测的状态变化（新角色入库、
 // flag 搬迁、CFLAG:1 归零）＋ 分支走向（换人循环、16 位占满的早退）。
 //
 // 随机源：`never` 恒 1 只够表达「位号」，内部 chara_make 的名字重掷要大量
@@ -1178,7 +1178,7 @@ test('rand_chara_make：换人支删除刚加的角色并回到重挑', async ()
   assert.equal(result, 1, '返回重挑后的角色号');
 });
 
-test('rand_chara_make：target/assi 复位——FLAG:1/2 搬迁是恒空操作、原样保留（#565 返工）', async () => {
+test('rand_chara_make：TARGET/ASSI 复位——FLAG:1/2 搬迁是恒空操作、原样保留（#565 返工）', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 3);
   seed_hero(fixture, 9);
@@ -1192,7 +1192,7 @@ test('rand_chara_make：target/assi 复位——FLAG:1/2 搬迁是恒空操作�
   assert.equal(fixture.store.get('flag:2'), 5, '搬迁恒空操作 → FLAG:2 不前移');
   assert.equal(fixture.store.get('flag:1'), 3, '搬迁恒空操作 → FLAG:1 不清空');
   // 搬迁与复位写同一对值（重复是按既有行为保留的），故只断
-  // 终值。两条都是「FLAG:1/2 → target/assi 指针槽」这条链的出口
+  // 终值。两条都是「FLAG:1/2 → TARGET/ASSI 指针槽」这条链的出口
   assert.equal(fixture.store.get('flag:10005'), 3, 'target = FLAG:1');
   assert.equal(fixture.store.get('flag:10006'), 5, 'assi = FLAG:2');
 });

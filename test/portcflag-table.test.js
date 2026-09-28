@@ -14,7 +14,7 @@
  *     内容——被丢即红，--force 重跑丢行的把关的在这里）经角色装载循环落
  *     预设、经真 addCharacter 落桶；未登记（一维模式）的反面同证。
  *   - 寻址：具名 portcflag:17:数据版本 与序号 portcflag:17:0 同槽。
- *   - PR#57 判据重证：名字表在/不在 × 桶在/不在 的三种组合在新表上与
+ *   - PR#57 条件重证：名字表在/不在 × 桶在/不在 的三种组合在新表上与
  *     内置表逐一同路（setVar case 3 default 不特判扩展表，实测依据）。
  *   - 存档往返：真 EraApi 实例（临时目录、真文件、真 saveData/loadData），
  *     不经夹具——夹具的记录层证明不了「引擎接受了」。
@@ -165,7 +165,7 @@ engine_test(
     assert.equal(
       auto_one_dim.static_data.chara[17].portcflag,
       undefined,
-      '一维表没有按角色预设，守卫（extendedTables[表] !== normal）应把整行筛掉',
+      '一维表没有按角色预设，检查（extendedTables[表] !== normal）应把整行筛掉',
     );
   },
 );
@@ -195,7 +195,7 @@ engine_test(
 );
 
 engine_test(
-  '判据重证（PR#57）：名字表在＋桶在 → 通过；名字表不在＋桶在 → 直接崩溃；桶不在 → 静默 undefined',
+  '条件重证（PR#57）：名字表在＋桶在 → 通过；名字表不在＋桶在 → 直接崩溃；桶不在 → 静默 undefined',
   () => {
     const loader = load_portcflag_table();
     // 组合一：全部在场 → 写入通过（与内置表同路）

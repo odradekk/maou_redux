@@ -1017,7 +1017,7 @@ test('#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 
   // 常识改写四支的首句：PRINTFORMW 「多亏（自带换行与等待）→ CALL
   // BENKI_PLAYER_NAME → PRINTFORMW 后续，名字与后续是**第二行**。K12 自
   // #243 起把两行并成一条输出（少一行、少一次等待），#599 拆回两条
-  // 语句；名字由真身 benki_player_name() 返回，用 ${} 插值接上（保真锁按
+  // 语句；名字由真身 benki_player_name() 返回，用 ${} 插值接上（按
   // CALL BENKI_PLAYER_NAME 记号核对）
   const cases = [
     [3, '{name}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」'],

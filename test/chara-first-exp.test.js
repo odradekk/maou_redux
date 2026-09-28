@@ -1090,7 +1090,7 @@ test('职业段落下的对象性别决定初吻部位', () => {
 
 // —— 接入：chara-make.js 的 cm_ns_exp 调用 chara_first_exp ——
 
-test('cm_ns_exp 已接入真身：占位行消失且产物写回', async () => {
+test('cm_ns_exp 已接入真身且产物写回', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(1, { id: 1, name: '预设名', callname: '预设称呼' });
   fixture.era.addCharacter(1);
@@ -1102,12 +1102,5 @@ test('cm_ns_exp 已接入真身：占位行消失且产物写回', async () => {
 
   await cm_ns_exp(1, never);
 
-  const texts = fixture.lines_history
-    .filter((line) => line.type === 'text')
-    .map((line) => line.text);
-  assert(
-    !texts.some((line) => line.includes('@CHARA_FIRST_EXP')),
-    '不再有占位行',
-  );
   assert.equal(fixture.store.get('cstr:1:4'), '青梅竹马', '真身已跑过一遍');
 });

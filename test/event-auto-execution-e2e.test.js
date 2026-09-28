@@ -17,10 +17,10 @@
  * 世界补齐（夹具层，同 event-ending-e2e 预置 base 的先例）：温妮（31）以
  * 「侵攻中 + 洗脑戒指」的勇者身份进场——这对应真实玩法里勇者戴着偷来的
  * 戒指打进迷宫的状态；戒指陷落 → 新人标签 → 自动处刑的中间链路由
- * test/event-execution-batch.test.js 的 EVENTTURNEND 接线用例逐环锁定，
+ * test/event-execution-batch.test.js 的 EVENTTURNEND 接入用例逐环锁定，
  * 本用例只负责把它串进玩家按得到的完整流程。
  *
- * 随机源：Math.random 换成恒 0.5（同 event-execution-batch.test.js 接线用例
+ * 随机源：Math.random 换成恒 0.5（同 event-execution-batch.test.js 接入用例
  * 的取法）——本链沿途的随机消费（2D 地图、侵攻度衰减、SENGEN 掷点）只要求
  * 确定，不要求多样；恒值对输入序列错位最不敏感。
  */
@@ -107,7 +107,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
     fixture.era.addCharacter(31);
     fixture.store.set('cflag:31:1', 2); // 侵攻中（洗脑戒指的陷落对象）
     fixture.store.set('cflag:31:551', BRAINWASH_RING);
-    // HP 剩一成 → 2D 地图上必撤退且保持侵攻中（接线用例同款取值）
+    // HP 剩一成 → 2D 地图上必撤退且保持侵攻中（接入用例同款取值）
     fixture.store.set('base:31:0', 100);
     fixture.store.set('maxbase:31:0', 1000);
     fixture.store.set('base:31:1', 1000);

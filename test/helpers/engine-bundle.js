@@ -5,7 +5,7 @@
  * 为什么需要它：test/helpers/era-fixture.js 的记录层只能证明「我们调了这个
  * API」，证不了「引擎接受了这次调用」——#21/#22 的「初始角色被加入」验收
  * 正是这样漏过实机的（yml/ 缺角色表时 addCharacter 整段短路，测试却全绿）。
- * 自写的解析镜像又会漂移。这里的做法是把 #17 实机验证的手法固化成测试：
+ * 自写的解析镜像又会与引擎不一致。这里的做法是把 #17 实机验证的手法固化成测试：
  * 用引擎自己的代码当基准。
  *
  * 手法（均为 app.asar 的实测结构）：
@@ -16,7 +16,7 @@
  *   3. `new Function('require', …)` 求值（模块里的外部依赖走 Node 的
  *      require，本助手用到的模块树不需要 Electron）。
  *
- * 模块号是 ere-4.8.0 的实测值（见各字段注释），引擎升版后编号漂移会在这里
+ * 模块号是 ere-4.8.0 的实测值（见各字段注释），引擎升版后编号不一致会在这里
  * 抛错——那是重新核读新版的信号，不是本助手的缺陷。
  *
  * asar 定位顺序见 ASAR_CANDIDATES。全都没有时 load_engine_bundle() 返回
@@ -33,7 +33,7 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 /**
  * asar 候选位置（按顺序取第一个存在的）。**三处 locate_asar 必须同款**
  * （本文件、tools/mutation-check.mjs、tools/engine-contract-check.mjs），
- * 漂移由 test/asar-candidates.test.js 判红。
+ * 不一致由 test/asar-candidates.test.js 判红。
  *
  * 最后一条 `~/.era-engine/app.asar` 是为「worktree 里没有引擎」准备的：
  * `ere-4.8.0-win-x64/` 不进 git（.gitignore:15），所以 worktree 与
@@ -115,8 +115,8 @@ function load_engine_bundle() {
   );
   const wp = bootstrap(require);
 
-  // 模块号漂移守卫（#91）：4.8.0 实测 EraApi 是模块 183——引擎升版后编号
-  // 漂移时 wp(183) 会取到别的模块，下游在 undefined 上炸出不知所云的
+  // 模块号一致性检查（#91）：4.8.0 实测 EraApi 是模块 183——引擎升版后编号
+  // 变了时 wp(183) 会取到别的模块，下游在 undefined 上炸出不知所云的
   // TypeError。这里就地抛「引擎变了」，与「引擎缺失 → 返回 undefined 让
   // 用例 skip」区分开：asar 在场而模块对不上 = 镜像要重核的时刻，直接判失败。
   const era_api = wp(183);
@@ -167,13 +167,13 @@ function load_engine_bundle() {
     name_mapping: wp(676),
     /** 引擎工具（模块 65）：getNumber / toLowerCase / safeUndefinedCheck 等 */
     engine_utils: wp(65),
-    /** EraApi 类（模块 183，已过形状守卫）：addCharacter 是未绑定方法，须以假 this 调用 */
+    /** EraApi 类（模块 183，已过形状检查）：addCharacter 是未绑定方法，须以假 this 调用 */
     era_api,
     /** 引擎变量寻址（模块 648）：setVar.call(this, varName, val, isAdd)，get 同路 */
     set_var: wp(648),
     /** 静态数据格式优先级（模块 84）：['yml','json','csv']，与下一条同序 */
     static_format_priority: staticFormatPriority,
-    /** 静态数据分类正则（模块 84，已过形状守卫）：eraStart 用它分逐角色/普通表 */
+    /** 静态数据分类正则（模块 84，已过形状检查）：eraStart 用它分逐角色/普通表 */
     static_format_regex: staticFormatRegex,
   };
   return cached_bundle;
@@ -191,7 +191,7 @@ function load_engine_bundle() {
  *
  * #67 起 extended_tables 可传二维扩展表登记（引擎侧是
  * `this.extendedTables`，eraStart 由 config 的 extendedCharaTables 填成
- * `表名 → EraApi.tableType.chara`）。装载循环的守卫
+ * `表名 → EraApi.tableType.chara`）。装载循环的检查
  * `extended_tables[mapped] !== tableType.normal` 用它区分：已登记（chara）
  * 与内置表一样进 switch，预设行可落；未登记的自定义表是 normal，预设行
  * 整行跳过（一维表没有按角色预设）。
@@ -295,7 +295,7 @@ function create_chara_loader({ extended_tables = {} } = {}) {
  * #43 增补两处转写（此前用不到、故未写）：进入内层 switch 前引擎统一把
  * 名称列小写（o.map(e=>(e[1]=toLowerCase(e[1]),e))）；param/palam 两个
  * 表名落到同一分支、装进 staticData.juel 一张名字表（juel/jewel/delta 等
- * 文件名受保护不可用，Emuera 里 JUEL 与 PALAM 共用名字表在引擎侧同样成立，
+ * 文件名受保护不可用，旧引擎里 JUEL 与 PALAM 共用名字表在引擎侧同样成立，
  * 缺省开发套件键 k 的前缀是 param 而非表名）。
  *
  * @returns {{ static_data: object, field_names: object, warnings: string[],

@@ -1,16 +1,16 @@
 /**
- * @file 角色表族二段寻址守卫（#212 返工三）：扫 ere/ 全部 .js，角色表的
+ * @file 角色表族二段寻址检查（#212 返工三）：扫 ere/ 全部 .js，角色表的
  * 二段字面量（`'<表>:<数字>'`）即红。
  *
  * 缘由：同一类缺陷在 #184、#185、#212 三张独立票里各出一次、三次都零测试
- * 拦截——原作 `TEQUIP:35` / `JUEL:1` / `TALENT:122` 这类省略角色位的写法，
- * Emuera 语义是「== TARGET」，ere 侧必须三段（`tequip:${target}:35`）。
+ * 拦截——`TEQUIP:35` / `JUEL:1` / `TALENT:122` 这类省略角色位的写法，
+ * 旧引擎语义是「== TARGET」，ere 侧必须三段（`tequip:${target}:35`）。
  * 写成二段在引擎里的后果比读不到更糟（app.asar setVar 二段分支实测）：
  *   - `tequip:35` → 命中**角色 35** 的整行对象（恒 truthy——Chara35 是真实
  *     角色，避孕套后缀因此恒显示）；
- *   - `tequip:37` → undefined（没有编号 37 的角色，守卫恒不触发）；
+ *   - `tequip:37` → undefined（没有编号 37 的角色，检查恒不触发）；
  *   - `era.add('juel:1', …)` → 打在角色 1 的行对象上，加算从未生效。
- * 夹具是平表、镜像不出这个差别，所以靠静态扫描（判据只认字面量前缀，与
+ * 夹具是平表、镜像不出这个差别，所以靠静态扫描（判断条件只认字面量前缀，与
  * test/static-table-coverage.test.js 同款做法）。
  *
  * 表族清单的依据（显式列出，勿凭记忆增删）：
@@ -24,13 +24,13 @@
  *     TRAIN_ONLY_TABLES 同款清单）；
  *   - yml/_fixed.json 的 extendedCharaTables（tableType.chara）：
  *     portcflag/ex_talent/c_relation/c_relation_sub。
- * **不在名单**（二段是其合法形态，勿误伤）：callname/relation/love——
+ * **不在名单**（二段是其合法写法，勿误伤）：callname/relation/love——
  * setVar 二段 switch 的显式 case（callname:c 与 relation:c 返回行对象、
  * love:c 是按角色的值）；flag/tflag/tstr/global/item 等平表。
  *
  * 阳性对照：对清单里**每一个**表族喂已知坏样本，必须被抓——防两件事：
  * 扫描正则失效（空转）、清单被摘条（摘掉哪族哪族红）。这是 M715 反向变异
- * 的靶子。**本守卫不放豁免名单**（#212 返工时十一处已全部修完，树是
+ * 的目标。**本检查不放豁免名单**（#212 返工时十一处已全部修完，树是
  * 干净的；将来真有豁免需求，先想清楚是不是又在写二段）。
  */
 
@@ -108,7 +108,7 @@ function walk_js(dir, out = []) {
   return out;
 }
 
-test('守卫（真树）：ere/ 里不得有角色表族的二段字面量', () => {
+test('检查（真树）：ere/ 里不得有角色表族的二段字面量', () => {
   const violations = [];
   for (const file of walk_js(ERE_DIR)) {
     if (path.basename(file) === 'era-electron.js') {
@@ -116,19 +116,19 @@ test('守卫（真树）：ere/ 里不得有角色表族的二段字面量', () 
     }
     for (const hit of scan_text(fs.readFileSync(file, 'utf8'))) {
       violations.push(
-        `${path.relative(REPO_ROOT, file)}：${hit.literal}（${hit.family} 是角色表，省略位 == TARGET 的 Emuera 写法须展开为三段）`,
+        `${path.relative(REPO_ROOT, file)}：${hit.literal}（${hit.family} 是角色表，省略位 == TARGET 的旧引擎写法须展开为三段）`,
       );
     }
   }
   assert.deepEqual(
     violations,
     [],
-    '角色表二段寻址（#184/#185/#212 三次踩中的形态，引擎侧读行对象或 undefined）：\n' +
+    '角色表二段寻址（#184/#185/#212 三次踩中的形式，引擎侧读行对象或 undefined）：\n' +
       violations.join('\n'),
   );
 });
 
-test('守卫（阳性对照）：清单与期望名单一致，且每个表族的坏样本都被抓住', () => {
+test('检查（阳性对照）：清单与期望名单一致，且每个表族的坏样本都被抓住', () => {
   // 期望名单独立写死在此（与实现清单互为镜像，增删必须两侧同步）——
   // 只对实现清单自身做循环，摘条会让被摘的族根本不被检查（M715 首版教训）
   const EXPECTED = [
@@ -162,7 +162,7 @@ test('守卫（阳性对照）：清单与期望名单一致，且每个表族�
   assert.deepEqual(
     new Set(CHARA_TABLE_FAMILIES),
     new Set(EXPECTED),
-    '守卫清单与期望名单不一致——增删表族必须有依据（见文件头），并同步两侧',
+    '检查清单与期望名单不一致——增删表族必须有依据（见文件头），并同步两侧',
   );
   for (const family of EXPECTED) {
     for (const bad of [`'${family}:35'`, `\`${family}:35\``]) {
@@ -170,21 +170,21 @@ test('守卫（阳性对照）：清单与期望名单一致，且每个表族�
       assert.equal(
         hits.length,
         1,
-        `${bad} 必须被判违例——${family} 不在守卫清单里，或扫描正则失效`,
+        `${bad} 必须被判违例——${family} 不在检查清单里，或扫描正则失效`,
       );
     }
   }
 });
 
-test('守卫（阴性对照）：三段与平表二段不误伤', () => {
-  // 三段（正确形态）与含表达式的模板串
+test('检查（阴性对照）：三段与平表二段不误伤', () => {
+  // 三段（正确写法）与含表达式的模板串
   assert.deepEqual(
     scan_text(
       "era.get(`tequip:${target}:35`) era.set(`juel:${arg}:1`, x) era.set('tflag:402', 0)",
     ),
     [],
   );
-  // 平表二段是合法形态（tstr:90 / flag / global / item 等）
+  // 平表二段是合法写法（tstr:90 / flag / global / item 等）
   assert.deepEqual(
     scan_text("era.set('tstr:90', '') era.get('flag:81') era.get(`global:3`)"),
     [],

@@ -358,7 +358,7 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
 
   const texts = fixture.text_lines();
   // 指令行 → 描写 → 反应（c = 5+3 = 8 < 100 → 第一档文本）→ 结算块全在。
-  // （eventtrain 的一串占位行在指令行之前，断言一律位置无关）
+  // （断言一律位置无关）
   assert(texts.includes('爱抚'));
   assert(texts.some((l) => l.includes('仔细爱抚着温妮的身体')));
   assert(

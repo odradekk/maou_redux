@@ -10,7 +10,7 @@
  *   - equip_com89 持续效果（T 共享变量的累加与 EXP:56 收尾、射精检查
  *     关闭时跳到尾段，尾段无条件执行）；
  *   - train_message_b 的 80–89 分支与 90 的真实无输出、train_message_a 的
- *     80/90 分支与 81–89 的显式无操作（无对应分支，不得出占位行）；
+ *     80/90 分支与 81–89 的显式无操作（无对应分支）；
  *   - get_adv_com 的 CASE 80 升格规则（com80 → 64，三人）。
  *
  * 世界底座与 com-colosseum.test.js 的 seed_colosseum_world 同构。
@@ -277,18 +277,18 @@ test('com80：CASE 80 命中且 com64 真身已注册（族票测试假身）时
   assert.equal(era_flag.selectcom, 64, 'SELECTCOM 由 COM64 真身自行回填');
 });
 
-test('com80：CASE 80 命中但 com64 真身未实现 → jump_to_advanced 打占位行 + RETURN 1', async () => {
+test('com80：CASE 80 命中但 com64 真身未实现 → jump_to_advanced 返回 1', async () => {
   const world = seed_world();
   const { fixture, era_flag, com_able_family } = world;
   era_flag.prevcom = 64;
   com_able_family.register(64, () => 1); // 可用性判定通过，但 com_family 无 64 号真身
   const result = await run_com(world, 80);
-  assert.equal(result, 1, 'jump_to_advanced 的存根路径 RETURN 1');
+  assert.equal(result, 1, 'jump_to_advanced 的缺号路径 RETURN 1');
   assert.ok(
     !fixture.text_lines().includes('强制口交'),
     '已升格，不落回 COM80 正常执行',
   );
-  assert.equal(era_flag.selectcom, 80, 'jump_to_advanced 存根不改写 SELECTCOM');
+  assert.equal(era_flag.selectcom, 80, 'jump_to_advanced 不改写 SELECTCOM');
 });
 
 test('com80：able64 不可用 → CASE 80 不升格，com80 正常执行', async () => {
@@ -529,26 +529,22 @@ async function run_a(world, com) {
   await train_message_a();
 }
 
-test('B90：无 SELECTCOM==90 分支，真实无输出（不是占位行）', async () => {
+test('B90：无 SELECTCOM==90 分支，真实无输出', async () => {
   const world = seed_world();
   await run_b(world, 90);
   assert.deepEqual(world.fixture.text_lines(), []);
 });
 
-test('B81-89：各有专属文案输出（真实分支，非存根占位）', async () => {
+test('B81-89：各有专属文案输出（真实分支）', async () => {
   for (const com of [81, 82, 83, 85, 87, 88, 89]) {
     const world = seed_world();
     await run_b(world, com);
     const lines = world.fixture.text_lines();
     assert.ok(lines.length > 0, `B${com} 应有输出`);
-    assert.ok(
-      !lines.some((l) => l.includes('指令')),
-      `B${com} 不得是存根占位行`,
-    );
   }
 });
 
-test('A81-89：无专属分支，显式无操作 → 不打「族票缺失」占位行', async () => {
+test('A81-89：无专属分支，注册为显式无操作', async () => {
   for (const com of [81, 82, 83, 84, 85, 87, 88, 89]) {
     const world = seed_world();
     await run_a(world, com);

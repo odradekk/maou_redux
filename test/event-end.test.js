@@ -66,17 +66,13 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
   // charadead_check / party_char_del 自 #548（S7）起为真身（存活路径
-  // 静默、死亡路径在 test/event-charadead.test.js 锁行为），不再打占位行
-  assert(
-    !fixture.text_lines().some((line) => line.includes('CHARADEAD_CHECK')),
-  );
+  // 静默、死亡路径在 test/event-charadead.test.js 锁行为）
 
   // aftertrain_cloth / re_clothed 自 #215（J5）起为真身：着衣分支可达
   // （FLAG:37 = 1 且存活）但本世界 TFLAG:45 = 0、无衣物状态变化 → 静默
   // （真身的行为锁在 test/cloth-func.test.js）
-  // 珠结算已是真身（#47）：结算表已实现、不再是占位行
+  // 珠结算已是真身（#47）：结算表已实现
   assert(fixture.text_lines().includes('以上的点数变化了。'));
-  assert(!fixture.text_lines().some((line) => line.includes('JUEL_CHECK')));
   // 尾部还原：ASSI = ASSI:1、TARGET = TARGET:1——复位段
   // 与尾部各还原一次，末值都是记录值 31/32
   const target_writes = fixture.var_writes.filter(

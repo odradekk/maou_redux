@@ -486,21 +486,4 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
     ),
     '收下播报点名新加入的 3 号（读最新加入者的称呼）',
   );
-  const placeholders = [
-    'SET_CHARASTERISTIC',
-    'SET_HAIRCOLOR',
-    'SHOW_CHARASTERISTIC',
-    'SET_RANDOM_CHARASTERISTIC',
-    'SHOW_HAIRCOLOR',
-    'SET_RANDOM_HAIRCOLOR',
-    'CHOOSE_CHARASTERISTIC',
-    'CHOOSE_HAIRCOLOR',
-  ];
-  assert.deepEqual(
-    texts(fixture).filter((text) =>
-      placeholders.some((name) => text.includes(`@${name}`)),
-    ),
-    [],
-    '八处 chara-and-hair 存根占位行不再出现（其余存根如 show_chara_info 不在这张工单）',
-  );
 });

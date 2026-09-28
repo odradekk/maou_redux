@@ -8,7 +8,7 @@
  *     史莱姆）被可用性检查过滤后，输入 100 恒进入 usercom 界面；
  *   - com200 真身：进入/退出翻转、胆怯/感情淡薄的损耗缩放；
  *   - TRAIN_MESSAGE 分支：B 的 200 分支（进出两支 + 服装前缀 + 全裸示众）
- *     与 201-207 的显式无操作（无消息分支，不得出占位行）、A 公共头的
+ *     与 201-207 的显式无操作（无消息分支）、A 公共头的
  *     TFLAG:15 死斗场两个分支；
  *   - com201 真身：压制/反击两支、助手退却、凌辱菜单（选项条件/收入/
  *     暂时放过）；
@@ -327,7 +327,7 @@ test('B 的 200 分支：服装前缀三档与气力有余的短句', async () =
   );
 });
 
-test('B/A 对 201-207 注册显式无操作：无消息分支，不得出占位行', async () => {
+test('B/A 对 201-207 注册显式无操作：无消息分支', async () => {
   const { fixture, era_flag } = seed_colosseum_world();
   const { train_message_a, train_message_b } = fixture.load_module(
     'system/train/train-message',
@@ -341,17 +341,9 @@ test('B/A 对 201-207 注册显式无操作：无消息分支，不得出占位�
     assert.deepEqual(
       texts.slice(texts.length - 2),
       [],
-      `SELECTCOM = ${com} 两张表的输出都应为空（无占位行）`,
+      `SELECTCOM = ${com} 两张表的输出都应为空`,
     );
   }
-  // 对照：未装载的族（SELECTCOM = 30，com-service 不在本世界）零输出——
-  // #565 起缺号归零，显式无操作与缺失同为零输出
-  era_flag.selectcom = 30;
-  await train_message_b();
-  assert.ok(
-    !fixture.text_lines().some((l) => l.includes('占位')),
-    '别族缺失分支零输出（#565），不得再落占位行',
-  );
 });
 
 test('A 公共头的 TFLAG:15 死斗场两个分支（SELECTCOM 21/27/31 的灌精文本）', async () => {
@@ -997,11 +989,7 @@ test('死斗场中的状态显示：装备行出 [死斗场决斗中]（粉色�
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('SHOW_STATUS');
-  // #390 起 show_equip_2 是完整实现：无任何位时只打一个空格，不再有占位文案
-  assert.ok(
-    !fixture.text_lines().some((l) => l.includes('SHOW_EQUIP_2')),
-    '未在死斗场时不再落占位行（真身：空行）',
-  );
+  // #390 起 show_equip_2 是完整实现：无任何位时只打一个空格。
 
   fixture.store.set('tequip:31:55', 1);
   await emit('SHOW_STATUS');

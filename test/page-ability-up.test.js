@@ -446,14 +446,10 @@ test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位�
     const { ability_up_core } = fixture.load_module('page/page-ability-up');
     const ret = await ability_up_core(1);
     assert.equal(ret, 0, `ABLUP${id} 之后 [999] 正常结束`);
-    assert.ok(
-      !fixture.text_lines().some((t) => t.includes(`ablup${id}`)),
-      `ABLUP${id} 不应再打占位行`,
-    );
   }
 });
 
-test('ABILITY_UP_CORE：ABLUP_IDS 与分发表一一对应（#638：占位回落已删，表内编号必须全有真身）', async () => {
+test('ABILITY_UP_CORE：ABLUP_IDS 与分发表一一对应（#638：表内编号必须全有真身）', async () => {
   const { ABLUP_IDS, ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );
@@ -497,8 +493,8 @@ test('ABILITY_UP_CORE：999 收尾三件（欲情变化检查真身 → 出售�
   const { ability_up_core } = fixture.load_module('page/page-ability-up');
   await ability_up_core(1);
   assert.ok(
-    !fixture.text_lines().some((t) => t.includes('yokubo_up_check')),
-    'YOKUBO_UP_CHECK 已接真身，不应再打占位行',
+    fixture.text_lines().includes('玛奥可以卖掉了'),
+    'CHECK_SELLASSIABLE 复核的是 CORE 里的 TARGET（1 号）',
   );
   assert.ok(
     fixture.text_lines().includes('玛奥可以卖掉了'),

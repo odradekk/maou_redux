@@ -202,7 +202,7 @@ test('失神（TFLAG:899）/ 触手（TEQUIP:90）/ 崩坏（TALENT:9）：不�
   }
 });
 
-test('兽奸（TEQUIP:89）：K5 是静默跳过（无 DOG_KOJO 占位行）', async () => {
+test('兽奸（TEQUIP:89）：K5 是静默跳过', async () => {
   const fixture = await setup_k5((f) => f.store.set('tequip:17:89', 1));
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), []);

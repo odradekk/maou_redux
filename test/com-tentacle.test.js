@@ -821,18 +821,6 @@ test('B150：嗅觉 / 腋 / 其它癖好三支；拼在「向」之后同一行'
   );
 });
 
-test('B208 与 A 100-109/208：无分支，注册显式无操作（不得出占位行）', async () => {
-  const world = seed_world();
-  await run_b(world, 208);
-  await run_a(world, 100);
-  await run_a(world, 108);
-  await run_a(world, 208);
-  assert.ok(
-    !world.fixture.text_lines().some((l) => l.includes('尚未移植')),
-    '显式无操作压掉分发骨架占位行',
-  );
-});
-
 // —— train_message_a 150 + TFLAG:15 公共头 ——
 
 test('A150：F 中毒 / F 感觉分档；嗅觉与其它癖好各一支', async () => {

@@ -66,7 +66,7 @@ test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——EXP:74 为零则
     f.store.set('cflag:31:1', 2); // 勇者
     f.store.set('exp:31:74', 0); // 卖淫经验为零
     // 让后续条件全部满足（卖春积极性 + 判定成功）——EXP:74 是唯一拦截点：
-    // 删掉该门槛后必然进入卖春、打出 LOG_TRY_BITCH 占位行
+    // 删掉该门槛后必然进入卖春、打出 LOG_TRY_BITCH 文本
     f.store.set('cflag:31:120', 1); // 卖春积极性
     f.store.set('abl:31:37', 0);
     f.store.set('cflag:31:580', 0);
@@ -98,8 +98,7 @@ test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——SEIKOU <= 100 �
     f.store.set('abl:31:37', 0);
     f.store.set('cflag:31:151', 0);
   });
-  // SEIKOU 恒 101 > 100：第二道门槛不拦，卖春进入（LOG_TRY_BITCH 真身，
-  // #185 起不再打占位行）
+  // SEIKOU 恒 101 > 100：第二道门槛不拦，卖春进入（LOG_TRY_BITCH 真身）
   assert.equal(mod.fi_culc_bitch(31, 'SEIKOU', 'DUNGEON'), 101);
   await mod.dungeon_bitch(31, seq_rand(0, 0));
   const lines = fixture.text_lines();
@@ -110,10 +109,6 @@ test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——SEIKOU <= 100 �
   assert.ok(
     lines.some((l) => l.includes('在空闲的时间，')),
     'LOG_TRY_BITCH 真身 DUNGEON 分支',
-  );
-  assert.ok(
-    !lines.some((l) => l.includes('LOG_TRY_BITCH')),
-    '不再打存根占位行',
   );
 });
 
@@ -660,11 +655,7 @@ test('HEROINE_BITCH：债务过高强制卖春接真身（CFLAG:582 < -10000 且
     lines.some((l) => l.startsWith('由于温妮欠的债务实在太高了')),
     '强制肉偿真身的开场行',
   );
-  assert.ok(
-    !lines.some((l) => l.includes('强制肉偿') && l.includes('债务过高')),
-    '占位行已消失',
-  );
-  // 顺序断言放最后：门槛不成立（M11420）时上面两条先红，漏 await（M11427）
+  // 顺序断言放最后：门槛不成立（M11420）时上面的开场行先红，漏 await（M11427）
   // 时开场行照打、只有这里能拦
   assert.deepEqual(uppers, [3, 4, 10, 500, 3, 36], '调用点与真身的抽取序');
 });

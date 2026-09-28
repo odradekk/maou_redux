@@ -1,9 +1,9 @@
 /**
- * 阶段 5b 段 5 收口的端到端验收（issue #406）：「据点一日循环」进 `npm test`。
+ * 阶段 5b 段 5 收尾的端到端验收（issue #406）：「据点一日循环」进 `npm test`。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点，#16）。照
  * test/event-ending-e2e.test.js 的形状——同样的新档启动序列（标题 → 新游戏
- * → @EVENTFIRST 村娘线），但驱动的不是「打到 ENDING_1」，是票面点名的这条
+ * → @EVENTFIRST 村娘线），但驱动的不是「打到 ENDING_1」，是工单内容点名的这条
  * 链（主菜单 → 选 199 休息 → @EVENTTURNEND → TIME==1 时 CALL EVENT_NEXTDAY
  * → 日期推进 → BEGIN SHOP 回主菜单），断言全部落在可观察契约上（日期真的
  * 推进、税率真的涨了 5、回到主菜单后循环真的还能再走一轮）——不断言中间
@@ -14,8 +14,8 @@
  *
  * TIME（era_flag.time，flag:10003）显式置 1（下午）：EVENTFIRST 之后的
  * 默认值虽然实测是 0，但显式置位比依赖一个未在源码里写明的默认值更稳，
- * 且直接对应票面「TIME == 1 时 CALL EVENT_NEXTDAY」这句话本身要测的分支
- * （EVENT_TURNEND.ERB:57 的 `午后（TIME==1）则进次日`）。
+ * 且直接对应工单内容「TIME == 1 时 CALL EVENT_NEXTDAY」这句话本身要测的分支
+ * （午后（TIME==1）则进次日）。
  */
 
 'use strict';
@@ -86,12 +86,12 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   assert.equal(
     fixture.store.get('flag:9'),
     tax_before + 5,
-    'FLAG:9（税金）休息一次 += 5（SHOP ver1.0.2.ERB:135）',
+    'FLAG:9（税金）休息一次 += 5',
   );
 
   // day/date 基线在这里取，不在 EVENTFIRST 之后取：@EVENTFIRST 只初始化
-  // DAY:1 = 1，DAY 与 DAY:2 留 0（#22 的 1:1 决定），是 run_shop 自己的
-  // 防御性钳位（page-shop.js:163-168，同一条注释）把 DAY:2 从 0 修正到 1
+  // DAY:1 = 1，DAY 与 DAY:2 留 0（#22 决定按原样保留），是 run_shop 自己的
+  // 防御性钳位（page-shop.js 的同一条注释）把 DAY:2 从 0 修正到 1
   // ——上面这次 run_shop() 调用已经把钳位应用过，此刻取到的正是玩家在主
   // 菜单上会看到的日期。
   const day_before = era_flag.day_count;
@@ -99,22 +99,10 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
 
   // —— 3-5. @EVENTTURNEND → TIME==1 → CALL EVENT_NEXTDAY → 日期推进 ——
   const pending = await emit('EVENTTURNEND');
-  assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP（:140）');
-  assert.equal(
-    era_flag.day_count,
-    day_before + 1,
-    'DAY:0（累计天数）+= 1（EVENT_NEXTDAY.ERB:79）',
-  );
-  assert.equal(
-    era_flag.date,
-    date_before + 1,
-    'DAY:2（月内日期）+= 1（EVENT_NEXTDAY.ERB:81）',
-  );
-  assert.equal(
-    era_flag.time,
-    0,
-    'TIME 推进后回到 0（次日午前，EVENT_TURNEND.ERB:91）',
-  );
+  assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');
+  assert.equal(era_flag.day_count, day_before + 1, 'DAY:0（累计天数）+= 1');
+  assert.equal(era_flag.date, date_before + 1, 'DAY:2（月内日期）+= 1');
+  assert.equal(era_flag.time, 0, 'TIME 推进后回到 0（次日午前）');
 
   // —— 6. BEGIN SHOP 回到主菜单，且循环真的还能再走一轮 ——
   fixture.set_inputs(199);

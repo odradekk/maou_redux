@@ -104,12 +104,6 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（各面�
   assert.equal(rounds_drawn(fixture), 5);
 
   const texts = history_texts(fixture);
-  // #395 起四个子面板与指令面板全部真身：混合切换不再产生任何存根占位行
-  assert.equal(
-    texts.filter((line) => line.includes('尚未移植')).length,
-    0,
-    '四个子面板 + 指令面板均已换真身，本轮组合不应再打任何存根占位',
-  );
   // 切换后的重绘确实换到了对应面板：第 1/5 轮是 draw_have_items（技巧Lv
   // 头行），第 2 轮是 draw_have_traps（落穴标记），第 3/4 轮是地城两面板
   // 真身读数
@@ -454,14 +448,9 @@ test('作用域外的指令分支：占位壳已全部接通或删除（代表�
     texts.some((line) => line.includes('第5阶层')),
     '525 → show_floor(5)',
   );
-  assert.equal(
-    texts.filter((line) => line.includes('尚未移植')).length,
-    0,
-    '主菜单不再有任何存根占位行（#638 删除存根机制）',
-  );
 });
 
-test('777 设定：真身接入 page-config.js 的 config_menu（#463，不再打存根）', async () => {
+test('777 设定：真身接入 page-config.js 的 config_menu（#463）', async () => {
   const fixture = create_shop_fixture();
   const { usershop } = fixture.load_module('page/page-shop');
   fixture.set_inputs(100); // config_menu 自身的 [100] 返回
@@ -792,7 +781,7 @@ test('7788 接通 relation_debugprint：输出关系矩阵并等待按键', asyn
 
 test('498/499 无前置条件：指针未选也进分支', async () => {
   // #391 起 chara_info_individual_wrapped 是真身；#390 起它的正文
-  // （chara_info_individual）也换真身，不再打占位行——这里改为按正文的
+  // （chara_info_individual）也换真身——这里改为按正文的
   // 标题行计数（`NO.<id>` 那一行），个别信息页自身的渲染/按钮/分发见
   // test/page-chara-info.test.js
   const fixture = create_shop_fixture();

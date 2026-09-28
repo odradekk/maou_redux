@@ -5,7 +5,7 @@
  *   1. **表不变量**：load_table() 对坏形状（非单字、链式映射、词级 target
  *      再含键、空豁免）必须 throw——表只能以合法形状生长；
  *   2. **判定行为**：find_offenders / find_outside_trad / is_exempted /
- *      scan_string_literals 的命中形态逐条固定（字级 / 词级 / 假名 / 表外
+ *      scan_string_literals 的命中形式逐条固定（字级 / 词级 / 假名 / 表外
  *      繁侧 / 豁免整串 / 注释与转义不骗扫描器）。
  */
 

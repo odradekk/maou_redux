@@ -348,7 +348,7 @@ test('SAVEGAME 标题行：故事名有无两态（拼接，含【保存存档�
   const { save_game } = load_page(fixture);
   fixture.set_inputs(100);
   await save_game();
-  // 前缀「【保存存档】」是 PRINT 段，#161 范围 B 对拍查出首版漏抄、已补
+  // 前缀「【保存存档】」是 PRINT 段，#161 范围 B 实测比对查出首版漏抄、已补
   assert(
     history_texts(fixture).some(
       (t) => t === '【保存存档】当前故事还没有名字，要保存到以下哪个存档？',
@@ -640,7 +640,7 @@ test('钩子副作用：历史补丁三行对新档有语义的等价物在读�
   assert.equal(fixture.store.get('maxbase:17:1'), 100, '恰等于下限不动');
 });
 
-test('读档钩子：CHARA_NAME_INIT 已落真身（#388，不再打占位），EX_TALENTNAME_INIT 同样已落真身', async () => {
+test('读档钩子：CHARA_NAME_INIT 与 EX_TALENTNAME_INIT 已落真身（#388）', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 3, '三号档');
   const { load_game } = load_page(fixture);
@@ -648,12 +648,6 @@ test('读档钩子：CHARA_NAME_INIT 已落真身（#388，不再打占位），
   fixture.set_inputs(3);
 
   await assert.rejects(() => load_game(), /BEGIN/);
-  const texts = history_texts(fixture);
-  assert(
-    !texts.some((t) => t.includes('CHARA_NAME_INIT')),
-    '角色名初始化已落真身（读表见 chara-name-list.js），读档路径不应再出现存根占位行',
-  );
-  assert(!texts.some((t) => t.includes('EX_TALENTNAME_INIT')));
 });
 
 test('夹具镜像版本检查：低版本存档 loadData 拒读，不转场、数据不被替换', async () => {

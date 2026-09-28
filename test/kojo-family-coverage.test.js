@@ -26,11 +26,7 @@ test('try_kojo 未命中静默（TRYCALLFORM 落空语义，不打占位）', as
   // 窗口外（target = 0 魔王，无口上性格）→ kojo_handler_id = -1 → 静默
   const a = await try_kojo(dungeon_attack_family, 0);
   assert.equal(a, 0, '未命中返回 0（TRYCALLFORM 落空的 RESULT 语义）');
-  assert.equal(
-    fixture.lines_history.length,
-    before,
-    '窗口外不得有任何输出（含占位行）',
-  );
+  assert.equal(fixture.lines_history.length, before, '窗口外不得有任何输出');
 
   // 窗口内但该族无此编号（K11 的 GOBI：两边同缺）→ 同样静默
   const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');

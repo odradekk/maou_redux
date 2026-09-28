@@ -9,8 +9,7 @@
  *
  * 窄路径的既定事实（chara-init.js 文件头）：菲娅 CFLAG:35:9 = 1（等级段
  * 不进）、CFLAG:35:450 无预设（一人称走 <9 直设）、FLAG:5 恒 0（身体数据
- * 段不进——真身自 #385 起在 ere/chara/chara-body.js，条件由占位行改为
- * CFLAG:451 的写入）。本文件另用注入态覆盖条件段的两个入口（等级段、
+ * 段不进——真身自 #385 起在 ere/chara/chara-body.js，条件看 CFLAG:451 的写入）。本文件另用注入态覆盖条件段的两个入口（等级段、
  * 身体数据段），守住条件结构不走样。
  */
 
@@ -23,12 +22,6 @@ function load(fixture) {
   return fixture.load_module('chara/chara-init');
 }
 
-function history_texts(fixture) {
-  return fixture.lines_history
-    .filter((line) => line.type === 'text')
-    .map((line) => line.text);
-}
-
 test('char_init 窄路径（菲娅预设）：一人称直设 + 无服装静默 + 能力者全掷不中', async () => {
   const fixture = create_era_fixture();
   const { char_init } = load(fixture);
@@ -36,18 +29,13 @@ test('char_init 窄路径（菲娅预设）：一人称直设 + 无服装静默 
   const result = await char_init(35, () => 1);
   assert.equal(result, 35, 'RETURN L_A');
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称已设');
-  const texts = history_texts(fixture);
   // 着替え装着自 #215（J5）起为真身：菲娅无既定服装（41/42 均 0）
   // → wearing_cloth_able 早退、无输出无写入（行为锁在 test/cloth-func.test.js）
   assert.equal(fixture.store.get('cflag:35:40'), undefined, '无服装不写装位');
-  assert(
-    !texts.some((line) => line.includes('@ST_UP')),
-    'CFLAG:9 = 1 不 > 1：等级段不进（菲娅既定事实）',
-  );
   assert.equal(
     fixture.store.get('cflag:35:451'),
     undefined,
-    'FLAG:5 恒 0：身体数据段不进（#385 起真身，条件看写入而不是占位行）',
+    'FLAG:5 恒 0：身体数据段不进（#385 起真身，条件看写入）',
   );
 });
 
@@ -124,12 +112,6 @@ test('身体数据段条件：FLAG:5 位 12/15 开且 451/453 缺失才进', asy
     '位 12 开 + CFLAG:451/453 缺失：身体数据真身落盘',
   );
   assert.equal(fixture.store.get('cflag:35:452'), 17, '种族年龄一并落盘');
-  assert(
-    !history_texts(fixture).some((line) =>
-      line.includes('@CHAR_BODY_GENERATE_WAPPED'),
-    ),
-    '已落真身，不得再出现存根占位行',
-  );
 
   // 预设已带身体数据（CFLAG:451 = 10、CFLAG:453 = 1270 的菲娅预设）：
   // 位开也不进

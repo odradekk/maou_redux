@@ -6,9 +6,9 @@
  *   - **12 个区段各有测试**（验收项）：区间数据直接解析
  *     ownership/tequip-ownership.yml——每条区间取代表下标，火车表内
  *     写入→读回持久；
- *   - 四个口上头部守卫位（45 口塞 / 55 死斗场 / 89 兽奸 / 90 触手，
- *     #213 的 @KOJO_MESSAGE_COM 七道守卫读它们）经 train 域门面可写，
- *     且守卫真实触发（tequip:55 → COLOSSEUM_KOJO 支、tequip:90 → 静默
+ *   - 四个口上头部检查位（45 口塞 / 55 死斗场 / 89 兽奸 / 90 触手，
+ *     #213 的 @KOJO_MESSAGE_COM 七道检查读它们）经 train 域门面可写，
+ *     且检查真实触发（tequip:55 → COLOSSEUM_KOJO 支、tequip:90 → 静默
  *     跳过）——写入路径打通的端到端证明；
  *   - 跨域两段（22 属 system、35 属 event）经属主域门面写（#71：跨域写
  *     走门面是 domain-check 的硬要求，门面本体在 ere/facade/chara-system.js
@@ -69,8 +69,7 @@ function load_intervals() {
   return out;
 }
 
-// 旗标一览（target/資料_非必要無須解壓/eramaouフラグまとめ.txt :501-529）的
-// 代表下标注释——区间代表取首下标，语义名照抄旗标一览
+// 旗标一览（eramaou 的旗标汇总资料）的代表下标注释——区间代表取首下标，语义名照旗标一览
 const INTERVAL_NOTES = {
   11: '振动棒（TEQUIP:11 バイブ装着）',
   13: '肛门振动棒',
@@ -122,9 +121,9 @@ test('TEQUIP 区间覆盖完整：ownership 产物恰 12 条（J5 验收面的�
   );
 });
 
-// —— 2. 四个口上守卫位可写（验收项：写入路径归 J5）——
+// —— 2. 四个口上检查位可写（验收项：写入路径归 J5）——
 
-test('四个口上守卫位经 train 域门面可写：口塞 45 / 死斗场 55 / 兽奸 89 / 触手 90', () => {
+test('四个口上检查位经 train 域门面可写：口塞 45 / 死斗场 55 / 兽奸 89 / 触手 90', () => {
   const fixture = seed_world();
   const { chara } = fixture.load_module('facade/chara');
   chara(31).train.口塞 = 1;
@@ -137,7 +136,7 @@ test('四个口上守卫位经 train 域门面可写：口塞 45 / 死斗场 55 
   assert.equal(fixture.era.get('tequip:31:90'), 1, '触手（TEQUIP:90）');
 });
 
-test('守卫真实触发：死斗场位置位 → K3 口上走 COLOSSEUM_KOJO 支（:888-892）', async () => {
+test('检查真实触发：死斗场位置位 → K3 口上走 COLOSSEUM_KOJO 支', async () => {
   const fixture = seed_world();
   fixture.store.set('tequip:31:55', 1);
   fixture.store.set('base:31:1', 100);
@@ -151,9 +150,9 @@ test('守卫真实触发：死斗场位置位 → K3 口上走 COLOSSEUM_KOJO �
   );
 });
 
-test('守卫真实触发：触手位置位 → 口上静默跳过（:911-912，无爱抚台词）', async () => {
+test('检查真实触发：触手位置位 → 口上静默跳过（无爱抚台词）', async () => {
   const fixture = seed_world();
-  fixture.store.set('cflag:31:301', 0); // 初めて分支可用（无守卫时会出台词）
+  fixture.store.set('cflag:31:301', 0); // 初めて分支可用（无检查时会出台词）
   fixture.store.set('tequip:31:90', 1);
   const { kojo_message_com_3 } = fixture.load_module('kojo/kojo-k3-noble');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -161,7 +160,7 @@ test('守卫真实触发：触手位置位 → 口上静默跳过（:911-912，�
   await kojo_message_com_3(() => 0);
   assert(
     !fixture.text_lines().some((line) => line.includes('「')),
-    '触手守卫命中：不打常规台词',
+    '触手检查命中：不打常规台词',
   );
 });
 

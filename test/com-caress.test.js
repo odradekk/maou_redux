@@ -1039,7 +1039,7 @@ test('A 分支 5（胸爱抚）：爆乳先行行 + UP:14 高档的双行', asyn
   );
 });
 
-test('A 空支（4/6/7/8/9）：无分支——零输出（不落占位行）', async () => {
+test('A 空支（4/6/7/8/9）：无分支——只画点线', async () => {
   const { fixture, era_flag } = seed_family_world(4);
   const { train_message_a } = fixture.load_module('system/train/train-message');
   for (const n of [4, 6, 7, 8, 9]) {
@@ -1047,10 +1047,6 @@ test('A 空支（4/6/7/8/9）：无分支——零输出（不落占位行）', 
     const before = fixture.lines.length;
     await train_message_a();
     assert.equal(fixture.lines.length - before, 1, `SELECTCOM=${n} 只画点线`);
-    assert(
-      !fixture.text_lines().some((l) => l.includes('TRAIN_MESSAGE_A')),
-      '无分支 → 不落占位行',
-    );
   }
 });
 

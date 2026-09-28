@@ -111,40 +111,19 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   assert.equal(fixture.store.get('cstr:1:60'), '我', 'cstr:60 一人称');
   assert.equal(fixture.store.get('cflag:1:450'), 9, 'cflag:450 一人称档位');
   // 随机命名与 chara_name_define 自 #384 起都是真身（名字真的写进去了），
-  // 冲突检查也一并写入；#389 的 look_set 与 #394 的 chara_first_exp 都已换真身，
-  // 两者的占位行都不该再出现。
+  // 冲突检查也一并写入；#389 的 look_set 与 #394 的 chara_first_exp 都已换真身。
   assert.equal(
     fixture.store.get('callname:1:-1'),
     '佳奈美',
     'chara_name_define 真身：没有可查的固定名时回落到默认名',
   );
-  // look_set 自 #389 起是真身：外貌素质真的写入了（占位行反过来不该再出现）。
+  // look_set 自 #389 起是真身：外貌素质真的写入了。
   // 精确值：never（RAND:N 恒 1）下发色掷到 11（粉髪）、癖掷到 2（往后看）
   assert.equal(
     fixture.store.get('talent:1:300'),
     11,
     'look_set 真身：发色（talent:300）= 11 粉髪',
   );
-  const texts = stub_texts(fixture);
-  for (const name of [
-    'LOOK_SET',
-    'CHARA_NAME_DEFINE',
-    'CMI_CONFLICT_CHECK',
-    'CHARA_FIRST_EXP',
-  ]) {
-    assert(
-      !texts.some((line) => line.includes(`@${name}`)),
-      `${name} 已落真身，不应再有占位行`,
-    );
-  }
-  // char_body_generate_wapped 自 #385 起也是真身，不在这张「不触发」表里——
-  // 它不再打占位行，留在表里的断言对任何输入都成立、验不出东西。
-  for (const name of ['FAMILY_REGISTER', 'ST_UP']) {
-    assert(
-      !texts.some((line) => line.includes(`@${name}`)),
-      `${name} 不触发（条件不达）`,
-    );
-  }
 });
 
 test('三分叉·精英部下：cflag:1 = 0，走 cm_st_ace（无职业四维外的 BASE 写入）', async () => {
@@ -163,10 +142,6 @@ test('三分叉·精英部下：cflag:1 = 0，走 cm_st_ace（无职业四维外
   // cm_st_ace：魔王等级（cflag:0:9）缺省 0 不 > 2 → 不掷 st_up、不写 BASE；
   // 与 cm_st 的差异正在此（cm_st 无条件写 base = maxbase）
   assert.equal(fixture.store.get('base:7:0'), undefined, 'BASE 未被 cm_st 写');
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@ST_UP')),
-    '魔王等级 <= 2：精英初始等级段不进',
-  );
 });
 
 test('三分叉·后代（ex_talent:2）：cflag:1 = 0、阴毛状态 = 2、跳过性别与性交经验', async () => {
@@ -188,11 +163,6 @@ test('三分叉·后代（ex_talent:2）：cflag:1 = 0、阴毛状态 = 2、跳�
     fixture.store.get('exp:9:60'),
     undefined,
     '后代跳过 cm_ns_exp（出産経験不写）',
-  );
-  // 家族登记只对非后代（always 下 RAND:4 == 0 恒真，仍不进）
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@FAMILY_REGISTER')),
-    '后代不设定家族',
   );
   assert.equal(fixture.store.get('cflag:9:16'), -1, '后代初吻未定');
 });
@@ -243,8 +213,8 @@ test('flag:5 位 12 开：char_body_generate_wapped 真身落盘', async () => {
   fixture.store.set('flag:5', 4096); // flag:5 位 12
   const { chara_make } = load(fixture);
   await chara_make(1, 0, 0, never);
-  // #385 起为真身（ere/chara/chara-body.js）：cflag:451-457 是条件，
-  // 占位行不再出现。年龄先钳制在 [12,35]，身高/体重为正数。
+  // #385 起为真身（ere/chara/chara-body.js）：cflag:451-457 是条件。
+  // 年龄先钳制在 [12,35]，身高/体重为正数。
   // 随机源钉死（never）→ 四个落点都是确定值，钉精确值而不是区间。
   // #389 勘误：#385 当时写的 [12,35] 只是那一条随机序的巧合——char_age_generate
   // 先把年龄钳制在 [12,35]（chara-body.js）再走 normal_point_pickup 的
@@ -253,25 +223,7 @@ test('flag:5 位 12 开：char_body_generate_wapped 真身落盘', async () => {
   assert.equal(fixture.store.get('cflag:1:452'), 11, '种族年龄（人类同档）');
   assert.equal(fixture.store.get('cflag:1:453'), 1281, '身高（厘米）');
   assert.equal(fixture.store.get('cflag:1:454'), 191, '体重（公斤）');
-  assert.equal(
-    stub_texts(fixture).some((line) =>
-      line.includes('@CHAR_BODY_GENERATE_WAPPED'),
-    ),
-    false,
-    '已落真身，不得再出现存根占位行',
-  );
 });
-
-test('RAND:4 == 0 且非后代：family_register 已接真身', async () => {
-  const fixture = create_era_fixture();
-  const { chara_make } = load(fixture);
-  await chara_make(1, 0, 0, always);
-  assert.equal(
-    stub_texts(fixture).some((line) => line.includes('@FAMILY_REGISTER')),
-    false,
-  );
-});
-
 test('口上性格段：角色号 ∈ [1,16] 与 [200,211] 触发，区间外不触发', async () => {
   const fixture = create_era_fixture();
   const { chara_make } = load(fixture);
@@ -663,12 +615,7 @@ test('cm_look：look_set 真身落盘 + 白虎 5%', async () => {
   const { cm_look } = load(fixture);
   await cm_look(3, 0, never);
   // #389 起 cm_look 接的是 look_set 真身（ere/chara/look.js）：外貌素质
-  // 由它掷出，占位行不再出现
-  assert.equal(
-    stub_texts(fixture).some((line) => line.includes('@LOOK_SET')),
-    false,
-    '已落真身，不得再出现占位行',
-  );
+  // 由它掷出
   assert.equal(fixture.store.get('talent:3:300'), 11, '发色 = 11 粉髪');
   assert.equal(fixture.store.get('talent:3:313'), 2, '癖 = 2 往后看');
   assert.equal(fixture.store.get('talent:3:125'), undefined, '白虎未掷中');
@@ -946,19 +893,7 @@ test('转发层 char_make_inport：rand(arg0) != 0 即返回 0', async () => {
   const forward = load_forward(fixture);
   assert.equal(await forward.char_make_inport(5, never), 0, '掷不中：非异国');
   // 掷中即进转发目标——#394 起真身（ere/chara/chara-make-inport.js），
-  // 占位行随存根一起消失；真身的行为面在 test/chara-make-inport.test.js。
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@CHARA_MAKE_INPORT')),
-    '掷中后不再有占位行（真身已接入）',
-  );
-  // 缺省 arg0 = 1：RAND(1) 恒 0 必成功
-  const fixture2 = create_era_fixture();
-  const forward2 = load_forward(fixture2);
-  await forward2.char_make_inport(undefined, always);
-  assert(
-    !stub_texts(fixture2).some((line) => line.includes('@CHARA_MAKE_INPORT')),
-    '缺省 1 必进真身（同样无占位行）',
-  );
+  // 行为面在 test/chara-make-inport.test.js。
 });
 
 test('转发层 naming / name_reset：转发目标自 #384 起是真身', async () => {
@@ -987,10 +922,6 @@ test('转发层 naming / name_reset：转发目标自 #384 起是真身', async 
     fixture.store.get('callname:0:-2'),
     '魔王的旧称呼',
     '魔王被跳过',
-  );
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@CN_REBUILD')),
-    'cn_rebuild 已落真身',
   );
 });
 
