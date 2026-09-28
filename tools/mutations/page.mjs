@@ -1750,7 +1750,7 @@ export default [
       return 0;`,
     replace: `      return 0; // 变异：SENGEN_VIDEO 调用丢失`,
     tests: ['page-invasion'],
-    must_mention: '[1000] 转发到 SENGEN_VIDEO 真身（#502）',
+    must_mention: '[1000] 转发到 sengen_video 真身（#502）',
   },
   {
     desc: 'M9717 [9] campaign_menu 调用丢失',
@@ -2153,7 +2153,7 @@ export default [
   );`,
     replace: '  // 变异：补正提示不打印',
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 提示',
+    must_mention: 'medal_bonus 提示',
   },
   {
     desc: 'M10730 {值,N} 定宽少一列（padStart(width) 改 width - 1，#502）',
@@ -2178,7 +2178,7 @@ export default [
     replace:
       '      era_exflag.crystal_ball_deployed += 1; // 变异：只记 1 部\n      // sengen_video_bonus 的返回值即回写后的投放数',
     tests: ['page-invasion'],
-    must_mention: ':1109 EX_FLAG:9011 += RESULT',
+    must_mention: 'EX_FLAG:9011 += RESULT',
   },
   {
     desc: 'M10733 加成后的数漏写流行度（9012 += placed 整行删除，#502）',
@@ -2231,7 +2231,7 @@ export default [
     replace:
       '      if (grown > before * 3) grown = before * 3; // 变异：封顶放宽',
     tests: ['page-invasion'],
-    must_mention: ':1195-1196 封顶 M*2',
+    must_mention: '封顶 M*2',
   },
   {
     desc: 'M10739 延长时长的保底删除（(9013 - M) < 1 → M + 1 整支删掉，#502）',
@@ -2239,7 +2239,7 @@ export default [
     find: '      if (grown - before < 1) grown = before + 1;',
     replace: '      // 变异：保底删除',
     tests: ['page-invasion'],
-    must_mention: ':1226-1227 保底 +1',
+    must_mention: '保底 +1',
   },
   {
     desc: 'M10740 奸商的犒赏扣款倍率改坏（M*5000 改 M*500，#502）',
@@ -2247,7 +2247,7 @@ export default [
     find: '            era_flag.money -= base * 5000; // MONEY -= (M * 5000)',
     replace: '            era_flag.money -= base * 500; // 变异：少扣一个零',
     tests: ['page-invasion'],
-    must_mention: ':1151 MONEY -= M*5000',
+    must_mention: 'MONEY -= M*5000',
   },
   {
     desc: 'M10741 增强效果的支付金额改坏（50000 改 5000，#502）',
@@ -2256,7 +2256,7 @@ export default [
     replace:
       "          era.print('犒赏了奸商50000G');\n          era_flag.money -= 5000; // 变异：支付金额改坏",
     tests: ['page-invasion'],
-    must_mention: ':1179 MONEY -= 50000',
+    must_mention: 'MONEY -= 50000',
   },
   {
     desc: 'M10742 增强段第一枚骰子的上界改坏（RAND:5 改 RAND:10，#502）',
@@ -2285,7 +2285,7 @@ export default [
     replace: `  // 变异：补正提示后不等键
   return tier.bonus;`,
     tests: ['page-invasion'],
-    must_mention: 'MEDAL_BONUS 提示后等键（PRINTFORMW）',
+    must_mention: 'medal_bonus 提示后等键（PRINTFORMW）',
   },
   {
     desc: 'M10749 [1] 投放成功支不等键（:1112 的 PRINTFORMW 删除）',
@@ -2294,7 +2294,7 @@ export default [
     replace:
       '        // 变异：成功投放后不等键\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
     tests: ['page-invasion'],
-    must_mention: ':1112 成功投放后等键（PRINTFORMW）',
+    must_mention: '成功投放后等键（PRINTFORMW）',
   },
   {
     desc: 'M10750 [1] 投放失败支不等键（:1116 的 PRINTFORMW 删除）',
@@ -2303,7 +2303,7 @@ export default [
     replace:
       "        era_exflag.crystal_ball_expire += placed;\n      } else {\n        era.print('投放，似乎失败了。');\n        // 变异：投放失败后不等键",
     tests: ['page-invasion'],
-    must_mention: ':1116 投放失败后等键（PRINTFORMW）',
+    must_mention: '投放失败后等键（PRINTFORMW）',
   },
   {
     desc: 'M10751 [2] 奸商代理成功支不等键（:1140 的 PRINTFORMW 删除）',
@@ -2312,7 +2312,7 @@ export default [
     replace:
       '        // 变异：奸商成功投放后不等键\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n        if (base * 5000 < era_flag.money) {',
     tests: ['page-invasion'],
-    must_mention: ':1140 奸商成功投放后等键（PRINTFORMW）',
+    must_mention: '奸商成功投放后等键（PRINTFORMW）',
   },
   {
     desc: 'M10752 [0] 怪物出兵：怪物减半写成三等分（/2 改 /3）',
@@ -2504,7 +2504,7 @@ export default [
     find: '  karma(yusya_i, -5); // CALL KARMA, YUSYA_I, -5',
     replace: '  karma(yusya_i, -1); // 变异：减量改坏',
     tests: ['page-invasion'],
-    must_mention: 'KARMA, YUSYA_I, -5',
+    must_mention: 'karma -5',
   },
   {
     desc: 'M10774 [3] 掠夺结算的封顶值改坏（10000*10 改 10000*9）',
@@ -2801,7 +2801,7 @@ export default [
     find: '  if (elite_hp <= 100) {',
     replace: '  if (elite_hp <= 101) {',
     tests: ['page-invasion'],
-    must_mention: '三条退场判据',
+    must_mention: '三条退场条件',
   },
   {
     desc: 'M10809 @_INV_DEATH_CHECK 魔王侧的俘虏线改坏（<= 1000 改 <= 999）',
@@ -2809,7 +2809,7 @@ export default [
     find: '    hero_mp <= 1000 &&',
     replace: '    hero_mp <= 999 &&',
     tests: ['page-invasion'],
-    must_mention: '魔王侧四条退场判据',
+    must_mention: '魔王侧四条退场条件',
   },
   {
     desc: 'M10810 @_INV_DEATH_CHECK 魔王军的溃败线改坏（<= 300 改 <= 299）',
@@ -2817,7 +2817,7 @@ export default [
     find: '      : hero_hp <= 300',
     replace: '      : hero_hp <= 299',
     tests: ['page-invasion'],
-    must_mention: '魔王侧四条退场判据',
+    must_mention: '魔王侧四条退场条件',
   },
   {
     desc: 'M10811 @_INV_DEATH_CHECK 的退场状态对调（被狂王带走 9 / 逃回 0）',
@@ -3203,7 +3203,7 @@ export default [
     replace:
       '  // 变异：凌辱地区号写死 1\n  await invasion_ryouzyoku(1, sinkou, rand);',
     tests: ['page-invasion'],
-    must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
+    must_mention: '传给 invasion_ryouzyoku 的地区号',
   },
   {
     desc: 'M10860 地区表的凌辱地区号改坏（精灵族领域 2 → 4，:674）',
@@ -3211,7 +3211,7 @@ export default [
     find: '    ravish_area: 2,\n    kyoten_arg: 2,',
     replace: '    ravish_area: 4,\n    kyoten_arg: 2, // 变异：凌辱地区号改坏',
     tests: ['page-invasion'],
-    must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
+    must_mention: '传给 invasion_ryouzyoku 的地区号',
   },
   {
     desc: 'M10862 天神宫补上 kyoten 实参（旧写法 :983-994 没有 101 分支）',
@@ -3289,7 +3289,7 @@ export default [
     replace:
       '  await invasion_ryouzyoku(1, sinkou, rand); // 变异：凌辱地区号写死\n  // 9% 概率抓到负隅顽抗的勇者（比 [0] 的 5% 高；GET_ENEMY 之后',
     tests: ['page-invasion'],
-    must_mention: '[2] 传给 @INVASION_RYOUZYOKU 的地区号也是 2',
+    must_mention: '[2] 传给 invasion_ryouzyoku 的地区号也是 2',
   },
   {
     desc: 'M10874 魔力结果段的已征服条件写死（region.sindo 改字面量 82）',
@@ -4191,7 +4191,7 @@ export default [
     replace:
       "era.printButton('退出', 999); // 变异：丢掉「- 」",
     tests: ['page-invasion'],
-    must_mention: 'INVASION.ERB',
+    must_mention: '七个按钮的正文照写「- 」',
   },
   {
     desc: 'M12300 征服后菜单 [1] 的未征服分支丢掉「- 」（三元分支只改一支）',
@@ -4200,7 +4200,7 @@ export default [
     replace:
       "? '巡视黑暗精灵的领土（已征服）' // 变异：丢掉「- 」",
     tests: ['page-invasion'],
-    must_mention: 'INVASION.ERB',
+    must_mention: '七个按钮的正文照写「- 」',
   },
   {
     desc: 'M12301 技巧等级道具买光确认的 [0] 丢掉「- 」',
@@ -4516,7 +4516,7 @@ export default [
     replace:
       "    if (result === 1001) {\n      era.print('（代理人菜单不在移植范围。）');\n      await era.waitAnyKey();\n      return 0;\n    }\n    // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：",
     tests: ['page-invasion'],
-    must_mention: '落到 :102 的 >=6 拒收重问',
+    must_mention: '>=6 拒收重问',
   },
   {
     desc: 'M12909 主菜单 400 LABO 隐入口复活（提示行+等键打回——#638 删除的分支不得回潮）',

@@ -216,14 +216,14 @@ export default [
     'AMNESIA 扣款 100000 改 100001',
     '  pay(100000);\n  return 1;',
     '  pay(100001);\n  return 1;',
-    'MODIFY_AMNESIA：全清清单（ABL/MARK/JUEL 各 100 项、TALENT 74-78、85/86、CFLAG 0/2/10）',
+    'modify_amnesia：全清清单（ABL/MARK/JUEL 各 100 项、TALENT 74-78、85/86、CFLAG 0/2/10）',
   ),
   make(
     9428,
     'TATOO 价格 10000 改 10001',
     '  const cost = 10000; // COST = 10000',
     '  const cost = 10001; // COST = 10000',
-    'TATOO_SET_OFF：部位菜单 + 自由文字（刻印与消去两支）',
+    'tatoo_set_off：部位菜单 + 自由文字（刻印与消去两支）',
   ),
   make(
     9429,
@@ -294,14 +294,14 @@ export default [
     'BLOCK_FEELING 的部位素质表 101 改 102',
     'const PID_TALENT = [101, 103, 105, 107];',
     'const PID_TALENT = [102, 103, 105, 107];',
-    'BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两道门）',
+    'block_feeling：部位维度表驱动（四部位 × 钝感位与 ABL 两道门）',
   ),
   make(
     9439,
     'BLOCK_FEELING 的 PAID 映射首位 0 改 1',
     'const PID_ABL = [0, 2, 3, 1];',
     'const PID_ABL = [1, 2, 3, 1];',
-    'BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两道门）',
+    'block_feeling：部位维度表驱动（四部位 × 钝感位与 ABL 两道门）',
   ),
   make(
     9440,
@@ -315,7 +315,7 @@ export default [
     'DEMON_REBIRTH 类型表首行首项 133 改 134',
     '  [133, 143, 153, 163, 160, 170], // 男巫/女巫/男祭司/女忍/黑暗骑士/女祭司',
     '  [134, 143, 153, 163, 160, 170], // 男巫/女巫/男祭司/女忍/黑暗骑士/女祭司',
-    'DEMON_REBIRTH：类型表整表 + 等级门 + 附加素质 + 随机上界 3/7',
+    'demon_rebirth：类型表整表 + 等级门 + 附加素质 + 随机上界 3/7',
   ),
   // —— 随机上界 ——
   make(
@@ -605,6 +605,6 @@ export default [
     'LABO_PAGE4 的真空行删除（:272 的 PRINTL 是独立的一行，不是收尾）',
     "  era.print(''); // PRINTL\n  era.print('□洗脑 （助手用）');",
     "  // 变异：:272 的真空行删除\n  era.print('□洗脑 （助手用）');",
-    ':272 的独立 PRINTL 仍是一个真空行',
+    '独立 PRINTL 仍是一个真空行',
   ),
 ];
