@@ -1,6 +1,6 @@
 // 变异条目表切片：角色信息显示链（#390，CHARA_INFO_SHOW ＋ CHARA_INFO_SHOW_TALENT）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
+// 分配，只作引用基准，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 74; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 守卫的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
@@ -20,14 +20,14 @@ const TRAIN = 'ere/page/page-train.js';
 const USERCOM = 'ere/page/page-usercom.js';
 
 /**
- * 每条 = 一次「改坏一处、本票测试必须红」。
+ * 每条 = 一次「改坏一处、本条目测试必须红」。
  * @param {number} id 编号
  * @param {string} desc 说明
- * @param {string} file 靶文件
- * @param {string} find 命中串（靶文件里恰一次）
+ * @param {string} file 目标文件
+ * @param {string} find 命中串（目标文件里恰一次）
  * @param {string} replace 变异后的串
  * @param {string} must_mention 失败输出里必须出现的片段
- * @param {string[]} [tests] 守它的测试文件（缺省本票的 chara-info-show；
+ * @param {string[]} [tests] 守它的测试文件（缺省本条目对应的 chara-info-show；
  *   cup_size 的一组住在 test/chara-body.test.js）
  */
 const make = (id, desc, file, find, replace, must_mention, tests) => ({
@@ -185,7 +185,7 @@ export default [
     TALENTS,
     'const PLAIN_START_U = 6;',
     'const PLAIN_START_U = 0;',
-    '简单臂',
+    '简单分支',
   ),
   make(
     8716,
@@ -193,7 +193,7 @@ export default [
     TALENTS,
     'const PLAIN_SKIP_TO = 325;',
     'const PLAIN_SKIP_TO = 324;',
-    '简单臂跳过',
+    '简单分支跳过',
   ),
   make(
     8717,
@@ -325,7 +325,7 @@ export default [
     EQUIP,
     '    if (t(bit) && t(90)) push(` ${tentacle}`);',
     '    if (t(bit) && t(89)) push(` ${tentacle}`);',
-    '触手形态',
+    '触手名优先于常态名',
   ),
   make(
     8734,
@@ -560,7 +560,7 @@ export default [
     '    era.print(`一人称：${pad_display(self_call(cid), 24)}`);',
     '[8] 一人称重设真按钮',
   ),
-  // —— #586：献祭名单轮的返回编号（预设 100 × 原作的 [100] 撞号） ——
+  // —— #586：献祭名单轮的返回编号（预设 100 × 返回编号 [100] 撞号） ——
   make(
     11900,
     'show_chara_info：名单轮的返回编号退回 100（与预设 100 的角色行撞号复现）',

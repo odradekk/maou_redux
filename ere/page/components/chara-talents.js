@@ -8,7 +8,7 @@
  *     起始计数 U = 6（首行只放得下 2 项）。
  *
  * 分组扫描用表驱动（SECTIONS）：直写 60 余段几乎同形的
- * `FOR LCOUNT, A, B / SIF TALENT:TARGET:(LCOUNT) / CALL SHOW_TALENT_GROUP`
+ * `FOR LCOUNT, A, B / SIF TALENT:TARGET:(LCOUNT) / show_talent_group`
  * 既无从复核也易漏项。边界与跳过集逐条核对。
  *
  * 有意偏离（各条注明依据）：
@@ -107,11 +107,10 @@ const SKIP_BATTLE_EXCLUSIVE = [244, 245, 246, 247, 248, 253, 254, 255, 256]; // 
 
 /**
  * 分类显示的分组表。每条 entry：`{ id, ex?, value?, guard? }`——
- *   - `ex`：读 EX_TALENT 并按模式 2 渲染（源 `SIF EX_TALENT:TARGET:(LCOUNT)` +
- *     `CALL SHOW_TALENT_GROUP(LCOUNT, 2)`）；
- *   - `value`：渲染模式取自该素质自身的第 2 位（源 :661
- *   - `value`：渲染模式取自该素质自身的第 2 位（源
- *     `TALENT:TARGET:(LCOUNT) & 2`）；
+ *   - `ex`：读 EX_TALENT 并按模式 2 渲染（`SIF EX_TALENT:TARGET:(LCOUNT)` 时走
+ *     `show_talent_group(LCOUNT, 2)`）；
+ *   - `value`：渲染模式取自该素质自身的第 2 位
+ *     （`TALENT:TARGET:(LCOUNT) & 2`）；
  *   - `guard(t)`：用别的条件当检查（缺省 = 自身非 0）。
  * `flush` 是段收尾方式：
  *   - `'items'`：本段出过至少一项才收行（源 `SIF U != 0 → PRINTFORML %TSTR%`），

@@ -501,7 +501,7 @@ export default [
     must_mention: 'key error',
   },
 
-  // —— 页面接线 ——
+  // —— 页面接入 ——
   {
     desc: 'M8559 个别信息页的育儿室按钮不再接入（回到占位）',
     file: 'ere/page/page-chara-info.js',
@@ -516,6 +516,6 @@ export default [
     find: '        await child_care_chara(current);',
     replace: "        await era.waitAnyKey('（育儿室流程未接线）');",
     tests: ['page-chara-info'],
-    must_mention: '育儿室接线',
+    must_mention: '育儿室接入',
   },
 ];

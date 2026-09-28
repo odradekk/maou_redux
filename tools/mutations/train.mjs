@@ -1,4 +1,4 @@
-// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
+﻿// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
@@ -426,7 +426,7 @@ export default [
     replace: `  if (false) {
     // 变异：合成臂删（64 合成时直接落 TRAIN_NAME）`,
     tests: ['page-usercom'],
-    must_mention: '64 合成臂',
+    must_mention: '64 合成分支',
   },
   {
     desc: 'M747 get_adv_com 的缺失语义改 0（RETURN ARG 变 RETURN 0——无规则的指令被升格去 0 号）',
@@ -533,7 +533,7 @@ export default [
   }`,
     replace: `  await show_commenu(); // 变异：恒自定义臂`,
     tests: ['page-usercom'],
-    must_mention: 'OFF 臂读 traincommandname',
+    must_mention: '内建渲染路径',
   },
   {
     desc: 'M763 SHOW_COMMENU 的 COM_ABLE 过滤删（不可用指令也渲染）',

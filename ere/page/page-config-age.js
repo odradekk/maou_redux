@@ -1,7 +1,7 @@
 /**
  * @file 设置页的年龄/三围子菜单与种族年龄编辑器（issue #547）。
  *
- * 两个函数是 chara-body.js 里仅存的配置界面段（其余都是生成算法）；编辑对象是同一张种族年龄表（FLAG:26/27 的数组承载，#105 决议四），读写经 game.chara.种族年龄设定_0/1 门面——page 是伪域，裸寻址写会被域检查拦下（tools/domain-check.mjs）。
+ * 两个配置界面段（年龄/三围开关、种族年龄编辑）自 chara-body 域拆到本文件（chara-body.js 只承载生成算法）；编辑对象是同一张种族年龄表（FLAG:26/27 的数组承载，#105 决议四），读写经 game.chara.种族年龄设定_0/1 门面——page 是伪域，裸寻址写会被域检查拦下（tools/domain-check.mjs）。
  *
  * 四类有意取舍（前两类沿 page-config.js 文件头的既有结论）：
  *
@@ -272,8 +272,8 @@ async function config_age_setting(rand = default_rand) {
 
 /**
  * race_config：8 个种族的年龄换算档位编辑器（FLAG:26/27 的
- * 读写界面）。结构是两层循环：顶层表格 + 编辑循环（GOTO SETTING_TOP /
- * INPUT_LOOP 用 labeled continue 镜像）。
+ * 读写界面）。结构是两层循环：顶层表格 + 编辑循环（回表顶 /
+ * 输入循环用 labeled continue 镜像）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[99] 重算用）
  * @returns {Promise<number>} 恒 0

@@ -156,7 +156,7 @@ function chara_ikai_cost(l_i) {
 async function char_ikai_append(arg, rand) {
   era.addCharacter(arg); // ADDCHARA ARG
   const saved_target = era_flag.target; // LOCAL = TARGET
-  // CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）：拼名调用对「没有
+  // add_chara_ex 扁平化直传：拼名调用对「没有
   // CHARA_EX_<N> 这个函数」的编号是**静默无操作**——异界人的 10000+
   // 编号不在 DECLARED_CHARA_IDS 里；ere 的注册表对声明空间外直接抛错
   //（拼写错误防线），故这里先查空间再调
@@ -165,7 +165,7 @@ async function char_ikai_append(arg, rand) {
   }
   era_flag.target = arg; // TARGET = CHARANUM - 1
   const a = arg; // A = CHARANUM - 1
-  await char_init(a, rand); // CALL CHAR_INIT（rand 显式传参）
+  await char_init(a, rand); // char_init（rand 显式传参）
   chara(a).invasion.状态 = 0; // CFLAG:A:1 = 0
   era_flag.target = saved_target; // TARGET = LOCAL
   return a; // RETURN A
@@ -324,7 +324,7 @@ async function chara_sim_shop(rand) {
 
     const chara_id = IKA_SIM_ID; // CHARA = 211
     era.addCharacter(chara_id); // ADDCHARA CHARA
-    await add_chara_ex(chara_id); // CALL ADDCHARA_EX, CHARANUM-1
+    await add_chara_ex(chara_id); // add_chara_ex 直传（CHARANUM-1 位置）
     const a = chara_id; // A = CHARANUM - 1（扁平化）
     if (sex_coin === 1) {
       era.set(`talent:${a}:${MALE_TALENT}`, 1);
@@ -332,7 +332,7 @@ async function chara_sim_shop(rand) {
     if (sex_coin === 3) {
       era.set(`talent:${a}:${FUTA_TALENT}`, 1);
     }
-    await char_make(a, 0, 0, rand); // CALL CHAR_MAKE; A = RESULT
+    await char_make(a, 0, 0, rand); // char_make；返回值入 A
     chara(a).invasion.状态 = 0;
     if ((era.get(`cflag:${a}:151`) || 0) < -100) {
       chara(a).chara.善恶值 = -100; // 善良値調整
@@ -364,7 +364,7 @@ async function chara_sim_shop(rand) {
       era.removeCharacter(a);
       era_flag.money -= SUMMON_FEE;
       era_exflag.legit_money -= SUMMON_FEE;
-      name_reset(); // CALL NAME_RESET
+      name_reset(); // 名字归「你」
       continue; // 回加人循环头
     }
     if (result === 0) {

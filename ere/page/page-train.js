@@ -207,15 +207,15 @@ async function draw_status_screen(target) {
   header.push({ content: '   ' }); // PRINT（行尾三空格）
   era.print(header);
 
-  // CALL SHOW_EQUIP_2 —— 调教装备显示（#390 真身：九个位一次铺完，
+  // show_equip_2 —— 调教装备显示（#390 真身：九个位一次铺完，
   // 原先逐族点亮的临时实现随之作废）
   show_equip_2(target);
-  // CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/chara-bars.js）
+  // life_bar / vital_bar（#212 真身，ere/page/components/chara-bars.js）
   life_bar(target);
   vital_bar(target);
 
   // 調教時ステータス画面に服装表示を捻じ込んでみた：PRINT 【 /
-  // CALL PRINT_CLOTHTYPE / PRINT 】三段拼一行、PRINTL（空）收行；
+  // 服装显示行：PRINT 【 / clothtype_text / PRINT 】三段拼一行、PRINTL（空）收行；
   // ere 合成一次 print（#215 真身：ere/page/page-clothtype.js；FLAG:37
   // 着衣模式的检查在 clothtype_text 内部，关闭时显示全裸——状态屏恒出
   // 【】行）
@@ -370,10 +370,10 @@ async function draw_status_screen(target) {
     );
   }
 
-  // CALL SHOW_EQUIP_1 —— 使用中道具一览（#390 真身）
+  // show_equip_1 —— 使用中道具一览（#390 真身）
   show_equip_1(target);
 
-  // CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；这张工单
+  // 设置清除点：TFLAG:999 = LINECOUNT（ScreenBlock 基准；这张工单
   // 移植——LINECOUNT 的等价物 getLineCount 直通）
   era.set('tflag:999', era.getLineCount());
 }

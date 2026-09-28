@@ -8,8 +8,10 @@
  *
  * == 出口形式（equip-print.js 的「两种出口」同款决定） ==
  *
- * 全部调用点都是**行内嵌**——page-train.js 状态画面的【…】包裹、
- * train-message.js 的「隔着…、」前缀、event-beforetrain.js 的句中。
+ * 全部调用点都是**行内嵌**——状态画面的【…】包裹（page-train.js）、
+ * 侍奉指令的「隔着…、」前缀（com-caress.js）、事件文本与外观信息行的
+ * 句中嵌入（event-beforetrain/autotrain/nextday/nextday-pillory、
+ * components/chara-appearance.js）。
  * 引擎的 era.print 每次调用即结束一行，共一行的输出必须由调用方合成
  * 一次调用——故本模块四个出口一律**返回串**（monster_name 的同款改法），
  * 无整行打印出口（独立整行调用点出现时再补，equip-print 先例）。

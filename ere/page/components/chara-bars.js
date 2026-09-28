@@ -19,8 +19,9 @@
  *
  * 指定角色走显式参数 cid（TARGET 换出换入习语不移植，
  * ere 一律显式传参）；「末尾免改行」不承载——progress 格一行一条，
- * 当前唯一调用点（page-train.js 的状态画面）用默认带改行（角色信息画面的
- * 后续调用点需要同行拼接时再定形状）。
+ * ere 一律显式传参）；「末尾免改行」第二参不承载——progress 格一行一条，
+ * 调用点是 page-train.js 状态画面与 chara-info-title.js 角色信息块
+ * （#596 起逐行，同行拼接的形状问题不再出现）。
  */
 
 const era = require('#/era-electron');

@@ -294,7 +294,7 @@ async function set_story_name(anchor) {
     era.print('消去了故事的名字');
     await era.waitAnyKey();
   }
-  // GOTO DRAW_PAGE（调用方循环尾清行重画）
+  // 回调用方循环尾清行重画
 }
 
 /**
@@ -473,7 +473,7 @@ async function save_game() {
         }
       }
       // $SAVE_GAME
-      // SAVEDATA_TEXT 清空 + CALL SAVEINFO + 拼时间戳前缀
+      // SAVEDATA_TEXT 清空 + build_save_info + 拼时间戳前缀
       const remark = `${get_times()} ${build_save_info()}`;
       // SAVEDATA L_IDX, LOCALS（备注落 global:saves，引擎自动 saveGlobal）
       await era.saveData(result, remark);

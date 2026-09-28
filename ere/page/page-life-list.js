@@ -173,7 +173,7 @@ function love_fragment(cid) {
  * life_list_item_e 另有 343 → [肛内妊娠]（见文件头第 4 条：乳内/精巣/
  * 口内三支恒不可达，已精简）。
  * @param {number} cid
- * @param {boolean} anal 是否带 @LIFE_LIST_ITEM_E 的 343 支
+ * @param {boolean} anal 是否带 life_list_item_e 的 343 支
  * @returns {{content: string, color: string}|null}
  */
 function pregnancy_fragment(cid, anal) {
@@ -458,7 +458,7 @@ function life_list_enemy(no_page = 0, num_page = 20) {
     no_page * num_page,
     (no_page + 1) * num_page,
   )) {
-    life_list_item_e(cid); // CALL LIFE_LIST_ITEM_E(COUNT)
+    life_list_item_e(cid); // 逐角色一支（COUNT 循环体）
   }
 }
 
@@ -496,7 +496,7 @@ function life_list_salave(no_page = 0, num_page = 20) {
     no_page * num_page,
     (no_page + 1) * num_page,
   )) {
-    life_list_item_e(cid); // CALL LIFE_LIST_ITEM_E(COUNT)
+    life_list_item_e(cid); // 逐角色一支（COUNT 循环体）
   }
 }
 

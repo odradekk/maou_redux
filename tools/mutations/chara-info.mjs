@@ -155,7 +155,7 @@ export default [
     find: `  if (state === 0) return { content: '[可调教]', color: '#6464ff' };`,
     replace: `  if (state === 1) return { content: '[可调教]', color: '#6464ff' };`,
     tests: ['page-chara-info'],
-    must_mention: 'SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射',
+    must_mention: 'show_chara_act：状态码到徽章文本/颜色的映射',
   },
   {
     desc: 'M7863 COMPARE_CHARA_ACT 同分末位判定反转（平局时按 ID 降序）',
@@ -192,8 +192,7 @@ export default [
     find: `  if (spouse === 900) return '野狗';`,
     replace: `  if (spouse === 901) return '野狗';`,
     tests: ['page-chara-info'],
-    must_mention:
-      'MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 + ELSE 内四条支线',
+    must_mention: 'marriage_bracket_text：spouse 分支串',
   },
   {
     desc: 'M7867 BUILD_ACT_SORT_ORDER 双出击对不再按敌方序（enemy_compare 退回通用比较）',
@@ -322,7 +321,7 @@ export default [
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result !== 2) return 0;`,
     tests: ['page-chara-info'],
-    must_mention: '个别信息页把 1 上浮给 CHARA_INFO（回合结束）',
+    must_mention: '结婚成功的 1 透传上浮',
   },
   {
     desc: 'M11141 compare_chara_act 按 C 式「&& 优先」读错（状态 2 不再吃楼层条件——左结合，#517）',
@@ -782,14 +781,14 @@ export default [
     tests: ['page-chara-info'],
     must_mention: '1 位等级补 3 格',
   },
-  // —— #546：装备详情与自定义一人称的接线（ere/page/page-chara-info.js）——
+  // —— #546：装备详情与自定义一人称的接入（ere/page/page-chara-info.js）——
   {
     desc: 'M11539 [16] 装备情报按钮接入删（调用改空——装备查看条件放行也不渲染按钮）',
     file: 'ere/page/page-chara-info.js',
     find: '      show_button_equip(16, current);',
     replace: '      // 变异：不调 show_button_equip',
     tests: ['page-chara-info'],
-    must_mention: 'CHECK_ABLE_TO_SHOW_EQUIP 放行才渲染',
+    must_mention: '装备查看条件放行才渲染',
   },
   {
     desc: 'M11540 case 16 的装备详情调用删（equip_st_show 不跑——状态行整段消失）',
@@ -806,7 +805,7 @@ export default [
     replace:
       '        equip_st_show(current); // 同步纯输出，无等待；等待按键在下一行',
     tests: ['page-chara-info'],
-    must_mention: '详情后 WAIT 至少一次',
+    must_mention: '详情后等键至少一次',
   },
   {
     desc: 'M11542 CASE 8 的 MODE 实参丢失（random_self_call 落回 MODE 0——没有输入提示，直接随机重掷）',

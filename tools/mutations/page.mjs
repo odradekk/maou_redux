@@ -1025,8 +1025,7 @@ export default [
     find: '  if (era.getAddedCharacters().length >= 1) {',
     replace: '  if (era.getAddedCharacters().length >= 2) {',
     tests: ['page-main-menu'],
-    must_mention:
-      '[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰色 [---]',
+    must_mention: '[101] 能力显示：角色数 >= 1 时是可点按钮',
   },
   {
     desc: 'M7900 [103] 处刑：A > 0 检查取反',
@@ -1228,7 +1227,7 @@ export default [
     find: "return { content: '<爱\\u00A0\\u00A0慕>', color: COLOR_LOVE };",
     replace: "return { content: '<爱慕>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8382 life_list 淫乱标签条件错位（76 → 78）',
@@ -1237,7 +1236,7 @@ export default [
     replace:
       "  if (talent(cid, 78) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8383 life_list 妊娠条件漏掉乳内妊娠（341）',
@@ -1245,7 +1244,7 @@ export default [
     find: '    talent(cid, 153) !== 0 ||\n    talent(cid, 341) !== 0 ||\n    talent(cid, 342) !== 0',
     replace: '    talent(cid, 153) !== 0 ||\n    talent(cid, 342) !== 0',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8384 LIFE_LIST_ITEM_E 肛内妊娠下标错位（343 → 344）',
@@ -1269,7 +1268,7 @@ export default [
     find: '    cflag(cid, 0) > 0 &&\n    cid !== 0 &&',
     replace: '    cflag(cid, 0) >= 0 &&\n    cid !== 0 &&',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8387 LIFE_LIST 可作为助手的助手役编号错（2 → 3）',
@@ -1277,7 +1276,7 @@ export default [
     find: '    cflag(cid, 0) === 2 &&\n    cid !== 0 &&',
     replace: '    cflag(cid, 0) === 3 &&\n    cid !== 0 &&',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8388 LIFE_LIST 虫寄生素质表多收一个（193 → 194）',
@@ -1285,7 +1284,7 @@ export default [
     find: '[190, 191, 192, 193].some((idx) => talent(cid, idx) !== 0)',
     replace: '[190, 191, 192, 194].some((idx) => talent(cid, idx) !== 0)',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8389 LIFE_LIST 派遣状态编号错（12 → 13）',
@@ -1293,7 +1292,7 @@ export default [
     find: '  if (cflag(cid, 1) === 12) {',
     replace: '  if (cflag(cid, 1) === 13) {',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8390 LIFE_LIST 名字字段宽多一格（+8 → +9）',
@@ -3495,7 +3494,7 @@ export default [
         continue; // 变异：守卫取反
       }`,
     tests: ['page-config-age'],
-    must_mention: ':911 CFLAG:451≠0 跳过',
+    must_mention: 'CFLAG:451≠0 跳过',
   },
   {
     desc: 'M11556 CONFIG_AGE_SETTING 退出块的魔王跳过检查挪位（cid === 0 → cid === 1，#547）',
@@ -3505,7 +3504,7 @@ export default [
         continue; // 变异：守卫挪位
       }`,
     tests: ['page-config-age'],
-    must_mention: ':909-910 LCOUNT==0 跳过',
+    must_mention: 'LCOUNT==0 跳过',
   },
   {
     desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
@@ -3544,7 +3543,7 @@ export default [
             (i) => cla[i] * 100 + deg[i] * 10 + num[i],
           );`,
     tests: ['page-config-age'],
-    must_mention: ':1050-1057 在确认 INPUT 之前',
+    must_mention: '表已打包（打包先于确认）',
   },
   {
     desc: 'M11560 RACE_CONFIG [110]-[112] 的 SET_VAR:4>0 检查删除（未选上限也切随机档，#547）',
@@ -4091,7 +4090,7 @@ export default [
     replace:
       "    era.print(''); // 变异：多补一条空行\n    era.print(`要让${chara_callname(arg)}穿上什么？`);",
     tests: ['page-tailor'],
-    must_mention: ':72 所持金 → :73 现状行 → :75 追问行',
+    must_mention: '现状行与追问行之间不夹空行',
   },
   {
     desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（首个换行只收 [10] 那一行）',
@@ -4109,7 +4108,7 @@ export default [
     replace:
       "    era.printButton('返回', LIST_RETURN);\n    era.println(); // 变异：多补一条空行\n    // 返回文本之后不补空行（输入停在这一行）",
     tests: ['chara-info-show'],
-    must_mention: ':127 的返回文本之后不补空行',
+    must_mention: '名单轮的 [999] 返回之后不补空行',
   },
   {
     desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（两个换行都是真行）',
@@ -4140,7 +4139,7 @@ export default [
     replace:
       '  if (is_not_master) era.println(); // 变异：多补一条空行\n  // 条自身成行，此处不补空行',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
     desc: 'M12088 角色状态块的体重行之后补回空行（该段的收行只结束所在行）',
@@ -4149,7 +4148,7 @@ export default [
     replace:
       '  era.println(); // 变异：多补一条空行\n  // 同上，条自身成行\n  // 气力条',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
     desc: 'M12089 角色状态块的臀围行之后补回空行（该段的收行只结束所在行）',
@@ -4157,7 +4156,7 @@ export default [
     find: '  // 同上，条自身成行\n}',
     replace: '  era.println(); // 变异：多补一条空行\n  // 同上，条自身成行\n}',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
     desc: 'M12090 个别信息页无操作按钮的子页把块尾真空行删掉（那一支落在空行上）',
@@ -4165,7 +4164,7 @@ export default [
     find: '    if (era.getLineCount() === button_anchor) {\n      era.println();\n    }',
     replace: '    // 变异：无按钮子页的真空行删掉',
     tests: ['page-chara-info'],
-    must_mention: '无按钮子页里 :907 的空行在补白之后',
+    must_mention: '无按钮子页里块尾的空行在补白之后',
   },
 
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
@@ -4352,7 +4351,7 @@ export default [
     find: "  era.print('确认吗？');",
     replace: "  era.print('确认吗？\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1037 的行紧随其后',
+    must_mention: '确认页两行正文不相连、真空行与按钮位置正确',
   },
   {
     desc: 'M12242 RACE_CONFIG 表头补回尾换行（表头与收尾是同一显示行）',
@@ -4361,7 +4360,7 @@ export default [
     replace:
       "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄\\n', // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':972-974 的 PRINTFORM + PRINTFORML 是一条显示行',
+    must_mention: '表头行不带尾换行，紧接八种族按钮行',
   },
   {
     desc: 'M12243 编辑头档位说明行补回尾换行（整段是同一显示行）',
@@ -4387,7 +4386,7 @@ export default [
     find: "          era.print('　　■ 下限');",
     replace: "          era.print('　　■ 下限\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1215 的 PRINTL 自成一行',
+    must_mention: 'PRINTL 自成一行',
   },
   {
     desc: 'M12246 随机档「■ 上限」标签补回尾换行（PRINTL 自成一行）',
@@ -4395,7 +4394,7 @@ export default [
     find: "          era.print('　　■ 上限');",
     replace: "          era.print('　　■ 上限\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1233 的 PRINTL 自成一行',
+    must_mention: 'PRINTL 自成一行',
   },
   {
     desc: 'M12247 兵器标题行补回两个尾换行（PRINTFORML 自成一行）',
@@ -4422,7 +4421,7 @@ export default [
     find: '    era.println(); // 第二个 \\n：横幅之间的真空行',
     replace: '    // 变异：横幅之间的真空行删掉',
     tests: ['chara-info-show'],
-    must_mention: ':65 的第二个 \\n',
+    must_mention: '第二个 \\n：两行横幅之间的真空行',
   },
   {
     desc: 'M12251 横幅第二行拆回三段（三段是同一显示行）',
@@ -4457,7 +4456,7 @@ export default [
     find: '    era.println(); // 第一个 \\n\n    era.println(); // 第二个 \\n',
     replace: '    era.println(); // 变异：两个空行只留一个',
     tests: ['chara-info-show'],
-    must_mention: ':76 的第二个 \\n',
+    must_mention: '完全召唤横幅两行、之间一个真空行、之后两个真空行',
   },
   // —— #615：ENEMY_EXIST2 的空行落在原作的分支上（:595 与 :629-630） ——
   {
