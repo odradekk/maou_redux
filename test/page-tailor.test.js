@@ -441,6 +441,14 @@ test('tailor_accessory：翻页取模的两侧（末页再下一页回首页 / �
   assert.ok(titles_back[1].includes('5页'), '首页按上一页到第 5 页');
 });
 
+test('tailor_accessory：页码两边都不补位（(1/5页) 格式）', async () => {
+  const fixture = tailor_fixture();
+  const draw = await run_core(fixture, [2, 997, 999, 999]);
+  const titles = texts(draw).filter((t) => t.includes('□装备品'));
+  assert.equal(titles[0], '□装备品 (1/5页)', '首页页码');
+  assert.equal(titles[1], '□装备品 (2/5页)', '下一页页码');
+});
+
 test('tailor_accessory：r = 98/99（尿道导管 / 贞操带）的额外演出', async () => {
   // 43 号（神秘的尿道导管，r = 98）在第 5 页
   const fixture = tailor_fixture();

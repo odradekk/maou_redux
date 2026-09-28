@@ -654,9 +654,8 @@ async function tailor_normal_special(cid) {
 async function tailor_accessory(cid) {
   let page = 0; // LOCAL:0
   for (;;) {
-    // `□装备品 ({(LOCAL:0)+1,2}/{(LOCAL:1/10)+1,2}页)`
-    era.print(`□装备品 (${page + 1}/ ${ACCESSORY_PAGE_MAX + 1}页)`);
-    era.print(`所持金：${era_flag.money}点`);
+    // 页码两边都不补位（本库分页显示的统一写法）
+    era.print(`□装备品 (${page + 1}/${ACCESSORY_PAGE_MAX + 1}页)`);
     era.drawLine();
     for (const item of ACCESSORY_ITEMS) {
       if (item.page !== page) continue;
