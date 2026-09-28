@@ -367,7 +367,7 @@ export default [
   // —— 接线点（#385 的五个等待方里两条有独立断言的面）——
   make(
     8084,
-    'EVENTFIRST 的村娘身体生成调用被拆掉',
+    'EVENTFIRST 的村娘身体生成接入被拆掉',
     '    char_body_generate_wapped(17); // A = 1（序号）→ 角色 ID 17',
     '    void 17; // A = 1（序号）→ 角色 ID 17',
     '村娘的身体数据必须经真身落盘',
@@ -379,7 +379,7 @@ export default [
   ),
   make(
     8085,
-    '月替的种族年龄换算调用被拆掉（CFLAG:451 恒 0）',
+    '月替的种族年龄换算接入被拆掉（CFLAG:451 恒 0）',
     '      chara(cid).chara.年龄 = human_age_generate(\n        chara(cid).chara.种族年龄,\n        cid,\n      );',
     '      chara(cid).chara.年龄 = 0;',
     '奴隶的年龄应写入换算结果',
