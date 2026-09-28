@@ -132,6 +132,43 @@ test('欲望（ABL:11）档位：欲情参数的增量逐档（C/B/情爱三路�
   }
 });
 
+test('source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）', async () => {
+  // COM0 写 SOURCE:17 = 300（ABL:1 = 2 档）→ 调教者技巧 0 档 ×0.5 = 150 →
+  // 胸围档乘算 SOURCE:17 → local0 = ×0.5（欲情 LV0）落进 palam:31:14。
+  // 乘算在 local0/local1 取值之前，快Ｂ与欲情两路同随胸围增减。
+  const CASES = [
+    [253, 187], // ×2.50：floor(floor(150×2.50)×0.5)
+    [252, 161], // ×2.15
+    [251, 135], // ×1.80
+    [116, 112], // ×1.50
+    [109, 90], // ×1.20
+    [110, 67], // ×0.90
+    [114, 60], // ×0.80
+    [119, 52], // ×0.70
+  ];
+  for (const [talent, expected] of CASES) {
+    const fixture = await run_caress((f) => {
+      f.store.set('abl:31:1', 2);
+      f.store.set(`talent:31:${talent}`, 1);
+    });
+    assert.equal(
+      fixture.store.get('palam:31:14'),
+      expected,
+      `胸围素质 ${talent} 档乘算乳房源`,
+    );
+  }
+  // 无胸围素质：SOURCE:17 不乘算
+  const plain = await run_caress((f) => f.store.set('abl:31:1', 2));
+  assert.equal(plain.store.get('palam:31:14'), 75, '无胸围素质档不乘算');
+  // 多档同在场时取表序第一档（253 先于 116）
+  const both = await run_caress((f) => {
+    f.store.set('abl:31:1', 2);
+    f.store.set('talent:31:253', 1);
+    f.store.set('talent:31:116', 1);
+  });
+  assert.equal(both.store.get('palam:31:14'), 187, '253 与 116 同在场取 253');
+});
+
 test('情爱双梯（顺从 × 侍奉精神）：恭顺参数的来源', async () => {
   // SOURCE:3 = 50；顺从 2 档 ×0.4 → 20；侍奉精神 3 档 ×1.10 → 22
   const fixture = await run_caress((f) => {

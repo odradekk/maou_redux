@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 507; // #702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4745,5 +4745,25 @@ export default [
       '        `${chara_callname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`, // 变异：称呼换成姓名',
     tests: ['page-invasion'],
     must_mention: '勇者用称呼而不是姓名',
+  },
+  {
+    desc: 'M14153 装备品页码改回旧的单补位写法（(1/ 5页)）',
+    file: 'ere/page/page-tailor.js',
+    find: '    era.print(`□装备品 (${page + 1}/${ACCESSORY_PAGE_MAX + 1}页)`);',
+    replace:
+      '    era.print(`□装备品 (${page + 1}/ ${ACCESSORY_PAGE_MAX + 1}页)`);',
+    tests: ['page-tailor'],
+    test_name: 'tailor_accessory：页码两边都不补位（(1/5页) 格式）',
+    must_mention: '首页页码',
+  },
+  {
+    desc: 'M14154 装备品页码改成两边右对齐补位（( 1/ 5页)）',
+    file: 'ere/page/page-tailor.js',
+    find: '    era.print(`□装备品 (${page + 1}/${ACCESSORY_PAGE_MAX + 1}页)`);',
+    replace:
+      '    era.print(`□装备品 (${String(page + 1).padStart(2)}/${String(ACCESSORY_PAGE_MAX + 1).padStart(2)}页)`);',
+    tests: ['page-tailor'],
+    test_name: 'tailor_accessory：页码两边都不补位（(1/5页) 格式）',
+    must_mention: '首页页码',
   },
 ];
