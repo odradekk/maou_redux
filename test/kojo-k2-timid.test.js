@@ -223,7 +223,7 @@ test('口塞（TEQUIP:45）：SELECTCOM != 45 跳过、== 45 不被此判定拦'
     era_flag.selectcom = 45;
   });
   await speak_k2(speaking, seq_rand(0, 0));
-  assert.ok(speaking.text_lines().length > 0, '口塞中的 45 指令不被头部守卫拦');
+  assert.ok(speaking.text_lines().length > 0, '口塞中的 45 指令不被头部检查拦');
 });
 
 test('失神（TFLAG:899）：静默跳过', async () => {
@@ -250,7 +250,7 @@ test('触手（TEQUIP:90）：静默跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('@EVENTTRAIN #PRI 置 FLAG:102、@EVENTEND #LATER 清 0', async () => {
+test('EVENTTRAIN #PRI 档置 FLAG:102、EVENTEND #LATER 档清 0', async () => {
   const fixture = await setup_k2((f) => f.store.set('flag:102', 0));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -259,7 +259,7 @@ test('@EVENTTRAIN #PRI 置 FLAG:102、@EVENTEND #LATER 清 0', async () => {
   assert.equal(fixture.store.get('flag:102'), 0);
 });
 
-test('@EVENTTRAIN 普通档：默认种族初调教台词 + 推进 CFLAG:201', async () => {
+test('EVENTTRAIN NORMAL 档：默认种族初调教台词 + 推进 CFLAG:201', async () => {
   const fixture = await setup_k2();
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -270,7 +270,7 @@ test('@EVENTTRAIN 普通档：默认种族初调教台词 + 推进 CFLAG:201', a
   assert.equal(fixture.store.get('cflag:31:201'), 1);
 });
 
-test('@EVENTEND 普通档：屈服低时「为什么要这样对我」', async () => {
+test('EVENTEND NORMAL 档：屈服低时「为什么要这样对我」', async () => {
   const fixture = await setup_k2((f) => {
     f.store.set('base:31:0', 1000);
     f.store.set('talent:31:85', 0);
@@ -380,12 +380,12 @@ test('惩罚口上：choice == 0 出声', async () => {
   assert.deepEqual(fixture.text_lines(), ['「谢谢……」']);
 });
 
-// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+// —— #625：同一行输出被拆成多条 era.print 的合并点 ——
 
-test('#625 交谈·自我介绍：本名与后续是同一行（:3915 首次 / :3988 二次，ABL:31 两档）', async () => {
-  // 原作 :3915（PRINTFORM）+ :3917（SIF ABL:31 >= 3 只护这一段）+ :3918
-  // （PRINTFORML 收行）**是一整行**，:3988+:3990+:3991 是二次以后的同型行；
-  // ere 侧曾各拆成三条 era.print（#625）。两处 × ABL:31 两档各断言整行
+test('#625 交谈·自我介绍：本名与后续是同一行（首次 / 二次，ABL:31 两档）', async () => {
+  // 首次段（PRINTFORM + SIF ABL:31 >= 3 只护这一段 + PRINTFORML 收行）
+  // 与二次以后的同型行各是一整行；
+  // 曾各拆成三条 era.print（#625）。两处 × ABL:31 两档各断言整行
   const cases = [
     [
       0,
@@ -421,10 +421,9 @@ test('#625 交谈·自我介绍：本名与后续是同一行（:3915 首次 / :
   }
 });
 
-test('#625 交谈·按捺住声音：工具档三档与前后文同一行（:3951 首次 / :4024 二次）', async () => {
-  // 原作 :3951+:3953+:3955+:3957+:3959 与 :4024+:4026+:4028+:4030+:4032
-  // 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORML 收行），ere 侧曾拆成
-  // 五条 era.print（#625）。两处 × 三档工具各断言整行
+test('#625 交谈·按捺住声音：工具档三档与前后文同一行（首次 / 二次）', async () => {
+  // 首次与二次各是一整行（无后缀 PRINT 不换行，末行 PRINTFORML 收行），
+  // 曾拆成五条 era.print（#625）。两处 × 三档工具各断言整行
   const tiers = [
     { tequip: 11, word: '快乐的' }, // TEQUIP:11/13/14/15/16/17 档
     { tequip: 44, word: '痛苦的' }, // TEQUIP:44/49 档
@@ -456,9 +455,8 @@ test('#625 交谈·按捺住声音：工具档三档与前后文同一行（:395
 });
 
 test('#625 COLOSSEUM_KOJO_2：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
-  // 原作 :6674+:6676+:6678+:6679、:6707+:6709+:6711+:6712、:6731+:6733+
-  // 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
-  // ere 侧曾把每行拆成四条 era.print（#625）
+  // 三处武器名行各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
+  // 曾把每行拆成四条 era.print（#625）
   const cases = [
     {
       selectcom: 31,
@@ -481,7 +479,7 @@ test('#625 COLOSSEUM_KOJO_2：SC31/21/27 武器名与前后文同一行（三种
   ];
   const tiers = [
     { weapon: '阴茎', seed: (f) => f.store.set('talent:17:121', 1) },
-    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // 原作 ITEM:PBAND
+    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // ITEM:PBAND
     { weapon: '', seed: undefined },
   ];
   for (const { selectcom, quote, head, tail } of cases) {
@@ -513,8 +511,7 @@ test('#625 COLOSSEUM_KOJO_2：SC31/21/27 武器名与前后文同一行（三种
 });
 
 test('#625 GOHOUBI_REQUEST：兽名与前后文是同一行（CFLAG:504 三档）', async () => {
-  // 原作 :6984（PRINTFORM）+ :6986/:6988/:6990（IF/ELSEIF 三档）+ :6992
-  // （PRINTFORMW 收行）**是一整行**（#625）
+  // PRINTFORM + IF/ELSEIF 三档 + PRINTFORMW 收行是一整行（#625）
   const cases = [
     [1, '狗'],
     [2, '猪'],

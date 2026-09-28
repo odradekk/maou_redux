@@ -69,7 +69,7 @@ async function self_k19(fixture) {
   return self_kojo_family.call(KEY, { args: [] });
 }
 
-test('@EVENTTRAIN #PRI 置存在标志并补总开关，@EVENTEND #LATER 清标志', async () => {
+test('EVENTTRAIN #PRI 档置存在标志并补总开关，EVENTEND #LATER 档清标志', async () => {
   const fixture = await setup_k19((f) => {
     f.store.delete('flag:119');
     f.store.set('flag:7', 0);
@@ -146,22 +146,22 @@ for (const guard of [
   ['触手', (f) => f.store.set(`tequip:${CID}:90`, 1)],
   ['崩坏', (f) => f.store.set(`talent:${CID}:9`, 1)],
 ]) {
-  test(`KOJO_MESSAGE_COM 头部守卫：${guard[0]}静默跳过`, async () => {
+  test(`KOJO_MESSAGE_COM 头部检查：${guard[0]}静默跳过`, async () => {
     const fixture = await setup_k19((f, flag) => {
       f.store.set(`cflag:${CID}:301`, 0);
       guard[1](f, flag);
     });
     await speak_k19(fixture);
-    assert.deepEqual(fixture.text_lines(), [], `${guard[0]}守卫无输出`);
+    assert.deepEqual(fixture.text_lines(), [], `${guard[0]}检查无输出`);
     assert.equal(
       fixture.store.get(`cflag:${CID}:301`),
       0,
-      `${guard[0]}守卫不推进爱抚计数`,
+      `${guard[0]}检查不推进爱抚计数`,
     );
   });
 }
 
-test('KOJO_MESSAGE_COM 头部守卫：死斗场转入专用口上', async () => {
+test('KOJO_MESSAGE_COM 头部检查：死斗场转入专用口上', async () => {
   const fixture = await setup_k19(
     (f) => f.store.set(`tequip:${CID}:55`, 1),
     55,
@@ -169,7 +169,7 @@ test('KOJO_MESSAGE_COM 头部守卫：死斗场转入专用口上', async () => 
   await speak_k19(fixture);
   assert.ok(
     fixture.text_lines().some((line) => line.includes('死斗场')),
-    '死斗场守卫转入专用口上',
+    '死斗场检查转入专用口上',
   );
 });
 
@@ -436,7 +436,7 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
     ['淫乱', (f) => f.store.set(`talent:${CID}:76`, 1), 5],
     ['爱慕', (f) => f.store.set(`talent:${CID}:85`, 1), 4],
     ['ABL:17>=3', (f) => f.store.set(`abl:${CID}:17`, 3), 3],
-    ['无素质兜底', () => {}, 2],
+    ['无素质保底', () => {}, 2],
   ];
   for (const [name, seed, expected] of cases) {
     const fixture = await setup_k19((f) => {
@@ -457,7 +457,7 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
   }
 
   const guard_fixture = await setup_k19((f) => {
-    f.store.set('flag:7', 1); // 关掉总开关旁路，让判据真正生效
+    f.store.set('flag:7', 1); // 关掉总开关旁路，让条件真正生效
     f.store.set(`cflag:${CID}:308`, 1);
     f.store.set(`cflag:${CID}:306`, 6); // 干扰项：胸爱抚计数偏高
   }, 7);
@@ -465,7 +465,7 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
   assert.equal(
     guard_fixture.store.get(`cflag:${CID}:308`),
     2,
-    '兜底判据读 308 自身：306=6 不影响命中',
+    '保底条件读 308 自身：306=6 不影响命中',
   );
 });
 
@@ -517,12 +517,12 @@ test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async
   );
 });
 
-// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+// —— #625：同一行输出被拆成多条 era.print 的合并点 ——
 
-test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 两处 × ABL:31 两档）', async () => {
-  // 原作 :4340（PRINTFORM）+ :4342（SIF ABL:31 >= 3 只护这一段）+ :4343
-  // （PRINTFORMW 收行）**是一整行**，:4410+:4412+:4413 是二次以后的同型行；
-  // ere 侧曾各拆成三条 era.print（#625）
+test('#625 交谈·自我介绍：名字与后续是同一行（两处 × ABL:31 两档）', async () => {
+  // 首次段（PRINTFORM + SIF ABL:31 >= 3 只护这一段 + PRINTFORMW 收行）
+  // 与二次以后的同型行各是一整行；
+  // 曾各拆成三条 era.print（#625）
   const cases = [
     [0, 0],
     [0, 3],
@@ -552,10 +552,10 @@ test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 �
   }
 });
 
-test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 / :4446 两处 × 两档）', async () => {
-  // 原作 :4375+:4377+:4379+:4381（无 ELSE，两档都不满足时中间为空）与
-  // 各是一整行，末行 PRINTFORML 收行；ere 侧曾各拆成
-  // 四条 era.print（#625）。:4446 那一处还在 :4440 的 PLAYER 前缀行之后，
+test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（两处 × 两档）', async () => {
+  // 两处工具档段（无 ELSE，两档都不满足时中间为空）
+  // 各是一整行，末行 PRINTFORML 收行；曾各拆成
+  // 四条 era.print（#625）。PLAYER 前缀行之后的那一处，
   // 行首要带前缀
   const cases = [
     { talked: 0, tequip: 11, prefix: '' },
@@ -586,9 +586,9 @@ test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 /
   }
 });
 
-test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4442/:4444/:4455/:4458/:4461/:4464）', async () => {
-  // 原作 :4440 的 `PRINTFORM %SAVESTR:PLAYER%` 不换行，随后的 IF/ELSEIF 各支
-  // 用自己的 PRINTFORML 收行——整条链每一支都是「前缀 + 尾段」的一行。ere 侧
+test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行', async () => {
+  // PLAYER 前缀 `PRINTFORM %SAVESTR:PLAYER%` 不换行，随后的 IF/ELSEIF 各支
+  // 用自己的 PRINTFORML 收行——整条链每一支都是「前缀 + 尾段」的一行。
   // 曾把前缀单独打成一行（#625）。各支各断言整行
   const cases = [
     {
@@ -644,10 +644,10 @@ test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4
 });
 
 test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
-  // 原作 :6160+:6162+:6164+:6165、:6193+:6195+:6197+:6198、:6217+:6219+
+  // 三处武器名行（SC31/21/27）
   // 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
-  // ere 侧曾把每行拆成四条 era.print（#625）。助手臂在 KOJO_MESSAGE_COM 的
-  // ASSI 守卫之后、运行时不带助手才可达，直接调真身覆盖（同 K2/K4/K903）
+  // 曾把每行拆成四条 era.print（#625）。助手分支在 KOJO_MESSAGE_COM 的
+  // ASSI 检查之后、运行时不带助手才可达，直接调真身覆盖（同 K2/K4/K903）
   const cases = [
     {
       selectcom: 31,
@@ -702,9 +702,8 @@ test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三�
 });
 
 test('#625 GOHOUBI_REQUEST：空首尾夹着的兽名单独成行（CFLAG:504 三档）', async () => {
-  // 原作 :6525（PRINTFORM 空串）+ :6527/:6529/:6531（IF/ELSEIF 三档兽名）
-  // + :6533（PRINTFORMW 空串）**是一整行**，内容只有兽名；ere 侧曾拆成
-  // 三条 era.print（前后两条还是空行）（#625）
+  // 兽名段（PRINTFORM 空串 + IF/ELSEIF 三档 + PRINTFORMW 空串）是一整行，
+  // 内容只有兽名；曾拆成三条 era.print（前后两条还是空行）（#625）
   const cases = [
     [1, '犬'],
     [2, '豚'],

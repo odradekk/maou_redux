@@ -128,7 +128,7 @@ test('CFLAG:201：初调教、屈服 1-3、淫乱、爱慕六档都按源推进�
   );
 });
 
-test('COM 仅保留源中活动的五道守卫：口塞、失神、DOG、触手、死斗场', async () => {
+test('COM 仅五道检查活动：口塞、失神、DOG、触手、死斗场', async () => {
   const muted = await setup_k903((f) => f.store.set(`tequip:${CID}:45`, 1));
   await speak(muted);
   assert.deepEqual(muted.text_lines(), [], '口塞且非口塞指令时静默');
@@ -142,7 +142,7 @@ test('COM 仅保留源中活动的五道守卫：口塞、失神、DOG、触手�
   assert.equal(
     dog.store.get(`cflag:${CID}:301`),
     1,
-    'DOG 守卫转发到 DOG_KOJO 并推进',
+    'DOG 检查转发到 DOG_KOJO 并推进',
   );
   assert.ok(
     dog.text_lines().some((line) => line.includes('下等生物')),
@@ -160,7 +160,7 @@ test('COM 仅保留源中活动的五道守卫：口塞、失神、DOG、触手�
   await speak(colosseum);
   assert.ok(
     colosseum.text_lines().length > 0,
-    '死斗场守卫转发到 COLOSSEUM_KOJO',
+    '死斗场检查转发到 COLOSSEUM_KOJO',
   );
 });
 
@@ -309,7 +309,7 @@ test('SELECTCOM 5 胸部爱抚二次各档推进 CFLAG:306 自身，不碰自己
   }
 });
 
-test('PALAMCNG：221-229 的九个首超判据各自只置一次', async () => {
+test('PALAMCNG：221-229 的九个首超条件各自只置一次', async () => {
   const cases = [
     [221, `palam:${CID}:3`, 600],
     [222, `palam:${CID}:5`, 600],
@@ -392,7 +392,7 @@ test('SELF_KOJO 通过 peek_aftertrain_q 读取 Q：野狗妄想分支可达', a
   );
 });
 
-test('SELECTCOM 2/7/13 计数器自洽：303 兜底读自身、308 二次写自身、314 按 A 感觉分档', async () => {
+test('SELECTCOM 2/7/13 计数器自洽：303 保底读自身、308 二次写自身、314 按 A 感觉分档', async () => {
   const anal = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:303`, 1);
     f.store.set(`cflag:${CID}:223`, 2);
@@ -401,15 +401,15 @@ test('SELECTCOM 2/7/13 计数器自洽：303 兜底读自身、308 二次写自�
   await speak(anal);
   assert.ok(
     anal.text_lines().some((line) => line.includes('从后面玩弄本宫什么的')),
-    'CFLAG:303=1 时兜底支出声（223 不参与判据）',
+    'CFLAG:303=1 时保底支出声（223 不参与条件）',
   );
-  assert.equal(anal.store.get(`cflag:${CID}:303`), 2, '兜底支推进 CFLAG:303=2');
+  assert.equal(anal.store.get(`cflag:${CID}:303`), 2, '保底支推进 CFLAG:303=2');
 
   const spread_cases = [
     ['淫乱', (f) => f.store.set(`talent:${CID}:76`, 1), 5],
     ['爱慕', (f) => f.store.set(`talent:${CID}:85`, 1), 4],
     ['ABL:17>=3', (f) => f.store.set(`abl:${CID}:17`, 3), 3],
-    ['无素质兜底', () => {}, 2],
+    ['无素质保底', () => {}, 2],
   ];
   for (const [name, seed, expected] of spread_cases) {
     const fixture = await setup_k903((f) => {
@@ -483,7 +483,7 @@ test('SELECTCOM 30/32/40/41 门槛与计数器自洽：侍奉支不需爱慕、�
   await speak(spanking);
   assert.ok(
     spanking.text_lines().some((line) => line.includes('加倍奉还')),
-    'CFLAG:341 兜底支按 OR 门槛出声',
+    'CFLAG:341 保底支按 OR 门槛出声',
   );
   assert.equal(spanking.store.get(`cflag:${CID}:341`), 2, '推进 CFLAG:341=2');
 
@@ -495,7 +495,7 @@ test('SELECTCOM 30/32/40/41 门槛与计数器自洽：侍奉支不需爱慕、�
   await speak(whip);
   assert.ok(
     whip.text_lines().some((line) => line.includes('没……没用的')),
-    'CFLAG:342 兜底支读 342 自身（335 不参与）',
+    'CFLAG:342 保底支读 342 自身（335 不参与）',
   );
   assert.equal(whip.store.get(`cflag:${CID}:342`), 2, '推进 CFLAG:342=2');
 });
@@ -566,8 +566,8 @@ test('KOJO2 开场素质链：自慰狂支不重复挡路，露出狂两支读 T
 });
 
 test('#625 GOHOUBI_REQUEST 保留 Y=0、兽名与前后文同一行（要求奖赏 1/2/3）', async () => {
-  // 原作 :5699（PRINTFORM）+ :5701/:5703/:5705（IF/ELSEIF 三档）+ :5707
-  // （PRINTFORMW 收行）**是一整行**（#625）。后两档读的是从未赋值的 public
+  // 兽名三档段（PRINTFORM + IF/ELSEIF 三档 + PRINTFORMW 收行）是一整行（#625）。
+  // 后两档读的是从未赋值的 public
   // static Y（清洁调用时 = 0），所以要求奖赏 2/3 不补「公猪」「雄马」——
   // 整行只有前段与收行，源缺陷 1:1 保留
   const cases = [
@@ -647,16 +647,15 @@ test('SELECTCOM 56 淫乱二次档读 TALENT:76（摄影与非摄影两支），
   );
 });
 
-// —— COLOSSEUM_KOJO_903：ITEM:PBAND → item:4（#552；源 :5394/:5427/:5451） ——
-// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
+// —— COLOSSEUM_KOJO_903：ITEM:PBAND → item:4（#552） ——
+// PBAND 是内建非角色变量（引擎启动时赋 4；VariableSize.csv:61
 // 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下面三档必须红。助手用嘉德自己（同本文件
 // 死斗场先例）：TALENT:121/122 均未置位，121/122 门不成立，判定只看假阳具位。
 test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三种 selectcom × 三档）', async () => {
-  // 原作 :5390+:5392+:5394+:5395、:5423+:5425+:5427+:5428、:5447+:5449+
-  // 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
-  // 收行），ere 侧曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
+  // 三处武器名行各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
+  // 收行），曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
   const cases = [
     {
       selectcom: 31,
@@ -679,7 +678,7 @@ test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三�
   ];
   const tiers = [
     { weapon: '阴茎', seed: (f) => f.store.set(`talent:${CID}:121`, 1) },
-    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // 原作 ITEM:PBAND
+    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // ITEM:PBAND
     { weapon: '', seed: undefined },
   ];
   for (const { selectcom, quote, head, tail } of cases) {

@@ -4,11 +4,11 @@
  * 缝 = test/helpers/era-fixture.js。世界底座：冷徹（id 31，随机生成的
  * 冷徹性格角色——实机复现不了，测试播种素质 164 → GET_KOJO_NUM = 104）。
  * 覆盖（验收清单逐项）：
- *   - @EVENTTRAIN 初調教（CFLAG:201 状态机：初回 → 屈服Lv1/2/3 → 淫乱 →
- *     爱慕 → 助手无 → K4_KOJO2 二回目以降）与 @EVENTEND 的调教终了分档；
- *   - @KOJO_MESSAGE_COM_4 的头部守卫（K4 只有五道活动守卫：TEQUIP:45 /
+ *   - EVENTTRAIN NORMAL 档初調教（CFLAG:201 状态机：初回 → 屈服Lv1/2/3 → 淫乱 →
+ *     爱慕 → 助手无 → k4_kojo2 二回目以降）与 EVENTEND 的调教终了分档；
+ *   - kojo_message_com_4 的头部检查（K4 只有五道活动检查：TEQUIP:45 /
  *     TFLAG:899 / TEQUIP:89→DOG_KOJO_4 / TEQUIP:90 / TEQUIP:55→COLOSSEUM；
- *     ASSI 与 TALENT:9 两道守卫在 K4 模板从未成文，不补写——测五道）；
+ *     ASSI 与 TALENT:9 两道检查在 K4 模板从未成文，不补写——测五道）；
  *   - SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22/23/
  *     26/27/28/29/30/31/32/33/34/35/36/37/40/41/42/43/44/45/46/55/56/80
  *     各分支的初回判定与 CFLAG:301–400 计数器推进；
@@ -26,7 +26,7 @@
  *   - 阈值闸 FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声；
  *   - 成熟出售调用（SELL_MATURO_K0，#338 接通）。
  *
- * K4 与 K3 的区别（模板如此，非缺移植）：COM 头部只有五道守卫；爱抚
+ * K4 与 K3 的区别（模板如此，非缺移植）：COM 头部只有五道检查；爱抚
  * 二回目以降的「それ以外」档在 FLAG:7 == 2 时**每次**出声（无随机尾，
  * 每次 CFLAG:301 = 2 并 RETURN）；淫乱/爱慕档 CFLAG:301 落到 6/5 后同支
  * 不再重入（除非 FLAG:7 == 2 旁路）。
@@ -76,9 +76,9 @@ async function speak_k4(fixture, rand) {
   return kojo_message_com_family.call(4, { args: [rand] });
 }
 
-// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K4 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K4 一对）', async () => {
   const fixture = await setup_k4((f) => f.store.delete('flag:104'));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -118,7 +118,7 @@ test('初調教眼鏡附注（CFLAG:42 == 83）与 NTR 再捕获（CFLAG:650 == 
   assert.equal(glasses.text_lines().length, 3);
   assert.equal(glasses.text_lines()[2], '这么说着、冷徹推了推眼镜…');
 
-  // NTR 再捕获：CFLAG:201 >= 1 && CFLAG:650 == 1（爱慕/淫乱臂）
+  // NTR 再捕获：CFLAG:201 >= 1 && CFLAG:650 == 1（爱慕/淫乱分支）
   const ntr = await setup_k4((f) => {
     f.store.set('cflag:31:201', 2);
     f.store.set('cflag:31:650', 1);
@@ -203,8 +203,8 @@ test('初調教屈服刻印分档（各 Lv 一次）：CFLAG:201 2 → 3 → 4 �
 
 test('K4_KOJO2 二回目以降（ASSI < 0 → :168-169）：反抗刻印Lv3 支', async () => {
   // CFLAG:201 已到顶（6）且 ASSI < 0 → K4_KOJO2；反抗刻印Lv3 + FLAG:7 == 2。
-  // （:243 的 SIF CFLAG:42 == 83 只护住 :244 那一段）是一整行
-  // （#625），眼镜档两臂各断言整行
+  // （SIF CFLAG:42 == 83 只护住前一段）是一整行
+  // （#625），眼镜档两分支各断言整行
   const cases = [
     [0, '冷徹的目光异常冰冷…'],
     [83, '冷徹眼镜下的目光异常冰冷…'],
@@ -227,7 +227,7 @@ test('K4_KOJO2 二回目以降（ASSI < 0 → :168-169）：反抗刻印Lv3 支'
   }
 });
 
-test('@EVENTEND 调教终了分档（MARK:3 / TALENT:76/85 / BASE:0）', async () => {
+test('EVENTEND 调教终了分档（MARK:3 / TALENT:76/85 / BASE:0）', async () => {
   // 反抗刻印Lv3 + 无爱慕（BASE:0 > 0 才出声）
   const def = await setup_k4((f) => {
     f.store.set('mark:31:3', 3);
@@ -237,11 +237,11 @@ test('@EVENTEND 调教终了分档（MARK:3 / TALENT:76/85 / BASE:0）', async (
   await emit1('EVENTEND');
   assert.deepEqual(def.text_lines(), ['「可恶！」']);
 
-  // 淫乱 + 体力 >= 500（MARK:2 == 3 且 TALENT:85 == 1 绕过刻印臂）
+  // 淫乱 + 体力 >= 500（MARK:2 == 3 且 TALENT:85 == 1 绕过刻印分支）
   const whore = await setup_k4((f) => {
     f.store.set('talent:31:76', 1);
-    f.store.set('talent:31:85', 1); // 绕过 :477-492 刻印臂
-    f.store.set('mark:31:2', 3); // 避开 :477/:482/:487
+    f.store.set('talent:31:85', 1); // 绕过刻印分支
+    f.store.set('mark:31:2', 3); // 避开刻印分档
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 100); // 気力 > 0
   });
@@ -249,10 +249,10 @@ test('@EVENTEND 调教终了分档（MARK:3 / TALENT:76/85 / BASE:0）', async (
   await emit2('EVENTEND');
   assert.deepEqual(whore.text_lines(), ['「请……请再用肉棒蹂躏我………可以吗？」']);
 
-  // 爱慕 + 体力 < 500（MARK:2 == 3 绕过刻印臂）
+  // 爱慕 + 体力 < 500（MARK:2 == 3 绕过刻印分支）
   const love = await setup_k4((f) => {
     f.store.set('talent:31:85', 1);
-    f.store.set('mark:31:2', 3); // 避开 :477-492 刻印臂
+    f.store.set('mark:31:2', 3); // 避开刻印分支
     f.store.set('base:31:0', 300);
     f.store.set('base:31:1', 100); // 気力 > 0
   });
@@ -263,7 +263,7 @@ test('@EVENTEND 调教终了分档（MARK:3 / TALENT:76/85 / BASE:0）', async (
   ]);
 });
 
-// —— @KOJO_MESSAGE_COM_4：头部守卫（K4 五道活动守卫） ——
+// —— kojo_message_com_4：头部检查（K4 五道活动检查） ——
 
 test('口塞（TEQUIP:45 且非指令45）：静默跳过', async () => {
   const fixture = await setup_k4((f) => f.store.set('tequip:31:45', 1));
@@ -308,14 +308,14 @@ test('死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_4', async 
   ]);
 });
 
-test('K4 无 ASSI 守卫：助手调教也出声', async () => {
+test('K4 无 ASSI 检查：助手调教也出声', async () => {
   const fixture = await setup_k4((f, era_flag) => {
     era_flag.assi = 31;
     era_flag.assiplay = 1;
   });
   await speak_k4(fixture, seq_rand(0));
-  // 与 K3 不同（K3 有 ASSI 守卫会静默）；K4 的 ASSI 守卫从未成文
-  assert.ok(fixture.text_lines().length > 0, 'K4 无 ASSI 守卫，助手调教也出声');
+  // 与 K3 不同（K3 有 ASSI 检查会静默）；K4 的 ASSI 检查从未成文
+  assert.ok(fixture.text_lines().length > 0, 'K4 无 ASSI 检查，助手调教也出声');
 });
 
 // —— SELECTCOM 0：爱抚 CFLAG:301 状态机 ——
@@ -336,7 +336,7 @@ test('爱撫初回的刻印分档（MARK:2 >= 2）：配合台词', async () => 
   assert.equal(fixture.store.get('cflag:31:301'), 1);
 });
 
-test('爱撫二回目以降的素质/刻印分档推进（:570-590）', async () => {
+test('爱撫二回目以降的素质/刻印分档推进', async () => {
   // 淫乱 TALENT:76 → CFLAG:301 = 6
   const whore = await setup_k4((f) => {
     f.store.set('talent:31:76', 1);
@@ -536,7 +536,7 @@ test('处女丧失（TFLAG:3 && CFLAG:229 == 0 && TFLAG:20）：素质分档 + C
 
 test('处女丧失 A >= 500（UP:11 + UP:12 够高）时走「それ以外」档', async () => {
   // 源 :4089/:4092 的 (A < 500 || TFLAG:150 == 1) 门槛：A == 600 不满足、
-  // TFLAG:150 未置 → 落 else（:4095）。UP:12 参与 A 是关键（M1764）：
+  // TFLAG:150 未置 → 落 else。UP:12 参与 A 是关键（M1764）：
   // 变异只留 UP:11 = 400 → A = 400 < 500 → 误入爱慕档。
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
@@ -678,7 +678,7 @@ test('GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一（返回文字，#570�
   assert.equal(await mod3.gobi_koujo_k4(0, seq_rand(0)), '呢。');
 });
 
-// —— 非调教口上：GOHOUBI_REQUEST / OSIOKI 入口守卫 ——
+// —— 非调教口上：GOHOUBI_REQUEST / OSIOKI 入口检查 ——
 
 test('GOHOUBI_REQUEST（发情请求）：TFLAG:18 == 1 支出力', async () => {
   const fixture = await setup_k4((f) => f.store.set('tflag:18', 1));
@@ -691,7 +691,7 @@ test('GOHOUBI_REQUEST（发情请求）：TFLAG:18 == 1 支出力', async () => 
 });
 
 test('#625 GOHOUBI_REQUEST：兽名与前后文同一行（CFLAG:504 1/2/3，仅 1 狗档有兽名）', async () => {
-  // 一整行结构（#625）：兽名仅 504==1（狗）有词，504==2/3 的兽名臂本就
+  // 一整行结构（#625）：兽名仅 504==1（狗）有词，504==2/3 的兽名分支本就
   // 不可达已删除，落空串——整行只有前段与收行
   const cases = [
     [1, '狗'],
@@ -710,14 +710,13 @@ test('#625 GOHOUBI_REQUEST：兽名与前后文同一行（CFLAG:504 1/2/3，仅
   }
 });
 
-// —— COLOSSEUM_KOJO_4：ITEM:PBAND → item:4（#552；源 :4956/:4989/:5013） ——
-// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// —— COLOSSEUM_KOJO_4：ITEM:PBAND → item:4（#552） ——
+// PBAND 是内建非角色变量（引擎启动时赋 4，4 号 = 假阳具）；
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 test('#625 COLOSSEUM_KOJO_4：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
-  // 原作 :4952+:4954+:4956+:4957、:4985+:4987+:4989+:4990、:5009+:5011+
-  // 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
-  // 收行），ere 侧曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
+  // 三处武器名行各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
+  // 收行），曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
   const cases = [
     {
       selectcom: 31,
@@ -740,7 +739,7 @@ test('#625 COLOSSEUM_KOJO_4：SC31/21/27 武器名与前后文同一行（三种
   ];
   const tiers = [
     { weapon: '阴茎', seed: (f) => f.store.set('talent:17:121', 1) },
-    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // 原作 ITEM:PBAND
+    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // ITEM:PBAND
     { weapon: '', seed: undefined },
   ];
   for (const { selectcom, quote, head, tail } of cases) {

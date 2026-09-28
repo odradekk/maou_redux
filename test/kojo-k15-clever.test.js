@@ -4,8 +4,8 @@
  * 缝 = test/helpers/era-fixture.js。世界底座：伶俐（素质 175 →
  * GET_KOJO_NUM = 115 → 分发 key 15）。本文件按切片增长。
  *
- * K15 与模板七条的差别（按源文 1:1，非缺移植）：@KOJO_MESSAGE_COM_15
- * 头部只有四道活动守卫——ASSI/ASSIPLAY 整行注释、无 TALENT:9、无
+ * K15 与模板七条的差别（实测如此，非缺失）：kojo_message_com_15
+ * 头部只有四道活动检查——ASSI/ASSIPLAY 整行注释、无 TALENT:9、无
  * TEQUIP:90；TEQUIP:89 → DOG_KOJO_15 真身、TEQUIP:55 → COLOSSEUM_KOJO_15
  * 真身。
  */
@@ -65,9 +65,9 @@ async function speak_k15(fixture, rand) {
   return kojo_message_com_family.call(KEY, { args: [rand] });
 }
 
-// —— @EVENTTRAIN / @EVENTEND：存在标志一对 ——
+// —— EVENTTRAIN / EVENTEND：存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K15 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K15 一对）', async () => {
   const fixture = await setup_k15((f) => {
     f.store.delete('flag:115');
     f.store.set(`talent:${CID}:175`, 0); // 越过 EVENTTRAIN 普通档
@@ -79,7 +79,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K15 一对）'
   assert.equal(fixture.store.get('flag:115'), 0, 'EVENTEND #LATER 清 FLAG:115');
 });
 
-test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
+test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k15((f) => {
     f.store.set('flag:7', 0);
     f.store.set(`talent:${CID}:175`, 0);
@@ -88,14 +88,14 @@ test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () =
   assert.equal(fixture.store.get('flag:7'), 2, 'FLAG:7 从 0 补到 2');
 });
 
-test('EVENTTRAIN 自身守卫①口上开关<0（玩家显式关掉）静默跳过', async () => {
+test('EVENTTRAIN 自身检查①口上开关<0（玩家显式关掉）静默跳过', async () => {
   const fixture = await setup_k15((f) => f.store.set('flag:7', -1));
   await emit_train(fixture);
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get(`cflag:${CID}:201`), undefined);
 });
 
-test('EVENTTRAIN 自身守卫②TALENT:175!=1 静默跳过', async () => {
+test('EVENTTRAIN 自身检查②TALENT:175!=1 静默跳过', async () => {
   const fixture = await setup_k15((f) => f.store.set(`talent:${CID}:175`, 0));
   await emit_train(fixture);
   assert.deepEqual(fixture.text_lines(), []);
@@ -159,7 +159,7 @@ test('初调教：TALENT:10 胆怯 → 紧握拳头保持镇定', async () => {
   );
 });
 
-test('NTR 再捕获（CFLAG:650==1）：爱慕/淫乱臂解除开关', async () => {
+test('NTR 再捕获（CFLAG:650==1）：爱慕/淫乱分支解除开关', async () => {
   const fixture = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:201`, 1);
     f.store.set(`cflag:${CID}:650`, 1);
@@ -168,12 +168,12 @@ test('NTR 再捕获（CFLAG:650==1）：爱慕/淫乱臂解除开关', async () 
   await emit_train(fixture);
   assert.ok(
     fixture.text_lines().some((l) => l.includes('真是非常抱歉')),
-    'NTR 再捕获爱慕/淫乱臂',
+    'NTR 再捕获爱慕/淫乱分支',
   );
   assert.equal(fixture.store.get(`cflag:${CID}:650`), 0, 'NTR 开关解除');
 });
 
-test('NTR 再捕获：未沦陷臂', async () => {
+test('NTR 再捕获：未沦陷分支', async () => {
   const fixture = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:201`, 1);
     f.store.set(`cflag:${CID}:650`, 1);
@@ -181,7 +181,7 @@ test('NTR 再捕获：未沦陷臂', async () => {
   await emit_train(fixture);
   assert.ok(
     fixture.text_lines().some((l) => l.includes('反正不管在哪')),
-    'NTR 再捕获未沦陷臂',
+    'NTR 再捕获未沦陷分支',
   );
   assert.equal(fixture.store.get(`cflag:${CID}:650`), 0);
 });
@@ -271,7 +271,7 @@ test('崩坏（TALENT:9 && CFLAG:201<9）：推进到 9', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:201`), 9, '崩坏推进到 9');
 });
 
-// —— @K15_KOJO2：二回目以降 ——
+// —— k15_kojo2：二回目以降 ——
 
 test('K15_KOJO2 反抗刻印 Lv3（ASSI<0 岔入）', async () => {
   const fixture = await setup_k15((f) => {
@@ -317,10 +317,10 @@ test('K15_KOJO2 屈服刻印 Lv0：PRINTDATAL 随机两条', async () => {
   }
 });
 
-test('K15_KOJO2 淫乱：RAND:2 两臂', async () => {
+test('K15_KOJO2 淫乱：RAND:2 两分支', async () => {
   const a = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:201`, 6);
-    f.store.set(`mark:${CID}:2`, 3); // 绕开 MARK:2==0/1/2 的先行臂（原作顺序 1:1）
+    f.store.set(`mark:${CID}:2`, 3); // 绕开 MARK:2==0/1/2 的先行分支（本文件顺序）
     f.store.set(`talent:${CID}:76`, 1);
   });
 
@@ -329,7 +329,7 @@ test('K15_KOJO2 淫乱：RAND:2 两臂', async () => {
     await emit_train(a);
     assert.ok(
       a.text_lines().some((l) => l.includes('今天要玩些什么呢')),
-      '淫乱 RAND 真值臂',
+      '淫乱 RAND 真值分支',
     );
   } finally {
     a.restore_math_random();
@@ -346,14 +346,14 @@ test('K15_KOJO2 淫乱：RAND:2 两臂', async () => {
     await emit_train(b);
     assert.ok(
       b.text_lines().some((l) => l.includes('新的知识')),
-      '淫乱 RAND 假值臂',
+      '淫乱 RAND 假值分支',
     );
   } finally {
     b.restore_math_random();
   }
 });
 
-// —— @EVENTEND 调教终了 ——
+// —— EVENTEND 调教终了 ——
 
 test('EVENTEND 死亡（BASE:0<=0）静默跳过', async () => {
   const fixture = await setup_k15((f) => f.store.set(`base:${CID}:0`, 0));
@@ -391,7 +391,7 @@ test('EVENTEND 屈服 Lv1 以下 + 故乡恋人（TALENT:317==4）', async () =>
 });
 
 test('EVENTEND 淫乱体力>=500 / 爱慕体力<500', async () => {
-  // 刻印臂都带 TALENT:85==0；要落到淫乱必须同时有爱慕以绕开刻印臂（原作顺序 1:1）
+  // 刻印分支都带 TALENT:85==0；要落到淫乱必须同时有爱慕以绕开刻印分支（本文件顺序）
   const whore = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`talent:${CID}:85`, 1);
@@ -419,22 +419,22 @@ test('EVENTEND 淫乱体力>=500 / 爱慕体力<500', async () => {
   }
 });
 
-// —— @KOJO_MESSAGE_COM_15：头部守卫（K15 四道活动守卫） ——
+// —— kojo_message_com_15：头部检查（K15 四道活动检查） ——
 
 test('口塞（TEQUIP:45 且非指令45）：静默跳过', async () => {
   const fixture = await setup_k15((f) => f.store.set(`tequip:${CID}:45`, 1));
   await speak_k15(fixture, seq_rand(0));
-  assert.deepEqual(fixture.text_lines(), [], '口塞守卫跳过');
+  assert.deepEqual(fixture.text_lines(), [], '口塞检查跳过');
 });
 
-test('口塞守卫不拦 SELECTCOM==45', async () => {
+test('口塞检查不拦 SELECTCOM==45', async () => {
   const fixture = await setup_k15(
     (f) => f.store.set(`tequip:${CID}:45`, 1),
     45,
   );
   await speak_k15(fixture, seq_rand(0));
-  // SELECTCOM 45 本切片尚未落地，不应被口塞守卫拦成空输出以外的副作用；
-  // 这里只锁「不是被 45 守卫 return 0」——后续切片接口塞指令时改断言。
+  // SELECTCOM 45 本切片尚未实现，不应被口塞检查拦成空输出以外的副作用；
+  // 这里只锁「不是被 45 检查 return 0」——后续切片接口塞指令时改断言。
   assert.equal(
     fixture.store.get(`cflag:${CID}:301`) || 0,
     0,
@@ -445,7 +445,7 @@ test('口塞守卫不拦 SELECTCOM==45', async () => {
 test('失神（TFLAG:899）：静默跳过', async () => {
   const fixture = await setup_k15((f) => f.store.set('tflag:899', 1));
   await speak_k15(fixture, seq_rand(0));
-  assert.deepEqual(fixture.text_lines(), [], '失神守卫跳过');
+  assert.deepEqual(fixture.text_lines(), [], '失神检查跳过');
 });
 
 test('兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_15', async () => {
@@ -476,7 +476,7 @@ test('死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_15', async
   );
 });
 
-test('K15 无 ASSI 守卫：助手调教也出声（源 :408-410 整行注释）', async () => {
+test('K15 无 ASSI 检查：助手调教也出声（整行注释）', async () => {
   const fixture = await setup_k15((f, era_flag) => {
     era_flag.assi = CID;
     era_flag.assiplay = 1;
@@ -484,18 +484,18 @@ test('K15 无 ASSI 守卫：助手调教也出声（源 :408-410 整行注释）
   await speak_k15(fixture, seq_rand(0));
   assert.ok(
     fixture.text_lines().length > 0,
-    'K15 无 ASSI 守卫，助手调教也出声',
+    'K15 无 ASSI 检查，助手调教也出声',
   );
 });
 
-test('K15 无 TALENT:9 / TEQUIP:90 守卫：崩坏与触手仍出声', async () => {
+test('K15 无 TALENT:9 / TEQUIP:90 检查：崩坏与触手仍出声', async () => {
   const broken = await setup_k15((f) => f.store.set(`talent:${CID}:9`, 1));
   await speak_k15(broken, seq_rand(0));
-  assert.ok(broken.text_lines().length > 0, 'K15 无 TALENT:9 守卫');
+  assert.ok(broken.text_lines().length > 0, 'K15 无 TALENT:9 检查');
 
   const tentacle = await setup_k15((f) => f.store.set(`tequip:${CID}:90`, 1));
   await speak_k15(tentacle, seq_rand(0));
-  assert.ok(tentacle.text_lines().length > 0, 'K15 无 TEQUIP:90 守卫');
+  assert.ok(tentacle.text_lines().length > 0, 'K15 无 TEQUIP:90 检查');
 });
 
 test('kojo_message_com_family 注册了 K15（key 15）', async () => {
@@ -708,7 +708,7 @@ test('肛门爱抚初回（CFLAG:303==0）推进到 1', async () => {
   );
 });
 
-test('肛门爱抚二回目以降：润滑分档 + それ以外判据读 CFLAG:303', async () => {
+test('肛门爱抚二回目以降：润滑分档 + それ以外条件读 CFLAG:303', async () => {
   const whore_wet = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`cflag:${CID}:303`, 1);
@@ -748,7 +748,7 @@ test('肛门爱抚二回目以降：润滑分档 + それ以外判据读 CFLAG:3
   await speak_k15(other, seq_rand(0));
   assert.ok(
     other.text_lines().some((l) => l.includes('羞愤异常地怒吼')),
-    'それ以外判据读 CFLAG:303：303<=1 命中出声',
+    'それ以外条件读 CFLAG:303：303<=1 命中出声',
   );
   assert.equal(
     other.store.get(`cflag:${CID}:303`),
@@ -756,7 +756,7 @@ test('肛门爱抚二回目以降：润滑分档 + それ以外判据读 CFLAG:3
     'それ以外 → CFLAG:303 = 2',
   );
 
-  // FLAG:7==1 且 303 已推进到 2：判据读本支计数，不出声
+  // FLAG:7==1 且 303 已推进到 2：条件读本支计数，不出声
   const done = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:303`, 2);
     f.store.set('flag:7', 1);
@@ -797,7 +797,7 @@ test('自慰二回目以降：淫乱处女 / RAND:2 / それ以外', async () =>
   await speak_k15(addict, seq_rand(1));
   assert.ok(
     addict.text_lines().some((l) => l.includes('被人看着自慰')),
-    '自慰淫乱中毒Lv3 RAND:2 真值臂',
+    '自慰淫乱中毒Lv3 RAND:2 真值分支',
   );
   assert.equal(addict.store.get(`cflag:${CID}:304`), 8, '淫乱中毒Lv3 → 8');
 
@@ -969,7 +969,7 @@ test('自己扒开初回推进 CFLAG:308=1；二回目以降读写 CFLAG:308', a
     );
   }
 
-  // FLAG:7==1 且 308 已推进到 2：判据读本支计数，不出声
+  // FLAG:7==1 且 308 已推进到 2：条件读本支计数，不出声
   const done = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:308`, 2);
     f.store.set('flag:7', 1);
@@ -1071,7 +1071,7 @@ test('振动杖初回 / 二回目以降分档', async () => {
 // —— SELECTCOM 13–37：指令口上（切片 4） ——
 // COM 14–17 整段注释，活代码只有 13 / 19–23 / 26–37。
 
-test('肛门虫开始（SELECTCOM 13 && TEQUIP:13）：初回 / 二回目淫乱两臂都写 6', async () => {
+test('肛门虫开始（SELECTCOM 13 && TEQUIP:13）：初回 / 二回目淫乱两分支都写 6', async () => {
   const first = await setup_k15((f) => f.store.set(`tequip:${CID}:13`, 1), 13);
   await speak_k15(first, seq_rand(0));
   assert.ok(
@@ -1103,7 +1103,7 @@ test('肛门虫开始（SELECTCOM 13 && TEQUIP:13）：初回 / 二回目淫乱�
     whore.text_lines().some((l) => l.includes('又要用这个来欺负')),
     '肛门虫淫乱（无 A感覚）',
   );
-  assert.equal(whore.store.get(`cflag:${CID}:314`), 6, '淫乱两臂都写 6');
+  assert.equal(whore.store.get(`cflag:${CID}:314`), 6, '淫乱两分支都写 6');
 });
 
 test('肛门虫着脱（SELECTCOM 13 && TEQUIP:13==0）：CFLAG:374', async () => {
@@ -1150,7 +1150,7 @@ test('SELECTCOM 14–17 整段注释：静默且不写计数器', async () => {
   }
 });
 
-test('肛珠开始 / 着脱；爱+A感覚臂带 !ASSIPLAY（源 1:1）', async () => {
+test('肛珠开始 / 着脱；爱+A感覚分支带 !ASSIPLAY', async () => {
   const first = await setup_k15((f) => f.store.set(`tequip:${CID}:19`, 1), 19);
   await speak_k15(first, seq_rand(0));
   assert.ok(
@@ -1182,12 +1182,12 @@ test('肛珠开始 / 着脱；爱+A感覚臂带 !ASSIPLAY（源 1:1）', async (
   await speak_k15(love_assi, seq_rand(0));
   assert.ok(
     !love_assi.text_lines().some((l) => l.includes('区区')),
-    '爱+A感覚+ASSIPLAY 不进爱臂（源 !ASSIPLAY）',
+    '爱+A感覚+ASSIPLAY 不进爱分支（!ASSIPLAY 检查）',
   );
   assert.equal(
     love_assi.store.get(`cflag:${CID}:320`),
     3,
-    'ASSIPLAY 落到 A感覚Lv3 臂 → 3',
+    'ASSIPLAY 落到 A感覚Lv3 分支 → 3',
   );
 
   const off = await setup_k15((f) => f.store.set(`talent:${CID}:76`, 1), 19);
@@ -1331,7 +1331,7 @@ test('手淫 / 口交_奴：初回それ以外 + 二回目淫乱', async () => {
   assert.equal(ow.store.get(`cflag:${CID}:332`), 6, '口交淫乱+奉仕Lv5 → 6');
 });
 
-test('乳交：初回推进到 1；二回目判据读 CFLAG:333', async () => {
+test('乳交：初回推进到 1；二回目条件读 CFLAG:333', async () => {
   const first = await setup_k15((f) => f.store.set(`talent:${CID}:76`, 1), 32);
   await speak_k15(first, seq_rand(0));
   assert.ok(
@@ -1340,7 +1340,7 @@ test('乳交：初回推进到 1；二回目判据读 CFLAG:333', async () => {
   );
   assert.equal(first.store.get(`cflag:${CID}:333`), 1, '乳交初回推进到 1');
 
-  // 淫乱+奉仕Lv5 档：333=1 命中推进到 6（332 是干扰项，判据不读它）
+  // 淫乱+奉仕Lv5 档：333=1 命中推进到 6（332 是干扰项，条件不读它）
   const hit = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`abl:${CID}:16`, 5);
@@ -1377,7 +1377,7 @@ test('乳交：初回推进到 1；二回目判据读 CFLAG:333', async () => {
   );
   assert.equal(plain.store.get(`cflag:${CID}:333`), 1, '淫乱无奉仕档不写计数');
 
-  // FLAG:7==1 且 333 已推进到 5：判据读本支计数，不出声
+  // FLAG:7==1 且 333 已推进到 5：条件读本支计数，不出声
   const silent = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`cflag:${CID}:333`, 5);
@@ -1487,13 +1487,13 @@ test('打屁股（SELECTCOM 40）：初回需 !(淫乱||爱慕)；二回目淫�
   assert.equal(later.store.get(`cflag:${CID}:341`), 2, 'それ以外 → 2');
 });
 
-test('鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外判据读 CFLAG:342', async () => {
+test('鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外条件读 CFLAG:342', async () => {
   const first = await setup_k15(undefined, 41);
   await speak_k15(first, seq_rand(0));
   assert.ok(first.text_lines().includes(''), '鞭初回空 PRINTFORMW');
   assert.equal(first.store.get(`cflag:${CID}:342`), 1, '鞭初回 → 1');
 
-  // それ以外档：342=1 命中，空 PRINTFORMW 后推进到 2（335 是干扰项，判据不读它）
+  // それ以外档：342=1 命中，空 PRINTFORMW 后推进到 2（335 是干扰项，条件不读它）
   const later = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:342`, 1);
     f.store.set(`cflag:${CID}:335`, 6);
@@ -1508,7 +1508,7 @@ test('鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外判据读 C
   );
   assert.equal(later.store.get(`cflag:${CID}:335`), 6, '骑乘位计数器不动');
 
-  // FLAG:7==1 且 342 已推进到 2：判据读本支计数，不出声
+  // FLAG:7==1 且 342 已推进到 2：条件读本支计数，不出声
   const silent = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:342`, 2);
     f.store.set('flag:7', 1);
@@ -1694,12 +1694,12 @@ test('乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 /
   }
 });
 
-test('深喉（SELECTCOM 124）：二回目判据与写入都是 CFLAG:365', async () => {
+test('深喉（SELECTCOM 124）：二回目条件与写入都是 CFLAG:365', async () => {
   const first = await setup_k15(undefined, 124);
   await speak_k15(first, seq_rand(0));
   assert.equal(first.store.get(`cflag:${CID}:365`), 1, '深喉初回 → 1');
 
-  // 淫乱档：365=1 命中推进到 5（363 是干扰项，判据不读它）
+  // 淫乱档：365=1 命中推进到 5（363 是干扰项，条件不读它）
   const later = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`cflag:${CID}:365`, 1);
@@ -1710,7 +1710,7 @@ test('深喉（SELECTCOM 124）：二回目判据与写入都是 CFLAG:365', asy
   assert.equal(later.store.get(`cflag:${CID}:365`), 5, '淫乱 → CFLAG:365 = 5');
   assert.equal(later.store.get(`cflag:${CID}:363`), 6, '真空口交计数器不动');
 
-  // FLAG:7==1 且 365 已推进到 5：判据读本支计数，不出声
+  // FLAG:7==1 且 365 已推进到 5：条件读本支计数，不出声
   const silent = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`cflag:${CID}:365`, 5);
@@ -1811,7 +1811,7 @@ test('深喉二回目·真空口交=6 静默（363 与本支无关）', async ()
   assert.equal(fixture.store.get('cflag:31:365'), 5);
 });
 
-test('兽奸眼罩着脱：判据与写入都是 CFLAG:444', async () => {
+test('兽奸眼罩着脱：条件与写入都是 CFLAG:444', async () => {
   const first = await setup_k15((f) => {
     f.store.set(`tequip:${CID}:89`, 1);
     f.store.set(`tequip:${CID}:43`, 0);
@@ -1828,7 +1828,7 @@ test('兽奸眼罩着脱：判据与写入都是 CFLAG:444', async () => {
     '兽奸眼罩不写 CFLAG:380',
   );
 
-  // 牝犬档：444=1 命中（< 3）推进到 4（338 是干扰项，判据不读它）
+  // 牝犬档：444=1 命中（< 3）推进到 4（338 是干扰项，条件不读它）
   const later = await setup_k15((f) => {
     f.store.set(`tequip:${CID}:89`, 1);
     f.store.set(`tequip:${CID}:43`, 0);
@@ -1886,8 +1886,8 @@ test('死斗场交谈：気力>0 助手用 SELF_CALL(A)；非助手骂怪物', a
 test('死斗场口交 PRINT 拼接 + 假阳具持有位；背后位巨魔 TFLAG:400==206', async () => {
   const assi = await setup_k15((f, era_flag) => {
     f.store.set(`tequip:${CID}:55`, 1);
-    // 原作 ITEM:PBAND（PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4）
-    // = ITEM:4 假阳具（#552）
+    // ITEM:PBAND（内建非角色变量，4 号 = 假阳具）
+    // = ITEM:4（#552）
     f.store.set('item:4', 1);
     era_flag.assi = CID;
     era_flag.assiplay = 1;
@@ -1897,7 +1897,7 @@ test('死斗场口交 PRINT 拼接 + 假阳具持有位；背后位巨魔 TFLAG:
     assi
       .text_lines()
       .includes('伶俐粗暴地拉起伶俐的头发，得意地用假阳具侵犯着对方的口腔……'),
-    '死斗场口交助手无 121/122 + item:4（原作 ITEM:PBAND）→ 假阳具，且与前后文同一行（#625）',
+    '死斗场口交助手无 121/122 + item:4（ITEM:PBAND）→ 假阳具，且与前后文同一行（#625）',
   );
 
   const troll = await setup_k15((f) => {
@@ -1934,7 +1934,7 @@ async function mark_k15(fixture) {
   return kojo_message_markcng_family.call(KEY, { args: [] });
 }
 
-test('PALAMCNG 口塞守卫跳过；润滑 PALAM+UP > PALAMLV[2] 写 CFLAG:221', async () => {
+test('PALAMCNG 口塞检查跳过；润滑 PALAM+UP > PALAMLV[2] 写 CFLAG:221', async () => {
   const gag = await setup_k15((f) => {
     f.store.set(`tequip:${CID}:45`, 1);
     f.store.set(`palam:${CID}:3`, 600);
@@ -1943,7 +1943,7 @@ test('PALAMCNG 口塞守卫跳过；润滑 PALAM+UP > PALAMLV[2] 写 CFLAG:221',
   assert.equal(
     gag.store.get(`cflag:${CID}:221`),
     undefined,
-    'PALAMCNG 口塞守卫跳过润滑',
+    'PALAMCNG 口塞检查跳过润滑',
   );
 
   const wet = await setup_k15((f) => {
@@ -2014,7 +2014,7 @@ test('PALAMCNG 处女丧失：主人淫乱 / 主人以外爱慕', async () => {
   );
 });
 
-test('MARKCNG 口塞守卫跳过；苦痛/快乐/屈服/反抗 Lv3', async () => {
+test('MARKCNG 口塞检查跳过；苦痛/快乐/屈服/反抗 Lv3', async () => {
   const gag = await setup_k15((f) => {
     f.store.set(`tequip:${CID}:45`, 1);
     f.store.set('tflag:22', 3);
@@ -2023,7 +2023,7 @@ test('MARKCNG 口塞守卫跳过；苦痛/快乐/屈服/反抗 Lv3', async () =>
   assert.equal(
     gag.store.get(`cflag:${CID}:297`),
     undefined,
-    'MARKCNG 口塞守卫跳过苦痛',
+    'MARKCNG 口塞检查跳过苦痛',
   );
 
   const pain = await setup_k15((f) => {
@@ -2271,12 +2271,12 @@ test('GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW', async () => 
   assert.ok(exe.text_lines().includes(''), 'EXUCUTION 空 PRINTFORMW');
 });
 
-// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+// —— #625：同一行输出被拆成多条 era.print 的合并点 ——
 
 test('#625 接吻初吻それ以外：擦嘴段与挑衅段是同一行（TEQUIP:44 两档）', async () => {
-  // 原作 :758（PRINTFORM）+ :760（SIF !TEQUIP:44 只护这一段）+ :761
-  // （PRINTFORMW 收行）**是一整行**——无后缀 PRINTFORM 连续不换行。ere 侧曾
-  // 拆成三条 era.print（#625）。断言整行文本，不是只查片段
+  // 擦嘴段（PRINTFORM + SIF !TEQUIP:44 只护这一段 + PRINTFORMW 收行）
+  // 是一整行——无后缀 PRINTFORM 连续不换行。曾拆成三条 era.print（#625）。
+  // 断言整行文本，不是只查片段
   const cases = [
     [
       0,
@@ -2300,8 +2300,8 @@ test('#625 接吻初吻それ以外：擦嘴段与挑衅段是同一行（TEQUIP
 });
 
 test('#625 死斗场口交：武器名与前后文是同一行（阴茎 / 假阳具 / 两段都不出）', async () => {
-  // 原作 :5843（PRINTFORM）+ :5845/:5847（两条互斥 SIF 各护一段）+:5848
-  // （PRINTFORMW 收行）**是一整行**（#625）。三档各断言整行
+  // 武器名段（PRINTFORM + 两条互斥 SIF 各护一段 + PRINTFORMW 收行）
+  // 是一整行（#625）。三档各断言整行
   const cases = [
     ['阴茎', (f) => f.store.set(`talent:${CID}:121`, 1)],
     ['假阳具', (f) => f.store.set('item:4', 1)],
@@ -2329,8 +2329,7 @@ test('#625 死斗场口交：武器名与前后文是同一行（阴茎 / 假阳
 });
 
 test('#625 gohoubi_request_koujo_k15：兽名与前后文是同一行（CFLAG:504 三档）', async () => {
-  // 原作 :6140（PRINTFORM）+ :6142/:6144/:6146（IF/ELSEIF 三档兽名）
-  // + :6148（PRINTFORMW 收行）**是一整行**（#625）
+  // 兽名三档段（PRINTFORM + IF/ELSEIF 三档 + PRINTFORMW 收行）是一整行（#625）
   const cases = [
     [1, '狗'],
     [2, '猪'],

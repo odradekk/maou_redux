@@ -37,9 +37,9 @@ async function setup_k12(seed, selectcom = 0) {
   return fixture;
 }
 
-// —— @EVENTTRAIN：存在标志一对 ——
+// —— EVENTTRAIN：存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）', async () => {
   const fixture = await setup_k12((f) => {
     f.store.delete('flag:112');
     f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机
@@ -53,7 +53,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K12 一对）'
   assert.equal(fixture.store.get('flag:112'), 0);
 });
 
-test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
+test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('flag:7', 0);
     f.store.set('cflag:20:201', 9); // 越过状态机
@@ -63,7 +63,7 @@ test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () =
   assert.equal(fixture.store.get('flag:7'), 2);
 });
 
-test('EVENTTRAIN 自身守卫①口上开关<=0（玩家显式关掉）静默跳过', async () => {
+test('EVENTTRAIN 自身检查①口上开关<=0（玩家显式关掉）静默跳过', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('flag:7', -1);
   });
@@ -73,7 +73,7 @@ test('EVENTTRAIN 自身守卫①口上开关<=0（玩家显式关掉）静默跳
   assert.equal(fixture.store.get('cflag:20:201'), undefined);
 });
 
-test('EVENTTRAIN 自身守卫②TALENT:172!=1 静默跳过', async () => {
+test('EVENTTRAIN 自身检查②TALENT:172!=1 静默跳过', async () => {
   const fixture = await setup_k12((f) => f.store.set('talent:20:172', 0));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -81,7 +81,7 @@ test('EVENTTRAIN 自身守卫②TALENT:172!=1 静默跳过', async () => {
   assert.equal(fixture.store.get('cflag:20:201'), undefined);
 });
 
-// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
 test('初调教（CFLAG:201==0）人狼分档（TALENT:种族==2）：CFLAG:201=1', async () => {
   const fixture = await setup_k12((f) => f.store.set('talent:20:种族', 2));
@@ -222,7 +222,7 @@ test('爱慕（CFLAG:201<6 && TALENT:85==1）：推进到 6', async () => {
   assert.equal(fixture.store.get('cflag:20:201'), 6);
 });
 
-// —— @K12_KOJO2：二回目以降 ——
+// —— k12_kojo2：二回目以降 ——
 
 test('K12_KOJO2 反抗刻印 Lv3（MARK:3==3）：进入视线的拒绝', async () => {
   const fixture = await setup_k12((f) => {
@@ -270,7 +270,7 @@ test('K12_KOJO2 爱慕（TALENT:85==1）rand=1（rand_n(3)=1 → 第二支）', 
   ]);
 });
 
-// —— @EVENTEND：调教结束口上 ——
+// —— EVENTEND：调教结束口上 ——
 
 test('EVENTEND 死亡跳过（BASE:0<=0）静默', async () => {
   const fixture = await setup_k12((f) => {
@@ -296,14 +296,14 @@ test('EVENTEND 爱慕低体力：回到研究桌继续工作', async () => {
   ]);
 });
 
-// —— @KOJO_MESSAGE_COM_12：指令口上（S2a：守卫 + SELECTCOM 0/1/2） ——
+// —— kojo_message_com_12：指令口上（S2a：检查 + SELECTCOM 0/1/2） ——
 
 async function speak_k12(fixture, rand) {
   const mod = fixture.load_module('kojo/kojo-k12-intellectual');
   return mod.kojo_message_com_12(rand);
 }
 
-test('KOJO_MESSAGE_COM_12 头部守卫① TEQUIP:45（口塞）且 SELECTCOM!=45 跳过', async () => {
+test('KOJO_MESSAGE_COM_12 头部检查① TEQUIP:45（口塞）且 SELECTCOM!=45 跳过', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('tequip:20:45', 1);
   }, 0);
@@ -312,7 +312,7 @@ test('KOJO_MESSAGE_COM_12 头部守卫① TEQUIP:45（口塞）且 SELECTCOM!=45
   assert.equal(fixture.store.get('cflag:20:301'), undefined);
 });
 
-test('KOJO_MESSAGE_COM_12 头部守卫② TFLAG:899（失神）跳过', async () => {
+test('KOJO_MESSAGE_COM_12 头部检查② TFLAG:899（失神）跳过', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('tflag:899', 1);
   }, 0);
@@ -320,7 +320,7 @@ test('KOJO_MESSAGE_COM_12 头部守卫② TFLAG:899（失神）跳过', async ()
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('KOJO_MESSAGE_COM_12 头部守卫③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身', async () => {
+test('KOJO_MESSAGE_COM_12 头部检查③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('tequip:20:89', 1);
   }, 0);
@@ -329,7 +329,7 @@ test('KOJO_MESSAGE_COM_12 头部守卫③ TEQUIP:89（兽奸）岔去 dog_kojo_1
   assert.equal(fixture.store.get('cflag:20:301'), 1);
 });
 
-test('KOJO_MESSAGE_COM_12 头部守卫④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身', async () => {
+test('KOJO_MESSAGE_COM_12 头部检查④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('tequip:20:55', 1);
     f.store.set('base:20:1', 10);
@@ -490,7 +490,7 @@ test('SELECTCOM==7（自己扒开）初回淫乱：推进到 1', async () => {
   assert.equal(fixture.store.get('cflag:20:308'), 1);
 });
 
-test('SELECTCOM==7（自己扒开）二回目：四档判据与写入都是 CFLAG:308', async () => {
+test('SELECTCOM==7（自己扒开）二回目：四档条件与写入都是 CFLAG:308', async () => {
   const cases = [
     {
       seed: { 'talent:20:76': 1 },
@@ -539,7 +539,7 @@ test('SELECTCOM==7（自己扒开）二回目：四档判据与写入都是 CFLA
     );
   }
 
-  // FLAG:7==1 且 308 已推进到 2：判据读本支计数，不出声
+  // FLAG:7==1 且 308 已推进到 2：条件读本支计数，不出声
   const silent = await setup_k12((f) => {
     f.store.set('cflag:20:308', 2);
     f.store.set('flag:7', 1);
@@ -679,7 +679,7 @@ test('SELECTCOM==21（背后位）妊娠淫乱 RAND=0：推进到 6（人狼尾�
   assert.equal(fixture.store.get('cflag:20:322'), 6);
 });
 
-test('SELECTCOM==27（背后位肛交）二回目淫乱：判据与写入都是 CFLAG:328', async () => {
+test('SELECTCOM==27（背后位肛交）二回目淫乱：条件与写入都是 CFLAG:328', async () => {
   const cases = [
     {
       abl: 3,
@@ -735,8 +735,8 @@ test('SELECTCOM==30（手淫）爱+侍奉精神Lv5：player 鸡巴四档 RAND=0'
   );
 });
 
-test('SELECTCOM==32（乳交）二回目淫乱：判据读 CFLAG:333', async () => {
-  // 淫乱+奉仕Lv5 档：333=1 命中推进到 6（332 是干扰项，判据不读它）
+test('SELECTCOM==32（乳交）二回目淫乱：条件读 CFLAG:333', async () => {
+  // 淫乱+奉仕Lv5 档：333=1 命中推进到 6（332 是干扰项，条件不读它）
   const hit = await setup_k12((f) => {
     f.store.set('cflag:20:333', 1);
     f.store.set('cflag:20:332', 6);
@@ -760,7 +760,7 @@ test('SELECTCOM==32（乳交）二回目淫乱：判据读 CFLAG:333', async () 
   assert.deepEqual(plain.text_lines(), ['「好难啊……你、真的会舒服吗？」']);
   assert.equal(plain.store.get('cflag:20:333'), 5);
 
-  // FLAG:7==1 且 333 已推进到 5：判据读本支计数，不出声
+  // FLAG:7==1 且 333 已推进到 5：条件读本支计数，不出声
   const silent = await setup_k12((f) => {
     f.store.set('cflag:20:333', 5);
     f.store.set('cflag:20:332', 1);
@@ -1014,9 +1014,9 @@ test('benki_koujo_k12 FLAG:62==0 常识改写（FLAG:63）合并 CALL 称呼', a
 });
 
 test('#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名', async () => {
-  // 原作 :5105-:5107 等四处：PRINTFORMW 「多亏（自带换行与等待）→ CALL
+  // 常识改写四支的首句：PRINTFORMW 「多亏（自带换行与等待）→ CALL
   // BENKI_PLAYER_NAME → PRINTFORMW 后续，名字与后续是**第二行**。K12 自
-  // #243 起把两行并成一条输出（少一行、少一次等待），#599 按原作拆回两条
+  // #243 起把两行并成一条输出（少一行、少一次等待），#599 拆回两条
   // 语句；名字由真身 benki_player_name() 返回，用 ${} 插值接上（保真锁按
   // CALL BENKI_PLAYER_NAME 记号核对）
   const cases = [
@@ -1043,13 +1043,13 @@ test('#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 
 });
 
 test('#584 benki_koujo_k12：「勇者/冒险者」段与后续是同一行（行动 7/9/12 × 常识改写）', async () => {
-  // 原作 :5195/:5197（勇者或冒险者）+ :5199 + :5200 同属一行（PRINTFORM 不换行），
+  // 「勇者/冒险者」段三行同属一行（PRINTFORM 不换行），
   // ere 曾拆成多条 era.print（#584）。断言「前缀与主体落在同一行」，不是只查片段
   const cases = [
     [7, '毫无抵抗地被洗脑成牝犬家畜肉便器', 1, '冒险者'],
     [9, '被彻头彻尾地调教并洗脑', 1, '冒险者'],
     [12, '毫无抵抗的被开发了身体的每个角落', 1, '冒险者'],
-    // TALENT:122 == 0 → 勇者档（原作 IF/ELSEIF 的另一臂）
+    // TALENT:122 == 0 → 勇者档（IF/ELSEIF 的另一分支）
     [7, '毫无抵抗地被洗脑成牝犬家畜肉便器', 0, '勇者'],
   ];
   for (const [action, tail, male, word] of cases) {
@@ -1071,9 +1071,9 @@ test('#584 benki_koujo_k12：「勇者/冒险者」段与后续是同一行（�
 });
 
 test('#625 gohoubi_request_koujo_k12：兽名与前后文是同一行（CFLAG:504 三档）', async () => {
-  // 原作 :5747（PRINTFORM）+ :5749/:5751/:5753（IF/ELSEIF 三档兽名）
-  // + :5755（PRINTFORMW 收行）**是一整行**——无后缀 PRINTFORM/PRINT 连续不换行。
-  // ere 曾拆成五条 era.print（#625）。断言整行文本（不是只查片段）
+  // 兽名三档段（PRINTFORM + IF/ELSEIF 三档 + PRINTFORMW 收行）是一整行
+  // ——无后缀 PRINTFORM/PRINT 连续不换行。
+  // 曾拆成五条 era.print（#625）。断言整行文本（不是只查片段）
   const cases = [
     [1, '狗'],
     [2, '猪'],

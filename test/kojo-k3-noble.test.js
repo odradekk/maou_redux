@@ -112,7 +112,7 @@ test('随机尾的第三支（RAND:3 != 0 且 RAND:2 != 0）与可重复性', as
   }
 });
 
-test('淫乱分支（TALENT:76）三支随机：插值与 ♡/♡♡♡ 逐字', async () => {
+test('淫乱分支（TALENT:76）三支随机：插值与 ♡/♡♡♡ 原样保留', async () => {
   // RAND:3 == 0 支：自称（未设定 → 我）与心形 ×1/×3
   const a = await setup_k3((f) => {
     f.store.set('talent:31:76', 1);
@@ -268,9 +268,9 @@ test('屈服Lv2＆快乐Lv3 链（3xx）：301/302/303 逐格推进后随机尾'
 });
 
 test('3xx 支的附加门槛 MARK:1 == 3：Lv2 屈服而无快乐刻印时两支皆不命中', async () => {
-  // ELSEIF MARK:2 == 2 && MARK:1 == 3 —— 删掉 MARK:1 臂会让本状态
+  // ELSEIF MARK:2 == 2 && MARK:1 == 3 —— 删掉 MARK:1 分支会让本状态
   // 误入 3xx（验收变异实测的误报通过位）：MARK:2 == 2 且 MARK:1 != 3 时，
-  // 3xx（要 MARK:1 == 3）与 2xx（要 MARK:2 <= 1）都不命中，原作一句不出
+  // 3xx（要 MARK:1 == 3）与 2xx（要 MARK:2 <= 1）都不命中，一句不出
   const fixture = await setup_k3((f) => {
     f.store.set('mark:31:2', 2);
     f.store.set('cflag:31:301', 1); // mark:31:1 保持 0（≠ 3）
@@ -305,7 +305,7 @@ test('死斗场（TEQUIP:55）最先：岔进 COLOSSEUM_KOJO_3 真台词', async
     era_flag.selectcom = 55;
     f.store.set('tequip:31:55', 1);
     f.store.set('base:31:1', 100);
-    f.store.set('tflag:899', 1); // 即使后续守卫也会拦，先到先得
+    f.store.set('tflag:899', 1); // 即使后续检查也会拦，先到先得
   });
   await speak_k3(fixture, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), [
@@ -505,10 +505,10 @@ test('肛门爱抚二次以后：淫乱润滑分档 / 爱慕润滑 / それ以�
   assert.equal(
     other.store.get('cflag:31:303'),
     2,
-    'それ以外判据读 CFLAG:303，推进到 2',
+    'それ以外条件读 CFLAG:303，推进到 2',
   );
 
-  // FLAG:7==1 且 303 已推进到 2：判据读本支计数，不出声
+  // FLAG:7==1 且 303 已推进到 2：条件读本支计数，不出声
   const done = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 2;
@@ -791,9 +791,9 @@ test('自己扒开首次（SELECTCOM 7 / CFLAG:308 == 0）：非素质支 + 推�
 // —— SELECTCOM 87（穿环 CFLAG:348）——
 
 test('穿环（SELECTCOM 87）：CFLAG:7 命中部位位 P 时走「初次开洞」演出，未命中走拿掉环', async () => {
-  // 原作 :5527/:5570/:5613/:5664/:5707/:5750 都是 `IF CFLAG:7 & P`——装着与
-  // 取り外し的分岔，#493 修的就是读不到的 train.穿孔装着。P 由 @COM87 写进
-  // piercing_state（com-hardcore.js:1590），此处直接注入。七例各断言整段文本：
+  // 各穿环分支都是 `IF CFLAG:7 & P`——装着与
+  // 取り外し的分岔，#493 修的就是读不到的 train.穿孔装着。P 由 com87() 写进
+  // piercing_state（见 com-hardcore.js），此处直接注入。七例各断言整段文本：
   // 装着的六段演出在修前一律不触发，P 的分档（乳环/肚脐/阴唇/舌/唇/鼻）也一并锁住。
   const cases = [
     {
@@ -964,9 +964,9 @@ test('BENKI_KOUJO：肉便器行动 0 常识改写真身', async () => {
 });
 
 test('#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名', async () => {
-  // 原作 :8205-:8207 三行一支：PRINTFORM 「请 + CALL BENKI_PLAYER_NAME（:8206）
+  // 「请」段：PRINTFORM + BENKI_PLAYER_NAME
   // + PRINTFORMW …（含 %SELF_CALL(A)% 与心形）。三行同属一行（前缀不带 W/L），
-  // #599 起用拼接锚 + ${} 插值，与 K0 四处同型
+  // #599 起用拼接基准 + ${} 插值，与 K0 四处同型
   const fixture = await setup_k3((f) => {
     f.store.set('flag:62', 6);
     f.store.set('flag:63', 1);
@@ -984,14 +984,14 @@ test('#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 �
 
 // —— SELECTCOM 7 / 56：被拆开的同一行输出（#600）——
 //
-// 原作的无后缀 PRINTFORM/PRINT 不换行，一行会一直续到下一个带 W/L 的 PRINT。
-// 下列五处原来各占一条 era.print，本票按拼接锚合并成一条（锚里列全区间内的
-// PRINT 行，条件/分支的判据提到语句外当取值）。
+// 无后缀 PRINTFORM/PRINT 不换行，一行会一直续到下一个带 W/L 的 PRINT。
+// 下列五处原来各占一条 era.print，这批按拼接基准合并成一条（基准里列全区间内的
+// PRINT 行，条件/分支的条件提到语句外当取值）。
 
-test('SELECTCOM 7 录像展示：:1640..:1656 的五段 SIF 后缀与收行同属一行（#600）', async () => {
-  // 原作 :1640 以全角空格开头「只要是魔王大人的命令来的话、%SELF_CALL(TARGET)%一定会在这里…用这个」
-  // 后接五条 SIF（:1643 魔王大人专用 / :1646 淫乱 / :1649 牝犬 / :1652 贪欲 /
-  // 处女），末行 :1656 PRINTFORML 收行。五段各自可有可无，文本顺序固定
+test('SELECTCOM 7 录像展示：五段 SIF 后缀与收行同属一行（#600）', async () => {
+  // 首行以全角空格开头「只要是魔王大人的命令来的话、%SELF_CALL(TARGET)%一定会在这里…用这个」
+  // 后接五条 SIF（魔王大人专用 / 淫乱 / 牝犬 / 贪欲 /
+  // 处女），末行 PRINTFORML 收行。五段各自可有可无，文本顺序固定
   const head = '\u3000只要是魔王大人的命令来的话、我一定会在这里…用这个';
   const tail = '小穴来、给今天看到的大家侍奉也说不定呢。';
   const cases = [
@@ -1123,7 +1123,7 @@ test('SELECTCOM 56 二次·通常：:5104+:5106|:5108+:5110 是一行，输出�
   }
 });
 
-// —— #623 拆行合并：原作同一行输出合成一条 era.print（整行断言） ——
+// —— #623 拆行合并：同一行输出合成一条 era.print（整行断言） ——
 
 /** 含该片段的第一行（合并后整行断言用；找不到返回 undefined） */
 function line_with(fixture, fragment) {
@@ -1173,9 +1173,8 @@ test('#623 强制排泄·出身两支的整行（:4569.. / :4589..）', async ()
   }
 });
 
-test('#623 强制排泄·最深部遭遇三档整行（:4653+:4655+:4657+:4659+:4661）', async () => {
-  // 抽签序（照原作）：:4634/:4639/:4644 三次 RAND:2 → :4652 的 RAND:3 入场签
-  // → 整行里的 :4654 RAND:3（:4656 RAND:2）
+test('#623 强制排泄·最深部遭遇三档整行', async () => {
+  // 抽签序：三次 RAND:2 → RAND:3 入场签 → 整行里的 RAND:3（再 RAND:2）
   const cases = [
     { draws: [1, 1, 1, 0, 0], word: '找到' },
     { draws: [1, 1, 1, 0, 1, 0], word: '一不小心捡到' },

@@ -36,9 +36,9 @@ async function setup_k14(seed) {
   return fixture;
 }
 
-// —— @EVENTTRAIN / @EVENTEND：存在标志一对 ——
+// —— EVENTTRAIN / EVENTEND：存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K14 一对）', async () => {
+test('EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K14 一对）', async () => {
   const fixture = await setup_k14((f) => {
     f.store.delete('flag:114');
     f.store.set('cflag:20:201', 9); // 越过 EVENTTRAIN 前段状态机（避免打印）
@@ -52,7 +52,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K14 一对）'
   assert.equal(fixture.store.get('flag:114'), 0);
 });
 
-test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
+test('EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('flag:7', 0);
     f.store.set('cflag:20:201', 9); // 越过状态机
@@ -62,9 +62,9 @@ test('@EVENTTRAIN #PRI 口上开关补 0（FLAG:7 从 0 补到 2）', async () =
   assert.equal(fixture.store.get('flag:7'), 2);
 });
 
-// —— @EVENTTRAIN：自身守卫 ——
+// —— EVENTTRAIN：自身检查 ——
 
-test('EVENTTRAIN 守卫①口上开关<0（玩家显式关掉）静默跳过', async () => {
+test('EVENTTRAIN 检查①口上开关<0（玩家显式关掉）静默跳过', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('flag:7', -1);
   });
@@ -74,7 +74,7 @@ test('EVENTTRAIN 守卫①口上开关<0（玩家显式关掉）静默跳过', a
   assert.equal(fixture.store.get('cflag:20:201'), undefined);
 });
 
-test('EVENTTRAIN 守卫②TALENT:174!=1 静默跳过', async () => {
+test('EVENTTRAIN 检查②TALENT:174!=1 静默跳过', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('talent:20:174', 0);
   });
@@ -84,7 +84,7 @@ test('EVENTTRAIN 守卫②TALENT:174!=1 静默跳过', async () => {
   assert.equal(fixture.store.get('cflag:20:201'), undefined);
 });
 
-// —— @EVENTTRAIN：初调教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初调教 CFLAG:201 状态机 ——
 
 test('初调教（CFLAG:201==0）通常男（TALENT:122）：置 201=1，无 RETURN 1', async () => {
   const fixture = await setup_k14((f) => {
@@ -193,7 +193,7 @@ test('爱（201<6 && 85）：男档台词 + 推进到 6', async () => {
   );
 });
 
-// —— @K14_KOJO2：二回目以降（经 EVENTTRAIN 尾档进入） ——
+// —— k14_kojo2：二回目以降（经 EVENTTRAIN 尾档进入） ——
 
 test('无助手时 EVENTTRAIN 尾档 CALL K14_KOJO2：反抗刻印Lv3 分档台词', async () => {
   const fixture = await setup_k14((f) => {
@@ -224,9 +224,9 @@ test('K14_KOJO2 淫乱档：RAND 三选一（rand=0 时首句）', async () => {
   );
 });
 
-// —— @EVENTEND：调教结束 ——
+// —— EVENTEND：调教结束 ——
 
-test('EVENTEND 守卫①口上开关<0 静默跳过', async () => {
+test('EVENTEND 检查①口上开关<0 静默跳过', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('flag:7', -1);
   });
@@ -261,14 +261,14 @@ test('EVENTEND 爱（85）体力 500 未満：感谢台词（非魔族档）', a
   ]);
 });
 
-// —— @KOJO_MESSAGE_COM_14：空模板骨架的状态机（S2） ——
+// —— kojo_message_com_14：空模板骨架的状态机（S2） ——
 //
-// K14 指令口上是未填写模板：PRINTFORMW 全空，行为契约 = 计数器推进 + 守卫
-// 分派。本节断言计数器写入与守卫，不断言文本（空模板 1:1 保留，见模块头）。
+// K14 指令口上是未填写模板：PRINTFORMW 全空，行为契约 = 计数器推进 + 检查
+// 分派。本节断言计数器写入与检查，不断言文本（空模板按原样保留，见模块头）。
 
-test('COM 守卫①口塞（TEQUIP:45 && SELECTCOM!=45）return 0', async () => {
+test('COM 检查①口塞（TEQUIP:45 && SELECTCOM!=45）return 0', async () => {
   const fixture = await setup_k14((f, era_flag) => {
-    era_flag.selectcom = 0; // 爱抚（若守卫失效会被推进）
+    era_flag.selectcom = 0; // 爱抚（若检查失效会被推进）
     f.store.set('tequip:20:45', 1);
     f.store.set('mark:20:2', 2);
   });
@@ -277,11 +277,11 @@ test('COM 守卫①口塞（TEQUIP:45 && SELECTCOM!=45）return 0', async () => 
   assert.equal(
     fixture.store.get('cflag:20:301'),
     undefined,
-    '口塞守卫：爱抚不得推进（守卫删松即红）',
+    '口塞检查：爱抚不得推进（检查删松即红）',
   );
 });
 
-test('COM 守卫②失神（TFLAG:899）return 0', async () => {
+test('COM 检查②失神（TFLAG:899）return 0', async () => {
   const fixture = await setup_k14((f, era_flag) => {
     era_flag.selectcom = 0;
     f.store.set('tflag:899', 1);
@@ -346,7 +346,7 @@ test('COM 穿环初回 淫乱＋未装（CFLAG:7 & P==0）：置 CFLAG:348 = 1',
 
 // —— S3：DOG / PALAMCNG / MARKCNG / SELF / 迷宫 / 肉便器 / 胜利 / 攻击 / 死斗场 ——
 
-test('COM 兽奸守卫（TEQUIP:89）CALL DOG：走兽奸计数器（爱抚初回→301=1）', async () => {
+test('COM 兽奸检查（TEQUIP:89）CALL DOG：走兽奸计数器（爱抚初回→301=1）', async () => {
   const fixture = await setup_k14((f, era_flag) => {
     era_flag.selectcom = 0;
     f.store.set('tequip:20:89', 1);
@@ -357,7 +357,7 @@ test('COM 兽奸守卫（TEQUIP:89）CALL DOG：走兽奸计数器（爱抚初�
   assert.equal(fixture.store.get('cflag:20:301'), 1);
 });
 
-test('COM 死斗场守卫（TEQUIP:55）CALL COLOSSEUM：55 号指令空行返回', async () => {
+test('COM 死斗场检查（TEQUIP:55）CALL COLOSSEUM：55 号指令空行返回', async () => {
   const fixture = await setup_k14((f, era_flag) => {
     era_flag.selectcom = 55;
     f.store.set('tequip:20:55', 1);
@@ -381,7 +381,7 @@ test('PALAMCNG 首次润滑超Lv2（P1>500 && CFLAG:221==0）：置 221=1', asyn
 });
 
 test('PALAMCNG 首次耻情超Lv2（P3 = PALAM:8 + UP:8 > 500 && CFLAG:223==0）：置 223=1', async () => {
-  // 原作 :4439 P = PALAM:8 + UP:8，#493 修前读的是 train 域不存在的「耻情」
+  // 耻情块 P = PALAM:8 + UP:8，#493 修前读的是 train 域不存在的「耻情」
   // （同域只有 delta:8 的「耻情增量」），NaN > PALAMLV:2 恒假、本块恒不成立
   const fixture = await setup_k14((f) => {
     f.store.set('palam:20:8', 600);
@@ -421,7 +421,7 @@ test('PALAMCNG 首次恐怖超Lv2（P4 = PALAM:10 + UP:10 > 500 && CFLAG:224==0�
 });
 
 test('PALAMCNG 阈值闸恰在 PALAMLV:2（500）：> 而非 >=，500 不触发、501 触发', async () => {
-  // 原作 :4440/:4455 都是 `P > PALAMLV:2`，阈值本身不算命中——门槛判据
+  // 两处阈值都是 `P > PALAMLV:2`，阈值本身不算命中——门槛条件
   // 写成 >= 会把恰好 500 的情形也触发（边界的两个方向各断言一次）。
   const cases = [
     { name: '耻情 500', index: 8, cflag: 223, value: 500, fires: false },
@@ -559,9 +559,8 @@ test('GOHOUBI_REQUEST CFLAG:504==4：接吻奖励台词（%SAVESTR:A% 渲染）'
 });
 
 test('#625 GOHOUBI_REQUEST CFLAG:504 1/2/3：兽名与前后文是同一行', async () => {
-  // 原作 :5738（PRINTFORM 前缀）+ :5740/:5742/:5744（IF/ELSEIF 三档兽名）
-  // + :5746（PRINTFORMW 收行）**是一整行**（无后缀 PRINT 不换行），ere 侧曾
-  // 拆成五条 era.print（#625）。断言整行文本，不是只查片段
+  // 兽名三档段（前缀 PRINTFORM + IF/ELSEIF 三档 + PRINTFORMW 收行）是一整行
+  // （无后缀 PRINT 不换行），曾拆成五条 era.print（#625）。断言整行文本，不是只查片段
   const cases = [
     [1, '狗'],
     [2, '猪'],
@@ -614,7 +613,7 @@ test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688）
 test('DOG_KOJO_14 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
   const fixture = await setup_k14((f, era_flag) => {
     era_flag.selectcom = 30;
-    f.store.set('tequip:20:89', 1); // 兽奸守卫岔去 DOG_KOJO_14
+    f.store.set('tequip:20:89', 1); // 兽奸检查岔去 DOG_KOJO_14
     f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
     f.store.set('cflag:20:331', 2);
     f.store.set('abl:20:16', 3);
