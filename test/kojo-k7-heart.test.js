@@ -29,7 +29,7 @@ async function setup_k7(seed, selectcom = 0) {
   fixture.store.set('talent:20:167', 1); // 金红桃 → GET_KOJO_NUM = 107
   fixture.store.set('flag:107', 1); // K7 存在标志
   fixture.store.set('flag:7', 2); // 口上总开关默认
-  fixture.store.set('talent:0:122', 1); // MASTER 是男性（简易助手分支的守卫）
+  fixture.store.set('talent:0:122', 1); // MASTER 是男性（简易助手分支的检查）
   if (seed) {
     seed(fixture, era_flag);
   }
@@ -38,9 +38,9 @@ async function setup_k7(seed, selectcom = 0) {
   return fixture;
 }
 
-// —— @EVENTTRAIN：存在标志一对 ——
+// —— EVENTTRAIN：存在标志一对 ——
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K7 一对）', async () => {
+test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（K7 一对）', async () => {
   const fixture = await setup_k7((f) => f.store.delete('flag:107'));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -50,7 +50,7 @@ test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（K7 一对）',
   assert.equal(fixture.store.get('flag:107'), 0);
 });
 
-// —— @EVENTTRAIN：初調教 CFLAG:201 状态机 ——
+// —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
 test('初調教（CFLAG:201 == 0）：人間分档，推进到 1', async () => {
   const fixture = await setup_k7();
@@ -95,7 +95,7 @@ test('魔族化（１回のみ）：CFLAG:201<5 且未魔族化时改造，CFLAG
   assert.equal(fixture.store.get('cflag:20:370'), 2);
 });
 
-test('NTR再捕獲（CFLAG:201>=1 && CFLAG:650==1）：爱慕臂清 NTR 开关', async () => {
+test('NTR再捕獲（CFLAG:201>=1 && CFLAG:650==1）：爱慕分支清 NTR 开关', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('cflag:20:201', 2);
     f.store.set('cflag:20:650', 1);
@@ -209,7 +209,7 @@ test('崩坏後は K7_KOJO2 二回目以降へ（CFLAG:201 == 9 时直接岔走�
   );
 });
 
-// —— @EVENTTRAIN：简易助手口上 ——
+// —— EVENTTRAIN：简易助手口上 ——
 
 test('无名助手（TALENT:MASTER:122 == 0）时岔去 K7_KOJO2，不进助手分支', async () => {
   const fixture = await setup_k7((f) => {
@@ -242,7 +242,7 @@ test('助手银黑桃（NO:ASSI == 21）初めて：爱取得済み分档', asyn
   assert.equal(fixture.store.get('cflag:20:202'), 2);
 });
 
-test('助手白梅花（NO:ASSI == 23）守卫：TALENT:ASSI:121 == 0 时静默跳过', async () => {
+test('助手白梅花（NO:ASSI == 23）检查：TALENT:ASSI:121 == 0 时静默跳过', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('cflag:20:201', 9);
     f.store.set('talent:23:121', 0); // 白梅花未着装扶她属性
@@ -271,16 +271,16 @@ test('助手黑方片（NO:ASSI == 22）二回目以降 CFLAG:203==2 分支照�
   );
 });
 
-// —— @EVENTEND：调教结束口上 ——
+// —— EVENTEND：调教结束口上 ——
 
-test('@EVENTEND 死亡守卫（BASE:0 <= 0）：静默跳过', async () => {
+test('EVENTEND 死亡检查（BASE:0 <= 0）：静默跳过', async () => {
   const fixture = await setup_k7((f) => f.store.set('base:20:0', 0));
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTEND');
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('@EVENTEND 崩坏：TALENT:9==1 && FLAG:7==2', async () => {
+test('EVENTEND 崩坏：TALENT:9==1 && FLAG:7==2', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('base:20:0', 100);
     f.store.set('talent:20:9', 1);
@@ -293,7 +293,7 @@ test('@EVENTEND 崩坏：TALENT:9==1 && FLAG:7==2', async () => {
   ]);
 });
 
-test('@EVENTEND 淫乱体力分档：BASE:0 >= 500 与 <= 500 两臂不同台词', async () => {
+test('EVENTEND 淫乱体力分档：BASE:0 >= 500 与 <= 500 两分支不同台词', async () => {
   const high = await setup_k7((f) => {
     f.store.set('base:20:0', 600);
     f.store.set('talent:20:76', 1);
@@ -314,7 +314,7 @@ test('@EVENTEND 淫乱体力分档：BASE:0 >= 500 与 <= 500 两臂不同台词
   assert.equal(low.text_lines()[0], '「呼啊呼啊…如果再抱我一下…就满足了………♡」');
 });
 
-// —— 家族注册接线（issue #238 自检 ④ top-level-wiring）——
+// —— 家族注册接入（issue #238 自检 ④ top-level-wiring）——
 
 test('20 个分发族全部注册了 K7（key 7）', async () => {
   const fixture = await setup_k7();
@@ -370,7 +370,7 @@ test('20 个分发族全部注册了 K7（key 7）', async () => {
   }
 });
 
-// —— @KOJO_MESSAGE_COM_7：指令口上族 ——
+// —— kojo_message_com_7：指令口上族 ——
 
 async function speak_k7(fixture, rand) {
   const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
@@ -404,7 +404,7 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
   ]);
 });
 
-test('TEQUIP:89（兽奸PLAY）：头部守卫岔去 DOG_KOJO_7 真身，全部空文本（模板未填台词）', async () => {
+test('TEQUIP:89（兽奸PLAY）：头部检查岔去 DOG_KOJO_7 真身，全部空文本（模板未填台词）', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tequip:20:89', 1);
     f.store.set('mark:20:2', 2);
@@ -414,7 +414,7 @@ test('TEQUIP:89（兽奸PLAY）：头部守卫岔去 DOG_KOJO_7 真身，全部�
   assert.equal(fixture.store.get('cflag:20:301'), 1); // 状态机仍推进
 });
 
-test('TEQUIP:55（死斗场）：头部守卫岔去 COLOSSEUM_KOJO_7 真身', async () => {
+test('TEQUIP:55（死斗场）：头部检查岔去 COLOSSEUM_KOJO_7 真身', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tequip:20:55', 1);
     f.store.set('base:20:1', 0);
@@ -423,9 +423,9 @@ test('TEQUIP:55（死斗场）：头部守卫岔去 COLOSSEUM_KOJO_7 真身', as
   assert.deepEqual(fixture.text_lines(), ['金红桃连站起来的气力都没有了……']);
 });
 
-// —— 头部七道守卫的余下五道（#238 验收补测；TEQUIP:89/:55 已在上方两例覆盖）——
+// —— 头部七道检查的余下五道（#238 验收补测；TEQUIP:89/:55 已在上方两例覆盖）——
 
-test('ASSI > 0 && ASSIPLAY（助手调教中）：头部第 1 道守卫静默跳过', async () => {
+test('ASSI > 0 && ASSIPLAY（助手调教中）：头部第 1 道检查静默跳过', async () => {
   const fixture = await setup_k7((f, era_flag) => {
     era_flag.assi = 21;
     era_flag.assiplay = 1;
@@ -435,11 +435,11 @@ test('ASSI > 0 && ASSIPLAY（助手调教中）：头部第 1 道守卫静默跳
   assert.equal(
     fixture.store.get('cflag:20:301'),
     undefined,
-    '守卫直接 return 0，不进状态机',
+    '检查直接 return 0，不进状态机',
   );
 });
 
-test('TEQUIP:45（口塞）且 SELECTCOM != 45：头部第 2 道守卫静默跳过', async () => {
+test('TEQUIP:45（口塞）且 SELECTCOM != 45：头部第 2 道检查静默跳过', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tequip:20:45', 1);
   }, 0);
@@ -447,7 +447,7 @@ test('TEQUIP:45（口塞）且 SELECTCOM != 45：头部第 2 道守卫静默跳�
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('TFLAG:899（失神）：头部第 3 道守卫静默跳过', async () => {
+test('TFLAG:899（失神）：头部第 3 道检查静默跳过', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tflag:899', 1);
   }, 0);
@@ -455,7 +455,7 @@ test('TFLAG:899（失神）：头部第 3 道守卫静默跳过', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('TALENT:9 == 1（崩坏）：头部第 6 道守卫静默跳过', async () => {
+test('TALENT:9 == 1（崩坏）：头部第 6 道检查静默跳过', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('talent:20:9', 1);
   }, 0);
@@ -463,7 +463,7 @@ test('TALENT:9 == 1（崩坏）：头部第 6 道守卫静默跳过', async () =
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('TEQUIP:90（触手调教中）：头部第 7 道守卫静默跳过', async () => {
+test('TEQUIP:90（触手调教中）：头部第 7 道检查静默跳过', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tequip:20:90', 1);
   }, 0);
@@ -481,7 +481,7 @@ test('COLOSSEUM SELECTCOM==31：ITEM:PBAND(=4) 修正为 item:4，非字符串�
   fixture.store.set('talent:21:122', 0);
   fixture.store.set('item:4', 1); // PBAND
   era_flag.assiplay = 1;
-  // 直调 colosseum_kojo_7 真身：kojo_message_com_7 头部 ASSI&&ASSIPLAY 守卫
+  // 直调 colosseum_kojo_7 真身：kojo_message_com_7 头部 ASSI&&ASSIPLAY 检查
   // 先于 TEQUIP:55 分派，正常入口下二者不能同时为真，直调绕开这层不可达性。
   const { colosseum_kojo_7 } = fixture.load_module('kojo/kojo-k7-heart');
   await colosseum_kojo_7();
@@ -492,7 +492,7 @@ test('COLOSSEUM SELECTCOM==31：ITEM:PBAND(=4) 修正为 item:4，非字符串�
   );
 });
 
-// —— @KOJO_MESSAGE_PALAMCNG_7 / @KOJO_MESSAGE_MARKCNG_7 ——
+// —— kojo_message_palamcng_7 / kojo_message_markcng_7 ——
 
 test('KOJO_MESSAGE_PALAMCNG_7：P = PALAM:3 + UP:3 首次超过 PALAMLV:2 触发润滑首超', async () => {
   const fixture = await setup_k7();
@@ -517,7 +517,7 @@ test('KOJO_MESSAGE_MARKCNG_7：TFLAG:22==3 且 CFLAG:297==0 触发苦痛刻印Lv
   assert.equal(fixture.store.get('cflag:20:297'), 1);
 });
 
-// —— @SELF_KOJO_K7 ——
+// —— self_kojo_k7 ——
 
 test('SELF_KOJO_K7 TFLAG:13==4（调教后性交）：s 读 peek_aftertrain_s()（跨模块全局 S）', async () => {
   const fixture = await setup_k7();
@@ -693,15 +693,15 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K7：注册且
   before = fixture.text_lines().length;
   fixture.store.set('tflag:530', 0);
   await grotesque_koujo_family.call(7, { args: [] });
-  assert.deepEqual(fixture.text_lines().slice(before), ['']); // 源无文本，PRINTFORMW 仍记空行
+  assert.deepEqual(fixture.text_lines().slice(before), ['']); // 链上无文本，PRINTFORMW 仍记空行
 });
 
 // —— #621：普查二类清单（26 组）合并后的整行断言 ——
-// 源里一条输出由「无后缀 PRINTFORM 前缀 + 各互斥支的收行段」拼成，移植早期
-// 按段各打一行；本票把同一条输出的各段合成一句 era.print*（拼接锚 // :a+:b）。
-// 这里逐组断言整行文本，覆盖该行的各分支组合（判据两档 × 互斥支各一支）。
+// 一条输出由「无后缀 PRINTFORM 前缀 + 各互斥支的收行段」拼成，移植早期
+// 按段各打一行；这张工单把同一条输出的各段合成一句 era.print*（拼接基准）。
+// 这里逐组断言整行文本，覆盖该行的各分支组合（条件两档 × 互斥支各一支）。
 
-test('#621 屈服刻印Lv3 的靠近分档（:639 组）：三支各合成一条输出', async () => {
+test('#621 屈服刻印Lv3 的靠近分档：三支各合成一条输出', async () => {
   const cases = [
     { talent302: 1, line: '你慢慢的靠近了金红桃抓过她的金发嗅着。' },
     { talent302: 101, line: '你慢慢的靠近了金红桃抓过她长顺的金发嗅着。' },
@@ -721,7 +721,7 @@ test('#621 屈服刻印Lv3 的靠近分档（:639 组）：三支各合成一条
   }
 });
 
-test('#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出', async () => {
+test('#621 口塞初回三档：前缀与收行段合成一条输出', async () => {
   const cases = [
     {
       label: '淫乱＋眼罩',
@@ -732,7 +732,7 @@ test('#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合
       line: '金红桃因为嘴被塞住而稍稍不满的动了起来………',
     },
     {
-      label: '淫乱＋无眼罩（ELSE 支 :5109）',
+      label: '淫乱＋无眼罩（ELSE 支）',
       seed: (f) => f.store.set('talent:20:76', 1),
       line: '金红桃因为嘴被塞住而稍稍不满的用眼睛凝视着你………',
     },
@@ -745,7 +745,7 @@ test('#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合
       line: '金红桃好像期待着什么就那样动了起来………',
     },
     {
-      label: '爱慕＋无眼罩（ELSE 支 :5118）',
+      label: '爱慕＋无眼罩（ELSE 支）',
       seed: (f) => f.store.set('talent:20:85', 1),
       line: '金红桃好像期待着什么就那样用眼睛凝视着你………',
     },
@@ -755,7 +755,7 @@ test('#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合
       line: '金红桃的嘴被口枷塞住，左右摇着头………',
     },
     {
-      label: 'それ以外＋无眼罩（ELSE 支 :5127）',
+      label: 'それ以外＋无眼罩（ELSE 支）',
       seed: () => {},
       line: '金红桃的嘴被口枷塞住，瞪着你………',
     },
@@ -773,10 +773,10 @@ test('#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合
   }
 });
 
-test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出', async () => {
+test('#621 口塞二回目三档：前缀与收行段合成一条输出', async () => {
   const cases = [
     {
-      label: '淫乱＋眼罩（:5147+:5149）',
+      label: '淫乱＋眼罩',
       seed: (f) => {
         f.store.set('talent:20:76', 1);
         f.store.set('cflag:20:346', 5);
@@ -785,7 +785,7 @@ test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段
       line: '金红桃因为嘴被塞住而稍稍不满的动了起来………',
     },
     {
-      label: '淫乱＋无眼罩（ELSE 支 :5151）',
+      label: '淫乱＋无眼罩（ELSE 支）',
       seed: (f) => {
         f.store.set('talent:20:76', 1);
         f.store.set('cflag:20:346', 5);
@@ -793,7 +793,7 @@ test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段
       line: '金红桃因为嘴被塞住而稍稍不满的用眼睛凝视着你………',
     },
     {
-      label: '爱慕＋眼罩（:5167+:5169）',
+      label: '爱慕＋眼罩',
       seed: (f) => {
         f.store.set('talent:20:85', 1);
         f.store.set('cflag:20:346', 3);
@@ -802,7 +802,7 @@ test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段
       line: '金红桃好像期待着什么就那样动了起来………',
     },
     {
-      label: 'それ以外＋眼罩（:5182+:5184）',
+      label: 'それ以外＋眼罩',
       seed: (f) => {
         f.store.set('cflag:20:346', 1);
         f.store.set('tequip:20:43', 1);
@@ -810,7 +810,7 @@ test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段
       line: '金红桃的嘴被口枷塞住左右摇着头………',
     },
     {
-      label: 'それ以外＋无眼罩（ELSE 支 :5186）',
+      label: 'それ以外＋无眼罩（ELSE 支）',
       seed: (f) => f.store.set('cflag:20:346', 1),
       line: '金红桃的嘴被口枷塞住瞪着你………',
     },
@@ -828,11 +828,11 @@ test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段
   }
 });
 
-test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:5392/:5469 组）', async () => {
+test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）', async () => {
   const cases = [
-    { label: '含自慰妄想（初回 :5392+:5394+:5395）', cflag: 0, dirty: 1 },
+    { label: '含自慰妄想（初回）', cflag: 0, dirty: 1 },
     { label: '不含（初回）', cflag: 0, dirty: 0 },
-    { label: '含自慰妄想（二回目 :5469+:5471+:5472）', cflag: 1, dirty: 1 },
+    { label: '含自慰妄想（二回目）', cflag: 1, dirty: 1 },
     { label: '不含（二回目）', cflag: 1, dirty: 0 },
   ];
   for (const { label, cflag, dirty } of cases) {
@@ -854,101 +854,101 @@ test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条�
   }
 });
 
-test('#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出', async () => {
-  // 两处链各支全覆盖；源读 store 的 PALAMLV，故每例显式给阈值
+test('#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出', async () => {
+  // 两处链各支全覆盖；PALAMLV 阈值取自 store，故每例显式给阈值
   const cases = [
     {
-      label: '初回（:5408 组）・爱意',
+      label: '初回・爱意',
       cflag: 0,
       seed: { 'palam:20:5': 10000, 'talent:20:85': 1, 'tflag:60': 1 },
       line: '被你搭着话、金红桃摇着腰说出了爱的话语',
     },
     {
-      label: '初回（:5408 组）・淫猥',
+      label: '初回・淫猥',
       cflag: 0,
       seed: { 'palam:20:5': 10000, 'talent:20:76': 1, 'tflag:60': 1 },
       line: '被你搭着话、金红桃摇着腰说出了下流的话语',
     },
     {
-      label: '初回（:5408 组）・语调・快乐',
+      label: '初回・语调・快乐',
       cflag: 0,
       seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:11': 1 },
       line: '被你搭着话、金红桃一边发出快乐的的声音、一边拼死的回着话',
     },
     {
-      label: '初回（:5408 组）・语调・痛苦',
+      label: '初回・语调・痛苦',
       cflag: 0,
       seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:44': 1 },
       line: '被你搭着话、金红桃一边发出痛苦的的声音、一边拼死的回着话',
     },
     {
-      label: '初回（:5408 组）・语调・无档',
+      label: '初回・语调・无档',
       cflag: 0,
       seed: { 'palam:20:5': 10000, 'palam:20:4': 10000 },
       line: '被你搭着话、金红桃一边发出的声音、一边拼死的回着话',
     },
     {
-      label: '初回（:5408 组）・融洽',
+      label: '初回・融洽',
       cflag: 0,
       seed: { 'palam:20:4': 10000 },
       line: '被你搭着话、金红桃融洽的回着话',
     },
     {
-      label: '初回（:5408 组）・断断续续',
+      label: '初回・断断续续',
       cflag: 0,
       seed: { 'palam:20:4': 600 },
       line: '被你搭着话、金红桃断断续续的回着话',
     },
     {
-      label: '初回（:5408 组）・それ以外',
+      label: '初回・それ以外',
       cflag: 0,
       seed: {},
       line: '被你搭着话、但是金红桃好像没有认真听…',
     },
     {
-      label: '二回目（:5485 组）・爱意',
+      label: '二回目・爱意',
       cflag: 1,
       seed: { 'palam:20:5': 10000, 'talent:20:85': 1, 'tflag:60': 1 },
       line: '被你搭着话、金红桃摇着腰说出了爱的话语',
     },
     {
-      label: '二回目（:5485 组）・淫猥',
+      label: '二回目・淫猥',
       cflag: 1,
       seed: { 'palam:20:5': 10000, 'talent:20:76': 1, 'tflag:60': 1 },
       line: '被你搭着话、金红桃摇着腰说出了下流的话语',
     },
     {
-      label: '二回目（:5485 组）・语调・快乐',
+      label: '二回目・语调・快乐',
       cflag: 1,
       seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:11': 1 },
       line: '被你搭着话、金红桃一边发出快乐的声音、一边拼死的回着话',
     },
     {
-      label: '二回目（:5485 组）・语调・痛苦',
+      label: '二回目・语调・痛苦',
       cflag: 1,
       seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:44': 1 },
       line: '被你搭着话、金红桃一边发出痛苦的声音、一边拼死的回着话',
     },
     {
-      label: '二回目（:5485 组）・语调・无档',
+      label: '二回目・语调・无档',
       cflag: 1,
       seed: { 'palam:20:5': 10000, 'palam:20:4': 10000 },
       line: '被你搭着话、金红桃一边发出声音、一边拼死的回着话',
     },
     {
-      label: '二回目（:5485 组）・融洽',
+      label: '二回目・融洽',
       cflag: 1,
       seed: { 'palam:20:4': 10000 },
       line: '被你搭着话、金红桃融洽的回着话',
     },
     {
-      label: '二回目（:5485 组）・断断续续',
+      label: '二回目・断断续续',
       cflag: 1,
       seed: { 'palam:20:4': 600 },
       line: '被你搭着话、金红桃断断续续的回着话',
     },
     {
-      label: '二回目（:5485 组）・それ以外',
+      label: '二回目・それ以外',
       cflag: 1,
       seed: {},
       line: '被你搭着话、但是金红桃好像没有认真听…',
@@ -969,7 +969,7 @@ test('#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支
   }
 });
 
-test('#621 迷宫凌辱「作为代替」（:8001+:8004）：前缀与收行段合成一条输出', async () => {
+test('#621 迷宫凌辱「作为代替」：前缀与收行段合成一条输出', async () => {
   const cases = [
     {
       exp1: 30,
@@ -993,7 +993,7 @@ test('#621 迷宫凌辱「作为代替」（:8001+:8004）：前缀与收行段�
   }
 });
 
-test('#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）', async () => {
+test('#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出', async () => {
   const cases = [
     {
       selectcom: 31,
@@ -1044,24 +1044,24 @@ test('#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:
   }
 });
 
-test('#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）', async () => {
+test('#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出', async () => {
   const cases = [
     {
-      label: 'P1・爱慕・狂王巨根（:8362+:8366）',
+      label: 'P1・爱慕・狂王巨根',
       p: 1,
       king: 1,
       seed: (f) => f.store.set('talent:20:85', 1),
       line: '然后、狂王的巨根慢慢的插进了金红桃的秘裂。在镜头里能看见金红桃的蜜壶被深深的贯穿了。',
     },
     {
-      label: 'P1・それ以外・按摩棒（:8375+:8379）',
+      label: 'P1・それ以外・按摩棒',
       p: 1,
       king: 0,
       seed: () => {},
       line: '特大号按摩棒深深的插入了金红桃的蜜壶、破瓜之血顺着大腿流了下来………',
     },
     {
-      label: 'P2・肛开Lv3・巨根（:8388+:8394）',
+      label: 'P2・肛开Lv3・巨根',
       p: 2,
       king: 1,
       seed: (f) => {
@@ -1071,35 +1071,35 @@ test('#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362
       line: '金红桃被开发了的肛门轻易地吞下了狂王的巨根、金红桃开始发出了呻吟声。',
     },
     {
-      label: 'P2・肛开Lv3未満・按摩棒（:8398+:8404）',
+      label: 'P2・肛开Lv3未満・按摩棒',
       p: 2,
       king: 0,
       seed: (f) => f.store.set('talent:20:85', 1),
       line: '金红桃的肛门吞下了特大号按摩棒、金红桃因为强烈的苦痛而悲鸣着。',
     },
     {
-      label: 'P2・それ以外（:8411+:8415）',
+      label: 'P2・それ以外',
       p: 2,
       king: 0,
       seed: () => {},
       line: '特大号按摩棒插进了金红桃的肛门、金红桃发出娇喘取悦着狂王………',
     },
     {
-      label: 'P4・淫乱・巨根（:8437+:8443）',
+      label: 'P4・淫乱・巨根',
       p: 4,
       king: 1,
       seed: (f) => f.store.set('talent:20:75', 1),
       line: '虽然因为完全变成性爱狂的金红桃而困惑着，但还是用他的巨根不停地侵犯着金红桃的蜜壶。然后随着抽送金红桃发出着野兽一样的呻吟声。',
     },
     {
-      label: 'P4・爱慕・巨根（:8450+:8454）',
+      label: 'P4・爱慕・巨根',
       p: 4,
       king: 1,
       seed: (f) => f.store.set('talent:20:85', 1),
       line: '狂王的巨根不停的侵犯着金红桃的蜜壶、金红桃发出了甜美的呻吟。',
     },
     {
-      label: 'P4・それ以外・巨根（:8460+:8464）',
+      label: 'P4・それ以外・巨根',
       p: 4,
       king: 1,
       seed: () => {},
@@ -1120,7 +1120,7 @@ test('#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362
   }
 });
 
-test('#621 迎击奖励请求：动物名与收行段合成一条输出（:8680+:8682+:8684+:8686+:8688）', async () => {
+test('#621 迎击奖励请求：动物名与收行段合成一条输出', async () => {
   const cases = [
     { kind: 1, line: '「奖励？　我想尝试和犬性交看看」' },
     { kind: 2, line: '「奖励？　我想尝试和豚性交看看」' },

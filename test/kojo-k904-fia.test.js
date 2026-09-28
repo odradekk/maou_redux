@@ -117,7 +117,7 @@ test('K904 分发：全部口上族注册键都是 904', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 1, '904 主分发可调用');
 });
 
-// —— #625：原作同一行被拆成多条 era.print 的合并点（正文与 K19 相同） ——
+// —— #625：同一行输出被拆成多条 era.print 的合并点（正文与 K19 相同） ——
 
 async function speak_k904(fixture, rand = () => 0) {
   const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
@@ -129,7 +129,7 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
     ['淫乱', (f) => f.store.set(`talent:${CID}:76`, 1), 5],
     ['爱慕', (f) => f.store.set(`talent:${CID}:85`, 1), 4],
     ['ABL:17>=3', (f) => f.store.set(`abl:${CID}:17`, 3), 3],
-    ['无素质兜底', () => {}, 2],
+    ['无素质缺省', () => {}, 2],
   ];
   for (const [name, seed, expected] of cases) {
     const fixture = await setup_k904((f, era_flag) => {
@@ -152,7 +152,7 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
 
   const guard_fixture = await setup_k904((f, era_flag) => {
     era_flag.selectcom = 7;
-    f.store.set('flag:7', 1); // 关掉总开关旁路，让判据真正生效
+    f.store.set('flag:7', 1); // 关掉总开关旁路，让条件真正生效
     f.store.set(`cflag:${CID}:308`, 1);
     f.store.set(`cflag:${CID}:306`, 6); // 干扰项：胸爱抚计数偏高
   });
@@ -160,7 +160,7 @@ test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306',
   assert.equal(
     guard_fixture.store.get(`cflag:${CID}:308`),
     2,
-    '兜底判据读 308 自身：306=6 不影响命中',
+      '缺省档条件读 308 自身：306=6 不影响命中',
   );
 });
 
@@ -202,7 +202,7 @@ test('SELECTCOM 123 无口上分支：不输出也不推进 CFLAG:360', async ()
     'SELECTCOM 123 不推进 CFLAG:360',
   );
 });
-test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 两处 × ABL:31 两档）', async () => {
+test('#625 交谈·自我介绍：名字与后续是同一行（两处 × ABL:31 两档）', async () => {
   const cases = [
     [0, 0],
     [0, 3],
@@ -231,7 +231,7 @@ test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 �
   }
 });
 
-test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 / :4446 两处 × 两档）', async () => {
+test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（两处 × 两档）', async () => {
   const cases = [
     { talked: 0, tequip: 11, prefix: '' },
     { talked: 0, tequip: 44, prefix: '' },
@@ -262,10 +262,10 @@ test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 /
   }
 });
 
-test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4442/:4444/:4455/:4458/:4461/:4464）', async () => {
+test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行', async () => {
   const cases = [
     {
-      name: ':4442 爱慕+插着不拔',
+      name: '爱慕+插着不拔',
       seed: (f) => {
         f.store.set(`palam:${CID}:5`, 10000);
         f.store.set(`talent:${CID}:85`, 1);
@@ -274,7 +274,7 @@ test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4
       line: '你菲娅一边与你说着话，一边对着你露出了重要的地方。',
     },
     {
-      name: ':4444 淫乱+插着不拔',
+      name: '淫乱+插着不拔',
       seed: (f) => {
         f.store.set(`palam:${CID}:5`, 10000);
         f.store.set(`talent:${CID}:76`, 1);
@@ -283,22 +283,22 @@ test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4
       line: '你菲娅开心的朝着你撒着娇，对着你说着色色的话语。',
     },
     {
-      name: ':4455 淫乱（无插着不拔、欲情低）',
+      name: '淫乱（无插着不拔、欲情低）',
       seed: (f) => f.store.set(`talent:${CID}:76`, 1),
       line: '你菲娅一边这么说着，一边对着你露出了重要的地方。',
     },
     {
-      name: ':4458 欲情LV4 但欲情5 未达标',
+      name: '欲情LV4 但欲情5 未达标',
       seed: (f) => f.store.set(`palam:${CID}:4`, 10000),
       line: '你菲娅开心的朝着你撒着娇，说着色色的话语。',
     },
     {
-      name: ':4461 技巧Lv3',
+      name: '技巧Lv3',
       seed: (f) => f.store.set(`abl:${CID}:10`, 3),
       line: '你菲娅大口大口的喘着气，小小的身体因为快感而像触电一样痉挛个不停。',
     },
     {
-      name: ':4464 都不满足',
+      name: '都不满足',
       seed: () => {},
       line: '你菲娅乖巧的低着头听着。',
     },
@@ -318,7 +318,7 @@ test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4
 });
 
 test('#625 COLOSSEUM_KOJO_904：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
-  // 助手臂在 KOJO_MESSAGE_COM 的 ASSI 守卫之后，运行时不带助手才可达，
+  // 助手分支在 KOJO_MESSAGE_COM 的 ASSI 检查之后，运行时不带助手才可达，
   // 直接调真身覆盖（同 K2/K4/K903/K19）
   const cases = [
     {
