@@ -95,7 +95,7 @@ export default [
     desc: 'M10 is_trainable：删掉占用条件（CFLAG:x:1）',
     file: 'ere/page/page-select-target.js',
     find: '  // 占用中（CFLAG:x:1 != 0）→ 2\n  if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {\n    return 2;\n  }',
-    replace: '  // 变异：删掉占用判据',
+    replace: '  // 变异：删掉占用条件',
     tests: ['page-select-target'],
     must_mention: 'is_trainable',
   },
@@ -261,7 +261,7 @@ export default [
     desc: 'M143 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
     file: 'ere/page/page-shop.js',
     // #395 起 show_shop 变 async，redraw 调用点从 `return` 改成
-    // `const row_count = await`（BOUGHT 跳转判据要用到返回的行数），
+    // `const row_count = await`（BOUGHT 跳转条件要用到返回的行数），
     // find 收窄到方法名本身
     find: 'main_menu.redraw()',
     replace: 'main_menu.draw()',
@@ -281,7 +281,7 @@ export default [
     desc: 'M150 重绘条件反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
     file: 'ere/page/page-train.js',
     find: '  if (command_path_seen) {',
-    replace: '  if (!command_path_seen) { // 变异：判据反接',
+    replace: '  if (!command_path_seen) { // 变异：条件反接',
     tests: ['page-train'],
     must_mention: '指令轮追加绘制',
   },
@@ -305,7 +305,7 @@ export default [
     find: `      const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {
         era.logger.warn(
-          \`画面组件重绘后行数 \${remaining} 未回到锚点 \${this.anchor_row}（清行跨度 \${span}）——存在旁路清行\`,
+          \`画面组件重绘后行数 \${remaining} 未回到基准点 \${this.anchor_row}（清行跨度 \${span}）——存在旁路清行\`,
         );
       }`,
     replace: '      await era.clear(span); // 变异：自校验删除',
@@ -1375,7 +1375,7 @@ export default [
     desc: 'M8399 max_page_enemy 敌人数条件错位（2 → 1）',
     file: 'ere/page/page-life-list.js',
     find: '    cflag(cid, 1) === 2 && // 侵攻中',
-    replace: '    cflag(cid, 1) === 1 && // 变异：判据错位',
+    replace: '    cflag(cid, 1) === 1 && // 变异：条件错位',
     tests: ['page-life-list'],
     must_mention: '页数算式在整除与余数两侧',
   },
@@ -3492,7 +3492,7 @@ export default [
     file: 'ere/page/page-config-age.js',
     find: '      if (chara(cid).chara.年龄 !== 0) {\n        continue; // 已生成的跳过\n      }',
     replace: `      if (chara(cid).chara.年龄 === 0) {
-        continue; // 变异：守卫取反
+        continue; // 变异：检查取反
       }`,
     tests: ['page-config-age'],
     must_mention: 'CFLAG:451≠0 跳过',
@@ -3502,7 +3502,7 @@ export default [
     file: 'ere/page/page-config-age.js',
     find: '      if (cid === 0) {\n        continue; // 魔王跳过\n      }',
     replace: `      if (cid === 1) {
-        continue; // 变异：守卫挪位
+        continue; // 变异：检查挪位
       }`,
     tests: ['page-config-age'],
     must_mention: 'LCOUNT==0 跳过',
@@ -4000,17 +4000,17 @@ export default [
     desc: 'M12205 名册上浮条件错位（sub_result === 1 改 === 2，1 不再结束本回合）',
     file: 'ere/page/page-chara-info.js',
     find: '      if (sub_result === 1) {',
-    replace: '      if (sub_result === 2) { // 变异：判据错位',
+    replace: '      if (sub_result === 2) { // 变异：条件错位',
     tests: ['page-chara-info'],
     must_mention: '直接调内层的视图：返回 1 结束本回合',
   },
   // —— #606 返工：转职 2 档不结束本回合 ——
-  // 验收要求守卫「名册判断改成 >= 1 / if (sub_result) 要被发现」。实测（本轮
+  // 验收要求检查「名册判断改成 >= 1 / if (sub_result) 要被发现」。实测（本轮
   // 实验 A/B）：名册行 sub_result 恒 ∈ {0,1}（转职/诱惑/结婚的 2 被内层
-  // :1094-1099 的守卫消化成页内重画，永不上浮），>= 1 与 truthy 在名册行
+  // :1094-1099 的检查消化成页内重画，永不上浮），>= 1 与 truthy 在名册行
   // 与 === 1 语义等价、任何用例都发现不了。两条写法因此钉在唯一有语义
-  // 差别的位置——内层 case 2 的守卫（守卫一破，2 直达名册，那种放宽的
-  // 判断即会误结束回合）；另配一条纯删守卫。
+  // 差别的位置——内层 case 2 的检查（检查一破，2 直达名册，那种放宽的
+  // 判断即会误结束回合）；另配一条纯删检查。
   {
     desc: 'M12206 转职 2 档的检查删除（job_result 直返——2 外泄直达名册，#606 返工）',
     file: 'ere/page/page-chara-info.js',
@@ -4306,9 +4306,9 @@ export default [
     must_mention: '苏生名单',
   },
   {
-    // 反向：原作的 `[\\@ FLAG_B ? - # 0 \\@]` 里 `-` 在方括号**内**，是编号替身
+    // 反向：`[\@ FLAG_B ? - # 0 \@]` 里 `-` 在方括号**内**，是编号替身
     // 而不是分隔符——这里给它补上「- 」必须被断言拦下（#612 反馈的「反向普查」）
-    desc: 'M12315 部位菜单误加「- 」（:2140 的 `-` 在方括号内，不是分隔符）',
+    desc: 'M12315 部位菜单误加「- 」（旧写法 `-` 在方括号内，不是分隔符）',
     file: 'ere/page/page-shop-labo.js',
     find: 'era.printButton(label, pid);',
     replace: 'era.printButton(`- ${label}`, pid); // 变异：误加「- 」',
@@ -4316,7 +4316,7 @@ export default [
     must_mention: '未封锁部位',
   },
   {
-    // 灰字行的假编号前缀也照写原作（`:1032` / `:1164` 逐字相同，靠行尾注释区分）；
+    // 灰字行的假编号前缀与其余两处逐字相同（靠行尾注释区分）；
     // 两处都是文本行，去掉 `[---] - ` 时对应断言必须红
     desc: 'M12316 戒指页的灰字行丢掉「[---] - 」',
     file: 'ere/page/page-tailor.js',
@@ -4491,7 +4491,7 @@ export default [
     desc: 'M12900 设置页 [26]/[28] 入口复活（MOD 开关与立绘开关按钮打回——#638 按 #574 删除的判不移植入口不得回潮）',
     file: 'ere/page/page-config.js',
     find: `    // [26] MOD开关与 [28] 立绘开关：MOD 子系统与立绘系统均判不移植（#542），
-    // 缺内容的入口随存根清单一并删除（#638 按 #574「缺内容的去掉入口」）`,
+    // 缺内容的入口随占位机制一并删除（#638 按 #574「缺内容的去掉入口」）`,
     replace: `    // 变异：入口复活
     era.printButton('MOD开关', 26);
     era.printButton('立绘开关 　　　　 　　 　现在：OFF', 28);`,
@@ -4501,8 +4501,8 @@ export default [
   {
     desc: 'M12901 主菜单 999 调试入口复活（提示行+等键打回——#638 删除的 DEBUG_MENU_U 分支不得回潮）',
     file: 'ere/page/page-shop.js',
-    find: `  // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随存根
-  // 清单一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
+    find: `  // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随占位
+  // 机制一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
   // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾`,
     replace: `  if (result === 999) {
     era.print('（调试菜单不在移植范围。）');
@@ -4553,7 +4553,7 @@ export default [
     desc: 'M12932 追加信息检查拆成无条件输出（留空也打空串行，#642）',
     file: 'ere/page/page-title.js',
     find: '  if (gamebase.info) {\n    era.print(gamebase.info);\n  }',
-    replace: '  era.print(gamebase.info); // 变异：守卫拆除',
+    replace: '  era.print(gamebase.info); // 变异：检查拆除',
     tests: ['page-title'],
     must_mention: '【追加信息】为空时不得输出空串行',
   },
@@ -4562,7 +4562,7 @@ export default [
     file: 'ere/page/page-title.js',
     find: "  if (gamebase.year) {\n    era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]);\n  }",
     replace:
-      "  era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]); // 变异：守卫拆除",
+      "  era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]); // 变异：检查拆除",
     tests: ['page-title'],
     must_mention: '【发布时间】为空时不得输出',
   },

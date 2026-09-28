@@ -233,7 +233,7 @@ export default [
     find: '  chara_name_define(cid, nid);',
     replace: '  void nid;',
     tests: ['chara-name'],
-    must_mention: '固定名 0 未注册名字 → 佳奈美（真身已执行，不再是占位行）',
+    must_mention: '固定名 0 未注册名字 → 佳奈美（真身已执行）',
   },
   {
     desc: 'M6539 自动调教肛门绝顶的 KARMA -2 改 -1',

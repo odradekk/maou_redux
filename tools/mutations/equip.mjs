@@ -1,6 +1,6 @@
-// 变异条目表切片：ere/system/equip/ 与 ere/data/equip-database.js（装备系统，#174/H5——EQUIP.ERB 九函数 + USEABLE_EQUIPMENT + WEAPON_RESTORE + 存根接线）。
+// 变异条目表切片：ere/system/equip/ 与 ere/data/equip-database.js（装备系统，#174/H5——九个装备函数 + USEABLE_EQUIPMENT + WEAPON_RESTORE + 存根接入）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 32; // #174 建表 19 条；#546 +13（M11520-M11531、M11547：装备详情显示三函数——诅咒行随规范审查补可达用例）

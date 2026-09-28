@@ -97,7 +97,7 @@ export default [
     era.set(\`tequip:\${this.cid}:46\`, v);
   }`,
     tests: ['tequip-model'],
-    must_mention: '四个口上守卫位经 train 域门面可写',
+    must_mention: '四个口上检查位经 train 域门面可写',
   },
   // —— #493：调教域手写区补的两条 palam 访问器（ownership 无 8/10 的测量
   // 事实，生成器发不出来，改从手写区读「当前值」一侧）——

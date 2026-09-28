@@ -1,6 +1,6 @@
-// issue #338：成熟奴隶黑市末路与口上接线（M7600-M7699）。
+// issue #338：成熟奴隶黑市末路与口上接入（M7600-M7699）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 73; // #640 -1（M7665 随输出比对工具删除）；#653 -1 +1（删反向变异 M7650：代词已改为跟随出售对象，新增 M13256 守卫）
+export const COUNT = 73; // #640 -1（M7665 随输出比对工具删除）；#653 -1 +1（删反向变异 M7650：代词已改为跟随出售对象，新增 M13256 检查）
 
 const code = 'ere/system/stronghold/sell-maturo-k0.js';
 const make = (id, desc, find, replace, must_mention) => ({
@@ -457,7 +457,7 @@ export default [
     '          if (era.get(`cflag:${cid}:9`) >= 21) {',
     matrix,
   ),
-  // M7665（归因规则的行号兜底规则）随输出比对工具删除（#640）。
+  // M7665（归因规则的行号缺省规则）随输出比对工具删除（#640）。
   {
     desc: 'M7690 K2 成熟出售真身调用丢失',
     file: 'ere/kojo/kojo-k2-timid.js',

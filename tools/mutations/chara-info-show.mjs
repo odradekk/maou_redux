@@ -657,7 +657,7 @@ export default [
     '同一轮里与角色行同屏的固定编号不得等于预设 ID',
     ['child-id-collision'],
   ),
-  // 靶文件是核对自己（test/child-id-collision.test.js）：回边并错轮 = 漏报
+  // 目标文件是核对自己（test/child-id-collision.test.js）：回边并错轮 = 漏报
   {
     desc: 'M11988 同屏核对：尾段无条件并进第 0 轮（sacrifice_flow 形状的尾段漏报）',
     file: 'test/child-id-collision.test.js',

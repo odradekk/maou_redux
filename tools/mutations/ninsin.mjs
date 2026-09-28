@@ -101,7 +101,7 @@ export default [
     must_mention: '角色 ID 100 不与弃养选项冲突',
   },
   {
-    desc: 'M7192 动态后代保留区起点漂移',
+    desc: 'M7192 动态后代保留区起点错位',
     file: 'ere/chara/chara-pregnancy.js',
     find: 'const FIRST_CHILD_ID = 100000;',
     replace: 'const FIRST_CHILD_ID = 100001;',

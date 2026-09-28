@@ -1653,7 +1653,7 @@ export default [
   },
   // M8940（异界召唤的性别菜单行少一个全角空格，:30）随 #572 的按钮化删除：
   // 那一行成了 printButton（引擎把正文里的连续空白折成一个空格），排版字面量
-  // 不再存在，等价守卫换成 #572 的 M12025（菜单行退回纯文本即红）。
+  // 不再存在，等价检查换成 #572 的 M12025（菜单行退回纯文本即红）。
   // —— #399 验收返工（第三轮）：范围端点 ——
   // 「幅度和边界是两回事」：这一组每条只把端点挪一到两格。挪一格但数据里没有
   // 商品/角色落在那一格的，是等价变异（不建条目），理由写进相邻条目的注释；
@@ -1791,7 +1791,7 @@ export default [
     tests: ['chara-shop'],
     must_mention: '扶她档',
   },
-  // 第三轮评审点名的两个内联端点（不是命名常量，判据直接写在行里）
+  // 第三轮评审点名的两个内联端点（不是命名常量，条件直接写在行里）
   {
     desc: 'M9116 戒指槽位的上限宽一格（ITEM:300 > 99 → > 100）',
     file: 'ere/page/page-item-shop.js',
@@ -1998,8 +1998,8 @@ export default [
     must_mention: '缺省值读 store（modsave:0 = 1）',
   },
   {
-    // #562：PRINTLC 不换行，:80 的 PRINTL 只结束两个按钮那一行（见 CONTEXT.md
-    // 「输出 API 与原作的对应」）
+    // #562：PRINTLC 不换行，PRINTL 只结束两个按钮那一行（见 CONTEXT.md
+    // 「输出 API 的排版与对齐」）
     desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-item-shop.js',
     find: "  era.setAlign('left');\n\n  return 0;\n}",
@@ -2093,7 +2093,7 @@ export default [
     tests: ['sale-chara'],
     must_mention: '出售确认两键带「- 」',
   },
-  // —— #653（F7）：卖淫影响 2 的倍率修复守卫 ——
+  // —— #653（F7）：卖淫影响 2 的倍率回归检查 ——
   {
     desc: 'M13255 卖淫影响 2 的倍率改回参与估价（无影响档被卖淫经验打折）',
     file: 'ere/system/stronghold/sale.js',

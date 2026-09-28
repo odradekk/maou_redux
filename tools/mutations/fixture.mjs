@@ -1,9 +1,9 @@
 // 变异条目表切片：test/helpers/（测试夹具与引擎比对助手的镜像语义）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 48; // #557 +6（M12350-M12355：等待重叠检测——守卫拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 48; // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -32,7 +32,7 @@ export default [
     must_mention: '调教菜单登录',
   },
   {
-    desc: 'M2113 夹具 input 白名单校验被拆（未打印按钮的值照单全收——#130 要防的复发形态）',
+    desc: 'M2113 夹具 input 白名单校验被拆（未打印按钮的值照单全收——#130 要防的复发形式）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (config?.useRule !== false) {`,
     replace: `    if (false && config?.useRule !== false) { // 变异：白名单失守`,
@@ -152,7 +152,7 @@ export default [
     find: `  era.playMusic = (names, config) => {
     const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
     replace: `  era.playMusic = (names, config) => {
-    push_row([]); // 变异：音乐误算一行（派单人独立变异复现过的误报通过形态）
+    push_row([]); // 变异：音乐误算一行（派单人独立变异复现过的误报通过形式）
     const cfg = typeof config === 'object' ? config : { loop: false }; // 引擎：非对象重置`,
     tests: ['fixture'],
     must_mention: '不占 Row',
@@ -206,11 +206,11 @@ export default [
     must_mention: '中途分叉（二）',
   },
   {
-    // 注：must_mention 原为「#68 形态」（#91 落地时的短语，住在依赖引擎的
+    // 注：must_mention 原为「#68 形式」（#91 实现时的短语，住在依赖引擎的
     // engine-contract.test.js 里——无引擎执行点（CI，#89）暴露：该用例跳过
     // 时 fixture.test.js 侧虽红但文案不含短语，被误判误报通过。改指 fixture
     // 侧也在场的「回显计一行」，两侧环境都能报出，无弱化。
-    desc: 'M170 夹具 input 回显不计行不置位（#68 形态：Row 记账错位）',
+    desc: 'M170 夹具 input 回显不计行不置位（#68 形式：Row 记账错位）',
     file: 'test/helpers/era-fixture.js',
     find: `        total_rows += 1; // this.print(回显值)：+1 Row
         allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）`,
@@ -230,7 +230,7 @@ export default [
     must_mention: 'disableClear 下 clear 整体无操作',
   },
   {
-    desc: 'M178 engine-bundle 模块号漂移守卫被拆（漂移时炸 TypeError 而非说清引擎变了）',
+    desc: 'M178 engine-bundle 模块号不一致检查被拆（不一致时炸 TypeError 而非说清引擎变了）',
     file: 'test/helpers/engine-bundle.js',
     find: '    !ERA_API_METHODS.every(',
     replace: '    false && !ERA_API_METHODS.every(',
@@ -262,7 +262,7 @@ export default [
   };`,
     replace: `  era.quit = () => {
     calls.push({ api: 'quit', args: [] });
-    // 变异：throw 拆回普通返回（兜底桩形态）
+    // 变异：throw 拆回普通返回（缺省桩形式）
   };`,
     tests: ['fixture', 'event-ending'],
     must_mention: 'QUIT 的异常炸穿 invasion_check',
@@ -292,7 +292,7 @@ export default [
         throw new Error();
       }`,
     replace: `      if (mismatch) {
-        // 变异：throw 拆回普通返回（兜底桩形态）
+        // 变异：throw 拆回普通返回（缺省桩形式）
       }`,
     tests: ['fixture'],
     must_mention: '不匹配必须裸抛 Error 而非返回 false',
@@ -410,7 +410,7 @@ export default [
     must_mention: '调教列表按数值升序，与入列序无关',
   },
   {
-    // getAllCharacters 在 #150 前没有实现（走兜底记录桩恒 undefined），
+    // getAllCharacters 在 #150 前没有实现（走缺省记录桩恒 undefined），
     // 本条模拟的是「补实现时照另两个 get 的旧风格摊开容器」——Map 的
     // 键序是 seed 序，非升序 seed 时与引擎 staticData.chara 的键序分道。
     desc: 'M292 夹具 getAllCharacters 退回预设表插入序（Map 键序即 seed 序——照另两个 get 的旧风格发明）',
@@ -436,7 +436,7 @@ export default [
     // 「一个人会怎么写错」：手册都说回包 val 恒字符串，保守写法就是只归一
     // 字符串（「别的类型不该动」）——字符串路径全过，唯独 Number(null)
     // === 0 分岔，正主用例的 null 断言专杀它。
-    desc: 'M294 夹具归一加 typeof string 守卫（只归一字符串——null 不再归一成 0 的保守错法）',
+    desc: 'M294 夹具归一加 typeof string 检查（只归一字符串——null 不再归一成 0 的保守错法）',
     file: 'test/helpers/era-fixture.js',
     find: `  const get_number = (val) => {
     const num = Number(val);
@@ -468,20 +468,20 @@ export default [
   },
   {
     // 「一个人会怎么写错」：看见「清残留」就直接每次 beginTrain 都清，
-    // 漏了引擎 `this.data.tequip||` 的存在性守卫——同场幂等 beginTrain
+    // 漏了引擎 `this.data.tequip||` 的存在性检查——同场幂等 beginTrain
     // （train-loop 的补入角色路径）会把已写状态错杀。
-    desc: 'M296 夹具 beginTrain 重建守卫被拆（每次 beginTrain 都清表——漏引擎 tequip 存在性守卫）',
+    desc: 'M296 夹具 beginTrain 重建检查被拆（每次 beginTrain 都清表——漏引擎 tequip 存在性检查）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (!train_open) {
-      // 引擎守卫逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
+      // 引擎检查逐字：只在 tequip 表不存在时重建——同场重复 beginTrain
       // 不清 tflag（train-loop 的 beginTrain 幂等语义依赖它）
       delete_train_table_keys();
     }
     train_open = true;`,
-    replace: `    delete_train_table_keys(); // 变异：守卫被拆，每次 beginTrain 都重建
+    replace: `    delete_train_table_keys(); // 变异：检查被拆，每次 beginTrain 都重建
     train_open = true;`,
     tests: ['fixture'],
-    must_mention: '表已存在时重复 beginTrain 不重建（引擎 tequip 守卫逐字）',
+    must_mention: '表已存在时重复 beginTrain 不重建（引擎 tequip 检查逐字）',
   },
   {
     // 「一个人会怎么写错」：读到「引擎把 tflag 静态条目清 0」就把删键范围
@@ -527,7 +527,7 @@ export default [
     tests: ['fixture'],
     must_mention: 'resetData 把调教列表一并清空（引擎整份重建 data）',
   },
-  // —— #171 夹具隔离开关（#168 裁定 4：两条 e2e 不在同一条日循环上竞速）——
+  // —— #171 夹具隔离开关（#168 结论 4：两条 e2e 不在同一条日循环上竞速）——
   {
     desc: 'M357 disable_enter_enemy 被拆（隔离开关失效，勇者照常来袭）',
     file: 'test/helpers/era-fixture.js',
@@ -538,9 +538,9 @@ export default [
     // must_mention 取先红断言的消息（M275 先例）
     must_mention: '开关短路了早退检查的调用——勇者没有入队',
   },
-  // —— #557：等待重叠检测（input / waitAnyKey / printAndWait 的漏写 await 守卫）——
+  // —— #557：等待重叠检测（input / waitAnyKey / printAndWait 的漏写 await 检查）——
   {
-    desc: 'M12350 夹具重叠守卫被拆（上一次等待未完成也不再抛错——#557 要防的复发形态）',
+    desc: 'M12350 夹具重叠检查被拆（上一次等待未完成也不再抛错——#557 要防的复发形式）',
     file: 'test/helpers/era-fixture.js',
     find: `    if (pending_wait) {
       throw new Error(
@@ -548,7 +548,7 @@ export default [
       );
     }`,
     replace: `    if (false && pending_wait) {
-      // 变异：重叠守卫被拆
+      // 变异：重叠检查被拆
       throw new Error(
         \`测试夹具：\${api}() 在上一次等待（\${pending_wait}()）完成前开始——两处同时等待同一个输入，疑似漏写 await\`,
       );
@@ -557,7 +557,7 @@ export default [
     must_mention: '漏写 await',
   },
   {
-    desc: 'M12351 夹具等待窗口立即清除（settle_wait 不等宏任务边界——重叠不可观察，#544/#545/#542 三票变异的逃逸形态）',
+    desc: 'M12351 夹具等待窗口立即清除（settle_wait 不等宏任务边界——重叠不可观察，#544/#545/#542 三票变异的逃逸形式）',
     file: 'test/helpers/era-fixture.js',
     find: `  const settle_wait = () =>
     new Promise((resolve) => {
@@ -594,7 +594,7 @@ export default [
     must_mention: '漏写 await',
   },
   {
-    desc: 'M12353 夹具 waitAnyKey 真等不占重叠窗口（含清屏前强制等键——快进态 clear 的守卫一并消失）',
+    desc: 'M12353 夹具 waitAnyKey 真等不占重叠窗口（含清屏前强制等键——快进态 clear 的检查一并消失）',
     file: 'test/helpers/era-fixture.js',
     find: `    begin_wait('waitAnyKey');
     // 引擎：等待＝input({any:true,useRule:false}) 真回传一次，returnFromButton

@@ -1,10 +1,10 @@
 // 变异条目表切片：回合结束链（EVENT_TURNEND / EVENT_PREGNANCY / EVETRAIN /
 // EVENT1，issue #401）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295）——重号由 gate_shape 随
+// 分配，只作引用基准，但全表必须唯一（#295）——重号由 gate_shape 随
 // --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 60; // #401 建表 60 条（M8501-M8560，本票号段上限）
+export const COUNT = 60; // #401 建表 60 条（M8501-M8560，本工单号段上限）
 
 export default [
   // —— event-pregnancy.js：12 组成对函数的共同形状与维度数据 ——
@@ -514,7 +514,7 @@ export default [
     desc: 'M8560 PAGE：育儿室流程的 CASE 5 不再调真身（回到占位）',
     file: 'ere/page/page-chara-info.js',
     find: '        await child_care_chara(current);',
-    replace: "        await era.waitAnyKey('（育儿室流程未接线）');",
+    replace: "        await era.waitAnyKey('（育儿室流程未接入）');",
     tests: ['page-chara-info'],
     must_mention: '育儿室接入',
   },
