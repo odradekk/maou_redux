@@ -1,25 +1,25 @@
 /**
  * @file 口上系统的公共底座：口上总开关、性格编号解析、指令口上的分发。
  *
- * 调用点：@SOURCE_CHECK:11-12（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM，
+ * 调用点：source-check（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM，
  * ere/event/source-check.js）。
  *
  * == 总开关与存在标志（事件链机制，#6 的真实用例） ==
  *
- *   - FLAG:7 是玩家可关的口上总开关；@EVENTSHOP #PRI 在其为 0 时置 2
+ *   - FLAG:7 是玩家可关的口上总开关；EVENTSHOP 事件 #PRI 在其为 0 时置 2
  *     （默认开，且**只补 0**：玩家显式关掉（-1）不会自开）。
- *   - 每个口上文件自带一对事件定义：@EVENTTRAIN #PRI 置 FLAG:(100+编号)
- *     = 1（存在标志）并同样补 FLAG:7，@EVENTEND #LATER 清 0。文件被删掉
- *     时标志没人置、分发静默跳过——原作注释明言这是容错设计
- *     （EVENT_K.ERB:3-9）。ere 侧等价：不 require 的口上模块不注册，分发
+ *   - 每个口上文件自带一对事件定义：EVENTTRAIN #PRI 置 FLAG:(100+编号)
+ *     = 1（存在标志）并同样补 FLAG:7，EVENTEND #LATER 清 0。文件被删掉
+ *     时标志没人置、分发静默跳过——旧引擎的注释明言这是容错设计。
+ *     ere 侧等价：不 require 的口上模块不注册，分发
  *     族空间内缺失合法（TRYCALL 落空语义）。
  *
  * == 分发（决议 #7 的机制） ==
  *
  * TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100} 改走分发族。编号空间 =
- * 分发守卫（:160 `LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`，按 Emuera 的
+ * 分发检查（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`，按旧引擎的
  * 「&& 与 || 同优先级、左结合」读作 `(100..139) || 1000 以上`——`||` 之后没有
- * `&&`，两种读法同值，与 `local > 1000` 并列即为窗口；#517。ere 侧收口成
+ * `&&`，两种读法同值，与 `local > 1000` 并列即为窗口；#517。ere 侧整合成
  * in_kojo_window，只此一处定义）能拼出的
  * 全部函数名：普通口上 0-39（性格素质 160-179 → LOCAL 100-119）、
  * EX 口上 901-1600（EX_TALENT 101-800 → LOCAL 1001-1700）。空间内缺失
@@ -31,26 +31,26 @@
  *   async (rand) => 0
  *
  *   - 入参 rand：RAND:N 的随机源（(n) => [0, n) 整数；缺省均匀随机）。
- *     分发点以 args: [rand] 透传；handler 内部自兜底（K3 先例）；
+ *     分发点以 args: [rand] 透传；handler 内部自取缺省（K3 先例）；
  *   - 返回值恒 0（TRYCALLFORM 不读返回值；契约测试锁定）；
  *   - 读取面：era_flag 的 target/player/assi/assiplay/selectcom 与
  *     era 表——**只读游戏状态**，跨域写一律走门面（#71）；
  *   - 输出面：台词用 era.printAndWait；除此之外不得有任何输出或等待；
- *   - **七道头部守卫先于任何 SELECTCOM 分支**（实测 EVENT_K3_高貴.ERB
- *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各 handler
+ *   - **七道头部检查先于任何 SELECTCOM 分支**（K3/K5 实测——检查集相同、
+ *     顺序按各 handler
  *     自家文件；K1 自信家（#232）顺序不同：TEQUIP:55 →（助手调教不跳过）→ TEQUIP:45
  *     → TFLAG:899 → TALENT:9 → TEQUIP:89 → TEQUIP:90。死斗场/兽奸岔真身，
- *     助手调教出台词。契约测试对跳过类守卫逐条置位；助手与专用口上按
+ *     助手调教出台词。契约测试对跳过类检查逐条置位；助手与专用口上按
  *     各 handler 逐字拆开。
- *   - SELECTCOM 分支：指令族票（轴 A）落地一条 @COM<n> 时，同一编号的
+ *   - SELECTCOM 分支：指令族票（轴 A）实现一条 COM<n> 时，同一编号的
  *     台词分支在各口上 handler 内各自扩展（各 handler 随自家文件，
  *     分支序/条件照写）。
  *
  * == EX 口上 ==
  *
- * @GET_KOJO_NUM 的 LOCAL = GET_EX_KOJO_NUM(ARG)（EXCOM.ERB:31-38，扫
- * EX_TALENT 101-800，命中 +900）与 @KOJO_MESSAGE_COM 存在判定的
- * EX_FLAG:(LOCAL - 900) 臂（:156）已接入。EX_TALENT:102 映射为
+ * get_kojo_num 的 LOCAL = get_ex_kojo_num(cid)（扫
+ * EX_TALENT 101-800，命中 +900）与 kojo_message_com 存在判定的
+ * EX_FLAG:(LOCAL - 900) 分支已接入。EX_TALENT:102 映射为
  * LOCAL 1002，再分发到 K902；EX_FLAG:102 是独立的口上存在标志。
  */
 
@@ -61,7 +61,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 
-// @EVENTSHOP #PRI（:12-15）：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
+// EVENTSHOP #PRI：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
 // 玩家关掉（-1）不自开，1（少量模式）不改
 on(
   'EVENTSHOP',
@@ -74,29 +74,29 @@ on(
   TIER.PRI,
 );
 
-// 声明的编号空间：分发守卫（:160）能拼出的全部 KOJO_MESSAGE_COM_{N} 名。
+// 声明的编号空间：分发检查能拼出的全部 KOJO_MESSAGE_COM_{N} 名。
 // 普通口上 0-39 + EX 口上 901-1600；空间内缺失 = TRYCALL 落空（合法）
 const DECLARED_KOJO_COM_IDS = [
   ...Array.from({ length: 40 }, (_, i) => i),
   ...Array.from({ length: 700 }, (_, i) => i + 901),
 ];
 
-/** @KOJO_MESSAGE_COM_{N}：指令口上族（K3 / K5 / K1） */
+/** KOJO_MESSAGE_COM_{N} 族：指令口上（K3 / K5 / K1） */
 const kojo_message_com_family = new DispatchFamily(
   'KOJO_MESSAGE_COM',
   DECLARED_KOJO_COM_IDS,
 );
 
-/** @SELF_KOJO_K{N}：事件口上族（随各口上票落地） */
+/** SELF_KOJO_K{N} 族：事件口上（随各口上票实现） */
 const self_kojo_family = new DispatchFamily('SELF_KOJO', DECLARED_KOJO_COM_IDS);
 
-/** @KOJO_MESSAGE_PALAMCNG_{N}：参数变动口上（#232 起 K1 真身） */
+/** KOJO_MESSAGE_PALAMCNG_{N} 族：参数变动口上（#232 起 K1 真身） */
 const kojo_message_palamcng_family = new DispatchFamily(
   'KOJO_MESSAGE_PALAMCNG',
   DECLARED_KOJO_COM_IDS,
 );
 
-/** @KOJO_MESSAGE_MARKCNG_{N}：刻印取得口上（#232 起 K1 真身） */
+/** KOJO_MESSAGE_MARKCNG_{N} 族：刻印取得口上（#232 起 K1 真身） */
 const kojo_message_markcng_family = new DispatchFamily(
   'KOJO_MESSAGE_MARKCNG',
   DECLARED_KOJO_COM_IDS,
@@ -150,40 +150,37 @@ const gobi_koujo_family = new DispatchFamily(
 );
 
 /**
- * EVENT_K.ERB 的 22 条 TRYCALLFORM 分发表（#403 的交付面；每行的 line 字段
- * 就是原作行号）。
+ * 22 条 TRYCALLFORM 分发表（#403 的交付面）。
  *
- * 原件 522 行里有 27 个函数、22 处活的分发点；剩下的 5 个是 @EVENTSHOP
- * （:12-15，本文件的 on('EVENTSHOP', …)）、@GET_KOJO_NUM（:86-144，本文件
- * 的 get_kojo_num）与三个 **eraWiz 未使用**的入口（@KOJO_MESSAGE_COM_MASTER
- * :24 / _ASSI :44 / @KOJO_MESSAGE_PLAYERCHANGE :68——它们的 TRYCALLFORM 在
- * 原作就是注释态，不派发，故不进表）。
+ * 不进表的 5 个入口：EVENTSHOP（本文件的 on('EVENTSHOP', …)）、
+ * GET_KOJO_NUM（本文件的 get_kojo_num）与三个 **未使用**的入口
+ * （KOJO_MESSAGE_COM_MASTER / _ASSI / KOJO_MESSAGE_PLAYERCHANGE——
+ * 它们的 TRYCALLFORM 在旧引擎里就是注释态，不派发，故不进表）。
  *
  * 字段：
- *   - line     原作 TRYCALLFORM 所在行号（源对照用例按它逐条核，表长草即红）
+ *   - line     分发行号（遗留字段，现无读取方）
  *   - dispatch TRYCALLFORM 拼出的函数名前缀（编号 = LOCAL - 100）
  *   - entry    ere 侧入口函数名；module 是它所在的模块（load_module 可加载名）
- *   - erb     原作函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
+ *   - erb      入口函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
  *             的三处（VICTORY_KOUJO / ATTACK_KOUJO / ATTACK_KOUJO_B 的实际函数名
  *             是去掉 DUNGEON_ 的），OSIOKI_KOUJO 在 ere 侧沿史拼作 osioski-
- *             （各口上文件的既有拼写，不改）。源对照用例按 erb 找原件定义
+ *             （各口上文件的既有拼写，不改）。
  *   - family   入口分发用的族（DispatchFamily 的导出名）
- *   - flag_guard 该入口有无 FLAG:7 总开关守卫（true = 关掉口上时不派发）。
- *              由测试对着原件各函数体段现场核对（不是抄来的声明）
+ *   - flag_guard 该入口有无 FLAG:7 总开关检查（true = 关掉口上时不派发）。
  *   - call     调用入口时的实参名（驱动方按名取值）
  *   - handler  handler 应收到的实参名（逐条对照实现，是实参契约的锁）
  *
  * **缺席语义不进表**：#565 返工起未命中一律静默（try_kojo 的返回 0、族调用的
- * whenMissing，原作 TRYCALLFORM 落空的等价物），各行没有差别。「原作有对应
- * 函数而 ere 没移植」的真缺口由 test/kojo-family-coverage.test.js 静态核对拦住。
+ * whenMissing，TRYCALLFORM 落空的等价物），各行没有差别。「有对应函数而
+ * 没移植」的真缺口由 test/kojo-family-coverage.test.js 静态核对拦住。
  *
  * 实参名 → 驱动方取值：cid = 目标角色号；event_no = 事件编号（K0 旧签名
- * 收它）；choice = 奖赏/惩罚选择序号；arg0 = @GOBI_KOUJO 的情绪编号；
- * q = @SELF_KOJO 的自慰妄想对象；rand = 注入的确定性随机源。
+ * 收它）；choice = 奖赏/惩罚选择序号；arg0 = gobi_koujo 的情绪编号；
+ * q = self_kojo 的自慰妄想对象；rand = 注入的确定性随机源。
  *
- * 表内的行为分支（守卫、TARGET 语义、缺席静默）在
- * test/event-k-dispatch.test.js 里逐条钉住——本表只管「谁在哪一行派发到
- * 哪个族」这一件事。
+ * 表内的行为分支（检查、TARGET 语义、缺席静默）在
+ * test/event-k-dispatch.test.js 里逐条钉住——本表只管「谁派发到哪个族」
+ * 这一件事。
  */
 const EVENT_K_DISPATCH_TABLE = [
   {
@@ -286,9 +283,9 @@ const EVENT_K_DISPATCH_TABLE = [
     handler: ['rand'],
   },
   {
-    // @ATTACK_KOUJO_B（:325-337）：与 @ATTACK_KOUJO（:311-323）同族同目标，
+    // ATTACK_KOUJO_B：与 ATTACK_KOUJO 同族同目标，
     // 差别只在 TARGET = B；
-    // 调用方侵略/ARCANA_BATTLE.ERB:208 未移植，入口先行落地
+    // 调用方在侵略域、尚未移植，本入口先实现
     line: 336,
     dispatch: 'DUNGEON_ATTACK_K',
     entry: 'attack_koujo_b',
@@ -430,12 +427,12 @@ const EVENT_K_DISPATCH_TABLE = [
 
 /**
  * 分发窗口：LOCAL 落在 [100, 140) 或 (1000, ∞) 时才拼名分发——各入口
- * 逐字同构的那条守卫（@KOJO_MESSAGE_COM / @SELF_KOJO /
- * @DUNGEON_RYOUZYOKU 的凌辱前与凌辱后两处 / @GOHOUBI_AFTER_KOUJO /
- * @OSIOKI_KOUJO 各段都有它的复写）。
+ * 都有的那条检查（kojo_message_com / self_kojo /
+ * dungeon_ryouzyoku 的凌辱前与凌辱后两处 / gohoubi_after_koujo /
+ * osioski_koujo 各段都有它的复写）。
  * 键 = LOCAL - 100，窗口两端因此正好是声明编号空间的两端：普通口上 0-39
  * （LOCAL 100-139）、EX 口上 901-1600（LOCAL 1001-1700）。LOCAL 120-139
- * 现在没有产出源头（GET_KOJO_NUM 只到 119），但窗口照原作收着它们——
+ * 现在没有产出源头（GET_KOJO_NUM 只到 119），但窗口照旧收着它们——
  * 上界 140 是**声明空间 40 格的写法**，不是可达值域。
  *
  * **只此一处定义**：全库曾有七份内联复写（本文件四处、kojo-dungeon-after
@@ -452,7 +449,7 @@ function in_kojo_window(local) {
 }
 
 /**
- * 分发守卫能拼出的性格编号（键）。arg 的哨兵语义由 get_kojo_num 定：缺省/负
+ * 分发检查能拼出的性格编号（键）。arg 的哨兵语义由 get_kojo_num 定：缺省/负
  * 取当前 TARGET，**0 是合法角色号**。空间外（含无性格 → 0）返回 -1。
  */
 function kojo_handler_id(arg = -1) {
@@ -463,14 +460,13 @@ function kojo_handler_id(arg = -1) {
   return -1;
 }
 /**
- * @GET_KOJO_NUM（:86-144）：角色 → 口上编号。
+ * get_kojo_num：角色 → 口上编号。
  *
- * :137-140 FOR COUNT,160,180：素质 160-179（慈愛..貴公子等性格素质）逐格
- * 探测，**最后一格命中者胜**（原作无 BREAK，后写覆盖先写）。性格素质 →
+ * 素质 160-179（慈愛..貴公子等性格素质）逐格
+ * 探测，**最后一格命中者胜**（无 BREAK，后写覆盖先写）。性格素质 →
  * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 素质
  * 101-800 先映射为 1001-1700，后命中的普通性格素质会覆盖它。
- *
- * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）。
+ * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标。
  *   **哨兵只认负数——0 是合法角色号（魔王），读它自己的素质**（#403 二轮
  *   验收实测：`arg <= 0` 会把 0 号的口上静默换成当前 TARGET 的口上）
  * @returns {number} 口上编号（普通 100-119；EX 1001-1700；无命中时 0）
@@ -487,23 +483,23 @@ function get_kojo_num(arg = -1) {
 }
 
 /**
- * @KOJO_MESSAGE_COM（:150-162）：指令执行时的口上入口。
+ * kojo_message_com：指令执行时的口上入口。
  *
- * 两道守卫（:151-152 总开关；:155-157 存在判定：普通口上读
- * FLAG:LOCAL，EX 口上读 EX_FLAG:(LOCAL - 900)）之后按编号分发（:160-161）。
+ * 两道检查（总开关；存在判定：普通口上读
+ * FLAG:LOCAL，EX 口上读 EX_FLAG:(LOCAL - 900)）之后按编号分发。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源（返回 [0, n) 的
  *   整数；缺省均匀随机）。以参数注入而非测试钩子——随机源本就是引擎外
  *   概念（#47 的 juel-check 先例），测试注入定值序固定随机分支
- * @returns {Promise<number>} 0（:152/:157/:161 的 RETURN 0；调用方不读）
+ * @returns {Promise<number>} 0（各检查处的 RETURN 0；调用方不读）
  */
 async function kojo_message_com(rand) {
-  // 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）
+  // 第一道检查：总开关 FLAG:7 <= 0 直接返回（玩家可关）
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
 
-  // 第二道守卫：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 臂）
+  // 第二道检查：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 分支）
   const local = get_kojo_num(); // GET_KOJO_NUM()（参缺省 → TARGET）
   if (
     (era.get(`flag:${local}`) || 0) === 0 &&
@@ -523,17 +519,16 @@ async function kojo_message_com(rand) {
 }
 
 /**
- * @SELF_KOJO（:225-241）：事件口上入口（EVENT_AFTERTRAIN 等处的 CALL SELF_KOJO）。
- *
- * 两道守卫：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
+ * self_kojo：事件口上入口（EVENT_AFTERTRAIN 等处的调用点）。
+ * 两道检查：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @param {number} [q] 自慰妄想对象（EVENT_AFTERTRAIN :657-665 的 Q：0 主人 / 1 助手 / 2 野狗）
+ * @param {number} [q] 自慰妄想对象（0 主人 / 1 助手 / 2 野狗）
  * @param {boolean} [outside_train] 调教外事件不写只在调教期存在的 TFLAG:15
  * @returns {Promise<number>} 0
  */
 async function self_kojo(rand, q, outside_train = false) {
-  // 第一道守卫：总开关 FLAG:7 <= 0
+  // 第一道检查：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {
     if (!outside_train) {
       const { game } = require('#/facade/game');
@@ -556,8 +551,8 @@ async function self_kojo(rand, q, outside_train = false) {
 }
 
 /**
- * 已注册则走真身，**未命中静默**（#565 返工第 4 条起，原作 TRYCALLFORM
- * 落空的 RESULT 0 语义——此前打占位行，把「原作本来就没有」（如 K11 没有语
+ * 已注册则走真身，**未命中静默**（#565 返工第 4 条起，TRYCALLFORM
+ * 落空的 RESULT 0 语义——此前打占位行，把「本来就没有」（如 K11 没有语
  * 尾函数）与「ID 在口上窗口外」（如魔王的 -2 确认页）也吵成一条占位）。
  *
  * 「有对应函数而没移植」的真缺口因此不再有运行时提示，改由
@@ -588,7 +583,7 @@ async function kojo_message_palamcng(rand) {
     return 0;
   }
   const local = get_kojo_num();
-  // 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
+  // 的第二道检查：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
   // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
   // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
   if (
@@ -632,31 +627,30 @@ async function attack_koujo(cid, rand) {
 }
 
 /**
- * @ATTACK_KOUJO_B（:325-337）：战斗攻击口上的 B 侧变体。
+ * attack_koujo_b：战斗攻击口上的 B 侧变体。
  *
- * 与 @ATTACK_KOUJO 同族同目标（TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}），
- * 差别只在指针来源：@ATTACK_KOUJO（:311-323）是 `TARGET = ARG:0` 带参，
- * @ATTACK_KOUJO_B（:325-337）零参、吃全局 B（`TARGET = B`）。B 是侵略战斗
- * 的「被攻击方」暂存（ARCANA_BATTLE.ERB:199-200 的 `A = ARG:0` /
- * `B = ARG:2`），ere 侧无单字母全局通道，按 #5 决议第六条以形参显式传入。
+ * 与 attack_koujo 同族同目标（TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}），
+ * 差别只在指针来源：attack_koujo 是 `TARGET = ARG:0` 带参，
+ * attack_koujo_b 零参、吃全局 B（`TARGET = B`）。B 是侵略战斗
+ * 的「被攻击方」暂存，ere 侧无单字母全局通道，按 #5 决议第六条以形参显式传入。
  *
  * **调用方尚未移植**：`CALL ATTACK_KOUJO_B` 全库唯一一处，在
- * `侵略/ARCANA_BATTLE.ERB:208`（FLAG:5 & 32 的セリフ守卫内），该文件属侵略
- * 域、随侵略票落真身。本入口照 22 条分发表先行落地（表是 #403 的交付面），
+ * 侵略域的 ARCANA 战斗（FLAG:5 & 32 的台词检查内），该文件属侵略
+ * 域、随侵略票实现真身。本入口照 22 条分发表先实现（表是 #403 的交付面），
  * 接入时调用方传 `B` 的取值即可，不改本签名。
  *
- * 守卫集照原作（:325-337 无守卫）；缺席语义取静默——与同族 @ATTACK_KOUJO
+ * 本入口无额外检查；缺席语义取静默——与同族 attack_koujo
  * 一致（#565 返工第 4 条起：try_kojo 未命中不打占位）。TARGET 暂存/还原按
- * 同族既有约定（原作不还原，ere 侧不留跨调用指针残留）。
+ * 同族既有约定（旧引擎不还原，ere 侧不留跨调用指针残留）。
  *
- * @param {number} cid B 侧角色号（原作全局 B）
+ * @param {number} cid B 侧角色号
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
  */
 async function attack_koujo_b(cid, rand) {
   const target_pool = era_flag.target;
   if (cid !== undefined && cid >= 0) {
-    era_flag.target = cid; // TARGET = B（:325-337 段）
+    era_flag.target = cid; // TARGET = B
   }
   const result = await try_kojo(
     dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
@@ -669,19 +663,17 @@ async function attack_koujo_b(cid, rand) {
 
 /**
  * 处刑首五族（EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION /
- * GROTESQUE，五族各占一段：EXUCUTION :357-367 / MUSEUM :372-382 /
- * BANISHMENT :387-397 / PUBLIC_EXUCUTION :402-412 / GROTESQUE :417-427）的
- * 共同分发体——五处原作逐字同构：
- * `LOCAL = GET_KOJO_NUM()`（存在判定注释态）→ 守卫 → `TRYCALLFORM
- * <族>_K{LOCAL - 100}`。五族都不设 TARGET（与原作一致：调用方自己管
- * TARGET，如 EXECUTION.ERB:123 的 `TARGET = A`），所以本分发体不碰它。
+ * GROTESQUE）的共同分发体——五处结构相同：
+ * `LOCAL = GET_KOJO_NUM()`（存在判定注释态）→ 检查 → `TRYCALLFORM
+ * <族>_K{LOCAL - 100}`。五族都不设 TARGET（调用方自己管
+ * TARGET），所以本分发体不碰它。
  *
- * 族内实参一个：键 0（K0 慈愛）是早期落地的旧签名，收事件编号
- * （展品号/处刑号，:366 一族的 K 侧从 TARGET 之外显式收它）；其余键收
- * 随机源——这条分档原先写在五个调用点里（各处同款三元式），#403 收口
+ * 族内实参一个：键 0（K0 慈愛）是早期实现的旧签名，收事件编号
+ * （展品号/处刑号，一族的 K 侧从 TARGET 之外显式收它）；其余键收
+ * 随机源——这条分档原先写在五个调用点里（各处同款三元式），#403 整合
  * 到分发体，行为不变。
  *
- * 缺席语义 = 静默（TRYCALL 落空；与 @KOJO_MESSAGE_COM 同款）。
+ * 缺席语义 = 静默（TRYCALL 落空；与 kojo_message_com 同款）。
  *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family 目标族
  * @param {number} cid 对象角色号（调用方已把 TARGET 置成它）
@@ -698,22 +690,22 @@ async function dispatch_execution_koujo(family, cid, event_no, rand) {
   return 0;
 }
 
-/** @EXUCUTION_KOUJO（:357-367）：处刑口上；调用方 ere/event/event-execution.js */
+/** exucution_koujo：处刑口上；调用方 ere/event/event-execution.js */
 async function exucution_koujo(cid, event_no, rand) {
   return dispatch_execution_koujo(exucution_koujo_family, cid, event_no, rand);
 }
 
-/** @MUSEUM_KOUJO（:372-382）：博物馆（雕像）口上；调用方 ere/event/event-museum.js */
+/** museum_koujo：博物馆（雕像）口上；调用方 ere/event/event-museum.js */
 async function museum_koujo(cid, event_no, rand) {
   return dispatch_execution_koujo(museum_koujo_family, cid, event_no, rand);
 }
 
-/** @BANISHMENT_KOUJO（:387-397）：流放处刑口上；调用方 ere/event/event-banishment.js */
+/** banishment_koujo：流放处刑口上；调用方 ere/event/event-banishment.js */
 async function banishment_koujo(cid, event_no, rand) {
   return dispatch_execution_koujo(banishment_koujo_family, cid, event_no, rand);
 }
 
-/** @PUBLIC_EXUCUTION_KOUJO（:402-412）：公开处刑口上；调用方 ere/event/event-public-execution.js */
+/** public_exucution_koujo：公开处刑口上；调用方 ere/event/event-public-execution.js */
 async function public_exucution_koujo(cid, event_no, rand) {
   return dispatch_execution_koujo(
     public_exucution_koujo_family,
@@ -723,15 +715,15 @@ async function public_exucution_koujo(cid, event_no, rand) {
   );
 }
 
-/** @GROTESQUE_KOUJO（:417-427）：猎奇处刑口上；调用方 ere/event/event-grotesque.js */
+/** grotesque_koujo：猎奇处刑口上；调用方 ere/event/event-grotesque.js */
 async function grotesque_koujo(cid, event_no, rand) {
   return dispatch_execution_koujo(grotesque_koujo_family, cid, event_no, rand);
 }
 
 /**
- * @NTR_KOUJO（EVENT_K.ERB:342-354）：按当前目标的性格编号分发 NTR 口上。
+ * ntr_koujo：按当前目标的性格编号分发 NTR 口上。
  * 族的统一参数顺序是 [rand, P]；少数旧 handler 的单参数注册在各自模块处
- * 适配，避免把随机源误当成原作全局 P。
+ * 适配，避免把随机源误当成旧引擎的全局 P。
  */
 function adapt_legacy_ntr_koujo(handler) {
   return (rand, p) => handler(p ?? rand);
@@ -754,15 +746,15 @@ async function enterenemy_koujo(cid, rand) {
 }
 
 /**
- * @GOBI_KOUJO（:504-521）：语尾口上。原作各 K 真身用**不换行 PRINT** 把语尾
- * 写进调用方的当前行（LOOK.ERB:875-878 的 PRINTFORM → CALL → PRINT 」 同行）；
- * ere 引擎一次 era.print 即一行，「插入后再续写」没有对应形态，#570 起真身
+ * gobi_koujo：语尾口上。旧引擎各 K 真身用**不换行 PRINT** 把语尾
+ * 写进调用方的当前行（PRINTFORM → CALL → PRINT 」同行）；
+ * ere 引擎一次 era.print 即一行，「插入后再续写」没有对应写法，#570 起真身
  * 改为返回语尾文字、由调用方拼进行内（look.js / 迷宫凌辱两侧）。
  *
  * @param {number} arg0 情绪档位（0 默认 / 1 喜 / 2 怒 / 3 悲 / 4 恥 / 5 情けない）
  * @param {(n: number) => number} [rand] RAND:N 的随机源（默认支三选一用）
  * @returns {Promise<string>} 语尾文字；未命中（TRYCALLFORM 落空，如 K11
- *   原作就没有语尾函数）返回空串——调用方的行照常结束
+ *   就没有语尾函数）返回空串——调用方的行照常结束
  */
 async function gobi_koujo(arg0, rand) {
   const text = await try_kojo(gobi_koujo_family, -1, [arg0, rand]);

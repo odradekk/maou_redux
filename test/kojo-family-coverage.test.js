@@ -14,7 +14,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const REPO = path.resolve(__dirname, '..');
 const KOJO_DIR = path.join(REPO, 'ere', 'kojo');
 
-test('try_kojo 未命中静默（原作 TRYCALLFORM 落空语义，不打占位）', async () => {
+test('try_kojo 未命中静默（TRYCALLFORM 落空语义，不打占位）', async () => {
   const fixture = create_era_fixture();
   for (const n of fs.readdirSync(KOJO_DIR).filter((n) => n.endsWith('.js'))) {
     fixture.load_module(`kojo/${n.replace(/\.js$/, '')}`);
@@ -25,14 +25,14 @@ test('try_kojo 未命中静默（原作 TRYCALLFORM 落空语义，不打占位�
 
   // 窗口外（target = 0 魔王，无口上性格）→ kojo_handler_id = -1 → 静默
   const a = await try_kojo(dungeon_attack_family, 0);
-  assert.equal(a, 0, '未命中返回 0（原作 TRYCALLFORM 落空的 RESULT 语义）');
+  assert.equal(a, 0, '未命中返回 0（TRYCALLFORM 落空的 RESULT 语义）');
   assert.equal(
     fixture.lines_history.length,
     before,
     '窗口外不得有任何输出（含占位行）',
   );
 
-  // 窗口内但该族无此编号（K11 的 GOBI：原作与 ere 同缺）→ 同样静默
+  // 窗口内但该族无此编号（K11 的 GOBI：两边同缺）→ 同样静默
   const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
@@ -42,11 +42,11 @@ test('try_kojo 未命中静默（原作 TRYCALLFORM 落空语义，不打占位�
   assert.equal(
     fixture.lines_history.length,
     before,
-    '族内缺号（原作同样没有）必须静默——语尾这类高频调用一档一占位会刷屏',
+    '族内缺号（本来就没有）必须静默——语尾这类高频调用一档一占位会刷屏',
   );
 });
 
-test('show_chara_info 换 TARGET：语尾按被显示角色的口上取，退出即恢复（:25-26/:320-321）', async () => {
+test('show_chara_info 换 TARGET：语尾按被显示角色的口上取，退出即恢复', async () => {
   const fixture = create_era_fixture();
   for (const n of fs.readdirSync(KOJO_DIR).filter((n) => n.endsWith('.js'))) {
     fixture.load_module(`kojo/${n.replace(/\.js$/, '')}`);

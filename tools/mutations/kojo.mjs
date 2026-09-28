@@ -7,11 +7,11 @@ export const COUNT = 2709; // #643 -5…沿革见 git 历史；#654（F8）：�
 
 export default [
   {
-    desc: 'M57 口上总开关守卫删松（<= 0 改 < 0，flag:7 = 0 不再拦）',
+    desc: 'M57 口上总开关检查删松（<= 0 改 < 0，flag:7 = 0 不再拦）',
     file: 'ere/kojo/kojo-system.js',
-    find: "async function kojo_message_com(rand) {\n  // 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）\n  if ((era.get('flag:7') || 0) <= 0) {",
+    find: "async function kojo_message_com(rand) {\n  // 第一道检查：总开关 FLAG:7 <= 0 直接返回（玩家可关）\n  if ((era.get('flag:7') || 0) <= 0) {",
     replace:
-      "async function kojo_message_com(rand) {\n  // 第一道守卫：总开关 FLAG:7 <= 0 直接返回（玩家可关）\n  if ((era.get('flag:7') || 0) < 0) {",
+      "async function kojo_message_com(rand) {\n  // 第一道检查：总开关 FLAG:7 <= 0 直接返回（玩家可关）\n  if ((era.get('flag:7') || 0) < 0) {",
     tests: ['kojo-system'],
     must_mention: '完全不输出',
   },
@@ -312,7 +312,7 @@ export default [
     must_mention: '善恶值 > -50',
   },
   {
-    desc: 'M520 LOG_TRY_BITCH 的 DUNGEON 勇者「空闲」分支改坏（#185 验收变异：真身分档文本；#600 起靶在拼接语句的分支片段）',
+    desc: 'M520 LOG_TRY_BITCH 的 DUNGEON 勇者「空闲」分支改坏（#185 验收变异：真身分档文本；#600 起目标在拼接语句的分支片段）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find: "              : '在空闲的时间，'",
     replace: "              : '变异：错误文本'",
@@ -338,7 +338,7 @@ export default [
 
   // —— #212 返工：存量二段寻址修复的反向变异 ——
   {
-    desc: 'M717 ANIMAL 珠加算回退成二段（juel:arg:1 → juel:1——从未生效的形态）',
+    desc: 'M717 ANIMAL 珠加算回退成二段（juel:arg:1 → juel:1——从未生效的写法）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '      era.add(`juel:${arg}:1`, play * 200); // JUEL:1 += PLAY * 200',
     replace: '      era.add(`juel:1`, play * 200); // 变异：二段',
@@ -16257,13 +16257,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '结尾清 TFLAG:13',
   },
   {
-    desc: 'M3171 K0 SELF_KOJO 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    desc: 'M3171 K0 SELF_KOJO 总开关检查删松（FLAG:7 <= 0 改 < 0）（#231）',
     file: 'ere/kojo/kojo-system.js',
     find: `async function self_kojo(rand, q, outside_train = false) {
-  // 第一道守卫：总开关 FLAG:7 <= 0
+  // 第一道检查：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {`,
     replace: `async function self_kojo(rand, q, outside_train = false) {
-  // 第一道守卫：总开关 FLAG:7 <= 0
+  // 第一道检查：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) < 0) {`,
     tests: ['kojo-k0-tender'],
     must_mention: 'SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15',
@@ -16296,7 +16296,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'PALAMCNG：CFLAG:221 已置位时不重复出声',
   },
   {
-    desc: 'M3175 K0 PALAMCNG 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    desc: 'M3175 K0 PALAMCNG 总开关检查删松（FLAG:7 <= 0 改 < 0）（#231）',
     file: 'ere/kojo/kojo-system.js',
     find: "async function kojo_message_palamcng(rand) {\n  if ((era.get('flag:7') || 0) <= 0) {",
     replace:
@@ -16332,7 +16332,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'MARKCNG：CFLAG:297 已置位时不重复出声',
   },
   {
-    desc: 'M3179 K0 MARKCNG 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
+    desc: 'M3179 K0 MARKCNG 总开关检查删松（FLAG:7 <= 0 改 < 0）（#231）',
     file: 'ere/kojo/kojo-system.js',
     find: "async function kojo_message_markcng(rand) {\n  if ((era.get('flag:7') || 0) <= 0) {",
     replace:
@@ -19718,18 +19718,18 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M9000 ——
   {
-    desc: 'M8941 分发窗口丢 EX 臂（LOCAL > 1000 不再分发，EX 性格全族静默）',
+    desc: 'M8941 分发窗口丢 EX 分支（LOCAL > 1000 不再分发，EX 性格全族静默）',
     file: 'ere/kojo/kojo-system.js',
     find: '  return (local >= 100 && local < 140) || local > 1000;',
     replace: '  return local >= 100 && local < 140;',
     tests: ['event-k-dispatch'],
-    must_mention: '守卫的 LOCAL > 1000 臂可达',
+    must_mention: '检查的 LOCAL > 1000 分支可达',
   },
   {
     desc: 'M8944 ATTACK_KOUJO_B 不置 TARGET（B 侧对象不进分发上下文）',
     file: 'ere/kojo/kojo-system.js',
     find: `  if (cid !== undefined && cid >= 0) {
-    era_flag.target = cid; // TARGET = B（:325-337 段）
+    era_flag.target = cid; // TARGET = B
   }`,
     replace: `  if (cid !== undefined && cid >= 0) {
     // 变异：不置 TARGET
@@ -19780,7 +19780,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'K0 收展品/处刑编号',
   },
   {
-    desc: 'M8949 处刑首五族：守卫 `id >= 0` 改 `id > 0`（K0 慈愛被拦掉）',
+    desc: 'M8949 处刑首五族：检查 `id >= 0` 改 `id > 0`（K0 慈愛被拦掉）',
     file: 'ere/kojo/kojo-system.js',
     find: `  const id = kojo_handler_id(cid); // LOCAL = GET_KOJO_NUM()
   if (id >= 0) {
@@ -19877,9 +19877,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '返回后 TARGET 还原',
   },
   {
-    desc: 'M8960 PALAMCNG 存在判定丢 EX 臂（EX 性格的口上永久静默）',
+    desc: 'M8960 PALAMCNG 存在判定丢 EX 分支（EX 性格的口上永久静默）',
     file: 'ere/kojo/kojo-system.js',
-    find: '  // 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0\n  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL\n  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）\n  if (\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 900) === 0\n  ) {\n    return 0;\n  }',
+    find: '  // 的第二道检查：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0\n  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL\n  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）\n  if (\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 900) === 0\n  ) {\n    return 0;\n  }',
     replace: `  if ((era.get(\`flag:\${local}\`) || 0) === 0) {
     return 0;
   }`,
@@ -19887,11 +19887,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'EX_FLAG:102 == 1',
   },
   {
-    desc: 'M8961 PALAMCNG EX 臂下标偏移（local - 900 改 - 901）',
+    desc: 'M8961 PALAMCNG EX 分支下标偏移（local - 900 改 - 901）',
     file: 'ere/kojo/kojo-system.js',
-    find: '  // 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0\n  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL\n  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）\n  if (\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 900) === 0',
+    find: '  // 的第二道检查：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0\n  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL\n  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）\n  if (\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 900) === 0',
     replace:
-      '  // 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0\n  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL\n  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）\n  if (\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 901) === 0',
+      '  // 的第二道检查：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0\n  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL\n  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）\n  if (\n    (era.get(`flag:${local}`) || 0) === 0 &&\n    era_exflag.get(local - 901) === 0',
     tests: ['event-k-dispatch'],
     must_mention: 'EX_FLAG:102 == 1',
   },
@@ -20000,7 +20000,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '在 kojo/kojo-system 导出',
   },
   {
-    desc: 'M8973 分发表：PALAMCNG 行的 flag_guard 写反（守卫集与源不符）',
+    desc: 'M8973 分发表：PALAMCNG 行的 flag_guard 写反（检查集与实测不符）',
     file: 'ere/kojo/kojo-system.js',
     find: `    entry: 'kojo_message_palamcng',
     erb: 'KOJO_MESSAGE_PALAMCNG',
@@ -20013,7 +20013,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     family: 'kojo_message_palamcng_family',
     flag_guard: false,`,
     tests: ['event-k-dispatch'],
-    must_mention: '有 FLAG:7 守卫',
+    must_mention: '有 FLAG:7 检查',
   },
   // M8974/M8975：删除（#643）——erb 字段与「表行数对上」都只由源对照用例守，
   // 行为面（入口函数、逐行驱动）不随行数变化。
@@ -20060,7 +20060,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'EX 下界（EX_TALENT:101 → K901）',
   },
   {
-    desc: 'M8987 分发窗口两臂并成 &&（普通口上一律静默）',
+    desc: 'M8987 分发窗口两分支并成 &&（普通口上一律静默）',
     file: 'ere/kojo/kojo-system.js',
     find: '  return (local >= 100 && local < 140) || local > 1000;',
     replace: '  return (local >= 100 && local < 140) && local > 1000;',
@@ -20091,7 +20091,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-system.js',
     find: `  const target_pool = era_flag.target;
   if (cid !== undefined && cid >= 0) {
-    era_flag.target = cid; // TARGET = B（:325-337 段）
+    era_flag.target = cid; // TARGET = B
   }`,
     replace: `  const target_pool = era_flag.target;
   era_flag.target = cid; // 变异：无条件覆盖（缺省时把 TARGET 清成 undefined）`,
@@ -20167,7 +20167,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '落空值声明 0',
   },
   {
-    desc: 'M8998 声明空间普通臂少一格（length 40 改 39，键 39 掉出空间）',
+    desc: 'M8998 声明空间普通分支少一格（length 40 改 39，键 39 掉出空间）',
     file: 'ere/kojo/kojo-system.js',
     find: '  ...Array.from({ length: 40 }, (_, i) => i),',
     replace: '  ...Array.from({ length: 39 }, (_, i) => i), // 变异',
@@ -20175,7 +20175,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '键 39 必须在声明空间内',
   },
   {
-    desc: 'M8999 声明空间 EX 臂起点漂一格（i + 901 改 902，键 901 掉出空间）',
+    desc: 'M8999 声明空间 EX 分支起点漂一格（i + 901 改 902，键 901 掉出空间）',
     file: 'ere/kojo/kojo-system.js',
     find: '  ...Array.from({ length: 700 }, (_, i) => i + 901),',
     replace: '  ...Array.from({ length: 700 }, (_, i) => i + 902), // 变异',
@@ -20183,10 +20183,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '键 901 必须在声明空间内',
   },
   {
-    desc: 'M9000 ATTACK_KOUJO_B 的 cid 守卫收成 > 0（合法角色号 0 被当缺省）',
+    desc: 'M9000 ATTACK_KOUJO_B 的 cid 检查收成 > 0（合法角色号 0 被当缺省）',
     file: 'ere/kojo/kojo-system.js',
     find: `  if (cid !== undefined && cid >= 0) {
-    era_flag.target = cid; // TARGET = B（:325-337 段）`,
+    era_flag.target = cid; // TARGET = B`,
     replace: `  if (cid !== undefined && cid > 0) {
     era_flag.target = cid; // 变异：0 被当缺省（TARGET = B）`,
     tests: ['event-k-dispatch'],
@@ -20307,7 +20307,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
   {
-    desc: 'M11326 卖春积极性档位第二臂文案写错（level === 1 的「普通」改「普通级」——一到三级串档，#542）',
+    desc: 'M11326 卖春积极性档位第二分支文案写错（level === 1 的「普通」改「普通级」——一到三级串档，#542）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "  if (level === 1) {\n    return '普通';\n  }",
     replace: `  if (level === 1) {
@@ -20317,7 +20317,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
   {
-    desc: 'M11327 卖春积极性档位第三臂数值错位（${level}等级 改 ${level + 1}等级——档位文案与 CFLAG:120 对不上，#542）',
+    desc: 'M11327 卖春积极性档位第三分支数值错位（${level}等级 改 ${level + 1}等级——档位文案与 CFLAG:120 对不上，#542）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  return `${level}等级`;',
     replace: '  return `${level + 1}等级`; // 变异：第三臂数值错位',
@@ -20959,7 +20959,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   },
   // M11947（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
   {
-    desc: 'M11949 男版肉便器收尾行拆回两条（#584 的 :802+:804；#600 起靶在整行语句的末段）',
+    desc: 'M11949 男版肉便器收尾行拆回两条（#584 的 :802+:804；#600 起目标在整行语句的末段）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "        (rand_n(3) === 0\n          ? '【操我】'\n          : rand_n(2) === 0\n            ? '【肛门免费】'\n            : '【母猪】') +\n        '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n    );",
     replace:
@@ -20970,7 +20970,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11950 男版「素直」行拆回两条（#584：:76+:77 的同一行被拆）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
-    find: '        // 与 :77 原作 PRINTFORM + PRINTFORML，同一行（#584）\n        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
+    find: '        // 旧引擎里这两句 PRINTFORM + PRINTFORML 是同一行（#584）\n        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
     replace:
       '        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，`,\n        ); // （变异：拆回）\n        await era.print(`耻情点数+${mon_num * 10}`); // （变异：拆回）',
     tests: ['kojo-dungeon-ravish-man'],
@@ -21007,9 +21007,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12019 @PC_RYOU 的旁观/不要选择项退回纯文本行',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: "  // PC_RYOU 段自己的两行——此前误写成主框架的 :21/:22，文本相同故锁没红）\n  era.printButton('- 旁观凌辱', 0);",
+    find: "  // 主框架的两行，文本相同故测试没红）\n  era.printButton('- 旁观凌辱', 0);",
     replace:
-      "  // PC_RYOU 段自己的两行——此前误写成主框架的 :21/:22，文本相同故锁没红）\n  era.print('[0] - 旁观凌辱'); // 变异",
+      "  // 主框架的两行，文本相同故测试没红）\n  era.print('[0] - 旁观凌辱'); // 变异",
     tests: ['kojo-dungeon-ravish'],
     must_mention: 'PC_RYOU',
   },
@@ -22226,9 +22226,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12712 女版迷宫凌辱·主框架空行（:16+:19）拆回两条（#624：立绘分支的空 PRINT 又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: "  // PRINTL 同属一行——合起来仍是空行（#624）\n  await era.print(''); // PRINTL",
+    find: "  // PRINTL 同属一行——合起来仍是空行。\n  await era.print(''); // PRINTL",
     replace:
-      "  // PRINTL 同属一行——合起来仍是空行（#624）\n  await era.print(''); // 变异：拆回\n  await era.print(''); // 变异：拆回",
+      "  // PRINTL 同属一行——合起来仍是空行。\n  await era.print(''); // 变异：拆回\n  await era.print(''); // 变异：拆回",
     tests: ['kojo-dungeon-ravish'],
     must_mention: '合成一条空行',
   },
@@ -22251,7 +22251,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "      await era.print('脸上'); // 变异：拆回\n" +
       '      await era.print(`流露着沉浸在了羞耻与情欲之中的神色……`); // 变异：拆回',
     tests: ['kojo-dungeon-ravish'],
-    must_mention: ':330+:335 是一整行',
+    must_mention: '两行前缀与描写合成一整行',
   },
   {
     desc: 'M12715 女版兽人凌辱·口交整行（:410..:419）拆回多条（#624）',
@@ -22275,7 +22275,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        ); // 变异：拆回\n' +
       '        await era.print(`耻情点数+${mon_num * 10}`); // 变异：拆回',
     tests: ['kojo-dungeon-ravish'],
-    must_mention: ':470（PRINTFORM）+ :471（PRINTFORML）整行',
+    must_mention: '耻情点数显示与前置描写合成整行',
   },
   {
     desc: 'M12717 女版兽人凌辱·口交整行（:475..:502）拆回多条（#624：名字与收行又各占一行）',
@@ -22300,7 +22300,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      ); // 变异：拆回\n' +
       "      await era.print('奉仕持续了下去……'); // 变异：拆回",
     tests: ['kojo-dungeon-ravish'],
-    must_mention: ':475..:498 与 :509..:524 合成一条',
+    must_mention: '前半段与后半段合成一条',
   },
   {
     desc: 'M12719 女版兽人凌辱·全穴奉仕整行（:549..:572）拆回多条（#624）',
@@ -22436,7 +22436,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      await era.printAndWait(\n' +
       "        (loser_is_man ? '后穴' : '前后两穴都') +\n",
     tests: ['kojo-dungeon-ravish'],
-    must_mention: ':2517..:2523 是一整行',
+    must_mention: '巨型假阳具行是一整行',
   },
   {
     desc: 'M12729 对人格斗·头发压脸收句（:2646..:2650）拆回两条（#624）',
@@ -22446,7 +22446,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "        await era.print(winner_has_cock ? '阴茎' : '私处'); // 变异：拆回\n" +
       "        await era.printAndWait('。'); // 变异：拆回",
     tests: ['kojo-dungeon-ravish'],
-    must_mention: ':2646/:2648 与 :2650 合成一行',
+    must_mention: '二选一与句号合成一行',
   },
   {
     desc: 'M12730 对人格斗·捆绑鞭打行（:2674+:2676）拆回两条（#624）',
@@ -22456,7 +22456,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          await era.print(`向伏在地上的${loser_name}的背上`); // 变异：拆回\n' +
       "          await era.printAndWait('用鞭子不停地抽打着、'); // 变异：拆回",
     tests: ['kojo-dungeon-ravish'],
-    must_mention: 'RAND:2 = 0 → :2674+:2676 是一整行',
+    must_mention: 'RAND:2 = 0 → 鞭打行是一整行',
   },
   {
     desc: 'M12734 内职·副业行（:504+:511）拆回多条（#624：随机副业名又占一行）',
@@ -22698,7 +22698,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          await era.print(back_2674); // 变异：拆回\n' +
       "          await era.printAndWait('将点燃的蜡烛倾倒了上去'); // 变异：拆回",
     tests: ['kojo-dungeon-ravish'],
-    must_mention: ':2674 与 :2679 合成一条',
+    must_mention: '前缀与蜡烛收行合成一条',
   },
 
   // —— #622：口上剩余拆行第 B 组（kojo-k8-spade.js 26 处「原作同一行被拆」的

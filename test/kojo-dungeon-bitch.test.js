@@ -80,12 +80,12 @@ test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——EXP:74 为零则
 });
 
 test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——SEIKOU <= 100 是死门槛（#14）', async () => {
-  // 源 :20-21 第一道门槛（EXP:74 == 0 → 返回）与 :22 第二道门槛
+  // 旧引擎里两道门槛（EXP:74 == 0 → 返回）与
   // （SEIKOU <= 100 → 返回）在可达状态互斥：SEIKOU 计算里 `SIF EXP:74
-  // → LOCAL++`（:770）保证经验非零时 SEIKOU >= 101（勇者无奴隶分支的
+  // → LOCAL++` 保证经验非零时 SEIKOU >= 101（勇者无奴隶分支的
   // +45：0 基础 + 1 经验 + 5 所持金 + 95 积极性 = 101）。所以第二道门槛
-  // 在「EXP:74 > 0 且卖春积极性 > 0」的真实卖春路径上恒不触发——是原作
-  // 死门槛，1:1 保留、登记 #14（反向变异：删掉它测试仍绿属预期）。
+  // 在「EXP:74 > 0 且卖春积极性 > 0」的真实卖春路径上恒不触发——是旧引擎的
+  // 死门槛，按原样保留、登记 #14（反向变异：删掉它测试仍绿属预期）。
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
@@ -520,10 +520,10 @@ test('SET_BICH_LEVEL：输入分档（0/1/2-5）写入 CFLAG:120', async () => {
   assert.equal(f5.store.get('cflag:31:120'), undefined);
 });
 
-test('#600 SHOW_BUTTON_BICH_LEVEL：:1157..:1167 是一行，输出一条（末段空参数不加文本）', async () => {
-  // 原作 :1157「[%NUM%] 卖春积极性 - 」+ IF/ELSEIF/ELSE 三档（:1160/:1162/:1164）
-  // + :1167 的 `PRINT  `（关键字后只有空白 → 参数为空，不输出字符）同属一行。
-  // ere 侧合并成一条 era.print，:1167 只进锚、不加文本
+test('#600 SHOW_BUTTON_BICH_LEVEL：档位文案合回一行，输出一条（末段空参数不加文本）', async () => {
+  // 旧引擎里「[%NUM%] 卖春积极性 - 」+ IF/ELSEIF/ELSE 三档
+  // + `PRINT  `（关键字后只有空白 → 参数为空，不输出字符）同属一行。
+  // ere 侧合并成一条 era.print，空参数段不加文本。
   const cases = [
     [0, '没有'],
     [1, '普通'],
@@ -576,9 +576,9 @@ test('SELL_BITCH：完整流程（客循环 → 成功显示 → 经验/金钱/�
 });
 
 test('#584 SELL_BITCH：有客却一个也没买下时，「人群的声音嘈杂着、」与「交涉终了…」是同一行', async () => {
-  // 原作 DUNGEON_BITCH.ERB:314-315 是 PRINTFORM（不换行）+ PRINTFORMW，
-  // Emuera 里同属一行；ere 曾拆成两条 era.print（#584）。
-  // 走到 :314-315 需要：客数 > 0（KYAKU 至少 1）且客循环里全部失败 →
+  // 旧引擎里这两句是 PRINTFORM（不换行）+ PRINTFORMW，
+  // 同属一行；ere 曾拆成两条 era.print（#584）。
+  // 走到该分支需要：客数 > 0（KYAKU 至少 1）且客循环里全部失败 →
   // fail_message 的 has_kyaku 支。前三支（善恶值 > 100 / > 50 / > 0）都不成立
   // → CFLAG:151 取 0。
   const { fixture, mod } = setup_bitch((f) => {
@@ -599,8 +599,8 @@ test('#584 SELL_BITCH：有客却一个也没买下时，「人群的声音嘈�
   );
 });
 
-test('#584 DUNGEON_ANIMAL：:524-525（无法压抑兽交的欲望 + 悄悄寻找着兽穴）是同一行', async () => {
-  // 原作 DUNGEON_BITCH.ERB:524-525 是 PRINTFORM + PRINTFORMW，Emuera 里同属
+test('#584 DUNGEON_ANIMAL：「无法压抑兽交的欲望 + 悄悄寻找着兽穴」是同一行', async () => {
+  // 旧引擎里这两句是 PRINTFORM + PRINTFORMW，同属
   // 一行；ere 曾拆成两条 era.print（#584）
   const { fixture, mod } = setup_bitch();
   await mod.dungeon_animal(31, seq_rand(0));
@@ -642,12 +642,12 @@ test('HEROINE_BITCH：债务过高强制卖春接真身（CFLAG:582 < -10000 且
     f.store.set('cflag:31:582', -20000); // 债务高
     f.store.set('talent:31:0', 0); // 非处女
   });
-  // 抽取序（原作顺序）：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
+  // 抽取序（按旧引擎语句顺序）：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
   // RAND:10 → 0（PLAY = 5）、RAND:500 → 0（COST = 1000）、RAND:3 → 1（不拍片；
-  // 本用例没设 ABL:11/ABL:37/EXP:20，走低档）；回到 :78 的自慰判定
+  // 本用例没设 ABL:11/ABL:37/EXP:20，走低档）；回到自慰判定
   // RAND:36 → 35（35 > 0 → 不触发；传 36 会被 36 % 36 = 0 判成触发）。
-  // 调用点漏写 await 时（M11427），本函数会在强制肉偿停在 :10 的
-  // printAndWait 上时继续跑 :78 的 RAND:36，把 RAND:4 要用的数取走——
+  // 调用点漏写 await 时（M11427），本函数会在强制肉偿停在
+  // printAndWait 上时继续跑 RAND:36，把 RAND:4 要用的数取走——
   // 上界序列错位，下面这条断言是唯一能拦它的地方。
   const uppers = [];
   const draws = [0, 0, 0, 0, 1, 35];
@@ -681,14 +681,14 @@ test('EXP_BITCH：ANIMAL 的 JUEL 加算真打到 arg 名下（JUEL:1/6/8 三段
   assert.equal(fixture.store.get('juel:31:1'), 400, 'JUEL:1 必须 +PLAY*200');
   assert.equal(fixture.store.get('juel:31:6'), 600, 'JUEL:6 必须 +PLAY*300');
   assert.equal(fixture.store.get('juel:31:8'), 400, 'JUEL:8 必须 +PLAY*200');
-  // 角色 1 名下不得被打扰（二段形态 era.add(`juel:1`) 打的是它的行对象）
+  // 角色 1 名下不得被打扰（二段写法 era.add(`juel:1`) 打的是它的行对象）
   assert.equal(fixture.store.get('juel:1:1'), undefined);
 });
 
-// —— #624：三处「原作同一行被拆开」合回一条输出 ——
+// —— #624：三处「旧引擎同一行被拆开」合回一条输出 ——
 //
 // 断言一律钉整行：旧的 `.some(includes(片段))` 在「拆回多条」时照样绿。
-// 本文件其余 13 组落在 [SKIPSTART]:1199-:3132 的跳过块里（未移植），或在
+// 本文件其余 13 组落在跳过块里（未移植），或在
 // 跳过块之前的行被未终止的 `PRINT  ` 链到块内——都清不掉，见完成评论。
 
 test('#624 SELL_BITCH：:205+:212（名字与客合计）与 :213+:217 各是一条输出', async () => {

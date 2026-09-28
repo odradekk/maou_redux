@@ -1,26 +1,26 @@
 /**
  * ere/kojo/kojo-system.js 的行为测试（issue #46：口上系统的公共底座；
- * #213 增补接触面契约——七道头部守卫）。
+ * #213 增补接触面契约——七道头部检查）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - 两道守卫：FLAG:7 关闭时完全不输出（验收项「此行为有测试」）、
+ *   - 两道检查：FLAG:7 关闭时完全不输出（验收项「此行为有测试」）、
  *     存在判定 FLAG:LOCAL == 0 静默返回；
- *   - @GET_KOJO_NUM 的素质扫描（163 高貴 → 103、165 村娘A → 105、
+ *   - GET_KOJO_NUM 的素质扫描（163 高貴 → 103、165 村娘A → 105、
  *     多素质后格覆盖、无素质 → 0、显式角色号）；
  *   - 分发：编号命中唯一实现、空间内缺失（K4 未移植）静默；
- *   - 分发窗口（#403 收口成 in_kojo_window）：99/100、139/140、1000/1001
+ *   - 分发窗口（#403 整合成 in_kojo_window）：99/100、139/140、1000/1001
  *     两侧逐点，并核对声明编号空间恰是窗口的像；
- *   - 事件链挂接：@EVENTSHOP #PRI 总开关默认开（只补 0）、
- *     @EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0；
- *   - 实机路径端到端：run_shop（BEGIN SHOP → @EVENTSHOP 链置开关）→
- *     @EVENTTRAIN 链 → COM0 → @SOURCE_CHECK 链 → K5 首次台词；
- *   - **#213 接触面契约**：@KOJO_MESSAGE_COM_<n> handler 的签名
- *     （kojo-system.js 文件头「handler 签名」段）——七道头部守卫对
- *     **已注册的全部 handler** 逐条置位驱动，守卫命中时不得出现台词。
- *     口上票（轴 B）落地新 handler 自动进契约，无需逐票自写守卫用例；
+ *   - 事件链挂接：EVENTSHOP #PRI 总开关默认开（只补 0）、
+ *     EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0；
+ *   - 实机路径端到端：run_shop（BEGIN SHOP → EVENTSHOP 链置开关）→
+ *     EVENTTRAIN 链 → COM0 → SOURCE_CHECK 链 → K5 首次台词；
+ *   - **#213 接触面契约**：KOJO_MESSAGE_COM_<n> handler 的签名
+ *     （kojo-system.js 文件头「handler 签名」段）——七道头部检查对
+ *     **已注册的全部 handler** 逐条置位驱动，检查命中时不得出现台词。
+ *     口上票（轴 B）实现新 handler 自动进契约，无需逐票自写检查用例；
  *     指令族票（轴 A）对着同一签名扩展 SELECTCOM 分支；
  *   - **#585 改名契约**：try_kojo 的旧名不再导出、常设形参只剩两个
- *     （family + 清单锚名），且 ere/ 与 tools/ 全库不残留旧名文本。
+ *     （family + 清单基准名），且 ere/ 与 tools/ 全库不残留旧名文本。
  */
 
 const assert = require('node:assert/strict');
@@ -68,7 +68,7 @@ test('FLAG:7 关闭（0 / -1）：口上完全不输出，状态不动', async (
   }
 });
 
-test('FLAG:7 = 1（少量模式）不拦（守卫是 <= 0）', async () => {
+test('FLAG:7 = 1（少量模式）不拦（检查是 <= 0）', async () => {
   const fixture = await setup_kojo((f) => f.store.set('flag:7', 1));
   const { kojo_message_com } = fixture.load_module('kojo/kojo-system');
   await kojo_message_com();
@@ -97,7 +97,7 @@ test('GET_KOJO_NUM：素质 160-179 扫描，最后一格命中者胜', async ()
   fixture.store.set('talent:17:168', 1);
   assert.equal(get_kojo_num(17), 108);
 
-  // 无性格素质 → 0（分发守卫不通过，无调用）
+  // 无性格素质 → 0（分发检查不通过，无调用）
   fixture.store.delete('talent:17:163');
   fixture.store.delete('talent:17:168');
   assert.equal(get_kojo_num(17), 0);
@@ -158,7 +158,7 @@ test('分发：性格命中唯一实现；空间内缺失（K4 冷徹未移植�
   assert.deepEqual(k4.text_lines(), []);
 });
 
-// —— 分发窗口（#403：七处内联守卫收口成 in_kojo_window 的唯一定义） ——
+// —— 分发窗口（#403：七处内联检查整合成 in_kojo_window 的唯一定义） ——
 
 test('分发窗口边界：99/100、139/140、1000/1001 两侧逐点，且恰是声明编号空间的像', () => {
   const fixture = create_era_fixture();
@@ -191,7 +191,7 @@ test('分发窗口边界：99/100、139/140、1000/1001 两侧逐点，且恰是
     );
   }
 
-  // 声明空间自己的两端逐点：普通臂 0-39、EX 臂 901-1600。上面的循环只保证
+  // 声明空间自己的两端逐点：普通分支 0-39、EX 分支 901-1600。上面的循环只保证
   // 「空间内的键都能放行」，空间被改小（39 或 1600 掉出去）它看不出来——
   // 这两个字面量（40 格 / 700 格 / 起点 901）要有自己的钉子
   for (const id of [0, 39, 901, 1600]) {
@@ -224,7 +224,7 @@ test('GET_KOJO_NUM：0 是合法角色号（魔王），不许并进缺省哨兵
   assert.equal(
     get_kojo_num(0),
     0,
-    '显式 0（魔王无素质）→ 读它自己（0），不是 TARGET 的 103（源文 :89-91 的哨兵只认负数）',
+    '显式 0（魔王无素质）→ 读它自己（0），不是 TARGET 的 103（哨兵只认负数）',
   );
   assert.equal(get_kojo_num(-1), 103, '负数才是哨兵 → 当前 TARGET');
   assert.equal(get_kojo_num(), 103, '不传参 → 当前 TARGET');
@@ -262,7 +262,7 @@ test('try_kojo：arg 缺省 -1 吃当前 TARGET，显式 0 读它自己（#585 �
   assert.equal(
     try_kojo.length,
     1,
-    '只有 family 是必填形参（arg/extra_args 带缺省；#638 起连静态核对的锚名形参也删了）',
+    '只有 family 是必填形参（arg/extra_args 带缺省；#638 起连静态核对的基准名形参也删了）',
   );
   const seen = [];
   benki_koujo_family.register(0, async () => {
@@ -306,7 +306,7 @@ test('改名完整性：ere/ 与 tools/ 里不残留旧名（#585）', () => {
   for (const dir of ['ere', 'tools']) {
     walk(path.join(repo, dir));
   }
-  // 空集守卫（同 test/event-k-dispatch.test.js 的「扫描器自身不许漂成空集」）：
+  // 空集检查（同 test/event-k-dispatch.test.js 的「扫描器自身不许漂成空集」）：
   // 少了它，目录改名或扩展名过滤失效时 found 恒空、本用例照绿。ere/ 与
   // tools/ 下当前 517 个 .js/.mjs，门槛取 300 留出删并文件的空间
   assert.ok(scanned >= 300, `扫描面塌了：只读到 ${scanned} 个 .js/.mjs`);
@@ -404,10 +404,10 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   assert.equal(fixture.store.get('cflag:17:301'), 1, '状态机推进');
 });
 
-// —— #213 接触面契约：@KOJO_MESSAGE_COM_<n> 的七道头部守卫 ——
+// —— #213 接触面契约：KOJO_MESSAGE_COM_<n> 的七道头部检查 ——
 
-// 七道守卫的置位器（EVENT_K3_高貴.ERB:888-912 实测；K5 同款顺序互异——
-// 契约锁的是守卫集与语义，顺序按各文件 1:1）。TEQUIP:55/45/89/90 只读
+// 七道检查的置位器（K3 实测；K5 同款顺序互异——
+// 契约锁的是检查集与语义，顺序按各 handler 自家写法）。TEQUIP:55/45/89/90 只读
 // （TEQUIP 建模归 J5，#215）。
 const KOJO_GUARD_STATES = [
   [
@@ -439,9 +439,9 @@ const KOJO_GUARD_STATES = [
   ['TEQUIP:90 触手 → 跳过', (fixture) => fixture.store.set('tequip:17:90', 1)],
 ];
 
-test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过（守卫命中不得出台词；K2/K3/K5 死斗场走真身，K3 兽奸走真身）', async () => {
-  // 对 family 里已注册的每个 handler × 每道守卫：置位 → 直调 → 返回 0。
-  // 跳过类守卫不得等待、不得出台词；死斗场/兽奸岔去专用口上——K5 死斗场
+test('#213 契约：七道头部检查对已注册的全部 handler 逐条跳过（检查命中不得出台词；K2/K3/K5 死斗场走真身，K3 兽奸走真身）', async () => {
+  // 对 family 里已注册的每个 handler × 每道检查：置位 → 直调 → 返回 0。
+  // 跳过类检查不得等待、不得出台词；死斗场/兽奸岔去专用口上——K5 死斗场
   // 已随 #236 换真台词、兽奸静默；K2 死斗场已随 #233 换真台词、兽奸仍静默；
   const probe = await setup_kojo();
   const { kojo_message_com_family } = probe.load_module('kojo/kojo-system');
@@ -456,45 +456,45 @@ test('#213 契约：七道头部守卫对已注册的全部 handler 逐条跳过
         fixture.load_module('kojo/kojo-system');
       const handler = kojo_message_com_family.implemented.get(num);
       const result = await handler();
-      assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 守卫「${name}」返回 0`);
+      assert.equal(result, 0, `KOJO_MESSAGE_COM_${num} 检查「${name}」返回 0`);
       if (num === 2 && name.startsWith('TEQUIP:55')) {
         assert.ok(
           fixture.text_lines().some((l) => l.includes('死斗场的狂热')),
-          `KOJO_MESSAGE_COM_${num} 守卫「${name}」走死斗场真台词`,
+          `KOJO_MESSAGE_COM_${num} 检查「${name}」走死斗场真台词`,
         );
         continue;
       }
       if (num === 3 && name.startsWith('TEQUIP:55')) {
         assert.ok(
           fixture.text_lines().some((l) => l.includes('吓得直发抖')),
-          `KOJO_MESSAGE_COM_${num} 守卫「${name}」走死斗场真台词`,
+          `KOJO_MESSAGE_COM_${num} 检查「${name}」走死斗场真台词`,
         );
         continue;
       }
       if (num === 5 && name.startsWith('TEQUIP:55')) {
         assert.ok(
           fixture.text_lines().some((l) => l.includes('吓得直哆嗦')),
-          `KOJO_MESSAGE_COM_${num} 守卫「${name}」走死斗场真台词`,
+          `KOJO_MESSAGE_COM_${num} 检查「${name}」走死斗场真台词`,
         );
         continue;
       }
       if (num === 3 && name.startsWith('TEQUIP:89')) {
         assert.ok(
           fixture.text_lines().some((l) => l.includes('才不要做这种事情')),
-          `KOJO_MESSAGE_COM_${num} 守卫「${name}」走兽奸真台词`,
+          `KOJO_MESSAGE_COM_${num} 检查「${name}」走兽奸真台词`,
         );
         continue;
       }
       assert.equal(
         fixture.calls.filter((c) => c.api === 'waitAnyKey').length,
         0,
-        `KOJO_MESSAGE_COM_${num} 守卫「${name}」不得有台词（无等待）`,
+        `KOJO_MESSAGE_COM_${num} 检查「${name}」不得有台词（无等待）`,
       );
       for (const line of fixture.text_lines()) {
         assert.match(
           line,
           /尚未移植，此处为占位/,
-          `KOJO_MESSAGE_COM_${num} 守卫「${name}」只允许存根占位行，` +
+          `KOJO_MESSAGE_COM_${num} 检查「${name}」只允许存根占位行，` +
             `实际输出：${line}`,
         );
       }
