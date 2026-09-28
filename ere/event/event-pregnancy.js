@@ -1,33 +1,33 @@
 /**
- * @file 妊娠判定与妊娠确定（issue #401：EVENT_PREGNANCY.ERB 31 个函数全量；
+ * @file 妊娠判定与妊娠确定（issue #401：妊娠判定一族 31 个函数全量；
  * issue #333 先落其中三个）。
  *
  * **12 组是维度型分支，不是 12 段逻辑。** 每组的 `IN_VAGINA_<源>_TO_<目标>`
  * 与同名 `CONCEPTION_CHECK_` 只差四个维度：受检主体（TARGET / ASSI /
- * MASTER / 全角色）、妊娠相手码（CFLAG:102，亦即 NAKADASHI_CHECK 的
+ * MASTER / 全角色）、妊娠相手码（CFLAG:102，亦即 nakadashi_check 的
  * ARG:1）、IN_VAGINA 侧是否另查 TALENT:158（同族不育）、确定时写的
  * CFLAG:111（孩子父亲）。四个维度全在下方 `PAIRS` 表里，函数体共用
  * `run_in_vagina` / `run_conception` 两条形状。
  *
  * 三处一眼看不出的细节，逐条照写：
  *
- *   - **T_TO_A 两侧的存在性守卫不对称**：`@IN_VAGINA_T_TO_A`（:127）只查
- *     `ASSI >= 1`，而 `@CONCEPTION_CHECK_T_TO_A`（:357）另查 `TARGET >= 1`
+ *   - **T_TO_A 两侧的存在性检查不对称**：`IN_VAGINA_T_TO_A` 只查
+ *     `ASSI >= 1`，而 `CONCEPTION_CHECK_T_TO_A` 另查 `TARGET >= 1`
  *     （因为确定时要写 `CSTR:ASSI:2 = %SAVESTR:TARGET%`）。故表里
- *     `iv`/`cc` 两列分开写，不共用一个「主体在场」判据。
- *   - **`MASTER == 0` 是三处恒真式**（:108/:154/:163 与 :331/:404/:415），
- *     保留为表里的空守卫（`iv: []`），不折叠掉——折叠会让「改坏它无差异」
+ *     `iv`/`cc` 两列分开写，不共用一个「主体在场」条件。
+ *   - **`MASTER == 0` 是三处恒真式**，
+ *     保留为表里的空检查（`iv: []`），不折叠掉——折叠会让「改坏它无差异」
  *     看起来像覆盖到了。
- *   - **NTR 兽奸秀（NTRD_TO_T）的妊娠相手码是 5（野狗）不是 6**（:184）：
+ *   - **NTR 兽奸秀（NTRD_TO_T）的妊娠相手码是 5（野狗）不是 6**：
  *     它成立的条件是 SHOW 里放了狗，故走 `CFLAG:106` 犬精液池。
  *
- * 不移植的一处：`@GET_CHILD` 全库零调用者（全库检索只命中它自己的定义行，
- * TRYCALLFORM 面也已查），且函数体是五道「不满足则 RETURN 0」的守卫、
- * 末尾同样 RETURN 0——没有任何可观察效果，落地只会得到一批改了也不红
+ * 不实现的一处：`GET_CHILD` 没有调用者，
+ * 且函数体是五道「不满足则 RETURN 0」的检查、
+ * 末尾同样 RETURN 0——没有任何可观察效果，实现只会得到一批改了也不红
  * 的死代码，判死不实现。
  *
- * 随机源一律经末位形参注入（缺省 Math.random）；`@EVENTTURNEND` 链上没有
- * 参数通道，由夹具的 override_math_random 兜（#120）。
+ * 随机源一律经末位形参注入（缺省 Math.random）；EVENTTURNEND 链上没有
+ * 参数通道，由夹具的 override_math_random 接住（#120）。
  */
 
 const era = require('#/era-electron');
@@ -39,7 +39,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
- * 主人角色号。原作 MASTER 是引擎内建量（当前主人所指的角色号），本作恒 0
+ * 主人角色号。旧引擎里 MASTER 是内建量（当前主人所指的角色号），本作恒 0
  * （chara-pregnancy.js 文件头同款；ere 侧没有 MASTER 表）。
  */
 const MASTER = 0;
@@ -49,17 +49,17 @@ function default_rand(n) {
 }
 
 /**
- * 12 组的维度表。**只剩数据**：字段含义与 ERB 的对应见下方每条的注释。
+ * 12 组的维度表。**只剩数据**：字段含义见下方每条的注释。
  *
  *   name    函数名后缀（IN_VAGINA_<name> / CONCEPTION_CHECK_<name>）
  *   kind    NAKADASHI_CHECK 的 ARG:1，亦即妊娠相手码 CFLAG:102 的目标值
- *   subject 受检主体：'target' / 'assi' / 'master' / 'each'（原作 REPEAT
+ *   subject 受检主体：'target' / 'assi' / 'master' / 'each'（REPEAT
  *           CHARANUM，含角色 0）
- *   iv      IN_VAGINA 侧的最外层存在性守卫（:85-194）
- *   cc      CONCEPTION_CHECK 侧的存在性守卫（:305-444）
+ *   iv      IN_VAGINA 侧的最外层存在性检查
+ *   cc      CONCEPTION_CHECK 侧的存在性检查
  *   kin     IN_VAGINA 侧是否另查 TALENT:158（同族不育）
  *   father  CONCEPTION 落定时的 CFLAG:111：数字直写；角色号表示
- *           NID(该角色)+1，并同步写 CSTR:2 = SAVESTR:该角色
+ *           NID(该角色)+1，并同步写 CSTR:2 = 该角色名
  */
 const PAIRS = [
   // 主人 → 奴隶
@@ -82,7 +82,7 @@ const PAIRS = [
     kin: true,
     father: 0,
   },
-  // 奴隶 → 主人（:108 的 MASTER == 0 恒真）
+  // 奴隶 → 主人（MASTER == 0 恒真）
   {
     name: 't_to_m',
     kind: 3,
@@ -102,7 +102,7 @@ const PAIRS = [
     kin: true,
     father: 'assi',
   },
-  // 奴隶 → 助手（两侧守卫不对称，见文件头）
+  // 奴隶 → 助手（两侧检查不对称，见文件头）
   {
     name: 't_to_a',
     kind: 3,
@@ -189,24 +189,24 @@ const IN_VAGINA = {};
 const CONCEPTION_CHECK = {};
 
 /**
- * 角色是否在场。原作的存在性守卫是 `TARGET >= 1` / `ASSI >= 1` / 指针
- * 越界（`TARGET >= CHARANUM` 一类）三种写法；后一种在 ere 侧不可照搬——
+ * 角色是否在场。存在性检查有三种写法：`TARGET >= 1` / `ASSI >= 1` / 指针
+ * 越界（`TARGET >= CHARANUM` 一类）三种写法；后一种在 ere 侧不可按原样保留——
  * #21 扁平化下角色号 = 预设号且**稀疏**（0 主人 / 1-16 勇者位 / 17-40 特殊
- * 位 / 1000+ 生产的子代），「个数」判据不成立。等价判据是出场名单包含
+ * 位 / 1000+ 生产的子代），「个数」条件不成立。等价条件是出场名单包含
  * （chara-make.js 的 `GETCHARA(CHARA, 0) == -1` 同款处置）。
  */
 function is_present(cid) {
   return era.getAddedCharacters().includes(cid);
 }
 
-/** 原作 `SIF TARGET < 0 || TARGET >= CHARANUM`（:44/:62）：TARGET 不是活角色 */
+/** 「TARGET 不是已加入角色」的越界检查 */
 function target_out_of_range() {
   return !is_present(era_flag.target);
 }
 
 /**
- * 原作 `SIF ASSI >= CHARANUM`（:46/:64）：**`ASSI = -1` 不在拦截范围内**
- * ——-1 不是「越界」是「没有助手」，放行之后由各组的 `ASSI >= 1` 守卫
+ * 「ASSI 越界」检查：**`ASSI = -1` 不在拦截范围内**
+ * ——-1 不是「越界」是「没有助手」，放行之后由各组的 `ASSI >= 1` 检查
  * 逐组拦下。区别是可观察的：ASSI 越界时连 TARGET 那几组也不跑。
  */
 function assi_out_of_range() {
@@ -215,8 +215,8 @@ function assi_out_of_range() {
 }
 
 /**
- * 守卫求值：`['target']` = TARGET >= 1，`['assi']` = ASSI >= 1，空表恒真
- * （原作的 `MASTER == 0` 恒真式与 REPEAT 组都落在这里）。
+ * 检查求值：`['target']` = TARGET >= 1，`['assi']` = ASSI >= 1，空表恒真
+ * （`MASTER == 0` 恒真式与 REPEAT 组都落在这里）。
  */
 function gate_ok(gate) {
   for (const who of gate) {
@@ -227,8 +227,8 @@ function gate_ok(gate) {
 }
 
 /**
- * 受检角色列表。'each' = `REPEAT CHARANUM` 从 COUNT = 0 起——**角色 0
- * （主人）也在受检之列**，这是判据本身的行为，不是笔误。
+ * 受检角色列表。'each' 从 COUNT = 0 起——**角色 0
+ * （主人）也在受检之列**，这是条件本身的行为，不是笔误。
  */
 function subjects_of(subject) {
   if (subject === 'target') return [era_flag.target];
@@ -238,22 +238,21 @@ function subjects_of(subject) {
 }
 
 /**
- * 受胎概率检查（原作 @NAKADASHI_CHECK，:196-274）。
+ * 受胎概率检查（nakadashi_check）。
  *
  * 中出量分六档、排卵诱发剂与体型（TALENT:100 娇小）共同决定掷骰上界；
  * 命中把来源写进 CFLAG:102（妊娠相手），随后**无论命中与否都清池**——
- * 但三处提前返回（男性/未熟、兽奸非兽耳、池为空）**不清池**，那是原作的
+ * 但三处提前返回（男性/未熟、兽奸非兽耳、池为空）**不清池**，那是旧引擎的
  * 写法（池留给下一回合）。
  *
  * @param {number} cid 受检角色号
  * @param {number} kind 妊娠相手码（CFLAG:102 的目标值，亦即精液池的下标来源）
- * @param {(n: number) => number} [rand] RAND:N 的等价物
- * @returns {number} 原作的 RETURN 0
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {number} 恒 0
  */
 function nakadashi_check(cid, kind, rand = default_rand) {
   const view = chara(cid);
-  // FLAG:5 bit 2 = 启用妊娠系统：关闭时只清池（:209 的「妊娠不可でも
-  // 膣射のリセット」）
+  // FLAG:5 bit 2 = 启用妊娠系统：关闭时只清池（「妊娠不可でも膣射のリセット」）
   if (((era.get('flag:5') || 0) & 4) === 0) {
     clear_pool(cid, kind);
     return 0;
@@ -308,7 +307,7 @@ function pool_of(cid, kind) {
   return view.system.狂王膣内射精;
 }
 
-/** 中出し量の清零（与 pool_of 同表，见 :205-209 的下标换算） */
+/** 中出し量の清零（与 pool_of 同表） */
 function clear_pool(cid, kind) {
   const view = chara(cid);
   if (kind === 1) view.system.主人膣内射精 = 0;
@@ -322,7 +321,7 @@ function clear_pool(cid, kind) {
 
 /**
  * IN_VAGINA_<…> 的共同形状：受检者未妊娠（kin 组另查非同族不育）时按
- * 中出量掷受胎判定。存在性守卫在最外层——**不成立时连池都不碰**。
+ * 中出量掷受胎判定。存在性检查在最外层——**不成立时连池都不碰**。
  */
 function run_in_vagina(pair, rand = default_rand) {
   if (!gate_ok(pair.iv)) return 0;
@@ -340,8 +339,8 @@ function run_in_vagina(pair, rand = default_rand) {
  * CONCEPTION_CHECK_<…> 的共同形状：妊娠相手（CFLAG:102）为本组来源、且
  * 尚无预产日、且未妊娠时落定出产日与孩子父亲。
  *
- * 预产日一律 `DAY + 10 + RAND:6`（原作六处「妊娠期間短い」的注释是设计
- * 意图，代码里 **12 组全是同一个 10 + RAND:6**——1:1 不分辨）。差异只在
+ * 预产日一律 `DAY + 10 + 随机数(6)`（六处「妊娠期間短い」的注释是设计
+ * 意图，代码里 **12 组全是同一个 10 + rand(6)**——逐字不分辨）。差异只在
  * CFLAG:111：数字码（-1 客 / -2 犬 / -3 怪物 / -4 狂王 / 0 主人）或
  * NID(父)+1（奴隶与助手来源，同时写 CSTR:2 的父亲名字）。
  */
@@ -370,7 +369,7 @@ for (const pair of PAIRS) {
   CONCEPTION_CHECK[pair.name] = (rand) => run_conception(pair, rand);
 }
 
-/** @IN_VAGINA_ALL（:42-60）：九连调，先过两道指针守卫 */
+/** in_vagina_all：九连调，先过两道指针检查 */
 function in_vagina_all(rand = default_rand) {
   if (target_out_of_range()) return 0;
   if (assi_out_of_range()) return 0;
@@ -390,7 +389,7 @@ function in_vagina_all(rand = default_rand) {
   return 0;
 }
 
-/** @CONCEPTION_CHECK_ALL（:61-79）：九连调，守卫同 ALL */
+/** conception_check_all：九连调，检查同 in_vagina_all */
 function conception_check_all(rand = default_rand) {
   if (target_out_of_range()) return 0;
   if (assi_out_of_range()) return 0;
@@ -411,8 +410,8 @@ function conception_check_all(rand = default_rand) {
 }
 
 /**
- * @CHECK_ABLE_TO_CHILD_CARE(ARG)（:473-489）：角色能否被访问育儿室。
- * 原作是 `#FUNCTION`（返回数值的式中函数，`RETURNF` 收尾）。
+ * check_able_to_child_care：角色能否被访问育儿室。
+ * 返回值式中函数（`RETURNF` 收尾）。
  *
  * @param {number} arg 角色号
  * @returns {number} 0 = 可访问；1 = 你（角色 0）不在育儿室；2 = 侵攻中的
@@ -426,17 +425,17 @@ function check_able_to_child_care(arg) {
 }
 
 /**
- * @SHOW_BUTTON_CHILD_CARE(NUM, ARG)（:452-470）：个别信息页的「前往育儿室」
+ * show_button_child_care：个别信息页的「前往育儿室」
  * 按钮渲染。
  *
  * 原结构是 `IF LOCAL == 2 → RETURN 0` / `ELSEIF LOCAL != 0 → RETURN 0 →
  * SETCOLOR 0x646464`——**那条 SETCOLOR 在 RETURN 0 之后，永远不会执行**
- * （注释「奴隷で実行不可なら灰色にする」是未完成的意图）。灰色分支不落地，
+ * （注释「奴隷で実行不可なら灰色にする」是未完成的意图）。灰色分支不实现，
  * 只留注释，函数化简为「可访问才渲染」。
  *
- * @param {number} num 按钮编号（原作实参 5）
+ * @param {number} num 按钮编号
  * @param {number} arg 角色号
- * @returns {number} 原作的 RETURN 0
+ * @returns {number} 恒 0
  */
 function show_button_child_care(num, arg) {
   if (check_able_to_child_care(arg) !== 0) return 0;
@@ -448,20 +447,20 @@ function show_button_child_care(num, arg) {
 }
 
 /**
- * @CHILD_CARE_CHARA(ARG)（:492-514）：访问某角色的育儿室。
+ * child_care_chara：访问某角色的育儿室。
  *
- * 返回 2 是原作的防御支（:502）——侵攻中的勇者按钮根本不渲染，但直接输入
+ * 返回 2 是防御支——侵攻中的勇者按钮根本不渲染，但直接输入
  * 编号仍会走到这里，此时把 2 上浮给调用方（页面据此忽略这次输入）。
  *
- * 两处 ere 侧的必要处置（均沿用既有裁定，非本票新发明）：
+ * 两处 ere 侧的必要处置（均沿用既有结论，非这张工单新发明）：
  *
- *   - `TFLAG:13 = 13`（:512）是调教外语义：EraElectron 的 tflag 桶只存在于
+ *   - `TFLAG:13 = 13`是调教外语义：EraElectron 的 tflag 桶只存在于
  *     调教期（引擎 endTrain 删除），据点侧写它会直接崩。改走
- *     `game.train.with_self_kojo_event`（#179 裁定，sale.js / chara-pregnancy.js
+ *     `game.train.with_self_kojo_event`（#179 结论，sale.js / chara-pregnancy.js
  *     同款），并由 `self_kojo(rand, q, true)` 的第三参声明「不在调教中」
  *     ——否则 FLAG:7 <= 0 时它会写同样只在调教期存在的 TFLAG:15。
- *   - `:514` 的 `PRINT`（无实参）不落地：它既不带换行也不带内容，是空操作
- *     （`PRINTL` 才换行，见 emuera-basic-agent-guide 的 print-system.md）。
+ *   - 育儿室支尾的 `PRINT`（无实参）不实现：它既不带换行也不带内容，是空操作
+ *     （`PRINTL` 才换行）。
  *
  * @param {number} arg 角色号
  * @returns {Promise<number>} 0 = 已处理；2 = 侵攻中的勇者（不可访问）
@@ -479,13 +478,13 @@ async function child_care_chara(arg) {
     return 0;
   }
 
-  // PRINTFORMW 你去了%SAVESTR:ARG%的育儿室。
+  // 你去了该角色的育儿室。
   await era.printAndWait(`你去了${chara_callname(arg)}的育儿室。`);
-  era.print(''); // PRINTL（空行）
+  era.print(''); // 空行
   era_flag.target = arg; // TARGET = ARG
   await game.train.with_self_kojo_event(13, () =>
     self_kojo(undefined, undefined, true),
-  ); // TFLAG:13 = 13 / CALL SELF_KOJO
+  ); // 口上事件码 13 后调 SELF_KOJO
   return 0;
 }
 

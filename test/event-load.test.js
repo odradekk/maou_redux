@@ -1,9 +1,9 @@
 /**
- * ere/event/event-load.js（@EVENTLOAD 读档钩子，#137）的行为测试。
+ * ere/event/event-load.js（eventload 读档钩子，#137）的行为测试。
  *
  * 验收项：钩子本体直驱（emit('EVENTLOAD')）——历史补丁三行等价物的
- * 落地逐条判定（判定依据见 event-load.js 文件头）；「读档成功后钩子被调用」
- * 的集成判据在 test/page-save-load.test.js（emit 点与转场一起测）。
+ * 实现逐条判定（判定依据见 event-load.js 文件头）；「读档成功后钩子被调用」
+ * 的集成条件在 test/page-save-load.test.js（emit 点与转场一起测）。
  */
 
 const assert = require('node:assert/strict');
@@ -58,16 +58,16 @@ test('历史补丁等价物 2：MAXBASE 下限钳制（< 600 → 600、< 100 →
   assert.equal(
     fixture.store.get('maxbase:17:0'),
     1200,
-    '高于下限不动（SIF 判据，幂等钳制）',
+    '高于下限不动（SIF 条件，幂等钳制）',
   );
   assert.equal(
     fixture.store.get('maxbase:17:1'),
     100,
-    '恰好等于下限不动（SIF 判据是 <）',
+    '恰好等于下限不动（SIF 条件是 <）',
   );
 });
 
-test('历史补丁等价物 3：未声明序号读值 undefined → || 0 兜底也钳（#13）', async () => {
+test('历史补丁等价物 3：未声明序号读值 undefined → || 0 保底处理也钳（#13）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -76,7 +76,7 @@ test('历史补丁等价物 3：未声明序号读值 undefined → || 0 兜底�
   assert.equal(
     fixture.store.get('maxbase:0:0'),
     600,
-    'undefined 兜底 0 → 同样低于下限，钳到 600（零值语义一致）',
+    'undefined 保底处理 0 → 同样低于下限，钳到 600（零值语义一致）',
   );
   assert.equal(fixture.store.get('maxbase:0:1'), 100);
 });
@@ -96,7 +96,7 @@ test('钩子是幂等重放：对已钳过的世界再跑一遍不改变结果',
   assert.equal(fixture.store.get('ex_talent:0:200'), 1);
 });
 
-test('LOADGLOBAL 镜像（:762）：钩子链首行恢复 global 表为最近一次保存值（#547 验收第 3 条）', async () => {
+test('LOADGLOBAL 镜像：钩子链首行恢复 global 表为最近一次保存值（#547 验收第 3 条）', async () => {
   const fixture = create_era_fixture();
   const era_global = fixture.load_module('era-utils/era-global');
   // 最近一次保存时的值是 2（saveData 自动 saveGlobal），之后设置页改到 1 未保存
@@ -108,7 +108,7 @@ test('LOADGLOBAL 镜像（:762）：钩子链首行恢复 global 表为最近一
 
   assert.ok(
     fixture.calls.some((c) => c.api === 'loadGlobal'),
-    '钩子链必须真的调用 era.loadGlobal（@EVENTLOAD 首行 LOADGLOBAL 的镜像）',
+    '钩子链必须真的调用 era.loadGlobal（eventload 首行 LOADGLOBAL 的镜像）',
   );
   assert.equal(
     era_global.adventurer_gender,

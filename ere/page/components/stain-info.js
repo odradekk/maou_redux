@@ -1,27 +1,27 @@
 /**
- * @file 污渍一览（@STAIN_INFO）。
+ * @file 污渍一览（stain_info）。
  *
  * 主人／调教对象／助手三方各六行（嘴巴/双手/阴茎/私处/肛门/乳房），每行按
  * STAIN 的位域标出沾了什么。
  *
- * **那两处 SWAP 是真的换手**：`SWAP TARGET, TARGET:1`（:1437）把「当前调教
- * 对象」换成 `@EVENTTRAIN` 记录下来的 TARGET:1（flag:10012），`SWAP ASSI,
- * ASSI:1`（:1438）同（flag:10013）；三段 REPEAT 里第二段读的 `TALENT:121`、
- * `STAIN:TARGET:COUNT` 都是换过之后的 TARGET。尾部再换回来（:1552-1553），
+ * **两处换手是真的交换**：先把「当前调教对象」与 EVENTTRAIN 事件
+ * 记录的 TARGET:1（flag:10012）对调、助手与 ASSI:1（flag:10013）
+ * 对调；三段部位循环里第二段读的 `TALENT:121`、
+ * `STAIN:TARGET:COUNT` 都是换过之后的 TARGET。尾部再换回来，
  * 不留痕迹——所以本函数是**对称的**，进出时 era_flag 的四个槽不变。
  *
  * 跳过规则（三段逐字相同，只把 MASTER 换成对应角色）：阴茎位（2）在既非
  * 扶她也非男人时不显示；私处位（3）与乳房位（5）在男人（TALENT:122）时
- * 不显示。助手段另有 `SIF ASSI < 0 → BREAK` 的整段守卫（:1514）。
+ * 不显示。助手段另有整段检查：ASSI < 0 时整段不打印。
  *
- * 收尾的 `WAIT`（:1551-1554）是引擎的等待读键：ere 侧 `await era.waitAnyKey()`。
+ * 收尾等键：`await era.waitAnyKey()`。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
-/** 六个部位的行首（源 :1448-1460 的六个分支，三段逐字相同） */
+/** 六个部位的行首（六个分支，三段逐字相同） */
 const STAIN_PARTS = [
   '的嘴巴：',
   '的双手：',
@@ -31,7 +31,7 @@ const STAIN_PARTS = [
   '的乳房：',
 ];
 
-/** 污渍位与标记（源 :1461-1472 的六条 SIF，顺序即输出顺序） */
+/** 污渍位与标记（六条位测试，顺序即输出顺序） */
 const STAIN_BITS = [
   { bit: 1, text: '<爱液>' },
   { bit: 2, text: '<前液>' },
@@ -41,7 +41,7 @@ const STAIN_BITS = [
   { bit: 32, text: '<尿液>' },
 ];
 
-/** 位置码（源里的裸数字，逐个注释） */
+/** 位置码（裸数字，逐个注释） */
 const PART_PENIS = 2;
 const PART_VAGINA = 3;
 const PART_BREAST = 5;
@@ -51,7 +51,7 @@ const TALENT_FUTA = 121; // 扶她
 const TALENT_MAN = 122; // 男人
 
 /**
- * 一方角色的六行污渍（源 :1440-1474 / :1476-1511 / :1513-1550 三段同形）。
+ * 一方角色的六行污渍（三方各一段，三段同形）。
  *
  * @param {string} head 角色名（姓名或存档名）
  * @param {number} cid 该方角色 ID
@@ -74,8 +74,8 @@ function print_stain_block(head, cid) {
 }
 
 /**
- * @STAIN_INFO（:1435-1556）：三方污渍一览。
- * @returns {Promise<number>} 源 :1553-1556 RETURN 1
+ * stain_info：三方污渍一览。
+ * @returns {Promise<number>} 恒 1
  */
 async function stain_info() {
   // 换手（TARGET↔TARGET:1、ASSI↔ASSI:1）
@@ -99,7 +99,7 @@ async function stain_info() {
   }
 
   swap();
-  await era.waitAnyKey(); // WAIT
+  await era.waitAnyKey();
   return 1;
 }
 

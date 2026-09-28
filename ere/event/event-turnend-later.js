@@ -1,10 +1,10 @@
 /**
- * @file 回合结束事件 @EVENTTURNEND 的 #LATER 档定义（issue #114——保留为
+ * @file 回合结束事件 EVENTTURNEND 的 #LATER 档定义（issue #114——保留为
  * 空）。
  *
  * 旧实现此处只有函数头、#LATER 标记与一行注释「;エンディングチェック」，
  * 函数体为空，按 #114 的明确要求保留为空。结局检查的实际链路是
- * @ENDCHECK（#116）；若该票或 #118（ENDING_1 分派）需要在此挂处理器，本
+ * endcheck（#116）；若该票或 #118（ENDING_1 分派）需要在此挂处理器，本
  * 文件就是接入点。链序：#PRI（ere/event/event-turnend.js）→ 普通档
  * （ere/system/turnend-settle.js）→ 本档，三档全部跑完后才提交跳转（#6）。
  */

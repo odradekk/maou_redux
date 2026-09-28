@@ -1,49 +1,51 @@
 /**
- * @file 服装类型的显示串构造：@PRINT_CLOTHTYPE / _MAIN / _MAIN2 / _SPECIAL
- * （issue #215 J5；PRINT_/GET_ 分法见 #106 裁定三：PRINT_ → ere/page/，
+ * @file 服装类型的显示串构造：clothtype_text / clothtype_main_text /
+ * clothtype_main2_text / clothtype_special_text
+ * （issue #215 J5；PRINT_/GET_ 分法见 #106 决定三：PRINT_ → ere/page/，
  * GET_ → ere/system/cloth-lookup.js，两处不共享表——两版取串表本身有差
  * 异：MAIN2 缺 CASE 9、SPECIAL 的 98/99 文本不同，既有行为、被用例钉
  * 住，见 cloth-lookup.js 文件头）。
  *
- * == 出口形态（equip-print.js 的「两种出口」同款裁定） ==
+ * == 出口形式（equip-print.js 的「两种出口」同款决定） ==
  *
- * 原作四个函数全用 PRINT（追加行缓冲、不换行），全部调用点都是**行内嵌**
- * ——SHOW_STATUS 的【…】包裹（TRAIN_MAIN.ERB:88-90）、TRAIN_MESSAGE_B 的
- * 「隔着…、」前缀（EVENT_TRAIN_MESSAGE_B.ERB:29-33）、EVENT_BEFORETRAIN
- * 的句中（:74-96）。ere 引擎每次 print 调用即结束一行，共一行的输出必须
- * 由调用方合成一次调用——故本模块四个出口一律**返回串**（monster_name
- * 的同款改法），无整行打印出口（独立整行调用点出现时再补，equip-print
- * 先例）。#106「无 GET_ 版本的两个不预先提取」照办：@PRINT_CLOTHTYPE 与
- * _MAIN 在此 1:1 落地，不拆成 GET_ + 打印。
+ * 全部调用点都是**行内嵌**——状态画面的【…】包裹（page-train.js）、
+ * 侍奉指令的「隔着…、」前缀（com-caress.js）、事件文本与外观信息行的
+ * 句中嵌入（event-beforetrain/autotrain/nextday/nextday-pillory、
+ * components/chara-appearance.js）。
+ * 引擎的 era.print 每次调用即结束一行，共一行的输出必须由调用方合成
+ * 一次调用——故本模块四个出口一律**返回串**（monster_name 的同款改法），
+ * 无整行打印出口（独立整行调用点出现时再补，equip-print 先例）。
+ * #106「无 GET_ 版本的两个不预先提取」照办：clothtype_text 与
+ * clothtype_main_text 在此实现，不拆成 GET_ + 打印。
  */
 
 'use strict';
 
 const era = require('#/era-electron');
 
-/** CFLAG:40（着衣状态位域）的读数兜底（未声明下标 undefined → 0，#13） */
+/** CFLAG:40（着衣状态位域）的读数缺省处理（未声明下标 undefined → 0，#13） */
 function worn_bits(cid) {
   return era.get(`cflag:${cid}:40`) || 0;
 }
 
-/** CFLAG:41（上衣类型）的读数兜底 */
+/** CFLAG:41（上衣类型）的读数缺省处理 */
 function main_type(cid) {
   return era.get(`cflag:${cid}:41`) || 0;
 }
 
-/** CFLAG:42（特别服装类型）的读数兜底 */
+/** CFLAG:42（特别服装类型）的读数缺省处理 */
 function special_type(cid) {
   return era.get(`cflag:${cid}:42`) || 0;
 }
 
-/** TALENT 读数兜底 */
+/** TALENT 读数缺省处理 */
 function talent(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
 }
 
 /**
- * @PRINT_CLOTHTYPE_MAIN2 的名字表（:531-703 逐字；与 GET 版的差异是
- * **本表有 CASE 9**（胸甲＆透视裙子）——两份表不合并，1:1 各自落地）。
+ * clothtype_main2_text 的名字表（与 GET 版的差异是
+ * **本表有 CASE 9**（胸甲＆透视裙子）——两份表不合并，各自逐字保留）。
  * 键 = CFLAG:41。
  */
 const MAIN2_TABLE = {
@@ -131,7 +133,7 @@ const MAIN2_TABLE = {
 };
 
 /**
- * @PRINT_CLOTHTYPE_SPECIAL 的名字表（:894-992 逐字；98/99 是简体形
+ * clothtype_special_text 的名字表（98/99 是简体形
  * ——GET 版同两号是繁体残留，ere 统一取本表的简体，#60）。键 = CFLAG:42。
  */
 const SPECIAL_TABLE = {
@@ -184,8 +186,8 @@ const SPECIAL_TABLE = {
 };
 
 /**
- * @PRINT_CLOTHTYPE_SPECIAL（:892-994）：特别服装名。未知编号**无输出**
- * （原作无 CASEELSE，ENDIF 直接结束）——ere 以空串对应。
+ * clothtype_special_text：特别服装名。未知编号**无输出**
+ * （表外编号不进任何分支）——ere 以空串对应。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -194,8 +196,7 @@ function clothtype_special_text(cid) {
 }
 
 /**
- * @PRINT_CLOTHTYPE_MAIN2（:530-703）：上衣下类型名。未知编号 →「服」
- * （:701-702 ELSE）。
+ * clothtype_main2_text：上衣下类型名。未知编号 →「服」（缺省分支）。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -204,9 +205,9 @@ function clothtype_main2_text(cid) {
 }
 
 /**
- * 乳房可见性的判定（:102 与 :126 共用的条件，TALENT:122 男人 /
- * 116 绝壁 / 109 贫乳 / 132 幼稚）：非男人、非绝壁、且贫乳与幼稚
- * 至少一项为 0 时「乳房外露」，否则「上半身裸露」。
+ * 乳房可见性的判定（TALENT:122 男人 / 116 绝壁 / 109 贫乳 / 132 幼稚）：
+ * 非男人、非绝壁、且贫乳与幼稚至少一项为 0 时「乳房外露」，否则
+ * 「上半身裸露」。
  * @param {number} cid 角色 ID
  * @returns {boolean}
  */
@@ -219,7 +220,7 @@ function breasts_exposed(cid) {
 }
 
 /**
- * @PRINT_CLOTHTYPE_MAIN（:61-156）：基本服装的整体形态句。
+ * clothtype_main_text：基本服装的整体状态句。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -298,7 +299,7 @@ function clothtype_main_text(cid) {
 }
 
 /**
- * @PRINT_CLOTHTYPE（:35-58）：使用中的着衣表示（SHOW_STATUS 的【…】等）。
+ * clothtype_text：使用中的着衣表示（状态画面等的【…】内嵌）。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -311,7 +312,7 @@ function clothtype_text(cid) {
   if (special_type(cid) === 11 && worn_bits(cid) & 64) {
     return '被史莱姆包围着';
   }
-  // 基本コスチューム + :52-56 特別コスチューム（穿戴着…的模样）
+  // 基本服装 + 特别服装（穿戴着…的模样）
   let out = clothtype_main_text(cid);
   if (special_type(cid)) {
     out += `穿戴着${clothtype_special_text(cid)}的模样`;

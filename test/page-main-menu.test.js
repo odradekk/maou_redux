@@ -3,25 +3,24 @@
  * （issue #23：主菜单骨架）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。主菜单
- * 不读 gamebase，无须 preset_gamebase；角色数（CHARANUM 的等价物）经夹具的
- * seed_chara 预置。
+ * 不读 gamebase，无须 preset_gamebase；角色数经夹具的 seed_chara 预置。
  *
  * 覆盖：
  *   1. 状态行：年/月/日/第几日/时段/所持金取自真实变量（包装层），整行
  *      粗体、右对齐、满月之日黄色标注；
- *   2. 六个功能入口：编号、正文、引擎渲染文本、明暗（@MENU_BUTTON 近似）；
- *   3. 防御性修正（@DRAW_MAINMENU :20-39 / @EVENTSHOP :7-12）：越界、
+ *   2. 六个功能入口：编号、正文、引擎渲染文本、明暗（menu_button 的调暗）；
+ *   3. 防御性修正（draw_main_menu 与 EVENTSHOP 链各一份）：越界、
  *      同人、占用三态重置；
  *   4. 四个子面板与指令面板全部真身（#395 起无占位行）；
- *   5. @SHOW_SHOP 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
+ *   5. show_shop 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
  *   6. #73 画面组件迁入：商店轮的就地重绘（不涨屏、上方内容完好、分发期
- *      临时输出被消费、跨会话锚点重新起算）。
+ *      临时输出被消费、跨会话基准重新起算）。
  *
- * 已知未测行（变异测试实证，勿误当守卫）：page-shop.js 的 eventshop() 里
- * @EVENTSHOP :7-12 的指针钳制——删掉它 115 条全绿（误报通过）。原因：run_shop
- * 里紧随其后的 draw_main_menu 自带同一份钳制（原作同构，@SHOW_SHOP 恒调
- * @DRAW_MAINMENU，两份钳制互为冗余兜底），不设钩子无法在两者之间观测。
- * 它是 1:1 保真，行为守卫由 draw 侧的三条防御性修正用例承担。
+ * 已知未测行（变异测试实证，勿误当行为保护）：page-shop.js 注册的
+ * EVENTSHOP 链处理器里的指针钳制——删掉它 115 条全绿（误报通过）。原因：
+ * run_shop 里紧随其后的 draw_main_menu 自带同一份钳制（每轮重绘恒经
+ * draw_main_menu，两份钳制互为冗余），不设钩子无法在两者之间观测。行为
+ * 保护由 draw 侧的三条防御性修正用例承担。
  */
 
 const assert = require('node:assert/strict');
@@ -45,7 +44,7 @@ function button_of(fixture, accelerator) {
   );
 }
 
-// 严格夹具下加入角色要先有预设（#35 镜像的引擎守卫）。本文件只关心「角色在
+// 严格夹具下加入角色要先有预设（#35 镜像的引擎检查）。本文件只关心「角色在
 // 不在已加入列表里」，预设取最小形状即可；真实预设的正确性由
 // test/chara-yml.test.js 用引擎代码比对。
 function join_chara(fixture, id) {
@@ -71,7 +70,7 @@ test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整
   assert(status.includes('上午'));
   assert(status.includes('(所持金：12345 pts.)'));
 
-  // FONTBOLD 整行粗体（片段级携带）；:54 ALIGNMENT RIGHT 后还原左对齐
+  // 整行粗体（片段级携带）；setAlign('right') 后还原左对齐
   const record = fixture.lines.find((line) => line.text?.includes('所持金'));
   assert(record.content.every((frag) => frag.fontWeight === 'bold'));
   assert(
@@ -82,14 +81,14 @@ test('状态行：年/月/日/第几日/时段/所持金取自真实变量，整
   );
 });
 
-// —— BGM（issue #69：原作 :11-17 是否启用背景音乐 == 1 → PLAYBGM 据点2）——
+// —— BGM（issue #69：是否启用背景音乐 == 1 → playMusic 据点2）——
 
 test('BGM：开关开时播据点2（循环），新档默认（0）不播', () => {
-  // 新档默认：audio:0 无声明默认值（erh:3），恒 0 → 不播（原作新档同款）
+  // 新档默认：audio:0 无声明默认值，恒 0 → 不播
   const silent = draw_menu_with(() => {});
   assert.deepEqual(silent.fixture.music, []);
 
-  // 开关开：PLAYBGM "据点2.mp3"（注册名即文件名）+ Emuera 默认循环 → 显式 loop
+  // 开关开：playMusic "据点2.mp3"（注册名即文件名）+ 显式 loop（循环播放）
   const playing = draw_menu_with((fixture) => {
     fixture.store.set('audio:0', 1);
     fixture.seed_res('据点2.mp3', 'audio');
@@ -147,7 +146,7 @@ test('满月之日：DAY:2 == 15 时追加黄色《满月》', () => {
     line.text?.includes('所持金'),
   );
   assert(record.text.includes('《满月》'));
-  // SETCOLORBYNAME Yellow：标注片段带颜色、其余片段无色
+  // 黄色染色（片段 color: 'yellow'）：标注片段带颜色、其余片段无色
   const marked = record.content.find((frag) => frag.content === '《满月》');
   assert.equal(marked.color, 'yellow');
 
@@ -179,7 +178,7 @@ test('六个功能入口：编号、正文与引擎渲染文本（不写手写 [
   }
 });
 
-test('入口明暗：未选中调暗（@MENU_BUTTON 近似），选中正常色', () => {
+test('入口明暗：未选中调暗（menu_button 的调暗），选中正常色', () => {
   // 开局常态：TARGET=-1 / ASSI=0 / FLAG:36=0 → 496、497 暗，500 亮
   const fresh = draw_menu_with((fixture) => {
     fixture.store.set('flag:10005', -1); // target
@@ -209,15 +208,15 @@ test('入口明暗：未选中调暗（@MENU_BUTTON 近似），选中正常色'
 
 test('防御性修正：编号不在已加入角色列表时重置为未选择', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
-    join_chara(fixture, 0); // CHARANUM = 1：序号世界里合法的只有 0
-    era_flag.target = 5; // 越界（原作 :20-21 TARGET > CHARANUM-1）
-    era_flag.assi = 3; // 越界（原作 :23-25）
+    join_chara(fixture, 0); // 角色数 = 1：序号世界里合法的只有 0
+    era_flag.target = 5; // 越界（不在已加入列表里）
+    era_flag.assi = 3; // 越界
   });
   assert.equal(era_flag.target, -1);
   assert.equal(era_flag.assi, -1);
 
-  // ID 语义：已加入 [0, 31] 时 ID 31 合法（原作序号判据会误杀，ere 侧按
-  // 「不在已加入列表」移植，见 page-main-menu.js 的说明）
+  // ID 语义：已加入 [0, 31] 时 ID 31 合法（按「不在已加入列表」判断，见
+  // page-main-menu.js 的说明）
   const id_world = draw_menu_with((fixture, era_flag) => {
     join_chara(fixture, 0);
     join_chara(fixture, 31);
@@ -234,7 +233,7 @@ test('防御性修正：调教目标与助手指向同一人时重置助手', ()
     era_flag.target = 31;
     era_flag.assi = 31;
   });
-  // 原作 :27-29 SIF ASSI == TARGET → ASSI = -1；TARGET 保留
+  // ASSI == TARGET → ASSI = -1；TARGET 保留
   assert.equal(era_flag.assi, -1);
   assert.equal(era_flag.target, 31);
 });
@@ -253,12 +252,12 @@ test('防御性修正：所指角色被占用（CFLAG:x:1 != 0）时重置', () 
   assert.equal(era_flag.assi, 1, '未占用的助手保留');
 });
 
-test('边界：TARGET == 1 时 :31-34 守卫成立，占用即重置（>= 1 下界为真）', () => {
+test('边界：TARGET == 1 时条件成立，占用即重置（>= 1 下界为真）', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
     join_chara(fixture, 0);
     join_chara(fixture, 1);
     era_flag.target = 1; // 恰为边界值 1
-    era_flag.assi = -1; // 避开 :27-29 的 ASSI === TARGET 重置干扰
+    era_flag.assi = -1; // 避开 ASSI === TARGET 的重置干扰
     fixture.store.set('cflag:1:1', 2); // 目标被占用
   });
   assert.equal(
@@ -268,12 +267,12 @@ test('边界：TARGET == 1 时 :31-34 守卫成立，占用即重置（>= 1 下�
   );
 });
 
-test('边界：TARGET == 0（魔王）时 :31-34 守卫不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
+test('边界：TARGET == 0（魔王）时条件不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
     join_chara(fixture, 0);
     era_flag.target = 0; // 恰在边界下方：0 不满足 >= 1
     era_flag.assi = -1;
-    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但守卫不应读到这里
+    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但条件检查不应读到这里
   });
   assert.equal(
     era_flag.target,
@@ -282,7 +281,7 @@ test('边界：TARGET == 0（魔王）时 :31-34 守卫不成立，即使标记�
   );
 });
 
-test('边界：ASSI == 1 时 :36-39 守卫成立，占用即重置（>= 1 下界为真）', () => {
+test('边界：ASSI == 1 时条件成立，占用即重置（>= 1 下界为真）', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
     join_chara(fixture, 0);
     join_chara(fixture, 1);
@@ -297,12 +296,12 @@ test('边界：ASSI == 1 时 :36-39 守卫成立，占用即重置（>= 1 下界
   );
 });
 
-test('边界：ASSI == 0（魔王）时 :36-39 守卫不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
+test('边界：ASSI == 0（魔王）时条件不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
     join_chara(fixture, 0);
     era_flag.target = -1;
     era_flag.assi = 0; // 恰在边界下方：0 不满足 >= 1
-    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但守卫不应读到这里
+    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但条件检查不应读到这里
   });
   assert.equal(
     era_flag.assi,
@@ -312,18 +311,18 @@ test('边界：ASSI == 0（魔王）时 :36-39 守卫不成立，即使标记占
 });
 
 test('四个子面板：按 FLAG:36 分发——四支全部真身（#180/#395）', () => {
-  // 面板 0（DRAW_HAVEITEMS）：技巧 Lv 头行恒出现；ELSE 分支（:197-198）
-  // 未知值回落同一面板
+  // 面板 0（draw_have_items）：技巧 Lv 头行恒出现；ELSE 分支未知值回落
+  // 同一面板
   for (const flag_value of [0, 2]) {
     const { fixture } = draw_menu_with((f) => {
       f.store.set('flag:36', flag_value);
     });
     assert(
       fixture.text_lines().some((line) => line.includes('技巧Lv')),
-      `FLAG:36=${flag_value} 应显示 DRAW_HAVEITEMS 的技巧 Lv 头行`,
+      `FLAG:36=${flag_value} 应显示 draw_have_items 的技巧 Lv 头行`,
     );
   }
-  // 面板 1（DRAW_HAVETRAPS）：给一个陷阱道具，断言真身网格把它画出来
+  // 面板 1（draw_have_traps）：给一个陷阱道具，断言真身网格把它画出来
   {
     const { fixture } = draw_menu_with((f) => {
       f.store.set('flag:36', 1);
@@ -332,10 +331,10 @@ test('四个子面板：按 FLAG:36 分发——四支全部真身（#180/#395�
     });
     assert(
       fixture.text_lines().some((line) => line.includes('落穴')),
-      'DRAW_HAVETRAPS 应画出持有陷阱的名字',
+      'draw_have_traps 应画出持有陷阱的名字',
     );
   }
-  // 面板 4/5：地城两面板真身读数（#180 起真身，本票未改动）
+  // 面板 4/5：地城两面板真身读数（#180 起真身，这张工单未改动）
   for (const [flag_value, marker] of [
     [4, '迷宫Lv'],
     [5, '威望值'],
@@ -352,7 +351,7 @@ test('四个子面板：按 FLAG:36 分发——四支全部真身（#180/#395�
   const { fixture } = draw_menu_with((f) => f.store.set('flag:36', 0));
   assert(
     !fixture.text_lines().some((line) => line.includes('尚未移植')),
-    '四个子面板均已落真身，不应再出现存根占位',
+    '四个子面板均已换真身，不应再出现存根占位',
   );
 });
 
@@ -398,7 +397,7 @@ test('[100] 调教：A > 0 时是可点按钮，A == 0 时退化为灰色 [---] 
     '按钮正文不得手写 [100] 前缀（引擎的 showAcc 会拼，PR #30）',
   );
 
-  // A == 0：只有魔王，原作 :229-231 退化为灰色 [---]（不可选）
+  // A == 0：只有魔王，退化为灰色 [---]（不可选）
   const off = draw_menu_with((fixture) => {
     join_chara(fixture, 0);
   });
@@ -410,7 +409,7 @@ test('[100] 调教：A > 0 时是可点按钮，A == 0 时退化为灰色 [---] 
   const placeholder = off.fixture.lines.find((line) =>
     line.text?.includes('[---]'),
   );
-  assert.ok(placeholder, 'A == 0 时必须留灰色 [---] 占位（原作 PRINTLC）');
+  assert.ok(placeholder, 'A == 0 时必须留灰色 [---] 占位');
 });
 
 test('[106] 贩卖奴隶：B > 0 时是可点按钮，未解锁时不可点', () => {
@@ -431,11 +430,11 @@ test('[106] 贩卖奴隶：B > 0 时是可点按钮，未解锁时不可点', ()
   assert.equal(button_of(off.fixture, 106), undefined);
 });
 
-test('[109] 侵略：无条件渲染按钮（原作 :283 无守卫），正文无手写前缀', () => {
-  // 原作 :282-283 无条件 PRINTLCD [109] 侵略（对照 [100] 的 IF A > 0 守卫）
-  // ——新档（A == 0）也必须打。分支真身自 #117 起（usershop 109 → INVASION
-  // + BEGIN TURNEND），#129 起入口存在：没有这枚按钮，引擎的 input() 拒收
-  // 109（「输入不合法」），整条侵略线在实机上不存在。
+test('[109] 侵略：无条件渲染按钮，正文无手写前缀', () => {
+  // [109] 无条件渲染（对照 [100] 的 A > 0 条件）——新档（A == 0）也必须
+  // 打。分支真身自 #117 起（usershop 109 → invasion() + TURNEND 转场），
+  // #129 起入口存在：没有这枚按钮，引擎的 input() 拒收 109（「输入不合
+  // 法」），整条侵略线在实机上不存在。
   const fresh = draw_menu_with(() => {});
   const invade = button_of(fresh.fixture, 109);
   assert.ok(
@@ -465,12 +464,12 @@ test('[111] 设施·设备：肉便器或展品存在时才渲染可点按钮', 
   }
 });
 
-test('[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰色 [---]', () => {
+test('[101] 能力显示：角色数 >= 1 时是可点按钮，空档退化为灰色 [---]', () => {
   const on = draw_menu_with((fixture) => {
     join_chara(fixture, 0);
   });
   const info = button_of(on.fixture, 101);
-  assert.ok(info, 'CHARANUM >= 1 时 [101] 必须是按钮');
+  assert.ok(info, '角色数 >= 1 时 [101] 必须是按钮');
   assert.equal(info.rendered, '[101] 能力显示');
   assert.equal(info.text, '能力显示');
 
@@ -478,7 +477,7 @@ test('[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰
   assert.equal(
     button_of(off.fixture, 101),
     undefined,
-    'CHARANUM == 0 时不得渲染可点的 [101]',
+    '角色数 == 0 时不得渲染可点的 [101]',
   );
   assert(off.fixture.lines.some((line) => line.text?.includes('[---]')));
 });
@@ -559,7 +558,7 @@ test('[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前
   }
 });
 
-test('DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例', () => {
+test('draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例', () => {
   const { fixture } = draw_menu_with((f) => {
     f.store.set('abl:0:12', 3);
     f.store.set('talent:0:55', 1); // 调合知识
@@ -590,8 +589,8 @@ test('DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的
     '300-339 网格应画出持有道具',
   );
   // #577：行首两格补位（`NBSP.repeat(2)`）与 18 列字段的补位都得是 NBSP——
-  // 退回半角空格会被引擎合并，5 列网格整体错位。行尾那两格半角空格是原作的
-  // 行尾空白（属 #577 普查的「行尾空白不动」，见 draw_have_items 的注释）
+  // 退回半角空格会被引擎合并，5 列网格整体错位。行尾那两格半角空格是保留
+  // 的行尾空白（属 #577 普查的「行尾空白不动」，见 draw_have_items 的注释）
   const item_row = texts.find((l) => l.includes('振动宝石(2)'));
   assert.match(
     item_row,
@@ -600,7 +599,7 @@ test('DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的
   );
 });
 
-test('DRAW_HAVEITEMS：5 个一行，第 6 个换行', () => {
+test('draw_have_items：5 个一行，第 6 个换行', () => {
   const { fixture } = draw_menu_with((f) => {
     for (let i = 0; i <= 5; i += 1) {
       f.store.set(`item:${i}`, 1);
@@ -618,7 +617,7 @@ test('DRAW_HAVEITEMS：5 个一行，第 6 个换行', () => {
   assert.ok(second_row, '道具5 应出现在换行后的新行');
 });
 
-test('DRAW_HAVETRAPS：单一网格（ids 59-89）', () => {
+test('draw_have_traps：单一网格（ids 59-89）', () => {
   const { fixture } = draw_menu_with((f) => {
     f.store.set('flag:36', 1);
     f.store.set('item:60', 3);
@@ -626,11 +625,11 @@ test('DRAW_HAVETRAPS：单一网格（ids 59-89）', () => {
   });
   assert(
     fixture.text_lines().some((l) => l.includes('落穴(3)')),
-    'DRAW_HAVETRAPS 应画出持有陷阱',
+    'draw_have_traps 应画出持有陷阱',
   );
 });
 
-test('DRAW_HAVETRAPS：边界闭区间 [59, 89]，界外相邻号不画', () => {
+test('draw_have_traps：边界闭区间 [59, 89]，界外相邻号不画', () => {
   const { fixture } = draw_menu_with((f) => {
     f.store.set('flag:36', 1);
     f.store.set('item:59', 1);
@@ -661,15 +660,14 @@ test('DRAW_HAVETRAPS：边界闭区间 [59, 89]，界外相邻号不画', () => 
   );
 });
 
-test('[200]/[300]：保存/读取按钮无条件渲染（原作 :303/:306 无守卫），正文无手写前缀', () => {
-  // 原作 :303 PRINTLCD [200] 保存 / :306 PRINTLCD [300] 读取，前均无 IF
-  // 守卫，无条件渲染（对照 [100] 的 IF A > 0）。分发真身自 #136 起在
-  // usershop 的 200/300 分支，但渲染侧此前从未画过按钮——引擎的 input()
-  // 只送达已打印按钮的快捷键，据点两处存读档入口在实机上不存在
-  // （#136 勘误评论移交 #137）。这一条是本次缺口的正主：#136 的用例直接
-  // 驱动 save_game()/load_game()，绕过主菜单 input()，「入口存在」从未
-  // 被覆盖（夹具的按钮白名单 #130 随 printButton 自动放行 200/300——
-  // 想写「经主菜单进存档界面」的用例，输入合法性即由此保证）
+test('[200]/[300]：保存/读取按钮无条件渲染，正文无手写前缀', () => {
+  // [200] 保存 / [300] 读取无条件渲染（对照 [100] 的 A > 0 条件）。分发
+  // 真身自 #136 起在 usershop 的 200/300 分支，但渲染侧此前从未画过按钮
+  // ——引擎的 input() 只送达已打印按钮的快捷键，据点两处存读档入口在实
+  // 机上不存在（#136 勘误评论移交 #137）。这一条是本次缺口的正主：#136
+  // 的用例直接驱动 save_game()/load_game()，绕过主菜单 input()，「入口
+  // 存在」从未被覆盖（夹具的按钮白名单 #130 随 printButton 自动放行
+  // 200/300——想写「经主菜单进存档界面」的用例，输入合法性即由此保证）
   const fresh = draw_menu_with(() => {});
   const save = button_of(fresh.fixture, 200);
   assert.ok(
@@ -687,11 +685,11 @@ test('[200]/[300]：保存/读取按钮无条件渲染（原作 :303/:306 无守
   assert.equal(load.text, '读取', '正文不得手写 [300] 前缀（PR #30）');
 });
 
-test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1日）', async () => {
+test('show_shop 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1日）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
-  // @EVENTFIRST 只初始化 month=1，date/day_count/time 留 0；SHOW_SHOP 再把
-  // date 钳成 1——还原开局现场（month 也一并钳，照搬 :33-36 两条 SIF）
+  // EVENTFIRST 链只初始化 month=1，date/day_count/time 留 0；show_shop 再
+  // 把 date 钳成 1——还原开局现场（month 也一并钳）
   era_flag.month = 0;
   era_flag.date = 0;
   const { run_shop } = fixture.load_module('page/page-shop');
@@ -707,7 +705,7 @@ test('@SHOW_SHOP 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1
   assert(button_of(fixture, 496));
 });
 
-test('@SHOW_SHOP 日期钳制：正常日期不动', async () => {
+test('show_shop 日期钳制：正常日期不动', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.month = 5;
@@ -721,7 +719,7 @@ test('@SHOW_SHOP 日期钳制：正常日期不动', async () => {
 
 // —— #73：主菜单画面组件的就地重绘（商店轮集成）——
 // 组件层单元（行数测量、Row 的计法、回显跨度）在 test/screen-block.test.js；
-// 这里钉调用点：重绘只发生在玩家交互之后、锚点不越过上方内容。
+// 这里钉调用点：重绘只发生在玩家交互之后、基准不越过上方内容。
 
 // 预置两行上方内容后跑 n 轮商店轮；输入队列耗尽时按预期炸出，返回终态夹具
 async function run_shop_rounds(inputs) {
@@ -739,7 +737,7 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
   const two_rounds = await run_shop_rounds([500, 500]);
 
   for (const fixture of [one_round, two_rounds]) {
-    // 上方内容原样：锚点之上不被重绘触碰（Row 的计法错误的破坏形态正是
+    // 上方内容原样：基准之上不被重绘触碰（Row 的计法错误的破坏方式正是
     // 上方内容被连带抹掉——组件层已有直接断言，这里在真实调用点上再钉）
     assert.deepEqual(
       fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
@@ -751,35 +749,35 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
       1,
     );
   }
-  // 一轮与两轮的终态行数一致：每轮的 input 回显行被锚点跨度消费，
+  // 一轮与两轮的终态行数一致：每轮的 input 回显行被基准跨度消费，
   // 屏幕不随交互次数增长（重绘前必有交互——无输入不会推进到重绘）
   assert.equal(one_round.era.getLineCount(), two_rounds.era.getLineCount());
 });
 
 test('分发期输出玩家先看到再被重绘清掉：阶层信息入口的等键输出不留残行', async () => {
   // 101 自 #391、777 自 #463、103 自 #543（批量处刑）、52x 自 #548（阶层
-  // 信息）依次真身化，#638 起最后的占位入口（LABO 400 与 999 调试）也删了
-  // ——店里已没有任何运行时存根。拆成两半驱动：#73 的「玩家先看到」用
-  // 直调 100 的育儿室守卫（:94-97 的 PRINTFORMW 等键可观测：waits 记
-  // rows_at_wait）；「下一轮重绘清掉」用 [521] 的真身分支继续驱同一轮循环
-  //（真身内容同样先落屏、重绘后不留残行；printAndWait 的内部等待按夹具
-  // 契约——era-fixture.js 的 printAndWait 注释——不入 waits，那半只能
-  // 断言「落过屏 + 重绘后不在屏上」）。
+  // 信息）依次真身化，#638 起最后的占位入口（实验室 400 与 999 调试）也删
+  // 了——店里已没有任何运行时存根。拆成两半驱动：#73 的「玩家先看到」用
+  // 直调 100 的育儿室检查（报文后的等键可观测：waits 记 rows_at_wait）；
+  // 「下一轮重绘清掉」用 [521] 的真身分支继续驱同一轮循环（真身内容同样
+  // 先落屏、重绘后不留残行；printAndWait 的内部等待按夹具契约——
+  // era-fixture.js 的 printAndWait 注释——不入 waits，那半只能断言「落过
+  // 屏 + 重绘后不在屏上」）。
   const stub_direct = create_era_fixture();
   join_chara(stub_direct, 31);
   stub_direct.load_module('era-utils/era-flag').bought = -1; // BOUGHT = -1：非购物态
   const { usershop: usershop_stub } = stub_direct.load_module('page/page-shop');
-  stub_direct.store.set('cflag:0:1', 10); // 育儿室守卫分支（魔王在育儿室）
-  stub_direct.load_module('era-utils/era-flag').target = 31; // 跳过选人，直达守卫
+  stub_direct.store.set('cflag:0:1', 10); // 育儿室检查分支（魔王在育儿室）
+  stub_direct.load_module('era-utils/era-flag').target = 31; // 跳过选人，直达检查
   await usershop_stub(100);
   const guard_waits = stub_direct.waits.filter((w) => w.waited);
-  assert.equal(guard_waits.length, 1, '100 育儿室守卫必须等一次键');
+  assert.equal(guard_waits.length, 1, '100 育儿室检查必须等一次键');
   const guard_at_wait = stub_direct.lines_history.filter(
     (l) => l.row !== undefined && l.row < guard_waits[0].rows_at_wait,
   );
   assert(
     guard_at_wait.some((l) => l.text?.includes('育儿室中的你不能进行调教')),
-    '等键时守卫报文必须已在屏幕上',
+    '等键时检查报文必须已在屏幕上',
   );
 
   const stub_round = create_era_fixture();
@@ -815,25 +813,25 @@ test('无分发输出的一轮（面板切换）零等待：菜单重绘本身�
   assert.equal(fixture.waits.length, 0);
 });
 
-test('跨会话锚点：TRAIN 转场后重进 SHOP，上方内容不被旧锚点清掉', async () => {
+test('跨会话基准：TRAIN 转场后重进 SHOP，上方内容不被旧基准清掉', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   join_chara(fixture, 0);
   join_chara(fixture, 31);
-  era_flag.target = 31; // 100 分支无需选人，直达 BEGIN TRAIN
+  era_flag.target = 31; // 100 分支无需选人，直达 TRAIN 转场
   const { run_shop } = fixture.load_module('page/page-shop');
 
-  // 第一局：100 → BEGIN TRAIN 信号上抛，商店轮随之结束
+  // 第一局：100 → TRAIN 转场信号上抛，商店轮随之结束
   fixture.set_inputs(100);
   await assert.rejects(() => run_shop(), /BEGIN TRAIN/);
 
-  // 状态画面整屏清空 + 新局的上方内容（EVENTFIRST 产物的形态）
+  // 状态画面整屏清空 + 新局的上方内容（EVENTFIRST 链的产物）
   await fixture.era.clear();
   fixture.era.print('新局上方一');
   fixture.era.print('新局上方二');
 
-  // 重进 SHOP：菜单组件随状态进入新建、锚点重新起算——上方内容完好、
-  // 菜单纯此一份（模块级单例会拿第一局的旧锚点把这两行清掉）
+  // 重进 SHOP：菜单组件随状态进入新建、基准重新起算——上方内容完好、
+  // 菜单纯此一份（模块级单例会拿第一局的旧基准把这两行清掉）
   fixture.set_inputs(500);
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.deepEqual(

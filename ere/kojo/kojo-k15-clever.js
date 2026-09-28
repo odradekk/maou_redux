@@ -1138,7 +1138,6 @@ async function dog_kojo_15(rand) {
         await era.printAndWait('');
         kojo.手淫 = 4;
       } else if (
-        era0(`talent:${target}:85`) == 1 &&
         era0(`abl:${target}:16`) >= 3 &&
         (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
       ) {

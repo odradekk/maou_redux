@@ -1,15 +1,14 @@
 /**
  * @file 玩家设定画面（issue #463）。
  *
- * 颜色不镜像：原作 CONFIG_FILTER_SETTING/CONFIG_SHOW_FILTER_STATUS 用
- * SETCOLOR 深灰标记「已过滤」，本项目画面组件不复刻纯视觉状态（同
- * LIFE_BAR/立绘先例，docs/stub-registry.md 相关行）。CONFIG_SHOW_FILTER_STATUS
- * 里颜色是唯一状态载体，改用「〇/×」文字标记保留可读信息，不静默丢弃。
+ * 颜色不镜像：过滤开关与过滤状态原本用 SETCOLOR 深灰标记「已过滤」，
+ * 本项目画面组件不复刻纯视觉状态（同 LIFE_BAR/立绘先例）。过滤状态里
+ * 颜色是唯一状态载体，改用「〇/×」文字标记保留可读信息，不静默丢弃。
  *
- * 按钮不能拼接：printButton 独占一行，原作 PRINTFORM（不换行）+ CALL 状态
- * 函数（接着打印）拼一行的习惯在这里行不通。凡状态展示依赖独立函数的选项
+ * 按钮不能拼接：printButton 独占一行，「不换行输出 + 状态函数接着打印」
+ * 拼一行的写法在这里行不通。凡状态展示依赖独立函数的选项
  * （[13]/[21]/[27]/[29]），改造成 `*_text()` 纯文本 helper 供行内按钮拼接；
- * 原作的状态函数只做打印，ere 侧没有第二个调用方，不再保留独立打印包装。
+ * 状态文本没有第二个调用方，不再保留独立打印包装。
  */
 
 const era = require('#/era-electron');
@@ -32,7 +31,7 @@ function invertbit(v, n) {
   return getbit(v, n) ? v - 2 ** n : v + 2 ** n;
 }
 
-/** 5 类过滤的中文标签（CONFIG_FILTER_SETTING/CONFIG_SHOW_FILTER_STATUS 共用） */
+/** 5 类过滤的中文标签（config_filter_setting/filter_status_text 共用） */
 const FILTER_LABELS = [
   '爱抚系过滤',
   '器具系过滤',
@@ -42,12 +41,11 @@ const FILTER_LABELS = [
 ];
 
 /**
- * @CONFIG_FILTER_SETTING（:3-27）：调教指令过滤开关（FLAG:25 位 0-4，
+ * config_filter_setting：调教指令过滤开关（FLAG:25 位 0-4，
  * game.train.指令过滤）。
  *
- * 原作 RESTART 不清屏——每次切换都在下方追加一份新菜单，退出（[100]）后
- * 由 @CONFIG 自身的整页重绘（:288-290）统一清掉；本函数按同一形状 1:1，
- * 不额外补清屏（不引入原作没有的行为）。
+ * 切换后不清屏——每次切换都在下方追加一份新菜单，退出（[100]）后由
+ * config_menu 的整页重绘统一清掉；本函数不额外补清屏（不引入新行为）。
  */
 async function config_filter_setting() {
   for (;;) {
@@ -77,9 +75,8 @@ async function config_filter_setting() {
 }
 
 /**
- * @CONFIG_SHOW_FILTER_STATUS（:30-44）：过滤状态单行摘要。原作用 SETCOLOR
- * 深灰着色 + PRINT 输出；ere 侧文本内联进 [13] 按钮行（见文件头「按钮不能
- * 拼接」），本函数是唯一文本载体，颜色不镜像（改〇/× 文字标记）。
+ * filter_status_text：过滤状态单行摘要。文本内联进 [13] 按钮行（见文件头
+ * 「按钮不能拼接」），本函数是唯一文本载体，颜色不镜像（改〇/× 文字标记）。
  */
 function filter_status_text() {
   const v = game.train.指令过滤;
@@ -90,8 +87,8 @@ function filter_status_text() {
 }
 
 /**
- * @CONFIG_VIRGIN_CONCEDED_SETTING（:47-67）：陷落之后处女主动献身发生方式
- * 三态菜单，写 era_flag.virgin_conceded_mode（FLAG:38 = RESULT-1）。
+ * config_virgin_conceded_setting：陷落之后处女主动献身发生方式三态菜单，
+ * 写 era_flag.virgin_conceded_mode（FLAG:38 = 选项值-1）。
  *
  * FLAG:38 无归属条目、且与属主 system 的 FLAG:37 同属合并区间「37-38」
  * （ownership/flag-ownership.yml），从 page 域裸写会被域检查判定为新增跨域
@@ -120,8 +117,8 @@ async function config_virgin_conceded_setting() {
 }
 
 /**
- * @CONFIG_VIRGIN_CONCEDED_STATUS（:70-82）：三态文案（从不发生/每人一次/
- * 持续触发）。原作独立打印；ere 侧内联进 [21] 按钮行，本函数是唯一文本载体。
+ * virgin_conceded_status_text：三态文案（从不发生/每人一次/持续触发）。
+ * 文本内联进 [21] 按钮行，本函数是唯一文本载体。
  */
 function virgin_conceded_status_text() {
   const v = era_flag.virgin_conceded_mode;
@@ -135,18 +132,18 @@ function virgin_conceded_status_text() {
 }
 
 /**
- * @CONFIG_PENIS_YOU_SETTING（:85-116）：魔王的阴茎形态设定，写
+ * config_penis_you_setting：魔王的阴茎状态设定，写
  * chara(0).chara.阴茎的状态（TALENT:0:318，与 ask_penis_size 共用门面）。
  *
- * 原作单次 INPUT，无重试循环——非 999、非 0-4 的输入直接落到函数尾、
- * 无效输入静默无操作（既有行为，不补校验）。
+ * 单次输入，无重试循环——非 999、非 0-4 的输入直接落到函数尾、无效输入
+ * 静默无操作（既有行为，不补校验）。
  *
- * 确认回显原作是 PRINT（不换行）+ PRINTW（换行并等键，:104-113）——等键
- * 保证玩家在下一次整页重绘清屏前看到结果；ere 侧用 printAndWait 镜像该
- * 语义，单纯的 print 会在 config_menu 下一轮 redraw 里一闪即逝。
+ * 确认回显是「打印 + 等键」一条显示行——等键保证玩家在下一次整页重绘
+ * 清屏前看到结果；ere 侧用 printAndWait 承载该语义，单纯的 print 会在
+ * config_menu 下一轮 redraw 里一闪即逝。
  */
 async function config_penis_you_setting() {
-  // 的 PRINTFORML 自成一行——正文不带尾换行（多写 `\n` 会多出空行，#615）
+  // 标题行自成一行——正文不带尾换行（多写 `\n` 会多出空行，#615）
   era.print('魔王的兵器是如意金箍棒，可大也可小！！');
   era.printButton('- 普通', 0);
   era.printButton('- 巨根', 1);
@@ -167,7 +164,7 @@ async function config_penis_you_setting() {
       '《包茎》',
       '《马阴茎》',
     ];
-    // 的 PRINT + :105 的 PRINTW 是一条显示行（printAndWait = print + 等键），
+    // 「打印 + 等键」是一条显示行（printAndWait = print + 等键），
     // 正文不带尾换行（#615）
     await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}`);
     chara(0).chara.阴茎的状态 = result;
@@ -176,10 +173,10 @@ async function config_penis_you_setting() {
 }
 
 /**
- * @冒險者性別顯示（:118-134）：冒险者性别限制的档位文案。冒険者性別
- * （原文用字）= GLOBAL SAVEDATA（魔改使用.ERH:2），#547 落 yml/Global.yml
- * id 3（era_global.adventurer_gender）：@EVENTFIRST 开局重置 -1，[27] 六档
- * 循环。ere 侧文本内联进 [27] 按钮行，本函数是唯一文本载体。
+ * adventurer_gender_status_text：冒险者性别限制的档位文案。该设定是公共
+ * 存档变量，#547 落 yml/Global.yml id 3（era_global.adventurer_gender）：
+ * EVENTFIRST 链开局重置 -1，[27] 六档循环。文本内联进 [27] 按钮行，
+ * 本函数是唯一文本载体。
  */
 function adventurer_gender_status_text() {
   switch (era_global.adventurer_gender) {
@@ -201,11 +198,10 @@ function adventurer_gender_status_text() {
 }
 
 /**
- * @卖淫影响（:136-145）：卖淫对奴隶售价影响的档位文案。卖淫影响 =
- * SAVEDATA（魔改使用.ERH:4），#547 落 yml/ModSave.yml id 0
- * （era_modsave.prostitution_effect）：0 负面（DIM 无声明默认值，原作
- * CASE 0 的「（默认设置）」注释印证）、1 正面、2 无影响（CASEELSE）。
- * ere 侧文本内联进 [29] 按钮行，本函数是唯一文本载体。
+ * prostitution_effect_status_text：卖淫对奴隶售价影响的档位文案。该设定
+ * 是存档变量，#547 落 yml/ModSave.yml id 0（era_modsave.prostitution_effect）：
+ * 0 负面（未初始化即 0，文案自带「（默认设置）」）、1 正面、2 无影响。
+ * 文本内联进 [29] 按钮行，本函数是唯一文本载体。
  */
 function prostitution_effect_status_text() {
   if (era_modsave.prostitution_effect === 0) {
@@ -321,8 +317,8 @@ function draw_config_page(page) {
       '陷落之后处女主动献身　　 现在：' + virgin_conceded_status_text(),
       21,
     );
-    // [22] 男冒险者许可：原作 :182 该行菜单文字本身被注释掉（未公开的隐藏
-    // 分支），但 :243-245 的分发范围仍含 LOCAL==22——不渲染按钮，只留分发
+    // [22] 男冒险者许可：该菜单文字本就是注释态（未公开的隐藏
+    // 分支），但分发仍受理 22——不渲染按钮，只留分发
     era.printButton(
       '勇者出现时的素质表示　　 现在：' + (getbit(af, 1) ? 'ON' : 'OFF'),
       23,
@@ -354,16 +350,16 @@ function draw_config_page(page) {
 }
 
 /**
- * @CONFIG（:206-286）的输入分发，与渲染/输入获取分离（同 page-shop.js 的
- * show_shop/usershop 二分）：[22] 男冒险者许可的菜单文字原作即被注释掉
- * （:182，未公开隐藏分支），不会被任何 printButton 打印，era.input() 的
+ * config_menu 的输入分发，与渲染/输入获取分离（同 page-shop.js 的
+ * show_shop/usershop 二分）：[22] 男冒险者许可的菜单文字本就是
+ * 注释态（未公开隐藏分支），不会被任何 printButton 打印，era.input() 的
  * 按钮白名单校验（#130）永远拒收它——必须绕开 era.input() 直调本函数才能
  * 测到，与 page-shop.js 的 110/111、520-530 抽查同一必要性。
  *
- * @param {number} local 原作 LOCAL（RESULT）
+ * @param {number} local 菜单编号（输入值）
  * @param {number} page 当前页（0/1）
  * @returns {Promise<number | null>} 新的 page（未变化的分支原样返回）；
- *   null 表示应退出 @CONFIG（[100] 分支，原作 RETURN 0）
+ *   null 表示应退出 config_menu（[100] 分支）
  */
 async function dispatch_config(local, page) {
   if (local === 100) {
@@ -408,24 +404,24 @@ async function dispatch_config(local, page) {
       local - 22,
     );
   } else if (local === 27) {
-    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（:253-264，GLOBAL 变量）
+    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（era_global 公共存档变量）
     era_global.cycle_adventurer_gender();
   } else if (local === 29) {
-    // [29] 卖淫影响：0→1→2→0 三档循环（:273-278）
+    // [29] 卖淫影响：0→1→2→0 三档循环（era_modsave 存档变量）
     era_modsave.cycle_prostitution_effect();
   } else if (local === 30) {
-    // [30] 反作弊：0↔1（:281-285；1 = 关闭 DEBUG_CHECK，可开修改）
+    // [30] 反作弊：0↔1（1 = 关闭反作弊检查，可开修改）
     era_modsave.toggle_anti_cheat();
   }
   return page;
 }
 
 /**
- * @CONFIG（:148-290）：玩家设定主菜单，两页翻页，[100] 返回。
+ * config_menu：玩家设定主菜单，两页翻页，[100] 返回。
  *
- * 导航行（[102]上一页/[100]返回/[101]下一页）原作用 PRINT/PRINT/PRINTL
- * 拼在同一行；本引擎 printButton 独占一行（AGENTS.md 已确认的渲染层约束），
- * 改竖排三个按钮，功能（编号与文案）不变，只是不再横排——同 LIFE_BAR/立绘
+ * 导航行（[102]上一页/[100]返回/[101]下一页）原来是三段输出拼在同一行；
+ * 引擎的 printButton 独占一行（AGENTS.md 已确认的渲染层约束），改竖排
+ * 三个按钮，功能（编号与文案）不变，只是不再横排——同 LIFE_BAR/立绘
  * 先例，视觉排布不镜像。
  */
 async function config_menu() {

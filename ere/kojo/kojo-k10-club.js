@@ -5335,7 +5335,6 @@ async function kojo_message_com_10(rand) {
         // CFLAG:331  = 4（变量语义：CFLAG 族，331）
         kojo.手淫 = 4;
       } else if (
-        era.get(`talent:${target}:85`) == 1 &&
         era.get(`abl:${target}:16`) >= 3 &&
         (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
       ) {
@@ -8736,7 +8735,6 @@ async function dog_kojo_10(rand) {
         // CFLAG:331  = 4（变量语义：CFLAG 族，331）
         chara(target).kojo.手淫 = 4;
       } else if (
-        era.get(`talent:${target}:85`) == 1 &&
         era.get(`abl:${target}:16`) >= 3 &&
         (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
       ) {

@@ -1,22 +1,22 @@
 /**
- * ere/event/enter-enemy.js @ENTER_ENEMY + @K_11_LILY + @K_34_crazylord +
- * @GET_ENEMY 的行为测试（issue #171，阶段 3 H2）。
+ * ere/event/enter-enemy.js enter_enemy + k_11_lily + k_34_crazylord +
+ * get_enemy 的行为测试（issue #171，阶段 3 H2）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
  * enter_enemy / k_34_crazylord / get_enemy 的 rand 参数注入（chara-make.js
  * 先例）：
  *   - zero = () => 0（所有掷骰恒 0：CHARA = 1、初期座標 X=Y=0 贴边、
  *     CHAR_MAKE_INPORT 判定通过）
- *   - one = () => 1（恒 1：座標走 ELSE 末臂 Y=31）
+ *   - one = () => 1（恒 1：座標走 ELSE 末分支 Y=31）
  *
  * 验收对应（#171 清单）：
- *   - 月末守卫不移植（被注释掉的功能不恢复，#574 第 4 条）——钉住用例
+ *   - 月末检查不移植（被注释掉的功能不恢复，#574 第 4 条）——钉住用例
  *     证明「月末也照来」；
  *   - 新生成的勇者 CFLAG:1 == 2 有测试，且让 turnend-settle.js:128 那处
- *     守卫（DUNGEON 占位）为真（链路两用例）；
+ *     检查（DUNGEON 占位）为真（链路两用例）；
  *   - 人数上限六分支各有测试；「出于对魔王的恐惧」早退有测试；
  *   - 初期金钱七条修正逐条有测试（含下限 0）；
- *   - 隔离接线：EVENTTURNEND 的 :93 调用点真调 enter_enemy。
+ *   - 隔离接入：EVENTTURNEND 的调用点真调 enter_enemy。
  */
 
 const assert = require('node:assert/strict');
@@ -44,12 +44,6 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-/** 占位行按「原作 @函数名，」精确计数 */
-function stub_count(fixture, name) {
-  return text_lines(fixture).filter((line) => line.includes(`原作 @${name}，`))
-    .length;
-}
-
 /**
  * 最小世界：魔王 0 在场 + 勇者 1 号已 seed（enter_enemy 以 zero 随机源
  * 恒掷出 1 号）
@@ -62,25 +56,25 @@ function setup_world() {
   return fixture;
 }
 
-// —— 月末守卫不移植（钉住用例：被注释掉的功能不恢复，勇者每日来袭）——
+// —— 月末检查不移植（钉住用例：被注释掉的功能不恢复，勇者每日来袭）——
 
-test('月末守卫已删：日 28、DAY 50、FLAG:60 = 0 仍每日生成（#574 第 4 条）', async () => {
+test('月末检查已删：日 28、DAY 50、FLAG:60 = 0 仍每日生成（#574 第 4 条）', async () => {
   const fixture = setup_world();
   const { enter_enemy } = load(fixture);
-  // 原守卫的三项条件全真（月末 28 > 10、通常来袭、无等级补正）照样来袭
+  // 原检查的三项条件全真（月末 28 > 10、通常来袭、无等级补正）照样来袭
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.date = 28; // DAY:2 日
   era_flag.day_count = 50;
   fixture.store.set('flag:60', 0);
   const ret = await enter_enemy(0, zero);
-  assert.equal(ret, 1, '月末守卫已删：日 28 仍每日来袭');
+  assert.equal(ret, 1, '月末检查已删：日 28 仍每日来袭');
   assert(
     fixture.chara_no.includes(1),
-    '勇者 1 号在月末照常入队（守卫不移植，每日来袭）',
+    '勇者 1 号在月末照常入队（检查不移植，每日来袭）',
   );
 });
 
-// —— 生成链：CFLAG:1 = 2 与 turnend-settle 守卫（验收「此行为必须有测试」）——
+// —— 生成链：CFLAG:1 = 2 与 turnend-settle 检查（验收「此行为必须有测试」）——
 
 test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座標写入', async () => {
   const fixture = setup_world();
@@ -91,27 +85,27 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
   assert.equal(
     fixture.store.get('cflag:1:1'),
     2,
-    'CFLAG:A:1 = 2 侵攻中（CM_STP 经 CHAR_MAKE 落地）',
+    'CFLAG:A:1 = 2 侵攻中（CM_STP 经 CHAR_MAKE 实现）',
   );
   // 演出行（PRINT/PRINTS 归并，见 enter-enemy.js 文件头）
   const texts = text_lines(fixture);
   // 名字：#384 起 CHARA_NAME_DEFINE 是真身，随机勇者（NO 1-16）的名字由
-  // 命名链**覆盖**预设名（原作同：预设名只服务特殊角色 0/17-40）。夹具里
-  // 没有固定名表（namelistkeys 为空），故落到兜底名「佳奈美」。
+  // 命名链**覆盖**预设名（既有行为：预设名只服务特殊角色 0/17-40）。夹具里
+  // 没有固定名表（namelistkeys 为空），故落到保底处理名「佳奈美」。
   assert(
     texts.includes('勇者佳奈美开始了地下城的攻略！'),
     '演出行：勇者 + 名字（callname:-1 承载，已由命名链改写）+ 开始攻略',
   );
   assert(
     texts.includes('*****************************************'),
-    '星框上沿（:73，41 星逐字）',
+    '星框上沿（41 星逐字）',
   );
   // 初期座標（zero 随机源：X = Y = 0 贴边）
   assert.equal(fixture.store.get('cflag:1:510'), 0, 'CFLAG:A:510 座標 X');
   assert.equal(fixture.store.get('cflag:1:511'), 0, 'CFLAG:A:511 座標 Y');
-  // 善恶值落在 @CM_KIND 的值域 [0,199]（:735 RAND:200）——:102-103 的
+  // 善恶值落在 cm_kind 的值域 [0,199]（RAND:200）——
   // -100 钳制对刚生成的角色结构上不可达（CM_KIND 恒非负），它防的是
-  // 异国勇者线（CHAR_MAKE_INPORT 真身）与 KARMA 系统的负值，1:1 保留
+  // 异国勇者线（CHAR_MAKE_INPORT 真身）与 KARMA 系统的负值
   const karma = fixture.store.get('cflag:1:151');
   assert(
     karma >= 0 && karma <= 199,
@@ -119,15 +113,15 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
   );
 });
 
-test('#597：显示角色信息时前后各一个真空行（原作 :159 / :161）', async () => {
+test('#597：显示角色信息时前后各一个空行', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 2); // GETBIT(FLAG:8, 1)：开局设置位图 2
   const { enter_enemy } = load(fixture);
 
   await enter_enemy(0, zero);
 
-  // 星框最后一行（:85 的 PRINTL）之后是 :98 与 :159 两个真空行，再接
-  // show_chara_info 的第一条输出（:160 自带收尾）；:161 的 PRINTL 落在角色
+  // 星框最后一行（的 PRINTL）之后是与两个空行，再接
+  // show_chara_info 的第一条输出（自带收尾）； PRINTL 落在角色
   // 信息之后，是整段演出的收尾。三处删掉任何一处都会少行。
   const frame = fixture.lines.findLastIndex(
     (line) => line.type === 'text' && line.text.startsWith('*****'),
@@ -136,37 +130,37 @@ test('#597：显示角色信息时前后各一个真空行（原作 :159 / :161�
   assert.deepEqual(
     fixture.lines.slice(frame + 1, frame + 3).map((line) => is_blank(line)),
     [true, true],
-    ':98 与 :159 两个真空行都在（角色信息之前）',
+    '角色信息之前的两个空行都在',
   );
   assert.ok(
     !is_blank(fixture.lines[frame + 3]),
     '两个空行之后接角色信息，不多不少',
   );
-  assert_trailing_blank(fixture, '角色信息之后（:161）');
+  assert_trailing_blank(fixture, '角色信息之后');
 });
 
 test('冒险者前缀：TALENT:122（男人位）非 0 时演出写「冒险者」', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:122', 1);
   const { enter_enemy } = load(fixture);
-  // **随机源不能全 0**：CM_GENDER 的 CASE 0 臂在 RAND:50 == 0 时写 TALENT:121
+  // **随机源不能全 0**：CM_GENDER 的 CASE 0 分支在 RAND:50 == 0 时写 TALENT:121
   // （扶她），而 CMI_CONFLICT_CHECK 的互斥对 (121,122) 会把预置的 122 清掉
   // （#384 起那道检查是真身；RAND:2 = 0 时清右侧 122）。这里让 RAND:50 掷出 1
-  // 避开扶她，122 得以存活——正是 :78-82 那一支的成立条件。
+  // 避开扶她，122 得以存活——正是那一支的成立条件。
   await enter_enemy(0, (n) => (n === 50 ? 1 : 0));
   assert.equal(fixture.store.get('talent:1:122'), 1, '预置的男人位存活');
   assert(
     text_lines(fixture).includes('冒险者佳奈美开始了地下城的攻略！'),
-    'TALENT:RESULT:122 非 0 → 冒险者（:78-82）；名字同前一条用例',
+    'TALENT:RESULT:122 非 0 → 冒险者；名字同前一条用例',
   );
 });
 
-test('链路：生成勇者后 turnend-settle 的 DUNGEON 守卫第一次为真（:116/:128）', async () => {
+test('链路：生成勇者后 turnend-settle 的 DUNGEON 检查第一次为真', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
-  // 金钱不变量（#401）：@DEBUG_CHECK 按 `MONEY == EX_FLAG:4444 + 8766` 判
+  // 金钱不变量（#401）：debug_check 按 `MONEY == EX_FLAG:4444 + 8766` 判
   // 「钱被改过」，不成立就随机删一个角色（本用例断言角色 1 仍在场）
   fixture.store.set('flag:10004', 10000); // MONEY
   fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
@@ -185,19 +179,19 @@ test('链路：生成勇者后 turnend-settle 的 DUNGEON 守卫第一次为真�
 
   era_flag.time = 1;
   await emit('EVENTTURNEND');
-  // #112 起 1:1 保留的守卫：place === 2 且非 2D 模式 → 走迷宫本体。
+  // #112 起已接真身的检查：place === 2 且非 2D 模式 → 走迷宫本体。
   // #177（H8）起 DUNGEON_ROOM 也是真身（无占位行）——改以 CFLAG:514
-  // （階層滞在カウント，run_dungeon 滞留臂 :358 的唯一写者）观测：本用例
+  // （階層滞在カウント，run_dungeon 滞留分支的唯一写者）观测：本用例
   // 不注入随机源，Math.random 下 WALK ∈ [0, 73]，仅七掷全 0（概率 ~5e-9）
-  // 才走撤退臂使 514 为 0——与原存根行观测的失守条件同概率（#195）
+  // 才走撤退分支使 514 为 0——与原存根行观测的失守条件同概率（#195）
   assert.equal(
     fixture.store.get('cflag:1:514'),
     1,
-    'CFLAG:1 == 2 的勇者让 turnend-settle 的 DUNGEON 守卫为真',
+    'CFLAG:1 == 2 的勇者让 turnend-settle 的 DUNGEON 检查为真',
   );
 });
 
-test('隔离接线：EVENTTURNEND 的 :93 调用点真调 enter_enemy（日推进即生成）', async () => {
+test('隔离接入：EVENTTURNEND 的调用点真调 enter_enemy（日推进即生成）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
@@ -220,7 +214,7 @@ test('隔离接线：EVENTTURNEND 的 :93 调用点真调 enter_enemy（日推�
   fixture.restore_math_random();
 });
 
-// —— 人数上限六分支（:35-47）——
+// —— 人数上限六分支——
 
 /** 直接操纵已加入列表的长度（上限分支只读数量与 FLAG，不触角色数据） */
 function fill_chara_no(fixture, count) {
@@ -283,7 +277,7 @@ for (const [title, flags, count] of CAP_CASES) {
   });
 }
 
-test('人数上限之下的边界：60 人且 FLAG:82 == 0 不拦（> 60 才拦）', async () => {
+test('人数上限之下的边界（60 人）且 FLAG:82 == 0 不拦（> 60 才拦）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fill_chara_no(fixture, 60);
@@ -298,7 +292,7 @@ test('人数上限之下的边界：60 人且 FLAG:82 == 0 不拦（> 60 才拦�
   );
 });
 
-test('人数上限①的拦截判据：FLAG:82 == 0 且 61 人（静态锚，供变异条目检索）', async () => {
+test('人数上限①的拦截条件：FLAG:82 == 0 且 61 人（静态基准，供变异条目检索）', async () => {
   const fixture = create_era_fixture();
   fill_chara_no(fixture, 61);
   const { enter_enemy } = load(fixture);
@@ -311,7 +305,7 @@ test('人数上限①的拦截判据：FLAG:82 == 0 且 61 人（静态锚，供
   );
 });
 
-// —— 「出于对魔王的恐惧」早退（:93-96）——
+// —— 「出于对魔王的恐惧」早退——
 
 test('同号勇者在队且未被処理：出于对魔王的恐惧，勇者没有出现', async () => {
   const fixture = setup_world();
@@ -321,7 +315,7 @@ test('同号勇者在队且未被処理：出于对魔王的恐惧，勇者没�
   assert.equal(ret, 0, 'RETURN 0（早退）');
   assert(
     text_lines(fixture).includes('出于对魔王的恐惧，勇者没有出现。'),
-    '早退演出文本（:94）',
+    '早退演出文本',
   );
   assert.equal(fixture.chara_no.length, 2, '未生成新角色');
 });
@@ -329,7 +323,7 @@ test('同号勇者在队且未被処理：出于对魔王的恐惧，勇者没�
 test('GETCHARA 双参 SP=0：在场但 CFLAG:0 = 2（助手可）视为不在场，同号再来', async () => {
   const fixture = setup_world();
   fixture.era.addCharacter(1);
-  fixture.store.set('cflag:1:0', 2); // 売却可/助手可（源 :51-52 注释）
+  fixture.store.set('cflag:1:0', 2); // 売却可/助手可（既有注释）
   const { enter_enemy } = load(fixture);
   const ret = await enter_enemy(0, zero);
   assert.equal(ret, 1, 'CFLAG:0 != 0 → GETCHARA(CHARA,0) = -1 → 生成');
@@ -343,17 +337,17 @@ test('调试位 GETBIT(FLAG:5,32)：位 32 开启时无视在场照常生成', a
   fixture.store.set('flag:5', 2 ** 32);
   const { enter_enemy } = load(fixture);
   const ret = await enter_enemy(0, zero);
-  assert.equal(ret, 1, 'FLAG:5 位 32 → 强制生成（:53）');
+  assert.equal(ret, 1, 'FLAG:5 位 32 → 强制生成');
 });
 
-// —— 初期金钱七条修正（:107-133，含下限 0）——
+// —— 初期金钱七条修正（含下限 0）——
 
 /**
- * 生成勇者 1 号（等级恒 1，CHAR_MAKE :22-24 置）并返回其 CFLAG:580 终值。
+ * 生成勇者 1 号（等级恒 1，CHAR_MAKE  置）并返回其 CFLAG:580 终值。
  *
  * #389 勘误：本助手原来「预置 talent:1:315/316 存活」的前提**不成立**了——
- * @CM_LOOK 接上 LOOK_SET 真身后，它会重掷并**无条件覆盖** TALENT:315/316
- * （源 LOOK.ERB:583/:607），预置值一律被冲掉。原来成立只是因为当时 LOOK_SET
+ * cm_look 接上 LOOK_SET 真身后，它会重掷并**无条件覆盖** TALENT:315/316
+ * （LOOK_SET 真身接入后），预置值一律被冲掉。原来成立只是因为当时 LOOK_SET
  * 是个占位（不掷骰）。改法：按上界投喂掷骰——RAND:21 → 想要的 315、RAND:20
  * → 想要的 316（两个 Q 都是「掷值 + 1」）。
  */
@@ -407,7 +401,7 @@ test('初期金钱⑦：组合下限（315 = 9 且 316 = 11 → -1000 + 1）钳 
   assert.equal(
     await raised_money({ 315: 9, 316: 11 }),
     0,
-    '对于不受欢迎的勇者（:131）',
+    '对于不受欢迎的勇者',
   );
 });
 
@@ -415,13 +409,13 @@ test('初期金钱组合：高人气 + 出身贵族 + 受命（1000 + 1500 + 500
   assert.equal(await raised_money({ 126: 1, 315: 8, 316: 9 }), 3001);
 });
 
-// —— 善恶值段（:101-103）——
+// —— 善恶值段——
 //
-// -100 钳制对刚生成的角色结构上不可达（@CM_KIND 的值域是 RAND:200 恒
+// -100 钳制对刚生成的角色结构上不可达（cm_kind 的值域是 RAND:200 恒
 // 非负，见「通常来袭」用例的值域断言）；它防的是异国勇者线
-// （CHAR_MAKE_INPORT 真身）与 KARMA 系统的负值，1:1 保留不删。
+// （CHAR_MAKE_INPORT 真身）与 KARMA 系统的负值，负值路径留着有测试守住。
 
-// —— @K_11_LILY（:169-221）——
+// —— k_11_lily——
 
 /** K_11 的可出场世界：DAY 200+、玛奥在场持【爱】、莉莉未出场 */
 function setup_lily() {
@@ -439,20 +433,20 @@ function setup_lily() {
   return { fixture, era_flag };
 }
 
-test('K_11_LILY 出场：CFLAG:1 = 2、FLAG:223、初期装备、再起点不写（1:1）', async () => {
+test('K_11_LILY 出场：CFLAG:1 = 2、FLAG:223、初期装备、再起点不写', async () => {
   const { fixture } = setup_lily();
   const { k_11_lily } = load(fixture);
   const ret = await k_11_lily();
-  assert.equal(ret, 0, '原作无显式 RETURN（隐式 0）');
+  assert.equal(ret, 0, '无显式 RETURN（隐式 0）');
   assert(fixture.chara_no.includes(24), 'ADDCHARA 24（莉莉入队）');
-  assert.equal(fixture.store.get('cflag:24:1'), 2, 'CFLAG:A:1 = 2（:209）');
+  assert.equal(fixture.store.get('cflag:24:1'), 2, 'CFLAG:A:1 = 2');
   assert.equal(fixture.store.get('flag:223'), 1, 'FLAG:223 登场済');
   assert.equal(fixture.store.get('cflag:24:501'), 1, 'CFLAG:A:501 侵入阶层');
   assert.equal(fixture.store.get('cflag:24:502'), 0, 'CFLAG:A:502 侵攻度');
   assert.equal(
     fixture.store.get('cflag:24:508'),
     undefined,
-    'K_11 不设再起点（原作 :207-209 就没有 508，1:1）',
+    'K_11 不设再起点（508 一直是空值）',
   );
   assert.equal(
     fixture.store.get('cflag:24:550'),
@@ -463,24 +457,20 @@ test('K_11_LILY 出场：CFLAG:1 = 2、FLAG:223、初期装备、再起点不写
   assert.equal(
     fixture.store.get('c_relation:24:17') % 10,
     4,
-    'K_11 FAMILY_REGISTER 接线：莉莉登记为玛奥的妹妹',
+    'K_11 FAMILY_REGISTER 接入：莉莉登记为玛奥的妹妹',
   );
   assert.equal(fixture.store.get('c_relation:17:24') % 10, 2);
   assert(
     text_lines(fixture).includes('村娘莉莉开始了地下城的攻略！'),
     '村娘演出行',
   );
-  // #597：:215 的 PRINTL 落在 :214 的 PRINTW 之后（那一行已结束）——真空行
-  assert_one_blank_before(
-    fixture,
-    '村娘莉莉开始了地下城的攻略！',
-    'K_11 开场（:215）',
-  );
+  // #597： 的 PRINTL 落在的 PRINTW 之后（那一行已结束）——空行
+  assert_one_blank_before(fixture, '村娘莉莉开始了地下城的攻略！', 'K_11 开场');
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, 0, 'TARGET 还原到 MASTER（FLAG:1 = 0）');
 });
 
-test('K_11 出场：身体数据生成接线（#385）：FLAG:5 位 12 开时落 CFLAG:451-457', async () => {
+test('K_11 出场：身体数据生成接入（#385）：FLAG:5 位 12 开时落 CFLAG', async () => {
   const { fixture } = setup_lily();
   fixture.store.set('flag:5', 1 << 12); // 位 12 开：函数内闸门放行
   const { k_11_lily } = load(fixture);
@@ -504,7 +494,7 @@ test('K_11 出场：身体数据生成接线（#385）：FLAG:5 位 12 开时落
   );
 });
 
-test('K_34 出场：身体数据生成接线（#385）：FLAG:5 位 12 开时落 CFLAG:451-457', async () => {
+test('K_34 出场：身体数据生成接入（#385）：FLAG:5 位 12 开时落 CFLAG', async () => {
   const { fixture } = setup_crazylord();
   fixture.store.set('flag:5', 1 << 12);
   const { k_34_crazylord } = load(fixture);
@@ -553,7 +543,7 @@ test('K_11_LILY 早退四条：标志已立 / 未满 200 日 / 玛奥无爱无�
   }
 });
 
-// —— @K_34_crazylord（:224-323）——
+// —— k_34_crazylord——
 
 /** K_34 的可出场世界：DAY 350+、金红桃在场持【淫乱】、四方堡垒全陷 */
 function setup_crazylord() {
@@ -575,23 +565,19 @@ function setup_crazylord() {
 test('K_34 出场：CFLAG:1 = 2、508 = 3、性别设定、随机名、座標、FLAG:224', async () => {
   const { fixture } = setup_crazylord();
   const { k_34_crazylord } = load(fixture);
-  const ret = await k_34_crazylord(one); // 恒 1：随机名 = 1，座標走 ELSE 末臂
+  const ret = await k_34_crazylord(one); // 恒 1：随机名 = 1，座標走 ELSE 末分支
   assert.equal(ret, 1, 'RETURN 1');
   assert(fixture.chara_no.includes(34), 'ADDCHARA 34（替身入队）');
-  assert.equal(fixture.store.get('cflag:34:1'), 2, 'CFLAG:A:1 = 2（:299）');
+  assert.equal(fixture.store.get('cflag:34:1'), 2, 'CFLAG:A:1 = 2');
   assert.equal(fixture.store.get('cflag:34:501'), 1, 'CFLAG:A:501');
   assert.equal(fixture.store.get('cflag:34:502'), 0, 'CFLAG:A:502');
-  assert.equal(
-    fixture.store.get('cflag:34:508'),
-    3,
-    'CFLAG:A:508 再起点（:300）',
-  );
+  assert.equal(fixture.store.get('cflag:34:508'), 3, 'CFLAG:A:508 再起点');
   assert.equal(
     fixture.store.get('cflag:34:6'),
     1,
     'CFLAG:A:6 随机名（RAND:80 → 1）',
   );
-  // FLAG:500 == 1（女性）→ TALENT:121 = 0 / 122 = 0（:260-262）
+  // FLAG:500 == 1（女性）→ TALENT:121 = 0 / 122 = 0
   assert.equal(fixture.store.get('talent:34:121'), 0, '扶她位 = 0');
   assert.equal(fixture.store.get('talent:34:122'), 0, '男人位 = 0');
   assert.equal(
@@ -600,17 +586,17 @@ test('K_34 出场：CFLAG:1 = 2、508 = 3、性别设定、随机名、座標、
     'FLAG:224 登场済（era_flag 具名）',
   );
   assert.equal(fixture.store.get('cstr:34:1'), '葵希罗', 'CSTR:A:1');
-  // 座標（one 随机源：X = Y = 1，RAND:4/3/2 全掷 1 → ELSE 末臂 Y = 31）
+  // 座標（one 随机源：X = Y = 1，RAND:4/3/2 全掷 1 → ELSE 末分支 Y = 31）
   assert.equal(fixture.store.get('cflag:34:510'), 1, '座標 X = 1');
-  assert.equal(fixture.store.get('cflag:34:511'), 31, '座標 Y = 31（末臂）');
+  assert.equal(fixture.store.get('cflag:34:511'), 31, '座標 Y = 31（末分支）');
   // 演出与仪式输入
   const texts = text_lines(fixture);
   assert(
     texts.includes('狂王的替身葵希罗'),
     '替身演出行（PRINT 狂王的替身 + PRINTL 葵希罗 归并）',
   );
-  // #597：:285 的空 `PRINTW` 与 :286 的 `PRINTL` 是相邻的**两个**真空行
-  // （:285 自己就让出一行、:286 再让一行）——删掉 :286 那一处即少一行
+  // #597： 的空 `PRINTW` 与的 `PRINTL` 是相邻的**两个**空行
+  // （自己就让出一行、 再让一行）——删掉那一处即少一行
   const crazylord = fixture.lines.findIndex(
     (line) => line.type === 'text' && line.text.includes('狂王的替身葵希罗'),
   );
@@ -618,25 +604,25 @@ test('K_34 出场：CFLAG:1 = 2、508 = 3、性别设定、随机名、座標、
   assert.deepEqual(
     fixture.lines.slice(crazylord - 2, crazylord).map((line) => is_blank(line)),
     [true, true],
-    ':285 与 :286 两个真空行都在（替身演出之前）',
+    ':285 与两个空行都在（替身演出之前）',
   );
   assert(texts.includes('开始了地下城的攻略！'), '开始攻略行');
   assert(
     fixture.inputs_consumed.some(
       (item) => item.api === 'input' && item.value === 0,
     ),
-    '仪式性确认输入被消费（:294-295）',
+    '仪式性确认输入被消费',
   );
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, 0, 'TARGET 还原到 MASTER');
 });
 
-test('K_34 性别设定的扶她臂：FLAG:500 = 0 → TALENT:121 = 1 / 122 = 0', async () => {
+test('K_34 性别设定的扶她分支：FLAG:500 = 0 → TALENT:121 = 1 / 122 = 0', async () => {
   const { fixture } = setup_crazylord();
   fixture.store.set('flag:500', 0);
   const { k_34_crazylord } = load(fixture);
   await k_34_crazylord(one);
-  assert.equal(fixture.store.get('talent:34:121'), 1, '扶她位 = 1（:264-266）');
+  assert.equal(fixture.store.get('talent:34:121'), 1, '扶她位 = 1');
   assert.equal(fixture.store.get('talent:34:122'), 0);
 });
 
@@ -660,7 +646,7 @@ test('K_34 早退：FLAG:224 已立 / 四方堡垒未全陷（FLAG:92 != 15）',
   }
 });
 
-// —— @GET_ENEMY（:326-405）——
+// —— get_enemy——
 
 test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、RETURN A', async () => {
   const fixture = setup_world();
@@ -668,18 +654,14 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
   const ret = await get_enemy(zero);
   assert.equal(ret, 1, 'RETURN A（生成角色号）');
   assert(fixture.chara_no.includes(1), 'ADDCHARA 1');
-  assert.equal(
-    fixture.store.get('cflag:1:1'),
-    0,
-    'CFLAG:A:1 = 0——俘虏不侵攻（:384）',
-  );
+  assert.equal(fixture.store.get('cflag:1:1'), 0, 'CFLAG:A:1 = 0——俘虏不侵攻');
   assert.equal(fixture.store.get('cflag:1:501'), 1, 'CFLAG:A:501 = 1');
   assert.equal(fixture.store.get('cflag:1:508'), 3, 'CFLAG:A:508 = 3');
   assert(
     text_lines(fixture).includes('勇者佳奈美被俘虏了！'),
-    '俘虏演出行（:370-371）；名字同「通常来袭」用例（命名链已改写预设名）',
+    '俘虏演出行；名字同「通常来袭」用例（命名链已改写预设名）',
   );
-  // 异国判定掷 RAND(10)：zero → 判定通过 → 进 @CHAR_MAKE_INPORT 真身
+  // 异国判定掷 RAND(10)：zero → 判定通过 → 进 char_make_inport 真身
   // （#394 起，ere/chara/chara-make-inport.js）。FLAG:76 未设时它早退 0
   // （无候选），于是**恰好只有生成分支建出的那一名**角色在场；真身的行为面
   // 在 test/chara-make-inport.test.js，这里只钉「判定通过后没有被真身另建一名」。
@@ -688,11 +670,6 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
     [0, 1],
     '判定通过但真身无候选 → 除开局的魔王 0 外只有生成分支建出的角色 1',
   );
-  assert.equal(
-    stub_count(fixture, 'CHARA_MAKE_INPORT'),
-    0,
-    'CHAR_MAKE_INPORT 已无占位行（#394 换真身）',
-  );
 });
 
 test('GET_ENEMY 人数上限：CHARANUM >= 90 → RETURN 0（复制段同样在防）', async () => {
@@ -700,11 +677,11 @@ test('GET_ENEMY 人数上限：CHARANUM >= 90 → RETURN 0（复制段同样在�
   fill_chara_no(fixture, 90);
   const { get_enemy } = load(fixture);
   const ret = await get_enemy(zero);
-  assert.equal(ret, 0, '上限六分支的复制段（:332-344）同样拦截');
+  assert.equal(ret, 0, '上限六分支的复制段同样拦截');
   assert.equal(fixture.lines.length, 0, '零输出');
 });
 
-// —— 夹具隔离开关（#168 裁定 4；防的是「开关被拆、两条 e2e 重新竞速」）——
+// —— 夹具隔离开关（#168 结论 4；防的是「开关被拆、两条 e2e 重新竞速」）——
 
 test('夹具隔离开关：disable_enter_enemy 后 EVENTTURNEND 不再生成勇者', async () => {
   const fixture = create_era_fixture();
@@ -721,7 +698,10 @@ test('夹具隔离开关：disable_enter_enemy 后 EVENTTURNEND 不再生成勇�
 
   era_flag.time = 1;
   await emit('EVENTTURNEND');
-  assert(!fixture.chara_no.includes(1), '开关短路了 :93 的调用——勇者没有入队');
+  assert(
+    !fixture.chara_no.includes(1),
+    '开关短路了早退检查的调用——勇者没有入队',
+  );
   assert.equal(
     fixture.store.get('cflag:1:1'),
     undefined,

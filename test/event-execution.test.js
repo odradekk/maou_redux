@@ -1,7 +1,7 @@
 /**
  * @file 处刑、设施与苗床业务行为测试（issue #348，阶段 5a L17）。
  *
- * #403 把五个处刑入口的内联分发收口成单一入口后，调用点的实参顺序
+ * #403 把五个处刑入口的内联分发收尾成单一入口后，调用点的实参顺序
  * （cid / 处分编号 / 随机源）由本文件的「入口实参位置锁」用例守着——
  * 入口族内部收对参数，调用点传错一样是玩家侧失声（#403 验收反馈实测
  * execution 与 public-execution 两处的第二三实参对调未被拦住）。
@@ -54,7 +54,7 @@ function seed_world() {
   return fixture;
 }
 
-/** 断言 `needle` 那一行之前紧邻空行（#597：分条件的真空行） */
+/** 断言 `needle` 那一行之前紧邻空行（#597：分条件的空行） */
 function assert_blank_before(fixture, needle, label) {
   const index = fixture.lines.findIndex(
     (line) => line.type === 'text' && line.text.includes(needle),
@@ -63,11 +63,11 @@ function assert_blank_before(fixture, needle, label) {
   const prev = fixture.lines[index - 1];
   assert.ok(
     prev.type === 'br' || (prev.type === 'text' && prev.text === ''),
-    `${label}：勋章播报之前的空行是真空行`,
+    `${label}：勋章播报之前的空行不许删`,
   );
 }
 
-/** 断言 `needle` 那一行之前没有空行（同一处的反方向守卫） */
+/** 断言 `needle` 那一行之前没有空行（同一处的反方向检查） */
 function assert_no_blank_before(fixture, needle, label) {
   const index = fixture.lines.findIndex(
     (line) => line.type === 'text' && line.text.includes(needle),
@@ -121,7 +121,7 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   fixture.store.set('cflag:31:552', 1003);
   // NAME_RESET 的真身 CN_REBUILD（#384）把在场角色的 callname:-2 同步成
   // callname:-1，且不打印任何标记行——制造一个偏差，才能观察到「没被同
-  // 步」这一事实，而不是钉在早已作废的 @CN_REBUILD 占位输出上。
+  // 步」这一事实，而不是钉在早已作废的 cn_rebuild 占位输出上。
   fixture.store.set('callname:47:-2', '旧称呼');
   const { execution_mini } = fixture.load_module('event/event-execution');
 
@@ -138,11 +138,11 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   assert.equal(fixture.store.get('flag:80'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.equal(fixture.store.get('exp:0:81'), 1);
-  // #597：勋章播报之前的空行是真空行（:438 的 PRINTL 落在上一条 PRINTFORML 之后）
+  // #597：勋章播报之前的空行不许删（前一条已收尾）
   assert_one_blank_before(
     fixture,
     '得到了用勇者力量形成的勋章',
-    '迷你处刑的勋章行（:438）',
+    '迷你处刑的勋章行',
   );
   assert.equal(fixture.store.get('exflag:99'), 2);
   assert.equal(
@@ -190,15 +190,15 @@ test('PUBLIC_EXECUTION：魂粉碎保留拼行、录像归档与确定性随机�
   assert.equal(fixture.store.get('exp:0:81'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 47]);
-  // #597：第三支（TFLAG:520 == 2）没有空行——原作 :129 的 `PRINTFORMW  ` 只
-  // 收尾 :89-128 那串未换行的 PRINTFORM；空行只属于 :56/:76 两支
+  // #597：第三支（TFLAG:520 == 2）没有空行——`PRINTFORMW  ` 只
+  // 收尾那串未换行的 PRINTFORM；空行只属于前两支
   assert_no_blank_before(fixture, '得到了用勇者力量形成的勋章', '魂粉碎支');
 });
 
-test('#597：公开处刑前两支的勋章空行是真空行（:56 / :76）', async () => {
+test('#597：公开处刑前两支的勋章空行不许删', async () => {
   for (const [branch, label] of [
-    [0, '凌辱致死支（:56）'],
-    [1, '淫行悬挂支（:76）'],
+    [0, '凌辱致死支'],
+    [1, '淫行悬挂支'],
   ]) {
     const fixture = seed_world();
     fixture.set_inputs(branch);
@@ -230,13 +230,13 @@ test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async
   assert.deepEqual(observed, [5, 4]);
   assert.equal(fixture.store.get('videoarchive:1'), '肉类温妮');
   assert.equal(fixture.store.get('exp:0:81'), 1);
-  // #597：菜单末项之后的空行是真空行（:25 的 PRINTL 已收尾），删掉即少一行
-  assert_one_blank_after(fixture, '僵尸化', '猎奇菜单末项（:26）');
-  // #597：勋章播报之前的空行也是真空行（:62 的 PRINTFORMW 已收尾）
+  // #597：菜单末项之后的空行不许删（的 PRINTL 已收尾），删掉即少一行
+  assert_one_blank_after(fixture, '僵尸化', '猎奇菜单末项');
+  // #597：勋章播报之前的空行也是空行（前一句已收尾）
   assert_one_blank_before(
     fixture,
     '到手的勇者之力以勋章的形式保留下来了',
-    '猎奇结算（:63）',
+    '猎奇结算',
   );
 });
 
@@ -633,8 +633,8 @@ test('BANISHMENT：普通流放末路覆盖完整优先链与嵌套开关', asyn
       '恋物癖男优',
     ],
     ['肉便器处女', { 'talent:204': 1, 'talent:0': 1 }, '尻穴便器女优'],
-    ['肉便器兜底', { 'talent:204': 1 }, '痴女女优'],
-    ['肉便器男性兜底', { 'talent:204': 1, 'talent:122': 1 }, '痴汉男优'],
+    ['肉便器保底处理', { 'talent:204': 1 }, '痴女女优'],
+    ['肉便器男性保底处理', { 'talent:204': 1, 'talent:122': 1 }, '痴汉男优'],
     ['肉便器总门关闭', { 'talent:75': 1 }, '下落不明'],
     ['药物上瘾', { 'talent:46': 1 }, '药物中毒的娼妓'],
     ['启示契机', { 'talent:316': 3 }, '新兴宗教的信者'],
@@ -663,7 +663,7 @@ test('BANISHMENT：普通流放末路覆盖完整优先链与嵌套开关', asyn
     ['原娼妓', { 'talent:315': 5 }, '娼妓'],
     ['原乞丐', { 'talent:315': 7 }, '乞丐'],
     ['原贫民', { 'talent:315': 9 }, '贫民'],
-    ['普通兜底', {}, '下落不明'],
+    ['普通保底处理', {}, '下落不明'],
     ['最高优先级覆盖肉便器', { 'talent:244': 1, 'talent:204': 1 }, '玩物'],
     [
       '肉便器内滥交覆盖兽奸',
@@ -997,8 +997,8 @@ test('EXECUTION：使用稳定角色 ID 选择第二名角色并路由到固定�
   assert.equal(fixture.store.get('cflag:47:1'), 8);
   assert.equal(fixture.store.get('videoarchive:2'), undefined);
   assert(fixture.text_lines().some((line) => line.includes('艾达')));
-  // #597：处置菜单末项之后的空行是真空行（:88 的 PRINTL 已收尾）
-  assert_one_blank_after(fixture, '消除记忆后释放', '处置菜单末项（:89）');
+  // #597：处置菜单末项之后的空行不许删（前一句已收尾）
+  assert_one_blank_after(fixture, '消除记忆后释放', '处置菜单末项');
 });
 
 test('EXECUTION：收藏角色不能走除士兵化外的处刑方式', async () => {
@@ -1039,9 +1039,9 @@ test('EXECUTION：肉便器支完整结算，录像开关关闭时不额外写�
   );
 });
 
-test('#597：处刑对象列表的表头之后不补空行（:22 的 PRINTL 只收 :18 那一行）', async () => {
-  // 源 :18 `PRINT 请选择处刑对象`（不换行）+ :19-23 的 IF/ELSE：IF 支接
-  // 的实绩提示，ELSE 支的 :22 `PRINTL` 只结束 :18 那一行——**不是空
+test('#597：处刑对象列表的表头之后不补空行（PRINTL 只收那一行）', async () => {
+  // `PRINT 请选择处刑对象`（不换行）与随后的 IF/ELSE：IF 支接
+  // 的实绩提示，ELSE 支的 `PRINTL` 只结束那一行——**不是空
   // 行**（#597）。两支持续都得钉：只测 IF 支会让 ELSE 支多补的空行逃掉。
   for (const [label, decorations] of [
     ['IF 支（有实绩提示）', 0],
@@ -1067,7 +1067,7 @@ test('#597：处刑对象列表的表头之后不补空行（:22 的 PRINTL 只�
   }
 });
 
-// —— 五个处刑调用点的实参位置锁（#403 收口；验收反馈实测 execution 与
+// —— 五个处刑调用点的实参位置锁（#403 收尾；验收反馈实测 execution 与
 //    public-execution 两处「第二三实参对调」全绿——入口族内部收对参数，
 //    调用点传错一样是玩家侧失声，两只手都要有钉子）——
 
@@ -1084,7 +1084,7 @@ function register_probe(family, key) {
 test('EXECUTION：处刑口上处理器收到注入随机源（入口实参位置锁）', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:163', 1); // 高贵 → K3
-  fixture.set_inputs(0, 6); // 第 1 候选（31）、方式 6 = 固定示众
+  fixture.set_inputs(0, 6); // 第 1 候选、方式 6 = 固定示众
   const { execution } = fixture.load_module('event/event-execution');
   const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
   const rand_n = seq([0]);
@@ -1385,7 +1385,7 @@ test('处刑口上：K2 与 K4 注册四种处刑处理器', () => {
 // 断言看夹具的按钮条目（type === 'button'，rendered = 引擎实显文本）：
 // 正文一律不带 [N] 前缀（引擎按 showAcc 自动拼，手写会显示成 `[1] [1] …`，
 // AGENTS.md 硬约束、PR #30 实机撞见）。流放与公开处刑两处**保留
-// useRule: false**：原作的 `[100] 返回` 被注释掉却仍被受理（BANISHMENT.ERB:32
+// useRule: false**：`[100] 返回` 被注释掉却仍被受理（
 // / PUBLIC_EXECUTION 同款），收紧白名单会锁死这条未显示路径。
 
 /** 按钮条目的引擎实显文本（`[快捷键] 正文`，showAcc 默认为真） */
@@ -1415,8 +1415,8 @@ test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#5
   );
 });
 
-test('#597：流放画面的两处真空行（原作 :20-21 与 :30-31）', async () => {
-  // 未显示的 100：打印完菜单就返回，两处空行都已落盘（:21 在开场白之后、
+test('#597：流放画面的两处空行', async () => {
+  // 未显示的 100：打印完菜单就返回，两处空行都已落盘（在开场白之后、
   // 在五个按钮之后）——删掉任何一处即少一行
   const fixture = seed_world();
   fixture.set_inputs(100);
@@ -1424,12 +1424,8 @@ test('#597：流放画面的两处真空行（原作 :20-21 与 :30-31）', asyn
 
   assert.equal(await banishment(31, seq([0])), 0, '100 走「不执行」出口');
 
-  assert_one_blank_after(fixture, '要来点有意思的放逐吗？', '流放开场（:21）');
-  assert_one_blank_after(
-    fixture,
-    '回到成为勇者前的生活',
-    '流放菜单末项（:31）',
-  );
+  assert_one_blank_after(fixture, '要来点有意思的放逐吗？', '流放开场');
+  assert_one_blank_after(fixture, '回到成为勇者前的生活', '流放菜单末项');
 });
 
 test('PUBLIC_EXECUTION：三选一菜单是按钮，未显示的 100 仍可键入（#572）', async () => {
@@ -1483,7 +1479,7 @@ test('EXECUTION：处置菜单是按钮、候选人行保持纯文本（#572）'
     '候选人轮的 [100] 返回保持纯文本',
   );
   // 整行逐字钉住：编号右对齐 2 / 名字左对齐 12 / 职业左对齐 6 / 等级右对齐 3
-  // （源 :32-33 的 %…,N% 规格），列补位是 NBSP（#577）——退回半角空格的话
+  // （%…,N% 规格），列补位是 NBSP（#577）——退回半角空格的话
   // 这些格子会被引擎合并成一格，整行错位，本断言当场红。职业列为空时
   // job_name 给一个半角空格，故名字与职业之间是「分隔空格 + 那个半角空格」
   const rows = fixture.text_lines().filter((line) => /^\[\s*\d+\]/.test(line));

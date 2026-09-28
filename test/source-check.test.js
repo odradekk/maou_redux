@@ -1,5 +1,5 @@
 /**
- * ere/event/source-check.js 的行为测试（issue #45：@SOURCE_CHECK 的爱抚
+ * ere/event/source-check.js 的行为测试（issue #45：source_check 的爱抚
  * 可达路径）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
@@ -67,7 +67,7 @@ async function run_caress(seed, post) {
 
 test('调教者技巧（ABL:PLAYER:12）六档：源的乘算逐档落进 palam', async () => {
   // 爱抚 SOURCE:0 = 2800（ABL:0 = 8 的 ELSE 档）×技巧档 → 欲情 LV0 ×0.5 →
-  // ABL:0 > 5 的放大 ×(8+5)/10（:650-652，期望算式逐项同序）
+  // ABL:0 > 5 的放大 ×(8+5)/10（期望算式逐项同序）
   const rates = [0.5, 0.8, 1.0, 1.2, 1.5, 2.0];
   for (let skill = 0; skill <= 5; skill += 1) {
     const fixture = await run_caress((f) => {
@@ -80,7 +80,7 @@ test('调教者技巧（ABL:PLAYER:12）六档：源的乘算逐档落进 palam'
     assert.equal(
       fixture.store.get('palam:31:0'),
       expected,
-      `技巧 ${skill} 档：2800×${rates[skill]}×0.5×1.3`,
+      `技巧 ${skill} 档×${rates[skill]}×0.5×1.3`,
     );
   }
   // 技巧 ≥ 5 全落 2.0 档
@@ -207,7 +207,7 @@ test('不洁源：顺从档削反感/不快（无初吻回避时不洁 30 在场
   assert.equal(fixture.store.get('palam:31:12'), Math.floor(30 * 0.6));
 });
 
-// —— 绝顶（@EX_CHECK_UP） ——
+// —— 绝顶（ex_check_up） ——
 
 test('阴蒂绝顶：阈值越过 → 宣告行、DOWN 回落、NOWEX 只写不并、绝顶经验', async () => {
   const fixture = await run_caress((f) => {
@@ -237,7 +237,7 @@ test('无绝顶：不写 NOWEX、无宣告', async () => {
   assert(!fixture.text_lines().includes('最强阴蒂绝顶'));
 });
 
-// —— 刻印（@MARK_GOT_CHECK） ——
+// —— 刻印（mark_got_check） ——
 
 test('反抗刻印 LV1：反感+不快 ≥ 500 时取得', async () => {
   // COM0 会把 SOURCE:12 覆写成 100——post 钩子在 COM0 之后改大源面：
@@ -258,7 +258,7 @@ test('快乐刻印 LV1：快乐合计 ≥ 500 时取得', async () => {
   assert(fixture.text_lines().includes('获得快乐刻印LV1'));
 });
 
-test('调教者是助手时不取得反抗刻印（player != MASTER 判据）', async () => {
+test('调教者是助手时不取得反抗刻印（player != MASTER 条件）', async () => {
   // 构造助手调教世界：ASSIPLAY = 1、PLAYER = 助手
   const fixture = await run_caress((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -321,13 +321,13 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
 
   const texts = fixture.text_lines();
   // 指令行 → 描写 → 反应（c = 5+3 = 8 < 100 → 第一档文本）→ 结算块全在。
-  // （@EVENTTRAIN 的一串占位行在指令行之前，断言一律位置无关）
+  // （eventtrain 的一串占位行在指令行之前，断言一律位置无关）
   assert(texts.includes('爱抚'));
   assert(texts.some((l) => l.includes('仔细爱抚着温妮的身体')));
   assert(
     texts.some((l) => l.includes('把身体扭来扭去、好像没有感觉到快感的样子')),
   );
-  // 源一览：20×0.5(技巧) = 10、15×0.5 = 7（PLAYER_SKILL 已乘）
+  // 源一览×0.5(技巧) = 10、15×0.5 = 7（PLAYER_SKILL 已乘）
   assert(
     texts.includes('阴核(10)乳房(7)情爱(50)性行动(60)不洁(30)露出(100)　'),
   );
@@ -368,9 +368,9 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   );
 });
 
-// —— #216 J6：@LOST_VIRGIN_CHECK 正文（守卫之后的处女丧失处理） ——
+// —— #216 J6：lost_virgin_check 正文（检查之后的处女丧失处理） ——
 
-test('LOST_VIRGIN_CHECK：守卫（TFLAG:19 = 0）→ 处女不动、无记录', async () => {
+test('LOST_VIRGIN_CHECK：检查（TFLAG:19 = 0）→ 处女不动、无记录', async () => {
   const fixture = await run_caress((f) => f.store.set('talent:31:0', 1));
   assert.equal(fixture.store.get('talent:31:0'), 1, '处女未丧失');
   assert.equal(fixture.store.get('cflag:31:15'), undefined);
@@ -433,8 +433,8 @@ test('LOST_VIRGIN_CHECK：CFLAG:15 已有记录 → 不覆盖；selectcom 11 →
   assert.equal(vibe.store.get('cflag:31:15'), 101, '振动棒初体验覆盖码');
 });
 
-test('LOST_VIRGIN_CHECK：主人亲自 + 对象爱慕（85）→ 反抗刻印回避生效', async () => {
-  // tflag:150 是回合内旗（MARK_GOT_CHECK 消费后清零，:1637），断言走
+test('LOST_VIRGIN_CHECK：主人亲自 + 对象爱慕→ 反抗刻印回避生效', async () => {
+  // tflag:150 是回合内旗（MARK_GOT_CHECK 消费后清零），断言走
   // 消费效果：UP:11+12 ≥ 500 本应得反抗刻印，回避旗命中则不得
   const control = await run_caress(
     (f) => f.store.set('talent:31:0', 1),
@@ -466,7 +466,7 @@ test('LOST_VIRGIN_CHECK：主人亲自 + 对象爱慕（85）→ 反抗刻印回
   );
 });
 
-test('LOST_VIRGIN_CHECK：对象淫乱（76）→ 同款回避（SOURCE:6/15 的折算另有乘算位）', async () => {
+test('LOST_VIRGIN_CHECK：对象淫乱→ 同款回避（SOURCE:6/15 的折算另有乘算位）', async () => {
   const control = await run_caress(
     (f) => f.store.set('talent:31:0', 1),
     (f) => {
@@ -493,9 +493,9 @@ test('LOST_VIRGIN_CHECK：对象淫乱（76）→ 同款回避（SOURCE:6/15 的
   );
 });
 
-// —— @INCEST / TARGET_* 早退（#220 J10 收口）——
+// —— incest / TARGET_* 早退（#220 J10 收尾）——
 
-test('INCEST：CFLAG:21–24 按顺序写 TFLAG:14，主人 + -1 强制父母关系', async () => {
+test('INCEST：CFLAG 按顺序写 TFLAG:14，主人 + -1 强制父母关系', async () => {
   const fixture = await run_caress(
     (f) => {
       f.store.set('talent:0:122', 1);
@@ -580,12 +580,12 @@ test('SOURCE_LESBIAN_SEX_CHECK：TARGET 百合气质/中毒 + 调教者同名两
     }
     f.store.set('source:31:7', 0);
   });
-  // 100*0.4(A tier2)*0.6(B tier1)=24 ；:14 同 :8
+  // 100*0.4(A tier2)*0.6(B tier1)=24 ； 同
   assert.equal(fixture.store.get('source:31:8'), 24);
   assert.equal(fixture.store.get('source:31:14'), 24);
   // 100*0.6(A tier2，B 不碰 13)=60
   assert.equal(fixture.store.get('source:31:13'), 60);
-  // 0+200(A tier2)=200（B/C/D 均不加 :7）
+  // 0+200(A tier2)=200（B/C/D 均不加）
   assert.equal(fixture.store.get('source:31:7'), 200);
   // 100*1.2(A)*1.2(B)=144 → *1.3(C tier3)=187 → *2.5(D tier3)=467
   assert.equal(fixture.store.get('source:31:5'), 467);
@@ -595,7 +595,7 @@ test('SOURCE_LESBIAN_SEX_CHECK：TARGET 百合气质/中毒 + 调教者同名两
   assert.equal(fixture.store.get('source:31:4'), 325);
 });
 
-test('SOURCE_LESBIAN_SEX_CHECK：调教者百合中毒（ABL:PLAYER:33）无 0 档，ELSE 同时兜底 0 与 ≥5', async () => {
+test('SOURCE_LESBIAN_SEX_CHECK：调教者百合中毒（ABL:PLAYER:33）无 0 档，ELSE 同时保底处理 0 与 ≥5', async () => {
   const seed = (v) => (f) => {
     f.store.set('talent:31:122', 0);
     f.store.set('talent:0:122', 0);
@@ -629,7 +629,7 @@ test('SOURCE_GAY_SEX_CHECK：只按 TARGET 的ホモっ気（ABL:23）单段级�
   assert.equal(fixture.store.get('source:31:5'), 70);
 });
 
-test('SOURCE_GAY_SEX_CHECK：ABL:23 ≥ 6 无 ELSE 兜底，整段跳过', async () => {
+test('SOURCE_GAY_SEX_CHECK：ABL:23 ≥ 6 无 ELSE 保底处理，整段跳过', async () => {
   const fixture = await run_caress(undefined, (f) => {
     f.store.set('talent:31:122', 1);
     f.store.set('talent:0:122', 1);
@@ -644,7 +644,7 @@ test('同性检查末尾：调教者克制（TALENT:PLAYER:20）令 SOURCE:4/5 �
     f.store.set('talent:31:122', 1);
     f.store.set('talent:0:122', 1);
     f.store.set('talent:0:20', 1);
-    f.store.set('abl:31:23', 0); // tier0 本身已令 :5 ×0.5，验证叠加而非替代
+    f.store.set('abl:31:23', 0); // tier0 本身已令源值 ×0.5，验证叠加而非替代
     f.store.set('source:31:4', 100);
     f.store.set('source:31:5', 100);
   });
@@ -663,7 +663,7 @@ test('同性检查末尾：调教者克制（TALENT:PLAYER:20）令 SOURCE:4/5 �
 
 // —— SOUL_DISLOCATION_DEBUFF（灵魂错位减益） ——
 
-test('SOUL_DISLOCATION_DEBUFF：按 EX_TALENT:0 等级缩放 SOURCE:8，无门槛判据', async () => {
+test('SOUL_DISLOCATION_DEBUFF：按 EX_TALENT:0 等级缩放 SOURCE:8，无门槛条件', async () => {
   const lv2 = await run_caress(undefined, (f) => {
     f.store.set('ex_talent:31:0', 2); // 缩放比例 100-15*2=70%
     f.store.set('source:31:8', 1000);
@@ -688,7 +688,7 @@ test('SOUL_DISLOCATION_DEBUFF：循环上界不含 19（SOURCE:19 不缩放）',
 // —— TARGET_EJAC_CHECK ——
 
 // SOURCE_CHECK_UP_C/V/A/B/FREE 在 target_ejac_check 之前先跑，会按 COM0
-// 残留的 SOURCE:0-19 往 delta:0/1/2/14 累加一截增量（真实行为，不是本票
+// 残留的 SOURCE 往 delta:0/1/2/14 累加一截增量（真实行为，不是这张工单
 // 引入）。要让 post 钩子里设置的 delta 原样传到 target_ejac_check，必须
 // 先把这批 SOURCE 清零，否则 BASE:2 的最终值会带着 COM0 的残留偏移。
 function zero_up_sources(f) {
@@ -697,7 +697,7 @@ function zero_up_sources(f) {
   }
 }
 
-test('TARGET_EJAC_CHECK：守卫（TALENT:121/122 均 0）→ 早退，无射精结算', async () => {
+test('TARGET_EJAC_CHECK：检查（TALENT:121/122 均 0）→ 早退，无射精结算', async () => {
   const fixture = await run_caress(undefined, (f) => {
     f.store.set('maxbase:31:2', 1000);
     zero_up_sources(f);
@@ -771,7 +771,7 @@ test('TARGET_EJAC_CHECK：大量射精档（BASE:2 > EJAC*2），扶她非男人
   assert.equal(fixture.store.get('base:31:2'), 999); // 3500-2000=1500≥1000 → 钳制 EJAC-1
 });
 
-test('TARGET_EJAC_CHECK：大量射精档 + 男人 → 不加异常经验（!TALENT:122 判据）', async () => {
+test('TARGET_EJAC_CHECK：大量射精档 + 男人 → 不加异常经验（!TALENT:122 条件）', async () => {
   const fixture = await run_caress(
     (f) => {
       f.store.set('talent:31:122', 1); // TARGET 男人
@@ -794,7 +794,7 @@ test('TARGET_EJAC_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:3<EXPLV[3]）不与�
       f.store.set('talent:31:121', 1);
       f.store.set('maxbase:31:2', 1000);
       f.store.set('base:31:2', 0);
-      f.store.set('exp:31:3', 10); // EXPLV=[0,1,4,20,50,200]：4≤10<20 落 EXPLV[3] 档
+      f.store.set('exp:31:3', 10); // EXPLV=[0,1,4,20,50,200]≤10<20 落 EXPLV[3] 档
     },
     (f) => {
       zero_up_sources(f);
@@ -857,9 +857,9 @@ test('TARGET_EJAC_CHECK：七项乘算系数各自方向正确（克制/接受�
   const baseline = await run_caress(seed_with({}), post);
   assert.equal(baseline.store.get('base:31:2'), 1000); // 1000+idiv(0,2)
 
-  // 克制/媚药/利尿剂三项在 up_talent_cva_check（:691，先于本函数执行）里
+  // 克制/媚药/利尿剂三项在 up_talent_cva_check（先于本函数执行）里
   // 各自也响应同一个 TALENT/TEQUIP，对 delta:0 先做一次独立缩放——这是
-  // 原作两个检查点各自命中同一素质的真实叠加，断言取叠加后的最终值。
+  // 两个检查点各自命中同一素质的真实叠加，断言取叠加后的最终值。
   const restrained = await run_caress(seed_with({ 'talent:31:20': 1 }), post);
   // up_talent_cva_check：1000×0.3=300；target_ejac_check：idiv(300,2)=150→1000+idiv(-850,2)
   assert.equal(restrained.store.get('base:31:2'), 575);
@@ -944,8 +944,8 @@ test('TARGET_EJAC_CHECK：未熟 + 大量射精 → 体力/气力上限下降且
 
 // —— TARGET_WORMBABY_CHECK ——
 
-// ex_check_up（:1662，先于本函数执行）按「单个 UP 维度 ≥ PALAMLV[4]
-// （10000）」独立判定绝顶，会往 SOURCE:12/13 追加自己的贡献，与
+// ex_check_up（先于本函数执行）按「单个 UP 维度 ≥ PALAMLV[4]
+// 」独立判定绝顶，会往 SOURCE:12/13 追加自己的贡献，与
 // TARGET_WORMBABY_CHECK 撞车。把总量摊到 UP:0/1/2/14 四个维度、每份都
 // 低于阈值，总和仍够触发 LOCAL 的三档判定，同时避开绝顶判定这条独立支路。
 function spread_local(f, total) {
@@ -960,8 +960,8 @@ function spread_local(f, total) {
 // —— TARGET_MILK_CHECK ——
 
 // 全部用 UP:14（×3、无除法取整）单维驱动 LOCAL，数值可精确手算，且远低于
-// ex_check_up 的绝顶阈值（10000），不会连带触发绝顶判定污染 SOURCE 断言。
-test('TARGET_MILK_CHECK：守卫（TALENT:130=0）→ 早退，无喷乳结算', async () => {
+// ex_check_up 的绝顶阈值，不会连带触发绝顶判定污染 SOURCE 断言。
+test('TARGET_MILK_CHECK：检查（TALENT:130=0）→ 早退，无喷乳结算', async () => {
   const fixture = await run_caress(undefined, (f) => {
     f.store.set('maxbase:31:3', 1000);
     zero_up_sources(f);
@@ -1033,8 +1033,8 @@ test('TARGET_MILK_CHECK：大量档 EXP:54=0 → EXPLV 最低档 + 恒加异常�
   const fixture = await run_caress(
     (f) => {
       f.store.set('talent:31:130', 1);
-      f.store.set('talent:31:122', 1); // TARGET 男人——若照抄 EJAC 的性别门槛会被误挡
-      // TALENT:122=1 同时解开 TARGET_EJAC_CHECK 的守卫；把它的 EJAC 钳制拉到
+      f.store.set('talent:31:122', 1); // TARGET 男人——若沿用 EJAC 的性别门槛会被误挡
+      // TALENT:122=1 同时解开 TARGET_EJAC_CHECK 的检查；把它的 EJAC 钳制拉到
       // 天文数字，让它的 grade 恒为 0、早退不写 SOURCE，避免和本函数的
       // SOURCE:12/13 断言相撞（两函数同读 UP:14）
       f.store.set('maxbase:31:2', 999999);
@@ -1078,7 +1078,7 @@ test('TARGET_MILK_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:54<EXPLV[3]）不与�
       f.store.set('talent:31:130', 1);
       f.store.set('maxbase:31:3', 1000);
       f.store.set('base:31:3', 0);
-      f.store.set('exp:31:54', 10); // EXPLV=[0,1,4,20,50,200]：4≤10<20 落 EXPLV[3] 档
+      f.store.set('exp:31:54', 10); // EXPLV=[0,1,4,20,50,200]≤10<20 落 EXPLV[3] 档
     },
     (f) => {
       zero_up_sources(f);
@@ -1123,7 +1123,7 @@ test('TARGET_MILK_CHECK：十一项乘算系数各自方向正确（克制/接�
   const baseline = await run_caress(seed_with({}), post);
   assert.equal(baseline.store.get('base:31:3'), 800); // LOCAL=600→1000+idiv(-400,2)
 
-  // 克制/媚药/利尿剂三项在 up_talent_cva_check（:691，先于本函数执行）里
+  // 克制/媚药/利尿剂三项在 up_talent_cva_check（先于本函数执行）里
   // 各自也响应同一个 TALENT/TEQUIP，对 delta:14 先做一次独立缩放——同
   // TARGET_EJAC_CHECK 的先例，断言取叠加后的最终值。
   const restrained = await run_caress(seed_with({ 'talent:31:20': 1 }), post);
@@ -1197,7 +1197,7 @@ test('TARGET_MILK_CHECK：搾乳器检查——TEQUIP:16 且非 TEQUIP:90 才累
   assert.equal(overridden.store.get('tflag:35') || 0, 0);
 });
 
-test('TARGET_WORMBABY_CHECK：守卫（TALENT:190/191 均 0）→ 早退，无出产结算', async () => {
+test('TARGET_WORMBABY_CHECK：检查（TALENT:190/191 均 0）→ 早退，无出产结算', async () => {
   const fixture = await run_caress(undefined, (f) => spread_local(f, 30000));
   assert.equal(fixture.store.get('exp:31:60') || 0, 0);
   assert.ok(!fixture.text_lines().some((t) => t.includes('蠕虫')));
@@ -1266,7 +1266,7 @@ test('TARGET_WORMBABY_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:3<EXPLV[3]）不�
   const fixture = await run_caress(
     (f) => {
       f.store.set('talent:31:190', 1);
-      f.store.set('exp:31:3', 10); // EXPLV=[0,1,4,20,50,200]：4≤10<20 落 EXPLV[3] 档
+      f.store.set('exp:31:3', 10); // EXPLV=[0,1,4,20,50,200]≤10<20 落 EXPLV[3] 档
     },
     (f) => spread_local(f, 30000),
   );
@@ -1277,7 +1277,7 @@ test('TARGET_WORMBABY_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:3<EXPLV[3]）不�
 test('TARGET_WORMBABY_CHECK：五项乘算系数各自方向正确（克制/接受快感/淫乱化/否定快感/媚药）', async () => {
   // 无可读中间量，只能靠「是否跨过 10000/25000 门槛」间接验证方向——
   // 各系数各选一个刚好卡在门槛两侧的 baseline。克制/媚药同时被
-  // up_talent_cva_check（:691，先于本函数执行）按同一 TALENT/TEQUIP
+  // up_talent_cva_check（先于本函数执行）按同一 TALENT/TEQUIP
   // 做过一次独立缩放，此处断言的是叠加后的最终方向。
   const seed_with = (overrides) => (f) => {
     f.store.set('talent:31:190', 1);
@@ -1348,10 +1348,10 @@ test('TARGET_WORMBABY_CHECK：五项乘算系数各自方向正确（克制/接�
 
 // —— PISSING_ECST_CHECK ——
 
-// TFLAG:29 由 ecst_check（:1555，先于本函数执行）按本回合实际绝顶次数
+// TFLAG:29 由 ecst_check（先于本函数执行）按本回合实际绝顶次数
 // 覆写，不能直接注入——用单一部位（UP:0）的量级控制 ex_c 的离散档位
-// （0/1/2/4/9），避开多部位同时绝顶的倍率加成（≥2 部位才生效）。全部用例
-// 都要开 TEQUIP:22（利尿剂），它同时被 up_talent_cva_check（:691，先于
+// ，避开多部位同时绝顶的倍率加成（≥2 部位才生效）。全部用例
+// 都要开 TEQUIP:22（利尿剂），它同时被 up_talent_cva_check（先于
 // ex_check_up 执行）读取、把 UP:0 缩到 0.7 倍——阈值按此放大留足余量。
 function seed_t29(f, t29) {
   const thresholds = { 1: 15000, 2: 30000, 4: 150000, 9: 500000 };
@@ -1362,7 +1362,7 @@ function seed_t29(f, t29) {
   f.store.set('delta:31:14', 0);
 }
 
-test('PISSING_ECST_CHECK：守卫（TFLAG:29=0）→ 无输出，EXP:31 不变', async () => {
+test('PISSING_ECST_CHECK：检查（TFLAG:29=0）→ 无输出，EXP:31 不变', async () => {
   const fixture = await run_caress(
     (f) => {
       f.store.set('tequip:31:22', 1);
@@ -1374,7 +1374,7 @@ test('PISSING_ECST_CHECK：守卫（TFLAG:29=0）→ 无输出，EXP:31 不变',
   assert.ok(!fixture.text_lines().some((t) => t.includes('放尿经验')));
 });
 
-test('PISSING_ECST_CHECK：五档级联按判据优先级依次命中', async () => {
+test('PISSING_ECST_CHECK：五档级联按条件优先级依次命中', async () => {
   // grade5：TFLAG:29≥7 且两开关全开——最高优先级
   const g5 = await run_caress(
     (f) => {
@@ -1433,7 +1433,7 @@ test('PISSING_ECST_CHECK：五档级联按判据优先级依次命中', async ()
   assert.ok(g3_tal57_only.text_lines().includes('放尿经验+3'));
 
   // grade1 的 (TFLAG:29≥3 && 漏尿癖) 分支：不开 TEQUIP:22，只靠漏尿癖单独
-  // 命中——TFLAG:29=4 时更高档全不成立，只有这一支能兜底
+  // 命中——TFLAG:29=4 时更高档全不成立，只有这一支能保底处理
   const g1_tal57_only = await run_caress(
     (f) => f.store.set('talent:31:57', 1),
     (f) => seed_t29(f, 4),
@@ -1498,7 +1498,7 @@ function spread_pleasure(f, total) {
   f.store.set('delta:31:14', total - quarter * 3);
 }
 
-test('EXP_GOT_CHECK 段 1：守卫（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0', async () => {
+test('EXP_GOT_CHECK 段 1：检查（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0', async () => {
   const guard_off = await run_caress(undefined, (f) => {
     zero_up_sources(f);
     spread_pleasure(f, 3000);
@@ -1593,7 +1593,7 @@ test('EXP_GOT_CHECK 段 1：TEQUIP:88（驯兽陪玩）联动主从爱情经验'
   );
 });
 
-test('EXP_GOT_CHECK 段 2：无 TFLAG:100 守卫；UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减', async () => {
+test('EXP_GOT_CHECK 段 2：无 TFLAG:100 检查；UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减', async () => {
   const no_guard = await run_caress(undefined, (f) => {
     zero_up_sources(f);
     f.store.set('delta:31:2', 2000); // <5000 → ×2；LOCAL=2000×2=4000，落[3000,5000) → grade=4
@@ -1615,8 +1615,8 @@ test('EXP_GOT_CHECK 段 2：无 TFLAG:100 守卫；UP:2<300 强制 LOCAL=0；UP:
   assert.ok(!up2_low.text_lines().some((t) => t.includes('肛门快乐经验')));
 
   // 最高档：UP:2=15000（≥10000 → ×4；LOCAL=60000≥12000）。UP:2 同时会
-  // 触发 ex_check_up 的肛门绝顶判定（:1662，check_part(2,2,...)），其
-  // SOURCE:13 累加经 source_check_up_submit（:2985，晚于本函数执行）
+  // 触发 ex_check_up 的肛门绝顶判定（check_part(2,2,...)），其
+  // SOURCE:13 累加经 source_check_up_submit（晚于本函数执行）
   // 连带污染 UP:6——用差分法消去这个定量污染：两次跑的绝顶贡献相同，
   // palam:31:6 差值只剩本函数 ×1.2 折减的净增量。
   const highest_base = await run_caress(undefined, (f) => {
@@ -1744,7 +1744,7 @@ test('EXP_GOT_CHECK 段 3：助手侧按 ABL:20+TEQUIP:47 六档二次折算', a
 
 // —— SOKUOCHI_CHECK ——
 
-test('SOKUOCHI_CHECK：守卫（TALENT:73=0）→ 早退，ABL 不变', async () => {
+test('SOKUOCHI_CHECK：检查（TALENT:73=0）→ 早退，ABL 不变', async () => {
   const fixture = await run_caress(undefined, (f) => {
     zero_up_sources(f);
     f.store.set('delta:31:0', 5000);
@@ -1961,8 +1961,8 @@ test('SOKUOCHI_CHECK：驱动下标不与相邻组混淆（ABL:2 读 UP:1 非 UP
 });
 
 test('SOKUOCHI_CHECK：ABL:12（技巧）用 UP 阈值表，不是 EXP 阈值表', async () => {
-  // 起点垂到 LV1；驱动值 20 在 TIERS 下不越过 LV2 门槛（30），在 EXP_TIERS
-  // 下会越过（5）——两表在这个起点/驱动值组合下给出不同结果，能区分误用
+  // 起点垂到 LV1；驱动值 20 在 TIERS 下不越过 LV2 门槛，在 EXP_TIERS
+  // 下会越过——两表在这个起点/驱动值组合下给出不同结果，能区分误用
   const fixture = await run_caress(
     (f) => {
       f.store.set('talent:31:73', 1);
@@ -1997,7 +1997,7 @@ test('SOKUOCHI_CHECK：ABL:17（露出癖）门槛来源是乳房感觉，不是
 
 // —— AUTO_NUM_CHECK ——
 
-// 无调用点（调用方 @SOURCE_CHECK_AUTO 仍是存根），不走 run_caress/COM0/
+// 无调用点（调用方 source_check_auto 仍是存根），不走 run_caress/COM0/
 // SOURCE_CHECK 事件——只建立 delta 桶（beginTrain）后直接单测导出函数，
 // 避免 SOURCE_CHECK 内其余已实现函数（up_talent_cva_check 等）对 delta
 // 的连带修改污染断言。
@@ -2051,12 +2051,12 @@ test('AUTO_NUM_CHECK：CFLAG:667（自动调教回数）八档阈值', async () 
 
 // —— #90：跨域写走门面（条目表 22 条清零的契约锁）——
 
-test('跨域写走门面：22 条条目表寻址串的字面量 era.set/add 清零', () => {
+test('跨域写走门面 条条目表寻址串的字面量 era.set/add 清零', () => {
   const text = fs.readFileSync(
     path.resolve(__dirname, '..', 'ere', 'event', 'source-check.js'),
     'utf8',
   );
-  // 写侧零残留：#72 条目表里的 22 个寻址串，字面量形态的 era.set/era.add
+  // 写侧零残留：#72 条目表里的 22 个寻址串，字面量形式的 era.set/era.add
   // 都必须消失（读侧 era.get 放行是 #70 决议，不在本锁范围）
   const gone = [
     'era.set(`mark:',
@@ -2098,7 +2098,7 @@ test('跨域写走门面：22 条条目表寻址串的字面量 era.set/add 清�
   }
 });
 
-// —— #221 J11：SYSTEM_SOURCE.ERB :426-473 对象避孕套与膣内射精计数 ——
+// —— #221 J11：对象避孕套与膣内射精计数 ——
 
 async function run_ejaculation_settlement({
   seed,
@@ -2149,7 +2149,7 @@ test('射精结算：目标避孕套先清 TFLAG:10 与装备，阻止同回合�
   assert.ok(fixture.text_lines().includes('射在避孕套里（温妮）'));
 });
 
-// —— #461：SYSTEM_SOURCE.ERB :19-51 避孕套判定（谁在戴 + 独立的助手射精分支）——
+// —— #461：避孕套判定（谁在戴 + 独立的助手射精分支）——
 
 test('避孕套判定：主人戴着 + 命中任一射精 TFLAG → 清位并打印固定文本', async () => {
   const fixture = await run_ejaculation_settlement({
@@ -2287,7 +2287,7 @@ test('射精结算：TFLAG:19 严格优先链的每对相邻分支', async () =>
       seed,
     });
     assert.equal(fixture.store.get(key), value, name);
-    assert.equal(fixture.store.get(skipped), undefined, `${name} 不得落后臂`);
+    assert.equal(fixture.store.get(skipped), undefined, `${name} 不得落后分支`);
   }
 });
 
@@ -2359,7 +2359,7 @@ test('射精结算：逆侵犯与 COM62/65 按助手/主人落 CFLAG:104/101', a
   }
 });
 
-// —— @SOURCE_CHECK_AUTO（issue #461：自动调教入口，与 SOURCE_CHECK 共享大
+// —— source_check_auto（issue #461：自动调教入口，与 SOURCE_CHECK 共享大
 // 部分函数，调用序列不同——差异见各测试注释）——
 
 // 世界底座（与 run_caress 相同）+ 一次 SOURCE_CHECK_AUTO。不调用 COM_FAMILY：
@@ -2389,7 +2389,7 @@ async function run_auto_check(seed) {
   return fixture;
 }
 
-test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（原作 :2728-2735 的 AUTO 专属门槛，manual 路径的 ANTI 调用被原作者注释掉）', async () => {
+test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（AUTO 专属门槛，manual 路径的 ANTI 调用被注释掉）', async () => {
   const cases = [
     ['主人调教·无反抗刻印', {}, 300, Math.floor(400 * 1.25)],
     ['反抗刻印生效（CFLAG:1 != 0）', { cflag1: 1 }, undefined, undefined],
@@ -2417,7 +2417,7 @@ test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（
   }
 });
 
-test('AUTO_NUM_CHECK：CFLAG:667 八档倍率表（SYSTEM_SOURCE_SUB1.ERB:1852-1881）', async () => {
+test('AUTO_NUM_CHECK：CFLAG:667 八档倍率表（auto_num_check 八档）', async () => {
   const cases = [
     [0, 1.25],
     [5, 1.5],
@@ -2441,7 +2441,7 @@ test('AUTO_NUM_CHECK：CFLAG:667 八档倍率表（SYSTEM_SOURCE_SUB1.ERB:1852-1
   }
 });
 
-test('AUTO_NUM_CHECK：跳过 UP:11/12/13，UP:14 是例外不跳（原作 SIF LOCAL>=11 && LOCAL!=14 的 CONTINUE）', async () => {
+test('AUTO_NUM_CHECK：跳过 UP:11/12/13，UP:14 是例外不跳（SIF LOCAL>=11 && LOCAL!=14 的 CONTINUE）', async () => {
   // 11/12/13 均在 palam_up_check_mini 的 ORDER 里，会被正常处理并写入
   // palam、再清零 delta——读 palam 能验证 AUTO_NUM_CHECK 是否跳过了档位
   // 乘算。15/16 不在 ORDER 里，处理器执行完后读 palam 恒为 undefined，
@@ -2479,8 +2479,8 @@ test('AUTO_NUM_CHECK：跳过 UP:11/12/13，UP:14 是例外不跳（原作 SIF L
 });
 
 test('AUTO_NUM_CHECK：跳过 UP:16（死区，PALAM.yml 无此展示位，需读 delta 而非 palam 验证）', async () => {
-  // UP:16／PALAM:16 全 target/ 目录无消费者，yml/Palam.yml 的展示位止于
-  // 15——16 是原作 FOR LOCAL,0,17 循环上界比实际展示位多出的一档死区。
+  // UP:16／PALAM:16 全库无消费者，yml/Palam.yml 的展示位止于
+  // 15——16 是 FOR LOCAL,0,17 循环上界比实际展示位多出的一档死区。
   // palam_up_check_mini 的 ORDER 不含 16，处理器执行完后 palam:31:16 恒
   // 为 undefined、没有区分力；但 16 也不会被 touched 清零或本次新增的
   // delta:15 无条件清零覆盖，所以 AUTO_NUM_CHECK 结算后的 delta:31:16
@@ -2506,7 +2506,7 @@ test('AUTO_NUM_CHECK：跳过 UP:16（死区，PALAM.yml 无此展示位，需�
 });
 
 test('PALAM_UP_CHECK_MINI：delta:15 处理器执行后恒为 0（收尾清零，不验证 AUTO_NUM_CHECK 对 15 的跳过逻辑）', async () => {
-  // UPID=15 从未进入 palam_up_check_mini 的 ORDER（撞车缺陷，1:1 保留，
+  // UPID=15 从未进入 palam_up_check_mini 的 ORDER（撞车缺陷，恒不处理，
   // 见函数头注释），但 delta:15 仍须无条件清零，否则会被引擎
   // nextTurnInTrain 的通用结算重新累加进 palam。这行清零是同步执行、
   // 无条件的，会覆盖 AUTO_NUM_CHECK 对 UP:15 是否跳过档位乘算留下的任何
@@ -2533,8 +2533,8 @@ test('PALAM_UP_CHECK_MINI：delta:15 处理器执行后恒为 0（收尾清零�
   );
 });
 
-test('AUTO 处理器接线：两处气力 0 减半块与 AUTO_NUM_CHECK 按原作顺序复合', async () => {
-  // Block A（原作 :2601-2606，UP:0/1/2/14 减半）先于 AUTO_NUM_CHECK：
+test('AUTO 处理器接入：两处气力 0 减半块与 AUTO_NUM_CHECK 按既有顺序复合', async () => {
+  // Block A（UP:0/1/2/14 减半）先于 AUTO_NUM_CHECK：
   // 1000 → 减半 500 → ×1.25（CFLAG:667 未播种）= 625
   const fixture_a = await run_auto_check((f) => {
     f.store.set('delta:31:0', 1000);
@@ -2546,7 +2546,7 @@ test('AUTO 处理器接线：两处气力 0 减半块与 AUTO_NUM_CHECK 按原�
     'Block A 先减半，AUTO_NUM_CHECK 再放大',
   );
 
-  // Block B（原作 :2752-2763，UP:3/4/5/7/9/13 减半）后于 AUTO_NUM_CHECK：
+  // Block B（UP:3/4/5/7/9/13 减半）后于 AUTO_NUM_CHECK：
   // 100 × 1.25 = 125 → 减半 62
   const fixture_b = await run_auto_check((f) => {
     f.store.set('delta:31:9', 100);
@@ -2559,7 +2559,7 @@ test('AUTO 处理器接线：两处气力 0 减半块与 AUTO_NUM_CHECK 按原�
   );
 });
 
-test('气力 0 损耗结算：Block B 写入的 deltabase 经 :2773-2774 当场结算到 base（AUTO 不显示损耗条，仍须扣减）', async () => {
+test('气力 0 损耗结算：Block B 写入的 deltabase 经当场结算到 base（AUTO 不显示损耗条，仍须扣减）', async () => {
   const fixture = await run_auto_check((f) => {
     f.store.set('base:31:1', 0); // 气力 0，仅触发 set_lose(0, lose(0)*2+80)=80，无其他 delta 输入
   });

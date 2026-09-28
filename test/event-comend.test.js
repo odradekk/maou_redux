@@ -1,6 +1,6 @@
 /**
- * ere/event/event-comend.js 的行为测试（issue #44：@EVENTCOMEND 死亡/衰弱
- * 判定 1:1）。
+ * ere/event/event-comend.js 的行为测试（issue #44：eventcomend 死亡/衰弱
+ * 判定逐条对照）。
  *
  * 缝 = test/helpers/era-fixture.js。四条分支各有用例；**FLAG:35（濒死自动
  * 结束调教）开关两侧行为不同**是验收项——同一体力值下开关决定是否自动
@@ -17,7 +17,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：目标 31（体力由用例另置）、助手可选。tflag/tequip 寻址有夹具
-// 守卫，先 beginTrain 开表
+// 检查，先 beginTrain 开表
 function seed_world(fixture, { assi = -1 } = {}) {
   join_slave_chara(fixture, 31, '温妮');
   if (assi >= 0) {
@@ -128,7 +128,7 @@ test('分支 3：助手体力 <= 0 → 助手死亡消息（代词取助手侧�
   await run_comend(control);
   assert(
     !control.var_writes.some((w) => w.name === 'tflag:34'),
-    '助手侧的 53 号不得触发录像标志（原作读的是 TARGET）',
+    '助手侧的 53 号不得触发录像标志（读的是 TARGET）',
   );
 });
 
@@ -137,7 +137,7 @@ test('分支 4：助手体力 < 500 → 衰弱结束，无 FLAG:35 条件（开�
   seed_world(fixture, { assi: 32 });
   fixture.store.set('base:31:0', 2000);
   fixture.store.set('base:32:0', 300);
-  // 助手衰弱分支（:303）没有 FLAG:35 守卫——开关关同样触发
+  // 助手衰弱分支没有 FLAG:35 检查——开关关同样触发
   fixture.store.set('flag:35', 0);
 
   const pending = await run_comend(fixture);
@@ -158,9 +158,9 @@ test('健在路径：体力充足、无助手 → 无消息无转场，DRAWLINE 
   assert.deepEqual(fixture.inputs_consumed, []);
 });
 
-// —— #401：@EVENTCOMEND 的无属性档（EVENT1.ERB） ——
+// —— #401：eventcomend 的无属性档（EVENT1 档） ——
 
-/** 无属性档靶场：健在的目标 31 + 两份 @EVENTCOMEND 定义（#PRI 与无属性档） */
+/** 无属性档目标场：健在的目标 31 + 两份 eventcomend 定义（#PRI 与无属性档） */
 function seed_world_comend_normal(fixture) {
   const era_flag = seed_world(fixture);
   fixture.store.set('base:31:0', 2000); // 目标健在（否则 #PRI 档会转场 AFTERTRAIN）
@@ -232,9 +232,9 @@ test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不
   assert.equal(
     fixture.store.get('cflag:31:100'),
     1,
-    '无属性档照常执行（#PRI 档在健在时零写入，不影响本判据）',
+    '无属性档照常执行（#PRI 档在健在时零写入，不影响本条件）',
   );
   assert(fixture.text_lines().includes(ACCEPT_TEXT));
 });
 
-test('#401 无属性档：存根名单为空（EVENT1.ERB 整份落真身）', () => {});
+test('#401 无属性档：存根名单为空（EVENT1 整份落真身）', () => {});

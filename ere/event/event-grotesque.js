@@ -112,7 +112,7 @@ async function grotesque(cid, rand_n = default_rand) {
     '死灵化',
     '僵尸化',
   ].forEach((label, index) => era.print(`[${index}] ${label}`));
-  era.println(); // 真空行：25 行的 PRINTL 已收尾（26 行的 PRINTL 落在空行上）
+  era.println(); // 空行：选项块结束，与输入提示隔开
   let result;
   do {
     result = await era.input({ useRule: false });
@@ -125,9 +125,9 @@ async function grotesque(cid, rand_n = default_rand) {
   era_flag.target = cid;
   apply_prestige(cid);
   game.event.猎奇处刑口上 = result;
-  // EVENT_K.ERB:417-427 的 @GROTESQUE_KOUJO（#403 收口到分发入口）
+  // 猎奇处刑口上（grotesque_koujo，#403 收到分发入口）
   await grotesque_koujo(cid, result, rand_n);
-  // GROTESQUE_KOUJO 可改写 TFLAG:530；原作在 CALL 后读取。
+  // 口上可改写 TFLAG:530；下面在调用后读取。
   result = game.event.猎奇处刑口上;
 
   const name = chara_callname(cid);
@@ -147,7 +147,7 @@ async function grotesque(cid, rand_n = default_rand) {
       await era.printAndWait(format_line(line, name));
     }
   }
-  era.println(); // 真空行：62 行的 PRINTFORMW 已收尾（63 行的 PRINTL 落在空行上）
+  era.println(); // 空行：处刑叙述结束，与后续结算隔开
   era.print('到手的勇者之力以勋章的形式保留下来了');
   era.print('勋章经验+1');
   chara(0).event.勋章经验 += 1;

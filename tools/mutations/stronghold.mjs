@@ -1175,7 +1175,7 @@ export default [
     must_mention: '无素质无持有的基线',
   },
   {
-    desc: 'M8882 SALEITEM_CHECK 已持有非消耗品的下架判据取反（== 1 → == 0）',
+    desc: 'M8882 saleitem_check 已持有非消耗品的下架条件取反（== 1 → == 0）',
     file: 'ere/page/page-item-shop.js',
     find: '    if ((era.get(`item:${i}`) || 0) === 1) {',
     replace: '    if ((era.get(`item:${i}`) || 0) === 0) {',
@@ -1183,7 +1183,7 @@ export default [
     must_mention: '已持有一件',
   },
   {
-    desc: 'M8883 SALEITEM_CHECK 消耗品上限的判据松一格（>= 99 → > 99）',
+    desc: 'M8883 saleitem_check 消耗品上限的条件松一格（>= 99 → > 99）',
     file: 'ere/page/page-item-shop.js',
     find: 'if ((era.get(`item:${id}`) || 0) >= STOCK_LIMIT) {',
     replace: 'if ((era.get(`item:${id}`) || 0) > STOCK_LIMIT) {',
@@ -1191,7 +1191,7 @@ export default [
     must_mention: '99 上限',
   },
   {
-    desc: 'M8884 SALEITEM_CHECK ラブダイナミックスの素质判据取反（=== 1）',
+    desc: 'M8884 saleitem_check ラブダイナミックスの素质条件取反（=== 1）',
     file: 'ere/page/page-item-shop.js',
     find: 'if (talent(0, LOVE_DYNAMICS_TALENT) === 1) {',
     replace: 'if (talent(0, LOVE_DYNAMICS_TALENT) !== 1) {',
@@ -1207,7 +1207,7 @@ export default [
     must_mention: 'ラブダイナミックス',
   },
   {
-    desc: 'M8886 SALEITEM_CHECK 技巧上限的判据错一档（>= 10 → > 10）',
+    desc: 'M8886 saleitem_check 技巧上限的条件错一档（>= 10 → > 10）',
     file: 'ere/page/page-item-shop.js',
     find: 'const TECHNIQUE_MAX = 10;',
     replace: 'const TECHNIQUE_MAX = 9;',
@@ -1399,7 +1399,8 @@ export default [
     find: 'const IKAI_MOD = 10000;',
     replace: 'const IKAI_MOD = 1000;',
     tests: ['chara-shop'],
-    must_mention: 'CHARA_IKAI_COST',
+    must_mention:
+      'chara_ikai_cost：勋章 = L_I % 10000 / 5（截断、下限 3），金钱 = 勋章 × 2000',
   },
   {
     desc: 'M8910 强行召唤的勋章下限错一档（3 → 4）',
@@ -1426,7 +1427,7 @@ export default [
     must_mention: '勋章闸',
   },
   {
-    desc: 'M8913 @SHOW_SHOP 的道具商店上界错一位（< 54 → < 55）',
+    desc: 'M8913 show_shop 的道具商店上界错一位（< 54 → < 55）',
     file: 'ere/page/page-shop.js',
     find: 'if (era_flag.bought >= 0 && era_flag.bought < 54) {',
     replace: 'if (era_flag.bought >= 0 && era_flag.bought < 55) {',
@@ -1434,9 +1435,9 @@ export default [
     must_mention: '陷阱商店',
   },
   {
-    desc: 'M8914 店内 997 的 JUMP 不再重画道具商店（item_shop → 无）',
+    desc: 'M8914 店内 997 的跳转不再重画道具商店（item_shop 调用删）',
     file: 'ere/page/page-shop.js',
-    find: '    await item_shop(); // JUMP ITEM_SHOP（切道具商店并立即重画）',
+    find: '    await item_shop(); // 切道具商店并立即重画',
     replace: '    // 变异：切店不重画',
     tests: ['shop-trap'],
     must_mention: '切回道具商店',
@@ -1451,7 +1452,7 @@ export default [
     must_mention: '商品一览的排版字面量',
   },
   {
-    desc: 'M8916 120 分支的满员判据宽一位（< MAX_CHARANUM → <=）',
+    desc: 'M8916 120 分支的满员条件宽一位（< MAX_CHARANUM → <=）',
     file: 'ere/page/page-shop.js',
     find: 'if (era.getAddedCharacters().length < MAX_CHARANUM) {',
     replace: 'if (era.getAddedCharacters().length <= MAX_CHARANUM) {',
@@ -1779,7 +1780,8 @@ export default [
     find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
     replace: 'const IKAI_IDS = { start: 10000, end: 99999 };',
     tests: ['chara-shop'],
-    must_mention: 'INRANGE 的上界',
+    must_mention:
+      'char_ikai_create：编号段的上界是闭区间（100000 也查在场，不重复收费）',
   },
   {
     desc: 'M9115 异界召唤性别选择的上限少一档（SEX_MAX 3 → 2）',
@@ -1808,7 +1810,7 @@ export default [
     must_mention: '53 号选择面的翻页',
   },
   {
-    desc: 'M9118 30 号选择面的页高错一格（@USE_ITEM 的同款判据 * 20 → * 21）',
+    desc: 'M9118 30 号选择面的页高错一格（使用支的同款条件 * 20 → * 21）',
     file: 'ere/page/page-item-shop.js',
     find: '      // 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {\n        no_page += 1;\n      }\n      continue;\n    }\n    if (!era.getAddedCharacters().includes(result)) {',
     replace:
@@ -1848,7 +1850,8 @@ export default [
     find: 'await show_chara_info(a, -2, rand);',
     replace: 'await show_chara_info(a, -1, rand);',
     tests: ['chara-shop'],
-    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+    must_mention:
+      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
   },
   {
     desc: 'M9123 异界召唤的角色信息传错角色（A → 0）',
@@ -1856,7 +1859,8 @@ export default [
     find: 'await show_chara_info(a, -2, rand);',
     replace: 'await show_chara_info(0, -2, rand);',
     tests: ['chara-shop'],
-    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+    must_mention:
+      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
   },
   {
     desc: 'M9124 异界召唤不调角色信息屏（去掉调用）',
@@ -1864,7 +1868,8 @@ export default [
     find: 'await show_chara_info(a, -2, rand);',
     replace: 'await Promise.resolve(); // 变异：不调角色信息屏',
     tests: ['chara-shop'],
-    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+    must_mention:
+      '召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）',
   },
   // —— #399 接入返工（第二轮）：随机源透传 ——
   // 形参带缺省值时，实参一去掉就静静落回 downstream 的 default_rand
@@ -1995,7 +2000,7 @@ export default [
   {
     // #562：PRINTLC 不换行，:80 的 PRINTL 只结束两个按钮那一行（见 CONTEXT.md
     // 「输出 API 与原作的对应」）
-    desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-item-shop.js',
     find: "  era.setAlign('left');\n\n  return 0;\n}",
     replace:
@@ -2051,7 +2056,7 @@ export default [
     find: "    era.printButton('扶她', 3);",
     replace: "    era.print('[3]扶她'); // 变异",
     tests: ['chara-shop'],
-    must_mention: ':30 的性别菜单与 :36 的返回',
+    must_mention: 'chara_sim_shop：性别菜单是按钮 —— 999 清在售位退出（#572）',
   },
   {
     desc: 'M12026 异界勇者召唤确认退回纯文本行',
@@ -2059,7 +2064,8 @@ export default [
     find: "    era.printButton('再换一个（花费1500）', 1);",
     replace: "    era.print('[1] 再换一个（花费1500）'); // 变异",
     tests: ['chara-shop'],
-    must_mention: ':90-96 的两项',
+    must_mention:
+      'chara_sim_shop：再换一个（[1]）——退人扣 1500 重来；钱不够则只报错',
   },
   {
     desc: 'M12027 异界勇者列表轮的 [999] 返回改成按钮（同上，列表轮不打按钮）',

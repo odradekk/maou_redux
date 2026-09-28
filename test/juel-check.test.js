@@ -3,7 +3,7 @@
  * 模块）的行为测试（issue #47：run_juel_check / juel_check_main）。
  *
  * 缝 = test/helpers/era-fixture.js。期望值覆盖两层：
- *   - 结算表 13 行、SHOW_INFO_EXP、show_juel 的逐字比对（预置状态复刻
+ *   - 结算表 13 行、show_info_exp、show_juel 的逐字比对（预置状态复刻
  *     结算前态 + 定值随机源）；
  *   - 梯子/加算/相殺语义的数值判定。
  *
@@ -461,7 +461,7 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
     fixture.text_lines().some((line) => line.includes('卖淫经验')),
     '真身分支的需求画面应被渲染（decide_ablup37 的 D 行）',
   );
-  // 重绘两次首轮：SHOW_INFO_EXP 的等级行每轮一条
+  // 重绘两次首轮：show_info_exp 的等级行每轮一条
   assert.equal(
     fixture.text_lines().filter((line) => line.includes('当前是Lv')).length,
     2,
@@ -578,7 +578,7 @@ test('结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () =>
   assert.equal(fixture.store.get('juel:31:100'), 167);
 });
 
-test('SHOW_INFO_EXP 的经验行与等级行逐字一致', () => {
+test('show_info_exp 的经验行与等级行逐字一致', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('exp:31:2', 3); // 绝顶经验 3（逐字比对前态）
@@ -592,7 +592,7 @@ test('SHOW_INFO_EXP 的经验行与等级行逐字一致', () => {
   ]);
 });
 
-test('SHOW_INFO_EXP：四个经验一行的换行与 8 宽名字列、残行收尾', () => {
+test('show_info_exp：四个经验一行的换行与 8 宽名字列、残行收尾', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   for (const id of [0, 1, 2, 3, 5]) {
@@ -611,7 +611,7 @@ test('SHOW_INFO_EXP：四个经验一行的换行与 8 宽名字列、残行收�
   ]);
 });
 
-test('SHOW_INFO_EXP：初吻/初体验括号行（两者皆无时不输出）', () => {
+test('show_info_exp：初吻/初体验括号行（两者皆无时不输出）', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('cflag:31:16', 993);

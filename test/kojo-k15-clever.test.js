@@ -2351,3 +2351,17 @@ test('#625 gohoubi_request_koujo_k15：兽名与前后文是同一行（CFLAG:50
     );
   }
 });
+
+// —— #688：SELECTCOM 30 手淫「侍奉精神Lv3以上」档不再要求爱慕 ——
+
+test('DOG_KOJO_15 SC30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+  const fixture = await setup_k15((f) => {
+    f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
+    f.store.set('cflag:31:331', 2);
+    f.store.set('abl:31:16', 3);
+  }, 30);
+  const { dog_kojo_15 } = fixture.load_module('kojo/kojo-k15-clever');
+  await dog_kojo_15();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:331'), 3, 'CFLAG:331 推进到 3');
+});

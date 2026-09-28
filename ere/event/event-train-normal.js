@@ -1,38 +1,33 @@
 /**
- * @file 调教开始事件 @EVENTTRAIN 的**无属性档**定义（issue #401）。
+ * @file 调教开始事件 EVENTTRAIN 的**无属性档**定义（issue #401）。
  *
- * == 引擎保留事件名的多定义（结论来自 emuera-basic-agent-guide，不是猜的） ==
+ * == 链上保留事件名的多定义 ==
  *
- * `@EVENTTRAIN` 全库零 `CALL` 调用点——它是**引擎保留事件名**，由引擎在
- * `BEGIN TRAIN` 之后自动派发（system-flow.md「系统自动调用 @EVENTTRAIN」）。
- * 同名定义有三处，**不是重名冲突**：事件函数允许有多份定义，按
- * `#PRI` 组 → 无属性组 → `#LATER` 组依次全部执行
- * （core-concepts/user-defined-functions.md「事件函数属性」；version-diff/
- * differences.md:115-119 补充「Emuera 1.800 起精确再现 eramaker 的
- * #PRI → 无属性 → #LATER 分组」；`#SINGLE` 才算中断，且只中断本组）。
+ * EVENTTRAIN 在 ere 里没有显式调用点——它由调教主循环（train-loop.js）
+ * 在进入调教阶段后经事件链派发。同名定义有三处，**不是重名冲突**：事件函数
+ * 允许有多份定义，按 `#PRI` 组 → 无属性组 → `#LATER` 组依次全部执行
+ * （`#SINGLE` 才算中断，且只中断本组）。
  *
- *   | 定义处 | 属性 | ere 侧落点 |
- *   | --- | --- | --- |
- *   | 調教相關/TRAIN_MAIN.ERB:13 | `#PRI` | ere/event/event-train.js |
- *   | **EVENT/EVETRAIN.ERB:1（本文件）** | 无属性 | 本模块 |
- *   | （口上模块各自另有一份 @EVENTTRAIN） | 无属性 | ere/kojo/kojo-k*.js |
+ *   | 定义处 | 属性 |
+ *   | --- | --- |
+ *   | ere/event/event-train.js | `#PRI` |
+ *   | **本模块** | 无属性 |
+ *   | 口上模块各自另有一份 | 无属性 |
  *
- * 无属性组内的次序 = 定义次序（Emuera 是文件装载序），ere 侧由
- * `ere/system/flow/main-loop.js` 的 require 序决定（`system/event/registry.js`
- * 头注：同档追加在尾部）。本模块紧随 event-train（#PRI 那份）之后装载。
+ * 无属性组内的次序 = 装载次序，ere 侧由 `ere/system/flow/main-loop.js` 的
+ * require 序决定（`system/event/registry.js` 头注：同档追加在尾部）。本模块
+ * 紧随 event-train（#PRI 那份）之后装载。
  *
  * == 与 #PRI 那份的关系 ==
  *
- * 本体的前半与 TRAIN_MAIN.ERB:13 的 #PRI 定义重叠（射精槽清零、调教者
- * 选择），差别只有一处：**TFLAG 的重置范围**——#PRI 那份是
- * `REPEAT 200 → TFLAG:0..199`，本文件是 `VARSET TFLAG, 0, 0, 201` =
- * TFLAG:0..200（`VARSET 变量名[, 值, 起始索引, 结束索引]`，结束索引**不含**
- * ——commands/system.md:41-51）。两份都跑，后者多清一个 200。1:1 照搬，
- * 不合并。
+ * 本体的前半与 #PRI 那份（ere/event/event-train.js）重叠（射精槽清零、
+ * 调教者选择），差别只有一处：**TFLAG 的重置范围**——#PRI 那份清
+ * TFLAG:0..199，本文件清 TFLAG:0..200（结束索引 201 不含）。两份都跑，
+ * 后者多清一个 200。按原样保留，不合并。
  *
- * == :10 那 201 条写的落法（工单硬约束六） ==
+ * == 那 201 条写入的落法（工单硬约束六） ==
  *
- * 一条 `VARSET` 展开成 201 个下标写入，其中 **47 个下标属主在 event 域外**
+ * 一条清空语句展开成 201 个下标写入，其中 **47 个下标属主在 event 域外**
  * （跨域写登记里 file = 本文件的记录正好 47
  * 条：train 31 / system 12 / dungeon 1 / kojo 1 / stronghold 2）。按
  * CONTEXT.md「跨域写必须经属主域导出的具名方法」，这 47 条一律走门面 setter
@@ -44,7 +39,7 @@
  * **一份交叉验证**：门面只为「有跨域写者」的下标生成——201 个下标里恰好
  * 60 个有门面字段，且 47 个跨域下标**全部**在其中（另 13 个属 event 域但
  * 有跨域写者）。这与跨域写登记的记录集完全吻合，
- * 是本文件逐条落地的独立佐证。
+ * 是本文件逐条写入的独立佐证。
  */
 
 const era = require('#/era-electron');
@@ -53,20 +48,20 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 
-// @EVENTTRAIN（EVETRAIN.ERB:1-17，无属性档——on 的缺省档即 TIER.NORMAL）
+// EVENTTRAIN（无属性档——on 的缺省档即 TIER.NORMAL）
 on('EVENTTRAIN', async () => {
   // 主人公の射精を0に（BASE:2 = 射精槽，属主 train → 门面）
   chara(0).train.射精槽 = 0;
 
   // いちおう調教対象と助手も
   chara(era_flag.target).train.射精槽 = 0;
-  // SIF ASSI >= 0
+  // ASSI >= 0 才写
   if (era_flag.assi >= 0) {
     chara(era_flag.assi).train.射精槽 = 0;
   }
 
-  // VARSET TFLAG, 0, 0, 201 —— 201 个下标逐条清 0（起始 0、结束 201
-  // 不含）。分域落法见文件头「:10 那 201 条写的落法」。
+  // TFLAG 201 个下标逐条清 0（起始 0、结束 201 不含）。分域落法见文件头
+  // 「那 201 条写入的落法」。
   // —— 跨域 47 条：一律走属主域门面 setter（跨域写登记
   //    逐条核对过：train 31 / system 12 / dungeon 1 / kojo 1 / stronghold 2）——
   // train（31 条）
@@ -122,7 +117,7 @@ on('EVENTTRAIN', async () => {
   game.stronghold.召唤暂存_1 = 0; // tflag:101 召唤暂存_1
   game.stronghold.召唤暂存_2 = 0; // tflag:102 召唤暂存_2
   // —— 同域 154 条（属主 event）：本文件在 ere/event/，裸寻址合规。
-  //    下标集合逐字列出（VARSET 是一条语句、敲成一条，但集合必须可审——
+  //    下标集合逐字列出（源语句是一条、敲成一条，但集合必须可审——
   //    动态 i 循环会同时绕过 domain-check 的判定与人的复核）——
   for (const index of [
     16, 31, 33, 36, 37, 39, 43, 44, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 57,

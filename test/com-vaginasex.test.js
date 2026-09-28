@@ -229,6 +229,34 @@ test('部位文案：CFLAG:113 = 3（肛）/ 4（口）的追加句', async () =
   }
 });
 
+test('部位文案：CFLAG:113 = 2（精巢）通常射精不带悬空的「的」，大量射精保留「强烈的」', async () => {
+  const normal = seed_world();
+  arm_player(normal.fixture);
+  normal.fixture.store.set('cflag:31:113', 2);
+  normal.fixture.store.set('base:0:2', 5001); // > 5000 且蓄积后 ≤ 2×5000 → 通常
+  await normal.vs.com_ejac_player_sex(() => 9);
+  const lines = normal.fixture.text_lines();
+  assert.ok(
+    lines.some((t) => t.includes('温妮的精巢似乎感受到了冲击')),
+    '通常射精读得通',
+  );
+  assert.ok(
+    !lines.some((t) => t.includes('感受到了的冲击')),
+    '「感受到了的冲击」缺形容词的旧写法不出现',
+  );
+
+  const heavy = seed_world();
+  arm_player(heavy.fixture);
+  heavy.fixture.store.set('cflag:31:113', 2);
+  heavy.fixture.store.set('base:0:2', 9999); // 蓄积后 > 2×5000 → 大量
+  await heavy.vs.com_ejac_player_sex(() => 9);
+  assert.ok(
+    heavy.fixture
+      .text_lines()
+      .some((t) => t.includes('精巢似乎感受到了强烈的冲击')),
+    '大量射精保留「强烈的」',
+  );
+});
 // —— com_ejac_player_milk ——
 
 test('MILK：非母乳体质 → 早退（ゲージ 3 不动）', async () => {

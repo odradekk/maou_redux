@@ -166,6 +166,25 @@ test('可用性检查：COM20 的男性器/道具条件与 COM25 不额外禁止
   assert.equal(await world.com_able_family.call(25), 1, 'COM25 允许男性调教者');
 });
 
+test('可用性检查：肛门电极（TEQUIP:49）挡 COM26–29，COM27 与其余三式一致', async () => {
+  const world = seed_world();
+  world.fixture.store.set('talent:0:122', 1); // 调教者有男性器
+  world.fixture.store.set('exp:31:1', 10); // 肛门经验门槛
+  assert.equal(
+    await world.com_able_family.call(27),
+    1,
+    '无电极时 COM27 可执行',
+  );
+
+  world.fixture.store.set('tequip:31:49', 1); // 肛门电极使用中
+  for (const id of [26, 27, 28, 29]) {
+    assert.equal(
+      await world.com_able_family.call(id),
+      0,
+      `COM${id} 电极使用中挡`,
+    );
+  }
+});
 test('get_adv_com：连续三人目标缺失时按既有 staged stub 跳转；不能误写 TFLAG:42', async () => {
   const world = seed_world();
   world.era_flag.prevcom = 64;
@@ -390,10 +409,10 @@ test('升格到已实现目标：执行 COM64 真身，不打占位（跳转语�
 });
 
 test('可用性检查：特殊检查保持各指令的差异', async () => {
-  // COM27 没有电极位 49 检查，COM26 有；两者都要求 EXP:1 >= 10。
+  // COM26/27 都有电极位 49 检查（COM27 与其余肛交位一致）；两者都要求 EXP:1 >= 10。
   for (const [id, expected] of [
     [26, 0],
-    [27, 1],
+    [27, 0],
   ]) {
     const world = seed_world();
     world.fixture.store.set('talent:0:122', 1);

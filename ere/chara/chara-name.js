@@ -304,6 +304,11 @@ function nid_get_type(nid) {
   return 1;
 }
 
+/** 单段名不宜独存的段值：单段名拼到这些段时追加一段通用两音段。 */
+const SINGLE_BAD_PIECES = new Set([
+  200, 201, 204, 205, 207, 208, 210, 215, 217, 218, 219, 227,
+]);
+
 /**
  * cn_span_combine_name_num：生成随机假名组合名的编号。
  *
@@ -344,8 +349,16 @@ function cn_span_combine_name_num(rand = default_rand) {
     }
     result += piece;
 
-    // 「计数器为负则跳出」——循环计数器恒非负，不可达（文件头）
-    // 「长度 1 且段值在 200 段则计数器减 10」——只由上一条放行，同样不可达
+    // 单段名落在不宜独存的段值时追加一段通用两音段后停止：追加一轮仍先
+    // 消耗一音段判定的两个骰子（rand(3)/rand(2)），length == 1 时两个条件
+    // 都不成立，段值取通用两音段。
+    if (length === 1 && SINGLE_BAD_PIECES.has(piece)) {
+      result *= 1000;
+      const one_sound =
+        (rand(3) === 0 && length !== 1) || (rand(2) === 0 && length === 3);
+      result += one_sound ? rand(9) + 300 : rand(30) + 200;
+      break;
+    }
   }
 
   return result + 2_000_000_000;

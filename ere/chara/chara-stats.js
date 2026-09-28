@@ -76,7 +76,7 @@ function chara_id_output(cid) {
       break;
     }
   }
-  personality -= 1; // LOCAL:1 -= 1（有意保留的偏移，既有写法）
+  personality -= 1; // 性格槽取命中序 - 1：160 号性格落在 -1 槽。识别号只做恋人/结婚匹配的相等比较，不展示、不排序，负槽不影响结果
   result += (personality - 160) * 1000;
   result += (era.get(`talent:${cid}:320`) || 0) * 100000; // 家族构成
   return result;

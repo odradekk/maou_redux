@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 401; // #649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 修复守卫；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的守卫）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 402; // #660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 修复守卫；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的守卫）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
@@ -21,21 +21,21 @@ export const COUNT = 401; // #649/#650 合并后重算（两边在同位置追�
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
   {
-    desc: 'M11610 event-first 的 CHARA_NAME_DEFINE 接线删除（魔王称呼不落地）',
+    desc: 'M11610 event-first 的 CHARA_NAME_DEFINE 接入删除（魔王称呼不写入）',
     file: 'ere/event/event-first.js',
     find: '    chara_name_define(0);',
-    replace: '    // 变异：称呼定义接线删除',
+    replace: '    // 变异：称呼定义接入删除',
     tests: ['event-first'],
     must_mention: 'callname:0:-1',
   },
   {
-    desc: 'M11611 event-first 的 RAND_CHARA_MAKE 接线删除（随机奴隶不生成）',
+    desc: 'M11611 event-first 的 RAND_CHARA_MAKE 接入删除（随机奴隶不生成）',
     file: 'ere/event/event-first.js',
     find: '  const rand_n = (n) => Math.floor(Math.random() * n);\n  await rand_chara_make(rand_n, () => char_make_inport(1, rand_n));',
     replace:
-      '  const rand_n = (n) => Math.floor(Math.random() * n);\n  // 变异：随机奴隶生成接线删除（rand_n 不再被消费，夹具输入面随之错位）',
+      '  const rand_n = (n) => Math.floor(Math.random() * n);\n  // 变异：随机奴隶生成接入删除（rand_n 不再被消费，夹具输入面随之错位）',
     tests: ['event-first'],
-    must_mention: '随机奴隶经 @RAND_CHARA_MAKE 真身生成',
+    must_mention: '随机奴隶经 rand_chara_make 真身生成',
   },
   {
     desc: 'M11612 头发生长播报缺发色段（get_look_info 接入旁路）',
@@ -51,7 +51,7 @@ export default [
     find: `          \`\${name}\${charm ?? ''}的阴阜上，\${get_look_info(cid, '发色(颜色)')}的\${state_word}\`,`,
     replace: `          \`\${name}\${charm ?? ''}的阴阜上，\${state_word}\`,`,
     tests: ['event-turnend'],
-    must_mention: '阴毛播报必须按原作拼成单行',
+    must_mention: '阴毛播报必须拼成单行',
   },
   {
     desc: 'M11626 CHARA_NAME_DEFINE 实参错掷 17（省略参数误当 TARGET）',
@@ -62,7 +62,7 @@ export default [
     must_mention: 'callname:0:-1',
   },
   {
-    desc: 'M4 EVENTCOMEND 目标死亡分支：FLAG:35 判据取反',
+    desc: 'M4 EVENTCOMEND 目标死亡分支：FLAG:35 条件取反',
     file: 'ere/event/event-comend.js',
     find: '  if (stamina <= 0 && auto_end_flag === 0) {',
     replace: '  if (stamina <= 0 && auto_end_flag !== 0) {',
@@ -70,11 +70,11 @@ export default [
     must_mention: '死亡消息',
   },
   {
-    desc: 'M5 EVENTCOMEND 助手衰弱分支：凭空加 FLAG:35 守卫（原作无）',
+    desc: 'M5 EVENTCOMEND 助手衰弱分支：凭空加 FLAG:35 检查（本无）',
     file: 'ere/event/event-comend.js',
-    find: '  } else if (stamina < 500) {\n    // 衰弱（无 FLAG:35 守卫——开关只管目标侧）',
+    find: '  } else if (stamina < 500) {\n    // 衰弱（不受 FLAG:35 检查——开关只管目标侧）',
     replace: `  } else if (stamina < 500 && era.get('flag:35')) {
-    // 变异：加了原作没有的 FLAG:35 守卫`,
+    // 变异：加了本没有的 FLAG:35 检查`,
     tests: ['event-comend'],
     must_mention: '分支 4',
   },
@@ -96,8 +96,8 @@ export default [
     must_mention: '全量断言',
   },
   {
-    // #114 起三档链落地：#PRI 的出口会被链上后写的普通档覆盖，改它已无
-    // 行为差异（整条变异退化为跳过）；出口守卫改指向链上最后生效的普通档
+    // #114 起三档链实现：#PRI 的出口会被链上后写的普通档覆盖，改它已无
+    // 行为差异（整条变异退化为跳过）；出口检查改指向链上最后生效的普通档
     desc: 'M17 TURNEND 出口：普通档 BEGIN SHOP 改 BEGIN TITLE（链上最后的出口决定去向，回不到主菜单）',
     file: 'ere/system/turnend-settle.js',
     find: '  begin(STATE.SHOP);',
@@ -165,7 +165,7 @@ export default [
     must_mention: 'NOWEX',
   },
   {
-    desc: 'M51 体力气力扣减的去零钳制删掉（manual 路径，find 锚定 lose0/lose1 快照——#461 起 AUTO 路径有同款语义的第二处 next=Math.max(...) 子句，裸行不再唯一）',
+    desc: 'M51 体力气力扣减的去零钳制删掉（manual 路径，find 基准定 lose0/lose1 快照——#461 起 AUTO 路径有同款语义的第二处 next=Math.max(...) 子句，裸行不再唯一）',
     file: 'ere/event/source-check.js',
     find: `  const lose0 = Math.max(lose(0), 0);
   const lose1 = Math.max(lose(1), 0);
@@ -220,7 +220,7 @@ export default [
   {
     desc: 'M108 村娘加入点漏盖版本戳（init_portcflag 调用删除）',
     file: 'ere/event/event-first.js',
-    find: `    // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+    find: `    // 自建（issue #67，追加动作）：给刚加入的角色盖数据版本戳
     // （portcflag 扩展表；预设基线 0 已由 addCharacter 套上，此处盖为当前
     // 版本——引擎侧链路由 test/portcflag-table.test.js 驱动引擎代码比对）
     init_portcflag(17);`,
@@ -247,7 +247,7 @@ export default [
   // —— #114 日循环骨架（EVENTTURNEND 三档；普通档体在 ere/system/
   //    turnend-settle.js，同属事件链代码，条目收本切片）——
   {
-    desc: 'M2114 EVENTTURNEND（#PRI）时段判据取反（TIME==1 改 !=）',
+    desc: 'M2114 EVENTTURNEND（#PRI）时段条件取反（TIME==1 改 !=）',
     file: 'ere/event/event-turnend.js',
     find: '    if (era_flag.time === 1) {',
     replace: '    if (era_flag.time !== 1) {',
@@ -268,7 +268,7 @@ export default [
     find: "    if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {",
     replace: '    if (true) {',
     tests: ['event-turnend'],
-    must_mention: 'CFLAG:1 守卫',
+    must_mention: 'CFLAG:1 检查：不在 2/3/12 时 DUNGEON 一次都不调',
   },
   {
     desc: 'M188 侵攻度自然衰减归零（不减 RAND:100——通关天数估算失真）',
@@ -289,7 +289,7 @@ export default [
     must_mention: '魔王回复',
   },
   {
-    desc: 'M196 @EVENTFIRST 威望播种改坏（70 改 7，SYSTEM ver1.0.3.ERB:62）',
+    desc: 'M196 eventfirst 威望播种改坏（70 改 7）',
     file: 'ere/event/event-first.js',
     find: '  era_exflag.prestige = 70;',
     replace: '  era_exflag.prestige = 7; // 变异：播种改坏',
@@ -325,7 +325,7 @@ export default [
   {
     desc: 'M193 ENDCHECK 调用点被删（主线剧情监测每日一次失守；#116 起为真调用）',
     file: 'ere/event/event-nextday.js',
-    find: '  // 主线剧情监测——每日一次的结局判定入口，@ENDCHECK 全链本体在\n  // ere/event/event-endcheck.js（#116）\n  await run_endcheck();',
+    find: '  // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在\n  // ere/event/event-endcheck.js（#116）\n  await run_endcheck();',
     replace: '  // 变异：ENDCHECK 不调用',
     tests: ['event-nextday'],
     must_mention: 'ENDCHECK 必须恰好被调用一次',
@@ -343,12 +343,20 @@ export default [
   {
     desc: 'M195 跨年年龄增长漏 +1（种族年龄不推进）',
     file: 'ere/event/event-nextmonth.js',
-    find: '      chara(cid).chara.种族年龄 += 1; // CFLAG:452 += 1（:31）',
+    find: '      chara(cid).chara.种族年龄 += 1; // CFLAG:452 += 1',
     replace: '      // 变异：种族年龄不推进',
     tests: ['event-nextday'],
     must_mention: '种族年龄应 +1',
   },
-  // —— #119 KYOTEN_EVENT 接线（普通档衰减块内两处调用，条目收本切片）——
+  {
+    desc: 'M13700 跨年年龄增长不再跳过 0 号位（魔王也涨年龄）',
+    file: 'ere/event/event-nextmonth.js',
+    find: '      if (cid === 0) {\n        continue; // 年龄增长循环跳过 0 号位（魔王不涨年龄）\n      }\n',
+    replace: '',
+    tests: ['event-nextday'],
+    must_mention: '魔王不得涨年龄',
+  },
+  // —— #119 KYOTEN_EVENT 接入（普通档衰减块内两处调用，条目收本切片）——
   {
     desc: 'M197 kyoten_event 未征服分支调用删除（衰减后据点事件不触发）',
     file: 'ere/system/turnend-settle.js',
@@ -377,7 +385,7 @@ export default [
     replace: `      // kyoten_event(region)（未征服分支）
       await kyoten_event(1); // 变异：领域号写死`,
     tests: ['event-turnend'],
-    must_mention: 'ARG 2 臂不得误读人间界状态再退一档',
+    must_mention: 'ARG 2 分支不得误读人间界状态再退一档',
   },
   {
     desc: 'M205 ending_1 的 FLAG:82 置位删除',
@@ -572,7 +580,7 @@ export default [
     find: '  if (f(82) === 0 && charanum > 60) {',
     replace: '  if (f(82) === 0 && charanum > 61) {',
     tests: ['enter-enemy'],
-    // must_mention 取静态锚用例**会红的那条**断言消息：变异下 ret 仍为 0
+    // must_mention 取静态基准用例**会红的那条**断言消息：变异下 ret 仍为 0
     // （61 人走到恐惧早退也返回 0），第一条断言通过不打印；红的是第二条
     // （零输出——恐惧早退会打文本），消息只在该断言失败时出现
     must_mention:
@@ -604,10 +612,10 @@ export default [
     find: '  if (money <= 0) {\n    money = 0; // 对于不受欢迎的勇者（本次赠与额下限 0）\n  }',
     replace: '  // 变异：下限钳制删',
     tests: ['enter-enemy'],
-    must_mention: '对于不受欢迎的勇者（:131）',
+    must_mention: '对于不受欢迎的勇者',
   },
   {
-    desc: 'M353 初期座標写入删（死变量也 1:1 保留——裁定 5 的 H12 前置）',
+    desc: 'M353 初期座標写入删（死变量也照常写入——结论 5 的 H12 前置）',
     file: 'ere/event/enter-enemy.js',
     find: `  const [pos_x, pos_y] = roll_initial_position(rand_n);
   era.set(\`cflag:\${a}:510\`, pos_x); // event 域内直写
@@ -623,7 +631,7 @@ export default [
     replace:
       '  chara(a).invasion.状态 = 0; // 变异：不侵攻\n  chara(a).dungeon.再起点 = 3;',
     tests: ['enter-enemy'],
-    must_mention: 'CFLAG:A:1 = 2（:299）',
+    must_mention: 'CFLAG:A:1 = 2',
   },
   {
     desc: 'M355 GET_ENEMY 的 CFLAG:A:1 = 0 改 2（俘虏变侵攻中）',
@@ -631,7 +639,7 @@ export default [
     find: '  chara(a).invasion.状态 = 0; // CFLAG:A:1 = 0（与主体的 2 相对）',
     replace: '  chara(a).invasion.状态 = 2; // 变异：俘虏变侵攻',
     tests: ['enter-enemy'],
-    must_mention: 'CFLAG:A:1 = 0——俘虏不侵攻（:384）',
+    must_mention: 'CFLAG:A:1 = 0——俘虏不侵攻',
   },
   {
     desc: 'M356 EVENTTURNEND 的 :93 调用点被拆（日推进不再来袭）',
@@ -709,7 +717,7 @@ export default [
     must_mention: '阻止同回合逆侵犯计数',
   },
   {
-    desc: 'M1101 SOURCE_CHECK 兽奸臂提前到 3P 主人前（优先链错序）（#221）',
+    desc: 'M1101 SOURCE_CHECK 兽奸分支提前到 3P 主人前（优先链错序）（#221）',
     file: 'ere/event/source-check.js',
     find: `    } else if (tflag(2) && tflag(40) === 1) {
       chara(cid).system.主人膣内射精 += tflag(38);
@@ -818,7 +826,7 @@ export default [
     replace: `    game.event.金属像数_2 += 1;
     locals = '';`,
     tests: ['event-museum'],
-    must_mention: '保留原作 LOCALS 跨调用残值',
+    must_mention: '保留 LOCALS 跨调用残值',
   },
   {
     desc: 'M6954 MUSEUM 隐藏输入：错误启用按钮规则而拒绝 100',
@@ -826,7 +834,7 @@ export default [
     find: '    result = await era.input({ useRule: false });',
     replace: '    result = await era.input();',
     tests: ['event-museum'],
-    must_mention: '保留原作隐藏输入 100',
+    must_mention: '保留隐藏输入 100',
   },
   {
     desc: 'M6955 MUSEUM K2 口上：漏注册博物馆处理器',
@@ -850,7 +858,7 @@ export default [
     find: '    } else if (rand_n(3) === 1) {',
     replace: '    } else if (false) {',
     tests: ['event-museum'],
-    must_mention: '原作 ELSEIF 会重新掷 RAND',
+    must_mention: 'ELSEIF 会重新掷 RAND',
   },
   {
     desc: 'M6958 MUSEUM 隐藏输入：错误清空函数静态 MATURO',
@@ -861,7 +869,7 @@ export default [
   maturo = '';
   const family_id = search_family(a);`,
     tests: ['event-museum'],
-    must_mention: '隐藏输入 100 继承原作 MATURO 静态残值',
+    must_mention: '隐藏输入 100 继承 MATURO 静态残值',
   },
   {
     desc: 'M6959 MUSEUM 装备回收：漏掉第二装饰槽',
@@ -912,7 +920,7 @@ export default [
     must_mention: '金属像分支增加装饰品总数',
   },
   {
-    desc: 'M7928 SABBATH：CFLAG:1（调教状态）守卫判据改成恒假，非调教态角色也能触发',
+    desc: 'M7928 SABBATH：CFLAG:1（调教状态）检查条件改成恒假，非调教态角色也能触发',
     file: 'ere/event/event-sabbath.js',
     find: '  if (cflag(cid, 1) !== 0) {',
     replace: '  if (cflag(cid, 1) === 999) {',
@@ -936,7 +944,7 @@ export default [
     must_mention: '信仰值不足 40',
   },
   {
-    desc: 'M7931 EVENT_CHARA_LEAVE：清空上次调教对象引用的判据被拆（FLAG:1 恒不清）',
+    desc: 'M7931 EVENT_CHARA_LEAVE：清空上次调教对象引用的条件被拆（FLAG:1 恒不清）',
     file: 'ere/event/event-chara-leave.js',
     find: "  if (get('flag:1') === cid) {",
     replace: "  if (get('flag:1') === -cid) {",
@@ -952,7 +960,7 @@ export default [
     must_mention: '差 3 级，ST_UP 补足 3 次',
   },
   {
-    desc: 'M7933 EVENT_CHARA_RETURN：身体数据生成存根守卫判据取反',
+    desc: 'M7933 EVENT_CHARA_RETURN：身体数据生成存根检查条件取反',
     file: 'ere/event/event-chara-leave.js',
     find: '  if (get(`cflag:${cid}:451`) === 0) {',
     replace: '  if (get(`cflag:${cid}:451`) === 1) {',
@@ -977,7 +985,7 @@ export default [
     must_mention: '取得媚药中毒——普通门槛 12',
   },
   {
-    desc: 'M7936 PRECIPITATE_WITHDRAWAL：侵攻中无媚药退出分支判据改判 CFLAG:1 == 3',
+    desc: 'M7936 PRECIPITATE_WITHDRAWAL：侵攻中无媚药退出分支条件改判 CFLAG:1 == 3',
     file: 'ere/event/event-addict.js',
     find: '  // 侵攻中角色：无媚药可用，独自捱过症状后退出本轮\n  if (cflag(cid, 1) === 2) {',
     replace:
@@ -986,7 +994,7 @@ export default [
     must_mention: '侵攻中角色（无媚药）独自捱过',
   },
   {
-    desc: 'M7937 CHECK_SPECIALSKIL：cid 在场判据取反（不在场的反而放行）',
+    desc: 'M7937 CHECK_SPECIALSKIL：cid 在场条件取反（不在场的反而放行）',
     file: 'ere/event/get-specialtalent.js',
     find: '  if (!era.getAddedCharacters().includes(cid)) {',
     replace: '  if (era.getAddedCharacters().includes(cid)) {',
@@ -994,7 +1002,7 @@ export default [
     must_mention: 'cid 不在已加入角色列表时直接跳过',
   },
   {
-    desc: 'M7938 CHECK_SPECIALSKIL：TALENT:9（崩坏）守卫判据被拆（崩坏角色也跑 STEP1/STEP2）',
+    desc: 'M7938 CHECK_SPECIALSKIL：TALENT:9（崩坏）检查条件被拆（崩坏角色也跑 STEP1/STEP2）',
     file: 'ere/event/get-specialtalent.js',
     find: '  if (talent(cid, 9)) {',
     replace: '  if (false && talent(cid, 9)) {',
@@ -1010,7 +1018,7 @@ export default [
     must_mention: '且未助手化时顺从达 Lv5',
   },
   {
-    desc: 'M7940 semen_liking：已持有喜欢精液的早退守卫判据被拆（重复触发）',
+    desc: 'M7940 semen_liking：已持有喜欢精液的早退检查条件被拆（重复触发）',
     file: 'ere/event/get-specialtalent.js',
     find: '  if (talent(cid, 47) !== 0) {',
     replace: '  if (talent(cid, 47) === 0) {',
@@ -1018,7 +1026,7 @@ export default [
     must_mention: '已持有喜欢精液时不重复触发',
   },
   {
-    desc: 'M7941 forced_semen_liking：TFLAG:110/seiin 双门判据被拆成恒真',
+    desc: 'M7941 forced_semen_liking：TFLAG:110/seiin 双门条件被拆成恒真',
     file: 'ere/event/get-specialtalent.js',
     find: '  if (!seiin || !game.event.精爱味觉 || talent(cid, 47) !== 0) {',
     replace: '  if (false) {',
@@ -1026,7 +1034,7 @@ export default [
     must_mention: 'TFLAG:110 为假时跳过',
   },
 
-  // —— #404（N20）结局链：四条角色线状态机 + 65 个 @END<n> 数据表 + 演出 ——
+  // —— #404（N20）结局链：四条角色线状态机 + 65 个 end<n> 数据表 + 演出 ——
   {
     desc: 'M8196 endcheck_square 起步档：好感门槛 2000 误写成 2001',
     file: 'ere/event/event-endcheck.js',
@@ -1715,7 +1723,7 @@ export default [
     tests: ['event-ending'],
     must_mention: '种族年龄支',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：素质变化三事件 ——
+  // —— #400（N16）日循环全路径：素质变化三事件 ——
   {
     desc: 'M8441 FUTA_F 接受支：不清【肉芽诅咒】（TALENT:326 该清而不清）',
     file: 'ere/event/event-nextday.js',
@@ -1741,8 +1749,8 @@ export default [
     must_mention: '【肉芽诅咒】清零',
   },
   // M8444（FUTA_F 非法输入不再回到 INPUT 循环）随 #572 的按钮化删除：
-  // 白名单＝本轮按钮（0/1），越界输入进不了函数，这条兜底支结构性不可达、
-  // 变异不再可观测；对应的行为守卫换成 M12004（选项退回纯文本即红）。
+  // 白名单＝本轮按钮（0/1），越界输入进不了函数，这条保底处理支结构性不可达、
+  // 变异不再可观测；对应的行为检查换成 M12004（选项退回纯文本即红）。
   {
     desc: 'M8445 MORASI：【漏尿癖】写成 0（该给 1）',
     file: 'ere/event/event-nextday.js',
@@ -1784,7 +1792,7 @@ export default [
     must_mention: '表外素质不得被清',
   },
   {
-    desc: 'M8449 YOUJI：【漏尿癖】的守卫取反（已持有也重写并播报）',
+    desc: 'M8449 YOUJI：【漏尿癖】的检查取反（已持有也重写并播报）',
     file: 'ere/event/event-nextday.js',
     find: '  if (!(era.get(`talent:${cid}:57`) || 0)) {\n    era.set(`talent:${cid}:57`, 1);',
     replace:
@@ -1793,7 +1801,7 @@ export default [
     must_mention: '已持有【漏尿癖】时不重复给也不播报',
   },
   {
-    desc: 'M8450 YOUJI：【反抗刻印】清零写成 1（MARK:3 = 0 的靶）',
+    desc: 'M8450 YOUJI：【反抗刻印】清零写成 1（MARK:3 = 0 的目标）',
     file: 'ere/event/event-nextday.js',
     find: '  chara(cid).system.反抗刻印 = 0;',
     replace: '  chara(cid).system.反抗刻印 = 1;',
@@ -1801,21 +1809,21 @@ export default [
     must_mention: '【反抗刻印】清零',
   },
   {
-    desc: 'M8451 NEXTDAY 接线：放尿经验门槛 15 抬到 16（幼稚支不再触发）',
+    desc: 'M8451 NEXTDAY 接入：放尿经验门槛 15 抬到 16（幼稚支不再触发）',
     file: 'ere/event/event-nextday.js',
     find: `        era.get(\`talent:\${cid}:132\`) &&
         (era.get(\`exp:\${cid}:31\`) || 0) >= 15`,
     replace: `        era.get(\`talent:\${cid}:132\`) &&
         (era.get(\`exp:\${cid}:31\`) || 0) >= 16`,
     tests: ['event-nextday'],
-    must_mention: '素质变化三事件接线',
+    must_mention: '素质变化三事件接入',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：魔族化 ——
+  // —— #400（N16）event-nextday.js 全路径：魔族化 ——
   {
-    desc: 'M8452 MAZOKU：【魂缚】的早退守卫去掉（被缚者也改造）',
+    desc: 'M8452 MAZOKU：【魂缚】的早退检查去掉（被缚者也改造）',
     file: 'ere/event/event-nextday.js',
     find: '  if (era.get(`talent:${cid}:274`)) {\n    return; // SIF TALENT:魂缚 / RETURN\n  }',
-    replace: `  // 变异：去掉魂缚守卫`,
+    replace: `  // 变异：去掉魂缚检查`,
     tests: ['event-nextday'],
     must_mention: '持有【魂缚】时不改造也不播报',
   },
@@ -1859,7 +1867,7 @@ export default [
     tests: ['event-nextday'],
     must_mention: '诱惑',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：维持费 / 偶尔归来 ——
+  // —— #400（N16）event-nextday.js 全路径：维持费 / 偶尔归来 ——
   {
     desc: 'M8458 RUNNING_COST：天数档 >31 抬成 >30（第 31 日提前加算）',
     file: 'ere/event/event-nextday.js',
@@ -2015,9 +2023,9 @@ export default [
     tests: ['event-nextday'],
     must_mention: '一次只回一人',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：魔王候补确定与魔王替换 ——
+  // —— #400（N16）event-nextday.js 全路径：魔王候补确定与魔王替换 ——
   {
-    desc: 'M8477 MAOU_KOUHO：第一个候补即收手（判据改成先到先得）',
+    desc: 'M8477 MAOU_KOUHO：第一个候补即收手（条件改成先到先得）',
     file: 'ere/event/event-nextday.js',
     find: '    if (era.get(`ex_talent:${cid}:3`)) {\n      temp = cid;\n    }',
     replace:
@@ -2058,7 +2066,7 @@ export default [
     must_mention: '90 + 300/3',
   },
   {
-    desc: 'M8482 MAOU_TENSHIN 直接继位支：【上届魔王】写回原作字面的 0（剔错人）',
+    desc: 'M8482 MAOU_TENSHIN 直接继位支：【上届魔王】写回字面的 0（剔错人）',
     file: 'ere/event/event-nextday.js',
     find: '    era_exflag.prev_maou = candidate; // （见文件头）',
     replace: '    era_exflag.prev_maou = 0; // （见文件头）',
@@ -2083,7 +2091,7 @@ export default [
     must_mention: '灵魂转移支',
   },
   {
-    desc: 'M8485 MAOU_TENSHIN 直接继位支：【爱慕】的清理守卫取反（只清没有的人）',
+    desc: 'M8485 MAOU_TENSHIN 直接继位支：【爱慕】的清理检查取反（只清没有的人）',
     file: 'ere/event/event-nextday.js',
     find: `      if (era.get(\`talent:\${cid}:85\`)) {
         chara(cid).stronghold.爱慕 = 0;
@@ -2094,17 +2102,17 @@ export default [
     tests: ['event-nextday'],
     must_mention: '【爱慕】清零',
   },
-  // —— #400（N16）四张跨边接线 ——
+  // —— #400（N16）四张跨边接入 ——
   {
-    desc: 'M8486 接线：TAX_GET 真身不再调用（退回空转）',
+    desc: 'M8486 接入：TAX_GET 真身不再调用（退回空转）',
     file: 'ere/event/event-nextday.js',
-    find: `  await tax_get(); // #396 真身（system/stronghold/tax.js），#400 接线`,
+    find: `  await tax_get(); // #396 真身（system/stronghold/tax.js），#400 接入`,
     replace: `  // 变异：不调 tax_get`,
     tests: ['event-nextday'],
     must_mention: '收税日必须打真身的开场行',
   },
   {
-    desc: 'M8487 接线：APHRODISIAC_ADDICT 真身不再调用',
+    desc: 'M8487 接入：APHRODISIAC_ADDICT 真身不再调用',
     file: 'ere/event/event-nextday.js',
     find: `    await aphrodisiac_addict(cid);
     soul_dislocation(cid);`,
@@ -2113,7 +2121,7 @@ export default [
     must_mention: '残留度 -1',
   },
   {
-    desc: 'M8488 接线：APHRODISIAC_ADDICT 传错角色（恒传 0 号位）',
+    desc: 'M8488 接入：APHRODISIAC_ADDICT 传错角色（恒传 0 号位）',
     file: 'ere/event/event-nextday.js',
     find: `    await aphrodisiac_addict(cid);`,
     replace: `    await aphrodisiac_addict(0);`,
@@ -2121,32 +2129,32 @@ export default [
     must_mention: '残留度 -1',
   },
   {
-    desc: 'M8489 接线：SABBATH 真身不再调用',
+    desc: 'M8489 接入：SABBATH 真身不再调用',
     file: 'ere/event/event-nextday.js',
-    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线
+    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接入
     await sabbath_day(cid);`,
     replace: `    await sabbath_day(cid);`,
     tests: ['event-nextday'],
     must_mention: 'SABBATH 真身输出必须出现',
   },
   {
-    desc: 'M8490 接线：SABBATH_DAY 真身不再调用',
+    desc: 'M8490 接入：SABBATH_DAY 真身不再调用',
     file: 'ere/event/event-nextday.js',
-    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线
+    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接入
     await sabbath_day(cid);`,
-    replace: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线`,
+    replace: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接入`,
     tests: ['event-nextday'],
     must_mention: 'SABBATH_DAY 真身输出必须出现',
   },
   {
-    desc: 'M8491 接线：SABBATH 传错角色（恒传 0 号位）',
+    desc: 'M8491 接入：SABBATH 传错角色（恒传 0 号位）',
     file: 'ere/event/event-nextday.js',
-    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线`,
-    replace: `    await sabbath(0); // #405 真身（event-sabbath.js），#400 接线`,
+    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接入`,
+    replace: `    await sabbath(0); // #405 真身（event-sabbath.js），#400 接入`,
     tests: ['event-nextday'],
     must_mention: 'SABBATH 真身输出必须出现',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：おねしょ ——
+  // —— #400（N16）event-nextday.js 全路径：おねしょ ——
   {
     desc: 'M8492 ONESHO 准入掷：`RAND:12 <= 门槛` 改成 `<`（压线不再触发）',
     file: 'ere/event/event-nextday.js',
@@ -2176,7 +2184,7 @@ export default [
     must_mention: '超一线（4 > 3）',
   },
   {
-    desc: 'M8495 ONESHO：死者的守卫去掉（体力 0 也走尿床）',
+    desc: 'M8495 ONESHO：死者的检查去掉（体力 0 也走尿床）',
     file: 'ere/event/event-nextday.js',
     find: '    if ((era.get(`base:${cid}:0`) || 0) <= 0) {\n      continue; // 死んでたらダメ\n    }',
     replace: `    // 变异：死者也参与`,
@@ -2327,14 +2335,14 @@ export default [
     must_mention: '不在魔王房间时不得出现报告支',
   },
   {
-    desc: 'M8613 ONESHO：返回值 1 改成 0（原作恒 RETURN 1）',
+    desc: 'M8613 ONESHO：返回值 1 改成 0（恒 RETURN 1）',
     file: 'ere/event/event-nextday.js',
     find: '  }\n  return 1;',
     replace: '  }\n  return 0;',
     tests: ['event-nextday'],
     must_mention: '恒返回 1',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：犬の散歩 ——
+  // —— #400（N16）event-nextday.js 全路径：犬の散歩 ——
   {
     desc: 'M8614 DOG_WALK：道具持有检查去掉（没狗也遛）',
     file: 'ere/event/event-nextday.js',
@@ -2361,7 +2369,7 @@ export default [
     must_mention: 'CHARANUM - 1 == 0 → 返回 0',
   },
   {
-    desc: 'M8617 DOG_WALK：调整守卫的并集改成交集（未陷落不再退回魔王）',
+    desc: 'M8617 DOG_WALK：调整检查的并集改成交集（未陷落不再退回魔王）',
     file: 'ere/event/event-nextday.js',
     find: `    ((era.get(\`cflag:\${picked()}:1\`) || 0) !== 0 ||
       (era.get(\`cflag:\${picked()}:0\`) || 0) === 0)`,
@@ -2379,7 +2387,7 @@ export default [
     must_mention: 'JUEL:0 += 5*PLAY',
   },
   {
-    desc: 'M8619 DOG_WALK：动物耳的 PLAY > 0 前置守卫去掉',
+    desc: 'M8619 DOG_WALK：动物耳的 PLAY > 0 前置检查去掉',
     file: 'ere/event/event-nextday.js',
     find: '  if (era.get(`talent:${cid}:124`) && play > 0) play += 1; // 動物耳',
     replace: '  if (era.get(`talent:${cid}:124`)) play += 1; // 動物耳',
@@ -2483,7 +2491,7 @@ export default [
     tests: ['event-nextday'],
     must_mention: 'CHARANUM - 1 == 0 → 返回 0',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：处女献上 ——
+  // —— #400（N16）event-nextday.js 全路径：处女献上 ——
   {
     desc: 'M8631 处女献上准入：禁止判定 `FLAG:38 <= -1` 抬成 `<= 0`',
     file: 'ere/event/event-nextday.js',
@@ -2500,7 +2508,7 @@ export default [
     replace:
       'if ((era.get(`talent:${cid}:0`) || 0) === 1 || era.get(`talent:${cid}:122`)) {',
     tests: ['event-nextday'],
-    must_mention: '十条准入守卫逐条挡住',
+    must_mention: '十条准入检查逐条挡住',
   },
   {
     desc: 'M8633 处女献上准入：顺+欲+侍奉的门槛 10 抬成 11',
@@ -2520,7 +2528,7 @@ export default [
     replace: `    (era.get(\`cflag:\${cid}:42\`) || 0) === 78 &&
     ((era.get(\`cflag:\${cid}:49\`) || 0) === 0 ||`,
     tests: ['event-nextday'],
-    must_mention: '十条准入守卫逐条挡住',
+    must_mention: '十条准入检查逐条挡住',
   },
   {
     desc: 'M8635 处女献上准入：魔王部屋的状态白名单 {0,1} 改成 {0,2}',
@@ -2528,7 +2536,7 @@ export default [
     find: `  if (status !== 0 && status !== 1) return true;`,
     replace: `  if (status !== 0 && status !== 2) return true;`,
     tests: ['event-nextday'],
-    must_mention: '十条准入守卫逐条挡住',
+    must_mention: '十条准入检查逐条挡住',
   },
   {
     desc: 'M8636 判定变量 S：起手 `-RAND:3` 丢掉负号',
@@ -2654,13 +2662,13 @@ export default [
   {
     desc: 'M8650 处女献上：破处支的返回值 1 改成 0',
     file: 'ere/event/event-nextday.js',
-    find: '  return 1;\n}\n\n/**\n * 夜这い候选的过滤 + OK_FLAG（原作 :1105-1167 与 :1175-1243 两趟逐字相同的',
+    find: '  return 1;\n}\n\n/**\n * 夜这い候选的过滤 + OK_FLAG（两个调用点共用同一段',
     replace:
-      '  return 0;\n}\n\n/**\n * 夜这い候选的过滤 + OK_FLAG（原作 :1105-1167 与 :1175-1243 两趟逐字相同的',
+      '  return 0;\n}\n\n/**\n * 夜这い候选的过滤 + OK_FLAG（两趟逐字相同的',
     tests: ['event-nextday'],
     must_mention: '破处支返回 1',
   },
-  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：夜这い ——
+  // —— #400（N16）event-nextday.js 全路径：夜这い ——
   {
     desc: 'M8651 夜这い准入：欲望门槛 4 抬成 5',
     file: 'ere/event/event-nextday.js',
@@ -2669,7 +2677,7 @@ export default [
     replace: `    (era.get(\`abl:\${cid}:11\`) || 0) < 5 || // 欲望
     (era.get(\`abl:\${cid}:30\`) || 0) < 1 // 性交中毒`,
     tests: ['event-nextday'],
-    must_mention: '十条排除守卫逐条挡住',
+    must_mention: '十条排除检查逐条挡住',
   },
   {
     desc: 'M8652 夜这い准入：男人支的门槛 12 抬成 13',
@@ -2722,7 +2730,7 @@ export default [
     must_mention: '抵掉克制',
   },
   {
-    desc: 'M8658 OK_FLAG：【性爱狂】的处女守卫反了（处女才加）',
+    desc: 'M8658 OK_FLAG：【性爱狂】的处女检查反了（处女才加）',
     file: 'ere/event/event-nextday.js',
     find: `    (era.get(\`talent:\${cid}:0\`) || 0) === 0 &&
     (era.get(\`abl:\${cid}:2\`) || 0) >= (era.get(\`abl:\${cid}:3\`) || 0)`,
@@ -2797,7 +2805,7 @@ export default [
     tests: ['event-nextday'],
     must_mention: 'TFLAG:13 = 5',
   },
-  // —— #400（N16）@PILLORY（ere/event/event-nextday-pillory.js）——
+  // —— #400（N16）pillory（ere/event/event-nextday-pillory.js）——
   {
     desc: 'M8666 示众台：状态门 8 改成 7（非示众台也走）',
     file: 'ere/event/event-nextday-pillory.js',
@@ -2807,7 +2815,7 @@ export default [
     must_mention: '非示众台状态整场早退',
   },
   {
-    desc: 'M8667 示众台：出产当日的判据改成「前一天」',
+    desc: 'M8667 示众台：出产当日的条件改成「前一天」',
     file: 'ere/event/event-nextday-pillory.js',
     find: 'if (cflag(110) === era_flag.day_count)',
     replace: 'if (cflag(110) - 1 === era_flag.day_count)',
@@ -3072,7 +3080,7 @@ export default [
     find: 'chara(0).chara.阴茎的状态 = result;\n      return result;',
     replace: 'chara(0).chara.阴茎的状态 = result + 1;\n      return result;',
     tests: ['event-first'],
-    must_mention: '0-4 写 chara(0).chara.阴茎的状态',
+    must_mention: 'ask_penis_size 写 chara(0).chara.阴茎的状态',
   },
   {
     desc: 'M10215 FIRST-SETTING 狂王性别写入偏移（result → result+1）',
@@ -3080,10 +3088,10 @@ export default [
     find: 'game.system.狂王性别 = result;',
     replace: 'game.system.狂王性别 = result + 1;',
     tests: ['event-first'],
-    must_mention: '0-2 写 game.system.狂王性别',
+    must_mention: 'ask_kuangwang_sex 写 game.system.狂王性别',
   },
   {
-    desc: 'M10216 FIRST-SETTING 跳过肉棒尺寸的判据写反（!== 1 → !== 0）',
+    desc: 'M10216 FIRST-SETTING 跳过肉棒尺寸的条件写反（!== 1 → !== 0）',
     file: 'ere/event/first-setting.js',
     find: 'if (maou_sex !== 1) {',
     replace: 'if (maou_sex !== 0) {',
@@ -3098,7 +3106,7 @@ export default [
     tests: ['event-first'],
     must_mention: '开局直线赋值逐项一致',
   },
-  // —— #502：SENGEN_VIDEO_DE（侵略/INVASION.ERB:1269-1281）与宣言数真读 ——
+  // —— #502：sengen_video_de（侵略流程的每日衰减）与宣言数真读 ——
   {
     desc: 'M10744 流行度的骰子判定恒真（SIF RAND:3 改 if (true)，#502）',
     file: 'ere/event/event-nextday.js',
@@ -3133,7 +3141,7 @@ export default [
     tests: ['event-turnend'],
     must_mention: '流行度 6 → 当日衰减为 5',
   },
-  // —— #508：自动调教三连的调教窗口与回合尾部结算接线 ——
+  // —— #508：自动调教三连的调教窗口与回合尾部结算接入 ——
   {
     desc: 'M11000 回合结算不开调教窗口（删 beginTrain——自动调教三连的 SOURCE/PALAM 写全被引擎静默丢弃；夹具里 tflag 二段写先炸）',
     file: 'ere/system/turnend-settle.js',
@@ -3167,7 +3175,7 @@ export default [
     must_mention: '常时发情的 3000 起步必须落进 palam（窗口开着的直接证据）',
   },
   {
-    desc: 'M11470 CHARADEAD_CHECK 存活判据取反（BASE:0 > 0 改成 >= 0：体力 0 也算存活，死亡判定整段不可达）',
+    desc: 'M11470 CHARADEAD_CHECK 存活条件取反（BASE:0 > 0 改成 >= 0：体力 0 也算存活，死亡判定整段不可达）',
     file: 'ere/event/event-aftertrain.js',
     find: '  if ((era.get(`base:${target}:0`) || 0) > 0) {\n    return 0;\n  }',
     replace:
@@ -3184,16 +3192,16 @@ export default [
     must_mention: '钳到 1',
   },
   {
-    desc: 'M11472 CHARADEAD_CHECK 菲娅线判据取反（目标判据 target === GETCHARA(35) 改成 !==：非菲娅的调教也会被推线）',
+    desc: 'M11472 CHARADEAD_CHECK 菲娅线条件取反（目标条件 target === GETCHARA(35) 改成 !==：非菲娅的调教也会被推线）',
     file: 'ere/event/event-aftertrain.js',
     find: '  if (route >= 160 && route < 170 && target === get_chara(35)) {',
     replace:
-      '  if (route >= 160 && route < 170 && target !== get_chara(35)) { // 变异：判据取反',
+      '  if (route >= 160 && route < 170 && target !== get_chara(35)) { // 变异：条件取反',
     tests: ['event-charadead'],
     must_mention: '菲娅线推进',
   },
   {
-    desc: 'M11473 CHARADEAD_CHECK 死亡旗写错段（FLAG:(NO+999) 改成 NO+199——与 @EVENTEND 的删除旗撞段）',
+    desc: 'M11473 CHARADEAD_CHECK 死亡旗写错段（FLAG:(NO+999) 改成 NO+199——与 eventend 的删除旗撞段）',
     file: 'ere/event/event-aftertrain.js',
     find: '  era.set(`flag:${target + 999}`, -2);',
     replace: '  era.set(`flag:${target + 199}`, -2); // 变异：段错',
@@ -3233,7 +3241,7 @@ export default [
     must_mention: 'party_del 复位',
   },
   {
-    desc: 'M11578 EVENTFIRST 的冒险者性别播种写成 0（原作 :53 是 -1，#547）',
+    desc: 'M11578 EVENTFIRST 的冒险者性别播种写成 0（旧引擎是 -1，#547）',
     file: 'ere/event/event-first.js',
     find: `  era_global.adventurer_gender = -1;`,
     replace: `  era_global.adventurer_gender = 0; // 变异：播种值错档`,
@@ -3264,7 +3272,7 @@ export default [
   },
   // —— #547 返工轮（验收第 3 条）：M11589 守 LOADGLOBAL 镜像 ——
   {
-    desc: 'M11589 @EVENTLOAD 漏 LOADGLOBAL 镜像（global 表不回最近保存值，#547 返工 3）',
+    desc: 'M11589 eventload 漏 LOADGLOBAL 镜像（global 表不回最近保存值，#547 返工 3）',
     file: 'ere/event/event-load.js',
     find: `    await era.loadGlobal();`,
     replace: `    // 变异：漏 :762 的 LOADGLOBAL 镜像`,
@@ -3330,95 +3338,96 @@ export default [
     must_mention: '输入不合法！请输入以下值之一：',
   },
   // —— #597：收尾的 PRINTL 只结束上一行、空源码行不产生输出（语义见
-  //    CONTEXT.md「输出 API 与原作的对应」）。四条各把空行补回去
-  //    （旧形态），三条守真空行不许删 ——
+  //    CONTEXT.md「输出 API 的排版与对齐」）。四条各把空行补回去
+  //    （旧形式），三条守住空行不许删 ——
   {
-    desc: 'M12114 调教后性交的「回到床上做了…」之后补回空行（:229 是空源码行，没有 PRINTL）',
+    desc: 'M12114 调教后性交的「回到床上做了…」之后补回空行（空源码行不产生输出，#597）',
     file: 'ere/event/event-aftertrain.js',
-    find: '  // 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的',
+    find: '  // 上一行已结束当前行；空源码行不产生输出，这里不补空行（#597；',
     replace:
-      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的",
+      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形式\n  // 上一行已结束当前行；空源码行不产生输出，这里不补空行（#597；",
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_sex_check：这里不补空行',
   },
   {
     desc: 'M12115 调教后肛门性交的同款补回空行（:332 是空源码行）',
     file: 'ere/event/event-aftertrain.js',
-    find: '  // （332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML',
+    find: '  // （空源码行不产生输出）：上一行的 PRINTFORML',
     replace:
-      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // （332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML",
+      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形式\n  // （332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML",
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_analsex_check：这里不补空行',
   },
   {
-    desc: 'M12116 示众台涂鸦行与总结行之间补回空行（:2128 的 PRINTL 只收 PRINT 串那一行）',
+    desc: 'M12116 示众台涂鸦行与总结行之间补回空行（PRINTL 只收 PRINT 串那一行）',
     file: 'ere/event/event-nextday-pillory.js',
-    find: '  // 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来',
+    find: '  // 的 PRINTL 只结束上面那一串 `PRINT 『…』` 拼起来',
     replace:
-      "  era.print(''); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n  // 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来",
+      "  era.print(''); // 变异：照「PRINTL 要再补一条」翻译的旧形式\n  // 的 PRINTL 只结束上面那一串 `PRINT 『…』` 拼起来",
     tests: ['event-nextday'],
-    must_mention: '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
+    must_mention: '里程碑行与总结行之间不夹空行（只收尾，#597）',
   },
   {
-    desc: 'M12117 安息日仪式播报之后补回空行（:260 是空源码行，没有 PRINTL）',
+    desc: 'M12117 安息日仪式播报之后补回空行（空源码行不产生输出，#597）',
     file: 'ere/event/event-sabbath.js',
-    find: '  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后',
+    find: '  // 仪式播报之后是空源码行（没有换行输出），故不补空行',
     replace:
-      '  era.println(); // 变异：照「空源码行＝空行」翻译的旧形态\n  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后',
+      '  era.println(); // 变异：照「空源码行＝空行」翻译的旧形式\n  // 仪式播报之后是空源码行（没有换行输出），故不补空行',
     tests: ['event-sabbath'],
-    must_mention: '整段只有段首那一个空行（:258）',
+    must_mention: '整段只有段首那一个空行',
   },
   {
-    desc: 'M12118 魔族化 152 支的 :485 真空行删除（:484 的 PRINTFORMW 已收尾，空行由它来）',
+    desc: 'M12118 魔族化 152 支的空行删除（前一句已收尾，空行由它来）',
     file: 'ere/event/event-nextday.js',
     find: "    era.print(''); // PRINTFORML（空行）\n  } else {",
-    replace: '    // 变异：:485 的真空行删除\n  } else {',
+    replace: '    // 变异：末句后的空行删除\n  } else {',
     tests: ['event-nextday'],
-    must_mention: ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
+    must_mention: '末句的空行在末句之后（末尾恰有一个空行）',
   },
   {
-    desc: 'M12119 魔族化 140 支的 :495 真空行删除（:494 的 PRINTFORMW 已收尾，空行由它来）',
+    desc: 'M12119 魔族化 140 支的空行删除（前一句已收尾，空行由它来）',
     file: 'ere/event/event-nextday.js',
     find: "    era.print(''); // PRINTFORML（空行）\n  }\n",
-    replace: '    // 变异：:495 的真空行删除\n  }\n',
+    replace: '    // 变异：末句后的空行删除\n  }\n',
     tests: ['event-nextday'],
-    must_mention: ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
+    must_mention: '末句的空行在末句之后（末尾恰有一个空行）',
   },
   {
-    desc: 'M12120 取得疯狂播报之后的 :58 真空行删除（:57 的 PRINTFORML 已收尾，空行由它来）',
+    desc: 'M12120 取得疯狂播报之后的空行删除（播报已收尾，空行由它来）',
     file: 'ere/event/event-addict.js',
-    find: '    era.println(); // 真空行：58 行的 PRINTL 落在上面三条 PRINTFORML 之后\n    set_talent(cid, 123, 1);',
-    replace: '    // 变异：:58 的真空行删除\n    set_talent(cid, 123, 1);',
+    find: '    era.println(); // 空行：三条播报之后隔一行\n    set_talent(cid, 123, 1);',
+    replace:
+      '    // 变异：取得疯狂播报之后的空行删除\n    set_talent(cid, 123, 1);',
     tests: ['event-addict'],
-    must_mention: ':58 的真空行紧跟取得播报',
+    must_mention: '取得播报之后紧跟一个空行',
   },
-  // —— #597 返工：容易被误删的真空行（这一批的代表处；同类分组成员见
+  // —— #597 返工：容易被误删的空行（这一批的代表处；同类分组成员见
   //    issue 的返工评论）——
   {
-    desc: 'M12128 初调教开场的 :35 真空行删除（:34 的 PRINTFORML 已收尾，空行由它来）',
+    desc: 'M12128 初调教开场的空行删除（开场句已收尾，空行由它来）',
     file: 'ere/event/event-beforetrain.js',
-    find: "    era.print(''); // 真空行：34 行的 PRINTFORML 已收尾（35 行的 PRINTL 落在空行上）",
-    replace: '    // 变异：初调教开场的真空行删除',
+    find: "    era.print(''); // 空行：开场句已收尾，此行补空行",
+    replace: '    // 变异：初调教开场的空行删除',
     tests: ['event-beforetrain'],
-    must_mention: '初调教开场（:35）：这一行之后是真空行（不许删）',
+    must_mention: '初调教开场：这一行之后是真空行（不许删）',
   },
   {
-    desc: 'M12129 禁断症状结算的收尾 :290 真空行删除（候选函数的 PRINTFORMW 已收尾）',
+    desc: 'M12129 禁断症状结算的收尾空行删除（候选函数已收尾）',
     file: 'ere/event/event-addict.js',
-    find: '  era.println(); // 真空行：候选函数的收尾 PRINTFORMW 已结束那一行',
-    replace: '  // 变异：禁断症状结算的收尾真空行删除',
+    find: '  era.println(); // 空行：候选函数收尾之后隔一行',
+    replace: '  // 变异：禁断症状结算的收尾空行删除',
     tests: ['event-addict'],
-    must_mention: 'W < 5 废人支的收尾（:290）：末尾是真空行（不许删）',
+    must_mention: 'W < 5 废人支的收尾：末尾是真空行',
   },
   {
-    // E 类（角色信息展示前后成对的两个真空行）的代表处：:98 的空行先让出一行、
-    // :159 再让一行，`show_chara_info` 之后 :161 收尾；只删其中一个即少一行
-    desc: 'M12270 角色信息之前的 :159 真空行删除（E 类代表——:98/:159 成对，删一个即少一行）',
+    // E 类（角色信息展示前后成对的两个空行）的代表处：前一行的空行先让出
+    // 一行、后一行的再让一行，`show_chara_info` 之后收尾；只删其中一个即少一行
+    desc: 'M12270 角色信息之前的空行删除（前后成对，删一个即少一行）',
     file: 'ere/event/enter-enemy.js',
-    find: '    era.println(); // 真空行：85/90 行已收尾（159 行的 PRINTL 落在空行上）',
-    replace: '    // 变异：角色信息之前的真空行删除',
+    find: '    era.println(); // 空行：信息展示前隔一行',
+    replace: '    // 变异：角色信息之前的空行删除',
     tests: ['enter-enemy'],
-    must_mention: ':98 与 :159 两个真空行都在（角色信息之前）',
+    must_mention: '角色信息之前的两个空行都在',
   },
 
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
@@ -3602,11 +3611,11 @@ export default [
   },
   // —— #650 F4 缺陷修复守卫 ——
   {
-    desc: 'M13102 ENTER_ENEMY：月末守卫复活（每日来袭变月末才来）',
+    desc: 'M13102 ENTER_ENEMY：月末检查复活（每日来袭变月末才来）',
     file: 'ere/event/enter-enemy.js',
-    find: `  // LOCAL = 10 写死（早退阈值用）：原月末守卫要求 DAY:2 > LOCAL，该守卫
+    find: `  // LOCAL = 10 写死（早退阈值用）：原月末检查要求 DAY:2 > LOCAL，该检查
   // 被注释掉的功能不恢复，每日来袭（#574 第 4 条）`,
-    replace: `  const local_month = 10; // 变异：月末守卫复活
+    replace: `  const local_month = 10; // 变异：月末检查复活
   if (
     era_flag.date > local_month &&
     arg0 === 0 &&
@@ -3615,7 +3624,7 @@ export default [
     return 0;
   }`,
     tests: ['enter-enemy'],
-    must_mention: '月末守卫已删：日 28 仍每日来袭',
+    must_mention: '月末检查已删：日 28 仍每日来袭',
   },
   {
     desc: 'M13104 WITHDRAWAL：废人化生效素质回退成未声明的 19 号',

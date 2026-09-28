@@ -1,9 +1,9 @@
 /**
- * @file 调教开始事件 @EVENTTRAIN 的处理器（issue #44，#PRI 档真身）。
+ * @file 调教开始事件 EVENTTRAIN 的处理器（issue #44，#PRI 档真身）。
  *
- * @EVENTTRAIN 是事件函数（口上模块后续会往链上挂自己的定义）；本处理器
- * 对应 TRAIN_MAIN.ERB 的 #PRI 定义，注册于模块顶层。直线赋值 1:1 照搬，
- * test/event-train.test.js 对写入做全量断言（意外写入当场暴露）。
+ * EVENTTRAIN 是事件函数（口上模块后续会往链上挂自己的定义）；本处理器
+ * 是 #PRI 档定义，注册于模块顶层。直线赋值逐项落表，test/event-train.test.js
+ * 对写入做全量断言（意外写入当场暴露）。
  */
 
 const era = require('#/era-electron');
@@ -12,13 +12,13 @@ const era_flag = require('#/era-utils/era-flag');
 const { train_name_init } = require('#/system/train/train-name');
 const { pritrain_message } = require('#/event/event-beforetrain');
 
-// @EVENTTRAIN（TRAIN_MAIN.ERB:13-58，#PRI）
+// EVENTTRAIN（#PRI 档）
 on(
   'EVENTTRAIN',
   async () => {
     // 主人公の射精を0に（BASE:2 = 射精槽；MASTER 恒角色 0）
     era.set('base:0:2', 0);
-    // いちおう調教対象と助手も（:19-20 SIF ASSI >= 0 才写）
+    // いちおう調教対象と助手も（ASSI >= 0 才写）
     era.set(`base:${era_flag.target}:2`, 0);
     if (era_flag.assi >= 0) {
       era.set(`base:${era_flag.assi}:2`, 0);
@@ -56,11 +56,11 @@ on(
     // 死斗场の収入初期化：TFLAG:402 = 0（200 循环外，独立写入）
     era.set('tflag:402', 0);
 
-    // CALL TRAIN_NAME_INIT（#212 真身：TRAIN_NAME 定制名表一次性播种，
-    // 守卫幂等——ere/system/train/train-name.js）
+    // train_name_init（#212 真身：TRAIN_NAME 定制名表一次性播种，
+    // 幂等检查在内部——ere/system/train/train-name.js）
     train_name_init();
 
-    // CALL PRITRAIN_MESSAGE（真身）
+    // pritrain_message（真身）
     await pritrain_message();
   },
   TIER.PRI,

@@ -121,8 +121,9 @@ async function chara_info_recover_hp(cid) {
 /**
  * chara_info_up_level（基础版）：花钱购买 1 级经验。
  *
- * 每次调用固定升 1 级（魔王 LV*100+10、精英 LV*20+10、通常 LV*10+10；
- * 此处只算差额判定花费，真正的升级结算仍交给 dungeon-lvup.js 的 lvup）。
+ * 每次调用固定升 1 级（魔王/通常 LV*10+10、精英 LV*20+10，与升级结算的
+ * 曲线一致；此处只算差额判定花费，真正的升级结算仍交给 dungeon-lvup.js
+ * 的 lvup）。
  * MOD 版的批量购买（0/1/5/10/100/500/1000 级）不在本工单范围，见文件头。
  * @param {number} cid 角色 ID
  * @returns {Promise<void>}
@@ -131,7 +132,7 @@ async function chara_info_up_level(cid) {
   const lv = era.get(`cflag:${cid}:9`) || 0; // CFLAG:9 等级
   let need;
   if (cid === 0) {
-    need = lv * 100 + 10; // 魔王
+    need = lv * 10 + 10; // 魔王（与升级结算同曲线）
   } else if ((era.get(`talent:${cid}:220`) || 0) === 1) {
     need = lv * 20 + 10; // 精英
   } else {

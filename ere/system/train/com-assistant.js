@@ -1805,13 +1805,13 @@ async function com66() {
     consume_gauge(assi, 2, assi_ejac.ejac);
     era.set('tflag:6', 2);
   } else if (assi_ejac.e === 1) {
+    era.print('射精（助手）');
     chara(assi).train.射精经验 += 1;
     chara(target).dungeon.精液经验 += 1;
-    era.print('射精（助手）');
     era.print('精液经验＋１');
     mark_penis_stain(assi);
     consume_gauge(assi, 1, assi_ejac.ejac);
-    era.set('tflag:6', 2);
+    era.set('tflag:6', 1);
   }
   await com_ejac_player_milk(b2);
   if (tal(MASTER, 121) || tal(MASTER, 122))
