@@ -1791,7 +1791,7 @@ export default [
   {
     desc: 'M9721 [0] 委派 start_campaign() 丢失',
     file: 'ere/page/page-invasion.js',
-    find: '    if (result === 0) {\n      // 人间界：复用出兵流程；其内部的 RESTART（原作出兵路线里的\n      // [999] 返回等）原样透传，由 invasion() 的外层循环回到 :6 的分派\n      return await start_campaign(rand, HUMAN_WORLD);\n    }',
+    find: '    if (result === 0) {\n      // 人间界：复用出兵流程；其内部的 RESTART（出兵路线里的\n      // [999] 返回等）原样透传，由 invasion() 的外层循环回到入口分派\n      return await start_campaign(rand, HUMAN_WORLD);\n    }',
     replace:
       '    if (result === 0) {\n      return 0; // 变异：委派丢失\n    }',
     tests: ['page-invasion'],
@@ -2174,9 +2174,9 @@ export default [
   {
     desc: 'M10732 投放数量的入账改坏（9011 += count 改 += 1，#502）',
     file: 'ere/page/page-invasion.js',
-    find: '      era_exflag.crystal_ball_deployed += count; // EX_FLAG:9011 += RESULT\n      // CALL SENGEN_VIDEO_BONUS, RESULT（RESULT 按引用回写）',
+    find: '      era_exflag.crystal_ball_deployed += count; // EX_FLAG:9011 += RESULT\n      // sengen_video_bonus 的返回值即回写后的投放数',
     replace:
-      '      era_exflag.crystal_ball_deployed += 1; // 变异：只记 1 部\n      // CALL SENGEN_VIDEO_BONUS, RESULT（RESULT 按引用回写）',
+      '      era_exflag.crystal_ball_deployed += 1; // 变异：只记 1 部\n      // sengen_video_bonus 的返回值即回写后的投放数',
     tests: ['page-invasion'],
     must_mention: ':1109 EX_FLAG:9011 += RESULT',
   },
@@ -2344,9 +2344,9 @@ export default [
   {
     desc: 'M10755 [0] 怪物出兵：战力归一的分母改坏（/20 改 /10）',
     file: 'ere/page/page-invasion.js',
-    find: '      sinkou = Math.trunc(sinkou / 20);\n      // 威望修正（与魔力分支 :270-293 同构，共用一套五档）',
+    find: '      sinkou = Math.trunc(sinkou / 20);\n      // 威望修正（与魔力分支同构，共用一套五档）',
     replace:
-      '      sinkou = Math.trunc(sinkou / 10); // 变异：分母改坏\n      // 威望修正（与魔力分支 :270-293 同构，共用一套五档）',
+      '      sinkou = Math.trunc(sinkou / 10); // 变异：分母改坏\n      // 威望修正（与魔力分支同构，共用一套五档）',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },
@@ -2864,9 +2864,9 @@ export default [
   {
     desc: 'M10816 [2] 结果段的经验除数改坏（SINKOU / 2 改 / 4）',
     file: 'ere/page/page-invasion.js',
-    find: '    const exp_gain = Math.trunc(sinkou / 2);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain;\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:860）',
+    find: '    const exp_gain = Math.trunc(sinkou / 2);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain;\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）',
     replace:
-      '    const exp_gain = Math.trunc(sinkou / 4);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain; // 变异：除数改坏\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:860）',
+      '    const exp_gain = Math.trunc(sinkou / 4);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain; // 变异：除数改坏\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）',
     tests: ['page-invasion'],
     must_mention: '结果段',
   },
@@ -4512,9 +4512,9 @@ export default [
   {
     desc: 'M12908 征服后菜单 [1001] AGENT_MENU 分支复活（提示行打回——#638 删除的入口不得回潮）',
     file: 'ere/page/page-invasion.js',
-    find: '    // 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：',
+    find: '    // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：',
     replace:
-      "    if (result === 1001) {\n      era.print('（代理人菜单不在移植范围。）');\n      await era.waitAnyKey();\n      return 0;\n    }\n    // 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：",
+      "    if (result === 1001) {\n      era.print('（代理人菜单不在移植范围。）');\n      await era.waitAnyKey();\n      return 0;\n    }\n    // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：",
     tests: ['page-invasion'],
     must_mention: '落到 :102 的 >=6 拒收重问',
   },
@@ -4597,7 +4597,7 @@ export default [
   {
     desc: 'M13200 据点事件三分支恢复星号输出（#652 删掉的反复弹星号复原）',
     file: 'ere/page/page-invasion.js',
-    find: '  // 精灵/龙/天界三臂：不输出、不推进（见函数头注释）\n  return 0;',
+    find: '  // 精灵/龙/天界三分支：不输出、不推进（见函数头注释）\n  return 0;',
     replace:
       '  // 变异：三分支恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
     tests: ['page-invasion'],
