@@ -13,8 +13,8 @@
  * 122/135 是可直选指令，没有这条赋值。
  *
  * TRAIN_MESSAGE A/B 随各指令真身登记。COM135 无 A 分支，A 登记空操作以免
- * 「族工单未完成」占位行。口上（kojo_message_com_<n>）随轴 B，本工单不写台词。
- * COM135 经 21 号规则可能跳到 COM64（三人，J15）。真身未实现时走登记存根。
+ * 被分发骨架当成缺失分支。口上（kojo_message_com_<n>）随轴 B，本工单不写台词。
+ * COM135 经 21 号规则可能跳到 COM64（三人，J15 真身已交付）。
  */
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');

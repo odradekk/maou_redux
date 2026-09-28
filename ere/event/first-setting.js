@@ -16,8 +16,8 @@
  * （$INPUT_LOOP2）不可达，不移植。
  *
  * [7] 丽塔/卡拉隐藏开关（菜单文字都被注释掉）不移植：
- * 丽塔启动！/卡拉启动！是 MOD SAVEDATA 变量，本项目无 ere 存储（同
- * docs/stub-registry.md「开局设置票」行的既有登记）。
+ * 丽塔启动！/卡拉启动！是 MOD SAVEDATA 变量，本项目无 ere 存储（「开局设置」
+ * 的既有结论）。
  */
 
 const era = require('#/era-electron');

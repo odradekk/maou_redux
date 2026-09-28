@@ -32,7 +32,7 @@ const { st_up } = require('#/dungeon/dungeon-lvup');
  * char_init：初始化从预设加入的角色。
  *
  * 窄路径 = 菲娅（ENDING_1 的 addCharacter 35）：等级段不可达（CFLAG:35:9 = 1
- * 不 > 1）、身体数据段不可达（FLAG:5 位 12/15 恒 0），服装存根、一人称
+ * 不 > 1）、身体数据段不可达（FLAG:5 位 12/15 恒 0），服装段、一人称
  * 走 <9 直设、能力者技能照掷。条件结构对全部角色一致，不可达段体内占位。
  *
  * @param {number} cid 角色 ID

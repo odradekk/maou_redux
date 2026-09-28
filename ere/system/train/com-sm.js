@@ -25,9 +25,8 @@
  *
  * com40 头部的升格跳转：规则体注册进 adv_com_family（CASE 40 → 132
  * 背后位・打屁股）；升格命中时以 com_family.call(升格号) 同位调用。
- * **132 属 J19（追加与高级族）**，这张工单只交规则与跳转位；J19 未实现
- * 期间跳转目标缺失 → 存根占位行 + 返回 1（com132 真身会自置 selectcom =
- * 132，占位期不动 selectcom，J19 实现即自愈）。
+ * **132 属 J19（追加与高级族，真身已交付 com-advanced.js）**，这张工单
+ * 只交规则与跳转位：升格命中时以 com_family.call(升格号) 同位调用。
  *
  * == equip_com43-49 的接入（本族自带的六个持续效果函数） ==
  *
@@ -80,7 +79,7 @@ const palam = (cid, i) => era.get(`palam:${cid}:${i}`) || 0;
 const add_lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
 const add_up = (cid, i, v) => era.add(`delta:${cid}:${i}`, v);
 
-/** times(v, m)：整数乘小数后截断（math-etc.md，source-check.js 同款） */
+/** times(v, m)：整数乘小数后截断（TIMES 语义，source-check.js 同款） */
 const times = (v, m) => Math.floor(v * m);
 
 /**

@@ -45,8 +45,7 @@ const era_audio = {
 //
 //   bgm_enabled  是否启用背景音乐  SAVEDATA（随游戏存档）。主菜单 BGM 开关：
 //       1=据点主菜单每轮重绘时播 据点2.mp3、0=不播。声明无默认值 → 新档
-//       0=不播，开局不播即应有行为——唯一写点是设定菜单 MOD_SWITCH，见
-//       docs/stub-registry.md 资源级待办。
+//       0=不播，开局不播即应有行为——唯一写点是设定菜单 MOD_SWITCH。
 //   bgm_volume   背景音乐音量  SAVEDATA。声明默认 66（「#DIM SAVEDATA
 //       背景音乐音量 = 66」，SETBGMVOLUME 的实参）。ere 侧无
 //       逐曲音量 API，值暂无消费者；声明默认值的播种随首个消费者（设定票）。

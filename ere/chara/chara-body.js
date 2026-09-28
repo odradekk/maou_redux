@@ -6,9 +6,8 @@
  * 步骤，不是独立入口；char_bust_regenerate_wapped 不在该工单范围，后来
  * 在本文件另行实现。
  *
- * 未移植的残留见 docs/stub-registry.md：config_age_setting 与 race_config
- * 已随 #547 实现为 ere/page/page-config-age.js（配置界面）；cup_size 已随
- * #390 实现。
+ * config_age_setting 与 race_config 已随 #547 实现为 ere/page/page-config-age.js
+ * （配置界面）；cup_size 已随 #390 实现。
  */
 
 const era = require('#/era-electron');

@@ -188,7 +188,7 @@ const MONSTER_IDS_BY_FLOOR = new Map([
  */
 function campaign_monster_list_1(floor, rand = default_rand) {
   // DICE = RAND:3——无条件掷（即使楼层不在表内也照掷），保持 PRNG
-  // 序列与旧引擎对齐（dungeon-battle.js 文件头同款纪律）
+  // 序列逐位确定（dungeon-battle.js 文件头同款纪律）
   const dice = rand(3);
   const ids = MONSTER_IDS_BY_FLOOR.get(floor);
   return ids ? ids[dice] : 0;

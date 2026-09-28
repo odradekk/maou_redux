@@ -32,7 +32,7 @@ function she(id) {
   return era.get(`talent:${id}:122`) || 0 ? '他' : '她';
 }
 
-/** 整数乘小数后截断（math-etc.md） */
+/** 整数乘小数后截断（TIMES 语义） */
 const times = (v, m) => Math.floor(v * m);
 
 /**

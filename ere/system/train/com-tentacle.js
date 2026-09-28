@@ -7,7 +7,7 @@
  *
  *   - COM101-107/109 尾 JUMP 不改写 SELECTCOM（TRAIN_MESSAGE_B 仍走触手号
  *     分支）。目标 11/13-17 未移植 → COM_MISSING；44/46 已由 com-sm.js
- *     注册。不建 COM11/13-17 存根（#220 在飞）。
+ *     注册。COM11/13-17 同样未注册（#220 在飞）。
  *   - COM208 先改写 SELECTCOM 再 JUMP COM31/5/21/27。COM5/21/27 已移植；
  *     COM31 未移植 → COM_MISSING（#222 在飞）。
  *
@@ -73,7 +73,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** JUMP COM{id}：目标未移植返回 COM_MISSING（不建存根）。 */
+/** JUMP COM{id}：目标未注册返回 COM_MISSING。 */
 function jump_com(id, { rewrite_selectcom = false } = {}) {
   if (rewrite_selectcom) {
     era_flag.selectcom = id;

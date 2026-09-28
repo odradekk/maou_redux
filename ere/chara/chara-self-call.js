@@ -42,7 +42,7 @@
  *   - **nid_get_type 不在本文件重复实现**：set_nick_selfcall 需要它判定姓名
  *     是「和名」还是「洋名」，但 ere/chara/chara-name.js（#384）已经有一份
  *     实现，与 chara-family.js 的 nid()/nid_r() 名字编号体系共用同一份函数，
- *     `chara-pregnancy.js` 已在用。两份真身比两份存根危险（将来谁改了一边，
+ *     `chara-pregnancy.js` 已在用。两份真身比两处寄放危险（将来谁改了一边，
  *     另一边会静默不同步且没有测试会红），本文件直接
  *     `require('#/chara/chara-name')` 复用，不新造第二份。#653 起
  *     `nid_get_type` 已把 [3000,4059) 的男性和名与 [4500,5289) 的中式名

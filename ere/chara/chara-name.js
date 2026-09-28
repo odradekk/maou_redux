@@ -5,7 +5,7 @@
  *
  *   - **nid_get_type 自 ere/chara/chara-family.js 收拢回本文件**（#384）：
  *     先前寄在 chara-family.js 是 #349 的临时落点（chara-self-call.js /
- *     chara-pregnancy.js 都从那里导入）。两份真身比两份存根危险（改了一边
+ *     chara-pregnancy.js 都从那里导入）。两份真身比两处寄放危险（改了一边
  *     另一边静默不同步），故本工单按「一个函数一个落点」收拢：真身在
  *     chara-name.js，两个消费方改从本文件导入。**nid 与 nid_r 留在
  *     chara-family.js**：那边已有实现与既有测试面（chara-self-call /
@@ -61,9 +61,6 @@ const JAPANESE_MALE_NAME_COUNT = 1059;
 const CHINESE_NAME_COUNT = 789;
 
 const default_rand = (n) => Math.floor(Math.random() * n);
-
-/** 本文件曾存根化的调用名清单。
- * #384 起本文件的十个函数全部有了真身，名单清空。 */
 
 /**
  * 整数除法（向零截断）：「已加入角色数 × 4 ÷ 10」这类条件按整型运算，

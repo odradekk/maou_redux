@@ -51,7 +51,7 @@ const {
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/** 整数乘小数后截断（math-etc.md；source-check.js 等同款） */
+/** 整数乘小数后截断（TIMES 语义；source-check.js 等同款） */
 const times = (v, m) => Math.floor(v * m);
 
 /** A = A * n / 100 型整数复利（区别于 times：整数乘整数除，非小数乘法截断） */
@@ -5465,7 +5465,7 @@ async function ablup37(cid, mode) {
     // 干跑出口（decide_ablup37 / core_ablup37）
     if (mode === 'decide') {
       // decide_ablup37 的额外门槛：卖淫中毒＋性交中毒合计 10
-      // 以上即不可提升——主流程没有这条（文件头登记的差异）
+      // 以上即不可提升——能力提升主流程没有这条额外门槛
       if (lv + (era.get(`abl:${cid}:38`) || 0) >= 10) return null;
       return { i };
     }
@@ -6195,7 +6195,7 @@ async function auto_ablup(
     if (talent(122) === 0 && (count === 23 || count === 34)) continue;
     // 卖淫为负面评价时，等级不会自动提昇
     if (count === 37 && prostitution_effect === 0) continue;
-    // 只自动提升部分能力（位 36，见文件头）
+    // 只自动提升部分能力（FLAG:5 位 36）
     if (count > 15 && auto_getbit(era.get('flag:5'), 36)) break;
 
     await auto_ablup_core(count, 1);

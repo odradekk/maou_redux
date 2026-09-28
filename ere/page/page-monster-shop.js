@@ -49,8 +49,6 @@ const { clear_shop } = require('#/page/page-item-shop');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/** 本文件存根化的调用名（docs/stub-registry.md 必须收录每一个） */
-
 /** 魔物从者的上限（`COUNT:1 >= 30`） */
 const FOLLOWER_LIMIT = 30;
 /** 魔物从者的素质编号（`TALENT:COUNT:220`，召喚済み标记） */
@@ -262,8 +260,7 @@ async function monster_shop(rand) {
     era.print(`${chara_callname(a)}回应了你的召唤………`);
     era.print('*****************************************');
     await era.waitAnyKey(); // PRINTW
-    // CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
-    // -2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
+    // CALL SHOW_CHARA_INFO, A, -2（#390 起真身；-2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
     await show_chara_info(a, -2, rand);
     era.print(`确定要召唤${chara_callname(a)}么？`);
     era.print('');

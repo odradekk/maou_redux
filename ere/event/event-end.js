@@ -6,7 +6,7 @@
  * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
  * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
  *
- * 原存根已全部换真身：self_check / aftertrain_cloth / re_clothed /
+ * 真身一览：self_check / aftertrain_cloth / re_clothed /
  * name_reset / karma（各自工单）；charadead_check 与 party_char_del 自
  * #548（S7）起为真身（ere/event/event-aftertrain.js 与
  * ere/dungeon/dungeon-party.js）。

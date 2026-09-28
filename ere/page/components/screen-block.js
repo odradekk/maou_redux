@@ -12,7 +12,7 @@
  *     随条目数）；
  *   - 重绘清行 ＝ getLineCount() - 基准点（基准点＝本次绘制前的行数）。基准点
  *     跨度天然覆盖：组件自身行 + input 回显行（+1 Row，#68 已镜像进缝）
- *     + 两次绘制之间的任何临时输出（如分发期的存根行、选择画面整屏）。
+ *     + 两次绘制之间的任何临时输出（如分发期的占位行、选择画面整屏）。
  *     只清「自身行数」是错的：clear 只能从屏幕尾部删行（渲染层公式，
  *     #68 实证），回显行在组件下方，清 N 行会删掉回显、留下组件顶行，
  *     实机表现为屏幕每轮净涨一行——正是 Row 的计法错误的破坏形式。
@@ -65,7 +65,7 @@ class ScreenBlock {
       const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {
         era.logger.warn(
-          `画面组件重绘后行数 ${remaining} 未回到锚点 ${this.anchor_row}（清行跨度 ${span}）——存在旁路清行`,
+          `画面组件重绘后行数 ${remaining} 未回到基准点 ${this.anchor_row}（清行跨度 ${span}）——存在旁路清行`,
         );
       }
     }

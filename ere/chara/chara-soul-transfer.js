@@ -4,7 +4,7 @@
  *
  * 调用方：ere/page/page-chara-info.js 的身份互换入口（case 17）；
  * ere/event/event-nextday.js 每角色每日调用 soul_dislocation（这张工单
- * 接入真身、撤下原存根）。
+ * 接入真身）。
  *
  * swap_chara() 覆盖范围：`ere/` 没有通用的「角色全部变量」枚举 API（不像
  * 引擎能反射出全部已注册表），因此只交换本项目目前实际使用的角色数值表
