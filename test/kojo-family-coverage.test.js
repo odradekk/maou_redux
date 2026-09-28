@@ -69,5 +69,5 @@ test('show_chara_info 换 TARGET：语尾按被显示角色的口上取，退出
     texts.some((l) => l.startsWith('「') && l.endsWith('……。」')),
     '-2 页的语尾按被显示角色（K0，无刻印 → mark 4 → 『……。』）取，且拼进「」之内、与台词同一行（#570），不得回退到魔王的静默',
   );
-  assert.equal(era_flag.target, 0, ':320-321 退出恢复调用方的 TARGET');
+  assert.equal(era_flag.target, 0, '退出恢复调用方的 TARGET');
 });

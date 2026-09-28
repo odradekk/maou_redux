@@ -508,7 +508,7 @@ async function sell_bitch(arg, place, rand = default_rand) {
 }
 
 /**
- * 卖春失败/无客时的台词（:306-328 两个分档共用四支）。
+ * 卖春失败/无客时的台词（两个分档共用四支）。
  * @param {number} arg 角色 ID
  * @param {number} kyaku 客数
  * @param {boolean} has_kyaku 有客（客循环后失败）
@@ -873,8 +873,8 @@ async function self_bitch(arg, place, rand = default_rand) {
 
   // 妄想对象分档（调教后自慰的妄想对象）
   // レズ（无爱慕且百合气质 > RAND:5）
-  // 分档的文本与 :634 的追加、:637 的收行同属一行（:571..:637 之间只有
-  // PRINTDATA 块，不是 PRINT 行）——:571/:575 的字面量留在输出语句里，
+  // 分档的文本与追加、收行同属一行（中间的 PRINTDATA 块不是 PRINT 行）——
+  // 字面量留在输出语句里，
   // PRINTDATA 的随机词条提到语句外当取值，RAND 抽数在条件与语句内惰性消费（#624）
   let branch = 0;
   let dream = '';

@@ -3,12 +3,12 @@
  *
  * 缝 = test/helpers/era-fixture.js。世界底座：被凌辱者 = 角色 31（通用奴隶
  * 编号），由 join_slave_chara 预置并加入。覆盖：
- *   - 13 种怪物分派（`*_ryou` 女性版）+ 主框架 @RYOUZYOKU（E 表读取、
+ *   - 13 种怪物分派（`*_ryou` 女性版）+ 主框架 ryouzyoku（E 表读取、
  *     凌辱畏怖记忆 CFLAG:130/131 推进、按 TALENT:122 分流到 H14 男版）；
- *   - @PC_RYOU（武器检查 EQUIP_DATABASE、触手武器分支、REPEAT 三连随机、
+ *   - pc_ryou（武器检查 EQUIP_DATABASE、触手武器分支、REPEAT 三连随机、
  *     处女丧失推进 CFLAG:15/16/CSTR:3）；
- *   - @VICTORY_RYOUZYOKU（善恶值门槛、E 表分派到 *_RYOU_YUSYA）；
- *   - @DUNGEON_RYOUZYOKU_ESCAPE（队伍解析、CHECK_STATUS 评级、救援成功
+ *   - victory_ryouzyoku（善恶值门槛、E 表分派到 *_ryou_yusya）；
+ *   - dungeon_ryouzyoku_escape（队伍解析、CHECK_STATUS 评级、救援成功
  *     时回城标志/体力气力回复/状态回侵攻）；
  *   - 口上钩子分发（#403 整合）：窗口两侧（LOCAL 0 拒绝、100-139 与 EX
  *     放行）与键 = LOCAL - 100 的偏移，前后两族各归各；
@@ -513,7 +513,7 @@ test('#624 RYOUZYOKU 主框架：立绘分支的空 PRINT 与 PRINTL 合成一�
     '冒险者将被凌辱――',
     '', // PRINTL
     '[结婚对象:无][善恶值:0|中立]　', // SHOW_DATA
-    '', // （立绘分支的空 PRINT）+ :19 的 PRINTL 合成的一条
+    '', // （立绘分支的空 PRINT）+ PRINTL 合成的一条
   ]);
   // 拆回多条会多出一条空行：整段输出里的空行数（开场 PRINTL 的一条 + 尾部 4 条）就是检查
   assert.equal(

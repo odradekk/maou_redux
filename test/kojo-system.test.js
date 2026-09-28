@@ -87,9 +87,9 @@ test('GET_KOJO_NUM：素质 160-179 扫描，最后一格命中者胜', async ()
   const { get_kojo_num } = fixture.load_module('kojo/kojo-system');
   assert.equal(get_kojo_num(), 105); // 165 村娘A（隐式 TARGET）
   assert.equal(get_kojo_num(17), 105); // 显式角色号
-  assert.equal(get_kojo_num(-1), 105); // 负参回落 TARGET（:90-91）
+  assert.equal(get_kojo_num(-1), 105); // 负参回落 TARGET
 
-  // 163 高貴 → 103；163+168 同置 → 后格覆盖（FOR 无 BREAK，:137-140）
+  // 163 高貴 → 103；163+168 同置 → 后格覆盖（FOR 无 BREAK，后写覆盖先写）
   fixture.store.set('talent:17:163', 1);
   assert.equal(get_kojo_num(17), 105); // 165 仍最后命中
   fixture.store.delete('talent:17:165');
@@ -315,7 +315,7 @@ test('改名完整性：ere/ 与 tools/ 里不残留旧名（#585）', () => {
 
 // —— 事件链挂接（#PRI / #LATER 语义） ——
 
-test('@EVENTSHOP #PRI：FLAG:7 == 0 补 2；1 与 -1 不动（关掉不自开）', async () => {
+test('EVENTSHOP #PRI：FLAG:7 == 0 补 2；1 与 -1 不动（关掉不自开）', async () => {
   for (const [before, after] of [
     [0, 2],
     [1, 1],
@@ -337,7 +337,7 @@ test('@EVENTSHOP #PRI：FLAG:7 == 0 补 2；1 与 -1 不动（关掉不自开）
   }
 });
 
-test('@EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0（两模块各自一对）', async () => {
+test('EVENTTRAIN #PRI 置存在标志、EVENTEND #LATER 清 0（两模块各自一对）', async () => {
   const fixture = await setup_kojo((f) => f.store.delete('flag:7'));
   const { emit } = fixture.load_module('system/event/registry');
 
@@ -362,7 +362,7 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   fixture.store.set('base:17:0', 1450);
   fixture.store.set('base:17:1', 410);
 
-  // BEGIN SHOP → @EVENTSHOP 链（kojo-system 的 #PRI + page-shop 的普通档；
+  // BEGIN SHOP → EVENTSHOP 链（kojo-system 的 #PRI + page-shop 的普通档；
   // 挂载顺序同 main-loop：页面先、口上后——档位序保证 #PRI 先跑）
   const { run_shop } = fixture.load_module('page/page-shop');
   fixture.load_module('kojo/kojo-system');
@@ -375,10 +375,10 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   assert.equal(
     fixture.store.get('flag:7'),
     2,
-    '总开关由 @EVENTSHOP #PRI 默认开',
+    '总开关由 EVENTSHOP #PRI 默认开',
   );
 
-  // BEGIN TRAIN → @EVENTTRAIN 链（存在标志 + 真实的 #PRI 主体）
+  // BEGIN TRAIN → EVENTTRAIN 链（存在标志 + 真实的 #PRI 主体）
   fixture.era.beginTrain(0, 17);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 17;
@@ -391,7 +391,7 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   await emit('EVENTTRAIN');
   assert.equal(fixture.store.get('flag:105'), 1);
 
-  // 回合：COM0（爱抚）→ @SOURCE_CHECK（:11-12 的 CALL KOJO_MESSAGE_COM）
+  // 回合：COM0（爱抚）→ SOURCE_CHECK（CALL KOJO_MESSAGE_COM）
   fixture.load_module('system/train/com-caress');
   fixture.load_module('event/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');

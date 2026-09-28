@@ -4,7 +4,7 @@
  * 缝 = test/helpers/era-fixture.js。世界底座：魔王 + 温妮（id 31）入列
  * （强制肉偿不要求调教中，直接 addCharacter 即可）。覆盖（逐条对应验收
  * 清单）：
- *   - SELECTCASE RAND:4 的四档（:12/:25/:41/:58）；
+ *   - SELECTCASE RAND:4 的四档；
  *   - PLAY/COST 两档算式与随机上界（高档 RAND:20+10 / RAND:1000+1000，
  *     低档 RAND:10+5 / RAND:500+500）；
  *   - 分档条件的三个析取项各自单独命中（ABL:11 >= 3 / ABL:37 / EXP:20 >= 30）；

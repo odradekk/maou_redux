@@ -36,7 +36,7 @@
  *
  *   - 口上的装载是**行为断言**在守（各 kojo 模块测试直接 load_module 并
  *     断言注册与台词），不是清单对账——清单里有没有它，行为测试都会红；
- *   - 口上的调用链经 `event/source-check.js:78` 的
+ *   - 口上的调用链经 `event/source-check.js` 的
  *     `require('#/kojo/kojo-system')` 顶层副作用成立，而 source-check 已在
  *     调教路径清单里——kojo-system 必然装上，分发族存在；
  *   - 每个口上文件的注册由本锁对账主启动图。

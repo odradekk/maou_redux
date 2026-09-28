@@ -691,7 +691,7 @@ test('EXP_BITCH：ANIMAL 的 JUEL 加算真打到 arg 名下（JUEL:1/6/8 三段
 // 本文件其余 13 组落在跳过块里（未移植），或在
 // 跳过块之前的行被未终止的 `PRINT  ` 链到块内——都清不掉，见完成评论。
 
-test('#624 SELL_BITCH：:205+:212（名字与客合计）与 :213+:217 各是一条输出', async () => {
+test('#624 SELL_BITCH：名字前缀与客合计、客行各是一条输出', async () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
@@ -708,11 +708,11 @@ test('#624 SELL_BITCH：:205+:212（名字与客合计）与 :213+:217 各是一
   assert.deepEqual(
     lines.slice(0, 2),
     ['温妮以2人的兽人为对手', '1人的手淫奉侍进行着'],
-    ':205+:212 与 :213+:217 各占一条；男性客时 :212/:213 不输出，:205 的前缀并进 :217 那条（#624）',
+    '两条输出各占一条；男性客时客名不输出，名字前缀并进「以 LOCALS 为对手」那条（#624）',
   );
 });
 
-test('#624 SELL_BITCH 街中：:233+:237 的客行是一整条输出', async () => {
+test('#624 SELL_BITCH 街中：客行是一整条输出', async () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
@@ -732,7 +732,7 @@ test('#624 SELL_BITCH 街中：:233+:237 的客行是一整条输出', async () 
   );
 });
 
-test('#624 DUNGEON_WORK：:504..:511 的副业行是一整条输出', async () => {
+test('#624 DUNGEON_WORK：副业行是一整条输出', async () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('cflag:31:9', 2);
     f.store.set('cflag:31:0', 1);
@@ -744,11 +744,11 @@ test('#624 DUNGEON_WORK：:504..:511 的副业行是一整条输出', async () =
   assert.deepEqual(
     fixture.text_lines(),
     ['温妮从事了研磨宝石的副业140点收入。'],
-    ':504 + PRINTDATA 词条 + :511 合成一条',
+    '「…从事了」+ PRINTDATA 词条 + 收行合成一条',
   );
 });
 
-test('#624 SELF_BITCH：:571..:637 的分档文本、扶她追加与收行同属一行', async () => {
+test('#624 SELF_BITCH：分档文本、扶她追加与收行同属一行', async () => {
   const cases = [
     ['レズ支', (f) => f.store.set('abl:31:22', 10), '想象着跟女人的交合'],
     [
@@ -772,11 +772,11 @@ test('#624 SELF_BITCH：:571..:637 的分档文本、扶她追加与收行同属
     await mod.self_bitch(31, 'DUNGEON', seq_rand(0, 0, 0));
     assert.ok(
       fixture.text_lines().includes(`${part}自慰了1次。`),
-      `${name} → :571..:637 是一整行`,
+      `${name} → 分档文本与收行是一整行`,
     );
   }
 
-  // 扶她/男人/肉芽 → :634 的追加与分档文本、收行同属一行
+  // 扶她/男人/肉芽的追加与分档文本、收行同属一行
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('talent:31:121', 1);
     f.store.set('abl:31:22', 10);
@@ -786,6 +786,6 @@ test('#624 SELF_BITCH：:571..:637 的分档文本、扶她追加与收行同属
     fixture
       .text_lines()
       .includes('想象着跟女人的交合握住肉棒捋了起来自慰了1次。'),
-    '扶她追加（:634）也并进同一行',
+    '扶她追加也并进同一行',
   );
 });

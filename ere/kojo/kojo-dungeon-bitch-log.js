@@ -863,8 +863,7 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
       await era.print(picks[kyaku][rand_n(picks[kyaku].length)]); // PRINTDATAL
     }
   }
-  // 固定地の文（源文本只有这两行；:744-745 已在上方）
-  // —— 源 :934 无输出；:935-936 是空行/下一函数 ——
+  // 固定地の文（上文已覆盖；旧引擎里此处无更多输出）
 }
 
 /**
@@ -1319,7 +1318,7 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
 /**
  * log_bitch_animal：兽交卖春描写。
  *
- * 特殊处理（源注释）：DUNGEON 里无金钱授受、自主进行；TOWN 里 ARG:1 无
+ * 特殊处理（旧引擎注释）：DUNGEON 里无金钱授受、自主进行；TOWN 里 ARG:1 无
  * 意义（公衆プレイ）。TOWN 分支有固定三行地の文；DUNGEON 分支为空。
  * 函数签名 (ARG, PLACE, ARG:1) 的第三参在本函数未使用（:1451 声明，
  * 实际只按 PLACE 分）。

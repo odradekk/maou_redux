@@ -71,9 +71,9 @@ function probe(sink) {
   };
 }
 
-// —— @ATTACK_KOUJO_B（:325-337）——
+// —— ATTACK_KOUJO_B ——
 
-test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DUNGEON_ATTACK_K{LOCAL-100} 后还原', async () => {
+test('ATTACK_KOUJO_B：TARGET 置为 B 侧对象、分发 DUNGEON_ATTACK_K{LOCAL-100} 后还原', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture); // 高貴 163 → LOCAL 103 → 键 3
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -90,7 +90,7 @@ test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DU
 
   era_flag.target = 5; // 调用前的 TARGET（另一角色，验「暂存/还原」）
   assert.equal(await attack_koujo_b(17, rand), 0);
-  assert.deepEqual(seen, [[rand]], '随机源透传（:322/:336 同族）');
+  assert.deepEqual(seen, [[rand]], '随机源透传（同族两入口一致）');
   assert.equal(target_during, 17, '分发期间 TARGET = 传入的 B 侧角色号');
   assert.equal(
     era_flag.target,
@@ -183,7 +183,7 @@ test('GOHOUBI_REQUEST_KOUJO：签名 (cid) 由 #397 冻结，函数体真分发�
   era_flag.target = 5; // 调用前的 TARGET（验 SWAP 的暂存/还原）
   assert.equal(await gohoubi_request_koujo(17), 0);
   assert.deepEqual(seen, [[17]], 'K 侧收 cid（K7 直接用它读 CFLAG:504）');
-  assert.equal(target_during, 17, '分发期间 TARGET = A（:452）');
+  assert.equal(target_during, 17, '分发期间 TARGET = A');
   assert.equal(era_flag.target, 5, '返回后 TARGET 还原（SWAP）');
 });
 
@@ -294,7 +294,7 @@ test('处刑首五族：无性格编号（键 -1）→ 静默（TRYCALL 落空�
   }
 });
 
-test('@DUNGEON_RYOUZYOKU（:249-258）/:DUNGEON_RYOUZYOKU_AFTER（:263-272）：读当前 TARGET 分发、无参、不改写 TARGET', async () => {
+test('DUNGEON_RYOUZYOKU/DUNGEON_RYOUZYOKU_AFTER：读当前 TARGET 分发、无参、不改写 TARGET', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -309,7 +309,7 @@ test('@DUNGEON_RYOUZYOKU（:249-258）/:DUNGEON_RYOUZYOKU_AFTER（:263-272）：
   assert.equal(await ravish.dungeon_ryouzyoku_after(), 0);
   assert.deepEqual(seen_before, [[]], 'GET_KOJO_NUM() 走当前 TARGET');
   assert.deepEqual(seen_after, [[]]);
-  assert.equal(era_flag.target, 17, 'TARGET 由调用方（:57 TARGET = ARG）管');
+  assert.equal(era_flag.target, 17, 'TARGET 由调用方（分派前置）管');
 });
 
 test('迷宫凌辱两族：无性格编号时静默（TRYCALL 落空）', async () => {

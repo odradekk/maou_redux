@@ -118,7 +118,7 @@
  * 的分派按 `TALENT:ARG:122`（男人）分发：为真 →
  * CALL *_RYOU男（H14 文件），否则 → CALL *_RYOU（本文件）。这张工单交付
  * 无「男」版 + 主框架（ryouzyoku / pc_ryou / victory_ryouzyoku /
- * *_RYOU_YUSYA / DUNGEON_RYOUZYOKU_ESCAPE）。
+ * *_ryou_yusya / dungeon_ryouzyoku_escape）。
  *
  * @module
  */
@@ -2400,8 +2400,8 @@ async function girl_ryou(arg, mon_num, rand) {
         '『大家一起来帮他含，一下就射的话，就要好好处罚你喔！』',
       );
       await era.printAndWait(`${arg_name}被魔界的女人口交着，`);
-      // 与上一个分支同型：:1733 的「紫色的长舌头，在…的」与
-      // 的阴茎分档都不换行，末段 :1747 的 PRINTFORMW 才收行（#624）
+      // 与上一个分支同型：「紫色的长舌头，在…的」与
+      // 阴茎分档都不换行，末段 PRINTFORMW 才收行（#624）
       const p318b = era.get(`talent:${arg}:318`) || 0; // 阴茎分档
       await era.printAndWait(
         `紫色的长舌头，在${arg_name}的` +
@@ -2465,8 +2465,8 @@ async function girl_ryou(arg, mon_num, rand) {
       // 喂奶
       await era.printAndWait('『胸部，味道好吗？舔个没完呢～』');
       await era.printAndWait(`${arg_name}被魔界的女性一边喂奶，一边被撸着。`);
-      // 与上面两支同型：:1805 的「紫色的手，温柔地在…的」与
-      // 的阴茎分档都不换行，末段 :1819 的 PRINTFORMW 才收行（#624）
+      // 与上面两支同型：「紫色的手，温柔地在…的」与
+      // 阴茎分档都不换行，末段 PRINTFORMW 才收行（#624）
       const p318d = era.get(`talent:${arg}:318`) || 0; // 阴茎分档
       await era.printAndWait(
         `紫色的手，温柔地在${arg_name}的` +

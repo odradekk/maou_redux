@@ -161,7 +161,7 @@ const gobi_koujo_family = new DispatchFamily(
  *   - line     分发行号（遗留字段，现无读取方）
  *   - dispatch TRYCALLFORM 拼出的函数名前缀（编号 = LOCAL - 100）
  *   - entry    ere 侧入口函数名；module 是它所在的模块（load_module 可加载名）
- *   - erb      入口函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
+ *   - erb      拼名对应的旧引擎函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
  *             的三处（VICTORY_KOUJO / ATTACK_KOUJO / ATTACK_KOUJO_B 的实际函数名
  *             是去掉 DUNGEON_ 的），OSIOKI_KOUJO 在 ere 侧沿史拼作 osioski-
  *             （各口上文件的既有拼写，不改）。
@@ -635,8 +635,8 @@ async function attack_koujo(cid, rand) {
  * 的「被攻击方」暂存，ere 侧无单字母全局通道，按 #5 决议第六条以形参显式传入。
  *
  * **调用方尚未移植**：`CALL ATTACK_KOUJO_B` 全库唯一一处，在
- * 侵略域的 ARCANA 战斗（FLAG:5 & 32 的台词检查内），该文件属侵略
- * 域、随侵略票实现真身。本入口照 22 条分发表先实现（表是 #403 的交付面），
+ * 侵略域的 ARCANA 战斗里（FLAG:5 & 32 的台词检查内），随侵略
+ * 票实现真身。本入口照 22 条分发表先实现（表是 #403 的交付面），
  * 接入时调用方传 `B` 的取值即可，不改本签名。
  *
  * 本入口无额外检查；缺席语义取静默——与同族 attack_koujo

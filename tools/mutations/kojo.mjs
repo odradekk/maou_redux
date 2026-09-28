@@ -108,7 +108,7 @@ export default [
     find: "      era.set('flag:7', 2);",
     replace: "      era.set('flag:7', 1);",
     tests: ['kojo-system'],
-    must_mention: '@EVENTSHOP',
+    must_mention: 'EVENTSHOP',
   },
   {
     desc: 'M70 K5 @EVENTEND #LATER 清标志删除',
@@ -19868,10 +19868,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M8958 GOHOUBI_REQUEST 不还原 TARGET（SWAP 少了回程）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    find: `  era_flag.target = target_pool; // SWAP 还原（:450-463 段）
+    find: `  await try_kojo(gohoubi_request_koujo_family, cid, [cid]);
+  era_flag.target = target_pool; // SWAP 还原
   return 0;
 }`,
-    replace: `  return 0; // 变异：不还原 TARGET
+    replace: `  await try_kojo(gohoubi_request_koujo_family, cid, [cid]);
+  return 0; // 变异：不还原 TARGET
 }`,
     tests: ['event-k-dispatch'],
     must_mention: '返回后 TARGET 还原',
@@ -22168,7 +22170,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      ); // 变异：拆回\n' +
       "      await era.print('奉仕持续了下去……'); // 变异：拆回",
     tests: ['kojo-dungeon-ravish-man'],
-    must_mention: ':81..:101 与 :112..:127 合成一条',
+    must_mention: '前半段与后半段合成一条',
   },
   {
     desc: 'M12708 男版迷宫凌辱·全穴奉仕整行（:152..:175）拆回多条（#624：随机词条又占一行）',
@@ -22467,7 +22469,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    await era.print(job); // 变异：拆回\n' +
       '    await era.printAndWait(`副业${local}点收入。`); // 变异：拆回',
     tests: ['kojo-dungeon-bitch'],
-    must_mention: ':504 + PRINTDATA 词条 + :511 合成一条',
+    must_mention: '副业行',
   },
   {
     desc: 'M12735 自慰·妄想行（:571..:637）拆回多条（#624）',
@@ -22485,7 +22487,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "    (has_cock ? '握住肉棒捋了起来' : '') + `自慰了${play}次。`,\n" +
       '  ); // 变异：拆回',
     tests: ['kojo-dungeon-bitch'],
-    must_mention: ':571..:637 是一整行',
+    must_mention: '分档文本与收行是一整行',
   },
   {
     desc: 'M12736 K0 自慰二次·拍摄（:887..:893）拆回多条（#624）',
@@ -22633,7 +22635,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "        await era.print(girl[0] && man[0] ? '于是' : name_of(arg)); // 变异：拆回\n" +
       '        await era.print(`以${locals}为对手`); // 变异：拆回',
     tests: ['kojo-dungeon-bitch'],
-    must_mention: '前缀并进 :217 那条',
+    must_mention: '前缀并进「以 LOCALS 为对手」那条',
   },
   {
     desc: 'M12748 女版卖春·街中客行前缀（:233+:237）拆回两条（#624）',
