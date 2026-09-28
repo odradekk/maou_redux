@@ -1,20 +1,19 @@
 /**
- * EVENT_K.ERB 口上分发表的行为测试（issue #403，N19 段 4）。
+ * 口上分发表的行为测试（issue #403，N19 段 4）。
  *
  * 表在 ere/kojo/kojo-system.js 的 EVENT_K_DISPATCH_TABLE（分片在
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点）。覆盖：
  *   - 21 条派发的编号换算（性格素质 160-179 → LOCAL 100-119 → 分发键
  *     LOCAL - 100；EX_TALENT 101-800 → LOCAL 1001-1700 → 键 901-1600）；
- *   - 各入口的守卫集与 TARGET 语义逐条驱动（有无 FLAG:7 守卫、
+ *   - 各入口的检查集与 TARGET 语义逐条驱动（有无 FLAG:7 检查、
  *     有无存在判定、是否 TARGET = A / B / ARG:0 并还原）；
  *   - 缺席语义：未命中一律静默（TRYCALL 落空；#565 返工统一）——逐条钉住；
- *   - :325 的 ATTACK_KOUJO_B（调用方侵略/ARCANA_BATTLE.ERB
- *     未移植）；
- *   - TARGET 置位守卫的两侧：置成传入对象 / cid 缺省时吃当前 TARGET；
+ *   - ATTACK_KOUJO_B（调用方在侵略域、尚未移植）；
+ *   - TARGET 置位检查的两侧：置成传入对象 / cid 缺省时吃当前 TARGET；
  *   - 分发窗口（in_kojo_window）与键偏移：本地可达格在这里、边界格与窗口
  *     谓词本身在 test/kojo-system.test.js、ravish 站点另有逐点扫描；
- *   - DispatchFamily 族名全库唯一（#403 实测的缺陷形态：同名两实例，
+ *   - DispatchFamily 族名全库唯一（#403 实测的缺陷形式：同名两实例，
  *     一边注册一边分发，玩家侧静默失声）。
  */
 
@@ -72,9 +71,9 @@ function probe(sink) {
   };
 }
 
-// —— @ATTACK_KOUJO_B（:325-337）——
+// —— ATTACK_KOUJO_B ——
 
-test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DUNGEON_ATTACK_K{LOCAL-100} 后还原', async () => {
+test('ATTACK_KOUJO_B：TARGET 置为 B 侧对象、分发 DUNGEON_ATTACK_K{LOCAL-100} 后还原', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture); // 高貴 163 → LOCAL 103 → 键 3
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -91,7 +90,7 @@ test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DU
 
   era_flag.target = 5; // 调用前的 TARGET（另一角色，验「暂存/还原」）
   assert.equal(await attack_koujo_b(17, rand), 0);
-  assert.deepEqual(seen, [[rand]], '随机源透传（:322/:336 同族）');
+  assert.deepEqual(seen, [[rand]], '随机源透传（同族两入口一致）');
   assert.equal(target_during, 17, '分发期间 TARGET = 传入的 B 侧角色号');
   assert.equal(
     era_flag.target,
@@ -100,7 +99,7 @@ test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DU
   );
 });
 
-test('@ATTACK_KOUJO_B：缺席目标静默（原作 TRYCALLFORM 落空，#565 返工）', async () => {
+test('ATTACK_KOUJO_B：缺席目标静默（TRYCALLFORM 落空，#565 返工）', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture); // 高貴 163 → 键 3，不注册 handler
   const { attack_koujo_b } = fixture.load_module('kojo/kojo-system');
@@ -108,13 +107,13 @@ test('@ATTACK_KOUJO_B：缺席目标静默（原作 TRYCALLFORM 落空，#565 �
   assert.deepEqual(
     fixture.text_lines(),
     [],
-    '未命中静默（原作 TRYCALLFORM 落空；真缺口由 kojo-family-coverage 的集合比对拦）',
+    '未命中静默（TRYCALLFORM 落空；真缺口由 kojo-family-coverage 的集合比对拦）',
   );
 });
 
-// —— @KOJO_MESSAGE_PALAMCNG（:169-181）——
+// —— KOJO_MESSAGE_PALAMCNG ——
 
-test('@KOJO_MESSAGE_PALAMCNG（:175-176）：存在判定的 EX_FLAG 臂——EX 口上不被普通 FLAG 拦掉', async () => {
+test('KOJO_MESSAGE_PALAMCNG：存在判定的 EX_FLAG 分支——EX 口上不被普通 FLAG 拦掉', async () => {
   const fixture = setup_kojo();
   seed_ex(fixture); // LOCAL 1002；存在标志是 EX_FLAG:102，FLAG:1002 不在册
   const { kojo_message_palamcng, kojo_message_palamcng_family } =
@@ -131,7 +130,7 @@ test('@KOJO_MESSAGE_PALAMCNG（:175-176）：存在判定的 EX_FLAG 臂——EX
   );
 });
 
-test('@KOJO_MESSAGE_PALAMCNG：两道存在标志都为 0 时静默早退（EX 臂另一侧）', async () => {
+test('KOJO_MESSAGE_PALAMCNG：两道存在标志都为 0 时静默早退（EX 分支另一侧）', async () => {
   const fixture = setup_kojo();
   seed_ex(fixture);
   fixture.store.set('exflag:102', 0);
@@ -144,7 +143,7 @@ test('@KOJO_MESSAGE_PALAMCNG：两道存在标志都为 0 时静默早退（EX �
   assert.deepEqual(fixture.text_lines(), [], '早退连占位行也不打');
 });
 
-test('@KOJO_MESSAGE_MARKCNG：无存在判定（原件的存在判定行是注释态）→ FLAG:LOCAL == 0 也派发', async () => {
+test('KOJO_MESSAGE_MARKCNG：无存在判定（存在判定行是注释态）→ FLAG:LOCAL == 0 也派发', async () => {
   const fixture = setup_kojo();
   fixture.store.set('talent:17:163', 1); // FLAG:103 特意不置
   const { kojo_message_markcng, kojo_message_markcng_family } =
@@ -153,12 +152,12 @@ test('@KOJO_MESSAGE_MARKCNG：无存在判定（原件的存在判定行是注�
   kojo_message_markcng_family.register(3, probe(seen));
   const rand = always;
   await kojo_message_markcng(rand);
-  assert.deepEqual(seen, [[rand]], '没有存在判定这道闸（原作 :195 是注释态）');
+  assert.deepEqual(seen, [[rand]], '没有存在判定这道闸（该行是注释态）');
 });
 
-// —— @GOHOUBI_REQUEST_KOUJO（:450-463）——
+// —— GOHOUBI_REQUEST_KOUJO ——
 
-test('@GOHOUBI_REQUEST_KOUJO（:451-463）：签名 (cid) 由 #397 冻结，函数体真分发（#403 换体）', async () => {
+test('GOHOUBI_REQUEST_KOUJO：签名 (cid) 由 #397 冻结，函数体真分发（#403 换体）', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -180,11 +179,11 @@ test('@GOHOUBI_REQUEST_KOUJO（:451-463）：签名 (cid) 由 #397 冻结，函�
   era_flag.target = 5; // 调用前的 TARGET（验 SWAP 的暂存/还原）
   assert.equal(await gohoubi_request_koujo(17), 0);
   assert.deepEqual(seen, [[17]], 'K 侧收 cid（K7 直接用它读 CFLAG:504）');
-  assert.equal(target_during, 17, '分发期间 TARGET = A（:452）');
-  assert.equal(era_flag.target, 5, '返回后 TARGET 还原（:463 SWAP）');
+  assert.equal(target_during, 17, '分发期间 TARGET = A');
+  assert.equal(era_flag.target, 5, '返回后 TARGET 还原（SWAP）');
 });
 
-test('@GOHOUBI_REQUEST_KOUJO：缺席目标静默（原作 TRYCALLFORM 落空，#565 返工）', async () => {
+test('GOHOUBI_REQUEST_KOUJO：缺席目标静默（TRYCALLFORM 落空，#565 返工）', async () => {
   const fixture = setup_kojo(); // 无性格素质 → 键 -1
   const { gohoubi_request_koujo } = fixture.load_module(
     'kojo/kojo-dungeon-after',
@@ -225,24 +224,24 @@ test('GOHOUBI_REQUEST 族单实例：K 模块声明的注册号全部落进 dung
   assert.deepEqual(
     missing,
     [],
-    '注册进了另一个同名实例（分发侧永远看不到）——#403 实测的缺陷形态',
+    '注册进了另一个同名实例（分发侧永远看不到）——#403 实测的缺陷形式',
   );
 });
 
-// —— 处刑首五族（:357-:427）与迷宫凌辱两族（:249-:272）——
+// —— 处刑首五族与迷宫凌辱两族 ——
 
-// 入口 → 族 → 原作行号。五族同构：LOCAL = GET_KOJO_NUM() → 守卫 →
-// TRYCALLFORM <族>_K{LOCAL - 100}（:366/:381/:396/:411/:426）。
-// 入口在 kojo-system.js（#403 从五个事件模块的内联块收口，行为不变）。
+// 入口 → 族。五族同构：LOCAL = GET_KOJO_NUM() → 检查 →
+// TRYCALLFORM <族>_K{LOCAL - 100}。
+// 入口在 kojo-system.js（#403 从五个事件模块的内联块整合，行为不变）。
 const EXECUTION_DISPATCH = [
-  ['@EXUCUTION_KOUJO（:357-367）', 'exucution_koujo'],
-  ['@MUSEUM_KOUJO（:372-382）', 'museum_koujo'],
-  ['@BANISHMENT_KOUJO（:387-397）', 'banishment_koujo'],
-  ['@PUBLIC_EXUCUTION_KOUJO（:402-412）', 'public_exucution_koujo'],
-  ['@GROTESQUE_KOUJO（:417-427）', 'grotesque_koujo'],
+  ['EXUCUTION_KOUJO', 'exucution_koujo'],
+  ['MUSEUM_KOUJO', 'museum_koujo'],
+  ['BANISHMENT_KOUJO', 'banishment_koujo'],
+  ['PUBLIC_EXUCUTION_KOUJO', 'public_exucution_koujo'],
+  ['GROTESQUE_KOUJO', 'grotesque_koujo'],
 ];
 
-test('处刑首五族：分发到 <族>_K{LOCAL-100}、随机源透传、不改写 TARGET（原作这五处不设 TARGET）', async () => {
+test('处刑首五族：分发到 <族>_K{LOCAL-100}、随机源透传、不改写 TARGET（这五处不设 TARGET）', async () => {
   for (const [label, entry] of EXECUTION_DISPATCH) {
     const fixture = setup_kojo();
     seed_noble(fixture); // 高貴 163 → LOCAL 103 → 键 3
@@ -258,7 +257,7 @@ test('处刑首五族：分发到 <族>_K{LOCAL-100}、随机源透传、不改�
     era_flag.target = 5;
     assert.equal(await kojo[entry](17, 42, rand), 0, label);
     assert.deepEqual(seen, [[rand]], `${label}：handler 收随机源`);
-    assert.equal(era_flag.target, 5, `${label}：TARGET 不动（原作不设）`);
+    assert.equal(era_flag.target, 5, `${label}：TARGET 不动`);
   }
 });
 
@@ -291,7 +290,7 @@ test('处刑首五族：无性格编号（键 -1）→ 静默（TRYCALL 落空�
   }
 });
 
-test('@DUNGEON_RYOUZYOKU（:249-258）/:DUNGEON_RYOUZYOKU_AFTER（:263-272）：读当前 TARGET 分发、无参、不改写 TARGET', async () => {
+test('DUNGEON_RYOUZYOKU/DUNGEON_RYOUZYOKU_AFTER：读当前 TARGET 分发、无参、不改写 TARGET', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -306,7 +305,7 @@ test('@DUNGEON_RYOUZYOKU（:249-258）/:DUNGEON_RYOUZYOKU_AFTER（:263-272）：
   assert.equal(await ravish.dungeon_ryouzyoku_after(), 0);
   assert.deepEqual(seen_before, [[]], 'GET_KOJO_NUM() 走当前 TARGET');
   assert.deepEqual(seen_after, [[]]);
-  assert.equal(era_flag.target, 17, 'TARGET 由调用方（:57 TARGET = ARG）管');
+  assert.equal(era_flag.target, 17, 'TARGET 由调用方（分派前置）管');
 });
 
 test('迷宫凌辱两族：无性格编号时静默（TRYCALL 落空）', async () => {
@@ -349,8 +348,8 @@ function arg_value(name, ctx) {
 /**
  * 表驱动的单行驱动：一份新夹具 + 探针注册 + 调用入口。
  *
- * 每行一份新夹具：DUNGEON_ATTACK_K 一族被两行共用（@ATTACK_KOUJO 与
- * @ATTACK_KOUJO_B），同族重复注册会被 DispatchFamily 当场拦下（同名遮蔽守卫）。
+ * 每行一份新夹具：DUNGEON_ATTACK_K 一族被两行共用（ATTACK_KOUJO 与
+ * ATTACK_KOUJO_B），同族重复注册会被 DispatchFamily 当场拦下（同名遮蔽检查）。
  *
  * @param {object} row 表行
  * @param {object} [options]
@@ -366,7 +365,7 @@ async function drive_row(row, { key = 3, seed = () => {} } = {}) {
   era_flag.target = cid;
   fixture.store.set('flag:7', 2);
   seed(fixture, cid);
-  // @SELF_KOJO 的 FLAG:7 守卫会写 TFLAG:15（调教期才存在的表），照真实调用
+  // SELF_KOJO 的 FLAG:7 检查会写 TFLAG:15（调教期才存在的表），照真实调用
   // 场景把调教开起来——kojo-system.test.js 的 setup_kojo 同款
   fixture.era.beginTrain(0, cid);
   const mod = fixture.load_module(row.module);
@@ -428,7 +427,7 @@ test('GET_KOJO_NUM 素质扫描全范围：160-179 逐格 → LOCAL 100-119', as
   }
 });
 
-test('21 行逐条驱动（EX 臂）：EX_TALENT:102 → LOCAL 1002 → 键 902 同样命中', async () => {
+test('21 行逐条驱动（EX 分支）：EX_TALENT:102 → LOCAL 1002 → 键 902 同样命中', async () => {
   for (const row of table_rows()) {
     const { seen, cid, rand } = await drive_row(row, {
       key: 902,
@@ -437,7 +436,7 @@ test('21 行逐条驱动（EX 臂）：EX_TALENT:102 → LOCAL 1002 → 键 902 
     assert.deepEqual(
       seen,
       [row.handler.map((name) => arg_value(name, { cid, rand }))],
-      `${row.entry}：守卫的 LOCAL > 1000 臂可达`,
+      `${row.entry}：检查的 LOCAL > 1000 分支可达`,
     );
   }
 });
@@ -455,7 +454,7 @@ test('族 call 的落空值契约：21 行都在 options 里声明 whenMissing =
     era_flag.target = cid;
     fixture.store.set('flag:7', 2);
     seed_noble(fixture, cid); // LOCAL 103 → 键 3
-    fixture.era.beginTrain(0, cid); // @SELF_KOJO 的守卫会写 TFLAG:15
+    fixture.era.beginTrain(0, cid); // SELF_KOJO 的检查会写 TFLAG:15
     const mod = fixture.load_module(row.module);
     const family = mod[row.family];
     const recorded = [];
@@ -494,23 +493,23 @@ test('FLAG:7 = 0（口上总开关关）：flag_guard 行不派发，其余行�
       },
     });
     if (row.flag_guard) {
-      assert.deepEqual(seen, [], `${row.entry}：有 FLAG:7 守卫 → 关掉时不派发`);
+      assert.deepEqual(seen, [], `${row.entry}：有 FLAG:7 检查 → 关掉时不派发`);
       assert.deepEqual(
         fixture.text_lines(),
         [],
-        `${row.entry}：守卫命中连占位行也不打`,
+        `${row.entry}：检查命中连占位行也不打`,
       );
     } else {
       assert.equal(
         seen.length,
         1,
-        `${row.entry}：原件同段没有 FLAG:7 守卫 → 关掉也照常派发`,
+        `${row.entry}：同段没有 FLAG:7 检查 → 关掉也照常派发`,
       );
     }
   }
 });
 
-test('缺席语义：未命中一律静默（原作 TRYCALLFORM 落空，#565 返工统一）', async () => {
+test('缺席语义：未命中一律静默（TRYCALLFORM 落空，#565 返工统一）', async () => {
   for (const row of table_rows()) {
     const fixture = create_era_fixture();
     const era_flag = fixture.load_module('era-utils/era-flag');
@@ -533,20 +532,16 @@ test('缺席语义：未命中一律静默（原作 TRYCALLFORM 落空，#565 �
       `${row.entry}：缺 handler 时返回 ${JSON.stringify(missing_value)}（TRYCALL 落空）`,
     );
     // 未命中一律静默（#565 返工），各入口没有差别
-    assert.deepEqual(
-      lines,
-      [],
-      `${row.entry}：未命中静默（原作 TRYCALLFORM 落空）`,
-    );
+    assert.deepEqual(lines, [], `${row.entry}：未命中静默（TRYCALLFORM 落空）`);
   }
 });
 
 // —— TARGET 暂存/还原（SWAP LOCAL:2, TARGET 的等价改写） ——
 
-// 七处会改 TARGET 的入口：@ENTERENEMY_KOUJO（:433/:445）、@GOHOUBI_REQUEST_KOUJO
-// （:451/:463）、@GOHOUBI_AFTER_KOUJO（:469/:481）、@OSIOKI_KOUJO（:487/:499）
-// 是 SWAP 成对。@VICTORY_KOUJO（:296）、@ATTACK_KOUJO（:313）、
-// @ATTACK_KOUJO_B（:327）原件只置不还原，ere 侧按同族既有约定（attack_koujo
+// 七处会改 TARGET 的入口：ENTERENEMY_KOUJO、GOHOUBI_REQUEST_KOUJO
+// 、GOHOUBI_AFTER_KOUJO、OSIOKI_KOUJO
+// 是 SWAP 成对。VICTORY_KOUJO、ATTACK_KOUJO、
+// ATTACK_KOUJO_B 只置不还原，ere 侧按同族既有约定（attack_koujo
 // 先例）暂存/还原，不留跨调用的指针残留。其余分发点不碰 TARGET（读当前值，
 // 由调用方置）——两侧都在这儿钉住。
 const TARGET_SET_ENTRIES = [
@@ -634,7 +629,7 @@ test('TARGET 暂存/还原：七处置/还原成对（分发期间 = 传入对�
   }
 });
 
-test('TARGET 置位守卫的两侧：cid 缺省（undefined / 负数）吃当前 TARGET，合法 0 按它自己', async () => {
+test('TARGET 置位检查的两侧：cid 缺省（undefined / 负数）吃当前 TARGET，合法 0 按它自己', async () => {
   // 三个入口的 `if (cid !== undefined && cid >= 0)` 是哨兵与合法值的边界：
   // 缺省侧吃当前 TARGET（GET_KOJO_NUM 的参缺省语义），0 侧是合法角色号，
   // 指针都不留残留
@@ -716,7 +711,7 @@ test('TARGET 置位守卫的两侧：cid 缺省（undefined / 负数）吃当前
   }
 });
 
-// —— 族名唯一（#403 实测缺陷的形态锁） ——
+// —— 族名唯一（#403 实测缺陷的形式锁） ——
 
 test('DispatchFamily 族名全库唯一：同名两实例会让一边的注册永远分不到', () => {
   const names = new Map(); // 族名 → [文件…]

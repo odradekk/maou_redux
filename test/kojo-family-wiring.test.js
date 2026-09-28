@@ -1,32 +1,31 @@
 /**
- * 口上模块接线的通用锁（issue #282）：`ere/kojo/kojo-*.js` 里靠副作用注册
+ * 口上模块接入的通用锁（issue #282）：`ere/kojo/kojo-*.js` 里靠副作用注册
  * 进 `kojo_message_com_family` / `self_kojo_family` 的模块，必须被主启动图
  * （ere/system/flow/main-loop.js）require——注册与否全看有没有人 require 它，
  * 而口上票的单测走 `load_module('kojo/kojo-xxx')` 直接加载模块，绕过主启动图，
- * 漏装不会被任何检查发现（#228 的 com-cloth 就是同形态漏的：游戏里两条指令
- * 根本没注册，玩家脱不了衣服，而所有测试全绿）。
+ * 漏装不会被任何检查发现（#228 的 com-cloth 就是同写法漏的：游戏里两条指令
  *
  * == 键空间（#282 工单第一问，逐条查实后写死） ==
  *
  * 注册侧与调用侧是**同一套编号**，不是指令族那种「register(20) = COM20」的
  * 直白对应，查实的映射如下：
  *
- *   - `kojo-k3-noble.js:477`：`kojo_message_com_family.register(3, …)`；
- *     `kojo-k5-mao.js:199`：`register(5, …)`。注册的就是分发键 N。
+ *   - `kojo-k3-noble.js`：`kojo_message_com_family.register(3, …)`；
+ *     `kojo-k5-mao.js`：`register(5, …)`。注册的就是分发键 N。
  *   - 调用侧 `kojo-system.js` 的 `kojo_message_com()`：
- *     `local = get_kojo_num()`（:155 GET_KOJO_NUM()）——:137-140 逐格探测
+ *     `local = get_kojo_num()`——逐格探测
  *     素质 160-179（慈愛..貴公子 等性格素质），`local = count - 60`
  *     （163 高貴 → 103、165 村娘A/マオ → 105），最后一格命中者胜。
- *     然后 `kojo_message_com_family.call(local - 100, …)`（:161）。
+ *     然后 `kojo_message_com_family.call(local - 100, …)`。
  *     所以 **register(N) 与 call(LOCAL - 100) 的 N 恒等**：K3 高貴素质 163 →
  *     LOCAL 103 → call(3) → 命中 register(3)。
- *   - `DECLARED_KOJO_COM_IDS`（kojo-system.js:91）= 普通 0-39 + EX 901-1600，
+ *   - `DECLARED_KOJO_COM_IDS`（kojo-system.js）= 普通 0-39 + EX 901-1600，
  *     是**合法性空间**（DispatchFamily 的 declaredIds；空间内缺失合法，是
  *     TRYCALL 落空的等价物），不是注册清单——锁对的是「每个注册号都必须
  *     经主启动图装上」，不是「空间被填满」。
  *   - `self_kojo_family` 与 `kojo_message_com_family` **同一套键**
- *     （SELF_KOJO_K{LOCAL - 100}，kojo-system.js:100/136-141）。K3 已注册
- *     `SELF_KOJO_K3`（#234）；K5 事件口上仍随各自票落地。锁对两个族都扫——
+ *     （SELF_KOJO_K{LOCAL - 100}，kojo-system.js 同处声明）。K3 已注册
+ *     `SELF_KOJO_K3`（#234）；K5 事件口上仍随各自票实现。锁对两个族都扫——
  *     任何口上文件往里注册时，主启动图漏 require 立即红。
  *
  * == 为什么只锁主启动图一张清单（#282 工单第二问） ==
@@ -37,18 +36,18 @@
  *
  *   - 口上的装载是**行为断言**在守（各 kojo 模块测试直接 load_module 并
  *     断言注册与台词），不是清单对账——清单里有没有它，行为测试都会红；
- *   - 口上的调用链经 `event/source-check.js:78` 的
+ *   - 口上的调用链经 `event/source-check.js` 的
  *     `require('#/kojo/kojo-system')` 顶层副作用成立，而 source-check 已在
  *     调教路径清单里——kojo-system 必然装上，分发族存在；
  *   - 每个口上文件的注册由本锁对账主启动图。
  *
  *   结论：**不需要第二张口上清单**。加一张没人消费的清单只会把
- *   「口上文件落地必须同时改两处」的维护成本丢给后面二十张口上票，而锁
- *   本身证明不了任何行为（#274 的教训是清单对账守真漂移，这里没有第二张
+ *   「口上文件实现必须同时改两处」的维护成本丢给后面二十张口上票，而锁
+ *   本身证明不了任何行为（#274 的教训是清单对账保持同步，这里没有第二张
  *   清单可漂）。口上装载面的正确性由两条独立防线承担：本文件（主启动图
  *   对账）+ 各口上模块的行为断言。
  *
- * 号集合从源码扫出，不维护手写名单——新口上文件落地即纳入；漏 require
+ * 号集合从源码扫出，不维护手写名单——新口上文件实现即纳入；漏 require
  * 时断言点名模块，不报一串裸编号。扫描器解析不了新写法就抛（与 #274 的
  * 既有约定一致）。
  */
@@ -124,7 +123,7 @@ function missing_modules(expected_by_module, field, actual) {
 
 test('源码扫描能拿到每个口上模块的分发族注册号', () => {
   const by_module = scan_kojo_modules();
-  // 抽查字面量写法（当前唯一形态），防止扫描器自己漂成空集还全绿
+  // 抽查字面量写法（当前唯一写法），防止扫描器自己漂成空集还全绿
   assert.deepEqual(
     [...by_module.get('kojo-k3-noble').kojo_message_com_family].sort(
       (a, b) => a - b,
@@ -137,7 +136,7 @@ test('源码扫描能拿到每个口上模块的分发族注册号', () => {
     ),
     [5],
   );
-  // K3 已落地 SELF_KOJO_K3（#234）；K5 事件口上随 #236
+  // K3 已实现 SELF_KOJO_K3（#234）；K5 事件口上随 #236
   assert.equal(by_module.get('kojo-k3-noble').self_kojo_family.size, 1);
   assert.equal(by_module.get('kojo-k5-mao').self_kojo_family.size, 1);
   // 底座与纯工具模块不进表
@@ -146,7 +145,7 @@ test('源码扫描能拿到每个口上模块的分发族注册号', () => {
 });
 
 test('主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集', () => {
-  // 漏装时报「主启动图漏装：kojo-k3-noble」——M1520/M1521 的 must_mention 锚
+  // 漏装时报「主启动图漏装：kojo-k3-noble」——M1520/M1521 的 must_mention 定位串
   const expected_by_module = scan_kojo_modules();
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
