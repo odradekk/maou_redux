@@ -12778,7 +12778,7 @@ async function kojo_message_com_11(rand) {
             await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);
           }
         } else {
-          // 与上面同型：六支的 PRINTFORML 各自收行，
+          // 与初回同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
