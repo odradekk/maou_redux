@@ -14144,7 +14144,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'GOHOUBI_AFTER：童贞狩档的膣/肛门两支文字不同（对照上一条）',
   },
   {
-    desc: 'M2502 K8 OSIOKI 脱粪刑门槛被「统一」成自慰刑的 4（源作是 6，#239）',
+    desc: 'M2502 K8 OSIOKI 脱粪刑门槛被「统一」成自慰刑的 4（应为 6，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    if (era0(`abl:${a}:17`) >= 6) {',
     replace: '    if (era0(`abl:${a}:17`) >= 4) {',
@@ -14188,7 +14188,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2507 K8 GOBI 默认支第二支被「去重」成第三支的语尾（两支同文，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      return `啊。`;\n    } else {',
-    replace: '      return `什么啊。`; // （变异：源作同文被改）\n    } else {',
+    replace: '      return `什么啊。`; // （变异：两支同文被改）\n    } else {',
     tests: ['kojo-k8-spade'],
     must_mention: '默认支（含 ARG:0==0）三选一，前两支同文',
   },
@@ -22766,7 +22766,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 6; // CFLAG:TARGET:346 = 6',
     replace:
-      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        // 与上两档"眼神快融化了………"不同，此处缺"了"字（源作误写，1:1 保真）',
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回\n      } else {\n        // 与上两档"眼神快融化了………"不同，此处缺"了"字（误写按原样保留）',
     tests: ['kojo-k8-spade'],
     must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
