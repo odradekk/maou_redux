@@ -25192,7 +25192,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '      if (assi_mao) {\n        if (\n          era.get(`talent:${target}:76`) === 1 &&\n          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2) // 变异：回退误读 363',
     tests: ['kojo-k11-lily'],
-    must_mention: '四分支条件读 CFLAG:365 自身',
+    must_mention: 'COM124 二回目门槛按深喉 CFLAG:365 分档',
   },
   {
     desc: 'M13337 K11 DOG_KOJO_11 眼罩牝犬档条件回退误读 CFLAG:338（#654）',
