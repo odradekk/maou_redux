@@ -3625,6 +3625,16 @@ test('DOG_KOJO_8 SC43 眼罩 終了時·牝犬：正常触发，CFLAG:444 推进
   assert.equal(fixture.store.get('cflag:31:444'), 4, 'CFLAG:444 推进到 4');
 });
 
+test('DOG_KOJO_8 SC43 眼罩 終了時·それ以外：CFLAG:444 推进到 1', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    ef.selectcom = 43;
+  });
+  const { dog_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await dog_kojo_8();
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get('cflag:31:444'), 1, 'CFLAG:444 推进到 1');
+});
+
 test('DOG_KOJO_8 SC56 会話 初めて·无摄像（TEQUIP:53 == 0）：不打印任何文本，CFLAG:357 仍推进到 1', async () => {
   const fixture = await setup_k8((f, ef) => {
     ef.selectcom = 56;

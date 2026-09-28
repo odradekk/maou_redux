@@ -435,11 +435,11 @@ test('SELECTCOM 19 肛珠：五档档位不再要求尻穴狂（#688），口上
 
 // —— #688：SELF_KOJO 调教后自慰「尻穴狂」档不再叠加淫乱要求 ——
 
-test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=3 命中推进到 4', async () => {
+test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=4（本档上限）命中推进到 4', async () => {
   const fixture = await setup_k904((f) => {
     f.store.set('tflag:13', 1); // 初吻与自我口上 === 1 → 调教后自慰段
     f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
-    f.store.set(`cflag:${CID}:261`, 3);
+    f.store.set(`cflag:${CID}:261`, 4); // 推进值取在本档上限
     f.store.set(`talent:${CID}:77`, 1); // 尻穴狂
   });
   const { self_kojo_family } = fixture.load_module('kojo/kojo-system');

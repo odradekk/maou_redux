@@ -456,10 +456,12 @@ test('SELECTCOM 30/32/40/41 门槛与计数器自洽：侍奉支不需爱慕、�
   }, 30);
   await speak(handjob);
   assert.ok(
-    handjob.text_lines().some((line) => line.includes('什么都可以做来着')),
+    handjob
+      .text_lines()
+      .some((line) => line.includes('为什么会要本宫做这种事')),
     'CFLAG:331 侍奉精神支单有 ABL:16>=3 即出声',
   );
-  assert.equal(handjob.store.get(`cflag:${CID}:331`), 4, '推进 CFLAG:331=4');
+  assert.equal(handjob.store.get(`cflag:${CID}:331`), 3, '推进 CFLAG:331=3');
 
   const paizuri = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:333`, 4);
@@ -700,13 +702,13 @@ test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三�
   }
 });
 
-// —— #688：SELECTCOM 30 手淫三档（原写法叠加爱慕与侍奉双要求，永远走不到）回正为只看爱慕 ——
+// —— #688：SELECTCOM 30 手淫侍奉精神档回到三档（F8 当时把侍奉档改在了四档，本档按模板只看侍奉精神） ——
 
-test('SELECTCOM 30 手淫：三档回正为只看爱慕（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
+test('SELECTCOM 30 手淫：侍奉精神档回到三档（#688），口上开关关闭时在 CFLAG:331=2 命中推进到 3', async () => {
   const fixture = await setup_k903((f) => {
     f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
     f.store.set(`cflag:${CID}:331`, 2);
-    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`abl:${CID}:16`, 3);
   }, 30);
   await speak(fixture);
   assert.deepEqual(fixture.text_lines(), [

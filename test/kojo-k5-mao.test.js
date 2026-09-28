@@ -757,11 +757,11 @@ test('SELECTCOM 30 手淫：侍奉精神Lv3以上档不再要求爱慕（#688）
 
 // —— #688：SELF_KOJO 调教后自慰「尻穴狂」档不再叠加淫乱要求 ——
 
-test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=3 命中推进到 4', async () => {
+test('SELF_KOJO 调教后自慰：尻穴狂档（TALENT:77）不再叠加淫乱要求（#688），口上开关关闭时在 CFLAG:261=4（本档上限）命中推进到 4', async () => {
   const fixture = await setup_k5((f) => {
     f.load_module('facade/game').game.train.初吻与自我口上 = 1; // 入口：调教后自慰段
     f.store.set('flag:7', 0); // 口上开关关闭，档推进上限生效
-    f.store.set('cflag:17:261', 3);
+    f.store.set('cflag:17:261', 4);
     f.store.set('talent:17:77', 1); // 尻穴狂
   });
   const mod = fixture.load_module('kojo/kojo-k5-mao');

@@ -9374,7 +9374,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       find: 'kojo.兽奸眼罩 = 4;',
       replace: 'kojo.兽奸眼罩 = 99;',
       tests: ['kojo-k11-lily'],
-      must_mention: '眼罩取下前三档按原作误读 CFLAG:338，写 CFLAG:444',
+      must_mention: '眼罩着脱各档判据读 CFLAG:444 自身',
     },
     {
       desc: 'M4685 DOG_KOJO_11 交谈后续高档写错（#242）',
@@ -13103,7 +13103,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '      kojo.背面座位肛交 = 4; // CFLAG:330 = 4',
     replace: '      kojo.背面座位肛交 = 3; // （变异：推进写错）',
     tests: ['kojo-k8-spade'],
-    must_mention: '缺失结尾引号 1:1 保真',
+    must_mention: '台词收尾引号齐全',
   },
   {
     desc: 'M1867 K8 SELECTCOM 29 背面座位肛交爱+A感觉Lv3以上分档丢失（TALENT:85==1 改 false，#239）',
@@ -13591,7 +13591,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '      kojo.兽奸眼罩 = 1;',
     replace: '      kojo.兽奸眼罩 = 0; // （变异：推进写错）',
     tests: ['kojo-k8-spade'],
-    must_mention: '而非牝犬档应有的 4',
+    must_mention: 'CFLAG:444 推进到 1',
   },
   {
     desc: 'M1927 K8 DOG_KOJO_8 SC56 会話 初めて·有摄像推进写错（CFLAG:357 = 1 改 0，#239）',
@@ -14068,12 +14068,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'TFLAG:16==4 肉便器刑',
   },
   {
-    desc: 'M1989 K8 MUSEUM 蜡人形档值被「修正」成 2（源作是 21，#239）',
+    desc: 'M1989 K8 MUSEUM 蜡人形档值被「修正」成 2（档值是 21，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  } else if (game.event.博物馆口上 == 21) {',
     replace: '  } else if (game.event.博物馆口上 == 2) {',
     tests: ['kojo-k8-spade'],
-    must_mention: '蝋人形化档值 21（源作如此）',
+    must_mention: '蜡人形档判据为 21',
   },
   {
     desc: 'M1990 K8 BANISHMENT 追放档守卫写错（TFLAG:510 == 0 改 == 1，#239）',
@@ -14089,7 +14089,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '  } else if (game.event.猎奇处刑口上 == 6) {',
     replace: '  } else if (false) {',
     tests: ['kojo-k8-spade'],
-    must_mention: 'TFLAG:530==6 源作未填台词，只出空行',
+    must_mention: 'TFLAG:530 七档全未填写，逐档只出空行',
   },
   {
     desc: 'M1993 K8 ENTERENEMY 爱慕档守卫丢失（TALENT:85 == 1 改恒真，#239）',
@@ -14117,13 +14117,13 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:504==2 兽奸要求',
   },
   {
-    desc: 'M1996 K8 GOHOUBI_REQUEST キス档被补上源作没有的旁白行（#239）',
+    desc: 'M1996 K8 GOHOUBI_REQUEST キス档被补上没有的旁白行（#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    await era.printAndWait(`「回来之后想要魔王大人的吻…想要认真的吻」`);',
     replace:
       '    await era.printAndWait(`「回来之后想要魔王大人的吻…想要认真的吻」`);\n    await era.printAndWait(`${a_name}要求接吻作为报酬。`); // 变异：补旁白',
     tests: ['kojo-k8-spade'],
-    must_mention: 'キス档源作没有旁白行',
+    must_mention: 'キス档只有一行（无旁白）',
   },
   {
     desc: 'M1997 K8 GOHOUBI_AFTER 放置 PLAY 档守卫写错（choice == 0 改 == 1，#239）',
@@ -14185,12 +14185,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'ARG:0 == 3',
   },
   {
-    desc: 'M2507 K8 GOBI 默认支第二支被「去重」成第三支的语尾（源作两支同文，#239）',
+    desc: 'M2507 K8 GOBI 默认支第二支被「去重」成第三支的语尾（两支同文，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      return `啊。`;\n    } else {',
     replace: '      return `什么啊。`; // （变异：源作同文被改）\n    } else {',
     tests: ['kojo-k8-spade'],
-    must_mention: '默认支第二支与第一支同文（源作如此）',
+    must_mention: '默认支（含 ARG:0==0）三选一，前两支同文',
   },
   {
     desc: 'M2508 K8 NTR 注册退回只收 P 的适配器（族实参是 [rand, P]，rand 被当成 P → 整段静默，#239）',
@@ -15021,7 +15021,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '            `「呀～啊啊啊～…咕～…好紧～${heart_black(3)}」`,',
     replace: '            `「呀～啊啊啊～…咕～…好紧～${heart(3)}」`,',
     tests: ['kojo-k0-tender'],
-    must_mention: '对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321',
+    must_mention: '门槛读 CFLAG:323 / 黑心插值',
   },
   {
     desc: 'M3023 K0 背面座位首次状态推进写错（CFLAG:324 = 1 改 2）（#231）',
@@ -15423,7 +15423,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace:
       '        era.get(`talent:${target}:76`) === 1 &&\n        masochism >= 5 &&\n        (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)\n      ) {',
     tests: ['kojo-k0-tender'],
-    must_mention: '鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸',
+    must_mention: '末支门槛读 CFLAG:342 / 阈值闸',
   },
   {
     desc: 'M3074 K0 鞭二次淫乱+抖M写回错档（CFLAG:342 = 9 改 8）（#231）',
@@ -17531,7 +17531,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '      kojo.乳交 = 1;',
     replace: '      kojo.乳交 = 2;',
     tests: ['kojo-k15-clever'],
-    must_mention: '初回淫乱先写 5 再被 CFLAG:TARGET:333=1 覆盖',
+    must_mention: '乳交：初回推进到 1',
   },
   {
     desc: 'M3544 K15 股间性交首次状态推进写错（=1 改 2，#246）',
@@ -22996,7 +22996,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':7521+:7523+:7525 是一行',
   },
   {
-    desc: 'M12524 K8 NTR·P==4 それ以外（:7532+:7534+:7536）拆回两条（#622）',
+    desc: 'M12524 K8 NTR·P==4 それ以外（武器名与收行同属一行）拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了逞强的声音。`,\n      );',
     replace:
@@ -23009,7 +23009,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了逞强的声音。`,\n' +
       '      ); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: ':7532+:7534+:7536 是一行',
+    must_mention: '武器名与收行同属一行',
   },
   {
     desc: 'M12525 K8 迎击奖赏·兽奸要求（:7744..:7752）拆回多条（#622：兽名又占一行）',
@@ -24970,11 +24970,11 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M13304 K903 SELECTCOM:30 侍奉精神支回退多余的爱慕要求（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
-    find: '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {',
+    find: '        era0(`talent:${target}:85`) == 1 &&\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(\n          `「哈啊……虽然本宫是说过为了魔王大人什么都可以做来着……」`,',
     replace:
-      '      } else if (\n        era0(`talent:${target}:85`) == 1 && // 变异：回退爱慕要求\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {',
+      '        era0(`abl:${target}:16`) >= 3 && // 变异：四档回退为只看侍奉精神\n        (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(\n          `「哈啊……虽然本宫是说过为了魔王大人什么都可以做来着……」`,',
     tests: ['kojo-k903-garde'],
-    must_mention: 'SELECTCOM 30/32/40/41 门槛与计数器自洽',
+    must_mention: '侍奉精神档回到三档',
   },
   {
     desc: 'M13305 K903 SELECTCOM:32 乳交淫乱支门槛回退误读 CFLAG:332（#654）',
@@ -25684,18 +25684,18 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M13677 K903 SELECTCOM:30 手淫三档回退叠回侍奉精神要求（#688 补查）',
     file: 'ere/kojo/kojo-k903-garde.js',
-    find: '      } else if (\n        era0(`talent:${target}:85`) == 1 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    find: '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(\n          `「本宫……知道了啊……稍微弄一下也不是不可以……为什么会要本宫做这种事……切」`,',
     replace:
-      '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        era0(`talent:${target}:85`) == 1 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+      '      } else if (\n        era0(`talent:${target}:85`) == 1 && // 变异：三档回退为爱慕＋侍奉\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(\n          `「本宫……知道了啊……稍微弄一下也不是不可以……为什么会要本宫做这种事……切」`,',
     tests: ['kojo-k903-garde'],
-    must_mention: '三档回正为只看爱慕',
+    must_mention: '侍奉精神档回到三档',
   },
   {
     desc: 'M13678 K903 DOG_KOJO_903 SC30 手淫侍奉精神档回退加回 TALENT:85（#688 补查）',
     file: 'ere/kojo/kojo-k903-garde.js',
-    find: '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+    find: '      } else if (\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(`「为什么要强迫本宫……做这种肮脏的事情！」`);',
     replace:
-      '      } else if (\n        era0(`talent:${target}:85`) == 1 &&\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)',
+      '      } else if (\n        era0(`talent:${target}:85`) == 1 &&\n        era0(`abl:${target}:16`) >= 3 &&\n        (chara(target).kojo.手淫 <= 2 || game.kojo.口上开关 == 2)\n      ) {\n        await era.printAndWait(`「为什么要强迫本宫……做这种肮脏的事情！」`);',
     tests: ['kojo-k903-garde'],
     must_mention: '侍奉精神Lv3以上档不再要求爱慕',
   },
