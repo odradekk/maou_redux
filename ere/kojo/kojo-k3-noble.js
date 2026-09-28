@@ -1,7 +1,7 @@
 /**
  * @file 高貴性格口上 K3：指令口上（issue #46 黄金样本切片 + issue #234 全量复核）。
  *
- * == 状态机（CFLAG:301，:918 注释「コマンド実行時のセリフ CFLAG 301～400
+ * == 状态机（CFLAG:301，注释「コマンド実行時のセリフ CFLAG 301～400
  *    を使用」） ==
  *
  * 二回目以降按「淫乱(76) → 爱慕(85) → 屈服刻印Lv3 → 屈服Lv2＆快乐Lv3 →
@@ -33,7 +33,7 @@
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。死斗场 / 兽奸 / PALAMCNG /
  * MARKCNG / 其余 SELECTCOM 与
- * 非调教入口均已随 #234 落地。
+ * 非调教入口均已随 #234 实现。
  */
 
 const era = require('#/era-electron');
@@ -78,7 +78,7 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 
-// @EVENTTRAIN #PRI（:81-85）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -90,7 +90,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:87-89）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -100,7 +100,7 @@ on(
 );
 
 /**
- * @KOJO_MESSAGE_COM_3（:887-1105）：七道跳过判定 + 爱抚分支。
+ * kojo_message_com_3：七道跳过判定 + 爱抚分支。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序——分支序恒为 RAND:3 后 RAND:2）
@@ -1406,9 +1406,9 @@ async function kojo_message_com_3(rand) {
             );
           }
         }
-        // 原作是一整行：无后缀 PRINTFORM 五段 SIF 后缀连续不换行，
-        // 末行 PRINTFORML 才收行（#600）。五条 SIF 的判据提到语句外当条件、
-        // 文本留在输出语句里（保真锁按序核对 ERB 片段）
+        // 同一行输出：无后缀 PRINTFORM 五段 SIF 后缀连续不换行，
+        // 末行 PRINTFORML 才收行（#600）。五条 SIF 的条件提到语句外当条件、
+        // 文本留在输出语句里（保真锁按序核对台词片段）
         const devoted = era.get(`talent:${target}:85`) === 1; // 爱慕
         const lewd = era.get(`talent:${target}:76`) === 1; // 淫乱
         const female_dog = era.get(`talent:${target}:136`) === 1; // 牝犬
@@ -6035,9 +6035,8 @@ async function kojo_message_com_3(rand) {
           era.get(`talent:${target}:成为勇者前的生活`) === 9 ||
           era.get(`talent:${target}:成为勇者前的生活`) === 20
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 链，
-          // 是四选一的出身（:4568/:4570/:4572/:4574 的
-          // IF 链），:4577 的 PRINTFORMW 收行（#623）
+          // 同一行输出：无后缀 PRINTFORM 链，
+          // 是四选一的出身（IF 链收行，#623）
           const former_life = era.get(`talent:${target}:成为勇者前的生活`);
           await era.printAndWait(
             (former_life === 5
@@ -6074,9 +6073,8 @@ async function kojo_message_com_3(rand) {
           era.get(`talent:${target}:成为勇者前的生活`) === 9 ||
           era.get(`talent:${target}:成为勇者前的生活`) === 20
         ) {
-          // 原作是一整行（与
-          // 同型，:4590/:4592/:4594/:4596 的
-          // IF 链），:4599 的 PRINTFORMW 收行（#623）
+          // 同一行输出（与上一段同型，
+          // IF 链收行，#623）
           const former_life = era.get(`talent:${target}:成为勇者前的生活`);
           const origin_word =
             former_life === 5
@@ -6178,9 +6176,9 @@ async function kojo_message_com_3(rand) {
               era.get(`abl:${target}:17`) >= 5
             ) {
               if (rand_n(3) === 0) {
-                // 原作是一整行：无后缀
-                // PRINTFORM 链，:4655/:4657/:4659 是三选一的遭遇
-                // （:4654/:4656 的 RAND 链，抽签顺序照原作），:4661 收行（#623）
+                // 同一行输出：无后缀
+                // PRINTFORM 链，三选一遭遇的 RAND 链
+                // 按原序先抽，末尾收行（#623）
                 await era.printAndWait(
                   `「…哈、啊哈${black_heart(1)}${'\u3000'}一想到${sc()}拉出来的东西、要是让探索中的勇者` +
                     (rand_n(3) === 0
@@ -6370,9 +6368,9 @@ async function kojo_message_com_3(rand) {
             );
           }
         } else {
-          // 原作是一整行：:4775 的 PRINTFORM 不换行，三支的
-          // PRINTFORMW 各自收行。前缀提到语句外共用——各支语句只列本支行号，
-          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（抽签顺序照原作，#623）
+          // 同一行输出：PRINTFORM 不换行，三支的
+          // PRINTFORMW 各自收行。前缀提到语句外共用——各支语句只列本支的基准，
+          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（抽签顺序不变，#623）
           const crying_out = rand_n(3) === 0;
           const line_head = `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`;
           if (crying_out) {
@@ -6714,7 +6712,7 @@ async function kojo_message_com_3(rand) {
           rand_n(3) === 0 &&
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
-          // 原作是一整行（#600）
+          // 同一行输出（#600）
           const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
           era.print(
             `${target_name}将自己的本名、接下来要进行的性体验` +
@@ -6778,8 +6776,8 @@ async function kojo_message_com_3(rand) {
             era.get(`abl:${target}:10`) >= 5) &&
           game.event.插着不拔
         ) {
-          // 原作是一整行：:5026 的 PRINTFORM 不换行、:5028 的
-          // PRINTFORML 收行（前缀与支文本本来就在同一条语句里，只是锚漏了
+          // 同一行输出：PRINTFORM 不换行、
+          // PRINTFORML 收行（前缀与支文本本来就在同一条语句里，只是基准漏了
           // ——#623 按各支的末行各记各的，其余支仍是各自的行）
           era.print(
             `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,
@@ -6800,7 +6798,7 @@ async function kojo_message_com_3(rand) {
             era.get(`talent:${target}:76`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 原作是一整行：中段 IF/ELSEIF 二选一（:5034/:5036），
+          // 同一行输出：中段 IF/ELSEIF 二选一（
           // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）
           const excited =
             era.get(`tequip:${target}:11`) ||
@@ -6879,7 +6877,7 @@ async function kojo_message_com_3(rand) {
           rand_n(3) === 0 &&
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
-          // 与 :4995+:4997+:4998 同型（#600）
+          // 与上一段同型（#600）
           const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
           era.print(
             `${target_name}将自己的本名、接下来要进行的性体验` +
@@ -6943,7 +6941,7 @@ async function kojo_message_com_3(rand) {
             era.get(`abl:${target}:10`) >= 5) &&
           game.event.插着不拔
         ) {
-          // 与 :5026+:5028 同型（二回目，锚漏了 :5098，#623）
+          // 与上一段同型（二回目，基准漏了一段，#623）
           era.print(
             `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,
           );
@@ -7654,8 +7652,8 @@ async function kojo_message_com_3(rand) {
 
   if (era_flag.selectcom === 87) {
     // 延迟读取：主启动图的 COM80-90 注册仍仅由 com-hardcore 自己负责。顶层
-    // require 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接线锁与
-    // M1249 一起失明（#233 全量变异抓到，本票重犯一次）
+    // require 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接入锁与
+    // M1249 一起失明（#233 全量变异抓到，这张工单重犯一次）
     const { piercing_state } = require('#/system/train/com-hardcore');
     p = piercing_state.p;
 
@@ -8075,7 +8073,7 @@ async function kojo_message_com_3(rand) {
   return 0;
 }
 
-// @EVENTTRAIN NORMAL（:95）：初调教 CFLAG:201 状态机
+// EVENTTRAIN NORMAL 档：初调教 CFLAG:201 状态机
 on(
   'EVENTTRAIN',
   async () => {
@@ -8084,7 +8082,7 @@ on(
   TIER.NORMAL,
 );
 
-// @EVENTEND NORMAL（:790）：CFLAG:301 钳回 1 + 调教结束台词
+// EVENTEND NORMAL 档：CFLAG:301 钳回 1 + 调教结束台词
 on(
   'EVENTEND',
   async () => {
@@ -9523,9 +9521,8 @@ async function dog_kojo_3(rand) {
         } else {
           era.print(`「嗯~…好像要融化掉了一样啊~${heart(1)}」`);
         }
-        // 原作是一整行：无后缀 PRINTFORM 链，
-        // 是 RAND:2 二选一的插入段（:6032 的 IF，抽签照原作），
-        // 的 PRINTFORMW 收行（#623）
+        // 同一行输出：无后缀 PRINTFORM 链，
+        // 是 RAND:2 二选一的插入段，PRINTFORMW 收行（#623）
         await era.printAndWait(
           `${target_name}` +
             (rand_n(2) === 0 ? `一脸陶醉的表情` : `专心地`) +
@@ -9902,8 +9899,8 @@ async function dog_kojo_3(rand) {
           }
 
           if (local_9 > 0) {
-            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，
-            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // 同一行输出：无后缀 PRINTFORM/PRINT 链，
+            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），
             // 的 PRINTFORMW 收行（#623）
             await era.printAndWait(
               `「${sc()}是有` +
@@ -10022,8 +10019,8 @@ async function dog_kojo_3(rand) {
           }
 
           if (local_9 > 0) {
-            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，
-            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // 同一行输出：无后缀 PRINTFORM/PRINT 链，
+            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），
             // 的 PRINTFORMW 收行（#623）
             await era.printAndWait(
               `「${sc()}是有` +
@@ -10180,8 +10177,8 @@ async function dog_kojo_3(rand) {
           }
 
           if (local_9 > 0) {
-            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，
-            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // 同一行输出：无后缀 PRINTFORM/PRINT 链，
+            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），
             // 的 PRINTFORMW 收行（#623）
             await era.printAndWait(
               `「${sc()}是有` +
@@ -10306,8 +10303,8 @@ async function dog_kojo_3(rand) {
           }
 
           if (local_9 > 0) {
-            // 原作是一整行：无后缀 PRINTFORM/PRINT 链，
-            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // 同一行输出：无后缀 PRINTFORM/PRINT 链，
+            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），
             // 的 PRINTFORMW 收行（#623）
             await era.printAndWait(
               `「${sc()}是有` +
@@ -10487,8 +10484,8 @@ async function colosseum_kojo_3(rand) {
       await era.printAndWait(
         `「啊哼嗯…嗯呜…再、再这样做的话…呜噗嗯！？嗯噗嗯嗯噗嗯……！」`,
       );
-      // 原作是一整行：无后缀 PRINTFORM 链，
-      // 是两个 SIF 插入段（可都为假），:8497 的 PRINTFORMW 收行（#623）
+      // 同一行输出：无后缀 PRINTFORM 链，
+      // 是两个 SIF 插入段（可都为假），PRINTFORMW 收行（#623）
       const assi_penis =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -10534,7 +10531,7 @@ async function colosseum_kojo_3(rand) {
       await era.printAndWait(
         `「啊啊~！不，不行的啊…这样…强行做这样的…啊啊啊啊！」`,
       );
-      // 与 :8492+:8494+:8496+:8497 同型（#623）
+      // 与上一段同型（#623）
       const assi_penis =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -10562,7 +10559,7 @@ async function colosseum_kojo_3(rand) {
   if (era_flag.selectcom === 27) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊啊~！啊~啊啊~！屁股…要坏掉了啊~…~！」`);
-      // 与 :8492+:8494+:8496+:8497 同型（#623）
+      // 与上一段同型（#623）
       const assi_penis =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -11015,9 +11012,8 @@ async function kojo_message_palamcng_3(rand) {
         era.get(`talent:${target}:190`) === 1 &&
         era.get(`talent:${target}:191`) === 1
       ) {
-        // 原作是一整行：无后缀 PRINTFORM 链，
-        // 是 RAND:2 二选一的插入段（:7384 的 IF，抽签照原作），
-        // 的 PRINTFORMW 收行（#623）
+        // 同一行输出：无后缀 PRINTFORM 链，
+        // 是 RAND:2 二选一的插入段，PRINTFORMW 收行（#623）
         const both_holes = rand_n(2) === 0;
         await era.printAndWait(
           `「啊啊~…我的` +
@@ -11926,9 +11922,8 @@ async function benki_koujo_k3(rand) {
     }
   } else if (game.train.肉便器行动 === 6) {
     if (game.dungeon.肉便器常识改写 === 1) {
-      // 原作 PRINTFORM 「请 → CALL BENKI_PLAYER_NAME（:8206，名字）
-      // → PRINTFORMW …，三行同属一行输出（与 K0 四处同型）；名字按 #599
-      // 用插值接在 CALL 的位置，拼接锚让前缀行也进锁 B/D
+      // 「请」、对象名与收尾三行同属一行输出（与 K0 四处同型）；名字按 #599
+      // 用插值接在 CALL 的位置，拼接基准让前缀行也进锁 B/D
       const player_name_benki =
         require('#/system/train/benki').benki_player_name();
       await era.printAndWait(
@@ -12442,9 +12437,8 @@ async function gohoubi_request_koujo_k3(rand) {
     chara(a).stronghold.要求奖赏 === 2 ||
     chara(a).stronghold.要求奖赏 === 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM 链，
-    // 是三选一的野兽名（:8804/:8806/:8808 的 IF 链），
-    // 的 PRINTFORMW 收行（#623）
+    // 同一行输出：无后缀 PRINTFORM 链，
+    // 是三选一的野兽名，PRINTFORMW 收行（#623）
     const beast =
       chara(a).stronghold.要求奖赏 === 1
         ? `狗`
@@ -12564,7 +12558,7 @@ async function gohoubi_after_koujo_k3(rand, cid, choice) {
         );
       }
     } else {
-      /* empty — 原作 ELSE 无输出 */
+      /* empty — ELSE 无输出 */
     }
   }
 }
@@ -12630,10 +12624,10 @@ async function osioski_koujo_k3(rand, cid, choice) {
     await era.printAndWait(`「啊呜呃嗯啊～不要啊～」`);
   }
 }
-// #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）。
+// #570 起返回语尾文字、不打印（PRINT 不换行，由调用方拼进同一行）。
 // 形参序修正为 (arg_0, rand)：#403 起曾写反成 (rand, arg_0 = 0)，族实参
 // [arg0, rand] 反接后真调用即 TypeError（登记在 docs/stub-registry.md 的
-// GOBI_KOUJO 行，随本票修正）。
+// GOBI_KOUJO 行，随这张工单修正）。
 function gobi_koujo_k3(arg_0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 

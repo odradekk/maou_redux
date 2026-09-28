@@ -1,5 +1,5 @@
 /**
- * @file 懦弱性格口上 K2：整份 EVENT_K2_気弱.ERB 复核落地（issue #233）。
+ * @file 懦弱性格口上 K2（issue #233）。
  *
  * 转译初稿 products/kojo/kojo-k2-timid.js（#107）经逐段复核后移入。
  *
@@ -10,7 +10,7 @@
  * 每次出声；FLAG:7 == 1 时逐阶段各出一次声。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。DOG_KOJO_2 有真身但 COM
- * 头部守卫是静默跳过（:871），
+ * 头部检查是静默跳过，
  * 与 K5 同款、不调专用口上。
  */
 
@@ -82,7 +82,7 @@ function bind_ctx(rand) {
   };
 }
 
-// @EVENTTRAIN #PRI（:80-84）：存在标志 + 总开关补 0
+// EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
   () => {
@@ -94,7 +94,7 @@ on(
   TIER.PRI,
 );
 
-// @EVENTEND #LATER（:86-88）：调教结束清存在标志
+// EVENTEND #LATER 档：调教结束清存在标志
 on(
   'EVENTEND',
   () => {
@@ -103,7 +103,7 @@ on(
   TIER.LATER,
 );
 
-// @EVENTTRAIN
+// eventtrain_k2：EVENTTRAIN NORMAL 档
 async function eventtrain_k2(rand) {
   const {
     rand_n,
@@ -703,7 +703,7 @@ async function eventtrain_k2(rand) {
   }
 }
 
-// @K2_KOJO2
+// k2_kojo2
 async function k2_kojo2(rand) {
   const { rand_n, target, target_name, player_name, sc, view } = bind_ctx(rand);
 
@@ -989,7 +989,7 @@ async function k2_kojo2(rand) {
   return 0;
 }
 
-// @EVENTEND
+// eventend_k2：EVENTEND NORMAL 档
 async function eventend_k2(rand) {
   const { target, target_name, sc } = bind_ctx(rand);
 
@@ -1151,7 +1151,7 @@ async function eventend_k2(rand) {
   return 0;
 }
 
-// @KOJO_MESSAGE_COM_2
+// kojo_message_com_2
 async function kojo_message_com_2(rand) {
   const {
     rand_n,
@@ -1165,7 +1165,7 @@ async function kojo_message_com_2(rand) {
   } = bind_ctx(rand);
   // 延迟读取：主启动图的 COM80–90 注册仍仅由 com-hardcore 自己负责；本模块
   // 只在 COM 口上读穿环位图。顶层 require 会让 main-loop 漏装时模块仍被间接
-  // 拉进来，#274/#282 接线锁与 M1249 一起失明（#233 全量变异抓到）。
+  // 拉进来，#274/#282 接入锁与 M1249 一起失明（#233 全量变异抓到）。
   const { piercing_state } = require('#/system/train/com-hardcore');
   let P = piercing_state.p;
 
@@ -5806,9 +5806,9 @@ async function kojo_message_com_2(rand) {
           (era.get(`talent:${target}:89`) ||
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
-          // 原作是一整行：无后缀 PRINTFORM 连续不换行，
-          // 末行 PRINTFORML 才收行。:3916 的 SIF ABL:31 >= 3 只护住 :3917
-          // 那一段——判据提到语句外当取值，文本留在输出语句里（#625）
+          // 同一行输出：无后缀 PRINTFORM 连续不换行，
+          // 末行 PRINTFORML 才收行。SIF ABL:31 >= 3 只护住
+          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）
           const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;
           await era.print(
             `于是${target_name}将自己的本名、之前的性体验` +
@@ -5897,9 +5897,9 @@ async function kojo_message_com_2(rand) {
             era.get(`talent:${target}:76`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 原作是一整行：无后缀 PRINTFORM/
-          // PRINT 连续不换行，末行 PRINTFORML 才收行。:3952/:3954 的工具档与
-          // ELSE 三档互斥——判据提到语句外当取值，文本留在输出语句里（#625）
+          // 同一行输出：无后缀 PRINTFORM/
+          // PRINT 连续不换行，末行 PRINTFORML 才收行。前段工具档与
+          // ELSE 三档互斥——条件提到语句外当取值，文本留在输出语句里（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -7094,7 +7094,7 @@ async function kojo_message_com_2(rand) {
   }
 }
 
-// @DOG_KOJO_2
+// dog_kojo_2
 async function dog_kojo_2(rand) {
   const { rand_n, target, sc, kojo } = bind_ctx(rand);
 
@@ -7995,7 +7995,7 @@ async function dog_kojo_2(rand) {
   return 0;
 }
 
-// @KOJO_MESSAGE_PALAMCNG_2
+// kojo_message_palamcng_2
 async function kojo_message_palamcng_2(rand) {
   const { target, target_name, player_name, sc, kojo } = bind_ctx(rand);
   let P = 0;
@@ -8241,7 +8241,7 @@ async function kojo_message_palamcng_2(rand) {
   }
 }
 
-// @KOJO_MESSAGE_MARKCNG_2
+// kojo_message_markcng_2
 async function kojo_message_markcng_2(rand) {
   const { target, kojo } = bind_ctx(rand);
 
@@ -8316,7 +8316,7 @@ async function kojo_message_markcng_2(rand) {
   }
 }
 
-// @SELF_KOJO_K2
+// self_kojo_k2
 async function self_kojo_k2(rand) {
   const { target, target_name, assi_name, sc, view, kojo } = bind_ctx(rand);
   const Q = peek_aftertrain_q();
@@ -8697,7 +8697,7 @@ async function self_kojo_k2(rand) {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_K2
+// dungeon_ryouzyoku_k2
 async function dungeon_ryouzyoku_k2(rand) {
   const { target, sc } = bind_ctx(rand);
 
@@ -8802,7 +8802,7 @@ async function dungeon_ryouzyoku_k2(rand) {
   return 0;
 }
 
-// @DUNGEON_RYOUZYOKU_AFTER_K2
+// dungeon_ryouzyoku_after_k2
 async function dungeon_ryouzyoku_after_k2(rand) {
   const { target } = bind_ctx(rand);
 
@@ -8857,7 +8857,7 @@ async function dungeon_ryouzyoku_after_k2(rand) {
   }
 }
 
-// @BENKI_KOUJO_K2
+// benki_koujo_k2
 async function benki_koujo_k2(rand) {
   const { target, sc } = bind_ctx(rand);
 
@@ -8947,7 +8947,7 @@ async function benki_koujo_k2(rand) {
   return 0;
 }
 
-// @DUNGEON_VICTORY_K2
+// dungeon_victory_k2
 async function dungeon_victory_k2(rand) {
   const { rand_n, target } = bind_ctx(rand);
 
@@ -9003,7 +9003,7 @@ async function dungeon_victory_k2(rand) {
   return 0;
 }
 
-// @DUNGEON_ATTACK_K2
+// dungeon_attack_k2
 async function dungeon_attack_k2(rand) {
   const { rand_n, target, sc, view } = bind_ctx(rand);
 
@@ -9098,15 +9098,13 @@ async function dungeon_attack_k2(rand) {
   return 0;
 }
 
-// @COLOSSEUM_KOJO_2
+// colosseum_kojo_2
 async function colosseum_kojo_2(rand) {
   const { target, assi, target_name, assi_name, master_name, sc, scf } =
     bind_ctx(rand);
-  // 死斗场 SC31/21/27 三处同型的武器名（源 :6675-:6678、:6708-:6711、
-  // ）：TALENT:ASSI:121/122 有则「阴茎」，否则持假阳具时补
-  // 「假阳具」，两段都不出时为空串。
-  // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
-  //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+  // 死斗场 SC31/21/27 三处同型的武器名：TALENT:ASSI:121/122 有则「阴茎」，
+  // 否则持假阳具时补「假阳具」，两段都不出时为空串。
+  // ITEM:PBAND 是内建非角色变量（4 号 = 假阳具），不再改写（#552）
   const assi_has_penis =
     (era.get(`talent:${assi}:121`) || 0) === 1 ||
     (era.get(`talent:${assi}:122`) || 0) === 1;
@@ -9155,8 +9153,8 @@ async function colosseum_kojo_2(rand) {
   if (era_flag.selectcom === 31) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「是…这里不可以…嗯嗯…啊…唔唔！」`);
-      // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-      // 不换行，末行 PRINTFORMW 才收行。:6675/:6677 两条 SIF 互斥——判据提到
+      // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+      // 不换行，末行 PRINTFORMW 才收行。两条 SIF 互斥——条件提到
       // 语句外当取值（assi_has_penis/assi_has_toy），文本留在输出语句里（#625）
       await era.printAndWait(
         `${assi_name}把` +
@@ -9237,7 +9235,7 @@ async function colosseum_kojo_2(rand) {
   return 0;
 }
 
-// @NTR_KOUJO_K2
+// ntr_koujo_k2
 async function ntr_koujo_k2(rand, p = 0) {
   const { target, target_name, sc, view, kojo } = bind_ctx(rand);
 
@@ -9346,7 +9344,7 @@ async function ntr_koujo_k2(rand, p = 0) {
   return 0;
 }
 
-// @EXUCUTION_KOUJO_K2
+// exucution_koujo_k2
 async function exucution_koujo_k2(rand) {
   const { sc } = bind_ctx(rand);
 
@@ -9361,7 +9359,7 @@ async function exucution_koujo_k2(rand) {
   }
 }
 
-// @MUSEUM_KOUJO_K2
+// museum_koujo_k2
 async function museum_koujo_k2(rand) {
   const { sc } = bind_ctx(rand);
 
@@ -9390,7 +9388,7 @@ async function museum_koujo_k2(rand) {
   }
 }
 
-// @BANISHMENT_KOUJO_K2
+// banishment_koujo_k2
 async function banishment_koujo_k2(rand) {
   const { sc } = bind_ctx(rand);
 
@@ -9409,7 +9407,7 @@ async function banishment_koujo_k2(rand) {
   }
 }
 
-// @PUBLIC_EXUCUTION_KOUJO_K2
+// public_exucution_koujo_k2
 async function public_exucution_koujo_k2(rand) {
   bind_ctx(rand);
 
@@ -9424,7 +9422,7 @@ async function public_exucution_koujo_k2(rand) {
   }
 }
 
-// @GROTESQUE_KOUJO_K2
+// grotesque_koujo_k2
 async function grotesque_koujo_k2(rand) {
   bind_ctx(rand);
 
@@ -9445,7 +9443,7 @@ async function grotesque_koujo_k2(rand) {
   }
 }
 
-// @ENTERENEMY_KOUJO_K2
+// enterenemy_koujo_k2
 async function enterenemy_koujo_k2(rand) {
   const { target, sc } = bind_ctx(rand);
 
@@ -9472,7 +9470,7 @@ async function enterenemy_koujo_k2(rand) {
   }
 }
 
-// @GOHOUBI_REQUEST_KOUJO_K2
+// gohoubi_request_koujo_k2
 async function gohoubi_request_koujo_k2(rand) {
   const { target, sc } = bind_ctx(rand);
 
@@ -9483,8 +9481,8 @@ async function gohoubi_request_koujo_k2(rand) {
     era.get(`cflag:${target}:504`) === 2 ||
     era.get(`cflag:${target}:504`) === 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:6985/:6987/:6989）提到
+    // 同一行输出：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的条件提到
     // 语句外当取值、文本留在输出语句里（#625）
     const beast_word =
       era.get(`cflag:${target}:504`) === 1
@@ -9510,7 +9508,7 @@ async function gohoubi_request_koujo_k2(rand) {
   }
 }
 
-// @GOHOUBI_AFTER_KOUJO_K2
+// gohoubi_after_koujo_k2
 async function gohoubi_after_koujo_k2(cid, choice, rand) {
   const { sc } = bind_ctx(rand);
 
@@ -9570,12 +9568,12 @@ async function gohoubi_after_koujo_k2(cid, choice, rand) {
         await era.printAndWait(`「${sc()}的屁股期待了很久了呀？」`);
       }
     } else {
-      // 原作空 ELSE（无台词）
+      // 空 ELSE（无台词）
     }
   }
 }
 
-// @OSIOKI_KOUJO_K2
+// osioski_koujo_k2
 async function osioki_koujo_k2(cid, choice, rand) {
   const { sc } = bind_ctx(rand);
 
@@ -9631,7 +9629,7 @@ async function osioki_koujo_k2(cid, choice, rand) {
   }
 }
 
-// @GOBI_KOUJO_K2, ARG:0
+// gobi_koujo_k2（ARG:0）
 function gobi_koujo_k2(arg_0, rand) {
   const { rand_n } = bind_ctx(rand);
 
@@ -9659,9 +9657,9 @@ function gobi_koujo_k2(arg_0, rand) {
 on('EVENTTRAIN', eventtrain_k2);
 on('EVENTEND', eventend_k2);
 
-// 口上族接线：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 =
+// 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 =
 // 玩家侧看到占位行或不响。文件内直调的真身不在此列（COLOSSEUM_KOJO_2 由 COM
-// 头部守卫直调；DOG_KOJO_2 有真身但守卫静默跳过，见文件头）。范围与接线由
+// 头部检查直调；DOG_KOJO_2 有真身但检查静默跳过，见文件头）。范围与接入由
 // test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
 kojo_message_com_family.register(2, kojo_message_com_2);
 kojo_message_palamcng_family.register(2, kojo_message_palamcng_2);
