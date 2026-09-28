@@ -112,7 +112,7 @@ test('CHAR_SIZE_GENERATE：胸围变化模式复用原身高体重，只记录�
   assert.equal(fixture.store.get('e:1'), -25, 'E:1 只记录胸围带来的重量差');
 });
 
-// @CHARA_MAKE_INHERIT / @CMI_SETTALENT / @CMI_MOM_COMPLEX / @CMI_CONFLICT_CHECK
+// chara_make_inherit / cmi_settalent / cmi_mom_complex / cmi_conflict_check
 // 的用例自 #384（N2）起迁往 test/chara-make-inherit.test.js——那边以真身为
 // 断言对象（素质真的被继承、冲突真的被清理）。
 
@@ -122,6 +122,6 @@ test('CHAR_INHERIT 转发层：JUMP 到 CHARA_MAKE_INHERIT 真身', () => {
   assert.equal(char_inherit(8, -1), undefined);
 });
 
-// @CHARA_NAME_RANDOM_DEFINE / @CN_REBUILD / @CHARA_NAME_DEFINE 的用例自
+// chara_name_random_define / cn_rebuild / chara_name_define 的用例自
 // #384（N2）起迁往 test/chara-name.test.js——那边以真身
 // 为断言对象，这里是留下的一处指向。

@@ -1,8 +1,8 @@
 # TrainAlias 表：#DIMS TRAIN_NAME,500（「用于储存保留的 TRAINNAME，
-# 函数 @TRAIN_NAME_INIT 用于初始化」）的 ere 落点
+# 函数 train_name_init 用于初始化」）的 ere 落点
 # （issue #212）。按存档定制的调教指令名表——静态名在 yml/TrainCommand.yml
-# （TRAINNAME 的等价物，#43），本表是它的可写覆盖层：@TRAIN_NAME_INIT
-# 一次性播种，@P_C 在静态名为空时回落读它。
+# （TRAINNAME 的等价物，#43），本表是它的可写覆盖层：train_name_init
+# 一次性播种，p_c 在静态名为空时回落读它。
 #
 # 表名为什么不是 trainname：引擎 setVar 的二段分支对以 name 结尾的表名有
 # 拦截（a.endsWith('name') → 当作「取 fieldNames 名字」的只读寻址，登记成

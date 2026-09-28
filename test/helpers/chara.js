@@ -18,7 +18,7 @@ const CHARA_0_SHAPE = { id: 0, name: '你', callname: '你' };
 const CHARA_17_SHAPE = { id: 17, name: '玛奥', callname: '玛奥' };
 
 // yml/Chara1.yml 装载后的最小形状（#565：初期奴隶选「随机」且 rand ≡ 0 时
-// RAND(1,17) 掷中勇者位 1，@RAND_CHARA_MAKE 真身要 ADDCHARA 1——同 #35 的
+// RAND(1,17) 掷中勇者位 1，rand_chara_make 真身要 ADDCHARA 1——同 #35 的
 // 引擎检查，预设先种才能加入）。基礎/素質预设不进夹具，理由同上。
 const CHARA_1_SHAPE = { id: 1, name: '战士', callname: '战士' };
 

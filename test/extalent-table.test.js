@@ -338,7 +338,7 @@ engine_test(
       assert.equal(api.addCharacter(31), true);
       assert.deepEqual(api.get('base:31:0'), 1800, '预设值经引擎寻址可读');
 
-      // chara-ex 同款写入（@CHARA_EX_31：EX_TALENT:101 = 琼）
+      // chara-ex 同款写入（chara_ex 的 31 号实现：EX_TALENT:101 = 琼）
       assert.equal(api.set('ex_talent:31:101', 1), 1);
 
       assert.equal(await api.saveData(1, 'EX_TALENT 往返'), true);

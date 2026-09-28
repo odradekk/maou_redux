@@ -1,8 +1,8 @@
-# 固定名列表：@CHARA_NAME_INIT 的数据落点（issue #388，#329 决定 10）。
+# 固定名列表：角色名生成的数据落点（issue #388，#329 决定 10）。
 #
-# 源: @CHARA_NAME_INIT 的 3,336 条 LIST_CHARA_NAME:n = 名字 赋值（声明
+# 源: chara_name_init 的 3,336 条 LIST_CHARA_NAME:n = 名字 赋值（声明
 #     #DIMS LIST_CHARA_NAME,5500）。5 个计数常量（WEST_NAME_COUNT 等）不在
-#     本表——它们只服务 @CHARA_NAME_RANDOM_DEFINE 的随机范围计算，且已随
+#     本表——它们只服务 chara_name_random_define 的随机范围计算，且已随
 #     #332 独立落在 ere/chara/chara-name.js（WEST_NAME_COUNT 等常量），
 #     本工单不重复。
 #
@@ -46,7 +46,7 @@
 # yml 的键唯一性放不下。归一表把繁体/日文汉字与对应简体字合并成同一个
 # 名字后，又带出 10 组新合并（如「綾」与既有「绫」）；最终共 65 组、
 # 丢弃 70 个 id——那些 id 查表会返回空，未来的读取实现
-# （@CHARA_NAME_DEFINE，ere 落点 ere/chara/chara-name.js）回落到它已有的
+# （chara_name_define，ere 落点 ere/chara/chara-name.js）回落到它已有的
 # 默认名，不在本工单范围：
 #   爱理（保留 225，丢弃 96）
 #   伊芙（保留 1352，丢弃 49）

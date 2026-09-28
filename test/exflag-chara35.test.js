@@ -114,7 +114,7 @@ engine_test(
       extendedTables: { exflag: tableType.normal },
     };
 
-    // 数字寻址写入：@EVENTFIRST 的威望播种（EX_FLAG:99 = 70）
+    // 数字寻址写入：EVENTFIRST 的威望播种（EX_FLAG:99 = 70）
     assert.equal(engine.set_var.call(fake, 'exflag:99', 70), 70);
     assert.equal(fake.data.exflag[99], 70);
     // 名称寻址与数字寻址等价（包装层与门面可用中文名）

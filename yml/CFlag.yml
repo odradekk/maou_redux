@@ -9,6 +9,6 @@
 #
 # 已知边界（引擎行为，app.asar 的 addCharacter 实测）：预设的 cflag 值不会随
 # addCharacter 落进 data——引擎的 initCharaTable 初始化只覆盖名字表内登记的
-# 下标。Chara17 的 フラグ,1,1（初始占用）随即被 @EVENTFIRST 村娘分支的
+# 下标。Chara17 的 フラグ,1,1（初始占用）随即被 EVENTFIRST 村娘分支的
 # CFLAG:1 = 0 覆盖，无行为差异。将来若某个角色的
 # 预设 cflag 值需要在加入时直接生效，在此补「名称: id」条目即可。

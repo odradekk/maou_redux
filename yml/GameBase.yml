@@ -37,7 +37,7 @@
 # 0.0.4（#217 J7）：新增持久写入位属破坏性改动（ADR-0006 判定表）——
 # 肉便器系统实现（ere/system/train/benki.js）后 EXP:0/1/5/20/52/53/56/80、
 # JUEL 珠与 FLAG:62/63/64 首次有了写入路径（此前 BENKI 是存根，每回合不
-# 结算；dungeon 战斗的 GET_EXP_BENKI_MENU 存根也不写经验）：@BENKI 按行动
+# 结算；dungeon 战斗的 get_exp_benki_menu 存根也不写经验）：run_benki 按行动
 # 分派写经验/珠/噂，FLAG:64 的角色对象名、FLAG:62 的配信类型、FLAG:63 的
 # 常识改写计数都从 0 态起步，旧档无人补正这些迁移语义。TEQUIP 建模已随
 # 0.0.3 开门面，不进存档（本工单只读不写，无新增 TEQUIP 位）。
@@ -55,10 +55,10 @@
 # 0.0.2 的纯字形改动一样抬了版本），故同抬【最低支持版本】废旧档，不写迁移。
 
 # 0.0.7（#547 S6）：新增持久全局下标属破坏性改动（ADR-0006 判定表）——
-# Global.yml 新增 id 3「冒险者性别」（GLOBAL SAVEDATA，魔改使用.ERH:2）。
+# Global.yml 新增 id 3「冒险者性别」（GLOBAL SAVEDATA，魔改使用的全局变量声明）。
 # 引擎 loadGlobal 对 global 表新增声明槽位一律补 0（this.global[e]||(t[e]=0)，
 # dev-guides/11-saves.md「对其中所有未初始化的变量赋0」），而该变量的正确初值
-# 是 -1（@EVENTFIRST :53 播种，女多男少的默认档），只有开新档才会写——旧
+# 是 -1（EVENTFIRST 播种，女多男少的默认档），只有开新档才会写——旧
 # global.sav 读入即 0（= 只有女性），玩家更新后直接读旧档不会察觉、也无人补正。
 # 故同抬【最低支持版本】废旧档（旧 save*.sav 与 global.sav 一并作废重开）。
 #

@@ -29,7 +29,7 @@
  *     「继续」询问——恰在封顶轮的 TURNEND 链内消费）；征服后
  *     [100, (17,) 999, 999]（主菜单调教 → 首轮选目标玛奥 → 调教结束 →
  *     juel-check 退出）——**调教是征服后驱动的回合通道**（TRAIN →
- *     AFTERTRAIN 的 @EVENTEND 尾部 BEGIN TURNEND，main-loop 的状态机），
+ *     AFTERTRAIN 的 EVENTEND 尾部 BEGIN TURNEND，main-loop 的状态机），
  *     FLAG:81 冻结、勇者继续游走；尾 0
  *     留给触发轮 ENDING_2 的仪式 INPUT。两档切换对「第几轮封顶」不
  *     敏感（世界轨迹偏移只移动切换点）；但调教轮的 PRNG 消费量与侵略
@@ -154,7 +154,7 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       '标题画面新游戏',
     );
 
-    // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+    // —— EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
     // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「2D」[1]
     // （#181 加的一问——本条与 3D 版在此分岔）、搬运选「抱起」[1] ——
     fixture.set_inputs(1, 2, 1, 1, 1);

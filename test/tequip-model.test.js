@@ -7,7 +7,7 @@
  *     ownership/tequip-ownership.yml——每条区间取代表下标，火车表内
  *     写入→读回持久；
  *   - 四个口上头部检查位（45 口塞 / 55 死斗场 / 89 兽奸 / 90 触手，
- *     #213 的 @KOJO_MESSAGE_COM 七道检查读它们）经 train 域门面可写，
+ *     #213 的 kojo_message_com 七道检查读它们）经 train 域门面可写，
  *     且检查真实触发（tequip:55 → COLOSSEUM_KOJO 支、tequip:90 → 静默
  *     跳过）——写入路径打通的端到端证明；
  *   - 跨域两段（22 属 system、35 属 event）经属主域门面写（#71：跨域写

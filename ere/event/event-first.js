@@ -129,7 +129,7 @@ on('EVENTFIRST', async () => {
   // INVERTBIT FLAG:8, 0/1/2 —— 新档 FLAG:8 为 0，翻三位后 = 0b111
   era.set('flag:8', 7);
 
-  // 冒險者性別 = -1 —— GLOBAL SAVEDATA（魔改使用.ERH:2），#547 起落
+  // 冒險者性別 = -1 —— GLOBAL SAVEDATA（魔改使用的全局变量声明），#547 起落
   // global:3（era_global.adventurer_gender）：每次开局无条件重置 -1（跨档
   // 共享，用户经设置页 [27] 改的档位维持到下一次新游戏）；此处无
   // SAVEGLOBAL，持久化交给引擎的自动 saveGlobal 时机，不显式代劳。

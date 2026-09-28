@@ -53,7 +53,7 @@ chara:
 
 stronghold:
   label: 据点
-  # 售卻相關（卖奴隶/母乳/影像/决斗金）是据点经济循环，从 @EVENTEND 与 SHOP 入口调用
+  # 售卻相關（卖奴隶/母乳/影像/决斗金）是据点经济循环，从 EVENTEND 与 SHOP 入口调用
   dirs: SHOP, 售卻相關
 
 dungeon:

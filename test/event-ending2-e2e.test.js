@@ -26,7 +26,7 @@
  * 引擎的 addCharacter 会把预设「基礎」抄进 base/maxbase（e2e 注释与
  * ending-paths.md 的说明），**夹具不搬这层**（era-fixture 的 addCharacter
  * 只镜像 callname 双下标）。不预置的后果实测（种子 20250601，60 日不出
- * 结局）：勇者气力上限 undefined → cm_st 写 0 → @DUNGEON 的
+ * 结局）：勇者气力上限 undefined → cm_st 写 0 → run_dungeon 的
  * 「冒険の疲れ」每轮扣 RAND:6 直接坠负 → CHECK_STATUS 的 wp 百分比算出
  * -Infinity 判轻伤 → 踏破后「放弃探索，开始回头了」→ 全员回头，推进无法
  * 成立。预置值与阶段 1 e2e 对角色 0/17 的 base/maxbase 设置同款。
@@ -220,7 +220,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       '标题画面新游戏',
     );
 
-    // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+    // —— EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
     // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]（#50 真身）、地下城模式选
     // 「普通」[0]（#181 加的一问——本条走 3D 路径，2D 版见
     // event-ending2-2d-e2e.test.js）、搬运选「抱起」[1]

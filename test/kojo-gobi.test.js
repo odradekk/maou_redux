@@ -1,7 +1,7 @@
 /**
  * @file 语尾口上（GOBI_KOUJO）的返回值契约（issue #570）。
  *
- * @GOBI_KOUJO_K{n} 用**不换行 PRINT** 把语尾写进调用方的当前行——
+ * gobi_koujo_k{n} 用**不换行 PRINT** 把语尾写进调用方的当前行——
  * `PRINTFORM 的%SAVESTR%` → `CALL GOBI_KOUJO` → `PRINT 」` 在旧引擎里是一行。ere 引擎一次 era.print 即一行（引擎源
  * `print(...e){…this.text("print",…e),this.addTotalLines()}`，见
  * page-shop-trap.js 头注的同一结论），「插入后再续写」没有对应写法，
@@ -242,7 +242,7 @@ test('GOBI 分发入口：kojo-system.gobi_koujo 转交真身返回值', async (
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.seed_chara(31, { id: 31, name: '勇者', callname: '勇者' });
   fixture.era.addCharacter(31);
-  era_flag.target = 31; // @GOBI_KOUJO 无参 TARGET 换手，读当前 TARGET
+  era_flag.target = 31; // gobi_koujo 无参 TARGET 换手，读当前 TARGET
   fixture.store.set('talent:31:164', 1); // K4 冷徹（COUNT 164 − 60 = 104 → 族内 4）
   assert.equal(await gobi_koujo(4), '吧……算是……。', '转交 K4 害羞档');
   assert.equal(

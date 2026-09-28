@@ -243,7 +243,7 @@ const CAP_CASES = [
     { 82: 1, 87: 1, 89: 1, 91: 1, 92: 0 },
     81,
   ],
-  // 到 MAX_CHARANUM（VARIABLES.ERH:2 = 90）硬上限
+  // 到 MAX_CHARANUM（上限 90）硬上限
   [
     '⑥ CHARANUM >= MAX_CHARANUM(90)',
     { 82: 1, 87: 1, 89: 1, 91: 1, 92: 15 },

@@ -122,7 +122,7 @@ engine_test(
 
 // 情形三：yml/TStr.yml 的世界——装载仓库产物（引擎 parseDataFile + 装载
 // 循环转写）+ normal 登记 + fillData 持久桶，tstr:90 字符串写入可读回。
-// 这是 @P_C（TSTR:90）与未来 TSTR:30（售卻/處刑）的承载面。
+// 这是 p_c（TSTR:90）与未来 TSTR:30（售卻/處刑）的承载面。
 engine_test(
   '引擎 setVar：TStr.yml 装载 + normal 登记——tstr:90 字符串写入落桶可读回',
   () => {

@@ -32,7 +32,7 @@
   id: 82
   name: "human_realm_fallen"
   type: "number"
-# 人间界侵略事件进度（@KYOTEN_EVENT 的状态机）：
+# 人间界侵略事件进度（kyoten_event 的状态机）：
 # 0=未占、1=占村、2=占港、3=陷堡垒、4=占街道、5=占城市；侵攻度回落时按档
 # 回退。角色线读数点：嘉德线判定 == 3
 "人间界侵略事件进度":
@@ -100,7 +100,7 @@
   name: "map_2d_mode"
   type: "number"
 # —— 勇者来袭的特殊登场（issue #171 H2）——
-# 狂王替身（葵希罗替身，角色号 34）登场済标志：@K_34_crazylord 的防重复
+# 狂王替身（葵希罗替身，角色号 34）登场済标志：k_34_crazylord 的防重复
 # 触发判断条件（SIF FLAG:224 == 1 RETURN），登场即置 1。属主 chara（ownership/flag-ownership.yml "224"）——跨域写须
 # 具名，故进本表生成包装层（era_flag.crazylord_entered）；同函数族的
 # FLAG:223（莉莉登场済，:173）属主 event、域内裸写，不进表
@@ -109,7 +109,7 @@
   name: "crazylord_entered"
   type: "number"
 # —— 结局线区间（issue #116）——
-# 结局线区间 2801-2820 声明在 EX_FLAG（@ENDCHECK 头注释），但两条实际
+# 结局线区间 2801-2820 声明在 EX_FLAG（ere/event/event-endcheck.js 头注释），但两条实际
 # 写进了 FLAG 侧（ENDCHECK 链逐条按原写点移植，见 yml/ExFlag.yml 头注的
 # 错写登记；ExFlag.yml 同 id 的 2815/2816 条目是语义登记，真值归属由
 # ENDING_1 演出票 #118 定夺——两侧均无读者，写侧必须与 ENDCHECKCHARA 的
@@ -199,7 +199,7 @@
   id: 10016
   name: "assi_backup"
   type: "number"
-# 星期（DAY:3，@EVENTTURNEND 的日推进写入：+1 超过 6 回 0——日曜的次日是
+# 星期（DAY:3，EVENTTURNEND 的日推进写入：+1 超过 6 回 0——日曜的次日是
 # 月曜，即 0=月曜…6=日曜；开局不写、留 0，随 #114 进保留区）
 "星期":
   id: 10017
@@ -214,9 +214,9 @@
   id: 10018
   name: "last_load_no"
   type: "number"
-# 上次保存存档（10019..10028）：其他/VARIABLES.ERH:16 `#DIM LASTSAVE_NO,10
+# 上次保存存档（10019..10028）：引擎变量的 `#DIM LASTSAVE_NO,10
 # = -1`——声明即带初值 -1，_1.._9 是 ARRAYSHIFT 压栈的历史元素
-# （@SYSTEM_LIST_DATA 的高亮比较只读 [0]，历史元素仅占位防撞号）。
+# （list_data 的高亮比较只读 [0]，历史元素仅占位防撞号）。
 "上次保存存档":
   id: 10019
   name: "last_save_no"
@@ -258,8 +258,8 @@
   name: "last_save_no_9"
   type: "number"
 # 购入品指针（BOUGHT，旧引擎内置标量，issue #395 落表）：
-# @EVENTSHOP 每轮进商店时重置为 -1；@USERSHOP 的 107 分支（购物）
-# 置 1，下一轮 @SHOW_SHOP 据此跳过主菜单、改向道具/陷阱商店（0-53 = 道具、
+# EVENTSHOP 每轮进商店时重置为 -1；usershop 的 107 分支（购物）
+# 置 1，下一轮 show_shop 据此跳过主菜单、改向道具/陷阱商店（0-53 = 道具、
 # >=54 = 陷阱商店，商店票 #399 落真身）；
 # 新档不落表默认 0（fillData 语义，#13），必须显式初始化为 -1（event-first.js），
 # 否则新档第一次进商店会被误判为「正在购物道具 0 号」

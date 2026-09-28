@@ -15,7 +15,7 @@ const { preset_gamebase } = require('./helpers/gamebase');
  * 断言的达成调教回合区间（[1, 2] 围绕实测 1 轮）：
  * - 下界 1 轮：初始能力设为 ABL:0=4（阴蒂感觉 4，基础快C 2000，调教者技巧 0 档 50% 削减后实得 UP:0=1000），首轮单次爱抚即可超越 MARK:1 阈值（UP >= 500）；
  * - 上界 2 轮：若叠加初吻未体验（CFLAG:16=-1 减半至 UP:0=500）或轻微衰减，亦必然在 2 轮内达成 MARK:1=1。
- * 注：系统内 ABL 提升依赖未移植的 @ABLUP 族，测试不使用人工注入延迟轮数，依据系统自身算式进行首轮闭合。
+ * 注：系统内 ABL 提升依赖未移植的 ablup 族，测试不使用人工注入延迟轮数，依据系统自身算式进行首轮闭合。
  */
 const TURN_MIN = 1;
 const TURN_MAX = 2;
@@ -146,7 +146,7 @@ async function run_corrupt_path() {
 
   // 3. COM_ABLE 放行新指令：
   // 真实调教写出的状态驱动部分：ITEM:15 在场、EXP:1 > 25 在场、着装正常；
-  // ABL 部分因 @ABLUP 存根期尚未由珠自动提升，此处进行人工置位替代升级验证 COM_ABLE46 闸门判定。
+  // ABL 部分因 ablup 存根期尚未由珠自动提升，此处进行人工置位替代升级验证 COM_ABLE46 闸门判定。
   fixture.store.set('abl:17:10', 4); // 顺从 4
   fixture.store.set('abl:17:11', 4); // 欲望 4
   fixture.store.set('abl:17:17', 2); // 露出 2 (合计 10 >= 10)

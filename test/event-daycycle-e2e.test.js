@@ -3,8 +3,8 @@
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点，#16）。照
  * test/event-ending-e2e.test.js 的形状——同样的新档启动序列（标题 → 新游戏
- * → @EVENTFIRST 村娘线），但驱动的不是「打到 ENDING_1」，是工单内容点名的这条
- * 链（主菜单 → 选 199 休息 → @EVENTTURNEND → TIME==1 时 CALL EVENT_NEXTDAY
+ * → EVENTFIRST 村娘线），但驱动的不是「打到 ENDING_1」，是工单内容点名的这条
+ * 链（主菜单 → 选 199 休息 → EVENTTURNEND → TIME==1 时 CALL EVENT_NEXTDAY
  * → 日期推进 → BEGIN SHOP 回主菜单），断言全部落在可观察契约上（日期真的
  * 推进、税率真的涨了 5、回到主菜单后循环真的还能再走一轮）——不断言中间
  * 函数被调了几次。
@@ -68,7 +68,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   fixture.set_inputs(1);
   await expect_signal(run_title_page(), 'FIRST', BeginSignal, '标题画面新游戏');
 
-  // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+  // —— EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
   // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「普通」[0]、
   // 搬运选「抱起」[1]；村娘分支出口 BEGIN SHOP ——
   fixture.set_inputs(1, 2, 1, 0, 1);
@@ -80,7 +80,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   // TIME 显式置 1（下午）：见文件头说明
   era_flag.time = 1;
 
-  // —— 1. 主菜单（@EVENTSHOP → DRAW_MAINMENU）→ 2. 选 199（休息）——
+  // —— 1. 主菜单（EVENTSHOP → DRAW_MAINMENU）→ 2. 选 199（休息）——
   fixture.set_inputs(199);
   await expect_signal(run_shop(), 'TURNEND', BeginSignal, '主菜单选休息');
   assert.equal(
@@ -89,7 +89,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
     'FLAG:9（税金）休息一次 += 5',
   );
 
-  // day/date 基线在这里取，不在 EVENTFIRST 之后取：@EVENTFIRST 只初始化
+  // day/date 基线在这里取，不在 EVENTFIRST 之后取：EVENTFIRST 只初始化
   // DAY:1 = 1，DAY 与 DAY:2 留 0（#22 决定按原样保留），是 run_shop 自己的
   // 防御性钳位（page-shop.js 的同一条注释）把 DAY:2 从 0 修正到 1
   // ——上面这次 run_shop() 调用已经把钳位应用过，此刻取到的正是玩家在主
@@ -97,7 +97,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   const day_before = era_flag.day_count;
   const date_before = era_flag.date;
 
-  // —— 3-5. @EVENTTURNEND → TIME==1 → CALL EVENT_NEXTDAY → 日期推进 ——
+  // —— 3-5. EVENTTURNEND → TIME==1 → CALL EVENT_NEXTDAY → 日期推进 ——
   const pending = await emit('EVENTTURNEND');
   assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');
   assert.equal(era_flag.day_count, day_before + 1, 'DAY:0（累计天数）+= 1');

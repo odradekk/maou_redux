@@ -26,13 +26,13 @@
 #
 # 包装层产物：暂未生成——首个消费者（侵略线各票）实现时由
 # tools/gen-wrapper.js 入白名单生成 ere/era-utils/era-exflag.js 初稿。
-# 上届魔王的角色号（@MAOU_TENSHIN：EX_FLAG:0 = MASTER，注释「上届魔王记录」，
+# 上届魔王的角色号（event_maou_tenshin：EX_FLAG:0 = MASTER，注释「上届魔王记录」，
 # 角色名单跳过它）
 "上届魔王":
   id: 0
   name: "prev_maou"
   type: "number"
-# 指定继任的魔王角色号（@MAOU_KOUFO 选出存入，@MAOU_TENSHIN 据此交接）
+# 指定继任的魔王角色号（maou_kouho 选出存入，event_maou_tenshin 据此交接）
 "继任魔王":
   id: 3
   name: "next_maou"
@@ -42,7 +42,7 @@
   id: 95
   name: "defeated_heroes_bits"
   type: "number"
-# 威望。@EVENTFIRST 播种 70，每次侵略 +2；出兵效率按区间打折
+# 威望。EVENTFIRST 播种 70，每次侵略 +2；出兵效率按区间打折
 # （≤20 侵攻失败、21-40 战斗力÷4、41-60 略受
 # 质疑、61-80 相安无事、81-100 广受爱戴）；魔王交接时 -30
 "威望":
@@ -59,7 +59,7 @@
   id: 102
   name: "shrine_stage"
   type: "number"
-# 嘉德口上会话开关（@EVENTTRAIN #PRI 置 1、@EVENTEND #LATER 清 0）
+# 嘉德口上会话开关（EVENTTRAIN #PRI 置 1、EVENTEND #LATER 清 0）
 "嘉德口上会话":
   id: 103
   name: "kojo_gade_session"
@@ -74,7 +74,7 @@
   id: 223
   name: "kojo_rita_session"
   type: "number"
-# 非作弊资金记账：@MONEYSYS 与 MONEY 同步增减（初值 1234）；
+# 非作弊资金记账：moneysys 与 MONEY 同步增减（初值 1234）；
 # ENDCHECKMAIN 以 MONEY > 本值 + 8766 判资金作弊
 "非作弊资金":
   id: 4444

@@ -1153,7 +1153,7 @@ function create_era_fixture() {
     delete_train_table_keys();
     return undefined;
   };
-  // removeCharacter（DELCHARA 的引擎等价物，#44 的 @EVENTEND 死亡分支用）。
+  // removeCharacter（DELCHARA 的引擎等价物，#44 的 EVENTEND 死亡分支用）。
   // 引擎（app.asar 模块 183，逐字）分两段清理：
   //   - filter 的幸存者分支：对每个幸存者 × 每个参数，delete
   //     relation[幸存者][参数] 与 callname[幸存者][参数]（三段键）；
