@@ -93,7 +93,7 @@ export default [
     ...make(
       6993,
       'C_RELATION 名字表损坏',
-      '# 家族关系矩阵：移植自 RELATION.ERH 的 C_RELATION（200 槽）。',
+      '# 家族关系矩阵：承接 C_RELATION（200 槽）。',
       '"损坏": [',
       'yml/C_Relation.yml',
       '引擎接受家族扩展表',
@@ -104,7 +104,7 @@ export default [
     ...make(
       6994,
       'C_RELATION_SUB 名字表损坏',
-      '# 登录角色与外部对象的家族关系：移植自 RELATION.ERH 的',
+      '# 登录角色与外部对象的家族关系：承接\n# C_RELATION_SUB（1=娼馆客、2=野狗、3=怪物、4=狂王；共 10 槽）。',
       '"损坏": [',
       'yml/C_Relation_Sub.yml',
       '引擎接受家族扩展表',
