@@ -320,7 +320,7 @@ export default [
     must_mention: '勇者无中毒/债务 → 空闲',
   },
   {
-    desc: 'M521 LOG_TRY_BITCH 末段删除（:47「考虑着出卖肉体的事。」，#185 验收变异：与 FI_TRY_BITCH 区分）',
+    desc: 'M521 LOG_TRY_BITCH 末段删除（「考虑着出卖肉体的事。」，#185 验收变异：与 FI_TRY_BITCH 区分）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find: "      '考虑着出卖肉体的事。',",
     replace: "      '', // 变异：末段删（LOG_TRY_BITCH 不再输出收尾文本）",
@@ -14160,7 +14160,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'OSIOKI：小便器刑 受虐狂 TALENT:88 或淫乱 TALENT:76 任一即可',
   },
   {
-    desc: 'M2504 K8 OSIOKI 厕所打扫刑与断食刑串档（:7905 换成 :7908 的台词，#239）',
+    desc: 'M2504 K8 OSIOKI 厕所打扫刑与断食刑串档（两段台词互换，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    await era.printAndWait(`「这不是我应该做的事啊………」`);',
     replace:
@@ -14177,7 +14177,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'choice 9',
   },
   {
-    desc: 'M2506 K8 GOBI 悲伤档串成害羞档（:7929 换成 :7932 的语尾，#239）',
+    desc: 'M2506 K8 GOBI 悲伤档串成害羞档（两段语尾互换，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    return `唉……。`;',
     replace: '    return `嗯……。`; // （变异：串档）',
@@ -17314,7 +17314,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_15',
   },
   {
-    desc: 'M3518 K15 COM 头部被插入 ASSI 检查（源 :408-410 整行注释，#246）',
+    desc: 'M3518 K15 COM 头部被插入 ASSI 检查（整行注释，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: `  const kojo = chara(target).kojo;
 
@@ -20246,7 +20246,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '湿润的舌头就立马从缝隙中钻进来',
   },
   {
-    desc: 'M10711 K9 对面座位爱慕支 RAND:2 分支的同一处初吻条件退回（:2449 的第 14 处第二站点）',
+    desc: 'M10711 K9 对面座位爱慕支 RAND:2 分支的同一处初吻条件退回（第 14 处第二站点）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          }\n          if (chara(target).train.初吻对象 >= 0) {',
     replace: '          }\n          if (kojo.初吻对象 >= 0) {',
@@ -20894,7 +20894,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '两处二选一是按钮',
   },
   {
-    desc: 'M11940 卖春失败（有客）行拆回两条（#584：:314+:315 的同一行被拆）',
+    desc: 'M11940 卖春失败（有客）行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    await era.printAndWait(\n      `${kyaku}人群的声音嘈杂着、交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,\n    );',
     replace:
@@ -20903,7 +20903,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '两句必须落在同一行',
   },
   {
-    desc: 'M11941 兽奸描写首行拆回两条（#584：:524+:525 的同一行被拆）',
+    desc: 'M11941 兽奸描写首行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  await era.printAndWait(`${name_of(arg)}无法压抑兽交的欲望悄悄寻找着兽穴...`);',
     replace:
@@ -20912,7 +20912,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'DUNGEON_ANIMAL 首行必须是整行',
   },
   {
-    desc: 'M11942 强制肉偿结算行拆回两条（#584：:78+…+:86 的同一行被拆）',
+    desc: 'M11942 强制肉偿结算行拆回两条（#584：多行合成的一整行被拆）',
     file: 'ere/kojo/kojo-forced-payment.js',
     find: '  await era.printAndWait(\n    `被强制用肉体偿债的${name_of(arg)}抵销了${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,\n  );',
     replace:
@@ -20921,7 +20921,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '结算行（#584 起是同一行）',
   },
   {
-    desc: 'M11943 BENKI 施舍首次台词拆回两条（#584：:7495+:7497 的同一行被拆；#599 起名字已接上，find 同步）',
+    desc: 'M11943 BENKI 施舍首次台词拆回两条（#584：两行合成的一整行被拆；#599 起名字已接上，find 同步）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,\n      );',
     replace:
@@ -20939,7 +20939,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '段必须与后句同一行',
   },
   {
-    desc: 'M11945 兽交卖春首行拆回两条（#584：:1459+:1464 的同一行被拆）',
+    desc: 'M11945 兽交卖春首行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find: '    await era.printAndWait(\n      `${name_of(arg)}在大家的眼前不知羞耻的进行着兽交表演...`,\n    );',
     replace:
@@ -20948,7 +20948,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TOWN 首行是名字 + 固定文的整行',
   },
   {
-    desc: 'M11946 男子迷宫凌辱「反抗的」行拆回两条（#584：:71+:72 的同一行被拆）',
+    desc: 'M11946 男子迷宫凌辱「反抗的」行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: '        await era.print(\n          `带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+${mon_num * 10}`,\n        );',
     replace:
@@ -20958,7 +20958,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   },
   // M11947（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
   {
-    desc: 'M11949 男版肉便器收尾行拆回两条（#584 的 :802+:804；#600 起目标在整行语句的末段）',
+    desc: 'M11949 男版肉便器收尾行拆回两条（#584 的两行合一段；#600 起目标在整行语句的末段）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "        (rand_n(3) === 0\n          ? '【操我】'\n          : rand_n(2) === 0\n            ? '【肛门免费】'\n            : '【母猪】') +\n        '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n    );",
     replace:
@@ -20967,7 +20967,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '肉便器行必须是整行',
   },
   {
-    desc: 'M11950 男版「素直」行拆回两条（#584：:76+:77 的同一行被拆）',
+    desc: 'M11950 男版「素直」行拆回两条（#584：两行合成的一整行被拆）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: '        // 与 :77 原作 PRINTFORM + PRINTFORML，同一行（#584）\n        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
     replace:
@@ -20985,7 +20985,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '段必须与后句同一行',
   },
   {
-    desc: 'M11952 强制肉偿拍片结算行拆回两条（#584：:90+:92+:94 的同一行被拆）',
+    desc: 'M11952 强制肉偿拍片结算行拆回两条（#584：三行合成的一整行被拆）',
     file: 'ere/kojo/kojo-forced-payment.js',
     find: '    // 片酬只求值一次：显示与入账同一个数（RAND:100 只取一次）\n    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n    await era.printAndWait(\n      `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,\n    );',
     replace:
@@ -21031,7 +21031,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12131 K0 施舍首句（:7495+:7497）名字换成别的调用（保真锁认记号：benki_player_name() → sc()）（#599）',
+    desc: 'M12131 K0 施舍首句名字换成别的调用（保真锁认记号：benki_player_name() → sc()）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '`「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`',
     replace: '`「和${sc()}来同时用小穴和菊花来做爱了♪」`',
@@ -21039,7 +21039,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '首次台词必须是整行',
   },
   {
-    desc: 'M12132 K0 施舍首句（:7516+:7518）名字删除（缺对象名）（#599）',
+    desc: 'M12132 K0 施舍首句名字删除（缺对象名）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}用小穴做爱做到潮如泉涌咯♪」`,\n      );',
     replace:
@@ -21049,7 +21049,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12133 K0 施舍首句（:7537+:7539）名字删除（缺对象名）（#599）',
+    desc: 'M12133 K0 施舍首句名字删除（缺对象名）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「和${benki_player_name()}用菊花做爱做到湿滑不已咯♪」`,\n      );',
     replace:
@@ -21059,7 +21059,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12134 K0 施舍首句（:7558+:7560）名字删除（缺对象名）（#599）',
+    desc: 'M12134 K0 施舍首句名字删除（缺对象名）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '      await era.printAndWait(\n        `「给予${benki_player_name()}先生的肉棒大人的『施舍』哦♪」`,\n      );',
     replace:
@@ -21069,7 +21069,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12135 K12 交配实验续行（:5107）名字删除（与 K0 同型的丢名字）（#599）',
+    desc: 'M12135 K12 交配实验续行名字删除（与 K0 同型的丢名字）（#599）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '      await era.printAndWait(`「多亏`);\n      await era.printAndWait(\n        `${benki_player_name()}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,\n      );',
     replace:
@@ -21079,7 +21079,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12136 K3 口交施舍首句（:8205+:8207）名字删除（K3 用拼接基准后同受本锁）（#599）',
+    desc: 'M12136 K3 口交施舍首句名字删除（K3 用拼接基准后同受本锁）（#599）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '      await era.printAndWait(\n        `「请${player_name_benki}大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,\n      );',
     replace:
@@ -21091,7 +21091,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // M12137（保真锁记号表检查）随 kojo-text-fidelity 删除（#640）。
   // M12138（保真锁上方记号行检查）随 kojo-text-fidelity 删除（#640）。
   {
-    desc: 'M12139 K12 两行并回一行（:5171+:5173 的前缀行被吞——行为断言的整行输出对账抓）（#599；#640 起由 kojo-k12-intellectual 守）',
+    desc: 'M12139 K12 两行并回一行（前缀行被吞——行为断言的整行输出对账抓）（#599；#640 起由 kojo-k12-intellectual 守）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '      await era.printAndWait(`「多亏`);\n      await era.printAndWait(\n        `${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,\n      );',
     replace:
@@ -21103,7 +21103,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #600：16 处「同一行输出被拆」的合并点，各配一条「拆回多条」变异 ——
   // （每处合并后的整行断言见对应测试文件；条目按工单给的 M12140 起编号）
   {
-    desc: 'M12140 K8 穿环·舌先（:5233+:5234）拆回两条（#600：同一行又被拆开）',
+    desc: 'M12140 K8 穿环·舌先拆回两条（#600：同一行又被拆开）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '            await era.print(\n              `「啊啊…如果和你舌吻的话…会变得很舒服吧…？」${target_name}为了展示环而伸出了舌头………`,\n            );',
     replace:
@@ -21113,7 +21113,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '初めて·爱慕·P=16',
   },
   {
-    desc: 'M12141 K8 穿环·唇（:5237+:5238）拆回两条（#600）',
+    desc: 'M12141 K8 穿环·唇拆回两条（#600）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '            await era.print(\n              `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,\n            );',
     replace:
@@ -21123,7 +21123,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '初めて·爱慕·P=32',
   },
   {
-    desc: 'M12142 K8 穿环·二回目以降·舌先（:5374+:5375）拆回两条（#600）',
+    desc: 'M12142 K8 穿环·二回目以降·舌先拆回两条（#600）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          await era.print(\n            `「啊啊…如果和你舌吻的话…会变得很舒服吧…？」${target_name}为了展示环而伸出了舌头………`,\n          );',
     replace:
@@ -21133,7 +21133,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '二回目以降·爱慕·P=16',
   },
   {
-    desc: 'M12143 K8 穿环·二回目以降·唇（:5378+:5379）拆回两条（#600）',
+    desc: 'M12143 K8 穿环·二回目以降·唇拆回两条（#600）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          await era.print(\n            `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,\n          );',
     replace:
@@ -21143,7 +21143,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '二回目以降·爱慕·P=32',
   },
   {
-    desc: 'M12144 K11 兽交要求（:12915..:12923）拆回三条（#600：兽名与收行又各占一行）',
+    desc: 'M12144 K11 兽交要求拆回三条（#600：兽名与收行又各占一行）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    await era.printAndWait(`${name}提出了和` + animal + `进行兽交的请求`);',
     replace:
@@ -21154,7 +21154,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'GOHOUBI_REQUEST：兽交要求',
   },
   {
-    desc: 'M12145 K13 NTR·前缀段（:5518..:5526）在 :5531 支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
+    desc: 'M12145 K13 NTR·前缀段在 :5531 支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find:
       '      const rape_prefix =\n' +
@@ -21170,7 +21170,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀段与收行同属一行',
   },
   {
-    desc: 'M12146 K0 交谈首次·录像自白（:4652+:4654+:4655）拆回多条（#600）',
+    desc: 'M12146 K0 交谈首次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
     replace:
@@ -21179,7 +21179,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '交谈首次',
   },
   {
-    desc: 'M12147 K0 交谈二次·录像自白（:4711+:4713+:4714）拆回多条（#600）',
+    desc: 'M12147 K0 交谈二次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          // 与上一段同型（SIF 的基准相同，#600）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
     replace:
@@ -21188,7 +21188,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '交谈二次·录像自白',
   },
   {
-    desc: 'M12148 K3 录像展示·五段 SIF 后缀（:1640..:1656）拆回七条（#600）',
+    desc: 'M12148 K3 录像展示·五段 SIF 后缀拆回七条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "        era.print(\n          `${'\\u3000'}只要是魔王大人的命令来的话、${sc()}一定会在这里…用这个` +\n            (devoted ? '魔王大人专用' : '') +\n            (lewd ? '淫乱' : '') +\n            (female_dog ? '牝犬' : '') +\n            (greedy ? '贪欲' : '') +\n            (virgin ? '处女' : '') +\n            `小穴来、给今天看到的大家侍奉也说不定呢。`,\n        );",
     replace:
@@ -21205,7 +21205,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 7 录像展示',
   },
   {
-    desc: 'M12149 K3 交谈首次·录像自白（:4995+:4997+:4998）拆回多条（#600）',
+    desc: 'M12149 K3 交谈首次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation ? '还有手淫时妄想的内容' : '') +\n              `之类的兴高采烈地说个不停……`,\n          );\n          era.print(\n            `${target_name}只是因为想象着水晶球在故乡传播开的画面股间就湿润了……`,",
     replace:
@@ -21214,7 +21214,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 初回·录像自白',
   },
   {
-    desc: 'M12150 K3 交谈首次·通常（:5032..:5038）拆回多条（#600：发出档二选一又各占一行）',
+    desc: 'M12150 K3 交谈首次·通常拆回多条（#600：发出档二选一又各占一行）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
     replace:
@@ -21223,7 +21223,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 初回·通常',
   },
   {
-    desc: 'M12151 K3 交谈二次·录像自白（:5067+:5069+:5070）拆回多条（#600）',
+    desc: 'M12151 K3 交谈二次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation ? '还有手淫时妄想的内容' : '') +\n              `之类的兴高采烈地说个不停……`,\n          );\n          era.print(\n            `${target_name}只是因为想象到水晶球在故乡传播开的样子股间就湿润了……`,",
     replace:
@@ -21232,7 +21232,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 二次·录像自白',
   },
   {
-    desc: 'M12152 K3 交谈二次·通常（:5104..:5110）拆回多条（#600）',
+    desc: 'M12152 K3 交谈二次·通常拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          // 与 :5032..:5038 同型（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
     replace:
@@ -21241,7 +21241,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'SELECTCOM 56 二次·通常',
   },
   {
-    desc: 'M12153 男版迷宫凌辱·肉便器整行（:767..:804）拆回多条（#600：落書与收尾又各占一行）',
+    desc: 'M12153 男版迷宫凌辱·肉便器整行拆回多条（#600：落書与收尾又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "    await era.printAndWait(\n      `${arg_name}的身上，被写着` +\n        '【最喜欢阴茎】' +\n        (cold ? '【性冷淡便器】' : '') +\n        (modest ? '【看似忠贞的便器出道】' : '') +\n        (wet ? '【又粘又湿】' : '') +\n        (pleased ? '【愉悦的脸】' : '') +\n        (has_penis ? '【有鸡鸡的奴隶】' : '') +\n        (rand_n(3) === 0\n          ? '【操我】'\n          : rand_n(2) === 0\n            ? '【肛门免费】'\n            : '【母猪】') +\n        '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n    );",
     replace:
@@ -21266,7 +21266,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '男人凌辱·肉便器',
   },
   {
-    desc: 'M12154 女版卖春前后·LOG_TRY_BITCH 整行（:14..:47）拆回多条（#600：前缀与收行又各占一行）',
+    desc: 'M12154 女版卖春前后·LOG_TRY_BITCH 整行拆回多条（#600：前缀与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -21281,7 +21281,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_TRY_BITCH 的整段输出',
   },
   {
-    desc: 'M12155 卖春积极性按钮（:1157..:1167）拆回两条（#600：档位文案又占一行）',
+    desc: 'M12155 卖春积极性按钮拆回两条（#600：档位文案又占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  era.print(`[${num}] 卖春积极性 - ${level}`);',
     replace:
@@ -21295,7 +21295,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 「拆回多条」变异（每处合并后的整行断言见 test/kojo-k11-lily.test.js 的
   // #623 段；条目编号按工单给的区间 M12600 起）——
   {
-    desc: 'M12600 K11 初回录像·自我介绍整行（:6842+:6844+:6845）拆回多条（#623）',
+    desc: 'M12600 K11 初回录像·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 是 SIF 的插入段，末行 PRINTFORML 才收行（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(\n            `${target_name}介绍了自己的名字和迄今为止的性经验` +\n              (masturbation_talk\n                ? '、自慰的时候幻想的内容和对象也说出来了'\n                : '') +\n              `说得自己都兴奋起来了……`,\n          );",
     replace:
@@ -21304,7 +21304,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回录像',
   },
   {
-    desc: 'M12601 K11 二回目录像·自我介绍整行（:6929+:6931+:6932）拆回多条（#623）',
+    desc: 'M12601 K11 二回目录像·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 与初回同型（#623）\n          const masturbation_talk = chara(target).train.自慰中毒 >= 3;\n          await era.print(\n            `${target_name}介绍了自己的名字和迄今为止的性经验` +\n              (masturbation_talk\n                ? '、自慰的时候幻想的内容和对象也说出来了'\n                : '') +\n              `说得自己都兴奋起来了……`,\n          );",
     replace:
@@ -21313,7 +21313,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目录像',
   },
   {
-    desc: 'M12602 K11 初回交谈·助手玛奥首支（:6867）拆回两条（#623）',
+    desc: 'M12602 K11 初回交谈·助手玛奥首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            );",
     replace:
@@ -21322,7 +21322,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12603 K11 初回交谈·非助手首支（:6895）拆回两条（#623）',
+    desc: 'M12603 K11 初回交谈·非助手首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          const line_head = `${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n            );',
     replace:
@@ -21331,7 +21331,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12604 K11 二回目交谈·助手玛奥首支（:6954）拆回两条（#623）',
+    desc: 'M12604 K11 二回目交谈·助手玛奥首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "          // 前缀提到语句外共用（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            );",
     replace:
@@ -21340,7 +21340,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12605 K11 二回目交谈·非助手首支（:6982）拆回两条（#623）',
+    desc: 'M12605 K11 二回目交谈·非助手首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n            );',
     replace:
@@ -21349,7 +21349,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12606 K11 初回交谈·助手玛奥插入段（:6873+:6875+:6877+:6879）拆回多条（#623）',
+    desc: 'M12606 K11 初回交谈·助手玛奥插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '却乐在其中' : painful ? '无比痛苦' : '') +\n                `地回应着。`,\n            );",
     replace:
@@ -21365,7 +21365,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 助手玛奥：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12607 K11 初回交谈·非助手插入段（:6901+:6903+:6905+:6907）拆回多条（#623）',
+    desc: 'M12607 K11 初回交谈·非助手插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            // 同一行输出：无后缀 PRINTFORM 链，\n            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n                `地努力回答着`,\n            );",
     replace:
@@ -21374,7 +21374,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 非助手：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12608 K11 二回目交谈·助手玛奥插入段（:6960+:6962+:6964+:6966）拆回多条（#623）',
+    desc: 'M12608 K11 二回目交谈·助手玛奥插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '害羞' : painful ? '无比痛苦' : '') +\n                `地回应着`,\n            );",
     replace:
@@ -21390,7 +21390,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 助手玛奥：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12609 K11 二回目交谈·非助手插入段（:6988+:6990+:6992+:6994）拆回多条（#623）',
+    desc: 'M12609 K11 二回目交谈·非助手插入段拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            // 同一行输出（与上面互斥插入段同型，#623）\n            const excited =\n              era.get(`tequip:${target}:11`) ||\n              era.get(`tequip:${target}:13`) ||\n              era.get(`tequip:${target}:14`) ||\n              era.get(`tequip:${target}:15`) ||\n              era.get(`tequip:${target}:16`) ||\n              era.get(`tequip:${target}:17`);\n            const painful =\n              era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n            await era.print(\n              line_head +\n                `的语言调戏，${target_name}` +\n                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n                `地努力回答着`,\n            );",
     replace:
@@ -21399,7 +21399,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 非助手：语言调戏插入段并入整行（三档）',
   },
   {
-    desc: 'M12610 K11 NTR P=1 处女丧失·陥落済（:12609+:12611+:12613+:12615）拆回多条（#623）',
+    desc: 'M12610 K11 NTR P=1 处女丧失·陥落済拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用` +\n          (king_has_penis ? `双腿之间的巨根` : `粗大的假阳具`) +\n          `径直插入了${target_name}的处女蜜穴之中。`,\n      );',
     replace:
@@ -21414,7 +21414,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=1',
   },
   {
-    desc: 'M12611 K11 NTR P=1 处女丧失·それ以外（:12622+:12624+:12626+:12628）拆回多条（#623）',
+    desc: 'M12611 K11 NTR P=1 处女丧失·それ以外拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用` +\n          (king_has_penis ? `双腿之间的巨根` : `粗大的假阳具`) +\n          `径直插入了${target_name}的蜜穴之中。`,\n      );',
     replace:
@@ -21429,7 +21429,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=1',
   },
   {
-    desc: 'M12612 K11 NTR P=2 肛门·陥落済（:12638+:12640+:12642+:12644）拆回多条（#623）',
+    desc: 'M12612 K11 NTR P=2 肛门·陥落済拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `${target_name}被` +\n          (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `撑开肛门，径直插了进去。在狂王的持续侵犯下，${target_name}不住地呻吟了起来。`,\n      );',
     replace:
@@ -21446,7 +21446,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=2',
   },
   {
-    desc: 'M12613 K11 NTR P=2 肛门·それ以外（:12655+:12657+:12659+:12661）拆回多条（#623）',
+    desc: 'M12613 K11 NTR P=2 肛门·それ以外拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        `${target_name}的肛门被` +\n          (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `撑开了肛门，插了进去。`,\n      );',
     replace:
@@ -21461,7 +21461,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=2',
   },
   {
-    desc: 'M12614 K11 NTR P=4 V プレイ·陥落済（:12683+:12685+:12687）拆回多条（#623）',
+    desc: 'M12614 K11 NTR P=4 V プレイ·陥落済拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `持续地侵犯着${target_name}的蜜穴，${target_name}感受着交媾的快感，发出了甘甜的娇喘。`,\n      );',
     replace:
@@ -21477,7 +21477,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 NTR P=4',
   },
   {
-    desc: 'M12615 K11 NTR P=4 V プレイ·それ以外（:12700+:12702+:12704）拆回多条（#623）',
+    desc: 'M12615 K11 NTR P=4 V プレイ·それ以外拆回多条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      await era.printAndWait(\n        (king_has_penis ? `狂王的巨根` : `粗大的假阳具`) +\n          `持续地侵犯着${target_name}的蜜穴，${target_name}不住地呻吟着。`,\n      );',
     replace:
@@ -21496,7 +21496,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #623：C 组（K9 黑方片 19 处）「同一行输出被拆」的合并点，各配一条
   // 「拆回多条」变异（整行断言见 test/kojo-k9-diamond.test.js 的 #623 段）——
   {
-    desc: 'M12616 K9 口塞初回·爱慕首段（:4146+:4148）拆回两条（#623：前缀又占一行）',
+    desc: 'M12616 K9 口塞初回·爱慕首段拆回两条（#623：前缀又占一行）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n      } else {',
     replace:
@@ -21505,7 +21505,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞初回',
   },
   {
-    desc: 'M12617 K9 口塞初回·それ以外首段（:4155+:4157）拆回两条（#623）',
+    desc: 'M12617 K9 口塞初回·それ以外首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `左右甩起了脑袋………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n      }',
     replace:
@@ -21514,7 +21514,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞初回',
   },
   {
-    desc: 'M12618 K9 口塞二回目·淫乱受虐狂Lv5 首段（:4169+:4171）拆回两条（#623）',
+    desc: 'M12618 K9 口塞二回目·淫乱受虐狂Lv5 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 9（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21523,7 +21523,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12619 K9 口塞二回目·淫乱受虐狂Lv3 首段（:4179+:4181）拆回两条（#623）',
+    desc: 'M12619 K9 口塞二回目·淫乱受虐狂Lv3 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 8（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21532,7 +21532,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12620 K9 口塞二回目·爱慕受虐狂Lv5 首段（:4194+:4196）拆回两条（#623）',
+    desc: 'M12620 K9 口塞二回目·爱慕受虐狂Lv5 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子……………`);',
     replace:
@@ -21542,7 +21542,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12621 K9 口塞二回目·爱慕受虐狂Lv3 首段（:4204+:4206）拆回两条（#623）',
+    desc: 'M12621 K9 口塞二回目·爱慕受虐狂Lv3 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 5（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21551,7 +21551,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12622 K9 口塞二回目·爱慕首段（:4214+:4216）拆回两条（#623）',
+    desc: 'M12622 K9 口塞二回目·爱慕首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 4（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21560,7 +21560,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12623 K9 口塞二回目·受虐狂Lv3 首段（:4224+:4226）拆回两条（#623）',
+    desc: 'M12623 K9 口塞二回目·受虐狂Lv3 首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `的样子…………`);',
     replace:
@@ -21570,7 +21570,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12624 K9 口塞二回目·それ以外首段（:4234+:4236）拆回两条（#623）',
+    desc: 'M12624 K9 口塞二回目·それ以外首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.printAndWait(line_head + `左右甩起了脑袋………`);\n        } else {\n          await era.printAndWait(line_head + `的眼神看着${player_name}………`);\n        }\n        // CFLAG:TARGET:346  = 2（变量语义：CFLAG 族，TARGET:346）',
     replace:
@@ -21579,7 +21579,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 口塞二回目',
   },
   {
-    desc: 'M12625 K9 交谈录像·自我介绍整行（:4424+:4426+:4427）拆回多条（#623）',
+    desc: 'M12625 K9 交谈录像·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "          // 是 SIF 的插入段，末行 PRINTFORML 才收行（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation_talk ? '还有手淫时妄想的内容' : '') +\n              `十分兴奋地说了出来……`,\n          );",
     replace:
@@ -21588,7 +21588,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈录像',
   },
   {
-    desc: 'M12626 K9 交谈初回·首支（:4442）拆回两条（#623）',
+    desc: 'M12626 K9 交谈初回·首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '        const line_head = `${player_name}向她`;\n        if (spoke_first) {\n          await era.print(\n            line_head +\n              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n          );',
     replace:
@@ -21597,7 +21597,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12627 K9 交谈初回·第三支插入段整行（:4446+:4448+:4450+:4452）拆回多条（#623）',
+    desc: 'M12627 K9 交谈初回·第三支插入段整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "          // 同一行输出：无后缀 PRINTFORM 链，\n          // 是两个互斥插入段，末行 PRINTFORML 收行\n          // （这两段是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            line_head +\n              `搭话后、${target_name}就发出了` +\n              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n              `娇喘声，拼命地回起话来了。`,\n          );",
     replace:
@@ -21606,7 +21606,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12628 K9 交谈二回目·自我介绍整行（:4475+:4477+:4478）拆回多条（#623）',
+    desc: 'M12628 K9 交谈二回目·自我介绍整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "          // 与初回同型（#623）\n          const masturbation_talk = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `${target_name}将自己的本名、接下来要进行的性体验` +\n              (masturbation_talk ? '还有手淫时妄想的内容' : '') +\n              `十分兴奋地说了出来……`,\n          );",
     replace:
@@ -21615,7 +21615,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈录像',
   },
   {
-    desc: 'M12629 K9 交谈二回目·首支（:4493）拆回两条（#623）',
+    desc: 'M12629 K9 交谈二回目·首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '        const line_head = `${master_name}向她`;\n        if (spoke_first) {\n          await era.print(\n            line_head +\n              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n          );',
     replace:
@@ -21624,7 +21624,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12630 K9 交谈二回目·第三支插入段整行（:4497+:4499+:4501+:4503）拆回多条（#623）',
+    desc: 'M12630 K9 交谈二回目·第三支插入段整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "          // 与初回同型\n          // （这几段是这个 ELSEIF 支的收尾，#623）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            line_head +\n              `搭话后、${target_name}就发出了` +\n              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n              `娇喘声，拼命地回起话来了。`,\n          );",
     replace:
@@ -21633,7 +21633,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12631 K9 死斗场·口交器具名整行（:7085+:7087+:7089+:7090）拆回多条（#623）',
+    desc: 'M12631 K9 死斗场·口交器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "      await era.printAndWait(\n        `${assi_name}看着${target_name}舔着` +\n          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n          `露出了十分愉悦的表情……`,\n      );",
     replace:
@@ -21648,7 +21648,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场',
   },
   {
-    desc: 'M12632 K9 死斗场·背后位器具名整行（:7119+:7121+:7123+:7124）拆回多条（#623）',
+    desc: 'M12632 K9 死斗场·背后位器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "      await era.printAndWait(\n        `${assi_name}听着${target_name}的悲鸣继续用` +\n          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n          `来毫不留情地蹂蹑的${target_name}的小穴。`,\n      );",
     replace:
@@ -21663,7 +21663,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场',
   },
   {
-    desc: 'M12633 K9 死斗场·背后位肛门器具名整行（:7144+:7146+:7148+:7149）拆回多条（#623）',
+    desc: 'M12633 K9 死斗场·背后位肛门器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n          `毫不留情地继续蹂蹑${target_name}的屁眼。`,\n      );",
     replace:
@@ -21678,7 +21678,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场',
   },
   {
-    desc: 'M12634 K9 奖赏请求·野兽名整行（:7414+:7416+:7418+:7420+:7422）拆回多条（#623）',
+    desc: 'M12634 K9 奖赏请求·野兽名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '    await era.printAndWait(\n      `「呐~魔王大人、我想和` +\n        beast +\n        `交尾试一试呢~、能不能事先帮我准备好呢~？」`,\n    );',
     replace:
@@ -21692,7 +21692,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #623：C 组（K3 温妮 17 处）「同一行输出被拆」的合并点，各配一条
   // 「拆回多条」变异（整行断言见 test/kojo-k3-noble.test.js 的 #623 段）——
   {
-    desc: 'M12635 K3 强制排泄·出身首支整行（:4569+:4571+:4573+:4575+:4577）拆回多条（#623）',
+    desc: 'M12635 K3 强制排泄·出身首支整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '          await era.printAndWait(\n            (former_life === 5\n              ? `「从娼妇`\n              : former_life === 7\n                ? `「从乞丐`\n                : former_life === 9\n                  ? `「从贫民`\n                  : `「从奴隶`) + `成为了勇者，就能摆脱以前的生活…才对的啊…」`,\n          );',
     replace:
@@ -21707,7 +21707,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·出身两支的整行',
   },
   {
-    desc: 'M12636 K3 强制排泄·出身二支整行（:4589+:4591+:4593+:4595+:4597+:4599）拆回多条（#623）',
+    desc: 'M12636 K3 强制排泄·出身二支整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          await era.printAndWait(\n            `「不、不要啊！${'\\u3000'}这这这、这样子的、比` +\n              origin_word +\n              `还不如的待遇！！」`,\n          );",
     replace:
@@ -21718,7 +21718,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·出身两支的整行',
   },
   {
-    desc: 'M12637 K3 强制排泄·最深部遭遇整行（:4653+:4655+:4657+:4659+:4661）拆回多条（#623）',
+    desc: 'M12637 K3 强制排泄·最深部遭遇整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "                await era.printAndWait(\n                  `「…哈、啊哈${black_heart(1)}${'\\u3000'}一想到${sc()}拉出来的东西、要是让探索中的勇者` +\n                    (rand_n(3) === 0\n                      ? `找到`\n                      : rand_n(2) === 0\n                        ? `一不小心捡到`\n                        : `无意中踩到`) +\n                    `了的话…吼吼噢噢噢噢${black_heart(1)}」`,\n                );",
     replace:
@@ -21729,7 +21729,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·最深部遭遇三档整行',
   },
   {
-    desc: 'M12638 K3 强制排泄·两穴支首段（:4777）拆回两条（#623：前缀又占一行）',
+    desc: 'M12638 K3 强制排泄·两穴支首段拆回两条（#623：前缀又占一行）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '            await era.printAndWait(line_head + `着……竟然…」`);',
     replace:
@@ -21739,7 +21739,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12639 K3 强制排泄·屈辱支首段（:4812）拆回两条（#623）',
+    desc: 'M12639 K3 强制排泄·屈辱支首段拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '              await era.printAndWait(\n                line_head + `又要…出来了、出…快停下来啊……！！」`,\n              );',
     replace:
@@ -21749,7 +21749,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12640 K3 交谈·搭话首支（:5026+:5028）拆回两条（#623：基准里的前缀行又独立打印）',
+    desc: 'M12640 K3 交谈·搭话首支拆回两条（#623：基准里的前缀行又独立打印）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '          // ——#623 按各支的末行各记各的，其余支仍是各自的行）\n          era.print(\n            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,\n          );',
     replace:
@@ -21758,7 +21758,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈·搭话首支整行',
   },
   {
-    desc: 'M12641 K3 交谈二回目·搭话首支（:5098+:5100）拆回两条（#623）',
+    desc: 'M12641 K3 交谈二回目·搭话首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '          // 与上一段同型（二回目，基准漏了一段，#623）\n          era.print(\n            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,\n          );',
     replace:
@@ -21767,7 +21767,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈·搭话首支整行',
   },
   {
-    desc: 'M12642 K3 兽奸接吻·舌头缠绕整行（:6031+:6033+:6035+:6037）拆回多条（#623）',
+    desc: 'M12642 K3 兽奸接吻·舌头缠绕整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '        await era.printAndWait(\n          `${target_name}` +\n            (rand_n(2) === 0 ? `一脸陶醉的表情` : `专心地`) +\n            `和野狗用舌头缠绕在一起了。`,\n        );',
     replace:
@@ -21778,7 +21778,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 兽奸接吻·舌头缠绕整行',
   },
   {
-    desc: 'M12643 K3 兽奸录像·孩子称呼整行（:6717..:6751）拆回两条（#623）',
+    desc: 'M12643 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '            await era.printAndWait(`「这是你的……新爸爸哦♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +',
     replace:
@@ -21787,7 +21787,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12644 K3 兽奸录像·孩子称呼整行（:6796..:6830）拆回两条（#623）',
+    desc: 'M12644 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈服从于狗了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +",
     replace:
@@ -21796,7 +21796,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12645 K3 兽奸录像·孩子称呼整行（:6900..:6934）拆回两条（#623）',
+    desc: 'M12645 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '            );\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +',
     replace:
@@ -21805,7 +21805,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12646 K3 兽奸录像·孩子称呼整行（:6982..:7016）拆回两条（#623）',
+    desc: 'M12646 K3 兽奸录像·孩子称呼整行拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "              `「${sc()}是有儿子的♪${'\\u3000'}看啊～♪${'\\u3000'}妈妈对狗发情了♪」`,\n            );\n            await era.printAndWait(`「你的妈妈身为雌性的姿态、请尽情欣赏吧♪」`);\n          }\n\n          if (local_9 > 0) {\n            // 同一行输出：无后缀 PRINTFORM/PRINT 链，\n            // 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 保底处理），\n            // 的 PRINTFORMW 收行（#623）\n            await era.printAndWait(\n              `「${sc()}是有` +",
     replace:
@@ -21814,7 +21814,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 兽奸录像·孩子称呼整行',
   },
   {
-    desc: 'M12647 K3 排卵·両穴整行（:7383+:7385+:7387+:7389）拆回多条（#623）',
+    desc: 'M12647 K3 排卵·両穴整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '        await era.printAndWait(\n          `「啊啊~…我的` +\n            (both_holes ? `两个小穴` : `小穴还有屁股`) +\n            `都要生出来、要生出来了啊~……啊啊~！！」`,\n        );',
     replace:
@@ -21825,7 +21825,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 排卵·両穴整行',
   },
   {
-    desc: 'M12648 K3 死斗场·口交器具名整行（:8492+:8494+:8496+:8497）拆回多条（#623）',
+    desc: 'M12648 K3 死斗场·口交器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      await era.printAndWait(\n        `${assi_name}用` +\n          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n          `让${target_name}吸着，露出了愉悦的表情……`,\n      );",
     replace:
@@ -21840,7 +21840,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场·助手器具名整行',
   },
   {
-    desc: 'M12649 K3 死斗场·背后位器具名整行（:8525+:8527+:8529+:8530）拆回多条（#623）',
+    desc: 'M12649 K3 死斗场·背后位器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n          `将${target_name}的小穴毫不留情地侵犯着……`,\n      );",
     replace:
@@ -21855,7 +21855,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场·助手器具名整行',
   },
   {
-    desc: 'M12650 K3 死斗场·背后位肛门器具名整行（:8549+:8551+:8553+:8554）拆回多条（#623）',
+    desc: 'M12650 K3 死斗场·背后位肛门器具名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n          `将${target_name}的肛穴毫不留情地侵犯着……`,\n      );",
     replace:
@@ -21870,7 +21870,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 死斗场·助手器具名整行',
   },
   {
-    desc: 'M12651 K3 奖赏请求·野兽名整行（:8803+:8805+:8807+:8809+:8811）拆回多条（#623）',
+    desc: 'M12651 K3 奖赏请求·野兽名整行拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '    await era.printAndWait(\n      `「${self_call(a)}…这场战斗完后想要跟…` +\n        beast +\n        `交配想得受不了了~…！」`,\n    );',
     replace:
@@ -21886,7 +21886,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 拼前缀（M12652-M12659：每族一条拆回，覆盖非首支；整行断言见三份测试的同名
   // 用例）；M12660 钉住 :4810 前缀行尾全角空格（审查建议 11） ——
   {
-    desc: 'M12652 K11 初回交谈·助手玛奥第二支（:6870）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12652 K11 初回交谈·助手玛奥第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head +\n                `边侵犯边用语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );',
     replace:
@@ -21898,7 +21898,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12653 K11 初回交谈·非助手第二支（:6898）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12653 K11 初回交谈·非助手第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 同一行输出：无后缀 PRINTFORM 链，\n            // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）",
     replace:
@@ -21907,7 +21907,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12654 K11 二回目交谈·助手玛奥第二支（:6957）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12654 K11 二回目交谈·助手玛奥第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head +\n                `的语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );',
     replace:
@@ -21919,7 +21919,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12655 K11 二回目交谈·非助手第二支（:6985）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12655 K11 二回目交谈·非助手第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "            await era.print(\n              line_head +\n                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n            );\n            await era.printAndWait(\n              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,\n            );\n          } else if (\n            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||\n              chara(target).system.顺从 >= 5 ||\n              era.get(`talent:${target}:76`) ||\n              era.get(`talent:${target}:85`)) &&\n            chara(target).train.欲情 >= era0('palamlv:4')\n          ) {\n            // 同一行输出（与上面互斥插入段同型，#623）",
     replace:
@@ -21928,7 +21928,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12656 K9 交谈初回·第二支（:4444）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12656 K9 交谈初回·第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.print(\n            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n          );\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 同一行输出：无后缀 PRINTFORM 链，\n          // 是两个互斥插入段，末行 PRINTFORML 收行\n          // （这两段是这个 ELSEIF 支的收尾，#623）',
     replace:
@@ -21937,7 +21937,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12657 K9 交谈二回目·第二支（:4495）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12657 K9 交谈二回目·第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '          await era.print(\n            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n          );\n        } else if (\n          (era.get(`palam:${target}:4`) >= PALAMLV[4] ||\n            era.get(`abl:${target}:10`) >= 5 ||\n            era.get(`talent:${target}:85`)) &&\n          era.get(`palam:${target}:5`) >= PALAMLV[4]\n        ) {\n          // 与初回同型\n          // （这几段是这个 ELSEIF 支的收尾，#623）',
     replace:
@@ -21946,7 +21946,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
-    desc: 'M12658 K3 强制排泄·两穴支 ELSEIF（:4779）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12658 K3 强制排泄·两穴支 ELSEIF拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '            await era.printAndWait(line_head + `着……唔！」`);',
     replace:
@@ -21956,7 +21956,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12659 K3 强制排泄·屈辱支 ELSEIF（:4814）拆回两条（#623 返工：非首支也拼前缀）',
+    desc: 'M12659 K3 强制排泄·屈辱支 ELSEIF拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "              await era.printAndWait(\n                line_head +\n                  `请、请怜悯下…！${'\\u3000'}啊？${'\\u3000'}啊啊、不要啊啊……」`,\n              );",
     replace:
@@ -21966,7 +21966,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12660 K3 强制排泄·屈辱支前缀丢行尾全角空格（:4810，审查建议 11）',
+    desc: 'M12660 K3 强制排泄·屈辱支前缀丢行尾全角空格（审查建议 11）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "            const line_head = `「原、原谅我…啊啊啊啊！！${'\\u3000'}`;",
     replace:
@@ -21980,7 +21980,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 没人发现；这八处各配一条「丢前缀」变异，整行断言见 test/kojo-k11-lily.test.js
   // 两条「五支各自并入前缀整行」用例 ——
   {
-    desc: 'M12661 K11 初回交谈·助手玛奥第五支（:6885）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12661 K11 初回交谈·助手玛奥第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言调戏、${target_name}小声地回答着`,\n            );\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
@@ -21989,7 +21989,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12662 K11 初回交谈·助手玛奥第六支（:6888）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12662 K11 初回交谈·助手玛奥第六支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与上面同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
@@ -21998,7 +21998,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12663 K11 初回交谈·非助手第五支（:6913）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12663 K11 初回交谈·非助手第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}结结巴巴地回答着`,\n            );\n            await era.printAndWait(`「应，应该回答什么…？」`);\n          } else {\n            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      // CFLAG:357  = 1（变量语义：CFLAG 族，357）',
     replace:
@@ -22007,7 +22007,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12664 K11 初回交谈·非助手第六支（:6916）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12664 K11 初回交谈·非助手第六支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      // CFLAG:357  = 1（变量语义：CFLAG 族，357）',
     replace:
@@ -22016,7 +22016,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12665 K11 二回目交谈·助手玛奥第五支（:6972）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12665 K11 二回目交谈·助手玛奥第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言调戏、${target_name}小声地回答着`,\n            );\n            await era.printAndWait(\n              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,\n            );\n          } else {\n            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与初回同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
@@ -22025,7 +22025,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12666 K11 二回目交谈·助手玛奥第六支（:6975）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12666 K11 二回目交谈·助手玛奥第六支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言羞辱，${target_name}只是红着脸，低着头听着…`,\n            );\n            await era.printAndWait(`「为，为什么……会变成这个样子…」`);\n            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`);\n          }\n        } else {\n          // 与初回同型：六支的 PRINTFORML 各自收行，\n          // 前缀提到语句外共用（#623）',
     replace:
@@ -22034,7 +22034,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12667 K11 二回目交谈·非助手第五支（:7000）丢前缀（#623 第 2 轮返工）',
+    desc: 'M12667 K11 二回目交谈·非助手第五支丢前缀（#623 第 2 轮返工）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}结结巴巴地回答着`,\n            );\n            await era.printAndWait(`「应，应该回答什么…？」`);\n          } else {\n            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      return 0;',
     replace:
@@ -22043,7 +22043,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12668 K11 二回目交谈·非助手第六支（:7003）丢前缀（#623 第 2 轮返工，验收抽样同处）',
+    desc: 'M12668 K11 二回目交谈·非助手第六支丢前缀（#623 第 2 轮返工，验收抽样同处）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            await era.print(\n              line_head + `的语言挑逗、${target_name}听清楚了吗…`,\n            );\n            await era.printAndWait(`「…不，不太想说话…」`);\n          }\n        }\n      }\n      return 0;',
     replace:
@@ -22055,7 +22055,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #624：口上剩余拆行第 D 组（迷宫四文件与 k0，59 组「同一行输出被拆」）——
   // 每处合并后的整行断言见对应测试文件；条目按工单给的 M12700 起编号。
   {
-    desc: 'M12700 女版卖春·LOG_BITCH_HAND 整行（:386..:403）拆回多条（#624：名字与收行又各占一行）',
+    desc: 'M12700 女版卖春·LOG_BITCH_HAND 整行拆回多条（#624：名字与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22070,7 +22070,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_HAND 整行',
   },
   {
-    desc: 'M12701 女版卖春·LOG_BITCH_ORAL 整行（:559..:574）拆回多条（#624）',
+    desc: 'M12701 女版卖春·LOG_BITCH_ORAL 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22085,7 +22085,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_ORAL 整行',
   },
   {
-    desc: 'M12702 女版卖春·LOG_BITCH_LES 整行（:729..:744）拆回多条（#624）',
+    desc: 'M12702 女版卖春·LOG_BITCH_LES 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22100,7 +22100,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_LES 整行',
   },
   {
-    desc: 'M12703 女版卖春·LOG_BITCH_ANAL 整行（:943..:960）拆回多条（#624）',
+    desc: 'M12703 女版卖春·LOG_BITCH_ANAL 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22115,7 +22115,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_ANAL 整行',
   },
   {
-    desc: 'M12704 女版卖春·LOG_BITCH_SEX 整行（:1182..:1207）拆回多条（#624）',
+    desc: 'M12704 女版卖春·LOG_BITCH_SEX 整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch-log.js',
     find:
       '  await era.printAndWait(\n' +
@@ -22130,7 +22130,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_BITCH_SEX 整行',
   },
   {
-    desc: 'M12705 男版迷宫凌辱·兽人口交整行（:22..:31）拆回多条（#624：无头骑士前缀与名字又各占一行）',
+    desc: 'M12705 男版迷宫凌辱·兽人口交整行拆回多条（#624：无头骑士前缀与名字又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22145,7 +22145,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '无头骑士前缀',
   },
   {
-    desc: 'M12706 男版迷宫凌辱·兽人口交整行（:81..:105）拆回多条（#624：名字与收行又各占一行）',
+    desc: 'M12706 男版迷宫凌辱·兽人口交整行拆回多条（#624：名字与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "          `${arg_name}把` +\n          penis +\n          '含了下去，『呃……这家伙，简直就是经验丰富的娼妓嘛～』',\n      );",
     replace:
@@ -22158,7 +22158,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TALENT:52 支',
   },
   {
-    desc: 'M12707 男版迷宫凌辱·兽人口交收行（:112..:127）拆回两条（#624：收行文本又占一行）',
+    desc: 'M12707 男版迷宫凌辱·兽人口交收行拆回两条（#624：收行文本又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: "                    ? '拼命地用舌头奉仕着，'\n                    : '') +\n          '奉仕持续了下去……',\n      );",
     replace:
@@ -22170,7 +22170,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':81..:101 与 :112..:127 合成一条',
   },
   {
-    desc: 'M12708 男版迷宫凌辱·全穴奉仕整行（:152..:175）拆回多条（#624：随机词条又占一行）',
+    desc: 'M12708 男版迷宫凌辱·全穴奉仕整行拆回多条（#624：随机词条又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.print(\n' +
@@ -22186,7 +22186,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人的阴茎插进了',
   },
   {
-    desc: 'M12709 男版迷宫凌辱·润滑液整行（:198..:216）拆回多条（#624）',
+    desc: 'M12709 男版迷宫凌辱·润滑液整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.print(\n' +
@@ -22199,7 +22199,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人们把润滑液涂在了',
   },
   {
-    desc: 'M12710 男版迷宫凌辱·体型分档整行（:217..:242）拆回多条（#624）',
+    desc: 'M12710 男版迷宫凌辱·体型分档整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find: '    await era.print(\n' + '      `在${arg_name}的` +\n',
     replace:
@@ -22210,7 +22210,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「在冒险者的',
   },
   {
-    desc: 'M12711 男版迷宫凌辱·屈辱プレイ整行（:268..:287）拆回多条（#624）',
+    desc: 'M12711 男版迷宫凌辱·屈辱プレイ整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22223,7 +22223,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「冒险者全裸地四肢着地趴在地下',
   },
   {
-    desc: 'M12712 女版迷宫凌辱·主框架空行（:16+:19）拆回两条（#624：立绘分支的空 PRINT 又占一行）',
+    desc: 'M12712 女版迷宫凌辱·主框架空行拆回两条（#624：立绘分支的空 PRINT 又占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "  // PRINTL 同属一行——合起来仍是空行（#624）\n  await era.print(''); // PRINTL",
     replace:
@@ -22232,7 +22232,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '合成一条空行',
   },
   {
-    desc: 'M12713 女版兽人凌辱·单只整行（:302..:328）拆回多条（#624）',
+    desc: 'M12713 女版兽人凌辱·单只整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '    await era.print(\n' + "      '四肢着地趴在地上，' +\n",
     replace:
@@ -22243,7 +22243,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「四肢着地趴在地上',
   },
   {
-    desc: 'M12714 女版兽人凌辱·「脸上」与恥じらい分档（:330+:335）拆回两条（#624）',
+    desc: 'M12714 女版兽人凌辱·「脸上」与恥じらい分档拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '      await era.print(`脸上流露着沉浸在了羞耻与情欲之中的神色……`);',
     replace:
@@ -22253,7 +22253,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':330+:335 是一整行',
   },
   {
-    desc: 'M12715 女版兽人凌辱·口交整行（:410..:419）拆回多条（#624）',
+    desc: 'M12715 女版兽人凌辱·口交整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22266,7 +22266,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「无头骑士的冒险者身体被固定住了',
   },
   {
-    desc: 'M12716 女版兽人凌辱·素直耻情行（:470+:471）拆回两条（#624）',
+    desc: 'M12716 女版兽人凌辱·素直耻情行拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '          `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
     replace:
@@ -22277,7 +22277,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':470（PRINTFORM）+ :471（PRINTFORML）整行',
   },
   {
-    desc: 'M12717 女版兽人凌辱·口交整行（:475..:502）拆回多条（#624：名字与收行又各占一行）',
+    desc: 'M12717 女版兽人凌辱·口交整行拆回多条（#624：名字与收行又各占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "          `${arg_name}把` +\n          cock +\n          '含了下去，『呃……这家伙，简直就是经验丰富的妓女嘛～』',\n      );",
     replace:
@@ -22290,7 +22290,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TALENT:52 支',
   },
   {
-    desc: 'M12718 女版兽人凌辱·口交收行（:509..:524）拆回两条（#624）',
+    desc: 'M12718 女版兽人凌辱·口交收行拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "                    ? '拼命地用舌头奉仕着，'\n                    : '') +\n          '奉仕持续了下去……',\n      );",
     replace:
@@ -22302,7 +22302,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':475..:498 与 :509..:524 合成一条',
   },
   {
-    desc: 'M12719 女版兽人凌辱·全穴奉仕整行（:549..:572）拆回多条（#624）',
+    desc: 'M12719 女版兽人凌辱·全穴奉仕整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '    await era.print(\n' + "      '兽人的' +\n" + '        cock +\n',
     replace:
@@ -22313,7 +22313,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人的阴茎插进了',
   },
   {
-    desc: 'M12720 女版兽人凌辱·润滑液整行（:595..:613）拆回多条（#624）',
+    desc: 'M12720 女版兽人凌辱·润滑液整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.print(\n' +
@@ -22326,7 +22326,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「兽人们把润滑液涂在了',
   },
   {
-    desc: 'M12721 女版兽人凌辱·体型分档整行（:614..:639）拆回多条（#624）',
+    desc: 'M12721 女版兽人凌辱·体型分档整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '    await era.print(\n' + '      `在${arg_name}的` +\n',
     replace:
@@ -22337,7 +22337,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「在冒险者的',
   },
   {
-    desc: 'M12722 女版兽人凌辱·屈辱プレイ整行（:668..:687）拆回多条（#624）',
+    desc: 'M12722 女版兽人凌辱·屈辱プレイ整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22350,7 +22350,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「冒险者全裸地四肢着地趴在地下',
   },
   {
-    desc: 'M12723 女版男人凌辱·肉便器整行（:1514..:1562）拆回多条（#624）',
+    desc: 'M12723 女版男人凌辱·肉便器整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '    await era.printAndWait(\n' +
@@ -22364,7 +22364,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「冒险者的身上，被写着',
   },
   {
-    desc: 'M12724 女魔族凌辱·一人支整行（:1692..:1706）拆回多条（#624）',
+    desc: 'M12724 女魔族凌辱·一人支整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22379,7 +22379,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「紫色的长舌头',
   },
   {
-    desc: 'M12725 女魔族凌辱·多人口交支整行（:1733..:1747）拆回多条（#624）',
+    desc: 'M12725 女魔族凌辱·多人口交支整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22394,7 +22394,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「紫色的长舌头',
   },
   {
-    desc: 'M12726 女魔族凌辱·喂奶支整行（:1805..:1819）拆回多条（#624）',
+    desc: 'M12726 女魔族凌辱·喂奶支整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22409,7 +22409,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行「紫色的手',
   },
   {
-    desc: 'M12727 女魔族凌辱·处女封印整行（:1889..:1895）拆回多条（#624）',
+    desc: 'M12727 女魔族凌辱·处女封印整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '        await era.printAndWait(\n' +
@@ -22424,7 +22424,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '→ 整行「『这边的穴',
   },
   {
-    desc: 'M12728 对人格斗·巨型假阳具整行（:2517..:2523）拆回多条（#624）',
+    desc: 'M12728 对人格斗·巨型假阳具整行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find:
       '      await era.printAndWait(\n' +
@@ -22438,7 +22438,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':2517..:2523 是一整行',
   },
   {
-    desc: 'M12729 对人格斗·头发压脸收句（:2646..:2650）拆回两条（#624）',
+    desc: 'M12729 对人格斗·头发压脸收句拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "        await era.printAndWait((winner_has_cock ? '阴茎' : '私处') + '。');",
     replace:
@@ -22448,7 +22448,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':2646/:2648 与 :2650 合成一行',
   },
   {
-    desc: 'M12730 对人格斗·捆绑鞭打行（:2674+:2676）拆回两条（#624）',
+    desc: 'M12730 对人格斗·捆绑鞭打行拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: '          await era.printAndWait(\n            `向伏在地上的${loser_name}的背上用鞭子不停地抽打着、`,\n          );',
     replace:
@@ -22458,7 +22458,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'RAND:2 = 0 → :2674+:2676 是一整行',
   },
   {
-    desc: 'M12734 内职·副业行（:504+:511）拆回多条（#624：随机副业名又占一行）',
+    desc: 'M12734 内职·副业行拆回多条（#624：随机副业名又占一行）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    await era.printAndWait(\n      `${name_of(arg)}从事了` + job + `副业${local}点收入。`,\n    );',
     replace:
@@ -22469,7 +22469,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':504 + PRINTDATA 词条 + :511 合成一条',
   },
   {
-    desc: 'M12735 自慰·妄想行（:571..:637）拆回多条（#624）',
+    desc: 'M12735 自慰·妄想行拆回多条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "  await era.printAndWait(\n    (branch === 1\n      ? '想象着跟女人的交合'\n      : branch === 2\n        ? '陷入了跟野兽交尾的幻想'\n        : dream) +\n      (has_cock ? '握住肉棒捋了起来' : '') +\n      `自慰了${play}次。`,\n  );",
     replace:
@@ -22487,7 +22487,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':571..:637 是一整行',
   },
   {
-    desc: 'M12736 K0 自慰二次·拍摄（:887..:893）拆回多条（#624）',
+    desc: 'M12736 K0 自慰二次·拍摄拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "        await era.printAndWait(\n          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格\n          `「看吧～${heart(1)}　噗咻噗咻勃起的` +\n            (has_penis ? '鸡鸡～' : '假鸡鸡～') +\n            `${heart(1)}」`,\n        );",
     replace:
@@ -22498,7 +22498,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '「看吧～♡',
   },
   {
-    desc: 'M12737 K0 自慰二次·爱慕拍摄（:922..:928）拆回多条（#624）',
+    desc: 'M12737 K0 自慰二次·爱慕拍摄拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "        await era.printAndWait(\n          // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格\n          '「看见了吗？～♪　噗咻噗咻勃起的' +\n            (has_penis ? '鸡鸡……' : '假鸡鸡') +\n            '♪」',\n        );",
     replace:
@@ -22509,7 +22509,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '「看见了吗？～♪',
   },
   {
-    desc: 'M12738 K0 灌肠·淫乱（:4433..:4445）拆回多条（#624）',
+    desc: 'M12738 K0 灌肠·淫乱拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "        await era.printAndWait(\n          (rand_n(2) === 0\n            ? '「呀…嗯啊、啊、啊啊！　'\n            : '「啊啊～！、不行、不、不要看、') +\n            (rand_n(2) === 0 ? '出来了、' : '出来、要出来了、') +\n            (rand_n(3) === 0 ? '全部' : '') +\n            `要排出来了啊${heart(3)}」`,\n        );",
     replace:
@@ -22521,7 +22521,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '「呀…嗯啊',
   },
   {
-    desc: 'M12739 K0 灌肠·壶虫（:4448..:4452）拆回多条（#624）',
+    desc: 'M12739 K0 灌肠·壶虫拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.printAndWait(\n            (rand_n(2) === 0\n              ? `以Ｍ字的状态大开双腿的${target_name}那秘所之中`\n              : `四肢着地的${target_name}那股间之中`) +\n              '极粗的蠕虫正在蠢动着、',\n          );",
     replace:
@@ -22535,7 +22535,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'TEQUIP:11 壶虫支要说出蠕虫',
   },
   {
-    desc: 'M12740 K0 灌肠·内壁（:4460..:4466）拆回多条（#624）',
+    desc: 'M12740 K0 灌肠·内壁拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.printAndWait(\n            '那扩张开来无法闭合的' +\n              (rand_n(2) === 0 ? '肛门' : '肛穴') +\n              '之中，可以看清那内壁正在痉挛着……',\n          );",
     replace:
@@ -22546,7 +22546,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'EXP:53 >= 5 支的一整行',
   },
   {
-    desc: 'M12741 K0 交谈·按捺（:4674..:4682）拆回两条（#624）',
+    desc: 'M12741 K0 交谈·按捺拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (holding ? '快乐的' : hurting ? '痛苦的' : '自己的') +\n              `声音，一边回应着${player_name}。`,\n          );",
     replace:
@@ -22559,7 +22559,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一整行',
   },
   {
-    desc: 'M12742 K0 交谈二回目·按捺（:4733..:4741）拆回两条（#624）',
+    desc: 'M12742 K0 交谈二回目·按捺拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (holding_b ? '快乐的' : hurting_b ? '痛苦的' : '自己的') +\n              `声音，一边回应着${player_name}。`,\n          );",
     replace:
@@ -22572,7 +22572,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一整行',
   },
   {
-    desc: 'M12743 K0 助手口交（:7782..:7787）拆回多条（#624）',
+    desc: 'M12743 K0 助手口交拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "      await era.printAndWait(\n        `${assi_name}让` +\n          (assi_has_cock\n            ? '吞咽着肉棒的'\n            : assi_with_band\n              ? '吞咽着假阳具的'\n              : '') +\n          `${target_name}露出了愉悦的表情……`,\n      );",
     replace:
@@ -22589,7 +22589,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '→ 整行「玛奥让',
   },
   {
-    desc: 'M12744 K0 助手后背位（:7815..:7820）拆回多条（#624）',
+    desc: 'M12744 K0 助手后背位拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边` +\n          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n      );",
     replace:
@@ -22602,7 +22602,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '的阴道……',
   },
   {
-    desc: 'M12745 K0 助手后背位肛门（:7839..:7844）拆回多条（#624）',
+    desc: 'M12745 K0 助手后背位肛门拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边` +\n          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n          `毫不留情地持续蹂躙着${target_name}的肛门……`,\n      );",
     replace:
@@ -22615,7 +22615,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '的肛门……',
   },
   {
-    desc: 'M12746 女版兽人凌辱·「脸上」前缀的兄弟支（:339）拆回两条（#624：前缀又单独成行）',
+    desc: 'M12746 女版兽人凌辱·「脸上」前缀的兄弟支拆回两条（#624：前缀又单独成行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "        await era.print(face_front + '的神情为屈服的喜悦与口水所浸染……');",
     replace:
@@ -22625,7 +22625,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '→ 整行「脸上的神情为屈服的喜悦与口水所浸染……',
   },
   {
-    desc: 'M12747 女版卖春·客行前缀（:213+:217）拆回两条（#624：名字又单独成行）',
+    desc: 'M12747 女版卖春·客行前缀拆回两条（#624：名字又单独成行）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "        await era.print(\n          (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,\n        );",
     replace:
@@ -22635,7 +22635,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀并进 :217 那条',
   },
   {
-    desc: 'M12748 女版卖春·街中客行前缀（:233+:237）拆回两条（#624）',
+    desc: 'M12748 女版卖春·街中客行前缀拆回两条（#624）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "          await era.print(\n            (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,\n          );",
     replace:
@@ -22645,7 +22645,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀并进 :237 那条',
   },
   {
-    desc: 'M12749 K0 奖励请求·动物名（:8133..:8141）拆回多条（#624）',
+    desc: 'M12749 K0 奖励请求·动物名拆回多条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "    await era.printAndWait(\n      `「要是${sc()}打倒勇者的话…` +\n        (request_kind === 1\n          ? '可以奖励我与犬'\n          : request_kind === 2\n            ? '可以奖励我与猪'\n            : '可以奖励我与马') +\n        '做爱吗…？」',\n    );",
     replace:
@@ -22661,7 +22661,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一整行',
   },
   {
-    desc: 'M12750 K0 灌肠肛塞脱着·观赏支（:4484）拆回两条（#624）',
+    desc: 'M12750 K0 灌肠肛塞脱着·观赏支拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '          await era.printAndWait(front_4475 + dump_mid + `请您好好地观赏……」`);',
     replace:
@@ -22671,7 +22671,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '合成一条',
   },
   {
-    desc: 'M12752 K0 灌肠肛塞脱着·疼爱支（:4486）拆回两条（#624）',
+    desc: 'M12752 K0 灌肠肛塞脱着·疼爱支拆回两条（#624）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '          await era.printAndWait(front_4475 + dump_mid + `请您好好地疼爱……」`);',
     replace:
@@ -22681,7 +22681,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '合成一条',
   },
   {
-    desc: 'M12753 K0 助手后背位·肉棒/假阳具两档写反（:7815）换档（#624 验收返工：有阴茎时不得拼假阳具词）',
+    desc: 'M12753 K0 助手后背位·肉棒/假阳具两档写反换档（#624 验收返工：有阴茎时不得拼假阳具词）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: "          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n      );",
     replace:
@@ -22690,7 +22690,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '21：肉棒词',
   },
   {
-    desc: 'M12751 对人格斗·捆绑蜡烛支（:2674+:2679）拆回两条（#624：前缀常量改用单占一行）',
+    desc: 'M12751 对人格斗·捆绑蜡烛支拆回两条（#624：前缀常量改用单占一行）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: "          await era.printAndWait(back_2674 + '将点燃的蜡烛倾倒了上去');",
     replace:
@@ -22704,7 +22704,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 合并点，各配一条「拆回多条」变异；每组一条，M12500-M12525。整行文本断言见
   // test/kojo-k8-spade.test.js 同名用例） ——
   {
-    desc: 'M12500 K8 爱慕+魔族化·调教前从魔族（:278+:279）拆回两条（#622：SIF 的「全裸的」又占一行）',
+    desc: 'M12500 K8 爱慕+魔族化·调教前从魔族拆回两条（#622：SIF 的「全裸的」又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里（保真锁按序核对台词片段）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
     replace:
@@ -22713,7 +22713,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '爱慕+魔族化（调教前从魔族',
   },
   {
-    desc: 'M12501 K8 爱慕+魔族化·调教后从魔族（:301+:302）拆回两条（#622）',
+    desc: 'M12501 K8 爱慕+魔族化·调教后从魔族拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        // 与上一段同型（#622）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
     replace:
@@ -22722,7 +22722,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '爱慕+魔族化（调教后从魔族',
   },
   {
-    desc: 'M12502 K8 二回目·メイド服的内衣色（:671+:678）拆回三条（#622：PRINTDATA 的随机色又占一行）',
+    desc: 'M12502 K8 二回目·メイド服的内衣色拆回三条（#622：PRINTDATA 的随机色又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        await era.printAndWait(\n          `${target_name}把裙子卷了起来露出内衣。今日的内衣的颜色是` +\n            ['白', '赤', '黑', '青'][rand_n(4)] +\n            `的样子。`,\n        );",
     replace:
@@ -22733,7 +22733,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12503 K8 口塞·淫乱＋受虐狂Lv5以上（:4383+:4385）拆回两条（#622）',
+    desc: 'M12503 K8 口塞·淫乱＋受虐狂Lv5以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}自己戴上了口枷` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );',
     replace:
@@ -22743,7 +22743,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '眼罩已戴：同一行输出一条',
   },
   {
-    desc: 'M12504 K8 口塞·淫乱＋受虐狂Lv3以上（:4393+:4395）拆回两条（#622）',
+    desc: 'M12504 K8 口塞·淫乱＋受虐狂Lv3以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 3; // CFLAG:TARGET:346 = 3',
     replace:
@@ -22752,7 +22752,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
   {
-    desc: 'M12505 K8 口塞·淫乱（:4403+:4405）拆回两条（#622）',
+    desc: 'M12505 K8 口塞·淫乱拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被戴上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );',
     replace:
@@ -22762,7 +22762,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '淫乱＋受虐狂っ気Lv5以上，眼罩已戴：同一行输出一条',
   },
   {
-    desc: 'M12506 K8 口塞·爱＋受虐狂Lv5以上（:4413+:4415）拆回两条（#622）',
+    desc: 'M12506 K8 口塞·爱＋受虐狂Lv5以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 6; // CFLAG:TARGET:346 = 6',
     replace:
@@ -22771,7 +22771,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '各档的前缀与「嘴的缝隙」都是一行',
   },
   {
-    desc: 'M12507 K8 口塞·爱＋受虐狂Lv3以上（:4423+:4425）拆回两条（#622）',
+    desc: 'M12507 K8 口塞·爱＋受虐狂Lv3以上拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);\n      }\n      kojo.口塞 = 5; // CFLAG:TARGET:346 = 5',
     replace:
@@ -22780,7 +22780,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '口塞·開始時，二回目以降·爱＋受虐狂っ気Lv5以上',
   },
   {
-    desc: 'M12508 K8 口塞·爱慕（:4433+:4435）拆回两条（#622）',
+    desc: 'M12508 K8 口塞·爱慕拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.printAndWait(\n          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n        );\n      } else {\n        await era.printAndWait(mouth_gag_word + `皱着眉看着${player_name}………`);',
     replace:
@@ -22798,7 +22798,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '受虐狂っ気Lv3以上，眼罩已戴：同一行输出',
   },
   {
-    desc: 'M12510 K8 交谈·初めて·求爱档（:4649+:4651）拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
+    desc: 'M12510 K8 交谈·初めて·求爱档拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '          await era.print(\n            `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n          );',
     replace:
@@ -22810,7 +22810,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12511 K8 交谈·二回目·求爱档（:4700+:4702）拆回两条（#622）',
+    desc: 'M12511 K8 交谈·二回目·求爱档拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '        await era.print(\n          `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n        );',
     replace:
@@ -22822,7 +22822,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12512 K8 交谈·初めて·视频自我介绍（:4633+:4635+:4636）拆回三条（#622：SIF 段又占一行）',
+    desc: 'M12512 K8 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "          await era.print(\n            `${target_name}把自己的本名和至今为止的性经验` +\n              (masturbation ? `甚至自慰时妄想的内容都` : '') +\n              `微笑的娓娓道来……`,\n          );",
     replace:
@@ -22835,7 +22835,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12513 K8 交谈·二回目·视频自我介绍（:4684+:4686+:4687）拆回三条（#622）',
+    desc: 'M12513 K8 交谈·二回目·视频自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        await era.print(\n          `${target_name}把自己的本名和至今为止的性经验` +\n            (masturbation ? `、甚至自慰时妄想的内容都` : '') +\n            `一边微笑一边喋喋不休的讲着……`,\n        );",
     replace:
@@ -22848,7 +22848,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12514 K8 交谈·初めて·装备档（:4655+:4657+:4659+:4661）拆回多条（#622：快乐/痛苦又各占一行）',
+    desc: 'M12514 K8 交谈·初めて·装备档拆回多条（#622：快乐/痛苦又各占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "          await era.print(\n            talk_prefix +\n              `刚和她交谈了几句、${target_name}就一边发出着` +\n              (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n              `声音，一边拼命忍耐着的回着话`,\n          );",
     replace:
@@ -22865,7 +22865,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12515 K8 交谈·二回目·装备档（:4706+:4708+:4710+:4712）拆回多条（#622）',
+    desc: 'M12515 K8 交谈·二回目·装备档拆回多条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "        await era.print(\n          talk_prefix +\n            `刚和她交谈了几句、${target_name}就一边发出着` +\n            (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n            `声音、一边拼命忍耐着的回着话`,\n        );",
     replace:
@@ -22882,7 +22882,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12516 K8 死斗场·SC31 助手（:7351+:7353+:7355+:7356）拆回多条（#622：部位词又各占一行）',
+    desc: 'M12516 K8 死斗场·SC31 助手拆回多条（#622：部位词又各占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? `阴茎` : '') +\n          (assi_has_strap ? `假阴茎` : '') +\n          `被${target_name}舔着而露出了心旷神怡的表情……`,\n      );",
     replace:
@@ -22898,7 +22898,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12517 K8 死斗场·SC21 助手（:7386+:7388+:7390+:7391）拆回多条（#622）',
+    desc: 'M12517 K8 死斗场·SC21 助手拆回多条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣用` +\n          (assi_has_penis ? `阴茎` : '') +\n          (assi_has_strap ? `假阴茎` : '') +\n          `毫不留情的蹂躏着${target_name}的腔内。`,\n      );",
     replace:
@@ -22914,7 +22914,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':7386..:7391 是一行',
   },
   {
-    desc: 'M12518 K8 死斗场·SC27 助手（:7413+:7415+:7417+:7418）拆回多条（#622）',
+    desc: 'M12518 K8 死斗场·SC27 助手拆回多条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣。一边用` +\n          (assi_has_penis ? `阴茎` : '') +\n          (assi_has_strap ? `假阴茎` : '') +\n          `一般毫不留情的继续蹂躏着${target_name}的肛门。`,\n      );",
     replace:
@@ -22930,7 +22930,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':7413..:7418 是一行',
   },
   {
-    desc: 'M12519 K8 NTR·P==1 陥落済（:7460+:7462+:7464）拆回两条（#622：武器名又占一行）',
+    desc: 'M12519 K8 NTR·P==1 陥落済拆回两条（#622：武器名又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `然后、狂王的巨根` : `然后、特大号的按摩棒`) +\n          `慢慢的插进了${target_name}的秘裂。在镜头下${target_name}还不知道男人的蜜壶被插进了深处。`,\n      );',
     replace:
@@ -22946,7 +22946,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12520 K8 NTR·P==1 それ以外（:7468+:7470+:7472+:7474）拆回两条（#622）',
+    desc: 'M12520 K8 NTR·P==1 それ以外拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        `还是处女的${target_name}的秘裂被` +\n          (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `深深的插了进去。破瓜之血从秘裂里流了出来。`,\n      );',
     replace:
@@ -22961,7 +22961,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12521 K8 NTR·P==2 陥落済（:7488+:7490+:7492）拆回两条（#622）',
+    desc: 'M12521 K8 NTR·P==2 陥落済拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n      );\n    } else {',
     replace:
@@ -22970,7 +22970,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12522 K8 NTR·P==2 それ以外（:7496+:7498+:7500）拆回两条（#622）',
+    desc: 'M12522 K8 NTR·P==2 それ以外拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      // 同上（#622）\n      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n      );',
     replace:
@@ -22979,7 +22979,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12523 K8 NTR·P==4 淫乱（:7521+:7523+:7525）拆回两条（#622）',
+    desc: 'M12523 K8 NTR·P==4 淫乱拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      await era.printAndWait(\n        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了野兽一样的喘息。`,\n      );',
     replace:
@@ -23011,7 +23011,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与收行同属一行',
   },
   {
-    desc: 'M12525 K8 迎击奖赏·兽奸要求（:7744..:7752）拆回多条（#622：兽名又占一行）',
+    desc: 'M12525 K8 迎击奖赏·兽奸要求拆回多条（#622：兽名又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: "    await era.printAndWait(\n      `「我呢，想要和` +\n        (gohoubi == 1 ? `犬` : gohoubi == 2 ? `猪` : gohoubi == 3 ? `马` : '') +\n        `交尾的那种${heart(1)}」`,\n    );",
     replace:
@@ -23031,7 +23031,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 合并点，各配一条「拆回多条」变异；M12526-M12545。整行文本断言见
   // test/kojo-k1-confident.test.js 同名用例） ——
   {
-    desc: 'M12526 K1 交谈·初めて·视频自我介绍（:4747+:4749+:4750）拆回三条（#622：SIF 段又占一行）',
+    desc: 'M12526 K1 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "            // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(\n              `于是${target_name}将自己的本名、至今为止的性体验` +\n                (masturbation ? `以及自慰时意淫的内容` : '') +\n                `津津有味的说了起来……`,\n            );",
     replace:
@@ -23040,7 +23040,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '交谈·初めて·视频·TALENT:89（RAND:3==0）：同属一行',
   },
   {
-    desc: 'M12527 K1 交谈·初めて·无摄像·求爱档（:4787+:4789）拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
+    desc: 'M12527 K1 交谈·初めて·无摄像·求爱档拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '            await era.print(\n              `一边与${player_name}说着情话、${target_name}一边扭动着腰。`,\n            );',
     replace:
@@ -23050,7 +23050,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12528 K1 交谈·初めて·无摄像·装备档（:4793+:4795+:4797+:4799）拆回多条（#622：快乐/痛苦又各占一行）',
+    desc: 'M12528 K1 交谈·初めて·无摄像·装备档拆回多条（#622：快乐/痛苦又各占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "            await era.print(\n              chat_prefix +\n                `聊天、${target_name}一边发出着` +\n                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n                `声音、一边拼命地回应着${player_name}。`,\n            );",
     replace:
@@ -23067,7 +23067,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12529 K1 交谈·二回目·视频自我介绍（:4833+:4835+:4836）拆回三条（#622）',
+    desc: 'M12529 K1 交谈·二回目·视频自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "            // 与上一段同型（#622）\n            const masturbation = era.get(`abl:${target}:31`) >= 3;\n            await era.print(\n              `于是${target_name}将自己的本名、至今为止的性体验` +\n                (masturbation ? `以及自慰时意淫的内容` : '') +\n                `津津有味的说了起来……`,\n            );",
     replace:
@@ -23076,7 +23076,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '交谈·二回目·视频·TALENT:89（RAND:3==0）：同属一行',
   },
   {
-    desc: 'M12530 K1 交谈·二回目·无摄像·求爱档（:4873+:4875）拆回两条（#622）',
+    desc: 'M12530 K1 交谈·二回目·无摄像·求爱档拆回两条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '            await era.print(\n              `${player_name}让${target_name}一边扭动着腰一边与${player_name}说着情话。`,\n            );',
     replace:
@@ -23088,7 +23088,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12531 K1 交谈·二回目·无摄像·装备档（:4879+:4881+:4883+:4885）拆回多条（#622）',
+    desc: 'M12531 K1 交谈·二回目·无摄像·装备档拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "            await era.print(\n              chat_prefix +\n                `${target_name}一边发出着` +\n                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n                `声音、一边拼命地回应着${player_name}。`,\n            );",
     replace:
@@ -23105,7 +23105,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12532 K1 兽奸会話·初めて·牝犬自我介绍（:6341+:6344+:6346+:6348）拆回三条（#622）',
+    desc: 'M12532 K1 兽奸会話·初めて·牝犬自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「现在是优秀的` +\n              (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +\n              `！快乐的作为家畜生活着${heart(1)}」`,\n          );',
     replace:
@@ -23120,7 +23120,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
   },
   {
-    desc: 'M12533 K1 兽奸会話·初めて·牝犬的「在最后」（:6351..:6371）拆回多条（#622）',
+    desc: 'M12533 K1 兽奸会話·初めて·牝犬的「在最后」拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「在最后` +\n              (former_life === 1\n                ? `同班同学的大家`\n                : former_life === 2\n                  ? `修道院的大家`\n                  : former_life === 15 || former_life === 18\n                    ? `在${sc()}的店里消费过的客人`\n                    : former_life === 19\n                      ? `部下的大家`\n                      : former_life === 21\n                        ? `最重要的你`\n                        : `爸爸、妈妈`) +\n              `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          );\n        } else if (era.get(`talent:${target}:76`) === 1) {',
     replace:
@@ -23129,7 +23129,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
   },
   {
-    desc: 'M12534 K1 兽奸会話·二回目·牝犬自我介绍（:6403+:6406+:6408+:6410）拆回三条（#622）',
+    desc: 'M12534 K1 兽奸会話·二回目·牝犬自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「现在是优秀的` +\n              (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +\n              `、快乐的作为家畜生活着${heart(1)}」`,\n          );',
     replace:
@@ -23144,7 +23144,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
   },
   {
-    desc: 'M12535 K1 兽奸会話·二回目·牝犬的「在最后」（:6413..:6433）拆回多条（#622）',
+    desc: 'M12535 K1 兽奸会話·二回目·牝犬的「在最后」拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          await era.printAndWait(\n            `「在最后` +\n              (former_life === 1\n                ? `同班同学的大家`\n                : former_life === 2\n                  ? `修道院的大家`\n                  : former_life === 15 || former_life === 18\n                    ? `在${sc()}的店里消费过的客人`\n                    : former_life === 19\n                      ? `部下的大家`\n                      : former_life === 21\n                        ? `最重要的你`\n                        : `爸爸、妈妈`) +\n              `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          );\n          // CFLAG:357  = 5（变量语义：CFLAG 族，357）',
     replace:
@@ -23153,7 +23153,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
   },
   {
-    desc: 'M12536 K1 兽奸会話·初めて·淫乱自我介绍（:6374+:6376+:6377）拆回三条（#622）',
+    desc: 'M12536 K1 兽奸会話·初めて·淫乱自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          // + 收行的 PRINTFORML（#622）。SIF 条件提到语句外当条件、文本留在语句里\n          const masturbation = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );",
     replace:
@@ -23162,7 +23162,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽奸会話·初めて·视频·淫乱：同属一行',
   },
   {
-    desc: 'M12537 K1 兽奸会話·初めて·爱慕自我介绍（:6381+:6383+:6384）拆回三条（#622）',
+    desc: 'M12537 K1 兽奸会話·初めて·爱慕自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `开始高兴地讲着……`,\n          );",
     replace:
@@ -23175,7 +23175,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12538 K1 兽奸会話·二回目·淫乱自我介绍（:6437+:6439+:6440）拆回三条（#622）',
+    desc: 'M12538 K1 兽奸会話·二回目·淫乱自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );\n          await era.print(\n            `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,\n          );\n          // CFLAG:357  = 4（变量语义：CFLAG 族，357）",
     replace:
@@ -23184,7 +23184,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12539 K1 兽奸会話·二回目·爱慕自我介绍（:6445+:6447+:6448）拆回三条（#622）',
+    desc: 'M12539 K1 兽奸会話·二回目·爱慕自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "          await era.print(\n            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n              `高兴地开始津津有味的说了起来……`,\n          );\n          await era.print(\n            `只是想想这个水晶球在故乡公开放映的样子股间就开始湿了……`,\n          );\n          // CFLAG:357  = 3（变量语义：CFLAG 族，357）",
     replace:
@@ -23193,7 +23193,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12540 K1 妊娠発覚 1回目·牝犬野良犬（:7040+:7042）拆回两条（#622：名字又占一行）',
+    desc: 'M12540 K1 妊娠発覚 1回目·牝犬野良犬拆回两条（#622：名字又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          // 各支自带收行，前缀在分支外取值；首支那句把整行写在一起\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
     replace:
@@ -23202,7 +23202,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12541 K1 妊娠発覚 2回目以降·牝犬野良犬（:7106+:7108）拆回两条（#622）',
+    desc: 'M12541 K1 妊娠発覚 2回目以降·牝犬野良犬拆回两条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
     replace:
@@ -23211,7 +23211,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12542 K1 死斗场·SC31 口交（:7763+:7765+:7767+:7768）拆回多条（#622：部位词又各占一行）',
+    desc: 'M12542 K1 死斗场·SC31 口交拆回多条（#622：部位词又各占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? `真正的小鸡鸡` : '') +\n          (assi_has_strap ? `假阳具` : '') +\n          `被${target_name}含了进去而露出了心旷神怡的表情……`,\n      );",
     replace:
@@ -23227,7 +23227,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12543 K1 死斗场·SC21 背后位（:7796+:7798+:7800+:7801）拆回多条（#622）',
+    desc: 'M12543 K1 死斗场·SC21 背后位拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_has_penis ? `真正的小鸡鸡` : '') +\n          (assi_has_strap ? `假阳具` : '') +\n          `毫不留情的继续蹂躏${target_name}的阴道……`,\n      );",
     replace:
@@ -23243,7 +23243,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12544 K1 死斗场·SC27 背后位アナル（:7820+:7822+:7824+:7825）拆回多条（#622）',
+    desc: 'M12544 K1 死斗场·SC27 背后位アナル拆回多条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣一边用` +\n          (assi_has_penis ? `真正的小鸡鸡` : '') +\n          (assi_has_strap ? `假阳具` : '') +\n          `毫不留情的继续蹂躏${target_name}的肛门……`,\n      );",
     replace:
@@ -23259,7 +23259,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '是一行',
   },
   {
-    desc: 'M12545 K1 迎击奖赏·兽奸要求（:8075..:8083）拆回多条（#622：兽名又占一行）',
+    desc: 'M12545 K1 迎击奖赏·兽奸要求拆回多条（#622：兽名又占一行）',
     file: 'ere/kojo/kojo-k1-confident.js',
     find: "    await era.printAndWait(\n      `「胜利之后、想要和` +\n        (reward === 1 ? `狗` : reward === 2 ? `猪` : reward === 3 ? `马` : '') +\n        `交尾」`,\n    );",
     replace:
@@ -23279,7 +23279,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 合并点，各配一条「拆回多条」变异；M12546-M12556。整行文本断言见
   // test/kojo-k10-club.test.js 同名用例） ——
   {
-    desc: 'M12546 K10 肛门爱抚二回目（:1044+:1046）拆回两条（#622：首支台词又占一行）',
+    desc: 'M12546 K10 肛门爱抚二回目拆回两条（#622：首支台词又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '          await era.printAndWait(\n            `「啊嗯～、啊啊～${heart(1)} 更多的…摸那里…伸、伸进去…${heart(1)}」`,\n          );',
     replace:
@@ -23291,7 +23291,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':1044+:1046 是一行',
   },
   {
-    desc: 'M12547 K10 交谈·初めて·视频自我介绍（:4156+:4158+:4159）拆回三条（#622：SIF 段又占一行）',
+    desc: 'M12547 K10 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          await era.print(\n            `${target_name}将自己的本名、至今为止的性经验` +\n              (masturbation ? `甚至自慰时想的什么` : '') +\n              `都微笑地讲了出来……`,\n          );",
     replace:
@@ -23304,7 +23304,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4156+:4158+:4159 是一行',
   },
   {
-    desc: 'M12548 K10 交谈·初めて·无摄像·求爱档（:4172+:4174）拆回两条（#622：前缀又占一行）',
+    desc: 'M12548 K10 交谈·初めて·无摄像·求爱档拆回两条（#622：前缀又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '          await era.print(\n            `在和${player_name}会话的过程中，${target_name}扭动着腰呢喃着充满爱意的话语。`,\n          );',
     replace:
@@ -23316,7 +23316,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4172+:4174 是一行',
   },
   {
-    desc: 'M12549 K10 交谈·初めて·无摄像·装备档（:4178+:4180+:4182+:4184）拆回多条（#622：语调词又占一行）',
+    desc: 'M12549 K10 交谈·初めて·无摄像·装备档拆回多条（#622：语调词又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          // PRINT（互斥两支）+ 收行的 PRINTFORML（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
     replace:
@@ -23325,7 +23325,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4178+:4180+:4182+:4184 是一行',
   },
   {
-    desc: 'M12550 K10 交谈·二回目·视频自我介绍（:4207+:4209+:4210）拆回三条（#622）',
+    desc: 'M12550 K10 交谈·二回目·视频自我介绍拆回三条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          await era.print(\n            `${target_name}将自己的本名、至今为止的性经验` +\n              (masturbation ? `甚至手淫时想到的什么` : '') +\n              `都微笑地讲了出来……`,\n          );",
     replace:
@@ -23338,7 +23338,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4207+:4209+:4210 是一行',
   },
   {
-    desc: 'M12551 K10 交谈·二回目·无摄像·求爱档（:4223+:4225）拆回两条（#622）',
+    desc: 'M12551 K10 交谈·二回目·无摄像·求爱档拆回两条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: '          await era.print(\n            `在和${master_name}会话的过程中，${target_name}扭动着腰呢喃着充满爱意的话语。`,\n          );',
     replace:
@@ -23350,7 +23350,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4223+:4225 是一行',
   },
   {
-    desc: 'M12552 K10 交谈·二回目·无摄像·装备档（:4229+:4231+:4233+:4235）拆回多条（#622）',
+    desc: 'M12552 K10 交谈·二回目·无摄像·装备档拆回多条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "          // 与初回同型（#622）\n          await era.print(\n            chat_prefix +\n              `会话的过程中，${target_name}` +\n              (equip_pleasure\n                ? `带着快乐的语调`\n                : equip_pain\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );",
     replace:
@@ -23359,7 +23359,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':4229+:4231+:4233+:4235 是一行',
   },
   {
-    desc: 'M12553 K10 死斗场·SC31 口交（:6763+:6765+:6767+:6768）拆回多条（#622：部位词又各占一行）',
+    desc: 'M12553 K10 死斗场·SC31 口交拆回多条（#622：部位词又各占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "      await era.printAndWait(\n        `${assi_name}` +\n          (assi_has_penis ? `坚硬的雄性器` : '') +\n          (assi_has_strap ? `粗大的假阳具` : '') +\n          `让${target_name}一边舔一边露出了心旷神怡的表情……`,\n      );",
     replace:
@@ -23377,7 +23377,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '同一行里拼「假阳具」',
   },
   {
-    desc: 'M12554 K10 死斗场·SC21 背后位（:6797+:6799+:6801+:6802）拆回多条（#622）',
+    desc: 'M12554 K10 死斗场·SC21 背后位拆回多条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "      await era.printAndWait(\n        `${assi_name}听着${target_name}的悲鸣` +\n          (assi_has_penis ? `用坚硬的雄性器` : '') +\n          (assi_has_strap ? `用粗大的假阳具` : '') +\n          `${target_name}的肛门被无慈悲的继续蹂躏着。`,\n      );\n      await era.printAndWait(\n        `${target_name}的悲鸣传到观众席，让观客们欢呼了起来………`,\n      );\n    } else if (game.train.死斗场敌种 == 206) {\n      await era.printAndWait(`「咳哦…呜噗…咔呃…咳…喀呃哦」`);",
     replace:
@@ -23386,7 +23386,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '同一行里拼「假阳具」',
   },
   {
-    desc: 'M12555 K10 死斗场·SC27 背后位アナル（:6823+:6825+:6827+:6828）拆回多条（#622）',
+    desc: 'M12555 K10 死斗场·SC27 背后位アナル拆回多条（#622）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "      await era.printAndWait(\n        `${assi_name}听着${target_name}的悲鸣` +\n          (assi_has_penis ? `用坚硬的雄性器` : '') +\n          (assi_has_strap ? `用粗大的假阳具` : '') +\n          `${target_name}的肛门被无慈悲的继续蹂躏着。`,\n      );\n      await era.printAndWait(\n        `${target_name}的悲鸣传到观众席，让观客们欢呼了起来………`,\n      );\n    } else if (game.train.死斗场敌种 == 206) {\n      await era.printAndWait(`「啊嘎…咳…咔啊～…咕呃～…咔呃…咳咳～」`);",
     replace:
@@ -23395,7 +23395,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '同一行里拼「假阳具」',
   },
   {
-    desc: 'M12556 K10 迎击奖赏·兽奸要求（:7101..:7109）拆回多条（#622：兽名又占一行）',
+    desc: 'M12556 K10 迎击奖赏·兽奸要求拆回多条（#622：兽名又占一行）',
     file: 'ere/kojo/kojo-k10-club.js',
     find: "    await era.printAndWait(\n      `「人家想和` +\n        (reward == 1 ? `犬` : reward == 2 ? `猪` : reward == 3 ? `马` : '') +\n        `交尾试试看♪」`,\n    );",
     replace:
@@ -23451,7 +23451,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 每组一条：把合成后的那一条 era.print* 又拆成两条，对应测试的整行断言必须红
   // （条目按工单 #621 的组序编号 M12400-M12452）
   {
-    desc: 'M12400 K6 口塞初回·淫乱（:3953+:3955）拆回多条（#621）',
+    desc: 'M12400 K6 口塞初回·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_3954) {\n          await era.print(`配合地戴上口塞的${target_name}带着期待地晃动着………`);',
     replace:
@@ -23460,7 +23460,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12401 K6 口塞初回·爱慕（:3962+:3964）拆回多条（#621）',
+    desc: 'M12401 K6 口塞初回·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `配合地戴上口塞的${target_name}带着温柔的眼神晃动着………`,\n          );\n',
     replace:
@@ -23470,7 +23470,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12402 K6 口塞初回·それ以外（:3971+:3973）拆回多条（#621）',
+    desc: 'M12402 K6 口塞初回·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_3972) {\n          await era.print(`戴上口塞的${target_name}左右摇着头………`);',
     replace:
@@ -23479,7 +23479,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12403 K6 口塞二回目·淫乱受虐狂Lv5（:3985+:3987）拆回多条（#621）',
+    desc: 'M12403 K6 口塞二回目·淫乱受虐狂Lv5拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(`配合地戴上口塞的${target_name}粗重急促地喘息着………`);\n',
     replace:
@@ -23489,7 +23489,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12404 K6 口塞二回目·淫乱（:4000+:4002）拆回多条（#621）',
+    desc: 'M12404 K6 口塞二回目·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_4001) {\n          await era.print(`配合地戴上口塞的${target_name}带着期待地晃动着………`);',
     replace:
@@ -23498,7 +23498,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12405 K6 口塞二回目·受虐狂Lv3（:4025+:4027）拆回多条（#621）',
+    desc: 'M12405 K6 口塞二回目·受虐狂Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(`${target_name}习以为常地被口塞塞住嘴眼色朦胧………`);\n',
     replace:
@@ -23508,7 +23508,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12406 K6 口塞二回目·それ以外（:4035+:4037）拆回多条（#621）',
+    desc: 'M12406 K6 口塞二回目·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        if (blindfold_4036) {\n          await era.print(`戴上口塞的${target_name}左右摇着头………`);',
     replace:
@@ -23517,7 +23517,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目四档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12407 K6 交谈初回·爱意（:4342+:4344）拆回多条（#621）',
+    desc: 'M12407 K6 交谈初回·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `在和${player_name}会话的过程中，${target_name}呢喃着充满爱意的话语。`,\n          );\n',
     replace:
@@ -23528,7 +23528,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12408 K6 交谈二回目·爱意（:4414+:4416）拆回多条（#621）',
+    desc: 'M12408 K6 交谈二回目·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `在和${player_name}会话的过程中，${target_name}呢喃着充满爱意的话语`,\n          );\n',
     replace:
@@ -23539,7 +23539,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12409 K6 口交时自慰初回·淫乱（:4594+:4596）拆回多条（#621）',
+    desc: 'M12409 K6 口交时自慰初回·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}含住${player_name}的阴茎显得十分兴奋，用手摆弄着插入私处和肛门的蠕虫，激烈地抽插着……`,\n          );\n',
     replace:
@@ -23549,7 +23549,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12410 K6 口交时自慰初回·爱慕（:4607+:4609）拆回多条（#621）',
+    desc: 'M12410 K6 口交时自慰初回·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}用舌头纠缠着${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n          );\n',
     replace:
@@ -23559,7 +23559,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12411 K6 口交时自慰初回·侍奉Lv3（:4620+:4622）拆回多条（#621）',
+    desc: 'M12411 K6 口交时自慰初回·侍奉Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4620 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`,\n          );',
     replace:
@@ -23568,7 +23568,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12412 K6 口交时自慰初回·それ以外（:4633+:4635）拆回多条（#621）',
+    desc: 'M12412 K6 口交时自慰初回·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4633 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`,\n          );',
     replace:
@@ -23577,7 +23577,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12413 K6 口交时自慰二回目·淫乱（:4651+:4653）拆回多条（#621）',
+    desc: 'M12413 K6 口交时自慰二回目·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}含住${player_name}的阴茎显得十分兴奋，两穴里的蠕虫蠕动着蠕动着，自慰激烈地继续………`,\n          );\n',
     replace:
@@ -23587,7 +23587,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12414 K6 口交时自慰二回目·爱慕（:4667+:4669）拆回多条（#621）',
+    desc: 'M12414 K6 口交时自慰二回目·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '          await era.print(\n            `${target_name}用舌头纠缠着${player_name}的阴茎，任两穴里的蠕虫蠕动着，摇动着纤腰………`,\n          );\n',
     replace:
@@ -23597,7 +23597,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12415 K6 口交时自慰二回目·侍奉Lv3（:4683+:4685）拆回多条（#621）',
+    desc: 'M12415 K6 口交时自慰二回目·侍奉Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4683 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n          );',
     replace:
@@ -23606,7 +23606,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12416 K6 口交时自慰二回目·それ以外（:4699+:4701）拆回多条（#621）',
+    desc: 'M12416 K6 口交时自慰二回目·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        const serve_front_4699 = `${target_name}被命令用口服侍${player_name}的阴茎，`;\n        if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {\n          await era.print(\n            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n          );',
     replace:
@@ -23615,7 +23615,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口交时自慰八组：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12417 K6 百合PLAY·爱慕（:6516+:6518）拆回多条（#621）',
+    desc: 'M12417 K6 百合PLAY·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        await era.printAndWait(\n          `${assi_name}苦笑着和${target_name}以女人间特有的方式纠缠在一起，直到黄昏………`,\n        );\n',
     replace:
@@ -23626,7 +23626,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（爱慕与百合中毒两组）',
   },
   {
-    desc: 'M12418 K6 百合PLAY·百合中毒Lv3（:6526+:6528）拆回多条（#621）',
+    desc: 'M12418 K6 百合PLAY·百合中毒Lv3拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '        await era.printAndWait(\n          `尝到百合滋味的${target_name}嬉笑着和${assi_name}纠缠着，直到黄昏………`,\n        );\n',
     replace:
@@ -23637,7 +23637,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（爱慕与百合中毒两组）',
   },
   {
-    desc: 'M12419 K6 录像自我介绍初回（SIF ABL:31）（:4311+:4313+:4314）拆回多条（#621）',
+    desc: 'M12419 K6 录像自我介绍初回（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            `面带微笑的${target_name}介绍了自己的本名和性经验` +\n              (dirty_exp ? `，甚至还有手淫的时候想到的内容` : '') +\n              `……`,\n          );\n",
     replace:
@@ -23649,7 +23649,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12420 K6 录像自我介绍二回目（SIF ABL:31）（:4383+:4385+:4386）拆回多条（#621）',
+    desc: 'M12420 K6 录像自我介绍二回目（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            `${target_name}面带微笑地介绍了自己的本名和性经验` +\n              (dirty_exp_4384 ? `，甚至还有手淫的时候想到的内容` : '') +\n              `……`,\n          );\n",
     replace:
@@ -23661,7 +23661,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12421 K6 死斗场口交（助手性器两档）（:7491+:7493+:7495+:7496）拆回多条（#621）',
+    desc: 'M12421 K6 死斗场口交（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "      await era.printAndWait(\n        `${assi_name}将` +\n          (assi_has_penis_7493 ? `阴茎` : '') +\n          (assi_dildo_7495 ? `假阳具` : '') +\n          `塞入${target_name}的口中。她吞吐着，脸上带有几分愉悦的表情……`,\n      );\n",
     replace:
@@ -23671,7 +23671,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
   },
   {
-    desc: 'M12422 K6 死斗场后背位（助手性器两档）（:7524+:7526+:7528+:7529）拆回多条（#621）',
+    desc: 'M12422 K6 死斗场后背位（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "      await era.printAndWait(\n        `${assi_name}边听着惨叫边用` +\n          (assi_has_penis_7526 ? `阴茎` : '') +\n          (assi_dildo_7528 ? `假阳具` : '') +\n          `毫不留情地蹂躏着${target_name}的阴道……`,\n      );\n",
     replace:
@@ -23681,7 +23681,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
   },
   {
-    desc: 'M12423 K6 死斗场后背位アナル（助手性器两档）（:7548+:7550+:7552+:7553）拆回多条（#621）',
+    desc: 'M12423 K6 死斗场后背位アナル（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "      await era.printAndWait(\n        `${assi_name}边听着惨叫边用` +\n          (assi_has_penis_7550 ? `阴茎` : '') +\n          (assi_dildo_7552 ? `假阳具` : '') +\n          `蹂躏着${target_name}那鲜嫩的肛门……`,\n      );\n",
     replace:
@@ -23691,7 +23691,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
   },
   {
-    desc: 'M12424 K6 交谈初回·语调三档（:4348+:4350+:4352+:4354）拆回多条（#621）',
+    desc: 'M12424 K6 交谈初回·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            talk_front_4342 +\n              `会话的过程中，${target_name}` +\n              (excited_4349\n                ? `带着快乐的语调`\n                : painful_4351\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );\n",
     replace:
@@ -23708,7 +23708,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12425 K6 交谈二回目·语调三档（:4420+:4422+:4424+:4426）拆回多条（#621）',
+    desc: 'M12425 K6 交谈二回目·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: "          await era.print(\n            talk_front_4414 +\n              `会话的过程中，${target_name}` +\n              (excited_4421\n                ? `带着快乐的语调`\n                : painful_4423\n                  ? `带着痛苦的语调`\n                  : '') +\n              `拼命地回应着。`,\n          );\n",
     replace:
@@ -23725,7 +23725,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12426 K6 迎击奖励请求·动物名三档（:7806+:7808+:7810+:7812）拆回多条（#621）',
+    desc: 'M12426 K6 迎击奖励请求·动物名三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: '    await era.printAndWait(request_animal_7812 + `性交啦♪」`);\n',
     replace:
@@ -23735,7 +23735,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 迎击奖励请求：动物名与收行段合成一条输出',
   },
   {
-    desc: 'M12427 K7 屈服刻印Lv3·靠近分档（:639+:641）拆回多条（#621）',
+    desc: 'M12427 K7 屈服刻印Lv3·靠近分档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        `${player_name}慢慢的靠近了${target_name}抓过她的金发嗅着。`,\n      );\n',
     replace:
@@ -23745,7 +23745,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 屈服刻印Lv3 的靠近分档：三支各合成一条输出',
   },
   {
-    desc: 'M12428 K7 口塞初回·淫乱（:5105+:5107）拆回多条（#621）',
+    desc: 'M12428 K7 口塞初回·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5105 = `${target_name}因为嘴被塞住而稍稍不满的`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,\n          );',
     replace:
@@ -23754,7 +23754,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12429 K7 口塞初回·爱慕（:5114+:5116）拆回多条（#621）',
+    desc: 'M12429 K7 口塞初回·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5114 = `${target_name}好像期待着什么就那样`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}好像期待着什么就那样动了起来………`,\n          );',
     replace:
@@ -23763,7 +23763,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12430 K7 口塞初回·それ以外（:5123+:5125）拆回多条（#621）',
+    desc: 'M12430 K7 口塞初回·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '          await era.printAndWait(`${target_name}的嘴被口枷塞住，左右摇着头………`);\n',
     replace:
@@ -23773,7 +23773,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞初回三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12431 K7 口塞二回目·淫乱（:5147+:5149）拆回多条（#621）',
+    desc: 'M12431 K7 口塞二回目·淫乱拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5147 = `${target_name}因为嘴被塞住而稍稍不满的`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,\n          );',
     replace:
@@ -23782,7 +23782,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12432 K7 口塞二回目·爱慕（:5167+:5169）拆回多条（#621）',
+    desc: 'M12432 K7 口塞二回目·爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        const mouth_front_5167 = `${target_name}好像期待着什么就那样`;\n        if (era0(`tequip:${target}:43`)) {\n          await era.printAndWait(\n            `${target_name}好像期待着什么就那样动了起来………`,\n          );',
     replace:
@@ -23791,7 +23791,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12433 K7 口塞二回目·それ以外（:5182+:5184）拆回多条（#621）',
+    desc: 'M12433 K7 口塞二回目·それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '          await era.printAndWait(`${target_name}的嘴被口枷塞住左右摇着头………`);\n',
     replace:
@@ -23801,7 +23801,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 口塞二回目三档：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12434 K7 交谈初回·爱意（:5408+:5410）拆回多条（#621）',
+    desc: 'M12434 K7 交谈初回·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "        const talk_front_5408 = `被${player_name}`;\n        if (\n          era0(`palam:${target}:5`) >= era0('palamlv:4') &&\n          (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&\n          era0('tflag:60')\n        ) {\n          await era.print(\n            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,\n          );",
     replace:
@@ -23811,7 +23811,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12435 K7 交谈二回目·爱意（:5485+:5487）拆回多条（#621）',
+    desc: 'M12435 K7 交谈二回目·爱意拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "        const talk_front_5485 = `被${player_name}`;\n        if (\n          era0(`palam:${target}:5`) >= era0('palamlv:4') &&\n          (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&\n          era0('tflag:60')\n        ) {\n          await era.print(\n            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,\n          );",
     replace:
@@ -23821,7 +23821,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12436 K7 迷宫凌辱·「作为代替」（:8001+:8004）拆回多条（#621）',
+    desc: 'M12436 K7 迷宫凌辱·「作为代替」拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        `作为代替${target_name}的肛门被彻底侵犯，逆流出了分不清是精液还是粘液的液体。`,\n      );\n',
     replace:
@@ -23831,7 +23831,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 迷宫凌辱「作为代替」：前缀与收行段合成一条输出',
   },
   {
-    desc: 'M12437 K7 录像自我介绍初回（SIF ABL:31）（:5392+:5394+:5395）拆回多条（#621）',
+    desc: 'M12437 K7 录像自我介绍初回（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            `${target_name}把自己的本名和至今为止的性体验` +\n              (recall_dirty ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n",
     replace:
@@ -23841,7 +23841,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12438 K7 录像自我介绍二回目（SIF ABL:31）（:5469+:5471+:5472）拆回多条（#621）',
+    desc: 'M12438 K7 录像自我介绍二回目（SIF ABL:31）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            `${target_name}把自己的本名和至今为止的性体验` +\n              (recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n",
     replace:
@@ -23851,7 +23851,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（初回与二回目两组）',
   },
   {
-    desc: 'M12439 K7 死斗场口交（助手性器两档）（:8254+:8256+:8258+:8259）拆回多条（#621）',
+    desc: 'M12439 K7 死斗场口交（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis_8255 ? `肉棒` : '') +\n          (assi_dildo_8257 ? `假阴茎` : '') +\n          `被${target_name}舔着而露出了心旷神怡的额表情……`,\n      );\n",
     replace:
@@ -23860,7 +23860,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12440 K7 死斗场正常位（助手性器两档）（:8289+:8291+:8293+:8294）拆回多条（#621）',
+    desc: 'M12440 K7 死斗场正常位（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n          (assi_has_penis_8290 ? `肉棒` : '') +\n          (assi_dildo_8292 ? `假阴茎` : '') +\n          `继续毫不留情的蹂躏着${target_name}的小穴。`,\n      );\n",
     replace:
@@ -23869,7 +23869,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12441 K7 死斗场后背位アナル（助手性器两档）（:8316+:8318+:8320+:8321）拆回多条（#621）',
+    desc: 'M12441 K7 死斗场后背位アナル（助手性器两档）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n          (assi_has_penis_8317 ? `肉棒` : '') +\n          (assi_dildo_8319 ? `假阴茎` : '') +\n          `继续毫不留情的蹂躏着${target_name}的小穴。`,\n      );\n",
     replace:
@@ -23878,7 +23878,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12442 K7 交谈初回·语调三档（:5414+:5416+:5418+:5420）拆回多条（#621）',
+    desc: 'M12442 K7 交谈初回·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            talk_front_5408 +\n              `搭着话、${target_name}一边发出` +\n              (excited_5415 ? `快乐的` : painful_5417 ? `痛苦的` : '') +\n              `的声音、一边拼死的回着话`,\n          );\n",
     replace:
@@ -23891,7 +23891,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12443 K7 交谈二回目·语调三档（:5491+:5493+:5495+:5497）拆回多条（#621）',
+    desc: 'M12443 K7 交谈二回目·语调三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "          await era.print(\n            talk_front_5485 +\n              `搭着话、${target_name}一边发出` +\n              (excited_5492 ? `快乐的` : painful_5494 ? `痛苦的` : '') +\n              `声音、一边拼死的回着话`,\n          );\n",
     replace:
@@ -23904,7 +23904,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出',
   },
   {
-    desc: 'M12444 K7 NTR·P1 插进秘裂（:8362+:8364+:8366）拆回多条（#621）',
+    desc: 'M12444 K7 NTR·P1 插进秘裂拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8361 ? `然后、狂王的巨根` : `然后、特大号按摩棒`) +\n          `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`,\n      );\n',
     replace:
@@ -23913,7 +23913,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12445 K7 NTR·P1 それ以外（:8375+:8377+:8379）拆回多条（#621）',
+    desc: 'M12445 K7 NTR·P1 それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`) +\n          `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`,\n      );\n',
     replace:
@@ -23922,7 +23922,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12446 K7 NTR·P2 肛门吞下（肛开Lv3）（:8388+:8390+:8392+:8394）拆回多条（#621）',
+    desc: 'M12446 K7 NTR·P2 肛门吞下（肛开Lv3）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        await era.printAndWait(\n          `${target_name}被开发了的肛门轻易地吞下了` +\n            (king_penis_8389 ? `狂王的巨根` : `特大号按摩棒`) +\n            `、${target_name}开始发出了呻吟声。`,\n        );\n',
     replace:
@@ -23931,7 +23931,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12447 K7 NTR·P2 肛门吞下（苦痛）（:8398+:8400+:8402+:8404）拆回多条（#621）',
+    desc: 'M12447 K7 NTR·P2 肛门吞下（苦痛）拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '        await era.printAndWait(\n          `${target_name}的肛门吞下了` +\n            (king_penis_8399 ? `狂王的巨根` : `特大号按摩棒`) +\n            `、${target_name}因为强烈的苦痛而悲鸣着。`,\n        );\n',
     replace:
@@ -23940,7 +23940,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12448 K7 NTR·P2 それ以外（:8411+:8413+:8415）拆回多条（#621）',
+    desc: 'M12448 K7 NTR·P2 それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8410 ? `狂王的巨根` : `特大号按摩棒`) +\n          `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`,\n      );\n',
     replace:
@@ -23949,7 +23949,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12449 K7 NTR·P4 性爱狂（:8437+:8439+:8441+:8443）拆回多条（#621）',
+    desc: 'M12449 K7 NTR·P4 性爱狂拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        `虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用` +\n          (king_penis_8438 ? `他的巨根` : `特大号按摩棒`) +\n          `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`,\n      );\n',
     replace:
@@ -23958,7 +23958,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12450 K7 NTR·P4 爱慕（:8450+:8452+:8454）拆回多条（#621）',
+    desc: 'M12450 K7 NTR·P4 爱慕拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8449 ? `狂王的巨根` : `特大号按摩棒`) +\n          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`,\n      );\n',
     replace:
@@ -23967,7 +23967,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12451 K7 NTR·P4 それ以外（:8460+:8462+:8464）拆回多条（#621）',
+    desc: 'M12451 K7 NTR·P4 それ以外拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '      await era.printAndWait(\n        (king_penis_8459 ? `狂王的巨根` : `特大号按摩棒`) +\n          `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`,\n      );\n',
     replace:
@@ -23976,7 +23976,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出',
   },
   {
-    desc: 'M12452 K7 迎击奖励请求·动物名三档（:8680+:8682+:8684+:8686+:8688）拆回多条（#621）',
+    desc: 'M12452 K7 迎击奖励请求·动物名三档拆回多条（#621）',
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '    await era.printAndWait(\n      `「奖励？　我想尝试和` +\n        (beast_kind_8680 == 1 ? `犬` : beast_kind_8680 == 2 ? `豚` : `马`) +\n        `性交看看」`,\n    );',
     replace:
@@ -23985,7 +23985,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#621 迎击奖励请求：动物名与收行段合成一条输出',
   },
   {
-    desc: 'M12561 K8 NTR P==5 それ以外·蜜裂与肛门段（:7549+:7551+:7553）拆回三条（#622 补查：普查把这一组归一类误报，只并第一支会漏）',
+    desc: 'M12561 K8 NTR P==5 それ以外·蜜裂与肛门段拆回三条（#622 补查：普查把这一组归一类误报，只并第一支会漏）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '      // 一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT\n      // （互斥两支，各支自带收尾，块后没有共同的收行语句）（#622 补查）。\n      // 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同）\n      await era.print(\n        `${target_name}的蜜裂和肛门被` +\n          (game.system.狂王性别 == 0\n            ? `阴茎搅动着、精液不停的溢了出来………`\n            : `假阳具搅动着、爱液不停的溢了出来………`),\n      );',
     replace:
@@ -24003,7 +24003,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // 各配一条「拆回多条」变异。（每处合并后的整行断言见对应测试文件；
   // 条目按工单给的 M12800 起编号）——
   {
-    desc: 'M12800 K12 褒美请求·兽名（:5747..:5755）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12800 K12 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '    await era.printAndWait(\n      `${chara_callname(a)}提出了与` + beast_word + `交尾的要求`,\n    );',
     replace:
@@ -24014,7 +24014,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12801 K14 褒美请求·兽名（:5738..:5746）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12801 K14 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '    await era.printAndWait(\n      `${chara_callname(a)}提出了想要和` + beast_word + `进行交配的奖励。`,\n    );',
     replace:
@@ -24025,7 +24025,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12802 K15 接吻初吻·擦嘴段（:758+:760+:761）拆回三条（#625：擦嘴段又占一行）',
+    desc: 'M12802 K15 接吻初吻·擦嘴段拆回三条（#625：擦嘴段又占一行）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: "        await era.printAndWait(\n          `${target_name}` +\n            (wiped\n              ? '像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，'\n              : '') +\n            `恼怒地说着挑衅着话语……`,\n        );",
     replace:
@@ -24038,7 +24038,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '擦嘴段与挑衅段落在同一行',
   },
   {
-    desc: 'M12803 K15 死斗场口交·武器名（:5843..:5848）拆回三条（#625：武器名又占一行）',
+    desc: 'M12803 K15 死斗场口交·武器名拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: "      await era.printAndWait(\n        `${assi_name}粗暴地拉起${target_name}的头发，得意地用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `侵犯着对方的口腔……`,\n      );",
     replace:
@@ -24053,7 +24053,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12804 K15 褒美请求·兽名（:6140..:6148）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12804 K15 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    await era.printAndWait(\n      `「迎击成功的话，请让${sc()}跟` + beast_word + `进行交配好吗？」`,\n    );',
     replace:
@@ -24064,7 +24064,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12805 K903 死斗场 SC31·武器名（:5390..:5395）拆回四条（#625：武器名又占一行）',
+    desc: 'M12805 K903 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: "      await era.printAndWait(\n        `${assi_name}把` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `粗暴地塞入${target_name}的嘴里，露出了心满意足的神情……`,\n      );",
     replace:
@@ -24081,7 +24081,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12806 K903 死斗场 SC21·武器名（:5423..:5428）拆回四条（#625）',
+    desc: 'M12806 K903 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的私处……`,\n      );",
     replace:
@@ -24096,7 +24096,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12807 K903 死斗场 SC27·武器名（:5447..:5452）拆回四条（#625）',
+    desc: 'M12807 K903 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24111,7 +24111,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12808 K903 褒美请求·兽名（:5699..:5707）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12808 K903 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '    await era.printAndWait(\n      `「魔王大人，你懂得的吧…让本宫和` + beast_word + `好好地玩・一・玩吧♪」`,\n    );',
     replace:
@@ -24122,7 +24122,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12809 K4 K4_KOJO2 眼镜段（:241+:244+:245）拆回三条（#625：眼镜段又占一行）',
+    desc: 'M12809 K4 K4_KOJO2 眼镜段拆回三条（#625：眼镜段又占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "    await era.printAndWait(\n      `${target_name}` + (glasses ? '眼镜下' : '') + `的目光异常冰冷…`,\n    );",
     replace:
@@ -24135,7 +24135,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '眼镜段与后半句落在同一行',
   },
   {
-    desc: 'M12810 K4 死斗场 SC31·武器名（:4952..:4957）拆回四条（#625：武器名又占一行）',
+    desc: 'M12810 K4 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "      await era.printAndWait(\n        `${assi_name}把` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `粗暴地塞入${target_name}的嘴里，露出了心满意足的神情……`,\n      );",
     replace:
@@ -24152,7 +24152,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12811 K4 死斗场 SC21·武器名（:4985..:4990）拆回四条（#625）',
+    desc: 'M12811 K4 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的私处……`,\n      );",
     replace:
@@ -24167,7 +24167,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12812 K4 死斗场 SC27·武器名（:5009..:5014）拆回四条（#625）',
+    desc: 'M12812 K4 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: "      await era.printAndWait(\n        `${assi_name}听到悲鸣，更加兴奋了，继续用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `毫不留情地蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24182,7 +24182,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12813 K4 褒美请求·兽名（:5259..:5267）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12813 K4 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: '    await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`);',
     replace:
@@ -24193,7 +24193,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12814 K2 交谈首次·自我介绍（:3915+:3917+:3918）拆回三条（#625：自白段又占一行）',
+    desc: 'M12814 K2 交谈首次·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `于是${target_name}将自己的本名、之前的性体验` +\n              (masturbation_note ? '还有一个人手淫的时候想着谁之类的' : '') +\n              `面带微笑的说了出来……`,\n          );\n          await era.printAndWait(",
     replace:
@@ -24202,7 +24202,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '本名段与后文落在同一行',
   },
   {
-    desc: 'M12815 K2 交谈二次·自我介绍（:3988+:3990+:3991）拆回三条（#625）',
+    desc: 'M12815 K2 交谈二次·自我介绍拆回三条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n          await era.print(\n            `于是${target_name}将自己的本名、之前的性体验` +\n              (masturbation_note ? '还有一个人手淫的时候想着谁之类的' : '') +\n              `面带微笑的说了出来……`,\n          );\n          await era.print(",
     replace:
@@ -24211,7 +24211,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '本名段与后文落在同一行',
   },
   {
-    desc: 'M12816 K2 交谈首次·按捺住声音（:3951..:3959）拆回五条（#625：工具档又占一行）',
+    desc: 'M12816 K2 交谈首次·按捺住声音拆回五条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "          // ELSE 三档互斥——条件提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
     replace:
@@ -24220,7 +24220,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12817 K2 交谈二次·按捺住声音（:4024..:4032）拆回五条（#625）',
+    desc: 'M12817 K2 交谈二次·按捺住声音拆回五条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "          // 同 :3951 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
     replace:
@@ -24246,7 +24246,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12818 K2 死斗场 SC31·武器名（:6674..:6679）拆回四条（#625：武器名又占一行）',
+    desc: 'M12818 K2 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "      await era.printAndWait(\n        `${assi_name}把` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `塞入${target_name}的口中，她一脸愉悦的吞吐着肉棒……`,\n      );",
     replace:
@@ -24263,7 +24263,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12819 K2 死斗场 SC21·武器名（:6707..:6712）拆回四条（#625）',
+    desc: 'M12819 K2 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "      await era.printAndWait(\n        `${assi_name}仔细聆听传来的悲鸣，用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `将${target_name}的小穴无情地蹂躏着……`,\n      );",
     replace:
@@ -24278,7 +24278,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12820 K2 死斗场 SC27·武器名（:6731..:6736）拆回四条（#625）',
+    desc: 'M12820 K2 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: "      await era.printAndWait(\n        `${assi_name}仔细聆听传来的悲鸣，用` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n          `将${target_name}的肛门无情地蹂躏着……`,\n      );",
     replace:
@@ -24293,7 +24293,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12821 K2 褒美请求·兽名（:6984..:6992）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12821 K2 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k2-timid.js',
     find: '    await era.printAndWait(\n      `「那个…回来的话…能让` + beast_word + `来和我…做…吗」`,\n    );',
     replace:
@@ -24304,7 +24304,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12822 K19 交谈·自我介绍（:4340+:4342+:4343）拆回三条（#625：自白段又占一行）',
+    desc: 'M12822 K19 交谈·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
@@ -24313,7 +24313,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12823 K19 交谈·自我介绍·二次（:4410+:4412+:4413）拆回三条（#625）',
+    desc: 'M12823 K19 交谈·自我介绍·二次拆回三条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "          // 同 :4340 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
@@ -24327,7 +24327,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12824 K19 交谈·压抑着呼吸声（:4375..:4381）拆回四条（#625：工具档又占一行）',
+    desc: 'M12824 K19 交谈·压抑着呼吸声拆回四条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "          await era.print(\n            `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
@@ -24342,7 +24342,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12825 K19 交谈·压抑着呼吸声·二次（:4446..:4452）拆回四条（#625）',
+    desc: 'M12825 K19 交谈·压抑着呼吸声·二次拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "          // 同 :4375 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
@@ -24366,7 +24366,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12826 K19 交谈·PLAYER 前缀与尾段（:4440+:4442）拆回两条（#625）',
+    desc: 'M12826 K19 交谈·PLAYER 前缀与尾段拆回两条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '          await era.print(\n            `${player_name}${target_name}一边与${master_name}说着话，一边对着${master_name}露出了重要的地方。`,\n          );',
     replace:
@@ -24378,7 +24378,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'PLAYER 前缀与尾段落在同一行',
   },
   {
-    desc: 'M12827 K19 死斗场 SC31·武器名（:6160..:6165）拆回四条（#625：武器名又占一行）',
+    desc: 'M12827 K19 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阴茎' : '') +\n          `被${target_name}含住而露出了快乐的的表情……`,\n      );",
     replace:
@@ -24395,7 +24395,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12828 K19 死斗场 SC21·武器名（:6193..:6198）拆回四条（#625）',
+    desc: 'M12828 K19 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的腔内……`,\n      );",
     replace:
@@ -24410,7 +24410,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12829 K19 死斗场 SC27·武器名（:6217..:6222）拆回四条（#625）',
+    desc: 'M12829 K19 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24425,7 +24425,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12830 K19 褒美请求·兽名（:6525..:6533）拆回三条（#625：空首尾又各占一行）',
+    desc: 'M12830 K19 褒美请求·兽名拆回三条（#625：空首尾又各占一行）',
     file: 'ere/kojo/kojo-k19-fia.js',
     find: '    await era.printAndWait(beast_word);',
     replace:
@@ -24436,7 +24436,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '空首尾不再各占一行',
   },
   {
-    desc: 'M12831 K904 交谈·自我介绍（:4340+:4342+:4343）拆回三条（#625：自白段又占一行）',
+    desc: 'M12831 K904 交谈·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
@@ -24445,7 +24445,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12832 K904 交谈·自我介绍·二次（:4410+:4412+:4413）拆回三条（#625）',
+    desc: 'M12832 K904 交谈·自我介绍·二次拆回三条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "          // 同 :4340 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
@@ -24454,7 +24454,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12833 K904 交谈·压抑着呼吸声（:4375..:4381）拆回四条（#625：工具档又占一行）',
+    desc: 'M12833 K904 交谈·压抑着呼吸声拆回四条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "          await era.print(\n            `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
@@ -24463,7 +24463,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12834 K904 交谈·压抑着呼吸声·二次（:4446..:4452）拆回四条（#625）',
+    desc: 'M12834 K904 交谈·压抑着呼吸声·二次拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "          // 同 :4375 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
@@ -24472,7 +24472,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '工具档与前后文落在同一行',
   },
   {
-    desc: 'M12835 K904 交谈·PLAYER 前缀与尾段（:4440+:4442）拆回两条（#625）',
+    desc: 'M12835 K904 交谈·PLAYER 前缀与尾段拆回两条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: '          await era.print(\n            `${player_name}${target_name}一边与${master_name}说着话，一边对着${master_name}露出了重要的地方。`,\n          );',
     replace:
@@ -24481,7 +24481,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'PLAYER 前缀与尾段落在同一行',
   },
   {
-    desc: 'M12836 K904 死斗场 SC31·武器名（:6160..:6165）拆回四条（#625：武器名又占一行）',
+    desc: 'M12836 K904 死斗场 SC31·武器名拆回四条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}因为` +\n          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阴茎' : '') +\n          `被${target_name}含住而露出了快乐的的表情……`,\n      );",
     replace:
@@ -24490,7 +24490,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12837 K904 死斗场 SC21·武器名（:6193..:6198）拆回四条（#625）',
+    desc: 'M12837 K904 死斗场 SC21·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的腔内……`,\n      );",
     replace:
@@ -24499,7 +24499,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12838 K904 死斗场 SC27·武器名（:6217..:6222）拆回四条（#625）',
+    desc: 'M12838 K904 死斗场 SC27·武器名拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着悲鸣，一边用` +\n          (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +\n          `毫不留情的继续蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24508,7 +24508,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12839 K904 褒美请求·兽名（:6525..:6533）拆回三条（#625：空首尾又各占一行）',
+    desc: 'M12839 K904 褒美请求·兽名拆回三条（#625：空首尾又各占一行）',
     file: 'ere/kojo/kojo-k904-fia.js',
     find: '    await era.printAndWait(beast_word);',
     replace:
@@ -24517,7 +24517,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '空首尾不再各占一行',
   },
   {
-    desc: 'M12840 K13 正常位恳求·三档（:1562..:1570）拆回多条（#625：恳求段又占一行）',
+    desc: 'M12840 K13 正常位恳求·三档拆回多条（#625：恳求段又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(\n              `「亲爱的…请原谅……` +\n                (rand_n(3) == 0\n                  ? `啊啊啊…`\n                  : rand_n(2) == 0\n                    ? `不行…`\n                    : `噫噫…`) +\n                `${heart(3)}」`,\n            );',
     replace:
@@ -24534,7 +24534,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '恳求段与收行落在同一行',
   },
   {
-    desc: 'M12841 K13 背后位·把…弄乱（:1675..:1681）拆回三条（#625：把…段又占一行）',
+    desc: 'M12841 K13 背后位·把…弄乱拆回三条（#625：把…段又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '              await era.printAndWait(\n                moan_front +\n                  moan_act +\n                  moan_pat +\n                  `……` +\n                  `把${sc()}` +\n                  (rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`) +\n                  `${heart(3)}」`,\n              );',
     replace:
@@ -24550,7 +24550,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':1675 组必须出声',
   },
   {
-    desc: 'M12842 K13 背后位恳求·三档（:1690..:1698）拆回多条（#625）',
+    desc: 'M12842 K13 背后位恳求·三档拆回多条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(\n              `「亲爱的…请原谅……` +\n                (rand_n(3) == 0\n                  ? `啊啊啊啊啊`\n                  : rand_n(2) == 0\n                    ? `不行`\n                    : `噫噫`) +\n                `${heart(3)}」`,\n            );',
     replace:
@@ -24567,7 +24567,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '恳求段与收行落在同一行',
   },
   {
-    desc: 'M12843 K13 NTR·前缀与再生处女膜（:5518..:5529）拆回两条（#625）',
+    desc: 'M12843 K13 NTR·前缀与再生处女膜拆回两条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: "        await era.printAndWait(\n          `狂王毫不介意${sc()}的话、邪笑了起来、将` +\n            (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n            `刺穿了` +\n            `由魔王再生的处女膜。`,\n        );",
     replace:
@@ -24581,7 +24581,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀段与收行同属一行',
   },
   {
-    desc: 'M12844 K13 NTR·冷笑与一口气刺穿（:5547..:5554）拆回三条（#625：武器名又占一行）',
+    desc: 'M12844 K13 NTR·冷笑与一口气刺穿拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '      await era.print(\n        `狂王冷笑了一番、蹂躏了一番${sc()}的屁股、将` +\n          (king_has_penis ? `胯下的巨根` : `取出的极粗假阳具`) +\n          `一口气刺穿了`,\n      );',
     replace:
@@ -24592,7 +24592,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5547 组是一行',
   },
   {
-    desc: 'M12845 K13 NTR·处女膜段与赤印（:5557+:5559+:5561）拆回两条（#625）',
+    desc: 'M12845 K13 NTR·处女膜段与赤印拆回两条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '      await era.print(\n        (regen_hymen\n          ? `由魔王再生的处女膜、`\n          : `尚未经人事的小穴、蛮横地抽插着、`) + `纯洁的赤印将地板染红了。`,\n      );',
     replace:
@@ -24606,7 +24606,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5557 组是一行',
   },
   {
-    desc: 'M12846 K13 NTR·亲密接触整行（:5563..:5570）拆回多条（#625）',
+    desc: 'M12846 K13 NTR·亲密接触整行拆回多条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: "      await era.printAndWait(\n        (has_hymen ? `（老公……抱歉……最终还是……）` : '') +\n          `不仅无视了伴随着呜咽声求饶的${sc()}、狂王还愉快地将` +\n          (king_has_penis ? `腰` : `极粗假阳具`) +\n          `与${a_name}亲密接触的模样记录在了水晶球中。`,\n      );",
     replace:
@@ -24618,7 +24618,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5563 组是一行',
   },
   {
-    desc: 'M12847 K13 NTR P==4·昂与比魔王大人（:5593+:5595+:5596）拆回三条（#625）',
+    desc: 'M12847 K13 NTR P==4·昂与比魔王大人拆回三条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: "      await era.print(\n        `「昂${heart(1)}　` +\n          (has_hymen ? `比那个人、` : '') +\n          `比魔王大人${heart(3)}」`,\n      );",
     replace:
@@ -24629,7 +24629,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: ':5593 组是一行',
   },
   {
-    desc: 'M12848 K13 褒美请求·兽名（:5790..:5798）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12848 K13 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '    await era.printAndWait(`${a_name}要求奖励与` + beast_word + `交尾`);',
     replace:
@@ -24640,7 +24640,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12849 K5 交谈·自我介绍（:4795+:4797+:4798）拆回三条（#625：自白段又占一行）',
+    desc: 'M12849 K5 交谈·自我介绍拆回三条（#625：自白段又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          // 语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
     replace:
@@ -24649,7 +24649,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12850 K5 交谈二次·自我介绍（:4841+:4843+:4844）拆回三条（#625）',
+    desc: 'M12850 K5 交谈二次·自我介绍拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          // 同 :4795 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
     replace:
@@ -24658,7 +24658,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '名字段与后文落在同一行',
   },
   {
-    desc: 'M12851 K5 交谈·发出了…的声音（:4818..:4824）拆回三条（#625：工具档又占一行）',
+    desc: 'M12851 K5 交谈·发出了…的声音拆回三条（#625：工具档又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          await era.print(\n            maid_front +\n              `向少女搭话后、${target_name}发出了` +\n              (overwhelmed_by_tool\n                ? `快乐的`\n                : overwhelmed_by_pain\n                  ? `痛苦的`\n                  : '') +\n              `的声音、拼命地向着${player_name}说了起来`,\n          );",
     replace:
@@ -24669,7 +24669,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与工具档、前后文落在同一行',
   },
   {
-    desc: 'M12852 K5 交谈二次·发出了…的声音（:4864..:4870）拆回三条（#625）',
+    desc: 'M12852 K5 交谈二次·发出了…的声音拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          await era.print(\n            maid_front_4858 +\n              `向少女搭话后，${target_name}发出了` +\n              (overwhelmed_by_tool\n                ? `快乐的`\n                : overwhelmed_by_pain\n                  ? `痛苦的`\n                  : '') +\n              `的声音、拼命地向着${player_name}说了起来`,\n          );",
     replace:
@@ -24680,7 +24680,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与工具档、前后文落在同一行',
   },
   {
-    desc: 'M12853 K5 六九式初回·淫乱（:5190..:5196）拆回三条（#625：武器名又占一行）',
+    desc: 'M12853 K5 六九式初回·淫乱拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '        await era.printAndWait(\n          `「啊嗯~…更加地…玩弄那里嘛~…那样的话我就会好好地吸主人的` +\n            (player_has_penis ? `大鸡巴` : `花蕾`) +\n            `的啦~${heart(1)}」`,\n        );',
     replace:
@@ -24693,7 +24693,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行拼接「假阳具」',
   },
   {
-    desc: 'M12854 K5 六九式初回·爱慕（:5201..:5209）拆回四条（#625）',
+    desc: 'M12854 K5 六九式初回·爱慕拆回四条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '        await era.printAndWait(\n          `${target_name}吮吸起${player_name}的` +\n            (player_has_penis\n              ? `阴茎`\n              : player_has_toy && rand_n(3) === 0\n                ? `假阳具`\n                : `阴唇`) +\n            `，而${player_name}也没有停下来继续着口腔侍奉。`,\n        );\n      } else if (era.get(`abl:${target}:16`) >= 3) {',
     replace:
@@ -24702,7 +24702,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行拼接「假阳具」',
   },
   {
-    desc: 'M12855 K5 六九式二回目·爱慕（:5233..:5241）拆回四条（#625）',
+    desc: 'M12855 K5 六九式二回目·爱慕拆回四条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '        await era.printAndWait(\n          `${target_name}吮吸起${player_name}的` +\n            (player_has_penis\n              ? `阴茎`\n              : player_has_toy && rand_n(3) === 0\n                ? `假阳具`\n                : `阴唇`) +\n            `，而${player_name}也没有停下来继续着口腔侍奉。`,\n        );\n        await era.printAndWait(',
     replace:
@@ -24711,7 +24711,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '整行拼接「假阳具」',
   },
   {
-    desc: 'M12856 K5 死斗场 SC31·武器名（:7274..:7279）拆回三条（#625：武器名又占一行）',
+    desc: 'M12856 K5 死斗场 SC31·武器名拆回三条（#625：武器名又占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "      await era.printAndWait(\n        `舔着${assi_name}的` +\n          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n          `${target_name}露出心旷神怡的表情……`,\n      );",
     replace:
@@ -24722,7 +24722,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12857 K5 死斗场 SC21·武器名（:7307..:7312）拆回三条（#625）',
+    desc: 'M12857 K5 死斗场 SC21·武器名拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着哀嚎` +\n          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n          `继续毫不留情地蹂躏着${target_name}的阴道……`,\n      );",
     replace:
@@ -24733,7 +24733,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12858 K5 死斗场 SC27·武器名（:7331..:7336）拆回三条（#625）',
+    desc: 'M12858 K5 死斗场 SC27·武器名拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "      await era.printAndWait(\n        `${assi_name}一边听着哀嚎` +\n          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n          `继续毫不留情地蹂躏着${target_name}的肛门……`,\n      );",
     replace:
@@ -24744,7 +24744,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '武器名与前后文落在同一行',
   },
   {
-    desc: 'M12859 K5 褒美请求·兽名（:7574..:7582）拆回三条（#625：兽名与前后文又各占一行）',
+    desc: 'M12859 K5 褒美请求·兽名拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '    await era.printAndWait(\n      `「如果打倒勇者姐姐的话请给我奖赏、好想和` + beast_word + `做爱啊♪」`,\n    );',
     replace:
@@ -24755,7 +24755,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '兽名与前后文落在同一行',
   },
   {
-    desc: 'M12860 K5 交谈·前缀行（:4812+:4814 支）拆回两条（#625：前缀又单独占一行）',
+    desc: 'M12860 K5 交谈·前缀行（该分支）拆回两条（#625：前缀又单独占一行）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            `${player_name}向少女搭话后、${target_name}晃动着腰部说起了充满爱意的话语`,\n          );',
     replace:
@@ -24767,7 +24767,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12861 K5 交谈二次·前缀行（:4858+:4860 支）拆回两条（#625）',
+    desc: 'M12861 K5 交谈二次·前缀行（该分支）拆回两条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            `${player_name}向少女搭话后，${target_name}晃动着腰部说起了充满爱意的话语`,\n          );',
     replace:
@@ -24779,7 +24779,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12862 K5 百合 PLAY·前缀与收行（:6150+:6152）拆回两条（#625）',
+    desc: 'M12862 K5 百合 PLAY·前缀与收行拆回两条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.printAndWait(\n            `${assi_name}看着那样的少女、感到很满意` +\n              `直到天黑一直都在玩弄着少女………`,\n          );',
     replace:
@@ -24789,7 +24789,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与收行落在同一行',
   },
   {
-    desc: 'M12863 K13 哈啊…请您·整段（:1656..:1670）拆回三条（#625：前缀与整段又各占一行）',
+    desc: 'M12863 K13 哈啊…请您·整段拆回三条（#625：前缀与整段又各占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '                await era.printAndWait(\n                  `「哈啊…请您` +\n                    (act_is_insert\n                      ? `抽插${sc()}的时候`\n                      : `侵犯${sc()}的时候`) +\n                    `${heart(1)}` +\n                    `……` +\n                    `再激烈一点…` +\n                    `才好啊${heart(3)}」`,\n                );',
     replace:
@@ -24804,7 +24804,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与整段落在同一行',
   },
   {
-    desc: 'M12864 K13 有感觉了什么的（:1709+:1711）拆回两条（#625：前缀又单独占一行）',
+    desc: 'M12864 K13 有感觉了什么的拆回两条（#625：前缀又单独占一行）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '            await era.printAndWait(`「有感觉了什么的……」`);',
     replace:
@@ -24814,7 +24814,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与收行落在同一行',
   },
   {
-    desc: 'M12865 K13 这副模样／好羞耻（:1719..:1725）拆回三条（#625）',
+    desc: 'M12865 K13 这副模样／好羞耻拆回三条（#625）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: '          await era.printAndWait(\n            (shame_if ? `「这副模样……` : `「`) +\n              `好羞耻……` +\n              (shame_heart ? `啊啊${heart(3)}」` : `」`),\n          );',
     replace:
@@ -24825,7 +24825,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '头部与收尾落在同一行',
   },
   {
-    desc: 'M12866 K5 交谈·下流的话语（:4816 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12866 K5 交谈·下流的话语（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front +\n              `向少女搭话后、${target_name}一边晃着腰一边不停地说着下流的话语`,\n          );',
     replace:
@@ -24837,7 +24837,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12867 K5 交谈二次·下流的话语（:4862 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12867 K5 交谈二次·下流的话语（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front_4858 +\n              `向少女搭话后，${target_name}一边晃着腰一边不停地说着下流的话语`,\n          );',
     replace:
@@ -24849,7 +24849,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12868 K5 交谈·牢骚（:4826 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12868 K5 交谈·牢骚（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front +\n              `向少女搭话后、${target_name}如同打发无聊一样发起了牢骚`,\n          );',
     replace:
@@ -24861,7 +24861,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '前缀与分支文本落在同一行',
   },
   {
-    desc: 'M12869 K5 交谈二次·牢骚（:4872 支）拆回两条（#625：非首支又漏拼前缀）',
+    desc: 'M12869 K5 交谈二次·牢骚（该分支）拆回两条（#625：非首支又漏拼前缀）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '          await era.print(\n            maid_front_4858 +\n              `向少女搭话后，${target_name}如同打发无聊一样发起了牢骚`,\n          );',
     replace:
@@ -24875,7 +24875,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #557：重叠检测直接报错的调用点变异（与 M11427 同一目标、独立条目：
   // 那条守的是随机数/顺序断言，这条守夹具的重叠抛错本身）——
   {
-    desc: 'M12356 强制肉偿调用点漏写 await（重叠检测直接报错：不等真身跑完，:78 的自慰判定与肉偿抢同一个输入，#557/#544）',
+    desc: 'M12356 强制肉偿调用点漏写 await（重叠检测直接报错：不等真身跑完，自慰判定与肉偿抢同一个输入，#557/#544）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    // CALL 强制肉偿(ARG)\n    await forced_payment(arg, rand);',
     replace:
