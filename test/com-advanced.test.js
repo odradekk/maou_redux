@@ -4,7 +4,6 @@
  *
  *   - 16 条可用性检查的关键条件（FLAG:71、男性器、无头骑士、技巧门槛）；
  *   - 高级 COM 显式回填 SELECTCOM；
- *   - TRAIN_MESSAGE 120-135 注册显式无操作；
  *   - get_adv_com CASE 135（口交时自慰升格）。
  */
 const assert = require('node:assert/strict');

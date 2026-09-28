@@ -496,10 +496,6 @@ test('ABILITY_UP_CORE：999 收尾三件（欲情变化检查真身 → 出售�
     fixture.text_lines().includes('玛奥可以卖掉了'),
     'CHECK_SELLASSIABLE 复核的是 CORE 里的 TARGET（1 号）',
   );
-  assert.ok(
-    fixture.text_lines().includes('玛奥可以卖掉了'),
-    'CHECK_SELLASSIABLE 复核的是 CORE 里的 TARGET（1 号）',
-  );
   assert.equal(fixture.store.get('flag:10005'), 0, '退出时 TARGET 还原为 T');
 });
 
