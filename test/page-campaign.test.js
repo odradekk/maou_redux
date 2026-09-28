@@ -442,11 +442,7 @@ test('招募不动 FLAG:1/FLAG:2（恒空操作，#565 返工第 3 条）', asyn
   })([1, 100, 2]);
   const { campaign_menu } = load(fixture);
   await campaign_menu(() => 0);
-  assert.equal(
-    fixture.store.get('flag:1'),
-    17,
-    'FLAG:1 不被改写（空操作）',
-  );
+  assert.equal(fixture.store.get('flag:1'), 17, 'FLAG:1 不被改写（空操作）');
   assert.equal(fixture.store.get('flag:2'), 17, 'FLAG:2 不被改写');
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, 17, 'TARGET 复位为 FLAG:1');

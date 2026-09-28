@@ -330,10 +330,7 @@ test('INTERCEPT：出击决定写入状态与扣款，并调 gohoubi_request', a
   fixture.store.set('exflag:4444', 100000);
   const { ret, added } = await run_intercept(fixture, [1, 998]);
   assert.equal(ret, 0);
-  assert.ok(
-    texts(added).includes('支付了金钱'),
-    '可被卖状态之外的派遣要付费',
-  );
+  assert.ok(texts(added).includes('支付了金钱'), '可被卖状态之外的派遣要付费');
   assert.ok(texts(added).includes('*玛奥作为你的爪牙外出迎击了*'));
   assert.equal(fixture.store.get('cflag:1:1'), 3, 'CFLAG:1 = 3（迎击中）');
   assert.equal(fixture.store.get('cflag:1:500'), 0, 'CFLAG:500 = WORK');
@@ -483,10 +480,7 @@ test('INTERCEPT：行动设定选扩张设施（3）——无设施 / 已到上�
   none.store.set('cflag:0:9', 30);
   {
     const { added } = await run_intercept(none, [1, 0, 3, 1, 3, 999, 999]);
-    assert.ok(
-      texts(added).includes('3层没有任何设施'),
-      '出发层 3 没有设施',
-    );
+    assert.ok(texts(added).includes('3层没有任何设施'), '出发层 3 没有设施');
     assert.equal(none.store.get('cflag:1:500') ?? 0, 0, 'WORK 没被改动');
   }
   // 已到上限：FLAG:(FLOOR+349+10) == 3

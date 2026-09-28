@@ -268,7 +268,7 @@ async function pick_action(select, floor) {
     } else if (result === 3) {
       // 扩张设施：两道前置检查 + 资金检查
       if (!facility_expandable(floor)) {
-      return 0; // GOTO INPUT_LOOP_MAIN——回迎击设定，WORK 不变
+        return 0; // GOTO INPUT_LOOP_MAIN——回迎击设定，WORK 不变
       }
       await print_wait(
         `${floor}层的${era.get(`itemname:${era.get(`flag:${floor + ROOM_ID_BASE}`) ?? 0}`) ?? ''}扩张需要${EQUIP_COST}资金。`,

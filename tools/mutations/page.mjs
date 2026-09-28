@@ -4188,8 +4188,7 @@ export default [
     desc: 'M12299 征服后菜单的 [999] 退出丢掉「- 」',
     file: 'ere/page/page-invasion.js',
     find: "era.printButton('- 退出', 999);",
-    replace:
-      "era.printButton('退出', 999); // 变异：丢掉「- 」",
+    replace: "era.printButton('退出', 999); // 变异：丢掉「- 」",
     tests: ['page-invasion'],
     must_mention: '七个按钮的正文照写「- 」',
   },
@@ -4197,8 +4196,7 @@ export default [
     desc: 'M12300 征服后菜单 [1] 的未征服分支丢掉「- 」（三元分支只改一支）',
     file: 'ere/page/page-invasion.js',
     find: "? '- 巡视黑暗精灵的领土（已征服）'",
-    replace:
-      "? '巡视黑暗精灵的领土（已征服）' // 变异：丢掉「- 」",
+    replace: "? '巡视黑暗精灵的领土（已征服）' // 变异：丢掉「- 」",
     tests: ['page-invasion'],
     must_mention: '七个按钮的正文照写「- 」',
   },
