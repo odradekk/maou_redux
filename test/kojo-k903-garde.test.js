@@ -648,8 +648,7 @@ test('SELECTCOM 56 淫乱二次档读 TALENT:76（摄影与非摄影两支），
 });
 
 // —— COLOSSEUM_KOJO_903：ITEM:PBAND → item:4（#552） ——
-// PBAND 是内建非角色变量（引擎启动时赋 4；VariableSize.csv:61
-// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
+// PBAND 是旧引擎的内建变量，开局脚本把它赋为 4 且不再改写，4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下面三档必须红。助手用嘉德自己（同本文件
 // 死斗场先例）：TALENT:121/122 均未置位，121/122 门不成立，判定只看假阳具位。

@@ -13600,7 +13600,7 @@ async function dungeon_attack_k7(rand) {
  * colosseum_kojo_7：死斗场专用口上（TEQUIP:55 时由
  * kojo_message_com_7 头部检查岔入）。SELECTCOM 覆盖：55/56/31/5/21/27/51。
  * `ITEM:PBAND` 里的 PBAND 是内建非角色变量
- * （默认 4），旧引擎启动时赋值 4 且未再改写，恒等于 `ITEM:4`（4 号假阳具；同
+ * （默认 4），开局脚本赋值 4 且未再改写，恒等于 `ITEM:4`（4 号假阳具；同
  * system/train/com-hardcore.js 的 `const PBAND = 4` 先例），故按 `item:4`
  * 直译，非字符串具名寻址。
  * @returns {Promise<number>} 0

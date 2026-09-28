@@ -553,8 +553,7 @@ test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
 });
 
 // —— COLOSSEUM_KOJO_10：ITEM:PBAND → item:4（#552） ——
-// PBAND 是内建非角色变量（引擎启动时赋 4；VariableSize.csv:61
-// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
+// PBAND 是旧引擎的内建变量，开局脚本把它赋为 4 且不再改写，4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下列用例必须红。
 // sc21/sc27 两支的拼接词与尾部文案逐字相同，只有开场白能区分——每档断言各自

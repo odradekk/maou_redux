@@ -711,7 +711,7 @@ test('#625 GOHOUBI_REQUEST：兽名与前后文同一行（CFLAG:504 1/2/3，仅
 });
 
 // —— COLOSSEUM_KOJO_4：ITEM:PBAND → item:4（#552） ——
-// PBAND 是内建非角色变量（引擎启动时赋 4，4 号 = 假阳具）；
+// PBAND 是旧引擎的内建变量，开局脚本把它赋为 4（4 号 = 假阳具）；
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 test('#625 COLOSSEUM_KOJO_4：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {

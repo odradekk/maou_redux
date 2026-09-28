@@ -20533,7 +20533,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '调用点与真身的抽取序',
   },
   // #552 起口上按常量 4 读 item:4（ITEM:PBAND = 4 号假阳具，
-  // 引擎启动时赋 4）。下列条目把某处回退成字符串具名寻址
+  // 开局脚本赋 4）。下列条目把某处回退成字符串具名寻址
   // era.get('item:PBAND')——Item.yml 名字表没有 PBAND 条目，该判定从此恒
   // undefined，对应分支必须不再出词，测试必须红。
   {

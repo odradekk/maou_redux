@@ -3834,8 +3834,8 @@ test('COLOSSEUM_KOJO_8 SC51 媚药史莱姆：单行台词', async () => {
 });
 
 // —— COLOSSEUM_KOJO_8：ITEM:PBAND → item:4（#552） ——
-// PBAND 是内建非角色变量（4 号 = 假阳具，赋 4；VariableSize.csv 的
-// `PBAND,1000` 只是给它扩容），不再改写（#552）；yml/Item.yml 名字表无 PBAND
+// PBAND 是旧引擎的内建变量，开局脚本把它赋为 4（4 号 = 假阳具）且不再
+// 改写（#552）；yml/Item.yml 名字表无 PBAND
 // 条目，era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js
 // 的引擎用例），地址写回 item:PBAND 时下面三档必须红。
 test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 同一行里拼「假阴茎」（#622）', async () => {
