@@ -1,13 +1,13 @@
 /**
- * 陷阱商店测试（issue #396 / N12 段 3）：@ITEM_SHOP_TRAP 与
- * @SALEITEM_CHECK_TRAP（target/ERB/SHOP/SHOP_TRAP.ERB）。
+ * 陷阱商店测试（issue #396 / N12 段 3）：item_shop_trap 与
+ * saleitem_check_trap。
  *
  * 接缝 = ere/page/page-shop-trap.js 导出的两个函数；经唯一夹具观察玩家
  * 输出行、在售标志与变量读写，不断言模块内部辅助函数。
  *
- * 维度型判据一律表驱动走完整维度：在售标志的三个判据（淫魔知识 ×
+ * 维度型判断条件一律表驱动走完整维度：在售标志的三个条件（淫魔知识 ×
  * 魔虫知识 × 陷阱等级）八种组合整表走完，网格排版按「满行 / 不满行 /
- * 空段」三种形态走完。
+ * 空段」三种情况走完。
  */
 
 const assert = require('node:assert/strict');
@@ -16,8 +16,8 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 /**
- * SALEITEM_CHECK_TRAP 的六组在售 id 段（原作 :77-126 逐行 1:1）：
- * 基础段无守卫；淫魔知识（TALENT:0:327）二选一；魔虫知识（TALENT:MASTER:328）
+ * saleitem_check_trap 的六组在售 id 段（逐行移植）：
+ * 基础段无检查；淫魔知识（TALENT:0:327）二选一；魔虫知识（TALENT:MASTER:328）
  * 先按 `== 0` 单独点亮 56，再按 `== 1` 追加 65/79/80；戒指恒亮；
  * 陷阱等级（FLAG:85 < CFLAG:0:9）追加 55。
  */
@@ -28,10 +28,10 @@ const EROTIC = [64, 65, 66, 67, 68, 70, 71, 79]; // TALENT:0:327 == 1
 const SUCCUBUS_KNOWLEDGE = [54]; // TALENT:0:327 != 1（淫魔知识）
 const WORM_BASE = [56]; // TALENT:MASTER:328 == 0
 const WORM_EXTRA = [65, 79, 80]; // TALENT:MASTER:328 == 1
-const RING = [91]; // 无守卫
+const RING = [91]; // 无检查
 const LEVEL_TRAP = [55]; // FLAG:85 < CFLAG:0:9
 
-/** 跑一遍 @SALEITEM_CHECK_TRAP，返回被点亮的 itemsales 下标（升序、保留重复） */
+/** 跑一遍 saleitem_check_trap，返回被点亮的 itemsales 下标（升序、保留重复） */
 function run_saleitem_check(seed = {}) {
   const fixture = create_era_fixture();
   for (const [name, value] of Object.entries(seed)) {
@@ -63,7 +63,7 @@ function expected_set({ witch, worm, level }) {
   return [...new Set(ids)].sort((a, b) => a - b);
 }
 
-test('SALEITEM_CHECK_TRAP：三个判据的八种组合整表驱动', () => {
+test('saleitem_check_trap：三个条件的八种组合整表驱动', () => {
   // 淫魔知识（TALENT:0:327）× 魔虫知识（TALENT:MASTER:328）× 陷阱等级
   // （FLAG:85 < CFLAG:0:9）——2×2×2 全覆盖
   for (const witch of [0, 1]) {
@@ -86,19 +86,19 @@ test('SALEITEM_CHECK_TRAP：三个判据的八种组合整表驱动', () => {
   }
 });
 
-test('SALEITEM_CHECK_TRAP：只写 1，不写 0（清空是商店轮 @EVENTSHOP 的职责）', () => {
+test('saleitem_check_trap：只写 1，不写 0（清空是商店轮 EVENTSHOP 事件的职责）', () => {
   const { written } = run_saleitem_check({ 'talent:0:327': 1 });
   assert(written.length > 0);
   assert(
     written.every((w) => w.value === 1),
-    '本函数一律写 1——清零在 @EVENTSHOP 的 REPEAT 100（page-shop.js:95-97）',
+    '本函数一律写 1——清零在 EVENTSHOP 事件的 REPEAT 100（page-shop.js:95-97）',
   );
 });
 
-test('SALEITEM_CHECK_TRAP：两个分支共有的 65/79 各写两次（1:1 照搬，不合并）', () => {
-  // 的えっちな陷阱与 :116-120 的魔蟲知識陷阱都含 65/79——两个
-  // 守卫同时成立时原作写两次 1。写值幂等，但「两个分支都跑过」只有写序
-  // 看得见，故照搬不合并。
+test('saleitem_check_trap：两个分支共有的 65/79 各写两次（两支都保留，不合并）', () => {
+  // 的えっちな陷阱与魔蟲知識陷阱都含 65/79——两条
+  // 检查同时成立时写两次 1。写值幂等，但「两个分支都跑过」只有写序
+  // 看得见，故各写一遍不合并。
   const both = run_saleitem_check({
     'talent:0:327': 1,
     'talent:0:328': 1,
@@ -113,7 +113,7 @@ test('SALEITEM_CHECK_TRAP：两个分支共有的 65/79 各写两次（1:1 照�
   assert.deepEqual(one.lit, [...new Set(one.lit)]);
 });
 
-test('SALEITEM_CHECK_TRAP：陷阱等级判据是严格小于（相等不点亮 55）', () => {
+test('saleitem_check_trap：陷阱等级条件是严格小于（相等不点亮 55）', () => {
   for (const [flag85, maze_level, expected] of [
     [0, 0, false],
     [0, 1, true],
@@ -134,7 +134,7 @@ test('SALEITEM_CHECK_TRAP：陷阱等级判据是严格小于（相等不点亮 
   }
 });
 
-/** 画一遍 @ITEM_SHOP_TRAP。seed 落夹具变量存储（item/itemname 等） */
+/** 画一遍 item_shop_trap。seed 落夹具变量存储（item/itemname 等） */
 async function run_item_shop_trap(seed = {}) {
   const fixture = create_era_fixture();
   for (const [name, value] of Object.entries(seed)) {
@@ -148,8 +148,8 @@ async function run_item_shop_trap(seed = {}) {
 /**
  * 页脚 [999] 返回键所在的行号（页脚空行断言的取证面）。
  *
- * 原作 :68-70 是两个 `PRINTLC` 跟一个 `PRINTL`：`PRINTLC` 不换行（按
- * CONTEXT.md「输出 API 与原作的对应」），那个 `PRINTL` 只结束它所在的那一行。
+ * 两个 `PRINTLC` 跟一个 `PRINTL`：`PRINTLC` 不换行（按
+ * CONTEXT.md「输出 API 的排版与对齐」），那个 `PRINTL` 只结束它所在的那一行。
  * ere 的 `printButton` 自成一行（＝ `PRINTLC` + 收尾的 `PRINTL`），故页脚
  * 按钮之后不应再出现空行。
  * @param {object} fixture 夹具
@@ -173,7 +173,7 @@ function rows_between(fixture, start_label, end_label) {
   return lines.slice(start + 1, end);
 }
 
-/** 「名字(xN)」补到 16 显示宽度、外面套方括号的一格（原作 %…,16,LEFT%） */
+/** 「名字(xN)」补到 16 显示宽度、外面套方括号的一格（%…,16,LEFT%） */
 function cell(name, count) {
   const text = `${name}(x${count})`;
   const width = [...text].reduce(
@@ -183,7 +183,7 @@ function cell(name, count) {
   return `[${text}${'\u00A0'.repeat(Math.max(0, 16 - width))}]`; // #577：补位 NBSP
 }
 
-test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
+test('item_shop_trap：头行与提示行逐字一致，分隔线三处', async () => {
   const fixture = await run_item_shop_trap({
     'flag:10000': 6, // DAY:0
     'flag:10002': 7, // DAY:2
@@ -213,13 +213,13 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
     ],
   );
 
-  // CUSTOMDRAWLINE = → isSolid 近似；:12/:55/:67 三处
+  // CUSTOMDRAWLINE = → isSolid 近似；三处
   const dividers = fixture.lines.filter((line) => line.type === 'divider');
   assert.equal(dividers.length, 3);
   assert(dividers.every((line) => line.border === 'solid'));
 
-  // 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 与原作
-  // 的对应」）以 setAlign 包一次近似排版、随后还原 'left'
+  // 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 的排版
+  // 与对齐」）以 setAlign 包一次近似排版、随后还原 'left'
   assert.deepEqual(
     fixture.calls
       .filter((call) => call.api === 'setAlign')
@@ -241,7 +241,7 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
   }
 });
 
-test('ITEM_SHOP_TRAP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换行，:70 的 PRINTL 只收那一行）', async () => {
+test('item_shop_trap：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换行，收尾的 PRINTL 只收那一行）', async () => {
   const fixture = await run_item_shop_trap({
     'flag:10000': 6, // DAY:0
     'flag:10002': 7, // DAY:2
@@ -249,9 +249,9 @@ test('ITEM_SHOP_TRAP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换�
     'flag:10004': 1234, // MONEY
     'flag:85': 3, // FLAG:85
   });
-  // 原作 :68-70 是两个 PRINTLC 加一个 PRINTL。PRINTLC 按「PRINTCの文字数」
-  // 补空格后打在同一行、**不换行**（语义与勘误见 CONTEXT.md「输出 API 与
-  // 原作的对应」），那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的
+  // 两个 PRINTLC 加一个 PRINTL。PRINTLC 按「PRINTCの文字数」
+  // 补空格后打在同一行、**不换行**（语义与勘误见 CONTEXT.md「输出 API 的
+  // 排版与对齐」），那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的
   // printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条
   // 就是多出来的空行。
   assert.deepEqual(
@@ -261,7 +261,7 @@ test('ITEM_SHOP_TRAP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换�
   );
 });
 
-test('ITEM_SHOP_TRAP：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0 + 1', async () => {
+test('item_shop_trap：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0 + 1', async () => {
   for (const [time, half] of [
     [0, '午前'],
     [1, '午后'],
@@ -283,7 +283,7 @@ test('ITEM_SHOP_TRAP：日期行两态（TIME 0 午前 / 1 午后）与日号 = 
   }
 });
 
-test('ITEM_SHOP_TRAP：陷阱网格 60-91、戒指网格 300-320，5 格一行', async () => {
+test('item_shop_trap：陷阱网格 60-91、戒指网格 300-320，5 格一行', async () => {
   const fixture = await run_item_shop_trap({
     'item:59': 1, // 段外（陷阱段从 60 起）
     'item:60': 3,
@@ -330,7 +330,7 @@ test('ITEM_SHOP_TRAP：陷阱网格 60-91、戒指网格 300-320，5 格一行',
   );
 });
 
-test('ITEM_SHOP_TRAP：网格段两端都算数（陷阱 60/91、戒指 300/320 在内，59/92/299/321 在外）', async () => {
+test('item_shop_trap：网格段两端都算数（陷阱 60/91、戒指 300/320 在内，59/92/299/321 在外）', async () => {
   // 段界只在两端可见：#396 自钉变异实测「上界 92 → 91」在旧用例里零反应
   // （那时只造了 60-72 的持有）——两端各钉一枚。
   const fixture = await run_item_shop_trap({
@@ -360,7 +360,7 @@ test('ITEM_SHOP_TRAP：网格段两端都算数（陷阱 60/91、戒指 300/320 
   );
 });
 
-test('ITEM_SHOP_TRAP：网格三种形态——空段不打行、恰好满行、余数收尾', async () => {
+test('item_shop_trap：网格三种情况——空段不打行、恰好满行、余数收尾', async () => {
   // 空段：一个持有都没有 → 两段都不出格行（0 格不补换行）
   const empty = await run_item_shop_trap();
   assert.deepEqual(rows_between(empty, '[陷阱]', '[戒指]'), []);
@@ -392,8 +392,7 @@ test('ITEM_SHOP_TRAP：网格三种形态——空段不打行、恰好满行、
   const over_rows = rows_between(over, '[陷阱]', '[戒指]');
   assert.equal(over_rows.length, 2);
 
-  // 持有数 0 或负都不占格（判据是 `== 0` 的 CONTINUE + 负值同样非零？
-  // 原作只在 `== 0` 时跳过，负值照打——1:1）
+  // 持有数 0 或负都不占格（只在 `== 0` 时跳过，负值照打——既有行为照旧）
   const negative = await run_item_shop_trap({
     'item:60': -2,
     'itemname:60': '落穴',
@@ -403,25 +402,25 @@ test('ITEM_SHOP_TRAP：网格三种形态——空段不打行、恰好满行、
   ]);
 });
 
-test('ITEM_SHOP_TRAP：绘制顺带点亮在售位，且据点期不写 tflag（#399 起暂存落模块内）', async () => {
+test('item_shop_trap：绘制顺带点亮在售位，且据点期不写 tflag（#399 起暂存落模块内）', async () => {
   const fixture = create_era_fixture();
   const { item_shop_trap } = fixture.load_module('page/page-shop-trap');
   const { get_temp_money, snapshot_money } = fixture.load_module(
     'page/page-item-shop',
   );
   fixture.store.set('flag:10004', 4321);
-  // 非调教期：tflag 表不存在，写二段会抛 key error（夹具镜像引擎守卫）
+  // 非调教期：tflag 表不存在，写二段会抛 key error（夹具镜像引擎检查）
   await assert.doesNotReject(() => item_shop_trap());
   assert(
     fixture.var_writes.some((w) => w.name === 'itemsales:60'),
-    ':57 CALL SALEITEM_CHECK_TRAP 应点亮在售位',
+    'CALL SALEITEM_CHECK_TRAP 应点亮在售位',
   );
   assert(
     !fixture.var_writes.some((w) => w.name.startsWith('tflag:')),
     '据点期不写 tflag（TFLAG:15 改落模块内暂存，见 page-item-shop.js 文件头）',
   );
-  assert.equal(get_temp_money(), 4321, ':59 的暂存值 = 绘制时的 MONEY');
-  // 暂存值的消费者是取消购买时的退钱（page-item-shop 的 @EVENTBUY）
+  assert.equal(get_temp_money(), 4321, '暂存值 = 绘制时的 MONEY');
+  // 暂存值的消费者是取消购买时的退钱（page-item-shop 的 event_buy）
   snapshot_money();
   assert.equal(get_temp_money(), 4321);
 });
@@ -447,26 +446,26 @@ async function run_shop_with_bought(bought, ...inputs) {
   return fixture;
 }
 
-// show_shop 的 BOUGHT 跳转（原作 :27/:29，本票的 SHOW_SHOP:29 调用点）由
-// test/page-shop.test.js 的 show_shop 用例覆盖（那里是商店轮自身的行为靶）；
-// 本文件覆盖陷阱商店本体与 usershop 侧的 USERSHOP:50 调用点。
+// show_shop 的 BOUGHT 跳转由 test/page-shop.test.js 的 show_shop 用例覆盖
+// （那里是商店轮自身的行为目标）；
+// 本文件覆盖陷阱商店本体与 usershop 侧的调用点。
 
-test('USERSHOP 999：购物态下清购物标志与在售位后直接结束（#592：CLEAR_SHOP 把 RESULT 清 0）', async () => {
+test('usershop 999：购物态下清购物标志与在售位后直接结束（#592：CLEAR_SHOP 把 RESULT 清 0）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { usershop } = fixture.load_module('page/page-shop');
   era_flag.bought = 54;
-  fixture.store.set('itemsales:60', 1); // 陷阱商店点亮的在售位（:45 CALL CLEAR_SHOP 的对象）
+  fixture.store.set('itemsales:60', 1); // 陷阱商店点亮的在售位（CALL CLEAR_SHOP 的对象）
   await usershop(999);
   assert.equal(era_flag.bought, -1, '999 退出商店');
   assert.equal(
     fixture.store.get('itemsales:60'),
     0,
-    ':45 CALL CLEAR_SHOP 必须清在售位（0-299 全段）',
+    'CALL CLEAR_SHOP 必须清在售位（0-299 全段）',
   );
   assert(
     !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
-    '店内 999 不得落到 :222 的 DEBUG_MENU_U（:45 的 CLEAR_SHOP 无 RETURN，RESULT 被清 0）',
+    '店内 999 不得落到 DEBUG_MENU_U（CLEAR_SHOP 无 RETURN，RESULT 被清 0）',
   );
   assert.equal(
     fixture.waits.filter((w) => w.waited).length,
@@ -474,7 +473,7 @@ test('USERSHOP 999：购物态下清购物标志与在售位后直接结束（#5
     '退出商店不等键',
   );
 
-  // 边界：BOUGHT == 0（刚买 0 号商品）也在购物态内（:44 判据是 >= 0），同样退出
+  // 边界：BOUGHT == 0（刚买 0 号商品）也在购物态内（条件是 >= 0），同样退出
   const zero = create_era_fixture();
   zero.load_module('era-utils/era-flag').bought = 0;
   await zero.load_module('page/page-shop').usershop(999);
@@ -499,7 +498,7 @@ test('USERSHOP 999：购物态下清购物标志与在售位后直接结束（#5
   assert.equal(outside.waits.filter((w) => w.waited).length, 0, '不得等待读键');
 });
 
-test('USERSHOP 999 后回主菜单：下一轮 @SHOW_SHOP 重画主菜单（回合能继续）', async () => {
+test('usershop 999 后回主菜单：下一轮 show_shop 重画主菜单（回合能继续）', async () => {
   const fixture = await run_shop_with_bought(54, 999, 500);
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.bought, -1);
@@ -515,34 +514,34 @@ test('USERSHOP 999 后回主菜单：下一轮 @SHOW_SHOP 重画主菜单（回�
   );
 });
 
-test('USERSHOP 998：切陷阱商店并立即重画（原作 :47-50 的 JUMP）', async () => {
+test('usershop 998：切陷阱商店并立即重画（JUMP 分支）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { usershop } = fixture.load_module('page/page-shop');
   era_flag.bought = 1; // 道具商店态（BOUGHT < 54）
   await usershop(998);
-  assert.equal(era_flag.bought, 200, ':48 BOUGHT = 200');
+  assert.equal(era_flag.bought, 200, 'BOUGHT = 200');
   assert(
     history_texts(fixture).includes('《可以购买在地下城里布置的陷阱》'),
-    ':50 JUMP ITEM_SHOP_TRAP 立即重画陷阱商店',
+    'JUMP ITEM_SHOP_TRAP 立即重画陷阱商店',
   );
 });
 
-test('USERSHOP 997：切回道具商店并立即重画（原作 :51-54 的 JUMP）', async () => {
+test('usershop 997：切回道具商店并立即重画（JUMP 分支）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { usershop } = fixture.load_module('page/page-shop');
   era_flag.bought = 200; // 陷阱商店态
   await usershop(997);
-  assert.equal(era_flag.bought, 1, ':52 BOUGHT = 1');
+  assert.equal(era_flag.bought, 1, 'BOUGHT = 1');
   assert(
     history_texts(fixture).includes('黑市商人'),
-    ':54 JUMP ITEM_SHOP 立即重画道具商店（#399 起真身）',
+    'JUMP ITEM_SHOP 立即重画道具商店（#399 起真身）',
   );
 });
 
-test('USERSHOP：购物态下的其它输入一律 RETURN 0，不落到主菜单分发', async () => {
-  // 原作 :55-57 `ELSEIF BOUGHT >= 0 → RETURN 0`：101（能力显示）在购物态
+test('usershop：购物态下的其它输入一律 RETURN 0，不落到主菜单分发', async () => {
+  // `ELSEIF BOUGHT >= 0 → RETURN 0`：101（能力显示）在购物态
   // 不生效——若漏掉这一支，101 会画角色信息并 BEGIN TURNEND
   for (const result of [100, 101, 106, 109, 199, 200, 300, 500]) {
     const fixture = create_era_fixture();
@@ -553,7 +552,7 @@ test('USERSHOP：购物态下的其它输入一律 RETURN 0，不落到主菜单
     assert.deepEqual(
       history_texts(fixture),
       [],
-      `购物态下 ${result} 不应有输出（原作 :56 RETURN 0）`,
+      `购物态下 ${result} 不应有输出（该分支一律 RETURN 0）`,
     );
     assert.equal(era_flag.bought, 54, `购物态下 ${result} 不改 BOUGHT`);
   }
@@ -582,7 +581,7 @@ test('陷阱商店里的购买：点中陷阱走同一套 purchase（#399 起两
     990,
     '引擎侧先扣钱（TRAP_PRICE 与 ITEMPRICE 同值）',
   );
-  assert.equal(era_exflag.legit_money, -10, '@EVENTBUY → BUY_PLURAL 的记账');
+  assert.equal(era_exflag.legit_money, -10, 'event_buy → buy_plural 的记账');
   assert.equal(era_flag.bought, 60, '买完仍在陷阱商店（BOUGHT 停在商品号）');
   assert(
     history_texts(fixture).includes('《购买了落穴》'),

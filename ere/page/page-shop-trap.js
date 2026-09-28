@@ -1,34 +1,34 @@
 /**
- * @file 陷阱商店：@ITEM_SHOP_TRAP 与 @SALEITEM_CHECK_TRAP。
+ * @file 陷阱商店：item_shop_trap 与 saleitem_check_trap。
  *
- * **#399 补齐的两笔**：原作 :63 的引擎命令 `PRINT_SHOPITEM`（把 ITEMSALES
- * 不为 0 的商品连同价格列出来、点击即买）与 :59 的 `TFLAG:15 = MONEY`
- * 都已落地——列货与购买流程是**两个商店共用的一套**，真身在
+ * **#399 补齐的两笔**：`PRINT_SHOPITEM`（把 ITEMSALES 不为 0 的商品连同
+ * 价格列出来、点击即买）与 `TFLAG:15 = MONEY` 都已实现——列货与购买流程
+ * 是**两个商店共用的一套**，真身在
  * page/page-item-shop.js（`print_shopitem` / `purchase` / `snapshot_money`）；
- * 玩家点中的编号由 page-shop.js 的输入分发（販売アイテム数 = 100 的判据）
- * 交给 purchase，@EVENTBUY 的三支分派与账目也都在那边。
+ * 玩家点中的编号由 page-shop.js 的输入分发（販売アイテム数 = 100 的判断条件）
+ * 交给 purchase，event_buy 的三支分派与账目也都在那边。
  *
- * **进店路径**（原作两条，两条都通了）：@SHOW_SHOP :25-30 的 BOUGHT ≥ 54
- * 跳转（买下 54 号【淫魔知识】后 BOUGHT 停在 54，见 page-item-shop.js 的
- * @EVENTBUY），与道具商店里的 [998] 键（@USERSHOP :47-50）。
+ * **进店路径**（两条，两条都通了）：show_shop 的 BOUGHT ≥ 54 跳转（买下
+ * 54 号【淫魔知识】后 BOUGHT 停在 54，见 page-item-shop.js 的 event_buy），
+ * 与道具商店里的 [998] 键（usershop 的 JUMP 分支）。
  *
- * 布局映射（原作 → ere）：
- *   - :10 `CUSTOMDRAWLINE =` 的 `=` 线以 era.drawLine({isSolid: true})
+ * 布局映射：
+ *   - `CUSTOMDRAWLINE =` 的 `=` 线以 era.drawLine({isSolid: true})
  *     近似（page-select-target.js:271 / page-save-load.js:345 先例）；
- *   - :68-69 两个 `PRINTLC`（左对齐补位、**不换行**——正确语义与技能指南的
- *     勘误见 CONTEXT.md「输出 API 与原作的对应」）以 setAlign('center') 包
+ *   - 两个 `PRINTLC`（左对齐补位、**不换行**——正确语义与勘误见
+ *     CONTEXT.md「输出 API 的排版与对齐」）以 setAlign('center') 包
  *     一次 era.print 近似排版，随后还原 'left'（page-main-menu.js:149-174
  *     的 ALIGNMENT 先例）；
- *   - :23-26/:39-41 的 SETCOLORBYNAME LightSalmon … RESETCOLOR 以片段自带
+ *   - SETCOLORBYNAME LightSalmon … RESETCOLOR 以片段自带
  *     color 承载（equip-print.js:32 先例，CSS 色名直通渲染层）；
- *   - 引擎每次 print 调用即一行：原作不换行的 PRINT/PRINTV/PRINTFORM 串
- *     一律合成一次 era.print（:13-19 的日期行、:31/:46 的网格格子）。
+ *   - 引擎每次 print 调用即一行：不换行的 PRINT/PRINTV/PRINTFORM 串
+ *     一律合成一次 era.print（日期行、网格格子）。
  *
- * 出口（$INPUT_LOOP / :63 之后的提示行）分属两处：本函数是「绘制半」，
+ * 出口（$INPUT_LOOP 之后的提示行）分属两处：本函数是「绘制半」，
  * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 的跳转）与 usershop（998 分支的
- * JUMP）经 era 的商店轮循环驱动；购买本身的循环（原作 :61 的 $INPUT_LOOP
- * 标签、:63 的 PRINT_SHOPITEM 之后接 @EVENTBUY）落在 page/page-item-shop.js
- * 的 purchase 与 @EVENTBUY 族——#399 起两个商店共用一套。
+ * JUMP）经 era 的商店轮循环驱动；购买本身的循环（$INPUT_LOOP 标签、
+ * PRINT_SHOPITEM 之后接 event_buy）在 page/page-item-shop.js 的 purchase
+ * 与 event_buy 族——#399 起两个商店共用一套。
  */
 
 'use strict';
@@ -39,27 +39,27 @@ const era_flag = require('#/era-utils/era-flag');
 const { print_shopitem, snapshot_money } = require('#/page/page-item-shop');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/** SETCOLORBYNAME LightSalmon 的 ere 等价物（:23/:39） */
+/** SETCOLORBYNAME LightSalmon 的 ere 等价物 */
 const LIGHT_SALMON = 'LightSalmon';
 
-/** 陷阱商品段（:28 `FOR ICOUNT_A,60,92`——上界开区间，即 60..91） */
+/** 陷阱商品段（`FOR ICOUNT_A,60,92`——上界开区间，即 60..91） */
 const TRAP_IDS = { start: 60, end: 92 };
 
-/** 戒指商品段（:43 `FOR ICOUNT_A,300,321`——即 300..320） */
+/** 戒指商品段（`FOR ICOUNT_A,300,321`——即 300..320） */
 const RING_IDS = { start: 300, end: 321 };
 
-/** 每行几格（:33/:48 `IF ICOUNT_B % 5 == 0`） */
+/** 每行几格（`IF ICOUNT_B % 5 == 0`） */
 const COLUMNS = 5;
 
-/** 每格的显示宽度（:31/:46 `%…,16,LEFT%`） */
+/** 每格的显示宽度（`%…,16,LEFT%`） */
 const CELL_WIDTH = 16;
 
 /**
- * 基础在售段（:77-94）：无守卫，逐行照搬。
- * :96-109 淫魔知识（TALENT:0:327 == 1）二选一，
- * :112-113 魔虫知识（TALENT:MASTER:328 == 0）单独点亮 56，
- * :116-120 `== 1` 时追加 65/79/80，:123 戒指恒亮，
- * :125-126 陷阱等级（FLAG:85 < CFLAG:0:9）追加 55。
+ * 基础在售段：无检查，逐行移植。
+ * 淫魔知识（TALENT:0:327 == 1）二选一，
+ * 魔虫知识（TALENT:MASTER:328 == 0）单独点亮 56，
+ * `== 1` 时追加 65/79/80，戒指恒亮，
+ * 陷阱等级（FLAG:85 < CFLAG:0:9）追加 55。
  */
 const SALES_ALWAYS = [
   60, 61, 62, 63, 69, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85, 87,
@@ -77,11 +77,11 @@ function item_name(id) {
 }
 
 /**
- * @SALEITEM_CHECK_TRAP（:75-128）：点亮本商店的在售位。只写 1——清零是
- * 商店轮 @EVENTSHOP 的 REPEAT 100（page-shop.js:95-97）与 CLEAR_SHOP 的
+ * saleitem_check_trap：点亮本商店的在售位。只写 1——清零是商店轮
+ * EVENTSHOP 事件的 REPEAT 100（page-shop.js:95-97）与 CLEAR_SHOP 的
  * 职责（后者 #399 起在 page/page-item-shop.js）。
  *
- * @returns {number} 原作 RETURN 0
+ * @returns {number} 恒 return 0
  */
 function saleitem_check_trap() {
   for (const id of SALES_ALWAYS) {
@@ -126,13 +126,13 @@ function saleitem_check_trap() {
     }
   }
 
-  return 0; // 原作尾的 RETURN 0（:75-128 的收尾）
+  return 0; // 函数尾的 RETURN 0
 }
 
 /**
- * 一段持有商品网格（:27-38 陷阱 / :42-53 戒指，两段同构）。
+ * 一段持有商品网格（陷阱 / 戒指，两段同构）。
  *
- * 原作排布：`SIF ITEM:ICOUNT_A == 0 → CONTINUE`（持有 0 个不占格），
+ * 排布：`SIF ITEM:ICOUNT_A == 0 → CONTINUE`（持有 0 个不占格），
  * 否则打 `[%ITEMNAME:ICOUNT_A + @"(x{ITEM:ICOUNT_A})",16,LEFT%]`——每格
  * 由字面方括号包住一个补到 16 显示宽度的「名字(xN)」，每满 5 格换一行；
  * 段尾若未满整行再补一次换行（`SIF ICOUNT_B % 5 > 0 → PRINTL`），
@@ -164,13 +164,12 @@ function item_grid_rows({ start, end }) {
 }
 
 /**
- * @ITEM_SHOP_TRAP（:7-70）：陷阱商店的绘制半。
+ * item_shop_trap：陷阱商店的绘制半。
  *
- * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 → 原作 :29 的 JUMP）与 usershop
- * （998 分支 → 原作里的 JUMP ITEM_SHOP_TRAP）调用，等价于原作把商店界面
- * 整个接管本轮。
+ * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 → JUMP）与 usershop
+ * （998 分支 → JUMP ITEM_SHOP_TRAP）调用，等价于把商店界面整个接管本轮。
  *
- * @returns {Promise<number>} 原作落进 @SALEITEM_CHECK_TRAP 之后无 RETURN，
+ * @returns {Promise<number>} 落进 saleitem_check_trap 之后无 RETURN，
  *   隐式返回 0（函数体在末尾的 PRINTL 之后结束）
  */
 async function item_shop_trap() {
@@ -203,8 +202,8 @@ async function item_shop_trap() {
   saleitem_check_trap(); // CALL SALEITEM_CHECK_TRAP
   snapshot_money(); // TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）
 
-  // $INPUT_LOOP：购买循环的重新进入点，原作的循环本体是 :63 的
-  // PRINT_SHOPITEM + 引擎侧购买。era 侧的重绘由 page-shop.js 的商店轮
+  // $INPUT_LOOP：购买循环的重新进入点，循环本体是 PRINT_SHOPITEM +
+  // 引擎侧购买。ere 侧的重绘由 page-shop.js 的商店轮
   // 循环承担（998 分支再调一次本函数），购买本身由该轮的分发交给
   // page-item-shop.js 的 purchase，故此处不设标签。
 
@@ -218,7 +217,7 @@ async function item_shop_trap() {
   // 两个 PRINTLC 打在同一行，紧随的 PRINTL 只结束那一行——PRINTLC
   // 左对齐补位、**不换行**，故不产生空行。ere 的 printButton 自成一行
   // （＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md
-  // 「输出 API 与原作的对应」）。
+  // 「输出 API 的排版与对齐」）。
   era.setAlign('center'); // PRINTLC（排版近似：见 CONTEXT.md）
   era.printButton('- 普通物品', 997);
   era.printButton('- 返回', 999);

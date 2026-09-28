@@ -9,25 +9,25 @@
  * 领域/龙之山/天界/天神宫各一段）。
  *
  * 整份模块是**无状态纯叙事**：只有 PRINTFORMW/PRINTW/PRINTFORML 输出，没有
- * 任何 CFLAG/BASE/FLAG 写入。唯一的对外依赖是 MONSTER_DATA（写 E: 三列的
- * 怪物数据，:15）与 %ITEMNAME%（:24 读 Item.yml 的登记名）。
+ * 任何 CFLAG/BASE/FLAG 写入。唯一的对外依赖是 monster_data（写 E: 三列的
+ * 怪物数据）与 %ITEMNAME%（读 Item.yml 的登记名）。
  *
- * 移植说明（有意保留的形态差异）：
- *   - :10 `ARG:1 /= 5000` 是侵攻点的整数除算（0..10 档）；分发函数只在入口
+ * 移植说明（有意保留的写法差异）：
+ *   - 侵攻点 /= 5000 的整数除算（0..10 档）；分发函数只在入口
  *     归一一次，12 个旁白函数收到的已是归一后的档位。
- *   - :14 `X = (RAND:9 + 1) * 10 + 100 + RAND:5` 抽 110-194 的怪物号
- *     （`(RAND:9 + 1)` 上界 9 → 190，再 + RAND:5 的上界 4），:15
- *     `CALL MONSTER_DATA, X, COUNT, 0, -1` 把数据写进第 COUNT 列
+ *   - `X = (RAND:9 + 1) * 10 + 100 + RAND:5` 抽 110-194 的怪物号
+ *     （`(RAND:9 + 1)` 上界 9 → 190，再 + RAND:5 的上界 4），
+ *     `monster_data(X, COUNT, 0, -1)` 把数据写进第 COUNT 列
  *     （COUNT = 0/1/2 三列），rand 一路透传。
- *   - :19-21 `IF E:NUM <= 0 THEN E:RYOUZYOKU = 0` 是原作的就地清零：
+ *   - `IF E:NUM <= 0 THEN E:RYOUZYOKU = 0` 的就地清零：
  *     该列无怪（数量 0）时把凌辱类型抹掉，后续 `E:RYOUZYOKU > 0` 与分发
- *     都走不到。**该守卫在 ere 侧不可达**：`monster_data` 给 0–2 列写的
+ *     都走不到。**该检查在 ere 侧不可达**：`monster_data` 给 0–2 列写的
  *     数量（`E:列头+99`）恒 ≥ 1——它算这个数的「数量第二骰」段
- *     （ere/dungeon/monster-data.js:437-464）每条分支的取值都 ≥ 1，三处
- *     提前返回只发生在 `line` 为 3/4/5，而本模块只传 0/1/2。该守卫保留
+ *     （ere/dungeon/monster-data.js）每条分支的取值都 ≥ 1，三处
+ *     提前返回只发生在 `line` 为 3/4/5，而本模块只传 0/1/2。该检查保留
  *     不删不改行为（issue #486；不可达分支无法用变异守住，故不设变异条目）。
- *   - :63 `PRINTL` 的空行分隔每列一段，照排。
- *   - @IVY_INV 的战场表带天神宫（5）档，称呼取十字军系的两个名字。
+ *   - PRINTL 的空行分隔每列一段，照排。
+ *   - ivy_inv 的战场表带天神宫（5）档，称呼取十字军系的两个名字。
  *
  * 跨域：本文件属 invasion 域；E: 数组与 ITEMNAME 都在 dungeon 域，
  * 经 ere/dungeon/monster-data.js 的具名导出读取，不是裸寻址。
@@ -43,17 +43,17 @@ const {
   monster_data,
 } = require('#/dungeon/monster-data');
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
- * @INVASION_RYOUZYOKU（:1-66）：侵略时的凌辱旁白分发。抽三列怪物的数据，
- * 按各列的凌辱类型（E:(列头+7)，由 MONSTER_DATA 写入）调对应的旁白。
- * @param {number} area 战场（原作 ARG:0：1 人间界 / 2 精灵领域 / 3 龙之山 /
- *   4 天界 / 5 天神宫；其余落旁白函数内的 ELSE 臂）
- * @param {number} sinkou 侵攻点（原作 ARG:1，本函数内 ÷5000 归一到 0..10）
+ * invasion_ryouzyoku：侵略时的凌辱旁白分发。抽三列怪物的数据，
+ * 按各列的凌辱类型（E:(列头+7)，由 monster_data 写入）调对应的旁白。
+ * @param {number} area 战场（1 人间界 / 2 精灵领域 / 3 龙之山 /
+ *   4 天界 / 5 天神宫；其余落旁白函数内的 ELSE 分支）
+ * @param {number} sinkou 侵攻点（本函数内 ÷5000 归一到 0..10）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function invasion_ryouzyoku(area, sinkou, rand = default_rand) {
   // 侵攻ポイントを調整（整数除算で 0..10 档）
@@ -108,14 +108,14 @@ async function invasion_ryouzyoku(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @ORC_INV（:71-162）：兽人（凌辱类型 1）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * orc_inv：兽人（凌辱类型 1）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function orc_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['看板娘', '女骑士', '少女'],
     2: ['精灵少女', '精灵猎手', '精灵少女'],
@@ -214,14 +214,14 @@ async function orc_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @SLIME_INV（:165-237）：史莱姆（凌辱类型 2）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * slime_inv：史莱姆（凌辱类型 2）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function slime_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女人', '女孩', '年轻修女'],
     2: ['精灵女性', '精灵女孩', '精灵巫女'],
@@ -286,14 +286,14 @@ async function slime_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @INSECT_INV（:240-291）：昆虫（凌辱类型 3）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * insect_inv：昆虫（凌辱类型 3）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function insect_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '女学生'],
     2: ['女精灵', '精灵学生'],
@@ -344,15 +344,15 @@ async function insect_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @IVY_INV（:294-346）：藤蔓触手（凌辱类型 4）。
+ * ivy_inv：藤蔓触手（凌辱类型 4）。
  *
  * 战场表按 area 取称呼（1 人间界 / 2 精灵领域 / 3 龙之山 / 4 天界 /
  * 5 天神宫），未知道场回落人间界的称呼。
  *
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function ivy_inv(area, sinkou, rand = default_rand) {
   // 戦場別の称呼（5 = 天神宫；未知道场回落人间界的两个名字）
@@ -412,14 +412,14 @@ async function ivy_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @SYOKUSYU_INV（:349-402）：触手（凌辱类型 5）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * syokusyu_inv：触手（凌辱类型 5）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function syokusyu_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女人', '侍女', '贵族女人'],
     2: ['女精灵', '精灵侍女', '精灵贵族'],
@@ -476,14 +476,14 @@ async function syokusyu_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @FAILY_INV（:405-460）：妖精（凌辱类型 6）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * faily_inv：妖精（凌辱类型 6）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function faily_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女人', '少女', '人类'],
     2: ['精灵女性', '精灵少女', '精灵'],
@@ -537,14 +537,14 @@ async function faily_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @GIANT_INV（:463-527）：巨人（凌辱类型 7）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * giant_inv：巨人（凌辱类型 7）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function giant_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女奴隶', '魔导士', '人类'],
     2: ['精灵女奴隶', '精灵使', '精灵'],
@@ -612,14 +612,14 @@ async function giant_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @MAN_INV（:531-591）：男（凌辱类型 8）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * man_inv：男（凌辱类型 8）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function man_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女神官', '女战士', '人类的法律'],
     2: ['精灵女神官', '女精灵战士', '投降'],
@@ -675,14 +675,14 @@ async function man_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @GIRL_INV（:594-653）：女（凌辱类型 9）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * girl_inv：女（凌辱类型 9）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function girl_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的三个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的三个名字）
   const [l0, l1, l2] = {
     1: ['女司令官', '秘书', '女人'],
     2: ['精灵士官', '侍从', '精灵女性'],
@@ -691,7 +691,7 @@ async function girl_inv(area, sinkou, rand = default_rand) {
     5: ['破邪天使', '侍从', '天使'],
   }[area] ?? ['女司令官', '秘书', '女人'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同）
+  // 第一分支没有侵攻点门槛（与其它函数不同）
   if (rand(3) === 0) {
     await era.printAndWait(`据点被攻陷，${l0}成功地突围逃命，不过`);
     await era.printAndWait(`${l0}的${l1}却被女魔族俘虏了。`);
@@ -736,14 +736,14 @@ async function girl_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @BEAST_INV（:655-697）：兽（凌辱类型 10）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * beast_inv：兽（凌辱类型 10）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function beast_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '贵族千金'],
     2: ['精灵猎手', '精灵千金'],
@@ -752,7 +752,7 @@ async function beast_inv(area, sinkou, rand = default_rand) {
     5: ['破邪天使', '天使圣女'],
   }[area] ?? ['女人', '贵族千金'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同）
+  // 第一分支没有侵攻点门槛（与其它函数不同）
   if (rand(2) === 0) {
     await era.printAndWait(
       `在被俘的${l1}身上，施加了强力的催眠魔法，持续的心理暗示，让她成为一只发情期的母兽了。`,
@@ -786,14 +786,14 @@ async function beast_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @BRAIN_INV（:700-738）：脑奸（凌辱类型 11）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * brain_inv：脑奸（凌辱类型 11）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function brain_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（只有一个名字；ELSE 臂 = 人间界的「女」）
+  // 戦場別の称呼（只有一个名字；ELSE 分支 = 人间界的「女」）
   const [l0] = {
     1: ['女'],
     2: ['女精灵'],
@@ -802,7 +802,7 @@ async function brain_inv(area, sinkou, rand = default_rand) {
     5: ['天使'],
   }[area] ?? ['女'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同）
+  // 第一分支没有侵攻点门槛（与其它函数不同）
   if (rand(2) === 0) {
     await era.printAndWait(
       `${l0}司令官的拷问开始了。为了下一步的进军，有必要让她说出全部。`,
@@ -843,14 +843,14 @@ async function brain_inv(area, sinkou, rand = default_rand) {
 }
 
 /**
- * @HORSE_INV（:741-782）：马（凌辱类型 12）。
- * @param {number} area 战场（原作 ARG:0）
- * @param {number} sinkou 侵攻点档位（原作 ARG:1，已 ÷5000）
+ * horse_inv：马（凌辱类型 12）。
+ * @param {number} area 战场
+ * @param {number} sinkou 侵攻点档位（已 ÷5000）
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function horse_inv(area, sinkou, rand = default_rand) {
-  // 戦場別の称呼（ELSE 臂 = 人间界的两个名字）
+  // 戦場別の称呼（ELSE 分支 = 人间界的两个名字）
   const [l0, l1] = {
     1: ['女人', '本地女领主'],
     2: ['女精灵', '精灵女族长'],
@@ -859,7 +859,7 @@ async function horse_inv(area, sinkou, rand = default_rand) {
     5: ['十字军', '十字军军官'],
   }[area] ?? ['女人', '本地女领主'];
 
-  // 第一臂没有侵攻点门槛（与其它函数不同）
+  // 第一分支没有侵攻点门槛（与其它函数不同）
   if (rand(2) === 0) {
     await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');
     await era.printAndWait(`居然是原来的${l1}，现在成为了马的阴茎套。`);

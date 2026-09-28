@@ -1,37 +1,36 @@
 /**
- * @file 怪物商店（召唤魔物从者）：@MONSTER_SHOP 族（issue #399 / N15 段 3）。
+ * @file 怪物商店（召唤魔物从者）：monster_shop 族（issue #399 / N15 段 3）。
  *
- * 调用点：SHOP ver1.0.2.ERB:218（@USERSHOP 的 120「召唤」分支，
- * CHARANUM < MAX_CHARANUM 时），由 page/page-shop.js 接入。
+ * 调用点：page/page-shop.js 的 usershop 120「召唤」分支
+ * （CHARANUM < MAX_CHARANUM 时）。
  *
  * == 有意偏离（逐条注明依据） ==
  *
  * 1. **TFLAG:100/101/102 改落模块内状态**。据点期没有 tflag 表
  *    （beginTrain 建、endTrain 删；page-shop-trap.js:24-31 的实测），
- *    写二段直接抛 key error。三个槽的语义（:16-18 的注释）：TFLAG:100/101
+ *    写二段直接抛 key error。三个槽的语义：TFLAG:100/101
  *    = 怪物种族的两个档（1-4/6/7 同值；5/8/9 各自映射到第二档），
  *    TFLAG:102 = 选中的商品编号。它们只在一次召唤交互内被写读、
- *    不进存档（@MONSTER_SHOP :27-29 每次进店置 0），故落在模块级的
+ *    不进存档（每次进店置 0），故放在模块级的
  *    `shop_state`。
- * 2. **`[IF DEBUG]` 的 `[2]召唤异界勇者` 不移植**（:32-35 的调试编译块，
+ * 2. **`[IF DEBUG]` 的 `[2]召唤异界勇者` 不移植**（调试编译块，
  *    page-ablup.js:113 / page-title.js:18 同款先例）。那条支路是
- *    `JUMP CHARA_SIM_SHOP`——SHOP_CHARA.ERB 的函数按 1:1 落在
- *    page-chara-shop.js（文件级交付），但**发布构建里没有入口**，
- *    与原作一致。
- * 3. **`PRINTFORML` 的换行排版按显示宽度近似**：本屏的种族一览（:97-99）
- *    与商品一览（:238 的 `,22,LEFT%` + `,5,RIGHT%`）都按原文字面量排版；
+ *    `JUMP CHARA_SIM_SHOP`——同形函数移植在
+ *    page-chara-shop.js（文件级交付），但**发布构建里没有入口**。
+ * 3. **`PRINTFORML` 的换行排版按显示宽度近似**：本屏的种族一览
+ *    与商品一览（`,22,LEFT%` + `,5,RIGHT%`）都按原文字面量排版；
  *    商品一览两格一行（`SIF LOCAL%2 == 0 → PRINTL`）。
- * 4. **`:271` 的第二条金钱守卫恒不达**（`MONEY < ITEMPRICE:RESULT * 135`
- *    与它上一条逐字相同、只多一个 `&& TALENT:A:122`），照 #391 口径精简：
- *    上一条已把整个条件吃掉。同 :216-224 的 SELECT_MONSTER 里也有这一对。
+ * 4. **第二条金钱检查恒不达**（`MONEY < ITEMPRICE:RESULT * 135`
+ *    与它上一条逐字相同、只多一个 `&& TALENT:A:122`），照 #391 的
+ *    既有标准精简：上一条已把整个条件吃掉。select_monster 里也有这一对。
  * 5. **`PRINTW` / `CLEARLINE`**：PRINTW = print + waitAnyKey 显式组合
- *    （PRINTW 的既有约定）；CLEARLINE（:82/:111 的「表示外の
+ *    （PRINTW 的既有约定）；CLEARLINE（「表示外の
  *    数字なら戻す」）在 ere 侧没有对应动作——本屏幕的重绘由商店轮的循环
  *    承担，局部清行不镜像（page-ability-up.js 同款）。
- * 6. **选项升格为按钮**（#572）：入口菜单（:30-37）、性别（:71/:73）、
- *    种族（:97-101）、召唤确认（:149-155）与成交确认（:344）改
+ * 6. **选项升格为按钮**（#572）：入口菜单、性别、
+ *    种族、召唤确认与成交确认改
  *    `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；第 3 条的列排版
- *    因此变成「一按钮一行」的记名差异，见 CONTEXT.md）。两处商品/祭品
+ *    因此变成「一按钮一行」，差异按 CONTEXT.md 的条款登记）。两处商品/祭品
  *    一览轮的 `[999] 返回` **保持纯文本**——同轮的有效编号是那些格行的
  *    编号，打按钮会把它们锁死（理由见各处注释）。
  */
@@ -50,46 +49,46 @@ const { clear_shop } = require('#/page/page-item-shop');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
+/** 本文件存根化的调用名（docs/stub-registry.md 必须收录每一个） */
 
-/** 魔物从者的上限（:55 `COUNT:1 >= 30`） */
+/** 魔物从者的上限（`COUNT:1 >= 30`） */
 const FOLLOWER_LIMIT = 30;
-/** 魔物从者的素质编号（:52 `TALENT:COUNT:220`，召喚済み标记） */
+/** 魔物从者的素质编号（`TALENT:COUNT:220`，召喚済み标记） */
 const FOLLOWER_TALENT = 220;
-/** 种族2 的素质编号（:237/:303 `CSVTALENT(LCOUNT,319,0)`） */
+/** 种族2 的素质编号（`CSVTALENT(LCOUNT,319,0)`） */
 const RACE_TALENT = 319;
-/** 召唤费（:107/:120/:166 的 1500） */
+/** 召唤费（1500） */
 const SUMMON_FEE = 1500;
-/** 献祭的金钱倍率（:267/:271 `ITEMPRICE:RESULT * 135`） */
+/** 献祭的金钱倍率（`ITEMPRICE:RESULT * 135`） */
 const SACRIFICE_RATE = 135;
-/** 商品段（:232 `FOR LCOUNT,201,280`——上界开区间） */
+/** 商品段（`FOR LCOUNT,201,280`——上界开区间） */
 const MONSTER_IDS = { start: 201, end: 280 };
-/** 每页行数（:232 起的两格一行；:206 `#DIM LCOUNT, 2` 是变量声明） */
+/** 每页行数（两格一行） */
 const COLUMNS = 2;
-/** 商品名字段宽（:238 `%ITEMNAME:LCOUNT,22,LEFT%`） */
+/** 商品名字段宽（`%ITEMNAME:LCOUNT,22,LEFT%`） */
 const NAME_WIDTH = 22;
-/** 最低等级字段宽（:238 `%TOSTR(ITEMPRICE:LCOUNT),5,RIGHT%`） */
+/** 最低等级字段宽（`%TOSTR(ITEMPRICE:LCOUNT),5,RIGHT%`） */
 const LEVEL_WIDTH = 5;
-/** 祭品一览的名字字段宽（:283/:334 `%ITEMNAME:LCOUNT,22,LEFT%`） */
+/** 祭品一览的名字字段宽（`%ITEMNAME:LCOUNT,22,LEFT%`） */
 const SACRIFICE_NAME_WIDTH = 22;
-/** 祭品数量的字段宽（:283/:334 `%TOSTR(MONS:LCOUNT:2),7,RIGHT%`） */
+/** 祭品数量的字段宽（`%TOSTR(MONS:LCOUNT:2),7,RIGHT%`） */
 const SACRIFICE_COUNT_WIDTH = 7;
-/** 可选祭品一览的名字字段宽（:330/:381 `%ITEMNAME:LCOUNT,20,LEFT%`） */
+/** 可选祭品一览的名字字段宽（`%ITEMNAME:LCOUNT,20,LEFT%`） */
 const PICK_NAME_WIDTH = 20;
-/** 可选祭品一览的数量字段宽（:330/:381 `%TOSTR(MONS:LCOUNT:1),5,RIGHT%`） */
+/** 可选祭品一览的数量字段宽（`%TOSTR(MONS:LCOUNT:1),5,RIGHT%`） */
 const PICK_COUNT_WIDTH = 5;
-/** 性别选择的选项上限（:81 `RESULT > 3`） */
+/** 性别选择的选项上限（`RESULT > 3`） */
 const SEX_MAX = 3;
-/** 种族选择的选项上限（:110 `RESULT > 9`） */
+/** 种族选择的选项上限（`RESULT > 9`） */
 const RACE_MAX = 9;
 
 /**
- * 怪物商店的交互内状态（原作 TFLAG:100/101/102，见文件头第 1 条）。
+ * 怪物商店的交互内状态（TFLAG:100/101/102，见文件头第 1 条）。
  * `race`/`race2` 是种族映射出的两档，`chosen` 是选中的商品编号。
  */
 const shop_state = { race: 0, race2: 0, chosen: 0 };
 
-/** TALENT 读数兜底（#13：未声明下标读回 undefined） */
+/** TALENT 读数缺省处理（#13：未声明下标读回 undefined，按 0 处理） */
 function talent(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
 }
@@ -99,7 +98,7 @@ function item_name(id) {
   return era.get(`itemname:${id}`) ?? '';
 }
 
-/** %ITEMPRICE:id%（Item.yml 的 price，缺号回落 0——`SIF ITEMPRICE:LCOUNT == 0` 的判据） */
+/** %ITEMPRICE:id%（Item.yml 的 price，缺号回落 0——`SIF ITEMPRICE:LCOUNT == 0` 的条件） */
 function item_price(id) {
   return era.get(`itemprice:${id}`) || 0;
 }
@@ -108,7 +107,7 @@ function item_price(id) {
  * CSVTALENT(n, idx, 0)：角色预设在 yml/CharaN.yml 里的素质表读数。
  * 与 CSVNAME 族同一处置（chara-name.js / chara-self-call.js 的先例）：
  * 取 `era.get('chara:'+n)` 的整份预设对象后按可选链读，不走三段静态寻址
- * （引擎的 getVar 没有四段形态）。
+ * （引擎的 getVar 没有四段写法）。
  * @param {number} no 角色预设编号
  * @param {number} idx 素质编号
  * @returns {number}
@@ -119,7 +118,7 @@ function csv_talent(no, idx) {
 }
 
 /**
- * @SHOW_SHOP_MONSTER（:178-196）：召唤系列三个画面的公共头行。
+ * show_shop_monster：召唤系列三个画面的公共头行。
  */
 function show_shop_monster() {
   // CUSTOMDRAWLINE = → 本屏的分隔线走实线（page-shop-trap.js 同款近似）
@@ -135,15 +134,15 @@ function show_shop_monster() {
 }
 
 /**
- * @MONSTER_SHOP（:18-173）：召唤魔物从者的入口。
+ * monster_shop：召唤魔物从者的入口。
  *
- * 结构 1:1：入口菜单（[1] 召唤 / [999] 返回）→ 从者数上限检查（≥ 30 拒绝）
- * → 性别选择（1/2/3）→ 种族选择（1-9）→ @SELECT_MONSTER → @BUY_MONSTER
+ * 流程：入口菜单（[1] 召唤 / [999] 返回）→ 从者数上限检查（≥ 30 拒绝）
+ * → 性别选择（1/2/3）→ 种族选择（1-9）→ select_monster → buy_monster
  * → 入队与角色生成（CHAR_MAKE）→ 确认（[0] 就它 / [1] 再换一个）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（透传给 CHAR_MAKE 与
- *   @MONSTER_DATA 的两处骰子；缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 0（:173）
+ *   monster_data 的两处骰子；缺省均匀随机）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function monster_shop(rand) {
   // TFLAG:100/101/102 = 0（文件头第 1 条）
@@ -155,7 +154,7 @@ async function monster_shop(rand) {
   // 的理由是「打了按钮就把输入集收紧到那批编号、头行里没有的选项（性别
   // 1-3、种族 1-9）再也键入不进」——那只在**同轮只打一部分按钮**时成立；
   // 同轮的每个选项都升格按钮后，白名单恰是显示出来的编号，点击与键入都通。
-  // 本轮「其余值」（原作没有 ELSE、顺着落进 :48）的兜底臂随之不可达，
+  // 本轮「其余值」（没有 ELSE、顺着往下落）的默认分支随之不可达，
   // 结构保留不补用例（page-ability-up.js 文件头同款）。
   era.drawLine({ isSolid: true });
   era.printButton('召唤魔物从者', 1);
@@ -167,8 +166,8 @@ async function monster_shop(rand) {
     clear_shop();
     return 0;
   }
-  // RESULT == 1 → GOTO MONSTER_SHOP_TAG；其余值（原作没有 ELSE）
-  // 顺着往下落进 :48 的标签，与选 1 同路（[2] 的调试支不移植，见文件头）
+  // RESULT == 1 → GOTO MONSTER_SHOP_TAG；其余值（没有 ELSE）
+  // 顺着往下落进标签，与选 1 同路（[2] 的调试支不移植，见文件头）
 
   // 召唤的魔物从者数量太多（TALENT:220 计数 >= 30）
   let follower_count = 0;
@@ -201,7 +200,7 @@ async function monster_shop(rand) {
       return 0;
     }
     if (result > SEX_MAX) {
-      continue; // （原作 CLEARLINE 1 后回标签）
+      continue; // （CLEARLINE 1 后回标签）
     }
     sex_coin = result;
     if (result === 0) {
@@ -293,17 +292,16 @@ async function monster_shop(rand) {
 }
 
 /**
- * @SELECT_MONSTER（:200-285）与 @SELECT_CHARA（SHOP_CHARA.ERB:155-234）的
- * 通用核：两个函数逐字相同，只差**两道守卫**——SHOP_CHARA 的那份没有
- * 「编号在 201-280 段内」与「ITEMSALES 已点亮」两条（SHOP_MONSTER.ERB
- * :260-265 的注释在 SHOP_CHARA 里不存在），故按 `guard` 形参分档。
+ * select_monster 与 select_chara（page-chara-shop.js 的同形函数）的
+ * 通用核：两个函数逐字相同，只差**两道检查**——select_chara 的那份没有
+ * 「编号在 201-280 段内」与「ITEMSALES 已点亮」两条，故按 `guard` 形参分档。
  *
  * @param {object} options
- * @param {number} options.arg0 种族选择的输入（原作 ARG:0）
- * @param {() => void} options.show 头行绘制（SHOW_SHOP_MONSTER / _CHARA）
- * @param {boolean} options.guard 段内与在售位的两道守卫（见上）
+ * @param {number} options.arg0 种族选择的输入
+ * @param {() => void} options.show 头行绘制（show_shop_monster / show_shop_chara）
+ * @param {boolean} options.guard 段内与在售位的两道检查（见上）
  * @param {(n: number) => number} [options.rand] RAND:N 随机源
- * @returns {Promise<number>} 1 = 买定（原作 RETURN 1）、0 = 退回种族选择
+ * @returns {Promise<number>} 1 = 买定、0 = 退回种族选择
  */
 async function select_follower({ arg0, show, guard, rand }) {
   // SELECTCASE ARG:0：种族两档的映射（TFLAG:100/101）
@@ -375,8 +373,8 @@ async function select_follower({ arg0, show, guard, rand }) {
     if (result === 999) {
       return 0;
     }
-    // 商品编号段与在售位的两道守卫（不在段内/没点亮则重问；
-    // SELECT_CHARA 没有这两条，见函数头）
+    // 商品编号段与在售位的两道检查（不在段内/没点亮则重问；
+    // select_chara 没有这两条，见函数头）
     if (guard) {
       if (result < MONSTER_IDS.start || result > MONSTER_IDS.end) {
         continue;
@@ -385,7 +383,7 @@ async function select_follower({ arg0, show, guard, rand }) {
         continue;
       }
     }
-    // 钱不够则重问（两条守卫的判据逐字相同，第二条恒不达——
+    // 钱不够则重问（两条检查的条件逐字相同，第二条恒不达——
     // 文件头第 4 条）
     if (era_flag.money < item_price(result) * SACRIFICE_RATE) {
       era.print(
@@ -404,9 +402,9 @@ async function select_follower({ arg0, show, guard, rand }) {
 }
 
 /**
- * @SELECT_MONSTER（:200-285）：种族 → 商品陈列 → @BUY_MONSTER。
- * @param {number} arg0 种族选择的输入（原作 ARG:0）
- * @param {(n: number) => number} [rand] RAND:N 随机源（透传给 @MONSTER_DATA）
+ * select_monster：种族 → 商品陈列 → buy_monster。
+ * @param {number} arg0 种族选择的输入
+ * @param {(n: number) => number} [rand] RAND:N 随机源（透传给 monster_data）
  * @returns {Promise<number>} 1 = 买定、0 = 退回种族选择
  */
 async function select_monster(arg0, rand) {
@@ -419,7 +417,7 @@ async function select_monster(arg0, rand) {
 }
 
 /**
- * @BUY_MONSTER（:288-410）与 @BUY_CHARA（SHOP_CHARA.ERB:237-359）的通用核
+ * buy_monster 与 buy_chara（page-chara-shop.js 的同形函数）的通用核
  * （两者逐字相同，差处只有头行绘制函数与跳转标签名）。
  *
  * 祭品表（MONS）按「同种族（CSVTALENT 的 319 与两档任一相等）且在库
@@ -432,7 +430,7 @@ async function select_monster(arg0, rand) {
  * @returns {Promise<number>} 1 = 成交、0 = 取消或祭品不足
  */
 async function buy_follower({ show, rand }) {
-  const target = shop_state.chosen; // 原作 TFLAG:102
+  const target = shop_state.chosen; // TFLAG:102
   // 收集祭品
   const offering = new Map(); // 编号 → { level, stock, picked }
   let total_level = 0; // LOCAL:1（已选合计；收集期先累持有等级、随后清零）
@@ -595,7 +593,7 @@ function sacrifice_rows(offering) {
 /**
  * `CALL MONSTER_DATA, LCOUNT, 5` 的等价物：祭品判定要的两个数（E:501 等级、
  * E:507 种族2）。真身在 dungeon/monster-data.js 的 `monster_data`
- * （`@MONSTER_DATA`，ARG:1 = 5 时只算属性、不落任何赋值）。
+ * （ARG:1 = 5 时只算属性、不落任何赋值）。
  * @param {number} id 怪物编号
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
  * @returns {{level: number, race2: number}}
@@ -610,8 +608,8 @@ function read_monster(id, rand) {
 }
 
 /**
- * @BUY_MONSTER（:288-410）：@BUY_CHARA 的同形复用（见 buy_follower）。
- * @param {(n: number) => number} [rand] RAND:N 随机源（@MONSTER_DATA 的骰子）
+ * buy_monster：buy_chara 的同形复用（见 buy_follower）。
+ * @param {(n: number) => number} [rand] RAND:N 随机源（monster_data 的骰子）
  * @returns {Promise<number>} 1 = 召唤成功、0 = 取消或祭品不足
  */
 async function buy_monster(rand) {
@@ -623,7 +621,7 @@ module.exports = {
   show_shop_monster,
   select_monster,
   buy_monster,
-  // SHOP_CHARA.ERB 的两份同形函数（page-chara-shop.js 复用；两者与原作的
+  // page-chara-shop.js 复用的两份同形函数（两者的
   // TFLAG 槽位本就共用，见该文件的说明）
   select_follower,
   buy_follower,

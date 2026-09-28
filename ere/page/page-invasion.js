@@ -2,9 +2,9 @@
  * @file 侵略画面：invasion() 的四条出兵路线与地上征服后菜单 + kyoten_event()
  *     的据点事件横幅 + invasion_event() 的 RAND:10 分发与三个中途事件 +
  *     invasion_check() 的结局判定（issue #117 魔力出兵；issue #118 结局判定
- *     本体与 ENDING_1 接线；issue #468 地上征服后菜单渲染与派发、CAMPAIGN_MENU
+ *     本体与 ENDING_1 接入；issue #468 地上征服后菜单渲染与派发、campaign_menu
  *     接通；issue #503 怪物出兵 / 勇者掠夺两条路线；issue #504 勇者出兵路线与
- *     FORT / CHALLENGE 两臂；issue #505 地区续接与 start_campaign 的地区泛化）。
+ *     FORT / CHALLENGE 两分支；issue #505 地区续接与 start_campaign 的地区泛化）。
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - CLEARLINE 局部重绘不镜像：ere 控制台是滚动视图，画面每次进入
@@ -15,19 +15,19 @@
  *   - BARSTR 文本条 → era 原生进度条格（printMultiColumns 的 progress 格，
  *     page-train 先例）：barWidth 16 保住条后数值列（引擎缺省 24 会被
  *     el-col-0 吞掉，M155 的教训）；进度条标签按 AREA 取自 CAMPAIGN_REGIONS，
- *     原作里为对齐 BAR 而在标签两侧写的全角空格一并丢弃（只留「侵攻度」
- *     「精灵族领域的侵攻度」这样的正文，与 #117 起的口径一致）；本路径无
- *     黄金样本（#108 接受），逐字锁随 #109 裁定后补。SEIEI 战斗体的
+ *     为对齐 BAR 而在标签两侧写的全角空格一并丢弃（只留「侵攻度」
+ *     「精灵族领域的侵攻度」这样的正文，与 #117 起的写法一致）；本路径无
+ *     黄金样本（#108 接受），逐字锁随 #109 决定后补。SEIEI 战斗体的
  *     HP/气力条同款（`print_progress_line`）；
  *   - invasion_event() 的 RAND:10 分发**自 #503 起掷骰真分发**：#117 只
- *     做魔力路线时，三臂对 INV_TYPE == 1 一律「打印守卫后 RETURN -1」，
- *     掷不掷骰结果相同，故当时归约成直接调 SEIEI 臂。[0]/[3] 落地后
+ *     做魔力路线时，三分支对 INV_TYPE == 1 一律「打印首档传闻后 RETURN -1」，
+ *     掷不掷骰结果相同，故当时归约成直接调 SEIEI 分支。[0]/[3] 实现后
  *     INV_TYPE 取 0/3：CHALLENGE 的 `!= 0 && != 2 && != 3` 链对两者都放行；
  *     FORT 的 `FLAG:SINDO || INV_TYPE != 0 && ...` 按**同优先级左结合**（见
  *     invasion_event_fort 的注释）读成 `((FLAG:SINDO || INV_TYPE != 0) &&
  *     INV_TYPE != 2) && INV_TYPE != 3`——对 2/3 恒不早退、对 0 才看
- *     FLAG:SINDO，两条路线照样可达（已征服的 [3] 也进）。两臂真的可达，
- *     归约的依据当场失效，因此恢复真分发（#504 起三臂的行为体全部落地）；
+ *     FLAG:SINDO，两条路线照样可达（已征服的 [3] 也进）。两分支真的可达，
+ *     归约的依据当场失效，因此恢复真分发（#504 起三分支的行为体全部实现）；
  *   - **SINKOU 的按引用改写**：中途事件把 SINKOU 按引用参数传进传出，
  *     FORT/CHALLENGE 的强攻/潜入/绕路按比例削减它。ere 侧把
  *     `{sinkou, yusya_i}` 打包成 state 传进传出，`start_campaign()` 在调用
@@ -40,21 +40,21 @@
  *     「魔力爆发」并给魔王经验），是错误行为而不仅是缺功能；
  *   - **地区泛化（#505）**：`AREA`/`SINDO` 由 `CAMPAIGN_REGIONS` 表给出，
  *     各处按 AREA 分派的位置全部读表：出兵菜单标签、累加、四条结果段的
- *     地区名/已征服臂/进度条、invasion_ryouzyoku() 的地区号、kyoten_event()
+ *     地区名/已征服分支/进度条、invasion_ryouzyoku() 的地区号、kyoten_event()
  *     的实参。侵攻度一律读写 FLAG 侧（`flag:${AREA}`；EX_FLAG:101 没有写
- *     点，天神宫的累加在 FLAG:101）；[0] 的已征服臂列全五个地区。FLAG:101/102
+ *     点，天神宫的累加在 FLAG:101）；[0] 的已征服分支列全五个地区。FLAG:101/102
  *     与 K1/K2 的「口上存在标志」同槽（yml/Flag.yml 保留区外的 1xx 段），
  *     累加会覆盖口上标志、读 FLAG:102 会把口上的存在当成「已征服」——#102
  *     查明、ExFlag.yml 头注登记，写侧的重叠保留、由用例钉住；
- *   - [2] 候选判据的第三条：带队者必须是助手可的角色（CFLAG:0 == 2），
+ *   - [2] 候选条件的第三条：带队者必须是助手可的角色（CFLAG:0 == 2），
  *     其余一律排除，由 `brute_rejected` 的注释与用例钉住；
  *   - SEIEI 战斗体的两处退场检查都判（领军勇者，精锐部队）——「魔王侧
- *     获得胜利」的判据是精锐部队倒下，不是魔王被打残；
+ *     获得胜利」的判断条件是精锐部队倒下，不是魔王被打残；
  *
- *   - kyoten_event() 的 ARG 2/3/4 三臂只有判定骨架：推进赋值整体被注释，
- *     不输出任何内容、不推进，状态字维持原样。三臂随地区续接（#505）可达：
+ *   - kyoten_event() 的 ARG 2/3/4 三分支只有判定骨架：推进赋值整体被注释，
+ *     不输出任何内容、不推进，状态字维持原样。三分支随地区续接（#505）可达：
  *     出兵结算尾的 AREA 可取 86/88/90，侵攻度有写入路径。状态字（FLAG:94/95/96）
- *     没有写点：94 号被挪作「人数上限阶梯」的判据，CHALLENGE 用的是
+ *     没有写点：94 号被挪作「人数上限阶梯」的判断条件，CHALLENGE 用的是
  *     EX_FLAG:95 位域；
  *
  *   - FORT 的 [3] 绕路支（勇者掠夺路线）掷 RAND:10：九成平安无事（体力
@@ -63,9 +63,9 @@
  *
  *   - FORT/CHALLENGE 的 `LOCAL:3`（领军勇者的种族号）与 `LOCAL:12`（复现
  *     职业）都是局部量数组的元素，不是位运算；CHALLENGE 的职业在选区时
- *     就掷定下（早于位域守卫的早退），顺序照此；
+ *     就掷定下（早于位域检查的早退），顺序照此；
  *
- *   - SEIEI 战斗体的先制守卫用 `SINKOU/2048+1`、伤害式用 `SINKOU/1024+1`
+ *   - SEIEI 战斗体的先制检查用 `SINKOU/2048+1`、伤害式用 `SINKOU/1024+1`
  *     ——两处除数不同是不对称的既有行为，有意不统一；
  *
  *   - 精锐部队的清退在扁平化（#21）下直接用角色号 18/19——
@@ -81,7 +81,7 @@
  *     调用不受限）；[1]/[2]/[3]/[5] 自 #505 起按 CAMPAIGN_REGIONS 取
  *     AREA/SINDO 后汇入同一个 start_campaign()；
  *
- *   - [5] 天神宫的渲染与派发共用同一道 route_33 > 500 守卫：按钮只在窗口
+ *   - [5] 天神宫的渲染与派发共用同一道 route_33 > 500 检查：按钮只在窗口
  *     内渲染，派发拒收窗口外的值，玩家看不到「可选却进不去」的按钮；
  *
  *   - [1001]（AGENT_MENU）是复制改名事故（#103 判定）、不排期——缺内容的
@@ -122,36 +122,35 @@ const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
- * 原作 RESTART 的 ere 侧信号（control-flow.md:376-377「回到当前函数开头重新
+ * RESTART 语义的 ere 侧信号（control-flow.md:376-377「回到当前函数开头重新
  * 执行」；`#DIM` 局部量不随 RESTART 重置见 user-defined-variables.md 的
- * 局部变量一节）。@INVASION 的开头是 :6 的 FLAG:82 分派，
+ * 局部变量一节）。invasion() 的开头按 FLAG:82 分派，
  * 所以信号一路透传到 invasion() 的外层循环——那里重走「FLAG:82 分派 →
- * 菜单」，与原作的 RESTART 等价（含「征服后菜单的 [0] 出发时回到征服后
- * 菜单」这一形态）。
+ * 菜单」，与 RESTART 语义等价（含「征服后菜单的 [0] 出发时回到征服后
+ * 菜单」这一写法）。
  */
 const RESTART = Symbol('restart');
 
-/** 每页角色数（:19 `#DIM NUM_PAGE = 26`） */
+/** 每页角色数（`#DIM NUM_PAGE = 26`） */
 const NUM_PAGE = 26;
 
-/** 出兵菜单的怪物门槛（:173/:179 `MON_NUM < 600`） */
+/** 出兵菜单的怪物门槛（`MON_NUM < 600`） */
 const MONSTER_THRESHOLD = 600;
 
 /** 进度条的条宽（< 24，否则引擎 el-col-0 吞掉条后数值列，见文件头） */
 const BAR_WIDTH = 16;
 
 /**
- * 出兵目标的地区表（:108-138 的 RESULT → AREA/SINDO 下标对，连同各处按 AREA
- * 分派所需的派生值）。键是地上征服后菜单的输入值 RESULT（:109/:113/:117/
- * :121/:133）；[4] 是 ARCANA_FORT 单独一支，不在本表。
+ * 出兵目标的地区表（RESULT → AREA/SINDO 下标对，连同各处按 AREA
+ * 分派所需的派生值）。键是地上征服后菜单的输入值 RESULT；
+ * [4] 是 ARCANA_FORT 单独一支，不在本表。
  *
- * `area`/`sindo` 就是原作的同名 `#DIM` 局部量（也照原作命名 FLAG）；
- * `campaign_label` 是出兵菜单（$START1）的进度条标签（:153/:156/:159/:162/
- * :165）、`result_label` 是结果段的标签（:655/:657/…/:663 与 :743/:745/…/
- * :751 等）、`name` 是结果段里的地区名（:762/:765/…/:773 与 :895/:898/…/
- * :906）、`ravish_area` 是 @INVASION_RYOUZYOKU 的地区号（:671/:674/:677/
- * :680/:683 与 :867/:870/:873/:876/:879）、`kyoten_arg` 是 @KYOTEN_EVENT 的
- * 实参（:984/:987/:990/:993——**没有天神宫臂**，故为 null）。
+ * `area`/`sindo` 沿用同名 `#DIM` 局部量的命名（AREA/SINDO 本就是对应
+ * FLAG 下标的名字）；
+ * `campaign_label` 是出兵菜单的进度条标签、`result_label` 是结果段的
+ * 标签、`name` 是结果段里的地区名、`ravish_area` 是 invasion_ryouzyoku()
+ * 的地区号、`kyoten_arg` 是 kyoten_event() 的实参（**没有天神宫分支**，
+ * 故为 null）。
  *
  * 侵攻度一律读写 FLAG 侧（`flag:${AREA}`）：EX_FLAG:101 没有写点，天神宫
  * 的累加在 FLAG:101（add_region_progress，出兵结算），region_progress()
@@ -207,12 +206,12 @@ const CAMPAIGN_REGIONS = {
   },
 };
 
-/** 人间界：未征服时 invasion() 直接进的那一支（:139-142 的 ELSE，AREA=81） */
+/** 人间界：未征服时 invasion() 直接进的那一支（出兵菜单的 ELSE，AREA=81） */
 const HUMAN_WORLD = CAMPAIGN_REGIONS[0];
 
 /**
- * [0] 怪物路线的已征服臂（强制征收 ×10 + 封顶）适用的五个地区；不在列的
- * 地区落 ELSE 战利品臂、不封顶。
+ * [0] 怪物路线的已征服分支（强制征收 ×10 + 封顶）适用的五个地区；不在列的
+ * 地区落 ELSE 战利品分支、不封顶。
  */
 const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];
 
@@ -226,7 +225,7 @@ const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];
  * 属主，只计数不判定」）。
  *
  * @param {object} region 地区条目
- * @returns {number} 该地区的侵攻度（未声明下标兜 0，见 issue #13）
+ * @returns {number} 该地区的侵攻度（未声明下标按 0 处理，见 issue #13）
  */
 function region_progress(region) {
   return era.get(`flag:${region.area}`) || 0;
@@ -238,14 +237,14 @@ function region_progress(region) {
  * 读 FLAG:102 会把口上的存在当成「已征服」）。
  *
  * @param {object} region 地区条目
- * @param {number} gained 本次增量（原作 SINKOU，掠夺路线是 SINKOU / 20）
+ * @param {number} gained 本次增量（SINKOU，掠夺路线是 SINKOU / 20）
  */
 function add_region_progress(region, gained) {
   const next = (era.get(`flag:${region.area}`) || 0) + gained;
   era.set(`flag:${region.area}`, Math.min(next, 10000)); // 封顶
 }
 
-/** 原作 RAND:N（0..N-1）的缺省随机源（同族模块同款；各函数以 rand 为注入名） */
+/** RAND:N（0..N-1）的缺省随机源（同族模块同款；各函数以 rand 为注入名） */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -256,8 +255,8 @@ function getbit(value, bit) {
 }
 
 /**
- * 原作 `TIMES 整数, 小数` 的等价物：乘完截断小数部分。Emuera 的双精度与 JS
- * 同为 IEEE 754，两边逐位同值（`SENGEN_VIDEO` 的 ×1.20/×1.60、`SENGEN_VIDEO_BONUS`
+ * `TIMES 整数, 小数` 的等价物：乘完截断小数部分。旧引擎的双精度与 JS
+ * 同为 IEEE 754，两边逐位同值（sengen_video 的 ×1.20/×1.60、sengen_video_bonus
  * 的 ×1.10/×1.20/×0.80 共十二处）。
  * @param {number} value 整数原值
  * @param {number} factor 小数倍率
@@ -268,19 +267,19 @@ function times(value, factor) {
 }
 
 /**
- * 数值型 INPUT 的读数（本文件九处：`SENGEN_VIDEO` 内的六处
- * :1093/:1102/:1127/:1148/:1176/:1208，post_conquest_menu 与 start_campaign
- * 各一处菜单读数，以及 #503 的 pick_raid_hero 一处——:517 的列表选人）。
+ * 数值型 INPUT 的读数（本文件九处：sengen_video 内的六处，
+ * post_conquest_menu 与 start_campaign 各一处菜单读数，以及 #503 的
+ * pick_hero 一处列表选人）。
  *
- * 引擎 `era.input()` 与原作 `INPUT` 有两处差异（逐字镜像见
+ * 引擎 `era.input()` 与旧引擎的 `INPUT` 有两处差异（镜像见
  * test/helpers/era-fixture.js 的 #151/G6，`getNumber(val)` 即 `Number(val)`、
  * 解析失败原样返回）：
- *   - **空输入归一成 0**——原作的 `INPUT` 没有默认值时会在引擎层原地重问，
+ *   - **空输入归一成 0**——`INPUT` 没有默认值时会在引擎层原地重问，
  *     游戏层永远看不到空值；ere 侧区分不出「空」与「显式键入 0」，两者都走
  *     `RESULT == 0` 那一支；
- *   - **非数字串原样回传**（字符串），而原作的 `RESULT` 恒为数值——不归一
+ *   - **非数字串原样回传**（字符串），而 `INPUT` 侧的 `RESULT` 恒为数值——不归一
  *     就会让 `count` 变成 NaN：`count > stock` 恒假、直接被当合法数量收下，
- *     随后 `EX_FLAG:9011 += count`（:1109/:1137）把 NaN 写进存档变量。
+ *     随后 `EX_FLAG:9011 += count` 把 NaN 写进存档变量。
  *
  * @returns {Promise<number>} 输入值；空输入与非数字一律归一到 0
  */
@@ -290,7 +289,7 @@ async function number_input() {
 }
 
 /**
- * 原作 FORMAT `{值,N}` 的定宽：位数不足补半角空格（右对齐；数字是半角，
+ * `FORMAT {值,N}` 的定宽：位数不足补半角空格（右对齐；数字是半角，
  * 与全角算两格的规则无关）。
  * @param {number} value 数值
  * @param {number} width 显示位数
@@ -300,7 +299,7 @@ function pad_number(value, width) {
   return pad_left(String(value), width);
 }
 
-// @KYOTEN_EVENT 的星号横幅（含全角空格的手工对齐）
+// kyoten_event 的星号横幅（含全角空格的手工对齐）
 const BANNER_STAR =
   '*******************************************************************************************';
 const BANNER_BLANK =
@@ -347,8 +346,8 @@ function print_progress_line(label, value, max) {
 }
 
 /**
- * @KYOTEN_EVENT 四臂共用的状态推进链（人间界臂 :14-105 与三臂 :106-206 的
- * 十档判定逐字同构）：命中档给下一档号，未命中返回原档。ELSEIF 链化成一串
+ * kyoten_event 四个分支共用的状态推进链（人间界分支与另外三个分支的
+ * 十档判定结构相同）：命中档给下一档号，未命中返回原档。ELSEIF 链化成一串
  * 提前 return，语义与「命中即止」相同。
  *
  * @param {number} progress 该领域的侵攻度
@@ -370,18 +369,17 @@ function kyoten_next_stage(progress, stage) {
 }
 
 /**
- * @KYOTEN_EVENT：据点事件横幅。
+ * kyoten_event：据点事件横幅。
  *
  * arg == 1（人间界）的完整状态机：侵攻度跨 2000/4000/6000/8000/10000 逐档
  * 推进 FLAG:93，回落到 500/2000/4000/6000/8000 以下时逐档回退，命中的档打
  * 七行横幅并写回状态字。
  *
- * arg == 2/3/4（精灵/龙/天界）三臂只有判定骨架：推进赋值整体被注释、状态字
- * 恒 0，三臂不输出任何内容、也不推进——状态字维持原样，出兵结算的侵攻度
- * 照算。
- * 三臂随地区续接（#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有
- * 写入路径。三臂的状态字（FLAG:94/95/96）没有写点：94 号被挪作「人数上限
- * 阶梯」的判据，CHALLENGE 用的是 EX_FLAG:95 位域。
+ * arg == 2/3/4（精灵/龙/天界）三分支只有判定骨架：推进赋值整体被注释、状态字
+ * 恒 0，不输出任何内容、也不推进——状态字维持原样，出兵结算的侵攻度照算。
+ * 三分支随地区续接（#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有
+ * 写入路径。三分支的状态字（FLAG:94/95/96）没有写点：94 号被挪作「人数上限
+ * 阶梯」的判断条件，CHALLENGE 用的是 EX_FLAG:95 位域。
  *
  * @param {number} arg 地区编号：1=人间界、2=精灵、3=龙、4=天界（0 与 5 及以上空转）
  * @returns {Promise<0>} 恒 RETURN 0
@@ -407,7 +405,7 @@ async function kyoten_event(arg) {
     return 0;
   }
 
-  // 精灵/龙/天界三臂：不输出、不推进（见函数头注释）
+  // 精灵/龙/天界三分支：不输出、不推进（见函数头注释）
   return 0;
 }
 
@@ -428,15 +426,15 @@ function recapture_key(stage) {
 }
 
 /**
- * @INVASION_EVENT（INVASION_EVENT.ERB:212-235）：侵略中途事件的 RAND:10 分发。
+ * invasion_event：侵略中途事件的 RAND:10 分发。
  *
- * :224 `LOCAL = RAND:10` 后三分（:226-230）：9 → @INVASION_EVENT_FORT、
- * 8 → @INVASION_EVENT_CHALLENGE、其余 0-7 → @INVASION_EVENT_SEIEI。原作三
- * 条都是 JUMP（尾调用），被跳函数的返回值就是本函数的返回值。**#503 起是
+ * `LOCAL = RAND:10` 后三分：9 → invasion_event_fort、
+ * 8 → invasion_event_challenge、其余 0-7 → invasion_event_seiei。三条都
+ * 是 JUMP（尾调用），被跳函数的返回值就是本函数的返回值。**#503 起是
  * 真分发**（归约依据失效的经过见文件头）。
  *
- * 原作五参是 `AREA, SINDO, INV_TYPE, SINKOU(#DIM REF), YUSYA_I`——三臂都会
- * 读 SINKOU，FORT/CHALLENGE 还会改写它（两臂的强攻/潜入/绕路各自按比例削
+ * 五参是 `AREA, SINDO, INV_TYPE, SINKOU(#DIM REF), YUSYA_I`——三分支都会
+ * 读 SINKOU，FORT/CHALLENGE 还会改写它（两分支的强攻/潜入/绕路各自按比例削
  * 减）。ere 侧把 SINKOU 与 YUSYA_I 打包成 `state` 传进传出，等价于 `#DIM
  * REF`（返回后由调用方写回局部量）。
  *
@@ -444,10 +442,10 @@ function recapture_key(stage) {
  * @param {number} sindo 征服标记 FLAG 下标（82）
  * @param {number} inv_type 出兵类别（0/1/2/3）
  * @param {{sinkou: number, yusya_i: number}} state 以引用语义共享的局部量
- *   （原作 `#DIM REF SINKOU` 与 `#DIM YUSYA_I`）
+ *   （`#DIM REF SINKOU` 与 `#DIM YUSYA_I`）
  * @param {(n: number) => number} [rand] RAND:N 随机源（RAND:10 的上界）
- * @returns {Promise<number>} 0/-1 = 继续侵攻（原作 :213 的契约是「0 继续、
- *   1 结束」，三臂照此返回）；>0 = 侵攻中止（调用方透传）
+ * @returns {Promise<number>} 0/-1 = 继续侵攻（契约是「0 继续、
+ *   1 结束」，三分支照此返回）；>0 = 侵攻中止（调用方透传）
  */
 async function invasion_event(
   area,
@@ -472,7 +470,7 @@ function captive_route() {
 }
 
 /**
- * @_INV_DEATH_CHECK（INVASION_EVENT.ERB:462-529）：精锐部队战斗的退场判定。
+ * inv_death_check：精锐部队战斗的退场判定。
  *
  * 两段：先判 ARG:1（精锐部队）的三条死线 → RETURN 2（魔王侧获胜）；再判
  * ARG:0（领军勇者）的四条 → RETURN 1（侵攻中止）。玩家的位 7 开关
@@ -480,15 +478,15 @@ function captive_route() {
  * 本国（CFLAG:1 = 0）。
  *
  * 战斗体内有两处调用点（精锐部队反击前、反击后），都传（领军勇者，精锐
- * 部队）：先判精锐部队的三条死线，「魔王侧获得胜利」的判据是精锐部队
+ * 部队）：先判精锐部队的三条死线，「魔王侧获得胜利」的判断条件是精锐部队
  * 退场，不是魔王被打残。
  *
- * @param {number} arg0 领军勇者（原作 ARG:0）
- * @param {number} arg1 精锐部队（原作 ARG:1）
+ * @param {number} arg0 领军勇者
+ * @param {number} arg1 精锐部队
  * @returns {Promise<number>} 2 = 精锐部队退场；1 = 魔王侧退场；0 = 继续
  */
 async function inv_death_check(arg0, arg1) {
-  // 勇者死亡判定（判 ARG:1）
+  // 勇者死亡判定（判 arg1）
   const elite_hp = era.get(`base:${arg1}:0`) || 0;
   if (elite_hp <= 0) {
     era.print(
@@ -510,7 +508,7 @@ async function inv_death_check(arg0, arg1) {
     return 2;
   }
 
-  // 魔王側の生き残りを判定（判 ARG:0；四条 ELSEIF，顺序 1:1）
+  // 魔王側の生き残りを判定（判 arg0；四条 ELSEIF，顺序照旧）
   const hero_hp = era.get(`base:${arg0}:0`) || 0;
   const hero_mp = era.get(`base:${arg0}:1`) || 0;
   // 被狂王俘虏过（TALENT:280）且气力见底 → 抛下武器投降
@@ -528,8 +526,8 @@ async function inv_death_check(arg0, arg1) {
     era.drawLine();
     return 1;
   }
-  // 三条「魔王军被打散」的形态，各自的收尾文案按位 7 二分。
-  // 原作的 `PRINTFORM X，` 接 `PRINTFORMW Y` 在同一显示行，ere 侧并入一次
+  // 三条「魔王军被打散」的写法，各自的收尾文案按位 7 二分。
+  // `PRINTFORM X，` 接 `PRINTFORMW Y` 在同一显示行，ere 侧并入一次
   // print + 等键（同显示行归并先例）。
   const collapse =
     hero_hp <= 0
@@ -562,21 +560,20 @@ async function inv_death_check(arg0, arg1) {
   return 1;
 }
 
-/** 精锐部队的两个预设角色号（:298 `ADDCHARA 18` 防御型 / :303 `ADDCHARA 19` 攻击型） */
+/** 精锐部队的两个预设角色号（`ADDCHARA 18` 防御型 / `ADDCHARA 19` 攻击型） */
 const SEIEI_DEFENDER = 18;
 const SEIEI_ATTACKER = 19;
 
-/** 战斗回合数（:317 `REPEAT 21`）：第 21 次循环由 :318 的 `TIME_I > 19` 截住 */
+/** 战斗回合数（`REPEAT 21`）：第 21 次循环由 `TIME_I > 19` 截住 */
 const SEIEI_ROUNDS = 21;
-/** 战线崩溃的判据（:318 `IF TIME_I > 19`） */
+/** 战线崩溃的判断条件（`IF TIME_I > 19`） */
 const SEIEI_TIMEOUT_AT = 19;
 
 /**
- * 精锐部队战斗体（INVASION_EVENT.ERB:279-459）。
+ * 精锐部队战斗体。
  *
- * 回合制：勇者侧先制（:361 的防御判定 + :362 的 1/5 会心一击）→
- * `_INV_DEATH_CHECK`（无实参，见该函数）→ 精锐侧反击（:412 的防御判定）→
- * `_INV_DEATH_CHECK, YUSYA_I, SEIEI_I`。`REPEAT 21` 的第 21 次直接走
+ * 回合制：勇者侧先制（防御判定 + 1/5 会心一击）→ inv_death_check →
+ * 精锐侧反击（防御判定）→ inv_death_check。`REPEAT 21` 的第 21 次直接走
  * 超时（战线崩溃、给 SINKOU/10 经验、RETURN 1）。
  *
  * @param {number} area 侵攻地区 FLAG 下标（81）
@@ -689,7 +686,7 @@ async function seiei_battle(area, state, rand) {
     era.drawLine();
 
     // 魔王軍の先制攻撃（会心一击 1/5，倍率 ×4；否则 ×2）。
-    // **两处的档位除数不同**：守卫是 `SINKOU/2048+1`、伤害式
+    // **两处的档位除数不同**：判定线是 `SINKOU/2048+1`、伤害式
     // 是 `SINKOU/1024+1`——不对称的既有行为，有意不统一。
     const strike =
       chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1);
@@ -783,7 +780,7 @@ async function seiei_battle(area, state, rand) {
 }
 
 /**
- * 精锐部队退场（:327-331 / :395-400 / :430-435 等重复段）：`SEIEI_I =
+ * 精锐部队退场（三处重复段）：`SEIEI_I =
  * CHARANUM - 1` 后 PARTY_CHAR_DEL → DELCHARA → NAME_RESET。扁平化（#21）
  * 下 `CHARANUM - 1` 不成立，直接用它的角色号（#487 的教训）。
  * @param {number} seiei 精锐部队的角色号（18 或 19）
@@ -795,13 +792,13 @@ async function seiei_cleanup(seiei) {
 }
 
 /**
- * @INVASION_EVENT_SEIEI（INVASION_EVENT.ERB:240-459）：精英部队事件。
+ * invasion_event_seiei：精英部队事件。
  *
- * 三臂共用的头部（:250-271）：FLAG:SINDO != 0（已征服）→ RETURN -1；否则按
+ * 三分支共用的头部：FLAG:SINDO != 0（已征服）→ RETURN -1；否则按
  * 侵攻度打三档传闻文本——**三档的 INV_TYPE 条件不同**：首档
- * `FLAG:AREA == 0`（:257）无 INV_TYPE 条件，后两档（:261/:266）要求
+ * `FLAG:AREA == 0` 无 INV_TYPE 条件，后两档要求
  * `INV_TYPE != 1`，所以魔力路线只打首档、[0]/[2]/[3] 三路三档都可能打。
- * 打完 `SIF INV_TYPE != 2 → RETURN -1`（:273-274）：只有 [2] 路线进战斗体。
+ * 打完 `SIF INV_TYPE != 2 → RETURN -1`：只有 [2] 路线进战斗体。
  *
  * @param {number} area 侵攻地区 FLAG 下标（81）
  * @param {number} sindo 征服标记 FLAG 下标（82）
@@ -856,7 +853,7 @@ async function invasion_event_seiei(
   }
 
   // IF FLAG:AREA >= 5000 && FLAG:SINDO == 0 && INV_TYPE == 2（纯 `&&` 链；
-  // FLAG:SINDO == 0 已由 :250 的早退保证）
+  // FLAG:SINDO == 0 已由上面的早退保证）
   if (progress >= 5000) {
     const roll = rand(progress); // LOCAL = RAND:FLAG:AREA
     if (roll > 2000) {
@@ -886,7 +883,7 @@ async function invasion_event_seiei(
 }
 
 /**
- * FORT 的五个地区表（:542-567）：地点、敌方部队、要塞名，以及
+ * FORT 的五个地区表：地点、敌方部队、要塞名，以及
  * `LOCAL:3`（`TALENT:YUSYA_I:种族 == n`——决定潜入支的 100% 成功档）。
  * 未列出的 AREA 三串留空、`LOCAL:3` 保持 0（LOCAL 的初值）。
  */
@@ -899,21 +896,21 @@ const FORT_AREAS = {
 };
 
 /**
- * @INVASION_EVENT_FORT（INVASION_EVENT.ERB:530-814）：侵略中途事件（要塞）。
+ * invasion_event_fort：侵略中途事件（要塞）。
  *
- * 守卫（:539）对 INV_TYPE == 2/3 恒放行、对 0 看 FLAG:SINDO、对 1 恒早退
+ * 入口检查对 INV_TYPE == 2/3 恒放行、对 0 看 FLAG:SINDO、对 1 恒早退
  * （读法与依据见 #503 的 M10789）。行为体按 INV_TYPE 三支：0 固定走强攻、
  * 2 三选项（强攻/潜入/绕路）、3 两选项（偷偷潜入/绕路）。
  *
- * **`SINKOU` 按引用改写**（原作 `#DIM REF SINKOU`）：强攻减员、潜入失败、
- * 绕路减员都直接改 `state.sinkou`，调用方读回后用于侵攻結果共通（:609-618）。
+ * **`SINKOU` 按引用改写**（`#DIM REF SINKOU`）：强攻减员、潜入失败、
+ * 绕路减员都直接改 `state.sinkou`，调用方读回后用于侵攻結果共通。
  *
  * @param {number} area 侵攻地区 FLAG 下标（81）
  * @param {number} sindo 征服标记 FLAG 下标（82）
  * @param {number} inv_type 出兵类别（0/2/3）
  * @param {{sinkou: number, yusya_i: number}} state 共享局部量
  * @param {(n: number) => number} [rand] RAND:N 随机源（各处 RAND:10）
- * @returns {Promise<number>} 0 = 继续侵攻；-1 = 守卫早退（继续侵攻）；
+ * @returns {Promise<number>} 0 = 继续侵攻；-1 = 检查早退（继续侵攻）；
  *   1 = 侵攻中止
  */
 async function invasion_event_fort(
@@ -924,7 +921,7 @@ async function invasion_event_fort(
   rand = default_rand,
 ) {
   // `SIF FLAG:SINDO || INV_TYPE != 0 && INV_TYPE != 2 && INV_TYPE != 3`
-  // —— Emuera 里 `&&` 与 `||` **同优先级、左结合**（operators.md 的优先级表
+  // —— 旧引擎里 `&&` 与 `||` **同优先级、左结合**（operators.md 的优先级表
   // 把两者排在同一行；com-sex.js:1837 / train-message.js:251 同款读法），
   // 因此原式等价于 `((FLAG:SINDO || INV_TYPE != 0) && INV_TYPE != 2)
   // && INV_TYPE != 3`，而不是 C 式「&& 优先」的 `FLAG:SINDO || (...)`：
@@ -938,7 +935,7 @@ async function invasion_event_fort(
   }
 
   const yusya = state.yusya_i;
-  // 未列出的 AREA：原作 `LOCAL:3` 保持初值 0（恒假）→ 这里用 -1 保证
+  // 未列出的 AREA：`LOCAL:3` 保持初值 0（恒假）→ 这里用 -1 保证
   // `talent:314 === race` 永不成立（TALENT:314 是非负值），不能写 0——
   // 那会让种族 0（人类）在未知地区恒吃 100% 潜成功（#505 地区泛化时会生效）
   const info = FORT_AREAS[area] ?? {
@@ -1025,7 +1022,7 @@ async function invasion_event_fort(
         fort_hero_reward(inv_type, state, 5);
         chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 2);
         era.print(`${chara_callname(yusya)}的体力减少了一半！`);
-        // 注意：:645 的 PRINTFORML 后没有 WAIT，等键在 :649-650 的 WAIT
+        // 注意：这里的 PRINTFORML 后没有 WAIT，等键由后面的 WAIT 承担
       }
       era.print('怪物数量减少了50%');
       state.sinkou = Math.trunc(state.sinkou / 2);
@@ -1141,7 +1138,7 @@ async function invasion_event_fort(
       );
       era.print(`${chara_nickname(yusya)}杀出一条血路，勉强逃了回去。`); // PRINTFORMW
       await era.waitAnyKey();
-      // 源 :752-754 段之间是纯空白行（不产生输出），ere 侧不打空行
+      // 两段之间是纯空白行（不产生输出），ere 侧不打空行
       chara(yusya).dungeon.体力 = 1;
       chara(yusya).invasion.状态 = 0;
       return 1;
@@ -1153,7 +1150,7 @@ async function invasion_event_fort(
       `在一番激烈战斗后${chara_nickname(yusya)}还是被${info.troop}生擒。`, // PRINTFORMW
     );
     await era.waitAnyKey();
-    // 源 :760-762 段之间是纯空白行（不产生输出），ere 侧不打空行
+    // 两段之间是纯空白行（不产生输出），ere 侧不打空行
     chara(yusya).invasion.状态 = 9;
     return 1;
   }
@@ -1229,10 +1226,10 @@ async function fort_choice(allowed) {
 }
 
 /**
- * FORT [2] 路线的经验段（:619-624 / :640-645 / :680-685 / :697-702）。
- * 只有 INV_TYPE == 2 给经验，且用的是**减员前**的 SINKOU。原作四处都是
- * `EXP:…` 接 `PRINTFORML`（不等键）——等键在各分支末尾的 WAIT
- * （:624-626 / :649-650 / :687-690 / :704-707），所以这里不 wait。
+ * FORT [2] 路线的经验段（四处的同一形状）。
+ * 只有 INV_TYPE == 2 给经验，且用的是**减员前**的 SINKOU。四处都是
+ * `EXP:…` 接 `PRINTFORML`（不等键）——等键在各分支末尾的 WAIT，
+ * 所以这里不 wait。
  * @param {number} inv_type 出兵类别
  * @param {{sinkou: number, yusya_i: number}} state 共享局部量
  * @param {number} divisor 除数（四处都是 SINKOU/5）
@@ -1247,7 +1244,7 @@ function fort_hero_reward(inv_type, state, divisor) {
 }
 
 /**
- * 「带队奴隶有天使/恶魔翼」（FORT :677-678/:742-743 与 CHALLENGE 同款的
+ * 「带队奴隶有天使/恶魔翼」（FORT 与 CHALLENGE 同款的
  * `TALENT:恶魔翅膀 || TALENT:种族 == 6 || TALENT:种族 == 8`）。
  * 恶魔翅膀 = TALENT:245、种族 = TALENT:314（yml/Talent.yml）；种族 6 是**天使**、
  * 8 是魔族（对照 CHALLENGE 地区表的 `race` 列：天界/天神宫两组都是 6）。
@@ -1260,7 +1257,7 @@ function has_wing(cid) {
 }
 
 /**
- * CHALLENGE 的五个地区表（:828-887）：称呼、地点与「复现职业」
+ * CHALLENGE 的五个地区表：称呼、地点与「复现职业」
  * （`LOCAL:12`，开挂取胜时 `ADDCHARA LOCAL:12`）。
  *
  * AREA 81 的职业固定 9；其余四表是 `LOCAL:12 = RAND:2 ? a # b`——
@@ -1322,8 +1319,8 @@ const CHALLENGE_AREAS = {
 };
 
 /**
- * 人数上限的快照（CHALLENGE :996-1010 的七分支，与 @ENTER_ENEMY :35-47 /
- * @GET_ENEMY :332-344 是同源的复制段，三处各自 1:1）。命中任一分支时
+ * 人数上限的快照（CHALLENGE 的七分支，与 enter_enemy / get_enemy
+ * 里的两段是同一段判定，三处各自保留一份）。命中任一分支时
  * `LOCAL = 0`——开挂取胜（要求 `LOCAL >= 2`）随之降级成开挂失败。
  * @returns {boolean} true = 人数已满
  */
@@ -1357,14 +1354,13 @@ function hero_cap_reached() {
 }
 
 /**
- * @INVASION_EVENT_CHALLENGE（INVASION_EVENT.ERB:815-1162）：侵略中途事件
- * （被勇者叫阵单挑）。
+ * invasion_event_challenge：侵略中途事件（被勇者叫阵单挑）。
  *
- * 守卫（:824）是纯 `&&` 链，对 0/2/3 放行、对 1 早退（无优先级歧义）。
- * 地区的位域守卫（`SIF EX_FLAG:95 & bit → RETURN -1`）保证每块地盘的
- * 「被叫阵」只发生一次；开挂取胜支把该位置起（`:1041 EX_FLAG:95 = LOCAL:20`）。
+ * 入口检查是纯 `&&` 链，对 0/2/3 放行、对 1 早退（无优先级歧义）。
+ * 地区的位域检查（`SIF EX_FLAG:95 & bit → RETURN -1`）保证每块地盘的
+ * 「被叫阵」只发生一次；开挂取胜支把该位置起（`EX_FLAG:95 = LOCAL:20`）。
  *
- * `SINKOU` 按引用改写（原作 `#DIM REF SINKOU`）：只有 `[3] 无视，全军进攻`
+ * `SINKOU` 按引用改写（`#DIM REF SINKOU`）：只有 `[3] 无视，全军进攻`
  * 的「损失一般」档会改成 ×4/5。
  *
  * @param {number} area 侵攻地区 FLAG 下标（81）
@@ -1372,7 +1368,7 @@ function hero_cap_reached() {
  * @param {number} inv_type 出兵类别（0/2/3）
  * @param {{sinkou: number, yusya_i: number}} state 共享局部量
  * @param {(n: number) => number} [rand] RAND:N 随机源（RAND:2/4/10 的上界）
- * @returns {Promise<number>} 0 = 继续侵攻；-1 = 守卫早退（继续侵攻）；
+ * @returns {Promise<number>} 0 = 继续侵攻；-1 = 检查早退（继续侵攻）；
  *   1 = 侵攻中止
  */
 async function invasion_event_challenge(
@@ -1469,7 +1465,7 @@ async function invasion_event_challenge(
     ])) {
       era.print(line);
     }
-    // 源 :952 是纯空白行，ere 侧不打空行
+    // 这里是纯空白行，ere 侧不打空行
     await era.waitAnyKey(); // WAIT
     choice = 2;
   } else {
@@ -1486,7 +1482,7 @@ async function invasion_event_challenge(
       era.print(line);
     }
     era.print(`毫无紧张感的${info.foe}这样说着。`);
-    // 源 :965-967 段之间是纯空白行（不产生输出），ere 侧不打空行
+    // 两段之间是纯空白行（不产生输出），ere 侧不打空行
     choice = 3;
     era.print(
       `在意识到敌人只有一个人后，魔王军向敢于挑衅的${info.foe}发起了猛烈的进攻。`, // PRINTFORMW
@@ -1628,7 +1624,7 @@ async function invasion_event_challenge(
         `虽然${info.foe}${info.skill}，但${chara_nickname(yusya)}也不遑多让。`,
       );
       era.print(`在大战几百回合之后，${info.foe}心有不甘地${info.leave}。`);
-      // 源 :1109-1112 段之间是纯空白行（不产生输出），ere 侧不打空行
+      // 两段之间是纯空白行（不产生输出），ere 侧不打空行
       era.print(
         inv_type === 2
           ? `魔王军高呼万岁，继续向${info.place}进发。`
@@ -1688,10 +1684,10 @@ async function invasion_event_challenge(
 /**
  * PRINTDATA / PRINTDATAL 的随机抽取（等概率选中一组，逐行返回）。
  *
- * 原作 :893-910 的 PRINTDATA 与 :1015-1028 的 PRINTDATAL 各含若干
+ * PRINTDATA 与 PRINTDATAL 各含若干
  * DANTA/DATALIST/DATAFORM 块，引擎「等概率随机选择一个显示」——一次
  * `RAND:块数`。ere 侧无全局 RAND 序列（#117 决议），改用注入的 rand，
- * 上界 = 块数（PRINTDATA 与 PRINTDATAL 同款）。
+ * 上界 = 块数（两种命令同款）。
  *
  * @param {(n: number) => number} rand 随机源
  * @param {string[][]} blocks 候选块（每块若干行）
@@ -1701,7 +1697,7 @@ function printdata(rand, blocks) {
   return blocks[rand(blocks.length)];
 }
 
-/** @MEDAL_BONUS 的十一档补正（降序 IF 链：命中即返，不再往下判） */
+/** medal_bonus 的十一档补正（降序 IF 链：命中即返，不再往下判） */
 const MEDAL_TIERS = [
   { over: 500, bonus: 160 },
   { over: 250, bonus: 150 },
@@ -1717,9 +1713,9 @@ const MEDAL_TIERS = [
 ];
 
 /**
- * @MEDAL_BONUS：勋章补正（EXP:ARG:81 分档）。
+ * medal_bonus：勋章补正（EXP 第 81 位分档）。
  *
- * 十一档降序判定，命中即打印 `%CALLNAME:ARG%` +「的勋章补正」+ 一个全角
+ * 十一档降序判定，命中即打印角色呼名 +「的勋章补正」+ 一个全角
  * 空格 + `x1.xx`（U+3000 对齐）并等键，返回 100-160 的百分比。未达首档
  * （≤5 枚）返回 100 且不打任何输出。
  *
@@ -1745,31 +1741,31 @@ async function medal_bonus(cid = 0) {
 }
 
 /**
- * @SENGEN_VIDEO_BONUS（INVASION.ERB:1236-1266）：投放量的随机加成。
+ * sengen_video_bonus：投放量的随机加成。
  *
- * 原作 RESULT 是**按引用回传**的实参（`TIMES RESULT, …` 直接改写调用方的
+ * RESULT 是**按引用回传**的实参（`TIMES RESULT, …` 直接改写调用方的
  * RESULT），ere 侧改成返回值由调用方接。MODE 0（普通）先跳 `$MODE_0`
- * （:1243-1244），只掷 :1254-1257 两枚；MODE 1（奸商）先掷 :1246-1251 的
- * 三枚加成再落同一段——**判定顺序即 RAND 消费顺序，不可交换**。
- * MODE 1 只会变大（:1260-1261 的 `RESULT <= M → RESULT = M` 保底），
+ * 段，只掷两枚；MODE 1（奸商）先掷三枚加成再落同一段——
+ * **判定顺序即 RAND 消费顺序，不可交换**。
+ * MODE 1 只会变大（`RESULT <= M → RESULT = M` 保底），
  * MODE 0 可能缩水到 0（×0.80 截断），调用方据此走「投放失败」分支。
  *
- * @param {number} result 投放数（原作 RESULT 的传入值）
- * @param {number} [mode] 0 = 普通，1 = 奸商（原作 MODE 的默认值 0）
+ * @param {number} result 投放数（RESULT 的传入值）
+ * @param {number} [mode] 0 = 普通，1 = 奸商（MODE 的默认值 0）
  * @param {(n: number) => number} [rand] 随机源（RAND:2/3/4 的上界）
- * @returns {number} 加成后的投放数（原作回写的 RESULT）
+ * @returns {number} 加成后的投放数（回写的 RESULT）
  */
 function sengen_video_bonus(result, mode = 0, rand = default_rand) {
   const base = result; // M = RESULT
   let placed = result;
   if (mode !== 0) {
-    // 奸商加成段（MODE == 0 时被 :1243-1244 跳过）
+    // 奸商加成段（MODE == 0 时被跳过）
     placed = times(placed, 1.1);
     if (rand(2) === 0) placed = times(placed, 1.2);
     if (rand(3) === 0) placed = times(placed, 1.2);
     if (rand(4) === 0) placed = times(placed, 1.2);
   }
-  // $MODE_0 :1253-1257 两段共用
+  // $MODE_0 段，两种 MODE 共用
   if (rand(2) === 0) placed = times(placed, 1.2);
   if (rand(3) === 0) placed = times(placed, 0.8);
   // 提示与保底（四条 SIF 的先后即输出次序）
@@ -1789,25 +1785,25 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
 }
 
 /**
- * @SENGEN_VIDEO：水晶球投放菜单（post_conquest_menu 的 [1000]，进入后
+ * sengen_video：水晶球投放菜单（post_conquest_menu 的 [1000]，进入后
  * RETURN 0）。
  *
  * 四档操作：投放、雇奸商代理投放（付 5000G/枚 或 1 枚勋章）、花钱增强
  * 流行效果、花钱延长流行时间；[999] 退出。
  *
- * 循环形态沿用文件头的既有取舍：回主菜单重画整屏、子画面只重问不重画；
+ * 循环写法沿用文件头的既有取舍：回主菜单重画整屏、子画面只重问不重画；
  * 选项 `PRINTL [n] …` 改 printButton（引擎自动拼 `[n] `，正文不得自带前缀，
  * PR #30）；`{值,N}` 走 pad_number。
  *
  * 两处行为在此登记：
  *   - 犒赏段的两条按钮渲染条件（`(M*5000) < MONEY`、`M < EXP:0:81`）与
- *     接受条件同式，但支付发生在**加成之后**、判据用的是 `M`（= 投入数）：
+ *     接受条件同式，但支付发生在**加成之后**、判断条件用的是 `M`（= 投入数）：
  *     `M*5000 == MONEY` 或 `M == 勋章数` 时按钮不渲染，而引擎白名单会拒收
  *     未渲染的 [1]/[2]，玩家只能重问；
  *   - 效果增强与时长延长在随机段之后各有一道封顶（×2 / +5）与一道保底
  *     （时长的 `(9013 - M) < 1 → M + 1`，即最小也涨 1 天）。
  *
- * 三处由引擎形态带出的说明（都不是行为偏离）：
+ * 三处由引擎行为带出的说明（都不是行为偏离）：
  *   - 六处数值读数走 number_input()：空输入与非数字归一到 0，见该函数的
  *     JSDoc（引擎侧空输入会被重问掉，游戏层看不到空值）；
  *   - 菜单每轮至少打印 `[999]`，所以 `STOCK == 0 && RESULT != 999` 与落尾
@@ -1822,7 +1818,7 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
  * @returns {Promise<0>} 两条出口都 RETURN 0
  */
 async function sengen_video(rand = default_rand) {
-  // $INPUT_LOOP :1073-1095（画在循环头：GOTO INPUT_LOOP 即重画）
+  // $INPUT_LOOP（画在循环头：GOTO INPUT_LOOP 即重画）
   menu: for (;;) {
     const stock =
       era_exflag.crystal_ball_stock - era_exflag.crystal_ball_deployed;
@@ -1868,7 +1864,7 @@ async function sengen_video(rand = default_rand) {
       era.print('通过投放拍摄的影像，激起反抗魔王的决心。');
       era.drawLine();
       era.print('请输入要投放的数量');
-      // $INPUT_LOOP_TMP0 :1101-1107（0 = 回菜单，超量 = 只重问）
+      // $INPUT_LOOP_TMP0（0 = 回菜单，超量 = 只重问）
       let count;
       for (;;) {
         count = await number_input();
@@ -1882,7 +1878,7 @@ async function sengen_video(rand = default_rand) {
         break;
       }
       era_exflag.crystal_ball_deployed += count; // EX_FLAG:9011 += RESULT
-      // CALL SENGEN_VIDEO_BONUS, RESULT（RESULT 按引用回写）
+      // sengen_video_bonus 的返回值即回写后的投放数
       const placed = sengen_video_bonus(count, 0, rand);
       if (placed >= 1) {
         era.print(`成功投放${placed}部水晶球`);
@@ -1903,7 +1899,7 @@ async function sengen_video(rand = default_rand) {
       era.print('但需要收取代理酬劳，每部5000G或是1枚勋章。');
       era.drawLine();
       era.print('请输入要投放的数量');
-      // $INPUT_LOOP_TMP1 :1126-1135
+      // $INPUT_LOOP_TMP1
       let count;
       for (;;) {
         count = await number_input();
@@ -1922,8 +1918,8 @@ async function sengen_video(rand = default_rand) {
         break;
       }
       era_exflag.crystal_ball_deployed += count; // EX_FLAG:9011 += RESULT
-      // CALL SENGEN_VIDEO_BONUS, RESULT, 1；犒赏段（:1143-1157）消费的
-      // M 就是调用前的投入数（原作 M 是全局量、:1242 赋值后一直留到调用方）
+      // 奸商模式的 sengen_video_bonus；犒赏段消费的
+      // M 就是调用前的投入数（M 是全局量，赋值后一直留到调用方）
       const base = count;
       const placed = sengen_video_bonus(count, 1, rand);
       if (placed >= 1) {
@@ -1937,7 +1933,7 @@ async function sengen_video(rand = default_rand) {
         if (base < chara(0).event.勋章经验) {
           era.printButton('犒赏勋章', 2);
         }
-        // $INPUT_LOOP_TMP2 :1147-1158（无效输入重问，见函数 JSDoc 的缺陷说明）
+        // $INPUT_LOOP_TMP2（无效输入重问，见函数 JSDoc 的缺陷说明）
         for (;;) {
           const pay = await number_input();
           if (pay === 1 && base * 5000 < era_flag.money) {
@@ -1974,7 +1970,7 @@ async function sengen_video(rand = default_rand) {
         era.printButton('支付勋章', 2);
       }
       era.printButton('离开', 999);
-      // $INPUT_LOOP_TMP3 :1175-1188
+      // $INPUT_LOOP_TMP3
       for (;;) {
         const pay = await number_input();
         if (pay === 1 && era_flag.money > 50000) {
@@ -2014,7 +2010,7 @@ async function sengen_video(rand = default_rand) {
         era.printButton('支付', 1);
       }
       era.printButton('算了', 999);
-      // $INPUT_LOOP_TMP4 :1207-1217
+      // $INPUT_LOOP_TMP4
       for (;;) {
         const pay = await number_input();
         if (pay === 1 && era_flag.money > 50000) {
@@ -2043,9 +2039,9 @@ async function sengen_video(rand = default_rand) {
     if (result === 999) {
       return 0; // （[999] 的 RETURN 0 与紧随其后落尾的空 ELSE 同值）
     }
-    // 其余值落在原作的空 ELSE 上：落尾即隐式 RETURN 0，同样退出菜单。
+    // 其余值落在空 ELSE 上：落尾即隐式 RETURN 0，同样退出菜单。
     // 真引擎里同样不可达（菜单每轮都打印 [999]，白名单外的手工键入送不到
-    // 游戏层），两支都按原作保留
+    // 游戏层），两支都按原结构保留
     return 0;
   }
 }
@@ -2064,7 +2060,7 @@ async function sengen_video(rand = default_rand) {
  * 标记仍为 0 就会触发（三组的标记由各自 ENDING_x 置 1）。#118 时写的
  * 「窄路径不可达（对应无写入点）」对这三组已失效。
  *
- * 天神宫不在检查之列：判据读的 EX_FLAG:101 没有写点（侵攻度累加在
+ * 天神宫不在检查之列：判断条件读的 EX_FLAG:101 没有写点（侵攻度累加在
  * FLAG:101），那组条件永不成立，是死分支；END10_55 演出本体保留在
  * event-ending.js（直驱测试覆盖），没有分派入口。
  *
@@ -2123,10 +2119,10 @@ async function invasion_check() {
 }
 
 /**
- * 威望修正（INVASION.ERB:270-293，魔力分支内的一份；怪物分支 :236-259
- * 同构，两处共用本函数，#503 起 [0] 也走这里）。五档；0-20 档侵攻失败
- * （早退，返回 true 表示已 RETURN），21-40 档的提示是 PRINTW（:243/:277
- * `PRINTW 侵攻战斗力减少`）——**要等键**，其余三档是 PRINTl/PRINTL（不等键）。
+ * 威望修正（魔力分支内的一份；怪物分支同构，两处共用本函数，#503 起
+ * [0] 也走这里）。五档；0-20 档侵攻失败
+ * （早退，返回 true 表示已 RETURN），21-40 档的提示是 PRINTW
+ * （`PRINTW 侵攻战斗力减少`）——**要等键**，其余三档是 PRINTl/PRINTL（不等键）。
  * 等键使本函数变成 async（#503 审查发现：原先两行打印后直接返回，#117 起的
  * 存量偏差，[0] 也走这条档位后一并修正）。
  *
@@ -2168,18 +2164,18 @@ async function apply_prestige_tier(sinkou) {
       failed: false,
     };
   }
-  // 威望 < 0 或 > 100：原作无匹配档，无修正（1:1）
+  // 威望 < 0 或 > 100：无匹配档，不作修正
   return { sinkou, failed: false };
 }
 
 /**
- * @INVASION（INVASION.ERB:6-997）：侵略画面入口，按 FLAG:82 分派。
+ * invasion：侵略画面入口，按 FLAG:82 分派。
  *
  * 返回 0 = 取消（不消耗回合，回主菜单）；返回 1 = 回合已耗（调用方
  * page-shop 的 [109] 分支据此 BEGIN TURNEND）。
  *
- * 外层 `for (;;)` 承载原作的 RESTART（:325/:377 等）：菜单与其下各层
- * 把 RESTART 信号原样返回，这里重走 :6 的分派——与「回到函数开头重新执行」
+ * 外层 `for (;;)` 承载 RESTART：菜单与其下各层
+ * 把 RESTART 信号原样返回，这里重走入口分派——与「回到函数开头重新执行」
  * 等价（RESTART 常量的说明见上）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（透传到出兵路线）
@@ -2198,20 +2194,20 @@ async function invasion(rand = default_rand) {
 }
 
 /**
- * @INVASION（INVASION.ERB:25-138）：地上征服后的地区选择菜单（#468）。
+ * post_conquest_menu：地上征服后的地区选择菜单（#468）。
  *
  * 五条状态行（人间界固定「已征服」；精灵/龙之山/天界随各自 FLAG:87/89/91
  * 征服标记切换标签；天神宫随 route_33 开窗或 shrine_stage >= 4 切换，两
- * 条件都不满足时不渲染；圣灵骑士堡垒原作没有状态行，仅按钮文案随
+ * 条件都不满足时不渲染；圣灵骑士堡垒没有状态行，仅按钮文案随
  * FLAG:92 == 15 切换）+ 六个可选分支（[0] 与 [1]/[2]/[3]/[5] 都转
  * start_campaign()，区别只在地区实参——[1]/[2]/[3]/[5] 自 #505 起是真身；
- * [4] 转 ARCANA_FORT 真身，#470）+ [9] CAMPAIGN_MENU + [999] 退出 +
- * [1000] SENGEN_VIDEO + 原作 [1001] AGENT_MENU 分支（后者随 #638 删除，
- * 键入 1001 落到 :102 的拒收支——见文件头）。
+ * [4] 转 arcana_fort() 真身，#470）+ [9] campaign_menu() + [999] 退出 +
+ * [1000] sengen_video() + 已删除的 [1001] 分支（随 #638 去掉，
+ * 键入 1001 落到拒收支——见文件头）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（转 start_campaign）
- * @returns {Promise<number|typeof RESTART>} 0 / 1；RESTART = 原作出兵路线里
- *   的 RESTART，由 invasion() 的外层循环重走 :6 的分派
+ * @returns {Promise<number|typeof RESTART>} 0 / 1；RESTART = 出兵路线里
+ *   的 RESTART，由 invasion() 的外层循环重走入口分派
  */
 async function post_conquest_menu(rand = default_rand) {
   // 五条状态行（BARSTR 偏离说明见文件头；圣灵骑士堡垒没有状态行，
@@ -2256,35 +2252,35 @@ async function post_conquest_menu(rand = default_rand) {
   }
   era.drawLine();
   era.print('地面上已被你征服了，你指挥着你的军队准备进攻其他领土………');
-  era.printButton('- 巡视地上的魔界领土（已征服）', 0); // INVASION.ERB:52
+  era.printButton('- 巡视地上的魔界领土（已征服）', 0);
   era.printButton(
     era_flag.elf_realm_conquered >= 1
-      ? '- 巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54
-      : '- 入侵精灵族的领域', // INVASION.ERB:56
+      ? '- 巡视黑暗精灵的领土（已征服）'
+      : '- 入侵精灵族的领域',
     1,
   );
   era.printButton(
     era_flag.dragon_realm_conquered >= 1
-      ? '- 巡视混沌龙之山（已征服）' // INVASION.ERB:59
-      : '- 入侵龙之山脉', // INVASION.ERB:61
+      ? '- 巡视混沌龙之山（已征服）'
+      : '- 入侵龙之山脉',
     2,
   );
   era.printButton(
     era_flag.heaven_conquered >= 1
-      ? '- 巡视堕天使的淫界（已征服）' // INVASION.ERB:64
-      : '- 入侵天界', // INVASION.ERB:66
+      ? '- 巡视堕天使的淫界（已征服）'
+      : '- 入侵天界',
     3,
   );
   // FLAG:92（arcana_fort_stage）是位掩码，不是线性阶段数：&1 东 &2 南
-  // &4 西 &8 北（ARCANA_FORT.ERB:20/:76，ARCANA_FORT 自身按 |= 逐门置位），
+  // &4 西 &8 北（arcana_fort 自身按 |= 逐门置位），
   // 15 = 四门全破；这里只判「是否全部攻陷」，不代表推进到第几关
   era.printButton(
     era_flag.arcana_fort_stage === 15
-      ? '- 巡视圣灵骑士的卖春堡垒（已征服）' // INVASION.ERB:69
-      : '- 攻略圣灵骑士的堡垒', // INVASION.ERB:71
+      ? '- 巡视圣灵骑士的卖春堡垒（已征服）'
+      : '- 攻略圣灵骑士的堡垒',
     4,
   );
-  // [5] 的渲染与派发同一道守卫（route_33 > 500）：窗口开着才渲染，
+  // [5] 的渲染与派发同一道检查（route_33 > 500）：窗口开着才渲染，
   // 标签随剧情阶段切换；派发拒收窗口外的键入（见下方派发检查）。
   if (era_exflag.route_33 > 500) {
     if (era_exflag.shrine_stage >= 4) {
@@ -2295,9 +2291,9 @@ async function post_conquest_menu(rand = default_rand) {
       era.printButton('- 攻略天神宫', 5);
     }
   }
-  era.printButton('- 向着世界之外', 9); // INVASION.ERB:80（原文作「向著」，#60 归一为简体）
+  era.printButton('- 向着世界之外', 9); // 旧文本作「向著」，#60 归一为简体
   era.drawLine();
-  era.printButton('- 退出', 999); // INVASION.ERB:82
+  era.printButton('- 退出', 999);
   // [1000] 的分子/分母走具名门面（#502 起；此前的「无门面、直读」注释
   // 已过时，era-exflag.js 的 crystal_ball_deployed/stock 早已备好）
   era.printButton(
@@ -2305,28 +2301,28 @@ async function post_conquest_menu(rand = default_rand) {
     1000,
   );
 
-  // $INPUT_LOOP2 :85-106：无效输入重问不重画（GOTO，见文件头）
+  // $INPUT_LOOP2：无效输入重问不重画（GOTO，见文件头）
   for (;;) {
     const result = await number_input();
     if (result === 999) {
       return 0;
     }
     if (result === 1000) {
-      // CALL SENGEN_VIDEO → RETURN 0（#502 起真身）；注释单占一行，
-      // 免得变异条目的 find 串把带 trace ref 的注释当锚点（trace-check 的
+      // 调 sengen_video → RETURN 0（#502 起真身）；注释单占一行，
+      // 免得变异条目的 find 串把带 trace ref 的注释当定位串（trace-check 的
       // 「引用不进锁」约定）
       await sengen_video();
       return 0;
     }
-    // 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：
-    // AGENT_MENU 是复制改名事故、不排期，缺内容的入口去掉），键入 1001 落到
-    // 下方 :102 的 >=6 拒收支继续重问
+    // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：
+    // 复制改名事故、不排期，缺内容的入口去掉），键入 1001 落到
+    // 下方的 >=6 拒收支继续重问
     if (result === 9) {
       await campaign_menu();
       return 0;
     }
     if (result === 5 && era_exflag.route_33 <= 500) {
-      // [5] 的派发守卫与按钮渲染同款（route_33 > 500）：
+      // [5] 的派发检查与按钮渲染同款（route_33 > 500）：
       // 窗口外键入 5 按无效输入重问
       continue;
     }
@@ -2337,8 +2333,8 @@ async function post_conquest_menu(rand = default_rand) {
     // 地区选择：RESULT → AREA/SINDO 下标对（CAMPAIGN_REGIONS），
     // 五条分支此后都落到同一个 $START1
     if (result === 0) {
-      // 人间界：复用出兵流程；其内部的 RESTART（原作出兵路线里的
-      // [999] 返回等）原样透传，由 invasion() 的外层循环回到 :6 的分派
+      // 人间界：复用出兵流程；其内部的 RESTART（出兵路线里的
+      // [999] 返回等）原样透传，由 invasion() 的外层循环回到入口分派
       return await start_campaign(rand, HUMAN_WORLD);
     }
     if (result === 4) {
@@ -2350,20 +2346,19 @@ async function post_conquest_menu(rand = default_rand) {
       era_exflag.shrine_stage = era_exflag.shrine_stage + 1;
     }
     // 精灵/龙/天界/天神宫：取各自的 AREA/SINDO（天神宫的
-    // 副作用已在上一步应用），与原作一样汇入 $START1
+    // 副作用已在上一步应用），此后都汇入 $START1
     return await start_campaign(rand, CAMPAIGN_REGIONS[result]);
   }
 }
 
 /**
- * 掠夺路线的派遣资格判据（:452-456 的五条 filter）。
+ * 掠夺路线的派遣资格条件（五条 filter）。
  *
- * 原作 :444 自注「選択基準は迎撃に準じる」——与迎击设定的派遣判据同源，
- * 但**少两条**（对照 SHOP_2.ERB:284-291 的七条版：这里没有近卫兵与后代
- * 那两条 EX_TALENT 守卫），所以不复用 page-intercept.js 的 reject_reason。
+ * 自注「選択基準は迎撃に準じる」——与迎击设定的派遣条件同源，
+ * 但**少两条**（迎击设定的七条版有近卫兵与后代两条 EX_TALENT 检查，
+ * 这里没有），所以不复用 page-intercept.js 的 reject_reason。
  * 五条依次为：濒死 → 魔王自己 → 非待机 → 未驯服 → 孕妇且未开「孕妇可
- * 出征」位。判据只有这一处真相，列表计数（:450-460）与列表渲染（:491-505）
- * 共用。
+ * 出征」位。条件只有这一处真相，列表计数与列表渲染共用。
  *
  * @param {number} cid 角色 ID
  * @returns {boolean} true = 不可派遣
@@ -2380,7 +2375,7 @@ function raid_rejected(cid) {
     return true;
   }
   // 孕妇（TALENT:153）且未开「怀孕时的迎击・临月调教」位（FLAG:5 位 10，
-  // CONFIG.ERB:167 的 [10] 开关）
+  // 配置页的 [10] 开关）
   if (
     (era.get(`talent:${cid}:153`) || 0) === 1 &&
     getbit(era.get('flag:5'), 10) === 0
@@ -2391,9 +2386,8 @@ function raid_rejected(cid) {
 }
 
 /**
- * 勇者出兵（[2]）路线的派遣资格判据（:307-312 与 :349-354 的同一段六条
- * filter）。判据只有这一处真相，列表计数（:305-316）与列表渲染
- * （:349-357）共用。
+ * 勇者出兵（[2]）路线的派遣资格条件（两段共用的六条 filter）。
+ * 条件只有这一处真相，列表计数与列表渲染共用。
  *
  * 六条依次为：魔王自己 → 濒死 → 非助手可（CFLAG:0 != 2）→ 非待机非苗床
  * （CFLAG:1 不属于 {0, 7}）→ 不爱慕也不淫乱 → 孕妇且未开「孕妇可出征」位。
@@ -2428,29 +2422,29 @@ function brute_rejected(cid) {
 }
 
 /**
- * 两条出兵路线的勇者选择（[3] :442-563 的选人段 / [2] :299-441 的选人段）。
+ * 两条出兵路线的勇者选择（[3] 与 [2] 的选人段）。
  *
- * 两段**逐字同源**（连翻页判据的怪癖一并保留）：标题、缓存段、页窗、三个
- * 按钮、输入分发全部相同，只有候选判据不同——由 `rejected` 注入，判据本身
+ * 两段是**同一段代码的复制**（连翻页条件的怪癖一并保留）：标题、缓存段、页窗、
+ * 三个按钮、输入分发全部相同，只有候选条件不同——由 `rejected` 注入，条件本身
  * 各有各的一处真相（raid_rejected / brute_rejected）。
  *
- * 原作 `FOR COUNT, LIST_POS, CHARANUM` 在「角色号」上扫，ere 侧改成已加入
+ * `FOR COUNT, LIST_POS, CHARANUM` 在「角色号」上扫，ere 侧改成已加入
  * 角色 ID 的升序表（#21 扁平化的既有做法，见文件头的移植说明），LIST_POS 仍是
- * 「最后渲染的那个 ID」——与 SHOP_2.ERB:282-335 的迎击列表**逐字同源**，
- * 连翻页判据的怪癖一并保留：T_LCOUNT 从 `NUM_PAGE * NO_PAGE + 1` 起算且只在
+ * 「最后渲染的那个 ID」——与迎击列表（page-intercept.js）同一段骨架，
+ * 连翻页条件的怪癖一并保留：T_LCOUNT 从 `NUM_PAGE * NO_PAGE + 1` 起算且只在
  * 渲染支内自增，页窗是 `[NO_PAGE*NUM_PAGE+1, (NO_PAGE+1)*NUM_PAGE)`，于是每页
- * 实际渲染 NUM_PAGE - 1 行、且上一页的最后一行会重复（原作现状，1:1 不修）。
+ * 实际渲染 NUM_PAGE - 1 行、且上一页的最后一行会重复（既有现状，不修）。
  *
- * NO_PAGE/LIST_POS/PREV_PAGE/PREV_LIST_POS 是 @INVASION 的 #DIM 局部量：
+ * NO_PAGE/LIST_POS/PREV_PAGE/PREV_LIST_POS 是 invasion() 一侧的 #DIM 局部量：
  * RESTART 不重置它们（control-flow.md:376-377 的回函数头重执行 +
  * user-defined-variables.md 的「局部变量在 RESTART 时不重置」），故由调用方
  * 持有、本函数读写。
  *
  * @param {{no_page: number, list_pos: number, prev_page: number,
  *   prev_list_pos: number}} state 跨 RESTART 保留的翻页游标
- * @param {(cid: number) => boolean} rejected 候选判据（true = 不列）
+ * @param {(cid: number) => boolean} rejected 候选条件（true = 不列）
  * @returns {Promise<number|typeof RESTART>} 选中的角色 ID；RESTART = [999]
- *   返回或没有候选时的原作 RESTART（:467-470/:519-520）
+ *   返回或没有候选
  */
 async function pick_hero(state, rejected) {
   // LIST_POS/PREV_PAGE/PREV_LIST_POS 清零、LOCAL = 0、YUSYA_I = 0
@@ -2475,7 +2469,7 @@ async function pick_hero(state, rejected) {
     await era.waitAnyKey();
     return RESTART;
   }
-  // $INPUT_LOOP_TMPO3 :471
+  // $INPUT_LOOP_TMPO3
   for (;;) {
     // 缓存、重置列表信息（SWAP 换位）
     if (state.no_page === 0) {
@@ -2495,7 +2489,7 @@ async function pick_hero(state, rejected) {
     era.print('派遣谁去侵攻呢？');
     era.drawLine();
     // 列表（窗口外的命中项只跳过、不渲染）
-    let rows = 0; // L_LCOUNT：原作按 LINECOUNT 差算，ere 侧按渲染行数代
+    let rows = 0; // L_LCOUNT：旧引擎按 LINECOUNT 差算，ere 侧按渲染行数代
     let t_lcount = NUM_PAGE * state.no_page + 1;
     for (const cid of added) {
       if (cid < state.list_pos) continue; // FOR COUNT, LIST_POS, CHARANUM
@@ -2518,11 +2512,11 @@ async function pick_hero(state, rejected) {
       }
     }
     // 三个按钮（PRINTLC 左对齐补位、不换行 → printButton，引擎自动
-    // 拼 [编号]；语义见 CONTEXT.md「输出 API 与原作的对应」）
+    // 拼 [编号]；语义见 CONTEXT.md「输出 API 的排版与对齐」）
     era.drawLine();
-    era.printButton('- 上一页', 1000); // INVASION.ERB:513 PRINTLC
-    era.printButton('- 返 回', 999); // INVASION.ERB:514 PRINTLC（原作两个空格，引擎折叠成一个）
-    era.printButton('- 下一页', 1001); // INVASION.ERB:515 PRINTLC
+    era.printButton('- 上一页', 1000); // PRINTLC
+    era.printButton('- 返 回', 999); // PRINTLC（两个空格，引擎折叠成一个）
+    era.printButton('- 下一页', 1001); // PRINTLC
 
     const result = await number_input(); // INPUT
 
@@ -2556,17 +2550,17 @@ async function pick_hero(state, rejected) {
 }
 
 /**
- * 结果段·怪物路线（:620-692，[0] 专用）。
+ * 结果段·怪物路线（[0] 专用）。
  *
  * 战利品 = SINKOU × 10：已征服的土地（FLAG:SINDO != 0）是「强制征收」且先
- * 按 100000 封顶，未征服是「战利品」且**不封顶**（ELSE 臂没有 MIN，两臂的
- * 差别是既有行为）。已征服臂的地区见 MONSTER_CONQUERED_AREAS——五个地区
+ * 按 100000 封顶，未征服是「战利品」且**不封顶**（ELSE 分支没有 MIN，两分支的
+ * 差别是既有行为）。已征服分支的地区见 MONSTER_CONQUERED_AREAS——五个地区
  * 都在列。
  *
- * :686-692 的 5% 抓捕按原作即「等键 → GET_ENEMY → 返回 0 才有犒赏行」。
+ * 5% 抓捕的顺序是「等键 → get_enemy → 返回 0 才有犒赏行」。
  *
  * @param {object} region 出兵目标（CAMPAIGN_REGIONS 的条目）
- * @param {number} inkou 侵攻点（原作 SINKOU）
+ * @param {number} inkou 侵攻点（SINKOU）
  * @param {(n: number) => number} rand RAND:N 随机源
  */
 async function monster_result_section(region, inkou, rand) {
@@ -2581,13 +2575,13 @@ async function monster_result_section(region, inkou, rand) {
     era_flag.money += sinkou * 10;
     era_exflag.legit_money += sinkou * 10;
   } else {
-    // 未征服（五地区含天神宫都已列入已征服臂，走到这里即未征服）
+    // 未征服（五地区含天神宫都已列入已征服分支，走到这里即未征服）
     era.print(`得到了${sinkou * 10}点的战利品！`); // PRINTFORMW
     await era.waitAnyKey();
     era_flag.money += sinkou * 10;
     era_exflag.legit_money += sinkou * 10;
   }
-  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:664）
+  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）
   era.drawLine();
   print_progress_line(region.result_label, region_progress(region), 10000);
   era.drawLine();
@@ -2606,18 +2600,18 @@ async function monster_result_section(region, inkou, rand) {
 }
 
 /**
- * 结果段·掠夺路线（:891-975，[3] 专用）。
+ * 结果段·掠夺路线（[3] 专用）。
  *
  * 掠夺额 = SINKOU（**不是**怪物路线的 ×10），经验是 SINKOU/20；善恶值先减
- * 5（:909 `CALL KARMA, YUSYA_I, -5`，真身 ere/chara/chara-stats.js）。已
- * 征服/未征服的封顶差别与 [0] 同款（:912-957），但这一段的已征服臂列全了
- * 五个地区（含 :944 的 101），故只判 FLAG:SINDO。原作 :892-908 的三段
- * PRINTFORM/PRINT/PRINTW 在同一显示行，ere 侧并入一次 print + 等键
+ * 5（`CALL KARMA, YUSYA_I, -5`，真身 ere/chara/chara-stats.js）。已
+ * 征服/未征服的封顶差别与 [0] 同款，但这一段的已征服分支列全了
+ * 五个地区（含 101），故只判 FLAG:SINDO。三段 PRINTFORM/PRINT/PRINTW
+ * 在同一显示行，ere 侧并入一次 print + 等键
  * （monster-data.js 的同显示行归并先例），地区名取 region.name。
  *
  * @param {object} region 出兵目标（CAMPAIGN_REGIONS 的条目）
- * @param {number} yusya_i 领军勇者（角色 ID，原作 YUSYA_I）
- * @param {number} inkou 侵攻点（原作 SINKOU）
+ * @param {number} yusya_i 领军勇者（角色 ID）
+ * @param {number} inkou 侵攻点（SINKOU）
  */
 async function raid_result_section(region, yusya_i, inkou) {
   const conquered = (era.get(`flag:${region.sindo}`) || 0) !== 0;
@@ -2643,7 +2637,7 @@ async function raid_result_section(region, yusya_i, inkou) {
   chara(yusya_i).dungeon.战斗经验 += exp_gain; // EXP:YUSYA_I:80
   era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);
   await era.waitAnyKey();
-  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:970）
+  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）
   era.drawLine();
   print_progress_line(region.result_label, region_progress(region), 10000);
   era.drawLine();
@@ -2651,21 +2645,21 @@ async function raid_result_section(region, yusya_i, inkou) {
 }
 
 /**
- * 结果段·勇者出兵路线（:758-888，[2] 专用）。
+ * 结果段·勇者出兵路线（[2] 专用）。
  *
  * 战利品 = SINKOU × 5（[0] 是 ×10、[3] 是 ×1），经验是 SINKOU/2；善恶值先
- * 减 50（:776 `CALL KARMA, YUSYA_I, -50`，全作最重的一档）。已征服/未征服的
- * 封顶差别与 [0] 同款（:803-847），这一段也列全了五个地区（含 :834 的 101），
- * 故只判 FLAG:SINDO。原作 :759-775 的三段 PRINTFORM/PRINT/PRINTW 在同一
+ * 减 50（`CALL KARMA, YUSYA_I, -50`，全作最重的一档）。已征服/未征服的
+ * 封顶差别与 [0] 同款，这一段也列全了五个地区（含 101），
+ * 故只判 FLAG:SINDO。三段 PRINTFORM/PRINT/PRINTW 在同一
  * 显示行，ere 侧并入一次 print + 等键（monster-data.js 的同显示行归并先例），
  * 地区名取 region.name。
  *
- * :778-800 的七档性格旁白按 `TALENT:YUSYA_I:160-166` 顺序判定，七档都不命中
- * 时打一个空行（:797-799 的 PRINTL）。
+ * 七档性格旁白按 `TALENT:YUSYA_I:160-166` 顺序判定，七档都不命中
+ * 时打一个空行（PRINTL）。
  *
  * @param {object} region 出兵目标（CAMPAIGN_REGIONS 的条目）
- * @param {number} yusya_i 领军勇者（角色 ID，原作 YUSYA_I）
- * @param {number} inkou 侵攻点（原作 SINKOU）
+ * @param {number} yusya_i 领军勇者（角色 ID）
+ * @param {number} inkou 侵攻点（SINKOU）
  * @param {(n: number) => number} rand RAND:N 随机源（凌辱旁白与 9% 抓捕）
  */
 async function brute_result_section(region, yusya_i, inkou, rand) {
@@ -2732,7 +2726,7 @@ async function brute_result_section(region, yusya_i, inkou, rand) {
     era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);
     await era.waitAnyKey();
   }
-  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:860）
+  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）
   era.drawLine();
   print_progress_line(region.result_label, region_progress(region), 10000);
   era.drawLine();
@@ -2754,28 +2748,28 @@ async function brute_result_section(region, yusya_i, inkou, rand) {
 }
 
 /**
- * @INVASION（INVASION.ERB:139-997）：出兵流程——菜单（:139-204）+ 四条路线
- * （:209-563）+ 共通补正（:565-603）+ 中途事件（:601-603）+ 侵攻結果共通
- * （:609-618）+ 结果段（:620-975）+ 结算尾（:976-997）。
+ * start_campaign：出兵流程——菜单 + 四条路线
+ * + 共通补正 + 中途事件 + 侵攻結果共通
+ * + 结果段 + 结算尾。
  *
- * 四条路线：[0] 怪物出兵 :210-263（#503）、[1] 魔力出兵 :266-296（#117）、
- * [2] 勇者出兵 :299-441（#504）、[3] 勇者掠夺 :442-563（#503）。四条真身
+ * 四条路线：[0] 怪物出兵（#503）、[1] 魔力出兵（#117）、
+ * [2] 勇者出兵（#504）、[3] 勇者掠夺（#503）。四条真身
  * 共走后面的共通段。
  *
  * `region` 是出兵目标（CAMPAIGN_REGIONS 的条目，#505）：窄路径（未征服）由
  * invasion() 传默认的人间界，征服后菜单由 [0]/[1]/[2]/[3]/[5] 各传各的——
- * 与原作「先设 AREA/SINDO、再落 $START1」同构。
+ * 与「先设 AREA/SINDO、再落 $START1」同构。
  *
- * 外层 `for (;;)` 是 `$START1` 复刻：[2]/[3] 的 RESTART（:467-470 没有候选、
- * :519-520 [999] 返回）在这里 `continue` 重画整屏出兵菜单——与原作「回到
- * @INVASION 开头」在窄路径下等价；从征服后菜单进来时，原作的 RESTART 会回到
+ * 外层 `for (;;)` 是 `$START1` 复刻：[2]/[3] 的 RESTART（没有候选、
+ * [999] 返回）在这里 `continue` 重画整屏出兵菜单——与「回到
+ * invasion() 开头」在窄路径下等价；从征服后菜单进来时，RESTART 会回到
  * 征服后菜单，故把 RESTART 信号返回给 invasion() 承接。
  *
  * 返回 0 = 取消（不消耗回合，回主菜单）；返回 1 = 回合已耗（调用方
  * page-shop 的 [109] 分支据此 BEGIN TURNEND）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0]/[2] 的 MONSTER_DATA、
- *   [3] 的 MEDAL_BONUS 经共通段，以及 @INVASION_EVENT 的分发与三臂）
+ *   [3] 的 medal_bonus 经共通段，以及 invasion_event 的分发与三分支）
  * @param {object} [region] 出兵目标（缺省人间界，见 HUMAN_WORLD）
  * @returns {Promise<number|typeof RESTART>} 0 / 1 / RESTART
  */
@@ -2783,12 +2777,12 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   // 的地区分派已由调用方完成（AREA/SINDO 来自 region）；
   // 的 ELSE 是缺省人间界那一支
   const { area, sindo } = region;
-  // 的 #DIM 局部量里，NO_PAGE（= 0，声明在 :18-22 那一段）与三条翻页
+  // 的 #DIM 局部量里，NO_PAGE（= 0）与三条翻页
   // 游标跨 RESTART 保留（局部量不重置，见 user-defined-variables.md）：窄路径
   // 的 RESTART 在本函数的 `$START1` 循环里 `continue`，游标自然保住；已征服
   // 来路那条 RESTART 会绕回 invasion() 重进本函数、游标被重建。**这一差异实测
-  // 不可观测**（#505 复审用探针跑过两版：pick_hero 每次进入都按原作 :445-449
-  // 清零 LIST_POS/PREV_*，页窗又只按计数判，两版画出的列表逐行相同），故不为
+  // 不可观测**（#505 复审用探针跑过两版：pick_hero 每次进入都清零
+  // LIST_POS/PREV_*，页窗又只按计数判，两版画出的列表逐行相同），故不为
   // 此改 RESTART 的承接结构（「不要动路线本身」）
   const page_state = {
     no_page: 0,
@@ -2800,7 +2794,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   let inv_type = 0; // INV_TYPE = RESULT
   let yusya_i = 0; // #DIM YUSYA_I（[0]/[1] 路线不赋值，恒 0）
 
-  // $START1 :143（[3] 的 RESTART 回到这里重画整屏）
+  // $START1（[3] 的 RESTART 回到这里重画整屏）
   for (;;) {
     // 怪物数量 = ITEM:100..189 之和（[0]/[2] 路线的 600 门槛）
     let mon_num = 0;
@@ -2823,22 +2817,22 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     if (mon_num < MONSTER_THRESHOLD) {
       era.print('[-] - 怪物数量不足。至少需要600只');
     } else {
-      era.printButton('- 使用现有怪物的一半去进攻（资金·俘虏）', 0); // INVASION.ERB:176
+      era.printButton('- 使用现有怪物的一半去进攻（资金·俘虏）', 0);
     }
-    era.printButton('- 使用魔王的魔力（经验值）', 1); // INVASION.ERB:178
+    era.printButton('- 使用魔王的魔力（经验值）', 1);
     if (mon_num < MONSTER_THRESHOLD) {
       era.print('[-] - 怪物数量不足。至少需要600只');
     } else {
       era.printButton(
         '- 派遣勇者带三分之一的怪物去进攻（资金·经验值·俘虏）',
         2,
-      ); // INVASION.ERB:182
+      );
     }
-    era.printButton('- 派遣勇者前去掠夺资金（资金·经验值）', 3); // INVASION.ERB:184
+    era.printButton('- 派遣勇者前去掠夺资金（资金·经验值）', 3);
     era.drawLine();
-    era.printButton('- 返回', 999); // INVASION.ERB:186
+    era.printButton('- 返回', 999);
 
-    // $INPUT_LOOP :188-200：无效输入重问不重画（GOTO INPUT_LOOP，见文件头）
+    // $INPUT_LOOP：无效输入重问不重画（GOTO INPUT_LOOP，见文件头）
     for (;;) {
       const result = await number_input();
       if (result === 999) {
@@ -2858,7 +2852,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     sinkou = 0;
 
     if (inv_type === 0) {
-      // ===== [0] 怪物出兵（:210-263）=====
+      // ===== [0] 怪物出兵 =====
       // 逐个持有怪物调 MONSTER_DATA 取战斗力，怪物数先减半再累加
       for (let i = 100; i < 190; i += 1) {
         if ((era.get(`item:${i}`) || 0) < 1) continue;
@@ -2871,7 +2865,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
         sinkou += mon_atk * (Math.trunc(halved / 9) + 1);
       }
       sinkou = Math.trunc(sinkou / 20);
-      // 威望修正（与魔力分支 :270-293 同构，共用一套五档）
+      // 威望修正（与魔力分支同构，共用一套五档）
       const tier = await apply_prestige_tier(sinkou);
       sinkou = tier.sinkou;
       if (tier.failed) {
@@ -2882,10 +2876,10 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       era.print('怪物的战斗力　' + sinkou + '点'); // PRINTFORMW
       await era.waitAnyKey();
     } else if (inv_type === 2) {
-      // ===== [2] 勇者带三分之一的怪物出兵（:299-441）=====
+      // ===== [2] 勇者带三分之一的怪物出兵 =====
       const picked = await pick_hero(page_state, brute_rejected);
       if (picked === RESTART) {
-        // 没有候选 / :519-520 [999] 返回（与 [3] 同一段复制，处置同）
+        // 没有候选 / [999] 返回（与 [3] 同一段复制，处置同）
         if (era_flag.human_realm_fallen !== 0) {
           return RESTART;
         }
@@ -2920,14 +2914,14 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       // 勋章补正（传勇者号——#502 的 medal_bonus 签名接实参）
       sinkou = Math.trunc((sinkou * (await medal_bonus(yusya_i))) / 100);
     } else if (inv_type === 3) {
-      // ===== [3] 勇者掠夺（:442-563）=====
+      // ===== [3] 勇者掠夺 =====
       const picked = await pick_hero(page_state, raid_rejected);
       if (picked === RESTART) {
-        // 没有候选 / :519-520 [999] 返回：原作的 RESTART 回
-        // @INVASION 开头（:6）重走 FLAG:82 分派。未征服时落点是 $START1
+        // 没有候选 / [999] 返回：RESTART 回
+        // invasion() 开头重走 FLAG:82 分派。未征服时落点是 $START1
         // （就是本函数的循环头，`continue` 连 #DIM 翻页游标一起保住）；
         // 已征服时（从征服后菜单 [0] 进来）落点是征服后菜单，本函数到不了，
-        // 把信号透传给 invasion() 的外层循环——那里的三元就是 :25 的分派。
+        // 把信号透传给 invasion() 的外层循环——那里的三元就是入口分派。
         if (era_flag.human_realm_fallen !== 0) {
           return RESTART;
         }
@@ -2952,8 +2946,8 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       // 勋章补正（传勇者号——#502 的 medal_bonus 签名接实参）
       sinkou = Math.floor((sinkou * (await medal_bonus(yusya_i))) / 100);
     } else {
-      // ===== [1] 魔力出兵（:266-296）=====
-      // SINKOU = BASE:0:1 / 25；:268 BASE:0:1 /= 2（失败也照减）。气力是
+      // ===== [1] 魔力出兵 =====
+      // SINKOU = BASE:0:1 / 25；随后 BASE:0:1 /= 2（失败也照减）。气力是
       // dungeon 域属主（#70 实测），跨域写走门面（#71）
       sinkou = Math.floor(chara(0).dungeon.气力 / 25);
       chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);
@@ -2973,7 +2967,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     break; // 路线走完，进共通段
   }
 
-  // ===== 共通処理（:565-598）=====
+  // ===== 共通処理 =====
   // 魔王补正：CFLAG:0:9 是百分比加成（+20 → x1.20），新档 0
   const maou_bonus = (era.get('cflag:0:9') || 0) + 100;
   era.print(
@@ -3007,7 +3001,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   await era.waitAnyKey();
 
   // CALL INVASION_EVENT；SIF RESULT > 0 → RETURN RESULT。
-  // SINKOU 按引用传入传出（原作 `#DIM REF SINKOU`）：FORT/CHALLENGE 的
+  // SINKOU 按引用传入传出（`#DIM REF SINKOU`）：FORT/CHALLENGE 的
   // 强攻/潜入/绕路会按比例削减它，改动经 state 回到这里。
   const event_state = { sinkou, yusya_i };
   const event_result = await invasion_event(
@@ -3023,13 +3017,13 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     return event_result;
   }
 
-  // ===== 侵攻結果共通（:609-618）=====
-  // 掠夺路线的侵攻力激减（SINKOU / 20）；:613-614 其余路线全额。
+  // ===== 侵攻結果共通 =====
+  // 掠夺路线的侵攻力激减（SINKOU / 20）；其余路线全额。
   // 累加与封顶一律写 FLAG:AREA（天神宫因此写 FLAG:101，见 add_region_progress）
   const gained = inv_type === 3 ? Math.trunc(sinkou / 20) : sinkou;
   add_region_progress(region, gained);
 
-  // ===== 结果段：按 INV_TYPE 四臂（:620-975）=====
+  // ===== 结果段：按 INV_TYPE 四分支 =====
   if (inv_type === 0) {
     await monster_result_section(region, sinkou, rand);
   } else if (inv_type === 2) {
@@ -3037,7 +3031,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   } else if (inv_type === 3) {
     await raid_result_section(region, yusya_i, sinkou);
   } else {
-    // ===== 魔力结果段（:694-757）=====
+    // ===== 魔力结果段 =====
     // %SAVESTR:MASTER%的魔力爆发出来了！
     era.print(`${chara_callname(0)}的魔力爆发出来了！`);
     await era.waitAnyKey();
@@ -3057,8 +3051,8 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     era.print(burst);
     await era.waitAnyKey();
     era.drawLine();
-    // 经验值段（未征服走 :736-738 的 ELSE 臂，已征服走各自臂的
-    // 100000 封顶——五个地区的两臂只差封顶，经验同为 SINKOU/2）。战斗
+    // 经验值段（未征服走 ELSE 分支，已征服走各自分支的
+    // 100000 封顶——五个地区的两分支只差封顶，经验同为 SINKOU/2）。战斗
     // 经验是 dungeon 域属主，跨域写走门面
     let exp_sinkou = sinkou;
     if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {
@@ -3073,7 +3067,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     print_progress_line(region.result_label, region_progress(region), 10000);
   }
 
-  // ===== 结算尾（:976-997）=====
+  // ===== 结算尾 =====
   era.drawLine();
   await era.waitAnyKey(); // WAIT
   era_exflag.prestige = era_exflag.prestige + 2; // EX_FLAG:99 += 2

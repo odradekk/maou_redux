@@ -4,15 +4,15 @@
 // 的字面数字，本行漏改会让下一张票的号段起点算错，#406 验收时正是这样
 // 撞的号）。
 //
-// 靶文件常住 ere/page/page-shop-labo.js（52 函数：主分发 + 四页菜单 +
-// MODIFY 族 + 特殊流程）；tests 一律是本票的 test/page-shop-labo.test.js。
+// 改动文件常驻 ere/page/page-shop-labo.js（52 函数：主分发 + 四页菜单 +
+// MODIFY 族 + 特殊流程）；tests 一律是这张工单的 test/page-shop-labo.test.js。
 // 取点原则（工单覆盖面标准）：价格/门槛/素质编号等字面量逐个钉、随机上界
 // 单独钉（DEIMMATURITY 的 RAND:2、DEMON_REBIRTH 的 RAND:3/7）、范围端点
 // （编号 150/199、页高 23、CHARANUM 60/80/90）。
 //
 // M9450 起补的是**等号侧**（#398 一轮验收的抽样探针打出）：字面量钉的是
 // 「那个数」，`>= N` 改 `> N` 数字一个没动却改变了恰好取等时的行为。每条
-// 改的都是比较运算符本身，靶是 test/page-shop-labo.test.js 第六节。
+// 改的都是比较运算符本身，目标是 test/page-shop-labo.test.js 第六节。
 const code = 'ere/page/page-shop-labo.js';
 const make = (id, desc, find, replace, must_mention) => ({
   desc: `M${id} ${desc}`,
@@ -244,7 +244,7 @@ export default [
     '洗脑【早泄】档 8000 改 8001',
     '  31: [8000, 133], // 【早泄】',
     '  31: [8001, 133], // 【早泄】',
-    'BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫',
+    'brain_washing：四档「费用 × 素质」整表 + 三道检查',
   ),
   make(
     9432,
@@ -284,7 +284,7 @@ export default [
   // —— 素质编号 / 映射（改一项应只被对应的表驱动用例抓到） ——
   make(
     9437,
-    'TRANS_SEX 的已性转守卫认错人（cid !== MASTER 改 cid !== 1）',
+    'TRANS_SEX 的已性转检查认错人（cid !== MASTER 改 cid !== 1）',
     '    if (cflag(cid, 70) && cid !== MASTER) {',
     '    if (cflag(cid, 70) && cid !== 1) {',
     'trans_sex：提示原文「奴隶1已经被性转过了。」在场',
@@ -308,7 +308,7 @@ export default [
     '洗脑四项的素质映射 133 改 134',
     '  31: [8000, 133], // 【早泄】',
     '  31: [8000, 134], // 【早泄】',
-    'BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫',
+    'brain_washing：四档「费用 × 素质」整表 + 三道检查',
   ),
   make(
     9441,
@@ -420,10 +420,10 @@ export default [
   ),
   make(
     9456,
-    '死者苏生扫描的 `FLAG < 0` 改 `<= 0`（|| 0 兜底的 0 被算成亡者）',
+    '死者苏生扫描的 `FLAG < 0` 改 `<= 0`（|| 0 缺省取 0，被算成亡者）',
     '    if ((era.get(`flag:${count + 1000}`) || 0) < 0) {',
     '    if ((era.get(`flag:${count + 1000}`) || 0) <= 0) {',
-    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 兜底 = 0，不算亡者）',
+    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 的缺省值是 0，不算亡者）',
   ),
   make(
     9457,
@@ -490,7 +490,7 @@ export default [
   ),
   make(
     9466,
-    'ST_UP 上限判据的 `current >= limit` 改 `>`（取上限时放行）',
+    'ST_UP 上限条件的 `current >= limit` 改 `>`（取上限时放行）',
     '    if (current >= limit) {',
     '    if (current > limit) {',
     '当前值 == 上限时拒绝（current >= limit 的等号侧）',
@@ -500,7 +500,7 @@ export default [
     'CURE_INSANE 的 `EXP <= 30` 改 `< 30`（勋章恰好 30 时放行）',
     '  if (exp_of(MASTER, 81) <= 30) {',
     '  if (exp_of(MASTER, 81) < 30) {',
-    'EXP == 30 时仍被拒绝（判据是 <= 30）',
+    'EXP == 30 时仍被拒绝（条件是 <= 30）',
   ),
   make(
     9468,
@@ -521,8 +521,8 @@ export default [
     '洗脑助手资格的 `cflag(cid,0) < 2` 改 `<= 2`（恰好 2 也不可洗）',
     '    if (cid !== MASTER && cflag(cid, 0) < 2) {',
     '    if (cid !== MASTER && cflag(cid, 0) <= 2) {',
-    // 守卫触发后流程回到主循环，输入序列对不上（夹具报错）——按用例名判红
-    'BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫',
+    // 检查拦下后流程回到主循环，输入序列对不上（夹具报错）——按用例名判红
+    'brain_washing：四档「费用 × 素质」整表 + 三道检查',
   ),
   make(
     9471,
@@ -538,10 +538,10 @@ export default [
     '    if (base(result, 0) <= 1) {',
     'BASE == 1 的角色可选（< 1 的等号侧）；BASE == 0 的被跳过',
   ),
-  // —— #517：运算符优先级普查（源 :4364 的 &&/|| 同层混写按 C 式读错） ——
+  // —— #517：运算符优先级普查（&& 与 || 同层混写按 C 式读错） ——
   make(
     11142,
-    '减龄魔药守卫按 C 式「&& 优先」读错（年龄 < 18 不再吃种族年龄门）',
+    '减龄魔药检查按 C 式「&& 优先」读错（年龄 < 18 不再吃种族年龄检查）',
     '    if ((cflag(cid, 451) < 18 || long_lived) && cflag(cid, 452) < 18) {',
     '    if (cflag(cid, 451) < 18 || (long_lived && cflag(cid, 452) < 18)) {',
     '年龄 17 但种族年龄 30 → 不拦',
@@ -580,7 +580,7 @@ export default [
   // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
   make(
     11866,
-    '选人画面页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    '选人画面页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
     "  era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页\n}",
     "  era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页\n  era.print(''); // 变异：页脚之后多补空行\n}",
     '实验室选人画面页脚按钮之后不应有空行',

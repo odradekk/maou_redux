@@ -1,22 +1,22 @@
-// issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
+// issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 249; // #562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 守卫无影响档倍率）；
+export const COUNT = 249; // #562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
 // page-monster-shop 35 / page-chara-shop 22 / page-shop 3（另有 1 条 #395 的
 // page-shop 旧条目） / page-shop-trap 2。
 // 第二轮返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
-// 1:1 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
+// 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
 // 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里；
 // M9116-M9118 是第三轮评审补的两个内联端点（戒指槽位、两处页高）；
-// M9119-M9124 是接线一轮：两处召唤确认段接 @SHOW_CHARA_INFO 真身（#390），
+// M9119-M9124 是接入一轮：两处召唤确认段接 show_chara_info 真身（#390），
 // 每条各取「接没接」「传给谁」「哪一页」三面之一；M9125-M9138 是随机源
 // 透传面：每条「把 rand 往下传」的调用点各拿掉一次实参。
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
 //；#547 起 +1（M11582，sale.js 的卖淫影响缺省读 modsave:0——由 test/sale.test.js 守护）
-// #612 起 +1（M12306：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
+// #612 起 +1（M12306：按钮正文补回「- 」分隔符——补回点被改回时对应的
 // rendered 断言必须红）
 
 export default [
@@ -1138,7 +1138,7 @@ export default [
     find: '    wish = rand(3) + 1; // 女装',
     replace: '    wish = rand(3) + 2; // 变异：女装档偏移',
     tests: ['page-intercept'],
-    must_mention: 'WISH 三档判据整表驱动',
+    must_mention: 'WISH 三档判断整表驱动',
   },
   {
     desc: 'M8438 GOHOUBI_REQUEST 爱慕档偏移（+4 → +5）',
@@ -1146,7 +1146,7 @@ export default [
     find: '    wish = rand(3) + 4; // 爱慕',
     replace: '    wish = rand(3) + 5; // 变异：爱慕档偏移',
     tests: ['page-intercept'],
-    must_mention: 'WISH 三档判据整表驱动',
+    must_mention: 'WISH 三档判断整表驱动',
   },
   {
     desc: 'M8439 GOHOUBI_REQUEST 淫乱档偏移（+7 → +8）',
@@ -1154,7 +1154,7 @@ export default [
     find: '    wish = rand(3) + 7; // 淫乱',
     replace: '    wish = rand(3) + 8; // 变异：淫乱档偏移',
     tests: ['page-intercept'],
-    must_mention: 'WISH 三档判据整表驱动',
+    must_mention: 'WISH 三档判断整表驱动',
   },
   {
     desc: 'M8440 GOHOUBI_REQUEST 6→4 降级判断条件错位（121 → 120）',
@@ -1163,7 +1163,7 @@ export default [
     replace:
       '    if (wish === 6 && talent(0, 120) === 0 && talent(0, 122) === 0) {',
     tests: ['page-intercept'],
-    must_mention: 'WISH 三档判据整表驱动',
+    must_mention: 'WISH 三档判断整表驱动',
   },
   // —— #399（N15 段 3）：三个商店 ——
   {
@@ -1354,12 +1354,12 @@ export default [
     must_mention: '种族的九档映射整表',
   },
   {
-    desc: 'M8904 商品一览的价格判据取反（ITEMPRICE == 0 → != 0）',
+    desc: 'M8904 商品一览的价格条件取反（ITEMPRICE == 0 → != 0）',
     file: 'ere/page/page-monster-shop.js',
     find: 'if (item_price(id) === 0) {',
     replace: 'if (item_price(id) !== 0) {',
     tests: ['monster-shop'],
-    must_mention: '商品一览的四个判据',
+    must_mention: '商品一览的四个条件',
   },
   {
     desc: 'M8905 祭品段的下界错一位（100 起 → 101 起）',
@@ -1370,7 +1370,7 @@ export default [
     must_mention: '逐只挑',
   },
   {
-    desc: 'M8906 祭品库存的告罄判据取反（stock === picked）',
+    desc: 'M8906 祭品库存的告罄条件取反（stock === picked）',
     file: 'ere/page/page-monster-shop.js',
     find: '    if (info.stock === info.picked) {',
     replace: '    if (info.stock !== info.picked) {',
@@ -1555,7 +1555,7 @@ export default [
     find: 'const LEVEL_WIDTH = 5;',
     replace: 'const LEVEL_WIDTH = 6;',
     tests: ['monster-shop'],
-    must_mention: '商品一览的四个判据',
+    must_mention: '商品一览的四个条件',
   },
   {
     desc: 'M8929 怪物商店祭品行的名字字段宽错一格（SACRIFICE_NAME_WIDTH 22 → 21）',
@@ -1742,7 +1742,7 @@ export default [
     must_mention: '祭品扫描的编号段端点',
   },
   {
-    desc: 'M9110 祭品守卫的下界宽一格（result < 100 → <= 100：把 100 也拒了）',
+    desc: 'M9110 祭品检查的下界宽一格（result < 100 → <= 100：把 100 也拒了）',
     file: 'ere/page/page-monster-shop.js',
     find: '    if (result < 100 || result >= 200) {',
     replace: '    if (result <= 100 || result >= 200) {',
@@ -1816,7 +1816,7 @@ export default [
     tests: ['item-shop'],
     must_mention: '30 号选择面的翻页',
   },
-  // —— #399 接线一轮：两处召唤确认段接 @SHOW_CHARA_INFO 真身（#390）——
+  // —— #399 接入一轮：两处召唤确认段接 show_chara_info 真身（#390）——
   // 每条各取「接没接」「传给谁」「哪一页」三面之一
   {
     desc: 'M9119 怪物商店召唤段的角色信息页码传错（-2 → -1）',
@@ -1866,9 +1866,9 @@ export default [
     tests: ['chara-shop'],
     must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
   },
-  // —— #399 接线返工（第二轮）：随机源透传 ——
+  // —— #399 接入返工（第二轮）：随机源透传 ——
   // 形参带缺省值时，实参一去掉就静静落回 downstream 的 default_rand
-  // （Math.random，#344 的形态：本机跑一次绿、CI 抽中才红）。这一组把每条
+  // （Math.random，#344 的写法：本机跑一次绿、CI 抽中才红）。这一组把每条
   // 「把 rand 往下传」的调用点各拿掉一次，由两个文件的「随机源透传」用例组
   // （Math.random 换成会抛的桩）拦下；共享核那几处两个商店的用例都会红。
   {

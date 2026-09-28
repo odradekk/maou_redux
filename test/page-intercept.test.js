@@ -2,14 +2,14 @@
  * @file ere/page/page-intercept.js 与 ere/system/stronghold/gohoubi-request.js
  * 的行为测试（issue #397 / N13 段 3）。
  *
- * 接缝 = test/helpers/era-fixture.js。维度型判据表驱动：
- *   - 派遣判据 `reject_reason` 的七条 × 两侧整表走完；
+ * 接缝 = test/helpers/era-fixture.js。维度型判断表驱动：
+ *   - 派遣判断 `reject_reason` 的七条 × 两侧整表走完；
  *   - 迎击设定的三层子画面（出发阶层 1-9 / 行动 0-5 / 出击确认）各走一遍；
  *   - 道具补给的三次抽奖与「一件都没入手就退款」两支。
  *
- * **不可达支**（1:1 保留、不补用例）：列表过滤与输入守卫同判据，且它判定的
+ * **不可达支**（原样保留、不补用例）：列表过滤与输入检查同一判断，且它判定的
  * 角色根本没有按钮可点，故除「金钱不足」外的拒因提示（魔王自己 / 未驯服 /
- * 孕妇 / 近卫兵 / 后代）与 :367-373 的越界、濒死两支在实机输入下到不了；
+ * 孕妇 / 近卫兵 / 后代）与越界、濒死两支在实机输入下到不了；
  * 行动设定的六个等级门同理由渲染侧保证（等级不足的档位不是按钮）。
  */
 
@@ -37,7 +37,7 @@ function add_dispatchable(fixture, cid, name = `奴隶${cid}`) {
 /** 定值随机源：恒返回同一值（[0, n) 内，故取 0 或 3） */
 const const_rand = (value) => () => value;
 
-/** 跑一次 @INTERCEPT，返回本次新增的输出行 */
+/** 跑一次 intercept，返回本次新增的输出行 */
 async function run_intercept(fixture, inputs, rand = const_rand(3)) {
   fixture.set_inputs(...inputs);
   const before = fixture.lines.length;
@@ -51,9 +51,9 @@ const accs = (lines) =>
 const texts = (lines) =>
   lines.filter((l) => l.type === 'text').map((l) => l.text);
 
-// —— 派遣判据（:284-291 / :325-335 / :367-407 共用的七条）——
+// —— 派遣判断（共用的七条）——
 
-test('INTERCEPT：派遣判据 reject_reason 七条 × 两侧整表驱动', () => {
+test('INTERCEPT：派遣判断 reject_reason 七条 × 两侧整表驱动', () => {
   const BASE = { 'base:1:0': 1, 'cflag:1:0': 1 };
   const CASES = [
     ['可派遣', BASE, 0],
@@ -152,7 +152,7 @@ test('INTERCEPT：列表只出可派遣者，页脚三键与返回', async () =>
   assert.ok(texts(added).includes('派遣谁前去迎击勇者？'));
 });
 
-test('#612 INTERCEPT：列表页脚三键的正文照写原作的「- 」', async () => {
+test('#612 INTERCEPT：列表页脚三键的正文带「- 」前缀照写', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_dispatchable(fixture, 1, '玛奥');
@@ -165,7 +165,7 @@ test('#612 INTERCEPT：列表页脚三键的正文照写原作的「- 」', asyn
     '[999] - 返 回',
     '[1001] - 下一页',
   ]) {
-    assert.ok(rendered.includes(expected), `${expected}（SHOP_2.ERB:346-348）`);
+    assert.ok(rendered.includes(expected), `${expected}（页脚三键正文）`);
   }
 });
 
@@ -205,7 +205,7 @@ test('INTERCEPT：金钱不足（可被卖状态但要付费）拦下派遣', as
   const { added } = await run_intercept(fixture, [1, 999]);
   assert.ok(
     texts(added).includes('金钱不足，玛奥无视了你的命令'),
-    '金钱不足提示（:390）',
+    '金钱不足提示',
   );
   assert.ok(!texts(added).includes('玛奥的迎击设定'), '没进迎击设定画面');
 });
@@ -292,7 +292,7 @@ test('INTERCEPT：补给可取消（[2] 再按一次回到裸奔）', async () =
   );
   assert.ok(
     supply_buttons.some((l) => l.text.includes('裸奔吧')),
-    ':468-470 再按一次取消补给',
+    '再按一次取消补给',
   );
   assert.equal(fixture.store.get('flag:10004'), 100000, '取消后不扣补给费');
 });
@@ -312,13 +312,13 @@ test('INTERCEPT：行动 3（扩张设施）在出击时另扣 2000', async () =
   assert.equal(
     fixture.store.get('flag:10004'),
     100000 - 2000,
-    ':449 的扩张费在出击时扣',
+    '扩张费在出击时扣',
   );
   assert.equal(fixture.store.get('exflag:4444'), 100000 - 2000);
   assert.equal(fixture.store.get('cflag:1:500'), 3, 'WORK = 3 写回');
 });
 
-test('INTERCEPT：出击决定写入状态与扣款，并调 @GOHOUBI_REQUEST', async () => {
+test('INTERCEPT：出击决定写入状态与扣款，并调 gohoubi_request', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   // 付费派遣的门槛：CFLAG:0 == 0（未驯服）且 TALENT:254 == 1（可被卖）
@@ -332,7 +332,7 @@ test('INTERCEPT：出击决定写入状态与扣款，并调 @GOHOUBI_REQUEST', 
   assert.equal(ret, 0);
   assert.ok(
     texts(added).includes('支付了金钱'),
-    ':410-411 可被卖状态之外的派遣要付费',
+    '可被卖状态之外的派遣要付费',
   );
   assert.ok(texts(added).includes('*玛奥作为你的爪牙外出迎击了*'));
   assert.equal(fixture.store.get('cflag:1:1'), 3, 'CFLAG:1 = 3（迎击中）');
@@ -346,11 +346,11 @@ test('INTERCEPT：出击决定写入状态与扣款，并调 @GOHOUBI_REQUEST', 
   assert.equal(fixture.store.get('cflag:1:505'), 0, 'CFLAG:505 = 0');
   assert.equal(fixture.store.get('flag:10004'), 100000 - 6000, '扣 COST');
   assert.equal(fixture.store.get('exflag:4444'), 100000 - 6000);
-  // @GOHOUBI_REQUEST：爱慕（TALENT:85）→ WISH = RAND:3 + 4 = 7（rand 恒 3）
+  // gohoubi_request：爱慕（TALENT:85）→ WISH = RAND:3 + 4 = 7（rand 恒 3）
   assert.equal(fixture.store.get('cflag:1:504'), 7, 'CFLAG:504 = WISH');
   assert.ok(
     !texts(added).some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
-    '口上侧未命中静默（角色 1 无性格素质 → 键 -1；原作 TRYCALLFORM 落空，#565 返工）',
+    '口上侧未命中静默（角色 1 无性格素质 → 键 -1；键不存在时按缺省处理跳过，#565 返工）',
   );
 });
 
@@ -428,7 +428,7 @@ test('INTERCEPT：行动设定的等级门渲染（19 级看不到卖淫、55 �
     add_chara(fixture, 0, '你');
     add_dispatchable(fixture, 1, '玛奥');
     fixture.store.set('cflag:0:9', level);
-    // 行动设定画面没有 [999]（原作 :552-598 只给 0-5），必须选一档才回得去。
+    // 行动设定画面没有 [999]（只给 0-5），必须选一档才回得去。
     // 断言按按钮**正文**（档名）走：设置画面的 [0]/[1]/[2] 与行动档编号撞车，
     // 只看 accelerator 分不出是哪个画面。
     const action = level < 20 ? 1 : 5;
@@ -485,7 +485,7 @@ test('INTERCEPT：行动设定选扩张设施（3）——无设施 / 已到上�
     const { added } = await run_intercept(none, [1, 0, 3, 1, 3, 999, 999]);
     assert.ok(
       texts(added).includes('3层没有任何设施'),
-      '出发层 3 没有设施（:534）',
+      '出发层 3 没有设施',
     );
     assert.equal(none.store.get('cflag:1:500') ?? 0, 0, 'WORK 没被改动');
   }
@@ -501,7 +501,7 @@ test('INTERCEPT：行动设定选扩张设施（3）——无设施 / 已到上�
     const { added } = await run_intercept(maxed, [1, 0, 3, 1, 3, 999, 999]);
     assert.ok(
       texts(added).includes('3层的陷阱屋已经扩张到极限了。'),
-      '已到上限（:542）',
+      '已到上限',
     );
   }
 });
@@ -518,7 +518,7 @@ test('INTERCEPT：行动设定选扩张设施（3）——资金不足拦下', a
   const { added } = await run_intercept(fixture, [1, 0, 3, 1, 3, 999, 999]);
   assert.ok(
     texts(added).includes('* 魔王大人，你怎么这么穷 *'),
-    '扩张费用不足（:643）',
+    '扩张费用不足',
   );
   assert.equal(fixture.store.get('cflag:1:500') ?? 0, 0, 'WORK 没被改动');
 });
@@ -541,7 +541,7 @@ test('INTERCEPT：道具补给（[2]）——三次抽奖都成功则不退款',
     !texts(added).includes('补给已满，资金被退还了。'),
     '三件都入手 → 不退款',
   );
-  // 三次抽奖的轮数（:495 `FOR LOCAL:1, 0, 3`）：三次各打一行入手提示
+  // 三次抽奖的轮数（`FOR LOCAL:1, 0, 3`）：三次各打一行入手提示
   assert.equal(
     texts(added).filter((t) => t.includes('入手了')).length,
     3,
@@ -550,14 +550,14 @@ test('INTERCEPT：道具补给（[2]）——三次抽奖都成功则不退款',
 });
 
 test('INTERCEPT：道具补给——一件都没入手就把 2000 退回来', async () => {
-  // rand 恒 0 → @ADD_EX_ITEM 走换武器支、floor(0) <= 等级(0) → 恒返回 0
+  // rand 恒 0 → add_ex_item 走换武器支、floor(0) <= 等级(0) → 恒返回 0
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_dispatchable(fixture, 1, '玛奥');
   fixture.store.set('flag:10004', 100000);
   fixture.store.set('exflag:4444', 100000);
   const { added } = await run_intercept(fixture, [1, 2, 998], const_rand(0));
-  assert.ok(texts(added).includes('补给已满，资金被退还了。'), ':502 退款');
+  assert.ok(texts(added).includes('补给已满，资金被退还了。'), '退款');
   assert.equal(fixture.store.get('flag:10004'), 100000, '退款后净扣为零');
   assert.equal(fixture.store.get('exflag:4444'), 100000);
 });
@@ -587,7 +587,7 @@ test('INTERCEPT：道具补给的钱不够两支（单纯不够 / 付费派遣�
   }
 });
 
-// —— @GOHOUBI_REQUEST（:661-691） ——
+// —— gohoubi_request ——
 
 /** 定值序随机源（依次吐 values，用尽后重复末值） */
 function seq(values) {
@@ -595,7 +595,7 @@ function seq(values) {
   return () => values[Math.min(index++, values.length - 1)];
 }
 
-test('GOHOUBI_REQUEST：WISH 三档判据整表驱动（含 RAND:3 == 0 的门槛与 6→4 降级）', async () => {
+test('GOHOUBI_REQUEST：WISH 三档判断整表驱动（含 RAND:3 == 0 的门槛与 6→4 降级）', async () => {
   /** @param {object} seed 角色预置 @param {number|number[]} roll rand 的返回值 */
   const run_case = async (seed, roll) => {
     const fixture = create_era_fixture();
@@ -655,7 +655,7 @@ test('GOHOUBI_REQUEST：WISH 三档判据整表驱动（含 RAND:3 == 0 的门�
   );
 });
 
-test('GOHOUBI_REQUEST：魔王同时是男与扶她时 6 也降级（判据是两者皆非）', async () => {
+test('GOHOUBI_REQUEST：魔王同时是男与扶她时 6 也降级（判断条件是两者皆非）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_dispatchable(fixture, 1, '玛奥');
@@ -675,11 +675,11 @@ test('GOHOUBI_REQUEST_KOUJO：调用面（签名）由 #397 冻结，函数体�
   assert.equal(typeof gohoubi_request_koujo, 'function');
   assert.equal(gohoubi_request_koujo.length, 1, '只有一个形参 cid');
 
-  // 缺目标（无性格素质 → 键 -1）：缺席语义是静默（原作 TRYCALLFORM 落空，
+  // 缺目标（无性格素质 → 键 -1）：缺席语义是静默（键不存在时按缺省处理跳过，
   // #565 返工；真缺口由 test/kojo-family-coverage.test.js 的集合比对拦）
   assert.equal(await gohoubi_request_koujo(3), 0);
   assert.deepEqual(fixture.text_lines(), [], '未命中静默，不打存根行');
-  // 有目标且已注册：真分发，K 侧收 cid（#403 落的体）
+  // 有目标且已注册：真分发，K 侧收 cid（#403 实现的函数体）
   fixture.store.set('talent:3:163', 1); // 高貴 163 → LOCAL 103 → 键 3
   const seen = [];
   gohoubi_request_koujo_family.register(3, async (cid) => {

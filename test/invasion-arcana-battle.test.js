@@ -7,13 +7,13 @@
  *   rand(2) → 1：magic(0,·) 的三段（MAGIC_SELECT / SHAMAN_SELECT / 末段）
  *     对 TARGET_TYPE 0 全部未命中，状态零变化；
  *   rand(3) → 0：slave_monster_skill 直接返回 0；
- *   rand(6) → 1：双方同值 → X == Y 平局（:73 的 IF X >= Y → 奴隶先攻）；
+ *   rand(6) → 1：双方同值 → X == Y 平局（IF X >= Y → 奴隶先攻）；
  *   rand(100) → 99：不失手、不连击（40 号剑失手率/连击率 0）；
  *   rand(20)/rand(30)：回合损耗 / 超时损耗，按用例覆盖。
  * 攻击数值的期望按 duel_attack → attack_chara_extra_dmg_battle2 →
  * attack_chara_extra_dmg → defence_chara_extra_dmg 四层逐步核算（武器
  * 40 号剑：伤害强化/气力伤害/防御伤害 100，弹药消耗/失手率/连击率/特殊
- * 0——ere/data/equip-database.js:80；等级 9 < 100，技能段不掷 rand）。
+ * 0——ere/data/equip-database.js；等级 9 < 100，技能段不掷 rand）。
  */
 
 const assert = require('node:assert/strict');
@@ -61,7 +61,7 @@ function knob(overrides = {}) {
   };
 }
 
-// —— @DEATH_CHECK4（:531-584）——
+// —— death_check4 ——
 
 test('DEATH_CHECK4：圣灵侧三档退场 → RETURN 2 且状态 0（PRINTFORML 无等待）', async () => {
   const cases = [
@@ -141,7 +141,7 @@ test('DEATH_CHECK4：双方健在 → 0', async () => {
   assert.equal(fixture.text_lines().length, 0, '健在时不输出');
 });
 
-// —— @ARCANA_BATTLE 主循环（:2-121）——
+// —— arcana_battle 主循环 ——
 
 test('ARCANA_BATTLE：一回合击破——四层伤害核算、弹药 15、经验与武器恢复', async () => {
   const fixture = setup_arcana_world();
@@ -175,7 +175,7 @@ test('ARCANA_BATTLE：一回合击破——四层伤害核算、弹药 15、经�
   assert.equal(fixture.store.get('exp:1:80'), 9, '击中加经验（CFLAG:2:9）');
   assert.equal(fixture.store.get('cflag:2:1'), 0, '骑士状态 0（投降）');
 
-  // 弹药补充 15（:21-22，BATTLE2 是 7——各文件字面量不同）；40 号剑弹药
+  // 弹药补充 15（BATTLE2 是 7——各文件字面量不同）；40 号剑弹药
   // 消耗 0，战后仍是 15
   assert.equal(fixture.store.get('cflag:1:571'), 15, '元勇者弹药 15');
   assert.equal(fixture.store.get('cflag:2:571'), 15, '骑士弹药 15');
@@ -216,10 +216,7 @@ test('ARCANA_BATTLE：显示开（FLAG:5 位 5）——开场、参数、VS 与�
   // X == Y 平局 → 奴隶先攻：奴隶的攻击行在骑士之前
   const slave_atk = texts.indexOf('奴隶阿尔使用剑攻击！！');
   const knight_atk = texts.indexOf('圣灵骑士·贝丝使用剑攻击！！');
-  assert(
-    slave_atk > 0 && knight_atk > slave_atk,
-    '平局归奴隶先攻（:73 X >= Y）',
-  );
+  assert(slave_atk > 0 && knight_atk > slave_atk, '平局归奴隶先攻（X >= Y）');
   assert(texts.includes('奴隶阿尔的攻击令贝丝受到224点伤害！'), '先手伤害 224');
   assert(
     texts.includes('阿尔拼命忍受着圣灵骑士·贝丝的攻击………'),
@@ -275,7 +272,7 @@ test('ARCANA_BATTLE：超时（TURN > 15）撤退——败北叙述、回合损�
   assert.equal(fixture.store.get('base:2:0'), 400, 'HP 无损');
   assert(
     fixture.text_lines().includes('阿尔被圣灵骑士击败了………'),
-    '骑士在任时的败北叙述（无显示开关守卫）',
+    '骑士在任时的败北叙述（无显示开关检查）',
   );
 });
 
@@ -320,7 +317,7 @@ test('ARCANA_BATTLE：先制圣灵（骑士 TALENT:252）arg3=2 落账', async (
   assert.equal(fixture.store.get('exp:2:80'), 9, '骑士击中加经验');
 });
 
-test('ARCANA_BATTLE：999 的 BREAK 嵌在显示守卫内——显示关时不中断，打满 16 回合', async () => {
+test('ARCANA_BATTLE：999 的 BREAK 嵌在显示检查内——显示关时不中断，打满 16 回合', async () => {
   const fixture = setup_arcana_world();
   const mod = fixture.load_module('invasion/invasion-arcana-battle');
   const battle2 = fixture.load_module('dungeon/dungeon-battle2');
@@ -362,6 +359,6 @@ test('ARCANA_BATTLE：999 + 显示开 → 打印「战斗中断了」并退出',
   assert.equal(calls.length, 1, '回合 0 即中断');
   assert.equal(result, 0, 'RETURN 0');
   const texts = fixture.text_lines();
-  assert(texts.includes('战斗中断了'), '中断行（守卫内 PRINTL）');
+  assert(texts.includes('战斗中断了'), '中断行（检查内 PRINTL）');
   assert(texts.includes('阿尔被圣灵骑士击败了………'), '骑士在任 → 败北叙述');
 });
