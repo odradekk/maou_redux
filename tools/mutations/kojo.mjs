@@ -20972,7 +20972,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11950 男版「素直」行拆回两条（#584：:76+:77 的同一行被拆）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
-    find: '        // 旧引擎里这两句 PRINTFORM + PRINTFORML 是同一行（#584）\n        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
+    find: '        // 拼成一行：PRINTFORM + PRINTFORML（#584）\n        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n        );',
     replace:
       '        await era.print(\n          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，`,\n        ); // （变异：拆回）\n        await era.print(`耻情点数+${mon_num * 10}`); // （变异：拆回）',
     tests: ['kojo-dungeon-ravish-man'],

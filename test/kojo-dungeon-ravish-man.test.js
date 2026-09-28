@@ -82,7 +82,7 @@ test('兽人凌辱（RAND:5 == 0）：口交三选一 + 恐怖点数 + 初吻', 
   assert.equal(result, 0);
   const lines = fixture.text_lines();
   assert.ok(lines.some((l) => l.includes('恐怖点数+50')));
-  // #584：旧引擎里这两句是 PRINTFORM + PRINTFORML，同一行——整行相等即断言
+  // #584：这两句（PRINTFORM + PRINTFORML）拼成一行——整行相等即断言
   assert.ok(
     lines.includes(
       '带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+50',
@@ -171,7 +171,7 @@ test('男人凌辱：肉便器分支（RAND:5 != 0 且 RAND:4 == 0）', async ()
 });
 
 test('#600 男人凌辱·肉便器：装身写文与收尾同属一行', async () => {
-  // 旧引擎里「%SAVESTR:ARG%的身上，被写着」+「【最喜欢阴茎】」
+  // 拼成一行：「%SAVESTR:ARG%的身上，被写着」+「【最喜欢阴茎】」
   // + IF 追加的落書 + IF/ELSEIF 三选一
   // + PRINTFORM + PRINTFORMW 收行都是一行：无后缀 PRINT 不换行。
   // 各 IF 是追加片段（不是互斥分支），整段的判断条件提到语句外当取值
@@ -203,7 +203,7 @@ test('#600 男人凌辱·肉便器：装身写文与收尾同属一行', async (
 });
 
 test('#584 兽人凌辱：素直（TALENT:13）行的耻情点数与前置描写同一行', async () => {
-  // 旧引擎里这两句（PRINTFORM + PRINTFORML 耻情点数+{MON_NUM * 10}）是同一行
+  // 拼成一行：PRINTFORM + PRINTFORML 耻情点数+{MON_NUM * 10}
   const fixture = await setup_ravish((f) => {
     f.store.set('talent:31:13', 1); // 素直（TALENT:11 反抗的未置位）
   });
@@ -279,7 +279,7 @@ test('GOBI_KOUJO 行内拼接：『猪…』整段一行收语尾（#570）', as
   );
 });
 
-// —— #624：兽人凌辱里七处「旧引擎同一行被拆开」合回一条输出 ——
+// —— #624：兽人凌辱里七处「同一行被拆开」合回一条输出 ——
 //
 // 七处的共同形状：`PRINTFORM`/`PRINT`（无 L/W 后缀）连续不换行，中间夹 IF/
 // SELECTCASE 的分档片段，末段才带 W/L 收行。条件提到语句外当取值、片段文本

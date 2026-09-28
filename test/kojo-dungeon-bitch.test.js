@@ -80,11 +80,11 @@ test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——EXP:74 为零则
 });
 
 test('DUNGEON_BITCH：勇者（CFLAG:1 == 2）两道门槛——SEIKOU <= 100 是死门槛（#14）', async () => {
-  // 旧引擎里两道门槛（EXP:74 == 0 → 返回）与
+  // 两道门槛（EXP:74 == 0 → 返回）与
   // （SEIKOU <= 100 → 返回）在可达状态互斥：SEIKOU 计算里 `SIF EXP:74
   // → LOCAL++` 保证经验非零时 SEIKOU >= 101（勇者无奴隶分支的
   // +45：0 基础 + 1 经验 + 5 所持金 + 95 积极性 = 101）。所以第二道门槛
-  // 在「EXP:74 > 0 且卖春积极性 > 0」的真实卖春路径上恒不触发——是旧引擎的
+  // 在「EXP:74 > 0 且卖春积极性 > 0」的真实卖春路径上恒不触发——这是
   // 死门槛，按原样保留、登记 #14（反向变异：删掉它测试仍绿属预期）。
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
@@ -521,7 +521,7 @@ test('SET_BICH_LEVEL：输入分档（0/1/2-5）写入 CFLAG:120', async () => {
 });
 
 test('#600 SHOW_BUTTON_BICH_LEVEL：档位文案合回一行，输出一条（末段空参数不加文本）', async () => {
-  // 旧引擎里「[%NUM%] 卖春积极性 - 」+ IF/ELSEIF/ELSE 三档
+  // 「[%NUM%] 卖春积极性 - 」+ IF/ELSEIF/ELSE 三档
   // + `PRINT  `（关键字后只有空白 → 参数为空，不输出字符）同属一行。
   // ere 侧合并成一条 era.print，空参数段不加文本。
   const cases = [
@@ -576,8 +576,8 @@ test('SELL_BITCH：完整流程（客循环 → 成功显示 → 经验/金钱/�
 });
 
 test('#584 SELL_BITCH：有客却一个也没买下时，「人群的声音嘈杂着、」与「交涉终了…」是同一行', async () => {
-  // 旧引擎里这两句是 PRINTFORM（不换行）+ PRINTFORMW，
-  // 同属一行；ere 曾拆成两条 era.print（#584）。
+  // 拼成一行：PRINTFORM（不换行）+ PRINTFORMW（#584）；
+  // ere 曾拆成两条 era.print。
   // 走到该分支需要：客数 > 0（KYAKU 至少 1）且客循环里全部失败 →
   // fail_message 的 has_kyaku 支。前三支（善恶值 > 100 / > 50 / > 0）都不成立
   // → CFLAG:151 取 0。
@@ -600,8 +600,7 @@ test('#584 SELL_BITCH：有客却一个也没买下时，「人群的声音嘈�
 });
 
 test('#584 DUNGEON_ANIMAL：「无法压抑兽交的欲望 + 悄悄寻找着兽穴」是同一行', async () => {
-  // 旧引擎里这两句是 PRINTFORM + PRINTFORMW，同属
-  // 一行；ere 曾拆成两条 era.print（#584）
+  // 拼成一行：PRINTFORM + PRINTFORMW（#584）；ere 曾拆成两条 era.print。
   const { fixture, mod } = setup_bitch();
   await mod.dungeon_animal(31, seq_rand(0));
   assert.ok(
@@ -642,7 +641,7 @@ test('HEROINE_BITCH：债务过高强制卖春接真身（CFLAG:582 < -10000 且
     f.store.set('cflag:31:582', -20000); // 债务高
     f.store.set('talent:31:0', 0); // 非处女
   });
-  // 抽取序（按旧引擎语句顺序）：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
+  // 抽取序：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
   // RAND:10 → 0（PLAY = 5）、RAND:500 → 0（COST = 1000）、RAND:3 → 1（不拍片；
   // 本用例没设 ABL:11/ABL:37/EXP:20，走低档）；回到自慰判定
   // RAND:36 → 35（35 > 0 → 不触发；传 36 会被 36 % 36 = 0 判成触发）。
@@ -685,7 +684,7 @@ test('EXP_BITCH：ANIMAL 的 JUEL 加算真打到 arg 名下（JUEL:1/6/8 三段
   assert.equal(fixture.store.get('juel:1:1'), undefined);
 });
 
-// —— #624：三处「旧引擎同一行被拆开」合回一条输出 ——
+// —— #624：三处「同一行被拆开」合回一条输出 ——
 //
 // 断言一律钉整行：旧的 `.some(includes(片段))` 在「拆回多条」时照样绿。
 // 本文件其余 13 组落在跳过块里（未移植），或在

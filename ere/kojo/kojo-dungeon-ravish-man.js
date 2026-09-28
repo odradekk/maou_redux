@@ -16,7 +16,7 @@
  *   - **%SAVESTR:ARG% 经 chara_callname(arg) 承载**（#5 决议：SAVESTR 无
  *     引擎通道，#171 实测三段完全静默丢弃）：ARG 是参数角色号（被凌辱者），
  *     与口上文件的 TARGET 不同源，本文件用独立的 arg_name 变量。
- *   - **PRINTDATA/PRINTDATAW（DATAFORM 随机数组）**：旧引擎在块内随机取一
+ *   - **PRINTDATA/PRINTDATAW（DATAFORM 随机数组）**：在块内随机取一
  *     条输出，此处改写成
  *     `pick(list, rand_n(n))`——随机取一条（#117：无全局 RAND 序列，
  *     随机经注入的 rand_n 掷出，测试注入定值序）。
@@ -28,7 +28,7 @@
  *     读用裸寻址 `era.get('cflag:${arg}:16')`，写走门面
  *     `chara(arg).train.初吻对象 = 995`。
  *   - **`CALL GOBI_KOUJO` 真身接通（#570）**：语尾口上分派（gobi_koujo）
- *     返回语尾文字——旧引擎里『猪…』整段是一行（PRINTFORM 夹两处
+ *     返回语尾文字——『猪…』整段拼成一行（PRINTFORM 夹两处
  *     GOBI 后 PRINTFORMW 收尾），ere 一次 print 即一行，故拼成整串一次
  *     printAndWait。TALENT:17（プライド低い）→ 1（喜んで誇らしげに）、
  *     否则 5（情けなさそうに）。
@@ -37,6 +37,10 @@
  *     ere 侧无单字母变量通道，注释保留不落变量。
  *   - **`WAIT` → `await era.waitAnyKey()`**（PRINTW 的等待语义，#73；
  *     enter-enemy.js 先例）。
+ *   - **一行输出的拼接**：旧引擎的无后缀 PRINTFORM/PRINT 不换行，连续多段
+ *     输出拼成一条显示行，末段带 W/L 的语句才收行。本文件按
+ *     「一条 JS 输出语句 = 一条显示行」合成，函数内的注释只标
+ *     「拼成一行：…」的段落构成。
  *   - **TALENT:ARG:种族等中文下标**：yml/Talent.yml 的名字表
  *     有「种族」（id 314）等条目，引擎列名寻址 `talent:${cid}:种族` 可用
  *     （#183 引擎实测 setVar 通过中文名翻译）。
@@ -111,7 +115,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
       mon_num *= 2; // 舌使いボーナス
     }
 
-    // 旧引擎里这是一整行：无头骑士前缀（SIF + PRINTFORM）、
+    // 拼成一行：无头骑士前缀（SIF + PRINTFORM）、
     // 名字、种族分档都不换行，到末段的 PRINTFORMW 才收行。
     // 条件提到语句外当取值、片段文本留在输出语句里。
     const headless = t('种族') === 4;
@@ -155,14 +159,14 @@ async function orc_ryou_man(arg, mon_num, rand) {
       // 初见的畏惧反应
       if (t(11)) {
         // 反抗的
-        // 旧引擎里这两句 PRINTFORM + PRINTFORML 是同一行（#584）
+        // 拼成一行：PRINTFORM + PRINTFORML（#584）
         await era.print(
           `带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+${mon_num * 10}`,
         );
         era.add(`juel:${arg}:10`, mon_num * 10); // JUEL:ARG:10 恐怖
       } else if (t(13)) {
         // 素直
-        // 旧引擎里这两句 PRINTFORM + PRINTFORML 是同一行（#584）
+        // 拼成一行：PRINTFORM + PRINTFORML（#584）
         await era.print(
           `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,
         );
@@ -272,7 +276,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
       `${arg_name}的脸和性器都用精液化上了妆。兽人们看着他这样子，开怀大笑。`,
     );
 
-    // 旧引擎里这是一整行：「兽人的」、PRINTDATA 的随机词条
+    // 拼成一行：「兽人的」、PRINTDATA 的随机词条
     // 与部位分档都不换行，末段的 PRINTL
     // 收行（本身无文本）。条件提到语句外当取值、片段文本留在输出语句里。
     const penis = pick(
@@ -316,7 +320,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
     }
 
     await era.printAndWait(''); // PRINTW（空行等待）
-    // 旧引擎里这是一整行：PRINTW 是空行，「兽人们把润滑液
+    // 拼成一行：PRINTW 是空行，「兽人们把润滑液
     // 涂在了…的」与分档片段都不换行，末段的 PRINTL 收行。
     // 条件提到语句外当取值、片段文本留在输出语句里。
     // 阴毛状态是纯读，提到语句外当取值。
@@ -341,7 +345,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
         '性器和肛门上',
     );
 
-    // 旧引擎里这是一整行：「在…的」与体型分档都不
+    // 拼成一行：「在…的」与体型分档都不
     // 换行，末段的 PRINTL 收行。
     await era.print(
       `在${arg_name}的` +
@@ -394,7 +398,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
       ),
     );
 
-    // 旧引擎里这是一整行：「…全裸地四肢着地趴在地下、」与
+    // 拼成一行：「…全裸地四肢着地趴在地下、」与
     // 素质分档都不换行，末段的 PRINTW 才收行。条件提到
     // 语句外当取值、片段文本留在输出语句里。
     await era.printAndWait(
@@ -436,7 +440,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
       era.add(`juel:${arg}:5`, mon_num * 10); // JUEL:ARG:5 欲情
     }
 
-    // 旧引擎里『猪…』整段是一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
+    // 『猪…』整段拼成一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
     // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
     const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
       t(17) ? 1 : 5,
@@ -1078,7 +1082,7 @@ async function man_ryou_man(arg, mon_num, rand) {
       `${arg_name}被强行宣布为肉便器，全身都被写满了淫秽的话语。`,
     );
 
-    // 旧引擎里这是一整行：无后缀 PRINT 连续不换行，末行 PRINTFORMW 才收行。
+    // 拼成一行：无后缀 PRINT 连续不换行，末行 PRINTFORMW 才收行。
     // 落書的追加档与末尾三选一都在行内，各 IF 的条件提到语句外当取值、
     // 文本留在输出语句里。
     const cold = era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`); // 感情淡薄・冷漠

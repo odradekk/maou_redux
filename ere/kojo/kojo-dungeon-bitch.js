@@ -1,6 +1,5 @@
 /**
- * @file 地下城卖春系统（issue #184，H15）：旧引擎卖春脚本的二十四函数
- * 中**活代码十二函数**的移植。四组同名（DUNGEON_BITCH / HEROINE_BITCH /
+ * @file 地下城卖春系统（issue #184，H15）：二十四函数中**活代码十二函数**的移植。四组同名（DUNGEON_BITCH / HEROINE_BITCH /
  * DUNGEON_ANIMAL / DUNGEON_WORK）的旧版定义全在死代码块（旧構文）里——
  * 那些函数不进入函数空间、不构成同名遮蔽（#12 仲裁的 AGENT 先例：
  * 用同一机制禁掉旧版 check_status 后「不参与同名仲裁」）。SKIP 块内
@@ -21,9 +20,13 @@
  * 口上正文统一为简体（issue #60 的归一表决定），新增文本受
  * tools/lang-check.js 检查。
  *
+ * 一行输出的拼接：旧引擎的无后缀 PRINTFORM/PRINT 不换行，连续多段输出
+ * 拼成一条显示行，末段带 W/L 的语句才收行。本文件把同一显示行的多段
+ * 合成一条输出语句，函数内的注释只标「拼成一行：…」的段落构成。
+ *
  * == #572 复核：SET_BICH_LEVEL 的裸编号行保持纯文本 ==
  *
- * 旧引擎里是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
+ * 那一轮是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
  * （等级 0-5，选中的等级由后续的播报补述）。按钮化要走两条路之一：
  * 拆成六条语句（「一条 JS 语句 ↔ 一行输出」的配对纪律不成立）或改用
  * 多列网格按钮（`printMultiColumns`/`printInColRows` 的按钮格，本项目尚无
@@ -341,7 +344,7 @@ async function sell_bitch(arg, place, rand = default_rand) {
             girl[5],
           );
         }
-        // 旧引擎里这是一整行：「于是」（只在 GIRL && MAN 时输出，
+        // 拼成一行：「于是」（只在 GIRL && MAN 时输出，
         // 那时前缀已由上面那条收行）与「以%LOCALS%为对手」都不换行。
         await era.print(
           (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
@@ -388,7 +391,7 @@ async function sell_bitch(arg, place, rand = default_rand) {
               girl[5],
             );
           }
-          // 旧引擎里这是一整行：「于是」（只在 GIRL && MAN 时输出，
+          // 拼成一行：「于是」（只在 GIRL && MAN 时输出，
           // 那时前缀已由上面那条收行）与「以%LOCALS%为对手」都不换行。
           await era.print(
             (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
@@ -527,8 +530,7 @@ async function fail_message(arg, kyaku, has_kyaku, no_kyaku) {
       '然而，根本没有勇气发出声音，说自己在卖春的这种事情。',
     );
   } else if (has_kyaku) {
-    // 旧引擎里这两句是 PRINTFORM（不换行）+ PRINTFORMW，同属一行；
-    // 合成一条输出即「这一条语句 = 这两行构成的一行输出」（#584）
+    // 拼成一行：PRINTFORM（不换行）+ PRINTFORMW（#584）
     await era.printAndWait(
       `${kyaku}人群的声音嘈杂着、交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,
     );
@@ -636,7 +638,7 @@ function exp_bitch(arg, place, type, play) {
       }
       break;
 
-    // ANIMAL 兽交奉侍（场所差异在旧引擎注释中说明无差异）
+    // ANIMAL 兽交奉侍（各场所的描写相同）
     case 'ANIMAL':
       chara(arg).dungeon.兽奸经验 += play; // EXP:56 += PLAY（兽奸经验）
       chara(arg).dungeon.私处经验 += play; // EXP:0 += PLAY
@@ -786,7 +788,7 @@ async function dungeon_work(arg, rand = default_rand) {
     // PRINTDATA 随机选一（提到语句外当取值）
     const jobs = ['研磨宝石的', '制作工艺品的', '抄写书籍的', '制作手工的'];
     const job = jobs[rand(jobs.length)]; // PRINTDATA
-    // 旧引擎里这是一整行：「…从事了」、随机副业名与
+    // 拼成一行：「…从事了」、随机副业名与
     // PRINTFORMW 收行都不换行。
     await era.printAndWait(
       `${name_of(arg)}从事了` + job + `副业${local}点收入。`,
@@ -809,7 +811,7 @@ async function dungeon_animal(arg, rand = default_rand) {
   // PLAY（兽交次数）
   const play = fi_culc_bitch(arg, 'PLAY', 'ANIMAL', rand);
 
-  // 描写（旧引擎里这两句 PRINTFORM + PRINTFORMW 是同一行——#584）
+  // 描写（拼成一行：PRINTFORM + PRINTFORMW——#584）
   await era.printAndWait(`${name_of(arg)}无法压抑兽交的欲望悄悄寻找着兽穴...`);
   // PRINTFORMW %SAVESTR:ARG%进入了野兽的巢穴…
   await era.printAndWait(
@@ -950,7 +952,7 @@ async function self_bitch(arg, place, rand = default_rand) {
     local = 5;
   }
 
-  // 旧引擎里这是一整行：分档文本（或 PRINTDATA 词条）
+  // 拼成一行：分档文本（或 PRINTDATA 词条）
   // + 扶她/男人追加 + PRINTFORMW 收行。
   const has_cock =
     era.get(`talent:${arg}:121`) === 1 ||
@@ -1652,15 +1654,15 @@ function fi_culc_bitch(arg, args, args1 = '', rand = default_rand) {
 /**
  * show_button_bich_level：角色能力显示中的卖春积极性按钮。
  *
- * 显示 `[NUM] 卖春积极性 - 没有/普通/N等级`。旧引擎里此按钮在角色信息页
- * 被注释（卖春积极性改走 PTJ_BUTTON），本函数保留给
+ * 显示 `[NUM] 卖春积极性 - 没有/普通/N等级`。此按钮在角色信息页被注释
+ * （卖春积极性改走 PTJ_BUTTON），本函数保留给
  * 打工 MOD 使用。
  *
  * @param {number} num 按钮数值
  * @param {number} arg 角色 ID
  */
 function show_button_bich_level(num, arg) {
-  // 旧引擎里这是一整行：无后缀 PRINTFORM/PRINT 连续
+  // 拼成一行：无后缀 PRINTFORM/PRINT 连续
   // 不换行，档位文案由 IF/ELSEIF/ELSE 三档拼进来。末段的 `PRINT  `
   // 关键字后只有空白，参数为空（不输出字符），因此不加文本。
   const level = bich_level_text(arg); // 三档
@@ -1690,7 +1692,7 @@ function bich_level_text(arg) {
 /**
  * set_bich_level：设置卖春积极性。
  *
- * 旧引擎经 INPUT 读键（[0]-[5]），输入无效（< 0 或 > 5）直接返回。
+ * 经 INPUT 读键（[0]-[5]），输入无效（< 0 或 > 5）直接返回。
  *
  * @param {number} arg 角色 ID
  */

@@ -10,14 +10,14 @@
  *     （默认开，且**只补 0**：玩家显式关掉（-1）不会自开）。
  *   - 每个口上文件自带一对事件定义：EVENTTRAIN #PRI 置 FLAG:(100+编号)
  *     = 1（存在标志）并同样补 FLAG:7，EVENTEND #LATER 清 0。文件被删掉
- *     时标志没人置、分发静默跳过——旧引擎的注释明言这是容错设计。
+ *     时标志没人置、分发静默跳过——注释里明言这是容错设计。
  *     ere 侧等价：不 require 的口上模块不注册，分发
  *     族空间内缺失合法（TRYCALL 落空语义）。
  *
  * == 分发（决议 #7 的机制） ==
  *
  * TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100} 改走分发族。编号空间 =
- * 分发检查（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`，按旧引擎的
+ * 分发检查（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`，按
  * 「&& 与 || 同优先级、左结合」读作 `(100..139) || 1000 以上`——`||` 之后没有
  * `&&`，两种读法同值，与 `local > 1000` 并列即为窗口；#517。ere 侧整合成
  * in_kojo_window，只此一处定义）能拼出的
@@ -155,13 +155,13 @@ const gobi_koujo_family = new DispatchFamily(
  * 不进表的 5 个入口：EVENTSHOP（本文件的 on('EVENTSHOP', …)）、
  * GET_KOJO_NUM（本文件的 get_kojo_num）与三个 **未使用**的入口
  * （KOJO_MESSAGE_COM_MASTER / _ASSI / KOJO_MESSAGE_PLAYERCHANGE——
- * 它们的 TRYCALLFORM 在旧引擎里就是注释态，不派发，故不进表）。
+ * 它们的 TRYCALLFORM 本就是注释态，不派发，故不进表）。
  *
  * 字段：
  *   - line     分发行号（遗留字段，现无读取方）
  *   - dispatch TRYCALLFORM 拼出的函数名前缀（编号 = LOCAL - 100）
  *   - entry    ere 侧入口函数名；module 是它所在的模块（load_module 可加载名）
- *   - erb      拼名对应的旧引擎函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
+ *   - erb      拼名对应的函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
  *             的三处（VICTORY_KOUJO / ATTACK_KOUJO / ATTACK_KOUJO_B 的实际函数名
  *             是去掉 DUNGEON_ 的），OSIOKI_KOUJO 在 ere 侧沿史拼作 osioski-
  *             （各口上文件的既有拼写，不改）。
@@ -641,7 +641,7 @@ async function attack_koujo(cid, rand) {
  *
  * 本入口无额外检查；缺席语义取静默——与同族 attack_koujo
  * 一致（#565 返工第 4 条起：try_kojo 未命中不打占位）。TARGET 暂存/还原按
- * 同族既有约定（旧引擎不还原，ere 侧不留跨调用指针残留）。
+ * 同族既有约定（脚本不还原，ere 侧不留跨调用指针残留）。
  *
  * @param {number} cid B 侧角色号
  * @param {(n: number) => number} [rand] RAND:N 的随机源

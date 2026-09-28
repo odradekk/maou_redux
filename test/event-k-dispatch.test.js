@@ -143,7 +143,7 @@ test('KOJO_MESSAGE_PALAMCNG：两道存在标志都为 0 时静默早退（EX �
   assert.deepEqual(fixture.text_lines(), [], '早退连占位行也不打');
 });
 
-test('KOJO_MESSAGE_MARKCNG：无存在判定（旧引擎的存在判定行是注释态）→ FLAG:LOCAL == 0 也派发', async () => {
+test('KOJO_MESSAGE_MARKCNG：无存在判定（存在判定行是注释态）→ FLAG:LOCAL == 0 也派发', async () => {
   const fixture = setup_kojo();
   fixture.store.set('talent:17:163', 1); // FLAG:103 特意不置
   const { kojo_message_markcng, kojo_message_markcng_family } =
@@ -152,11 +152,7 @@ test('KOJO_MESSAGE_MARKCNG：无存在判定（旧引擎的存在判定行是注
   kojo_message_markcng_family.register(3, probe(seen));
   const rand = always;
   await kojo_message_markcng(rand);
-  assert.deepEqual(
-    seen,
-    [[rand]],
-    '没有存在判定这道闸（旧引擎里该行是注释态）',
-  );
+  assert.deepEqual(seen, [[rand]], '没有存在判定这道闸（该行是注释态）');
 });
 
 // —— GOHOUBI_REQUEST_KOUJO ——

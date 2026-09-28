@@ -280,7 +280,7 @@ test('强制肉偿：债务未抵完时累加（CFLAG:582 += COST）', async () 
   // draws：[档 0, PLAY 0, COST 0, 拍片 1]，低档 PLAY=5、COST=1000
   await mod.forced_payment(31, seq_rand(0, 0, 0, 1));
   assert.equal(DEBT(fixture), -19000);
-  // #584：旧引擎里五句 PRINTFORM/PRINTFORMW 是同一行——结算行必须整行出现
+  // #584：五句 PRINTFORM/PRINTFORMW 拼成一行——结算行必须整行出现
   assert.equal(
     fixture.text_lines().find((l) => l.includes('抵销了')),
     '被强制用肉体偿债的温妮抵销了1000点的债务，当前欠金变为-19000点……',
@@ -317,7 +317,7 @@ test('强制肉偿：!RAND:3 才拍片，EXP:50/70 各 +1', async () => {
   assert.ok(
     fixture.text_lines().includes('温妮用肉体还债的过程被人拍下来了！'),
   );
-  // #584：显示片酬与前后文是同一行（旧引擎里 PRINTFORM + PRINTFORMW）
+  // #584：显示片酬与前后文拼成一行（PRINTFORM + PRINTFORMW）
   assert.ok(
     fixture
       .text_lines()
@@ -494,7 +494,7 @@ test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', 
   fixture.store.set('abl:31:31', 0);
   fixture.store.set('talent:31:60', 0);
   const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
-  // 抽取序（按旧引擎语句顺序）：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
+  // 抽取序：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
   // RAND:10 → 0（PLAY = 5）、RAND:500 → 0（COST = 1000）、RAND:3 → 1（不拍片，
   // 本用例没设 ABL:11/ABL:37/EXP:20，走低档）；回到 heroine_bitch 的
   // 自慰判定 RAND:36 → 35（35 > 0，不触发）。

@@ -238,7 +238,7 @@ test('LOG_TRY_BITCH：DUNGEON 卖春指示（CFLAG:500 == 1）分支「遵照命
 });
 
 test('#600 LOG_TRY_BITCH：各分支片段同属一行，输出一条', async () => {
-  // 旧引擎里「%FS_BITCH("LOOKS", ARG)%」+ 分支片段 + PRINTFORMW 收行是一整行：
+  // 「%FS_BITCH("LOOKS", ARG)%」+ 分支片段 + PRINTFORMW 收行拼成一行：
   // 无后缀 PRINTFORM 不换行。
   // 各分支的条件提到语句外当取值、片段文本留在输出语句里。
   // LOOKS 前缀本身随素质变（ABL:37 卖淫中毒 → 「卖身寻欢的」、TALENT:85 →
@@ -459,7 +459,7 @@ test('LOG_BITCH_ANIMAL：DUNGEON 空 / TOWN 三行固定文', async () => {
     lines.some((l) => l.includes('在大家的眼前不知羞耻的进行着兽交表演...')),
     'TOWN 第一行',
   );
-  // #584：旧引擎里这两句（PRINTFORM %SAVESTR:ARG% 与 PRINTFORMW …）同一行
+  // #584：这两句（PRINTFORM %SAVESTR:ARG% 与 PRINTFORMW …）拼成一行
   assert.ok(
     lines.includes('温妮在大家的眼前不知羞耻的进行着兽交表演...'),
     'TOWN 首行是名字 + 固定文的整行（#584）',
@@ -507,7 +507,7 @@ test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BIT
 
 // —— #624：五个卖春玩法描写的「名字 + 经验分档 + 固定文」合回一整行 ——
 //
-// 旧引擎里各玩法描写的开场 `%SAVESTR:ARG%`
+// 各玩法描写的开场 `%SAVESTR:ARG%`
 // 与 SELECTCASE 分档文案都是无后缀 PRINTFORM（不换行），到末段的 PRINTFORMW
 // 才收行。合并后整行必须恰好占一条输出——**旧的 `.some(includes(片段))`
 // 断言拆回多条照样绿**，所以这里的每条用例都钉 `text_lines()[0]` 的整串。

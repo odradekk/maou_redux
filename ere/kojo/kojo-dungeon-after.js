@@ -35,7 +35,7 @@
  *     同款镜像），EVENTTURNEND 里向 tflag 的 18 号槽写入会落进缺省分支
  *     era.error「key error in getter/setter」且写入丢失（engine-bundle
  *     驱动 setVar 的两情形探针：桶未建 → era.error + 不落盘；桶预建 →
- *     正常落）。旧引擎侧调教期读不到奖惩残留靠「TRAIN 开始清零」，ere
+ *     正常落）。调教期读不到奖惩残留靠「TRAIN 开始清零」，ere
  *     侧靠「endTrain 删表」，两者等价；被替换的只是 ere 引擎里本就不
  *     存在的「调教外写 tflag」通道。口上实现移植时读 choice 参数、不读
  *     tflag:18。**#508 补记**：本链的调用点
@@ -43,7 +43,7 @@
  *     调教窗口内——「EVENTTURNEND 里没有 tflag 桶」这一条现状不再成立，
  *     参数链仍保持（值同、读者同，见 dungeon-after.js 文件头的补记）；
  *     直读 tflag:18 的口上实现（K14/K19/K904）都在窗口外语境，语义不变；
- *   - 存在判定（SIF FLAG:LOCAL == 0 → RETURN 0）在旧引擎里就是注释状态，
+ *   - 存在判定（SIF FLAG:LOCAL == 0 → RETURN 0）本就注释掉，
  *     不移植；GET_KOJO_NUM 的 EX 半边同 kojo-system 的
  *     待办说明。
  */
@@ -95,7 +95,7 @@ async function gohoubi_after_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
   const local = get_kojo_num(cid); // GET_KOJO_NUM()（此刻 TARGET = A）
-  // 存在判定在旧引擎里是注释状态，不判；キャラ別
+  // 不做存在判定；キャラ別
   if (in_kojo_window(local)) {
     await gohoubi_after_koujo_family.call(local - 100, {
       whenMissing: 0,
@@ -112,7 +112,7 @@ async function gohoubi_after_koujo(cid, choice) {
  * **签名与参数形状由 #397（N13）定死，函数体随 #403（N19）实现**——#403 只
  * 换函数体，签名一字未动：
  *
- *   - 形参只有 `cid`（派遣对象，调用方在调用前写好）。旧引擎的定义是零参
+ *   - 形参只有 `cid`（派遣对象，调用方在调用前写好）。定义本是零参
  *     （`SWAP LOCAL:2, TARGET; TARGET = A`），ere 侧按 #5 决议的等价改写
  *     显式传参（本文件的 gohoubi_after_koujo/osioski_koujo 同款）；
  *   - 奖赏种类不入参：K 侧实现一律读 `CFLAG:cid:504`（0-9），调用方
