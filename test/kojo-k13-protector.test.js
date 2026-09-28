@@ -250,7 +250,7 @@ test('屈服Lv2 旧引擎 &&/|| 优先级：仅 TALENT:114 也走「人妻+胸�
   assert.equal(
     fixture.text_lines()[0],
     '「呼呵呵……就承认这段时间我的心稍微有些动摇了吧」',
-    '源 :178 的 157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
+    '157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
   );
   assert.equal(fixture.store.get('cflag:31:201'), 3, '屈服Lv2 胸分支推进到 3');
 });
@@ -301,7 +301,7 @@ test('EVENTEND 调教终了分档（反抗 / 淫乱体力闸 / 爱慕）', async
     ['「哎呀、已经结束了哎……明天也请您多多关照了……♪」', '「我会翘首以待的♪」'],
     'EVENTEND 淫乱体力>=500 两句台词',
   );
-  assert.equal(r_hi, 0, '淫乱体力>=500 臂落末尾 return 0（返回值无人消费）');
+  assert.equal(r_hi, 0, '淫乱体力>=500 分支落末尾 return 0（返回值无人消费）');
 
   const love_lo = await setup_k13((f) => {
     f.store.set('talent:31:85', 1);
@@ -380,7 +380,7 @@ test('死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_13', async
   );
 });
 
-test('K13 无 ASSI 检查：助手调教也出声（源 :538-539 整行注释）', async () => {
+test('K13 无 ASSI 检查：助手调教也出声（整行注释）', async () => {
   const fixture = await setup_k13((f, era_flag) => {
     era_flag.assi = 31;
     era_flag.assiplay = 1;
@@ -510,7 +510,7 @@ test('阈值闸：FLAG:7==1 时淫乱阶段耗尽不出声、==2 时旁路重出
   );
 });
 
-// —— 家族注册接线 ——
+// —— 家族注册接入 ——
 
 test('20 个分发族全部注册了 K13（key 13）', async () => {
   const fixture = await setup_k13();
@@ -584,7 +584,7 @@ test('KOJO_MESSAGE_PALAMCNG_13 口塞检查静默跳过', async () => {
   );
 });
 
-test('KOJO_MESSAGE_PALAMCNG_13：首次润滑 Lv2 爱慕臂推进 CFLAG:221', async () => {
+test('KOJO_MESSAGE_PALAMCNG_13：首次润滑 Lv2 爱慕分支推进 CFLAG:221', async () => {
   const fixture = await setup_k13((f) => {
     f.store.set('talent:31:85', 1);
     f.store.set('palam:31:3', 600);
@@ -595,7 +595,7 @@ test('KOJO_MESSAGE_PALAMCNG_13：首次润滑 Lv2 爱慕臂推进 CFLAG:221', as
   assert.deepEqual(
     fixture.text_lines(),
     ['「湿了……湿了、、、吗」'],
-    'PALAMCNG 首次润滑Lv2 爱慕臂',
+    'PALAMCNG 首次润滑Lv2 爱慕分支',
   );
   assert.equal(
     fixture.store.get('cflag:31:221'),
@@ -817,7 +817,7 @@ test('ENTERENEMY_KOUJO_K13：默认档来袭口上', async () => {
 
 // —— NTR / 处刑 / 博物馆 ——
 
-test('NTR_KOUJO_K13：P==1 爱慕臂首次经 CFLAG:650/651 标记', async () => {
+test('NTR_KOUJO_K13：P==1 爱慕分支首次经 CFLAG:650/651 标记', async () => {
   const fixture = await setup_k13((f) => {
     f.store.set('talent:31:85', 1);
   });
@@ -827,7 +827,7 @@ test('NTR_KOUJO_K13：P==1 爱慕臂首次经 CFLAG:650/651 标记', async () =>
   await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
   assert.ok(
     fixture.text_lines().some((l) => l.includes('全都是魔王大人的东西')),
-    'NTR P==1 爱慕臂台词',
+    'NTR P==1 爱慕分支台词',
   );
   assert.equal(fixture.store.get('cflag:31:650'), 1, 'NTR 开关 CFLAG:650');
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'NTR P==1 记位 CFLAG:651');
@@ -838,7 +838,7 @@ test('NTR_KOUJO_K13：连续无后缀 PRINT 是一行，输出一条（#600/#625
   // + IF/ELSE 的武器名 +「刺穿了」同属一行：无后缀
   // PRINTFORM/PRINT 连续不换行，末尾的 PRINTW 才收行——**两分支各自
   // 与前面的前缀段同属一行**（#625 把 #600 停在前缀段的那一段接上了终点）。
-  // 武器名提到语句外当判据，文本留在输出语句里（保真锁按序核对片段）
+  // 武器名提到语句外当条件，文本留在输出语句里（保真锁按序核对片段）
   const cases = [
     [0, '胯下的巨根', 0, '尚未经人事的小穴、蛮横地抽插着。'],
     [2, '胯下的巨根', 0, '尚未经人事的小穴、蛮横地抽插着。'],
@@ -859,7 +859,7 @@ test('NTR_KOUJO_K13：连续无后缀 PRINT 是一行，输出一条（#600/#625
     await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
     const lines = fixture.text_lines();
     const at = lines.findIndex((l) => l.startsWith('狂王毫不介意'));
-    assert.ok(at >= 0, `狂王性别 ${king_sex}：定位到 :5518 行`);
+    assert.ok(at >= 0, `狂王性别 ${king_sex}：定位到该行`);
     assert.equal(
       lines[at],
       `狂王毫不介意我的话、邪笑了起来、将${weapon}刺穿了${end}`,
@@ -947,7 +947,7 @@ test('#625 正常位二回目·恳求三档：尾段与前后文同一行', asyn
   }
 });
 
-test('#625 背后位二回目·恳求三档：尾段与前后文同一行（:1690+:1692+:1694+:1696+:1698）', async () => {
+test('#625 背后位二回目·恳求三档：尾段与前后文同一行', async () => {
   const draws = [
     [1, 1, 0, '啊啊啊啊啊'],
     [1, 1, 1, 0, '不行'],
@@ -973,7 +973,7 @@ test('#625 背后位二回目·恳求三档：尾段与前后文同一行（:169
   }
 });
 
-test('#625 背后位二回目·把…弄乱：尾段与前后文同一行（:1675+:1677+:1679+:1681）', async () => {
+test('#625 背后位二回目·把…弄乱：尾段与前后文同一行', async () => {
   const cases = [
     [0, '弄得乱七八糟的'],
     [1, '插得更加乱七八糟'],
@@ -1072,19 +1072,19 @@ test('#625 NTR_KOUJO_K13 P==4：:5593+:5595+:5596 是一行（TALENT:157 两档�
   }
 });
 
-test('#625 背后位·哈啊…请您：前缀行并入各支（:1656..:1670 整段与另两支）', async () => {
-  // 的 `PRINT 「哈啊…请您` 是 :1658/:1660 动作、:1662 心形与各自收行
+test('#625 背后位·哈啊…请您：前缀行并入各支（整段与另两支）', async () => {
+  // 的 `PRINT 「哈啊…请您` 是动作、心形与各自收行
   // 尾段共同的前缀行：前缀提到语句外当局部量，各支都拼同一份前缀（#625）
   const cases = [
     // 抽签：:1655=0 → :1657 动作 → :1663 rand_n(3)
     { draws: [0, 0, 0], expect: '「哈啊…请您抽插我的时候♡」' },
     { draws: [0, 1, 0], expect: '「哈啊…请您侵犯我的时候♡」' },
-    // ≠0 → :1667=0 → :1669=0（普查那一组的收行）
+    // ≠0 时头部与收尾两处都判 0（普查那一组的收行）
     {
       draws: [0, 0, 1, 0, 0],
       expect: '「哈啊…请您抽插我的时候♡……再激烈一点…才好啊♡♡♡」',
     },
-    // ≠0（同 :1656 那一行的另一支）
+    // ≠0（同一行的另一支）
     {
       draws: [0, 0, 1, 0, 1],
       expect: '「哈啊…请您抽插我的时候♡……再激烈一点…更喜欢…♡♡♡」',
@@ -1106,7 +1106,7 @@ test('#625 背后位·哈啊…请您：前缀行并入各支（:1656..:1670 整
   }
 });
 
-test('#625 背后位·有感觉了什么的：前缀行并入三条互斥终点（:1709..:1715）', async () => {
+test('#625 背后位·有感觉了什么的：前缀行并入三条互斥终点', async () => {
   const cases = [
     // 抽签：:1706 rand_n(3)≠0 → :1708 rand_n(2)=0 → :1710 rand_n(3) 或 :1712 rand_n(2)
     { draws: [1, 0, 0], expect: '「有感觉了什么的……」' },
@@ -1127,9 +1127,9 @@ test('#625 背后位·有感觉了什么的：前缀行并入三条互斥终点�
   }
 });
 
-test('#625 背后位·这副模样／好羞耻：两处抽签的行拼成一条（:1719..:1727）', async () => {
+test('#625 背后位·这副模样／好羞耻：两处抽签的行拼成一条', async () => {
   const cases = [
-    // 抽签：:1706≠0 → :1708≠0 → :1718 头部 → :1724 收尾
+    // 抽签顺序：前两段≠0 → 头部 → 收尾
     { draws: [1, 1, 0, 0], expect: '「这副模样……好羞耻……啊啊♡♡♡」' },
     { draws: [1, 1, 0, 1], expect: '「这副模样……好羞耻……」' },
     { draws: [1, 1, 1, 0], expect: '「好羞耻……啊啊♡♡♡」' },

@@ -8278,7 +8278,7 @@ async function kojo_message_com_8(rand) {
         await era.print(`${target_name}把脸转向一边什么都没说`);
       }
     } else {
-      // 无摄像（与 :4649-4668 同型，#622）
+      // 无摄像（与上一段同型，#622）
       if (
         palam(5) >= era0('palamlv:4') &&
         (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&

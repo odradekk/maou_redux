@@ -416,7 +416,7 @@ async function kojo_message_com_3(rand) {
         }
       }
     } else if (
-      // それ以外（百位 2xx 阶段；黄金样本 :1097 在此）
+      // それ以外（百位 2xx 阶段；黄金样本在此）
       mark(2) <= 1 &&
       (kojo.爱抚 <= 1 || game.kojo.口上开关 === 2)
     ) {
@@ -6961,7 +6961,7 @@ async function kojo_message_com_3(rand) {
             era.get(`talent:${target}:76`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 与 :5032..:5038 同型（#600）
+          // 与上一段同型（#600）
           const excited =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||

@@ -7024,7 +7024,7 @@ async function colosseum_kojo_903() {
   if (era_flag.selectcom == 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊…！唔……啊啊啊！…好深………弄的好深啦……！」`);
-      // 同 :5390 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}听到悲鸣，更加兴奋了，继续用` +
           (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +
@@ -7045,7 +7045,7 @@ async function colosseum_kojo_903() {
   if (era_flag.selectcom == 27) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」`);
-      // 同 :5390 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}听到悲鸣，更加兴奋了，继续用` +
           (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +

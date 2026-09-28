@@ -14441,9 +14441,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1629 K0 自慰淫乱拍摄检查删除（TEQUIP:53 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '      // 撮影中\n      if (filming) {\n        // 同一行输出：PRINTFORM、鸡鸡分档与',
+    find: '      // 撮影中\n      if (filming) {\n        // 同一行输出：PRINTFORM、鸡鸡分档\n        // 与收尾都不换行（#624）',
     replace:
-      '      // 撮影中\n      if (false) {\n        // 同一行输出：PRINTFORM、鸡鸡分档与',
+      '      // 撮影中\n      if (false) {\n        // 同一行输出：PRINTFORM、鸡鸡分档\n        // 与收尾都不换行（#624）',
     tests: ['kojo-k0-tender'],
     must_mention: '看吧～♡　噗咻噗咻勃起的',
   },
@@ -21236,7 +21236,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12152 K3 交谈二次·通常拆回多条（#600）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find: "          // 与 :5032..:5038 同型（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
+    find: "          // 同一行输出：中段 IF/ELSEIF 二选一（\n          // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
     replace:
       '          // 与 :5032..:5038 同型（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(player_name + `向其搭话后，${target_name}发出了`); // 变异：拆回\n          if (excited) {\n            era.print(`欢喜的`); // 变异：拆回\n          } else if (painful) {\n            era.print(`苦痛的`); // 变异：拆回\n          }\n          era.print(`叫声，拼命地向你回话了。`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
@@ -23206,7 +23206,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12541 K1 妊娠発覚 2回目以降·牝犬野良犬拆回两条（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
+    find: '          // 无后缀 PRINTFORM 前缀，与下面 IF 链首支的收行同属一行（#622）。\n          // 各支自带收行，前缀在分支外取值；首支那句把整行写在一起\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
     replace:
       '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          await era.print(\n            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n          ); // 变异：拆回\n          if (rand_n(9) === 0) {\n            await era.printAndWait(`波奇？」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
@@ -23443,9 +23443,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12560 K1 妊娠発覚 2回目以降·狗名链第二支漏拼前缀（#622）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(dog_name_prefix + `哈娜？」`);',
+    find: '          // 无后缀 PRINTFORM 前缀，与上一段同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(dog_name_prefix + `哈娜？」`);',
     replace:
-      '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(`哈娜？」`); // （变异：漏拼前缀）',
+      '          // 无后缀 PRINTFORM 前缀，与上一段同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );\n          } else if (rand_n(8) === 0) {\n            await era.printAndWait(`哈娜？」`); // （变异：漏拼前缀）',
     tests: ['kojo-k1-confident'],
     must_mention: '非首支也带前缀（2回目以降，漏拼前缀会红）',
   },
@@ -24224,26 +24224,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12817 K2 交谈二次·按捺住声音拆回五条（#625）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: "          // 同 :3951 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM/\n          // PRINT 连续不换行，末行 PRINTFORML 才收行。前段工具档与\n          // ELSE 三档互斥——条件提到语句外当取值，文本留在输出语句里（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            `${target_name}一边竭力按捺住` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '自己的') +\n              `声音，一边努力地回应着${player_name}。`,\n          );",
     replace:
-      '          const overwhelmed_by_tool =\n' +
-      '            era.get(`tequip:${target}:11`) ||\n' +
-      '            era.get(`tequip:${target}:13`) ||\n' +
-      '            era.get(`tequip:${target}:14`) ||\n' +
-      '            era.get(`tequip:${target}:15`) ||\n' +
-      '            era.get(`tequip:${target}:16`) ||\n' +
-      '            era.get(`tequip:${target}:17`);\n' +
-      '          const overwhelmed_by_pain =\n' +
-      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n' +
-      '          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n' +
-      '          if (overwhelmed_by_tool) {\n' +
-      '            await era.print(`快乐的`); // 变异：拆回\n' +
-      '          } else if (overwhelmed_by_pain) {\n' +
-      '            await era.print(`痛苦的`); // 变异：拆回\n' +
-      '          } else {\n' +
-      '            await era.print(`自己的`); // 变异：拆回\n' +
-      '          }\n' +
-      '          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
+      '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          } else {\n            await era.print(`自己的`); // 变异：拆回\n          }\n          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k2-timid'],
     must_mention: '工具档与前后文落在同一行',
   },
@@ -24317,14 +24300,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12823 K19 交谈·自我介绍·二次拆回三条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: "          // 同 :4340 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，\n          // 末行 PRINTFORMW 才收行。SIF ABL:31 >= 3 只护住\n          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
-      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n' +
-      '          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n' +
-      '          if (masturbation_note) {\n' +
-      '            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n' +
-      '          }\n' +
-      '          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
+      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
     tests: ['kojo-k19-fia'],
     must_mention: '名字段与后文落在同一行',
   },
@@ -24346,24 +24324,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12825 K19 交谈·压抑着呼吸声·二次拆回四条（#625）',
     file: 'ere/kojo/kojo-k19-fia.js',
-    find: "          // 同 :4375 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
+    find: "          // 同组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
-      '          const overwhelmed_by_tool =\n' +
-      '            era.get(`tequip:${target}:11`) ||\n' +
-      '            era.get(`tequip:${target}:13`) ||\n' +
-      '            era.get(`tequip:${target}:14`) ||\n' +
-      '            era.get(`tequip:${target}:15`) ||\n' +
-      '            era.get(`tequip:${target}:16`) ||\n' +
-      '            era.get(`tequip:${target}:17`);\n' +
-      '          const overwhelmed_by_pain =\n' +
-      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n' +
-      '          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n' +
-      '          if (overwhelmed_by_tool) {\n' +
-      '            await era.print(`快乐的`); // 变异：拆回\n' +
-      '          } else if (overwhelmed_by_pain) {\n' +
-      '            await era.print(`痛苦的`); // 变异：拆回\n' +
-      '          }\n' +
-      '          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
+      '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          }\n          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
     tests: ['kojo-k19-fia'],
     must_mention: '工具档与前后文落在同一行',
   },
@@ -24449,7 +24412,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12832 K904 交谈·自我介绍·二次拆回三条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 同 :4340 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，\n          // 末行 PRINTFORMW 才收行。SIF ABL:31 >= 3 只护住\n          // 那一段——条件提到语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.printAndWait(\n            `于是${target_name}将自己的名字、喜欢的H的方式` +\n              (masturbation_note ? '还有手淫时妄想的内容' : '') +\n              `之类的介绍了出来……`,\n          );",
     replace:
       '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`于是${target_name}将自己的名字、喜欢的H的方式`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`还有手淫时妄想的内容`); // 变异：拆回\n          }\n          await era.printAndWait(`之类的介绍了出来……`); // 变异：拆回',
     tests: ['kojo-k904-fia'],
@@ -24467,7 +24430,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12834 K904 交谈·压抑着呼吸声·二次拆回四条（#625）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: "          // 同 :4375 组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
+    find: "          // 同组的一整行（#625）\n          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(\n            player_prefix +\n              `${target_name}一边压抑着` +\n              (overwhelmed_by_tool\n                ? '快乐的'\n                : overwhelmed_by_pain\n                  ? '痛苦的'\n                  : '') +\n              `呼吸声，一边努力回应着${master_name}……`,\n          );",
     replace:
       '          const overwhelmed_by_tool =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const overwhelmed_by_pain =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          await era.print(player_prefix + `${target_name}一边压抑着`); // 变异：拆回\n          if (overwhelmed_by_tool) {\n            await era.print(`快乐的`); // 变异：拆回\n          } else if (overwhelmed_by_pain) {\n            await era.print(`痛苦的`); // 变异：拆回\n          }\n          await era.print(`呼吸声，一边努力回应着${master_name}……`); // 变异：拆回',
     tests: ['kojo-k904-fia'],
@@ -24653,7 +24616,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12850 K5 交谈二次·自我介绍拆回三条（#625）',
     file: 'ere/kojo/kojo-k5-mao.js',
-    find: "          // 同 :4795 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
+    find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，末行\n          // PRINTFORML 才收行。SIF ABL:31 >= 3 只护住前段——条件提到\n          // 语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
     replace:
       '          // 同 :4795 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`${target_name}将自己的本名和接下来要进行的性体验`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`、甚至是连自慰时妄想的事情`); // 变异：拆回\n          }\n          await era.print(`十分欣喜地全部说了出来……`); // 变异：拆回',
     tests: ['kojo-k5-mao'],

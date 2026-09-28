@@ -857,7 +857,7 @@ test('胸爱抚二回目以降：淫乱 / 爱慕+ASSIPLAY 不写计数器 / B感
   assert.equal(
     assi.store.get(`cflag:${CID}:306`),
     1,
-    '爱慕+ASSIPLAY 不写 CFLAG:306（源未赋值）',
+    '爱慕+ASSIPLAY 不写 CFLAG:306（未赋值）',
   );
 
   const sense = await setup_k15((f) => {
@@ -1609,7 +1609,7 @@ test('灌肠肛塞（SELECTCOM 46）：开始有台词；结束不写 CFLAG:347'
   assert.equal(
     off.store.get(`cflag:${CID}:347`),
     1,
-    '结束段不写 CFLAG:347（源 1:1）',
+    '结束段不写 CFLAG:347（按原样）',
   );
 });
 

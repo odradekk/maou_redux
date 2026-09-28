@@ -6760,7 +6760,7 @@ async function kojo_message_com_19(rand) {
           rand_n(3) == 0 &&
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
-          // 同 :4340 组的一整行（#625）
+          // 同组的一整行（#625）
           const masturbation_note = era.get(`abl:${target}:31`) >= 3;
           await era.printAndWait(
             `于是${target_name}将自己的名字、喜欢的H的方式` +
@@ -6858,7 +6858,7 @@ async function kojo_message_com_19(rand) {
             era.get(`talent:${target}:76`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 同 :4375 组的一整行（#625）
+          // 同组的一整行（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -6879,7 +6879,7 @@ async function kojo_message_com_19(rand) {
               `呼吸声，一边努力回应着${master_name}……`,
           );
         } else if (era.get(`talent:${target}:76`) == 1) {
-          // （同 :4440 那一行的另一条互斥尾段，前缀用同一个变量）
+          // （同一行的另一条互斥尾段，前缀用同一个变量）
           await era.print(
             player_prefix +
               `${target_name}一边这么说着，一边对着${master_name}露出了重要的地方。`,
@@ -6890,7 +6890,7 @@ async function kojo_message_com_19(rand) {
           era.get(`talent:${target}:85`) ||
           era.get(`abl:${target}:10`) >= 5
         ) {
-          // （同 :4440 那一行的另一条互斥尾段，前缀用同一个变量）
+          // （同一行的另一条互斥尾段，前缀用同一个变量）
           await era.print(
             player_prefix +
               `${target_name}开心的朝着${master_name}撒着娇，说着色色的话语。`,
@@ -6900,14 +6900,14 @@ async function kojo_message_com_19(rand) {
           era.get(`palam:${target}:4`) >= PALAMLV[2] ||
           era.get(`abl:${target}:10`) >= 3
         ) {
-          // （同 :4440 那一行的另一条互斥尾段，前缀用同一个变量）
+          // （同一行的另一条互斥尾段，前缀用同一个变量）
           await era.print(
             player_prefix +
               `${target_name}大口大口的喘着气，小小的身体因为快感而像触电一样痉挛个不停。`,
           );
           await era.printAndWait(`「嗯……❤呀……哈啊……❤」`);
         } else {
-          // （同 :4440 那一行的另一条互斥尾段，前缀用同一个变量）
+          // （同一行的另一条互斥尾段，前缀用同一个变量）
           await era.print(player_prefix + `${target_name}乖巧的低着头听着。`);
         }
         return 0;
@@ -8893,7 +8893,7 @@ async function colosseum_kojo_19() {
   if (era_flag.selectcom == 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「不要不要…太过分了…不要了啊…啊啊！」`);
-      // 同 :6160 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}一边听着悲鸣，一边用` +
           (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +
@@ -8914,7 +8914,7 @@ async function colosseum_kojo_19() {
   if (era_flag.selectcom == 27) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「不要不要…不是插进哪里啊…不要了啊…啊啊！」`);
-      // 同 :6160 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}一边听着悲鸣，一边用` +
           (assi_has_penis ? '肉棒' : assi_has_toy ? '假阴茎' : '') +

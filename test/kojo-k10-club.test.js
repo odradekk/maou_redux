@@ -274,7 +274,7 @@ test('TEQUIP:89（兽奸PLAY）：头部检查岔去 DOG_KOJO_10 真身', async 
     f.store.set('tequip:20:89', 1);
   }, 0);
   await speak_k10(fixture);
-  assert.deepEqual(fixture.text_lines(), ['']); // DOG_KOJO_10 平行状态机，源无文本，仍记空行
+  assert.deepEqual(fixture.text_lines(), ['']); // DOG_KOJO_10 平行状态机，无文本，仍记空行
   assert.equal(
     fixture.store.get('cflag:20:301'),
     1,
@@ -538,7 +538,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K10：注册�
   before = fixture.text_lines().length;
   game.event.猎奇处刑口上 = 0;
   await grotesque_koujo_family.call(10, { args: [] });
-  assert.deepEqual(fixture.text_lines().slice(before), ['']); // 源无文本，PRINTFORMW 仍记空行
+  assert.deepEqual(fixture.text_lines().slice(before), ['']); // 无文本，PRINTFORMW 仍记空行
 });
 
 test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {

@@ -10168,7 +10168,7 @@ async function self_kojo_k1(rand, q) {
             `「这可是我和老公的孩子、一定会生下皮毛可爱的孩子来的」`,
           );
         } else {
-          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）
+          // 无后缀 PRINTFORM 前缀，与上一段同型（#622）
           const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;
           if (rand_n(9) === 0) {
             await era.printAndWait(

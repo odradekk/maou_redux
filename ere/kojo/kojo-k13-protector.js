@@ -1658,7 +1658,7 @@ async function kojo_message_com_13(rand) {
                 );
               }
             } else {
-              // 同属 :1656 那一行的另一支（#625）
+              // 同属上一行的另一支（#625）
               await era.printAndWait(
                 moan_front +
                   moan_act +
@@ -1675,7 +1675,7 @@ async function kojo_message_com_13(rand) {
             await era.print(`「哈啊…这么大这么硬…好棒${heart(3)}」`);
             await era.printAndWait(`(根本无法和主人相提并论嘛……老公的那根……）`);
           } else {
-            // 同 :1562 组的一整行（#625）
+            // 同组的一整行（#625）
             await era.printAndWait(
               `「亲爱的…请原谅……` +
                 (rand_n(3) == 0

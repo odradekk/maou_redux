@@ -1551,8 +1551,8 @@ async function gohoubi_request_koujo_k0() {
     (era.get(`cflag:${target}:504`) || 0) === 2 ||
     (era.get(`cflag:${target}:504`) || 0) === 3
   ) {
-    // 同一行输出：「…打倒勇者的话…」、504 的三选一与
-    // 的 PRINTFORMW 收行都不换行。条件是纯读，提到语句外当取值（#624）
+    // 同一行输出：「…打倒勇者的话…」、504 的三选一
+    // 与收尾都不换行。条件是纯读，提到语句外当取值（#624）
     const request_kind = era.get(`cflag:${target}:504`) || 0;
     await era.printAndWait(
       `「要是${sc()}打倒勇者的话…` +
@@ -1740,7 +1740,7 @@ async function benki_koujo_k0() {
   /* eslint-disable no-irregular-whitespace -- 台词含全角空格（BENKI 段，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
-  // BENKI_PLAYER_NAME：对象名真身，延迟
+  // benki_player_name()：对象名真身，延迟
   // require 是 K12/K3 同款（防顶层漏装遮蔽），名字表只有一份
   const benki_player_name = () =>
     require('#/system/train/benki').benki_player_name();
@@ -1794,7 +1794,7 @@ async function benki_koujo_k0() {
   } else if (era.get('flag:62') === 3) {
     if (era.get('flag:63') === 1) {
       // 「和」、对象名与收尾同属一行输出。名字按 #599 接上：
-      // ${benki_player_name()} 插在 CALL 的位置（拼接基准）
+      // ${benki_player_name()} 插在名字调用的位置（拼接基准）
       await era.printAndWait(
         `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,
       );
@@ -2551,7 +2551,7 @@ async function colosseum_kojo_0() {
       await era.printAndWait(
         `「啊啊～…嗯！不要～…不要～…请、请饶了我吧～…嗯！」`,
       );
-      // 与 :7782..:7787 同型的一整行（#624）
+      // 与上一段同型的一整行（#624）
       const assi_has_cock =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -2578,7 +2578,7 @@ async function colosseum_kojo_0() {
       await era.printAndWait(
         `「啊啊～…嗯！不要～…不要～…请、请饶了我吧～…嗯！！」`,
       );
-      // 与 :7815..:7820 同型的一整行（#624）
+      // 与上一段同型的一整行（#624）
       const assi_has_cock =
         era.get(`talent:${assi}:121`) === 1 ||
         era.get(`talent:${assi}:122`) === 1;
@@ -4937,8 +4937,8 @@ async function kojo_message_com_0(rand) {
     ) {
       // 撮影中
       if (filming) {
-        // 同一行输出：PRINTFORM、鸡鸡分档与
-        // 的 PRINTFORMW 收行都不换行（#624）
+        // 同一行输出：PRINTFORM、鸡鸡分档
+        // 与收尾都不换行（#624）
         await era.printAndWait(
           // eslint-disable-next-line no-irregular-whitespace -- 台词含全角空格
           `「看吧～${heart(1)}　噗咻噗咻勃起的` +

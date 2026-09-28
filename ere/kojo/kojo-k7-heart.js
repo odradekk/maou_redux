@@ -9124,7 +9124,7 @@ async function kojo_message_com_7(rand) {
         }
       } else if (era0(`talent:${target}:85`) == 1) {
         await era.printAndWait(`「啊啊…请更多的拘束我吧…嗯…嗯咕…嗯呼呼…♪」`);
-        // 同型（ELSE 支 :5118）
+        // 同型（ELSE 支）
         const mouth_front_5114 = `${target_name}好像期待着什么就那样`;
         if (era0(`tequip:${target}:43`)) {
           await era.printAndWait(
@@ -9139,7 +9139,7 @@ async function kojo_message_com_7(rand) {
         await era.printAndWait(
           `「不、不要啊…这个好像其他人也用过…嗯！嗯咕………！」`,
         );
-        // 同型（ELSE 支 :5127）
+        // 同型（ELSE 支）
         const mouth_front_5123 = `${target_name}的嘴被口枷塞住，`;
         if (era0(`tequip:${target}:43`)) {
           await era.printAndWait(`${target_name}的嘴被口枷塞住，左右摇着头………`);
@@ -9182,7 +9182,7 @@ async function kojo_message_com_7(rand) {
         (era0(`cflag:${target}:346`) <= 6 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(`「虽然我的喘息声音可能确实有点大…嗯咕………」`);
-        // 同型（ELSE 支 :5151）
+        // 同型（ELSE 支）
         const mouth_front_5147 = `${target_name}因为嘴被塞住而稍稍不满的`;
         if (era0(`tequip:${target}:43`)) {
           await era.printAndWait(
@@ -9226,7 +9226,7 @@ async function kojo_message_com_7(rand) {
         (era0(`cflag:${target}:346`) <= 3 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(`「啊啊…我的嘴被塞住了♪………嗯…嗯咕…♪」`);
-        // 同型（ELSE 支 :5171）
+        // 同型（ELSE 支）
         const mouth_front_5167 = `${target_name}好像期待着什么就那样`;
         if (era0(`tequip:${target}:43`)) {
           await era.printAndWait(
@@ -9251,7 +9251,7 @@ async function kojo_message_com_7(rand) {
         era.set(`cflag:${target}:346`, 3);
       } else if (era0(`cflag:${target}:346`) <= 1 || era0('flag:7') == 2) {
         await era.printAndWait(`「啊咕…嗯…嗯咕…嗯…嗯嗯！」`);
-        // 同型（ELSE 支 :5186）
+        // 同型（ELSE 支）
         const mouth_front_5182 = `${target_name}的嘴被口枷塞住`;
         if (era0(`tequip:${target}:43`)) {
           await era.printAndWait(`${target_name}的嘴被口枷塞住左右摇着头………`);
@@ -9776,7 +9776,7 @@ async function kojo_message_com_7(rand) {
           await era.print(`${target_name}头扭向一边什么都不说`);
         }
       } else {
-        // 同 :5408 那处一整行：前缀提到语句外共用，
+        // 同一行：前缀提到语句外共用，
         // 第三支的片段下面合成一条（#621）
         const talk_front_5485 = `被${player_name}`;
         if (
@@ -13600,7 +13600,7 @@ async function dungeon_attack_k7(rand) {
  * colosseum_kojo_7：死斗场专用口上（TEQUIP:55 时由
  * kojo_message_com_7 头部检查岔入）。SELECTCOM 覆盖：55/56/31/5/21/27/51。
  * `ITEM:PBAND` 里的 PBAND 是内建非角色变量
- * （默认 4），引擎启动时赋值 4 且未再改写，恒等于 `ITEM:4`（4 号假阳具；同
+ * （默认 4），旧引擎启动时赋值 4 且未再改写，恒等于 `ITEM:4`（4 号假阳具；同
  * system/train/com-hardcore.js 的 `const PBAND = 4` 先例），故按 `item:4`
  * 直译，非字符串具名寻址。
  * @returns {Promise<number>} 0
@@ -13822,7 +13822,7 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `「唔呵呵、那个魔王在考虑什么啊…啊嗯…把我的处女膜再生了…啊啊…再次被狂王大人夺走我的处女好幸福啊♪」`,
       );
-      // 同型（两条互斥的性器名 + :8379 收行；#621）
+      // 同型（两条互斥的性器名 + 收行；#621）
       const king_penis_8374 = era0('flag:500') == 1;
       await era.printAndWait(
         (king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`) +
@@ -14357,7 +14357,7 @@ async function gohoubi_after_koujo_k7(cid, choice) {
 }
 
 /**
- * osioski_koujo_k7：迎击惩罚结算后口上。TFLAG:18 同款改经
+ * osioki_koujo_k7：迎击惩罚结算后口上。TFLAG:18 同款改经
  * choice 参数传递（见 gohoubi_after_koujo_k7 头注、kojo-dungeon-after.js
  * 头注结论）。choice 0-9 十档。
  * @param {number} cid 角色 ID（单字母全局 A）

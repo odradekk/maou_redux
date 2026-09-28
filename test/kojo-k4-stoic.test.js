@@ -474,7 +474,7 @@ test('SELECTCOM == 5（胸爱抚）/7（自己扒开）/11（壶虫）/12（振�
 
 // —— DOG_KOJO_4（兽奸）真身 ——
 
-test('兽奸爱撫二回目以降（DOG_KOJO_4 :3101+）：屈服刻印分档推进', async () => {
+test('兽奸爱撫二回目以降（DOG_KOJO_4）：屈服刻印分档推进', async () => {
   const fixture = await setup_k4((f) => {
     f.store.set('tequip:31:89', 1);
     f.store.set('cflag:31:301', 1); // 二回目以降

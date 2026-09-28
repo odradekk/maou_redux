@@ -4960,7 +4960,7 @@ async function kojo_message_palamcng_12(rand) {
     return 0;
   }
 
-  // PALAM:3 + UP:3（源 :4366）
+  // PALAM:3 + UP:3
   const P1 =
     (era.get(`palam:${target}:3`) || 0) + (era.get(`delta:${target}:3`) || 0);
   if (P1 > PALAMLV[2] && kojo.首次润滑Lv2 == 0) {
@@ -4985,7 +4985,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次润滑Lv2 = 1;
   }
 
-  // PALAM:5 + UP:5（源 :4397）
+  // PALAM:5 + UP:5
   const P2 =
     (era.get(`palam:${target}:5`) || 0) + (era.get(`delta:${target}:5`) || 0);
   if (P2 > PALAMLV[2] && kojo.首次欲情Lv2 == 0) {
@@ -5006,7 +5006,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次欲情Lv2 = 1;
   }
 
-  // PALAM:8 + UP:8（源 :4424）
+  // PALAM:8 + UP:8
   const P3 =
     (era.get(`palam:${target}:8`) || 0) + (era.get(`delta:${target}:8`) || 0);
   if (P3 > PALAMLV[2] && kojo.首次耻情Lv2 == 0) {
@@ -5023,7 +5023,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次耻情Lv2 = 1;
   }
 
-  // PALAM:10 + UP:10（源 :4439）
+  // PALAM:10 + UP:10
   const P4 =
     (era.get(`palam:${target}:10`) || 0) + (era.get(`delta:${target}:10`) || 0);
   if (P4 > PALAMLV[2] && kojo.首次恐怖Lv2 == 0) {
@@ -5092,7 +5092,7 @@ async function kojo_message_palamcng_12(rand) {
     kojo.首次B绝顶 = 1;
   }
 
-  // UP:11 + UP:12（源 :4516）
+  // UP:11 + UP:12
   const A =
     (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0); // A = UP:11 + UP:12
   if (game.train.处女丧失 == 1 && kojo.处女丧失 == 0) {

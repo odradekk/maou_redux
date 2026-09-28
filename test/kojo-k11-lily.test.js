@@ -8621,7 +8621,7 @@ for (const [label, assistant] of [
   ['助手玛奥', true],
   ['非助手', false],
 ]) {
-  test(`#623 COM56 初回通常（${label}）：五支各自并入 :6865/:6893 前缀整行`, async () => {
+  test(`#623 COM56 初回通常（${label}）：五支各自并入前缀整行`, async () => {
     const head = assistant ? '面对你' : '你';
     const seed = (f, era_flag) => {
       f.store.set('palamlv:2', 100);
@@ -8692,7 +8692,7 @@ for (const [label, assistant] of [
       assert.equal(
         line_with(fixture, item.tail.slice(0, 10)),
         head + item.tail,
-        `${label} ${item.label}：与 :6865/:6893 前缀合成一行`,
+        `${label} ${item.label}：与前缀合成一行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === head).length,
@@ -8702,7 +8702,7 @@ for (const [label, assistant] of [
     }
   });
 
-  test(`#623 COM56 二回目通常（${label}）：五支各自并入 :6952/:6980 前缀整行`, async () => {
+  test(`#623 COM56 二回目通常（${label}）：五支各自并入前缀整行`, async () => {
     const head = '面对你';
     const seed = (f, era_flag) => {
       f.store.set(`cflag:${LILY}:357`, 9);
@@ -8774,7 +8774,7 @@ for (const [label, assistant] of [
       assert.equal(
         line_with(fixture, item.tail.slice(0, 10)),
         head + item.tail,
-        `${label} ${item.label}：与 :6952/:6980 前缀合成一行`,
+        `${label} ${item.label}：与前缀合成一行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === head).length,

@@ -8297,7 +8297,7 @@ async function kojo_message_com_5(rand) {
           era.get(`talent:${target}:89`) ||
           era.get(`abl:${target}:17`) >= 5
         ) {
-          // 同 :4795 组的一整行（#625）
+          // 同组的一整行（#625）
           const masturbation_note = era.get(`abl:${target}:31`) >= 3;
           await era.print(
             `${target_name}将自己的本名和接下来要进行的性体验` +
@@ -8330,7 +8330,7 @@ async function kojo_message_com_5(rand) {
           await era.printAndWait(`「姐姐救救我吧…好想快点回到村子里去啊………」`);
         }
       } else {
-        // 同 :4812：前缀行 + 各互斥分支的收行尾段（#625）
+        // 同前：前缀行 + 各互斥分支的收行尾段（#625）
         const maid_front_4858 = `${player_name}`;
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -8357,7 +8357,7 @@ async function kojo_message_com_5(rand) {
             era.get(`talent:${target}:85`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 同属 :4858 那一行的另一支（#625）
+          // 同属上一行的另一支（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -11748,7 +11748,7 @@ async function colosseum_kojo_5(rand) {
   if (era_flag.selectcom === 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「不要啊…好过分…已经够了啦…哎呀啊！」`);
-      // 同 :7274 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}一边听着哀嚎` +
           (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +
@@ -11769,7 +11769,7 @@ async function colosseum_kojo_5(rand) {
   if (era_flag.selectcom === 27) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「不要啊…不能插那边啊…已经够了啦…哎呀啊！」`);
-      // 同 :7274 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}一边听着哀嚎` +
           (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +

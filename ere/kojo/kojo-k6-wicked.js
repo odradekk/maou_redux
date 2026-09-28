@@ -6634,7 +6634,7 @@ async function kojo_message_com_6(rand) {
         }
       } else if ((era.get(`talent:${target}:85`) || 0) === 1) {
         await era.printAndWait(`「呜咕…呜…呼啊…${heart(1)}」`);
-        // 同型（ELSE 支 :3966）
+        // 同型（ELSE 支）
         const mouth_front_3962 = `配合地戴上口塞的${target_name}带着温柔的眼神`;
         const blindfold_3963 = era.get(`tequip:${target}:43`);
         if (blindfold_3963) {
@@ -6646,7 +6646,7 @@ async function kojo_message_com_6(rand) {
         }
       } else {
         await era.printAndWait(`「啊、这、这样吗…嘴里…呜…呜咕噜…………」`);
-        // 同型（ELSE 支 :3975）
+        // 同型（ELSE 支）
         const mouth_front_3971 = `戴上口塞的${target_name}`;
         const blindfold_3972 = era.get(`tequip:${target}:43`);
         if (blindfold_3972) {
@@ -6665,7 +6665,7 @@ async function kojo_message_com_6(rand) {
         (kojo.口塞 <= 8 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「呼啊…呜啊…呜啊${heart(1)}」`);
-        // 同型（ELSE 支 :3989）
+        // 同型（ELSE 支）
         const mouth_front_3985 = `配合地戴上口塞的${target_name}粗重急促地喘息`;
         const blindfold_3986 = era.get(`tequip:${target}:43`);
         if (blindfold_3986) {
@@ -6691,7 +6691,7 @@ async function kojo_message_com_6(rand) {
         (kojo.口塞 <= 6 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「呜呼…呜啊…呜啊${heart(1)}」`);
-        // 同型（ELSE 支 :4004）
+        // 同型（ELSE 支）
         const mouth_front_4000 = `配合地戴上口塞的${target_name}带着期待`;
         const blindfold_4001 = era.get(`tequip:${target}:43`);
         if (blindfold_4001) {
@@ -6736,7 +6736,7 @@ async function kojo_message_com_6(rand) {
         (kojo.口塞 <= 2 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「呜啊…哈…哈………」`);
-        // 同型（ELSE 支 :4029）
+        // 同型（ELSE 支）
         const mouth_front_4025 = `${target_name}习以为常地被口塞塞住嘴`;
         const blindfold_4026 = era.get(`tequip:${target}:43`);
         if (blindfold_4026) {
@@ -6748,7 +6748,7 @@ async function kojo_message_com_6(rand) {
         kojo.口塞 = 3;
       } else if (kojo.口塞 <= 1 || game.kojo.口上开关 === 2) {
         await era.printAndWait(`「啊、这、这样吗…嘴里…呜…呜咕噜…………」`);
-        // 同型（ELSE 支 :4039）
+        // 同型（ELSE 支）
         const mouth_front_4035 = `戴上口塞的${target_name}`;
         const blindfold_4036 = era.get(`tequip:${target}:43`);
         if (blindfold_4036) {
@@ -7429,7 +7429,7 @@ async function kojo_message_com_6(rand) {
           await era.printAndWait(`${target_name}侧过脸去，沉默不语`);
         }
       } else {
-        // 起是一整行，同 :4342 那处：前缀提到语句外共用（#621）
+        // 起是一整行，同一行：前缀提到语句外共用（#621）
         const talk_front_4414 = `在和${player_name}`;
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
@@ -7814,7 +7814,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「肉棒…想要…${heart(1)} 啊啊…一边自慰一边品尝肉棒的感觉${heart(1)}」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4611/:4613/:4615）
+        // 同型（ELSEIF/ELSE 三支）
         const tongue_front_4607 = `${target_name}用舌头纠缠着${player_name}的阴茎，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -7835,7 +7835,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「${scf()}、${sc()}…才不要一边自慰…一边帮你做那种事…呜…呜啊…呜…呜咕………」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4624/:4626/:4628）
+        // 同型（ELSEIF/ELSE 三支）
         const serve_front_4620 = `${target_name}被命令用口服侍${player_name}的阴茎，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -7856,7 +7856,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「呜…哈啊…哈啊…要${sc()}…做这样的事…呜呼…呜呜…呜哈啊咕咕……！」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4637/:4639/:4641）
+        // 同型（ELSEIF/ELSE 三支）
         const serve_front_4633 = `${target_name}被命令用口服侍${player_name}的阴茎，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -7885,7 +7885,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「呜咕噜…才、才没有…喜欢这么做呢…啊呜…呜咕噜${heart(1)} 唔啊啊${heart(1)} 哈啊啊${heart(1)} 好舒服${heart(1)}」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4655/:4657/:4659）
+        // 同型（ELSEIF/ELSE 三支）
         const mouth_front_4651 = `${target_name}含住${player_name}的阴茎显得十分兴奋，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -7917,7 +7917,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「肉棒…想要…${heart(1)} 啊啊…一边自慰一边品尝肉棒的感觉${heart(1)}」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4671/:4673/:4675）
+        // 同型（ELSEIF/ELSE 三支）
         const tongue_front_4667 = `${target_name}用舌头纠缠着${player_name}的阴茎，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -7949,7 +7949,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「${scf()}、${sc()}…才不要一边自慰…一边帮你做那种事…呜…呜啊…呜…呜咕………」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4687/:4689/:4691）
+        // 同型（ELSEIF/ELSE 三支）
         const serve_front_4683 = `${target_name}被命令用口服侍${player_name}的阴茎，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -7974,7 +7974,7 @@ async function kojo_message_com_6(rand) {
         await era.printAndWait(
           `「呜…哈啊…哈啊…要${sc()}…做这样的事…呜呼…呜呜…呜哈啊咕咕……！」`,
         );
-        // 同型（ELSEIF/ELSE 三支 :4703/:4705/:4707）
+        // 同型（ELSEIF/ELSE 三支）
         const serve_front_4699 = `${target_name}被命令用口服侍${player_name}的阴茎，`;
         if (era.get(`tequip:${target}:11`) && era.get(`tequip:${target}:13`)) {
           await era.print(
@@ -10420,7 +10420,7 @@ async function self_kojo_k6(rand) {
       await era.printAndWait(
         `「啊啊啊…原来跟女人做爱这么舒服…到了这里之后才发现呢♪」`,
       );
-      // 同型（ELSE 支 :6530）
+      // 同型（ELSE 支）
       const lily_front_6526 = `尝到百合滋味的${target_name}嬉笑着和${assi_name}纠缠着，`;
       if (era_flag.time === 0) {
         await era.printAndWait(

@@ -526,7 +526,7 @@ test('SELECTCOM 56 交谈·二回目·无摄像·痛苦装备（TEQUIP:44）：�
   ]);
 });
 
-test('DOG 兽奸会話·初めて·视频·牝犬：:6341..:6348 与 :6351..:6371 各是一行（#622）', async () => {
+test('DOG 兽奸会話·初めて·视频·牝犬：两段各是一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`tequip:${CID}:53`, 1);
@@ -559,7 +559,7 @@ test('DOG 兽奸会話·初めて·视频·牝犬·未与狗结婚：另一支�
   );
 });
 
-test('DOG 兽奸会話·二回目·视频·牝犬：:6403..:6410 与 :6413..:6433 各是一行（#622）', async () => {
+test('DOG 兽奸会話·二回目·视频·牝犬：两段各是一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
       f.store.set(`cflag:${CID}:357`, 1);

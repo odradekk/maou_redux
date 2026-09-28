@@ -5973,7 +5973,7 @@ async function kojo_message_com_2(rand) {
           (era.get(`talent:${target}:89`) ||
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
-          // 同 :3915 组的一整行（#625）
+          // 同组的一整行（#625）
           const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;
           await era.print(
             `于是${target_name}将自己的本名、之前的性体验` +
@@ -6062,7 +6062,7 @@ async function kojo_message_com_2(rand) {
             era.get(`talent:${target}:76`)) &&
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
-          // 同 :3951 组的一整行（#625）
+          // 同组的一整行（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -9186,7 +9186,7 @@ async function colosseum_kojo_2(rand) {
   if (era_flag.selectcom === 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「对不起，对不起啊…已经无法反抗了…啊啊啊！」`);
-      // 同 :6674 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}仔细聆听传来的悲鸣，用` +
           (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +
@@ -9209,7 +9209,7 @@ async function colosseum_kojo_2(rand) {
       await era.printAndWait(
         `「对不起，对不起…已经无法反抗了啊…啊啊啊！要，要被用坏了啊！」`,
       );
-      // 同 :6674 组的一整行（#625）
+      // 同组的一整行（#625）
       await era.printAndWait(
         `${assi_name}仔细聆听传来的悲鸣，用` +
           (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +

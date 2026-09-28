@@ -577,7 +577,7 @@ test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且可
   assert.deepEqual(
     fixture.text_lines().slice(before),
     [''],
-    'GROTESQUE 分支路由错位（源无文本，PRINTFORMW 仍记空行）',
+    'GROTESQUE 分支路由错位（无文本，PRINTFORMW 仍记空行）',
   );
 });
 
@@ -787,7 +787,7 @@ test('#623 交谈：六支各自并入前缀整行', async () => {
       await speak_k9(fixture, () => 0);
       assert.ok(
         fixture.text_lines().includes(item.expected),
-        `${phase} ${item.label}：并入 :4440/:4491 前缀的整行`,
+        `${phase} ${item.label}：并入前缀的整行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === '你向她').length,
