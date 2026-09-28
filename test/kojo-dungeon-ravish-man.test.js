@@ -40,7 +40,7 @@ const seq_rand =
     return value % n;
   };
 
-// 全部 11 个函数（导出名 → 文件名里的 @ 原名）
+// 全部 11 个函数（导出名 → 族名标记）
 const FUNCS = [
   ['orc_ryou_man', 'ORC_RYOU男'],
   ['slime_ryou_man', 'SLIME_RYOU男'],
