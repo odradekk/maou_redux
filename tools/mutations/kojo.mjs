@@ -16626,7 +16626,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       '  } else if (kojo.初调教 < 3 && era0(`mark:${target}:2`) == 2) {\n    era.drawLine();\n    if (\n      era0(`talent:${target}:157`) &&\n      (era0(`talent:${target}:110`) ||\n        era0(`talent:${target}:114`) ||\n        era0(`talent:${target}:119`))\n    ) {',
     tests: ['kojo-k13-protector'],
     must_mention:
-      '源 :178 的 157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
+      '157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
   },
   {
     desc: 'M3313 K13 K13_KOJO2 反抗刻印Lv3 条件改错（MARK:3==3 改 ==2，#244）',
@@ -23119,7 +23119,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.printAndWait(`！快乐的作为家畜生活着${heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
+    must_mention: 'DOG 兽奸会話·初めて·视频·牝犬：两段各是一行',
   },
   {
     desc: 'M12533 K1 兽奸会話·初めて·牝犬的「在最后」拆回多条（#622）',
@@ -23128,7 +23128,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '          await era.print(`「在最后`); // 变异：拆回\n          if (former_life === 1) {\n            await era.print(`同班同学的大家`); // 变异：拆回\n          } else if (former_life === 2) {\n            await era.print(`修道院的大家`); // 变异：拆回\n          } else if (former_life === 15 || former_life === 18) {\n            await era.print(`${sc()}的店里消费过的客人`); // 变异：拆回\n          } else if (former_life === 19) {\n            await era.print(`部下的大家`); // 变异：拆回\n          } else if (former_life === 21) {\n            await era.print(`最重要的你`); // 变异：拆回\n          } else {\n            await era.print(`爸爸、妈妈`); // 变异：拆回\n          }\n          await era.printAndWait(\n            `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          ); // 变异：拆回\n        } else if (era.get(`talent:${target}:76`) === 1) {',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
+    must_mention: 'DOG 兽奸会話·初めて·视频·牝犬：两段各是一行',
   },
   {
     desc: 'M12534 K1 兽奸会話·二回目·牝犬自我介绍拆回三条（#622）',
@@ -23143,7 +23143,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.printAndWait(`、快乐的作为家畜生活着${heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
+    must_mention: 'DOG 兽奸会話·二回目·视频·牝犬：两段各是一行',
   },
   {
     desc: 'M12535 K1 兽奸会話·二回目·牝犬的「在最后」拆回多条（#622）',
@@ -23152,7 +23152,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '          await era.print(`「在最后`); // 变异：拆回\n          if (former_life === 1) {\n            await era.print(`同班同学的大家`); // 变异：拆回\n          } else if (former_life === 2) {\n            await era.print(`修道院的大家`); // 变异：拆回\n          } else if (former_life === 15 || former_life === 18) {\n            await era.print(`${sc()}的店里消费过的客人`); // 变异：拆回\n          } else if (former_life === 19) {\n            await era.print(`部下的大家`); // 变异：拆回\n          } else if (former_life === 21) {\n            await era.print(`最重要的你`); // 变异：拆回\n          } else {\n            await era.print(`爸爸、妈妈`); // 变异：拆回\n          }\n          await era.printAndWait(\n            `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n          ); // 变异：拆回\n          // CFLAG:357  = 5（变量语义：CFLAG 族，357）',
     tests: ['kojo-k1-confident'],
-    must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
+    must_mention: 'DOG 兽奸会話·二回目·视频·牝犬：两段各是一行',
   },
   {
     desc: 'M12536 K1 兽奸会話·初めて·淫乱自我介绍拆回三条（#622）',
