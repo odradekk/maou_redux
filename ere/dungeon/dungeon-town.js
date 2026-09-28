@@ -1,33 +1,32 @@
 /**
- * @file 城镇事件（issue #178，阶段 3 H9）：DUNGEON_TOWN.ERB 全量 15 函数。
+ * @file 城镇事件（issue #178，阶段 3 H9）：全量 15 函数。
  *
- * 勇者资产闭环（简报第 5 条）：CFLAG:580 所持金（dungeon 门面「所持金」）、
+ * 勇者资产完整流程（简报第 5 条）：CFLAG:580 所持金（dungeon 门面「所持金」）、
  * CFLAG:582 借款（patch 门面「借款」，#176 建）、CFLAG:581 战利品换金
  * 槽（dungeon 属主域内裸寻址）。担保人债务与借款利息同走 582。
  *
- * 移植说明（有意偏离，均注明依据）：
- *   - **角色变量省略角色号 = TARGET**（Emuera 语义，旁证
- *     CHARA_INFO_SHOW ver1.1.2.ERB:24-26/1055-1058——TARGET 换手后
- *     CFLAG:16 与 CFLAG:TARGET:9 同指）。本文件三处依赖它，且原作不设
- *     TARGET 就读（残留值）：FI_FUNDING 的素质/善恶/等级补正、TOWN_HENSAI
- *     的还款比例分档（SELECTCASE CFLAG:151）、TOWN_PT_PARTY 的预算收集
+ * 说明（有意偏离，均注明依据）：
+ *   - **角色变量省略角色号 = TARGET**（省略角色号寻址，TARGET 换手后
+ *     CFLAG:16 与 CFLAG:TARGET:9 同指）。本文件三处依赖它，且不设
+ *     TARGET 就读（残留值）：fi_funding 的素质/善恶/等级补正、town_hensai
+ *     的还款比例分档（SELECTCASE CFLAG:151）、town_pt_party 的预算收集
  *     （CFLAG:580）——全部读 era_flag.target 的当前值（flag:10005，可
  *     预置可断言）。保留的怪异行为：援助金按 TARGET 的出身算而不是
  *     每个成员自己的、预算收集对每人都读同一个人的钱袋；
- *   - TOWN_PT_DAYEVENT / TOWN_PT_PARTY 演出段显式 `TARGET = PM:LCOUNT`
- *     （:619/:696）——镜像为 era_flag.target 写（#5 决议第六条）；
+ *   - town_pt_dayevent / town_pt_party 演出段显式 `TARGET = PM:LCOUNT`
+ *     ——镜像为 era_flag.target 写（#5 决议第六条）；
  *   - %SAVESTR:PM% = SAVESTR:(PM:0)（数组名省略下标即取第 0 元）——队长名，
  *     name_of(pm[0])；名字承载一律 callname（#5 决议）；
- *   - Emuera 整数除法向零截断：`CFLAG:582 / 10`（负数）、`LOCAL /= 100`
+ *   - 整数除法向零截断：`CFLAG:582 / 10`（负数）、`LOCAL /= 100`
  *     均 Math.trunc（-1234/10 = -123，不是 floor 的 -124）；
- *   - LIMIT(X, min, max) = MIN(MAX(X, min), max)——TOWN_HENSAI 的
+ *   - LIMIT(X, min, max) = MIN(MAX(X, min), max)——town_hensai 的
  *     LIMIT(LOCAL, 100, 580/2) 在所持金 < 200 时 min > max，结果取 max
  *     （580/2，可 < 100）：先 MAX 后 MIN 的求值序；
  *   - ere 无全局 RAND 序列（#117），掷点经注入 rand（缺省 Math.random）；
  *   - PRINT/PRINTFORM 不换行与 PRINTL/PRINTFORML 换行的行拼接归并（引擎
  *     print 每调用一行，dungeon.js 文件头先例）——本文件 SETCOLORBYNAME
  *     的彩色数值段按「行文本 + 数值 + 行尾」拼为一次 print，配色不做；
- *   - 逐段注释保留原样（日文分支标记不译），行号锚点已随全库清理删除。
+ *   - 逐段注释保留原样（日文分支标记不译），行号引用已删除。
  */
 
 'use strict';
@@ -35,17 +34,17 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-// H10（#179）真身：@LVUP（DUNGEON_TOWN.ERB:34 的 CALL LVUP, PM:LOCAL）
+// H10（#179）真身：lvup（CALL lvup, PM:LOCAL）
 const { lvup } = require('#/dungeon/dungeon-lvup');
-// H15（#184）真身：@HEROINE_BITCH（:134 城镇侧卖春入口；log_try_bitch 的
+// H15（#184）真身：heroine_bitch（城镇侧卖春入口；log_try_bitch 的
 // 'TOWN' 档随 H16 #185 齐备）。经模块对象引用，测试可替换导出。
 const bitch_mod = require('#/kojo/kojo-dungeon-bitch');
-// 本票（#178）真身：@SET_QUEST（:56 受注，必须在 PLANNING 之后——读
+// 这张工单（#178）真身：set_quest（受注，必须在 PLANNING 之后——读
 // CFLAG:520 目标阶层）
 const quest_mod = require('#/dungeon/dungeon-quest');
-// L10（#341）真身：@DUNGEON_TOWN_LOVER（:697 城镇日常恋人事件）。
+// L10（#341）真身：dungeon_town_lover（城镇日常恋人事件）。
 const lovers_mod = require('#/dungeon/dungeon-lovers');
-// L13（#344）真身：@SELL_EX_ITEM（:123）/ @ADD_EX_ITEM（:354）。
+// L13（#344）真身：sell_ex_item / add_ex_item。
 const ex_item_mod = require('#/dungeon/ex-item');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
@@ -53,7 +52,7 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -70,16 +69,16 @@ function party_of(arg) {
 // —— 城镇主流程与各段（#500 起本文件无域内存根；存根清单见 docs/stub-registry.md）——
 
 /**
- * @DUNGEON_TOWN（:5-75）：勇者撤到迷宫外时的城镇事件主流程。
+ * dungeon_town：勇者撤到迷宫外时的城镇事件主流程。
  *
- * 顺序（原作 :27-67）：再起点恢复 → 全员升级 → 资金调达 → 日常 → 采购
+ * 顺序：再起点恢复 → 全员升级 → 资金调达 → 日常 → 采购
  * → 冒险计划 → 任务受注 → 分隔线 → 9/10 概率散会（RAND:10 > 0 即返），
  * 否则宴会。三处 `A = ARG:0` 的全局 A 换手在 ere 侧由 dungeon.js 的局部
  * 变量承载（调用点 a 已是队长，无副作用——注释留痕）。
  *
- * @param {number} arg0 队长（原作 ARG:0）
+ * @param {number} arg0 队长
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function dungeon_town(arg0, rand = default_rand) {
   const rand_n = rand;
@@ -98,7 +97,7 @@ async function dungeon_town(arg0, rand = default_rand) {
     await town_pt_rest(pm[0], pm[1], pm[2], rand_n);
   }
 
-  // レベルアップ（全员 CALL LVUP——#179 真身）
+  // レベルアップ（全员 CALL lvup——#179 真身）
   for (let local = 0; local < 3; local += 1) {
     if (pm[local] > 0) {
       await lvup(pm[local], rand_n);
@@ -113,7 +112,7 @@ async function dungeon_town(arg0, rand = default_rand) {
   await town_pt_shopping(pm[0], pm[1], pm[2], rand_n);
   // 冒険の計画
   await town_pt_planning(pm[0], pm[1], pm[2], rand_n);
-  // クエスト受注（SET_QUEST 必须在 PLANNING 之后，读 CFLAG:520）
+  // クエスト受注（set_quest 必须在 PLANNING 之后，读 CFLAG:520）
   await quest_mod.set_quest(pm[0], rand_n);
 
   era.print(
@@ -128,17 +127,17 @@ async function dungeon_town(arg0, rand = default_rand) {
   // 宴会
   await town_pt_party(pm[0], pm[1], pm[2], rand_n);
   // 今後宴会以降の処理が実装される可能性があるのでいちおう中断判定
-  // （RESULT == 0 = 宴会流局——原作读取 CALL 的 RESULT；ere 侧经返回值。
+  // （RESULT == 0 = 宴会流局——读取 CALL 的 RESULT；ere 侧经返回值。
   //   流局时 A = ARG:0; RETURN 0，与走到尾等价，仅注释留痕）
   return 0; // A = ARG:0; RETURN 0
 }
 
 /**
- * @TOWN_PT_REST（:80-94）：宿屋。消耗队长的再起点（CFLAG:508--），全队
+ * town_pt_rest：宿屋。消耗队长的再起点（CFLAG:508--），全队
  * HP/气力恢复到上限。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @param {(n: number) => number} rand_n 随机源（未用，签名对齐）
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无显式返回
  */
 async function town_pt_rest(pm0, pm1, pm2, rand_n) {
   void rand_n;
@@ -160,12 +159,12 @@ async function town_pt_rest(pm0, pm1, pm2, rand_n) {
 }
 
 /**
- * @TOWN_PT_FUNDING（:101-135）：资金调达段。援助金（队伍合算）发给每个
+ * town_pt_funding：资金调达段。援助金（队伍合算）发给每个
  * 成员，随后各自：EX 道具出售 → 战利品换金 → 担保人借债 → 还债 →
- * （所持金 < 10000 时）借款 → 城镇侧卖春（HEROINE_BITCH）。
+ * （所持金 < 10000 时）借款 → 城镇侧卖春（heroine_bitch）。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @param {(n: number) => number} rand_n 随机源
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无显式返回
  */
 async function town_pt_funding(pm0, pm1, pm2, rand_n) {
   const pm = [pm0, pm1, pm2];
@@ -185,10 +184,10 @@ async function town_pt_funding(pm0, pm1, pm2, rand_n) {
     }
     const cid = pm[lcount];
     chara(cid).dungeon.所持金 += local; // CFLAG:580 += LOCAL
-    ex_item_mod.sell_ex_item(cid, rand_n); // CALL SELL_EX_ITEM
-    town_sell(cid); // CALL TOWN_SELL
-    await town_hoshounin(cid); // CALL TOWN_HOSHOUNIN
-    await town_hensai(cid); // CALL TOWN_HENSAI
+    ex_item_mod.sell_ex_item(cid, rand_n); // CALL sell_ex_item
+    town_sell(cid); // CALL town_sell
+    await town_hoshounin(cid); // CALL town_hoshounin
+    await town_hensai(cid); // CALL town_hensai
     // 手持ちが少ないと借金する
     if (chara(cid).dungeon.所持金 < 10000) {
       await town_loan(cid, rand_n);
@@ -200,7 +199,7 @@ async function town_pt_funding(pm0, pm1, pm2, rand_n) {
 }
 
 /**
- * @FI_PT_FUNDING（:140-151）：援助金计算（合算，#FUNCTION）。三人合计，
+ * fi_pt_funding：援助金计算（合算，#FUNCTION）。三人合计，
  * 下限 1（MAX(LOCAL, 1)——全空队伍也发 1）。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @returns {number} 援助金
@@ -215,13 +214,13 @@ function fi_pt_funding(pm0, pm1, pm2) {
 }
 
 /**
- * @FI_FUNDING（:156-189）：援助金计算（个人，#FUNCTION）。
+ * fi_funding：援助金计算（个人，#FUNCTION）。
  *
  * **ARG 只用于空位检查**（ARG <= 0 返 0）；全部补正读的是省略角色号的
- * TALENT/CFLAG → TARGET 残留（文件头裁定）——原作如此：队伍每人的援助
+ * TALENT/CFLAG → TARGET 残留（文件头结论）——有意保留：队伍每人的援助
  * 额实际都按 TARGET 一人的出身/善恶/等级计算（enter-enemy.js 的初期
  * 金钱七条修正与之同构、彼处读生成者本人）。
- * @param {number} arg 成员位（原作 ARG）
+ * @param {number} arg 成员位
  * @returns {number} 援助金
  */
 function fi_funding(arg) {
@@ -233,7 +232,7 @@ function fi_funding(arg) {
   const t = era_flag.target;
   const tv = (n) => era.get(`talent:${t}:${n}`) || 0;
 
-  // 素質補正——高人气ボーナス（原作 TALENT:高人气 名字寻址 →
+  // 素質補正——高人气ボーナス（TALENT:高人气 名字寻址 →
   // id 126，yml/Talent.yml；ere 侧数字下标 + 注释，门面生成物同惯例）
   if (tv(126) !== 0) {
     local += 1000;
@@ -267,10 +266,10 @@ function fi_funding(arg) {
 }
 
 /**
- * @TOWN_SELL（:193-208）：战利品换金。CFLAG:581（换金槽）> 0 时并入所持金
- * 并清零（581 由 GET_JUNK_ITEM / 陷阱等累积，dungeon 属主域内裸寻址）。
+ * town_sell：战利品换金。CFLAG:581（换金槽）> 0 时并入所持金
+ * 并清零（581 由 get_junk_item / 陷阱等累积，dungeon 属主域内裸寻址）。
  * @param {number} arg 角色
- * @returns {void} 原作无 RETURN
+ * @returns {void} 无显式返回
  */
 function town_sell(arg) {
   if (arg <= 0) {
@@ -288,11 +287,11 @@ function town_sell(arg) {
 }
 
 /**
- * @TOWN_HOSHOUNIN（:212-227）：担保人事件。有「担保人」素质（TALENT:209）
+ * town_hoshounin：担保人事件。有「担保人」素质（TALENT:209）
  * 的角色每次回城，债务按**魔王等级**（CFLAG:0:9 × 8 + 500）增加——担保
- * 人替魔王背债的原作设定。
+ * 人替魔王背债的设定。
  * @param {number} arg 角色
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无显式返回
  */
 async function town_hoshounin(arg) {
   // SIF ARG <= 0 / SIF !TALENT:ARG:担保人 RETURN——TALENT:209
@@ -308,11 +307,11 @@ async function town_hoshounin(arg) {
 }
 
 /**
- * @TOWN_HENSAI（:231-300）：还债。
+ * town_hensai：还债。
  *
  * 三段：① 有债务（582 ≠ 0）先加高利贷利息（债务 / 10 向零截断）；② 债务
  * < -500 时还款额按 **TARGET 的善恶值**分档（负债 1/2 ～ 1/9，省略角色号
- * 写法——文件头裁定），-500 ～ -1 之间固定还 500，无债直接返回；③ 还款
+ * 写法——文件头结论），-500 ～ -1 之间固定还 500，无债直接返回；③ 还款
  * 额取整到百（下限 100、上限所持金半额——所持金 < 200 时上限 < 下限，
  * LIMIT 先 MAX 后 MIN，结果取上限），且不超过债务与所持金半额。
  *
@@ -321,7 +320,7 @@ async function town_hoshounin(arg) {
  * ≤ |582|，债务清零。
  *
  * @param {number} arg 角色
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无显式返回
  */
 async function town_hensai(arg) {
   if (arg <= 0) {
@@ -329,7 +328,7 @@ async function town_hensai(arg) {
   }
   const loan = chara(arg).patch.借款; // CFLAG:582（负数为债务）
 
-  // 借金加上高利貸利率（利息段打印无 FLAG:5&32 守卫——总可见）
+  // 借金加上高利貸利率（利息段打印无 FLAG:5&32 检查——总可见）
   if (loan !== 0) {
     const interest = Math.trunc(loan / 10); // 利率 = CFLAG:582 / 10（截断）
     chara(arg).patch.借款 += interest;
@@ -387,23 +386,23 @@ async function town_hensai(arg) {
       `${name_of(arg)}将总计${chara(arg).patch.借款}的债务归还了${local}点。`,
     );
   }
-  chara(arg).patch.借款 += local; // CFLAG:582 += LOCAL（向 0 收敛）
+  chara(arg).patch.借款 += local; // CFLAG:582 += LOCAL（趋近 0）
   chara(arg).dungeon.所持金 -= local; // CFLAG:580 -= LOCAL
 }
 
 /**
- * @TOWN_LOAN（:304-324）：借款。债务超过 -50000 再也没人肯借；否则
+ * town_loan：借款。债务超过 -50000 再也没人肯借；否则
  * （260 + 善恶值）面骰 < 50 时借入 1000（善恶越低越难借——下限 160 面）。
  * @param {number} arg 角色
  * @param {(n: number) => number} rand_n 随机源
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无显式返回
  */
 async function town_loan(arg, rand_n) {
   if (arg <= 0) {
     return;
   }
   if (chara(arg).patch.借款 < -50000) {
-    // 负债累累（打印有 FLAG:5&32 守卫，数值分支无守卫）
+    // 负债累累（打印有 FLAG:5&32 检查，数值分支无检查）
     if ((era.get('flag:5') || 0) & 32) {
       era.print(`${name_of(arg)}负债累累，再也没人愿意借钱给她了……`);
     }
@@ -420,10 +419,10 @@ async function town_loan(arg, rand_n) {
 }
 
 /**
- * @TOWN_PT_SHOPPING（:331-343）：采购段。每人 @TOWN_SHOPPING，末尾 WAIT。
+ * town_pt_shopping：采购段。每人 town_shopping，末尾 WAIT。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<void>} 原作无 RETURN
+ * @returns {Promise<void>} 无显式返回
  */
 async function town_pt_shopping(pm0, pm1, pm2, rand_n = default_rand) {
   const pm = [pm0, pm1, pm2];
@@ -440,11 +439,11 @@ async function town_pt_shopping(pm0, pm1, pm2, rand_n = default_rand) {
 }
 
 /**
- * @TOWN_SHOPPING（:346-357）：个人采购。所持金 ≥ 3000 才买（ADD_EX_ITEM
+ * town_shopping：个人采购。所持金 ≥ 3000 才买（add_ex_item
  * -3 补给购买），RESULT 非 0（买到）时扣 500。
  * @param {number} arg 角色
  * @param {(n: number) => number} rand_n RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function town_shopping(arg, rand_n = default_rand) {
   if (arg <= 0) {
@@ -454,7 +453,7 @@ async function town_shopping(arg, rand_n = default_rand) {
   if (chara(arg).dungeon.所持金 < 3000) {
     return 0;
   }
-  const bought = await ex_item_mod.add_ex_item(-3, arg, 1, rand_n); // CALL ADD_EX_ITEM
+  const bought = await ex_item_mod.add_ex_item(-3, arg, 1, rand_n); // CALL add_ex_item
   // 代金を支払う（RESULT 非 0 才扣款）
   if (bought) {
     chara(arg).dungeon.所持金 -= 500;
@@ -463,25 +462,25 @@ async function town_shopping(arg, rand_n = default_rand) {
 }
 
 /**
- * @TOWN_PT_PLANNING（:368-567）：冒险计划。定目标阶层（GOAL）与出发阶层
+ * town_pt_planning：冒险计划。定目标阶层（GOAL）与出发阶层
  * （START_FLOOR），按目标阶层向每人借入必要资金（COST）。
  *
  * 分支（按队伍最深到达/平均善恶/负债加权）：英雄类素质（自信家 161 /
  * 高贵 163 / 冷静 164 / 恶女 166）直奔 8 层；重度借债（LOAN_MIN ≤ 档 0
  * 或人均收支 ≤ 档 1）直奔深潜（GOAL = FLOOR_MAX + 1，与 1/4 掷点的
- * INTO_DEEPER 同目标；同守卫的 ELSEIF 分支恒不达，不落地）；
+ * INTO_DEEPER 同目标；同检查的 ELSEIF 分支恒不达，不实现）；
  * 中度借债走浅层（FLOOR_PT/2 与 FLOOR_MIN 取小、至少 1）；无债或各档
  * 掷中（1/4、1/3、1/2）时 INTO_DEEPER（FLOOR_MAX + 1）；其余慎重层
  * （FLOOR_MAX/2 与 FLOOR_PT 取大、至少 1）。
  *
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @param {(n: number) => number} rand_n 随机源
- * @returns {Promise<number>} 原作 RETURN 0（英雄类早退同 0）
+ * @returns {Promise<number>} 恒 return 0（英雄类早退同 0）
  */
 async function town_pt_planning(pm0, pm1, pm2, rand_n) {
   const pm = [pm0, pm1, pm2];
   // 新探索模式——TALENT:161 自信家/163 高贵/164 冷静/166 恶女
-  // 直奔最深处（CFLAG:520 = 8）。原作首行的 GETBIT(FLAG:5,33) 守卫被注释。
+  // 直奔最深处（CFLAG:520 = 8）。首行的 GETBIT(FLAG:5,33) 检查被注释。
   const hero_or_die =
     era.get(`talent:${pm[0]}:161`) ||
     era.get(`talent:${pm[0]}:163`) ||
@@ -503,7 +502,7 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
     era.print(`${name_of(pm[0])}的队伍制定了新的冒险计划。`);
   }
 
-  // —— 情報取得（:410-436）——
+  // —— 情報取得 ——
   let num_pm = 0;
   const karma = [0, 0, 0];
   const floor_arr = [0, 0, 0];
@@ -536,7 +535,7 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
   // ふつー黒字収支を心がける…どうも借金＞収入になるので頭割り
   const balance_pt = Math.trunc(sum(balance) / num_pm); // BALANCE_PT
 
-  // —— LOAN_LIMIT 三档（:445-480 SELECTCASE KARMA_PT 八档）——
+  // —— LOAN_LIMIT 三档（SELECTCASE KARMA_PT 八档）——
   // ここらへんは適当に決めた判定（カルマ高いと慎重派）
   let loan_limit;
   if (karma_pt > 180) {
@@ -557,12 +556,12 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
     loan_limit = [-14000, -12500, -10000];
   }
 
-  // —— 進行処理（:484-534；GOTO INTO_DEEPER 经闭包落地）——
+  // —— 進行処理（GOTO INTO_DEEPER 经闭包实现）——
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
   let goal = 0; // GOAL（#DIM 初值 0）
   let start_floor = 0; // START_FLOOR
   const into_deeper = () => {
-    // $INTO_DEEPER（:518-525）——以比上次更深层为目标
+    // $INTO_DEEPER——以比上次更深层为目标
     if (show) {
       era.print('以比上次更深层为目标。');
     }
@@ -583,7 +582,7 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
       goal = floor_max + 1;
       start_floor = floor_max + 1;
       // ELSEIF FLAG:5 & 32 && (TALENT:172 智慧 || TALENT:164 冷静 ||
-      // CFLAG:151 >= 100)——与 IF 同守卫恒不达，不落地
+      // CFLAG:151 >= 100)——与 IF 同检查恒不达，不实现
     }
   } else if (loan_min <= loan_limit[1] || balance_pt <= loan_limit[2]) {
     // 借金そこそこ
@@ -645,22 +644,22 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
 }
 
 /**
- * @TOWN_PT_PARTY（:575-679）：宴会。
+ * town_pt_party：宴会。
  *
  * 预算收集段读的是 **TARGET 残留的 CFLAG:580**（省略角色号——文件头
- * 裁定）：每人份的飲み代全按同一个人的钱袋算（支付判定曾修过的是支付段，
+ * 结论）：每人份的飲み代全按同一个人的钱袋算（支付判定曾修过的是支付段，
  * 收集段仍是 TARGET 读），支付段则显式扣本人的 580——收集与支付不对称。
  * 无预算（SUMARRAY(COST) == 0）流局：A = PM:0; RETURN 0（TARGET 未动）。
  *
- * お楽しみタイム按 TARGET（此处已显式换手为各成员）的善恶/素质走臂：
- * karma > 50 早睡；karma ≤ 50 恒进第二臂（`CFLAG:151 <= 50` 在该世界
+ * お楽しみタイム按 TARGET（此处已显式换手为各成员）的善恶/素质走分支：
+ * karma > 50 早睡；karma ≤ 50 恒进第二分支（`CFLAG:151 <= 50` 在该世界
  * 恒真）——其内层按素质走嫖妓（百合气质/扶她/男 → 自动调教三连）或
- * 少年风俗（正太控）或无输出。**祈祷臂（圣女·神官·巫女 + KARMA +1）
- * 与醉睡臂恒不达**（见函数体内注释）。末尾 TARGET 恢复暂存值。
+ * 少年风俗（正太控）或无输出。**祈祷分支（圣女·神官·巫女 + KARMA +1）
+ * 与醉睡分支恒不达**（见函数体内注释）。末尾 TARGET 恢复暂存值。
  *
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @param {(n: number) => number} rand_n 随机源
- * @returns {Promise<number>} 原作 RETURN：0 = 流局 / 1 = 开宴
+ * @returns {Promise<number>} 0 = 流局 / 1 = 开宴
  */
 async function town_pt_party(pm0, pm1, pm2, rand_n) {
   const pm = [pm0, pm1, pm2];
@@ -697,7 +696,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
     return 0; // お流れ（A = PM:0; RETURN 0——TARGET 未动）
   }
 
-  // お楽しみタイム（TARGET 显式换手为各成员，:619）
+  // お楽しみタイム（TARGET 显式换手为各成员）
   for (let lcount = 0; lcount < 3; lcount += 1) {
     if (pm[lcount] <= 0) {
       continue;
@@ -715,7 +714,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
       // カルマが高い場合
       era.print('为了备战冒险早早就寝了……');
       // ELSEIF CFLAG:151 > 80 && TALENT:122——恒不达（> 80 蕴含
-      // > 50，上一臂已抓走；下文同为「早早就寝」），不镜像，注释留痕
+      // > 50，上一分支已抓走；下文同为「早早就寝」），不镜像，注释留痕
     } else if (karma_v <= 50 || (karma_v <= 80 && man)) {
       const abl22 = era.get(`abl:${t}:22`) || 0; // 百合气质
       if (abl22 > 1 || futanari || man) {
@@ -741,7 +740,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
         }
         // 愛撫自動調教（扶她或男——扶她两连）
         if (futanari || man) {
-          const { com0_auto } = require('#/event/event-autotrain'); // CALL COM0_AUTO
+          const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto
           com0_auto();
         }
         await source_check_auto();
@@ -753,18 +752,18 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
           source_check_auto,
         } = require('#/dungeon/dungeon-battle');
         await before_autotrain();
-        const { com0_auto } = require('#/event/event-autotrain'); // CALL COM0_AUTO
+        const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto
         com0_auto();
         await source_check_auto();
       }
       // ELSEIF TALENT:122 && ABL:23 > 1——**恒不达**（蕴含
-      // TALENT:122，第一臂的 `|| TALENT:122` 已把所有男人抓走）。
+      // TALENT:122，第一分支的 `|| TALENT:122` 已把所有男人抓走）。
       // 内层 IF TALENT:143（少年风俗）/ ELSEIF
       // ABL:20 > 2（空 PRINT）随之不可达，不镜像，注释留痕
       //
-      // ELSEIF 聖女・神官・巫女（祈祷 + CALL KARMA, TARGET, 1）
-      // 与 ELSE 醉睡——**两臂同样恒不达**：臂 1 不中即 karma ≤ 50，而臂 3
-      // 的左半 `CFLAG:151 <= 50` 在该世界恒真、臂 3 恒中，臂 4/5 无世界
+      // ELSEIF 聖女・神官・巫女（祈祷 + CALL karma, TARGET, 1）
+      // 与 ELSE 醉睡——**两分支同样恒不达**：分支 1 不中即 karma ≤ 50，而分支 3
+      // 的左半 `CFLAG:151 <= 50` 在该世界恒真、分支 3 恒中，分支 4/5 无世界
       // 可达（`TALENT:315 == 12 || (202 神官 &&
       // 122 男 && CFLAG:5 > 100) || (202 && (121 || !122)) || 206 巫女`
       // 的祈祷条件与「醉醺醺地睡着了」从未执行）。不镜像，注释留痕——
@@ -778,10 +777,10 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
 }
 
 /**
- * @TOWN_PT_DAYEVENT（:686-700）：日常段。每人换手 TARGET 后走恋人事件
- * （DUNGEON_TOWN_LOVER——#341 真身）。
+ * town_pt_dayevent：日常段。每人换手 TARGET 后走恋人事件
+ * （dungeon_town_lover——#341 真身）。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function town_pt_dayevent(pm0, pm1, pm2) {
   const pm = [pm0, pm1, pm2];
@@ -791,7 +790,7 @@ async function town_pt_dayevent(pm0, pm1, pm2) {
       continue;
     }
     era_flag.target = pm[lcount]; // TARGET = PM:LCOUNT
-    await lovers_mod.dungeon_town_lover(pm[lcount]); // CALL DUNGEON_TOWN_LOVER
+    await lovers_mod.dungeon_town_lover(pm[lcount]); // CALL dungeon_town_lover
   }
   return 0;
 }

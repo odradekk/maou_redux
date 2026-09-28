@@ -1,20 +1,20 @@
 /**
- * @file 升级结算（issue #179，阶段 3 H10）：@LVUP 与 @ST_UP 真身。
+ * @file 升级结算（issue #179，阶段 3 H10）：lvup 与 st_up 真身。
  *
- * 调用点（全部随本票接线）：
- *   - ere/system/turnend-settle.js 结算主循环（原作 SYSTEM ver1.0.3.ERB:299，
- *     守卫 SIF CFLAG:A:1 != 2——侵攻中的勇者不升级，保留在调用方）；
- *   - 同文件魔王结算（原作 :619，CALL LVUP, 0——战斗日志 WAIT 之后）；
- *   - ere/chara/chara-init.js 等级段（原作 CHARA_MAKE_INIT.ERB:14，按等级
- *     逐级 CALL ST_UP + 等级复位 + HP/气力拉满到上限）。
+ * 调用点（全部随这张工单接入）：
+ *   - ere/system/turnend-settle.js 结算主循环（防护判断 SIF CFLAG:A:1 != 2——
+ *     侵攻中的勇者不升级，保留在调用方）；
+ *   - 同文件魔王结算（CALL lvup, 0——战斗日志 WAIT 之后）；
+ *   - ere/chara/chara-init.js 等级段（按等级
+ *     逐级 CALL st_up + 等级复位 + HP/气力拉满到上限）。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - 经验曲线的注释失真：注释写「魔王必要经验值 = LV * 100 + 10」而
  *     代码是 LOCAL:0 = CFLAG:9 * 10 + 10（LV * 10 + 10）。以代码为准，
  *     注释保留并在此指明——曲线按代码；
  *   - NAME:MASTER / SAVESTR:ARG 都承载名前（CONTEXT.md「称呼」：本作把
  *     SAVESTR:x 赋成 %NAME:x%，两者同值），统一 name_of（#5 决议）；
- *   - ere 无全局 RAND 序列（#117 决议），ST_UP 的六处掷骰经注入 rand_n
+ *   - ere 无全局 RAND 序列（#117 决议），st_up 的六处掷骰经注入 rand_n
  *     掷出（缺省 Math.random；turnend 调用点不注入——结算循环的随机量
  *     本就逐回合独立，测试经模块替换注入）；
  *   - CFLAG:9（等级）无门面字段，裸寻址 + 注释（page-info-exp.js 先例）；
@@ -34,21 +34,21 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
 /**
- * @ST_UP（LVUP.ERB:44-89）：单角色升一级的基础数值结算。
+ * st_up：单角色升一级的基础数值结算。
  *
  * 等级 +1、基础攻击/防御各 +1，再按掷骰与种族素质补正（RAND:2 二选一、
  * DAY >= 100 与战术/肌肉型素质各补 RAND:3 / RAND:2、竜族/矮人/史莱姆/
  * 触手各族补正），最后体力/气力上限各 +10。
  *
- * @param {number} cid 角色 ID（原作 ARG:0）
- * @param {(n: number) => number} [rand] 原作 RAND:N 的随机源（缺省均匀随机）
- * @returns {number} 0（原作 RETURN 0；调用方不读）
+ * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand] RAND:N 的随机源（缺省均匀随机）
+ * @returns {number} 0（恒 return 0；调用方不读）
  */
 function st_up(cid, rand = default_rand) {
   // 等级与攻防各 +1（CFLAG:9 / :13 / :14，后两者走门面）
@@ -105,19 +105,19 @@ function st_up(cid, rand = default_rand) {
 }
 
 /**
- * @LVUP（LVUP.ERB:2-41）：按战斗经验升级（循环保底一级起步的多升）。
+ * lvup：按战斗经验升级（循环保底一级起步的多升）。
  *
- * 三条经验曲线（LOCAL:0 基数 = LV * 10 + 10，:6）：
+ * 三条经验曲线（LOCAL:0 基数 = LV * 10 + 10）：
  *   - 魔王（ARG == MASTER）：LOCAL = 基数；
- *   - 精英（TALENT:220）：基数 - 10 后翻倍再 +10（勇者曲线的两倍，:14-17）；
+ *   - 精英（TALENT:220）：基数 - 10 后翻倍再 +10（勇者曲线的两倍）；
  *   - 通常勇者：LOCAL = 基数。
- * 战斗经验（EXP:80）够曲线即扣、升级（CALL ST_UP）、重算基数再判，直到
+ * 战斗经验（EXP:80）够曲线即扣、升级（CALL st_up）、重算基数再判，直到
  * 不够。升过级则播报一行；初心者（TALENT:291）到 LV30 成长为真勇者并失去
  * 该素质。
  *
- * @param {number} cid 角色 ID（原作 ARG:0；0 = 魔王 MASTER）
- * @param {(n: number) => number} [rand] 原作 RAND:N 的随机源（透传 ST_UP）
- * @returns {number} 本次升的级数（原作 RETURN LOCAL:2；调用方不读）
+ * @param {number} cid 角色 ID（0 = 魔王 MASTER）
+ * @param {(n: number) => number} [rand] RAND:N 的随机源（透传 st_up）
+ * @returns {number} 本次升的级数（LOCAL:2；调用方不读）
  */
 function lvup(cid, rand = default_rand) {
   // LOCAL:0 = CFLAG:9 * 10 + 10（经验曲线基数）
@@ -125,9 +125,9 @@ function lvup(cid, rand = default_rand) {
   // LOCAL:2 = 升级计数
   let gained = 0;
 
-  // $LVUP_REPEAT（:10-29）
+  // $LVUP_REPEAT
   for (;;) {
-    // 必要经验值：:11-21 三条曲线（魔王 / 精英翻倍 / 通常）
+    // 必要经验值：三条曲线（魔王 / 精英翻倍 / 通常）
     let need;
     if (cid === 0) {
       // 魔王（注释写 LV * 100 + 10 失真，代码是基数，文件头）

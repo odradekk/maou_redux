@@ -2,32 +2,32 @@
  * @file 队伍战斗（issue #175，阶段 3 H6）：勇者队伍 vs 怪物。
  *
  * H6 之前这里是 ere/dungeon/dungeon.js 的三处带记录存根之一（H3 留）：
- * 存根不改 CFLAG:1，勇者不掉血必然推到第 9 层（#168 裁定 1 认可的中间
- * 状态）。本文件接上真身后勇者会掉 HP/气力、会投降（@DEATH_CHECK 写
- * CFLAG:1 = 0）、@DUNGEON 主循环据此刻 BREAK 并走 GET_DOWN_ENEMY。
+ * 存根不改 CFLAG:1，勇者不掉血必然推到第 9 层（#168 结论 1 认可的中间
+ * 状态）。本文件接上真身后勇者会掉 HP/气力、会投降（death_check 写
+ * CFLAG:1 = 0）、run_dungeon 主循环据此刻 BREAK 并走 get_down_enemy。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 钉下）：名字承载一律 `callname:${id}:-1`
- *     （#5 决议），本文件 name_of 收口；
+ *     （#5 决议），统一走本文件 name_of；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（run_dungeon
- *     第二参先例）。**原作死赋值处的 RAND 消费照掷**（:124 ATK_TURN =
- *     RAND:3 之后无读者）——PRNG 序列与原作逐位对齐是种子化对比测试的
+ *     第二参先例）。**死赋值处的 RAND 消费照掷**（ATK_TURN =
+ *     RAND:3 之后无读者）——PRNG 序列逐位对齐是种子化对比测试的
  *     前提（#173 mulberry32 先例）；
- *   - 原作全局 A/B/C/X/Y/Z/W/TURN 的换手改显式传参与返回值（#5 决议
+ *   - 全局 A/B/C/X/Y/Z/W/TURN 的换手改显式传参与返回值（#5 决议
  *     第六条）：A/ATKER → atker 参数，W 数组 → equip-lookup 的装备记录
  *     对象；#343 起 MAGIC 收到显式施法者、目标列头和 D:20 共享槽；
  *   - **E 数组走引擎变量**（yml/E.yml，ere/dungeon/monster-data.js 的
  *     e_get/e_set）；
- *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
+ *   - PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
  *     的拼接（技能标签 + 攻击演出 + 结果）归并为一次 era.print（引擎
- *     print 每调用一行，dungeon.js 先例）。@SKILL_EXTRA_BONUS 的行内
+ *     print 每调用一行，dungeon.js 先例）。skill_extra_bonus 的行内
  *     PRINTFORM 因此改为**返回标签串**，由攻击函数拼行；
  *   - SETFONT/SETCOLORBYNAME/BAR/STRLENS 对齐、立绘 HTML_PRINT 无 era
- *     通道或按需后补（#68 起 printProgress 可代 BAR，本票参数显示段以
- *     文本近似并注明）：玩家可见的行序与文案 1:1，字宽对齐与配色不做；
- *   - FLAG:5 & 32（战斗日志显示）的守卫逐处保留——夹具与 e2e 的 FLAG:5
- *     缺省 0，战斗数值行为不依赖该位；
- *   - 逐段注释保留原样（日文分支标记不译），行号锚点已随全库清理删除。
+ *     通道或按需后补（#68 起 printProgress 可代 BAR，参数显示段以
+ *     文本近似并注明）：玩家可见的行序与文案完全一致，字宽对齐与配色不做；
+ *   - FLAG:5 & 32（战斗日志显示）的显示开关逐处保留——夹具与 e2e 的
+ *     FLAG:5 缺省 0，战斗数值行为不依赖该位；
+ *   - 逐段注释保留原样（日文分支标记不译），行号引用已删除。
  */
 
 'use strict';
@@ -64,10 +64,10 @@ const {
 } = require('#/system/train/benki');
 
 /**
- * @CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
+ * CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
  * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
- * 依据）；实现在 ere/page/page-campaign-1.js 注册。whenMissing 按原作
- * :233 预置 190（骸骨缺省）。
+ * 依据）；实现在 ere/page/page-campaign-1.js 注册。whenMissing
+ * 预置 190（骸骨缺省）。
  */
 const campaign_monster_list_family = new DispatchFamily(
   'CAMPAIGN_MONSTER_LIST',
@@ -79,27 +79,27 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** SHE(ARG) 代词（魔改新增/文本校正.ERB :1-7 的三行纯函数，随本票内联） */
+/** SHE(ARG) 代词（三行纯函数，已内联） */
 function she(cid) {
   return (era.get(`talent:${cid}:122`) || 0) !== 0 ? '他' : '她';
 }
 
 // —— 存根层（#175 登记，归属见 docs/stub-registry.md）——
 
-// @QUEST_BATTLE_SET / @RESULT_QUEST（迷宮/DUNGEON_QUEST.ERB）：#178（H9）
+// quest_battle_set / result_quest：#178（H9）
 // 起为真身 ere/dungeon/dungeon-quest.js 的 quest_battle_set / result_quest
-// （:77 与 :363/:365 的调用点经模块对象 quest_mod 引用，见文件头）。
+// （调用点经模块对象 quest_mod 引用，见文件头）。
 
 /**
- * @CAMPAIGN_MONSTER_LIST（CAMPAIGN_EVENT.ERB:226-235）：战役迷宫的出现
- * 怪物表。原作 RESULT 预置 190（骸骨缺省，非旧存根实际返回的 undefined
- * ——旧 JSDoc 写「恒 0」但 stub_line 本身无返回值，1:1 修正）。
- * @param {number} floor 阶层（原作 ARG:0）
+ * CAMPAIGN_MONSTER_LIST：战役迷宫的出现
+ * 怪物表。RESULT 预置 190（骸骨缺省，非旧存根实际返回的 undefined
+ * ——旧 JSDoc 写「恒 0」但 stub_line 本身无返回值，据实修正）。
+ * @param {number} floor 阶层
  * @param {(n: number) => number} [rand] RAND:N 随机源，透传给
  *   CAMPAIGN_MONSTER_LIST_1 的 DICE = RAND:3（缺省均匀随机，与调用方
  *   dungeon_party_battle 共用同一注入源，保持 PRNG 序列对齐）
@@ -117,20 +117,20 @@ async function campaign_monster_list(floor, rand) {
 }
 
 /**
- * @BEFORE_AUTOTRAIN（EVENT_AUTOTRAIN.ERB:91-104；#508 起真身）：
+ * before_autotrain（#508 起真身）：
  * 自动调教前置——SOURCE / delta 清零。真身在 ere/event/event-autotrain.js，
  * 调用点直调（浏览器/测试可替换导出，同 SOURCE_CHECK_AUTO 一族的先例）。
- * @returns {Promise<number>} 原作 RETURN 0（调用点不消费）
+ * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function before_autotrain() {
   return require('#/event/event-autotrain').before_autotrain();
 }
 
 /**
- * @SOURCE_CHECK_AUTO（调教票，#461 起真身）：自动调教结算。调用点同
- * BEFORE_AUTOTRAIN 一族（DUNGEON_TRAP.ERB / DUNGEON_TOWN.ERB /
- * DUNGEON_BATLLE.ERB / DUNGEON_BATLLE2.ERB，详见 docs/stub-registry.md）
- * 与真身分属迷宫域与 event 域，接线走
+ * source_check_auto（调教域工单，#461 起真身）：自动调教结算。调用点同
+ * before_autotrain 一族（曾散见迷宫域四文件，详见
+ * docs/stub-registry.md）
+ * 与真身分属迷宫域与 event 域，接入走
  * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
  * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
  *
@@ -139,7 +139,7 @@ async function before_autotrain() {
  * 对应物。本移植把 NOWEX→EX 的合并交给引擎的 nextTurnInTrain（source-check.js
  * 文件头的职责划分），而迷宫路径不经过回合循环，不补这一步的话 EX:0-4
  * （绝顶次数，JUEL_CHECK_MAIN 的珠加成读它）在 endTrain 删表时丢掉。
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * @returns {Promise<void>} 无 RESULT 消费
  */
 async function source_check_auto() {
   await emit('SOURCE_CHECK_AUTO');
@@ -147,32 +147,32 @@ async function source_check_auto() {
 }
 
 /**
- * @ATTACK_KOUJO（EVENT_K.ERB:311）：攻击时的口上台词。分发层在
- * kojo-system.js；未注册性格静默（try_kojo，原作 TRYCALLFORM 落空）。
- * @param {number} [cid] 攻击者（原作 ARG:0）
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * attack_koujo：攻击时的口上台词。分发层在
+ * kojo-system.js；未注册性格静默（try_kojo 落空）。
+ * @param {number} [cid] 攻击者
+ * @returns {Promise<void>} 无 RESULT 消费
  */
 async function attack_koujo(cid) {
   await speak_attack_koujo(cid);
 }
 
 /**
- * @VICTORY_KOUJO（EVENT_K.ERB:294）：胜利时的口上台词。分发层在
- * kojo-system.js；未注册性格静默（try_kojo，原作 TRYCALLFORM 落空）。
- * @param {number} [cid] 胜者（原作全局 A = ATKER）
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * victory_koujo：胜利时的口上台词。分发层在
+ * kojo-system.js；未注册性格静默（try_kojo 落空）。
+ * @param {number} [cid] 胜者（全局 A = ATKER）
+ * @returns {Promise<void>} 无 RESULT 消费
  */
 async function victory_koujo(cid) {
   await speak_victory_koujo(cid);
 }
 
 /**
- * @VICTORY_RYOUZYOKU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：胜利后的
+ * victory_ryouzyoku（#182 H13）：胜利后的
  * 凌辱事件（「間違いが起こる」）。真身在 ere/kojo/kojo-dungeon-ravish.js，
  * 经模块对象调用（测试可替换导出断言被调，#184 先例）。
- * @param {number} atker 胜者（原作 ARG = A）
+ * @param {number} atker 胜者
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * @returns {Promise<void>} 无 RESULT 消费
  */
 async function victory_ryouzyoku(atker, rand) {
   const mod = require('#/kojo/kojo-dungeon-ravish');
@@ -180,12 +180,12 @@ async function victory_ryouzyoku(atker, rand) {
 }
 
 /**
- * @RYOUZYOKU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：败者的凌辱事件
+ * ryouzyoku（#182 H13）：败者的凌辱事件
  * （FLAG:5 & 1 配置位）。真身在 ere/kojo/kojo-dungeon-ravish.js，经模块
  * 对象调用。
- * @param {number} atker 败北勇者（原作 ARG = A）
+ * @param {number} atker 败北勇者
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * @returns {Promise<void>} 无 RESULT 消费
  */
 async function ryouzyoku(atker, rand) {
   const mod = require('#/kojo/kojo-dungeon-ravish');
@@ -193,8 +193,8 @@ async function ryouzyoku(atker, rand) {
 }
 
 /**
- * @MONSTER_LIST（:416-444）：怪物清单打印（防御三列）。
- * @returns {void} 原作 RETURN 0
+ * monster_list：怪物清单打印（防御三列）。
+ * @returns {void} 恒 return 0
  */
 function monster_list() {
   // REPEAT 3（B 从 0 起 += 100——列头 0/100/200）
@@ -223,10 +223,10 @@ function monster_list() {
 }
 
 /**
- * @SELECT_ATKER（:447-487）：选出本回合攻击的勇者。
- * @param {number} arg0 队长（原作 ARG:0）
- * @param {number} arg1 回合数（原作 ARG:1；函数内 + 1 后取模）
- * @returns {number} 攻击者角色号（原作 RETURN）
+ * select_atker：选出本回合攻击的勇者。
+ * @param {number} arg0 队长
+ * @param {number} arg1 回合数（函数内 + 1 后取模）
+ * @returns {number} 攻击者角色号
  */
 function select_atker(arg0, arg1) {
   let member = 1;
@@ -262,8 +262,8 @@ function select_atker(arg0, arg1) {
 }
 
 /**
- * @SPEED_PLUS（:490-543）：先攻后攻判定（正 = 勇者先攻）。
- * @param {number} atker 攻击者（原作全局 A）
+ * speed_plus：先攻后攻判定（正 = 勇者先攻）。
+ * @param {number} atker 攻击者
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {number} SPEED_X - SPEED_Y（正 = 勇者侧快）
  */
@@ -325,10 +325,10 @@ function speed_plus(atker, rand) {
 }
 
 /**
- * @SKILL_EXTRA_BONUS（:1328-1441）：战斗前发动的技能加成。
- * 原作的行内 PRINTFORM（技能标签）改返回字符串，由攻击函数拼进行内
+ * skill_extra_bonus：战斗前发动的技能加成。
+ * 行内 PRINTFORM（技能标签）改返回字符串，由攻击函数拼进行内
  * （文件头「同一显示行归并」）。
- * @param {number} arg0 攻击者（原作 ARG:0）
+ * @param {number} arg0 攻击者
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {string} 技能标签串（无技能为空串）
  */
@@ -399,7 +399,7 @@ function skill_extra_bonus(arg0, rand) {
   }
 
   if ((era.get(`talent:${arg0}:251`) || 0) === 1 && rand(100) < 60) {
-    // 忍術：属性按能力者素质固定（RAND:5 掷点被覆盖——原作 :1392 的
+    // 忍術：属性按能力者素质固定（RAND:5 掷点被覆盖——
     // LOCAL:1 = RAND:5 在有能力者时立即改写；ere 侧照掷保持 PRNG 序列）
     let kind = rand(5);
     if ((era.get(`talent:${arg0}:275`) || 0) !== 0) {
@@ -444,9 +444,9 @@ function skill_extra_bonus(arg0, rand) {
 }
 
 /**
- * @ATTACK_CHARA_EXTRA_DMG（:1118-1145）：角色不依赖装备的给伤害补正。
- * @param {number} arg0 攻击者（原作 ARG:0）
- * @param {number} dmg 伤害（原作 DMG）
+ * attack_chara_extra_dmg：角色不依赖装备的给伤害补正。
+ * @param {number} arg0 攻击者
+ * @param {number} dmg 伤害（DMG）
  * @param {number} arg1 先后手（0 先手 / 1 后手 / 2 先制）
  * @returns {number} 补正后的伤害
  */
@@ -474,10 +474,10 @@ function attack_chara_extra_dmg(arg0, dmg, arg1) {
 }
 
 /**
- * @DEFENCE_CHARA_EXTRA_DMG（:1148-1206）：角色不依赖装备的受伤害补正。
+ * defence_chara_extra_dmg：角色不依赖装备的受伤害补正。
  * HP 的实际扣减（BASE:0 -= DMG）在此发生。
- * @param {number} arg0 被攻击者（原作 ARG:0）
- * @param {number} dmg 伤害（原作 DMG）
+ * @param {number} arg0 被攻击者
+ * @param {number} dmg 伤害（DMG）
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {number} 补正后的伤害（0 = 闪避/无效）
  */
@@ -539,7 +539,7 @@ function defence_chara_extra_dmg(arg0, dmg, rand) {
 }
 
 /**
- * 防御侧选择（ENEMY_ATTACK 与 SLAVE_MONSTER_ATTACK 的同构段）：扫三列
+ * 防御侧选择（enemy_attack 与 slave_monster_attack 的同构段）：扫三列
  * 数量槽，返回首个存活列的列头。全灭时 b 终值 300（< 400——REPEAT 3 只扫
  * 三列，B 到不了 400，全灭早退分支不可达，死分支留注释标注）。
  * @returns {{head: number, b: number}} head = 列头（0/100/200），b = 扫描终值
@@ -557,12 +557,12 @@ function pick_defender_column() {
 }
 
 /**
- * @ENEMY_ATTACK（:546-882）：勇者侧的攻击。
- * @param {number} arg0 勇者（原作 ARG:0；A/TARGET 随之）
+ * enemy_attack：勇者侧的攻击。
+ * @param {number} arg0 勇者（A/TARGET 随之）
  * @param {number} arg1 先后手（0 先手 / 1 后手 / 2 先制）
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 1 = 怪物（列）全灭 /
- *   999 = 战斗中断（MAGIC 存根下不达）
+ * @returns {Promise<number>} 0 = 通常 / 1 = 怪物（列）全灭 /
+ *   999 = 战斗中断（magic 存根期不可达）
  */
 async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
@@ -574,7 +574,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 
   // PLAYER = 0——本函数无读者，不落变量（死赋值，注释留痕）
 
-  // 肛门虫（TALENT:193）自动调教三连（:572 CALL COM13_AUTO——
+  // 肛门虫（TALENT:193）自动调教三连（CALL com13_auto——
   // 真身 ere/event/event-autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await before_autotrain();
@@ -594,7 +594,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 1;
   }
 
-  // B = C; CALL MAGIC,1; C = B（MAGIC 可重定向目标列——存根不动）
+  // B = C; CALL magic,1; C = B（magic 可重定向目标列——存根不动）
   let target_head = c;
   if ((await magic_mod.magic(1, arg0, target_head, rand, move_ctx)) === 999) {
     return 999;
@@ -618,7 +618,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   // 戦闘前発動スキル（行内标签串，文件头「同一显示行归并」）
   const skill_tag = skill_extra_bonus(arg0, rand);
 
-  // セリフ（FLAG:5 & 32 守卫；口上分发）
+  // セリフ（FLAG:5 & 32 显示开关；口上分发）
   if ((settings & 32) !== 0) {
     await attack_koujo(arg0);
   }
@@ -649,7 +649,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     let line = skill_tag;
     if (benki) {
       // 作为肉便器的XX以（NAME_BENKI_MENU 的类型名）进行了诱惑！！
-      // CALL NAME_BENKI_MENU,PLAY_TYPE（#217 真身：返回类型名拼行）
+      // CALL name_benki_menu,PLAY_TYPE（#217 真身：返回类型名拼行）
       line += `作为肉便器的${name_of(arg0)}以${name_benki_menu(play_type)}进行了诱惑！！`;
     } else {
       line += `勇者${name_of(arg0)}使用${
@@ -725,7 +725,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   // CFLAG:571 -= W:10
   era.set(`cflag:${arg0}:571`, bullets - w.弹药消耗);
 
-  // 畏怖・隷属処理（CFLAG:130 凌辱记忆怪物号 / 131 深度；无守卫）
+  // 畏怖・隷属処理（CFLAG:130 凌辱记忆怪物号 / 131 深度；无显示开关）
   const trauma_mon = era.get(`cflag:${arg0}:130`) || 0;
   const trauma_lv = era.get(`cflag:${arg0}:131`) || 0;
   if (trauma_mon === e_get(target_head) && trauma_lv > 5) {
@@ -801,7 +801,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 
   if (rest_def <= 0) {
     // 列全灭
-    // SIF 单行作用域：战斗日志守卫只盖住第一行打印，怪物名与
+    // SIF 单行作用域：战斗日志开关只盖住第一行打印，怪物名与
     // 「全灭了」两行无条件出
     if (boss_flag === 0) {
       if ((settings & 32) !== 0) {
@@ -834,7 +834,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
     return 1;
   }
 
-  // DEF = CFLAG:11 / E:(C+3)——下一行立即覆盖（死赋值，原作现状保留）
+  // DEF = CFLAG:11 / E:(C+3)——下一行立即覆盖（死赋值，有意保留）
   // DEF = CFLAG:11 / X（部分杀伤数）
   const killed = Math.floor(chara(arg0).dungeon.攻击力 / herd_def);
   // 死亡怪物計算
@@ -884,15 +884,15 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 }
 
 /**
- * @SLAVE_MONSTER_ATTACK（:886-1004）：配下怪物侧的攻击（打防御怪物列，
+ * slave_monster_attack：配下怪物侧的攻击（打防御怪物列，
  * 不打勇者）。勇者的配下（CFLAG:570 >= 100）且第 4 列有效（E:300 >= 100）
  * 时发动。
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 1 = 列全灭
+ * @returns {Promise<number>} 0 = 通常 / 1 = 列全灭
  */
 async function slave_monster_attack(rand) {
   const settings = era.get('flag:5') || 0;
-  const atker = era_flag.target; // 原作全局 A（攻击者）
+  const atker = era_flag.target; // 全局 A（攻击者）
   // 配下がいるかどうか
   if ((era.get(`cflag:${atker}:570`) || 0) < 100) {
     return 0;
@@ -904,7 +904,7 @@ async function slave_monster_attack(rand) {
   // 防御侧选择（同 ENEMY_ATTACK）
   const { head: c, b: scan_b } = pick_defender_column();
   if (scan_b >= 400) {
-    // 全滅時（不可达臂，文件头 pick_defender_column 注释）
+    // 全滅時（不可达分支，文件头 pick_defender_column 注释）
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
       await era.waitAnyKey();
@@ -1002,18 +1002,18 @@ async function slave_monster_attack(rand) {
 }
 
 /**
- * @MONSTER_ATTACK（:1006-1115）：怪物侧的攻击（打勇者的气力；HP 的扣减
- * 在 DEFENCE_CHARA_EXTRA_DMG 内）。
+ * monster_attack：怪物侧的攻击（打勇者的气力；HP 的扣减
+ * 在 defence_chara_extra_dmg 内）。
  *
  * 选列循环 BREAK 停在数量槽 99/199/299，换算 -99 得列头 0/100/200（与
- * ENEMY_ATTACK / SLAVE_MONSTER_ATTACK / DEATH_CHECK 同构），随后读数量槽
+ * enemy_attack / slave_monster_attack / death_check 同构），随后读数量槽
  * E:99/199/299 与攻撃槽 E:2/102/202——怪物攻击按 数量 × 攻撃 对勇者造成
  * HP 扣减（DEFENCE_CHARA_EXTRA_DMG 内）与气力扣减。
  *
- * @param {number} arg0 被攻击的勇者（原作 ARG:0）
- * @param {number} arg1 回合数（原作 ARG:1）
+ * @param {number} arg0 被攻击的勇者
+ * @param {number} arg1 回合数
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 1 = 怪物全灭 / 999 = 中断
+ * @returns {Promise<number>} 0 = 通常 / 1 = 怪物全灭 / 999 = 中断
  */
 async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
@@ -1049,7 +1049,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
   // IDを先頭に（数量槽 99/199/299 → 列头 0/100/200，与同构三处一致）
   monid -= 99;
 
-  // B = MONID; CALL MAGIC,2（存根不动目标）
+  // B = MONID; CALL magic,2（存根不动目标）
   if ((await magic_mod.magic(2, arg0, monid, rand, move_ctx)) === 999) {
     return 999;
   }
@@ -1084,7 +1084,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     );
   }
 
-  // 畏怖・隷属処理（CFLAG:130/131，无守卫）
+  // 畏怖・隷属処理（CFLAG:130/131，无显示开关）
   const trauma_mon = era.get(`cflag:${arg0}:130`) || 0;
   const trauma_lv = era.get(`cflag:${arg0}:131`) || 0;
   if (trauma_mon === monname_no && trauma_lv > 5) {
@@ -1115,9 +1115,9 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
 }
 
 /**
- * @DEATH_CHECK（:1209-1256）：战斗中断判定。
- * @param {number} arg0 勇者（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN：0 = 继续 / 1 = 勇者胜（怪物全灭）/
+ * death_check：战斗中断判定。
+ * @param {number} arg0 勇者
+ * @returns {Promise<number>} 0 = 继续 / 1 = 勇者胜（怪物全灭）/
  *   2 = 勇者败北（投降/力尽，CFLAG:1 = 0）
  */
 async function death_check(arg0) {
@@ -1169,11 +1169,11 @@ async function death_check(arg0) {
 }
 
 /**
- * @VICTORY_GET（:1260-1325）：搜刮战利品（死体漁り）。善恶值影响意愿，
+ * victory_get：搜刮战利品（死体漁り）。善恶值影响意愿，
  * 执行后善恶 -5。
- * @param {number} arg0 勇者（原作 ARG:0）
+ * @param {number} arg0 勇者
  * @param {(n: number) => number} rand RAND:N 随机源
- * @returns {Promise<number>} 原作 RETURN：1 = 搜刮了 / 0 = 没搜
+ * @returns {Promise<number>} 1 = 搜刮了 / 0 = 没搜
  */
 async function victory_get(arg0, rand) {
   const settings = era.get('flag:5') || 0;
@@ -1231,11 +1231,11 @@ async function victory_get(arg0, rand) {
     await era.waitAnyKey();
   }
 
-  // CALL KARMA, (ARG:0), -5（dungeon.js 的既有存根，不动值）
+  // CALL karma, (ARG:0), -5（dungeon.js 的既有存根，不动值）
   const { karma } = require('#/dungeon/dungeon');
   karma(arg0, -5);
 
-  // CALL ADD_EX_ITEM, -1, (ARG:0), 0（存根恒 0 = 没找到）
+  // CALL add_ex_item, -1, (ARG:0), 0（存根恒 0 = 没找到）
   const { add_ex_item } = require('#/dungeon/dungeon');
   const found = await add_ex_item(-1, arg0, 0);
 
@@ -1248,11 +1248,11 @@ async function victory_get(arg0, rand) {
 }
 
 /**
- * @DUNGEON_PARTY_BATTLE（:3-412）：队伍战斗主流程（勇者队 vs 防御怪物）。
+ * dungeon_party_battle：队伍战斗主流程（勇者队 vs 防御怪物）。
  *
- * @param {number} arg0 队长（原作 ARG:0）
+ * @param {number} arg0 队长
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 0（陷落信息经 CFLAG:1 传递）
+ * @returns {Promise<number>} 恒 return 0（陷落信息经 CFLAG:1 传递）
  */
 async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
   const rand_n = rand ?? default_rand;
@@ -1263,7 +1263,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     return 0;
   }
 
-  // === 対戦相手選択（:22-54）===
+  // === 対戦相手選択 ===
   if ((era.get('flag:502') || 0) === 1) {
     // 2Dフィールド用処理。ほぼ廃止——M:2 无通道、2D 线随 H12（#185），
     // 结构保留（空分支 + 注释），怪物选召不发生
@@ -1291,7 +1291,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     }
   }
 
-  // === スケルトンチェック（:56-73）===
+  // === スケルトンチェック ===
   let skeleton_count = 0; // LOCAL:1
   for (let local = 0; local < 300; local += 100) {
     if (e_get(local) === 190) {
@@ -1311,14 +1311,14 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     era.drawLine();
   }
 
-  // === 勝利フラグ / クエスト（:75-80）===
+  // === 勝利フラグ / クエスト ===
   const success = { v: 0 };
   const quest_flag = await quest_mod.quest_battle_set(arg0, rand); // QUEST_FLAG = RESULT
   if (quest_flag === 1) {
     return 0; // 性奉侍完结（QUEST_BITCH 已把 534 置成功位）
   }
 
-  // === 弾の補充（:89-96）===
+  // === 弾の補充 ===
   era.set(`cflag:${arg0}:571`, 4);
   let atker_slot = era.get(`cflag:${arg0}:531`) || 0;
   if (atker_slot > 0) {
@@ -1329,7 +1329,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     era.set(`cflag:${atker_slot}:571`, 4);
   }
 
-  // === 先制（:98-121）===
+  // === 先制 ===
   for (let turn = 0; turn < 3; turn += 1) {
     if (turn === 0) {
       atker_slot = arg0;
@@ -1354,18 +1354,18 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     } else if ((era.get(`talent:${atker_slot}:252`) || 0) === 1) {
       // Z = 0（先制标记；主循环 Z == 1 读者恒假，文件头注释）
       if ((await enemy_attack(atker_slot, 2, rand_n, move_ctx)) === 999) {
-        // 传送术等中断先制攻击；主循环仍按原作进入后续中断判定。
+        // 传送术等中断先制攻击；主循环仍进入后续中断判定。
       }
     }
   }
 
-  // === 攻撃順（:123-124）===
-  // ATK_TURN = RAND:3——全函数无读者（仅 :359 的 += 1），原作死赋值；
-  // 掷点照掷（PRNG 序列与原作逐位对齐是种子化对比测试的前提，文件头），
-  // 变量不落地
+  // === 攻撃順 ===
+  // ATK_TURN = RAND:3——全函数无读者，死赋值；
+  // 掷点照掷（PRNG 序列逐位对齐是种子化对比测试的前提，文件头），
+  // 变量不写入
   rand_n(3);
 
-  // === 主循环（:125-360）===
+  // === 主循环 ===
   for (let turn = 0; turn < 99; turn += 1) {
     // 反抗的・高傲的・抵抗的：第 7 回合多打一轮（演出）
     if (
@@ -1441,7 +1441,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
       }
     }
 
-    // === パラメータ表示（:194-296；FLAG:5 & 32）===
+    // === パラメータ表示（FLAG:5 & 32）===
     if ((settings & 32) !== 0) {
       era.drawLine();
       era.print(`第${turn + 1}回合`);
@@ -1475,7 +1475,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
       era.print(
         ` 防 ${chara(arg0).dungeon.防御力}${sidea > 0 ? `  | 防 ${chara(sidea).dungeon.防御力}` : ''}${sideb > 0 ? `  | 防 ${chara(sideb).dungeon.防御力}` : ''}`,
       );
-      // 立绘 HTML_PRINT（:279-287）无通道，不移植
+      // 立绘 HTML_PRINT 无通道，不移植
       era.drawLine();
       era.print('VS');
       await era.waitAnyKey();
@@ -1485,7 +1485,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
       await era.waitAnyKey();
     }
 
-    // === 攻撃を行うキャラを選定（:298-302）===
+    // === 攻撃を行うキャラを選定 ===
     const atker = select_atker(arg0, turn);
     atker_slot = atker;
 
@@ -1539,7 +1539,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
       break;
     }
 
-    // === 攻撃を行った勇者が堕ちたか判定（:342-358）===
+    // === 攻撃を行った勇者が堕ちたか判定 ===
     const dc = await death_check(atker);
     if (dc === 2) {
       if ((settings & 1) !== 0) {
@@ -1556,10 +1556,10 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
       success.v = 1;
       break;
     }
-    // ATK_TURN += 1——死赋值（无读者），不落地（文件头注释）
+    // ATK_TURN += 1——死赋值（无读者），不写入（文件头注释）
   }
 
-  // クエスト结算——#178 真身起两臂第一次可达（存根期 QUEST_FLAG
+  // クエスト结算——#178 真身起两个分支第一次可达（存根期 QUEST_FLAG
   // 恒 0）：任务战斗（quest_flag === 2）按战果 SUCCESS 走成功/失败结算
   if (quest_flag === 2 && success.v === 1) {
     await quest_mod.result_quest(arg0, '成功', rand);
@@ -1573,7 +1573,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     era.print(`${name_of(arg0)}再次对地下城进行攻略`);
   }
 
-  // === 装備の回復（:370-410；队长与两同伴同构）===
+  // === 装備の回復（队长与两同伴同构）===
   const { weapon_restore } = require('#/system/equip/weapon-restore');
   const restore_one = async (cid) => {
     era_flag.target = cid; // A = 换手

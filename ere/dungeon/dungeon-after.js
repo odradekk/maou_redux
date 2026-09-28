@@ -1,20 +1,20 @@
 /**
- * @file 迷宫战果结算（issue #179，阶段 3 H10）：@DUNGEON_AFTER 与奖惩两臂。
+ * @file 迷宫战果结算（issue #179，阶段 3 H10）：dungeon_after 与奖惩两分支。
  *
- * 调用点：ere/system/turnend-settle.js 结算主循环（原作 SYSTEM
- * ver1.0.3.ERB:302，全角色每回合；本票接线）。
+ * 调用点：ere/system/turnend-settle.js 结算主循环（全角色每回合；随这张
+ * 工单接入）。
  *
- * 移植说明（有意偏离，均注明依据）：
- *   - 原作经全局 A 传角色（CFLAG:A:1 / SAVESTR:A / EXP:A:N），ere 侧显式
- *     传参 cid（#5 决议第六条）；RESULT（INPUT 的输入值）改局部变量；
+ * 说明（有意偏离，均注明依据）：
+ *   - 经全局 A 传角色（CFLAG:A:1 / SAVESTR:A / EXP:A:N）的做法改为 ere
+ *     侧显式传参 cid（#5 决议第六条）；RESULT（INPUT 的输入值）改局部变量；
  *   - SAVESTR:A → name_of（CONTEXT.md「称呼」：本作 SAVESTR:x = 名前）；
- *   - 奖惩两臂的选项菜单（源 :27-29 的三行、:331-339 的九项）自 #572 起
+ *   - 奖惩两分支的选项菜单（三行、九项）自 #572 起
  *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
  *     **#180 的纯文本先例不适用于此处**：那一条针对的是「WAIT 夹在选项
  *     之间」的界面（page-dungeon-info2.js 的逐层 WAIT），按钮会在后续回传
  *     时被清出白名单/禁用；本文件两处的 WAIT 都在菜单**之前**
- *     （@GOHOUBI 的 :24-25、@OSIOKI 的 :328-329；选项与紧跟的 INPUT 在
- *     :27-31 与 :331-341），选项打印后紧接 `input_choice`，中途没有
+ *     （gohoubi 与 osioski；选项与紧跟的 INPUT 成对），选项打印后紧接
+ *     `input_choice`，中途没有
  *     成功回传，按钮照常可点（引擎 app.asar 的 returnFromButton /
  *     getButtonObject 与 valCount 三处机制，逐字见 #180、#572 的核对）。
  *     随之「越界值重问」支在实机上不可达，保留结构不补用例
@@ -23,16 +23,17 @@
  *     气质；dungeon 域：私处/肛门/绝顶/性交/自慰/调教自慰/精液/口交/私处
  *     扩张/肛门扩张/兽奸/药物经验）；EXP:23（爱情）/EXP:81（勋章）无门面
  *     字段，裸寻址 + 注释；JUEL 表无所有权产物（#70），读写均裸寻址；
- *   - **TFLAG:18 改经 choice 参数链内传递**（本票裁定）：原作各分支开头
+ *   - **TFLAG:18 改经 choice 参数链内传递**（这张工单的结论）：各分支开头
  *     `TFLAG:18 = N` 的 N 与 INPUT 的 RESULT 同值，唯一读者是同链的口上
  *     分发（读 TFLAG:18 选台词）——ere 引擎的 tflag 桶 beginTrain 建 /
- *     endTrain 删，裁定当时「调教外（EVENTTURNEND）写 `tflag:18` 落引擎兜底
- *     分支 era.error 且丢失」（engine-bundle 驱动 setVar 的探针实证，裁定
- *     全文见 ere/kojo/kojo-dungeon-after.js 文件头）。故 result 直接作为
- *     第二参传给口上分发，原作各分支的赋值行不落、序号值原样透传；
+ *     endTrain 删，当时的结论是「调教外（EVENTTURNEND）写 `tflag:18` 落进
+ *     引擎缺省处理分支、era.error 且丢失」（engine-bundle 驱动 setVar 的
+ *     探针实证，结论全文见 ere/kojo/kojo-dungeon-after.js 文件头）。故
+ *     result 直接作为第二参传给口上分发，各分支的赋值行不落、序号值
+ *     原样透传；
  *     TFLAG:18 的调教期语义（足コキ / SYSTEM_SOURCE）不受影响——那
  *     些调用点桶在场，仍走 era.set。
- *     **#508 补记**：本链唯一的调用点（turnend-settle.js:163，原作 :302）
+ *     **#508 补记**：本链唯一的调用点（turnend-settle.js:163）
  *     自 #508 起落在回合结算开出的调教窗口内——`tflag:18` 在该语境下已能
  *     落值，「窗口外写不落」不再是本链的现状描述。参数链保持不动：已实现、
  *     与 era.set 等价（值同、读者同），不因窗口出现回头改；后续若有人
@@ -42,9 +43,9 @@
  *     裸寻址；
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon-trap.js 先例）；
- *   - @OSIOKI 的 ELSEIF RESULT == 9（:562-566）是死分支——输入循环
+ *   - osioski 的 ELSEIF RESULT == 9 是死分支——输入循环
  *     保留结构，不另登记；
- *   - 原作文本的繁/日字按 #60 归一为简体（経験→经验、糞→粪、終→终、
+ *   - 文本的繁/日字按 #60 归一为简体（経験→经验、糞→粪、終→终、
  *     給→给、頭→头、呑→吞、幇→帮、説→说、帯→带、浄→净），玩家可见
  *     文本一律简体的有意识偏离。
  */
@@ -66,13 +67,13 @@ function name_of(cid) {
 }
 
 /**
- * INPUT 循环（原作 $INPUT_LOOP：RESULT < 0 或 >= 上界时 GOTO 重输）。
+ * INPUT 循环（RESULT < 0 或 >= 上界时 GOTO 重输）。
  *
  * #572 起两个调用点的选项都打成了按钮，白名单＝按钮集，越界值由引擎
  * 拒收（弹「输入不合法」），`while` 那支在实机上不可达——保留结构
  * 与文案，不补用例（page-ability-up.js 文件头同款登记）。
  *
- * @param {number} upper 合法输入的上界（GOHOUBI 3 / OSIOKI 9）
+ * @param {number} upper 合法输入的上界（gohoubi 3 / osioski 9）
  * @returns {Promise<number>} 合法的选择值
  */
 async function input_choice(upper) {
@@ -84,13 +85,13 @@ async function input_choice(upper) {
 }
 
 /**
- * @DUNGEON_AFTER（DUNGEON_AFTER.ERB:2-15）：战果结算的分派层。
+ * dungeon_after：战果结算的分派层。
  *
- * 任务归来状态 CFLAG:x:1 == 5（凯旋）→ 奖赏；== 6（败北）→ 惩罚；两臂
+ * 任务归来状态 CFLAG:x:1 == 5（凯旋）→ 奖赏；== 6（败北）→ 惩罚；两分支
  * 结束后状态归 0。其余状态不动作。
  *
- * @param {number} cid 角色 ID（原作全局 A）
- * @returns {Promise<number>} 0（原作 RETURN 0；调用方不读）
+ * @param {number} cid 角色 ID
+ * @returns {Promise<number>} 恒 return 0（调用方不读）
  */
 async function dungeon_after(cid) {
   if (chara(cid).invasion.状态 === 5) {
@@ -104,8 +105,8 @@ async function dungeon_after(cid) {
 }
 
 /**
- * 奖赏的档位表（@GOHOUBI :40-62，顺从 ABL:10 → LOCAL:10）。
- * ABL:10 > 10 时 LOCAL:10 保持 0（Emuera 局部量初值）。
+ * 奖赏的档位表（gohoubi，顺从 ABL:10 → LOCAL:10）。
+ * ABL:10 > 10 时 LOCAL:10 保持 0（局部量初值）。
  * @param {number} cid 角色 ID
  * @returns {number} 欲情/私处/肛门点数的增量
  */
@@ -118,7 +119,7 @@ function gohoubi_reward_level(cid) {
 }
 
 /**
- * 惩罚的两张档位表（@OSIOKI :353-401）：LOCAL:10 按顺从（欲情增量）、
+ * 惩罚的两张档位表（osioski）：LOCAL:10 按顺从（欲情增量）、
  * LOCAL:11 按欲望（苦痛/屈服增量）。
  * @param {number} cid 角色 ID
  * @returns {{ju: number, desire: number}} 顺从档位 / 欲望档位的点数
@@ -132,18 +133,18 @@ function osioski_reward_levels(cid) {
 }
 
 /**
- * @GOHOUBI（DUNGEON_AFTER.ERB:19-322）：奖赏臂——凯旋奴隶的犒赏。
+ * gohoubi：奖赏分支——凯旋奴隶的犒赏。
  *
  * 三选（[0] 应份 / [1] 勋章 / [2] 承诺之物），第三选按该奴隶要求的奖赏
  * 种类（CFLAG:x:504）分十档：0 金币（金库不足回落否定）/ 1-3 兽奸（犬・
  * 豚・馬）/ 4 接吻 / 5 性交 / 6 精液 / 7 乱交 / 8 饮尿 / 9 童贞狩。
  * 兽奸・性交・乱交・童贞狩按身体（处女或男人 → 肛门，否则私处；性交与
- * 童贞狩按私处/肛门感觉高低）分两臂，各自加算 JUEL 点数与 EXP 经验。
- * 每档结算中段 CALL GOHOUBI_AFTER_KOUJO（口上分发，ere/kojo/
+ * 童贞狩按私处/肛门感觉高低）分两分支，各自加算 JUEL 点数与 EXP 经验。
+ * 每档结算中段 CALL gohoubi_after_koujo（口上分发，ere/kojo/
  * kojo-dungeon-after.js；未移植的性格不发一言）。
  *
- * @param {number} cid 角色 ID（原作全局 A）
- * @returns {Promise<void>} 原作无 RETURN（RESULT 0 落回）
+ * @param {number} cid 角色 ID
+ * @returns {Promise<void>} 无显式返回
  */
 async function gohoubi(cid) {
   const name = name_of(cid);
@@ -189,11 +190,11 @@ async function gohoubi(cid) {
   } else if (result === 2) {
     // 承诺之物——按 CFLAG:x:504 分档
     const gift = era.get(`cflag:${cid}:504`) || 0; // CFLAG:504 要求的奖赏
-    // 处女（TALENT:0）或男人（TALENT:122）→ 肛门臂（兽奸四档共用判据）
+    // 处女（TALENT:0）或男人（TALENT:122）→ 肛门分支（兽奸四档共用判断条件）
     const anal =
       (era.get(`talent:${cid}:0`) || 0) === 1 ||
       (era.get(`talent:${cid}:122`) || 0) === 1;
-    // 性交・童贞狩的臂判据：私处感觉 > 肛门感觉
+    // 性交・童贞狩的分支判断条件：私处感觉 > 肛门感觉
     const vaginal_first =
       chara(cid).system.私处感觉 > chara(cid).system.肛门感觉;
 
@@ -219,7 +220,7 @@ async function gohoubi(cid) {
         era.print(`否定点数增加${lv * 60}`);
         await era.waitAnyKey();
         era.add(`juel:${cid}:100`, lv * 60);
-        // 金库不足臂无口上调用（原作如此），不补
+        // 金库不足分支无口上调用（有意保留），不补
       }
     } else if (gift === 1) {
       // 犬と兽奸
@@ -271,7 +272,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.兽奸经验 += 10;
       }
     } else if (gift === 2) {
-      // 豚と兽奸（两臂文本相同）
+      // 豚と兽奸（两分支文本相同）
       era.print(`${name}全裸身体冲进猪窝，着迷地贪求着钻头一样的猪阴茎，`);
       await era.waitAnyKey();
       era.print(
@@ -311,7 +312,7 @@ async function gohoubi(cid) {
         chara(cid).dungeon.兽奸经验 += 10;
       }
     } else if (gift === 3) {
-      // 馬と兽奸（扩张经验随臂）
+      // 馬と兽奸（扩张经验随分支）
       era.print(
         `${name}脸朝下被固定在台子上，想到接下来的变态性爱，爱液沿着大腿流下来，`,
       );
@@ -369,7 +370,7 @@ async function gohoubi(cid) {
       await era.waitAnyKey();
       chara(cid).train.爱情经验 += 10; // EXP:23（train 域门面）
     } else if (gift === 5) {
-      // セックス（私处/肛门感觉定臂）
+      // セックス（私处/肛门感觉定分支）
       era.print(`你抱住了${name}因为战斗而发热的身体，`);
       await era.waitAnyKey();
       if (vaginal_first) {
@@ -477,7 +478,7 @@ async function gohoubi(cid) {
       await era.waitAnyKey();
       era.add(`juel:${cid}:5`, local10);
     } else if (gift === 9) {
-      // 童贞狩り——首行 PRINTFORM 不换行，与臂判词拼一行
+      // 童贞狩り——首行 PRINTFORM 不换行，与分支判词拼一行
       era.print(`${name}将被选中的魔族处男的肉棒`);
       if (vaginal_first) {
         era.print('用私处吞入了，');
@@ -524,15 +525,15 @@ async function gohoubi(cid) {
 }
 
 /**
- * @OSIOKI（DUNGEON_AFTER.ERB:325-568）：惩罚臂——败北奴隶的处罚。
+ * osioski：惩罚分支——败北奴隶的处罚。
  *
  * 九选（[0] 不做 / [1] 电椅 / [2] 当街自慰 / [3] 当街脱粪 / [4] 鞭 /
  * [5] 小便器 / [6] 打扫厕所 / [7] 不给吃饭 / [8] 媚药放置），部分选项按
- * 素质/能力分两臂（抖M气质・露出癖・受虐狂/淫乱），各自加算 JUEL 点数与
- * EXP 经验。每档结算中段 CALL OSIOKI_KOUJO（口上分发，同上）。
+ * 素质/能力分两分支（抖M气质・露出癖・受虐狂/淫乱），各自加算 JUEL 点数与
+ * EXP 经验。每档结算中段 CALL osioski_koujo（口上分发，同上）。
  *
- * @param {number} cid 角色 ID（原作全局 A）
- * @returns {Promise<void>} 原作 RETURN 0（:568）
+ * @param {number} cid 角色 ID
+ * @returns {Promise<void>} 恒 return 0
  */
 async function osioski(cid) {
   const name = name_of(cid);
@@ -542,9 +543,9 @@ async function osioski(cid) {
   era.print(`要处罚${name}吗？`);
   await era.waitAnyKey();
 
-  // 选项菜单（源是 PRINT/PRINTL 三行拼行的纯文本，升格为按钮后
-  // 按按钮平铺逐行渲染——CONTEXT.md 的记名排版差异；行尾用于列对齐的
-  // 全角空格随之失去意义，不保留）
+  // 选项菜单（PRINT/PRINTL 三行拼行的纯文本，升格为按钮后
+  // 按按钮平铺逐行渲染；行尾用于列对齐的全角空格随之失去意义，
+  // 不保留）
   era.printButton('什么也不做', 0);
   era.printButton('低压电椅刑', 1);
   era.printButton('当街自慰刑', 2);
@@ -596,7 +597,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 2) {
-    // 当街自慰刑（露出癖 >= 4 定臂）
+    // 当街自慰刑（露出癖 >= 4 定分支）
     era.print(`让${name}全裸着，在地下城的主干道正中央自慰。`);
     await era.waitAnyKey();
     if (exposure >= 4) {
@@ -633,7 +634,7 @@ async function osioski(cid) {
       chara(cid).dungeon.调教自慰经验 += 1;
     }
   } else if (result === 3) {
-    // 当街脱粪刑（露出癖 >= 6 定臂）
+    // 当街脱粪刑（露出癖 >= 6 定分支）
     era.print(`让${name}全裸着，在地下城的主干道正中央脱粪。`);
     await era.waitAnyKey();
     if (exposure >= 6) {
@@ -665,7 +666,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 4) {
-    // 鞭刑（抖M气质 >= 3 定臂）
+    // 鞭刑（抖M气质 >= 3 定分支）
     era.print(`把${name}绑起来，用鞭子抽打，`);
     await era.waitAnyKey();
     if (dabM) {
@@ -693,7 +694,7 @@ async function osioski(cid) {
       era.add(`juel:${cid}:6`, local11);
     }
   } else if (result === 5) {
-    // 小便器刑（受虐狂 TALENT:88 或淫乱 TALENT:76 定臂）
+    // 小便器刑（受虐狂 TALENT:88 或淫乱 TALENT:76 定分支）
     era.print(`将${name}固定在小便器上，让使用者尽情地往她身上撒尿，`);
     await era.waitAnyKey();
     if (
@@ -782,7 +783,7 @@ async function osioski(cid) {
     chara(cid).dungeon.药物经验 += 10;
   }
   // ELSEIF RESULT == 9 是死分支（输入循环拦回 >= 9，文件头），
-  // 0-8 全被上方覆盖——原作结构如此，不另设分支
+  // 0-8 全被上方覆盖——有意保留结构，不另设分支
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file 迷宫主循环（issue #172，阶段 3 H3）：@DUNGEON 与三个附属函数。
+ * @file 迷宫主循环（issue #172，阶段 3 H3）：run_dungeon 与附属函数。
  *
  * 局部变量语义（各 H 票共用词汇表）：
  *   ARG:0 / A = 攻略中的角色（队长）     D:20 = 侵攻度    D:1 = 1 时帰還
@@ -8,22 +8,22 @@
  *   FLOOR = 现在阶层    NO_BATTLE = 不发生战斗       ROOM / MAPC
  *
  * `MAPC` 决定演出用词：默认「地下城」，CFLAG:(ARG:0):1 == 12（战役）时是
- * 「迷宮」（:23-25）。
+ * 「迷宮」。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 引擎实测钉下，钉子在
  *     test/static-table-coverage.test.js「savestr 族不存在」用例）：三段
  *     `savestr:0:1` 完全静默丢弃，直接移植的后果是 88 处演出文本全部空白。
  *     名字承载一律走 `callname:${id}:-1`（#5 决议）；
- *   - EQUIP_CHECK / EQUIP_SELECT 用 #174（H5）真身 ere/system/equip/——
- *     工单票面把它俩列在存根表，出票后 H5 已先合并，以文件实际内容为准；
+ *   - equip_check / equip_select 用 #174（H5）真身 ere/system/equip/——
+ *     工单内容把它俩列在存根表，出票后 H5 已先合并，以文件实际内容为准；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
  *     Math.random，测试注入定值序——enter-enemy.js 先例）；
- *   - 原作全局 A / TARGET / W:8 / RESULT 的换手在 ere 侧显式传参（#5 决议
+ *   - 全局 A / TARGET / W:8 / RESULT 的换手在 ere 侧显式传参（#5 决议
  *     第六条）：A → 局部 a，W:8 → equip_check 第二参，RESULT → 返回值；
- *   - :157 `X *= 2`（迎击臂的侵攻度累加处）：X 是原作全局、全库无初始化
+ *   - `X *= 2`（迎击分支的侵攻度累加处）：X 是全局、全库无初始化
  *     （恒 0），*= 2 无副作用——死代码，注释保留不落变量；
- *   - :569 `CALL GET_DOWN_ENEMY, B`：B 由 @DUNGEON_BATTLE2_PARTY 设置
+ *   - `CALL get_down_enemy, B`：B 由 dungeon_battle2_party 设置
  *     （败者号）；H6（#175）起经返回值 { result, loser } 显式传出
  *     （#5 决议第六条）；
  *   - 跨域写走门面（#71/#72）：CFLAG:1（invasion.状态）、502
@@ -32,9 +32,9 @@
  *     151（chara.善恶值）；MONEY → era_flag.money、EX_FLAG:4444 →
  *     era_exflag.legit_money。dungeon 属主的 501/503/505/508/509/514/534/
  *     580/581 与 exp:80、base:1 为域内写，裸寻址即合法（#70）；
- *   - BARL（:161 侵攻度条形图）无 era API 通道，在 FLAG:5 & 32 渲染守卫内
+ *   - BARL（侵攻度条形图）无 era API 通道，在 FLAG:5 & 32 显示开关内
  *     以注释标记跳过（数值行为不受影响）；
- *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行，同一显示行的
+ *   - PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行，同一显示行的
  *     拼接归并为一次 era.print（引擎 print 每调用一行）；PRINTW/PRINTFORMW
  *     是 print + 读键。
  */
@@ -53,9 +53,9 @@ const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // H6（#175）战斗真身：dungeon-battle / dungeon-battle2 对 dungeon.js 的
 // karma 与 EX 道具兼容出口是函数内延迟 require（避开循环初始化）。
 // H7（#176）陷阱真身在 ere/dungeon/dungeon-trap.js（其对 dungeon.js 的
-// KARMA 真身是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）。
-// H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其 KARMA /
-// CAMPAIGN_ROOM 存根经延迟 require 复用；EX 道具随 #344 直连真身）。
+// karma 真身是延迟 require，同款防环；dark_juel_trap 唯一调用点）。
+// H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其 karma /
+// campaign_room 存根经延迟 require 复用；EX 道具随 #344 直连真身）。
 const battle_mod = require('#/dungeon/dungeon-battle');
 const battle2_mod = require('#/dungeon/dungeon-battle2');
 const trap_mod = require('#/dungeon/dungeon-trap');
@@ -64,18 +64,18 @@ const town_mod = require('#/dungeon/dungeon-town');
 const ex_item_mod = require('#/dungeon/ex-item');
 
 // —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
-// 键都是 FLAG:400（当前进行中的战役号）；只有 CAMPAIGN_SET_1 存在，
+// 键都是 FLAG:400（当前进行中的战役号）；只有 campaign_set_1 存在，
 // FLAG:400 在可达状态下只能是 0/1（各调用点先挡 < 1），declaredIds
 // 声明 {1} 即可（page-campaign.js 文件头同款依据）。实现在
 // ere/page/page-campaign-1.js 注册。
 
-/** @CAMPAIGN_ROOM_{FLAG:400} 族：战役迷宫的房间类型 */
+/** CAMPAIGN_ROOM_{FLAG:400} 族：战役迷宫的房间类型 */
 const campaign_room_family = new DispatchFamily('CAMPAIGN_ROOM', [1]);
-/** @CAMPAIGN_QUEST_{FLAG:400} 族：战役中的踏破判定 */
+/** CAMPAIGN_QUEST_{FLAG:400} 族：战役中的踏破判定 */
 const campaign_quest_family = new DispatchFamily('CAMPAIGN_QUEST', [1]);
-/** @CAMPAIGN_STORY_{FLAG:400} 族：踏破推进时插播的剧情文本 */
+/** CAMPAIGN_STORY_{FLAG:400} 族：踏破推进时插播的剧情文本 */
 const campaign_story_family = new DispatchFamily('CAMPAIGN_STORY', [1]);
-/** @CAMPAIGN_ENDING_{FLAG:400} 族：战役终局演出 */
+/** CAMPAIGN_ENDING_{FLAG:400} 族：战役终局演出 */
 const campaign_ending_family = new DispatchFamily('CAMPAIGN_ENDING', [1]);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
@@ -83,36 +83,36 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
 // —— 已换真身的原存根（工单 #172 十组 + 附属，归属见 docs/stub-registry.md）——
 
-// H6（#175）起三处战斗存根换成真身：DUNGEON_SPY / DUNGEON_PARTY_BATTLE /
-// DUNGEON_BATTLE2_PARTY 见 ere/dungeon/dungeon-battle2.js 与
+// H6（#175）起三处战斗存根换成真身：dungeon_spy / dungeon_party_battle /
+// dungeon_battle2_party 见 ere/dungeon/dungeon-battle2.js 与
 // ere/dungeon/dungeon-battle.js（调用点经模块对象引用，对比测试可替换）。
-// H7（#176）起 DUNGEON_TRAP 存根换成真身：ere/dungeon/dungeon-trap.js
+// H7（#176）起 dungeon_trap 存根换成真身：ere/dungeon/dungeon-trap.js
 // （调用点经模块对象引用 trap_mod，同款可替换）。
-// H8（#177）起 DUNGEON_ROOM 存根换成真身：ere/dungeon/dungeon-room.js
+// H8（#177）起 dungeon_room 存根换成真身：ere/dungeon/dungeon-room.js
 // （调用点经模块对象引用 room_mod，同款可替换；RESULT 语义与 D:20 ctx
-// 透传见 :386 调用点）。
-// H9（#178）起 DUNGEON_TOWN 存根换成真身：ere/dungeon/dungeon-town.js
-// （:294 调用点经模块对象引用 town_mod，同款可替换；其余反向引用用函数内
+// 透传见调用点）。
+// H9（#178）起 dungeon_town 存根换成真身：ere/dungeon/dungeon-town.js
+// （调用点经模块对象引用 town_mod，同款可替换；其余反向引用用函数内
 // 延迟 require 防环）。
-// S7（#548）起 BEDROOM_BATTLE_MALE 存根换成真身（本文件
-// bedroom_battle_male，源 ENDING ver 1.0.1.ERB:1042）。
+// S7（#548）起 bedroom_battle_male 存根换成真身（本文件
+// bedroom_battle_male）。
 
-// @DUNGEON_TOWN（迷宮/DUNGEON_TOWN.ERB）：#178（H9）起为真身
-// ere/dungeon/dungeon-town.js 的 dungeon_town（撤到迷宫外时的城镇事件——
+// dungeon_town：#178（H9）起为真身
+// ere/dungeon/dungeon-town.js（撤到迷宫外时的城镇事件——
 // 补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
 
 /**
- * @CAMPAIGN_QUEST（CAMPAIGN_EVENT.ERB:182-200）：战役中的踏破判定，含
- * 楼层推进剧情（:190-197 内嵌 CAMPAIGN_STORY 派发）。
+ * campaign_quest：战役中的踏破判定，含
+ * 楼层推进剧情（内嵌 campaign_story 族派发）。
  * RESULT：1 = 攻略成功 / 0 = 失败被赶回。
- * @param {number} cid 队长（原作 ARG:0）
+ * @param {number} cid 队长（ARG:0）
  * @returns {Promise<number>} RESULT（FLAG:400 < 1 时恒 0）
  */
 async function campaign_quest(cid) {
@@ -131,15 +131,15 @@ async function campaign_quest(cid) {
 }
 
 /**
- * @CAMPAIGN_ENDING（CAMPAIGN_EVENT.ERB:303-318）：战役终局演出。
+ * campaign_ending：战役终局演出。
  *
- * :304-312 的角色复位循环无条件跑（不受 :313 的 FLAG:400 < 1 早退约束，
+ * 角色复位循环无条件跑（不受 FLAG:400 < 1 早退约束，
  * FOR 循环放在 SIF 之前）：即使调用点已经用 `FLAG:400 > 0` 挡过一层，
  * 函数体自身仍保留这个无条件动作。
  *
- * 调用点传 ARG:0（队长），但函数体自身不使用，@CAMPAIGN_ENDING_{n} 也不接收
- * 参数（见 CAMPAIGN_1.ERB:360）——故本移植不设形参。
- * @returns {Promise<number>} 原作 RETURN（FLAG:400 < 1 时恒 0）
+ * 调用点传 ARG:0（队长），但函数体自身不使用，CAMPAIGN_ENDING_{n} 也不接收
+ * 参数——故本移植不设形参。
+ * @returns {Promise<number>} 家族调用的 RESULT（FLAG:400 < 1 时恒 0）
  */
 async function campaign_ending() {
   // 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立保留）
@@ -163,8 +163,8 @@ async function campaign_ending() {
 }
 
 /**
- * @CAMPAIGN_ROOM（CAMPAIGN_EVENT.ERB:155-166）：战役迷宫的房间类型。
- * @param {number} floor 阶层（原作 ARG:0）
+ * campaign_room：战役迷宫的房间类型。
+ * @param {number} floor 阶层（ARG:0）
  * @returns {Promise<number>} 房间类型（FLAG:400 < 1 时恒 0）
  */
 async function campaign_room(floor) {
@@ -176,30 +176,30 @@ async function campaign_room(floor) {
 }
 
 /**
- * @BEDROOM_BATTLE_MALE（ENDING ver 1.0.1.ERB:1042-1064）：男魔王寝室战
- * （冒险者 TALENT:122 四分之一概率挑战、且魔王欲望条件满足时，:210）。
+ * bedroom_battle_male：男魔王寝室战
+ * （冒险者 TALENT:122 四分之一概率挑战、且魔王欲望条件满足时）。
  *
- * MODE 组成（:1048-1053）：TALENT:0:122（魔王男人位）非 0 → +2；
- * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 三支文案相同（原作同文三写，
- * 1:1 归并）；CASE 0 独有「从睡梦中醒了过来」。CASEELSE 无输出（MODE
- * 只能落在 0-3，不可达）。原作 #DIM SWITCH 死变量（写 0 后全库无读者），
+ * MODE 组成：TALENT:0:122（魔王男人位）非 0 → +2；
+ * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 三支文案相同（同文三写，
+ * 归并为一支）；CASE 0 独有「从睡梦中醒了过来」。CASEELSE 无输出（MODE
+ * 只能落在 0-3，不可达）。#DIM SWITCH 死变量（写 0 后全库无读者），
  * 不落。
  *
- * **本函数不打印，返回该行的后半句**（#548 订正）：调用方 :209 的
- * `PRINTFORM %SAVESTR:0%察觉到了…的气息。` 与本体 :1056/:1058 的
+ * **本函数不打印，返回该行的后半句**（#548 订正）：调用方的
+ * `PRINTFORM %SAVESTR:0%察觉到了…的气息。` 与本体的
  * `PRINTFORM …` 都不换行，两句拼在同一显示行，由调用方合成一次输出
  * （同行合并的写法见 event-nextday.js:966 / source-check.js:3185）。
  *
- * 它之后的行缓冲：:224 的 `D:20 = 0` 起原作继续走设施（:386）与陷阱
- * （:405）两段，行一直开着——那两段的输出若发生，会接在同一行上。本项目
+ * 它之后的行缓冲：`D:20 = 0` 起继续走设施与陷阱
+ * 两段，行一直开着——那两段的输出若发生，会接在同一行上。本项目
  * 按文件头「一次 print 一行」的约定让各段各自成行（既有取舍，非本函数
  * 引入；设施段通常无输出，实际显示与「两句一行」一致）。
  *
- * @param {number} cid 挑战者（原作 ARG:0）
+ * @param {number} cid 挑战者（ARG:0）
  * @returns {Promise<string>} 该行后半句（MODE 0 与 MODE 1-3 两种文案）
  */
 async function bedroom_battle_male(cid) {
-  let mode = 0; // MODE = 0（:1048-1049 的 SIF 恒等写，省）
+  let mode = 0; // MODE = 0（SIF 恒等写，省）
   if (era.get('talent:0:122')) {
     mode = 2;
   }
@@ -213,15 +213,15 @@ async function bedroom_battle_male(cid) {
 }
 
 /**
- * @DUNGEON（:3-853）：迷宫攻略主循环。每次调用推进一「回合」（FOR TURN
- * 0..4 在 TURN > 0 即 BREAK——:79-81 的平衡调整，实际单轮），回合内按
+ * run_dungeon：迷宫攻略主循环。每次调用推进一「回合」（FOR TURN
+ * 0..4 在 TURN > 0 即 BREAK——平衡调整，实际单轮），回合内按
  * 侵攻度 D:20 决定踏破 / 撤退 / 滞留，再走设施、陷阱、战斗、伤势判定与
  * 撤退决议。本函数曾有同名旧版（首个加载生效会遮蔽本版）——以本文件为准，
  * 旧版不再保留。
  *
- * @param {number} arg0 攻略中的角色·队长（原作 ARG:0）
+ * @param {number} arg0 攻略中的角色·队长（ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function run_dungeon(arg0, rand) {
   const rand_n = rand ?? default_rand;
@@ -250,7 +250,7 @@ async function run_dungeon(arg0, rand) {
   // 仍读它，声明随之外提）
   let floor = chara(arg0).dungeon.侵攻阶层;
   // D:1 = 0（帰還フラグ——全函数无读者，撤退判定实走 CFLAG:507，
-  // 原作注释保留、不落变量）
+  // 注释保留、不落变量）
 
   // FLAG:5 & 32（战斗日志显示）时的开场演出
   const settings = era.get('flag:5') || 0;
@@ -309,7 +309,7 @@ async function run_dungeon(arg0, rand) {
     chara(sideb).dungeon.休憩 = 0;
   }
 
-  // FOR TURN, 0, 5——バランス調整のため侵攻は一回で終了（:80-81）
+  // FOR TURN, 0, 5——バランス調整のため侵攻は一回で終了
   for (let turn = 0; turn < 5; turn += 1) {
     if (turn > 0) {
       break;
@@ -318,8 +318,8 @@ async function run_dungeon(arg0, rand) {
     // 戦闘が発生しないフラグ初期化（NO_BATTLE）
     let no_battle = 0;
 
-    // PRINTFORM %SAVESTR%%MAPC%——与 :136-143 的 PRINTL 同一显示行
-    // （拼接见文件头），此处仅在有守卫演出时随其归并
+    // PRINTFORM %SAVESTR%%MAPC%——与 PRINTL 同一显示行
+    // （拼接见文件头），此处仅在有开关演出时随其归并
 
     // WALK = RAND:20 + 6 × RAND:10（速度UP）
     let walk = rand_n(20);
@@ -361,7 +361,7 @@ async function run_dungeon(arg0, rand) {
       room = era.get(`flag:${floor + 349}`) || 0;
     }
 
-    // FLAG:5 & 32 时的推进演出（与 :87 拼接为同一显示行）
+    // FLAG:5 & 32 时的推进演出（与开场演出拼接为同一显示行）
     if ((settings & 32) !== 0) {
       if (room === 507 && (era.get(`talent:${arg0}:180`) || 0)) {
         // 娼館街かつ娼婦（TALENT:180 妓女）
@@ -382,7 +382,7 @@ async function run_dungeon(arg0, rand) {
     }
 
     // 侵攻度累加：侵攻/战役（2/12）前进，其余（迎击 3）倒退。
-    // X *= 2 是原作全局 X（全库无初始化恒 0）的死代码，不落变量
+    // X *= 2 是全局 X（全库无初始化恒 0）的死代码，不落变量
     if (chara(arg0).invasion.状态 === 2 || chara(arg0).invasion.状态 === 12) {
       walk20 += walk;
     } else {
@@ -390,12 +390,12 @@ async function run_dungeon(arg0, rand) {
     }
     // BARL D:20,100,50（侵攻度条形图）——无 era API 通道，跳过
 
-    // === 侵攻度检查（:165-373 三臂）===
+    // === 侵攻度检查（三分支）===
     if (walk20 >= 100) {
       // 階層滞在カウントをリセット（CFLAG:514）
       era.set(`cflag:${arg0}:514`, 0);
       if (chara(arg0).invasion.状态 === 2 || chara(arg0).invasion.状态 === 12) {
-        // —— 勇者臂（:168-265）——
+        // —— 勇者分支 ——
         if (
           (era.get('flag:400') || 0) !== 0 &&
           chara(arg0).invasion.状态 === 12
@@ -431,11 +431,11 @@ async function run_dungeon(arg0, rand) {
           walk20 = 0;
           break;
         } else if (floor >= 9) {
-          // 魔王的房间——本票的贯通终点
+          // 魔王的房间——这张工单的贯通终点
           era.print('这里是魔王的房间………');
           if ((era.get(`talent:${arg0}:122`) || 0) === 0) {
-            // 真勇者（非冒险者）→ JUMP ENDING_2（#173 H4 存根；
-            // QUIT 后不返回，真身落地前以 RETURN 收口）
+            // 真勇者（非冒险者）→ JUMP ending_2（#173 H4 存根；
+            // QUIT 后不返回，真身实现前以 RETURN 收尾）
             await ending_2();
             return 0;
           } else if (era.get(`talent:${arg0}:122`)) {
@@ -550,7 +550,7 @@ async function run_dungeon(arg0, rand) {
           }
         }
       } else {
-        // —— 迎击臂（:266-283）：侵攻度满 100 时迎击方推到魔王房间 ——
+        // —— 迎击分支：侵攻度满 100 时迎击方推到魔王房间 ——
         if (floor >= 9) {
           era.print(`${leader_name}返回了魔王的房间。`);
           walk20 = 100;
@@ -572,11 +572,11 @@ async function run_dungeon(arg0, rand) {
         break;
       }
     } else if (walk20 <= 0) {
-      // === 撤退臂（:284-354）===
+      // === 撤退分支 ===
       // 階層滞在カウントをリセット
       era.set(`cflag:${arg0}:514`, 0);
       if (chara(arg0).invasion.状态 === 2 || chara(arg0).invasion.状态 === 12) {
-        // —— 勇者撤出（:287-327）——
+        // —— 勇者撤出 ——
         if (floor === 5) {
           floor = 1; // 第 5 层直接回到 1（中转层设计）
         }
@@ -586,7 +586,7 @@ async function run_dungeon(arg0, rand) {
           // 街でのイベント（城镇事件——#178 真身：恢复/筹钱/
           // 借贷/采购/计划/受注/宴会）
           await town_mod.dungeon_town(arg0, rand_n);
-          // 補給购买段在原作是注释状态（;CALL ADD_EX_ITEM -3），不移植
+          // 補給购买段是注释状态（;CALL add_ex_item -3），不移植
           break;
         } else {
           chara(arg0).dungeon.侵攻阶层 -= 1; // CFLAG:501 -= 1
@@ -603,7 +603,7 @@ async function run_dungeon(arg0, rand) {
           chara(sideb).dungeon.休憩 += 1;
         }
       } else {
-        // —— 迎击方被推出（:328-354）——
+        // —— 迎击方被推出 ——
         era.print(`${leader_name}踏破了这一层！`);
 
         // 拡張任務の失敗判定（CFLAG:500 == 3）
@@ -632,7 +632,7 @@ async function run_dungeon(arg0, rand) {
         }
       }
     } else {
-      // === 滞留臂（:355-373）：0 < D:20 < 100，无阶层移动 ===
+      // === 滞留分支：0 < D:20 < 100，无阶层移动 ===
       // 階層滞在カウントを+1（CFLAG:514）
       era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);
 
@@ -653,8 +653,8 @@ async function run_dungeon(arg0, rand) {
       }
     }
 
-    // === 设施効果（:377-388）：1/3 の確率で受けるキャラが変わる ===
-    let a; // 原作全局 A（设施/陷阱的受者）
+    // === 设施効果：1/3 の確率で受けるキャラが変わる ===
+    let a; // 全局 A（设施/陷阱的受者）
     if (rand_n(3) === 0 && sidea > 0) {
       a = sidea;
     } else if (rand_n(2) === 0 && sideb > 0) {
@@ -662,16 +662,16 @@ async function run_dungeon(arg0, rand) {
     } else {
       a = arg0;
     }
-    // CALL DUNGEON_ROOM, A——戦闘无なら1が加算される（RESULT → NO_BATTLE）
+    // CALL dungeon_room, A——戦闘无なら1が加算される（RESULT → NO_BATTLE）
     // H8（#177）起真身 ere/dungeon/dungeon-room.js。D:20（侵攻度）与陷阱
-    // 侧共享同一 ctx 槽（原作全局 D 槽，MASE :835 写、TELEPORT :330/:335
-    // 写、ONE_WAY/SHOOT 读），房间与陷阱两段之间本变量无读者——单槽即
-    // 原作语义
+    // 侧共享同一 ctx 槽（全局 D 槽，dungeon_mase 写、teleport_trap 写、
+    // one_way_trap/shoot_trap 读），房间与陷阱两段之间本变量无读者——单槽即
+    // 等价
     const move_ctx = { d20: walk20 };
     no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);
     walk20 = move_ctx.d20;
 
-    // === 陷阱処理（:390-413）：受者另行 1/3 掷选 ===
+    // === 陷阱処理：受者另行 1/3 掷选 ===
     let trap_target;
     if (rand_n(3) === 0 && sidea > 0) {
       trap_target = sidea;
@@ -681,9 +681,9 @@ async function run_dungeon(arg0, rand) {
       trap_target = arg0;
     }
 
-    // D:4 = 陷阱试行次数（原作全局 D 槽；装备「陷阱誘発」的强度——真身
-    // （#176）的输入）。D:20 与陷阱共享（TELEPORT 写、ONE_WAY/SHOOT 读），
-    // 经 ctx 对象回写（原作全局 D 槽，#5 决议第六条；房间段已建 move_ctx，
+    // D:4 = 陷阱试行次数（全局 D 槽；装备「陷阱誘発」的强度——真身
+    // （#176）的输入）。D:20 与陷阱共享（teleport_trap 写、one_way_trap/shoot_trap 读），
+    // 经 ctx 对象回写（全局 D 槽，#5 决议第六条；房间段已建 move_ctx，
     // 此处复用同一槽）
     const trap_ctx = move_ctx;
     // 装備効果(陷阱誘発)（W:8 = 20）
@@ -700,7 +700,7 @@ async function run_dungeon(arg0, rand) {
         await trap_mod.dungeon_trap(trap_target, 0, rand_n, trap_ctx);
       }
     }
-    // TELEPORT 的 D:20 写回（:330/:335）——:748 的 CFLAG:502 = D:20 用它
+    // teleport_trap 的 D:20 写回——移動反映段的 CFLAG:502 = D:20 用它
     walk20 = trap_ctx.d20;
 
     // シュートでPTが分断された時のためにここで一度SIDEA・SIDEBを
@@ -709,9 +709,9 @@ async function run_dungeon(arg0, rand) {
     sidea = era.get(`cflag:${arg0}:531`) || 0;
     sideb = era.get(`cflag:${arg0}:532`) || 0;
 
-    // === 戦闘フェイズ（:421-589 三臂）===
+    // === 戦闘フェイズ（三分支）===
     if (chara(arg0).invasion.状态 === 2) {
-      // —— 侵攻勇者（:423-522）——
+      // —— 侵攻勇者 ——
       if ((settings & 16) !== 0 || no_battle > 0) {
         // 无敌人开关（FLAG:5 & 16）或战斗未发生：
         // 経験値増加（CFLAG:MASTER:9 魔王等级，MASTER 恒角色 0）
@@ -730,7 +730,7 @@ async function run_dungeon(arg0, rand) {
         // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
         await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);
-        walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
+        walk20 = move_ctx.d20; // magic/teleport_magic 的 D:20 写回
         // 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
@@ -778,7 +778,7 @@ async function run_dungeon(arg0, rand) {
         }
       }
 
-      // TURNEND = 0——循环体单轮（:80-81 平衡调整），复位无后读，不落
+      // TURNEND = 0——循环体单轮（平衡调整），复位无后读，不落
 
       // 善悪値によっては魔王に寝返る（<= -150 且 CFLAG:1 == 2）
       if (chara(arg0).chara.善恶值 <= -150 && chara(arg0).invasion.状态 === 2) {
@@ -815,7 +815,7 @@ async function run_dungeon(arg0, rand) {
           await get_down_enemy(sideb);
           chara(sideb).invasion.状态 = 0;
         }
-        // TURNEND += 1 → :521-522 BREAK
+        // TURNEND += 1 → BREAK
         break;
       }
 
@@ -840,7 +840,7 @@ async function run_dungeon(arg0, rand) {
         break;
       }
     } else if (chara(arg0).invasion.状态 === 12) {
-      // —— 戦役（:523-563 イベントダンジョン）——
+      // —— 戦役（イベントダンジョン）——
       if (no_battle > 0) {
         // 戦闘未発生フラグ
         if ((settings & 32) !== 0) {
@@ -857,7 +857,7 @@ async function run_dungeon(arg0, rand) {
       } else {
         let turnend = 0;
         await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);
-        walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
+        walk20 = move_ctx.d20; // magic/teleport_magic 的 D:20 写回
         // 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
@@ -898,7 +898,7 @@ async function run_dungeon(arg0, rand) {
         }
       }
     } else {
-      // —— 勇者と元勇者の戦闘（:564-588 迎击 3）——H6（#175）真身：
+      // —— 勇者と元勇者の戦闘（迎击 3）——H6（#175）真身：
       // RESULT 与败者号 B 经返回值显式传出（#5 决议第六条，文件头）
       const { result: battle2r, loser: b } =
         await battle2_mod.dungeon_battle2_party(arg0, rand_n, move_ctx);
@@ -929,7 +929,7 @@ async function run_dungeon(arg0, rand) {
       }
     }
 
-    // === 迎击训练（:591-603）===
+    // === 迎击训练 ===
     if (
       chara(arg0).invasion.状态 === 3 &&
       (settings & 16) !== 0 &&
@@ -959,7 +959,7 @@ async function run_dungeon(arg0, rand) {
       chara(arg0).dungeon.战斗经验 += era.get('cflag:0:9') || 0;
     }
 
-    // === 貞操帯のカギを探す（:605-627；迎击者 CFLAG:49 == 1 且未找到）===
+    // === 貞操帯のカギを探す（迎击者 CFLAG:49 == 1 且未找到）===
     if (
       chara(arg0).invasion.状态 === 3 &&
       (era.get(`cflag:${arg0}:49`) || 0) === 1 &&
@@ -970,9 +970,9 @@ async function run_dungeon(arg0, rand) {
         `探索${mapc}的时候，在洞穴角落里发现了发光的东西。${leader_name}在意地把它捡起来了。`,
       );
       await era.waitAnyKey();
-      // ELSEIF 链（RAND:2 掷选，首个命中后短路）——原作每臂条件
+      // ELSEIF 链（RAND:2 掷选，首个命中后短路）——每个分支条件
       // 字面相同（RAND:2 == 0），ere 侧以顺序 if + 提前收尾等价改写：掷中
-      // 即打印读键并结束，未掷中继续掷下一臂（与 ELSEIF 短路同语义）
+      // 即打印读键并结束，未掷中继续掷下一分支（与 ELSEIF 短路同语义）
       if (rand_n(2) === 0) {
         era.print(
           `………是个旧奖章么，这种东西没有价值啊。${leader_name}把它丢掉了。`,
@@ -1028,7 +1028,7 @@ async function run_dungeon(arg0, rand) {
       }
     }
 
-    // === 冒険の疲れ（:629-634）：气力 - RAND:6，队长与同伴 ===
+    // === 冒険の疲れ：气力 - RAND:6，队长与同伴 ===
     chara(arg0).dungeon.气力 -= rand_n(6);
     if (sidea > 0) {
       chara(sidea).dungeon.气力 -= rand_n(6);
@@ -1037,10 +1037,10 @@ async function run_dungeon(arg0, rand) {
       chara(sideb).dungeon.气力 -= rand_n(6);
     }
 
-    // === 状态判定（:636-637 CALL CHECK_STATUS, ARG:0）===
+    // === 状态判定（CALL check_status, ARG:0）===
     const status = await check_status(arg0);
 
-    // === 帰還するかどうか（:639-705 撤退决议）===
+    // === 帰還するかどうか（撤退决议）===
     if (chara(arg0).invasion.回城标志 === 1) {
       // すでに帰還中である
       era.print(`${leader_name}在${mapc}内撤退（现在第${floor}层）`);
@@ -1130,9 +1130,9 @@ async function run_dungeon(arg0, rand) {
       }
     }
   }
-  // —— FOR TURN 循环结束（:706 NEXT）——
+  // —— FOR TURN 循环结束（NEXT）——
 
-  // === 戦闘後探索（:708-718）：1/3 の確率で受けるキャラが変わる ===
+  // === 戦闘後探索：1/3 の確率で受けるキャラが変わる ===
   let after_target;
   if (rand_n(3) === 0 && sidea > 0) {
     after_target = sidea;
@@ -1143,11 +1143,11 @@ async function run_dungeon(arg0, rand) {
   }
 
   await dungeon_bitch_mod.dungeon_bitch(after_target, rand_n); // （真身 #184；rand_n 透传，迷宫与卖春共用随机源。模块对象不解构——测试可替换导出断言被调，enter-enemy 先例）
-  await get_junk_item(after_target, rand_n); // （rand_n 透传同 :718；#469 e2e 确定性——缺省会落回 Math.random）
+  await get_junk_item(after_target, rand_n); // （rand_n 透传；#469 e2e 确定性——缺省会落回 Math.random）
 
-  // === 宝箱を見つける（:721-731；侵攻中 2 且 RAND:4 == 0，各自判定）===
+  // === 宝箱を見つける（侵攻中 2 且 RAND:4 == 0，各自判定）===
   if (chara(arg0).invasion.状态 === 2 && rand_n(4) === 0) {
-    await equip_select(arg0, rand_n); // CALL EQUIP_SELECT（#174 真身）
+    await equip_select(arg0, rand_n); // CALL equip_select（#174 真身）
   }
   if (sidea > 0 && chara(sidea).invasion.状态 === 2 && rand_n(4) === 0) {
     await equip_select(sidea, rand_n);
@@ -1156,7 +1156,7 @@ async function run_dungeon(arg0, rand) {
     await equip_select(sideb, rand_n);
   }
 
-  // === アイテムの使用（:735-744 CALL USE_EX_ITEM,"战斗后"）===
+  // === アイテムの使用（CALL use_ex_item,"战斗后"）===
   await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）
   if (sidea > 0) {
     await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // （A = SIDEA）
@@ -1165,7 +1165,7 @@ async function run_dungeon(arg0, rand) {
     await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // （A = SIDEB）
   }
 
-  // === 移動を反映（:748-753 CFLAG:502 = D:20，队长与同伴）===
+  // === 移動を反映（CFLAG:502 = D:20，队长与同伴）===
   chara(arg0).event.侵攻度 = walk20;
   if (sidea > 0) {
     chara(sidea).event.侵攻度 = walk20;
@@ -1174,7 +1174,7 @@ async function run_dungeon(arg0, rand) {
     chara(sideb).event.侵攻度 = walk20;
   }
 
-  // === 階層を反映（:755-760 CFLAG:SIDE?:501 = FLOOR）===
+  // === 階層を反映（CFLAG:SIDE?:501 = FLOOR）===
   floor = chara(arg0).dungeon.侵攻阶层;
   if (sidea > 0) {
     chara(sidea).dungeon.侵攻阶层 = floor;
@@ -1183,7 +1183,7 @@ async function run_dungeon(arg0, rand) {
     chara(sideb).dungeon.侵攻阶层 = floor;
   }
 
-  // === 休憩フェイズ（:762-849）===
+  // === 休憩フェイズ ===
 
   // 勇者に紛れ込んだ奴隷が暗躍します（同伴是迎击奴隶 3 时，
   // 熟睡后对同伴降善恶值）
@@ -1209,7 +1209,7 @@ async function run_dungeon(arg0, rand) {
   }
 
   // 装備効果(キャンプ)（W:8 = 18）：RESULT > 0 且休憩位 0 → +1
-  // （队长与同伴各自 EQUIP_CHECK；0 = 空槽，原作 IF SIDEA > 0）
+  // （队长与同伴各自 equip_check；0 = 空槽，IF SIDEA > 0）
   for (const camper of [arg0, sidea, sideb]) {
     if (camper <= 0) {
       continue;
@@ -1254,17 +1254,17 @@ async function run_dungeon(arg0, rand) {
 }
 
 /**
- * @CHECK_STATUS 的单人判定段（:897-938 队长 / :939-981 仲間A / :982-1024
- * 仲間B 的同构链）：按 HP/MP 百分比写 CFLAG:534（状态档）并返回累加的
+ * check_status 的单人判定段（队长 / 仲間A / 仲間B 的同构链）：
+ * 按 HP/MP 百分比写 CFLAG:534（状态档）并返回累加的
  * STATUS 槽位。
  *
  * 首分支 `HP% < 60 || MP% < 50` 已吞并其后全部六个分支（身体抱恙 / 重伤 /
  * 头脑发昏 / 濒死×2 / 气绝在逻辑上均不可达），实际可达态只有「轻伤（2）」
- * 与「元气满满（1）」两档——DUNGEON.ERB 的撤退判定（:685-696 的
- * 534 >= 3 / == 4）随之只有「轻伤 + 胆小」一臂真实可达。
+ * 与「元气满满（1）」两档——run_dungeon 的撤退判定（534 >= 3 / == 4）
+ * 随之只有「轻伤 + 胆小」一分支真实可达。
  *
  * @param {number} cid 角色
- * @param {number} mode MODE（非 0 时静默不打印，:899）
+ * @param {number} mode MODE（非 0 时静默不打印）
  * @returns {number} STATUS 槽位（1 轻伤 / 0 元气满满；2-6 为不可达档）
  */
 function check_status_one(cid, mode) {
@@ -1342,15 +1342,15 @@ function check_status_one(cid, mode) {
 }
 
 /**
- * @CHECK_STATUS（:856-1035）：队伍伤势判定。
+ * check_status：队伍伤势判定。
  *
  * 从队长记忆（CFLAG:533）解析三人（自己是队长读自己的 531/532；自己是
  * 同伴则读队长的，且若自己占了同伴A 位则视角换成队长），对侵攻 / 迎击中
  * （CFLAG:1 == 2 || 3）的三人各走判定链，产出 8 槽 STATUS 数组。
  *
- * @param {number} arg0 队长（原作 ARG:0）
+ * @param {number} arg0 队长（ARG:0）
  * @param {number} [mode] MODE（缺省 0；非 0 静默）
- * @returns {Promise<number[]>} 原作 RETURN STATUS,STATUS:1..STATUS:7（8 值）：
+ * @returns {Promise<number[]>} RETURN STATUS,STATUS:1..STATUS:7（8 值）：
  *   [0]=STATUS:0（无消费）、[1]轻伤数、[2]重伤数、[3]濒死数、[4]身体抱恙
  *   数、[5]头脑发昏数、[6]气绝数、[7]评级
  */
@@ -1405,15 +1405,15 @@ async function check_status(arg0, mode = 0) {
 }
 
 /**
- * @GET_JUNK_ITEM（:1041-1073）：换金财物入手。
+ * get_junk_item：换金财物入手。
  *
- * 计算式（:1046）：100 + 等级 × RAND(√(魔王等级 + 等级 + 1))；素质补正
+ * 计算式：100 + 等级 × RAND(√(魔王等级 + 等级 + 1))；素质补正
  * （好奇心 +10 / 为钱而来 +20 / 霍比特·矮人 +30 / 盗贼 1.5 倍）后乘当前
  * 阶层（CFLAG:501），下限 1，累入 CFLAG:581（掠夺的换金前金品）。
  *
- * @param {number} cid 角色（原作 ARG）
+ * @param {number} cid 角色（ARG）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 return 0
  */
 async function get_junk_item(cid, rand) {
   const rand_n = rand ?? default_rand;
@@ -1459,15 +1459,14 @@ async function get_junk_item(cid, rand) {
 }
 
 /**
- * @GET_DOWN_ENEMY（:1076-1091）：勇者陷落时的初始化与资金入手。
+ * get_down_enemy：勇者陷落时的初始化与资金入手。
  *
  * 本函数曾被同名旧版主入口遮蔽而不可达——**判定为复制粘贴事故、决定复活**
- * （判据：旧版恰缺 2015 三轮补丁特征，含本函数消费的 CFLAG:580/581/582
- * 勇者资产闭环）。已接上全部 9 处调用点（:446/:463/:470/:484/:497/:503/
- * :510/:516/:569）。
+ * （判断依据：旧版恰缺 2015 三轮补丁特征，含本函数消费的 CFLAG:580/581/582
+ * 勇者资产的完整链路）。已接上全部 9 处调用点。
  *
- * @param {number} arg0 陷落的勇者（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} arg0 陷落的勇者（ARG:0）
+ * @returns {Promise<number>} 恒 return 0
  */
 async function get_down_enemy(arg0) {
   // 善悪値 <= -150 且侵攻中 → 投诚；否则被抓住

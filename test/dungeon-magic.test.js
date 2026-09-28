@@ -1,5 +1,5 @@
 /**
- * MAGIC.ERB 十八个函数的行为测试（issue #343，阶段 5a L12）。
+ * ere/dungeon/magic.js 十八个函数的行为测试（issue #343，阶段 5a L12）。
  *
  * 缝 = ere/dungeon/magic.js 的导出函数与 dungeon-battle 的公开导出；
  * 随机源显式注入，状态与输出只通过 era API 夹具观察。
@@ -68,14 +68,14 @@ function prepare_spell_case(fixture) {
   });
 }
 
-test('MAGIC_DAMAGE_CAP 按等级差调整上限，并把非正伤害抬到 1', () => {
+test('magic_damage_cap 按等级差调整上限，并把非正伤害抬到 1', () => {
   const { magic } = load_world();
   assert.equal(magic.magic_damage_cap(1, 200, 1000, 300), 3);
   assert.equal(magic.magic_damage_cap(20, 10, 1000, 300), 330);
   assert.equal(magic.magic_damage_cap(10, 10, -20, 300), 1);
 });
 
-test('三类 MAGIC_BONUS 保留种族、Boss、耐性与魔法减益的逐步整数补正', () => {
+test('三类 magic_bonus 保留种族、Boss、耐性与魔法减益的逐步整数补正', () => {
   const { fixture, magic } = load_world();
   fixture.store.set('talent:1:314', 1);
   fixture.store.set('talent:1:244', 1);
@@ -97,7 +97,7 @@ test('三类 MAGIC_BONUS 保留种族、Boss、耐性与魔法减益的逐步整
   assert.equal(fixture.store.get('cflag:1:682'), 53);
 });
 
-test('MAGIC_SELECT 与 SHAMAN_SELECT：职业门槛、暴走伤害、怪物固定法术和映射', async () => {
+test('magic_select 与 shaman_select：职业门槛、暴走伤害、怪物固定法术和映射', async () => {
   const { fixture, magic } = load_world();
   fixture.store.set('talent:1:241', 1);
   fixture.store.set('talent:1:250', 1);
@@ -119,27 +119,23 @@ test('MAGIC_SELECT 与 SHAMAN_SELECT：职业门槛、暴走伤害、怪物固�
   };
   assert.equal(await magic.magic_select(0, 1, 2, record_bound), 0);
   assert.equal(await magic.shaman_select(0, 1, 2, record_bound), 0);
-  assert.deepEqual(
-    bounds,
-    [2, 2],
-    '缺省 TARGET_TYPE 的局部 MAGIC_LV 从 0 起算',
-  );
+  assert.deepEqual(bounds, [2, 2], '缺省 target_type 时法术等级从 0 起算');
 });
 
-test('MAGIC 调度怪物的魔法箭并接入 dungeon-battle，MAGIC 不再登记为存根', async () => {
+test('magic 调度怪物的魔法箭并接入 dungeon-battle，magic 不再登记为存根', async () => {
   const { fixture, magic } = load_world();
   fixture.store.set('e:1', 5);
   fixture.store.set('e:6', 3);
   const result = await magic.magic(2, 1, 0, seq());
   assert.equal(result, 0);
-  // CFLAG:130 与怪物号都缺省 0，原作的 >= 0 畏怖臂会给 1.2 倍增伤。
+  // CFLAG:130 与怪物号都缺省 0，>= 0 畏怖分支会给 1.2 倍增伤。
   assert.equal(fixture.store.get('base:1:0'), 916);
 
   const battle = fixture.load_module('dungeon/dungeon-battle');
   assert.equal(battle.magic, magic.magic);
 });
 
-test('DUNGEON_BATLLE2 的无参 MAGIC 保留 TARGET_TYPE=0，并显式传递原作交换后的 A/B', async () => {
+test('dungeon_battle2 的无参 magic 保留 target_type=0，并显式传递交换后的 A/B', async () => {
   const { fixture } = load_world();
   const battle = fixture.load_module('dungeon/dungeon-battle');
   const calls = [];
@@ -157,7 +153,7 @@ test('DUNGEON_BATLLE2 的无参 MAGIC 保留 TARGET_TYPE=0，并显式传递原�
   ]);
 });
 
-test('TARGET_TYPE=0 的完整 MAGIC 调度按 ERB 未命中任何法术分支，状态零变化', async () => {
+test('target_type=0 的完整 magic 调度未命中任何法术分支，状态零变化', async () => {
   const { fixture, magic } = load_world();
   assert.equal(await magic.magic(0, 1, 2, seq(1, 1, 1)), 0);
   assert.equal(fixture.store.get('base:1:0'), 1000);
@@ -166,7 +162,7 @@ test('TARGET_TYPE=0 的完整 MAGIC 调度按 ERB 未命中任何法术分支，
   assert.equal(fixture.store.get('base:2:1'), 1000);
 });
 
-test('TELEPORT_MAGIC：重伤队伍写回侵攻度；勇者对奴隶走 train 域的原作 CFLAG:3', async () => {
+test('teleport_magic：重伤队伍写回侵攻度；勇者对奴隶走 train 域的 CFLAG:3', async () => {
   const { fixture, magic } = load_world();
   fixture.store.set('base:1:0', 600);
   const move = { d20: 50 };
@@ -179,7 +175,7 @@ test('TELEPORT_MAGIC：重伤队伍写回侵攻度；勇者对奴隶走 train �
   assert.equal(fixture.store.get('cflag:2:3'), 41);
 });
 
-test('SLEEP_MAGIC、CURSE_MAGIC：对人格斗分别削攻击与防御', async () => {
+test('sleep_magic、curse_magic：对人格斗分别削攻击与防御', async () => {
   const { fixture, magic } = load_world();
   await magic.sleep_magic(3, 1, 2, seq(8));
   assert.equal(fixture.store.get('cflag:1:11'), 92);
@@ -188,7 +184,7 @@ test('SLEEP_MAGIC、CURSE_MAGIC：对人格斗分别削攻击与防御', async (
   assert.equal(fixture.store.get('cflag:2:12'), 96);
 });
 
-test('ENERGY_BOLT_MAGIC 与 FIREBALL_MAGIC：角色法术造成伤害并消灭怪物', async () => {
+test('energy_bolt_magic 与 fireball_magic：角色法术造成伤害并消灭怪物', async () => {
   const { fixture, magic } = load_world();
   await magic.energy_bolt_magic(4, 1, 2);
   assert.equal(fixture.store.get('base:2:0'), 955);
@@ -212,7 +208,7 @@ test('ENERGY_BOLT_MAGIC 与 FIREBALL_MAGIC：角色法术造成伤害并消灭�
   assert.equal(
     fixture.store.get('e:99'),
     0,
-    '魔法箭过量击杀按现存怪物数收口（怪物数不跌破 0）',
+    '魔法箭过量击杀按现存怪物数收尾（怪物数不跌破 0）',
   );
   assert.equal(fixture.store.get('exp:1:80'), 1, '经验按实杀 1 只结算');
 
@@ -230,7 +226,7 @@ test('ENERGY_BOLT_MAGIC 与 FIREBALL_MAGIC：角色法术造成伤害并消灭�
   assert(output.includes('火球术烧尽了1只怪物！'), '过量击杀按现存怪物数播报');
 });
 
-test('ENERGY_DRAIN_MAGIC 与 MIND_DRAIN_MAGIC：对人格斗按原作回复体力或气力', async () => {
+test('energy_drain_magic 与 mind_drain_magic：对人格斗回复体力或气力', async () => {
   const { fixture, magic } = load_world();
   await magic.energy_drain_magic(4, 1, 2);
   assert.equal(fixture.store.get('base:2:1'), 955);
@@ -241,7 +237,7 @@ test('ENERGY_DRAIN_MAGIC 与 MIND_DRAIN_MAGIC：对人格斗按原作回复体�
   assert.equal(fixture.store.get('base:2:1'), 970);
 });
 
-test('HEAL_MAGIC 选择队伍中最后一个重伤成员；SHIELD_MAGIC 保留无参局部变量的无效果语义', async () => {
+test('heal_magic 选择队伍中最后一个重伤成员；shield_magic 保留无参局部变量的无效果语义', async () => {
   const { fixture, magic } = load_world();
   fixture.store.set('base:1:0', 500);
   fixture.store.set('base:2:0', 400);
@@ -256,7 +252,7 @@ test('HEAL_MAGIC 选择队伍中最后一个重伤成员；SHIELD_MAGIC 保留�
   assert.equal(fixture.store.get('cflag:1:12'), 100);
 });
 
-test('LV_DRAIN_MAGIC：怪物吸取经验时同步等级四维，并把一半经验给魔王', async () => {
+test('lv_drain_magic：怪物吸取经验时同步等级四维，并把一半经验给魔王', async () => {
   const { fixture, magic } = load_world();
   fixture.store.set('e:1', 12);
   fixture.store.set('exp:1:80', 5);
@@ -349,7 +345,7 @@ test('四个魔法数值函数按种族、耐性、Boss、畏怖与减益阈值�
   }
 });
 
-test('MAGIC_SELECT/SHAMAN_SELECT 按目标类型分派，怪物咒术不掷随机数', async () => {
+test('magic_select/shaman_select 按目标类型分派，怪物咒术不掷随机数', async () => {
   const { fixture, magic } = load_world();
   prepare_spell_case(fixture);
   fixture.store.set('talent:1:241', 1);
@@ -376,7 +372,7 @@ test('MAGIC_SELECT/SHAMAN_SELECT 按目标类型分派，怪物咒术不掷随�
   assert.equal(
     random_calls,
     0,
-    '怪物目标的 SHAMAN_SELECT 必须在随机分派前返回',
+    '怪物目标的 shaman_select 必须在随机分派前返回',
   );
 });
 
@@ -402,7 +398,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       d20: 7,
     },
     {
-      label: '传送 3：奴隶重伤写原作 CFLAG:3',
+      label: '传送 3：奴隶重伤写 train 域 CFLAG:3',
       spell: 'teleport_magic',
       type: 3,
       setup: { 'base:2:0': 600 },

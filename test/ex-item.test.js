@@ -2,7 +2,7 @@
  * EX 道具十八个函数的行为测试（issue #344，阶段 5a L13）。
  *
  * 缝 = ere/dungeon/ex-item.js 的公开出口与 test/helpers/era-fixture.js。
- * 原作全局 A / RESULT 改为显式 cid / 返回值；RAND 经函数参数注入。
+ * 全局 A / RESULT 改为显式 cid / 返回值；RAND 经函数参数注入。
  */
 
 const assert = require('node:assert/strict');
@@ -43,7 +43,7 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-test('公开十八个函数，EX_ITEM_NAME 区分已鉴定与未鉴定品', () => {
+test('公开十八个函数，ex_item_name 区分已鉴定与未鉴定品', () => {
   const fixture = setup();
   const mod = load(fixture);
   const names = [
@@ -208,8 +208,8 @@ test('圣水：正常品除虫并提高善恶，原圣女另加基础攻防；�
   const { detox_worm_item } = load(fixture);
 
   assert.equal(await detox_worm_item(1, 0, () => 1), 1);
-  assert.equal(fixture.store.get('talent:1:190'), 0, 'ITEM_DETOX 真身被调用');
-  assert.equal(fixture.store.get('cflag:1:151'), 6, 'KARMA +1');
+  assert.equal(fixture.store.get('talent:1:190'), 0, 'item_detox 真身被调用');
+  assert.equal(fixture.store.get('cflag:1:151'), 6, 'karma +1');
   assert.equal(fixture.store.get('cflag:1:13'), 1);
   assert.equal(fixture.store.get('cflag:1:14'), 1);
 
@@ -249,10 +249,10 @@ test('透明化药与英雄药：正常品立位域/加战力，诅咒品只加�
   assert.equal(fixture.store.get('cflag:1:503'), 0, '诅咒品不立状态位');
 });
 
-test('USE_EX_ITEM：按槽序和使用条件分发，只清除返回非零的道具', async () => {
+test('use_ex_item：按槽序和使用条件分发，只清除返回非零的道具', async () => {
   const fixture = setup();
   fixture.store.set('maxbase:1:0', 1001);
-  fixture.store.set('base:1:0', 600); // ERB 整数除法的 60% 边界，且低于杖的 80%
+  fixture.store.set('base:1:0', 600); // 整数除法的 60% 边界，且低于杖的 80%
   fixture.store.set('cflag:1:560', 400);
   fixture.store.set('cflag:1:561', 1402); // 未鉴定回复杖，满足 80%
   fixture.store.set('cflag:1:562', 411); // 宝石箱 rand(5) 非 0，不使用
@@ -260,11 +260,7 @@ test('USE_EX_ITEM：按槽序和使用条件分发，只清除返回非零的道
   const { use_ex_item } = load(fixture);
 
   assert.equal(await use_ex_item('战斗后', 1, () => 1), 0);
-  assert.equal(
-    fixture.store.get('cflag:1:560'),
-    400,
-    'ERB 整数除法边界不使用草药',
-  );
+  assert.equal(fixture.store.get('cflag:1:560'), 400, '整数除法边界不使用草药');
   assert.equal(fixture.store.get('cflag:1:561'), 0, '未鉴定杖必毁并清槽');
   assert.equal(fixture.store.get('cflag:1:562'), 411, '宝石箱未掷中保留');
   assert.equal(fixture.store.get('cflag:1:563'), 412, '非战斗中透明药保留');
@@ -273,7 +269,7 @@ test('USE_EX_ITEM：按槽序和使用条件分发，只清除返回非零的道
   assert.equal(fixture.store.get('cflag:1:563'), 0, '战斗中使用透明药并清槽');
 });
 
-test('SELL_EX_ITEM：未鉴定品必卖、普通品十分之一概率卖，宝石箱与商人加价', () => {
+test('sell_ex_item：未鉴定品必卖、普通品十分之一概率卖，宝石箱与商人加价', () => {
   const fixture = setup();
   fixture.store.set('talent:1:315', 15);
   fixture.store.set('cflag:1:560', 1400); // 必卖：200 + 商人 100
@@ -288,7 +284,7 @@ test('SELL_EX_ITEM：未鉴定品必卖、普通品十分之一概率卖，宝�
   assert(text_lines(fixture).some((line) => line.includes('卖掉了2个道具')));
 });
 
-test('ADD_EX_ITEM：消耗品按随机种类入首个空槽，侵攻中可未鉴定，购买则强制鉴定', async () => {
+test('add_ex_item：消耗品按随机种类入首个空槽，侵攻中可未鉴定，购买则强制鉴定', async () => {
   const fixture = setup();
   const { add_ex_item } = load(fixture);
   // -3：先掷武器分支（非 0），再掷消耗品种类 2 => 402，再掷未鉴定 0，
@@ -301,7 +297,7 @@ test('ADD_EX_ITEM：消耗品按随机种类入首个空槽，侵攻中可未鉴
   assert.equal(fixture.store.get('cflag:1:561'), 405);
 });
 
-test('ADD_EX_ITEM：武器按层数、职业适用与随机前缀替换，触手武器回落为剑', async () => {
+test('add_ex_item：武器按层数、职业适用与随机前缀替换，触手武器回落为剑', async () => {
   const fixture = setup();
   fixture.store.set('talent:1:200', 1); // 战士，可用识别号 40
   fixture.store.set('cflag:1:550', 40); // 当前强度 0 < 阶层 3
@@ -311,7 +307,7 @@ test('ADD_EX_ITEM：武器按层数、职业适用与随机前缀替换，触手
   assert.equal(fixture.store.get('cflag:1:550'), 203040);
 });
 
-test('ADD_EX_ITEM：现有武器不弱、职业不适用或五个槽全满时不入手', async () => {
+test('add_ex_item：现有武器不弱、职业不适用或五个槽全满时不入手', async () => {
   const fixture = setup();
   const { add_ex_item } = load(fixture);
   fixture.store.set('talent:1:200', 1);
@@ -339,17 +335,17 @@ test('三处旧模块不再登记五个 EX 道具存根', () => {
   assert.equal(
     dungeon.add_ex_item,
     ex_item.add_ex_item,
-    'dungeon 导出 ADD 真身',
+    'dungeon 导出 add 真身',
   );
   assert.equal(
     dungeon.use_ex_item,
     ex_item.use_ex_item,
-    'dungeon 导出 USE 真身',
+    'dungeon 导出 use 真身',
   );
-  assert.equal(town.sell_ex_item, ex_item.sell_ex_item, '城镇导出 SELL 真身');
+  assert.equal(town.sell_ex_item, ex_item.sell_ex_item, '城镇导出 sell 真身');
 });
 
-test('房间与城镇调用点复用 SELL_EX_ITEM 真身，冰室用真身打印道具名', async () => {
+test('房间与城镇调用点复用 sell_ex_item 真身，冰室用真身打印道具名', async () => {
   const room_fixture = setup();
   room_fixture.store.set('cflag:1:560', 1400);
   room_fixture.store.set('flag:5', 32);
@@ -369,7 +365,7 @@ test('房间与城镇调用点复用 SELL_EX_ITEM 真身，冰室用真身打印
     text_lines(room_fixture).some((line) =>
       line.includes('【未鉴定品】破坏了'),
     ),
-    '冰室通过 EX_ITEM_NAME 真身拼行',
+    '冰室通过 ex_item_name 真身拼行',
   );
 
   const town_fixture = setup();

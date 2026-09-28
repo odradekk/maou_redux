@@ -1,15 +1,15 @@
-// 变异条目表切片：issue #344（阶段 5a L13）EX 道具十八函数与五处接线。
+// 变异条目表切片：issue #344（阶段 5a L13）EX 道具十八函数与五处接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 40;
 
 export default [
   {
-    desc: 'M6762 EX_ITEM_NAME 未鉴定阈值改坏（>1000 → >2000）',
+    desc: 'M6762 ex_item_name 未鉴定阈值改坏（>1000 → >2000）',
     file: 'ere/dungeon/ex-item.js',
     find: "  return item_no > 1000\n    ? '【未鉴定品】'",
     replace: "  return item_no > 2000\n    ? '【未鉴定品】'",
     tests: ['ex-item'],
-    must_mention: 'EX_ITEM_NAME 区分已鉴定与未鉴定品',
+    must_mention: 'ex_item_name 区分已鉴定与未鉴定品',
   },
   {
     desc: 'M6763 草药回复量改坏（500 → 400）',
@@ -46,9 +46,9 @@ export default [
   {
     desc: 'M6767 回复之杖未鉴定品必毁规则删除',
     file: 'ere/dungeon/ex-item.js',
-    find: '  if (appraise > 0) {\n    return 1;\n  }\n  return rand(3) > 0 ? 0 : 1;\n}\n\n/** @MIND_ROD_ITEM',
+    find: '  if (appraise > 0) {\n    return 1;\n  }\n  return rand(3) > 0 ? 0 : 1;\n}\n\n/** mind_rod_item',
     replace:
-      '  if (false && appraise > 0) {\n    return 1;\n  }\n  return rand(3) > 0 ? 0 : 1;\n}\n\n/** @MIND_ROD_ITEM',
+      '  if (false && appraise > 0) {\n    return 1;\n  }\n  return rand(3) > 0 ? 0 : 1;\n}\n\n/** mind_rod_item',
     tests: ['ex-item'],
     must_mention: '未鉴定杖必毁',
   },
@@ -119,7 +119,7 @@ export default [
     must_mention: '命与心之种子',
   },
   {
-    desc: 'M6776 命之种子男性守卫删除（男性误走私处敏感）',
+    desc: 'M6776 命之种子男性检查删除（男性误走私处敏感）',
     file: 'ere/dungeon/ex-item.js',
     find: '  if (era.get(`talent:${cid}:122`)) {\n    cursed = false;\n  }',
     replace:
@@ -173,7 +173,7 @@ export default [
     find: '  karma(cid, 1);',
     replace: '  karma(cid, 2); // 变异：善恶增量',
     tests: ['ex-item'],
-    must_mention: 'KARMA +1',
+    must_mention: 'karma +1',
   },
   {
     desc: 'M6783 圣水原圣女基础防御加成改坏（+1 → +2）',
@@ -226,16 +226,16 @@ export default [
     must_mention: '透明化药与英雄药',
   },
   {
-    desc: 'M6789 USE_EX_ITEM 丢失 ERB 整数除法截断',
+    desc: 'M6789 use_ex_item 丢失整数除法截断',
     file: 'ere/dungeon/ex-item.js',
     find: 'Math.trunc(((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10);\n    } else if (item_no === 401)',
     replace:
       '((era.get(`maxbase:${cid}:0`) || 0) * 6) / 10;\n    } else if (item_no === 401)',
     tests: ['ex-item'],
-    must_mention: 'ERB 整数除法边界',
+    must_mention: '整数除法边界',
   },
   {
-    desc: 'M6790 USE_EX_ITEM 使用后不清槽',
+    desc: 'M6790 use_ex_item 使用后不清槽',
     file: 'ere/dungeon/ex-item.js',
     find: '      era.set(`cflag:${cid}:${slot}`, 0);',
     replace: '      era.set(`cflag:${cid}:${slot}`, stored); // 变异：不清槽',
@@ -243,7 +243,7 @@ export default [
     must_mention: '未鉴定杖必毁并清槽',
   },
   {
-    desc: 'M6791 SELL_EX_ITEM 随机出售条件取反',
+    desc: 'M6791 sell_ex_item 随机出售条件取反',
     file: 'ere/dungeon/ex-item.js',
     find: '    const random_sale = rand(10) === 0;',
     replace: '    const random_sale = rand(10) !== 0; // 变异：出售条件取反',
@@ -251,7 +251,7 @@ export default [
     must_mention: '普通品十分之一概率卖',
   },
   {
-    desc: 'M6792 SELL_EX_ITEM 宝石箱价格改坏（1000 → 900）',
+    desc: 'M6792 sell_ex_item 宝石箱价格改坏（1000 → 900）',
     file: 'ere/dungeon/ex-item.js',
     find: '    money += item_no === 411 ? 1000 : 200;',
     replace: '    money += item_no === 411 ? 900 : 200; // 变异：宝石箱价格',
@@ -267,23 +267,23 @@ export default [
     must_mention: '宝石箱与商人加价',
   },
   {
-    desc: 'M6794 ADD_EX_ITEM 消耗品起始编号错位（400 → 401）',
+    desc: 'M6794 add_ex_item 消耗品起始编号错位（400 → 401）',
     file: 'ere/dungeon/ex-item.js',
     find: 'const ITEM_MIN = 400;',
     replace: 'const ITEM_MIN = 401; // 变异：道具起始编号错位',
     tests: ['ex-item'],
-    must_mention: 'ADD_EX_ITEM：消耗品按随机种类',
+    must_mention: 'add_ex_item：消耗品按随机种类',
   },
   {
-    desc: 'M6795 ADD_EX_ITEM 购买品不再强制鉴定（source >=1 → >=2）',
+    desc: 'M6795 add_ex_item 购买品不再强制鉴定（source >=1 → >=2）',
     file: 'ere/dungeon/ex-item.js',
     find: '  if (item_no > 1000 && source >= 1) {',
     replace: '  if (item_no > 1000 && source >= 2) { // 变异：购买不强制鉴定',
     tests: ['ex-item'],
-    must_mention: 'ADD_EX_ITEM：消耗品按随机种类',
+    must_mention: 'add_ex_item：消耗品按随机种类',
   },
   {
-    desc: 'M6796 ADD_EX_ITEM 触手武器回落编号改坏（340 → 341）',
+    desc: 'M6796 add_ex_item 触手武器回落编号改坏（340 → 341）',
     file: 'ere/dungeon/ex-item.js',
     find: '      weapon_item = 340;',
     replace: '      weapon_item = 341; // 变异：触手武器回落错',
@@ -291,31 +291,31 @@ export default [
     must_mention: '触手武器回落为剑',
   },
   {
-    desc: 'M6797 ADD_EX_ITEM 武器层数编码改坏（×1000 → ×2000）',
+    desc: 'M6797 add_ex_item 武器层数编码改坏（×1000 → ×2000）',
     file: 'ere/dungeon/ex-item.js',
     find: '    w.存储编号 += floor * 1000;',
     replace: '    w.存储编号 += floor * 2000; // 变异：层数编码',
     tests: ['ex-item'],
-    must_mention: 'ADD_EX_ITEM：武器按层数',
+    must_mention: 'add_ex_item：武器按层数',
   },
   {
-    desc: 'M6798 ADD_EX_ITEM 首个库存槽错位（560 → 561）',
+    desc: 'M6798 add_ex_item 首个库存槽错位（560 → 561）',
     file: 'ere/dungeon/ex-item.js',
     find: 'const ITEM_FIRST_SLOT = 560;',
     replace: 'const ITEM_FIRST_SLOT = 561; // 变异：库存基址错位',
     tests: ['ex-item'],
-    must_mention: 'ADD_EX_ITEM：消耗品按随机种类',
+    must_mention: 'add_ex_item：消耗品按随机种类',
   },
   {
-    desc: 'M6799 dungeon.js 的 ADD_EX_ITEM 兼容导出接错函数',
+    desc: 'M6799 dungeon.js 的 add_ex_item 兼容导出接错函数',
     file: 'ere/dungeon/dungeon.js',
     find: '  add_ex_item: ex_item_mod.add_ex_item,',
     replace: '  add_ex_item: ex_item_mod.use_ex_item, // 变异：导出接错',
     tests: ['ex-item'],
-    must_mention: 'dungeon 导出 ADD 真身',
+    must_mention: 'dungeon 导出 add 真身',
   },
   {
-    desc: 'M6800 dungeon-room.js 的 SELL_EX_ITEM 真身调用删除',
+    desc: 'M6800 dungeon-room.js 的 sell_ex_item 真身调用删除',
     file: 'ere/dungeon/dungeon-room.js',
     find: '  ex_item_mod.sell_ex_item(a, rand_n);',
     replace: '  // 变异：房间出售 EX 道具调用删除',
@@ -323,9 +323,9 @@ export default [
     must_mention: '房间与城镇调用点复用',
   },
   {
-    desc: 'M6801 dungeon-town.js 的 SELL_EX_ITEM 真身调用删除',
+    desc: 'M6801 dungeon-town.js 的 sell_ex_item 真身调用删除',
     file: 'ere/dungeon/dungeon-town.js',
-    find: '    ex_item_mod.sell_ex_item(cid, rand_n); // CALL SELL_EX_ITEM',
+    find: '    ex_item_mod.sell_ex_item(cid, rand_n); // CALL sell_ex_item',
     replace: '    // 变异：城镇出售 EX 道具调用删除',
     tests: ['ex-item'],
     must_mention: '房间与城镇调用点复用',

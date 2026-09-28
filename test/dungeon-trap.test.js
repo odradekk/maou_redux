@@ -1,19 +1,19 @@
 /**
- * ere/dungeon/dungeon-trap.js @DUNGEON_TRAP + 26 个陷阱段 + 诈骗陷阱 +
- * @SLAVE_TRAP_SET + @TRAP_PRICE 的行为测试（issue #176，阶段 3 H7）。
+ * ere/dungeon/dungeon-trap.js dungeon_trap + 26 个陷阱段 + 诈骗陷阱 +
+ * slave_trap_set + trap_price 的行为测试（issue #176，阶段 3 H7）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
  * dungeon_trap / 各陷阱函数的 rand 参数注入（enter-enemy.js 先例）：
- *   - seq(...v) 按消费顺序给定值（越界用末值兜底）；
+ *   - seq(...v) 按消费顺序给定值（越界用末值）；
  *   - 计数器 rand 断言「不掷骰」路径（全空槽的世界零随机消费——ENDING_2
- *     e2e 与 #175 对比测试的 PRNG 序列不因本票漂移的前提）。
+ *     e2e 与 #175 对比测试的 PRNG 序列不因这张工单改变的前提）。
  *
  * 验收对应（#176 清单）：
  *   - 26 个陷阱段 + 诈骗陷阱（TRAP_ID 87 的效果体）各有一条测试，断言
  *     效果落到正确的变量（HP/气力/宝珠/经验/CFLAG 位域/ITEM/MONEY）；
- *   - @TRAP_PRICE 价格表逐条有测试（含 86 空档与未登记 ID 的兜底 100）；
+ *   - trap_price 价格表逐条有测试（含 86 空档与未登记 ID 的默认值 100）；
  *   - 主循环的 A/B/C 槽寻位、连击回避链、库存消耗与 513 记忆、自动补货、
- *     迎击方 SLAVE_TRAP_SET（补充/换金）各有测试；
+ *     迎击方 slave_trap_set（补充/换金）各有测试；
  *   - D:20（侵攻度）经 ctx 对象与调用方共享——TELEPORT 的写回有测试
  *     （含 run_dungeon 集成：CFLAG:502 收到 TELEPORT 后的值）。
  */
@@ -73,9 +73,9 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— @TRAP_PRICE：价格表逐条（:1465-1520）——
+// —— trap_price：价格表逐条 ——
 
-test('TRAP_PRICE：27 个陷阱的价格逐条正确（含 87 诈骗、86 空档兜底 100）', () => {
+test('trap_price：27 个陷阱的价格逐条正确（含 87 诈骗、86 空档默认 100）', () => {
   const fixture = setup_world();
   const { trap_price } = load(fixture);
   const expected = {
@@ -111,18 +111,18 @@ test('TRAP_PRICE：27 个陷阱的价格逐条正确（含 87 诈骗、86 空档
     assert.equal(
       trap_price(Number(id)),
       price,
-      `TRAP_PRICE(${id}) 应为 ${price}（:1465-1518 的 SIF 表逐条）`,
+      `trap_price(${id}) 应为 ${price}（SIF 表逐条）`,
     );
   }
-  // 兜底：86 空档与未登记 ID 都是 100
-  assert.equal(trap_price(86), 100, '86（空档）走兜底 100');
-  assert.equal(trap_price(88), 100, '88（未登记）走兜底 100');
-  assert.equal(trap_price(0), 100, '0（非陷阱）走兜底 100');
+  // 默认值：86 空档与未登记 ID 都是 100
+  assert.equal(trap_price(86), 100, '86（空档）默认 100');
+  assert.equal(trap_price(88), 100, '88（未登记）默认 100');
+  assert.equal(trap_price(0), 100, '0（非陷阱）默认 100');
 });
 
 // —— 26 个陷阱段 + 诈骗陷阱：各一条，效果落到正确的变量 ——
 
-test('PIT（:196）：伤害落体力、落下位置起（CFLAG:503 位 6）', async () => {
+test('pit_trap：伤害落体力、落下位置起（CFLAG:503 位 6）', async () => {
   const fixture = setup_world();
   const { pit_trap } = load(fixture);
   const ret = await pit_trap(1, seq(50, 39)); // DICE=50 → 普通档；RAND:40=39
@@ -145,7 +145,7 @@ test('PIT（:196）：伤害落体力、落下位置起（CFLAG:503 位 6）', a
   assert.equal(fixture.store.get('base:1:0'), 2000, '避开不扣血');
 });
 
-test('PIT 重伤档（:230-240）：DICE ×2，魔虫知识再 1.5 倍', async () => {
+test('pit_trap 重伤档：DICE ×2，魔虫知识再 1.5 倍', async () => {
   const fixture = setup_world();
   const { pit_trap } = load(fixture);
   await pit_trap(1, seq(90, 39)); // DICE=90 ≥ 80 → (39+1)*2 = 80
@@ -156,7 +156,7 @@ test('PIT 重伤档（:230-240）：DICE ×2，魔虫知识再 1.5 倍', async (
   assert.equal(fixture.store.get('base:1:0'), 2000 - 120, '80 + 80/2 = 120');
 });
 
-test('ARROW（:265）：伤害落体力、怕痛者再扣气力', async () => {
+test('arrow_trap：伤害落体力、怕痛者再扣气力', async () => {
   const fixture = setup_world();
   const { arrow_trap } = load(fixture);
   assert.equal(await arrow_trap(1, seq(10)), 1, 'Z<30 躲开（未作动）');
@@ -171,20 +171,20 @@ test('ARROW（:265）：伤害落体力、怕痛者再扣气力', async () => {
   assert.equal(fixture.store.get('base:1:1'), 1000 - 30, '怕痛者气力 -30');
 });
 
-test('TELEPORT（:313）：侵攻度 D:20 经 ctx 写回（起点 1 / 随机 100）', async () => {
+test('teleport_trap：侵攻度 D:20 经 ctx 写回（起点 1 / 随机 100）', async () => {
   const fixture = setup_world();
   const { teleport_trap } = load(fixture);
   const ctx = { d20: 50 };
   assert.equal(await teleport_trap(1, seq(80), ctx), 1, 'Z>70 躲开（未作动）');
   assert.equal(ctx.d20, 50, '躲开不改侵攻度');
   await teleport_trap(1, seq(10), ctx); // Z=10 < 20 → 回本层起点
-  assert.equal(ctx.d20, 1, 'D:20 = 1（:330）');
+  assert.equal(ctx.d20, 1, 'D:20 = 1');
   await teleport_trap(1, seq(50, 77), ctx); // 中间档 → 随机重置
-  assert.equal(ctx.d20, 77, 'D:20 = RAND:100（:335）');
+  assert.equal(ctx.d20, 77, 'D:20 = RAND:100');
   assert.equal(fixture.store.get('base:1:1'), 1000, '无难度补正不扣气力');
 });
 
-test('ONE_WAY（:357）：侵攻度不足 40 不作动；迷路位置起（CFLAG:509）', async () => {
+test('one_way_trap：侵攻度不足 40 不作动；迷路位置起（CFLAG:509）', async () => {
   const fixture = setup_world();
   const { one_way_trap } = load(fixture);
   assert.equal(
@@ -195,7 +195,7 @@ test('ONE_WAY（:357）：侵攻度不足 40 不作动；迷路位置起（CFLAG
   assert.equal(
     await one_way_trap(1, seq(2), { d20: 40 }),
     0,
-    'Z>1 找到路 → 作动（RETURN 0，:383）',
+    'Z>1 找到路 → 作动（RETURN 0）',
   );
   await one_way_trap(1, seq(0), { d20: 40 }); // Z=0 → 迷路
   assert.equal(fixture.store.get('cflag:1:509'), 1, '迷路位置起（迷惑状态）');
@@ -206,7 +206,7 @@ test('ONE_WAY（:357）：侵攻度不足 40 不作动；迷路位置起（CFLAG
   );
 });
 
-test('LOVE_GAS（:406）：欲情宝珠与气力按档落变量、欲情位置起（位 9）', async () => {
+test('love_gas_trap：欲情宝珠与气力按档落变量、欲情位置起（位 9）', async () => {
   const fixture = setup_world();
   const { love_gas_trap } = load(fixture);
   assert.equal(await love_gas_trap(1, seq(70)), 0, 'Z>60 屏息跑开也是作动');
@@ -217,7 +217,7 @@ test('LOVE_GAS（:406）：欲情宝珠与气力按档落变量、欲情位置�
   assert.equal(
     (fixture.store.get('cflag:1:503') || 0) & 512,
     512,
-    '欲情位置起（位 9，:457）',
+    '欲情位置起（位 9）',
   );
   fixture.store.set('talent:1:60', 1); // 容易自慰
   await love_gas_trap(1, seq(5));
@@ -225,7 +225,7 @@ test('LOVE_GAS（:406）：欲情宝珠与气力按档落变量、欲情位置�
   assert.equal(fixture.store.get('juel:1:0'), 20, '乳房宝珠 +20（仅第二次）');
 });
 
-test('SYOKUSYU_FLOOR（:462）：触手经验与欲情宝珠、气力大量损耗', async () => {
+test('syokusyu_floor_trap：触手经验与欲情宝珠、气力大量损耗', async () => {
   const fixture = setup_world();
   const { syokusyu_floor_trap } = load(fixture);
   assert.equal(await syokusyu_floor_trap(1, seq(80)), 1, 'Z>70 击退（未作动）');
@@ -236,11 +236,11 @@ test('SYOKUSYU_FLOOR（:462）：触手经验与欲情宝珠、气力大量损�
   assert.equal(
     (fixture.store.get('cflag:1:503') || 0) & 512,
     0,
-    '本段不立欲情位（:521 无 SETBIT）',
+    '本段不立欲情位（无 SETBIT）',
   );
 });
 
-test('LOVE_BATH（:525）：淹没档双扣（体力气力各 200）+ 药物经验', async () => {
+test('love_bath_trap：淹没档双扣（体力气力各 200）+ 药物经验', async () => {
   const fixture = setup_world();
   const { love_bath_trap } = load(fixture);
   await love_bath_trap(1, seq(0)); // RAND:10 = 0 < 2 淹没
@@ -251,16 +251,16 @@ test('LOVE_BATH（:525）：淹没档双扣（体力气力各 200）+ 药物经�
   assert.equal(
     (fixture.store.get('cflag:1:503') || 0) & 512,
     512,
-    '欲情位置起（:579）',
+    '欲情位置起',
   );
 });
 
-test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TARGET 指向受者', async () => {
+test('self_saimin_trap：两档催眠自慰——攻防归零 / 减半，TARGET 指向受者', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { self_saimin_trap } = load(fixture);
   // 开调教域（#508）：自动调教三连的本体写的 SOURCE 要落得下才看得到效果，
-  // 否则被夹具的引擎守卫静默丢弃；三连的第三站 SOURCE_CHECK_AUTO 是真身
+  // 否则被夹具的引擎检查静默丢弃；三连的第三站 source_check_auto 是真身
   // 事件（生产由 main-loop.js:47 加载），也要显式载入才会响应
   fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
@@ -270,49 +270,49 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   assert.equal(
     fixture.store.get('cflag:1:666') ?? 0,
     0,
-    '清醒档不走自动调教（原作 :600-603 提前返回）',
+    '清醒档不走自动调教（提前返回）',
   );
   await self_saimin_trap(1, seq(5)); // DICE=5 < 10 深度
-  assert.equal(fixture.store.get('cflag:1:11'), 0, '攻击力归零（:615）');
-  assert.equal(fixture.store.get('cflag:1:12'), 0, '防御力归零（:616）');
-  assert.equal(era_flag.target, 1, 'TARGET = A（:594）');
-  // CALL COM3_AUTO——真身（ere/event/event-autotrain.js 的 com3_auto）。
+  assert.equal(fixture.store.get('cflag:1:11'), 0, '攻击力归零');
+  assert.equal(fixture.store.get('cflag:1:12'), 0, '防御力归零');
+  assert.equal(era_flag.target, 1, 'TARGET = A');
+  // CALL com3_auto——真身（ere/event/event-autotrain.js 的 com3_auto）。
   // 全素质 0 时 SOURCE:4 = 100（技巧 0 档的常量）、自慰经验 +1
   assert.ok(
     text_lines(fixture).some((line) => line.includes('≪自慰≫')),
-    'COM3_AUTO 真身被调（:611）',
+    'com3_auto 真身被调',
   );
   assert.equal(
     fixture.store.get('source:1:4'),
     0,
-    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）',
+    'SOURCE 已被第三站清零（换算在 source_check_auto、逐键置零在 nextTurnInTrain）',
   );
   assert.equal(fixture.store.get('exp:1:10'), 1, '自慰经验 +1（本体）');
   assert.equal(
     fixture.store.get('base:1:1'),
     950,
-    '气力 -50（本体 LOSEBASE:1 = 50 经 SOURCE_CHECK_AUTO 结算落 BASE）',
+    '气力 -50（本体 LOSEBASE:1 = 50 经 source_check_auto 结算落 BASE）',
   );
   assert.equal(
     fixture.store.get('palam:1:8'),
     5000,
-    '耻情 5000 = COM3_AUTO 的露出 2000（阴毛设定 ×2）× 自动调教倍率 1.25',
+    '耻情 5000 = com3_auto 的露出 2000（阴毛设定 ×2）× 自动调教倍率 1.25',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 80);
   await self_saimin_trap(1, seq(30)); // 浅度 → 减半
-  assert.equal(fixture.store.get('cflag:1:11'), 50, '攻击力减半（:628）');
-  assert.equal(fixture.store.get('cflag:1:12'), 40, '防御力减半（:629）');
+  assert.equal(fixture.store.get('cflag:1:11'), 50, '攻击力减半');
+  assert.equal(fixture.store.get('cflag:1:12'), 40, '防御力减半');
   assert.equal(
     fixture.store.get('cflag:1:666'),
     2,
-    '浅度档同样接真身（:624 是第二个调用点）',
+    '浅度档同样接真身（第二个调用点）',
   );
   assert.equal(
     fixture.store.get('exp:1:10'),
     2,
-    '自慰经验再 +1（浅档也走 COM3 本体，别的变体不写这一项）',
+    '自慰经验再 +1（浅档也走 com3_auto 本体，别的变体不写这一项）',
   );
   // 欲情中 → DICE ×0.80（TIMES 截断）：70 → 56 仍 >10 ≤60 走浅档；99 → 79 走浅档
   fixture.store.set('cflag:1:503', 512);
@@ -325,7 +325,7 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   );
 });
 
-test('IMITATER（:635）：五宝珠齐涨 + 绝顶经验 + 攻防弱化', async () => {
+test('imitater_trap：五宝珠齐涨 + 绝顶经验 + 攻防弱化', async () => {
   const fixture = setup_world();
   const { imitater_trap } = load(fixture);
   assert.equal(await imitater_trap(1, seq(70)), 1, 'Z>60 逃出（未作动）');
@@ -335,15 +335,15 @@ test('IMITATER（:635）：五宝珠齐涨 + 绝顶经验 + 攻防弱化', async
   }
   assert.equal(fixture.store.get('base:1:1'), 1000 - 50, '气力 -50');
   assert.equal(fixture.store.get('exp:1:2'), 1, '绝顶经验 +1');
-  assert.equal(fixture.store.get('cflag:1:11') ?? 0, 0, '攻防归零（:679-680）');
+  assert.equal(fixture.store.get('cflag:1:11') ?? 0, 0, '攻防归零');
   fixture.store.set('cflag:1:11', 90);
   fixture.store.set('cflag:1:12', 90);
   await imitater_trap(1, seq(30)); // 浅档
-  assert.equal(fixture.store.get('cflag:1:11'), 45, '攻减半（:703）');
+  assert.equal(fixture.store.get('cflag:1:11'), 45, '攻减半');
   assert.equal(fixture.store.get('juel:1:5'), 80, '浅档欲情 +30（累积）');
 });
 
-test('SUMMON（:711）：弱召唤真身入库、高难度时体力损耗', async () => {
+test('summon_trap：弱召唤真身入库、高难度时体力损耗', async () => {
   const fixture = setup_world();
   const { summon_trap } = load(fixture);
   assert.equal(await summon_trap(1, seq(1)), 1, 'Z>0 破坏阵（未作动）');
@@ -356,7 +356,7 @@ test('SUMMON（:711）：弱召唤真身入库、高难度时体力损耗', asyn
   assert.equal(fixture.store.get('base:1:0'), 2000 - 20, '体力 -= FLAG:85×10');
 });
 
-test('SUCCUBUS（:740）：非男人者百合经验 +1 档、五宝珠与攻防弱化', async () => {
+test('succubus_trap：非男人者百合经验 +1 档、五宝珠与攻防弱化', async () => {
   const fixture = setup_world();
   const { succubus_trap } = load(fixture);
   assert.equal(await succubus_trap(1, seq(70)), 1, 'DICE>60 无视（未作动）');
@@ -377,11 +377,11 @@ test('SUCCUBUS（:740）：非男人者百合经验 +1 档、五宝珠与攻防�
   assert.equal(fixture.store.get('exp:1:2'), 2, '绝顶经验再 +1');
 });
 
-test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位 3）', async () => {
+test('slime_room_trap：攻防弱化 + 肛门经验 + 润滑位置起（位 3）', async () => {
   const fixture = setup_world();
   const { slime_room_trap } = load(fixture);
-  // 开调教域（#508）：COM50_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫），
-  // 第三站 SOURCE_CHECK_AUTO 的真身也要显式载入（生产由 main-loop.js:47 加载）
+  // 开调教域（#508）：com50_auto 真身写的 SOURCE 要落得下（夹具镜像引擎检查），
+  // 第三站 source_check_auto 的真身也要显式载入（生产由 main-loop 加载）
   fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
@@ -391,36 +391,36 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
   assert.equal(
     fixture.store.get('cflag:1:666') ?? 0,
     0,
-    '逃脱档提前返回，不走自动调教（:846-849）',
+    '逃脱档提前返回，不走自动调教',
   );
   await slime_room_trap(1, seq(5)); // DICE=5 < 10 深档
-  // CALL COM50_AUTO——真身（ere/event/event-autotrain.js 的 com50_auto）。
+  // CALL com50_auto——真身（ere/event/event-autotrain.js 的 com50_auto）。
   // **这条身份断言排在第一**（#538）：调错变体（com3_auto）同样会把自动调教
   // 回数 +1、并让后面的气力/宝珠数值各自落在另一个值上，那些数值断言会先
   // 红在「气力 -25-10」这类派生量上，把「真身被调」这条结论盖掉（M10717 的
   // 实测现场）。真身文案是「调对了哪个变体」的直接证据，先判它。
   assert.ok(
     text_lines(fixture).some((line) => line.includes('≪粘液≫')),
-    'COM50_AUTO 真身被调（:882）',
+    'com50_auto 真身被调',
   );
-  assert.equal(fixture.store.get('cflag:1:11'), 50, '攻减半（:854）');
-  assert.equal(fixture.store.get('cflag:1:12'), 45, '防减半（:855）');
-  assert.equal(fixture.store.get('exp:1:1'), 1, '肛门经验 +1（:861）');
+  assert.equal(fixture.store.get('cflag:1:11'), 50, '攻减半');
+  assert.equal(fixture.store.get('cflag:1:12'), 45, '防减半');
+  assert.equal(fixture.store.get('exp:1:1'), 1, '肛门经验 +1');
   assert.equal(fixture.store.get('base:1:1'), 1000 - 25 - 10, '气力 -25-10');
   assert.equal(
     (fixture.store.get('cflag:1:503') || 0) & 8,
     8,
-    '润滑位置起（位 3，:885）',
+    '润滑位置起（位 3）',
   );
   assert.equal(
     fixture.store.get('source:1:10'),
     0,
-    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（液体追加 10000 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 source_check_auto、逐键置零在 nextTurnInTrain）（液体追加 10000 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('source:1:12'),
     0,
-    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（露出 300 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 source_check_auto、逐键置零在 nextTurnInTrain）（露出 300 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('palam:1:3'),
@@ -430,12 +430,12 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
   assert.equal(
     fixture.store.get('palam:1:8'),
     375,
-    '耻情 375 = COM50_AUTO 的露出 300 × 自动调教倍率 1.25',
+    '耻情 375 = com50_auto 的露出 300 × 自动调教倍率 1.25',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
-test('NET（:890）：气力损耗按上限 1/20 封顶、魔虫知识追打 HP', async () => {
+test('net_trap：气力损耗按上限 1/20 封顶、魔虫知识追打 HP', async () => {
   const fixture = setup_world();
   const { net_trap } = load(fixture);
   fixture.store.set('flag:85', 0); // local = 10，上限 1000/20 = 50 不封
@@ -455,7 +455,7 @@ test('NET（:890）：气力损耗按上限 1/20 封顶、魔虫知识追打 HP'
   );
 });
 
-test('SHOP（:921）：销售入金库（双记）、扣购物预算（CFLAG:582）、恢复', async () => {
+test('shop_trap：销售入金库（双记）、扣购物预算（CFLAG:582）、恢复', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
@@ -470,41 +470,33 @@ test('SHOP（:921）：销售入金库（双记）、扣购物预算（CFLAG:582
   // rand=1 → COST = 1*50 = 50；阶层 1 → floor(50×(99+1)/100) = 50
   const ret = await shop_trap(1, seq(1));
   assert.equal(ret, 0, '购买成立（作动）');
-  assert.equal(era_flag.money - money0, 50, 'MONEY += COST（:951）');
-  assert.equal(
-    era_exflag.legit_money - legit0,
-    50,
-    'EX_FLAG:4444 += COST（:952）',
-  );
-  assert.equal(
-    fixture.store.get('cflag:1:582') || 0,
-    -50,
-    'CFLAG:582 -= COST（:954）',
-  );
+  assert.equal(era_flag.money - money0, 50, 'MONEY += COST');
+  assert.equal(era_exflag.legit_money - legit0, 50, 'EX_FLAG:4444 += COST');
+  assert.equal(fixture.store.get('cflag:1:582') || 0, -50, 'CFLAG:582 -= COST');
   assert.equal(
     fixture.store.get('cflag:1:580'),
     3000,
-    'CFLAG:580 不扣（:953 注释态）',
+    'CFLAG:580 不扣（扣款行注释态）',
   );
-  assert.equal(fixture.store.get('base:1:0'), 1050, 'HP += COST（:957）');
-  assert.equal(fixture.store.get('base:1:1'), 1000, '气力全恢复（:961）');
+  assert.equal(fixture.store.get('base:1:0'), 1050, 'HP += COST');
+  assert.equal(fixture.store.get('base:1:1'), 1000, '气力全恢复');
   // 钱不够 → 杀价失败
   fixture.store.set('cflag:1:580', 10);
   assert.equal(await shop_trap(1, seq(1)), 1, '所持金不足（未作动）');
 });
 
-test('BLACKOUT（:969）：攻减半，DICE==1 档再扣气力与毒箭', async () => {
+test('blackout_trap：攻减半，DICE==1 档再扣气力与毒箭', async () => {
   const fixture = setup_world();
   const { blackout_trap } = load(fixture);
   fixture.store.set('cflag:1:11', 100);
   assert.equal(await blackout_trap(1, seq(2)), 0, 'DICE==2 逃掉也是作动');
   await blackout_trap(1, seq(0)); // DICE==0
-  assert.equal(fixture.store.get('cflag:1:11'), 50, '攻减半（:998）');
+  assert.equal(fixture.store.get('cflag:1:11'), 50, '攻减半');
   assert.equal(fixture.store.get('base:1:1'), 1000, 'DICE==0 档不扣气力');
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('flag:85', 1);
   await blackout_trap(1, seq(1)); // DICE==1
-  assert.equal(fixture.store.get('base:1:1'), 900, '气力 -100（:989）');
+  assert.equal(fixture.store.get('base:1:1'), 900, '气力 -100');
   assert.equal(
     fixture.store.get('base:1:0'),
     2000 - 10,
@@ -512,7 +504,7 @@ test('BLACKOUT（:969）：攻减半，DICE==1 档再扣气力与毒箭', async 
   );
 });
 
-test('SHOOT（:1011）：按楼层三档下坠、队伍分断、落下位置起', async () => {
+test('shoot_trap：按楼层三档下坠、队伍分断、落下位置起', async () => {
   const fixture = setup_world();
   const { shoot_trap } = load(fixture);
   const { party_del } = fixture.load_module('dungeon/dungeon-party');
@@ -537,65 +529,49 @@ test('SHOOT（:1011）：按楼层三档下坠、队伍分断、落下位置起'
   );
   // 第 1 层 → else 档：下坠一层 + 分断
   await shoot_trap(1, seq(0), { d20: 40 });
-  assert.equal(fixture.store.get('cflag:1:501'), 2, '下坠一层（:1066）');
-  assert.equal(del_called, 1, '队伍分断（PARTY_DEL，:1071）');
+  assert.equal(fixture.store.get('cflag:1:501'), 2, '下坠一层');
+  assert.equal(del_called, 1, '队伍分断（party_del）');
   assert.equal(fixture.store.get('cflag:1:509'), 1, '迷路位置起');
-  assert.equal(
-    fixture.store.get('cflag:1:503') || 0,
-    64,
-    '落下位置起（:1030）',
-  );
+  assert.equal(fixture.store.get('cflag:1:503') || 0, 64, '落下位置起');
   // 第 9 层 → 砸向最底层，不分断
   fixture.store.set('cflag:1:501', 9);
   fixture.store.set('base:1:0', 2000);
   await shoot_trap(1, seq(0, 250), { d20: 40 });
-  assert.equal(
-    fixture.store.get('cflag:1:501'),
-    9,
-    '第 9 层不再 +1（:1044 档）',
-  );
-  assert.equal(fixture.store.get('base:1:0'), 2000 - 250, 'RAND:300 落地伤害');
+  assert.equal(fixture.store.get('cflag:1:501'), 9, '第 9 层不再 +1');
+  assert.equal(fixture.store.get('base:1:0'), 2000 - 250, 'RAND:300 落下伤害');
   assert.equal(del_called, 1, '第 9 层不分断队伍');
   // 第 8 层 → +1 且分断
   fixture.store.set('cflag:1:501', 8);
   await shoot_trap(1, seq(0, 100), { d20: 40 });
-  assert.equal(fixture.store.get('cflag:1:501'), 9, '第 8 层 +1（:1054）');
-  assert.equal(del_called, 2, '第 8 层分断（:1063）');
+  assert.equal(fixture.store.get('cflag:1:501'), 9, '第 8 层 +1');
+  assert.equal(del_called, 2, '第 8 层分断');
 });
 
-test('DISPELL（:1085）：诅咒位置起（位 1）、已诅咒不重复', async () => {
+test('dispell_trap：诅咒位置起（位 1）、已诅咒不重复', async () => {
   const fixture = setup_world();
   const { dispell_trap } = load(fixture);
   assert.equal(await dispell_trap(1, seq(1)), 0, 'Z>0 解除也是作动');
   await dispell_trap(1, seq(0));
-  assert.equal(
-    fixture.store.get('cflag:1:503') || 0,
-    2,
-    '诅咒位（位 1，:1109）',
-  );
+  assert.equal(fixture.store.get('cflag:1:503') || 0, 2, '诅咒位（位 1）');
   await dispell_trap(1, seq(0));
   assert.equal(fixture.store.get('cflag:1:503') || 0, 2, '已诅咒不重复累加');
   fixture.store.set('flag:85', 1);
   await dispell_trap(1, seq(0));
-  assert.equal(
-    fixture.store.get('base:1:1'),
-    1000 - 10,
-    '气力 -FLAG:85×10（:1115）',
-  );
+  assert.equal(fixture.store.get('base:1:1'), 1000 - 10, '气力 -FLAG:85×10');
 });
 
-test('OIL（:1121）：气力损耗、油位置起（位 3 之 8）', async () => {
+test('oil_trap：气力损耗、油位置起（位 3 之 8）', async () => {
   const fixture = setup_world();
   const { oil_trap } = load(fixture);
   assert.equal(await oil_trap(1, seq(20)), 1, 'Z<30 躲开（未作动）');
   await oil_trap(1, seq(50)); // Z=50
   assert.equal(fixture.store.get('base:1:1'), 1000 - 50, '气力 -= Z');
-  assert.equal(fixture.store.get('cflag:1:503') || 0, 8, '油位 +8（:1143）');
+  assert.equal(fixture.store.get('cflag:1:503') || 0, 8, '油位 +8');
   await oil_trap(1, seq(50));
   assert.equal(fixture.store.get('cflag:1:503') || 0, 8, '已油腻不重复累加');
 });
 
-test('FIRE（:1150）：命中伤害、油位追打', async () => {
+test('fire_trap：命中伤害、油位追打', async () => {
   const fixture = setup_world();
   const { fire_trap } = load(fixture);
   assert.equal(await fire_trap(1, seq(50)), 0, 'DICE<100 回避也是作动');
@@ -609,45 +585,41 @@ test('FIRE（:1150）：命中伤害、油位追打', async () => {
   assert.equal(
     fixture.store.get('base:1:0'),
     2000 - (150 + 10) - (30 + 5),
-    '点火追加 30+FLAG:85×5（:1172）',
+    '点火追加 30+FLAG:85×5',
   );
 });
 
-test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALENT:193）', async () => {
+test('a_worm_trap：气力损耗、A 经验 > 30 未寄生则寄生（TALENT:193）', async () => {
   const fixture = setup_world();
   const { a_worm_trap } = load(fixture);
   assert.equal(await a_worm_trap(1, seq(30)), 1, 'DICE<35 弄死（未作动）');
   await a_worm_trap(1, seq(50)); // DICE=50 → 50+30 = 80
   assert.equal(fixture.store.get('base:1:1'), 1000 - 80, '气力 -= DICE+30');
-  assert.equal(fixture.store.get('exp:1:1'), 1, '肛门经验 +1（:1225）');
+  assert.equal(fixture.store.get('exp:1:1'), 1, '肛门经验 +1');
   assert.equal(fixture.store.get('talent:1:193') ?? 0, 0, 'A 经验 ≤ 30 不寄生');
   fixture.store.set('exp:1:1', 31);
   fixture.store.set('base:1:1', 1000);
   await a_worm_trap(1, seq(50));
-  assert.equal(
-    fixture.store.get('talent:1:193'),
-    1,
-    '寄生（TALENT:193 = 1，:1215）',
-  );
+  assert.equal(fixture.store.get('talent:1:193'), 1, '寄生（TALENT:193 = 1）');
   assert.equal(fixture.store.get('exp:1:1'), 32, '寄生后再 +1');
-  // 已寄生 → 肛门虫自动调教三连（:1221 CALL COM13_AUTO——真身）
+  // 已寄生 → 肛门虫自动调教三连（CALL com13_auto——真身）
   fixture.store.set('base:1:1', 1000);
   fixture.load_module('event/source-check'); // #508：第三站真身要注册
-  fixture.era.beginTrain(0, 1); // #508：SOURCE 等调教域表要落得下（夹具守卫）
+  fixture.era.beginTrain(0, 1); // #508：SOURCE 等调教域表要落得下（夹具检查）
   await a_worm_trap(1, seq(50));
   assert.ok(
     text_lines(fixture).some((line) => line.includes('＜肛门虫插入中＞')),
-    'COM13_AUTO 真身被调（:1221；本体只在 TEQUIP:90 时改说「肛门触手」）',
+    'com13_auto 真身被调（本体只在 TEQUIP:90 时改说「肛门触手」）',
   );
   assert.equal(
     fixture.store.get('deltabase:1:0'),
     0,
-    'LOSEBASE 经 SOURCE_CHECK_AUTO 结算进 BASE 并清零',
+    'LOSEBASE 经 source_check_auto 结算进 BASE 并清零',
   );
   assert.equal(
     fixture.store.get('source:1:14'),
     0,
-    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（逃离 400 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 source_check_auto、逐键置零在 nextTurnInTrain）（逃离 400 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('base:1:0'),
@@ -662,7 +634,7 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   // 润滑位 ×1.30（TIMES 截断）：本体的 50 档变 65；余下的 93 是同一次
-  // 自动调教三连的损耗（COM13_AUTO 的 LOSEBASE + SOURCE_CHECK_AUTO 的
+  // 自动调教三连的损耗（com13_auto 的 LOSEBASE + source_check_auto 的
   // 苦痛追加），#508 前它们落在没有结算点的 losebase 上、不进 BASE
   fixture.store.set('cflag:1:503', 8);
   fixture.store.set('base:1:1', 1000);
@@ -674,11 +646,11 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
   );
 });
 
-test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使免疫', async () => {
+test('love_bug_trap：伤害 + 爱抚自动调教（com0_auto）+ 天使免疫', async () => {
   const fixture = setup_world();
   const { love_bug_trap } = load(fixture);
-  // 开调教域（#508）：COM0_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫），
-  // 第三站 SOURCE_CHECK_AUTO 的真身也要显式载入（生产由 main-loop.js:47 加载）
+  // 开调教域（#508）：com0_auto 真身写的 SOURCE 要落得下（夹具镜像引擎检查），
+  // 第三站 source_check_auto 的真身也要显式载入（生产由 main-loop 加载）
   fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('talent:1:314', 6); // 天使
@@ -691,7 +663,7 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
     '两个提前返回档都不走自动调教',
   );
   await love_bug_trap(1, seq(10, 39)); // else 档：39+1 = 40
-  // CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）。
+  // CALL com0_auto——真身（ere/event/event-autotrain.js 的 com0_auto）。
   // **这条身份断言排在第一**（#538）：调用点退回占位或调错变体（com63_auto）
   // 时，本体的伤害照打，但 COM0_AUTO 的 LOSEBASE:0 = 1 不再进 BASE——下面
   // 那条合并了「本体伤害 + 本体损耗」的数值断言会先红在「体力 -= RAND:40+1…」
@@ -699,27 +671,27 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
   // 是「调对了哪个变体」的直接证据，先判它。
   assert.ok(
     text_lines(fixture).some((line) => line.includes('≪摸来摸去≫')),
-    'COM0_AUTO 真身被调（:1283）',
+    'com0_auto 真身被调',
   );
   assert.equal(
     fixture.store.get('base:1:0'),
     2000 - 40 - 1,
-    '体力 -= RAND:40+1（本体伤害）+ 1（COM0_AUTO 的 LOSEBASE:0，已结算落 BASE）',
+    '体力 -= RAND:40+1（本体伤害）+ 1（com0_auto 的 LOSEBASE:0，已结算落 BASE）',
   );
   assert.equal(
     fixture.store.get('source:1:4'),
     0,
-    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）',
+    'SOURCE 已被第三站清零（换算在 source_check_auto、逐键置零在 nextTurnInTrain）',
   );
   assert.equal(
     fixture.store.get('base:1:1'),
     995,
-    '气力 -5（本体 LOSEBASE:1 = 5 经 SOURCE_CHECK_AUTO 结算落 BASE）',
+    '气力 -5（本体 LOSEBASE:1 = 5 经 source_check_auto 结算落 BASE）',
   );
   assert.equal(
     fixture.store.get('palam:1:8'),
     125,
-    '耻情 125 = COM0_AUTO 的露出 100 × 自动调教倍率 1.25（本世界无射精加成）',
+    '耻情 125 = com0_auto 的露出 100 × 自动调教倍率 1.25（本世界无射精加成）',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('talent:1:10', 1); // 胆怯
@@ -728,11 +700,11 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
   assert.equal(
     fixture.store.get('base:1:1'),
     1000 - 10 - 5,
-    '胆怯气力 -10 + COM0_AUTO 的 LOSEBASE:1 = 5（已结算落 BASE）',
+    '胆怯气力 -10 + com0_auto 的 LOSEBASE:1 = 5（已结算落 BASE）',
   );
 });
 
-test('DARK_JUEL（:1295）：掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶值下降', async () => {
+test('dark_juel_trap：掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶值下降', async () => {
   const fixture = setup_world();
   const { dark_juel_trap } = load(fixture);
   fixture.store.set('cflag:1:151', 200); // 善恶值 > 150
@@ -743,9 +715,9 @@ test('DARK_JUEL（:1295）：掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶�
   );
   await dark_juel_trap(1, seq(2, 1)); // RAND:5=2 → 100；RAND:4=1 不克服
   // 阶层 1：floor(100×(99+1)/100) = 100；无素质补正
-  assert.equal(fixture.store.get('cflag:1:581') || 0, 100, '掠夺换金（:1337）');
-  assert.equal(fixture.store.get('juel:1:6'), 10, '屈服宝珠 +DICE/10（:1339）');
-  assert.equal(fixture.store.get('cflag:1:151'), 199, 'KARMA 真身扣善恶值 1');
+  assert.equal(fixture.store.get('cflag:1:581') || 0, 100, '掠夺换金');
+  assert.equal(fixture.store.get('juel:1:6'), 10, '屈服宝珠 +DICE/10');
+  assert.equal(fixture.store.get('cflag:1:151'), 199, 'karma 真身扣善恶值 1');
   // 素质补正：好奇心 +5、盗贼 +DICE/5
   fixture.store.set('talent:1:23', 1);
   fixture.store.set('talent:1:203', 1);
@@ -755,7 +727,7 @@ test('DARK_JUEL（:1295）：掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶�
   assert.equal(fixture.store.get('cflag:1:581') || 0, 126, '好奇心与盗贼补正');
 });
 
-test('DEF/ATK/MAG_DOWN（:1349-1400）：三项阵地弱化各落各槽', async () => {
+test('def_down_trap / atk_down_trap / mag_down_trap：三项阵地弱化各落各槽', async () => {
   const fixture = setup_world();
   const { def_down_trap, atk_down_trap, mag_down_trap } = load(fixture);
   await def_down_trap(1, seq(0, 10)); // 0 + 10 + 1
@@ -766,7 +738,7 @@ test('DEF/ATK/MAG_DOWN（:1349-1400）：三项阵地弱化各落各槽', async 
   assert.equal(fixture.store.get('cflag:1:682') || 0, 11, 'CFLAG:682 += DICE');
 });
 
-test('ALL_DOWN（:1403）：三槽同值（掷骰减半 +1）', async () => {
+test('all_down_trap：三槽同值（掷骰减半 +1）', async () => {
   const fixture = setup_world();
   const { all_down_trap } = load(fixture);
   await all_down_trap(1, seq(0, 10)); // floor((0+10)/2)+1 = 6
@@ -775,12 +747,12 @@ test('ALL_DOWN（:1403）：三槽同值（掷骰减半 +1）', async () => {
   assert.equal(fixture.store.get('cflag:1:682') || 0, 6, '682 +6');
 });
 
-test('诈骗陷阱剧情1（魔改 :16-86）：善恶值定价、金库双记、扣所持金', async () => {
+test('诈骗陷阱剧情1（魔改）：善恶值定价、金库双记、扣所持金', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
   const { fraud_trap } = load(fixture);
-  fixture.store.set('flag:5', 32); // 日志开（数值效果在守卫内，文件头）
+  fixture.store.set('flag:5', 32); // 日志开（数值效果在检查内，文件头）
   fixture.store.set('cflag:1:151', 200); // 善恶值 > 100
   fixture.store.set('cflag:1:9', 10);
   fixture.store.set('cflag:1:580', 3000);
@@ -796,7 +768,7 @@ test('诈骗陷阱剧情1（魔改 :16-86）：善恶值定价、金库双记、
   fixture.store.set('cflag:1:151', -100);
   await fraud_trap(1, seq(0, 0, 0, 0));
   assert.equal(fixture.store.get('cflag:1:580'), 2000, '冷血者不被骗');
-  // 日志关 → 整个效果不发生（魔改原作如此，文件头 + #14）
+  // 日志关 → 整个效果不发生（有意为之，文件头 + #14）
   fixture.store.set('flag:5', 0);
   fixture.store.set('cflag:1:151', 200);
   await fraud_trap(1, seq(0, 0, 0, 0));
@@ -807,7 +779,7 @@ test('诈骗陷阱剧情1（魔改 :16-86）：善恶值定价、金库双记、
   );
 });
 
-test('诈骗陷阱剧情3（魔改 :189-231）：双倍欠条（CFLAG:582）', async () => {
+test('诈骗陷阱剧情3（魔改）：双倍欠条（CFLAG:582）', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { fraud_trap } = load(fixture);
@@ -820,19 +792,11 @@ test('诈骗陷阱剧情3（魔改 :189-231）：双倍欠条（CFLAG:582）', a
   await fraud_trap(1, seq(2, 0, 0, 0, 0, 0, 0));
   // 收下 500、债 +1000：MONEY += 500、580 += 500、582 -= 1000
   assert.equal(era_flag.money - money0, 500, 'MONEY += COST');
-  assert.equal(
-    fixture.store.get('cflag:1:580'),
-    3500,
-    '所持金 += COST（:230）',
-  );
-  assert.equal(
-    fixture.store.get('cflag:1:582') || 0,
-    -1000,
-    '债务 COST×2（:231）',
-  );
+  assert.equal(fixture.store.get('cflag:1:580'), 3500, '所持金 += COST');
+  assert.equal(fixture.store.get('cflag:1:582') || 0, -1000, '债务 COST×2');
 });
 
-// —— @DUNGEON_TRAP 主循环 ——
+// —— dungeon_trap 主循环 ——
 
 test('主循环：A 槽分发落穴——库存消耗、513 记忆、尾部 WAIT', async () => {
   const fixture = setup_world();
@@ -847,22 +811,18 @@ test('主循环：A 槽分发落穴——库存消耗、513 记忆、尾部 WAIT
     2000 - 80,
     '落穴伤害经分发落变量',
   );
-  assert.equal(fixture.store.get('item:60'), 2, '作动消耗一个库存（:163）');
-  // B/C 空槽的 TRAP_ID = 0 也走「作动」路径（:167 无差别写记忆）——
-  // 末槽覆盖 513 = 0；A 槽的 60 只在 B/C 置 -1 的世界里可见（:68 提前出）
-  assert.equal(
-    fixture.store.get('cflag:1:513') || 0,
-    0,
-    '空槽覆盖记忆（原作 :167）',
-  );
-  // c512 逐步账：A 槽 -1 后钳 0（钳位在 ITEM 分支前，:87-88）；B 槽
+  assert.equal(fixture.store.get('item:60'), 2, '作动消耗一个库存');
+  // B/C 空槽的 TRAP_ID = 0 也走「作动」路径（无差别写记忆）——
+  // 末槽覆盖 513 = 0；A 槽的 60 只在 B/C 置 -1 的世界里可见（提前出）
+  assert.equal(fixture.store.get('cflag:1:513') || 0, 0, '空槽覆盖记忆');
+  // c512 逐步账：A 槽 -1 后钳 0（钳位在 ITEM 分支前）；B 槽
   // ITEM<1 → -1；C 槽 c513(0)==trap_id(0) 的 +1 与 c513==0 的 -1 相抵后
   // 钳 0，再 ITEM<1 → -1
-  assert.equal(fixture.store.get('cflag:1:512'), -1, '空槽的回避率衰减（:95）');
-  assert.equal(fixture.waits.length, waits0 + 1, '尾部 WAIT（:191）');
+  assert.equal(fixture.store.get('cflag:1:512'), -1, '空槽的回避率衰减');
+  assert.equal(fixture.waits.length, waits0 + 1, '尾部 WAIT');
 });
 
-test('主循环：A 空查 B（FLAG:310）、C 槽兜底（FLAG:320）', async () => {
+test('主循环：A 空查 B（FLAG:310）、C 槽默认（FLAG:320）', async () => {
   const fixture = setup_world();
   const { dungeon_trap } = load(fixture);
   fixture.store.set('flag:300', -1);
@@ -872,13 +832,13 @@ test('主循环：A 空查 B（FLAG:310）、C 槽兜底（FLAG:320）', async (
   await dungeon_trap(1, 0, seq(19, 50), { d20: 50 });
   assert.equal(fixture.store.get('item:61'), 0, 'C 槽的陷阱被消耗');
   assert.equal(fixture.store.get('base:1:0'), 2000 - 50, '射箭伤害（Z=50）');
-  assert.equal(fixture.store.get('cflag:1:513'), 61, '末槽的记忆（:167）');
+  assert.equal(fixture.store.get('cflag:1:513'), 61, '末槽的记忆');
   // 三槽全空 → RETURN 0（不经 WAIT）
   fixture.store.set('flag:320', -1);
   const waits0 = fixture.waits.length;
   const ctx = await dungeon_trap(1, 0, seq(), { d20: 50 });
   assert.equal(ctx.d20, 50, '全空返回不动 D:20');
-  assert.equal(fixture.waits.length, waits0, '中途 RETURN 不 WAIT（:68）');
+  assert.equal(fixture.waits.length, waits0, '中途 RETURN 不 WAIT');
 });
 
 test('主循环：无库存不掷骰（e2e 序列稳定的前提）', async () => {
@@ -887,18 +847,14 @@ test('主循环：无库存不掷骰（e2e 序列稳定的前提）', async () =
   fixture.store.set('flag:300', 60); // 有陷阱但无库存
   const calls = [];
   await dungeon_trap(1, 0, counting(calls), { d20: 50 });
-  assert.deepEqual(calls, [], 'ITEM < 1 时 RAND:20 不掷（:94 的 ELSEIF 短路）');
-  assert.equal(
-    fixture.store.get('cflag:1:512'),
-    -1,
-    '库存空 → 回避率 -1（:95）',
-  );
+  assert.deepEqual(calls, [], 'ITEM < 1 时 RAND:20 不掷（ELSEIF 短路）');
+  assert.equal(fixture.store.get('cflag:1:512'), -1, '库存空 → 回避率 -1');
 });
 
 test('主循环：同一陷阱连击回避链（512 累计 → 印回避、不消耗）', async () => {
   const fixture = setup_world();
   const { dungeon_trap } = load(fixture);
-  fixture.store.set('flag:5', 32); // 印行在日志守卫内（:96）
+  fixture.store.set('flag:5', 32); // 印行在日志检查内
   fixture.store.set('flag:300', 60);
   fixture.store.set('item:60', 5);
   fixture.store.set('cflag:1:512', 6);
@@ -909,19 +865,15 @@ test('主循环：同一陷阱连击回避链（512 累计 → 印回避、不�
     text_lines(fixture).some((line) =>
       line.includes('≪同一陷阱发动限制≫勇者回避了陷阱'),
     ),
-    '回避演出（:97-98，FLAG:5 关时不印——本用例置 32）',
+    '回避演出（FLAG:5 关时不印——本用例置 32）',
   );
-  // 回避分支无 RETURN → TRAP_NOUSE = 0（:73 保险值）——回避也算作动：
-  // 消耗一个、写记忆（原作 :157-159 注释：只有一方通行与弹射可能 RETURN 1）
+  // 回避分支无 RETURN → TRAP_NOUSE = 0（保险值）——回避也算作动：
+  // 消耗一个、写记忆（只有一方通行与弹射可能 RETURN 1）
   assert.equal(fixture.store.get('item:60'), 4, '回避也消耗（TRAP_NOUSE = 0）');
-  assert.equal(
-    fixture.store.get('cflag:1:513') || 0,
-    0,
-    'B/C 空槽覆盖记忆（:167）',
-  );
+  assert.equal(fixture.store.get('cflag:1:513') || 0, 0, 'B/C 空槽覆盖记忆');
   // 512 逐步账：A 槽 6+1=7、回避 -1 = 6；B 槽（513=60≠0，ITEM<1）-1 = 5；
   // C 槽（513=0==trap_id 的 +1 与 ==0 的 -1 相抵，ITEM<1）-1 = 4
-  assert.equal(fixture.store.get('cflag:1:512'), 4, '回避 → 512 -1（:100）');
+  assert.equal(fixture.store.get('cflag:1:512'), 4, '回避 → 512 -1');
 });
 
 test('主循环：自动补货（FLAG:5 位 6）按价扣金库', async () => {
@@ -937,26 +889,18 @@ test('主循环：自动补货（FLAG:5 位 6）按价扣金库', async () => {
   const legit0 = era_exflag.legit_money;
   era_flag.money = money0 + 5000;
   await dungeon_trap(1, 0, seq(19, 0), { d20: 50 }); // Z=0 → 召唤
-  assert.equal(fixture.store.get('item:69'), 1, '消耗 0 → 补 1（:174）');
-  assert.equal(
-    era_flag.money,
-    money0 + 5000 - 1000,
-    'MONEY -= TRAP_PRICE（:175）',
-  );
-  assert.equal(
-    era_exflag.legit_money,
-    legit0 - 1000,
-    'EX_FLAG:4444 同扣（:176）',
-  );
+  assert.equal(fixture.store.get('item:69'), 1, '消耗 0 → 补 1');
+  assert.equal(era_flag.money, money0 + 5000 - 1000, 'MONEY -= trap_price');
+  assert.equal(era_exflag.legit_money, legit0 - 1000, 'EX_FLAG:4444 同扣');
 });
 
-test('主循环：TELEPORT 的 D:20 写回经 ctx（run_dungeon 集成）', async () => {
+test('主循环：teleport_trap 的 D:20 写回经 ctx（run_dungeon 集成）', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:300', 62); // 传送陷阱
   fixture.store.set('item:62', 2);
-  // FLAG:5 位 4（无敌人开关）：跳过战斗臂，让陷阱那条收线成为 D:20 的唯一
-  // 来源。战斗臂里 dungeon.js:678 的 `walk20 = move_ctx.d20` 在 MAGIC 落
-  // 真身后同样会写出 1（TELEPORT_MAGIC 与陷阱 TELEPORT 是同一个值），两条
+  // FLAG:5 位 4（无敌人开关）：跳过战斗分支，让陷阱那条收线成为 D:20 的唯一
+  // 来源。战斗分支里 dungeon.js 的 `walk20 = move_ctx.d20` 在 MAGIC 落
+  // 真身后同样会写出 1（teleport_magic 与陷阱 teleport_trap 是同一个值），两条
   // 路合流后本用例分不出陷阱收线在不在——阶段 5a 的 T4 全量变异 M551 实证。
   fixture.store.set('flag:5', 16);
   const { run_dungeon } = fixture.load_module('dungeon/dungeon');
@@ -964,17 +908,13 @@ test('主循环：TELEPORT 的 D:20 写回经 ctx（run_dungeon 集成）', asyn
   // 回避判定 20 < 1 假 → TELEPORT：Z = 1 < 20 → ctx.d20 = 1。
   // 收线删掉时 walk20 停在 7（= WALK 累加值），故本断言两态可分。
   await run_dungeon(1, () => 1);
-  assert.equal(
-    fixture.store.get('cflag:1:502'),
-    1,
-    'CFLAG:502 = D:20 = 1（:748）',
-  );
+  assert.equal(fixture.store.get('cflag:1:502'), 1, 'CFLAG:502 = D:20 = 1');
   assert.equal(fixture.store.get('item:62'), 1, '传送陷阱被消耗');
 });
 
-// —— @SLAVE_TRAP_SET（迎击方补充）——
+// —— slave_trap_set（迎击方补充）——
 
-test('SLAVE_TRAP_SET：库存 < 99 补一个、≥ 99 按价换金', async () => {
+test('slave_trap_set：库存 < 99 补一个、≥ 99 按价换金', async () => {
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { dungeon_trap } = load(fixture);
@@ -986,25 +926,17 @@ test('SLAVE_TRAP_SET：库存 < 99 补一个、≥ 99 按价换金', async () =>
   fixture.store.set('item:61', 99); // 满 → 换金
   const money0 = era_flag.money;
   const ctx = await dungeon_trap(1, 0, seq(), { d20: 50 });
-  assert.equal(fixture.store.get('item:60'), 6, '库存 5 → 补 1（:1440）');
-  assert.equal(
-    era_flag.money - money0,
-    50,
-    '满仓按 TRAP_PRICE(61) 换金（:1445）',
-  );
-  assert.equal(ctx.d20, 50, '迎击者在补充后直接返回（:24-25）');
+  assert.equal(fixture.store.get('item:60'), 6, '库存 5 → 补 1');
+  assert.equal(era_flag.money - money0, 50, '满仓按 trap_price(61) 换金');
+  assert.equal(ctx.d20, 50, '迎击者在补充后直接返回');
   // 非补充行动（CFLAG:500 != 2）→ 不补
   fixture.store.set('cflag:1:500', 5);
   fixture.store.set('item:60', 5);
   await dungeon_trap(1, 0, seq(), { d20: 50 });
-  assert.equal(
-    fixture.store.get('item:60'),
-    5,
-    '非补充行动不动库存（:1427-1428）',
-  );
+  assert.equal(fixture.store.get('item:60'), 5, '非补充行动不动库存');
 });
 
-// —— CAMPAIGN_TRAP（#469 起真身）——
+// —— campaign_trap（#469 起真身）——
 
 test('campaign_trap()：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
   const fixture = create_era_fixture();
@@ -1012,12 +944,12 @@ test('campaign_trap()：FLAG:400 < 1 时恒 0（未在战役中）', async () =>
   assert.equal(await campaign_trap(301), 0);
 });
 
-test('campaign_trap()：FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回陷阱 ID', async () => {
+test('campaign_trap()：FLAG:400 = 1 时按 campaign_trap_1 的映射表返回陷阱 ID', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:400', 1);
   fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
   const { campaign_trap } = load(fixture);
-  // 原作 CAMPAIGN_1.ERB:126-165 的 SELECTCASE 全表（12 个 CASE，逐行；#469
+  // 战役 1 映射表的 SELECTCASE 全表（12 个 CASE，逐行；#469
   // 需求审查 3a 指出旧用例只抽了 3 行），外加三处空档与段外槽号
   const CASES = [
     [301, 60, '2 层落穴'],
@@ -1046,23 +978,21 @@ test('campaign_trap()：FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回�
   }
 });
 
-test('campaign_trap()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 原作预置值 0', async () => {
+test('campaign_trap()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 预置值 0', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:400', 1);
   // 不 load_module('page/page-campaign-1')：族声明空间含 1 但未注册实现，
   // 命中 DispatchFamily 的合法缺失分支（非拼写错误）
   const { campaign_trap } = load(fixture);
-  assert.equal(await campaign_trap(301), 0, 'whenMissing 原作预置值 0');
+  assert.equal(await campaign_trap(301), 0, 'whenMissing 预置值 0');
 });
 
 // —— #597：陷阱段收尾的 PRINTL 只结束上一行，不是空行 ——
 //
-// 六个陷阱段（:259-260 落穴 / :351-352 瞬移 / :400-401 单向 / :453-454
-// 催情气体 / :915-916 蜘蛛网 / :1276-1277 爱虫）尾部各有一个
-// `SIF FLAG:5 & 32` + `PRINTL  `。它前面那条原作输出是**不换行**的
+// 六个陷阱段（落穴 / 瞬移 / 单向 / 催情气体 / 蜘蛛网 / 爱虫）尾部各有一个
+// `SIF FLAG:5 & 32` + `PRINTL  `。它前面那条输出是**不换行**的
 // `PRINTFORM` 串，所以那个 PRINTL 只是把那一行收尾——ere 侧每段
-// `era.print` 自成一行，再补 `era.println()` 就是多出来的空行（#597；
-// 语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+// `era.print` 自成一行，再补 `era.println()` 就是多出来的空行（#597）。
 
 /** 空行条目：夹具的 println 落成 br，print('') 落成空文本条目 */
 function blank_entries(fixture) {
@@ -1071,7 +1001,7 @@ function blank_entries(fixture) {
   );
 }
 
-/** 断言 `needle` 那一行之后**紧跟**一个空行（分条件的真空行，反方向守卫） */
+/** 断言 `needle` 那一行之后**紧跟**一个空行（分条件的真空行，反方向检查） */
 function assert_blank_after(fixture, needle, label) {
   const index = fixture.lines.findIndex(
     (line) => line.type === 'text' && line.text.includes(needle),
@@ -1102,40 +1032,35 @@ function assert_no_blank_after(fixture, needle, label) {
 test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON）', async () => {
   const CASES = [
     [
-      '落穴（:259-260）',
+      '落穴',
       'pit_trap',
       (mod) => mod.pit_trap(1, seq(50, 39)),
       '受到40点伤害！',
     ],
     [
-      '瞬移（:351-352）',
+      '瞬移',
       'teleport_trap',
       (mod) => mod.teleport_trap(1, seq(50, 77), { d20: 50 }),
       '被传送走了！',
     ],
     [
-      '单向通行（:400-401）',
+      '单向通行',
       'one_way_trap',
       (mod) => mod.one_way_trap(1, seq(0), { d20: 40 }),
       '心急如焚',
     ],
     [
-      '催情气体（:453-454）',
+      '催情气体',
       'love_gas_trap',
       (mod) => mod.love_gas_trap(1, seq(5)),
       '气息慌乱了',
     ],
+    ['蜘蛛网', 'net_trap', (mod) => mod.net_trap(1), '消耗了相当的精力'],
     [
-      '蜘蛛网（:915-916）',
-      'net_trap',
-      (mod) => mod.net_trap(1),
-      '消耗了相当的精力',
-    ],
-    [
-      '爱虫（:1276-1277）',
+      '爱虫',
       'love_bug_trap',
       async (mod, fixture) => {
-        // 的 COM0_AUTO 真身要开调教域（#508），同 LOVE_BUG 主用例
+        // 的 com0_auto 真身要开调教域（#508），同 LOVE_BUG 主用例
         fixture.load_module('event/source-check');
         fixture.era.beginTrain(0, 1);
         await mod.love_bug_trap(1, seq(10, 39));
@@ -1152,7 +1077,7 @@ test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON�
     assert_no_blank_after(fixture, needle, label);
   }
 
-  // 落穴段整场演出只有 PRINTFORM 串，通篇不应出现空行（更宽的守卫：
+  // 落穴段整场演出只有 PRINTFORM 串，通篇不应出现空行（更宽的检查：
   // 除了收尾那一处，别处多补也会被这条抓到）
   const fixture = setup_world();
   fixture.store.set('flag:5', 32);
@@ -1160,13 +1085,13 @@ test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON�
   assert.equal(
     blank_entries(fixture).length,
     0,
-    '落穴段演出通篇无空行（含 :259-260 那一处）',
+    '落穴段演出通篇无空行（含收尾那一处）',
   );
 });
 
 /**
- * 但有两段的收尾 PRINTL 是**分条件**的真空行——原作在那一支里前一条输出
- * 已经换过行（瞬移的 :347 PRINTFORML、催情气体的 :445 PRINTL），落上去就是
+ * 但有两段的收尾 PRINTL 是**分条件**的真空行——那一支里前一条输出
+ * 已经换过行（瞬移的 PRINTFORML、催情气体的 PRINTL），落上去就是
  * 空行；条件不成立时它只收尾未换行的 PRINTFORM，不产生空行（#597）。
  * 这两条必须成对钉住：无条件补空行与删除分支空行都要红。
  */

@@ -44,9 +44,9 @@ export default [
     must_mention: '钳到库存上限',
   },
   {
-    desc: 'M7185 PREGNANCY_MASTER 自跳缺陷被静默吞掉',
+    desc: 'M7185 pregnancy_master 自跳缺陷被静默吞掉',
     file: 'ere/dungeon/monster-summon.js',
-    find: "  throw new Error('原作 PREGNANCY_MASTER 会无限尾调用自身');",
+    find: "  throw new Error('pregnancy_master 会无限尾调用自身');",
     replace: '  return 0;',
     tests: ['chara-pregnancy'],
     must_mention: '自跳缺陷以明确错误终止',
