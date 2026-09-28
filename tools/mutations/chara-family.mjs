@@ -160,7 +160,7 @@ export default [
       '    await relation_debugprint();',
       '    return;',
       'ere/page/page-shop.js',
-      '7788 接通 RELATION_DEBUGPRINT',
+      '7788 接通 relation_debugprint',
     ),
     tests: ['page-shop'],
   },

@@ -1,27 +1,27 @@
 /**
- * @file 角色基础条组件：体力/气力条（@LIFE_BAR/@VITAL_BAR）与槽条 progress
+ * @file 角色基础条组件：体力/气力条（life_bar/vital_bar）与槽条 progress
  * 格助手（射精/母乳/触手段共用）。
  *
- * 表现层（#74 裁定的 BASE 条版）：原作是 BAR 命令的字符条 + (cur/max) 数值
- * + 状态标；ere 侧换 printMultiColumns 的 progress 格——
+ * 表现层（#74 决定的 BASE 条版）：引擎的百分比条 + (cur/max) 数值
+ * + 状态标（printMultiColumns 的 progress 格）——
  *   - 语义值＝条内文字（体力/气力/射精（名）…）+ 条后文字 `(cur/max)`，
  *     读取层零解析直取（progress 格的条内/条后文字即全部语义，
  *     #212 起 `(cur/max)` 映射为 gauge{val, max}）；
- *   - 条形几何不进事件流（原作 14/32 格字符条 vs 引擎百分比条）；
+ *   - 条形几何不进事件流（14/32 格字符条还是引擎百分比条都不影响语义值）；
  *   - 状态标（★濒死★ 等）与「避孕套使用中」缀在 (cur/max) 之后，玩家可见。
  *
- * 立绘分支不镜像（:1145-1156 的 IF 立绘 → 条宽 14，且存活臂渲染的是
- * BAR 0——恒空条，原作自身的显示缺陷；黄金样本第 48 行的 14 格空条即此形态，
+ * 立绘分支不镜像（立绘开关开时条宽 14，且该分支渲染的是恒空条
+ * ——显示缺陷，黄金样本第 48 行的 14 格空条即它，
  * 比对只取 val/max、不受影响）：条宽是纯表现，ere 侧恒 < 24——引擎
  * ProgressConfig 的 barWidth ≥ 24 会把条后文字列（el-col-0）整列藏掉，
- * 语义值必须玩家可见（#74 硬约束）。开关本体（#DIM SAVEDATA 立绘，
- * 魔改新增/魔改使用.ERH:6；SYSTEM/CONFIG.ERB 的 268/270 行置位）随设置票落表，
+ * 语义值必须玩家可见（#74 硬约束）。立绘开关本体（存档设置项）随设置票落表，
  * 届时只影响条宽、无语义面。
  *
- * ARG:0（指定角色）→ 显式参数 cid（Emuera 的 TARGET 换出换入习语不移植，
- * ere 一律显式传参）；ARG:1（末尾免改行）不承载——progress 格一行一条，
- * 当前唯一调用点 @SHOW_STATUS 用默认带改行（CHARA_INFO_SHOW 后续调用点
- * 需要同行拼接时再定形状，见 docs/stub-registry.md 的角色信息票）。
+ * 指定角色走显式参数 cid（TARGET 换出换入习语不移植，
+ * ere 一律显式传参）；「末尾免改行」不承载——progress 格一行一条，
+ * ere 一律显式传参）；「末尾免改行」第二参不承载——progress 格一行一条，
+ * 调用点是 page-train.js 状态画面与 chara-info-title.js 角色信息块
+ * （#596 起逐行，同行拼接的形状问题不再出现）。
  */
 
 const era = require('#/era-electron');
@@ -33,12 +33,12 @@ const BASE_BAR_WIDTH = 16;
 /**
  * 基础槽条的 progress 格：`(cur/max)` 数值 + 可选缀文。
  *
- * @param {string} label 条内文字（体力/气力/射精（名）…；原作名字后的全角
+ * @param {string} label 条内文字（体力/气力/射精（名）…；名字后的全角
  *   对齐衬垫是字符条时代的排版，progress 格由引擎排版，不镜像）
- * @param {number} cur 当前值（负值按 0 渲染——原作死亡分支 BAR 0 的写法）
+ * @param {number} cur 当前值（负值按 0 渲染——死亡分支的恒空条写法）
  * @param {number} max 上限
  * @param {{value_width?: number, suffix?: string}} [options]
- *   value_width：数值右对齐宽（LIFE/VITAL 的 {BASE,4} 取 4；射精/母乳段
+ *   value_width：数值右对齐宽（体力/气力条取 4；射精/母乳段
  *   无宽度规格取 0＝不填充）
  *   suffix：缀文（避孕套使用中 / ★濒死★…，缀在 (cur/max) 之后）
  */
@@ -62,13 +62,13 @@ function print_base_bar(
 }
 
 /**
- * @LIFE_BAR（CHARA_INFO_SHOW ver1.1.2.ERB:1129-1168）：体力条。
- * MAXBASE:0 ≤ 0 时静默返回（:1137-1141）；濒死（< 500）/死亡（< 0）缀标。
+ * life_bar：体力条。
+ * MAXBASE:0 ≤ 0 时静默返回；濒死（< 500）/死亡（< 0）缀标。
  * @param {number} cid 角色 ID
  */
 function life_bar(cid) {
   const max = era.get(`maxbase:${cid}:0`) || 0;
-  // IF MAXBASE:0 <= 0 → RETURN 0（无输出）
+  // MAXBASE:0 <= 0 → 无输出直接返回
   if (max <= 0) {
     return;
   }
@@ -80,13 +80,13 @@ function life_bar(cid) {
   } else if (cur < 500) {
     suffix = '★濒死★';
   }
-  // 体力 BAR +（{BASE:0, 4}/{MAXBASE:0}）——数值宽 4
+  // 体力条：数值右对齐宽 4
   print_base_bar('体力', cur, max, { value_width: 4, suffix });
 }
 
 /**
- * @VITAL_BAR（CHARA_INFO_SHOW ver1.1.2.ERB:1175-1203）：气力条。
- * MAXBASE:1 ≤ 0 时静默返回（:1183-1187）；气力 0（≤ 0）缀标（:1198-1199）。
+ * vital_bar：气力条。
+ * MAXBASE:1 ≤ 0 时静默返回；气力 0（≤ 0）缀标。
  * @param {number} cid 角色 ID
  */
 function vital_bar(cid) {

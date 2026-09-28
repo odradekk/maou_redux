@@ -1,46 +1,46 @@
 /**
- * @file 调教指令菜单：@SHOW_USERCOM（绘制）与 @USERCOM（输入分发）的处理器
+ * @file 调教指令菜单：SHOW_USERCOM（绘制）与 USERCOM（输入分发）的处理器
  * （issue #44；指令按钮 #45 挂载、#213 换紧凑序号与升格标签、#214 挂
- * 子菜单按钮组、自定义 COM 菜单与 @USERCOM 全分支分发）。
+ * 子菜单按钮组、自定义 COM 菜单与 USERCOM 全分支分发）。
  *
- * == 指令方格的两条渲染路径（#214 起，GETBIT(FLAG:5,34) 分流，:9-13） ==
+ * == 指令方格的两条渲染路径（#214 起，按 FLAG:5 位 34 分流） ==
  *
- *   - ON（FLAG:5 位 34 = 1）：@SHOW_COMMENU 的自定义菜单——标签先过
- *     @GET_ADV_COM 升格（TRAIN_NAME/trainalias 取名，64 合成臂读
+ *   - ON（FLAG:5 位 34 = 1）：show_commenu 的自定义菜单——标签先过
+ *     get_adv_com 升格（TRAIN_NAME/trainalias 取名，64 合成分支读
  *     TRAINNAME 静态名），编号印 L_IDX 紧凑序号。开局默认即 ON
- *     （@EVENTFIRST 置 FLAG:5 = 17179934119，bit34 = 1，event-first.js
- *     :110；golden 两份样本的方格形态（升格名）为此态）。CONFIG.ERB 的
- *     [18]「显示高级调教指令的名称」（INVERTBIT FLAG:5,34）是开关本体，
+ *     （开局置 FLAG:5 = 17179934119，位 34 = 1，见 event-first.js；
+ *     golden 两份样本的方格样式（升格名）为此态）。设置页的
+ *     [18]「显示高级调教指令的名称」（翻转 FLAG:5 位 34）是开关本体，
  *     随设定票。
- *   - OFF：Emuera 引擎内建 TRAIN 列表（循环步骤 2，system-flow.md）——
- *     TRAINNAME 静态名 + 同样的位次编号（#211：引擎把输入当「全部非空
- *     TRAINNAME 条目中的位次」解释），**不升格**（CONFIG [18] 的选项
- *     语义反证：内建态不显示高级名，否则该选项无意义）。ere 侧由
+ *   - OFF：内建样式的指令列表（train 循环步骤 2，system-flow.md）——
+ *     TRAINNAME 静态名 + 同样的位次编号（#211：编号按「全部非空
+ *     TRAINNAME 条目中的位次」解释），**不升格**（设置页 [18] 的选项
+ *     语义反证：内建态不显示高级名，否则该选项无意义），由
  *     draw_builtin_comlist 承载（#45/#213 的既有职责，标签自 #214 起
  *     按内建语义取静态名）。
  *
- * == 清除语义（@CLEAR_TO_POINT 的记名差异） ==
+ * == 清除语义（不移植 CLEAR_TO_POINT） ==
  *
- * 原作：SET_CLEAR_POINT 每回合在 SHOW_STATUS 尾更新锚点（TFLAG:999）；
- * GETBIT 时引擎先画内建列表（追加），@SHOW_USERCOM 开头的 CLEAR_TO_POINT
- * 清「锚点之后的行」＝只清引擎刚画的那段，再画自定义菜单。净效果＝每回合
+ * SET_CLEAR_POINT 每回合在 SHOW_STATUS 尾更新清除点（TFLAG:999）；位 34
+ * 开启时先画一遍内建列表（追加），SHOW_USERCOM 开头的 CLEAR_TO_POINT 再清
+ * 「清除点之后的行」＝只清刚画的那段，随后画自定义菜单。净效果＝每回合
  * **追加**一个自定义方格（旧方格随叙述滚上去，golden 日志每回合一组方格
- * 为证）。ere 侧没有「引擎预画内建列表」这一步，两条路径都直接追加一次
- * ——CLEAR_TO_POINT 无可清对象，不镜像（记名差异：原作内建列表的闪现
- * 过程不可见，净输出一致）。
+ * 为证）。ere 侧没有「预画内建列表」这一步，两条路径都直接追加一次
+ * ——CLEAR_TO_POINT 无可清对象，不移植（内建列表的闪现过程玩家不可见，
+ * 净输出一致）。
  *
  * 指令按钮的编号/标签规则（#45/#213 确立）：编号印 L_IDX（com-index
- * 映射，升格前的位次、与可用性无关）、自定义菜单的标签先过升格。原作
- * PRINTC 三列排版 → 按钮平铺（记名差异：排版；PR #30 通则——正文不带
+ * 映射，升格前的位次、与可用性无关）、自定义菜单的标签先过升格。三列
+ * 排版改为按钮平铺（有意偏离：仅排版；PR #30 通则——正文不带
  * [编号] 前缀，引擎 showAcc 自动拼）。
  *
- * @P_C（#212 真身，本文件 p_c）：TSTR:90 承载上次的指令名，TRAIN_NAME
- * 定制名（trainalias）优先级高于静态名表——见 p_c 的三级回落。
+ * p_c（#212）：TSTR:90 承载上次的指令名，静态名表优先、
+ * 定制名（trainalias）只补空——见 p_c 的三级回落。
  *
- * 本文件已无存根化的原作调用（docs/stub-registry.md）：SHOW_CHARA_INFO
- * （USERCOM:105）与 STAIN_INFO（:108）随 #390 落地真身。@USERCOM 各分支的 RETURN 1/0 被 Emuera 引擎忽略
- * （重绘回合画面是唯一效果），ere 侧 emit 同构（返回值无消费者）。
- * SETCOLOR 0xDDA0DD 的「上次的调教指令」淡紫色不镜像（记名差异）。
+ * 本文件已无存根调用：SHOW_CHARA_INFO 与 STAIN_INFO 已随 #390 换真身。
+ * USERCOM 各分支的 RETURN 1/0 均无效果（重绘回合画面是唯一效果），
+ * ere 侧 emit 同构（返回值无消费者）。
+ * 「上次的调教指令」的淡紫色（0xDDA0DD）不移植（有意偏离：着色）。
  */
 
 const era = require('#/era-electron');
@@ -64,17 +64,17 @@ const { show_chara_info } = require('#/page/page-chara-info-show');
 const { stain_info } = require('#/page/components/stain-info');
 const { condom_settings } = require('#/system/train/com-condom');
 
-/** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
+/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
 // %TRAINNAME:64%・%TRAINNAME:L_I% 的复合动作分隔（lang-table.js 整串
-// 豁免本字面量：・ 是原作样式，归一成 · 会切断与 target/ 指令名的对应）
+// 豁免本字面量：・ 是既有指令名的分隔样式，归一成 · 会对不上指令名）
 const COMPOUND_SEP = '・';
 
 /**
- * GETBIT(FLAG:5,34)：显示高级调教指令名（自定义 COM 菜单开关，CONFIG.ERB
- * 的 [18]）。FLAG:5 的开局值 17179934119 > 2^32，JS 位运算符会先截成
- * int32（bit34 恒丢），用除法取位。
+ * FLAG:5 位 34：显示高级调教指令名（自定义 COM 菜单开关，设置页的
+ * [18]）。FLAG:5 的开局值 17179934119 > 2^32，JS 位运算符会先截成
+ * int32（位 34 恒丢），用除法取位。
  * @returns {boolean}
  */
 function show_advanced_names() {
@@ -83,21 +83,21 @@ function show_advanced_names() {
 }
 
 /**
- * @P_C（TRAIN_MAIN.ERB:771-780）：上次的调教指令名 → TSTR:90。
- * 三级回落（1:1）：TRAINNAME（静态名表 traincommandname）→ TRAIN_NAME
+ * p_c：上次的调教指令名 → TSTR:90。
+ * 三级回落：TRAINNAME（静态名表 traincommandname）→ TRAIN_NAME
  * （trainalias 定制覆盖层）→ 全角空格。TSTR:90 的承载是 yml/TStr.yml 的
  * 扩展普通表（#5 建模项定论，引擎探针见 test/tstr-train-table.test.js）；
- * 「BEGIN TRAIN 清空」由 train-loop.js 初始化段手动镜像。
+ * 进调教时的清空由 train-loop.js 初始化段手动完成。
  */
 function p_c() {
   const local = era_flag.prevcom;
-  // TSTR:90 '= TRAINNAME:LOCAL（'= 是表达式赋值；TRAINNAME ＝静态名表）
+  // TSTR:90 = TRAINNAME:LOCAL（TRAINNAME ＝ 静态名表）
   let name = era.get(`traincommandname:${local}`) ?? '';
-  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）
+  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）
   if (name.length < 1) {
     name = read_train_name(local);
   }
-  // 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）
+  // 仍空 → 全角空格（占位非空串——显示宽度 ≥ 1）
   if (name.length < 1) {
     name = '　';
   }
@@ -105,36 +105,34 @@ function p_c() {
 }
 
 /**
- * @SHOW_COMMENU 的方格标签（USERCOM.ERB:210-214）：升格后的号取名字。
- * 64 的合成臂（RESULT == 64 且 L_I != 64）读 CSV 静态名（TRAINNAME，两段
+ * show_commenu 的方格标签：升格后的号取名字。
+ * 64 的合成分支（RESULT == 64 且 L_I != 64）读 TRAINNAME 静态名（两段
  * 拼接）；其余读 TRAIN_NAME（trainalias 覆盖层）。纯函数抽出便于断言。
  *
- * @param {number} adv @GET_ADV_COM 的返回值（升格后的号；未升格 = 原号）
+ * @param {number} adv get_adv_com 的返回值（升格后的号；未升格 = 原号）
  * @param {number} id 当前指令号（L_I，升格前）
  * @returns {string} 按钮正文
  */
 function command_button_label(adv, id) {
   if (adv === 64 && id !== 64) {
-    // PRINTFORMC %TRAINNAME:64%・%TRAINNAME:L_I%（CSV 静态名）。
+    // %TRAINNAME:64%・%TRAINNAME:L_I%（静态名两段拼接）。
     // ・ 是复合动作的分隔样式（沿用训练名表的语序），与
     // SHOW_STATUS 的射精行同款处置（lang-table 整串豁免，见 COMPOUND_SEP）
     return `${era.get('traincommandname:64') ?? ''}${COMPOUND_SEP}${
       era.get(`traincommandname:${id}`) ?? ''
     }`;
   }
-  // PRINTFORMC %TRAIN_NAME:RESULT%（游戏自建数组，trainalias）
+  // %TRAIN_NAME:RESULT%（trainalias 覆盖层）
   return read_train_name(adv);
 }
 
 /**
- * @SHOW_COMMENU（USERCOM.ERB:188-216）：自定义 COM 菜单的方格渲染。
- * 循环规则逐字：遍历非空 TRAINNAME（= DECLARED_TRAIN_IDS 升序，FOR
- * L_I,0,300 + STRLENS 守卫的运行时等价物），L_IDX 在 COM_ABLE 检查
- * **之前**自增（位次与可用性无关、稳定——#211 实证）；COM_ABLE 过滤
- * （:200-203，前置 RESULT = 1 即「未定义即视为可执行」）；标签过
- * @GET_ADV_COM 升格、编号印位次（:209-214）。COM_ABLE 的二次扫描与
- * train-loop 步骤 5 的预扫描并存是源侧本来的形态（引擎扫一遍、SHOW_
- * COMMENU 再扫一遍，每回合两次）。
+ * show_commenu：自定义 COM 菜单的方格渲染。
+ * 循环规则：遍历非空 TRAINNAME（= DECLARED_TRAIN_IDS 升序，恰为全部非空
+ * 静态名），L_IDX 在 COM_ABLE 检查**之前**自增（位次与可用性无关、稳定
+ * ——#211 实证）；COM_ABLE 过滤（前置 RESULT = 1 即「未定义即视为可执行」）；
+ * 标签过 get_adv_com 升格、编号印位次。COM_ABLE 的检查每回合跑两遍
+ * （train-loop 步骤 5 的预扫描 + 本循环），是既有结构。
  * @returns {Promise<void>}
  */
 async function show_commenu() {
@@ -143,17 +141,16 @@ async function show_commenu() {
     if (able === 0) {
       continue; // SIF RESULT == 0 CONTINUE
     }
-    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I
+    const adv = await get_adv_com(id); // 取升格号
     era.printButton(command_button_label(adv, id), com_index(id));
   }
-  // 循环后的 PRINTL 只结束方格最后那一行（PRINTC 系不换行，见
-  // CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里不补空行——
-  // golden 里方格与分割线之间只有一个空行（train-natural-log:108-114），
-  // 那一个来自下一段的 :14 PRINTL。
+  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个
+  // 空行，那一个来自下一段的 println（排版语义见 CONTEXT.md「输出 API
+  // 的排版与对齐」）。
 }
 
 /**
- * 内建渲染臂（Emuera TRAIN 循环步骤 2 的 ere 等价，#45/#213 的既有职责）：
+ * 内建渲染路径（train 循环步骤 2 的等价承载，#45/#213 的既有职责）：
  * TRAINNAME 静态名 + L_IDX 位次编号，不升格（见文件头「两条渲染路径」）。
  * @param {number[]} usable 可执行指令表（train-loop 的 COM_ABLE 预扫描）
  * @returns {void}
@@ -164,9 +161,9 @@ function draw_builtin_comlist(usable) {
   }
 }
 
-// —— 过滤按钮的染色（USERCOM.ERB:38-84 的 SETCOLOR 值 → CSS 色）——
+// —— 过滤按钮的染色（RGB 值 → CSS 色）——
 // 开启（FLAG:25 对应位 = 1）一律灰 100,100,100；未开启各系色，唯独
-// 爱抚系（104）的 ELSE 无 SETCOLOR（引擎默认色，config 不传 color）
+// 爱抚系（104）未开启时不染色（渲染层默认色，config 不传 color）
 const FILTER_GRAY = '#646464';
 const FILTER_COLORS = {
   105: '#6495ED', // 器具系 100,149,237（CornflowerBlue）
@@ -174,7 +171,7 @@ const FILTER_COLORS = {
   107: '#DB7093', // 肛门性交系 219,112,147（PaleVioletRed）
   108: '#FF6347', // ＳＭ系 255,99,71（Tomato）
 };
-/** 过滤按钮表：[按钮号, 文案, FLAG:25 位掩码]（:38-84 逐条） */
+/** 过滤按钮表：[按钮号, 文案, FLAG:25 位掩码] */
 const FILTER_BUTTONS = [
   [104, '爱抚系过滤', 1],
   [105, '器具系过滤', 2],
@@ -184,10 +181,10 @@ const FILTER_BUTTONS = [
 ];
 
 /**
- * 交代助手[102] / 对换调教[112] 的守卫（:20-35——渲染与分发用同一判据，
- * @USERCOM 的 :110/:123 同款条件）。ASSI:1 = flag:10013（@EVENTTRAIN
- * 记录的助手，era_flag.assi_record）；CFLAG:0 = 调教状态（2 = 可交易/
- * 对换，enter-enemy.js 注释与 page-select-target.js:66 先例）。
+ * 交代助手[102] / 对换调教[112] 的显示与分发条件（渲染与分发用同一判断
+ * 条件）。ASSI:1 = flag:10013（EVENTTRAIN 记录的助手，era_flag.assi_
+ * record）；CFLAG:0 = 调教状态（2 = 可交易/对换，enter-enemy.js 注释与
+ * page-select-target.js 先例）。
  * @returns {{can_handover: boolean, can_swap: boolean}}
  */
 function handover_guard_ok() {
@@ -204,8 +201,8 @@ function handover_guard_ok() {
 }
 
 on('SHOW_USERCOM', async (usable = []) => {
-  // 指令方格：GETBIT(FLAG:5,34) → 自定义菜单（show_commenu），
-  // 否则引擎内建列表（ere 侧 draw_builtin_comlist）——两条路径都是净追加
+  // 指令方格：FLAG:5 位 34 开 → 自定义菜单（show_commenu），
+  // 否则内建路径（draw_builtin_comlist）——两条路径都是净追加
   // （清除语义见文件头「清除语义」节）
   if (show_advanced_names()) {
     await show_commenu();
@@ -215,7 +212,7 @@ on('SHOW_USERCOM', async (usable = []) => {
   era.println(); // PRINTL（空行）
   era.drawLine(); // DRAWLINE
   // RESETCOLOR —— 无 ere 对应语义，不镜像
-  // —— 子菜单按钮组（:17-91；PRINTC 三列 → 按钮平铺，记名差异）——
+  // —— 子菜单按钮组（PRINTC 三列 → 按钮平铺，有意偏离：仅排版）——
   era.printButton('能力表示', 100);
   era.printButton('污秽表示', 101);
   const guards = handover_guard_ok();
@@ -240,19 +237,17 @@ on('SHOW_USERCOM', async (usable = []) => {
           : undefined,
     );
   }
-  // 起的四个 PRINTC（[990] 调教菜单登录 / [991] 表示 / [992] 实行 /
-  // [999] 调教结束）与 :86、:92 的两个 PRINTL：PRINTC 不换行，那两个 PRINTL
-  // 只结束各自所在的那一行，不产生空行——golden 的 train-natural-log:115-118
-  // 里网格行与 [990]/[999] 逐行相邻。ere 的 printButton 自成一行（＝ PRINTC
-  // + 收尾的 PRINTL），按钮之间与页脚之后都不再补空行（语义与勘误见
-  // CONTEXT.md「输出 API 与原作的对应」）。
+  // 尾部四个按钮（[990] 调教菜单登录 / [991] 表示 / [992] 实行 /
+  // [999] 调教结束）逐行相邻、不夹空行——golden 里网格行与 [990]/[999]
+  // 逐行相邻为证。ere 的 printButton 自成一行，按钮之间与页脚之后都不再
+  // 补空行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
   era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）
   if (game_train.指令菜单长度 > 0) {
     era.printButton('调教菜单表示', 991);
     era.printButton('调教菜单实行', 992);
   }
   era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）
-  // PREVCOM > -1 → CALL P_C（置 TSTR:90）→ ＜上次的调教指令：…＞
+  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞
   // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
   if (era_flag.prevcom > -1) {
     p_c();
@@ -261,7 +256,7 @@ on('SHOW_USERCOM', async (usable = []) => {
 });
 
 on('USERCOM', async (result) => {
-  // REDRAW 1 —— 不镜像；RETURN 1/0 引擎均忽略（见文件头）
+  // REDRAW 1 —— 不移植；RETURN 1/0 均无效果（见文件头）
   const guards = handover_guard_ok();
   if (result === 100) {
     // 能力表示（#390 真身：ARG:1 缺省 -1，即调教时的信息）
@@ -315,7 +310,7 @@ on('USERCOM', async (result) => {
     return;
   }
   // 过滤位翻转（落尾 RETURN 0——重绘即反馈）；清位掩码 =
-  // 31 ^ 位（源侧的 30/29/27/23/15 逐字值与 31^mask 等价，取位算式）
+  // 31 ^ 位（30/29/27/23/15 各值与 31^mask 等价，取位算式）
   for (const [acc, , mask] of FILTER_BUTTONS) {
     if (result === acc) {
       if ((game_train.指令过滤 & mask) !== 0) {
@@ -345,12 +340,12 @@ on('USERCOM', async (result) => {
     return;
   }
   if (result === 999) {
-    // 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）
+    // 调教结束 → begin(STATE.AFTERTRAIN) 转场（事件链暂存，回合循环提交）
     begin(STATE.AFTERTRAIN);
     return;
   }
-  // RETURN 0：其余输入落到链尾，引擎重绘回合画面（不提示——与
-  // 主菜单对无效输入的处置一致）
+  // 其余输入落到链尾、重绘回合画面（不提示——与主菜单对无效输入的处置
+  // 一致）
 });
 
 module.exports = { command_button_label, show_commenu };

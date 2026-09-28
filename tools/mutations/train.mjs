@@ -1,4 +1,4 @@
-// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
+﻿// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
@@ -401,9 +401,9 @@ export default [
   {
     desc: 'M744 按钮编号印回 L_I（渲染侧映射删——方格与玩家输入错位）',
     file: 'ere/page/page-usercom.js',
-    find: '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), com_index(id));',
+    find: '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), com_index(id));',
     replace:
-      '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
+      '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
@@ -420,13 +420,13 @@ export default [
     must_mention: '标签换、编号不换',
   },
   {
-    desc: 'M746 64 合成臂删（%TRAINNAME:64%・%TRAINNAME:L_I% 的合成标签不再成形）',
+    desc: 'M746 64 合成分支删（%TRAINNAME:64%・%TRAINNAME:L_I% 的合成标签不再成形）',
     file: 'ere/page/page-usercom.js',
     find: `  if (adv === 64 && id !== 64) {`,
     replace: `  if (false) {
     // 变异：合成臂删（64 合成时直接落 TRAIN_NAME）`,
     tests: ['page-usercom'],
-    must_mention: '64 合成臂',
+    must_mention: '64 合成分支',
   },
   {
     desc: 'M747 get_adv_com 的缺失语义改 0（RETURN ARG 变 RETURN 0——无规则的指令被升格去 0 号）',
@@ -505,14 +505,14 @@ export default [
   {
     desc: 'M760 SHOW_COMMENU 的 L_IDX 位次换成 L_I（升格前的号直印——位次映射在渲染处旁路）',
     file: 'ere/page/page-usercom.js',
-    find: '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), com_index(id));',
+    find: '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), com_index(id));',
     replace:
-      '    const adv = await get_adv_com(id); // CALL GET_ADV_COM, L_I\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
+      '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
   {
-    desc: 'M761 GETBIT 分流恒 OFF（自定义菜单臂删除——flag:5 开局态失灵）',
+    desc: 'M761 位测试分流恒 OFF（自定义菜单分支删除——flag:5 开局态失灵）',
     file: 'ere/page/page-usercom.js',
     find: `  if (show_advanced_names()) {
     await show_commenu();
@@ -524,7 +524,7 @@ export default [
     must_mention: '自定义菜单，标签取 TRAIN_NAME',
   },
   {
-    desc: 'M762 GETBIT 分流恒 ON（内建臂删除——OFF 态吃 trainalias 不吃静态名）',
+    desc: 'M762 位测试分流恒 ON（内建分支删除——OFF 态吃 trainalias 不吃静态名）',
     file: 'ere/page/page-usercom.js',
     find: `  if (show_advanced_names()) {
     await show_commenu();
@@ -533,7 +533,7 @@ export default [
   }`,
     replace: `  await show_commenu(); // 变异：恒自定义臂`,
     tests: ['page-usercom'],
-    must_mention: 'OFF 臂读 traincommandname',
+    must_mention: '内建渲染路径',
   },
   {
     desc: 'M763 SHOW_COMMENU 的 COM_ABLE 过滤删（不可用指令也渲染）',
@@ -544,7 +544,7 @@ export default [
     must_mention: 'COM_ABLE=0 的指令不得渲染',
   },
   {
-    desc: 'M764 子菜单按钮守卫删（交代助手/对换调教恒显示）',
+    desc: 'M764 子菜单按钮检查删（交代助手/对换调教恒显示）',
     file: 'ere/page/page-usercom.js',
     find: "  if (guards.can_handover) {\n    era.printButton('交代助手', 102); // （ASSI > 0 && ASSI:1 > 0）\n  }",
     replace: `  era.printButton('交代助手', 102); // 变异：无守卫`,
@@ -552,7 +552,7 @@ export default [
     must_mention: '默认态 9 个按钮',
   },
   {
-    desc: 'M765 FLAG:550 守卫删（991/992 无菜单也显示）',
+    desc: 'M765 FLAG:550 检查删（991/992 无菜单也显示）',
     file: 'ere/page/page-usercom.js',
     find: "  if (game_train.指令菜单长度 > 0) {\n    era.printButton('调教菜单表示', 991);\n    era.printButton('调教菜单实行', 992);\n  }",
     replace: `  era.printButton('调教菜单表示', 991); // 变异：无守卫

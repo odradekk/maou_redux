@@ -164,7 +164,7 @@ export default [
     replace: `    era.print('（设施·设备不在移植范围。）');
     await era.waitAnyKey(); // 变异：入口退回提示`,
     tests: ['page-shop'],
-    must_mention: '守卫成立应进设施真身',
+    must_mention: '条件成立应进设施真身',
   },
   {
     desc: 'M7280 回合结算：漏调苗床业务',

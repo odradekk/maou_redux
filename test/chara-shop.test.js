@@ -1,12 +1,11 @@
 /**
- * 异界勇者召唤测试（issue #399 / N15 段 3）：SHOP_CHARA.ERB 的七个函数。
+ * 异界勇者召唤测试（issue #399 / N15 段 3）：page-chara-shop.js 的七个函数。
  *
- * 缝 = ere/page/page-chara-shop.js 导出的函数；经唯一夹具观察玩家输出行、
- * 变量读写与角色列表。
+ * 被测对象 = ere/page/page-chara-shop.js 导出的函数；经唯一夹具观察玩家
+ * 输出行、变量读写与角色列表。
  *
- * 本屏在发布构建里没有入口（SHOP_MONSTER.ERB:32-35 的 `[IF DEBUG]` 档未
- * 移植，见该模块文件头），故全部用例直接驱动函数；随机源一律显式注入
- * （`() => 0`）。
+ * 本屏在发布构建里没有入口（调试专用分支未随移植，见该模块文件头），故
+ * 全部用例直接驱动函数；随机源一律显式注入（`() => 0`）。
  */
 
 const assert = require('node:assert/strict');
@@ -25,11 +24,10 @@ function history_texts(fixture) {
 }
 
 /**
- * 一览的一格（:378 的编号与名字 + :380 的价钱）：` [编号] ` + 名字补到 14
- * 显示宽 + 价钱（格首的空格是 `PRINTFORM  ` 的第二个空格——Emuera 只吃一个
- * 作分隔，见实现的注释）。原作的三个排版字面量在这里各写一份：编号宽 2
- * （段内编号恒 5 位，此宽度到不了）、名字宽 14、价钱 = @CHARA_IKAI_COST 的
- * 两项；「每行 5 格」由用例按整行钉住。
+ * 一览的一格（编号与名字 + 价钱）：` [编号] ` + 名字补到 14 显示宽 + 价钱
+ * （格首的空格是命令后双空格里充当正文的那一个，见实现的注释）。三个
+ * 排版字面量在这里各写一份：编号宽 2（段内编号恒 5 位，此宽度到不了）、
+ * 名字宽 14、价钱 = chara_ikai_cost 的两项；「每行 5 格」由用例按整行钉住。
  */
 function ikai_cell(id, name, coins, money) {
   const shown = [...name].reduce(
@@ -45,7 +43,7 @@ function ikai_cell(id, name, coins, money) {
 
 /**
  * 铺一个可召唤的世界：异界勇者的预设 211（yml/Chara211.yml 的编号）、
- * 钱与勋章各一档（:122 成交要 1500 与 1 枚勋章）。
+ * 钱与勋章各一档（成交要 1500 金与 1 枚勋章）。
  */
 function chara_world(seed = {}) {
   const fixture = create_era_fixture();
@@ -65,7 +63,7 @@ function chara_world(seed = {}) {
   return fixture;
 }
 
-/** 走一遍 @CHARA_SIM_SHOP：跑到输入耗尽或正常返回 */
+/** 走一遍 chara_sim_shop：跑到输入耗尽或正常返回 */
 async function run_chara_shop(seed = {}, ...inputs) {
   const fixture = chara_world(seed);
   fixture.set_inputs(...inputs);
@@ -78,9 +76,9 @@ async function run_chara_shop(seed = {}, ...inputs) {
   return fixture;
 }
 
-// —— @SHOW_SHOP_CHARA（:133-151） ——
+// —— show_shop_chara ——
 
-test('SHOW_SHOP_CHARA：头行 1:1（标题/说明/日期/所持金与勋章）与两处分隔线', () => {
+test('show_shop_chara：头行逐字（标题/说明/日期/所持金与勋章）与两处分隔线', () => {
   const fixture = chara_world({ 'flag:10004': 1234, 'exp:0:81': 5 });
   const { show_shop_chara } = fixture.load_module('page/page-chara-shop');
   show_shop_chara();
@@ -91,13 +89,13 @@ test('SHOW_SHOP_CHARA：头行 1:1（标题/说明/日期/所持金与勋章）�
     '所持金：1234点\t\t勋章：5点',
   ]);
   const dividers = fixture.lines.filter((line) => line.type === 'divider');
-  assert.equal(dividers.length, 2, ':141 与 :151 两处 DRAWLINE');
+  assert.equal(dividers.length, 2, '两处分隔线');
   assert(dividers.every((line) => line.border === 'solid'));
 });
 
-// —— @CHARA_SIM_SHOP（:11-128） ——
+// —— chara_sim_shop ——
 
-test('CHARA_SIM_SHOP：性别菜单是按钮 —— 999 清在售位退出（#572）', async () => {
+test('chara_sim_shop：性别菜单是按钮 —— 999 清在售位退出（#572）', async () => {
   const fixture = await run_chara_shop({ 'itemsales:202': 1 }, 999);
   // #572：三档性别与返回都是按钮（正文不带 [N]，引擎按 showAcc 拼；
   // 行尾用于列对齐的全角空格不再需要）
@@ -106,17 +104,17 @@ test('CHARA_SIM_SHOP：性别菜单是按钮 —— 999 清在售位退出（#57
       .filter((line) => line.type === 'button')
       .map((line) => line.rendered),
     ['[1] 男性', '[2] 女性', '[3] 扶她', '[999] 返回'],
-    ':30 的性别菜单与 :36 的返回',
+    '性别菜单与返回按钮',
   );
   const texts = history_texts(fixture);
-  assert.equal(fixture.store.get('itemsales:202'), 0, ':41 CALL CLEAR_SHOP');
+  assert.equal(fixture.store.get('itemsales:202'), 0, '清在售位');
   assert(
     !texts.some((line) => line.includes('回应了你的召唤')),
     '999 直接退出，不进召唤段',
   );
 
-  // 旧行为是「4 与 0 打回重问」——按钮化后白名单就是 1/2/3/999，越界值由
-  // 引擎拒收、不回传游戏，重问支结构性不可达（1:1 保留，不补用例）
+  // 「4 与 0 打回重问」的重问支——按钮化后白名单就是 1/2/3/999，越界值由
+  // 引擎拒收、不回传游戏，重问支结构性不可达（保留现状，不补用例）
   const rejected = chara_world({ 'itemsales:202': 1 });
   rejected.set_inputs(4);
   const { chara_sim_shop } = rejected.load_module('page/page-chara-shop');
@@ -126,18 +124,18 @@ test('CHARA_SIM_SHOP：性别菜单是按钮 —— 999 清在售位退出（#57
   );
 });
 
-test('CHARA_SIM_SHOP：召唤成功 —— 入队、性别素质、生成、成交的账（钱 1500 + 勋章 1）', async () => {
+test('chara_sim_shop：召唤成功 —— 入队、性别素质、生成、成交的账（钱 1500 + 勋章 1）', async () => {
   const fixture = await run_chara_shop({}, 1, 0);
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
-  assert(fixture.era.getAddedCharacters().includes(211), ':64 ADDCHARA 211');
+  assert(fixture.era.getAddedCharacters().includes(211), '211 入队');
   assert(
     fixture.var_writes.some(
       (w) => w.name === 'talent:211:122' && w.value === 1,
     ),
-    ':68-69 男性档写 TALENT:A:122 = 1（随后 CHAR_MAKE 按预设覆写，原作同序）',
+    '男性档写 talent:211:122 = 1（随后 chara_make 按预设覆写，同序）',
   );
-  assert.equal(fixture.store.get('cflag:211:1'), 0, ':75 CFLAG:A:1 = 0');
+  assert.equal(fixture.store.get('cflag:211:1'), 0, 'CFLAG:211:1 = 0');
   // 成交：钱 1500、勋章 1、标记
   assert.equal(era_flag.money, 100000 - 1500);
   assert.equal(era_exflag.legit_money, -1500);
@@ -148,40 +146,40 @@ test('CHARA_SIM_SHOP：召唤成功 —— 入队、性别素质、生成、成�
   );
 });
 
-test('CHARA_SIM_SHOP：扶她档写 TALENT:121，且成交标记只在 CFLAG:999 == 0 时写', async () => {
+test('chara_sim_shop：扶她档写 TALENT:121，且成交标记只在 CFLAG:999 == 0 时写', async () => {
   const fixture = await run_chara_shop({ 'cflag:211:999': 1 }, 3, 0);
   assert(
     fixture.var_writes.some(
       (w) => w.name === 'talent:211:121' && w.value === 1,
     ),
-    ':70-71 扶她档',
+    '扶她档写 TALENT:121',
   );
   assert.equal(
     fixture.store.get('cflag:211:999'),
     1,
-    ':123-124 已非 0 时不重写（1:1 保留的守卫）',
+    '已非 0 时不重写（原样保留的检查）',
   );
 });
 
-test('CHARA_SIM_SHOP：成交的金钱闸（<= 1500 只报「金钱不够！」、不扣款不加人）', async () => {
+test('chara_sim_shop：成交的金钱闸（<= 1500 只报「金钱不够！」、不扣款不加人）', async () => {
   const fixture = await run_chara_shop({ 'flag:10004': 1500 }, 1, 0);
   const era_flag = fixture.load_module('era-utils/era-flag');
   const texts = history_texts(fixture);
-  assert(texts.includes('金钱不够！'), ':114-115');
+  assert(texts.includes('金钱不够！'), '金钱闸拦下');
   assert.equal(era_flag.money, 1500, '不扣款');
   assert.equal(fixture.store.get('exp:0:81'), 3, '不扣勋章');
   assert.equal(fixture.store.get('cflag:211:999') ?? 0, 0, '不写成交标记');
 });
 
-test('CHARA_SIM_SHOP：成交的勋章闸（< 1 只报「勋章不够！」）', async () => {
+test('chara_sim_shop：成交的勋章闸（< 1 只报「勋章不够！」）', async () => {
   const fixture = await run_chara_shop({ 'exp:0:81': 0 }, 1, 0);
   const era_flag = fixture.load_module('era-utils/era-flag');
-  assert(history_texts(fixture).includes('勋章不够！'), ':116-118');
+  assert(history_texts(fixture).includes('勋章不够！'), '勋章闸拦下');
   assert.equal(era_flag.money, 100000, '不扣款');
   assert.equal(fixture.store.get('cflag:211:999') ?? 0, 0);
 });
 
-test('CHARA_SIM_SHOP：再换一个（[1]）——退人扣 1500 重来；钱不够则只报错', async () => {
+test('chara_sim_shop：再换一个（[1]）——退人扣 1500 重来；钱不够则只报错', async () => {
   {
     const fixture = await run_chara_shop(
       { 'flag:10004': 100000 },
@@ -210,9 +208,9 @@ test('CHARA_SIM_SHOP：再换一个（[1]）——退人扣 1500 重来；钱不
   }
 });
 
-// —— @CHARA_IKAI_COST（:451-458） ——
+// —— chara_ikai_cost ——
 
-test('CHARA_IKAI_COST：勋章 = L_I % 10000 / 5（截断、下限 3），金钱 = 勋章 × 2000', () => {
+test('chara_ikai_cost：勋章 = L_I % 10000 / 5（截断、下限 3），金钱 = 勋章 × 2000', () => {
   const fixture = chara_world();
   const { chara_ikai_cost } = fixture.load_module('page/page-chara-shop');
   for (const [l_i, c, d] of [
@@ -231,7 +229,7 @@ test('CHARA_IKAI_COST：勋章 = L_I % 10000 / 5（截断、下限 3），金钱
 
 // —— #572：选项按钮化 ——
 
-test('CHARA_SIM_SHOP：召唤确认的两项是按钮（#572）', async () => {
+test('chara_sim_shop：召唤确认的两项是按钮（#572）', async () => {
   const fixture = await run_chara_shop({ 'flag:10004': 100000 }, 1, 0);
   const male = (fixture.store.get('talent:211:122') || 0) !== 0;
   const buttons = fixture.lines
@@ -240,7 +238,7 @@ test('CHARA_SIM_SHOP：召唤确认的两项是按钮（#572）', async () => {
   assert.deepEqual(
     buttons.slice(-2),
     [`[0] 就是${male ? '他' : '她'}了`, '[1] 再换一个（花费1500）'],
-    ':90-96 的两项（正文不带 [N]）',
+    '确认的两项（正文不带 [N]）',
   );
   assert(
     !history_texts(fixture).some((line) => line.includes('[0] 就是')),
@@ -248,28 +246,28 @@ test('CHARA_SIM_SHOP：召唤确认的两项是按钮（#572）', async () => {
   );
 });
 
-// —— @CHAR_IKAI_APPEND（:435-449） ——
+// —— char_ikai_append ——
 
-test('CHAR_IKAI_APPEND：入队、恒把 TARGET 还原（:437/:448 的存还）、清 CFLAG:1', async () => {
+test('char_ikai_append：入队、恒把 TARGET 还原（存还）、清 CFLAG:1', async () => {
   const fixture = chara_world({ 'flag:1': 77 });
   fixture.seed_chara(10001, { id: 10001, name: '异界人甲' });
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 5;
   const { char_ikai_append } = fixture.load_module('page/page-chara-shop');
   const a = await char_ikai_append(10001, rand0);
-  assert.equal(a, 10001, 'RETURN A = 新角色号');
+  assert.equal(a, 10001, '返回新角色号');
   assert(fixture.era.getAddedCharacters().includes(10001));
-  assert.equal(fixture.store.get('cflag:10001:1'), 0, ':446');
-  assert.equal(era_flag.target, 5, 'TARGET 还原为调用前的值（LOCAL 的存还）');
+  assert.equal(fixture.store.get('cflag:10001:1'), 0, 'CFLAG:10001:1 = 0');
+  assert.equal(era_flag.target, 5, 'TARGET 还原为调用前的值');
 });
 
-// —— @CHAR_IKAI_CREATE（:361-432） ——
+// —— char_ikai_create ——
 
-test('CHAR_IKAI_CREATE：一览只列「有预设且不在场」的编号，999 退出', async () => {
+test('char_ikai_create：一览只列「有预设且不在场」的编号，999 退出', async () => {
   const fixture = chara_world();
   fixture.seed_chara(10001, { id: 10001, name: '异界人甲' });
   fixture.seed_chara(10002, { id: 10002, name: '异界人乙' });
-  // CSVNAME 的读数通道（era.get('chara:N') = 引擎的 staticData.chara[N]）
+  // 名字表的读数通道（era.get('chara:N') = 引擎的 staticData.chara[N]）
   fixture.store.set('chara:10001', { name: '异界人甲' });
   fixture.store.set('chara:10002', { name: '异界人乙' });
   // 10002 已在场 → 不再列出
@@ -293,7 +291,7 @@ test('CHAR_IKAI_CREATE：一览只列「有预设且不在场」的编号，999 
   assert(texts.includes('[999] 返回'));
 });
 
-test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格，首号 10000）', async () => {
+test('char_ikai_create：一览的排版字面量（名字补 14、每行 5 格，首号 10000）', async () => {
   // 六个可召唤的编号（10000 = 段首，正好站在 IKAI_IDS.start 上）：前五个
   // 占满一行，第六个另起一行
   const fixture = chara_world();
@@ -313,7 +311,7 @@ test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格�
   fixture.set_inputs(999);
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
   await char_ikai_create(rand0);
-  // 一览的每一行就是一次 era.print（原作 SIF LOCAL % 5 == 0 → PRINTL）
+  // 一览的每一行就是一次 era.print（每 5 格收一行）
   const rows = history_texts(fixture).filter((line) => line.includes('勋章&'));
   assert.deepEqual(rows, [
     [10000, 10001, 10002, 10003, 10004]
@@ -323,7 +321,7 @@ test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格�
   ]);
 });
 
-test('CHAR_IKAI_CREATE：金钱/勋章两道闸与成交的账', async () => {
+test('char_ikai_create：金钱/勋章两道闸与成交的账', async () => {
   // 钱不够：10099 要 38000 → 给 1000
   {
     const fixture = chara_world({ 'flag:10004': 1000, 'exp:0:81': 999 });
@@ -357,31 +355,31 @@ test('CHAR_IKAI_CREATE：金钱/勋章两道闸与成交的账', async () => {
     const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
     await char_ikai_create(rand0);
     assert(fixture.era.getAddedCharacters().includes(10099));
-    assert.equal(era_flag.money, 100000 - 38000, ':422');
-    assert.equal(era_exflag.legit_money, -38000, ':423 记账同步');
-    assert.equal(fixture.store.get('exp:0:81'), 1, ':424 扣勋章');
+    assert.equal(era_flag.money, 100000 - 38000, '扣钱 38000');
+    assert.equal(era_exflag.legit_money, -38000, '记账同步');
+    assert.equal(fixture.store.get('exp:0:81'), 1, '扣勋章');
     assert(
       history_texts(fixture).some((line) => line.includes('被你强行召唤了')),
     );
   }
 });
 
-test('CHAR_IKAI_CREATE：已登录的角色（FINDCHARA 命中）不重复扣费', async () => {
+test('char_ikai_create：已登录的角色（编号已在场）不重复扣费', async () => {
   const fixture = chara_world();
   fixture.seed_chara(10001, { id: 10001, name: '异界人甲' });
-  // 已在场：一览里不列出，但键入它的编号仍命中 A >= 0 的支
+  // 已在场：一览里不列出，但键入它的编号仍命中受理支
   fixture.era.addCharacter(10001);
   fixture.set_inputs(10001);
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
   await char_ikai_create(rand0);
-  assert.equal(era_flag.money, 100000, '不扣费（A < 0 的块整段跳过）');
+  assert.equal(era_flag.money, 100000, '不扣费（不在受理段，整块跳过）');
   assert(
     !history_texts(fixture).some((line) => line.includes('被你强行召唤了')),
   );
 });
 
-test('CHAR_IKAI_CREATE：无预设的编号直接打回（:400-403）', async () => {
+test('char_ikai_create：无预设的编号直接打回', async () => {
   const fixture = chara_world();
   fixture.set_inputs(99998, 999);
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
@@ -390,7 +388,7 @@ test('CHAR_IKAI_CREATE：无预设的编号直接打回（:400-403）', async ()
   assert.equal(
     texts.filter((line) => line.includes('强行从异世界召唤')).length,
     1,
-    ':363-365 的开场只画一次（打回不重画开场）',
+    '开场只画一次（打回不重画开场）',
   );
   assert(
     !texts.some((line) => line.includes('99998')),
@@ -398,9 +396,9 @@ test('CHAR_IKAI_CREATE：无预设的编号直接打回（:400-403）', async ()
   );
 });
 
-// —— @SELECT_CHARA / @BUY_CHARA（零调用点的同形两份） ——
+// —— select_chara / buy_chara（零调用点的同形两份） ——
 
-test('SELECT_CHARA：与 SELECT_MONSTER 同形，但缺两道守卫（段外与未点亮的编号也受理）', async () => {
+test('select_chara：与 select_monster 同形，但缺两道检查（段外与未点亮的编号也受理）', async () => {
   const fixture = chara_world({
     'itemprice:279': 15,
     'itemname:279': '精英魔兽',
@@ -410,13 +408,13 @@ test('SELECT_CHARA：与 SELECT_MONSTER 同形，但缺两道守卫（段外与�
   });
   fixture.set_inputs(279, 101, 101, 101, 0);
   const { select_chara } = fixture.load_module('page/page-chara-shop');
-  // 种族 1 → [1, 1]；279 在段内但没被点亮（guard 为假，照样受理）
+  // 种族 1 → [1, 1]；279 在段内但没被点亮（照样受理）
   const result = await select_chara(1, rand0);
-  assert.equal(result, 1, ':234 RETURN 1');
-  assert.equal(fixture.store.get('item:101'), 0, '@BUY_CHARA 的祭品扣除');
+  assert.equal(result, 1, '受理返回 1');
+  assert.equal(fixture.store.get('item:101'), 0, 'buy_chara 的祭品扣除');
 });
 
-test('BUY_CHARA：与 BUY_MONSTER 同形（确认处 [1] 取消不扣钱扣货）', async () => {
+test('buy_chara：与 buy_monster 同形（确认处 [1] 取消不扣钱扣货）', async () => {
   const fixture = chara_world({
     'itemprice:202': 15,
     'itemname:202': '精英狗头人',
@@ -433,8 +431,8 @@ test('BUY_CHARA：与 BUY_MONSTER 同形（确认处 [1] 取消不扣钱扣货�
   assert.equal(fixture.store.get('item:101'), 3, '不扣祭品');
 });
 
-test('CHAR_IKAI_CREATE：INRANGE 的上界是闭区间（100000 也查在场，不重复收费）', async () => {
-  // 源 :408 `INRANGE(L_I,10000,100000)` 两端闭——100000 且在库时不入新角色
+test('char_ikai_create：编号段的上界是闭区间（100000 也查在场，不重复收费）', async () => {
+  // 编号段检查两端闭（10000–100000）——100000 且在库时不入新角色
   const fixture = chara_world();
   fixture.seed_chara(100000, { id: 100000, name: '异界人丁' });
   fixture.store.set('chara:100000', { name: '异界人丁' });
@@ -449,27 +447,27 @@ test('CHAR_IKAI_CREATE：INRANGE 的上界是闭区间（100000 也查在场，�
   );
 });
 
-// —— 存根接线：召唤确认段的 @SHOW_CHARA_INFO（#390 真身落地后换接） ——
+// —— 召唤确认段接 show_chara_info 真身（#390） ——
 
-test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 异界勇者 211、页码 -2）', async () => {
+test('召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）', async () => {
   const fixture = await run_chara_shop({}, 1, 0);
   const texts = history_texts(fixture);
   assert(
     texts.some((line) => line.startsWith('NO.211 ')),
     '标题行 NO.<cid> 带的是召唤出的 211',
   );
-  // 页码 = -2 的判据：经验段（-2/-1/1 三臂）∧ 外貌段（-2/2 两臂）的交集
+  // 页码 = -2 的判定：经验段（-2/-1/1 三分支）∧ 外貌段（-2/2 两分支）的交集
   assert(
     texts.some((line) => line.includes('本级经验：')),
-    '-2 臂的经验段在（占位行只有一行）',
+    '-2 分支的经验段在（占位行只有一行）',
   );
   assert(
     texts.some((line) => line.includes('[发色：')),
-    '-2 臂的外貌段在（页码传错时这一行不在）',
+    '-2 分支的外貌段在（页码传错时这一行不在）',
   );
   assert(
     !texts.some((line) => line.startsWith('一人称：')),
-    '-2 臂无 SHOW_BLOCK 的人称行',
+    '-2 分支没有信息块的人称行',
   );
   assert(
     !texts.some((line) => line.includes('尚未移植')),
@@ -477,8 +475,8 @@ test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 异界勇者 211、�
   );
 });
 
-// —— 随机源透传（接线验收返工）：形参有缺省值时，实参被去掉会静静落回
-//    Math.random（#344 的形态：本机跑一次绿、CI 抽中才红） ——
+// —— 随机源透传（接入验收返工）：形参有缺省值时，实参被去掉会静静落回
+//    Math.random（#344 那类问题：本机跑一次绿、CI 抽中才红） ——
 
 /**
  * 把缺省随机源换成会抛的桩，再跑 fn。任何一环没把 `rand` 往下传、下游落回
@@ -497,7 +495,7 @@ async function without_default_rand(fn) {
   }
 }
 
-test('随机源透传：异界召唤全链吃注入的源（CHAR_MAKE / 信息屏）', async () => {
+test('随机源透传：异界召唤全链吃注入的源（char_make / 信息屏）', async () => {
   const fixture = await without_default_rand(() => run_chara_shop({}, 1, 0));
   assert(
     history_texts(fixture).some((line) => line.includes('确定要召唤')),
@@ -505,7 +503,7 @@ test('随机源透传：异界召唤全链吃注入的源（CHAR_MAKE / 信息�
   );
 });
 
-test('随机源透传：强行召唤链吃注入的源（CHAR_IKAI_APPEND → CHAR_INIT）', async () => {
+test('随机源透传：强行召唤链吃注入的源（char_ikai_append → char_init）', async () => {
   const fixture = chara_world({ 'exp:0:81': 20 });
   fixture.seed_chara(10099, { id: 10099, name: '异界人丙' });
   fixture.store.set('chara:10099', { name: '异界人丙' });
@@ -514,13 +512,13 @@ test('随机源透传：强行召唤链吃注入的源（CHAR_IKAI_APPEND → CH
   await without_default_rand(() => char_ikai_create(rand0));
   assert(
     fixture.era.getAddedCharacters().includes(10099),
-    '召唤落地（全链跑完）',
+    '召唤入队（全链跑完）',
   );
 });
 
-test('随机源透传：SELECT_CHARA / BUY_CHARA 两个同形出口也吃注入的源', async () => {
+test('随机源透传：select_chara / buy_chara 两个同形出口也吃注入的源', async () => {
   {
-    // SELECT_CHARA → SELECT_FOLLOWER → BUY_CHARA 的同款链
+    // select_chara → select_follower → buy_chara 的同款链
     const fixture = chara_world({
       'itemprice:279': 15,
       'itemname:279': '精英魔兽',
@@ -531,10 +529,10 @@ test('随机源透传：SELECT_CHARA / BUY_CHARA 两个同形出口也吃注入�
     fixture.set_inputs(279, 101, 101, 101, 0);
     const { select_chara } = fixture.load_module('page/page-chara-shop');
     const result = await without_default_rand(() => select_chara(1, rand0));
-    assert.equal(result, 1, 'SELECT_CHARA 全链跑完');
+    assert.equal(result, 1, 'select_chara 全链跑完');
   }
   {
-    // BUY_CHARA 的独立出口（绕开 SELECT_CHARA，三格状态手工立起来）
+    // buy_chara 的独立出口（绕开 select_chara，三格状态手工立起来）
     const fixture = chara_world({
       'itemprice:202': 15,
       'itemname:202': '精英狗头人',
@@ -549,6 +547,6 @@ test('随机源透传：SELECT_CHARA / BUY_CHARA 两个同形出口也吃注入�
     shop_state.race2 = 1;
     shop_state.chosen = 202;
     const result = await without_default_rand(() => buy_chara(rand0));
-    assert.equal(result, 1, 'BUY_CHARA 全链跑完');
+    assert.equal(result, 1, 'buy_chara 全链跑完');
   }
 });

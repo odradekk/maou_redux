@@ -2,9 +2,8 @@
  * @file ere/page/page-chara-info.js 的行为测试（issue #391）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖行动徽章/比较器/婚姻文本三个纯函数、
- * 四个列表函数的排序契约、主循环 CHARA_INFO 的翻页与分派、个别信息页
- * CHARA_INFO_INDIVIDUAL 的按钮分发与导航（详情正文 SHOW_CHARA_INFO 由
- * page-chara-info-show.js 模块承载，行为经本文件的用例间接覆盖）。
+ * 四个列表函数的排序契约、主循环 chara_info 的翻页与分派、个别信息页
+ * chara_info_individual 的按钮分发与导航（详情正文 show_chara_info 由
  */
 
 'use strict';
@@ -41,7 +40,7 @@ function buttons_with(fixture, accelerator) {
 }
 
 /**
- * 显示宽度：全角按 2 格、半角按 1 格（原作 Emuera 的字符格口径）。
+ * 显示宽度：全角按 2 格、半角按 1 格。
  * 只覆盖本屏会出现的字符——U+3000 全角空格、U+2015 横线、CJK 汉字与全角
  * 标点、半角 ASCII；不是通用的 East Asian Width 实现，别拿去量别处的文本。
  * @param {string} text
@@ -53,7 +52,7 @@ function display_width(text) {
     const code = char.codePointAt(0);
     const wide =
       code === 0x3000 || // 全角空格（这一屏的列对齐靠它）
-      code === 0x2015 || // ―（SHOW_CHARA_ACT 回落文案里的横线）
+      code === 0x2015 || // ―（show_chara_act 回落文案里的横线）
       (code >= 0x2e80 && code <= 0xa4cf) || // CJK 部首～彝文（汉字都在内）
       (code >= 0xac00 && code <= 0xd7a3) || // 谚文音节
       (code >= 0xf900 && code <= 0xfaff) || // CJK 兼容表意文字
@@ -65,9 +64,9 @@ function display_width(text) {
   return width;
 }
 
-// —— SHOW_CHARA_ACT ——
+// —— show_chara_act ——
 
-test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状态回落残留字面量——表驱动走完 state 整个维度', () => {
+test('show_chara_act：状态码到徽章文本/颜色的映射，未登记状态回落残留字面量——表驱动走完 state 整个维度', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { show_chara_act } = fixture.load_module('page/page-chara-info');
@@ -82,7 +81,7 @@ test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状�
     [8, '[拘束台]', '#64ff64'],
     [9, '[ NTR中]', '#ff0000'],
     [10, '[育儿室]', '#64ff64'],
-    [99, '-F\u3000\u2015\u3000', undefined], // 未登记状态：原作残留字面量
+    [99, '-F\u3000\u2015\u3000', undefined], // 未登记状态：残留字面量
   ];
   fixture.store.set('cflag:1:501', 3);
   for (const [state, content, color] of ACT_TABLE) {
@@ -92,9 +91,9 @@ test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状�
   }
 });
 
-// —— COMPARE_CHARA_ACT ——
+// —— compare_chara_act ——
 
-test('COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜', () => {
+test('compare_chara_act：按 (状态+11-act)%11 排名，同排名再按楼层/ID 决胜', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   add_chara(fixture, 2);
@@ -110,8 +109,8 @@ test('COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/
     '苗床（rank 5）排在可调教（rank 9）之前',
   );
 
-  // 状态 2/3（侵攻中/迎击中）：源 :813 的 `… == 2 || … == 3 && 楼层不等` 按
-  // Emuera 的「&& 与 || 同优先级、左结合」读作 `(状态 ∈ {2,3}) && 楼层不等`，
+  // 状态 2/3（侵攻中/迎击中）：这一支的条件是 `(状态 ∈ {2,3}) && 楼层不等`，
+  // 不是「状态 2 直接过、状态 3 才比楼层」，
   // 楼层相等时整支不命中、落到末行的 ID 决胜（#517）
   fixture.store.set('cflag:1:1', 2);
   fixture.store.set('cflag:2:1', 2);
@@ -137,18 +136,18 @@ test('COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/
   assert.equal(compare_chara_act(2, 1, 2), 1);
 });
 
-// —— CHARA_MARRIGE_BEFORE ——
+// —— chara_marriage_before ——
 
-test('CHARA_MARRIGE_BEFORE：%10==0 早退、category 0/2/6 分档', () => {
+test('chara_marriage_before：%10==0 早退、category 0/2/6 分档', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { chara_marriage_before } = fixture.load_module('page/page-chara-info');
 
   assert.equal(chara_marriage_before(1), '无', '缺省 0：无');
 
-  // 早退判据是 `code % 10 === 0`，不是 `code % 100 === 0`——0 与 00 结尾在
-  // 两种判据下都会早退，分不出改坏。10010 是 %10==0 但 %100!=0 的例子：
-  // 早退判据命中即返回「无」；若误改成 %100，会漏判早退、继续往下算出
+  // 早退条件是 `code % 10 === 0`，不是 `code % 100 === 0`——0 与 00 结尾在
+  // 两种条件下都会早退，分不出改坏。10010 是 %10==0 但 %100!=0 的例子：
+  // 早退条件命中即返回「无」；若误改成 %100，会漏判早退、继续往下算出
   // category=trunc(10010/10000)=1、kind=trunc(10010/10^9)=0，落进「0/4/8
   // → 故乡丈夫」，与早退的「无」不同，两侧才分得出来
   fixture.store.set('talent:1:320', 10010);
@@ -166,15 +165,15 @@ test('CHARA_MARRIGE_BEFORE：%10==0 早退、category 0/2/6 分档', () => {
   fixture.store.set('talent:1:320', 20005); // local1=20005 → category=2
   assert.equal(chara_marriage_before(1), '无', 'category 2');
 
-  fixture.store.set('talent:1:320', 60005); // local1=60005 → category=6：CASEELSE 死代码
+  fixture.store.set('talent:1:320', 60005); // local1=60005 → category=6：其余类别，无文本
   assert.equal(
     chara_marriage_before(1),
     '',
-    'category 5/CASEELSE：原作死代码，无输出',
+    'category 6：其余类别无文本（返回空串）',
   );
 });
 
-test('CHARA_MARRIGE_BEFORE：kind [0,4,8]/[1,5,7]/其余 三分组——表驱动走完 kind=0..9 整个维度', () => {
+test('chara_marriage_before：kind [0,4,8]/[1,5,7]/其余 三分组——表驱动走完 kind=0..9 整个维度', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { chara_marriage_before } = fixture.load_module('page/page-chara-info');
@@ -202,7 +201,7 @@ test('CHARA_MARRIGE_BEFORE：kind [0,4,8]/[1,5,7]/其余 三分组——表驱�
 
 // —— 四个列表函数：排序契约 + 表头/行渲染基本形状 ——
 
-test('SHOW_CHARA_INFO_LIST：返回已加入角色 ID（不含魔王），渲染魔王表头与每行编号按钮', () => {
+test('show_chara_info_list：返回已加入角色 ID（不含魔王），渲染魔王表头与每行编号按钮', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -217,12 +216,12 @@ test('SHOW_CHARA_INFO_LIST：返回已加入角色 ID（不含魔王），渲染
   assert.equal(buttons_with(fixture, 2).length, 1);
 });
 
-test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] 前缀，姓名/等级/攻防同格（#535）', () => {
+test('show_chara_info_list：角色行的编号按钮仅由引擎拼一层 [N] 前缀，姓名/等级/攻防同格（#535）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
   add_chara(fixture, 11, '乙');
-  // 下标含义（行内同格，原作 CHARA_INFO ver1.0.1.ERB:158-163）：
+  // 下标含义（行内同格）：
   // CFLAG:x:9 等级 / :13 攻击 / :14 防御 / :151 善恶值
   fixture.store.set('cflag:1:9', 5);
   fixture.store.set('cflag:1:13', 15);
@@ -266,7 +265,7 @@ test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] �
   // 每格的列宽（引擎 24 列网格的 span，夹具记在 grid_width）：3 + 13 + 6 + 2
   // = 24。这一屏的排版核对（#535 第 4 项）靠它固定——后列的横向位置由跨度
   // 决定，与前一格的文本长度无关，所以编号格写 `[11] ` 还是 `[1] ` 都不会
-  // 带着后列走（原作的定宽右对齐 `[{n,MAX_NUM_LEN}]` 在引擎里做不到，见
+  // 带着后列走（定宽右对齐的编号在引擎里做不到，见
   // page-chara-info.js 文件头）
   assert.deepEqual(
     fixture.lines_history
@@ -295,7 +294,7 @@ test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] �
   );
 });
 
-test('SHOW_CHARA_INFO_LIST：魔王行与角色行的姓名列在格内同宽（全角按 2、半角按 1，#535 引擎实测）', () => {
+test('show_chara_info_list：魔王行与角色行的姓名列在格内同宽（全角按 2、半角按 1，#535 引擎实测）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -307,9 +306,9 @@ test('SHOW_CHARA_INFO_LIST：魔王行与角色行的姓名列在格内同宽（
   // 引擎里每格的横向位置由 el-col 的 span 决定，**不随前一格文本长度变化**
   // （#535 验收在引擎里实测确认），所以「姓名列齐不齐」只取决于姓名格内部
   // 到姓名为止的显示宽度：魔王行是空档，角色行是状态徽章 + 一个空格。
-  // 实测口径：全角按 2 格、半角按 1 格（原作 Emuera 的字符格）。
+  // 实测：全角按 2 格、半角按 1 格。
   // 魔王行原来空档 10 格（5 个全角空格），实机上「你」比角色行的名字右一个
-  // 半角字符（原作两行是齐的——golden 目录下的名册基准日志里可以直接数出来），
+  // 半角字符（golden 目录下的名册基准日志里两行是齐的，可以直接数出来），
   // #535 改成 4 个全角 + 1 个半角＝9 格。
   const prefix_widths = [
     { row: 0, name: '你', label: '魔王行' },
@@ -342,7 +341,7 @@ test('SHOW_CHARA_INFO_LIST：魔王行与角色行的姓名列在格内同宽（
   );
 });
 
-test('SHOW_CHARA_ACT_LIST：act=0 走 COMPARE_CHARA_ACT，按 (状态+11-2)%11 排名（迎击中 rank=1 早于可调教 rank=9）', () => {
+test('show_chara_act_list：act=0 走 compare_chara_act，按 (状态+11-2)%11 排名（迎击中 rank=1 早于可调教 rank=9）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -353,14 +352,10 @@ test('SHOW_CHARA_ACT_LIST：act=0 走 COMPARE_CHARA_ACT，按 (状态+11-2)%11 �
 
   const order = show_chara_act_list(0, 0);
 
-  assert.deepEqual(
-    order,
-    [1, 2],
-    'rank 数值小的排前（源注释：0=調教中…3=迎撃中…）',
-  );
+  assert.deepEqual(order, [1, 2], 'rank 数值小的排前');
 });
 
-test('SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（按楼层，不是按状态排名）', () => {
+test('show_chara_act_list：双方都在侵攻/迎击时改走 enemy_compare（按楼层，不是按状态排名）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -371,14 +366,14 @@ test('SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（�
   fixture.store.set('cflag:2:501', 2); // 楼层很浅
   const { show_chara_act_list } = fixture.load_module('page/page-chara-info');
 
-  // 若误退回 COMPARE_CHARA_ACT（只看状态排名，2 排 3 前）会得到 [1,2]；
-  // ENEMY_COMPARE 按楼层比（浅层优先）应得到 [2,1]——两者在本例故意给出
+  // 若误退回 compare_chara_act（只看状态排名，2 排 3 前）会得到 [1,2]；
+  // enemy_compare 按楼层比（浅层优先）应得到 [2,1]——两者在本例故意给出
   // 相反答案，用来分辨排序真的走了哪条支
   const order = show_chara_act_list(0, 1);
   assert.deepEqual(order, [2, 1]);
 });
 
-test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 + ELSE 内四条支线', () => {
+test('marriage_bracket_text：spouse 分支串——表驱动走完外层四路 + 其余内四条支线', () => {
   // 每行独立起一个 fixture（分支所需的辅助状态互不相同，混用会串味）；
   // add_chara(0) 固定名字「你」，与外层 901/ELSE-同魔王婚姻分支的期望值对齐
   const CASES = [
@@ -395,7 +390,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
       '你',
     ],
     [
-      'spouse=0 → 委托 CHARA_MARRIGE_BEFORE（code=0 早退为无）',
+      'spouse=0 → 委托 chara_marriage_before（code=0 早退为无）',
       (f) => {
         f.store.set('cflag:1:601', 0);
         f.store.set('talent:1:320', 0);
@@ -411,7 +406,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
       '温柔的青年',
     ],
     [
-      'ELSE 分支 1：EX_TALENT:2 非零且 SEARCH_FAMILY 未命中 → 无',
+      '其余分支 1：EX_TALENT:2 非零且 search_family 未命中 → 无',
       (f) => {
         f.store.set('cflag:1:601', 903);
         f.store.set('cflag:0:601', 1); // 避免与 cflag:1:6 缺省值 0 撞上分支 2
@@ -420,7 +415,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
       '无',
     ],
     [
-      'ELSE 分支 2：CFLAG:0:601 与 CFLAG:cid:6 同值 → 魔王本人',
+      '其余分支 2：CFLAG:0:601 与 CFLAG:cid:6 同值 → 魔王本人',
       (f) => {
         f.store.set('cflag:1:601', 903);
         f.store.set('cflag:0:601', 55);
@@ -429,7 +424,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
       '你',
     ],
     [
-      'ELSE 分支 3：spouse%10===9 且 SEARCH_FAMILY 命中 → 对方名字',
+      '其余分支 3：spouse%10===9 且 search_family 命中 → 对方名字',
       (f) => {
         f.store.set('cflag:1:601', 909);
         f.store.set('cflag:0:601', 1);
@@ -439,7 +434,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
       '乙',
     ],
     [
-      'ELSE 分支 3：spouse%10===9 但 SEARCH_FAMILY 未命中 → 无',
+      '其余分支 3：spouse%10===9 但 search_family 未命中 → 无',
       (f) => {
         f.store.set('cflag:1:601', 909);
         f.store.set('cflag:0:601', 1);
@@ -447,7 +442,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
       '无',
     ],
     [
-      'ELSE 默认：查 ITEMNAME 表',
+      '其余默认：查 itemname 表',
       (f) => {
         f.store.set('cflag:1:601', 903);
         f.store.set('cflag:0:601', 1);
@@ -470,7 +465,7 @@ test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 
   }
 });
 
-test('SHOW_CHARA_MONEY_LIST：按 CFLAG:580 降序，取值相同按迭代顺序（稳定排序）', () => {
+test('show_chara_money_list：按 CFLAG:580 降序，取值相同按迭代顺序（稳定排序）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -487,7 +482,7 @@ test('SHOW_CHARA_MONEY_LIST：按 CFLAG:580 降序，取值相同按迭代顺序
   assert.equal(printed_includes(fixture, '所持金:300'), true);
 });
 
-test('SHOW_CHARA_DEBT_LIST：按 CFLAG:582 升序（负值越小债务越多，越靠前），显示取反', () => {
+test('show_chara_debt_list：按 CFLAG:582 升序（负值越小债务越多，越靠前），显示取反', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -502,9 +497,9 @@ test('SHOW_CHARA_DEBT_LIST：按 CFLAG:582 升序（负值越小债务越多，�
   assert.equal(printed_includes(fixture, '借金:200'), true, '显示为正数');
 });
 
-// —— CHARA_INFO 主循环 ——
+// —— chara_info 主循环 ——
 
-test('CHARA_INFO：魔王行的 [0] 是真按钮（名册轮次白名单非空，纯文本行敲不进编号，#530）', async () => {
+test('chara_info：魔王行的 [0] 是真按钮（名册轮次白名单非空，纯文本行敲不进编号，#530）', async () => {
   // 名册这一轮的白名单非空——角色行按角色号、排序表头 1200-1700、翻页
   // 997/998、返回 999 都在上面打印过；而 added_chara_ids() 把 0 滤掉了，
   // **没有别的按钮编号是 0**。魔王行若是纯文本，玩家敲 0 被引擎拒收
@@ -525,7 +520,7 @@ test('CHARA_INFO：魔王行的 [0] 是真按钮（名册轮次白名单非空�
   assert.equal(
     printed_includes(fixture, 'NO.0'),
     true,
-    '魔王(0) 的个别信息页已打开（:`581` result === 0 的分支可达）',
+    '魔王(0) 的个别信息页已打开（result === 0 的分支可达）',
   );
   const rendered = fixture.lines_history
     .filter((line) => line.type === 'button')
@@ -546,14 +541,14 @@ test('CHARA_INFO：魔王行的 [0] 是真按钮（名册轮次白名单非空�
   );
 });
 
-test('CHARA_INFO：[1600]/[1700] 分别进两个真身流程，返回后名册整屏重进（#545）', async () => {
+test('chara_info：[1600]/[1700] 分别进两个真身流程，返回后名册整屏重进（#545）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 1600 → 统一卖春积极性真身（选 [2003] 取消，不写任何值）→ JUMP 重进
-  // 1700 → 换号真身（[1999] 結束换号）→ JUMP 重进 → 999 返回主菜单
+  // 1600 → 统一卖春积极性真身（选 [2003] 取消，不写任何值）→ 回名册重进
+  // 1700 → 换号真身（[1999] 结束换号）→ 回名册重进 → 999 返回主菜单
   fixture.set_inputs(1600, 2003, 1700, 1999, 999);
   const result = await chara_info();
 
@@ -586,7 +581,7 @@ test('CHARA_INFO：[1600]/[1700] 分别进两个真身流程，返回后名册�
   assert.equal(fixture.store.get('cflag:1:120'), undefined, '未写卖春积极性');
 });
 
-test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 页，第 25 人只在第 2 页', async () => {
+test('chara_info：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 页，第 25 人只在第 2 页', async () => {
   const fixture = create_era_fixture();
   // 角色号 1..25：25 人正好跨两页（第 1 页 24 行、第 2 页 1 行）
   const chara_ids = Array.from({ length: 25 }, (_, index) => index + 1);
@@ -598,7 +593,7 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   assert.equal(await chara_info(), 0);
 
   // 每次绘制以 [998] 收尾，用它把四次绘制切片。角色行的按钮正文自 #535 起
-  // 为空（编号由引擎按 showAcc 拼，见 print_chara_row），旧写法按 text 匹配
+  // 为空（编号由引擎按 showAcc 拼，见 print_chara_row），早先的写法按 text 匹配
   // `/^\[\d+\]$/` 切不动了——改按快捷键数值筛：角色号是 1..25，排序表头
   // 1200-1700、翻页 997/998/999 都在这个区间之外。魔王行的编号格快捷键是 0
   // （正文同为空的按钮），也由这条筛选天然排除。
@@ -650,7 +645,7 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   );
 });
 
-test('CHARA_INFO：选中一个角色进入个别信息页，「返回」回名册、[999] 退出', async () => {
+test('chara_info：选中一个角色进入个别信息页，「返回」回名册、[999] 退出', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -664,7 +659,7 @@ test('CHARA_INFO：选中一个角色进入个别信息页，「返回」回名�
   assert.equal(result, 0);
 });
 
-test('CHARA_INFO：个别页子调用完成后 continue 回名册主循环（非 1 即停留原页）', async () => {
+test('chara_info：个别页子调用完成后 continue 回名册主循环（非 1 即停留原页）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -678,7 +673,7 @@ test('CHARA_INFO：个别页子调用完成后 continue 回名册主循环（非
   assert.equal(fixture.store.get('cflag:1:1'), 0, '拘束台解放已生效');
 });
 
-test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1 透传上浮，本回合结束（#652 改正）', async () => {
+test('chara_info：1200 视图（默认）走包装入口——结婚成功的 1 透传上浮，本回合结束（#652 改正）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -686,7 +681,7 @@ test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1
   fixture.store.set('itemname:100', '怪物');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 旧包装把内层返回值清成 0（原作缺陷），1200 视图下结婚不结束本回合；
+  // 旧包装把内层返回值清成 0，1200 视图下结婚不结束本回合；
   // 改正后包装透传内层返回值：名册默认 1200——选 1 → [4] 结婚 → 选 100 号怪
   // （内层返回 1 的唯一操作）→ 1 上浮、本回合结束，[999] 不再被消费
   fixture.set_inputs(1, 4, 100, 999);
@@ -711,17 +706,16 @@ test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1
   assert.equal(input_count, 3, '[999] 未被消费');
 });
 
-test('CHARA_INFO：直调内层的视图里转职返回 2（防御支）也不结束本回合——2 在内层被消化成页内重画（#606 返工）', async () => {
+test('chara_info：直调内层的视图里转职返回 2（防御支）也不结束本回合——2 在内层被消化成页内重画（#606 返工）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
   fixture.store.set('cflag:1:1', 2); // 侵攻中的勇者：转职档位 = 2
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 转职的 2 来自原作 CHARA_JOB_CHANGE.ERB:55-57（侵攻中的勇者，RETURN 2，
-  // 无输出直接返回）；CHARA_INFO ver1.0.1.ERB:1094-1099 的收尾写明
-  // 「2なら再入力」——2 在内层就被消化成页内重画，不会上浮给名册，名册
-  // 的 IF RESULT == 1 收到的只会是其后 [100] 的 0。ere 侧该档位不渲染
+  // 转职的 2 来自侵攻中的勇者档位（无输出直接返回 2）；
+  // 个别页的收尾对 2 的处置是「2 则再输入」——2 在内层就被消化成页内重画，
+  // 不会上浮给名册，名册收到的只会是其后 [100] 的 0。ere 侧该档位不渲染
   // [2] 按钮、编号进不了输入白名单（#129），故按夹具头注的既有手法（test
   // 里「被调方返回 2（防御支）」同款）就地替换 era.input 把 2 喂进去。
   // 序列：[1300] 切状态视图 → 选 1 → 个别页喂 2（转职防御支）→ [100]
@@ -749,7 +743,7 @@ test('CHARA_INFO：直调内层的视图里转职返回 2（防御支）也不�
   );
 });
 
-test('CHARA_INFO：切到非 1200 视图（[1300]）直调内层——结婚成功的 1 仍然上浮，本回合结束（#606）', async () => {
+test('chara_info：切到非 1200 视图（[1300]）直调内层——结婚成功的 1 仍然上浮，本回合结束（#606）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -757,8 +751,9 @@ test('CHARA_INFO：切到非 1200 视图（[1300]）直调内层——结婚成�
   fixture.store.set('itemname:100', '怪物');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 原作 :97-98 的 ELSE 支 CALL CHARA_INFO_INDIVIDUAL(RESULT, CHARA_SORT)，
-  // 返回值直达 :100 的 IF RESULT == 1——这条路径不经包装，不受该缺陷影响。
+  // 非 1200 视图直调内层（chara_info_individual），
+  // 返回值直达名册的「返回 1 即结束回合」判断——这条路径不经包装入口，
+  // 不受旧包装清零问题影响。
   // 末尾的 999 只在 1 没上浮时才会被消费（名册重绘等下一个输入）
   fixture.set_inputs(1300, 1, 4, 100, 999);
   const result = await chara_info();
@@ -767,11 +762,11 @@ test('CHARA_INFO：切到非 1200 视图（[1300]）直调内层——结婚成�
   assert.equal(result, 1, '直接调内层的视图：返回 1 结束本回合');
 });
 
-// —— CHARA_INFO_INDIVIDUAL：分页与换人导航 ——
+// —— chara_info_individual：分页与换人导航 ——
 
-test('CHARA_INFO_INDIVIDUAL：操作按钮行与页脚分割线之间不夹空行（#596）', async () => {
-  // 原作 :907 的 PRINTL 只结束那一串 `SIF … PRINT [n] …` 拼出的按钮行
-  // （train-upgrade-log:171-172 里按钮行与分割线逐行相邻），不产生空行。
+test('chara_info_individual：操作按钮行与页脚分割线之间不夹空行（#596）', async () => {
+  // 按钮块的收行只结束按钮行
+  // （按钮行与分割线逐行相邻），不产生空行。
   // ere 的按钮各自成行，收行由引擎负责。
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -787,7 +782,7 @@ test('CHARA_INFO_INDIVIDUAL：操作按钮行与页脚分割线之间不夹空�
   assert.equal(
     fixture.lines[at - 1].type,
     'button',
-    '操作按钮行的下一行就是页脚分割线，中间不夹空行（:907 只收行）',
+    '操作按钮行的下一行就是页脚分割线，中间不夹空行（块尾 println 只收行）',
   );
   assert.deepEqual(
     fixture.lines.slice(at - 2, at + 2).map((line) => line.type),
@@ -796,8 +791,8 @@ test('CHARA_INFO_INDIVIDUAL：操作按钮行与页脚分割线之间不夹空�
   );
 });
 
-test('CHARA_INFO_INDIVIDUAL：无操作按钮的子页保留 :907 的真空行（#596）', async () => {
-  // sub_page 3 在原作两支 IF/ELSEIF 都不命中（一个按钮都不打），:907 的 PRINTL
+test('chara_info_individual：无操作按钮的子页保留块尾的真空行（#596）', async () => {
+  // sub_page 3 一个按钮都不打，块尾的 println
   // 因此落在已收行的空行上 = 真空行；有按钮的子页里它只收行（上一条用例）。
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -808,18 +803,18 @@ test('CHARA_INFO_INDIVIDUAL：无操作按钮的子页保留 :907 的真空行�
 
   const footer = fixture.lines.filter((line) => line.type === 'divider').at(-1);
   const at = fixture.lines.indexOf(footer);
-  // 分割线之前连续两个空行：页尾补白（MIN_LINES）那一个 + :907 落在空行上的
+  // 分割线之前连续两个空行：页尾补白（MIN_LINES）那一个 + 块尾 println 落在空行上的
   // 那一个。把无按钮分支的 println 删掉后这里只剩一个（本用例的失败点）
   const blank_forms = (index) =>
     fixture.lines[index].type === 'br' ||
     (fixture.lines[index].type === 'text' && fixture.lines[index].text === '');
   assert.ok(
     blank_forms(at - 1) && blank_forms(at - 2),
-    "无按钮子页里 :907 的空行在补白之后（println 与 print('') 两种形态都算）",
+    "无按钮子页里块尾的空行在补白之后（println 与 print('') 两种写法都算）",
   );
 });
 
-test('CHARA_INFO_INDIVIDUAL：前页/后页在 0..3 间夹紧', async () => {
+test('chara_info_individual：前页/后页在 0..3 间夹紧', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -833,7 +828,7 @@ test('CHARA_INFO_INDIVIDUAL：前页/后页在 0..3 间夹紧', async () => {
   assert.equal(result, 0);
 });
 
-test('CHARA_INFO_INDIVIDUAL：前一人/后一人按 chara_sort 顺位导航，含魔王(0)边界', async () => {
+test('chara_info_individual：前一人/后一人按 chara_sort 顺位导航，含魔王(0)边界', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -842,7 +837,7 @@ test('CHARA_INFO_INDIVIDUAL：前一人/后一人按 chara_sort 顺位导航，�
 
   // 从甲(1)开始：后一人 → 乙(2，此时已是末位，按钮不再画出）；
   // 前一人 → 回到甲(1)；再前一人 → 到魔王(0)（l_indx===0 特例）；
-  // 魔王行 l_indx=-1 同样满足「后一人」判据（#391 修正，见文件头），
+  // 魔王行 l_indx=-1 同样满足「后一人」条件（#391 修正，见文件头），
   // 按下后应回到顺位第一个 chara_sort[0]=1
   fixture.set_inputs(600, 500, 500, 600, 100);
   const result = await chara_info_individual(1, [1, 2]);
@@ -850,14 +845,14 @@ test('CHARA_INFO_INDIVIDUAL：前一人/后一人按 chara_sort 顺位导航，�
   assert.equal(result, 0);
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 6 设为目标——按钮与分发共用同一门控条件', async () => {
+test('chara_info_individual：case 6 设为目标——按钮与分发共用同一门控条件', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
   const { chara_info_individual } = fixture.load_module('page/page-chara-info');
 
   // is_assistable(1)!==0（cflag:1:0 默认不是 2）时「设为助手」按钮不画出，
-  // 分发端对 case 7 的同一判据因此也无从触发——按钮门控与分发门控用的是
+  // 分发端对 case 7 的同一条件因此也无从触发——按钮门控与分发门控用的是
   // 同一个函数调用，不存在"画出但点了不生效"的缝隙，故这里只验证 case 6
   fixture.set_inputs(102, 6, 100);
   await chara_info_individual(1, [1]);
@@ -865,7 +860,7 @@ test('CHARA_INFO_INDIVIDUAL：case 6 设为目标——按钮与分发共用同�
   assert.equal(fixture.store.get('flag:1'), 1, 'case 6：默认可调教，写入目标');
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 7 满足条件时写入助手', async () => {
+test('chara_info_individual：case 7 满足条件时写入助手', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -878,7 +873,7 @@ test('CHARA_INFO_INDIVIDUAL：case 7 满足条件时写入助手', async () => {
   assert.equal(fixture.store.get('flag:2'), 1);
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 12 拘束台解放仅在 state===8 时生效，并直接返回 0', async () => {
+test('chara_info_individual：case 12 拘束台解放仅在 state===8 时生效，并直接返回 0', async () => {
   {
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
@@ -913,7 +908,7 @@ test('CHARA_INFO_INDIVIDUAL：case 12 拘束台解放仅在 state===8 时生效�
   }
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 13 强行召回门控 state===3，命中后调用 CHARA_INFO_CALLBACK 并返回 0', async () => {
+test('chara_info_individual：case 13 强行召回门控 state===3，命中后调用 chara_info_callback 并返回 0', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -931,11 +926,11 @@ test('CHARA_INFO_INDIVIDUAL：case 13 强行召回门控 state===3，命中后�
   assert.equal(
     fixture.store.get('cflag:1:1'),
     0,
-    'CHARA_INFO_CALLBACK 已清状态',
+    'chara_info_callback 已清状态',
   );
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 14/15/17 门控 state===0 才可用', async () => {
+test('chara_info_individual：case 14/15/17 门控 state===0 才可用', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -954,7 +949,7 @@ test('CHARA_INFO_INDIVIDUAL：case 14/15/17 门控 state===0 才可用', async (
   assert.equal(printed_includes(fixture, '灵魂转移'), true);
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 17 灵魂转移改写 current 为其返回值', async () => {
+test('chara_info_individual：case 17 灵魂转移改写 current 为其返回值', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -967,7 +962,7 @@ test('CHARA_INFO_INDIVIDUAL：case 17 灵魂转移改写 current 为其返回值
   assert.equal(result, 0, '拒绝确认后 current 仍是 1，按返回正常退出');
 });
 
-test('CHARA_INFO_INDIVIDUAL：case 9 收藏切换仅对非魔王角色生效', async () => {
+test('chara_info_individual：case 9 收藏切换仅对非魔王角色生效', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -979,24 +974,24 @@ test('CHARA_INFO_INDIVIDUAL：case 9 收藏切换仅对非魔王角色生效', a
   assert.equal(fixture.store.get('cflag:1:700'), 0, '收藏又取消，回到 0');
 });
 
-// CASE 18（SET_BICH_LEVEL）：原作与本port都没有为它画按钮（源码逐行核对，
-// 只有 `CASE 18` 分支体，DRAW_PAGE 段无对应 PRINTLC/PRINTBUTTON），只能靠
+// case 18（set_bich_level）：没有为它画按钮（源码逐行核对，
+// 只有 case 18 分支体、无对应按钮打印），只能靠
 // 输入框直接敲数字触发——本夹具的 era.input() 白名单校验镜像引擎行为，
 // 不打算模拟「跳过白名单直接敲字」，故这里不测；set_bich_level() 本体已有
 // 专属覆盖，见 test/kojo-dungeon-bitch.test.js。
 
-// CASE >=15000（跳转到其他角色）：加速键编码目标角色 ID，供别的页面内嵌
-// 「快速跳到角色 X 信息页」按钮使用；截至本票，ere/ 里没有任何页面已经
+// case >=15000（跳转到其他角色）：加速键编码目标角色 ID，供别的页面内嵌
+// 「快速跳到角色 X 信息页」按钮使用；截至本张工单，ere/ 里没有任何页面已经
 // 布这种按钮（全库检索 `15000` 只有本文件自己的分发端），故本轮同样无法
 // 通过 era.input() 的白名单驱动到——留给接入该跳转的调用方在自己的测试里
 // 覆盖端到端路径。
 
-test('CHARA_INFO_INDIVIDUAL_WAPPED：顺位表是全部已加入角色（按排序编号），前一人/后一人照它走（#545 返工）', async () => {
+test('chara_info_individual_wrapped：顺位表是全部已加入角色（按排序编号），前一人/后一人照它走（#545 返工）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
-  // 原作这里现建的是 1..CHARANUM 的序号顺位表＝「编号」视图那套顺序；ere 侧
-  // 换成同一套排列键（PORTCFLAG:排序编号）：3 号持最小、1 号持最大 → [3,2,1]
+  // 包装入口的顺位表＝「编号」视图那套顺序（排列键
+  // PORTCFLAG:排序编号）：3 号持最小、1 号持最大 → [3,2,1]
   fixture.store.set('portcflag:3:排序编号', 1);
   fixture.store.set('portcflag:1:排序编号', 3);
   const { chara_info_individual_wrapped } = fixture.load_module(
@@ -1016,7 +1011,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：顺位表是全部已加入角色（按排�
   assert.deepEqual(nos, ['2', '1'], '后一人按排序编号顺位走到 1 号');
 });
 
-test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口透传内层返回值，结婚返回 1 结束本回合（#652 改正）', async () => {
+test('chara_info_individual_wrapped：包装入口透传内层返回值，结婚返回 1 结束本回合（#652 改正）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1026,8 +1021,8 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口透传内层返回值，结婚�
     'page/page-chara-info',
   );
 
-  // 结婚是内层唯一返回 1 的操作（婚礼完成的出口、ENTER_LOVER 成功同）；
-  // 旧包装把内层的返回值清成 0，1200 视图下结婚不结束本回合（原作缺陷）。
+  // 结婚是内层唯一返回 1 的操作（婚礼完成的出口、enter_lover 成功同）；
+  // 旧包装把内层的返回值清成 0，1200 视图下结婚不结束本回合。
   // 改正后包装透传内层返回值：婚礼完成 → 1。
   fixture.set_inputs(4, 100);
   assert.equal(
@@ -1044,11 +1039,11 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口透传内层返回值，结婚�
 // —— #638：立绘与调试入口已删（#542 判不移植的落点随存根机制一并移除） ——
 
 test('[20] 更换立绘与 [99] 调试面板按钮不再渲染（任何分页、奴隶与魔王）', async () => {
-  // 立绘系统与 CHAR_DEBUG 调试面板均不移植（#542），#638 起按钮与处理分支
+  // 立绘系统与调试面板均不移植（#542），#638 起按钮与处理分支
   // 一并删除：任何角色、任何 sub_page 都不得再渲染这两枚按钮
   const table = [
     ['奴隶 sub_page 0', 1, [1]],
-    ['魔王 sub_page 0（ARG == MASTER 原本就不渲染 [20]）', 0, [0, 1]],
+    ['魔王 sub_page 0（魔王行原本就不渲染 [20]）', 0, [0, 1]],
     ['奴隶 sub_page 1', 1, [1], [102]],
     ['奴隶 sub_page 2', 1, [1], [102, 102]],
   ];
@@ -1094,7 +1089,7 @@ test('[10] 提升能力：可提升时按钮编号是 10（[20] 删除后不得�
 
 test('case 20：立绘入口已删（#638），键入 20 在输入层被弹回', async () => {
   // 引擎只接受已打印按钮的快捷键（#130）：[20] 按钮删掉后，键入 20 在
-  // input 层直接被弹回、画面不再推进——这就是「输入不被接受」的运行时形态。
+  // input 层直接被弹回、画面不再推进——这就是「输入不被接受」的运行时表现。
   //（[99] 从未打印过按钮，键入 99 前后都被弹回，无分支可达，无断言可做——
   // 它的删除由上方按钮用例与代码评审承担。）
   const fixture = create_era_fixture();
@@ -1114,9 +1109,9 @@ test('case 20：立绘入口已删（#638），键入 20 在输入层被弹回',
   );
 });
 
-// —— #546：装备详情与自定义一人称的接线 ——
+// —— #546：装备详情与自定义一人称的接入 ——
 
-test('[16] 装备情报按钮（:880）：CHECK_ABLE_TO_SHOW_EQUIP 放行才渲染——表驱动', async () => {
+test('[16] 装备情报按钮：装备查看条件放行才渲染——表驱动', async () => {
   // 五道 OR 之一成立 = 放行（此处用善恶值 ≤0 与顺从 >0 两道代表）；
   // 全不满足（善恶值 1）= 按钮整个不出现
   const table = [
@@ -1145,7 +1140,7 @@ test('[16] 装备情报按钮（:880）：CHECK_ABLE_TO_SHOW_EQUIP 放行才渲�
   }
 });
 
-test('case 16（:1070-1074）：印出装备状态行并等键，重绘回页（LOCAL = LINECOUNT 是死赋值）', async () => {
+test('case 16：印出装备状态行并等键，重绘回页', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1162,9 +1157,9 @@ test('case 16（:1070-1074）：印出装备状态行并等键，重绘回页（
     '装备状态行随 [16] 印出',
   );
   assert.ok(printed_includes(fixture, '战锤+2'), '名称行印出');
-  // WAIT：详情行之后有一次真实等待（rows_at_wait 在详情行之后）
+  // 等键：详情行之后有一次真实等待（rows_at_wait 在详情行之后）
   const waited = fixture.waits.filter((w) => w.waited);
-  assert.ok(waited.length >= 1, '详情后 WAIT 至少一次');
+  assert.ok(waited.length >= 1, '详情后等键至少一次');
   const equip_pos = fixture.lines_history.findIndex((line) =>
     (line.text ?? '').includes('*160的打击力'),
   );
@@ -1176,7 +1171,7 @@ test('case 16（:1070-1074）：印出装备状态行并等键，重绘回页（
     waited.some((w) => w.rows_at_wait > fixture.lines_history[equip_pos].row),
     '等待发生在装备详情行之后',
   );
-  // 等键后 GOTO DRAW_PAGE：同一轮里页导航按钮再次出现
+  // 等键后回到页首重画：同一轮里页导航按钮再次出现
   assert.ok(
     fixture.lines_history.filter(
       (line) => line.type === 'button' && line.accelerator === 100,
@@ -1185,7 +1180,7 @@ test('case 16（:1070-1074）：印出装备状态行并等键，重绘回页（
   );
 });
 
-test('case 8（:1062）：[8] 一人称重设走 MODE 1 自定义输入，写入 CSTR:60 与档位 0', async () => {
+test('case 8：[8] 一人称重设走第 3 参 mode 1 的自定义输入，写入 CSTR:60 与档位 0', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1196,7 +1191,7 @@ test('case 8（:1062）：[8] 一人称重设走 MODE 1 自定义输入，写入
   assert.equal(result, 0);
   assert.ok(
     printed_includes(fixture, '请输入想设定的第一人称，若不输入则随机设定'),
-    'MODE 1 的提示行印出（1:1 照抄原作）',
+    'mode 1 的提示行印出',
   );
   assert.ok(
     printed_includes(fixture, '（输入 0 随机设定）'),
@@ -1206,7 +1201,7 @@ test('case 8（:1062）：[8] 一人称重设走 MODE 1 自定义输入，写入
   assert.equal(fixture.store.get('cflag:1:450'), 0);
 });
 
-test('case 8：输入 0 代替空输入（有意偏离，原作会把一人称写成「0」）→ 随机重掷路径（<9 直设「我」）', async () => {
+test('case 8：输入 0 代替空输入（有意偏离——0 不再按字面写成一人称）→ 随机重掷路径（<9 直设「我」）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1218,11 +1213,10 @@ test('case 8：输入 0 代替空输入（有意偏离，原作会把一人称�
   assert.equal(fixture.store.get('cflag:1:450'), 9);
 });
 
-// —— #542：PTJ_BUTTON 的判死落点（[20] 立绘入口随 #638 一并删除，见上方） ——
-test('卖春积极性按钮（PTJ_BUTTON 默认态）：档位文案随 CFLAG:120 变，按下进真身——表驱动', async () => {
-  // CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
-  // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE = SHOW_BUTTON_BICH_LEVEL(18,ARG)
-  // 的 [18] 卖春积极性按钮；打工变体（SHOW_PTJ_BUTTON_LEVEL）不渲染
+// —— #542：打工 MOD 按钮的判死落点（[20] 立绘入口随 #638 一并删除，见上方） ——
+test('卖春积极性按钮（打工 MOD 的默认态）：档位文案随 CFLAG:120 变，按下进真身——表驱动', async () => {
+  // 打工 MOD（EX_FLAG:9000 第 2 位）判不移植
+  // （#542），只保留默认态的 [18] 卖春积极性按钮；打工变体按钮不渲染
   // [CFLAG:1:120, 期望按钮正文]
   const table = [
     [0, '[18] 卖春积极性 - 没有'],
@@ -1252,7 +1246,7 @@ test('卖春积极性按钮（PTJ_BUTTON 默认态）：档位文案随 CFLAG:12
   }
 });
 
-test('卖春积极性按钮（CASE 18）：按下进 set_bich_level 真身', async () => {
+test('卖春积极性按钮（case 18）：按下进 set_bich_level 真身', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1264,12 +1258,12 @@ test('卖春积极性按钮（CASE 18）：按下进 set_bich_level 真身', asy
   assert.equal(fixture.store.get('cflag:1:120'), 3);
   assert.ok(
     fixture.text_lines().some((t) => t.includes('卖春积极性变为等级3了')),
-    'SET_BICH_LEVEL 真身的回显',
+    'set_bich_level 真身的回显',
   );
 });
 
 test('三动作按钮（#393）：[2] 转职 / [3] 魔的诱惑 / [4] 结婚×恋人设定 的渲染随状态变——表驱动', async () => {
-  // 三个 SHOW_BUTTON_* 的实参（快捷键 2/3/4 与真角色号）都在这一行接线里：
+  // 三个 show_button_* 的实参（快捷键 2/3/4 与真角色号）都在这一行接入里：
   // 换号、换实参、染色与否都在这里露馅。
   // [标签, 状态, 等级, 期望的三支按钮正文（按渲染顺序）, 期望的 #646464 次数]
   const table = [
@@ -1327,7 +1321,7 @@ test('三动作按钮（#393）：[2] 转职 / [3] 魔的诱惑 / [4] 结婚×�
   }
 });
 
-test('三动作接线（#393）：[2]/[3]/[4] 分别进转职 / 魔的诱惑 / 结婚三支真身', async () => {
+test('三动作接入（#393）：[2]/[3]/[4] 分别进转职 / 魔的诱惑 / 结婚三支真身', async () => {
   {
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
@@ -1403,14 +1397,14 @@ test('三动作接线（#393）：[2]/[3]/[4] 分别进转职 / 魔的诱惑 / �
   }
 });
 
-test('三动作接线（#393）：被调方返回 2（防御支）时不上浮，落回 INPUT_LOOP 重画', async () => {
-  // 三个动作的返回 2 都是「按钮本不该显示」的防御支（chara-job-change.js:279
-  // 的侵攻中勇者 / chara-temptation.js:156 的非侵攻中 / chara-marriage.js:1095
-  // 的不可结婚状态）——原作 :1094-1099 的返り値による処理写的是「2なら再入力」。
+test('三动作接入（#393）：被调方返回 2（防御支）时不上浮，落回输入循环重画', async () => {
+  // 三个动作的返回 2 都是「按钮本不该显示」的防御支（chara-job-change.js
+  // 的侵攻中勇者 / chara-temptation.js 的非侵攻中 / chara-marriage.js
+  // 的不可结婚状态）——个别页的收尾对 2 的处置是「2 则再输入」。
   // EraElectron 的渲染层只回传本轮已打印按钮的快捷键（夹具同款白名单），
   // 「未渲染按钮的编号」到不了游戏逻辑，所以这里按夹具头注的既有手法
   // （「SDK 是普通可变对象、可在 require 之后就地替换函数」）直接替换
-  // era.input 把 2 喂进去——测的是接线本身：谁把 2 当结果时会被上浮。
+  // era.input 把 2 喂进去——测的是接入本身：谁把 2 当结果时会被上浮。
   const cases = [
     ['chara_info_job_change：侵攻中的勇者（状态 2）', 2, 2],
     ['temptation：非侵攻中（状态 0）', 0, 3],
@@ -1442,7 +1436,7 @@ test('三动作接线（#393）：被调方返回 2（防御支）时不上浮�
   }
 });
 
-test('三动作接线（#393）：诱惑真身不传随机源时走默认源（Math.random）', async () => {
+test('三动作接入（#393）：诱惑真身不传随机源时走默认源（Math.random）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1453,7 +1447,7 @@ test('三动作接线（#393）：诱惑真身不传随机源时走默认源（M
   fixture.set_inputs(3);
   // 页面调 `temptation(current)` 不传随机源（生产路径），默认源是
   // Math.random（chara-temptation.js 的 default_rand）——钉住它可跑通：
-  // 固定到 0 后六轮各走 CASE 0，扣满 2000 气力、好感度 +60、不投诚
+  // 固定到 0 后六轮各走 case 0，扣满 2000 气力、好感度 +60、不投诚
   fixture.override_math_random(() => 0);
   let result;
   try {
@@ -1474,7 +1468,7 @@ test('三动作接线（#393）：诱惑真身不传随机源时走默认源（M
   assert.equal(fixture.store.get('cflag:1:1'), 2, '好感度未满 1000：不投诚');
 });
 
-test('育儿室接线（#401）：在育儿室的角色渲染 [5] 按钮，按下后进 CHILD_CARE_CHARA 真身', async () => {
+test('育儿室接入（#401）：在育儿室的角色渲染 [5] 按钮，按下后进 child_care_chara 真身', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1491,21 +1485,21 @@ test('育儿室接线（#401）：在育儿室的角色渲染 [5] 按钮，按�
     .map((b) => b.rendered);
   assert.ok(
     rendered.includes('[5] 前往育儿室'),
-    '育儿室里的角色应渲染按钮（CHECK_ABLE_TO_CHILD_CARE == 0）',
+    '育儿室里的角色应渲染按钮（可用性条件放行）',
   );
   assert(
     fixture.lines_history.some((line) => line.text === '你去了甲的育儿室。'),
     '按下 [5] 后走真身的到访播报',
   );
-  assert.equal(era_flag.target, 1, 'CHILD_CARE_CHARA 的 TARGET = ARG');
+  assert.equal(era_flag.target, 1, 'child_care_chara 的 TARGET = ARG');
   assert.equal(
     printed_includes(fixture, '@CHILD_CARE_CHARA'),
     false,
-    '不再打 CHILD_CARE_CHARA 的占位行',
+    '不再打 child_care_chara 的占位行',
   );
 });
 
-test('三动作接线（#393）：结婚成功后 MARRIAGE 的返回 1 上浮为「回合结束」', async () => {
+test('三动作接入（#393）：结婚成功后 marriage 的返回 1 上浮为「回合结束」', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1517,7 +1511,7 @@ test('三动作接线（#393）：结婚成功后 MARRIAGE 的返回 1 上浮为
     .load_module('page/page-chara-info')
     .chara_info_individual(1, [1]);
 
-  assert.equal(result, 1, '个别信息页把 1 上浮给 CHARA_INFO（回合结束）');
+  assert.equal(result, 1, '个别信息页把 1 上浮给 chara_info（回合结束）');
   assert.ok(printed_includes(fixture, '举行了结婚典礼'));
 });
 
@@ -1558,7 +1552,7 @@ test('排序表头：[1200]-[1500] 四个快捷键各自切到对应视图——
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     add_chara(fixture, 1, '甲');
-    // 下标含义（CHARA_INFO ver1.0.1.ERB:158-163 同款）：CFLAG:x:13 攻击 /
+    // 下标含义（与名册行同款）：CFLAG:x:13 攻击 /
     // 防御 / :580 所持金 / :582 借金（负值存储，显示取反）
     fixture.store.set('cflag:1:13', 15);
     fixture.store.set('cflag:1:14', 20);
@@ -1659,7 +1653,7 @@ test('统一卖春积极性：三个范围各写各的状态，魔王跳过，�
     add_chara(fixture, 3, '丙');
     add_chara(fixture, 4, '丁');
     // CFLAG:x:1 状态：2＝侵攻中、3＝迎击中、0＝可调教、7＝苗床；
-    // 魔王也置成侵攻中，验证 SIF COUNT == MASTER 的跳过
+    // 魔王也置成侵攻中，验证「跳过魔王」的处理
     fixture.store.set('cflag:0:1', 2);
     fixture.store.set('cflag:1:1', 2);
     fixture.store.set('cflag:2:1', 3);
@@ -1700,7 +1694,7 @@ test('统一卖春积极性：等级 [0]-[5] 六枚按钮、范围按钮实显�
   fixture.set_inputs(2003);
   await uniform_bitch_level();
 
-  // 四个范围按钮：正文保留原作 [ … ] 标签，编号由引擎拼一层
+  // 四个范围按钮：正文保留 [ … ] 标签，编号由引擎拼一层
   assert.equal(
     buttons_with(fixture, 2000)[0].rendered,
     '[2000] [ 全侵攻中的勇者 ]',
@@ -1712,7 +1706,7 @@ test('统一卖春积极性：等级 [0]-[5] 六枚按钮、范围按钮实显�
   assert.equal(
     printed_includes(fixture, '要将积极性设置为多少？'),
     false,
-    '[2003] 取消：不进等级选择（原作空 ELSE）',
+    '[2003] 取消：不进等级选择',
   );
   assert.equal(fixture.store.get('cflag:1:120'), undefined, '取消不写值');
 
@@ -1740,14 +1734,14 @@ test('统一卖春积极性：等级 [0]-[5] 六枚按钮、范围按钮实显�
     assert.equal(
       printed_includes(fixture2, '要将积极性设置为多少？'),
       true,
-      '等级屏提示语逐字（原作 :12/:33/:54 三处同文）',
+      '等级屏提示语逐字',
     );
   }
 });
 
 // —— #545：换号（ere/page/page-chara-number-swap.js） ——
 
-test('换号：显示守卫表驱动（状态 0/7、近卫排除、后代+铁石心肠放行）与 [SP] 标记', async () => {
+test('换号：显示条件表驱动（状态 0/7、近卫排除、后代+铁石心肠放行）与 [SP] 标记', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲'); // 状态 0：列出
@@ -1779,7 +1773,7 @@ test('换号：显示守卫表驱动（状态 0/7、近卫排除、后代+铁石
       '交换角色的排序编号(PS:侵攻与迎击中的角色无法换号)',
     ),
     true,
-    '第一屏标题（原作提示语）',
+    '第一屏标题',
   );
   for (const [cid, listed] of [
     [1, true],
@@ -1831,7 +1825,7 @@ test('换号：显示守卫表驱动（状态 0/7、近卫排除、后代+铁石
   assert.equal(
     buttons_with(fixture, 1999)[0].rendered,
     '[1999] 结束换号',
-    '結束换号按 #60 归一为简体',
+    '结束换号按 #60 归一为简体',
   );
 });
 
@@ -1905,7 +1899,7 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
     1,
     '2 号拿到原属 1 号的排序编号（对调）',
   );
-  // TARGET/ASSI 复位（原作 -1，非 ere 惯例的 0）
+  // TARGET/ASSI 复位为 -1（非 ere 惯例的 0）
   assert.equal(era_flag.target, -1, 'TARGET = -1');
   assert.equal(era_flag.assi, -1, 'ASSI = -1');
   // 文案与交互
@@ -1917,7 +1911,7 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
     '确认文案逐字（确认时还是互换前的名字）',
   );
   assert.equal(printed_includes(fixture, '已完成互换'), true);
-  // 第二屏（「要跟那个角色换号呢？」到确认文案之间）剃除 CN:1 的行
+  // 第二屏（「要跟那个角色换号呢？」到确认文案之间）剃除已选的行
   const second_from = fixture.lines_history.findIndex(
     (line) => line.text === '要跟那个角色换号呢？',
   );
@@ -1931,16 +1925,16 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
       (line) => line.type === 'button' && line.accelerator === 1,
     ),
     false,
-    '第二屏剃除 CN:1 的行',
+    '第二屏剃除已选的行',
   );
   assert.equal(
     second_screen.some(
       (line) => line.type === 'button' && line.accelerator === 2,
     ),
     true,
-    '第二屏列出 CN:2 候选',
+    '第二屏列出候选',
   );
-  // 交换后 RESTART 重画的第一屏按新的排列顺序：拿到排序编号 1 的乙排在前
+  // 互换后重画的第一屏按新的排列顺序：拿到排序编号 1 的乙排在前
   const done_at = fixture.lines_history.findIndex(
     (line) => line.text === '已完成互换',
   );
@@ -1957,7 +1951,7 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
     [2, 1],
     '互换后第一屏按排序编号排：乙（排序编号 1）在前',
   );
-  // 行体按原作 `LV:{CFLAG:COUNT:9,4,LEFT}`：冒号 + 等级值左对齐占 4 格
+  // 行体：冒号 + 等级值左对齐占 4 格
   // （1 位数补 3 空格，后面才是 [SP] 之类的片段），见 print_swap_row
   assert.equal(
     printed_includes(fixture, ' 甲 战士 LV:5\u00A0\u00A0\u00A0'),
@@ -2016,8 +2010,8 @@ test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页�
     fixture.set_inputs(2000, 2001, 2001, 2000, 1999);
     await chara_number_swap();
 
-    // 每屏以 [1999] 結束换号 收尾，按它切片：第二屏（页首按上一页后）
-    // 必须仍是第 1 页的 25 行——上一页守卫写坏（no_page 落到 -1）时这一屏空
+    // 每屏以 [1999] 结束换号 收尾，按它切片：第二屏（页首按上一页后）
+    // 必须仍是第 1 页的 25 行——上一页条件写坏（no_page 落到 -1）时这一屏空
     const screens = [];
     let screen_start = 0;
     fixture.lines_history.forEach((line, idx) => {
@@ -2047,12 +2041,12 @@ test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页�
     assert.equal(
       buttons_with(fixture, 26).length,
       2,
-      '第 26 人只在第 2 页；末页再按下一页不翻页但仍重画（原作 GOTO 在 IF 外）',
+      '第 26 人只在第 2 页；末页再按下一页不翻页但仍重画',
     );
   }
   {
     // 恰好 25 名候选：(0+1)*25 <= 25 成立 → 第 2 页可进，但整页无行
-    //（守卫若误写成 <，这里会停在原地重画 25 行）
+    //（条件若误写成 <，这里会停在原地重画 25 行）
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     for (let cid = 1; cid <= 25; cid += 1)
@@ -2075,7 +2069,7 @@ test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页�
     );
   }
   {
-    // 第二屏的翻页守卫与第一屏共用边界：恰 25 名候选时 [3001] 可进空尾页、
+    // 第二屏的翻页条件与第一屏共用边界：恰 25 名候选时 [3001] 可进空尾页、
     // [3000] 回第 1 页后照常选人
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
@@ -2103,7 +2097,7 @@ test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页�
   }
 });
 
-test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码也保持（静态变量语义）', async () => {
+test('换号：互换后重画停在当前页；[1999] 出口后名册页码也保持（页码不归零）', async () => {
   {
     // 27 名候选（第 1 页 1-25、第 2 页 26-27）：在第 2 页内部选两个角色换号
     // （互换只对调排列键，两人都还在第 2 页），重画应仍在第 2 页
@@ -2116,9 +2110,8 @@ test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码�
     );
 
     // 第一屏 [2001] 翻到第 2 页选 26；第二屏（同页、剃除 26）选 27；[4000] 确认；
-    // 互换发生在第 2 页，RESTART 重画仍在第 2 页（NO_PAGE 是静态变量，
-    // 指南 user-defined-variables.md:67-69/:82：函数退出与 RESTART 都不重置；
-    // 换号页的实现相应把页码提在模块级，见该文件头）
+    // 互换发生在第 2 页，重画仍在第 2 页（no_page 提在模块级：
+    // 函数退出与重画都不重置，见该文件头）
     fixture.set_inputs(2001, 26, 27, 4000, 1999);
     await chara_number_swap();
 
@@ -2172,8 +2165,8 @@ test('名册重进：[1600] 流程返回后名册页码保持（同一轮 contin
   for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：JUMP 重进名册在原作沿用静态变量
-  // （NO_PAGE 不归零），ere 侧靠同一轮循环的 continue 复现，重画仍在第 2 页
+  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：子流程返回后名册靠同一轮
+  // 循环的 continue 重画，页码不归零，仍在第 2 页
   fixture.set_inputs(998, 1600, 2003, 999);
   await chara_info();
 
@@ -2206,7 +2199,7 @@ test('名册重进：[1400] 切视图后走 [1600]，排序视图也保持（同
     .map((line) => line.text);
   assert.ok(
     last_texts.some((text) => text.includes('所持金:300')),
-    `排序视图保持所持金（SORT_SELECT 是静态局部变量；实际：${JSON.stringify(last_texts)}）`,
+    `排序视图保持所持金（sort_select 沿用现值；实际：${JSON.stringify(last_texts)}）`,
   );
   assert.equal(
     last_texts.some((text) => text.includes('攻击15/防御20')),
@@ -2309,7 +2302,7 @@ test('换号页：候选列表按排序编号升序，编号格显示的仍是�
     ['[3] ', '[1] ', '[2] '],
     '编号格＝引擎按 showAcc 拼的快捷键（角色 ID）：看到的号与敲的号是同一个',
   );
-  // 等级列：原作 :21/:72 的 `LV:{CFLAG:COUNT:9,4,LEFT}`——冒号 + 左对齐 4 格
+  // 等级列：冒号 + 左对齐 4 格
   const row_text = (name) =>
     fixture.lines_history.find(
       (line) =>
@@ -2335,10 +2328,10 @@ test('换号第二屏：只剩一名候选时也有出口——[3002] 取消回�
     'page/page-chara-number-swap',
   );
 
-  // 唯一候选 17 被选中后，第二屏把她本人剃除（:67-69）→ 屏上再没有候选行；
+  // 唯一候选 17 被选中后，第二屏把她本人剃除 → 屏上再没有候选行；
   // 只剩 [3000]/[3001]/[3002]，而 [3001] 在候选不足一页时只重绘同一屏。
-  // 原作那条「乱输编号也走确认屏 → [4001] 否 → 回第一屏」的兜底在白名单下
-  // 不可达，本轮补出的 [3002] 取消就是这条路上唯一可达的出口
+  // 手输编号的路径在白名单下不可达，本轮补出的 [3002] 取消就是
+  // 唯一可达的出口
   fixture.set_inputs(17, 3002, 1999);
   let thrown = null;
   try {
@@ -2383,7 +2376,7 @@ test('换号第二屏：只剩一名候选时也有出口——[3002] 取消回�
   );
 });
 
-test('换号页：页码跨次进入沿用（原作 NO_PAGE 是静态变量）——#545 返工', async () => {
+test('换号页：页码跨次进入沿用（模块级 no_page）——#545 返工', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (let cid = 1; cid <= 26; cid += 1) add_chara(fixture, cid, `角色${cid}`);
@@ -2404,7 +2397,7 @@ test('换号页：页码跨次进入沿用（原作 NO_PAGE 是静态变量）�
     second_entry.some(
       (line) => line.type === 'button' && line.accelerator === 26,
     ),
-    '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
+    '再次进入仍在第 2 页：页码不随函数退出归零（模块级变量）',
   );
   assert.equal(
     second_entry.some(

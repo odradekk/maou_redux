@@ -59,9 +59,9 @@ export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dun
 
 export default [
   {
-    desc: 'M3 999 出口：@USERCOM 不再发起 BEGIN AFTERTRAIN',
+    desc: 'M3 999 出口：USERCOM 不再发起 AFTERTRAIN 转场',
     file: 'ere/page/page-usercom.js',
-    find: '  if (result === 999) {\n    // 调教结束 → BEGIN AFTERTRAIN（事件链暂存，回合循环提交）\n    begin(STATE.AFTERTRAIN);\n    return;\n  }',
+    find: '  if (result === 999) {\n    // 调教结束 → begin(STATE.AFTERTRAIN) 转场（事件链暂存，回合循环提交）\n    begin(STATE.AFTERTRAIN);\n    return;\n  }',
     replace: `  if (result === 999) {
     // 变异：不发起转场
     return;
@@ -70,9 +70,9 @@ export default [
     must_mention: '端到端',
   },
   {
-    desc: 'M8 SELECT_TARGET 取消：999 返回 1（假选中）',
+    desc: 'M8 select_target 取消：999 返回 1（假选中）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 返回 → RETURN 0\n      return 0;\n    }',
+    find: '    if (result === 999) {\n      // 返回 → 0\n      return 0;\n    }',
     replace: `    if (result === 999) {
       // 变异：返回 1
       return 1;
@@ -92,12 +92,12 @@ export default [
     must_mention: 'FLAG:1',
   },
   {
-    desc: 'M10 IS_TRAINABLE：删掉占用判据（CFLAG:x:1）',
+    desc: 'M10 is_trainable：删掉占用条件（CFLAG:x:1）',
     file: 'ere/page/page-select-target.js',
-    find: '  // SIF CFLAG:ARG:1 != 0 → 2\n  if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {\n    return 2;\n  }',
+    find: '  // 占用中（CFLAG:x:1 != 0）→ 2\n  if ((era.get(`cflag:${cid}:1`) || 0) !== 0) {\n    return 2;\n  }',
     replace: '  // 变异：删掉占用判据',
     tests: ['page-select-target'],
-    must_mention: 'IS_TRAINABLE',
+    must_mention: 'is_trainable',
   },
   {
     desc: 'M11 PRINT_PALAM 百分比：满刻度改用当前等级阈值（而非下一级）',
@@ -116,18 +116,18 @@ export default [
     must_mention: '条后数值',
   },
   {
-    desc: 'M16 SELECT_TARGET 翻页：开窗判据边界错一格（下界改开区间）',
+    desc: 'M16 select_target 翻页：开窗条件边界错一格（下界改开区间）',
     file: 'ere/page/page-select-target.js',
     // #395 起 show_list_assistable 复制了同一条件表达式，find 收窄到
-    // trainable.forEach 起始的整段（含两行注释）以恰中一处
-    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
+    // trainable.forEach 起始的整段（含注释行）以恰中一处
+    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口按可训练序号开（修正按角色号开窗的错位，见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
     replace:
-      '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
+      '  trainable.forEach((cid, index) => {\n    // 显示窗口按可训练序号开（修正按角色号开窗的错位，见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
     tests: ['page-select-target'],
     must_mention: '翻页',
   },
   {
-    desc: 'M18 100 分支守卫：育儿室判据取反（10 改 11，守卫永不成立）',
+    desc: 'M18 100 分支检查：育儿室条件取反（10 改 11，检查永不成立）',
     file: 'ere/page/page-shop.js',
     find: "    if ((era.get('cflag:0:1') || 0) === 10) {",
     replace: "    if ((era.get('cflag:0:1') || 0) === 11) {",
@@ -149,10 +149,10 @@ export default [
     find: '    // 其余\n    need = lv * 10 + 10;',
     replace: '    // 其余\n    need = lv * 10 + 5;',
     tests: ['juel-check'],
-    must_mention: 'SHOW_INFO_EXP 的经验行',
+    must_mention: 'show_info_exp 的经验行与等级行逐字一致',
   },
   {
-    desc: 'M56 指令按钮渲染删掉（#214 起靶 = 内建臂：GETBIT=0 的静态名按钮——e2e 与单测都走它）',
+    desc: 'M56 指令按钮渲染删掉（#214 起目标 = 内建分支：位 34 关的静态名按钮——e2e 与单测都走它）',
     file: 'ere/page/page-usercom.js',
     find: "    era.printButton(era.get(`traincommandname:${id}`) ?? '', com_index(id));",
     replace: '    // 变异：按钮渲染删除',
@@ -162,7 +162,7 @@ export default [
   {
     desc: 'M109 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
     file: 'ere/page/page-title.js',
-    find: `      // 移植自建（issue #67，非原作动作）：给刚加入的角色盖移植数据版本戳
+    find: `      // 移植版自建（issue #67）：给刚加入的角色盖移植数据版本戳
       // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
       init_portcflag(0);`,
     replace: '      // 变异：portcflag 版本戳不盖',
@@ -178,7 +178,7 @@ export default [
     must_mention: 'TFM-003A_17',
   },
   {
-    desc: 'M117 标题音乐丢循环（{loop:true} → {}——Emuera PLAYBGM 默认循环）',
+    desc: 'M117 标题音乐丢循环（{loop:true} → {}——标题曲应循环播放）',
     file: 'ere/page/page-title.js',
     find: "    era.playMusic('TFM-003A_17.mp3', { loop: true });",
     replace: "    era.playMusic('TFM-003A_17.mp3', {});",
@@ -186,7 +186,7 @@ export default [
     must_mention: '（循环）',
   },
   {
-    desc: 'M118 主菜单 BGM 守卫删掉（开关恒真，新档也播）',
+    desc: 'M118 主菜单 BGM 检查删掉（开关恒真，新档也播）',
     file: 'ere/page/page-main-menu.js',
     find: `  if (era_audio.bgm_enabled === 1) {
     era.playMusic('据点2.mp3', { loop: true });
@@ -196,17 +196,17 @@ export default [
     must_mention: '新档默认',
   },
   {
-    desc: 'M121 标题图守卫删掉（资源未启用也硬输出图片行）',
+    desc: 'M121 标题图检查删掉（资源未启用也硬输出图片行）',
     file: 'ere/page/page-title.js',
     find: `  if (era.checkImage('TITLE')) {
     era.printWholeImage('TITLE');
   }`,
     replace: "  era.printWholeImage('TITLE');",
     tests: ['page-title'],
-    must_mention: '纯文本兜底',
+    must_mention: '缺席时回退纯文本',
   },
   {
-    desc: 'M137 重绘清行改「本次行数」而非锚点跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
+    desc: 'M137 重绘清行改「本次行数」而非基准行跨度（回显在块下方，清不干净——屏幕每轮净涨一行）',
     file: 'ere/page/components/screen-block.js',
     find: '    const span = era.getLineCount() - this.anchor_row;',
     replace: '    const span = this.row_count;',
@@ -224,7 +224,7 @@ export default [
     must_mention: '上方内容完好',
   },
   {
-    desc: 'M139 锚点挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
+    desc: 'M139 基准行挪到绘制之后（跨度漏掉块自身行——旧行残留、越清越涨）',
     file: 'ere/page/components/screen-block.js',
     find: `    this.anchor_row = era.getLineCount();
     await this.draw_content();`,
@@ -250,7 +250,7 @@ export default [
     must_mention: '调暗',
   },
   {
-    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，PR #30 形态）',
+    desc: 'M142 menu_button 手写编号前缀（引擎 showAcc 自动拼——重复前缀，同 PR #30）',
     file: 'ere/page/components/menu-button.js',
     find: '    `▌${label}`,',
     replace: '    `[${accelerator}] ▌${label}`,',
@@ -269,7 +269,7 @@ export default [
     must_mention: '不涨屏',
   },
   {
-    desc: 'M144 菜单块提为模块级单例（跨会话复用旧锚点——转场后清掉新局上方内容）',
+    desc: 'M144 菜单块提为模块级单例（跨会话复用旧基准——转场后清掉新局上方内容）',
     file: 'ere/page/page-shop.js',
     find: '  const main_menu = create_main_menu();',
     replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
@@ -278,7 +278,7 @@ export default [
     must_mention: '跨会话',
   },
   {
-    desc: 'M150 重绘判据反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
+    desc: 'M150 重绘条件反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
     file: 'ere/page/page-train.js',
     find: '  if (command_path_seen) {',
     replace: '  if (!command_path_seen) { // 变异：判据反接',
@@ -286,7 +286,7 @@ export default [
     must_mention: '指令轮追加绘制',
   },
   {
-    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧锚点清掉新局内容）',
+    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧基准清掉新局内容）',
     file: 'ere/page/page-train.js',
     find: `on('EVENTTRAIN', () => {
   status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
@@ -300,7 +300,7 @@ export default [
     must_mention: '跨会话',
   },
   {
-    desc: 'M152 旁路清行自校验删除（重绘行数未回锚点不记录）',
+    desc: 'M152 旁路清行自校验删除（重绘行数未回基准不记录）',
     file: 'ere/page/components/screen-block.js',
     find: `      const remaining = await era.clear(span);
       if (remaining !== this.anchor_row) {
@@ -343,7 +343,7 @@ export default [
     must_mention: '条后数值列必须真实渲染',
   },
   {
-    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155 形态）',
+    desc: 'M156 删掉 progress 的 config（吃引擎缺省 barWidth 24——同 M155）',
     file: 'ere/page/page-train.js',
     find: '      config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },',
     replace: '      // 变异：config 删除，吃引擎缺省 24',
@@ -448,7 +448,7 @@ export default [
     must_mention: 'EXP:0:80 += SINKOU/2',
   },
   {
-    desc: 'M2112 [109] 出兵成功不转场（BEGIN TURNEND 删除，SHOP ver1.0.2.ERB:127）',
+    desc: 'M2112 [109] 出兵成功不转场（TURNEND 转场删除）',
     file: 'ere/page/page-shop.js',
     find: '    if ((await invasion()) === 1) {\n      begin(STATE.TURNEND);\n    }',
     replace: '    await invasion(); // 变异：不转场',
@@ -456,7 +456,7 @@ export default [
     must_mention: 'TURNEND',
   },
   {
-    desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，#129 形态）',
+    desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，同 #129）',
     file: 'ere/page/page-main-menu.js',
     find: "  era.printButton('侵略', 109);",
     replace: "  era.printButton('侵略', 1090); // 变异：accelerator 改坏",
@@ -516,7 +516,7 @@ export default [
     must_mention: '五组全不满足',
   },
   {
-    desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿（SYSTEM_DATA.ERB:309-310）',
+    desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿',
     file: 'ere/page/page-save-load.js',
     find: "    // SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）\n    if (i === era_flag.last_save_no) {\n      color = 'lightgreen';\n    }",
     replace: '    // 变异：删掉 LASTSAVE_NO 高亮',
@@ -524,7 +524,7 @@ export default [
     must_mention: '上次存档号高亮 LIGHTGREEN',
   },
   {
-    desc: 'M224 覆盖确认整段跳过（存在槽不再问，SYSTEM_DATA.ERB:163-171）',
+    desc: 'M224 覆盖确认整段跳过（存在槽不再问）',
     file: 'ere/page/page-save-load.js',
     find: "      if (has_valid_save(comment)) {\n        era.print('存档已经存在，确定要覆盖么？');",
     replace:
@@ -533,7 +533,7 @@ export default [
     must_mention: '取消时不得存档',
   },
   {
-    desc: 'M225 故事命名截断放宽（32 → 33 字符，SYSTEM_DATA.ERB:202）',
+    desc: 'M225 故事命名截断放宽（32 → 33 字符）',
     file: 'ere/page/page-save-load.js',
     find: '    chara(0).system.故事名 = name.substring(0, 32);',
     replace:
@@ -542,7 +542,7 @@ export default [
     must_mention: 'CSTR:MASTER:99 只存前 32 字符',
   },
   {
-    desc: 'M226 存档界面翻页步长改坏（+20 → +19，SYSTEM_DATA.ERB:140-146）',
+    desc: 'M226 存档界面翻页步长改坏（+20 → +19）',
     file: 'ere/page/page-save-load.js',
     find: '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === 200) {',
     replace:
@@ -551,7 +551,7 @@ export default [
     must_mention: '翻页往返后回到首页起点 0',
   },
   {
-    desc: 'M227 删除存档：rmData 调用移除（SYSTEM_DATA.ERB:284）',
+    desc: 'M227 删除存档：rmData 调用移除',
     file: 'ere/page/page-save-load.js',
     find: '        await era.rmData(result);',
     replace: '        // 变异：删除调用移除',
@@ -559,7 +559,7 @@ export default [
     must_mention: '确认后必须调 era.rmData(5)',
   },
   {
-    desc: 'M228 SAVEINFO 时段判据反转（TIME == 0 改 == 1，SYSTEM ver1.0.3.ERB:955）',
+    desc: 'M228 SAVEINFO 时段条件反转（TIME == 0 改 == 1）',
     file: 'ere/page/page-save-load.js',
     find: "  const day_half = era_flag.time === 0 ? '午前' : '午后';",
     replace:
@@ -568,7 +568,7 @@ export default [
     must_mention: '正在调教:玛奥',
   },
   {
-    desc: 'M229 LASTSAVE_NO 压栈不滑动（ARRAYSHIFT 退化为只写 [0]，SYSTEM_DATA.ERB:186）',
+    desc: 'M229 LASTSAVE_NO 压栈不滑动（ARRAYSHIFT 退化为只写 [0]）',
     file: 'ere/page/page-save-load.js',
     find: `  for (let i = 9; i > 0; i -= 1) {
     era.set(\`flag:\${10019 + i}\`, era.get(\`flag:\${10019 + i - 1}\`) ?? -1);
@@ -580,7 +580,7 @@ export default [
     must_mention: '旧 [0] 移到 [1]',
   },
   {
-    desc: 'M230 读档成功不写 LASTLOAD_NO（SYSTEM_DATA.ERB:73 的引擎行为等价物）',
+    desc: 'M230 读档成功不写 LASTLOAD_NO',
     file: 'ere/page/page-save-load.js',
     find: `        era_flag.last_load_no = result;`,
     replace: `        // 变异：漏写 LASTLOAD_NO`,
@@ -588,7 +588,7 @@ export default [
     must_mention: 'LASTLOAD_NO = 本次槽号',
   },
   {
-    desc: 'M231 EX_FLAG:2801 钳制阈值改坏（< 10 改 < 4，SYSTEM_DATA.ERB:74）',
+    desc: 'M231 EX_FLAG:2801 钳制阈值改坏（< 10 改 < 4）',
     file: 'ere/page/page-save-load.js',
     find: `        if (era_exflag.first_run_deadline < 10) {
           era_exflag.first_run_deadline = 10;
@@ -639,17 +639,17 @@ export default [
       '保存必须是按钮——没有 [200]，据点存档入口在实机上不存在（#137）',
   },
   {
-    desc: 'M253 读档后仍执行 @EVENTSHOP（skip_eventshop 开关被拆——读回来的在售状态被初始化覆盖，system-flow.md:51-53）',
+    desc: 'M253 读档后仍执行 EVENTSHOP 链（skip_eventshop 开关被拆——读回来的在售状态被初始化覆盖，见 system-flow.md）',
     file: 'ere/page/page-shop.js',
     find: `  if (!skip_eventshop) {
-    // @EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
-    // kojo/kojo-system.js——#PRI 先跑，见 eventshop 注册处的说明）
+    // EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
+    // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）
     await emit('EVENTSHOP');
   }`,
-    replace: `  // 变异：跳过开关被拆，一律执行 @EVENTSHOP
+    replace: `  // 变异：跳过开关被拆，一律执行 EVENTSHOP 链
   await emit('EVENTSHOP');`,
     tests: ['page-shop'],
-    must_mention: '读档后的进入路径不得执行 @EVENTSHOP',
+    must_mention: '读档后的进入路径不得执行 EVENTSHOP 链',
   },
   {
     desc: 'M256 读档钩子链被拆（load_game 成功分支不再 emit EVENTLOAD——钩子存在但从不被调用）',
@@ -665,7 +665,7 @@ export default [
     find: `  [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),`,
     replace: `  [STATE.SHOP_AFTER_LOAD]: run_shop, // 变异：映射指回原样`,
     tests: ['page-shop'],
-    must_mention: '经主循环进入 SHOP_AFTER_LOAD 同样不跑 @EVENTSHOP',
+    must_mention: '经主循环进入 SHOP_AFTER_LOAD 同样不跑 EVENTSHOP 链',
   },
   {
     desc: 'M282 has_valid_save 的 FILE LOST 前缀分支被拆（丢失槽被当有效档可点——#147 点名的无钉住缺口）',
@@ -734,7 +734,7 @@ export default [
     must_mention: '阶层 2 排在阶层 5 前',
   },
   {
-    desc: 'M567 OVERVIEW「迷宫外」判定改坏（501 <= 1 且 502 == 0 → 502 判据删）',
+    desc: 'M567 OVERVIEW「迷宫外」判定改坏（501 <= 1 且 502 == 0 → 502 条件删）',
     file: 'ere/page/page-main-menu.js',
     find: `        if (floor <= 1 && (era.get(\`cflag:\${cid}:502\`) || 0) === 0) {
           temp[10] += 1;`,
@@ -765,9 +765,9 @@ export default [
 
   // —— #212（J2 调教回合骨架）：M704-M712 ——
   {
-    desc: 'M705 @P_C 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
+    desc: 'M705 p_c 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
     file: 'ere/page/page-usercom.js',
-    find: "  let name = era.get(`traincommandname:${local}`) ?? '';\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，TRAIN_NAME_INIT 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }",
+    find: "  let name = era.get(`traincommandname:${local}`) ?? '';\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }",
     replace: `  let name = read_train_name(local);
   if (name.length < 1) {
     name = era.get(\`traincommandname:\${local}\`) ?? '';
@@ -776,9 +776,9 @@ export default [
     must_mention: 'TRAINNAME 非空时不得读 TRAIN_NAME',
   },
   {
-    desc: 'M706 @P_C 第三级回落的全角空格改空串（STRLENSU >= 1 语义丢）',
+    desc: 'M706 p_c 第三级回落的全角空格改空串（非空占位语义丢）',
     file: 'ere/page/page-usercom.js',
-    find: "  // 仍空 → 全角空格（占位非空串——STRLENSU ≥ 1）\n  if (name.length < 1) {\n    name = '　';\n  }",
+    find: "  // 仍空 → 全角空格（占位非空串——显示宽度 ≥ 1）\n  if (name.length < 1) {\n    name = '　';\n  }",
     replace:
       "  // 变异：占位改空串\n  if (name.length < 1) {\n    name = '';\n  }",
     tests: ['page-usercom'],
@@ -805,7 +805,7 @@ export default [
     must_mention: '★气力０★',
   },
   {
-    desc: 'M709 主人射精档的 135 守卫补上 >=2000 臂（三处守卫差异抹平）',
+    desc: 'M709 主人射精档的 135 检查补上 >=2000 分支（三处检查差异抹平）',
     file: 'ere/page/page-train.js',
     find: `    (era.get('talent:0:121') || era.get('talent:0:122')) &&
     !era.get('talent:0:135') &&
@@ -817,7 +817,7 @@ export default [
     must_mention: '主人档 TALENT:135 置位即不显示',
   },
   {
-    desc: 'M710 目标射精档的 135 >=2000 臂删（守卫差异反向抹平）',
+    desc: 'M710 目标射精档的 135 >=2000 分支删（检查差异反向抹平）',
     file: 'ere/page/page-train.js',
     find: `    (era.get(\`talent:\${target}:121\`) || era.get(\`talent:\${target}:122\`)) &&
     (!era.get(\`talent:\${target}:135\`) ||
@@ -828,7 +828,7 @@ export default [
     must_mention: '135 置位但 BASE >= 2000 → 显示',
   },
   {
-    desc: 'M711 母乳（目标）MAXBASE:3 缺省补 10000 删（:217-218 SIF 写入）',
+    desc: 'M711 母乳（目标）MAXBASE:3 缺省补 10000 删（缺省时的条件写入）',
     file: 'ere/page/page-train.js',
     find: `  if (era.get(\`talent:\${target}:130\`)) {
     if (!(era.get(\`maxbase:\${target}:3\`) > 0)) {
@@ -849,7 +849,7 @@ export default [
     must_mention: '(2500/10000)避孕套使用中',
   },
   {
-    desc: 'M716 避孕套守卫回退成二段（tequip:TARGET:35 → tequip:35——守卫真树用例的靶心）',
+    desc: 'M716 避孕套检查回退成二段（tequip:TARGET:35 → tequip:35——检查用例正中此处）',
     file: 'ere/page/page-train.js',
     find: "      suffix: era.get(`tequip:${target}:35`) ? '避孕套使用中' : '',",
     replace: "      suffix: era.get('tequip:35') ? '避孕套使用中' : '',",
@@ -857,7 +857,7 @@ export default [
     must_mention: '角色表二段寻址',
   },
   {
-    desc: 'M713 主人档的 TARGET != MASTER 判据删（自调教双条）',
+    desc: 'M713 主人档的 TARGET != MASTER 条件删（自调教双条）',
     file: 'ere/page/page-train.js',
     find: `    !era.get('talent:0:135') &&
     target !== 0`,
@@ -872,10 +872,11 @@ export default [
     find: '    out += `穿戴着${clothtype_special_text(cid)}的模样`;',
     replace: '    // 变异：特别服装句删',
     tests: ['cloth-func'],
-    must_mention: '基本 + 特别复合句（:49-56）',
+    must_mention:
+      'clothtype_text：着衣模式关 / 无基本服装 → 全裸；史莱姆特装；特别服装句',
   },
   {
-    desc: 'M811 乳房外露判据删（breasts_exposed 恒假 → 一律上半身裸露）',
+    desc: 'M811 乳房外露条件删（breasts_exposed 恒假 → 一律上半身裸露）',
     file: 'ere/page/page-clothtype.js',
     find: `  return (
     talent(cid, 122) === 0 &&
@@ -902,27 +903,29 @@ export default [
     replace: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
     game.stronghold.税金修正 += 4; // 变异：税金少算 1`,
     tests: ['page-shop'],
-    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND',
+    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
-    desc: 'M7889 199 休息：BEGIN TURNEND 删（回合推不动，本票到站标记失守）',
+    desc: 'M7889 199 休息：TURNEND 转场删（回合推不动，这张工单的到站标记失守）',
     file: 'ere/page/page-shop.js',
     find: `    game.stronghold.税金修正 += 5;
     begin(STATE.TURNEND);`,
     replace: `    game.stronghold.税金修正 += 5;
-    // 变异：BEGIN TURNEND 删`,
+    // 变异：TURNEND 转场删`,
     tests: ['page-shop'],
-    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND',
+    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
-    desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转判据永不成立）',
+    desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转条件永不成立）',
     file: 'ere/page/page-shop.js',
-    find: `    // （show_shop 的 0-53 支，#399 起本体是真身 page/page-item-shop.js）
+    find: `    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
+    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
     era_flag.bought = 1;`,
-    replace: `    // （show_shop 的 0-53 支，#399 起本体是真身 page/page-item-shop.js）
+    replace: `    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
+    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
     era_flag.bought = -1; // 变异：不再触发商店跳转`,
     tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店',
+    must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
   },
   {
     desc: 'M7891 show_shop：BOUGHT 54 边界错一格（>= 改 >，#396 重构后重钉）',
@@ -939,10 +942,10 @@ export default [
     replace:
       '  if (era_flag.bought >= 54 && era_flag.bought < 54) { // 变异：支不可达',
     tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店',
+    must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
   },
   {
-    desc: 'M7893 SELECT_ASSI [1002]：ASSI 复位删（旧指针残留）',
+    desc: 'M7893 select_assi [1002]：ASSI 复位删（旧指针残留）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
@@ -951,10 +954,10 @@ export default [
       return 0; // 变异：ASSI 未复位`,
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+      'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
   },
   {
-    desc: 'M7894 SELECT_ASSI [1002]：FLAG:2 写错值（0 代替 -1）',
+    desc: 'M7894 select_assi [1002]：FLAG:2 写错值（0 代替 -1）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = -1;
       game.event.上次助手 = -1;`,
@@ -962,10 +965,10 @@ export default [
       game.event.上次助手 = 0; // 变异：写错值`,
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+      'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
   },
   {
-    desc: 'M7895 SELECT_ASSI [1002]：返回值改 2（误判为取消，与 999 混淆）',
+    desc: 'M7895 select_assi [1002]：返回值改 2（误判为取消，与 999 混淆）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
@@ -979,20 +982,20 @@ export default [
     if (result === 999) {`,
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+      'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
   },
   {
-    desc: 'M7896 SELECT_ASSI [999]：返回值改 0（误判为非取消，与 1002 混淆）',
+    desc: 'M7896 select_assi [999]：返回值改 0（误判为非取消，与 1002 混淆）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）\n      return 2;\n    }',
+    find: '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
     replace:
-      '    if (result === 999) {\n      // 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
+      '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
     tests: ['page-select-target'],
     must_mention:
-      'SELECT_ASSI 我先想想（999）：返回 2（取消，与 SELECT_TARGET 的 999=0 不同码），不置 ASSI',
+      'select_assi 我先想想（999）：返回 2（取消，与 select_target 的 999=0 不同码），不置 ASSI',
   },
   {
-    desc: 'M7897 SELECT_ASSI 正常选中：ASSI 未写（选中的人选丢失）',
+    desc: 'M7897 select_assi 正常选中：ASSI 未写（选中的人选丢失）',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = result;
       game.event.上次助手 = result;
@@ -1000,10 +1003,10 @@ export default [
     replace: `      game.event.上次助手 = result;
       return 1; // 变异：ASSI 未写`,
     tests: ['page-select-target'],
-    must_mention: 'SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
+    must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
   {
-    desc: 'M7898 SELECT_ASSI 正常选中：FLAG:2（上次助手）未写',
+    desc: 'M7898 select_assi 正常选中：FLAG:2（上次助手）未写',
     file: 'ere/page/page-select-target.js',
     find: `      era_flag.assi = result;
       game.event.上次助手 = result;
@@ -1015,19 +1018,18 @@ export default [
     }
     if (result === 1000) {`,
     tests: ['page-select-target'],
-    must_mention: 'SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
+    must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
   {
-    desc: 'M7899 [101] 能力显示：CHARANUM 守卫边界错一格（>= 1 改 >= 2）',
+    desc: 'M7899 [101] 能力显示：角色数检查边界错一格（>= 1 改 >= 2）',
     file: 'ere/page/page-main-menu.js',
     find: '  if (era.getAddedCharacters().length >= 1) {',
     replace: '  if (era.getAddedCharacters().length >= 2) {',
     tests: ['page-main-menu'],
-    must_mention:
-      '[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰色 [---]',
+    must_mention: '[101] 能力显示：角色数 >= 1 时是可点按钮',
   },
   {
-    desc: 'M7900 [103] 处刑：A > 0 守卫取反',
+    desc: 'M7900 [103] 处刑：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if (count_selectable_slaves() > 0) {
     era.printButton('处刑', 103);`,
@@ -1038,7 +1040,7 @@ export default [
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
   },
   {
-    desc: 'M7901 [104] 迎击：A > 0 守卫取反',
+    desc: 'M7901 [104] 迎击：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if (count_selectable_slaves() > 0) {
     era.printButton('迎击', 104);`,
@@ -1049,7 +1051,7 @@ export default [
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
   },
   {
-    desc: 'M7902 [108] 换装：FLAG:37 == 1 守卫取反',
+    desc: 'M7902 [108] 换装：FLAG:37 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: "  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {",
     replace:
@@ -1059,7 +1061,7 @@ export default [
       '[108] 换装：A > 0 且 FLAG:37 == 1 才渲染（未落表前恒不成立）',
   },
   {
-    desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 守卫取反',
+    desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if ((era.get('talent:0:325') || 0) === 1) {
     era.printButton('实验室', 110);`,
@@ -1101,7 +1103,7 @@ export default [
     find: '  if (state.column >= 5) {',
     replace: '  if (state.column >= 6) {',
     tests: ['page-main-menu'],
-    must_mention: 'DRAW_HAVEITEMS：5 个一行，第 6 个换行',
+    must_mention: 'draw_have_items：5 个一行，第 6 个换行',
   },
   {
     desc: 'M7908 DRAW_HAVEITEMS 第一段起点错一格（0 改 1，item:0 漏画）',
@@ -1110,7 +1112,7 @@ export default [
     replace: '  for (let id = 1; id <= 58; id += 1) {',
     tests: ['page-main-menu'],
     must_mention:
-      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+      'draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
   {
     desc: 'M7909 DRAW_HAVEITEMS 第二段起点错一格（300 改 301，item:300 漏画）',
@@ -1119,7 +1121,7 @@ export default [
     replace: '  for (let id = 301; id <= 339; id += 1) {',
     tests: ['page-main-menu'],
     must_mention:
-      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+      'draw_have_items：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
   {
     desc: 'M8104 ITEM_SHOP_TRAP 陷阱网格上界改错（end 92 → 91，漏掉 91 号）',
@@ -1195,9 +1197,9 @@ export default [
     must_mention: '日期行两态',
   },
   {
-    desc: 'M8113 USERSHOP 998：切了陷阱商店却不重画（JUMP 的目标删）',
+    desc: 'M8113 USERSHOP 998：切了陷阱商店却不重画（跳转目标删）',
     file: 'ere/page/page-shop.js',
-    find: '    await item_shop_trap(); // JUMP ITEM_SHOP_TRAP（切陷阱商店并立即重画）',
+    find: '    await item_shop_trap(); // 切陷阱商店并立即重画',
     replace: '    // 变异：切了不画',
     tests: ['shop-trap'],
     must_mention: '切陷阱商店并立即重画',
@@ -1205,18 +1207,18 @@ export default [
   {
     desc: 'M8114 USERSHOP 999：购物态下不清 BOUGHT（退出商店失效）',
     file: 'ere/page/page-shop.js',
-    find: '    era_flag.bought = -1;\n    return; // 支的出口：原作 :226-229 的 RETURN 0（#592）',
+    find: '    era_flag.bought = -1;\n    return; // 支的出口：回主菜单（#592）',
     replace:
-      '    // 变异：不退出购物态\n    return; // 支的出口：原作 :226-229 的 RETURN 0（#592）',
+      '    // 变异：不退出购物态\n    return; // 支的出口：回主菜单（#592）',
     tests: ['shop-trap'],
     must_mention: '999 退出商店',
   },
   {
-    desc: 'M8115 USERSHOP 购物态守卫失效（其它输入落到主菜单分发）',
+    desc: 'M8115 USERSHOP 购物态检查失效（其它输入落到主菜单分发）',
     file: 'ere/page/page-shop.js',
-    find: '  } else if (era_flag.bought >= 0) {\n    return; // 的 RETURN 0',
+    find: '  } else if (era_flag.bought >= 0) {\n    return; // 购物态下其它输入无反应，回循环重绘',
     replace: `  } else if (era_flag.bought >= 100000) {
-    return; // 变异：购物态守卫失效`,
+    return; // 变异：购物态检查失效`,
     tests: ['shop-trap'],
     must_mention: '购物态下的其它输入一律 RETURN 0',
   },
@@ -1226,24 +1228,24 @@ export default [
     find: "return { content: '<爱\\u00A0\\u00A0慕>', color: COLOR_LOVE };",
     replace: "return { content: '<爱慕>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
-    desc: 'M8382 LIFE_LIST 淫乱标签判据错位（76 → 78）',
+    desc: 'M8382 life_list 淫乱标签条件错位（76 → 78）',
     file: 'ere/page/page-life-list.js',
     find: "  if (talent(cid, 76) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     replace:
       "  if (talent(cid, 78) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
-    desc: 'M8383 LIFE_LIST 妊娠判据漏掉乳内妊娠（341）',
+    desc: 'M8383 life_list 妊娠条件漏掉乳内妊娠（341）',
     file: 'ere/page/page-life-list.js',
     find: '    talent(cid, 153) !== 0 ||\n    talent(cid, 341) !== 0 ||\n    talent(cid, 342) !== 0',
     replace: '    talent(cid, 153) !== 0 ||\n    talent(cid, 342) !== 0',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8384 LIFE_LIST_ITEM_E 肛内妊娠下标错位（343 → 344）',
@@ -1254,7 +1256,7 @@ export default [
     must_mention: '妊娠段多一支 343',
   },
   {
-    desc: 'M8385 LIFE_LIST 收藏标记判据错位（700 → 701）',
+    desc: 'M8385 life_list 收藏标记条件错位（700 → 701）',
     file: 'ere/page/page-life-list.js',
     find: 'if (cflag(cid, 700) !== 0) {',
     replace: 'if (cflag(cid, 701) !== 0) {',
@@ -1262,12 +1264,12 @@ export default [
     must_mention: '占位',
   },
   {
-    desc: 'M8386 LIFE_LIST 可被卖判据放宽（> 0 → >= 0）',
+    desc: 'M8386 life_list 可被卖条件放宽（> 0 → >= 0）',
     file: 'ere/page/page-life-list.js',
     find: '    cflag(cid, 0) > 0 &&\n    cid !== 0 &&',
     replace: '    cflag(cid, 0) >= 0 &&\n    cid !== 0 &&',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8387 LIFE_LIST 可作为助手的助手役编号错（2 → 3）',
@@ -1275,7 +1277,7 @@ export default [
     find: '    cflag(cid, 0) === 2 &&\n    cid !== 0 &&',
     replace: '    cflag(cid, 0) === 3 &&\n    cid !== 0 &&',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8388 LIFE_LIST 虫寄生素质表多收一个（193 → 194）',
@@ -1283,7 +1285,7 @@ export default [
     find: '[190, 191, 192, 193].some((idx) => talent(cid, idx) !== 0)',
     replace: '[190, 191, 192, 194].some((idx) => talent(cid, idx) !== 0)',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8389 LIFE_LIST 派遣状态编号错（12 → 13）',
@@ -1291,7 +1293,7 @@ export default [
     find: '  if (cflag(cid, 1) === 12) {',
     replace: '  if (cflag(cid, 1) === 13) {',
     tests: ['page-life-list'],
-    must_mention: '行尾标签按判据逐维驱动',
+    must_mention: '行尾标签按条件逐维驱动',
   },
   {
     desc: 'M8390 LIFE_LIST 名字字段宽多一格（+8 → +9）',
@@ -1353,7 +1355,7 @@ export default [
     must_mention: '调教回数 / 种族性格 / 性别三列',
   },
   {
-    desc: 'M8397 LIFE_LIST_ITEM_E 性别主判据错位（122 → 121）',
+    desc: 'M8397 life_list_item_e 性别主条件错位（122 → 121）',
     file: 'ere/page/page-life-list.js',
     find: "  const gender = talent(arg, 122)\n    ? { content: '\\u00A0\\u00A0<男>' }\n    : talent(arg, 121)",
     replace:
@@ -1370,7 +1372,7 @@ export default [
     must_mention: '六种状态整表驱动',
   },
   {
-    desc: 'M8399 MAX_PAGE_ENEMY 敌人数判据错位（2 → 1）',
+    desc: 'M8399 max_page_enemy 敌人数条件错位（2 → 1）',
     file: 'ere/page/page-life-list.js',
     find: '    cflag(cid, 1) === 2 && // 侵攻中',
     replace: '    cflag(cid, 1) === 1 && // 变异：判据错位',
@@ -1378,11 +1380,11 @@ export default [
     must_mention: '页数算式在整除与余数两侧',
   },
   {
-    desc: 'M8400 MAX_PAGE_ENEMY 整除分支多算一页',
+    desc: 'M8400 max_page_enemy 整除分支多算一页',
     file: 'ere/page/page-life-list.js',
-    find: '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 1;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * @LIFE_LIST_SALAVE',
+    find: '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 1;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * life_list_salave：可作为奴隶出售角色的分页列表。',
     replace:
-      '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 2;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * @LIFE_LIST_SALAVE',
+      '  if (local % num_page > 0) {\n    return Math.trunc(local / num_page) + 2;\n  }\n  return Math.trunc(local / num_page);\n}\n\n/**\n * life_list_salave：可作为奴隶出售角色的分页列表。',
     tests: ['page-life-list'],
     must_mention: '页数算式在整除与余数两侧',
   },
@@ -1420,7 +1422,7 @@ export default [
     must_mention: '跨域消费同步扣',
   },
   {
-    desc: 'M8420 PAGE-TAILOR 戒指强化漏掉跨域消费（:957）',
+    desc: 'M8420 PAGE-TAILOR 戒指强化漏掉跨域消费',
     file: 'ere/page/page-tailor.js',
     find: "      era.set(\n        'exflag:4444',\n        (era.get('exflag:4444') || 0) - pay * ENHANCE_UNIT,\n      );\n      era.set(`cflag:${cid}:${slot}`, value);",
     replace: '      era.set(`cflag:${cid}:${slot}`, value);',
@@ -1428,7 +1430,7 @@ export default [
     must_mention: '跨域消费',
   },
   {
-    desc: 'M8421 PAGE-TAILOR 武器强化漏掉跨域消费（:1049）',
+    desc: 'M8421 PAGE-TAILOR 武器强化漏掉跨域消费',
     file: 'ere/page/page-tailor.js',
     find: "      era.set(\n        'exflag:4444',\n        (era.get('exflag:4444') || 0) - pay * ENHANCE_UNIT,\n      );\n      era.set(`cflag:${cid}:${SLOT_WEAPON}`, value);",
     replace: '      era.set(`cflag:${cid}:${SLOT_WEAPON}`, value);',
@@ -1436,7 +1438,7 @@ export default [
     must_mention: '跨域消费',
   },
   {
-    desc: 'M8426 PAGE-TAILOR 旧内衣变卖漏掉跨域进账（:1132）',
+    desc: 'M8426 PAGE-TAILOR 旧内衣变卖漏掉跨域进账',
     file: 'ere/page/page-tailor.js',
     find: "      era.set('exflag:4444', (era.get('exflag:4444') || 0) + price);",
     replace: '      // 变异：漏掉变卖的跨域进账',
@@ -1444,7 +1446,7 @@ export default [
     must_mention: '同步进账',
   },
   {
-    desc: 'M8429 PAGE-TAILOR 买入漏掉跨域扣款（:1185）',
+    desc: 'M8429 PAGE-TAILOR 买入漏掉跨域扣款',
     file: 'ere/page/page-tailor.js',
     find: "  era.set('exflag:4444', (era.get('exflag:4444') || 0) - c);",
     replace: '  // 变异：漏掉买入的跨域扣款',
@@ -1452,7 +1454,7 @@ export default [
     must_mention: '跨域消费同步扣',
   },
   {
-    desc: 'M8431 PAGE-TAILOR 旧内衣变卖的判据收紧（>= 0 → > 0）',
+    desc: 'M8431 PAGE-TAILOR 旧内衣变卖的条件收紧（>= 0 → > 0）',
     file: 'ere/page/page-tailor.js',
     find: '    if (cflag(cid, 43) >= 0 && cflag(cid, 48) >= 6) {',
     replace: '    if (cflag(cid, 43) > 0 && cflag(cid, 48) >= 6) {',
@@ -1630,7 +1632,7 @@ export default [
     find: 'const CASUAL_PRICE = 100;',
     replace: 'const CASUAL_PRICE = 101;',
     tests: ['page-tailor'],
-    must_mention: 'TAILOR_CASUAL',
+    must_mention: 'tailor_casual',
   },
   {
     desc: 'M8427 PAGE-TAILOR 黑市价格（30000 → 30001）',
@@ -1662,7 +1664,7 @@ export default [
     find: 'const ENHANCE_LEVEL = 30;',
     replace: 'const ENHANCE_LEVEL = 31;',
     tests: ['page-tailor'],
-    must_mention: '等级门的灰显',
+    must_mention: '等级不足的灰显',
   },
   {
     desc: 'M8433 PAGE-TAILOR 武器前缀档数（9 → 8）',
@@ -2056,7 +2058,7 @@ export default [
     must_mention: 'virgin_conceded_mode = RESULT-1',
   },
   {
-    desc: 'M10201 PAGE-CONFIG 阴茎形态回显文案错位（巨根 → 短小）',
+    desc: 'M10201 PAGE-CONFIG 阴茎档位回显文案错位（巨根 → 短小）',
     file: 'ere/page/page-config.js',
     find: "'《巨根》',",
     replace: "'《短小》',",
@@ -3316,7 +3318,7 @@ export default [
     must_mention: '输入不合法！请输入以下值之一',
   },
   {
-    desc: 'M11205 献祭确认的两个选项一起退回纯文本（#530 的原形态：该轮白名单因此为空，1/0 走自由输入照样能过——只有按钮断言拦得住）',
+    desc: 'M11205 献祭确认的两个选项一起退回纯文本（#530 之前的写法：该轮白名单因此为空，1/0 走自由输入照样能过——只有按钮断言拦得住）',
     file: 'ere/page/page-chara-info-show.js',
     find: `      era.printButton('献祭', 1);
       era.println();
@@ -3330,9 +3332,9 @@ export default [
   {
     desc: 'M11206 献祭两个出口的 [100] 返回退回纯文本（白名单里有 [10]，100 被引擎拒收，#530）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // INPUT",
+    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // 输入",
     replace:
-      "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // INPUT",
+      "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // 输入",
     tests: ['chara-info-show'],
     must_mention: '输入不合法！请输入以下值之一',
   },
@@ -3368,9 +3370,9 @@ export default [
     must_mention: '守卫之后的分派一行都不许发生',
   },
   {
-    desc: 'M11480 SHOW_FLOOR 漏 LIMIT 钳制（ARG 直用：0 与 99 不再落到边界层）',
+    desc: 'M11480 show_floor 漏入参钳制（arg 直用：0 与 99 不再落到边界层）',
     file: 'ere/page/page-shop.js',
-    find: '  arg = Math.min(Math.max(arg, 1), 10); // ARG = LIMIT(ARG,1,10)',
+    find: '  arg = Math.min(Math.max(arg, 1), 10); // 钳到 1-10',
     replace: '  // 变异：漏 LIMIT 钳制',
     tests: ['page-shop-floor'],
     must_mention: '钳制',
@@ -3393,7 +3395,7 @@ export default [
     must_mention: '楼层头与设施后缀合一行',
   },
   {
-    desc: 'M11483 SHOW_FLOOR 近卫护卫判据取反（EX_TALENT:x:1 非 0 改成 == 0：名单整段空）',
+    desc: 'M11483 show_floor 近卫护卫条件取反（EX_TALENT:x:1 非 0 改成 == 0：名单整段空）',
     file: 'ere/page/page-shop.js',
     find: '        (era.get(`ex_talent:${cid}:1`) || 0) !== 0',
     replace: '        (era.get(`ex_talent:${cid}:1`) || 0) === 0',
@@ -3426,12 +3428,12 @@ export default [
     must_mention: '开头的空行',
   },
   {
-    desc: 'M11493 SHOW_FLOOR 末尾的无参 PRINTW 只等键不落空行（printAndWait → waitAnyKey，:500 少一行）',
+    desc: 'M11493 show_floor 末尾改成只等键不落空行（printAndWait → waitAnyKey，少一行）',
     file: 'ere/page/page-shop.js',
     find: "  await era.printAndWait('');",
     replace: '  await era.waitAnyKey(); // 变异：少一个空行',
     tests: ['page-shop-floor'],
-    must_mention: 'PRINTW 的空行',
+    must_mention: 'printAndWait 的空行',
   },
   {
     desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
@@ -3486,24 +3488,24 @@ export default [
     must_mention: '村娘Ｂ 年龄 = RAND:5 + 14',
   },
   {
-    desc: 'M11555 CONFIG_AGE_SETTING 退出块「已生成的跳过」守卫取反（CFLAG:451 ≠ 0 才重算，#547）',
+    desc: 'M11555 CONFIG_AGE_SETTING 退出块「已生成的跳过」检查取反（CFLAG:451 ≠ 0 才重算，#547）',
     file: 'ere/page/page-config-age.js',
     find: '      if (chara(cid).chara.年龄 !== 0) {\n        continue; // 已生成的跳过\n      }',
     replace: `      if (chara(cid).chara.年龄 === 0) {
         continue; // 变异：守卫取反
       }`,
     tests: ['page-config-age'],
-    must_mention: ':911 CFLAG:451≠0 跳过',
+    must_mention: 'CFLAG:451≠0 跳过',
   },
   {
-    desc: 'M11556 CONFIG_AGE_SETTING 退出块的魔王跳过守卫挪位（cid === 0 → cid === 1，#547）',
+    desc: 'M11556 CONFIG_AGE_SETTING 退出块的魔王跳过检查挪位（cid === 0 → cid === 1，#547）',
     file: 'ere/page/page-config-age.js',
     find: '      if (cid === 0) {\n        continue; // 魔王跳过\n      }',
     replace: `      if (cid === 1) {
         continue; // 变异：守卫挪位
       }`,
     tests: ['page-config-age'],
-    must_mention: ':909-910 LCOUNT==0 跳过',
+    must_mention: 'LCOUNT==0 跳过',
   },
   {
     desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
@@ -3513,7 +3515,8 @@ export default [
       // 变异：不播种默认表
       await race_config(rand);`,
     tests: ['page-config-age'],
-    must_mention: ':889-892 先播种',
+    must_mention:
+      'CONFIG_AGE_SETTING [9]：种族年龄表未设时先播种默认表，再进 RACE_CONFIG',
   },
   {
     desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
@@ -3525,10 +3528,10 @@ export default [
         return 0;
       }`,
     tests: ['page-config-age'],
-    must_mention: ':1043-1044 回默认',
+    must_mention: 'RACE_CONFIG [98]：确认后整表回默认并直接返回',
   },
   {
-    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（原作时序：取消也写回编辑态，#547）',
+    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
     file: 'ere/page/page-config-age.js',
     find: "    } else if (result === 99 || result === 100) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === 99) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
     replace: `    } else if (result === 99 || result === 100) {
@@ -3542,10 +3545,10 @@ export default [
             (i) => cla[i] * 100 + deg[i] * 10 + num[i],
           );`,
     tests: ['page-config-age'],
-    must_mention: ':1050-1057 在确认 INPUT 之前',
+    must_mention: '表已打包（打包先于确认）',
   },
   {
-    desc: 'M11560 RACE_CONFIG [110]-[112] 的 SET_VAR:4>0 守卫删除（未选上限也切随机档，#547）',
+    desc: 'M11560 RACE_CONFIG [110]-[112] 的 SET_VAR:4>0 检查删除（未选上限也切随机档，#547）',
     file: 'ere/page/page-config-age.js',
     find: `          sv[3] = sub - 108;
           if (sv[4] > 0) {
@@ -3644,40 +3647,41 @@ export default [
           // 变异：不跳过魔王
           for (const cid of era.getAllCharacters()) {`,
     tests: ['page-config-age'],
-    must_mention: ':1069-1070 魔王跳过',
+    must_mention:
+      'RACE_CONFIG [99]：打包先于确认（取消也写回编辑态），确认后按新表重算全体种族年龄',
   },
   {
-    desc: 'M11567 设置页 [27] 冒险者性别循环不落地（#547）',
+    desc: 'M11567 设置页 [27] 冒险者性别循环不写入（#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 27) {
-    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（:253-264，GLOBAL 变量）
+    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（era_global 公共存档变量）
     era_global.cycle_adventurer_gender();`,
     replace: `  } else if (local === 27) {
     // 变异：不写`,
     tests: ['page-config'],
-    must_mention: '三个魔改存档变量的切换落地',
+    must_mention: '三个魔改存档变量的切换写入',
   },
   {
-    desc: 'M11568 设置页 [29] 卖淫影响循环不落地（#547）',
+    desc: 'M11568 设置页 [29] 卖淫影响循环不写入（#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 29) {
-    // [29] 卖淫影响：0→1→2→0 三档循环（:273-278）
+    // [29] 卖淫影响：0→1→2→0 三档循环（era_modsave 存档变量）
     era_modsave.cycle_prostitution_effect();`,
     replace: `  } else if (local === 29) {
     // 变异：不写`,
     tests: ['page-config'],
-    must_mention: '三个魔改存档变量的切换落地',
+    must_mention: '三个魔改存档变量的切换写入',
   },
   {
-    desc: 'M11569 设置页 [30] 反作弊翻转不落地（#547）',
+    desc: 'M11569 设置页 [30] 反作弊翻转不写入（#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 30) {
-    // [30] 反作弊：0↔1（:281-285；1 = 关闭 DEBUG_CHECK，可开修改）
+    // [30] 反作弊：0↔1（1 = 关闭反作弊检查，可开修改）
     era_modsave.toggle_anti_cheat();`,
     replace: `  } else if (local === 30) {
     // 变异：不写`,
     tests: ['page-config'],
-    must_mention: '三个魔改存档变量的切换落地',
+    must_mention: '三个魔改存档变量的切换写入',
   },
   {
     desc: 'M11570 冒险者性别状态行的 4 档文案串成 -1 档（全是扶她 → 女多男少，#547）',
@@ -3687,9 +3691,9 @@ export default [
     replace: `    case 4:
       return '女多男少'; // 变异：串档`,
     tests: ['page-config'],
-    must_mention: '六档文案（global:3，@EVENTFIRST 开局 -1）',
+    must_mention: '六档文案（global:3，EVENTFIRST 开局 -1）',
     test_name:
-      'adventurer_gender_status_text：六档文案（global:3，@EVENTFIRST 开局 -1）',
+      'adventurer_gender_status_text：六档文案（global:3，EVENTFIRST 开局 -1）',
   },
   {
     desc: 'M11571 卖淫影响状态行的 1 档文案串成 0 档（正面 → 负面，#547）',
@@ -3720,7 +3724,7 @@ export default [
     await config_age_setting();`,
     replace: `  } else if (local === 15) {
     // 变异：退回占位（打一行字，不进子菜单）
-    era.print('@CONFIG_AGE_SETTING 占位\\n');`,
+    era.print('CONFIG_AGE_SETTING 占位\\n');`,
     tests: ['page-config'],
     must_mention: '年龄菜单首行',
   },
@@ -3746,13 +3750,13 @@ export default [
           sv[1] = 0;
           sv[2] = 1;
           sv[3] = -1;
-          sv[4] = -1; // 变异：多清上限两值（原作 :1279-1284 只设 0-3）
+          sv[4] = -1; // 变异：多清上限两值（只该设 0-3）
           sv[5] = -1;`,
     tests: ['page-config-age'],
-    must_mention: '旧实现误存 001',
+    must_mention: '修正前误存 001',
   },
   {
-    desc: 'M11586 编辑头重画前的空行被删（:1111 PRINTL 丢失，#547 返工 5）',
+    desc: 'M11586 编辑头重画前的空行被删（PRINTL 丢失，#547 返工 5）',
     file: 'ere/page/page-config-age.js',
     find: '        era.println(); // 的空行（重画首拍）',
     replace: `        // 变异：漏 :1111 的重画前空行`,
@@ -3760,7 +3764,7 @@ export default [
     must_mention: '编辑头前一拍是空行（PRINTL）',
   },
   {
-    desc: 'M11587 「■ 下限」丢前导两个全角空格（:1215，#547 返工 6）',
+    desc: 'M11587 「■ 下限」丢前导两个全角空格（#547 返工 6）',
     file: 'ere/page/page-config-age.js',
     find: `          era.print('　　■ 下限');`,
     replace: `          era.print('■ 下限'); // 变异：丢前导全角空格`,
@@ -3768,7 +3772,7 @@ export default [
     must_mention: '「■ 下限」带前导两个全角空格',
   },
   {
-    desc: 'M11588 「■ 上限」丢前导两个全角空格（:1233，#547 返工 6）',
+    desc: 'M11588 「■ 上限」丢前导两个全角空格（#547 返工 6）',
     file: 'ere/page/page-config-age.js',
     find: `          era.print('　　■ 上限');`,
     replace: `          era.print('■ 上限'); // 变异：丢前导全角空格`,
@@ -3777,7 +3781,7 @@ export default [
   },
   // —— #549（S8）自动处刑端到端（M11640 起）——
   {
-    desc: 'M11640 设置页 [3] 状态行读位错（位 3 → 位 4，#549 e2e 唯一守卫）',
+    desc: 'M11640 设置页 [3] 状态行读位错（位 3 → 位 4，#549 e2e 唯一检查）',
     file: 'ere/page/page-config.js',
     find: `      '勇者自动处刑机能　　　　　现在：' + (getbit(v5, 3) ? 'ON' : 'OFF'),`,
     replace: `      '勇者自动处刑机能　　　　　现在：' + // 变异：读位错
@@ -3860,7 +3864,7 @@ export default [
   },
   // —— #567：故事命名的空输入语义（0 ＝ 空输入，消名支恢复可达） ——
   {
-    desc: 'M11838 故事命名改回 A 语义（输入 0 落成故事名「0」，:207-209 消名支不可达）',
+    desc: 'M11838 故事命名改回 A 语义（输入 0 落成故事名「0」，消名支不可达）',
     file: 'ere/page/page-save-load.js',
     find: '  const name = input_text(await era.input());',
     replace:
@@ -3873,7 +3877,7 @@ export default [
   // :222 调试菜单提示」，而 #641 已整段删除 DEBUG_MENU_U 入口，提示行不复
   // 存在、变异无行为面；退出语义由同段的 M11971/M11972 守。
   {
-    desc: 'M11971 店内 999 不清在售位（:45 CALL CLEAR_SHOP 删——退出商店时货架不撤）',
+    desc: 'M11971 店内 999 不清在售位（clear_shop 调用删——退出商店时货架不撤）',
     file: 'ere/page/page-shop.js',
     find: '    clear_shop();\n    era_flag.bought = -1;',
     replace: '    era_flag.bought = -1; // （变异：:45 的 CLEAR_SHOP 删）',
@@ -3896,13 +3900,13 @@ export default [
     replace:
       '  if (result === 998 && era_flag.bought >= 0) { // 变异：退出键改 998',
     tests: ['page-shop'],
-    must_mention: '999 退出商店（:46）',
+    must_mention: '999 退出商店',
   },
   // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
   // 四条各补回一处空行：按钮自成一行（＝ PRINTLC + 收尾的 PRINTL），多补
   // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
   {
-    desc: 'M11860 陷阱商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    desc: 'M11860 陷阱商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-shop-trap.js',
     find: "  era.printButton('- 返回', 999);\n  era.setAlign('left');",
     replace:
@@ -3920,7 +3924,7 @@ export default [
     must_mention: '能力值提升页脚按钮之后不应有空行',
   },
   {
-    desc: 'M11862 子菜单按钮之间补回空行（:86 的 PRINTL 只收 [990] 那一行，golden 里按钮逐行相邻）',
+    desc: 'M11862 子菜单按钮之间补回空行（PRINTL 只收 [990] 那一行，golden 里按钮逐行相邻）',
     file: 'ere/page/page-usercom.js',
     find: "  era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）",
     replace:
@@ -3929,7 +3933,7 @@ export default [
     must_mention: '子菜单按钮逐行相邻，按钮之间不夹空行',
   },
   {
-    desc: 'M11863 子菜单页脚之后补回空行（同上，:92 的 PRINTL 只收 [999] 那一行）',
+    desc: 'M11863 子菜单页脚之后补回空行（同上，PRINTL 只收 [999] 那一行）',
     file: 'ere/page/page-usercom.js',
     find: "  era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）",
     replace:
@@ -3938,19 +3942,19 @@ export default [
     must_mention: '子菜单页脚按钮之后不应有空行',
   },
   {
-    desc: 'M11869 方格之后补回空行（:217 的 PRINTL 只收方格最后那一行，golden 里方格与分割线之间只有一个空行）',
+    desc: 'M11869 方格之后补回空行（PRINTL 只收方格最后那一行，golden 里方格与分割线之间只有一个空行）',
     file: 'ere/page/page-usercom.js',
-    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // 循环后的',
+    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个',
     replace:
-      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // 循环后的',
+      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
   {
-    desc: 'M11870 子菜单 :14 的真空行删除（那一个是真行——:217 的 PRINTL 不产生空行，空行全由它来）',
+    desc: 'M11870 子菜单开头的真空行删除（那一个是真行——收行不产生空行，空行全由它来）',
     file: 'ere/page/page-usercom.js',
     find: '  era.println(); // PRINTL（空行）\n  era.drawLine(); // DRAWLINE',
-    replace: '  era.drawLine(); // 变异：:14 的真空行删除',
+    replace: '  era.drawLine(); // 变异：开头的真空行删除',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
@@ -3993,7 +3997,7 @@ export default [
     must_mention: '直接调内层的视图：返回 1 结束本回合',
   },
   {
-    desc: 'M12205 名册上浮判据错位（sub_result === 1 改 === 2，1 不再结束本回合）',
+    desc: 'M12205 名册上浮条件错位（sub_result === 1 改 === 2，1 不再结束本回合）',
     file: 'ere/page/page-chara-info.js',
     find: '      if (sub_result === 1) {',
     replace: '      if (sub_result === 2) { // 变异：判据错位',
@@ -4008,26 +4012,26 @@ export default [
   // 差别的位置——内层 case 2 的守卫（守卫一破，2 直达名册，那种放宽的
   // 判断即会误结束回合）；另配一条纯删守卫。
   {
-    desc: 'M12206 转职 2 档的守卫删除（job_result 直返——2 外泄直达名册，#606 返工）',
+    desc: 'M12206 转职 2 档的检查删除（job_result 直返——2 外泄直达名册，#606 返工）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾\n        continue;',
-    replace: '        return job_result; // 变异：守卫删除，2 外泄直达名册',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮\n        continue;',
+    replace: '        return job_result; // 变异：检查删除，2 外泄直达名册',
     tests: ['page-chara-info'],
     must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
   },
   {
-    desc: 'M12207 守卫写成 >= 1（2 也外泄、0 变页内重画——>= 1 放在唯一有语义差别的位置，名册行本身等价，#606 返工）',
+    desc: 'M12207 检查写成 >= 1（2 也外泄、0 变页内重画——>= 1 放在唯一有语义差别的位置，名册行本身等价，#606 返工）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮',
     replace:
       '        if (job_result >= 1) return job_result; // 变异：>= 1，2 外泄',
     tests: ['page-chara-info'],
     must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
   },
   {
-    desc: 'M12208 守卫写成 truthy（if (job_result)——同 M12207 的真值形态，#606 返工）',
+    desc: 'M12208 检查写成 truthy（if (job_result)——同 M12207 的真值写法，#606 返工）',
     file: 'ere/page/page-chara-info.js',
-    find: '        if (job_result !== 2) return job_result; // 的收尾',
+    find: '        if (job_result !== 2) return job_result; // 2 以外的返回值上浮',
     replace:
       '        if (job_result) return job_result; // 变异：truthy，2 外泄',
     tests: ['page-chara-info'],
@@ -4062,7 +4066,7 @@ export default [
     must_mention: '末行后有空行',
   },
   {
-    desc: 'M12073 个别信息页操作按钮之后补回空行（:907 的 PRINTL 只收那一串 PRINT 拼出的按钮行）',
+    desc: 'M12073 个别信息页操作按钮之后补回空行（PRINTL 只收那一串 PRINT 拼出的按钮行）',
     file: 'ere/page/page-chara-info.js',
     find: "    era.drawLine();\n    era.printButton('前页', 101);",
     replace:
@@ -4074,25 +4078,25 @@ export default [
   // 汉化及制作名单整段删除，find 串已无输出点；空行普查由 M12075 与
   // test/page-title.test.js 的空行普查用例（#596）继续守住。
   {
-    desc: 'M12075 标题画面联系按钮之后补回空行（:86-87 的 PRINTFORML 只结束上一行）',
+    desc: 'M12075 标题画面联系按钮之后补回空行（PRINTFORML 只结束上一行）',
     file: 'ere/page/page-title.js',
-    find: '  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    find: '  era.drawLine(); // 按钮区上方的分隔线',
     replace:
-      '  era.println(); // 变异：多补一条空行\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+      '  era.println(); // 变异：多补一条空行\n  era.drawLine(); // 按钮区上方的分隔线',
     tests: ['page-title'],
-    must_mention: '年份行后恰一个空行（:41）即分割线',
+    must_mention: '年份行后恰一个空行即分割线',
   },
   {
-    desc: 'M12076 服饰店现状行与追问行之间补回空行（:74 是空白源码行，不产生输出）',
+    desc: 'M12076 服饰店现状行与追问行之间补回空行（空白源码行不产生输出）',
     file: 'ere/page/page-tailor.js',
     find: '    era.print(`要让${chara_callname(arg)}穿上什么？`);',
     replace:
       "    era.print(''); // 变异：多补一条空行\n    era.print(`要让${chara_callname(arg)}穿上什么？`);",
     tests: ['page-tailor'],
-    must_mention: ':72 所持金 → :73 现状行 → :75 追问行',
+    must_mention: '现状行与追问行之间不夹空行',
   },
   {
-    desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（:80 的首个换行只收 [10] 那一行）',
+    desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（首个换行只收 [10] 那一行）',
     file: 'ere/page/page-chara-info-show.js',
     find: "  era.println();\n  era.printButton('返回', 100);",
     replace:
@@ -4101,16 +4105,16 @@ export default [
     must_mention: '三个真空行',
   },
   {
-    desc: 'M12078 献祭名单轮 [999] 返回之后补回空行（:127 的返回文本之后没有 PRINTL）',
+    desc: 'M12078 献祭名单轮 [999] 返回之后补回空行（返回文本之后不收行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "    era.printButton('返回', LIST_RETURN);\n    // 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行",
+    find: "    era.printButton('返回', LIST_RETURN);\n    // 返回文本之后不补空行（输入停在这一行）",
     replace:
-      "    era.printButton('返回', LIST_RETURN);\n    era.println(); // 变异：多补一条空行\n    // 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行",
+      "    era.printButton('返回', LIST_RETURN);\n    era.println(); // 变异：多补一条空行\n    // 返回文本之后不补空行（输入停在这一行）",
     tests: ['chara-info-show'],
-    must_mention: ':127 的返回文本之后不补空行',
+    must_mention: '名单轮的 [999] 返回之后不补空行',
   },
   {
-    desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（:79 的两个换行都是真行）',
+    desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（两个换行都是真行）',
     file: 'ere/page/page-chara-info-show.js',
     find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
     replace:
@@ -4132,39 +4136,38 @@ export default [
     must_mention: '按钮行之间不夹空行',
   },
   {
-    desc: 'M12087 角色状态块的一人称段之后补回空行（:395-396 的 PRINTL 只收行）',
+    desc: 'M12087 角色状态块的一人称段之后补回空行（该段的收行只结束所在行）',
     file: 'ere/page/components/chara-info-title.js',
-    find: '  // 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是',
+    find: '  // 条自身成行，此处不补空行',
     replace:
-      '  if (is_not_master) era.println(); // 变异：多补一条空行\n  // 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是',
+      '  if (is_not_master) era.println(); // 变异：多补一条空行\n  // 条自身成行，此处不补空行',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
-    desc: 'M12088 角色状态块的体重行之后补回空行（:405-408 的 PRINTL 只收行）',
+    desc: 'M12088 角色状态块的体重行之后补回空行（该段的收行只结束所在行）',
     file: 'ere/page/components/chara-info-title.js',
-    find: '  // 的 PRINTL 同理（只收体重行/LIFE_BAR 行）',
+    find: '  // 同上，条自身成行\n  // 气力条',
     replace:
-      '  era.println(); // 变异：多补一条空行\n  // 的 PRINTL 同理（只收体重行/LIFE_BAR 行）',
+      '  era.println(); // 变异：多补一条空行\n  // 同上，条自身成行\n  // 气力条',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
-    desc: 'M12089 角色状态块的臀围行之后补回空行（:416-419 的 PRINTL 只收行）',
+    desc: 'M12089 角色状态块的臀围行之后补回空行（该段的收行只结束所在行）',
     file: 'ere/page/components/chara-info-title.js',
-    find: '  // 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）\n}',
-    replace:
-      '  era.println(); // 变异：多补一条空行\n  // 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）\n}',
+    find: '  // 同上，条自身成行\n}',
+    replace: '  era.println(); // 变异：多补一条空行\n  // 同上，条自身成行\n}',
     tests: ['chara-info-show'],
-    must_mention: '零空行（三处 PRINTL 只收行）',
+    must_mention: '三处收行只结束所在行，全程零空行',
   },
   {
-    desc: 'M12090 个别信息页无操作按钮的子页把 :907 的真空行删掉（那一支落在空行上）',
+    desc: 'M12090 个别信息页无操作按钮的子页把块尾真空行删掉（那一支落在空行上）',
     file: 'ere/page/page-chara-info.js',
     find: '    if (era.getLineCount() === button_anchor) {\n      era.println();\n    }',
     replace: '    // 变异：无按钮子页的真空行删掉',
     tests: ['page-chara-info'],
-    must_mention: '无按钮子页里 :907 的空行在补白之后',
+    must_mention: '无按钮子页里块尾的空行在补白之后',
   },
 
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
@@ -4205,19 +4208,20 @@ export default [
   {
     desc: 'M12301 技巧等级道具买光确认的 [0] 丢掉「- 」',
     file: 'ere/page/page-item-shop.js',
-    find: "era.printButton('- 好的', 0); // SHOP_ITEM.ERB:752",
-    replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
+    find: "  era.printButton('- 好的', 0);\n  era.printButton('- 不要', 1);",
+    replace:
+      "  era.printButton('好的', 0); // 变异：丢掉「- 」\n  era.printButton('- 不要', 1);",
     tests: ['item-shop'],
-    must_mention: 'SHOP_ITEM.ERB:752',
+    must_mention: '#612 technique_of_master',
   },
   {
-    desc: 'M12302 换装铺主菜单的 [0] 丢掉「- 」（原作写死数字、移植侧是插值的那一项）',
+    desc: 'M12302 换装铺主菜单的 [0] 丢掉「- 」（价格插值四项之一）',
     file: 'ere/page/page-tailor.js',
     find: 'era.printButton(`- 日常服饰（${CASUAL_PRICE}点）`, 0);',
     replace:
       'era.printButton(`日常服饰（${CASUAL_PRICE}点）`, 0); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB',
+    must_mention: '#612 tailor_core 主菜单：按钮正文带「- 」前缀',
   },
   {
     desc: 'M12303 换装铺主菜单的 [7] 魔法装备丢掉「- 」',
@@ -4225,7 +4229,7 @@ export default [
     find: "era.printButton('- 魔法装备', 7);",
     replace: "era.printButton('魔法装备', 7); // 变异：丢掉「- 」",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB',
+    must_mention: '#612 tailor_core 主菜单：按钮正文带「- 」前缀',
   },
   // —— #612 返工轮：数据表驱动的调用点（渲染前缀留在调用点，不塞进数据表——
   //    label 是数据字段，前缀拼在调用点，变异条目才能逐个调用点打）——
@@ -4236,34 +4240,34 @@ export default [
     replace:
       '      era.printButton(`${item.label}`, item.n); // 变异：丢掉「- 」\n    }',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:276',
+    must_mention: 'tailor_casual',
   },
   {
     desc: 'M12308 普通装备表（NORMAL_ITEMS）丢掉「- 」',
     file: 'ere/page/page-tailor.js',
-    find: '    for (const item of NORMAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // 起（表驱动，前缀在调用点拼）',
+    find: '    for (const item of NORMAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // （表驱动，前缀在调用点拼）',
     replace:
       '    for (const item of NORMAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`${item.label}`, item.n); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:328',
+    must_mention: 'tailor_normal',
   },
   {
     desc: 'M12309 黑市特殊服表（SPECIAL_ITEMS）丢掉「- 」',
     file: 'ere/page/page-tailor.js',
-    find: '    for (const item of SPECIAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // 起（表驱动，前缀在调用点拼）',
+    find: '    for (const item of SPECIAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`- ${item.label}`, item.n); // （表驱动，前缀在调用点拼）',
     replace:
       '    for (const item of SPECIAL_ITEMS) {\n      if (item.page !== page) continue;\n      era.printButton(`${item.label}`, item.n); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1320',
+    must_mention: 'tailor_normal_special',
   },
   {
     desc: 'M12310 装备品表（ACCESSORY_ITEMS，价格印在正文里）丢掉「- 」',
     file: 'ere/page/page-tailor.js',
-    find: 'era.printButton(`- ${item.label}（${item.c}点）`, item.n); // 起（表驱动）',
+    find: 'era.printButton(`- ${item.label}（${item.c}点）`, item.n); // （表驱动）',
     replace:
       'era.printButton(`${item.label}（${item.c}点）`, item.n); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:571',
+    must_mention: 'tailor_accessory',
   },
   {
     desc: 'M12311 强化前缀表（WEAPON_PREFIXES）丢掉「- 」',
@@ -4272,27 +4276,28 @@ export default [
     replace:
       'era.printButton(`${WEAPON_PREFIXES[index]}`, index); // 变异：丢掉「- 」',
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1254',
+    must_mention: 'equip_magic_weapon',
   },
   {
-    // :1027 与 :1156 两处调用点逐字相同，只靠行尾的 `// :1156` 区分；下面这条的
-    // find 以 `);\n` 收尾（另一处是 `); // :1156`），故恰好命中 1 次
-    desc: 'M12312 戒指页的持有装备行（:1027）丢掉「- 」',
+    // 戒指页与武器页两处持有行的调用点逐字相同，find 以其后继语句区分：下面
+    // 这条收在「强化 / 取下」注释前（戒指页），另一条收在武器化触手的 if 前
+    // （武器页），各恰好命中 1 次
+    desc: 'M12312 戒指页的持有装备行丢掉「- 」',
     file: 'ere/page/page-tailor.js',
     find: "        era.printButton(\n          `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    // 强化 / 取下",
     replace:
       "        era.printButton(\n          `${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    // 强化 / 取下",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1027',
+    must_mention: 'equip_magic_item',
   },
   {
-    desc: 'M12313 武器页的持有装备行（:1156）丢掉「- 」',
+    desc: 'M12313 武器页的持有装备行丢掉「- 」',
     file: 'ere/page/page-tailor.js',
     find: "        era.printButton(\n          `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    if ((era.get(`item:${WEAPON_TENTACLE_ITEM}`) || 0) > 0) {",
     replace:
       "        era.printButton(\n          `${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,\n          item_no,\n        );\n      }\n    }\n    if ((era.get(`item:${WEAPON_TENTACLE_ITEM}`) || 0) > 0) {",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1156',
+    must_mention: 'equip_magic_weapon',
   },
   {
     desc: 'M12314 苏生名单丢掉「- 」（:2594 的正文前缀）',
@@ -4315,22 +4320,22 @@ export default [
   {
     // 灰字行的假编号前缀也照写原作（`:1032` / `:1164` 逐字相同，靠行尾注释区分）；
     // 两处都是文本行，去掉 `[---] - ` 时对应断言必须红
-    desc: 'M12316 戒指页的灰字行（:1032）丢掉「[---] - 」',
+    desc: 'M12316 戒指页的灰字行丢掉「[---] - 」',
     file: 'ere/page/page-tailor.js',
     find: "        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (cflag(cid, slot) >= 0) {",
     replace:
       "        { content: '未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (cflag(cid, slot) >= 0) {",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1032',
+    must_mention: 'equip_magic_item',
   },
   {
-    desc: 'M12317 武器页的灰字行（:1164）丢掉「[---] - 」',
+    desc: 'M12317 武器页的灰字行丢掉「[---] - 」',
     file: 'ere/page/page-tailor.js',
     find: "        { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (current.存储编号 >= 0) {",
     replace:
       "        { content: '未开放（30级后才能装备强化）', color: GRAY },\n      ]);\n    } else if (current.存储编号 >= 0) {",
     tests: ['page-tailor'],
-    must_mention: 'SHOP_TAILOR.ERB:1163-1165',
+    must_mention: 'equip_magic_weapon',
   },
 
   // —— #615：print 正文的尾换行（page-config-age.js 的 7 处） ——
@@ -4341,27 +4346,28 @@ export default [
     replace:
       "  era.print(`${prompt}\\n`); // 变异：尾换行\n  era.print('确认吗？');",
     tests: ['page-config-age'],
-    must_mention: ':1036 的正文不带尾换行',
+    must_mention:
+      '#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按钮位置正确',
   },
   {
-    desc: 'M12241 [98]/[99] 确认页询问行补回尾换行（:1037 的 PRINTL 只收行）',
+    desc: 'M12241 [98]/[99] 确认页询问行补回尾换行（PRINTL 只收行）',
     file: 'ere/page/page-config-age.js',
     find: "  era.print('确认吗？');",
     replace: "  era.print('确认吗？\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1037 的行紧随其后',
+    must_mention: '确认页两行正文不相连、真空行与按钮位置正确',
   },
   {
-    desc: 'M12242 RACE_CONFIG 表头补回尾换行（:972-974 是 PRINTFORM + PRINTFORML 的同一行）',
+    desc: 'M12242 RACE_CONFIG 表头补回尾换行（表头与收尾是同一显示行）',
     file: 'ere/page/page-config-age.js',
     find: "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',",
     replace:
       "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄\\n', // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':972-974 的 PRINTFORM + PRINTFORML 是一条显示行',
+    must_mention: '表头行不带尾换行，紧接八种族按钮行',
   },
   {
-    desc: 'M12243 编辑头档位说明行补回尾换行（:1131-1143 的收尾 PRINTFORML）',
+    desc: 'M12243 编辑头档位说明行补回尾换行（整段是同一显示行）',
     file: 'ere/page/page-config-age.js',
     find: '        era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}`);',
     replace:
@@ -4370,7 +4376,7 @@ export default [
     must_mention: '档位说明行不带尾换行',
   },
   {
-    desc: 'M12244 编辑头 17 岁预览行补回尾换行（:1146-1162 的收尾 PRINTFORML）',
+    desc: 'M12244 编辑头 17 岁预览行补回尾换行（整段是同一显示行）',
     file: 'ere/page/page-config-age.js',
     find: "        era.print('　 换算人类 17 岁左右 ' + edit_age);",
     replace:
@@ -4379,23 +4385,23 @@ export default [
     must_mention: '预览行不带尾换行',
   },
   {
-    desc: 'M12245 随机档「■ 下限」标签补回尾换行（:1215 的 PRINTL 自成一行）',
+    desc: 'M12245 随机档「■ 下限」标签补回尾换行（PRINTL 自成一行）',
     file: 'ere/page/page-config-age.js',
     find: "          era.print('　　■ 下限');",
     replace: "          era.print('　　■ 下限\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1215 的 PRINTL 自成一行',
+    must_mention: 'PRINTL 自成一行',
   },
   {
-    desc: 'M12246 随机档「■ 上限」标签补回尾换行（:1233 的 PRINTL 自成一行）',
+    desc: 'M12246 随机档「■ 上限」标签补回尾换行（PRINTL 自成一行）',
     file: 'ere/page/page-config-age.js',
     find: "          era.print('　　■ 上限');",
     replace: "          era.print('　　■ 上限\\n'); // 变异：尾换行",
     tests: ['page-config-age'],
-    must_mention: ':1233 的 PRINTL 自成一行',
+    must_mention: 'PRINTL 自成一行',
   },
   {
-    desc: 'M12247 兵器标题行补回两个尾换行（CONFIG.ERB:88 的 PRINTFORML 自成一行）',
+    desc: 'M12247 兵器标题行补回两个尾换行（PRINTFORML 自成一行）',
     file: 'ere/page/page-config.js',
     find: "  era.print('魔王的兵器是如意金箍棒，可大也可小！！');",
     replace:
@@ -4404,7 +4410,7 @@ export default [
     must_mention: '正文不带尾换行（多写',
   },
   {
-    desc: 'M12248 鸡鸡状态回显补回尾换行（:103 PRINT + :105 PRINTW 是一条显示行）',
+    desc: 'M12248 鸡鸡状态回显补回尾换行（PRINT + PRINTW 是一条显示行）',
     file: 'ere/page/page-config.js',
     find: '    await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}`);',
     replace:
@@ -4414,15 +4420,15 @@ export default [
   },
   // —— #615：完全召唤横幅两行 + 前后空行数（CHARA_INFO_SHOW:63-68 / :76） ——
   {
-    desc: 'M12250 两行横幅之间的真空行删掉（:65 的第二个 \\n 落空行）',
+    desc: 'M12250 两行横幅之间的真空行删掉（第二个换行落空行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: '    era.println(); // 的第二个 \\n：横幅之间的真空行',
+    find: '    era.println(); // 第二个 \\n：横幅之间的真空行',
     replace: '    // 变异：横幅之间的真空行删掉',
     tests: ['chara-info-show'],
-    must_mention: ':65 的第二个 \\n',
+    must_mention: '第二个 \\n：两行横幅之间的真空行',
   },
   {
-    desc: 'M12251 横幅第二行拆回三段（:66-68 是同一显示行）',
+    desc: 'M12251 横幅第二行拆回三段（三段是同一显示行）',
     file: 'ere/page/page-chara-info-show.js',
     find: '    era.print(`${dashes()}< 完 全 召 唤 >${dashes()}  `);',
     replace:
@@ -4431,7 +4437,7 @@ export default [
     must_mention: '横幅第二行（不再被拆成三段）',
   },
   {
-    desc: 'M12252 横幅第一行的首段短横线删掉（:63-65 拼接的开头那一段）',
+    desc: 'M12252 横幅第一行的首段短横线删掉（拼接的开头那一段）',
     file: 'ere/page/page-chara-info-show.js',
     find: '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,',
     replace:
@@ -4440,7 +4446,7 @@ export default [
     must_mention: '横幅第一行',
   },
   {
-    desc: 'M12269 横幅第一行的尾随两个空格删掉（:65 的 "\\s"*2 是原作拼行的一部分）',
+    desc: 'M12269 横幅第一行的尾随两个空格删掉（两个空格是拼行的一部分）',
     file: 'ere/page/page-chara-info-show.js',
     find: '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,',
     replace:
@@ -4449,12 +4455,12 @@ export default [
     must_mention: '横幅第一行',
   },
   {
-    desc: 'M12253 :76 的两个空行只留一个（RESTART 之前是 \\n*2）',
+    desc: 'M12253 两个空行只留一个（重画之前是两个换行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: '    era.println(); // 的第一个 \\n\n    era.println(); // 的第二个 \\n',
-    replace: '    era.println(); // 变异：:76 的两个 \\n 只留一个',
+    find: '    era.println(); // 第一个 \\n\n    era.println(); // 第二个 \\n',
+    replace: '    era.println(); // 变异：两个空行只留一个',
     tests: ['chara-info-show'],
-    must_mention: ':76 的第二个 \\n',
+    must_mention: '完全召唤横幅两行、之间一个真空行、之后两个真空行',
   },
   // —— #615：ENEMY_EXIST2 的空行落在原作的分支上（:595 与 :629-630） ——
   {
@@ -4497,10 +4503,9 @@ export default [
   {
     desc: 'M12901 主菜单 999 调试入口复活（提示行+等键打回——#638 删除的 DEBUG_MENU_U 分支不得回潮）',
     file: 'ere/page/page-shop.js',
-    find: `  // 原作的 :222-223 调试菜单（DEBUG_MENU_U，原作者的调试工具）自 #542 判不
-  // 移植、#638 起随存根清单一并删除入口：主菜单不印 [999] 按钮，引擎的输入
-  // 白名单（#130）本就送不到这里；店内的 999 在上面的购物段早退（#592），
-  // 也不会落到链尾`,
+    find: `  // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随存根
+  // 清单一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
+  // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾`,
     replace: `  if (result === 999) {
     era.print('（调试菜单不在移植范围。）');
     await era.waitAnyKey();
@@ -4527,7 +4532,7 @@ export default [
     await era.waitAnyKey();
   } else if (result === 496 && selectable_count > 0) { // 变异：400 入口复活`,
     tests: ['page-shop'],
-    must_mention: 'LABO 隐入口不得等待读键',
+    must_mention: '实验室隐入口不得等待读键',
   },
   {
     desc: 'M12930 标题画面硬编码旧游戏名（gamebase.title 改旧字面量，#642）',
@@ -4547,7 +4552,7 @@ export default [
     must_mention: '标题画面必须显示 yml 的作者 odradekk',
   },
   {
-    desc: 'M12932 追加信息守卫拆成无条件输出（留空也打空串行，#642）',
+    desc: 'M12932 追加信息检查拆成无条件输出（留空也打空串行，#642）',
     file: 'ere/page/page-title.js',
     find: '  if (gamebase.info) {\n    era.print(gamebase.info);\n  }',
     replace: '  era.print(gamebase.info); // 变异：守卫拆除',
@@ -4555,7 +4560,7 @@ export default [
     must_mention: '【追加信息】为空时不得输出空串行',
   },
   {
-    desc: 'M12933 年份守卫拆成无条件输出（空年份也打「()」，#642）',
+    desc: 'M12933 年份检查拆成无条件输出（空年份也打「()」，#642）',
     file: 'ere/page/page-title.js',
     find: "  if (gamebase.year) {\n    era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]);\n  }",
     replace:
@@ -4578,18 +4583,17 @@ export default [
   {
     desc: 'M12941 联系方式段复活（联系行与 [8] 钮加回，#642 返工）',
     file: 'ere/page/page-title.js',
-    find: '  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    find: '  era.drawLine(); // 按钮区上方的分隔线',
     replace:
-      "  era.print('版本推进出问题 '); // 变异：联系方式段复活\n  era.printButton('>>', 8);\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）",
+      "  era.print('版本推进出问题 '); // 变异：联系方式段复活\n  era.printButton('>>', 8);\n  era.drawLine(); // 按钮区上方的分隔线",
     tests: ['page-title'],
     must_mention: '联系方式段已删除：「版本推进出问题」不得出现',
   },
   {
     desc: 'M12942 标题画面整屏居中改成左对齐（#642 验收抽样补的断言）',
     file: 'ere/page/page-title.js',
-    find: "  era.setAlign('center'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
-    replace:
-      "  era.setAlign('left'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
+    find: "  era.setAlign('center'); // 本屏全部居中",
+    replace: "  era.setAlign('left'); // 本屏全部居中",
     tests: ['page-title'],
     must_mention: '标题画面整屏居中：首个 setAlign 必须是 center',
   },
@@ -4702,7 +4706,7 @@ export default [
     must_mention: '按 ×16 合成三段',
   },
   {
-    desc: 'M13213 SHOW_TALENT 魔虫知识（328）的守卫退回笔误形态（读回 327，#652 改正被拆）',
+    desc: 'M13213 show_talent 魔虫知识（328）的检查退回笔误写法（读回 327，#652 改正被拆）',
     file: 'ere/page/components/chara-talents.js',
     find: '      { id: 328 },',
     replace: '      { id: 327 }, // 变异：魔虫知识行换成 327',
