@@ -1149,7 +1149,7 @@ function source_check_up_desire() {
 function source_check_up_like() {
   add_up(4, src(16)); // 恭顺追加 → 恭顺
 }
-// source_check_up_anti：反感追加 → 反感。manual 路径的调用被注释
+// source_check_up_anti：反感追加 → 反感。manual 路径的调用被
 // 注释掉（"自动调教的反感"），只有 AUTO 路径
 // 真正调用
 function source_check_up_anti() {
@@ -3590,7 +3590,7 @@ on('SOURCE_CHECK_AUTO', async () => {
   source_check_up_submit();
   source_check_up_deviate();
 
-  // 反感／恭顺——AUTO 专属门槛（manual 路径的 ANTI 调用被注释
+  // 反感／恭顺——AUTO 专属门槛（manual 路径的 ANTI 调用被
   // 注释掉，LIKE 在 manual 无条件调用；两者在 AUTO 都受同一门槛限制）
   if ((era.get(`cflag:${cid}:1`) || 0) === 0 && player === MASTER) {
     source_check_up_anti();

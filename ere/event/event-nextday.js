@@ -1008,7 +1008,7 @@ async function dog_walk(rand = default_rand) {
  * 是全局 L，而本函数自始至终没有给 L 赋值——它在旧引擎里是上一个调用者留下
  * 的值（紧邻的 morning_fellatio 会写 L），在 EreElectron 侧没有跨函数
  * 残留的全局量（#5 决议：A-Z 按 JS 局部处理）。本移植取初值 0
- * （即 0 号位，魔王），不复刻残留，也不擅自改成 COUNT（那是替调用方改行为）。
+ * （即 0 号位，魔王），不复刻残留，也不擅自改成 COUNT（那样会改变现有行为）。
  *
  * @param {(n: number) => number} [rand] 随机源
  * @returns {Promise<number>} 恒 1
@@ -1651,7 +1651,7 @@ async function run_event_nextday() {
  *
  * 调用时机（turnend-settle.js）：#PRI 档已推进 DAY:0 += 1、TIME
  * 已归 0——本函数入口即「新游戏日开始」的语义点，自动存档（#137 / ADR-0006
- * 的有意偏离，非既定动作）挂在这里，备注里的「第N日午前」反映新的一天。
+ * 的有意偏离）挂在这里，备注里的「第N日午前」反映新的一天。
  */
 async function run_event_newday() {
   // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的

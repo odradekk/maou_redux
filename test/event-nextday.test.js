@@ -151,14 +151,14 @@ test('跨年的年龄增长：奴隶 452 +1、451 落换算真身，魔王不涨
     '奴隶的种族年龄应 +1（CFLAG:452）',
   );
   // #385 起 HUMAN_AGE_GENERATE 为真身：未设种族（TALENT:314 = 0）走 1 倍档，
+  // 人类年龄 = 种族年龄
   assert.equal(
     world.fixture.store.get('cflag:31:451'),
     1,
     '奴隶的年龄应写入换算结果（1 倍档：与种族年龄同值）',
   );
-  assert.equal(
-    world.fixture.chara_no.length,
-    2,
+  assert(
+    !world.fixture.var_writes.some((w) => w.name === 'cflag:0:452'),
     'FOR AGE_COUNT, 1, CHARANUM 跳过 0 号位：魔王不得涨年龄',
   );
   assert(
@@ -1533,7 +1533,7 @@ test('尿床（ONESHO）：导管一档（顺从 < 3）的四选一', async () =
     await onesho(seq([0, roll]));
 
     // 此处写 `JUEL:L:8`——L 在本函数内无赋值，旧引擎全局取初值 0
-    // （见文件头「L 的初值」；不改成 COUNT，那是在给调用方改行为）
+    // （见文件头「L 的初值」；不改成 COUNT，那样会改变现有行为）
     assert.equal(fixture.store.get(key), value, `RAND:4 = ${roll}`);
     const texts = fixture.text_lines();
     assert(
