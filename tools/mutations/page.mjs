@@ -660,7 +660,7 @@ export default [
     must_mention: '读档成功必须 emit EVENTLOAD 链一次',
   },
   {
-    desc: 'M257 SHOP_AFTER_LOAD 的状态映射指回 run_shop 原样（主循环进入也跑 @EVENTSHOP）',
+    desc: 'M257 SHOP_AFTER_LOAD 的状态映射指回 run_shop 原样（主循环进入也跑 EVENTSHOP）',
     file: 'ere/system/flow/main-loop.js',
     find: `  [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),`,
     replace: `  [STATE.SHOP_AFTER_LOAD]: run_shop, // 变异：映射指回原样`,
