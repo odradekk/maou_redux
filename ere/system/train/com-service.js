@@ -737,7 +737,7 @@ async function com33() {
   src.set(4, times(src.get(4), source4_rates[lube]));
   let base = [500, 1100, 2000, 3000, 3900, 4600][Math.min(target_abl(12), 5)];
   base += [0, 0, 0, 300, 600, 1000][lube];
-  const ejaculation = service_ejaculation({
+  service_ejaculation({
     base: [base, base, base, base, base, base],
     target_rates: {
       10: [0.8, 0.9, 1, 1.1, 1.2, 1.3],
@@ -764,7 +764,7 @@ async function com33() {
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
   if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
-  return ejaculation.e === undefined ? 1 : 1;
+  return 1;
 }
 
 async function com34_check() {

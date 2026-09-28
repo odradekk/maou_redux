@@ -658,11 +658,11 @@ async function com56() {
   chara(cid).dungeon.调教会话经验 += gain;
   if (abl(cid, 71) > 1 && gain > 2) {
     era.print(`歌唱经验+${gain + abl(cid, 71) - 2}`);
-    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 3;
+    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 2;
   }
   if (abl(cid, 72) > 1 && tq(cid, 54) && gain > 2) {
     era.print(`舞蹈经验+${gain + abl(cid, 72) - 2}`);
-    chara(cid).train.舞蹈经验 += gain + abl(cid, 72) - 3;
+    chara(cid).train.舞蹈经验 += gain + abl(cid, 72) - 2;
   }
   if (chara(cid).chara.好感度 >= 1000 && era_flag.assiplay === 0) {
     era.print(`爱情经验+${gain}`);

@@ -580,6 +580,28 @@ test('cn_span_combine_name_num：各档位的编号值逐一钉住（生成器�
   }
 });
 
+test('cn_span_combine_name_num：单段名落在不宜独存的段值时追加一段通用两音段', () => {
+  const fixture = create_era_fixture();
+  const { cn_span_combine_name_num, cn_span_combine_name } = load(fixture);
+
+  // 长度 1（rand(2)=1、rand(3)=1）；一音段判定的 rand(3)/rand(2) 不中；
+  // rand(30)=27 → 段值 227（不宜独存）→ 追加一轮：rand(3)/rand(2) 照常消耗，
+  // rand(30)=2 → 段值 202（宜独存，不再追加）
+  const retry = seq_capture([1, 1, 5, 1, 27, 5, 1, 2]);
+  const nid = cn_span_combine_name_num(retry);
+  assert.equal(nid, 2_000_227_202, '227 后追加 202');
+  assert.deepEqual(
+    retry.bounds.slice(2),
+    [3, 2, 30, 3, 2, 30],
+    '追加一轮照常消耗一音段判定的两个上界',
+  );
+  assert.equal(cn_span_combine_name(nid), 'アルレセ', '两段都拼得出来');
+
+  // 对照：段值 202 宜独存，保持单段
+  const ok = cn_span_combine_name_num(seq_capture([1, 1, 5, 1, 2]));
+  assert.equal(ok, 2_000_000_202, '202 不追加');
+});
+
 test('cn_span_combine_name_num：随机名的生成域与「名字非空」不变量', () => {
   const fixture = create_era_fixture();
   const { cn_span_combine_name_num, cn_span_combine_name } = load(fixture);

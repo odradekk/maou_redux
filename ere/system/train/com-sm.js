@@ -1321,11 +1321,6 @@ async function equip_com49() {
     set_src(target, 13, Math.floor(src(target, 13) / 3));
   }
 
-  // 看重贞操的处女 → S13 /= 3
-  if ((era.get(`exp:${target}:0`) || 0) === 0 && tal(target, 30)) {
-    set_src(target, 13, Math.floor(src(target, 13) / 3));
-  }
-
   // —— 经验上升 ——
   chara(target).dungeon.肛门经验 += 5;
   era.print('肛门经验＋５');

@@ -705,6 +705,20 @@ test('com49：ABL:3/EXP:1 双梯 + 位取反', async () => {
   assert.equal(f.store.get('tequip:31:49'), 0, '再执行即解除');
 });
 
+test('equip_com49：看重贞操的处女 S13 只除一次 3（同一条件不重复执行）', async () => {
+  const world = seed_world();
+  const f = world.fixture;
+  world.era_flag.selectcom = 49;
+  f.store.set('abl:31:3', 1); // S13 基数 2000
+  f.store.set('talent:31:30', 1); // 看重贞操
+  // exp:31:0 未设 = 0（处女）
+  await world.equip_com_family.call(49);
+  assert.equal(
+    f.store.get('source:31:13'),
+    666,
+    'floor(2000/3) 一次；重复执行会是 222',
+  );
+});
 // —— equip_com43-49：持续效果（直调 + 链序消费） ——
 
 test('equip_com43：三格累加 + UP 直写（欲情/恐怖）', async () => {
