@@ -1566,7 +1566,7 @@ export default [
     must_mention: '直抬 LV3',
   },
   {
-    desc: 'M906 LOST_VIRGIN_CHECK 守卫的 TFLAG:19 判据删（恒早退）',
+    desc: 'M906 LOST_VIRGIN_CHECK 早退检查的 TFLAG:19 条件删（恒早退）',
     file: 'ere/event/source-check.js',
     find: 'function lost_virgin_check() {\n  if (!tal(0) || tflag(19) === 0) {\n    return;\n  }',
     replace: `function lost_virgin_check() {
@@ -2901,7 +2901,7 @@ export default [
   },
 
   {
-    desc: 'M1270 AFTERTRAIN: self_check 失神守卫失效（tflag:899 不再拦截）（#218）',
+    desc: 'M1270 AFTERTRAIN: self_check 失神检查失效（tflag:899 不再拦截）（#218）',
     file: 'ere/event/event-aftertrain.js',
     find: `  // 失神中に調教終了したらスルー
   if ((era.get('tflag:899') || 0) >= 1) {
@@ -4978,7 +4978,7 @@ export default [
     must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
   },
   {
-    desc: 'M9589 TARGET_EJAC_CHECK 早退守卫的 TALENT:122 判据删（只剩 121）',
+    desc: 'M9589 TARGET_EJAC_CHECK 早退检查的 TALENT:122 条件删（只剩 121）',
     file: 'ere/event/source-check.js',
     find: `function target_ejac_check() {
   if (!tal(121) && !tal(122)) {
@@ -6857,7 +6857,7 @@ export default [
 
   // —— SOKUOCHI_CHECK（#462）——
   {
-    desc: 'M9836 SOKUOCHI_CHECK 早退守卫删除（TALENT:73=0 时也会执行 12 组升级）',
+    desc: 'M9836 SOKUOCHI_CHECK 早退检查删除（TALENT:73=0 时也会执行 12 组升级）',
     file: 'ere/event/source-check.js',
     find: `function sokuochi_check() {
   if (!tal(73)) {

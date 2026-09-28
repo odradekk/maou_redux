@@ -3175,7 +3175,7 @@ export default [
     must_mention: '常时发情的 3000 起步必须落进 palam（窗口开着的直接证据）',
   },
   {
-    desc: 'M11470 CHARADEAD_CHECK 存活判据取反（BASE:0 > 0 改成 >= 0：体力 0 也算存活，死亡判定整段不可达）',
+    desc: 'M11470 CHARADEAD_CHECK 存活条件取反（BASE:0 > 0 改成 >= 0：体力 0 也算存活，死亡判定整段不可达）',
     file: 'ere/event/event-aftertrain.js',
     find: '  if ((era.get(`base:${target}:0`) || 0) > 0) {\n    return 0;\n  }',
     replace:

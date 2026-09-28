@@ -717,7 +717,7 @@ export default [
     must_mention: 'BASE:A:1 -= 50（:904）',
   },
   {
-    desc: 'M619 event-nextday 的 ROOM_DAY 调用删（日结算不接线）',
+    desc: 'M619 event-nextday 的 ROOM_DAY 调用删（日结算不接入）',
     file: 'ere/event/event-nextday.js',
     find: '  await room_day_mod.dungeon_room_day();',
     replace: '  // await room_day_mod.dungeon_room_day(); // 变异：调用删',
