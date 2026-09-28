@@ -1,41 +1,37 @@
 /**
  * @file 异国（通信）勇者的生成（issue #394，N10）。
  *
- * 调用面：全库只有转发层 ere/chara/char-make.js 的 @CHAR_MAKE_INPORT（源
- * CHAR_MAKE.ERB:27-34 的判定式 + CHAR_MAKE.ERB:34 的 JUMP）调本函数；两个
- * 真实调用点是 ere/event/enter-enemy.js:215（源 ENTER_ENEMY.ERB:63）与
- * ere/event/enter-enemy.js:518（源 ENTER_ENEMY.ERB:350），都经转发层，
+ * 调用面：ere 侧只有转发层 ere/chara/char-make.js 的 char_make_inport 调
+ * 本函数；两个真实调用点在 ere/event/enter-enemy.js，都经转发层，
  * 不直接 require 本文件。
  *
- * 移植决议与有意偏离（逐条注明依据）：
+ * 移植决议与有意偏离既有行为（逐条注明依据）：
  *
- *   一、**原作 `GLOBALS:0..99` 在 ere 侧是 `global:100` 的 JSON 数组**
+ *   一、**通信名单是 `global:100` 的 JSON 数组**
  *       （ere/era-utils/era-global.js 手写区「communication_roster」，MAOUNET
- *       票定的形状，元素字段序与 ere/system/cross-save-sharing.js 的
+ *       工单定下的形状，元素字段序与 ere/system/cross-save-sharing.js 的
  *       serialize_character 一致）。取值走该模块的 get_roster()，不另写一份
  *       解析——记录格式的真相源只有那一处。
  *
- *   二、**`ADDVOIDCHARA` + `NO:CHARA = TOINT(LOCALS:1)` 在扁平化（#21）下
- *       就是 `era.addCharacter(no)`**：ere 的角色号即预设号，没有「先建空白
- *       角色、事后指定 NO」这一档（event-chara-leave.js:188-190 同款处置）。
- *       由此引出一处**有意偏离**：引擎的 addCharacter 对无预设的号返回
- *       false（原作 ADDVOIDCHARA 不会失败，它建的正是无预设的角色）。此时
- *       提前 RETURN 0，不往不存在的桶里写——AGENTS.md「名字表在 + 桶不在 →
- *       静默丢弃」说的就是这种「函数看着成功、数据其实全丢了」的形态。
+ *   二、**建角色即 `era.addCharacter(no)`**（扁平化 #21：ere 的角色号即
+ *       预设号，没有「先建空白角色、事后指定预设」这一档，
+ *       event-chara-leave.js:188-190 同款处置）。由此引出一处**有意偏离既有
+ *       行为**：引擎的 addCharacter 对无预设的号返回 false（既有行为里这一步
+ *       不会失败）。此时提前返回 0，不往不存在的桶里写——AGENTS.md「名字表
+ *       在 + 桶不在 → 静默丢弃」说的就是这种「函数看着成功、数据其实全丢
+ *       了」的情形。
  *
- *   三、**`NAME:CHARA = CALLNAME(NO:CHARA, 0)`（:52）不落地**：它读的是
- *       CSV 静态呼び名，与 :49/:51 写进去的导入称呼是**两个不同的值**，而
- *       ere 侧 NAME 与 SAVESTR/CALLNAME 共享 callname 表的两槽（#5 决议，
- *       CONTEXT.md「称呼」：-1 名前 / -2 呼び名），同一个槽表达不了「NAME
- *       是 CSV 名、SAVESTR 是导入名」。处置与 event-chara-leave.js:194-195
- *       一致：两槽都落导入称呼，导入角色的显示名因此就是它自己的名字，而
- *       不是它那个预设号的静态名。行号引用保留在本注释里。
+ *   三、**显示名槽不写预设号的静态称呼**：ere 侧 NAME 与 SAVESTR/CALLNAME
+ *       共享 callname 表的两槽（#5 决议，CONTEXT.md「称呼」：-1 名前 /
+ *       -2 呼び名），表达不了「一个槽放预设静态名、另一个放导入名」。处置
+ *       与 event-chara-leave.js:194-195 一致：两槽都落导入称呼，导入角色的
+ *       显示名因此就是它自己的名字，而不是它那个预设号的静态名。
  *
  *   四、跨域写一律走门面（#71：cflag:501 属 dungeon、cflag:502 属 event、
  *       cflag:1 属 invasion、cflag:9 属 chara、exp:80 与 base:0/1 属
  *       dungeon）。十张二维表的回填**不在此列**：下标来自记录里的一段文本
- *       （`TOINT(NUMS)`），#70 的动态下标无属主可比、不判域，按
- *       event-chara-leave.js 的 decode_table 同款写法原样落地。
+ *       （to_int 解析），#70 的动态下标无属主可比、不判域，按
+ *       event-chara-leave.js 的 decode_table 同款写法处理。
  */
 
 'use strict';
@@ -50,10 +46,10 @@ const era_flag = require('#/era-utils/era-flag');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 
-/** TOINT 的等价物（非数值与空串一律 0；记录段由 serialize_character 写出） */
+/** 文本转数值（非数值与空串一律 0；记录段由 serialize_character 写出） */
 const to_int = (value) => Number(value) || 0;
 
-/** 记录里十张二维表段的表名，按 :54-103 的读取顺序（下标即 LOCALS 序号 - 4） */
+/** 记录里十张二维表段的表名（record 下标即段序 + 4） */
 const TABLE_SEGMENTS = [
   ['abl', false],
   ['base', false],
@@ -68,11 +64,10 @@ const TABLE_SEGMENTS = [
 ];
 
 /**
- * :54-103 一段 `"下标,值/下标,值/"` 的回填（cstr 段的值是字符串）。
- * 收尾的空段由外层 `RESULT-1` 的上界挡掉：`SPLIT` 对结尾分隔符会多切出
- * 一个空元素，原作的 `FOR LOCAL, 0, RESULT-1` 因此正好跳过它。
+ * 一段 `"下标,值/下标,值/"` 的回填（cstr 段的值是字符串）。
+ * 结尾分隔符会多切出一个空元素，由 slice(0, -1) 挡掉。
  *
- * @param {number} cid 角色 ID（原作 CHARA）
+ * @param {number} cid 角色 ID
  * @param {string} table 表名（abl / base / … / cstr）
  * @param {string} segment 记录段
  * @param {boolean} is_string 段内值是否为字符串
@@ -80,7 +75,7 @@ const TABLE_SEGMENTS = [
  */
 function decode_table(cid, table, segment, is_string) {
   if (!segment) return;
-  // RESULT-1：段尾必有一个空元素（serialize_character 的每项都以 "/" 收尾）
+  // 段尾必有一个空元素（serialize_character 的每项都以 "/" 收尾），slice 挡掉
   const pieces = segment.split('/').slice(0, -1);
   for (const piece of pieces) {
     const [index_text, value_text] = piece.split(',');
@@ -92,21 +87,21 @@ function decode_table(cid, table, segment, is_string) {
 }
 
 /**
- * @CHARA_MAKE_INPORT（:2-126）：从通信名单里抽一名异国勇者加入游戏。
+ * chara_make_inport：从通信名单里抽一名异国勇者加入游戏。
  *
- * @param {(n: number) => number} [rand] 原作 `RAND:N`（[0,n) 整数）的随机源，
+ * @param {(n: number) => number} [rand] 随机源（[0,n) 整数），
  *   缺省均匀随机；测试注入定值序
- * @returns {number} 新角色号（原作 `RETURN CHARA`）；无可用记录、名单为空或
- *   目标预设不存在时 0（原作 `RETURN 0`，预设不存在那一档见文件头二）
+ * @returns {number} 新角色号；无可用记录、名单为空或
+ *   目标预设不存在时 0（预设不存在那一档见文件头二）
  */
 function chara_make_inport(rand = default_rand) {
-  // SIF FLAG:76 <= 0 RETURN 0（FLAG:76 外来勇者等级上限，MAOUNET 菜单设定）
+  // 外来勇者等级上限（FLAG:76，MAOUNET 菜单设定）<= 0 则直接返回 0
   const level_cap = game.system.外来勇者等级上限;
   if (level_cap <= 0) {
     return 0;
   }
 
-  // VARSET LIST, -100 / LOCAL:1 = 0 —— 候选槽位表与它的计数
+  // 候选槽位表（空档 -100）与它的计数
   const list = new Array(100).fill(-100);
   let candidate_count = 0;
 
@@ -131,8 +126,8 @@ function chara_make_inport(rand = default_rand) {
     }
     if (duplicated) continue;
 
-    // 同一预设号已在场则跳过（GETCHARA(NO, 0) >= 0，
-    // #21 扁平化下即「名单里有这个号」）
+    // 同一预设号已在场则跳过
+    // （#21 扁平化下即「已加入名单里有这个号」）
     if (era.getAddedCharacters().includes(to_int(fields[1]))) continue;
 
     list[candidate_count] = slot;
@@ -144,20 +139,20 @@ function chara_make_inport(rand = default_rand) {
     return 0;
   }
 
-  // 从候选里随机抽一条（RAND 的分母是候选数，不是 100）
+  // 从候选里随机抽一条（分母是候选数，不是 100）
   const chosen = list[rand(candidate_count)];
   const record = String(roster[chosen] ?? '').split('_');
 
-  // 空白角色を作成 / CHARA = CHARANUM-1（扁平化下角色号 = 预设号，见文件头二）
-  const cid = to_int(record[1]); // NO:CHARA
+  // 建角色（扁平化下角色号 = 预设号，见文件头二）
+  const cid = to_int(record[1]); // 记录里的预设号
   if (!era.addCharacter(cid)) {
-    return 0; // 有意的守卫，见文件头二
+    return 0; // 有意的防护判断，见文件头二
   }
 
-  // SAVESTR / CALLNAME 都写 LOCALS:3（ere 侧同落 -2，见文件头三）
+  // 两槽都写记录里的称呼（ere 侧同落 -2，见文件头三）
   const nickname = record[3] ?? '';
-  era.set(`callname:${cid}:-2`, nickname); // SAVESTR:CHARA = %LOCALS:3%
-  era.set(`callname:${cid}:-1`, nickname); // CALLNAME:CHARA = %LOCALS:3%
+  era.set(`callname:${cid}:-2`, nickname); // callname:-2 称呼槽
+  era.set(`callname:${cid}:-1`, nickname); // callname:-1 姓名槽
 
   // 十张二维表回填
   for (const [index, [table, is_string]] of TABLE_SEGMENTS.entries()) {
@@ -173,11 +168,11 @@ function chara_make_inport(rand = default_rand) {
   if (era_flag.communication_hero_level_one) {
     chara(cid).chara.等级 = 1; // CFLAG:9
     chara(cid).dungeon.战斗经验 = 0; // EXP:80
-    // FLAG:60 勇者基础等级修正：逐级 ST_UP
+    // FLAG:60 勇者基础等级修正：逐级 st_up
     const times = game.event.勇者基础等级修正;
     if (times > 0) {
       for (let i = 0; i < times; i += 1) {
-        st_up(cid, rand); // CALL ST_UP, CHARA
+        st_up(cid, rand); // 补一级
       }
     }
   }
@@ -186,12 +181,12 @@ function chara_make_inport(rand = default_rand) {
   chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0;
   chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
 
-  // 身体データ未生成なら生成（#385 起真身；FLAG:5 的位闸门在函数内部）
+  // 身体データ未生成なら生成（#385 起真身；FLAG:5 的位检查在函数内部）
   if (chara(cid).chara.年龄 === 0) {
     char_body_generate_wapped(cid, rand);
   }
 
-  return cid; // RETURN CHARA
+  return cid;
 }
 
 module.exports = { chara_make_inport };

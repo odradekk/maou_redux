@@ -1,8 +1,8 @@
 // 变异条目表切片：角色信息显示链（#390，CHARA_INFO_SHOW ＋ CHARA_INFO_SHOW_TALENT）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
+// 分配，只作引用编号，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 74; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 守卫的反向钉，笔误已改正）
+export const COUNT = 74; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
@@ -20,14 +20,14 @@ const TRAIN = 'ere/page/page-train.js';
 const USERCOM = 'ere/page/page-usercom.js';
 
 /**
- * 每条 = 一次「改坏一处、本票测试必须红」。
+ * 每条 = 一次「改坏一处、这张工单的测试必须红」。
  * @param {number} id 编号
  * @param {string} desc 说明
- * @param {string} file 靶文件
- * @param {string} find 命中串（靶文件里恰一次）
+ * @param {string} file 目标文件
+ * @param {string} find 命中串（目标文件里恰一次）
  * @param {string} replace 变异后的串
  * @param {string} must_mention 失败输出里必须出现的片段
- * @param {string[]} [tests] 守它的测试文件（缺省本票的 chara-info-show；
+ * @param {string[]} [tests] 对应测试文件（缺省这张工单的 chara-info-show；
  *   cup_size 的一组住在 test/chara-body.test.js）
  */
 const make = (id, desc, file, find, replace, must_mention, tests) => ({
@@ -58,25 +58,25 @@ export default [
   ),
   make(
     8701,
-    'CUP_SIZE：CAL_VAR ≤ 1 的档位由 1 放宽到 2',
+    'cup_size：cal_var ≤ 1 的档位由 1 放宽到 2',
     BODY,
     "  if (cal_var <= 1) return '-';",
     "  if (cal_var <= 2) return '-';",
-    'CUP_SIZE',
+    'cup_size',
     ['chara-body'],
   ),
   make(
     8702,
-    'CUP_SIZE：除数 25 改成 20',
+    'cup_size：除数 25 改成 20',
     BODY,
     '  const cal_var = int((bust10 - under_bust(cid, height10)) / 25);',
     '  const cal_var = int((bust10 - under_bust(cid, height10)) / 20);',
-    'CUP_SIZE',
+    'cup_size',
     ['chara-body'],
   ),
   make(
     8703,
-    'CUP_SIZE：字母表少一格（AAA 被吃掉）',
+    'cup_size：字母表少一格（AAA 被吃掉）',
     BODY,
     `const CUP_LETTERS = [
   'AAA',
@@ -84,7 +84,7 @@ export default [
     `const CUP_LETTERS = [
   'AA',
   'A',`,
-    'CUP_SIZE',
+    'cup_size',
     ['chara-body'],
   ),
   make(

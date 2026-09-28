@@ -1,17 +1,17 @@
 /**
- * ere/chara/chara-init.js @CHAR_INIT 窄路径的行为测试
+ * ere/chara/chara-init.js char_init 窄路径的行为测试
  * （issue #118，ENDING_1 的 ADDCHARA 链第三环）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开
- * 接口 char_init 直驱。一人称设定（@RANDOM_SELF_CALL）自 #383 起是完整实现，
+ * 接口 char_init 直驱。一人称设定（random_self_call）自 #383 起是完整实现，
  * 落在 ere/chara/chara-self-call.js，分支覆盖见 test/chara-self-call.test.js，
  * 本文件不重复。
  *
  * 窄路径的既定事实（chara-init.js 文件头）：菲娅 CFLAG:35:9 = 1（等级段
  * 不进）、CFLAG:35:450 无预设（一人称走 <9 直设）、FLAG:5 恒 0（身体数据
- * 段不进——真身自 #385 起在 ere/chara/chara-body.js，判据由占位行改为
+ * 段不进——真身自 #385 起在 ere/chara/chara-body.js，条件由占位行改为
  * CFLAG:451 的写入）。本文件另用注入态覆盖条件段的两个入口（等级段、
- * 身体数据段），守住条件结构 1:1。
+ * 身体数据段），守住条件结构不走样。
  */
 
 const assert = require('node:assert/strict');
@@ -29,7 +29,7 @@ function history_texts(fixture) {
     .map((line) => line.text);
 }
 
-test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 + 能力者全掷不中', async () => {
+test('char_init 窄路径（菲娅预设）：一人称直设 + 无服装静默 + 能力者全掷不中', async () => {
   const fixture = create_era_fixture();
   const { char_init } = load(fixture);
   // 注入全不中的随机源（RAND:40 恒 1 ≠ 0）
@@ -38,7 +38,7 @@ test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称已设');
   const texts = history_texts(fixture);
   // 着替え装着自 #215（J5）起为真身：菲娅无既定服装（41/42 均 0）
-  // → WEARING_CLOTH_ALL 早退、无输出无写入（行为锁在 test/cloth-func.test.js）
+  // → wearing_cloth_able 早退、无输出无写入（行为锁在 test/cloth-func.test.js）
   assert.equal(fixture.store.get('cflag:35:40'), undefined, '无服装不写装位');
   assert(
     !texts.some((line) => line.includes('@ST_UP')),
@@ -47,11 +47,11 @@ test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 
   assert.equal(
     fixture.store.get('cflag:35:451'),
     undefined,
-    'FLAG:5 恒 0：身体数据段不进（#385 起真身，判据看写入而不是占位行）',
+    'FLAG:5 恒 0：身体数据段不进（#385 起真身，条件看写入而不是占位行）',
   );
 });
 
-test('能力者技能五连（CHARA_MAKE_INIT.ERB:35-47）：掷中即得、注入序 275→279', async () => {
+test('能力者技能五连：掷中即得、注入序 275→279', async () => {
   const fixture = create_era_fixture();
   const { char_init } = load(fixture);
   // RAND:40 == 0 才获得：前两掷中、后三掷不中
@@ -63,23 +63,23 @@ test('能力者技能五连（CHARA_MAKE_INIT.ERB:35-47）：掷中即得、注�
   assert.equal(fixture.store.get('talent:35:279'), undefined, '暗未获得');
 });
 
-test('已持有一系能力者时整段跳过（!(275||…||279) 的守卫，:35）', async () => {
+test('已持有一系能力者时整段跳过（!(275||…||279) 的检查）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('talent:35:277', 1);
   const { char_init } = load(fixture);
   await char_init(35, () => 0); // 全掷中
-  assert.equal(fixture.store.get('talent:35:275'), undefined, '守卫挡住五连');
+  assert.equal(fixture.store.get('talent:35:275'), undefined, '检查挡住五连');
   assert.equal(fixture.store.get('talent:35:276'), undefined);
 });
 
-test('等级段条件 1:1：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（ST_UP 真身，#179）', async () => {
+test('等级段条件：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（st_up 真身，#179）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:35:9', 5);
   fixture.store.set('cflag:35:11', 0);
   const { char_init } = load(fixture);
-  // rand ≡ 1：ST_UP 的 RAND:2 掷 1 → 每级攻 +1 / 防 +2（基础各 +1 + 防 1）
+  // rand ≡ 1：st_up 的 RAND:2 掷 1 → 每级攻 +1 / 防 +2（基础各 +1 + 防 1）
   await char_init(35, () => 1);
-  assert.equal(fixture.store.get('cflag:35:9'), 5, '等级钳回原值（:15）');
+  assert.equal(fixture.store.get('cflag:35:9'), 5, '等级钳回原值');
   assert.equal(fixture.store.get('cflag:35:13'), 5, '基础攻击 +5（5 级 × 1）');
   assert.equal(
     fixture.store.get('cflag:35:14'),
@@ -89,13 +89,13 @@ test('等级段条件 1:1：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（ST_UP 真身�
   assert.equal(
     fixture.store.get('maxbase:35:0'),
     50,
-    '体力上限 +50（5 级 × 10，:86）',
+    '体力上限 +50（5 级 × 10）',
   );
-  assert.equal(fixture.store.get('maxbase:35:1'), 50, '气力上限 +50（:87）');
-  assert.equal(fixture.store.get('base:35:0'), 50, '体力拉满到上限（:16）');
-  assert.equal(fixture.store.get('base:35:1'), 50, '气力拉满到上限（:17）');
+  assert.equal(fixture.store.get('maxbase:35:1'), 50, '气力上限 +50');
+  assert.equal(fixture.store.get('base:35:0'), 50, '体力拉满到上限');
+  assert.equal(fixture.store.get('base:35:1'), 50, '气力拉满到上限');
 
-  // 菲娅形态的对照组：CFLAG:11 = 15（CSV 预设）——即使等级 > 1 也不进
+  // 菲娅预设的对照组：CFLAG:11 = 15（yml 预设）——即使等级 > 1 也不进
   const guard = create_era_fixture();
   guard.store.set('cflag:35:9', 5);
   guard.store.set('cflag:35:11', 15);
@@ -104,12 +104,12 @@ test('等级段条件 1:1：CFLAG:9 > 1 且 CFLAG:11 == 0 才进（ST_UP 真身�
   assert.equal(
     guard.store.get('cflag:35:13'),
     undefined,
-    'CFLAG:11 != 0：等级段不进（CSV 已设攻击力）',
+    'CFLAG:11 != 0：等级段不进（预设已设攻击力）',
   );
   assert.equal(guard.store.get('cflag:35:14'), undefined);
 });
 
-test('身体数据段条件 1:1：FLAG:5 位 12/15 开且 451/453 缺失才进', async () => {
+test('身体数据段条件：FLAG:5 位 12/15 开且 451/453 缺失才进', async () => {
   const fixture = create_era_fixture();
   // 位 12 开（GETBIT(FLAG:5,12)）：4096
   fixture.store.set('flag:5', 4096);
@@ -131,7 +131,7 @@ test('身体数据段条件 1:1：FLAG:5 位 12/15 开且 451/453 缺失才进',
     '已落真身，不得再出现存根占位行',
   );
 
-  // 预设已带身体数据（CFLAG:451 = 10、CFLAG:453 = 1270 的菲娅形态）：
+  // 预设已带身体数据（CFLAG:451 = 10、CFLAG:453 = 1270 的菲娅预设）：
   // 位开也不进
   const guard = create_era_fixture();
   guard.store.set('flag:5', 4096);

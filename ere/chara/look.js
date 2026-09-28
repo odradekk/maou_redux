@@ -1,37 +1,34 @@
 /**
- * @file 外观描述（issue #389，N5）：LOOK.ERB 的设定、清空与信息显示五函数。
+ * @file 外观描述（issue #389，N5）：设定、清空与信息显示五函数。
  *
- * 调用面：#389 起 LOOK_SET 由 ere/chara/chara-make.js 的 @CM_LOOK 接入
- * （源 CHARA_MAKE.ERB:864 的 `CALL LOOK_SET, ARG`）；@LOOK_INFO 的两个调用点
- * 在 CHARA_INFO_SHOW ver1.1.2.ERB:233/:295，#390 的靶——本票只把函数做成
- * 可被调用的形状（`await look_info(cid)` 走 era.print 逐行输出），不去改那个
- * 文件。LOOK_INFO_LOVE 由 LOOK_INFO 尾段无条件调用（源 :1662-1664）。
+ * 调用面：#389 起 look_set 由 ere/chara/chara-make.js 的 cm_look 调用；
+ * look_info 的两个调用点在 ere/page/page-chara-info-show.js（#390 起为可
+ * 调用的形状，`await look_info(cid)` 走 era.print 逐行输出）；
+ * look_info_love 由 look_info 尾段无条件调用。
  *
- * 移植说明（有意偏离，均注明依据）：
- *   - **TARGET 换手显式传参**（#5 决议第六条）：源的 `TARGET = A` / `SWAP`
- *     一律消解成 cid 形参，与 chara-make.js 同款。
- *   - **`%SELF_CALL(TARGET)%` 改用 ere/kojo/kojo-text.js 的真身**，
- *     `CALL GOBI_KOUJO` 用 ere/kojo/kojo-system.js 的真身（语尾口上族，
- *     未实现的分支打占位行——那是那张票的欠账，不在本票）。
- *   - **`CALL NAME_LOVER,CFLAG:606,1` 改读 LOVER_NAMES 表**（与
- *     ere/page/page-chara-info.js:201 同款做法）：原函数按 print_flag=1
- *     直接打印 14 格填充，这里按同一张登记表取裸文本 + 同一填充宽度。
- *   - **SETCOLORBYNAME / RESETCOLOR 保留为彩色片段**（`{content,color}` 数组，
- *     page-dungeon-info2.js 先例）——LOOK_INFO 的两态（`FLAG:5 & 2048` 的
- *     「口上视角」与默认的「方括号视角」）都按此落地。
- *   - **`PRINT`/`PRINTFORM`/`PRINTV` 合流**：引擎每次 era.print 即一行，
- *     原作「不换行的连续 PRINT」合成一条字符串后一次输出（page-shop-trap.js
- *     先例）。
+ * 实现说明（有意偏离既有写法，均注明依据）：
+ *   - **目标角色显式传参**（#5 决议第六条）：一律以 cid 形参传递目标
+ *     角色，与 chara-make.js 同款。
+ *   - **一人称与语尾口上走真身**：self_call 用 ere/kojo/kojo-text.js 的
+ *     真身，gobi_koujo 用 ere/kojo/kojo-system.js 的真身（语尾口上族，
+ *     未实现的分支打占位行——那是另一张工单的欠账，不在 #389）。
+ *   - **恋人名的 14 格填充改读 LOVER_NAMES 表**（与 ere/page/
+ *     page-chara-info.js:201 同款做法）：按同一张登记表取裸文本 + 同一
+ *     填充宽度。
+ *   - **彩色字符保留为彩色片段**（`{content,color}` 数组，page-dungeon-info2.js
+ *     先例）——look_info 的两态（`FLAG:5 & 2048` 的「口上视角」与默认的
+ *     「方括号视角」）都按此实现。
+ *   - **连续输出合流**：引擎每次 era.print 即一行，不换行的连续输出合成
+ *     一条字符串后一次输出（page-shop-trap.js 先例）。
  *
- * == 三处恒真/恒假写法保留原形 ==
+ * == 三处恒真/恒假条件 ==
  *
- *   - :476 `ELSEIF TALENT:319 == 10 || 12`——`|| 12` 是恒真常量，该臂等价
- *     于 ELSE；保留原写法，注释说明。
- *   - :599 `SIF Q >103 && EX_TALENT:2`——Q 只可能是 1-20 或 90-93，该判定
- *     恒假；保留原写法（改写成常量会让它的变异失去意义）。
- *   - :102-113 `IF Q >= 2` 吞掉了随后的 `ELSEIF Q == 3` / `ELSEIF Q == 4`
- *     两支（头发修剪方式：2 齐剪 / 3 层剪 不可达）；按 page-chara-info.js
- *     先例**精简为可达形状**，结论写在此。
+ *   - race_set 的兽/马分支：旧条件 `TALENT:319 == 10 || 12` 里 `|| 12`
+ *     恒真，该分支等价于 ELSE；写法上收成裸 else，语义不变（见该处注释）。
+ *   - reason_set 的 `q > 103 && ex_t(cid, 2)`：q 只可能是 1-20 或 90-93，
+ *     该判定恒假；保留条件原形（改写成常量会让它的变异失去意义）。
+ *   - 头发修剪方式的前一支吞掉了后两支（2 齐剪 / 3 层剪不可达）；按
+ *     page-chara-info.js 先例**精简为可达形状**，结论写在此。
  */
 
 'use strict';
@@ -104,7 +101,7 @@ const T_阴茎的状态 = 318;
 const T_种族2 = 319;
 const T_家族构成 = 320;
 
-/** 素质下标 → 值（`TALENT:x` 的隐式 TARGET 在 ere 侧一律显式传 cid） */
+/** 素质下标 → 值（目标角色一律显式传 cid） */
 function t(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
 }
@@ -120,8 +117,7 @@ function ex_t(cid, idx) {
 }
 
 /**
- * 源 :547-551 的刺青候选表（`LOCALS:10 '= "淫乱" , …`，10 项）。
- * LOCAL = RAND:8 + 10 → 取前 8 项。
+ * 刺青候选表（10 项）。掷 rand(8) + 10 作下标 → 取前 8 项。
  */
 const TATTOO_NAMES = [
   '淫乱',
@@ -137,26 +133,26 @@ const TATTOO_NAMES = [
 ];
 
 /**
- * @LOOK_SET（:4-813）：按种族设定掷出全部外貌素质。
+ * look_set：按种族设定掷出全部外貌素质。
  *
  * 设定面（全部写 TALENT:x:300-320 与 ABL/EXP 的少数档）：
  *   头发颜色/状态/长度/修剪/发型、目、瞳色、唇、体型、乳头、阴毛、阴茎、
  *   魅力点、癖、种族、成为勇者前的生活、成为勇者的契机、喜欢的东西、
  *   家族构成。
  *
- * 已设定则保留：头发颜色在 `TALENT:300 > 0` 时整段跳过（源 :10-12）。
+ * 已设定则保留：头发颜色在 `TALENT:300 > 0` 时整段跳过。
  *
- * @param {number} cid 角色 ID（源 TARGET）
- * @param {number} arg 种族设定（源 ARG：0 随机、-1 人类、10/11 指定、其余按码）
+ * @param {number} cid 角色 ID
+ * @param {number} arg 种族设定（0 随机、-1 人类、10/11 指定、其余按码）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {number} 源 :808-811 `RETURN 1`
+ * @returns {number} 恒 1
  */
 function look_set(cid, arg, rand = default_rand) {
   const rand_n = rand;
 
-  // —— 头发颜色（:7-61）——
+  // —— 头发颜色 ——
   if (t(cid, T_头发颜色) > 0) {
-    // 設定済み（stick 修改：不再按 rand 重掷）
+    // 設定済み（不再按 rand 重掷）
   } else {
     rand_n(100); // 先消耗一次 RAND:100、结果弃用：保持后续掷骰的取值序与既定序列对齐
     // 0-4 粉髪 5% / 5-14 紫髪 10% / 15-20 白发 6% / 21-30 青髪 10%
@@ -190,7 +186,7 @@ function look_set(cid, arg, rand = default_rand) {
     );
   }
 
-  // —— 头发状态（:63-83）——
+  // —— 头发状态 ——
   const q_state = rand_n(12); // Q = RAND:12
   set_t(
     cid,
@@ -208,7 +204,7 @@ function look_set(cid, arg, rand = default_rand) {
               : 6, // ウェーブ
   );
 
-  // —— 头发长度（:85-97）ボーイッシュ（未熟 135）なら常にショート ——
+  // —— 头发长度：ボーイッシュ（未熟 135）なら常にショート ——
   const q_hair_len = rand_n(6);
   set_t(
     cid,
@@ -220,14 +216,14 @@ function look_set(cid, arg, rand = default_rand) {
         : 201, // ロング
   );
 
-  // —— 头发修剪方式（:99-114）——
+  // —— 头发修剪方式 ——
   const q_cut = rand_n(6);
-  // 源 :102-113 是 `IF Q >= 2 → 1` 后接 `ELSEIF Q == 3 → 2` / `ELSEIF Q == 4 → 3`：
-  // 前一支把 2..5 全吃掉，2 齐剪与 3 层剪**不可达**（page-chara-info.js 先例，
-  // 精简为可达形状：Q >= 2 → 1 基本剪法，否则 → 4 碎发）
+  // 修剪只分两档：Q >= 2 → 1 基本剪法，否则 → 4 碎发。旧写法后接的
+  // 「Q == 3 → 2 齐剪」「Q == 4 → 3 层剪」两支会被 Q >= 2 全吃掉、不可达，
+  // 按 page-chara-info.js 先例精简为可达形状（见文件头）
   set_t(cid, T_头发修剪方式, q_cut >= 2 ? 1 : 4);
 
-  // —— 髪型（:116-130）长度决定可掷范围 ——
+  // —— 髪型：长度决定可掷范围 ——
   const hair_len = t(cid, T_头发长度);
   let q_style;
   if (hair_len >= 1 && hair_len <= 100) {
@@ -239,7 +235,7 @@ function look_set(cid, arg, rand = default_rand) {
   }
   set_t(cid, T_发型, q_style + 1); // Q += 1
 
-  // —— 目（:132-166）——
+  // —— 目 ——
   const q_eye = rand_n(100);
   set_t(
     cid,
@@ -261,7 +257,7 @@ function look_set(cid, arg, rand = default_rand) {
                   : 6, // 標準 56%
   );
 
-  // —— 瞳色（:168-188）——
+  // —— 瞳色 ——
   const q_eye_color = rand_n(100);
   set_t(
     cid,
@@ -279,7 +275,7 @@ function look_set(cid, arg, rand = default_rand) {
               : 5, // クリムゾン
   );
 
-  // —— 唇（:190-204）——
+  // —— 唇 ——
   const q_lip = rand_n(6);
   set_t(
     cid,
@@ -293,7 +289,7 @@ function look_set(cid, arg, rand = default_rand) {
           : 4, // 標準
   );
 
-  // —— 体型（:206-217）——
+  // —— 体型 ——
   const q_body = rand_n(3);
   set_t(
     cid,
@@ -305,7 +301,7 @@ function look_set(cid, arg, rand = default_rand) {
         : 150, // 標準
   );
 
-  // —— 乳头（:219-233）——
+  // —— 乳头 ——
   const q_nipple = rand_n(6);
   set_t(
     cid,
@@ -319,7 +315,7 @@ function look_set(cid, arg, rand = default_rand) {
           : 3, // 標準
   );
 
-  // —— 陰毛（:235-255）——
+  // —— 陰毛 ——
   const q_pubic = rand_n(150);
   set_t(
     cid,
@@ -338,7 +334,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
   set_t(cid, T_阴毛状态, t(cid, T_阴毛生长极限));
 
-  // —— ペニス（:258-273）有無にかかわらず設定は入れておく ——
+  // —— ペニス：有無にかかわらず設定は入れておく ——
   const q_penis = rand_n(150);
   const boyish = t(cid, T_未熟);
   set_t(
@@ -358,8 +354,8 @@ function look_set(cid, arg, rand = default_rand) {
     set_t(cid, T_早泄, 1);
   }
 
-  // —— 魅力点（:279-302）：$CHARMPOINT 标号 + 两处 GOTO 重掷 ——
-  let charm; // $CHARMPOINT
+  // —— 魅力点：循环重掷（两处重掷点） ——
+  let charm;
   for (;;) {
     charm = rand_n(28) + 1;
     // 贫乳は美乳になれない（109 命中且掷到 12 → 重掷）
@@ -380,8 +376,8 @@ function look_set(cid, arg, rand = default_rand) {
   }
   set_t(cid, T_魅力点, charm);
 
-  // —— 癖（:305-315）：$HABIT 标号 + 说话不能时重掷 ——
-  let habit; // $HABIT
+  // —— 癖：说话不能时重掷 ——
+  let habit;
   for (;;) {
     habit = rand_n(34) + 1;
     // 話せないなら決め台詞はありえない（金红桃 167 命中且掷到 25 → 重掷）
@@ -392,20 +388,20 @@ function look_set(cid, arg, rand = default_rand) {
   }
   set_t(cid, T_癖, habit);
 
-  race_set(cid, arg, rand_n); // $RACE
-  born_set(cid, rand_n); // $BORN
-  reason_set(cid, rand_n); // $REASON
-  love_set(cid, rand_n); // $LOVE
-  family_set(cid, rand_n); // $FAMILY
+  race_set(cid, arg, rand_n);
+  born_set(cid, rand_n);
+  reason_set(cid, rand_n);
+  love_set(cid, rand_n);
+  family_set(cid, rand_n);
 
-  return 1; // RETURN 1
+  return 1;
 }
 
 /**
- * 源 `$RACE` 段（:320-487）：种族与种族特性。
+ * race_set：种族与种族特性。
  *
  * @param {number} cid 角色 ID
- * @param {number} arg 种族设定（源 ARG）
+ * @param {number} arg 种族设定
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function race_set(cid, arg, rand_n) {
@@ -490,7 +486,7 @@ function race_set(cid, arg, rand_n) {
 
   // 精英の場合はこちら（种族 9 + 种族2 的特性）
   set_t(cid, T_种族, 9);
-  const race2 = t(cid, T_种族2); // TALENT:319
+  const race2 = t(cid, T_种族2);
   if (race2 === 1) {
     // 亜人
     if (rand_n(4) === 0) {
@@ -561,8 +557,8 @@ function race_set(cid, arg, rand_n) {
       }
     }
   } else {
-    // 獣＆馬。兜底臂：未命中前几档的种族 2 值一律按兽/马处理——原判据
-    // `ELSEIF TALENT:319 == 10 || 12` 的 `|| 12` 恒真，该臂等价于 ELSE；
+    // 獣＆馬。缺省分支：未命中前几档的种族 2 值一律按兽/马处理——旧条件
+    // `TALENT:319 == 10 || 12` 里 `|| 12` 恒真，本分支等价于 ELSE；
     // 写法上收成裸 else（常量条件检查会拦 `|| 12`），语义不变
     set_t(cid, T_恶魔肌肤, 0);
     set_t(cid, T_褐色肌肤, 0);
@@ -577,13 +573,13 @@ function race_set(cid, arg, rand_n) {
 }
 
 /**
- * 源 `$BORN` 段（:496-589）：成为勇者前的生活 + 对应的经验与善恶值。
+ * born_set：成为勇者前的生活 + 对应的经验与善恶值。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function born_set(cid, rand_n) {
-  let q; // $BORN
+  let q;
   for (;;) {
     q = rand_n(21) + 1;
     // 配下の場合、特別な元職業
@@ -648,7 +644,7 @@ function born_set(cid, rand_n) {
     // 妓女と奴隷は、刺青を入れられていることがある
     if (rand_n(15) === 0 && q !== 7 && t(cid, T_男人) === 0) {
       const local = rand_n(8) + 10;
-      // `LOCALS:10 '= "淫乱" , …"骷髅"`（10 项），:551 `CSTR:LOCAL = %LOCALS:LOCAL%`
+      // 刺青候选表（TATTOO_NAMES）按 local 取项，写入 CSTR:local
       era.set(`cstr:${cid}:${local}`, TATTOO_NAMES[local - 10]);
     }
 
@@ -681,7 +677,7 @@ function born_set(cid, rand_n) {
 }
 
 /**
- * 源 `$REASON` 段（:592-608）：成为勇者的理由。
+ * reason_set：成为勇者的理由。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -692,8 +688,8 @@ function reason_set(cid, rand_n) {
   if (t(cid, T_精英) === 1 || ex_t(cid, 2)) {
     q = 90 + rand_n(4);
   }
-  // `SIF Q >103 && EX_TALENT:2 → Q = 93`：Q 只可能是 1-20 或
-  // 90-93，此判定在两个赋值点之后**恒假**；保留判据原形（见文件头）
+  // q 只可能是 1-20 或 90-93，此判定在两个赋值点之后**恒假**；
+  // 保留条件原形（见文件头）
   if (q > 103 && ex_t(cid, 2)) {
     q = 93;
   }
@@ -708,7 +704,7 @@ function reason_set(cid, rand_n) {
 }
 
 /**
- * 源 `$LOVE` 段（:611-621）：喜欢的东西。
+ * love_set：喜欢的东西。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -726,8 +722,7 @@ function love_set(cid, rand_n) {
 }
 
 /**
- * 源 `$FAMILY` 段（:641-808）：家族构成码（TALENT:320）的生成（段标签 `$FAMILY`
- * 在区间内，前面 :641-642 的非精英判定与家族构成置 1 也属本段）。
+ * family_set：家族构成码（TALENT:320）的生成。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -738,7 +733,7 @@ function family_set(cid, rand_n) {
     set_t(cid, T_家族构成, 1);
   }
 
-  let local = 0; // LOCAL = 0 / MARRY = 0
+  let local = 0;
   let marry = 0;
 
   // 結婚相手の設定
@@ -853,15 +848,11 @@ function family_set(cid, rand_n) {
 }
 
 /**
- * @LOOK_CLEAR（:814-822）：把 TALENT:300 起的全部外貌素质清零。
+ * look_clear：把 TALENT:300 起的全部外貌素质清零。
  *
- * 源 `REPEAT 314` 扫 COUNT = 0..313，`SIF COUNT < 300 → COUNT = 300`——
- * 即 0-299 一律归到 300、300-313 用自己的号，于是实际只清 300..313，
- * 循环把 0-299 一律归到 300、300-313 用自己的号，实际只清 300..313：
- * 300 单独写一次，301-313 逐项写；无随机性与副作用。
+ * 实际只清 300..313：300 单独写一次，301-313 逐项写；无随机性与副作用。
  *
- * @param {number} cid 角色 ID（源 TARGET）
- * @param {number} [count] 源循环变量初值（缺省 0；测试用）
+ * @param {number} cid 角色 ID
  */
 function look_clear(cid) {
   set_t(cid, 300, 0);
@@ -871,20 +862,18 @@ function look_clear(cid) {
 }
 
 /**
- * @LOVE_LIKE_BASE（:2811-2884）：TALENT:317 的字面档 → 文本。
+ * love_like_base：TALENT:317 的字面档 → 文本。
  *
- * 源是「打印 + 返回命中标志」的二合一（:2815-2819 `LOCAL = 0`，命中则
- * `LOCAL++` 后 `RETURN LOCAL`）。本实现返回 `{printed, matched}`：调用方
- * （look_info_love）需要的是「有没有命中」与「输出什么串」，而打印时机由
- * 调用方决定——与源在 LOOK_INFO_LOVE 里的用法（`CALL LOVE_LIKE_BASE` 后
- * `SIF RESULT == 0 CONTINUE`）等价。
+ * 「查表」与「打印」拆开：返回 `{printed, matched}`，打印时机由调用方
+ *（look_info_love）决定——它需要的是「有没有命中」与「输出什么串」，
+ * 未命中即跳过该项。
  *
- * @param {number} cid 角色 ID（源 TARGET）
+ * @param {number} cid 角色 ID
  * @returns {{printed: string, matched: boolean}} 命中的文本与命中标志
  */
 function love_like_base(cid) {
   const v = t(cid, T_喜欢的东西); // TALENT:317
-  const zero_cflag0 = (era.get(`cflag:${cid}:0`) || 0) === 0; // 起四处 `&& CFLAG:0 == 0`
+  const zero_cflag0 = (era.get(`cflag:${cid}:0`) || 0) === 0; // 命中档共用的 `&& CFLAG:0 == 0`（未陷落）
   const table = [
     [1, true, '甜食'],
     [2, true, '辣条'],
@@ -909,27 +898,27 @@ function love_like_base(cid) {
   ];
   for (const [code, ok, text] of table) {
     if (v === code && ok) {
-      return { printed: text, matched: true }; // 起 `PRINTFORM …` + `LOCAL++`
+      return { printed: text, matched: true };
     }
   }
-  return { printed: '', matched: false }; // RETURN LOCAL（未被覆盖 → 0）
+  return { printed: '', matched: false };
 }
 
-/** SETCOLORBYNAME LightSalmon 的 ere 等价物（LOOK.ERB:859 起全篇的高亮色） */
+/** 全篇高亮文字的颜色（LightSalmon） */
 const LIGHT_SALMON = 'LightSalmon';
-/** SETCOLORBYNAME LightGreen 的 ere 等价物（:1599-1601 借金行） */
+/** 借金行的颜色（LightGreen） */
 const LIGHT_GREEN = 'LightGreen';
 
 /**
- * LOOK_INFO 族的输出片段缓冲：源里 `SETCOLORBYNAME X … RESETCOLOR` 之间的
- * 文字是一个彩色片段（page-shop-trap.js / page-dungeon-info2.js 的
- * `{content,color}` 数组先例）。一次 era.print = 源里一条 PRINTL 行。
+ * look_info 族的输出片段缓冲：定色区间之间的文字是一个彩色片段
+ * （page-shop-trap.js / page-dungeon-info2.js 的 `{content,color}` 数组
+ * 先例）。一次 era.print 一行。
  *
- * **一处有意偏离（行合并）**：源 :911-976 的「头发颜色と性質」与「头发长度・
- * カット・髪型」两块之间没有 PRINTL，在 Emuera 里落在同一行；本实现按块各出
- * 一行。理由有二：引擎每次 era.print 即一行（page-shop-trap.js 头注的同一
- * 约束），而两块之间在口上视角还夹着 `CALL GOBI_KOUJO`（异步整行输出），
- * 引擎的行模型下「插入后再续写」没有对应形态。文本内容逐字一致，只有分行
+ * **一处有意偏离（行合并）**：「头发颜色と性質」与「头发长度・カット・
+ * 髪型」两块按块各出一行，不并作一行。理由有二：引擎每次 era.print 即
+ * 一行（page-shop-trap.js 头注的同一约束），而两块之间在口上视角还夹着
+ * 语尾口上 gobi_koujo（异步整行输出），引擎的行模型下「插入后再续写」
+ * 没有对应写法。
  * 位置不同。
  */
 class Spans {
@@ -968,12 +957,12 @@ class Spans {
   }
 }
 
-/** 素质下标（LOOK_INFO / LOOK_INFO_LOVE 专用的一批；与文件上半同名的各自定义） */
+/** 素质下标（look_info / look_info_love 专用的一批；与文件上半同名的各自定义） */
 const T_服从 = 85; // 爱慕
 const T_淫乱_T = 76;
-const T_低姿态 = 17; // 源 :1519 的 TALENT:17
+const T_低姿态 = 17;
 const T_冒渎者 = 282;
-const T_法术 = 242; // 法术（上半 $BORN 的修道女判定与 $RACE 之外都读它）
+const T_法术 = 242; // 法术（born_set 的修道女判定与 race_set 之外都读它）
 const T_咒术 = 250;
 const T_原种族_T = 321;
 const T_现种族_T = 322;
@@ -1021,7 +1010,7 @@ const T_淫壶 = 232;
 const T_淫肛 = 233;
 const T_狂王俘虏 = 280;
 
-/** 经验下标（源里写名字，这里落 yml/Exp.yml 的 id） */
+/** 经验下标（按 yml/Exp.yml 的 id） */
 const E_精饮绝顶经验 = 8;
 const E_侍奉快乐经验 = 21;
 const E_爱情经验 = 23;
@@ -1035,12 +1024,12 @@ const M_屈服刻印 = 2;
 const M_快乐刻印 = 1;
 const M_反抗刻印 = 3;
 
-/** 种族（TALENT:314）里「高洁」「恶」「堕落」三组（源 :1753-1767 / :1769-1781 / :1798-1810） */
+/** 种族（TALENT:314）里「高洁」「恶」「堕落」三组 */
 const RACES_NOBLE = [1, 6];
 const RACES_EVIL = [3, 4];
 const RACES_FALLEN = [7, 8, 9];
 
-/** 喜欢的东西的档位（LOVE_ID → MAIN_LOVE 下标；源 :1677-1712 的注释表） */
+/** 喜欢的东西的档位（LOVE_ID → MAIN_LOVE 下标） */
 const LOVE = {
   喜欢的东西: 0,
   你: 1,
@@ -1073,13 +1062,13 @@ const LOVE = {
   狂王: 62,
 };
 
-/** LOVE_SORT 的长度（源 :2637 `WHILE LOVE_COUNT < 30` 与 :2671 的 `FOR … 30`） */
+/** LOVE_SORT 的长度（排序与显示两处循环都以 30 为界） */
 const LOVE_SORT_MAX = 30;
-/** 显示门槛（源 :2677-2678 `SIF MAIN_LOVE:LOVE_ID <= 3 CONTINUE`） */
+/** 显示门槛（分值 <= 3 不显示） */
 const LOVE_SHOW_MIN = 3;
-/** 心形上限（源 :2779 `SIF HEART > 6`） */
+/** 心形上限 */
 const LOVE_HEART_MAX = 6;
-/** 每行几个（源 :2791 `IF LOVE_NUM % 6 == 0`） */
+/** 每行几个 */
 const LOVE_PER_ROW = 6;
 
 /** ABL 读数 */
@@ -1091,15 +1080,14 @@ const mark_of = (cid, idx) => era.get(`mark:${cid}:${idx}`) || 0;
 /** CFLAG 读数 */
 const cflag_of = (cid, idx) => era.get(`cflag:${cid}:${idx}`) || 0;
 
-/** FLAG:5 位 11（2048）= 「口上视角」（源全篇的 `IF FLAG:5 & 2048`） */
+/** FLAG:5 位 11（2048）=「口上视角」 */
 function kojo_view() {
   return ((era.get('flag:5') || 0) & 2048) !== 0;
 }
 
 /**
- * `CALL GOBI_KOUJO, x`（语尾口上）：返回语尾文字，由调用方拼进当前行
- * （原作 GOBI 不换行 PRINT、接在前后 PRINT 之间；#570）。真身在
- * kojo-system，未落地的性格返回空串。
+ * gobi_koujo（语尾口上）：返回语尾文字，由调用方拼进当前行——不换行、
+ * 接在前后文字之间（#570）。真身在 kojo-system，未实现的性格返回空串。
  *
  * @param {number} arg0 情绪档位
  * @returns {Promise<string>} 语尾文字（空串 = 落空）
@@ -1108,18 +1096,18 @@ async function gobi_koujo(arg0) {
   return require('#/kojo/kojo-system').gobi_koujo(arg0);
 }
 
-/** `%CSVNAME(NO:TARGET)%`：角色预设的「名前」（callname -1 槽，chara-name.js 先例） */
+/** 角色预设的「名前」（callname -1 槽，chara-name.js 先例） */
 const csv_name = (cid) => era.get(`callname:${cid}:-1`) ?? '';
 
 /**
- * @LOOK_INFO（:823-1666）：角色外观与来历的整屏描述。
+ * look_info：角色外观与来历的整屏描述。
  *
- * 两个视角同函数内分叉（源 `IF FLAG:5 & 2048`）：口上视角用「」引号 +
- * LightSalmon 高亮 + 语尾口上（GOBI_KOUJO）；默认视角用 [] 分节。
+ * 两个视角同函数内分叉（`FLAG:5 & 2048`）：口上视角用「」引号 +
+ * LightSalmon 高亮 + 语尾口上（gobi_koujo）；默认视角用 [] 分节。
  * 每个「块」一次 era.print（见 Spans 头注的行合并说明）。
  *
- * @param {number} cid 角色 ID（源 TARGET）
- * @returns {Promise<number>} 源 :1662-1664（尾段 CALL LOOK_INFO_LOVE + `RETURN 1`）
+ * @param {number} cid 角色 ID
+ * @returns {Promise<number>} 恒 1（尾段先跑 look_info_love）
  */
 async function look_info(cid) {
   // LOCALS / LOCALS:1..3（LOCALS 是函数局部，天然为空）
@@ -1133,7 +1121,7 @@ async function look_info(cid) {
     if (race2 !== 8 && race2 !== 9) {
       loc1 = get_look_info(cid, '种族2');
     }
-    loc2 = csv_name(cid); // CSVNAME(NO:TARGET)
+    loc2 = csv_name(cid);
   } else if (t(cid, T_种族) === 9) {
     // 魔族化済みで现种族が設定されていない場合設定しておく
     const now = t(cid, T_现种族_T);
@@ -1177,7 +1165,7 @@ async function look_info(cid) {
       t3.add('」');
       era.print(t3.take());
     }
-    // PRINTL（口上视角的收尾换行；默认视角没有）
+    // 收尾换行（口上视角才有；默认视角没有）
     era.println();
   } else {
     // 默认视角
@@ -1296,7 +1284,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  family_print_info(cid); // CALL FAMILY_PRINT_INFO(TARGET)
+  family_print_info(cid);
 
   // 成为勇者之前（四路前缀 + 取值 + 语尾）
   await look_info_block(
@@ -1437,7 +1425,7 @@ async function look_info(cid) {
   if (t(cid, 281) > 0 || t(cid, 283) > 0) {
     const s = new Spans();
     s.add(kojo ? '「肉便器经过洗脑之后、' : '[常识改变：');
-    let flag = 0; // LOCAL（源 :1620-1621 的「LOCALは連続に使う」）
+    let flag = 0; // 跨战斗/日常两段连续使用的局部标志
     if (t(cid, 281) > 0) {
       s.add(kojo ? '战斗' : '【战斗】 ');
       s.hl(get_look_info(cid, '常识改变【战斗】'));
@@ -1463,19 +1451,19 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  await look_info_love(cid); // CALL LOOK_INFO_LOVE
+  await look_info_love(cid);
 
-  return 1; // （CALL LOOK_INFO_LOVE + RETURN 1）
+  return 1;
 }
 
 /**
- * LOOK_INFO 两段「来历」块的共用形状（源 :1345-1408 与 :1411-1475）：
- * 前缀 + 取值 + 语尾口上 + 收尾符，落在同一条输出行上。
+ * look_info 两段「来历」块的共用形状：前缀 + 取值 + 语尾口上 + 收尾符，
+ * 落在同一条输出行上。
  * @param {number} cid 角色 ID
  * @param {boolean} kojo 是否口上视角
  * @param {[string, string]} prefix [口上视角前缀, 默认视角前缀]
- * @param {string} value 取到的文本（`GET_LOOK_INFO`）
- * @param {number} gobi 口上视角的 GOBI_KOUJO 档位
+ * @param {string} value 取到的文本（get_look_info）
+ * @param {number} gobi 口上视角的 gobi_koujo 档位
  * @returns {Promise<void>}
  */
 async function look_info_block(cid, kojo, prefix, value, gobi) {
@@ -1494,9 +1482,9 @@ async function look_info_block(cid, kojo, prefix, value, gobi) {
 }
 
 /**
- * 前职业（TALENT:315）决定的口上档位（源 :1384-1404）。
+ * 前职业（TALENT:315）决定的口上档位。
  * @param {number} value TALENT:315
- * @returns {number} GOBI_KOUJO 档位
+ * @returns {number} gobi_koujo 档位
  */
 function look_info_job_gobi(value) {
   if (value === 8 || value === 12 || value === 19) return 1; // 貴族・聖女・軍人は誇らしい
@@ -1507,9 +1495,9 @@ function look_info_job_gobi(value) {
 }
 
 /**
- * 成为勇者的契机（TALENT:316）决定的口上档位（源 :1450-1470）。
+ * 成为勇者的契机（TALENT:316）决定的口上档位。
  * @param {number} value TALENT:316
- * @returns {number} GOBI_KOUJO 档位
+ * @returns {number} gobi_koujo 档位
  */
 function look_info_reason_gobi(value) {
   if (value === 3 || value === 7 || value === 16 || value === 17) return 1; // 啓示・故郷・平和・正義
@@ -1520,22 +1508,22 @@ function look_info_reason_gobi(value) {
 }
 
 /**
- * @LOOK_INFO_LOVE 的评分半（源 :1714-2603）：① 素质/能力/经验/刻印逐项给
- * MAIN_LOVE 打分；② 相互作用修正先落在 LOVE_POOL、再统一加上。
+ * look_info_love 的评分半：① 素质/能力/经验/刻印逐项给 MAIN_LOVE 打分；
+ * ② 相互作用修正先落在 LOVE_POOL、再统一加上。
  *
- * **拆成两半是有意的（#389）**：源的返回值是常量 1，分值表在函数外无法
- * 观测，而显示侧只暴露两个高度饱和的投影（「>3 才显示」与「心形数 = 分值/5-1
- * 封顶 6」）。散在 1000 行里的加減倍率若只能经这两个投影断言，改变 1-4 分
- * 的扰动全部不可见——把评分拆成一个纯函数、显示留给 look_info_love，是为了
- * 让每一条字面量都有直接的红线（本文件所有其它函数同理：可测性优先于
- * 逐字搬移函数边界）。返回值语义与源一致的地方：调用方不看返回值。
+ * **拆成两半是有意的（#389）**：旧写法把评分与显示写进同一个函数、返回值
+ * 是常量 1，分值表在函数外无法观测，显示侧只暴露两个高度饱和的投影
+ *（「>3 才显示」与「心形数 = 分值/5-1 封顶 6」）。散在上千行里的加減倍率
+ * 若只能经这两个投影断言，改变 1-4 分的扰动全部不可见——把评分拆成一个
+ * 纯函数、显示留给 look_info_love，是为了让每一条字面量都有直接的红线
+ *（本文件所有其它函数同理：可测性优先于逐字搬移函数边界）。
  *
- * @param {number} cid 角色 ID（源 TARGET）
- * @returns {number[]} MAIN_LOVE:0..99（源 :2600-2603 修正值适用后的表）
+ * @param {number} cid 角色 ID
+ * @returns {number[]} MAIN_LOVE:0..99（修正值适用后的分值表）
  */
 function love_score(cid) {
-  const like = t(cid, T_喜欢的东西); // 源全篇多处读 TALENT:317
-  const main = new Array(100).fill(0); // MAIN_LOVE（源 :1737-1742 的初始化循环）
+  const like = t(cid, T_喜欢的东西); // TALENT:317
+  const main = new Array(100).fill(0); // MAIN_LOVE
   const pool = new Array(100).fill(0); // LOVE_POOL
 
   main[LOVE.喜欢的东西] = 15; // 初期値（最初から好き）
@@ -1803,8 +1791,8 @@ function love_score(cid) {
   main[LOVE.獣姦] += abl_of(cid, 39) * 3;
 
   // 経験補正：每组自带两个档位（第 3/4 列），>0 → +1 七组共用。
-  // 肛门快乐经验（:2519-2528）单独用 >200 / >80，其余六组（:2475-2517、
-  // ）用 >100 / >30——源逐组写死，不是一处常量。
+  // 肛门快乐经验单独用 >200 / >80，其余六组用 >100 / >30——逐组写死，
+  // 不是一处常量。
   for (const [exp_idx, target, hi, mid] of [
     [E_精饮绝顶经验, LOVE.精液, 100, 30],
     [E_侍奉快乐经验, LOVE.奉仕, 100, 30],
@@ -1847,13 +1835,13 @@ function love_score(cid) {
 }
 
 /**
- * @LOOK_INFO_LOVE（:1667-2810）：喜欢的东西的评分、排序与显示。
+ * look_info_love：喜欢的东西的评分、排序与显示。
  *
- * 评分在 love_score（见其头注）；本函数接 :2618 起的 ③ 排序（降序取前 30、
- * 同值按添字序）与 ④ 显示（每项心形数 = 分值/5 - 1，封顶 6）。
+ * 评分在 love_score（见其头注）；本函数做 ③ 排序（降序取前 30、同值按
+ * 添字序）与 ④ 显示（每项心形数 = 分值/5 - 1，封顶 6）。
  *
- * @param {number} cid 角色 ID（源 TARGET）
- * @returns {Promise<number>} 源 :2806-2808（计数行 + `RETURN 1`）
+ * @param {number} cid 角色 ID
+ * @returns {Promise<number>} 恒 1（计数行之后返回）
  */
 async function look_info_love(cid) {
   const lover = cflag_of(cid, 606); // LOVER = CFLAG:606 的读取点移到显示侧
@@ -1880,11 +1868,11 @@ async function look_info_love(cid) {
     top = next_top;
     next_top = -9999;
     guard += 1;
-    if (guard > 100) break; // SIF LOCAL:1 > 100 BREAK
+    if (guard > 100) break; // 防无限循环的上界
   }
 
   // 各種表示の前置き
-  era.print(kojo_view() ? '「喜欢的东西是……' : '[喜欢的东西]'); // PRINTL（两种视角的引子）
+  era.print(kojo_view() ? '「喜欢的东西是……' : '[喜欢的东西]'); // 两种视角的引子
 
   // 本体
   const s = new Spans();
@@ -1897,7 +1885,7 @@ async function look_info_love(cid) {
     let text = null;
     if (id === 0) {
       const base = love_like_base(cid);
-      if (!base.matched) continue; // SIF RESULT == 0 CONTINUE
+      if (!base.matched) continue; // 未命中即跳过
       text = base.printed;
     } else if (id === 1) {
       text = '魔王大人';
@@ -1910,7 +1898,7 @@ async function look_info_love(cid) {
     } else if (id === 10) {
       text = t(cid, T_男人) ? '被玩弄阴茎' : '被弄阴蒂';
     } else if (id === 11) {
-      if (t(cid, T_男人)) continue; // `ELSEIF LOVE_ID == 11 && !TALENT:男人`
+      if (t(cid, T_男人)) continue; // 男性无此项
       text = '被弄小穴';
     } else if (id === 12) {
       text = '被弄菊穴';
@@ -1967,7 +1955,7 @@ async function look_info_love(cid) {
     } else if (id === 62) {
       text = '狂王大人';
     } else {
-      continue; // ELSE CONTINUE
+      continue; // 未登记的档跳过
     }
     s.add(text);
     // 5 個ごとに金红桃が一つずつ増える（上限 6 個）
@@ -1977,9 +1965,9 @@ async function look_info_love(cid) {
     s.add('　'); // 間の空白
     shown += 1; // 好きな数を増やす
     if (shown % LOVE_PER_ROW === 0) {
-      // 改行：PRINTL「 」（行末补一个空格）后换行，新行以全角空格开头。
-      // 原先写成 era.print(s.take()) + era.println()——era.println 是**多打一个空行**，
-      // 原作只是换行（#570 返工）。
+      // 改行：行末补一个空格后换行，新行以全角空格开头。原先写成
+      // era.print(s.take()) + era.println()——era.println 是**多打一个空行**，
+      // 这里只要换行（#570 返工）。
       s.add(' ');
       era.print(s.take());
       s.add('　');
@@ -1991,12 +1979,12 @@ async function look_info_love(cid) {
   if (kojo_view()) {
     s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行
   } else {
-    s.add(' '); // PRINTL：物品行末尾补一个空格后换行
+    s.add(' '); // 物品行末尾补一个空格后换行
   }
   era.print(s.take());
-  era.print(`[共${shown}个喜欢的东西]`); // PRINTFORML
+  era.print(`[共${shown}个喜欢的东西]`);
 
-  return 1; // （计数行之后的 RETURN 1）
+  return 1;
 }
 
 module.exports = {

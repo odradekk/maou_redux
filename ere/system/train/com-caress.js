@@ -1,48 +1,40 @@
 /**
- * @file 爱抚系指令族（0-9）：@COM0-9 真身 + @COM_ABLE0-9 可用性判定 +
- * @TRAIN_MESSAGE_B/A 的本族分支 + @GET_ADV_COM 的本族升格规则
- * （issue #219 / J9——轴 A 十二族票的第一张，四样装齐的形状由本票定型）。
+ * @file 爱抚系指令族（0-9）：com0–com9、0–9 号可用性检查、
+ * train_message_b / train_message_a 的本族分支及 get_adv_com 的本族升格规则
+ * （issue #219 / J9）。
  *
- * == 变量承载（ere 等价物，com0-caress.js 既有注记随搬） ==
+ * == 变量承载 ==
  *
  *   - SOURCE:xx → `source:${cid}:${xx}`（nextTurnInTrain 每回合清零）；
  *   - LOSEBASE:0/1 → `deltabase:${cid}:0/1` 的负值累加，结算在回合循环；
- *   - UP:xx（TRAIN_MESSAGE_A 读）→ `delta:${cid}:${xx}`（nextTurnInTrain
- *     结算 delta→palam，A 文在其前运行，读数与原作同位）；
- *   - A/S/Y（Emuera 全局单字母变量）：COM3/6/7 判定段的累加值。
- *     COM_ORDER 以参数显式传递（#214 接触面）；**COM3 的 A/V 与 COM6 的 Y
- *     跨 CALL TRAIN_MESSAGE_B 存活**（B 分支 3 读 A/V、COM6 的 SOURCE:8
- *     读判定段算出的 Y），以本模块的 last_order 状态承载——原作里
- *     TRAIN_MESSAGE_B 只被 SELECTCOM 对应的 @COMn 在判定段之后调用
- *     （全库唯一调用形态），无跨指令残留读取，模块态无歧义；
- *   - MASTER 恒为角色 0（CONTEXT.md，event-train.js 同款注记）。
+ *   - UP:xx（train_message_a 读）→ `delta:${cid}:${xx}`（nextTurnInTrain
+ *     结算 delta→palam，A 文在其前运行，因此读取未结算的增量）；
+ *   - A/S/Y：com3 / com6 / com7 判定段的累加值。
+ *     com_order 以参数显式传递（#214）；com3 的 A/V 与 com6 的 Y
+ *     跨 train_message_b 调用保留（B 分支 3 读 A/V，com6 的 SOURCE:8
+ *     读判定段算出的 Y），由本模块的 last_order 保存。
+ *     train_message_b 由 selectcom 对应的指令在判定段之后调用，
+ *     因而不会读取其他指令留下的状态；
+ *   - MASTER 恒为角色 0。
  *
- * == 输出形状（一次 print 一行，PR #30/#53 通则） ==
+ * == 输出格式（一次 print 一行，PR #30/#53） ==
  *
- * COMF 的 PRINT/PRINTS/PRINTV/PRINTFORM 系是**行内追加**（Emuera 到 PRINTL
- * 才收行），ere 引擎每次 print 调用即一行——同源一行的输出在 ere 侧合成
- * 一次调用。判定段（COM_ORDER 明细 + 本指令贡献 + 合计 + 实行值）在原作
- * 是一行（golden train-natural:169 实证），故 com_order 自 #219 起改为
- * **返回段落数组、不自行打印**，由调用方拼接后一次 print；Emuera 日志按
- * 终端宽折行产生的两物理段与 ere 整行的形态差是记名差异（同点线近似，
- * 两条物理段按同一判定行归档）。
+ * 引擎每次 print 调用即一行。判定段（com_order 明细 + 本指令贡献 +
+ * 合计 + 实行值）需要显示为一行，因此 com_order 自 #219 起
+ * 返回段落数组、不自行打印，由调用方拼接后一次 print。
  *
- * COMF3:872 起）已随 #218 在 ere/event/event-autotrain.js 实现（自动调教），
- * 调用点在 dungeon 域的 DUNGEON_TOWN.ERB/DUNGEON_TRAP.ERB，与本文件 COM0/COM3
- * 真身是两条不同的调用路径，不需要本文件登记（#459）。
+ * 自动调教已随 #218 在 ere/event/event-autotrain.js 实现，
+ * 由 dungeon 域调用，与本文件的 com0 / com3 是不同的调用路径，
+ * 不需要在此登记（#459）。
  *
- * CONFIRM_LOST_VIRGIN（COMF_VAGINASEX.ERB:6，COM8 头部调用）不是存根：
- * #216 落真身于 com-vaginasex.js，本票接线（com8 头部直调）。
+ * com8 直接调用 confirm_lost_virgin，处理夺处女确认（#216）。
  *
  * == 升格规则的缺失语义 ==
  *
- * 规则挂可直选空间（#213）；规则体内的 `CALL COM_ABLE<目标>` 探测高级 COM
- * 的可用性——目标族票（J15/J16/J19）未落地期间 com_able 族缺号，以
- * whenMissing: 0 落空（复核不过 → 不升格），族票落地即自动接通。规则体的
- * 副作用（FLAG:71 / TFLAG:42）在本族六个 CASE 里不存在（源码核实，体位族
- * 的 CASE 20-34 才有）。COMF 头部的 JUMPFORM COM{RESULT}：目标未移植时以
- * COM_MISSING 哨兵上抛，回合循环按「重新要求输入」丢弃本回合（引擎对
- * 未定义 @COMxx 的语义，train-loop.js 步骤 12）。
+ * 规则注册在可直选空间（#213），通过 com_able_family 检查高级指令可用性。
+ * 目标检查尚未注册时，whenMissing: 0 使其不升格；注册后自动接通。
+ * 本族六个 CASE 不修改 FLAG:71 / TFLAG:42（体位族 CASE 20–34 才有此副作用）。
+ * 升格目标尚未实现时，上抛 COM_MISSING，回合循环丢弃本回合并重新要求输入。
  */
 
 const era = require('#/era-electron');
@@ -71,14 +63,14 @@ const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
 
 // —— 纯数据表（错一格不会报错——每档的用例与变异条目固定住） ——
 
-// EXPLV：Emuera 内建经验等级阈值（_replace.csv 未改此键，默认值见
-// config.md「EXPLVの初期値」：0,1,4,20,50,200,400,700,1000,1500,2000）
+// EXPLV：经验等级阈值
+// 各等级从 0 起依次取下表值。
 const EXPLV = [0, 1, 4, 20, 50, 200, 400, 700, 1000, 1500, 2000];
 
-/** TIMES X, m：整数乘小数后截断（math-etc.md；source-check.js 同款） */
+/** times：整数乘小数后向下取整。 */
 const times = (v, m) => Math.floor(v * m);
 
-// COM0（COMF0:32-72）ABL:0/1 分档 → [SOURCE:0, SOURCE:3] / [SOURCE:17, SOURCE:3 增量]
+// COM0ABL:0/1 分档 → [SOURCE:0, SOURCE:3] / [SOURCE:17, SOURCE:3 增量]
 const ABL_C_TIERS_COM0 = [
   [20, 25],
   [100, 50],
@@ -96,10 +88,10 @@ const ABL_B_TIERS_COM0 = [
   [1600, 125],
 ];
 
-// COM1（COMF1:37-46）ABL:0 → SOURCE:0
+// COM1ABL:0 → SOURCE:0
 const ABL_C_TIERS_COM1 = [40, 160, 700, 1500, 2400, 3300];
 
-// COM2（COMF2:33-46）ABL:3 → [SOURCE:2, SOURCE:13]
+// COM2ABL:3 → [SOURCE:2, SOURCE:13]
 const ABL_A_TIERS_COM2 = [
   [20, 300],
   [75, 350],
@@ -109,7 +101,7 @@ const ABL_A_TIERS_COM2 = [
   [1500, 1500],
 ];
 
-// COM3（COMF3:226-244）ABL:0 → [SOURCE:0, SOURCE:12, SOURCE:13]（通常态）
+// COM3ABL:0 → [SOURCE:0, SOURCE:12, SOURCE:13]（通常态）
 const ABL_C_TIERS_COM3 = [
   [15, 2000, 500],
   [50, 2300, 800],
@@ -118,7 +110,7 @@ const ABL_C_TIERS_COM3 = [
   [1100, 3200, 2500],
   [1600, 3500, 3000],
 ];
-// COM3（COMF3:332-352 淋浴态）ABL:0 → [SOURCE:0, SOURCE:12, SOURCE:13]
+// COM3（淋浴态）ABL:0 → [SOURCE:0, SOURCE:12, SOURCE:13]
 const ABL_C_TIERS_COM3_SHOWER = [
   [150, 1000, 50],
   [400, 1300, 80],
@@ -127,7 +119,7 @@ const ABL_C_TIERS_COM3_SHOWER = [
   [1500, 2200, 250],
   [1800, 2500, 300],
 ];
-// COM3（COMF3:247-263/279-295）ABL:2/3 → [A|B 累加, D 累加]（振动/后庭振动共用）
+// COM3ABL:2/3 → [A|B 累加, D 累加]（振动/后庭振动共用）
 const ABL_VA_TIERS_COM3 = [
   [40, 150],
   [120, 400],
@@ -136,7 +128,7 @@ const ABL_VA_TIERS_COM3 = [
   [650, 1000],
   [850, 1200],
 ];
-// COM3（COMF3:354-363 淋浴态）ABL:2 → [SOURCE:1, D]
+// COM3（淋浴态）ABL:2 → [SOURCE:1, D]
 const ABL_V_TIERS_COM3_SHOWER = [
   [0, 0],
   [100, 300],
@@ -145,7 +137,7 @@ const ABL_V_TIERS_COM3_SHOWER = [
   [400, 600],
   [500, 700],
 ];
-// COM3（COMF3:344-361 淋浴态）ABL:3 → [B 赋值, D 累加]
+// COM3（淋浴态）ABL:3 → [B 赋值, D 累加]
 const ABL_A_TIERS_COM3_SHOWER = [
   [40, 150],
   [120, 400],
@@ -155,10 +147,10 @@ const ABL_A_TIERS_COM3_SHOWER = [
   [850, 1200],
 ];
 
-// COM4（COMF4:25-34）ABL:0 → SOURCE:0
+// COM4ABL:0 → SOURCE:0
 const ABL_C_TIERS_COM4 = [50, 200, 800, 1600, 2400, 3200];
 
-// COM5（COMF5:27-38）ABL:1 → [SOURCE:17, SOURCE:3]
+// COM5ABL:1 → [SOURCE:17, SOURCE:3]
 const ABL_B_TIERS_COM5 = [
   [20, 50],
   [100, 100],
@@ -168,7 +160,7 @@ const ABL_B_TIERS_COM5 = [
   [2800, 250],
 ];
 
-// COM6（COMF6:180-213）ABL:16 → [SOURCE:4, SOURCE:5, SOURCE:8 系数]
+// COM6ABL:16 → [SOURCE:4, SOURCE:5, SOURCE:8 系数]
 const ABL_SERVE_TIERS_COM6 = [
   [50, 10, 4.0],
   [150, 50, 2.5],
@@ -177,7 +169,7 @@ const ABL_SERVE_TIERS_COM6 = [
   [300, 300, 0.5],
   [350, 500, 0.1],
 ];
-// COM6（COMF6:215-236）ABL:12 → [SOURCE:4 系数, SOURCE:5 系数]
+// COM6ABL:12 → [SOURCE:4 系数, SOURCE:5 系数]
 const ABL_SKILL_TIERS_COM6 = [
   [0.5, 0.5],
   [0.8, 0.8],
@@ -186,7 +178,7 @@ const ABL_SKILL_TIERS_COM6 = [
   [2.5, 2.5],
   [4.0, 4.0],
 ];
-// COM6（COMF6:238-263 兽奸态）ABL:39 → SOURCE:8 系数 / [SOURCE:3, SOURCE:10]
+// COM6（兽奸态）ABL:39 → SOURCE:8 系数 / [SOURCE:3, SOURCE:10]
 const ABL_DOG_TIERS_COM6 = [
   null, // LV0：仅 ×2.00，无 SOURCE:3/10 写入
   null, // LV1：仅 ×1.00
@@ -196,7 +188,7 @@ const ABL_DOG_TIERS_COM6 = [
   [800, 200, 0.1], // LV5+
 ];
 
-// COM7（COMF7:143-156）ABL:2 → [SOURCE:12, SOURCE:13]
+// COM7ABL:2 → [SOURCE:12, SOURCE:13]
 const ABL_V_TIERS_COM7 = [
   [1500, 300],
   [1800, 600],
@@ -205,7 +197,7 @@ const ABL_V_TIERS_COM7 = [
   [2700, 2100],
   [3000, 2800],
 ];
-// COM7（COMF7:158-167）ABL:16 → [SOURCE:4, SOURCE:5]
+// COM7ABL:16 → [SOURCE:4, SOURCE:5]
 const ABL_SERVE_TIERS_COM7 = [
   [100, 50],
   [150, 100],
@@ -214,7 +206,7 @@ const ABL_SERVE_TIERS_COM7 = [
   [300, 500],
   [350, 750],
 ];
-// COM7（COMF7:169-182）ABL:17 → [SOURCE:7 增量, SOURCE:12 系数, SOURCE:5 系数]
+// COM7ABL:17 → [SOURCE:7 增量, SOURCE:12 系数, SOURCE:5 系数]
 const ABL_EXPO_TIERS_COM7 = [
   [0, 1.0, 1.0],
   [100, 1.2, 1.2],
@@ -224,7 +216,7 @@ const ABL_EXPO_TIERS_COM7 = [
   [2500, 3.0, 3.0],
 ];
 
-// COM8（COMF8:24-39）ABL:2 → [SOURCE:1, SOURCE:13]
+// COM8ABL:2 → [SOURCE:1, SOURCE:13]
 const ABL_V_TIERS_COM8 = [
   [10, 150],
   [50, 250],
@@ -234,10 +226,10 @@ const ABL_V_TIERS_COM8 = [
   [1800, 2000],
 ];
 
-// COM9（COMF9:21-29）ABL:3 → SOURCE:2
+// COM9ABL:3 → SOURCE:2
 const ABL_A_TIERS_COM9 = [5, 50, 200, 500, 1000, 1800];
 
-// —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 / ?? '' 兜底） ——
+// —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 / ?? '' 默认值处理） ——
 
 /** 目标/调教者的 SOURCE 读写 */
 function make_src_helpers(cid) {
@@ -250,10 +242,10 @@ function make_src_helpers(cid) {
 /** LOSEBASE:0/1 → deltabase 负向累加（引擎 base += deltabase 并钳位） */
 const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
 
-/** 目标角色的 TEQUIP 读数（装备位；写入点在装备族票，读跨域放行） */
+/** 目标角色的 TEQUIP 读数（装备位由装备指令写入）。 */
 const tequip = (idx) => era.get(`tequip:${era_flag.target}:${idx}`) || 0;
 
-/** 汚れ双向移动：a |= b 后 b |= a，两边同为原两值的按位或（com0 同款） */
+/** 污垢双向移动：a |= b 后 b |= a，两边同为原两值的按位或。 */
 function stain_exchange(cid_a, idx_a, cid_b, idx_b) {
   const merged =
     (era.get(`stain:${cid_a}:${idx_a}`) || 0) |
@@ -263,18 +255,17 @@ function stain_exchange(cid_a, idx_a, cid_b, idx_b) {
 }
 
 /**
- * 百合/断背经验的共用段（COMF 各指令的经验上昇部，写入走 chara 门面——
- * exp:40/41 属主 train，raw 亦可，门面保持与 0/1/10/11/50 一致的写法）。
+ * 百合/断背经验的共用段，exp:40/41 由 train 域维护。
  * @param {number} target 目标
  * @param {number} player 调教者
  * @param {number} yuri 百合经验增量
- * @param {number} [homo] 断背经验增量（源侧无断背支的指令不传 = 无该支）
+ * @param {number} [homo] 断背经验增量（不传时不增加断背经验）
  */
 function print_same_sex_exp(target, player, yuri, homo) {
   const target_male = era.get(`talent:${target}:122`);
   const player_male = era.get(`talent:${player}:122`);
   if (!target_male && !player_male) {
-    era.print(`百合经验+${yuri}`); // PRINTS EXPNAME:40 / PRINTL +n
+    era.print(`百合经验+${yuri}`); // 百合经验增量
     era.add(`exp:${target}:40`, yuri);
   } else if (homo !== undefined && target_male && player_male) {
     era.print(`断背经验+${homo}`);
@@ -289,14 +280,14 @@ function print_same_sex_exp(target, player, yuri, homo) {
  */
 function print_love_exp(target, e) {
   if ((era.get(`cflag:${target}:2`) || 0) >= 1000 && era_flag.assiplay === 0) {
-    era.print(`爱情经验+${e}`); // PRINTFORML %EXPNAME:23%+{E}
+    era.print(`爱情经验+${e}`); // 爱情经验增量
     era.add(`exp:${target}:23`, e);
   }
 }
 
 /**
- * 调教者的初吻记录（COMF1/4/6/9：CFLAG:PLAYER:16 == -1 时按指令置码位并
- * 记录对象名；码位 301/201/401/1 各指令自传）。
+ * 调教者的初吻记录（com1 / com4 / com6 / com9）：CFLAG:PLAYER:16 == -1 时
+ * 按指令记录码位和对象名；码位 301/201/401/1 由各指令传入。
  * @param {number} player 调教者
  * @param {number} target 目标
  * @param {number} code CFLAG:PLAYER:16 的写入值
@@ -304,12 +295,12 @@ function print_love_exp(target, e) {
 function record_player_first_kiss(player, target, code) {
   if ((era.get(`cflag:${player}:16`) || 0) === -1) {
     era.set(`cflag:${player}:16`, code);
-    era.set(`cstr:${player}:4`, chara_callname(target)); // CSTR:4 = %SAVESTR:TARGET%
+    era.set(`cstr:${player}:4`, chara_callname(target)); // CSTR:4 = 初吻对象名
   }
 }
 
-// COMF 头部的升格跳转（LOCAL = n / CALL GET_ADV_COM / SIF RESULT != LOCAL /
-// JUMPFORM COM{RESULT}）：目标未移植时 COM_MISSING 上抛，回合循环丢弃本回合。
+// 指令开头检查升格；目标未实现时上抛 COM_MISSING，
+// 回合循环据此丢弃本回合。
 async function jump_advanced(n) {
   const adv = await get_adv_com(n);
   if (adv === n) {
@@ -319,23 +310,23 @@ async function jump_advanced(n) {
 }
 
 /**
- * @COM0（COMF0_愛撫.ERB:7-168，#45 落地的爱抚，函数体随 #219 搬入族模块）。
- * @returns {Promise<number>} 原作 RETURN 1
+ * com0：爱抚（#45 实现，#219 移入族模块）。
+ * @returns {Promise<number>} 返回 1
  */
 async function com0() {
   const target = era_flag.target;
   const player = era_flag.player;
   const { src, set } = make_src_helpers(target);
 
-  era.print('爱抚'); // PRINTL（;SAVESTR:22 = 爱抚 在原作已是注释，不移植）
+  era.print('爱抚'); // 指令名标题行
   await train_message_b();
 
-  // —— ソースの計算 ——
+  // —— 源计算 ——
   lose(target, 0, 5);
   lose(target, 1, 50);
 
-  // 基础源：阴核/乳房/情爱 先清 0（指令内的「= 0」在 ere 由回合清零
-  // 承担，此三行不落）；性行动/不洁/露出 直接赋值
+  // 阴核/乳房/情爱源由回合循环清零，因此此处只写本指令的增量；
+  // 性行动/不洁/露出源直接赋值。
   set(4, 60);
   set(8, 30);
   set(12, 100);
@@ -350,10 +341,10 @@ async function com0() {
   set(17, ABL_B_TIERS_COM0[abl_b][0]);
   set(3, src(3) + ABL_B_TIERS_COM0[abl_b][1]);
 
-  // 接吻侧修正。:122-128（口污 + ASSIPLAY）与 :130-134（口塞）整支
-  // 登记存根（见文件头）：当前构建 ASSIPLAY 恒 0、TEQUIP:45 无写入点。
+  // 接吻侧修正：口污 + ASSIPLAY 支与口塞支整支
+  // 尚未实现：此处只处理主人调教时的接吻修正。
   if ((era.get(`cflag:${target}:16`) || 0) === -1) {
-    // 初吻未体験 → 回避接吻，效果减
+    // 初吻未体验 → 回避接吻，效果减
     set(8, 0);
     set(0, Math.floor(src(0) / 2));
     set(3, Math.floor(src(3) / 4));
@@ -379,23 +370,23 @@ async function com0() {
     stain_exchange(target, 0, player, 0); // 口 ⇔ 口
   }
 
-  // 兽奸提前返回（TEQUIP:89）——装备系存根，登记不落
+  // 本指令尚未处理兽奸装备下的提前返回。
 
-  // —— 汚れの処理（:204-221）——
-  // 触手污れ（TEQUIP:90）整支登记存根；ELSE 支 1:1：
+  // —— 污垢处理 ——
+  // 触手污垢分支尚未实现；当前只处理 V/B 与指的交换。
   stain_exchange(target, 3, player, 1); // V ⇔ 指
   stain_exchange(target, 5, player, 1); // B ⇔ 指
 
-  // —— 経験上昇（:144-165）——
+  // —— 经验增加 ——
   print_same_sex_exp(target, player, 5, 5); // 百合/断背同额
-  print_love_exp(target, 2); // （:160 E = 2）
+  print_love_exp(target, 2); // 爱情经验增量为 2
 
   return 1;
 }
 
 /**
- * @COM1（COMF1_クンニ.ERB:8-86）舔阴。
- * @returns {Promise<number>} 原作 RETURN 1（升格跳转时为跳转目标的返回值）
+ * com1：舔阴。
+ * @returns {Promise<number>} 返回 1（升格跳转时为跳转目标的返回值）
  */
 async function com1() {
   // 头部升格跳转（LOCAL = 1 → CASE 1：前回合口交/强制舔阴/六九式 → 69）
@@ -435,7 +426,7 @@ async function com1() {
 
   stain_exchange(target, 3, player, 0); // V ⇔ 口
 
-  // 百合经验（源侧无断背支）
+  // 百合经验（本指令不增加断背经验）
   print_same_sex_exp(target, player, 3);
   record_player_first_kiss(player, target, 301);
 
@@ -445,8 +436,8 @@ async function com1() {
 }
 
 /**
- * @COM2（COMF2_アナル愛撫.ERB:8-152）肛门爱抚。
- * @returns {Promise<number>} 原作 RETURN 1
+ * com2：肛门爱抚。
+ * @returns {Promise<number>} 返回 1
  */
 async function com2() {
   const target = era_flag.target;
@@ -565,14 +556,14 @@ async function com2() {
     set(6, times(src(6), 2.0));
   }
 
-  // 汚れ：触手 → A 位 |= 2/4；否则 A ⇔ 指
+  // 污垢：触手 → A 位 |= 2/4；否则 A ⇔ 指
   if (tequip(90)) {
     era.set(`stain:${target}:4`, (era.get(`stain:${target}:4`) || 0) | 2 | 4);
   } else {
     stain_exchange(target, 4, player, 1);
   }
 
-  // 経験上昇：肛门经验按 ABL:3 档给 1-4
+  // 经验增加：肛门经验按 ABL:3 档给 1-4
   const s = abl_a <= 1 ? 1 : abl_a <= 4 ? 2 : abl_a <= 7 ? 3 : 4;
   chara(target).dungeon.肛门经验 += s; // EXP:1 += S（exp:1 属主 dungeon，走门面）
   era.print(`肛门经验+${s}`);
@@ -583,29 +574,28 @@ async function com2() {
   return 1; // （尾行）
 }
 
-// —— 判定段共用（COM3/6/7 的「実行できるかの判定」；行形状见文件头） ——
+// —— 共用执行判定（com3 / com6 / com7；输出格式见文件头） ——
 
 /**
- * COM3/COM6 的 A/V/Y 跨 CALL TRAIN_MESSAGE_B 存活态（Emuera 全局单字母
- * 变量的等价物）。B 分支 3 读 A/V（COMF3 判定段的累计值/门槛），COM6 的
- * SOURCE:8 读 Y——全库唯一调用形态是「@COMn 判定段之后紧接 CALL
- * TRAIN_MESSAGE_B」，无跨指令残留读取。
+ * com3 / com6 的 A/V/Y 需要跨 train_message_b 调用保留。
+ * B 分支 3 读 A/V（com3 判定段的累计值/门槛），com6 的 SOURCE:8 读 Y。
+ * 调用顺序为「指令判定段 → train_message_b」，不会读取其他指令留下的状态。
  */
 const order_state = { a: 0, v: 0, y: 0 };
 
 /** 名字表读取（ablname/talentname/markname/palamname…） */
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 
-/** 判定行助手：把「= A … 实行值 V」的收尾段拼进 parts（COMF3:189-201） */
+/** 判定行助手：把「= A … 实行值 V」的收尾段拼进 parts。 */
 function push_judge_tail(parts, a, v) {
-  parts.push(` = ${a}`); // PRINT  = / PRINTV A
-  parts.push(a < v ? ' < ' : a === v ? ' = ' : ' > '); // SIF 三连
-  parts.push(`实行值${v}`); // PRINT 实行值 / PRINTV V
+  parts.push(` = ${a}`); // 累计值
+  parts.push(a < v ? ' < ' : a === v ? ' = ' : ' > '); // 三段分别追加，保证输出仍在同一行
+  parts.push(`实行值${v}`); // 实行值
 }
 
 /**
- * @COM3（COMF3_自慰.ERB:14-379）自慰。
- * @returns {Promise<number>} 原作 RETURN 1（判定不过 RETURN 0）
+ * com3：自慰。
+ * @returns {Promise<number>} 返回 1；判定不过返回 0
  */
 async function com3() {
   // 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）
@@ -617,7 +607,7 @@ async function com3() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // 指令名行（装备前缀 + 手淫/自慰，PRINT 累加一行）
+  // 指令名行（装备前缀 + 手淫/自慰拼成一行）
   let title = '';
   if (tequip(53)) {
     title += '公开';
@@ -642,7 +632,7 @@ async function com3() {
         : '自慰'),
   );
 
-  // —— :32-189 実行できるかの判定 ——
+  // —— 执行判定 ——
   let a = 0;
   let s = 0;
   const { a: order_a, s: order_s, parts } = await com_order(0, 0);
@@ -756,7 +746,7 @@ async function com3() {
     parts.push(`${name_of('talentname', 89)}(10)`);
     s = 1;
   }
-  // しあわせ草（TEQUIP:21，打印读 ITEMNAME:26 媚药）+8
+  // 媚药（TEQUIP:21，打印读 ITEMNAME:26）+8
   if (tequip(21)) {
     plus();
     a += 8;
@@ -764,7 +754,7 @@ async function com3() {
     s = 1;
   }
 
-  // 合计 + 実行值（公開+10、沐浴+3、振动+5、后庭振动+5）
+  // 合计 + 实行值（公开+10、沐浴+3、振动+5、后庭振动+5）
   let v = 33;
   if (tequip(53)) {
     v += 10;
@@ -780,13 +770,13 @@ async function com3() {
   }
   push_judge_tail(parts, a, v);
   era.print(parts.join(''));
-  await era.waitAnyKey(); // WAIT
+  await era.waitAnyKey(); // 等待确认
 
-  // 実行できない
+  // 不可执行
   if (a < v) {
     return 0;
   }
-  order_state.a = a; // B 分支 3（TRAIN_MESSAGE_B）读 A/V
+  order_state.a = a; // train_message_b_3 读 A/V
   order_state.v = v;
 
   await train_message_b();
@@ -796,12 +786,12 @@ async function com3() {
   lose(target, 1, 50);
   set(14, 400);
 
-  let va = 0; // A（:348）
-  let vb = 0; // B（:349）
-  let vc = 0; // C（:350）
-  let vd = 0; // D（:351）
+  let va = 0; // A
+  let vb = 0; // B
+  let vc = 0; // C
+  let vd = 0; // D
 
-  // ビデオ撮影中（TEQUIP:53）
+  // 录像中（TEQUIP:53）
   if (tequip(53)) {
     set(10, 50);
     set(11, 100);
@@ -817,13 +807,13 @@ async function com3() {
   const abl_b3 = Math.min(abl(1), 5);
   set(17, [15, 50, 300, 700, 1100, 1600][abl_b3]);
 
-  // バイブ挿入中（TEQUIP:11）
+  // 振动棒插入中（TEQUIP:11）
   if (tequip(11)) {
     // ABL:2 → A/D 累加
     const lvl = Math.min(abl(2), 5);
     va += ABL_VA_TIERS_COM3[lvl][0];
     vd += ABL_VA_TIERS_COM3[lvl][1];
-    // EXP:0 档（处女はありえない——档仍在）→ A 系数 / C 增量
+    // EXP:0 档（即使无私处经验也保留此档）→ A 系数 / C 增量
     const exp_v = era.get(`exp:${target}:0`) || 0;
     if (exp_v < EXPLV[2]) {
       va = times(va, 0.6);
@@ -848,10 +838,10 @@ async function com3() {
       vc = times(vc, m);
       vd = times(vd, m);
     }
-    set(13, src(13) + vd); // 一度単独で計算
+    set(13, src(13) + vd); // 单独计算一次
   }
 
-  // アナルバイブ挿入中（TEQUIP:13）
+  // 后庭振动棒插入中（TEQUIP:13）
   if (tequip(13)) {
     lose(target, 0, 30);
     lose(target, 1, 80);
@@ -885,7 +875,7 @@ async function com3() {
       vc = times(vc, m);
       vd = times(vd, m);
     }
-    set(13, src(13) + vd); // 一度単独で計算
+    set(13, src(13) + vd); // 单独计算一次
   }
 
   // 淋浴使用中（TEQUIP:18）——覆写 S0/S12/S13、S1 与 B 另计
@@ -912,7 +902,7 @@ async function com3() {
         vd = times(vd, idx === 105 ? 1.5 : 0.6);
       }
     }
-    set(13, src(13) + vd); // 一度単独で計算
+    set(13, src(13) + vd); // 单独计算一次
   } else {
     // ELSE：B/A/S1/S2 清零（淋浴才有的尾巴）
     vb = 0;
@@ -921,7 +911,7 @@ async function com3() {
     set(1, 0);
   }
 
-  // ＶかＡが上昇するとき、SOURCE:0/17 減衰（E = ABL:2 + ABL:3）
+  // 私处或肛门快感增加时，SOURCE:0/17 衰减（E = ABL:2 + ABL:3）
   if (tequip(11) || tequip(13)) {
     const e = abl(2) + abl(3);
     const m =
@@ -940,7 +930,7 @@ async function com3() {
     set(17, times(src(17), m));
   }
 
-  // 两段共用的 PALAM:5（欲情）系数（バイブ/淋浴同表）
+  // 两段共用的 PALAM:5（欲情）系数（振动棒/淋浴同表）
   const lust_m2 =
     palam5 < PALAMLV[1]
       ? 0.8
@@ -951,7 +941,7 @@ async function com3() {
           : palam5 < PALAMLV[4]
             ? 1.1
             : 1.2;
-  // バイブ、アナルバイブだけ先に計算（SOURCE:1/2/6 的落点）
+  // 先计算振动棒、后庭振动棒的 SOURCE:1/2/6
   if (tequip(11) || tequip(13)) {
     const lube = era.get(`palam:${target}:3`) || 0;
     if (lube < PALAMLV[1]) {
@@ -993,8 +983,8 @@ async function com3() {
     set(6, vc);
   }
 
-  // 淋浴だけ先に計算（A/B 再过一遍参数与顺从；C 的累加在此段
-  // 无落点——先算的 C 在淋浴段不再使用，是这段计算序的固有形态）
+  // 淋浴先单独计算（A/B 再过一遍参数与顺从；C 的累加在此段
+  // 不再使用，保留此计算顺序）
   if (tequip(18)) {
     const lube = era.get(`palam:${target}:3`) || 0;
     if (lube < PALAMLV[1]) {
@@ -1049,7 +1039,7 @@ async function com3() {
     set(2, times(src(2), m_va));
   }
 
-  // 公開/野外（TEQUIP:53||54）→ ABL:17（露出癖）+ 露出狂
+  // 公开/野外（TEQUIP:53||54）→ ABL:17（露出癖）+ 露出狂
   if (tequip(53) || tequip(54)) {
     const expo = Math.min(abl(17), 5);
     set(7, src(7) + [0, 100, 300, 800, 1500, 2500][expo]);
@@ -1070,7 +1060,7 @@ async function com3() {
     }
   }
 
-  // 陰毛を生やす設定で剃毛状態 → SOURCE:12 ×2.00
+  // 开启阴毛生长且处于剃毛状态 → SOURCE:12 ×2.00
   if (
     !era.get(`talent:${target}:125`) &&
     (era.get(`talent:${target}:310`) || 0) <= 20
@@ -1078,7 +1068,7 @@ async function com3() {
     set(12, times(src(12), 2.0));
   }
 
-  // 汚れ：指 ⇔ B、指 ⇔ V 双向移动
+  // 污垢：指 ⇔ B、指 ⇔ V 双向移动
   stain_exchange(target, 1, target, 5);
   stain_exchange(target, 1, target, 3);
 
@@ -1094,10 +1084,10 @@ async function com3() {
     );
   }
 
-  // 经验上昇（录像/野外 +2、通常 +1；首次 + 异常经验）
+  // 经验增加（录像/野外 +2、通常 +1；首次 + 异常经验）
   if (tequip(53) || tequip(54)) {
     chara(target).dungeon.自慰经验 += 2;
-    era.print('自慰经验＋２'); // 全角＋（源 :888 逐字）
+    era.print('自慰经验＋２'); // 保留全角＋
     chara(target).dungeon.调教自慰经验 += 2;
     era.print('调教自慰经验＋２');
   } else {
@@ -1114,14 +1104,14 @@ async function com3() {
 
   print_same_sex_exp(target, player, 3, 3);
 
-  era.set('tflag:200', 2); // 屈服刻印２に相当
+  era.set('tflag:200', 2); // 相当于屈服刻印 2
 
   return 1;
 }
 
 /**
- * @COM4（COMF4_フェラする.ERB:9-75）口交(主)。
- * @returns {Promise<number>} 原作 RETURN 1（升格跳转时为跳转目标的返回值）
+ * com4：口交(主)。
+ * @returns {Promise<number>} 返回 1（升格跳转时为跳转目标的返回值）
  */
 async function com4() {
   // 头部升格跳转（LOCAL = 4 → CASE 4：前回合口交/强制舔阴/六九式 → 69）
@@ -1162,9 +1152,9 @@ async function com4() {
   print_same_sex_exp(target, player, 3, 3);
   record_player_first_kiss(player, target, 201);
 
-  era.add(`cflag:${player}:22`, 1); // 調教者的経験
+  era.add(`cflag:${player}:22`, 1); // 调教者的经验
 
-  await event_seitsu(target, player); // CALL EVENT_SEITSU
+  await event_seitsu(target, player); // 检查精通事件
 
   // 爱情经验：对象是男人（TALENT:122）时 E = 2
   print_love_exp(target, era.get(`talent:${target}:122`) ? 2 : 1);
@@ -1173,11 +1163,10 @@ async function com4() {
 }
 
 /**
- * @EVENT_SEITSU（COMF4_フェラする.ERB:59-75）精通——本族自有函数
- * （COMF4 尾部定义，非范围外调用）。
+ * event_seitsu：精通，本族共用事件。
  * @param {number} target 目标
- * @param {number} player 调教者（A = NO:PLAYER）
- * @returns {Promise<number>} 原作 RETURN 0/1
+ * @param {number} player 调教者
+ * @returns {Promise<number>} 返回 0/1
  */
 async function event_seitsu(target, player) {
   // 男人或扶她、且未熟——否则 RETURN 0
@@ -1203,8 +1192,8 @@ async function event_seitsu(target, player) {
 }
 
 /**
- * @COM5（COMF5_胸愛撫.ERB:11-103）胸爱抚。
- * @returns {Promise<number>} 原作 RETURN 1（升格跳转时为跳转目标的返回值）
+ * com5：胸爱抚。
+ * @returns {Promise<number>} 返回 1（升格跳转时为跳转目标的返回值）
  */
 async function com5() {
   // 头部升格跳转（LOCAL = 5 → CASE 5：正常位系 → 129 / 背后位系 → 131）
@@ -1247,7 +1236,7 @@ async function com5() {
     set(3, times(src(3), 1.2));
   }
 
-  // 汚れ：触手 → B 位 |= 2/4；否则胸可用时 B ⇔ 口（擅用舌头加成）、
+  // 污垢：触手 → B 位 |= 2/4；否则胸可用时 B ⇔ 口（擅用舌头加成）、
   // 其后一律 B ⇔ 指
   if (tequip(90)) {
     era.set(`stain:${target}:5`, (era.get(`stain:${target}:5`) || 0) | 2 | 4);
@@ -1273,16 +1262,16 @@ async function com5() {
   print_same_sex_exp(target, player, 5, 5);
   print_love_exp(target, 1);
 
-  await event_junyu(target, player); // CALL EVENT_JUNYU
+  await event_junyu(target, player); // 检查母乳体质变化
 
   return 1;
 }
 
 /**
- * @EVENT_JUNYU（COMF5_胸愛撫.ERB:105-121）母乳体质变化——本族自有函数。
+ * event_junyu：母乳体质变化，本族共用事件。
  * @param {number} target 目标
- * @param {number} player 调教者（A = NO:PLAYER）
- * @returns {Promise<number>} 原作 RETURN 0/1
+ * @param {number} player 调教者
+ * @returns {Promise<number>} 返回 0/1
  */
 async function event_junyu(target, player) {
   // 已是母乳体质（130）/娇小（100）/贫乳（109）/男人（122）→ 不发生
@@ -1328,9 +1317,9 @@ async function event_junyu(target, player) {
 }
 
 /**
- * COM6 判定段的汚れ权重（COMF6:24-40 / :116-131 两处同式）：主人口污的
- * 位构成（爱液+1 / 精液+3 / 肛门+7 / 母乳+1 / 尿+3）、兽奸固定 7、
- * 不怕污臭 ÷3 / 反感污臭 ×2、接吻影响减半。
+ * com6 判定段的污垢权重：主人口污的位构成
+ * （爱液+1 / 精液+3 / 肛门+7 / 母乳+1 / 尿+3）、兽奸固定 7，
+ * 不怕污臭 ÷3 / 反感污臭 ×2，接吻影响减半。
  * @returns {number} Y
  */
 function kiss_stain_penalty() {
@@ -1365,8 +1354,8 @@ function kiss_stain_penalty() {
 }
 
 /**
- * @COM6（COMF6_キス.ERB:9-330）接吻。
- * @returns {Promise<number>} 原作 RETURN 1（判定不过 RETURN 0）
+ * com6：接吻。
+ * @returns {Promise<number>} 返回 1；判定不过返回 0
  */
 async function com6() {
   const target = era_flag.target;
@@ -1384,14 +1373,14 @@ async function com6() {
 
   era.print('接吻');
 
-  // —— :24-44 判定段前半：汚れ权重 Y（AUTO_SUCCESS 路径沿用此值） ——
+  // —— 判定段前半：污垢权重 Y（自动成功路径沿用此值） ——
   let y = kiss_stain_penalty();
 
   // 顺从 2 以上 / 侍奉精神 3 以上 / 爱慕 → 自动成功（跳过判定）
   const auto_success = abl(10) >= 2 || abl(16) >= 3 || Boolean(talent(85));
 
   if (!auto_success) {
-    // —— :47-115 判定段：COM_ORDER + 本指令贡献 ——
+    // —— 判定段：com_order + 本指令贡献 ——
     let a = 0;
     let s = 0;
     const { a: order_a, s: order_s, parts } = await com_order(0, 0);
@@ -1480,22 +1469,22 @@ async function com6() {
       parts.push(`${name_of('talentname', 71)}(1)`);
       s = 1;
     }
-    // 爱慕（TALENT:85）且主人亲自调教 +5（源 :207 S = 5，逐字）
+    // 爱慕（TALENT:85）且主人亲自调教 +5
     if (talent(85) && era_flag.assiplay === 0) {
       plus();
       a += 5;
       parts.push(`${name_of('talentname', 85)}(5)`);
       s = 5;
     }
-    // 兽奸（TEQUIP:89）且非牝犬（TALENT:136）-15（打印值是 10——
-    // 源 :215 PRINTV '(,10,') 逐字，与 A 的 -15 不一致是原状）
+    // 兽奸（TEQUIP:89）且非牝犬（TALENT:136）-15；
+    // 打印值为 10，与实际扣减的 15 不一致，保留此行为。
     if (tequip(89) && !talent(136)) {
       minus();
       a -= 15;
       parts.push(`${name_of('itemname', 22)}(10)`);
       s = 1;
     }
-    // Y 重算 + 汚れあり块（脏、名字、(Y)）
+    // Y 重算 + 污垢说明（脏、名字、(Y)）
     y = kiss_stain_penalty();
     if (y) {
       minus();
@@ -1508,22 +1497,22 @@ async function com6() {
       parts.push(`脏、${stain_name}(${y})`);
       s = 1;
     }
-    // 合計（15 以上で実行）
+    // 合计（15 以上可执行）
     push_judge_tail(parts, a, 15);
     era.print(parts.join(''));
-    await era.waitAnyKey(); // WAIT
+    await era.waitAnyKey(); // 等待确认
     if (a < 15) {
-      return 0; // 実行できない
+      return 0; // 不可执行
     }
   }
-  order_state.y = y; // SOURCE:8 的算式读判定段 Y（$AUTO_SUCCESS 路径为第一块值）
+  order_state.y = y; // SOURCE:8 的算式读判定段 Y（自动成功路径用第一块值）
 
   await train_message_b();
 
-  // —— :266-310 ソースの計算 ——
+  // —— 源计算 ——
   lose(target, 0, 5);
   lose(target, 1, 50);
-  set(8, y * 20 + 10); // 上のほうで計算した汚れデータ
+  set(8, y * 20 + 10); // 使用判定段算出的污垢权重
 
   // ABL:16（侍奉精神）→ [SOURCE:4, SOURCE:5, SOURCE:8 系数]
   const serve = Math.min(abl(16), 5);
@@ -1536,7 +1525,7 @@ async function com6() {
   set(4, times(src(4), ABL_SKILL_TIERS_COM6[skill][0]));
   set(5, times(src(5), ABL_SKILL_TIERS_COM6[skill][1]));
 
-  // 兽奸（TEQUIP:89）：兽奸中毒（ABL:39）分档 + 犬と初吻，提前返回
+  // 兽奸（TEQUIP:89）：兽奸中毒（ABL:39）分档 + 与狗初吻，提前返回
   if (tequip(89)) {
     const dog = Math.min(Math.floor(era.get(`abl:${target}:39`) || 0), 5);
     const row = ABL_DOG_TIERS_COM6[dog];
@@ -1551,9 +1540,9 @@ async function com6() {
       set(8, times(src(8), dog === 0 ? 2.0 : 1.0)); // LV0 ×2.00 / LV1 ×1.00
     }
     if ((era.get(`cflag:${target}:16`) || 0) === -1) {
-      era.set('tflag:13', 1); // 犬と初吻
+      era.set('tflag:13', 1); // 与狗初吻
       era.set(`cflag:${target}:16`, 998);
-      era.set('tflag:200', 2); // 屈服刻印２に相当
+      era.set('tflag:200', 2); // 相当于屈服刻印 2
     }
     return 1;
   }
@@ -1568,13 +1557,13 @@ async function com6() {
     set(3, times(src(3), 2.0));
   }
 
-  // —— :416-419 汚れの処理：口 ⇔ 口 ——
+  // —— 污垢处理：口 ⇔ 口 ——
   stain_exchange(target, 0, player, 0);
 
-  // —— :385-434 経験上昇（レズ/ホモ :387-396、爱情 :398-434）——
+  // —— 经验增加（百合/断背、爱情） ——
   print_same_sex_exp(target, player, 3, 3);
 
-  // 爱情经验段（:398 起）
+  // 爱情经验段
   let love_e = 1;
   if (talent(85) && era_flag.assiplay === 0) {
     love_e += 2;
@@ -1582,7 +1571,7 @@ async function com6() {
   if ((era.get(`cflag:${target}:16`) || 0) === -1) {
     era.set('tflag:13', 1); // 初吻
     era.set(`cflag:${target}:16`, 1);
-    era.set(`cstr:${target}:4`, chara_callname(player)); // CSTR:4 = %SAVESTR:PLAYER%
+    era.set(`cstr:${target}:4`, chara_callname(player)); // CSTR:4 = 初吻对象名
     love_e += 20;
     if (era_flag.assiplay && era_flag.assi > 0) {
       // 初吻对象是助手时，对象对助手的关系 +10（==10 抬 110、>200 钳 200）
@@ -1596,7 +1585,7 @@ async function com6() {
       }
       era.set(`relation:${target}:${r}`, rel);
     }
-    era.set('tflag:200', 1); // 屈服刻印１に相当
+    era.set('tflag:200', 1); // 相当于屈服刻印 1
   }
   record_player_first_kiss(player, target, 1); // 调教者的初吻
 
@@ -1612,8 +1601,8 @@ async function com6() {
 }
 
 /**
- * @COM7（COMF7_秘貝開帳.ERB:10-245）自己扒开。
- * @returns {Promise<number>} 原作 RETURN 1（判定不过 RETURN 0）
+ * com7：自己扒开。
+ * @returns {Promise<number>} 返回 1；判定不过返回 0
  */
 async function com7() {
   const target = era_flag.target;
@@ -1626,7 +1615,7 @@ async function com7() {
   // 指令名行（公开前缀）
   era.print(`${tequip(53) ? '公开' : ''}自己扒开`);
 
-  // —— :13-131 実行できるかの判定（无自动成功路径） ——
+  // —— 执行判定（无自动成功路径） ——
   let a = 0;
   let s = 0;
   const { a: order_a, s: order_s, parts } = await com_order(0, 0);
@@ -1755,14 +1744,14 @@ async function com7() {
     s = 1;
   }
 
-  // 合計（22 以上で実行；公開 +10）
+  // 合计（22 以上可执行；公开 +10）
   let v = 22;
   if (tequip(53)) {
     v += 10;
   }
   push_judge_tail(parts, a, v);
   era.print(parts.join(''));
-  await era.waitAnyKey(); // WAIT
+  await era.waitAnyKey(); // 等待确认
   if (a < v) {
     return 0;
   }
@@ -1771,7 +1760,7 @@ async function com7() {
 
   await train_message_b();
 
-  // —— :204-336 実行決定後的源计算（LOSEBASE 起至 TFLAG:200）——
+  // —— 确认可执行后的源计算（LOSEBASE 起至 TFLAG:200） ——
   lose(target, 0, 10);
   lose(target, 1, 50);
   set(14, 400);
@@ -1799,19 +1788,19 @@ async function com7() {
     set(5, times(src(5), 1.5));
   }
 
-  // 剃毛状態 → SOURCE:12 ×2.00
+  // 剃毛状态 → SOURCE:12 ×2.00
   if (!talent(125) && (talent(310) || 0) <= 20) {
     set(12, times(src(12), 2.0));
   }
 
-  // 汚れ：指 ⇔ V
+  // 污垢：指 ⇔ V
   stain_exchange(target, 1, target, 3);
 
   // 露出癖 3+ 的自慰经验等：
   if (abl(17) >= 3) {
     if (tequip(53)) {
       chara(target).dungeon.自慰经验 += 2;
-      era.print('自慰经验＋２'); // 全角＋（源逐字）
+      era.print('自慰经验＋２'); // 保留全角＋
       chara(target).dungeon.调教自慰经验 += 2;
       era.print('调教自慰经验＋２');
     } else {
@@ -1827,24 +1816,24 @@ async function com7() {
     }
   }
 
-  print_same_sex_exp(target, player, 2); // 百合经验（源侧无断背支）
+  print_same_sex_exp(target, player, 2); // 百合经验（本指令不增加断背经验）
 
-  era.set('tflag:200', 1); // 屈服刻印１に相当
+  era.set('tflag:200', 1); // 相当于屈服刻印 1
 
   return 1;
 }
 
 /**
- * @COM8（COMF8_指挿入れ.ERB:7-146）插入手指。
- * @returns {Promise<number>} 原作 RETURN 1（确认拒绝 RETURN 0；升格跳转时
+ * com8：插入手指。
+ * @returns {Promise<number>} 返回 1（确认拒绝返回 0；升格跳转时
  *   为跳转目标的返回值）
  */
 async function com8() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // 夺处女确认（CALL CONFIRM_LOST_VIRGIN / SIF RESULT == 0 RETURN 0）
-  // 真身在 com-vaginasex.js（#216）；rebase 接线，替换本票先前的恒放行存根
+  // confirm_lost_virgin 拒绝时返回 0，不执行后续指令。
+  // 确认流程由 com-vaginasex.js 提供（#216）。
   if ((await confirm_lost_virgin()) === 0) {
     return 0;
   }
@@ -1871,8 +1860,8 @@ async function com8() {
   set(13, ABL_V_TIERS_COM8[abl_v][1]);
 
   // EXP:0 档 → [SOURCE:1 系数, SOURCE:13 系数, SOURCE:6, SOURCE:14 增量]
-  // 注：最末档（ELSE）乘的是 SOURCE:2（源 :76 逐字——与同族的 SOURCE:1 不一致
-  // 是原状，不「修正」）
+  // 最末档（ELSE）乘的是 SOURCE:2，而非其他档的 SOURCE:1；
+  // 保留这一档的独立处理。
   const exp_v = era.get(`exp:${target}:0`) || 0;
   if (exp_v < EXPLV[1]) {
     set(1, times(src(1), 0.2));
@@ -1960,14 +1949,14 @@ async function com8() {
     set(6, times(src(6), 2.0));
   }
 
-  // 汚れ：触手 → V 位 |= 2/4；否则 V ⇔ 指
+  // 污垢：触手 → V 位 |= 2/4；否则 V ⇔ 指
   if (tequip(90)) {
     era.set(`stain:${target}:3`, (era.get(`stain:${target}:3`) || 0) | 2 | 4);
   } else {
     stain_exchange(target, 3, player, 1);
   }
 
-  // 経験上昇：私处经验按 ABL:2 档给 1-4
+  // 经验增加：私处经验按 ABL:2 档给 1-4
   const s = abl_v <= 1 ? 1 : abl_v <= 4 ? 2 : abl_v <= 7 ? 3 : 4;
   chara(target).dungeon.私处经验 += s; // （exp:0 属主 dungeon，走门面）
   era.print(`私处经验+${s}`);
@@ -1975,7 +1964,7 @@ async function com8() {
   print_same_sex_exp(target, player, 4);
   print_love_exp(target, 1);
 
-  era.set('tflag:19', 1); // 私处经验を伴うコマンドのフラグ
+  era.set('tflag:19', 1); // 记录本指令伴随私处经验
 
   return 1;
 }
@@ -1986,8 +1975,8 @@ function palam_lust_of(cid) {
 }
 
 /**
- * @COM9（COMF9_アナル舐め.ERB:7-63）舔肛。
- * @returns {Promise<number>} 原作 RETURN 1
+ * com9：舔肛。
+ * @returns {Promise<number>} 返回 1
  */
 async function com9() {
   const target = era_flag.target;
@@ -2010,12 +1999,12 @@ async function com9() {
   // 兽奸：肛门经验 +1 后提前返回
   if (tequip(89)) {
     chara(target).dungeon.肛门经验 += 1;
-    era.print('肛门经验＋１'); // （全角＋，源逐字）
+    era.print('肛门经验＋１'); // 保留全角＋
     return 1;
   }
 
   // 调教者擅用舌头（TALENT:PLAYER:52）：SOURCE:2 ×2.00、
-  // SOURCE:16 += SOURCE:0/20（SOURCE:0 本指令从不写——恒 +0，源逐字保留）
+  // SOURCE:16 += SOURCE:0/20（本指令不写 SOURCE:0，因此此项恒为 0）
   if (era.get(`talent:${player}:52`) || tequip(89)) {
     set(2, times(src(2), 2.0));
     set(16, src(16) + Math.floor(src(0) / 20));
@@ -2033,10 +2022,10 @@ async function com9() {
   return 1;
 }
 
-// —— @TRAIN_MESSAGE_B 的本族分支（SELECTCOM 0-9；0 分支 #45 落地随搬，其余
-//    #219 落地。源 EVENT_TRAIN_MESSAGE_B.ERB:28-782 的 IF 链段） ——
+// —— train_message_b 的本族分支（SELECTCOM 0–9） ——
+// 0 号分支由 #45 实现，其余由 #219 实现。
 
-/** 体型/肤色描述（B 文 74-87 行，#45 落地随搬） */
+/** 体型/肤色描述（#45）。 */
 function body_phrase(cid) {
   let phrase = '';
   if (era.get(`talent:${cid}:135`)) {
@@ -2057,8 +2046,8 @@ function body_phrase(cid) {
 }
 
 /**
- * :89-90 妊娠中的胎动（B 文爱抚分支 :28-90 的尾段；全文件仅此一支有此段，
- * #45 注记「与其余分支同款」不确——其余分支无胎动行，以源为准）。
+ * 妊娠中的胎动（B 文爱抚分支的尾段；全文件仅此一支有此段，
+ * #45 注记「与其余分支同款」不确——其余分支无胎动行，行为照原样保留）。
  */
 async function print_pregnancy_kick(target, target_name) {
   if (
@@ -2071,13 +2060,13 @@ async function print_pregnancy_kick(target, target_name) {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 0（:28-90，#45 落地随搬） */
+/** train_message_b_0：爱抚（#45）。 */
 async function train_message_b_0() {
   const target = era_flag.target;
   const player = era_flag.player;
   const target_name = chara_callname(target);
 
-  // 服装前缀（#215 起真身，ere/page/page-clothtype.js）
+  // 服装前缀（#215，ere/page/page-clothtype.js）
   const cloth_bits = era.get(`cflag:${target}:40`) || 0;
   const special_type = era.get(`cflag:${target}:42`) || 0;
   let line = '';
@@ -2089,7 +2078,7 @@ async function train_message_b_0() {
     line += '隔着内衣、';
   }
 
-  // 装备描写支（触手 :66-67 / 魔兽 :68-89 / 兽奸 :90-91）——#215 起真身
+  // 装备描写支（触手/魔兽/兽奸三支）——#215 起真身
   const teq = (idx) => era.get(`tequip:${target}:${idx}`) || 0;
   if (teq(90)) {
     line += '触手玩弄着';
@@ -2142,7 +2131,7 @@ function monster_species_text(species, table) {
   return table[species] ?? table.default;
 }
 
-/** @TRAIN_MESSAGE_B 分支 1（舔阴，:94-215） */
+/** train_message_b_1：舔阴。 */
 async function train_message_b_1() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2234,7 +2223,7 @@ async function train_message_b_1() {
   era.print(`${line}……`);
 }
 
-/** @TRAIN_MESSAGE_B 分支 2（肛门爱抚，:99-151） */
+/** train_message_b_2：肛门爱抚。 */
 async function train_message_b_2() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2263,10 +2252,10 @@ async function train_message_b_2() {
     } else {
       body = `玩弄着${target_name}的肛门${deep ? '、同时那指尖还深入到直肠绞动了起来' : ''}…`;
     }
-    era.print(`${monster_name(e_get(300))} ${body} `); // 尾随空格（PRINTL ' '）
+    era.print(`${monster_name(e_get(300))} ${body} `); // 保留仅含空格的输出行
   } else {
-    // 普通支。SIF TEQUIP:90 == 0 的 PRINTFORM 是行内前缀（不收行），
-    // 与后续 PRINTFORML 合成一行的形状在此按源拼接
+    // 普通支：未装备触手时，调教者名前缀需与后文合为一行，
+    // 因而先拼接，再一次输出。
     const prefix = teq(90) === 0 ? player_name : '';
     if (teq(90)) {
       era.print(`${prefix}用沾满粘液的触手、刺激着${target_name}的肛门…`);
@@ -2288,14 +2277,14 @@ async function train_message_b_2() {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 3（自慰，:222-279——读判定段的 A/V，order_state） */
+/** train_message_b_3：自慰，读取判定段的 last_order.a/v。 */
 async function train_message_b_3(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const player_name = chara_callname(era_flag.player);
   const { a, v } = order_state;
 
-  // 牡奴/牝奴的 LOCALS（RAND:2 参与分流）
+  // 牡奴/牝奴称呼（rand(2) 参与分流）
   const male_side =
     era.get(`talent:${target}:122`) ||
     (era.get(`talent:${target}:121`) && rand(2) === 0);
@@ -2380,7 +2369,7 @@ async function train_message_b_3(rand) {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 4（口交，:307-332） */
+/** train_message_b_4：口交。 */
 async function train_message_b_4(rand) {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2402,7 +2391,7 @@ async function train_message_b_4(rand) {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 5（胸爱抚，:332-478） */
+/** train_message_b_5：胸爱抚。 */
 async function train_message_b_5() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2410,7 +2399,7 @@ async function train_message_b_5() {
   const assi_name = chara_callname(era_flag.assi);
   const teq = (idx) => (era.get(`tequip:${target}:${idx}`) || 0) !== 0;
   const talent = (i) => era.get(`talent:${target}:${i}`);
-  // PRINTFORMW/PRINTL 收行、PRINT 行内追加——以行缓冲合成（分支内局部约定）
+  // 前缀与后文分步拼接，只在一行完整时输出。
   let buf = '';
   const line = (text = '') => {
     era.print(buf + text);
@@ -2421,7 +2410,7 @@ async function train_message_b_5() {
     return era.waitAnyKey();
   };
 
-  // 死斗场的六种 PRINTFORMW 开场
+  // 死斗场六种开场，每种都等待确认
   if (teq(55)) {
     const t400 = era.get('tflag:400') || 0;
     if (t400 === 201) {
@@ -2494,7 +2483,7 @@ async function train_message_b_5() {
     }
   }
 
-  // %TARGET% + 乳房形容
+  // 目标名 + 乳房形容
   buf += target_name;
   if (talent(116)) {
     buf += '平坦的';
@@ -2510,7 +2499,7 @@ async function train_message_b_5() {
     buf += '的';
   }
 
-  // 胸部的下场（触手/魔兽/母乳/普通各支；PRINTL 收行）
+  // 胸部描写（触手/魔兽/母乳/普通各分支均独占一行）
   const milk_peak =
     talent(130) &&
     (era.get(`palam:${target}:5`) || 0) > PALAMLV[3] &&
@@ -2586,7 +2575,7 @@ async function train_message_b_5() {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 6（接吻，:385-459） */
+/** train_message_b_6：接吻。 */
 async function train_message_b_6() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2599,7 +2588,7 @@ async function train_message_b_6() {
     ((era.get(`cflag:${target}:40`) || 0) & 64) !== 0;
 
   if (teq(89) && full_cloth) {
-    // 流浪狗隔着着ぐるみ舔（PRINTFORM + SPECIAL + PRINTFORML 一行）
+    // 流浪狗隔着布偶装舔舐，前缀、服装与后文合为一行
     era.print(`流浪狗把${clothtype_special_text(target)}舔舐变色了……`);
   } else if (teq(88)) {
     // 魔兽接吻（异种婚姻 TALENT:159 时按种族深吻）
@@ -2624,7 +2613,7 @@ async function train_message_b_6() {
       era.print(`${monster_name(e_get(300))} 与${target_name}进行着亲吻……`);
     }
   } else if (full_cloth) {
-    // 隔着着ぐるみ接吻
+    // 隔着布偶装接吻
     era.print(
       ` ${player_name}与穿着${clothtype_special_text(target)}的她接吻了……`,
     );
@@ -2647,8 +2636,8 @@ async function train_message_b_6() {
       );
     }
   } else {
-    // 普通接吻。PRINTFORM 前缀不收行，与 PRINTL/PRINTFORML 的
-    // 尾段合成一行（golden 第 172 行「…来回舔舐着……」的形态）
+    // 普通接吻：前缀与反应需显示为一行，
+    // 因而拼接后再输出。
     let kiss_line = `${player_name}在${target_name}口腔的每个角落来回舔舐着`;
     if (
       (era.get(`abl:${target}:10`) || 0) >= 2 &&
@@ -2680,7 +2669,7 @@ async function train_message_b_6() {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 7（自己扒开，:555-646） */
+/** train_message_b_7：自己扒开。 */
 async function train_message_b_7() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2750,7 +2739,7 @@ async function train_message_b_7() {
     era.print('从张开的阴部里、精液缓缓地流了出来……');
   }
 
-  // 貞操帯
+  // 贞操带
   if (
     (era.get(`cflag:${target}:42`) || 0) === 79 &&
     ((era.get(`cflag:${target}:40`) || 0) & 64) !== 0
@@ -2758,7 +2747,7 @@ async function train_message_b_7() {
     era.print(`然后、${target_name}的阴部、被结实的贞操带紧紧保护着。`);
   }
 
-  // 穿环状態（CFLAG:7 & 8 阴茎环 / & 4 阴唇环）
+  // 穿环状态（CFLAG:7 & 8 阴茎环 / & 4 阴唇环）
   const pierced = era.get(`cflag:${target}:7`) || 0;
   if (pierced & 8 || pierced & 4) {
     let tail = target_name;
@@ -2778,7 +2767,7 @@ async function train_message_b_7() {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 8（插入手指，:588-668） */
+/** train_message_b_8：插入手指。 */
 async function train_message_b_8() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2793,8 +2782,8 @@ async function train_message_b_8() {
     ((era.get(`cflag:${target}:40`) || 0) & 8) !== 0 &&
     (era.get(`abl:${target}:17`) || 0) !== 0;
 
-  // 的 PRINTFORM 前缀不收行——与 :664-668 的 PRINTFORML
-  // 插入行合成一行（finger_prefix）
+  // 前缀先写入 finger_prefix，
+  // 再与插入描写合为一行输出。
   let finger_prefix;
   if (teq(11)) {
     // 振动使用中（蠕虫在动作）
@@ -2864,7 +2853,7 @@ async function train_message_b_8() {
   }
 }
 
-/** @TRAIN_MESSAGE_B 分支 9（舔肛，:740-782） */
+/** train_message_b_9：舔肛。 */
 async function train_message_b_9() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -2905,21 +2894,21 @@ async function train_message_b_9() {
   }
 }
 
-// —— @TRAIN_MESSAGE_A 的本族分支（SELECTCOM 0/1/2/3/5；源侧 4/6/7/8/9 无
-//    分支——IF 链落空、零输出，见文末注册处的空 handler） ——
+// —— train_message_a 的本族分支（SELECTCOM 0/1/2/3/5） ——
+// 4/6/7/8/9 无反应描写，文末注册空 handler 保证零输出。
 
 /**
- * @TRAIN_MESSAGE_A 分支 0（:783-846，#45 落地随搬）。UP 的等价物是 delta
- * 表（nextTurnInTrain 结算 delta→palam，本函数在其前运行，读数与原作同位）。
+ * train_message_a_0：爱抚（#45）。UP 对应 delta 表；nextTurnInTrain
+ * 结算 delta→palam，本函数在其前运行，因此读取未结算的增量。
  */
 async function train_message_a_0() {
   const target = era_flag.target;
   const player_name = chara_callname(era_flag.player);
   const target_name = chara_callname(target);
 
-  // 分支守卫（SELECTCOM == 0 由分发表保证；另两条在此）。原作条件
-  // 不满足时整条 IF/ELSEIF 链没有分支命中、**什么都不输出**——此前打的
-  // 「紧缚/失神中的爱抚反应」占位与原作不符，#565 起按原作改为直接返回
+  // SELECTCOM == 0 由分发表保证；另两项在此检查。
+  // 紧缚或失神时不输出反应，
+  // #565 删除了这两种情况的占位输出，改为直接返回。
   if (era.get(`tequip:${target}:44`) || (era.get('tflag:899') || 0) > 1) {
     return;
   }
@@ -2992,13 +2981,13 @@ async function train_message_a_0() {
   }
 }
 
-/** @TRAIN_MESSAGE_A 分支 1（舔阴，:746-778） */
+/** train_message_a_1：舔阴。 */
 async function train_message_a_1() {
   const target = era_flag.target;
   const player_name = chara_callname(era_flag.player);
   const target_name = chara_callname(target);
   if ((era.get('tflag:899') || 0) > 1) {
-    return; // 守卫（SELECTCOM == 1 由分发表保证）
+    return; // 检查（SELECTCOM == 1 由分发表保证）
   }
   const a = era.get(`delta:${target}:0`) || 0; // A = UP:0
   const talent = (i) => era.get(`talent:${target}:${i}`);
@@ -3040,12 +3029,12 @@ async function train_message_a_1() {
   }
 }
 
-/** @TRAIN_MESSAGE_A 分支 2（肛门爱抚，:846-890） */
+/** train_message_a_2：肛门爱抚。 */
 async function train_message_a_2() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   if ((era.get('tflag:899') || 0) > 1) {
-    return; // 守卫
+    return; // 检查
   }
   const a = era.get(`delta:${target}:2`) || 0; // A = UP:2
   const talent = (i) => era.get(`talent:${target}:${i}`);
@@ -3077,7 +3066,7 @@ async function train_message_a_2() {
   }
 }
 
-/** @TRAIN_MESSAGE_A 分支 3（自慰，:261-318——无 TFLAG:899 守卫，源逐字） */
+/** train_message_a_3：自慰，不检查 TFLAG:899。 */
 async function train_message_a_3() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
@@ -3091,14 +3080,14 @@ async function train_message_a_3() {
   const d = era.get(`delta:${target}:17`) || 0;
   const e = a + b + c + d;
 
-  // LOCALS（男人/扶她 → 撸系文案）
+  // 男人/扶她使用撸系文案
   const male_side = talent(122) || talent(121);
   const locals0 = male_side ? '撸' : '玩弄性器官';
   const locals1 = male_side
     ? '握着勃起变硬的阴茎'
     : '把沾满爱液的私处扒开给你看';
 
-  // 状态描写（SIF 链全为行内追加，合成一行）
+  // 状态描写逐段追加，合成一行
   let line = target_name;
   if (abl17 === 4) {
     line += '露出了沉醉于快感的表情、';
@@ -3159,7 +3148,7 @@ async function train_message_a_3() {
   }
 }
 
-/** @TRAIN_MESSAGE_A 分支 5（胸爱抚，:909-945） */
+/** train_message_a_5：胸爱抚。 */
 async function train_message_a_5() {
   const target = era_flag.target;
   const player_name = chara_callname(era_flag.player);
@@ -3167,7 +3156,7 @@ async function train_message_a_5() {
   const talent = (i) => era.get(`talent:${target}:${i}`);
   const teq = (idx) => (era.get(`tequip:${target}:${idx}`) || 0) !== 0;
 
-  // 守卫（兽奸中与失神档不写反应）
+  // 检查（兽奸中与失神档不写反应）
   if (teq(89) || (era.get('tflag:899') || 0) > 1) {
     return;
   }
@@ -3208,30 +3197,30 @@ async function train_message_a_5() {
   }
 }
 
-// —— @GET_ADV_COM 的本族升格规则（COMF_JUMP.ERB CASE 6/1/3/4/5/8；
-//    签名 async (rand) => number，#213 定死） ——
+// —— get_adv_com 的本族升格规则（CASE 6/1/3/4/5/8） ——
+// 注册函数签名为 async (rand) => number（#213）。
 
-/** 「前回と今回の調教者が同じ」＝ (ASSIPLAY && TFLAG:50) || (!ASSIPLAY && !TFLAG:50) */
+/** 前后两回合的调教者相同：均由主人或均由助手调教。 */
 function same_player_as_last() {
   const t50 = era.get('tflag:50') || 0;
   return era_flag.assiplay ? t50 !== 0 : t50 === 0;
 }
 
-/** 升格目标的可用性复核（CALL COM_ABLE<n>；目标族票未落地 → 0 不升格） */
+/** 复核升格目标的可用性：目标检查未注册时返回 0，不升格。 */
 async function adv_target_able(n) {
   return com_able_family.call(n, { whenMissing: 0 });
 }
 
-// CASE 6（COMF_JUMP:9-63）：接吻 → 正常位・接吻（128）/ 站立背后位（133）
+// CASE 6：接吻 → 正常位・接吻（128）/ 站立背后位（133）
 async function adv_rule_6() {
   const prev = era_flag.prevcom;
   const prev2 = era.get('tflag:59') || 0;
   if (same_player_as_last()) {
-    // 前回が正常位/正常位・胸爱抚/正常位SP → 正常位・接吻
+    // 前回合为正常位/正常位・胸爱抚/正常位SP → 正常位・接吻
     if ([20, 129, 130].includes(prev) && (await adv_target_able(128)) === 1) {
       return 128;
     }
-    // Gスポ・子宮口攻めからの分岐
+    // G 点或子宫口指令的升格分支
     if (
       [20, 128, 129, 130].includes(prev2) &&
       [120, 121].includes(prev) &&
@@ -3241,7 +3230,7 @@ async function adv_rule_6() {
     }
   }
   if (same_player_as_last()) {
-    // 前回が背后位系 → 站立背后位
+    // 前回合为背后位系 → 站立背后位
     if ([131, 132, 134].includes(prev) && (await adv_target_able(133)) === 1) {
       return 133;
     }
@@ -3256,13 +3245,13 @@ async function adv_rule_6() {
   return 6;
 }
 
-// CASE 1（:51-63）：舔阴 → 六九式（69）——非兽奸、非绳缚
+// CASE 1：舔阴 → 六九式（69）——非兽奸、非绳缚
 //
-// 的守卫 `(ASSIPLAY && TFLAG:50) || (ASSIPLAY == 0 && TFLAG:50 == 0)
-// && TEQUIP:89 == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」读作
-// `(同调教者两臂) && TEQUIP:89 == 0`——兽奸门是整个同调教者条件的合取项，
-// 不是 C 式「&& 优先」的「第二臂各自带兽奸门」（#517）。后续 PREVCOM 三选一
-// 与 TEQUIP:44 == 0 是嵌套 IF，布尔上与外层条件合取。
+// 同调教者条件的两个分支都必须排除兽奸，而不是只在主人分支排除。
+// 若表达式中的 && 与 || 同优先级且左结合，
+// 则 `(同调教者的两个分支) && TEQUIP:89 == 0` 是整个条件（#517）。
+// JavaScript 的 && 优先，因此这里用 same_player_as_last() 明确分组，
+// 再检查 PREVCOM、TEQUIP:44 与目标可用性。
 async function adv_rule_1() {
   if (
     same_player_as_last() &&
@@ -3276,7 +3265,7 @@ async function adv_rule_1() {
   return 1;
 }
 
-// CASE 3（:66-78）：自慰 → 口交时自慰（125）
+// CASE 3：自慰 → 口交时自慰（125）
 async function adv_rule_3() {
   if (
     same_player_as_last() &&
@@ -3288,7 +3277,7 @@ async function adv_rule_3() {
   return 3;
 }
 
-// CASE 4（:81-93）：口交 → 六九式（69）——非绳缚、非兽奸
+// CASE 4：口交 → 六九式（69）——非绳缚、非兽奸
 async function adv_rule_4() {
   if (
     same_player_as_last() &&
@@ -3302,7 +3291,7 @@ async function adv_rule_4() {
   return 4;
 }
 
-// CASE 5（:96-132）：胸爱抚 → 正常位・胸爱抚（129）/ 背后位・胸爱抚（131）
+// CASE 5：胸爱抚 → 正常位・胸爱抚（129）/ 背后位・胸爱抚（131）
 async function adv_rule_5() {
   const prev = era_flag.prevcom;
   const prev2 = era.get('tflag:59') || 0;
@@ -3336,8 +3325,8 @@ async function adv_rule_5() {
   return 5;
 }
 
-// CASE 8（:101-107）：插入手指 → 刺激Ｇ点（84）。COM_ABLE84 在源侧不存在
-// （#213 勘定：「未定义即视为可执行」恰好覆盖），不探测、直接升格。
+// CASE 8：插入手指 → 刺激Ｇ点（84），不探测目标可用性，直接升格。
+// 缺失目标按「未定义即视为可执行」处理（#213）。
 async function adv_rule_8() {
   if (
     era_flag.prevcom === 8 &&
@@ -3351,9 +3340,9 @@ async function adv_rule_8() {
   return 8;
 }
 
-// —— @COM_ABLE0-9（COMABLE.ERB:28-381）——
+// —— com_able_family 的 0–9 号可用性检查 ——
 
-/** 着衣三件套的共用判定（CFLAG:40 位域 / オムツ 69 / ズーコ 11） */
+/** 着衣共用判定：CFLAG:40 服装位，以及 CFLAG:42 为 69/11 时的位 64。 */
 function cloth_blocked(target, bits) {
   const worn = era.get(`cflag:${target}:40`) || 0;
   const special = era.get(`cflag:${target}:42`) || 0;
@@ -3377,7 +3366,7 @@ function assi_disgusted() {
   );
 }
 
-// @COM_ABLE0（:28-34）：爱抚系过滤与决斗中不可，其余可执行
+// 0 号可用性检查：爱抚系过滤与决斗中不可，其余可执行
 com_able_family.register(0, async () => {
   if ((era.get('flag:25') || 0) & 1) {
     return 0;
@@ -3388,25 +3377,25 @@ com_able_family.register(0, async () => {
   return 1;
 });
 
-// @COM_ABLE1（:39-70）：舔阴
+// 1 号可用性检查：舔阴
 com_able_family.register(1, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
     return 0;
   }
   if (era.get(`talent:${target}:122`)) {
-    return 0; // 対象が男人
+    return 0; // 对象是男人
   }
   if (era.get(`tequip:${target}:90`)) {
-    return 0; // 触手調教中
+    return 0; // 触手调教中
   }
   if (era.get(`tequip:${target}:55`)) {
-    return 0; // 決闘中
+    return 0; // 决斗中
   }
   if (cloth_blocked(target, 17)) {
-    return 0; // パンツか上着下・ズボン
+    return 0; // 内裤或下装
   }
-  // 性器污れ + 反感污臭的助手
+  // 性器污垢 + 反感污臭的助手
   const stain2 = era.get(`stain:${target}:2`) || 0;
   if ((stain2 & 4 || stain2 & 8 || stain2 & 32) && era_flag.assiplay) {
     if (assi_disgusted()) {
@@ -3416,8 +3405,8 @@ com_able_family.register(1, async () => {
   return 1;
 });
 
-// @COM_ABLE2（:71-112）：肛门爱抚（源 :98-100 的「顺从4以上かつ百合气质4以上」
-// 实文是 <= 3 && <= 3 → RETURN 1——注释与代码相反，逐字保留）
+// 2 号可用性检查：肛门爱抚。助手调教且润滑不足时，
+// 顺从 <= 3 且百合气质 <= 3 可放行，保留这一条件。
 com_able_family.register(2, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3427,15 +3416,15 @@ com_able_family.register(2, async () => {
     return 0;
   }
   if (era.get(`tequip:${target}:89`)) {
-    return 0; // 兽奸PLAY中
+    return 0; // 兽奸中
   }
   if (cloth_blocked(target, 17)) {
     return 0;
   }
   if (era_flag.assiplay === 0) {
-    return 1; // 主人プレイなら自動成功
+    return 1; // 主人调教时自动成功
   }
-  // 助手プレイ：润滑不足时施虐狂或（源文的）双 ≤3 才行
+  // 助手调教：润滑不足时需施虐狂，或顺从与百合气质均 ≤3
   if ((era.get(`palam:${target}:3`) || 0) < PALAMLV[2]) {
     const assi = era_flag.assi;
     if (era.get(`talent:${assi}:83`)) {
@@ -3452,7 +3441,7 @@ com_able_family.register(2, async () => {
   return 1;
 });
 
-// @COM_ABLE3（:113-157）：自慰
+// 3 号可用性检查：自慰
 com_able_family.register(3, async () => {
   const target = era_flag.target;
   const assi = era_flag.assi;
@@ -3495,7 +3484,7 @@ com_able_family.register(3, async () => {
   return 1;
 });
 
-// @COM_ABLE4（:158-196）：口交（STAIN:2 的爱液位也在判定里，:163）
+// 4 号可用性检查：口交（STAIN:2 的爱液位也参与判定）
 com_able_family.register(4, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3514,7 +3503,7 @@ com_able_family.register(4, async () => {
   if (era.get(`tequip:${target}:55`)) {
     return 0;
   }
-  // 対象が男人/扶她的判定在源里已被注释，不移植
+  // 不以目标是否为男人/扶她限制可用性。
   if (era.get(`tequip:${target}:90`)) {
     return 0;
   }
@@ -3524,21 +3513,21 @@ com_able_family.register(4, async () => {
   if (era.get(`tequip:${target}:88`)) {
     return 0;
   }
-  // `(CFLAG:40 & 1) || (CFLAG:40 & 16) && FLAG:37` 按 Emuera 的
-  // 「&& 与 || 同优先级、左结合」读作 `((CFLAG:40 & 1) || (CFLAG:40 & 16))
-  // && FLAG:37`——同族 @COM_ABLE20-29 的服装位写的是等价式
-  // `(CFLAG:40 & 17) && FLAG:37`（COMABLE.ERB:911），两处语义一致（#517）。
+  // FLAG:37 控制两个服装位，位 1 和位 16 都不能绕过此开关。
+  // && 与 || 同优先级且左结合时，条件为「两位任一 && FLAG:37」；
+  // JavaScript 的 && 优先，因此需显式括起两位的或条件。
+  // 整体等价于 `(CFLAG:40 & 17) && FLAG:37`（#517）。
   const worn = era.get(`cflag:${target}:40`) || 0;
   if (((worn & 1) !== 0 || (worn & 16) !== 0) && era.get('flag:37')) {
     return 0;
   }
   if (cloth_blocked(target, 0)) {
-    return 0; // オムツ/ズーコ（位 17 的着衣判定不在此段）
+    return 0; // 特殊服装（位 17 的着衣判定不在此段）
   }
   return 1;
 });
 
-// @COM_ABLE5（:196-216）：胸爱抚
+// 5 号可用性检查：胸爱抚
 com_able_family.register(5, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3550,7 +3539,7 @@ com_able_family.register(5, async () => {
   if (era.get(`talent:${target}:122`)) {
     return 0; // 男人
   }
-  // ブラジャーか上着上（位 2|4）
+  // 胸罩或上装（位 2|4）
   const worn = era.get(`cflag:${target}:40`) || 0;
   const special = era.get(`cflag:${target}:42`) || 0;
   if ((worn & 6) !== 0 && era.get('flag:37')) {
@@ -3562,7 +3551,7 @@ com_able_family.register(5, async () => {
   return 1;
 });
 
-// @COM_ABLE6（:217-243）：接吻
+// 6 号可用性检查：接吻
 com_able_family.register(6, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3592,7 +3581,7 @@ com_able_family.register(6, async () => {
   return 1;
 });
 
-// @COM_ABLE7（:244-291）：自己扒开
+// 7 号可用性检查：自己扒开
 com_able_family.register(7, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3611,7 +3600,7 @@ com_able_family.register(7, async () => {
     return 0;
   }
   if ((era.get(`abl:${target}:10`) || 0) < 2) {
-    return 0; // 顺从 2 未満
+    return 0; // 顺从 2 未满
   }
   // 处女时需顺从 3+ 或露出癖 3+
   if (
@@ -3622,7 +3611,7 @@ com_able_family.register(7, async () => {
     return 0;
   }
   if (era.get(`tequip:${target}:11`)) {
-    return 0; // バイブ使用中
+    return 0; // 振动棒使用中
   }
   if (era.get(`tequip:${target}:44`)) {
     return 0;
@@ -3639,7 +3628,7 @@ com_able_family.register(7, async () => {
   return 1;
 });
 
-// @COM_ABLE8（:292-336）：插入手指
+// 8 号可用性检查：插入手指
 com_able_family.register(8, async () => {
   const target = era_flag.target;
   const assi = era_flag.assi;
@@ -3674,19 +3663,19 @@ com_able_family.register(8, async () => {
   if (cloth_blocked(target, 17)) {
     return 0;
   }
-  // 貞操帯（79）
+  // 贞操带（79）
   const worn = era.get(`cflag:${target}:40`) || 0;
   const special = era.get(`cflag:${target}:42`) || 0;
   if (special === 79 && (worn & 64) !== 0 && era.get('flag:37')) {
     return 0;
   }
   if (era.get(`talent:${target}:273`)) {
-    return 0; // 貞操封印
+    return 0; // 贞操封印
   }
   return 1;
 });
 
-// @COM_ABLE9（:337-380）：舔肛
+// 9 号可用性检查：舔肛
 com_able_family.register(9, async () => {
   const target = era_flag.target;
   if ((era.get('flag:25') || 0) & 1) {
@@ -3708,10 +3697,10 @@ com_able_family.register(9, async () => {
     return 0; // 肛珠
   }
   if (era.get(`tequip:${target}:46`)) {
-    return 0; // 浣腸
+    return 0; // 浣肠
   }
   if (era.get(`tequip:${target}:49`)) {
-    return 0; // 電極
+    return 0; // 电极
   }
   if (cloth_blocked(target, 17)) {
     return 0;
@@ -3751,9 +3740,9 @@ for (const [id, fn] of [
   train_message_b_family.register(id, fn);
 }
 
-// A 分支：源侧 EVENT_MESSAGE_A 只有无 4/6/7/8/9 的分支——注册空
-// handler 使「缺失 = 族票未落地落占位行」的语义对这些号保持精确（源侧
-// 链落空零输出，占位行反而是错的）
+// 4/6/7/8/9 没有 A 文反应，注册空 handler，
+// 将其与尚未实现的分支区分开，
+// 避免分发器为这些号输出占位行。
 for (const [id, fn] of [
   [0, train_message_a_0],
   [1, train_message_a_1],

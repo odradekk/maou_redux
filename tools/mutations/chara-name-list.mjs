@@ -1,13 +1,13 @@
 // 变异条目表分片：chara-name-list（issue #388，CHARA_NAME_INIT 落表；
 // #435 文件名被引擎误判为逐角色数据、表名与读取键随改名同步）。
-// 靶文件：ere/chara/chara-name-list.js、event-first.js／event-load.js 的接线点、
-// yml/NameList.yml 数据本身。守护测试见 test/chara-name-list.test.js。
+// 目标文件：ere/chara/chara-name-list.js、event-first.js／event-load.js 的接入点、
+// yml/NameList.yml 数据本身。对应测试见 test/chara-name-list.test.js。
 
 export const COUNT = 10;
 
 export default [
   {
-    desc: 'M7968 get_fixed_chara_name 的未注册守卫被恒假绕过，缺口 id 也去读裸地址',
+    desc: 'M7968 get_fixed_chara_name 的未注册检查被恒假绕过，缺口 id 也去读裸地址',
     file: 'ere/chara/chara-name-list.js',
     find: '  if (!valid_ids().has(nid)) {',
     replace: '  if (false) {',
@@ -15,7 +15,7 @@ export default [
     must_mention: '未注册 id 必须直接返回空串，不得读到陈旧的名字地址残留',
   },
   {
-    desc: 'M7969 get_fixed_chara_name 的守卫被恒真短路，已注册 id 也查不到名字',
+    desc: 'M7969 get_fixed_chara_name 的检查被恒真短路，已注册 id 也查不到名字',
     file: 'ere/chara/chara-name-list.js',
     find: '  if (!valid_ids().has(nid)) {',
     replace: '  if (true) {',
@@ -31,12 +31,12 @@ export default [
     must_mention: 'namelistkeys 只应被读取一次（缓存生效）',
   },
   {
-    desc: 'M7971 get_fixed_chara_name 丢了名字地址的 undefined 兜底',
+    desc: 'M7971 get_fixed_chara_name 丢了名字地址的 undefined 缺省',
     file: 'ere/chara/chara-name-list.js',
     find: "  return era.get(`namelistname:${nid}`) ?? '';",
     replace: '  return era.get(`namelistname:${nid}`);',
     tests: ['chara-name-list'],
-    must_mention: "名字地址未播种时必须兜底为空串（?? ''）",
+    must_mention: "名字地址未播种时必须缺省为空串（?? ''）",
   },
   {
     desc: 'M7972 chara_name_init 的调用点被清空，valid_ids 缓存不再预热',
@@ -47,7 +47,7 @@ export default [
     must_mention: 'chara_name_init 必须读取 namelistkeys',
   },
   {
-    desc: 'M7973 event-first.js 里 CHARA_NAME_INIT 的接线调用被删掉',
+    desc: 'M7973 event-first.js 里 CHARA_NAME_INIT 的接入调用被删掉',
     file: 'ere/event/event-first.js',
     find: 'chara_name_init();',
     replace: '',
@@ -55,7 +55,7 @@ export default [
     must_mention: 'EVENTFIRST 链必须真的调用了 chara_name_init',
   },
   {
-    desc: 'M7974 event-load.js 里 CHARA_NAME_INIT 的接线调用被删掉',
+    desc: 'M7974 event-load.js 里 CHARA_NAME_INIT 的接入调用被删掉',
     file: 'ere/event/event-load.js',
     find: 'chara_name_init();',
     replace: '',
@@ -83,7 +83,7 @@ export default [
     must_mention: '已注册 id 必须查表返回名字',
   },
   {
-    desc: 'M9474 valid_ids 的 keys 读取被摘成空集，未注册守卫恒判定未登录',
+    desc: 'M9474 valid_ids 的 keys 读取被摘成空集，未注册检查恒判定未登录',
     file: 'ere/chara/chara-name-list.js',
     find: "new Set(era.get('namelistkeys'))",
     replace: 'new Set([])',

@@ -2,7 +2,7 @@
  * @file issue #349：家族关系设置。
  *
  * 测试边界 = chara/chara-family 的公开导出。关系矩阵通过公开读写与家族查询
- * 观察；期望值直接来自 RELATION.ERB / RELATION_FAMILY.ERB 的关系码定义。
+ * 观察；期望值直接来自 ere/chara/chara-family.js 的关系码定义。
  */
 
 'use strict';
@@ -144,7 +144,7 @@ test('关系调试表按五字符列逐行输出、标色，并在打印后等�
   const first = fixture.lines_history.find((entry) => entry.type === 'text');
   assert.equal(first.content[0].color, 'rgb(100, 255, 255)');
   assert.equal(first.content[1].color, 'gray');
-  // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行：
+  // 每行调试表打完只结束本行，不产生空行：
   // 两行调试表逐行相邻，中间没有 br（#596）
   assert.deepEqual(
     fixture.lines_history.map((entry) => entry.type),
@@ -165,11 +165,7 @@ test('家族查询可分别忽略性别与兄弟姐妹长幼，并包含外部�
   assert.equal(family.rf_count(1, 2), 1, '默认忽略性别：兄/姐同组');
   assert.deepEqual(family.rf_all(1, 2), [2]);
   assert.deepEqual(family.rf_all(1, 2, false, 1, 1), [2, 3]);
-  assert.equal(
-    family.rf_first(1, 5),
-    4,
-    '保留原作外部对象返回正循环下标的行为',
-  );
+  assert.equal(family.rf_first(1, 5), 4, '保留外部对象返回正循环下标的行为');
   assert.equal(family.rf_first(4), -99);
 });
 
@@ -240,7 +236,7 @@ test('加入手足家庭会复制父母；父母加入子女家庭会覆盖全�
   assert.equal(
     family.rf_join_to(3, 2, 4, 0, seq([])),
     1,
-    '保留原作父母计数再次除二的行为',
+    '保留父母计数再次除二的行为',
   );
   assert.equal(family.rf_get(3, 1), 6);
   assert.equal(family.rf_get(3, 2), 4);
@@ -312,7 +308,7 @@ test('随机家族登记跳过作为候选的后代', () => {
   assert.deepEqual(family.family_register(41, seq([])), [43, 2]);
 });
 
-test('种族和经历相容规则保留精英限制、冲突与原作非对称性', () => {
+test('种族和经历相容规则保留精英限制、冲突与参数序的非对称', () => {
   const fixture = create_era_fixture();
   for (const cid of [8, 41, 42, 201, 202, 211]) add_chara(fixture, cid);
   fixture.store.set('talent:41:314', 9); // 魔化
@@ -343,11 +339,11 @@ test('相关性检查会读取外部家族成员的经历，不擅自跳过负�
   assert.equal(family.f_check_relevant(41, 42), 1);
   assert.ok(
     fixture.var_reads.some((entry) => entry.name === 'talent:-4:315'),
-    'RELATION_FAMILY.ERB 对负编号成员同样读取 TALENT:经历',
+    'f_check_relevant 对负编号成员同样读取 TALENT:经历',
   );
 });
 
-test('关系类型文本、反转和十进制位工具忠实保留原公式', () => {
+test('关系类型文本、反转和十进制位工具的公式取值', () => {
   const fixture = create_era_fixture();
   const family = fixture.load_module('chara/chara-family');
 
@@ -380,9 +376,8 @@ test('家族信息输出父母、手足和子女按钮，并区分显示数与�
       (entry) => entry.type === 'text' && entry.text === '等',
     ),
   );
-  // RELATION_FAMILY.ERB:422-423 的 `SIF !LINEISEMPTY() → PRINTL` 只结束那一行
-  // （有内容才收尾），不产生空行（#596）。空行的两种形态都算：
-  // println 落 br、print('') 落 text 空串
+  // family_print_info 的行尾只结束有内容的那一行，不产生空行（#596）。
+  // 空行的两种形式都算：println 落 br、print('') 落 text 空串
   assert.equal(
     fixture.lines_history.filter(
       (entry) =>

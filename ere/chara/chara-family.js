@@ -1,13 +1,12 @@
 /**
  * @file 家族关系设置（issue #349，阶段 5a L18）。
  *
- * SEARCH_FAMILY 的 CFLAG:605/601/610 是十进制压缩数据：个位为关系，
+ * search_family 的 CFLAG:605/601/610 是十进制压缩数据：个位为关系，
  * 十位为成为勇者前的生活，千位为性格（TALENT-160），十万位起为家族
- * 构成。候选遍历使用 getAddedCharacters()，对应 Emuera 的 0..CHARANUM。
+ * 构成。候选遍历使用 getAddedCharacters()，覆盖全部已加入角色。
  *
- * 原作 C_RELATION 的横轴是会随增删排序而移动的“加入序号”，所以需要搬列
- * 重建。ere 的角色 ID 稳定，不存在这类错位；c_relation 仍保存对角 NID，
- * 检查/重建接口保留，但修复只需按当前已加入 ID 重写对角标识。
+ * c_relation 仍保存对角 NID，检查/重建接口保留，但修复只需按当前已加入
+ * ID 重写对角标识——ere 的角色 ID 稳定，不存在横轴随增删排序移动的错位。
  */
 
 'use strict';
@@ -116,7 +115,7 @@ function parent_child_counts_match(search_type, source_family, target_family) {
   );
 }
 
-/** @SEARCH_FAMILY（:12-355）：按压缩家族照检索在场角色。 */
+/** search_family：按压缩家族照检索在场角色。 */
 function search_family(cid, kind = 'FAMILY') {
   let found = -1;
   const added = era.getAddedCharacters();
@@ -215,14 +214,14 @@ function search_family(cid, kind = 'FAMILY') {
 }
 
 function nid(cid) {
-  // @NID：特殊角色的名字编号固定为 10000 + NO；ere 的 ID 即原作 NO。
+  // nid：特殊角色的名字编号固定为 10000 + 角色 ID。
   if (cid === 0 || (cid >= 17 && cid <= 40)) {
     era.set(`cflag:${cid}:6`, 10_000 + cid); // CFLAG:6 = 名字编号
   }
   return era.get(`cflag:${cid}:6`) || 0;
 }
 
-/** @NID_R：按名字编号反查当前已加入角色；找不到返回 -1。 */
+/** nid_r：按名字编号反查当前已加入角色；找不到返回 -1。 */
 function nid_r(value) {
   return (
     era
@@ -247,7 +246,7 @@ function relation_needs_rebuild(cid) {
   return added.some((id) => r_get(id, id) !== nid(id));
 }
 
-/** @RELATION_REBUILD（RELATION.ERB:135-194）：修复当前角色的对角 NID。 */
+/** relation_rebuild：重写各已加入角色的对角 NID。 */
 function relation_rebuild() {
   for (const cid of era.getAddedCharacters()) r_set(cid, cid, nid(cid));
   return 0;
@@ -315,7 +314,7 @@ async function relation_debugprint() {
       parts.push(part);
     }
     era.print(parts);
-    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行
+    // 一名角色一行，行间不额外产生空行
   }
   await era.waitAnyKey();
 }
@@ -441,7 +440,7 @@ function rf_first(cid, type = -1, ignore_gender = 1, ignore_old_young = 0) {
         ignore_old_young,
       )
     ) {
-      // 原作这里返回循环变量 L_B，而不是实际查询的 -L_B；保留此行为。
+      // 这里返回循环变量 external，而不是实际查询的 -external；保留既有行为。
       return external;
     }
   }
@@ -487,7 +486,7 @@ function rf_join_to(a, b, type, is_father = 0, rand = default_rand) {
         rf_set_both(a, parent, parent_type);
       }
     }
-    // 原作把 RF_ALL 返回的成员数又除以二；返回计数虽有缺陷，仍照原样保留。
+    // 这里把 rf_all 返回的成员数又除以二；返回计数虽有缺陷，仍保留既有行为。
     count += int(parents.length / 2);
     for (const sibling of rf_all(b, 2, false, 1, 1)) {
       if (sibling === a) continue;
@@ -506,7 +505,7 @@ function rf_join_to(a, b, type, is_father = 0, rand = default_rand) {
     return count + 1;
   }
   if (type === 7 || type === 8) {
-    void (is_father % 2); // 原作形参保留，但后续未使用。
+    void (is_father % 2); // 形参保留，但后续未使用。
     const siblings = rf_all(b, 2, false, 1, 1);
     for (const sibling of siblings) {
       if (sibling === a) continue;
@@ -549,13 +548,11 @@ function family_birth_to_dad(child, father, rand = default_rand) {
 }
 
 /**
- * @CHAR_AGE_EXPECT（CHARA_BODY.ERB:39-144，式中函数）：根据素质与经历推算
- * 相对年龄（返回值域约 (-16, +30)）。
+ * char_age_expect：根据素质与经历推算相对年龄（返回值域约 (-16, +30)）。
  *
- * 真身落在本文件（#349 先落地，供 RELATION_FAMILY.ERB:81/:113 与
- * FAMILY_REGISTER_SLAVE 使用），#385 起由 ere/chara/chara-body.js 的
- * @CHAR_AGE_GENERATE 复用——同一函数不复制第二份。原作写法是 SWAP TARGET
- * 后读裸 TALENT/EXP，ere 侧按 cid 显式寻址，无 TARGET 换手。
+ * 真身落在本文件（#349 先实现，供 family_register_slave 使用），#385 起
+ * 由 ere/chara/chara-body.js 复用——同一函数不复制第二份。读取一律按
+ * cid 显式寻址 talent/exp 变量表。
  *
  * @param {number} cid 角色 ID
  * @returns {number} 相对年龄修正值
@@ -564,7 +561,7 @@ function char_age_expect(cid) {
   let age = 0;
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
   if (talent(99)) age += 1; // 魁梧
-  if (talent(100)) age -= 4; // 娇小；原作两条 SIF 均命中
+  if (talent(100)) age -= 4; // 娇小；与魁梧可同时命中
   if (talent(109)) age -= 1; // 贫乳
   if (talent(110)) age += 1; // 巨乳
   if (talent(114)) age += 1; // 爆乳
@@ -627,12 +624,12 @@ function f_is_close_experience(a, b) {
 
 function f_check_relevant(a, b) {
   if (!f_is_same_race(a, b)) return 0;
-  // @NID_GET_TYPE 的真身自 #384（N2）起在 ere/chara/chara-name.js（它的原作出处
-  // CHARA_NAME.ERB:255）；本文件只在 f_check_relevant 里用它，故在调用点惰性取。
+  // nid_get_type 的真身自 #384（N2）起在 ere/chara/chara-name.js；本文件只在
+  // f_check_relevant 里用它，故在调用点惰性取。
   // **不能写成顶层 require**：chara-name 顶层 require 本文件的
-  // relation_rename_rebuild（CHARA_NAME.ERB:160/:169 的名字重建），两边静态
-  // 引用即环——谁先装载，另一边的解构就是 undefined。惰性取在这里是安全的：
-  // 两个模块必已装载完。同款处置见 ere/kojo/kojo-k12-intellectual.js:7966。
+  // relation_rename_rebuild，两边静态引用即环——谁先装载，另一边的解构就是
+  // undefined。惰性取在这里是安全的：两个模块必已装载完。同款处置见
+  // ere/kojo/kojo-k12-intellectual.js。
   const { nid_get_type } = require('#/chara/chara-name');
   if (
     Math.min(1, Math.max(0, nid_get_type(nid(a)))) !==
@@ -664,7 +661,7 @@ function family_register_slave(cid, rand = default_rand) {
     const other_age = char_age_expect(other);
     const difference = other_age - expected_age;
     let type = 0;
-    // 分支顺序忠实保留原作：其中男性分支会被前面的无性别分支遮蔽。
+    // 分支顺序保留既有行为：其中男性分支会被前面的无性别分支遮蔽。
     if (difference > 10 && era.get(`exp:${other}:60`) && expected_age < 0) {
       const child_type = era.get(`talent:${cid}:122`) ? 7 : 8;
       if (rf_count(other, child_type) <= 0) type = 6;
@@ -747,9 +744,8 @@ function family_print_info(cid) {
     }
     era.print(']');
   }
-  // RELATION_FAMILY.ERB:422-423 的 `SIF !LINEISEMPTY() → PRINTL` 只结束上面
-  // 那行（有内容才收尾、空行上不动），不产生空行：打印过的片段由各自的
-  // print / printButton 自成一行承接
+  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：
+  // 打印过的片段由各自的 print / printButton 自成一行承接
   return { displayed, total };
 }
 
@@ -765,7 +761,7 @@ function dec_get_bit(number, bit) {
 
 function dec_set_bit(number, bit, value) {
   const place = 10 ** (bit - 1);
-  // 忠实保留原式：高位没有乘回 place * 10。
+  // 保留既有写法：高位没有乘回 place * 10。
   return {
     number: int(number / place / 10) + (value % 10) * place + (number % place),
     value,

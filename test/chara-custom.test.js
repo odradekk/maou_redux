@@ -1,7 +1,7 @@
 /**
  * ere/chara/chara-custom.js 的行为测试（issue #392，N8 段 2）。
  *
- * 缝 = test/helpers/era-fixture.js。@CHAR_DEBUG 不在本票（不移植，文件头），
+ * 缝 = test/helpers/era-fixture.js。调试面板不在这张工单（不移植，文件头），
  * 故本文件也不测它。
  */
 
@@ -19,9 +19,9 @@ function load(fixture) {
 /**
  * 建一套预设（1-16 勇者、201-210 精英、17-24 与 31-35 特殊）。
  *
- * 两处都要写：`seed_chara` 对应引擎的 staticData.chara（EXISTCSV /
- * getAllCharacters 的读数源），`store` 里的 `chara:N` 是 CSVNAME 的读数源
- * （chara-name.test.js:63-64 同款）。
+ * 两处都要写：`seed_chara` 对应引擎的 staticData.chara（exist_csv /
+ * getAllCharacters 的读数源），`store` 里的 `chara:N` 是 csv_name 的读数源
+ * （chara-name.test.js 同款）。
  */
 function seed_presets(fixture, ids) {
   for (const id of ids) {
@@ -64,7 +64,7 @@ const ALL_PRESETS = [
   40,
 ];
 
-test('CHAR_CREATE：付费路径（ARG 0）列两段，无特殊段', async () => {
+test('char_create：付费路径（模式 0）列两段，无特殊段', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
   const { char_create } = load(fixture);
@@ -76,11 +76,11 @@ test('CHAR_CREATE：付费路径（ARG 0）列两段，无特殊段', async () =
   assert.ok(lines.includes('这将耗费大量的金钱，幸好只看不买是免费的'));
   assert.ok(lines.includes('■=== 勇者 ===■'));
   assert.ok(lines.includes('■=== 精英 ===■'));
-  assert.ok(!lines.includes('■=== 特殊 ===■'), 'ARG 0 不列特殊段');
+  assert.ok(!lines.includes('■=== 特殊 ===■'), '模式 0 不列特殊段');
   assert.ok(lines.some((t) => t.includes(' [999] 返回')));
 });
 
-test('CHAR_CREATE：调试路径（ARG 1）多列特殊段，且 18/19 被排除', async () => {
+test('char_create：调试路径（模式 1）多列特殊段，且 18/19 被排除', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
   const { char_create } = load(fixture);
@@ -97,7 +97,7 @@ test('CHAR_CREATE：调试路径（ARG 1）多列特殊段，且 18/19 被排除
   assert.ok(!special.some((t) => t.includes('预设19')));
 });
 
-test('CHAR_CREATE：特殊段列 17-39（含上界 39、不含 40），显示编号 = 预设号 + 20', async () => {
+test('char_create：特殊段列 17-39（含上界 39、不含 40），显示编号 = 预设号 + 20', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS); // 含 39 与 40——40 在库但不在特殊段
   const { char_create } = load(fixture);
@@ -105,8 +105,8 @@ test('CHAR_CREATE：特殊段列 17-39（含上界 39、不含 40），显示编
 
   await char_create(1);
   // 数据实况：yml/Chara*.yml 在 17-40 这段里只有 17/20-24/31-35（18/19 排除），
-  // 39 与 40 是**合成**种——两个端点按源码边界钉住（改了会让本用例红），
-  // 在成品数据里则落不到（EXISTCSV 拦下）
+  // 39 与 40 是**合成**种——两个端点按实现边界钉住（改了会让本用例红），
+  // 在成品数据里则到不了（在库检查拦下）
   const rows = texts(fixture, true).filter((t) => t.includes('预设'));
   assert.ok(
     rows.some((t) => t.includes('预设39')),
@@ -114,9 +114,9 @@ test('CHAR_CREATE：特殊段列 17-39（含上界 39、不含 40），显示编
   );
   assert.ok(
     !rows.some((t) => t.includes('预设40')),
-    '40 越出 FOR 的右端（:49 `FOR L_I, 17, 40`），即使它在库',
+    '40 越出特殊段的列举范围（17 到 39），即使它在库',
   );
-  // `[{L_I+20,2}]`：17 号显示为 [37]
+  // 编号右对齐宽 2、再加 20：17 号显示为 [37]
   const row_17 = rows.find((t) => t.includes('预设17'));
   assert.ok(
     row_17.includes('[37] 预设17'),
@@ -124,7 +124,7 @@ test('CHAR_CREATE：特殊段列 17-39（含上界 39、不含 40），显示编
   );
 });
 
-test('CHAR_CREATE：勇者段每行 4 格、精英段每行 5 格（补位宽度 14）', async () => {
+test('char_create：勇者段每行 4 格、精英段每行 5 格（补位宽度 14）', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
   const { char_create } = load(fixture);
@@ -150,7 +150,7 @@ test('CHAR_CREATE：勇者段每行 4 格、精英段每行 5 格（补位宽度
   assert.ok(elite_row.includes('[21]'), '精英的显示编号从 21 起');
 });
 
-test('CHAR_CREATE：编号映射三分支 + 兜底臂（表驱动）', async () => {
+test('char_create：编号映射三分支 + 默认分支（表驱动）', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
   const { char_create } = load(fixture);
@@ -162,12 +162,12 @@ test('CHAR_CREATE：编号映射三分支 + 兜底臂（表驱动）', async () 
     [30, 210],
     [37, 17], // 37-60 → -20（下界）
     [51, 31],
-    [35, 35], // 兜底臂：不在任何区间 → 原样（预设 35 在库）
+    [35, 35], // 默认分支：不在任何区间 → 原样（预设 35 在库）
   ];
   for (const [input, expected] of table) {
-    fixture.reset_inputs(input, 999); // 第二项给 CHAR_CUSTOM 的 [999]
+    fixture.reset_inputs(input, 999); // 第二项给 char_custom 的 [999]
     if (expected <= 16) {
-      // 勇者走 CHAR_CUSTOM（模式 1 直接确定），给两轮 999
+      // 勇者走 char_custom（模式 1 直接确定），给两轮 999
       fixture.reset_inputs(input, 999, 999);
     }
     await char_create(1);
@@ -179,7 +179,7 @@ test('CHAR_CREATE：编号映射三分支 + 兜底臂（表驱动）', async () 
   }
 });
 
-test('CHAR_CREATE：预设不在库时重问（EXISTCSV 守卫）', async () => {
+test('char_create：预设不在库时重问（在库检查）', async () => {
   const fixture = setup();
   seed_presets(fixture, [1, 2]);
   const { char_create } = load(fixture);
@@ -194,13 +194,13 @@ test('CHAR_CREATE：预设不在库时重问（EXISTCSV 守卫）', async () => 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0], '没有加进任何角色');
 });
 
-test('CHAR_CREATE：特殊位（17-40）已在场则复用（FINDCHARA），不新建', async () => {
+test('char_create：特殊位（17-40）已在场则复用，不新建', async () => {
   const fixture = setup();
   seed_presets(fixture, [17, 35]);
   fixture.era.addCharacter(17); // 预设 17 已在场
   fixture.era.addCharacter(35); // 预设 35 已在场（在库数据在这条区间里的末端）
   const { char_create } = load(fixture);
-  // [输入, 映射出的预设号]：17 走兜底臂原样、55 走 CASE 37 TO 60 的 -20
+  // [输入, 映射出的预设号]：17 走默认分支原样、55 走 37-60 区间的 -20
   for (const [input, preset] of [
     [17, 17],
     [55, 35],
@@ -219,21 +219,21 @@ test('CHAR_CREATE：特殊位（17-40）已在场则复用（FINDCHARA），不�
   }
 });
 
-test('CHAR_CREATE：特殊位区间上界 40——已在场同样复用（INRANGE 的右端）', async () => {
+test('char_create：特殊位区间上界 40——已在场同样复用（区间的右端）', async () => {
   const fixture = setup();
-  // 40 号不在 yml/Chara*.yml 里（合成种），故本用例是**源码边界的保真锁**：
-  // 的 `INRANGE(L_I,17,40)` 收敛成 `<= 39` 会让 40 号改走 CHAR_APPEND。
-  // 在库数据里这条端不可达（EXISTCSV(40) 为假、先把输入退回重问）
+  // 40 号不在 yml/Chara*.yml 里（合成种），故本用例直接锁实现的区间右端：
+  // 区间判断改成 `<= 39` 会让 40 号改走 char_append。
+  // 在库数据里这条端不可达（40 号不在库，先把输入退回重问）
   seed_presets(fixture, [40]);
   fixture.era.addCharacter(40); // 预设 40 已在场
   const { char_create } = load(fixture);
-  fixture.set_inputs(60, 999); // 60 → L_I = 40（CASE 37 TO 60 的右端）
+  fixture.set_inputs(60, 999); // 60 → 预设号 40（37-60 区间的右端）
 
   await char_create(1);
   assert.deepEqual(
     fixture.calls.filter((c) => c.api === 'addCharacter').map((c) => c.args[0]),
-    [0, 40], // 0 = setup 的魔王；40 = 测试自己加的。CHAR_APPEND 没有再调
-    '已在场的 40 号不再 ADDCHARA',
+    [0, 40], // 0 = setup 的魔王；40 = 测试自己加的。char_append 没有再调
+    '已在场的 40 号不再调 addCharacter',
   );
   assert.ok(
     !texts(fixture, true).some((t) => t.includes('你召唤出了')),
@@ -241,14 +241,14 @@ test('CHAR_CREATE：特殊位区间上界 40——已在场同样复用（INRANG
   );
   assert.ok(
     texts(fixture, true).some((t) => t.includes('修改角色属性（预设40）')),
-    'CHAR_CUSTOM 收到的是 40 号（称呼由夹具的 ADDCHARA 写入）',
+    'char_custom 收到的是 40 号（称呼由夹具的 addCharacter 写入）',
   );
 });
 
-test('CHAR_CREATE：新建时播报召唤结果', async () => {
+test('char_create：新建时播报召唤结果', async () => {
   const fixture = setup();
-  // 用 17（特殊位）：勇者位在模式 1 会走 CHAR_MAKE 随机成型、名字被重掷，
-  // 播报的 %SAVESTR:A% 就不是预设名了
+  // 用 17（特殊位）：勇者位在模式 1 会走 char_make 随机成型、名字被重掷，
+  // 播报的随机名字就不是预设名了
   seed_presets(fixture, [17]);
   const { char_create } = load(fixture);
   fixture.set_inputs(17, 999);
@@ -260,13 +260,13 @@ test('CHAR_CREATE：新建时播报召唤结果', async () => {
   );
 });
 
-// —— @CHAR_APPEND（:103-269）——
+// —— char_append ——
 
-test('CHAR_APPEND：默认路径问性别与名字（模式 0）', async () => {
+test('char_append：默认路径问性别与名字（模式 0）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
-  fixture.set_inputs(1, '莉塔', 996); // 男性、名字、CHAR_CUSTOM 取消
+  fixture.set_inputs(1, '莉塔', 996); // 男性、名字、char_custom 取消
 
   const cid = await char_append(5, 0);
   assert.equal(cid, 5);
@@ -276,22 +276,22 @@ test('CHAR_APPEND：默认路径问性别与名字（模式 0）', async () => {
   assert.ok(texts(fixture, true).includes('新建人物今后被称呼为莉塔。'));
 });
 
-test('CHAR_APPEND：名字输入 0 走原作的随机名分支（#567：0 视为空输入）', async () => {
+test('char_append：名字输入 0 走随机名分支（#567：0 视为空输入）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
   // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 到手都是数值 0，
-  // 按 #567 的裁定视为空输入、走原作 :261-264 的随机名支
-  fixture.set_inputs(1, 0, 996); // 男性、空输入、CHAR_CUSTOM 取消
+  // 按 #567 的结论视为空输入、走随机名分支
+  fixture.set_inputs(1, 0, 996); // 男性、空输入、char_custom 取消
 
   await char_append(5, 0);
   const name = fixture.store.get('callname:5:-1');
   assert.notEqual(name, '0', '输入 0 不再落成字面量「0」');
-  assert.ok(name, '随机名已写入（真身由 CHARA_NAME_RANDOM_DEFINE 掷出）');
+  assert.ok(name, '随机名已写入（真身由 chara_name_random_define 掷出）');
   assert.equal(fixture.store.get('callname:5:-2'), name, '两条名字键同值');
   assert.ok(
     texts(fixture, true).includes(`新建人物今后被称呼为${name}。`),
-    ':263 的随机名播报',
+    '随机名播报',
   );
   assert.ok(
     texts(fixture, true).includes('（输入 0 随机生成名字）'),
@@ -299,7 +299,7 @@ test('CHAR_APPEND：名字输入 0 走原作的随机名分支（#567：0 视为
   );
 });
 
-test('CHAR_APPEND：性别选项保持纯文本（#572 复核：原文 PRINTFORMW 的 WAIT 夹在 INPUT 前）', async () => {
+test('char_append：性别选项保持纯文本（#572 复核：问句的等待键夹在输入前）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
@@ -315,12 +315,12 @@ test('CHAR_APPEND：性别选项保持纯文本（#572 复核：原文 PRINTFORM
   assert.equal(
     fixture.lines_history.filter((line) => line.type === 'button').length,
     0,
-    '本轮不打按钮：源 :240 是 PRINTFORMW（自带 WAIT），中间那次成功回传' +
+    '本轮不打按钮：性别一问自带等待键，中间那次成功回传' +
       '会把 valCount 推高、把按钮整批禁用',
   );
 });
 
-test('CHAR_APPEND：性别三档（1 男 / 3 扶她 / 2 女不写）', async () => {
+test('char_append：性别三档（1 男 / 3 扶她 / 2 女不写）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
@@ -343,7 +343,7 @@ test('CHAR_APPEND：性别三档（1 男 / 3 扶她 / 2 女不写）', async () 
   }
 });
 
-test('CHAR_APPEND：名字过长重问，空输入走随机名', async () => {
+test('char_append：名字过长重问，空输入走随机名', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
@@ -356,7 +356,7 @@ test('CHAR_APPEND：名字过长重问，空输入走随机名', async () => {
   assert.equal(fixture.store.get('callname:5:-1'), '短');
 });
 
-test('CHAR_APPEND：名字长度上界 16（16 收下、17 重问）', async () => {
+test('char_append：名字长度上界 16（16 收下、17 重问）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
@@ -379,11 +379,11 @@ test('CHAR_APPEND：名字长度上界 16（16 收下、17 重问）', async () 
   );
 });
 
-test('CHAR_APPEND：模式 1 不问性别与名字', async () => {
+test('char_append：模式 1 不问性别与名字', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
-  fixture.set_inputs(996); // 直接到 CHAR_CUSTOM 的取消
+  fixture.set_inputs(996); // 直接到 char_custom 的取消
 
   await char_append(5, 1);
   assert.deepEqual(
@@ -392,7 +392,7 @@ test('CHAR_APPEND：模式 1 不问性别与名字', async () => {
   );
 });
 
-test('CHAR_APPEND：末行写 CFLAG:1 = 0 并还原 TARGET、返回角色号', async () => {
+test('char_append：末行写 CFLAG:1 = 0 并还原 TARGET、返回角色号', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   fixture.store.set('flag:10005', 0); // TARGET = 魔王
@@ -405,7 +405,7 @@ test('CHAR_APPEND：末行写 CFLAG:1 = 0 并还原 TARGET、返回角色号', a
   assert.equal(fixture.store.get('flag:10005'), 0, 'TARGET 还原');
 });
 
-test('CHAR_APPEND：CASE 17 玛奥化的七项数值与身体生成', async () => {
+test('char_append：预设 17 玛奥化的七项数值与身体生成', async () => {
   const fixture = setup();
   seed_presets(fixture, [17]);
   const { char_append } = load(fixture);
@@ -422,7 +422,7 @@ test('CHAR_APPEND：CASE 17 玛奥化的七项数值与身体生成', async () =
   assert.equal(fixture.store.get('cflag:17:16'), -1);
 });
 
-test('CHAR_APPEND：CASE 24 莉莉——剑 40 与着装', async () => {
+test('char_append：预设 24 莉莉——剑 40 与着装', async () => {
   const fixture = setup();
   seed_presets(fixture, [24]);
   const { char_append } = load(fixture);
@@ -432,7 +432,7 @@ test('CHAR_APPEND：CASE 24 莉莉——剑 40 与着装', async () => {
   assert.equal(fixture.store.get('cflag:24:550'), 40);
 });
 
-test('CHAR_APPEND：四张扑克牌的初始装备与经验（表驱动）', async () => {
+test('char_append：四张扑克牌的初始装备与经验（表驱动）', async () => {
   const fixture = setup();
   seed_presets(fixture, [20, 21, 22, 23]);
   const { char_append } = load(fixture);
@@ -467,7 +467,7 @@ test('CHAR_APPEND：四张扑克牌的初始装备与经验（表驱动）', asy
   }
 });
 
-test('CHAR_APPEND：狂王性别决定是否补性交经验（FLAG:500 的 0/2）', async () => {
+test('char_append：狂王性别决定是否补性交经验（FLAG:500 的 0/2）', async () => {
   const fixture = setup();
   seed_presets(fixture, [20]);
   const { char_append } = load(fixture);
@@ -491,7 +491,7 @@ test('CHAR_APPEND：狂王性别决定是否补性交经验（FLAG:500 的 0/2�
   assert.equal(fixture.store.get('cflag:20:15'), 105, '初体验对象是狂王');
 });
 
-test('CHAR_APPEND：扑克牌的等级调整与数值封顶', async () => {
+test('char_append：扑克牌的等级调整与数值封顶', async () => {
   const fixture = setup();
   seed_presets(fixture, [22]);
   const { char_append } = load(fixture);
@@ -503,7 +503,7 @@ test('CHAR_APPEND：扑克牌的等级调整与数值封顶', async () => {
 
   await char_append(22, 1);
   assert.equal(fixture.store.get('cflag:22:9'), 4, '等级 +3');
-  // 体力上限会被 CHAR_BODY_GENERATE_WAPPED 重设（身体生成），故钉「BASE 等于
+  // 体力上限会被 char_body_generate_wapped 重设（身体生成），故钉「BASE 等于
   // 当场读到的 MAXBASE」；气力上限没有别的写点，钉字面量
   assert.equal(
     fixture.store.get('base:22:0'),
@@ -517,7 +517,7 @@ test('CHAR_APPEND：扑克牌的等级调整与数值封顶', async () => {
   );
 });
 
-test('CHAR_APPEND：FLAG:60 为 0 时不升级', async () => {
+test('char_append：FLAG:60 为 0 时不升级', async () => {
   const fixture = setup();
   seed_presets(fixture, [22]);
   const { char_append } = load(fixture);
@@ -528,7 +528,7 @@ test('CHAR_APPEND：FLAG:60 为 0 时不升级', async () => {
   assert.equal(fixture.store.get('cflag:22:9'), 5);
 });
 
-test('CHAR_APPEND：CASE 34 葵希罗——FLAG:224 与着装', async () => {
+test('char_append：预设 34 葵希罗——FLAG:224 与着装', async () => {
   const fixture = setup();
   seed_presets(fixture, [34]);
   const { char_append } = load(fixture);
@@ -538,44 +538,44 @@ test('CHAR_APPEND：CASE 34 葵希罗——FLAG:224 与着装', async () => {
   assert.equal(fixture.store.get('flag:224'), 1);
 });
 
-test('CHAR_APPEND：CASE 31-33 与 35 走 CHAR_INIT（区间两端，判据是能力者掷骰）', async () => {
+test('char_append：预设 31-33 与 35 走 char_init（区间两端，判断条件是能力者掷骰）', async () => {
   const fixture = setup();
   seed_presets(fixture, [31, 32, 33, 35]);
   const { char_append } = load(fixture);
   for (const preset of [31, 32, 33, 35]) {
     fixture.reset_inputs(996);
-    // CHAR_INIT 的五连掷（RAND:40）全中时五系能力者素质被写上——它跑过的证据。
-    // 不拿称呼当判据：ADDCHARA 自己就会写 callname:id:-1/-2（夹具 addCharacter
-    // 镜像引擎的同一动作），那种断言在 CHAR_INIT 缺席时照样绿
+    // char_init 的五连掷（RAND:40）全中时五系能力者素质被写上——它跑过的证据。
+    // 不拿称呼当判断条件：addCharacter 自己就会写 callname:id:-1/-2（夹具 addCharacter
+    // 镜像引擎的同一动作），那种断言在 char_init 缺席时照样绿
     await char_append(preset, 1, () => 0);
     assert.deepEqual(
       [275, 276, 277, 278, 279].map((t) =>
         fixture.store.get(`talent:${preset}:${t}`),
       ),
       [1, 1, 1, 1, 1],
-      `预设 ${preset} 走了 CHAR_INIT`,
+      `预设 ${preset} 走了 char_init`,
     );
   }
 });
 
-test('CHAR_APPEND：勇者（1-16）在模式 1 走 CHAR_MAKE 随机成型（区间两端）', async () => {
+test('char_append：勇者（1-16）在模式 1 走 char_make 随机成型（区间两端）', async () => {
   const fixture = setup();
   const { char_append } = load(fixture);
   for (const preset of [1, 16]) {
     seed_presets(fixture, [preset]);
     fixture.reset_inputs(996);
     await char_append(preset, 1);
-    // 判据用 CHAR_MAKE 必写的 CFLAG:120（卖春积极性，chara-make.js:130）。
-    // 不用 CFLAG:1：本函数末尾的 `CFLAG:A:1 = 0` 也写它，证不了 CHAR_MAKE 跑过
+    // 判断条件用 char_make 必写的 CFLAG:120（卖春积极性，见 chara-make.js）。
+    // 不用 CFLAG:1：本函数末尾的 `CFLAG:A:1 = 0` 也写它，证不了 char_make 跑过
     assert.equal(
       fixture.store.get(`cflag:${preset}:120`),
       1,
-      `预设 ${preset} 走了 CHAR_MAKE`,
+      `预设 ${preset} 走了 char_make`,
     );
   }
 });
 
-test('CHAR_APPEND：精英（201-210）在模式 1 同样走 CHAR_MAKE（区间两端）', async () => {
+test('char_append：精英（201-210）在模式 1 同样走 char_make（区间两端）', async () => {
   const fixture = setup();
   const { char_append } = load(fixture);
   for (const preset of [201, 210]) {
@@ -585,7 +585,7 @@ test('CHAR_APPEND：精英（201-210）在模式 1 同样走 CHAR_MAKE（区间�
     assert.equal(
       fixture.store.get(`cflag:${preset}:120`),
       1,
-      `预设 ${preset} 走了 CHAR_MAKE`,
+      `预设 ${preset} 走了 char_make`,
     );
   }
 });

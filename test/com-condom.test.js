@@ -3,18 +3,18 @@
  * ere/system/train/com-condom.js 的行为测试（issue #216 J6）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @CONDOM_SETTINGS：TARGET < 1 直通、四键画面与 CFLAG:61 写入、
+ *   - condom_settings：TARGET < 1 直通、四键画面与 CFLAG:61 写入、
  *     「现在：」行的标签显示（LOCALS 缺陷的修复）；
- *   - @CONFIRM_CONDOM：五道直通闸（设定不用 / 兽奸 / 死斗场 / 无男性器 /
- *     已戴）、每次问的四键（戴/不戴/今后直接/今后都戴，含 RESTART 语义）、
+ *   - confirm_condom：五道直通闸（设定不用 / 兽奸 / 死斗场 / 无男性器 /
+ *     已戴）、每次问的四键（戴/不戴/今后直接/今后都戴，选今后项改设后重走）、
  *     自动用的有套/无套 × 技巧档、主人位 35 走 event 门面、助手位 36 直写；
- *   - @CONFIRM_CONDOM2：条件合取与两键（用 → tequip:37 + 消耗、直接 →
+ *   - confirm_condom2：条件合取与两键（用 → tequip:37 + 消耗、直接 →
  *     MASTER 的 CFLAG:61 = 2）。
  *
  * 契约（调用方：[103] 分发 = page-usercom.js；性交系指令入口闸 =
- * COMF20 等 16 个文件，J11/J19 落地）：condom_settings() →
+ * 16 个性交系指令，J11/J19 实现）：condom_settings() →
  * Promise<number>；confirm_condom() → Promise<number>（1 继续 / 0 中止，
- * 调用方 SIF !RESULT RETURN 0）；confirm_condom2() → Promise<number>。
+ * 调用方收到 0 即中止）；confirm_condom2() → Promise<number>。
  */
 
 const assert = require('node:assert/strict');
@@ -52,10 +52,10 @@ function rendered_buttons(fixture) {
     .map((button) => button.rendered);
 }
 
-// —— #612：按钮正文照写原作的「- 」分隔符 ——
+// —— #612：按钮正文保留「- 」分隔符 ——
 
-test('#612 COM_CONDOM：四组确认菜单的按钮正文都带「- 」', async () => {
-  // 每次确认且有套：主人位 [0]戴 [1]不戴 [2]今后都直接 [3]今后都戴（:67-70）
+test('#612 com-condom：四组确认菜单的按钮正文都带「- 」', async () => {
+  // 每次确认且有套：主人位 [0]戴 [1]不戴 [2]今后都直接 [3]今后都戴
   const master = seed_world();
   arm_player(master.fixture);
   master.fixture.store.set('item:24', 1);
@@ -69,10 +69,10 @@ test('#612 COM_CONDOM：四组确认菜单的按钮正文都带「- 」', async 
       '[2] - 今后都直接来，来个痛快',
       '[3] - 今后都戴套',
     ],
-    '主人位四键带「- 」（COMF_CONDOM.ERB:70-78）',
+    '主人位四键带「- 」',
   );
 
-  // 助手位：同一位置的「使用/不使用」两个标签（:72-73）
+  // 助手位：同一位置的「使用/不使用」两个标签
   const assi = seed_world();
   arm_player(assi.fixture);
   assi.fixture.store.set('item:24', 1);
@@ -86,7 +86,7 @@ test('#612 COM_CONDOM：四组确认菜单的按钮正文都带「- 」', async 
     '[3] - 今后都戴套',
   ]);
 
-  // 设定 1 + 无套 + 主人技巧 Lv5：三键（:121-123）
+  // 设定 1 + 无套 + 主人技巧 Lv5：三键
   const second = seed_world();
   arm_player(second.fixture);
   second.fixture.store.set('cflag:31:61', 1);
@@ -96,10 +96,10 @@ test('#612 COM_CONDOM：四组确认菜单的按钮正文都带「- 」', async 
   assert.deepEqual(
     rendered_buttons(second.fixture),
     ['[0] - 好的(下次也继续确认)', '[1] - 好的(今后都直接来)', '[2] - 不要'],
-    '无套三键带「- 」（COMF_CONDOM.ERB:132-134）',
+    '无套三键带「- 」',
   );
 
-  // CONFIRM2 的有套两键（:169-170）
+  // confirm_condom2 的有套两键
   const bare = seed_world();
   bare.fixture.store.set('talent:31:122', 1); // 对象侧的男性器
   bare.fixture.store.set('item:24', 2);
@@ -111,7 +111,7 @@ test('#612 COM_CONDOM：四组确认菜单的按钮正文都带「- 」', async 
   ]);
 });
 
-// —— @CONDOM_SETTINGS ——
+// —— condom_settings ——
 
 test('TARGET < 1（魔王自己是对象）→ RETURN 1，不开画面', async () => {
   const { fixture, era_flag, condom } = seed_world();
@@ -174,7 +174,7 @@ test('[0]/[1]/[2] 各写 CFLAG:61 并回显确认行', async () => {
   }
 });
 
-// —— @CONFIRM_CONDOM：直通闸 ——
+// —— confirm_condom：直通闸 ——
 
 test('设定 2（不用）→ 直接放行', async () => {
   const { fixture, condom } = seed_world();
@@ -214,7 +214,7 @@ test('已戴着（主人位 35 / 助手位 36）→ 放行且不重复消耗', a
   }
 });
 
-// —— @CONFIRM_CONDOM：每次问 ——
+// —— confirm_condom：每次问 ——
 
 test('每次问 + 有套 + [0] 戴：消耗一枚、主人位 35（event 门面）、放行', async () => {
   const { fixture, condom } = seed_world();
@@ -237,7 +237,7 @@ test('每次问 + 有套 + [1] 不戴：不消耗、放行', async () => {
   assert.equal(fixture.store.get('tequip:31:35'), undefined);
 });
 
-test('每次问 + 无套：两段 IF 均不进（原作静默 RETURN 1——不问也不提示）', async () => {
+test('每次问 + 无套：两段 IF 均不进（静默返回 1——不问也不提示）', async () => {
   const { fixture, condom } = seed_world();
   arm_player(fixture);
   fixture.set_inputs(); // 不等待输入
@@ -245,7 +245,7 @@ test('每次问 + 无套：两段 IF 均不进（原作静默 RETURN 1——不�
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('每次问 + 有套 + [2] 今后都直接：RESTART 后按设定 2 放行', async () => {
+test('每次问 + 有套 + [2] 今后都直接：改设后重走，按设定 2 放行', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('item:24', 3);
   arm_player(fixture);
@@ -256,7 +256,7 @@ test('每次问 + 有套 + [2] 今后都直接：RESTART 后按设定 2 放行',
   assert.equal(fixture.store.get('item:24'), 3, '不消耗');
 });
 
-test('每次问 + 有套 + [3] 今后都戴：RESTART 后走自动用（消耗并戴上）', async () => {
+test('每次问 + 有套 + [3] 今后都戴：改设后重走自动用（消耗并戴上）', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('item:24', 3);
   arm_player(fixture);
@@ -279,7 +279,7 @@ test('助手调教（assiplay）+ 每次问：问句与戴上位切换（36 直�
   assert.equal(fixture.store.get('tequip:31:36'), 1);
 });
 
-// —— @CONFIRM_CONDOM：自动用 ——
+// —— confirm_condom：自动用 ——
 
 test('设定 1 + 有套：直接消耗并戴上（无输入）', async () => {
   const { fixture, condom } = seed_world();
@@ -331,7 +331,7 @@ test('设定 1 + 无套 + 主人技巧 Lv5 + [1]：今后都直接（CFLAG:61 = 
   assert.ok(fixture.text_lines().includes('今后对温妮不再确认。'));
 });
 
-test('设定 1 + 无套 + 技巧 < Lv5：直接插入（笨魔王条款，:115 原注）', async () => {
+test('设定 1 + 无套 + 技巧 < Lv5：直接插入（笨魔王条款）', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('cflag:31:61', 1);
   fixture.store.set('abl:0:12', 4);
@@ -341,7 +341,7 @@ test('设定 1 + 无套 + 技巧 < Lv5：直接插入（笨魔王条款，:115 �
   assert.ok(fixture.text_lines().includes('因为没有安全套所以直接插入。'));
 });
 
-// —— @CONFIRM_CONDOM2 ——
+// —— confirm_condom2 ——
 
 test('CONFIRM2：对象有男性器 + 未戴 + 有套 → 两键；[0] 用（37 + 消耗）', async () => {
   const { fixture, condom } = seed_world();

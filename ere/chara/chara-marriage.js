@@ -2,86 +2,85 @@
  * @file 婚姻：角色信息页的「结婚」与「恋人设定」入口、婚礼典礼与离婚
  * （issue #393，N9）。
  *
- * 调用点：原作 CHARA_INFO ver1.0.1.ERB:862（按钮）与 :1057（CASE 4 动作），
- * 已接在 ere/page/page-chara-info.js。
+ * 调用点：ere/page/page-chara-info.js（「结婚」按钮与按下后的动作）。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 移植说明（有意偏离既有行为，均注明依据）：
  *
  *   - **按钮正文不写 `[{NUM}]` 前缀**（chara-name-edit.js 同款处置）：引擎
  *     `printButton` 自动拼 `[快捷键] `，手写会渲染成 `[0] [0] 结婚`。按钮
  *     正文尾部的全角空格保留（渲染层会把连续空白折叠成一个半角空格）。
  *
- *   - **「不可选」项（原作 `[666]` 灰字）落成 `disabled: true` 的灰按钮**：
+ *   - **「不可选」项（`[666]` 灰字）落成 `disabled: true` 的灰按钮**：
  *     引擎的禁用按钮仍然渲染出 `[666] 正文`（app.asar 的 getButtonObject
- *     对 `config.disabled` 只跳过入合法输入集、不改渲染公式），与原文的
- *     灰字逐字同形；而它的快捷键不会被 input() 回传——正是原作 `[666]`
- *     的语义（输入 666 走 `ITEM:RESULT <= 0` 一路回重问）。灰值取
- *     `SETCOLOR 100,100,80` 的十六进制等价 `#646464`（chara-name-edit.js
- *     的 `0x646464` 同款；原作两个色号在本作里都是「不可用」的灰）。
+ *     对 `config.disabled` 只跳过入合法输入集、不改渲染公式），与灰字文本
+ *     逐字同形；而它的快捷键不会被 input() 回传——正是 `[666]` 编号
+ *     的语义（输入 666 会按未持有该物品处理，一路回重问）。灰值取
+ *     `#646464`（chara-name-edit.js
+ *     的 `0x646464` 同款；既有写法的两个灰值在本作里都指「不可用」的灰，
+ *     统一取此值）。
  *
  *   - **`[900]/[901]/[902]/[903]/[904]/[998]/[999]` 与怪物按钮同排一段**：
- *     原作靠 PRINT/PRINTL 排版、玩家敲号；ere 侧一律落真按钮（本项目通例），
- *     编号即 accelerator，正文不带前缀。
+ *     一律落真按钮（本项目通例），编号即 accelerator，正文不带前缀。
  *
- *   - **`LIFE_LIST(NO_PAGE, 2)`（:202）用 #397 的真身**
- *     （ere/page/page-life-list.js 的 `life_list`）：MODE 2 只画列表、不画
- *     表头，与原作 :28-29 的空分支一致；编号按钮的 accelerator 就是角色
- *     ID（#21 的 ID 世界改写），因此 `RESULT` 直接与角色 ID 比较。该页同屏
+ *   - **`life_list(page, 2)` 用 #397 的真身**
+ *     （ere/page/page-life-list.js）：MODE 2 只画列表、不画表头；编号按钮的
+ *     accelerator 就是角色
+ *     ID（#21 的 ID 世界改写），因此输入值直接与角色 ID 比较。该页同屏
  *     还有固定编号 [999]-[1001]（`slave_sub_menu`），后代 ID 因此必须落在
  *     固定编号之上（chara-pregnancy.js 的 `FIRST_CHILD_ID` = 100000，issue
- *     #560 的裁定；静态守见 test/child-id-collision.test.js）。
+ *     #560 的决定；静态守见 test/child-id-collision.test.js）。
  *
- *   - **`CHARA_ID_OUTPUT`（:314/:319）用 #332 的真身**
- *     （ere/chara/chara-stats.js 的 `chara_id_output`）。
+ *   - **`chara_id_output` 用 #332 的真身**
+ *     （ere/chara/chara-stats.js）。
  *
- *   - **「无效输入重问」的几支（:222-256）在 ere 侧结构性不可达**：引擎
+ *   - **「无效输入重问」的几支在 ere 侧结构性不可达**：引擎
  *     `input()` 只回传本轮已打印按钮的快捷键（`useRule` 默认开，#130 镜像
  *     进夹具），未持有怪物的编号、越界编号、`[666]` 这些值都进不了游戏
  *     逻辑。这几支保留为防御性 `continue`，不构造只有夹具能触发
  *     的用例。
  *
- *   - **`NO:ARG + 1` 按 ID 世界写作 `cid + 1`**（:423/:427）：#21 起角色 ID
- *     即原作 NO（chara-ex.js 头注同款换算），初吻对象的「番号＋1」编码
- *     因此是 `cid + 1`。
+ *   - **`NO:ARG + 1` 按 ID 世界写作 `arg + 1`**：#21 起角色 ID
+ *     即角色编号（chara-ex.js 头注同款换算），初吻对象的「编号＋1」编码
+ *     因此是 `arg + 1`。
  *
  *   - **行尾的对齐空格串不保留**：每项独占一行按钮，对齐交给排版层与
  *     网格宽度；行尾空格串只会被折成一个空格（按钮正文的 `\s+` 折叠）。
  *     标签内部的单个全角空格（「返 回」）是正文，保留。
  *
- *   - **`SETCOLOR 100,100,80` 的灰值取 `#646464`**：与 chara-name-edit.js
+ *   - **`100,100,80` 的灰值取 `#646464`**：与 chara-name-edit.js
  *     的 `0x646464` 是同一个灰（文件头「不可选」条已说明为什么两者在本作
  *     里等价——都是「不可用」的灰，引擎只认十六进制）。
  *
- *   - **两处 `CFLAG:ARG:601 == 5` 的分支（`:412-413` 的触手初体验码、
- *     `:432-433` 的触手初吻码）在 ID 世界里不可达**：`CFLAG:601` 婚礼后
- *     只会是 900/901/902、怪物物品号（≥100）或 `CHARA_ID_OUTPUT+9`（≥9），
- *     取不到 5。两支判据保留（`SPOUSE_TENTACLE` 常量两处共用），不构造只有
+ *   - **两处 `CFLAG:601 == 5` 的分支（触手初体验码、触手初吻码）在
+ *     ID 世界里不可达**：`CFLAG:601` 婚礼后
+ *     只会是 900/901/902、怪物物品号（≥100）或 `chara_id_output()+9`（≥9），
+ *     取不到 5。两支条件保留（`SPOUSE_TENTACLE` 常量两处共用），不构造只有
  *     夹具能触发的用例。
  *
- *   - **`CFLAG:ARG:601 > 0` 的「已婚」守卫（:261-263）在清旧账段
- *     （:266-273）之前**：所以能走到清旧账的唯一形态是「`CFLAG:609` 有值而
- *     `CFLAG:601` == 0」。而此时 `SEARCH_FAMILY` 以「源侧压缩数据 0」的
+ *   - **`CFLAG:601 > 0` 的「已婚」检查在清旧账段之前**：所以能走到
+ *     清旧账的唯一情形是「`CFLAG:609` 有值而 `CFLAG:601` == 0」。而此时
+ *     `search_family` 以「源侧压缩数据 0」的
  *     档案去找，两条出口都真实存在（两侧都有用例）：找不到人时返回 -1，
- *     于是 `DIVORCE(-1)` 被调用（上一段那个例外的实际来源）；若家族册上
+ *     于是 `divorce(-1)` 被调用（上一段那个例外的实际来源）；若家族册上
  *     恰有角色与该零档案匹配（名字槽等于发起方的 `CFLAG:6`、前身 0、
- *     性格 160、家族构成 0），则 RESULT 是对方，`DIVORCE(对方)` 先把那一侧
- *     的登记解掉。这不是移植引入的，是原作两条判据的先后如此。
+ *     性格 160、家族构成 0），则返回对方，`divorce(对方)` 先把那一侧
+ *     的登记解掉。这不是移植引入的，是既有两条判断条件的先后如此。
  *
- *   - **`CURRENT_SPOUSE_TEXT` 里原作的 :148-149 / :150-151 两支恒假**：
- *     两支都以 `CFLAG:ARG:601 == 0` 开头，而 :133-139 已经把 `== 0` 整个
- *     分档走完（`IF TALENT:315 == 21 || TALENT:157` 两出口）——ELSE 段里再
- *     判一次 `== 0` 永远不成立。1:1 精简为可达分支，不逐字保留死支
- *     （page-chara-info.js 的 `MASTER` 恒假两支同款处置），移除后该函数
- *     只剩「`spouse % 10 == 9` 走家族册、其余查 ITEMNAME」两出口。
+ *   - **`current_spouse_text` 里的两支恒假分支已删**：
+ *     两支都以 `CFLAG:601 == 0` 开头，而函数前段已经把 `== 0` 整个
+ *     分档走完（`talent:315 == 21 || talent:157` 两出口）——后段里再
+ *     判一次 `== 0` 永远不成立。精简为可达分支，不保留死支
+ *     （page-chara-info.js 的恒假两支同款处置），移除后该函数
+ *     只剩「`spouse % 10 == 9` 走家族册、其余查 itemname」两出口。
  *
  *   - **跨域写一律经属主域门面**（逐条登记在案）：婚姻状况
  *     CFLAG:601/602/606/609 走 `chara().chara.结婚对象/
  *     结婚爱情` 与 `chara().dungeon.恋人`（读用裸寻址），状态 CFLAG:1 走
  *     `chara().invasion.状态`，处女丧失对象 CFLAG:15 与初吻对象 CFLAG:16 /
- *     名字 CSTR:4 走 `chara().train.*`（train 域）。**一处例外**：`DIVORCE`
- *     的 `CFLAG:RESULT:601 = 0` 在 SEARCH_FAMILY 回 -1 时会写到
+ *     名字 CSTR:4 走 `chara().train.*`（train 域）。**一处例外**：`divorce`
+ *     的 `cflag:${found}:601 = 0` 在 search_family 回 -1 时会写到
  *     `cflag:-1:601`——家族册查无此人时解绑落到这里：-1 不是任何角色，
- *     写入无观测影响，不加守卫。
+ *     写入无观测影响，不加防护判断。
  */
 
 const era = require('#/era-electron');
@@ -93,9 +92,9 @@ const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { monsterplay_list } = require('#/dungeon/monster-play');
 const { chara } = require('#/facade/chara');
 
-/** 判定返回值：不可结婚（状态不对）（:45-47） */
+/** 判定返回值：不可结婚（状态不对） */
 const MARRIAGE_BLOCKED = 1;
-/** 判定返回值：侵攻中的勇者（走恋人线）（:42-43） */
+/** 判定返回值：侵攻中的勇者（走恋人线） */
 const MARRIAGE_HERO = 2;
 
 /** 婚姻状况的三档哨兵（CFLAG:601 的值） */
@@ -103,32 +102,32 @@ const SPOUSE_DOG = 900; // 野狗
 const SPOUSE_YOU = 901; // 你（魔王）
 const SPOUSE_LOVER = 902; // 恋人
 
-/** 恋人及其解码哨兵（CFLAG:606 == 200 时 SEARCH_FAMILY 的 "LOVE" 找得到实人） */
+/** 恋人及其解码哨兵（CFLAG:606 == 200 时 search_family 的 "LOVE" 找得到实人） */
 const LOVER_IS_REAL_PERSON = 200;
 
-/** 奴隶列表的一页人数（:218 `(NO_PAGE+1) * 20 <= CHARANUM`，与 LIFE_LIST 同值） */
+/** 奴隶列表的一页人数（翻页按已加入角色数判断，与 life_list 同值） */
 const SLAVE_PAGE_SIZE = 20;
 
-/** 结婚前的离婚判定用的配偶名槽（:267 `CFLAG:ARG:609 > 0`） */
+/** 结婚前的离婚判定用的配偶名槽（CFLAG:609 > 0） */
 const SPOUSE_NAME_SLOT = 609;
 
-/** 处女丧失的四种记录码（:408-416，按配偶种类分档） */
+/** 处女丧失的四种记录码（按配偶种类分档） */
 const FIRST_SEX_YOU = 1;
 const FIRST_SEX_MONSTER = 104;
 const FIRST_SEX_DOG = 103;
 const FIRST_SEX_TENTACLE = 102;
-/** `CFLAG:ARG:601 == 5` 时记触手（:412-413） */
+/** `CFLAG:601 == 5` 时记触手 */
 const SPOUSE_TENTACLE = 5;
 
-/** 初吻的四种记录码（:421-439） */
+/** 初吻的四种记录码 */
 const FIRST_KISS_YOU = 1;
 const FIRST_KISS_DOG = 998;
 const FIRST_KISS_TENTACLE = 999;
 const FIRST_KISS_OTHER = 994;
 
 /**
- * 家族构成码十万位段的「婚姻状态」两位（:337-339 / :892-899 的
- * `TALENT:n:320 % 100000 / 10000`，整数除法）——三处判据共用这一个读法。
+ * 家族构成码十万位段的「婚姻状态」两位（`talent:320 % 100000 / 10000`，
+ * 整数除法）——三处判断条件共用这一个读法。
  * @param {number} cid 角色号
  * @returns {number} 0 未婚 / 1 已婚 / 2 离婚 / 3 重婚 / 4 再婚
  */
@@ -138,70 +137,70 @@ function marriage_state(cid) {
   );
 }
 
-/** 婚姻状态的进位/回落（:341/:344 的 `+= 20000`、:897/:900 的 `-= 20000`） */
+/** 婚姻状态的进位/回落（`+= 20000` / `-= 20000`） */
 function shift_marriage_state(cid, delta) {
   era.set(`talent:${cid}:320`, (era.get(`talent:${cid}:320`) || 0) + delta);
 }
 
-/** 婚姻状况的十进制编码位（:337-345 家族构成的高位） */
+/** 婚姻状况的十进制编码位（家族构成的高位） */
 const MARRIAGE_STATE_MASK = 100000;
 const MARRIAGE_STATE_DIVISOR = 10000;
 /** 已婚 / 离婚 在编码里的两位（重婚 +20000、再婚 +20000） */
 const MARRIAGE_STATE_MARRIED = 1;
 const MARRIAGE_STATE_DIVORCED = 2;
-/** 重婚（位 3）：DIVORCE 后回落一档（:895-897） */
+/** 重婚（位 3）：divorce 后回落一档 */
 const MARRIAGE_STATE_BIGAMY = 3;
-/** 再婚（位 4）：同上（:898-900） */
+/** 再婚（位 4）：同上 */
 const MARRIAGE_STATE_REMARRIED = 4;
 const REMARRIAGE_DELTA = 20000;
 
-/** 处女丧失的四档判据里的「特殊服装 79」（:405） */
+/** 处女丧失的四档判断条件里的「特殊服装 79」 */
 const CLOTH_SEX_MARK = 79;
 /** 处女丧失的续发判定：CFLAG:42 == 79 时跳过（同上） */
 const VIRGIN_B_THRESHOLD = 4;
 
-/** 记录「在故乡等待的伴侣」的素质（:135） */
+/** 记录「在故乡等待的伴侣」的素质 */
 const T_HOMETOWN_WIFE = 157;
-/** 异种婚姻素质（:444-448） */
+/** 异种婚姻素质 */
 const T_CROSS_MARRIAGE = 159;
 
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** `%SHE(ARG)%` 的等价代词：男人 → 他，其余 → 她 */
+/** 代词：男人 → 他，其余 → 她 */
 function she(cid) {
   return talent(cid, 122) ? '他' : '她';
 }
 
-/** 已加入角色 ID 表（#21 的 ID 世界；原作的 `RESULT < CHARANUM` 用它改写） */
+/** 已加入角色 ID 表（#21 的 ID 世界；编号是否在册的判断用它，不拿总数比大小） */
 function added_ids() {
   return era.getAddedCharacters();
 }
 
-/** 角色显示名（%SAVESTR:x% 的等价物） */
+/** 角色显示名（callname 的 -1 列） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 物品名（%ITEMNAME:n% 的等价物） */
+/** 物品名（`itemname:n`） */
 function itemname(id) {
   return era.get(`itemname:${id}`) ?? '';
 }
 
-/** %TALENTNAME:n% 的等价物（:447） */
+/** 素质名（`talentname:n`） */
 function talentname(id) {
   return era.get(`talentname:${id}`) ?? '';
 }
 
-/** 角色素质读数（TALENT:x:n） */
+/** 角色素质读数（`talent:${cid}:${idx}`） */
 function talent(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
 }
 
 /**
- * `SETCOLOR 100,100,80` / `SETCOLOR 0x646464` 的等价灰值——本作两处「不可用」
- * 灰色在 ere 侧统一用同一个十六进制值（chara-name-edit.js 先例）。
+ * 「不可用」灰的统一色值 `#646464`——既有写法的两处灰色
+ * 在 ere 侧统一用同一个十六进制值（chara-name-edit.js 先例）。
  */
 const COLOR_DISABLED = '#646464';
 
@@ -215,7 +214,7 @@ function print_choice(content, accelerator) {
 }
 
 /**
- * 渲染一个「不可选」项：灰按钮 + `disabled`，编号恒取原作的 666
+ * 渲染一个「不可选」项：灰按钮 + `disabled`，编号恒取 666
  * （文件头「不可选」条）。
  * @param {string} content 按钮正文
  */
@@ -227,9 +226,9 @@ function print_disabled(content) {
 }
 
 /**
- * @CHECK_ABLE_TO_MARRIAGE（:35-49，#FUNCTION 式中函数）：角色能否结婚。
+ * check_able_to_marriage：角色能否结婚。
  *
- * @param {number} arg 角色号（原作 ARG）
+ * @param {number} arg 角色号
  * @returns {0|1|2} 0 = 可以；1 = 状态不对；2 = 侵攻中的勇者（走恋人线）
  */
 function check_able_to_marriage(arg) {
@@ -240,10 +239,10 @@ function check_able_to_marriage(arg) {
 }
 
 /**
- * @SHOW_BUTTON_MARRIAGE（:14-32）：渲染「结婚」/「恋人设定」按钮。
+ * show_button_marriage：渲染「结婚」/「恋人设定」按钮。
  *
- * @param {number} num 按钮的快捷键编号（原作 NUM）
- * @param {number} arg 目标角色号（原作 ARG）
+ * @param {number} num 按钮的快捷键编号
+ * @param {number} arg 目标角色号
  */
 function show_button_marriage(num, arg) {
   const able = check_able_to_marriage(arg); // LOCAL
@@ -256,11 +255,11 @@ function show_button_marriage(num, arg) {
   print_choice('结婚\u3000', num);
 }
 
-// —— 十三支种族典礼（:508-867）：同形的「开场 ＋ 三档反应」 ——
+// —— 十三支种族典礼：同形的「开场 ＋ 三档反应」 ——
 
 /**
  * 一档反应行的公共骨架：开场白（首行 ＋ 分隔 ＋ 典礼正文）之外，末端按
- * 素质分三档（`TALENT:76` 淫乱 / `TALENT:85` 爱慕 / 其他）。
+ * 素质分三档（`talent:arg:76` 淫乱 / `talent:arg:85` 爱慕 / 其他）。
  * @param {number} arg 角色号
  * @param {(name: string) => string} lust 淫乱档的整行正文
  * @param {(name: string) => string} love 爱慕档的整行正文
@@ -277,16 +276,16 @@ function print_reaction(arg, lust, love, other) {
   }
 }
 
-/** 二十四行典礼共用的「眼泛泪光」收尾（:477/:530/:560…） */
+/** 二十四行典礼共用的「眼泛泪光」收尾 */
 const TREMBLE = (name) => `${name}眼泛泪光，在屈辱和绝望中颤抖着。`;
-/** 共用的爱慕档收尾（:527/:557…） */
+/** 共用的爱慕档收尾 */
 const CALM = (name) => `${name}静静地处理着结婚事宜。`;
 
 /**
- * @ORC_MARRIAGE（:508-535）
+ * orc_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function orc_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -311,10 +310,10 @@ async function orc_marriage(arg, groom_num) {
 }
 
 /**
- * @SLIME_MARRIAGE（:538-565）
+ * slime_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function slime_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -339,10 +338,10 @@ async function slime_marriage(arg, groom_num) {
 }
 
 /**
- * @INSECT_MARRIAGE（:568-595）
+ * insect_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function insect_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -366,10 +365,10 @@ async function insect_marriage(arg, groom_num) {
 }
 
 /**
- * @IVY_MARRIAGE（:598-622）
+ * ivy_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function ivy_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -389,11 +388,11 @@ async function ivy_marriage(arg, groom_num) {
 }
 
 /**
- * @SYOKUSYU_MARRIAGE（:625-652）：首行写的是字面「触手」（原作如此，
- * 不用 %ITEMNAME%）。
+ * syokusyu_marriage：首行写的是字面「触手」（既有写法，
+ * 不走 itemname 查表）。
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function syokusyu_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -417,10 +416,10 @@ async function syokusyu_marriage(arg, groom_num) {
 }
 
 /**
- * @FAILY_MARRIAGE（:655-682）
+ * faily_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function faily_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -444,10 +443,10 @@ async function faily_marriage(arg, groom_num) {
 }
 
 /**
- * @GIANT_MARRIAGE（:685-713）
+ * giant_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function giant_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -474,8 +473,8 @@ async function giant_marriage(arg, groom_num) {
 }
 
 /**
- * `:720-727` / `:755-762`：男人与女人两支典礼各自的前缀（TALENT:141
- * 中年 / 143 少年；TALENT:140 熟女 / 142 幼女）。
+ * man_marriage 与 girl_marriage 各自的前缀（talent:141
+ * 中年 / 143 少年；talent:140 熟女 / 142 幼女）。
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
  * @param {[number, string][]} prefixes [素质下标, 前缀] 的两档
@@ -490,10 +489,10 @@ function groom_with_prefix(arg, groom_num, prefixes) {
 }
 
 /**
- * @MAN_MARRIAGE（:716-748）
+ * man_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function man_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -518,10 +517,10 @@ async function man_marriage(arg, groom_num) {
 }
 
 /**
- * @GIRL_MARRIAGE（:751-783）
+ * girl_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function girl_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -546,8 +545,8 @@ async function girl_marriage(arg, groom_num) {
 }
 
 /**
- * `:800-809` 一族的反应档：`TALENT:136` 牝犬 / `ABL:39` 兽奸中毒 / 其他
- * （与 `TALENT:76/85` 那套不是同一组分支）。
+ * 野兽系三支典礼的反应档：`talent:arg:136` 牝犬 / `abl:arg:39` 兽奸中毒 / 其他
+ * （与 `talent:arg:76/85` 那套不是同一组分支）。
  * @param {number} arg 角色号
  * @param {(name: string) => string} beast 牝犬档
  * @param {(name: string) => string} addict 兽奸中毒档
@@ -564,10 +563,10 @@ function print_beast_reaction(arg, beast, addict) {
 }
 
 /**
- * @BEAST_MARRIAGE（:786-811）：这支典礼没有 WAIT（原作如此）。
+ * beast_marriage：这支典礼没有 waitAnyKey（保留既有行为）。
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {number} 原作的 RETURN 0
+ * @returns {number} 恒 0
  */
 function beast_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -590,10 +589,10 @@ function beast_marriage(arg, groom_num) {
 }
 
 /**
- * @BRAIN_MARRIAGE（:814-837）
+ * brain_marriage
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function brain_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -615,10 +614,10 @@ async function brain_marriage(arg, groom_num) {
 }
 
 /**
- * @HORSE_MARRIAGE（:840-867）：与 @BEAST_MARRIAGE 同族，同样没有 WAIT。
+ * horse_marriage：与 beast_marriage 同族，同样没有 waitAnyKey。
  * @param {number} arg 角色号
  * @param {number} groom_num 结婚对象（物品号）
- * @returns {number} 原作的 RETURN 0
+ * @returns {number} 恒 0
  */
 function horse_marriage(arg, groom_num) {
   const name = name_of(arg);
@@ -641,11 +640,11 @@ function horse_marriage(arg, groom_num) {
 }
 
 /**
- * @MARRIAGE_DOG（:455-480）：这支典礼没有 WAIT（原作 :476-480 的收尾直接 RETURN），
- * 与 @BEAST_MARRIAGE / @HORSE_MARRIAGE 同族。首行的对象名是字面「野狗」
- * （原作如此，与 `ITEMNAME:900` 无关）。
+ * marriage_dog：这支典礼没有 waitAnyKey（收尾直接 return），
+ * 与 beast_marriage / horse_marriage 同族。首行的对象名是字面「野狗」
+ * （既有写法，不走 itemname 查表）。
  * @param {number} arg 角色号
- * @returns {number} 原作的 RETURN 0
+ * @returns {number} 恒 0
  */
 function marriage_dog(arg) {
   const name = name_of(arg);
@@ -668,9 +667,9 @@ function marriage_dog(arg) {
 }
 
 /**
- * @MARRIAGE_YOU（:484-491）
+ * marriage_you：与「你」结婚的典礼。
  * @param {number} arg 角色号
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function marriage_you(arg) {
   const name = name_of(arg);
@@ -681,9 +680,9 @@ async function marriage_you(arg) {
 }
 
 /**
- * @MARRIAGE_LOVERS（:494-505）
+ * marriage_lovers：与恋人结婚的典礼。
  * @param {number} arg 角色号
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function marriage_lovers(arg) {
   const name = name_of(arg);
@@ -696,10 +695,10 @@ async function marriage_lovers(arg) {
 }
 
 /**
- * @SLAVE_MARRIAGE（:870-878）
+ * slave_marriage：与选中奴隶的婚礼。
  * @param {number} arg 角色号
- * @param {number} partner 对方角色号（原作 CHARA）
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @param {number} partner 对方角色号
+ * @returns {Promise<number>} 恒 0
  */
 async function slave_marriage(arg, partner) {
   const name = name_of(arg);
@@ -710,10 +709,10 @@ async function slave_marriage(arg, partner) {
   return 0;
 }
 
-// —— 主流程（:52-451） ——
+// —— 主流程 ——
 
 /**
- * 当前结婚对象的正文（:128-168 的 `[%SAVESTR:ARG%目前结婚对象: … ]`）。
+ * 当前结婚对象的正文（菜单尾部的「目前结婚对象」列）。
  *
  * 与 page-chara-info.js 的 `marriage_bracket_text`（角色信息页的括号列）
  * **不是同一支**：那一支的「无配偶」走压缩家族码，本函数走「在故乡等待
@@ -734,7 +733,7 @@ function current_spouse_text(cid) {
     return '无';
   }
   if (spouse === SPOUSE_LOVER) {
-    // CALL NAME_LOVER,CFLAG:ARG:606,1——只要裸文本，读同一张登记表
+    // 恋人名只要裸文本，读同一张登记表
     //（page-chara-info.js 的 marriage_bracket_text 同款读法）
     return LOVER_NAMES.get(era.get(`cflag:${cid}:606`) || 0) ?? '';
   }
@@ -744,9 +743,9 @@ function current_spouse_text(cid) {
   if ((era.get('cflag:0:601') || 0) === (era.get(`cflag:${cid}:6`) || 0)) {
     return name_of(0);
   }
-  // 原作 ELSE 里的 :148-149 / :150-151 两支（`CFLAG:ARG:601 == 0` 的两种
-  // 分档）在 :133-139 的 `== 0` 早退之后恒假——这里 1:1 精简为可达分支，
-  // 不逐字保留死支（page-chara-info.js 的 MASTER 恒假两支同款处置）。
+  // `CFLAG:601 == 0` 的两支分档在上面的 `== 0` 早退之后恒假——死支已删，
+  // 精简为可达分支
+  // （page-chara-info.js 的恒假两支同款处置）。
   if (spouse % 10 === 9) {
     // 一の位が 9：家族册上的人
     const partner = search_family(cid, 'MARRIAGE');
@@ -756,13 +755,13 @@ function current_spouse_text(cid) {
 }
 
 /**
- * 结婚对象选择的列表页（:79-126）：怪物列表 ＋ 特殊五项 ＋ 当前对象。
+ * 结婚对象选择的列表页：怪物列表 ＋ 特殊五项 ＋ 当前对象。
  * @param {number} arg 角色号
  */
 function print_marriage_menu(arg) {
   const lover = era.get(`cflag:${arg}:606`) || 0;
   const married = (era.get(`cflag:${arg}:601`) || 0) !== 0;
-  // 四道 DRAWLINE ＋ 两行标题（逐行排布，锚在 :84 的 MONSTERPLAY_LIST）
+  // 四道 DRAWLINE ＋ 两行标题（逐行排布，以 monsterplay_list 为基准）
   era.drawLine();
   era.print('怪物');
   era.drawLine();
@@ -798,29 +797,29 @@ function print_marriage_menu(arg) {
     print_disabled('离婚');
   }
   print_choice('返回', 999);
-  // [%SAVESTR:ARG%目前结婚对象: … ]
+  // 尾部的「目前结婚对象」列
   era.print(`[${name_of(arg)}目前结婚对象:${current_spouse_text(arg)}]`);
 }
 
 /**
- * 奴隶子菜单（:198-243）：`LIFE_LIST(NO_PAGE, 2)` ＋ 翻页 ＋ 选中校验。
+ * 奴隶子菜单：`life_list(page, 2)` ＋ 翻页 ＋ 选中校验。
  *
- * 返回值：`partner === null` 表示回外层重画（原作的 `GOTO INPUT_LOOP`），
- * 否则是选中的角色 ID；`no_page` 是翻页后的页码（原作按 NO_PAGE 的
- * `#DIM` 就地更新，移植按「进出一对」返回）。
+ * 返回值：`partner === null` 表示回外层重画（`GOTO INPUT_LOOP`），
+ * 否则是选中的角色 ID；`no_page` 是翻页后的页码（页码不就地更新，
+ * 按「进出一对」返回）。
  *
- * 原作 `RESULT < 0 || RESULT >= CHARANUM`（:222-224）按 #21 的 ID 世界改写为
+ * 越界判断按 #21 的 ID 世界改写为
  * 「不在已加入角色表里」——ID 世界的角色 ID 可以有缺口，拿总数比大小会把
  * 合法的高位 ID 误判成越界（文件头）。
  *
- * @param {number} arg 发起方角色号（:233-238 的「自恋」判据）
+ * @param {number} arg 发起方角色号（「自恋」判断用）
  * @param {number} no_page 当前页码
  * @returns {Promise<{partner: number|null, no_page: number}>}
  */
 async function slave_sub_menu(arg, no_page) {
   let page = no_page;
   for (;;) {
-    // 子菜单每轮重画的四道输出（锚在 :202 的 LIFE_LIST）
+    // 子菜单每轮重画的四道输出（以 life_list 为基准）
     era.drawLine();
     life_list(page, 2);
     print_choice('- 上一页', 1000);
@@ -831,12 +830,12 @@ async function slave_sub_menu(arg, no_page) {
 
     if (pick === 999) return { partner: null, no_page: page };
     if (pick === 1000) {
-      // 上一页（首屏时 NO_PAGE 不降、落回菜单重画）
+      // 上一页（首屏时 page 不降、回菜单重画）
       if (page > 0) page -= 1;
       continue;
     }
     if (pick === 1001) {
-      // 下一页（末页时 NO_PAGE 不升、落回菜单重画）
+      // 下一页（末页时 page 不升、回菜单重画）
       if ((page + 1) * SLAVE_PAGE_SIZE <= added_ids().length) page += 1;
       continue;
     }
@@ -855,7 +854,7 @@ async function slave_sub_menu(arg, no_page) {
       era.print(`${name_of(pick)}已婚了。`);
       return { partner: null, no_page: page };
     }
-    // 自恋判据：ELSE 内层只有这一支，命中即回重画
+    // 自恋条件：内层只有这一支，命中即回重画
     if (pick === arg) {
       era.print(`${name_of(pick)}并不是一个自恋狂。`);
       return { partner: null, no_page: page };
@@ -865,8 +864,8 @@ async function slave_sub_menu(arg, no_page) {
 }
 
 /**
- * 结婚前的旧账清理（:266-273）：有配偶名槽但家族册上找不到人时，
- * `DIVORCE` 会以 -1 被调用（原作同款，见文件头的例外说明）。
+ * 结婚前的旧账清理：有配偶名槽但家族册上找不到人时，
+ * `divorce` 会以 -1 被调用（见文件头的例外说明）。
  * @param {number} arg 角色号
  */
 function settle_previous_marriage(arg) {
@@ -879,17 +878,17 @@ function settle_previous_marriage(arg) {
 }
 
 /**
- * 婚礼对象的显示名（:276-327 的 `PRINTFORM *%SAVESTR:ARG%和` 后半段）。
+ * 婚礼对象的显示名（`*…和…举行了结婚典礼*` 播报行的后半段）。
  *
  * 副作用与显示名同源：奴隶婚要交换双方的名槽与婚姻编码、怪物婚要跑一次
- * `MONSTER_DATA(GROOM_NUM, 5)` 取陵辱类型。`GROOM_NUM` 是跨函数的输出，
+ * `monster_data` 取陵辱类型。`groom_num` 是跨函数的输出，
  * 用 `{ groom_num, groom_type }` 这对返回值承载。
  *
  * @param {number} arg 角色号
  * @param {number} groom_num 当前的结婚对象编码
  * @param {number} groom_type 当前的结婚对象类型
- * @param {number} partner 选中的奴隶（仅 GROOM_TYPE == 1000 时有效）
- * @param {(n: number) => number} rand RAND:N 随机源
+ * @param {number} partner 选中的奴隶（仅 groom_type == 1000 时有效）
+ * @param {(n: number) => number} rand 随机源
  * @returns {{label: string, groom_num: number, groom_type: number}}
  */
 function resolve_groom(arg, groom_num, groom_type, partner, rand) {
@@ -916,7 +915,7 @@ function resolve_groom(arg, groom_num, groom_type, partner, rand) {
       }
       return { label, groom_num, groom_type };
     }
-    // 一般恋人：NAME_LOVER,CFLAG:ARG:606,1
+    // 一般恋人：查 LOVER_NAMES 登记表
     return {
       label: LOVER_NAMES.get(era.get(`cflag:${arg}:606`) || 0) ?? '',
       groom_num,
@@ -944,7 +943,7 @@ function resolve_groom(arg, groom_num, groom_type, partner, rand) {
       groom_type,
     };
   }
-  // ELSE：怪物。MONSTER_DATA 把陵辱类型写进 E:507（列头 500 + 7）
+  // ELSE：怪物。monster_data 把陵辱类型写进 E:507（列头 500 + 7）
   monster_data(groom_num, 5, -1, -1, -1, rand);
   return {
     label: itemname(groom_num),
@@ -953,7 +952,7 @@ function resolve_groom(arg, groom_num, groom_type, partner, rand) {
   };
 }
 
-/** 十三支种族典礼的分发表（:353-376，键 = `E:507` 的陵辱类型） */
+/** 十三支种族典礼的分发表（键 = `E:507` 的陵辱类型） */
 const MONSTER_RITUALS = new Map([
   [1, orc_marriage],
   [2, slime_marriage],
@@ -970,11 +969,11 @@ const MONSTER_RITUALS = new Map([
 ]);
 
 /**
- * `:381-403` 处女丧失的掷骰与「同为女性」那一档的直接生效。
+ * 处女丧失的掷骰与「同为女性」那一档的直接生效。
  * @param {number} arg 角色号
  * @param {number} groom_type 结婚对象类型
  * @param {number} partner 对方角色号（仅奴隶婚有效）
- * @param {(n: number) => number} rand RAND:N 随机源
+ * @param {(n: number) => number} rand 随机源
  * @returns {number} VIRGIN_B
  */
 function virgin_roll(arg, groom_type, partner, rand) {
@@ -996,7 +995,7 @@ function virgin_roll(arg, groom_type, partner, rand) {
   if (partner_male && arg_futa) return rand(9);
   if (partner_futa && arg_futa) return rand(5) + 1;
   if (!partner_male && talent(partner, 0) && arg_male) {
-    // CHARA 为女性、ARG 为男性：直接让对方破处
+    // partner 为女性、arg 为男性：直接让对方破处
     era.print(`${name_of(partner)}【处女丧失】`);
     era.set(`talent:${partner}:0`, 0);
   }
@@ -1004,7 +1003,7 @@ function virgin_roll(arg, groom_type, partner, rand) {
 }
 
 /**
- * `:405-417` 处女丧失的落地与记录码。
+ * 处女丧失的实现与记录码。
  * @param {number} arg 角色号
  * @param {number} groom_type 结婚对象类型
  * @param {number} virgin_b VIRGIN_B
@@ -1031,7 +1030,7 @@ function apply_virgin_loss(arg, groom_type, virgin_b) {
 }
 
 /**
- * `:419-441` 初吻的落地与记录码。
+ * 初吻的实现与记录码。
  * @param {number} arg 角色号
  */
 function apply_first_kiss(arg) {
@@ -1040,12 +1039,12 @@ function apply_first_kiss(arg) {
   const spouse = era.get(`cflag:${arg}:601`) || 0;
   const view = chara(arg).train;
   if (spouse === SPOUSE_YOU) {
-    // 原作先写 1 再写 NO:MASTER+1（NO:MASTER == 0，两次同值，
-    // 第一行是冗余赋值）；#21 起角色 ID 即 NO，故两次同值
+    // 既有写法先后写 1 与「你的 ID + 1」（你的 ID 恒 0，两次同值，
+    // 第一行是冗余赋值）；#21 起角色 ID 即编号，故两次同值
     view.初吻对象 = FIRST_KISS_YOU;
     view.初吻对象名 = name_of(0); // CSTR:4
     if ((era.get('cflag:0:16') ?? 0) === -1) {
-      // 調教者の初吻（NO:ARG + 1）
+      // 調教者の初吻（NO:ARG + 1 编码）
       chara(0).train.初吻对象 = arg + 1;
       chara(0).train.初吻对象名 = name_of(arg);
     }
@@ -1059,7 +1058,7 @@ function apply_first_kiss(arg) {
 }
 
 /**
- * `:443-449` 异种婚姻：欲望 LV ≥ 5 且异种奸经验 ≥ 300 且已有主从逆转 /
+ * 异种婚姻：欲望 LV ≥ 5 且异种奸经验 ≥ 300 且已有主从逆转 /
  * 异种恋慕时，改判【异种婚姻】。
  * @param {number} arg 角色号
  */
@@ -1076,11 +1075,11 @@ function apply_cross_marriage(arg) {
 }
 
 /**
- * @MARRIAGE（:52-451）：结婚按钮被按下后的整场流程。
+ * marriage：结婚按钮被按下后的整场流程。
  *
- * @param {number} arg 角色号（原作 ARG）
- * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 0 = 回角色信息页；1 = 回合结束（原作 RETURN 1）；
+ * @param {number} arg 角色号
+ * @param {(n: number) => number} [rand] 随机源
+ * @returns {Promise<number>} 0 = 回角色信息页；1 = 回合结束；
  *   2 = 不可结婚（按钮本不该显示）
  */
 async function marriage(arg, rand = default_rand) {
@@ -1094,7 +1093,7 @@ async function marriage(arg, rand = default_rand) {
   let no_page = 0; // #DIM NO_PAGE
   let groom_num = 0;
   let groom_type = 0;
-  let partner = 0; // 原作 CHARA
+  let partner = 0;
 
   for (;;) {
     print_marriage_menu(arg);
@@ -1117,7 +1116,7 @@ async function marriage(arg, rand = default_rand) {
       }
     } else if (result === 903) {
       // 恋人別れる
-      chara(arg).dungeon.恋人 = 0; // CFLAG:ARG:606 = 0（dungeon 域）
+      chara(arg).dungeon.恋人 = 0; // CFLAG:606 = 0（dungeon 域）
       era.print('与恋人分手了。');
       continue;
     } else if (result === 904) {
@@ -1167,7 +1166,7 @@ async function marriage(arg, rand = default_rand) {
       shift_marriage_state(arg, REMARRIAGE_DELTA);
     }
 
-    // 結婚式（特殊三支按 GROOM_NUM、种族十二支与奴隶婚按 GROOM_TYPE）
+    // 結婚式（特殊三支按 groom_num、种族十二支与奴隶婚按 groom_type）
     if (groom_num === SPOUSE_DOG) await marriage_dog(arg);
     else if (groom_num === SPOUSE_YOU) await marriage_you(arg);
     else if (groom_num === SPOUSE_LOVER) await marriage_lovers(arg);
@@ -1190,15 +1189,15 @@ async function marriage(arg, rand = default_rand) {
 }
 
 /**
- * @DIVORCE（:881-902）：离婚。归还双方的婚姻登记，并按编码回落婚姻状态。
+ * divorce：离婚。归还双方的婚姻登记，并按编码回落婚姻状态。
  *
- * @param {number} arg 角色号（原作 ARG）
- * @returns {number} 原作的 RETURN 0
+ * @param {number} arg 角色号
+ * @returns {number} 恒 0
  */
 function divorce(arg) {
   const found = search_family(arg, 'MARRIAGE');
-  // `RESULT > 0 && RESULT < CHARANUM` 按 #21 的 ID 世界改写为「是个
-  // 真角色」（ID 可以有缺口，见文件头）
+  // found 是不是真角色：大于 0 且在已加入角色表里（#21 的 ID 世界，
+  // ID 可以有缺口，见文件头）
   if (found > 0 && added_ids().includes(found)) {
     era.set(`cflag:${found}:601`, 0);
     era.set(`cflag:${found}:609`, 0);

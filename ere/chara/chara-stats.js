@@ -8,14 +8,14 @@ const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
- * @KARMA：增减善恶值；魂缚角色不变，结果钳在 [-200, 200]。
+ * karma：增减善恶值；魂缚角色不变，结果钳在 [-200, 200]。
  * @param {number} cid 角色 ID
  * @param {number} delta 增减量
- * @returns {number} 原作 RETURN 0
+ * @returns {number} 恒 0
  */
 function karma(cid, delta) {
   if (chara(cid).stronghold.魂缚) {
-    return 0; // CHAR_ST.ERB 77-78 行
+    return 0;
   }
   const value = chara(cid).chara.善恶值 + delta; // CFLAG:151 善恶值
   chara(cid).chara.善恶值 = Math.max(-200, Math.min(200, value));
@@ -23,14 +23,14 @@ function karma(cid, delta) {
 }
 
 /**
- * @FAITH：增减信仰值；魂缚角色不变，结果钳在 [0, 100]。
+ * faith：增减信仰值；魂缚角色不变，结果钳在 [0, 100]。
  * @param {number} cid 角色 ID
  * @param {number} delta 增减量
- * @returns {number} 原作 RETURN 0
+ * @returns {number} 恒 0
  */
 function faith(cid, delta) {
   if (chara(cid).stronghold.魂缚) {
-    return 0; // CHAR_ST.ERB 96-97 行
+    return 0;
   }
   const value = (era.get(`cflag:${cid}:152`) || 0) + delta; // CFLAG:152 信仰
   era.set(`cflag:${cid}:152`, Math.max(0, Math.min(100, value)));
@@ -38,13 +38,13 @@ function faith(cid, delta) {
 }
 
 /**
- * @CHARA_LV_CHECK：战斗经验跌到零以下时降一级并同步战斗四维。
+ * chara_lv_check：战斗经验跌到零以下时降一级并同步战斗四维。
  * @param {number} cid 角色 ID
- * @returns {Promise<number>} 原作 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function chara_lv_check(cid) {
   if (chara(cid).dungeon.战斗经验 >= 0) {
-    return 0; // IF EXP:CHARA:80 < 0
+    return 0;
   }
 
   const view = chara(cid);
@@ -63,9 +63,9 @@ async function chara_lv_check(cid) {
 }
 
 /**
- * @CHARA_ID_OUTPUT：按经历、首个性格与家族构成生成角色识别号。
+ * chara_id_output：按经历、首个性格与家族构成生成角色识别号。
  * @param {number} cid 角色 ID
- * @returns {number} 原作 RETURN LOCAL
+ * @returns {number} 生成的识别号
  */
 function chara_id_output(cid) {
   let result = (era.get(`talent:${cid}:315`) || 0) * 10; // 成为勇者前的生活
@@ -76,7 +76,7 @@ function chara_id_output(cid) {
       break;
     }
   }
-  personality -= 1; // LOCAL:1 -= 1（原作有意保留的偏移）
+  personality -= 1; // LOCAL:1 -= 1（有意保留的偏移，既有写法）
   result += (personality - 160) * 1000;
   result += (era.get(`talent:${cid}:320`) || 0) * 100000; // 家族构成
   return result;
