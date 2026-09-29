@@ -18,21 +18,8 @@
  * 再加一行不会红**（净额不变）。要钉到具体行就得把基线换成基准串，
  * engine-contract-ledger.mjs 那种粒度；本工单取的是计数，够拦住「新增一行」
  * 这一主要风险，代价是丢掉了同文件等额增减的分辨力。
+ *
+ * #710 把扫描面内最后 62 行（15 个文件）全部按钮化，基线随之清空；空表仍
+ * 有效：新出现一行纯文本选项行照样判红（判定面与纪律不变）。
  */
-export default {
-  'ere/chara/chara-custom.js': 2,
-  'ere/dungeon/dungeon-battle2.js': 2,
-  'ere/event/event-addict.js': 2,
-  'ere/event/event-execution.js': 1,
-  'ere/event/event-grotesque.js': 1,
-  'ere/event/get-specialtalent.js': 2,
-  'ere/kojo/kojo-dungeon-bitch.js': 2,
-  'ere/page/page-chara-shop.js': 1,
-  'ere/page/page-dungeon-info2.js': 2,
-  'ere/page/page-life-list.js': 1,
-  'ere/page/page-monster-shop.js': 2,
-  'ere/page/page-shop-labo.js': 1,
-  'ere/system/train/cloth.js': 2,
-  'ere/system/train/com-cloth.js': 24,
-  'ere/system/train/com-hardcore.js': 17,
-};
+export default {};
