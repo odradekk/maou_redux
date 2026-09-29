@@ -177,6 +177,13 @@ async function run_steps(steps, ctx) {
     } else if (op === 'w') {
       era.print(interpolate(a));
       await era.waitAnyKey();
+    } else if (op === 'btn') {
+      // 选项按钮：一枚一条。正文不写 [编号] 前缀（引擎按 showAcc 拼，PR #30）；
+      // **按钮打印后不再等键**——任何一次成功回传都会清空按钮白名单，在
+      // 按钮后面夹一次等键会让按钮点不动（下一次 INPUT 就在几步之后）。
+      for (const [accelerator, content] of a) {
+        era.printButton(content, accelerator);
+      }
     } else if (op === 'f') {
       await era.waitAnyKey();
     } else if (op === 'align') {

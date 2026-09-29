@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 405; // #702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 417; // #711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回「- 」分隔符——补回点被改回时对应的
@@ -3710,5 +3710,168 @@ export default [
     test_name:
       'source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）',
     must_mention: '胸围素质 119 档乘算乳房源',
+  },
+  // —— #711：结局脚本与口上的纯文本选项改按钮 ——
+  {
+    desc: 'M14300 ending-family 的 btn 步退回纯文本（选项按钮没了编号）',
+    file: 'ere/event/ending-family.js',
+    find: `      for (const [accelerator, content] of a) {
+        era.printButton(content, accelerator);
+      }`,
+    replace: `      for (const [accelerator, content] of a) {
+        era.print(interpolate(content)); // 变异：选项按钮退回纯文本
+      }`,
+    tests: ['event-ending'],
+    must_mention: '选项行是按钮',
+  },
+  {
+    desc: 'M14301 ending-family 的 btn 步在按钮之后夹一次等键（白名单被清空）',
+    file: 'ere/event/ending-family.js',
+    find: `        era.printButton(content, accelerator);
+      }
+    } else if (op === 'f') {`,
+    replace: `        era.printButton(content, accelerator);
+      }
+      await era.waitAnyKey(); // 变异：按钮与下一次 INPUT 之间夹了一次等键
+    } else if (op === 'f') {`,
+    tests: ['event-ending'],
+    must_mention: '的越界输入必须被引擎拒收',
+  },
+  {
+    desc: 'M14302 END7_2 的点头/摇头选项退回纯文本（按钮变回手写编号行）',
+    file: 'ere/data/ending-scripts.js',
+    find: `        [
+          'btn',
+          [
+            [1, '点头'],
+            [2, '摇头'],
+          ],
+        ],`,
+    replace: `        ['w', '[1] 点头 [2] 摇头'],`,
+    tests: ['event-ending'],
+    must_mention: '选项行是按钮',
+  },
+  {
+    desc: 'M14303 END7_2 的按钮之后夹一次 FORCEWAIT（白名单被清空）',
+    file: 'ere/data/ending-scripts.js',
+    find: `        [
+          'btn',
+          [
+            [1, '点头'],
+            [2, '摇头'],
+          ],
+        ],
+        ['inconseq', 7],`,
+    replace: `        [
+          'btn',
+          [
+            [1, '点头'],
+            [2, '摇头'],
+          ],
+        ],
+        ['f'], // 变异：按钮与读输入的 inconseq 之间夹了一次等键
+        ['inconseq', 7],`,
+    tests: ['event-ending'],
+    must_mention: '的越界输入必须被引擎拒收',
+  },
+  {
+    desc: 'M14304 END7_12 的进入结局询问退回纯文本（按钮变回手写编号行）',
+    file: 'ere/data/ending-scripts.js',
+    find: `              ['l', '可以达成菲娅的魔界公主end，想要进入这个结局吗？'],
+              [
+                'btn',
+                [
+                  [1, '好的'],
+                  [2, '唔，还是算了'],
+                  [3, '明天再问我可以喵？'],
+                ],
+              ],`,
+    replace: `              ['l', '可以达成菲娅的魔界公主end，想要进入这个结局吗？'],
+              ['w', '[1]好的 [2]唔，还是算了 [3]明天再问我可以喵？'],`,
+    tests: ['event-ending'],
+    must_mention: '选项行是按钮',
+  },
+  {
+    desc: 'M14305 END7_12 的询问按钮之后夹一次 FORCEWAIT（白名单被清空）',
+    file: 'ere/data/ending-scripts.js',
+    find: `              ['l', '可以达成菲娅的魔界公主end，想要进入这个结局吗？'],
+              [
+                'btn',
+                [
+                  [1, '好的'],
+                  [2, '唔，还是算了'],
+                  [3, '明天再问我可以喵？'],
+                ],
+              ],
+            ],`,
+    replace: `              ['l', '可以达成菲娅的魔界公主end，想要进入这个结局吗？'],
+              [
+                'btn',
+                [
+                  [1, '好的'],
+                  [2, '唔，还是算了'],
+                  [3, '明天再问我可以喵？'],
+                ],
+              ],
+              ['f'], // 变异：按钮与读输入的 INPUT 之间夹了一次等键
+            ],`,
+    tests: ['event-ending'],
+    must_mention: '的越界输入必须被引擎拒收',
+  },
+  {
+    desc: 'M14306 END7_5 的按钮正文补上手写 [3] 前缀（显示成 [3] [3] 好吃！）',
+    file: 'ere/data/ending-scripts.js',
+    find: `            [3, '好吃！'],
+            [4, '不怎么好吃'],`,
+    replace: `            [3, '[3] 好吃！'],
+            [4, '不怎么好吃'],`,
+    tests: ['event-ending'],
+    must_mention: '选项行是按钮',
+  },
+  {
+    desc: 'M14307 ending_n 的结束/继续选项退回纯文本（手写编号行）',
+    file: 'ere/event/event-ending.js',
+    find: `  era.printButton('结束游戏', 1);
+  era.printButton('继续游戏', 2);`,
+    replace: `  era.print('[1] 结束游戏\\t\\t[2] 继续游戏'); // 变异：结尾选项退回纯文本`,
+    tests: ['event-ending'],
+    must_mention: '结尾选项是按钮',
+  },
+  {
+    desc: 'M14308 ending_n 的按钮之后夹一次等键（白名单被清空）',
+    file: 'ere/event/event-ending.js',
+    find: `  era.printButton('结束游戏', 1);
+  era.printButton('继续游戏', 2);
+  // ending_input(EX_FLAG:2801 + 1000)`,
+    replace: `  era.printButton('结束游戏', 1);
+  era.printButton('继续游戏', 2);
+  await era.waitAnyKey(); // 变异：按钮与 ending_input 之间夹了一次等键
+  // ending_input(EX_FLAG:2801 + 1000)`,
+    tests: ['event-ending'],
+    must_mention: 'ending_n 的越界输入必须被引擎拒收',
+  },
+  {
+    desc: 'M14309 ending_n 的按钮正文补上手写 [1] 前缀（显示成 [1] [1] 结束游戏）',
+    file: 'ere/event/event-ending.js',
+    find: `  era.printButton('结束游戏', 1);`,
+    replace: `  era.printButton('[1] 结束游戏', 1);`,
+    tests: ['event-ending'],
+    must_mention: '结尾选项是按钮',
+  },
+  {
+    desc: 'M14312 run_ask 的 again 判定反转（不命中直接落 else，不再重问）',
+    file: 'ere/event/ending-family.js',
+    find: `    if (ask.again) {`,
+    replace: `    if (!ask.again) {`,
+    tests: ['event-ending'],
+    must_mention: 'again 为真',
+  },
+  {
+    desc: 'M14313 run_ask 的不命中兜底被拆（else 步列表不再执行）',
+    file: 'ere/event/ending-family.js',
+    find: `    await run_steps(ask.else ?? [], ctx);`,
+    replace: `    await run_steps([], ctx);`,
+    tests: ['event-ending'],
+    must_mention: 'again 不为真',
   },
 ];
