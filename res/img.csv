@@ -5,6 +5,7 @@
 ; 文件名两处写成小写 .png（COVER_WHITE 与 WHITE_L），与仓库文件一致：
 ; Windows/WSL-NTFS 大小写不敏感会掩盖不匹配，ext4 工作树（变异检查的
 ; 并行副本）上「同目录存在」即红——文件名要与磁盘精确匹配。
+; TITLE.png 目前是占位图（灰框加对角线），新 logo 做好后直接替换这个文件，宽高由引擎注册时读取。
 HEART,HEART.png
 HEART_R,HEART_R.png
 HEART_B,HEART_B.png
