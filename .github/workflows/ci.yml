@@ -4,7 +4,7 @@
 # 单个任务 5 分钟内跑完。曾按改动面选测试（#256），实测最多省一半时间，
 # 却让「PR 绿不等于全库绿」成为要额外解释的注意事项，#452 撤掉。现在：
 #
-#   pull_request   → engine / windows / static   与 master push 同一套全库检查（static 含锚点质量全文量，#626）
+#   pull_request   → engine / windows / static   与 master push 同一套全库检查
 #   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线
 #
 # 全量变异在 mutation.yml，只对打了 `phase-acceptance` 标签的阶段收尾 PR 跑。
@@ -95,4 +95,3 @@ jobs:
         run: npm run test:ci
       - name: 跳过数检查（引擎缺失的代价必须是看得见的数字）
         run: node tools/skip-count-check.mjs test-report.tap
-      # 锚点质量全文量自 #626 起在 static 任务里跑（PR 与 master push 都覆盖）。

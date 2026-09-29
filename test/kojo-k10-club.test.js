@@ -671,7 +671,7 @@ async function speak_gohoubi_request_k10(fixture, cid = 20) {
   return gohoubi_request_koujo_family.call(10, { args: [cid] });
 }
 
-test('SELECTCOM==2（肛门爱抚）二回目·淫乱·TEQUIP:13：:1044+:1046 是一行（#622）', async () => {
+test('SELECTCOM==2（肛门爱抚）二回目·淫乱·TEQUIP:13：两段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('cflag:20:303', 1);
     f.store.set('tequip:20:13', 1);
@@ -706,7 +706,7 @@ test('SELECTCOM==2（肛门爱抚）二回目·それ以外：第三支同样接
   ]);
 });
 
-test('SELECTCOM==56 交谈·初めて·视频·TALENT:89：:4156+:4158+:4159 是一行（#622）', async () => {
+test('SELECTCOM==56 交谈·初めて·视频·TALENT:89：三段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tequip:20:53', 1);
     f.store.set('talent:20:89', 1);
@@ -733,7 +733,7 @@ test('SELECTCOM==56 交谈·初めて·视频·TALENT:89 但 ABL:31 < 3：SIF �
   );
 });
 
-test('SELECTCOM==56 交谈·初めて·无摄像·求爱档：:4172+:4174 是一行（#622）', async () => {
+test('SELECTCOM==56 交谈·初めて·无摄像·求爱档：两段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('talent:20:85', 1);
     f.store.set('palam:20:5', 10000); // PALAMLV[4]
@@ -745,7 +745,7 @@ test('SELECTCOM==56 交谈·初めて·无摄像·求爱档：:4172+:4174 是一
   ]);
 });
 
-test('SELECTCOM==56 交谈·初めて·无摄像·装备档：:4178+:4180+:4182+:4184 是一行（#622）', async () => {
+test('SELECTCOM==56 交谈·初めて·无摄像·装备档：四段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('tequip:20:11', 1); // 快感装备
     f.store.set('palam:20:4', 10000);
@@ -779,7 +779,7 @@ test('SELECTCOM==56 交谈·初めて·无摄像·それ以外档：:4172..:4191
   ]);
 });
 
-test('SELECTCOM==56 交谈·二回目·视频·TALENT:89（RAND:3==0）：:4207+:4209+:4210 是一行（#622）', async () => {
+test('SELECTCOM==56 交谈·二回目·视频·TALENT:89（RAND:3==0）：三段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('cflag:20:357', 1);
     f.store.set('tequip:20:53', 1);
@@ -794,7 +794,7 @@ test('SELECTCOM==56 交谈·二回目·视频·TALENT:89（RAND:3==0）：:4207+
   ]);
 });
 
-test('SELECTCOM==56 交谈·二回目·无摄像·求爱档：:4223+:4225 是一行（#622）', async () => {
+test('SELECTCOM==56 交谈·二回目·无摄像·求爱档：两段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('cflag:20:357', 1);
     f.store.set('talent:20:85', 1);
@@ -807,7 +807,7 @@ test('SELECTCOM==56 交谈·二回目·无摄像·求爱档：:4223+:4225 是一
   ]);
 });
 
-test('SELECTCOM==56 交谈·二回目·无摄像·装备档：:4229+:4231+:4233+:4235 是一行（#622）', async () => {
+test('SELECTCOM==56 交谈·二回目·无摄像·装备档：四段是一行（#622）', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('cflag:20:357', 1);
     f.store.set('tequip:20:11', 1);

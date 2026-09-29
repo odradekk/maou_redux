@@ -73,7 +73,7 @@ const NUM_PAGE = 26;
  * TALENT:153 == 0）：状态 0/7 + 爱(85)或淫乱(76) + 种族(CFLAG:0) == 2 +
  * 非魔王。开场侦察用同一条件、无妊娠项。
  * @param {number} cid 候选角色
- * @param {boolean} pregnant_ok 妊娠者可出击（GETBIT(FLAG:5,10)，:131）
+ * @param {boolean} pregnant_ok 妊娠者可出击（GETBIT(FLAG:5,10)）
  * @returns {boolean}
  */
 function is_candidate(cid, pregnant_ok) {

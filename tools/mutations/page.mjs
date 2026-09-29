@@ -42,7 +42,7 @@ export const COUNT = 507; // #702 起 +2（M14153/M14154：装备品页码不补
 // [2] 与 [0] 两处凌辱地区号）
 // #521 返工起 +1（M11100，page-campaign.js：招募上限 >80 的差一边界——验收
 // 抽样发现 >79 放行，两条边界用例夹住 80/81 两个方向）
-// #515 起 +1（M11110，page-shop.js：STUBBED_CALLS 退回旧状态——#397 已接
+// #515 起 +1（M11110，page-shop.js：存根名单退回旧状态——#397 已接
 // 真身的 INTERCEPT/ABILITY_UP/TAILOR_MAIN 重新列入时，名单的 deepEqual
 // 固定断言必须红）
 // 合并态（#505 与 #521 并集）实测 373，取 `import('./tools/mutations/page.mjs')
@@ -360,7 +360,7 @@ export default [
     must_mention: 'FLAG:81 += 10000/25',
   },
   {
-    desc: 'M2102 气力减半删除（失败也照减的 :268 语义）',
+    desc: 'M2102 气力减半删除（失败也照减）',
     file: 'ere/page/page-invasion.js',
     find: '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     replace:
@@ -369,7 +369,7 @@ export default [
     must_mention: 'BASE:0:1 减半',
   },
   {
-    desc: 'M2103 威望 +2 删除（结算尾 :978）',
+    desc: 'M2103 威望 +2 删除（结算尾）',
     file: 'ere/page/page-invasion.js',
     find: '  era_exflag.prestige = era_exflag.prestige + 2; // EX_FLAG:99 += 2',
     replace: '  // 变异：威望不增',
@@ -386,7 +386,7 @@ export default [
     must_mention: '略受质疑）的侵攻度增量',
   },
   {
-    desc: 'M2105 相安无事档偷偷打折（61-80 无修正的 :285-286）',
+    desc: 'M2105 相安无事档偷偷打折（61-80 无修正）',
     file: 'ere/page/page-invasion.js',
     find: "    era.print('威望值是【相安无事】');\n    return { sinkou, failed: false };",
     replace:
@@ -404,7 +404,7 @@ export default [
     must_mention: '广受爱戴）的侵攻度增量',
   },
   {
-    desc: 'M2107 侵攻度封顶阈值挪走（10000 改 99999，:617-618）',
+    desc: 'M2107 侵攻度封顶阈值挪走（10000 改 99999）',
     file: 'ere/page/page-invasion.js',
     find: '  era.set(`flag:${region.area}`, Math.min(next, 10000)); // 封顶',
     replace:
@@ -431,7 +431,7 @@ export default [
     must_mention: '精锐部队',
   },
   {
-    desc: 'M2110 [999] 取消误报成功（返回 1 消耗回合，:190-191）',
+    desc: 'M2110 [999] 取消误报成功（返回 1 消耗回合）',
     file: 'ere/page/page-invasion.js',
     find: '      if (result === 999) {\n        return 0;\n      }',
     replace:
@@ -701,7 +701,7 @@ export default [
     must_mention: 'B 列不受单元选择影响',
   },
   {
-    desc: 'M561 INFO2 设施批量改造的扣款删除（MONEY 与 EX_FLAG:4444 双减，:334-335）',
+    desc: 'M561 INFO2 设施批量改造的扣款删除（MONEY 与 EX_FLAG:4444 双减）',
     file: 'ere/page/page-dungeon-info2.js',
     find: `              era_flag.money -= 10000 * dialogue[1];
               era_exflag.legit_money -= 10000 * dialogue[1];`,
@@ -2290,7 +2290,7 @@ export default [
     must_mention: 'medal_bonus 提示后等键（PRINTFORMW）',
   },
   {
-    desc: 'M10749 [1] 投放成功支不等键（:1112 的 PRINTFORMW 删除）',
+    desc: 'M10749 [1] 投放成功支不等键（PRINTFORMW 删除）',
     file: 'ere/page/page-invasion.js',
     find: '        await era.waitAnyKey(); // PRINTFORMW 的 WAIT\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
     replace:
@@ -2299,7 +2299,7 @@ export default [
     must_mention: '成功投放后等键（PRINTFORMW）',
   },
   {
-    desc: 'M10750 [1] 投放失败支不等键（:1116 的 PRINTFORMW 删除）',
+    desc: 'M10750 [1] 投放失败支不等键（PRINTFORMW 删除）',
     file: 'ere/page/page-invasion.js',
     find: "        era_exflag.crystal_ball_expire += placed;\n      } else {\n        era.print('投放，似乎失败了。');\n        await era.waitAnyKey(); // PRINTFORMW 的 WAIT",
     replace:
@@ -2308,7 +2308,7 @@ export default [
     must_mention: '投放失败后等键（PRINTFORMW）',
   },
   {
-    desc: 'M10751 [2] 奸商代理成功支不等键（:1140 的 PRINTFORMW 删除）',
+    desc: 'M10751 [2] 奸商代理成功支不等键（PRINTFORMW 删除）',
     file: 'ere/page/page-invasion.js',
     find: '        await era.waitAnyKey(); // PRINTFORMW 的 WAIT\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n        if (base * 5000 < era_flag.money) {',
     replace:
@@ -3183,7 +3183,7 @@ export default [
     must_mention: '1900 + 400：累加进 FLAG:',
   },
   {
-    desc: 'M10857 [2] 结果段的地区名写死人间界（:762-773 的 PRINT 分派丢失）',
+    desc: 'M10857 [2] 结果段的地区名写死人间界（PRINT 分派丢失）',
     file: 'ere/page/page-invasion.js',
     find: '到达了${region.name}，尽可能地施暴着',
     replace: '到达了人间界，尽可能地施暴着',
@@ -3191,7 +3191,7 @@ export default [
     must_mention: '地区名取 AREA=86',
   },
   {
-    desc: 'M10858 [3] 结果段的地区名写死人间界（:894-906 的 PRINT 分派丢失）',
+    desc: 'M10858 [3] 结果段的地区名写死人间界（PRINT 分派丢失）',
     file: 'ere/page/page-invasion.js',
     find: '得到了魔王的力量！${region.name}被掠夺了',
     replace: '得到了魔王的力量！人间界被掠夺了',
@@ -3199,7 +3199,7 @@ export default [
     must_mention: '[3] 的地区名取 AREA=88',
   },
   {
-    desc: 'M10859 [0] 结果段的凌辱地区号写死 1（:669-684 的地区号分派丢失）',
+    desc: 'M10859 [0] 结果段的凌辱地区号写死 1（地区号分派丢失）',
     file: 'ere/page/page-invasion.js',
     find: '  // CALL INVASION_RYOUZYOKU, <地区号>, SINKOU（#470 的真身）\n  await invasion_ryouzyoku(region.ravish_area, sinkou, rand);',
     replace:
@@ -3208,7 +3208,7 @@ export default [
     must_mention: '传给 invasion_ryouzyoku 的地区号',
   },
   {
-    desc: 'M10860 地区表的凌辱地区号改坏（精灵族领域 2 → 4，:674）',
+    desc: 'M10860 地区表的凌辱地区号改坏（精灵族领域 2 → 4）',
     file: 'ere/page/page-invasion.js',
     find: '    ravish_area: 2,\n    kyoten_arg: 2,',
     replace: '    ravish_area: 4,\n    kyoten_arg: 2, // 变异：凌辱地区号改坏',
@@ -3216,7 +3216,7 @@ export default [
     must_mention: '传给 invasion_ryouzyoku 的地区号',
   },
   {
-    desc: 'M10862 天神宫补上 kyoten 实参（旧写法 :983-994 没有 101 分支）',
+    desc: 'M10862 天神宫补上 kyoten 实参（旧写法没有 101 分支）',
     file: 'ere/page/page-invasion.js',
     find: '    ravish_area: 5,\n    kyoten_arg: null,',
     replace:
@@ -3233,7 +3233,7 @@ export default [
     must_mention: '1900 + 400：累加进 FLAG:',
   },
   {
-    desc: 'M10867 出兵菜单的地区标签改坏（精灵族领域的侵攻度 → 侵攻度，:156）',
+    desc: 'M10867 出兵菜单的地区标签改坏（精灵族领域的侵攻度 → 侵攻度）',
     file: 'ere/page/page-invasion.js',
     find: "    campaign_label: '精灵族领域的侵攻度',",
     replace: "    campaign_label: '侵攻度', // 变异：标签改坏",
@@ -3241,7 +3241,7 @@ export default [
     must_mention: '出兵菜单的进度条标签',
   },
   {
-    desc: 'M10868 结果段的地区标签改坏（精灵族领域　侵攻度 → 侵攻度，:657）',
+    desc: 'M10868 结果段的地区标签改坏（精灵族领域　侵攻度 → 侵攻度）',
     file: 'ere/page/page-invasion.js',
     find: "    result_label: '精灵族的领域　侵攻度',",
     replace: "    result_label: '侵攻度', // 变异：标签改坏",
@@ -3249,7 +3249,7 @@ export default [
     must_mention: '结果段的进度条标签',
   },
   {
-    desc: 'M10869 魔力结果段的已征服封顶改大（100000 改 1000000，:713-733）',
+    desc: 'M10869 魔力结果段的已征服封顶改大（100000 改 1000000）',
     file: 'ere/page/page-invasion.js',
     find: '      exp_sinkou = Math.min(exp_sinkou, 10000 * 10);',
     replace:
@@ -3285,7 +3285,7 @@ export default [
     must_mention: '结果段的进度条一律读 FLAG:AREA',
   },
   {
-    desc: 'M10873 [2] 结果段的凌辱地区号写死 1（:866-880 的地区号分派丢失）',
+    desc: 'M10873 [2] 结果段的凌辱地区号写死 1（地区号分派丢失）',
     file: 'ere/page/page-invasion.js',
     find: '  await invasion_ryouzyoku(region.ravish_area, sinkou, rand);\n  // 9% 概率抓到负隅顽抗的勇者（比 [0] 的 5% 高；GET_ENEMY 之后',
     replace:
@@ -3423,7 +3423,7 @@ export default [
     desc: 'M11492 enemy_exist2 的首行空行删掉（两处 PRINTL，两个调用方都受影响，#548/#180）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '  if (sorted.length > 0) {\n    era.println();\n  }',
-    replace: '  // 变异：漏掉首行空行（:595 的 PRINTL）',
+    replace: '  // 变异：漏掉首行空行（PRINTL）',
     tests: ['page-dungeon-info'],
     must_mention: '开头的空行',
   },
@@ -3733,7 +3733,7 @@ export default [
     desc: 'M11584 编辑页网格门退回无差别 else（和人类一样也打印随机档，#547 返工 1）',
     file: 'ere/page/page-config-age.js',
     find: `        } else if (dis_flag > 1) {`,
-    replace: `        } else { // 变异：网格门退回 else（:1214 ELSEIF DIS_FLAG > 1 的门丢失）`,
+    replace: `        } else { // 变异：网格门退回 else（ELSEIF DIS_FLAG > 1 的判断丢失）`,
     tests: ['page-config-age'],
     must_mention: '[110] 下限按钮不打印',
   },
@@ -3759,7 +3759,7 @@ export default [
     desc: 'M11586 编辑头重画前的空行被删（PRINTL 丢失，#547 返工 5）',
     file: 'ere/page/page-config-age.js',
     find: '        era.println(); // 的空行（重画首拍）',
-    replace: `        // 变异：漏 :1111 的重画前空行`,
+    replace: `        // 变异：漏重画前空行`,
     tests: ['page-config-age'],
     must_mention: '编辑头前一拍是空行（PRINTL）',
   },
@@ -3817,7 +3817,7 @@ export default [
     must_mention: '第一轮：队员名补到 12 列',
   },
   {
-    desc: 'M11723 勇者行的名字补齐删除（:627 %SAVESTR,MAX_NAME_LEN,LEFT% 丢填充）',
+    desc: 'M11723 勇者行的名字补齐删除（%SAVESTR,MAX_NAME_LEN,LEFT% 丢填充）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '      content: `${pad_display(name_of(cid), max_name_len)}\\u3000`,',
     replace: '      content: `${name_of(cid)}\\u3000`, // 变异：勇者行不补齐',
@@ -3825,7 +3825,7 @@ export default [
     must_mention: '同队行：队员名按显示宽度右补半角空格',
   },
   {
-    desc: 'M11724 护卫行的名字补齐删除（:637 %SAVESTR,MAX_NAME_LEN,LEFT% 丢填充）',
+    desc: 'M11724 护卫行的名字补齐删除（%SAVESTR,MAX_NAME_LEN,LEFT% 丢填充）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '          { content: pad_display(name_of(cid), max_name_len) },',
     replace: '          { content: name_of(cid) }, // 变异：护卫行不补齐',
@@ -3851,7 +3851,7 @@ export default [
     must_mention: '第二轮：护卫行仍按第一轮的 12 列补齐',
   },
   {
-    desc: 'M11727 MAX_NAME_LEN 只按侵攻中的角色更新（:569 的 MAX 本应对每一个筛出角色执行，迎击/奴隶的长名被忽略）',
+    desc: 'M11727 MAX_NAME_LEN 只按侵攻中的角色更新（MAX 本应对每一个筛出角色执行，迎击/奴隶的长名被忽略）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '    max_name_len = Math.max(display_width(name), max_name_len);',
     replace: `    if (cflag_get(cid, 1) === 2) {
@@ -3874,7 +3874,7 @@ export default [
   },
   // —— #592：店内 999 是退出商店（CALL CLEAR_SHOP 无 RETURN，RESULT 被清 0） ——
   // M11970：删除（#643，master 上已红）——它模拟「店内 999 删 return 后落回
-  // :222 调试菜单提示」，而 #641 已整段删除 DEBUG_MENU_U 入口，提示行不复
+  // 调试菜单提示」，而 #641 已整段删除 DEBUG_MENU_U 入口，提示行不复
   // 存在、变异无行为面；退出语义由同段的 M11971/M11972 守。
   {
     desc: 'M11971 店内 999 不清在售位（clear_shop 调用删——退出商店时货架不撤）',
@@ -4298,7 +4298,7 @@ export default [
     must_mention: 'equip_magic_weapon',
   },
   {
-    desc: 'M12314 苏生名单丢掉「- 」（:2594 的正文前缀）',
+    desc: 'M12314 苏生名单丢掉「- 」（正文前缀）',
     file: 'ere/page/page-shop-labo.js',
     find: 'era.printButton(`- ${itemname(idx)}`, idx);',
     replace: 'era.printButton(`${itemname(idx)}`, idx); // 变异：丢掉「- 」',
@@ -4416,7 +4416,7 @@ export default [
     tests: ['page-config'],
     must_mention: '回显是一行（PRINT + PRINTW）',
   },
-  // —— #615：完全召唤横幅两行 + 前后空行数（CHARA_INFO_SHOW:63-68 / :76） ——
+  // —— #615：完全召唤横幅两行 + 前后空行数 ——
   {
     desc: 'M12250 两行横幅之间的真空行删掉（第二个换行落空行）',
     file: 'ere/page/page-chara-info-show.js',
@@ -4462,7 +4462,7 @@ export default [
   },
   // —— #615：enemy_exist2 的空行落在分支上 ——
   {
-    desc: 'M12254 首行空行改回无条件（名单为空时 :595 与 :630 各落一个空行）',
+    desc: 'M12254 首行空行改回无条件（名单为空时首尾各落一个空行）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '  if (sorted.length > 0) {\n    era.println();\n  }',
     replace:
@@ -4471,7 +4471,7 @@ export default [
     must_mention: '名单为空只有尾部的一个空行',
   },
   {
-    desc: 'M12255 名单为空时尾部的空行删掉（:630 的 PRINTL）',
+    desc: 'M12255 名单为空时尾部的空行删掉（尾部的 PRINTL）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '  } else {\n    // 名单为空：:595 未执行，这一条 PRINTL 落出那个空行\n    era.println();\n  }',
     replace: '  }',
@@ -4479,7 +4479,7 @@ export default [
     must_mention: '名单为空只有尾部的一个空行',
   },
   {
-    desc: 'M12256 首行空行的条件反转（有队伍时不落 :595 的空行、空名单反而落两个）',
+    desc: 'M12256 首行空行的条件反转（有队伍时不落首行空行、空名单反而落两个）',
     file: 'ere/page/page-dungeon-info2.js',
     find: '  if (sorted.length > 0) {',
     replace: '  if (sorted.length === 0) { // 变异：条件反转',

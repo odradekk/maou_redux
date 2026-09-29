@@ -196,7 +196,7 @@ test('show_info_title：CFLAG:451 已有值时不再生成（不消费随机源�
   assert.match(text_at(fixture, 1), /20 岁$/);
 });
 
-// —— @show_block（:372-427） ——
+// —— show_block ——
 
 function block_fixture(flag5 = 0, flag8 = 0) {
   const fixture = create_era_fixture();
@@ -1460,7 +1460,7 @@ test('stain_info：ASSI >= 0 时第三方照出（0 也算一方）', async () =
   assert.equal(fixture.text_lines().length, 15, '三方 × 5 行');
 });
 
-// —— @show_equip_1 / @show_equip_2（:1564-1676） ——
+// —— show_equip_1 / show_equip_2 ——
 
 function equip_fixture({ tequips = {}, cflags = {}, tflags = {} } = {}) {
   const fixture = create_era_fixture();
@@ -1669,7 +1669,7 @@ function data_fixture({ cflags = {}, ex_talents = {}, items = {} } = {}) {
 }
 
 test('show_data：无色段与底色——使役魔兽的名字着 #63e390', () => {
-  // CFLAG:570 是配下怪物的识别号；< 100 时 MONSTER_DATA（:384 的
+  // CFLAG:570 是配下怪物的识别号；< 100 时 MONSTER_DATA（其中
   // `if (inum < 100) { E:300 = 0; return 0 }`）会把 E:300 清成 0，
   // 于是名字取 0 号怪物的名字——这一步也一并钉住。
   const { fixture, show_data } = data_fixture({

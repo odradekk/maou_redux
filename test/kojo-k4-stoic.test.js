@@ -92,7 +92,7 @@ test('初調教（CFLAG:201 == 0）：种族分档 + 眼鏡附注 + 推进到 1'
   const fixture = await setup_k4();
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
-  // 源 :84-102：吸血鬼（TALENT:314 == 3）/ デュラハン（== 4）/ それ以外
+  // 吸血鬼（TALENT:314 == 3）/ デュラハン（== 4）/ それ以外
   assert.deepEqual(fixture.text_lines(), [
     '「…原来如此，用这样的牢狱来封住我的力量啊…」',
     '「哼，卑鄙。这都是徒劳的笑话罢了，我绝不屈服。」',
@@ -201,7 +201,7 @@ test('初調教屈服刻印分档（各 Lv 一次）：CFLAG:201 2 → 3 → 4 �
   assert.equal(love.store.get('cflag:31:201'), 6);
 });
 
-test('K4_KOJO2 二回目以降（ASSI < 0 → :168-169）：反抗刻印Lv3 支', async () => {
+test('K4_KOJO2 二回目以降（ASSI < 0）：反抗刻印Lv3 支', async () => {
   // CFLAG:201 已到顶（6）且 ASSI < 0 → K4_KOJO2；反抗刻印Lv3 + FLAG:7 == 2。
   // （SIF CFLAG:42 == 83 只护住前一段）是一整行
   // （#625），眼镜档两分支各断言整行
@@ -280,12 +280,12 @@ test('失神（TFLAG:899）：静默跳过', async () => {
 test('兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_4', async () => {
   const fixture = await setup_k4((f) => f.store.set('tequip:31:89', 1));
   await speak_k4(fixture, seq_rand(0));
-  // 兽奸爱撫初回（DOG_KOJO_4 :3101 CFLAG:301 == 0 且 MARK:2 < 2）
+  // 兽奸爱撫初回（DOG_KOJO_4 CFLAG:301 == 0 且 MARK:2 < 2）
   assert.deepEqual(fixture.text_lines(), ['「讨，讨厌！别舔啊！」']);
   assert.equal(
     fixture.store.get('cflag:31:301'),
     1,
-    '兽奸爱撫初回（DOG_KOJO_4 :3101 CFLAG:301 == 0 且 MARK:2 < 2）',
+    '兽奸爱撫初回（DOG_KOJO_4 CFLAG:301 == 0 且 MARK:2 < 2）',
   );
 });
 
@@ -435,7 +435,7 @@ test('舔陰初回（CFLAG:302 == 0）：一句 + 推进到 1', async () => {
 // —— SELECTCOM 11/13/14/15/16 需要 TEQUIP ——
 
 test('SELECTCOM == 13（肛门虫）带 TEQUIP 分支：初回 → CFLAG:314', async () => {
-  // 源 :1130-1201：SELECTCOM == 13 且 TEQUIP:13（肛门虫），计数器 CFLAG:314
+  // SELECTCOM == 13 且 TEQUIP:13（肛门虫），计数器 CFLAG:314
   const kiss = await setup_k4((f) => f.store.set('tequip:31:13', 1), 13);
   await speak_k4(kiss, seq_rand(0));
   assert.deepEqual(kiss.text_lines(), [
@@ -491,7 +491,7 @@ test('兽奸爱撫二回目以降（DOG_KOJO_4）：屈服刻印分档推进', a
 // —— COLOSSEUM_KOJO_4（死斗场）真身 ——
 
 test('死斗场 SELECTCOM == 56（战斗）：気力0 分档两行', async () => {
-  // 源 :4921-4937：SELECTCOM == 56 按 BASE:1（気力）分档；気力 <= 0 且
+  // SELECTCOM == 56 按 BASE:1（気力）分档；気力 <= 0 且
   // 助手未参与 → 两行（第二行 %SAVESTR:TARGET% 在句首）
   const fixture = await setup_k4((f) => {
     f.store.set('tequip:31:55', 1);
@@ -535,7 +535,7 @@ test('处女丧失（TFLAG:3 && CFLAG:229 == 0 && TFLAG:20）：素质分档 + C
 });
 
 test('处女丧失 A >= 500（UP:11 + UP:12 够高）时走「それ以外」档', async () => {
-  // 源 :4089/:4092 的 (A < 500 || TFLAG:150 == 1) 门槛：A == 600 不满足、
+  // (A < 500 || TFLAG:150 == 1) 门槛：A == 600 不满足、
   // TFLAG:150 未置 → 落 else。UP:12 参与 A 是关键（M1764）：
   // 变异只留 UP:11 = 400 → A = 400 < 500 → 误入爱慕档。
   const fixture = create_era_fixture();

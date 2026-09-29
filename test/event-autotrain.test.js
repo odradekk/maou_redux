@@ -413,7 +413,7 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
     await after_autotrain(17);
     assert.equal(fixture.store.get('cflag:17:667'), 50);
   }
-  // flag:5 bit 35 → AUTO_ABLUP 真身（:150-151）
+  // flag:5 bit 35 → AUTO_ABLUP 真身
   {
     const { fixture } = seed_autotrain_world();
     const { after_autotrain } = fixture.load_module('event/event-autotrain');

@@ -334,7 +334,7 @@ async function step1(cid) {
   }
 }
 
-/** :261-279 精饮相关素质【喜欢精液(47)】 */
+/** 精饮相关素质【喜欢精液(47)】 */
 async function semen_liking(cid) {
   if (talent(cid, 47) !== 0) {
     return;
@@ -376,7 +376,7 @@ async function semen_liking(cid) {
   }
 }
 
-/** :284-298 特殊技能素质【擅用舌头(52)】 */
+/** 特殊技能素质【擅用舌头(52)】 */
 async function skilled_tongue(cid) {
   const name = chara_callname(cid);
   if (talent(cid, 51)) {
@@ -404,7 +404,7 @@ async function skilled_tongue(cid) {
   }
 }
 
-/** :305-352 特殊性癖/性感素质：施虐狂/受虐狂/露出狂/牝犬/主从逆转·异种恋慕 */
+/** 特殊性癖/性感素质：施虐狂/受虐狂/露出狂/牝犬/主从逆转·异种恋慕 */
 async function fetish_talents(cid) {
   const name = chara_callname(cid);
 
@@ -487,7 +487,7 @@ async function fetish_talents(cid) {
 }
 
 /**
- * :355-456 特殊性感素质：阴蒂/私处/肛门/乳房「狂」系四选一（SEXSKILL
+ * 特殊性感素质：阴蒂/私处/肛门/乳房「狂」系四选一（SEXSKILL
  * 系统）。两重「已集齐四个」检查（外层 SIF、内层 SEXSKILL_COUNT==4）
  * 效果相同，合并为一次判定。
  */
@@ -631,7 +631,7 @@ async function arousal_specialty(cid) {
   }
 }
 
-/** :464-540 強化素質（FLAG:73 <= 0 时启用）：淫核/淫壶/淫肛/淫乳/性豪 */
+/** 強化素質（FLAG:73 <= 0 时启用）：淫核/淫壶/淫肛/淫乳/性豪 */
 async function enhanced_talents(cid) {
   if (get('flag:73') > 0) {
     return;
@@ -714,7 +714,7 @@ async function enhanced_talents(cid) {
     await era.printAndWait(`${name}获得了【${talent_name(272)}】。`);
     set_talent(cid, 272, 1);
     // TALENT:101/TALENT:103 走 PRINTFORMW（等键），TALENT:105/TALENT:107 走
-    // PRINTFORM（不等键，:523-538）——
+    // PRINTFORM（不等键）——
     // 字面量不对称，按原样保留
     await remove_talent_wait(cid, 101);
     await remove_talent_wait(cid, 103);
@@ -723,7 +723,7 @@ async function enhanced_talents(cid) {
   }
 }
 
-/** :546-601 时常发情（FLAG:75 <= 0 时启用） */
+/** 时常发情（FLAG:75 <= 0 时启用） */
 async function constant_arousal(cid) {
   if (get('flag:75') > 0) {
     return;
@@ -763,7 +763,7 @@ async function constant_arousal(cid) {
   await remove_talent_wait(cid, 30); // 看重贞操
 }
 
-/** :607-624 喜欢精液の习得（TFLAG:110 强制精饮绝顶触发 + seiin 参数） */
+/** 喜欢精液の习得（TFLAG:110 强制精饮绝顶触发 + seiin 参数） */
 async function forced_semen_liking(cid, seiin) {
   // 逐字是 `IF TFLAG:110 && TALENT:47 == 0 && SEIIN`。**ERE 侧有意调整
   // 了三个操作数的次序**：EraElectron 的 tflag 桶随 endTrain 销毁（旧引擎
@@ -788,7 +788,7 @@ async function forced_semen_liking(cid, seiin) {
   game.event.精爱味觉 = 0; // 取得フラグのリセット
 }
 
-/** :630-653 マイナス素质の消灭 */
+/** マイナス素质の消灭 */
 async function negative_talent_removal(cid) {
   if (abl(cid, 16) >= 5 && talent(cid, 151)) {
     await remove_talent_wait(cid, 151);
@@ -808,7 +808,7 @@ async function negative_talent_removal(cid) {
   }
 }
 
-/** :658-661 マスターの特殊能力（堕とした人数 5 人以上） */
+/** マスターの特殊能力（堕とした人数 5 人以上） */
 async function master_charm() {
   if (game.event.爱或淫乱人数 >= 5 && talent(MASTER, 92) === 0) {
     await era.printAndWait(
@@ -818,7 +818,7 @@ async function master_charm() {
   }
 }
 
-/** :668-691 妓女・倾城の修得 */
+/** 妓女・倾城の修得 */
 async function prostitution_talents(cid) {
   const name = chara_callname(cid);
   if (
@@ -865,7 +865,7 @@ async function prostitution_talents(cid) {
   }
 }
 
-/** :698-710 妄信の修得 */
+/** 妄信の修得 */
 async function blind_faith(cid) {
   const name = chara_callname(cid);
   if (

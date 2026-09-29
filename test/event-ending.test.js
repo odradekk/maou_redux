@@ -239,7 +239,7 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
   );
   // 的名字来自 TARGET 指针（callname:1:-1，不是 2 的「贝丝」）
   // PRINTFORMW 的读键（waitAnyKey，print 置位 allowWait 后真等）在
-  // 前、:55 INPUT（确认用）在后——顺序即 :52 → :55 → :56 的执行序
+  // 前、INPUT（确认用）在后，与执行顺序一致
   assert.deepEqual(
     fixture.inputs_consumed.map(({ api, value }) =>
       value === undefined ? api : `${api}:${value}`,

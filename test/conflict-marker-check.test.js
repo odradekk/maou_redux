@@ -213,7 +213,7 @@ test('探针：行尾拖着的行中标记必须红，进度条形式不得误�
     // 日志的进度条：八连大于号夹点号，且七连处后面不是空格。
     add_file(
       dir,
-      'golden/probe.log',
+      'logs-probe/probe.log',
       `      屈服[>>>>>>>>..]  2400      习得[>>>>>>....]   192\n`,
     );
     const { status, output } = run_tool(dir);
@@ -228,7 +228,7 @@ test('探针：行尾拖着的行中标记必须红，进度条形式不得误�
     );
     assert.ok(output.includes('行中标记'), `未点名行中标记形式：\n${output}`);
     assert.ok(
-      !output.includes('golden/probe.log'),
+      !output.includes('logs-probe/probe.log'),
       `进度条的八连大于号被误报：\n${output}`,
     );
   });

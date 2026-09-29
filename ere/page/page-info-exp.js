@@ -19,7 +19,7 @@ const {
 } = require('#/utils/display-width');
 
 /**
- * 初吻括号（:1058-1090）：CFLAG:16 的值域分支。返回空串 = 无此行。
+ * 初吻括号：CFLAG:16 的值域分支。返回空串 = 无此行。
  * @param {number} cid
  * @returns {string}
  */
@@ -71,7 +71,7 @@ function kiss_bracket(cid) {
 }
 
 /**
- * 初体验括号（:1092-1113）：CFLAG:15 的值域分支。返回空串 = 无此行。
+ * 初体验括号：CFLAG:15 的值域分支。返回空串 = 无此行。
  * @param {number} cid
  * @returns {string}
  */

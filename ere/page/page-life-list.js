@@ -91,13 +91,13 @@ const {
   pad_left,
 } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化（中央模块）
 
-/** SETCOLOR 255,100,100（:48/:52）——爱慕/淫乱标签 */
+/** SETCOLOR 255,100,100——爱慕/淫乱标签 */
 const COLOR_LOVE = '#ff6464';
-/** SETCOLOR 100,100,100（:56）——未沦陷标签 */
+/** SETCOLOR 100,100,100——未沦陷标签 */
 const COLOR_COLD = '#646464';
-/** SETCOLOR 100,255,100（:73/:127/:257）——妊娠标签 */
+/** SETCOLOR 100,255,100——妊娠标签 */
 const COLOR_PREGNANT = '#64ff64';
-/** SETCOLOR 100,200,100（:82/:136/:270）——派遣标签 */
+/** SETCOLOR 100,200,100——派遣标签 */
 const COLOR_DISPATCH = '#64c864';
 
 /** 已加入角色里除魔王（0 号）以外的 ID（升序）——`FOR COUNT, 1, CHARANUM` 的改写 */

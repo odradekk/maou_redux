@@ -3349,7 +3349,7 @@ on('SOURCE_CHECK', async () => {
     }
   }
 
-  // TFLAG:59 = PREVCOM（读的是**旧值**——PREVCOM 的更新在其后 :545，
+  // TFLAG:59 = PREVCOM（读的是**旧值**——PREVCOM 的更新在其后，
   // ere 侧由回合循环承载，见 train-loop.js 步骤 13）
   era.set('tflag:59', era_flag.prevcom);
 
@@ -3378,7 +3378,7 @@ on('SOURCE_CHECK', async () => {
   pain_damage_check_up();
 
   // 体力气力扣减（deltabase → base 当场结算并清零，钳 0..maxbase
-  // ——引擎 nextTurnInTrain 的同款语义，见文件头）。损耗值先快照——:552 的
+  // ——引擎 nextTurnInTrain 的同款语义，见文件头）。损耗值先快照——后面的
   // 损耗条在扣减之后还要读 LOSEBASE，LOSEBASE 独立存活于扣减后
   const lose0 = Math.max(lose(0), 0);
   const lose1 = Math.max(lose(1), 0);
@@ -3513,7 +3513,7 @@ on('SOURCE_CHECK', async () => {
 
   // 体力气力损耗条（含濒死/死亡星标；死亡档显示 BAR 0）——条与
   // 「 -N 」拼为一行（PRINT/PRINTFORM 同行累积 + PRINTL 收行）。
-  // 损耗值用 :411 扣减前的快照（见上）
+  // 损耗值用扣减前的快照（见上）
   const base0 = era.get(`base:${cid}:0`) || 0;
   const base1 = era.get(`base:${cid}:1`) || 0;
   const max0 = era.get(`maxbase:${cid}:0`) || 0;

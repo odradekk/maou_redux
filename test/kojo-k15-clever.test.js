@@ -455,7 +455,7 @@ test('兽奸（TEQUIP:89）：岔进本文件真身 DOG_KOJO_15', async () => {
     fixture
       .text_lines()
       .some((l) => l.includes('别靠过来') || l.includes('恶心')),
-    '兽奸爱抚初回（DOG_KOJO_15 :4032 CFLAG:301==0 且 MARK:2<2）',
+    '兽奸爱抚初回（DOG_KOJO_15 CFLAG:301==0 且 MARK:2<2）',
   );
   assert.equal(
     fixture.store.get(`cflag:${CID}:301`),

@@ -5,7 +5,7 @@
  * 高貴性格角色——实机复现不了，测试播种素质 163）。覆盖：
  * - 首次与二次以后走不同分支（验收项「此行为有测试」）；
  * - CFLAG:301 状态机的逐阶段推进（2xx/3xx/4xx 三条链 + 各自的随机尾）；
- * - 3xx 支的附加门槛 MARK:1 == 3（:1021——Lv2 屈服而无快乐刻印时
+ * - 3xx 支的附加门槛 MARK:1 == 3（Lv2 屈服而无快乐刻印时
  * 3xx 与 2xx 两支皆不命中、一句不出；验收变异补）；
  * - MARK:1/2 刻印分档、TALENT:76/85 素质分支；
  * - 随机分支可控可重复（rand 定值序注入，RAND:3 → RAND:2 定序）；
@@ -155,7 +155,7 @@ test('自称插值：CSTR:60 已定时 %SELF_CALL% 与 %SELF_CALL_FIRST% 取首�
     '温妮淫乱地蠕动着身体、接受着你的爱抚………',
   ]);
 
-  // %SELF_CALL_FIRST%：屈服Lv3 链头（MARK:1 == 3 时 :982 以首字起句）
+  // %SELF_CALL_FIRST%：屈服Lv3 链头（MARK:1 == 3 时以首字起句）
   const first = await setup_k3((f) => {
     f.store.set('mark:31:2', 3);
     f.store.set('mark:31:1', 3);
@@ -1016,7 +1016,7 @@ test('SELECTCOM 7 录像展示：五段 SIF 后缀与收行同属一行（#600�
   }
 });
 
-test('SELECTCOM 56 初回·录像自白：:4995+:4997+:4998 是一行，输出一条（#600）', async () => {
+test('SELECTCOM 56 初回·录像自白：三段是一行，输出一条（#600）', async () => {
   const cases = [
     [
       3,
@@ -1040,7 +1040,7 @@ test('SELECTCOM 56 初回·录像自白：:4995+:4997+:4998 是一行，输出�
   }
 });
 
-test('SELECTCOM 56 初回·通常：:5032+:5034|:5036+:5038 是一行，输出一条（#600）', async () => {
+test('SELECTCOM 56 初回·通常：两段是一行，输出一条（#600）', async () => {
   const cases = [
     [{ 'tequip:31:11': 1 }, '欢喜的'],
     [{ 'tequip:31:44': 1 }, '苦痛的'],
@@ -1066,7 +1066,7 @@ test('SELECTCOM 56 初回·通常：:5032+:5034|:5036+:5038 是一行，输出�
   }
 });
 
-test('SELECTCOM 56 二次·录像自白：:5067+:5069+:5070 是一行，输出一条（#600）', async () => {
+test('SELECTCOM 56 二次·录像自白：三段是一行，输出一条（#600）', async () => {
   const cases = [
     [
       3,
@@ -1091,7 +1091,7 @@ test('SELECTCOM 56 二次·录像自白：:5067+:5069+:5070 是一行，输出�
   }
 });
 
-test('SELECTCOM 56 二次·通常：:5104+:5106|:5108+:5110 是一行，输出一条（#600）', async () => {
+test('SELECTCOM 56 二次·通常：两段是一行，输出一条（#600）', async () => {
   const cases = [
     [{ 'tequip:31:13': 1 }, '欢喜的'],
     [{ 'tequip:31:49': 1 }, '苦痛的'],
@@ -1132,7 +1132,7 @@ test('#623 强制排泄·出身两支的整行', async () => {
     [9, '贫民'],
     [20, '奴隶'],
   ];
-  // ABL:3/21 两支齐备 → :4566 支（:4569 组）
+  // ABL:3/21 两支齐备 → 对应支
   for (const [life, word] of origins) {
     const fixture = await setup_k3((f) => {
       f.load_module('era-utils/era-flag').selectcom = 46;
@@ -1201,8 +1201,8 @@ test('#623 强制排泄·最深部遭遇三档整行', async () => {
 });
 
 test('#623 强制排泄·两穴与屈辱支的整行', async () => {
-  // 两穴支：tequip:54 未开、ABL:3/21 齐备（:4765 的 ELSE）。RAND:3 定
-  // crying_out、RAND:2 定后两支；三支都拼 :4775 前缀（#623）
+  // 两穴支：tequip:54 未开、ABL:3/21 齐备（ELSE 支）。RAND:3 定
+  // crying_out、RAND:2 定后两支；三支都拼同一前缀（#623）
   const two_seed = (f) => {
     f.load_module('era-utils/era-flag').selectcom = 46;
     f.store.set('tequip:31:46', 0);
@@ -1231,7 +1231,7 @@ test('#623 强制排泄·两穴与屈辱支的整行', async () => {
     );
   }
 
-  // 屈辱支：MARK:2 == 3 且 CFLAG:387 <= 1（:4786 支）的 ELSE；
+  // 屈辱支：MARK:2 == 3 且 CFLAG:387 <= 1 支的 ELSE；
   // 的 PRINTFORM 行尾带全角空格，三支都拼（审查建议 11）
   const shame_seed = (f) => {
     f.load_module('era-utils/era-flag').selectcom = 46;
@@ -1290,7 +1290,7 @@ test('#623 交谈·搭话首支整行', async () => {
     assert.equal(
       line_with(fixture, '向其搭话后，温妮摇晃着腰说起了恋慕的话语'),
       '你向其搭话后，温妮摇晃着腰说起了恋慕的话语',
-      `${phase}：:5026/:5098 前缀与支文本同属一条语句`,
+      `${phase}：前缀与支文本同属一条语句`,
     );
   }
 });
@@ -1307,7 +1307,7 @@ test('#623 兽奸接吻·舌头缠绕整行', async () => {
       f.store.set('cflag:31:307', 6);
       f.store.set('talent:31:136', 1);
     });
-    // 前一个 RAND:2（:6026 支）先消费一次抽签
+    // 前一个 RAND:2 先消费一次抽签
     await speak_k3(fixture, seq_rand(0, item.draw, 0));
     assert.ok(
       fixture

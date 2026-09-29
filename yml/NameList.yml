@@ -1,10 +1,8 @@
 # 固定名列表：角色名生成的数据落点（issue #388，#329 决定 10）。
 #
-# 源: chara_name_init 的 3,336 条 LIST_CHARA_NAME:n = 名字 赋值（声明
-#     #DIMS LIST_CHARA_NAME,5500）。5 个计数常量（WEST_NAME_COUNT 等）不在
-#     本表——它们只服务 chara_name_random_define 的随机范围计算，且已随
-#     #332 独立落在 ere/chara/chara-name.js（WEST_NAME_COUNT 等常量），
-#     本工单不重复。
+# 内容：3,336 条固定名（id → 名字，id 上限 5500）。5 个计数常量
+# （WEST_NAME_COUNT 等）不在本表——它们只服务 chara_name_random_define 的
+# 随机范围计算，定义在 ere/chara/chara-name.js。
 #
 # 本文件为人工产出（CFlag.yml / Ex_Talent.yml 同款先例）：按上面的源行，
 # 逐条抽取 `LIST_CHARA_NAME:n = 名字`，过归一表（词级→字级），

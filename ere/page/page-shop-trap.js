@@ -173,7 +173,7 @@ function item_grid_rows({ start, end }) {
  *   隐式返回 0（函数体在末尾的 PRINTL 之后结束）
  */
 async function item_shop_trap() {
-  // 标题（:10-12 的 CUSTOMDRAWLINE = 与 DRAWLINE 一并见文件头布局映射）
+  // 标题（CUSTOMDRAWLINE 与 DRAWLINE 一并见文件头布局映射）
   era.print('《可以购买在地下城里布置的陷阱》');
   era.drawLine({ isSolid: true });
   // PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后（PRINT 后的第一个

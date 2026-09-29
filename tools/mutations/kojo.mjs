@@ -495,8 +495,7 @@ export default [
     replace:
       '        await era.printAndWait(`「讨，讨厌！别舔啊！」`);\n      }\n      // CFLAG:301  = 1（变量语义：CFLAG 族，301）\n      era.set(`cflag:${target}:301`, 0);\n      return 0;',
     tests: ['kojo-k4-stoic'],
-    must_mention:
-      '兽奸爱撫初回（DOG_KOJO_4 :3101 CFLAG:301 == 0 且 MARK:2 < 2）',
+    must_mention: '兽奸爱撫初回（DOG_KOJO_4 CFLAG:301 == 0 且 MARK:2 < 2）',
   },
   {
     desc: 'M1764 K4 PALAMCNG 处女丧失的 A 加算改错（UP:12 丢，#235）',
@@ -14962,7 +14961,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '            await era.printAndWait(\n              `但是比起这个${target_name}更为被${player_name}所抱住的这一事实而心动不已………`,\n            );\n          } else {\n            await era.printAndWait(\n              `「啊啊…被爱着的愉悦…真美妙…${heart(1)} 啊～…啊啊～…又插的…更深了${heart(1)}」`,',
     replace:
-      '            // deleted lowercase printformw :2147\n          } else {\n            await era.printAndWait(\n              `「啊啊…被爱着的愉悦…真美妙…${heart(1)} 啊～…啊啊～…又插的…更深了${heart(1)}」`,',
+      '            // deleted lowercase printformw\n          } else {\n            await era.printAndWait(\n              `「啊啊…被爱着的愉悦…真美妙…${heart(1)} 啊～…啊啊～…又插的…更深了${heart(1)}」`,',
     tests: ['kojo-k0-tender'],
     must_mention: '但是比起这个琼更为被你所抱住的这一事实而心动不已',
   },
@@ -20524,7 +20523,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '除数 4 与向零截断',
   },
   {
-    desc: 'M11427 强制肉偿的调用点漏写 await（heroine_bitch 不等真身跑完就往下走，:78 的 RAND:36 抢走 RAND:4 的随机数、输出顺序也反了，#544 第 1 轮验收返工）',
+    desc: 'M11427 强制肉偿的调用点漏写 await（heroine_bitch 不等真身跑完就往下走，RAND:36 抢走 RAND:4 的随机数、输出顺序也反了，#544 第 1 轮验收返工）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '    // CALL 强制肉偿(ARG)\n    await forced_payment(arg, rand);',
     replace:
@@ -21155,7 +21154,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'GOHOUBI_REQUEST：兽交要求',
   },
   {
-    desc: 'M12145 K13 NTR·前缀段在 :5531 支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
+    desc: 'M12145 K13 NTR·前缀段在该支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find:
       '      const rape_prefix =\n' +
@@ -21237,7 +21236,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "          // 同一行输出：中段 IF/ELSEIF 二选一（\n          // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(\n            player_name +\n              `向其搭话后，${target_name}发出了` +\n              (excited ? '欢喜的' : painful ? '苦痛的' : '') +\n              `叫声，拼命地向你回话了。`,\n          );",
     replace:
-      '          // 与 :5032..:5038 同型（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(player_name + `向其搭话后，${target_name}发出了`); // 变异：拆回\n          if (excited) {\n            era.print(`欢喜的`); // 变异：拆回\n          } else if (painful) {\n            era.print(`苦痛的`); // 变异：拆回\n          }\n          era.print(`叫声，拼命地向你回话了。`); // 变异：拆回',
+      '          // 同型写法（#600）\n          const excited =\n            era.get(`tequip:${target}:11`) ||\n            era.get(`tequip:${target}:13`) ||\n            era.get(`tequip:${target}:14`) ||\n            era.get(`tequip:${target}:15`) ||\n            era.get(`tequip:${target}:16`) ||\n            era.get(`tequip:${target}:17`);\n          const painful =\n            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n          era.print(player_name + `向其搭话后，${target_name}发出了`); // 变异：拆回\n          if (excited) {\n            era.print(`欢喜的`); // 变异：拆回\n          } else if (painful) {\n            era.print(`苦痛的`); // 变异：拆回\n          }\n          era.print(`叫声，拼命地向你回话了。`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: 'SELECTCOM 56 二次·通常',
   },
@@ -21885,7 +21884,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   // —— #623 返工：8 族（K11 四族各 6 支 / K9 两族各 6 支 / K3 两族各 3 支）的
   // 无后缀 PRINTFORM 前缀提为语句外局部量 line_head 后，「首支以外」的分支也
   // 拼前缀（M12652-M12659：每族一条拆回，覆盖非首支；整行断言见三份测试的同名
-  // 用例）；M12660 钉住 :4810 前缀行尾全角空格（审查建议 11） ——
+  // 用例）；M12660 钉住前缀行尾全角空格（审查建议 11） ——
   {
     desc: 'M12652 K11 初回交谈·助手玛奥第二支拆回两条（#623 返工：非首支也拼前缀）',
     file: 'ere/kojo/kojo-k11-lily.js',
@@ -22643,7 +22642,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "          await era.print(girl[0] && man[0] ? '于是' : name_of(arg)); // 变异：拆回\n" +
       '          await era.print(`以${locals}为对手`); // 变异：拆回',
     tests: ['kojo-dungeon-bitch'],
-    must_mention: '前缀并进 :237 那条',
+    must_mention: '前缀并进那一条',
   },
   {
     desc: 'M12749 K0 奖励请求·动物名拆回多条（#624）',
@@ -23207,7 +23206,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '          // 无后缀 PRINTFORM 前缀，与下面 IF 链首支的收行同属一行（#622）。\n          // 各支自带收行，前缀在分支外取值；首支那句把整行写在一起\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          if (rand_n(9) === 0) {\n            await era.printAndWait(\n              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n            );',
     replace:
-      '          // 无后缀 PRINTFORM 前缀，与 :7040 同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          await era.print(\n            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n          ); // 变异：拆回\n          if (rand_n(9) === 0) {\n            await era.printAndWait(`波奇？」`); // 变异：拆回',
+      '          // 无后缀 PRINTFORM 前缀，与前面同型（#622）\n          const dog_name_prefix = `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`;\n          await era.print(\n            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n          ); // 变异：拆回\n          if (rand_n(9) === 0) {\n            await era.printAndWait(`波奇？」`); // 变异：拆回',
     tests: ['kojo-k1-confident'],
     must_mention: '是一行',
   },
@@ -23289,7 +23288,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '            `${heart(1)} 更多的…摸那里…伸、伸进去…${heart(1)}」`,\n' +
       '          ); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':1044+:1046 是一行',
+    must_mention: '二回目·淫乱·TEQUIP:13：两段是一行',
   },
   {
     desc: 'M12547 K10 交谈·初めて·视频自我介绍拆回三条（#622：SIF 段又占一行）',
@@ -23302,7 +23301,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`都微笑地讲了出来……`); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':4156+:4158+:4159 是一行',
+    must_mention: '初めて·视频·TALENT:89：三段是一行',
   },
   {
     desc: 'M12548 K10 交谈·初めて·无摄像·求爱档拆回两条（#622：前缀又占一行）',
@@ -23314,7 +23313,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '            `会话的过程中，${target_name}扭动着腰呢喃着充满爱意的话语。`,\n' +
       '          ); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':4172+:4174 是一行',
+    must_mention: '初めて·无摄像·求爱档：两段是一行',
   },
   {
     desc: 'M12549 K10 交谈·初めて·无摄像·装备档拆回多条（#622：语调词又占一行）',
@@ -23323,7 +23322,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '          // PRINT（互斥两支）+ 收行的 PRINTFORML（#622）\n          await era.print(\n            chat_prefix + `会话的过程中，${target_name}`,\n          ); // 变异：拆回\n          if (equip_pleasure) {\n            await era.print(`带着快乐的语调`); // 变异：拆回\n          } else if (equip_pain) {\n            await era.print(`带着痛苦的语调`); // 变异：拆回\n          }\n          await era.print(`拼命地回应着。`); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':4178+:4180+:4182+:4184 是一行',
+    must_mention: '初めて·无摄像·装备档：四段是一行',
   },
   {
     desc: 'M12550 K10 交谈·二回目·视频自我介绍拆回三条（#622）',
@@ -23336,7 +23335,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`都微笑地讲了出来……`); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':4207+:4209+:4210 是一行',
+    must_mention: '（RAND:3==0）：三段是一行',
   },
   {
     desc: 'M12551 K10 交谈·二回目·无摄像·求爱档拆回两条（#622）',
@@ -23348,7 +23347,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '            `会话的过程中，${target_name}扭动着腰呢喃着充满爱意的话语。`,\n' +
       '          ); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':4223+:4225 是一行',
+    must_mention: '二回目·无摄像·求爱档：两段是一行',
   },
   {
     desc: 'M12552 K10 交谈·二回目·无摄像·装备档拆回多条（#622）',
@@ -23357,7 +23356,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace:
       '          // 与初回同型（#622）\n          await era.print(\n            chat_prefix + `会话的过程中，${target_name}`,\n          ); // 变异：拆回\n          if (equip_pleasure) {\n            await era.print(`带着快乐的语调`); // 变异：拆回\n          } else if (equip_pain) {\n            await era.print(`带着痛苦的语调`); // 变异：拆回\n          }\n          await era.print(`拼命地回应着。`); // 变异：拆回',
     tests: ['kojo-k10-club'],
-    must_mention: ':4229+:4231+:4233+:4235 是一行',
+    must_mention: '二回目·无摄像·装备档：四段是一行',
   },
   {
     desc: 'M12553 K10 死斗场·SC31 口交拆回多条（#622：部位词又各占一行）',
@@ -24617,7 +24616,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "          // 同一行输出：无后缀 PRINTFORM 连续不换行，末行\n          // PRINTFORML 才收行。SIF ABL:31 >= 3 只护住前段——条件提到\n          // 语句外当取值，文本留在输出语句里（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(\n            `${target_name}将自己的本名和接下来要进行的性体验` +\n              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n              `十分欣喜地全部说了出来……`,\n          );",
     replace:
-      '          // 同 :4795 组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`${target_name}将自己的本名和接下来要进行的性体验`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`、甚至是连自慰时妄想的事情`); // 变异：拆回\n          }\n          await era.print(`十分欣喜地全部说了出来……`); // 变异：拆回',
+      '          // 同组的一整行（#625）\n          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n          await era.print(`${target_name}将自己的本名和接下来要进行的性体验`); // 变异：拆回\n          if (masturbation_note) {\n            await era.print(`、甚至是连自慰时妄想的事情`); // 变异：拆回\n          }\n          await era.print(`十分欣喜地全部说了出来……`); // 变异：拆回',
     tests: ['kojo-k5-mao'],
     must_mention: '名字段与后文落在同一行',
   },

@@ -328,7 +328,7 @@ test('geo_output_2：32×32 行输出 + 等键', async () => {
   await labo_map.geo_output_2();
   const texts = fixture.text_lines();
   assert.equal(texts.length, 32, '32 行（y 0..31）');
-  // #597：每行 32 个 CHIP_DRAW 的 `PRINT` 串由 :18 的 PRINTL 收尾，那一行
+  // #597：每行 32 个 CHIP_DRAW 的 `PRINT` 串由行尾的 PRINTL 收尾，那一行
   // 不产生空行——ere 的 print(row) 一次调用即一行，再补就每行多一个空行
   assert.equal(
     blank_rows(fixture).length,
@@ -347,7 +347,7 @@ test('geo_output_2：32×32 行输出 + 等键', async () => {
   );
   assert.ok(
     fixture.waits.some((w) => w.waited),
-    '尾部 WAIT（:23）',
+    '尾部 WAIT',
   );
 });
 

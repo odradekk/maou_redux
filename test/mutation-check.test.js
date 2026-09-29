@@ -489,6 +489,37 @@ test('must_mention 出处门（#442）：出处在 tests:/file:/era-fixture.js �
   }
 });
 
+test('must_mention 出处门：只有占位符的模板串不能当出处', () => {
+  // `${x}` 切开后没有任何字面字符，按模板匹配会「匹配」任意文字。
+  // C10 验收时 M3312 就是这样漏过的：源码里有 `${heart(1)}`，过时的
+  // must_mention 照样过了出处检查。
+  const root = make_fixture();
+  try {
+    fs.appendFileSync(
+      path.join(root, 'test', 'calc.test.js'),
+      'const only_placeholder = (x) => `${x}`;\nvoid only_placeholder;\n',
+    );
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, must_mention: '这段文字在 calc 的测试与源码里都不存在' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--verify',
+    ]);
+    assert.notEqual(
+      status,
+      0,
+      `只有占位符的模板串被当成出处，出处检查放过了过时的 must_mention：\n${output}`,
+    );
+    assert.ok(output.includes('都找不到'), output);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场同场景必须红', () => {
   const root = make_fixture();
   try {
@@ -915,6 +946,31 @@ test('--files 接受 Windows 反斜杠路径', () => {
       'lib\\calc.js',
     ]);
     assert.equal(status, 0, `反斜杠路径应命中条目：\n${output}`);
+    assert.match(output, /拦截 1 \/ 跳过 0 \/ 红 0/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--files 给测试文件时，tests: 引用它的条目也被选中', () => {
+  // 只改测试标题的工单，条目自身和目标文件都没动，--changed 只看 file:
+  // 就挑不出来，过时的 must_mention 要到全量变异才暴露
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--files',
+      'test/calc.test.js',
+    ]);
+    assert.equal(status, 0, `按测试文件应选中引用它的条目：\n${output}`);
     assert.match(output, /拦截 1 \/ 跳过 0 \/ 红 0/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

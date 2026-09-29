@@ -51,7 +51,7 @@
 // 用法：
 //   node tools/mutation-check.mjs                        全量（串行，就地变异+还原）
 //   node tools/mutation-check.mjs --verify               只跑五项检查（秒级；进 npm test 的快速模式）
-//   node tools/mutation-check.mjs --changed              定向：只跑改动文件的条目（SOP 的 T3 票验收档）
+//   node tools/mutation-check.mjs --changed              定向：只跑目标文件或测试文件改过的条目（工单验收档）
 //   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（本地想快速看一眼时用；CI 自 #302 起跑全量）
 //   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档 / SOP 的 T4 阶段闸）
 //   --jobs K 与筛选参数同给时：--ids/--files/--changed 会下传给副本子进程，
@@ -61,8 +61,8 @@
 //                             --jobs 互斥：抽样的总量、外层的切片都没有副本
 //                             表达（副本自按 --slice i k 分摊），同时给当场
 //                             报错，不静默换语义、不静默跑整表
-//   --changed / --base <ref>  按 git 改动过滤条目的 file:（默认基线 origin/master）
-//   --files a.js,b.js         显式给目标文件列表（不走 git；测试夹具与诊断用）
+//   --changed / --base <ref>  按 git 改动过滤：file: 或 tests: 的测试文件改过即选中（默认基线 origin/master）
+//   --files a.js,b.js         显式给文件列表，规则同 --changed（不走 git；测试夹具与诊断用）
 //   --ids M4246,M4250-M4260   只跑点名的 M 编号（agent 内环用：证明**刚加的**
 //                             那几条真能拦。`--files` 会把打同一个目标文件的条目
 //                             全跑一遍——K11 有 502 条 × 4.8s ≈ 40 分钟，每加一条
@@ -625,9 +625,11 @@ function matches_template(segments, must_mention) {
 /** must_mention 逐字或按模板字面段，能否在 content 里找到出处。 */
 function must_mention_found(content, must_mention) {
   if (content.includes(must_mention)) return true;
-  return template_literal_segments(content).some((segs) =>
-    matches_template(segs, must_mention),
-  );
+  // 只有占位符、没有一个字面字符的模板串（如 `${heart(1)}`）能「匹配」任意文字，
+  // 不能当出处（C10 验收时 M3312 就是这样漏过的）
+  return template_literal_segments(content)
+    .filter((segs) => segs.some((s) => s !== ''))
+    .some((segs) => matches_template(segs, must_mention));
 }
 
 /**
@@ -709,6 +711,58 @@ const EXEMPT_MUST_MENTION = new Map([
     'test/com-order.test.js:162 `T 系数 = ${factor}（含素质段双计）`，' +
       'must_mention「T 系数 = 4」止步于 ${factor} 取值，够不着「（含素质段双计）」',
   ],
+  [
+    '2120',
+    'test/top-level-wiring.test.js:584 `顶层 require：${rel}:${r.line} → ${r.target}`，must_mention「顶层 require：ere/system/train/com-tentacle.js」止步于 ${rel} 取值',
+  ],
+  [
+    '8301',
+    'test/look.test.js:1014 的用例标题 `look_set 素质 ${talent_idx}：${note}`，must_mention「look_set 素质 300」止步于 ${talent_idx} 取值',
+  ],
+  [
+    '12708',
+    'test/kojo-dungeon-ravish-man.test.js:406/433/461/487 的 `… → 整行「${line}」`，must_mention「整行「兽人的阴茎插进了」止步于 ${line} 取值中间',
+  ],
+  [
+    '12709',
+    'test/kojo-dungeon-ravish-man.test.js 同款 `… → 整行「${line}」`，must_mention「整行「兽人们把润滑液涂在了」止步于 ${line} 取值中间',
+  ],
+  [
+    '12713',
+    'test/kojo-dungeon-ravish.test.js:554 的 `… → 整行「${line}」`，must_mention「整行「四肢着地趴在地上」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12715',
+    'test/kojo-dungeon-ravish.test.js:616 的 `… → 整行「${line}」`，must_mention「整行「无头骑士的冒险者身体被固定住了」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12719',
+    'test/kojo-dungeon-ravish.test.js:723 的 `… → 整行「${line}」`，must_mention「整行「兽人的阴茎插进了」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12720',
+    'test/kojo-dungeon-ravish.test.js:750 的 `… → 整行「${line}」`，must_mention「整行「兽人们把润滑液涂在了」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12724',
+    'test/kojo-dungeon-ravish.test.js:861 的 `… → 整行「${line}」`，must_mention「整行「紫色的长舌头」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12725',
+    'test/kojo-dungeon-ravish.test.js:887 的 `… → 整行「${line}」`，must_mention「整行「紫色的长舌头」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12726',
+    'test/kojo-dungeon-ravish.test.js:913 的 `… → 整行「${line}」`，must_mention「整行「紫色的手」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12727',
+    'test/kojo-dungeon-ravish.test.js:932 的 `… → 整行「${line}」`，must_mention「→ 整行「『这边的穴」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12746',
+    'test/kojo-dungeon-ravish.test.js:594 的 `… → 整行「${line}」`，must_mention「→ 整行「脸上的神情为屈服的喜悦与口水所浸染……」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
   // 类别 C：字符串拼接，非单一模板字面量可重建
   [
     '1773',
@@ -725,6 +779,15 @@ const EXEMPT_MUST_MENTION = new Map([
     '1521',
     'test/kojo-family-wiring.test.js:111-114 同一个 format_missing()，' +
       'must_mention「主启动图漏装：kojo-k5-mao」同样横跨拼接边界',
+  ],
+  // 类别 D：出处在共享测试助手里，不在检查范围内
+  [
+    '12129',
+    'test/helpers/blank-lines.js:104 的 `${label}：末尾是真空行（不许删）`，must_mention「W < 5 废人支的收尾：末尾是真空行」由共享助手拼出，助手不在 tests:/file: 范围内',
+  ],
+  [
+    '12127',
+    'test/helpers/blank-lines.js:54 的 `${label}：这一行之后是真空行（不许删）`，must_mention「处置菜单末项：这一行之后是真空行」由共享助手拼出，助手不在 tests:/file: 范围内',
   ],
 ]);
 
@@ -1209,6 +1272,21 @@ function changed_files(root, base) {
   );
 }
 
+/** --files 给的清单，或 --changed/--base 相对基线的改动文件。 */
+function filter_files(args) {
+  return args.files ? new Set(args.files) : changed_files(args.root, args.base);
+}
+
+/**
+ * 条目的目标文件或它引用的测试文件在清单里。只改测试标题、条目自身没改时，
+ * 过时的 must_mention 只有实跑才发现，所以引用了改动测试文件的条目也要挑上。
+ */
+function entry_touches(m, files) {
+  return (
+    files.has(m.file) || m.tests.some((t) => files.has(`test/${t}.test.js`))
+  );
+}
+
 function select_entries(entries, args) {
   let picked = entries;
   if (args.ids) {
@@ -1227,10 +1305,8 @@ function select_entries(entries, args) {
       );
     }
   } else if (args.files || args.base) {
-    const files = args.files
-      ? new Set(args.files)
-      : changed_files(args.root, args.base);
-    picked = entries.filter((m) => files.has(m.file));
+    const files = filter_files(args);
+    picked = entries.filter((m) => entry_touches(m, files));
   } else if (args.sample !== undefined) {
     picked = [...entries]
       .sort(
@@ -1497,7 +1573,10 @@ async function execute_jobs(args, entries) {
   if (args.ids !== undefined) {
     filter_args = ['--ids', args.ids_spec ?? [...args.ids].join(',')];
   } else if (args.files || args.base) {
-    const files = [...new Set(selection.map((m) => m.file))];
+    // 只传被选中条目用到的那部分清单：子进程按同一规则重选，结果与这里一致
+    const files = [...filter_files(args)].filter((f) =>
+      selection.some((m) => entry_touches(m, new Set([f]))),
+    );
     filter_args = ['--files', files.join(',')];
   }
   if (filtered) {

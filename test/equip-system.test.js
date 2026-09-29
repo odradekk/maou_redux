@@ -148,7 +148,7 @@ test('get_equip_num 与 equip_get：道具号换算、入包 +1 上限 99', () =
   lookup.equip_get({ 存储编号: 6 });
   assert.equal(fixture.store.get('item:306'), 99);
   lookup.equip_get({ 存储编号: 6 });
-  assert.equal(fixture.store.get('item:306'), 99, '上限 99（:885-886）');
+  assert.equal(fixture.store.get('item:306'), 99, '上限 99');
   lookup.equip_get({ 存储编号: -1 });
   assert.equal(fixture.store.get('item:300'), undefined, '负编号不入包');
   // 武器入包（id 45 → item:345）
@@ -248,7 +248,7 @@ test('curse_equip_ring：库存耗尽 0；逐个消耗装饰戒指并按阶梯�
     texts.filter((l) => l === '你把装饰戒指制造成死亡戒指了').length,
     2,
   );
-  // D = 50 → 试炼戒指 id 19（阶梯 :171-189：<60 段）
+  // D = 50 → 试炼戒指 id 19（阶梯的 <60 段）
   store.set('item:300', 1);
   await curse.curse_equip_ring(() => 50);
   assert.equal(store.get('item:319'), 1);
@@ -399,7 +399,7 @@ test('equip_powerup：素质修正各分支（含能力者的属性化与强化�
   assert.equal(
     fire_armed.伤害强化,
     110,
-    '烈火无伤害增量（:670-674），火之能力者的 +10 全额生效',
+    '烈火无伤害增量，火之能力者的 +10 全额生效',
   );
 
   // 光之能力者 278：气力回复为正 → 三项 +5；为 0/负 → 气力回复 +10

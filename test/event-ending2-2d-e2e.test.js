@@ -181,7 +181,7 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
         // 打的是角色 ID 按钮）；此后 era_flag.target 经 EVENTTURNEND 尾部
         // 还原（FLAG:1）保持 > 0，直接 100 进调教。999×2：调教结束 +
         // juel-check 退出（train-loop 的 USERCOM 999 → AFTERTRAIN；
-        // juel-check 的 :461 INPUT 999 → LABEL_EXIT）。尾 0 留给触发轮
+        // juel-check 的 INPUT 999 → LABEL_EXIT）。尾 0 留给触发轮
         // ENDING_2 的仪式 INPUT
         const target_set = fixture.inputs_consumed.some(
           (i) => i.api === 'input' && i.value === 17,

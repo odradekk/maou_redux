@@ -109,7 +109,7 @@ export default [
     find: '  era.set(`item:${x}`, count > 99 ? 99 : count);',
     replace: '  era.set(`item:${x}`, count);',
     tests: ['equip-system'],
-    must_mention: '上限 99（:885-886）',
+    must_mention: '上限 99',
   },
   {
     desc: 'M343 火之能力者位判定改坏（& 2 → & 1——烈火剑被再次属性化红）',
