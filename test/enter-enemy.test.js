@@ -45,6 +45,21 @@ function text_lines(fixture) {
 }
 
 /**
+ * 星框之后第一条 `NO.` 开头的信息标题行（show_chara_info 的标题行，
+ * 编号后跟 NBSP 补位、名字接在后面）。取不到时返回 undefined，由断言报错。
+ */
+function info_title_line(fixture) {
+  const frame = fixture.lines.findLastIndex(
+    (line) => line.type === 'text' && line.text.startsWith('*****'),
+  );
+  assert.ok(frame >= 0, '星框行出现（否则断言会空过）');
+  return fixture.lines
+    .slice(frame + 1)
+    .map((line) => line.text)
+    .find((text) => text.startsWith('NO.'));
+}
+
+/**
  * 最小世界：魔王 0 在场 + 勇者 1 号已 seed（enter_enemy 以 zero 随机源
  * 恒掷出 1 号）
  */
@@ -113,7 +128,7 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
   );
 });
 
-test('#597：显示角色信息时前后各一个空行', async () => {
+test('#597：显示角色信息时前后各一个空行；#716：标题是新勇者', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 2); // GETBIT(FLAG:8, 1)：开局设置位图 2
   const { enter_enemy } = load(fixture);
@@ -137,6 +152,42 @@ test('#597：显示角色信息时前后各一个空行', async () => {
     '两个空行之后接角色信息，不多不少',
   );
   assert_trailing_blank(fixture, '角色信息之后');
+
+  // #716：显示的是**新勇者**的信息——标题行的编号与名字都必须是刚来袭的
+  // 1 号（名字在命名链改写后从存档读，不硬编码）；传错角色（如 0 号魔王）
+  // 时标题是 NO.0 + 魔王名，断言必须红
+  const title = info_title_line(fixture);
+  assert.ok(
+    title,
+    '角色信息的标题行（NO. 开头）出现——flag:8 位 1 的信息段确实打了',
+  );
+  const hero_name = fixture.store.get('callname:1:-1');
+  assert.ok(
+    /^NO\.1\u00a0/.test(title) && title.includes(hero_name),
+    `信息标题应是新勇者 1 号（${hero_name}），实际：${title}`,
+  );
+});
+
+test('#716：知り合い確定エントリー（arg0 > 0）的信息标题也是新勇者，不是 arg0 指向的角色', async () => {
+  const fixture = setup_world();
+  fixture.seed_chara(17, { id: 17, name: '玛奥', callname: '玛奥' });
+  fixture.era.addCharacter(17); // 熟人本人在场（arg0 指向她）
+  fixture.store.set('flag:8', 2); // GETBIT(FLAG:8, 1)：来袭时显示角色信息
+  const { enter_enemy } = load(fixture);
+
+  const ret = await enter_enemy(17, zero); // arg0 = 17：种族设定为玛奥
+
+  assert.equal(ret, 1, 'RETURN 1（有人来袭）');
+  const title = info_title_line(fixture);
+  assert.ok(
+    title,
+    '角色信息的标题行（NO. 开头）出现——flag:8 位 1 的信息段确实打了',
+  );
+  const hero_name = fixture.store.get('callname:1:-1');
+  assert.ok(
+    /^NO\.1\u00a0/.test(title) && title.includes(hero_name),
+    `信息标题应是新生成的勇者 1 号（${hero_name}）而非 arg0 指向的 17 号，实际：${title}`,
+  );
 });
 
 test('冒险者前缀：TALENT:122（男人位）非 0 时演出写「冒险者」', async () => {
