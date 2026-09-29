@@ -397,8 +397,8 @@ export default [
     7342,
     '菜单按钮快捷键偏移',
     'ere/page/components/menu-button.js',
-    '    accelerator,\n    dim ?',
-    '    accelerator + 1,\n    dim ?',
+    '    accelerator,\n    `▌${label}`',
+    '    accelerator + 1,\n    `▌${label}`',
     menu_button,
   ),
   make(

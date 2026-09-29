@@ -17,7 +17,7 @@
 const era = require('#/era-electron');
 const { ScreenBlock } = require('#/page/components/screen-block');
 const {
-  menu_button,
+  menu_button_row,
   MENU_BUTTON_DIM_COLOR,
 } = require('#/page/components/menu-button');
 const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
@@ -26,6 +26,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
 const { NBSP, pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { print_button_grid } = require('#/utils/button-grid');
 
 // 原文排版里的全角空格（UNICODE 0x3000）。以转义书写并集中定义：ESLint
 // 的 no-irregular-whitespace 拦裸写，prettier 会把字符串里的裸全角空格当
@@ -161,6 +162,15 @@ function draw_status_line() {
 }
 
 /**
+ * 指令面板不可用项的占位格：灰色 [---] 文本，不可点、仍占一格——各列对齐
+ * 不因可用性漂移。
+ * @returns {{content: string, config: {color: string}}} 文本占位格
+ */
+function dim_slot() {
+  return { content: '[---]', config: { color: MENU_BUTTON_DIM_COLOR } };
+}
+
+/**
  * 绘制据点主菜单。
  *
  * 本函数是画面组件的内容函数（create_main_menu 包装）：只输出、不清屏，
@@ -186,11 +196,16 @@ function draw_main_menu() {
   // 单线 ─（默认虚线近似）
   era.drawLine();
 
-  // 第一组入口：调教目标（496）/ 助手（497）。ere 的按钮独占一行
-  // （dev-guides/06-output.md），同行排版归 #9。明暗判断条件：亮当且
+  // 第一组入口：调教目标（496）/ 助手（497），两枚同行（原版 MENU_BUTTON
+  // 间以定宽空格隔开打在同一行，#717 恢复同行）。明暗判断条件：亮当且
   // 仅当指针 >= 1（-1 未选中、0 是魔王，都算未选中）。
-  menu_button('调教目标', 496, era_flag.target < 1);
-  menu_button('助手', 497, era_flag.assi < 1);
+  menu_button_row(
+    [
+      ['调教目标', 496, era_flag.target < 1],
+      ['助手', 497, era_flag.assi < 1],
+    ],
+    2,
+  );
 
   // 调教目标名/助手名按钮（498/499，点进各自状态画面，正文取角色呼名）
   // 与生命条（life_bar/vital_bar）：随角色数据工单实现（#35 前实机无角色
@@ -199,15 +214,21 @@ function draw_main_menu() {
   // 分隔线
   era.drawLine();
 
-  // 第二组入口：四个信息面板切换钮（500/501/504/505）。亮 = 当前
-  // 面板（FLAG:36），暗 = 未选中。FLAG:36 = 信息面板选择（0=物品/技能、
-  // 1=持有陷阱、4=地城概况、5=地城日常），写入随 #24 的分发；未声明读值
+  // 第二组入口：四个信息面板切换钮（500/501/504/505），四枚同行（原版
+  // 同打一行，#717 恢复）。亮 = 当前面板（FLAG:36），暗 = 未选中。
+  // FLAG:36 = 信息面板选择（0=物品/技能、1=持有陷阱、4=地城概况、
+  // 5=地城日常），写入随 #24 的分发；未声明读值
   // undefined → || 0 处理缺值（#13）。
   const active_panel = era.get('flag:36') || 0;
-  menu_button('物品/技能', 500, active_panel !== 0);
-  menu_button('持有陷阱', 501, active_panel !== 1);
-  menu_button('地城概况', 504, active_panel !== 4);
-  menu_button('地城日常', 505, active_panel !== 5);
+  menu_button_row(
+    [
+      ['物品/技能', 500, active_panel !== 0],
+      ['持有陷阱', 501, active_panel !== 1],
+      ['地城概况', 504, active_panel !== 4],
+      ['地城日常', 505, active_panel !== 5],
+    ],
+    4,
+  );
 
   // 四个子面板的分发（FLAG:36 → 专用函数，其余值 → 物品/技能）。
   // 四支自 #180/#395 起全部真身（draw_panel 内分发）：地城概况/地城日常
@@ -223,7 +244,10 @@ function draw_main_menu() {
   // A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
   // B（被调教过的奴隶数）在下方 [106] 入口消费。
   //
-  // [100] 调教 —— 指令面板里**唯一已接入**的入口：分发本体在
+  // 指令面板 18 项（[100]-[111]、[120]、[199]、[200]、[300]、[777]、[888]）
+  // 按每行 3 列排（原版 PRINTLCD 每 3 个换行，#717 恢复）；不可用项以
+  // 灰色 [---] 文本格占位、仍占一格，各列对齐不因可用性漂移。
+  //
   // [100] 调教 —— #24 起第一个接入的入口：分发本体在 page-shop.js 的
   // usershop，调教域自 #44/#45/#47 起可用。这里原是列排版纯文本配键盘
   // 输入，ere 侧改按钮（PR #53 通则：纯文本行在实机上点不动）；正文不写
@@ -232,19 +256,20 @@ function draw_main_menu() {
   //
   // 没有这一枚按钮，调教入口在实机上根本不存在——select_target 只能经
   // [496] 选人、选完仍回主菜单，玩家无从进入调教（实机撞见）。
+  const panel = [];
   if (count_selectable_slaves() > 0) {
-    era.printButton('调教', 100);
+    panel.push([100, '调教']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [101] 能力显示 —— chara_info()（#391 起真身，page/page-chara-info.js）。
   // 检查「已加入角色数 >= 1」：魔王自身即角色 0，恒真——保留这个恒真检查，
   // 不发明可用性规则（同 [109]/[200]/[300] 的处理原则）。
   if (era.getAddedCharacters().length >= 1) {
-    era.printButton('能力显示', 101);
+    panel.push([101, '能力显示']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [102] 地下城 —— 指令面板里第五个接通的真身入口（#180）：
@@ -253,27 +278,27 @@ function draw_main_menu() {
   // 检查）；文案依 FLAG:502（2D 模式 =「场子」，普通 =「地下城」——2D
   // 模式的设定一问随 #181 H12，当前恒 0）。写法同 [100]：列排版文本改
   // 按钮（PR #53），正文不写 [102] 前缀（PR #30）。
-  era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);
+  panel.push([102, (era.get('flag:502') || 0) === 0 ? '地下城' : '场子']);
 
   // [103] 处刑 —— batch_execution()（#543 起真身，ere/event/event-execution-batch.js）；检查 A > 0
   // （同 [100]/[104]，不发明可用性规则）。
   if (count_selectable_slaves() > 0) {
-    era.printButton('处刑', 103);
+    panel.push([103, '处刑']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [104] 迎击 —— intercept()（#397 起真身，page/page-intercept.js）；检查 A > 0。
   if (count_selectable_slaves() > 0) {
-    era.printButton('迎击', 104);
+    panel.push([104, '迎击']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [105] 能力值提升 —— ability_up()（#397 起真身，page/page-ability-up.js）。
   // 可用性判断条件整段是注释态，故无条件渲染——不补一个被关掉的
   // 检查。
-  era.printButton('能力值提升', 105);
+  panel.push([105, '能力值提升']);
 
   // [106] 贩卖奴隶。B > 0 时显示按钮；B 只看
   // CFLAG:0（是否达到出售资格），实际列表再排除濒死/影子/占用角色。
@@ -283,9 +308,9 @@ function draw_main_menu() {
       (cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0,
     ).length;
   if (sellable_count > 0) {
-    era.printButton('贩卖奴隶', 106);
+    panel.push([106, '贩卖奴隶']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [107] 购物 —— #395 置位、#399 起本体也是真身：BOUGHT = 1
@@ -293,15 +318,15 @@ function draw_main_menu() {
   // 整屏画 item_shop（BOUGHT ≥ 54 时画 item_shop_trap，两个本体分别在
   // page/page-item-shop.js 与 page-shop-trap.js）。无条件渲染——没有这枚
   // 按钮，道具商店在实机上进不去（同 [200]/[300] 的 #137 教训）。
-  era.printButton('购物', 107);
+  panel.push([107, '购物']);
 
   // [108] 换装 —— tailor_main()（#397 起真身，page/page-tailor.js）；
   // 检查 A > 0 && FLAG:37 == 1（FLAG:37 未落表前未声明读值 undefined →
   // || 0 → 恒不成立，落表后随设定生效）。
   if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {
-    era.printButton('换装', 108);
+    panel.push([108, '换装']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [109] 侵略 —— 指令面板里第二个接通的真身入口：分发在 page-shop.js
@@ -314,32 +339,32 @@ function draw_main_menu() {
   // 引擎的 input() 只收已打印按钮的快捷键，键入 109 一律「输入不合法」
   // （#129 实机撞见；夹具的 set_inputs 照单全收，验不出这类缺口，防复发
   // 校验见 #130）。
-  era.printButton('侵略', 109);
+  panel.push([109, '侵略']);
 
   // [110] 实验室 —— secret_labo()（#398 起真身，page/page-shop-labo.js）；
   // 检查 TALENT:0:325 == 1（魔王的魔界知识，与 usershop 110 分支的分发检查
   // 同源）。
   if ((era.get('talent:0:325') || 0) === 1) {
-    era.printButton('实验室', 110);
+    panel.push([110, '实验室']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [111] 设施·设备：肉便器或博物馆展品存在时才显示。
   if ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0) {
-    era.printButton('设施·设备', 111);
+    panel.push([111, '设施·设备']);
   } else {
-    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+    panel.push(dim_slot());
   }
 
   // [120] 召唤 —— monster_shop()（#399 起真身，page/page-monster-shop.js）；
   // 无条件渲染。
-  era.printButton('召唤', 120);
+  panel.push([120, '召唤']);
 
   // [199] 休息（回合结束）—— #395 起真身：内联文本 + FLAG:9 +=5
   // （税金）+ begin(STATE.TURNEND)，分发在 page-shop.js 的 usershop。无条件
   // 渲染——做完这一枚，引擎里第一次能把回合推过去（硬约束八）。
-  era.printButton('休息', 199);
+  panel.push([199, '休息']);
 
   // [200] 保存 / [300] 读取 —— 指令面板里第三、四个接通的真身入口：
   // 分发在 page-shop.js 的 usershop（200 → save_game、300 → load_game，
@@ -350,17 +375,18 @@ function draw_main_menu() {
   // 已打印按钮的快捷键，#136 分发侧虽已接真身，渲染侧从未画过按钮，实机
   // 验收当场撞出（#129 同型复现，#136 的勘误评论移交 #137）。存读档是
   // 菜单中枢功能，与调教/侵略不同，按钮随分发真身一起实现。
-  era.printButton('保存', 200);
-  era.printButton('读取', 300);
+  panel.push([200, '保存']);
+  panel.push([300, '读取']);
 
   // [777] 设定 —— config_menu()（#463 起真身，page/page-config.js）；无条件渲染。
-  era.printButton('设定', 777);
+  panel.push([777, '设定']);
 
   // [888] 通信 —— maounet()（真身，#350）；无条件渲染——分发真身早已
   // 接通（#350），渲染侧此前从未画过按钮，跨作品数据交换入口在实机上
   // 因此不存在（同 [200]/[300] 的 #137 教训）。
   // 入口在实机上因此不存在（同 [200]/[300] 的 #137 教训）。
-  era.printButton('通信', 888);
+  panel.push([888, '通信']);
+  print_button_grid(panel, 3);
 
   // 底部双线
   era.drawLine({ isSolid: true });

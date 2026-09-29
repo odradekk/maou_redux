@@ -339,6 +339,10 @@ function create_era_fixture() {
       // 引擎网格为 24 列；GridObject 未给 width 时独占 24 列。保留实际宽度，
       // 让三列布局等渲染行为可断言，而不只记录扁平文本。
       entry.grid_width = obj.config?.width ?? 24;
+      // 文本格的 config.color 直通渲染层（getTextObject 的
+      // safeUndefinedCheck(data.config.color, …)）——按钮格有 color 记录，
+      // 不记它，占位格的灰色就无从断言
+      entry.color = obj.config?.color;
       return entry;
     }
     if (obj?.type === 'divider') {

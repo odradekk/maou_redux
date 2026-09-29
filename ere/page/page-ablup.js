@@ -15,6 +15,7 @@
 const era = require('#/era-electron');
 const { decide_ablup } = require('#/system/train/ablup');
 const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { print_button_grid } = require('#/utils/button-grid');
 
 // 感觉缺失（[―] 灰显）的判定：能力 0-3 → TALENT:101/107/103/105 的第 1
 // 位（& 2）。名字：阴蒂/乳房/私处/肛门钝感（yml/Talent.yml）
@@ -65,6 +66,7 @@ function show_juel(cid) {
  * @param {number} cid 调教目标
  */
 async function show_ablup_select(cid) {
+  const items = [];
   for (let count = 0; count < 40; count += 1) {
     // 编号空间的空洞整组跳过
     if (count >= 4 && count <= 9) continue; // （4 局部感觉只在癖好行出现）
@@ -87,34 +89,36 @@ async function show_ablup_select(cid) {
     // 可提升标记 `*`（#467）：decide_ablup 判定可提升时在按钮正文尾追
     // 同一格式
     const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';
-    era.printButton(
-      `${name} - LV ${level}${mark}`, // 按钮正文空白折叠，不补位
+    items.push([
       count,
+      `${name} - LV ${level}${mark}`, // 按钮正文空白折叠，不补位
       lost ? { color: GRAY } : undefined,
-    );
-    // 不做「一行 4 格」的分栏排版：按钮各自成行，收行由引擎负责，不计数
-    // 也不补空行（连续多行按钮逐行相邻）。
+    ]);
   }
+  // 每行 4 格 = 原版「U % 4 == 0 时换行」的列数（#717 恢复）；网格行
+  // 之间不夹空行，收行由引擎负责
+  print_button_grid(items, 4);
 
-  // [99] 反抗刻印（同样打 `*` 标记）
+  // [99] 反抗刻印 + 癖好两枚（[4] 癖好感觉与 [40] 癖好中毒，CSTR:7 定制
+  // 了才有）：原版三枚同打一行，这里并入同一行网格（同样打 `*` 标记）
+  const tail = [];
   const mark3 = era.get(`mark:${cid}:3`) || 0;
   const mark99 = (await decide_ablup(cid, 99)) === 1 ? ' *' : '';
-  era.printButton(`${era.get('markname:3')} - LV ${mark3}${mark99}`, 99);
-  // 癖好（CSTR:7 定制了才有）：[4] 癖好感觉与 [40] 癖好中毒，同样打
-  // `*` 标记
+  tail.push([99, `${era.get('markname:3')} - LV ${mark3}${mark99}`]);
   const fetish = era.get(`cstr:${cid}:7`);
   if (fetish) {
     const mark_f = (await decide_ablup(cid, 4)) === 1 ? ' *' : '';
-    era.printButton(
-      `${fetish}感觉 - LV ${era.get(`abl:${cid}:4`) || 0}${mark_f}`,
+    tail.push([
       4,
-    );
+      `${fetish}感觉 - LV ${era.get(`abl:${cid}:4`) || 0}${mark_f}`,
+    ]);
     const mark_p = (await decide_ablup(cid, 40)) === 1 ? ' *' : '';
-    era.printButton(
-      `${fetish}中毒 - LV ${era.get(`abl:${cid}:40`) || 0}${mark_p}`,
+    tail.push([
       40,
-    );
+      `${fetish}中毒 - LV ${era.get(`abl:${cid}:40`) || 0}${mark_p}`,
+    ]);
   }
+  print_button_grid(tail, 4);
   // [100] 异界综合征行是调试专用，不绘制
   // （[99] 行与尾部分割线逐行相邻，不补空行）
   era.drawLine(); // 点线分割线

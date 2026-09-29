@@ -9,6 +9,7 @@ const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { chara } = require('#/facade/chara');
 const { e_get, monster_data } = require('#/dungeon/monster-data');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** RAND:N（0..N-1）的缺省实现。 */
 function default_rand(n) {
@@ -37,26 +38,19 @@ async function print_wait(text) {
 
 /**
  * monsterplay_list：列出库存非零的 100-199 号怪物。
- * 三项一行的自由输入文本；ere 以同编号按钮承载可达输入。
+ * 三项一行的自由输入文本；ere 以同编号按钮承载可达输入，每行 3 格
+ * （每格宽 24/3 = 8，三格恰好铺满一整行栅格——此前每格写 12，三格共
+ * 36 超过 24，引擎实际渲染成两格一行，#717 修正）。
  * @returns {number} 恒 return 0
  */
 function monsterplay_list() {
-  let row = [];
+  const items = [];
   for (let id = 100; id < 200; id += 1) {
     if (item_count(id) >= 1) {
-      row.push({
-        type: 'button',
-        accelerator: id,
-        content: item_name(id),
-        config: { align: 'left', width: 12 },
-      });
-      if (row.length === 3) {
-        era.printMultiColumns(row);
-        row = [];
-      }
+      items.push([id, item_name(id)]);
     }
   }
-  if (row.length > 0) era.printMultiColumns(row);
+  print_button_grid(items, 3);
   return 0;
 }
 

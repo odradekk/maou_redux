@@ -249,7 +249,7 @@ export default [
   {
     desc: 'M7289 据点菜单：漏画设施可达入口',
     file: 'ere/page/page-main-menu.js',
-    find: "    era.printButton('设施·设备', 111);",
+    find: "    panel.push([111, '设施·设备']);",
     replace: '    // 变异：设施入口未渲染',
     tests: ['page-main-menu'],
     must_mention: '肉便器或展品存在时才渲染可点按钮',

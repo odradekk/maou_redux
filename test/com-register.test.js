@@ -136,6 +136,33 @@ test('print_comlist：可登记指令的按钮列表，编号印指令号本身'
   assert.ok(!map.has(84), '高级 COM（traincommandname 空）不得出现在登记面');
 });
 
+test('print_comlist：可登记指令按每行 3 列排布（PRINTCPERLINE 的列数）', async () => {
+  const { fixture, mod } = load_register();
+  for (const id of [0, 6, 7, 8, 9]) {
+    fixture.store.set(`traincommandname:${id}`, `指令${id}`);
+  }
+
+  await mod.print_comlist();
+
+  const rows = new Map();
+  for (const line of fixture.lines.filter((l) => l.type === 'button')) {
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push(line.accelerator);
+  }
+  assert.deepEqual(
+    [...rows.values()],
+    [
+      [0, 6, 7],
+      [8, 9],
+    ],
+    '登记面指令列表每行 3 列（PRINTCPERLINE 的列数）',
+  );
+  assert.ok(
+    fixture.lines.every((line) => line.grid_width === 8),
+    '每格宽 24/3 = 8',
+  );
+});
+
 // —— comseq_register ——
 
 test('comseq_register：登记一条后保存并返回（槽位/长度/旗标终态）', async () => {

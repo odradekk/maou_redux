@@ -131,8 +131,15 @@ test('MONSTERPLAY_LIST 只列出持有的 100-199 怪物', () => {
     (line) => line.type === 'button',
   );
   assert.equal(buttons.find((line) => line.accelerator === 100).row, 0);
+  assert.equal(buttons.find((line) => line.accelerator === 102).row, 0);
   assert.equal(buttons.find((line) => line.accelerator === 103).row, 0);
   assert.equal(buttons.find((line) => line.accelerator === 199).row, 1);
+  // 每行 3 格、每格宽 24/3 = 8：三格恰好铺满一整行栅格。格宽写成 12 时
+  // 三格共 36 超过 24，引擎实际渲染成两格一行加一格一行
+  assert.ok(
+    buttons.every((line) => line.grid_width === 8),
+    '每格宽 8（24 栅格的三分之一）',
+  );
 });
 
 test('野狗、魔兽与马分支写入各自的兽奸经验和点数', async () => {

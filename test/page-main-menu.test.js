@@ -206,6 +206,62 @@ test('入口明暗：未选中调暗（menu_button 的调暗），选中正常�
   assert.equal(button_of(chosen.fixture, 505).color, '#bbbbbb');
 });
 
+test('菜单入口行：调教目标/助手同行，四个信息面板切换钮同行（▌ 前缀保留）', () => {
+  const { fixture } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+    join_chara(fixture, 100);
+    era_flag.target = 31;
+    era_flag.assi = 100;
+    fixture.store.set('flag:36', 4);
+  });
+
+  const row_of = (acc) => button_of(fixture, acc)?.row;
+  assert.equal(row_of(496), row_of(497), '调教目标与助手排在同一行');
+  assert.equal(row_of(500), row_of(501), '四个信息面板切换钮排在同一行');
+  assert.equal(
+    row_of(501),
+    row_of(504),
+    '四个信息面板切换钮排在同一行（501 与 504）',
+  );
+  assert.equal(
+    row_of(504),
+    row_of(505),
+    '四个信息面板切换钮排在同一行（504 与 505）',
+  );
+  assert.equal(button_of(fixture, 496).text, '▌调教目标');
+});
+
+test('指令面板：18 项按每行 3 列共 6 行，不可用项的 [---] 占位仍占格', () => {
+  // 空档世界：A = 0、无魔界知识、设施未解锁——大量 [---] 占位
+  const { fixture } = draw_menu_with(() => {});
+
+  // 指令面板 = 「▌Commands」标题之后、底部双线之前的全部网格格
+  const title = fixture.lines.find((line) => line.text?.includes('Commands'));
+  const rows = new Map();
+  for (const line of fixture.lines) {
+    if (line.row <= title.row) continue;
+    if (line.type !== 'button' && line.text !== '[---]') continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push(line);
+  }
+  const panel = [...rows.values()];
+  assert.equal(panel.length, 6, '18 项每行 3 格 = 6 行');
+  assert.ok(
+    panel.every((row) => row.length === 3),
+    '占位格仍占一格，各列不因可用性漂移',
+  );
+  // 首行 = [100]/[101] 占位 + [102] 地下城按钮；全部格宽 8
+  assert.deepEqual(
+    panel[0].map((line) => line.type),
+    ['text', 'text', 'button'],
+  );
+  assert.equal(panel[0][2].accelerator, 102);
+  assert.ok(panel.every((row) => row.every((line) => line.grid_width === 8)));
+  // 占位格是灰字（menu_button 的调暗色）
+  assert.equal(panel[0][0].color, '#bbbbbb');
+});
+
 test('防御性修正：编号不在已加入角色列表时重置为未选择', () => {
   const { era_flag } = draw_menu_with((fixture, era_flag) => {
     join_chara(fixture, 0); // 角色数 = 1：序号世界里合法的只有 0
