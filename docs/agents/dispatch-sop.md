@@ -2,7 +2,7 @@
 
 本文写给分配任务、验收并合并的主 agent。执行工单的 worker 读 `worker-sop.md`。一张工单对应一个 Paseo worktree 和一个 agent 会话；优先使用 Paseo MCP，没有对应操作时用 CLI。本文的远端写入、合并和归档步骤是已获授权的工作流：验收通过且 CI 绿即合并，不逐个 PR 请示；仍须遵守当前会话的权限范围。
 
-工单位于 GitHub 的 `odradekk/maou_redux`，操作约定见 `issue-tracker.md`。路线图 #101 规定阶段顺序：其子 issue 记录阶段决策，实施 issue 归入各阶段的子路线图。阻塞关系以 GitHub 的 `issue_dependencies_summary.blocked_by` 为准。
+工单位于 GitHub 的 `odradekk/maou_redux`，操作约定见 `issue-tracker.md`。路线图（带 `wayfinder:map` 标签的 issue；移植阶段用的是 #101，已于 2026-09-29 关闭）规定阶段顺序：其子 issue 记录阶段决策，实施 issue 归入各阶段的子路线图。阻塞关系以 GitHub 的 `issue_dependencies_summary.blocked_by` 为准。
 
 ## 0. 环境前提
 
@@ -215,7 +215,7 @@ git -C D:/Code/era worktree list                                    # 无当前�
 
 ## 6. 阶段验收
 
-在路线图 #101 的阶段决策 issue 关闭前完成一次，不要求每张实施工单重复：
+在路线图的阶段决策 issue 关闭前完成一次，不要求每张实施工单重复：
 
 1. **全量变异测试**：开阶段收尾 PR（承载阶段本来要做的文档改动，如 AGENTS.md「当前状态」；没有改动就用空提交），打 `phase-acceptance` 标签，`mutation.yml` 分 12 片在 CI 运行。合格线是每片退出码 0，汇总任务的 job summary 给出「拦截 / 跳过 / 红」合计，把数字写进 #101。本机也可 `node tools/run-node.mjs --timeout 14400 -- tools/mutation-check.mjs --jobs 2`，但 7000 条左右实测约 3.5 小时，优先走 CI。
 2. **引擎实际运行**：在主工作目录用 Electron MCP 工具（`launch_game`、`click`、`type`、`read_text`、`screenshot`、`get_errors`）走完该阶段的端到端流程。从新游戏开始；按 ADR-0006，旧存档因版本过低被拒绝属预期。临时设置的状态不得提交。列出验收路径前先核对入口在源码里已接线（按钮渲染与分发分支同名同号）。
