@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 165; // #650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
+export const COUNT = 167; // #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于自动处刑与流放逐两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一检查）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
@@ -1334,13 +1334,33 @@ export default [
     must_mention: '处置菜单',
   },
   {
-    desc: 'M11995 候选人轮的 [100] 返回改成按钮（白名单会把候选人编号锁死）',
+    // #710：候选人轮整轮按钮化（行 + 返回都是按钮），原「只给返回打按钮会
+    // 把候选人编号锁死」的检查随之调转方向——现在检查「返回退回纯文本」
+    // 与「候选人行退回纯文本」两侧。
+    desc: 'M14251 候选人轮的 [100] 返回退回纯文本（回到只按钮化行的半套写法）',
     file: 'ere/event/event-execution.js',
-    find: "    era.print('[100] 返回');\n    let selected;",
+    find: "    era.printButton('返回', 100);\n    let selected;",
     replace:
-      "    era.printButton('返回', 100); // 变异：列表轮打了按钮\n    let selected;",
+      "    era.print('[100] 返回'); // 变异：返回退回纯文本\n    let selected;",
     tests: ['event-execution'],
-    must_mention: '候选人轮的 [100] 返回保持纯文本',
+    must_mention: '候选人轮的 [100] 返回也是按钮',
+  },
+  {
+    desc: 'M14250 候选人行退回纯文本（行号即输入值，点不动）',
+    file: 'ere/event/event-execution.js',
+    find: '    era.printButton(line, index);',
+    replace: '    era.print(`[${index}] ${line}`); // 变异：纯文本行',
+    tests: ['event-execution'],
+    must_mention: '候选人行是按钮',
+  },
+  {
+    desc: 'M14249 猎奇处刑菜单的七枚选项退回纯文本行',
+    file: 'ere/event/event-grotesque.js',
+    find: '  ].forEach((label, index) => era.printButton(label, index));',
+    replace:
+      '  ].forEach((label, index) => era.print(`[${index}] ${label}`)); // 变异：纯文本',
+    tests: ['event-execution'],
+    must_mention: '七枚选项是按钮',
   },
   {
     desc: 'M11996 设施主菜单退回纯文本行（展品行点不动）',

@@ -1928,6 +1928,16 @@ test('summon_slave：四道前置与生成流程（等级 / 肉便器 / 编号�
     all_text(third.added).includes('请确认对象的收录编号在150以上199以下'),
     '149 以下与 199 以上都拒收',
   );
+  // #710：「不生成」改成按钮（保留 useRule: false，150-199 的自由输入照旧）
+  assert.ok(
+    button_texts(third.added).includes('[0] - 不生成'),
+    '「不生成」是按钮（编号由引擎按 showAcc 拼）',
+  );
+  assert.equal(
+    texts(third.added).some((t) => t.includes('[0] - 不生成')),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
   // 预设不存在
   const missing = make_fixture({ seed: { 'flag:83': 30 } });
   const fourth = await run(missing, 'summon_slave', [150, 0], {});

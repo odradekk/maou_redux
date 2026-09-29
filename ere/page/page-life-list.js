@@ -1,6 +1,6 @@
 /**
  * @file 据点角色列表：life_list 一族的七个函数（issue #397 / N13 段 3）；
- * select_yes_no 自 #333 起在本文件（原有内容，行为未动）。
+ * select_yes_no 自 #333 起在本文件（#710 把两枚选项改成按钮）。
  *
  * 消费方（这张工单只实现函数本体，接入随各自页面）：商店物品页、实验室
  * 的 42 处分页调用、婚姻、战役事件、特工事件、侵攻各页；这张工单内的
@@ -83,6 +83,7 @@
 
 const era = require('#/era-electron');
 const { get_look_info } = require('#/chara/look-info'); // #389 起的全量真身
+const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
   NBSP,
@@ -521,11 +522,23 @@ function max_page_salave(num_page) {
 /**
  * select_yes_no（issue #333 起在本文件）：完全的「是的/不要」
  * 二选一，只接受 0/1，其余输入重问（输入循环重问）。
+ *
+ * #710：两枚选项排成一行按钮（原是一行纯文本，玩家点不了）。按钮化后本轮
+ * 白名单即 0/1，越界输入由引擎当场拒收，重问分支因此结构性不可达（结构保留）。
+ * 调用点（monster-data / chara-temptation / dungeon-lovers）调用前都只打印
+ * 文本或已消费掉上一轮按钮，没有未消费的按钮同屏。
+ *
  * @returns {Promise<number>} 0 或 1
  */
 async function select_yes_no() {
   for (;;) {
-    era.print('\u00A0\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要');
+    print_button_grid(
+      [
+        [0, '是的'],
+        [1, '不要'],
+      ],
+      2,
+    );
     const result = await era.input();
     if (result === 0 || result === 1) return result;
   }

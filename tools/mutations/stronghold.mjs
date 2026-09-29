@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 249; // #562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 239; // #710 净 -10：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失）与 M9114（IKAI_IDS.end 的受理支已不可键入、一览上界在测试数据里不可观察），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -1408,7 +1408,7 @@ export default [
     find: 'const IKAI_MIN_COINS = 3;',
     replace: 'const IKAI_MIN_COINS = 4;',
     tests: ['chara-shop'],
-    must_mention: 'CHARA_IKAI_COST',
+    must_mention: '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
   },
   {
     desc: 'M8911 强行召唤的金钱单价错（2000 → 2001）',
@@ -1416,7 +1416,7 @@ export default [
     find: 'const IKAI_COIN_RATE = 2000;',
     replace: 'const IKAI_COIN_RATE = 2001;',
     tests: ['chara-shop'],
-    must_mention: 'CHARA_IKAI_COST',
+    must_mention: '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
   },
   {
     desc: 'M8912 成交的勋章闸错一档（< 1 → < 0）',
@@ -1442,15 +1442,8 @@ export default [
     tests: ['shop-trap'],
     must_mention: '切回道具商店',
   },
-  {
-    desc: 'M8915 商品一览的编号字段宽错一位（3 → 5）',
-    file: 'ere/page/page-monster-shop.js',
-    find: '        `[${pad_display(String(id), 3)}] ` +\n        `${pad_display(item_name(id), NAME_WIDTH)} ` +',
-    replace:
-      '        `[${pad_display(String(id), 5)}] ` +\n        `${pad_display(item_name(id), NAME_WIDTH)} ` +',
-    tests: ['monster-shop'],
-    must_mention: '商品一览的排版字面量',
-  },
+  // M8915（商品一览编号字段宽 3 → 5）随 #710 的按钮网格删除：编号补位已
+  // 不存在，等价检查换成 M14236（返回退回纯文本）与既有的 M8926（每行格数）。
   {
     desc: 'M8916 120 分支的满员条件宽一位（< MAX_CHARANUM → <=）',
     file: 'ere/page/page-shop.js',
@@ -1540,24 +1533,10 @@ export default [
     find: 'const COLUMNS = 2;',
     replace: 'const COLUMNS = 3;',
     tests: ['monster-shop'],
-    must_mention: '商品一览的排版字面量',
+    must_mention: '商品一览是按钮网格',
   },
-  {
-    desc: 'M8927 怪物商店商品一览的名字字段宽错一格（NAME_WIDTH 22 → 21）',
-    file: 'ere/page/page-monster-shop.js',
-    find: 'const NAME_WIDTH = 22;',
-    replace: 'const NAME_WIDTH = 21;',
-    tests: ['monster-shop'],
-    must_mention: '商品一览的排版字面量',
-  },
-  {
-    desc: 'M8928 怪物商店商品一览的等级字段宽错一格（LEVEL_WIDTH 5 → 6）',
-    file: 'ere/page/page-monster-shop.js',
-    find: 'const LEVEL_WIDTH = 5;',
-    replace: 'const LEVEL_WIDTH = 6;',
-    tests: ['monster-shop'],
-    must_mention: '商品一览的四个条件',
-  },
+  // M8927/M8928（商品一览的名字/等级字段宽）随 #710 的按钮网格删除：
+  // 两个补位常量已不存在，等价检查换成 M14236/M14238（返回与正文）。
   {
     desc: 'M8929 怪物商店祭品行的名字字段宽错一格（SACRIFICE_NAME_WIDTH 22 → 21）',
     file: 'ere/page/page-monster-shop.js',
@@ -1574,31 +1553,8 @@ export default [
     tests: ['monster-shop'],
     must_mention: '祭品行与可选行的排版字面量',
   },
-  {
-    desc: 'M8931 怪物商店可选祭品行的名字字段宽错一格（PICK_NAME_WIDTH 20 → 21）',
-    file: 'ere/page/page-monster-shop.js',
-    find: 'const PICK_NAME_WIDTH = 20;',
-    replace: 'const PICK_NAME_WIDTH = 21;',
-    tests: ['monster-shop'],
-    must_mention: '祭品行与可选行的排版字面量',
-  },
-  {
-    desc: 'M8932 怪物商店可选祭品行的持有数字段宽错一格（PICK_COUNT_WIDTH 5 → 4）',
-    file: 'ere/page/page-monster-shop.js',
-    find: 'const PICK_COUNT_WIDTH = 5;',
-    replace: 'const PICK_COUNT_WIDTH = 4;',
-    tests: ['monster-shop'],
-    must_mention: '祭品行与可选行的排版字面量',
-  },
-  {
-    desc: 'M8933 怪物商店可选行的编号字段宽错一位（3 → 5）',
-    file: 'ere/page/page-monster-shop.js',
-    find: '        `[${pad_display(String(id), 3)}] ` +\n        `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +',
-    replace:
-      '        `[${pad_display(String(id), 5)}] ` +\n        `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +',
-    tests: ['monster-shop'],
-    must_mention: '祭品行与可选行的排版字面量',
-  },
+  // M8931/M8932/M8933（可选祭品行的名字/数量/编号补位）随 #710 的按钮网格
+  // 删除：三个补位常量已不存在，等价检查换成 M14253（可选行退回纯文本）。
   {
     desc: 'M8934 异界一览的每行格数错一格（COLUMNS 5 → 4）',
     file: 'ere/page/page-chara-shop.js',
@@ -1607,50 +1563,9 @@ export default [
     tests: ['chara-shop'],
     must_mention: '一览的排版字面量',
   },
-  {
-    desc: 'M8935 异界一览的名字字段宽错一格（NAME_WIDTH 14 → 13）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const NAME_WIDTH = 14;',
-    replace: 'const NAME_WIDTH = 13;',
-    tests: ['chara-shop'],
-    must_mention: '一览的排版字面量',
-  },
-  {
-    // NUM_WIDTH = 2 是原字样面量，而段内编号恒 5 位——2 → 1 不改变任何输出，
-    // 是等价变异（收进来只会造一条永远拦不下的条目）。条目取可观察的那一侧：
-    // 顶宽到 10，`[     10001]` 的填充立刻显现
-    desc: 'M8936 异界一览的编号字段宽顶宽（NUM_WIDTH 2 → 10）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const NUM_WIDTH = 2;',
-    replace: 'const NUM_WIDTH = 10;',
-    tests: ['chara-shop'],
-    must_mention: '一览只列',
-  },
-  // 下面三条是同一轮顺手修回的三处 1:1（各由本轮的整格断言守）
-  {
-    desc: 'M8937 异界一览的格首少一个前导空格（PRINTFORM 的第二个空格）',
-    file: 'ere/page/page-chara-shop.js',
-    find: '        ` [${pad_left(String(l_i), NUM_WIDTH)}] ` +',
-    replace: '        `[${pad_left(String(l_i), NUM_WIDTH)}] ` +',
-    tests: ['chara-shop'],
-    must_mention: '一览的排版字面量',
-  },
-  {
-    desc: 'M8938 商品一览的名字字段后少一个半角空格（回到旧写法）',
-    file: 'ere/page/page-monster-shop.js',
-    find: '`${pad_display(item_name(id), NAME_WIDTH)} ` +',
-    replace: '`${pad_display(item_name(id), NAME_WIDTH)}` +',
-    tests: ['monster-shop'],
-    must_mention: '商品一览的排版字面量',
-  },
-  {
-    desc: 'M8939 可选祭品行格尾的制表符退回全角空格（回到旧写法）',
-    file: 'ere/page/page-monster-shop.js',
-    find: '`- ${info.picked} 只\\t`;',
-    replace: '`- ${info.picked} 只\\u3000`;',
-    tests: ['monster-shop'],
-    must_mention: '祭品行与可选行的排版字面量',
-  },
+  // M8935-M8939（异界一览的补位宽、格首空格、商品一览的半角空格与可选行格尾
+  // 制表符）随 #710 的按钮网格删除：这些排版字面量已不存在，等价检查换成
+  // M14238（异界一览正文）与 M14253（可选行退回纯文本）。
   // M8940（异界召唤的性别菜单行少一个全角空格）随 #572 的按钮化删除：
   // 那一行成了 printButton（引擎把正文里的连续空白折成一个空格），排版字面量
   // 不再存在，等价检查换成 #572 的 M12025（菜单行退回纯文本即红）。
@@ -1774,15 +1689,9 @@ export default [
     tests: ['chara-shop'],
     must_mention: '一览的排版字面量',
   },
-  {
-    desc: 'M9114 异界名录的上界错一格（IKAI_IDS.end 100000 → 99999）',
-    file: 'ere/page/page-chara-shop.js',
-    find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
-    replace: 'const IKAI_IDS = { start: 10000, end: 99999 };',
-    tests: ['chara-shop'],
-    must_mention:
-      'char_ikai_create：编号段的上界是闭区间（100000 也查在场，不重复收费）',
-  },
+  // M9114（IKAI_IDS.end 100000 → 99999）随 #710 删除：上有界 100000 的
+  // 「已在场复用」受理支已不可键入，而一览循环的上界在测试数据里
+  // （10000-100000 段没有 99999 号预设）不可观察，属等价变异。
   {
     desc: 'M9115 异界召唤性别选择的上限少一档（SEX_MAX 3 → 2）',
     file: 'ere/page/page-chara-shop.js',
@@ -2042,12 +1951,24 @@ export default [
     must_mention: '召唤确认处只认 0/1',
   },
   {
-    desc: 'M12024 商品一览轮的 [999] 返回改成按钮（白名单会把商品编号锁死）',
+    // #710：商品一览整轮按钮化（格 + 返回），原「只给返回打按钮」的检查
+    // 随之调转方向：现在检查「返回退回纯文本」会让商品编号被拒收。
+    desc: 'M14236 商品一览轮的 [999] 返回退回纯文本（商品编号当场被拒收）',
     file: 'ere/page/page-monster-shop.js',
-    find: "    era.print('[999] 返回');\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
+    find: "    era.printButton('返回', 999);\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
     replace:
-      "    era.printButton('返回', 999); // 变异：列表轮打了按钮\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
+      "    era.print('[999] 返回'); // 变异：返回退回纯文本\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
     tests: ['monster-shop'],
+    must_mention: '返回是按钮',
+  },
+  {
+    desc: 'M14253 可选祭品行的编号格退回纯文本（祭品编号点不动）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '    print_button_grid(pick_items, COLUMNS);',
+    replace:
+      '    for (const [id, content] of pick_items) {\n      era.print(`[${id}] ${content}`); // 变异：纯文本\n    }',
+    tests: ['monster-shop'],
+    // 可选行成了文本 → 白名单只剩 999，祭品编号当场被拒收
     must_mention: '输入不合法！请输入以下值之一：',
   },
   {
@@ -2068,12 +1989,23 @@ export default [
       'chara_sim_shop：再换一个（[1]）——退人扣 1500 重来；钱不够则只报错',
   },
   {
-    desc: 'M12027 异界勇者列表轮的 [999] 返回改成按钮（同上，列表轮不打按钮）',
+    // #710：异界一览整轮按钮化（格 + 返回），原检查调转方向：返回退回纯文本
+    desc: 'M12027 异界一览轮的 [999] 返回退回纯文本（预览格编号当场被拒收）',
     file: 'ere/page/page-chara-shop.js',
-    find: "    era.print('[999] 返回');",
-    replace: "    era.printButton('返回', 999); // 变异：列表轮打了按钮",
+    find: "    // #710：返回与上面的编号格整轮一起按钮化。\n    era.printButton('返回', 999);",
+    replace:
+      "    era.print('[999] 返回'); // 变异：返回退回纯文本\n    // （原按钮行）",
     tests: ['chara-shop'],
     must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M14238 异界一览的价钱文案漏掉金钱（正文少了「&…金」）',
+    file: 'ere/page/page-chara-shop.js',
+    find: '      items.push([l_i, `${csv_name(l_i)}(${coins}勋章&${money}金)`]);',
+    replace:
+      '      items.push([l_i, `${csv_name(l_i)}(${coins}勋章)`]); // 变异：漏金钱',
+    tests: ['chara-shop'],
+    must_mention: '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
   },
   {
     desc: 'M12028 道具商店购买确认退回纯文本行',

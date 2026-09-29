@@ -240,6 +240,33 @@ test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async
   );
 });
 
+test('GROTESQUE：#710 处刑菜单是一列按钮（0-6），未显示的 100 仍可键入', async () => {
+  const fixture = seed_world();
+  fixture.set_inputs(100); // 取消（未显示，走 useRule: false 的自由输入）
+  const { grotesque } = fixture.load_module('event/event-grotesque');
+
+  await grotesque(31, seq([0]));
+
+  assert.deepEqual(
+    button_rendered(fixture),
+    [
+      '[0] 四肢切断刑',
+      '[1] 内脏凌辱刑',
+      '[2] 斩首刑',
+      '[3] 火烧刑',
+      '[4] 食肉刑',
+      '[5] 死灵化',
+      '[6] 僵尸化',
+    ],
+    '七枚选项是按钮，正文不带 [N] 前缀（编号由 showAcc 拼）',
+  );
+  assert.equal(
+    fixture.text_lines().some((line) => /^\[\d\] /.test(line)),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
+});
+
 test('GROTESQUE：爱慕的食肉刑只打印一次烙印并保留专属结尾', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:85', 1); // 爱慕
@@ -1444,7 +1471,7 @@ test('PUBLIC_EXECUTION：三选一菜单是按钮，未显示的 100 仍可键�
   ]);
 });
 
-test('EXECUTION：处置菜单是按钮、候选人行保持纯文本（#572）', async () => {
+test('EXECUTION：处置菜单与候选人行都是按钮（#572 / #710）', async () => {
   const fixture = seed_world();
   fixture.set_inputs(1, 6); // 选 47 号 → [6] 固定示众
   const { execution } = fixture.load_module('event/event-execution');
@@ -1466,28 +1493,28 @@ test('EXECUTION：处置菜单是按钮、候选人行保持纯文本（#572）'
   ]) {
     assert(buttons.includes(option), `处置菜单 ${option}`);
   }
-  // 候选人列表保持纯文本：单给它上面的 [100] 打按钮，白名单会收成 100、
-  // 候选人编号当场被拒收（整轮按钮化要先重排多列拼行）
-  assert(
-    fixture.text_lines().some((line) => /^\[\s*0\] \S/.test(line)),
-    '候选人行仍是纯文本行（行首编号才是输入值）',
+  // #710：候选人行与 [100] 返回改成按钮（整轮一起按钮化——只给返回打
+  // 按钮会把候选人编号锁死）。候选人轮的输入仍传 useRule: false，
+  // 未显示编号的自由输入通道照旧（整表的上界检查靠输入值）。
+  // 行正文＝名字 + 职业 + 等级，格间单空格；列补位在按钮正文里会被引擎
+  // 折叠，不再补位（原纯文本行的对齐规格随文本行一起去）。
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered])
+      .filter(([, , rendered]) => rendered.includes(' LV ')),
+    [
+      [0, '温妮   LV 4', '[0] 温妮 LV 4'],
+      [1, '艾达   LV 2', '[1] 艾达 LV 2'],
+    ],
+    '候选人行是按钮，行号即快捷键、正文不带 [N] 前缀',
   );
-  // 专项断言排在下面的整行断言前面：[100] 改成按钮时两条都会红，先报这条，
-  // M11995 的 must_mention 才对得上
-  assert(
-    fixture.text_lines().includes('[100] 返回'),
-    '候选人轮的 [100] 返回保持纯文本',
+  assert(buttons.includes('[100] 返回'), '候选人轮的 [100] 返回也是按钮');
+  assert.equal(
+    fixture.text_lines().some((line) => /^\[\s*\d+\]/.test(line)),
+    false,
+    '同屏没有残留的纯文本候选人行',
   );
-  // 整行逐字钉住：编号右对齐 2 / 名字左对齐 12 / 职业左对齐 6 / 等级右对齐 3
-  // （%…,N% 规格），列补位是 NBSP（#577）——退回半角空格的话
-  // 这些格子会被引擎合并成一格，整行错位，本断言当场红。职业列为空时
-  // job_name 给一个半角空格，故名字与职业之间是「分隔空格 + 那个半角空格」
-  const rows = fixture.text_lines().filter((line) => /^\[\s*\d+\]/.test(line));
-  assert.deepEqual(rows, [
-    '[\u00A00] 温妮\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0  \u00A0\u00A0\u00A0\u00A0\u00A0 LV\u00A0\u00A04',
-    '[\u00A01] 艾达\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0  \u00A0\u00A0\u00A0\u00A0\u00A0 LV\u00A0\u00A02',
-    '[100] 返回',
-  ]);
 });
 
 test('INFRASTRUCTURE：主菜单、牧场设定与播种者四选都是按钮（#572）', async () => {

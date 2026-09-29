@@ -19,6 +19,9 @@
  *     等价——每个可输入项都是按钮，快捷键集合不变）；
  *   - %名,18,LEFT% 一类的等宽填充省略：引擎 showAcc 会把按钮正文里的连续
  *     空白折叠成一个空格（PR #30），填充不 survive 渲染；
+ *   - 部下总览的怪物行与 [999] 返回改成按钮（#710）：行收集到逐层 WAIT
+ *     全部走完之后再打印，早先打印的按钮不会被后面的等键禁用（理由见
+ *     print_subordinates 的注释）；
  *   - 按钮 [100] 的状态文案「關閉/開啟」按 #60 归一为简体「关闭/开启」；
  *   - 局部变量 DISPLAY_FLAG/SELECT_FLAG/DIALOGUE 是跨调用持久的
  *     #DIM（尾部手工复位），ere 侧是函数局部变量，天然复位；
@@ -317,7 +320,8 @@ async function enemy_exist2(floor) {
  * 部下状态总览（dungeon_info2 的 $PRINT 块，输入面 [100-199] +
  * [999]）：打印所选区段的楼层头 + 怪物库存 + ENEMY_EXIST2 的勇侧行，等输入。
  * GOTO PRINT 的重画收在调用方（主循环 continue 触发 ScreenBlock.redraw
- * 之前，先经本函数重建画面）。
+ * 之前，先经本函数重建画面）。怪物库存行是按钮（#710），在逐层 WAIT
+ * 全部走完之后才打印。
  *
  * @param {number} kai_result 主菜单输入（10-14：总览 / 1-3 层 / 4-6 层 /
  *   7-9 层 / 近卫兵）
@@ -343,7 +347,14 @@ async function print_subordinates(kai_result) {
     }
   }
   // REPEAT 100：怪物槽 Z = 层*10 + 格（A = Z + 100 即 Item.yml 的
-  // 怪物库存段 100-199），每层第一格画楼层头
+  // 怪物库存段 100-199），每层第一格画楼层头。
+  //
+  // #710：怪物行与 [999] 返回改成按钮。**等键都排在列表打印之前**——
+  // 按钮一旦打印，之后任何一次成功回传（逐层的 waitAnyKey 也是）都会把
+  // 早先的按钮禁用（引擎按 valCount 判定），最后那个 WAIT 之前打印的按钮
+  // 会整点不动。所以这里先把各层的行收集起来、走完全部 WAIT 之后再一次性
+  // 打印（#180「保持纯文本」的结论随之撤销）。
+  const monster_rows = [];
   let floor = 0;
   for (let i = 0; i < 100 && z < 100 && r > 0; i += 1) {
     if (z % 10 === 0) {
@@ -362,24 +373,18 @@ async function print_subordinates(kai_result) {
     const a = z + 100;
     const b = item_count(a);
     if (b > 0) {
-      // PRINTFORML [{A}] {B}只%MONSTERNAME(A)%——纯文本 + 自由输入。
-      // **不**改按钮（PR #53 通则在此处的例外）：本界面的
-      // 逐层 WAIT 在 ere 引擎里会清空按钮白名单（任何一次成功
-      // 回传都把 rule 置空，waitAnyKey 内部走 input({any:true})），最后
-      // 一个 WAIT 之前打印的按钮会整段拒收——怪物行改按钮会让早段怪物
-      // 在实机上不可选。纯文本 + 无按钮轮 = 引擎的自由输入通道（dev-
-      // guides/05-interaction.md），键盘键入 [A] 与 [999] 全程可达，
-      // 键盘交互行为保持一致。
-      era.print(`[${a}] ${b}只${monstername(a)}`);
+      // 原 PRINTFORML [{A}] {B}只%MONSTERNAME(A)% 的一行；正文只写库存与
+      // 名字，编号交给引擎按 showAcc 拼
+      monster_rows.push([a, `${b}只${monstername(a)}`]);
     }
     z += 1;
     r -= 1;
   }
+  for (const [accelerator, content] of monster_rows) {
+    era.printButton(content, accelerator);
+  }
   era.drawLine();
-  // PRINTL [999] 返回——同上，纯文本（不打按钮，保住自由输入通道）。
-  // #572 复核维持：本轮若打这枚按钮，白名单会被收成 999，上面那些怪物行的
-  // 编号（100-199）当场被拒收；按钮化必须与怪物行整轮一起做。
-  era.print('[999] 返回');
+  era.printButton('返回', 999);
   // INPUT
   return era.input();
 }

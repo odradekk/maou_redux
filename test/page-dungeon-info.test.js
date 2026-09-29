@@ -532,9 +532,32 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
     history.some((t) => t.includes('第1阶层')),
     '楼层头',
   );
-  assert.ok(
+  // #710：怪物行是按钮（编号 105 即快捷键，正文只写库存与名字）。
+  // 逐层等键都在列表打印之前，所以最后一轮的白名单就是这些行 + 999。
+  // 只取部下屏之后的按钮：主界面的阶层/单元按钮同在一片行史里。
+  const banner = fixture.lines_history.findIndex(
+    (l) => l.type === 'text' && l.text === '地下城内的部下',
+  );
+  assert.ok(banner >= 0, '部下横幅位置');
+  const remod = fixture.lines_history.findIndex(
+    (l) => l.type === 'text' && l.text.includes('的改造'),
+  );
+  assert.ok(remod > banner, '105 之后进改造画面');
+  assert.deepEqual(
+    fixture.lines_history
+      .slice(banner, remod)
+      .filter((l) => l.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [105, '7只狗头人', '[105] 7只狗头人'],
+      [999, '返回', '[999] 返回'],
+    ],
+    '怪物行与返回都是按钮',
+  );
+  assert.equal(
     history.some((t) => t.includes('7只狗头人')),
-    '怪物库存行（7 只狗头人）',
+    false,
+    '同屏没有残留的纯文本怪物行',
   );
   assert.ok(
     history.some((t) => t.includes('狗头人的改造')),

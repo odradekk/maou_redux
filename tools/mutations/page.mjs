@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 507; // #702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 507; // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -1388,15 +1388,8 @@ export default [
     tests: ['page-life-list'],
     must_mention: '页数算式在整除与余数两侧',
   },
-  {
-    desc: 'M8401 SELECT_YES_NO 放行多一个输入（0/1 → 0/1/2）',
-    file: 'ere/page/page-life-list.js',
-    find: '    if (result === 0 || result === 1) return result;',
-    replace:
-      '    if (result === 0 || result === 1 || result === 2) return result;',
-    tests: ['page-life-list'],
-    must_mention: '只接受 0/1',
-  },
+  // M8401（SELECT_YES_NO 放行多一个输入：0/1 → 0/1/2）随 #710 删除：
+  // 选项按钮化后本轮白名单只放行 0/1，2 不可键入，两档写法行为相同。
   {
     desc: 'M8402 ABILITY_UP 勇者一览每页行数（24 → 25）',
     file: 'ere/page/page-ability-up.js',
@@ -4765,5 +4758,14 @@ export default [
     tests: ['page-tailor'],
     test_name: 'tailor_accessory：页码两边都不补位（(1/5页) 格式）',
     must_mention: '首页页码',
+  },
+  // —— #710：按钮化（C 类保留 useRule: false） ——
+  {
+    desc: 'M14241 summon_slave 的「不生成」退回纯文本行（自由输入仍照旧）',
+    file: 'ere/page/page-shop-labo.js',
+    find: "    era.printButton('- 不生成', 0);",
+    replace: "    era.print(' [0] - 不生成'); // 变异：纯文本",
+    tests: ['page-shop-labo'],
+    must_mention: '「不生成」是按钮',
   },
 ];
