@@ -31,7 +31,7 @@ node tools/run-node.mjs -- --test test/<当前工单>.test.js
 node tools/run-node.mjs -- tools/mutation-check.mjs --ids <新增编号>
 ```
 
-`--verify` 只检查条目结构，不能代替实际变异。Windows 上串行变异被强制终止后，检查目标文件的 diff 是否已还原。
+`--verify` 只检查条目结构，不能代替实际变异。变异在临时目录的隔离副本里跑，被强制终止也不会改动工作区。
 
 **变异条目**：提示词给出本工单的编号区间和当前无引擎跳过基线，不得使用区间之外的编号。新增条目后更新所在分片的 `export const COUNT`；仅由引擎测试验证的条目设置 `engine: true` 并更新 `tools/mutation-check.mjs` 的 `ENGINE_SKIP_BASELINE`；新增依赖引擎的用例须更新 `test/engine-skip-baseline.txt`，并在注释中写明计数依据。`must_mention` 必须来自实际失败输出，不能按源码猜。
 

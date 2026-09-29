@@ -92,9 +92,7 @@ New-Item -ItemType Directory -Force logs/migration | Out-Null
 node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> logs/migration/mutation-full.log
 ```
 
-超时返回 124；Windows 用 `taskkill /T /F` 终止本次命令的子进程树，POSIX 先中断、5 秒后强制终止。**Windows 长变异任务使用 `--jobs 2` 或更高的隔离副本模式**：串行变异在原目录改文件，靠 `finally` 还原，而强制终止不执行 `finally`。**串行 `--ids` 跑完一律看一眼 `git status`，不论退出码**——异常退出同样跳过 `finally`，会把源文件留在变异态（#493 验收时 `kojo-k14-nobleman.js` 就被留成了 M10703 的样子，退出码看不出来）。留下的改动核对 diff 后 `git checkout --` 还原，重跑一次。
-
-`mutation-check` 自 #532 起每次启动会自查一道「靶文件是不是停在某条变异的状态」，查到就点名 M 编号、打印还原命令并拒绝执行。**但它管不到最常见的那种情形，所以上面那句仍要照做**：自查拿 `git HEAD` 当基准，只在变异写下时靶文件恰与 HEAD 一致时成立；而同一张工单既改靶文件、又跑打这个文件的变异条目是常规动作，那时残留是「你的未提交改动 + 变异」，自查认不出来（盲区与根治方案见 #536）。
+超时返回 124；Windows 用 `taskkill /T /F` 终止本次命令的子进程树，POSIX 先中断、5 秒后强制终止。强制终止不执行 `finally`，所以 `mutation-check` 的串行档和 `--jobs` 并行档都在临时目录的隔离副本里变异，工作区不会停在某条变异的状态（#536）；每次运行先复制副本、跑一遍不带变异的对照，多花几秒。只有显式加 `--in-place`（并行子进程和 CI 分片用）才直接改 `--root`。长时间的全量任务用 `--jobs 2` 或更高缩短时间。
 
 **等待长任务时，使用任务本身提供的等待接口，并取得最终退出码。** 不要另写基于进程名的轮询：`pgrep -f` 可能匹配轮询命令自身，导致循环无法结束。
 

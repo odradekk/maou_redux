@@ -1,5 +1,5 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，二十一条
+ * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，十七条
  * 行为在此固定。全部通过临时目录夹具驱动（--root/--ledger-dir/--asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
  * 目录，进程怎么死都污染不到仓库。
@@ -8,7 +8,7 @@
  *      引擎声明/must_mention 出处）由此进 npm test，变异检查拿到第一个
  *      自动执行点。本文件不持条数副本（数字只在各分片里），只验行为。
  *   2. 拦截路径：夹具变异被夹具测试拦下（退出码 0），且目标文件逐字节还原
- *      ——还原读回校验从工具外侧再证一遍。
+ *      ——还原读回校验从工具外侧再证一遍（--in-place）。
  *   3. 误报通过必红：变异不伤被测行为（测试照过）→ 退出码 1。
  *   4. 未报出即红：测试红了、但 must_mention 片段不在输出里 → 退出码 1
  *      （must_mention 的实义：证明红的正是被测行为，不是别的什么红了）。
@@ -51,30 +51,9 @@
  *      逐字节不变，且 `--verify` 不进入执行阶段（目标文件置为只读仍报绿
  *      ——「写了再还原」在 Windows 上是 EPERM、Linux 上是 EACCES）。
  *      `--verify` 是最高频的入口，跑它的人没预期源码会被改。
- *  17. 启动自检（#532）：目标文件停在「HEAD 内容应用了某条变异」的状态时，
- *      拒绝启动、点名 M 编号、打印可照抄的还原命令，且不自动还原（方向
- *      是「脏了立刻发现」，不是「脏了之后自动修」）；其余未提交改动
- *      （正在改那个目标文件）一律不拦——恒等判定零误报，见 detect_residue
- *      头注。夹具因此要造真 git 仓库（make_git_fixture），非 git 夹具
- *      根自检跳过。
- *  18. 自检排在门之前、所有档位都查（#532）：`--verify` 读的也是工作区里
- *      的目标文件，残留态下它的「五项检查全过」是假结论，比不报更坏（它在
- *      npm test 里）。这条与 16 一起构成 `--verify` 的两种形式：干净树报
- *      绿且只读，残留态拒绝并给还原命令。
- *  19. 自检的两条鲁棒分支（#532）：目标文件只进了索引、HEAD 里还没有它
- *      （取不到 HEAD 内容）→ 跳过该文件而不是崩；旧条目 desc 没有 M 编号
- *      → 报「某条」而不是「Mnull」，还原命令照给。后者是 #113 遗留的 4 条。
- *  20. 残留判断与 `run_one` 共用同一份 `apply_mutation`（#532）：replace 里的
- *      `$$`/`$&`/`$'` 会被 String.replace 展开（1056 条条目的 replace 带
- *      `$`），所以「写下去的字节」不等于条目表里的字面 replace。整串恒等
- *      判定不许换成「长度差对得上就算残留」这类便宜近似——最坏形式
- *      （1.2 MB × 961 条）正诱人这么省，见 detect_residue 头注的实测。
- *  21. 启动自检认「变异运行内部」的标记，且按 root 比对（#532）：目标在本
- *      工具自己的文件上时，`run_one` 给测试子进程带
- *      `MUTATION_CHECK_INFLIGHT_ROOT=<root>`，于是被测试拉起来的本工具不
- *      把自己的变异态读成残留（不认这个标记的话，M733 与 M9519-M9528 那一
- *      批会退化成「无论如何都红」的假检查——#532 的 `--changed` 实测捕到）；
- *      标记指别的 root 或压根没标记时自检照常生效。
+ *  17. 串行档在隔离副本里变异（#536）：目标文件置为只读照样全拦、工作区逐字节
+ *      不变；副本缺文件（COPY_DENY 排除的目录）时对照运行即红，不把环境
+ *      破损算成拦截。测就地变异与还原本身的用例带 --in-place。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -204,6 +183,7 @@ test('拦截路径：变异被拦下退出码 0，且目标文件逐字节还原
   try {
     const ledger = write_ledger(root, [GOOD_ENTRY]);
     const { status, output } = run_tool([
+      '--in-place',
       '--root',
       root,
       '--ledger-dir',
@@ -1063,6 +1043,7 @@ test('must_mention 等于测试名时只跑那一个用例：同文件的旁支�
   try {
     const ledger = write_ledger(root, [GOOD_ENTRY]);
     const { status, output } = run_tool([
+      '--in-place',
       '--root',
       root,
       '--ledger-dir',
@@ -1092,6 +1073,7 @@ test('must_mention 不是测试名时落回整份文件：判定不变，仍拦�
       { ...GOOD_ENTRY, must_mention: '加倍系数必须是 2' },
     ]);
     const { status, output } = run_tool([
+      '--in-place',
       '--root',
       root,
       '--ledger-dir',
@@ -1125,6 +1107,7 @@ test('test_name 是 must_mention 不是测试名时的逃生口：仍只跑那�
       { ...GOOD_ENTRY, must_mention: '加倍系数必须是 2', test_name: '加倍' },
     ]);
     const { status, output } = run_tool([
+      '--in-place',
       '--root',
       root,
       '--ledger-dir',
@@ -1187,6 +1170,7 @@ test('SIGINT 能中断串行档，并把目标文件还原', async () => {
             "process.on('message', () => process.emit('SIGINT'));",
           ),
         TOOL,
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -1231,7 +1215,7 @@ test('SIGINT 能中断串行档，并把目标文件还原', async () => {
   }
 });
 
-// —— #532：--verify 不碰工作区 + 残留态启动自检 ——
+// —— #532：--verify 不碰工作区 ——
 
 /** 递归快照（相对路径 → 内容）：断言「工作区被碰过没有」用它，不看 mtime。 */
 function snapshot_tree(root) {
@@ -1282,9 +1266,8 @@ function git_in(root, ...args) {
 }
 
 /**
- * git 夹具仓库：启动自检要读 HEAD 才有东西可比。临时目录里的普通夹具不是
- * git 仓库，自检在那里一律跳过（并行副本同款——COPY_DENY 把 .git 排除在
- * 副本外）。
+ * git 夹具仓库：还原失败的报告按 git 状态给建议，要读 HEAD 才有东西可比
+ * （临时目录里的普通夹具与隔离副本都不是 git 仓库，走「不在 git 管理下」那一支）。
  */
 function make_git_fixture() {
   const root = make_fixture();
@@ -1387,230 +1370,88 @@ test('门失败时 --verify 也只读：报错退出 1，残留态原样留着�
   }
 });
 
-test('启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）', () => {
-  // #513 的 M11069 就是这么留下的：超时截断时 taskkill 杀进程树，finally
-  // 不执行；而拆掉上界核对的残留形式（还有 38 条 replace 含 find 的条目
-  // 同款）对全绿真树没有输出影响，肉眼与 CI 都看不出来，实施者因而误把
-  // 变异态提交过一次（66bc345）。门 2 也兜不住那一类（残留后 find 照样
-  // 恰 1 次），它那句「find 出现 0 次」还会把人引向改 find 串。
-  const root = make_git_fixture();
-  const target = path.join(root, 'lib', 'calc.js');
-  try {
-    const ledger = write_ledger(root, [
-      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（n*2 → n*3）' },
-    ]);
-    fs.writeFileSync(target, MUTATED_CALC_JS, 'utf8');
-    const { status, output } = run_tool([
-      '--root',
-      root,
-      '--ledger-dir',
-      ledger,
-      '--asar',
-      'none',
-      '--skip-baseline',
-      '0',
-      '--ids',
-      'M9001',
-    ]);
-    assert.equal(
-      status,
-      1,
-      `残留态必须拒绝启动，实际退出 ${status}：\n${output}`,
-    );
-    assert.ok(
-      output.includes('启动自检') && output.includes('的变异态'),
-      `应点名启动自检与「停在某条的变异态」：\n${output}`,
-    );
-    // 断言的是**点名**（停在 M9001 的变异态），不是 desc 里出现过 M9001——
-    // 报告的第二行本来就印 desc，拿 output.includes('M9001') 会恒真
-    // （M11246 实测正是这样漏过去的：编号被焊死成「某条」也照样命中）。
-    assert.ok(
-      output.includes('停在 M9001 的变异态'),
-      `必须点名是哪一条的变异态，否则不知道该还原成什么：\n${output}`,
-    );
-    assert.ok(
-      output.includes('git checkout HEAD -- lib/calc.js'),
-      `必须打印可直接照抄的还原命令：\n${output}`,
-    );
-    assert.doesNotMatch(
-      output,
-      /SUMMARY caught=/,
-      `残留态下不得继续跑（后续结果全部不可信）：\n${output}`,
-    );
-    assert.equal(
-      fs.readFileSync(target, 'utf8'),
-      MUTATED_CALC_JS,
-      '自检只报不修：还原由人决定，工具不擅自 git checkout',
-    );
-  } finally {
-    fs.rmSync(root, { recursive: true, force: true });
-  }
-});
+// —— #536：串行档在隔离副本里变异 ——
 
-test('启动自检零误报：目标文件有未提交的合法改动时照常执行（#532）', () => {
-  // 开发常态：正在改某个目标文件，同票又给它加变异条目（#530 改
-  // chara-make.js 就是这么跑的）。自检的判断条件是「工作树 === HEAD 内容应用
-  // 某条变异」这一恒等形式，不是「和 HEAD 不一致」——后者会把开发流程整个
-  // 卡死，也会让并行副本、临时夹具全部跑不起来。
-  const root = make_git_fixture();
-  try {
-    const ledger = write_ledger(root, [
-      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（n*2 → n*3）' },
-    ]);
-    fs.writeFileSync(
-      path.join(root, 'lib', 'calc.js'),
-      CALC_JS.replace(
-        'const double',
-        '// 未提交的合法改动：正在改这个目标文件\nconst double',
-      ),
-      'utf8',
-    );
-    const { status, output } = run_tool([
-      '--root',
-      root,
-      '--ledger-dir',
-      ledger,
-      '--asar',
-      'none',
-      '--skip-baseline',
-      '0',
-      '--ids',
-      'M9001',
-    ]);
-    assert.equal(
-      status,
-      0,
-      `合法改动不该被当成残留拦下，实际退出 ${status}：\n${output}`,
-    );
-    assert.match(
-      output,
-      /拦截 1 \/ 跳过 0 \/ 红 0/,
-      `应照常执行并拦截：\n${output}`,
-    );
-  } finally {
-    fs.rmSync(root, { recursive: true, force: true });
-  }
-});
-
-test('启动自检覆盖 --verify 档：残留态下不许给出「结构校验全绿」的假结论（#532）', () => {
-  // --verify 读的也是工作区里的目标文件。残留态下它的「五项检查全过」是个假
-  // 结论——比不报更坏，因为 --verify 是最高频的入口（npm test 里就有一条），
-  // 绿了就等于告诉所有人工作区没问题。自检因此排在门之前、所有档位都查。
-  const root = make_git_fixture();
-  try {
-    const ledger = write_ledger(root, [
-      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（n*2 → n*3）' },
-    ]);
-    fs.writeFileSync(
-      path.join(root, 'lib', 'calc.js'),
-      MUTATED_CALC_JS,
-      'utf8',
-    );
-    const { status, output } = run_tool([
-      '--root',
-      root,
-      '--ledger-dir',
-      ledger,
-      '--verify',
-    ]);
-    assert.equal(
-      status,
-      1,
-      `残留态下 --verify 必须拒绝，实际退出 ${status}：\n${output}`,
-    );
-    assert.ok(
-      output.includes('启动自检') && output.includes('停在 M9001 的变异态'),
-      `--verify 档也要走自检并点名 M 编号：\n${output}`,
-    );
-    assert.doesNotMatch(
-      output,
-      /五项检查全过/,
-      `残留态下不得报「五项检查全过」：\n${output}`,
-    );
-  } finally {
-    fs.rmSync(root, { recursive: true, force: true });
-  }
-});
-
-test('启动自检的退化形式一：目标文件只进了索引、HEAD 里还没有它 → 跳过该文件，工具照常跑（#532）', () => {
-  // git show HEAD:<file> 取不到内容时必须跳过（否则 null.split 当场崩），
-  // 而这类文件确实会出现在 `git diff --name-only HEAD` 里（git add 之后
-  // 未提交）。属门前的鲁棒分支，不跳就是工具直接抛栈。
-  const root = make_git_fixture();
+test('串行档在隔离副本里变异：测试跑在副本里，工作区逐字节不变（#536）', () => {
+  // 就地变异时进程被强制终止，finally 不执行，目标文件会停在变异态。夹具的
+  // 测试把自己所在的目录记到夹具外的日志里，从工具外侧看得见测试跑在哪。
+  const root = make_fixture();
+  const log = path.join(os.tmpdir(), `mutation-fx-dirs-${process.pid}.log`);
   try {
     fs.writeFileSync(
-      path.join(root, 'lib', 'new.js'),
-      'const triple = (n) => n * 3;\nmodule.exports = { triple };\n',
-      'utf8',
-    );
-    fs.writeFileSync(
-      path.join(root, 'test', 'new.test.js'),
+      path.join(root, 'test', 'calc.test.js'),
       [
         "const { test } = require('node:test');",
         "const assert = require('node:assert/strict');",
-        "const { triple } = require('../lib/new');",
-        "test('三倍', () => {",
-        '  assert.equal(triple(21), 63);',
+        "const fs = require('node:fs');",
+        "const { double } = require('../lib/calc');",
+        "test('加倍', () => {",
+        "  fs.appendFileSync(process.env.FX_DIRS_LOG, __dirname + '\\n');",
+        '  assert.equal(double(21), 42);',
         '});',
         '',
       ].join('\n'),
       'utf8',
     );
-    const git = spawnSync('git', ['add', 'lib/new.js', 'test/new.test.js'], {
-      cwd: root,
-      encoding: 'utf8',
-      timeout: 30_000,
-      killSignal: 'SIGKILL',
-    });
-    assert.equal(git.status, 0, `夹具 git add 失败：${git.stderr}`);
-    const ledger = write_ledger(root, [
-      {
-        ...GOOD_ENTRY,
-        desc: 'M9001 新目标文件的三倍系数改坏',
-        file: 'lib/new.js',
-        find: 'n * 3',
-        replace: 'n * 4',
-        tests: ['new'],
-        must_mention: '三倍',
-      },
-    ]);
-    const { status, output } = run_tool([
-      '--root',
-      root,
-      '--ledger-dir',
-      ledger,
-      '--asar',
-      'none',
-      '--skip-baseline',
-      '0',
-      '--ids',
-      'M9001',
-    ]);
-    assert.equal(
-      status,
-      0,
-      `HEAD 里没有该文件时自检必须跳过而不是崩，实际退出 ${status}：\n${output}`,
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const before = snapshot_tree(root);
+    const { status, output } = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      { FX_DIRS_LOG: log },
     );
-    assert.match(output, /拦截 1 \/ 跳过 0 \/ 红 0/, `应照常执行：\n${output}`);
+    assert.equal(status, 0, `应拦截，实际退出 ${status}：\n${output}`);
+    const dirs = fs.readFileSync(log, 'utf8').split('\n').filter(Boolean);
+    assert.ok(dirs.length > 0, `夹具测试应至少跑过一次：\n${output}`);
+    for (const dir of dirs) {
+      assert.ok(
+        path.relative(root, dir).startsWith('..'),
+        `串行档的测试必须跑在隔离副本里，实际跑在 ${dir}`,
+      );
+    }
+    assert.deepEqual(
+      [...snapshot_tree(root)],
+      [...before],
+      '串行档跑完工作区必须逐字节不变',
+    );
   } finally {
+    fs.rmSync(log, { force: true });
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
 
-test('启动自检的退化形式二：旧条目 desc 没有 M 编号 → 报「某条」而不是「Mnull」（#532）', () => {
-  // #113 遗留的 4 条老条目 desc 没有 M 编号（extract_m_number 返回 null）。
-  // 还原命令仍然照给，否则这四条一旦残留就只能自己猜该退什么。
-  // 不带 --ids：这条 desc 取不出编号，点名档会先报「编号不存在」。
-  const root = make_git_fixture();
+test('串行档的副本对照即红时判红：副本缺文件不能让变异被当成拦截（#536）', () => {
+  // sav/ 在 COPY_DENY 里，不进副本。夹具测试读它：工作区里测试是绿的，
+  // 副本里一跑就红。不先对照的话，这种红会被当成「变异被拦截」。
+  const root = make_fixture();
   try {
-    const ledger = write_ledger(root, [
-      { ...GOOD_ENTRY, desc: 'T1 加倍系数改坏（无 M 编号的老条目形式）' },
-    ]);
+    fs.mkdirSync(path.join(root, 'sav'));
+    fs.writeFileSync(path.join(root, 'sav', 'factor.txt'), '2', 'utf8');
     fs.writeFileSync(
-      path.join(root, 'lib', 'calc.js'),
-      MUTATED_CALC_JS,
+      path.join(root, 'test', 'calc.test.js'),
+      [
+        "const { test } = require('node:test');",
+        "const assert = require('node:assert/strict');",
+        "const fs = require('node:fs');",
+        "const path = require('node:path');",
+        "const { double } = require('../lib/calc');",
+        "test('加倍', () => {",
+        "  const k = Number(fs.readFileSync(path.join(__dirname, '..', 'sav', 'factor.txt'), 'utf8'));",
+        '  assert.equal(double(21), 21 * k);',
+        '});',
+        '',
+      ].join('\n'),
       'utf8',
     );
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
     const { status, output } = run_tool([
       '--root',
       root,
@@ -1620,125 +1461,15 @@ test('启动自检的退化形式二：旧条目 desc 没有 M 编号 → 报「
       'none',
       '--skip-baseline',
       '0',
-    ]);
-    assert.equal(status, 1, `残留态必须拒绝，实际 ${status}：\n${output}`);
-    assert.ok(
-      output.includes('停在 某条 的变异态'),
-      `无 M 编号的老条目应报「某条」：\n${output}`,
-    );
-    assert.ok(
-      output.includes('git checkout HEAD -- lib/calc.js'),
-      `无 M 编号也要给还原命令：\n${output}`,
-    );
-  } finally {
-    fs.rmSync(root, { recursive: true, force: true });
-  }
-});
-
-test('启动自检认得「变异运行内部」的标记，且按 root 比对（#532）', () => {
-  // 目标在本工具自己的文件上时（M733、M9519-M9528 那一批），变异就是把
-  // tools/mutation-check.mjs 写成「HEAD + 该条变异」；测试里的 --verify
-  // 跑在真仓库上，被它拉起来的本工具会把自己的变异态读成残留。若自检不看
-  // 这个标记，那批条目全部退化成「无论如何都红」的假检查（#532 的
-  // --changed 实测：M733 判红、六条只能靠断言消息命中）。
-  //
-  // 标记必须按 root 比对，不能只按「有没有设」：夹具跑的是另一个 root，
-  // 那里没有任何人故意污染，自检要照常生效——本文件另外几条残留用例就是
-  // 在「标记已设、root 不同」的环境下跑的（harness 拉测试时带着真仓库的
-  // 标记），它们全绿即是这一半的检查。
-  const root = make_git_fixture();
-  const target = path.join(root, 'lib', 'calc.js');
-  try {
-    const ledger = write_ledger(root, [
-      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（n*2 → n*3）' },
-    ]);
-    fs.writeFileSync(target, MUTATED_CALC_JS, 'utf8');
-    const args = [
-      '--root',
-      root,
-      '--ledger-dir',
-      ledger,
-      '--asar',
-      'none',
-      '--skip-baseline',
-      '0',
-    ];
-    const inside = run_tool(args, { MUTATION_CHECK_INFLIGHT_ROOT: root });
-    assert.equal(
-      inside.status,
-      1,
-      `故意污染的 root 里，剩下的门该照常判红（目标文件的 find 已不在），实际 ${inside.status}：\n${inside.output}`,
-    );
-    assert.doesNotMatch(
-      inside.output,
-      /启动自检/,
-      `标记指向自己的 root 时不该报残留（那是故意的），应当由门 2 报：\n${inside.output}`,
-    );
-    assert.ok(
-      inside.output.includes('五项检查未过，拒绝执行'),
-      `跳过自检后应走到门，由门拒绝执行：\n${inside.output}`,
-    );
-
-    const other_root = run_tool(args, {
-      MUTATION_CHECK_INFLIGHT_ROOT: path.join(root, '别处'),
-    });
-    assert.match(
-      other_root.output,
-      /启动自检/,
-      `标记指向别的 root 时自检必须照常生效（夹具不是那个 root）：\n${other_root.output}`,
-    );
-    const none = run_tool(args);
-    assert.match(
-      none.output,
-      /启动自检/,
-      `没有标记时自检必须生效：\n${none.output}`,
-    );
-  } finally {
-    fs.rmSync(root, { recursive: true, force: true });
-  }
-});
-
-test('启动自检认得 replace 里的 $ 转义：整串判定不许换成便宜的近似（#532）', () => {
-  // String.replace 会展开 replace 里的 $$/$&/$'/$`（1246 条条目的 find、
-  // 1056 条条目的 replace 里带 $），所以「写下去的那串字节」不等于条目表里
-  // 的字面 replace。残留判断必须与 run_one 共用同一份实现（apply_mutation）；
-  // 换成「长度差对得上就算残留」这类便宜的近似，这些条目就漏判了——而
-  // 1.2 MB × 961 条那种最坏形式下正有人想这么省（见 detect_residue 头注）。
-  const root = make_git_fixture();
-  try {
-    // 条目表里的 replace 是 `n * 2 + $$100`，实际写下去的是 `n * 2 + $100`
-    const ledger = write_ledger(root, [
-      {
-        ...GOOD_ENTRY,
-        desc: 'M9001 报价系数改坏（replace 带 $$ 转义）',
-        replace: 'n * 2 + $$100',
-      },
-    ]);
-    fs.writeFileSync(
-      path.join(root, 'lib', 'calc.js'),
-      'const double = (n) => n * 2 + $100;\nmodule.exports = { double };\n',
-      'utf8',
-    );
-    const { status, output } = run_tool([
-      '--root',
-      root,
-      '--ledger-dir',
-      ledger,
-      '--asar',
-      'none',
-      '--skip-baseline',
-      '0',
-      '--ids',
-      'M9001',
     ]);
     assert.equal(
       status,
       1,
-      `带 $ 转义的残留也必须被认出来（近似判定会漏掉它），实际退出 ${status}：\n${output}`,
+      `副本环境破损必须判红，实际 ${status}：\n${output}`,
     );
     assert.ok(
-      output.includes('停在 M9001 的变异态'),
-      `应点名 M9001：\n${output}`,
+      output.includes('对照运行即红'),
+      `副本对照没过必须报出来：\n${output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
@@ -1905,6 +1636,7 @@ test('还原写入遇瞬态占用时重试到成功：注入前两次失败仍�
     const ledger = write_ledger(root, [GOOD_ENTRY]);
     const { status, output } = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -1945,6 +1677,7 @@ test('还原写入重试尽仍失败：点名 M 编号与还原命令、停止�
     ]);
     const { status, output } = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -1972,7 +1705,7 @@ test('还原写入重试尽仍失败：点名 M 编号与还原命令、停止�
     // 非 git 根（夹具、并行副本）取不到 HEAD，给的是「不在 git 管理下」那套
     // 说法；git 树上的两种建议见下一条用例。
     assert.ok(
-      output.includes('不在 git 管理下（并行模式的隔离副本或临时夹具）'),
+      output.includes('不在 git 管理下（隔离副本或临时夹具）'),
       `非 git 根不能推荐 git checkout——那条命令在这里根本跑不了：\n${output}`,
     );
     assert.ok(
@@ -1993,9 +1726,8 @@ test('还原写入重试尽仍失败：点名 M 编号与还原命令、停止�
 test('还原失败报告按 git 状态给建议：干净树给 git checkout，脏树警告别连未提交改动一起删（#553）', () => {
   // `git checkout HEAD -- <文件>` 只在「变异前的原文恰等于 HEAD 内容」时才
   // 无损。同一张票既改目标文件、又跑打它的变异条目是常态（SOP §2 的内环），
-  // 这时还原失败留下的残留是「工作树内容 + 变异」，恰落在 #536 记录的自检
-  // 盲区里——这份报告是用户唯一能看到的提示，说错方向就是把人引去删掉
-  // 自己没提交的改动。
+  // 这时就地变异（--in-place）还原失败留下的残留是「工作树内容 + 变异」，
+  // 说错方向就是把人引去删掉自己没提交的改动。
   const root = make_git_fixture();
   try {
     const ledger = write_ledger(root, [
@@ -2003,6 +1735,7 @@ test('还原失败报告按 git 状态给建议：干净树给 git checkout，�
     ]);
     const clean = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -2030,6 +1763,7 @@ test('还原失败报告按 git 状态给建议：干净树给 git checkout，�
     );
     const dirty = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -2180,6 +1914,7 @@ test('还原写入的瞬态失败重试认全三个可重试码：注入 EPERM �
     const ledger = write_ledger(root, [GOOD_ENTRY]);
     const { status, output } = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -2555,7 +2290,11 @@ test('--jobs 副本数按选中条数限定：一条编号两个 jobs 只有一�
  * 在」用它造真实形式；PID 在两次调用之间被复用的概率可忽略。
  */
 function dead_pid() {
-  const r = spawnSync(process.execPath, ['-e', ''], { encoding: 'utf8' });
+  const r = spawnSync(process.execPath, ['-e', ''], {
+    encoding: 'utf8',
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
+  });
   assert.ok(r.pid > 0, '夹具：没拿到子进程 PID');
   return r.pid;
 }
@@ -2595,6 +2334,7 @@ test('变异写入遇瞬态占用时重试到成功：注入前两次失败仍�
     const ledger = write_ledger(root, [GOOD_ENTRY]);
     const { status, output } = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -2645,6 +2385,7 @@ test('变异写入重试尽仍失败：报出 M 编号与文件、按「未写�
     // 的写入不再被注入、照常写下去并被拦下——「继续」这条语义就是这样判的。
     const { status, output } = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',
@@ -2707,6 +2448,7 @@ test('变异写入失败但目标文件已不是原文：按残留停下、不�
     ]);
     const { status, output } = run_tool(
       [
+        '--in-place',
         '--root',
         root,
         '--ledger-dir',

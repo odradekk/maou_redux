@@ -5,8 +5,9 @@
 # 入口只有这一条。
 #
 # 分片的依据：`--jobs N` 会忽略外层 `--slice`，两者不能嵌套，所以每个
-# 分片**串行**跑 `--slice i 12`（约 600 条），就地变异、靠工作树残留检查
-# 兜底。首跑（#454，run 35454050870）按 16 片校准：5301 条全部拦截、
+# 分片**串行**跑 `--slice i 12 --in-place`（约 600 条）：CI 的检出用完即弃，
+# 不必再建隔离副本、多跑一轮对照；最后一步的工作树检查确认每条都已还原。
+# 首跑（#454，run 35454050870）按 16 片校准：5301 条全部拦截、
 # 跳过 0、红 0，每片 330 条用时 5–10 分钟（含约 1 分钟装引擎），即每条
 # 0.9–1.6 秒；改 8 片后每片估算 20 分钟以内，全部并行落在 30 分钟内。
 # 阶段 6 收尾（#637）时条目涨到 7154 条，8 片实测每片 18–35 分钟（每条约
@@ -52,7 +53,7 @@ jobs:
       - name: 变异分片 ${{ matrix.shard }} / 12（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
         run: |
           set -o pipefail
-          node tools/run-node.mjs --timeout 2100 -- tools/mutation-check.mjs --slice ${{ matrix.shard }} 12 | tee "$RUNNER_TEMP/mutation-shard.log"
+          node tools/run-node.mjs --timeout 2100 -- tools/mutation-check.mjs --slice ${{ matrix.shard }} 12 --in-place | tee "$RUNNER_TEMP/mutation-shard.log"
       - name: 工作树残留检查（变异必须逐字节还原：与检出基线比对）
         if: always()
         run: |
