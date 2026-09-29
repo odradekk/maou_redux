@@ -482,13 +482,36 @@ test('PROFIT_BITCH：收益结算（场所/身份分档 + 客种类 + 处女溢�
   assert.equal(f3.store.get('cflag:31:580'), 260);
 });
 
-test('SET_BICH_LEVEL：输入分档（0/1/2-5）写入 CFLAG:120', async () => {
+test('SET_BICH_LEVEL：等级 0-5 是一行六枚按钮，输入走按钮编号', async () => {
   const { fixture, mod } = setup_bitch();
   fixture.set_inputs(0);
   await mod.set_bich_level(31);
   assert.equal(fixture.store.get('cflag:31:120'), 0);
   assert.ok(
     fixture.text_lines().some((l) => l.includes('卖春积极性变成没有了')),
+  );
+  // #710：六个等级排成一行按钮（原是一行裸编号文本，玩家点不了）。
+  // 正文为空串：原显示就是六个裸编号，编号由引擎按 showAcc 拼。
+  const buttons = fixture.lines_history.filter((l) => l.type === 'button');
+  assert.deepEqual(
+    buttons.map((b) => [b.accelerator, b.text, b.grid_width]),
+    [0, 1, 2, 3, 4, 5].map((level) => [level, '', 4]),
+    '一行六枚、每格宽 24 / 6 = 4',
+  );
+  assert.equal(
+    buttons.every((b) => b.row === buttons[0].row),
+    true,
+    '同一行',
+  );
+  assert.deepEqual(
+    buttons.map((b) => b.rendered),
+    [0, 1, 2, 3, 4, 5].map((level) => `[${level}] `),
+    '实显是六个裸编号',
+  );
+  assert.equal(
+    fixture.text_lines().some((l) => l.includes('[0] [1] [2]')),
+    false,
+    '同屏没有残留的纯文本编号行',
   );
 
   const { fixture: f2, mod: m2 } = setup_bitch();
@@ -502,39 +525,6 @@ test('SET_BICH_LEVEL：输入分档（0/1/2-5）写入 CFLAG:120', async () => {
   await m3.set_bich_level(31);
   assert.equal(f3.store.get('cflag:31:120'), 3);
   assert.ok(f3.text_lines().some((l) => l.includes('卖春积极性变为等级3了')));
-
-  // 无效输入（< 0 / > 5）直接返回不写
-  const { fixture: f4, mod: m4 } = setup_bitch();
-  f4.set_inputs(-1);
-  await m4.set_bich_level(31);
-  assert.equal(f4.store.get('cflag:31:120'), undefined);
-
-  const { fixture: f5, mod: m5 } = setup_bitch();
-  f5.set_inputs(6);
-  await m5.set_bich_level(31);
-  assert.equal(f5.store.get('cflag:31:120'), undefined);
-});
-
-test('#600 SHOW_BUTTON_BICH_LEVEL：档位文案合回一行，输出一条（末段空参数不加文本）', async () => {
-  // 「[%NUM%] 卖春积极性 - 」+ IF/ELSEIF/ELSE 三档
-  // + `PRINT  `（关键字后只有空白 → 参数为空，不输出字符）同属一行。
-  // ere 侧合并成一条 era.print，空参数段不加文本。
-  const cases = [
-    [0, '没有'],
-    [1, '普通'],
-    [3, '3等级'],
-  ];
-  for (const [level, word] of cases) {
-    const { fixture, mod } = setup_bitch((f) =>
-      f.store.set('cflag:31:120', level),
-    );
-    mod.show_button_bich_level(5, 31);
-    assert.deepEqual(
-      fixture.text_lines(),
-      [`[5] 卖春积极性 - ${word}`],
-      `CFLAG:120 = ${level}`,
-    );
-  }
 });
 
 test('SELL_BITCH：完整流程（客循环 → 成功显示 → 经验/金钱/善恶值）', async () => {

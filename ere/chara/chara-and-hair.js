@@ -12,8 +12,9 @@
  *   - **局部量无跨调用状态**：各函数的局部量都在函数体内先赋值后使用，
  *     不存在跨调用保留的状态，故一律用 JS 局部变量。
  *   - **两处列表是按钮网格**：`printMultiColumns` 每行 N 格，每格宽
- *     24 / N 列。纯文本的 `[N]` 行玩家点不了，只能手敲编号。正文只写名字，
- *     `[N] ` 前缀由引擎按 showAcc 自动拼（PR #30）。
+ *     24 / N 列，排版走 `#/utils/button-grid`（纯文本的 `[N]` 行玩家点不了，
+ *     只能手敲编号）。正文只写名字，`[N] ` 前缀由引擎按 showAcc 自动拼
+ *     （PR #30）。
  *   - **随机源提成 `rand` 形参**（chara-init.js 先例）：缺省均匀随机，
  *     测试注入定值序。
  *   - **表外序号的落点**：两个列表的输入只能是列出的按钮编号（引擎拒收
@@ -27,11 +28,9 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { print_button_grid } = require('#/utils/button-grid');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
-
-/** 栅格满行宽度（引擎 24 列） */
-const GRID_COLUMNS = 24;
 
 /** 非唯一性格的素质编号表 */
 const GENERAL_CHARASTERISTICS = [
@@ -169,26 +168,6 @@ function clear_charasteristic(cid = -1) {
   const chara_id = cid < 0 ? target_cid() : cid;
   for (const talent_id of GENERAL_CHARASTERISTICS) {
     set_talent(chara_id, talent_id, 0);
-  }
-}
-
-/**
- * 把 [编号, 名字] 列表排成按钮网格，每行 per_line 格。每格宽度按 per_line
- * 算而不按本行实际格数算，末行不满时各列仍与上面对齐。
- * @param {Array<[number, string]>} items 按钮编号与正文
- * @param {number} per_line 每行格数
- */
-function print_button_grid(items, per_line) {
-  const width = Math.floor(GRID_COLUMNS / per_line);
-  for (let i = 0; i < items.length; i += per_line) {
-    era.printMultiColumns(
-      items.slice(i, i + per_line).map(([accelerator, content]) => ({
-        type: 'button',
-        accelerator,
-        content,
-        config: { align: 'left', width },
-      })),
-    );
   }
 }
 

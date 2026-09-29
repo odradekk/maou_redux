@@ -24,21 +24,22 @@
  * 拼成一条显示行，末段带 W/L 的语句才收行。本文件把同一显示行的多段
  * 合成一条输出语句，函数内的注释只标「拼成一行：…」的段落构成。
  *
- * == #572 复核：SET_BICH_LEVEL 的裸编号行保持纯文本 ==
+ * == #710：SET_BICH_LEVEL 的裸编号行改成按钮网格 ==
  *
- * 那一轮是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
- * （等级 0-5，选中的等级由后续的播报补述）。按钮化要走两条路之一：
- * 拆成六条语句（「一条 JS 语句 ↔ 一行输出」的配对纪律不成立）或改用
- * 多列网格按钮（`printMultiColumns`/`printInColRows` 的按钮格，本项目尚无
- * 先例、须先在引擎里核渲染）。这张工单按「其他」保留纯文本：该轮没有按钮＝引擎
- * 的自由输入通道，玩家键入 0-5 照常可达，丢的只是「点得动」；留给后续按
- * 界面统一处理（docs/research/plaintext-options.md 第六节）。
+ * 原写法是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
+ * （等级 0-5，选中的等级由后续的播报补述）。#572 曾按「本项目尚无多列网格
+ * 先例」保留纯文本；#710 起用 `print_button_grid` 排成一行六枚按钮，
+ * 正文为空串，实显仍是 `[0] [1] … [5]`。
+ *
+ * 原 SHOW_BUTTON_BICH_LEVEL（`[NUM] 卖春积极性 - …` 的纯文本行）没有调用点
+ * （角色信息页 #542 起改用 printButton 共用 bich_level_text），#710 起删除。
  */
 
 const era = require('#/era-electron');
 const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { forced_payment } = require('#/kojo/kojo-forced-payment');
@@ -1652,29 +1653,12 @@ function fi_culc_bitch(arg, args, args1 = '', rand = default_rand) {
 }
 
 /**
- * show_button_bich_level：角色能力显示中的卖春积极性按钮。
- *
- * 显示 `[NUM] 卖春积极性 - 没有/普通/N等级`。此按钮在角色信息页被注释
- * （卖春积极性改走 PTJ_BUTTON），本函数保留给
- * 打工 MOD 使用。
- *
- * @param {number} num 按钮数值
- * @param {number} arg 角色 ID
- */
-function show_button_bich_level(num, arg) {
-  // 拼成一行：无后缀 PRINTFORM/PRINT 连续
-  // 不换行，档位文案由 IF/ELSEIF/ELSE 三档拼进来。末段的 `PRINT  `
-  // 关键字后只有空白，参数为空（不输出字符），因此不加文本。
-  const level = bich_level_text(arg); // 三档
-  era.print(`[${num}] 卖春积极性 - ${level}`);
-  return 0;
-}
-
-/**
  * 卖春积极性按钮的档位文案（SHOW_BUTTON_BICH_LEVEL 段）。
- * #542 起另一处在 ere/page/page-chara-info.js——PTJ_BUTTON 的默认态分支
- * （打工 MOD 判不移植，其默认分支就是本按钮）按本页通例升级成
- * printButton，按钮正文共用这份档位文案。
+ * #542 起在 ere/page/page-chara-info.js——PTJ_BUTTON 的默认态分支
+ * （打工 MOD 判不移植，其默认分支就是原按钮）按本页通例升级成
+ * printButton，按钮正文用这份档位文案。原 SHOW_BUTTON_BICH_LEVEL 打印的
+ * `[NUM] 卖春积极性 - …` 文本行是同一份文案的纯文本形态，没有调用方，
+ * #710 起删除。
  * @param {number} arg 角色 ID
  * @returns {string}
  */
@@ -1692,13 +1676,19 @@ function bich_level_text(arg) {
 /**
  * set_bich_level：设置卖春积极性。
  *
- * 经 INPUT 读键（[0]-[5]），输入无效（< 0 或 > 5）直接返回。
+ * #710：等级 0-5 排成一行六枚按钮（原是一行裸编号纯文本，玩家点不了）。
+ * 按钮正文为空串——原显示就是六个裸编号，编号由引擎按 showAcc 拼。
+ * 按钮化后本轮的编号集就是 0-5，输入无效（< 0 或 > 5）的分支因此结构性
+ * 不可达（结构保留）。
  *
  * @param {number} arg 角色 ID
  */
 async function set_bich_level(arg) {
   era.print('请设定等级');
-  era.print('[0] [1] [2] [3] [4] [5]');
+  print_button_grid(
+    [0, 1, 2, 3, 4, 5].map((level) => [level, '']),
+    6,
+  );
   const result = await era.input(); // INPUT
 
   if (result < 0) {
@@ -1732,7 +1722,6 @@ module.exports = {
   self_bitch,
   fi_try_bitch,
   fi_culc_bitch,
-  show_button_bich_level,
   bich_level_text,
   set_bich_level,
 };

@@ -36,6 +36,17 @@ function texts(fixture, history = false) {
   return source.filter((line) => line.type === 'text').map((line) => line.text);
 }
 
+/** 按钮网格快照：每行一个数组，每格是 [编号, 正文, 格宽]（按 row 分组） */
+function button_grid(fixture) {
+  const rows = new Map();
+  for (const line of fixture.lines_history) {
+    if (line.type !== 'button') continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push([line.accelerator, line.text, line.grid_width]);
+  }
+  return [...rows.values()];
+}
+
 function setup() {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
@@ -77,7 +88,12 @@ test('char_create：付费路径（模式 0）列两段，无特殊段', async (
   assert.ok(lines.includes('■=== 勇者 ===■'));
   assert.ok(lines.includes('■=== 精英 ===■'));
   assert.ok(!lines.includes('■=== 特殊 ===■'), '模式 0 不列特殊段');
-  assert.ok(lines.some((t) => t.includes(' [999] 返回')));
+  assert.ok(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .some((line) => line.rendered === '[999] 返回'),
+    '返回是按钮',
+  );
 });
 
 test('char_create：调试路径（模式 1）多列特殊段，且 18/19 被排除', async () => {
@@ -90,11 +106,14 @@ test('char_create：调试路径（模式 1）多列特殊段，且 18/19 被排
   const lines = texts(fixture, true);
   assert.ok(lines.includes('■=== 特殊 ===■'));
   assert.ok(!lines.includes('这将耗费大量的金钱，幸好只看不买是免费的'));
-  const special = lines.filter((t) => t.includes('预设'));
+  // #710：列表项是按钮，正文只写名字（缺省段名不出现在正文里的按钮上）
+  const special = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.text);
   // 特殊段是 17-39 里的在库编号（18/19 排除）
-  assert.ok(special.some((t) => t.includes('预设17')));
-  assert.ok(!special.some((t) => t.includes('预设18')));
-  assert.ok(!special.some((t) => t.includes('预设19')));
+  assert.ok(special.includes('预设17'), '预设17 在列');
+  assert.ok(!special.includes('预设18'), '18 被排除');
+  assert.ok(!special.includes('预设19'), '19 被排除');
 });
 
 test('char_create：特殊段列 17-39（含上界 39、不含 40），显示编号 = 预设号 + 20', async () => {
@@ -106,63 +125,102 @@ test('char_create：特殊段列 17-39（含上界 39、不含 40），显示编
   await char_create(1);
   // 数据实况：yml/Chara*.yml 在 17-40 这段里只有 17/20-24/31-35（18/19 排除），
   // 39 与 40 是**合成**种——两个端点按实现边界钉住（改了会让本用例红），
-  // 在成品数据里则到不了（在库检查拦下）
-  const rows = texts(fixture, true).filter((t) => t.includes('预设'));
+  // 在成品数据里则到不了（在库检查拦下）。#710 起列表是按钮：快捷键＝
+  // 显示编号（预设号 + 20），正文只写名字
+  const items = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map(({ accelerator, text }) => [accelerator, text]);
   assert.ok(
-    rows.some((t) => t.includes('预设39')),
+    items.some(([, text]) => text === '预设39'),
     '上界 39 在列表里',
   );
   assert.ok(
-    !rows.some((t) => t.includes('预设40')),
+    !items.some(([, text]) => text === '预设40'),
     '40 越出特殊段的列举范围（17 到 39），即使它在库',
   );
-  // 编号右对齐宽 2、再加 20：17 号显示为 [37]
-  const row_17 = rows.find((t) => t.includes('预设17'));
+  // 17 号的显示编号是 37
   assert.ok(
-    row_17.includes('[37] 预设17'),
-    `显示编号是预设号 + 20：${JSON.stringify(row_17)}`,
+    items.some(([acc, text]) => acc === 37 && text === '预设17'),
+    `显示编号是预设号 + 20：${JSON.stringify(items)}`,
   );
 });
 
-test('char_create：勇者段每行 4 格、精英段每行 5 格（补位宽度 14）', async () => {
+test('char_create：三段列表是按钮网格（勇者每行 4 格、精英/特殊每行 5 格）', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
   const { char_create } = load(fixture);
   fixture.set_inputs(999);
 
   await char_create(1);
-  const lines = texts(fixture, true);
-  const hero_row = lines.find(
-    (t) => t.includes('预设1') && t.includes('预设4'),
+  const grid = button_grid(fixture);
+  // 勇者 8 项：两行 4 格，格宽 24 / 4 = 6
+  assert.deepEqual(
+    grid.slice(0, 2),
+    [
+      [1, 2, 3, 4].map((id) => [id, `预设${id}`, 6]),
+      [5, 6, 7, 8].map((id) => [id, `预设${id}`, 6]),
+    ],
+    '勇者段每行 4 格',
   );
-  assert.ok(hero_row, '勇者首行含 1-4');
-  assert.ok(!hero_row.includes('预设5'), '第 5 个换行');
-  // 行内每格 = `[` + 编号右对齐宽 2 + `] ` + 名字左对齐宽 14（显示宽度：
-  // '预设1' 宽 5 → 补 9 个 NBSP，#577 起补位字符是 U+00A0）
+  // 精英 10 项：两行 5 格，格宽 24 / 5 = 4（显示编号 = 预设号 - 200 + 20）
+  assert.deepEqual(
+    grid.slice(2, 4),
+    [
+      [201, 202, 203, 204, 205].map((id) => [id - 180, `预设${id}`, 4]),
+      [206, 207, 208, 209, 210].map((id) => [id - 180, `预设${id}`, 4]),
+    ],
+    '精英段每行 5 格、显示编号从 21 起',
+  );
+  // 特殊段 17-39 里除 18/19 的在库项：17、20-24、31-35、39（合成 39 也在）；
+  // 最后一行是 printButton 的返回（不在网格里，grid_width 为 undefined）
+  assert.deepEqual(
+    grid.slice(4, 7),
+    [
+      [
+        [37, '预设17'],
+        [40, '预设20'],
+        [41, '预设21'],
+        [42, '预设22'],
+        [43, '预设23'],
+      ].map(([acc, text]) => [acc, text, 4]),
+      [
+        [44, '预设24'],
+        [51, '预设31'],
+        [52, '预设32'],
+        [53, '预设33'],
+        [54, '预设34'],
+      ].map(([acc, text]) => [acc, text, 4]),
+      [
+        [55, '预设35', 4],
+        [59, '预设39', 4],
+      ],
+    ],
+    '特殊段每行 5 格、显示编号 = 预设号 + 20',
+  );
   assert.equal(
-    hero_row,
-    '[\u00A01] 预设1\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[\u00A02] 预设2\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[\u00A03] 预设3\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[\u00A04] 预设4\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0',
+    texts(fixture, true).some((t) => /\[[0-9]+\] 预设/.test(t)),
+    false,
+    '同屏没有残留的纯文本列表行',
   );
-  const elite_row = lines.find(
-    (t) => t.includes('预设201') && t.includes('预设205'),
-  );
-  assert.ok(elite_row, '精英首行含 201-205');
-  assert.ok(elite_row.includes('[21]'), '精英的显示编号从 21 起');
 });
 
-test('char_create：编号映射三分支 + 默认分支（表驱动）', async () => {
+test('char_create：编号映射三分支（表驱动，取各段列表的两端）', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
   const { char_create } = load(fixture);
-  // [输入, 期望加进来的预设号]；999 只用来收尾
+  // [输入, 期望加进来的预设号]；999 只用来收尾。按钮化后只有列表项能键入：
+  // 勇者段 1-8（9-16 不列）、精英 21-30、特殊 37-59（指在库的 17-39），
+  // 原来的「默认分支」不在任何区间（如 35）已不可达，删掉该行。
   const table = [
-    [1, 1], // 1-16 → 原样（下界）
-    [16, 16], // 1-16 的上界
+    [1, 1], // 1-16 → 原样（下界，列表首项）
+    [8, 8], // 勇者段的列表末项
     [21, 201], // 21-30 → -20 +200（下界）
     [30, 210],
-    [37, 17], // 37-60 → -20（下界）
+    [37, 17], // 37-60 → -20（下界，特殊段首项）
     [51, 31],
-    [35, 35], // 默认分支：不在任何区间 → 原样（预设 35 在库）
+    [55, 35], // 特殊段里 35 号的显示编号（35 是区间内最后一个常规预设；39 是
+    // 测试合成的在库预设，char_append → add_chara_ex(39) 会撞「不在声明空间」
+    // 的防线，故不选它）
   ];
   for (const [input, expected] of table) {
     fixture.reset_inputs(input, 999); // 第二项给 char_custom 的 [999]
@@ -200,9 +258,9 @@ test('char_create：特殊位（17-40）已在场则复用，不新建', async (
   fixture.era.addCharacter(17); // 预设 17 已在场
   fixture.era.addCharacter(35); // 预设 35 已在场（在库数据在这条区间里的末端）
   const { char_create } = load(fixture);
-  // [输入, 映射出的预设号]：17 走默认分支原样、55 走 37-60 区间的 -20
+  // [输入, 映射出的预设号]：37 是特殊段里预设 17 的显示编号、55 是 35 的
   for (const [input, preset] of [
-    [17, 17],
+    [37, 17],
     [55, 35],
   ]) {
     fixture.reset_inputs(input, 999);
@@ -219,39 +277,37 @@ test('char_create：特殊位（17-40）已在场则复用，不新建', async (
   }
 });
 
-test('char_create：特殊位区间上界 40——已在场同样复用（区间的右端）', async () => {
+test('char_create：#710 特殊位区间右端 40/显示 60 不可键入（列表只到 39）', async () => {
   const fixture = setup();
-  // 40 号不在 yml/Chara*.yml 里（合成种），故本用例直接锁实现的区间右端：
-  // 区间判断改成 `<= 39` 会让 40 号改走 char_append。
-  // 在库数据里这条端不可达（40 号不在库，先把输入退回重问）
-  seed_presets(fixture, [40]);
+  // 40 号不在 yml/Chara*.yml 里（合成种）。原纯文本一轮里键入 60 能走
+  // 「37-60 区间 + 已在场复用」的受理支；按钮化后特殊段只列到 39（显示
+  // 59）与返回 999，60 被引擎当场拒收，区间的右端不可达（结构保留）。
+  seed_presets(fixture, ALL_PRESETS);
   fixture.era.addCharacter(40); // 预设 40 已在场
   const { char_create } = load(fixture);
-  fixture.set_inputs(60, 999); // 60 → 预设号 40（37-60 区间的右端）
+  fixture.set_inputs(60, 999);
 
-  await char_create(1);
+  const error = await char_create(1).then(
+    () => null,
+    (err) => err,
+  );
+  assert.match(error.message, /输入不合法！请输入以下值之一/);
+  assert.ok(!/(^|[^\d])60([^\d]|$)/.test(error.message), '60 不在本轮按钮集里');
+  assert.match(error.message, /59, 999（/, '特殊段末项 59 与返回在本轮集里');
   assert.deepEqual(
     fixture.calls.filter((c) => c.api === 'addCharacter').map((c) => c.args[0]),
     [0, 40], // 0 = setup 的魔王；40 = 测试自己加的。char_append 没有再调
     '已在场的 40 号不再调 addCharacter',
   );
-  assert.ok(
-    !texts(fixture, true).some((t) => t.includes('你召唤出了')),
-    '复用时不播报',
-  );
-  assert.ok(
-    texts(fixture, true).some((t) => t.includes('修改角色属性（预设40）')),
-    'char_custom 收到的是 40 号（称呼由夹具的 addCharacter 写入）',
-  );
 });
 
 test('char_create：新建时播报召唤结果', async () => {
   const fixture = setup();
-  // 用 17（特殊位）：勇者位在模式 1 会走 char_make 随机成型、名字被重掷，
-  // 播报的随机名字就不是预设名了
+  // 用 17（特殊位，显示编号 37）：勇者位在模式 1 会走 char_make 随机成型、
+  // 名字被重掷，播报的随机名字就不是预设名了
   seed_presets(fixture, [17]);
   const { char_create } = load(fixture);
-  fixture.set_inputs(17, 999);
+  fixture.set_inputs(37, 999);
 
   await char_create(1);
   assert.ok(
@@ -299,24 +355,53 @@ test('char_append：名字输入 0 走随机名分支（#567：0 视为空输入
   );
 });
 
-test('char_append：性别选项保持纯文本（#572 复核：问句的等待键夹在输入前）', async () => {
+test('char_append：性别选项是一行三枚按钮，且按钮在最后一次等键之后打印', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
   fixture.set_inputs(1, '莉塔', 996);
 
   await char_append(5, 0);
-  assert.ok(
-    fixture.lines_history.some(
-      (line) => line.type === 'text' && line.text.includes('[1] 男性'),
-    ),
-    '性别选项仍是纯文本行（该轮无按钮＝引擎的自由输入通道）',
+  // #710：原顺序是「打印选项 → waitAnyKey → input」，等键会让刚打印的按钮
+  // 点不动；改成问句的等键之后直接打印按钮并等输入。三枚按钮同属一行，
+  // 正文不带 [N] 前缀（引擎按 showAcc 拼）
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered, grid_width }) => [
+        accelerator,
+        text,
+        rendered,
+        grid_width,
+      ]),
+    [
+      [1, '男性', '[1] 男性', 8],
+      [2, '女性', '[2] 女性', 8],
+      [3, '扶她', '[3] 扶她', 8],
+    ],
+    '性别三选一是按钮（每行 3 格、格宽 24 / 3 = 8）',
   );
   assert.equal(
-    fixture.lines_history.filter((line) => line.type === 'button').length,
-    0,
-    '本轮不打按钮：性别一问自带等待键，中间那次成功回传' +
-      '会把 valCount 推高、把按钮整批禁用',
+    texts(fixture, true).some((t) => t.includes('[1] 男性')),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
+  // 顺序证据：按钮之前只有问句那一次等键、全程只有问句与名字播报两次等键。
+  // 原顺序（按钮与输入之间再等一次键）会多出一次等待——夹具表达不了
+  // 「渲染层把早先的按钮置为不可点」，等键次数是那条顺序的代理
+  const button_row = fixture.lines_history.find(
+    (line) => line.type === 'button',
+  ).row;
+  assert.equal(
+    fixture.waits.filter((w) => w.waited && w.rows_at_wait <= button_row)
+      .length,
+    1,
+    '问句的一次等键在按钮之前',
+  );
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    2,
+    '等键只有问句那次与名字播报那次（按钮与输入之间没有等键）',
   );
 });
 

@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2709; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2708; // #710 净 0（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本；-1 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -244,14 +244,8 @@ export default [
     tests: ['kojo-dungeon-bitch'],
     must_mention: '失败率算式',
   },
-  {
-    desc: 'M402 SET_BICH_LEVEL 输入上限改坏（> 5 改 > 6，#184 验收变异）',
-    file: 'ere/kojo/kojo-dungeon-bitch.js',
-    find: '  if (result > 5) {',
-    replace: '  if (result > 6) {',
-    tests: ['kojo-dungeon-bitch'],
-    must_mention: '输入分档',
-  },
+  // M402（SET_BICH_LEVEL 输入上限 > 5 改 > 6）随 #710 删除：等级 0-5 成了
+  // 按钮网格，本轮白名单只放行 0-5，6 不可键入，两档写法行为相同。
   {
     desc: 'M403 PROFIT_BITCH 总价改坏（PAY * PLAY 改 PAY + PLAY，#184 验收变异）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
@@ -21281,14 +21275,15 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'LOG_TRY_BITCH 的整段输出',
   },
   {
-    desc: 'M12155 卖春积极性按钮拆回两条（#600：档位文案又占一行）',
+    // #710：原 SHOW_BUTTON_BICH_LEVEL（`[NUM] 卖春积极性 - …` 的纯文本行）
+    // 没有调用点、随按钮化删除；这一条改指同一文件里活着的等级网格：
+    // 六枚按钮退回裸编号文本行（玩家点不了）
+    desc: 'M14254 set_bich_level 的等级网格退回裸编号文本行',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
-    find: '  era.print(`[${num}] 卖春积极性 - ${level}`);',
-    replace:
-      '  era.print(`[${num}] 卖春积极性 - `); // 变异：拆回\n' +
-      '  era.print(level); // 变异：拆回',
+    find: "  print_button_grid(\n    [0, 1, 2, 3, 4, 5].map((level) => [level, '']),\n    6,\n  );",
+    replace: "  era.print('[0] [1] [2] [3] [4] [5]'); // 变异：裸编号文本行",
     tests: ['kojo-dungeon-bitch'],
-    must_mention: 'SHOW_BUTTON_BICH_LEVEL',
+    must_mention: '等级 0-5 是一行六枚按钮',
   },
 
   // —— #623：C 组（K11 莉莉 16 处）「同一行输出被拆」的合并点，各配一条
