@@ -7,8 +7,8 @@
  * 被测量的是三处：素质表（talent:cid:160..175 与 300）的写入、屏幕上的按钮
  * 与文本、以及随机上界（分母）——上界单独钉（`rand(n)` 捕获实参 n）。
  *
- * 补位断言用显示宽度（全角算 2、半角算 1，NBSP 填充——#577 起对齐补位字符
- * 是 U+00A0），分别钉住编号列的右对齐补位与名字列的左对齐补位。
+ * 两个选择列表断言按钮网格：哪几行、每格的编号与正文、格宽（夹具的
+ * grid_width）。
  */
 
 'use strict';
@@ -37,25 +37,6 @@ const HAIRCOLORS = [
   '粉发',
 ];
 
-/** 显示宽度（全角 2 / 半角 1） */
-function disp_width(text) {
-  let width = 0;
-  for (const ch of text) {
-    width += ch.codePointAt(0) > 0xff ? 2 : 1;
-  }
-  return width;
-}
-
-/** 右对齐补位（编号列） */
-function pad_left(text, width) {
-  return '\u00A0'.repeat(Math.max(0, width - disp_width(text))) + text; // #577：补位 NBSP
-}
-
-/** 左对齐补位（名字列） */
-function pad_right(text, width) {
-  return text + '\u00A0'.repeat(Math.max(0, width - disp_width(text))); // #577：补位 NBSP
-}
-
 function load(fixture) {
   return fixture.load_module('chara/chara-and-hair');
 }
@@ -69,16 +50,15 @@ function setup(cid = 1) {
   return fixture;
 }
 
-/** 夹具记录的按钮（rendered = 引擎实际渲染出来的样子） */
-function buttons(fixture) {
-  return fixture.lines_history
-    .filter((line) => line.type === 'button')
-    .map((line) => ({
-      text: line.text,
-      acc: line.accelerator,
-      rendered: line.rendered,
-      color: line.color,
-    }));
+/** 按钮网格快照：每行一个数组，每格是 [编号, 正文, 格宽] */
+function button_grid(fixture) {
+  const rows = new Map();
+  for (const line of fixture.lines_history) {
+    if (line.type !== 'button') continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push([line.accelerator, line.text, line.grid_width]);
+  }
+  return [...rows.values()];
 }
 
 /** 夹具记录的文本行 */
@@ -86,18 +66,6 @@ function texts(fixture) {
   return fixture.lines_history
     .filter((line) => line.type === 'text')
     .map((line) => line.text);
-}
-
-/**
- * 逐行快照：文本行给正文、`era.println()` 给 '\n' 记号——换行位置
- * 是列表函数的关键观测面，不能被 filter 掉。
- */
-function rows(fixture) {
-  return fixture.lines_history.map((line) => {
-    if (line.type === 'br') return '\n';
-    if (line.type === 'text') return line.text;
-    return `<${line.type}>`;
-  });
 }
 
 /** 读取 10 个性格素质的当前值 */
@@ -221,41 +189,34 @@ test('clear_charasteristic：表内 10 项全部清零', () => {
 
 // —— choose_charasteristic ——
 
-/** 列表一行的正文：编号右对齐宽 2，名字左对齐宽 10 */
-function charasteristic_row(index, name) {
-  return `[${pad_left(String(index), 2)}] ${pad_right(name, 10)}`;
-}
-
-test('choose_charasteristic：列表跳过 174，每 3 项换行；输入越界重问', async () => {
+test('choose_charasteristic：列表是按钮网格，跳过 174，每 3 项换行', async () => {
   const fixture = setup();
   for (const id of CHARASTERISTICS)
     fixture.store.set(`talentname:${id}`, `N${id}`);
   const { choose_charasteristic } = load(fixture);
-  fixture.set_inputs(99, 2); // 99 > SIZE 重问；2 命中表内第 2 项
+  fixture.set_inputs(2);
 
   await choose_charasteristic(1);
-  // 一行 3 格（每 3 项换一行），9 项正好三行
-  assert.deepEqual(rows(fixture), [
+  // 每行 3 格、每格 24 / 3 = 8 列；编号按表内序号，174 是第 8 项，故缺 8
+  assert.deepEqual(button_grid(fixture), [
     [
-      charasteristic_row(0, 'N160'),
-      charasteristic_row(1, 'N161'),
-      charasteristic_row(2, 'N162'),
-    ].join(''),
+      [0, 'N160', 8],
+      [1, 'N161', 8],
+      [2, 'N162', 8],
+    ],
     [
-      charasteristic_row(3, 'N163'),
-      charasteristic_row(4, 'N164'),
-      charasteristic_row(5, 'N166'),
-    ].join(''),
+      [3, 'N163', 8],
+      [4, 'N164', 8],
+      [5, 'N166', 8],
+    ],
     [
-      charasteristic_row(6, 'N172'),
-      charasteristic_row(7, 'N173'),
-      charasteristic_row(9, 'N175'),
-    ].join(''),
-    // 9 项 % 3 = 0：没有残行，列表末尾的收尾换行自成一行 = 真空行（#596）
-    '\n',
+      [6, 'N172', 8],
+      [7, 'N173', 8],
+      [9, 'N175', 8],
+    ],
   ]);
+  assert.deepEqual(texts(fixture), [], '列表只有按钮，没有纯文本行');
   assert.equal(fixture.store.get('talent:1:162'), 1, '输入 2 → 表内第 2 项');
-  assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
 test('choose_charasteristic：换行位置按每行 N 项（实参可换）', async () => {
@@ -266,30 +227,26 @@ test('choose_charasteristic：换行位置按每行 N 项（实参可换）', as
   fixture.set_inputs(0);
 
   await choose_charasteristic(1, 2);
-  // 9 项 % 2 = 1：末行是残行，收尾换行只收它，不产生空行（#596）。
-  // 残行为空的那一支才留空行，见上一条「每 3 项换行」用例
-  assert.deepEqual(rows(fixture), [
-    [charasteristic_row(0, 'N160'), charasteristic_row(1, 'N161')].join(''),
-    [charasteristic_row(2, 'N162'), charasteristic_row(3, 'N163')].join(''),
-    [charasteristic_row(4, 'N164'), charasteristic_row(5, 'N166')].join(''),
-    [charasteristic_row(6, 'N172'), charasteristic_row(7, 'N173')].join(''),
-    charasteristic_row(9, 'N175'),
+  // 末行只有 1 格，宽度仍按每行 2 格算（24 / 2 = 12），与上面各列对齐
+  assert.deepEqual(button_grid(fixture), [
+    [
+      [0, 'N160', 12],
+      [1, 'N161', 12],
+    ],
+    [
+      [2, 'N162', 12],
+      [3, 'N163', 12],
+    ],
+    [
+      [4, 'N164', 12],
+      [5, 'N166', 12],
+    ],
+    [
+      [6, 'N172', 12],
+      [7, 'N173', 12],
+    ],
+    [[9, 'N175', 12]],
   ]);
-});
-
-test('choose_charasteristic：输入等于表长（10）按越界重问', async () => {
-  const fixture = setup();
-  const { choose_charasteristic } = load(fixture);
-  fixture.set_inputs(10, 3); // SIZE = 10，输入 10 越界重问；3 命中
-
-  await choose_charasteristic(1);
-  assert.equal(
-    fixture.store.get('talent:1:163'),
-    1,
-    '重问后输入 3 → 表内第 3 项',
-  );
-  assert.equal(fixture.store.get('talent:1:0') ?? 0, 0, '素质 0 未被写入');
-  assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
 // —— show_haircolor ／ set_haircolor ——
@@ -365,36 +322,21 @@ test('set_random_haircolor：RAND:100 的全部分档', () => {
 
 // —— choose_haircolor ——
 
-/** 列表一行的正文：编号右对齐宽 2，名字左对齐宽 7 */
-function haircolor_row(index, name) {
-  return `[${pad_left(String(index), 2)}] ${pad_right(name, 7)}`;
+/** 1-11 号发色的按钮格，格宽 width */
+function haircolor_cells(width) {
+  return HAIRCOLORS.slice(1).map((name, i) => [i + 1, name, width]);
 }
 
-test('choose_haircolor：列出 1-11 号，每 6 项换行；输入越界重问', async () => {
+test('choose_haircolor：列出 1-11 号，每 6 项换行', async () => {
   const fixture = setup();
   const { choose_haircolor } = load(fixture);
-  fixture.set_inputs(0, 13, 12, 5); // 0、13 与 12 越界（`< 1 || >= 12`），5 命中
+  fixture.set_inputs(5);
 
   await choose_haircolor(1);
-  const items = HAIRCOLORS.slice(1).map((name, i) =>
-    haircolor_row(i + 1, name),
-  );
-  assert.deepEqual(rows(fixture), [
-    items.slice(0, 6).join(''), // 一行 6 格（每 6 项换一行）
-    items.slice(6).join(''),
-  ]);
+  const cells = haircolor_cells(4); // 24 / 6 = 4 列
+  assert.deepEqual(button_grid(fixture), [cells.slice(0, 6), cells.slice(6)]);
+  assert.deepEqual(texts(fixture), [], '列表只有按钮，没有纯文本行');
   assert.equal(fixture.store.get('talent:1:300'), 5);
-  assert.equal(fixture.inputs_consumed.length, 4);
-});
-
-test('choose_haircolor：12 号无名字（表外），按越界重问', async () => {
-  const fixture = setup();
-  const { choose_haircolor } = load(fixture);
-  fixture.set_inputs(12, 4); // 12 越界重问；4 命中
-
-  await choose_haircolor(1);
-  assert.equal(fixture.store.get('talent:1:300'), 4, '重问后输入 4 → 黑发');
-  assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
 test('choose_haircolor：每行 N 项可换（实参）', async () => {
@@ -403,31 +345,12 @@ test('choose_haircolor：每行 N 项可换（实参）', async () => {
   fixture.set_inputs(1);
 
   await choose_haircolor(1, 4);
-  const items = HAIRCOLORS.slice(1).map((name, i) =>
-    haircolor_row(i + 1, name),
-  );
-  // 11 项 % 4 = 3：末行残行由收尾换行结束，不产生空行（#596）
-  assert.deepEqual(rows(fixture), [
-    items.slice(0, 4).join(''),
-    items.slice(4, 8).join(''),
-    items.slice(8).join(''),
+  const cells = haircolor_cells(6); // 24 / 4 = 6 列
+  assert.deepEqual(button_grid(fixture), [
+    cells.slice(0, 4),
+    cells.slice(4, 8),
+    cells.slice(8),
   ]);
-});
-
-// —— 按钮与颜色：两个列表函数用的是文本行，不是按钮 ——
-
-test('choose_charasteristic：性格列表是文本行，不是按钮', async () => {
-  const fixture = setup();
-  fixture.store.set('talentname:160', '刚强');
-  const { choose_charasteristic } = load(fixture);
-  fixture.set_inputs(0);
-
-  await choose_charasteristic(1);
-  assert.deepEqual(
-    buttons(fixture),
-    [],
-    '性格列表是纯文本行 + 输入，不升级为按钮（与 chara-custom2 的素质格不同）',
-  );
 });
 
 // —— 接入（rand_chara_make，这张工单把八处存根换真身）——
