@@ -285,7 +285,7 @@ async function enter_enemy(arg0 = 0, rand) {
   const settings2 = era.get('flag:8') || 0;
   if (((settings2 >> 1) & 1) !== 0) {
     era.println(); // 空行：信息展示前隔一行
-    await show_chara_info(arg0, -1, rand); // （#390 真身）
+    await show_chara_info(a, -1, rand); // （#390 真身）目标 = 刚来袭的新勇者
     era.println(); // 空行：信息展示后隔一行
   }
 
