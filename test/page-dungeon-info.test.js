@@ -574,9 +574,7 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   assert.ok(row_115 > floor2, '115 排在第 2 层头之后');
   // 整屏打印期间没有等键：有等键的话它之前的按钮会被渲染层禁用（#710 把
   // 逐层的 waitAnyKey 去掉的原因）
-  const last_button_row = screen
-    .filter((l) => l.type === 'button')
-    .pop().row;
+  const last_button_row = screen.filter((l) => l.type === 'button').pop().row;
   assert.deepEqual(
     fixture.waits
       .filter(
