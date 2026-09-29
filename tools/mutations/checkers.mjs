@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 88; // #646 +1（M14200：出处检查的只占位符模板串）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 89; // #646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -256,6 +256,14 @@ export default [
     replace: '',
     tests: ['mutation-check'],
     must_mention: '只有占位符的模板串被当成出处',
+  },
+  {
+    desc: 'M14201 --files/--changed 又只看 file:（测试标题改了的条目挑不出来）',
+    file: 'tools/mutation-check.mjs',
+    find: '    files.has(m.file) || m.tests.some((t) => files.has(`test/${t}.test.js`))\n',
+    replace: '    files.has(m.file)\n',
+    tests: ['mutation-check'],
+    must_mention: '按测试文件应选中引用它的条目',
   },
 
   // —— #304：并行模式的输出、计数与子进程参数 ——
@@ -755,13 +763,9 @@ export default [
     desc: 'M11717 --jobs 的 --changed/--files 清单不下传副本（子进程又各跑整表切片——副本里没有 .git，这一支的退化形式正是本工单要根除的那个）（#553）',
     file: 'tools/mutation-check.mjs',
     find: `  } else if (args.files || args.base) {
-    const files = [...new Set(selection.map((m) => m.file))];
-    filter_args = ['--files', files.join(',')];
-  }`,
+    // 只传被选中条目用到的那部分清单：子进程按同一规则重选，结果与这里一致`,
     replace: `  } else if (false && (args.files || args.base)) { // 变异：清单不下传
-    const files = [...new Set(selection.map((m) => m.file))];
-    filter_args = ['--files', files.join(',')];
-  }`,
+    // 只传被选中条目用到的那部分清单：子进程按同一规则重选，结果与这里一致`,
     tests: ['mutation-check'],
     test_name:
       '--jobs 的 --changed 筛选下传副本：清单外条目在子输出与汇总里都不出现（#553）',

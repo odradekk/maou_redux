@@ -952,6 +952,31 @@ test('--files 接受 Windows 反斜杠路径', () => {
   }
 });
 
+test('--files 给测试文件时，tests: 引用它的条目也被选中', () => {
+  // 只改测试标题的工单，条目自身和目标文件都没动，--changed 只看 file:
+  // 就挑不出来，过时的 must_mention 要到全量变异才暴露
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--files',
+      'test/calc.test.js',
+    ]);
+    assert.equal(status, 0, `按测试文件应选中引用它的条目：\n${output}`);
+    assert.match(output, /拦截 1 \/ 跳过 0 \/ 红 0/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('--files 显式给出的文件零匹配时退 1，不把空跑报告成全拦截', () => {
   const root = make_fixture();
   try {
