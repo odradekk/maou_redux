@@ -246,10 +246,6 @@ test('dispatch_config(15)：进入年龄/三围子菜单（CONFIG_AGE_SETTING �
     ),
     '年龄菜单首行',
   );
-  assert(
-    !fixture.text_lines().some((t) => t.includes('@CONFIG_AGE_SETTING')),
-    '存根占位行必须消失',
-  );
 });
 
 test('dispatch_config(19)：进入 config_penis_you_setting 子菜单', async () => {

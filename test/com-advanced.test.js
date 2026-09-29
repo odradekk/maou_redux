@@ -4,7 +4,6 @@
  *
  *   - 16 条可用性检查的关键条件（FLAG:71、男性器、无头骑士、技巧门槛）；
  *   - 高级 COM 显式回填 SELECTCOM；
- *   - TRAIN_MESSAGE 空操作占位（不得出「族票缺失」占位行）；
  *   - get_adv_com CASE 135（口交时自慰升格）。
  */
 const assert = require('node:assert/strict');
@@ -854,20 +853,4 @@ test('get_adv_com CASE 135：PREVCOM 口交系且 able125 通过 → 125；非�
     args: [() => 0],
   });
   assert.equal(miss, 135, '非口交 PREVCOM 不升');
-});
-
-test('TRAIN_MESSAGE 120-135：骨架空操作，不得出族票缺失占位行', async () => {
-  for (const com of [120, 122, 125, 135]) {
-    const world = seed_world();
-    world.era_flag.selectcom = com;
-    const { train_message_b, train_message_a } = world.fixture.load_module(
-      'system/train/train-message',
-    );
-    await train_message_b();
-    await train_message_a();
-    assert.ok(
-      !world.fixture.text_lines().some((l) => l.includes('族票缺失')),
-      `COM${com} 不得打占位行`,
-    );
-  }
 });

@@ -7,18 +7,18 @@
  * engine-bundle 取到的**真 EraApi 方法**（模块 183 的原型方法，闭包是真
  * 的、this 是最小假体）与夹具镜像放在同一串调用序列下**逐步**比对：每
  * 一步比对 {行数, allowWait} 与 waits 观测记录，而不是只比最终状态——三次
- * 缺陷的共同形态是「某一步的副作用被漏掉」，最终状态比对在副作用互相抵消时
+ * 缺陷的共同形式是「某一步的副作用被漏掉」，最终状态比对在副作用互相抵消时
  * 静默通过。
  *
- * 边界（工单已查实，勿重查）：clear 横跨两层——守卫链（disableClear
+ * 边界（工单已查实，勿重查）：clear 横跨两层——检查链（disableClear
  * 短路、isContinue 强制等键、setTotalLines 再置位）在 background.js，
- * 行数算术在渲染层。这里只比对守卫链：引擎侧的 clearScreen 用「假渲染
+ * 行数算术在渲染层。这里只比检查链：引擎侧的 clearScreen 用「假渲染
  * 层」打桩（era.connect/listen 立即按渲染层公式应答剩余行数），两侧的
- * 算术同源、不比；第二层（渲染变换）不执行——锚点校核在
+ * 算术同源、不比；第二层（渲染变换）不执行——基准校核在
  * tools/engine-contract-check.mjs。
  *
  * 引擎缺失（无 app.asar）时比对用例整组 skip 并留警告（engine-bundle
- * 内建）；模块号漂移则直接判失败（load_engine_bundle 的形状守卫 + 本文件的
+ * 内建）；模块号不一致则直接判失败（load_engine_bundle 的形状检查 + 本文件的
  * 探针用例）。
  */
 
@@ -48,7 +48,7 @@ const engine_test = engine ? test : test.skip;
 // 打桩：connect 记录事件流；listen 立即应答——input 应答回 {val, continue}
 // （引擎以它维护 isContinue、决定回显），clear 应答回「渲染层公式」算出的
 // 剩余行数（NaN / 超界 → 0，否则删最近 n 行——公式两侧同源，本文件不比
-// 算术、只比守卫链）。waitAnyKey 内部走 input({any:true})，同样过假 era，
+// 算术、只比检查链）。waitAnyKey 内部走 input({any:true})，同样过假 era，
 // 它消费的值与显式 input 的值分池（expect 旗标区分），避免顺序串味。
 function create_engine_side() {
   const api = engine.era_api.prototype;
@@ -117,7 +117,7 @@ function create_engine_side() {
       const rows_at_wait = state.totalLines;
       const events_before = renderer_events.length;
       await state.waitAnyKey(force);
-      // 「真的等了」的实证 = 渲染层真收到一次 any 输入请求（waited 的判据
+      // 「真的等了」的实证 = 渲染层真收到一次 any 输入请求（waited 的判断
       // 本体在引擎条件式里，这里从事件流取证，不重写条件）
       const fired = renderer_events
         .slice(events_before)
@@ -223,14 +223,14 @@ async function run_sequence(make_side, steps) {
 /** 空步骤（纯置位/预置），只为让轨迹里留下这一拍的快照 */
 const noop = () => {};
 
-// —— 主序列：allowWait 状态机全部转移 + 三次缺陷的形态 ——
+// —— 主序列：allowWait 状态机全部转移 + 三次缺陷的形式 ——
 //
 // 序列按 waits[] 当前的观测面（{waited, rows_at_wait, forced}）与每步的
-// {行数, allowWait} 设计，判据是三次缺陷的形态能否被跑出来：
+// {行数, allowWait} 设计，判断条件是三次缺陷的形式能否被跑出来：
 //   #68 input 回显 +1 Row → 「input() 回显」步：行数必须 +1（漏镜像即错位）；
 //   #69 playMusic 不占 Row → 「playMusic」步：行数与 allowWait 都不动；
 //   #74 参数条 → 「printProgress」步的行数面（+1 Row 恰一次）；barWidth 的
-//     值语义在渲染层（第二层），由锚点校核与调用点规则守，不在本序列。
+//     值语义在渲染层（第二层），由基准校核与调用点规则守，不在本序列。
 // 状态机转移的覆盖：置位（print / 回显 / clear 再置位）、消费（waitAnyKey
 // 等即清零）、空转（无输出不等）、强制（waitAnyKey(true) 与快进态 clear）、
 // 同值 setTotalLines 不再置位（clear(0)）、disableClear 整体无操作。
@@ -251,7 +251,7 @@ const MAIN_SEQUENCE = [
     run: async (s) => ({ wait: await s.wait_any_key(true) }),
   },
   {
-    name: 'input() 回显 +1 Row（#68 形态）',
+    name: 'input() 回显 +1 Row（#68 形式）',
     run: async (s) => ({ returned: await s.input() }),
   },
   {
@@ -265,11 +265,11 @@ const MAIN_SEQUENCE = [
   },
   { name: '关 hideUserInput', run: (s) => s.set_hide_user_input(false) },
   {
-    name: 'playMusic 不占行不置位（#69 形态）',
+    name: 'playMusic 不占行不置位（#69 形式）',
     run: (s) => ({ returned: s.play_music('未注册') }),
   },
   {
-    name: 'printProgress +1 Row（#74 形态的行数面）',
+    name: 'printProgress +1 Row（#74 形式的行数面）',
     run: (s) => s.print_progress(50, '阴核', ' 5540', { barWidth: 16 }),
   },
   { name: 'clear(1) 删一行并再置位', run: async (s) => await s.clear(1) },
@@ -323,14 +323,14 @@ engine_test(
     assert.equal(by_name['waitAnyKey 消费'].wait.waited, true);
     assert.equal(by_name['waitAnyKey 空转（无输出不等）'].wait.waited, false);
     assert.equal(by_name['waitAnyKey(true) 强制'].wait.forced, true);
-    assert.deepEqual(by_name['input() 回显 +1 Row（#68 形态）'], {
-      step: 'input() 回显 +1 Row（#68 形态）',
+    assert.deepEqual(by_name['input() 回显 +1 Row（#68 形式）'], {
+      step: 'input() 回显 +1 Row（#68 形式）',
       rows: 2,
       allowWait: true,
       returned: 7,
     });
-    assert.deepEqual(by_name['playMusic 不占行不置位（#69 形态）'], {
-      step: 'playMusic 不占行不置位（#69 形态）',
+    assert.deepEqual(by_name['playMusic 不占行不置位（#69 形式）'], {
+      step: 'playMusic 不占行不置位（#69 形式）',
       rows: 2,
       allowWait: true,
       returned: false,
@@ -407,12 +407,12 @@ engine_test(
   },
 );
 
-// —— 模块号漂移 → 直接判失败（不依赖真实引擎：伪造 asar 探针）——
+// —— 模块号不一致 → 直接判失败（不依赖真实引擎：伪造 asar 探针）——
 //
 // background.js 造形成「入口标记仍在、模块 183 不是 EraApi」的形状——
-// 即引擎升版后最可能的样子。load_engine_bundle 的形状守卫必须抛
+// 即引擎升版后最可能的样子。load_engine_bundle 的形状检查必须抛
 // 「引擎变了」，而不是让下游炸 TypeError 或静默 skip。
-test('模块号漂移 → 直接判失败报「引擎变了」（engine-bundle 形状守卫）', () => {
+test('模块号不一致 → 直接判失败报「引擎变了」（engine-bundle 形状检查）', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-'));
   const asar_path = path.join(dir, 'app.asar');
   // 形状要点：含入口标记 `r(r.s=311)}`（engine-bundle 据此切 webpack
@@ -452,16 +452,15 @@ test('模块号漂移 → 直接判失败报「引擎变了」（engine-bundle �
   }
 });
 
-// —— 模块 183 的方法守卫必须独立生效，不能靠模块 84 守卫接力（#441）——
+// —— 模块 183 的方法检查必须独立生效，不能靠模块 84 检查接力（#441）——
 //
-// 上一条探针对 183 与 84 用同一个空对象（{prototype:{}}），两条守卫谁先抛
-// 都能让断言通过——M178（把 183 守卫拆成 `false && …`）落地后，183 守卫
+// 上一条探针对 183 与 84 用同一个空对象（{prototype:{}}），两条检查谁先抛
 // 被跳过，但 84 那条仍会因为同一个空对象而抛出同款「引擎变了」文案，测试
-// 照样全绿，真正被拆的那条守卫却没人验证过（mutation-check 实测：拦截 0 /
-// 红 1）。本条把 84 造成合法形状（该守卫应当放行），只让 183 的原型缺一个
-// 方法（addCharacter）——183 守卫被拆时 load_engine_bundle() 会一路跑到底
-// 不抛错、退出码变 0，探针即刻落空，与真守卫在场时的非 0 退出分道。
-test('模块 183 原型方法缺失 → 单独判失败（84 守卫合法放行，不许接力顶替）', () => {
+// 照样全绿，真正被拆的那条检查却没人验证过（mutation-check 实测：拦截 0 /
+// 红 1）。本条把 84 造成合法形状（该检查应当放行），只让 183 的原型缺一个
+// 方法（addCharacter）——183 检查被拆时 load_engine_bundle() 会一路跑到底
+// 不抛错、退出码变 0，探针即刻落空，与真检查在场时的非 0 退出分道。
+test('模块 183 原型方法缺失 → 单独判失败（84 检查合法放行，不许接力顶替）', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-'));
   const asar_path = path.join(dir, 'app.asar');
   fs.writeFileSync(
@@ -497,11 +496,11 @@ test('模块 183 原型方法缺失 → 单独判失败（84 守卫合法放行�
     assert.notEqual(
       probe.status,
       0,
-      `模块 183 缺 addCharacter 时必须非 0 退出（84 守卫已合法放行，不能靠它接力）：\n${combined}`,
+      `模块 183 缺 addCharacter 时必须非 0 退出（84 检查已合法放行，不能靠它接力）：\n${combined}`,
     );
     assert.ok(
       combined.includes('引擎变了') && combined.includes('模块 183'),
-      `报错必须点名模块 183，不能是 84 守卫代打：\n${combined}`,
+      `报错必须点名模块 183，不能是 84 检查代打：\n${combined}`,
     );
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });

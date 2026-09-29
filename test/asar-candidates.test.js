@@ -4,14 +4,14 @@
  * 引擎 asar 的定位在三处各写了一份（CJS/ESM 混用，抽不成共享模块）：
  *   test/helpers/engine-bundle.js     测试侧的引擎比对
  *   tools/mutation-check.mjs          变异检查的「引擎在场」判定
- *   tools/engine-contract-check.mjs   引擎契约锚点校核
+ *   tools/engine-contract-check.mjs   引擎契约基准校核
  *
- * 三份漂移的后果不是报错，是**静默降级**：找不到 asar 的那一侧把引擎用例
+ * 三份不一致的后果不是报错，是**静默降级**：找不到 asar 的那一侧把引擎用例
  * 整片 skip 却仍报绿（#113 验收被这个假象误导过），而 mutation-check 那侧
  * 会判出「引擎在场却有 N 条按跳过处理」的整体红。两种表现差得太远，靠人
  * 记住「改一处要改三处」不可靠，所以在这里钉死。
  *
- * 锁的口径是**候选列表逐条同序相等**，不是「都含某几条」——顺序决定命中
+ * 锁的标准是**候选列表逐条同序相等**，不是「都含某几条」——顺序决定命中
  * 哪一份 asar，乱序会让慢盘那条排到快盘前面。
  */
 
@@ -123,7 +123,7 @@ test('三处都认 ERE_ENGINE_ASAR=none（SOP 跳过基线核对的唯一开关�
 test('行为验证：ERE_ENGINE_ASAR=none 时 engine-bundle 真的退回无引擎', () => {
   // 静态匹配只证明写了那行字，证不了它接在正确的位置上（比如写在回落之后
   // 就永远轮不到）。这里起子进程实跑一次。
-  // 判据用 falsy 而不是 === undefined：无引擎时 load_engine_bundle 返回的是
+  // 判断条件用 falsy 而不是 === undefined：无引擎时 load_engine_bundle 返回的是
   // null（engine-bundle.js 里 cached_bundle = null 那支），=== undefined 会
   // 把「无引擎」误读成「有引擎」
   const probe = `

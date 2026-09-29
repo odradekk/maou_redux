@@ -2,7 +2,7 @@
  * @file issue #333：阶段 5a 段 0 的九个跨域前置函数。
  *
  * 测试边界 = 各模块公开导出；SEARCH_FAMILY 与 CAMPAIGN_DUNGEON_LV 另经既有
- * 调用方验证换接。期望值直接来自对应 ERB 的分支与常量，不复算实现。
+ * 调用方验证换接。期望值直接来自被测分支与常量，不复算实现。
  */
 
 'use strict';
@@ -244,7 +244,7 @@ test('NAKADASHI_CHECK：已有预产日或正在妊娠时清池但不改妊娠�
   assert.equal(fixture.store.get('cflag:2:102') ?? 0, 0);
 });
 
-test('ENEMY_DATA_CHECK：1:1 保留原作未绑定局部变量造成的无操作行为', () => {
+test('ENEMY_DATA_CHECK：保留未绑定局部变量造成的无操作行为', () => {
   const fixture = create_era_fixture();
   const { enemy_data_check } = fixture.load_module('dungeon/monster-data');
 

@@ -204,7 +204,7 @@ test('史莱姆、昆虫、藤蔓与触手按随机分支结算经验和点数',
   assert.equal(fixture.store.get('cflag:0:107'), 6);
 });
 
-test('男性魔王在十个异性怪物分支走原作提前返回', async () => {
+test('男性魔王在十个异性怪物分支提前返回', async () => {
   const function_names = [
     'monster_play_dog',
     'orc_monster_play',
@@ -230,7 +230,7 @@ test('男性魔王在十个异性怪物分支走原作提前返回', async () =>
   }
 });
 
-test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机臂均可达', async () => {
+test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机分支均可达', async () => {
   const slime = setup();
   await slime
     .load_module('dungeon/monster-play')
@@ -257,12 +257,12 @@ test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机臂均可�
     await tentacle
       .load_module('dungeon/monster-play')
       .syokusyu_monster_play(0, 6, seq(branch));
-    assert.equal(tentacle.store.get('exp:0:55'), 6, `触手臂 ${branch}`);
-    assert.equal(tentacle.store.get('juel:0:5'), 60, `触手臂 ${branch}`);
+    assert.equal(tentacle.store.get('exp:0:55'), 6, `触手分支 ${branch}`);
+    assert.equal(tentacle.store.get('juel:0:5'), 60, `触手分支 ${branch}`);
     assert.equal(
       tentacle.store.get(branch === 1 ? 'exp:0:1' : 'exp:0:0'),
       branch === 0 ? undefined : 6,
-      `触手臂 ${branch}`,
+      `触手分支 ${branch}`,
     );
   }
 

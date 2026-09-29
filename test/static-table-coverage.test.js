@@ -3,8 +3,8 @@
  * 对应的名字表（issue #42 实机缺陷）。
  *
  * 缘由：引擎的三段寻址在 **`data[表][角色]` 存在、而 `staticData[表]` 缺位**
- * 时**直接抛错**——app.asar 的 setVar 兜底分支是
- * `u = i(this.staticData[a][u], u)`，没有守卫。调教域的表由
+ * 时**直接抛错**——app.asar 的 setVar 缺省分支是
+ * `u = i(this.staticData[a][u], u)`，没有检查。调教域的表由
  * `beginTrain` / `addCharacter` 按角色开桶，所以桶一定在，崩就崩在名字表
  * 这一侧。实机撞见：调教开始时写 `stain:31:2` 报
  * `Cannot read properties of undefined (reading '2')`（stain/ex/cstr/tequip
@@ -188,7 +188,7 @@ engine_test(
       era: { error: (m) => errors.push(String(m)) },
     });
 
-    // 对照：cstr 表引擎认识，三段写得进（原作 CSTR:A:1 因此可 1:1 照写）
+    // 对照：cstr 表引擎认识，三段写得进（CSTR:A:1 可直接写）
     assert.equal(engine.set_var.call(make_fake(), 'cstr:0:1', 'X'), 'X');
 
     // 二段 savestr：引擎压根没有这张表（app.asar 全文零命中），走 error 分支
@@ -197,7 +197,7 @@ engine_test(
     assert.deepEqual(errors, ['key error in getter/setter! key (savestr:0)']);
 
     // 三段 savestr：**连 era.error 都不给**，完全静默丢弃。这一条比二段更
-    // 危险——原作的 SAVESTR:A 正是三段形态，照抄过来不会有任何痕迹，
+    // 危险——SAVESTR:A 正是三段写法，直接照写不会有任何痕迹，
     // 玩家看到的名字恒空。#171 因此把名字承载改走 callname:${id}:-1（#5）。
     errors.length = 0;
     assert.equal(

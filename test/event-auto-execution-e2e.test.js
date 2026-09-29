@@ -1,14 +1,14 @@
 /**
  * 阶段 6 段收尾的端到端验收（issue #549，#540 抵达条件 3）：
  * 「自动处刑」链进 `npm test`——设置页 [3] 开启勇者自动处刑 → 主菜单 [103]
- * 批量处刑处置一名奴隶 → 过天后 @EVENTTURNEND 触发「自動處刑」。
+ * 批量处刑处置一名奴隶 → 过天后 EVENTTURNEND 触发「自動處刑」。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点，#16）。照
  * test/event-daycycle-e2e.test.js 的形状——同样的新档启动序列（标题 → 新游戏
- * → @EVENTFIRST 村娘线，地下城模式选 2D），但驱动的是本阶段新接的这条链：
+ * → EVENTFIRST 村娘线，地下城模式选 2D），但驱动的是本阶段新接的这条链：
  *   - 设置页经主菜单 [777] 进入，[3] 的状态行从 OFF 翻到 ON（FLAG:5 位 3）；
  *   - 主菜单 [103] 进批量处刑（#543），给村娘打标签 → [121] 选流放 → 确认；
- *   - [199] 休息过天，@EVENTTURNEND 里洗脑戒指把侵攻中的勇者变成俘虏
+ *   - [199] 休息过天，EVENTTURNEND 里洗脑戒指把侵攻中的勇者变成俘虏
  *     （CFLAG:506 新人标签），开关位开着 → 自動處刑处决她。
  * 三段全部经真实输入通道（era.input 的按钮白名单），断言落在可观察契约上
  * （状态行文案、处刑播报、角色从队伍消失、勋章/处刑计数），不断言中间
@@ -17,10 +17,10 @@
  * 世界补齐（夹具层，同 event-ending-e2e 预置 base 的先例）：温妮（31）以
  * 「侵攻中 + 洗脑戒指」的勇者身份进场——这对应真实玩法里勇者戴着偷来的
  * 戒指打进迷宫的状态；戒指陷落 → 新人标签 → 自动处刑的中间链路由
- * test/event-execution-batch.test.js 的 EVENTTURNEND 接线用例逐环锁定，
+ * test/event-execution-batch.test.js 的 EVENTTURNEND 接入用例逐环锁定，
  * 本用例只负责把它串进玩家按得到的完整流程。
  *
- * 随机源：Math.random 换成恒 0.5（同 event-execution-batch.test.js 接线用例
+ * 随机源：Math.random 换成恒 0.5（同 event-execution-batch.test.js 接入用例
  * 的取法）——本链沿途的随机消费（2D 地图、侵攻度衰减、SENGEN 掷点）只要求
  * 确定，不要求多样；恒值对输入序列错位最不敏感。
  */
@@ -65,7 +65,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
   fixture.seed_chara(17, { name: '玛奥', callname: '玛奥' });
   fixture.seed_chara(31, { name: '温妮', callname: '温妮' });
   // 引擎静态表里 Chara0 的装载形状（CSVCALLNAME 的读数源，test/chara-
-  // name.test.js 同款预置）：@EVENTFIRST 会用 CHARA_NAME_DEFINE 把魔王称呼
+  // name.test.js 同款预置）：EVENTFIRST 会用 chara_name_define 把魔王称呼
   // 重写为预设值，不补这格时夹具世界里它是空串
   fixture.store.set('chara:0', { name: '你', callname: '你' });
   // 引擎从 Chara0.yml 的「基礎」抄开局满状态（村娘线结算的回复段读上限）
@@ -107,7 +107,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
     fixture.era.addCharacter(31);
     fixture.store.set('cflag:31:1', 2); // 侵攻中（洗脑戒指的陷落对象）
     fixture.store.set('cflag:31:551', BRAINWASH_RING);
-    // HP 剩一成 → 2D 地图上必撤退且保持侵攻中（接线用例同款取值）
+    // HP 剩一成 → 2D 地图上必撤退且保持侵攻中（接入用例同款取值）
     fixture.store.set('base:31:0', 100);
     fixture.store.set('maxbase:31:0', 1000);
     fixture.store.set('base:31:1', 1000);
@@ -182,7 +182,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
       '玛奥经批量处刑从队伍消失',
     );
 
-    // —— 段 3：过天 → @EVENTTURNEND 触发「自動處刑」 ——
+    // —— 段 3：过天 → EVENTTURNEND 触发「自動處刑」 ——
     const pending = await emit('EVENTTURNEND');
     assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');
     const turnend_texts = history_texts(fixture);

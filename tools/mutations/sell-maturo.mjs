@@ -1,6 +1,6 @@
 // issue #337：成熟奴隶异族市场与宠物市场末路（M7100-M7129）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 30; // #653 -1 +1（删反向变异 M7128、新增 M13264 守卫 K1 奶罐判定修复）
+export const COUNT = 30; // #653 -1 +1（删反向变异 M7128、新增 M13264 检查 K1 奶罐判定修复）
 
 const code = 'ere/system/stronghold/sell-maturo.js';
 const make = (id, desc, find, replace, must_mention) => ({

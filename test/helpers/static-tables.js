@@ -18,8 +18,8 @@ const {
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 // 入库变量表清单：文件 → 表名（eraStart 用的归一表名）。后续表（Abl/Exp/…）
-// 随各自的数据管线票入库时在此登记。CFlag.yml 不是转换器产物（原作无
-// CFLAG 名表，见该文件头注释），登记在此使比对与实机装载一致：缺它时
+// 随各自的数据管线票入库时在此登记。CFlag.yml 的 CFLAG 名表系自建（见该
+// 文件头注释），登记在此使比对与实机装载一致：缺它时
 // 角色预设的 フラグ 行报「角色数据表不存在: cflag!」并被丢弃（#50 实测）。
 // PortCFlag.yml 同为人工表（移植自建扩展表，#67）：登记在此使 Chara17.yml
 // 的 portcflag 预设行在装载循环里可翻译（名字表缺位同样报错丢弃）。
@@ -27,11 +27,11 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 // 入库角色，缺表时这两行同样被报错丢弃。
 // Mark/Exp（#43 入库）随 #138 登记：常规批 Chara34 首带 MARK 预设行（缺表
 // 时整行报错丢弃，#138 前仅 Chara223 有 EXP 行、编号外批未入库，一直漏登）。
-// Ex_Talent.yml（#138，原作 EXCOM.ERH:4 的 CHARADATA EX_TALENT）：登记使
+// Ex_Talent.yml（#138，CHARADATA EX_TALENT 扩展声明）：登记使
 // 比对与实机装载一致——虽然常规批 Chara*.yml 没有 ex_talent 预设段，但
 // extendedCharaTables 里的表理应在装载循环视野内（空名字表建
 // staticData.ex_talent，数字下标寻址的回落依赖它）。
-// C_Relation/C_Relation_Sub（#349，原作 RELATION.ERH 的 CHARADATA）：空
+// C_Relation/C_Relation_Sub（#349，CHARADATA 扩展声明）：空
 // 名字表同样必须进入 staticData，三段数字下标才能被扩展角色表接受。
 const TABLE_FILES = [
   ['Base.yml', 'base'],

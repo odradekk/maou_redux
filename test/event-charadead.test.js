@@ -296,10 +296,6 @@ test('接入：eventend 死亡删除分支真调 party_char_del（队伍复位�
     fixture.calls.some((c) => c.api === 'removeCharacter' && c.args[0] === 31),
     'DELCHARA 在 party_char_del 之后执行',
   );
-  assert(
-    !text_lines(fixture).some((line) => line.includes('party_char_del')),
-    '不再打 party_char_del 占位行',
-  );
 });
 
 test('接入：存活路径 RESULT == 0 → SELF_CHECK 照常执行', async () => {

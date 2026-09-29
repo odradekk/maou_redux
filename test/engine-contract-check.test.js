@@ -1,10 +1,10 @@
 /**
  * @file engine-contract-check 的行为锁（issue #91）：工具不只「报告对得上」，
- * 三项检查的每一条都要在退出码里生效——探针写坏规则靶子 / 伪造引擎 / 改坏
+ * 三项检查的每一条都要在退出码里生效——探针写坏规则目标 / 伪造引擎 / 改坏
  * 条目表，工具必须非 0 且报出位置；引擎缺失时必须退 0 并警告（skip 语义）。
  * 本文件不持事实表、基线或条目表的副本（数据只在 tools/ 的三份源文件与工具
  * 内嵌基线里），只验行为——「规则写在测试里而工具声称自己在守、退出码却是
- * 0」是 trace-check 整改时的教训。
+ * 0」是此前返工的教训。
  *
  * 直接 import 工具、同进程调 run()，不再 spawnSync（#449：子进程卡在 Node
  * 自己的退出收尾期，会把 node --test 的 TAP 顺序输出锁死，整套挂起十几
@@ -13,12 +13,12 @@
  * 缓存），写坏型探针改文件、同一份导入实例也能看见新内容。伪造引擎用
  * test/helpers/fake-asar.js 构造的最小 asar（同款头结构），不碰真实引擎。
  *
- * 写坏型探针一律住在**临时仓库副本**里（#89 整改的阻断 2，两轮）：node
+ * 写坏型探针一律住在**临时仓库副本**里（#89 返工的阻断 2，两轮）：node
  * --test 并行跑测试文件（这一层仍是多进程隔离，与本工具是否 spawn 无关），
  * 就地改 ere/page/page-train.js 这类工作树文件会与并行读者撞车（16 核
  * Linux 五跑四红）；而副本若整棵拷 ere/，递归拷贝在乎的不是内容是「条目
  * 在不在」，并行的探针在 ere/ 里增删文件会让 cpSync 中途 ENOENT（Windows
- * npm test 7/9 红的回归形态）。故副本按**清单最小拷贝**（PROBE_REPO_ENTRIES：
+ * npm test 7/9 红的回归形式）。故副本按**清单最小拷贝**（PROBE_REPO_ENTRIES：
  * 事实表 + 条目表 + 全仓唯一的 progress 调用点 + 见证所在的夹具——门 A 在
  * 副本里扫 ere/ 只见 page-train.js，调用点 1 处与真树合计一致，判定可
  * 平移；工具本体不用拷了，探针跑的是同一份导入实例，root 参数指向副本）；
@@ -38,7 +38,7 @@ const { build_asar, build_renderer_map } = require('./helpers/fake-asar');
 const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
 
 // 工具在 tools/ 侧是 ESM；Node 22.12+ 的 require(esm) 可同步引入无顶级
-// await 的模块——工具的顶层 await 只在 CLI 守卫分支里，require 时不会
+// await 的模块——工具的顶层 await 只在 CLI 检查分支里，require 时不会
 // 走到那条分支，取 run() 是安全的
 const { run: run_tool_fn } = require('../tools/engine-contract-check.mjs');
 const { ENGINE_FACTS } = require('../tools/engine-contract-facts.mjs');
@@ -77,7 +77,7 @@ async function run_tool_in(root, options = {}) {
   return { status: failures === 0 ? 0 : 1, output };
 }
 
-/** 全部事实的锚点字面合集（伪造「锚点齐全」的渲染包用） */
+/** 全部事实的基准字面合集（伪造「基准齐全」的渲染包用） */
 function all_anchor_literals() {
   return ENGINE_FACTS.flatMap((fact) => fact.anchors);
 }
@@ -90,7 +90,7 @@ function write_fake_asar(files) {
   return asar_path;
 }
 
-test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 条目表两项检查，退出码 0）', async () => {
+test('engine-contract-check 全绿（规则 + 真实引擎基准 + 条目表两项检查，退出码 0）', async () => {
   const { status, output } = await run_tool();
   if (status !== 0) {
     // 引擎缺失的裸克隆：工具按 skip 语义退 0，这里的非 0 只可能是真失守
@@ -98,17 +98,17 @@ test('engine-contract-check 全绿（规则 + 真实引擎锚点 + 条目表两�
       `engine-contract-check 应全绿，实际退出 ${status}：\n${output}`,
     );
   }
-  assert.ok(output.includes('锚点') || output.includes('跳过'), output);
+  assert.ok(output.includes('基准') || output.includes('跳过'), output);
   assert.ok(output.includes('条目表'), `报告应包含条目表判定：\n${output}`);
 });
 
-test('调用点规则：barWidth 常量改成 24 必须红且报出位置（#74 形态的拦截）', async () => {
+test('调用点规则：barWidth 常量改成 24 必须红且报出位置（#74 形式的拦截）', async () => {
   const root = probe_repo();
   try {
     const page_train = path.join(root, 'ere', 'page', 'page-train.js');
     const original = fs.readFileSync(page_train, 'utf8');
     const anchor = 'const PALAM_PROGRESS_BAR_WIDTH = 16;';
-    assert.ok(original.includes(anchor), '探针锚行不在 page-train.js 里？');
+    assert.ok(original.includes(anchor), '探针基准行不在 page-train.js 里？');
     fs.writeFileSync(
       page_train,
       original.replace(anchor, 'const PALAM_PROGRESS_BAR_WIDTH = 24;'),
@@ -118,7 +118,7 @@ test('调用点规则：barWidth 常量改成 24 必须红且报出位置（#74 
     assert.notEqual(
       status,
       0,
-      'barWidth=24 时工具必须非 0——数值列被吞的缺陷形态',
+      'barWidth=24 时工具必须非 0——数值列被吞的缺陷形式',
     );
     assert.ok(
       output.includes('page-train') && output.includes('barWidth = 24'),
@@ -144,7 +144,7 @@ test('调用点规则：删掉 config（不显式传 barWidth）必须红', asyn
     const page_train = path.join(root, 'ere', 'page', 'page-train.js');
     const original = fs.readFileSync(page_train, 'utf8');
     const anchor = 'config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },';
-    assert.ok(original.includes(anchor), '探针锚行不在 page-train.js 里？');
+    assert.ok(original.includes(anchor), '探针基准行不在 page-train.js 里？');
     fs.writeFileSync(page_train, original.replace(anchor, ''), 'utf8');
     const { status, output } = await run_tool_in(root);
     assert.notEqual(
@@ -186,8 +186,8 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
       ),
       'utf8',
     );
-    // 引擎缺失环境下锚点检查本就跳过，此探针只看规则门：显式指一个不存在的
-    // asar，把锚点检查摘出去
+    // 引擎缺失环境下基准检查本就跳过，此探针只看规则门：显式指一个不存在的
+    // asar，把基准检查摘出去
     const { status, output } = await run_tool_in(root, {
       asar: 'Z:\\definitely\\missing.asar',
     });
@@ -201,7 +201,7 @@ test('规则阈值来自事实表（同一条事实不抄两遍）：改表里�
   }
 });
 
-test('锚点失配 → 直接判失败报「引擎变了」并报出事实（伪造 asar 探针）', async () => {
+test('基准失配 → 直接判失败报「引擎变了」并报出事实（伪造 asar 探针）', async () => {
   const asar_path = write_fake_asar({
     'js/app.2cccec57.js.map': build_renderer_map(
       all_anchor_literals().filter(
@@ -214,7 +214,7 @@ test('锚点失配 → 直接判失败报「引擎变了」并报出事实（伪
     assert.notEqual(
       status,
       0,
-      '锚点字面消失时工具必须非 0——引擎升版改默认值的当天就要红',
+      '基准字面消失时工具必须非 0——引擎升版改默认值的当天就要红',
     );
     assert.ok(
       output.includes('引擎变了') &&
@@ -230,7 +230,7 @@ test('锚点失配 → 直接判失败报「引擎变了」并报出事实（伪
   }
 });
 
-test('锚点定位器按模式匹配渲染包：换了内容哈希的文件名仍能定位（不写死）', async () => {
+test('基准定位器按模式匹配渲染包：换了内容哈希的文件名仍能定位（不写死）', async () => {
   const asar_path = write_fake_asar({
     'js/app.deadbeef99.js.map': build_renderer_map(all_anchor_literals()),
   });
@@ -239,22 +239,22 @@ test('锚点定位器按模式匹配渲染包：换了内容哈希的文件名�
     assert.equal(
       status,
       0,
-      `渲染包文件名换成别的哈希后锚点仍应全中（定位器是模式匹配）：\n${output}`,
+      `渲染包文件名换成别的哈希后基准仍应全中（定位器是模式匹配）：\n${output}`,
     );
-    assert.ok(output.includes('全中'), `报告应给出锚点判定：\n${output}`);
+    assert.ok(output.includes('全中'), `报告应给出基准判定：\n${output}`);
   } finally {
     fs.rmSync(path.dirname(asar_path), { recursive: true, force: true });
   }
 });
 
-test('渲染包缺失 → 直接判失败报「引擎变了」（引擎在场而形状漂移，不是环境缺失）', async () => {
+test('渲染包缺失 → 直接判失败报「引擎变了」（引擎在场而形状不一致，不是环境缺失）', async () => {
   const asar_path = write_fake_asar({ 'background.js': 'x' });
   try {
     const { status, output } = await run_tool({ asar: asar_path });
     assert.notEqual(status, 0, 'asar 在场而渲染包定位不到必须非 0');
     assert.ok(
       output.includes('引擎变了') && output.includes('渲染包'),
-      `报错应说明渲染包漂移：\n${output}`,
+      `报错应说明渲染包不一致：\n${output}`,
     );
   } finally {
     fs.rmSync(path.dirname(asar_path), { recursive: true, force: true });
@@ -272,7 +272,7 @@ test('引擎缺失 → 退 0 并警告（skip 语义，不是失守）', async (
   );
   assert.ok(
     output.includes('未找到 app.asar') && output.includes('跳过'),
-    `应留警告说明锚点检查跳过：\n${output}`,
+    `应留警告说明基准检查跳过：\n${output}`,
   );
   assert.ok(output.includes('条目表'), `规则与条目表照跑照判：\n${output}`);
 });
@@ -285,7 +285,7 @@ test('条目表只能变短：基线外新条目必须红且报出位置', async
     const anchor = "  {\n    id: 'waitanykey-fromclear-useRule',";
     assert.ok(
       original.includes(anchor),
-      '探针锚行不在条目表里——条目表结构变了？',
+      '探针基准行不在条目表里——条目表结构变了？',
     );
     const probe = `  {\n    id: 'probe-outside-baseline',\n    desc: '探针：基线外条目',\n    witness: '不存在的见证串',\n  },\n${anchor}`;
     fs.writeFileSync(ledger, original.replace(anchor, probe), 'utf8');
@@ -322,7 +322,7 @@ test('条目表不许过期失效：见证注释不在夹具里的条目必须�
     const anchor = "witness: 'setBack/setOverlay 的独立',";
     assert.ok(
       original.includes(anchor),
-      '探针锚行不在条目表里——条目表结构变了？',
+      '探针基准行不在条目表里——条目表结构变了？',
     );
     fs.writeFileSync(
       ledger,

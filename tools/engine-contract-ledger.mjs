@@ -1,6 +1,6 @@
 // 引擎契约待办条目表（issue #91）：契约测试（test/engine-contract.test.js）查出
 // 的、第一层（allowWait 状态机一簇：addTotalLines / setTotalLines /
-// waitAnyKey / getLineCount / clear 守卫链）范围之外的有意分歧，逐条冻结。
+// waitAnyKey / getLineCount / clear 检查链）范围之外的有意分歧，逐条冻结。
 //
 // 条目标识 = id + witness：witness 是分歧在夹具里的**见证注释**原文片段——
 // 不用行号（#72 教训：行号随编辑腐烂），注释挪动只要片段仍在就不算过期失效。
@@ -21,7 +21,7 @@ export const ENGINE_CONTRACT_LEDGER = [
   },
   {
     id: 'setback-setoverlay-rearm',
-    desc: 'setBack / setOverlay 的独立 allowWait 置位不镜像（两个方法各以 allowWait=!0 收尾；游戏代码未用，夹具走兜底记录层）',
+    desc: 'setBack / setOverlay 的独立 allowWait 置位不镜像（两个方法各以 allowWait=!0 收尾；游戏代码未用，夹具走缺省记录层）',
     witness: 'setBack/setOverlay 的独立',
   },
   {

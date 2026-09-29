@@ -15,8 +15,7 @@
  *     test/static-table-coverage.test.js「savestr 族不存在」用例）：三段
  *     `savestr:0:1` 完全静默丢弃，直接移植的后果是 88 处演出文本全部空白。
  *     名字承载一律走 `callname:${id}:-1`（#5 决议）；
- *   - equip_check / equip_select 用 #174（H5）真身 ere/system/equip/——
- *     工单内容把它俩列在存根表，出票后 H5 已先合并，以文件实际内容为准；
+ *   - equip_check / equip_select 用 #174（H5）真身 ere/system/equip/；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
  *     Math.random，测试注入定值序——enter-enemy.js 先例）；
  *   - 全局 A / TARGET / W:8 / RESULT 的换手在 ere 侧显式传参（#5 决议
@@ -55,7 +54,7 @@ const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // H7（#176）陷阱真身在 ere/dungeon/dungeon-trap.js（其对 dungeon.js 的
 // karma 真身是延迟 require，同款防环；dark_juel_trap 唯一调用点）。
 // H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其 karma /
-// campaign_room 存根经延迟 require 复用；EX 道具随 #344 直连真身）。
+// campaign_room 域内存根经延迟 require 复用；EX 道具随 #344 直连真身）。
 const battle_mod = require('#/dungeon/dungeon-battle');
 const battle2_mod = require('#/dungeon/dungeon-battle2');
 const trap_mod = require('#/dungeon/dungeon-trap');
@@ -88,20 +87,20 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-// —— 已换真身的原存根（工单 #172 十组 + 附属，归属见 docs/stub-registry.md）——
+// —— 已换真身的跨域入口（工单 #172 十组 + 附属）——
 
-// H6（#175）起三处战斗存根换成真身：dungeon_spy / dungeon_party_battle /
+// H6（#175）起三处战斗入口接真身：dungeon_spy / dungeon_party_battle /
 // dungeon_battle2_party 见 ere/dungeon/dungeon-battle2.js 与
 // ere/dungeon/dungeon-battle.js（调用点经模块对象引用，对比测试可替换）。
-// H7（#176）起 dungeon_trap 存根换成真身：ere/dungeon/dungeon-trap.js
+// H7（#176）起 dungeon_trap 接真身：ere/dungeon/dungeon-trap.js
 // （调用点经模块对象引用 trap_mod，同款可替换）。
-// H8（#177）起 dungeon_room 存根换成真身：ere/dungeon/dungeon-room.js
+// H8（#177）起 dungeon_room 接真身：ere/dungeon/dungeon-room.js
 // （调用点经模块对象引用 room_mod，同款可替换；RESULT 语义与 D:20 ctx
 // 透传见调用点）。
-// H9（#178）起 dungeon_town 存根换成真身：ere/dungeon/dungeon-town.js
+// H9（#178）起 dungeon_town 接真身：ere/dungeon/dungeon-town.js
 // （调用点经模块对象引用 town_mod，同款可替换；其余反向引用用函数内
 // 延迟 require 防环）。
-// S7（#548）起 bedroom_battle_male 存根换成真身（本文件
+// S7（#548）起 bedroom_battle_male 接真身（本文件
 // bedroom_battle_male）。
 
 // dungeon_town：#178（H9）起为真身
@@ -434,8 +433,8 @@ async function run_dungeon(arg0, rand) {
           // 魔王的房间——这张工单的贯通终点
           era.print('这里是魔王的房间………');
           if ((era.get(`talent:${arg0}:122`) || 0) === 0) {
-            // 真勇者（非冒险者）→ JUMP ending_2（#173 H4 存根；
-            // QUIT 后不返回，真身实现前以 RETURN 收尾）
+            // 真勇者（非冒险者）→ JUMP ending_2（#173 H4；
+            // QUIT 后不返回，以 RETURN 收尾）
             await ending_2();
             return 0;
           } else if (era.get(`talent:${arg0}:122`)) {
@@ -1496,7 +1495,7 @@ module.exports = {
   get_junk_item,
   get_down_enemy,
   // 三支战斗侧消费的域内存根（#175 起 dungeon-battle/-battle2 经模块对象
-  // 引用——单点登记，docs/stub-registry.md 不重复收录）。#177 起增补
+  // 引用——本文件单点导出）。#177 起增补
   // campaign_room（dungeon-room.js 战役分支的延迟 require 同款）
   karma,
   add_ex_item: ex_item_mod.add_ex_item,

@@ -672,7 +672,7 @@ test('GOHOUBI_REQUEST_KOUJO：调用面（签名）由 #397 冻结，函数体�
   // 缺目标（无性格素质 → 键 -1）：缺席语义是静默（键不存在时按缺省处理跳过，
   // #565 返工；真缺口由 test/kojo-family-coverage.test.js 的集合比对拦）
   assert.equal(await gohoubi_request_koujo(3), 0);
-  assert.deepEqual(fixture.text_lines(), [], '未命中静默，不打存根行');
+  assert.deepEqual(fixture.text_lines(), [], '未命中静默，无输出');
   // 有目标且已注册：真分发，K 侧收 cid（#403 实现的函数体）
   fixture.store.set('talent:3:163', 1); // 高貴 163 → LOCAL 103 → 键 3
   const seen = [];

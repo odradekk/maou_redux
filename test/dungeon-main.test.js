@@ -705,15 +705,15 @@ test('体力富余分支：状态良好时 CFLAG:520 记下当前阶层并下潜
   assert.equal(fixture.store.get('cflag:1:501'), 4, '同一轮下潜到第 4 层');
 });
 
-// —— #184 返工 1：H3 留的 dungeon_bitch 存根换真身（运行时可达）——
+// —— #184 返工 1：dungeon_bitch 换真身（运行时可达）——
 
-test('战后探索：run_dungeon 调用卖春真身（#184 接入，非存根占位行）', async () => {
+test('战后探索：run_dungeon 调用卖春真身（#184 接入）', async () => {
   const fixture = setup_world();
   const { run_dungeon } = load(fixture);
 
   // 替换真身模块导出为 spy（dungeon.js 不解构、属性查找在调用时——与
   // disable_enter_enemy 同款手法）：断言真的调用到 kojo-dungeon-bitch
-  // 的真身，而不是 #172 遗留的本地存根占位行
+  // 的真身
   const mod = fixture.load_module('kojo/kojo-dungeon-bitch');
   const calls = [];
   const orig = mod.dungeon_bitch;

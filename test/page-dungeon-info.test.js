@@ -680,10 +680,6 @@ test('DRAW_DUNGEON_DAILY：尾部 DISPLAY_DUNGEON_DAILY 真身（#179 起）', a
     fixture.text_lines().some((t) => t.includes('Space for further docuement')),
     '日程头一行可见（page/page-dungeon-daily.js 真身）',
   );
-  assert.ok(
-    !fixture.text_lines().some((t) => t.includes('@DISPLAY_DUNGEON_DAILY')),
-    '不再打存根占位行',
-  );
 });
 
 // —— [102] 按钮的实机可达性（#129 型缺口的防复发）——

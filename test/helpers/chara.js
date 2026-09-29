@@ -1,7 +1,7 @@
 /**
  * @file 测试预置：yml/Chara0.yml 与 yml/Chara17.yml 的运行时形状（#35/#50）。
  *
- * 夹具的 addCharacter 镜像引擎守卫（无预设数据不加，见 era-fixture.js），
+ * 夹具的 addCharacter 镜像引擎检查（无预设数据不加，见 era-fixture.js），
  * 页面用例要断言「初始角色被加入」就得先预置角色 0 的形状——否则断言的是
  * 夹具行为而非引擎行为，#21/#22 就是这样漏过实机的。字段与 yml/Chara*.yml
  * 对应（引擎装载后的规范名）：番号 id / 名前 name / 呼び名 callname；
@@ -18,8 +18,8 @@ const CHARA_0_SHAPE = { id: 0, name: '你', callname: '你' };
 const CHARA_17_SHAPE = { id: 17, name: '玛奥', callname: '玛奥' };
 
 // yml/Chara1.yml 装载后的最小形状（#565：初期奴隶选「随机」且 rand ≡ 0 时
-// RAND(1,17) 掷中勇者位 1，@RAND_CHARA_MAKE 真身要 ADDCHARA 1——同 #35 的
-// 引擎守卫，预设先种才能加入）。基礎/素質预设不进夹具，理由同上。
+// RAND(1,17) 掷中勇者位 1，rand_chara_make 真身要 ADDCHARA 1——同 #35 的
+// 引擎检查，预设先种才能加入）。基礎/素質预设不进夹具，理由同上。
 const CHARA_1_SHAPE = { id: 1, name: '战士', callname: '战士' };
 
 /**
@@ -47,14 +47,14 @@ function preset_chara_1(fixture) {
  */
 function preset_chara_17(fixture) {
   // 单层即够：称呼由 addCharacter 直写；静态表层（CSVCALLNAME 的
-  // era.get('chara:17')）自 #565 按原作实参走 0 分支后无读者
+  // era.get('chara:17')）自 #565 起按实参走 0 分支后无读者
   fixture.seed_chara(17, CHARA_17_SHAPE);
 }
 
 /**
  * 预置并加入一个可调教的奴隶角色（调教域测试的世界底座，issue #44）。
  *
- * 做两件事：seed 预设（#35 镜像的引擎守卫）、addCharacter 入列。callname
+ * 做两件事：seed 预设（#35 镜像的引擎检查）、addCharacter 入列。callname
  * 寻址键（callname:x:-1/-2，SAVESTR:x 与 NAME:x 的读数源）由夹具的
  * addCharacter 从预设镜像写入（引擎行为，见 era-fixture.js）。CFLAG:x:1
  *（占用标志）保持未写 = 0（可选）。

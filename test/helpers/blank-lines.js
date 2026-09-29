@@ -1,8 +1,8 @@
 'use strict';
 /**
  * @file 空行的相邻性断言（issue #597 输出普查）：ere 的 print 系每次调用自成一行，
- * `era.println()` / `era.print('')` 是**额外的一个空行**（CONTEXT.md「输出 API 与
- * 原作的对应」）。哪些空行是真空行、哪些是多补，逐处判定见工单 #597 的普查表；
+ * `era.println()` / `era.print('')` 是**额外的一个空行**（CONTEXT.md「输出 API 的
+ * 排版与对齐」）。哪些空行是真空行、哪些是多补，逐处判定见工单 #597 的普查表；
  * 本模块只提供判定「空行在不在、是不是恰好一个、位置对不对」的公共断言，
  * 免去同一套判断在各测试文件里各抄一遍。
  *
@@ -25,7 +25,7 @@ function is_blank(line) {
  * 找到含 `needle` 的文本 / 按钮条目下标（按钮的 `text` 是正文，`rendered` 才带
  * 引擎拼的 `[快捷键] `，断言位置用正文即可）。
  * @param {{lines: object[]}} fixture 夹具
- * @param {string} needle 锚文本
+ * @param {string} needle 基准文本
  * @param {string} label 断言前缀
  * @returns {number} 下标
  */
@@ -40,10 +40,10 @@ function index_of(fixture, needle, label) {
 }
 
 /**
- * 断言「`needle` 那一行之后紧跟**恰好一个**空行」——真空行的正面守卫：
+ * 断言「`needle` 那一行之后紧跟**恰好一个**空行」——真空行的正面检查：
  * 删掉那个空行会红（缺少空行），再多补一个也会红（空行不止一个）。
  * @param {{lines: object[]}} fixture 夹具
- * @param {string} needle 锚文本
+ * @param {string} needle 基准文本
  * @param {string} label 断言前缀
  */
 function assert_one_blank_after(fixture, needle, label) {
@@ -56,7 +56,7 @@ function assert_one_blank_after(fixture, needle, label) {
   assert.equal(
     next.row,
     fixture.lines[index].row + 1,
-    `${label}：空行紧邻锚行（按行序）`,
+    `${label}：空行紧邻基准行（按行序）`,
   );
   const after = fixture.lines[index + 2];
   assert.ok(
@@ -66,10 +66,10 @@ function assert_one_blank_after(fixture, needle, label) {
 }
 
 /**
- * 断言「`needle` 那一行之前紧跟**恰好一个**空行」（锚在空行**后面**那一行上，
+ * 断言「`needle` 那一行之前紧跟**恰好一个**空行」（基准在空行**后面**那一行上，
  * 用于空行之后才是确定文本、之前是可变演出的位置）。
  * @param {{lines: object[]}} fixture 夹具
- * @param {string} needle 锚文本
+ * @param {string} needle 基准文本
  * @param {string} label 断言前缀
  */
 function assert_one_blank_before(fixture, needle, label) {
@@ -82,7 +82,7 @@ function assert_one_blank_before(fixture, needle, label) {
   assert.equal(
     fixture.lines[index].row,
     prev.row + 1,
-    `${label}：空行紧邻锚行（按行序）`,
+    `${label}：空行紧邻基准行（按行序）`,
   );
   const before = fixture.lines[index - 2];
   assert.ok(
@@ -92,7 +92,7 @@ function assert_one_blank_before(fixture, needle, label) {
 }
 
 /**
- * 断言「演出以**恰好一个**空行收尾」（空行之后没有更多输出，锚不了后一行）。
+ * 断言「演出以**恰好一个**空行收尾」（空行之后没有更多输出，定不了后一行）。
  * @param {{lines: object[]}} fixture 夹具
  * @param {string} label 断言前缀
  */
@@ -111,10 +111,10 @@ function assert_trailing_blank(fixture, label) {
 }
 
 /**
- * 断言「`needle` 那一行之后**不紧跟**空行」（多补的反方向守卫；该行是最后一行
+ * 断言「`needle` 那一行之后**不紧跟**空行」（多补的反方向检查；该行是最后一行
  * 也算通过）。
  * @param {{lines: object[]}} fixture 夹具
- * @param {string} needle 锚文本
+ * @param {string} needle 基准文本
  * @param {string} label 断言前缀
  */
 function assert_no_blank_after(fixture, needle, label) {

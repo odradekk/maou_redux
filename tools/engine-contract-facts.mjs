@@ -1,28 +1,28 @@
 // 引擎事实表（issue #91，ADR-0005 第二层）：夹具与调用点共同依赖的引擎
 // 渲染层语义。一条事实只写一遍，同时喂两件事——
-//   锚点校核（tools/engine-contract-check.mjs 门 B）：断言 app.asar 渲染层
+//   基准校核（tools/engine-contract-check.mjs 检查 B）：断言 app.asar 渲染层
 //     源码（js/app.*.js.map 的 sourcesContent，即 app.vue 出货前源码的
 //     原始副本）仍含本表 anchors 列出的**字面**——引擎升版改掉任一字面
 //     即红、提示「引擎变了，重新核读」，守的是「引擎还是不是这样」；
-//   调用点规则（门 A）：静态守「我们有没有踩上去」。规则的阈值来自同一
+//   调用点规则（检查 A）：静态守「我们有没有踩上去」。规则的阈值来自同一
 //     条事实（progress 的上界 23 由缺省 24 推出），不在检查器里再写一份。
 //
-// 收录判据（工单边界）：只收「夹具行为真的依赖它」且可断言的事实——
+// 收录条件（工单边界）：只收「夹具行为真的依赖它」且可断言的事实——
 // anchors 能在渲染层源码里逐字钉住的才进表；「引擎主/渲染两层在 0 行时
 // 分歧」一类背景叙述不进表。第一层（background.js 的 allowWait 状态机）
 // 不在本表：它由 test/engine-contract.test.js 以真方法逐步比对守——
-// **可执行的不锚定，锚定的不执行**，两层不重复设防。
+// **能执行验证的不做字面校核，做字面校核的不执行**，两层不重复设防。
 //
-// anchors 是渲染层 sourcesContent 的字面子串（非正则）：锚点校核的语义
-// 就是「这个字面还在不在」，正则会引入自身的漂移面。渲染包文件名带内容
+// anchors 是渲染层 sourcesContent 的字面子串（非正则）：基准校核的语义
+// 就是「这个字面还在不在」，正则会引入自身的不一致风险。渲染包文件名带内容
 // 哈希（app.2cccec57.js），定位由检查器按模式 js/app.*.js.map 匹配，
 // 不写死。新事实必须先在渲染层源码里实证字面，再进表（表只能有意识地长）。
 
 export const ENGINE_FACTS = [
   {
     id: 'progress-bar-width-default',
-    desc: '进度条 barWidth 缺省 24：getProgressObject 物化 data.config.barWidth ?? 24；条后文字列 span = 24 - line.barWidth，barWidth=24 时 span=0（el-col-0 即 display:none），条后数值整列不渲染——不传 config 就吞数值（#74 实机缺陷形态）',
-    // 夹具镜像位：锚点失配时报错指路用
+    desc: '进度条 barWidth 缺省 24：getProgressObject 物化 data.config.barWidth ?? 24；条后文字列 span = 24 - line.barWidth，barWidth=24 时 span=0（el-col-0 即 display:none），条后数值整列不渲染——不传 config 就吞数值（#74 实机缺陷形式）',
+    // 夹具镜像位：基准失配时报错指路用
     mirror:
       'test/helpers/era-fixture.js make_progress_entry（bar_width 物化 + out_visible 派生）',
     anchors: [
@@ -30,7 +30,7 @@ export const ENGINE_FACTS = [
       ':span="24 - line.barWidth"',
       'v-if="line.outContent"',
     ],
-    // 调用点规则（首日唯一一条）：targets 是检查器里的两种提取形态
+    // 调用点规则（首日唯一一条）：targets 是检查器里的两种提取写法
     rule: {
       id: 'progress-bar-width-explicit',
       desc: 'progress 格必须显式传 barWidth 且 1 ≤ barWidth ≤ 23（上界 = 缺省 24 - 1：24 是引擎缺省，不传或传 24 都吞掉条后文字列）',
@@ -43,7 +43,7 @@ export const ENGINE_FACTS = [
   },
   {
     id: 'button-acc-prefix-fold',
-    desc: '按钮渲染公式：showAcc !== false 时拼 `[快捷键] 正文`，否则 `[正文]`；随后按行把连续空白折叠成一个空格——手写 [编号] 前缀会与引擎前缀撞车（PR #30 实机缺陷形态）',
+    desc: '按钮渲染公式：showAcc !== false 时拼 `[快捷键] 正文`，否则 `[正文]`；随后按行把连续空白折叠成一个空格——手写 [编号] 前缀会与引擎前缀撞车（PR #30 实机缺陷形式）',
     mirror: 'test/helpers/era-fixture.js make_button_entry 的 rendered 字段',
     anchors: [
       '`[${data.accelerator}] ${data.content}`',
@@ -54,7 +54,7 @@ export const ENGINE_FACTS = [
   },
   {
     id: 'divider-is-solid-border',
-    desc: "分隔线线型：border = isSolid ? 'solid' : 'dashed'——原作 DRAWLINEFORM 双线 ═ / 单线 ─ 以 solid/dashed 近似",
+    desc: "分隔线线型：border = isSolid ? 'solid' : 'dashed'——双线 ═ / 单线 ─ 以 solid/dashed 近似",
     mirror:
       'test/helpers/era-fixture.js drawLine 与多列 divider 格的 border 字段',
     anchors: ["border: data.config.isSolid ? 'solid' : 'dashed'"],
@@ -64,28 +64,28 @@ export const ENGINE_FACTS = [
     // #163：手册 A-api-docs.md 曾写 useRule 默认 false，渲染层逐字是
     // safeUndefinedCheck(data.config.useRule, true)——默认 true，显式传
     // false 才关。夹具的白名单校验正依赖这个缺省（不传 config.useRule
-    // 时校验生效），符合「夹具行为真的依赖它」的收录判据。
+    // 时校验生效），符合「夹具行为真的依赖它」的收录条件。
     id: 'input-userule-default-true',
-    desc: 'input 的 useRule 缺省 true：渲染层 safeUndefinedCheck(data.config.useRule, true) 兜底——不传时本轮按钮快捷键白名单与 config.rule 正则校验默认生效',
+    desc: 'input 的 useRule 缺省 true：渲染层 safeUndefinedCheck(data.config.useRule, true) 提供缺省值——不传时本轮按钮快捷键白名单与 config.rule 正则校验默认生效',
     mirror:
       'test/helpers/era-fixture.js era.input 的白名单校验（config?.useRule !== false 分支，#130）',
     anchors: ['safeUndefinedCheck(data.config.useRule, true)'],
-    rule: null, // 只锚默认值；「何时该显式传 false」无静态可判的调用点规则
+    rule: null, // 只校核默认值；「何时该显式传 false」无静态可判的调用点规则
   },
   {
-    // #567：空输入语义的判据第二条（第一条 getNumber 归一由
+    // #567：空输入语义的依据第二条（第一条 getNumber 归一由
     // test/fixture.test.js 的引擎用例直接断言）。夹具输入段的注释早已引用这条
-    // 守卫（#130 的白名单镜像未含它），#567 把它升格成「0 即空输入」全库裁定
-    // 的支柱之一，故进表锚定——引擎升版改掉它，这条判据会静默失效。
+    // 检查（#130 的白名单镜像未含它），#567 把它升格成「0 即空输入」全库结论
+    // 的支柱之一，故进表钉住——引擎升版改掉它，这条依据会静默失效。
     id: 'input-empty-submit-guard',
-    desc: "input 的渲染层不受理空提交：returnFromInput 对非 any 输入有空守卫——`!inputParam.value['any'] && !inputParam.value['val']` 为真时直接 return，普通 input() 下玩家根本交不出空串（#567 空输入判据的第二条依据）",
+    desc: "input 的渲染层不受理空提交：returnFromInput 对非 any 输入有空提交检查——`!inputParam.value['any'] && !inputParam.value['val']` 为真时直接 return，普通 input() 下玩家根本交不出空串（#567 空输入依据的第二条）",
     mirror:
-      'test/helpers/era-fixture.js 输入段的注释（#130 白名单镜像未含这条守卫）+ ere/utils/input-text.js 文件头的「引擎事实 2」',
+      'test/helpers/era-fixture.js 输入段的注释（#130 白名单镜像未含这条检查）+ ere/utils/input-text.js 文件头的「引擎事实 2」',
     anchors: [
       `function returnFromInput() {
   if (!inputParam.value['any'] && !inputParam.value['val']) {`,
     ],
-    rule: null, // 只锚事实；判据的消费点（input_text）无静态可判的调用点规则
+    rule: null, // 只校核事实；依据的消费点（input_text）无静态可判的调用点规则
   },
   {
     // #572：选按钮化站点时逐处判断的两条渲染层事实。夹具不镜像 valCount

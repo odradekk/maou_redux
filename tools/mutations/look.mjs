@@ -431,7 +431,7 @@ export default [
     must_mention: '物品行之间不得出现空行',
   },
   {
-    desc: 'M11776 LOOK_INFO_LOVE 收尾另起一行（#570 返工：原作接在物品行末）',
+    desc: 'M11776 LOOK_INFO_LOVE 收尾另起一行（#570 返工：原本接在物品行末）',
     file: look,
     find: '    s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行',
     replace: '    era.print(`${await gobi_koujo(1)}」 `); // 变异：另起一行',

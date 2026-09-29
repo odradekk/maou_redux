@@ -271,7 +271,7 @@ function era_writes_of(fixture, name) {
 
 // ———— ablup1：乳房感觉 ————
 
-test('ablup1：两档终止判定（特殊素质/封锁/已达最高级）与成功购买', async () => {
+test('ablup1：三档终止判定（特殊素质/封锁/已达最高级）与成功购买', async () => {
   const blocked = create_era_fixture();
   const { ablup1: a1 } = seed(blocked);
   blocked.store.set(`abl:${CID}:1`, 5);
@@ -1267,7 +1267,7 @@ test('ablup8：两个选项各自的"条件不足。"重试文案', async () => 
   assert.equal(retries.length, 2);
 });
 
-test('ablup8：选项1 屈服点数（JUEL:6）未声明须按不足处理，不能被 undefined<e 静默放过', async () => {
+test('ablup8：选项1 屈服点数（JUEL:6）未声明须按不足处理，不能被 undefined < e 静默放过', async () => {
   const fixture = create_era_fixture();
   const { ablup8 } = seed(fixture);
   fixture.store.set(`abl:${CID}:1`, 1);

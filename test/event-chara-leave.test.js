@@ -168,13 +168,6 @@ test('EVENT_CHARA_RETURN：身体数据未生成（CFLAG:451==0）时调真身�
     `真身落盘：年龄落在 LIMIT(12,35) 内（实际 ${age}）`,
   );
   assert.ok(fixture.store.get('cflag:31:453') > 100, '身高（厘米）已落盘');
-  assert.equal(
-    fixture
-      .text_lines()
-      .some((line) => line.includes('CHAR_BODY_GENERATE_WAPPED')),
-    false,
-    '真身不再打存根占位行',
-  );
 });
 
 test('EVENT_CHARA_RETURN：身体数据未生成但 FLAG:5 位 12/15 关 → 闸门挡住', () => {

@@ -163,7 +163,7 @@ async function auto_buying() {
  * debug_check：反作弊检查与三段「爆炸」事件。
  *
  * 调用点是 `SIF !反作弊`——反作弊是 MOD 追加的 SAVEDATA 开关
- * （魔改使用.ERH 的自定义变量），#547 起落 modsave:1（era_modsave.anti_cheat）：
+ * （魔改使用的自定义全局变量），#547 起落 modsave:1（era_modsave.anti_cheat）：
  * 新档默认 0 = 每回合执行，设置页 [30] 切 1 后跳过（OFF = 可开修改）。它
  * **不是**无副作用的检查：三段事件都会删角色、清钱，其中第三段直接 GAMEOVER。
  *
@@ -489,7 +489,7 @@ on(
     era_flag.assi = -1;
 
     // 反作弊检查（`SIF !反作弊` → debug_check）。反作弊是 MOD
-    // 追加的 SAVEDATA 开关（魔改使用.ERH 的自定义变量），#547 落 modsave:1
+    // 追加的 SAVEDATA 开关（魔改使用的自定义全局变量），#547 落 modsave:1
     // （era_modsave.anti_cheat）：0 = 每回合执行（新档默认），1 = 跳过检查
     // （设置页 [30] 可切，OFF = 可开修改）
     if (!era_modsave.anti_cheat) {

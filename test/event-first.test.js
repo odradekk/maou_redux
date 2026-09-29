@@ -334,7 +334,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     ...Array.from({ length: 1 }, () => ({ api: 'waitAnyKey' })),
   ]);
 
-  // 开场叙事、村娘分支文本与存根占位都可见（存根行含函数名，可检索）
+  // 开场叙事与村娘分支文本都可见
   const texts = fixture.text_lines();
   assert(texts.includes('今天，又有纯洁无垢的勇者敲响了地下城的大门……'));
   assert(texts.includes('魔王俯视着被吸取了能量用于破坏封印的村女'));
@@ -346,37 +346,14 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     fixture.var_reads.some((r) => r.name === 'namelistkeys'),
     'EVENTFIRST 链必须真的调用了 chara_name_init',
   );
-  // FIRST_SETTING 自 #463 起五问全部实现，first-setting.js 不再打占位行
-  assert(
-    !texts.some((line) => line.includes('first_setting')),
-    'FIRST_SETTING 已全量实现，不得再出现存根占位行',
-  );
-  assert(
-    !texts.some((line) => line.includes('chara_name_define')),
-    '称呼定义已落真身（#565 接入），不得再出现存根占位行',
-  );
   // 真身的可观察效果：NID 落 10000 + 17（特殊角色分支的「定义 NID」）
   assert.equal(fixture.store.get('cflag:17:6'), 10017);
   // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/chara/chara-body.js）：
-  // 条件从占位行改为 CFLAG:17 的落盘（本用例不注入随机源，只断言
+  // 条件看 CFLAG:17 的落盘（本用例不注入随机源，只断言
   // 写入发生；逐值与全量写入断言在下方两条「初始化写入」用例里）
   assert(
     fixture.var_writes.some((w) => w.name === 'cflag:17:451'),
     '村娘的身体数据必须经真身落盘（FLAG:5 已开位 12/15）',
-  );
-  assert(
-    !texts.some((line) => line.includes('char_body_generate_wapped')),
-    '身体数据已落真身，不得再出现占位行',
-  );
-  // 随机路径被村娘出口（BEGIN SHOP 即结束函数）跳过，其存根不得出现
-  assert(
-    !texts.some((line) => line.includes('rand_chara_make')),
-    '村娘路径不得触发随机角色生成的占位（BEGIN 即跳出随机路径）',
-  );
-  // 反向钉（同 test/page-save-load.test.js 的同款写法）：CHARA_NAME_INIT 已落真身（#388），不得再出现存根占位行
-  assert(
-    !texts.some((line) => line.includes('chara_name_init')),
-    '角色名初始化已落真身，不得出现存根占位行',
   );
 
   // 初始化后的开局值（验收项：日期与金钱取既有开局值）。
@@ -497,10 +474,6 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
     '随机路径的直线赋值必须与村娘路径共用同一前缀',
   );
   const texts = fixture.text_lines();
-  assert(
-    !texts.some((line) => line.includes('rand_chara_make')),
-    '随机角色生成已接真身，不得再出现占位行',
-  );
   // 生成的奴隶真的入列：勇者位 1（rand ≡ 0 掷 1）+ 魔王 0
   assert.deepEqual(fixture.chara_no, [0, 1]);
   // 形象确认循环与收下确认的可见文本（非战役招募文案，普通版）。

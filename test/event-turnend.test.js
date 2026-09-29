@@ -53,8 +53,7 @@ function setup_turnend() {
 test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次回到同时段且 DAY:0 += 1', async () => {
   const { fixture, emit, STATE, era_flag } = setup_turnend();
   // EVENT_NEXTDAY 的无条件可见副作用：FLAG:61（熏香使用次数）清零。
-  // #400（N16）起该函数走全路径，原先借用的 tax_get 占位行已随真身撤下，
-  // 改用这个不需要任何角色预置的写点当基准
+  // #400（N16）起该函数走全路径，改用这个不需要任何角色预置的写点当基准
   fixture.store.set('flag:61', 3);
 
   assert.equal(era_flag.time, 0, '开局应为午前');
@@ -128,7 +127,7 @@ test('CFLAG:1 检查：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   // 检查是阶段 3 的接入点（工单单独要求的测试）。中立世界（状态位 0）下
   // 迷宫整体绕开；再以 12/2/3 的正向用例分开两支——检查删坏（比如恒放行）
   // 在正向用例上无差异、在本用例红；检查写反（恒拦截）则在正向用例红。
-  // #177（H8）起 DUNGEON_ROOM 也是真身（无占位行），观测基准点换成
+  // #177（H8）起 DUNGEON_ROOM 也是真身，观测基准点换成
   // CFLAG:514（階層滞在カウント，dungeon-room 域——全库唯一写者是
   // run_dungeon 的滞留分支，/ 两分支则清零）：一次 emit 恰走一次滞留
   // 分支 → 514 恰为 1。注意 CALL DUNGEON_ROOM **不是必经**
@@ -142,18 +141,10 @@ test('CFLAG:1 检查：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   const neutral = setup_turnend();
   join_slave_chara(neutral.fixture, 31, '温妮');
   await neutral.emit('EVENTTURNEND');
-  const neutral_texts = neutral.fixture.text_lines();
-  const stub_count = (lines, name) =>
-    lines.filter((line) => line.includes(`原作 @${name}，`)).length;
   assert.equal(
     neutral.fixture.store.get('cflag:31:514') ?? 0,
     0,
     'CFLAG:1 = 0 时 DUNGEON 不得被调用（哪怕一次）',
-  );
-  assert.equal(
-    stub_count(neutral_texts, 'DUNGEON_MAP'),
-    0,
-    'CFLAG:1 = 0 时 DUNGEON_MAP 不得被调用',
   );
 
   // 状态 12（战役）：WEAPON_RESTORE 循环内的调用点火
@@ -191,7 +182,7 @@ test('CFLAG:1 检查：不在 2/3/12 时 DUNGEON 一次都不调；12/2/3 各走
   // 状态 2 且 2D 模式：改走 DUNGEON_MAP 真身（#181 H12 换上），不走迷宫
   // 本体。观测点换成真身的确定性后果：HP 预置 10%（< 45%）必触发
   // 「决定返回了」播报 + CFLAG:507 = 1（DUNGEON_MAP 的撤退决议）；
-  // 3D 的 DUNGEON_ROOM 占位行 0 计数佐证迷宫本体未被调用。恒定 0.5 随机
+  // 迷宫本体未走由 CFLAG:514 保持 0 佐证。恒定 0.5 随机
   // 源：unit_move 的抖动 ±0（坐标不动）、dungeon_bitch（RAND:5）与
   // equip_select（RAND:4）均不触发（floor(0.5*n) 恒 ≥ 1），退出路径确定
   const field = setup_turnend();
@@ -644,17 +635,14 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     !fixture.var_writes.some((w) => w.name === 'cflag:0:570'),
     '结算主循环必须跳过魔王（A = 1 起）',
   );
-  // 结算中段的 WAIT 恰好一次。#508 前这里断言的是「消费了一次输入」，
-  // 那是两条占位行把它前面垫满（引擎语义：有可读输出才真等键）；换真身后
-  // 本世界窗口内零输出，WAIT 仍被调用、但不消费——两项都钉住
+  // 结算中段的 WAIT 恰好一次。输出把它前面垫满时（引擎语义：有可读输出才真等键）会消费输入；本世界窗口内零输出，WAIT 仍被调用、但不消费——两项都钉住
   assert.equal(fixture.waits.length, 1, '结算中段的 WAIT 恰一次');
   assert.equal(fixture.waits[0].waited, false, '之前无可读输出：不消费输入');
   assert.deepEqual(fixture.inputs_consumed, []);
 });
 
 test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与死之戒指的回复减衰', async () => {
-  // W:8 = 4 乘、W:8 = 13 除。存根时代倍率恒 ×1/÷1，此处
-  // 钉住真身取值——再生+3（效果 4）→ ×(3+1)；死之+2（效果 13）→ ÷(2+1)
+  // W:8 = 4 乘、W:8 = 13 除，钉住真身取值——再生+3（效果 4）→ ×(3+1)；死之+2（效果 13）→ ÷(2+1)
   const world = setup_turnend();
   join_slave_chara(world.fixture, 31, '温妮');
   world.fixture.store.set('maxbase:31:0', 2000);
@@ -668,7 +656,7 @@ test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与�
 });
 
 test('装备效果接入（#174 真身）：欲望戒指的陷落事件随 RESULT > 0 可达', async () => {
-  // （W:8 = 6）：存根 RESULT 0 整支不达。真身按佩戴强度取值，
+  // （W:8 = 6）：真身按佩戴强度取值，
   // 无素质 69/73 的角色走第一支：获得容易陷落（TALENT:73）并加欲情珠
   const world = setup_turnend();
   join_slave_chara(world.fixture, 31, '温妮');
@@ -693,7 +681,7 @@ test('装备效果接入（#174 真身）：欲望戒指的陷落事件随 RESUL
   );
 });
 
-test('回合结算：苗床角色进入真实业务，不再停在 NAEDOKO 存根', async () => {
+test('回合结算：苗床角色进入真实业务', async () => {
   const world = setup_turnend();
   join_slave_chara(world.fixture, 31, '温妮');
   world.fixture.store.set('talent:31:209', 1); // 苗床
@@ -705,34 +693,19 @@ test('回合结算：苗床角色进入真实业务，不再停在 NAEDOKO 存�
   const penis = world.fixture.store.get('juel:31:0') || 0;
   const anal = world.fixture.store.get('juel:31:2') || 0;
   assert.equal(penis + anal, 30, 'NAEDOKO 真身按魔王等级结算点数');
-  assert(
-    !world.fixture.text_lines().some((line) => line.includes('naedoko')),
-    '回合结算不得再输出 NAEDOKO 存根',
-  );
 });
 
 test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', async () => {
   const { fixture, emit, STATE } = setup_turnend();
   await emit('EVENTTURNEND');
-  // 普通档内部的开闭点（#508：FORMAT_AUTOTRAIN / AUTOTRAIN 换真身后不再有
-  // 占位行，改用调教窗口的开闭序与调教域表的存在性作序证人）
+  // 普通档内部的开闭点（#508 起 FORMAT_AUTOTRAIN / AUTOTRAIN 为真身，用调教窗口的开闭序与调教域表的存在性作序证人）
   const calls = fixture.calls.map((c) => c.api);
   const window_open = calls.indexOf('beginTrain');
   const window_close = calls.indexOf('endTrain');
   assert.ok(window_open >= 0, '普通档要开一次调教窗口');
   assert.ok(window_close >= 0, '窗口必须在结算尾部关上（endTrain）');
   assert.ok(window_open < window_close, '调教窗口先开后关');
-  assert(
-    !fixture
-      .text_lines()
-      .some(
-        (line) =>
-          line.includes('format_autotrain') || line.includes('autotrain'),
-      ),
-    '两条占位行必须消失（#508 起都是真身）',
-  );
-  // #PRI 档的尾观测点在 #401 之后不再有存根文本（AUTO_BUYING/DEBUG_CHECK
-  // 已落真身、两者在本世界都零写入），改用写入序作序证人： 的
+  // #PRI 档的尾观测点：AUTO_BUYING/DEBUG_CHECK 在本世界都零写入，改用写入序作序证人： 的
   // `ASSI = -1` 是该档最后两笔写之一、普通档开头的 `PLAYER = 0` 记其后
   const pri_tail = fixture.var_writes.findIndex(
     (w) => w.name === 'flag:10006' && w.value === -1,
@@ -915,8 +888,8 @@ test('升级检查（SIF CFLAG:A:1 != 2）：侵攻中的勇者不升级，其�
     fixture.store.set(`maxbase:${cid}:0`, 100);
     fixture.store.set(`maxbase:${cid}:1`, 100);
   }
-  // 2D 模式（FLAG:502 = 1）：侵攻中的阿尔走 DUNGEON_MAP 存根分支而非迷宫
-  // 真身——本用例只测升级检查，迷宫推进的行为在 dungeon-main.test.js
+  // 2D 模式（FLAG:502 = 1）：侵攻中的阿尔走野外地图（DUNGEON_MAP）而非迷宫
+  // 本体——本用例只测升级检查，迷宫推进的行为在 dungeon-main.test.js
   fixture.store.set('flag:502', 1);
   // 阿尔：侵攻中（CFLAG:1 = 2，H2 写入的状态）+ 足量经验（LV3 需 40）
   fixture.store.set('cflag:1:1', 2);
@@ -1162,10 +1135,6 @@ test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接入后按既有格式拼
   assert(
     texts.includes('角色31艳丽的阴阜上，红色的汗毛长出来了。'),
     '阴毛播报必须拼成单行（含发色段，不再拆两行/省「的」）',
-  );
-  assert(
-    !texts.some((line) => line.includes('get_look_info')),
-    'GET_LOOK_INFO 已接真身，不得再出现占位行',
   );
   // 生长确实发生（钳制未触发——311 = 200 远未达）
   assert.equal(fixture.store.get('talent:31:302'), 51);

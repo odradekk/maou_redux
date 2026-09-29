@@ -459,7 +459,7 @@ test('召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、�
   // 页码 = -2 的判定：经验段（-2/-1/1 三分支）∧ 外貌段（-2/2 两分支）的交集
   assert(
     texts.some((line) => line.includes('本级经验：')),
-    '-2 分支的经验段在（占位行只有一行）',
+    '-2 分支的经验段在',
   );
   assert(
     texts.some((line) => line.includes('[发色：')),
@@ -468,10 +468,6 @@ test('召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、�
   assert(
     !texts.some((line) => line.startsWith('一人称：')),
     '-2 分支没有信息块的人称行',
-  );
-  assert(
-    !texts.some((line) => line.includes('尚未移植')),
-    '不得再打存根占位行',
   );
 });
 

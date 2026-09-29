@@ -15,7 +15,7 @@
  *     LOCAL/LOCALS 这两个内建局部量传递），此处落一个 JS 局部变量；
  *   - `%SHE()%` 是招式函数（男人→他 / 其余→她；文本校正的
  *     纯函数，随这张工单内联）；
- *   - 跨边：`CALL CAMPAIGN_EXP_PILLORY` 真身未交付 → 存根 + 登记；
+ *   - 跨边：`CALL CAMPAIGN_EXP_PILLORY` 未实现（无对应真身，不产生输出）；
  *     `CALL IN_VAGINA_SYOKU_TO_T` / `CONCEPTION_CHECK_SYOKU_TO_T`
  *     在 ere/event/event-pregnancy.js 已有真身 → 直接调用（#400 接入）。
  */

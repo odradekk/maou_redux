@@ -1,5 +1,5 @@
 /**
- * @file 工作树写入锁（#89 三轮整改的结构性守护）：测试不得写仓库工作树。
+ * @file 工作树写入锁（#89 三轮返工的结构性守护）：测试不得写仓库工作树。
  *
  * 缘由：#89 三轮验收各揪出一个写真树的测试（#91 的 page-train 就地改、
  * domain/trace 的条目表就地改与 ere/ 探针、lang-lock 的 ere/ 探针）——在
@@ -21,7 +21,7 @@
  * 自证：合成的违规样本（临时目录里的假测试文件，写族调用指向
  * path.join(REPO_ROOT, 'ere', …)）必须被报出——证明锁对「后来者」不失明，
  * 而不是只在现有文件上凑绿。样本文本用占位符拼接构造，避免本文件自己
- * 含有可被本锁匹配的字面调用形态。
+ * 含有可被本锁匹配的字面调用写法。
  */
 
 'use strict';
@@ -39,7 +39,7 @@ const WRITE_CALL_RE =
 
 /** 单行 const/let 初始化表：标识符 → 初值文本。同名多处声明视为**歧义**
  * （跨作用域同名：参数 dir/target 与别处的 const dir 撞名——实测 gen-facade
- * 的假阳性形态），歧义名不参与解析，宁可放行不可误报。 */
+ * 的假阳性形式），歧义名不参与解析，宁可放行不可误报。 */
 function build_const_map(text) {
   const decls = new Map();
   const re = /(?:const|let)\s+([A-Za-z_$][\w$]*)\s*=\s*([^;\n]+)/g;
@@ -147,7 +147,7 @@ test('测试不写工作树：test/ 全部源码无指向仓库根的写族调�
   assert.deepEqual(
     violations,
     [],
-    `测试里有写向仓库工作树的调用（#89 三轮整改的教训：node --test 并行下，` +
+    `测试里有写向仓库工作树的调用（#89 三轮返工的教训：node --test 并行下，` +
       `写单文件与读单文件/递归拷贝都会撞车；写坏型探针一律住临时副本，` +
       `见 test/helpers/probe-repo.js）：\n  ${violations.join('\n  ')}`,
   );
@@ -156,7 +156,7 @@ test('测试不写工作树：test/ 全部源码无指向仓库根的写族调�
 test('自证：合成违规样本（临时目录）必须被报出——锁对后来者不失明', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-write-lock-'));
   try {
-    // 占位符拼接：本文件自身不得含有可被本锁匹配的字面调用形态
+    // 占位符拼接：本文件自身不得含有可被本锁匹配的字面调用写法
     const offender = [
       "'use strict';",
       "const path = require('node:path');",
@@ -205,15 +205,15 @@ test('自证：合成违规样本（临时目录）必须被报出——锁对�
     );
     assert.ok(
       violations.some((v) => v.includes('PAGE')),
-      '标识符（const 别名）形态必须被抓',
+      '标识符（const 别名）写法必须被抓',
     );
     assert.ok(
       violations.some((v) => v.includes("'yml'")),
-      '直接 path.join(REPO_ROOT, …) 形态必须被抓',
+      '直接 path.join(REPO_ROOT, …) 写法必须被抓',
     );
     assert.ok(
       violations.some((v) => v.includes('unlinkSync(probe')),
-      '目录别名（ERE_DIR）+ unlink 形态必须被抓',
+      '目录别名（ERE_DIR）+ unlink 写法必须被抓',
     );
     assert.ok(
       violations.some((v) => v.includes('cpSync') && v.includes("'ere'")),

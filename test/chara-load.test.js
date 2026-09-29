@@ -93,7 +93,7 @@ engine_test(
   },
 );
 
-// —— 引擎行为回归锁：无预设不加（#35 缺陷的形态）——
+// —— 引擎行为回归锁：无预设不加（#35 缺陷的形式）——
 
 engine_test('引擎 addCharacter：无角色预设时整段短路，角色 0 加不进去', () => {
   const empty_loader = create_chara_loader();

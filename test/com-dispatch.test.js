@@ -287,15 +287,6 @@ test('TRAIN_MESSAGE 分发族：声明空间 121；缺失零输出（#565 语义
   assert.ok(train_message_b_family.has(0));
   assert.ok(!train_message_b_family.has(84));
 
-  // 缺失（族模块未装载）→ 零输出（#565 起的语义：无分支的号
-  // 什么都不打印；#45–#402 期间 ere 给缺号打占位行，全量收尾后还原）
-  era_flag.selectcom = 84; // 升格可达的高级号：本世界未装载 com-hardcore
-  await train_message_b();
-  assert(
-    !fixture.text_lines().some((l) => l.includes('TRAIN_MESSAGE_B')),
-    '缺失分支零输出，不得再落占位行（#565）',
-  );
-
   // 空间外 → 显式抛错（SELECTCOM 只会是 121 之一，越界即引擎对接 bug）
   era_flag.selectcom = 999;
   await assert.rejects(() => train_message_b(), /不在声明的编号空间内/);

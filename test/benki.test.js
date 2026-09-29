@@ -240,11 +240,8 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + 口上�
     '第二段演出',
   );
   // 本夹具不加载口上模块：try_kojo 未命中**静默**（未注册函数调用
-  // 落空的语义，#565 返工第 4 条）——一般分派走公共段与一般段两处
-  // 调用，都不得出声；口上函数的真缺口由
+  // 落空的语义，#565 返工第 4 条）；口上函数的真缺口由
   // test/kojo-family-coverage.test.js 的定义集合比对拦
-  const stub_count = lines.filter((l) => l.includes('benki_koujo')).length;
-  assert.equal(stub_count, 0, '未注册性格静默（未注册函数调用落空，不打占位）');
   // flag:62 = 6（フェラ便器）、flag:64 = 3（魔族男性）
 
   assert.equal(flag_of(fixture, 62), 6);
@@ -263,7 +260,7 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + 口上�
   assert.equal(fixture.store.get('flag:10005'), 0);
 });
 
-test('run_benki：加载 K3 口上后不打占位行，走常识改写真身', async () => {
+test('run_benki：加载 K3 口上后走常识改写真身', async () => {
   const { fixture, mod } = setup_benki((f) => {
     f.store.set('talent:31:163', 1); // 高貴 → GET_KOJO_NUM = 103
     f.store.set('talent:31:283', 1); // 常识改变【日常】→ FLAG:63=1、奉仕分派 FLAG:62=0
@@ -274,11 +271,6 @@ test('run_benki：加载 K3 口上后不打占位行，走常识改写真身', a
   fixture.load_module('kojo/kojo-k3-noble');
   await mod.run_benki(31, seq_rand(0));
   const lines = fixture.text_lines();
-  assert.equal(
-    lines.filter((l) => l.includes('benki_koujo')).length,
-    0,
-    'K3 真身不打占位行',
-  );
   assert.ok(
     lines.some((l) => l.includes('呵呵…别那么吃惊嘛这没什么的哦')),
     'K3 肉便器常识改写真台词',

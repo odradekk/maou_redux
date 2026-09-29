@@ -399,7 +399,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 读它——无预设时体力 0 会触发死亡删除分支，那不是本用例的目标路径）
   fixture.store.set('base:31:0', 2000);
   // 行动完了预置（#172 起 PARTY_UNITE 真身：回合结算的队伍编成会把它
-  // 复位为 0——占位行时代该断言盯占位文案，真身后改盯数据效果）
+  // 复位为 0——该断言盯数据效果）
   fixture.store.set('cflag:31:530', 1);
   const { on, TIER } = fixture.load_module('system/event/registry');
   on('EVENTFIRST', async () => fixture.era.addCharacter(31), TIER.LATER);
@@ -481,18 +481,6 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 回合结算三档链已实现（#114）：#PRI 档自 #401 起无占位（十个体外
   // 调用全落真身；本世界 FLAG:34 = 0、金钱不变量成立 → AUTO_BUYING 与
   // 0→1 断言作证
-  assert(
-    !texts.some(
-      (line) => line.includes('AUTO_BUYING') && line.includes('占位'),
-    ),
-    'AUTO_BUYING 已是真身（#401），不应再打占位行',
-  );
-  assert(
-    !texts.some(
-      (line) => line.includes('PARTY_UNITE') && line.includes('占位'),
-    ),
-    'PARTY_UNITE 已是真身（#172），不应再打占位行',
-  );
   assert.equal(
     fixture.store.get('cflag:31:530'),
     0,

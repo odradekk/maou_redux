@@ -1,11 +1,10 @@
-# 本文件不是转换器产物：原作没有 CSTR 的名字表（target/CSV 下无对应 CSV，
-# 原作一律用数字下标），无从转换。
+# 本文件为人工产出：CSTR 没有名字表（游戏侧一律用数字下标）。
 #
-# 内容：角色的自定义字串（CSTR:7 = 癖好名，珠结算的癖好行读它）。原作下标全是数字，target/CSV/Str.csv 是 STR 表、与本表无关（且 str/strname 是引擎弃用表名）。
+# 内容：角色的自定义字串（CSTR:7 = 癖好名，珠结算的癖好行读它）。下标全是数字（引擎的 str/strname 是弃用表名，与本表无关）。
 #
 # 它的存在只有一个目的：让引擎装载循环建出 `staticData.cstr`。引擎的
 # 三段寻址在 `data[表][角色]` 存在、而 `staticData[表]` 缺位时**直接抛错**
-# （app.asar 的 setVar 兜底分支 `u = i(this.staticData[a][u], u)`，无守卫）——
+# （app.asar 的 setVar 回落分支 `u = i(this.staticData[a][u], u)`，无检查）——
 # 调教域的表由 beginTrain/addCharacter 按角色开桶，所以桶一定在、崩就崩在
 # 名字表这一侧。实机撞见：调教开始时写 `stain:31:2` 报
 # `Cannot read properties of undefined (reading '2')`。

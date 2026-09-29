@@ -20,7 +20,7 @@
 //      ownership/<表>-ownership.yml；「某寻址有没有具名方法」来自解析
 //      ere/facade/*.js 的访问器注释；文件属于哪个域来自下方 DIR_DOMAINS。
 //
-// 条目表条目的标识形态：文件 → `表:下标` → 次数。行号会随编辑腐烂、同一
+// 条目表条目的标识写法：文件 → `表:下标` → 次数。行号会随编辑腐烂、同一
 // 寻址串在同一文件里可能重复，故不用行号；次数吸收重复——修掉一处，
 // 计数减一（改条目表，差异可见），修光则删条目。era.set 与 era.add 记同
 // 一条（待办是「这处跨域写还没走门面」，与写法无关）。
@@ -29,11 +29,11 @@
 // 知道写了哪些下标——与 test/static-table-coverage 只扫字面量前缀同款
 // 标准）；表无所有权产物（juel / delta / ex_talent 等 #70 未测量或引擎
 // 内建表，测量补齐前无判定依据——表清单也从 ownership/ 目录推导，产物
-// 落地即自动纳入）；下标无测量事实（如 flag:10000+ 保留区，#70 只对
-// 原作实写下标给出属主）。拼接/变量首参（`'flag:' + n`）静态连寻址串都
+// 到位即自动纳入）；下标无测量事实（如 flag:10000+ 保留区，#70 只对
+// 实写下标给出属主）。拼接/变量首参（`'flag:' + n`）静态连寻址串都
 // 拿不到，清点为「不可见」逐处报进报告——不判定，但必须被看见。
-// cid 段认字面量与模板两种形态（`base:0:2` 与 `base:${cid}:2` 同判，
-// 属主与角色无关）。这不与「写变量前所属静态表必须已落地」（名字表不
+// cid 段认字面量与模板两种写法（`base:0:2` 与 `base:${cid}:2` 同判，
+// 属主与角色无关）。这不与「写变量前所属静态表必须已存在」（名字表不
 // 在 + 桶在 → 直接崩溃）混为一谈——那是引擎表覆盖问题
 // （test/static-table-coverage.test.js），这里是域边界问题。
 //
@@ -61,7 +61,7 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 /**
  * 所有权产物覆盖的表：从 ownership/ 目录推导（* -ownership.yml），不逐张
- * 硬编码——测量补齐新表（juel 等）时产物落地即自动纳入判定（代码审查
+ * 硬编码——测量补齐新表（juel 等）时产物到位即自动纳入判定（代码审查
  * c-3：表清单也是「来自产物」的一部分）。
  */
 function list_ownership_tables() {
@@ -114,12 +114,12 @@ const WRAPPER_FILES = [
 
 /**
  * 子目录 → 域（段边界最长匹配；未认领即红）。ere/ 的目录布局就是移植侧
- * 的域声明（AGENTS.md 的导入分组同款词汇）；target/ERB/ 一级目录 → 域
+ * 的域声明（AGENTS.md 的导入分组同款词汇）；旧代码树一级目录 → 域
  * 的映射在 ownership/domains.yml（#70），两边不是同一套布局。
  * page / utils 是伪域：表现层与工具层不拥有任何玩法状态，写玩法表
  * 即跨域（读放行）——这正是「界面写状态应走门面」的架构意图。
  * ere/ 根下直接摆放的文件（main.js 等基础设施）属 system，不走本表，
- * 也不给「ere/ 全树」兜底——否则包装层目录里未登记的新文件会被静默
+ * 也不给「ere/ 全树」设缺省域——否则包装层目录里未登记的新文件会被静默
  * 归进 system，白名单就退化成了目录逃生口。
  */
 const DIR_DOMAINS = [
@@ -133,7 +133,7 @@ const DIR_DOMAINS = [
   // #470 Q13 起 ere/invasion/ 承载侵略域（domains.yml 的 invasion = 侵略）
   ['ere/invasion', 'invasion'],
   // ere/data/ 是纯数据常量表（如装备表 ere/data/equip-database.js，ADR-0007
-  // 的装备落 system 兜底域）——零 era.set，域映射只为目录认领完整性
+  // 的装备归 system 缺省域）——零 era.set，域映射只为目录认领完整性
   ['ere/data', 'system'],
   ['ere/system', 'system'],
   ['ere/page', 'page'],
@@ -288,7 +288,7 @@ function file_domain(rel) {
 /**
  * 解析门面访问器注释，建立 `表:下标` → 具名方法 的映射（报错的修改
  * 指引用；门面本体的裸寻址不进扫描——WRAPPER_FILES 已排除）。
- * 注释形态（gen-facade 生成）：`   * 录像开始状况（flag:22）`
+ * 注释写法（gen-facade 生成）：`   * 录像开始状况（flag:22）`
  * 与 `   * 爱抚（cflag:cid:301）`。
  */
 function parse_accessors() {
@@ -324,7 +324,7 @@ function parse_accessors() {
 
 /**
  * 扫单个 js 文本里的 era.get/set/add 调用。字符串首参（字面量或模板串）
- * 逐处解析；cid 段认 `${...}` 与字面量数字两种形态（`base:0:2` 与
+ * 逐处解析；cid 段认 `${...}` 与字面量数字两种写法（`base:0:2` 与
  * `base:${cid}:2` 同判——代码审查实证曾有 14 处字面量 cid 写被当成动态
  * 下标漏出条目表）；多行调用按整文件正则捕获，行号用换行计数回算。
  * 返回 [{ op, table, index | null, line }]：index 为 null = 动态下标
@@ -358,7 +358,7 @@ function scan_calls(text) {
 
 /**
  * 清点扫描正则看不见的调用：首参是拼接（`'flag:' + n`）或变量等非纯串
- * 形态。当前现有实测为零；一旦出现即计入「动态/不可见」——拼接下标静态
+ * 写法。当前现有实测为零；一旦出现即计入「动态/不可见」——拼接下标静态
  * 无法判定属主，但必须被看见，不许静默逃逸（代码审查 c-2）。
  * 返回 [{ op, line }]。
  */
@@ -462,7 +462,7 @@ function remedy_for(accessors, key) {
   if (named) {
     return `门面已有 ${named}（ere/facade/）——改用之`;
   }
-  return `门面尚无 ${key} 的访问器——先在 tools/facade-names.js 补名并 node tools/gen-facade.js --force（#71 裁定三：未命名属主下标不进门面，ownership/ 仍登记），再改用之`;
+  return `门面尚无 ${key} 的访问器——先在 tools/facade-names.js 补名并 node tools/gen-facade.js --force（#71 结论三：未命名属主下标不进门面，ownership/ 仍登记），再改用之`;
 }
 
 // —— 核对 ——

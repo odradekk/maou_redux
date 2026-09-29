@@ -123,7 +123,7 @@ export default [
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (game.train.失神) {',
     replace:
-      '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (false) { // 变异：失神守卫删除',
+      '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (false) { // 变异：失神检查删除',
     tests: ['kojo-k3-noble'],
     must_mention: '静默跳过',
   },
@@ -152,12 +152,12 @@ export default [
     tests: ['kojo-k3-noble'],
     must_mention: 'MARK:1 == 3',
   },
-  // M75（K3 :944 的 print/printAndWait 归类）随保真锁删除后无人可守（#640
+  // M75（K3 的 print/printAndWait 归类）随文本锁删除后无人可守（#640
   // 实测：行为断言不覆盖 W/L 形式）——删条目不补。
-  // M76（K3 :1076 插值槽位）随保真锁删除后无人可守（#640 实测：该分支无
+  // M76（K3 插值槽位）随文本锁删除后无人可守（#640 实测：该分支无
   // 行为断言覆盖）——删条目不补。
   {
-    desc: 'M78 K5 台词改回繁体（简体锁 + 锁 D 反向 + 行为断言三处红）',
+    desc: 'M78 K5 台词改回繁体（简体锁 + 行为断言两处红）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "        await era.printAndWait('「你这个变态…别、别碰我！」');",
     replace: "        await era.printAndWait('「你這個變態…別、別碰我！」');",
@@ -191,7 +191,7 @@ export default [
     must_mention: '11 种怪物分派',
   },
   {
-    // #183：%SAVESTR:ARG% 插值承载改坏（arg_name 变固定串）。保真锁 D 只
+    // #183：%SAVESTR:ARG% 插值承载改坏（arg_name 变固定串）。旧文本锁只
     // 比对字面量片段、不守插值映射本身（名字变了片段仍在）——由行为测试
     // 的「11 种怪物分派」断言（输出须含被凌辱者名「冒险者」）拦截。
     desc: 'M421 H14 插值承载改坏：arg_name_of 返回固定字符串',
@@ -720,7 +720,7 @@ export default [
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }\n\n  if (game.train.失神) {',
     replace:
-      '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }\n\n  if (false) {\n    // 变异：失神守卫删除',
+      '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }\n\n  if (false) {\n    // 变异：失神检查删除',
     tests: ['kojo-k1-confident'],
     must_mention: '失神：跳过',
   },
@@ -738,7 +738,7 @@ export default [
     file: 'ere/kojo/kojo-k1-confident.js',
     find: '  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }\n\n  if (era_flag.selectcom === 0) {',
     replace:
-      '  if (false) {\n    // 变异：触手守卫删除\n    return 0;\n  }\n\n  if (era_flag.selectcom === 0) {',
+      '  if (false) {\n    // 变异：触手检查删除\n    return 0;\n  }\n\n  if (era_flag.selectcom === 0) {',
     tests: ['kojo-k1-confident'],
     must_mention: '触手：跳过',
   },
@@ -1864,7 +1864,7 @@ export default [
     replace:
       '  // 獣姦プレイ中（K5 是静默跳过，无 DOG_KOJO 调用）\n  if (false) {\n    return 0;\n  }',
     tests: ['kojo-k5-mao'],
-    must_mention: '静默跳过（无 DOG_KOJO 占位行）',
+    must_mention: 'K5 是静默跳过',
   },
   {
     desc: 'M1809 K5 COM 死斗场岔路丢失（TEQUIP:55 不再调 COLOSSEUM）（#236）',
@@ -1924,7 +1924,7 @@ export default [
     file: 'ere/kojo/kojo-k3-noble.js',
     find: "const era = require('#/era-electron');",
     replace: `const era = require('#/era-electron');
-const { piercing_state } = require('#/system/train/com-hardcore'); // 变异：顶层 require（#288 守卫的靶子）`,
+const { piercing_state } = require('#/system/train/com-hardcore'); // 变异：顶层 require（#288 检查的目标）`,
     tests: ['top-level-wiring'],
     must_mention: '顶层 require：ere/kojo/kojo-k3-noble.js',
   },
@@ -1933,7 +1933,7 @@ const { piercing_state } = require('#/system/train/com-hardcore'); // 变异：�
     file: 'ere/system/train/com-tentacle.js',
     find: "const era = require('#/era-electron');",
     replace: `const era = require('#/era-electron');
-const { arena_slave_point, com_after_arena } = require('#/system/train/com-colosseum'); // 变异：顶层 require（#288 守卫的靶子）`,
+const { arena_slave_point, com_after_arena } = require('#/system/train/com-colosseum'); // 变异：顶层 require（#288 检查的目标）`,
     tests: ['top-level-wiring'],
     must_mention: '顶层 require：ere/system/train/com-tentacle.js',
   },
@@ -2039,7 +2039,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   ) {
     // 崩坏`,
     replace: `era0(\`talent:\${target}:9\`) == 1 &&
-    era0(\`cflag:\${target}:201\`) <= 9 // 变异：守卫删松
+    era0(\`cflag:\${target}:201\`) <= 9 // 变异：检查删松
   ) {
     // 崩坏`,
     tests: ['kojo-k7-heart'],
@@ -2066,7 +2066,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n    // 崩坏\n    era.drawLine();\n    await era.printAndWait(`「不…讨厌…怪物的孩子不要生下来…不要………」`);",
     replace:
-      "if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 3) {\n    // 崩坏（变异：FLAG:7 判据错格）\n    era.drawLine();\n    await era.printAndWait(`「不…讨厌…怪物的孩子不要生下来…不要………」`);",
+      "if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 3) {\n    // 崩坏（变异：FLAG:7 条件错格）\n    era.drawLine();\n    await era.printAndWait(`「不…讨厌…怪物的孩子不要生下来…不要………」`);",
     tests: ['kojo-k7-heart'],
     must_mention: 'EVENTEND 崩坏',
   },
@@ -2099,7 +2099,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: `if (era0(\`talent:\${assi}:121\`) == 0) {
       return 0;
     }`,
-    replace: `if (false) {  // 变异：白梅花守卫删除
+    replace: `if (false) {  // 变异：白梅花检查删除
       return 0;
     }`,
     tests: ['kojo-k7-heart'],
@@ -2110,7 +2110,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 助手调教时跳过\n  if (era_flag.assi > 0 && era_flag.assiplay) {\n    return 0;\n  }',
     replace:
-      '// 助手调教时跳过\n  if (false) {  // 变异：助手调教守卫删除\n    return 0;\n  }',
+      '// 助手调教时跳过\n  if (false) {  // 变异：助手调教检查删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
     must_mention: '头部第 1 道检查',
   },
@@ -2119,7 +2119,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 口塞着用时跳过（SELECTCOM == 45 自己说话不算）\n  if (era0(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }',
     replace:
-      '// 口塞着用时跳过（SELECTCOM == 45 自己说话不算）\n  if (false) {  // 变异：口塞守卫删除\n    return 0;\n  }',
+      '// 口塞着用时跳过（SELECTCOM == 45 自己说话不算）\n  if (false) {  // 变异：口塞检查删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
     must_mention: '头部第 2 道检查',
   },
@@ -2128,7 +2128,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k7-heart.js',
     find: "// 失神时跳过\n  if (era0('tflag:899')) {\n    return 0;\n  }",
     replace:
-      '// 失神时跳过\n  if (false) {  // 变异：失神守卫删除\n    return 0;\n  }',
+      '// 失神时跳过\n  if (false) {  // 变异：失神检查删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
     must_mention: '头部第 3 道检查',
   },
@@ -2155,7 +2155,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 崩坏时跳过\n  if (era0(`talent:${target}:9`) == 1) {\n    return 0;\n  }',
     replace:
-      '// 崩坏时跳过\n  if (false) {  // 变异：崩坏守卫删除\n    return 0;\n  }',
+      '// 崩坏时跳过\n  if (false) {  // 变异：崩坏检查删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
     must_mention: '头部第 6 道检查',
   },
@@ -2164,7 +2164,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k7-heart.js',
     find: '// 触手调教中跳过\n  if (era0(`tequip:${target}:90`)) {\n    return 0;\n  }',
     replace:
-      '// 触手调教中跳过\n  if (false) {  // 变异：触手守卫删除\n    return 0;\n  }',
+      '// 触手调教中跳过\n  if (false) {  // 变异：触手检查删除\n    return 0;\n  }',
     tests: ['kojo-k7-heart'],
     must_mention: '头部第 7 道检查',
   },
@@ -2767,7 +2767,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "    if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n      // 崩坏\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
     replace:
-      "    if (era0(`talent:${target}:9`) == 0 && era0('flag:7') == 2) {\n      // 变异：崩坏判据错格\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
+      "    if (era0(`talent:${target}:9`) == 0 && era0('flag:7') == 2) {\n      // 变异：崩坏条件错格\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：崩坏分档',
   },
@@ -2827,7 +2827,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2377 COM_11 助手非玛奥检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 助手マオ以外が調教した時に口上をスキップする\n  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    return 0;\n  }',
-    replace: `  // 变异：助手非玛奥守卫删`,
+    replace: `  // 变异：助手非玛奥检查删`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM_11 检查：助手非玛奥调教时静默跳过',
   },
@@ -2835,7 +2835,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2378 COM_11 口塞检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // ボールギャグ着用時には口上をスキップする（SELECTCOM==45 自己说话不算）\n  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {\n    return 0;\n  }',
-    replace: `  // 变异：口塞守卫删`,
+    replace: `  // 变异：口塞检查删`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM_11 检查：口塞中（非口塞指令）静默跳过',
   },
@@ -2843,7 +2843,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2379 COM_11 失神检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 失神時には口上をスキップする\n  if (game.train.失神) {\n    return 0;\n  }',
-    replace: `  // 变异：失神守卫删`,
+    replace: `  // 变异：失神检查删`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM_11 检查：失神中静默跳过',
   },
@@ -2852,7 +2852,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 獣姦プレイ中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
-      '  // 獣姦プレイ中は専用口上\n  if (false) { // 变异：删除兽奸守卫',
+      '  // 獣姦プレイ中は専用口上\n  if (false) { // 变异：删除兽奸检查',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM_11 检查：兽奸中改走 DOG_KOJO_11 真身',
   },
@@ -2872,7 +2872,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2382 COM_11 崩坏检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 崩坏した場合は口上をスキップする\n  if (era.get(`talent:${target}:9`) === 1) {\n    return 0;\n  }',
-    replace: `  // 变异：崩坏守卫删`,
+    replace: `  // 变异：崩坏检查删`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM_11 检查：崩坏后静默跳过',
   },
@@ -2880,7 +2880,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M2383 COM_11 触手检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  // 触手調教中は口上をスキップする\n  if (era.get(`tequip:${target}:90`)) {\n    return 0;\n  }',
-    replace: `  // 变异：触手守卫删`,
+    replace: `  // 变异：触手检查删`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM_11 检查：触手调教中静默跳过',
   },
@@ -2947,7 +2947,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: `  if (era_flag.selectcom === 1) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
     replace: `  if (era_flag.selectcom === 1) {
-    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：处女判据错格`,
+    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：处女条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM1 初めて：处女 + 非助手玛奥推进到 1',
   },
@@ -2977,7 +2977,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: `      mark(3) >= 1 &&
       mark(2) <= 2 &&
       (kojo.舔阴 <= 1 || game.kojo.口上开关 === 2)`,
-    replace: `      mark(3) >= 2 && // 变异：反抗刻印Lv1以上判据错格
+    replace: `      mark(3) >= 2 && // 变异：反抗刻印Lv1以上条件错格
       mark(2) <= 2 &&
       (kojo.舔阴 <= 1 || game.kojo.口上开关 === 2)`,
     tests: ['kojo-k11-lily'],
@@ -3167,7 +3167,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k9-diamond.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {\n    return 0;\n  }',
     replace:
-      '  if (false) { // 变异：TEQUIP:45 口塞守卫删除\n    return 0;\n  }',
+      '  if (false) { // 变异：TEQUIP:45 口塞检查删除\n    return 0;\n  }',
     tests: ['kojo-k9-diamond'],
     must_mention: '头部检查',
   },
@@ -3412,7 +3412,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      // 初めて（CFLAG:304 == 0）\n      if (assi_mao) {',
     replace:
-      '      // 初めて（CFLAG:304 == 0）\n      if (!assi_mao) {\n        // 变异：助手玛奥判据颠倒',
+      '      // 初めて（CFLAG:304 == 0）\n      if (!assi_mao) {\n        // 变异：助手玛奥条件颠倒',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM3 初めて：助手玛奥分档',
   },
@@ -3433,7 +3433,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 淫乱`,
     replace: `      if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.自慰 <= 5 || game.kojo.口上开关 === 2)
       ) {
         // 淫乱`,
@@ -3489,7 +3489,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 淫乱＋自慰中毒Lv3以上`,
     replace: `      era.get(\`talent:\${target}:76\`) === 1 &&
-      chara(target).train.自慰中毒 >= 2 && // 变异：判据错格
+      chara(target).train.自慰中毒 >= 2 && // 变异：条件错格
       (kojo.自慰 <= 7 || game.kojo.口上开关 === 2)
     ) {
       // 淫乱＋自慰中毒Lv3以上`,
@@ -3552,7 +3552,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 爱慕＋自慰中毒Lv3以上`,
     replace: `      era.get(\`talent:\${target}:85\`) === 1 &&
-      chara(target).train.自慰中毒 >= 2 && // 变异：判据错格
+      chara(target).train.自慰中毒 >= 2 && // 变异：条件错格
       (kojo.自慰 <= 4 || game.kojo.口上开关 === 2)
     ) {
       // 爱慕＋自慰中毒Lv3以上`,
@@ -3577,7 +3577,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       (kojo.自慰 <= 2 || game.kojo.口上开关 === 2)
     ) {
       // 屈服刻印Lv3+自慰中毒Lv1以上`,
-    replace: `      era.get(\`mark:\${target}:2\`) === 2 && // 变异：判据错格
+    replace: `      era.get(\`mark:\${target}:2\`) === 2 && // 变异：条件错格
       chara(target).train.自慰中毒 >= 1 &&
       (kojo.自慰 <= 2 || game.kojo.口上开关 === 2)
     ) {
@@ -3601,7 +3601,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      // 初めて（CFLAG:306 == 0）\n      if (assi_mao) {',
     replace:
-      '      // 初めて（CFLAG:306 == 0）\n      if (!assi_mao) {\n        // 变异：助手玛奥判据颠倒',
+      '      // 初めて（CFLAG:306 == 0）\n      if (!assi_mao) {\n        // 变异：助手玛奥条件颠倒',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM5 初めて：助手玛奥分档',
   },
@@ -3624,7 +3624,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 淫乱`,
     replace: `      if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.胸爱抚 <= 4 || game.kojo.口上开关 === 2)
       ) {
         // 淫乱`,
@@ -3648,7 +3648,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 爱慕`,
     replace: `      } else if (
-        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
         (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
       ) {
         // 爱慕`,
@@ -3664,7 +3664,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // B感覚Lv3以上`,
     replace: `      } else if (
-        chara(target).system.乳房感觉 >= 2 && // 变异：判据错格
+        chara(target).system.乳房感觉 >= 2 && // 变异：条件错格
         (kojo.胸爱抚 <= 2 || game.kojo.口上开关 === 2)
       ) {
         // B感覚Lv3以上`,
@@ -3705,7 +3705,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
     ) {
       // 爱慕`,
-    replace: `      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+    replace: `      era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
       (kojo.胸爱抚 <= 3 || game.kojo.口上开关 === 2)
     ) {
       // 爱慕`,
@@ -3742,7 +3742,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 淫乱かつ主人`,
     replace: `      if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         !era_flag.assiplay &&
         chara(target).train.兽奸 === 0 &&
         chara(target).train.触手 === 0
@@ -3762,7 +3762,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 爱慕かつ主人`,
     replace: `      } else if (
-        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
         !era_flag.assiplay &&
         chara(target).train.兽奸 === 0 &&
         chara(target).train.触手 === 0
@@ -3788,7 +3788,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          );\n        } else if (era.get(`talent:${target}:85`) === 1) {\n          // 爱慕\n          await era.printAndWait(`『嘿嘿嘿，和姐姐亲亲了${heart(1)}呣呣呣呒』`);',
     replace:
-      '          );\n        } else if (era.get(`talent:${target}:76`) === 1) {\n          // 变异：判据错格（原 85）\n          await era.printAndWait(`『嘿嘿嘿，和姐姐亲亲了${heart(1)}呣呣呣呒』`);',
+      '          );\n        } else if (era.get(`talent:${target}:76`) === 1) {\n          // 变异：条件错格（原 85）\n          await era.printAndWait(`『嘿嘿嘿，和姐姐亲亲了${heart(1)}呣呣呣呒』`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 首吻：助手玛奥 + 爱慕',
   },
@@ -3805,7 +3805,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (assi_mao) {\n        if (era.get(`talent:${target}:76`) === 1) {\n          // 淫乱\n          await era.printAndWait(`『最喜欢姐姐了♪』`);',
     replace:
-      '      if (assi_mao) {\n        if (era.get(`talent:${target}:85`) === 1) {\n          // 变异：判据错格（原 76）\n          await era.printAndWait(`『最喜欢姐姐了♪』`);',
+      '      if (assi_mao) {\n        if (era.get(`talent:${target}:85`) === 1) {\n          // 变异：条件错格（原 76）\n          await era.printAndWait(`『最喜欢姐姐了♪』`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 初めて：助手玛奥 + 淫乱',
   },
@@ -3871,7 +3871,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         await era.printAndWait(
           \`「呣呣…舌头进来了、呣呣呣…跟姐姐亲亲舒服吗？\${heart(1)}」\`,`,
     replace: `      if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
       ) {
         // 淫乱
@@ -3893,7 +3893,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`『姐姐，好喜欢你…最喜欢了♪』`);',
     replace:
-      '      } else if (\n        era.get(`talent:${target}:76`) === 1 && // 变异：判据错格\n        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`『姐姐，好喜欢你…最喜欢了♪』`);',
+      '      } else if (\n        era.get(`talent:${target}:76`) === 1 && // 变异：条件错格\n        (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`『姐姐，好喜欢你…最喜欢了♪』`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 二回目：助手玛奥 + 爱慕推进到 4',
   },
@@ -3910,7 +3910,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        chara(target).system.顺从 >= 2 &&\n        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 従順Lv2以上\n        await era.printAndWait(`『来、姐姐，来亲亲♪』`);',
     replace:
-      '      } else if (\n        chara(target).system.顺从 >= 1 && // 变异：判据错格\n        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 従順Lv2以上\n        await era.printAndWait(`『来、姐姐，来亲亲♪』`);',
+      '      } else if (\n        chara(target).system.顺从 >= 1 && // 变异：条件错格\n        (kojo.接吻 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 従順Lv2以上\n        await era.printAndWait(`『来、姐姐，来亲亲♪』`);',
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM6 二回目：助手玛奥 + 顺从恰为 Lv1（未达 Lv2）不误入従順分档',
@@ -3943,7 +3943,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       await era.printAndWait(
         \`「吻我…魔王大人…呣呣…呣呒……再激烈一点…我想品尝魔王大人的，呣呣…呣呒，味道\${heart(1)}」\`,`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
       (kojo.接吻 <= 4 || game.kojo.口上开关 === 2)
     ) {
       // 淫乱
@@ -3965,7 +3965,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「唔——呣呣呒…魔，魔王大人…呣啾啾${heart(1)}」`);',
     replace:
-      '    } else if (\n      era.get(`talent:${target}:76`) === 1 && // 变异：判据错格\n      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「唔——呣呣呒…魔，魔王大人…呣啾啾${heart(1)}」`);',
+      '    } else if (\n      era.get(`talent:${target}:76`) === 1 && // 变异：条件错格\n      (kojo.接吻 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「唔——呣呣呒…魔，魔王大人…呣啾啾${heart(1)}」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM6 二回目：非助手玛奥 + 爱慕推进到 4',
   },
@@ -4053,7 +4053,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         // 淫乱
         if (virgin) {`,
     replace: `      if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)
       ) {
         // 淫乱
@@ -4074,7 +4074,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '          await era.printAndWait(`「不要开玩笑啦！」`);\n          if (chara(target).system.露出癖 >= 3) {',
     replace:
-      '          await era.printAndWait(`「不要开玩笑啦！」`);\n          if (chara(target).system.露出癖 >= 2) {\n            // 变异：判据错格',
+      '          await era.printAndWait(`「不要开玩笑啦！」`);\n          if (chara(target).system.露出癖 >= 2) {\n            // 变异：条件错格',
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM7 二回目：助手玛奥 + 爱慕 + 处女 + 露出癖恰为 Lv2（未达 Lv3）不误入爱液满溢分支',
@@ -4093,7 +4093,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        chara(target).system.露出癖 >= 3 &&\n        (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 露出癖Lv3以上\n        await era.printAndWait(`「啊啊…这个姿势…能全部看清楚了吗？」`);',
     replace:
-      '      } else if (\n        chara(target).system.露出癖 >= 2 && // 变异：判据错格\n        (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 露出癖Lv3以上\n        await era.printAndWait(`「啊啊…这个姿势…能全部看清楚了吗？」`);',
+      '      } else if (\n        chara(target).system.露出癖 >= 2 && // 变异：条件错格\n        (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 露出癖Lv3以上\n        await era.printAndWait(`「啊啊…这个姿势…能全部看清楚了吗？」`);',
     tests: ['kojo-k11-lily'],
     must_mention:
       'COM7 二回目：助手玛奥 + 露出癖恰为 Lv2（未达 Lv3）不误入露出癖分档',
@@ -4119,7 +4119,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(`「哈啊…这个姿势就能全部看清了吧………${heart(1)}」`);',
     replace:
-      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：判据错格\n      (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(`「哈啊…这个姿势就能全部看清了吧………${heart(1)}」`);',
+      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：条件错格\n      (kojo.自己扒开 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(`「哈啊…这个姿势就能全部看清了吧………${heart(1)}」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM7 二回目：非助手玛奥 + 淫乱 + 非处女推进到 5',
   },
@@ -4136,7 +4136,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:85`) === 1 &&\n      (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「魔，魔王大人，请…看个够吧…${heart(1)}」`);',
     replace:
-      '    } else if (\n      era.get(`talent:${target}:76`) === 1 && // 变异：判据错格\n      (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「魔，魔王大人，请…看个够吧…${heart(1)}」`);',
+      '    } else if (\n      era.get(`talent:${target}:76`) === 1 && // 变异：条件错格\n      (kojo.自己扒开 <= 3 || game.kojo.口上开关 === 2)\n    ) {\n      // 爱慕\n      await era.printAndWait(`「魔，魔王大人，请…看个够吧…${heart(1)}」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM7 二回目：非助手玛奥 + 爱慕 + 处女推进到 4',
   },
@@ -4159,7 +4159,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       await era.printAndWait(
         \`「羞，羞死人了…这个姿势…实在太羞耻了！可是…为什么手指…就是挪不开…哈啊」\`,`,
     replace: `    } else if (
-      chara(target).system.露出癖 >= 2 && // 变异：判据错格
+      chara(target).system.露出癖 >= 2 && // 变异：条件错格
       (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)
     ) {
       // 露出癖Lv3以上
@@ -4192,7 +4192,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: `  if (era_flag.selectcom === 7) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
     replace: `  if (era_flag.selectcom === 7) {
-    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：处女判据错格`,
+    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：处女条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM7 初めて：非助手玛奥 + 淫乱 + 处女',
   },
@@ -4201,7 +4201,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊${heart(1)} 感觉到了，你湿漉漉的手指${heart(1)}」`,\n        );',
     replace:
-      '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 变异：判据错格\n        await era.printAndWait(\n          `「哈啊${heart(1)} 感觉到了，你湿漉漉的手指${heart(1)}」`,\n        );',
+      '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 变异：条件错格\n        await era.printAndWait(\n          `「哈啊${heart(1)} 感觉到了，你湿漉漉的手指${heart(1)}」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM8 初めて：非助手玛奥 + 淫乱推进到 1',
   },
@@ -4210,7 +4210,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (mark(2) === 3 && era.get(`talent:${target}:85`) === 1) {\n        // 屈服刻印Lv3+爱慕\n        await era.printAndWait(`「魔王大人的话…想怎么做什么都可以…嗯啊啊！」`);',
     replace:
-      '      } else if (mark(2) === 3 && era.get(`talent:${target}:76`) === 1) {\n        // 变异：判据错格\n        await era.printAndWait(`「魔王大人的话…想怎么做什么都可以…嗯啊啊！」`);',
+      '      } else if (mark(2) === 3 && era.get(`talent:${target}:76`) === 1) {\n        // 变异：条件错格\n        await era.printAndWait(`「魔王大人的话…想怎么做什么都可以…嗯啊啊！」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM8 初めて：非助手玛奥 + 屈服刻印Lv3+爱慕推进到 1',
   },
@@ -4232,7 +4232,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {`,
     replace: `    if (assi_mao) {
       if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)
       ) {`,
     tests: ['kojo-k11-lily'],
@@ -4256,7 +4256,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 爱慕＋屈服刻印Lv3`,
     replace: `      } else if (
-        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
         mark(2) === 3 &&
         (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
       ) {
@@ -4277,7 +4277,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实得多了呢，是感觉到快感了吧？』`);',
     replace:
-      '      } else if (\n        mark(2) === 2 && // 变异：判据错格\n        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实得多了呢，是感觉到快感了吧？』`);',
+      '      } else if (\n        mark(2) === 2 && // 变异：条件错格\n        (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实得多了呢，是感觉到快感了吧？』`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM8 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
   },
@@ -4302,7 +4302,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「哈啊${heart(1)} 蜜穴都湿透了，都是因为你${heart(1)}嗯啊」`,\n      );',
     replace:
-      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：判据错格\n      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「哈啊${heart(1)} 蜜穴都湿透了，都是因为你${heart(1)}嗯啊」`,\n      );',
+      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：条件错格\n      (kojo.插入手指 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「哈啊${heart(1)} 蜜穴都湿透了，都是因为你${heart(1)}嗯啊」`,\n      );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM8 二回目：非助手玛奥 + 淫乱推进到 5',
   },
@@ -4324,7 +4324,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 爱慕＋屈服刻印Lv3`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
       mark(2) === 3 &&
       (kojo.插入手指 <= 3 || game.kojo.口上开关 === 2)
     ) {
@@ -4349,7 +4349,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 屈服刻印Lv3`,
     replace: `    } else if (
-      mark(2) === 2 && // 变异：判据错格
+      mark(2) === 2 && // 变异：条件错格
       (kojo.插入手指 <= 2 || game.kojo.口上开关 === 2)
     ) {
       // 屈服刻印Lv3`,
@@ -4378,7 +4378,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 淫乱\n        await era.printAndWait(`「真是的！连那种地方也要舔，你真是变态！」`);',
     replace:
-      '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 变异：判据错格\n        await era.printAndWait(`「真是的！连那种地方也要舔，你真是变态！」`);',
+      '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 变异：条件错格\n        await era.printAndWait(`「真是的！连那种地方也要舔，你真是变态！」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM9 初めて：非助手玛奥 + 淫乱推进到 1',
   },
@@ -4387,7 +4387,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 爱慕\n        await era.printAndWait(\n          `「不，不要舔那里，那里太…肮脏了啊！呜呜…嗯啊啊」`,\n        );',
     replace:
-      '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 变异：判据错格\n        await era.printAndWait(\n          `「不，不要舔那里，那里太…肮脏了啊！呜呜…嗯啊啊」`,\n        );',
+      '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 变异：条件错格\n        await era.printAndWait(\n          `「不，不要舔那里，那里太…肮脏了啊！呜呜…嗯啊啊」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM9 初めて：非助手玛奥 + 爱慕推进到 1',
   },
@@ -4409,7 +4409,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {`,
     replace: `    if (assi_mao) {
       if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)
       ) {`,
     tests: ['kojo-k11-lily'],
@@ -4428,7 +4428,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「啊啊…这样太羞耻了…快停下，${player_name}…嗯啊啊」`,\n        );',
     replace:
-      '      } else if (\n        era.get(`talent:${target}:76`) === 1 && // 变异：判据错格\n        (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「啊啊…这样太羞耻了…快停下，${player_name}…嗯啊啊」`,\n        );',
+      '      } else if (\n        era.get(`talent:${target}:76`) === 1 && // 变异：条件错格\n        (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(\n          `「啊啊…这样太羞耻了…快停下，${player_name}…嗯啊啊」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM9 二回目：助手玛奥 + 爱慕推进到 4',
   },
@@ -4445,7 +4445,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(\n          `「呃啊啊…姐姐一点都不觉得舒服…快，快点结束啦…嗯啊啊！」`,\n        );',
     replace:
-      '      } else if (\n        mark(2) === 2 && // 变异：判据错格\n        (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(\n          `「呃啊啊…姐姐一点都不觉得舒服…快，快点结束啦…嗯啊啊！」`,\n        );',
+      '      } else if (\n        mark(2) === 2 && // 变异：条件错格\n        (kojo.舔肛 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(\n          `「呃啊啊…姐姐一点都不觉得舒服…快，快点结束啦…嗯啊啊！」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM9 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
   },
@@ -4470,7 +4470,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「啊啊…魔王大人真是变态…喜欢…舔人家的肛门${heart(1)}哈啊」`,\n      );',
     replace:
-      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：判据错格\n      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「啊啊…魔王大人真是变态…喜欢…舔人家的肛门${heart(1)}哈啊」`,\n      );',
+      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：条件错格\n      (kojo.舔肛 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「啊啊…魔王大人真是变态…喜欢…舔人家的肛门${heart(1)}哈啊」`,\n      );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM9 二回目：非助手玛奥 + 淫乱推进到 5',
   },
@@ -4491,7 +4491,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 爱慕`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
       (kojo.舔肛 <= 3 || game.kojo.口上开关 === 2)
     ) {
       // 爱慕`,
@@ -4539,7 +4539,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 淫乱\n        await era.printAndWait(\n          `「啊啊，这样的震动…真让人…欲仙欲死${heart(1)}」`,\n        );',
     replace:
-      '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 变异：判据错格\n        await era.printAndWait(\n          `「啊啊，这样的震动…真让人…欲仙欲死${heart(1)}」`,\n        );',
+      '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 变异：条件错格\n        await era.printAndWait(\n          `「啊啊，这样的震动…真让人…欲仙欲死${heart(1)}」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM10 初めて：非助手玛奥 + 淫乱推进到 1',
   },
@@ -4577,7 +4577,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {`,
     replace: `    if (assi_mao) {
       if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)
       ) {`,
     tests: ['kojo-k11-lily'],
@@ -4601,7 +4601,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {
         // 爱慕＋屈服刻印Lv3`,
     replace: `      } else if (
-        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
         mark(2) === 3 &&
         (kojo.振动宝石 <= 3 || game.kojo.口上开关 === 2)
       ) {
@@ -4622,7 +4622,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        mark(2) === 3 &&\n        (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实多了呢，是不是已经有快感了？』`);',
     replace:
-      '      } else if (\n        mark(2) === 2 && // 变异：判据错格\n        (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实多了呢，是不是已经有快感了？』`);',
+      '      } else if (\n        mark(2) === 2 && // 变异：条件错格\n        (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)\n      ) {\n        // 屈服刻印Lv3\n        await era.printAndWait(`『姐姐变得老实多了呢，是不是已经有快感了？』`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM10 二回目：助手玛奥 + 屈服刻印Lv3推进到 3',
   },
@@ -4647,7 +4647,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      era.get(`talent:${target}:76`) === 1 &&\n      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「呜啊啊！好舒服……小豆豆…好舒服！哈啊…嗯啊啊${heart(1)}」`,\n      );',
     replace:
-      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：判据错格\n      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「呜啊啊！好舒服……小豆豆…好舒服！哈啊…嗯啊啊${heart(1)}」`,\n      );',
+      '    } else if (\n      era.get(`talent:${target}:85`) === 1 && // 变异：条件错格\n      (kojo.振动宝石 <= 4 || game.kojo.口上开关 === 2)\n    ) {\n      // 淫乱\n      await era.printAndWait(\n        `「呜啊啊！好舒服……小豆豆…好舒服！哈啊…嗯啊啊${heart(1)}」`,\n      );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM10 二回目：非助手玛奥 + 淫乱推进到 5',
   },
@@ -4669,7 +4669,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 爱慕＋屈服刻印Lv3`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
       mark(2) === 3 &&
       (kojo.振动宝石 <= 3 || game.kojo.口上开关 === 2)
     ) {
@@ -4694,7 +4694,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     ) {
       // 屈服刻印Lv3`,
     replace: `    } else if (
-      mark(2) === 2 && // 变异：判据错格
+      mark(2) === 2 && // 变异：条件错格
       (kojo.振动宝石 <= 2 || game.kojo.口上开关 === 2)
     ) {
       // 屈服刻印Lv3`,
@@ -4724,7 +4724,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: `  if (era_flag.selectcom === 11) {
     const virgin = era.get(\`talent:\${target}:0\`) === 1;`,
     replace: `  if (era_flag.selectcom === 11) {
-    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：判据错格`,
+    const virgin = era.get(\`talent:\${target}:0\`) === 0; // 变异：条件错格`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて（TEQUIP:11）：处女 + 助手玛奥 + 淫乱',
   },
@@ -4733,7 +4733,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '            if (era.get(`talent:${target}:76`) === 1) {\n              // 淫乱\n              await era.printAndWait(\n                `「哈啊，啊啊啊…虽说是这样…但是…还是…很舒服啊${heart(1)}哈……」`,\n              );',
     replace:
-      '            if (era.get(`talent:${target}:85`) === 1) {\n              // 变异：判据错格\n              await era.printAndWait(\n                `「哈啊，啊啊啊…虽说是这样…但是…还是…很舒服啊${heart(1)}哈……」`,\n              );',
+      '            if (era.get(`talent:${target}:85`) === 1) {\n              // 变异：条件错格\n              await era.printAndWait(\n                `「哈啊，啊啊啊…虽说是这样…但是…还是…很舒服啊${heart(1)}哈……」`,\n              );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて（TEQUIP:11）：处女 + 助手玛奥 + 淫乱',
   },
@@ -4776,7 +4776,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (assi_mao) {\n          // 非处女・助手玛奥\n          await era.printAndWait(`『啊哈哈、姐姐看，虫子从你下面钻进去了♪』`);',
     replace:
-      '        } else if (!assi_mao) {\n          // 变异：判据错格\n          await era.printAndWait(`『啊哈哈、姐姐看，虫子从你下面钻进去了♪』`);',
+      '        } else if (!assi_mao) {\n          // 变异：条件错格\n          await era.printAndWait(`『啊哈哈、姐姐看，虫子从你下面钻进去了♪』`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 初めて：非处女 + 助手玛奥',
   },
@@ -4808,7 +4808,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         ) {`,
     replace: `      if (assi_mao) {
         if (
-          era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+          era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
           (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)
         ) {`,
     tests: ['kojo-k11-lily'],
@@ -4827,7 +4827,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '        } else if (\n          era.get(`talent:${target}:85`) === 1 &&\n          (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』`,\n          );',
     replace:
-      '        } else if (\n          era.get(`talent:${target}:76`) === 1 && // 变异：判据错格\n          (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』`,\n          );',
+      '        } else if (\n          era.get(`talent:${target}:76`) === 1 && // 变异：条件错格\n          (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n        ) {\n          // 爱慕\n          await era.printAndWait(\n            `『姐姐，告诉我，被蠕虫插进去舒服还是被阴茎插进去舒服些？』`,\n          );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 二回目：助手玛奥 + 爱慕推进到 4',
   },
@@ -4850,7 +4850,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
           await era.printAndWait(
             \`『哎呀，姐姐一副口水都要流出来了的表情呢，真的有那么舒服吗\${heart(1)}虫子已经要全部爬进去了哦哦』\`,`,
     replace: `        } else if (
-          chara(target).system.私处感觉 >= 4 && // 变异：判据错格
+          chara(target).system.私处感觉 >= 4 && // 变异：条件错格
           (kojo.壶虫 <= 2 || game.kojo.口上开关 === 2)
         ) {
           // V感覚Lv3以上
@@ -4880,7 +4880,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:76`) === 1 &&\n        (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊…啊！蜜穴被虫子…！啊啊…好…好舒服${heart(1)}」`,\n        );',
     replace:
-      '      } else if (\n        era.get(`talent:${target}:85`) === 1 && // 变异：判据错格\n        (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊…啊！蜜穴被虫子…！啊啊…好…好舒服${heart(1)}」`,\n        );',
+      '      } else if (\n        era.get(`talent:${target}:85`) === 1 && // 变异：条件错格\n        (kojo.壶虫 <= 4 || game.kojo.口上开关 === 2)\n      ) {\n        // 淫乱\n        await era.printAndWait(\n          `「哈啊…啊！蜜穴被虫子…！啊啊…好…好舒服${heart(1)}」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 二回目：非助手玛奥 + 淫乱推进到 5',
   },
@@ -4897,7 +4897,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (\n        era.get(`talent:${target}:85`) === 1 &&\n        (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`「哈啊…啊！进，进去了…虫子…蜜穴里…嗯啊啊」`);',
     replace:
-      '      } else if (\n        era.get(`talent:${target}:76`) === 1 && // 变异：判据错格\n        (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`「哈啊…啊！进，进去了…虫子…蜜穴里…嗯啊啊」`);',
+      '      } else if (\n        era.get(`talent:${target}:76`) === 1 && // 变异：条件错格\n        (kojo.壶虫 <= 3 || game.kojo.口上开关 === 2)\n      ) {\n        // 爱慕\n        await era.printAndWait(`「哈啊…啊！进，进去了…虫子…蜜穴里…嗯啊啊」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM11 二回目：非助手玛奥 + 爱慕推进到 4',
   },
@@ -4920,7 +4920,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         await era.printAndWait(
           \`「这，这种东西钻进去…不会感觉到舒服的啦啊啊啊…哈啊…嗯啊啊！」\`,`,
     replace: `      } else if (
-        chara(target).system.私处感觉 >= 4 && // 变异：判据错格
+        chara(target).system.私处感觉 >= 4 && // 变异：条件错格
         (kojo.壶虫 <= 2 || game.kojo.口上开关 === 2)
       ) {
         // V感覚Lv3以上
@@ -4954,7 +4954,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       (kojo.壶虫着脱 < 3 || game.kojo.口上开关 === 2)
     ) {`,
     replace: `    if (
-      era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
       (kojo.壶虫着脱 < 3 || game.kojo.口上开关 === 2)
     ) {`,
     tests: ['kojo-k11-lily'],
@@ -4976,7 +4976,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       (kojo.壶虫着脱 < 2 || game.kojo.口上开关 === 2)
     ) {`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
       (kojo.壶虫着脱 < 2 || game.kojo.口上开关 === 2)
     ) {`,
     tests: ['kojo-k11-lily'],
@@ -5003,7 +5003,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      if (assi_mao) {\n        await era.printAndWait(\n          `『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』`,\n        );',
     replace:
-      '      if (!assi_mao) {\n        // 变异：判据错格\n        await era.printAndWait(\n          `『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』`,\n        );',
+      '      if (!assi_mao) {\n        // 变异：条件错格\n        await era.printAndWait(\n          `『这个震动起来很厉害的哦，不知道姐姐能坚持多久呢♪』`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM12 初めて：助手玛奥推进到 1',
   },
@@ -5026,7 +5026,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '      } else if (era.get(`talent:${target}:85`) === 1) {\n        // 爱慕\n        await era.printAndWait(\n          `「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」`,\n        );',
     replace:
-      '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 变异：判据错格\n        await era.printAndWait(\n          `「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」`,\n        );',
+      '      } else if (era.get(`talent:${target}:76`) === 1) {\n        // 变异：条件错格\n        await era.printAndWait(\n          `「这，这是？！这种东西不是用来按摩肩膀的——啊啊啊！」`,\n        );',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM12 初めて：非助手玛奥 + 爱慕推进到 1',
   },
@@ -5048,7 +5048,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       ) {`,
     replace: `    if (assi_mao) {
       if (
-        era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
         (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)
       ) {`,
     tests: ['kojo-k11-lily'],
@@ -5073,7 +5073,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         await era.printAndWait(
           \`「哈…啊…又是这个！快，快拿开啊，姐姐怕痒啊啊啊…呼…呼…呃啊啊啊！」\`,`,
     replace: `      } else if (
-        era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+        era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
         (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)
       ) {
         // 爱慕
@@ -5101,7 +5101,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         await era.printAndWait(
           \`『姐姐也开始露出舒服和享受的表情了呢，真是可爱～』\`,`,
     replace: `      } else if (
-        mark(2) === 2 && // 变异：判据错格
+        mark(2) === 2 && // 变异：条件错格
         (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)
       ) {
         // 屈服刻印Lv3
@@ -5137,7 +5137,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       await era.printAndWait(
         \`「啊啊啊…这个感觉…好棒呃啊啊…简直太舒服了嗯啊啊啊…\${heart(1)}」\`,`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:85\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:85\`) === 1 && // 变异：条件错格
       (kojo.振动杖 <= 4 || game.kojo.口上开关 === 2)
     ) {
       // 淫乱
@@ -5165,7 +5165,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       await era.printAndWait(
         \`「啊啊啊…太…太激烈了…嗯啊啊…哈…哈…呃啊啊啊\${heart(1)}」\`,`,
     replace: `    } else if (
-      era.get(\`talent:\${target}:76\`) === 1 && // 变异：判据错格
+      era.get(\`talent:\${target}:76\`) === 1 && // 变异：条件错格
       (kojo.振动杖 <= 3 || game.kojo.口上开关 === 2)
     ) {
       // 爱慕
@@ -5187,7 +5187,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '    } else if (\n      mark(2) === 3 &&\n      (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)\n    ) {\n      // 屈服刻印Lv3\n      await era.printAndWait(`「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」`);',
     replace:
-      '    } else if (\n      mark(2) === 2 && // 变异：判据错格\n      (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)\n    ) {\n      // 屈服刻印Lv3\n      await era.printAndWait(`「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」`);',
+      '    } else if (\n      mark(2) === 2 && // 变异：条件错格\n      (kojo.振动杖 <= 2 || game.kojo.口上开关 === 2)\n    ) {\n      // 屈服刻印Lv3\n      await era.printAndWait(`「不，不行啊…再继续就…就啊啊…哈啊…哈啊…！」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'COM12 二回目：非助手玛奥 + 屈服刻印Lv3推进到 3',
   },
@@ -7884,7 +7884,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "  // IF SELECTCOM == 27（背后位肛交 CFLAG:328）\n  if (era_flag.selectcom === 27) {\n    const weapon =\n      era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0\n        ? '电动假阳具'\n        : '阴茎';",
     replace:
-      "  // IF SELECTCOM == 27（背后位肛交 CFLAG:328）\n  if (era_flag.selectcom === 27) {\n    // 原作缺陷：源第 4079、4102、4181、4201 行的前两档误读 CFLAG:327\n    //（正常位肛交），1:1 保留。\n    const weapon =\n      era0(`talent:${player}:121`) === 0 || era0(`talent:${player}:122`) === 0\n        ? '电动假阳具'\n        : '阴茎';",
+      "  // IF SELECTCOM == 27（背后位肛交 CFLAG:328）\n  if (era_flag.selectcom === 27) {\n    // 变异：武器三目条件改回 ||（缺陷写法：前两档误读 CFLAG:327 正常位肛交）\n    const weapon =\n      era0(`talent:${player}:121`) === 0 || era0(`talent:${player}:122`) === 0\n        ? '电动假阳具'\n        : '阴茎';",
     tests: ['kojo-k11-lily'],
     must_mention: 'COM27 初次助手玛奥使用三目武器名',
   },
@@ -9684,7 +9684,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: "      : '阴茎';\n  void rand;\n\n  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {",
     replace:
-      "      : '阴茎';\n  void rand;\n\n  if (false) {\n    // 变异：删除非玛奥助手守卫",
+      "      : '阴茎';\n  void rand;\n\n  if (false) {\n    // 变异：删除非玛奥助手检查",
     tests: ['kojo-k11-lily'],
     must_mention: '非玛奥助手参与调教时整段静默跳过',
   },
@@ -9775,7 +9775,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  const kojo = chara(target).kojo;\n  void rand;\n\n  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {',
     replace:
-      '  const kojo = chara(target).kojo;\n  void rand;\n\n  if (false) {\n    // 变异：删除非玛奥助手守卫',
+      '  const kojo = chara(target).kojo;\n  void rand;\n\n  if (false) {\n    // 变异：删除非玛奥助手检查',
     tests: ['kojo-k11-lily'],
     must_mention: 'MARKCNG_11 非玛奥助手参与调教时整段静默跳过',
   },
@@ -10371,7 +10371,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
       'COM31 非助手玛奥淫乱 RAND 第二档台词',
     ],
   ].map(([id, find_rand, replace_rand, must_mention]) => ({
-    desc: `M${id} COM31 非助手淫乱随机判据改错（#242）`,
+    desc: `M${id} COM31 非助手淫乱随机条件改错（#242）`,
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `${id === 4343 ? 'if (' : '} else if ('}${find_rand}) {\n            // COM31-RAND`,
     replace: `${id === 4343 ? 'if (' : '} else if ('}${replace_rand}) {\n            // COM31-RAND`,
@@ -12809,7 +12809,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M1826 K8 SELECTCOM 8 それ以外分支删除（CFLAG:309 <= 1 检查改 false，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '    } else if (kojo.插入手指 <= 1 || game.kojo.口上开关 == 2) {\n      // それ以外',
-    replace: '    } else if (false) {\n      // それ以外（变异：守卫删除）',
+    replace: '    } else if (false) {\n      // それ以外（变异：检查删除）',
     tests: ['kojo-k8-spade'],
     must_mention: '那里…被这样玩弄的话',
   },
@@ -14130,7 +14130,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  if (choice == 0) {\n    // 放置PLAY\n    await era.printAndWait(`「………知道了、我就这样退下了」`);',
     replace:
-      '  if (choice == 1) {\n    // （变异：档位守卫写错）\n    await era.printAndWait(`「………知道了、我就这样退下了」`);',
+      '  if (choice == 1) {\n    // （变异：档位检查写错）\n    await era.printAndWait(`「………知道了、我就这样退下了」`);',
     tests: ['kojo-k8-spade'],
     must_mention: 'GOHOUBI_AFTER：choice 0/1 各一行，choice 越界静默',
   },
@@ -14249,7 +14249,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (game.train.失神) {',
     replace:
-      '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (false) { // 变异：失神守卫删除',
+      '  // 失神時（TFLAG:899）——跨域读属主 train 的一维门面\n  if (false) { // 变异：失神检查删除',
     tests: ['kojo-k0-tender'],
     must_mention: '失神（TFLAG:899）：不输出',
   },
@@ -14291,7 +14291,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M1610 K0 死斗场检查删除（TEQUIP:55 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 死斗场中は専用口上\n  if (era.get(`tequip:${target}:55`)) {',
-    replace: '  if (false) { // 变异：死斗场守卫删除',
+    replace: '  if (false) { // 变异：死斗场检查删除',
     tests: ['kojo-k0-tender'],
     must_mention: '死斗场（TEQUIP:55）',
   },
@@ -14300,7 +14300,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 助手が調教した時に口上をスキップする\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
-      '  // 助手が調教した時に口上をスキップする\n  if (false) { // 变异：助手守卫删除',
+      '  // 助手が調教した時に口上をスキップする\n  if (false) { // 变异：助手检查删除',
     tests: ['kojo-k0-tender'],
     must_mention: '助手调教中',
   },
@@ -14308,7 +14308,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M1612 K0 口塞检查删除（TEQUIP:45 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom !== 45) {',
-    replace: '  if (false) { // 变异：口塞守卫删除',
+    replace: '  if (false) { // 变异：口塞检查删除',
     tests: ['kojo-k0-tender'],
     must_mention: '口塞（TEQUIP:45）',
   },
@@ -14317,7 +14317,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前\n  if (era.get(`talent:${target}:9`) === 1) {\n    return 0;\n  }',
     replace:
-      '  // 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前\n  if (false) { // 变异：崩坏守卫删除\n    return 0;\n  }',
+      '  // 崩坏した場合（TALENT:9）——K0 把崩坏放在兽奸前\n  if (false) { // 变异：崩坏检查删除\n    return 0;\n  }',
     tests: ['kojo-k0-tender'],
     must_mention: '崩坏（TALENT:9）',
   },
@@ -14325,7 +14325,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M1614 K0 兽奸检查删除（TEQUIP:89 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 兽奸PLAY中は専用口上\n  if (era.get(`tequip:${target}:89`)) {',
-    replace: '  if (false) { // 变异：兽奸守卫删除',
+    replace: '  if (false) { // 变异：兽奸检查删除',
     tests: ['kojo-k0-tender'],
     must_mention: '兽奸（TEQUIP:89）',
   },
@@ -14333,7 +14333,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M1615 K0 触手检查删除（TEQUIP:90 改恒 false）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  // 触手調教中（TEQUIP:90）\n  if (era.get(`tequip:${target}:90`)) {',
-    replace: '  if (false) { // 变异：触手守卫删除',
+    replace: '  if (false) { // 变异：触手检查删除',
     tests: ['kojo-k0-tender'],
     must_mention: '触手（TEQUIP:90）',
   },
@@ -15675,9 +15675,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3104 K0 交谈录像自白 TFLAG:32 按位或改成赋值（|= 2 改 = 2）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 |= 2;",
+    find: "          // 当条件、文本留在输出语句里\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 |= 2;",
     replace:
-      "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 = 2;",
+      "          // 当条件、文本留在输出语句里\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );\n          era.print(\n            `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,\n          );\n          game.kojo.录像内容 = 2;",
     tests: ['kojo-k0-tender'],
     must_mention: '录像自白 TFLAG:32 |= 2',
   },
@@ -16309,7 +16309,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
-      '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (false) { // 变异：助手守卫删松',
+      '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (false) { // 变异：助手检查删松',
     tests: ['kojo-k0-tender'],
     must_mention: 'PALAMCNG：助手调教跳过',
   },
@@ -16345,7 +16345,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '  const target = era_flag.target;\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (era_flag.assi > 0 && era_flag.assiplay) {',
     replace:
-      '  const target = era_flag.target;\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (false) { // 变异：助手守卫删松',
+      '  const target = era_flag.target;\n  const sc = () => self_call(target); // %SELF_CALL(TARGET)%\n  const kojo = chara(target).kojo;\n\n  if (false) { // 变异：助手检查删松',
     tests: ['kojo-k0-tender'],
     must_mention: 'MARKCNG：助手调教跳过',
   },
@@ -17107,7 +17107,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M3423 K14 COM 检查①口塞条件删除（#245）',
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
-    replace: '  if (false) { // 变异：口塞守卫删除',
+    replace: '  if (false) { // 变异：口塞检查删除',
     tests: ['kojo-k14-nobleman'],
     must_mention: '口塞（TEQUIP:45',
   },
@@ -17116,7 +17116,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k14-nobleman.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
-      '  if (false) { // 变异：失神守卫删除\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
+      '  if (false) { // 变异：失神检查删除\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     tests: ['kojo-k14-nobleman'],
     must_mention: '失神（TFLAG:899）',
   },
@@ -17322,7 +17322,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: `  const kojo = chara(target).kojo;
 
   if (era_flag.assi > 0 && era_flag.assiplay) {
-    return 0; // 变异：插入 ASSI 守卫
+    return 0; // 变异：插入 ASSI 检查
   }
   if (era0(\`tequip:\${target}:45\`) && era_flag.selectcom != 45) {`,
     tests: ['kojo-k15-clever'],
@@ -17333,7 +17333,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '    await colosseum_kojo_15(rand_n); // CALL COLOSSEUM_KOJO_15\n    return 0;\n  }\n\n  if (era_flag.selectcom == 0) {',
     replace:
-      '    await colosseum_kojo_15(rand_n); // CALL COLOSSEUM_KOJO_15\n    return 0;\n  }\n  if (era0(`talent:${target}:9`) == 1) {\n    return 0; // 变异：插入 TALENT:9 守卫\n  }\n\n  if (era_flag.selectcom == 0) {',
+      '    await colosseum_kojo_15(rand_n); // CALL COLOSSEUM_KOJO_15\n    return 0;\n  }\n  if (era0(`talent:${target}:9`) == 1) {\n    return 0; // 变异：插入 TALENT:9 检查\n  }\n\n  if (era_flag.selectcom == 0) {',
     tests: ['kojo-k15-clever'],
     must_mention: 'K15 无 TALENT:9 检查',
   },
@@ -17342,7 +17342,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k15-clever.js',
     find: '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }\n  if (era0(`tequip:${target}:89`)) {',
     replace:
-      '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }\n  if (era0(`tequip:${target}:90`)) {\n    return 0; // 变异：插入 TEQUIP:90 守卫\n  }\n  if (era0(`tequip:${target}:89`)) {',
+      '  if (game.train.失神) {\n    // TFLAG:899（跨域读走门面）\n    return 0;\n  }\n  if (era0(`tequip:${target}:90`)) {\n    return 0; // 变异：插入 TEQUIP:90 检查\n  }\n  if (era0(`tequip:${target}:89`)) {',
     tests: ['kojo-k15-clever'],
     must_mention: 'K15 无 TEQUIP:90 检查',
   },
@@ -18095,7 +18095,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M3224 K12 KOJO_MESSAGE_COM_12 口塞检查删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: 'if (era.get(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
-    replace: 'if (false) { // 变异：口塞守卫删松',
+    replace: 'if (false) { // 变异：口塞检查删松',
     tests: ['kojo-k12-intellectual'],
     must_mention: '头部检查① TEQUIP:45（口塞）',
   },
@@ -18104,7 +18104,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     replace:
-      '  if (false) { // 变异：失神守卫删松\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
+      '  if (false) { // 变异：失神检查删松\n    return 0;\n  }\n\n  if (era.get(`tequip:${target}:89`)) {',
     tests: ['kojo-k12-intellectual'],
     must_mention: '失神）跳过',
   },
@@ -18144,7 +18144,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M3230 K12 KOJO_MESSAGE_COM_12 检查③ TEQUIP:89（兽奸岔入 DOG）删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (era.get(`tequip:${target}:89`)) {',
-    replace: '  if (false) { // 变异：兽奸岔入守卫删松',
+    replace: '  if (false) { // 变异：兽奸岔入检查删松',
     tests: ['kojo-k12-intellectual'],
     must_mention: '头部检查③ TEQUIP:89（兽奸）岔去 dog_kojo_12 真身',
   },
@@ -18152,7 +18152,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M3231 K12 KOJO_MESSAGE_COM_12 检查④ TEQUIP:55（死斗场岔入 COLOSSEUM）删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (era.get(`tequip:${target}:55`)) {',
-    replace: '  if (false) { // 变异：死斗场岔入守卫删松',
+    replace: '  if (false) { // 变异：死斗场岔入检查删松',
     tests: ['kojo-k12-intellectual'],
     must_mention: '头部检查④ TEQUIP:55（死斗场）岔去 colosseum_kojo_12 真身',
   },
@@ -18160,7 +18160,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M3232 K12 MARKCNG 苦痛刻印 Lv3 首超条件删松',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find: '  if (game.system.苦痛刻印变动 == 3 && kojo.苦痛刻印Lv3 == 0) {',
-    replace: '  if (false) { // 变异：苦痛刻印首超判据删松',
+    replace: '  if (false) { // 变异：苦痛刻印首超条件删松',
     tests: ['kojo-k12-intellectual'],
     must_mention: 'kojo_message_markcng_12 苦痛刻印Lv3 取得',
   },
@@ -18195,7 +18195,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`ex_talent:${target}:103`) != 1) {\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     replace:
-      '  if (false) { // 变异：EX_TALENT:103 守卫删除\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
+      '  if (false) { // 变异：EX_TALENT:103 检查删除\n    return 0;\n  }\n\n  if (kojo.初调教 == 0) {',
     tests: ['kojo-k903-garde'],
     must_mention: 'EX_TALENT:103 缺席',
   },
@@ -18260,7 +18260,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M6409 K903 COM 检查① TEQUIP:45 删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {',
-    replace: '  if (false) { // 变异：TEQUIP:45 口塞守卫删松',
+    replace: '  if (false) { // 变异：TEQUIP:45 口塞检查删松',
     tests: ['kojo-k903-garde'],
     must_mention: 'COM 仅五道检查活动',
   },
@@ -18269,7 +18269,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (game.train.失神) {\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:89`)) {',
     replace:
-      '  if (false) { // 变异：TFLAG:899 失神守卫删松\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:89`)) {',
+      '  if (false) { // 变异：TFLAG:899 失神检查删松\n    return 0;\n  }\n\n  if (era0(`tequip:${target}:89`)) {',
     tests: ['kojo-k903-garde'],
     must_mention: 'COM 仅五道检查活动',
   },
@@ -18277,7 +18277,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M6411 K903 COM 检查③ TEQUIP:89 DOG 分发删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:89`)) {',
-    replace: '  if (false) { // 变异：TEQUIP:89 DOG 分发守卫删松',
+    replace: '  if (false) { // 变异：TEQUIP:89 DOG 分发检查删松',
     tests: ['kojo-k903-garde'],
     must_mention: 'COM 仅五道检查活动',
   },
@@ -18285,7 +18285,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     desc: 'M6412 K903 COM 检查④ TEQUIP:90 触手删松（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:90`)) {',
-    replace: '  if (false) { // 变异：TEQUIP:90 触手守卫删松',
+    replace: '  if (false) { // 变异：TEQUIP:90 触手检查删松',
     tests: ['kojo-k903-garde'],
     must_mention: 'COM 仅五道检查活动',
   },
@@ -18294,7 +18294,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     file: 'ere/kojo/kojo-k903-garde.js',
     find: '  if (era0(`tequip:${target}:55`)) {\n    await colosseum_kojo_903(rand);\n    return 0;\n  }',
     replace:
-      '  if (false) { // 变异：TEQUIP:55 竞技场分发守卫删松\n    await colosseum_kojo_903(rand);\n    return 0;\n  }',
+      '  if (false) { // 变异：TEQUIP:55 竞技场分发检查删松\n    await colosseum_kojo_903(rand);\n    return 0;\n  }',
     tests: ['kojo-k903-garde'],
     must_mention: 'COM 仅五道检查活动',
   },
@@ -20304,7 +20304,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   if (level === 0) {`,
     replace: `function bich_level_text(arg) {
   const level = era.get(\`cflag:\${arg}:120\`) || 0;
-  if (level !== 0) { // 变异：首档判据写反`,
+  if (level !== 0) { // 变异：首档条件写反`,
     tests: ['page-chara-info', 'kojo-dungeon-bitch'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
@@ -20313,7 +20313,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: "  if (level === 1) {\n    return '普通';\n  }",
     replace: `  if (level === 1) {
-    return '普通级'; // 变异：第二臂文案写错
+    return '普通级'; // 变异：第二分支文案写错
   }`,
     tests: ['page-chara-info', 'kojo-dungeon-bitch'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
@@ -20322,7 +20322,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M11327 卖春积极性档位第三分支数值错位（${level}等级 改 ${level + 1}等级——档位文案与 CFLAG:120 对不上，#542）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  return `${level}等级`;',
-    replace: '  return `${level + 1}等级`; // 变异：第三臂数值错位',
+    replace: '  return `${level + 1}等级`; // 变异：第三分支数值错位',
     tests: ['page-chara-info', 'kojo-dungeon-bitch'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
@@ -20883,8 +20883,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-dungeon-ravish'],
     must_mention: '语尾两处都拼进『猪』行',
   },
-  // M11772（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
-  // M11773（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
+  // M11772（拼接基准漏列——文本锁专属检查）随文本锁删除（#640）。
+  // M11773（拼接基准漏列——文本锁专属检查）随文本锁删除（#640）。
   // —— #572：K10 初调教两处二选一的按钮化 ——
   {
     desc: 'M12035 K10 初调教的选项退回纯文本行（引擎里点不动）',
@@ -20958,7 +20958,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-dungeon-ravish-man'],
     must_mention: '反抗的：恐怖点数与前置描写同一行',
   },
-  // M11947（拼接基准漏列——保真锁专属检查）随 kojo-text-fidelity 删除（#640）。
+  // M11947（拼接基准漏列——文本锁专属检查）随文本锁删除（#640）。
   {
     desc: 'M11949 男版肉便器收尾行拆回两条（#584 的两行合一段；#600 起目标在整行语句的末段）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
@@ -21016,12 +21016,11 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   },
 
   // —— #599：肉便器口上 BENKI_PLAYER_NAME 接入（M12130-M12139） ——
-  // K0 四处（:7495+:7497 / :7516+:7518 / :7537+:7539 / :7558+:7560）三行一支
+  // K0 四处三行一支
   // 合并成一条 era.printAndWait 后，名字位置必须插 ${benki_player_name()}；
   // K12 四处是两行（前缀 PRINTFORMW 自带换行/等待），拆成两条语句、
   // 名字插在续行语句首位；K3 一处与 K0 同型，用拼接基准。行为测试守「名字出现
-  // 在整行里」，保真锁（kojo-text-fidelity）守「插的是那个记号、位置对、
-  // 该拆的行没被并」——两侧各钉几条。
+  // 在整行里」与「该拆的行没被并」——两侧各钉几条。
   {
     desc: 'M12130 K0 施舍首句名字删除（缺对象名，与三行一支结构不符）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
@@ -21033,7 +21032,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12131 K0 施舍首句名字换成别的调用（保真锁认记号：benki_player_name() → sc()）（#599）',
+    desc: 'M12131 K0 施舍首句名字换成别的调用（换记号：benki_player_name() → sc()）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '`「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`',
     replace: '`「和${sc()}来同时用小穴和菊花来做爱了♪」`',
@@ -21090,8 +21089,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention:
       '#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名',
   },
-  // M12137（保真锁记号表检查）随 kojo-text-fidelity 删除（#640）。
-  // M12138（保真锁上方记号行检查）随 kojo-text-fidelity 删除（#640）。
+  // M12137（文本锁记号表检查）随文本锁删除（#640）。
+  // M12138（文本锁上方记号行检查）随文本锁删除（#640）。
   {
     desc: 'M12139 K12 两行并回一行（前缀行被吞——行为断言的整行输出对账抓）（#599；#640 起由 kojo-k12-intellectual 守）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
@@ -21174,9 +21173,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12146 K0 交谈首次·录像自白拆回多条（#600）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: "          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
+    find: "          // 当条件、文本留在输出语句里\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验` +\n              (masturbation ? '以及自慰时妄想的内容' : '') +\n              `开始愉快的说了起来……`,\n          );",
     replace:
-      '          // 当条件、文本留在输出语句里（保真锁按序核对台词片段）\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验`,\n          ); // 变异：拆回\n          if (masturbation) {\n            era.print(`以及自慰时妄想的内容`); // 变异：拆回\n          }\n          era.print(\n            `开始愉快的说了起来……`,\n          ); // 变异：拆回',
+      '          // 当条件、文本留在输出语句里\n          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;\n          era.print(\n            `于是${target_name}就将自己的本名、至今为止的性体验`,\n          ); // 变异：拆回\n          if (masturbation) {\n            era.print(`以及自慰时妄想的内容`); // 变异：拆回\n          }\n          era.print(\n            `开始愉快的说了起来……`,\n          ); // 变异：拆回',
     tests: ['kojo-k0-tender'],
     must_mention: '交谈首次',
   },
@@ -21317,9 +21316,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12602 K11 初回交谈·助手玛奥首支拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            );",
+    find: "          // 前缀留在里面会多出一段不属于本支的插值记号（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(\n              line_head +\n                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            );",
     replace:
-      "          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(line_head); // 变异：拆回\n            await era.print(\n              `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            ); // 变异：拆回",
+      "          // 前缀留在里面会多出一段不属于本支的插值记号（#623）\n          const faced_first =\n            chara(target).train.欲情 >= era0('palamlv:4') &&\n            (era.get(`talent:${target}:85`) ||\n              chara(target).system.顺从 >= 5) &&\n            game.event.插着不拔;\n          const line_head = `面对${player_name}`;\n          if (faced_first) {\n            await era.print(line_head); // 变异：拆回\n            await era.print(\n              `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n            ); // 变异：拆回",
     tests: ['kojo-k11-lily'],
     must_mention: '#623 COM56 初回通常（',
   },
@@ -22708,9 +22707,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12500 K8 爱慕+魔族化·调教前从魔族拆回两条（#622：SIF 的「全裸的」又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: "        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里（保真锁按序核对台词片段）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
+    find: "        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
     replace:
-      '        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里（保真锁按序核对台词片段）\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+      '        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
     must_mention: '爱慕+魔族化（调教前从魔族',
   },

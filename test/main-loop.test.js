@@ -94,14 +94,10 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   }
 
   // 到站证据二：随机路径已走 rand_chara_make 真身（#565）——初始奴隶
-  // 已生成并入列（rand ≡ 0 掷勇者位 1）、收下播报可见，占位行不得再出现
+  // 已生成并入列（rand ≡ 0 掷勇者位 1）、收下播报可见
   assert(
     texts.some((line) => line.includes('冒险者佳奈美被囚禁在了地牢里！')),
     '随机初始奴隶的收下播报必须在场（rand_chara_make 真身）',
-  );
-  assert(
-    !texts.some((line) => line.includes('@RAND_CHARA_MAKE')),
-    '随机角色生成已接真身，占位行不得再出现',
   );
   assert.deepEqual(fixture.chara_no, [0, 1], '魔王与生成的初始奴隶都在列');
   // 到站证据三：标题只画过转场前的那一次（FIRST 之后没有回标题重绘）

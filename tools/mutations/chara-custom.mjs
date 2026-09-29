@@ -665,7 +665,7 @@ export default [
   },
   {
     // #562：PRINTLC 不换行，页脚四个按钮那一行由 PRINTL 收尾后即入
-    // INPUT（见 CONTEXT.md「输出 API 与原作的对应」）
+    // INPUT（见 CONTEXT.md「输出 API 的排版与对齐」）
     desc: 'M11865 角色定制页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/chara/chara-custom2.js',
     find: "    era.printButton('后一页', 998);",

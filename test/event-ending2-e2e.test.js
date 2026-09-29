@@ -1,5 +1,5 @@
 /**
- * ere 阶段 3 第四条贯通路径的端到端验收（issue #173，#169 阶段 3 的收口）：
+ * ere 阶段 3 第四条贯通路径的端到端验收（issue #173，#169 阶段 3 的收尾）：
  * 新档从标题画面一路跑到 ENDING_2——**游戏第二次能走到结局，这次是输的
  * 那个**（真 GAMEOVER，quit 抛出）。夹具跑完整逻辑循环，毫秒级，每次
  * `npm test` 都跑（与阶段 1 的 test/event-ending-e2e.test.js 并列）。
@@ -9,13 +9,13 @@
  * 与阶段 1 e2e（ENDING_1）的两点对称：
  *   - **勇者来袭开着**（不调 disable_enter_enemy）：本路径的推进者就是
  *     ENTER_ENEMY 每日生成的勇者。两条 e2e 各自隔离——阶段 1 那条关掉
- *     勇者（#168 裁定 4），本条开着，互不踩对方的回归判据；
+ *     勇者（#168 结论 4），本条开着，互不踩对方的回归断言；
  *   - **压住侵攻度**：出兵照常（[109]→[1]，与阶段 1 同一驱动——主菜单上
  *     它是唯一已接真的 TURNEND 出口），但 ENDING_2 的贯通用时（实测 14 日）
  *     远短于 ENDING_1 的 100 日，人间界侵攻度只涨到 ~1300，`FLAG:81 >=
- *     10000` 的 ENDING_1 判据不可达——用例尾部断言 flag:82 == 0 留证。
+ *     10000` 的 ENDING_1 条件不可达——用例尾部断言 flag:82 == 0 留证。
  *
- * 随机源（#173 票面指定，阶段 1 e2e 的先例）：端到端从 turnend-settle 进
+ * 随机源（#173 工单内容指定，阶段 1 e2e 的先例）：端到端从 turnend-settle 进
  * run_dungeon，调用是 `run_dungeon(cid)` **不带 rand**——随机源注入点
  * （run_dungeon 的第二参）在端到端路径上够不着，改在 turnend-settle 开
  * 透传属设计改动（简报第 2 条：要在 issue 上说明依据，别默默改）。
@@ -24,17 +24,17 @@
  *
  * 勇者的 base/maxbase 预置（Chara1-16.yml「基礎」的 0/1 两键等价值）：
  * 引擎的 addCharacter 会把预设「基礎」抄进 base/maxbase（e2e 注释与
- * ending-paths.md 的口径），**夹具不搬这层**（era-fixture 的 addCharacter
+ * ending-paths.md 的说明），**夹具不搬这层**（era-fixture 的 addCharacter
  * 只镜像 callname 双下标）。不预置的后果实测（种子 20250601，60 日不出
- * 结局）：勇者气力上限 undefined → cm_st 写 0 → @DUNGEON :629-634 的
+ * 结局）：勇者气力上限 undefined → cm_st 写 0 → run_dungeon 的
  * 「冒険の疲れ」每轮扣 RAND:6 直接坠负 → CHECK_STATUS 的 wp 百分比算出
  * -Infinity 判轻伤 → 踏破后「放弃探索，开始回头了」→ 全员回头，推进无法
- * 成立。预置口径与阶段 1 e2e 对角色 0/17 的 base/maxbase 设置同款。
+ * 成立。预置值与阶段 1 e2e 对角色 0/17 的 base/maxbase 设置同款。
  *
- * 通关天数（实测口径，种子 20250601）：14 日 / 28 个半天轮。五个候选
+ * 通关天数（实测值，种子 20250601）：14 日 / 28 个半天轮。五个候选
  * 种子（20250601/1/42/20250701/998877）实测 14-16 日，断言区间 [10, 20]
- * 两端各留 4-6 日余量给后续票（H5-H16 会继续接真身，PRNG 消费序列随之
- * 漂移），同时都在变异的实测天数之外（WALK 公式改坏时 60 轮上限先红）。
+ * 两端各留 4-6 日余量给后续工单（H5-H16 会继续接真身，PRNG 消费序列随之
+ * 变化），同时都在变异的实测天数之外（WALK 公式改坏时 60 轮上限先红）。
  */
 
 const assert = require('node:assert/strict');
@@ -86,25 +86,25 @@ const HEROES = {
 
 /**
  * 固定名表（LIST_CHARA_NAME）的**种子编号域**——本用例自己种的，
- * **不是原作数据**（名字一律 `勇<nid>`，与勇者池的职业名不重样）。
+ * **不是游戏数据表的内容**（名字一律 `勇<nid>`，与勇者池的职业名不重样）。
  *
  * 为什么要种：勇者的称呼由命名链掷一个编号再查这张表写下
- * （CHARA_MAKE.ERB:18-20 → @CHARA_NAME_RANDOM_DEFINE → @CHARA_NAME_DEFINE，
+ * （chara_make → CHARA_NAME_RANDOM_DEFINE → CHARA_NAME_DEFINE，
  * #384 起都是真身）。编号是**掷出来的、与勇者号无关**（实测本种子下 11 名
  * 勇者的编号是 88/123/129/154/177/1248/1270/1274/1281/1500/1543）；夹具不
- * 种表时全部落兜底名「佳奈美」，名字就再也当不了身份用——「被封印的」与
+ * 种表时全部落缺省名「佳奈美」，名字就再也当不了身份用——「被封印的」与
  * 「打到第 9 层的」之间的绑定会失去抓手。
  *
- * 区间按真身的掷法推（命名发生在 CHARA_MAKE.ERB:18-20，**早于**同一函数里
- * 设职业与种族的段（:32 起），故掷骰时 TALENT:骑士/巫女/忍者（:45-51）与
- * CFLAG:314（:55-93）都还没设 → 名字类型恒落「洋名」支（:110-119））：
+ * 区间按真身的掷法推（命名发生在同一函数里设职业与种族的段**之前**，
+ * 故掷骰时 TALENT:骑士/巫女/忍者与
+ * CFLAG:314 都还没设 → 名字类型恒落「洋名」支）：
  *   - nid = RAND:WEST_NAME_COUNT = [0, 585)
  *   - nid >= 200 时再 +1000 → [1200, 1585)
  *   - 男性勇者另走 RAND:WEST_MALE_NAME_COUNT + 2000 = [2000, 2453)
- *     （TALENT:122 由 :14-16 的 CM_GENDER 先设好；本种子下没有男性勇者，
+ *     （TALENT:122 由 CM_GENDER 先设好；本种子下没有男性勇者，
  *     换个随机序列就会有，故一并种上）
- * 种满可达域而不是只种实测到的那几个：本文件明确容忍 PRNG 序列随后续票
- * 漂移（文件头「断言区间…余量」条），种窄了就会以「名字不在表里」这种
+ * 种满可达域而不是只种实测到的那几个：本文件明确容忍 PRNG 序列随后续工单
+ * 变化（文件头「断言区间…余量」条），种窄了就会以「名字不在表里」这种
  * 看不懂的方式红。每个编号一个互不相同的名字，掷到哪个都查得到。
  */
 const NAME_NIDS = [
@@ -146,7 +146,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     fixture.store.set(`maxbase:${id}:1`, wp);
   }
   // 固定名表（区间与依据见 NAME_NIDS 的注释）：命名链读的就是这张表，
-  // 必须在任何角色生成之前种好，种晚了仍会落兜底名
+  // 必须在任何角色生成之前种好，种晚了仍会落缺省名
   fixture.store.set('namelistkeys', NAME_NIDS);
   for (const nid of NAME_NIDS) {
     fixture.store.set(`namelistname:${nid}`, seeded_name(nid));
@@ -162,7 +162,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     fixture.store.set(`maxbase:17:${idx}`, 1500);
   }
   // 留一只最低级狗头人在防御库存，使勇者的真实循环必经战斗层；没有库存
-  // 时原作走“无敌人训练”分支，MAGIC / MONSTER_SKILL 都不会被调用。
+  // 时走“无敌人训练”分支，MAGIC / MONSTER_SKILL 都不会被调用。
   fixture.store.set('item:100', 1);
   fixture.store.set('itemname:100', '狗头人');
 
@@ -202,8 +202,8 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // #346 接入的每日召唤与本用例的勇者推进无关；隔离它的随机消费，避免
-  // 全局 PRNG 序列把固定剧本漂移到需要额外输入的凌辱分支。召唤自身及
-  // EVENT_NEXTDAY 接线由 chara-pregnancy.test.js 独立覆盖。
+  // 全局 PRNG 序列把固定剧本偏移到需要额外输入的凌辱分支。召唤自身及
+  // EVENT_NEXTDAY 接入由 chara-pregnancy.test.js 独立覆盖。
   const summon_mod = fixture.load_module('dungeon/monster-summon');
   summon_mod.summon_monster = async () => 0;
 
@@ -220,7 +220,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       '标题画面新游戏',
     );
 
-    // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+    // —— EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
     // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]（#50 真身）、地下城模式选
     // 「普通」[0]（#181 加的一问——本条走 3D 路径，2D 版见
     // event-ending2-2d-e2e.test.js）、搬运选「抱起」[1]
@@ -230,7 +230,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
 
     // —— 主循环：每半天出兵一次（压住侵攻度的论证见文件头），直到
     // ENDING_2 的 QUIT 从 EVENTTURNEND 链里炸出来。触发轮比正常轮多一个
-    // 输入（ENDING_2 的仪式性 INPUT，原作 :55）——reset_inputs 每轮清掉
+    // 输入（ENDING_2 的仪式性 INPUT）——reset_inputs 每轮清掉
     // 上一轮未消费的残留，避免错位（阶段 1 e2e 同款）
     let quit_error;
     while (quit_error === undefined) {
@@ -259,7 +259,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       );
     }
 
-    // —— 终局判据：真 GAMEOVER 是 quit 抛出，不是某个 flag 变 1（票面）——
+    // —— 终局条件：真 GAMEOVER 是 quit 抛出，不是某个 flag 变 1（工单内容）——
     assert(
       quit_error instanceof Error && quit_error.message === 'quit',
       'ENDING_2 的 QUIT 异常炸穿 EVENTTURNEND 链（#148 throw 型控制流）',
@@ -273,31 +273,31 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       .filter((line) => line.type === 'text')
       .map((line) => line.text);
 
-    // —— 触发点与演出（DUNGEON.ERB:200-202 → ENDING ver 1.0.1.ERB:43-56）——
+    // —— 触发点与演出（踏破第 9 层 → ENDING_2 演出）——
     assert(
       texts.includes('这里是魔王的房间………'),
-      '第 9 层踏破打出「这里是魔王的房间………」（DUNGEON.ERB:200）',
+      '第 9 层踏破打出「这里是魔王的房间………」',
     );
     assert(
       texts.includes(
         '｜　　　　　　新的女勇者，终于攻陷了魔王的地下城　　　　　　｜',
       ),
-      'ENDING_2 横幅在真实循环的终点出现（:47）',
+      'ENDING_2 横幅在真实循环的终点出现',
     );
     assert(
       texts.includes(
         '｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜',
       ),
-      'ENDING_2 横幅末行（:49）',
+      'ENDING_2 横幅末行',
     );
     // 封印播报的名字来自 %SAVESTR:TARGET%（→ callname:TARGET:-1，#5 决议：
     // NAME / SAVESTR 同源）。它必须是命名链**从上面种下的表里取到**的名字：
-    // 勇者的称呼在生成时被 CHARA_NAME_RANDOM_DEFINE 掷号覆写（CHARA_MAKE.ERB
-    // ），模板名（战士/骑士…）只活在 ADDCHARA 那一刻。
+    // 勇者的称呼在生成时被 CHARA_NAME_RANDOM_DEFINE 掷号覆写，
+    // 模板名（战士/骑士…）只活在 ADDCHARA 那一刻。
     const report = texts.find((line) =>
       line.includes('封印了魔王，被后人歌颂为传说中的勇者'),
     );
-    assert(report !== undefined, '封印播报在场（:52 PRINTFORMW）');
+    assert(report !== undefined, '封印播报在场');
     const sealed_name = report
       .replace(/^\*勇者/, '')
       .replace(/封印了魔王.*$/, '');
@@ -323,10 +323,10 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       texts.includes(
         '-------------------------------GAMEOVER---------------------------------',
       ),
-      'GAMEOVER 分隔行（:54）',
+      'GAMEOVER 分隔行',
     );
 
-    // —— 压住侵攻度（票面：确保先到 ENDING_2 而非 ENDING_1）——
+    // —— 压住侵攻度（工单内容：确保先到 ENDING_2 而非 ENDING_1）——
     assert.equal(
       fixture.store.get('flag:82') ?? 0,
       0,
@@ -334,14 +334,14 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     );
     assert(
       (fixture.store.get('flag:81') ?? 0) < 10000,
-      '人间界侵攻度未满（ENDING_1 的判据不可达）',
+      '人间界侵攻度未满（ENDING_1 的条件不可达）',
     );
     assert(
       !texts.some((line) => line.includes('魔王终于再次掌握了世界')),
-      'ENDING_1 横幅未出现（两条结局的竞速由本票压住）',
+      'ENDING_1 横幅未出现（两条结局的竞速由本工单压住）',
     );
 
-    // —— 阶段 5a 三块真身的贯通证据：既要实际抵达，也不许退回存根形态。——
+    // —— 阶段 5a 三块真身的贯通证据：既要实际抵达，也要有调用的留证。——
     console.log('[e2e] 阶段 5a 真身调用次数', {
       magic_calls,
       monster_skill_calls,
@@ -354,7 +354,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行',
     );
     // ENDING_2 不进入奴隶迎击的 duel_attack；SLAVE_MONSTER_SKILL 的接入
-    // 由 test/monster-skill.test.js:329 的模块边界用例负责。
+    // 由 test/monster-skill.test.js 的模块边界用例负责。
     assert(
       use_ex_item_in_battle_calls > 0,
       'USE_EX_ITEM 在 ENDING_2 战斗中调用点实际执行',

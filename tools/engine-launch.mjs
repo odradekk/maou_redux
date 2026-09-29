@@ -1,4 +1,4 @@
-// CLI 与 MCP 共用的引擎启动位置；Windows 用上游发布包，Linux 保留 Electron 运行时。
+// CLI 与 MCP 共用的引擎启动位置；Windows 用官方发布包，Linux 保留 Electron 运行时。
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';

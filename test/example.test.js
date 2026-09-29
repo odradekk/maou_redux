@@ -22,7 +22,7 @@ test('示例：游戏入口 main 已接到标题画面（入口冒烟）', async
   // 经 '#/' 加载游戏入口，与引擎的加载路径一致
   const main = fixture.load_module('main');
 
-  // 标题画面是常驻循环（原作 RESTART 语义）：预置输入耗尽 = 循环仍在等待
+  // 标题画面是常驻循环（RESTART 语义）：预置输入耗尽 = 循环仍在等待
   // 下一次交互，夹具以抛错终止（issue #16 的既定设计，测循环必用）
   await assert.rejects(() => main(), /预置输入已耗尽/);
 

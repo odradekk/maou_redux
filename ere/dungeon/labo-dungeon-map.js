@@ -271,7 +271,7 @@ async function dungeon_map(a, rand) {
     await equip_select(a, rand_n);
   }
 
-  // アイテムの使用（3D 路径同款存根，单点登记）
+  // アイテムの使用（与 3D 路径同款，use_ex_item 走 dungeon.js 转发）
   await use_ex_item('战斗后', a);
 
   // 移動を反映（D:20 写回 CFLAG:502，event 属主门面）

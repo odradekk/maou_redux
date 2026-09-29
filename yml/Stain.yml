@@ -1,11 +1,10 @@
-# 本文件不是转换器产物：原作没有 STAIN 的名字表（target/CSV 下无对应 CSV，
-# 原作一律用数字下标），无从转换。
+# 本文件为人工产出：STAIN 没有名字表（游戏侧一律用数字下标）。
 #
-# 内容：身体部位的污垢位掩码（值是污渍类型的按位或：1 爱液 / 2 阴茎 / 4 精液 / 8 肛门）。原作对下标一律用数字（STAIN:0..5），无 Stain.csv 可转。
+# 内容：身体部位的污垢位掩码（值是污渍类型的按位或：1 爱液 / 2 阴茎 / 4 精液 / 8 肛门）。下标一律用数字（STAIN:0..5）。
 #
 # 它的存在只有一个目的：让引擎装载循环建出 `staticData.stain`。引擎的
 # 三段寻址在 `data[表][角色]` 存在、而 `staticData[表]` 缺位时**直接抛错**
-# （app.asar 的 setVar 兜底分支 `u = i(this.staticData[a][u], u)`，无守卫）——
+# （app.asar 的 setVar 回落分支 `u = i(this.staticData[a][u], u)`，无检查）——
 # 调教域的表由 beginTrain/addCharacter 按角色开桶，所以桶一定在、崩就崩在
 # 名字表这一侧。实机撞见：调教开始时写 `stain:31:2` 报
 # `Cannot read properties of undefined (reading '2')`。

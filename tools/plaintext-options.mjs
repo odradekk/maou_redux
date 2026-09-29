@@ -6,7 +6,7 @@
  * returnFromButton：整段校验包在 `if (useRule)` 里，数组分支
  * `rule.length > 0 && rule.indexOf(Number(val)) === -1` 即拒收、不回调游戏；
  * 规则见 #130、`[N] 文字` + INPUT 升级为 printButton 的通则见 PR #53）。
- * 原作 Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用，EraElectron
+ * 旧引擎的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用，EraElectron
  * 不行——纯文本选项行会变成死路（#129 的主菜单 [109]、PR #53 的 [100]、
  * #530 的战役招募都是这个病灶）。反过来，消费方传 `era.input({useRule:false})`
  * 就整段跳过校验，那种行**结构性免疫**（报告第二节的 C 类，先例与结论见
@@ -14,8 +14,8 @@
  *
  * 判定面（有意收窄，理由逐条）：
  *   - 只认 `era.print` / `era.println` / `era.printAndWait` 的**首实参字面量**
- *     （含模板串）。这是全库菜单行的既有写法；数组形态的 `era.print([{content: …}])`
- *     多为排版片段（如 chara-info-title.js 的 `[8] 一人称重设`，原作本身用的
+ *     （含模板串）。这是全库菜单行的既有写法；数组写法的 `era.print([{content: …}])`
+ *     多为排版片段（如 chara-info-title.js 的 `[8] 一人称重设`，那边本身用的
  *     是 PRINTPLAINFORM，不由 INPUT 消费），不纳入——纳入会把排版文字算成选项。
  *   - 选项编号认两种写法：字面数字 `[1]` 与插值数字 `[${index}]`（后者在循环里
  *     逐行生成，见 OPTION_RE/INTERPOLATED_OPTION_RE 的注释）。字面那一支先剥
@@ -30,7 +30,7 @@
  * `ere/chara/chara-custom.js:131`（选项文本拼进字符串变量、再整行 `era.print`）、
  * `ere/event/event-ending.js:537`（选项文本在数组元素上、经循环打印）、
  * `ere/event/event-execution.js:116` 与
- * `ere/page/components/chara-info-title.js:151`（数组形态的 `content`）。把数据
+ * `ere/page/components/chara-info-title.js:151`（数组写法的 `content`）。把数据
  * 表纳入棘轮会把「数据」与「打印调用点」混在一个判定面里，故不纳入。
  *
  * 用法：
@@ -64,7 +64,7 @@ export const SCAN_ROOT = 'ere';
 const CALL_RE =
   /era\.(?:print|println|printAndWait)\(\s*(['"`])((?:\\.|[^\\])*?)\1/g;
 // 选项编号的两种写法：字面数字（`[1]`）与插值数字（`[${index}]`）。后者在
-// 循环里逐行生成，是同一形态——不认它会把 page-infrastructure 的展品行、
+// 循环里逐行生成，是同一种写法——不认它会把 page-infrastructure 的展品行、
 // page-dungeon-info2 的怪物行（#180 明文保留的那批）整组漏掉。
 // 字面数字那一支要**先剥插值**再测，否则 `${items[0]}` 这种下标会被误命中；
 // 插值数字那一支要在原文上测（剥掉就什么都不剩了），且要求**字面量以它开头、
@@ -74,7 +74,7 @@ const CALL_RE =
 // 分别由「后面要跟正文」与「要在字面量开头」两条挡住。
 const OPTION_RE = /\[\s*\d+\s*\]/;
 const INTERPOLATED_OPTION_RE = /^\s*\[\s*\$\{[^}]*\}\s*\]\s*\S/;
-// 消费这次输入的调用形态，用来标注「该行所在的输入是否传了 useRule: false」。
+// 消费这次输入的调用写法，用来标注「该行所在的输入是否传了 useRule: false」。
 // 只认 `era.input(`：`printAndWait` 等的是任意键、没有 useRule 这一说，
 // 把它算进来会让「菜单在别的函数里打印、消费点在调用方」的行（如
 // page-infrastructure.js 的 print_menu，中间夹着 show_exhibit 的 printAndWait）
@@ -204,7 +204,7 @@ export function scan_repo(root = REPO) {
   return hits.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
 }
 
-/** 命中项按文件计数（基线的键值形态） */
+/** 命中项按文件计数（基线的键值形式） */
 export function count_by_file(hits) {
   const counts = {};
   for (const hit of hits) {
@@ -226,7 +226,7 @@ export function render_baseline(counts) {
  * 生成：node tools/plaintext-options.mjs --write
  * 消费：test/plaintext-option.test.js（计数不符即红，两个方向都算）。
  *
- * 每项 = 「文件 → 该文件里「era.print('…[N] …')」形态的纯文本选项行条数」。
+ * 每项 = 「文件 → 该文件里「era.print('…[N] …')」写法的纯文本选项行条数」。
  * 这些行**今天还能用**（本轮没打印按钮时引擎放行自由输入），但只要同一轮
  * 里多打印一枚按钮，编号就会被引擎拒收、玩家敲不进去（#129 / PR #53 /
  * #530 三次都是这个病灶）。逐处的「真选项／说明文字」判定与处理意见见
@@ -237,8 +237,8 @@ export function render_baseline(counts) {
  * 收窄扫描面（改判定规则）时要一并重生成本文件，并在 #530 下说明理由。
  *
  * 已知限度（#530 二轮审查指出）：计数按「文件 → 条数」，**同一文件里删一行
- * 再加一行不会红**（净额不变）。要钉到具体行就得把基线换成锚点串，
- * engine-contract-ledger.mjs 那种粒度；本票取的是计数，够拦住「新增一行」
+ * 再加一行不会红**（净额不变）。要钉到具体行就得把基线换成基准串，
+ * engine-contract-ledger.mjs 那种粒度；本工单取的是计数，够拦住「新增一行」
  * 这一主要风险，代价是丢掉了同文件等额增减的分辨力。
  */
 export default {

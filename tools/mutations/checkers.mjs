@@ -1,16 +1,16 @@
 // 变异条目表切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #641 -96（trace-check / trace-coverage / stub-registry 体系守卫条目随工具与清单一并删除）；更早的计数沿革见 git 历史（#640 起改为单行注记）
-// SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
+export const COUNT = 87; // #641 -96（trace-check / trace-coverage / stub-registry 体系检查条目随工具与清单一并删除）；更早的计数沿革见 git 历史（#640 起改为单行注记）
+// SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收尾后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
 // 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
-// 合并 #547 时两侧 178/169 调和为 176：本票 178 收进 master 的 -2，按导入实测条目数写回
+// 合并 #547 时两侧 178/169 调和为 176：本工单 178 收进 master 的 -2，按导入实测条目数写回
 // 背景音乐音量三行退回存根，M11330：RULINGS 路径悬空——由 test/trace-check.test.js 的 #542 用例与
 // test/stub-registry-status.test.js 的八行棘轮守护）；此前 166 = 合并态实测（#532 与 #530 两侧条目全留；
-// 按 merge-conflicts.md，计数型基线不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、
+// 按 merge-conflicts.md，计数型基线不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本工单 144、
 // master 135，递增账：133 + #532 的 11 + #530 的 2 = 146，与实测相符）
 // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
@@ -21,12 +21,12 @@ export const COUNT = 87; // #641 -96（trace-check / trace-coverage / stub-regis
 // 的 #532 用例与既有的拦截路径/SIGINT 用例守护）；#530 起 +2（M11207/M11208：纯文本选项行的棘轮两个方向——新增一行、基线留过期条目，
 // 均由 test/plaintext-option.test.js 守护）；#541 起 +20（M11270-M11289：存根清单四张表的状态词三分类、
 // 分组标题行与表头/分隔行跳过、拆格的 \| 转义、未了结计数与打印面、以及清单三处行文退回——
-// 除注明外由 test/stub-registry-status.test.js 守护；M6511/M6512/M6520 的靶行随同票重构改写，
+// 除注明外由 test/stub-registry-status.test.js 守护；M6511/M6512/M6520 的目标行随同票重构改写，
 // M10901/M10902 两条清单行条目的 find 同步到新行文）
 
 export default [
   {
-    desc: 'M11630 冲突标记的行中形态识别删除（行尾尾巴重新失明）',
+    desc: 'M11630 冲突标记的行中形式识别删除（行尾尾巴重新失明）',
     file: 'tools/conflict-marker-check.mjs',
     find: '    if (INLINE_END_RE.test(line) || INLINE_START_RE.test(line)) {',
     replace: '    if (false) {',
@@ -107,21 +107,21 @@ export default [
     must_mention: '改成 24',
   },
   {
-    desc: 'M173 锚点检查被拆（字面消失不红，引擎升版当天守护无声消失）',
+    desc: 'M173 基准检查被拆（字面消失不红，引擎升版当天守护无声消失）',
     file: 'tools/engine-contract-check.mjs',
     find: '      if (!renderer_source.includes(anchor)) {',
-    replace: '      if (false) { // 变异：锚点检查拆除',
+    replace: '      if (false) { // 变异：基准检查拆除',
     tests: ['engine-contract-check'],
-    must_mention: '锚点失配',
+    must_mention: '基准失配',
   },
   {
-    desc: 'M174 失守语义被拆（failures 归零——工具只会打印不会红，#449 改同进程调用后靶点随 run() 的返回值挪，不再是 CLI 退出码）',
+    desc: 'M174 失守语义被拆（failures 归零——工具只会打印不会红，#449 改同进程调用后目标点随 run() 的返回值挪，不再是 CLI 退出码）',
     file: 'tools/engine-contract-check.mjs',
     find: "return { failures, output: lines.join('\\n') };",
     replace:
       "return { failures: 0, output: lines.join('\\n') }; // 变异：失守语义拆除",
     tests: ['engine-contract-check'],
-    must_mention: '锚点失配',
+    must_mention: '基准失配',
   },
   {
     desc: 'M175 条目表基线检查被拆（基线外新条目不再红）',
@@ -140,7 +140,7 @@ export default [
     must_mention: '过期失效',
   },
   {
-    desc: 'M177 锚点定位器退化成写死哈希文件名（渲染包换名即失明）',
+    desc: 'M177 基准定位器退化成写死哈希文件名（渲染包换名即失明）',
     file: 'tools/engine-contract-check.mjs',
     find: 'const RENDERER_MAP_RE = /^js\\/app\\.[0-9a-f]+\\.js\\.map$/;',
     replace:
@@ -171,7 +171,7 @@ export default [
     must_mention: '名字不一致',
   },
   {
-    desc: 'M181 delta 属主裁定被改（train → system，切片落错域文件）',
+    desc: 'M181 delta 属主结论被改（train → system，切片落错域文件）',
     file: 'tools/facade-names.js',
     find: `const PORT_TABLE_OWNERS = {
   delta: 'train',`,
@@ -189,11 +189,11 @@ export default [
     must_mention: '好感度',
   },
   {
-    desc: 'M373 三处 asar 候选悄悄漂移一条（引擎定位在三个文件里各写一份，漂移的后果是静默降级而非报错）',
+    desc: 'M373 三处 asar 候选悄悄不一致一条（引擎定位在三个文件里各写一份，不一致的后果是静默降级而非报错）',
     file: 'tools/engine-contract-check.mjs',
     find: "    path.join(os.homedir(), '.era-engine', 'app.asar'),",
     replace:
-      "    path.join(os.homedir(), '.era-engine-drifted', 'app.asar'), // 变异：候选漂移",
+      "    path.join(os.homedir(), '.era-engine-drifted', 'app.asar'), // 变异：候选不一致",
     tests: ['asar-candidates'],
     must_mention: '三处必须同款',
   },
@@ -207,23 +207,23 @@ export default [
     must_mention: 'none 必须让 engine-bundle 退回无引擎',
   },
 
-  // —— #212 返工三：二段寻址守卫的反向变异 ——
+  // —— #212 返工三：二段寻址检查的反向变异 ——
   {
-    desc: 'M715 守卫表族清单摘掉 tequip（阳性对照当场红——守卫必须有牙）',
+    desc: 'M715 检查表族清单摘掉 tequip（阳性对照当场红——检查必须有牙）',
     file: 'test/chara-table-addressing.test.js',
     find: `  'tequip',
   'tcvar',`,
     replace: `  'tcvar',`,
     tests: ['chara-table-addressing'],
-    must_mention: '守卫清单与期望名单不一致',
+    must_mention: '检查清单与期望名单不一致',
   },
 
   // —— #256 引擎声明的两道核对 ——
-  // 全量变异退到阶段闸之后，ENGINE_SKIP_BASELINE 的漂移一个阶段才暴露
+  // 全量变异退到阶段闸之后，ENGINE_SKIP_BASELINE 的不一致一个阶段才暴露
   // （#135 的 M222 漏抬就是这么连红 18 次 4 天的）。补偿是门 4（静态声明
   // 数，随 npm test 每次都查）与 run_one 的逐条交叉核对。两道各钉一条。
   {
-    desc: 'M733 ENGINE_SKIP_BASELINE 抬到 27（声明数与基线分家——门 4 若失守，这一类漂移要一个阶段才暴露）',
+    desc: 'M733 ENGINE_SKIP_BASELINE 抬到 27（声明数与基线分家——门 4 若失守，这一类不一致要一个阶段才暴露）',
     file: 'tools/mutation-check.mjs',
     find: 'const ENGINE_SKIP_BASELINE = 26;',
     replace: 'const ENGINE_SKIP_BASELINE = 27; // 变异：与声明数分家',
@@ -317,12 +317,12 @@ export default [
     must_mention: '原始冲突标记探针必须非 0——未解标记会让登记条目脱离表格',
   },
   {
-    desc: 'M2741 prettier 洗净形态识别被拆（七个空格隔开的大于号不再报——只认原始形态等于没修）',
+    desc: 'M2741 prettier 洗净形式识别被拆（七个空格隔开的大于号不再报——只认原始形式等于没修）',
     file: 'tools/conflict-marker-check.mjs',
     find: "      hits.push({ kind: 'prettier 洗净', line: i + 1, text: line.trim() });",
-    replace: '      // 变异：prettier 洗净形态不再报',
+    replace: '      // 变异：prettier 洗净形式不再报',
     tests: ['conflict-marker-check'],
-    must_mention: 'prettier 洗净后仍须红——只认原始形态等于没修',
+    must_mention: 'prettier 洗净后仍须红——只认原始形式等于没修',
   },
   {
     desc: 'M2742 setext 标题下划线排除被拆（合法标题下的七个等号也报——排除按上下文的探针必须红）',
@@ -381,13 +381,13 @@ export default [
     must_mention: 'test_name 点名了用例就该只跑它',
   },
   {
-    desc: 'M3709 串行档不再让出事件循环（SIGINT 排队到跑完才派发，中断时靶文件停在变异态）',
+    desc: 'M3709 串行档不再让出事件循环（SIGINT 排队到跑完才派发，中断时目标文件停在变异态）',
     file: 'tools/mutation-check.mjs',
     find: '    await new Promise((resolve) => setImmediate(resolve));',
     replace: '    // 变异：串行档不让出事件循环',
     tests: ['mutation-check'],
     must_mention: '信号会一直排队到跑完',
-    test_name: 'SIGINT 能中断串行档，并把靶文件还原',
+    test_name: 'SIGINT 能中断串行档，并把目标文件还原',
   },
   // —— #493：新加的门面属性检查器自己的行为锁 ——
   {
@@ -441,34 +441,34 @@ export default [
     must_mention: '视图别名上的属性未被报出',
   },
 
-  // —— #532：--verify 只读 + 残留态启动自检（靶同为 tools/mutation-check.mjs）——
+  // —— #532：--verify 只读 + 残留态启动自检（目标同为 tools/mutation-check.mjs）——
   {
-    desc: 'M11240 --verify 的只读短路被拆（if (args.verify) 恒假，--verify 落进执行阶段、就地变异并写靶文件）（#532）',
+    desc: 'M11240 --verify 的只读短路被拆（if (args.verify) 恒假，--verify 落进执行阶段、就地变异并写目标文件）（#532）',
     file: 'tools/mutation-check.mjs',
     find: '  if (args.verify) {',
     replace: '  if (false) { // 变异：--verify 不再短路，直接落进执行阶段',
     tests: ['mutation-check'],
     test_name:
-      '--verify 全程只读：靶文件置为只读照样报绿，且不进入执行阶段（#532）',
+      '--verify 全程只读：目标文件置为只读照样报绿，且不进入执行阶段（#532）',
     must_mention: '工作区只读不该影响结构校验',
   },
   {
-    desc: 'M11241 残留判定焊死为「都命中」（脏靶文件一律当残留，恒等判定失效——正在改那个靶文件的开发常态被拦下）（#532）',
+    desc: 'M11241 残留判定焊死为「都命中」（脏目标文件一律当残留，恒等判定失效——正在改那个目标文件的开发常态被拦下）（#532）',
     file: 'tools/mutation-check.mjs',
     find: '      if (apply_mutation(head, m) === working) {',
-    replace: '      if (true) { // 变异：脏靶文件一律当残留',
+    replace: '      if (true) { // 变异：脏目标文件一律当残留',
     tests: ['mutation-check'],
-    test_name: '启动自检零误报：靶文件有未提交的合法改动时照常执行（#532）',
+    test_name: '启动自检零误报：目标文件有未提交的合法改动时照常执行（#532）',
     must_mention: '合法改动不该被当成残留拦下',
   },
   {
-    desc: 'M11242 残留恒等判定恒假（残留再也认不出来，退回到门 2 那句「靶代码被重构了？」——#513 的 M11069 那一类重新变成隐形）（#532）',
+    desc: 'M11242 残留恒等判定恒假（残留再也认不出来，退回到门 2 那句「目标代码被重构了？」——#513 的 M11069 那一类重新变成隐形）（#532）',
     file: 'tools/mutation-check.mjs',
     find: '      if (apply_mutation(head, m) === working) {',
     replace: '      if (false) { // 变异：恒等判定恒假，残留认不出来',
     tests: ['mutation-check'],
     test_name:
-      '启动自检：靶文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
+      '启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
     must_mention: '应点名启动自检与「停在某条的变异态」',
   },
   {
@@ -478,7 +478,7 @@ export default [
     replace: '    残留：${f.file}',
     tests: ['mutation-check'],
     test_name:
-      '启动自检：靶文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
+      '启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
     must_mention: '必须打印可直接照抄的还原命令',
   },
   {
@@ -498,14 +498,14 @@ export default [
     must_mention: '--verify 档也要走自检并点名 M 编号',
   },
   {
-    desc: 'M11245 HEAD 里没有该文件时的跳过分支被拆（只进了索引的新靶文件让自检在 null 上崩，工具直接抛栈）（#532）',
+    desc: 'M11245 HEAD 里没有该文件时的跳过分支被拆（只进了索引的新目标文件让自检在 null 上崩，工具直接抛栈）（#532）',
     file: 'tools/mutation-check.mjs',
     find: '    if (head === null) continue;',
     replace:
       '    // 变异：HEAD 里没有该文件时不再跳过（head 为 null 继续往下走）',
     tests: ['mutation-check'],
     test_name:
-      '启动自检的退化形态一：靶文件只进了索引、HEAD 里还没有它 → 跳过该文件，工具照常跑（#532）',
+      '启动自检的退化形式一：目标文件只进了索引、HEAD 里还没有它 → 跳过该文件，工具照常跑（#532）',
     must_mention: 'HEAD 里没有该文件时自检必须跳过而不是崩',
   },
   {
@@ -515,7 +515,7 @@ export default [
     replace: "    const which = '某条'; // 变异：编号点名焊死",
     tests: ['mutation-check'],
     test_name:
-      '启动自检：靶文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
+      '启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
     must_mention: '必须点名是哪一条的变异态',
   },
   {
@@ -530,7 +530,7 @@ export default [
     must_mention: '带 $ 转义的残留也必须被认出来',
   },
   {
-    desc: 'M11248 run_one 的 finally 还原被拆（变异写下后不再还原，靶文件留在变异态，工具自报「还原失败（读回不一致）」）（#532；#553 起 finally 体换成带重试的 write_with_retry，#582 起变异写入共用同一个函数，find 两次同步）',
+    desc: 'M11248 run_one 的 finally 还原被拆（变异写下后不再还原，目标文件留在变异态，工具自报「还原失败（读回不一致）」）（#532；#553 起 finally 体换成带重试的 write_with_retry，#582 起变异写入共用同一个函数，find 两次同步）',
     file: 'tools/mutation-check.mjs',
     find: `  } finally {
     restore_error = write_with_retry(
@@ -543,16 +543,16 @@ export default [
   }`,
     replace: '  } finally {\n    // 变异：还原被拆\n  }',
     tests: ['mutation-check'],
-    test_name: '拦截路径：变异被拦下退出码 0，且靶文件逐字节还原',
+    test_name: '拦截路径：变异被拦下退出码 0，且目标文件逐字节还原',
     must_mention: '还原失败（读回不一致）',
   },
   {
-    desc: 'M11249 SIGINT 处理器退的不是 130（中断被处理了，退出码却报成功——CI 与脚本据此判成败）（#532 初版想守处理器的兜底还原，实测那一段到不了：信号只在条目间的 setImmediate 让出点派发，那时 active_restore 已是 null。改守同一用例里非空的那半）',
+    desc: 'M11249 SIGINT 处理器退的不是 130（中断被处理了，退出码却报成功——CI 与脚本据此判成败）（#532 初版想守处理器的缺省还原，实测那一段到不了：信号只在条目间的 setImmediate 让出点派发，那时 active_restore 已是 null。改守同一用例里非空的那半）',
     file: 'tools/mutation-check.mjs',
     find: '  process.exit(130);',
     replace: '  process.exit(0); // 变异：中断退出码报成功',
     tests: ['mutation-check'],
-    test_name: 'SIGINT 能中断串行档，并把靶文件还原',
+    test_name: 'SIGINT 能中断串行档，并把目标文件还原',
     must_mention: 'SIGINT 必须被处理器接住并退 130',
   },
   {
@@ -565,7 +565,7 @@ export default [
     must_mention: '标记指向别的 root 时自检必须照常生效',
   },
 
-  // —— #553：--jobs 尊重筛选参数、还原写入重试、并行逐条输出（靶同为 tools/mutation-check.mjs）——
+  // —— #553：--jobs 尊重筛选参数、还原写入重试、并行逐条输出（目标同为 tools/mutation-check.mjs）——
   {
     desc: 'M11700 --jobs 丢掉 --ids 等筛选参数（副本各跑整表切片——8 条点名跑成两张半表，S0 验收 25 分钟被超时杀）（#553）',
     file: 'tools/mutation-check.mjs',
@@ -604,13 +604,13 @@ export default [
     must_mention: '同时给 --sample 与 --jobs 必须当场报错',
   },
   {
-    desc: 'M11703 靶文件写入不重试（Windows 瞬态占用一次即弃——#541 一晚三次还原失败即红的那条路；#582 起还原与变异共用这份预算，find 随之改指 WRITE_RETRY_TRIES）（#553）',
+    desc: 'M11703 目标文件写入不重试（Windows 瞬态占用一次即弃——#541 一晚三次还原失败即红的那条路；#582 起还原与变异共用这份预算，find 随之改指 WRITE_RETRY_TRIES）（#553）',
     file: 'tools/mutation-check.mjs',
     find: 'const WRITE_RETRY_TRIES = 5;',
     replace: 'const WRITE_RETRY_TRIES = 1; // 变异：不重试',
     tests: ['mutation-check'],
     test_name:
-      '还原写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且靶文件逐字节还原（#553）',
+      '还原写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且目标文件逐字节还原（#553）',
     must_mention: '注入两次瞬态失败仍应重试到成功',
   },
   {
@@ -664,19 +664,19 @@ export default [
     must_mention: '筛选档的对照只跑选中条目的测试面',
   },
   {
-    desc: 'M11709 副本数不按选中条数收敛（1 条点名也建满 K 份副本白拷贝仓库白跑对照）（#553）',
+    desc: 'M11709 副本数不按选中条数一致（1 条点名也建满 K 份副本白拷贝仓库白跑对照）（#553）',
     file: 'tools/mutation-check.mjs',
     find: `  const jobs = filtered
     ? Math.max(1, Math.min(args.jobs, selection.length))
     : args.jobs;`,
-    replace: '  const jobs = args.jobs; // 变异：不按选中条数收敛副本数',
+    replace: '  const jobs = args.jobs; // 变异：不按选中条数一致副本数',
     tests: ['mutation-check'],
     test_name:
-      '--jobs 副本数按选中条数收敛：一条编号两个 jobs 只有一个子进程 SUMMARY（#553）',
+      '--jobs 副本数按选中条数限定：一条编号两个 jobs 只有一个子进程 SUMMARY（#553）',
     must_mention: '副本数不得超过选中条数',
   },
   {
-    desc: 'M11710 还原失败的报告不给还原命令（人只能自己猜怎么回退——提示格式与 #532 启动自检一致是本票要求）（#553）',
+    desc: 'M11710 还原失败的报告不给还原命令（人只能自己猜怎么回退——提示格式与 #532 启动自检一致是本工单要求）（#553）',
     file: 'tools/mutation-check.mjs',
     find: `  if (head !== null && head === original) {
     console.log(
@@ -736,7 +736,7 @@ export default [
     must_mention: '非 git 根不能推荐 git checkout',
   },
   {
-    desc: 'M11715 靶文件写入的瞬态失败只认 UNKNOWN 一个码（EPERM/EBUSY 一次即弃——真实占用抛的码不固定，只认观测样本就漏；#582 起还原与变异共用这个集合，find 随之改指 WRITE_RETRY_CODES）（#553）',
+    desc: 'M11715 目标文件写入的瞬态失败只认 UNKNOWN 一个码（EPERM/EBUSY 一次即弃——真实占用抛的码不固定，只认观测样本就漏；#582 起还原与变异共用这个集合，find 随之改指 WRITE_RETRY_CODES）（#553）',
     file: 'tools/mutation-check.mjs',
     find: "const WRITE_RETRY_CODES = new Set(['UNKNOWN', 'EBUSY', 'EPERM']);",
     replace:
@@ -761,7 +761,7 @@ export default [
     must_mention: '分到空片要明确说「本轮 0 条」',
   },
   {
-    desc: 'M11717 --jobs 的 --changed/--files 清单不下传副本（子进程又各跑整表切片——副本里没有 .git，这一支的退化形态正是本票要根除的那个）（#553）',
+    desc: 'M11717 --jobs 的 --changed/--files 清单不下传副本（子进程又各跑整表切片——副本里没有 .git，这一支的退化形式正是本工单要根除的那个）（#553）',
     file: 'tools/mutation-check.mjs',
     find: `  } else if (args.files || args.base) {
     const files = [...new Set(selection.map((m) => m.file))];
@@ -776,9 +776,9 @@ export default [
       '--jobs 的 --changed 筛选下传副本：清单外条目在子输出与汇总里都不出现（#553）',
     must_mention: '--jobs 的 --changed 筛选必须下传副本',
   },
-  // —— #582：变异写入的重试与「未写入」报告、并行副本的启动清理（靶同为 tools/mutation-check.mjs）——
+  // —— #582：变异写入的重试与「未写入」报告、并行副本的启动清理（目标同为 tools/mutation-check.mjs）——
   {
-    desc: 'M11890 变异写入不走重试写函数（直接 writeFileSync——Windows 瞬态占用一次即弃，本票要修的就是这一条）（#582）',
+    desc: 'M11890 变异写入不走重试写函数（直接 writeFileSync——Windows 瞬态占用一次即弃，本工单要修的就是这一条）（#582）',
     file: 'tools/mutation-check.mjs',
     find: `  const write_error = write_with_retry(
     full,
@@ -791,7 +791,7 @@ export default [
   const write_error = undefined;`,
     tests: ['mutation-check'],
     test_name:
-      '变异写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且靶文件逐字节还原（#582）',
+      '变异写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且目标文件逐字节还原（#582）',
     must_mention: '变异写入的重试过程要记录',
   },
   {
@@ -816,17 +816,17 @@ export default [
     must_mention: '有条目没验证完必须退 1',
   },
   {
-    desc: 'M11893 变异写入失败后不读回实测（照报「仍是原文」继续跑——文件可能已被 O_TRUNC 截断或半写，后面的条目拿它当原文；#582 审查轮的阻断项，靶从「报告不说明处置」改指读回比对）',
+    desc: 'M11893 变异写入失败后不读回实测（照报「仍是原文」继续跑——文件可能已被 O_TRUNC 截断或半写，后面的条目拿它当原文；#582 审查轮的阻断项，目标从「报告不说明处置」改指读回比对）',
     file: 'tools/mutation-check.mjs',
     find: "    if (fs.readFileSync(full, 'utf8') !== original) {",
     replace: '    if (false) { // 变异：不读回实测',
     tests: ['mutation-check'],
     test_name:
-      '变异写入失败但靶文件已不是原文：按残留停下、不跑后续条目（#582 审查轮）',
+      '变异写入失败但目标文件已不是原文：按残留停下、不跑后续条目（#582 审查轮）',
     must_mention: '写入失败后必须读回实测',
   },
   {
-    desc: 'M11894 并行副本目录名不带创建者 PID（启动清理失去所有者判据——只剩年龄，长任务副本会被误删）（#582）',
+    desc: 'M11894 并行副本目录名不带创建者 PID（启动清理失去所有者条件——只剩年龄，长任务副本会被误删）（#582）',
     file: 'tools/mutation-check.mjs',
     find: '    path.join(os.tmpdir(), `${COPY_PREFIX}${process.pid}-`),',
     replace: '    path.join(os.tmpdir(), COPY_PREFIX), // 变异：目录名不带 PID',
@@ -865,7 +865,7 @@ export default [
     must_mention: '所有者还在（另一个 agent 的长任务）必须保住',
   },
   {
-    desc: 'M11897 启动清理不再执行（clean_stale_copies 不接入调用点——临时目录里的副本继续累积，本票要治的那件事回到原样）（#582）',
+    desc: 'M11897 启动清理不再执行（clean_stale_copies 不接入调用点——临时目录里的副本继续累积，本工单要治的那件事回到原样）（#582）',
     file: 'tools/mutation-check.mjs',
     find: '  clean_stale_copies();',
     replace: '  // 变异：启动清理不接入',
@@ -881,14 +881,14 @@ export default [
     replace: '    left: 0, // 变异：注入预算焊死',
     tests: ['mutation-check'],
     test_name:
-      '变异写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且靶文件逐字节还原（#582）',
+      '变异写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且目标文件逐字节还原（#582）',
     must_mention: '变异写入的重试过程要记录',
   },
   {
-    desc: 'M11899 陈旧副本的年龄判据方向反了（只删没超龄的——阈值倒着用，超龄残留一个也清不掉）（#582）',
+    desc: 'M11899 陈旧副本的年龄条件方向反了（只删没超龄的——阈值倒着用，超龄残留一个也清不掉）（#582）',
     file: 'tools/mutation-check.mjs',
     find: '    if (age < COPY_STALE_MS) continue;',
-    replace: '    if (age > COPY_STALE_MS) continue; // 变异：判据方向反了',
+    replace: '    if (age > COPY_STALE_MS) continue; // 变异：条件方向反了',
     tests: ['mutation-check'],
     test_name:
       '启动清理陈旧并行副本：超龄且所有者不在才删，活副本与新鲜副本不动（#582）',

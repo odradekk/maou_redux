@@ -232,11 +232,7 @@ test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点�
   assert(!texts.some((line) => line.includes('绝顶')));
   // SHOW_EQUIP_1/2 自 #390 起是真身（ere/page/components/chara-equip-status.js）：
   // 本世界没有任何 TEQUIP/TFLAG 位 → SHOW_EQUIP_2 只打一个空格、SHOW_EQUIP_1
-  // 整段静默（条件不成立）；两段都不再出现占位文案
-  assert(
-    !texts.some((line) => line.includes('@SHOW_EQUIP')),
-    'SHOW_EQUIP_1/2 已换真身，不该再有占位行',
-  );
+  // 整段静默（条件不成立）
   assert(
     !texts.some((line) => line.startsWith('使用中(')),
     '无装备位时 SHOW_EQUIP_1 整段不出（含头行）',

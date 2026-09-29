@@ -1,7 +1,7 @@
 /**
  * @file 变量表装载的引擎行为测试（issue #38；#640 起只留 yml 侧行为）。
  *
- * 不用夹具（记录层证明不了「引擎接受」），不用自写镜像（会漂移），全部经
+ * 不用夹具（记录层证明不了「引擎接受」），不用自写镜像（会不一致），全部经
  * test/helpers/engine-bundle.js 驱动 app.asar 里的 parseDataFile 与 eraStart
  * 变量表装载分支（转写），钉住：
  *   - yml/Base.yml（人工表）装载后的形状符合预期；
@@ -136,7 +136,7 @@ engine_test(
       '具名地址在名字表与数据桶里都落空，必须读到 undefined——持有假阳具也判不出',
     );
     // 写侧同样另立门户：era.set('item:PBAND', 1) 落 hold['pband']，与 hold[4]
-    // 互不相通（写未声明的名字会静默建变量，在 item 族的形态）
+    // 互不相通（写未声明的名字会静默建变量，在 item 族的形式）
     engine.set_var.call(fake_this, 'item:PBAND', 1);
     assert.deepEqual(Object.keys(fake_this.data.item.hold), ['4', 'pband']);
   },

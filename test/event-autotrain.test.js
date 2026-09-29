@@ -2,22 +2,22 @@
  * @file 单元测试：EVENT_AUTOTRAIN 与 6 个 _AUTO 调教分支。
  *
  * 覆盖（issue #218 补轮）：
- *   - @BEFORE_AUTOTRAIN：source 清零（target 指针为空时同 delta 一起跳过）；
- *   - @FORMAT_AUTOTRAIN：射精槽/母乳槽/触手射精槽、deltabase（LOSEBASE 的
+ *   - before_autotrain：source 清零（target 指针为空时同 delta 一起跳过）；
+ *   - format_autotrain：射精槽/母乳槽/触手射精槽、deltabase（LOSEBASE 的
  *     负值通道）、tflag、
  *     palam、delta 重置，常时发情（TALENT:271）润滑/欲情 3000 起步，
  *     死斗场收入清零；
- *   - @COM0_AUTO：SOURCE 分档（C 感觉 × B 感觉各档）、deltabase、自动回数；
- *   - @COM3_AUTO：C/B 感觉分档、技巧乘算、自慰中毒乘算、阴毛设定、
+ *   - com0_auto：SOURCE 分档（C 感觉 × B 感觉各档）、deltabase、自动回数；
+ *   - com3_auto：C/B 感觉分档、技巧乘算、自慰中毒乘算、阴毛设定、
  *     自慰经验、自动回数；
- *   - @COM13_AUTO：体力/气力门槛、触手/虫分支、A 感觉/经验/润滑/欲情/
+ *   - com13_auto：体力/气力门槛、触手/虫分支、A 感觉/经验/润滑/欲情/
  *     顺从分档、大柄/小柄/未熟、A 敏感/迟钝、处女+贞操观、肛门经验；
- *   - @COM50_AUTO：液体追加 10000、露出 300；
- *   - @COM63_AUTO：顺从/阴蒂感觉/技巧/侍奉精神分档；
- *   - @AFTER_AUTOTRAIN：KARMA 占位（ex:1/ex:2）、常时发情蓄积（flag:75
+ *   - com50_auto：液体追加 10000、露出 300；
+ *   - com63_auto：顺从/阴蒂感觉/技巧/侍奉精神分档；
+ *   - after_autotrain：KARMA 占位（ex:1/ex:2）、常时发情蓄积（flag:75
  *     与 TALENT:271 两道闸）、gotjuel:100 清零、cflag:667 累加与封顶、
  *     AUTO_ABLUP 占位（flag:5 bit 35）；
- *   - @AUTOTRAIN：全角色遍历（跳过 cflag:666==0）、输出格式、指针还原。
+ *   - autotrain：全角色遍历（跳过 cflag:666==0）、输出格式、指针还原。
  */
 
 const assert = require('node:assert/strict');

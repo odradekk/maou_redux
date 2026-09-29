@@ -1,11 +1,10 @@
-# 本文件不是转换器产物：原作没有 TEQUIP 的名字表（target/CSV 下无对应 CSV，
-# 原作一律用数字下标），无从转换。
+# 本文件为人工产出：TEQUIP 没有名字表（游戏侧一律用数字下标）。
 #
-# 内容：调教中的装备状态（下标 = 装备编号，如 35/36 避孕套、45 口塞、55 死斗场、89 兽奸、90 触手）。原作下标全是数字，无 TEquip.csv 可转。
+# 内容：调教中的装备状态（下标 = 装备编号，如 35/36 避孕套、45 口塞、55 死斗场、89 兽奸、90 触手）。下标全是数字。
 #
 # 它的存在只有一个目的：让引擎装载循环建出 `staticData.tequip`。引擎的
 # 三段寻址在 `data[表][角色]` 存在、而 `staticData[表]` 缺位时**直接抛错**
-# （app.asar 的 setVar 兜底分支 `u = i(this.staticData[a][u], u)`，无守卫）——
+# （app.asar 的 setVar 回落分支 `u = i(this.staticData[a][u], u)`，无检查）——
 # 调教域的表由 beginTrain/addCharacter 按角色开桶，所以桶一定在、崩就崩在
 # 名字表这一侧。实机撞见：调教开始时写 `stain:31:2` 报
 # `Cannot read properties of undefined (reading '2')`。

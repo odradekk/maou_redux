@@ -131,7 +131,7 @@ async function event_futa_f(cid) {
   await era.waitAnyKey();
 }
 
-/** TIMES X, m：整数变量乘小数后截断（math-etc.md，source-check.js 同款） */
+/** TIMES X, m：整数变量乘小数后截断（TIMES 语义；source-check.js 同款） */
 function times(v, m) {
   return Math.floor(v * m);
 }
@@ -491,9 +491,9 @@ function first_experience_code(relation, is_male, master_side) {
  * 收回贞操带钥匙、一次限定落 CFLAG:62）→ 破处支（安全套二问、经验与珠结算、
  * 初体验记录、亲族关系编码）→ 收尾。
  *
- * **跨边（不在位，存根 + 登记）**：`CALL IN_VAGINA_M_TO_T` /
+ * **跨边（不在位）**：`CALL IN_VAGINA_M_TO_T` /
  * `CALL CONCEPTION_CHECK_M_TO_T` 属妊娠判定的并行票交付内容
- * （#401），这张工单只保留占位，不另造一份。
+ * （#401），这张工单不接入。
  *
  * @param {(n: number) => number} [rand] 随机源
  * @returns {Promise<number>} 1 = 献上成立、0 = 未发生/被拒

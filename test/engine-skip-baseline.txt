@@ -2,7 +2,7 @@
 # 数值来源：node --test TAP 摘要的 `# skipped` 行，由 tools/skip-count-check.mjs
 # 在 CI 的「跳过数守护」步对账。#92 定档时的勘误：工单原估 89 是 8 个引擎
 # 依赖模块的用例总数，其中不依赖引擎的用例在 CI 上照常跑，实际门控跳过 38。
-# #91（引擎语义契约对拍）合并后复测：+3（engine-contract.test.js 的三个
+# #91（引擎语义契约比对）合并后复测：+3（engine-contract.test.js 的三个
 # 门控用例），现为 41（574 = 533 过 + 41 跳过 + 0 挂，WSL 无引擎实测）。
 # #113（ExFlag 落表与 Chara35 入库）合并后复测：+6（exflag-chara35.test.js
 # 的六个门控用例），现为 47（600 = 553 过 + 47 跳过 + 0 挂，WSL 无引擎实测）。
@@ -22,7 +22,7 @@
 # 无引擎实测）——page-save-load.test.js 与入口改造均走 era-fixture 路径，
 # 无 engine-bundle 门控。
 # #136 返工（指针槽登记与显式初始化）复测：49 不变（700 = 651 过 + 49 跳过
-# + 0 挂，WSL 无引擎实测）——新增登记锚用例只读 yml 文本，event-first 的
+# + 0 挂，WSL 无引擎实测）——新增登记基准用例只读 yml 文本，event-first 的
 # 初始化断言走夹具路径。
 # #138（C4 常规角色批入库与 EX_TALENT 落表）复测：+7（extalent-table.test.js
 # 的七个引擎门控用例：常规批逐字段比对、消费验证、消费验证边界、ex_talent
@@ -56,13 +56,13 @@
 # #163（手册按引擎代码修正）复测：+1（fixture.test.js 第三个引擎门控用例
 # 「引擎 nextTurnInTrain：deltabase→base 带 maxbase 钳制、delta→palam、
 # nowex→ex，逐键置 0 不删表」，驱动真 nextTurnInTrain；同票的 useRule 走
-# ENGINE_FACTS 锚定不经用例，不加数），现为 66
+# ENGINE_FACTS 基准不经用例，不加数），现为 66
 # （rebase 到含 #151/#152 的 master 后复测：773 = 707 过 +
 # 66 跳过 + 0 挂，WSL 无引擎实测）。
 # #171（H2 勇者来袭）复测：66 不变（899 = 833 过 + 66 跳过 + 0 挂，WSL
 # 无引擎实测）——enter-enemy.test.js 的 33 条与 event-turnend/
 # event-nextday 的隔离改造、event-ending-e2e 的开关全部走 era-fixture
-# 路径（无 engine-bundle 门控），不新增跳过：66（既有）+ 0（本票）= 66。
+# 路径（无 engine-bundle 门控），不新增跳过：66（既有）+ 0（本工单）= 66。
 # #171 验收补 +1，现为 67：static-table-coverage 新增引擎门控用例
 # 「savestr 族不存在——二段报 key error、三段完全静默」。#171 把这条事实
 # 只写进了 enter-enemy.js 的文件头注释，没有任何东西会在引擎升版时报错；
@@ -83,20 +83,20 @@
 # 无 engine-bundle 门控）——0 条新增引擎依赖用例，跳过数不动。
 # #173（H4 ENDING_2 与端到端）复测：67 不变（976 = 909 过 + 67 跳过 + 0
 # 挂，ERE_ENGINE_ASAR=none 实测）。算式：event-ending.test.js 新增 2 条
-# （ENDING_2 真身与 TARGET 判据）+ event-ending2-e2e.test.js 1 条（新档到
-# GAMEOVER 的端到端）全部走 era-fixture 路径——67（既有）+ 0（本票）= 67。
+# （ENDING_2 真身与 TARGET 条件）+ event-ending2-e2e.test.js 1 条（新档到
+# GAMEOVER 的端到端）全部走 era-fixture 路径——67（既有）+ 0（本工单）= 67。
 # #175（H6 迷宫战斗）复测：67 不变（rebase 到含 #184/#195 的 master 后
-# 为 1017 = 950 过 + 67 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测；本票未合并
+# 为 1017 = 950 过 + 67 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测；本工单未合并
 # 时单边实测 993 = 926 过 + 67 跳过）。算式：dungeon-battle.test.js 17 条
 # （monster-database 源比对走纯文件解析、战斗行为全走 era-fixture 路径，
 # 随机源经参数注入或 mulberry32 替换 Math.random，无 engine-bundle 门控）
-# + dungeon-main.test.js 改写 3 条仍走夹具——67（既有）+ 0（本票）= 67。
+# + dungeon-main.test.js 改写 3 条仍走夹具——67（既有）+ 0（本工单）= 67。
 # E 表（yml/E.yml）的引擎侧验证由 static-table-coverage 的既有门控用例
 # 覆盖（e 族名字表在装载后可寻址），不新增门控用例。
 # #212（J2 调教回合骨架）复测：+5（tstr-train-table.test.js 的五个引擎门控
-# 用例——TSTR 建模与 trainname 表名裁定的 setVar/beginTrain/endTrain 探针），
+# 用例——TSTR 建模与 trainname 表名结论的 setVar/beginTrain/endTrain 探针），
 # 现为 72（1371 = 1299 过 + 72 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）。
-# 算式：67（既有）+ 5（tstr-train-table 的 engine_test）= 72；本票其余新用例
+# 算式：67（既有）+ 5（tstr-train-table 的 engine_test）= 72；本工单其余新用例
 #（train-name/page-train 槽条段/p_c 扩展）全走 era-fixture
 # 或纯解析路径，无 engine-bundle 门控。
 # #349（L18 家族关系）：chara-family 的扩展角色表建桶、寻址与存档往返 +1。
@@ -113,13 +113,13 @@
 # #388 那行里的旧名按现状改回现名。
 # #548（S7 零散存根）复测：+1（chara34-mark.test.js 的引擎门控用例「引擎接受
 # mark:<cid>:4 的写入：addCharacter 后 setVar 落 data 可读回」——引擎真
-# parse_data_file + create_add_character + set_var 驱动）。本票另三个新测试
+# parse_data_file + create_add_character + set_var 驱动）。本工单另三个新测试
 # 文件（dungeon-bedroom / event-charadead / page-shop-floor）与 com-toy /
 # event-end / page-shop / extalent-table 的改动全走
 # era-fixture 路径，无 engine-bundle 门控，不新增跳过。
 # #552（S9 口上 PBAND 下标）：+1（variable-yml.test.js 的引擎门控用例「item:PBAND
 # 名字表查不到 → 读恒 undefined、写另立键」——引擎侧证据钉住「口上具名地址
-# 永远判不出持有」的依据）。本票的口上分支用例全走 era-fixture 路径，不加数。
+# 永远判不出持有」的依据）。本工单的口上分支用例全走 era-fixture 路径，不加数。
 # 两支合并后重测（#548 并入 #552）：79（#435 基线）+ 1（#548 的 chara34-mark）
 # + 1（#552 的 variable-yml）= 81。**实测**：ERE_ENGINE_ASAR=none 跑全库
 # （6625 = 6544 过 + 81 跳过 + 0 挂），node tools/skip-count-check.mjs 与本
@@ -137,4 +137,4 @@
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
 70
-# #643（R4 删除读原作用例与 target/）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
+# #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。

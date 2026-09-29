@@ -550,7 +550,7 @@ on('EVENTTURNEND', async () => {
   // 全角色：肉便器/苗床业务与结婚日、事件后的场所/任务复位
   for (const cid of era.getAddedCharacters()) {
     // run_benki（#217 真身：肉便器业务——门槛不中静默返回，演出段
-    // 输出 + BENKI_KOUJO 口上存根，见 ere/system/train/benki.js）
+    // 输出 + BENKI_KOUJO 口上，见 ere/system/train/benki.js）
     await run_benki(cid);
     await run_seedbed(cid);
     // 已处于 TURNEND：同状态 BEGIN 在这里等价为顺接后文；
@@ -580,7 +580,7 @@ on('EVENTTURNEND', async () => {
   }
 
   // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
-  // 晨间三事件存根 + 每日一次的 run_endcheck 调用点）
+  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）
   if (era_flag.time === 0) {
     await run_event_newday();
   }

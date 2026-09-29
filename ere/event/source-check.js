@@ -14,12 +14,12 @@
  *     nextTurnInTrain 的 nowex→ex 成为唯一一次合并，数值等价于旧引擎的
  *     EX += …）。
  *
- * 可达性判断（哪些分支整支存根，依据写在 issue #45）：
+ * 可达性判断（哪些分支整支未实现，依据写在 issue #45）：
  *   - 避孕套判定（TEQUIP:35/36）已随 #461 落真身；装备持续效果组
  *     的各装备位是否已有真身由 equip_com_family
  *     按位判定；
  *   - SOURCE_LESBIAN/GAY_SEX_CHECK（SUB2）：预设角色清一色女性 + 主人是
- *     男人（Chara0），两分支当前不可达，登记；
+ *     男人（Chara0），两分支当前不可达，
  *   - INCEST 的 CFLAG:21–25 解码、普通无亲族早退与 SUB1 的源乘算已实现；
  *   - target_ejac_check／target_wormbaby_check
  *     （蠕虫出产检查）已随 #462 实现：原登记「TALENT:121/190/191 无预
@@ -118,7 +118,7 @@ const tflag = (i) => era.get(`tflag:${i}`) || 0;
 // count 0-4 射精系）是字面量列表与真计数器，展开与否届时裁——这张票不碰
 // （工单的统计：小尾巴，不是主命题）。
 
-/** TIMES X, m：整数乘小数后截断（math-etc.md） */
+/** TIMES X, m：整数乘小数后截断（TIMES 语义） */
 const times = (v, m) => Math.floor(v * m);
 /** 整数除法（正数域 = 向下取整） */
 const idiv = (a, b) => Math.floor(a / b);
@@ -3235,7 +3235,7 @@ on('SOURCE_CHECK', async () => {
   // 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
   // 接通）：按链序遍历装备位。EQUIP_COM_CHAIN 的每个号都已注册进
   // equip_com_family（道具/SM/特殊/重度/触手各族的 EQUIP_COM 注册），链上
-  // 不再有缺失位——缺位回落分支随存根机制一并删除（#638）
+  // 不再有缺失位——缺位回落分支随占位机制一并删除（#638）
   for (const [bit, com] of EQUIP_COM_CHAIN) {
     if (!era.get(`tequip:${cid}:${bit}`)) {
       continue;

@@ -2309,8 +2309,7 @@ async function post_conquest_menu(rand = default_rand) {
     }
     if (result === 1000) {
       // 调 sengen_video → RETURN 0（#502 起真身）；注释单占一行，
-      // 免得变异条目的 find 串把带 trace ref 的注释当定位串（trace-check 的
-      // 「引用不进锁」约定）
+      // 免得变异条目的 find 串把这行注释当定位串
       await sengen_video();
       return 0;
     }

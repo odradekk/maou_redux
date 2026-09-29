@@ -109,8 +109,8 @@
  *   - **`CALL CHECK_STATUS, ARG, 1`**：队伍伤势判定（#172 真身，
  *     ere/dungeon/dungeon.js 的 check_status）——返回 8 槽数组，RESULT:7
  *     = 队伍当前状态评级（> 9 时同伴无力救援）。
- *   - **`CALL KARMA, ARG, -10`**：善恶值增减（阶段 5 存根，
- *     ere/dungeon/dungeon.js 的 karma 存根，#172 登记）。
+ *   - **`CALL KARMA, ARG, -10`**：善恶值增减（ere/dungeon/dungeon.js 的
+ *     karma 域内存根，#172 接入）。
  *   - **`$INPUT_LOOP` / `INPUT` / `GOTO`**：旁观/不
  *     凌辱的选择循环。ERE 侧以 while 循环 + era.input() 重写（输入 < 0
  *     或 >= 2 重来；== 1 返回 0——page-save-load 的 input 先例）。
@@ -238,7 +238,7 @@ async function dungeon_ryouzyoku_after() {
  * *_RYOU男，否则 → 本文件 *_RYOU）→ 处女丧失判定（EXP:0 > 0 且 TALENT:0
  * == 1，魔王 0 的专属）→ 口上后置钩子 → 逃脱分支。
  *
- * @param {number} arg 败北勇者角色号（脚本开头 `ARG = A`）
+ * @param {number} arg 败北勇者角色号（旧脚本的入口 `ARG = A`，ere 侧由调用方实参保证）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -3763,7 +3763,7 @@ async function victory_ryouzyoku(arg = -1, rand) {
     await era.printAndWait(
       `冒险者被魔界的瘴气侵袭着，玩弄起${monstername(local_1)}来。（善恶值:-10）`,
     );
-    // CALL KARMA, ARG, -10（阶段 5 存根）
+    // CALL KARMA, ARG, -10（dungeon.js 的 karma 域内存根）
     const { karma } = require('#/dungeon/dungeon');
     karma(arg, -10);
   }

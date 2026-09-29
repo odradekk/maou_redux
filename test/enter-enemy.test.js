@@ -180,10 +180,10 @@ test('链路：生成勇者后 turnend-settle 的 DUNGEON 检查第一次为真'
   era_flag.time = 1;
   await emit('EVENTTURNEND');
   // #112 起已接真身的检查：place === 2 且非 2D 模式 → 走迷宫本体。
-  // #177（H8）起 DUNGEON_ROOM 也是真身（无占位行）——改以 CFLAG:514
+  // #177（H8）起 DUNGEON_ROOM 也是真身——改以 CFLAG:514
   // （階層滞在カウント，run_dungeon 滞留分支的唯一写者）观测：本用例
   // 不注入随机源，Math.random 下 WALK ∈ [0, 73]，仅七掷全 0（概率 ~5e-9）
-  // 才走撤退分支使 514 为 0——与原存根行观测的失守条件同概率（#195）
+  // 才走撤退分支使 514 为 0——换观测点不改变失守概率（#195）
   assert.equal(
     fixture.store.get('cflag:1:514'),
     1,
@@ -243,7 +243,7 @@ const CAP_CASES = [
     { 82: 1, 87: 1, 89: 1, 91: 1, 92: 0 },
     81,
   ],
-  // 到 MAX_CHARANUM（VARIABLES.ERH:2 = 90）硬上限
+  // 到 MAX_CHARANUM（上限 90）硬上限
   [
     '⑥ CHARANUM >= MAX_CHARANUM(90)',
     { 82: 1, 87: 1, 89: 1, 91: 1, 92: 15 },

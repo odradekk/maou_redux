@@ -231,7 +231,7 @@ export default [
     find: '  void top;',
     replace: '  e_set(top, inum);',
     tests: ['cross-stubs'],
-    must_mention: '原作未绑定局部变量造成的无操作行为',
+    must_mention: '保留未绑定局部变量造成的无操作行为',
   },
   {
     desc: 'M6590 campaign_dungeon_lv 战役 1 等级常量改错',

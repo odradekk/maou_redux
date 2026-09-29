@@ -6,8 +6,7 @@
  *     draw_dungeon_daily 尾部（已接入）；
  *   - cal_dungeon_daily **无调用方**（ere 里定义之外零引用，
  *     与 display_dungeon_daily 尾部也无调用关系）——保留函数体、
- *     同样不接入，落这里防遗失（docs/stub-registry.md 不占存根位：
- *     无调用点即无占位行）。
+ *     同样不接入，落这里防遗失（无调用点即不产生占位输出）。
  *
  * == 真实输出面（大半输出是死代码） ==
  *

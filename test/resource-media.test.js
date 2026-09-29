@@ -3,7 +3,7 @@
  *
  * 三层验证：
  *   1. 搬运边界：res/ 的文件清单恰为 img.csv「菜单通用」节的 6 张图 + 三首
- *      BGM——头像素材（243 项）裁定为**不搬运不登记**（依据与裁定过程见
+ *      BGM——头像素材（243 项）结论为**不搬运不登记**（依据与过程见
  *      issue #69 评论），精确清单断言让任何混入的头像文件当场红；
  *   2. 复制保真比对已随只读源删除（res/ 的媒体文件本身保留在仓库）；
  *   3. 引擎接受（test/helpers/engine-bundle.js，app.asar 真代码）：注册表
@@ -63,7 +63,7 @@ test('res/ 的搬运范围恰为「菜单通用」六图 + 三首 BGM（头像�
   assert.deepEqual(walk_files(RES_DIR), [...EXPECTED_FILES].sort());
 });
 
-test('注册表不含头像素材的繁体注册名（紅綠藍銀——不登记裁定的机械钉子）', () => {
+test('注册表不含头像素材的繁体注册名（紅綠藍銀——不登记结论的机械钉子）', () => {
   const texts = ['img.csv', 'sound/sound.csv'].map((rel) =>
     fs.readFileSync(path.join(RES_DIR, rel), 'utf8'),
   );
@@ -77,7 +77,7 @@ test('注册表不含头像素材的繁体注册名（紅綠藍銀——不登�
   }
 });
 
-test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册名即原作实参）', () => {
+test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册名即调用实参）', () => {
   // 游戏代码引用的媒体名（page-title.js / page-main-menu.js 的 #69 接入）
   const referenced = ['TFM-003A_17.mp3', '据点2.mp3', 'TITLE'];
   const registered = new Set();
@@ -95,7 +95,7 @@ test('注册表的注册名覆盖游戏代码引用的全部媒体名（注册�
       `游戏代码引用的媒体名 ${name} 未在注册表登记`,
     );
   }
-  // 大书库.mp3 保持登记：播放点（@DEBUG_MENU_U）所在画面已随 #542 判不移植，
+  // 大书库.mp3 保持登记：播放点（旧调试菜单）所在画面已随 #542 判不移植，
   // 注册名与文件是 #69 的 res/ 备份（1:1 追溯），永无消费者
   assert.ok(registered.has('大书库.mp3'));
 });
@@ -163,7 +163,7 @@ engine_test(
 // —— 版本库默认配置（#69 重开补的交付项）：资源开关进 git ——
 //
 // `resource: true` 不能只写本机 ere.config.json（gitignore，全新克隆落到引擎
-// 默认 resource:false，一张图一个音都不加载——issue #69 重开评论的裁定）。
+// 默认 resource:false，一张图一个音都不加载——issue #69 重开评论的结论）。
 // 落点是 yml/_config.json：进 git 的默认值、用户仍可在配置 UI 覆盖（与
 // _fixed.json 的结构性锁定不同类，extendedCharaTables 留在 _fixed.json）。
 
@@ -182,7 +182,7 @@ engine_test(
   'yml/_config.json 是引擎默认配置整份 + 唯一偏离 resource:true',
   () => {
     // 缺键调研（app.asar 实证）：_config.json 存在时 defaultConfig 整个是它，
-    // getEmptyConfigForm() 只在文件缺失/解析失败时兜底、不做逐键合并；
+    // getEmptyConfigForm() 只在文件缺失/解析失败时用作缺省值、不做逐键合并；
     // syncConfig 又把 config 合并 _fixed.json 后整份写回 ere.config.json——
     // _config.json 没写的键从此不存在（window.audio 缺失 = 静默没声音一类坑）。
     // 故必须写全：与 getEmptyConfigForm() 逐键一致，唯一偏离 resource。
@@ -199,7 +199,7 @@ engine_test(
 
 // —— 存档槽位数（#135）：结构性要求，落 _fixed.json 而非 _config.json ——
 //
-// 原作有 99 个手动存档槽（0–98，SYSTEM_DATA.ERB 的 CASE 0 TO 98），另加 99 号
+// 游戏有 99 个手动存档槽（0–98，存档菜单的 CASE 0 TO 98），另加 99 号
 // 自动存档槽（ADR-0006）。引擎 listSaveFiles 的扫描是**闭区间**：
 //   const e = saveFiles || 10; for (let t = 0; t <= e; ++t) { … }
 // 所以 saveFiles = 99 恰好覆盖槽位 0–99。取 99 而非 100 还有一条硬约束：
@@ -209,12 +209,12 @@ engine_test(
 // 整份短路（app.asar：`if (this.config || (this.config = …defaultConfig))`），
 // 而 ere.config.json 不进 git、且经 .worktreeinclude 复制进每个新 worktree。
 // 落 _config.json 的话，任何装过旧版本的机器上 saveFiles 仍是 10，槽位 11–98
-// 的备注不被 loadGlobal 维护——**原作大半存档槽在界面上显示为空栏位**，
-// 且没有任何测试会红。这是「缺了会静默降级」，按 AGENTS.md 的判据归 _fixed.json。
+// 的备注不被 loadGlobal 维护——**游戏的大半存档槽在界面上显示为空栏位**，
+// 且没有任何测试会红。这是「缺了会静默降级」，按 AGENTS.md 的标准归 _fixed.json。
 //
 // 代价（有意接受）：引擎配置 UI 若有「存档数量」开关，玩家点了不会生效。
 engine_test(
-  'yml/_fixed.json 锁定 saveFiles = 99（原作 0–98 手动槽 + 99 自动槽）',
+  'yml/_fixed.json 锁定 saveFiles = 99（0–98 手动槽 + 99 自动槽）',
   () => {
     const fixed = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, 'yml', '_fixed.json'), 'utf8'),

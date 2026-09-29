@@ -38,8 +38,6 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 // syokusyu_milk 的真身在触手族文件（#227/J17 导出；#548 起调用点换真身）——
 // 族模块只能函数内延迟 require，见 equip_com16 的注释
 
-/** 运行时存根（#548 起为空——syokusyu_milk 已换真身）；清单核对测试仍读它。 */
-
 // —— 读数缺省处理（未声明下标 undefined → 0，#13） ——
 
 const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;

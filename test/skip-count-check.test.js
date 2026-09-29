@@ -17,7 +17,7 @@
  * 整数——基线烂在本地 npm test 就红，不用等 CI。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require
- * （做法沿用 test/trace-check.test.js）。夹具全部进临时目录，不碰仓库
+ * （做法沿用既有检查器的行为锁测试）。夹具全部进临时目录，不碰仓库
  * 的真实基线文件。
  */
 

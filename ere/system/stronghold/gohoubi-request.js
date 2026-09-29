@@ -7,8 +7,8 @@
  *
  * 调用侧与口上侧实现是一对，而口上侧实装属于 #403（N19）、本轮没派。
  * 这张工单把调用面的形状定死在这里，写进 `ere/kojo/kojo-dungeon-after.js` 的
- * `gohoubi_request_koujo(cid)`（口上侧保留存根，签名与参数形状由这张工单冻结，
- * #403 接上时只换函数体、不该再改签名）：
+ * `gohoubi_request_koujo(cid)`（口上侧入口在 ere/kojo/kojo-dungeon-after.js，
+ * 签名与参数形状由这张工单冻结，#403 接上时只换函数体、不该再改签名）：
  *
  *   - **形参只有一个 `cid`**（派遣对象）。ere 侧按 #5 决议的等价改写把角色
  *     显式传参（kojo-dungeon-after.js 的 gohoubi_after_koujo/osioski_koujo

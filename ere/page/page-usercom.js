@@ -37,7 +37,7 @@
  * p_c（#212）：TSTR:90 承载上次的指令名，静态名表优先、
  * 定制名（trainalias）只补空——见 p_c 的三级回落。
  *
- * 本文件已无存根调用：SHOW_CHARA_INFO 与 STAIN_INFO 已随 #390 换真身。
+ * SHOW_CHARA_INFO 与 STAIN_INFO 已随 #390 换真身。
  * USERCOM 各分支的 RETURN 1/0 均无效果（重绘回合画面是唯一效果），
  * ere 侧 emit 同构（返回值无消费者）。
  * 「上次的调教指令」的淡紫色（0xDDA0DD）不移植（有意偏离：着色）。

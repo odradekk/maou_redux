@@ -1,12 +1,12 @@
 /**
- * @file 写坏型探针的临时仓库副本（#89 二次整改的阻断 2）。
+ * @file 写坏型探针的临时仓库副本（#89 二次返工的阻断 2）。
  *
- * 原则（#91 勘误 + #89 两轮整改的结论）：**写坏型探针一律住临时副本，
+ * 原则（#91 勘误 + #89 两轮返工的结论）：**写坏型探针一律住临时副本，
  * 不写工作树**——node --test 并行跑测试文件，就地改共享树会与并行读者
- * 撞车（16 核 Linux 五跑四红的形态）。同理，**副本按清单最小拷贝，不整
+ * 撞车（16 核 Linux 五跑四红的形式）。同理，**副本按清单最小拷贝，不整
  * 棵拷用不到的目录**：递归拷贝在乎的不是内容是「条目在不在」，并行的
  * 探针在源目录里增删文件，cpSync 枚举之后条目消失就 ENOENT、整棵失败
- * （Windows npm test 7/9 红的回归形态——「写单个文件 vs 递归拷贝整棵
+ * （Windows npm test 7/9 红的回归形式——「写单个文件 vs 递归拷贝整棵
  * 目录」的碰撞面比原来更大）。清单里的条目都是没有并行写者的文件，
  * 碰撞面收到零。
  *
@@ -25,7 +25,7 @@ const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
-/** 单条目拷贝：文件走 copyFileSync（fs.cpSync 覆写既有文件在 Windows 上有怪错——实测 ESRCH/「操作成功完成」形态，Node 24），目录走 cpSync */
+/** 单条目拷贝：文件走 copyFileSync（fs.cpSync 覆写既有文件在 Windows 上有怪错——实测 ESRCH/「操作成功完成」形式，Node 24），目录走 cpSync */
 function copy_entry(from, to) {
   fs.mkdirSync(path.dirname(to), { recursive: true });
   if (fs.statSync(from).isDirectory()) {
@@ -56,7 +56,7 @@ function make_probe_repo(entries) {
 }
 
 /**
- * 把清单重新拷一遍盖回副本（探针还原的统一形态）：单例副本跨用例复用，
+ * 把清单重新拷一遍盖回副本（探针还原的统一形式）：单例副本跨用例复用，
  * 每条写坏型用例的 finally 都调它，探针残留不会流进同文件的后续用例。
  * 目录条目是合并不是镜像——副本里多出的探针文件不会被清掉，那类残留
  * 由各用例开头的「上次残骸先清」处理（与就地探针时代的纪律相同）。
@@ -70,9 +70,9 @@ function refresh_probe_repo(root, entries) {
 }
 
 /**
- * 从仓库内某源文件的文本里抽字面路径（探针副本清单推导用——工具引用的
- * target/ 源文件散在它的数据表里，逐个手抄会过期失效，从源码文本机械提取）。
- * @param {string} file_rel 仓库相对的源文件
+ * 从仓库内某文件的文本里抽字面路径（探针副本清单推导用——逐个手抄会
+ * 过期失效，从文本机械提取）。
+ * @param {string} file_rel 仓库相对的文件
  * @param {RegExp} re 含一个捕获组的路径正则
  * @returns {string[]} 去重后真实存在的路径
  */

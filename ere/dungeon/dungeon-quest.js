@@ -21,7 +21,7 @@
  *     引用传参，ere 侧以返回值 { args } 传出，调用方不消费也保留；
  *   - ere 无全局 RAND 序列（#117），掷点经注入 rand（缺省 Math.random，
  *     dungeon-battle.js 先例）；**死赋值处的 RAND 照掷**（PRNG 序列
- *     逐位对齐是种子化对比测试的前提，#175 文件头同款）；
+ *     逐位确定是种子化回归测试的前提，#175 文件头同款）；
  *   - 逐段注释保留原样（日文分支标记不译），行号引用已删除。
  */
 
@@ -32,7 +32,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { e_get, e_set } = require('#/dungeon/monster-data');
 // 陷阱真身（#176）：quest_battle_set 的障碍陷阱三选一。其对 dungeon.js
-// 存根的延迟 require 同款防环；本文件不反依赖它，顶层引用无环。
+// 域内存根的延迟 require 同款防环；本文件不反依赖它，顶层引用无环。
 const trap_mod = require('#/dungeon/dungeon-trap');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
@@ -542,8 +542,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
 /**
  * quest_battle_set：任务战斗判定与敌方设置。
  *
- * 每场普通战斗前由 dungeon_party_battle 调用（存根期恒 0 = 普通战斗照
- * 打；#178 起真身）。对每个成员：受注计数 -1（> 0 时）；1/3 掷点命中且
+ * 每场普通战斗前由 dungeon_party_battle 调用（#178 起为真身）。对每个成员：受注计数 -1（> 0 时）；1/3 掷点命中且
  * 受注中（534 == 1）且 E 列头持有讨伐对象时进入任务战斗——按障碍位改
  * 写 E 第三列（boss 化 / 15 只）或先掷陷阱；性要求位（bit4）另算交涉值，
  * 掷过 100 即以 quest_bitch 完结任务并 RETURN 1（跳过普通战斗）。

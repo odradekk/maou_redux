@@ -1117,7 +1117,7 @@ async function k7_kojo2() {
     );
     // 同一行输出：无后缀 PRINTFORM 不换行，末行 PRINTW 才收行；
     // ELSEIF 两支是同一行的另两支。前缀提到语句外共用——各支自己的
-    // 语句只列本支，前缀留在里面会被保真锁 C 当成多出来的插值记号（#621）
+    // 语句只列本支，前缀留在里面会多出一段不属于本支的插值记号（#621）
     const approach_front_639 = `${player_name}慢慢的靠近了${target_name}`;
     if (
       era0(`talent:${target}:302`) >= 1 &&
@@ -9609,8 +9609,8 @@ async function kojo_message_com_7(rand) {
       } else {
         // 同一行输出：无后缀 PRINTFORM 不换行，各支的
         // PRINTFORML 才收行；第三支也同属这一行。前缀提到
-        // 语句外共用——各支自己的语句只列本支，前缀留在里面会被保真锁 C
-        // 当成多出来的插值记号（#621）
+        // 语句外共用——各支自己的语句只列本支，前缀留在里面会多出一段
+        // 不属于本支的插值记号（#621）
         const talk_front_5408 = `被${player_name}`;
         if (
           era0(`palam:${target}:5`) >= era0('palamlv:4') &&

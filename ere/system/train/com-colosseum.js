@@ -46,7 +46,7 @@
  *     输出灌精文本，实现在 train-message.js；非死斗场的触手分支
  *     由触手族（J17）负责。
  *
- * 本文件无存根（docs/stub-registry.md）。口上由轴 B 的模块负责，
+ * 本文件口上由轴 B 的模块负责，
  * kojo_message_com 按 TEQUIP:55 分发死斗场口上；
  * 子指令 5/21/27/31/51 经 com_family 分发，缺失时按调用点声明的
  * whenMissing: 0（执行失败）走。
@@ -233,7 +233,7 @@ function assi_can_penetrate(assi) {
 
 /**
  * 凌辱指令分发：先回填 selectcom，再调用对应指令。
- * 别族指令（#219/#221/#222/#224）经 com_family 调用，不另建存根；
+ * 别族指令（#219/#221/#222/#224）经 com_family 调用，不另注册；
  * 缺失时返回 whenMissing: 0（执行失败），
  * 调用方随即取消本回合（#7 决议：缺失值由调用点声明）。
  *

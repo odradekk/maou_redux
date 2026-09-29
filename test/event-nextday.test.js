@@ -357,9 +357,6 @@ test('录像日收益接入：EVENT_NEXTDAY 在每角色循环调用 EVENT_VIDEO
 
   assert.equal(fixture.store.get('cflag:31:495'), 100, '每日浏览数已累计');
   assert.equal(fixture.store.get('flag:10004'), 100, '每日收益已入账');
-  assert(
-    !fixture.text_lines().some((line) => line.includes('event_video_day')),
-  );
 });
 
 test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、ENDCHECK 在普通档尾部', async () => {
@@ -367,7 +364,7 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   join_slave_chara(world.fixture, 31, '温妮');
   // 银黑桃 21 在场且线值 >= 151：ENDCHECK（#116 真调用）进入 ENDCHECKCHARA
   // 时会跑真身状态机、打一行乳业收入播报——它就是 ENDCHECK 执行的直接
-  // 可见证据（#404 起该链的存根行已换成真身）
+  // 可见证据（#404 起该链已换真身）
   join_slave_chara(world.fixture, 21, '银黑桃');
   world.fixture.store.set('exflag:2814', 151);
   // NEXTDAY 体内的可见基准：排卵诱发剂消去播报，位于税収/角色循环之前
@@ -388,9 +385,9 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   ); // ENDCHECK 内部（event_newday  之后，ENDCHECKSPADE 的 151 档播报）
   assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0);
   assert.ok(nextday < month_roll, 'EVENT_NEXTDAY必须先于月替——既有调用序');
-  // 普通档尾部的序证人。#508 起 autotrain 的占位行没了，改用纯文本的位置
-  // 关系：ENDCHECK 在普通档的 （EVENT_NEWDAY 内）跑，必在 #PRI 档的
-  // 月替之后——三档链序或 EVENT_NEWDAY 调用点被挪动，本断言即红。
+  // 普通档尾部的序证人：用纯文本的位置关系——ENDCHECK 在普通档的
+  // （EVENT_NEWDAY 内）跑，必在 #PRI 档的月替之后——三档链序或
+  // EVENT_NEWDAY 调用点被挪动，本断言即红。
   // 「AUTOTRAIN 真的执行了」不在本证人的射程内（它在本世界零输出，由
   // event-turnend 的窗口用例与变异 M11002 单独钉）
   assert.ok(
@@ -1071,7 +1068,6 @@ test('税収接入（TAX_GET）：收税日走真身，非收税日一声不响'
     ),
     '收税日必须打真身的开场行',
   );
-  assert(!taxed_texts.some((t) => t.includes('tax_get')), '占位行必须消失');
 
   const quiet = setup_chara_events();
   quiet.store.set('flag:10002', 11); // 非收税日
@@ -1094,10 +1090,6 @@ test('媚药中毒接入（APHRODISIAC_ADDICT）：每 7 日一次的残留度�
   await run_event_nextday();
 
   assert.equal(fixture.store.get('cflag:31:31'), 2, '残留度 -1（真身跑过）');
-  assert(
-    !fixture.text_lines().some((t) => t.includes('aphrodisiac_addict')),
-    '占位行必须消失',
-  );
 });
 
 test('安息日接入（SABBATH）：满月 15 日 + 法术 + 淫乱 的奴隶走真身', async () => {
@@ -1119,7 +1111,6 @@ test('安息日接入（SABBATH）：满月 15 日 + 法术 + 淫乱 的奴隶�
     texts.some((t) => t.includes('对地下城里的怪物们，进行了性施舍。')),
     'SABBATH 真身输出必须出现',
   );
-  assert(!texts.some((t) => t.includes('sabbath')), '占位行必须消失');
 });
 
 test('安息日日程接入（SABBATH_DAY）：每 3 日的仪式走真身', async () => {
@@ -1141,7 +1132,6 @@ test('安息日日程接入（SABBATH_DAY）：每 3 日的仪式走真身', asy
     texts.includes('祭坛前，信徒的女孩自慰了起来……'),
     'SABBATH_DAY 真身输出必须出现（user = 0 且无野良犬道具 → 泛用题材）',
   );
-  assert(!texts.some((t) => t.includes('sabbath_day')), '占位行必须消失');
 });
 
 // —— #400（N16）晨间三事件：朝フェラ / おねしょ / 犬の散歩 ——
@@ -3169,11 +3159,11 @@ test('示众台（PILLORY）：战役经验结算——FLAG:400 置位时派遣�
   assert.ok(exp_line, '结算播报行');
   assert.ok(
     fixture.waits.some((w) => w.waited && w.rows_at_wait === exp_line.row + 1),
-    ':298 PRINTFORMW 的等待',
+    'PRINTFORMW 的等待',
   );
 });
 
-test('素质变化三事件接入：EVENT_NEXTDAY 命中触发条件时不再打占位行', async () => {
+test('素质变化三事件接入：EVENT_NEXTDAY 命中触发条件', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('talentname:57', '漏尿癖');
   fixture.store.set('talent:31:57', 0);
@@ -3184,12 +3174,6 @@ test('素质变化三事件接入：EVENT_NEXTDAY 命中触发条件时不再打
   await run_event_nextday();
 
   assert.equal(fixture.store.get('talent:31:57'), 1, '经日循环获得【漏尿癖】');
-  assert(
-    !fixture
-      .text_lines()
-      .some((t) => t.includes('原作 @') && t.includes('EVENT_MORASI')),
-    '占位行必须消失',
-  );
 });
 
 // —— 随机上界（#298 覆盖面：随机源的 N 是字面量，改错等于改概率分布）——

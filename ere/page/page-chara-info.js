@@ -669,7 +669,7 @@ async function chara_info_individual_wrapped(cid) {
 // —— chara_info_individual ——
 
 /**
- * 个别角色信息页：详情正文存根 + 操作按钮 + 分页/换人导航。
+ * 个别角色信息页：详情正文 + 操作按钮 + 分页/换人导航。
  * @param {number} arg 角色 ID
  * @param {number[]} chara_sort 本次前一人/后一人导航所依据的顺序（调用方
  *   传入，页内不重算）

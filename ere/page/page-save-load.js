@@ -77,7 +77,7 @@
  *     承载**（本文件 require 装配，emit 点在 load_game 的成功分支）：
  *     LOADGLOBAL 自 #547 起在该链首行镜像（await era.loadGlobal——global:3
  *     不即时 SAVEGLOBAL 打破了 #137 的不镜像前提，见 event-load.js 文件头）；
- *     名字初始化两调用是既有存根（#105 决议）；LASTLOAD_NO == 999 →
+ *     名字初始化两调用自 #105 起为真身；LASTLOAD_NO == 999 →
  *     MAOUNET 与 1000–1020 → INPORT_B 是跨作品数据交换（ere 读档界面只放行
  *     0-99，不可达，归通信工单）；DATA_FIX 历史补丁体由 ADR-0006 判不移植，
  *     三处对新档有语义的行经 #137 逐条判定后归钩子等价实现（判定依据见
@@ -407,9 +407,8 @@ async function save_game() {
     era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
     // 标题（故事名拼接；PRINT 不带行尾，两段拼同一行——ere 的
     // print 独占一行，一次拼完再输出，两行布局等效）。标题 PRINT 的
-    // 「【保存存档】」前缀首版漏抄，#161 范围 B 对拍实证
-    // （saveload-natural-log:90），已补——读取画面同款前缀
-    // 本就在，此处与其对齐
+    // 「【保存存档】」前缀首版漏抄，#161 范围 B 实证后已补——读取画面同款
+    // 前缀本就在，此处与其对齐
     const story = chara(0).system.故事名;
     if (story.length > 0) {
       era.print(

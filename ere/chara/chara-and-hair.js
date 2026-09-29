@@ -2,7 +2,7 @@
  * @file 性格与发色的读写面板（issue #392，N8 段 2）。
  *
  * 调用面（全库唯一调用方）：ere/chara/chara-make.js 的 `rand_chara_make`
- * （rand_chara_make 的形象确认段）。#392 把该处八条存根换成本模块的真身。
+ * （rand_chara_make 的形象确认段）。#392 把该处八个面板函数换成本模块的真身。
  *
  * 移植说明（有意偏离既有写法，均注明依据）：
  *

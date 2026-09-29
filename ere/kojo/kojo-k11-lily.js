@@ -12467,7 +12467,7 @@ async function kojo_message_com_11(rand) {
         if (assi_mao) {
           // 同一行输出：PRINTFORM 不换行，六支的
           // PRINTFORML 各自收行。前缀提到语句外共用，
-          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）
+          // 前缀留在里面会多出一段不属于本支的插值记号（#623）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
             (era.get(`talent:${target}:85`) ||
@@ -22792,7 +22792,7 @@ async function gohoubi_request_koujo_k11() {
   } else if (request >= 1 && request <= 3) {
     // IF/ELSEIF 的兽名分档 + 同一行输出：
     // 两条无后缀 PRINTFORM 不换行，末行 PRINTFORMW 才收行。兽名提到语句外，
-    // 免得它落进模板字面量被保真锁当成插值记号（#600）
+    // 免得它落进模板字面量被当成插值记号（#600）
     const animal = ['', '狗', '猪', '马'][request];
     await era.printAndWait(`${name}提出了和` + animal + `进行兽交的请求`);
   } else if (request === 4) {

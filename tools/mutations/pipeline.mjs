@@ -1,13 +1,13 @@
 // 变异条目表切片：tools/lang-*（简体检查与参考集）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 7; // master 8（#640：-31 比对/转换工具条目与 M77，+2 M12877/M12878 守 lang-check）- 本票 1（#642 删 M79：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）；M1371 改挂 com-family-wiring 自持清单
+export const COUNT = 7; // master 8（#640：-31 比对/转换工具条目与 M77，+2 M12877/M12878 守 lang-check）- 本工单 1（#642 删 M79：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）；M1371 改挂 com-family-wiring 自持清单
 
 export default [
   // M77（归一表删实测字种）随语料普查测试删除、无人可守（#640 删除——
-  // 「新增映射须有原作用例」的规则已由 #573 废止）。
+  // #573 起新增映射不再要求来源用例）。
   // 【#642 删除】M79（豁免名单删華胥の亡靈条）——致谢名单整段已随标题画面
   // 删除，lang-table 的豁免条目同步移除，find 串已无匹配；简体锁的自证
   // 由 output-lang-lock 的探针用例继续守住。
@@ -27,17 +27,17 @@ export default [
   // M303/M304（回放观测面/输入白名单）随输出比对工具删除（#640）。
   // M306（cli 比对 scope）随输出比对工具删除（#640）。
   {
-    desc: 'M370 表外繁体判定器坏（find_outside_trad 永不报——锁对表外繁体复盲，#188 的靶心）',
+    desc: 'M370 表外繁体判定器坏（find_outside_trad 永不报——锁对表外繁体复盲，#188 的目标）',
     file: 'tools/lang-check.js',
     find: '    if (tbl.char_map.has(ch) || !TRAD_SIDE_SET.has(ch)) {',
     replace: '    if (true) { // 变异：表外繁体永不报',
     tests: ['lang-check', 'output-lang-lock'],
-    // 锚取断言消息而非具体汉字：#236 把「贖」加进归一表后，表外检测器不再
-    // 报它，旧锚当场失配。断言消息不随表增长而漂。
+    // 基准取断言消息而非具体汉字：#236 把「贖」加进归一表后，表外检测器不再
+    // 报它，旧基准当场失配。断言消息不随表增长而漂。
     must_mention: '不在归一表——这正是 #188 的失明点，由参考集报出',
   },
   {
-    desc: 'M371 参考集数据删锚点字（贖 移出繁侧集——数据侧坏，判定器跟着失明）',
+    desc: 'M371 参考集数据删基准字（贖 移出繁侧集——数据侧坏，判定器跟着失明）',
     file: 'tools/lang-simp-ref.js',
     find: '贖贗',
     replace: '贗',
@@ -55,10 +55,10 @@ export default [
 
   // M714（归一化器 (cur/max) 拆解）随输出比对工具删除（#640）。
   // M660-M667（调教段登记/回放/归因/基线锁）随输出比对工具删除（#640）。
-  // M1102（回放漏装性交系）随输出比对工具删除；同一行为的清单守卫改挂
-  // M1371（见下，靶改为 com-family-wiring 自持的调教路径清单）。
+  // M1102（回放漏装性交系）随输出比对工具删除；同一行为的清单检查改挂
+  // M1371（见下，目标改为 com-family-wiring 自持的调教路径清单）。
   {
-    desc: 'M1371 调教路径清单漏装奉仕系（COM30-38 的真实 guard 不生效）（#274；#640 起靶改为 com-family-wiring 自持清单）',
+    desc: 'M1371 调教路径清单漏装奉仕系（COM30-38 的真实 guard 不生效）（#274；#640 起目标改为 com-family-wiring 自持清单）',
     file: 'test/com-family-wiring.test.js',
     find: "  'system/train/com-service',",
     replace: '  // 变异：路径清单漏装奉仕系',

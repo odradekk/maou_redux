@@ -37,7 +37,7 @@ const {
   confirm_lost_virgin,
 } = require('#/system/train/com-vaginasex');
 
-/** 本文件没有需要存根化的未移植调用；口上由 source-check 的既有分发承载。 */
+/** 本文件没有未实现的移植调用；口上由 source-check 的既有分发承载。 */
 
 /**
  * TIMES：本游戏须用十进制定点相乘、每一步朝零截断，不能让 JS 二进制

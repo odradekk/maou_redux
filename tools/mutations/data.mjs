@@ -1,9 +1,9 @@
 // 变异条目表切片：yml/ 与 res/（静态表产物与媒体注册）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 32; // master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为守卫）+ 本票 4（#642：M12936-M12939 GameBase 游戏名称/作者/发布时间/追加信息改坏——标题画面直读 yml 的一致性用例拦截）
+export const COUNT = 32; // master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 本工单 4（#642：M12936-M12939 GameBase 游戏名称/作者/发布时间/追加信息改坏——标题画面直读 yml 的一致性用例拦截）
 
 export default [
   {
@@ -144,7 +144,7 @@ export default [
   },
   {
     engine: true,
-    desc: 'M222 saveFiles 退回引擎默认（_fixed.json 里改成 10——原作 11-98 号槽的备注不再被 loadGlobal 维护，界面上显示为空栏位）',
+    desc: 'M222 saveFiles 退回引擎默认（_fixed.json 里改成 10——11-98 号槽的备注不再被 loadGlobal 维护，界面上显示为空栏位）',
     file: 'yml/_fixed.json',
     find: `"saveFiles": 99`,
     replace: `"saveFiles": 10`,
@@ -231,7 +231,7 @@ export default [
     replace: `"人间界侵攻度":
   id: 80`,
     tests: ['exflag-chara35'],
-    must_mention: '人间界侵攻度必须落在原作下标 81',
+    must_mention: '人间界侵攻度必须落在下标 81',
   },
   {
     engine: true,
@@ -270,11 +270,11 @@ export default [
   },
   {
     engine: true,
-    desc: 'M12874 角色表全量装载的张数判据改坏（45 改 44——yml 丢失一张也绿，#640）',
+    desc: 'M12874 角色表全量装载的张数条件改坏（45 改 44——yml 丢失一张也绿，#640）',
     file: 'test/chara-load.test.js',
     find: '      files.length,\n      45,\n      `库内应有 45 张 Chara*.yml，实际 ${files.length}`,',
     replace:
-      '      files.length,\n      44, // 变异：张数判据坏\n      `库内应有 45 张 Chara*.yml，实际 ${files.length}`,',
+      '      files.length,\n      44, // 变异：张数条件坏\n      `库内应有 45 张 Chara*.yml，实际 ${files.length}`,',
     tests: ['chara-load'],
     must_mention: '库内应有 45 张',
   },

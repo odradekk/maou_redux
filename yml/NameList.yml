@@ -1,15 +1,13 @@
-# 固定名列表：原作 @CHARA_NAME_INIT 的数据落点（issue #388，#329 裁定 10）。
+# 固定名列表：角色名生成的数据落点（issue #388，#329 决定 10）。
 #
-# 源: target/ERB/キャラ関数/CHARA_NAME_INIT.ERB:5-3360（@CHARA_NAME_INIT，
-#     3,336 条 LIST_CHARA_NAME:n = 名字 赋值，声明见同目录 CHARA_NAME.ERH:7
-#     的 #DIMS LIST_CHARA_NAME,5500）。5 个计数常量（WEST_NAME_COUNT 等，
-#     :10-14）不在本表——它们只服务 @CHARA_NAME_RANDOM_DEFINE 的随机范围
-#     计算，且已随 #332 独立落在 ere/chara/chara-name.js（WEST_NAME_COUNT 等
-#     常量），本票不重复。
+# 源: chara_name_init 的 3,336 条 LIST_CHARA_NAME:n = 名字 赋值（声明
+#     #DIMS LIST_CHARA_NAME,5500）。5 个计数常量（WEST_NAME_COUNT 等）不在
+#     本表——它们只服务 chara_name_random_define 的随机范围计算，且已随
+#     #332 独立落在 ere/chara/chara-name.js（WEST_NAME_COUNT 等常量），
+#     本工单不重复。
 #
-# 本文件不是 tools/csv-to-yml.js 的转换器产物（原作没有对应 CSV，源是 ERB
-# 赋值语句，CFlag.yml / Ex_Talent.yml 同款先例）：按上面的源行，逐条抽取
-# `LIST_CHARA_NAME:n = 名字`，过 tools/lang-normalize.js 的归一表（词级→字级），
+# 本文件为人工产出（CFlag.yml / Ex_Talent.yml 同款先例）：按上面的源行，
+# 逐条抽取 `LIST_CHARA_NAME:n = 名字`，过归一表（词级→字级），
 # 再按下方两条规则处理，最终按 id 升序写出。
 #
 # 一维表，无 extendedCharaTables 登记（TrainCommand.yml 同款先例）。读法：
@@ -29,15 +27,15 @@
 # #435 处理，表名与读取键一并改）。改名前先核对 test/chara-name-list.test.js
 # 的「文件名分类」用例——它拿引擎自己的 staticFormatRegex 逐文件过一遍。
 #
-# 原作数据问题（源文件本身有 2 处同一 id 被赋值两次、值不同；Emuera 逐行
-# 执行，后一次赋值生效，取源文件里最后一次赋值的值）：
+# 数据问题（有 2 处同一 id 被赋值两次、值不同；旧引擎逐行
+# 执行，后一次赋值生效，取最后一次赋值的值）：
 #   :3003 陸 → 颯太
 #   :3013 悠斗 → 陽斗
 #
 # そら（id 3610，男性和名范围，纯假名人名）→ 空：假名不是字级映射能处理的
 # 对象，且对中文玩家不可读，不适合塞进 EXEMPT_STRINGS（那栏是「刻意保留
 # 原文」，不适用于一个玩家读不懂的人名）。换成同音同义、且与该范围内其它
-# 名字风格一致的汉字写法「空」，本票范围内的一次性译名决定（issue #388
+# 名字风格一致的汉字写法「空」，本工单范围内的一次性译名决定（issue #388
 # 讨论已确认），不写入共享的 tools/lang-table.js。
 #
 # 重名合并（yml 以名字为键，无法承载重复键——引擎 YAML 装载器对重复 key
@@ -47,9 +45,9 @@
 # 女名与男名，「翼」同时是日式男名与中华名），源数据本身允许重复，只是
 # yml 的键唯一性放不下。归一表把繁体/日文汉字与对应简体字合并成同一个
 # 名字后，又带出 10 组新合并（如「綾」与既有「绫」）；最终共 65 组、
-# 丢弃 70 个 id——那些 id 查表会返回空，未来 CHARA_NAME.ERB 的读取实现
-# （@CHARA_NAME_DEFINE，ere 落点 ere/chara/chara-name.js）落到它已有的默认名
-# 兜底，不在本票范围：
+# 丢弃 70 个 id——那些 id 查表会返回空，未来的读取实现
+# （chara_name_define，ere 落点 ere/chara/chara-name.js）回落到它已有的
+# 默认名，不在本工单范围：
 #   爱理（保留 225，丢弃 96）
 #   伊芙（保留 1352，丢弃 49）
 #   艾伦（保留 2020，丢弃 7,2000,2012）

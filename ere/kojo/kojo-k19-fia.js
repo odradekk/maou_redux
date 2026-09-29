@@ -6827,10 +6827,9 @@ async function kojo_message_com_19(rand) {
           );
         }
       } else {
-        // 的 `PRINTFORM %SAVESTR:PLAYER%` 与随后互斥分支的 PRINTFORML
-        // 尾段（各自收行）在旧引擎里同属一行。前缀行归第一条
-        // 分支的拼接基准；其余互斥分支改用同一个前缀变量——保真锁
-        // 按基准逐条核对插值记号，非前缀行的语句里不许再出现 PLAYER 记号（#625）
+        // 互斥分支共用同一段 `PRINTFORM %SAVESTR:PLAYER%` 前缀：前缀行归
+        // 第一条分支的拼接基准，其余分支改用同一个前缀变量——非前缀行的
+        // 语句里不许再出现 PLAYER 记号（#625）
         const player_prefix = `${player_name}`;
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&

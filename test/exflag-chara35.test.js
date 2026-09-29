@@ -3,15 +3,15 @@
  * Flag.yml 侵略线条目。
  *
  * 验证路线与 test/chara-yml.test.js / test/variable-yml.test.js 同构：不用
- * 夹具（记录层证明不了「引擎接受」），不用自写镜像（会漂移），全部经
+ * 夹具（记录层证明不了「引擎接受」），不用自写镜像（会不一致），全部经
  * test/helpers/engine-bundle.js 驱动 app.asar 里的 parseDataFile、eraStart
  * 装载循环转写与 setVar（模块 648，真方法 + 最小假 this）。
  *
- * 本票的存在理由（工单动机的回归锁）：EX_FLAG 是扩展普通表，yml/ExFlag.yml
+ * 本工单的存在理由（工单动机的回归锁）：EX_FLAG 是扩展普通表，yml/ExFlag.yml
  * 缺席的世界里 `era.set('exflag:99', …)` 在引擎 setVar 的二段寻址分支既找不到
- * data 桶也过不了 extendedTables 守卫，落到函数末尾的
+ * data 桶也过不了 extendedTables 检查，落到函数末尾的
  * `era.error('key error in getter/setter!')`——侵略线写威望（EX_FLAG:99）
- * 与结局链写 EX_FLAG:2801-2816 之前，这张表必须先落地。
+ * 与结局链写 EX_FLAG:2801-2816 之前，这张表必须先实现。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告——见 helper 文件头。
  */
@@ -65,7 +65,7 @@ engine_test(
     assert.equal(table['威望'], 99);
     assert.equal(table['非作弊资金'], 4444);
     assert.equal(table['天神宫侵攻度'], 101);
-    // 结局线 2801-2816 连号齐全（2815/2816 为原作错写 FLAG 侧的槽位，见该 yml 头注）
+    // 结局线 2801-2816 连号齐全（2815/2816 为写错到 FLAG 侧的槽位，见该 yml 头注）
     for (let id = 2801; id <= 2816; id += 1) {
       assert.ok(
         Object.values(table).includes(id),
@@ -114,7 +114,7 @@ engine_test(
       extendedTables: { exflag: tableType.normal },
     };
 
-    // 数字寻址写入：@EVENTFIRST 的威望播种（EX_FLAG:99 = 70）
+    // 数字寻址写入：EVENTFIRST 的威望播种（EX_FLAG:99 = 70）
     assert.equal(engine.set_var.call(fake, 'exflag:99', 70), 70);
     assert.equal(fake.data.exflag[99], 70);
     // 名称寻址与数字寻址等价（包装层与门面可用中文名）
@@ -151,7 +151,7 @@ engine_test(
     engine.set_var.call(fake, 'exflag:99', 70);
     assert.deepEqual(errors, ['key error in getter/setter! key (exflag:99)']);
 
-    // 名字表不在 + 桶在 + 登记在（PR #57 逐族实测的「直接崩溃」形态，二段版）：
+    // 名字表不在 + 桶在 + 登记在（PR #57 逐族实测的「直接崩溃」形式，二段版）：
     // u = i(this.staticData[a][u], u) 在 undefined 上取下标，TypeError
     const { tableType } = engine.era_api;
     const fake_bucket = {
@@ -302,7 +302,7 @@ engine_test(
     // 引擎行为记录（Chara17 同款，见 CFlag.yml 头注）：预设的 cflag 值不随
     // addCharacter 落 data——initCharaTable 只覆盖名字表内登记的下标，而
     // CFlag.yml 是空表。菲娅的 22 项フラグ预设（含 151 = 99）是否需要在加入
-    // 时直接生效，由 ENDING_1 演出票对照原作 @CHAR_INIT 定夺
+    // 时直接生效，由 ENDING_1 演出工单对照 CHAR_INIT 的行为定夺
     assert.deepEqual(adder.data.cflag[35], {});
   },
 );
@@ -321,7 +321,7 @@ engine_test('Flag.yml 侵略线条目经引擎装载：11 条新增映射与 id 
   const table = loader.static_data.flag;
   // 侵攻度三区 + 人间界（81/86/88/90）、征服标记三区（87/89/91）、ENDING_1
   // 已播（82）、特别税（9）、勇者战役（400）、2D 地图（502）
-  assert.equal(table['人间界侵攻度'], 81, '人间界侵攻度必须落在原作下标 81');
+  assert.equal(table['人间界侵攻度'], 81, '人间界侵攻度必须落在下标 81');
   assert.equal(table['人间界陷落'], 82);
   assert.equal(table['精灵领域侵攻度'], 86);
   assert.equal(table['精灵领域征服'], 87);
@@ -332,7 +332,7 @@ engine_test('Flag.yml 侵略线条目经引擎装载：11 条新增映射与 id 
   assert.equal(table['特别税加成'], 9);
   assert.equal(table['勇者战役中'], 400);
   assert.equal(table['二维地图模式'], 502);
-  // 保留区仍在（#22 并入的 DAY/TIME/MONEY 与角色指针），原作下标与 10000
+  // 保留区仍在（#22 并入的 DAY/TIME/MONEY 与角色指针），既有下标与 10000
   // 起保留区不撞号
   assert.equal(table['天数'], 10000);
   assert.equal(table['所持金'], 10004);
