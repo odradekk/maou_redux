@@ -10,7 +10,7 @@
 
 ## 当前状态
 
-**移植已完成**：路线图 #101 于 2026-09-29 关闭，各阶段的决策与验收记录在它和各阶段子地图里。此后本项目独立开发（ADR-0008）：改游戏按普通产品改动处理，理由写在代码注释和提交说明里。打包与发布等后续工作另开工单规划。
+**移植已完成**：路线图 #101 于 2026-09-29 关闭，各阶段的决策与验收记录在它和各阶段子地图里。此后本项目独立开发（ADR-0008）：改游戏按普通产品改动处理，理由写在代码注释和提交说明里。首个公开版本 0.1.0 于 2026-09-29 发布（#714），发版步骤见「发版」一节。
 
 **从新游戏到结局的流程由 `test/event-ending-e2e.test.js` 持续验证**（侵略线到 `ENDING_1`）。另有迷宫到 `ENDING_2`（`event-ending2-e2e`、`event-ending2-2d-e2e`）、战役全通关（`campaign-e2e`）、角色堕落（`event-corrupt-e2e`）、据点一日循环（`event-daycycle-e2e`）等端到端测试，都包含在 `npm test` 中。
 
@@ -31,6 +31,8 @@
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
 ├── res/              # 图片/音频（#69 起启用，resource: true；六图 + 三首 BGM）
 ├── sav/              # 存档，*.sav 已 gitignore
+├── third-party/      # 随发布包分发的第三方许可证
+├── dist/             # 发布包产物，已 gitignore
 └── dev-guides/       # 引擎手册的本地副本，已按引擎行为修正
 ```
 
@@ -122,6 +124,17 @@ PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任�
 跳过数分别与两份基线比较：无引擎时使用 `test/engine-skip-baseline.txt`，新增依赖引擎的用例必须同步更新该文件；有引擎时使用 `test/engine-present-skip-baseline.txt`，预期为 0。引擎已安装却仍有测试跳过时，应检查跳过条件和 `locate_asar` 的查找结果。
 
 **concurrency 会取消 PR 的旧运行，不取消正在执行的 master push 任务。** 但同组等待中的运行仍可能被后续运行替代。因此，连续合并多个 PR 后，中间提交不一定各有一次完整结果；最终提交的测试失败时，应检查自上次通过以来的全部合并。
+
+### 发版
+
+版本号与存档兼容按 ADR-0006：0.x 期间不保证存档通用，破坏性改动同时提高【版本】与【最低支持版本】。发版本身也要改 `yml/GameBase.yml` 的三个版本字段，并在 `CHANGELOG.md` 写明本版是否影响存档。
+
+1. 发版工单的 PR 改版本号和 `CHANGELOG.md`，合并后切回 master。
+2. 在 master 上运行 `node tools/pack-release.mjs`，在 `dist/` 下生成纯游戏包和整合包，并输出两个包的 SHA256。脚本只收 git 已跟踪的 `ere/`、`yml/`、`res/` 与说明文件，这些路径有未提交的改动时拒绝打包。整合包里的引擎取本机引擎目录，查找顺序同 `npm start`；压缩需要 7-Zip。
+3. 解压整合包，在解压目录里启动 exe，确认不手动选目录也能进入标题画面，且标题显示新版本号。
+4. 在合并提交上打 `v<版本代号>` tag 并推送，用 `gh release create v<版本代号> dist/*.zip --repo odradekk/maou_redux` 发布。发版说明取自 `CHANGELOG.md`，附两个包的 SHA256。
+
+游戏的 Release 带 Latest 标记。`engine-4.8.0` 是 CI 下载引擎用的 Release，CI 按固定地址下载，不受 Latest 标记影响。整合包附带的引擎要与测试使用的版本一致，换引擎版本另开工单。
 
 ### 静态数据目录
 
