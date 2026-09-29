@@ -502,12 +502,12 @@ async function ending_5(rand) {
  * ending_n：一周目 500 天的 Normal End 演出。
  *
  * 调用点 run_endcheck（EX_FLAG:2801 == 99 && DAY:0 == 500，每日一次）。
- * 14 行 PRINTFORMW（每行读一次键）+ 首行后的 FORCEWAIT（**连读两次**，
- * 保留）+ 结尾的 ending_input 选择。
+ * 13 行剧本逐行打印（非空行各读一次键，中间的空行不读）+ 首行后的
+ * FORCEWAIT（**连读两次**，保留）+ 结尾的 ending_input 选择。
  *
- * 结尾选项是手写 `[1] …[2] …` 而不是 printButton——此处无按钮，玩家
- * 键入编号，ending_input 的 INPUT 直接收（与 ending_1 的按钮化刻意不同，
- * 保留该写法）。
+ * 结尾选项 [1] 结束 / [2] 继续是按钮，打印在最后一行读完键之后——按钮
+ * 若跟着选项行一起提前打印，后面那次等键会清空白名单，玩家点不动
+ * （#711；正文不写 [编号]，引擎按 showAcc 拼）。
  *
  * @returns {Promise<void>}
  */
@@ -529,7 +529,6 @@ async function ending_n() {
     '...',
     '大概，已经不会有尽头了吧。',
     '达成了【Normal End】。',
-    '[1] 结束游戏\t\t[2] 继续游戏',
   ];
   for (const [i, line] of lines.entries()) {
     if (line !== '') {
@@ -543,6 +542,11 @@ async function ending_n() {
       await era.waitAnyKey();
     }
   }
+  // 结尾选项：[1] 结束游戏（QUIT）/ [2] 继续游戏。**按钮必须打印在上一行
+  // 读完键之后**——任何一次成功回传都会清空按钮白名单，打印在等键之前
+  // 会点不动（引擎规则）。正文不写 [编号]，引擎按 showAcc 拼（PR #30）
+  era.printButton('结束游戏', 1);
+  era.printButton('继续游戏', 2);
   // ending_input(EX_FLAG:2801 + 1000)
   await ending_input(era_exflag.first_run_deadline + 1000);
 }

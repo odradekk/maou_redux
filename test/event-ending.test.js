@@ -2282,16 +2282,18 @@ test('END 族分派贯通：菲娅线值 10 → run_endcheck 走 END7_1 → 文�
 
 test('效果表驱动：每段收尾对线值的写入（表里逐条独立写出，不复用数据表）', async () => {
   // [族, 小节, 期望的线值终值, 可选输入]；族 F 的线值 = EX_FLAG:(2800 + F)，
-  // 起点统一预置 100。+1 的段是绝大多数，清零/加倍/加五的段逐条写出
+  // 起点统一预置 100。+1 的段是绝大多数，清零/加倍/加五的段逐条写出。
+  // 选项行自 #711 起是按钮，输入值必须是该行按钮的编号（0 号不在
+  // 「点头/摇头」「好吃/不好吃」这两行里，喂 0 会被引擎拒收）
   const CASES = [
     // 族 7（菲娅线，EX_FLAG:2807）
     // 崩坏态 Bad Ending 占位段：收尾 += 1（起点 100 → 101），防重播置个位
     [7, '-1', 101],
     [7, 1, 101],
-    [7, 2, 101, [0]],
+    [7, 2, 101, [1]],
     [7, 3, 100],
     [7, 4, 101],
-    [7, 5, 101, [0]],
+    [7, 5, 101, [3]],
     [7, 6, 101],
     [7, 7, 101],
     [7, 8, 101],
@@ -2308,7 +2310,7 @@ test('效果表驱动：每段收尾对线值的写入（表里逐条独立写�
     [7, 19, 101],
     [7, 20, 101],
     [7, 21, 101],
-    [7, 22, 101, [1, 1]],
+    [7, 22, 101, [1, 5]],
     // 族 10（嘉德线，EX_FLAG:2810）
     [10, 11, 101],
     [10, '12_1', 101],
@@ -2483,9 +2485,11 @@ test('ask 段分岔：八个 INPUT 段的两侧都走一遍（表驱动）', asy
   }
 });
 
-test('END10_12 分岔：INPUT 1/2 + after 的两个 CFLAG 区间子调用（含无效输入重问）', async () => {
-  // [输入序列, CFLAG:33:2, 期望线值终值, 期望子段]；线值起点 100，
-  // 子段 12_1 = +1、12_2 = +2，主段自身无写入
+test('END10_12 分岔：INPUT 1/2 + after 的两个 CFLAG 区间子调用', async () => {
+  // [输入, CFLAG:33:2, 期望线值终值, 期望子段]；线值起点 100，
+  // 子段 12_1 = +1、12_2 = +2，主段自身无写入。
+  // 选项行自 #711 起是按钮（1/2），越界输入在引擎侧就被拒收——again
+  // 重问不可达，拒收另有专门用例（选项步按钮化的白名单）
   const CASES = [
     [[1], 3000, 102, '12_2', 'result 1 且 3000 <= c2 < 5000 → 12_2'],
     [[1], 2500, 101, '12_1', 'result 1 且 2500 <= c2 < 4000 → 12_1'],
@@ -2493,7 +2497,6 @@ test('END10_12 分岔：INPUT 1/2 + after 的两个 CFLAG 区间子调用（含�
     [[1], 2499, 100, null, '2499 两个区间都不进'],
     [[1], 5000, 100, null, '5000 碰不到任何一个左闭右开区间'],
     [[2], 0, 101, '12_1', 'result 2 → 12_1（无 CFLAG 条件）'],
-    [[3, 1], 3000, 102, '12_2', '无效输入先重问（again），第二次命中'],
   ];
   for (const [inputs, c2, want, sub, why] of CASES) {
     const fixture = create_era_fixture();
@@ -2519,23 +2522,253 @@ test('END10_12 分岔：INPUT 1/2 + after 的两个 CFLAG 区间子调用（含�
   }
 });
 
-test('end10_12 的无效输入重问不重画：同一段 prompt 出现两次、子段只在最后一次命中', async () => {
+test('end10_12 的越界输入被引擎当场拒收（#711：选项已按钮化，again 重问结构性不可达）', async () => {
+  // 旧行为是「不在 branches 里的键跳回询问头重问（again）」——选项行按钮化后
+  // 白名单就是那两枚按钮，越界值在引擎渲染层被拒收、不回传游戏，again 支
+  // 结构性不可达（char_gift 子菜单的越界用例同款）。夹具按引擎同款校验当场
+  // 抛「输入不合法」：这条同时证明按钮在白名单里、没被中途的等键清掉——
+  // 若按钮被打印在最后一次等键之前，白名单为空、9 反而会被放行。
   const fixture = create_era_fixture();
   const { END_FAMILY } = fixture.load_module('event/ending-family');
   fixture.store.set('exflag:2810', 100);
   fixture.store.set('cflag:33:2', 2500);
-  fixture.set_inputs(9, 9, 2);
-  await END_FAMILY.call(10, { args: [12] });
+  fixture.set_inputs(9);
+  await assert.rejects(
+    () => END_FAMILY.call(10, { args: [12] }),
+    /输入不合法！请输入以下值之一：1, 2/,
+  );
   assert.equal(
     fixture.store.get('exflag:2810'),
-    101,
-    '重问两次后 result 2 命中 12_1（+1）',
+    100,
+    '被拒收的输入不落到游戏侧（线值不动）',
   );
-  assert.equal(
-    fixture.inputs_consumed.filter(({ api }) => api === 'input').length,
-    3,
-    '三次 INPUT：两次无效 + 一次命中',
-  );
+});
+
+test('选项步按钮化：十一处选项行都是按钮、在最后一次等键之后打印（表驱动）', async () => {
+  // 每项：族 / 小节 / 输入序列 / 期望按钮实显文本 / 改前的手写选项行。
+  // 输入都取该行按钮的编号，断言能送达游戏（夹具的 inputs_consumed）。
+  // 「按钮在最后一次等键之后」由下一条越界拒收用例把守：顺序错位时白名单
+  // 已被那次等键清空，越界值反而会被当自由输入放行。
+  const CASES = [
+    {
+      family: 7,
+      section: 2,
+      inputs: [1],
+      buttons: ['[1] 点头', '[2] 摇头'],
+      old: '[1] 点头 [2] 摇头',
+    },
+    {
+      family: 7,
+      section: 5,
+      inputs: [3],
+      buttons: ['[3] 好吃！', '[4] 不怎么好吃'],
+      old: '[3] 好吃！ [4] 不怎么好吃',
+    },
+    {
+      // 本段两步都有选项：先「要不要进入魔女线」，再魔药三选一
+      family: 7,
+      section: 22,
+      inputs: [1, 5],
+      buttons: [
+        '[1] 好的',
+        '[2] 唔，还是算了',
+        '[3] 明天再问我可以喵？',
+        '[5] 喝掉',
+        '[6] 不喝',
+        '[7] 喂菲娅喝',
+      ],
+      old: '[5] 喝掉 [6] 不喝 [7] 喂菲娅喝',
+    },
+    {
+      family: 7,
+      section: 12,
+      inputs: [1],
+      buttons: ['[1] 好的', '[2] 唔，还是算了', '[3] 明天再问我可以喵？'],
+      old: '[1]好的 [2]唔，还是算了 [3]明天再问我可以喵？',
+    },
+    {
+      family: 10,
+      section: 12,
+      inputs: [1],
+      buttons: ['[1] 「想要肉棒是吗 」', '[2] 呵呵、有趣'],
+      old: '[1] 「想要肉棒是吗 」 [2]呵呵、有趣',
+    },
+    {
+      family: 11,
+      section: 4,
+      inputs: [1],
+      buttons: ['[1] 打开方便之门', '[2] 直接丢到床上♂然后干了个爽'],
+      old: '[1]打开方便之门 [2]直接丢到床上♂然后干了个爽',
+    },
+    {
+      family: 11,
+      section: 9,
+      inputs: [1],
+      buttons: ['[1] 好的', '[2] 唔，还是算了', '[3] 明天再问我可以喵？'],
+      old: '[1]好的 [2]唔，还是算了 [3]明天再问我可以喵？',
+    },
+    {
+      family: 14,
+      section: 4,
+      inputs: [1],
+      buttons: ['[1] 许可', '[2] 阻止'],
+      old: '[1]许可 [2]阻止',
+    },
+    {
+      family: 14,
+      section: 9,
+      inputs: [1],
+      buttons: ['[1] 好的', '[2] 唔，还是算了', '[3] 明天再问我可以喵？'],
+      old: '[1]好的 [2]唔，还是算了 [3]明天再问我可以喵？',
+    },
+    {
+      family: 14,
+      section: 20,
+      inputs: [1],
+      buttons: ['[1] 好的', '[2] 唔，还是算了', '[3] 明天再问我可以喵？'],
+      old: '[1]好的 [2]唔，还是算了 [3]明天再问我可以喵？',
+    },
+  ];
+  // 角色线 [1] 支要离队，离队对象得在场（与 ask 段分岔用例同款）
+  const build_world = (c) => {
+    const fixture = create_era_fixture();
+    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const cid = c.family === 11 ? 22 : 21;
+    if (c.family === 11 || c.family === 14) {
+      fixture.seed_chara(cid, { id: cid, name: '角色', callname: '角色' });
+      fixture.era.addCharacter(cid);
+      fixture.store.set(`base:${cid}:0`, 5000);
+      fixture.store.set(`base:${cid}:1`, 5000);
+    }
+    return { fixture, END_FAMILY };
+  };
+  for (const c of CASES) {
+    const label = `END${c.family}_${c.section}`;
+    const { fixture, END_FAMILY } = build_world(c);
+    fixture.set_inputs(...c.inputs);
+    await END_FAMILY.call(c.family, { args: [c.section] });
+
+    assert.deepEqual(
+      button_rendered(fixture),
+      c.buttons,
+      `${label}：选项行是按钮，编号与正文不变（引擎按 showAcc 拼前缀）`,
+    );
+    assert.ok(
+      !history_texts(fixture).includes(c.old),
+      `${label}：改前的手写选项行不得再出现`,
+    );
+    assert.ok(
+      fixture.inputs_consumed.some(
+        ({ api, value }) => api === 'input' && value === c.inputs[0],
+      ),
+      `${label}：选项编号 ${c.inputs[0]} 被白名单接受（按钮在最后一次等键之后）`,
+    );
+
+    // 每个站点各自钉一次顺序：按钮若被挪到等键之前，白名单为空，越界值
+    // 会被当自由输入放行——这里的越界拒收当场红
+    const rejected = build_world(c);
+    rejected.fixture.set_inputs(9);
+    await assert.rejects(
+      () => rejected.END_FAMILY.call(c.family, { args: [c.section] }),
+      /输入不合法！请输入以下值之一：/,
+      `${label}：越界输入必须被引擎拒收（按钮在最后一次等键之后）`,
+    );
+  }
+});
+
+test('ask 步的 again / else：提示按钮化后数据表不可达，执行器分岔在这里钉住', async () => {
+  // 八处 ask 的提示都是按钮、越界值在引擎侧被拒收，数据表里的 again / else
+  // 因此不再可达（与 char_gift 的越界重问同款，见数据表 where again: true）。
+  // 执行器这两个分岔的语义用「提示不打印按钮」的合成步直接驱动
+  {
+    const fixture = create_era_fixture();
+    const { run_steps } = fixture.load_module('event/ending-family');
+    fixture.set_inputs(9, 1); // 第一次不命中 → again 重问；第二次命中
+    const ctx = { family: 7 };
+    await run_steps(
+      [
+        [
+          'ask',
+          {
+            prompt: [['l', '（合成）要进入这个结局吗？']],
+            branches: { 1: [['l', '（合成）命中分支']] },
+            else: [['l', '（合成）else 兜底']],
+            again: true,
+          },
+        ],
+      ],
+      ctx,
+    );
+    assert.deepEqual(
+      fixture.inputs_consumed.map(({ api, value }) => [api, value]),
+      [
+        ['input', 9],
+        ['input', 1],
+      ],
+      'again 为真：不命中不落 else，回到提示头重问',
+    );
+    assert.equal(ctx.result, 1, 'ctx.result 记录最后一次输入');
+    assert.ok(
+      history_texts(fixture).includes('（合成）命中分支'),
+      '第二次输入命中分支',
+    );
+    assert.ok(
+      !history_texts(fixture).includes('（合成）else 兜底'),
+      'again 为真时不走 else',
+    );
+  }
+  {
+    const fixture = create_era_fixture();
+    const { run_steps } = fixture.load_module('event/ending-family');
+    fixture.set_inputs(9);
+    await run_steps(
+      [
+        [
+          'ask',
+          {
+            prompt: [['l', '（合成）要进入这个结局吗？']],
+            branches: { 1: [['l', '（合成）命中分支']] },
+            else: [['l', '（合成）else 兜底']],
+          },
+        ],
+      ],
+      { family: 7 },
+    );
+    assert.ok(
+      history_texts(fixture).includes('（合成）else 兜底'),
+      'again 不为真：不命中落 else',
+    );
+    assert.ok(
+      !history_texts(fixture).includes('（合成）命中分支'),
+      '不命中时不走任何分支',
+    );
+  }
+});
+
+test('选项步按钮化的白名单：越界输入被当场拒收（#711）', async () => {
+  // 与上一条互补：上一条证「按钮活着、编号能送达」，这一条证「白名单真的
+  // 收紧了」——越界值在引擎侧就被弹回，游戏侧的「无效输入重问」不可达。
+  const CASES = [
+    [7, 2, 3, '1, 2', '因果选择「点头/摇头」'],
+    [7, 12, 4, '1, 2, 3', '结局进入询问'],
+    [14, 4, 5, '1, 2', '暗杀许可'],
+  ];
+  for (const [family, section, input, allowed, why] of CASES) {
+    const fixture = create_era_fixture();
+    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    if (family === 14) {
+      fixture.seed_chara(21, { id: 21, name: '角色', callname: '角色' });
+      fixture.era.addCharacter(21);
+      fixture.store.set('base:21:0', 5000);
+      fixture.store.set('base:21:1', 5000);
+    }
+    fixture.set_inputs(input);
+    await assert.rejects(
+      () => END_FAMILY.call(family, { args: [section] }),
+      new RegExp(`输入不合法！请输入以下值之一：${allowed}`),
+      `END${family}_${section}：${why}的越界输入必须被引擎拒收（按钮在最后一次等键之后）`,
+    );
+  }
 });
 
 test('finish 步：2801 < 99 先抬到 90 再 ++；>= 99 不动；95 只 ++', async () => {
@@ -2735,6 +2968,51 @@ test('end10_54 的 ALIGNMENT：先 CENTER 后 LEFT（era.setAlign 各一次）',
     'END10_54 的两处 ALIGNMENT（REDRAW 不镜像）',
   );
   assert(history_texts(fixture).includes('天神宫可以侵略了。'), '收尾行');
+});
+
+test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之后打印（输入按钮编号能送达）', async () => {
+  const fixture = create_era_fixture();
+  const { ending_n } = fixture.load_module('event/event-ending');
+  fixture.set_inputs(2); // [2] 继续游戏
+  await ending_n();
+
+  const buttons = fixture.lines_history.filter(
+    (line) => line.type === 'button',
+  );
+  assert.deepEqual(
+    buttons.map((line) => line.rendered),
+    ['[1] 结束游戏', '[2] 继续游戏'],
+    '结尾选项是按钮，编号与正文不变（引擎按 showAcc 拼前缀）',
+  );
+  assert.ok(
+    !history_texts(fixture).includes('[1] 结束游戏\t\t[2] 继续游戏'),
+    '旧的手写编号选项行不得再出现',
+  );
+  // 顺序：按钮必须排在「达成了【Normal End】。」那一行之后。若提前到它
+  // 之前打印，那次等键会清空白名单——下面的越界拒收用例当场红
+  const end_line = fixture.lines_history.find(
+    (line) => line.type === 'text' && line.text === '达成了【Normal End】。',
+  );
+  assert.ok(end_line, '收尾行仍在（其余剧本行的打印与等键节奏不变）');
+  assert.ok(
+    buttons.every((line) => line.row > end_line.row),
+    '两个按钮都在收尾行的等键之后打印',
+  );
+  assert.ok(
+    history_texts(fixture).includes('魔王的传说，还将继续......'),
+    '输入 2 被白名单接受 → [2] 继续分支',
+  );
+
+  // 白名单真的活着：越界值被当场拒收。按钮若打印在等键之前，白名单为空、
+  // 3 反而会被放行——ending_input 重问时预置输入已耗尽，抛的是别的错
+  const rejected = create_era_fixture();
+  const { ending_n: rejected_n } = rejected.load_module('event/event-ending');
+  rejected.set_inputs(3);
+  await assert.rejects(
+    () => rejected_n(),
+    /输入不合法！请输入以下值之一：1, 2/,
+    'ending_n 的越界输入必须被引擎拒收（按钮在最后一次等键之后）',
+  );
 });
 
 test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无效输入重问', async () => {
