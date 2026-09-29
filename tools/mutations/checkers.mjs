@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 89; // #646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 83; // #536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -440,7 +440,7 @@ export default [
     must_mention: '视图别名上的属性未被报出',
   },
 
-  // —— #532：--verify 只读 + 残留态启动自检（目标同为 tools/mutation-check.mjs）——
+  // —— #532：--verify 只读（目标同为 tools/mutation-check.mjs）——
   {
     desc: 'M11240 --verify 的只读短路被拆（if (args.verify) 恒假，--verify 落进执行阶段、就地变异并写目标文件）（#532）',
     file: 'tools/mutation-check.mjs',
@@ -450,83 +450,6 @@ export default [
     test_name:
       '--verify 全程只读：目标文件置为只读照样报绿，且不进入执行阶段（#532）',
     must_mention: '工作区只读不该影响结构校验',
-  },
-  {
-    desc: 'M11241 残留判定焊死为「都命中」（脏目标文件一律当残留，恒等判定失效——正在改那个目标文件的开发常态被拦下）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: '      if (apply_mutation(head, m) === working) {',
-    replace: '      if (true) { // 变异：脏目标文件一律当残留',
-    tests: ['mutation-check'],
-    test_name: '启动自检零误报：目标文件有未提交的合法改动时照常执行（#532）',
-    must_mention: '合法改动不该被当成残留拦下',
-  },
-  {
-    desc: 'M11242 残留恒等判定恒假（残留再也认不出来，退回到门 2 那句「目标代码被重构了？」——#513 的 M11069 那一类重新变成隐形）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: '      if (apply_mutation(head, m) === working) {',
-    replace: '      if (false) { // 变异：恒等判定恒假，残留认不出来',
-    tests: ['mutation-check'],
-    test_name:
-      '启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
-    must_mention: '应点名启动自检与「停在某条的变异态」',
-  },
-  {
-    desc: 'M11243 残留自检不再打印还原命令（报出残留却不给可照抄的 git checkout，人只能自己猜怎么回退）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: '    还原：git checkout HEAD -- ${f.file}',
-    replace: '    残留：${f.file}',
-    tests: ['mutation-check'],
-    test_name:
-      '启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
-    must_mention: '必须打印可直接照抄的还原命令',
-  },
-  {
-    desc: 'M11244 verify 档跳过启动自检（--verify 在残留态上照报「五项检查全过」——最高频入口给出假绿）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: `  const residue =
-    inflight && path.resolve(inflight) === args.root
-      ? null
-      : detect_residue(args.root, entries);`,
-    replace: `  const residue =
-    args.verify || (inflight && path.resolve(inflight) === args.root) // 变异：verify 档不自检
-      ? null
-      : detect_residue(args.root, entries);`,
-    tests: ['mutation-check'],
-    test_name:
-      '启动自检覆盖 --verify 档：残留态下不许给出「结构校验全绿」的假结论（#532）',
-    must_mention: '--verify 档也要走自检并点名 M 编号',
-  },
-  {
-    desc: 'M11245 HEAD 里没有该文件时的跳过分支被拆（只进了索引的新目标文件让自检在 null 上崩，工具直接抛栈）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: '    if (head === null) continue;',
-    replace:
-      '    // 变异：HEAD 里没有该文件时不再跳过（head 为 null 继续往下走）',
-    tests: ['mutation-check'],
-    test_name:
-      '启动自检的退化形式一：目标文件只进了索引、HEAD 里还没有它 → 跳过该文件，工具照常跑（#532）',
-    must_mention: 'HEAD 里没有该文件时自检必须跳过而不是崩',
-  },
-  {
-    desc: 'M11246 无 M 编号的老条目点名被焊死（哪一条残留都只报「某条」——#113 遗留的四条落在里面时报出的是空壳）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: "    const which = f.number === null ? '某条' : `M${f.number}`;",
-    replace: "    const which = '某条'; // 变异：编号点名焊死",
-    tests: ['mutation-check'],
-    test_name:
-      '启动自检：目标文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
-    must_mention: '必须点名是哪一条的变异态',
-  },
-  {
-    desc: 'M11247 整串恒等判定换成只看长度差（省掉 1.2MB × 961 条的整串替换，但 String.replace 会展开 replace 里的 $$/$&——带 $ 的 1056 条条目从此漏判残留）（#532）',
-    file: 'tools/mutation-check.mjs',
-    find: '      if (apply_mutation(head, m) === working) {',
-    replace:
-      '      if (working.length - head.length === m.replace.length - m.find.length) { // 变异：只看长度差',
-    tests: ['mutation-check'],
-    test_name:
-      '启动自检认得 replace 里的 $ 转义：整串判定不许换成便宜的近似（#532）',
-    must_mention: '带 $ 转义的残留也必须被认出来',
   },
   {
     desc: 'M11248 run_one 的 finally 还原被拆（变异写下后不再还原，目标文件留在变异态，工具自报「还原失败（读回不一致）」）（#532；#553 起 finally 体换成带重试的 write_with_retry，#582 起变异写入共用同一个函数，find 两次同步）',
@@ -553,15 +476,6 @@ export default [
     tests: ['mutation-check'],
     test_name: 'SIGINT 能中断串行档，并把目标文件还原',
     must_mention: 'SIGINT 必须被处理器接住并退 130',
-  },
-  {
-    desc: 'M11250 in-flight 标记不再核对 root（环境里有标记就跳过自检——夹具与并行副本从此不受自检保护，#532 的 --changed 就是这么发现标记本身必要）',
-    file: 'tools/mutation-check.mjs',
-    find: '    inflight && path.resolve(inflight) === args.root',
-    replace: '    inflight !== undefined // 变异：标记只按有没有设',
-    tests: ['mutation-check'],
-    test_name: '启动自检认得「变异运行内部」的标记，且按 root 比对（#532）',
-    must_mention: '标记指向别的 root 时自检必须照常生效',
   },
 
   // —— #553：--jobs 尊重筛选参数、还原写入重试、并行逐条输出（目标同为 tools/mutation-check.mjs）——
@@ -675,7 +589,7 @@ export default [
     must_mention: '副本数不得超过选中条数',
   },
   {
-    desc: 'M11710 还原失败的报告不给还原命令（人只能自己猜怎么回退——提示格式与 #532 启动自检一致是本工单要求）（#553）',
+    desc: 'M11710 还原失败的报告不给还原命令（人只能自己猜怎么回退）（#553）',
     file: 'tools/mutation-check.mjs',
     find: `  if (head !== null && head === original) {
     console.log(
@@ -915,5 +829,30 @@ export default [
 }`,
     tests: ['plaintext-option'],
     must_mention: '基线里这些文件的条数变少了',
+  },
+
+  // —— #536：串行档在隔离副本里变异（目标同为 tools/mutation-check.mjs）——
+  {
+    desc: 'M14210 串行档不建副本、直接在工作区里变异（进程被强制终止时目标文件停在变异态，混在未提交改动里认不出来）（#536）',
+    file: 'tools/mutation-check.mjs',
+    find: '      : await execute_in_copy(picked, args.root);',
+    replace:
+      '      : await execute(picked, args.root); // 变异：串行档就地变异',
+    tests: ['mutation-check'],
+    test_name:
+      '串行档在隔离副本里变异：测试跑在副本里，工作区逐字节不变（#536）',
+    must_mention: '串行档的测试必须跑在隔离副本里',
+  },
+  {
+    desc: 'M14211 串行档不看副本对照的结果（副本缺文件时测试照样红，被当成「变异被拦截」）（#536）',
+    file: 'tools/mutation-check.mjs',
+    find: `    if (control.code !== 0) {
+      report_control_failure('副本', control);`,
+    replace: `    if (false && control.code !== 0) { // 变异：不看对照结果
+      report_control_failure('副本', control);`,
+    tests: ['mutation-check'],
+    test_name:
+      '串行档的副本对照即红时判红：副本缺文件不能让变异被当成拦截（#536）',
+    must_mention: '副本环境破损必须判红',
   },
 ];

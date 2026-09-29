@@ -77,7 +77,7 @@ New-Item -ItemType Directory -Force -Path logs/migration | Out-Null
 node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> logs/migration/mutation-full.log
 ```
 
-`tools/run-node.mjs` 保留命令退出码，超时返回 124，按 Ctrl+C 终止时返回 130。在 Windows 上强制终止命令时，它会结束该命令及其全部子进程，**无法保证被终止脚本的 `finally` 执行**。因此，长时间运行的变异测试应使用 `--jobs 2` 或更高值，启用隔离副本。串行 `--ids` 任务正常结束时会还原文件；若被强制终止，检查本次修改文件的 `git diff`，只还原变异造成的修改，保留原有改动。删除中断任务的临时副本前，先确认该任务已结束。
+`tools/run-node.mjs` 保留命令退出码，超时返回 124，按 Ctrl+C 终止时返回 130。在 Windows 上强制终止命令时，它会结束该命令及其全部子进程，**无法保证被终止脚本的 `finally` 执行**。因此 `mutation-check` 的串行档和 `--jobs` 并行档都在临时目录的隔离副本里变异，被强制终止时只会留下临时副本，工作区不受影响；留下的副本由之后的运行在启动时清理。长时间运行的全量任务用 `--jobs 2` 或更高值缩短时间。
 
 需要验证无引擎环境时，PowerShell 这样临时设变量并恢复原值：
 
