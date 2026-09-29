@@ -18,10 +18,10 @@
 // 宽度，栅格常量改了没有任何用例能发现；顺带查出 custom3 的冲行宽度是占位 0）。
 // 四文件的条目数变为 14/13/30/12，共 69 条。
 // 注意表只钉样本：同一形状的字面量还有不少靠用例本身守（如 custom2 的
-// JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
+// JOB_FIRST 职业下界、cost 扫描区间两端），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 91; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）
+export const COUNT = 87; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）；性格/发色列表改成按钮网格 -8 +4（删掉 M8768/M8769/M9009/M12083-M12085/M13257/M13258 所指的补位、收尾空行与越界重问；M14223-M14226 检查按钮网格）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -82,23 +82,6 @@ export default [
     replace: 'async function choose_charasteristic(cid = -1, per_line = 4) {',
     tests: ['chara-and-hair'],
     must_mention: '每 3 项换行',
-  },
-  {
-    desc: 'M8768 素质名补位宽度 10 改 11',
-    file: 'ere/chara/chara-and-hair.js',
-    find: '`[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 10)}`',
-    replace:
-      '`[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 11)}`',
-    tests: ['chara-and-hair'],
-    must_mention: 'N160',
-  },
-  {
-    desc: 'M8769 choose_haircolor 的 SIZE 12 改 11（12 号被拒收）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: '  const size = 12;',
-    replace: '  const size = 11;',
-    tests: ['chara-and-hair'],
-    must_mention: '列出 1-11 号',
   },
   {
     desc: 'M8770 choose_haircolor 每行项数缺省 6 改 5',
@@ -598,15 +581,6 @@ export default [
     tests: ['chara-custom'],
     must_mention: '勇者段每行 4 格',
   },
-  {
-    desc: 'M9009 发色名的字段宽 7 改 8（列表整行错位）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;",
-    replace:
-      "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 8)}`;",
-    tests: ['chara-and-hair'],
-    must_mention: '每 6 项换行',
-  },
   // —— #567：自由文本输入的空输入语义统一（0 ＝ 空输入）——
   // chara-custom 的名字输入与 chara-custom2 的两处自定义输入从 A 翻修到 B，
   // 提示行各补一句输入 0 的说明；目标与断言见 test/chara-custom.test.js、
@@ -746,33 +720,6 @@ export default [
   },
   // —— #596：print 之后多补的空行普查（性格/发色列表与外观分组） ——
   {
-    desc: 'M12083 性格列表残行之后补回空行（PRINTL 只收残行那一行）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行",
-    replace:
-      "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n    era.println(); // 变异：多补一条空行",
-    tests: ['chara-and-hair'],
-    must_mention: '换行位置按每行 N 项',
-  },
-  {
-    desc: 'M12084 性格列表整行恰满时的真空行删除（恰满时 PRINTL 落在空行上——那一个是真行）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n  } else {\n    // 整行恰满时这里输出空行——这一支才是真空行\n    era.println();",
-    replace:
-      "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n  } else {\n    // 变异：整行恰满时的真空行删除",
-    tests: ['chara-and-hair'],
-    must_mention: '每 3 项换行',
-  },
-  {
-    desc: 'M12085 发色列表残行之后补回空行（PRINTL 只收残行那一行）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;\n    count += 1;\n    if (count % per_line === 0) {\n      era.print(row);\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行",
-    replace:
-      "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;\n    count += 1;\n    if (count % per_line === 0) {\n      era.print(row);\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n    era.println(); // 变异：多补一条空行",
-    tests: ['chara-and-hair'],
-    must_mention: '每行 N 项可换',
-  },
-  {
     desc: 'M12086 外观分组末尾补回空行（PRINTL 只结束那一格行——行首由 PRINTV "  " 起头）',
     file: 'ere/chara/chara-custom3.js',
     find: "  era.setColor(''); // RESETCOLOR（字符色复位）",
@@ -783,27 +730,45 @@ export default [
   },
   // —— #653（F7）：列表越界放行修复检查 ——
   {
-    desc: 'M13257 choose_charasteristic 越界检查回退（等于表长又写素质 0）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: '    if (result < 0 || result >= size) {',
-    replace: '    if (result < 0 || result > size) {',
-    tests: ['chara-and-hair'],
-    must_mention: '重问后输入 3 → 表内第 3 项',
-  },
-  {
-    desc: 'M13258 choose_haircolor 越界检查回退（12 号无名发色被接受）',
-    file: 'ere/chara/chara-and-hair.js',
-    find: '    if (result < 1 || result >= size) {',
-    replace: '    if (result < 1 || result > size) {',
-    tests: ['chara-and-hair'],
-    must_mention: '重问后输入 4 → 黑发',
-  },
-  {
     desc: 'M13259 初体验对象的播报改回「为为」错字',
     file: 'ere/chara/chara-custom2.js',
     find: 'era.print(`新建人物初体验对象为${sex_name}。`);',
     replace: 'era.print(`新建人物初体验对象为为${sex_name}。`);',
     tests: ['chara-custom2'],
     must_mention: '初体验自定义输入（997）写下名字',
+  },
+  // —— 性格/发色列表改成按钮网格 ——
+  {
+    desc: 'M14223 按钮网格的格宽按本行实际格数算（末行不满时与上面各列错位）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '  const width = Math.floor(GRID_COLUMNS / per_line);\n  for (let i = 0; i < items.length; i += per_line) {\n    era.printMultiColumns(\n      items.slice(i, i + per_line).map(',
+    replace:
+      '  for (let i = 0; i < items.length; i += per_line) {\n    const row = items.slice(i, i + per_line);\n    const width = Math.floor(GRID_COLUMNS / row.length); // 变异\n    era.printMultiColumns(\n      row.map(',
+    tests: ['chara-and-hair'],
+    must_mention: '换行位置按每行 N 项',
+  },
+  {
+    desc: 'M14224 性格列表跳过的素质 174 改成 175（貴公子能选、伶俐消失）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '    talent_id === 174 ? [] : [[i, talentname(talent_id)]],',
+    replace: '    talent_id === 175 ? [] : [[i, talentname(talent_id)]],',
+    tests: ['chara-and-hair'],
+    must_mention: '跳过 174',
+  },
+  {
+    desc: 'M14225 发色列表把 0 号空串也列出来',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '    color_id === 0 ? [] : [[color_id, name]],',
+    replace: '    color_id < 0 ? [] : [[color_id, name]],',
+    tests: ['chara-and-hair'],
+    must_mention: '列出 1-11 号',
+  },
+  {
+    desc: 'M14226 列表格退回纯文本（玩家点不了，只能手敲编号）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: "        type: 'button',\n        accelerator,\n        content,",
+    replace: "        type: 'text',\n        accelerator,\n        content,",
+    tests: ['chara-and-hair'],
+    must_mention: '列表是按钮网格',
   },
 ];

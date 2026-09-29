@@ -11,18 +11,15 @@
  *     其余一律形参。
  *   - **局部量无跨调用状态**：各函数的局部量都在函数体内先赋值后使用，
  *     不存在跨调用保留的状态，故一律用 JS 局部变量。
- *   - **两处列表是纯文本行 + INPUT，不升级为按钮**：点击不是入口、按键
- *     才是——按 page 的 PR #53 通则只把「按钮化过的项」升级为
- *     `era.printButton`，这里保持文本行。`[N]` 编号写在正文里，不经引擎的
- *     showAcc 补位。
- *   - **补位按显示宽度**（全角 2 / 半角 1，左对齐补 NBSP——#577 起补位字符
- *     是 U+00A0，见 ere/utils/display-width.js）：编号补 2 位、性格名补
- *     10 位、发色名补 7 位。
+ *   - **两处列表是按钮网格**：`printMultiColumns` 每行 N 格，每格宽
+ *     24 / N 列。纯文本的 `[N]` 行玩家点不了，只能手敲编号。正文只写名字，
+ *     `[N] ` 前缀由引擎按 showAcc 自动拼（PR #30）。
  *   - **随机源提成 `rand` 形参**（chara-init.js 先例）：缺省均匀随机，
  *     测试注入定值序。
- *   - **表外序号的落点**：choose_charasteristic 的判断条件收在表长内
- *     （`result >= size` 重问）；set_charasteristic 不做范围检查，
- *     表外序号经 `?? 0` 缺省处理落成素质 0（処女）。
+ *   - **表外序号的落点**：两个列表的输入只能是列出的按钮编号（引擎拒收
+ *     本轮没打印过的编号），被跳过的 174 与表外序号都选不到；
+ *     set_charasteristic 不做范围检查，表外序号经 `?? 0` 缺省处理落成
+ *     素质 0（処女）。
  */
 
 'use strict';
@@ -30,9 +27,11 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
-const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 const default_rand = (n) => Math.floor(Math.random() * n);
+
+/** 栅格满行宽度（引擎 24 列） */
+const GRID_COLUMNS = 24;
 
 /** 非唯一性格的素质编号表 */
 const GENERAL_CHARASTERISTICS = [
@@ -174,10 +173,29 @@ function clear_charasteristic(cid = -1) {
 }
 
 /**
+ * 把 [编号, 名字] 列表排成按钮网格，每行 per_line 格。每格宽度按 per_line
+ * 算而不按本行实际格数算，末行不满时各列仍与上面对齐。
+ * @param {Array<[number, string]>} items 按钮编号与正文
+ * @param {number} per_line 每行格数
+ */
+function print_button_grid(items, per_line) {
+  const width = Math.floor(GRID_COLUMNS / per_line);
+  for (let i = 0; i < items.length; i += per_line) {
+    era.printMultiColumns(
+      items.slice(i, i + per_line).map(([accelerator, content]) => ({
+        type: 'button',
+        accelerator,
+        content,
+        config: { align: 'left', width },
+      })),
+    );
+  }
+}
+
+/**
  * choose_charasteristic：列出性格供选择，每 N 项换行。
  *
- * 174 貴公子在列表里**整项跳过**（跳过打印与计数）——编号仍按表内序号
- * 摆，故列表里会缺一个号。
+ * 174 貴公子在列表里**整项跳过**——编号仍按表内序号摆，故列表里会缺一个号。
  *
  * @param {number} [cid=-1] 角色 ID
  * @param {number} [per_line=3] 每行项数
@@ -187,39 +205,13 @@ async function choose_charasteristic(cid = -1, per_line = 3) {
   clear_charasteristic(cid); // 事前初期化
   const chara_id = cid < 0 ? target_cid() : cid;
 
-  let count = 0;
-  let row = '';
-  const size = GENERAL_CHARASTERISTICS.length;
-  for (let i = 0; i < size; i += 1) {
-    const talent_id = GENERAL_CHARASTERISTICS[i];
-    if (talent_id === 174) {
-      continue;
-    }
-    // 每格是「[编号] 名字」的等宽对齐；每满 N 格断一行，故拼成整行再输出
-    // ——引擎的「一次 print 即一行」见 look.js 文件头的「PRINT 合流」条
-    row += `[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 10)}`;
-    count += 1;
-    if (count % per_line === 0) {
-      era.print(row); // 本行满 N 格
-      row = '';
-    }
-  }
-  if (row.length > 0) {
-    era.print(row); // 残行整行输出，不产生空行
-  } else {
-    // 整行恰满时这里输出空行——这一支才是真空行
-    era.println();
-  }
+  const items = GENERAL_CHARASTERISTICS.flatMap((talent_id, i) =>
+    talent_id === 174 ? [] : [[i, talentname(talent_id)]],
+  );
+  print_button_grid(items, per_line);
 
-  for (;;) {
-    const result = await era.input();
-    if (result < 0 || result >= size) {
-      continue;
-    }
-    const chosen = GENERAL_CHARASTERISTICS[result];
-    set_talent(chara_id, chosen, 1);
-    return;
-  }
+  const result = await era.input();
+  set_talent(chara_id, GENERAL_CHARASTERISTICS[result], 1);
 }
 
 /**
@@ -282,10 +274,8 @@ function set_haircolor(cid = -1, value) {
 }
 
 /**
- * choose_haircolor：列出 1-11 号发色供选择，每 N 项换行。
- *
- * 列表与判断条件都取 size = 12 为上界（表内发色是 1-11 号，0 号是未设定
- * 的空串）：输入 12 按越界重问——12 号没有名字（ARR_HAIRCOLOR 到 11 止）。
+ * choose_haircolor：列出 1-11 号发色供选择，每 N 项换行（0 号是未设定的
+ * 空串，不列出）。
  *
  * @param {number} [cid=-1] 角色 ID
  * @param {number} [per_line=6] 每行项数
@@ -294,33 +284,13 @@ function set_haircolor(cid = -1, value) {
 async function choose_haircolor(cid = -1, per_line = 6) {
   const chara_id = cid < 0 ? target_cid() : cid;
 
-  let count = 0;
-  let row = '';
-  const size = 12;
-  for (let color_id = 1; color_id < size; color_id += 1) {
-    // 每格是「[编号] 发色名」的等宽对齐，一行 N 格（收行法同 choose_charasteristic）
-    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;
-    count += 1;
-    if (count % per_line === 0) {
-      era.print(row);
-      row = '';
-    }
-  }
-  if (row.length > 0) {
-    era.print(row); // 残行整行输出，不产生空行
-  } else {
-    // 整行恰满时这里输出空行——这一支才是真空行
-    era.println();
-  }
+  const items = ARR_HAIRCOLOR.flatMap((name, color_id) =>
+    color_id === 0 ? [] : [[color_id, name]],
+  );
+  print_button_grid(items, per_line);
 
-  for (;;) {
-    const result = await era.input();
-    if (result < 1 || result >= size) {
-      continue;
-    }
-    set_talent(chara_id, 300, result);
-    return;
-  }
+  const result = await era.input();
+  set_talent(chara_id, 300, result);
 }
 
 module.exports = {
