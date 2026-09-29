@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 88; // #646 +1（M14200：出处检查的只占位符模板串）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -246,6 +246,16 @@ export default [
     replace: "  const wrong_env = '';",
     tests: ['skip-count-check'],
     must_mention: '基线为 0 时应提示 asar',
+  },
+
+  // —— #646：出处检查不接受只有占位符的模板串 ——
+  {
+    desc: 'M14200 出处检查又接受只有占位符的模板串（`${x}` 能匹配任意 must_mention）',
+    file: 'tools/mutation-check.mjs',
+    find: "    .filter((segs) => segs.some((s) => s !== ''))\n",
+    replace: '',
+    tests: ['mutation-check'],
+    must_mention: '只有占位符的模板串被当成出处',
   },
 
   // —— #304：并行模式的输出、计数与子进程参数 ——

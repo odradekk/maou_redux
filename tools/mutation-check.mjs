@@ -625,9 +625,11 @@ function matches_template(segments, must_mention) {
 /** must_mention 逐字或按模板字面段，能否在 content 里找到出处。 */
 function must_mention_found(content, must_mention) {
   if (content.includes(must_mention)) return true;
-  return template_literal_segments(content).some((segs) =>
-    matches_template(segs, must_mention),
-  );
+  // 只有占位符、没有一个字面字符的模板串（如 `${heart(1)}`）能「匹配」任意文字，
+  // 不能当出处（C10 验收时 M3312 就是这样漏过的）
+  return template_literal_segments(content)
+    .filter((segs) => segs.some((s) => s !== ''))
+    .some((segs) => matches_template(segs, must_mention));
 }
 
 /**
@@ -709,6 +711,58 @@ const EXEMPT_MUST_MENTION = new Map([
     'test/com-order.test.js:162 `T 系数 = ${factor}（含素质段双计）`，' +
       'must_mention「T 系数 = 4」止步于 ${factor} 取值，够不着「（含素质段双计）」',
   ],
+  [
+    '2120',
+    'test/top-level-wiring.test.js:584 `顶层 require：${rel}:${r.line} → ${r.target}`，must_mention「顶层 require：ere/system/train/com-tentacle.js」止步于 ${rel} 取值',
+  ],
+  [
+    '8301',
+    'test/look.test.js:1014 的用例标题 `look_set 素质 ${talent_idx}：${note}`，must_mention「look_set 素质 300」止步于 ${talent_idx} 取值',
+  ],
+  [
+    '12708',
+    'test/kojo-dungeon-ravish-man.test.js:406/433/461/487 的 `… → 整行「${line}」`，must_mention「整行「兽人的阴茎插进了」止步于 ${line} 取值中间',
+  ],
+  [
+    '12709',
+    'test/kojo-dungeon-ravish-man.test.js 同款 `… → 整行「${line}」`，must_mention「整行「兽人们把润滑液涂在了」止步于 ${line} 取值中间',
+  ],
+  [
+    '12713',
+    'test/kojo-dungeon-ravish.test.js:554 的 `… → 整行「${line}」`，must_mention「整行「四肢着地趴在地上」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12715',
+    'test/kojo-dungeon-ravish.test.js:616 的 `… → 整行「${line}」`，must_mention「整行「无头骑士的冒险者身体被固定住了」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12719',
+    'test/kojo-dungeon-ravish.test.js:723 的 `… → 整行「${line}」`，must_mention「整行「兽人的阴茎插进了」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12720',
+    'test/kojo-dungeon-ravish.test.js:750 的 `… → 整行「${line}」`，must_mention「整行「兽人们把润滑液涂在了」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12724',
+    'test/kojo-dungeon-ravish.test.js:861 的 `… → 整行「${line}」`，must_mention「整行「紫色的长舌头」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12725',
+    'test/kojo-dungeon-ravish.test.js:887 的 `… → 整行「${line}」`，must_mention「整行「紫色的长舌头」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12726',
+    'test/kojo-dungeon-ravish.test.js:913 的 `… → 整行「${line}」`，must_mention「整行「紫色的手」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12727',
+    'test/kojo-dungeon-ravish.test.js:932 的 `… → 整行「${line}」`，must_mention「→ 整行「『这边的穴」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
+  [
+    '12746',
+    'test/kojo-dungeon-ravish.test.js:594 的 `… → 整行「${line}」`，must_mention「→ 整行「脸上的神情为屈服的喜悦与口水所浸染……」止步于 ${line} 取值中间，其后的字面「」」够不着',
+  ],
   // 类别 C：字符串拼接，非单一模板字面量可重建
   [
     '1773',
@@ -725,6 +779,15 @@ const EXEMPT_MUST_MENTION = new Map([
     '1521',
     'test/kojo-family-wiring.test.js:111-114 同一个 format_missing()，' +
       'must_mention「主启动图漏装：kojo-k5-mao」同样横跨拼接边界',
+  ],
+  // 类别 D：出处在共享测试助手里，不在检查范围内
+  [
+    '12129',
+    'test/helpers/blank-lines.js:104 的 `${label}：末尾是真空行（不许删）`，must_mention「W < 5 废人支的收尾：末尾是真空行」由共享助手拼出，助手不在 tests:/file: 范围内',
+  ],
+  [
+    '12127',
+    'test/helpers/blank-lines.js:54 的 `${label}：这一行之后是真空行（不许删）`，must_mention「处置菜单末项：这一行之后是真空行」由共享助手拼出，助手不在 tests:/file: 范围内',
   ],
 ]);
 
