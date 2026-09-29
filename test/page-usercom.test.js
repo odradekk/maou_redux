@@ -119,6 +119,45 @@ test('子菜单按钮组按每行 3 列排布：行间不夹空行，页脚之�
     );
   }
 });
+test('子菜单的条件态分组复刻原版：[103] 与 [990] 之后硬收行', async () => {
+  // 交代助手/对换调教在场（LOCAL 计数换行 + [103] 的硬 PRINTL）：
+  // 原版渲染成 [100,101,102] / [112,103] 两行，过滤组与页脚不受影响
+  const both = create_era_fixture();
+  seed_flag5(both, false);
+  both.store.set('flag:10006', 31); // ASSI
+  both.store.set('flag:10013', 32); // ASSI:1
+  both.store.set('flag:10005', 0); // TARGET = MASTER → 112 的 CFLAG:0 免
+  const { emit: emit_both } = load_page(both);
+  await emit_both('SHOW_USERCOM');
+  const divider_both = both.lines.find((line) => line.type === 'divider');
+  assert.deepEqual(
+    button_rows(both)
+      .filter((r) => r.row > divider_both.row)
+      .map((r) => r.cells.map(([acc]) => acc)),
+    [[100, 101, 102], [112, 103], [104, 105, 106], [107, 108, 990], [999]],
+    '条件按钮在场时 [103] 独占收行位（原版 USERCOM 的硬 PRINTL）',
+  );
+
+  // 登录菜单在场：[990] 硬收行之后 [991]/[992]/[999] 同一行
+  const with_menu = create_era_fixture();
+  seed_flag5(with_menu, false);
+  with_menu.store.set('flag:550', 2);
+  const { emit: emit_menu } = load_page(with_menu);
+  await emit_menu('SHOW_USERCOM');
+  const divider_menu = with_menu.lines.find((line) => line.type === 'divider');
+  assert.deepEqual(
+    button_rows(with_menu)
+      .filter((r) => r.row > divider_menu.row)
+      .map((r) => r.cells.map(([acc]) => acc)),
+    [
+      [100, 101, 103],
+      [104, 105, 106],
+      [107, 108, 990],
+      [991, 992, 999],
+    ],
+    '[990] 硬收行之后 [991]/[992]/[999] 同一行（FLAG:550 > 0）',
+  );
+});
 
 test('指令方格（自定义菜单路径）：按每行 3 列排布，末行不满仍与上面对齐', async () => {
   const fixture = create_era_fixture();

@@ -527,10 +527,7 @@ test('print_shopitem：在售商品各一枚按钮（accelerator = 道具序号�
   }
   assert.deepEqual(
     [...rows.values()],
-    [
-      [0, 24, 60],
-      [300],
-    ],
+    [[0, 24, 60], [300]],
     '商品按钮每行 3 列（PRINT_SHOPITEM 的 PRINTC 设置）',
   );
   assert.ok(

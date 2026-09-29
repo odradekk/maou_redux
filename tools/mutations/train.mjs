@@ -554,9 +554,9 @@ export default [
   {
     desc: 'M765 FLAG:550 检查删（991/992 无菜单也显示）',
     file: 'ere/page/page-usercom.js',
-    find: "  if (game_train.指令菜单长度 > 0) {\n    submenu.push([991, '调教菜单表示']);\n    submenu.push([992, '调教菜单实行']);\n  }",
-    replace: `  submenu.push([991, '调教菜单表示']); // 变异：无检查
-  submenu.push([992, '调教菜单实行']);`,
+    find: "  if (game_train.指令菜单长度 > 0) {\n    footer.push([991, '调教菜单表示']);\n    footer.push([992, '调教菜单实行']);\n  }",
+    replace: `  footer.push([991, '调教菜单表示']); // 变异：无检查
+  footer.push([992, '调教菜单实行']);`,
     tests: ['page-usercom'],
     must_mention: '默认态 9 个按钮',
   },
@@ -565,7 +565,7 @@ export default [
     file: 'ere/page/page-usercom.js',
     find: `    const on = (game_train.指令过滤 & mask) !== 0;
     const off_color = FILTER_COLORS[acc];
-    submenu.push([
+    filters.push([
       acc,
       label,
       on
@@ -574,7 +574,7 @@ export default [
           ? { color: off_color }
           : undefined,
     ]);`,
-    replace: `    submenu.push([acc, label]); // 变异：不染色`,
+    replace: `    filters.push([acc, label]); // 变异：不染色`,
     tests: ['page-usercom'],
     must_mention: '开启位一律灰',
   },

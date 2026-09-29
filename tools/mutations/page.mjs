@@ -3919,18 +3919,18 @@ export default [
   {
     desc: 'M11862 子菜单按钮之间补回空行（PRINTL 只收 [990] 那一行，golden 里按钮逐行相邻）',
     file: 'ere/page/page-usercom.js',
-    find: "  submenu.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）",
+    find: "  filters.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）",
     replace:
-      "  era.println(); // 变异：按钮之间多补空行\n  submenu.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）",
+      "  era.println(); // 变异：按钮之间多补空行\n  filters.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）",
     tests: ['page-usercom'],
     must_mention: '子菜单网格行之间不夹空行',
   },
   {
     desc: 'M11863 子菜单页脚之后补回空行（同上，PRINTL 只收 [999] 那一行）',
     file: 'ere/page/page-usercom.js',
-    find: '  print_button_grid(submenu, 3);\n  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞',
+    find: '  print_button_grid(footer, 3);\n  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞',
     replace:
-      '  print_button_grid(submenu, 3);\n  era.println(); // 变异：页脚之后多补空行\n  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞',
+      '  print_button_grid(footer, 3);\n  era.println(); // 变异：页脚之后多补空行\n  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞',
     tests: ['page-usercom'],
     must_mention: '子菜单页脚按钮之后不应有空行',
     // #717：find 自「页脚之后补 println」改为打在网格之后（p_c 注释行前），
@@ -4827,7 +4827,7 @@ export default [
     find: '  print_button_grid(submenu, 3);',
     replace: '  print_button_grid(submenu, 4); // 变异：列数改 4',
     tests: ['page-usercom'],
-    must_mention: '子菜单按钮按每行 3 列排布',
+    must_mention: '每格宽 24/3 = 8',
   },
   {
     desc: 'M14335 内建指令列表列数改 1（逐格独占一行）',

@@ -220,8 +220,9 @@ on('SHOW_USERCOM', async (usable = []) => {
   era.println(); // PRINTL（空行）
   era.drawLine(); // DRAWLINE
   // RESETCOLOR —— 无 ere 对应语义，不镜像
-  // —— 子菜单按钮组（原版 PRINTC 逐枚打印、每行 3 个换行，#717 恢复
-  // 三列网格；过滤钮的现色/灰色经单格 config 带进网格）——
+  // —— 子菜单按钮组（原版 PRINTC 流式打印：满 3 收行，[103] 与 [990]
+  // 之后硬收行——分三段网格逐段复刻原行分组，#717 恢复三列；过滤钮的
+  // 现色/灰色经单格 config 带进网格）——
   const submenu = [
     [100, '能力表示'],
     [101, '污秽表示'],
@@ -234,11 +235,14 @@ on('SHOW_USERCOM', async (usable = []) => {
     submenu.push([112, '对换调教']); // （(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
   }
   submenu.push([103, '避孕套设定']);
-  // 过滤组：开启灰、未开启各系色（104 未开启 = 引擎默认色）
+  print_button_grid(submenu, 3);
+  // 过滤组（[104]-[108]）+ [990]：原版 [990] 紧随 [108] 不换行、满 3 才收
+  //（默认态渲染成 [107][108][990] 同行）
+  const filters = [];
   for (const [acc, label, mask] of FILTER_BUTTONS) {
     const on = (game_train.指令过滤 & mask) !== 0;
     const off_color = FILTER_COLORS[acc];
-    submenu.push([
+    filters.push([
       acc,
       label,
       on
@@ -248,16 +252,18 @@ on('SHOW_USERCOM', async (usable = []) => {
           : undefined,
     ]);
   }
-  // 尾部四枚（[990] 调教菜单登录 / [991] 表示 / [992] 实行 / [999] 调教
-  // 结束）原版同样是 PRINTC，一并进网格；网格行之间与页脚之后都不补空行
-  //（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
-  submenu.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）
+  filters.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）
+  print_button_grid(filters, 3);
+  // 尾部（[991]/[992] 有登录菜单才有 + [999] 调教结束）：[990] 的硬收行
+  // 之后自成一段；网格行之间与页脚之后都不补空行（语义与勘误见
+  // CONTEXT.md「输出 API 的排版与对齐」）
+  const footer = [];
   if (game_train.指令菜单长度 > 0) {
-    submenu.push([991, '调教菜单表示']);
-    submenu.push([992, '调教菜单实行']);
+    footer.push([991, '调教菜单表示']);
+    footer.push([992, '调教菜单实行']);
   }
-  submenu.push([999, '调教结束']); // （正文不带 [999] 前缀，引擎自动拼）
-  print_button_grid(submenu, 3);
+  footer.push([999, '调教结束']); // （正文不带 [999] 前缀，引擎自动拼）
+  print_button_grid(footer, 3);
   // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞
   // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
   if (era_flag.prevcom > -1) {
