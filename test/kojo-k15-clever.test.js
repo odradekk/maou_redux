@@ -137,6 +137,49 @@ test('初调教暗器：选 1 不闪不避 → 擦伤、无恭顺珠', async () 
   assert.equal(fixture.store.get(`cflag:${CID}:201`), 1, '初调教推进到 1');
 });
 
+test('初调教暗器：选项是按钮（编号/正文/颜色），键盘提示已去掉', async () => {
+  const fixture = await setup_k15();
+  fixture.set_inputs(2);
+  await emit_train(fixture);
+
+  const buttons = fixture.lines_history.filter(
+    (line) => line.type === 'button',
+  );
+  assert.deepEqual(
+    buttons.map((line) => [line.accelerator, line.rendered, line.color]),
+    [
+      [1, '[1] 不闪不避', '#98fa69'],
+      [2, '[2] 偏头闪躲', '#98fa69'],
+    ],
+    '两枚按钮：编号、正文与颜色（原 SETCOLOR 的绿）',
+  );
+  const texts = fixture.text_lines();
+  assert.ok(
+    !texts.some((line) => line.includes('『1』') || line.includes('『2』')),
+    '旧的『N』选项行不得再出现',
+  );
+  assert.ok(
+    !texts.some((line) => line.includes('Enter')),
+    '「按 1 + Enter」类键盘提示去掉',
+  );
+  assert.ok(
+    texts.includes('（请选择行动！）'),
+    '行动提示保留（键盘指令改为通用说法）',
+  );
+});
+
+test('初调教暗器的越界输入：引擎当场拒收（#711：选项已按钮化）', async () => {
+  // 白名单就是那两枚按钮：敲 3 在引擎侧被弹回，游戏侧拿不到。
+  // 若按钮被打印在最后一次等键之前，白名单为空、3 反而会被放行，本用例红。
+  const fixture = await setup_k15();
+  fixture.set_inputs(3);
+  await assert.rejects(
+    () => emit_train(fixture),
+    /输入不合法！请输入以下值之一：1, 2/,
+    '初调教暗器的越界输入必须被引擎拒收（按钮在最后一次等键之后）',
+  );
+});
+
 test('初调教：TALENT:314==9 跳过暗器陷阱仍推进到 1', async () => {
   const fixture = await setup_k15((f) => f.store.set(`talent:${CID}:314`, 9));
   await emit_train(fixture);

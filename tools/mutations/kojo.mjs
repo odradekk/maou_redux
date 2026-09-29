@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2708; // #710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2710; // #710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -25675,5 +25675,29 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      } else if (\n        era.get(`talent:${target}:76`) == 1 &&\n        era.get(`talent:${target}:77`) == 1 &&\n        (chara(target).kojo.调教后自慰 <= 4 || game.kojo.口上开关 == 2)',
     tests: ['kojo-k904-fia'],
     must_mention: '尻穴狂档（TALENT:77）不再叠加淫乱要求',
+  },
+  // —— #711：K15 暗器菜单的纯文本选项改按钮 ——
+  {
+    desc: 'M14310 K15 暗器菜单退回纯文本（『N』选项行与按 N + Enter 提示）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      era.printButton('不闪不避', 1, { color: '#98fa69' });
+      era.printButton('偏头闪躲', 2, { color: '#98fa69' });`,
+    replace: `      await era.print(\`『1』不闪不避 ( 按 1 + Enter )\`); // 变异：选项退回纯文本
+      await era.print(\`『2』偏头闪躲 ( 按 2 + Enter )\`);`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '两枚按钮：编号、正文与颜色',
+  },
+  {
+    desc: 'M14311 K15 暗器菜单的按钮之后夹一次等键（白名单被清空）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `      era.printButton('不闪不避', 1, { color: '#98fa69' });
+      era.printButton('偏头闪躲', 2, { color: '#98fa69' });
+      const result0 = await era.input(); // TINPUT 1000, 1`,
+    replace: `      era.printButton('不闪不避', 1, { color: '#98fa69' });
+      era.printButton('偏头闪躲', 2, { color: '#98fa69' });
+      await era.waitAnyKey(); // 变异：按钮与读输入的 TINPUT 之间夹了一次等键
+      const result0 = await era.input(); // TINPUT 1000, 1`,
+    tests: ['kojo-k15-clever'],
+    must_mention: '初调教暗器的越界输入必须被引擎拒收',
   },
 ];

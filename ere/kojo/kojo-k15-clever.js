@@ -204,14 +204,11 @@ on('EVENTTRAIN', async () => {
       await era.printAndWait(
         `才刚走进牢房里，一枚带着光明气息的暗器就这样朝你的眼眸激射而来！！`,
       );
-      await era.printAndWait(`（请按数字键 + Enter 选择行动！）`);
-      era.setColor('#98fa69'); // SETCOLOR 152,250,105
-      await era.print(''); // PRINTL
-      await era.print(`『1』不闪不避 ( 按 1 + Enter )`);
-      await era.print('');
-      await era.print(`『2』偏头闪躲 ( 按 2 + Enter )`);
-      await era.print('');
-      era.setColor(''); // RESETCOLOR
+      await era.printAndWait(`（请选择行动！）`);
+      // 两项 → 按钮：正文不写编号与键盘提示（引擎按 showAcc 拼编号），
+      // 选项文字的绿色改由按钮自身的颜色承载
+      era.printButton('不闪不避', 1, { color: '#98fa69' });
+      era.printButton('偏头闪躲', 2, { color: '#98fa69' });
       const result0 = await era.input(); // TINPUT 1000, 1（限时由引擎侧省略，默认值测试以预置输入覆盖）
       if (result0 == 2) {
         await era.printAndWait(
