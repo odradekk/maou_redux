@@ -813,7 +813,9 @@ export default [
     must_mention: '新增了纯文本选项行',
   },
   {
-    desc: 'M11208 扫描器失明（is_comment_line 恒真——所有纯文本选项行都被跳过，棘轮的「条数变少」门必须拦住，#530）',
+    // #710：基线清空（0 行 / 0 文件）后「条数变少」门恒真，扫描器失明改由
+    // test/plaintext-option.test.js 的「扫描器自证」拦住（样本命中面变空即红）
+    desc: 'M11208 扫描器失明（is_comment_line 恒真——所有纯文本选项行都被跳过，#530；#710 起由扫描器自证拦住）',
     file: 'tools/plaintext-options.mjs',
     find: `function is_comment_line(line) {
   const trimmed = line.trim();
@@ -828,7 +830,8 @@ export default [
   return true; // 变异：扫描器失明
 }`,
     tests: ['plaintext-option'],
-    must_mention: '基线里这些文件的条数变少了',
+    must_mention:
+      '命中面 = print/println/printAndWait 的首实参字面量里的选项编号',
   },
 
   // —— #536：串行档在隔离副本里变异（目标同为 tools/mutation-check.mjs）——

@@ -3,9 +3,9 @@
  *
  * 移植说明（有意偏离，注明依据）：
  *   - 处置菜单（[0]-[7]/[100]/[101]）升格为 `era.printButton`
- *     （PR #53 通则，正文不写 [编号]）；候选人列表（`[NN] 名字 …`
- *     拼行，行号即输入值）**保持纯文本**——先例与理由见下方
- *     print_candidates 的注释（#572）。
+ *     （PR #53 通则，正文不写 [编号]）；#710 起候选人列表（`[NN] 名字 …`
+ *     拼行，行号即输入值）与候选人轮的 `[100] 返回` 也一并升格为按钮
+ *     （整轮一起改的 reason 见下方 print_candidates 的注释）。
  */
 
 'use strict';
@@ -22,7 +22,6 @@ const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { banishment } = require('#/event/event-banishment');
 const {
   apply_prestige,
@@ -91,11 +90,16 @@ function print_candidates(candidates) {
     // 是既有写法差异（不在这张工单范围）。
   }
   era.drawLine();
+  // #710：候选人行改成按钮（行号即快捷键），与 [100] 返回整轮一起改——
+  // 只给返回打按钮会把候选人编号锁死。候选人的消费点保留
+  // `useRule: false`（未显示编号的自由输入通道，见 execution）。
+  // 按钮正文里的列补位会被引擎折叠（连续空白合成一个空格），原文本行的
+  // 对齐规格随文本行一起去，正文只留「名字 职业 LV 等级」与两个标记。
   candidates.forEach((cid, index) => {
-    let line = `[${pad_left(String(index), 2)}] ${pad_display(chara_callname(cid), 12)} ${pad_display(job_name(cid), 6)} LV${pad_left(String(get(`cflag:${cid}:9`)), 3)}`;
+    let line = `${chara_callname(cid)} ${job_name(cid)} LV ${get(`cflag:${cid}:9`)}`;
     if (get(`cflag:${cid}:700`)) line += ' [☆]';
     if (get(`cflag:${cid}:0`) > 0) line += ' [可卖掉]';
-    era.print(line);
+    era.printButton(line, index);
   });
 }
 
@@ -319,12 +323,8 @@ async function execution(rand_n = default_rand) {
     print_candidates(candidates);
     if (candidates.length === 0) return 0;
     era.drawLine();
-    // `[100] 返回` 保持纯文本：本轮的编号是上面那些候选人行的
-    // `[NN]`（print_candidates 的拼行，行号即输入值），单给这行打按钮会把
-    // 白名单收成 100、候选人编号当场被拒收——整轮按钮化要先重排候选人列表
-    // （多列对齐），留给后续按界面过（#572 的分类表、docs/research/
-    // plaintext-options.md §6）。与 page-dungeon-info2.js 的怪物行同类。
-    era.print('[100] 返回');
+    // #710：候选人轮与 [100] 返回整轮按钮化（候选人行见 print_candidates）。
+    era.printButton('返回', 100);
     let selected;
     do {
       selected = await era.input({ useRule: false });

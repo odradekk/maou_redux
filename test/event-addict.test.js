@@ -278,18 +278,35 @@ test('PRECIPITATE_WITHDRAWAL：喂媚药且侵攻中时直接陷落退出侵攻'
   assert.equal(fixture.store.get('cflag:31:507'), 0);
 });
 
-test('PRECIPITATE_WITHDRAWAL：输入范围外重试后拒绝喂药，落到后续检查', async () => {
+test('PRECIPITATE_WITHDRAWAL：拒绝喂药（按钮 1），落到后续检查', async () => {
   const fixture = seed_world();
   const { precipitate_withdrawal } = fixture.load_module('event/event-addict');
   fixture.store.set('item:26', 1);
   fixture.store.set('cflag:31:1', 2); // 侵攻中，拒绝后走独自捱过分支
-  fixture.set_inputs(9, 1);
+  fixture.set_inputs(1);
 
   const result = await precipitate_withdrawal(31, seq([0]));
 
   assert.equal(result, 0);
   assert.equal(fixture.store.get('item:26'), 1, '未消耗道具');
-  assert(fixture.text_lines().includes('数小时后琼身体的颤抖终于停了下来。'));
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [0, '- 好的', '[0] - 好的'],
+      [1, '- 不要', '[1] - 不要'],
+    ],
+    '喂药确认是按钮，正文保留 `- ` 分隔符、不带 [N] 前缀',
+  );
+  assert.equal(
+    fixture.text_lines().some((t) => t.includes('[0] - 好的')),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
+  assert.ok(
+    fixture.text_lines().includes('数小时后琼身体的颤抖终于停了下来。'),
+  );
 });
 
 test('PRECIPITATE_WITHDRAWAL：无媚药道具时不进入喂药分支', async () => {

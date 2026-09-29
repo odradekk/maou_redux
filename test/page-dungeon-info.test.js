@@ -517,13 +517,14 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
-  fixture.store.set('item:105', 7); // 第 6 格怪物库存（5 只狗头人等价）
+  fixture.store.set('item:105', 7); // 第 1 层第 6 格（5 只狗头人等价）
   fixture.store.set('itemname:105', '狗头人');
+  fixture.store.set('item:115', 2); // 第 2 层第 6 格
+  fixture.store.set('itemname:115', '史莱姆');
   fixture.set_inputs(10, 105, 999, 999, 999);
   await dungeon_info2();
-  const history = fixture.lines_history
-    .filter((l) => l.type === 'text')
-    .map((l) => l.text);
+  const lines = fixture.lines_history;
+  const history = lines.filter((l) => l.type === 'text').map((l) => l.text);
   assert.ok(
     history.some((t) => t.includes('地下城内的部下')),
     '部下横幅',
@@ -532,9 +533,59 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
     history.some((t) => t.includes('第1阶层')),
     '楼层头',
   );
-  assert.ok(
+  // #710：怪物行是按钮（编号即快捷键，正文只写库存与名字），排在该层楼层头
+  // 与勇者行之后。只取部下屏之后的按钮：主界面的阶层/单元按钮同在一片行史里。
+  const banner = lines.findIndex(
+    (l) => l.type === 'text' && l.text === '地下城内的部下',
+  );
+  assert.ok(banner >= 0, '部下横幅位置');
+  const remod = lines.findIndex(
+    (l) => l.type === 'text' && l.text.includes('的改造'),
+  );
+  assert.ok(remod > banner, '105 之后进改造画面');
+  const screen = lines.slice(banner, remod);
+  assert.deepEqual(
+    screen
+      .filter((l) => l.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [105, '7只狗头人', '[105] 7只狗头人'],
+      [115, '2只史莱姆', '[115] 2只史莱姆'],
+      [999, '返回', '[999] 返回'],
+    ],
+    '怪物行与返回都是按钮',
+  );
+  assert.equal(
     history.some((t) => t.includes('7只狗头人')),
-    '怪物库存行（7 只狗头人）',
+    false,
+    '同屏没有残留的纯文本怪物行',
+  );
+  // 版面：每层的怪物按钮在它所属楼层头之后、下一层楼层头之前
+  const at = (predicate) => screen.findIndex(predicate);
+  const floor1 = at((l) => l.type === 'text' && l.text === '第1阶层');
+  const floor2 = at((l) => l.type === 'text' && l.text === '第2阶层');
+  const row_105 = at((l) => l.type === 'button' && l.accelerator === 105);
+  const row_115 = at((l) => l.type === 'button' && l.accelerator === 115);
+  assert.ok(floor1 >= 0 && floor2 > floor1, '两层楼层头都在');
+  assert.ok(
+    row_105 > floor1 && row_105 < floor2,
+    '105 排在第 1 层头之后、第 2 层头之前',
+  );
+  assert.ok(row_115 > floor2, '115 排在第 2 层头之后');
+  // 整屏打印期间没有等键：有等键的话它之前的按钮会被渲染层禁用（#710 把
+  // 逐层的 waitAnyKey 去掉的原因）
+  const last_button_row = screen.filter((l) => l.type === 'button').pop().row;
+  assert.deepEqual(
+    fixture.waits
+      .filter(
+        (w) =>
+          w.waited &&
+          w.rows_at_wait > screen[0].row &&
+          w.rows_at_wait <= last_button_row,
+      )
+      .map((w) => w.rows_at_wait),
+    [],
+    '部下屏从横幅到最后一批按钮之间没有等键',
   );
   assert.ok(
     history.some((t) => t.includes('狗头人的改造')),

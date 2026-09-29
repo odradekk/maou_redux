@@ -17,12 +17,12 @@
  *
  * 移植说明（有意偏离既有写法，均注明依据）：
  *
- *   - **列表是「一次 print 一行」**：EraElectron 一次 `era.print` 就是一行
- *     （look.js 文件头的「PRINT 合流」条），故按 4/5 格拼成整行输出——
- *     残行本来就是一整行，不再需要补断行。
- *   - **末位 else 分支保留**：把任意输入直接当素质编号，随后由 exist_csv
- *     拦下——这条缺省处理是可测的（输入 35 → 预设 35 在库 → 走「特殊」段
- *     的非调试路径）。
+ *   - **列表是按钮网格**（#710）：勇者段每行 4 格、精英与特殊段每行 5 格，
+ *     排版走 `#/utils/button-grid`。原先按「一次 print 一行」拼纯文本格行，
+ *     玩家只能手敲编号；按钮化后正文只写名字（补位交给网格与 showAcc）。
+ *   - **末位 else 分支保留**：把输入直接当素质编号、随后由 exist_csv 拦下。
+ *     #710 列表按钮化后，三种区间的显示编号各走各的映射、列表外的编号被
+ *     引擎拒收，这条缺省处理在实机上不可达（结构保留，测试不再构造它的输入）。
  *   - **find_chara 落成「已在场」判定**：ere 的角色 ID 即预设编号
  *     （chara-ex.js / chara-name.js 的既定标准），编号在
  *     `getAddedCharacters()` 内则返回它，否则 -1（chara-make-inport.js:136
@@ -56,9 +56,9 @@ const { st_up } = require('#/dungeon/dungeon-lvup');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
-const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -91,30 +91,13 @@ function strlens(text) {
 }
 
 /**
- * 拼一段编号列表：每 `columns` 格一行。
- *
- * @param {number[]} entries [显示编号, 预设编号]
- * @param {number} columns 每行格数
- * @returns {string[]} 每行一个字符串
- */
-function build_rows(entries, columns) {
-  const rows = [];
-  let current = '';
-  entries.forEach(([label, preset], i) => {
-    current += `[${pad_left(String(label), 2)}] ${pad_display(csv_name(preset), 14)}`;
-    if ((i + 1) % columns === 0) {
-      rows.push(current);
-      current = '';
-    }
-  });
-  if (current.length > 0) {
-    rows.push(current);
-  }
-  return rows;
-}
-
-/**
  * char_create：生命摇篮——列出可登录的预设并交出定制权。
+ *
+ * #710：三段列表改成按钮网格（原来的 `[NN] 名字` 纯文本行玩家点不了，
+ * 只能手敲编号）。显示编号即快捷键，正文只写名字、编号由引擎按 showAcc
+ * 拼（PR #30）；补位随文本行去掉（按钮正文的连续空白会被引擎折叠）。
+ * 非列表项（9-16 号勇者、未列出的特殊位）按钮化后不可达——引擎只回传
+ * 本轮打印过的编号，这与 #709 堵上「手敲 8 选貴公子」同类。
  *
  * @param {number} arg 0 = 付费定制 / 1 = 调试登录（文件头）
  * @param {(n: number) => number} [rand] 随机源（本函数内不用，传给下游）
@@ -133,20 +116,16 @@ async function char_create(arg, rand = default_rand) {
   await era.waitAnyKey();
 
   era.print('■=== 勇者 ===■');
-  for (const row of build_rows(
-    Array.from({ length: 8 }, (_, i) => [i + 1, i + 1]),
+  print_button_grid(
+    Array.from({ length: 8 }, (_, i) => [i + 1, csv_name(i + 1)]),
     HERO_COLUMNS,
-  )) {
-    era.print(row);
-  }
+  );
 
   era.print('■=== 精英 ===■');
-  for (const row of build_rows(
-    Array.from({ length: 10 }, (_, i) => [i + 21, i + 201]),
+  print_button_grid(
+    Array.from({ length: 10 }, (_, i) => [i + 21, csv_name(i + 201)]),
     ELITE_COLUMNS,
-  )) {
-    era.print(row);
-  }
+  );
 
   if (arg === 1) {
     // 特殊段（仅调试登录）：17-39 里在库且在用的预设，18/19 排除
@@ -156,15 +135,13 @@ async function char_create(arg, rand = default_rand) {
       if (!exist_csv(i) || i === 19 || i === 18) {
         continue;
       }
-      special.push([i + 20, i]);
+      special.push([i + 20, csv_name(i)]);
     }
-    for (const row of build_rows(special, ELITE_COLUMNS)) {
-      era.print(row);
-    }
+    print_button_grid(special, ELITE_COLUMNS);
   }
 
   era.drawLine();
-  era.print(' [999] 返回'); // 同一行的收尾由下一行的输入承接
+  era.printButton('返回', 999);
 
   for (;;) {
     const result = await era.input();
@@ -272,13 +249,18 @@ async function char_append(arg, mode, rand = default_rand) {
     era.print('请问登陆的角色是什么性别呢？');
     await era.waitAnyKey();
     era.drawLine();
-    // 的性别选项**保持纯文本**（#572 复核）：选项打印后先 waitAnyKey 再
-    // input，中间那次成功回传会把按钮的 valCount 推高（引擎 app.asar 的
-    // getButtonObject 按 `line.valCount < buttonValCount` 禁用早先的按钮），
-    // 按钮化后会点不动。纯文本 + 本轮无按钮 = 引擎的自由输入通道，键入
-    // 1/2/3 照常。
-    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`);
-    await era.waitAnyKey();
+    // #710：三档性别改成一行按钮（原是一行纯文本，玩家点不了）。原顺序是
+    // 「打印选项 → waitAnyKey → input」，中间那次等键会把刚打印的按钮禁用
+    // （引擎按 valCount 判定），故把那次等键去掉：问句的等键之后直接打印
+    // 按钮并等输入，编号由引擎按 showAcc 拼。
+    print_button_grid(
+      [
+        [1, '男性'],
+        [2, '女性'],
+        [3, '扶她'],
+      ],
+      3,
+    );
     const gender = await era.input();
     if (gender === 1) {
       era.set(`talent:${cid}:122`, 1); // 男人

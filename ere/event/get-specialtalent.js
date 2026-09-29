@@ -145,6 +145,11 @@ function remove_dislike_talents_32_34_84(cid) {
 /**
  * 【贞操封印(273)】力量消失后的解封选择（同形式两处，
  * 两个输入循环各一份）。
+ *
+ * #710：两枚选项改成按钮（正文的 `- ` 是既有文案，编号由引擎按 showAcc
+ * 拼）。printAndWait 的两次等键都在按钮之前，最后的等键之后才打印按钮，
+ * 编号在本轮的按钮集里点得动；越界输入由引擎当场拒收，重问分支因此
+ * 结构性不可达（结构保留）。
  */
 async function offer_release_seal(cid) {
   const name = chara_callname(cid);
@@ -152,8 +157,8 @@ async function offer_release_seal(cid) {
   await era.printAndWait('如果是现在的话，可以解开封印。要解开封印吗？');
   era.println(); // 空行：前一句已收尾，此处落在空行上
   for (;;) {
-    era.print(' [0] - 保留封印');
-    era.print(' [1] - 解开封印');
+    era.printButton('- 保留封印', 0);
+    era.printButton('- 解开封印', 1);
     const result = await era.input();
     if (result === 0 || result === 1) {
       if (result === 1) {

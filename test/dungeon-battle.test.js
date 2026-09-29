@@ -414,9 +414,24 @@ test('dungeon_spy：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏�
   // 背叛率拉满：勇者 HP/气力打到极低（体力项与气力项各趋 100）
   fixture.store.set('base:2:0', 10);
   fixture.store.set('base:2:1', 1);
-  fixture.set_inputs(1); // 「要让XX回来吗？」→ [1] 不要
+  fixture.set_inputs(1); // 「要让XX回来吗？」→ 按钮 [1] 不要
 
   await b2.dungeon_spy(1, () => 2); // rand(100) = 2 < BETRAY；rand(3) = 2 ≠ 0 不踌躇
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [0, '- 好的', '[0] - 好的'],
+      [1, '- 不要', '[1] - 不要'],
+    ],
+    '回来确认是按钮，正文保留 `- ` 分隔符、不带 [N] 前缀',
+  );
+  assert.equal(
+    fixture.text_lines().some((line) => /^\s*\[0\]\s*-/.test(line)),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
   assert.equal(fixture.store.get('cflag:2:1'), 0, '勇者陷落（CFLAG:1 = 0）');
   assert.equal(fixture.store.get('flag:10004'), 300, 'MONEY += 100 × 等级 3');
   assert.equal(fixture.store.get('exflag:4444'), 300, 'EX_FLAG:4444 镜像');

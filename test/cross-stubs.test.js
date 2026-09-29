@@ -151,20 +151,24 @@ test('FAMILY_BIRTHTO_MOM/DAD：普通父母先重建关系，再以 6/5 加入�
   assert.equal(rf_get(10, 3), 5);
 });
 
-test('SELECT_YES_NO：非法输入重问，直到返回 0 或 1', async () => {
+test('SELECT_YES_NO：#710 起选项是按钮，返回 0 或 1', async () => {
   const fixture = create_era_fixture();
-  fixture.set_inputs(7, 1);
+  fixture.set_inputs(1);
   const { select_yes_no } = fixture.load_module('page/page-life-list');
 
   assert.equal(await select_yes_no(), 1);
   assert.deepEqual(
     fixture.inputs_consumed.map(({ value }) => value),
-    [7, 1],
+    [1],
   );
-  assert.deepEqual(text_lines(fixture), [
-    '\u00A0\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要',
-    '\u00A0\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要',
-  ]);
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] 是的', '[1] 不要'],
+    '两枚按钮的含义：0 = 是的、1 = 不要（编号由引擎按 showAcc 拼）',
+  );
+  assert.deepEqual(text_lines(fixture), [], '本函数不再打印文本行');
 });
 
 test('ITEM_DETOX：按原状态输出并经属主门面清除四种寄生素质', () => {

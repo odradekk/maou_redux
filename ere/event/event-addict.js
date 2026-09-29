@@ -164,8 +164,11 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
   if (get('item:26')) {
     for (;;) {
       era.print(`给予${chara_callname(cid)}媚药吗？`);
-      era.print(' [0] - 好的');
-      era.print(' [1] - 不要');
+      // #710：两枚确认键改成按钮（正文的 `- ` 是既有文案，编号由引擎按
+      // showAcc 拼）。此处紧接 input，中间没有等键，按钮点得动；越界输入
+      // 由引擎当场拒收，下面的重问分支因此结构性不可达（结构保留）。
+      era.printButton('- 好的', 0);
+      era.printButton('- 不要', 1);
       const result = await era.input();
       if (result === 0) {
         if (cflag(cid, 1) === 2) {

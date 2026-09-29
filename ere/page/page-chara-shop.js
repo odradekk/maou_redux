@@ -31,10 +31,10 @@
  *   - **跨函数共享的 L_I**（chara_ikai_cost 读的是调用方的 L_I）：
  *     改形参 ＋ 返回值（trap_price 的同款处置，#5 决议第六条）。同理
  *     调用方在 chara_ikai_cost 之后读的结果 `C`/`D` 也改成读返回值。
- *   - **选项升格为按钮**（#572）：性别三选一与返回、确认召唤的
- *     `[0]/[1]` 改 `era.printButton`（PR #53 通则，正文不写
- *     [编号]）；异界勇者列表轮的 `[999] 返回`**保持纯文本**——
- *     本轮的有效编号是格行的 `[编号]`，打按钮会把它们锁死（理由见该处注释）。
+ *   - **选项升格为按钮**（#572 / #710）：性别三选一与返回、确认召唤的
+ *     `[0]/[1]` 改 `era.printButton`（PR #53 通则，正文不写 [编号]）；
+ *     #710 把异界勇者一览的格行改成按钮网格、同轮的 `[999] 返回` 一并
+ *     改按钮（只给返回打按钮会把格行的编号锁死，整轮必须一起改）。
  */
 
 'use strict';
@@ -54,8 +54,8 @@ const {
   buy_follower,
   shop_state,
 } = require('#/page/page-monster-shop');
+const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
-const { pad_display, pad_left } = require('#/utils/display-width'); // #577：补位 NBSP 化
 
 /** 异界勇者的预设编号 */
 const IKA_SIM_ID = 211;
@@ -78,11 +78,7 @@ const IKAI_MOD = 10000;
 const IKAI_DIVISOR = 5;
 /** 性别选择的选项上限（调试档的 99 未移植） */
 const SEX_MAX = 3;
-/** 名字字段宽 */
-const NAME_WIDTH = 14;
-/** 编号字段宽 */
-const NUM_WIDTH = 2;
-/** 一览每行几个 */
+/** 一览每行几个（按钮网格的每行格数） */
 const COLUMNS = 5;
 
 /** TALENT 读数缺省处理（#13） */
@@ -190,9 +186,10 @@ async function char_ikai_create(rand) {
 
   for (;;) {
     show_shop_chara();
-    let columns = 0; // LOCAL = 0
-    // 一览：有预设、且不在场的编号
-    let row = '';
+    // 一览：有预设、且不在场的编号。#710 起每格是一个按钮（编号即快捷键，
+    // 正文只写名字与价钱）——格行拼行改成按钮网格，行宽由网格列宽承担，
+    // 原文本行的编号/名字补位随之去掉（按钮正文的连续空白会被引擎折叠）。
+    const items = [];
     for (let l_i = IKAI_IDS.start; l_i < IKAI_IDS.end; l_i += 1) {
       if (!exist_csv(l_i)) {
         continue; // SIF !EXISTCSV(L_I) → CONTINUE
@@ -201,28 +198,13 @@ async function char_ikai_create(rand) {
         continue; // SIF A > 0 → CONTINUE
       }
       const [coins, money] = chara_ikai_cost(l_i);
-      // 格首有一个半角空格，是有意的字面文本（逐字比对钉住）：命令名后
-      // 的两个空格只有一个充当分隔，第二个属于正文（黄金样本里主菜单的
-      // 行首空格、单空格行都是这条规则的旁证）
-      row +=
-        ` [${pad_left(String(l_i), NUM_WIDTH)}] ` +
-        `${pad_display(csv_name(l_i), NAME_WIDTH)}` +
-        `(${coins}勋章&${money}金)`;
-      columns += 1;
-      if (columns % COLUMNS === 0) {
-        era.print(row); // SIF LOCAL % 5 == 0 → PRINTL
-        row = '';
-      }
+      items.push([l_i, `${csv_name(l_i)}(${coins}勋章&${money}金)`]);
     }
-    if (row !== '') {
-      era.print(row); // SIF !LINEISEMPTY() → PRINTL
-    }
+    print_button_grid(items, COLUMNS);
 
     era.drawLine({ isSolid: true });
-    // 列表轮的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面那些
-    // 勇者行的 `[编号]`（格行拼行，编号即输入值），单给这行打按钮会把
-    // 白名单收成 999、异界勇者的编号当场被拒收。整轮按钮化要先重排格行。
-    era.print('[999] 返回');
+    // #710：返回与上面的编号格整轮一起按钮化。
+    era.printButton('返回', 999);
 
     // 输入默认值 1：只有「空回传」按默认值 1 处理——显式键入的
     // 0 是合法值，不能被 `|| 1` 吞掉（文件头）

@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 87; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）；性格/发色列表改成按钮网格 -8 +4（删掉 M8768/M8769/M9009/M12083-M12085/M13257/M13258 所指的补位、收尾空行与越界重问；M14223-M14226 检查按钮网格）
+export const COUNT = 86; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）；性格/发色列表改成按钮网格 -8 +4（删掉 M8768/M8769/M9009/M12083-M12085/M13257/M13258 所指的补位、收尾空行与越界重问；M14223-M14226 检查按钮网格）；#710 角色列表与性别按钮化 -5 +4（删掉 M9007/M9008/M12014/M8805/M8807 所指的补位、纯文本性别行与两处不可键入的区间端点；M14230-M14232/M14234 检查列表按钮网格、等键顺序与 18/19 排除；M14223/M14226 随 print_button_grid 挪到 ere/utils/button-grid.js）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -380,14 +380,8 @@ export default [
 
   // —— 首轮验收返工补表：区间上界与 chara-custom.js 的分布 ——
 
-  {
-    desc: 'M8805 char_create 的「已在场复用」区间上界 40 改 39（首轮验收漏网的那一处）',
-    file: 'ere/chara/chara-custom.js',
-    find: '    if (index >= 17 && index <= 40) {',
-    replace: '    if (index >= 17 && index <= 39) {',
-    tests: ['chara-custom'],
-    must_mention: '特殊位区间上界 40',
-  },
+  // M8805（「已在场复用」区间上界 40 改 39）随 #710 删除：显示编号 60 的
+  // 受理支按钮化后不可键入（见 M8810 对可观察的列表上界的检查）。
   {
     desc: 'M8806 char_append 精英段的区间上界 210 改 209（首轮验收漏网的那一处）',
     file: 'ere/chara/chara-custom.js',
@@ -396,14 +390,8 @@ export default [
     tests: ['chara-custom'],
     must_mention: '精英（201-210）在模式 1 同样走 char_make',
   },
-  {
-    desc: 'M8807 char_create 输入映射的区间上界 60 改 59（60 落进默认分支）',
-    file: 'ere/chara/chara-custom.js',
-    find: '    } else if (result >= 37 && result <= 60) {',
-    replace: '    } else if (result >= 37 && result <= 59) {',
-    tests: ['chara-custom'],
-    must_mention: '特殊位区间上界 40',
-  },
+  // M8807（输入映射的区间上界 60 改 59）随 #710 删除：显示编号 60 不在
+  // 特殊段列表里（只到 59），该端点不可键入、变异不可观察。
   {
     desc: 'M8808 char_append 勇者段的区间上界 16 改 15（16 号不再随机成型）',
     file: 'ere/chara/chara-custom.js',
@@ -426,7 +414,8 @@ export default [
     find: '    for (let i = 17; i < 40; i += 1) {',
     replace: '    for (let i = 17; i < 39; i += 1) {',
     tests: ['chara-custom'],
-    must_mention: '特殊段列 17-39',
+    // #710：断言面从整行文本改成按钮网格——末项 59 的按钮消失
+    must_mention: '特殊段末项 59 与返回在本轮集里',
   },
   {
     desc: 'M8811 CASE 35, 31 TO 33 的区间上界 33 改 32（33 号不再走 char_init）',
@@ -562,25 +551,10 @@ export default [
     find: 'const ELITE_COLUMNS = 5;',
     replace: 'const ELITE_COLUMNS = 4;',
     tests: ['chara-custom'],
-    must_mention: '勇者段每行 4 格',
+    must_mention: '精英段每行 5 格',
   },
-  {
-    desc: 'M9007 预设名字的字段宽 14 改 15（列表整行错位）',
-    file: 'ere/chara/chara-custom.js',
-    find: '${pad_display(csv_name(preset), 14)}`;',
-    replace: '${pad_display(csv_name(preset), 15)}`;',
-    tests: ['chara-custom'],
-    must_mention: '勇者段每行 4 格',
-  },
-  {
-    desc: 'M9008 显示编号的补位宽 2 改 3（`[ 1]` 变 `[  1]`）',
-    file: 'ere/chara/chara-custom.js',
-    find: '    current += `[${pad_left(String(label), 2)}] ${pad_display(csv_name(preset), 14)}`;',
-    replace:
-      '    current += `[${pad_left(String(label), 3)}] ${pad_display(csv_name(preset), 14)}`;',
-    tests: ['chara-custom'],
-    must_mention: '勇者段每行 4 格',
-  },
+  // M9007/M9008（补位宽 14 与编号补位 2）随 #710 的列表按钮化删除：
+  // 那两个排版字面量已不存在，等价检查换成 M14230/M14231（列表退回纯文本）。
   // —— #567：自由文本输入的空输入语义统一（0 ＝ 空输入）——
   // chara-custom 的名字输入与 chara-custom2 的两处自定义输入从 A 翻修到 B，
   // 提示行各补一句输入 0 的说明；目标与断言见 test/chara-custom.test.js、
@@ -685,13 +659,13 @@ export default [
     must_mention: '输入不合法！请输入以下值之一：',
   },
   {
-    desc: 'M12014 char_append 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
+    desc: 'M14232 char_append 的性别按钮之后补回等键（原顺序：按钮会被渲染层禁用）',
     file: 'ere/chara/chara-custom.js',
-    find: '    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`);',
+    find: '      3,\n    );\n    const gender = await era.input();',
     replace:
-      "    era.printButton('男性', 1);\n    era.printButton('女性', 2);\n    era.printButton('扶她', 3); // 变异",
+      '      3,\n    );\n    await era.waitAnyKey(); // 变异：等键夹在按钮与输入之间\n    const gender = await era.input();',
     tests: ['chara-custom'],
-    must_mention: '性别选项仍是纯文本行',
+    must_mention: '等键只有问句那次与名字播报那次',
   },
   {
     desc: 'M12015 CHARA_FIRST_XP 的野狗部位菜单退回纯文本行',
@@ -740,7 +714,9 @@ export default [
   // —— 性格/发色列表改成按钮网格 ——
   {
     desc: 'M14223 按钮网格的格宽按本行实际格数算（末行不满时与上面各列错位）',
-    file: 'ere/chara/chara-and-hair.js',
+    // #710：print_button_grid 自 chara-and-hair.js 挪到公用模块，条目随之
+    // 改指新文件（行为与断言不变）
+    file: 'ere/utils/button-grid.js',
     find: '  const width = Math.floor(GRID_COLUMNS / per_line);\n  for (let i = 0; i < items.length; i += per_line) {\n    era.printMultiColumns(\n      items.slice(i, i + per_line).map(',
     replace:
       '  for (let i = 0; i < items.length; i += per_line) {\n    const row = items.slice(i, i + per_line);\n    const width = Math.floor(GRID_COLUMNS / row.length); // 变异\n    era.printMultiColumns(\n      row.map(',
@@ -765,10 +741,38 @@ export default [
   },
   {
     desc: 'M14226 列表格退回纯文本（玩家点不了，只能手敲编号）',
-    file: 'ere/chara/chara-and-hair.js',
+    // #710：公用网格模块是全部列表的落点，这一条同时守着所有网格调用点
+    file: 'ere/utils/button-grid.js',
     find: "        type: 'button',\n        accelerator,\n        content,",
     replace: "        type: 'text',\n        accelerator,\n        content,",
     tests: ['chara-and-hair'],
     must_mention: '列表是按钮网格',
+  },
+  // —— #710：列表与性别选项的按钮化 ——
+  {
+    desc: 'M14230 char_create 的勇者段列表退回纯文本行',
+    file: 'ere/chara/chara-custom.js',
+    find: '  print_button_grid(\n    Array.from({ length: 8 }, (_, i) => [i + 1, csv_name(i + 1)]),\n    HERO_COLUMNS,\n  );',
+    replace:
+      "  era.print(\n    Array.from({ length: 8 }, (_, i) => `[${i + 1}] ${csv_name(i + 1)}`).join(''),\n  ); // 变异：纯文本行",
+    tests: ['chara-custom'],
+    must_mention: '勇者段每行 4 格',
+  },
+  {
+    desc: 'M14231 char_create 的精英段列表退回纯文本行',
+    file: 'ere/chara/chara-custom.js',
+    find: '  print_button_grid(\n    Array.from({ length: 10 }, (_, i) => [i + 21, csv_name(i + 201)]),\n    ELITE_COLUMNS,\n  );',
+    replace:
+      "  era.print(\n    Array.from({ length: 10 }, (_, i) => `[${i + 21}] ${csv_name(i + 201)}`).join(''),\n  ); // 变异：纯文本行",
+    tests: ['chara-custom'],
+    must_mention: '精英段每行 5 格',
+  },
+  {
+    desc: 'M14234 特殊段把排除的 18/19 号也列出来',
+    file: 'ere/chara/chara-custom.js',
+    find: '      if (!exist_csv(i) || i === 19 || i === 18) {',
+    replace: '      if (!exist_csv(i)) { // 变异：不排除 18/19',
+    tests: ['chara-custom'],
+    must_mention: '18 被排除',
   },
 ];

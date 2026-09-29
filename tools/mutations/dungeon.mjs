@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 305; // #641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 309; // #710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -2744,5 +2744,45 @@ export default [
       '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv(damage, e_get(b + 99)); // 变异：封顶删（怪物数可负）',
     tests: ['dungeon-magic'],
     must_mention: '怪物数不跌破 0',
+  },
+  // —— #710：确认框与怪物列表的按钮化 ——
+  {
+    desc: 'M14245 dungeon_spy 的「回来吗」两枚确认键退回纯文本行',
+    file: 'ere/dungeon/dungeon-battle2.js',
+    find: "      era.printButton('- 好的', 0);\n      era.printButton('- 不要', 1);",
+    replace:
+      "      era.print(' [0] - 好的'); // 变异：纯文本\n      era.print(' [1] - 不要');",
+    tests: ['dungeon-battle'],
+    must_mention: '回来确认是按钮',
+  },
+  {
+    desc: 'M14239 部下总览补回逐层 waitAnyKey（早先打印的按钮会被等键禁用）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '    if (z % 10 === 0) {\n      floor = z / 10 + 1;\n      era.drawLine();',
+    replace:
+      '    if (z % 10 === 0) {\n      floor = z / 10 + 1;\n      await era.waitAnyKey(); // 变异：补回逐层等键\n      era.drawLine();',
+    tests: ['page-dungeon-info'],
+    // 第 2 层的等键清掉了第 1 层按钮的白名单，输入 105 当场被拒收
+    // （白名单只剩第 2 层的 115 与返回），走不到版面与等键的断言
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M14255 部下总览的怪物按钮挪到循环之后统一打印（版面顺序丢回去）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '    const a = z + 100;\n    const b = item_count(a);\n    if (b > 0) {\n      // 原 PRINTFORML [{A}] {B}只%MONSTERNAME(A)% 的一行；正文只写库存与\n      // 名字，编号交给引擎按 showAcc 拼\n      era.printButton(`${b}只${monstername(a)}`, a);\n    }\n    z += 1;\n    r -= 1;\n  }\n  era.drawLine();',
+    replace:
+      '    const a = z + 100;\n    const b = item_count(a);\n    if (b > 0) {\n      var moved_rows = moved_rows ?? []; // 变异：var 提升到函数作用域，收集到循环之后\n      moved_rows.push([a, `${b}只${monstername(a)}`]);\n    }\n    z += 1;\n    r -= 1;\n  }\n  for (const [accelerator, content] of moved_rows ?? []) {\n    era.printButton(content, accelerator); // 变异：挪到循环之后统一打印\n  }\n  era.drawLine();',
+    tests: ['page-dungeon-info'],
+    must_mention: '105 排在第 1 层头之后、第 2 层头之前',
+  },
+  {
+    desc: 'M14240 部下总览的 [999] 返回退回纯文本（只按钮化怪物行）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: "  era.printButton('返回', 999);\n  // INPUT\n  return era.input();",
+    replace:
+      "  era.print('[999] 返回'); // 变异：只按钮化怪物行\n  // INPUT\n  return era.input();",
+    tests: ['page-dungeon-info'],
+    // 只按钮化怪物行 → 白名单＝怪物编号，输入 999（与 105 之后的回程）被拒收
+    must_mention: '输入不合法！请输入以下值之一：',
   },
 ];

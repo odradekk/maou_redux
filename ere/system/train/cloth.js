@@ -229,10 +229,12 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     // オムツの場合の特殊処理（换新 / 洗涤的选择）
     for (;;) {
       era.print(`花费50p为${name}换尿布吗？`);
-      // 按钮串 `[0] - 好的`：编号后第一格是分隔符，那一个半角
-      // 空格照全项目 `[n] - …` 一族写成半角（#577 的普查标准）
-      era.print(' [0] - 好的');
-      era.print(' [1] - 不要');
+      // #710：两枚确认键改成按钮；正文的 `- ` 是既有文案（编号后第一格是
+      // 分隔符，全项目 `[n] - …` 一族同款），编号由引擎按 showAcc 拼。
+      // 此处紧接 input，中间没有等键，按钮点得动；越界输入由引擎当场拒收，
+      // 下面的重问分支因此结构性不可达（结构保留）。
+      era.printButton('- 好的', 0);
+      era.printButton('- 不要', 1);
       const result = await era.input();
       if (result === 0) {
         // 换上新的尿布（下一条耻情加成紧随其后，同段输出）

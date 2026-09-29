@@ -991,8 +991,10 @@ async function dungeon_spy(arg0, rand) {
         era.print(`和${name_of(enemy)}`);
       }
       era.print('回来吗？');
-      era.print(' [0] - 好的');
-      era.print(' [1] - 不要');
+      // #710：两枚确认键改成按钮（正文的 `- ` 是既有文案，编号由引擎按
+      // showAcc 拼）。此处紧接 input，中间没有等键，按钮点得动。
+      era.printButton('- 好的', 0);
+      era.printButton('- 不要', 1);
       const answer = await era.input();
       if (answer === 0) {
         chara(arg0).invasion.状态 = 5;

@@ -608,14 +608,28 @@ test('max_page_salave：页数算式与 enemy 同构，条件换六状态', () =
   assert.equal(max_page_salave(20), 1, '不足一页 → 1 页');
 });
 
-// —— select_yes_no（既有行为随这张工单回归）——
+// —— select_yes_no（#710 起两枚选项是按钮）——
 
-test('select_yes_no：只接受 0/1，其余输入重问', async () => {
+test('select_yes_no：一行两枚按钮（0 是的 / 1 不要），输入走按钮编号', async () => {
   const fixture = create_era_fixture();
-  fixture.set_inputs(7, 2, 0);
+  fixture.set_inputs(0);
   const { select_yes_no } = fixture.load_module('page/page-life-list');
   assert.equal(await select_yes_no(), 0);
-  assert.equal(fixture.inputs_consumed.length, 3, '7 与 2 都被重问、0 才回传');
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [0, '是的', '[0] 是的'],
+      [1, '不要', '[1] 不要'],
+    ],
+    '两枚按钮同属一行，正文不带 [N] 前缀（引擎按 showAcc 自动拼）',
+  );
+  assert.equal(
+    fixture.text_lines().some((t) => t.includes('[0] 是的')),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
 
   const second = create_era_fixture();
   second.set_inputs(1);

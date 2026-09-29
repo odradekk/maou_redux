@@ -356,11 +356,26 @@ test('爱慕觉醒：持有【贞操封印】时可选择保留或解开', async
   fixture.store.set('mark:31:2', 3);
   fixture.store.set('abl:31:16', 3);
   fixture.store.set('talent:31:273', 1);
-  fixture.set_inputs(1); // 解开封印
+  fixture.set_inputs(1); // 按钮 [1] 解开封印
 
   await check_specialskil(31);
 
   assert.equal(fixture.store.get('talent:31:273'), 0);
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [0, '- 保留封印', '[0] - 保留封印'],
+      [1, '- 解开封印', '[1] - 解开封印'],
+    ],
+    '解封二选一是按钮，正文保留 `- ` 分隔符、不带 [N] 前缀',
+  );
+  assert.equal(
+    fixture.text_lines().some((t) => t.includes('[0] - 保留封印')),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
 });
 
 test('爱慕觉醒：贞操封印选择保留时素质不动', async () => {

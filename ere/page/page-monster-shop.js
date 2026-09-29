@@ -27,12 +27,12 @@
  *    （PRINTW 的既有约定）；CLEARLINE（「表示外の
  *    数字なら戻す」）在 ere 侧没有对应动作——本屏幕的重绘由商店轮的循环
  *    承担，局部清行不镜像（page-ability-up.js 同款）。
- * 6. **选项升格为按钮**（#572）：入口菜单、性别、
+ * 6. **选项升格为按钮**（#572 / #710）：入口菜单、性别、
  *    种族、召唤确认与成交确认改
  *    `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；第 3 条的列排版
- *    因此变成「一按钮一行」，差异按 CONTEXT.md 的条款登记）。两处商品/祭品
- *    一览轮的 `[999] 返回` **保持纯文本**——同轮的有效编号是那些格行的
- *    编号，打按钮会把它们锁死（理由见各处注释）。
+ *    因此变成「一按钮一行」，差异按 CONTEXT.md 的条款登记）。#710 起商品
+ *    一览与可选祭品一览的格行改成按钮网格、同轮的 `[999] 返回` 一并改按钮
+ *    （只给返回打按钮会把格行的编号锁死，整轮必须一起改）。
  */
 
 'use strict';
@@ -46,6 +46,7 @@ const { add_chara_ex } = require('#/chara/chara-ex');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
+const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
@@ -61,20 +62,12 @@ const SUMMON_FEE = 1500;
 const SACRIFICE_RATE = 135;
 /** 商品段（`FOR LCOUNT,201,280`——上界开区间） */
 const MONSTER_IDS = { start: 201, end: 280 };
-/** 每页行数（两格一行） */
+/** 每行格数（两个一览的按钮网格） */
 const COLUMNS = 2;
-/** 商品名字段宽（`%ITEMNAME:LCOUNT,22,LEFT%`） */
-const NAME_WIDTH = 22;
-/** 最低等级字段宽（`%TOSTR(ITEMPRICE:LCOUNT),5,RIGHT%`） */
-const LEVEL_WIDTH = 5;
 /** 祭品一览的名字字段宽（`%ITEMNAME:LCOUNT,22,LEFT%`） */
 const SACRIFICE_NAME_WIDTH = 22;
 /** 祭品数量的字段宽（`%TOSTR(MONS:LCOUNT:2),7,RIGHT%`） */
 const SACRIFICE_COUNT_WIDTH = 7;
-/** 可选祭品一览的名字字段宽（`%ITEMNAME:LCOUNT,20,LEFT%`） */
-const PICK_NAME_WIDTH = 20;
-/** 可选祭品一览的数量字段宽（`%TOSTR(MONS:LCOUNT:1),5,RIGHT%`） */
-const PICK_COUNT_WIDTH = 5;
 /** 性别选择的选项上限（`RESULT > 3`） */
 const SEX_MAX = 3;
 /** 种族选择的选项上限（`RESULT > 9`） */
@@ -327,9 +320,10 @@ async function select_follower({ arg0, show, guard, rand }) {
     era.print('还需要支付最低等级＊１３５的金钱来召唤精英魔物从者');
 
     // 商品一览（ITEMPRICE 为 0 的不出场；CSVTALENT 的种族 319
-    // 与两个档任一相等即列出）
-    const rows = [];
-    let row = '';
+    // 与两个档任一相等即列出）。#710 起每格是一个按钮（编号即快捷键），
+    // 原来的两格一行拼行改成按钮网格；名字/等级补位随文本行去掉
+    // （按钮正文的连续空白会被引擎折叠），「最低等级：」前保留一个半角空格。
+    const items = [];
     let shown = 0;
     for (let id = MONSTER_IDS.start; id < MONSTER_IDS.end; id += 1) {
       if (item_price(id) === 0) {
@@ -339,31 +333,15 @@ async function select_follower({ arg0, show, guard, rand }) {
       if (race2 !== shop_state.race && race2 !== shop_state.race2) {
         continue;
       }
-      // 名字字段与「最低等级：」之间有一个半角空格（在 %…,22,LEFT% 之后，
-      // 是实参里的字面量，不是命令分隔符）
-      row +=
-        `[${pad_display(String(id), 3)}] ` +
-        `${pad_display(item_name(id), NAME_WIDTH)} ` +
-        `最低等级：${pad_left(String(item_price(id)), LEVEL_WIDTH)}\u3000\u3000`;
+      items.push([id, `${item_name(id)} 最低等级：${item_price(id)}`]);
       era.set(`itemsales:${id}`, 1); // 購入可能フラグ
       shown += 1;
-      if (shown % COLUMNS === 0) {
-        rows.push(row);
-        row = '';
-      }
     }
-    for (const line of rows) {
-      era.print(line);
-    }
-    if (row !== '') {
-      era.print(row); // SIF LOCAL%2 → PRINTL
-    }
+    print_button_grid(items, COLUMNS);
 
     era.drawLine({ isSolid: true });
-    // 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面商品行的
-    // 「[编号]」格行（拼行，编号即输入值 100-199），单给这行打按钮会把
-    // 白名单收成 999、商品编号当场被拒收。整轮按钮化要先重排格行。
-    era.print('[999] 返回');
+    // #710：返回与商品格整轮一起按钮化。
+    era.printButton('返回', 999);
     era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');
 
     const result = await era.input();
@@ -510,31 +488,21 @@ async function buy_follower({ show, rand }) {
     }
     era.print(`合计等级：${picked_level}`);
     era.drawLine({ isSolid: true });
-    let row = '';
-    let columns = 0;
+    // #710：可选祭品格改成按钮（编号即快捷键），与返回整轮一起按钮化。
+    // 原来的格尾制表符与名字/数量补位随文本行去掉（理由同商品一览）。
+    const pick_items = [];
     for (const [id, info] of offering) {
       if (info.level === 0) {
         continue;
       }
-      // 两行 PRINTFORM 拼一格；格尾是实参里的制表符（不是全角空格，
-      // 与祭品行的 `只` + 两个 U+3000 不同源），保留为 \t
-      row +=
-        `[${pad_display(String(id), 3)}] ` +
-        `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +
-        `LV:${info.level} ${pad_left(String(info.stock), PICK_COUNT_WIDTH)} ` +
-        `- ${info.picked} 只\t`;
-      columns += 1;
-      if (columns % COLUMNS === 0) {
-        era.print(row);
-        row = '';
-      }
+      pick_items.push([
+        id,
+        `${item_name(id)} LV:${info.level} ${info.stock} - ${info.picked} 只`,
+      ]);
     }
-    if (row !== '') {
-      era.print(row);
-    }
+    print_button_grid(pick_items, COLUMNS);
     era.drawLine({ isSolid: true });
-    // 的 [999] 返回同上（祭品行轮的编号 100-199 是纯文本选项）。
-    era.print('[999] 返回');
+    era.printButton('返回', 999);
     era.print('');
 
     const result = await era.input();

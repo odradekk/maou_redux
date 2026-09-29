@@ -61,17 +61,13 @@ function pad_right(text, width) {
 }
 
 /**
- * 商品一览的一格：`[编号] ` + 名字补 22 + 半角空格 + `最低等级：`
- * + 价格右对齐 5 + 两个全角空格。
- * 编号字段是 `TOSTR(LCOUNT,"000")`（零填充 3 位），段内编号恒 3 位，
- * 与 `pad_left(id, 3)` 同值。
+ * 商品一览的一格（#710 起是按钮，[编号, 正文, 格宽]）：名字 + 半角空格 +
+ * 「最低等级：」+ 价格。原文本行的编号/名字/等级补位随文本行去掉
+ * （按钮正文的连续空白会被引擎折叠）；「每行 2 格、每格 24 / 2 = 12 列」
+ * 由用例按网格钉住。
  */
 function goods_cell(id, name, price) {
-  return (
-    `[${pad_left(String(id), 3)}] ` +
-    `${pad_left(name, 22)} ` +
-    `最低等级：${pad_right(String(price), 5)}\u3000\u3000`
-  );
+  return [id, `${name} 最低等级：${price}`, 12];
 }
 
 /**
@@ -86,16 +82,26 @@ function sacrifice_cell(name, level, picked) {
 }
 
 /**
- * 可选祭品行：`[编号] ` + 名字补 20 + ` LV:` + 等级 + ` `
- * + 持有数右对齐 5 + ` - ` + 已选数 + ` 只` + 制表符（格尾是实参里的 \t）。
+ * 可选祭品行的一格（#710 起是按钮，[编号, 正文, 格宽]）：名字 + ` LV:` +
+ * 等级 + 空格 + 持有数 + ` - ` + 已选数 + ` 只`。原格尾制表符与名字/数量
+ * 补位随文本行去掉（理由同 goods_cell）。
  */
 function pick_cell(id, name, level, stock, picked) {
-  return (
-    `[${pad_left(String(id), 3)}] ` +
-    `${pad_left(name, 20)} ` +
-    `LV:${level} ${pad_right(String(stock), 5)} ` +
-    `- ${picked} 只\t`
-  );
+  return [id, `${name} LV:${level} ${stock} - ${picked} 只`, 12];
+}
+
+/**
+ * 按钮网格快照（只取正文含 needle 的格）：每行一个数组，每格是
+ * [编号, 正文, 格宽]（按 row 分组）。
+ */
+function grid_of(fixture, needle) {
+  const rows = new Map();
+  for (const line of fixture.lines_history) {
+    if (line.type !== 'button' || !line.text.includes(needle)) continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push([line.accelerator, line.text, line.grid_width]);
+  }
+  return [...rows.values()];
 }
 
 /**
@@ -534,14 +540,12 @@ test('select_monster：商品一览的四个条件——价格非 0、两个种�
     999,
   );
   const texts = history_texts(fixture);
-  const list_line = texts.find((line) => line.includes('精英狗头人'));
-  assert(list_line, '在售的 202 应出场');
-  assert(list_line.includes('[202]'), '[编号] 字段');
-  assert(
-    list_line.includes('最低等级：' + '\u00A0'.repeat(3) + '15'),
-    '右对齐等级字段',
+  // #710：商品一览是按钮网格，两格一行
+  assert.deepEqual(
+    grid_of(fixture, '最低等级：'),
+    [[goods_cell(202, '精英狗头人', 15), goods_cell(203, '精英蚁怪', 15)]],
+    '在售的 202 与同为档内的 203 同排一行',
   );
-  assert(list_line.includes('精英蚁怪'), '同为档内的 203 与 202 同行');
   assert(
     !texts.some((line) => line.includes('精英史莱姆')),
     '319 = 2 的 201 在亚人档外',
@@ -554,10 +558,10 @@ test('select_monster：商品一览的四个条件——价格非 0、两个种�
   assert.equal(fixture.store.get('itemsales:201') ?? 0, 0, '档外不点亮');
 });
 
-test('select_monster：商品一览的排版字面量（名字补 22、等级右对齐 5、每行 2 格）', async () => {
+test('select_monster：商品一览是按钮网格（每行 2 格、格宽 12）', async () => {
   // 三件在售（202/203/205 同属亚人档）：两格一行 → 第二行只剩第三件。
-  // 整格比对同时钉住名字字段宽、等级字段宽与「每行 2 格」——任何一处改动
-  // 都会让这一行的字符串对不上
+  // 整格比对同时钉住「每行 2 格」与每格宽度（24 / 2 = 12）——任何一处
+  // 改动都会让网格对不上
   const { fixture } = await run_select(
     1,
     {
@@ -570,13 +574,15 @@ test('select_monster：商品一览的排版字面量（名字补 22、等级右
     },
     999,
   );
-  const rows = history_texts(fixture).filter((line) =>
-    line.includes('最低等级：'),
-  );
-  assert.deepEqual(rows, [
-    goods_cell(202, '精英狗头人', 15) + goods_cell(203, '精英蚁怪', 7),
-    goods_cell(205, '精英巨魔', 120),
+  assert.deepEqual(grid_of(fixture, '最低等级：'), [
+    [goods_cell(202, '精英狗头人', 15), goods_cell(203, '精英蚁怪', 7)],
+    [goods_cell(205, '精英巨魔', 120)],
   ]);
+  assert.equal(
+    history_texts(fixture).some((line) => line.includes('最低等级：')),
+    false,
+    '同屏没有残留的纯文本商品行',
+  );
 });
 
 test('select_monster：空表与提示行（没有能召唤的魔物从者 / 请选择…）', async () => {
@@ -599,7 +605,7 @@ test('select_monster：空表与提示行（没有能召唤的魔物从者 / 请
       999,
     );
     const texts = history_texts(fixture);
-    assert(texts.includes('[999] 返回'));
+    assert(button_rendered(fixture).includes('[999] 返回'), '返回是按钮');
     assert(!texts.includes('请选择要召唤的魔物从者'), '空表不出「请选择」');
   }
   {
@@ -625,15 +631,27 @@ test('select_monster：五道输入检查——999 退出、段外、未点亮�
     const { result } = await run_select(1, {}, 999);
     assert.equal(result, 0);
   }
-  // 段外（200 / 280）与未点亮（203）都打回重问，随后 999 退出
+  // 段外（200 / 280）与未点亮（203）原来都打回重问；#710 按钮化后白名单
+  // ＝商品格 + 999，这些编号被引擎当场拒收，打回支结构性不可达（结构保留）
   {
-    const { fixture } = await run_select(1, {}, 200, 280, 203, 999);
-    assert.equal(
-      history_texts(fixture).filter((line) =>
-        line.includes('请选择要召唤的魔物从者'),
-      ).length,
-      4,
-      '三次打回各重开一轮（共四轮）',
+    const fixture = monster_world();
+    fixture.set_inputs(200);
+    const { select_monster } = fixture.load_module('page/page-monster-shop');
+    await assert.rejects(
+      () => select_monster(1, rand0),
+      /输入不合法！请输入以下值之一：202, 999/,
+    );
+  }
+  {
+    // 未点亮（203 有档位、没价位）：白名单只放行已点亮的 202 与返回
+    const fixture = monster_world({
+      'chara:203': { talent: { 319: 1 } },
+    });
+    fixture.set_inputs(203);
+    const { select_monster } = fixture.load_module('page/page-monster-shop');
+    await assert.rejects(
+      () => select_monster(1, rand0),
+      /输入不合法！请输入以下值之一：202, 999/,
     );
   }
   // 钱不够：ITEMPRICE:202 = 15 → 需要 15 × 135 = 2025；给 2024
@@ -792,31 +810,40 @@ test('buy_monster：祭品不足时逐只挑（剩余等级递减、库存告罄
   );
 });
 
-test('buy_monster：挑祭品的输入检查——段外与未持有都打回', async () => {
-  const { fixture } = await run_buy({ 'item:101': 3 }, 99, 199, 102, 999);
-  const texts = history_texts(fixture);
-  assert.equal(
-    texts.filter((line) =>
-      line.includes('请选择满足最低等级要求的怪物作为祭品'),
-    ).length,
-    4,
-    '两次非法输入各重开一轮（共四轮）',
+test('buy_monster：#710 挑祭品只认表内编号（段外的键入被引擎拒收）', async () => {
+  // 原纯文本一轮里 99/199/102（段外或未持有）都能键入、走「打回重开」的
+  // 输入检查；按钮化后白名单＝可选祭品格 + 999，这些编号被引擎当场拒收，
+  // 检查支结构性不可达（结构保留）
+  const fixture = monster_world({ 'item:101': 3 });
+  fixture.set_inputs(202, 99); // 选商品 → 挑祭品时键入段外的 99
+  const { select_monster } = fixture.load_module('page/page-monster-shop');
+  await assert.rejects(
+    () => select_monster(1, rand0),
+    /输入不合法！请输入以下值之一：101, 999/,
+  );
+  assert(
+    history_texts(fixture).includes('请选择满足最低等级要求的怪物作为祭品'),
   );
 });
 
-test('buy_monster：跨两种祭品凑够等级（选择不限于一只）', async () => {
-  // 101 与 102 各 2 只：102 的凌辱类型 2（史莱姆）不在亚人档 → 只有 101 可用
+test('buy_monster：档外的祭品编号不进可选表', async () => {
+  // 101 与 102 各有货：102 的凌辱类型 2（史莱姆）不在亚人档 → 可选表只有 101
   const { fixture, result } = await run_buy(
     { 'item:101': 3, 'item:102': 5, 'itemname:102': '史莱姆' },
-    102, // 102 不在亚人档 → 打回
     999, // 退出 buy_monster
     999, // 退出 select_monster
   );
   assert.equal(result, 0);
-  const texts = history_texts(fixture);
+  assert.deepEqual(
+    grid_of(fixture, ' LV:').map((row) =>
+      row.map(([accelerator]) => accelerator),
+    ),
+    [[101]],
+    '档外的 102 不进可选表',
+  );
   assert(
-    !texts.some((line) => line.includes('史莱姆 LV')),
-    '档外的 102 不进祭品表',
+    !history_texts(fixture).some((line) => line.includes('史莱姆 LV')),
+    '可选表里没有史莱姆',
   );
 });
 
@@ -852,17 +879,18 @@ test('buy_monster：祭品行与可选行的排版字面量（名补 22/20、数
   );
   assert.equal(result, 1, '三只凑够 16 级成交');
   const texts = history_texts(fixture);
-  // 可选行：两格一行，第三件另起一行；格尾是制表符
-  assert_has_line(
-    texts,
-    pick_cell(100, '狗头人', 5, 1, 0) + pick_cell(101, '哥布林', 5, 1, 0),
-    '可选行的整格字符串（名字宽 20 / 持有数宽 5 / 每行 2 格）',
-  );
-  assert_has_line(texts, pick_cell(110, '兽人', 6, 1, 0), '第三件另起一行');
-  assert_has_line(
-    texts,
-    pick_cell(100, '狗头人', 5, 1, 1) + pick_cell(101, '哥布林', 5, 1, 1),
-    '已选数进格（- 1 只）',
+  // #710 可选行：按钮网格，两格一行，第三件另起一行；每轮重画一次
+  assert.deepEqual(
+    grid_of(fixture, ' LV:'),
+    [
+      [pick_cell(100, '狗头人', 5, 1, 0), pick_cell(101, '哥布林', 5, 1, 0)],
+      [pick_cell(110, '兽人', 6, 1, 0)],
+      [pick_cell(100, '狗头人', 5, 1, 1), pick_cell(101, '哥布林', 5, 1, 0)],
+      [pick_cell(110, '兽人', 6, 1, 0)],
+      [pick_cell(100, '狗头人', 5, 1, 1), pick_cell(101, '哥布林', 5, 1, 1)],
+      [pick_cell(110, '兽人', 6, 1, 0)],
+    ],
+    '可选行每轮两格一行、已选数进格',
   );
   // 祭品行：两格一行，第三件另起一行
   assert_has_line(
@@ -902,9 +930,9 @@ test('select_monster：名录的编号段端点——201（首个在册）与 21
       },
       999,
     );
-    assert_has_line(
-      history_texts(fixture),
-      goods_cell(201, '精英史莱姆', 15),
+    assert.deepEqual(
+      grid_of(fixture, '最低等级：'),
+      [[goods_cell(201, '精英史莱姆', 15)]],
       '首个在册编号 201 必须在列',
     );
   }
@@ -918,9 +946,9 @@ test('select_monster：名录的编号段端点——201（首个在册）与 21
       },
       999,
     );
-    assert_has_line(
-      history_texts(fixture),
-      goods_cell(210, '猎犬首领', 15),
+    assert.deepEqual(
+      grid_of(fixture, '最低等级：'),
+      [[goods_cell(210, '猎犬首领', 15)]],
       '末个在册编号 210 必须在列（把 end 砍到 ≤ 210 即红）',
     );
   }
@@ -940,11 +968,10 @@ test('monster_shop：种族选择收下 9（RACE_MAX 的最后一个）并进魔
     9, // 种族：魔兽（映射 [10, 12]）
     999, // 退出
   );
-  const texts = history_texts(fixture);
-  assert_has_line(
-    texts,
-    goods_cell(210, '猎犬首领', 15),
-    '键入 9 应进魔兽档并列出 210（打回重问就看不到这一行）',
+  assert.deepEqual(
+    grid_of(fixture, '最低等级：'),
+    [[goods_cell(210, '猎犬首领', 15)]],
+    '键入 9 应进魔兽档并列出 210（打回重问就看不到这一格）',
   );
 });
 
@@ -963,10 +990,10 @@ test('buy_monster：祭品扫描的编号段端点——193（100-199 段末个�
   const { select_monster } = fixture.load_module('page/page-monster-shop');
   const result = await select_monster(9, rand0); // 魔兽档 [10, 12]
   assert.equal(result, 1, '一只 34 级的祭品就够');
-  assert_has_line(
-    history_texts(fixture),
-    pick_cell(193, '混沌龙', 34, 1, 0),
-    '末个在册祭品编号 193 必须进可选表',
+  assert.deepEqual(
+    grid_of(fixture, ' LV:'),
+    [[pick_cell(193, '混沌龙', 34, 1, 0)]],
+    '末个在册祭品编号 193 必须进可选表（按钮格）',
   );
   assert_has_line(
     history_texts(fixture),

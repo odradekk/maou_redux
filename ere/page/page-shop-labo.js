@@ -2467,7 +2467,9 @@ async function summon_slave() {
     }
     era.print('条件达成。要生成奴隶吗？');
     era.print('若要生成，请输入要奴隶的编号');
-    era.print(' [0] - 不生成');
+    // #710：「不生成」改成按钮（正文的 `- ` 是既有文案）。输入保留
+    // useRule: false——150-199 的编号是自由输入，不在按钮集里。
+    era.printButton('- 不生成', 0);
     const result = await era.input({ useRule: false }); // INPUT
     if (result === 0) {
       return 0;

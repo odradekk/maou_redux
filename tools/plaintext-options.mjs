@@ -24,14 +24,13 @@
  *   - 整行注释（`//`、`/*`（含 `/**`）、`*`、`;` 开头）跳过；`era.printButton`
  *     等按钮 API 自然不匹配（它们不是纯文本）。
  *
- * 面外已知项（同一病灶、选项文本不落在首实参字面量上，共 17 行，清单与判定见
- * docs/research/plaintext-options.md 第四节末尾）：`ere/data/ending-scripts.js`
- * 的数据表 11 行、`ere/chara/chara-and-hair.js:226`/`:327` 与
- * `ere/chara/chara-custom.js:131`（选项文本拼进字符串变量、再整行 `era.print`）、
- * `ere/event/event-ending.js:537`（选项文本在数组元素上、经循环打印）、
- * `ere/event/event-execution.js:116` 与
- * `ere/page/components/chara-info-title.js:151`（数组写法的 `content`）。把数据
- * 表纳入棘轮会把「数据」与「打印调用点」混在一个判定面里，故不纳入。
+ * 面外已知项（同一病灶、选项文本不落在首实参字面量上；清单与判定见
+ * docs/research/plaintext-options.md 第四节末尾）：#710 起只剩
+ * `ere/data/ending-scripts.js` 的结局数据表 11 行（由第二批工单处理）——
+ * `chara-and-hair.js` 的两处与 `chara-custom.js` 的三段列表已按钮化，
+ * `event-ending.js` 的循环打印与 `event-execution.js:116` 的数组写法
+ * （#572 起已是 printButton）也不在面内。把数据表纳入棘轮会把「数据」与
+ * 「打印调用点」混在一个判定面里，故不纳入。
  *
  * 用法：
  *   node tools/plaintext-options.mjs            # 打印清单与按文件计数
@@ -220,6 +219,8 @@ export function render_baseline(counts) {
   const rows = Object.entries(counts).map(
     ([file, count]) => `  '${file}': ${count},`,
   );
+  // 空表渲染成 `{}`：逐行 join 会留下空行，prettier --check 判红
+  const body = rows.length > 0 ? `{\n${rows.join('\n')}\n}` : '{}';
   return `/**
  * @file 纯文本选项行的棘轮基线（生成物，勿手改：issue #530）。
  *
@@ -240,10 +241,11 @@ export function render_baseline(counts) {
  * 再加一行不会红**（净额不变）。要钉到具体行就得把基线换成基准串，
  * engine-contract-ledger.mjs 那种粒度；本工单取的是计数，够拦住「新增一行」
  * 这一主要风险，代价是丢掉了同文件等额增减的分辨力。
+ *
+ * #710 把扫描面内最后 62 行（15 个文件）全部按钮化，基线随之清空；空表仍
+ * 有效：新出现一行纯文本选项行照样判红（判定面与纪律不变）。
  */
-export default {
-${rows.join('\n')}
-};
+export default ${body};
 `;
 }
 

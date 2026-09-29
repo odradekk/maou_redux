@@ -24,21 +24,23 @@ function history_texts(fixture) {
 }
 
 /**
- * 一览的一格（编号与名字 + 价钱）：` [编号] ` + 名字补到 14 显示宽 + 价钱
- * （格首的空格是命令后双空格里充当正文的那一个，见实现的注释）。三个
- * 排版字面量在这里各写一份：编号宽 2（段内编号恒 5 位，此宽度到不了）、
- * 名字宽 14、价钱 = chara_ikai_cost 的两项；「每行 5 格」由用例按整行钉住。
+ * 一览的一格（#710 起是按钮）：[编号, 正文, 格宽]。
+ * 正文＝名字 + 价钱 = chara_ikai_cost 的两项；「每行 5 格、每格 24 / 5 = 4
+ * 列」由用例按网格钉住（原文本行的编号/名字补位随文本行一起去）。
  */
 function ikai_cell(id, name, coins, money) {
-  const shown = [...name].reduce(
-    (sum, ch) => sum + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-  return (
-    ` [${String(id).padStart(2)}] ` +
-    `${name}${'\u00A0'.repeat(Math.max(0, 14 - shown))}` +
-    `(${coins}勋章&${money}金)`
-  );
+  return [id, `${name}(${coins}勋章&${money}金)`, 4];
+}
+
+/** 按钮网格快照：每行一个数组，每格是 [编号, 正文, 格宽]（按 row 分组） */
+function button_grid(fixture) {
+  const rows = new Map();
+  for (const line of fixture.lines_history) {
+    if (line.type !== 'button') continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push([line.accelerator, line.text, line.grid_width]);
+  }
+  return [...rows.values()];
 }
 
 /**
@@ -276,22 +278,23 @@ test('char_ikai_create：一览只列「有预设且不在场」的编号，999 
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
   assert.equal(await char_ikai_create(rand0), 0);
   const texts = history_texts(fixture);
-  assert(
-    texts.some((line) => line.includes('[10001]') && line.includes('异界人甲')),
-    '不在场的 10001 应列出',
-  );
-  assert(
-    texts.some((line) => line.includes('(3勋章&6000金)')),
-    '价钱按 CHARA_IKAI_COST 附在行内',
+  assert.deepEqual(
+    button_grid(fixture),
+    [[ikai_cell(10001, '异界人甲', 3, 6000)], [[999, '返回', undefined]]],
+    '不在场的 10001 是按钮（价钱附在正文里），返回也是按钮',
   );
   assert(
     !texts.some((line) => line.includes('异界人乙')),
     '在场的 10002 不列出',
   );
-  assert(texts.includes('[999] 返回'));
+  assert.equal(
+    texts.some((line) => line.includes('[10001]') || line.includes('返回')),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
 });
 
-test('char_ikai_create：一览的排版字面量（名字补 14、每行 5 格，首号 10000）', async () => {
+test('char_ikai_create：一览的排版字面量（按钮网格每行 5 格、格宽 4，首号 10000）', async () => {
   // 六个可召唤的编号（10000 = 段首，正好站在 IKAI_IDS.start 上）：前五个
   // 占满一行，第六个另起一行
   const fixture = chara_world();
@@ -311,13 +314,13 @@ test('char_ikai_create：一览的排版字面量（名字补 14、每行 5 格�
   fixture.set_inputs(999);
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
   await char_ikai_create(rand0);
-  // 一览的每一行就是一次 era.print（每 5 格收一行）
-  const rows = history_texts(fixture).filter((line) => line.includes('勋章&'));
-  assert.deepEqual(rows, [
-    [10000, 10001, 10002, 10003, 10004]
-      .map((id, index) => ikai_cell(id, names[index], 3, 6000))
-      .join(''),
-    ikai_cell(10005, names[5], 3, 6000),
+  // #710：一览是按钮网格，每行 5 格（一行一次 printMultiColumns）
+  assert.deepEqual(button_grid(fixture), [
+    [10000, 10001, 10002, 10003, 10004].map((id, index) =>
+      ikai_cell(id, names[index], 3, 6000),
+    ),
+    [ikai_cell(10005, names[5], 3, 6000)],
+    [[999, '返回', undefined]],
   ]);
 });
 
@@ -364,31 +367,35 @@ test('char_ikai_create：金钱/勋章两道闸与成交的账', async () => {
   }
 });
 
-test('char_ikai_create：已登录的角色（编号已在场）不重复扣费', async () => {
+test('char_ikai_create：#710 一览之外（已在场）的编号被引擎拒收', async () => {
   const fixture = chara_world();
   fixture.seed_chara(10001, { id: 10001, name: '异界人甲' });
-  // 已在场：一览里不列出，但键入它的编号仍命中受理支
+  // 已在场：一览里不列出。原纯文本一轮里能键入它的编号、走「不重复收费」
+  // 受理支；按钮化后白名单＝一览的编号 + 999，该编号被引擎当场拒收，
+  // 受理支结构性不可达（结构保留）
   fixture.era.addCharacter(10001);
   fixture.set_inputs(10001);
-  const era_flag = fixture.load_module('era-utils/era-flag');
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
-  await char_ikai_create(rand0);
-  assert.equal(era_flag.money, 100000, '不扣费（不在受理段，整块跳过）');
-  assert(
-    !history_texts(fixture).some((line) => line.includes('被你强行召唤了')),
+  // 一览为空（编号段从 10000 起，10001 已在场不列），白名单只剩 999
+  await assert.rejects(
+    () => char_ikai_create(rand0),
+    /输入不合法！请输入以下值之一：999/,
   );
 });
 
-test('char_ikai_create：无预设的编号直接打回', async () => {
+test('char_ikai_create：#710 无预设的编号被引擎拒收', async () => {
   const fixture = chara_world();
   fixture.set_inputs(99998, 999);
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
-  await char_ikai_create(rand0);
+  await assert.rejects(
+    () => char_ikai_create(rand0),
+    /输入不合法！请输入以下值之一：999/,
+  );
   const texts = history_texts(fixture);
   assert.equal(
     texts.filter((line) => line.includes('强行从异世界召唤')).length,
     1,
-    '开场只画一次（打回不重画开场）',
+    '开场只画一次',
   );
   assert(
     !texts.some((line) => line.includes('99998')),
@@ -431,19 +438,26 @@ test('buy_chara：与 buy_monster 同形（确认处 [1] 取消不扣钱扣货�
   assert.equal(fixture.store.get('item:101'), 3, '不扣祭品');
 });
 
-test('char_ikai_create：编号段的上界是闭区间（100000 也查在场，不重复收费）', async () => {
-  // 编号段检查两端闭（10000–100000）——100000 且在库时不入新角色
+test('char_ikai_create：一览按 IKAI_IDS 的上界开区间列举（上界内侧的预设进网格）', async () => {
+  // 一览循环是 `for (l_i = start; l_i < end; ...)`：上界内侧的 99999 在库且
+  // 未在场 → 出现在按钮网格里（把 IKAI_IDS.end 改小即红）。上界上的 100000
+  // 从不进一览——原来那条「已在场不重复收费」的键入路径随 #710 的按钮化
+  // 不可达（不在网格里的编号被引擎拒收），旧断言随之删除。
   const fixture = chara_world();
-  fixture.seed_chara(100000, { id: 100000, name: '异界人丁' });
-  fixture.store.set('chara:100000', { name: '异界人丁' });
-  fixture.era.addCharacter(100000);
-  fixture.set_inputs(100000);
-  const era_flag = fixture.load_module('era-utils/era-flag');
+  fixture.seed_chara(99999, { id: 99999, name: '异界人戊' });
+  fixture.store.set('chara:99999', { name: '异界人戊' });
+  fixture.set_inputs(999);
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
-  await char_ikai_create(rand0);
-  assert.equal(era_flag.money, 100000, '已在场的 100000 不重复收费');
-  assert(
-    !history_texts(fixture).some((line) => line.includes('被你强行召唤了')),
+  assert.equal(await char_ikai_create(rand0), 0);
+  assert.deepEqual(
+    button_grid(fixture).map((row) => row.map(([accelerator]) => accelerator)),
+    [[99999], [999]],
+    '上界内侧的 99999 列进按钮网格，返回 999 在下一行',
+  );
+  assert.equal(
+    history_texts(fixture).some((line) => line.includes('[99999]')),
+    false,
+    '一览不再是纯文本行',
   );
 });
 

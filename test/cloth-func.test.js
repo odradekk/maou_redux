@@ -256,8 +256,23 @@ test('aftertrain_cloth：尿布换新分支（42=69 & 47=0 & 钱 ≥ 50，选 0�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.money = 100;
   fixture.store.set('palamname:8', '耻情');
-  fixture.set_inputs(0); // [0] 好的
+  fixture.set_inputs(0); // 按钮 [0] 好的
   await cloth.aftertrain_cloth(31);
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [0, '- 好的', '[0] - 好的'],
+      [1, '- 不要', '[1] - 不要'],
+    ],
+    '换尿布确认是按钮，正文保留 `- ` 分隔符、不带 [N] 前缀',
+  );
+  assert.equal(
+    fixture.text_lines().some((line) => /^\s*\[0\]\s*-/.test(line)),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
   assert.equal(era_flag.money, 50, 'MONEY -= 50');
   assert.equal(
     fixture.store.get('exflag:31:4444') ?? 0,
