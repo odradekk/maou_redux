@@ -1,6 +1,6 @@
 // issue #351：阶段 5a 奴隶出售全链与 ENDING_2 真身接入证明。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 4; // #641 起 -2（M7800/M7801 名单复辟检查随 STUBBED_CALLS 机制移除）
+export const COUNT = 4; // #641 起 -2（M7800/M7801 名单复辟检查随存根名单机制移除）
 
 export default [
   {

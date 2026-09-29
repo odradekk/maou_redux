@@ -3,26 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #641 -96（trace-check / trace-coverage / stub-registry 体系检查条目随工具与清单一并删除）；更早的计数沿革见 git 历史（#640 起改为单行注记）
-// SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收尾后，#540 终点达成、存根行归零，
-// 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
-// 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
-// 合并 #547 时两侧 178/169 调和为 176：本工单 178 收进 master 的 -2，按导入实测条目数写回
-// 背景音乐音量三行退回存根，M11330：RULINGS 路径悬空——由 test/trace-check.test.js 的 #542 用例与
-// test/stub-registry-status.test.js 的八行棘轮守护）；此前 166 = 合并态实测（#532 与 #530 两侧条目全留；
-// 按 merge-conflicts.md，计数型基线不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本工单 144、
-// master 135，递增账：133 + #532 的 11 + #530 的 2 = 146，与实测相符）
-// #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
-// 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
-// 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
-// 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 目标文件 ere/page/page-shop.js，
-// 记在 tools/mutations/page.mjs）；#532 起 +11（M11240-M11250：--verify 只读、残留态启动
-// 自检与其 in-flight 标记、run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js
-// 的 #532 用例与既有的拦截路径/SIGINT 用例守护）；#530 起 +2（M11207/M11208：纯文本选项行的棘轮两个方向——新增一行、基线留过期条目，
-// 均由 test/plaintext-option.test.js 守护）；#541 起 +20（M11270-M11289：存根清单四张表的状态词三分类、
-// 分组标题行与表头/分隔行跳过、拆格的 \| 转义、未了结计数与打印面、以及清单三处行文退回——
-// 除注明外由 test/stub-registry-status.test.js 守护；M6511/M6512/M6520 的目标行随同票重构改写，
-// M10901/M10902 两条清单行条目的 find 同步到新行文）
+export const COUNT = 87; // #641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {

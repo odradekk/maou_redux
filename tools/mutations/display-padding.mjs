@@ -79,12 +79,12 @@ export default [
     must_mention: "startsWith('温妮 调教中",
   },
   {
-    desc: 'M12217 FIGURE_INDENT_2 的逐档补位退回半角空格（:2513-2520 的算式列对齐）',
+    desc: 'M12217 FIGURE_INDENT_2 的逐档补位退回半角空格（算式列对齐）',
     file: SOURCE_CHECK,
     find: '  if (n < 100000) {\n    s += NBSP;\n  }',
     replace: "  if (n < 100000) {\n    s += ' '; // 变异：回退\n  }",
     tests: ['source-check'],
-    // 黄金块比对（:107-118）把 U+00A0 归一回空格，拦不住这条；红的是
+    // 黄金块比对把 U+00A0 归一回空格，拦不住这条；红的是
     // e2e 断言（「阴核 0+5」那行的整行等值——五段全宽、无 DOWN 段的 7 位补白）
     must_mention: '算式五段全宽',
   },

@@ -986,8 +986,8 @@ test('#625 背后位二回目·把…弄乱：尾段与前后文同一行', asyn
       f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
     }, 21);
     const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
-    // 抽签序：:1655 rand_n(2)=0 → :1657 rand_n(2) → :1663 rand_n(3)≠0
-    // → :1667 rand_n(2)≠0 → :1676 rand_n(2)
+    // 抽签序：rand_n(2)=0 → rand_n(2) → rand_n(3)≠0 → rand_n(2)≠0
+    // → rand_n(2)
     await kojo_message_com_family.call(13, {
       args: [seq_rand(0, 1, 1, 1, last)],
     });
@@ -1049,7 +1049,7 @@ test('#625 NTR_KOUJO_K13 それ以外支：三处整行（武器名/处女膜/�
   }
 });
 
-test('#625 NTR_KOUJO_K13 P==4：:5593+:5595+:5596 是一行（TALENT:157 两档）', async () => {
+test('#625 NTR_KOUJO_K13 P==4：三段是一行（TALENT:157 两档）', async () => {
   // 的参数末尾是全角空格 U+3000（#183 只把半角空白当分隔符），合并后
   // 它是行中可见字符，按项目约定保留
   const cases = [
@@ -1076,7 +1076,7 @@ test('#625 背后位·哈啊…请您：前缀行并入各支（整段与另两�
   // 的 `PRINT 「哈啊…请您` 是动作、心形与各自收行
   // 尾段共同的前缀行：前缀提到语句外当局部量，各支都拼同一份前缀（#625）
   const cases = [
-    // 抽签：:1655=0 → :1657 动作 → :1663 rand_n(3)
+    // 抽签：rand_n(2)=0 → 动作 → rand_n(3)
     { draws: [0, 0, 0], expect: '「哈啊…请您抽插我的时候♡」' },
     { draws: [0, 1, 0], expect: '「哈啊…请您侵犯我的时候♡」' },
     // ≠0 时头部与收尾两处都判 0（普查那一组的收行）
@@ -1108,7 +1108,7 @@ test('#625 背后位·哈啊…请您：前缀行并入各支（整段与另两�
 
 test('#625 背后位·有感觉了什么的：前缀行并入三条互斥终点', async () => {
   const cases = [
-    // 抽签：:1706 rand_n(3)≠0 → :1708 rand_n(2)=0 → :1710 rand_n(3) 或 :1712 rand_n(2)
+    // 抽签：rand_n(3)≠0 → rand_n(2)=0 → rand_n(3) 或 rand_n(2)
     { draws: [1, 0, 0], expect: '「有感觉了什么的……」' },
     { draws: [1, 0, 1, 0], expect: '「有感觉了什么的……怎么可能……」' },
     { draws: [1, 0, 1, 1], expect: '「有感觉了什么的……啊啊♡」' },

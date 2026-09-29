@@ -173,7 +173,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
         era.add(`juel:${arg}:8`, mon_num * 10); // JUEL:ARG:8 耻情
       }
       // （大人しい・プライド低い・恥じらい）的初见分档文本已并进
-      // 下面 :81..:105 的整行语句（前缀当取值表达式），此处不再单独输出——
+      // 下面的整行语句（前缀当取值表达式），此处不再单独输出——
       // 否则同一段会先自占一行、又出现在合并行里（#624 审查发现）
     }
 
@@ -203,7 +203,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
       penis +
       '含了下去，';
     //
-    // 舌使い：TALENT:52 时由 :105 的 PRINTW 收行
+    // 舌使い：TALENT:52 时由整行末尾的 PRINTW 收行
     if (t(52)) {
       await era.printAndWait(
         (t(14)

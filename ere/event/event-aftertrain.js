@@ -551,7 +551,7 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
   era.print(`${target_name}和${assi_name}好像又百合PLAY了${n}回。`);
   await era.waitAnyKey();
 
-  // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
+  // TFLAG:13 = 2; CALL SELF_KOJO
   game.train.初吻与自我口上 = 2;
   await self_kojo();
 
@@ -738,7 +738,7 @@ async function aftertrain_masturbation_check(
     q = 0;
   }
 
-  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+  // TFLAG:13 = 1; CALL SELF_KOJO
   leftover_q = q;
   game.train.初吻与自我口上 = 1;
   await self_kojo(undefined, q);

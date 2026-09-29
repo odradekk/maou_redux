@@ -325,7 +325,7 @@ test('肉便器税：两处门槛（> 0 才收）与卖春税的三件道具字�
     !toilet_off.text_lines().some((text) => text.startsWith('├ 肉便器使用税')),
   );
 
-  // 淫魔卖春税（:184）：ITEM:143/152/182 各 ×2，另加 20 的固定项
+  // 淫魔卖春税：ITEM:143/152/182 各 ×2，另加 20 的固定项
   const whores = await run_tax({
     'item:143': 1, // 女巫
     'item:152': 2, // 魅魔

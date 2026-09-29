@@ -3741,7 +3741,7 @@ async function victory_ryouzyoku(arg = -1, rand) {
   if (arg < 0) {
     return 0; // 无调用方传参时不做任何事（旧引擎读全局 A，ere 侧由调用方保证）
   }
-  // （arg_name 未用——本函数台词无 %SAVESTR:ARG% 插值，见 :2791 用 MONSTERNAME）
+  // （arg_name 未用——本函数台词无 %SAVESTR:ARG% 插值，台词里用的是 MONSTERNAME）
 
   // 善恶值が低くないとダメ（CFLAG:ARG:151 > -50 → RETURN 0）
   if ((era.get(`cflag:${arg}:151`) || 0) > -50) {

@@ -186,7 +186,7 @@ async function monster_shop(rand) {
   for (;;) {
     show_shop_monster();
     era.print('请选择要召唤的魔物从者的性别');
-    // 的列排版纯文本选项 → 与 :73 的返回一并升格为按钮（#572）
+    // 列排版的纯文本选项与返回一并升格为按钮（#572）
     era.printButton('男性', 1);
     era.printButton('女性', 2);
     era.printButton('扶她', 3);
@@ -210,7 +210,7 @@ async function monster_shop(rand) {
   // 种族选择
   for (;;) {
     show_shop_monster();
-    // 三行列排版纯文本选项 → 与 :101 的返回一并升格为按钮（#572）
+    // 三行列排版的纯文本选项与返回一并升格为按钮（#572）
     era.printButton('兽人类', 1);
     era.printButton('史莱姆类', 2);
     era.printButton('昆虫类', 3);
@@ -484,7 +484,7 @@ async function buy_follower({ show, rand }) {
         return 0;
       }
       if (result !== 0) {
-        // 的两支只认 0/1：其余值的控制流落出 IF 链、由 :394 的
+        // 的两支只认 0/1：其余值的控制流落出 IF 链、由
         // $INPUT_LOOP_1 回到祭品选择的输入（ere 侧重画一轮祭品屏，同本
         // 文件头的第 3 条偏离）
         continue;
@@ -559,7 +559,7 @@ async function buy_follower({ show, rand }) {
 }
 
 /**
- * MONS 的祭品行（:329-338 / :363-372 两处同形）：`名字 LV:{等级} {已选}只`，
+ * MONS 的祭品行（两处同形）：`名字 LV:{等级} {已选}只`，
  * 每两格一行。
  * @param {Map<number, {level: number, stock: number, picked: number}>} offering
  * @returns {string[]}

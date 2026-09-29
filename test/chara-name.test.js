@@ -1042,7 +1042,7 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
   let asked = 0;
   fixture.era.input = () => {
     asked += 1;
-    return Promise.resolve(asked === 1 ? 2 : 100); // 首个答案 2 = :158 收下
+    return Promise.resolve(asked === 1 ? 2 : 100); // 首个答案 2 = 收下
   };
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
 

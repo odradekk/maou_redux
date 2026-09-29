@@ -587,22 +587,22 @@ export default [
   ),
   make(
     11867,
-    'EVILAPP 页脚补回空行（同上，:2872 的 PRINTL 只收 [999] 那一行）',
+    'EVILAPP 页脚补回空行（同上，PRINTL 只收 [999] 那一行）',
     "  era.printButton('- 返  回', 999); // PRINTLC",
     "  era.printButton('- 返  回', 999); // PRINTLC\n  era.print(''); // 变异：页脚之后多补空行",
     '恶魔体征改造页脚按钮之后不应有空行',
   ),
   make(
     11868,
-    '秘密实验室页脚补回空行（同上，:45 的 PRINTL 只收 [998] 那一行）',
+    '秘密实验室页脚补回空行（同上，PRINTL 只收 [998] 那一行）',
     "    era.printButton('- 后一页', 998); // PRINTLC  [998] - 后一页",
     "    era.printButton('- 后一页', 998); // PRINTLC  [998] - 后一页\n    era.print(''); // 变异：页脚之后多补空行",
     '秘密实验室页脚按钮之后不应有空行',
   ),
-  // 反方向的一条：:272 的 PRINTL 是独立真空行（:271 是整行 PRINTL），删掉即错
+  // 反方向的一条：这里的 PRINTL 是独立真空行（上一行是整行 PRINTL），删掉即错
   make(
     11872,
-    'LABO_PAGE4 的真空行删除（:272 的 PRINTL 是独立的一行，不是收尾）',
+    'LABO_PAGE4 的真空行删除（这里的 PRINTL 是独立的一行，不是收尾）',
     "  era.print(''); // PRINTL\n  era.print('□洗脑 （助手用）');",
     "  // 变异：:272 的真空行删除\n  era.print('□洗脑 （助手用）');",
     '独立 PRINTL 仍是一个真空行',

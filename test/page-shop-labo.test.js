@@ -1069,7 +1069,7 @@ test('modify_bustup：乳房档位递升整表（绝壁→贫乳→普通→巨�
         `${JSON.stringify(seed)} → TALENT:${index} = ${value}`,
       );
     }
-    // 价格：无巨乳/爆乳时 20000，否则加价档 50000（:339-343）
+    // 价格：无巨乳/爆乳时 20000，否则加价档 50000
     const price =
       'talent:1:110' in seed || 'talent:1:114' in seed ? 50000 : 20000;
     assert.equal(
@@ -1447,7 +1447,7 @@ test('block_feeling：部位维度表驱动（四部位 × 钝感位与 ABL 两�
   assert.deepEqual(
     button_texts(added).filter((text) => text.includes('感觉')),
     ['[0] 阴茎感觉', '[2] 肛门感觉', '[3] 乳房感觉'],
-    '未封锁部位按 `[编号] 部位名` 渲染，正文不带「- 」（:2140/:2156/:2162）',
+    '未封锁部位按 `[编号] 部位名` 渲染，正文不带「- 」',
   );
 });
 
@@ -1768,7 +1768,7 @@ test('demon_rebirth：现种族不能选（跳过同族）与转生附加素质'
   assert.equal(ret, 1);
   assert.equal(fixture.store.get('talent:1:124'), 1, '附加素质：动物耳朵');
   assert.ok(all_text(added).includes('头上长出'), '附加素质的文案');
-  // 现种族与某个类型相同时，那个类型的按钮被跳过（:3328-3329 CONTINUE）——
+  // 现种族与某个类型相同时，那个类型的按钮被跳过（CONTINUE）——
   // 按钮化之前还能手敲编号走到「已经是…了」那一支，按钮化之后不可达（文件头第 3 条）
   const same = make_fixture({ seed: { 'cflag:1:9': 99, 'cflag:1:1': 0 } });
   same.store.set('itemname:100', '狗头人');

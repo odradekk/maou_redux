@@ -297,7 +297,7 @@ function getbit(bits, n) {
 /**
  * LOG_TRY_BITCH：卖春直前の文章（还没开始、正否回数不明）。
  *
- * :14..:47 **是一整行**（#600）：首段是 %FS_BITCH("LOOKS", ARG)%（本人描写），
+ * 整个函数的输出**是一整行**（#600）：首段是 %FS_BITCH("LOOKS", ARG)%（本人描写），
  * 中段按场所（DUNGEON/其他=TOWN）与角色状态拼「无法压抑自己的性欲，」等片段，
  * 末段「考虑着出卖肉体的事。」是 PRINTFORMW（换行等待）——所以整函数只输出
  * 一条 `printAndWait`，片段由分支取值表达式在两段之间拼出。
@@ -1324,8 +1324,8 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
  *
  * 特殊处理：DUNGEON 里无金钱授受、自主进行；TOWN 里 ARG:1 无
  * 意义（公衆プレイ）。TOWN 分支有固定三行地の文；DUNGEON 分支为空。
- * 函数签名 (ARG, PLACE, ARG:1) 的第三参在本函数未使用（:1451 声明，
- * 实际只按 PLACE 分）。
+ * 函数签名 (ARG, PLACE, ARG:1) 的第三参在本函数未使用（实际只按
+ * PLACE 分）。
  *
  * @param {number} arg 角色 ID
  * @param {string} place "DUNGEON" | "TOWN"

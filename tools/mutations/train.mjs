@@ -3582,7 +3582,7 @@ export default [
   {
     desc: 'M1312 AFTERTRAIN: lesbian 分支漏设 tflag:13=2（#270）',
     file: 'ere/event/event-aftertrain.js',
-    find: `  // 源 :480-481：TFLAG:13 = 2; CALL SELF_KOJO
+    find: `  // TFLAG:13 = 2; CALL SELF_KOJO
   game.train.初吻与自我口上 = 2;`,
     replace: `  // 变异：百合分支不设 tflag:13
   // game.train.初吻与自我口上 = 2;`,
@@ -3592,7 +3592,7 @@ export default [
   {
     desc: 'M1313 AFTERTRAIN: masturbation 分支漏设 tflag:13=1（#270）',
     file: 'ere/event/event-aftertrain.js',
-    find: `  // 源 :669-670：TFLAG:13 = 1; CALL SELF_KOJO
+    find: `  // TFLAG:13 = 1; CALL SELF_KOJO
   leftover_q = q;
   game.train.初吻与自我口上 = 1;`,
     replace: `  // 变异：自慰分支不设 tflag:13
@@ -10331,7 +10331,7 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     must_mention: 'modsave:0 = 1（正面）→ 37 参与自动提升',
   },
   {
-    // #562：出口键是 :41-51 那串 PRINTC，:52 的 PRINTL 只结束那一行——
+    // #562：出口键是那串 PRINTC，随后的 PRINTL 只结束那一行——
     // 按钮自成一行，补回空行即多一行（见 CONTEXT.md「输出 API 的排版与对齐」）
     desc: 'M11871 调教菜单登记面出口键之后补回空行（照「PRINTL 要再补一条」翻译的旧写法）',
     file: 'ere/system/train/com-register.js',
@@ -10584,7 +10584,7 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     must_mention: '收尾的真空行在场',
   },
   {
-    desc: 'M12060 com111 撕破分支后的真空行删除（:160 的 PRINTL 已收行）',
+    desc: 'M12060 com111 撕破分支后的真空行删除（PRINTL 已收行）',
     file: 'ere/system/train/com-cloth.js',
     find: "      // 前一条提示已结束当前行，此处再输出一个空行（#595）\n      era.print('');",
     replace: '      // 变异：:161 的真空行删除',

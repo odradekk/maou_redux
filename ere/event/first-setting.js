@@ -12,7 +12,7 @@
  * 都是同一个值——挪到 first_setting() 只写一次，语义不变（不引入新行为）。
  *
  * que2mk 恒 RETURN 0（这张工单一并实现）：
- * `IF !RESULT`恒真，:942 起以 `ELSEIF RESULT` 开头的假支路
+ * `IF !RESULT`恒真，其后以 `ELSEIF RESULT` 开头的假支路
  * （$INPUT_LOOP2）不可达，不移植。
  *
  * [7] 丽塔/卡拉隐藏开关（菜单文字都被注释掉）不移植：
@@ -185,7 +185,7 @@ async function ask_dungeon_mode() {
  */
 async function first_setting() {
   chara(0).train.初吻对象 = -1; // ，四个魔王性别分支写的都是同一个值
-  que2mk(); // CALL QUE2MK，恒 0——:786 IF !RESULT 恒真，:942 起不可达
+  que2mk(); // CALL QUE2MK，恒 0——IF !RESULT 恒真，其后的 ELSEIF 支不可达
   const maou_sex = await ask_maou_sex();
   if (maou_sex !== 1) {
     // IF MAOUSEX != 1 —— 女性跳过肉棒尺寸一问
