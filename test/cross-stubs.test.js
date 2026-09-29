@@ -166,7 +166,7 @@ test('SELECT_YES_NO：#710 起选项是按钮，返回 0 或 1', async () => {
       .filter((line) => line.type === 'button')
       .map((line) => line.rendered),
     ['[0] 是的', '[1] 不要'],
-    '纯文本选项行不见了，编号由引擎按 showAcc 拼',
+    '两枚按钮的含义：0 = 是的、1 = 不要（编号由引擎按 showAcc 拼）',
   );
   assert.deepEqual(text_lines(fixture), [], '本函数不再打印文本行');
 });

@@ -261,7 +261,7 @@ test('GROTESQUE：#710 处刑菜单是一列按钮（0-6），未显示的 100 �
     '七枚选项是按钮，正文不带 [N] 前缀（编号由 showAcc 拼）',
   );
   assert.equal(
-    fixture.text_lines().some((line) => /^\[\d\] /.test(line)),
+    fixture.text_lines().some((line) => /^\s*\[\d\]\s/.test(line)),
     false,
     '同屏没有残留的纯文本选项行',
   );
@@ -1496,22 +1496,23 @@ test('EXECUTION：处置菜单与候选人行都是按钮（#572 / #710）', asy
   // #710：候选人行与 [100] 返回改成按钮（整轮一起按钮化——只给返回打
   // 按钮会把候选人编号锁死）。候选人轮的输入仍传 useRule: false，
   // 未显示编号的自由输入通道照旧（整表的上界检查靠输入值）。
-  // 行正文＝名字 + 职业 + 等级，格间单空格；列补位在按钮正文里会被引擎
-  // 折叠，不再补位（原纯文本行的对齐规格随文本行一起去）。
+  // 行正文＝名字 + 职业 + 等级；列补位在按钮正文里会被引擎折叠，不再补位
+  // （原纯文本行的对齐规格随文本行一起去）。断言只钉实显文本（空白已折叠、
+  // 名字/职业/等级都在）与编号，不钉 `text` 里的多空格字面量。
   assert.deepEqual(
     fixture.lines_history
       .filter((line) => line.type === 'button')
-      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered])
-      .filter(([, , rendered]) => rendered.includes(' LV ')),
+      .map(({ accelerator, rendered }) => [accelerator, rendered])
+      .filter(([, rendered]) => rendered.includes(' LV ')),
     [
-      [0, '温妮   LV 4', '[0] 温妮 LV 4'],
-      [1, '艾达   LV 2', '[1] 艾达 LV 2'],
+      [0, '[0] 温妮 LV 4'],
+      [1, '[1] 艾达 LV 2'],
     ],
-    '候选人行是按钮，行号即快捷键、正文不带 [N] 前缀',
+    '候选人行是按钮、编号由 showAcc 拼；正文含名字与等级',
   );
   assert(buttons.includes('[100] 返回'), '候选人轮的 [100] 返回也是按钮');
   assert.equal(
-    fixture.text_lines().some((line) => /^\[\s*\d+\]/.test(line)),
+    fixture.text_lines().some((line) => /^\s*\[\s*\d+\]\s/.test(line)),
     false,
     '同屏没有残留的纯文本候选人行',
   );

@@ -197,8 +197,9 @@ test('char_create：三段列表是按钮网格（勇者每行 4 格、精英/�
     ],
     '特殊段每行 5 格、显示编号 = 预设号 + 20',
   );
+  // 原纯文本行是 `[ 1] 预设1…`（编号补位到 2 位），正则要容下 `[` 后的空格
   assert.equal(
-    texts(fixture, true).some((t) => /\[[0-9]+\] 预设/.test(t)),
+    texts(fixture, true).some((t) => /^\s*\[\s*\d+\s*\]\s*预设/.test(t)),
     false,
     '同屏没有残留的纯文本列表行',
   );
@@ -283,7 +284,6 @@ test('char_create：#710 特殊位区间右端 40/显示 60 不可键入（列�
   // 「37-60 区间 + 已在场复用」的受理支；按钮化后特殊段只列到 39（显示
   // 59）与返回 999，60 被引擎当场拒收，区间的右端不可达（结构保留）。
   seed_presets(fixture, ALL_PRESETS);
-  fixture.era.addCharacter(40); // 预设 40 已在场
   const { char_create } = load(fixture);
   fixture.set_inputs(60, 999);
 
@@ -294,11 +294,6 @@ test('char_create：#710 特殊位区间右端 40/显示 60 不可键入（列�
   assert.match(error.message, /输入不合法！请输入以下值之一/);
   assert.ok(!/(^|[^\d])60([^\d]|$)/.test(error.message), '60 不在本轮按钮集里');
   assert.match(error.message, /59, 999（/, '特殊段末项 59 与返回在本轮集里');
-  assert.deepEqual(
-    fixture.calls.filter((c) => c.api === 'addCharacter').map((c) => c.args[0]),
-    [0, 40], // 0 = setup 的魔王；40 = 测试自己加的。char_append 没有再调
-    '已在场的 40 号不再调 addCharacter',
-  );
 });
 
 test('char_create：新建时播报召唤结果', async () => {

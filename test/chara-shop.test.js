@@ -438,25 +438,26 @@ test('buy_chara：与 buy_monster 同形（确认处 [1] 取消不扣钱扣货�
   assert.equal(fixture.store.get('item:101'), 3, '不扣祭品');
 });
 
-test('char_ikai_create：编号段的上界是闭区间（100000 也查在场，按钮化后不可键入）', async () => {
-  // 编号段检查两端闭（10000–100000）——100000 且在库时不入新角色。原纯文本
-  // 一轮里可以键入它走「已在场不重复收费」的受理支；#710 按钮化后它不在
-  // 一览里（已在场不列），白名单只剩 211 与 999，键入被引擎当场拒收，
-  // 该受理支结构性不可达（结构保留）。
+test('char_ikai_create：一览按 IKAI_IDS 的上界开区间列举（上界内侧的预设进网格）', async () => {
+  // 一览循环是 `for (l_i = start; l_i < end; ...)`：上界内侧的 99999 在库且
+  // 未在场 → 出现在按钮网格里（把 IKAI_IDS.end 改小即红）。上界上的 100000
+  // 从不进一览——原来那条「已在场不重复收费」的键入路径随 #710 的按钮化
+  // 不可达（不在网格里的编号被引擎拒收），旧断言随之删除。
   const fixture = chara_world();
-  fixture.seed_chara(100000, { id: 100000, name: '异界人丁' });
-  fixture.store.set('chara:100000', { name: '异界人丁' });
-  fixture.era.addCharacter(100000);
-  fixture.set_inputs(100000);
-  const era_flag = fixture.load_module('era-utils/era-flag');
+  fixture.seed_chara(99999, { id: 99999, name: '异界人戊' });
+  fixture.store.set('chara:99999', { name: '异界人戊' });
+  fixture.set_inputs(999);
   const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
-  await assert.rejects(
-    () => char_ikai_create(rand0),
-    /输入不合法！请输入以下值之一：999/,
+  assert.equal(await char_ikai_create(rand0), 0);
+  assert.deepEqual(
+    button_grid(fixture).map((row) => row.map(([accelerator]) => accelerator)),
+    [[99999], [999]],
+    '上界内侧的 99999 列进按钮网格，返回 999 在下一行',
   );
-  assert.equal(era_flag.money, 100000, '不重复收费');
-  assert(
-    !history_texts(fixture).some((line) => line.includes('被你强行召唤了')),
+  assert.equal(
+    history_texts(fixture).some((line) => line.includes('[99999]')),
+    false,
+    '一览不再是纯文本行',
   );
 });
 

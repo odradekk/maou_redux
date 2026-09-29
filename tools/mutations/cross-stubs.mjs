@@ -1,6 +1,6 @@
 // issue #333：阶段 5a 段 0 的九个跨域前置函数。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 41; // #710 -1：M6576（SELECT_YES_NO 接受非法输入）随按钮化删除——越界输入由引擎拒收，该分支不可观察
+export const COUNT = 41; // #710 -1：M6576（SELECT_YES_NO 接受非法输入）随按钮化删除——越界输入由引擎拒收，该分支不可观察；同轮 M6577（纯文本行的 0/1 含义互换）改写成按钮版 M14235（条数不变，断言消息改成「0 = 是的、1 = 不要」）
 
 export default [
   {
@@ -129,7 +129,7 @@ export default [
     find: "        [0, '是的'],\n        [1, '不要'],",
     replace: "        [0, '不要'],\n        [1, '是的'], // 变异",
     tests: ['cross-stubs'],
-    must_mention: '纯文本选项行不见了，编号由引擎按 showAcc 拼',
+    must_mention: '0 = 是的、1 = 不要',
   },
   {
     desc: 'M6578 ITEM_DETOX 私处恢复文本改错',

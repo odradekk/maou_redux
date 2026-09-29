@@ -427,6 +427,11 @@ test('dungeon_spy：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏�
     ],
     '回来确认是按钮，正文保留 `- ` 分隔符、不带 [N] 前缀',
   );
+  assert.equal(
+    fixture.text_lines().some((line) => /^\s*\[0\]\s*-/.test(line)),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
   assert.equal(fixture.store.get('cflag:2:1'), 0, '勇者陷落（CFLAG:1 = 0）');
   assert.equal(fixture.store.get('flag:10004'), 300, 'MONEY += 100 × 等级 3');
   assert.equal(fixture.store.get('exflag:4444'), 300, 'EX_FLAG:4444 镜像');
