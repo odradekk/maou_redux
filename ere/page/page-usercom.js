@@ -30,9 +30,9 @@
  * 净输出一致）。
  *
  * 指令按钮的编号/标签规则（#45/#213 确立）：编号印 L_IDX（com-index
- * 映射，升格前的位次、与可用性无关）、自定义菜单的标签先过升格。三列
- * 排版改为按钮平铺（有意偏离：仅排版；PR #30 通则——正文不带
- * [编号] 前缀，引擎 showAcc 自动拼）。
+ * 映射，升格前的位次、与可用性无关）、自定义菜单的标签先过升格。方格与
+ * 子菜单按每行 3 列的按钮网格排（原版 PRINTC 的列数，#717 恢复）；正文
+ * 不带 [编号] 前缀（PR #30 通则，引擎 showAcc 自动拼）。
  *
  * p_c（#212）：TSTR:90 承载上次的指令名，静态名表优先、
  * 定制名（trainalias）只补空——见 p_c 的三级回落。
@@ -63,6 +63,7 @@ const {
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { stain_info } = require('#/page/components/stain-info');
 const { condom_settings } = require('#/system/train/com-condom');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
@@ -136,17 +137,20 @@ function command_button_label(adv, id) {
  * @returns {Promise<void>}
  */
 async function show_commenu() {
+  const items = [];
   for (const id of DECLARED_TRAIN_IDS) {
     const able = await com_able_family.call(id, { whenMissing: 1 });
     if (able === 0) {
       continue; // SIF RESULT == 0 CONTINUE
     }
     const adv = await get_adv_com(id); // 取升格号
-    era.printButton(command_button_label(adv, id), com_index(id));
+    items.push([com_index(id), command_button_label(adv, id)]);
   }
-  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个
-  // 空行，那一个来自下一段的 println（排版语义见 CONTEXT.md「输出 API
-  // 的排版与对齐」）。
+  // 每行 3 格 = 原版 PRINTCPERLINE()（emuera.config 每行 3 个）的列数，
+  // #717 恢复
+  print_button_grid(items, 3);
+  // 网格行循环后不补空行——方格与分割线之间只有一个空行，那一个来自下一段
+  // 的 println（排版语义见 CONTEXT.md「输出 API 的排版与对齐」）。
 }
 
 /**
@@ -156,9 +160,13 @@ async function show_commenu() {
  * @returns {void}
  */
 function draw_builtin_comlist(usable) {
-  for (const id of usable) {
-    era.printButton(era.get(`traincommandname:${id}`) ?? '', com_index(id));
-  }
+  print_button_grid(
+    usable.map((id) => [
+      com_index(id),
+      era.get(`traincommandname:${id}`) ?? '',
+    ]),
+    3,
+  );
 }
 
 // —— 过滤按钮的染色（RGB 值 → CSS 色）——
@@ -212,41 +220,44 @@ on('SHOW_USERCOM', async (usable = []) => {
   era.println(); // PRINTL（空行）
   era.drawLine(); // DRAWLINE
   // RESETCOLOR —— 无 ere 对应语义，不镜像
-  // —— 子菜单按钮组（PRINTC 三列 → 按钮平铺，有意偏离：仅排版）——
-  era.printButton('能力表示', 100);
-  era.printButton('污秽表示', 101);
+  // —— 子菜单按钮组（原版 PRINTC 逐枚打印、每行 3 个换行，#717 恢复
+  // 三列网格；过滤钮的现色/灰色经单格 config 带进网格）——
+  const submenu = [
+    [100, '能力表示'],
+    [101, '污秽表示'],
+  ];
   const guards = handover_guard_ok();
   if (guards.can_handover) {
-    era.printButton('交代助手', 102); // （ASSI > 0 && ASSI:1 > 0）
+    submenu.push([102, '交代助手']); // （ASSI > 0 && ASSI:1 > 0）
   }
   if (guards.can_swap) {
-    era.printButton('对换调教', 112); // （(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
+    submenu.push([112, '对换调教']); // （(TARGET==MASTER||CFLAG:0>=2) && ASSI:1>0）
   }
-  era.printButton('避孕套设定', 103);
+  submenu.push([103, '避孕套设定']);
   // 过滤组：开启灰、未开启各系色（104 未开启 = 引擎默认色）
   for (const [acc, label, mask] of FILTER_BUTTONS) {
     const on = (game_train.指令过滤 & mask) !== 0;
     const off_color = FILTER_COLORS[acc];
-    era.printButton(
-      label,
+    submenu.push([
       acc,
+      label,
       on
         ? { color: FILTER_GRAY }
         : off_color !== undefined
           ? { color: off_color }
           : undefined,
-    );
+    ]);
   }
-  // 尾部四个按钮（[990] 调教菜单登录 / [991] 表示 / [992] 实行 /
-  // [999] 调教结束）逐行相邻、不夹空行——golden 里网格行与 [990]/[999]
-  // 逐行相邻为证。ere 的 printButton 自成一行，按钮之间与页脚之后都不再
-  // 补空行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
-  era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）
+  // 尾部四枚（[990] 调教菜单登录 / [991] 表示 / [992] 实行 / [999] 调教
+  // 结束）原版同样是 PRINTC，一并进网格；网格行之间与页脚之后都不补空行
+  //（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
+  submenu.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）
   if (game_train.指令菜单长度 > 0) {
-    era.printButton('调教菜单表示', 991);
-    era.printButton('调教菜单实行', 992);
+    submenu.push([991, '调教菜单表示']);
+    submenu.push([992, '调教菜单实行']);
   }
-  era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）
+  submenu.push([999, '调教结束']); // （正文不带 [999] 前缀，引擎自动拼）
+  print_button_grid(submenu, 3);
   // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞
   // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
   if (era_flag.prevcom > -1) {

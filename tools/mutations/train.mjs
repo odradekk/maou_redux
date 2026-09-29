@@ -1,9 +1,9 @@
-﻿// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
+// 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1027; // #710 +2（M14242-M14244/M14247：com110/com111 的菜单行与尿布确认、com-hardcore 的穿环第一层退回纯文本；M991/M998/M999 三条「空格写法」条目随之改写成按钮版，条数不变）；#696 起净 +7（M14100-M14106/M14110 守 F12 修复点：com56 显示实加一致、com66 助手通常射精旗、able27 电极检查、equip_com49 重复除块、精巢文案、able2 双 ≥4；M1195 com56 反向变异随缺陷修复删除）；合并 #650 后实测 1018（#650 +2 −2、#647 返工 +3、#647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的检查）；#650 起 +2 −2（M13100/M13101 回归检查；M1314/M9783 反向变异随缺陷修复删除）；#648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归检查）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接入）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接入；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装检查读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1028; // #717 +1（M14342：登记面指令列表的列数）； // #710 +2（M14242-M14244/M14247：com110/com111 的菜单行与尿布确认、com-hardcore 的穿环第一层退回纯文本；M991/M998/M999 三条「空格写法」条目随之改写成按钮版，条数不变）；#696 起净 +7（M14100-M14106/M14110 守 F12 修复点：com56 显示实加一致、com66 助手通常射精旗、able27 电极检查、equip_com49 重复除块、精巢文案、able2 双 ≥4；M1195 com56 反向变异随缺陷修复删除）；合并 #650 后实测 1018（#650 +2 −2、#647 返工 +3、#647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的检查）；#650 起 +2 −2（M13100/M13101 回归检查；M1314/M9783 反向变异随缺陷修复删除）；#648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归检查）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接入）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接入；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装检查读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接入 ——
@@ -401,9 +401,9 @@ export default [
   {
     desc: 'M744 按钮编号印回 L_I（渲染侧映射删——方格与玩家输入错位）',
     file: 'ere/page/page-usercom.js',
-    find: '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), com_index(id));',
+    find: '    const adv = await get_adv_com(id); // 取升格号\n    items.push([com_index(id), command_button_label(adv, id)]);',
     replace:
-      '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
+      '    const adv = await get_adv_com(id); // 取升格号\n    items.push([id, command_button_label(adv, id)]); // 变异：印 L_I',
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
@@ -505,9 +505,9 @@ export default [
   {
     desc: 'M760 SHOW_COMMENU 的 L_IDX 位次换成 L_I（升格前的号直印——位次映射在渲染处旁路）',
     file: 'ere/page/page-usercom.js',
-    find: '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), com_index(id));',
+    find: '    const adv = await get_adv_com(id); // 取升格号\n    items.push([com_index(id), command_button_label(adv, id)]);',
     replace:
-      '    const adv = await get_adv_com(id); // 取升格号\n    era.printButton(command_button_label(adv, id), id); // 变异：印 L_I',
+      '    const adv = await get_adv_com(id); // 取升格号\n    items.push([id, command_button_label(adv, id)]); // 变异：印 L_I',
     tests: ['page-usercom'],
     must_mention: '编号必须是紧凑序号 L_IDX',
   },
@@ -546,17 +546,17 @@ export default [
   {
     desc: 'M764 子菜单按钮检查删（交代助手/对换调教恒显示）',
     file: 'ere/page/page-usercom.js',
-    find: "  if (guards.can_handover) {\n    era.printButton('交代助手', 102); // （ASSI > 0 && ASSI:1 > 0）\n  }",
-    replace: `  era.printButton('交代助手', 102); // 变异：无检查`,
+    find: "  if (guards.can_handover) {\n    submenu.push([102, '交代助手']); // （ASSI > 0 && ASSI:1 > 0）\n  }",
+    replace: `  submenu.push([102, '交代助手']); // 变异：无检查`,
     tests: ['page-usercom'],
     must_mention: '默认态 9 个按钮',
   },
   {
     desc: 'M765 FLAG:550 检查删（991/992 无菜单也显示）',
     file: 'ere/page/page-usercom.js',
-    find: "  if (game_train.指令菜单长度 > 0) {\n    era.printButton('调教菜单表示', 991);\n    era.printButton('调教菜单实行', 992);\n  }",
-    replace: `  era.printButton('调教菜单表示', 991); // 变异：无检查
-  era.printButton('调教菜单实行', 992);`,
+    find: "  if (game_train.指令菜单长度 > 0) {\n    submenu.push([991, '调教菜单表示']);\n    submenu.push([992, '调教菜单实行']);\n  }",
+    replace: `  submenu.push([991, '调教菜单表示']); // 变异：无检查
+  submenu.push([992, '调教菜单实行']);`,
     tests: ['page-usercom'],
     must_mention: '默认态 9 个按钮',
   },
@@ -565,16 +565,16 @@ export default [
     file: 'ere/page/page-usercom.js',
     find: `    const on = (game_train.指令过滤 & mask) !== 0;
     const off_color = FILTER_COLORS[acc];
-    era.printButton(
-      label,
+    submenu.push([
       acc,
+      label,
       on
         ? { color: FILTER_GRAY }
         : off_color !== undefined
           ? { color: off_color }
           : undefined,
-    );`,
-    replace: `    era.printButton(label, acc); // 变异：不染色`,
+    ]);`,
+    replace: `    submenu.push([acc, label]); // 变异：不染色`,
     tests: ['page-usercom'],
     must_mention: '开启位一律灰',
   },
@@ -11265,5 +11265,14 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     replace: `  8: '乳贴＆迷你短裙铠甲',`,
     tests: ['cloth-func'],
     must_mention: '9 号补登（与渲染版同名）',
+  },
+  // —— #717：指令列表多列排版 ——
+  {
+    desc: 'M14342 登记面指令列表列数改 2（原版 PRINTFORMC 按 PRINTCPERLINE 换行）',
+    file: 'ere/system/train/com-register.js',
+    find: '  print_button_grid(items, 3);',
+    replace: '  print_button_grid(items, 2); // 变异：列数改 2',
+    tests: ['com-register'],
+    must_mention: '登记面指令列表每行 3 列（PRINTCPERLINE 的列数）',
   },
 ];

@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 48; // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 49; // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -633,5 +633,14 @@ export default [
       throw err;`,
     tests: ['fixture'],
     must_mention: '疑似漏写 await',
+  },
+  // —— #717：多列文本格的颜色记录 ——
+  {
+    desc: 'M14343 夹具不记文本格的颜色（占位灰显失去观测面）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      entry.color = obj.config?.color;`,
+    replace: `      // entry.color = obj.config?.color; // 变异：颜色不记录`,
+    tests: ['page-main-menu'],
+    must_mention: '#bbbbbb',
   },
 ];

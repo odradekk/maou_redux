@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 507; // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 518; // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -154,7 +154,7 @@ export default [
   {
     desc: 'M56 指令按钮渲染删掉（#214 起目标 = 内建分支：位 34 关的静态名按钮——e2e 与单测都走它）',
     file: 'ere/page/page-usercom.js',
-    find: "    era.printButton(era.get(`traincommandname:${id}`) ?? '', com_index(id));",
+    find: "    usable.map((id) => [\n      com_index(id),\n      era.get(`traincommandname:${id}`) ?? '',\n    ]),",
     replace: '    // 变异：按钮渲染删除',
     tests: ['source-check', 'page-usercom'],
     must_mention: '端到端',
@@ -458,8 +458,8 @@ export default [
   {
     desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，同 #129）',
     file: 'ere/page/page-main-menu.js',
-    find: "  era.printButton('侵略', 109);",
-    replace: "  era.printButton('侵略', 1090); // 变异：accelerator 改坏",
+    find: "  panel.push([109, '侵略']);",
+    replace: "  panel.push([1090, '侵略']); // 变异：accelerator 改坏",
     tests: ['page-main-menu'],
     must_mention: '侵略必须是按钮',
   },
@@ -631,8 +631,8 @@ export default [
   {
     desc: 'M251 主菜单 [200]/[300] 存读档按钮被拆（据点两处入口实机不可达，#136 勘误移交 #137 的缺口正主）',
     file: 'ere/page/page-main-menu.js',
-    find: `  era.printButton('保存', 200);
-  era.printButton('读取', 300);`,
+    find: `  panel.push([200, '保存']);
+  panel.push([300, '读取']);`,
     replace: `  // 变异：两枚按钮被拆`,
     tests: ['page-main-menu'],
     must_mention:
@@ -757,7 +757,7 @@ export default [
   {
     desc: 'M569 主菜单 [102] 地下城按钮删除（实机可达性——#129 型缺口的防复发钉）',
     file: 'ere/page/page-main-menu.js',
-    find: `  era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);`,
+    find: `  panel.push([102, (era.get('flag:502') || 0) === 0 ? '地下城' : '场子']);`,
     replace: `  // 变异：不渲染 [102] 按钮`,
     tests: ['page-dungeon-info'],
     must_mention: '[102] 恰一枚',
@@ -1032,9 +1032,9 @@ export default [
     desc: 'M7900 [103] 处刑：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if (count_selectable_slaves() > 0) {
-    era.printButton('处刑', 103);`,
+    panel.push([103, '处刑']);`,
     replace: `  if (count_selectable_slaves() <= 0) {
-    era.printButton('处刑', 103);`,
+    panel.push([103, '处刑']);`,
     tests: ['page-main-menu'],
     must_mention:
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
@@ -1043,9 +1043,9 @@ export default [
     desc: 'M7901 [104] 迎击：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if (count_selectable_slaves() > 0) {
-    era.printButton('迎击', 104);`,
+    panel.push([104, '迎击']);`,
     replace: `  if (count_selectable_slaves() <= 0) {
-    era.printButton('迎击', 104);`,
+    panel.push([104, '迎击']);`,
     tests: ['page-main-menu'],
     must_mention:
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
@@ -1064,17 +1064,17 @@ export default [
     desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
     find: `  if ((era.get('talent:0:325') || 0) === 1) {
-    era.printButton('实验室', 110);`,
+    panel.push([110, '实验室']);`,
     replace: `  if ((era.get('talent:0:325') || 0) === 0) {
-    era.printButton('实验室', 110);`,
+    panel.push([110, '实验室']);`,
     tests: ['page-main-menu'],
     must_mention: '[110] 实验室：TALENT:0:325 == 1（魔王的魔界知识）才渲染',
   },
   {
     desc: 'M7904 [199] 休息按钮编号错位（199 改 198，键入 199 不再送达）',
     file: 'ere/page/page-main-menu.js',
-    find: "  era.printButton('休息', 199);",
-    replace: "  era.printButton('休息', 198); // 变异：编号错位",
+    find: "  panel.push([199, '休息']);",
+    replace: "  panel.push([198, '休息']); // 变异：编号错位",
     tests: ['page-main-menu'],
     must_mention:
       '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
@@ -1082,8 +1082,8 @@ export default [
   {
     desc: 'M7905 [777] 设定按钮编号错位',
     file: 'ere/page/page-main-menu.js',
-    find: "  era.printButton('设定', 777);",
-    replace: "  era.printButton('设定', 776); // 变异：编号错位",
+    find: "  panel.push([777, '设定']);",
+    replace: "  panel.push([776, '设定']); // 变异：编号错位",
     tests: ['page-main-menu'],
     must_mention:
       '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
@@ -1091,8 +1091,8 @@ export default [
   {
     desc: 'M7906 [888] 通信按钮编号错位',
     file: 'ere/page/page-main-menu.js',
-    find: "  era.printButton('通信', 888);",
-    replace: "  era.printButton('通信', 887); // 变异：编号错位",
+    find: "  panel.push([888, '通信']);",
+    replace: "  panel.push([887, '通信']); // 变异：编号错位",
     tests: ['page-main-menu'],
     must_mention:
       '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
@@ -3919,27 +3919,29 @@ export default [
   {
     desc: 'M11862 子菜单按钮之间补回空行（PRINTL 只收 [990] 那一行，golden 里按钮逐行相邻）',
     file: 'ere/page/page-usercom.js',
-    find: "  era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）",
+    find: "  submenu.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）",
     replace:
-      "  era.println(); // 变异：按钮之间多补空行\n  era.printButton('调教菜单登录', 990); // （ENDIF 后无条件，缩进无语义）",
+      "  era.println(); // 变异：按钮之间多补空行\n  submenu.push([990, '调教菜单登录']); // （ENDIF 后无条件，缩进无语义）",
     tests: ['page-usercom'],
-    must_mention: '子菜单按钮逐行相邻，按钮之间不夹空行',
+    must_mention: '子菜单网格行之间不夹空行',
   },
   {
     desc: 'M11863 子菜单页脚之后补回空行（同上，PRINTL 只收 [999] 那一行）',
     file: 'ere/page/page-usercom.js',
-    find: "  era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）",
+    find: '  print_button_grid(submenu, 3);\n  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞',
     replace:
-      "  era.printButton('调教结束', 999); // （正文不带 [999] 前缀，引擎自动拼）\n  era.println(); // 变异：页脚之后多补空行",
+      '  print_button_grid(submenu, 3);\n  era.println(); // 变异：页脚之后多补空行\n  // prevcom > -1 → p_c（置 TSTR:90）→ ＜上次的调教指令：…＞',
     tests: ['page-usercom'],
     must_mention: '子菜单页脚按钮之后不应有空行',
+    // #717：find 自「页脚之后补 println」改为打在网格之后（p_c 注释行前），
+    // 页脚空行断言先于网格行空行断言跑，两条空行变异各红各的
   },
   {
     desc: 'M11869 方格之后补回空行（PRINTL 只收方格最后那一行，golden 里方格与分割线之间只有一个空行）',
     file: 'ere/page/page-usercom.js',
-    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个',
+    find: '  print_button_grid(items, 3);\n  // 网格行循环后不补空行——方格与分割线之间只有一个',
     replace:
-      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // 按钮自成一行，循环后不补空行——golden 里方格与分割线之间只有一个',
+      '  print_button_grid(items, 3);\n  era.println(); // 变异：方格之后多补空行\n  // 网格行循环后不补空行——方格与分割线之间只有一个',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
@@ -4767,5 +4769,113 @@ export default [
     replace: "    era.print(' [0] - 不生成'); // 变异：纯文本",
     tests: ['page-shop-labo'],
     must_mention: '「不生成」是按钮',
+  },
+  // —— #717：指令列表多列排版 ——
+  {
+    desc: 'M14330 指令面板列数改 4（原版 PRINTLCD 每 3 个换行）',
+    file: 'ere/page/page-main-menu.js',
+    find: '  print_button_grid(panel, 3);',
+    replace: '  print_button_grid(panel, 4); // 变异：列数改 4',
+    tests: ['page-main-menu'],
+    must_mention: '18 项每行 3 格 = 6 行',
+  },
+  {
+    desc: 'M14331 指令面板不可用占位不占格（各列随可用性漂移）',
+    file: 'ere/page/page-main-menu.js',
+    find: `  if (count_selectable_slaves() > 0) {
+    panel.push([100, '调教']);
+  } else {
+    panel.push(dim_slot());
+  }`,
+    replace: `  if (count_selectable_slaves() > 0) {
+    panel.push([100, '调教']);
+  }`,
+    tests: ['page-main-menu'],
+    must_mention: '占位格仍占一格，各列不因可用性漂移',
+  },
+  {
+    desc: 'M14332 调教目标/助手两枚退回各占一行',
+    file: 'ere/page/page-main-menu.js',
+    find: `      ['助手', 497, era_flag.assi < 1],
+    ],
+    2,
+  );`,
+    replace: `      ['助手', 497, era_flag.assi < 1],
+    ],
+    1,
+  );`,
+    tests: ['page-main-menu'],
+    must_mention: '调教目标与助手排在同一行',
+  },
+  {
+    desc: 'M14333 四个信息面板切换钮拆成两行',
+    file: 'ere/page/page-main-menu.js',
+    find: `      ['地城日常', 505, active_panel !== 5],
+    ],
+    4,
+  );`,
+    replace: `      ['地城日常', 505, active_panel !== 5],
+    ],
+    2,
+  );`,
+    tests: ['page-main-menu'],
+    must_mention: '四个信息面板切换钮排在同一行',
+  },
+  {
+    desc: 'M14334 子菜单网格列数改 4',
+    file: 'ere/page/page-usercom.js',
+    find: '  print_button_grid(submenu, 3);',
+    replace: '  print_button_grid(submenu, 4); // 变异：列数改 4',
+    tests: ['page-usercom'],
+    must_mention: '子菜单按钮按每行 3 列排布',
+  },
+  {
+    desc: 'M14335 内建指令列表列数改 1（逐格独占一行）',
+    file: 'ere/page/page-usercom.js',
+    find: "      era.get(`traincommandname:${id}`) ?? '',\n    ]),\n    3,\n  );",
+    replace:
+      "      era.get(`traincommandname:${id}`) ?? '',\n    ]),\n    1,\n  );",
+    tests: ['page-usercom'],
+    must_mention: '内建列表同样按每行 3 列排布',
+  },
+  {
+    desc: 'M14336 自定义指令菜单列数改 4',
+    file: 'ere/page/page-usercom.js',
+    find: '  print_button_grid(items, 3);',
+    replace: '  print_button_grid(items, 4); // 变异：列数改 4',
+    tests: ['page-usercom'],
+    must_mention: '零规则态 101 条指令 → 34 行',
+  },
+  {
+    desc: 'M14337 能力值提升列数改 3（原版 U % 4 换行）',
+    file: 'ere/page/page-ablup.js',
+    find: '  print_button_grid(items, 4);',
+    replace: '  print_button_grid(items, 3); // 变异：列数改 3',
+    tests: ['juel-check'],
+    must_mention: '21 枚能力按钮每行 4 格 → 6 行',
+  },
+  {
+    desc: 'M14338 [99]/癖好两枚拆成独立行',
+    file: 'ere/page/page-ablup.js',
+    find: '  print_button_grid(tail, 4);',
+    replace: '  print_button_grid(tail, 1); // 变异：各占一行',
+    tests: ['juel-check'],
+    must_mention: '[99] 与癖好两枚同一行',
+  },
+  {
+    desc: 'M14339 商品列表列数改 5',
+    file: 'ere/page/page-item-shop.js',
+    find: '  print_button_grid(items, 3);',
+    replace: '  print_button_grid(items, 5); // 变异：列数改 5',
+    tests: ['item-shop'],
+    must_mention: '商品按钮每行 3 列（PRINT_SHOPITEM 的 PRINTC 设置）',
+  },
+  {
+    desc: 'M14344 感觉缺失的灰显配置丢（ablup 灰按钮变默认色）',
+    file: 'ere/page/page-ablup.js',
+    find: '      lost ? { color: GRAY } : undefined,',
+    replace: '      undefined,',
+    tests: ['juel-check'],
+    must_mention: '#808080',
   },
 ];

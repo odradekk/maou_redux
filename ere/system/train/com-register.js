@@ -44,6 +44,7 @@ const {
   DECLARED_TRAIN_IDS,
 } = require('#/system/train/com-family');
 const { execute_command_round } = require('#/system/train/train-loop');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** 菜单保存槽的 flag 区段（FLAG:551～560） */
 const SLOT_BASE = 551;
@@ -127,15 +128,17 @@ async function comseq_show() {
  * print_comlist：可登记指令的方格列表（登记面用）。
  * 遍历 0..999，multi_comable 通过即一格。**编号是 L_I 本身**（三位
  * 补零显示）——不是调教主画面方格的 L_IDX 位次：两个画面的输入空间
- * 不同，登记面手输/按钮直达的是表内指令号。PRINTC 三列 → 按钮平铺
- * （PR #53 通则，既有界面差异）。
+ * 不同，登记面手输/按钮直达的是表内指令号。每行 3 格（原版 PRINTFORMC
+ * 按 PRINTCPERLINE() 换行，#717 恢复）。
  */
 async function print_comlist() {
+  const items = [];
   for (const id of DECLARED_TRAIN_IDS) {
     if ((await multi_comable(id)) === 1) {
-      era.printButton(era.get(`traincommandname:${id}`) ?? '', id);
+      items.push([id, era.get(`traincommandname:${id}`) ?? '']);
     }
   }
+  print_button_grid(items, 3);
 }
 
 /**

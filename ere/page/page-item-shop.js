@@ -50,6 +50,7 @@ const { item_detox } = require('#/system/equip/item-detox');
 const { life_list } = require('#/page/page-life-list');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { print_button_grid } = require('#/utils/button-grid');
 
 /**
  * 金额单位：价格与状态行按「数值 + pts.」显示（位置在后，如
@@ -338,12 +339,15 @@ const SECOND_GRID_SKIP = [29, 30, 31];
  */
 function print_shopitem() {
   const ids = (era.get('itemkeys') || []).slice().sort((a, b) => a - b);
+  const items = [];
   for (const id of ids) {
     if (!(era.get(`itemsales:${id}`) || 0)) {
       continue;
     }
-    era.printButton(`${item_name(id)}（${item_price(id)}${MONEY_UNIT}）`, id);
+    items.push([id, `${item_name(id)}（${item_price(id)}${MONEY_UNIT}）`]);
   }
+  // 原版 PRINT_SHOPITEM 按 PRINTC 的设置（每行 3 个）排列商品，#717 恢复
+  print_button_grid(items, 3);
 }
 
 /**

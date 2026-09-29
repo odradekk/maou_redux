@@ -49,7 +49,18 @@ test('子菜单按钮组全挂载：默认态 9 个按钮，条件按钮不出�
   ]);
 });
 
-test('子菜单按钮组：按钮串不换行——按钮之间、页脚之后与方格之后都没有多出的空行', async () => {
+/** 按钮按 Row 分组的快照：每行 { row, cells }，cells 每格 [编号, 正文, 格宽] */
+function button_rows(fixture) {
+  const rows = new Map();
+  for (const line of fixture.lines) {
+    if (line.type !== 'button') continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push([line.accelerator, line.text, line.grid_width]);
+  }
+  return [...rows].map(([row, cells]) => ({ row, cells }));
+}
+
+test('子菜单按钮组按每行 3 列排布：行间不夹空行，页脚之后无空行', async () => {
   // 两条渲染路径都走一遍：自定义菜单（FLAG:5 位 34 = 1）与内建列表
   for (const advanced of [false, true]) {
     const label = advanced ? '自定义菜单路径' : '内建列表路径';
@@ -59,30 +70,26 @@ test('子菜单按钮组：按钮串不换行——按钮之间、页脚之后�
 
     await emit('SHOW_USERCOM');
 
-    // 按钮串的排版语义（CONTEXT.md「输出 API 的排版与对齐」）：printButton
-    // 自成一行，按钮之间与页脚之后都不应再补空行——golden 里网格行与
-    // [990]/[999] 逐行相邻，就是这条的直接证据。
+    // 网格行的排版语义（CONTEXT.md「输出 API 的排版与对齐」）：按钮按每行
+    // 3 格进网格，网格行之间与页脚之后都不应再补空行
     const divider = fixture.lines.find((line) => line.type === 'divider');
-    const rows = fixture.lines
-      .filter((line) => line.type === 'button' && line.row > divider.row)
-      .map((line) => line.row);
+    // divider 之后的按钮行全是子菜单（[100] 起头，含 [990]-[999] 页脚）：
+    // 默认态 10 枚按钮 → 每行 3 格共 4 行（末行 [999] 一格）
+    const submenu_rows = button_rows(fixture).filter(
+      (r) => r.row > divider.row,
+    );
     assert.deepEqual(
-      rows,
-      Array.from({ length: rows.length }, (_, i) => rows[0] + i),
-      `${label}：子菜单按钮逐行相邻，按钮之间不夹空行`,
+      submenu_rows.map((r) => r.cells.map(([acc]) => acc)),
+      [[100, 101, 103], [104, 105, 106], [107, 108, 990], [999]],
+      `${label}：子菜单按钮按每行 3 列排布`,
     );
-    // 方格与分割线之间恰有一个空行：循环收尾只结束方格最后那一行，空行
-    // 来自下一段的 println。
-    // 多一个或少一个都是错的。
-    assert.equal(
-      fixture.lines.filter(
-        (line) =>
-          line.row < divider.row &&
-          (line.type === 'br' || (line.type === 'text' && line.text === '')),
-      ).length,
-      1,
-      `${label}：COM 菜单与分割线之间恰有一个空行（来自下一段的换行）`,
+    assert.ok(
+      submenu_rows.every((r) => r.cells.every(([, , width]) => width === 8)),
+      `${label}：每格宽 24/3 = 8`,
     );
+    // 页脚之后不补空行（先查页脚：网格行之间的空行由下一断言分头守）
+    const blank_line = (line) =>
+      line.type === 'br' || (line.type === 'text' && line.text === '');
     const footer = fixture.lines.find(
       (line) => line.type === 'button' && line.accelerator === 999,
     );
@@ -94,7 +101,75 @@ test('子菜单按钮组：按钮串不换行——按钮之间、页脚之后�
       ),
       `${label}：子菜单页脚按钮之后不应有空行`,
     );
+    // 行与行之间不夹空行：网格行逐行相邻
+    assert.ok(
+      !fixture.lines.some((line) => blank_line(line) && line.row > divider.row),
+      `${label}：子菜单网格行之间不夹空行`,
+    );
+    // 方格与分割线之间恰有一个空行：循环收尾只结束方格最后那一行，空行
+    // 来自下一段的 println。
+    assert.equal(
+      fixture.lines.filter(
+        (line) =>
+          line.row < divider.row &&
+          (line.type === 'br' || (line.type === 'text' && line.text === '')),
+      ).length,
+      1,
+      `${label}：COM 菜单与分割线之间恰有一个空行（来自下一段的换行）`,
+    );
   }
+});
+
+test('指令方格（自定义菜单路径）：按每行 3 列排布，末行不满仍与上面对齐', async () => {
+  const fixture = create_era_fixture();
+  seed_flag5(fixture, true);
+  const { train_name_init } = fixture.load_module('system/train/train-name');
+  const { emit } = load_page(fixture);
+  train_name_init();
+
+  await emit('SHOW_USERCOM');
+
+  const divider = fixture.lines.find((line) => line.type === 'divider');
+  // 零规则态 101 条指令全部可用：34 行 = 33 行满 3 格 + 末行 2 格
+  const rows = button_rows(fixture).filter((r) => r.row < divider.row);
+  assert.equal(rows.length, 34, '零规则态 101 条指令 → 34 行');
+  assert.deepEqual(
+    rows[0].cells.map(([acc]) => acc),
+    [0, 1, 2],
+    '首行三格是 L_IDX 0/1/2',
+  );
+  assert.equal(rows.at(-1).cells.length, 2, '末行 101 % 3 = 2 格');
+  assert.ok(
+    rows.slice(0, -1).every((r) => r.cells.length === 3),
+    '除末行外每行恰好 3 格',
+  );
+  assert.ok(
+    rows.every((r) => r.cells.every(([, , width]) => width === 8)),
+    '每格宽 24/3 = 8，末行不满仍按 3 列的格宽对齐',
+  );
+});
+
+test('指令方格（内建路径）：按每行 3 列排布', async () => {
+  const fixture = create_era_fixture();
+  seed_flag5(fixture, false);
+  const { emit } = load_page(fixture);
+
+  await emit('SHOW_USERCOM', [0, 6, 7, 8, 9]);
+
+  const divider = fixture.lines.find((line) => line.type === 'divider');
+  const rows = button_rows(fixture).filter((r) => r.row < divider.row);
+  assert.deepEqual(
+    rows.map((r) => r.cells.map(([acc]) => acc)),
+    [
+      [0, 6, 7],
+      [8, 9],
+    ],
+    '内建列表同样按每行 3 列排布',
+  );
+  assert.ok(
+    rows.every((r) => r.cells.every(([, , width]) => width === 8)),
+    '每格宽 24/3 = 8',
+  );
 });
 
 test('显示条件：ASSI>0 且 ASSI:1>0 时交代助手[102]出现', async () => {

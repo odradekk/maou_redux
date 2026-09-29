@@ -518,6 +518,25 @@ test('print_shopitem：在售商品各一枚按钮（accelerator = 道具序号�
     [60, '落穴（10pts.）'],
     [300, '装饰戒指（1pts.）'],
   ]);
+  // 原版 PRINT_SHOPITEM 按 PRINTC 的设置（每行 3 个）排列商品：按钮网格
+  // 恢复该列数，末行不满仍与上面对齐
+  const rows = new Map();
+  for (const line of fixture.lines.filter((l) => l.type === 'button')) {
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push(line.accelerator);
+  }
+  assert.deepEqual(
+    [...rows.values()],
+    [
+      [0, 24, 60],
+      [300],
+    ],
+    '商品按钮每行 3 列（PRINT_SHOPITEM 的 PRINTC 设置）',
+  );
+  assert.ok(
+    fixture.lines.every((line) => line.grid_width === 8),
+    '每格宽 24/3 = 8',
+  );
 });
 
 test('print_shopitem：一件在售都没有时一行不打（空表不出按钮）', () => {

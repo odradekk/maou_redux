@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 86; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）；性格/发色列表改成按钮网格 -8 +4（删掉 M8768/M8769/M9009/M12083-M12085/M13257/M13258 所指的补位、收尾空行与越界重问；M14223-M14226 检查按钮网格）；#710 角色列表与性别按钮化 -5 +4（删掉 M9007/M9008/M12014/M8805/M8807 所指的补位、纯文本性别行与两处不可键入的区间端点；M14230-M14232/M14234 检查列表按钮网格、等键顺序与 18/19 排除；M14223/M14226 随 print_button_grid 挪到 ere/utils/button-grid.js）
+export const COUNT = 88; // #717 +2（M14340/M14341：button-grid 单格 config 的两条通道）； // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）；性格/发色列表改成按钮网格 -8 +4（删掉 M8768/M8769/M9009/M12083-M12085/M13257/M13258 所指的补位、收尾空行与越界重问；M14223-M14226 检查按钮网格）；#710 角色列表与性别按钮化 -5 +4（删掉 M9007/M9008/M12014/M8805/M8807 所指的补位、纯文本性别行与两处不可键入的区间端点；M14230-M14232/M14234 检查列表按钮网格、等键顺序与 18/19 排除；M14223/M14226 随 print_button_grid 挪到 ere/utils/button-grid.js）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -715,11 +715,12 @@ export default [
   {
     desc: 'M14223 按钮网格的格宽按本行实际格数算（末行不满时与上面各列错位）',
     // #710：print_button_grid 自 chara-and-hair.js 挪到公用模块，条目随之
-    // 改指新文件（行为与断言不变）
+    // 改指新文件（行为与断言不变）；#717 网格项带单格 config，find 随
+    // map 的新形状更新
     file: 'ere/utils/button-grid.js',
-    find: '  const width = Math.floor(GRID_COLUMNS / per_line);\n  for (let i = 0; i < items.length; i += per_line) {\n    era.printMultiColumns(\n      items.slice(i, i + per_line).map(',
+    find: '  const width = Math.floor(GRID_COLUMNS / per_line);\n  for (let i = 0; i < items.length; i += per_line) {\n    era.printMultiColumns(\n      items.slice(i, i + per_line).map((item) =>',
     replace:
-      '  for (let i = 0; i < items.length; i += per_line) {\n    const row = items.slice(i, i + per_line);\n    const width = Math.floor(GRID_COLUMNS / row.length); // 变异\n    era.printMultiColumns(\n      row.map(',
+      '  for (let i = 0; i < items.length; i += per_line) {\n    const width = Math.floor(GRID_COLUMNS / items.slice(i, i + per_line).length); // 变异：格宽按本行实际格数\n    era.printMultiColumns(\n      items.slice(i, i + per_line).map((item) =>',
     tests: ['chara-and-hair'],
     must_mention: '换行位置按每行 N 项',
   },
@@ -743,8 +744,9 @@ export default [
     desc: 'M14226 列表格退回纯文本（玩家点不了，只能手敲编号）',
     // #710：公用网格模块是全部列表的落点，这一条同时守着所有网格调用点
     file: 'ere/utils/button-grid.js',
-    find: "        type: 'button',\n        accelerator,\n        content,",
-    replace: "        type: 'text',\n        accelerator,\n        content,",
+    find: "              type: 'button',\n              accelerator: item[0],\n              content: item[1],",
+    replace:
+      "              type: 'text',\n              accelerator: item[0],\n              content: item[1],",
     tests: ['chara-and-hair'],
     must_mention: '列表是按钮网格',
   },
@@ -774,5 +776,23 @@ export default [
     replace: '      if (!exist_csv(i)) { // 变异：不排除 18/19',
     tests: ['chara-custom'],
     must_mention: '18 被排除',
+  },
+  {
+    desc: 'M14340 占位格的单格 config 丢失（[---] 不再灰显）',
+    file: 'ere/utils/button-grid.js',
+    find: "              config: { align: 'left', width, ...item.config },",
+    replace:
+      "              config: { align: 'left', width }, // 变异：占位 config 丢",
+    tests: ['page-main-menu'],
+    must_mention: '#bbbbbb',
+  },
+  {
+    desc: 'M14341 按钮格的单格 config 丢失（过滤钮染色进不了网格）',
+    file: 'ere/utils/button-grid.js',
+    find: "              config: { align: 'left', width, ...item[2] },",
+    replace:
+      "              config: { align: 'left', width }, // 变异：单格 config 丢",
+    tests: ['page-usercom'],
+    must_mention: '开启位一律灰',
   },
 ];

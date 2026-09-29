@@ -1006,20 +1006,31 @@ test('printMultiColumns：GridObject 逐格压平成既有条目类型', () => {
   fixture.era.printMultiColumns([
     { type: 'button', content: '爱抚', accelerator: 0 },
     { type: 'text', content: '一行说明' },
+    {
+      type: 'text',
+      content: '占位',
+      config: { color: '#bbbbbb', width: 8 },
+    },
     { type: 'divider', config: { isSolid: true } },
     { type: 'image', names: 'res-a' },
   ]);
 
   assert.deepEqual(
     fixture.lines.map((l) => l.type),
-    ['button', 'text', 'divider', 'image'],
+    ['button', 'text', 'text', 'divider', 'image'],
   );
   // 按钮条目与 printButton 同款：rendered 是引擎前缀公式（app.asar）
   assert.equal(fixture.lines[0].text, '爱抚');
   assert.equal(fixture.lines[0].accelerator, 0);
   assert.equal(fixture.lines[0].rendered, '[0] 爱抚');
-  assert.equal(fixture.lines[2].border, 'solid');
-  assert.deepEqual(fixture.lines[3].names, 'res-a');
+  assert.equal(fixture.lines[3].border, 'solid');
+  assert.deepEqual(fixture.lines[4].names, 'res-a');
+  // 文本格的 config.color 与 width 都是渲染结构的一部分（渲染层 getTextObject
+  // 读 config.color、格宽走 el-col 的 span），一并入记录
+  assert.equal(fixture.lines[1].color, undefined);
+  assert.equal(fixture.lines[1].grid_width, 24);
+  assert.equal(fixture.lines[2].color, '#bbbbbb');
+  assert.equal(fixture.lines[2].grid_width, 8);
   // 已实现集：不落缺省 calls
   assert.deepEqual(fixture.calls, []);
 });
@@ -1038,6 +1049,7 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
       type: 'text',
       text: '列组形态',
       content: '列组形态',
+      color: undefined,
       grid_width: 24,
       row: 0,
     },

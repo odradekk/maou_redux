@@ -2,6 +2,8 @@
  * @file 菜单按钮排版助手（#73 自 page-main-menu 集中，全项目唯一落点）。
  *
  * ▌ 前缀由本助手统一拼接（调用方不再各自写进正文串），净效果等价。
+ * #717 起多枚菜单按钮可同行（menu_button_row），▌ 前缀与调暗仍是这里
+ * 的唯一权威。
  *
  * 两条既有 UI 结论（不得破坏，#73 验收报出）：
  *   1. 按钮正文一律不写 [编号] 前缀——引擎 showAcc 默认为真，渲染时自动拼
@@ -12,8 +14,12 @@
  *      实证），须为十六进制串——命名色在 hover 态会拼出非法值。
  */
 
-const era = require('#/era-electron');
+'use strict';
 
+const era = require('#/era-electron');
+const { print_button_grid } = require('#/utils/button-grid');
+
+/** 菜单按钮的调暗色（未选中态） */
 const MENU_BUTTON_DIM_COLOR = '#bbbbbb';
 
 /**
@@ -23,10 +29,42 @@ const MENU_BUTTON_DIM_COLOR = '#bbbbbb';
  * @param {boolean} dim 未选中标志（真 = 调暗）
  */
 function menu_button(label, accelerator, dim) {
-  era.printButton(
-    `▌${label}`,
+  const [cell_accelerator, content, config] = menu_cell(
+    label,
     accelerator,
+    dim,
+  );
+  era.printButton(content, cell_accelerator, config);
+}
+
+/**
+ * 菜单按钮格（menu_button 与 menu_button_row 共用）：▌ 前缀拼接与
+ * 未选中调暗的唯一落点，返回按钮网格的 [编号, 正文, config] 项。
+ * @param {string} label 按钮正文（不含 ▌）
+ * @param {number} accelerator 按钮编号
+ * @param {boolean} dim 未选中标志（真 = 调暗）
+ * @returns {[number, string, object|undefined]}
+ */
+function menu_cell(label, accelerator, dim) {
+  return [
+    accelerator,
+    `▌${label}`,
     dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined,
+  ];
+}
+
+/**
+ * 打印一整行菜单按钮：每枚的 ▌ 前缀与调暗规则同 menu_button，
+ * 经按钮网格同行排布。
+ * @param {Array<[string, number, boolean]>} buttons [label, 编号, dim] 列表
+ * @param {number} per_line 每行格数
+ */
+function menu_button_row(buttons, per_line) {
+  print_button_grid(
+    buttons.map(([label, accelerator, dim]) =>
+      menu_cell(label, accelerator, dim),
+    ),
+    per_line,
   );
 }
 
@@ -105,6 +143,7 @@ function bar_color_set(name) {
 
 module.exports = {
   menu_button,
+  menu_button_row,
   MENU_BUTTON_DIM_COLOR,
   print_colorbar,
   print_colorbar2,

@@ -661,9 +661,8 @@ test('show_ablup_select：能力按钮化（PR #53）——编号空间、性别
   assert.equal(buttons[0].rendered, '[0] 阴蒂感觉 - LV 3');
   assert.equal(buttons.at(-2).rendered, '[99] 反抗刻印 - LV 1');
   assert.equal(buttons.at(-1).rendered, '[999] - 能力值提高结束');
-  // 每 4 条的收尾换行与末行不足 4 的收行都只结束所在的按钮行，不产生
-  // 空行：train-natural-log 里五行能力按钮、[99] 行、尾部分割线与 [999]
-  // 行全部逐行相邻（#596）。
+  // 每 4 条一行的网格行不产生空行：五行能力按钮、[99] 行、尾部分割线与
+  // [999] 行全部逐行相邻（#596）。
   // 空行的两种写法都算（println 落 br、print('') 落 text 空串）
   const blank_line = (line) =>
     line.type === 'br' || (line.type === 'text' && line.text === '');
@@ -675,7 +674,65 @@ test('show_ablup_select：能力按钮化（PR #53）——编号空间、性别
       'divider', // 点线 ‥（夹在 [99] 行与 [999] 行之间）
       'button', // [999] - 能力值提高结束
     ]),
-    '按钮逐行相邻，[99] 行与尾部分割线、[999] 行之间都没有空行',
+    '能力按钮按每行 4 格进网格，[99] 行与尾部分割线、[999] 行之间都没有空行',
+  );
+});
+
+test('show_ablup_select：能力按钮按每行 4 列排布，[99]/癖好两枚并入同一行', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('abl:31:0', 3);
+  fixture.store.set('mark:31:3', 1);
+  fixture.store.set('cstr:31:7', '足交');
+  fixture.store.set('abl:31:4', 2);
+  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+
+  await show_ablup_select(31);
+
+  // 女性对象的 21 枚能力按钮（0-3、10-17、20-22、30-33、37、39）：
+  // 6 行 = 5 行满 4 格 + 末行 1 格，每格宽 24/4 = 6
+  const rows = new Map();
+  for (const line of fixture.lines) {
+    if (line.type !== 'button') continue;
+    if (!rows.has(line.row)) rows.set(line.row, []);
+    rows.get(line.row).push(line.accelerator);
+  }
+  const grid = [...rows.entries()];
+  // [99] 行起是尾部组（[99]/癖好两枚/[999]）：按 [99] 所在行切分，不受
+  // 每行格数变化影响
+  const tail_start = grid.findIndex(([, accs]) => accs.includes(99));
+  const loop_rows = grid.slice(0, tail_start);
+  const tail_rows = grid.slice(tail_start);
+  assert.equal(loop_rows.length, 6, '21 枚能力按钮每行 4 格 → 6 行');
+  assert.deepEqual(
+    loop_rows.map(([, accs]) => accs),
+    [
+      [0, 1, 2, 3],
+      [10, 11, 12, 13],
+      [14, 15, 16, 17],
+      [20, 21, 22, 30],
+      [31, 32, 33, 37],
+      [39],
+    ],
+    '能力按钮每行 4 列（原版 U % 4 换行）',
+  );
+  // [99]/[4]/[40] 并入同一行（原版三枚同打一行），[999] 独占一行
+  assert.deepEqual(
+    tail_rows.map(([, accs]) => accs),
+    [[99, 4, 40], [999]],
+    '[99] 与癖好两枚同一行，[999] 结束键独占一行',
+  );
+  const grid_buttons = fixture.lines.filter(
+    (line) => line.type === 'button' && line.grid_width !== undefined,
+  );
+  assert.ok(
+    grid_buttons.every((line) => line.grid_width === 6),
+    '每格宽 24/4 = 6',
+  );
+  // [999] 结束键是普通按钮（不在网格里，独占一行）
+  assert.equal(
+    fixture.lines.find((line) => line.accelerator === 999).grid_width,
+    undefined,
   );
 });
 
