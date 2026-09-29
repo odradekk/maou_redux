@@ -2290,7 +2290,11 @@ test('--jobs 副本数按选中条数限定：一条编号两个 jobs 只有一�
  * 在」用它造真实形式；PID 在两次调用之间被复用的概率可忽略。
  */
 function dead_pid() {
-  const r = spawnSync(process.execPath, ['-e', ''], { encoding: 'utf8' });
+  const r = spawnSync(process.execPath, ['-e', ''], {
+    encoding: 'utf8',
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
+  });
   assert.ok(r.pid > 0, '夹具：没拿到子进程 PID');
   return r.pid;
 }
