@@ -36,12 +36,31 @@ function line_of(text, at) {
 }
 
 /**
+ * text[i] 起是注释时返回注释最后一个字符的下标，否则返回 -1。注释里的文字
+ * 不是代码：不成对的引号（如注释里写 `$'`）会让扫描停在「字符串里」，把后面
+ * 的调用整段跳过；注释里提到的 `spawnSync(...)` 也不是调用。
+ */
+function comment_end(text, i) {
+  if (text[i] !== '/') return -1;
+  if (text[i + 1] === '/') {
+    const newline = text.indexOf('\n', i);
+    return newline === -1 ? text.length - 1 : newline - 1;
+  }
+  if (text[i + 1] === '*') {
+    const close = text.indexOf('*/', i + 2);
+    return close === -1 ? text.length - 1 : close + 1;
+  }
+  return -1;
+}
+
+/**
  * 单遍扫描全文找真实调用点：整段维护引号状态（单/双引号、模板串，含转义），
  * 字符串/模板字面量内部的文本一律跳过，不当成代码——本工具的探针会把
  * `spawnSync(...)` 当字面量文本拼进测试夹具源码，逐段正则扫描会把探针
  * 文本误判成真调用（#449 修改本工具时实测踩中：工具扫自己的测试文件，
  * 把测试里探针字符串当成了违规调用点）。找到调用名紧跟 `(` 后，从那个
  * `(` 开始配平扫描到匹配的 `)`，同样跳过内部字符串，取得完整实参文本。
+ * 两处扫描都跳过注释（见 comment_end）。
  * 返回 [{ index, name, call_text }]。
  */
 function scan_calls(text) {
@@ -55,6 +74,11 @@ function scan_calls(text) {
       } else if (ch === quote) {
         quote = null;
       }
+      continue;
+    }
+    const skip = comment_end(text, i);
+    if (skip >= 0) {
+      i = skip;
       continue;
     }
     if (ch === "'" || ch === '"' || ch === '`') {
@@ -86,6 +110,11 @@ function scan_calls(text) {
         } else if (c === call_quote) {
           call_quote = null;
         }
+        continue;
+      }
+      const skip_in_call = comment_end(text, k);
+      if (skip_in_call >= 0) {
+        k = skip_in_call;
         continue;
       }
       if (c === "'" || c === '"' || c === '`') {

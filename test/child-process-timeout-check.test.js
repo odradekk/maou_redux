@@ -1,7 +1,7 @@
 /**
  * @file child-process-timeout-check 的行为锁（issue #449）：test/ 里同步
  * 子进程调用（spawnSync / execFileSync / execSync）必须显式声明 timeout——
- * 三条行为在此固定：
+ * 四条行为在此固定：
  *
  *   1. 全绿运行：真树里现有的全部调用点都已声明 timeout，工具对真树退 0。
  *      本用例把工具并入 npm test——往后有人新加一处不带 timeout 的调用，
@@ -10,6 +10,8 @@
  *      工具必须非 0、报出探针文件的行号与调用名。
  *   3. 对照：同一探针目录改成带 timeout，工具必须转绿——证明红的判断条件
  *      确实是「有没有 timeout」，不是别的巧合。
+ *   4. 注释不是代码：注释里不成对的引号不会让后面的调用被跳过，注释里提到的
+ *      spawnSync(...) 也不算调用——调用实参里的注释同样如此。
  *
  * 工具直接 import 同进程调用（它本来就是为了不再 spawnSync 而写的，测试
  * 没道理反过来 spawn 它）。探针不落在仓库工作树里——本工具只读扫描
@@ -84,6 +86,36 @@ test('对照：同一探针补上 timeout 后必须转绿', async () => {
       failures,
       0,
       `补上 timeout 后必须转绿——证明上一条用例的红确实来自缺 timeout：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('注释不是代码：注释里不成对的引号和提到的 spawnSync(...) 都不影响判定', async () => {
+  // 两处注释里不成对的引号用不同的字符（双引号、反引号），探针别处都没有：
+  // 注释要是没被跳过，那个引号之后的全文都会被当成字符串，第 8 行漏报；
+  // 块注释里的 spawnSync(cmd) 会被多报一处。
+  const root = make_probe_root(
+    'probe-comments',
+    [
+      '// 注释里的引号不成对：6" 屏幕',
+      '/* 注释里提到 spawnSync(cmd) 不是调用 */',
+      "const { spawnSync } = require('node:child_process');",
+      "spawnSync('git', ['status'], {",
+      '  // 实参里的注释，引号也不成对：`',
+      '  timeout: 30_000,',
+      '});',
+      "spawnSync('git', ['log']);",
+      '',
+    ].join('\n'),
+  );
+  try {
+    const { failures, output } = await run({ root });
+    assert.equal(failures, 1, `只该报出第 8 行那一处：\n${output}`);
+    assert.ok(
+      output.includes('probe-comments.test.js:8'),
+      `缺 timeout 的调用要报出文件行号：\n${output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

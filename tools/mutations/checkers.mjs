@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 83; // #536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 86; // +3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -854,5 +854,37 @@ export default [
     test_name:
       '串行档的副本对照即红时判红：副本缺文件不能让变异被当成拦截（#536）',
     must_mention: '副本环境破损必须判红',
+  },
+
+  // —— 子进程超时检查：扫描器跳过注释 ——
+  {
+    desc: 'M14220 扫描器不认行注释（注释里一个不成对的引号就让后面整段被当成字符串，缺 timeout 的调用漏报）',
+    file: 'tools/child-process-timeout-check.mjs',
+    find: "  if (text[i + 1] === '/') {",
+    replace: '  if (false) { // 变异：不认行注释',
+    tests: ['child-process-timeout-check'],
+    test_name:
+      '注释不是代码：注释里不成对的引号和提到的 spawnSync(...) 都不影响判定',
+    must_mention: '只该报出第 8 行那一处',
+  },
+  {
+    desc: 'M14221 扫描器不认块注释（注释里提到的 spawnSync(...) 被当成调用误报）',
+    file: 'tools/child-process-timeout-check.mjs',
+    find: "  if (text[i + 1] === '*') {",
+    replace: '  if (false) { // 变异：不认块注释',
+    tests: ['child-process-timeout-check'],
+    test_name:
+      '注释不是代码：注释里不成对的引号和提到的 spawnSync(...) 都不影响判定',
+    must_mention: '只该报出第 8 行那一处',
+  },
+  {
+    desc: 'M14222 配平调用实参时不跳过注释（实参里的注释带不成对引号，括号配不上，后面的调用全被跳过）',
+    file: 'tools/child-process-timeout-check.mjs',
+    find: '      const skip_in_call = comment_end(text, k);',
+    replace: '      const skip_in_call = -1; // 变异：实参里不跳过注释',
+    tests: ['child-process-timeout-check'],
+    test_name:
+      '注释不是代码：注释里不成对的引号和提到的 spawnSync(...) 都不影响判定',
+    must_mention: '只该报出第 8 行那一处',
   },
 ];
