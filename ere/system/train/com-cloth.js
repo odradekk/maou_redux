@@ -50,17 +50,15 @@
  * 胸罩状态 门面（#71）。CFLAG:42/49 只读（42 由调教后服装处理写入，
  * 49 的写据点/日程侧）。
  *
- * == 菜单空格与排版约定 ==
+ * == 菜单排版约定（#710 起是按钮） ==
  *
- * - 菜单正文中的前导空格是字面文本，不应按代码缩进处理：
- *   脱衣行保留一个空格，如 ` [7] - 全部扒光`；
- *   穿衣行保留三个空格，用于区分穿衣与脱衣选项。
- *   每行合成后通过一次 print 输出。
- * - com111 的 [100] 行是 ` [100]- 算了`，
- *   ] 与 - 之间不加空格。
- *   cloth.js 尿布菜单两键与 passout.js 恢复文本的前导空格
- *   曾多出一格，#577 已修正；
- *   本菜单的空格仍按上述规则保留。
+ * - 两个子菜单的每一行都是一枚按钮（`era.printButton`），正文保留
+ *   `- ` 分隔符（` [N] - …` 去掉编号后的部分），编号由引擎按 showAcc 拼。
+ *   原先前导的一/三空格用于区分脱衣与穿衣行，**随文本行去掉**：
+ *   按钮正文里的连续空白会被引擎折叠成一个空格，空格分不出两档，
+ *   穿衣/脱衣由正文词（脱掉 / 穿起）区分。
+ * - com111 原 ` [100]- 算了` 在 ] 与 - 之间不加空格；按钮化后编号与正文
+ *   之间恒有一个引擎拼出的空格，这条排版细节不再适用。
  * - 内裤脱衣的弄脏前缀检查 TFLAG:45 的位 8/4（下装/下装处理），
  *   而非位 2/1（内裤）；与穿衣分支的位 2/1 不对称，
  *   当前行为保留不改。
@@ -526,68 +524,72 @@ async function com110() {
       com110_able5w(target, b),
     ];
 
-    // —— 子菜单（脱衣行一空格 / 穿衣行三空格，见文件头）——
+    // —— 子菜单（#710：一列按钮，正文保留 `- ` 分隔符；脱衣/穿衣由正文词
+    // 区分，原先的前导一/三空格随文本行去掉——按钮正文的连续空白会被引擎
+    // 折叠，编号由 showAcc 拼）——
     if (t[0]) {
-      era.print(
-        ` [0] - ${clothtype_special_text(target)}${
+      era.printButton(
+        `- ${clothtype_special_text(target)}${
           special_type(target) >= 51 ? '取下' : '脱掉'
         }`,
+        0,
       );
     }
     if (w[0]) {
-      era.print(
-        `\u00A0\u00A0\u00A0[0] - ${clothtype_special_text(target)}${
+      era.printButton(
+        `- ${clothtype_special_text(target)}${
           special_type(target) >= 51 ? '装上' : '穿起'
         }`,
+        0,
       );
     }
     if (t[1]) {
-      era.print(` [1] - ${clothtype_main2_text(target)}脱掉`);
+      era.printButton(`- ${clothtype_main2_text(target)}脱掉`, 1);
     }
     if (w[1]) {
-      era.print(`\u00A0\u00A0\u00A0[1] - ${clothtype_main2_text(target)}穿起`);
+      era.printButton(`- ${clothtype_main2_text(target)}穿起`, 1);
     }
     if (t[2]) {
-      era.print(` [1] - ${clothtype_main2_text(target)}上半身脱掉`);
+      era.printButton(`- ${clothtype_main2_text(target)}上半身脱掉`, 1);
     }
     if (w[2]) {
-      era.print(
-        `\u00A0\u00A0\u00A0[1] - ${clothtype_main2_text(target)}上半身穿起`,
-      );
+      era.printButton(`- ${clothtype_main2_text(target)}上半身穿起`, 1);
     }
     if (t[3]) {
-      era.print(
-        ` [2] - ${clothtype_main2_text(target)}${
+      era.printButton(
+        `- ${clothtype_main2_text(target)}${
           is_skirt(target) ? '的裙子脱掉' : '下半身脱掉'
         }`,
+        2,
       );
     }
     if (w[3]) {
-      era.print(
-        `\u00A0\u00A0\u00A0[2] - ${clothtype_main2_text(target)}${
+      era.printButton(
+        `- ${clothtype_main2_text(target)}${
           is_skirt(target) ? '的裙子穿起' : '下半身穿起'
         }`,
+        2,
       );
     }
     if (t[4]) {
-      era.print(' [3] - 解开胸罩');
+      era.printButton('- 解开胸罩', 3);
     }
     if (w[4]) {
-      era.print('\u00A0\u00A0\u00A0[3] - 穿上胸罩');
+      era.printButton('- 穿上胸罩', 3);
     }
     if (t[5]) {
-      era.print(' [4] - 脱掉内裤');
+      era.printButton('- 脱掉内裤', 4);
     }
     if (w[5]) {
-      era.print('\u00A0\u00A0\u00A0[4] - 穿上内裤');
+      era.printButton('- 穿上内裤', 4);
     }
     if (worn(target) !== 0) {
-      era.print(' [7] - 全部扒光');
+      era.printButton('- 全部扒光', 7);
     }
     if (worn(target) !== 0) {
-      era.print(' [9] - 移动到[撕破衣服]');
+      era.printButton('- 移动到[撕破衣服]', 9);
     }
-    era.print(' [100] - 算了');
+    era.printButton('- 算了', 100);
 
     const result = await era.input(); // 选择结果用于下面的穿脱分支
 
@@ -777,34 +779,35 @@ async function com111() {
       com111_able6l(target),
     ];
 
-    // —— 子菜单 ——
+    // —— 子菜单（#710：一列按钮，正文保留 `- ` 分隔符）——
     if (l[0]) {
-      era.print(` [10] - ${clothtype_special_text(target)}剥掉`);
+      era.printButton(`- ${clothtype_special_text(target)}剥掉`, 10);
     }
     if (l[1]) {
-      era.print(` [11] - ${clothtype_main2_text(target)}的上半身撕掉`);
+      era.printButton(`- ${clothtype_main2_text(target)}的上半身撕掉`, 11);
     }
     if (l[2]) {
-      era.print(` [12] - ${clothtype_main2_text(target)}的下半身撕掉`);
+      era.printButton(`- ${clothtype_main2_text(target)}的下半身撕掉`, 12);
     }
     if (l[3]) {
-      era.print(` [11] - ${clothtype_main2_text(target)}的上半撕破`);
+      era.printButton(`- ${clothtype_main2_text(target)}的上半撕破`, 11);
     }
     if (l[4]) {
-      era.print(
-        ` [12] - ${clothtype_main2_text(target)}${
+      era.printButton(
+        `- ${clothtype_main2_text(target)}${
           is_skirt(target) ? '的裙子撕破' : '的下半撕破'
         }`,
+        12,
       );
     }
     if (l[5]) {
-      era.print(' [13] - 撕碎胸罩');
+      era.printButton('- 撕碎胸罩', 13);
     }
     if (l[6]) {
-      era.print(' [14] - 撕碎内裤');
+      era.printButton('- 撕碎内裤', 14);
     }
-    era.print(' [19] - 返回[穿脱衣服]');
-    era.print(' [100]- 算了');
+    era.printButton('- 返回[穿脱衣服]', 19);
+    era.printButton('- 算了', 100);
 
     const result = await era.input();
 

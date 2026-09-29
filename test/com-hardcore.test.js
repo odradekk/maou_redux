@@ -362,6 +362,57 @@ test('com85：放尿，EXP:31（经门面写）＋2、污渍位 STAIN:2/3、TFLA
   assert.equal(world.fixture.store.get('tflag:200'), 2);
 });
 
+test('com87：#710 三层穿环菜单都是按钮（装/取、部位、算了）', async () => {
+  const world = seed_world();
+  const { fixture } = world;
+  fixture.store.set('item:34', 3);
+  fixture.set_inputs(0, 0); // [0] 装上环 → [0] 乳头
+  await run_com(world, 87);
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((l) => l.type === 'button')
+      .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
+    [
+      [0, '- 装上环', '[0] - 装上环'],
+      [10, '- 放弃', '[10] - 放弃'],
+      [0, '- 乳头(2个消费)', '[0] - 乳头(2个消费)'],
+      [1, '- 肚脐', '[1] - 肚脐'],
+      [2, '- 左右阴唇(2个消费)', '[2] - 左右阴唇(2个消费)'],
+      [3, '- 阴蒂', '[3] - 阴蒂'],
+      [4, '- 舌头', '[4] - 舌头'],
+      [5, '- 嘴唇', '[5] - 嘴唇'],
+      [6, '- 鼻子', '[6] - 鼻子'],
+      [10, '- 算了', '[10] - 算了'],
+    ],
+    '第一层（装/取/放弃）与第二层（部位/算了）都是按钮',
+  );
+  assert.equal(
+    fixture.text_lines().some((l) => /^\[\d+\]-? /.test(l)),
+    false,
+    '同屏没有残留的纯文本选项行',
+  );
+
+  // 第三层（取下环）：部位菜单同样按钮化
+  const off = seed_world();
+  off.fixture.store.set('cflag:31:7', 1 | 2 | 64);
+  off.fixture.set_inputs(1, 0); // [1] 取下环 → [0] 乳头
+  await run_com(off, 87);
+  assert.deepEqual(
+    off.fixture.lines_history
+      .filter((l) => l.type === 'button')
+      .map(({ accelerator, rendered }) => [accelerator, rendered]),
+    [
+      [1, '[1] - 取下环'],
+      [10, '[10] - 放弃'],
+      [0, '[0] - 乳头'],
+      [1, '[1] - 肚脐'],
+      [6, '[6] - 鼻子'],
+      [10, '[10] - 算了'],
+    ],
+    '取下环的第三层菜单（只列已穿部位）',
+  );
+});
+
 test('com87：装环成功（绳子紧缚免判定）写 CFLAG:7 位与消耗 ITEM:34，双份消耗（乳头 2 个）', async () => {
   const world = seed_world();
   const { fixture } = world;

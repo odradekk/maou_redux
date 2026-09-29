@@ -115,12 +115,15 @@ export default [
     must_mention: '第二句的 16 格前导',
   },
   {
-    desc: 'M12221 com110 穿上胸罩行的 3 格前导退回半角空格（com110 的打印行内容空格）',
+    // #710：com110 的穿衣行成了按钮（原 3 格前导 NBSP 的排版字面量随按钮化
+    // 删除——按钮正文的连续空白会被引擎折叠），等价检查换成「按钮退回纯文本」
+    desc: 'M14252 com110 穿上胸罩行退回纯文本（玩家点不了）',
     file: COM_CLOTH,
-    find: "    era.print('\\u00A0\\u00A0\\u00A0[3] - 穿上胸罩');",
-    replace: "    era.print('   [3] - 穿上胸罩'); // 变异：回退",
+    find: "      era.printButton('- 穿上胸罩', 3);",
+    replace:
+      "      era.print('\\u00A0\\u00A0\\u00A0[3] - 穿上胸罩'); // 变异：纯文本",
     tests: ['com-cloth'],
-    must_mention: '穿上胸罩',
+    must_mention: 'com110：空身（40=0）时无脱衣行',
   },
   // —— 验收第 1 轮返工：五个「主 agent 要核对的画面」各一条「补位退回半角空格」——
   {

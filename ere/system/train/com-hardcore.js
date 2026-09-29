@@ -1399,27 +1399,32 @@ async function piercing_choose_part() {
     const worn = era.get(`cflag:${target}:7`) || 0;
     const stock = era.get('item:34') || 0;
     if (stock && PIERCING_BITS.some((bit) => (worn & bit) === 0)) {
-      era.print(' [0] - 装上环');
+      era.printButton('- 装上环', 0);
     }
     if (PIERCING_BITS.some((bit) => (worn & bit) !== 0)) {
-      era.print(' [1] - 取下环');
+      era.printButton('- 取下环', 1);
     }
-    era.print(' [10]- 放弃');
+    era.printButton('- 放弃', 10);
     const choice = await era.input();
     if (choice === 0 && stock) {
       era.print('在哪里装上环？');
-      if ((worn & 1) === 0 && stock >= 2) era.print(' [0] - 乳头(2个消费)');
-      if ((worn & 2) === 0) era.print(' [1] - 肚脐');
-      if ((worn & 4) === 0 && !tal(target, 122) && stock >= 2)
-        era.print(' [2] - 左右阴唇(2个消费)');
-      if ((worn & 8) === 0)
-        era.print(
-          tal(target, 121) || tal(target, 122) ? ' [3] - 阴茎' : ' [3] - 阴蒂',
+      if ((worn & 1) === 0 && stock >= 2) {
+        era.printButton('- 乳头(2个消费)', 0);
+      }
+      if ((worn & 2) === 0) era.printButton('- 肚脐', 1);
+      if ((worn & 4) === 0 && !tal(target, 122) && stock >= 2) {
+        era.printButton('- 左右阴唇(2个消费)', 2);
+      }
+      if ((worn & 8) === 0) {
+        era.printButton(
+          tal(target, 121) || tal(target, 122) ? '- 阴茎' : '- 阴蒂',
+          3,
         );
-      if ((worn & 16) === 0) era.print(' [4] - 舌头');
-      if ((worn & 32) === 0) era.print(' [5] - 嘴唇');
-      if ((worn & 64) === 0) era.print(' [6] - 鼻子');
-      era.print(' [10]- 算了');
+      }
+      if ((worn & 16) === 0) era.printButton('- 舌头', 4);
+      if ((worn & 32) === 0) era.printButton('- 嘴唇', 5);
+      if ((worn & 64) === 0) era.printButton('- 鼻子', 6);
+      era.printButton('- 算了', 10);
       const sub = await era.input();
       if (sub === 10) return 0;
       if ((sub === 0 || sub === 2) && stock < 2) continue;
@@ -1429,17 +1434,19 @@ async function piercing_choose_part() {
     }
     if (choice === 1 && worn !== 0) {
       era.print('要拿下哪里的环？');
-      if (worn & 1) era.print(' [0] - 乳头');
-      if (worn & 2) era.print(' [1] - 肚脐');
-      if (worn & 4 && !tal(target, 122)) era.print(' [2] - 左右阴唇');
-      if (worn & 8)
-        era.print(
-          tal(target, 121) || tal(target, 122) ? ' [3] - 阴茎' : ' [3] - 阴蒂',
+      if (worn & 1) era.printButton('- 乳头', 0);
+      if (worn & 2) era.printButton('- 肚脐', 1);
+      if (worn & 4 && !tal(target, 122)) era.printButton('- 左右阴唇', 2);
+      if (worn & 8) {
+        era.printButton(
+          tal(target, 121) || tal(target, 122) ? '- 阴茎' : '- 阴蒂',
+          3,
         );
-      if (worn & 16) era.print(' [4] - 舌头');
-      if (worn & 32) era.print(' [5] - 嘴唇');
-      if (worn & 64) era.print(' [6] - 鼻子');
-      era.print(' [10]- 算了');
+      }
+      if (worn & 16) era.printButton('- 舌头', 4);
+      if (worn & 32) era.printButton('- 嘴唇', 5);
+      if (worn & 64) era.printButton('- 鼻子', 6);
+      era.printButton('- 算了', 10);
       const sub = await era.input();
       if (sub === 10) return 0;
       if (sub < 0 || sub > 6) continue;
