@@ -65,7 +65,5 @@ export const DOMAIN_LEDGER = {
   'ere/page/page-shop.js': {
     'flag:36': 4,
   },
-  'ere/page/page-train.js': {
-    'tflag:999': 1,
-  },
+  'ere/page/page-train.js': {},
 };

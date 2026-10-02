@@ -205,7 +205,7 @@ test('PRINT_PALAM：条后数值列必须真实渲染（barWidth<24——引擎�
   );
 });
 
-test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点，保留实现的骨架', async () => {
+test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根，保留实现的骨架', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
   era_flag.day_count = 0; // 开局：第 1 日
@@ -268,13 +268,12 @@ test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点�
       (w) => w.name === 'maxbase:0:2' && w.value === 10000,
     ),
   );
-  // SET_CLEAR_POINT：tflag:999 = 当前行数
-  const line_count = fixture.era.getLineCount();
-  assert(
-    fixture.var_writes.some(
-      (w) => w.name === 'tflag:999' && w.value === line_count,
-    ),
-    '清除点必须等于渲染后的行数',
+  // 换屏（#722）后画面只留本屏：渲染完的行数即状态画面自身的行数，
+  // 不再有记录清除点（ScreenBlock 基准）的写入
+  assert.equal(
+    fixture.var_writes.filter((w) => w.name === 'tflag:999').length,
+    0,
+    '换屏方案下 SHOW_STATUS 不再写清除点',
   );
 });
 
@@ -299,149 +298,127 @@ test('SHOW_STATUS：助手调教时目标行换助手名（粉色）', async () 
   );
 });
 
-// —— #74：整页 ScreenBlock 的重绘策略（EVENTCOM 探针条件）与生命周期 ——
+// —— #722：SHOW_STATUS 每轮换屏（ADR-0009） ——
 
-test('SHOW_STATUS 组件化：无指令轮就地重绘（菜单与回显被基准点跨度消费）', async () => {
+test('SHOW_STATUS 换屏：无效输入轮整屏清空后重画（菜单与回显已被输入消费）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  await run_show_status(fixture); // 首绘：追加（不清屏）
+  await run_show_status(fixture);
   const block_rows = fixture.era.getLineCount();
 
   // 模拟一轮无效输入：调教菜单（usercom）的菜单行 + input 回显（各占 Row）——
-  // 两者都已被那一次输入消费，且未进指令路径（无 EVENTCOM）
+  // 两者都已被那一次输入消费，换屏清掉它们不构成未读输出
   fixture.era.print('指令菜单占位');
   fixture.set_inputs(777);
   await fixture.era.input();
-  const rows_before_redraw = fixture.era.getLineCount();
-  assert(rows_before_redraw > block_rows);
+  assert(fixture.era.getLineCount() > block_rows);
 
-  await run_show_status(fixture); // EVENTCOM 未发 → 就地重绘
+  await run_show_status(fixture); // 无指令路径（EVENTCOM 未发）→ 换屏后重画
 
-  // 行数回到块自身（基准点跨度清掉 旧状态画面+菜单+回显 后重画）
+  // 整屏清空后行数回到块自身：画面只有这一屏的状态画面
   assert.equal(fixture.era.getLineCount(), block_rows);
   assert(!fixture.text_lines().includes('指令菜单占位'), '旧菜单行应被清掉');
-  // 「发生过什么」记录在行史（#73 的取证层）
+  // 「发生过什么」记录在行史（取证层）
   assert(fixture.lines_history.some((l) => l.text === '指令菜单占位'));
+  // 菜单与回显已被那一次输入按键消费：换屏没有抹掉未读输出
+  assert.deepEqual(fixture.unread_output_clears, []);
 });
-
-test('SHOW_STATUS 组件化：指令轮追加绘制（叙述行不被重绘吃掉）', async () => {
+test('SHOW_STATUS 换屏：指令轮的叙述须先经按键确认再被清（ADR-0009）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { emit } = fixture.load_module('system/event/registry');
   await run_show_status(fixture);
 
-  // 模拟一轮指令执行：叙述与算式行（SOURCE_CHECK 一族的输出）落在基准点
-  // 跨度内；EVENTCOM 是指令路径的必经事件（train-loop 步骤 11）
+  // 模拟一轮指令执行：叙述与算式行（SOURCE_CHECK 一族的输出）在菜单输入
+  // 之后打印、未按键确认——换屏（EVENTCOM 后的下一轮 SHOW_STATUS）清掉
+  // 它们就是「抹掉玩家还没读的输出」
   fixture.era.print('「哈呜、温妮、可是，一心地，想要杀了……」');
   fixture.era.print('阴核  5240+   300       =  5540');
   await emit('EVENTCOM');
 
-  await run_show_status(fixture); // 指令轮 → 追加滚动
+  await run_show_status(fixture); // 指令轮 → 换屏
 
-  // 叙述与算式行仍在屏幕上——「分发期输出必须被玩家看到再被重绘清掉」
-  //（#73 通则）；状态画面侧无等键，只能不吃它们
+  // 未经确认的输出被整屏清空：夹具的未读输出检查必须报出（哪段输出缺
+  // 等键，就在那段输出末尾补——不在换屏入口里补）
   assert(
-    fixture.text_lines().some((t) => t.includes('「哈呜、温妮')),
-    '指令叙述不得被重绘清掉',
+    fixture.unread_output_clears.some((e) => e.text.includes('「哈呜、温妮')),
+    '未按键确认的叙述被换屏清掉时必须报出',
   );
   assert(
-    fixture.text_lines().some((t) => t.includes('阴核  5240+')),
-    '算式行不得被重绘清掉',
+    fixture.unread_output_clears.some((e) => e.text.includes('阴核  5240+')),
+    '未按键确认的算式行被换屏清掉时必须报出',
   );
-  // 两次状态画面都在屏（滚动样式）：日期行恰两次
-  assert.equal(fixture.text_lines().filter((t) => t === '1日(午前)').length, 2);
+  // 叙述已被清掉但行史保留（取证层）
+  assert(fixture.lines_history.some((l) => l.text.includes('「哈呜、温妮')));
+
+  // 对照：同款叙述先等键再换屏——合法清屏，不新增未读记录
+  const reported = fixture.unread_output_clears.length;
+  fixture.era.print('「读完按了键的叙述」');
+  await fixture.era.waitAnyKey();
+  await run_show_status(fixture);
+  assert.equal(
+    fixture.unread_output_clears.length,
+    reported,
+    '按键确认过的输出被换屏清掉不报未读',
+  );
+  assert(!fixture.text_lines().includes('「读完按了键的叙述」'));
 });
 
-test('SHOW_STATUS 组件化：重复执行同一指令也追加（EVENTCOM 探针，评审抓出的洞）', async () => {
+test('SHOW_STATUS 换屏：重复执行同一指令同样换屏（每轮都只留当前一屏）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { emit } = fixture.load_module('system/event/registry');
   await run_show_status(fixture);
 
-  // 两轮同指令（爱抚→爱抚）：PREVCOM 的值差条件在这里失灵（步骤 13 同值
-  // 直写 0→0，首版实现据此误判成无指令轮、吃掉第二轮叙述——评审探针
-  // 实证）；EVENTCOM 探针与指令编号无关，两轮都翻标志
+  // 两轮同指令（爱抚→爱抚）：每轮 SHOW_STATUS 都换屏，不存在「同指令轮
+  // 追加」的分支
   fixture.era.print('「第一轮的叙述行」');
   await emit('EVENTCOM');
-  await run_show_status(fixture); // 第一轮：追加
+  await run_show_status(fixture); // 第一轮：换屏（清掉第一轮叙述）
   fixture.era.print('「第二轮的叙述行」');
   await emit('EVENTCOM');
-  await run_show_status(fixture); // 第二轮（同指令）：也必须追加
+  await run_show_status(fixture); // 第二轮（同指令）：同样换屏
 
+  // 画面只留当前一屏：两轮叙述都不在屏（各被自己那轮之后的换屏清掉）
   assert(
-    fixture.text_lines().includes('「第一轮的叙述行」'),
-    '第一轮叙述应在屏',
+    !fixture.text_lines().includes('「第一轮的叙述行」'),
+    '上一轮叙述应已被换屏清掉',
   );
   assert(
-    fixture.text_lines().includes('「第二轮的叙述行」'),
-    '重复同指令的叙述不得被重绘清掉（PREVCOM 值差条件的洞）',
+    !fixture.text_lines().includes('「第二轮的叙述行」'),
+    '重复同指令的叙述同样被换屏清掉',
   );
+  // 两轮叙述都在行史（发生过什么的取证层）
+  assert(fixture.lines_history.some((l) => l.text === '「第一轮的叙述行」'));
+  assert(fixture.lines_history.some((l) => l.text === '「第二轮的叙述行」'));
 });
-
-test('SHOW_STATUS 组件化：跨会话重建（旧基准点不得清掉新局内容）', async () => {
+test('SHOW_STATUS 换屏：再次进调教时上一屏内容不残留（无会话态可失效）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { emit } = fixture.load_module('system/event/registry');
 
-  // 会话 1（零指令局）：EVENTTRAIN 建块 → 绘制一次
+  // 会话 1（零指令局）：EVENTTRAIN → SHOW_STATUS
   await emit('EVENTTRAIN');
   await emit('SHOW_STATUS');
 
-  // 出调教、进商店：整屏清空后是商店内容（主菜单重绘的消费样式）
+  // 出调教、进商店：屏幕上是商店内容（主菜单重绘的消费样式）
   await fixture.era.clear();
   for (let i = 0; i < 10; i += 1) {
     fixture.era.print(`商店主菜单占位行${i}`);
   }
 
-  // 会话 2：EVENTTRAIN 重建（不重建则旧基准点＝0，重入时跨度覆盖全部商店行）
+  // 会话 2：再次进调教。SHOW_STATUS 每轮无条件整屏清空——不存在跨会话
+  // 复用的基准点，上一屏的商店内容天然不残留
   await emit('EVENTTRAIN');
   await emit('SHOW_STATUS');
 
   assert(
-    fixture.text_lines().includes('商店主菜单占位行0'),
-    '新局上方的商店内容必须幸存（跨会话旧基准点是 #73 固定的坑）',
+    !fixture.text_lines().some((t) => t.includes('商店主菜单占位行')),
+    '再次进调教时上一屏内容必须被换屏清掉',
   );
   assert(
-    fixture.text_lines().includes('商店主菜单占位行9'),
-    '最底部的商店行也必须幸存',
-  );
-});
-
-test('旁路清行：重绘后行数未回基准点须记录并重定基准恢复（#73 转来的待办）', async () => {
-  const fixture = create_era_fixture();
-  seed_world(fixture);
-  await run_show_status(fixture);
-
-  // 一轮无效输入（菜单+回显）后重绘；把 clear 的返回值模拟成引擎
-  // setTotalLines 回传多一行——「旁路动过行数」的样子（自校验的目标）
-  fixture.era.print('指令菜单占位');
-  fixture.set_inputs(777);
-  await fixture.era.input();
-  const original_clear = fixture.era.clear;
-  fixture.era.clear = async (n) => {
-    await original_clear(n);
-    return fixture.era.getLineCount() + 1; // 模拟偏差：比真实多一行
-  };
-  try {
-    await run_show_status(fixture);
-  } finally {
-    fixture.era.clear = original_clear;
-  }
-
-  // 自校验必须记录（去掉自校验本用例全绿——#73 验收报出的空覆盖）
-  assert(
-    fixture.logs.some((l) => l.level === 'warn' && l.msg.includes('旁路清行')),
-    '重绘后行数未回基准点必须 warn 记录',
-  );
-  // 恢复力：组件据真实行数重定基准，下一次（无偏差）重绘干净通过、不再记录
-  fixture.era.print('指令菜单占位');
-  fixture.set_inputs(777);
-  await fixture.era.input();
-  await run_show_status(fixture);
-  assert.equal(
-    fixture.logs.filter((l) => l.msg.includes('旁路清行')).length,
-    1,
-    '重定基准后不应再触发自校验',
+    fixture.text_lines().some((t) => t.includes('调教中')),
+    '本局的状态画面目标行应在屏',
   );
 });
 

@@ -217,9 +217,7 @@ const LEDGER_BASELINE = {
   'ere/page/page-shop.js': {
     'flag:36': 4,
   },
-  'ere/page/page-train.js': {
-    'tflag:999': 1,
-  },
+  'ere/page/page-train.js': {},
 };
 
 // —— 所有权产物：区间键展开为逐下标属主（同 tools/gen-facade.js 的解析） ——
