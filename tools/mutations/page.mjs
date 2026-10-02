@@ -4888,6 +4888,6 @@ export default [
     replace:
       '  await draw_status_screen(era_flag.target); // 变异：不换屏直接追加',
     tests: ['train-clear-screen-e2e'],
-    must_mention: '菜单屏行数应收敛在 ±3 行内',
+    must_mention: '菜单屏各轮行数之差应在 ±3 行内',
   },
 ];

@@ -102,7 +102,7 @@ test('端到端：调教每轮换屏——菜单屏行数有界、画面只留�
   // 行数有界：任意两轮的行数差在固定小界内（不随轮数增长）
   assert.ok(
     Math.max(...menu_rows) - Math.min(...menu_rows) <= ROW_SPREAD_LIMIT,
-    `菜单屏行数应收敛在 ±${ROW_SPREAD_LIMIT} 行内，实测 ${menu_rows.join(', ')}`,
+    `菜单屏各轮行数之差应在 ±${ROW_SPREAD_LIMIT} 行内，实测 ${menu_rows.join(', ')}`,
   );
   // 第 1 轮与第 N 轮：同为爱抚轮，行数相同或差固定的一行（第 2 轮起
   // 恒有「＜上次的调教指令：…＞」行，首轮 prevcom = -1 没有）——这就是
