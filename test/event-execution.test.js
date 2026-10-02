@@ -1344,6 +1344,25 @@ test('NAEDOKO：女性苗床结算经验、丧失处女并执行妊娠判定', a
   assert.equal(fixture.store.get('cflag:31:107'), 0, '妊娠判定会消费射精计数');
 });
 
+test('NAEDOKO：女性苗床结算的尾部分隔行在换屏清空前经按键确认（#723）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:209', 1);
+  fixture.store.set('cflag:0:9', 4);
+  const { run_seedbed } = fixture.load_module('system/train/seedbed');
+
+  await run_seedbed(31, seq([7]));
+
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '结算尾部的 drawLine 是本段最后一批输出，换屏前必须已确认',
+  );
+});
+
 test('NAEDOKO：男性分支使用确定性随机源选择种马或肛门业务', async () => {
   const man = seed_world();
   man.store.set('cflag:31:1', 7);

@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 309; // #710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 312; // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -2784,5 +2784,51 @@ export default [
     tests: ['page-dungeon-info'],
     // 只按钮化怪物行 → 白名单＝怪物编号，输入 999（与 105 之后的回程）被拒收
     must_mention: '输入不合法！请输入以下值之一：',
+  },
+  // —— #723：回主菜单换屏前的按键确认（ADR-0009 的段尾等键） ——
+  {
+    desc: 'M14410 回合结算衰减段尾的换屏确认等键删除（链尾播报未读就被清）',
+    file: 'ere/system/turnend-settle.js',
+    find: `  // 收尾带等键。waitAnyKey 只在有未读输出时才等，不会多出按键。
+  await era.waitAnyKey();
+
+  // 魔王的回复：午前结算（TIME==0，日推进的回合）+1400，午后结算`,
+    replace: `  // 收尾带等键。waitAnyKey 只在有未读输出时才等，不会多出按键。
+
+  // 魔王的回复：午前结算（TIME==0，日推进的回合）+1400，午后结算`,
+    tests: ['event-turnend', 'event-daycycle-e2e'],
+    // 最小世界（只有魔王）里晨间事件全部早退，段尾等键是链上最后一处等待；
+    must_mention: '衰减段分隔行要先经按键确认',
+  },
+  {
+    desc: 'M14411 尿床播报段尾的换屏确认等键删除（裸 print 未读就被清）',
+    file: 'ere/event/event-nextday.js',
+    find: `  // 没人尿床的回合不等多余的键
+  await era.waitAnyKey();
+  return 1;`,
+    replace: `  // 没人尿床的回合不等多余的键
+  return 1;`,
+    tests: ['event-nextday'],
+    must_mention: '换屏不得抹掉未读的晨间播报',
+  },
+  {
+    desc: 'M14412 巨人婚后结算段尾的换屏确认等键删除（结算数字未读就被清）',
+    file: 'ere/dungeon/marriage-day.js',
+    find: `  // 菜单换屏前要经按键确认（waitAnyKey 只在有未读输出时才等）
+  await era.waitAnyKey();
+
+  return y;
+}
+
+// man_marriage_day,cid`,
+    replace: `  // 菜单换屏前要经按键确认（waitAnyKey 只在有未读输出时才等）
+
+  return y;
+}
+
+// man_marriage_day,cid`,
+    tests: ['marriage-day'],
+    must_mention:
+      '巨人婚后结算的收尾裸 print 是本段最后一批输出，换屏前必须已确认',
   },
 ];

@@ -94,15 +94,21 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   }
 
   // 到站证据二：随机路径已走 rand_chara_make 真身（#565）——初始奴隶
-  // 已生成并入列（rand ≡ 0 掷勇者位 1）、收下播报可见
+  // 已生成并入列（rand ≡ 0 掷勇者位 1）、收下播报读键过（#723 起主菜单
+  // 换屏清掉它，取证看全量行史；换屏前它已由收下播报读键确认）
   assert(
-    texts.some((line) => line.includes('冒险者佳奈美被囚禁在了地牢里！')),
-    '随机初始奴隶的收下播报必须在场（rand_chara_make 真身）',
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' &&
+        line.text.includes('冒险者佳奈美被囚禁在了地牢里！'),
+    ),
+    '随机初始奴隶的收下播报必须播过（rand_chara_make 真身）',
   );
   assert.deepEqual(fixture.chara_no, [0, 1], '魔王与生成的初始奴隶都在列');
-  // 到站证据三：标题只画过转场前的那一次（FIRST 之后没有回标题重绘）
+  // 到站证据三：标题只画过转场前的那一次（FIRST 之后没有回标题重绘；
+  // #723 起主菜单换屏清掉了标题行，取证看全量行史）
   assert.equal(
-    texts.filter((line) => line === 'Ver0.0.0').length,
+    fixture.lines_history.filter((line) => line.text === 'Ver0.0.0').length,
     1,
     '标题不得在初始化后重绘（重绘 = 转场没到 SHOP）',
   );

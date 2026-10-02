@@ -1142,6 +1142,10 @@ async function onesho(rand = default_rand) {
       }
     }
   }
+  // 换屏规则（ADR-0009）：晨间播报的裸 print（导管三档与无导管支的收尾）
+  // 回主菜单换屏前要经按键确认；waitAnyKey 只在有未读输出时才等，
+  // 没人尿床的回合不等多余的键
+  await era.waitAnyKey();
   return 1;
 }
 

@@ -454,31 +454,46 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     { api: 'waitAnyKey' },
     { api: 'input', value: 999 },
     { api: 'waitAnyKey' },
+    // 回合结算链尾的换屏确认等键（#723：衰减段分隔行在回主菜单换屏前
+    // 经按键确认）
+    { api: 'waitAnyKey' },
   ]);
 
-  const texts = fixture.text_lines();
-  const history = fixture.lines_history.map((l) => l.text);
-  // 进过调教：目标选择画面（已过去的屏——#722 起调教每轮换屏，选人屏
-  // 被调教首屏的换屏清掉，行史取证）+ 调教状态画面 + 调教结束按钮
-  assert(history.includes('请魔王大人选择将要调教的奴隶人选'));
-  assert(texts.some((line) => line.includes('温妮 调教中')));
+  // 进过调教：目标选择画面（#722 起调教每轮换屏、#723 起回主菜单换屏，
+  // 过去的屏都被清掉，行史取证）+ 调教状态画面 + 调教结束按钮；换屏前的
+  // 读键都在上方 inputs_consumed 里，清掉的不算未读
+  const history = fixture.lines_history;
+  const history_texts = history
+    .filter((l) => l.type === 'text')
+    .map((l) => l.text);
+  assert(history_texts.includes('请魔王大人选择将要调教的奴隶人选'));
+  assert(history_texts.some((line) => line.includes('温妮 调教中')));
   assert(
-    fixture.lines.some(
-      (line) => line.type === 'button' && line.accelerator === 999,
-    ),
+    history.some((line) => line.type === 'button' && line.accelerator === 999),
   );
   // 出过调教：EVENTEND 消息 + 珠结算表（#47）+ 回合结算三档链（#114）+
-  // 回到主菜单（状态行恰两次：100 之前一次、回程重绘一次）
-  assert(texts.includes('调教结束了。'));
-  assert(texts.includes('以上的点数变化了。'));
+  // 回到主菜单（历史里状态行恰两次：100 之前一次、回程重绘一次；屏幕上
+  // 只剩回程这一份）
+  assert(history_texts.includes('调教结束了。'));
+  assert(history_texts.includes('以上的点数变化了。'));
   assert(
-    fixture.lines.some(
+    history.some(
       (line) =>
         line.type === 'button' &&
         line.accelerator === 999 &&
         line.rendered === '[999] - 能力值提高结束',
     ),
     'JUEL_CHECK 的退出键必须是按钮（PR #53）',
+  );
+  const texts = fixture.text_lines();
+  assert(
+    texts.filter((line) => line.includes('所持金')).length === 1,
+    '换屏后屏幕上只有回程重绘的主菜单（去程那份已被换屏清掉）',
+  );
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '调教结束 → 回合结算 → 回主菜单的换屏前，输出都经按键确认',
   );
   // 回合结算三档链已实现（#114）：#PRI 档自 #401 起无占位（十个体外
   // 调用全落真身；本世界 FLAG:34 = 0、金钱不变量成立 → AUTO_BUYING 与
@@ -489,12 +504,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     'PARTY_UNITE 真身应把行动完了复位（预置的 1 被清掉）',
   );
   assert.equal(
-    texts.filter((line) => line.includes('所持金')).length,
-    1,
-    '主菜单状态行在屏上只应有一次（回程重绘；去程那屏已被调教换屏清掉）',
-  );
-  assert.equal(
-    history.filter((t) => (t ?? '').includes('所持金')).length,
+    history.filter((line) => (line.text ?? '').includes('所持金')).length,
     2,
     '主菜单状态行发生过两次（去程与回程，行史取证）',
   );

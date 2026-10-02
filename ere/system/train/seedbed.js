@@ -114,7 +114,11 @@ async function naedoko(cid, rand_n = default_rand) {
   chara(cid).dungeon.绝顶经验 += level;
   await era.printAndWait(`经验值+${level}`);
   chara(cid).dungeon.战斗经验 += level;
+  // 分隔线之后的射精/妊娠处理不再输出，这行就是本段最后一批输出——
+  // 换屏规则（ADR-0009）下回主菜单前要经按键确认（waitAnyKey 只在
+  // 有未读输出时才等）
   era.drawLine();
+  await era.waitAnyKey();
 
   era_flag.target = cid;
   chara(cid).dungeon.怪物膣内射精 += rand_n(40);
