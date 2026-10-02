@@ -534,6 +534,10 @@ function create_era_fixture() {
       total_rows = 0;
     } else if (n > 0) {
       total_rows -= n;
+      // 局部清除从尾部删行，剩余行数可能落到确认边界之下：行号基准变了，
+      // 边界不压回的话，之后新打印的行号会小于边界，整屏清空时漏报
+      //（输入后 clear(1) 清回显、再打印结果的路径，#721 返工）
+      confirmed_row_count = Math.min(confirmed_row_count, total_rows);
     }
     const cut = lines.findIndex(
       (l) => l.row !== undefined && l.row >= total_rows,

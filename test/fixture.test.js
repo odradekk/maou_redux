@@ -899,6 +899,19 @@ test('未读输出：clear(n) 局部清除不触发检查（一屏之内，ADR-0
   assert.deepEqual(fixture.unread_output_clears, []);
 });
 
+test('未读输出：局部清除回显后打印的结果 → 整屏清空时仍报出（边界随剩余行数回退）', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.printButton('执行', 1);
+  fixture.set_inputs(1);
+  await fixture.era.input(); // 边界推到回显行（行号 1）之后
+  await fixture.era.clear(1); // 屏内清掉回显：剩余行数回退，边界须跟着压回
+  fixture.era.print('结果');
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, [
+    { row: 1, type: 'text', text: '结果' },
+  ]);
+});
+
 test('未读输出：整屏清空后行号归零，后续新输出仍受检查', async () => {
   const fixture = create_era_fixture();
   fixture.era.print('第一屏');
