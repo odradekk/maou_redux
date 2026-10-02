@@ -16,7 +16,7 @@
  *   - com63_auto：顺从/阴蒂感觉/技巧/侍奉精神分档；
  *   - after_autotrain：KARMA 占位（ex:1/ex:2）、常时发情蓄积（flag:75
  *     与 TALENT:271 两道闸）、gotjuel:100 清零、cflag:667 累加与封顶、
- *     AUTO_ABLUP 占位（flag:5 bit 35）；
+ *     AUTO_ABLUP 接入（flag:5 第 35 位触发自动提升，第 3 位不得触发）；
  *   - autotrain：全角色遍历（跳过 cflag:666==0）、输出格式、指针还原。
  */
 
@@ -394,7 +394,7 @@ test('AUTOTRAIN: after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两
   }
 });
 
-test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶、AUTO_ABLUP 占位', async () => {
+test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶、AUTO_ABLUP 接入', async () => {
   // gotjuel:100 清零 + cflag:667 累加
   {
     const { fixture } = seed_autotrain_world();
@@ -418,7 +418,7 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
     const { fixture } = seed_autotrain_world();
     const { after_autotrain } = fixture.load_module('event/event-autotrain');
     fixture.store.set('cflag:17:666', 1);
-    fixture.store.set('flag:5', 1 << 35);
+    fixture.store.set('flag:5', 2 ** 35); // 只有第 35 位为 1（1 << 35 会回绕成第 3 位）
     fixture.store.set('juel:17:0', 1); // 阴蒂感觉 Lv0 的 1 点
     await after_autotrain(17);
     assert.equal(fixture.store.get('abl:17:0'), 1, 'target 17 自动升一级');
@@ -431,6 +431,36 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
       '不再是存根占位',
     );
   }
+});
+
+test('AUTOTRAIN: after_autotrain FLAG:5 第 35 位为 1 时执行自动提升', async () => {
+  // 第 35 位 = 设定 [20]「自动提升角色能力」
+  const { fixture } = seed_autotrain_world();
+  const { after_autotrain } = fixture.load_module('event/event-autotrain');
+  fixture.store.set('cflag:17:666', 1);
+  fixture.store.set('flag:5', 2 ** 35);
+  fixture.store.set('juel:17:0', 1); // 阴蒂感觉 Lv0 的 1 点
+  await after_autotrain(17);
+  assert.equal(
+    fixture.store.get('abl:17:0'),
+    1,
+    'FLAG:5 第 35 位为 1 时自动调教后必须执行自动提升',
+  );
+});
+
+test('AUTOTRAIN: after_autotrain FLAG:5 第 3 位为 1 时不执行自动提升', async () => {
+  // 第 3 位 = 设定 [3]「勇者自动处刑机能」，与自动提升无关
+  const { fixture } = seed_autotrain_world();
+  const { after_autotrain } = fixture.load_module('event/event-autotrain');
+  fixture.store.set('cflag:17:666', 1);
+  fixture.store.set('flag:5', 2 ** 3);
+  fixture.store.set('juel:17:0', 1);
+  await after_autotrain(17);
+  assert.equal(
+    fixture.store.get('abl:17:0'),
+    undefined,
+    'FLAG:5 第 3 位为 1 时自动调教后不得执行自动提升',
+  );
 });
 
 test('AUTOTRAIN: autotrain 遍历只处理 cflag:666!=0 并还原指针', async () => {

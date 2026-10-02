@@ -137,7 +137,9 @@ async function after_autotrain(target) {
 
   juel_check_main(target);
 
-  if ((era.get('flag:5') || 0) & (1 << 35)) {
+  // FLAG:5 第 35 位超出 JS 位运算的 32 位范围（1 << 35 回绕成 8、实读第 3
+  // 位），按 64 位除法取位；第 35 位 = 设定 [20]「自动提升角色能力」
+  if (Math.floor((era.get('flag:5') || 0) / 2 ** 35) % 2 === 1) {
     await auto_ablup(); // SIF GETBIT(FLAG:5,35) → CALL AUTO_ABLUP
   }
 
