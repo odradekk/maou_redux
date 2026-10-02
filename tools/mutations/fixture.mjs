@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 49; // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 56; // #721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -581,6 +581,11 @@ export default [
     begin_wait('printAndWait');
     const returned = push_row([make_text_entry(content)]);
     input_rules.length = 0;
+    // 内部等待在引擎里必然真等（print 刚置位 allowWait）并消费一次按键：
+    // 确认边界推进到刚推入的行为止。观测面维持既定契约不进 waits /
+    // inputs_consumed（见上「有意不镜像的分歧」），这里只动未读输出检查的
+    // 边界，不动 allow_wait
+    confirmed_row_count = total_rows;
     await settle_wait();
     return returned;
   };`,
@@ -588,6 +593,7 @@ export default [
     // 变异：内部等待不占窗口
     const returned = push_row([make_text_entry(content)]);
     input_rules.length = 0;
+    confirmed_row_count = total_rows;
     return returned;
   };`,
     tests: ['fixture'],
@@ -601,6 +607,9 @@ export default [
     // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
     input_rules.length = 0;
     inputs_consumed.push({ api: 'waitAnyKey' });
+    // 真等＝玩家按下了一次键：等待瞬间的全部输出视为已读（未读输出检查的
+    // 边界，与 rows_at_wait 同一时刻取值）
+    confirmed_row_count = total_rows;
     await settle_wait();
   };`,
     replace: `    // 变异：真等不占窗口
@@ -608,6 +617,7 @@ export default [
     // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
     input_rules.length = 0;
     inputs_consumed.push({ api: 'waitAnyKey' });
+    confirmed_row_count = total_rows;
   };`,
     tests: ['fixture'],
     must_mention: '漏写 await',
@@ -642,5 +652,82 @@ export default [
     replace: `      // entry.color = obj.config?.color; // 变异：颜色不记录`,
     tests: ['page-main-menu'],
     must_mention: '#bbbbbb',
+  },
+  // —— #721：整屏清空的未读输出检查 ——
+  {
+    desc: 'M14345 夹具的未读输出检查永不报出（漏补等键的路径全部逃过端到端）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        if (entry.row !== undefined && entry.row >= confirmed_row_count) {`,
+    replace: `        if (false && entry.row !== undefined && entry.row >= confirmed_row_count) { // 变异：检查永不报出`,
+    tests: ['fixture'],
+    must_mention: '结算第一行',
+  },
+  {
+    desc: 'M14346 waitAnyKey 真等不推进确认边界（等过键的输出被整屏清空仍报未读）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    // 真等＝玩家按下了一次键：等待瞬间的全部输出视为已读（未读输出检查的
+    // 边界，与 rows_at_wait 同一时刻取值）
+    confirmed_row_count = total_rows;
+    await settle_wait();`,
+    replace: `    // 真等＝玩家按下了一次键：等待瞬间的全部输出视为已读（未读输出检查的
+    // 边界，与 rows_at_wait 同一时刻取值）
+    await settle_wait(); // 变异：不推进确认边界`,
+    tests: ['fixture'],
+    must_mention: '报出并记录行文本',
+  },
+  {
+    desc: 'M14347 printAndWait 的内部等待不推进确认边界（口上逐行被整屏清空全报未读）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    confirmed_row_count = total_rows;
+    await settle_wait();
+    return returned;`,
+    replace: `    await settle_wait(); // 变异：printAndWait 不推进确认边界
+    return returned;`,
+    tests: ['fixture'],
+    must_mention: 'printAndWait 自带等键',
+  },
+  {
+    desc: 'M14348 input 回传不推进确认边界（菜单行之前的历史被整屏清空也报未读）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      // 玩家按下了键：回显行（若计行）及其之前全部已确认。取值在回显计数
+      // 之后——回显本身不算未读，未读从下一次新输出开始
+      confirmed_row_count = total_rows;`,
+    replace: `      // 玩家按下了键：回显行（若计行）及其之前全部已确认。取值在回显计数
+      // 之后——回显本身不算未读，未读从下一次新输出开始
+      // 变异：input 不推进确认边界`,
+    tests: ['fixture'],
+    must_mention: '只有输入回显时整屏清空',
+  },
+  {
+    desc: 'M14349 整屏清空不归零确认边界（第一屏之后的新输出全部漏查）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      confirmed_row_count = 0;`,
+    replace: `      // 变异：整屏清空不归零确认边界`,
+    tests: ['fixture'],
+    must_mention: '后续新输出仍受检查',
+  },
+  {
+    desc: 'M14350 确认边界判定失效（已确认的行也报未读——每次换屏都误报）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        if (entry.row !== undefined && entry.row >= confirmed_row_count) {`,
+    replace: `        if (entry.row !== undefined && entry.row >= 0) { // 变异：已确认行也报出`,
+    tests: ['fixture'],
+    must_mention: '等键再整屏清空',
+  },
+  {
+    desc: 'M14351 未读行记录丢行文本（报出之后无从定位漏等键的路径）',
+    file: 'test/helpers/era-fixture.js',
+    find: `          unread_output_clears.push({
+            row: entry.row,
+            type: entry.type,
+            text: entry.text,
+          });`,
+    replace: `          unread_output_clears.push({
+            row: entry.row,
+            type: entry.type,
+            text: '',
+          }); // 变异：行文本不记录`,
+    tests: ['fixture'],
+    must_mention: '指令结算',
   },
 ];

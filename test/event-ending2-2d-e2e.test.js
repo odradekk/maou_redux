@@ -328,6 +328,12 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       rounds + 1,
       '每个半天轮恰好一次回合转场入口（侵略 [109] / 调教 [100]，触发轮在内）',
     );
+    // —— 未读输出检查（#721）：整屏清空前不允许有未经按键确认的输出 ——
+    assert.deepEqual(
+      fixture.unread_output_clears,
+      [],
+      '整屏清空抹掉了未读输出（换屏规则 ADR-0009：换屏前的输出先经按键确认）',
+    );
   } finally {
     // Math.random 是进程级替换，必须恢复（同文件后续用例不被污染）
     fixture.restore_math_random();

@@ -826,6 +826,91 @@ test('clear 在 isContinue 时强制等键（非 0 实参）；clear(0) 不等',
   assert.equal(forced.waited, true);
 });
 
+// —— 未读输出检查（#721）——
+// 换屏规则（ADR-0009）配套的夹具检查：整屏清空不许抹掉「上一次输入之后
+// 打印、且不是输入回显」的行——那是玩家还没按键确认过的输出。条目层不
+// 回显输入（回显只计行），所以「确认边界之后新推入的条目」就是全部未读
+// 行；端到端测试据此断言 unread_output_clears 为空，漏补等键的路径当场红。
+
+test('未读输出：打印后不等键就整屏清空 → 报出并记录行文本', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.print('结算第一行');
+  fixture.era.print('结算第二行');
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, [
+    { row: 0, type: 'text', text: '结算第一行' },
+    { row: 1, type: 'text', text: '结算第二行' },
+  ]);
+});
+
+test('未读输出：菜单选择后的输出不等键就换屏 → 报出（漏补等键的路径）', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.printButton('执行', 1);
+  fixture.set_inputs(1);
+  await fixture.era.input(); // 回显计行不推条目：输入本身不算未读
+  fixture.era.print('指令结算');
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, [
+    { row: 2, type: 'text', text: '指令结算' },
+  ]);
+});
+
+test('未读输出：打印后等键再整屏清空 → 不报出', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.print('结果');
+  await fixture.era.waitAnyKey(); // 有输出 → 真等：这一键确认了它
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, []);
+});
+
+test('未读输出：printAndWait 自带等键 → 不报出', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(1);
+  await fixture.era.input();
+  await fixture.era.printAndWait('口上一句'); // 引擎 = print + waitAnyKey
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, []);
+});
+
+test('未读输出：只有输入回显时整屏清空 → 不报出（含回显被短路）', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.printButton('执行', 1);
+  fixture.set_inputs(1);
+  await fixture.era.input(); // 菜单行在输入之前：已确认；回显不推条目
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, []);
+
+  // 回显计行被 system.hideUserInput 短路时，input 同样消费了一次按键——
+  // 确认边界照常推进，输入之前的行不得被当作未读
+  fixture.system_config.hideUserInput = true;
+  fixture.era.printButton('再执行', 1);
+  fixture.set_inputs(1);
+  await fixture.era.input();
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, []);
+});
+
+test('未读输出：clear(n) 局部清除不触发检查（一屏之内，ADR-0009）', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(1);
+  await fixture.era.input();
+  fixture.era.print('会被局部清掉的行');
+  await fixture.era.clear(1);
+  assert.deepEqual(fixture.unread_output_clears, []);
+});
+
+test('未读输出：整屏清空后行号归零，后续新输出仍受检查', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.print('第一屏');
+  await fixture.era.waitAnyKey();
+  await fixture.era.clear();
+  fixture.era.print('第二屏');
+  await fixture.era.clear();
+  assert.deepEqual(fixture.unread_output_clears, [
+    { row: 0, type: 'text', text: '第二屏' },
+  ]);
+});
+
 // —— 等待重叠检测（#557）——
 // 漏写 await 的调用在引擎里是两处同时等待同一个输入（画面先重绘、提示后
 // 到）；此前夹具的等待立即返回，后续代码照样顺序拿到预置输入，重叠不可观察。

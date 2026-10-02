@@ -157,6 +157,14 @@ async function run_corrupt_path() {
     '调教参数与能力满足门槛后 COM_ABLE:46 必须放行此前不可用的新指令',
   );
 
+  // —— 未读输出检查（#721）：整屏清空前不允许有未经按键确认的输出。
+  // 放在 helper 收尾：两个用例（长跑与出售全链）都走到这里 ——
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '整屏清空抹掉了未读输出（换屏规则 ADR-0009：换屏前的输出先经按键确认）',
+  );
+
   return { fixture, era_flag };
 }
 

@@ -208,6 +208,12 @@ test('端到端：新档从标题走到 ENDING_1（三信号 + 实测天数）',
       rounds,
       '每个半天轮恰好一次主菜单 [109]（循环没有走偏入口）',
     );
+    // —— 未读输出检查（#721）：整屏清空前不允许有未经按键确认的输出 ——
+    assert.deepEqual(
+      fixture.unread_output_clears,
+      [],
+      '整屏清空抹掉了未读输出（换屏规则 ADR-0009：换屏前的输出先经按键确认）',
+    );
   } finally {
     // Math.random 是进程级替换，必须恢复（同文件后续用例不被污染）
     fixture.restore_math_random();
