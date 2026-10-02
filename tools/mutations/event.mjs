@@ -2337,8 +2337,10 @@ export default [
   {
     desc: 'M8613 ONESHO：返回值 1 改成 0（恒 RETURN 1）',
     file: 'ere/event/event-nextday.js',
-    find: '  }\n  return 1;',
-    replace: '  }\n  return 0;',
+    // #723 起函数收尾先过换屏确认等键（M14411 守它），find 随之带上等键行
+    find: '  // 没人尿床的回合不等多余的键\n  await era.waitAnyKey();\n  return 1;',
+    replace:
+      '  // 没人尿床的回合不等多余的键\n  await era.waitAnyKey();\n  return 0;',
     tests: ['event-nextday'],
     must_mention: '恒返回 1',
   },

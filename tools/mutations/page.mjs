@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 519; // #722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 518; // #723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -258,25 +258,21 @@ export default [
     must_mention: '编号前缀',
   },
   {
-    desc: 'M143 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
+    desc: 'M143 主菜单去掉换屏调用（回纯追加——屏幕随轮数增长，过天链残留不再清）',
     file: 'ere/page/page-shop.js',
-    // #395 起 show_shop 变 async，redraw 调用点从 `return` 改成
-    // `const row_count = await`（BOUGHT 跳转条件要用到返回的行数），
-    // find 收窄到方法名本身
-    find: 'main_menu.redraw()',
-    replace: 'main_menu.draw()',
-    tests: ['page-main-menu'],
+    // #723 起主菜单每一屏开始时换屏（change_screen），组件只承载绘制；
+    // 本条守「换屏调用不得删」——删掉后端到端的行数采样逐轮增长
+    find: `  await change_screen();
+  const row_count = await main_menu.draw();`,
+    replace: '  const row_count = await main_menu.draw(); // 变异：换屏删除',
+    tests: ['page-main-menu', 'main-menu-clear-e2e'],
     must_mention: '不涨屏',
   },
-  {
-    desc: 'M144 菜单块提为模块级单例（跨会话复用旧基准——转场后清掉新局上方内容）',
-    file: 'ere/page/page-shop.js',
-    find: '  const main_menu = create_main_menu();',
-    replace: `  main_menu_singleton = main_menu_singleton ?? create_main_menu();
-  const main_menu = main_menu_singleton;`,
-    tests: ['page-main-menu'],
-    must_mention: '跨会话',
-  },
+  // M144（菜单块提为模块级单例）随 #723 删除：主菜单改「换屏 + draw」后
+  // 组件的基准点不再被读，单例与每次新建无行为差异，条目守不到任何东西
+  //（变异只能以 strict-mode 的 ReferenceError 崩溃形式变红）——#722 删
+  // M150/M151/M154 同款情形。
+
   {
     desc: 'M152 旁路清行自校验删除（重绘行数未回基准不记录）',
     file: 'ere/page/components/screen-block.js',

@@ -2659,6 +2659,9 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
     // EXP:cid[2] + = Math.trunc(y / 2)（变量语义：EXP 族，cid[2] +）
     era.add(`exp:${cid}:2`, Math.trunc(y / 2));
   }
+  // 换屏规则（ADR-0009）：结算数字的裸 print 是本段最后一批输出，回主
+  // 菜单换屏前要经按键确认（waitAnyKey 只在有未读输出时才等）
+  await era.waitAnyKey();
 
   return y;
 }

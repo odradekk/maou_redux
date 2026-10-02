@@ -261,6 +261,21 @@ test('giant_marriage_day / man_marriage_day / girl_marriage_day：三种人形�
   assert.equal(girl.fixture.store.get('exp:1:3'), 1);
 });
 
+test('giant_marriage_day：结算数字的裸 print 在换屏清空前经按键确认（#723）', async () => {
+  const { fixture, api } = setup();
+  await api.giant_marriage_day(0, 3, seq([]));
+
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '巨人婚后结算的收尾裸 print 是本段最后一批输出，换屏前必须已确认',
+  );
+});
+
 test('beast_marriage_day / brain_marriage_day / horse_marriage_day：兽类、脑寄生与马匹分支写各自状态', async () => {
   const beast = setup();
   await beast.api.beast_marriage_day(0, 3);

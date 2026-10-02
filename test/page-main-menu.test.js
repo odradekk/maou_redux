@@ -13,8 +13,8 @@
  *      同人、占用三态重置；
  *   4. 四个子面板与指令面板全部真身；
  *   5. show_shop 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
- *   6. #73 画面组件迁入：商店轮的就地重绘（不涨屏、上方内容完好、分发期
- *      临时输出被消费、跨会话基准重新起算）。
+ *   6. #73 画面组件迁入 → #723 起主菜单每轮「换屏 + 绘制」（ADR-0009）：
+ *      不涨屏、每屏只有主菜单、分发期临时输出被换屏清掉、跨会话重进不残留。
  *
  * 已知未测行（变异测试实证，勿误当行为保护）：page-shop.js 注册的
  * EVENTSHOP 链处理器里的指针钳制——删掉它 115 条全绿（误报通过）。原因：
@@ -773,9 +773,9 @@ test('show_shop 日期钳制：正常日期不动', async () => {
   assert.equal(era_flag.date, 20);
 });
 
-// —— #73：主菜单画面组件的就地重绘（商店轮集成）——
+// —— 主菜单每轮绘制（商店轮集成：#73 画面组件 → #723 换屏 + 绘制）——
 // 组件层单元（行数测量、Row 的计法、回显跨度）在 test/screen-block.test.js；
-// 这里钉调用点：重绘只发生在玩家交互之后、基准不越过上方内容。
+// 这里钉调用点：换屏只发生在玩家交互之后，屏幕上只有当前一屏。
 
 // 预置两行上方内容后跑 n 轮商店轮；输入队列耗尽时按预期炸出，返回终态夹具
 async function run_shop_rounds(inputs) {
@@ -788,25 +788,25 @@ async function run_shop_rounds(inputs) {
   return fixture;
 }
 
-test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重绘只在交互之后）', async () => {
+test('主菜单换屏重绘：轮数增加不涨屏、每屏只有主菜单（换屏在交互之后）', async () => {
   const one_round = await run_shop_rounds([500]);
   const two_rounds = await run_shop_rounds([500, 500]);
 
   for (const fixture of [one_round, two_rounds]) {
-    // 上方内容原样：基准之上不被重绘触碰（Row 的计法错误的破坏方式正是
-    // 上方内容被连带抹掉——组件层已有直接断言，这里在真实调用点上再钉）
-    assert.deepEqual(
-      fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
-      ['上方一', '上方二'],
+    // 换屏（#723/ADR-0009）后画面上只有主菜单：上一屏的上方内容被整屏
+    // 清空——包括进入 SHOP 前残留的旧行，屏幕不再随历史增长
+    assert(
+      !fixture.text_lines().some((l) => l.includes('上方一')),
+      '旧一屏的上方内容必须被换屏清掉',
     );
-    // 菜单只此一份：就地重绘不追加第二份
+    // 菜单只此一份：每轮换屏重画，不追加第二份
     assert.equal(
       fixture.lines.filter((l) => l.text?.includes('Commands')).length,
       1,
     );
   }
-  // 一轮与两轮的终态行数一致：每轮的 input 回显行被基准跨度消费，
-  // 屏幕不随交互次数增长（重绘前必有交互——无输入不会推进到重绘）
+  // 一轮与两轮的终态行数一致：每轮换屏清空后重画，屏幕不随交互次数增长
+  //（换屏前必有交互——无输入不会推进到重绘）
   assert.equal(one_round.era.getLineCount(), two_rounds.era.getLineCount());
 });
 
@@ -869,7 +869,7 @@ test('无分发输出的一轮（面板切换）零等待：菜单重绘本身�
   assert.equal(fixture.waits.length, 0);
 });
 
-test('跨会话基准：TRAIN 转场后重进 SHOP，上方内容不被旧基准清掉', async () => {
+test('跨会话重进 SHOP：换屏重画，上一局/新局的残留都不留存（#723）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   join_chara(fixture, 0);
@@ -886,13 +886,12 @@ test('跨会话基准：TRAIN 转场后重进 SHOP，上方内容不被旧基准
   fixture.era.print('新局上方一');
   fixture.era.print('新局上方二');
 
-  // 重进 SHOP：菜单组件随状态进入新建、基准重新起算——上方内容完好、
-  // 菜单纯此一份（模块级单例会拿第一局的旧基准把这两行清掉）
+  // 重进 SHOP：每一屏开始时换屏——新局的上方内容被清掉，菜单重画一份
   fixture.set_inputs(500);
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
-  assert.deepEqual(
-    fixture.lines.filter((l) => l.row < 2).map((l) => l.text),
-    ['新局上方一', '新局上方二'],
+  assert(
+    !fixture.text_lines().some((l) => l.includes('新局上方一')),
+    '重进后的换屏必须清掉上方残留（画面上只有主菜单）',
   );
   assert.equal(
     fixture.lines.filter((l) => l.text?.includes('Commands')).length,

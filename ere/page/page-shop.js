@@ -56,6 +56,7 @@ const {
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { secret_labo } = require('#/page/page-shop-labo');
+const { change_screen } = require('#/page/components/screen-change');
 // SHOW_FLOOR 的怪物行与近卫名单（#548）：怪物名与 %SAVESTR% 的承载
 const { item_name, monstername } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -112,8 +113,8 @@ async function show_shop(main_menu) {
 
   // BOUGHT 0-53 → item_shop（道具商店）：#399 起真身
   // （page/page-item-shop.js）。整个接管本轮——日期修正与主菜单都不执行；
-  // 玩家 [999] 退出后（bought → -1）的下一次重绘由主菜单组件的
-  // anchor_row 跨度收掉商店那段（同 #396 陷阱商店的机制）。
+  // 玩家 [999] 退出后（bought → -1）的下一次重绘由主菜单的换屏收掉商店
+  // 那段（同 #396 陷阱商店的机制）。
   if (era_flag.bought >= 0 && era_flag.bought < 54) {
     await item_shop();
     return undefined; // 本轮没画主菜单，无行数可报（调用方 run_shop 不取返回值）
@@ -139,12 +140,14 @@ async function show_shop(main_menu) {
     era_flag.date = 1;
   }
 
-  // 主菜单绘制在 page/page-main-menu.js。自 #73 起主菜单是画面组件：
-  // 本函数每轮的重入＝组件的就地重绘——清 anchor_row 跨度（自身行 +
-  // input 回显行 + 分发期临时输出）再重画；首绘（组件未画过）不清屏，
-  // 保住上方内容（送行句/分割线等）。重绘只发生在玩家交互之后：本函数
-  // 只在 run_shop 的循环里被调，输入先行（ADR-0003 的约定落点）。
-  const row_count = await main_menu.redraw();
+  // 主菜单绘制在 page/page-main-menu.js。#723 起主菜单每一屏开始时换屏
+  // （ADR-0009：先整屏清空再绘制，画面上只有主菜单本身）——前一阶段的
+  // 输出（调教、过天事件、子页面）都已在玩家按键确认后被清掉；换屏不
+  // 补等键，缺确认的路径由测试夹具的未读输出检查报出、在那段输出末尾
+  // 补。重绘只发生在玩家交互之后：本函数只在 run_shop 的循环里被调，
+  // 输入先行（ADR-0003 的约定落点）。
+  await change_screen();
+  const row_count = await main_menu.draw();
 
   return row_count;
 }
@@ -539,9 +542,8 @@ async function run_shop({ skip_eventshop = false } = {}) {
     // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）
     await emit('EVENTSHOP');
   }
-  // 主菜单画面组件：随 SHOP 状态的进入创建（create_main_menu 的注释说明
-  // 为什么不做模块级单例——anchor_row 是会话态，跨会话复用会拿旧基准清
-  // 本局内容）
+  // 主菜单画面组件：随 SHOP 状态的进入创建（组件的删除随 #724；这里每轮
+  // 「换屏 + 绘制」，组件只承载绘制内容）
   const main_menu = create_main_menu();
   for (;;) {
     await show_shop(main_menu);

@@ -334,14 +334,29 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     ...Array.from({ length: 1 }, () => ({ api: 'waitAnyKey' })),
   ]);
 
-  // 开场叙事与村娘分支文本都可见
-  const texts = fixture.text_lines();
-  assert(texts.includes('今天，又有纯洁无垢的勇者敲响了地下城的大门……'));
-  assert(texts.includes('魔王俯视着被吸取了能量用于破坏封印的村女'));
-  assert(texts.includes('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。'));
+  // 开场叙事与村娘分支文本都读过（#723 起主菜单换屏会清掉它们——取证看
+  // 全量行史；屏幕终态只有主菜单本身，下方另断言）
+  const history = fixture.lines_history
+    .filter((l) => l.type === 'text')
+    .map((l) => l.text);
+  assert(history.includes('今天，又有纯洁无垢的勇者敲响了地下城的大门……'));
+  assert(history.includes('魔王俯视着被吸取了能量用于破坏封印的村女'));
+  assert(history.includes('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。'));
   // 囚禁播报读 callname:17:-1（引擎 addCharacter 写入的预设名）
-  assert(texts.includes('村娘玛奥被囚禁在了地牢里'));
-  // CALL CHARA_NAME_INIT 真的被调用（#388，只有读取 namelistkeys 才能证明，因为它无其它可观察副作用）
+  assert(history.includes('村娘玛奥被囚禁在了地牢里'));
+  // 主菜单换屏（#723/ADR-0009）：屏幕上不再有开场叙事，只有主菜单本身；
+  // 被清掉的开场内容全部经过按键确认（上面 inputs_consumed 的读键记录）
+  const texts = fixture.text_lines();
+  assert(!texts.includes('今天，又有纯洁无垢的勇者敲响了地下城的大门……'));
+  assert(
+    texts.some((line) => line.includes('所持金')),
+    '主菜单已绘出',
+  );
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '换屏不得抹掉未读输出（开场叙事的读键都在换屏之前）',
+  );
   assert(
     fixture.var_reads.some((r) => r.name === 'namelistkeys'),
     'EVENTFIRST 链必须真的调用了 chara_name_init',

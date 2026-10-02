@@ -1634,6 +1634,48 @@ test('尿床（ONESHO）：导管三档（顺从 ≥ 6）的时间追加与 RAND
   }
 });
 
+test('尿床（ONESHO）：播报在换屏清空前都经按键确认（#723/ADR-0009）', async () => {
+  // 各支收尾是裸 print，回主菜单的换屏会整屏清空——段尾等键缺失时，
+  // 夹具的未读输出检查在此报出。表驱动覆盖导管支与无导管支（含不在魔王
+  // 房间的 continue 出口——它跳过循环体尾部，等键必须在函数收尾
+  const cases = [
+    ['导管一档', { 'abl:31:10': 1 }, [0, 0], 'catheter'],
+    ['导管二档', { 'abl:31:10': 4 }, [0], 'catheter'],
+    [
+      '无导管（不在魔王房间，报告支被 continue 跳过）',
+      { 'cflag:31:1': 1 },
+      [0],
+      'plain',
+    ],
+  ];
+  for (const [label, override, rolls, mode] of cases) {
+    const fixture = setup_chara_events();
+    seed_onesho_candidate(fixture, 31, '温妮');
+    if (mode === 'catheter') {
+      fixture.store.set('cflag:31:42', 99);
+      fixture.store.set('cflag:31:40', 64);
+      fixture.store.set('flag:37', 1);
+      fixture.store.set('cflag:31:1', 0);
+    }
+    for (const [key, value] of Object.entries(override)) {
+      fixture.store.set(key, value);
+    }
+    const { onesho } = fixture.load_module('event/event-nextday');
+
+    await onesho(seq(rolls));
+
+    const { change_screen } = fixture.load_module(
+      'page/components/screen-change',
+    );
+    await change_screen();
+    assert.deepEqual(
+      fixture.unread_output_clears,
+      [],
+      `${label}：换屏不得抹掉未读的晨间播报`,
+    );
+  }
+});
+
 /** 遛狗候选的底线：可调教（CFLAG:0 = 陷落、CFLAG:1 = 0）的奴隶 */
 function seed_dog_walk_candidate(fixture, cid, name) {
   join_slave_chara(fixture, cid, name);

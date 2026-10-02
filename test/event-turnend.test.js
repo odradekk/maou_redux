@@ -287,6 +287,18 @@ test('KYOTEN_EVENT 经日循环触发（#119 接入）：未征服衰减后推�
     '跨 2000 阈值的横幅经日循环打出',
   );
 
+  // 换屏规则（#723/ADR-0009）：横幅之后的链尾等键保证它在回主菜单换屏
+  // 前已被按键确认（衰减块自己的读键在横幅之前，兜不到它）
+  const { change_screen } = world.fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(
+    world.fixture.unread_output_clears,
+    [],
+    '据点横幅不得作为未读输出被换屏抹掉',
+  );
+
   // 再走一回合：stage == 1 且侵攻度 < 4000，档位条件全不满足 → 不重复触发
   await world.emit('EVENTTURNEND');
   assert.equal(
@@ -635,10 +647,33 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     !fixture.var_writes.some((w) => w.name === 'cflag:0:570'),
     '结算主循环必须跳过魔王（A = 1 起）',
   );
-  // 结算中段的 WAIT 恰好一次。输出把它前面垫满时（引擎语义：有可读输出才真等键）会消费输入；本世界窗口内零输出，WAIT 仍被调用、但不消费——两项都钉住
-  assert.equal(fixture.waits.length, 1, '结算中段的 WAIT 恰一次');
-  assert.equal(fixture.waits[0].waited, false, '之前无可读输出：不消费输入');
-  assert.deepEqual(fixture.inputs_consumed, []);
+  // 换屏检查先行（#723/ADR-0009）：整屏清空时不得有未读行——等键删掉时，
+  // 最小世界的衰减段分隔行会在这里被夹具报出（晨间事件全部早退，没有更晚
+  // 的等待能替它兜底）
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '整屏清空抹掉了未读输出（衰减段分隔行要先经按键确认）',
+  );
+  // 结算中段的 WAIT 恰好一次 + 衰减段尾的换屏确认等键一次。中段 WAIT
+  // 之前本世界零输出（引擎语义：有可读输出才真等键），不消费输入；段尾
+  // 等键前有衰减段的分隔行，真等、消费一次键
+  assert.equal(fixture.waits.length, 2, '中段 WAIT 与段尾换屏确认等键各恰一次');
+  assert.equal(
+    fixture.waits[0].waited,
+    false,
+    '中段 WAIT 之前无可读输出：不消费输入',
+  );
+  assert.equal(
+    fixture.waits[1].waited,
+    true,
+    '段尾等键之前有衰减段分隔行：真等',
+  );
+  assert.deepEqual(fixture.inputs_consumed, [{ api: 'waitAnyKey' }]);
 });
 
 test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与死之戒指的回复减衰', async () => {
