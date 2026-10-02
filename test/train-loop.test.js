@@ -457,8 +457,10 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   ]);
 
   const texts = fixture.text_lines();
-  // 进过调教：目标选择画面 + 调教状态画面 + 调教结束按钮
-  assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
+  const history = fixture.lines_history.map((l) => l.text);
+  // 进过调教：目标选择画面（已过去的屏——#722 起调教每轮换屏，选人屏
+  // 被调教首屏的换屏清掉，行史取证）+ 调教状态画面 + 调教结束按钮
+  assert(history.includes('请魔王大人选择将要调教的奴隶人选'));
   assert(texts.some((line) => line.includes('温妮 调教中')));
   assert(
     fixture.lines.some(
@@ -488,8 +490,13 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   );
   assert.equal(
     texts.filter((line) => line.includes('所持金')).length,
+    1,
+    '主菜单状态行在屏上只应有一次（回程重绘；去程那屏已被调教换屏清掉）',
+  );
+  assert.equal(
+    history.filter((t) => (t ?? '').includes('所持金')).length,
     2,
-    '主菜单状态行应恰出现两次（去程与回程）',
+    '主菜单状态行发生过两次（去程与回程，行史取证）',
   );
   // 循环走完后的指针：EVENTEND 尾部还原为记录值；FLAG:1 = 前回调教目标；
   // 体力充足不触发死亡删除（角色仍在场）

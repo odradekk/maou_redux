@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 521; // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 519; // #722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -278,28 +278,6 @@ export default [
     must_mention: '跨会话',
   },
   {
-    desc: 'M150 重绘条件反接（指令轮反而就地重绘——叙述被吃；无指令轮追加）',
-    file: 'ere/page/page-train.js',
-    find: '  if (command_path_seen) {',
-    replace: '  if (!command_path_seen) { // 变异：条件反接',
-    tests: ['page-train'],
-    must_mention: '指令轮追加绘制',
-  },
-  {
-    desc: 'M151 EVENTTRAIN 不重建组件（跨会话旧基准清掉新局内容）',
-    file: 'ere/page/page-train.js',
-    find: `on('EVENTTRAIN', () => {
-  status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
-  command_path_seen = false;
-});`,
-    replace: `on('EVENTTRAIN', () => {
-  // 变异：组件不重建
-  command_path_seen = false;
-});`,
-    tests: ['page-train'],
-    must_mention: '跨会话',
-  },
-  {
     desc: 'M152 旁路清行自校验删除（重绘行数未回基准不记录）',
     file: 'ere/page/components/screen-block.js',
     find: `      const remaining = await era.clear(span);
@@ -309,7 +287,7 @@ export default [
         );
       }`,
     replace: '      await era.clear(span); // 变异：自校验删除',
-    tests: ['page-train'],
+    tests: ['screen-block'], // #722 起该用例从 page-train 挪入组件层
     must_mention: '旁路清行',
   },
   {
@@ -322,17 +300,6 @@ export default [
       '  cells.forEach((cell) => era.printMultiColumns([cell])); // 变异：逐格平铺',
     tests: ['page-train'],
     must_mention: '16 格原生进度条',
-  },
-  {
-    desc: 'M154 EVENTCOM 探针不翻标志（重复同指令轮被误判成无指令轮——重绘吃叙述）',
-    file: 'ere/page/page-train.js',
-    find: `on('EVENTCOM', () => {
-  command_path_seen = true;
-});`,
-    replace: `on('EVENTCOM', () => {
-  // 变异：探针失灵`,
-    tests: ['page-train'],
-    must_mention: '重复执行同一指令',
   },
   {
     desc: 'M155 barWidth 改 24（引擎缺省值——el-col-0 吞掉全部条后数值，验收实测的全绿假象）',
@@ -4912,5 +4879,15 @@ export default [
 }`,
     tests: ['screen-change'],
     must_mention: '换屏不得调用 waitAnyKey',
+  },
+  {
+    desc: 'M14370 调教每轮换屏调用删除（SHOW_STATUS 退回追加绘制——菜单屏行数逐轮增长、旧屏残留）',
+    file: 'ere/page/page-train.js',
+    find: `  await change_screen();
+  await draw_status_screen(era_flag.target);`,
+    replace:
+      '  await draw_status_screen(era_flag.target); // 变异：不换屏直接追加',
+    tests: ['train-clear-screen-e2e'],
+    must_mention: '菜单屏行数应收敛在 ±3 行内',
   },
 ];

@@ -167,6 +167,45 @@ test('容纳可变行数的参数条样式（print_palam 的抽象容纳性，#7
   assert(fixture.text_lines().includes('画面标题（上方内容）'));
 });
 
+test('旁路清行：重绘后行数未回基准点须记录并重定基准恢复', async () => {
+  const fixture = create_era_fixture();
+  const {
+    screen_block: { ScreenBlock },
+  } = load_components(fixture);
+  const block = new ScreenBlock(() => fixture.era.print('块内容'));
+  await block.draw();
+
+  // 一轮交互（回显 +1 Row）后重绘；把 clear 的返回值模拟成引擎
+  // setTotalLines 回传多一行——「旁路动过行数」的样子（自校验的目标）
+  fixture.set_inputs(1);
+  await fixture.era.input();
+  const original_clear = fixture.era.clear;
+  fixture.era.clear = async (n) => {
+    await original_clear(n);
+    return fixture.era.getLineCount() + 1; // 模拟偏差：比真实多一行
+  };
+  try {
+    await block.redraw();
+  } finally {
+    fixture.era.clear = original_clear;
+  }
+
+  // 自校验必须记录（去掉自校验本用例全绿——空覆盖的破坏形式）
+  assert(
+    fixture.logs.some((l) => l.level === 'warn' && l.msg.includes('旁路清行')),
+    '重绘后行数未回基准点必须 warn 记录',
+  );
+  // 恢复力：组件据真实行数重定基准，下一次（无偏差）重绘干净通过、不再记录
+  fixture.set_inputs(1);
+  await fixture.era.input();
+  await block.redraw();
+  assert.equal(
+    fixture.logs.filter((l) => l.msg.includes('旁路清行')).length,
+    1,
+    '重定基准后不应再触发自校验',
+  );
+});
+
 test('menu_button：▌ 前缀、正文不写编号前缀（引擎自动拼）、未选中调暗', () => {
   const fixture = create_era_fixture();
   const {

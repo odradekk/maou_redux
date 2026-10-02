@@ -1,6 +1,7 @@
 /**
  * @file 调教状态画面：SHOW_STATUS 的处理器＋参数条画面 print_palam 的移植
- * （issue #44；#74 起整页为画面组件、参数条换引擎原生进度条）。
+ * （issue #44；#74 起整页为画面组件、参数条换引擎原生进度条；#722 起每轮
+ * 换屏后绘制，ADR-0009）。
  *
  * 骨架范围：SHOW_STATUS 的子调用里 SHOW_EQUIP_1/2（#390 实现）与
  * PRINT_CLOTHTYPE（#215 实现）都已换真身（J5 #215 服装与 TEQUIP 建模）；
@@ -13,13 +14,15 @@
  *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
  *     语义值（参数名 + palam 原值）在条内/条后文字里，归一化器零解析直取
  *     （progress 格的条内/条后文字即全部语义）；percentage 纯表现。
- *   - 整页＝一个 ScreenBlock（SHOW_STATUS 函数粒度，清除点也定在函数尾）。
- *     重绘时机见 SHOW_STATUS 处理器的 prevcom 条件。
+ *   - 整页＝一屏：每轮 SHOW_STATUS 先换屏（整屏清空）再绘制。调教循环的
+ *     每一轮回到指令菜单都是一屏的开始（ADR-0009）——上一轮的指令结算、
+ *     口上叙述留在同一屏里供玩家逐行读完，下一轮换屏时画面只留当前这一屏
+ *     的状态、参数与指令列表。
  */
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
-const { ScreenBlock } = require('#/page/components/screen-block');
+const { change_screen } = require('#/page/components/screen-change');
 const {
   life_bar,
   print_base_bar,
@@ -160,22 +163,8 @@ function fix_maxbase(cid, assi_variant = false) {
   }
 }
 
-// —— 状态画面组件（#74）：整页一个 ScreenBlock ——
-//
-// 会话态：进调教（EVENTTRAIN 事件链）时重建——基准点跨会话复用会拿上一
-// 局的基准点清掉本局内容（#73 主菜单同款结论，跨会话测试固定住）。本处理器不
-// 输出任何行，与链上其他 EVENTTRAIN 处理器（PRITRAIN 头部等）无序依赖。
-let status_block = null;
-// 「本轮指令路径执行过」探针（重绘条件）。PREVCOM 的**值差**不能当条件：
-// 重复执行同一指令时 train-loop 步骤 13 同值直写，值不变的指令轮会被误判
-// 成无指令轮、重绘吃掉当轮叙述（评审探针实证）。EVENTCOM 是指令路径的
-// 必经事件（步骤 11：输入命中可执行指令即发射，与指令编号无关）；本
-// 处理器零输出，只翻标志。
-let command_path_seen = false;
-
 /**
- * SHOW_STATUS 的绘制内容（直线段；ScreenBlock 的 draw_content，
- * 只输出、不清屏——清行归 redraw）。
+ * SHOW_STATUS 的绘制内容（直线段，只输出、不清屏——换屏归调用方）。
  * @param {number} target 调教目标角色 ID
  */
 async function draw_status_screen(target) {
@@ -372,46 +361,16 @@ async function draw_status_screen(target) {
 
   // show_equip_1 —— 使用中道具一览（#390 真身）
   show_equip_1(target);
-
-  // 设置清除点：TFLAG:999 = LINECOUNT（ScreenBlock 基准；这张工单
-  // 移植——LINECOUNT 的等价物 getLineCount 直通）
-  era.set('tflag:999', era.getLineCount());
 }
 
-// 进调教（EVENTTRAIN）的初始化（run_train 步骤 3，先于首个 SHOW_STATUS）：
-// 重建本会话的状态画面组件
-on('EVENTTRAIN', () => {
-  status_block = new ScreenBlock(() => draw_status_screen(era_flag.target));
-  command_path_seen = false;
-});
-
-// 指令路径探针（步骤 11）：输入命中可执行指令即翻标志——含未实现指令
-// 的编号（无效输入回环，同样整屏重画 SHOW_STATUS）
-on('EVENTCOM', () => {
-  command_path_seen = true;
-});
-
 on('SHOW_STATUS', async () => {
-  // 首绘缺省处理：未经 EVENTTRAIN 直发 SHOW_STATUS（如测试直驱）时惰性建块；
-  // 真实流程恒经 EVENTTRAIN 重建（跨会话基准点作废）
-  status_block ??= new ScreenBlock(() => draw_status_screen(era_flag.target));
-
-  if (command_path_seen) {
-    // 指令轮（含重复同指令）：追加绘制（同款追加滚动，无清行）。就地重绘
-    // 会清掉玩家还没读的指令结果（叙述/算式行在基准点跨度内）——「分发期
-    // 输出必须被玩家看到再被重绘清掉」（#73 确定）要求等键，而等键属叙述
-    // 所属的指令模块（train-message/SOURCE_CHECK，该工单边界外），状态画面
-    // 侧不加每轮按键（工单事实 7）就只能不吃叙述。
-    await status_block.draw();
-  } else {
-    // 无指令轮（无效输入回环）：基准点跨度内只有指令菜单与输入回显——
-    // 都已被那一次输入消费，就地重绘（#73 基准点跨度；重绘只发生在玩家
-    // 交互之后——本重入必经一次输入）。首绘（组件未画过）时 redraw
-    // 等价 draw，不清屏、保住上方内容。未来 USERCOM 分支若输出子画面，
-    // 其可见性归它自己的输出（#73 基准点跨度习语），不归本条件。
-    await status_block.redraw();
-  }
-  command_path_seen = false;
+  // 每轮换屏（ADR-0009）：回到指令菜单是一屏的开始，整屏清空后绘制
+  // 状态画面。上一次菜单选择之后的结算展示、口上叙述必须已经被玩家按键
+  // 确认过——缺等键的路径由测试夹具的未读输出检查（unread_output_clears）
+  // 报出，并在那段输出的末尾补等键；换屏入口里不补——菜单输入的回显
+  // 本身就算一次新输出，入口里等键会让每次菜单选择后都多一次按键。
+  await change_screen();
+  await draw_status_screen(era_flag.target);
 });
 
 module.exports = {
