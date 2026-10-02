@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 518; // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 521; // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4877,5 +4877,40 @@ export default [
     replace: '      undefined,',
     tests: ['juel-check'],
     must_mention: '#808080',
+  },
+  // —— #721：换屏入口 ——
+  {
+    desc: 'M14352 换屏入口不清屏（退回只追加，历史行数随游玩增长）',
+    file: 'ere/page/components/screen-change.js',
+    find: `async function change_screen() {
+  return await era.clear();
+}`,
+    replace: `async function change_screen() {
+  return 0; // 变异：不清屏
+}`,
+    tests: ['screen-change'],
+    must_mention: '换屏后行数必须归 0（整屏清空）',
+  },
+  {
+    desc: 'M14353 换屏入口只清一行（clear(1) 冒充整屏清空）',
+    file: 'ere/page/components/screen-change.js',
+    find: `  return await era.clear();`,
+    replace: `  return await era.clear(1); // 变异：只清一行`,
+    tests: ['screen-change'],
+    must_mention: '返回清屏后的行数（恒 0）',
+  },
+  {
+    desc: 'M14354 换屏入口补等键（每次菜单选择后都多一次按键）',
+    file: 'ere/page/components/screen-change.js',
+    find: `async function change_screen() {
+  return await era.clear();
+}`,
+    replace: `async function change_screen() {
+  await era.clear();
+  await era.waitAnyKey(); // 变异：换屏里补等键
+  return 0;
+}`,
+    tests: ['screen-change'],
+    must_mention: '换屏不得调用 waitAnyKey',
   },
 ];
