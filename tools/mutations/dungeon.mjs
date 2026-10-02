@@ -2789,11 +2789,11 @@ export default [
   {
     desc: 'M14410 回合结算衰减段尾的换屏确认等键删除（链尾播报未读就被清）',
     file: 'ere/system/turnend-settle.js',
-    find: `  // 时才等，安静回合的衰减播报链不会因此多出按键
+    find: `  // 收尾带等键。waitAnyKey 只在有未读输出时才等，不会多出按键。
   await era.waitAnyKey();
 
   // 魔王的回复：午前结算（TIME==0，日推进的回合）+1400，午后结算`,
-    replace: `  // 时才等，安静回合的衰减播报链不会因此多出按键
+    replace: `  // 收尾带等键。waitAnyKey 只在有未读输出时才等，不会多出按键。
 
   // 魔王的回复：午前结算（TIME==0，日推进的回合）+1400，午后结算`,
     tests: ['event-turnend', 'event-daycycle-e2e'],
