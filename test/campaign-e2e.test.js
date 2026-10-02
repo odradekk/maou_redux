@@ -133,4 +133,11 @@ test('战役 1 全链：campaign_menu 招募/派遣 → run_dungeon 真实推进
     texts(fixture).some((t) => t.includes('奇形怪状的植物')),
     '途中打过 campaign_story_1 进度 0 段文本',
   );
+
+  // —— 未读输出检查（#721）：整屏清空前不允许有未经按键确认的输出 ——
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '整屏清空抹掉了未读输出（换屏规则 ADR-0009：换屏前的输出先经按键确认）',
+  );
 });

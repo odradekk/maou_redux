@@ -155,6 +155,19 @@ function create_era_fixture() {
   // forced}。rows_at_wait = 调用瞬间的行数——「等待发生时屏幕上最新的是
   // 哪一行」的直接证据（#73：分发期输出必须在重绘前被玩家看到）
   const waits = [];
+  // —— 未读输出检查（#721）——
+  // 换屏规则（ADR-0009）配套的检查：整屏清空不许抹掉玩家还没按键确认过的
+  // 输出。夹具用「确认边界」表达「已经被按键确认到第几行」：任何一次等待类
+  // API 真正消费按键（input 回传、waitAnyKey 真等、printAndWait 的内部
+  // 等待——引擎里它 = print + waitAnyKey，print 刚置位 allowWait 所以内部
+  // 等待必然真等）之后，把边界推到当时的行数。边界之后推入的条目就是
+  // 「上一次输入之后打印、且不是输入回显」的行——条目层不回显输入（回显
+  // 只计行，见「输入」段），所以条目序列与确认边界直接可比，无需为回显
+  // 单独设排除逻辑。
+  let confirmed_row_count = 0;
+  // 每次整屏清空抹掉的未读行 [{row, type, text}]；端到端测试断言为空，
+  // 漏补等键的路径在此报出
+  const unread_output_clears = [];
 
   // —— 等待重叠检测（#557）——
   // 引擎里 input()/waitAnyKey()/printAndWait(=print+waitAnyKey) 的等待是对
@@ -297,6 +310,11 @@ function create_era_fixture() {
     begin_wait('printAndWait');
     const returned = push_row([make_text_entry(content)]);
     input_rules.length = 0;
+    // 内部等待在引擎里必然真等（print 刚置位 allowWait）并消费一次按键：
+    // 确认边界推进到刚推入的行为止。观测面维持既定契约不进 waits /
+    // inputs_consumed（见上「有意不镜像的分歧」），这里只动未读输出检查的
+    // 边界，不动 allow_wait
+    confirmed_row_count = total_rows;
     await settle_wait();
     return returned;
   };
@@ -498,9 +516,28 @@ function create_era_fixture() {
     const before = total_rows;
     const n = Number(line_count);
     if (Number.isNaN(n) || n > total_rows) {
+      // 未读输出检查（#721）：整屏清空要抹掉的是全部现存条目，其中确认
+      // 边界（confirmed_row_count）之后推入的就是未读行，逐条记录行号与
+      // 文本。快进态的强制等键发生在上方 isContinue 短路里，真等过的清屏
+      // 自然查不到未读。行号随整屏清空归零，确认边界同步归零——之后的
+      // 新输出从 row 0 起重新接受检查
+      for (const entry of lines) {
+        if (entry.row !== undefined && entry.row >= confirmed_row_count) {
+          unread_output_clears.push({
+            row: entry.row,
+            type: entry.type,
+            text: entry.text,
+          });
+        }
+      }
+      confirmed_row_count = 0;
       total_rows = 0;
     } else if (n > 0) {
       total_rows -= n;
+      // 局部清除从尾部删行，剩余行数可能落到确认边界之下：行号基准变了，
+      // 边界不压回的话，之后新打印的行号会小于边界，整屏清空时漏报
+      //（输入后 clear(1) 清回显、再打印结果的路径，#721 返工）
+      confirmed_row_count = Math.min(confirmed_row_count, total_rows);
     }
     const cut = lines.findIndex(
       (l) => l.row !== undefined && l.row >= total_rows,
@@ -972,6 +1009,9 @@ function create_era_fixture() {
         total_rows += 1; // this.print(回显值)：+1 Row
         allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
       }
+      // 玩家按下了键：回显行（若计行）及其之前全部已确认。取值在回显计数
+      // 之后——回显本身不算未读，未读从下一次新输出开始
+      confirmed_row_count = total_rows;
     } catch (err) {
       // 校验/耗尽抛错是给调用方的真实错误，不能把重叠窗口留在那，让后续
       // 等待看到连锁的「重叠」报错（#557）
@@ -1001,6 +1041,9 @@ function create_era_fixture() {
     // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
     input_rules.length = 0;
     inputs_consumed.push({ api: 'waitAnyKey' });
+    // 真等＝玩家按下了一次键：等待瞬间的全部输出视为已读（未读输出检查的
+    // 边界，与 rows_at_wait 同一时刻取值）
+    confirmed_row_count = total_rows;
     await settle_wait();
   };
 
@@ -1301,6 +1344,10 @@ function create_era_fixture() {
     /** 全部 waitAnyKey 调用记录 [{waited, rows_at_wait, forced}]（含跳过的；
      *  rows_at_wait = 调用瞬间的行数，#73 分发期可见性的直接证据） */
     waits,
+    /** 每次整屏清空抹掉的未读行 [{row, type, text}]（#721）：「上一次输入
+     *  之后打印、且不是输入回显」的行被整屏清空时逐条记录；换屏规则
+     *（ADR-0009）下端到端测试断言为空，漏补等键的路径在此报出 */
+    unread_output_clears,
     /** 引擎 allowWait 的只读观测面（#91 契约测试逐步比对用）：每一步比对
      *  {行数, allowWait}，行为本体仍在 push_row / waitAnyKey / input / clear
      *  的镜像里——这里只开观测，不开写口 */
