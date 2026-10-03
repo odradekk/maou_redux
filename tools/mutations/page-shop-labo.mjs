@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 84; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
+export const COUNT = 96; // #724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -278,7 +278,7 @@ export default [
     9436,
     '肉棒改造 扣款 20000 改 20001',
     '    pay(20000);\n    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    await era.waitAnyKey();\n    return 1;',
-    '    pay(20001);\n    return 1;',
+    '    pay(20001);\n    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    await era.waitAnyKey();\n    return 1;',
     '肉棒改造：扣掉 20000 点',
   ),
   // —— 素质编号 / 映射（改一项应只被对应的表驱动用例抓到） ——
@@ -617,7 +617,7 @@ export default [
     replace: `    // 画面的公共骨架，一处接入覆盖所有条目
     draw_pick(cfg.intro, no_page, cfg.mode ?? 1, cfg.cancel ?? '返  回');`,
     tests: ['page-shop-labo', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '实验室换屏：选人屏翻页空转轮重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -629,20 +629,201 @@ export default [
     replace: `    // $DRAW_PAGE。每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.print('魔界的大门');`,
     tests: ['page-shop-labo', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '实验室换屏：主菜单翻页空转轮重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
     desc: 'M14499 run_modify 成交尾段的换屏确认等键删除（apply 播报未读就被清）',
     file: 'ere/page/page-shop-labo.js',
-    find: `      // apply/after 的结果文案在回主菜单屏前经按键确认（ADR-0009）；
-      // 无输出的条目不会真等，玩家按键次数不变
+    find: `      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+      // 条目的 apply 都打印，这里必等且只等一次
       await era.waitAnyKey();
       return 1;`,
-    replace: `      // apply/after 的结果文案在回主菜单屏前经按键确认（ADR-0009）；
-      // 无输出的条目不会真等，玩家按键次数不变
+    replace: `      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+      // 条目的 apply 都打印，这里必等且只等一次
       return 1;`,
     tests: ['page-shop-labo', 'subpage-clear-screen'],
-    must_mention: '整屏清空抹掉了未读输出',
+    must_mention:
+      '实验室等键：条目成交的播报在回主菜单换屏前先经按键确认（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14500 modify_bustup 尾段等键删除（档位播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 档位播报在回选人/主菜单屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;
+  }
+}
+
+/** modify_bustdown：平胸改造。 */`,
+    replace: `    // 档位播报在回选人/主菜单屏前经按键确认（ADR-0009）
+    return 1;
+  }
+}
+
+/** modify_bustdown：平胸改造。 */`,
+    tests: ['page-shop-labo'],
+    must_mention:
+      '等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14501 modify_bustdown 尾段等键删除（档位播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 档位播报在回选人/主菜单屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;
+  }
+}
+
+/** modify_bonyu：母乳体质化。 */`,
+    replace: `    // 档位播报在回选人/主菜单屏前经按键确认（ADR-0009）
+    return 1;
+  }
+}
+
+/** modify_bonyu：母乳体质化。 */`,
+    tests: ['page-shop-labo'],
+    must_mention:
+      '等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14502 modify_futanari 尾段等键删除（形状播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 改造播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;
+  }
+}
+
+/** modify_futanari_erase：去扶她化。 */`,
+    replace: `    // 改造播报在回选人屏前经按键确认（ADR-0009）
+    return 1;
+  }
+}
+
+/** modify_futanari_erase：去扶她化。 */`,
+    tests: ['page-shop-labo'],
+    must_mention:
+      '等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14503 tatoo_set_off 尾段等键删除（刺青播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `  // 刺青播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
+  return 1;`,
+    replace: `  // 刺青播报在回选人屏前经按键确认（ADR-0009）
+  return 1;`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14504 modify_hair_color 尾段等键删除（发色播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 发色播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;`,
+    replace: `    // 发色播报在回选人屏前经按键确认（ADR-0009）
+    return 1;`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14505 modify_skin_color 尾段等键删除（肤色播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 肤色播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;`,
+    replace: `    // 肤色播报在回选人屏前经按键确认（ADR-0009）
+    return 1;`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14506 demon_rebirth 转生播报等键删除（转生播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `      // 转生播报在回选人屏前经按键确认（ADR-0009）
+      await era.waitAnyKey();
+      return 1;`,
+    replace: `      // 转生播报在回选人屏前经按键确认（ADR-0009）
+      return 1;`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14507 st_up_labo「数值太大」等键删除（提示未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `      // 提示后等键再重画（ADR-0009：换屏前的输出先经按键确认）
+      await era.waitAnyKey();
+      continue input_loop; // GOTO INPUT_LOOP（重来整段）`,
+    replace: `      // 提示后等键再重画（ADR-0009：换屏前的输出先经按键确认）
+      continue input_loop; // GOTO INPUT_LOOP（重来整段）`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14508 set_free_train 设定播报等键删除（播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `  // 设定播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
+  return 1;`,
+    replace: `  // 设定播报在回选人屏前经按键确认（ADR-0009）
+  return 1;`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14509 trans_specialtalent 失败支等键删除（失败播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `      // 提示后等键再重画选人屏（ADR-0009：换屏前的输出先经按键确认）
+      await era.waitAnyKey();
+      continue input_loop; // GOTO INPUT_LOOP（重来整段）`,
+    replace: `      // 提示后等键再重画选人屏（ADR-0009：换屏前的输出先经按键确认）
+      continue input_loop; // GOTO INPUT_LOOP（重来整段）`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：素质互换的成功与失败两支换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14510 trans_specialtalent 成功支等键删除（互换播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 互换播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;`,
+    replace: `    // 互换播报在回选人屏前经按键确认（ADR-0009）
+    return 1;`,
+    tests: ['page-shop-labo'],
+    must_mention: '等键契约：素质互换的成功与失败两支换屏前已确认',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14511 penis_remodel 尾段等键删除（改造播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 改造播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;
+  }
+}
+
+// ————————————————————————————————————————————————`,
+    replace: `    // 改造播报在回选人屏前经按键确认（ADR-0009）
+    return 1;
+  }
+}
+
+// ————————————————————————————————————————————————`,
+    tests: ['page-shop-labo'],
+    must_mention:
+      '等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认',
   },
 ];

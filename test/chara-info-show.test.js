@@ -3058,6 +3058,29 @@ test('show_appearance：内裤位（CFLAG:40 位 1）也算「私处不可见」
   );
 });
 
+test('献祭名单等键：该状态不可操作的提示在重画前先经按键确认（#724）', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  const victim = 9;
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  fixture.era.addCharacter(victim);
+  fixture.store.set('cflag:9:1', 5); // 不可献祭状态 → 提示后等键、重画名单
+  fixture.store.set('callname:7:-1', '考狄利亚');
+  fixture.set_inputs(10, 9, 999, 100);
+  await show_chara_info(7, -1, always, 0x000000).catch(() => {});
+
+  assert(
+    fixture.waits.some((w) => w.waited),
+    '提示后应有一次真等键',
+  );
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '该状态不可操作的提示在名单重画前已确认（ADR-0009）',
+  );
+});
+
 test('show_chara_info：名单里点可献祭的角色（状态 0/7/8）走确认流程', async () => {
   // 状态在 SACRIFICABLE_STATES 里 → 出「确定要将…献祭？」；不在 → 「该状态不可操作：N」
   const cases = [

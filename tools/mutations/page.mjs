@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 547; // #724 净 -2（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 554; // #724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -2204,9 +2204,26 @@ export default [
     tests: ['page-invasion'],
     must_mention: 'medal_bonus 提示后等键（PRINTFORMW）',
   },
-  // M10749/M10750（投放成功/失败支的 PRINTFORMW 等键删除）随 #724 删除：
-  // sengen_video 回菜单的换屏确认等键统一收口后，分支内的等键删不删都由
-  // 收口等键兜住，玩家按键数不变、行为不可区分
+  // —— #724 返工：恢复 M10749/M10750——先前删除判断有误，这两条守的
+  // 分支内等键（PRINTFORMW）负责确认投放结果；收口处不再补等键
+  {
+    desc: 'M10749 [1] 投放成功支不等键（PRINTFORMW 删除）',
+    file: 'ere/page/page-invasion.js',
+    find: '        await era.waitAnyKey(); // PRINTFORMW 的 WAIT\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
+    replace:
+      '        // 变异：成功投放后不等键\n        era_exflag.crystal_ball_popularity += placed;\n        era_exflag.crystal_ball_expire += placed;\n      } else {',
+    tests: ['page-invasion'],
+    must_mention: '成功投放后等键（PRINTFORMW）',
+  },
+  {
+    desc: 'M10750 [1] 投放失败支不等键（PRINTFORMW 删除）',
+    file: 'ere/page/page-invasion.js',
+    find: "        era_exflag.crystal_ball_expire += placed;\n      } else {\n        era.print('投放，似乎失败了。');\n        await era.waitAnyKey(); // PRINTFORMW 的 WAIT",
+    replace:
+      "        era_exflag.crystal_ball_expire += placed;\n      } else {\n        era.print('投放，似乎失败了。');\n        // 变异：投放失败后不等键",
+    tests: ['page-invasion'],
+    must_mention: '投放失败后等键（PRINTFORMW）',
+  },
   {
     desc: 'M10751 [2] 奸商代理成功支不等键（PRINTFORMW 删除）',
     file: 'ere/page/page-invasion.js',
@@ -4840,7 +4857,8 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     draw_config_page(page);`,
     tests: ['page-config', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '设定页换屏：config_menu 连续切换开关，各轮菜单行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4852,7 +4870,8 @@ export default [
     replace: `  for (;;) {
     const v = game.train.指令过滤;`,
     tests: ['page-config', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '设定页换屏：过滤开关子菜单连续切换，各轮菜单行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4864,7 +4883,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     const v = game.dungeon.游戏设定;`,
     tests: ['page-config-age', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '设定页换屏：年龄设定连续切换，各轮菜单行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4876,7 +4895,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 表头与八种族行（[n] 前缀由引擎加，正文 = 种族名 + 36 列`,
     tests: ['page-config-age', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '设定页换屏：种族年龄表与档位编辑器各自每轮整屏重画（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4888,20 +4907,9 @@ export default [
     replace: `        // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
         // 编辑头：重画前空行（DO 首拍的 PRINTL）+ 种族名 + 当前档`,
     tests: ['page-config-age', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '设定页换屏：种族年龄表与档位编辑器各自每轮整屏重画（#724）',
   },
-  // —— #724：子页面换屏 ——
-  {
-    desc: 'M14455 商店主菜单每轮换屏调用删除',
-    file: 'ere/page/page-shop.js',
-    find: `  // 输入先行（ADR-0003 的约定落点）。
-  await change_screen();
-  await draw_main_menu();`,
-    replace: `  // 输入先行（ADR-0003 的约定落点）。
-  await draw_main_menu();`,
-    tests: ['main-menu-clear-e2e', 'subpage-clear-screen'],
-    must_mention: '各轮主菜单行数必须相同',
-  },
+  // M14455 与 M143 同守 show_shop 的换屏调用（重复条目），随返工删除
   // —— #724：子页面换屏 ——
   {
     desc: 'M14456 陷阱商店每轮换屏调用删除',
@@ -4912,7 +4920,8 @@ export default [
     replace: `  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
   // 标题（CUSTOMDRAWLINE 与 DRAWLINE 一并见文件头布局映射）`,
     tests: ['shop-trap', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '陷阱商店换屏：连续两轮购买取消，各轮商品屏与数量屏行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4924,7 +4933,8 @@ export default [
     replace: `  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
   // 本屏的分隔线走实线（page-shop-trap.js 同款近似）`,
     tests: ['item-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '道具商店换屏：连续两轮购买取消，各轮商品屏与数量屏行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4938,7 +4948,8 @@ export default [
     era.drawLine();
     era.print(\`要让谁使用\${item_name(EXP_ITEM)}？\`);`,
     tests: ['item-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '经验值道具选人屏换屏：翻页与不可选提示后重画，行数不增长（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4952,7 +4963,8 @@ export default [
     era.drawLine();
     // 道具效果一行（每种道具一句）`,
     tests: ['item-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '普通道具选人屏换屏：翻页空转轮重画且每屏从第 0 行画起（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4964,7 +4976,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     const total = added_chara_ids().length;`,
     tests: ['page-chara-info', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '角色名册换屏：翻页越界轮重画，各轮列表屏行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -4988,7 +5000,7 @@ export default [
     replace: `
       draw_menu_header();`,
     tests: ['page-ability-up', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '能力提升换屏：菜单翻页空转轮重画，各轮行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5000,7 +5012,8 @@ export default [
     replace: `  for (;;) {
     era.drawLine(); // 分割线`,
     tests: ['page-ability-up', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '能力提升换屏：单角色循环里被拒的能力分支后重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5012,7 +5025,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.print('□日常着装');`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：日常着装屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5024,7 +5037,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.print('□普通的服装');`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：普通装备与黑市屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5036,7 +5049,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.print('□黑市服装');`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：普通装备与黑市屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5048,7 +5061,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 页码两边都不补位（本库分页显示的统一写法）`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：配饰屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5060,7 +5073,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 选槽（装饰 A [1] / 装饰 B [2]）——按钮化（PR #53 通则），编号 1/2 保持`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：装备品与戒指槽屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5072,7 +5085,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 列出持有的装备品（编号 300-319）`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：装备品与戒指槽屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5084,7 +5097,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     const current = { 存储编号: cflag(cid, SLOT_WEAPON) }; // W:0`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '裁缝换屏：武器装备屏往返重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5096,7 +5109,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.drawLine(); // 分隔线（所持金上方）`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '裁缝换屏：主菜单反复进出后同构（换装铺往返，#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5108,7 +5121,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 标题与日期`,
     tests: ['page-tailor', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '裁缝换屏：成员列表空转翻页轮重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5120,7 +5133,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 实线 / 标题 / 分割线`,
     tests: ['page-select-target', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '调教目标选择换屏：翻页空转轮重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5132,7 +5145,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.drawLine({ isSolid: true });`,
     tests: ['page-select-target', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '助手选择换屏：翻页空转轮重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5144,7 +5157,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =`,
     tests: ['page-intercept', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '迎击换屏：列表屏翻页空转轮重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5156,7 +5169,7 @@ export default [
     replace: `        // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
         draw_settings(select, floor, work, item_get);`,
     tests: ['page-intercept', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '迎击换屏：设定屏内反复进出阶层选择，行数不增长（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5168,7 +5181,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     const stock =`,
     tests: ['page-invasion', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '影像投放换屏：支付方式屏离开后菜单重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5180,7 +5193,8 @@ export default [
     replace: `  // RESTART 重入与本函数首绘都从这里开始
   // 五条状态行（BARSTR 偏离说明见文件头；圣灵骑士堡垒没有状态行，`,
     tests: ['page-invasion', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '出兵菜单换屏：掠夺路线的勇者屏取消后回出兵菜单，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5192,7 +5206,8 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 标题（CUSTOMDRAWLINE = 的空分割线不镜像，见文件头）`,
     tests: ['page-invasion', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '出兵菜单换屏：掠夺路线的勇者屏取消后回出兵菜单，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5204,7 +5219,8 @@ export default [
     replace: `  for (;;) {
     // 怪物数量 = ITEM:100..189 之和（[0]/[2] 路线的 600 门槛）`,
     tests: ['page-invasion', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention:
+      '出兵菜单换屏：掠夺路线的勇者屏取消后回出兵菜单，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5216,7 +5232,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     era.drawLine();`,
     tests: ['page-campaign', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '战役菜单换屏：行动选择往返后菜单重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5228,7 +5244,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     const candidate_ids = era.getAddedCharacters();`,
     tests: ['page-campaign', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '战役派遣换屏：子菜单返回后重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5240,7 +5256,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     const total = swap_candidates().length;`,
     tests: ['page-chara-info', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '换号换屏：第一屏空转翻页与取消往返后重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5252,7 +5268,7 @@ export default [
     replace: `      // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
       era.print('要跟那个角色换号呢？');`,
     tests: ['page-chara-info', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '换号换屏：第一屏空转翻页与取消往返后重画，行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -5264,6 +5280,91 @@ export default [
     replace: `    // —— 确认屏 ——
     era.println();`,
     tests: ['page-chara-info', 'subpage-clear-screen'],
-    must_mention: '标记行应在屏顶',
+    must_mention: '换号换屏：确认屏执行互换后回第一屏，行数相同（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14514 能力分支分发后的等键删除（分支画面未读就被重画清掉）',
+    file: 'ere/page/page-ability-up.js',
+    find: `      await ABLUP_HANDLERS[result](arg); // issue #464
+      // 分支画面（至少有自己的菜单）在重画本屏前经按键确认（ADR-0009）；
+      // 自带收尾等键的分支引擎自动短路，玩家按键次数不变
+      await era.waitAnyKey();`,
+    replace: `      await ABLUP_HANDLERS[result](arg); // issue #464
+      // 分支画面（至少有自己的菜单）在重画本屏前经按键确认（ADR-0009）；
+      // 自带收尾等键的分支引擎自动短路，玩家按键次数不变
+`,
+    tests: ['subpage-clear-screen'],
+    must_mention:
+      '能力提升等键：分支画面由分发处的等键确认（ablup100 停止支，#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14515 999 出口等键删除（欲情/出售播报未读就被清）',
+    file: 'ere/page/page-ability-up.js',
+    find: `      // 两项检查都未触发时不打印，不等键
+      await confirm_output_since(echo_rows);
+      era_flag.target = previous_target;`,
+    replace: `      // 两项检查都未触发时不打印，不等键
+      era_flag.target = previous_target;`,
+    tests: ['subpage-clear-screen'],
+    must_mention: '能力提升等键：欲情变化的播报让出口等一次键（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14517 增强流行的支付播报等键删除（播报未读就被菜单换屏清掉）',
+    file: 'ere/page/page-invasion.js',
+    find: `      // 支付与效果播报在回菜单换屏前经按键确认（ADR-0009）
+      await era.waitAnyKey();
+      continue; // GOTO INPUT_LOOP`,
+    replace: `      // 支付与效果播报在回菜单换屏前经按键确认（ADR-0009）
+      continue; // GOTO INPUT_LOOP`,
+    tests: ['subpage-clear-screen'],
+    must_mention:
+      '影像投放等键：增强与延长流行的支付播报在回菜单换屏前先经按键确认（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14518 延长流行的支付播报等键删除（播报未读就被菜单换屏清掉）',
+    file: 'ere/page/page-invasion.js',
+    find: `      // 支付与播报在回菜单换屏前经按键确认（ADR-0009）
+      await era.waitAnyKey();
+      continue; // GOTO INPUT_LOOP`,
+    replace: `      // 支付与播报在回菜单换屏前经按键确认（ADR-0009）
+      continue; // GOTO INPUT_LOOP`,
+    tests: ['subpage-clear-screen'],
+    must_mention:
+      '影像投放等键：增强与延长流行的支付播报在回菜单换屏前先经按键确认（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14520 999 出口的条件等键改成无条件（静默出口也多按一次键）',
+    file: 'ere/page/page-ability-up.js',
+    find: `      // 两项检查都未触发时不打印，不等键
+      await confirm_output_since(echo_rows);
+      era_flag.target = previous_target;`,
+    replace: `      // 两项检查都未触发时不打印，不等键
+      await era.waitAnyKey(); // 变异：无条件等键
+      era_flag.target = previous_target;`,
+    tests: ['subpage-clear-screen'],
+    must_mention: '能力提升等键：999 出口两项检查都未触发时不等键（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14522 buy_plural 尾段等键删除（尾段播报未读就被商品屏换屏清掉）',
+    file: 'ere/page/page-item-shop.js',
+    find: `  // 复数购买的尾段（经验值到手 / 陷阱等级 / 戒指退还）在返回商品屏前
+  // 补一次等键：下一轮商品屏换屏会清掉本屏（ADR-0009）。取消支早已
+  // return，这里只在成交后到达；分支内的等键已确认「购买了」，这次
+  // 等键只收尾段的新输出，没有则引擎短路
+  await era.waitAnyKey();`,
+    replace: `  // 复数购买的尾段（经验值到手 / 陷阱等级 / 戒指退还）在返回商品屏前
+  // 补一次等键：下一轮商品屏换屏会清掉本屏（ADR-0009）。取消支早已
+  // return，这里只在成交后到达；分支内的等键已确认「购买了」，这次
+  // 等键只收尾段的新输出，没有则引擎短路
+`,
+    tests: ['item-shop'],
+    must_mention:
+      '复数购买的尾段等键：取消提前退出不等键，成交后尾段再等一次（#724）',
   },
 ];

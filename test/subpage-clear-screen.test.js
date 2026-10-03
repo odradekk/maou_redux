@@ -345,7 +345,7 @@ test('陷阱商店换屏：连续两轮购买取消，各轮商品屏与数量�
   const rows = track_input_rows(fixture);
   const { run_shop } = fixture.load_module('page/page-shop');
 
-  // 主菜单 [107] 进道具商店 → 店内 [998] 切陷阱商店并立即重画 → [60] 落穴
+  // 主菜单 [107] 进道具商店 → 店内 [998] 切陷阱商店（重画归商店轮）→ [60] 落穴
   //（复数购买）→ [0] 数量取消 → 重画；再一遍后 [999] 退出
   fixture.set_inputs(107, 998, 60, 0, 60, 0, 999);
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
@@ -611,6 +611,156 @@ test('名册动作收尾：改名播报在名册重画前先经按键确认（#7
     '改名播报应输出过',
   );
   assert_no_unread(fixture, '改名收尾');
+});
+
+test('名册动作收尾：不可改名的反馈在名册重画前先经按键确认（#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 17, '玛奥');
+  fixture.store.set('cflag:17:1', 7); // 苗床：不可改名，有反馈
+  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+
+  await chara_info_name_edit(17);
+  await change_screen();
+
+  assert(
+    fixture.lines_history.some((l) =>
+      (l.text ?? '').includes('苗床不可改变名字'),
+    ),
+    '不可改名反馈应输出过',
+  );
+  assert_no_unread(fixture, '不可改名收尾');
+});
+
+test('名册动作收尾：还原名字的播报在名册重画前先经按键确认（#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 17, '玛奥');
+  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+
+  await chara_info_name_edit(17, 1);
+  await change_screen();
+
+  assert(
+    fixture.lines_history.some((l) =>
+      (l.text ?? '').includes('恢复了原来的名字'),
+    ),
+    '还原名播报应输出过',
+  );
+  assert_no_unread(fixture, '还原名收尾');
+});
+
+test('名册动作收尾：侵攻中的勇者无反馈，不得多按一次键（#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 17, '勇者');
+  fixture.store.set('cflag:17:1', 2); // 侵攻中的勇者：防御分支，无反馈
+  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+
+  // 先按下名册按钮（回显在，等键若被改成无条件就会真等——玩家多按键）
+  fixture.set_inputs(30);
+  await fixture.era.input();
+  await chara_info_name_edit(17);
+  // 没有反馈时不得真等键
+  assert.deepEqual(
+    fixture.waits.filter((w) => w.waited),
+    [],
+    '侵攻勇者分支没有输出，条件等键不触发',
+  );
+  await change_screen();
+  assert_no_unread(fixture, '侵攻勇者分支');
+});
+
+test('能力提升等键：999 出口两项检查都未触发时不等键（#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 1, '奴隶甲');
+  const { ability_up_core } = fixture.load_module('page/page-ability-up');
+
+  fixture.set_inputs(999);
+  await ability_up_core(1);
+
+  // 菜单输入的回显不算未读输出——检查未触发时不得真等键
+  assert.deepEqual(
+    fixture.waits.filter((w) => w.waited),
+    [],
+    '静默出口不等键',
+  );
+});
+
+test('能力提升等键：欲情变化的播报让出口等一次键（#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 1, '奴隶甲');
+  fixture.store.set('abl:1:11', 3); // 欲望 LV3 +
+  fixture.store.set('talent:1:32', 1); // 【压抑】→ 999 出口有欲情播报
+  const { ability_up_core } = fixture.load_module('page/page-ability-up');
+
+  fixture.set_inputs(999);
+  await ability_up_core(1);
+
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    '有播报的出口等一次键',
+  );
+  assert_no_unread(fixture, '能力提升出口');
+});
+
+test('能力提升等键：分支画面由分发处的等键确认（ablup100 停止支，#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 1, '奴隶甲');
+  const { ability_up_core } = fixture.load_module('page/page-ability-up');
+
+  // [0] 阴蒂感觉进分支 → 分支菜单 → [100] 停止返回 → 分发处的等键确认
+  // 分支画面 → 重画本屏 → [999] 出口（两项检查未触发，不再等键）
+  fixture.set_inputs(0, 100, 999);
+  await ability_up_core(1);
+
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    '停止返回后由分发等键确认一次',
+  );
+  assert_no_unread(fixture, 'ablup100 停止支');
+});
+
+test('影像投放等键：增强与延长流行的支付播报在回菜单换屏前先经按键确认（#724）', async () => {
+  for (const [entry, label, notice] of [
+    [3, '增强流行', '投放效果增强了'],
+    [4, '延长流行', '流行时间延长了'],
+  ]) {
+    const fixture = create_era_fixture();
+    fixture.load_module('era-utils/era-exflag').crystal_ball_stock = 3;
+    fixture.load_module('era-utils/era-flag').money = 100000;
+    const { sengen_video } = fixture.load_module('page/page-invasion');
+
+    // [entry] 进支付方式屏 → [1] 支付金币 → 播报+等键 → 回菜单 → [999] 退出
+    fixture.set_inputs(entry, 1, 999);
+    await sengen_video(() => 0);
+
+    assert(
+      fixture.lines_history.some((l) => (l.text ?? '').includes(notice)),
+      label + '：播报应输出过',
+    );
+    assert_no_unread(fixture, label);
+  }
 });
 
 test('名册动作收尾：灵魂转移播报在名册重画前先经按键确认（#724）', async () => {

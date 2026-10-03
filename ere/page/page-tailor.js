@@ -1037,8 +1037,6 @@ async function equip_magic_weapon(cid) {
       item_no = WEAPON_TENTACLE_ID; // Y:1 = 349; RESULT = 349
     } else if (result === 997 && current.存储编号 <= -1) {
       era.print('手无寸铁，强化啥子？');
-      // 提示后等键再重画本屏（ADR-0009：换屏前的输出先经按键确认）
-      await era.waitAnyKey();
       continue;
     } else if (result === 997 && cflag(0, 9) >= ENHANCE_LEVEL) {
       enhance_type = 1;

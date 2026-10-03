@@ -26,7 +26,6 @@
  *   用半角空格补位也是同一结果，实机表现不变。要真正对齐得改用
  *   `printMultiColumns` 的列宽（按钮格 + 文本格），不在本工单范围。
  *
- *
  * 三个选择循环每轮绘制前换屏（ADR-0009）：画面上只有当前这一屏。
  * 三条既有怪癖（行为被用例钉住，不改）：
  * - 顶层表格行对 cla≥5 的槽不写 PRINT_STR（空 ELSE）——残留
@@ -40,7 +39,6 @@
 'use strict';
 
 const era = require('#/era-electron');
-
 const {
   char_size_generate,
   race_age_generate,

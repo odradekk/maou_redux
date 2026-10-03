@@ -358,6 +358,31 @@ test('comseq_train：预检查有不可用条目 → 整体拒绝，零执行', 
   );
 });
 
+test('comseq_train：拒绝播报在回合画面换屏前先经按键确认（#724）', async () => {
+  const { fixture, mod } = load_register();
+  const { com_able_family } = fixture.load_module('system/train/com-family');
+  fixture.store.set('traincommandname:0', '爱抚');
+  fixture.store.set('traincommandname:6', '接吻');
+  seed_menu(fixture, [0, 6]);
+  com_able_family.register(6, async () => 0); // 第 2 条不可用 → 整段拒绝
+
+  await mod.comseq_train();
+
+  assert(
+    fixture.waits.some((w) => w.waited),
+    '拒绝播报后应有一次真等键',
+  );
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    '拒绝播报在下一轮回合画面换屏前已确认（ADR-0009）',
+  );
+});
+
 test('comseq_train：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回合，prevcom 恢复', async () => {
   const { fixture, mod } = load_register();
   const { com_family } = fixture.load_module('system/train/com-family');

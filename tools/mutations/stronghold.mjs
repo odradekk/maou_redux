@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 245; // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 245; // #724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -2052,7 +2052,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     show_shop_monster();`,
     tests: ['monster-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '怪物商店换屏：种族屏与商品屏反复重画，行数不增长（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -2064,7 +2064,8 @@ export default [
     replace: `    // 会把上一张角色卡整屏换掉
     const chara_id = shop_state.chosen; // CHARA = TFLAG:102`,
     tests: ['monster-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '怪物商店换屏：祭品屏与召唤确认屏反复重画，行数不增长（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -2078,7 +2079,8 @@ export default [
     show();
     era.print(`,
     tests: ['monster-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '怪物商店换屏：祭品屏与召唤确认屏反复重画，行数不增长（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -2094,7 +2096,8 @@ export default [
 
     if (item_price(target) - picked_level <= 0) {`,
     tests: ['monster-shop', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '怪物商店换屏：祭品屏与召唤确认屏反复重画，行数不增长（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -2106,6 +2109,7 @@ export default [
     replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     // 每完成或取消一单都从函数头重画。`,
     tests: ['sale-chara', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention:
+      '奴隶贩卖换屏：无效输入与返回后重画，列表屏行数不增长（#724）',
   },
 ];

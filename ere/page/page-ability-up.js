@@ -47,7 +47,10 @@ const {
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
-const { change_screen } = require('#/page/components/screen-change');
+const {
+  change_screen,
+  confirm_output_since,
+} = require('#/page/components/screen-change');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
 const { ABLUP_HANDLERS } = require('#/system/train/juel-check');
@@ -280,6 +283,9 @@ async function ability_up_core(arg) {
     await show_ablup_select(arg); // `*` 标记要等 decide_ablup 的判定，故 await
 
     const result = await era.input();
+    // 回显之后的行数：999 出口的两项检查有没有播报以它为准（回显也算
+    // 输出，无条件等键会让检查未触发的路径多按一次键）
+    const echo_rows = era.getLineCount();
 
     // 各能力分支（阴蒂感觉 0 / 乳房感觉 1 / 私处感觉 2 / 肛门感觉 3 /
     // 局部感覚 4 / 顺从 10 / 欲望 11 / 技巧 12 / 侍奉技术 13 / 性交技术 14 /
@@ -288,8 +294,8 @@ async function ability_up_core(arg) {
     // 卖淫中毒 37 / 兽奸中毒 39 / 局部中毒 40 / 反抗刻印 99 / 100）
     if (result in ABLUP_HANDLERS) {
       await ABLUP_HANDLERS[result](arg); // issue #464
-      // 各能力分支的成败播报在重画本屏前经按键确认（ADR-0009）；自带
-      // 收尾等键的分支不会再等，玩家按键次数不变
+      // 分支画面（至少有自己的菜单）在重画本屏前经按键确认（ADR-0009）；
+      // 自带收尾等键的分支引擎自动短路，玩家按键次数不变
       await era.waitAnyKey();
       continue;
     }
@@ -302,9 +308,9 @@ async function ability_up_core(arg) {
       // 「TFLAG:25 的调教外通道」节
       yokubo_up_check(era_flag.target, { in_train: false });
       await check_sellassiable(era_flag.target);
-      // 欲情变化与出售资格复核的播报在重画菜单前经按键确认（ADR-0009）；
-      // 未触发的检查不打印，不会多按键
-      await era.waitAnyKey();
+      // 欲情变化与出售资格复核的播报在回菜单前经按键确认（ADR-0009）；
+      // 两项检查都未触发时不打印，不等键
+      await confirm_output_since(echo_rows);
       era_flag.target = previous_target;
       return 0;
     }

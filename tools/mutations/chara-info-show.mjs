@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用编号，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 76; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
+export const COUNT = 77; // #724 返工 +1（M14516「该状态不可操作」等键删除）；此前 +2（M14494/M14495） // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
@@ -692,7 +692,7 @@ export default [
     replace: `  for (;;) {
     era.println();`,
     tests: ['chara-info-show', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '献祭名单换屏：切条件与返回后重画，各屏行数相同（#724）',
   },
   // —— #724：子页面换屏 ——
   {
@@ -704,6 +704,19 @@ export default [
     replace: `        // 重画一轮前换屏（ADR-0009）：献祭流程的输出已经过按键确认
         continue;`,
     tests: ['chara-info-show', 'subpage-clear-screen'],
-    must_mention: '各轮菜单行数之差应在',
+    must_mention: '献祭名单换屏：切条件与返回后重画，各屏行数相同（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14516 「该状态不可操作」提示等键删除（提示未读就被名单重画清掉）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: `        // 提示后等键再重画名单（ADR-0009：换屏前的输出先经按键确认）
+        await era.waitAnyKey();
+        continue; // 重画名单`,
+    replace: `        // 提示后等键再重画名单（ADR-0009：换屏前的输出先经按键确认）
+        continue; // 重画名单`,
+    tests: ['chara-info-show'],
+    must_mention:
+      '献祭名单等键：该状态不可操作的提示在重画前先经按键确认（#724）',
   },
 ];

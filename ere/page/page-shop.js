@@ -114,7 +114,7 @@ async function show_shop() {
   // 那段（同 #396 陷阱商店的机制）。
   if (era_flag.bought >= 0 && era_flag.bought < 54) {
     await item_shop();
-    return undefined; // 本轮没画主菜单，无行数可报（调用方 run_shop 不取返回值）
+    return; // 本轮没画主菜单（show_shop 无返回值，调用方不取）
   }
 
   // BOUGHT >= 54 → item_shop_trap（陷阱商店）：#396 起真身
@@ -123,7 +123,7 @@ async function show_shop() {
   // 后即转入陷阱商店）。
   if (era_flag.bought >= 54) {
     await item_shop_trap();
-    return undefined; // 同上
+    return; // 同上
   }
 
   // 防御性日期修正：月/日小于 1 时钳成 1。EVENTFIRST 链只初始化
@@ -181,6 +181,7 @@ async function usershop(result) {
   //     调试菜单分支，#562 实机发现；语义依据见 #592 的完成评论）；
   //   - 998/997 是切换商店：只置 BOUGHT 与清账后 return，重画归商店轮
   //     （两个商店各自绘制前换屏，抢先直画会被清掉未经确认的屏，#724）；
+  //   - BOUGHT >= 0 的其它输入直接 return：购物态下主菜单指令全部失效，
   //     只有 997/998/999 三个键有反应。
   // 三处 clear_shop（清 ITEMSALES:0-299）自 #399 起是真身——show_shop
   // 每轮进店也清一次，此处是退出/切店时两次清账（既有行为）。

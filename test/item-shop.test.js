@@ -846,6 +846,45 @@ async function buy_one(id, seed = {}, qty = 1, extra = []) {
   return fixture;
 }
 
+test('复数购买的尾段等键：取消提前退出不等键，成交后尾段再等一次（#724）', async () => {
+  // 取消路径：数量 0 → 提前 return，不进尾段也不等键
+  // 可买数给足（库存 1 时走单品支，进不了数量输入）
+  const cancel = await run_purchase(
+    24,
+    { 'flag:10004': 1000000, 'itemsales:24': 5 },
+    [0],
+  );
+  assert.deepEqual(
+    cancel.fixture.waits.filter((w) => w.waited),
+    [],
+    '取消路径不等键',
+  );
+  const { change_screen } = cancel.fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(cancel.fixture.unread_output_clears, [], '取消路径无未读');
+
+  // 尾段输出路径：55 号买一件 → 「购买了」与陷阱等级两段播报各等一次
+  const out = await run_purchase(
+    55,
+    { 'flag:10004': 1000000, 'cflag:0:9': 99, 'itemsales:55': 1 },
+    [1],
+  );
+  assert.equal(
+    out.fixture.waits.filter((w) => w.waited).length,
+    2,
+    '成交分支与尾段各等一次键',
+  );
+  const cs = out.fixture.load_module('page/components/screen-change');
+  await cs.change_screen();
+  assert.deepEqual(
+    out.fixture.unread_output_clears,
+    [],
+    '尾段输出在换屏前已确认',
+  );
+});
+
 test('复数购买：单价表逐条对上（含陷阱的 TRAP_PRICE 段与 91 的戒指价）', async () => {
   const cases = [
     [24, 100],

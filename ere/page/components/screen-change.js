@@ -27,4 +27,21 @@ async function change_screen() {
   return await era.clear();
 }
 
-module.exports = { change_screen };
+/**
+ * 换屏前的条件等键：baseline 之后又打印了新行才等。
+ *
+ * 菜单输入的回显也算一次输出——紧跟在输入后面的无条件 `waitAnyKey` 在
+ * 「输入之后没有新输出」的路径上也会真等，玩家要多按一次键。baseline 取
+ * 输入刚返回时的 `getLineCount()`（回显已计入），此后新增的行才是要玩家
+ * 确认的内容。已等过键的输出不会重复等（waitAnyKey 只在未读输出时等）。
+ *
+ * @param {number} baseline 输入返回时（或本段流程开始时）的屏幕行数
+ * @returns {Promise<void>}
+ */
+async function confirm_output_since(baseline) {
+  if (era.getLineCount() > baseline) {
+    await era.waitAnyKey();
+  }
+}
+
+module.exports = { change_screen, confirm_output_since };

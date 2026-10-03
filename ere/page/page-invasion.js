@@ -1892,8 +1892,7 @@ async function sengen_video(rand = default_rand) {
         era.print('投放，似乎失败了。');
         await era.waitAnyKey(); // PRINTFORMW 的 WAIT
       }
-      // 犒赏结果在回菜单换屏前经按键确认（ADR-0009）
-      await era.waitAnyKey();
+      // 分支出口已各自等键（PRINTFORMW 的 WAIT），回菜单换屏前无未读输出
       continue; // GOTO INPUT_LOOP
     }
 

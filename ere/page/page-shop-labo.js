@@ -371,8 +371,8 @@ async function run_modify(item, rand) {
       if (item.after) {
         item.after(cid, rand); // 应用之后的追加动作（身体重算等）
       }
-      // apply/after 的结果文案在回主菜单屏前经按键确认（ADR-0009）；
-      // 无输出的条目不会真等，玩家按键次数不变
+      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+      // 条目的 apply 都打印，这里必等且只等一次
       await era.waitAnyKey();
       return 1;
     }

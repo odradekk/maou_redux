@@ -6,7 +6,7 @@
 // M7821 原在 chara.mjs（目标是 chara-family.js 里的 nid_get_type），#384 把该函数
 // 收拢到 chara-name.js，条目随真身搬入本分片。
 
-export const COUNT = 72; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，检查型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）；#653 -1（M7987 随 nid_findcharas 删除）；#653 +1（M13261：nid_get_type 3000 和名分支的修复检查）
+export const COUNT = 75; // #724 返工 +3（M14512/M14513 出口等键删除、M14521 条件等键改无条件） // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，检查型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）；#653 -1（M7987 随 nid_findcharas 删除）；#653 +1（M13261：nid_get_type 3000 和名分支的修复检查）
 
 export default [
   {
@@ -617,5 +617,44 @@ export default [
       '  if (nid >= 3001) {\n    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)',
     tests: ['chara-name'],
     must_mention: '3000 → 和名（男性和名起点）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14512 不可改名出口等键删除（反馈未读就被名册换屏清掉）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: `    // 侵攻勇者一支无输出，不等键
+    await confirm_output_since(entry_rows);
+    return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;`,
+    replace: `    // 侵攻勇者一支无输出，不等键
+    return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;`,
+    tests: ['subpage-clear-screen'],
+    must_mention:
+      '名册动作收尾：不可改名的反馈在名册重画前先经按键确认（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14513 还原名出口等键删除（播报未读就被名册换屏清掉）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: `    // 还原名的播报在回名册前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 0; // 块的出口`,
+    replace: `    // 还原名的播报在回名册前经按键确认（ADR-0009）
+    return 0; // 块的出口`,
+    tests: ['subpage-clear-screen'],
+    must_mention:
+      '名册动作收尾：还原名字的播报在名册重画前先经按键确认（#724）',
+  },
+  // —— #724 返工：换屏前的等键 ——
+  {
+    desc: 'M14521 不可改名出口的条件等键改成无条件（侵攻勇者支也多按一次键）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: `    // 侵攻勇者一支无输出，不等键
+    await confirm_output_since(entry_rows);
+    return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;`,
+    replace: `    // 侵攻勇者一支无输出，不等键
+    await era.waitAnyKey(); // 变异：无条件等键
+    return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;`,
+    tests: ['subpage-clear-screen'],
+    must_mention: '名册动作收尾：侵攻中的勇者无反馈，不得多按一次键（#724）',
   },
 ];
