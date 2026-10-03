@@ -37,6 +37,7 @@ const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { print_shopitem, snapshot_money } = require('#/page/page-item-shop');
+const { change_screen } = require('#/page/components/screen-change');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** SETCOLORBYNAME LightSalmon 的 ere 等价物 */
@@ -173,6 +174,8 @@ function item_grid_rows({ start, end }) {
  *   隐式返回 0（函数体在末尾的 PRINTL 之后结束）
  */
 async function item_shop_trap() {
+  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+  await change_screen();
   // 标题（CUSTOMDRAWLINE 与 DRAWLINE 一并见文件头布局映射）
   era.print('《可以购买在地下城里布置的陷阱》');
   era.drawLine({ isSolid: true });

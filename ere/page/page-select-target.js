@@ -33,6 +33,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const monster_play_mod = require('#/dungeon/monster-play');
+const { change_screen } = require('#/page/components/screen-change');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -248,6 +249,8 @@ async function select_target() {
   let no_page = 0; // 页码从 0 起（局部变量，翻页状态不跨调用保留）
   // 输入循环（翻页游标不保留的说明见文件头）
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 实线 / 标题 / 分割线
     era.drawLine({ isSolid: true });
     era.print('请魔王大人选择将要调教的奴隶人选');
@@ -328,6 +331,8 @@ async function select_assi() {
   let no_page = 0; // 页码从 0 起（局部变量）
   // 输入循环
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.drawLine({ isSolid: true });
     era.print('请魔王大人选择在调教过程当中的助手人选');
     era.drawLine();

@@ -48,6 +48,7 @@ const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const { item_detox } = require('#/system/equip/item-detox');
 const { life_list } = require('#/page/page-life-list');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { print_button_grid } = require('#/utils/button-grid');
@@ -380,6 +381,8 @@ function snapshot_money() {
  * @returns {Promise<number>} 0（无显式返回值）
  */
 async function item_shop() {
+  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+  await change_screen();
   // 本屏的分隔线走实线（page-shop-trap.js 同款近似）
   era.print('黑市商人');
   era.print('《可以购买用于调教的物品》');
@@ -693,6 +696,8 @@ async function use_exp_item(count) {
   const gained = count * 10; // E = RESULT * 10
   let no_page = 0; // #DIM NO_PAGE（缺省 0）
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.drawLine();
     era.print(`要让谁使用${item_name(EXP_ITEM)}？`);
     life_list(no_page, 0);
@@ -724,6 +729,8 @@ async function use_exp_item(count) {
     // 卖却済み・臨死中的角色不可选
     if ((era.get(`cflag:${result}:1`) || 0) !== 0) {
       era.print('此人物尚不可选择');
+      // 提示后等键再重画选人屏（ADR-0009：换屏前的输出先经按键确认）
+      await era.waitAnyKey();
       continue;
     }
     // 经验值到手（RESULT == 0 即魔王，MASTER 也是 0）
@@ -844,6 +851,10 @@ async function buy_plural(bought) {
     }
   }
 
+  // 复数购买的尾段（经验值到手 / 陷阱等级 / 戒指退还）在返回商品屏前
+  // 补一次等键：下一轮商品屏换屏会清掉本屏（ADR-0009）。无尾段输出的
+  // 支（数量取消早退、普通成交）已等过键或不打印，不会多按键
+  await era.waitAnyKey();
   return 0;
 }
 
@@ -864,6 +875,8 @@ async function use_item(bought) {
   /** #DIM NO_PAGE（缺省 0） */
   let no_page = 0;
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.drawLine();
     // 道具效果一行（每种道具一句）
     const effect = USE_EFFECTS[bought];
@@ -1105,6 +1118,7 @@ module.exports = {
   event_buy,
   buy_plural,
   use_item,
+  use_exp_item,
   technique_of_master,
   technique_of_master_up,
   get_temp_money,

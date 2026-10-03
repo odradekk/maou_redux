@@ -299,6 +299,8 @@ async function transfer_soul(cid, mode = 0, rand = default_rand) {
   era.set(`ex_talent:${cid}:0`, debuff);
   era.set('ex_talent:0:0', 0);
   era.print(`${name_of(cid)}陷入了【${ex_talentname(0)}】`);
+  // 转移播报在回名册前经按键确认（名册循环换屏会清掉本屏，ADR-0009）
+  await era.waitAnyKey();
 
   return 0;
 }

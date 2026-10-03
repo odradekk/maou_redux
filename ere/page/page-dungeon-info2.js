@@ -13,7 +13,7 @@
  *     （page-main-menu.js 同款先例）；
  *   - LINE_COUNT 预计算块与 DISPLAY_LINE 计数的唯一
  *     目的是算 CLEARLINE 的清行数（下半区高度可变，先算空白填充对齐）——
- *     ere 侧行数由 ScreenBlock 运行时测量（#73 结论），整块省略；
+ *     ere 侧每轮绘制前换屏（ADR-0009），整块省略；
  *   - PRINTFORM 拼行的多按钮布局（每层一行：阶层钮 + 三列陷阱）→
  *     一行一钮（ere 的按钮独占一行，#73 两条 UI 结论的排版近似；功能面
  *     等价——每个可输入项都是按钮，快捷键集合不变）；
@@ -40,7 +40,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { menu_button } = require('#/page/components/menu-button');
-const { ScreenBlock } = require('#/page/components/screen-block');
+const { change_screen } = require('#/page/components/screen-change');
 const {
   item_name,
   monster_setup,
@@ -319,16 +319,17 @@ async function enemy_exist2(floor) {
 /**
  * 部下状态总览（dungeon_info2 的 $PRINT 块，输入面 [100-199] +
  * [999]）：打印所选区段的楼层头 + 怪物库存 + ENEMY_EXIST2 的勇侧行，等输入。
- * GOTO PRINT 的重画收在调用方（主循环 continue 触发 ScreenBlock.redraw
- * 之前，先经本函数重建画面）。怪物库存行是按钮（#710），排在该层楼层头与
- * 勇者行之后；逐层 WAIT 已去掉，整屏在输入之前没有等键。
+ * GOTO PRINT 的重画收在调用方（主循环 continue 触发换屏重画
+ * 之前，先经本函数重建画面——每轮绘制前换屏，ADR-0009）。怪物库存行是按钮（#710），
+ * 排在该层楼层头与勇者行之后；逐层 WAIT 已去掉，整屏在输入之前没有等键。
  *
  * @param {number} kai_result 主菜单输入（10-14：总览 / 1-3 层 / 4-6 层 /
  *   7-9 层 / 近卫兵）
  * @returns {Promise<number>} 部下一览的输入结果（100-199 = 选怪物，999 = 返回）
  */
 async function print_subordinates(kai_result) {
-  // 横幅
+  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+  await change_screen();
   era.print('******************');
   era.print('地下城内的部下');
   era.print('******************');
@@ -402,7 +403,7 @@ async function dungeon_info2() {
   // DIALOGUE[0] = 选中的设施号（0 = 通路）；DIALOGUE[1] = 对话状态
   //（0 = 无对话 / >0 = 待确认的层数 / -1 = 未选对象 / -2 = 钱不够）
   const dialogue = [0, 0];
-  const screen = new ScreenBlock(async () => {
+  const draw_screen = async () => {
     // CUSTOMDRAWLINE =（等号线）
     era.drawLine({ isSolid: true });
     // FONTBOLD + 三枚标签页按钮（未选中的调暗；▌ 前缀归 menu_button。
@@ -595,12 +596,14 @@ async function dungeon_info2() {
     );
     era.drawLine();
     era.printButton('- 返回', 999);
-  });
+  };
 
   // WHILE RESULT != 999
   let result = 0;
   while (result !== 999) {
-    await screen.redraw();
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    await draw_screen();
     // 注意书き表示時は入力を無視（DIALOGUE:1 < 0 → 等键复位重画）
     if (dialogue[1] < 0) {
       await era.waitAnyKey();

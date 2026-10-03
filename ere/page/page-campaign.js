@@ -65,6 +65,7 @@ const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { char_make_inport } = require('#/chara/char-make');
 const { rand_chara_make } = require('#/chara/chara-make');
 const { life_list_item } = require('#/page/page-life-list');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -179,6 +180,8 @@ async function recruit_campaign_slave(rand) {
   chara(0).dungeon.气力 -= 100;
   const talent_slot = era_flag.hero_campaign_active + 360; // LOCAL = FLAG:400 + 360
   era.set(`talent:${recruited}:${talent_slot}`, 1);
+  // 招募播报在回战役菜单换屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
 }
 
 /**
@@ -191,6 +194,8 @@ async function recruit_campaign_slave(rand) {
 async function dispatch_campaign_slave(no_page) {
   const talent_slot = era_flag.hero_campaign_active + 360; // LOCAL = FLAG:400 + 360
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const candidate_ids = era.getAddedCharacters();
     const max_page = Math.max(
       0,
@@ -264,6 +269,8 @@ async function campaign_menu(rand) {
   // #DIM NO_PAGE = 0——函数级，跨派遣子菜单的反复进出保留页码
   let dispatch_page = 0;
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.drawLine();
     const active = era_flag.hero_campaign_active;
     if (active > 0) {

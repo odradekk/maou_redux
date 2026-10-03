@@ -36,6 +36,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
 const { EXPLV } = require('#/era-utils/exp-level');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
 const MAX_SALE_PRICE = 25_000_000;
@@ -466,6 +467,8 @@ async function sale_chara(
         era_exflag.prestige -= 10;
         era.print('威望值减少');
       }
+      // 成交播报（售价 + 威望值）后等键再回列表屏换屏（ADR-0009）
+      await era.waitAnyKey();
       return price;
     }
     if (result === 1) {
@@ -566,6 +569,8 @@ async function chara_sale({
   rand,
 } = {}) {
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 每完成或取消一单都从函数头重画。
     era.drawLine();
     era.print(

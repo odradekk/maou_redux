@@ -121,6 +121,8 @@ async function chara_info_name_edit(arg, reset = 0) {
     }
     // 侵攻中的勇者不在此处给反馈——那是「按钮没显示但输入仍能到达」的
     // 防御分支，返回值给调用点。
+    // 不可改名的反馈在回名册前经按键确认（ADR-0009）；无输出时不会真等
+    await era.waitAnyKey();
     return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;
   }
 
@@ -131,6 +133,8 @@ async function chara_info_name_edit(arg, reset = 0) {
     if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
       await random_self_call(arg); // 一人称設定
     }
+    // 还原名的播报在回名册前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 0; // 块的出口
   }
 
@@ -161,6 +165,9 @@ async function chara_info_name_edit(arg, reset = 0) {
   if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
     await random_self_call(arg); // 一人称設定
   }
+  // 改名播报与一人称设定的输出在回名册前经按键确认（名册循环换屏会清掉
+  // 本屏，ADR-0009）；无输出时不会真等，玩家按键次数不变
+  await era.waitAnyKey();
   return 0;
 }
 

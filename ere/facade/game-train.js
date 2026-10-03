@@ -1195,21 +1195,6 @@ class TrainGame {
     era.set('tflag:899', v);
   }
 
-  /**
-   * 清屏锚点（tflag:999）
-   * yml/TFlag.yml 头注
-   * @returns {number}
-   */
-  get 清屏锚点() {
-    return era.get('tflag:999') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 清屏锚点(v) {
-    era.set('tflag:999', v);
-  }
-
   // —— item ——
   /**
    * 安全套（item:24）

@@ -44,6 +44,7 @@ const { add_ex_item } = require('#/dungeon/ex-item');
 const { chara } = require('#/facade/chara');
 const { gohoubi_request } = require('#/system/stronghold/gohoubi-request');
 const { life_list_item } = require('#/page/page-life-list');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');
 const { getbit } = require('#/kojo/kojo-dungeon-bitch-log');
 
@@ -210,12 +211,14 @@ async function pick_floor(select) {
 /**
  * 设施扩张的两道前置检查（两处同款）。
  * @param {number} floor 层号
- * @returns {boolean} true = 可扩张；false = 已回退（调用方回迎击设定）
+ * @returns {Promise<boolean>} true = 可扩张；false = 已回退（调用方回迎击设定）
  */
-function facility_expandable(floor) {
+async function facility_expandable(floor) {
   const room = era.get(`flag:${floor + ROOM_ID_BASE}`) || 0;
   if (room === 0) {
     era.print(`${floor}层没有任何设施`);
+    // 提示后等键再回迎击设定（ADR-0009：换屏前的输出先经按键确认）
+    await era.waitAnyKey();
     return false;
   }
   const level =
@@ -224,6 +227,8 @@ function facility_expandable(floor) {
     era.print(
       `${floor}层的${era.get(`itemname:${room}`) ?? ''}已经扩张到极限了。`,
     );
+    // 提示后等键再回迎击设定（ADR-0009：换屏前的输出先经按键确认）
+    await era.waitAnyKey();
     return false;
   }
   return true;
@@ -267,7 +272,7 @@ async function pick_action(select, floor) {
       await print_wait('将进行陷阱的补充作业');
     } else if (result === 3) {
       // 扩张设施：两道前置检查 + 资金检查
-      if (!facility_expandable(floor)) {
+      if (!(await facility_expandable(floor))) {
         return 0; // GOTO INPUT_LOOP_MAIN——回迎击设定，WORK 不变
       }
       await print_wait(
@@ -311,6 +316,8 @@ async function intercept(rand = default_rand) {
   // PREV_PAGE = NO_PAGE 在 ere 侧没有消费者：列表按命中序号开窗（文件头
   // 第 2 条），与 ability_up 同款处置。
   main0: for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
     era.print('派遣谁前去迎击勇者？');
     era.print(`<状态若不为[可被卖]、将需要${DISPATCH_COST}pt资金来派遣>`);
@@ -375,7 +382,9 @@ async function intercept(rand = default_rand) {
       if (cflag(result, 0) === 0) {
         era.print('支付了金钱');
       }
-      era.print(`*${chara_callname(result)}作为你的爪牙外出迎击了*`); // PRINTFORMW
+      era.print(`*${chara_callname(result)}作为你的爪牙外出迎击了*`); // 原版是 PRINTW
+      // 播报后等键再进迎击设定（ADR-0009：换屏前的输出先经按键确认）
+      await era.waitAnyKey();
       select = result;
 
       // 进入迎击设定
@@ -385,6 +394,8 @@ async function intercept(rand = default_rand) {
 
       // $INPUT_LOOP_MAIN
       for (;;) {
+        // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+        await change_screen();
         draw_settings(select, floor, work, item_get);
         const choice = await era.input();
         if (choice === 999) {
@@ -393,7 +404,7 @@ async function intercept(rand = default_rand) {
         if (choice === 0) {
           floor = await pick_floor(select); // GOTO INPUT_LOOP_4
           // WORK == 3 的前置检查（失败回迎击设定）
-          if (work === 3 && !facility_expandable(floor)) {
+          if (work === 3 && !(await facility_expandable(floor))) {
             continue;
           }
           continue; // GOTO INPUT_LOOP_MAIN
@@ -461,6 +472,8 @@ async function intercept(rand = default_rand) {
         }
         if (got === 0) {
           era.print('补给已满，资金被退还了。');
+          // 退款播报在回主菜单换屏前经按键确认（ADR-0009）
+          await era.waitAnyKey();
           era_flag.money += EQUIP_COST;
           era_exflag.legit_money += EQUIP_COST;
         }

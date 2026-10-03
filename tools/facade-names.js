@@ -571,7 +571,6 @@ const tflag_named = {
   860: named('失神口上开关', 'TFLAG:860'),
   ...fill(864, 898, (i) => named(`失神_${i}`, 'TFLAG:864～899 失神补丁')),
   899: named('失神', 'TFLAG:899'),
-  999: named('清屏锚点', 'yml/TFlag.yml 头注'),
 };
 
 const tflag = tflag_named;

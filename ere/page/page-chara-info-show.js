@@ -48,6 +48,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { equip_get } = require('#/system/equip/equip-lookup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_juel } = require('#/page/page-ablup');
+const { change_screen } = require('#/page/components/screen-change');
 const {
   show_block,
   show_info_title,
@@ -277,9 +278,10 @@ async function sacrifice_flow(cid, background) {
     return true; // 其余输入：重新开始
   }
 
-  // 名单轮循环
+  // 名单轮循环。每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
   let page = 0;
   for (;;) {
+    await change_screen();
     era.println();
     era.drawLine({ isSolid: true }); // 实线分割线
     era.print(`当前总祭品数： ${sacrifice_score(shadow)} /${SACRIFICE_FULL}`);
@@ -334,6 +336,9 @@ async function sacrifice_flow(cid, background) {
       const picked_state = cflag(result, 1);
       if (picked_state === STATE_HERO) {
         await show_chara_info(result, -2);
+        // 贡品信息页整屏输出没有收尾等键，补上再重画名单
+        //（ADR-0009：换屏前的输出先经按键确认）
+        await era.waitAnyKey();
         continue; // 重画名单
       }
       if (!SACRIFICABLE_STATES.includes(picked_state)) {
@@ -341,6 +346,8 @@ async function sacrifice_flow(cid, background) {
         // `cflag == 2` 的重复条件，恒假——上面已经拦过
         // STATE_HERO，只实现可达分支）
         era.print(`该状态不可操作：${picked_state}`);
+        // 提示后等键再重画名单（ADR-0009：换屏前的输出先经按键确认）
+        await era.waitAnyKey();
         continue; // 重画名单
       }
       // 献祭确认
@@ -436,7 +443,11 @@ async function show_chara_info_body(cid, page, rand, background) {
 
     if (cflag(cid, 1) === STATE_SACRIFICED) {
       const restart = await sacrifice_flow(cid, background);
-      if (restart) continue; // 重画一轮
+      if (restart) {
+        // 重画一轮前换屏（ADR-0009）：献祭流程的输出已经过按键确认
+        await change_screen();
+        continue;
+      }
       return 1; // 「直接回首页」以 1 传达（常规返回 0）
     }
 

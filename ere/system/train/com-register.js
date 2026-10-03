@@ -31,14 +31,13 @@
  * 全部按钮化（printButton）。multi_comable 拒绝的指令没有按钮——
  * 「输入 → 无效指令」的行内重试路径，ere 侧由引擎层拒收（#130 体系），
  * 「无效指令」提示行不可达，差异已记录。CLEARLINE 的原地重画由
- * ScreenBlock 承载（#73/#74 决定，page-train.js 文件头先例）；REDRAW
- * 不镜像（无 ere 对应语义）。
+ * 每轮换屏取代（ADR-0009）；REDRAW 不镜像（无 ere 对应语义）。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const game_train = require('#/facade/game-train');
-const { ScreenBlock } = require('#/page/components/screen-block');
+const { change_screen } = require('#/page/components/screen-change');
 const {
   com_able_family,
   DECLARED_TRAIN_IDS,
@@ -143,13 +142,13 @@ async function print_comlist() {
 
 /**
  * comseq_register：调教菜单的登记循环。
- * 每登记一条整屏重画（CLEARLINE 回 LOCAL:99 行 → ere 侧 ScreenBlock
- * 重绘）；满 10 条 / 保存并返回 / 首步取消 三路出口。
+ * 每登记一条换屏重画（ADR-0009）；满 10 条 / 保存并返回 / 首步取消 三路出口。
  * @returns {Promise<0>}
  */
 async function comseq_register() {
   let local0 = 0; // LOCAL:0 已登记条数（本次会话）
-  const block = new ScreenBlock(async () => {
+  const draw_register_screen = async () => {
+    era.print('调教菜单登录'); // PRINTL（整行自成一行，不再补换行——#562）
     era.drawLine();
     await comseq_show();
     era.drawLine();
@@ -173,12 +172,12 @@ async function comseq_register() {
     // 换行，见 CONTEXT.md「输出 API 的排版与对齐」）；按钮自成一行，故这里
     // 不补空行（#562）。
     era.drawLine();
-  });
-
-  era.print('调教菜单登录'); // PRINTL（整行自成一行，不再补换行——#562）
+  };
 
   for (;;) {
-    await block.redraw(); // 回标记行重画（REDRAW 0/1 不镜像）
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）；标题随屏重画
+    await change_screen();
+    await draw_register_screen(); // 回标记行重画（REDRAW 0/1 不镜像）
     const result = await era.input(); // INPUT
 
     // 出口：首步取消 → RETURN 0；越界（保存并返回 1000 等）→ 完成段
@@ -311,7 +310,10 @@ async function comseq_train() {
     pending = await run_calltrain(sequence); // CALLTRAIN FLAG:550
   } else {
     game_train.索求口上抑制 = 0; // 不可实行 → 旗标复位
-    era.print('所登录的指令目前无法实行'); // PRINTL（整行自成一行，不补空行——#595）
+    // PRINTL（整行自成一行，不补空行——#595）；这条报文没有后续结算输出，
+    // 尾部补等键，保证下一轮回合画面换屏时它已被按键确认（ADR-0009）
+    era.print('所登录的指令目前无法实行');
+    await era.waitAnyKey();
   }
   era_flag.prevcom = prevcom_saved; // PREVCOM 恢复
   return pending;

@@ -47,6 +47,7 @@ const {
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
+const { change_screen } = require('#/page/components/screen-change');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
 const { ABLUP_HANDLERS } = require('#/system/train/juel-check');
@@ -188,6 +189,7 @@ async function ability_up() {
       }
       prev_mode = select_menu;
 
+      await change_screen();
       draw_menu_header();
       const drawn = draw_list(select_menu, no_page);
       select_menu = drawn.menu; // 写回归一后的菜单档
@@ -267,8 +269,9 @@ async function ability_up_core(arg) {
   const previous_target = era_flag.target; // 备份，退出前还原
   era_flag.target = arg; // 本函数运行期间指向被提升的角色
 
-  // 输入循环：绘制状态区并消化能力分支
+  // 输入循环：绘制状态区并消化能力分支。每轮绘制前换屏（ADR-0009）
   for (;;) {
+    await change_screen();
     era.drawLine(); // 分割线
     era.print(chara_callname(arg)); // 目标名
     era.drawLine(); // 点线分割线
@@ -285,6 +288,9 @@ async function ability_up_core(arg) {
     // 卖淫中毒 37 / 兽奸中毒 39 / 局部中毒 40 / 反抗刻印 99 / 100）
     if (result in ABLUP_HANDLERS) {
       await ABLUP_HANDLERS[result](arg); // issue #464
+      // 各能力分支的成败播报在重画本屏前经按键确认（ADR-0009）；自带
+      // 收尾等键的分支不会再等，玩家按键次数不变
+      await era.waitAnyKey();
       continue;
     }
     // 菜单按钮的编号与 ABLUP_HANDLERS 的键一一对应（#464-#466 全部实现），
@@ -296,6 +302,9 @@ async function ability_up_core(arg) {
       // 「TFLAG:25 的调教外通道」节
       yokubo_up_check(era_flag.target, { in_train: false });
       await check_sellassiable(era_flag.target);
+      // 欲情变化与出售资格复核的播报在重画菜单前经按键确认（ADR-0009）；
+      // 未触发的检查不打印，不会多按键
+      await era.waitAnyKey();
       era_flag.target = previous_target;
       return 0;
     }

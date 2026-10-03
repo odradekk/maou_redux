@@ -58,7 +58,7 @@
  *     丢失（引擎能力差异，点击/键入不受影响）。
  *   - REDRAW/CLEARLINE → 本文件用「入口基准 + clear(跨度)」就地重绘
  *     （L_LINECOUNT = LINECOUNT → CLEARLINE LINECOUNT - L_LINECOUNT 的
- *     习语，ScreenBlock 同源）。无效输入只 CLEARLINE 1 不重画，ere 统一
+ *     习语）。无效输入只 CLEARLINE 1 不重画，ere 统一
  *     整屏重绘（page-select-target 先例：ere 控制台是滚动视图）。
  *   - 故事命名（$SET_NAME）：INPUTS 前先 clear 回基准——引擎在屏幕有按钮时
  *     拒收非按钮输入（dev-guides/05-interaction.md:144），文本输入必须先把
