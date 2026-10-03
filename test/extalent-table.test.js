@@ -81,7 +81,12 @@ test('常规批产物在场：27 张 Chara*.yml（1–24 除 0/17、31–34）�
     );
   }
 });
-test('版本轴：0.0.1——【版本】=【最低支持版本】= 版本代号的编码（#138 破坏性改动抬版本）', () => {
+// 已发布的最早版本 0.1.0 的【版本】编码。0.1.0 起对外发布、玩家手里有存档，
+// 【最低支持版本】不得高于它（ADR-0006「玩家存档保护」）；要提高它，必须先由
+// 用户决定并记进 ADR-0006，再改这里
+const OLDEST_RELEASED_VERSION = 1000;
+
+test('版本轴：【版本】与版本代号的编码一致，【最低支持版本】不高于已发布的 0.1.0', () => {
   const text = read_yml('GameBase.yml');
   const field = (name) => {
     const m = new RegExp(`^"${name}": (.+)$`, 'm').exec(text);
@@ -92,14 +97,18 @@ test('版本轴：0.0.1——【版本】=【最低支持版本】= 版本代号
   const version_name = field('版本代号');
   const allow = field('最低支持版本');
   // ADR-0006：【版本】= major×1000000 + minor×1000 + patch；
-  // 【最低支持版本】恒等于【版本】；【游戏标识】冻结 931060（另断言防误动）
+  // 【游戏标识】冻结 931060（另断言防误动）
   const [major, minor, patch] = version_name.split('.').map(Number);
   assert.equal(
     version,
     major * 1000000 + minor * 1000 + patch,
     `【版本】${version} 与【版本代号】"${version_name}" 的编码不一致`,
   );
-  assert.equal(allow, version, '【最低支持版本】必须恒等于【版本】');
+  assert.ok(
+    allow <= OLDEST_RELEASED_VERSION,
+    `【最低支持版本】${allow} 高于已发布的 0.1.0（${OLDEST_RELEASED_VERSION}），0.1.0 的玩家存档会被拒绝读取`,
+  );
+  assert.ok(allow <= version, '【最低支持版本】不得高于【版本】');
   assert.equal(field('游戏标识'), 931060, '【游戏标识】冻结，动它引擎拒绝启动');
 });
 
@@ -362,7 +371,7 @@ engine_test(
 );
 
 engine_test(
-  '版本闸门（#138 追加）：引擎真 loadData 拒 version 0 的档、放行当前 GameBase 版本',
+  '版本闸门（#138 追加）：引擎真 loadData 拒 version 0 的档、放行当前版本与已发布的 0.1.0',
   async () => {
     // #135 的 0.0.0 轴在实机上撞出的阻断性缺陷：loadData 的闸门是
     // `if (r.version && !(r.version < allowVersion))`——truthy 判空，0 直接
@@ -438,6 +447,20 @@ engine_test(
         await api.loadData(1),
         true,
         `version ${version}（当前 GameBase）的档必须能读回`,
+      );
+      assert.deepEqual(errors, []);
+
+      // 喂 0.1.0 盖戳的档：0.1.0 已对外发布，玩家存档必须能读回
+      fs.writeFileSync(
+        save_path,
+        JSON.stringify({ ...payload, version: OLDEST_RELEASED_VERSION }),
+      );
+      fake_era.data = {};
+      errors.length = 0;
+      assert.equal(
+        await api.loadData(1),
+        true,
+        '0.1.0（1000）盖戳的玩家存档必须能被引擎读回',
       );
       assert.deepEqual(errors, []);
     } finally {
