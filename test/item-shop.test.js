@@ -883,6 +883,19 @@ test('复数购买的尾段等键：取消提前退出不等键，成交后尾�
     [],
     '尾段输出在换屏前已确认',
   );
+
+  // 尾段无输出路径：24 号普通件买一件 → 成交分支的等键已确认「购买了」，
+  // 尾段不打印、无条件等键被引擎短路（waited:false），玩家不多按键
+  const plain = await run_purchase(
+    24,
+    { 'flag:10004': 1000000, 'itemsales:24': 5 },
+    [1],
+  );
+  assert.deepEqual(
+    plain.fixture.waits.map((w) => w.waited),
+    [true, false],
+    '普通件成交恰等一次，尾段等键短路',
+  );
 });
 
 test('复数购买：单价表逐条对上（含陷阱的 TRAP_PRICE 段与 91 的戒指价）', async () => {

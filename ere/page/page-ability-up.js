@@ -53,7 +53,7 @@ const {
 } = require('#/page/components/screen-change');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
-const { ABLUP_HANDLERS } = require('#/system/train/juel-check');
+const { ABLUP_HANDLERS, HANDLER_QUIET } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
@@ -293,10 +293,14 @@ async function ability_up_core(arg) {
     // 22 / ホモっ気 23 / 性交中毒 30 / 自慰中毒 31 / 精液中毒 32 / 百合中毒 33 /
     // 卖淫中毒 37 / 兽奸中毒 39 / 局部中毒 40 / 反抗刻印 99 / 100）
     if (result in ABLUP_HANDLERS) {
-      await ABLUP_HANDLERS[result](arg); // issue #464
-      // 分支画面（至少有自己的菜单）在重画本屏前经按键确认（ADR-0009）；
-      // 自带收尾等键的分支引擎自动短路，玩家按键次数不变
-      await era.waitAnyKey();
+      const handler_ret = await ABLUP_HANDLERS[result](arg); // issue #464
+      // 放弃支（HANDLER_QUIET）最后一次动作是输入：回显已把分支画面全部
+      // 确认，其后没有新输出——再等键会真等一次，玩家多按键，跳过。其余
+      // 分支至少有一行未读的自己画面（成功播报 / 分支菜单）在重画本屏前经
+      // 按键确认（ADR-0009）；自带收尾等键的分支引擎自动短路，不会重复等
+      if (handler_ret !== HANDLER_QUIET) {
+        await era.waitAnyKey();
+      }
       continue;
     }
     // 菜单按钮的编号与 ABLUP_HANDLERS 的键一一对应（#464-#466 全部实现），

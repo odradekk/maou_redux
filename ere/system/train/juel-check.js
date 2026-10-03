@@ -64,6 +64,7 @@ const {
   ablup99,
   ablup100,
   auto_ablup,
+  HANDLER_QUIET,
 } = require('#/system/train/ablup');
 const { check_specialskil } = require('#/event/get-specialtalent'); // #565 起接入
 const { show_info_exp } = require('#/page/page-info-exp');
@@ -423,6 +424,7 @@ async function run_juel_check() {
 module.exports = {
   ABLUP_IDS,
   ABLUP_HANDLERS,
+  HANDLER_QUIET,
   juel_check_main,
   offset_negative_group,
   palam_to_gain,

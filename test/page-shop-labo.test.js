@@ -2615,7 +2615,7 @@ test('等键契约：素质互换的成功与失败两支换屏前已确认', as
   });
 });
 
-test('run_modify 的成交等键：全部条目都打印 apply 文案，必等且只等一次', async () => {
+test('run_modify 的等键：成交必等一次，取消支不等键', async () => {
   // 25 个条目的 apply 都打印结果文案——确认键回显之后必有新输出，
   // 无条件等键不会多按键（#724 返工的审计结论）
   const fixture = make_fixture({ seed: { 'talent:1:124': 1 } });
@@ -2630,4 +2630,16 @@ test('run_modify 的成交等键：全部条目都打印 apply 文案，必等�
   );
   await change_screen();
   assert.deepEqual(fixture.unread_output_clears, [], '成交文案在换屏前已确认');
+
+  // 取消支（确认键选「否」）：最后一次动作是输入、其后无打印——等键在
+  // 早退的 return 之前根本不会被调用，玩家不多按键
+  const cancel = make_fixture({ seed: { 'talent:1:124': 1 } });
+  await run(cancel, 'modify_animal_erase', [1, 1], {});
+  assert.deepEqual(
+    cancel.waits.filter((w) => w.waited),
+    [],
+    '取消支不等键',
+  );
+  await cancel.load_module('page/components/screen-change').change_screen();
+  assert.deepEqual(cancel.unread_output_clears, [], '取消支无未读输出');
 });

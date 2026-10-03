@@ -721,24 +721,50 @@ test('能力提升等键：欲情变化的播报让出口等一次键（#724）'
   assert_no_unread(fixture, '能力提升出口');
 });
 
-test('能力提升等键：分支画面由分发处的等键确认（ablup100 停止支，#724）', async () => {
+test('能力提升等键：选能力后 [100] 放弃返回，不真等键（#724）', async () => {
   const fixture = create_era_fixture();
   const { join_slave_chara } = require('./helpers/chara');
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 1, '奴隶甲');
   const { ability_up_core } = fixture.load_module('page/page-ability-up');
 
-  // [0] 阴蒂感觉进分支 → 分支菜单 → [100] 停止返回 → 分发处的等键确认
-  // 分支画面 → 重画本屏 → [999] 出口（两项检查未触发，不再等键）
+  // [0] 阴蒂感觉进分支 → 分支菜单 → [100] 放弃返回（最后一次动作是输入、
+  // 其后无打印——分支画面已被放弃这次输入的回显全部确认）→ 重画本屏 →
+  // [999] 出口（两项检查未触发，不打印不等键）。全程不应真等键
   fixture.set_inputs(0, 100, 999);
   await ability_up_core(1);
 
+  assert.deepEqual(
+    fixture.waits.filter((w) => w.waited),
+    [],
+    '放弃返回与静默出口都不得真等键',
+  );
+  assert_no_unread(fixture, '能力提升放弃支');
+});
+
+test('能力提升等键：选能力并提升成功，等一次键（#724）', async () => {
+  const fixture = create_era_fixture();
+  const { join_slave_chara } = require('./helpers/chara');
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 1, '奴隶甲');
+  fixture.store.set('juel:1:0', 10); // LV0→1 需 1 点阴核点数，给足
+  const { ability_up_core } = fixture.load_module('page/page-ability-up');
+
+  // [0] 阴蒂感觉进分支 → 分支菜单 → [0] 提交 → 「变为LV1」播报（分支内不
+  // 等键）→ 分发处的等键确认一次 → 重画本屏 → [999] 出口（静默）
+  fixture.set_inputs(0, 0, 999);
+  await ability_up_core(1);
+
+  assert(
+    fixture.lines_history.some((l) => (l.text ?? '').includes('变为LV1')),
+    '提升成功的播报应输出过',
+  );
   assert.equal(
     fixture.waits.filter((w) => w.waited).length,
     1,
-    '停止返回后由分发等键确认一次',
+    '成功播报恰由分发等键确认一次',
   );
-  assert_no_unread(fixture, 'ablup100 停止支');
+  assert_no_unread(fixture, '能力提升成功支');
 });
 
 test('影像投放等键：增强与延长流行的支付播报在回菜单换屏前先经按键确认（#724）', async () => {
