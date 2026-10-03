@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 240; // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 245; // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -1435,12 +1435,13 @@ export default [
     must_mention: '陷阱商店',
   },
   {
-    desc: 'M8914 店内 997 的跳转不再重画道具商店（item_shop 调用删）',
+    desc: 'M8914 店内 997 切回道具商店不生效（BOUGHT 不置 1）',
     file: 'ere/page/page-shop.js',
-    find: '    await item_shop(); // 切道具商店并立即重画',
-    replace: '    // 变异：切店不重画',
+    find: '  } else if (result === 997 && era_flag.bought >= 0) {\n    era_flag.bought = 1;\n    clear_shop();',
+    replace:
+      '  } else if (result === 997 && era_flag.bought >= 0) {\n    // 变异：不切回道具商店（BOUGHT 不动）\n    clear_shop();',
     tests: ['shop-trap'],
-    must_mention: '切回道具商店',
+    must_mention: 'BOUGHT = 1',
   },
   // M8915（商品一览编号字段宽 3 → 5）随 #710 的按钮网格删除：编号补位已
   // 不存在，等价检查换成 M14236（返回退回纯文本）与既有的 M8926（每行格数）。
@@ -2040,5 +2041,71 @@ export default [
     replace: '  // 卖淫影响 2（无影响）：卖淫经验不参与估价\n  return 20;',
     tests: ['sale'],
     must_mention: '卖淫影响 2 不应用卖淫经验倍率',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14486 怪物商店种族屏每轮换屏调用删除',
+    file: 'ere/page/page-monster-shop.js',
+    find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    show_shop_monster();`,
+    replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    show_shop_monster();`,
+    tests: ['monster-shop', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14487 怪物商店召唤流程换屏调用删除',
+    file: 'ere/page/page-monster-shop.js',
+    find: `    // 会把上一张角色卡整屏换掉
+    await change_screen();
+    const chara_id = shop_state.chosen; // CHARA = TFLAG:102`,
+    replace: `    // 会把上一张角色卡整屏换掉
+    const chara_id = shop_state.chosen; // CHARA = TFLAG:102`,
+    tests: ['monster-shop', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14488 祭品选择屏每轮换屏调用删除',
+    file: 'ere/page/page-monster-shop.js',
+    find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    show();
+    era.print(`,
+    replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    show();
+    era.print(`,
+    tests: ['monster-shop', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14489 召唤对象选择屏每轮换屏调用删除',
+    file: 'ere/page/page-monster-shop.js',
+    find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    show();
+
+    if (item_price(target) - picked_level <= 0) {`,
+    replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    show();
+
+    if (item_price(target) - picked_level <= 0) {`,
+    tests: ['monster-shop', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14490 奴隶贩卖每轮换屏调用删除',
+    file: 'ere/system/stronghold/sale.js',
+    find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    // 每完成或取消一单都从函数头重画。`,
+    replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    // 每完成或取消一单都从函数头重画。`,
+    tests: ['sale-chara', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
   },
 ];

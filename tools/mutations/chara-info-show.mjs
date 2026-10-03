@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用编号，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 74; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
+export const COUNT = 76; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
@@ -634,8 +634,18 @@ export default [
     11906,
     'SHOW_CHARA_INFO：名单轮的返回从 RESTART 改成直接退到首页（出口轮不再重画）',
     MAIN,
-    '      const restart = await sacrifice_flow(cid, background);\n      if (restart) continue; // 重画一轮',
-    '      const restart = await sacrifice_flow(cid, background);\n      if (restart) return 1; // 变异：RESTART 改成直接退到首页',
+    `      const restart = await sacrifice_flow(cid, background);
+      if (restart) {
+        // 重画一轮前换屏（ADR-0009）：献祭流程的输出已经过按键确认
+        await change_screen();
+        continue;
+      }`,
+    `      const restart = await sacrifice_flow(cid, background);
+      if (restart) {
+        // 重画一轮前换屏（ADR-0009）：献祭流程的输出已经过按键确认
+        await change_screen();
+        return 1; // 变异：RESTART 改成直接退到首页
+      }`,
     'show_chara_info：祭品名单的返回是真按钮（名单轮次白名单非空，#530）',
   ),
   // —— #593：同屏固定编号核对的鉴别力（不认特定写法、`A + index` 展开、登记项失效） ——
@@ -671,5 +681,29 @@ export default [
       };`,
     tests: ['child-id-collision'],
     must_mention: '尾段的 [7] 必须并进循环头那一轮',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14494 献祭名单每轮换屏调用删除',
+    file: 'ere/page/page-chara-info-show.js',
+    find: `  for (;;) {
+    await change_screen();
+    era.println();`,
+    replace: `  for (;;) {
+    era.println();`,
+    tests: ['chara-info-show', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14495 献祭名单重入换屏调用删除（RESTART 支）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: `        // 重画一轮前换屏（ADR-0009）：献祭流程的输出已经过按键确认
+        await change_screen();
+        continue;`,
+    replace: `        // 重画一轮前换屏（ADR-0009）：献祭流程的输出已经过按键确认
+        continue;`,
+    tests: ['chara-info-show', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
   },
 ];

@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 81; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
+export const COUNT = 84; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -277,7 +277,7 @@ export default [
   make(
     9436,
     '肉棒改造 扣款 20000 改 20001',
-    '    pay(20000);\n    return 1;',
+    '    pay(20000);\n    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    await era.waitAnyKey();\n    return 1;',
     '    pay(20001);\n    return 1;',
     '肉棒改造：扣掉 20000 点',
   ),
@@ -607,4 +607,42 @@ export default [
     "  // 变异：:272 的真空行删除\n  era.print('□洗脑 （助手用）');",
     '独立 PRINTL 仍是一个真空行',
   ),
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14496 实验室选人屏每轮换屏调用删除',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // 画面的公共骨架，一处接入覆盖所有条目
+    await change_screen();
+    draw_pick(cfg.intro, no_page, cfg.mode ?? 1, cfg.cancel ?? '返  回');`,
+    replace: `    // 画面的公共骨架，一处接入覆盖所有条目
+    draw_pick(cfg.intro, no_page, cfg.mode ?? 1, cfg.cancel ?? '返  回');`,
+    tests: ['page-shop-labo', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14497 实验室主菜单每轮换屏调用删除',
+    file: 'ere/page/page-shop-labo.js',
+    find: `    // $DRAW_PAGE。每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    era.print('魔界的大门');`,
+    replace: `    // $DRAW_PAGE。每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    era.print('魔界的大门');`,
+    tests: ['page-shop-labo', 'subpage-clear-screen'],
+    must_mention: '各轮菜单行数之差应在',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14499 run_modify 成交尾段的换屏确认等键删除（apply 播报未读就被清）',
+    file: 'ere/page/page-shop-labo.js',
+    find: `      // apply/after 的结果文案在回主菜单屏前经按键确认（ADR-0009）；
+      // 无输出的条目不会真等，玩家按键次数不变
+      await era.waitAnyKey();
+      return 1;`,
+    replace: `      // apply/after 的结果文案在回主菜单屏前经按键确认（ADR-0009）；
+      // 无输出的条目不会真等，玩家按键次数不变
+      return 1;`,
+    tests: ['page-shop-labo', 'subpage-clear-screen'],
+    must_mention: '整屏清空抹掉了未读输出',
+  },
 ];
