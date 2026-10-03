@@ -26,6 +26,7 @@
  *   用半角空格补位也是同一结果，实机表现不变。要真正对齐得改用
  *   `printMultiColumns` 的列宽（按钮格 + 文本格），不在本工单范围。
  *
+ * 三个选择循环每轮绘制前换屏（ADR-0009）：画面上只有当前这一屏。
  * 三条既有怪癖（行为被用例钉住，不改）：
  * - 顶层表格行对 cla≥5 的槽不写 PRINT_STR（空 ELSE）——残留
  *   上一行的文案（#DIMS 跨循环残留），本文件同样保留前值。
@@ -45,6 +46,7 @@ const {
   unpack_race_config,
 } = require('#/chara/chara-body');
 const { game } = require('#/facade/game');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display, pad_left } = require('#/utils/display-width');
 
@@ -195,6 +197,8 @@ async function confirm_reset(prompt) {
  */
 async function config_age_setting(rand = default_rand) {
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const v = game.dungeon.游戏设定;
     // 字符串用 + 拼接而非模板串：全角空格填充避开 no-irregular-whitespace
     // 对模板字面量的差异（同 page-config.js）
@@ -291,6 +295,8 @@ async function race_config(rand = default_rand) {
   }
 
   top: for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 表头与八种族行（[n] 前缀由引擎加，正文 = 种族名 + 36 列
     // 左对齐的档位说明 + 换算年龄；cla≥5 的行保留前一行的文案，见文件头）
     // 表头是 PRINTFORM 与 PRINTFORML 拼出的一条显示行（中间夹的
@@ -348,6 +354,8 @@ async function race_config(rand = default_rand) {
       }
 
       edit: for (;;) {
+        // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+        await change_screen();
         // 编辑头：重画前空行（DO 首拍的 PRINTL）+ 种族名 + 当前档
         // 说明 + 17 岁换算预览。说明与预览各是一条显示行（各自带
         // 收尾 PRINTFORML；预览行前的 SETCOLOR 同理不镜像），

@@ -129,6 +129,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { life_list } = require('#/page/page-life-list');
+const { change_screen } = require('#/page/components/screen-change');
 const { char_size_generate } = require('#/chara/chara-body');
 const { char_create } = require('#/chara/chara-custom');
 const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/chara/chara-ex');
@@ -274,6 +275,9 @@ function draw_pick(intro, no_page, mode, cancel) {
 async function pick_slave(cfg) {
   let no_page = 0; // #DIM NO_PAGE = 0
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）——这是全部选人
+    // 画面的公共骨架，一处接入覆盖所有条目
+    await change_screen();
     draw_pick(cfg.intro, no_page, cfg.mode ?? 1, cfg.cancel ?? '返  回');
     const result = await era.input(); // INPUT
 
@@ -367,6 +371,9 @@ async function run_modify(item, rand) {
       if (item.after) {
         item.after(cid, rand); // 应用之后的追加动作（身体重算等）
       }
+      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+      // 条目的 apply 都打印，这里必等且只等一次
+      await era.waitAnyKey();
       return 1;
     }
     if (item.confirm_else === 'return') {
@@ -471,6 +478,8 @@ async function modify_bustup(rand = default_rand) {
     }
     pay(cost);
     regenerated_bust(cid, rand);
+    // 档位播报在回选人/主菜单屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -528,6 +537,8 @@ async function modify_bustdown(rand = default_rand) {
     }
     pay(10000);
     regenerated_bust(cid, rand);
+    // 档位播报在回选人/主菜单屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -608,6 +619,8 @@ async function modify_futanari() {
     chara(cid).chara.阴茎的状态 = shape;
     chara(cid).train.童贞 = 1;
     pay(50000);
+    // 改造播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -919,7 +932,7 @@ const SHOJO_SAISEI_ITEM = {
       return '怎么看都是不可能的了，真的谢谢了。'; // PRINTW
     }
     if (talent(cid, 0)) {
-      return { text: `${savestr(cid)}本来就是处女。`, wait: false }; // PRINTFORM
+      return `${savestr(cid)}本来就是处女。`; // PRINTFORM：换屏规则下改为提示后等键（ADR-0009）
     }
     return null;
   },
@@ -944,9 +957,7 @@ const SHOJO_SEAL_ITEM = {
   intro: ['封印对象的性器。', '要封印谁的性器呢？'],
   master: true,
   guard: (cid) =>
-    talent(cid, 273)
-      ? { text: `${savestr(cid)}的性器已经被封印了。`, wait: false }
-      : null, // PRINTFORM
+    talent(cid, 273) ? `${savestr(cid)}的性器已经被封印了。` : null, // PRINTFORM
   confirm: (cid) => [`封印${savestr(cid)}的性器吗？`],
   apply: (cid) => {
     era.print(`《${savestr(cid)}获得【${talentname(273)}】》`);
@@ -966,9 +977,7 @@ const SHOJO_SEAL_OFF_ITEM = {
   intro: ['解除对象的性器封印', '要解除谁的封印呢？'],
   master: true,
   guard: (cid) =>
-    talent(cid, 273) === 0
-      ? { text: `${savestr(cid)}本来就没有被封印。`, wait: false }
-      : null, // PRINTFORM
+    talent(cid, 273) === 0 ? `${savestr(cid)}本来就没有被封印。` : null, // PRINTFORM
   confirm: (cid) => [`解除${savestr(cid)}的封印吗？`],
   apply: (cid) => {
     era.print(`《${savestr(cid)}的【${talentname(273)}】失去了》`);
@@ -1075,6 +1084,8 @@ async function tatoo_set_off() {
   // CSTR:TATOO_TARGET:TATOO_SELECT = %RESULTS%（动态下标，直写）
   era.set(`cstr:${target}:${select}`, results);
   pay(cost);
+  // 刺青播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
   return 1;
 }
 
@@ -1134,6 +1145,8 @@ async function modify_hair_color() {
     chara(t).chara.头发颜色 = col; // TALENT:T:头发颜色 = COL
     era.print(`《${savestr(t)}的发色变成【${hair_color_name(t)}】了》`);
     pay(5000);
+    // 发色播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -1206,6 +1219,8 @@ async function modify_skin_color() {
     }
     era.print(`《${savestr(t)}的${current}变成${skin_names[col]}了》`);
     pay(5000);
+    // 肤色播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -2075,6 +2090,8 @@ async function demon_rebirth(rand = default_rand) {
         labo_dr_change_hair_color(t, rand(7) + 1);
       }
       pay(50000);
+      // 转生播报在回选人屏前经按键确认（ADR-0009）
+      await era.waitAnyKey();
       return 1;
     }
   }
@@ -2229,6 +2246,8 @@ async function st_up_labo(cost, b) {
     }
     if (times < 1 || times > d) {
       era.print('数值太大了。'); // PRINTL
+      // 提示后等键再重画（ADR-0009：换屏前的输出先经按键确认）
+      await era.waitAnyKey();
       continue input_loop; // GOTO INPUT_LOOP（重来整段）
     }
     // 逐项强化
@@ -2375,6 +2394,8 @@ async function set_free_train() {
     era.print(`${results}调教设定完毕。`);
   }
   pay(20000);
+  // 设定播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
   return 1;
 }
 
@@ -2436,9 +2457,13 @@ async function trans_specialtalent() {
       era.print(`${savestr(t)}获得了【${talentname(85)}】。`);
     } else {
       era.print(`${savestr(t)}改变失败了`);
+      // 提示后等键再重画选人屏（ADR-0009：换屏前的输出先经按键确认）
+      await era.waitAnyKey();
       continue input_loop; // GOTO INPUT_LOOP（重来整段）
     }
     pay(500000);
+    // 互换播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -2614,6 +2639,8 @@ async function penis_remodel() {
     chara(t).chara.阴茎的状态 = shape; // TALENT:T:318 = RESULT
     chara(t).train.童贞 = 1; // TALENT:T:1 = 1
     pay(20000);
+    // 改造播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 1;
   }
 }
@@ -2733,7 +2760,8 @@ const ST_UP_MENU = { 70: 0, 71: 1, 72: 2, 73: 3 };
 async function secret_labo(rand = default_rand) {
   let p = 0; // P = 0
   for (;;) {
-    // $DRAW_PAGE（REDRAW/CLEARLINE 的局部重绘不镜像）
+    // $DRAW_PAGE。每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.print('魔界的大门');
     era.print('《可以对奴隶进行肉体和精神的魔改》');
     era.drawLine(); // DRAWLINE

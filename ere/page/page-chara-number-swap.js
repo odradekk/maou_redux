@@ -80,6 +80,7 @@ const {
   swap_sort_numbers,
 } = require('#/chara/chara-portcflag');
 const { get_job_name } = require('#/page/page-select-target');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display } = require('#/utils/display-width');
 // 换号页自己的分页宽度（与名册的 24 无关）
@@ -174,6 +175,8 @@ async function chara_number_swap() {
   // 换号页标号：第二屏的 [3002] 取消要跳回外层循环头（第一屏），
   // 故外层循环带标号，跳法与 page-ability-up.js 的 restart/menu 同款
   swap_page: for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const total = swap_candidates().length;
 
     // —— 第一屏 ——
@@ -209,6 +212,8 @@ async function chara_number_swap() {
     // —— 第二屏（同一页码窗口，剃除已选的行）——
     let second = 0; // 第二个角色
     for (;;) {
+      // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+      await change_screen();
       era.print('要跟那个角色换号呢？');
       const second_ids = swap_candidates()
         .slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE)
@@ -241,6 +246,7 @@ async function chara_number_swap() {
     }
 
     // —— 确认屏 ——
+    await change_screen();
     era.println();
     era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`);
     era.printButton('是', 4000);

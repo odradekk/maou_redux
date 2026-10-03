@@ -37,6 +37,7 @@
 const era = require('#/era-electron');
 const { chara_name_reset } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call');
+const { confirm_output_since } = require('#/page/components/screen-change');
 const { input_text } = require('#/utils/input-text');
 
 /** 判定返回值：可改名（魔王：改名会波及全体角色的称呼，故单独一档） */
@@ -111,6 +112,8 @@ function show_button_name_edit(num, arg, reset = 0) {
  * @returns {Promise<number>} 0 = 已处理；2 = 侵攻中的勇者（按钮本不该显示）
  */
 async function chara_info_name_edit(arg, reset = 0) {
+  // 进入本流程时的行数（名册输入的回显已计入）：本段有没有新输出以它为准
+  const entry_rows = era.getLineCount();
   const able = check_able_to_name_edit(arg);
   if (able !== 0 && able !== NAME_EDIT_KING) {
     // 不可改名：按档位给出反馈后返回 0
@@ -120,7 +123,9 @@ async function chara_info_name_edit(arg, reset = 0) {
       era.print('角色处于不能变更名字的状态');
     }
     // 侵攻中的勇者不在此处给反馈——那是「按钮没显示但输入仍能到达」的
-    // 防御分支，返回值给调用点。
+    // 防御分支，返回值给调用点。反馈在回名册前经按键确认（ADR-0009）；
+    // 侵攻勇者一支无输出，不等键
+    await confirm_output_since(entry_rows);
     return able === NAME_EDIT_HERO ? NAME_EDIT_HERO : 0;
   }
 
@@ -131,6 +136,8 @@ async function chara_info_name_edit(arg, reset = 0) {
     if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
       await random_self_call(arg); // 一人称設定
     }
+    // 还原名的播报在回名册前经按键确认（ADR-0009）
+    await era.waitAnyKey();
     return 0; // 块的出口
   }
 
@@ -161,6 +168,9 @@ async function chara_info_name_edit(arg, reset = 0) {
   if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
     await random_self_call(arg); // 一人称設定
   }
+  // 改名播报与一人称设定的输出在回名册前经按键确认（名册循环换屏会清掉
+  // 本屏，ADR-0009）；无输出时不会真等，玩家按键次数不变
+  await era.waitAnyKey();
   return 0;
 }
 

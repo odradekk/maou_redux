@@ -8,15 +8,13 @@
  * 自 #69 起接通（见 draw_main_menu 首段）、调教目标名/助手名按钮与生命条
  * （随角色数据工单）。
  *
- * #73 起本画面迁入组件层：menu_button 排版助手集中到
- * page/components/menu-button.js（两条 UI 结论的唯一权威落点），整屏由
- * create_main_menu() 包装为画面组件（page/components/screen-block.js）。
- * #723 起主菜单每轮「换屏 + 绘制」（ADR-0009，换屏入口
- * page/components/screen-change.js；画面组件的删除放在 #724）。
+ * #73 起排版助手集中到 page/components/menu-button.js（两条 UI 结论的
+ * 唯一权威落点）。#723 起主菜单每轮「换屏 + 绘制」（ADR-0009，换屏入口
+ * page/components/screen-change.js）；随 #724 删除画面组件，本文件只保留
+ * 绘制函数，清屏与重画节奏由调用方（page-shop.js 的商店轮）掌握。
  */
 
 const era = require('#/era-electron');
-const { ScreenBlock } = require('#/page/components/screen-block');
 const {
   menu_button_row,
   MENU_BUTTON_DIM_COLOR,
@@ -174,9 +172,8 @@ function dim_slot() {
 /**
  * 绘制据点主菜单。
  *
- * 本函数是画面组件的内容函数（create_main_menu 包装）：只输出、不清屏，
- * 整屏清空归调用方的换屏（#723 起 page-shop.js 的 show_shop 每轮
- * change_screen 后再经组件 draw 调到这里，ADR-0009）。重绘只发生在玩家
+ * 本函数只输出、不清屏，整屏清空归调用方的换屏（#723 起 page-shop.js 的
+ * show_shop 每轮 change_screen 后调到这里，ADR-0009）。重绘只发生在玩家
  * 交互之后——调用点在 page-shop.js 的商店轮。逐行重绘抑制（防闪烁用）
  * 在 ere 无对应语义，不镜像。
  */
@@ -629,23 +626,8 @@ function draw_dungeon_daily() {
   display_dungeon_daily();
 }
 
-/**
- * 主菜单画面组件（#73）：包装 draw_main_menu 的 ScreenBlock。
- *
- * 随 SHOP 状态的进入创建（page-shop.js 的 run_shop）。#723 起主菜单每一屏
- * 开始时换屏（ADR-0009）：调用方先 change_screen() 整屏清空，再经本组件的
- * draw 绘制，画面上只有主菜单本身；组件的就地重绘（redraw 的基准点清行）
- * 不再使用，画面组件本身的删除放在 #724。
- *
- * @returns {ScreenBlock} 主菜单组件
- */
-function create_main_menu() {
-  return new ScreenBlock(draw_main_menu);
-}
-
 module.exports = {
   draw_main_menu,
-  create_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
   draw_dungeon_overview,

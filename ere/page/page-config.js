@@ -9,13 +9,15 @@
  * 拼一行的写法在这里行不通。凡状态展示依赖独立函数的选项
  * （[13]/[21]/[27]/[29]），改造成 `*_text()` 纯文本 helper 供行内按钮拼接；
  * 状态文本没有第二个调用方，不再保留独立打印包装。
+ *
+ * 每个选择循环每轮绘制前换屏（ADR-0009）：画面上只有当前这一屏的菜单。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_global = require('#/era-utils/era-global');
 const era_modsave = require('#/era-utils/era-modsave');
-const { ScreenBlock } = require('#/page/components/screen-block');
+const { change_screen } = require('#/page/components/screen-change');
 const { config_age_setting } = require('#/page/page-config-age');
 const { get_look_info, KIND } = require('#/chara/look-info');
 const { game } = require('#/facade/game');
@@ -44,11 +46,11 @@ const FILTER_LABELS = [
  * config_filter_setting：调教指令过滤开关（FLAG:25 位 0-4，
  * game.train.指令过滤）。
  *
- * 切换后不清屏——每次切换都在下方追加一份新菜单，退出（[100]）后由
- * config_menu 的整页重绘统一清掉；本函数不额外补清屏（不引入新行为）。
+ * 每轮绘制前换屏：切换后的新菜单独占一屏，不与上一轮叠加（ADR-0009）。
  */
 async function config_filter_setting() {
   for (;;) {
+    await change_screen();
     const v = game.train.指令过滤;
     for (let i = 0; i < FILTER_LABELS.length; i++) {
       // 字符串用 + 拼接而非模板串：ESLint no-irregular-whitespace 默认跳过普通
@@ -426,9 +428,10 @@ async function dispatch_config(local, page) {
  */
 async function config_menu() {
   let page = 0;
-  const block = new ScreenBlock(() => draw_config_page(page));
   for (;;) {
-    await block.redraw();
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    draw_config_page(page);
     era.printButton('上一页', 102);
     era.printButton('返回', 100);
     era.printButton('下一页', 101);

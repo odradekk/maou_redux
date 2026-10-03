@@ -269,11 +269,11 @@ test('SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根，保留�
     ),
   );
   // 换屏（#722）后画面只留本屏：渲染完的行数即状态画面自身的行数，
-  // 不再有记录清除点（ScreenBlock 基准）的写入
+  // 不再写「清除点行号」一类的锚点（画面组件随 #724 删除）
   assert.equal(
     fixture.var_writes.filter((w) => w.name === 'tflag:999').length,
     0,
-    '换屏方案下 SHOW_STATUS 不再写清除点',
+    '换屏方案下 SHOW_STATUS 不写清除点',
   );
 });
 

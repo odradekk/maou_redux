@@ -45,6 +45,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
+const { change_screen } = require('#/page/components/screen-change');
 const { game } = require('#/facade/game');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const {
@@ -268,6 +269,8 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   let y_arcana = 0;
   // $INPUT_LOOP1 / $INPUT_LOOP2 的合并循环：模式即所在分支
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 每轮重扫（REPEAT CHARANUM 重过滤）；无效输入会把模式翻到
     // 妊娠允许（GOTO INPUT_LOOP1，文件头）
     candidates = era

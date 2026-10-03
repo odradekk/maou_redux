@@ -28,7 +28,7 @@ const { on, emit, TIER } = require('#/system/event/registry');
 const { maounet } = require('#/system/cross-save-sharing');
 const { chara_sale } = require('#/system/stronghold/sale');
 const {
-  create_main_menu,
+  draw_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
 } = require('#/page/page-main-menu');
@@ -96,11 +96,8 @@ on(
 
 /**
  * show_shop：绘制一轮主菜单。
- *
- * @param {import('#/page/components/screen-block').ScreenBlock} main_menu
- *   主菜单画面组件（run_shop 进入 SHOP 状态时创建；本函数即组件的每轮重入）
  */
-async function show_shop(main_menu) {
+async function show_shop() {
   // SAVESTR:0 = 你（魔王的存档名字串）：#5 决议由内置 callname:0:-1
   // 承载（Chara0.yml 的名前同为「你」）。ere 侧没有它的读者——需要魔王名
   // 时一律走 name_of(0)/chara_callname，所以这里不做「每轮重写回你」的
@@ -117,7 +114,7 @@ async function show_shop(main_menu) {
   // 那段（同 #396 陷阱商店的机制）。
   if (era_flag.bought >= 0 && era_flag.bought < 54) {
     await item_shop();
-    return undefined; // 本轮没画主菜单，无行数可报（调用方 run_shop 不取返回值）
+    return; // 本轮没画主菜单（show_shop 无返回值，调用方不取）
   }
 
   // BOUGHT >= 54 → item_shop_trap（陷阱商店）：#396 起真身
@@ -126,7 +123,7 @@ async function show_shop(main_menu) {
   // 后即转入陷阱商店）。
   if (era_flag.bought >= 54) {
     await item_shop_trap();
-    return undefined; // 同上
+    return; // 同上
   }
 
   // 防御性日期修正：月/日小于 1 时钳成 1。EVENTFIRST 链只初始化
@@ -147,9 +144,7 @@ async function show_shop(main_menu) {
   // 补。重绘只发生在玩家交互之后：本函数只在 run_shop 的循环里被调，
   // 输入先行（ADR-0003 的约定落点）。
   await change_screen();
-  const row_count = await main_menu.draw();
-
-  return row_count;
+  await draw_main_menu();
 }
 
 /**
@@ -184,7 +179,8 @@ async function usershop(result) {
   //   - 999 没有独立的返回语句、落到函数尾：清完购物标志回到主菜单，
   //     **不进调试菜单**（旧移植按「调用之后输入值不变」错落到 7788 的
   //     调试菜单分支，#562 实机发现；语义依据见 #592 的完成评论）；
-  //   - 998/997 是切换商店：切完立即重画、不再回本函数，故切完即 return；
+  //   - 998/997 是切换商店：只置 BOUGHT 与清账后 return，重画归商店轮
+  //     （两个商店各自绘制前换屏，抢先直画会被清掉未经确认的屏，#724）；
   //   - BOUGHT >= 0 的其它输入直接 return：购物态下主菜单指令全部失效，
   //     只有 997/998/999 三个键有反应。
   // 三处 clear_shop（清 ITEMSALES:0-299）自 #399 起是真身——show_shop
@@ -196,13 +192,14 @@ async function usershop(result) {
   } else if (result === 998 && era_flag.bought >= 0) {
     era_flag.bought = 200;
     clear_shop();
-    await item_shop_trap(); // 切陷阱商店并立即重画
+    // 切完由商店轮的下一轮绘制（show_shop 的 BOUGHT 支）重画——两个商店
+    // 各自在绘制前换屏（#724），这里不再抢先直画：直画的屏与循环重画之间
+    // 没有输入，换屏会把未经确认的直画内容清掉
     return;
   } else if (result === 997 && era_flag.bought >= 0) {
     era_flag.bought = 1;
     clear_shop();
-    await item_shop(); // 切道具商店并立即重画
-    return;
+    return; // 重画同上，归商店轮
   } else if (era_flag.bought >= 0) {
     return; // 购物态下其它输入无反应，回循环重绘
   }
@@ -542,11 +539,10 @@ async function run_shop({ skip_eventshop = false } = {}) {
     // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）
     await emit('EVENTSHOP');
   }
-  // 主菜单画面组件：随 SHOP 状态的进入创建（组件的删除随 #724；这里每轮
-  // 「换屏 + 绘制」，组件只承载绘制内容）
-  const main_menu = create_main_menu();
+  // 商店轮每轮「换屏 + 绘制」（ADR-0009）：换屏在 show_shop 的主菜单支，
+  // 道具/陷阱商店支由各商店自行换屏（#724）
   for (;;) {
-    await show_shop(main_menu);
+    await show_shop();
     // 引擎侧：玩家点按钮（printButton 的快捷键）或直接键入编号；
     // era.input() 的返回值交 usershop 分发。
     await usershop(await era.input());

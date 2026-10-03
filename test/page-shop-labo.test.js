@@ -132,10 +132,12 @@ function last_button_row(lines) {
  */
 async function run(fixture, name, inputs, { args = [], rand = always } = {}) {
   fixture.set_inputs(...inputs);
-  const before = fixture.lines.length;
+  // 取证走全量行史：换屏（#724 / ADR-0009）把上一屏从 lines 清掉，
+  // 跨轮断言看「本次新增」必须数行史的总长
+  const before = fixture.lines_history.length;
   const impl = fixture.load_module('page/page-shop-labo')[name];
   const ret = await impl(...args, rand);
-  return { ret, added: fixture.lines.slice(before) };
+  return { ret, added: fixture.lines_history.slice(before) };
 }
 
 /** 跑一次 secret_labo（主循环） */
@@ -2065,19 +2067,20 @@ test('modify_deimmaturity：阴茎状态降一档（RAND:2 上界捕获）与下
   );
 });
 
-test('检查：等键的档等一次、PRINTFORM 的档不等（shojo_saisei 两支）', async () => {
+test('检查：两档都等键（选人屏换屏前的输出先经按键确认，#724）', async () => {
   // PRINTW（男人）→ 等键
   const wait_fixture = make_fixture({ seed: { 'talent:1:122': 1 } });
   seed_talentnames(wait_fixture);
   await run(wait_fixture, 'shojo_saisei', [1], {});
   const waited = wait_fixture.waits.filter((w) => w.waited).length;
-  // PRINTFORM（本来就是处女）→ 不等键
+  // 本来就是处女：原是 PRINTFORM（不等键）；#724 起选人屏每轮换屏，
+  // 提示必须先经按键确认，否则会被下一轮换屏清掉（ADR-0009）
   const nowait_fixture = make_fixture({ seed: { 'talent:1:0': 1 } });
   seed_talentnames(nowait_fixture);
   await run(nowait_fixture, 'shojo_saisei', [1], {});
   const waited2 = nowait_fixture.waits.filter((w) => w.waited).length;
   assert.equal(waited, 1, '男人档是 PRINTW，等一次键');
-  assert.equal(waited2, 0, '本来就处女档是 PRINTFORM，不等键');
+  assert.equal(waited2, 1, '本来就处女档的提示也等一次键');
 });
 
 // ————————————————————————————————————————————————
@@ -2182,7 +2185,11 @@ async function assert_dispatch(id, exits, text, extra) {
     {},
   );
   assert.equal(ret, 0, `[${id}] 最终返回 0`);
-  assert.ok(texts(fixture.lines).includes(text), `[${id}] 进的是「${text}」`);
+  // 首行文案取证走行史：换屏后终态只剩最后一屏（ADR-0009，取证层同 run()）
+  assert.ok(
+    texts(fixture.lines_history).includes(text),
+    `[${id}] 进的是「${text}」`,
+  );
   assert.equal(
     fixture.store.get('flag:10004'),
     fixture.store.get('exflag:4444'),
@@ -2501,4 +2508,138 @@ test('等号侧：召唤编号的两个端点 150 与 199 都可用', async () =
     const { ret } = await run(fixture, 'summon_slave', [id, 0], {});
     assert.equal(ret, 1, `编号 ${id}（闭区间端点）可用`);
   }
+});
+
+// ————————————————————————————————————————————————
+// #724 返工：等键契约——尾段输出在回选人/主菜单屏换屏前先经按键确认
+// ————————————————————————————————————————————————
+
+/**
+ * 走完一个条目后显式换屏（代演选人/主菜单屏的下一轮），断言：
+ * 1. 尾段有一次真等键（没有输出就不会有 waited，契约测试也就失了靶）；
+ * 2. 换屏清掉的行里没有未确认输出（ADR-0009）。
+ */
+async function assert_wait_contract(
+  label,
+  { fn, inputs, args = [], seed = {} },
+) {
+  const fixture = make_fixture({ seed });
+  await run(fixture, fn, inputs, { args });
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.ok(
+    fixture.waits.some((w) => w.waited),
+    `${label}：尾段应有一次真等键`,
+  );
+  assert.deepEqual(
+    fixture.unread_output_clears,
+    [],
+    `${label}：尾段输出在换屏前未确认`,
+  );
+}
+
+test('等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认', async () => {
+  await assert_wait_contract('modify_bustup 尾段', {
+    fn: 'modify_bustup',
+    inputs: [1, 0],
+  });
+  await assert_wait_contract('modify_bustdown 尾段', {
+    fn: 'modify_bustdown',
+    inputs: [1, 0],
+  });
+  await assert_wait_contract('modify_futanari 尾段', {
+    fn: 'modify_futanari',
+    inputs: [1, 0],
+    // 122 是「阉割」的 guard 种子，扶她化成交不需要
+  });
+  await assert_wait_contract('penis_remodel 尾段', {
+    fn: 'penis_remodel',
+    inputs: [1, 0],
+    seed: { 'talent:1:122': 1 },
+  });
+});
+
+test('等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认', async () => {
+  await assert_wait_contract('tatoo_set_off 尾段', {
+    fn: 'tatoo_set_off',
+    inputs: [1, 11, '爱', 0],
+  });
+  await assert_wait_contract('modify_hair_color 尾段', {
+    fn: 'modify_hair_color',
+    inputs: [1, 2, 0],
+  });
+  await assert_wait_contract('modify_skin_color 尾段', {
+    fn: 'modify_skin_color',
+    inputs: [1, 2, 0],
+  });
+  await assert_wait_contract('demon_rebirth 转生播报', {
+    fn: 'demon_rebirth',
+    inputs: [1, 40, 0],
+    args: [],
+    seed: { 'cflag:1:9': 99, 'cflag:1:1': 0, itemkeys: [] },
+  });
+  await assert_wait_contract('set_free_train 设定播报', {
+    fn: 'set_free_train',
+    inputs: [1, 0, '屁股'],
+  });
+  await assert_wait_contract('st_up_labo 数值太大', {
+    fn: 'st_up_labo',
+    inputs: [1, 999, 999],
+    args: [5000, 2],
+    // 等级达标才进得到次数输入（否则先被「请提高等级」拦下）
+    seed: { 'cflag:1:9': 10 },
+  });
+});
+
+test('等键契约：素质互换的成功与失败两支换屏前已确认', async () => {
+  await assert_wait_contract('trans_specialtalent 成功支', {
+    fn: 'trans_specialtalent',
+    inputs: [1],
+    seed: {
+      'talent:1:85': 1,
+      'abl:1:11': 3,
+      'abl:1:0': 4,
+      'abl:1:1': 4,
+      'abl:1:2': 2,
+      'exp:1:50': 3,
+      'mark:1:1': 3,
+      'mark:1:2': 3,
+    },
+  });
+  await assert_wait_contract('trans_specialtalent 失败支', {
+    fn: 'trans_specialtalent',
+    inputs: [1, 999],
+    seed: { 'talent:1:85': 1 },
+  });
+});
+
+test('run_modify 的等键：成交必等一次，取消支不等键', async () => {
+  // 25 个条目的 apply 都打印结果文案——确认键回显之后必有新输出，
+  // 无条件等键不会多按键（#724 返工的审计结论）
+  const fixture = make_fixture({ seed: { 'talent:1:124': 1 } });
+  await run(fixture, 'modify_animal_erase', [1, 0], {});
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    '成交等一次键（确认回显之外只有 apply 文案待读）',
+  );
+  const { change_screen } = fixture.load_module(
+    'page/components/screen-change',
+  );
+  await change_screen();
+  assert.deepEqual(fixture.unread_output_clears, [], '成交文案在换屏前已确认');
+
+  // 取消支（确认键选「否」）：最后一次动作是输入、其后无打印——等键在
+  // 早退的 return 之前根本不会被调用，玩家不多按键
+  const cancel = make_fixture({ seed: { 'talent:1:124': 1 } });
+  await run(cancel, 'modify_animal_erase', [1, 1], {});
+  assert.deepEqual(
+    cancel.waits.filter((w) => w.waited),
+    [],
+    '取消支不等键',
+  );
+  await cancel.load_module('page/components/screen-change').change_screen();
+  assert.deepEqual(cancel.unread_output_clears, [], '取消支无未读输出');
 });

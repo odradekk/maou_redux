@@ -70,6 +70,7 @@ const {
 } = require('#/page/page-clothtype');
 const { get_clothtype_main2 } = require('#/system/cloth-lookup');
 const { print_row } = require('#/page/page-life-list');
+const { change_screen } = require('#/page/components/screen-change');
 const { wearing_cloth_able } = require('#/system/train/cloth');
 
 /** 服装种类的编号（A = 购入品种） */
@@ -526,6 +527,8 @@ async function tailor_casual(cid) {
     return { a: 0, c: 0, r: 0, s: 0 };
   }
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.print('□日常着装');
     era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
@@ -559,6 +562,8 @@ async function tailor_normal(cid) {
   }
   let page = 0; // の P
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.print('□普通的服装');
     era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
@@ -615,6 +620,8 @@ async function tailor_normal_special(cid) {
   }
   let page = 0;
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.print('□黑市服装');
     era.print(`所持金：${era_flag.money}点`);
     era.drawLine();
@@ -654,6 +661,8 @@ async function tailor_normal_special(cid) {
 async function tailor_accessory(cid) {
   let page = 0; // LOCAL:0
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 页码两边都不补位（本库分页显示的统一写法）
     era.print(`□装备品 (${page + 1}/${ACCESSORY_PAGE_MAX + 1}页)`);
     era.print(`所持金：${era_flag.money}点`);
@@ -852,6 +861,8 @@ function install_equip(cid, slot, item_no, amount, prefix) {
  */
 async function equip_magic_item(cid) {
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 选槽（装饰 A [1] / 装饰 B [2]）——按钮化（PR #53 通则），编号 1/2 保持
     for (const [result_id, slot] of [
       [1, SLOT_RING_A],
@@ -892,6 +903,8 @@ async function equip_magic_item(cid) {
  */
 async function pick_ring(cid, slot) {
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 列出持有的装备品（编号 300-319）
     for (let index = 0; index < EQUIP_ITEM_COUNT; index += 1) {
       const item_no = EQUIP_ITEM_BASE + index; // X = COUNT + 300
@@ -975,6 +988,8 @@ async function pick_ring(cid, slot) {
  */
 async function equip_magic_weapon(cid) {
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const current = { 存储编号: cflag(cid, SLOT_WEAPON) }; // W:0
     if (current.存储编号 <= -1) {
       era.print('武器　: 空手');
@@ -1203,6 +1218,8 @@ async function tailor_core(arg) {
 
   // 主循环：绘制与分发 + 应用
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     era.drawLine(); // 分隔线（所持金上方）
     era.print(`所持金：${era_flag.money}点`);
     era.print(
@@ -1333,6 +1350,8 @@ async function confirm_tear(prompt) {
  */
 async function tailor_main() {
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 标题与日期
     era.drawLine({ isSolid: true }); // 实线分隔（标题上方）
     era.print('服装设计师');

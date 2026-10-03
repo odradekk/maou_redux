@@ -46,6 +46,7 @@ const { add_chara_ex } = require('#/chara/chara-ex');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
+const { change_screen } = require('#/page/components/screen-change');
 const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
@@ -202,6 +203,8 @@ async function monster_shop(rand) {
 
   // 种族选择
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     show_shop_monster();
     // 三行列排版的纯文本选项与返回一并升格为按钮（#572）
     era.printButton('兽人类', 1);
@@ -232,6 +235,9 @@ async function monster_shop(rand) {
 
   // $ADD_CHARA：入队、生成、确认
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）——「再换一个」
+    // 会把上一张角色卡整屏换掉
+    await change_screen();
     const chara_id = shop_state.chosen; // CHARA = TFLAG:102
     era.addCharacter(chara_id); // ADDCHARA CHARA
     await add_chara_ex(chara_id); // CALL ADDCHARA_EX, CHARANUM-1（扁平化直传）
@@ -313,6 +319,8 @@ async function select_follower({ arg0, show, guard, rand }) {
   [shop_state.race, shop_state.race2] = mapped;
 
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     show();
     era.print(
       '需要献祭一定数量的怪物以符合其合计等级的要求，作为祭品的怪物还需满足最低等级才能作为祭品，',
@@ -440,6 +448,8 @@ async function buy_follower({ show, rand }) {
   let picked_level = 0;
 
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     show();
 
     if (item_price(target) - picked_level <= 0) {

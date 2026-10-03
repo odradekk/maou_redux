@@ -96,6 +96,7 @@ const { random_self_call } = require('#/chara/chara-self-call');
 const { sort_by_number } = require('#/chara/chara-portcflag');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
+const { change_screen } = require('#/page/components/screen-change');
 const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
 const { chara_number_swap } = require('#/page/page-chara-number-swap');
 const { ability_up_core } = require('#/page/page-ability-up');
@@ -567,6 +568,8 @@ async function chara_info() {
   let sort_act = 0;
 
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const total = added_chara_ids().length;
     era.print(
       `请选择一个角色以了解详细信息。\u3000\u3000<第${no_page + 1}页> `,
@@ -680,6 +683,8 @@ async function chara_info_individual(arg, chara_sort) {
   let sub_page = 0;
 
   for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const l_indx = current !== 0 ? chara_sort.indexOf(current) : -1;
 
     // #390 起正文换真身（sub_page 0-4 五页；正文的当前角色由显式 cid 承载）

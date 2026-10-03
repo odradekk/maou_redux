@@ -38,6 +38,12 @@
    对齐，全角空格是输出内容的一部分，不是缩进 */
 
 const era = require('#/era-electron');
+
+/**
+ * 放弃支的返回哨兵：分发方（能力提升商店 page-ability-up.js）据此跳过
+ * 换屏前的等键。调教侧分发（juel-check.js 的 run_juel_check）不读返回值。
+ */
+const HANDLER_QUIET = 'quiet';
 const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
@@ -198,7 +204,9 @@ async function ablup0(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -327,7 +335,9 @@ async function ablup1(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -497,7 +507,9 @@ async function ablup2(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -658,7 +670,9 @@ async function ablup3(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -734,7 +748,9 @@ async function ablup4(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不足。');
       continue;
@@ -818,7 +834,9 @@ async function ablup5(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不足。');
       continue;
@@ -965,7 +983,9 @@ async function ablup6(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不足。请重新输入。');
       continue;
@@ -1067,7 +1087,9 @@ async function ablup7(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不满足。');
       continue;
@@ -1212,7 +1234,9 @@ async function ablup8(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不足。');
       continue;
@@ -1344,7 +1368,9 @@ async function ablup9(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不足。');
       continue;
@@ -1615,7 +1641,9 @@ async function ablup10(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       // i===256（a===0）与 i&1/i&2 走同一分支，这里没有给 i 设专门的
       // 静默 256 分支（与 k/l 不对称，见文件头），两者在 era.input()
@@ -1758,7 +1786,9 @@ async function ablup11(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -1881,7 +1911,9 @@ async function ablup12(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -2007,7 +2039,9 @@ async function ablup13(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -2202,7 +2236,9 @@ async function ablup14(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -2434,7 +2470,9 @@ async function ablup15(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -2807,7 +2845,9 @@ async function ablup16(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -2978,7 +3018,9 @@ async function ablup17(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件'); // （与 ablup10～16 统一，无句号）
       continue;
@@ -3215,7 +3257,9 @@ async function ablup20(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -3588,7 +3632,9 @@ async function ablup21(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -3847,7 +3893,9 @@ async function ablup22(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -4082,7 +4130,9 @@ async function ablup23(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -4364,7 +4414,9 @@ async function ablup30(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -4584,7 +4636,9 @@ async function ablup31(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -4878,7 +4932,9 @@ async function ablup32(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -5172,7 +5228,9 @@ async function ablup33(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -5495,7 +5553,9 @@ async function ablup37(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -5698,7 +5758,9 @@ async function ablup39(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -5798,7 +5860,9 @@ async function ablup40(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('条件不足');
       continue;
@@ -5869,7 +5933,9 @@ async function ablup99(cid, mode) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -5943,7 +6009,9 @@ async function ablup100(cid) {
 
     const result = await era.input();
     if (result === 100) {
-      return;
+      // 放弃返回：最后一次动作是输入、其后无打印，返回哨兵让分发方
+      // 不再等键（否则回显会让等键真等一次，玩家多按键）
+      return HANDLER_QUIET;
     } else if (result === 0 && i !== 0) {
       era.print('未满足条件');
       continue;
@@ -6249,6 +6317,7 @@ async function userablup(result) {
 }
 
 module.exports = {
+  HANDLER_QUIET,
   get_ablup_state,
   ablup0,
   ablup1,

@@ -34,10 +34,11 @@ function add_chara(fixture, cid, name = `角色${cid}`) {
 /** 跑一次 ability_up，返回本次新增的输出行 */
 async function run(fixture, inputs) {
   fixture.set_inputs(...inputs);
-  const before = fixture.lines.length;
+  // 菜单每轮换屏（#724/ADR-0009）会清掉 lines，跨轮取证走行史
+  const before = fixture.lines_history.length;
   const { ability_up } = fixture.load_module('page/page-ability-up');
   const ret = await ability_up();
-  return { ret, added: fixture.lines.slice(before) };
+  return { ret, added: fixture.lines_history.slice(before) };
 }
 
 /**

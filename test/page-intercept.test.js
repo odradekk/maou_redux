@@ -40,10 +40,13 @@ const const_rand = (value) => () => value;
 /** 跑一次 intercept，返回本次新增的输出行 */
 async function run_intercept(fixture, inputs, rand = const_rand(3)) {
   fixture.set_inputs(...inputs);
-  const before = fixture.lines.length;
+  // 取证走全量行史：换屏（#724 / ADR-0009）把上一屏从 lines 清掉，
+  // 跨轮断言看「本次新增」必须数行史的总长
+  const before = fixture.lines_history.length;
   const { intercept } = fixture.load_module('page/page-intercept');
   const ret = await intercept(rand);
-  return { ret, added: fixture.lines.slice(before) };
+  // added 含全部轮次（含被换屏清掉的屏）；多轮断言按屏分组见各用例
+  return { ret, added: fixture.lines_history.slice(before) };
 }
 
 const accs = (lines) =>
@@ -482,6 +485,8 @@ test('INTERCEPT：行动设定选扩张设施（3）——无设施 / 已到上�
     const { added } = await run_intercept(none, [1, 0, 3, 1, 3, 999, 999]);
     assert.ok(texts(added).includes('3层没有任何设施'), '出发层 3 没有设施');
     assert.equal(none.store.get('cflag:1:500') ?? 0, 0, 'WORK 没被改动');
+    // 提示在回迎击设定换屏前要先经按键确认（ADR-0009）
+    assert.deepEqual(none.unread_output_clears, []);
   }
   // 已到上限：FLAG:(FLOOR+349+10) == 3
   const maxed = create_era_fixture();
@@ -497,6 +502,8 @@ test('INTERCEPT：行动设定选扩张设施（3）——无设施 / 已到上�
       texts(added).includes('3层的陷阱屋已经扩张到极限了。'),
       '已到上限',
     );
+    // 提示在回迎击设定换屏前要先经按键确认（ADR-0009）
+    assert.deepEqual(maxed.unread_output_clears, []);
   }
 });
 
@@ -554,6 +561,8 @@ test('INTERCEPT：道具补给——一件都没入手就把 2000 退回来', as
   assert.ok(texts(added).includes('补给已满，资金被退还了。'), '退款');
   assert.equal(fixture.store.get('flag:10004'), 100000, '退款后净扣为零');
   assert.equal(fixture.store.get('exflag:4444'), 100000);
+  // 退款播报在回主菜单换屏前要先经按键确认（ADR-0009）
+  assert.deepEqual(fixture.unread_output_clears, []);
 });
 
 test('INTERCEPT：道具补给的钱不够两支（单纯不够 / 付费派遣时还要多留 COST）', async () => {

@@ -33,6 +33,13 @@ function seq(values) {
   return (n) => values[index++ % values.length] % n;
 }
 
+/** 全部屏史的文本行：列表屏每轮换屏（#724/ADR-0009），被清掉的轮也在史里 */
+function history_text_lines(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((l) => l.text);
+}
+
 test('CHECK_SELLASSIABLE：达到出售与助手门槛时逐级解锁且只提示一次', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
@@ -215,7 +222,7 @@ test('SALE_CHARA：零价确认仍结算威望，但不送别也不除名', asyn
   await chara_sale({ prostitution_effect: 0, rand: seq([0]) });
   assert(fixture.era.getAddedCharacters().includes(31), '零价不除名');
   assert.equal(fixture.store.get('exflag:99'), 5);
-  assert(fixture.text_lines().includes('温妮以0点卖掉了。'));
+  assert(history_text_lines(fixture).includes('温妮以0点卖掉了。'));
 });
 
 test('SALE_CHARA：调教外事件码能抵达角色出售口上', async () => {
@@ -355,10 +362,10 @@ test('CHARA_SALE：确认出售后连续重画，退出时恢复上次调教对�
   assert.equal(era_flag.target, 32, '退出列表时恢复 FLAG:1');
   assert.equal(era_flag.money, 110);
   assert(
-    fixture.lines.some(
+    fixture.lines_history.some(
       (line) => line.type === 'button' && line.accelerator === 31,
     ),
-    '可售角色必须以可点击按钮显示',
+    '可售角色必须以可点击按钮显示（列表屏每轮换屏，跨屏取证走行史）',
   );
   assert(!fixture.text_lines().some((line) => line.includes('@CHARA_SALE')));
 });
@@ -390,7 +397,7 @@ test('CHARA_SALE：确认出售后送别、除名并结算威望', async () => {
 
   assert(!fixture.era.getAddedCharacters().includes(31), '售出后除名');
   assert.equal(fixture.store.get('exflag:99'), 5);
-  assert(fixture.text_lines().includes(`温妮以${price}点卖掉了。`));
+  assert(history_text_lines(fixture).includes(`温妮以${price}点卖掉了。`));
   assert.equal(fixture.era.getAddedCharacters().length, 2, '送别不除名误伤');
 });
 test('CHARA_SALE：手输未显示的占用角色仍能出售', async () => {
@@ -429,8 +436,8 @@ test('CHARA_SALE：收藏与影子角色即使手输编号也拒绝出售', asyn
   await fixture.load_module('system/stronghold/sale').chara_sale();
 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31, 32]);
-  assert(fixture.text_lines().some((line) => line.includes('收藏列表')));
-  assert(fixture.text_lines().some((line) => line.includes('只是影子')));
+  assert(history_text_lines(fixture).some((line) => line.includes('收藏列表')));
+  assert(history_text_lines(fixture).some((line) => line.includes('只是影子')));
 });
 
 test('USERSHOP 106：从据点分发进入 CHARA_SALE 真身', async () => {

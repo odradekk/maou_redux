@@ -47,9 +47,13 @@ const {
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
+const {
+  change_screen,
+  confirm_output_since,
+} = require('#/page/components/screen-change');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
-const { ABLUP_HANDLERS } = require('#/system/train/juel-check');
+const { ABLUP_HANDLERS, HANDLER_QUIET } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
@@ -188,6 +192,7 @@ async function ability_up() {
       }
       prev_mode = select_menu;
 
+      await change_screen();
       draw_menu_header();
       const drawn = draw_list(select_menu, no_page);
       select_menu = drawn.menu; // 写回归一后的菜单档
@@ -267,8 +272,9 @@ async function ability_up_core(arg) {
   const previous_target = era_flag.target; // 备份，退出前还原
   era_flag.target = arg; // 本函数运行期间指向被提升的角色
 
-  // 输入循环：绘制状态区并消化能力分支
+  // 输入循环：绘制状态区并消化能力分支。每轮绘制前换屏（ADR-0009）
   for (;;) {
+    await change_screen();
     era.drawLine(); // 分割线
     era.print(chara_callname(arg)); // 目标名
     era.drawLine(); // 点线分割线
@@ -277,6 +283,9 @@ async function ability_up_core(arg) {
     await show_ablup_select(arg); // `*` 标记要等 decide_ablup 的判定，故 await
 
     const result = await era.input();
+    // 回显之后的行数：999 出口的两项检查有没有播报以它为准（回显也算
+    // 输出，无条件等键会让检查未触发的路径多按一次键）
+    const echo_rows = era.getLineCount();
 
     // 各能力分支（阴蒂感觉 0 / 乳房感觉 1 / 私处感觉 2 / 肛门感觉 3 /
     // 局部感覚 4 / 顺从 10 / 欲望 11 / 技巧 12 / 侍奉技术 13 / 性交技术 14 /
@@ -284,7 +293,14 @@ async function ability_up_core(arg) {
     // 22 / ホモっ気 23 / 性交中毒 30 / 自慰中毒 31 / 精液中毒 32 / 百合中毒 33 /
     // 卖淫中毒 37 / 兽奸中毒 39 / 局部中毒 40 / 反抗刻印 99 / 100）
     if (result in ABLUP_HANDLERS) {
-      await ABLUP_HANDLERS[result](arg); // issue #464
+      const handler_ret = await ABLUP_HANDLERS[result](arg); // issue #464
+      // 放弃支（HANDLER_QUIET）最后一次动作是输入：回显已把分支画面全部
+      // 确认，其后没有新输出——再等键会真等一次，玩家多按键，跳过。其余
+      // 分支至少有一行未读的自己画面（成功播报 / 分支菜单）在重画本屏前经
+      // 按键确认（ADR-0009）；自带收尾等键的分支引擎自动短路，不会重复等
+      if (handler_ret !== HANDLER_QUIET) {
+        await era.waitAnyKey();
+      }
       continue;
     }
     // 菜单按钮的编号与 ABLUP_HANDLERS 的键一一对应（#464-#466 全部实现），
@@ -296,6 +312,9 @@ async function ability_up_core(arg) {
       // 「TFLAG:25 的调教外通道」节
       yokubo_up_check(era_flag.target, { in_train: false });
       await check_sellassiable(era_flag.target);
+      // 欲情变化与出售资格复核的播报在回菜单前经按键确认（ADR-0009）；
+      // 两项检查都未触发时不打印，不等键
+      await confirm_output_since(echo_rows);
       era_flag.target = previous_target;
       return 0;
     }

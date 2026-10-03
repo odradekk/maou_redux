@@ -215,8 +215,14 @@ test('端到端：角色堕落后完成奴隶出售全链', async () => {
     ),
     'CHARA_SALE 的候选按钮必须显示 ESTIMATE_CHARA 算出的 3,960 点',
   );
+
+  // 黑市末路的演出画在出售流程中段，回出售列表的换屏（#724 / ADR-0009）
+  // 把它从终态 lines 清掉——「出现过」改在行史上断言（与上一条候选按钮
+  // 的行史取证同层，语义不变）
   assert(
-    fixture.text_lines().includes('公厕买下玛奥之后………'),
+    fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text === '公厕买下玛奥之后………',
+    ),
     'SELL_MATURO_K0 必须进入低价自然态的黑市末路',
   );
   assert.equal(era_flag.money, 3960, 'CHARA_SALE 必须把估价计入所持金');

@@ -172,8 +172,10 @@ test('招募：恰好 80 人（CHARANUM == 80）不触上限，招募成功', as
   await campaign_menu(() => 0);
   // SHOW_CHARA_INFO 走 -2 贡品页（#565 订正，
   // 战役招募与开局随机共用同一调用点）：外貌段的种族行必须真的铺出来
+  // 招募确认页画在招募流程中段，回战役菜单的换屏（#724 / ADR-0009）把它
+  // 从终态 lines 清掉——「出现过」改在行史上断言（语义不变）
   assert(
-    fixture.text_lines().includes('[人类]'),
+    fixture.lines_history.some((l) => l.type === 'text' && l.text === '[人类]'),
     '招募确认页应展示 -2 贡品页的外貌段（种族行）',
   );
   assert.equal(fixture.store.get('base:0:1'), 0, '恰好 100 气力扣 100 后为 0');
@@ -182,6 +184,8 @@ test('招募：恰好 80 人（CHARANUM == 80）不触上限，招募成功', as
     1,
     '招募成功点亮 1 号的战役素质位',
   );
+  // 招募播报在回战役菜单换屏前要先经按键确认（ADR-0009）
+  assert.deepEqual(fixture.unread_output_clears, []);
 });
 
 test('招募：成功后扣 100 气力、点亮本战役招募素质位（TALENT:(FLAG:400+360)）', async () => {

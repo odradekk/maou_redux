@@ -102,6 +102,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { campaign_menu } = require('#/page/page-campaign');
+const { change_screen } = require('#/page/components/screen-change');
 const { life_list_item } = require('#/page/page-life-list');
 const {
   ending_1,
@@ -1820,6 +1821,8 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
 async function sengen_video(rand = default_rand) {
   // $INPUT_LOOP（画在循环头：GOTO INPUT_LOOP 即重画）
   menu: for (;;) {
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     const stock =
       era_exflag.crystal_ball_stock - era_exflag.crystal_ball_deployed;
     era.drawLine();
@@ -1889,6 +1892,7 @@ async function sengen_video(rand = default_rand) {
         era.print('投放，似乎失败了。');
         await era.waitAnyKey(); // PRINTFORMW 的 WAIT
       }
+      // 分支出口已各自等键（PRINTFORMW 的 WAIT），回菜单换屏前无未读输出
       continue; // GOTO INPUT_LOOP
     }
 
@@ -1997,6 +2001,8 @@ async function sengen_video(rand = default_rand) {
       if (grown > before * 2) grown = before * 2;
       era_exflag.crystal_ball_popularity = grown;
       era.print('因为剪辑出了更多的版本，投放效果增强了');
+      // 支付与效果播报在回菜单换屏前经按键确认（ADR-0009）
+      await era.waitAnyKey();
       continue; // GOTO INPUT_LOOP
     }
 
@@ -2033,6 +2039,8 @@ async function sengen_video(rand = default_rand) {
       if (grown - before < 1) grown = before + 1;
       era_exflag.crystal_ball_expire = grown;
       era.print('流行时间延长了');
+      // 支付与播报在回菜单换屏前经按键确认（ADR-0009）
+      await era.waitAnyKey();
       continue; // GOTO INPUT_LOOP
     }
 
@@ -2210,6 +2218,9 @@ async function invasion(rand = default_rand) {
  *   的 RESTART，由 invasion() 的外层循环重走入口分派
  */
 async function post_conquest_menu(rand = default_rand) {
+  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）——invasion() 的
+  // RESTART 重入与本函数首绘都从这里开始
+  await change_screen();
   // 五条状态行（BARSTR 偏离说明见文件头；圣灵骑士堡垒没有状态行，
   // 只有按钮，见下方 [4] 的注释）
   print_progress_line(
@@ -2484,6 +2495,8 @@ async function pick_hero(state, rejected) {
     } else {
       state.prev_list_pos = state.list_pos;
     }
+    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
     // 标题（CUSTOMDRAWLINE = 的空分割线不镜像，见文件头）
     era.print('派遣谁去侵攻呢？');
     era.drawLine();
@@ -2793,8 +2806,9 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   let inv_type = 0; // INV_TYPE = RESULT
   let yusya_i = 0; // #DIM YUSYA_I（[0]/[1] 路线不赋值，恒 0）
 
-  // $START1（[3] 的 RESTART 回到这里重画整屏）
+  // $START1（[3] 的 RESTART 回到这里重画整屏）。每轮绘制前换屏（ADR-0009）
   for (;;) {
+    await change_screen();
     // 怪物数量 = ITEM:100..189 之和（[0]/[2] 路线的 600 门槛）
     let mon_num = 0;
     for (let i = 100; i < 190; i += 1) {

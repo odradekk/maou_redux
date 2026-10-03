@@ -1257,8 +1257,10 @@ test('卖春积极性按钮（case 18）：按下进 set_bich_level 真身', asy
 
   assert.equal(fixture.store.get('cflag:1:120'), 3);
   assert.ok(
-    fixture.text_lines().some((t) => t.includes('卖春积极性变为等级3了')),
-    'set_bich_level 真身的回显',
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('卖春积极性变为等级3了'),
+    ),
+    'set_bich_level 真身的回显（角色页每轮换屏，跨屏取证走行史）',
   );
 });
 

@@ -1,7 +1,7 @@
 // issue #470（Q13 侵略残余·3）：ARCANA_BATTLE / ARCANA_FORT /
 // INVASION_RYOUZYOKU 的变异条目与 GROUP_BATTLE 判死登记的回归检查。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 50; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
+export const COUNT = 51; // #724 +1（M14498：要塞勇者选择换屏） // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
 // 1 条 dungeon-battle2.js 攻击演出解码修复的回退检查）+ 第二批
 // M10318-M10345（ARCANA_FORT 15 条 + INVASION_RYOUZYOKU 13 条；
 // GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的检查）+ 第三批
@@ -426,5 +426,17 @@ export default [
     replace: "  }[area] ?? ['女人', '女兵士']; // 变异：删天神宫档",
     tests: ['invasion-ravish'],
     must_mention: '天神宫（5）拿十字军称呼',
+  },
+  // —— #724：子页面换屏 ——
+  {
+    desc: 'M14498 要塞勇者选择每轮换屏调用删除',
+    file: 'ere/invasion/invasion-arcana-fort.js',
+    find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    await change_screen();
+    // 每轮重扫（REPEAT CHARANUM 重过滤）；无效输入会把模式翻到`,
+    replace: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
+    // 每轮重扫（REPEAT CHARANUM 重过滤）；无效输入会把模式翻到`,
+    tests: ['invasion-arcana-fort', 'subpage-clear-screen'],
+    must_mention: '要塞勇者选择换屏：翻页空转轮重画，行数相同（#724）',
   },
 ];

@@ -514,29 +514,33 @@ test('usershop 999 后回主菜单：下一轮 show_shop 重画主菜单（回�
   );
 });
 
-test('usershop 998：切陷阱商店并立即重画（JUMP 分支）', async () => {
+test('usershop 998：切陷阱商店，重画归商店轮（JUMP 分支不再直画）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { usershop } = fixture.load_module('page/page-shop');
   era_flag.bought = 1; // 道具商店态（BOUGHT < 54）
   await usershop(998);
   assert.equal(era_flag.bought, 200, 'BOUGHT = 200');
-  assert(
-    history_texts(fixture).includes('《可以购买在地下城里布置的陷阱》'),
-    'JUMP ITEM_SHOP_TRAP 立即重画陷阱商店',
+  // #724 起两个商店各自在绘制前换屏：直画的屏与商店轮的下一轮重画之间
+  // 没有输入，换屏会清掉未经确认的直画——切店只置位，重画归 show_shop
+  assert.deepEqual(
+    fixture.lines_history,
+    [],
+    'usershop 998 不直画陷阱商店（下一轮 show_shop 画）',
   );
 });
 
-test('usershop 997：切回道具商店并立即重画（JUMP 分支）', async () => {
+test('usershop 997：切回道具商店，重画归商店轮（JUMP 分支不再直画）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { usershop } = fixture.load_module('page/page-shop');
   era_flag.bought = 200; // 陷阱商店态
   await usershop(997);
   assert.equal(era_flag.bought, 1, 'BOUGHT = 1');
-  assert(
-    history_texts(fixture).includes('黑市商人'),
-    'JUMP ITEM_SHOP 立即重画道具商店（#399 起真身）',
+  assert.deepEqual(
+    fixture.lines_history,
+    [],
+    'usershop 997 不直画道具商店（下一轮 show_shop 画）',
   );
 });
 
