@@ -1435,15 +1435,25 @@ test('复数购买：越界后的重画提示不带 D/2 那一段（与首次不
   );
 });
 
-test('复数购买：买 n 件时只等一次键（两支各一次等键）', async () => {
+test('复数购买：买 n 件只等一次键（尾段的补等键在无新输出时不等）', async () => {
   const one = await run_purchase(24, { 'item:24': 0, 'flag:10004': 1000 }, [1]);
   const three = await run_purchase(
     24,
     { 'item:24': 0, 'flag:10004': 1000 },
     [3],
   );
-  assert.equal(one.fixture.waits.length, 1, '买 1 件：一次等键');
-  assert.equal(three.fixture.waits.length, 1, '买 3 件：也是一次等键');
+  // 成交播报后的尾段等键（#724，为返回商品屏的换屏兜底）在无 53/55/91
+  // 尾段输出时不真等——玩家按键次数不变
+  assert.equal(
+    one.fixture.waits.filter((w) => w.waited).length,
+    1,
+    '买 1 件：一次真等键',
+  );
+  assert.equal(
+    three.fixture.waits.filter((w) => w.waited).length,
+    1,
+    '买 3 件：也是一次真等键',
+  );
 });
 
 // —— 剩下的两个内联端点（第三轮评审点名：页高与戒指槽位） ——

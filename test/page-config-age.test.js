@@ -46,6 +46,13 @@ function texts_of(fixture, accelerator) {
     .map(([, text]) => text);
 }
 
+/** 全部屏史的文本行：编辑器每轮换屏（#724/ADR-0009），被清掉的轮也在史里 */
+function history_text_lines(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((l) => l.text);
+}
+
 // —— config_age_setting：年龄/三围显示开关 ——
 
 test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用种族年龄）开时渲染', async () => {
@@ -557,24 +564,25 @@ test('RACE_CONFIG 编辑循环的数字网格与模式按钮（DIS_FLAG 各档�
   assert.ok(grid_of(21).includes('\u00A0\u00A0100 岁'));
   assert.ok(grid_of(25).includes('\u00A0\u00A0500 岁'));
   assert.deepEqual(grid_of(26), [], '26-30 不渲染');
-  // 两行标签带前导两个全角空格（#547 验收第 6 条）
+  // 两行标签带前导两个全角空格（#547 验收第 6 条）；编辑器每轮换屏
+  //（#724），跨轮取证走行史
   assert.ok(
-    fixture.text_lines().some((t) => t.startsWith('　　■ 下限')),
+    history_text_lines(fixture).some((t) => t.startsWith('　　■ 下限')),
     '「■ 下限」带前导两个全角空格',
   );
   assert.ok(
-    fixture.text_lines().some((t) => t.startsWith('　　■ 上限')),
+    history_text_lines(fixture).some((t) => t.startsWith('　　■ 上限')),
     '「■ 上限」带前导两个全角空格',
   );
   // 每次重画编辑头前先出空行（#547 验收第 5 条）
-  const header_rows = fixture.lines
+  const header_rows = fixture.lines_history
     .map((l, i) =>
       l.type === 'text' && l.text.includes('■ 种族 [精灵]') ? i : -1,
     )
     .filter((i) => i >= 0);
   assert.ok(header_rows.length > 0, '编辑头行存在');
   assert.ok(
-    header_rows.every((i) => fixture.lines[i - 1]?.type === 'br'),
+    header_rows.every((i) => fixture.lines_history[i - 1]?.type === 'br'),
     '编辑头前一拍是空行（PRINTL）',
   );
   // 模式按钮与出口
@@ -609,7 +617,8 @@ test('RACE_CONFIG 编辑循环的档位说明行（当前设定与 17 岁换算�
   fixture.set_inputs(0, 100, 100);
   await race_config(always);
 
-  const lines = fixture.text_lines();
+  // 编辑器与顶层各自每轮换屏（#724）：编辑头在被清掉的前一轮里，取证走行史
+  const lines = history_text_lines(fixture);
   assert.ok(
     lines.some((line) => line.includes('■ 种族 [精灵] 的年龄设定：')),
     '种族编辑头',
@@ -636,7 +645,8 @@ test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断）
   fixture.set_inputs(1, 100, 100);
   await race_config(always);
 
-  const lines = fixture.text_lines();
+  // 编辑器与顶层各自每轮换屏（#724）：预览行在被清掉的前一轮里，取证走行史
+  const lines = history_text_lines(fixture);
   assert.ok(
     lines.some((line) => line.includes('换算成人类年龄的\u00A01.5 倍')),
     '当前档说明（小数倍）',
@@ -702,7 +712,8 @@ test('#615 RACE_CONFIG 编辑头：两行正文各自成行，重画首拍是真
   fixture.set_inputs(0, 100, 100);
   await race_config(always);
 
-  const lines = fixture.lines;
+  // 编辑器每轮换屏（#724）：编辑头在被清掉的前一轮里，取证走行史
+  const lines = fixture.lines_history;
   const desc = lines.find(
     (l) => l.type === 'text' && l.text.startsWith('■ 种族 [精灵] 的年龄设定：'),
   );
@@ -737,7 +748,8 @@ test('#615 RACE_CONFIG 随机档：■ 下限 / ■ 上限 两行标签不带尾
   fixture.set_inputs(0, 104, 100, 100);
   await race_config(always);
 
-  const lines = fixture.lines;
+  // 编辑器每轮换屏（#724）：随机档那轮已被换屏清掉，取证走行史
+  const lines = fixture.lines_history;
   const lower = lines.find(
     (l) => l.type === 'text' && l.text.startsWith('　　■ 下限'),
   );

@@ -132,10 +132,12 @@ function last_button_row(lines) {
  */
 async function run(fixture, name, inputs, { args = [], rand = always } = {}) {
   fixture.set_inputs(...inputs);
-  const before = fixture.lines.length;
+  // 取证走全量行史：换屏（#724 / ADR-0009）把上一屏从 lines 清掉，
+  // 跨轮断言看「本次新增」必须数行史的总长
+  const before = fixture.lines_history.length;
   const impl = fixture.load_module('page/page-shop-labo')[name];
   const ret = await impl(...args, rand);
-  return { ret, added: fixture.lines.slice(before) };
+  return { ret, added: fixture.lines_history.slice(before) };
 }
 
 /** 跑一次 secret_labo（主循环） */
@@ -2065,19 +2067,20 @@ test('modify_deimmaturity：阴茎状态降一档（RAND:2 上界捕获）与下
   );
 });
 
-test('检查：等键的档等一次、PRINTFORM 的档不等（shojo_saisei 两支）', async () => {
+test('检查：两档都等键（选人屏换屏前的输出先经按键确认，#724）', async () => {
   // PRINTW（男人）→ 等键
   const wait_fixture = make_fixture({ seed: { 'talent:1:122': 1 } });
   seed_talentnames(wait_fixture);
   await run(wait_fixture, 'shojo_saisei', [1], {});
   const waited = wait_fixture.waits.filter((w) => w.waited).length;
-  // PRINTFORM（本来就是处女）→ 不等键
+  // 本来就是处女：原是 PRINTFORM（不等键）；#724 起选人屏每轮换屏，
+  // 提示必须先经按键确认，否则会被下一轮换屏清掉（ADR-0009）
   const nowait_fixture = make_fixture({ seed: { 'talent:1:0': 1 } });
   seed_talentnames(nowait_fixture);
   await run(nowait_fixture, 'shojo_saisei', [1], {});
   const waited2 = nowait_fixture.waits.filter((w) => w.waited).length;
   assert.equal(waited, 1, '男人档是 PRINTW，等一次键');
-  assert.equal(waited2, 0, '本来就处女档是 PRINTFORM，不等键');
+  assert.equal(waited2, 1, '本来就处女档的提示也等一次键');
 });
 
 // ————————————————————————————————————————————————
@@ -2182,7 +2185,11 @@ async function assert_dispatch(id, exits, text, extra) {
     {},
   );
   assert.equal(ret, 0, `[${id}] 最终返回 0`);
-  assert.ok(texts(fixture.lines).includes(text), `[${id}] 进的是「${text}」`);
+  // 首行文案取证走行史：换屏后终态只剩最后一屏（ADR-0009，取证层同 run()）
+  assert.ok(
+    texts(fixture.lines_history).includes(text),
+    `[${id}] 进的是「${text}」`,
+  );
   assert.equal(
     fixture.store.get('flag:10004'),
     fixture.store.get('exflag:4444'),

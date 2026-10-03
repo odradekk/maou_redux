@@ -95,11 +95,19 @@ function pick_cell(id, name, level, stock, picked) {
  * [编号, 正文, 格宽]（按 row 分组）。
  */
 function grid_of(fixture, needle) {
+  // #724 起每轮绘制前换屏，行号每屏从 0 重新计：按「行号回落」切屏分组，
+  // 每屏内部再按 row 归行——跨轮的断言因此仍按屏取证
   const rows = new Map();
+  let screen = 0;
+  let prev_row = -1;
   for (const line of fixture.lines_history) {
+    if (line.row === undefined) continue;
+    if (line.row < prev_row) screen += 1;
+    prev_row = line.row;
     if (line.type !== 'button' || !line.text.includes(needle)) continue;
-    if (!rows.has(line.row)) rows.set(line.row, []);
-    rows.get(line.row).push([line.accelerator, line.text, line.grid_width]);
+    const key = `${screen}:${line.row}`;
+    if (!rows.has(key)) rows.set(key, []);
+    rows.get(key).push([line.accelerator, line.text, line.grid_width]);
   }
   return [...rows.values()];
 }

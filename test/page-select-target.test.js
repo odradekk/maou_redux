@@ -28,6 +28,15 @@ function rendered_lines(fixture) {
     .map((line) => (line.type === 'button' ? line.rendered : line.text));
 }
 
+// 同 rendered_lines 但取全量行史：翻页用例的断言跨多轮（换屏 #724 /
+// ADR-0009 把前几屏从 lines 清掉，终态只剩最后一屏），「每轮画过什么」
+// 在行史里取证
+function rendered_history(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'text' || line.type === 'button')
+    .map((line) => (line.type === 'button' ? line.rendered : line.text));
+}
+
 // 列表行的预期文本（showAcc 折叠连续空白为一个空格，约定同 page-main-menu.test.js）。
 // 默认无职业（job 占位空格）会被折叠掉，所以不传 job 参数时等同无职业。
 function trainable_button_text(
@@ -167,7 +176,8 @@ test('翻页：27 人超过每页 26，[1001] 翻出第 27 人；[1000] 翻回',
   fixture.set_inputs(1001, 1000, 999);
 
   assert.equal(await select_target(), 0);
-  const texts = rendered_lines(fixture);
+  // 三轮各换一屏，取证走行史（rendered_history 注释；终态只剩翻回的首页）
+  const texts = rendered_history(fixture);
   // 首页：1..26（27 号不在）；第二页：只有 27 号；翻回：又是 1 号开头
   const first_draw = texts.findIndex(
     (l) => l === trainable_button_text(1, '奴隶1'),
@@ -177,13 +187,15 @@ test('翻页：27 人超过每页 26，[1001] 翻出第 27 人；[1000] 翻回',
     (l) => l === trainable_button_text(27, '奴隶27'),
   );
   assert.ok(page2_at > first_draw, '第 27 人只能在翻页后出现');
-  // 第二页不含 1 号（截取第 26 行到 27 号行之间的渲染）
+  // 第二页不含 1 号（截取首页末行到 27 号行之间的渲染）。锚点取第一处
+  // 奴隶26（首页末行）：翻回首页后它会再画一遍、位置在 27 号之后，
+  // 取最后一处会把区间切成空，断言就恒真了
   const between = texts.slice(
-    texts.lastIndexOf(trainable_button_text(26, '奴隶26')),
+    texts.indexOf(trainable_button_text(26, '奴隶26')),
     page2_at,
   );
   assert(!between.some((l) => l.includes('奴隶1')));
-  // 三轮绘制（首页/第二页/翻回首页）
+  // 三轮绘制（首页/第二页/翻回首页）——标题每屏各一行，行史里数三轮
   assert.equal(
     texts.filter((l) => l === '请魔王大人选择将要调教的奴隶人选').length,
     3,
@@ -197,7 +209,8 @@ test('页首不再退：第一页输入 [1000] 维持原页', async () => {
   fixture.set_inputs(1000, 999);
 
   assert.equal(await select_target(), 0);
-  const texts = rendered_lines(fixture);
+  // 两轮各换一屏，取证走行史（rendered_history 注释；终态只剩第二轮）
+  const texts = rendered_history(fixture);
   // 两轮都显示同一人（页码没有变成 -1 导致列表消失）
   assert.equal(
     texts.filter((l) => l === trainable_button_text(31, '温妮')).length,

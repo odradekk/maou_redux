@@ -47,6 +47,13 @@ function button_rendered(fixture) {
     .map((line) => line.rendered);
 }
 
+/** 全部屏史的文本行：献祭各屏每轮换屏（#724/ADR-0009），跨屏取证走行史 */
+function history_text_lines(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((l) => l.text);
+}
+
 function title_fixture(flag5 = 0) {
   const fixture = create_era_fixture();
   fixture.store.set('flag:5', flag5);
@@ -2233,7 +2240,7 @@ test('show_chara_info：献祭完成演出（合计 ≥ 30）的两句前导补�
   });
   fixture.set_inputs(100);
   await show_chara_info(7, -1, always, 0x000000);
-  const lines = fixture.text_lines();
+  const lines = history_text_lines(fixture); // 演出屏随后被换屏清掉，走行史
   assert.ok(
     lines.includes('\u00A0'.repeat(16) + '向这伟力的降临献上喝彩！'),
     '第二句的 16 格前导（内容空格，#577 起 NBSP）',
@@ -2288,12 +2295,12 @@ test('show_chara_info：名单轮的 [999] 返回之后不补空行（#596）', 
   fixture.set_inputs(10, 999, 100); // 进名单 → 名单轮 [999] → 出口轮 [100]
   await show_chara_info(7, -1, always, 0x000000);
 
-  const back = fixture.lines.find(
+  const back = fixture.lines_history.find(
     (entry) => entry.type === 'button' && entry.accelerator === 999,
   );
   assert.ok(back, '名单轮有一枚 [999] 返回');
-  const at = fixture.lines.indexOf(back);
-  const next = fixture.lines[at + 1];
+  const at = fixture.lines_history.indexOf(back); // 名单屏随后被换屏清掉，走行史
+  const next = fixture.lines_history[at + 1];
   assert.ok(
     !(next?.type === 'br' || (next?.type === 'text' && next.text === '')),
     "返回文本之后不补空行（println 与 print('') 两种写法都不许）",
@@ -2371,7 +2378,7 @@ test('show_chara_info：名单里 100 号角色行可选、返回仍可用（预
   const result = await show_chara_info(7, -1, always, 0x000000);
 
   assert.equal(result, 1, '两个返回都走通，回到首页');
-  const texts = fixture.text_lines();
+  const texts = history_text_lines(fixture); // 确认屏随后被换屏清掉，走行史
   assert.ok(
     texts.some((t) => t.includes('确定要将 怪物的女儿 献祭？')),
     `100 号角色行被选中（实际尾部：${JSON.stringify(texts.slice(-6))}）`,
@@ -2434,7 +2441,7 @@ test('show_chara_info：名单里勇者档（状态 2）的行打开贡品信息
   const result = await show_chara_info(7, -1, always, 0x000000);
 
   assert.equal(result, 1);
-  const texts = fixture.text_lines();
+  const texts = history_text_lines(fixture); // 贡品页随后被换屏清掉，走行史
   // 贡品信息页（-2 分支）自己的可认标志：9 号的标题行 + 刻印行（-1/-2 两分支共有的
   // 段）——名单页与献祭分支都不会打这两样
   assert.ok(
@@ -2482,7 +2489,7 @@ test('show_chara_info：献祭满足时走「完全召唤」演出并清零状�
     cflags: { 1: 11, 800: 30 },
   });
   await show_chara_info(7, -1, always, 0x000000).catch(() => {});
-  const texts = fixture.text_lines();
+  const texts = history_text_lines(fixture); // 演出屏随后被换屏清掉，走行史
   assert(
     texts.includes('————此刻正是献祭完成之时！'),
     `演出首句（实际前几句：${JSON.stringify(texts.slice(0, 3))}）`,
@@ -2501,7 +2508,7 @@ test('#615 show_chara_info：完全召唤横幅两行、之间一个真空行、
   });
   await show_chara_info(7, -1, always, 0x000000).catch(() => {});
 
-  const lines = fixture.lines;
+  const lines = fixture.lines_history; // 演出屏随后被换屏清掉，走行史
   const banner1 = lines.findIndex(
     (l) => l.type === 'text' && l.text.includes('魔王之影 『 考狄利亚 』'),
   );
@@ -3070,7 +3077,7 @@ test('show_chara_info：名单里点可献祭的角色（状态 0/7/8）走确�
     fixture.store.set('callname:7:-1', '考狄利亚');
     fixture.set_inputs(10, victim, 0); // 进名单 → 点 victim → 终止
     await show_chara_info(7, -1, always, 0x000000).catch(() => {});
-    const texts = fixture.text_lines();
+    const texts = history_text_lines(fixture); // 确认/提示屏随后被换屏清掉，走行史
     if (sacrificable) {
       assert(
         texts.some((t) => t.includes('确定要将 候补 献祭？')),
