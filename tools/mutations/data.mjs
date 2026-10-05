@@ -3,9 +3,18 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 33; // #731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）； master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 本工单 4（#642：M12936-M12939 GameBase 游戏名称/作者/发布时间/追加信息改坏——标题画面直读 yml 的一致性用例拦截）
+export const COUNT = 34; // #733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
+  {
+    engine: true,
+    desc: 'M14540 通信回归场景漏载 Equip 名字表（复现有角色容器、无静态名字表时的真实引擎异常，#733）',
+    file: 'test/cross-save-sharing-engine.test.js',
+    find: '/^(Chara\\d+|GameBase)\\.yml$/i.test(file)',
+    replace: '/^(Chara\\d+|GameBase|Equip)\\.yml$/i.test(file)',
+    tests: ['cross-save-sharing-engine'],
+    must_mention: '通信勇者：真实引擎导入旧共享档、保留字段并恢复接收档',
+  },
   {
     engine: true,
     desc: 'M112 Chara17 预设行被删（预设生效用例必须红）',
