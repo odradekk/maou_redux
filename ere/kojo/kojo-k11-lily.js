@@ -12243,7 +12243,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).train.欲情 >= era0('palamlv:3') &&
+          chara(target).train.欲情 >= PALAMLV[3] &&
           (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -12265,7 +12265,7 @@ async function kojo_message_com_11(rand) {
           kojo.放置PLAY = 5;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).train.欲情 >= era0('palamlv:3') &&
+          chara(target).train.欲情 >= PALAMLV[3] &&
           (kojo.放置PLAY <= 3 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「不，不要那样让姐姐……等着了……${heart(1)}」`);
@@ -12291,7 +12291,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).train.欲情 >= era0('palamlv:3') &&
+          chara(target).train.欲情 >= PALAMLV[3] &&
           (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -12311,7 +12311,7 @@ async function kojo_message_com_11(rand) {
           kojo.放置PLAY = 5;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).train.欲情 >= era0('palamlv:3') &&
+          chara(target).train.欲情 >= PALAMLV[3] &&
           (kojo.放置PLAY <= 3 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「不可以急躁，不可以急躁……」`);
@@ -12433,7 +12433,7 @@ async function kojo_message_com_11(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
           game.kojo.录像内容 |= 2;
         } else if (
-          chara(target).train.欲情 >= era0('palamlv:4') &&
+          chara(target).train.欲情 >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) || chara(target).system.欲望 >= 5)
         ) {
           await era.print(`${target_name}开始对着水晶球说着不知廉耻的话。`);
@@ -12469,7 +12469,7 @@ async function kojo_message_com_11(rand) {
           // PRINTFORML 各自收行。前缀提到语句外共用，
           // 前缀留在里面会多出一段不属于本支的插值记号（#623）
           const faced_first =
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:85`) ||
               chara(target).system.顺从 >= 5) &&
             game.event.插着不拔;
@@ -12483,7 +12483,7 @@ async function kojo_message_com_11(rand) {
               `「呜……呜啊啊……好，好舒服${heart(1)} 姐姐……这么淫乱……真是对不起呢……！」`,
             );
           } else if (
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:76`) ||
               chara(target).system.欲望 >= 5) &&
             game.event.插着不拔
@@ -12496,11 +12496,11 @@ async function kojo_message_com_11(rand) {
               `「嗯啊……啊啊……我，我正在，正在被妹妹看着自慰${heart(1)} 但是……但是好舒服……${heart(1)} …要，要去了啊啊${heart(1)}」`,
             );
           } else if (
-            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            (era0(`palam:${target}:4`) >= PALAMLV[4] ||
               chara(target).system.顺从 >= 5 ||
               era.get(`talent:${target}:76`) ||
               era.get(`talent:${target}:85`)) &&
-            chara(target).train.欲情 >= era0('palamlv:4')
+            chara(target).train.欲情 >= PALAMLV[4]
           ) {
             // 同一行输出：无后缀 PRINTFORM 链，
             // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）
@@ -12521,7 +12521,7 @@ async function kojo_message_com_11(rand) {
             );
             await era.printAndWait(`「不，不要再，再对姐姐恶作剧了」`);
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era0(`palam:${target}:4`) >= PALAMLV[4] ||
             era.get(`talent:${target}:85`) ||
             chara(target).system.顺从 >= 5
           ) {
@@ -12533,7 +12533,7 @@ async function kojo_message_com_11(rand) {
               `「只，只要能和${player_name}在一起，即使是做魔王大人的性奴，姐姐也很高兴！」`,
             );
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            era0(`palam:${target}:4`) >= PALAMLV[2] ||
             chara(target).system.顺从 >= 3
           ) {
             await era.print(
@@ -12553,7 +12553,7 @@ async function kojo_message_com_11(rand) {
           // 与上面同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:85`) ||
               chara(target).system.顺从 >= 5) &&
             game.event.插着不拔;
@@ -12567,7 +12567,7 @@ async function kojo_message_com_11(rand) {
               `「魔，魔王大人……${heart(1)} 你，你是我的全部……嗯啊${heart(1)} 啊啊啊${heart(1)} 我的身体……全部是属于大人的啊啊啊${heart(1)}`,
             );
           } else if (
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:76`) ||
               chara(target).system.欲望 >= 5) &&
             game.event.插着不拔
@@ -12580,11 +12580,11 @@ async function kojo_message_com_11(rand) {
               `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,
             );
           } else if (
-            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            (era0(`palam:${target}:4`) >= PALAMLV[4] ||
               chara(target).system.顺从 >= 5 ||
               era.get(`talent:${target}:76`) ||
               era.get(`talent:${target}:85`)) &&
-            chara(target).train.欲情 >= era0('palamlv:4')
+            chara(target).train.欲情 >= PALAMLV[4]
           ) {
             // 同一行输出：无后缀 PRINTFORM 链，
             // 是两个互斥插入段（IF/ELSEIF 收支），PRINTFORML 收行（#623）
@@ -12607,7 +12607,7 @@ async function kojo_message_com_11(rand) {
               `「呜啊啊！人，人家没关系的……请，请魔王大人……随意调教！」`,
             );
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era0(`palam:${target}:4`) >= PALAMLV[4] ||
             era.get(`talent:${target}:85`) ||
             chara(target).system.顺从 >= 5
           ) {
@@ -12618,7 +12618,7 @@ async function kojo_message_com_11(rand) {
               `「请，请魔王大人……随意调教${target_name}」`,
             );
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            era0(`palam:${target}:4`) >= PALAMLV[2] ||
             chara(target).system.顺从 >= 3
           ) {
             await era.print(
@@ -12663,7 +12663,7 @@ async function kojo_message_com_11(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
           game.kojo.录像内容 |= 2;
         } else if (
-          chara(target).train.欲情 >= era0('palamlv:4') &&
+          chara(target).train.欲情 >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) || chara(target).system.欲望 >= 5)
         ) {
           await era.print(`${target_name}开始对着水晶球说着不知廉耻的话。`);
@@ -12698,7 +12698,7 @@ async function kojo_message_com_11(rand) {
           // 与初回同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:85`) ||
               chara(target).system.顺从 >= 5) &&
             game.event.插着不拔;
@@ -12712,7 +12712,7 @@ async function kojo_message_com_11(rand) {
               `「呜……呜啊啊……好，好舒服${heart(1)} 姐姐……这么淫乱……真是对不起呢……！」`,
             );
           } else if (
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:76`) ||
               chara(target).system.欲望 >= 5) &&
             game.event.插着不拔
@@ -12725,11 +12725,11 @@ async function kojo_message_com_11(rand) {
               `「嗯啊……啊啊……我，我正在，正在被妹妹看着自慰${heart(1)} 但是……但是好舒服……${heart(1)} …要，要去了啊啊${heart(1)}」`,
             );
           } else if (
-            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            (era0(`palam:${target}:4`) >= PALAMLV[4] ||
               chara(target).system.顺从 >= 5 ||
               era.get(`talent:${target}:76`) ||
               era.get(`talent:${target}:85`)) &&
-            chara(target).train.欲情 >= era0('palamlv:4')
+            chara(target).train.欲情 >= PALAMLV[4]
           ) {
             // 同一行输出（与上面互斥插入段同型，#623）
             const excited =
@@ -12749,7 +12749,7 @@ async function kojo_message_com_11(rand) {
             );
             await era.printAndWait(`「不，不要再，再对姐姐恶作剧了」`);
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era0(`palam:${target}:4`) >= PALAMLV[4] ||
             era.get(`talent:${target}:85`) ||
             chara(target).system.顺从 >= 5
           ) {
@@ -12761,7 +12761,7 @@ async function kojo_message_com_11(rand) {
               `「只，只要能和${player_name}在一起，即使是做魔王大人的性奴，姐姐也很高兴！」`,
             );
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            era0(`palam:${target}:4`) >= PALAMLV[2] ||
             chara(target).system.顺从 >= 3
           ) {
             await era.print(
@@ -12781,7 +12781,7 @@ async function kojo_message_com_11(rand) {
           // 与初回同型：六支的 PRINTFORML 各自收行，
           // 前缀提到语句外共用（#623）
           const faced_first =
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:85`) ||
               chara(target).system.顺从 >= 5) &&
             game.event.插着不拔;
@@ -12795,7 +12795,7 @@ async function kojo_message_com_11(rand) {
               `「魔，魔王大人……${heart(1)} 你，你是我的全部……嗯啊${heart(1)} 啊啊啊${heart(1)} 我的身体……全部是属于大人的啊啊啊${heart(1)}`,
             );
           } else if (
-            chara(target).train.欲情 >= era0('palamlv:4') &&
+            chara(target).train.欲情 >= PALAMLV[4] &&
             (era.get(`talent:${target}:76`) ||
               chara(target).system.欲望 >= 5) &&
             game.event.插着不拔
@@ -12808,11 +12808,11 @@ async function kojo_message_com_11(rand) {
               `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,
             );
           } else if (
-            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            (era0(`palam:${target}:4`) >= PALAMLV[4] ||
               chara(target).system.顺从 >= 5 ||
               era.get(`talent:${target}:76`) ||
               era.get(`talent:${target}:85`)) &&
-            chara(target).train.欲情 >= era0('palamlv:4')
+            chara(target).train.欲情 >= PALAMLV[4]
           ) {
             // 同一行输出（与上面互斥插入段同型，#623）
             const excited =
@@ -12834,7 +12834,7 @@ async function kojo_message_com_11(rand) {
               `「呜啊啊！人，人家没关系的……请，请魔王大人……随意调教！」`,
             );
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era0(`palam:${target}:4`) >= PALAMLV[4] ||
             era.get(`talent:${target}:85`) ||
             chara(target).system.顺从 >= 5
           ) {
@@ -12845,7 +12845,7 @@ async function kojo_message_com_11(rand) {
               `「请，请魔王大人……随意调教${target_name}」`,
             );
           } else if (
-            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            era0(`palam:${target}:4`) >= PALAMLV[2] ||
             chara(target).system.顺从 >= 3
           ) {
             await era.print(

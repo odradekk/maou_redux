@@ -8143,8 +8143,7 @@ test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async
     },
     {
       seed: (f) => {
-        f.store.set('palamlv:4', 100);
-        f.store.set(`palam:${LILY}:5`, 100);
+        f.store.set(`palam:${LILY}:5`, 10000);
         f.store.set(`talent:${LILY}:76`, 1);
       },
       fragment: '每天都在渴望着魔王大人的调教和侵犯',
@@ -8184,8 +8183,6 @@ test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async
 test('COM56 初めて通常交谈：助手玛奥与非助手分支', async () => {
   for (const assistant of [true, false]) {
     const fixture = setup_lily((f, era_flag) => {
-      f.store.set('palamlv:2', 100);
-      f.store.set('palamlv:4', 200);
       if (assistant) {
         preset_chara_17(f);
         f.era.addCharacter(MAO);
@@ -8522,16 +8519,15 @@ for (const [label, assistant] of [
 ]) {
   test(`COM55 二回目：${label}五档推进`, async () => {
     const cases = [
-      { talent: 76, arousal: 100, expected: 6 },
+      { talent: 76, arousal: 3000, expected: 6 },
       { talent: 76, expected: 5 },
-      { talent: 85, arousal: 100, expected: 4 },
+      { talent: 85, arousal: 3000, expected: 4 },
       { talent: 85, expected: 3 },
       { expected: 2 },
     ];
     for (const item of cases) {
       const fixture = setup_lily((f, era_flag) => {
         f.store.set('flag:7', 1);
-        f.store.set('palamlv:3', 100);
         f.store.set(`cflag:${LILY}:356`, 1);
         if (assistant) {
           era_flag.assi = MAO;
@@ -8624,8 +8620,6 @@ for (const [label, assistant] of [
   test(`#623 COM56 初回通常（${label}）：五支各自并入前缀整行`, async () => {
     const head = assistant ? '面对你' : '你';
     const seed = (f, era_flag) => {
-      f.store.set('palamlv:2', 100);
-      f.store.set('palamlv:4', 200);
       if (assistant) {
         preset_chara_17(f);
         f.era.addCharacter(MAO);
@@ -8638,7 +8632,7 @@ for (const [label, assistant] of [
         label: '首支',
         // PALAM:5 >= PALAMLV:4 && (TALENT:85 || 顺从 >= 5) && TFLAG:60
         seed: (f) => {
-          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`palam:${LILY}:5`, 10000);
           f.store.set(`talent:${LILY}:85`, 1);
           f.store.set('tflag:60', 1);
         },
@@ -8650,7 +8644,7 @@ for (const [label, assistant] of [
         label: '第二支',
         // PALAM:5 >= PALAMLV:4 && (TALENT:76 || 欲望 >= 5) && TFLAG:60
         seed: (f) => {
-          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`palam:${LILY}:5`, 10000);
           f.store.set(`talent:${LILY}:76`, 1);
           f.store.set('tflag:60', 1);
         },
@@ -8661,7 +8655,7 @@ for (const [label, assistant] of [
       {
         label: '第四支',
         // PALAM:4 >= PALAMLV:4 || TALENT:85 || 顺从 >= 5（PALAM:5 落档避开前三支）
-        seed: (f) => f.store.set(`palam:${LILY}:4`, 200),
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 10000),
         tail: assistant
           ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
           : '的语言挑逗、莉莉有些害羞地应答着',
@@ -8669,7 +8663,7 @@ for (const [label, assistant] of [
       {
         label: '第五支',
         // PALAM:4 >= PALAMLV:2 || 顺从 >= 3（PALAM:4 落档避开第四支）
-        seed: (f) => f.store.set(`palam:${LILY}:4`, 100),
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 500),
         tail: assistant
           ? '的语言调戏、莉莉小声地回答着'
           : '的语言挑逗、莉莉结结巴巴地回答着',
@@ -8706,8 +8700,6 @@ for (const [label, assistant] of [
     const head = '面对你';
     const seed = (f, era_flag) => {
       f.store.set(`cflag:${LILY}:357`, 9);
-      f.store.set('palamlv:2', 100);
-      f.store.set('palamlv:4', 200);
       if (assistant) {
         preset_chara_17(f);
         f.era.addCharacter(MAO);
@@ -8720,7 +8712,7 @@ for (const [label, assistant] of [
         label: '首支',
         // PALAM:5 >= PALAMLV:4 && (TALENT:85 || 顺从 >= 5) && TFLAG:60
         seed: (f) => {
-          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`palam:${LILY}:5`, 10000);
           f.store.set(`talent:${LILY}:85`, 1);
           f.store.set('tflag:60', 1);
         },
@@ -8732,7 +8724,7 @@ for (const [label, assistant] of [
         label: '第二支',
         // PALAM:5 >= PALAMLV:4 && (TALENT:76 || 欲望 >= 5) && TFLAG:60
         seed: (f) => {
-          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`palam:${LILY}:5`, 10000);
           f.store.set(`talent:${LILY}:76`, 1);
           f.store.set('tflag:60', 1);
         },
@@ -8743,7 +8735,7 @@ for (const [label, assistant] of [
       {
         label: '第四支',
         // PALAM:4 >= PALAMLV:4 || TALENT:85 || 顺从 >= 5（PALAM:5 落档避开前三支）
-        seed: (f) => f.store.set(`palam:${LILY}:4`, 200),
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 10000),
         tail: assistant
           ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
           : '的语言挑逗、莉莉有些害羞地应答着',
@@ -8751,7 +8743,7 @@ for (const [label, assistant] of [
       {
         label: '第五支',
         // PALAM:4 >= PALAMLV:2 || 顺从 >= 3（PALAM:4 落档避开第四支）
-        seed: (f) => f.store.set(`palam:${LILY}:4`, 100),
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 500),
         tail: assistant
           ? '的语言调戏、莉莉小声地回答着'
           : '的语言挑逗、莉莉结结巴巴地回答着',
@@ -8816,9 +8808,8 @@ for (const [label, assistant] of [
       for (const item of cases) {
         const fixture = setup_lily((f, era_flag) => {
           if (replay) f.store.set(`cflag:${LILY}:357`, 9);
-          f.store.set('palamlv:4', 200);
-          f.store.set(`palam:${LILY}:4`, 200);
-          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`palam:${LILY}:4`, 10000);
+          f.store.set(`palam:${LILY}:5`, 10000);
           f.store.set(`talent:${LILY}:85`, 1);
           if (item.tequip !== undefined)
             f.store.set(`tequip:${LILY}:${item.tequip}`, 1);

@@ -3353,7 +3353,7 @@ async function kojo_message_com_12(rand) {
     } else {
       if (
         era.get(`talent:${target}:85`) == 1 &&
-        era.get(`palam:${target}:5`) >= era.get('palamlv:3') &&
+        era.get(`palam:${target}:5`) >= PALAMLV[3] &&
         (kojo.放置PLAY <= 3 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait('');

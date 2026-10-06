@@ -42,6 +42,7 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   banishment_koujo_family,
   benki_koujo_family,
@@ -678,7 +679,7 @@ async function kojo_message_com_4(rand) {
 
       if (
         era0(`talent:${target}:76`) == 1 &&
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 6 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -688,7 +689,7 @@ async function kojo_message_com_4(rand) {
         era.set(`cflag:${target}:303`, 7);
       } else if (
         era0(`talent:${target}:76`) == 1 &&
-        P < era0('palamlv:2') &&
+        P < PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 5 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -698,7 +699,7 @@ async function kojo_message_com_4(rand) {
         era.set(`cflag:${target}:303`, 6);
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 4 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -708,14 +709,14 @@ async function kojo_message_com_4(rand) {
         era.set(`cflag:${target}:303`, 5);
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        P < era0('palamlv:2') &&
+        P < PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 3 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(`「啊呜～！再把人家弄湿一些………有点痛呢………」`);
         // CFLAG:303  = 4（变量语义：CFLAG 族，303）
         era.set(`cflag:${target}:303`, 4);
       } else if (
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         era0(`abl:${target}:3`) >= 3 &&
         (era0(`cflag:${target}:303`) <= 2 || era0('flag:7') == 2)
       ) {
@@ -3565,7 +3566,7 @@ async function kojo_message_com_4(rand) {
     } else {
       if (
         era0(`talent:${target}:85`) == 1 &&
-        era0(`palam:${target}:5`) >= era0('palamlv:3') &&
+        era0(`palam:${target}:5`) >= PALAMLV[3] &&
         (era0(`cflag:${target}:356`) <= 3 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -4823,7 +4824,7 @@ async function kojo_message_palamcng_4() {
 
   // 赋值 P = PALAM:3 + UP:3
   let P = (era0(`palam:${target}:3`) || 0) + (era0(`delta:${target}:3`) || 0); // PALAM:3 + UP:3
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:221`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:221`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       if (era_flag.selectcom == 50) {
         await era.printAndWait(`「黏糊糊的……好想蹭到魔王大人身上！…嘻嘻～」`);
@@ -4851,7 +4852,7 @@ async function kojo_message_palamcng_4() {
 
   // 赋值 P = PALAM:5 + UP:5
   P = (era0(`palam:${target}:5`) || 0) + (era0(`delta:${target}:5`) || 0); // PALAM:5 + UP:5
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:222`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:222`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       if (era_flag.selectcom == 51) {
         await era.printAndWait(`「啊～五彩缤纷的！好棒～好棒啊！…」`);
@@ -4873,7 +4874,7 @@ async function kojo_message_palamcng_4() {
 
   // 赋值 P = PALAM:8 + UP:8
   P = (era0(`palam:${target}:8`) || 0) + (era0(`delta:${target}:8`) || 0); // PALAM:8 + UP:8
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:223`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:223`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       await era.printAndWait(`「魔王大人！…你好坏！人家羞羞嘛～…」`);
     } else {
@@ -4885,7 +4886,7 @@ async function kojo_message_palamcng_4() {
 
   // 赋值 P = PALAM:10 + UP:10
   P = (era0(`palam:${target}:10`) || 0) + (era0(`delta:${target}:10`) || 0); // PALAM:10 + UP:10
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:224`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:224`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       await era.printAndWait(`「魔王……大人……　有时候…你……好可怕啊………」`);
     } else {

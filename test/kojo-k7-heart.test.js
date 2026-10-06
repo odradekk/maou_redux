@@ -855,7 +855,6 @@ test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条�
 });
 
 test('#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出', async () => {
-  // 两处链各支全覆盖；PALAMLV 阈值取自 store，故每例显式给阈值
   const cases = [
     {
       label: '初回・爱意',
@@ -956,8 +955,6 @@ test('#621 交谈・通常会話七支（初回与二回目两组）：前缀与
   ];
   for (const { label, cflag, seed, line } of cases) {
     const fixture = await setup_k7((f) => {
-      f.store.set('palamlv:4', 10000);
-      f.store.set('palamlv:2', 500);
       f.store.set('cflag:20:357', cflag);
       for (const [key, value] of Object.entries(seed)) f.store.set(key, value);
     }, 56);

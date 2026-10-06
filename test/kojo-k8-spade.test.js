@@ -2911,8 +2911,7 @@ test('SELECTCOM 55 放置PLAY，二回目以降·淫乱＋欲情Lv3以上：CFLA
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:356', 1);
     f.store.set('talent:31:76', 1);
-    f.store.set('palam:31:5', 100);
-    f.store.set('palamlv:3', 50);
+    f.store.set('palam:31:5', 3000);
   }, 55);
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
@@ -2924,7 +2923,10 @@ test('SELECTCOM 55 放置PLAY，二回目以降·淫乱＋欲情Lv3以上：CFLA
 });
 
 test('SELECTCOM 56 交谈，初めて·无摄像·快乐装备未装：同一行输出一条（#622）', async () => {
-  const fixture = await setup_k8(undefined, 56);
+  const fixture = await setup_k8((f) => {
+    f.store.set('palam:31:4', 10000);
+    f.store.set('palam:31:5', 10000);
+  }, 56);
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '你刚和她交谈了几句、银黑桃就一边发出着声音，一边拼命忍耐着的回着话',
@@ -2934,6 +2936,8 @@ test('SELECTCOM 56 交谈，初めて·无摄像·快乐装备未装：同一行
 
 test('SELECTCOM 56 交谈，初めて·无摄像·痛苦装备（TEQUIP:44）：拼「痛苦的」（#622）', async () => {
   const fixture = await setup_k8((f) => {
+    f.store.set('palam:31:4', 10000);
+    f.store.set('palam:31:5', 10000);
     f.store.set('tequip:31:44', 1);
     f.store.set('tequip:31:11', 0); // 快感装备优先级更高，此处不装
   }, 56);
@@ -2946,8 +2950,7 @@ test('SELECTCOM 56 交谈，初めて·无摄像·痛苦装备（TEQUIP:44）：
 test('SELECTCOM 56 交谈，初めて·无摄像·求爱档（PALAM:5 + 插着不拔 + 爱慕）：同一行输出（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('talent:31:85', 1);
-    f.store.set('palam:31:5', 100);
-    f.store.set('palamlv:4', 50);
+    f.store.set('palam:31:5', 10000);
     f.store.set('tflag:60', 1);
   }, 56);
   await speak_k8(fixture);
@@ -2960,8 +2963,7 @@ test('SELECTCOM 56 交谈，二回目以降·无摄像·求爱档：同一行输
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:357', 1);
     f.store.set('talent:31:85', 1);
-    f.store.set('palam:31:5', 100);
-    f.store.set('palamlv:4', 50);
+    f.store.set('palam:31:5', 10000);
     f.store.set('tflag:60', 1);
   }, 56);
   await speak_k8(fixture);
@@ -2974,8 +2976,6 @@ test('SELECTCOM 56 交谈，二回目以降·无摄像·それ以外档：各支
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:357', 1);
     f.store.set('palam:31:4', 100);
-    f.store.set('palamlv:2', 50);
-    f.store.set('palamlv:4', 200); // 抬高 Lv4 门槛：落到 ABL:10 >= 3 支
     f.store.set('abl:31:10', 3);
   }, 56);
   await speak_k8(fixture);
@@ -3018,8 +3018,7 @@ test('SELECTCOM 56 交谈，二回目以降·视频·淫乱＋PALAMLV4＋插着�
     f.store.set('cflag:31:357', 1);
     f.store.set('tequip:31:53', 1);
     f.store.set('talent:31:76', 1);
-    f.store.set('palam:31:5', 100);
-    f.store.set('palamlv:4', 50);
+    f.store.set('palam:31:5', 10000);
     f.store.set('tflag:60', 1);
   }, 56);
   await speak_k8(fixture);
@@ -3061,9 +3060,8 @@ test('SELECTCOM 56 交谈，二回目以降·视频·TALENT:89（RAND:3==0）但
 test('SELECTCOM 56 交谈，二回目以降·无摄像·快乐装备未装：同一行输出（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:357', 1);
-    f.store.set('palam:31:4', 100);
-    f.store.set('palamlv:4', 50);
-    f.store.set('palam:31:5', 100);
+    f.store.set('palam:31:4', 10000);
+    f.store.set('palam:31:5', 10000);
     f.store.set('tequip:31:44', 1); // 痛苦装备
   }, 56);
   await speak_k8(fixture);
@@ -3075,9 +3073,8 @@ test('SELECTCOM 56 交谈，二回目以降·无摄像·快乐装备未装：同
 test('SELECTCOM 56 交谈，二回目以降·无摄像·TEQUIP:11：同一行输出，拼「快乐的」（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:357', 1);
-    f.store.set('palam:31:4', 100);
-    f.store.set('palamlv:4', 50);
-    f.store.set('palam:31:5', 100);
+    f.store.set('palam:31:4', 10000);
+    f.store.set('palam:31:5', 10000);
     f.store.set('tequip:31:11', 1);
   }, 56);
   await speak_k8(fixture);

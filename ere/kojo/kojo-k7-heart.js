@@ -25,6 +25,7 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
   self_kojo_family,
@@ -1966,7 +1967,7 @@ async function kojo_message_com_7(rand) {
 
       if (
         era0(`talent:${target}:76`) == 1 &&
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 6 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -1984,7 +1985,7 @@ async function kojo_message_com_7(rand) {
         era.set(`cflag:${target}:303`, 7);
       } else if (
         era0(`talent:${target}:76`) == 1 &&
-        P < era0('palamlv:2') &&
+        P < PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 5 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -1997,7 +1998,7 @@ async function kojo_message_com_7(rand) {
         era.set(`cflag:${target}:303`, 6);
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 4 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -2015,7 +2016,7 @@ async function kojo_message_com_7(rand) {
         era.set(`cflag:${target}:303`, 5);
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        P < era0('palamlv:2') &&
+        P < PALAMLV[2] &&
         (era0(`cflag:${target}:303`) <= 3 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -2027,7 +2028,7 @@ async function kojo_message_com_7(rand) {
         // CFLAG:303  = 4（变量语义：CFLAG 族，303）
         era.set(`cflag:${target}:303`, 4);
       } else if (
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         era0(`abl:${target}:3`) >= 3 &&
         (era0(`cflag:${target}:303`) <= 2 || era0('flag:7') == 2)
       ) {
@@ -2307,7 +2308,7 @@ async function kojo_message_com_7(rand) {
     if (era0(`cflag:${target}:306`) == 0) {
       if (
         era0(`talent:${target}:130`) == 1 &&
-        era0(`palam:${target}:5`) > era0('palamlv:3') &&
+        era0(`palam:${target}:5`) > PALAMLV[3] &&
         era0(`tequip:${target}:16`) == 0 &&
         era0(`tequip:${target}:15`) == 0
       ) {
@@ -2355,7 +2356,7 @@ async function kojo_message_com_7(rand) {
     } else {
       if (
         era0(`talent:${target}:130`) == 1 &&
-        era0(`palam:${target}:5`) > era0('palamlv:3') &&
+        era0(`palam:${target}:5`) > PALAMLV[3] &&
         era0(`tequip:${target}:16`) == 0 &&
         era0(`tequip:${target}:15`) == 0
       ) {
@@ -9407,7 +9408,7 @@ async function kojo_message_com_7(rand) {
     } else {
       if (
         era0(`talent:${target}:76`) == 1 &&
-        era0(`palam:${target}:5`) >= era0('palamlv:3') &&
+        era0(`palam:${target}:5`) >= PALAMLV[3] &&
         (era0(`cflag:${target}:356`) <= 5 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -9430,7 +9431,7 @@ async function kojo_message_com_7(rand) {
         era.set(`cflag:${target}:356`, 5);
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        era0(`palam:${target}:5`) >= era0('palamlv:3') &&
+        era0(`palam:${target}:5`) >= PALAMLV[3] &&
         (era0(`cflag:${target}:356`) <= 3 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(
@@ -9588,7 +9589,7 @@ async function kojo_message_com_7(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
           era.set('tflag:32 |', 2);
         } else if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5)
         ) {
           await era.print(`${target_name}向着水晶球开始说出了下流的话`);
@@ -9613,7 +9614,7 @@ async function kojo_message_com_7(rand) {
         // 不属于本支的插值记号（#621）
         const talk_front_5408 = `被${player_name}`;
         if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
           era0('tflag:60')
         ) {
@@ -9621,7 +9622,7 @@ async function kojo_message_com_7(rand) {
             `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,
           );
         } else if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
           era0('tflag:60')
         ) {
@@ -9629,10 +9630,10 @@ async function kojo_message_com_7(rand) {
             talk_front_5408 + `搭着话、${target_name}摇着腰说出了下流的话语`,
           );
         } else if (
-          (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+          (era0(`palam:${target}:4`) >= PALAMLV[4] ||
             era0(`abl:${target}:10`) >= 5 ||
             era0(`talent:${target}:85`)) &&
-          era0(`palam:${target}:5`) >= era0('palamlv:4')
+          era0(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // 也同属一行：两档语调的条件提到语句外取值（#621）
           const excited_5415 =
@@ -9651,7 +9652,7 @@ async function kojo_message_com_7(rand) {
               `的声音、一边拼死的回着话`,
           );
         } else if (
-          era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+          era0(`palam:${target}:4`) >= PALAMLV[4] ||
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 5
         ) {
@@ -9659,7 +9660,7 @@ async function kojo_message_com_7(rand) {
             talk_front_5408 + `搭着话、${target_name}融洽的回着话`,
           );
         } else if (
-          era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+          era0(`palam:${target}:4`) >= PALAMLV[2] ||
           era0(`abl:${target}:10`) >= 3
         ) {
           await era.print(
@@ -9723,7 +9724,7 @@ async function kojo_message_com_7(rand) {
       } else if (era0(`tequip:${target}:53`) == 1) {
         await era.print(`${player_name}催促${target_name}进行自我介绍、`);
         if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
           era0('tflag:60')
         ) {
@@ -9731,7 +9732,7 @@ async function kojo_message_com_7(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
           era.set('tflag:32 |', 2);
         } else if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
           era0('tflag:60')
         ) {
@@ -9757,7 +9758,7 @@ async function kojo_message_com_7(rand) {
           // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
           era.set('tflag:32 |', 2);
         } else if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5)
         ) {
           await era.print(`${target_name}向着水晶球开始说出了下流的话`);
@@ -9780,7 +9781,7 @@ async function kojo_message_com_7(rand) {
         // 第三支的片段下面合成一条（#621）
         const talk_front_5485 = `被${player_name}`;
         if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
           era0('tflag:60')
         ) {
@@ -9788,7 +9789,7 @@ async function kojo_message_com_7(rand) {
             `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,
           );
         } else if (
-          era0(`palam:${target}:5`) >= era0('palamlv:4') &&
+          era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
           era0('tflag:60')
         ) {
@@ -9796,10 +9797,10 @@ async function kojo_message_com_7(rand) {
             talk_front_5485 + `搭着话、${target_name}摇着腰说出了下流的话语`,
           );
         } else if (
-          (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+          (era0(`palam:${target}:4`) >= PALAMLV[4] ||
             era0(`abl:${target}:10`) >= 5 ||
             era0(`talent:${target}:85`)) &&
-          era0(`palam:${target}:5`) >= era0('palamlv:4')
+          era0(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // 也同属一行：两档语调的条件提到语句外取值（#621）
           const excited_5492 =
@@ -9818,7 +9819,7 @@ async function kojo_message_com_7(rand) {
               `声音、一边拼死的回着话`,
           );
         } else if (
-          era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+          era0(`palam:${target}:4`) >= PALAMLV[4] ||
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 5
         ) {
@@ -9826,7 +9827,7 @@ async function kojo_message_com_7(rand) {
             talk_front_5485 + `搭着话、${target_name}融洽的回着话`,
           );
         } else if (
-          era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+          era0(`palam:${target}:4`) >= PALAMLV[2] ||
           era0(`abl:${target}:10`) >= 3
         ) {
           await era.print(
@@ -12035,7 +12036,7 @@ async function kojo_message_palamcng_7() {
   }
 
   let P = (era0(`palam:${target}:3`) || 0) + (era0(`delta:${target}:3`) || 0); // P = PALAM:3 + UP:3
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:221`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:221`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       if (era_flag.selectcom == 50) {
         await era.printAndWait(`「啊啊…润滑液粘糊糊的啊…」`);
@@ -12060,7 +12061,7 @@ async function kojo_message_palamcng_7() {
   }
 
   P = (era0(`palam:${target}:5`) || 0) + (era0(`delta:${target}:5`) || 0); // P = PALAM:5 + UP:5
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:222`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:222`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       if (era_flag.selectcom == 51) {
         await era.printAndWait(
@@ -12093,7 +12094,7 @@ async function kojo_message_palamcng_7() {
   }
 
   P = (era0(`palam:${target}:8`) || 0) + (era0(`delta:${target}:8`) || 0); // P = PALAM:8 + UP:8
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:223`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:223`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       await era.printAndWait(
         `「啊啊我明明是这样的爱着魔王大人…让我这么害羞什么的………」`,
@@ -12108,7 +12109,7 @@ async function kojo_message_palamcng_7() {
   }
 
   P = (era0(`palam:${target}:10`) || 0) + (era0(`delta:${target}:10`) || 0); // P = PALAM:10 + UP:10
-  if (P > era0('palamlv:2') && era0(`cflag:${target}:224`) == 0) {
+  if (P > PALAMLV[2] && era0(`cflag:${target}:224`) == 0) {
     if (era0(`talent:${target}:85`) == 1) {
       await era.printAndWait(`「才、才没有觉得害怕呢…来、来吧、继续调教吧…」`);
       await era.printAndWait(`虽然这么说着，${target_name}还是微微的颤抖着………`);
