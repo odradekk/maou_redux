@@ -81,8 +81,6 @@ test('研究所复活：resulection 也经过 add_chara_ex，补偿照样写上�
   fixture.era.addCharacter(0);
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
   fixture.store.set('exp:0:81', 5); // 勋章经验（> 0 才进复活流程）
-  // Talent.yml 没有素质 398，复活成功后读它的名字会崩（#740 修复前的临时播种）
-  fixture.store.set('talentname:398', '勋章');
   fixture.store.set('flag:1033', -2); // 条件（可复活）
   fixture.set_inputs(0, 133); // 确定 → 选 34 号
   const { resulection } = fixture.load_module('page/page-shop-labo');

@@ -4219,8 +4219,9 @@ export default [
   {
     desc: 'M12314 苏生名单丢掉「- 」（正文前缀）',
     file: 'ere/page/page-shop-labo.js',
-    find: 'era.printButton(`- ${itemname(idx)}`, idx);',
-    replace: 'era.printButton(`${itemname(idx)}`, idx); // 变异：丢掉「- 」',
+    find: 'era.printButton(`- ${csv_name(count + 1)}`, idx);',
+    replace:
+      'era.printButton(`${csv_name(count + 1)}`, idx); // 变异：丢掉「- 」',
     tests: ['page-shop-labo'],
     must_mention: '苏生名单',
   },

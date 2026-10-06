@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 96; // #724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
+export const COUNT = 103; // #740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -825,5 +825,65 @@ export default [
     tests: ['page-shop-labo'],
     must_mention:
       '等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认',
+  },
+  // —— #740：勋章提示与苏生名单不读未声明的名字序号 ——
+  {
+    desc: 'M14562 given_human_life 的勋章提示改回读 talentname:398（素质表未声明，引擎抛错）',
+    file: 'ere/page/page-shop-labo.js',
+    find: "  await with_self_kojo(15, () => self_kojo(rand, undefined, true));\n  era.print('《失去了【勋章】》');",
+    replace:
+      '  await with_self_kojo(15, () => self_kojo(rand, undefined, true));\n  era.print(`《失去了【${talentname(398)}】》`); // 变异',
+    tests: ['page-shop-labo'],
+    must_mention: 'given_human_life：非人类支只提示不返回',
+  },
+  {
+    desc: 'M14563 resulection 的勋章提示改回读 talentname:398',
+    file: 'ere/page/page-shop-labo.js',
+    find: "    break;\n  }\n  era.print('《失去了【勋章】》');",
+    replace:
+      '    break;\n  }\n  era.print(`《失去了【${talentname(398)}】》`); // 变异',
+    tests: ['page-shop-labo'],
+    must_mention: 'resulection：三道前置',
+  },
+  {
+    desc: 'M14568 resulection 的勋章提示写成「获得了」（勋章随后清零）',
+    file: 'ere/page/page-shop-labo.js',
+    find: "    break;\n  }\n  era.print('《失去了【勋章】》');",
+    replace: "    break;\n  }\n  era.print('《获得了【勋章】》'); // 变异",
+    tests: ['page-shop-labo'],
+    must_mention: 'resulection：三道前置',
+  },
+  {
+    desc: 'M14564 cure_insane 的勋章提示改回读 talentname:398',
+    file: 'ere/page/page-shop-labo.js',
+    find: "    era.print('《【勋章】不见了》');",
+    replace: '    era.print(`《【${talentname(398)}】不见了》`); // 变异',
+    tests: ['page-shop-labo'],
+    must_mention: 'cure_insane：崩坏与疯狂两支各清一项',
+  },
+  {
+    desc: 'M14565 reget_chastity_key 的勋章提示改回读 talentname:398',
+    file: 'ere/page/page-shop-labo.js',
+    find: "  chara(t).stronghold.贞操带钥匙已丢弃 = 0; // CFLAG:T:49 = 0\n  era.print('《【勋章】不见了》');",
+    replace:
+      '  chara(t).stronghold.贞操带钥匙已丢弃 = 0; // CFLAG:T:49 = 0\n  era.print(`《【${talentname(398)}】不见了》`); // 变异',
+    tests: ['page-shop-labo'],
+    must_mention: 'reget_chastity_key：找回钥匙 + 勋章清零',
+  },
+  {
+    desc: 'M14566 苏生名单改回按按钮编号读 ITEMNAME（魔物名表，105 等编号未声明）',
+    file: 'ere/page/page-shop-labo.js',
+    find: 'era.printButton(`- ${csv_name(count + 1)}`, idx);',
+    replace: 'era.printButton(`- ${itemname(idx)}`, idx); // 变异',
+    tests: ['page-shop-labo'],
+    must_mention: 'resulection：名单显示亡者的预设名字',
+  },
+  {
+    desc: 'M14567 苏生名单的预设编号差一（取 count 而不是 count + 1）',
+    file: 'ere/page/page-shop-labo.js',
+    find: 'era.printButton(`- ${csv_name(count + 1)}`, idx);',
+    replace: 'era.printButton(`- ${csv_name(count)}`, idx); // 变异',
+    tests: ['page-shop-labo'],
+    must_mention: 'resulection：名单显示亡者的预设名字',
   },
 ];
