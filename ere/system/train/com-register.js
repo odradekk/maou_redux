@@ -52,7 +52,8 @@ const COMSEQ_ACTIVE = 555;
 
 /**
  * multi_comable：指令号能否登记进调教菜单。
- * TRAINNAME（静态名）为空 = 不在可直选表 = 不可（高级 COM 不入菜单）；
+ * 不在可直选表 = 不可（高级 COM 不入菜单）。按 DECLARED_TRAIN_IDS 判断，
+ * 不读 TRAINNAME 判空：引擎读未声明序号的名字会直接抛错。
  * 否则包着 TFLAG:224 调用 com_able_family 的对应号（实行中旗标让口上的
  * 「索求」分支静音，置位/复位成对）。
  *
@@ -60,7 +61,7 @@ const COMSEQ_ACTIVE = 555;
  * @returns {Promise<number>} 1 = 可登记，0 = 不可
  */
 async function multi_comable(id) {
-  if ((era.get(`traincommandname:${id}`) ?? '').length === 0) {
+  if (!DECLARED_TRAIN_IDS.includes(id)) {
     return 0;
   }
   game_train.索求口上抑制 = COMSEQ_ACTIVE;

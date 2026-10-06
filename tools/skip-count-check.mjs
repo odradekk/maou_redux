@@ -16,7 +16,7 @@
 // 缺摘要、文件缺失、基线烂——测试运行器异常退出不该被当成核对通过）。
 //
 // **两侧各有一份基线，别混用**（#302）：
-//   test/engine-skip-baseline.txt（现 72）—— 无引擎环境（CI 的 engineless
+//   test/engine-skip-baseline.txt（现 74）—— 无引擎环境（CI 的 engineless
 //     job、未放置 ere-4.8.0 的裸克隆）。守「引擎缺席的代价必须是看得见的
 //     数字」，新增引擎依赖用例必须同步改基线。
 //   test/engine-present-skip-baseline.txt（只能是 0）—— 有引擎环境（CI 的

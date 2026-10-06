@@ -24,6 +24,18 @@ function load_register() {
   return { fixture, mod };
 }
 
+/** 可用性检查只放行 ids：零实现态下全部可直选指令都可登记 */
+function only_registrable(fixture, ids) {
+  const { com_able_family, DECLARED_TRAIN_IDS } = fixture.load_module(
+    'system/train/com-family',
+  );
+  for (const id of DECLARED_TRAIN_IDS) {
+    if (!ids.includes(id)) {
+      com_able_family.register(id, async () => 0);
+    }
+  }
+}
+
 /** 登记槽播种：FLAG:550 = ids.length，FLAG:551.. 依次存 ids */
 function seed_menu(fixture, ids) {
   fixture.store.set('flag:550', ids.length);
@@ -85,7 +97,7 @@ function history_texts(fixture) {
 
 // —— multi_comable ——
 
-test('multi_comable：traincommandname 为空（高级 COM 84）→ 0，不进登记面', async () => {
+test('multi_comable：不在可直选表（高级 COM 84）→ 0，不进登记面', async () => {
   const { fixture, mod } = load_register();
   assert.equal(await mod.multi_comable(84), 0);
   assert.equal(fixture.store.get('tflag:224') ?? 0, 0, '提前返回路径不置旗标');
@@ -128,19 +140,17 @@ test('print_comlist：可登记指令的按钮列表，编号印指令号本身'
   const buttons = fixture.lines
     .filter((l) => l.type === 'button')
     .map((b) => [b.accelerator, b.text]);
-  // 零实现态其余全可用；40 被可用性检查拦下、高级 COM（traincommandname 空）无按钮
+  // 零实现态其余全可用；40 被可用性检查拦下、高级 COM（不在可直选表）无按钮
   const map = new Map(buttons);
   assert.equal(map.get(0), '爱抚');
   assert.equal(map.get(110), '穿脱衣服', '登记面编号是指令号（110 不折位次）');
   assert.ok(!map.has(40), '可用性检查不过不得出现在登记面');
-  assert.ok(!map.has(84), '高级 COM（traincommandname 空）不得出现在登记面');
+  assert.ok(!map.has(84), '高级 COM（不在可直选表）不得出现在登记面');
 });
 
 test('print_comlist：可登记指令按每行 3 列排布（PRINTCPERLINE 的列数）', async () => {
   const { fixture, mod } = load_register();
-  for (const id of [0, 6, 7, 8, 9]) {
-    fixture.store.set(`traincommandname:${id}`, `指令${id}`);
-  }
+  only_registrable(fixture, [0, 6, 7, 8, 9]);
 
   await mod.print_comlist();
 
@@ -275,6 +285,7 @@ test('comseq_register：登满 10 条自动进完成段（不再要输入）', a
 test('comseq_register：每轮重画带「选择第N个指令:」行', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
+  only_registrable(fixture, [0]);
   fixture.reset_inputs(0, 1000);
 
   await mod.comseq_register();

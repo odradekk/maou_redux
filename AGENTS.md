@@ -167,7 +167,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 - **手册与实测行为冲突时，以引擎代码为准。** `dev-guides/` 是本项目根据 `app.asar` 修正过的手册副本。发现差异后直接修正文段，不另建勘误表；上游原文可从 Git 历史查看（#163）。新确认的引擎行为按 `tools/engine-contract-facts.mjs` 文件头的说明增加检查：能直接执行的行为加入 engine-bundle 测试；只能通过源码片段定位的行为加入 `anchors` 表。
 - **游戏运行时仅可使用 `era` API 与 `crypto`。** 引擎禁止导入其他 Node 内置模块和第三方库（`dev-guides/18-tools.md`）；`tools/` 中的离线脚本不受此限制。
 - 异步 API 必须 `await`：`printAndWait`、`input`、`clear`、`waitAnyKey`、`delay`、存档系列。漏 `await` 造成的时序错乱极难排查。
-- 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读取未声明的序号返回 `undefined`，不是 0**（issue #13）；在名字表和数据容器存在时，写入未声明的下标不会报错，且会进入存档。因此必须检查下标是否正确，包装层的 getter 按项目约定使用 `|| 0` 处理缺值。
+- 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读取未声明的序号返回 `undefined`，不是 0**（issue #13）；**名字地址 `<表>name:<序号>` 例外：序号未声明时引擎直接抛 TypeError，游戏卡死**（#739），读名字前先确认序号已声明，测试夹具按 yml 声明集模拟这一行为。在名字表和数据容器存在时，写入未声明的下标不会报错，且会进入存档。因此必须检查下标是否正确，包装层的 getter 按项目约定使用 `|| 0` 处理缺值。
 - 文件编码用 UTF-8 或 UTF-8 BOM。
 - **写变量前，先确认它所属的静态表已存在于 `yml/`。** `setVar` 的行为由名字表和 `data` 容器是否存在共同决定，与地址是两段还是三段无关（PR #57）：两者都存在时写入成功，未声明下标按数字处理；只有名字表时静默丢弃写入；**只有数据容器时直接崩溃**。已出现过的问题包括 `item*`（PR #34）和 `stain`、`ex`、`cstr`、`tequip`、`tflag`（PR #57）。`test/static-table-coverage.test.js` 会提取源码中的变量类别并检查对应表，但只能识别 `era.get/set/add` 的字面量前缀；动态拼接的地址仍需人工检查。
 - **首次使用输出 API 前，检查引擎渲染层对参数的处理。** 手册未必描述最终显示效果，测试夹具也不完整模拟渲染。例如，`printButton` 的 `showAcc` 默认为真，引擎会添加 `[快捷键] `，并将正文中的连续空白合并为一个空格。**按钮正文不得自行添加 `[编号]` 前缀**，否则会显示为 `[0] [0] 旧的奴隶`（PR #30）。

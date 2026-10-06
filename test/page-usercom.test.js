@@ -8,9 +8,21 @@
  */
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const {
+  create_chara_loader,
+  create_variable_loader,
+  load_engine_bundle,
+} = require('./helpers/engine-bundle');
+const { seed_static_names } = require('./helpers/static-names');
+
+const engine = load_engine_bundle();
+const engine_test = engine ? test : test.skip;
+const YML_DIR = path.join(__dirname, '..', 'yml');
 
 function load_page(fixture) {
   fixture.load_module('page/page-usercom');
@@ -669,17 +681,36 @@ test('p_c 第一级：静态名表命中 → TSTR:90 = TRAINNAME', async () => {
   assert.equal(line, '＜上次的调教指令：振动杖＞');
 });
 
-test('p_c 第二级：静态名空 → TRAIN_NAME 定制名（trainalias 覆盖层）', async () => {
+/** 播种静态名表与 trainalias（进调教后的名字表状态） */
+function seed_train_names(fixture) {
+  seed_static_names(fixture);
+  fixture.load_module('system/train/train-name').train_name_init();
+}
+
+test('p_c 第二级：高级指令不在静态名表 → 不读 TRAINNAME，取 TRAIN_NAME 定制名（#739）', async () => {
   const fixture = create_era_fixture();
-  // 999 不是静态表编号：traincommandname 未播种 → 回落 trainalias
-  fixture.store.set('trainalias:999', '自定义名');
-  const { line, tstr } = await draw_with_prevcom(fixture, 999);
-  assert.equal(tstr, '自定义名');
-  assert.equal(line, '＜上次的调教指令：自定义名＞');
+  seed_train_names(fixture);
+  // 126 = 手搓口交：只能经升格进入，执行后 PREVCOM 即 126
+  const { line, tstr } = await draw_with_prevcom(fixture, 126);
+  assert.equal(tstr, '手搓口交');
+  assert.equal(line, '＜上次的调教指令：手搓口交＞');
+});
+
+test('p_c：每个高级指令号作 PREVCOM 都能画出「上次的调教指令」行（#739）', async () => {
+  const { ADVANCED_COM_IDS } = create_era_fixture().load_module(
+    'system/train/com-family',
+  );
+  for (const id of ADVANCED_COM_IDS) {
+    const fixture = create_era_fixture();
+    seed_train_names(fixture);
+    const { line } = await draw_with_prevcom(fixture, id);
+    assert.match(line, /^＜上次的调教指令：.+＞$/, `PREVCOM = ${id}`);
+  }
 });
 
 test('p_c 第三级：两级皆空 → 全角空格占位（非空占位）', async () => {
   const fixture = create_era_fixture();
+  // 998 既不在静态名表，也没有 trainalias
   const { line, tstr } = await draw_with_prevcom(fixture, 998);
   assert.equal(tstr, '　', '第三级回落必须落全角空格占位（非空）');
   assert.equal(line, '＜上次的调教指令：　＞');
@@ -699,3 +730,50 @@ test('PREVCOM = -1（首轮）：无「上次的调教指令」行，也不写 T
   assert.equal(line, undefined);
   assert.equal(tstr, undefined, 'P_C 不被调用，TSTR:90 不得有写入');
 });
+
+engine_test(
+  '真实引擎：执行手搓口交后的下一回合，指令菜单照常画出「上次的调教指令」（#739）',
+  async () => {
+    const variables = create_variable_loader();
+    for (const file of fs.readdirSync(YML_DIR)) {
+      if (!file.endsWith('.yml') || /^(Chara\d+|GameBase)\.yml$/i.test(file)) {
+        continue;
+      }
+      const table = path.basename(file, '.yml').toLowerCase();
+      variables.load_rows(
+        engine.parse_data_file(
+          fs.readFileSync(path.join(YML_DIR, file), 'utf8'),
+          'yml',
+          table,
+        ),
+        table,
+      );
+    }
+    // resetData 要读 gamebase，取角色装载器预备的静态数据
+    const characters = create_chara_loader();
+    Object.assign(characters.static_data, variables.static_data);
+    const errors = [];
+    const { normal } = engine.era_api.tableType;
+    const api = new engine.era_api({
+      config: {},
+      global: {},
+      staticData: characters.static_data,
+      fieldNames: variables.field_names,
+      // p_c 写 TSTR:90、读 TRAIN_NAME（trainalias），两张都是扩展普通表
+      extendedTables: { tstr: normal, trainalias: normal },
+      error: (message) => errors.push(message),
+    });
+    api.resetData();
+    const fixture = create_era_fixture();
+    for (const name of ['get', 'set', 'add']) {
+      fixture.era[name] = api[name].bind(api);
+    }
+    fixture.load_module('system/train/train-name').train_name_init();
+
+    const { line, tstr } = await draw_with_prevcom(fixture, 126);
+    assert.equal(line, '＜上次的调教指令：手搓口交＞');
+    assert.equal(tstr, undefined, '夹具 store 不参与，TSTR:90 写进引擎');
+    assert.equal(api.get('tstr:90'), '手搓口交');
+    assert.deepEqual(errors, [], '画菜单不得产生引擎变量寻址错误');
+  },
+);

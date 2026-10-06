@@ -11,6 +11,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { seed_undeclared_talent_names } = require('./helpers/static-names');
 
 function load(fixture) {
   return fixture.load_module('chara/chara-custom');
@@ -52,6 +53,7 @@ function setup() {
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
   fixture.store.set('flag:10005', 0); // era_flag.target
+  seed_undeclared_talent_names(fixture); // #741 修复前的临时播种
   return fixture;
 }
 

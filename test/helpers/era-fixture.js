@@ -18,6 +18,8 @@
 const Module = require('node:module');
 const path = require('node:path');
 
+const { yml_declared_ids } = require('./static-names');
+
 // '#/xxx' 一律映射到 <仓库>/ere/xxx，与引擎行为及 ere/jsconfig.json 的别名一致
 const ERE_DIR = path.resolve(__dirname, '..', '..', 'ere');
 
@@ -629,7 +631,23 @@ function create_era_fixture() {
     }
   };
 
+  // 引擎读 `<表>name:<序号>` 直接取 fieldNames[表][序号].n：yml 里有这张表
+  // 而序号未声明时抛 TypeError，不返回 undefined（#739）。用例显式播种的
+  // 名字键算作已声明，用于测试 yml 里没有的条目；绕开已知缺陷的播种要在
+  // 用例里注明工单号
+  const is_undeclared_name = (var_name) => {
+    const match = /^([a-z]+)name:(\d+)$/.exec(var_name);
+    if (match === null || store.has(var_name)) {
+      return false;
+    }
+    const ids = yml_declared_ids(match[1]);
+    return ids !== undefined && !ids.has(Number(match[2]));
+  };
+
   era.get = (var_name) => {
+    if (is_undeclared_name(var_name)) {
+      throw new TypeError("Cannot read properties of undefined (reading 'n')");
+    }
     if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
       var_reads.push({ name: var_name, value: undefined });
       return undefined;

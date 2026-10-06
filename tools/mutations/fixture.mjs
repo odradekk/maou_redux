@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 57; // #721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 60; // #739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -742,5 +742,30 @@ export default [
       // 变异：局部清除不压回确认边界`,
     tests: ['fixture'],
     must_mention: `text: '结果'`,
+  },
+  // —— #739：名字表读未声明序号同引擎抛错 ——
+  {
+    desc: 'M14559 夹具名字表读未声明序号不抛错（回到返回 undefined，掩盖引擎崩溃）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    if (is_undeclared_name(var_name)) {',
+    replace: '    if (false && is_undeclared_name(var_name)) { // 变异：不抛错',
+    tests: ['fixture'],
+    must_mention: 'yml 未声明且用例没播种的序号同引擎抛 TypeError',
+  },
+  {
+    desc: 'M14560 夹具名字表不看 yml 声明集（已声明序号也抛错）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    return ids !== undefined && !ids.has(Number(match[2]));',
+    replace: '    return ids !== undefined; // 变异：不看声明集',
+    tests: ['fixture'],
+    must_mention: 'yml 已声明的序号与非 yml 名字表照常读取',
+  },
+  {
+    desc: 'M14561 夹具名字表不认用例显式播种的名字（测试不可达分支的用例全部崩）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    if (match === null || store.has(var_name)) {',
+    replace: '    if (match === null) { // 变异：不认显式播种',
+    tests: ['fixture'],
+    must_mention: '用例显式播种的名字键算作已声明',
   },
 ];
