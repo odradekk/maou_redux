@@ -137,3 +137,31 @@ engine_test(
     assert.equal(engine.set_var.call(fake_this, 'traincommandname:0'), '爱抚');
   },
 );
+
+// 夹具读名字表时据此抛错：表内没有的序号不是返回 undefined
+engine_test(
+  'TrainCommand：读未声明序号的名字直接抛 TypeError，不返回 undefined（#739）',
+  () => {
+    const product_text = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', 'TrainCommand.yml'),
+      'utf8',
+    );
+    const loader = load_table(product_text, 'yml', 'traincommand');
+    const fake_this = {
+      staticData: loader.static_data,
+      fieldNames: loader.field_names,
+      data: {},
+      global: {},
+      extendedTables: {},
+    };
+    assert.equal(engine.set_var.call(fake_this, 'traincommandname:30'), '手淫');
+    // 126 = 手搓口交，只能经升格进入的高级指令号，不在 TrainCommand.yml
+    assert.throws(
+      () => engine.set_var.call(fake_this, 'traincommandname:126'),
+      {
+        name: 'TypeError',
+        message: "Cannot read properties of undefined (reading 'n')",
+      },
+    );
+  },
+);

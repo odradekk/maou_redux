@@ -693,6 +693,12 @@ const TALENT_NAMES = {
   398: '勋章',
 };
 
+/**
+ * Talent.yml 没有素质 398，引擎读它的名字会崩（#740）。#740 修复前，走到
+ * 「勋章」输出的用例显式播种这个名字；修复时删掉本常量与各处引用
+ */
+const MEDAL_NAME_SEED = { 'talentname:398': '勋章' };
+
 /** 把素质名预置进夹具 */
 function seed_talentnames(fixture) {
   for (const [id, name] of Object.entries(TALENT_NAMES)) {
@@ -1531,6 +1537,7 @@ test('bougt_tentacles：买与不买两支（ITEM:90 与 50000 点）', async ()
 test('given_human_life：非人类支只提示不返回 + 勋章清零 + 口上事件 15', async () => {
   const fixture = make_fixture({
     seed: {
+      ...MEDAL_NAME_SEED,
       'exp:0:81': 5,
       'talent:1:85': 1,
       'base:1:10': 0,
@@ -1557,7 +1564,7 @@ test('given_human_life：非人类支只提示不返回 + 勋章清零 + 口上�
     '不扣钱（勋章交换）',
   );
   // 勋章不足
-  const poor = make_fixture({ seed: {} });
+  const poor = make_fixture({ seed: { ...MEDAL_NAME_SEED } });
   const second = await run(poor, 'given_human_life', [1, 0], {});
   assert.equal(second.ret, 0);
   assert.ok(
@@ -1568,22 +1575,28 @@ test('given_human_life：非人类支只提示不返回 + 勋章清零 + 口上�
 
 test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）与复活流程', async () => {
   // 无勋章
-  const no_medal = make_fixture({ seed: {} });
+  const no_medal = make_fixture({ seed: { ...MEDAL_NAME_SEED } });
   assert.equal(
     (await run(no_medal, 'resulection', [], {})).ret,
     0,
     'EXP:MASTER:81 == 0 时拒绝（<= 0 的等号侧）',
   );
   // 人数 > 30
-  const many = make_fixture({ slaves: 31, seed: { 'exp:0:81': 5 } });
+  const many = make_fixture({
+    slaves: 31,
+    seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 5 },
+  });
   const first = await run(many, 'resulection', [], {});
   assert.equal(first.ret, 0);
   assert.ok(all_text(first.added).includes('亡者容身之所'));
   // FLAG:5 != 9 且人数 > 10
-  const eleven = make_fixture({ slaves: 11, seed: { 'exp:0:81': 5 } });
+  const eleven = make_fixture({
+    slaves: 11,
+    seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 5 },
+  });
   assert.equal((await run(eleven, 'resulection', [], {})).ret, 0);
   // 无亡者（FLAG:1000-1099 无 < 0）
-  const no_dead = make_fixture({ seed: { 'exp:0:81': 5 } });
+  const no_dead = make_fixture({ seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 5 } });
   // 尾部补 1（确认处取消）：万一扫描把未设置位也算成亡者，流程能干净退出
   const second = await run(no_dead, 'resulection', [1], {});
   assert.ok(
@@ -1593,9 +1606,13 @@ test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   // 有亡者：确认 → 选 100 → 复活
   // 亡者位 1099 → 按钮 199 → 预设编号 100（ADDCHARA D，D = RESULT - 99；
   // 显示名的 ITEM 编号 = COUNT + 100，即 RESULT）
-  const revive = make_fixture({ seed: { 'exp:0:81': 5, 'flag:1099': -2 } });
+  const revive = make_fixture({
+    seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 5, 'flag:1099': -2 },
+  });
   revive.seed_chara(100, { id: 100, name: '亡者', callname: '亡者' });
-  revive.store.set('itemname:199', '亡者'); // 名单正文的名字来自 ITEMNAME:D（D = COUNT + 100）
+  // 名单正文的名字来自 ITEMNAME:D（D = COUNT + 100）。Item.yml 未声明 199，
+  // 引擎读它会崩（#740 修复前的临时播种）
+  revive.store.set('itemname:199', '亡者');
   const third = await run(revive, 'resulection', [0, 199], {});
   assert.equal(third.ret, 1);
   assert.equal(revive.store.get('flag:1099'), -1, '购买标记 FLAG:C = -1');
@@ -1608,13 +1625,20 @@ test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
     '苏生名单按 `[编号] - 名字` 渲染',
   );
   // 确认处取消
-  const cancel = make_fixture({ seed: { 'exp:0:81': 5, 'flag:1000': -2 } });
+  const cancel = make_fixture({
+    seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 5, 'flag:1000': -2 },
+  });
   assert.equal((await run(cancel, 'resulection', [1], {})).ret, 0);
 });
 
 test('cure_insane：崩坏与疯狂两支各清一项 + 勋章 -30', async () => {
   const both = make_fixture({
-    seed: { 'exp:0:81': 40, 'talent:1:9': 1, 'talent:1:123': 1 },
+    seed: {
+      ...MEDAL_NAME_SEED,
+      'exp:0:81': 40,
+      'talent:1:9': 1,
+      'talent:1:123': 1,
+    },
   });
   const { ret, added } = await run(both, 'cure_insane', [1, 0], {});
   assert.equal(ret, 1);
@@ -1623,13 +1647,17 @@ test('cure_insane：崩坏与疯狂两支各清一项 + 勋章 -30', async () =>
   assert.equal(both.store.get('exp:0:81'), 10, 'EXP:MASTER:81 -= 30');
   assert.ok(all_text(added).includes('不见了'), '「【勋章】不见了」');
   // 只有疯狂一支
-  const mad = make_fixture({ seed: { 'exp:0:81': 31, 'talent:1:123': 1 } });
+  const mad = make_fixture({
+    seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 31, 'talent:1:123': 1 },
+  });
   const second = await run(mad, 'cure_insane', [1, 0], {});
   assert.equal(second.ret, 1);
   assert.ok(all_text(second.added).includes('从无尽的噩梦中苏醒了'));
   assert.ok(!all_text(second.added).includes('理性的光辉'), '崩坏支不触发');
   // 门槛：EXP <= 30 直接拒绝（31 可以，30 不行）
-  const edge = make_fixture({ seed: { 'exp:0:81': 30, 'talent:1:9': 1 } });
+  const edge = make_fixture({
+    seed: { ...MEDAL_NAME_SEED, 'exp:0:81': 30, 'talent:1:9': 1 },
+  });
   const third = await run(edge, 'cure_insane', [1, 0], {});
   assert.ok(
     texts(third.added).includes('勋章，是最好的药啊魔王大人！'),
@@ -2324,7 +2352,12 @@ test('等号侧：濒死条件 BASE:0 < 1 的等号侧（BASE == 1 仍可选）'
 test('等号侧：寿命条件 base(10) > 0 的两侧（人类有寿命才清零）', async () => {
   // 人类且寿命 > 0：成交时把 BASE:10 清零
   const human = make_fixture({
-    seed: { 'exp:0:81': 5, 'talent:1:85': 1, 'base:1:10': 100 },
+    seed: {
+      ...MEDAL_NAME_SEED,
+      'exp:0:81': 5,
+      'talent:1:85': 1,
+      'base:1:10': 100,
+    },
   });
   const first = await run(human, 'given_human_life', [1, 0], {});
   assert.equal(first.ret, 1);
@@ -2332,6 +2365,7 @@ test('等号侧：寿命条件 base(10) > 0 的两侧（人类有寿命才清零
   // 非人类（BASE:10 == 0）且带动物耳朵：走「并非人类」提示支、不写寿命
   const monster = make_fixture({
     seed: {
+      ...MEDAL_NAME_SEED,
       'exp:0:81': 5,
       'talent:1:85': 1,
       'base:1:10': 0,

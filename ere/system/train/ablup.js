@@ -768,9 +768,8 @@ async function ablup4(cid) {
 /**
  *
  * ABLNAME:5～9 在 Abl.yml 里没有条目（本文件头「调用方」一节的依据），
- * era.get 读到 undefined；成功文案的名称前缀因此原样留空，不是缺陷——
- * 与 ablup5～9 的实际情况一致，`|| ''` 只是避免模板字符串把 undefined
- * 拼成字面文字。
+ * 引擎读未声明序号的名字会直接抛错，所以 ablup5～9 的成功文案不读名字，
+ * 名称前缀留空。
  */
 async function ablup5(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -843,7 +842,7 @@ async function ablup5(cid) {
     } else if (result === 0) {
       const new_lv = era.add(`abl:${cid}:5`, 1);
       era.add(`juel:${cid}:2`, -a);
-      await era.printAndWait(`${era.get('ablname:5') || ''}变为LV${new_lv}。`); // （等待）
+      await era.printAndWait(`变为LV${new_lv}。`); // （等待）
       return;
     } else {
       continue; // 引擎层拒收代位，防御性保留（issue #130）
@@ -1000,17 +999,17 @@ async function ablup6(cid) {
     } else if (result === 0) {
       const new_lv = era.add(`abl:${cid}:6`, 1);
       era.add(`juel:${cid}:6`, -a);
-      await era.printAndWait(`${era.get('ablname:6') || ''}变为LV${new_lv}。`); // （等待）
+      await era.printAndWait(`变为LV${new_lv}。`); // （等待）
       return;
     } else if (result === 1) {
       const new_lv = era.add(`abl:${cid}:6`, 1);
       era.add(`juel:${cid}:4`, -b);
-      await era.printAndWait(`${era.get('ablname:6') || ''}变为LV${new_lv}。`);
+      await era.printAndWait(`变为LV${new_lv}。`);
       return;
     } else if (result === 2) {
       const new_lv = era.add(`abl:${cid}:6`, 1);
       era.add(`juel:${cid}:7`, -c);
-      await era.printAndWait(`${era.get('ablname:6') || ''}变为LV${new_lv}。`);
+      await era.printAndWait(`变为LV${new_lv}。`);
       return;
     } else {
       continue; // 引擎层拒收代位，防御性保留（issue #130）
@@ -1096,9 +1095,7 @@ async function ablup7(cid) {
     } else if (result === 0) {
       const new_lv = era.add(`abl:${cid}:7`, 1);
       era.add(`juel:${cid}:8`, -a);
-      await era.printAndWait(
-        `${era.get('ablname:7') || ''}的等级提升到${new_lv}级了。`,
-      ); // （等待）
+      await era.printAndWait(`的等级提升到${new_lv}级了。`); // （等待）
       return;
     } else {
       continue; // 引擎层拒收代位，防御性保留（issue #130）
@@ -1248,13 +1245,13 @@ async function ablup8(cid) {
       const new_lv = era.add(`abl:${cid}:8`, 1);
       era.add(`juel:${cid}:9`, -a);
       era.add(`juel:${cid}:5`, -b);
-      await era.printAndWait(`${era.get('ablname:8') || ''}变为LV${new_lv}。`); // （等待）
+      await era.printAndWait(`变为LV${new_lv}。`); // （等待）
       return;
     } else if (result === 1) {
       const new_lv = era.add(`abl:${cid}:8`, 1);
       era.add(`juel:${cid}:9`, -d);
       era.add(`juel:${cid}:6`, -e);
-      await era.printAndWait(`${era.get('ablname:8') || ''}变为LV${new_lv}。`);
+      await era.printAndWait(`变为LV${new_lv}。`);
       return;
     } else {
       continue; // 引擎层拒收代位，防御性保留（issue #130）
@@ -1382,12 +1379,12 @@ async function ablup9(cid) {
       const new_lv = era.add(`abl:${cid}:9`, 1);
       era.add(`juel:${cid}:5`, -a);
       era.add(`juel:${cid}:6`, -c);
-      await era.printAndWait(`${era.get('ablname:9') || ''}变为LV${new_lv}。`); // （等待）
+      await era.printAndWait(`变为LV${new_lv}。`); // （等待）
       return;
     } else if (result === 1) {
       const new_lv = era.add(`abl:${cid}:9`, 1);
       era.add(`juel:${cid}:0`, -d);
-      await era.printAndWait(`${era.get('ablname:9') || ''}变为LV${new_lv}。`);
+      await era.printAndWait(`变为LV${new_lv}。`);
       return;
     } else {
       continue; // 引擎层拒收代位，防御性保留（issue #130）

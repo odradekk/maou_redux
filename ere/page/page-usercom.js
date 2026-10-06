@@ -89,8 +89,12 @@ function show_advanced_names() {
  */
 function p_c() {
   const local = era_flag.prevcom;
-  // TSTR:90 = TRAINNAME:LOCAL（TRAINNAME ＝ 静态名表）
-  let name = era.get(`traincommandname:${local}`) ?? '';
+  // TSTR:90 = TRAINNAME:LOCAL（TRAINNAME ＝ 静态名表）。升格进入的高级指令号
+  // 不在表内，引擎读未声明序号的名字会直接抛错，表外编号按空名处理
+  let name = '';
+  if (DECLARED_TRAIN_IDS.includes(local)) {
+    name = era.get(`traincommandname:${local}`) ?? '';
+  }
   // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）
   if (name.length < 1) {
     name = read_train_name(local);

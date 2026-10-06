@@ -528,6 +528,8 @@ status,沉睡,0
 
 主要用于读写游戏当前的存档数据的 API，可以看到参数结构非常类似。相同的参数 varName，String 类型，用于指定要操作的变量。era.set 有专属的第二参数 val，任意类型，用于指定要赋值给操作变量的新值。但若`val=undefined`，era.set 将和 era.get 一样只会返回要操作的变量的当前值，即 `era.get(varName)` 等价于 `era.set(varName, undefined)`。
 
+读取名字 `` `${表名}name:${变量序号}` `` 时，引擎直接取该序号的定义：表存在而序号没有定义时**抛出 TypeError**（`Cannot read properties of undefined (reading 'n')`），不返回 `undefined`。不确定序号是否已定义时，先用 `` `${表名}keys` `` 判断再读名字。
+
 varName 的格式与 [变量数据表](#变量数据表) 中提及的各类数据表的用法一致，例如 `era.get('flagnames')` 会返回 flag 表下所有的变量名，`era.set('cstr:0:称号','')` 会将 cstr 表中属于角色0的子表的、名为`称号`的变量设置为空字符串 `''`。除此之外，还有一些特殊用法（以下所有指称角色的变量A或B都是该角色的ID）：
 
 ### gamebase

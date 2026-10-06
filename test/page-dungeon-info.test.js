@@ -517,6 +517,8 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
+  // Item.yml 未声明 105、115，嘉德暴走结局会把它们写成 30，之后读名字会崩
+  // （#741 修复前的显式播种）
   fixture.store.set('item:105', 7); // 第 1 层第 6 格（5 只狗头人等价）
   fixture.store.set('itemname:105', '狗头人');
   fixture.store.set('item:115', 2); // 第 2 层第 6 格

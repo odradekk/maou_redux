@@ -625,12 +625,12 @@ export default [
     must_mention: 'PLAYER != MASTER → ASSIPLAY = 1',
   },
   {
-    desc: 'M772 multi_comable 的 TRAINNAME 空条件删（高级 COM 可登记）',
+    desc: 'M772 multi_comable 的可直选表条件删（高级 COM 可登记）',
     file: 'ere/system/train/com-register.js',
-    find: `  if ((era.get(\`traincommandname:\${id}\`) ?? '').length === 0) {
+    find: `  if (!DECLARED_TRAIN_IDS.includes(id)) {
     return 0;
   }`,
-    replace: `  // 变异：不查静态名`,
+    replace: `  // 变异：不查可直选表`,
     tests: ['com-register'],
     must_mention: '高级 COM 84',
   },
@@ -6932,9 +6932,9 @@ export default [
   {
     desc: 'M9708 ablup9：成功购买结算文案',
     file: 'ere/system/train/ablup.js',
-    find: "      await era.printAndWait(`${era.get('ablname:9') || ''}变为LV${new_lv}。`); // （等待）",
+    find: '      era.add(`juel:${cid}:6`, -c);\n      await era.printAndWait(`变为LV${new_lv}。`); // （等待）',
     replace:
-      "await era.printAndWait(`${era.get('ablname:9') || ''}升级到LV${new_lv}。`); // 变异：结算文案改字",
+      '      era.add(`juel:${cid}:6`, -c);\n      await era.printAndWait(`升级到LV${new_lv}。`); // 变异：结算文案改字',
     tests: ['ablup'],
     must_mention: '两个成功购买路径各自扣对应珠、升级、等待按键后显示变为LV',
   },

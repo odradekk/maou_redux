@@ -28,6 +28,27 @@ function parse_yml_ids(file) {
   return map;
 }
 
+const declared_ids_cache = new Map();
+
+/**
+ * 名字表的声明序号（表名 → Set），按需解析、进程内缓存。引擎以 yml 文件名
+ * 的小写作表名；没有对应 yml 的表返回 undefined。
+ * @param {string} table 表名（小写）
+ * @returns {Set<number> | undefined}
+ */
+function yml_declared_ids(table) {
+  if (!declared_ids_cache.has(table)) {
+    const file = fs
+      .readdirSync(YML_DIR)
+      .find((name) => name.toLowerCase() === `${table}.yml`);
+    declared_ids_cache.set(
+      table,
+      file === undefined ? undefined : new Set(parse_yml_ids(file).keys()),
+    );
+  }
+  return declared_ids_cache.get(table);
+}
+
 /**
  * 播种名字表：palam / abl / mark / exp（#47）+ traincommand（#45 的指令
  * 按钮与「上次的调教指令」行读 `traincommandname:${id}`）。
@@ -52,4 +73,25 @@ function seed_static_names(fixture) {
   }
 }
 
-module.exports = { parse_yml_ids, seed_static_names };
+/**
+ * 把 Talent.yml 未声明的素质号播种成空名。人物定制素质页逐个读素质名，
+ * 未声明的号在引擎里会崩（#741）；#741 修复前相关用例用它绕开，修复时删除
+ * 本函数与各处调用。
+ * @param {ReturnType<import('./era-fixture').create_era_fixture>} fixture
+ */
+function seed_undeclared_talent_names(fixture) {
+  const declared = parse_yml_ids('Talent.yml');
+  // 素质页的分组最远读到 489 号（精英组），比 Talent.yml 最大的声明号还大
+  for (let id = 0; id < 490; id += 1) {
+    if (!declared.has(id)) {
+      fixture.store.set(`talentname:${id}`, '');
+    }
+  }
+}
+
+module.exports = {
+  parse_yml_ids,
+  seed_static_names,
+  seed_undeclared_talent_names,
+  yml_declared_ids,
+};

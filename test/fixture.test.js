@@ -745,6 +745,29 @@ test('resetData 清调教态（#152，D4 登记的分歧闭合）：列表清空
   );
 });
 
+test('名字表读取（#739）：yml 未声明且用例没播种的序号同引擎抛 TypeError', () => {
+  const fixture = create_era_fixture();
+  // 126 = 手搓口交，高级指令号，不在 TrainCommand.yml
+  assert.throws(() => fixture.era.get('traincommandname:126'), {
+    name: 'TypeError',
+    message: "Cannot read properties of undefined (reading 'n')",
+  });
+});
+
+test('名字表读取（#739）：yml 已声明的序号与非 yml 名字表照常读取', () => {
+  const fixture = create_era_fixture();
+  // 已声明而名字没播种：照旧返回 undefined
+  assert.equal(fixture.era.get('traincommandname:30'), undefined);
+  // callname 不对应 yml 名字表，不检查
+  assert.equal(fixture.era.get('callname:999'), undefined);
+});
+
+test('名字表读取（#739）：用例显式播种的名字键算作已声明', () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('traincommandname:999', '虚构指令');
+  assert.equal(fixture.era.get('traincommandname:999'), '虚构指令');
+});
+
 test('logger 被记录且不自递归', () => {
   const fixture = create_era_fixture();
   // 若只置 version.engine 而不整体替换 logger，

@@ -902,6 +902,7 @@ test('equip_magic_weapon：装备武器带前缀档（十万位）与武器化�
   );
   // [990] 武器化触手 → 349 号装备
   const tentacle = tailor_fixture({
+    'itemname:990': '', // 确认行读按钮号 990 的道具名（#741 修复前的临时播种）
     'item:90': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
@@ -935,6 +936,7 @@ test('equip_magic_weapon：武器段只列 341-359（360 不在段内）', async
   const fixture = tailor_fixture({
     'item:349': 1, // 武器化触手在段内但被过滤掉，只走 [990]
     'item:359': 1,
+    'itemname:359': '', // Item.yml 未声明 359（#741 修复前的临时播种）
     'item:360': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
