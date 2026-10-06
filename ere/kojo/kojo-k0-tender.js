@@ -4237,10 +4237,7 @@ async function kojo_message_palamcng_0() {
   }
 
   let p = (era.get(`palam:${target}:3`) || 0) + chara(target).train.润滑增量;
-  if (
-    p > (era.get('palamlv:2') || 0) &&
-    (era.get(`cflag:${target}:221`) || 0) === 0
-  ) {
+  if (p > PALAMLV[2] && (era.get(`cflag:${target}:221`) || 0) === 0) {
     if (era.get(`talent:${target}:85`) === 1) {
       if (era_flag.selectcom === 50) {
         await era.printAndWait(`「还有这种黏糊糊的液体呢………」`);
@@ -4265,10 +4262,7 @@ async function kojo_message_palamcng_0() {
   }
 
   p = (era.get(`palam:${target}:5`) || 0) + chara(target).train.欲情增量;
-  if (
-    p > (era.get('palamlv:2') || 0) &&
-    (era.get(`cflag:${target}:222`) || 0) === 0
-  ) {
+  if (p > PALAMLV[2] && (era.get(`cflag:${target}:222`) || 0) === 0) {
     if (era.get(`talent:${target}:85`) === 1) {
       if (era_flag.selectcom === 51) {
         await era.printAndWait(`「哈呜～…就算不用这种药…啊啊～…身体～………」`);
@@ -4293,10 +4287,7 @@ async function kojo_message_palamcng_0() {
   }
 
   p = (era.get(`palam:${target}:8`) || 0) + chara(target).train.耻情增量;
-  if (
-    p > (era.get('palamlv:2') || 0) &&
-    (era.get(`cflag:${target}:223`) || 0) === 0
-  ) {
+  if (p > PALAMLV[2] && (era.get(`cflag:${target}:223`) || 0) === 0) {
     if (era.get(`talent:${target}:85`) === 1) {
       await era.printAndWait(`「啊啊…不要再做这种羞人的事情了………」`);
       await era.printAndWait(`―――耻情初次超过LV2了。`);
@@ -4309,10 +4300,7 @@ async function kojo_message_palamcng_0() {
   }
 
   p = (era.get(`palam:${target}:10`) || 0) + chara(target).train.恐怖增量;
-  if (
-    p > (era.get('palamlv:2') || 0) &&
-    (era.get(`cflag:${target}:224`) || 0) === 0
-  ) {
+  if (p > PALAMLV[2] && (era.get(`cflag:${target}:224`) || 0) === 0) {
     if (era.get(`talent:${target}:85`) === 1) {
       await era.printAndWait(`「咿～…不要再做…这么可怕的事情了…好可怕………」`);
       await era.printAndWait(`―――恐怖初次超过LV2了。`);

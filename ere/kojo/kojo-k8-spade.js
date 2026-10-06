@@ -1818,7 +1818,7 @@ async function kojo_message_com_8(rand) {
       const P = palam(3) + delta(3); // P = PALAM:3 + UP:3
       if (
         era0(`talent:${target}:76`) == 1 &&
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         (kojo.肛门爱抚 <= 6 || game.kojo.口上开关 == 2)
       ) {
         // 淫乱+润滑Lv2以上
@@ -1836,7 +1836,7 @@ async function kojo_message_com_8(rand) {
         kojo.肛门爱抚 = 7; // CFLAG:303 = 7
       } else if (
         era0(`talent:${target}:76`) == 1 &&
-        P < era0('palamlv:2') &&
+        P < PALAMLV[2] &&
         (kojo.肛门爱抚 <= 5 || game.kojo.口上开关 == 2)
       ) {
         // 淫乱+润滑Lv2未満
@@ -1849,7 +1849,7 @@ async function kojo_message_com_8(rand) {
         kojo.肛门爱抚 = 6; // CFLAG:303 = 6
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         (kojo.肛门爱抚 <= 4 || game.kojo.口上开关 == 2)
       ) {
         // 爱慕+润滑Lv2以上
@@ -1867,7 +1867,7 @@ async function kojo_message_com_8(rand) {
         kojo.肛门爱抚 = 5; // CFLAG:303 = 5
       } else if (
         era0(`talent:${target}:85`) == 1 &&
-        P < era0('palamlv:2') &&
+        P < PALAMLV[2] &&
         (kojo.肛门爱抚 <= 3 || game.kojo.口上开关 == 2)
       ) {
         // 爱慕+润滑Lv2未満
@@ -1879,7 +1879,7 @@ async function kojo_message_com_8(rand) {
         );
         kojo.肛门爱抚 = 4; // CFLAG:303 = 4
       } else if (
-        P >= era0('palamlv:2') &&
+        P >= PALAMLV[2] &&
         era0(`abl:${target}:3`) >= 3 &&
         (kojo.肛门爱抚 <= 2 || game.kojo.口上开关 == 2)
       ) {
@@ -2091,7 +2091,7 @@ async function kojo_message_com_8(rand) {
     // 胸爱撫 CFLAG:306
     const milk_body =
       era0(`talent:${target}:130`) == 1 &&
-      palam(5) > era0('palamlv:3') &&
+      palam(5) > PALAMLV[3] &&
       era0(`tequip:${target}:16`) == 0 &&
       era0(`tequip:${target}:15`) == 0; // 母乳体质有效条件
     if (kojo.胸爱抚 == 0) {
@@ -8017,7 +8017,7 @@ async function kojo_message_com_8(rand) {
       kojo.放置PLAY = 1; // CFLAG:356 = 1
     } else if (
       era0(`talent:${target}:76`) == 1 &&
-      palam(5) >= era0('palamlv:3') &&
+      palam(5) >= PALAMLV[3] &&
       (kojo.放置PLAY <= 5 || game.kojo.口上开关 == 2)
     ) {
       // 二回目以降·淫乱＋欲情Lv3以上
@@ -8038,7 +8038,7 @@ async function kojo_message_com_8(rand) {
       kojo.放置PLAY = 5; // CFLAG:356 = 5
     } else if (
       era0(`talent:${target}:85`) == 1 &&
-      palam(5) >= era0('palamlv:3') &&
+      palam(5) >= PALAMLV[3] &&
       (kojo.放置PLAY <= 3 || game.kojo.口上开关 == 2)
     ) {
       // 爱＋欲情Lv3以上
@@ -8153,7 +8153,7 @@ async function kojo_message_com_8(rand) {
           );
           game.kojo.录像内容 |= 2; // TFLAG:32 |= 2
         } else if (
-          palam(5) >= era0('palamlv:4') &&
+          palam(5) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5)
         ) {
           await era.print(`${target_name}向着水晶球开始说起了猥琐的语言`);
@@ -8172,7 +8172,7 @@ async function kojo_message_com_8(rand) {
       } else {
         // 无摄像
         if (
-          palam(5) >= era0('palamlv:4') &&
+          palam(5) >= PALAMLV[4] &&
           (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
           game.event.插着不拔
         ) {
@@ -8180,7 +8180,7 @@ async function kojo_message_com_8(rand) {
             `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,
           );
         } else if (
-          palam(5) >= era0('palamlv:4') &&
+          palam(5) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
           game.event.插着不拔
         ) {
@@ -8189,10 +8189,10 @@ async function kojo_message_com_8(rand) {
               `刚和她交谈了几句、${target_name}就一边晃着腰，一边不停的说着猥琐的语言`,
           );
         } else if (
-          (palam(4) >= era0('palamlv:4') ||
+          (palam(4) >= PALAMLV[4] ||
             era0(`abl:${target}:10`) >= 5 ||
             era0(`talent:${target}:85`)) &&
-          palam(5) >= era0('palamlv:4')
+          palam(5) >= PALAMLV[4]
         ) {
           // 同一行输出：无后缀 PRINTFORM + IF/ELSEIF 的
           // PRINT（互斥两支）+ 收行的 PRINTFORML（#622）
@@ -8203,7 +8203,7 @@ async function kojo_message_com_8(rand) {
               `声音，一边拼命忍耐着的回着话`,
           );
         } else if (
-          palam(4) >= era0('palamlv:4') ||
+          palam(4) >= PALAMLV[4] ||
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 5
         ) {
@@ -8211,10 +8211,7 @@ async function kojo_message_com_8(rand) {
             talk_prefix +
               `刚和她交谈了几句、${target_name}就毫无隔阂的回起话来`,
           );
-        } else if (
-          palam(4) >= era0('palamlv:2') ||
-          era0(`abl:${target}:10`) >= 3
-        ) {
+        } else if (palam(4) >= PALAMLV[2] || era0(`abl:${target}:10`) >= 3) {
           await era.print(
             talk_prefix + `刚和她交谈了几句、${target_name}一点点的回起话来`,
           );
@@ -8233,14 +8230,14 @@ async function kojo_message_com_8(rand) {
       // ビデオ自己紹介
       await era.print(`${master_name}催促着${target_name}进行自我介绍、`);
       if (
-        palam(5) >= era0('palamlv:4') &&
+        palam(5) >= PALAMLV[4] &&
         (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
         game.event.插着不拔
       ) {
         await era.print(`${target_name}一边晃着腰一边说出了求爱的话语`);
         game.kojo.录像内容 |= 2; // TFLAG:32 |= 2
       } else if (
-        palam(5) >= era0('palamlv:4') &&
+        palam(5) >= PALAMLV[4] &&
         (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
         game.event.插着不拔
       ) {
@@ -8261,7 +8258,7 @@ async function kojo_message_com_8(rand) {
         );
         game.kojo.录像内容 |= 2; // TFLAG:32 |= 2
       } else if (
-        palam(5) >= era0('palamlv:4') &&
+        palam(5) >= PALAMLV[4] &&
         (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5)
       ) {
         await era.print(`${target_name}向着水晶球开始说起了猥琐的语言`);
@@ -8280,7 +8277,7 @@ async function kojo_message_com_8(rand) {
     } else {
       // 无摄像（与上一段同型，#622）
       if (
-        palam(5) >= era0('palamlv:4') &&
+        palam(5) >= PALAMLV[4] &&
         (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
         game.event.插着不拔
       ) {
@@ -8288,7 +8285,7 @@ async function kojo_message_com_8(rand) {
           `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,
         );
       } else if (
-        palam(5) >= era0('palamlv:4') &&
+        palam(5) >= PALAMLV[4] &&
         (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
         game.event.插着不拔
       ) {
@@ -8297,10 +8294,10 @@ async function kojo_message_com_8(rand) {
             `刚和她交谈了几句、${target_name}就一边晃着腰，一边不停的说着猥琐的语言`,
         );
       } else if (
-        (palam(4) >= era0('palamlv:4') ||
+        (palam(4) >= PALAMLV[4] ||
           era0(`abl:${target}:10`) >= 5 ||
           era0(`talent:${target}:85`)) &&
-        palam(5) >= era0('palamlv:4')
+        palam(5) >= PALAMLV[4]
       ) {
         // 与上一段同型（#622）
         await era.print(
@@ -8310,17 +8307,14 @@ async function kojo_message_com_8(rand) {
             `声音、一边拼命忍耐着的回着话`,
         );
       } else if (
-        palam(4) >= era0('palamlv:4') ||
+        palam(4) >= PALAMLV[4] ||
         era0(`talent:${target}:85`) ||
         era0(`abl:${target}:10`) >= 5
       ) {
         await era.print(
           talk_prefix + `刚和她交谈了几句、${target_name}就毫无隔阂的回起话来`,
         );
-      } else if (
-        palam(4) >= era0('palamlv:2') ||
-        era0(`abl:${target}:10`) >= 3
-      ) {
+      } else if (palam(4) >= PALAMLV[2] || era0(`abl:${target}:10`) >= 3) {
         await era.print(
           talk_prefix + `刚和她交谈了几句、${target_name}一点点的回起话来`,
         );

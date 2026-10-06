@@ -4909,11 +4909,49 @@ async function markcng_k0(fixture) {
   return kojo_message_markcng();
 }
 
+test('PALAMCNG：Lv2 阈值前保留首次口上，超过后各触发一次', async () => {
+  const parameters = [
+    [3, 221, '润滑度'],
+    [5, 222, '欲情'],
+    [8, 223, '耻情'],
+    [10, 224, '恐怖'],
+  ];
+  for (const [palam, delta, triggered] of [
+    [0, 0, false],
+    [1, 0, false],
+    [499, 0, false],
+    [400, 100, false],
+    [400, 101, true],
+  ]) {
+    const fixture = await setup_k0((f) => {
+      for (const [index] of parameters) {
+        f.store.set(`palam:31:${index}`, palam);
+        f.store.set(`delta:31:${index}`, delta);
+      }
+    });
+    await palamcng_k0(fixture);
+    for (const [, flag, name] of parameters) {
+      assert.equal(
+        fixture.store.get(`cflag:31:${flag}`) || 0,
+        triggered ? 1 : 0,
+        `${name}在 ${palam}+${delta} 时的首次标志`,
+      );
+      assert.equal(
+        fixture.text_lines().includes(`―――${name}初次超过LV2了。`),
+        triggered,
+        `${name}在 ${palam}+${delta} 时的首次台词`,
+      );
+    }
+    const first_lines = fixture.text_lines();
+    await palamcng_k0(fixture);
+    assert.deepEqual(fixture.text_lines(), first_lines, '首次口上不得重复播放');
+  }
+});
+
 test('PALAMCNG：润滑度首次超过 LV2 触发首次口上并写 CFLAG:221', async () => {
   const fixture = await setup_k0((f) => {
-    f.store.set('palam:31:3', 5);
-    f.store.set('delta:31:3', 5); // P = 10 > PALAMLV:2 = 5
-    f.store.set('palamlv:2', 5);
+    f.store.set('palam:31:3', 400);
+    f.store.set('delta:31:3', 101); // 累积量与本轮增量合计严格超过 Lv2。
   });
   await palamcng_k0(fixture);
   assert.match(fixture.text_lines()[0], /湿掉了/);
@@ -4922,9 +4960,8 @@ test('PALAMCNG：润滑度首次超过 LV2 触发首次口上并写 CFLAG:221', 
 
 test('PALAMCNG：CFLAG:221 已置位时不重复出声', async () => {
   const fixture = await setup_k0((f) => {
-    f.store.set('palam:31:3', 5);
-    f.store.set('delta:31:3', 5);
-    f.store.set('palamlv:2', 5);
+    f.store.set('palam:31:3', 400);
+    f.store.set('delta:31:3', 101);
     f.store.set('cflag:31:221', 1);
   });
   await palamcng_k0(fixture);
@@ -4934,9 +4971,8 @@ test('PALAMCNG：CFLAG:221 已置位时不重复出声', async () => {
 test('PALAMCNG：总开关 FLAG:7 <= 0 静默', async () => {
   const fixture = await setup_k0((f) => {
     f.store.set('flag:7', 0);
-    f.store.set('palam:31:3', 5);
-    f.store.set('delta:31:3', 5);
-    f.store.set('palamlv:2', 5);
+    f.store.set('palam:31:3', 400);
+    f.store.set('delta:31:3', 101);
   });
   await palamcng_k0(fixture);
   assert.deepEqual(fixture.text_lines(), []);
@@ -4944,9 +4980,8 @@ test('PALAMCNG：总开关 FLAG:7 <= 0 静默', async () => {
 
 test('PALAMCNG：助手调教跳过', async () => {
   const fixture = await setup_k0((f) => {
-    f.store.set('palam:31:3', 5);
-    f.store.set('delta:31:3', 5);
-    f.store.set('palamlv:2', 5);
+    f.store.set('palam:31:3', 400);
+    f.store.set('delta:31:3', 101);
   });
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.assi = 1;

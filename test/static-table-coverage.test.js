@@ -105,6 +105,20 @@ function collect_addressed_tables() {
   return [...found].sort();
 }
 
+test('参数等级阈值必须读取常量，不能作为引擎变量寻址', () => {
+  const invalid = [];
+  for (const file of walk_js(ERE_DIR)) {
+    const body = fs.readFileSync(file, 'utf8');
+    for (const match of body.matchAll(
+      /(?:era\.(?:get|set|add)|era0)\(\s*['"`]palamlv:/gi,
+    )) {
+      const line = body.slice(0, match.index).split('\n').length;
+      invalid.push(`${path.relative(REPO_ROOT, file)}:${line}`);
+    }
+  }
+  assert.deepEqual(invalid, [], `非法参数等级地址：\n${invalid.join('\n')}`);
+});
+
 /** 按 yml/ 现状走引擎的变量装载路径，得到 staticData */
 function load_all_products() {
   const loader = create_variable_loader();
