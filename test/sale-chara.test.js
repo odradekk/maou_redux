@@ -400,26 +400,38 @@ test('CHARA_SALE：确认出售后送别、除名并结算威望', async () => {
   assert(history_text_lines(fixture).includes(`温妮以${price}点卖掉了。`));
   assert.equal(fixture.era.getAddedCharacters().length, 2, '送别不除名误伤');
 });
-test('CHARA_SALE：手输未显示的占用角色仍能出售', async () => {
-  const fixture = create_era_fixture();
-  seed_world(fixture);
-  fixture.store.set('cflag:32:0', 1);
-  fixture.store.set('cflag:32:1', 2);
-  fixture.store.set('base:32:0', 100);
-  fixture.store.set('flag:1', 31);
-  fixture.set_inputs(32, 0, 999);
+for (const state of [1, 2]) {
+  test(`CHARA_SALE：手输状态 ${state} 的角色拒绝出售且不改动数据`, async () => {
+    const fixture = create_era_fixture();
+    const era_flag = seed_world(fixture);
+    fixture.store.set('cflag:32:0', 1);
+    fixture.store.set('cflag:32:1', state);
+    fixture.store.set('base:32:0', 100);
+    fixture.store.set('talent:32:292', 0);
+    fixture.store.set('cflag:32:700', 0);
+    fixture.store.set('flag:1', 31);
+    fixture.set_inputs(32, 0, 999);
 
-  const { chara_sale } = fixture.load_module('system/stronghold/sale');
-  await chara_sale({ rand: seq([0]) });
+    const { chara_sale } = fixture.load_module('system/stronghold/sale');
+    const before = new Map(fixture.store);
+    assert.equal(await chara_sale({ rand: seq([0]) }), 999);
 
-  assert(!fixture.era.getAddedCharacters().includes(32));
-  assert.equal(
-    fixture.lines.some(
-      (line) => line.type === 'button' && line.accelerator === 32,
-    ),
-    false,
-  );
-});
+    assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31, 32]);
+    assert.equal(era_flag.money, 100);
+    assert.deepEqual(fixture.store, before, '拒绝选择不改动角色或结算数据');
+    assert.equal(
+      fixture.lines_history.some(
+        (line) =>
+          line.type === 'button' && [32, 0, 1].includes(line.accelerator),
+      ),
+      false,
+      '状态非 0 的角色不显示在出售名单中，手输后也不进入确认',
+    );
+    assert(
+      !history_text_lines(fixture).some((line) => line.includes('卖掉了')),
+    );
+  });
+}
 
 test('CHARA_SALE：收藏与影子角色即使手输编号也拒绝出售', async () => {
   const fixture = create_era_fixture();
