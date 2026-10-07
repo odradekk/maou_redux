@@ -1,5 +1,5 @@
 // 名字读取前的声明检查：库存和角色状态可能含有静态表未声明的编号。
-export const COUNT = 8;
+export const COUNT = 9;
 
 export default [
   {
@@ -65,5 +65,13 @@ export default [
     replace: '        const names = new RegExp(`^${keys_match[1]}(?:name)?:',
     tests: ['fixture'],
     must_mention: '名字表序号：包含 yml 声明',
+  },
+  {
+    desc: 'M14588 楼层商店跳过声明检查，读取未声明魔物名',
+    file: 'ere/page/page-shop.js',
+    find: "    if (count > 0 && era.get('itemkeys').includes(base_slot + i)) {",
+    replace: '    if (count > 0) {',
+    tests: ['page-shop-floor'],
+    must_mention: '第 1 阶层：跳过未声明库存，正常显示已声明魔物',
   },
 ];

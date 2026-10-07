@@ -88,6 +88,42 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   );
 });
 
+for (const [floor, names] of [
+  [1, ['狗头人', '哥布林', '黏液怪', '龙头苍蝇', '丧尸']],
+  [2, ['兽人', '熊地精', '藤蔓怪', '丧尸虫', '丧尸猎犬']],
+  [3, ['蜥蜴人', '食人魔', '食铠者', '小仙子', '毒蜈蚣']],
+  [4, ['巨魔', '石像鬼', '小恶魔', '男巫', '报丧女妖']],
+  [5, ['下等恶魔', '地狱猎犬', '史莱姆', '女巫', '吸血树']],
+  [6, ['巨人', '奇美拉', '魅魔', '男祭司', '夜少女']],
+  [7, ['女忍', '黑暗骑士', '食脑魔', '女祭司', '小精灵']],
+  [8, ['忍者', '无头骑士', '吸血鬼', '幽灵', '死亡蝎']],
+  [9, ['大恶魔', '死亡领主', '莉莉丝', '梦魇', '眼魔']],
+  [10, ['骷髅兵', '黑暗救世主', '九尾', '混沌龙']],
+]) {
+  test(`第 ${floor} 阶层：跳过未声明库存，正常显示已声明魔物`, async () => {
+    const fixture = create_floor_fixture();
+    // 暴走结算会给未声明编号写入库存；旧存档也可能保留这些值。
+    const base_slot = (floor - 1) * 10 + 100;
+    for (let slot = base_slot; slot < base_slot + 10; slot += 1) {
+      fixture.store.set(`item:${slot}`, 30);
+    }
+    for (const [index, name] of names.entries()) {
+      fixture.store.set(`itemname:${base_slot + index}`, name);
+    }
+
+    await show_floor_via_usershop(fixture, 520 + floor);
+
+    assert.deepEqual(
+      text_lines(fixture).filter((line) => line.includes('只')),
+      names.map((name) => `30只${name}`),
+      '只显示已声明魔物的名字和库存数量',
+    );
+    for (let slot = base_slot; slot < base_slot + 10; slot += 1) {
+      assert.equal(fixture.store.get(`item:${slot}`), 30, '查看楼层不改库存');
+    }
+  });
+}
+
 test('1-9 层不追加护卫名单：护卫名单只出在近卫层（#652 改正）', async () => {
   const fixture = create_floor_fixture();
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
