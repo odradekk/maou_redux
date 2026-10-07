@@ -1571,13 +1571,15 @@ async function resulection() {
     await print_wait('这个世界好像已经没有亡者容身之所了');
     return 0;
   }
-  // 有没有可复活的（FLAG:1000-1099 < 0）
+  // FLAG:1000–1099 <= -2 为死亡标记，-1 表示已苏生或购买。
+  // 重新加入的角色可能残留死亡标记，不能覆盖在场角色的养成数据。
+  const can_revive = (cid) =>
+    (era.get(`flag:${cid + 999}`) || 0) <= -2 &&
+    !era.getAddedCharacters().includes(cid) &&
+    era.getAllCharacters().includes(cid);
   let d = 0;
   for (let count = 0; count < 100; count += 1) {
-    if (
-      (era.get(`flag:${count + 1000}`) || 0) < 0 &&
-      !era.getAddedCharacters().includes(count + 1)
-    ) {
+    if (can_revive(count + 1)) {
       d += 1;
     }
   }
@@ -1610,13 +1612,8 @@ async function resulection() {
     era.print('想要苏醒谁？');
     era.drawLine(); // DRAWLINE
     for (let count = 0; count < 100; count += 1) {
-      const c = count + 1000;
       const idx = count + 100;
-      if (
-        (era.get(`flag:${c}`) || 0) <= -2 &&
-        !era.getAddedCharacters().includes(count + 1)
-      ) {
-        // 死亡标记可能残留在重新加入的角色身上，不能覆盖这些在场角色。
+      if (can_revive(count + 1)) {
         // 亡者已不在场，名字只能取预设数据；ITEMNAME 100-199 是魔物名表，
         // 和亡者对不上，而且有一半编号没有声明（#740）。正文带「- 」（#612）
         era.printButton(`- ${csv_name(count + 1)}`, idx);
@@ -1632,11 +1629,8 @@ async function resulection() {
     }
     const c = result + 900; // C = RESULT + 900
     const preset = result - 99; // D = RESULT - 99
-    if (
-      (era.get(`flag:${c}`) || 0) >= 0 ||
-      era.getAddedCharacters().includes(preset)
-    ) {
-      continue; // 标记不为负或角色已重新加入时，不可复活
+    if (!can_revive(preset)) {
+      continue;
     }
     // 加入角色并做专属初始化：`ADDCHARA D`（D = RESULT - 99，
     // 即预设编号），`C = CHARANUM - 1` 在新加入即末位的序号世界等于 D——
