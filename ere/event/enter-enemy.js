@@ -23,9 +23,6 @@
  *     char_make / char_make_inport。RAND(1,17) 是双参形式，值域
  *     [1,17)＝1..16（双参 RAND 返回 [min,max)），
  *     不含 17（玛奥）——勇者池正是 Chara1-16；
- *   - GETBIT(FLAG:5,32)：JS 位运算符按 32 位截断（x >> 32 === x >> 0），
- *     位 32 用除法取位（Math.floor(v / 2**32) % 2）；FLAG:5 & 2 等 31 位
- *     内的按位与不受影响；
  *   - 跨域写一律走门面（#71：属主域门面 setter；本文件属 event 域）：
  *     cflag:1（invasion）、cflag:501/508/580（dungeon）、cflag:550/6/151、
  *     talent:121/122 与 cstr:1（chara）、flag:224（chara，经
@@ -68,20 +65,6 @@ const MAX_CHARANUM = 90;
  */
 function get_chara(no) {
   return era.getAddedCharacters().includes(no) ? no : -1;
-}
-
-/**
- * GETCHARA(キャラ番号, 0) 双参形式的 SP=0 语义：在场且该角色
- * CFLAG:0 == 0 → 注册番号；不在场、或 CFLAG:0 为 1（売却可）/2（助手可）
- * → -1——后一场合同一角色号的勇者会再次来袭。
- * @param {number} no 角色定义编号
- * @returns {number}
- */
-function getchara_sp0(no) {
-  if (!era.getAddedCharacters().includes(no)) {
-    return -1;
-  }
-  return (era.get(`cflag:${no}:0`) || 0) === 0 ? no : -1;
 }
 
 /**
@@ -150,7 +133,7 @@ function roll_initial_position(rand_n) {
  * @param {number} [arg0] 来袭模式（缺省 0）
  * @param {(n: number) => number} [rand] 随机源（缺省均匀随机）
  * @returns {Promise<number>} 1 = 有人来袭，0 = 早退
- *   （人数上限六分支 / 出于对魔王的恐惧）
+ *   （人数上限六分支 / 同号角色已在场）
  */
 async function enter_enemy(arg0 = 0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -178,16 +161,13 @@ async function enter_enemy(arg0 = 0, rand) {
   // キャラのNOを選定——值域 [1,17) = 1..16（文件头）
   const chara_id = 1 + rand_n(16);
 
-  // GETBIT(FLAG:5,32)（调试位）|| GETCHARA(CHARA,0) == -1（不在场
-  // 或已売却/助手化）才生成。FLAG:5 的位 32 超出 JS 位运算的 31 位界，
-  // 按文件头用除法取位
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
-  const debug_bit32 = Math.floor(settings / 2 ** 32) % 2;
   // LOCAL / RESULT 跨段存活（A = RESULT 在 ENDIF 后），
   // 声明随之外提
   let foreign;
   let result; // char_make 的返回（角色号）
-  if (debug_bit32 === 1 || getchara_sp0(chara_id) === -1) {
+  // 同号加入会重建现有角色；出售、助手资格和调试设置都不能绕过在场检查。
+  if (get_chara(chara_id) === -1) {
     if (arg0 > 0) {
       // 知り合い確定エントリー
       foreign = false; // LOCAL = 0
@@ -234,7 +214,7 @@ async function enter_enemy(arg0 = 0, rand) {
       await era.waitAnyKey();
     }
   } else {
-    // 同号勇者仍在队且未被処理 → 本次不来
+    // 同号角色已在场，取消本次来袭。
     era.print('出于对魔王的恐惧，勇者没有出现。');
     await era.waitAnyKey();
     return 0;
@@ -564,5 +544,4 @@ module.exports = {
   k_34_crazylord,
   get_enemy,
   get_chara,
-  getchara_sp0,
 };

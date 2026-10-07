@@ -1,5 +1,5 @@
-// #749：三个创建入口不得重建已在场的同号角色。
-export const COUNT = 5;
+// 角色创建与普通来袭入口不得重建已在场的同号角色。
+export const COUNT = 7;
 
 export default [
   {
@@ -45,6 +45,26 @@ export default [
     replace: '',
     tests: ['duplicate-character-creation-engine'],
     must_mention: '普通生命摇篮拒绝已在场勇者和精英，返回后全部数据不变',
+    engine: true,
+  },
+  {
+    desc: 'M14805 普通来袭将出售或助手资格视为角色不在场',
+    file: 'ere/event/enter-enemy.js',
+    find: '  if (get_chara(chara_id) === -1) {',
+    replace:
+      '  if (get_chara(chara_id) === -1 || (era.get(`cflag:${chara_id}:0`) || 0) !== 0) {',
+    tests: ['duplicate-character-creation-engine'],
+    must_mention: '普通来袭保留已有角色全部数据',
+    engine: true,
+  },
+  {
+    desc: 'M14806 普通来袭允许调试位绕过角色在场检查',
+    file: 'ere/event/enter-enemy.js',
+    find: '  if (get_chara(chara_id) === -1) {',
+    replace:
+      "  if (get_chara(chara_id) === -1 || Math.floor((era.get('flag:5') || 0) / 2 ** 32) % 2 === 1) {",
+    tests: ['duplicate-character-creation-engine'],
+    must_mention: '调试来袭保留已有角色全部数据',
     engine: true,
   },
 ];

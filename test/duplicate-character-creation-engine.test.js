@@ -121,7 +121,7 @@ function has_text(fixture, text) {
 }
 
 engine_test(
-  '角色创建：真实引擎保留已在场角色并允许首次加入（#749）',
+  '角色创建：真实引擎保留已在场角色并允许首次加入（#749、#759）',
   async (t) => {
     const presets = load_presets();
 
@@ -139,6 +139,63 @@ engine_test(
         }
       },
     );
+
+    await t.test(
+      '普通来袭抽中已具备出售或助手资格的角色时保留全部数据',
+      async () => {
+        for (const qualification of [1, 2]) {
+          const { api, fixture } = setup(presets);
+          mark_progress(api, 1);
+          api.set('cflag:1:0', qualification); // 出售或助手资格
+          const before = snapshot_character(api, 1);
+          const { enter_enemy } = fixture.load_module('event/enter-enemy');
+
+          const result = await enter_enemy(0, () => 0);
+          assert.deepEqual(
+            snapshot_character(api, 1),
+            before,
+            '普通来袭保留已有角色全部数据',
+          );
+          assert.equal(result, 0, '同号角色已在场，本次来袭取消');
+          assert.deepEqual(api.getAddedCharacters(), [0, 1]);
+          assert.ok(has_text(fixture, '出于对魔王的恐惧，勇者没有出现。'));
+        }
+      },
+    );
+
+    await t.test('调试位开启时普通和家族来袭均保留在场角色', async () => {
+      for (const mode of [0, 1]) {
+        const { api, fixture } = setup(presets);
+        mark_progress(api, 1);
+        api.set('flag:5', 2 ** 32); // 开局设置位图的调试位
+        const before = snapshot_character(api, 1);
+        const { enter_enemy } = fixture.load_module('event/enter-enemy');
+
+        const result = await enter_enemy(mode, () => 0);
+        assert.deepEqual(
+          snapshot_character(api, 1),
+          before,
+          '调试来袭保留已有角色全部数据',
+        );
+        assert.equal(result, 0);
+        assert.deepEqual(api.getAddedCharacters(), [0, 1]);
+      }
+    });
+
+    await t.test('未在场预设首次普通来袭仍加入并初始化', async () => {
+      const { api, fixture } = setup(presets);
+      const { enter_enemy } = fixture.load_module('event/enter-enemy');
+
+      assert.equal(await enter_enemy(0, () => 0), 1);
+      assert.deepEqual(api.getAddedCharacters(), [0, 1]);
+      assert.equal(api.get('base:1:0'), 2400, '从真实勇者预设读取体力');
+      assert.equal(api.get('cflag:1:1'), 2, '新勇者侵攻中');
+      assert.equal(api.get('cflag:1:501'), 1, '初始化侵攻阶层');
+      assert.equal(api.get('cflag:1:508'), 3, '初始化再起点');
+      assert.equal(api.get('cflag:1:510'), 0, '初始化横坐标');
+      assert.equal(api.get('cflag:1:511'), 0, '初始化纵坐标');
+      assert.ok(has_text(fixture, '开始了地下城的攻略！'));
+    });
 
     await t.test(
       '普通生命摇篮拒绝已在场勇者和精英，返回后全部数据不变',
