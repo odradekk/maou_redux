@@ -678,7 +678,9 @@ function get_look_info(cid, kind) {
       return RACE_MAP[talent(cid, T_原种族)] ?? get_look_info(cid, KIND.RACE);
     case KIND.NOW_RACE: {
       const v = talent(cid, T_现种族);
-      return inrange(v, 100, 220) ? itemname(v) : ERROR;
+      return inrange(v, 100, 220) && era.get('itemkeys').includes(v)
+        ? itemname(v)
+        : ERROR;
     }
     case KIND.COMMON_SENSE_BATTLE:
       return (

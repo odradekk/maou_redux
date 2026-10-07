@@ -73,25 +73,8 @@ function seed_static_names(fixture) {
   }
 }
 
-/**
- * 把 Talent.yml 未声明的素质号播种成空名。人物定制素质页逐个读素质名，
- * 未声明的号在引擎里会崩（#741）；#741 修复前相关用例用它绕开，修复时删除
- * 本函数与各处调用。
- * @param {ReturnType<import('./era-fixture').create_era_fixture>} fixture
- */
-function seed_undeclared_talent_names(fixture) {
-  const declared = parse_yml_ids('Talent.yml');
-  // 素质页的分组最远读到 489 号（精英组），比 Talent.yml 最大的声明号还大
-  for (let id = 0; id < 490; id += 1) {
-    if (!declared.has(id)) {
-      fixture.store.set(`talentname:${id}`, '');
-    }
-  }
-}
-
 module.exports = {
   parse_yml_ids,
   seed_static_names,
-  seed_undeclared_talent_names,
   yml_declared_ids,
 };

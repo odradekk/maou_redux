@@ -497,6 +497,10 @@ function print_single_talent(arg = -1, cid = era_flag.target) {
     talent_cursor = 0;
     return 0;
   }
+  // 未声明的素质没有名字，必须在读取名字前跳过。
+  if (!era.get('talentkeys').includes(arg)) {
+    return talent_cursor;
+  }
   const name = talentname(arg);
   if (strlens(name) < 1) {
     return talent_cursor; // 无名素质不占格

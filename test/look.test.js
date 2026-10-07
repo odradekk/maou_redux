@@ -809,18 +809,20 @@ test('get_look_info「原种族」：未登记码回落到「种族」分支', (
   assert.equal(neither.get_look_info(5, '原种族'), 'ERROR');
 });
 
-test('get_look_info「现种族」：inrange(v, 100, 220) 走物品名，否则 ERROR', () => {
+test('get_look_info「现种族」：范围内已声明的编号显示物品名，其余返回 ERROR', () => {
   for (const [value, expected] of [
     [100, '蜥蜴人'],
     [132, '小恶魔'],
-    [220, '边界'],
+    [193, '魔龙'],
+    [201, '女卫兵'],
+    [210, '女拳斗士'],
   ]) {
     const fixture = world({ [T.现种族]: value });
     fixture.store.set(`itemname:${value}`, expected);
     const { get_look_info } = fixture.load_module('chara/look-info');
     assert.equal(get_look_info(5, '现种族'), expected, `现种族 ${value}`);
   }
-  for (const value of [0, 99, 221]) {
+  for (const value of [0, 99, 105, 194, 211, 220, 221]) {
     const { get_look_info } = load({ [T.现种族]: value });
     assert.equal(get_look_info(5, '现种族'), 'ERROR', `现种族 ${value}`);
   }

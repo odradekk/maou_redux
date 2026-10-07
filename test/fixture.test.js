@@ -768,6 +768,19 @@ test('名字表读取（#739）：用例显式播种的名字键算作已声明'
   assert.equal(fixture.era.get('traincommandname:999'), '虚构指令');
 });
 
+test('名字表序号：包含 yml 声明和用例显式播种的名字，不包含未声明库存', () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('item:359', 1);
+  fixture.store.set('itemname:999', '测试道具');
+  const ids = fixture.era.get('itemkeys');
+  assert.ok(ids.includes(352));
+  assert.ok(ids.includes(999));
+  assert.ok(!ids.includes(359));
+  assert.equal(new Set(ids).size, ids.length);
+  fixture.store.set('itemkeys', [341]);
+  assert.deepEqual(fixture.era.get('itemkeys'), [341]);
+});
+
 test('logger 被记录且不自递归', () => {
   const fixture = create_era_fixture();
   // 若只置 version.engine 而不整体替换 logger，

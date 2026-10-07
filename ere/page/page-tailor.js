@@ -1000,6 +1000,7 @@ async function equip_magic_weapon(cid) {
     for (let index = 0; index < WEAPON_ITEM_COUNT; index += 1) {
       const item_no = WEAPON_ITEM_START + index; // X = COUNT + 341
       if (
+        era.get('itemkeys').includes(item_no) &&
         (era.get(`item:${item_no}`) || 0) > 0 &&
         item_no !== WEAPON_TENTACLE_ID
       ) {
@@ -1054,7 +1055,7 @@ async function equip_magic_weapon(cid) {
     era.print(
       enhance_type === 1
         ? `要强化现在的装备吗？　每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`
-        : `要装备${era.get(`itemname:${result}`) ?? ''}了吗？　请确认装备的提升。每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`,
+        : `要装备${era.get(`itemname:${item_no}`) ?? ''}了吗？　请确认装备的提升。每+1需花费${ENHANCE_UNIT}pt，最多能+${ENHANCE_MAX}。`,
     );
 
     const amount = await pick_enhance_amount();

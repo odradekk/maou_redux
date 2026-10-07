@@ -507,6 +507,7 @@ test('107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店并把�
 
 test('107 购物：BOUGHT >= 54 跳陷阱商店真身，主菜单一行不画（#396 接通）', async () => {
   const fixture = create_shop_fixture();
+  fixture.store.set('itemkeys', []); // 空商品列表，只观察商店与主菜单的切换
   const { run_shop } = fixture.load_module('page/page-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 真实路径只能置 1（[107] 分支），此处直接造世界验证 show_shop 自身对

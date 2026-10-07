@@ -11,7 +11,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { seed_undeclared_talent_names } = require('./helpers/static-names');
+const { parse_yml_ids } = require('./helpers/static-names');
 
 function load(fixture) {
   return fixture.load_module('chara/chara-custom2');
@@ -22,7 +22,6 @@ function setup(cid = 1) {
   fixture.seed_chara(cid, { id: cid, name: '测试角色', callname: '测试角色' });
   fixture.era.addCharacter(cid);
   fixture.store.set('flag:10005', cid); // era_flag.target
-  seed_undeclared_talent_names(fixture); // #741 修复前的临时播种
   return fixture;
 }
 
@@ -524,6 +523,24 @@ test('char_custom_talent_deal：纤细体型（308 <= 100）清肥胖位', () =>
 });
 
 // —— print_single_talent 与 char_custom_talent_page ——
+
+test('char_custom_talent_page：三页只显示已声明素质，跳过的编号不占格', () => {
+  const names = parse_yml_ids('Talent.yml');
+  for (const page of [0, 1, 2]) {
+    const fixture = setup();
+    for (const [id, name] of names) {
+      fixture.store.set(`talentname:${id}`, name);
+    }
+    const { char_custom_talent_page } = load(fixture);
+    char_custom_talent_page(page, 0, 1);
+    const displayed = buttons(fixture);
+    assert.ok(displayed.length > 0);
+    assert.ok(displayed.every(({ acc, text }) => names.get(acc) === text));
+    if (page === 0) {
+      assert.deepEqual(button_rows(fixture)[0], [0, 1, 9]);
+    }
+  }
+});
 
 test('char_custom_talent_page 0：九组的分组边界与每行 6 格', () => {
   const fixture = setup();

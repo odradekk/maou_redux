@@ -46,7 +46,7 @@ async function print_wait(text) {
 function monsterplay_list() {
   const items = [];
   for (let id = 100; id < 200; id += 1) {
-    if (item_count(id) >= 1) {
+    if (item_count(id) >= 1 && era.get('itemkeys').includes(id)) {
       items.push([id, item_name(id)]);
     }
   }

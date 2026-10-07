@@ -902,12 +902,13 @@ test('equip_magic_weapon：装备武器带前缀档（十万位）与武器化�
   );
   // [990] 武器化触手 → 349 号装备
   const tentacle = tailor_fixture({
-    'itemname:990': '', // 确认行读按钮号 990 的道具名（#741 修复前的临时播种）
+    'itemname:349': '触手',
     'item:90': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
   });
-  await run_core(tentacle, [8, 990, 0, 0, 999, 999]);
+  const added = await run_core(tentacle, [8, 990, 0, 0, 999, 999]);
+  assert.ok(texts(added).some((text) => text.startsWith('要装备触手了吗？')));
   assert.equal(
     tentacle.store.get('cflag:1:550'),
     49 + 1000 * 0,
@@ -932,11 +933,11 @@ test('equip_magic_weapon：空手时不给强化/取下（w:0 <= -1）', async (
   assert.ok(rendered.includes('[999] - 返回'));
 });
 
-test('equip_magic_weapon：武器段只列 341-359（360 不在段内）', async () => {
+test('equip_magic_weapon：武器段只列已声明的武器，跳过未声明库存', async () => {
   const fixture = tailor_fixture({
+    'item:352': 1,
     'item:349': 1, // 武器化触手在段内但被过滤掉，只走 [990]
     'item:359': 1,
-    'itemname:359': '', // Item.yml 未声明 359（#741 修复前的临时播种）
     'item:360': 1,
     'cflag:0:9': 30,
     'cflag:1:550': -1,
@@ -945,7 +946,8 @@ test('equip_magic_weapon：武器段只列 341-359（360 不在段内）', async
   const items = added
     .filter((l) => l.type === 'button')
     .map((l) => l.accelerator);
-  assert.ok(items.includes(359), '段尾 359 列出');
+  assert.ok(items.includes(352), '已声明的段尾 352 列出');
+  assert.ok(!items.includes(359), '未声明的 359 不列出');
   assert.ok(!items.includes(360), '360 在段外（循环 19 次）');
   assert.ok(items.includes(340), '[340] 剑恒在');
   assert.ok(

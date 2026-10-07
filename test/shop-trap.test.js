@@ -185,6 +185,7 @@ function cell(name, count) {
 
 test('item_shop_trap：头行与提示行逐字一致，分隔线三处', async () => {
   const fixture = await run_item_shop_trap({
+    itemkeys: [], // 空商品列表，检查页眉、提示与页脚
     'flag:10000': 6, // DAY:0
     'flag:10002': 7, // DAY:2
     'flag:10003': 0, // TIME = 0（午前）

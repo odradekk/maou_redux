@@ -1603,18 +1603,19 @@ export default [
     must_mention: 'MONSTERPLAY_LIST 只列出持有',
   },
   {
-    desc: 'M6856 怪物列表终点错过 199',
+    desc: 'M6856 怪物列表终点错过已声明的 193',
     file: 'ere/dungeon/monster-play.js',
     find: '  for (let id = 100; id < 200; id += 1) {',
-    replace: '  for (let id = 100; id < 199; id += 1) {',
+    replace: '  for (let id = 100; id < 193; id += 1) {',
     tests: ['monster-play'],
     must_mention: 'MONSTERPLAY_LIST 只列出持有',
   },
   {
     desc: 'M6857 怪物列表错误隐藏库存恰为一',
     file: 'ere/dungeon/monster-play.js',
-    find: '    if (item_count(id) >= 1) {',
-    replace: '    if (item_count(id) > 1) {',
+    find: "    if (item_count(id) >= 1 && era.get('itemkeys').includes(id)) {",
+    replace:
+      "    if (item_count(id) > 1 && era.get('itemkeys').includes(id)) {",
     tests: ['monster-play'],
     must_mention: 'MONSTERPLAY_LIST 只列出持有',
   },
@@ -2762,18 +2763,18 @@ export default [
     replace:
       '    if (z % 10 === 0) {\n      floor = z / 10 + 1;\n      await era.waitAnyKey(); // 变异：补回逐层等键\n      era.drawLine();',
     tests: ['page-dungeon-info'],
-    // 第 2 层的等键清掉了第 1 层按钮的白名单，输入 105 当场被拒收
-    // （白名单只剩第 2 层的 115 与返回），走不到版面与等键的断言
+    // 第 2 层的等键清掉了第 1 层按钮的白名单，输入 104 当场被拒收
+    // （白名单只剩第 2 层的 114 与返回），走不到版面与等键的断言
     must_mention: '输入不合法！请输入以下值之一：',
   },
   {
     desc: 'M14255 部下总览的怪物按钮挪到循环之后统一打印（版面顺序丢回去）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: '    const a = z + 100;\n    const b = item_count(a);\n    if (b > 0) {\n      // 原 PRINTFORML [{A}] {B}只%MONSTERNAME(A)% 的一行；正文只写库存与\n      // 名字，编号交给引擎按 showAcc 拼\n      era.printButton(`${b}只${monstername(a)}`, a);\n    }\n    z += 1;\n    r -= 1;\n  }\n  era.drawLine();',
+    find: "    const a = z + 100;\n    const b = item_count(a);\n    if (b > 0 && era.get('itemkeys').includes(a)) {\n      // 原 PRINTFORML [{A}] {B}只%MONSTERNAME(A)% 的一行；正文只写库存与\n      // 名字，编号交给引擎按 showAcc 拼\n      era.printButton(`${b}只${monstername(a)}`, a);\n    }\n    z += 1;\n    r -= 1;\n  }\n  era.drawLine();",
     replace:
-      '    const a = z + 100;\n    const b = item_count(a);\n    if (b > 0) {\n      var moved_rows = moved_rows ?? []; // 变异：var 提升到函数作用域，收集到循环之后\n      moved_rows.push([a, `${b}只${monstername(a)}`]);\n    }\n    z += 1;\n    r -= 1;\n  }\n  for (const [accelerator, content] of moved_rows ?? []) {\n    era.printButton(content, accelerator); // 变异：挪到循环之后统一打印\n  }\n  era.drawLine();',
+      "    const a = z + 100;\n    const b = item_count(a);\n    if (b > 0 && era.get('itemkeys').includes(a)) {\n      var moved_rows = moved_rows ?? []; // 变异：var 提升到函数作用域，收集到循环之后\n      moved_rows.push([a, `${b}只${monstername(a)}`]);\n    }\n    z += 1;\n    r -= 1;\n  }\n  for (const [accelerator, content] of moved_rows ?? []) {\n    era.printButton(content, accelerator); // 变异：挪到循环之后统一打印\n  }\n  era.drawLine();",
     tests: ['page-dungeon-info'],
-    must_mention: '105 排在第 1 层头之后、第 2 层头之前',
+    must_mention: '104 排在第 1 层头之后、第 2 层头之前',
   },
   {
     desc: 'M14240 部下总览的 [999] 返回退回纯文本（只按钮化怪物行）',
@@ -2782,7 +2783,7 @@ export default [
     replace:
       "  era.print('[999] 返回'); // 变异：只按钮化怪物行\n  // INPUT\n  return era.input();",
     tests: ['page-dungeon-info'],
-    // 只按钮化怪物行 → 白名单＝怪物编号，输入 999（与 105 之后的回程）被拒收
+    // 只按钮化怪物行 → 白名单＝怪物编号，输入 999（与 104 之后的回程）被拒收
     must_mention: '输入不合法！请输入以下值之一：',
   },
   // —— #723：回主菜单换屏前的按键确认（ADR-0009 的段尾等键） ——
