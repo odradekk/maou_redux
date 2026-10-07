@@ -371,25 +371,25 @@ test('同号勇者在队且未被処理：出于对魔王的恐惧，勇者没�
   assert.equal(fixture.chara_no.length, 2, '未生成新角色');
 });
 
-test('GETCHARA 双参 SP=0：在场但 CFLAG:0 = 2（助手可）视为不在场，同号再来', async () => {
-  const fixture = setup_world();
-  fixture.era.addCharacter(1);
-  fixture.store.set('cflag:1:0', 2); // 売却可/助手可（既有注释）
-  const { enter_enemy } = load(fixture);
-  const ret = await enter_enemy(0, zero);
-  assert.equal(ret, 1, 'CFLAG:0 != 0 → GETCHARA(CHARA,0) = -1 → 生成');
-  assert.equal(fixture.store.get('cflag:1:1'), 2, '同号角色再次来袭并置侵攻中');
-});
+for (const qualification of [0, 1, 2]) {
+  for (const settings of [0, 2 ** 32]) {
+    test(`同号角色已在场：资格 ${qualification}、设置 ${settings} 时取消来袭`, async () => {
+      const fixture = setup_world();
+      fixture.era.addCharacter(1);
+      fixture.store.set('cflag:1:0', qualification); // 出售与助手资格
+      fixture.store.set('cflag:1:1', 0); // 待机中
+      fixture.store.set('flag:5', settings); // 开局设置位图
+      const { enter_enemy } = load(fixture);
 
-test('调试位 GETBIT(FLAG:5,32)：位 32 开启时无视在场照常生成', async () => {
-  const fixture = setup_world();
-  fixture.era.addCharacter(1); // 同号在场（正常会恐惧早退）
-  // 位 32 超出 JS 位运算 31 位界（x >> 32 === x >> 0），实现须用除法取位
-  fixture.store.set('flag:5', 2 ** 32);
-  const { enter_enemy } = load(fixture);
-  const ret = await enter_enemy(0, zero);
-  assert.equal(ret, 1, 'FLAG:5 位 32 → 强制生成');
-});
+      assert.equal(await enter_enemy(0, zero), 0, '同号角色已在场时取消来袭');
+      assert.equal(fixture.store.get('cflag:1:0'), qualification, '保留资格');
+      assert.equal(fixture.store.get('cflag:1:1'), 0, '保留待机状态');
+      assert.ok(
+        text_lines(fixture).includes('出于对魔王的恐惧，勇者没有出现。'),
+      );
+    });
+  }
+}
 
 // —— 初期金钱七条修正（含下限 0）——
 

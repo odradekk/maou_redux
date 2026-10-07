@@ -204,10 +204,10 @@ export default [
   // （#135 的 M222 漏抬就是这么连红 18 次 4 天的）。补偿是门 4（静态声明
   // 数，随 npm test 每次都查）与 run_one 的逐条交叉核对。两道各钉一条。
   {
-    desc: 'M733 ENGINE_SKIP_BASELINE 抬到 34（声明数与基线分家——门 4 若失守，这一类不一致要一个阶段才暴露）',
+    desc: 'M733 ENGINE_SKIP_BASELINE 抬到 36（声明数与基线分家——门 4 若失守，这一类不一致要一个阶段才暴露）',
     file: 'tools/mutation-check.mjs',
-    find: 'const ENGINE_SKIP_BASELINE = 33;',
-    replace: 'const ENGINE_SKIP_BASELINE = 34; // 变异：与声明数分家',
+    find: 'const ENGINE_SKIP_BASELINE = 35;',
+    replace: 'const ENGINE_SKIP_BASELINE = 36; // 变异：与声明数分家',
     tests: ['mutation-check'],
     must_mention: 'engine: true 的声明数',
   },
