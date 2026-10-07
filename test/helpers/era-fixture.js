@@ -652,7 +652,20 @@ function create_era_fixture() {
       var_reads.push({ name: var_name, value: undefined });
       return undefined;
     }
-    const value = store.get(var_name);
+    let value = store.get(var_name);
+    const keys_match = /^([a-z]+)keys$/.exec(var_name);
+    if (value === undefined && keys_match !== null) {
+      const ids = yml_declared_ids(keys_match[1]);
+      if (ids !== undefined) {
+        // 显式播种的名字也是声明，单独写入库存则不会创建名字。
+        const names = new RegExp(`^${keys_match[1]}name:(\\d+)$`);
+        const seeded_ids = [...store.keys()]
+          .map((key) => names.exec(key))
+          .filter(Boolean)
+          .map((match) => Number(match[1]));
+        value = [...new Set([...ids, ...seeded_ids])];
+      }
+    }
     var_reads.push({ name: var_name, value });
     return value;
   };

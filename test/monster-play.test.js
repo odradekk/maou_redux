@@ -9,6 +9,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { parse_yml_ids } = require('./helpers/static-names');
 
 function seq(...values) {
   let index = 0;
@@ -25,7 +26,8 @@ function setup() {
   fixture.era.addCharacter(0);
   fixture.store.set('flag:10004', 5000); // MONEY = 所持金
   fixture.store.set('exflag:4444', 5000); // EX_FLAG:4444 = 非作弊资金
-  for (let id = 100; id < 200; id += 1) {
+  for (const id of parse_yml_ids('Item.yml').keys()) {
+    if (id < 100 || id >= 200) continue;
     fixture.store.set(`itemname:${id}`, `怪物${id}`);
     fixture.store.set(`item:${id}`, 1);
   }
@@ -112,28 +114,31 @@ test('MONSTER_SETUP 拒绝非法编号、缺钱和取消确认，兵种改造保
   assert.equal(troop.store.get('flag:800'), 10134);
 });
 
-test('MONSTERPLAY_LIST 只列出持有的 100-199 怪物', () => {
+test('MONSTERPLAY_LIST 只列出持有且已声明的 100-199 怪物', () => {
   const fixture = setup();
   for (let id = 100; id < 200; id += 1) fixture.store.set(`item:${id}`, 0);
   fixture.store.set('item:100', 2);
   fixture.store.set('item:101', 0);
   fixture.store.set('item:102', 1);
   fixture.store.set('item:103', 1);
-  fixture.store.set('item:199', 1);
+  fixture.store.set('item:193', 1);
+  fixture.store.set('item:105', 30);
+  fixture.store.set('item:199', 30);
   const { monsterplay_list } = fixture.load_module('dungeon/monster-play');
 
   assert.equal(monsterplay_list(), 0);
   const lines = rendered_lines(fixture);
   assert(lines.includes('[100] 怪物100'));
   assert(!lines.includes('[101] 怪物101'));
-  assert(lines.includes('[199] 怪物199'));
+  assert(lines.includes('[193] 怪物193'));
+  assert(!lines.some((line) => /^\[(105|199)\]/.test(line)));
   const buttons = fixture.lines_history.filter(
     (line) => line.type === 'button',
   );
   assert.equal(buttons.find((line) => line.accelerator === 100).row, 0);
   assert.equal(buttons.find((line) => line.accelerator === 102).row, 0);
   assert.equal(buttons.find((line) => line.accelerator === 103).row, 0);
-  assert.equal(buttons.find((line) => line.accelerator === 199).row, 1);
+  assert.equal(buttons.find((line) => line.accelerator === 193).row, 1);
   // 每行 3 格、每格宽 24/3 = 8：三格恰好铺满一整行栅格。格宽写成 12 时
   // 三格共 36 超过 24，引擎实际渲染成两格一行加一格一行
   assert.ok(

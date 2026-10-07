@@ -371,7 +371,7 @@ async function print_subordinates(kai_result) {
     }
     const a = z + 100;
     const b = item_count(a);
-    if (b > 0) {
+    if (b > 0 && era.get('itemkeys').includes(a)) {
       // 原 PRINTFORML [{A}] {B}只%MONSTERNAME(A)% 的一行；正文只写库存与
       // 名字，编号交给引擎按 showAcc 拼
       era.printButton(`${b}只${monstername(a)}`, a);

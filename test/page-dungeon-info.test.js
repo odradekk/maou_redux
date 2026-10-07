@@ -517,13 +517,14 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
-  // Item.yml 未声明 105、115，嘉德暴走结局会把它们写成 30，之后读名字会崩
-  // （#741 修复前的显式播种）
-  fixture.store.set('item:105', 7); // 第 1 层第 6 格（5 只狗头人等价）
-  fixture.store.set('itemname:105', '狗头人');
-  fixture.store.set('item:115', 2); // 第 2 层第 6 格
-  fixture.store.set('itemname:115', '史莱姆');
-  fixture.set_inputs(10, 105, 999, 999, 999);
+  fixture.store.set('item:104', 7); // 第 1 层的已声明魔物
+  fixture.store.set('itemname:104', '狗头人');
+  fixture.store.set('item:114', 2); // 第 2 层的已声明魔物
+  fixture.store.set('itemname:114', '史莱姆');
+  // 嘉德暴走会给未声明的格子写入库存；总览应跳过这些格子。
+  fixture.store.set('item:105', 30);
+  fixture.store.set('item:115', 30);
+  fixture.set_inputs(10, 104, 999, 999, 999);
   await dungeon_info2();
   const lines = fixture.lines_history;
   const history = lines.filter((l) => l.type === 'text').map((l) => l.text);
@@ -544,15 +545,15 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   const remod = lines.findIndex(
     (l) => l.type === 'text' && l.text.includes('的改造'),
   );
-  assert.ok(remod > banner, '105 之后进改造画面');
+  assert.ok(remod > banner, '104 之后进改造画面');
   const screen = lines.slice(banner, remod);
   assert.deepEqual(
     screen
       .filter((l) => l.type === 'button')
       .map(({ accelerator, text, rendered }) => [accelerator, text, rendered]),
     [
-      [105, '7只狗头人', '[105] 7只狗头人'],
-      [115, '2只史莱姆', '[115] 2只史莱姆'],
+      [104, '7只狗头人', '[104] 7只狗头人'],
+      [114, '2只史莱姆', '[114] 2只史莱姆'],
       [999, '返回', '[999] 返回'],
     ],
     '怪物行与返回都是按钮',
@@ -566,14 +567,14 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   const at = (predicate) => screen.findIndex(predicate);
   const floor1 = at((l) => l.type === 'text' && l.text === '第1阶层');
   const floor2 = at((l) => l.type === 'text' && l.text === '第2阶层');
-  const row_105 = at((l) => l.type === 'button' && l.accelerator === 105);
-  const row_115 = at((l) => l.type === 'button' && l.accelerator === 115);
+  const row_104 = at((l) => l.type === 'button' && l.accelerator === 104);
+  const row_114 = at((l) => l.type === 'button' && l.accelerator === 114);
   assert.ok(floor1 >= 0 && floor2 > floor1, '两层楼层头都在');
   assert.ok(
-    row_105 > floor1 && row_105 < floor2,
-    '105 排在第 1 层头之后、第 2 层头之前',
+    row_104 > floor1 && row_104 < floor2,
+    '104 排在第 1 层头之后、第 2 层头之前',
   );
-  assert.ok(row_115 > floor2, '115 排在第 2 层头之后');
+  assert.ok(row_114 > floor2, '114 排在第 2 层头之后');
   // 整屏打印期间没有等键：有等键的话它之前的按钮会被渲染层禁用（#710 把
   // 逐层的 waitAnyKey 去掉的原因）
   const last_button_row = screen.filter((l) => l.type === 'button').pop().row;
@@ -591,7 +592,7 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER
   );
   assert.ok(
     history.some((t) => t.includes('狗头人的改造')),
-    '105 → 改造真身',
+    '104 → 改造真身',
   );
   assert.ok(
     !history.some((t) => t.includes('MONSTER_SETUP') || t.includes('占位')),
