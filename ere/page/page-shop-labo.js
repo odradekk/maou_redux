@@ -2524,6 +2524,11 @@ async function summon_slave() {
       await era.waitAnyKey();
       continue; // GOTO INPUT_LOOP
     }
+    // 同号加入会覆盖现有角色，拒绝后保留资金、等级和肉便器。
+    if (era.getAddedCharacters().includes(local)) {
+      await era.printAndWait('该角色已在场，无法重复召唤');
+      continue;
+    }
     era.addCharacter(local); // ADDCHARA LOCAL
     // LOCAL:1 = CHARANUM - 1：序号世界里新角色恒在末位；ere 侧角色 ID
     // 就是收录编号（文件头第 8 条）
