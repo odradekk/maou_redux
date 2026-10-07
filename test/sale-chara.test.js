@@ -205,24 +205,117 @@ test('SALE_CHARA：据点不创建调教表，确认出售仍按估价增加威�
   assert(!fixture.calls.some(({ api }) => api === 'endTrain'));
 });
 
-test('SALE_CHARA：零价确认仍结算威望，但不送别也不除名', async () => {
+test('CHARA_SALE：重复选择零价角色不进入确认且不改动数据', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
+  era_flag.target = -1;
+  era_flag.money = 100;
+  fixture.store.set('flag:1', -1);
+  fixture.store.set('flag:2', -1);
+  fixture.store.set('exflag:99', 0);
   // 基础价 10（欲望零级）× 卖淫经验低档 40% × 素质 73 的 20% 恰好归零
   fixture.store.set('cflag:31:0', 1);
   fixture.store.set('base:31:0', 100);
   fixture.store.set('exp:31:74', 1);
   fixture.store.set('talent:31:73', 1);
-  fixture.set_inputs(31, 0, 999);
+  fixture.set_inputs(31, 0, 31, 0, 999);
 
   const { chara_sale } = fixture.load_module('system/stronghold/sale');
-  await chara_sale({ prostitution_effect: 0, rand: seq([0]) });
-  assert(fixture.era.getAddedCharacters().includes(31), '零价不除名');
+  const before = new Map(fixture.store);
+  assert.equal(
+    await chara_sale({ prostitution_effect: 0, rand: seq([0]) }),
+    999,
+  );
+
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31]);
+  assert.deepEqual(fixture.store, before, '拒绝零价出售不改动角色或结算数据');
+  assert(
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 31 &&
+        line.rendered.includes('[不能卖掉]'),
+    ),
+    '零价角色仍标明不能卖掉',
+  );
+  assert.equal(
+    fixture.lines_history.some(
+      (line) => line.type === 'button' && [0, 1].includes(line.accelerator),
+    ),
+    false,
+    '零价角色不进入出售确认',
+  );
+  assert(!history_text_lines(fixture).some((line) => line.includes('卖掉了')));
+});
+
+test('SALE_CHARA：零价普通、精英与近卫角色不结算也不触发出售口上', async () => {
+  for (const key of [undefined, 'talent:19:220', 'ex_talent:19:1']) {
+    const fixture = create_era_fixture();
+    join_slave_chara(fixture, 0, '你');
+    join_slave_chara(fixture, 19, '菲娅');
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.target = 19;
+    era_flag.money = 100;
+    fixture.store.set('flag:7', 1);
+    fixture.store.set('exflag:99', 50);
+    fixture.store.set('exflag:4444', 75);
+    fixture.store.set('exp:19:74', 1);
+    fixture.store.set('talent:19:73', 1);
+    fixture.store.set('talent:19:179', 1);
+    fixture.store.set('talent:19:85', 1);
+    if (key) fixture.store.set(key, 1);
+    fixture.set_inputs(0);
+    fixture.load_module('kojo/kojo-k19-fia');
+    const aftertrain = fixture.load_module('event/event-aftertrain');
+    aftertrain.remember_sale_price(12345);
+    const before = new Map(fixture.store);
+
+    assert.equal(
+      await fixture.load_module('system/stronghold/sale').sale_chara(19, {
+        prostitution_effect: 0,
+        rand: seq([0]),
+      }),
+      -1,
+      key,
+    );
+
+    assert.deepEqual(fixture.era.getAddedCharacters(), [0, 19], key);
+    assert.deepEqual(fixture.store, before, key);
+    assert.equal(aftertrain.peek_sale_price(), 12345, key);
+    assert.equal(fixture.reset_inputs(), 1, '拒绝零价出售不等待确认输入');
+    assert(!fixture.lines.some((line) => line.type === 'button'), key);
+    assert(
+      !fixture.text_lines().some((line) => /卖掉了|商人当做女仆/.test(line)),
+      key,
+    );
+  }
+});
+
+test('CHARA_SALE：售价仅 1 点仍能正常成交并除名', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = seed_world(fixture);
+  fixture.store.set('cflag:31:0', 1);
+  fixture.store.set('base:31:0', 100);
+  // 欲望零级基础价 10 × 生育经验一次的 50% × 否定快感的 20% = 1。
+  fixture.store.set('exp:31:60', 1);
+  fixture.store.set('talent:31:73', 1);
+  fixture.set_inputs(31, 0, 999);
+
+  assert.equal(
+    await fixture.load_module('system/stronghold/sale').chara_sale({
+      prostitution_effect: 0,
+      rand: seq([0]),
+    }),
+    999,
+  );
+
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 32]);
+  assert.equal(era_flag.money, 101);
+  assert.equal(fixture.store.get('exflag:4444'), 1);
   assert.equal(fixture.store.get('exflag:99'), 5);
-  assert(history_text_lines(fixture).includes('温妮以0点卖掉了。'));
+  assert(history_text_lines(fixture).includes('温妮以1点卖掉了。'));
 });
 
 test('SALE_CHARA：调教外事件码能抵达角色出售口上', async () => {
