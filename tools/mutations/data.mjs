@@ -3,9 +3,33 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 34; // #733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 37; // #746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
+  {
+    desc: 'M14608 现种族 211 的名字声明删除（近卫后代与旧存档显示 ERROR）',
+    file: 'yml/Item.yml',
+    find: '"异界勇者":\n  id: 211\n  price: 15\n',
+    replace: '',
+    tests: ['chara-pregnancy', 'look'],
+    must_mention: '近卫后代现种族名称',
+  },
+  {
+    desc: 'M14609 异界勇者的现种族编号错写为 212',
+    file: 'yml/Item.yml',
+    find: '"异界勇者":\n  id: 211',
+    replace: '"异界勇者":\n  id: 212',
+    tests: ['chara-pregnancy', 'look'],
+    must_mention: '旧存档现种族名称',
+  },
+  {
+    desc: 'M14610 现种族 211 名称误写为异界旅人',
+    file: 'yml/Item.yml',
+    find: '"异界勇者":\n  id: 211',
+    replace: '"异界旅人":\n  id: 211',
+    tests: ['chara-pregnancy', 'look'],
+    must_mention: '近卫后代现种族名称',
+  },
   {
     engine: true,
     desc: 'M14540 通信回归场景漏载 Equip 名字表（复现有角色容器、无静态名字表时的真实引擎异常，#733）',
