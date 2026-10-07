@@ -15,3 +15,6 @@ yml/
 # 区段所有权产物：与 yml/ 同规格的生成物，键名双引号 + 固定排序是约定，
 # 勿格式化
 ownership/
+
+# 本地设置由工具维护，不参与项目格式检查。
+/.claude/settings.local.json

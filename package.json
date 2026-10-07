@@ -5,8 +5,8 @@
   "description": "ere game project (EraElectron)",
   "scripts": {
     "start": "node tools/engine-launch.mjs",
-    "test": "node tools/run-node.mjs -- --test --test-concurrency=4",
-    "test:ci": "node tools/run-node.mjs --timeout 1200 -- --test --test-concurrency=4 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=tap --test-reporter-destination=test-report.tap",
+    "test": "node tools/run-node.mjs -- --test --test-concurrency=4 \"test/**/*.test.js\"",
+    "test:ci": "node tools/run-node.mjs --timeout 1200 -- --test --test-concurrency=4 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=tap --test-reporter-destination=test-report.tap \"test/**/*.test.js\"",
     "lint": "node tools/run-node.mjs -- node_modules/eslint/bin/eslint.js . --max-warnings 0",
     "format:check": "node tools/run-node.mjs -- node_modules/prettier/bin/prettier.cjs --check ."
   },
