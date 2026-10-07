@@ -508,7 +508,8 @@ async function show_floor(arg) {
   const base_slot = (arg - 1) * 10 + 100;
   for (let i = 0; i < 10; i += 1) {
     const count = era.get(`item:${base_slot + i}`) || 0;
-    if (count > 0) {
+    // 暴走结算可能留下未声明编号的库存，读取名字前必须检查声明。
+    if (count > 0 && era.get('itemkeys').includes(base_slot + i)) {
       era.print(
         `${pad_display(String(count), 2)}只${monstername(base_slot + i)}`,
       );
