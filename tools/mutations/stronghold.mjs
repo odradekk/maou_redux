@@ -1,6 +1,7 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 247; // #761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+// #764 净 +2：删除零价旧契约的 M6824，新增 M15003–M15005（零价拒绝与正价边界）。
+export const COUNT = 249; // #761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -837,12 +838,28 @@ export default [
     must_mention: '经队伍门面除名',
   },
   {
-    desc: 'M6824 CHARA_SALE 零价角色被错误除名',
+    desc: 'M15003 SALE_CHARA 零价角色绕过出售拒绝',
     file: 'ere/system/stronghold/sale.js',
-    find: '    if (price > 0) {',
-    replace: '    if (price >= 0) {',
+    find: '  if (price <= 0) return -1;',
+    replace: '  // 变异：零价角色继续进入出售确认',
     tests: ['sale-chara'],
-    must_mention: '零价确认仍结算威望',
+    must_mention: '重复选择零价角色不进入确认且不改动数据',
+  },
+  {
+    desc: 'M15004 SALE_CHARA 错误拒绝售价 1 点的角色',
+    file: 'ere/system/stronghold/sale.js',
+    find: '  if (price <= 0) return -1;',
+    replace: '  if (price <= 1) return -1;',
+    tests: ['sale-chara'],
+    must_mention: '售价仅 1 点仍能正常成交并除名',
+  },
+  {
+    desc: 'M15005 SALE_CHARA 零价拒绝返回值改坏',
+    file: 'ere/system/stronghold/sale.js',
+    find: '  if (price <= 0) return -1;',
+    replace: '  if (price <= 0) return 0;',
+    tests: ['sale-chara'],
+    must_mention: '零价普通、精英与近卫角色不结算也不触发出售口上',
   },
   {
     desc: 'M15000 CHARA_SALE 手输编号绕过角色状态限制',

@@ -433,13 +433,14 @@ function print_sale_details(cid, details, prostitution_effect) {
   }
 }
 
-/** sale_chara：显示估价明细并让玩家确认出售。 */
+/** sale_chara：正价角色确认出售后返回售价，零价或取消返回 -1。 */
 async function sale_chara(
   cid = era_flag.target,
   { prostitution_effect = era_modsave.prostitution_effect, rand } = {},
 ) {
   const details = estimate_chara(cid, { prostitution_effect });
   const { price } = details;
+  if (price <= 0) return -1;
   const name = chara_callname(cid);
   print_sale_details(cid, details, prostitution_effect);
   era.print(`${name}能卖出${price}点的样子。`);
