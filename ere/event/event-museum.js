@@ -1489,9 +1489,7 @@ async function museum(a, rand_n = default_rand) {
   }
 
   lv = target_chara.chara.等级;
-  // FLAG:(NO:A + 199) = 对应勇者已经处刑。普通角色的 NO 就是角色 ID；
-  // 后代的 NO 是来源模板号，故经 template_no_of 换算。
-  era.set(`flag:${template_no_of(a) + 199}`, 1);
+  era_flag.mark_hero_removed(template_no_of(a));
 
   // FLAG:1/2 = 上次调教目标/助手；被删角色本身需清空。旧引擎的注册号
   // 重排依赖删除后编号前移，ere 的角色 ID 稳定，故不移植。

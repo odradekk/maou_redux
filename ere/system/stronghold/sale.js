@@ -537,9 +537,7 @@ async function long_good_bye(cid = era_flag.target) {
 
 /** kill_target：把已售角色从队伍和已加入角色中除名。 */
 async function kill_target(cid = era_flag.target) {
-  // FLAG:(NO:TARGET + 199) = 对应勇者已经处刑。普通角色的 NO 就是角色
-  // ID；后代的 NO 是来源模板号，经 template_no_of 换算。
-  era.set(`flag:${template_no_of(cid) + 199}`, 1);
+  era_flag.mark_hero_removed(template_no_of(cid));
   party_char_del(cid);
   era.removeCharacter(cid);
 

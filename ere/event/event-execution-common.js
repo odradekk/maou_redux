@@ -94,11 +94,7 @@ async function dispose_character(
   if (equipment) release_equipment(cid);
 
   const level = target_chara.chara.等级;
-  // FLAG:(NO:A + 199) = 对应勇者已经处刑（处刑各支尾部的
-  // `X = NO:A + 199; FLAG:X = 1`）。普通角色的 NO 就是角色 ID；后代的
-  // NO 是来源模板号（chara-pregnancy.js 的 template_no_of），故经它换算——
-  // 直加角色 ID 会写到 100199 以上的别处下标。
-  era.set(`flag:${template_no_of(cid) + 199}`, 1);
+  era_flag.mark_hero_removed(template_no_of(cid));
 
   // 原写法后续的“注册号大于被删号则减一”依赖 DELCHARA 重排；ere 使用稳定
   // 角色 ID，故只清掉真正指向被删角色的槽位（#21 扁平化结论）。

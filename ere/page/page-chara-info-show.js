@@ -390,9 +390,7 @@ function sacrifice_chara(shadow, target_id, page) {
     equip_get({ 存储编号: cflag(target_id, slot) });
     era.set(`cflag:${target_id}:${slot}`, -1);
   }
-  // FLAG:(NO+199) = 1：普通角色的 NO 就是角色 ID；后代的
-  // NO 是来源模板号（chara-pregnancy.js 的 template_no_of），故经它换算。
-  era.set(`flag:${template_no_of(target_id) + 199}`, 1);
+  era_flag.mark_hero_removed(template_no_of(target_id));
   // 前回目标/助手（FLAG:1/FLAG:2）的下标前移——ID 世界不适用
   era_flag.target = era.get('flag:1') || 0; // TARGET = FLAG:1
   party_char_del(target_id); // 队伍移除
