@@ -1621,7 +1621,7 @@ test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   );
   // 确认处取消
   const cancel = make_fixture({
-    seed: { 'exp:0:81': 5, 'flag:1000': -2 },
+    seed: { 'exp:0:81': 5, 'flag:1005': -2 },
   });
   assert.equal((await run(cancel, 'resulection', [1], {})).ret, 0);
 });
@@ -1639,6 +1639,79 @@ test('resulection：名单显示亡者的预设名字（#740）', async () => {
   assert.equal(ret, 1);
   assert.equal(button_of(added, 105).rendered, '[105] - 亡者六');
   assert.ok(fixture.chara_no.includes(6), '复活的是预设 6');
+});
+
+test('resulection：死亡后重新加入的角色不再可选，也不消耗勋章', async () => {
+  const fixture = make_fixture({
+    slaves: 1,
+    seed: { 'exp:0:81': 5, 'flag:1000': -2, 'cflag:1:9': 88 },
+  });
+  fixture.store.set('callname:1:-1', '重新加入者');
+
+  const { ret, added } = await run(fixture, 'resulection', [1], {});
+
+  assert.equal(ret, 0);
+  assert.ok(texts(added).includes('找不到想要唤醒的人'));
+  assert.equal(button_of(added, 100), undefined, '在场角色没有苏生按钮');
+  assert.equal(fixture.store.get('cflag:1:9'), 88, '保留在场角色的养成数据');
+  assert.equal(fixture.store.get('callname:1:-1'), '重新加入者');
+  assert.equal(fixture.store.get('exp:0:81'), 5, '保留勋章');
+  assert.equal(fixture.store.get('flag:1000'), -2, '不改写旧死亡标记');
+});
+
+test('resulection：混合名单隐藏在场角色，仍能苏生不在场的亡者', async () => {
+  const fixture = make_fixture({
+    slaves: 1,
+    seed: {
+      'exp:0:81': 5,
+      'flag:1000': -2,
+      'flag:1005': -2,
+      'cflag:1:9': 88,
+    },
+  });
+  fixture.seed_chara(6, { id: 6, name: '亡者六', callname: '亡六' });
+
+  const { ret, added } = await run(fixture, 'resulection', [0, 105], {});
+
+  assert.equal(ret, 1);
+  assert.deepEqual(
+    accs(added).filter((acc) => acc >= 100 && acc <= 199),
+    [105],
+    '苏生名单仅列出不在场的亡者',
+  );
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 1, 6]);
+  assert.equal(fixture.store.get('cflag:1:9'), 88);
+  assert.equal(fixture.store.get('flag:1000'), -2);
+  assert.equal(fixture.store.get('flag:1005'), -1);
+  assert.equal(fixture.store.get('exp:0:81'), 0);
+});
+
+test('resulection：提交选择时目标已重新加入，拦截苏生并保留养成数据和勋章', async () => {
+  const fixture = make_fixture({
+    slaves: 0,
+    seed: { 'exp:0:81': 5, 'flag:1000': -2 },
+  });
+  fixture.seed_chara(1, { id: 1, name: '亡者一', callname: '亡一' });
+  // 在输入返回前改变已加入列表，验证执行时再次检查，而不只依赖绘制名单。
+  const real_input = fixture.era.input;
+  fixture.era.input = async (config) => {
+    const result = await real_input(config);
+    if (result === 100) {
+      fixture.era.addCharacter(1);
+      fixture.store.set('cflag:1:9', 88);
+      fixture.store.set('callname:1:-1', '重新加入者');
+    }
+    return result;
+  };
+
+  const { ret } = await run(fixture, 'resulection', [0, 100, 999], {});
+
+  assert.equal(ret, 0, '拦截后可以取消，不会完成苏生');
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 1]);
+  assert.equal(fixture.store.get('cflag:1:9'), 88, '不重置在场角色');
+  assert.equal(fixture.store.get('callname:1:-1'), '重新加入者');
+  assert.equal(fixture.store.get('exp:0:81'), 5, '拦截不消耗勋章');
+  assert.equal(fixture.store.get('flag:1000'), -2);
 });
 
 test('cure_insane：崩坏与疯狂两支各清一项 + 勋章 -30', async () => {
@@ -2180,7 +2253,7 @@ const DISPATCH = [
     [1],
     '过去从这个世界上消失和逝去的人，',
     // 有亡者才会走到确认画面（没有时直接「找不到想要唤醒的人」返回）
-    { seed: { 'exp:0:81': 40, 'flag:1000': -2 } },
+    { seed: { 'exp:0:81': 40, 'flag:1005': -2 } },
   ],
   [52, [999], '人的生命是无法直接触摸的', { seed: { 'exp:0:81': 40 } }],
   [
@@ -2469,6 +2542,7 @@ test('等号侧：(NO_PAGE+1)*NUM_PAGE == 角色数时允许翻页', async () =>
 
 test('等号侧：死者苏生的列表条件（<= -2 列出；-1、0、正数都不列）', async () => {
   const fixture = make_fixture({
+    slaves: 0,
     seed: {
       'exp:0:81': 5,
       'flag:1000': -2, // 列出
@@ -2492,23 +2566,25 @@ test('等号侧：角色数恰好 30 与恰好 10 时死者苏生放行', async 
   // charanum == 30（29 名奴隶）：> 30 不成立。FLAG:5 == 9 让第二道门也不成立
   const thirty = make_fixture({
     slaves: 29,
-    seed: { 'exp:0:81': 5, 'flag:5': 9, 'flag:1000': -2 },
+    seed: { 'exp:0:81': 5, 'flag:5': 9, 'flag:1099': -2 },
   });
   const first = await run(thirty, 'resulection', [0, 999], {});
   assert.ok(
     !all_text(first.added).includes('亡者容身之所'),
     '角色数 == 30 放行（charanum > 30 的等号侧）',
   );
+  assert.ok(texts(first.added).includes('过去从这个世界上消失和逝去的人，'));
   // charanum == 10（9 名奴隶）：> 10 不成立
   const ten = make_fixture({
     slaves: 9,
-    seed: { 'exp:0:81': 5, 'flag:1000': -2 },
+    seed: { 'exp:0:81': 5, 'flag:1099': -2 },
   });
   const second = await run(ten, 'resulection', [0, 999], {});
   assert.ok(
     !all_text(second.added).includes('亡者容身之所'),
     '角色数 == 10 放行（charanum > 10 的等号侧）',
   );
+  assert.ok(texts(second.added).includes('过去从这个世界上消失和逝去的人，'));
 });
 
 test('等号侧：角色数恰好 60 时生命摇篮放行（> 60）', async () => {
