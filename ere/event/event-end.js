@@ -98,10 +98,7 @@ on(
     const target_stamina = era.get(`base:${target}:0`) || 0;
     const target_willpower = era.get(`base:${target}:1`) || 0;
     if (target_stamina < 1 && target !== 0) {
-      // 角色削除処理：FLAG:(NO:A + 199) = 1（死亡标记）。普通角色的
-      // NO 就是角色 ID；后代角色的 NO 是来源模板号（chara-pregnancy.js 的
-      // template_no_of），故经它换算。随后清指针、除名（DELCHARA）
-      era.set(`flag:${template_no_of(target) + 199}`, 1);
+      era_flag.mark_hero_removed(template_no_of(target));
       era_flag.target = -1;
       era.set('flag:1', -1);
       era_flag.assi = -1;

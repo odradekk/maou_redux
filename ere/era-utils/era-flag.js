@@ -1262,6 +1262,15 @@ const era_flag = {
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+
+/** 登记普通勇者已除名；后代由调用方传入来源模板编号。 */
+era_flag.mark_hero_removed = function (template_no) {
+  // FLAG:200–299 = 预设 1–100 的除名标记；范围外属于其他玩法。
+  if (template_no >= 1 && template_no <= 100) {
+    era.set(`flag:${template_no + 199}`, 1);
+  }
+};
+
 //
 // 存读档域指针（#136 并入；随 #136 返工登记进 yml/Flag.yml 保留区
 // 10018-10028，两组变量**来源不同**）：

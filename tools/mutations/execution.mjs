@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 167; // #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
+export const COUNT = 176; // #748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于自动处刑与流放逐两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一检查）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
@@ -1215,8 +1215,8 @@ export default [
   {
     desc: 'M11783 处刑済 FLAG 回退成角色 ID 直加（后代写到 100199 以上）',
     file: 'ere/event/event-execution-common.js',
-    find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
-    replace: '  era.set(`flag:${cid + 199}`, 1);',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era_flag.mark_hero_removed(cid);',
     tests: ['event-execution-batch'],
     must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
@@ -1261,32 +1261,32 @@ export default [
   {
     desc: 'M11788 博物馆处刑済 FLAG 回退成角色 ID 直加',
     file: 'ere/event/event-museum.js',
-    find: '  era.set(`flag:${template_no_of(a) + 199}`, 1);',
-    replace: '  era.set(`flag:${a + 199}`, 1);',
+    find: '  era_flag.mark_hero_removed(template_no_of(a));',
+    replace: '  era_flag.mark_hero_removed(a);',
     tests: ['event-museum'],
     must_mention: '模板 1 → FLAG:200',
   },
   {
     desc: 'M11789 献祭后代时处刑済 FLAG 回退成角色 ID 直加',
     file: 'ere/page/page-chara-info-show.js',
-    find: '  era.set(`flag:${template_no_of(target_id) + 199}`, 1);',
-    replace: '  era.set(`flag:${target_id + 199}`, 1);',
+    find: '  era_flag.mark_hero_removed(template_no_of(target_id));',
+    replace: '  era_flag.mark_hero_removed(target_id);',
     tests: ['chara-info-show'],
     must_mention: '模板 1 → FLAG:200',
   },
   {
     desc: 'M11790 出售除名时处刑済 FLAG 回退成角色 ID 直加',
     file: 'ere/system/stronghold/sale.js',
-    find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
-    replace: '  era.set(`flag:${cid + 199}`, 1);',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era_flag.mark_hero_removed(cid);',
     tests: ['sale-chara'],
     must_mention: '模板 1 → FLAG:200',
   },
   {
     desc: 'M11791 调教后死亡时处刑済 FLAG 回退成角色 ID 直加',
     file: 'ere/event/event-end.js',
-    find: '      era.set(`flag:${template_no_of(target) + 199}`, 1);',
-    replace: '      era.set(`flag:${target + 199}`, 1);',
+    find: '      era_flag.mark_hero_removed(template_no_of(target));',
+    replace: '      era_flag.mark_hero_removed(target);',
     tests: ['event-end'],
     must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
@@ -1447,5 +1447,78 @@ export default [
     replace: '  // 变异：处置菜单末项之后的空行删除',
     tests: ['event-execution'],
     must_mention: '处置菜单末项：这一行之后是真空行（不许删）',
+  },
+  // —— #748：除名只登记普通勇者标记，不侵入其他玩法 ——
+  {
+    desc: 'M14700 死亡除名绕过范围检查，写入无关玩法标志',
+    file: 'ere/event/event-end.js',
+    find: '      era_flag.mark_hero_removed(template_no_of(target));',
+    replace: '      era.set(`flag:${template_no_of(target) + 199}`, 1);',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14701 出售除名绕过范围检查，写入无关玩法标志',
+    file: 'ere/system/stronghold/sale.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14702 处刑除名绕过范围检查，写入无关玩法标志',
+    file: 'ere/event/event-execution-common.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14703 献祭除名绕过范围检查，写入无关玩法标志',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(target_id));',
+    replace: '  era.set(`flag:${template_no_of(target_id) + 199}`, 1);',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14704 博物馆除名绕过范围检查，写入无关玩法标志',
+    file: 'ere/event/event-museum.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(a));',
+    replace: '  era.set(`flag:${template_no_of(a) + 199}`, 1);',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14705 除名标记上界放宽到101，侵入迷宫标志',
+    file: 'ere/era-utils/era-flag.js',
+    find: '  if (template_no >= 1 && template_no <= 100) {',
+    replace: '  if (template_no >= 1 && template_no <= 101) {',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14706 除名标记下界放宽到0，魔王误登记',
+    file: 'ere/era-utils/era-flag.js',
+    find: '  if (template_no >= 1 && template_no <= 100) {',
+    replace: '  if (template_no >= 0 && template_no <= 100) {',
+    tests: ['character-removal'],
+    must_mention: '魔王不写除名标记',
+  },
+  {
+    desc: 'M14707 除名标记排除普通勇者1',
+    file: 'ere/era-utils/era-flag.js',
+    find: '  if (template_no >= 1 && template_no <= 100) {',
+    replace: '  if (template_no > 1 && template_no <= 100) {',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  {
+    desc: 'M14708 除名标记排除普通勇者100',
+    file: 'ere/era-utils/era-flag.js',
+    find: '  if (template_no >= 1 && template_no <= 100) {',
+    replace: '  if (template_no >= 1 && template_no < 100) {',
+    tests: ['character-removal'],
+    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
   },
 ];
