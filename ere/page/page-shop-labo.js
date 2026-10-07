@@ -181,6 +181,8 @@ const charanum = () => era.getAddedCharacters().length;
 const talentname = (id) => era.get(`talentname:${id}`) ?? '';
 /** `%ITEMNAME:n%` */
 const itemname = (id) => era.get(`itemname:${id}`) ?? '';
+/** 预设的「名前」（不在场的角色也能读） */
+const csv_name = (no) => String(era.get(`chara:${no}`)?.name ?? '');
 /** `%EXPNAME:n%` */
 const expname = (id) => era.get(`expname:${id}`) ?? '';
 /** `%ITEMPRICE:n%`（转生门槛 `ITEMPRICE:L_ID / 20` 用） */
@@ -1546,7 +1548,7 @@ async function given_human_life(rand = default_rand) {
   await era.waitAnyKey(); // WAIT
   // 口上（TFLAG:13 = 15 + CALL SELF_KOJO）
   await with_self_kojo(15, () => self_kojo(rand, undefined, true));
-  era.print(`《失去了【${talentname(398)}】》`);
+  era.print('《失去了【勋章】》');
   chara(MASTER).event.勋章经验 = 0; // EXP:MASTER:81 = 0
   await era.waitAnyKey(); // WAIT
   return 1;
@@ -1598,7 +1600,7 @@ async function resulection() {
     }
     // ELSE GOTO INPUT_LOOP_00（不可达）
   }
-  // 选人（按钮 = ITEM 100-199）
+  // 选人（按钮 100-199 = 预设 1-100）
   let revived = 0;
   for (;;) {
     era.drawLine(); // DRAWLINE
@@ -1608,8 +1610,9 @@ async function resulection() {
       const c = count + 1000;
       const idx = count + 100;
       if ((era.get(`flag:${c}`) || 0) <= -2) {
-        // 正文带「- 」（`PRINTFORML  [{D}] - %ITEMNAME:D%`，#612）
-        era.printButton(`- ${itemname(idx)}`, idx);
+        // 亡者已不在场，名字只能取预设数据；ITEMNAME 100-199 是魔物名表，
+        // 和亡者对不上，而且有一半编号没有声明（#740）。正文带「- 」（#612）
+        era.printButton(`- ${csv_name(count + 1)}`, idx);
       }
     }
     era.printButton('- 取消', 999);
@@ -1637,7 +1640,7 @@ async function resulection() {
     await era.waitAnyKey(); // WAIT
     break;
   }
-  era.print(`《获得了【${talentname(398)}】》`);
+  era.print('《失去了【勋章】》');
   chara(MASTER).event.勋章经验 = 0; // EXP:MASTER:81 = 0
   await era.waitAnyKey(); // WAIT
   return 1;
@@ -1682,7 +1685,7 @@ async function cure_insane() {
   }
   const ret = await run_modify(CURE_INSANE_ITEM);
   if (ret === 1) {
-    era.print(`《【${talentname(398)}】不见了》`);
+    era.print('《【勋章】不见了》');
     chara(MASTER).event.勋章经验 = exp_of(MASTER, 81) - 30; // EXP:MASTER:81 -= 30
     await era.waitAnyKey(); // WAIT
   }
@@ -1721,7 +1724,7 @@ async function reget_chastity_key() {
   }
   era.print(`《${savestr(t)}的贞操带钥匙找到了》`);
   chara(t).stronghold.贞操带钥匙已丢弃 = 0; // CFLAG:T:49 = 0
-  era.print(`《【${talentname(398)}】不见了》`);
+  era.print('《【勋章】不见了》');
   chara(MASTER).event.勋章经验 = 0; // EXP:MASTER:81 = 0
   await era.waitAnyKey(); // WAIT
   return 1;
