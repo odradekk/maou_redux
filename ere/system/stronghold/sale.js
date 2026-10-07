@@ -602,6 +602,8 @@ async function chara_sale({
       continue;
     if (chara(selected).stronghold.出售与助手资格 < 1) continue;
     if (value('base', selected, 0) < 1) continue;
+    // CFLAG:1 = 角色状态；手输编号也必须满足出售名单的状态要求。
+    if (value('cflag', selected, 1) !== 0) continue;
     if (value('cflag', selected, 700)) {
       era.print(`${chara_callname(selected)}在你的收藏列表里，不能卖掉。`);
       await era.waitAnyKey();

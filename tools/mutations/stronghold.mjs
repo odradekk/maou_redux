@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 245; // #724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 247; // #761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -845,13 +845,28 @@ export default [
     must_mention: '零价确认仍结算威望',
   },
   {
-    desc: 'M6825 CHARA_SALE 错把占用状态加入输入校验',
+    desc: 'M15000 CHARA_SALE 手输编号绕过角色状态限制',
     file: 'ere/system/stronghold/sale.js',
-    find: '    if (chara(selected).stronghold.出售与助手资格 < 1) continue;',
-    replace:
-      "    if (chara(selected).stronghold.出售与助手资格 < 1 || value('cflag', selected, 1) !== 0) continue;",
+    find: "    if (value('cflag', selected, 1) !== 0) continue;",
+    replace: '    if (false) continue;',
     tests: ['sale-chara'],
-    must_mention: '手输未显示的占用角色',
+    must_mention: '手输状态',
+  },
+  {
+    desc: 'M15001 CHARA_SALE 状态校验只拒绝状态 1',
+    file: 'ere/system/stronghold/sale.js',
+    find: "    if (value('cflag', selected, 1) !== 0) continue;",
+    replace: "    if (value('cflag', selected, 1) === 1) continue;",
+    tests: ['sale-chara'],
+    must_mention: '手输状态 2 的角色拒绝出售且不改动数据',
+  },
+  {
+    desc: 'M15002 CHARA_SALE 状态校验只拒绝状态 2',
+    file: 'ere/system/stronghold/sale.js',
+    find: "    if (value('cflag', selected, 1) !== 0) continue;",
+    replace: "    if (value('cflag', selected, 1) === 2) continue;",
+    tests: ['sale-chara'],
+    must_mention: '手输状态 1 的角色拒绝出售且不改动数据',
   },
   {
     desc: 'M6826 CHARA_SALE 收藏角色保护失效',
