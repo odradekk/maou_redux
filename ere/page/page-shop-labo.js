@@ -1574,7 +1574,10 @@ async function resulection() {
   // 有没有可复活的（FLAG:1000-1099 < 0）
   let d = 0;
   for (let count = 0; count < 100; count += 1) {
-    if ((era.get(`flag:${count + 1000}`) || 0) < 0) {
+    if (
+      (era.get(`flag:${count + 1000}`) || 0) < 0 &&
+      !era.getAddedCharacters().includes(count + 1)
+    ) {
       d += 1;
     }
   }
@@ -1609,7 +1612,11 @@ async function resulection() {
     for (let count = 0; count < 100; count += 1) {
       const c = count + 1000;
       const idx = count + 100;
-      if ((era.get(`flag:${c}`) || 0) <= -2) {
+      if (
+        (era.get(`flag:${c}`) || 0) <= -2 &&
+        !era.getAddedCharacters().includes(count + 1)
+      ) {
+        // 死亡标记可能残留在重新加入的角色身上，不能覆盖这些在场角色。
         // 亡者已不在场，名字只能取预设数据；ITEMNAME 100-199 是魔物名表，
         // 和亡者对不上，而且有一半编号没有声明（#740）。正文带「- 」（#612）
         era.printButton(`- ${csv_name(count + 1)}`, idx);
@@ -1624,13 +1631,16 @@ async function resulection() {
       continue; // GOTO INPUT_LOOP_01
     }
     const c = result + 900; // C = RESULT + 900
-    if ((era.get(`flag:${c}`) || 0) >= 0) {
-      continue; // 的 ELSE GOTO INPUT_LOOP_01（标记不为负 = 不可复活）
+    const preset = result - 99; // D = RESULT - 99
+    if (
+      (era.get(`flag:${c}`) || 0) >= 0 ||
+      era.getAddedCharacters().includes(preset)
+    ) {
+      continue; // 标记不为负或角色已重新加入时，不可复活
     }
     // 加入角色并做专属初始化：`ADDCHARA D`（D = RESULT - 99，
     // 即预设编号），`C = CHARANUM - 1` 在新加入即末位的序号世界等于 D——
     // ere 侧角色 ID 就是预设编号（文件头第 8 条）
-    const preset = result - 99; // D = RESULT - 99
     era.addCharacter(preset); // ADDCHARA D
     revived = preset; // C = CHARANUM - 1
     await add_chara_ex_defined(revived); // CALL ADDCHARA_EX, CHARANUM-1

@@ -13,7 +13,7 @@
  *     PLAYER/ASSI、他人、17 号三种可达形式）；
  *   - 死亡口上事件码（TFLAG:13 = 999）与「X死掉了……」行——
  *     #DIM TEMP 恒 0、ELSEIF 分支不可达（#14 登记，见实现注释）；
- *   - BASE:0 = -1、FLAG:(NO+999) = -2 死亡旗、FLAG:31 杀害数累计；
+ *   - BASE:0 = -1、预设 1–100 的苏生标记、FLAG:31 杀害数累计；
  *   - 杀害数 ≥ 3 → 魔王获得【威压感】；
  *   - eventend 接入：死亡删除分支真调 party_char_del（队伍复位）。
  */
@@ -142,7 +142,7 @@ function seed_maou_death({ successor, player = 0 } = {}) {
   return { fixture, era_flag };
 }
 
-test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 + 魔王死亡旗', async () => {
+test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 + 死亡处理', async () => {
   const { fixture } = seed_maou_death({ successor: 31 });
 
   assert.equal(await run_check(fixture), 1);
@@ -164,7 +164,7 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
   // 夹具不钳。不断言 -1——那是引擎存不下的值，★死亡★ 显示不出来
   //（文件头「移植说明」记了这处偏离）
   assert.ok(fixture.store.get('base:0:0') <= 0, 'BASE:0 = -1（引擎落盘为 0）');
-  assert.equal(fixture.store.get('flag:999'), -2, 'FLAG:(NO+999) 死亡旗');
+  assert.equal(fixture.store.get('flag:999'), undefined, '魔王不进入苏生名单');
   assert.equal(fixture.store.get('flag:31'), 1, '杀害数 +1');
 });
 
@@ -238,6 +238,36 @@ test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数', async ()
   // 杀害数 1 < 3 → 无【威压感】
   assert(!texts.some((line) => line.includes('威压感')));
   assert.equal(fixture.store.get('talent:0:93'), undefined);
+});
+
+test('死亡苏生标记：仅编号 1–100 的预设角色可苏生，后代不登记模板或未声明旗标', async () => {
+  for (const [target, death_flag] of [
+    [1, 'flag:1000'],
+    [100, 'flag:1099'],
+    [101, null],
+    [201, null],
+    [211, null],
+    [777, null],
+    [100000, null],
+    [101500, null],
+    [120000, null],
+    [121099, null],
+  ]) {
+    const { fixture } = seed_world({ target, target_name: '调教对象' });
+    fixture.store.set(`base:${target}:0`, 0);
+
+    assert.equal(await run_check(fixture), 1, `角色 ${target} 仍按死亡处理`);
+    const death_writes = fixture.var_writes.filter(
+      (write) => write.name.startsWith('flag:') && write.value === -2,
+    );
+    assert.deepEqual(
+      death_writes.map((write) => write.name),
+      death_flag ? [death_flag] : [],
+      `角色 ${target} 的苏生登记范围`,
+    );
+    assert.equal(fixture.store.get('flag:31'), 1, '死亡仍计入杀害数');
+    assert.ok(fixture.text_lines().includes('调教对象死掉了……'));
+  }
 });
 
 test('威压感：杀害数累计到 3 → 魔王获得并播报', async () => {

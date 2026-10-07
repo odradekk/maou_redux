@@ -246,10 +246,11 @@ async function charadead_check() {
   // 「移植说明」的这处偏离；写入仍保留 -1 的意图）
   chara(target).dungeon.体力 = -1;
 
-  // 死亡フラグを残す：FLAG:(NO+999) = -2（与 EVENTEND 死亡删除
-  // 分支的 FLAG:(NO+199) = 1 是两段不同的旗）
-  // FLAGNAME:(TARGET+999) = 死亡旗（-2 = 已死）
-  era.set(`flag:${target + 999}`, -2);
+  // FLAG:1000–1099 = 预设 1–100 的苏生标记（-2 = 已死）。苏生会重新
+  // 创建预设角色，无法恢复后代本人，因此只登记该范围内的固定角色 ID。
+  if (target >= 1 && target <= 100) {
+    era.set(`flag:${target + 999}`, -2);
+  }
 
   // キャラの殺害回数に加算
   game.event.杀死人数 += 1;

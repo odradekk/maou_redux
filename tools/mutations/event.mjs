@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 421; // #722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 426; // #743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回「- 」分隔符——补回点被改回时对应的
@@ -3205,8 +3205,8 @@ export default [
   {
     desc: 'M11473 CHARADEAD_CHECK 死亡旗写错段（FLAG:(NO+999) 改成 NO+199——与 eventend 的删除旗撞段）',
     file: 'ere/event/event-aftertrain.js',
-    find: '  era.set(`flag:${target + 999}`, -2);',
-    replace: '  era.set(`flag:${target + 199}`, -2); // 变异：段错',
+    find: '    era.set(`flag:${target + 999}`, -2);',
+    replace: '    era.set(`flag:${target + 199}`, -2); // 变异：段错',
     tests: ['event-charadead'],
     must_mention: 'FLAG:(31+999)',
   },
@@ -3918,5 +3918,46 @@ export default [
 });`,
     tests: ['train-clear-screen-e2e'],
     must_mention: '整屏清空抹掉了未读输出',
+  },
+  {
+    desc: 'M14600 苏生登记不检查上界（后代和近卫写入范围外旗标）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (target >= 1 && target <= 100) {',
+    replace: '  if (target >= 1) {',
+    tests: ['event-charadead'],
+    must_mention: '死亡苏生标记：仅编号 1–100',
+  },
+  {
+    desc: 'M14601 苏生登记下界改成 0（魔王写入未声明的苏生标记）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (target >= 1 && target <= 100) {',
+    replace: '  if (target >= 0 && target <= 100) {',
+    tests: ['event-charadead'],
+    must_mention: '魔王不进入苏生名单',
+  },
+  {
+    desc: 'M14602 苏生登记下界排除预设 1',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (target >= 1 && target <= 100) {',
+    replace: '  if (target > 1 && target <= 100) {',
+    tests: ['event-charadead'],
+    must_mention: '角色 1 的苏生登记范围',
+  },
+  {
+    desc: 'M14603 苏生登记上界排除预设 100',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (target >= 1 && target <= 100) {',
+    replace: '  if (target >= 1 && target < 100) {',
+    tests: ['event-charadead'],
+    must_mention: '角色 100 的苏生登记范围',
+  },
+  {
+    desc: 'M14604 苏生登记误用后代模板号（后代死亡变成模板预设可苏生）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (target >= 1 && target <= 100) {\n    era.set(`flag:${target + 999}`, -2);\n  }',
+    replace:
+      "  const death_id = require('#/chara/chara-pregnancy').template_no_of(target);\n  if (death_id >= 1 && death_id <= 100) {\n    era.set(`flag:${death_id + 999}`, -2);\n  }",
+    tests: ['event-charadead'],
+    must_mention: '角色 100000 的苏生登记范围',
   },
 ];
