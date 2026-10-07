@@ -410,6 +410,7 @@ test('char_append：性别三档（1 男 / 3 扶她 / 2 女不写）', async () 
     [2, undefined],
   ];
   for (const [input, talent] of table) {
+    fixture.era.removeCharacter(5);
     fixture.store.delete('talent:5:122');
     fixture.store.delete('talent:5:121');
     fixture.reset_inputs(input, '名字', 996);
@@ -558,6 +559,7 @@ test('char_append：狂王性别决定是否补性交经验（FLAG:500 的 0/2�
     [3, 0],
   ];
   for (const [flag500, expected] of table) {
+    fixture.era.removeCharacter(20);
     fixture.store.set('flag:500', flag500);
     fixture.store.delete('exp:20:5');
     fixture.reset_inputs(996);

@@ -169,6 +169,9 @@ async function char_create(arg, rand = default_rand) {
     }
     if (target < 0) {
       target = await char_append(index, arg);
+      if (target < 0) {
+        return 0;
+      }
       era.print(`你召唤出了${chara_callname(target)}……`);
       await era.waitAnyKey();
     }
@@ -183,9 +186,14 @@ async function char_create(arg, rand = default_rand) {
  * @param {number} arg 预设编号（需保证可用）
  * @param {number} mode 0 = 付费定制 / 1 = 调试登录
  * @param {(n: number) => number} [rand] 随机源
- * @returns {Promise<number>} 新角色号
+ * @returns {Promise<number>} 新角色号；已在场时返回 -1
  */
 async function char_append(arg, mode, rand = default_rand) {
+  // 引擎重复加入同号角色会重建数据，必须在任何初始化之前拒绝。
+  if (find_chara(arg) >= 0) {
+    await era.printAndWait('该角色已在场，无法重复创建');
+    return -1;
+  }
   era.addCharacter(arg);
   await add_chara_ex(arg);
   const previous_target = era_flag.target;

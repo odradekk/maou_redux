@@ -136,9 +136,10 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-74
+75
 # #733：cross-save-sharing-engine 的完整旧共享档导入与恢复接收档用例 +1，70 + 1 = 71。
 # #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
 # #734：kojo-palam-level-engine 的真实引擎爱抚回归用例 +1，71 + 1 = 72。
 # #739：train-static-tables 的未声明序号名字读取用例 +1，72 + 1 = 73。
 # #739 审查返工：page-usercom 的真实引擎 p_c 用例 +1，73 + 1 = 74。
+# #749：角色创建入口的真实引擎回归组 +1，74 + 1 = 75（组内用例随组跳过）。

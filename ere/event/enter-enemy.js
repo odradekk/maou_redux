@@ -485,7 +485,7 @@ async function k_34_crazylord(rand_n) {
  * 金钱段。调用方在侵略线（阶段 5 接入）。
  *
  * @param {(n: number) => number} [rand] 随机源（缺省均匀随机）
- * @returns {Promise<number>} 生成角色号；人数上限早退 0
+ * @returns {Promise<number>} 生成角色号；人数上限或无可用预设时返回 0
  */
 async function get_enemy(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -495,14 +495,23 @@ async function get_enemy(rand) {
     return 0;
   }
 
-  // キャラのNOを選定（[1,17) = 1..16，文件头）
-  const chara_id = 1 + rand_n(16);
+  // 同号加入会重建现有角色，只从未在场的勇者预设中抽取。
+  const added = era.getAddedCharacters();
+  const candidates = era
+    .getAllCharacters()
+    .filter((cid) => cid >= 1 && cid <= 16 && !added.includes(cid));
+  const chara_id =
+    candidates.length > 0 ? candidates[rand_n(candidates.length)] : 0;
 
   // 異国の勇者の判定をする（RAND(10) 十分之一概率为 0 → 判定
   // 通过；#394 起真身在 FLAG:76 = 0 时恒早退 0 → 默认档仍走生成分支）
   const inport = await char_make_inport(10, rand_n);
   let result;
   if (inport === 0) {
+    if (chara_id === 0) {
+      await era.printAndWait('没有可捕获的新勇者');
+      return 0;
+    }
     era.addCharacter(chara_id);
     await add_chara_ex(chara_id);
     result = await char_make(chara_id, 0, 0, rand_n);
