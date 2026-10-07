@@ -19,6 +19,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { parse_yml_ids } = require('./helpers/static-names');
 
 /** 素质下标（与 ere/chara/look-info.js 的常量同名，测试侧独立写死防串改） */
 const T = {
@@ -822,10 +823,31 @@ test('get_look_info「现种族」：范围内已声明的编号显示物品名�
     const { get_look_info } = fixture.load_module('chara/look-info');
     assert.equal(get_look_info(5, '现种族'), expected, `现种族 ${value}`);
   }
-  for (const value of [0, 99, 105, 194, 211, 220, 221]) {
+  for (const value of [0, 99, 105, 194, 212, 220, 221]) {
     const { get_look_info } = load({ [T.现种族]: value });
     assert.equal(get_look_info(5, '现种族'), 'ERROR', `现种族 ${value}`);
   }
+});
+
+test('现种族 211 的旧存档读入后显示异界勇者', async () => {
+  const fixture = world({ [T.现种族]: 211 });
+  fixture.seed_chara(5, { name: '旧角色' });
+  assert.equal(fixture.era.addCharacter(5), true);
+  fixture.save_gate.current_version = 1000;
+  fixture.save_gate.allow_version = 1000;
+  assert.equal(await fixture.era.saveData(0, '0.1.0 存档'), true);
+  fixture.store.set('talent:5:322', 0);
+  assert.equal(await fixture.era.loadData(0), true, '读回旧存档');
+  for (const [id, name] of parse_yml_ids('Item.yml')) {
+    fixture.store.set(`itemname:${id}`, name);
+  }
+
+  assert.equal(fixture.store.get('talent:5:322'), 211, '旧存档现种族保持 211');
+  assert.equal(
+    fixture.load_module('chara/look-info').get_look_info(5, '现种族'),
+    '异界勇者',
+    '旧存档现种族名称',
+  );
 });
 
 // —— 常识改变两档 ——

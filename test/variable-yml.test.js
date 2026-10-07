@@ -98,6 +98,7 @@ engine_test(
     const loader = load_yml_table(product, 'item');
     const fake_this = {
       staticData: loader.static_data,
+      fieldNames: loader.field_names,
       data: { item: { sales: {} } },
       global: {},
       extendedTables: {},
@@ -105,6 +106,11 @@ engine_test(
     const result = engine.set_var.call(fake_this, 'itemsales:53', 1);
     assert.equal(result, 1);
     assert.equal(fake_this.data.item.sales[53], 1);
+    assert.equal(
+      engine.set_var.call(fake_this, 'itemname:211'),
+      '异界勇者',
+      '引擎读取现种族 211 名称',
+    );
   },
 );
 

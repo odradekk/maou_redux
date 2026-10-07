@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { parse_yml_ids } = require('./helpers/static-names');
 
 function seq(values) {
   let index = 0;
@@ -851,6 +852,37 @@ test('近卫后代随机模板覆盖 201–211 全部预设', async () => {
     assert.equal(fixture.store.get(`ex_talent:${child}:2`), 1, '后代');
   }
 });
+test('异界勇者作为双亲任一方生成近卫后代，现种族显示异界勇者', async () => {
+  for (const [mother, father] of [
+    [211, 0],
+    [0, 211],
+  ]) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '魔王');
+    add_chara(fixture, 211, '异界勇者');
+    for (const [id, name] of parse_yml_ids('Item.yml')) {
+      fixture.store.set(`itemname:${id}`, name);
+    }
+
+    const child = await fixture
+      .load_module('chara/chara-pregnancy')
+      .gb_add_guard(mother, father, seq(new Array(300).fill(0)));
+
+    assert.ok(fixture.era.getAddedCharacters().includes(child), '后代实际加入');
+    assert.equal(fixture.store.get(`ex_talent:${child}:1`), 1, '近卫后代');
+    assert.equal(
+      fixture.store.get(`talent:${child}:322`),
+      211,
+      '继承现种族 211',
+    );
+    assert.equal(
+      fixture.load_module('chara/look-info').get_look_info(child, '现种族'),
+      '异界勇者',
+      '近卫后代现种族名称',
+    );
+  }
+});
+
 test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级两侧', async () => {
   const cases = [
     {
