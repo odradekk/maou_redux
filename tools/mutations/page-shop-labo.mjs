@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 106; // #743 +3（M14605–M14607：在场角色的苏生前置、名单与提交检查）；#740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
+export const COUNT = 111; // #750 +5（M14900–M14904：统一苏生资格，排除 -1 与无效预设）；#743 +3（M14605–M14607：在场角色的苏生前置、名单与提交检查）；#740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -413,17 +413,17 @@ export default [
   ),
   make(
     9455,
-    '死者苏生列表的 `FLAG <= -2` 改 `< -2`',
-    '        (era.get(`flag:${c}`) || 0) <= -2 &&',
-    '        (era.get(`flag:${c}`) || 0) < -2 &&',
+    '死者苏生资格的 `FLAG <= -2` 改 `< -2`',
+    '    (era.get(`flag:${cid + 999}`) || 0) <= -2 &&',
+    '    (era.get(`flag:${cid + 999}`) || 0) < -2 &&',
     '只有 FLAG <= -2 的槽进列表（-1 / 0 / 正数都不进）',
   ),
   make(
     9456,
-    '死者苏生扫描的 `FLAG < 0` 改 `<= 0`（|| 0 缺省取 0，被算成亡者）',
-    '      (era.get(`flag:${count + 1000}`) || 0) < 0 &&',
-    '      (era.get(`flag:${count + 1000}`) || 0) <= 0 &&',
-    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 的缺省值是 0，不算亡者）',
+    '死者苏生资格的 `FLAG <= -2` 改 `<= 0`（缺省值被算成亡者）',
+    '    (era.get(`flag:${cid + 999}`) || 0) <= -2 &&',
+    '    (era.get(`flag:${cid + 999}`) || 0) <= 0 &&',
+    '没有死亡候选时拒绝（|| 0 的缺省值是 0，不算亡者）',
   ),
   make(
     9457,
@@ -889,25 +889,62 @@ export default [
   {
     desc: 'M14605 苏生前置扫描不排除在场角色',
     file: code,
-    find: '\n      !era.getAddedCharacters().includes(count + 1)',
-    replace: '\n      true',
+    find: '    !era.getAddedCharacters().includes(cid) &&',
+    replace: '    true &&',
     tests: ['page-shop-labo'],
     must_mention: 'resulection：死亡后重新加入的角色不再可选',
   },
   {
     desc: 'M14606 苏生名单不隐藏在场角色',
     file: code,
-    find: '        !era.getAddedCharacters().includes(count + 1)',
-    replace: '        true',
+    find: '      if (can_revive(count + 1)) {',
+    replace:
+      '      if ((era.get(`flag:${count + 1000}`) || 0) <= -2 && era.getAllCharacters().includes(count + 1)) {',
     tests: ['page-shop-labo'],
     must_mention: '苏生名单仅列出不在场的亡者',
   },
   {
     desc: 'M14607 苏生提交选择时不再检查目标是否在场',
     file: code,
-    find: '      era.getAddedCharacters().includes(preset)',
-    replace: '      false',
+    find: '    if (!can_revive(preset)) {',
+    replace:
+      '    if ((era.get(`flag:${c}`) || 0) > -2 || !era.getAllCharacters().includes(preset)) {',
     tests: ['page-shop-labo'],
     must_mention: '拦截后可以取消，不会完成苏生',
   },
+  make(
+    14900,
+    '苏生资格接受 -1 标记，出售后再次进入空名单',
+    '    (era.get(`flag:${cid + 999}`) || 0) <= -2 &&',
+    '    (era.get(`flag:${cid + 999}`) || 0) < 0 &&',
+    'resulection：苏生后出售的角色不再进入确认或空名单',
+  ),
+  make(
+    14901,
+    '苏生提交只排除非负标记，放行提交前变为 -1 的角色',
+    '    if (!can_revive(preset)) {',
+    '    if ((era.get(`flag:${c}`) || 0) >= 0 || era.getAddedCharacters().includes(preset) || !era.getAllCharacters().includes(preset)) {',
+    'resulection：缺席的已苏生角色不列出，提交时标记变为 -1 也不可苏生',
+  ),
+  make(
+    14902,
+    '苏生资格不检查预设是否有效',
+    '    era.getAllCharacters().includes(cid);',
+    '    true;',
+    'resulection：死亡标记没有有效预设时不进入确认或名单',
+  ),
+  make(
+    14903,
+    '苏生名单额外列出缺席的 -1 标记角色',
+    '      if (can_revive(count + 1)) {',
+    '      if ((era.get(`flag:${count + 1000}`) || 0) < 0 && !era.getAddedCharacters().includes(count + 1) && era.getAllCharacters().includes(count + 1)) {',
+    'resulection：混合已苏生标记与无效预设，只能苏生真正亡者',
+  ),
+  make(
+    14904,
+    '苏生名单额外列出没有预设的死亡标记',
+    '      if (can_revive(count + 1)) {',
+    '      if ((era.get(`flag:${count + 1000}`) || 0) <= -2 && !era.getAddedCharacters().includes(count + 1)) {',
+    'resulection：混合已苏生标记与无效预设，只能苏生真正亡者',
+  ),
 ];

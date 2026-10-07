@@ -22,10 +22,8 @@
  *     `pid < 0 || pid > 3`、转生类型表的 `id <= 0`）。
  *
  * **取不了等号侧的条件**（第六节的例外，逐条给理由——不是漏掉）：
- *   - 死者苏生选中检查的 `(FLAG || 0) >= 0`：列表只列 `FLAG <= -2` 的槽，
- *     且画面恒有 [999]（输入集非空、自由输入进不来），所以 flag == 0（`|| 0`
- *     缺省值）的槽选不中——该支在实机上不可达；能站等号侧的是列表条件
- *     `<= -2` 与扫描条件 `< 0`（两条都有用例）。
+ *   - 死者苏生的未列出编号无法从按钮输入，但提交前状态可能变化；
+ *     用输入返回前改写死亡标记或重新加入角色，验证提交时复查资格。
  *   - `talent(318) < 0`（「念のため」的钳制）：上一句 `> 1` 已挡掉，
  *     掷骰后不可能为负，故取不了等号侧。
  *   - `base(t, 10) > 0` 的 `>= 0`：改写发生在 BASE == 0 的分支里（同分支内
@@ -1588,13 +1586,14 @@ test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
     seed: { 'exp:0:81': 5 },
   });
   assert.equal((await run(eleven, 'resulection', [], {})).ret, 0);
-  // 无亡者（FLAG:1000-1099 无 < 0）
+  // 无亡者（FLAG:1000–1099 无死亡标记）
   const no_dead = make_fixture({ seed: { 'exp:0:81': 5 } });
+  no_dead.seed_chara(6, { id: 6, name: '未死亡者' });
   // 尾部补 1（确认处取消）：万一扫描把未设置位也算成亡者，流程能干净退出
   const second = await run(no_dead, 'resulection', [1], {});
   assert.ok(
     texts(second.added).includes('找不到想要唤醒的人'),
-    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 的缺省值是 0，不算亡者）',
+    '没有死亡候选时拒绝（|| 0 的缺省值是 0，不算亡者）',
   );
   // 有亡者：确认 → 选 100 → 复活
   // 亡者位 1099 → 按钮 199 → 预设编号 100（ADDCHARA D，D = RESULT - 99）
@@ -1623,7 +1622,120 @@ test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   const cancel = make_fixture({
     seed: { 'exp:0:81': 5, 'flag:1005': -2 },
   });
+  cancel.seed_chara(6, { id: 6, name: '亡者六', callname: '亡六' });
   assert.equal((await run(cancel, 'resulection', [1], {})).ret, 0);
+});
+
+test('resulection：苏生后出售的角色不再进入确认或空名单', async () => {
+  const fixture = make_fixture({
+    money: 100,
+    slaves: 0,
+    seed: { 'exp:0:81': 5, 'flag:1000': -2 },
+  });
+  const dead = { id: 1, name: '战士', callname: '战士' };
+  fixture.seed_chara(1, dead);
+  fixture.store.set('chara:1', dead);
+
+  assert.equal((await run(fixture, 'resulection', [0, 100])).ret, 1);
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 1]);
+  assert.equal(fixture.store.get('flag:1000'), -1);
+  assert.equal(fixture.store.get('exp:0:81'), 0);
+
+  // 苏生后明确设置出售前置，完整出售菜单负责成交和除名。
+  fixture.store.set('cflag:1:0', 1); // 出售与助手资格
+  fixture.store.set('base:1:0', 2400); // 体力
+  fixture.store.set('cflag:1:1', 0); // 已置于统治下
+  fixture.store.set('talent:1:292', 0); // 非影仆
+  fixture.store.set('cflag:1:700', 0); // 非收藏
+  fixture.set_inputs(1, 0, 999);
+  const { chara_sale } = fixture.load_module('system/stronghold/sale');
+  assert.equal(await chara_sale({ rand: always }), 999);
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0]);
+  assert.equal(fixture.store.get('flag:10004'), 110, '出售结算资金');
+  assert.equal(fixture.store.get('flag:1000'), -1, '出售保留已苏生标记');
+
+  fixture.store.set('exp:0:81', 7);
+  const { ret, added } = await run(fixture, 'resulection', [0, 999]);
+  assert.equal(ret, 0);
+  assert.deepEqual(texts(added), ['找不到想要唤醒的人']);
+  assert.deepEqual(accs(added), [], '无候选时不进入确认或名单');
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0]);
+  assert.equal(fixture.store.get('exp:0:81'), 7, '再次苏生保留勋章');
+  assert.equal(fixture.store.get('flag:1000'), -1);
+});
+
+test('resulection：缺席的已苏生角色不列出，提交时标记变为 -1 也不可苏生', async () => {
+  const fixture = make_fixture({
+    slaves: 0,
+    seed: { 'exp:0:81': 5, 'flag:1000': -1, 'flag:1005': -2 },
+  });
+  fixture.seed_chara(1, { id: 1, name: '已苏生者', callname: '已苏生者' });
+  fixture.seed_chara(6, { id: 6, name: '亡者六', callname: '亡六' });
+  const real_input = fixture.era.input;
+  fixture.era.input = async (config) => {
+    const result = await real_input(config);
+    if (result === 105) fixture.store.set('flag:1005', -1);
+    return result;
+  };
+
+  const { ret, added } = await run(fixture, 'resulection', [0, 105, 999]);
+
+  assert.equal(ret, 0, '提交时已非死亡标记，不得完成苏生');
+  assert.deepEqual(
+    accs(added).filter((acc) => acc >= 100 && acc <= 199),
+    [105],
+    '混合名单仅显示真正死亡且缺席的角色',
+  );
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0]);
+  assert.equal(fixture.store.get('exp:0:81'), 5, '拒绝选择保留勋章');
+  assert.equal(fixture.store.get('flag:1000'), -1);
+  assert.equal(fixture.store.get('flag:1005'), -1);
+});
+
+test('resulection：死亡标记没有有效预设时不进入确认或名单', async () => {
+  const fixture = make_fixture({
+    slaves: 0,
+    seed: { 'exp:0:81': 5, 'flag:1000': -2 },
+  });
+
+  const { ret, added } = await run(fixture, 'resulection', [1]);
+
+  assert.equal(ret, 0);
+  assert.deepEqual(texts(added), ['找不到想要唤醒的人']);
+  assert.deepEqual(accs(added), [], '无有效预设时不显示确认或名单按钮');
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0]);
+  assert.equal(fixture.store.get('exp:0:81'), 5);
+  assert.equal(fixture.store.get('flag:1000'), -2);
+});
+
+test('resulection：混合已苏生标记与无效预设，只能苏生真正亡者', async () => {
+  const fixture = make_fixture({
+    slaves: 0,
+    seed: {
+      'exp:0:81': 5,
+      'flag:1000': -1,
+      'flag:1005': -2,
+      'flag:1006': -2,
+    },
+  });
+  fixture.seed_chara(1, { id: 1, name: '已苏生者', callname: '已苏生者' });
+  const dead = { id: 6, name: '亡者六', callname: '亡六' };
+  fixture.seed_chara(6, dead);
+  fixture.store.set('chara:6', dead);
+
+  const { ret, added } = await run(fixture, 'resulection', [0, 105]);
+
+  assert.equal(ret, 1);
+  assert.deepEqual(
+    accs(added).filter((acc) => acc >= 100 && acc <= 199),
+    [105],
+    '混合名单只显示有有效预设的真正亡者',
+  );
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 6]);
+  assert.equal(fixture.store.get('flag:1000'), -1);
+  assert.equal(fixture.store.get('flag:1005'), -1);
+  assert.equal(fixture.store.get('flag:1006'), -2);
+  assert.equal(fixture.store.get('exp:0:81'), 0);
 });
 
 test('resulection：名单显示亡者的预设名字（#740）', async () => {
@@ -2299,6 +2411,9 @@ test('主分发整表：每个编号都进对应的函数（首行文案 + 不�
 async function assert_dispatch(id, exits, text, extra) {
   const seed = { 'item:90': 0, ...(extra.seed ?? {}) };
   const fixture = make_fixture({ seed });
+  if (id === 51) {
+    fixture.seed_chara(6, { id: 6, name: '亡者六', callname: '亡六' });
+  }
   // 尾部再补一个 999：函数返回后回到主循环，得有人按下「返回」
   const { ret } = await run_labo(
     fixture,
@@ -2552,6 +2667,9 @@ test('等号侧：死者苏生的列表条件（<= -2 列出；-1、0、正数�
       'flag:1004': -3, // 列出
     },
   });
+  for (let cid = 1; cid <= 5; cid += 1) {
+    fixture.seed_chara(cid, { id: cid, name: `亡者${cid}` });
+  }
   const { added } = await run(fixture, 'resulection', [0, 999], {});
   assert.deepEqual(
     accs(added)
@@ -2568,6 +2686,7 @@ test('等号侧：角色数恰好 30 与恰好 10 时死者苏生放行', async 
     slaves: 29,
     seed: { 'exp:0:81': 5, 'flag:5': 9, 'flag:1099': -2 },
   });
+  thirty.seed_chara(100, { id: 100, name: '亡者百' });
   const first = await run(thirty, 'resulection', [0, 999], {});
   assert.ok(
     !all_text(first.added).includes('亡者容身之所'),
@@ -2579,6 +2698,7 @@ test('等号侧：角色数恰好 30 与恰好 10 时死者苏生放行', async 
     slaves: 9,
     seed: { 'exp:0:81': 5, 'flag:1099': -2 },
   });
+  ten.seed_chara(100, { id: 100, name: '亡者百' });
   const second = await run(ten, 'resulection', [0, 999], {});
   assert.ok(
     !all_text(second.added).includes('亡者容身之所'),
