@@ -3901,8 +3901,8 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
     fixture.store.set('base:0:1', 10000);
     seed_seiei(fixture, 18);
     seed_seiei(fixture, 19);
-    // 精锐剩余体力低于普通档伤害：一击必杀，避免进入第二轮。
-    fixture.store.set('base:18:0', 5000);
+    // 普通档留 75 体力进入击溃判定，保留实际扣量的区分力；会心档直接击杀。
+    fixture.store.set('base:18:0', roll5 === 0 ? 5000 : 5675);
     fixture.store.set('talent:18:251', talent251);
     const state = { sinkou: 2048, yusya_i: 1 };
     const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
@@ -3930,7 +3930,11 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
 
   const normal = await run(1);
   assert.equal(normal.store.get('cflag:18:11'), 150 - 28, '攻击同样按 /100 削');
-  assert.equal(normal.store.get('base:18:0'), 0, '普通档伤害扣至 0 下限');
+  assert.equal(
+    normal.store.get('base:18:0'),
+    75,
+    '血量/攻防套算：普通档实际扣除 5600 点体力',
+  );
   assert(
     normal
       .text_lines()
