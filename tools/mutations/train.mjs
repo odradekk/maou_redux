@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1028; // #769/#770：+5（M15030-M15034 射精 helper 总量/封顶/普通边界/扣量/index 寻址），-8（M13002、M9861-M9867 随喷乳正向用例暂标 todo 延后，#770 修复时恢复）；此前沿革见 git 历史。
+export const COUNT = 1044; // #770：恢复 8 条喷乳守护（M13002、M9861-M9867），新增 8 条合法槽值下的分档与扣量守护（M15035-M15042）；此前沿革见 git 历史。
 
 export default [
   // —— #565 已实现函数的存根调用点接入 ——
@@ -7290,7 +7290,82 @@ export default [
     tests: ['source-check'],
     must_mention: '十一项乘算系数各自方向正确',
   },
-  // 喷乳正向测试因已知缺陷暂标 todo，分档与结算的行为守护需在修复母乳槽后恢复。
+  {
+    desc: 'M9861 TARGET_MILK_CHECK 三档判定 > ejac*2 错改 >= ejac*2',
+    file: 'ere/event/source-check.js',
+    find: '  if (total > ejac * 2) {',
+    replace: '  if (total >= ejac * 2) {',
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：三档判定边界',
+  },
+  {
+    desc: 'M9862 TARGET_MILK_CHECK 大量档 EXPLV 最低档条件删',
+    file: 'ere/event/source-check.js',
+    find: `  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (exp54 < EXPLV[1]) {`,
+    replace: `  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (false) {`,
+    tests: ['source-check'],
+    must_mention: '恒加异常经验',
+  },
+  {
+    desc: 'M9863 TARGET_MILK_CHECK 异常经验条件误加性别门槛（应恒不带门槛，区别于 TARGET_EJAC_CHECK）',
+    file: 'ere/event/source-check.js',
+    find: `    era.print(\`\${callname}的乳头喷出了大量的母乳。\`);
+    era.print('喷奶经验+2');
+    if (exp54 === 0) {`,
+    replace: `    era.print(\`\${callname}的乳头喷出了大量的母乳。\`);
+    era.print('喷奶经验+2');
+    if (exp54 === 0 && !tal(122)) {`,
+    tests: ['source-check'],
+    must_mention: '恒加异常经验',
+  },
+  {
+    desc: 'M9864 TARGET_MILK_CHECK 普通档胸部污渍位 16 错改 32',
+    file: 'ere/event/source-check.js',
+    find: `    chara(cid).train.喷奶经验 += 1;
+    chara(cid).train.胸部污渍 |= 16;`,
+    replace: `    chara(cid).train.喷奶经验 += 1;
+    chara(cid).train.胸部污渍 |= 32;`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：普通档',
+  },
+  {
+    desc: 'M9865 TARGET_MILK_CHECK 大量档喷奶经验 += 2 错改 += 1',
+    file: 'ere/event/source-check.js',
+    find: `    chara(cid).train.喷奶经验 += 2;
+    chara(cid).train.胸部污渍 |= 16;`,
+    replace: `    chara(cid).train.喷奶经验 += 1;
+    chara(cid).train.胸部污渍 |= 16;`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）',
+  },
+  {
+    desc: 'M9866 TARGET_MILK_CHECK 搾乳器检查 TEQUIP:90 条件删（覆盖时仍会累加）',
+    file: 'ere/event/source-check.js',
+    find: `    game.system.对象喷乳 += 1;
+    if (era.get(\`tequip:\${cid}:16\`) && !era.get(\`tequip:\${cid}:90\`)) {
+      game.system.榨乳中 += 1;
+    }`,
+    replace: `    game.system.对象喷乳 += 1;
+    if (era.get(\`tequip:\${cid}:16\`)) {
+      game.system.榨乳中 += 1;
+    }`,
+    tests: ['source-check'],
+    must_mention: '搾乳器检查',
+  },
+  {
+    desc: 'M9867 TARGET_MILK_CHECK 大量档对象喷乳 TFLAG:11 += 2 错改 += 1',
+    file: 'ere/event/source-check.js',
+    find: '    game.system.对象喷乳 += 2;',
+    replace: '    game.system.对象喷乳 += 1;',
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）',
+  },
 
   // —— #459（COMF3_自慰 头部升格跳转补齐）——
   {
@@ -11063,6 +11138,14 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     must_mention: '202 同形对照',
   },
   {
+    desc: 'M13002 MILK 的 E1 条件退回增量 B（蓄积 S 越过上限也不喷乳）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: '  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;',
+    replace: '  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;',
+    tests: ['com-vaginasex'],
+    must_mention: '喷乳后槽按 EJAC*2 扣减钳 0',
+  },
+  {
     desc: 'M13003 对面座位（com28）的爱情经验 4 档删（按普通档 2 结算）',
     file: 'ere/system/train/com-analsex.js',
     find: `  } else if (era_flag.selectcom === 28) {
@@ -11227,5 +11310,75 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
   }`,
     tests: ['com-register'],
     must_mention: 'comseq_train：拒绝播报在回合画面换屏前先经按键确认（#724）',
+  },
+  // —— #770：喷乳分档在 BASE 封顶前结算 ——
+  {
+    desc: 'M15035 调教者普通喷乳满值边界错改为 >=',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: '  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;',
+    replace: '  const e = s > ejac * 2 ? 2 : s >= ejac ? 1 : 0;',
+    tests: ['com-vaginasex'],
+    must_mention: '#770 调教者喷乳分档',
+  },
+  {
+    desc: 'M15036 调教者大量喷乳双倍边界错改为 >=',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: '  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;',
+    replace: '  const e = s >= ejac * 2 ? 2 : s > ejac ? 1 : 0;',
+    tests: ['com-vaginasex'],
+    must_mention: '#770 调教者喷乳分档',
+  },
+  {
+    desc: 'M15037 调教者普通喷乳误套射精扣量（普通档只扣一倍上限）',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: '  const next = e ? Math.max(s - ejac * 2, 0) : s;',
+    replace: '  const next = e ? Math.max(s - ejac * e, 0) : s;',
+    tests: ['com-vaginasex'],
+    must_mention: '喷乳后槽按 EJAC*2 扣减钳 0',
+  },
+  {
+    desc: 'M15038 调教者大量喷乳余量封顶保护删除',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: '  era.set(`base:${player}:3`, e && next >= ejac ? ejac - 1 : next);',
+    replace: '  era.set(`base:${player}:3`, next);',
+    tests: ['com-vaginasex'],
+    must_mention: '#770 调教者喷乳分档',
+  },
+  {
+    desc: 'M15039 调教对象喷乳分档漏掉本轮之前的槽值',
+    file: 'ere/event/source-check.js',
+    find: '  const total = chara(cid).train.母乳槽 + local;',
+    replace: '  const total = local;',
+    tests: ['source-check'],
+    must_mention: '#770 调教对象喷乳分档',
+  },
+  {
+    desc: 'M15040 调教对象普通喷乳满值边界错改为 >=',
+    file: 'ere/event/source-check.js',
+    find: '  } else if (total > ejac) {',
+    replace: '  } else if (total >= ejac) {',
+    tests: ['source-check'],
+    must_mention: '#770 调教对象喷乳分档',
+  },
+  {
+    desc: 'M15041 调教对象未喷乳时漏存本轮蓄积量',
+    file: 'ere/event/source-check.js',
+    find: `  if (grade === 0) {
+    chara(cid).train.母乳槽 = total;
+    return;
+  }`,
+    replace: `  if (grade === 0) {
+    return;
+  }`,
+    tests: ['source-check'],
+    must_mention: '#770 调教对象喷乳分档',
+  },
+  {
+    desc: 'M15042 调教对象喷乳余量封顶保护删除',
+    file: 'ere/event/source-check.js',
+    find: '  chara(cid).train.母乳槽 = Math.min(total - ejac * grade, ejac - 1);',
+    replace: '  chara(cid).train.母乳槽 = total - ejac * grade;',
+    tests: ['source-check'],
+    must_mention: '#770 调教对象喷乳分档',
   },
 ];

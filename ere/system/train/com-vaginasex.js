@@ -320,12 +320,14 @@ async function com_ejac_player_milk(b) {
 
   // 半衰蓄积 + 喷乳蓄积量
   b = 1000 + Math.floor((b - 1000) / 2);
-  era.add(`base:${player}:3`, b);
 
-  // 判定：蓄积值 s 越过上限即喷乳
-  const s = era.get(`base:${player}:3`) || 0;
+  // BASE 写入会立即封顶，分档与扣量必须使用写入前的总量。
+  const s = (era.get(`base:${player}:3`) || 0) + b;
   const ejac = era.get(`maxbase:${player}:3`) || 0;
   const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+  // 调教者普通与大量喷乳均扣两倍上限。
+  const next = e ? Math.max(s - ejac * 2, 0) : s;
+  era.set(`base:${player}:3`, e && next >= ejac ? ejac - 1 : next);
 
   if (e === 2) {
     // 大量喷乳
@@ -337,9 +339,6 @@ async function com_ejac_player_milk(b) {
     }
     era.add(`exp:${player}:54`, 2);
     era.set(`stain:${player}:5`, (era.get(`stain:${player}:5`) || 0) | 16); // Ｂ母乳
-    // （通常喷乳支同大量档扣 EJAC*2——两档一致的扣法）
-    const next = Math.max((era.get(`base:${player}:3`) || 0) - ejac * 2, 0);
-    era.set(`base:${player}:3`, next >= ejac ? ejac - 1 : next);
     era.add(`nowex:${player}:5`, 1);
     chara(player).system.喷乳绝顶 = chara(player).system.喷乳绝顶 + 1; // EX
   } else if (e === 1) {
@@ -352,8 +351,6 @@ async function com_ejac_player_milk(b) {
     }
     era.add(`exp:${player}:54`, 1);
     era.set(`stain:${player}:5`, (era.get(`stain:${player}:5`) || 0) | 16);
-    const next = Math.max((era.get(`base:${player}:3`) || 0) - ejac * 2, 0);
-    era.set(`base:${player}:3`, next >= ejac ? ejac - 1 : next);
     era.add(`nowex:${player}:5`, 1);
     chara(player).system.喷乳绝顶 = chara(player).system.喷乳绝顶 + 1; // EX
   }

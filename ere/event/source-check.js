@@ -1982,20 +1982,23 @@ function target_milk_check() {
   }
 
   local = 1000 + idiv(local - 1000, 2);
-  chara(cid).train.母乳槽 += local; // BASE:3 += LOCAL
+  // BASE 写入会立即封顶，先用写入前的总量分档并扣除喷乳量。
+  const total = chara(cid).train.母乳槽 + local;
 
   const ejac = era.get(`maxbase:${cid}:3`) || 0;
   let grade;
-  if (chara(cid).train.母乳槽 > ejac * 2) {
+  if (total > ejac * 2) {
     grade = 2;
-  } else if (chara(cid).train.母乳槽 > ejac) {
+  } else if (total > ejac) {
     grade = 1;
   } else {
     grade = 0;
   }
   if (grade === 0) {
+    chara(cid).train.母乳槽 = total;
     return;
   }
+  chara(cid).train.母乳槽 = Math.min(total - ejac * grade, ejac - 1);
 
   const callname = era.get(`callname:${cid}:-1`) ?? '';
   const exp54 = chara(cid).train.喷奶经验;
@@ -2030,11 +2033,6 @@ function target_milk_check() {
     }
     chara(cid).train.喷奶经验 += 2;
     chara(cid).train.胸部污渍 |= 16;
-
-    chara(cid).train.母乳槽 -= ejac * 2;
-    if (chara(cid).train.母乳槽 >= ejac) {
-      chara(cid).train.母乳槽 = ejac - 1;
-    }
 
     game.system.对象喷乳 += 2;
     if (era.get(`tequip:${cid}:16`) && !era.get(`tequip:${cid}:90`)) {
@@ -2073,11 +2071,6 @@ function target_milk_check() {
     }
     chara(cid).train.喷奶经验 += 1;
     chara(cid).train.胸部污渍 |= 16;
-
-    chara(cid).train.母乳槽 -= ejac;
-    if (chara(cid).train.母乳槽 >= ejac) {
-      chara(cid).train.母乳槽 = ejac - 1;
-    }
 
     game.system.对象喷乳 += 1;
     if (era.get(`tequip:${cid}:16`) && !era.get(`tequip:${cid}:90`)) {
