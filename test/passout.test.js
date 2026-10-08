@@ -528,6 +528,9 @@ test('PALAM_UP：折算与 Z 分配（Z = 100 → 快乐路空、恐怖/屈服�
   fixture.store.set('tflag:888', 1);
   fixture.store.set('tflag:896', 3);
   fixture.store.set('tflag:899', 1);
+  for (const k of [7, 8, 10]) {
+    fixture.store.set(`delta:31:${k}`, 0);
+  }
   passout.passout_palam_up();
   // Z = 100（无刻印/顺从/爱慕）：恐怖/屈服路（Z/100 = 1）全额、快乐路
   // （(100 - Z)/100 = 0）为空——分配语义：顺从越高，恐怖/屈服占比越大

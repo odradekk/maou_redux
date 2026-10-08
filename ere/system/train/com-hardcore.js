@@ -63,6 +63,7 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { com_order } = require('#/system/train/com-order');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { confirm_condom } = require('#/system/train/com-condom');
 const {
   com_ejac_player_sex,
@@ -479,9 +480,10 @@ async function com80() {
             : abl(player, 0) === 4
               ? 3.5
               : 5.0;
-  if (tal(player, 121) || tal(player, 122)) {
-    era.add(`base:${player}:2`, b);
-  }
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 121) || tal(player, 122) ? b : 0,
+  );
 
   // ソースの計算
   const { src, set } = make_src_helpers(target);
@@ -545,9 +547,6 @@ async function com80() {
   }
 
   // 射精チェック
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
   if (e) {
     set(4, src(4) * 3.0);
     if (abl(target, 32) === 0) {
@@ -587,9 +586,6 @@ async function com80() {
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-    let next = (era.get(`base:${player}:2`) || 0) - ejac * 2;
-    if (next >= ejac) next = ejac - 1;
-    era.set(`base:${player}:2`, next);
     era.set('tflag:0', 2); // 口で射精させたフラグ
     if (Math.floor(Math.random() * 5) === 0 && tal(target, 340)) {
       era.set(`cflag:${target}:113`, 4); // 口内挿入フラグ
@@ -601,9 +597,6 @@ async function com80() {
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-    let next = (era.get(`base:${player}:2`) || 0) - ejac;
-    if (next >= ejac) next = ejac - 1;
-    era.set(`base:${player}:2`, next);
     era.set('tflag:0', 1);
     if (Math.floor(Math.random() * 10) === 0 && tal(target, 340)) {
       era.set(`cflag:${target}:113`, 4);
@@ -1873,10 +1866,7 @@ async function equip_com89() {
       ejacb = 0;
     }
 
-    era.add(`base:${player_master}:4`, ejacb);
-    const s = era.get(`base:${player_master}:4`) || 0;
-    const ejac = era.get(`maxbase:${player_master}:4`) || 0;
-    e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+    e = settle_ejaculation_gauge(player_master, ejacb, 4);
 
     if (e) {
       set(4, src(4) * 3.0);
@@ -1912,18 +1902,12 @@ async function equip_com89() {
       era.print('兽奸大量射精');
       era.print('精液经验＋３');
       era.add('t:0', 5);
-      let next = (era.get(`base:${player_master}:4`) || 0) - ejac * 2;
-      if (next >= ejac) next = ejac - 1;
-      era.set(`base:${player_master}:4`, next);
       if (com === 21 || com === 34) era.set('tflag:38', 2);
     } else if (e === 1) {
       chara(target).dungeon.精液经验 += 1;
       era.print('兽奸射精');
       era.print('精液经验＋１');
       era.add('t:0', 2);
-      let next = (era.get(`base:${player_master}:4`) || 0) - ejac;
-      if (next >= ejac) next = ejac - 1;
-      era.set(`base:${player_master}:4`, next);
       if (com === 21 || com === 34) era.set('tflag:38', 1);
     }
 

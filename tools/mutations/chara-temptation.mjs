@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用编号，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 41; // #393 返工 +13；返工二 +5；返工三 +3（M9054-M9056 三条下标表）
+export const COUNT = 40; // #769 -1（M8852 显式上限截断由 BASE setter 等价承担）；#393 返工 +13；返工二 +5；返工三 +3（M9054-M9056 三条下标表）
 
 export default [
   {
@@ -94,14 +94,6 @@ export default [
     file: 'ere/chara/chara-temptation.js',
     find: '  return 200;\n}',
     replace: '  return 201;\n}',
-    tests: ['chara-temptation'],
-    must_mention: '档 5/6 的治愈按残量给好感度',
-  },
-  {
-    desc: 'M8852 治愈加值不再按上限截断（可以回超上限）',
-    file: 'ere/chara/chara-temptation.js',
-    find: '  const capped = Math.min(next, max);',
-    replace: '  const capped = next;',
     tests: ['chara-temptation'],
     must_mention: '档 5/6 的治愈按残量给好感度',
   },

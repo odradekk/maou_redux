@@ -885,8 +885,9 @@ test('偶尔归来（SOMETIMES_SHE_COMES_BACK）：死掉的奴隶回位，体�
   fixture.store.set('callname:0:-1', '你');
   fixture.store.set('base:31:0', 0); // 体力 0 = 已死
   fixture.store.set('base:31:1', 0);
-  fixture.store.set('maxbase:31:0', 300);
-  fixture.store.set('maxbase:31:1', 200);
+  // 气力上限高于体力上限，读错槽位时不会被 BASE 封顶掩盖。
+  fixture.store.set('maxbase:31:0', 200);
+  fixture.store.set('maxbase:31:1', 300);
   const { sometimes_she_comes_back } = fixture.load_module(
     'event/event-nextday',
   );
@@ -894,8 +895,8 @@ test('偶尔归来（SOMETIMES_SHE_COMES_BACK）：死掉的奴隶回位，体�
   const returned = await sometimes_she_comes_back();
 
   assert.equal(returned, 1, '有人归来时返回 1（D = 1 / RETURN 1）');
-  assert.equal(fixture.store.get('base:31:0'), 30, '体力 = MAXBASE:0 / 10');
-  assert.equal(fixture.store.get('base:31:1'), 200, '气力 = MAXBASE:1');
+  assert.equal(fixture.store.get('base:31:0'), 20, '体力 = MAXBASE:0 / 10');
+  assert.equal(fixture.store.get('base:31:1'), 300, '气力 = MAXBASE:1');
   const texts = fixture.text_lines();
   assert(
     texts.includes('早上，你睁开双眼，发现确实已经死掉了的温妮就站在面前。'),
@@ -2832,6 +2833,7 @@ test('夜这い（NIGHT_STALKING_CHECK）：SELF_KOJO 以事件码 5 在调教�
 function seed_pillory(fixture, cid = 31, name = '温妮') {
   join_slave_chara(fixture, cid, name);
   fixture.store.set(`cflag:${cid}:1`, 8);
+  fixture.store.set(`cflag:${cid}:665`, 0);
   fixture.store.set('flag:10005', cid);
   fixture.store.set('talentname:200', '战士');
   for (const [n, v] of [

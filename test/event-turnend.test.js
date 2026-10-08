@@ -615,8 +615,7 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'cflag:0:11', value: 0 },
     { name: 'cflag:0:12', value: 0 },
     { name: 'base:0:0', value: 1100 }, // 魔王体力 +1000（TIME 已翻转为 1）
-    { name: 'base:0:1', value: 1050 }, // 魔王气力 +1000
-    { name: 'base:0:1', value: 300 }, // 超上限钳回 MAXBASE:0:1
+    { name: 'base:0:1', value: 300 }, // 魔王气力 +1000，写入时钳至 MAXBASE
     { name: 'flag:10005', value: -1 }, // TARGET = TARGET_POOL（暂存值）
     // AUTOTRAIN（#508 起真身）自身的指针簿记：PLAYER/ASSI 置调教态、
     // 逐角色指 TARGET（本世界 getAllCharacters 只有 0 号），收尾还原

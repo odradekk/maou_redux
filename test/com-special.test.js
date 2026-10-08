@@ -180,6 +180,7 @@ test('com51：调合知识、药物经验与成瘾状态按规则落盘', async 
   fixture.store.set('talent:0:55', 1);
   fixture.store.set('talent:31:46', 1);
   fixture.store.set('exp:31:57', 50);
+  fixture.store.set('deltabase:31:0', 0);
 
   assert.equal(await run_com(world, 51), 1);
   assert.equal(

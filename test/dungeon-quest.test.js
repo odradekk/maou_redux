@@ -208,7 +208,7 @@ test('result_quest：受注计数耗尽（539 < 1）覆写为失败', async () =
 test('result_quest：E 列不持有讨伐对象时不结算', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
-  fixture.store.set('cflag:1:538', 250); // 不在 E 列头
+  fixture.store.set('cflag:1:538', 101); // 已声明的怪物，但不在 E 列头
   fixture.store.set('cflag:1:539', 50);
   const { result_quest } = load(fixture);
   const ret = await result_quest(1, '成功', seq_rand([1]));

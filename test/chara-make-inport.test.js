@@ -305,7 +305,8 @@ test('成功路径：侵入阶层 / 侵攻度 / 侵攻中与 HP 气力补满', (
       level: 7,
       nickname: '甲',
       base: '0,12/1,3/',
-      maxbase: '0,30/1,20/',
+      // 气力上限高于体力上限，读错槽位时不会被 BASE 封顶掩盖。
+      maxbase: '0,20/1,30/',
     }),
   ]);
   seed_preset(fixture, 3);
@@ -315,8 +316,8 @@ test('成功路径：侵入阶层 / 侵攻度 / 侵攻中与 HP 气力补满', (
   assert.equal(fixture.store.get('cflag:3:501'), 1, 'cflag:501 侵入阶层');
   assert.equal(fixture.store.get('cflag:3:502'), 0, 'cflag:502 侵攻度');
   assert.equal(fixture.store.get('cflag:3:1'), 2, 'cflag:1 = 2 侵攻中');
-  assert.equal(fixture.store.get('base:3:0'), 30, 'base:0 = maxbase:0');
-  assert.equal(fixture.store.get('base:3:1'), 20, 'base:1 = maxbase:1');
+  assert.equal(fixture.store.get('base:3:0'), 20, 'base:0 = maxbase:0');
+  assert.equal(fixture.store.get('base:3:1'), 30, 'base:1 = maxbase:1');
 });
 
 test('flag:77 关：不压等级、不清战斗经验', () => {

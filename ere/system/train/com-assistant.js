@@ -25,6 +25,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
@@ -275,21 +276,8 @@ const RATE_SKILL_12 = [0.5, 0.8, 1.0, 1.2, 1.5, 2.0];
 const RATE_V_EXP = [0.2, 0.5, 0.8, 1.0, 1.2, 1.4];
 const RATE_V_SENSE = [0.5, 0.8, 1.0, 1.2, 1.5, 2.0];
 
-function ejac_level(cid) {
-  const s = era.get(`base:${cid}:2`) || 0;
-  const ejac = era.get(`maxbase:${cid}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
-  return { e, s, ejac };
-}
-
-function consume_gauge(cid, e, ejac) {
-  const sub = e === 2 ? ejac * 2 : ejac;
-  const remaining = Math.max((era.get(`base:${cid}:2`) || 0) - sub, 0);
-  era.set(`base:${cid}:2`, remaining >= ejac ? ejac - 1 : remaining);
-}
-
 function add_gauge(cid, b) {
-  if (tal(cid, 121) || tal(cid, 122)) era.add(`base:${cid}:2`, b);
+  return settle_ejaculation_gauge(cid, tal(cid, 121) || tal(cid, 122) ? b : 0);
 }
 
 function mark_penis_stain(cid) {
@@ -382,7 +370,6 @@ function apply_poison_on_ejac(src, rows, e) {
 function settle_ejac({
   cid,
   e,
-  ejac,
   heavy_semen,
   normal_semen,
   flag,
@@ -405,7 +392,6 @@ function settle_ejac({
       era.print(heavy_label);
     }
     mark_penis_stain(cid);
-    consume_gauge(cid, 2, ejac);
     if (flag !== undefined) era.set(`tflag:${flag}`, flag_value_heavy);
   } else if (e === 1) {
     if (extra_normal) extra_normal();
@@ -418,7 +404,6 @@ function settle_ejac({
       era.print(normal_label);
     }
     mark_penis_stain(cid);
-    consume_gauge(cid, 1, ejac);
     if (flag !== undefined) era.set(`tflag:${flag}`, flag_value_normal);
   }
 }
@@ -978,7 +963,7 @@ async function com60() {
   b = scale_by_abl(b, target, 13, RATE_SERVE_TECH);
   if (tal(target, 52)) b = times(b, 2);
   b = scale_by_abl(b, player, 0, RATE_C_SENSE);
-  add_gauge(player, b);
+  const e = add_gauge(player, b);
   lose(target, 1, 20);
   src.set(13, 100);
   src.set(14, 10);
@@ -991,7 +976,6 @@ async function com60() {
     [300, 300, 0.5],
     [350, 500, 0.1],
   ]);
-  const { e, ejac } = ejac_level(player);
   apply_poison_on_ejac(
     src,
     [
@@ -1011,7 +995,6 @@ async function com60() {
   settle_ejac({
     cid: player,
     e,
-    ejac,
     heavy_semen: 1,
     flag: 4,
   });
@@ -1053,7 +1036,7 @@ async function com61() {
   b = scale_by_abl(b, target, 13, RATE_SERVE_TECH);
   if (tal(target, 52)) b = times(b, 2);
   b = scale_by_abl(b, player, 0, RATE_C_SENSE);
-  add_gauge(player, b);
+  const e = add_gauge(player, b);
   lose(target, 1, 10);
   lose(target, 1, 100);
   src.set(13, 1000);
@@ -1067,7 +1050,6 @@ async function com61() {
     [740, 1500, 0.5],
     [820, 2200, 0.1],
   ]);
-  const { e, ejac } = ejac_level(player);
   apply_poison_on_ejac(
     src,
     [
@@ -1087,7 +1069,6 @@ async function com61() {
   settle_ejac({
     cid: player,
     e,
-    ejac,
     heavy_semen: 4,
     normal_semen: 1,
     flag: 5,
@@ -1129,7 +1110,7 @@ async function com62() {
   b = scale_by_abl(b, assi, 2, RATE_V_SENSE);
   b = times(b, pick(RATE_V_EXP, exp_level(exp(assi, 0))));
   b = scale_by_abl(b, MASTER, 0, RATE_C_SENSE);
-  add_gauge(MASTER, b);
+  const e = add_gauge(MASTER, b);
   lose(target, 1, 40);
   lose(target, 1, 220);
   src.set(3, 1500);
@@ -1219,12 +1200,11 @@ async function com62() {
     raise_abl10(target, 2);
   }
   era.set('tflag:14', 0);
-  const { e, ejac } = ejac_level(MASTER);
   if (e) {
     src.times(13, pick([1, 1.2, 1.5, 2, 2.5, 3], abl(target, 32)));
   }
   if (e === 2) src.times(10, 1.5);
-  settle_ejac({ cid: MASTER, e, ejac, heavy_semen: 1, flag: 7 });
+  settle_ejac({ cid: MASTER, e, heavy_semen: 1, flag: 7 });
   if (tal(MASTER, 119) || tal(MASTER, 122) || tal(MASTER, 121)) {
     stain_exchange(MASTER, 2, assi, 3);
   }
@@ -1328,12 +1308,12 @@ async function com64() {
   if (site_used(1)) era.set('tflag:19', 1);
   let b = pick([2700, 2800, 2900, 3100, 3200, 3300], abl(target, 12));
   b = times(b, palam_rate(target, 3, [0.4, 0.7, 1.0, 1.3, 1.6, 1.6]));
-  add_gauge(MASTER, b);
+  const master_e = add_gauge(MASTER, b);
   let b2 = pick([1500, 1600, 1800, 2000, 2400, 3000], abl(target, 12));
   b2 = scale_by_abl(b2, target, 10, RATE_OBED);
   b2 = scale_by_abl(b2, target, 11, [1.0, 1.1, 1.2, 1.3, 1.4, 1.5]);
   b2 = times(b2, palam_rate(target, 3, [0.6, 0.8, 1.0, 1.2, 1.4, 1.4]));
-  add_gauge(assi, b2);
+  const assi_e = add_gauge(assi, b2);
   lose(target, 0, 160);
   lose(target, 1, 350);
   src.set(11, 1500);
@@ -1500,41 +1480,35 @@ async function com64() {
       era.set(`cstr:${target}:4`, chara_callname(assi));
     }
   }
-  const master_ejac = ejac_level(MASTER);
-  if (master_ejac.e === 2) {
+  if (master_e === 2) {
     chara(era_flag.player).train.射精经验 += 2;
     chara(target).dungeon.精液经验 += 1;
     era.print('大量射精');
     era.print('精液经验＋１');
     mark_penis_stain(MASTER);
-    consume_gauge(MASTER, 2, master_ejac.ejac);
     if (t40 === 1 || t40 === 2) {
       era.set('tflag:2', 2);
       if (t40 === 1 && !tequip(target, 35)) era.set('tflag:38', 2);
     } else era.set('tflag:0', 2);
-  } else if (master_ejac.e === 1) {
+  } else if (master_e === 1) {
     era.print('射精');
     chara(era_flag.player).train.射精经验 += 1;
     mark_penis_stain(MASTER);
-    consume_gauge(MASTER, 1, master_ejac.ejac);
     if (t40 === 1 || t40 === 2) {
       era.set('tflag:2', 1);
       if (t40 === 1 && !tequip(target, 35)) era.set('tflag:38', 1);
     } else era.set('tflag:0', 1);
   }
-  const assi_ejac = ejac_level(assi);
-  if (assi_ejac.e === 2) {
+  if (assi_e === 2) {
     chara(target).dungeon.精液经验 += 1;
     era.print('大量射精（助手）');
     era.print('精液经验＋１');
     mark_penis_stain(assi);
-    consume_gauge(assi, 2, assi_ejac.ejac);
     era.set('tflag:6', 2);
     if (t41 === 1 && !tequip(target, 36)) era.set('tflag:38', 2);
-  } else if (assi_ejac.e === 1) {
+  } else if (assi_e === 1) {
     era.print('射精（助手）');
     mark_penis_stain(assi);
-    consume_gauge(assi, 1, assi_ejac.ejac);
     era.set('tflag:6', 1);
     if (t41 === 1 && !tequip(target, 36)) era.set('tflag:38', 1);
   }
@@ -1596,7 +1570,7 @@ async function com65() {
   b = scale_by_abl(b, player, 2, RATE_V_SENSE);
   b = times(b, pick(RATE_V_EXP, exp_level(exp(player, 0))));
   b = scale_by_abl(b, target, 0, RATE_C_SENSE);
-  add_gauge(player, b);
+  const e = add_gauge(player, b);
   lose(target, 1, 40);
   lose(target, 1, 220);
   src.set(13, 1500);
@@ -1688,7 +1662,6 @@ async function com65() {
     ]);
   }
   era.set('tflag:14', 0);
-  const { e, ejac } = ejac_level(player);
   apply_poison_on_ejac(
     src,
     [
@@ -1711,13 +1684,11 @@ async function com65() {
     era.print(`${chara_callname(player)}大量射精`);
     era.print('精液经验＋１');
     mark_penis_stain(player);
-    consume_gauge(player, 2, ejac);
     era.set('tflag:6', 2);
   } else if (e === 1) {
     chara(player).train.射精经验 += 1;
     era.print(`${chara_callname(player)}射精`);
     mark_penis_stain(player);
-    consume_gauge(player, 1, ejac);
     era.set('tflag:6', 1);
   }
   if (tal(target, 119) || tal(target, 121) || tal(target, 122)) {
@@ -1754,10 +1725,10 @@ async function com66() {
   await train_message_b();
   let b = pick([1200, 1700, 2300, 3000, 3600, 4200], abl(target, 12));
   b = scale_fellatio_gauge(b, target, MASTER);
-  add_gauge(MASTER, b);
+  const e = add_gauge(MASTER, b);
   let b2 = pick([1200, 1700, 2300, 3000, 3600, 4200], abl(target, 12));
   b2 = scale_fellatio_gauge(b2, target, assi);
-  add_gauge(assi, b2);
+  const assi_e = add_gauge(assi, b2);
   lose(target, 0, 80);
   lose(target, 1, 250);
   src.set(13, 6000);
@@ -1775,12 +1746,10 @@ async function com66() {
     ],
     [0.8, 1.0, 1.2, 1.5, 2.0, 2.2],
   );
-  const { e, ejac } = ejac_level(MASTER);
   apply_poison_on_ejac(src, POISON_MOUTH, e);
   settle_ejac({
     cid: MASTER,
     e,
-    ejac,
     heavy_semen: 9,
     normal_semen: 3,
     flag: 0,
@@ -1796,28 +1765,25 @@ async function com66() {
   lick_clean(target, MASTER, e, 1);
   print_same_sex_exp(target, MASTER, 7, 7);
   if (tal(MASTER, 121)) src.times(13, 0.5);
-  const assi_ejac = ejac_level(assi);
-  if (assi_ejac.e === 2) {
+  if (assi_e === 2) {
     chara(target).dungeon.精液经验 += 3;
     era.print('大量射精（助手）');
     era.print('精液经验＋３');
     mark_penis_stain(assi);
-    consume_gauge(assi, 2, assi_ejac.ejac);
     era.set('tflag:6', 2);
-  } else if (assi_ejac.e === 1) {
+  } else if (assi_e === 1) {
     era.print('射精（助手）');
     chara(assi).train.射精经验 += 1;
     chara(target).dungeon.精液经验 += 1;
     era.print('精液经验＋１');
     mark_penis_stain(assi);
-    consume_gauge(assi, 1, assi_ejac.ejac);
     era.set('tflag:6', 1);
   }
   await com_ejac_player_milk(b2);
   if (tal(MASTER, 121) || tal(MASTER, 122))
     stain_exchange(target, 0, MASTER, 2);
   if (tal(assi, 121) || tal(assi, 122)) stain_exchange(target, 0, assi, 2);
-  lick_clean(target, assi, assi_ejac.e, 1);
+  lick_clean(target, assi, assi_e, 1);
   record_target_kiss(target, MASTER, 201);
   if (!tal(target, 122) && !tal(assi, 122)) {
     era.print(`${name_of('expname', 40)}+10`);
@@ -1922,7 +1888,7 @@ async function com68() {
   b = scale_fellatio_gauge(b, target, MASTER);
   b = times(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
   if (tal(assi, 52)) b = times(b, 2);
-  add_gauge(MASTER, b);
+  const e = add_gauge(MASTER, b);
   lose(target, 0, 10);
   lose(target, 1, 100);
   src.set(13, 1500);
@@ -1947,12 +1913,10 @@ async function com68() {
   src.times(4, pick(RATE_SKILL_12, abl(target, 12)));
   src.times(5, pick(RATE_SKILL_12, abl(target, 12)));
   apply_kin_source(src, era.get('tflag:14') || 0);
-  const { e, ejac } = ejac_level(MASTER);
   apply_poison_on_ejac(src, POISON_MOUTH, e);
   settle_ejac({
     cid: MASTER,
     e,
-    ejac,
     heavy_semen: 9,
     normal_semen: 3,
     flag: 0,
@@ -2022,7 +1986,7 @@ async function com69() {
   await train_message_b();
   let b = pick([1200, 1700, 2300, 3000, 3600, 4200], abl(target, 12));
   b = scale_fellatio_gauge(b, target, player);
-  add_gauge(player, b);
+  const e = add_gauge(player, b);
   if (tal(target, 47)) {
     lose(target, 1, 10);
     lose(target, 1, 80);
@@ -2059,7 +2023,6 @@ async function com69() {
     src.set(2, pick([5, 50, 200, 500, 1000, 1800], abl(target, 3)));
   }
   apply_kin_source(src, era.get('tflag:14') || 0);
-  const { e, ejac } = ejac_level(player);
   apply_poison_on_ejac(
     src,
     [
@@ -2075,7 +2038,6 @@ async function com69() {
   settle_ejac({
     cid: player,
     e,
-    ejac,
     heavy_semen: 9,
     normal_semen: 3,
     flag: 0,
@@ -2183,8 +2145,7 @@ async function com70() {
   b = scale_by_abl(b, target, 10, RATE_OBED);
   b = scale_by_abl(b, target, 16, RATE_SERVE_SPIRIT);
   b = scale_by_abl(b, era_flag.player, 0, RATE_C_SENSE);
-  add_gauge(era_flag.player, b);
-  const { e, ejac } = ejac_level(era_flag.player);
+  const e = add_gauge(era_flag.player, b);
   if (e) {
     src.times(4, 2);
     const poison = pick(
@@ -2210,7 +2171,6 @@ async function com70() {
     era.print('大量射精');
     era.print('精液经验+2');
     mark_penis_stain(era_flag.player);
-    consume_gauge(era_flag.player, 2, ejac);
     era.set('tflag:9', 2);
   } else if (e === 1) {
     chara(era_flag.player).train.射精经验 += 1;
@@ -2218,7 +2178,6 @@ async function com70() {
     era.print('射精');
     era.print('精液经验+1');
     mark_penis_stain(era_flag.player);
-    consume_gauge(era_flag.player, 1, ejac);
     era.set('tflag:9', 1);
   }
   stain_exchange(target, 3, era_flag.player, 2);
@@ -2304,8 +2263,7 @@ async function com71() {
   b = scale_fellatio_gauge(b, target, MASTER);
   b = times(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
   if (tal(assi, 52)) b = times(b, 2);
-  add_gauge(MASTER, b);
-  const { e, ejac } = ejac_level(MASTER);
+  const e = add_gauge(MASTER, b);
   apply_poison_on_ejac(src, POISON_MOUTH, e);
   if (e === 2) {
     src.times(7, 2);
@@ -2315,7 +2273,6 @@ async function com71() {
     era.print('大量射精');
     era.print('精液经验＋6');
     mark_penis_stain(MASTER);
-    consume_gauge(MASTER, 2, ejac);
     era.set('tflag:0', 2);
   } else if (e === 1) {
     chara(MASTER).train.射精经验 += 1;
@@ -2323,7 +2280,6 @@ async function com71() {
     era.print('射精');
     era.print('精液经验＋3');
     mark_penis_stain(MASTER);
-    consume_gauge(MASTER, 1, ejac);
     era.set('tflag:0', 1);
   }
   await com_ejac_player_milk(b);

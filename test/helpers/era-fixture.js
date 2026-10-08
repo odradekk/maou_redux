@@ -669,20 +669,33 @@ function create_era_fixture() {
     var_reads.push({ name: var_name, value });
     return value;
   };
+  const clamp_base_value = (var_name, value) => {
+    const match = /^base:(\d+):(\d+)$/.exec(String(var_name));
+    if (match === null) {
+      return value;
+    }
+    const max = store.get(`maxbase:${match[1]}:${match[2]}`);
+    return max > 0 ? Math.min(max, Math.max(0, value)) : value;
+  };
   era.set = (var_name, value) => {
     if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
       return undefined; // 引擎静默丢弃：不落盘、不留写记录
     }
-    store.set(var_name, value);
-    var_writes.push({ name: var_name, value });
-    return value;
+    const next = clamp_base_value(var_name, value);
+    store.set(var_name, next);
+    var_writes.push({ name: var_name, value: next });
+    return next;
   };
   era.add = (var_name, value) => {
+    // 真 EraApi.add 对假值增量直接转为 get，不调用写入路径。
+    if (!value) {
+      return era.get(var_name);
+    }
     if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
       return undefined;
     }
     // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算
-    const next = (store.get(var_name) ?? 0) + value;
+    const next = clamp_base_value(var_name, (store.get(var_name) ?? 0) + value);
     store.set(var_name, next);
     var_writes.push({ name: var_name, value: next });
     return next;

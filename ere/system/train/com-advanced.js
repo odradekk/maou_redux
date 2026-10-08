@@ -17,6 +17,7 @@
  * COM135 经 21 号规则可能跳到 COM64（三人，J15 真身已交付）。
  */
 const era = require('#/era-electron');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -1127,12 +1128,10 @@ function ejac122() {
   b = times(b, [0.8, 0.9, 1, 1.1, 1.2, 1.3][Math.min(abl(cid, 10), 5)]);
   b = times(b, [0.5, 0.8, 1.2, 1.5, 1.8, 2.4][palam_ladder(palam(cid, 3))]);
   b = times(b, [1, 1.5, 2, 2.5, 3.5, 5][Math.min(abl(player, 0), 5)]);
-  if (tal(player, 121) || tal(player, 122)) {
-    era.add(`base:${player}:2`, b);
-  }
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 121) || tal(player, 122) ? b : 0,
+  );
   if (e) {
     times_src(cid, 4, 3);
     const poison = [
@@ -1155,10 +1154,6 @@ function ejac122() {
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
-    era.add(`base:${player}:2`, -(ejac * 2));
-    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
-      era.set(`base:${player}:2`, ejac - 1);
-    }
     game.train.股间射精 = 2;
   } else if (e === 1) {
     era.add(`exp:${player}:3`, 1);
@@ -1166,10 +1161,6 @@ function ejac122() {
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
-    era.add(`base:${player}:2`, -ejac);
-    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
-      era.set(`base:${player}:2`, ejac - 1);
-    }
     game.train.股间射精 = 1;
   }
   const merged = stain(cid, 2) | stain(player, 2);
@@ -1335,18 +1326,16 @@ function gauge123() {
   else if (tal(cid, 114)) b = times(b, 1.2);
   else if (tal(cid, 110)) b = times(b, 1.1);
   // ELSEIF TALENT:110 贫乳 ×0.90 与上一支巨乳同一条件，死代码
-  if (tal(player, 119) || tal(player, 122) || tal(player, 121)) {
-    era.add(`base:${player}:2`, b);
-  }
-  return b;
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 119) || tal(player, 122) || tal(player, 121) ? b : 0,
+  );
+  return { b, e };
 }
 
-function ejac123() {
+function ejac123(e) {
   const cid = era_flag.target;
   const player = era_flag.player;
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
   if (e) {
     times_src(cid, 4, 3);
     const poison = [
@@ -1369,10 +1358,6 @@ function ejac123() {
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
-    era.add(`base:${player}:2`, -(ejac * 2));
-    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
-      era.set(`base:${player}:2`, ejac - 1);
-    }
     game.train.口中射精 = 2;
     if (Math.floor(Math.random() * 5) === 0 && tal(cid, 340)) {
       era.set(`cflag:${cid}:113`, 4);
@@ -1383,10 +1368,6 @@ function ejac123() {
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
-    era.add(`base:${player}:2`, -ejac);
-    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
-      era.set(`base:${player}:2`, ejac - 1);
-    }
     game.train.口中射精 = 1;
     if (Math.floor(Math.random() * 10) === 0 && tal(cid, 340)) {
       era.set(`cflag:${cid}:113`, 4);
@@ -1459,8 +1440,8 @@ async function com123() {
   era.print(`${name_of('expname', 22)}＋１`);
   chara(era_flag.target).dungeon.口交经验 += 1;
   source123(y);
-  const b = gauge123();
-  const e = ejac123();
+  const { b, e } = gauge123();
+  ejac123(e);
   await com_ejac_player_milk(b);
   after123(e);
   return 1;
@@ -1585,18 +1566,16 @@ function gauge124() {
   b = times(b, [1, 1.2, 1.3, 1.5, 1.7, 2][Math.min(abl(cid, 32), 5)]);
   if (tal(cid, 52)) b = times(b, 2);
   b = times(b, [1, 1.5, 2, 2.5, 3.5, 5][Math.min(abl(player, 0), 5)]);
-  if (tal(player, 119) || tal(player, 122) || tal(player, 121)) {
-    era.add(`base:${player}:2`, b);
-  }
-  return b;
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 119) || tal(player, 122) || tal(player, 121) ? b : 0,
+  );
+  return { b, e };
 }
 
-function ejac124() {
+function ejac124(e) {
   const cid = era_flag.target;
   const player = era_flag.player;
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
   if (e) {
     times_src(cid, 4, 3);
     const poison = [
@@ -1619,10 +1598,6 @@ function ejac124() {
     era.print('大量射精');
     era.print('精液经验＋９');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
-    era.add(`base:${player}:2`, -(ejac * 2));
-    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
-      era.set(`base:${player}:2`, ejac - 1);
-    }
     game.train.口中射精 = 2;
     if (Math.floor(Math.random() * 5) === 0 && tal(cid, 340)) {
       era.set(`cflag:${cid}:113`, 4);
@@ -1633,10 +1608,6 @@ function ejac124() {
     era.print('射精');
     era.print('精液经验＋３');
     era.set(`stain:${player}:2`, stain(player, 2) | 4);
-    era.add(`base:${player}:2`, -ejac);
-    if ((era.get(`base:${player}:2`) || 0) >= ejac) {
-      era.set(`base:${player}:2`, ejac - 1);
-    }
     game.train.口中射精 = 1;
     if (Math.floor(Math.random() * 10) === 0 && tal(cid, 340)) {
       era.set(`cflag:${cid}:113`, 4);
@@ -1702,8 +1673,8 @@ async function com124() {
   era.print(`${name_of('expname', 22)}＋１`);
   chara(era_flag.target).dungeon.口交经验 += 1;
   source124(y);
-  const b = gauge124();
-  const e = ejac124();
+  const { b, e } = gauge124();
+  ejac124(e);
   await com_ejac_player_milk(b);
   after124(e);
   return 1;
@@ -2160,8 +2131,8 @@ async function com125() {
   era.print(`${name_of('expname', 10)}＋１`);
   chara(era_flag.target).dungeon.自慰经验 += 1;
   source125(y);
-  const b = gauge124();
-  const e = ejac124();
+  const { b, e } = gauge124();
+  ejac124(e);
   await com_ejac_player_milk(b);
   after125(e);
   return 1;
@@ -2204,10 +2175,11 @@ function gauge126() {
   b = times(b, [1, 1.2, 1.3, 1.5, 1.7, 2][Math.min(abl(cid, 32), 5)]);
   if (tal(cid, 52)) b = times(b, 2);
   b = times(b, [1, 1.5, 2, 2.5, 3.5, 5][Math.min(abl(player, 0), 5)]);
-  if (tal(player, 119) || tal(player, 122) || tal(player, 121)) {
-    era.add(`base:${player}:2`, b);
-  }
-  return b;
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 119) || tal(player, 122) || tal(player, 121) ? b : 0,
+  );
+  return { b, e };
 }
 
 function after126(e) {
@@ -2271,8 +2243,8 @@ async function com126() {
   era.print(`${name_of('expname', 22)}＋１`);
   chara(era_flag.target).dungeon.口交经验 += 1;
   source126(y);
-  const b = gauge126();
-  const e = ejac124();
+  const { b, e } = gauge126();
+  ejac124(e);
   await com_ejac_player_milk(b);
   after126(e);
   return 1;
@@ -2300,8 +2272,8 @@ async function com127() {
   era.print(`${name_of('expname', 22)}＋１`);
   chara(era_flag.target).dungeon.口交经验 += 1;
   source124(y);
-  const b = gauge124();
-  const e = ejac124();
+  const { b, e } = gauge124();
+  ejac124(e);
   await com_ejac_player_milk(b);
   after124(e);
   return 1;

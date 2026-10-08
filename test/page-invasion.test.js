@@ -2364,9 +2364,9 @@ test('invasion_event_seiei 战斗体：防御型 18 与血量/攻防套算', asy
   fixture.store.set('callname:1:-1', '勇者1');
   fixture.store.set('callname:1:-2', '勇者1');
   fixture.store.set('base:1:0', 20000);
-  fixture.store.set('maxbase:1:0', 20000);
+  fixture.store.set('maxbase:1:0', 30000);
   fixture.store.set('base:1:1', 20000);
-  fixture.store.set('maxbase:1:1', 20000);
+  fixture.store.set('maxbase:1:1', 30000);
   fixture.store.set('cflag:1:11', 100); // 攻击
   fixture.store.set('cflag:1:12', 100); // 防御
   fixture.store.set('base:0:0', 10000); // 魔王体力（本用例不走旧无实参缺陷）
@@ -2433,7 +2433,7 @@ test('invasion_event_seiei 战斗体：防御型 18 与血量/攻防套算', asy
   );
   // 的 (cur/max) 数值列（条后文字）不可被 barWidth 吞掉
   assert(
-    progress_outs(fixture).includes(' 22048/20000'),
+    progress_outs(fixture).includes(' 22048/30000'),
     '魔王军体力条的数值列可见（显示发生在 SINKOU 补正之后）',
   );
   assert(
@@ -2478,7 +2478,7 @@ test('invasion_event_seiei 战斗体：精锐反击的伤害 ×5 与防御折半
     '第二回合按折半后的防御 66 结算（M10803 的目标）',
   );
   assert.equal(fixture.store.get('cflag:1:12'), 44, '防御 66/3*2 = 44');
-  assert.equal(fixture.store.get('base:1:0'), -70, 'HP 350 - 420');
+  assert.equal(fixture.store.get('base:1:0'), 0, 'HP 350 - 420 后钳至 0');
 });
 
 test('invasion_event_seiei 战斗体：第一条退场检查带实参、判精锐部队（#652 改正）', async () => {
@@ -3901,8 +3901,8 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
     fixture.store.set('base:0:1', 10000);
     seed_seiei(fixture, 18);
     seed_seiei(fixture, 19);
-    // 精锐体力归零：一击必杀，避免进入第二轮（本用例只量第一轮的算式）
-    fixture.store.set('base:18:0', 0);
+    // 普通档留 75 体力进入击溃判定，保留实际扣量的区分力；会心档直接击杀。
+    fixture.store.set('base:18:0', roll5 === 0 ? 5000 : 5675);
     fixture.store.set('talent:18:251', talent251);
     const state = { sinkou: 2048, yusya_i: 1 };
     const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
@@ -3918,8 +3918,8 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
   const crit = await run(0);
   assert.equal(crit.store.get('cflag:18:12'), 100, '精锐防御减半');
   assert.equal(crit.store.get('cflag:18:11'), 150 - 28, '攻击 -= 2800/100');
-  assert.equal(crit.store.get('base:18:0'), 0 - 11200, '体力 -= 2800×4');
-  assert.equal(crit.store.get('base:18:1'), 9000 - 11200, '气力同减');
+  assert.equal(crit.store.get('base:18:0'), 0, '体力扣至 0 下限');
+  assert.equal(crit.store.get('base:18:1'), 0, '气力同样扣至 0 下限');
   assert(crit.text_lines().includes('迅猛的一击！'), '会心提示');
   assert(
     crit
@@ -3930,7 +3930,11 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
 
   const normal = await run(1);
   assert.equal(normal.store.get('cflag:18:11'), 150 - 28, '攻击同样按 /100 削');
-  assert.equal(normal.store.get('base:18:0'), 0 - 5600, '普通档 ×2');
+  assert.equal(
+    normal.store.get('base:18:0'),
+    75,
+    '血量/攻防套算：普通档实际扣除 5600 点体力',
+  );
   assert(
     normal
       .text_lines()
@@ -3941,7 +3945,13 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
 
   const ninja = await run(0, { talent251: 1 });
   assert.equal(ninja.store.get('cflag:18:11'), 150, '忍术持有者不吃攻击削弱');
-  assert.equal(ninja.store.get('base:18:0'), 0 - 11200, '体力照扣');
+  assert.equal(ninja.store.get('base:18:0'), 0, '体力照扣至 0 下限');
+  assert(
+    ninja
+      .text_lines()
+      .includes('勇者1率领魔王军的攻击使精锐部队受到了11200点伤害！'),
+    '忍术持有者仍受到会心档伤害',
+  );
 });
 
 test('[2] 已征服的人间界（经征服后菜单的 [0]）：强制征收 ×5 与经验 /2', async () => {
