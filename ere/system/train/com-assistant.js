@@ -1500,6 +1500,7 @@ async function com64() {
     } else era.set('tflag:0', 1);
   }
   if (assi_e === 2) {
+    chara(assi).train.射精经验 += 2;
     chara(target).dungeon.精液经验 += 1;
     era.print('大量射精（助手）');
     era.print('精液经验＋１');
@@ -1508,6 +1509,7 @@ async function com64() {
     if (t41 === 1 && !tequip(target, 36)) era.set('tflag:38', 2);
   } else if (assi_e === 1) {
     era.print('射精（助手）');
+    chara(assi).train.射精经验 += 1;
     mark_penis_stain(assi);
     era.set('tflag:6', 1);
     if (t41 === 1 && !tequip(target, 36)) era.set('tflag:38', 1);
@@ -1766,6 +1768,7 @@ async function com66() {
   print_same_sex_exp(target, MASTER, 7, 7);
   if (tal(MASTER, 121)) src.times(13, 0.5);
   if (assi_e === 2) {
+    chara(assi).train.射精经验 += 2;
     chara(target).dungeon.精液经验 += 3;
     era.print('大量射精（助手）');
     era.print('精液经验＋３');

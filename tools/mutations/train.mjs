@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1048; // #775：新增 2 条三人调教主人射精经验归属守护（M15045-M15046）；此前沿革见 git 历史。
+export const COUNT = 1060; // #777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   // —— #565 已实现函数的存根调用点接入 ——
@@ -11420,5 +11420,131 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     chara(era_flag.player).train.射精经验 += 2;`,
     tests: ['com-assistant'],
     must_mention: '主人射精经验归主人',
+  },
+  // —— #777：助手射精经验按档位记给助手 ——
+  {
+    desc: 'M15047 三人调教助手普通射精漏记经验',
+    file: 'ere/system/train/com-assistant.js',
+    find: `  } else if (assi_e === 1) {
+    era.print('射精（助手）');
+    chara(assi).train.射精经验 += 1;
+    mark_penis_stain(assi);`,
+    replace: `  } else if (assi_e === 1) {
+    era.print('射精（助手）');
+    mark_penis_stain(assi);`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15048 三人调教助手普通射精经验误加两点',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 1;
+    mark_penis_stain(assi);`,
+    replace: `    chara(assi).train.射精经验 += 2;
+    mark_penis_stain(assi);`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15049 三人调教助手普通射精经验误记给主人',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 1;
+    mark_penis_stain(assi);`,
+    replace: `    chara(MASTER).train.射精经验 += 1;
+    mark_penis_stain(assi);`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15050 三人调教助手普通射精经验误记给对象',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 1;
+    mark_penis_stain(assi);`,
+    replace: `    chara(target).train.射精经验 += 1;
+    mark_penis_stain(assi);`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15051 三人调教助手大量射精漏记经验',
+    file: 'ere/system/train/com-assistant.js',
+    find: `  if (assi_e === 2) {
+    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 1;`,
+    replace: `  if (assi_e === 2) {
+    chara(target).dungeon.精液经验 += 1;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15052 三人调教助手大量射精经验误加一点',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 1;`,
+    replace: `    chara(assi).train.射精经验 += 1;
+    chara(target).dungeon.精液经验 += 1;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15053 三人调教助手大量射精经验误记给主人',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 1;`,
+    replace: `    chara(MASTER).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 1;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15054 三人调教助手大量射精经验误记给对象',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 1;`,
+    replace: `    chara(target).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 1;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15055 双枪口交助手大量射精漏记经验',
+    file: 'ere/system/train/com-assistant.js',
+    find: `  if (assi_e === 2) {
+    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 3;`,
+    replace: `  if (assi_e === 2) {
+    chara(target).dungeon.精液经验 += 3;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15056 双枪口交助手大量射精经验误加一点',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 3;`,
+    replace: `    chara(assi).train.射精经验 += 1;
+    chara(target).dungeon.精液经验 += 3;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15057 双枪口交助手大量射精经验误记给主人',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 3;`,
+    replace: `    chara(MASTER).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 3;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
+  },
+  {
+    desc: 'M15058 双枪口交助手大量射精经验误记给对象',
+    file: 'ere/system/train/com-assistant.js',
+    find: `    chara(assi).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 3;`,
+    replace: `    chara(target).train.射精经验 += 2;
+    chara(target).dungeon.精液经验 += 3;`,
+    tests: ['com-assistant'],
+    must_mention: '助手射精经验归助手',
   },
 ];

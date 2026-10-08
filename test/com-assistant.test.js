@@ -299,6 +299,68 @@ for (const [role, player] of [
   ['助手主导', ASSI],
 ]) {
   for (const [label, maximum, grade, remaining] of [
+    ['未射精', 100000, 0, 8190],
+    ['普通射精', 5000, 1, 3190],
+    ['大量射精', 3000, 2, 2190],
+    ['大量射精余量封顶', 1000, 2, 999],
+  ]) {
+    test(`#777 三人调教助手射精经验归属：${role}，助手${label}`, async () => {
+      const world = seed_world({ player });
+      const { fixture, era_flag, com_able_family } = world;
+      fixture.era.addCharacterForTrain(ASSI);
+      const { chara } = fixture.load_module('facade/chara');
+      era_flag.assiplay = player === ASSI ? 1 : 0;
+      for (const cid of [0, ASSI]) {
+        fixture.era.set(`talent:${cid}:122`, 1);
+        fixture.era.set(`base:${cid}:2`, 0);
+      }
+      fixture.era.set('maxbase:0:2', 100000);
+      fixture.era.set(`maxbase:${ASSI}:2`, maximum);
+      chara(TARGET).dungeon.肛门经验 = 20;
+      chara(0).train.射精经验 = 7;
+      chara(ASSI).train.射精经验 = 11;
+      chara(TARGET).train.射精经验 = 13;
+
+      assert.equal(await com_able_family.call(64), 1, '合法可执行的三人调教');
+      assert.equal(await run_com(world, 64), 1);
+      assert.equal(
+        chara(ASSI).train.射精经验,
+        11 + grade,
+        '助手射精经验归助手',
+      );
+      assert.equal(chara(0).train.射精经验, 7, '主人不获助手经验');
+      assert.equal(chara(TARGET).train.射精经验, 13, '对象不获助手经验');
+      assert.equal(
+        fixture.era.get(`base:${ASSI}:2`),
+        remaining,
+        '助手射精后扣除对应档位槽量',
+      );
+      assert.equal(
+        fixture.era.get('tflag:6') || 0,
+        grade,
+        '助手射精旗对应档位',
+      );
+      assert.equal(fixture.era.get('base:0:2'), 5280, '主人射精槽独立蓄积');
+      assert.equal(fixture.era.get('tflag:2') || 0, 0, '主人未射精');
+      assert.equal(
+        fixture.era.get(`stain:${ASSI}:2`) & 4,
+        grade ? 4 : 0,
+        '助手射精污垢对应档位',
+      );
+      assert.equal(
+        fixture.text_lines().includes('射精（助手）'),
+        grade === 1,
+        '助手普通射精提示对应档位',
+      );
+      assert.equal(
+        fixture.text_lines().includes('大量射精（助手）'),
+        grade === 2,
+        '助手大量射精提示对应档位',
+      );
+    });
+  }
+
+  for (const [label, maximum, grade, remaining] of [
     ['未射精', 100000, 0, 5280],
     ['普通射精', 5000, 1, 280],
     ['大量射精', 2000, 2, 1280],
@@ -384,6 +446,61 @@ for (const [role, player] of [
       );
     });
   }
+}
+
+for (const [label, maximum, grade, remaining, semen_exp] of [
+  ['未射精', 200000, 0, 131040, 0],
+  ['普通射精', 100000, 1, 31040, 1],
+  ['大量射精', 60000, 2, 11040, 3],
+  ['大量射精余量封顶', 1000, 2, 999, 3],
+]) {
+  test(`#777 双枪口交助手射精经验归属：助手${label}`, async () => {
+    const world = seed_world({ player: ASSI });
+    const { fixture, era_flag, com_able_family } = world;
+    const { chara } = fixture.load_module('facade/chara');
+    fixture.era.addCharacterForTrain(ASSI);
+    era_flag.assiplay = 1;
+    for (const cid of [0, ASSI]) {
+      fixture.era.set(`talent:${cid}:122`, 1);
+      fixture.era.set(`base:${cid}:2`, 0);
+    }
+    fixture.era.set('talent:0:91', 1);
+    fixture.era.set('maxbase:0:2', 1000000);
+    fixture.era.set(`maxbase:${ASSI}:2`, maximum);
+    chara(0).train.射精经验 = 7;
+    chara(ASSI).train.射精经验 = 11;
+    chara(TARGET).train.射精经验 = 13;
+    chara(TARGET).dungeon.精液经验 = 17;
+
+    assert.equal(await com_able_family.call(66), 1, '合法可执行的双枪口交');
+    assert.equal(await run_com(world, 66), 1);
+    assert.equal(chara(ASSI).train.射精经验, 11 + grade, '助手射精经验归助手');
+    assert.equal(chara(0).train.射精经验, 7, '主人不获助手经验');
+    assert.equal(chara(TARGET).train.射精经验, 13, '对象不获助手经验');
+    assert.equal(
+      chara(TARGET).dungeon.精液经验,
+      17 + semen_exp,
+      '对象精液经验保留原结算',
+    );
+    assert.equal(
+      fixture.era.get(`base:${ASSI}:2`),
+      remaining,
+      '助手射精后扣除对应档位槽量',
+    );
+    assert.equal(fixture.era.get('tflag:6') || 0, grade, '助手射精旗对应档位');
+    assert.equal(fixture.era.get('base:0:2'), 131040, '主人射精槽独立蓄积');
+    assert.equal(fixture.era.get('tflag:0') || 0, 0, '主人未射精');
+    assert.equal(
+      fixture.text_lines().includes('射精（助手）'),
+      grade === 1,
+      '助手普通射精提示对应档位',
+    );
+    assert.equal(
+      fixture.text_lines().includes('大量射精（助手）'),
+      grade === 2,
+      '助手大量射精提示对应档位',
+    );
+  });
 }
 
 test('com66：助手射精旗——通常射精 tflag:6 = 1，大量射精 = 2', async () => {
