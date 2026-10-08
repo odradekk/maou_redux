@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1044; // #770：恢复 8 条喷乳守护（M13002、M9861-M9867），新增 8 条合法槽值下的分档与扣量守护（M15035-M15042）；此前沿革见 git 历史。
+export const COUNT = 1046; // #773：新增 2 条三人调教喷乳增量归属守护（M15043-M15044）；此前沿革见 git 历史。
 
 export default [
   // —— #565 已实现函数的存根调用点接入 ——
@@ -11380,5 +11380,22 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     replace: '  chara(cid).train.母乳槽 = total - ejac * grade;',
     tests: ['source-check'],
     must_mention: '#770 调教对象喷乳分档',
+  },
+  // —— #773：三人调教按当前调教者选择喷乳增量 ——
+  {
+    desc: 'M15043 三人调教主人主导时误用助手增量结算母乳槽',
+    file: 'ere/system/train/com-assistant.js',
+    find: '  await com_ejac_player_milk(era_flag.player === MASTER ? b : b2);',
+    replace: '  await com_ejac_player_milk(b2);',
+    tests: ['com-assistant'],
+    must_mention: '#773 三人调教喷乳归属：主人主导',
+  },
+  {
+    desc: 'M15044 三人调教助手主导时误用主人增量结算母乳槽',
+    file: 'ere/system/train/com-assistant.js',
+    find: '  await com_ejac_player_milk(era_flag.player === MASTER ? b : b2);',
+    replace: '  await com_ejac_player_milk(b);',
+    tests: ['com-assistant'],
+    must_mention: '#773 三人调教喷乳归属：助手主导',
   },
 ];
