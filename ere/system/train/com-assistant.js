@@ -1512,7 +1512,7 @@ async function com64() {
     era.set('tflag:6', 1);
     if (t41 === 1 && !tequip(target, 36)) era.set('tflag:38', 1);
   }
-  await com_ejac_player_milk(b2);
+  await com_ejac_player_milk(era_flag.player === MASTER ? b : b2);
   const stain_part = { 1: 3, 2: 4, 3: 0 };
   if (stain_part[t41] !== undefined && (tal(assi, 121) || tal(assi, 122))) {
     stain_exchange(target, stain_part[t41], assi, 2);

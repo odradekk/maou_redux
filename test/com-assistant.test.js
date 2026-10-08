@@ -294,6 +294,52 @@ test('com64/com69/com70：升格抵达时显式回填 SELECTCOM', async () => {
   }
 });
 
+for (const [role, player] of [
+  ['主人主导', 0],
+  ['助手主导', ASSI],
+]) {
+  for (const [obedience, assistant_increment, assistant_milk] of [
+    [0, 5040, 2012],
+    [5, 8190, 2957],
+  ]) {
+    test(`#773 三人调教喷乳归属：${role}，顺从 ${obedience}`, async () => {
+      const world = seed_world({ player });
+      const { fixture, era_flag, com_able_family } = world;
+      era_flag.assiplay = player === ASSI ? 1 : 0;
+      for (const cid of [0, ASSI]) {
+        fixture.era.set(`talent:${cid}:122`, 1);
+        fixture.era.set(`talent:${cid}:130`, 1);
+        fixture.era.set(`abl:${cid}:1`, 0);
+        fixture.era.set(`base:${cid}:2`, 0);
+        fixture.era.set(`maxbase:${cid}:3`, 100000);
+        fixture.era.set(`base:${cid}:3`, 123);
+      }
+      fixture.era.set(`base:${player}:3`, 0);
+      fixture.era.set(`abl:${TARGET}:10`, obedience);
+      fixture.era.set(`exp:${TARGET}:1`, 20);
+
+      assert.equal(await com_able_family.call(64), 1, '合法可执行的三人调教');
+      assert.equal(await run_com(world, 64), 1);
+      assert.equal(fixture.era.get('base:0:2'), 5280, '主人射精槽增量不变');
+      assert.equal(
+        fixture.era.get(`base:${ASSI}:2`),
+        assistant_increment,
+        '助手射精槽增量不变',
+      );
+      assert.equal(
+        fixture.era.get(`base:${player}:3`),
+        player === 0 ? 2084 : assistant_milk,
+        '调教者母乳槽使用自身增量',
+      );
+      assert.equal(
+        fixture.era.get(`base:${player === 0 ? ASSI : 0}:3`),
+        123,
+        '未主导者母乳槽不变',
+      );
+    });
+  }
+}
+
 test('com66：助手射精旗——通常射精 tflag:6 = 1，大量射精 = 2', async () => {
   // 助手无 121/122 时 add_gauge 不动槽，射精档完全由预设槽位决定
   const world = seed_world();
