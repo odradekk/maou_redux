@@ -349,6 +349,8 @@ test('日结算·接入：event-nextday 的调用点真调 room_day（商店街�
 
 test('商店街·逛街档：扣所持金入账，体力 +20 气力 +50', async () => {
   const fixture = setup_world(500, 0);
+  fixture.store.set('maxbase:1:0', 3000);
+  fixture.store.set('maxbase:1:1', 2000);
   fixture.store.set('cflag:1:9', 2); // 勇者等级 2 → COST = 20
   const { dungeon_shop } = load(fixture);
   // 两掷都不中（1/3 与 1/2 都落空）→ 逛街档

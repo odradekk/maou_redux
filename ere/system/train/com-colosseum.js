@@ -55,6 +55,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const {
   train_message_a_family,
@@ -716,17 +717,8 @@ async function monster_ejaculation() {
     b = 0;
   }
 
-  era.add(`base:${master}:4`, b); // （BASE:2-4 属主 train，直写）
-
   // —— 射精判定 E ——
-  const s = era.get(`base:${master}:4`) || 0; // S = BASE:MASTER:4
-  const ejac = era.get(`maxbase:${master}:4`) || 0; // EJAC = MAXBASE:4
-  let e = 0;
-  if (s > ejac * 2) {
-    e = 2;
-  } else if (s > ejac) {
-    e = 1;
-  }
+  const e = settle_ejaculation_gauge(master, b, 4);
 
   // 射精している → SOURCE 修正（精液中毒 ABL:32 分档）
   const src = (idx) => era.get(`source:${target}:${idx}`) || 0;
@@ -745,10 +737,6 @@ async function monster_ejaculation() {
     chara(target).dungeon.精液经验 += 3; // EXP:20（属主 dungeon，门面）
     era.print('怪物大量射精');
     era.print('精液经验＋３');
-    era.add(`base:${master}:4`, -ejac * 2);
-    if ((era.get(`base:${master}:4`) || 0) >= ejac) {
-      era.set(`base:${master}:4`, ejac - 1);
-    }
     if (selectcom === 21 || selectcom === 34) {
       era.set('tflag:38', 2); // 私处内射精（怪物）
     }
@@ -762,10 +750,6 @@ async function monster_ejaculation() {
     chara(target).dungeon.精液经验 += 1;
     era.print('怪物射精');
     era.print('精液经验＋1');
-    era.add(`base:${master}:4`, -ejac);
-    if ((era.get(`base:${master}:4`) || 0) >= ejac) {
-      era.set(`base:${master}:4`, ejac - 1);
-    }
     if (selectcom === 21 || selectcom === 34) {
       era.set('tflag:38', 1);
     }

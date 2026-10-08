@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 60; // #739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 62; // #769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -767,5 +767,23 @@ export default [
     replace: '    if (match === null) { // 变异：不认显式播种',
     tests: ['fixture'],
     must_mention: '用例显式播种的名字键算作已声明',
+  },
+  // —— #769：BASE 写入与真 EraApi 一致 ——
+  {
+    desc: 'M15020 夹具 BASE 写入不按正 MAXBASE 钳制',
+    file: 'test/helpers/era-fixture.js',
+    find: '    return max > 0 ? Math.min(max, Math.max(0, value)) : value;',
+    replace: '    return value; // 变异：BASE 写入不钳制',
+    tests: ['engine-contract'],
+    must_mention: 'set 钳到上限',
+  },
+  {
+    desc: 'M15021 夹具 add(0) 仍走写入路径并留下写记录',
+    file: 'test/helpers/era-fixture.js',
+    find: '    if (!value) {\n      return era.get(var_name);\n    }',
+    replace:
+      '    if (false && !value) {\n      return era.get(var_name);\n    } // 变异：零增量仍写入',
+    tests: ['engine-contract'],
+    must_mention: '零增量只读取当前值',
   },
 ];

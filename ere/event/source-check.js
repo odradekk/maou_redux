@@ -52,6 +52,7 @@
  */
 
 const era = require('#/era-electron');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
@@ -1802,25 +1803,17 @@ function target_ejac_check() {
   }
 
   local = 1000 + idiv(local - 1000, 2);
-  chara(cid).train.射精槽 += local; // BASE:2 += LOCAL
-  if (is_mijyuku && mijyuku_kenkai < 2000 && chara(cid).train.射精槽 >= 2000) {
+  let total = mijyuku_kenkai + local;
+  if (is_mijyuku && mijyuku_kenkai < 2000 && total >= 2000) {
     era.print(
       `${era.get(`callname:${cid}:-1`) ?? ''}尚未成熟的${clitoris_name()}似乎渐渐有了感觉。`,
     );
   }
-  if (is_mijyuku && mijyuku_kenkai >= 2000 && chara(cid).train.射精槽 <= 2000) {
-    chara(cid).train.射精槽 = 2000;
+  if (is_mijyuku && mijyuku_kenkai >= 2000 && total <= 2000) {
+    total = 2000;
   }
 
-  const ejac = era.get(`maxbase:${cid}:2`) || 0;
-  let grade;
-  if (chara(cid).train.射精槽 > ejac * 2) {
-    grade = 2;
-  } else if (chara(cid).train.射精槽 > ejac) {
-    grade = 1;
-  } else {
-    grade = 0;
-  }
+  const grade = settle_ejaculation_gauge(cid, total - mijyuku_kenkai);
   if (grade === 0) {
     return;
   }
@@ -1877,10 +1870,6 @@ function target_ejac_check() {
     }
 
     chara(cid).train.阴茎污渍 |= 4;
-    chara(cid).train.射精槽 -= ejac * 2;
-    if (chara(cid).train.射精槽 >= ejac) {
-      chara(cid).train.射精槽 = ejac - 1;
-    }
 
     game.system.对象射精 = 2;
     era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
@@ -1925,10 +1914,6 @@ function target_ejac_check() {
     }
 
     chara(cid).train.阴茎污渍 |= 4;
-    chara(cid).train.射精槽 -= ejac;
-    if (chara(cid).train.射精槽 >= ejac) {
-      chara(cid).train.射精槽 = ejac - 1;
-    }
 
     game.system.对象射精 = 1;
     era.set(`nowex:${cid}:6`, (era.get(`nowex:${cid}:6`) || 0) + 1);

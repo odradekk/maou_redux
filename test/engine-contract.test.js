@@ -223,6 +223,78 @@ async function run_sequence(make_side, steps) {
 /** 空步骤（纯置位/预置），只为让轨迹里留下这一拍的快照 */
 const noop = () => {};
 
+test('夹具：BASE 写入按正上限钳制，其余相关表保持原值', () => {
+  const fixture = create_era_fixture();
+  const { era, store, var_writes } = fixture;
+
+  era.beginTrain(1);
+  store.set('maxbase:1:0', 100);
+  assert.equal(era.set('base:1:0', 120), 100, 'set 钳到上限');
+  assert.equal(era.add('base:1:0', -150), 0, 'add 钳到下限');
+  assert.equal(era.add('base:1:0', 40), 40, '普通累加保留结果');
+
+  store.set('maxbase:1:1', 0);
+  assert.equal(era.set('base:1:1', 120), 120, '零上限不钳制');
+  store.set('maxbase:1:2', -1);
+  assert.equal(era.set('base:1:2', -20), -20, '负上限不钳制');
+
+  store.set('base:1:3', 150);
+  store.set('maxbase:1:3', 100);
+  assert.equal(era.get('base:1:3'), 150, '读取不修正历史值');
+  assert.equal(era.set('maxbase:1:0', -10), -10, 'maxbase 写入不钳制');
+  assert.equal(era.set('delta:1:0', -10), -10, 'delta 写入不钳制');
+
+  const writes_before_zero_add = var_writes.length;
+  assert.equal(era.add('base:1:3', 0), 150, '零增量只读取当前值');
+  assert.equal(var_writes.length, writes_before_zero_add, '零增量不留下写记录');
+});
+
+engine_test('契约比对：真 EraApi 与夹具的 BASE set/add 钳制逐步一致', () => {
+  const api = engine.era_api.prototype;
+  const engine_state = {
+    data: {
+      base: { 1: { 0: 20, 1: 20 } },
+      maxbase: { 1: { 0: 100, 1: 0 } },
+      delta: { 1: { 0: 0 } },
+    },
+    staticData: { base: {}, juel: {} },
+    fieldNames: {},
+    extendedTables: {},
+    era: {
+      error(message) {
+        throw new Error(message);
+      },
+    },
+    get: api.get,
+    set: api.set,
+  };
+  const fixture = create_era_fixture();
+  fixture.era.beginTrain(1);
+  fixture.store.set('base:1:0', 20);
+  fixture.store.set('base:1:1', 20);
+  fixture.store.set('maxbase:1:0', 100);
+  fixture.store.set('maxbase:1:1', 0);
+  fixture.store.set('delta:1:0', 0);
+
+  const steps = [
+    ['set', 'base:1:0', 120],
+    ['add', 'base:1:0', -150],
+    ['add', 'base:1:0', 40],
+    ['set', 'base:1:1', 120],
+    ['set', 'maxbase:1:0', -10],
+    ['set', 'delta:1:0', -10],
+    ['add', 'base:1:1', 0],
+  ];
+  const engine_results = steps.map(([method, name, value]) =>
+    api[method].call(engine_state, name, value),
+  );
+  const fixture_results = steps.map(([method, name, value]) =>
+    fixture.era[method](name, value),
+  );
+
+  assert.deepEqual(fixture_results, engine_results);
+});
+
 // —— 主序列：allowWait 状态机全部转移 + 三次缺陷的形式 ——
 //
 // 序列按 waits[] 当前的观测面（{waited, rows_at_wait, forced}）与每步的

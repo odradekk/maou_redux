@@ -278,14 +278,24 @@ test('ARCANA_BATTLE：超时（TURN > 15）撤退——败北叙述、回合损�
 
 test('ARCANA_BATTLE：先制（元勇者 TALENT:252）×2 先制打击——力竭而非投降', async () => {
   const fixture = setup_arcana_world();
+  fixture.store.set('flag:5', 32);
   fixture.store.set('talent:1:252', 1);
   const mod = fixture.load_module('invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, knob());
 
   assert.equal(result, 2, '仍胜');
   // 先制（arg1=2）：190 ×2 = 380 → 防御层扣 4 → 376；骑士 HP 400-376=24
-  // 回合 0 再补一刀 233 → -209（力竭档，非投降档）
-  assert.equal(fixture.store.get('base:2:0'), 400 - 376 - 233, '两次打击累计');
+  // 回合 0 再补一刀 233，体力钳至 0（力竭档，非投降档）
+  assert.equal(fixture.store.get('base:2:0'), 0, '两次打击累计后体力钳至 0');
+  const texts = fixture.text_lines();
+  assert(
+    texts.some((text) => text.includes('阿尔的攻击令贝丝受到376点伤害！')),
+    '两次打击累计：先制伤害为 376',
+  );
+  assert(
+    texts.some((text) => text.includes('阿尔的攻击令贝丝受到233点伤害！')),
+    '两次打击累计：回合内伤害为 233',
+  );
   assert.equal(fixture.store.get('base:1:0'), 1000, '元勇者 HP 不变');
   assert.equal(fixture.store.get('base:1:1'), 1000 - 6, '骑士反击 MDMG');
   assert.equal(fixture.store.get('exp:1:80'), 18, '两次击中各 +9');

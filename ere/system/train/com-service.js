@@ -14,6 +14,7 @@ const { game } = require('#/facade/game');
 const { e_get, monster_name } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
 const { com_order } = require('#/system/train/com-order');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const {
   COM_MISSING,
@@ -322,10 +323,7 @@ function service_ejaculation({
   for (const [id, rates] of player_rates) {
     b = times(b, rate_by_abl(player, id, rates));
   }
-  if (add_if()) era.add(`base:${player}:2`, b);
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+  const e = settle_ejaculation_gauge(player, add_if() ? b : 0);
   if (e) {
     source.set(4, times(source.get(4), source4_rate));
     if (poison) {
@@ -344,11 +342,6 @@ function service_ejaculation({
       era.print('大量射精');
       era.print(`精液经验＋${semen_exp[1]}`);
       era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-      const remaining = Math.max(
-        (era.get(`base:${player}:2`) || 0) - ejac * 2,
-        0,
-      );
-      era.set(`base:${player}:2`, remaining >= ejac ? ejac - 1 : remaining);
       era.set(`tflag:${flag}`, 2);
     } else {
       era.add(`exp:${player}:3`, 1);
@@ -356,8 +349,6 @@ function service_ejaculation({
       era.print('射精');
       era.print(`精液经验＋${semen_exp[0]}`);
       era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-      const remaining = Math.max((era.get(`base:${player}:2`) || 0) - ejac, 0);
-      era.set(`base:${player}:2`, remaining >= ejac ? ejac - 1 : remaining);
       era.set(`tflag:${flag}`, 1);
     }
   }

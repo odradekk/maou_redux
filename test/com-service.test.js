@@ -225,6 +225,20 @@ test('COM33：射精时 SOURCE:4 乘 2、精液经验为 1/2', async () => {
   assert.equal(world.fixture.store.get('tflag:9'), 2);
 });
 
+test('COM33：满射精槽加上本轮增量后射精并保留余量', async () => {
+  const world = seed_service_world(33);
+  arm_service_world(world);
+  world.fixture.store.set('maxbase:0:2', 100000);
+  world.fixture.store.set('base:0:2', 99000);
+
+  assert.equal(await world.com_family.call(33), 1);
+  assert.equal(world.fixture.store.get('tflag:9'), 1);
+  assert.ok(
+    world.fixture.store.get('base:0:2') > 0,
+    '扣除一槽后应保留溢出余量',
+  );
+});
+
 test('COM35：玩家执行时重置玩家而非固定 0 号的污渍', async () => {
   const world = seed_service_world(35);
   const { fixture, era_flag } = world;

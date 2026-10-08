@@ -2832,6 +2832,7 @@ test('夜这い（NIGHT_STALKING_CHECK）：SELF_KOJO 以事件码 5 在调教�
 function seed_pillory(fixture, cid = 31, name = '温妮') {
   join_slave_chara(fixture, cid, name);
   fixture.store.set(`cflag:${cid}:1`, 8);
+  fixture.store.set(`cflag:${cid}:665`, 0);
   fixture.store.set('flag:10005', cid);
   fixture.store.set('talentname:200', '战士');
   for (const [n, v] of [

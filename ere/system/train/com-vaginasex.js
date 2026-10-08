@@ -33,6 +33,7 @@ const { chara } = require('#/facade/chara');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { incest } = require('#/system/train/incest');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 
 /** incest 使用当前 TARGET/PLAYER 计算亲族关系。 */
 function call_incest() {
@@ -185,15 +186,10 @@ async function com_ejac_player_sex(rand) {
     b = times(b, 0.6);
   }
 
-  // 蓄积（扶她 121 / 男人 122 才有射精蓄积量）
-  if (tal(player, 121) || tal(player, 122)) {
-    era.add(`base:${player}:2`, b);
-  }
-
-  // 射精判定（S = 蓄积值、EJAC = 上限）
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 121) || tal(player, 122) ? b : 0,
+  );
 
   const print_ejac = (heavy) => {
     // 大量 / 通常射精的部位文案，heavy 表示大量射精
@@ -237,9 +233,6 @@ async function com_ejac_player_sex(rand) {
     era.print('精液经验＋２');
     // 调教者的阴茎沾上精液（STAIN 位 4）
     era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-    // 蓄积量复位（超上限钳回 EJAC-1）
-    const next = Math.max((era.get(`base:${player}:2`) || 0) - ejac * 2, 0);
-    era.set(`base:${player}:2`, next >= ejac ? ejac - 1 : next);
     era.set('tflag:2', 2); // 性交射精
     if (!era_flag.assiplay && chara(cid).event.主人避孕套 === 0) {
       era.set('tflag:38', 2); // 阴道内射精（主人・无套）
@@ -254,8 +247,6 @@ async function com_ejac_player_sex(rand) {
     print_ejac(false);
     era.print('精液经验＋１');
     era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-    const next = Math.max((era.get(`base:${player}:2`) || 0) - ejac, 0);
-    era.set(`base:${player}:2`, next >= ejac ? ejac - 1 : next);
     era.set('tflag:2', 1);
     if (!era_flag.assiplay && chara(cid).event.主人避孕套 === 0) {
       era.set('tflag:38', 1);

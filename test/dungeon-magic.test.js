@@ -228,6 +228,7 @@ test('energy_bolt_magic 与 fireball_magic：角色法术造成伤害并消灭�
 
 test('energy_drain_magic 与 mind_drain_magic：对人格斗回复体力或气力', async () => {
   const { fixture, magic } = load_world();
+  fixture.store.set('maxbase:1:0', 2000);
   await magic.energy_drain_magic(4, 1, 2);
   assert.equal(fixture.store.get('base:2:1'), 955);
   assert.equal(fixture.store.get('base:1:0'), 1045);
@@ -453,6 +454,12 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       label: `魔法吸收 ${type}：按目标回复施法者体力或削对象气力`,
       spell: 'energy_drain_magic',
       type,
+      setup:
+        type === 3
+          ? { 'maxbase:2:0': 2000 }
+          : type === 1 || type === 4
+            ? { 'maxbase:1:0': 2000 }
+            : {},
       expected:
         type === 1
           ? { 'e:199': 1, 'exp:1:80': 120, 'base:1:0': 1045, 'base:1:1': 970 }
@@ -479,13 +486,18 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       label: `治疗 ${type}：按目标类型治疗队伍、怪物列或奴隶`,
       spell: 'heal_magic',
       type,
-      setup: type === 1 || type === 4 ? { 'base:1:0': 500 } : {},
+      setup:
+        type === 1 || type === 4
+          ? { 'base:1:0': 500 }
+          : type === 3
+            ? { 'base:2:0': 1200, 'maxbase:2:0': 2000 }
+            : {},
       expected:
         type === 1 || type === 4
           ? { 'base:1:0': 545, 'base:1:1': 995 }
           : type === 2
             ? { 'e:103': 11 }
-            : { 'base:2:0': 1045, 'base:2:1': 995 },
+            : { 'base:2:0': 1245, 'base:2:1': 995 },
     })),
     ...[1, 2, 3, 4].map((type) => ({
       label: `护盾 ${type}：无参私有 TARGET_TYPE 使各调用值都无效`,
@@ -511,6 +523,12 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       label: `精神吸收 ${type}：按目标削气力并回复施法者气力`,
       spell: 'mind_drain_magic',
       type,
+      setup:
+        type === 3
+          ? { 'maxbase:2:1': 2000 }
+          : type === 1 || type === 4
+            ? { 'maxbase:1:1': 2000 }
+            : {},
       expected:
         type === 1
           ? { 'e:199': 1, 'exp:1:80': 120, 'base:1:1': 1015 }

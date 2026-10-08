@@ -31,6 +31,7 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { clothtype_special_text } = require('#/page/page-clothtype');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const {
   COM_MISSING,
   com_able_family,
@@ -498,12 +499,7 @@ async function equip_com100() {
     if (tequip(target, 46)) b = times(b, 1.3);
     if (tequip(target, 98)) b = times(b, 1.5);
 
-    chara(player).train.触手射精槽 += b; // BASE:PLAYER:4
-    const s = chara(player).train.触手射精槽;
-    const ejac = era.get(`maxbase:${player}:4`) || 0;
-    let e = 0;
-    if (s > ejac * 2) e = 2;
-    else if (s > ejac) e = 1;
+    const e = settle_ejaculation_gauge(player, b, 4);
 
     if (e === 2) {
       chara(target).dungeon.精液经验 += 3; // EXP:20
@@ -511,20 +507,12 @@ async function equip_com100() {
       era.print('精液经验＋３');
       era.add('t:0', 1);
       if (tequip(target, 11)) game.train.对象膣内射精 = 2; // TFLAG:38
-      chara(player).train.触手射精槽 -= ejac * 2;
-      if (chara(player).train.触手射精槽 >= ejac) {
-        chara(player).train.触手射精槽 = ejac - 1;
-      }
     } else if (e === 1) {
       chara(target).dungeon.精液经验 += 1;
       era.print('触手射精');
       era.print('精液经验＋１');
       era.add('t:0', 1);
       if (tequip(target, 11)) game.train.对象膣内射精 = 1;
-      chara(player).train.触手射精槽 -= ejac;
-      if (chara(player).train.触手射精槽 >= ejac) {
-        chara(player).train.触手射精槽 = ejac - 1;
-      }
     }
     game.train.怪物射精或购入金 = e; // TFLAG:15
   }

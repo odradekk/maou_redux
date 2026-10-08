@@ -18,6 +18,7 @@
  */
 
 const era = require('#/era-electron');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -123,15 +124,10 @@ async function com_ejac_player_analsex(rand) {
     b = times(b, 0.5);
   }
 
-  // 蓄积（扶她 121 / 男人 122）
-  if (tal(player, 121) || tal(player, 122)) {
-    era.add(`base:${player}:2`, b);
-  }
-
-  // 射精判定
-  const s = era.get(`base:${player}:2`) || 0;
-  const ejac = era.get(`maxbase:${player}:2`) || 0;
-  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
+  const e = settle_ejaculation_gauge(
+    player,
+    tal(player, 121) || tal(player, 122) ? b : 0,
+  );
 
   // 肛内异常妊娠（大量 / 通常，TALENT:340 异常妊娠体质；
   // CFLAG:109 异常妊娠许可时概率更高：大量 1/3（否则 1/5）、通常 1/5（否则 1/10））
@@ -152,8 +148,6 @@ async function com_ejac_player_analsex(rand) {
     era.print('大量射精');
     era.print('精液经验＋２');
     era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-    const next = Math.max((era.get(`base:${player}:2`) || 0) - ejac * 2, 0);
-    era.set(`base:${player}:2`, next >= ejac ? ejac - 1 : next);
     era.set('tflag:2', 2);
     anal_pregnancy(true);
   } else if (e === 1) {
@@ -163,8 +157,6 @@ async function com_ejac_player_analsex(rand) {
     era.print('射精');
     era.print('精液经验＋１');
     era.set(`stain:${player}:2`, (era.get(`stain:${player}:2`) || 0) | 4);
-    const next = Math.max((era.get(`base:${player}:2`) || 0) - ejac, 0);
-    era.set(`base:${player}:2`, next >= ejac ? ejac - 1 : next);
     era.set('tflag:2', 1);
     anal_pregnancy(false);
   }
