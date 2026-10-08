@@ -1481,7 +1481,7 @@ async function com64() {
     }
   }
   if (master_e === 2) {
-    chara(era_flag.player).train.射精经验 += 2;
+    chara(MASTER).train.射精经验 += 2;
     chara(target).dungeon.精液经验 += 1;
     era.print('大量射精');
     era.print('精液经验＋１');
@@ -1492,7 +1492,7 @@ async function com64() {
     } else era.set('tflag:0', 2);
   } else if (master_e === 1) {
     era.print('射精');
-    chara(era_flag.player).train.射精经验 += 1;
+    chara(MASTER).train.射精经验 += 1;
     mark_penis_stain(MASTER);
     if (t40 === 1 || t40 === 2) {
       era.set('tflag:2', 1);

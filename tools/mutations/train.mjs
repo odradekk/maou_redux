@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1046; // #773：新增 2 条三人调教喷乳增量归属守护（M15043-M15044）；此前沿革见 git 历史。
+export const COUNT = 1048; // #775：新增 2 条三人调教主人射精经验归属守护（M15045-M15046）；此前沿革见 git 历史。
 
 export default [
   // —— #565 已实现函数的存根调用点接入 ——
@@ -11397,5 +11397,28 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     replace: '  await com_ejac_player_milk(b);',
     tests: ['com-assistant'],
     must_mention: '#773 三人调教喷乳归属：助手主导',
+  },
+  // —— #775：主人射精经验不随调教者切换归属 ——
+  {
+    desc: 'M15045 三人调教主人普通射精经验误写给当前调教者',
+    file: 'ere/system/train/com-assistant.js',
+    find: `  } else if (master_e === 1) {
+    era.print('射精');
+    chara(MASTER).train.射精经验 += 1;`,
+    replace: `  } else if (master_e === 1) {
+    era.print('射精');
+    chara(era_flag.player).train.射精经验 += 1;`,
+    tests: ['com-assistant'],
+    must_mention: '主人射精经验归主人',
+  },
+  {
+    desc: 'M15046 三人调教主人大量射精经验误写给当前调教者',
+    file: 'ere/system/train/com-assistant.js',
+    find: `  if (master_e === 2) {
+    chara(MASTER).train.射精经验 += 2;`,
+    replace: `  if (master_e === 2) {
+    chara(era_flag.player).train.射精经验 += 2;`,
+    tests: ['com-assistant'],
+    must_mention: '主人射精经验归主人',
   },
 ];
