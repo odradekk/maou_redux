@@ -298,6 +298,52 @@ for (const [role, player] of [
   ['主人主导', 0],
   ['助手主导', ASSI],
 ]) {
+  for (const [label, maximum, grade, remaining] of [
+    ['未射精', 100000, 0, 5280],
+    ['普通射精', 5000, 1, 280],
+    ['大量射精', 2000, 2, 1280],
+    ['大量射精余量封顶', 1000, 2, 999],
+  ]) {
+    test(`#775 三人调教射精经验归属：${role}，主人${label}`, async () => {
+      const world = seed_world({ player });
+      const { fixture, era_flag, com_able_family } = world;
+      const { chara } = fixture.load_module('facade/chara');
+      era_flag.assiplay = player === ASSI ? 1 : 0;
+      for (const cid of [0, ASSI]) {
+        fixture.era.set(`talent:${cid}:122`, 1);
+        fixture.era.set(`base:${cid}:2`, 0);
+      }
+      fixture.era.set('maxbase:0:2', maximum);
+      fixture.era.set(`maxbase:${ASSI}:2`, 100000);
+      chara(TARGET).dungeon.肛门经验 = 20;
+      chara(0).train.射精经验 = 7;
+      chara(ASSI).train.射精经验 = 11;
+      chara(TARGET).train.射精经验 = 13;
+
+      assert.equal(await com_able_family.call(64), 1, '合法可执行的三人调教');
+      assert.equal(await run_com(world, 64), 1);
+      assert.equal(chara(0).train.射精经验, 7 + grade, '主人射精经验归主人');
+      assert.equal(chara(ASSI).train.射精经验, 11, '未射精助手不获主人经验');
+      assert.equal(chara(TARGET).train.射精经验, 13, '对象不获主人经验');
+      assert.equal(
+        fixture.era.get('base:0:2'),
+        remaining,
+        '主人射精后扣除对应档位槽量',
+      );
+      assert.equal(
+        fixture.era.get(`base:${ASSI}:2`),
+        8190,
+        '助手射精槽独立蓄积',
+      );
+      assert.equal(
+        fixture.era.get('tflag:2') || 0,
+        grade,
+        '主人射精旗对应档位',
+      );
+      assert.equal(fixture.era.get('tflag:6') || 0, 0, '助手未射精');
+    });
+  }
+
   for (const [obedience, assistant_increment, assistant_milk] of [
     [0, 5040, 2012],
     [5, 8190, 2957],
