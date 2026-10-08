@@ -253,8 +253,8 @@ engine_test('契约比对：真 EraApi 与夹具的 BASE set/add 钳制逐步一
   const api = engine.era_api.prototype;
   const engine_state = {
     data: {
-      base: { 1: { 0: 20, 1: 20 } },
-      maxbase: { 1: { 0: 100, 1: 0 } },
+      base: { 1: { 0: 20, 1: 20, 3: 800 } },
+      maxbase: { 1: { 0: 100, 1: 0, 3: 1000 } },
       delta: { 1: { 0: 0 } },
     },
     staticData: { base: {}, juel: {} },
@@ -274,6 +274,8 @@ engine_test('契约比对：真 EraApi 与夹具的 BASE set/add 钳制逐步一
   fixture.store.set('base:1:1', 20);
   fixture.store.set('maxbase:1:0', 100);
   fixture.store.set('maxbase:1:1', 0);
+  fixture.store.set('base:1:3', 800);
+  fixture.store.set('maxbase:1:3', 1000);
   fixture.store.set('delta:1:0', 0);
 
   const steps = [
@@ -284,6 +286,9 @@ engine_test('契约比对：真 EraApi 与夹具的 BASE set/add 钳制逐步一
     ['set', 'maxbase:1:0', -10],
     ['set', 'delta:1:0', -10],
     ['add', 'base:1:1', 0],
+    ['add', 'base:1:3', 800],
+    ['set', 'base:1:3', 2750],
+    ['set', 'base:1:3', 750],
   ];
   const engine_results = steps.map(([method, name, value]) =>
     api[method].call(engine_state, name, value),
