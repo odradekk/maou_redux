@@ -27,9 +27,8 @@ async function remove_by_death(fixture, cid) {
   fixture.era.beginTrain(0, cid);
   fixture.store.set(`base:${cid}:0`, 0);
   fixture.load_module('event/event-end');
-  const { emit } = fixture.load_module('system/event/registry');
-  assert.equal(await emit('EVENTEND'), 'TURNEND');
-  await fixture.era.endTrain();
+  const { run_aftertrain } = fixture.load_module('system/train/train-loop');
+  assert.equal(await run_aftertrain(), 'TURNEND');
 }
 
 test('死亡除名后正常回复气力：近卫后代不触发战役，普通勇者保留除名与苏生标记', async () => {

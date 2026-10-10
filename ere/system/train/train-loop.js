@@ -78,6 +78,7 @@
  */
 
 const era = require('#/era-electron');
+const { name_reset } = require('#/chara/char-make');
 const { emit } = require('#/system/event/registry');
 const {
   COM_MISSING,
@@ -270,12 +271,19 @@ async function run_train() {
  *
  * endTrain 放在链后：EVENTEND 体内的 JUEL_CHECK 要读 palam/gotjuel，表先
  * 于结算删除会静默丢失（引擎三段寻址检查：角色子表不在即丢弃）。
+ * 死亡目标仍在引擎调教列表中，必须在 endTrain 完成珠结算后才能除名。
  *
  * @returns {Promise<string>} 下一游戏状态（EVENTEND 链的暂存转场目标）
  */
 async function run_aftertrain() {
+  // EVENTEND 会恢复暂存的目标；死亡时清空目标指针，但保留其数据直到收尾。
+  const target = era_flag.target_backup;
   const pending = await emit('EVENTEND');
   era.endTrain();
+  if (target !== 0 && era_flag.target === -1) {
+    era.removeCharacter(target);
+    await name_reset();
+  }
   return pending;
 }
 

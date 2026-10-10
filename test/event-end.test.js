@@ -37,8 +37,7 @@ function seed_world(fixture, { assi = -1 } = {}) {
 }
 
 async function run_eventend(fixture) {
-  const { emit } = fixture.load_module('system/event/registry');
-  return emit('EVENTEND');
+  return fixture.load_module('system/train/train-loop').run_aftertrain();
 }
 
 test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', async () => {
@@ -183,7 +182,10 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
   // #548 起 charadead_check 为真身：死亡叙事先行（温妮死掉了……），
   // self_check 因 RESULT != 0 被跳过
   assert(fixture.text_lines().includes('温妮死掉了……'));
-  assert.equal(fixture.store.get('tflag:13'), 999, '死亡口上事件码');
+  assert(
+    fixture.var_writes.some((w) => w.name === 'tflag:13' && w.value === 999),
+    '死亡口上事件码',
+  );
 });
 
 test('时常发情蓄积：润滑/欲情各按万分比进 CFLAG:81/82，不足清零', async () => {

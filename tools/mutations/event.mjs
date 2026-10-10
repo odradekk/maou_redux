@@ -107,10 +107,9 @@ export default [
   },
   {
     desc: 'M19 EVENTEND 死亡删除：漏除名（DELCHARA）',
-    file: 'ere/event/event-end.js',
-    find: '      party_char_del(target); // party_char_del 调用（#548 起真身）\n      // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）\n      era.removeCharacter(target);',
-    replace:
-      '      party_char_del(target); // party_char_del 调用（#548 起真身）\n      // 变异：不除名',
+    file: 'ere/system/train/train-loop.js',
+    find: '    era.removeCharacter(target);',
+    replace: '    // 变异：不除名',
     tests: ['event-end'],
     must_mention: '除名',
   },
