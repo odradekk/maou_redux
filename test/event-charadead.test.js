@@ -316,8 +316,8 @@ test('接入：eventend 死亡删除分支真调 party_char_del（队伍复位�
   fixture.era.beginTrain(0, 31);
   fixture.load_module('event/event-end');
 
-  const { emit } = fixture.load_module('system/event/registry');
-  const pending = await emit('EVENTEND');
+  const { run_aftertrain } = fixture.load_module('system/train/train-loop');
+  const pending = await run_aftertrain();
 
   assert.equal(pending, 'TURNEND');
   assert.equal(fixture.store.get('cflag:31:530'), 0, 'party_del 复位行动完了');

@@ -2,7 +2,7 @@
  * @file 调教结束事件 EVENTEND 的处理器（issue #44，#LATER 档真身）。
  *
  * STATE.AFTERTRAIN 的主体（train-loop.js 的 run_aftertrain 发起链、收尾
- * era.endTrain）。直线赋值与判定按原样保留；死亡删除分支内的
+ * era.endTrain）。死亡目标在引擎收尾后由 run_aftertrain 除名。死亡分支内的
  * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
  * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
  *
@@ -17,7 +17,6 @@
 
 const era = require('#/era-electron');
 const { karma } = require('#/chara/chara-stats');
-const { name_reset } = require('#/chara/char-make');
 const { template_no_of } = require('#/chara/chara-pregnancy');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
@@ -103,9 +102,10 @@ on(
       era.set('flag:1', -1);
       era_flag.assi = -1;
       party_char_del(target); // party_char_del 调用（#548 起真身）
-      // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）
-      era.removeCharacter(target);
-      await name_reset();
+      // 珠与参数共用声明序号。死亡目标不获珠，除名留到收尾后以保留珠表。
+      for (const key of era.get('palamkeys')) {
+        era.set(`gotjuel:${target}:${key}`, 0);
+      }
       begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
     } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
       // 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——
