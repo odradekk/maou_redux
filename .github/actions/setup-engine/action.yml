@@ -4,8 +4,12 @@
 # 历史里，且「ere-4.8.0-win-x64/ 不入库」是既有约定（AGENTS.md）。也不用
 # actions/cache——7 天不命中就被驱逐，会把「有没有引擎」变成时红时绿。
 #
-# 为什么不设 token：仓库是公开的，release 资产无需认证即可下载，fork PR
-# 的只读 GITHUB_TOKEN 因此不构成限制。
+# 为什么带 token 且走 gh：仓库转私有后，release 资产下载需要认证——
+# 此前的无认证 curl 在仓库公开时成立，转私有当天起两平台 job 齐挂
+# 404。github.token 按调用工作流的 permissions（contents: read）取权，
+# fork PR 的只读 token 同样够用。经 gh release download 走 API 取资产：
+# 它处理认证与到对象存储的重定向，绕开 curl 直连时 Authorization 头
+# 跨域重定向的坑。
 #
 # SHA256 断言是引擎换版的公告点：换版时新开 tag 并改这里，diff 即公告。
 name: 装引擎 bundle
@@ -17,7 +21,8 @@ runs:
     - name: 下载 app.asar 并校验
       shell: bash
       env:
-        ASAR_URL: https://github.com/odradekk/maou_redux/releases/download/engine-4.8.0/app.asar
+        GH_TOKEN: ${{ github.token }}
+        ASAR_TAG: engine-4.8.0
         ASAR_SHA256: 98cbd808b08c5d675665c4581ee813ff106b1bba0225102ea2950507e89808ce
       run: |
         set -euo pipefail
@@ -29,6 +34,6 @@ runs:
         # 放进第 3 号候选就与本机同构，那道开关才真的被守着。
         dest="$HOME/.era-engine/app.asar"
         mkdir -p "$(dirname "$dest")"
-        curl -sfL --retry 3 --retry-delay 2 -o "$dest" "$ASAR_URL"
+        gh release download "$ASAR_TAG" --repo odradekk/maou_redux --pattern 'app.asar' --output "$dest"
         echo "$ASAR_SHA256  $dest" | sha256sum -c -
         echo "引擎就位：$dest（locate_asar 第 3 号候选）"
