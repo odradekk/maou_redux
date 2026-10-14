@@ -24,10 +24,8 @@
  */
 
 const era = require('#/era-electron');
-const { party_char_del } = require('#/dungeon/dungeon-party');
+const { remove_character } = require('#/system/chara-removal');
 const { remember_sale_price } = require('#/event/event-aftertrain');
-const { name_reset } = require('#/chara/char-make');
-const { template_no_of } = require('#/chara/chara-pregnancy');
 const { get_look_info } = require('#/chara/look-info');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { game } = require('#/facade/game');
@@ -536,19 +534,9 @@ async function long_good_bye(cid = era_flag.target) {
   return 0;
 }
 
-/** kill_target：把已售角色从队伍和已加入角色中除名。 */
-async function kill_target(cid = era_flag.target) {
-  era_flag.mark_hero_removed(template_no_of(cid));
-  party_char_del(cid);
-  era.removeCharacter(cid);
-
-  // FLAG:1/2 属 event 域；跨域写经其具名门面。ere 的角色 ID
-  // 在 removeCharacter 后不重排（#21），指针按 ID 判等、不随人数修正。
-  if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;
-  if (game.event.上次助手 === cid) game.event.上次助手 = -1;
-  era_flag.target = game.event.上次调教对象;
-  era_flag.assi = game.event.上次助手;
-  await name_reset();
+/** kill_target：把已售角色除名。机械规则统一由 chara-removal 模块持有。 */
+function kill_target(cid) {
+  remove_character(cid);
   return 0;
 }
 

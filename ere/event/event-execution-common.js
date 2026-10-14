@@ -6,14 +6,11 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { name_reset } = require('#/chara/char-make');
-const { template_no_of } = require('#/chara/chara-pregnancy');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { equip_get } = require('#/system/equip/equip-lookup');
 const { video_maturo } = require('#/system/stronghold/sell-video');
+const { remove_character } = require('#/system/chara-removal');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -90,22 +87,12 @@ async function dispose_character(
     reset_names = true,
   } = {},
 ) {
-  const target_chara = chara(cid);
   if (equipment) release_equipment(cid);
 
-  const level = target_chara.chara.等级;
-  era_flag.mark_hero_removed(template_no_of(cid));
-
-  // 原写法后续的“注册号大于被删号则减一”依赖 DELCHARA 重排；ere 使用稳定
-  // 角色 ID，故只清掉真正指向被删角色的槽位（#21 扁平化结论）。
-  if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;
-  if (game.event.上次助手 === cid) game.event.上次助手 = -1;
-  era_flag.target = game.event.上次调教对象;
-  era_flag.assi = game.event.上次助手;
-
-  party_char_del(cid);
-  era.removeCharacter(cid);
-  if (reset_names) await name_reset();
+  // 等级在除名之前读——引擎删除被删者整行数据表（remove_character 的
+  // 协议注释），机械除名步骤统一由 chara-removal 模块持有
+  const level = chara(cid).chara.等级;
+  remove_character(cid, { reset_names });
 
   game.event.处刑勇者数 += 1;
   const experience = (level + 1) * 50;
@@ -122,8 +109,6 @@ async function dispose_character(
         `《封印吸取了勇者的力量，你获得了${experience}点的经验值！》`,
     );
   }
-  era_flag.target = game.event.上次调教对象;
-  era_flag.assi = game.event.上次助手;
   return 0;
 }
 

@@ -1,18 +1,14 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 176; // #748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
+export const COUNT = 183; // #785 审计返工净 -3：删 M11783/M11788/M11790 与 M7260 四条同型链路守卫（改由 chara-removal-scan 白名单扫描统一守护），新增 M15123（非正角色号契约校验）；#785 审查轮 +4（M15119–M15122：处刑/博物馆的原因特定奖励不因机械段集中而重复入账）；#785 净 +6：出售/处刑/博物馆三处除名登记条目 M14701/M14702/M14704 随机械步骤收敛进 ere/system/chara-removal.js 合并为 M15110，新增 M15111–M15118（指针判等与同步、称呼重建、reset_names 缺省、实际删除、队伍移除）；#748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于自动处刑与流放逐两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一检查）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
 export default [
-  {
-    desc: 'M7260 处刑装备回收：槽位错误清为 0',
-    file: 'ere/event/event-execution-common.js',
-    find: '    owner[field] = -1;',
-    replace: '    owner[field] = 0;',
-    tests: ['event-execution'],
-    must_mention: '回收装备、除名角色并结算处刑与勋章经验',
-  },
+  // #785 审计返工：原 M7260（装备回收槽位置 -1 改 0、挂 event-execution）
+  // 删除——与 event 分片原 M6949 同型的链路守卫改由
+  // test/chara-removal-scan.test.js 的白名单扫描统一守护，槽位置 -1 的
+  // 行为面由 EXECUTION_MINI 的 cflag:550–552 断言钉住
   {
     desc: 'M7261 迷你处刑：漏发勋章经验',
     file: 'ere/event/event-execution-common.js',
@@ -1212,14 +1208,10 @@ export default [
     must_mention:
       'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（A = 角色下标）',
   },
-  {
-    desc: 'M11783 处刑済 FLAG 回退成角色 ID 直加（后代写到 100199 以上）',
-    file: 'ere/event/event-execution-common.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era_flag.mark_hero_removed(cid);',
-    tests: ['event-execution-batch'],
-    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
-  },
+  // #785 审计返工：原 M11783/M11788/M11790 三条同型条目（mark_hero_removed
+  // 直加、各挂一条链）删除——「调用链必须经过共同实现」的架构不变量改由
+  // test/chara-removal-scan.test.js 的白名单扫描统一守护，行为面由
+  // character-removal / sale-chara 的既有断言钉住
   {
     desc: 'M11784 肉便器归档槽位回退成角色 ID',
     file: 'ere/event/event-execution-batch.js',
@@ -1259,27 +1251,11 @@ export default [
     must_mention: 'SUISEI_STR:A 保存展品名与角色名',
   },
   {
-    desc: 'M11788 博物馆处刑済 FLAG 回退成角色 ID 直加',
-    file: 'ere/event/event-museum.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(a));',
-    replace: '  era_flag.mark_hero_removed(a);',
-    tests: ['event-museum'],
-    must_mention: '模板 1 → FLAG:200',
-  },
-  {
     desc: 'M11789 献祭后代时处刑済 FLAG 回退成角色 ID 直加',
     file: 'ere/page/page-chara-info-show.js',
     find: '  era_flag.mark_hero_removed(template_no_of(target_id));',
     replace: '  era_flag.mark_hero_removed(target_id);',
     tests: ['chara-info-show'],
-    must_mention: '模板 1 → FLAG:200',
-  },
-  {
-    desc: 'M11790 出售除名时处刑済 FLAG 回退成角色 ID 直加',
-    file: 'ere/system/stronghold/sale.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era_flag.mark_hero_removed(cid);',
-    tests: ['sale-chara'],
     must_mention: '模板 1 → FLAG:200',
   },
   {
@@ -1458,34 +1434,10 @@ export default [
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
   },
   {
-    desc: 'M14701 出售除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/system/stronghold/sale.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
-    tests: ['character-removal'],
-    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
-  },
-  {
-    desc: 'M14702 处刑除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/event/event-execution-common.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
-    tests: ['character-removal'],
-    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
-  },
-  {
     desc: 'M14703 献祭除名绕过范围检查，写入无关玩法标志',
     file: 'ere/page/page-chara-info-show.js',
     find: '  era_flag.mark_hero_removed(template_no_of(target_id));',
     replace: '  era.set(`flag:${template_no_of(target_id) + 199}`, 1);',
-    tests: ['character-removal'],
-    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
-  },
-  {
-    desc: 'M14704 博物馆除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/event/event-museum.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(a));',
-    replace: '  era.set(`flag:${template_no_of(a) + 199}`, 1);',
     tests: ['character-removal'],
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
   },
@@ -1520,5 +1472,125 @@ export default [
     replace: '  if (template_no >= 1 && template_no < 100) {',
     tests: ['character-removal'],
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  // —— #785：除名机械步骤收敛进 chara-removal（出售/处刑/博物馆三处
+  // 调用点的登记条目 M14701/M14702/M14704 随源码消失，合并为 M15110）——
+  {
+    // 与 era-flag.js 的 M14705–M14708 共用同一范围谓词的守卫面；本条的
+    // 区分力在「绕过 mark_hero_removed 包装直写 flag」——范围内模板与
+    // 原语句等价，只有后代/范围外模板（120000 → 直写 FLAG:400）能区分
+    desc: 'M15110 除名登记绕过范围检查，写入无关玩法标志',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    tests: ['chara-removal'],
+    must_mention: '后代除名不碰其他玩法标志',
+  },
+  {
+    desc: 'M15111 上次调教对象的判等清空取反，被删者残留、旁观者误清',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;',
+    replace:
+      '  if (game.event.上次调教对象 !== cid) game.event.上次调教对象 = -1;',
+    tests: ['chara-removal'],
+    must_mention: '除名：上次调教对象指向被删者时置 -1',
+  },
+  {
+    desc: 'M15112 上次助手的判等清空取反，被删者残留、旁观者误清',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (game.event.上次助手 === cid) game.event.上次助手 = -1;',
+    replace: '  if (game.event.上次助手 !== cid) game.event.上次助手 = -1;',
+    tests: ['chara-removal'],
+    must_mention: '除名：上次助手指向旁观者时保留',
+  },
+  {
+    desc: 'M15113 TARGET 不再同步为清过的持久指针',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.target = game.event.上次调教对象;\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：TARGET 同步为清过的持久指针',
+  },
+  {
+    desc: 'M15114 ASSI 不再同步为清过的持久指针',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.assi = game.event.上次助手;\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：ASSI 同步为清过的持久指针',
+  },
+  {
+    desc: 'M15115 删除后不再重建称呼字串',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (reset_names) name_reset();\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名后称呼重建：幸存角色的存档字串刷新为当前称呼',
+  },
+  {
+    desc: 'M15116 reset_names 缺省翻转为不重建',
+    file: 'ere/system/chara-removal.js',
+    find: 'function remove_character(cid, { reset_names = true } = {}) {',
+    replace: 'function remove_character(cid, { reset_names = false } = {}) {',
+    tests: ['chara-removal'],
+    must_mention: '除名后称呼重建：幸存角色的存档字串刷新为当前称呼',
+  },
+  {
+    desc: 'M15117 漏掉实际删除，被删者仍在已加入列表',
+    file: 'ere/system/chara-removal.js',
+    find: '  era.removeCharacter(cid);\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：被删者移出已加入列表，旁观者与魔王保留',
+  },
+  {
+    desc: 'M15118 漏掉队伍移除，被删者的队伍数据残留',
+    file: 'ere/system/chara-removal.js',
+    find: '  party_char_del(cid);\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：队长本人的队伍标志复位',
+  },
+  {
+    desc: 'M15123 非正角色号的契约校验删除，0 与 -1 静默走完除名',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (cid <= 0) {\n    throw new TypeError(`除名收到非正角色号: ${cid}`);\n  }\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '非正角色号的除名当场炸出',
+  },
+  // —— #785 审查轮：处刑与博物馆切换到共同除名后，原因特定的奖励仍
+  // 须各发一次（不因机械段集中而重复入账）——
+  {
+    desc: 'M15119 处刑勇者数重复累加',
+    file: 'ere/event/event-execution-common.js',
+    find: '  game.event.处刑勇者数 += 1;',
+    replace: '  game.event.处刑勇者数 += 2;',
+    tests: ['event-execution'],
+    must_mention: '回收装备、除名角色并结算处刑与勋章经验',
+  },
+  {
+    desc: 'M15120 处刑战斗经验双倍入账',
+    file: 'ere/event/event-execution-common.js',
+    find: '  chara(0).dungeon.战斗经验 += experience;',
+    replace: '  chara(0).dungeon.战斗经验 += experience * 2;',
+    tests: ['event-execution'],
+    must_mention: '回收装备、除名角色并结算处刑与勋章经验',
+  },
+  {
+    desc: 'M15121 处刑勋章经验重复累加',
+    file: 'ere/event/event-execution-common.js',
+    find: '    chara(0).event.勋章经验 += 1;',
+    replace: '    chara(0).event.勋章经验 += 2;',
+    tests: ['event-execution'],
+    must_mention: '回收装备、除名角色并结算处刑与勋章经验',
+  },
+  {
+    desc: 'M15122 博物馆战斗经验双倍入账',
+    file: 'ere/event/event-museum.js',
+    find: '  chara(0).dungeon.战斗经验 += lv;',
+    replace: '  chara(0).dungeon.战斗经验 += lv * 2;',
+    tests: ['event-museum'],
+    must_mention: '等级 4 → (4 + 1) × 50',
   },
 ];

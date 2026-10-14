@@ -1,7 +1,7 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 // #764 净 +2：删除零价旧契约的 M6824，新增 M15003–M15005（零价拒绝与正价边界）。
-export const COUNT = 249; // #761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
+export const COUNT = 246; // #785 净 -3：kill_target 的机械步骤移入 chara-removal，M6820/M6822/M6823 随实现消失（改由 execution 分片 M15110–M15118 守护），M6821 改写为守出售链路的转发接入；#761 净 +2：删反向变异 M6825，新增 M15000–M15002（出售输入状态校验）；#724 +5（M14486–M14490：怪物商店四屏与奴隶贩卖换屏） // #710 净 -9：删 M8915/M8927/M8928/M8931-M8933/M8935-M8939 共 11 条补位类条目（两个一览改成按钮网格，排版字面量消失），M12024 改写成 M14236，M12027 改写成「返回退回纯文本」，新增 M14238 与 M14253 两条（异界一览正文、可选祭品行退回纯文本）；M9114 保留（返工补了上界内侧的用例）；#562 起 +1（M11864：道具商店页脚不产生空行）；#653 -1 +1（删反向变异 M6638，新增 M13255 检查无影响档倍率）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -806,36 +806,15 @@ export default [
     must_mention: '关系与性格累积压力',
   },
   {
-    desc: 'M6820 KILL_TARGET 勇者入场标志偏一位',
+    // #785：kill_target 的机械步骤（标记偏位/漏删/不清指针，原 M6820/
+    // M6822/M6823）随实现移入 chara-removal，由 execution 分片 M15110–
+    // M15123 直接守护；这里只守出售链路确实转发进共同除名
+    desc: 'M6821 KILL_TARGET 不再转发共同除名',
     file: 'ere/system/stronghold/sale.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era_flag.mark_hero_removed(template_no_of(cid) + 1);',
+    find: '  remove_character(cid);',
+    replace: '  // 变异：不再除名',
     tests: ['sale-chara'],
-    must_mention: '经队伍门面除名',
-  },
-  {
-    desc: 'M6821 KILL_TARGET 漏删角色',
-    file: 'ere/system/stronghold/sale.js',
-    find: '  era.removeCharacter(cid);',
-    replace: '  // 变异：漏删角色',
-    tests: ['sale-chara'],
-    must_mention: '经队伍门面除名',
-  },
-  {
-    desc: 'M6822 KILL_TARGET 不清上次调教对象',
-    file: 'ere/system/stronghold/sale.js',
-    find: '  if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;',
-    replace: '  if (false) game.event.上次调教对象 = -1;',
-    tests: ['sale-chara'],
-    must_mention: '经队伍门面除名',
-  },
-  {
-    desc: 'M6823 KILL_TARGET 不清上次助手',
-    file: 'ere/system/stronghold/sale.js',
-    find: '  if (game.event.上次助手 === cid) game.event.上次助手 = -1;',
-    replace: '  if (false) game.event.上次助手 = -1;',
-    tests: ['sale-chara'],
-    must_mention: '经队伍门面除名',
+    must_mention: 'KILL_TARGET：经队伍门面除名',
   },
   {
     desc: 'M15003 SALE_CHARA 零价角色绕过出售拒绝',
