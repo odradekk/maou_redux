@@ -88,14 +88,11 @@ async function dispose_character(
     reset_names = true,
   } = {},
 ) {
-  const target_chara = chara(cid);
   if (equipment) release_equipment(cid);
 
-  // 等级要在除名之前读：引擎的 removeCharacter 删除被删者整行数据表，
-  // 删除后等级读回 0（夹具平表残留可读、观测不到该时序，顺序约束由
-  // 代码保持）。机械除名步骤（登记/指针/队伍/删除/称呼重建）统一由
-  // chara-removal 模块持有
-  const level = target_chara.chara.等级;
+  // 等级在除名之前读——引擎删除被删者整行数据表（remove_character 的
+  // 协议注释），机械除名步骤统一由 chara-removal 模块持有
+  const level = chara(cid).chara.等级;
   await remove_character(cid, { reset_names });
 
   game.event.处刑勇者数 += 1;

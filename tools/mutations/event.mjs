@@ -758,6 +758,9 @@ export default [
     tests: ['event-museum'],
     must_mention: '家族末路、装备回收、威望与造型王实绩',
   },
+  // M6949 与 execution 分片的 M7260 同文件同 find/replace 是刻意的：各守
+  // 一条链（此处博物馆，彼处处刑），博物馆绕开共享的装备回收自行拼装时，
+  // event-museum 测试不再红、本条报「未被拦截」
   {
     desc: 'M6949 MUSEUM 装备回收：回收后槽位未置 -1',
     file: 'ere/event/event-execution-common.js',

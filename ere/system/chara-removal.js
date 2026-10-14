@@ -17,13 +17,14 @@ const era_flag = require('#/era-utils/era-flag');
 
 /**
  * 执行一次完整的角色除名（必须处于允许删除的时机——调教会话内要等
- * 引擎收尾，见 train-end.js 的收尾协议）：
+ * 引擎收尾后才能删角色）：
  *
  *   除名登记 → 引用清空 → 队伍移除 → 实际删除 → 称呼重建
  *
  * 引用清空针对两组指针：FLAG:1/2（上次调教对象/助手，持久）按 ID 判等
  * 置 -1，TARGET/ASSI（会话）同步为清过的持久指针。ere 的角色 ID 稳定
- * 不重排（#21），不移植旧引擎删除后的编号前移。
+ * 不重排（#21），不移植旧引擎删除后的编号前移。引擎的 removeCharacter
+ * 会删除被删者的整行数据表——调用方在除名后还要用的角色字段要先读。
  *
  * @param {number} cid 被除名角色的正数角色号
  * @param {object} [options]
@@ -42,8 +43,8 @@ async function remove_character(cid, { reset_names = true } = {}) {
   era_flag.assi = game.event.上次助手;
   party_char_del(cid);
   era.removeCharacter(cid);
-  // 称呼重建必须在删除之后：它按现存角色重建存档字串，被删角色的行随
-  // 重建消失
+  // 称呼重建按现存角色进行，被除名者不在重建范围；reset_names 关闭时
+  // 由调用方自行安排重建时机
   if (reset_names) await name_reset();
   return 0;
 }
