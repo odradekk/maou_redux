@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1065; // #787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1066; // #789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -1020,7 +1020,15 @@ export default [
     find: "  98: '神秘的尿道导管',",
     replace: "  98: '神秘的導尿管',",
     tests: ['cloth-func'],
-    must_mention: '98/99 按简体规则取渲染版名称',
+    must_mention: '98/99 按简体规则取名',
+  },
+  {
+    desc: 'M13703 get_clothtype_special 的未知编号哨兵错（ERROR 改空串）',
+    file: 'ere/system/cloth-lookup.js',
+    find: "  return SPECIAL_TABLE[cloth_special_type(cid)] ?? 'ERROR';",
+    replace: "  return SPECIAL_TABLE[cloth_special_type(cid)] ?? '';",
+    tests: ['cloth-func'],
+    must_mention: 'GET 版 special 的未知编号缺省是 ERROR 哨兵',
   },
   {
     desc: 'M830 run_benki 魔王除外检查删（arg == 0 不再提前返回）',
@@ -11301,7 +11309,7 @@ if (talent(16)) a = times(a, 1.3); // 嚣张 `,
   9: '胸甲＆透视裙子',`,
     replace: `  8: '乳贴＆迷你短裙铠甲',`,
     tests: ['cloth-func'],
-    must_mention: '9 号补登（与渲染版同名）',
+    must_mention: '9 号（胸甲＆透视裙子）在共享表内',
   },
   // —— #717：指令列表多列排版 ——
   {

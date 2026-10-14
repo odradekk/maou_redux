@@ -1,8 +1,7 @@
 /**
  * @file 服装类型的取串函数：get_clothtype_main2 与 get_clothtype_special
  * （issue #215 J5；PRINT_/GET_ 分法见 #106 决定三：GET_ → ere/system/，
- * PRINT_ → ere/page/page-clothtype.js，两处不共享表——两张表本来就是
- * 有差异的拷贝，见下）。
+ * PRINT_ → ere/page/page-clothtype.js）。
  *
  * == 取值函数直接返回串 ==
  *
@@ -16,12 +15,12 @@
  * **#397（N13）已随 tailor_core 实现**——三处都按「名字 → 动词」的
  * 渲染序取本函数的返回值（页面上即「日常服装……脱下了。」）。
  *
- * == 与 PRINT 版的表差（两张表各自实现，不做合并重构） ==
+ * == 名字表只有这一份 ==
  *
- * - MAIN2_TABLE 曾缺 9 号（胸甲＆透视裙子），9 号会落 CASEELSE
- *   「服」；现已按 PRINT 版同名补登。两表仍是独立维护的两份拷贝。
- * - SPECIAL_TABLE 的 98/99 取 PRINT 版的简体名（简体规则
- *   #60；两号在 PRINT 版的旧文本是未汉化的繁体）。
+ * MAIN2_TABLE（CFLAG:41）与 SPECIAL_TABLE（CFLAG:42）在这里定义，
+ * 页面版的 clothtype_main2_text / clothtype_special_text 直接读它们——
+ * 一次改动同时作用于两版，不会再有「改一份忘另一份」的分叉。
+ * 两版出口只在未知编号的缺省上分叉（见各自的函数注释）。
  */
 
 'use strict';
@@ -39,8 +38,8 @@ function cloth_special_type(cid) {
 }
 
 /**
- * get_clothtype_main2 的名字表（9 号已按 PRINT 版补登，
- * 未知编号落 CASEELSE「服」）。键 = CFLAG:41。
+ * 两版出口共用的上衣名表（get_clothtype_main2 与 clothtype_main2_text
+ * 同读这一份；未知编号两版都落「服」）。键 = CFLAG:41。
  */
 const MAIN2_TABLE = {
   0: '全裸',
@@ -127,8 +126,8 @@ const MAIN2_TABLE = {
 };
 
 /**
- * get_clothtype_special 的名字表（98/99 按文件头的决定
- * 取 PRINT 版的简体名）。键 = CFLAG:42。
+ * 两版出口共用的特别服装名表（get_clothtype_special 与
+ * clothtype_special_text 同读这一份；98/99 按 #60 取简体名）。键 = CFLAG:42。
  */
 const SPECIAL_TABLE = {
   1: '围裙',
@@ -183,7 +182,7 @@ const SPECIAL_TABLE = {
  * get_clothtype_main2。渲染序「名字 → 动词」（见文件头），动词缺省空串。
  * @param {number} cid 角色 ID
  * @param {string} [verb] 衣服前的动词（渲染在名字之后）
- * @returns {string} 服装名（未知编号 →「服」，落 CASEELSE）
+ * @returns {string} 服装名（未知编号 →「服」，页面版缺省相同）
  */
 function get_clothtype_main2(cid, verb = '') {
   const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';
@@ -195,7 +194,8 @@ function get_clothtype_main2(cid, verb = '') {
  * @param {number} cid 角色 ID
  * @returns {string} 特别服装名（未知编号 → 'ERROR'，RETURNF "ERROR"
  *   哨兵——aftertrain_cloth 等消费方以空串
- *   判定，ERROR 与未装备的区分由调用方自理）
+ *   判定，ERROR 与未装备的区分由调用方自理；页面版的
+ *   clothtype_special_text 对未知编号返回空串，供「无输出」的内嵌）
  */
 function get_clothtype_special(cid) {
   return SPECIAL_TABLE[cloth_special_type(cid)] ?? 'ERROR';
