@@ -26,36 +26,27 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 const REPO = path.join(__dirname, '..');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好触手族。 */
 function seed_world({ load_colosseum = false, load_caress = false } = {}) {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  fixture.era.beginTrain(0, 31);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.player = 0;
-  era_flag.assiplay = 0;
-  era_flag.assi = -1;
-  era_flag.selectcom = -1;
-  era_flag.prevcom = -1;
+  // 可选族按调用方的声明先装，触手族与族表随后——与既有装载顺序一致
+  const modules = {};
   if (load_colosseum) {
-    fixture.load_module('system/train/com-colosseum');
+    modules.colosseum = 'system/train/com-colosseum';
   }
   if (load_caress) {
-    fixture.load_module('system/train/com-caress');
+    modules.caress = 'system/train/com-caress';
   }
-  fixture.load_module('system/train/com-tentacle');
+  modules.tentacle = 'system/train/com-tentacle';
+  modules.family = 'system/train/com-family';
+  const world = seed_train_world({ modules });
   const { com_family, com_able_family, equip_com_family, COM_MISSING } =
-    fixture.load_module('system/train/com-family');
+    world.modules.family;
   return {
-    fixture,
-    era_flag,
+    ...world,
     com_family,
     com_able_family,
     equip_com_family,
