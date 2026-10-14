@@ -62,7 +62,7 @@ require('#/system/train/com-service');
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
 require('#/system/train/com-sm');
 // COM80-90「重度调教」族（#226 J16）：拳交系、G 点刺激、放尿、穿环、使役
-// 魔兽 PLAY、兽奸 PLAY、乳内插入的 COM/COM_ABLE 真身 + EQUIP_COM89
+// 魔兽 PLAY、兽奸 PLAY、乳房插入的 COM/COM_ABLE 真身 + EQUIP_COM89
 // 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 80 升格规则
 require('#/system/train/com-hardcore');
 // COM50-59「特殊」族（#224 J14）：药剂、录像与场景切换真身、可用性、
