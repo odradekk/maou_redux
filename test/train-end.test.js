@@ -4,9 +4,10 @@
  * ere/system/train/train-end.js 的行为测试（收拢调教收尾生命周期）。
  *
  * 缝 = test/helpers/era-fixture.js。聚焦登记冲账协议的 module 边界：
- * defer_train_death 立即完成机械清理但不除名；除名延迟到引擎收尾之后；
- * 入口清残留。链内完整行为（剧情、珠结算、转场）在 test/event-end.test.js，
- * 引擎侧数据面在 test/train-end-engine.test.js。
+ * defer_train_death 的机械清理立即就位而角色保留到冲账、非正角色号当场
+ * 拒绝、除名时序在 endTrain 之后（经 calls 记录断言）。链内完整行为
+ * （剧情、珠结算、转场）在 test/event-end.test.js，引擎侧数据面在
+ * test/train-end-engine.test.js。
  */
 
 const assert = require('node:assert/strict');
@@ -71,17 +72,12 @@ test('run_aftertrain：链内登记，除名在 endTrain 之后冲账', async ()
   assert.ok(!fixture.era.getAddedCharacters().includes(31), '登记的目标被除名');
 });
 
-test('run_aftertrain 入口清残留：上一场未冲账的登记不除名', async () => {
-  const { fixture } = seed_world();
-  const { defer_train_death, run_aftertrain } = fixture.load_module(
-    'system/train/train-end',
-  );
-  defer_train_death(31); // 模拟上一场异常中断留下的登记
+test('defer_train_death 拒绝非正角色号（0 是魔王、负数是未选中）', () => {
+  const { fixture, flags } = seed_world();
+  const { defer_train_death } = fixture.load_module('system/train/train-end');
 
-  await run_aftertrain();
-
-  assert.ok(
-    fixture.era.getAddedCharacters().includes(31),
-    '残留登记不泄漏进本场冲账',
-  );
+  assert.throws(() => defer_train_death(0), TypeError);
+  assert.throws(() => defer_train_death(-1), TypeError);
+  assert.equal(flags.target, 31, '拒绝时不做任何机械清理');
+  assert.ok(fixture.era.getAddedCharacters().includes(31));
 });

@@ -2,15 +2,14 @@
  * @file 调教结束事件 EVENTEND 的处理器（issue #44，#LATER 档真身）。
  *
  * STATE.AFTERTRAIN 的主体（train-end.js 的 run_aftertrain 发起链、收尾
- * era.endTrain）。死亡分支的机械清理经 train-end.js 的 defer_train_death
- * 登记，实际除名由 run_aftertrain 在引擎收尾后冲账。死亡分支内的
+ * era.endTrain）。死亡分支把机械清理交给 train-end.js 的 defer_train_death
+ * 并延迟除名（协议与时序见该文件头）。死亡分支内的
  * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
  * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
  *
  * 真身一览：self_check / aftertrain_cloth / re_clothed /
- * name_reset / karma（各自工单）；charadead_check 与 party_char_del 自
- * #548（S7）起为真身（ere/event/event-aftertrain.js 与
- * ere/dungeon/dungeon-party.js）。
+ * karma（各自工单）；charadead_check 自 #548（S7）起为真身
+ * （ere/event/event-aftertrain.js）。
  * event_maou_tenshin 自 #400（N16）起为真身（ere/event/event-nextday.js）。
  * 一次性珠结算（run_juel_check）已随 #47 实现
  * （system/train/juel-check.js，含与 era.endTrain 的职责划分定案）。

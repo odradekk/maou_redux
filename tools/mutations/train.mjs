@@ -3,25 +3,15 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1065; // 收尾生命周期收拢：新增 2 条登记冲账守护（M15103-M15104）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1064; // 收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
     desc: 'M15100 死亡目标在 endTrain 之前除名（重现引擎珠表崩溃）',
     file: 'ere/system/train/train-end.js',
     find: `  era.endTrain();
-  if (pending_removal !== 0) {
-    const cid = pending_removal;
-    pending_removal = 0;
-    era.removeCharacter(cid);
-    await name_reset();
-  }`,
-    replace: `  if (pending_removal !== 0) {
-    const cid = pending_removal;
-    pending_removal = 0;
-    era.removeCharacter(cid);
-    await name_reset();
-  }
+  await settle_train_death();`,
+    replace: `  await settle_train_death();
   era.endTrain();`,
     tests: ['train-end-engine'],
     engine: true,
@@ -56,14 +46,6 @@ export default [
     tests: ['train-end-engine'],
     engine: true,
     must_mention: '死亡目标必须除名',
-  },
-  {
-    desc: 'M15104 run_aftertrain 入口清残留删除（上一场登记泄漏进本场）',
-    file: 'ere/system/train/train-end.js',
-    find: '  pending_removal = 0; // 防御上一场异常残留（正常路径此处恒为 0）',
-    replace: '  // 变异：不清残留',
-    tests: ['train-end'],
-    must_mention: '残留登记不泄漏进本场冲账',
   },
   // —— #565 已实现函数的存根调用点接入 ——
   {
