@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 176; // #748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
+export const COUNT = 182; // #785 净 +6：出售/处刑/博物馆三处除名登记条目 M14701/M14702/M14704 随机械步骤收敛进 ere/system/chara-removal.js 合并为 M15110，新增 M15111–M15118（指针判等与同步、称呼重建、reset_names 缺省、实际删除、队伍移除）；#748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于自动处刑与流放逐两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一检查）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
@@ -1214,7 +1214,7 @@ export default [
   },
   {
     desc: 'M11783 处刑済 FLAG 回退成角色 ID 直加（后代写到 100199 以上）',
-    file: 'ere/event/event-execution-common.js',
+    file: 'ere/system/chara-removal.js',
     find: '  era_flag.mark_hero_removed(template_no_of(cid));',
     replace: '  era_flag.mark_hero_removed(cid);',
     tests: ['event-execution-batch'],
@@ -1260,9 +1260,9 @@ export default [
   },
   {
     desc: 'M11788 博物馆处刑済 FLAG 回退成角色 ID 直加',
-    file: 'ere/event/event-museum.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(a));',
-    replace: '  era_flag.mark_hero_removed(a);',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era_flag.mark_hero_removed(cid);',
     tests: ['event-museum'],
     must_mention: '模板 1 → FLAG:200',
   },
@@ -1276,7 +1276,7 @@ export default [
   },
   {
     desc: 'M11790 出售除名时处刑済 FLAG 回退成角色 ID 直加',
-    file: 'ere/system/stronghold/sale.js',
+    file: 'ere/system/chara-removal.js',
     find: '  era_flag.mark_hero_removed(template_no_of(cid));',
     replace: '  era_flag.mark_hero_removed(cid);',
     tests: ['sale-chara'],
@@ -1458,34 +1458,10 @@ export default [
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
   },
   {
-    desc: 'M14701 出售除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/system/stronghold/sale.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
-    tests: ['character-removal'],
-    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
-  },
-  {
-    desc: 'M14702 处刑除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/event/event-execution-common.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
-    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
-    tests: ['character-removal'],
-    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
-  },
-  {
     desc: 'M14703 献祭除名绕过范围检查，写入无关玩法标志',
     file: 'ere/page/page-chara-info-show.js',
     find: '  era_flag.mark_hero_removed(template_no_of(target_id));',
     replace: '  era.set(`flag:${template_no_of(target_id) + 199}`, 1);',
-    tests: ['character-removal'],
-    must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
-  },
-  {
-    desc: 'M14704 博物馆除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/event/event-museum.js',
-    find: '  era_flag.mark_hero_removed(template_no_of(a));',
-    replace: '  era.set(`flag:${template_no_of(a) + 199}`, 1);',
     tests: ['character-removal'],
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
   },
@@ -1520,5 +1496,81 @@ export default [
     replace: '  if (template_no >= 1 && template_no < 100) {',
     tests: ['character-removal'],
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
+  },
+  // —— #785：除名机械步骤收敛进 chara-removal（出售/处刑/博物馆三处
+  // 调用点的登记条目 M14701/M14702/M14704 随源码消失，合并为 M15110）——
+  {
+    desc: 'M15110 除名登记绕过范围检查，写入无关玩法标志',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    tests: ['chara-removal'],
+    must_mention: '后代除名不碰其他玩法标志',
+  },
+  {
+    desc: 'M15111 上次调教对象的判等清空取反，被删者残留、旁观者误清',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;',
+    replace:
+      '  if (game.event.上次调教对象 !== cid) game.event.上次调教对象 = -1;',
+    tests: ['chara-removal'],
+    must_mention: '除名：上次调教对象指向被删者时置 -1',
+  },
+  {
+    desc: 'M15112 上次助手的判等清空取反，被删者残留、旁观者误清',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (game.event.上次助手 === cid) game.event.上次助手 = -1;',
+    replace: '  if (game.event.上次助手 !== cid) game.event.上次助手 = -1;',
+    tests: ['chara-removal'],
+    must_mention: '除名：上次助手指向旁观者时保留',
+  },
+  {
+    desc: 'M15113 TARGET 不再同步为清过的持久指针',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.target = game.event.上次调教对象;\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：TARGET 同步为清过的持久指针',
+  },
+  {
+    desc: 'M15114 ASSI 不再同步为清过的持久指针',
+    file: 'ere/system/chara-removal.js',
+    find: '  era_flag.assi = game.event.上次助手;\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：ASSI 同步为清过的持久指针',
+  },
+  {
+    desc: 'M15115 删除后不再重建称呼字串',
+    file: 'ere/system/chara-removal.js',
+    find: '  if (reset_names) await name_reset();\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名后称呼重建：幸存角色的存档字串刷新为当前称呼',
+  },
+  {
+    desc: 'M15116 reset_names 缺省翻转为不重建',
+    file: 'ere/system/chara-removal.js',
+    find: 'async function remove_character(cid, { reset_names = true } = {}) {',
+    replace:
+      'async function remove_character(cid, { reset_names = false } = {}) {',
+    tests: ['chara-removal'],
+    must_mention: '除名后称呼重建：幸存角色的存档字串刷新为当前称呼',
+  },
+  {
+    desc: 'M15117 漏掉实际删除，被删者仍在已加入列表',
+    file: 'ere/system/chara-removal.js',
+    find: '  era.removeCharacter(cid);\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：被删者移出已加入列表，旁观者与魔王保留',
+  },
+  {
+    desc: 'M15118 漏掉队伍移除，被删者的队伍数据残留',
+    file: 'ere/system/chara-removal.js',
+    find: '  party_char_del(cid);\n',
+    replace: '',
+    tests: ['chara-removal'],
+    must_mention: '除名：队长本人的队伍标志复位',
   },
 ];

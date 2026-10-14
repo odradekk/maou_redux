@@ -737,7 +737,7 @@ export default [
   {
     desc: 'M6946 MUSEUM 角色处置：漏掉 DELCHARA 等价调用',
     file: 'ere/event/event-museum.js',
-    find: '  era.removeCharacter(a);',
+    find: '  await remove_character(a);',
     replace: '  // 变异：角色未除名',
     tests: ['event-museum'],
     must_mention: '家具化后记录展品',
@@ -760,7 +760,7 @@ export default [
   },
   {
     desc: 'M6949 MUSEUM 装备回收：回收后槽位未置 -1',
-    file: 'ere/event/event-museum.js',
+    file: 'ere/event/event-execution-common.js',
     find: '    owner[field] = -1;',
     replace: '    owner[field] = 0;',
     tests: ['event-museum'],
@@ -844,7 +844,7 @@ export default [
   },
   {
     desc: 'M6959 MUSEUM 装备回收：漏掉第二装饰槽',
-    file: 'ere/event/event-museum.js',
+    file: 'ere/event/event-execution-common.js',
     find: "    [target_chara.event, '装饰2'],",
     replace: '    // 变异：漏回收 CFLAG:552 装饰2',
     tests: ['event-museum'],

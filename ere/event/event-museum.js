@@ -6,13 +6,13 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { name_reset } = require('#/chara/char-make');
 const { search_family } = require('#/chara/chara-family');
-const { template_no_of } = require('#/chara/chara-pregnancy');
 const { museum_koujo } = require('#/kojo/kojo-system');
-const { party_char_del } = require('#/dungeon/dungeon-party');
-const { archive_slot_of } = require('#/event/event-execution-common');
-const { equip_get } = require('#/system/equip/equip-lookup');
+const {
+  archive_slot_of,
+  release_equipment,
+} = require('#/event/event-execution-common');
+const { remove_character } = require('#/system/chara-removal');
 const { video_maturo } = require('#/system/stronghold/sell-video');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -1478,29 +1478,13 @@ async function museum(a, rand_n = default_rand) {
   era.set(`videoarchive:${archive_slot_of(a)}`, archive_title);
   video_maturo(a);
 
-  const target_chara = chara(a);
-  for (const [owner, field] of [
-    [target_chara.chara, '武装'],
-    [target_chara.event, '装饰'],
-    [target_chara.event, '装饰2'],
-  ]) {
-    equip_get({ 存储编号: owner[field] });
-    owner[field] = -1;
-  }
-
-  lv = target_chara.chara.等级;
-  era_flag.mark_hero_removed(template_no_of(a));
-
-  // FLAG:1/2 = 上次调教目标/助手；被删角色本身需清空。旧引擎的注册号
-  // 重排依赖删除后编号前移，ere 的角色 ID 稳定，故不移植。
-  if (game.event.上次调教对象 === a) game.event.上次调教对象 = -1;
-  if (game.event.上次助手 === a) game.event.上次助手 = -1;
-  era_flag.target = game.event.上次调教对象;
-  era_flag.assi = game.event.上次助手;
-
-  party_char_del(a);
-  era.removeCharacter(a);
-  await name_reset();
+  release_equipment(a);
+  // 等级要在除名之前读：引擎的 removeCharacter 删除被删者整行数据表，
+  // 删除后等级读回 0（夹具平表残留可读、观测不到该时序，顺序约束由
+  // 代码保持）。机械除名步骤（登记/指针/队伍/删除/称呼重建）统一由
+  // chara-removal 模块持有
+  lv = chara(a).chara.等级;
+  await remove_character(a);
 
   game.event.处刑勇者数 += 1;
   lv = (lv + 1) * 50;
