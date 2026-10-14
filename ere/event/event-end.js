@@ -2,7 +2,8 @@
  * @file 调教结束事件 EVENTEND 的处理器（issue #44，#LATER 档真身）。
  *
  * STATE.AFTERTRAIN 的主体（train-end.js 的 run_aftertrain 发起链、收尾
- * era.endTrain）。死亡目标在引擎收尾后由 run_aftertrain 除名。死亡分支内的
+ * era.endTrain）。死亡分支的机械清理经 train-end.js 的 defer_train_death
+ * 登记，实际除名由 run_aftertrain 在引擎收尾后冲账。死亡分支内的
  * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
  * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
  *
@@ -17,7 +18,6 @@
 
 const era = require('#/era-electron');
 const { karma } = require('#/chara/chara-stats');
-const { template_no_of } = require('#/chara/chara-pregnancy');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { event_maou_tenshin } = require('#/event/event-nextday');
@@ -31,8 +31,8 @@ const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
 const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
 // charadead_check 自 #548（S7）起为真身（ere/event/event-aftertrain.js）
 const { charadead_check, self_check } = require('#/event/event-aftertrain');
-// party_char_del 真身（#172）——死亡删除分支的调用
-const { party_char_del } = require('#/dungeon/dungeon-party');
+// 死亡删除分支的机械清理与延迟除名（收尾协调器）
+const { defer_train_death } = require('#/system/train/train-end');
 
 on(
   'EVENTEND',
@@ -97,15 +97,9 @@ on(
     const target_stamina = era.get(`base:${target}:0`) || 0;
     const target_willpower = era.get(`base:${target}:1`) || 0;
     if (target_stamina < 1 && target !== 0) {
-      era_flag.mark_hero_removed(template_no_of(target));
-      era_flag.target = -1;
-      era.set('flag:1', -1);
-      era_flag.assi = -1;
-      party_char_del(target); // party_char_del 调用（#548 起真身）
-      // 珠与参数共用声明序号。死亡目标不获珠，除名留到收尾后以保留珠表。
-      for (const key of era.get('palamkeys')) {
-        era.set(`gotjuel:${target}:${key}`, 0);
-      }
+      // 死亡的机械步骤（除名登记/指针清空/队伍移除/待结算珠清零）收进
+      // 收尾协调器；实际除名在引擎收尾后冲账（时序约束见其文件头）
+      defer_train_death(target);
       begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
     } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
       // 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——

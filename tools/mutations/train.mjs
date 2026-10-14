@@ -10,12 +10,16 @@ export default [
     desc: 'M15100 死亡目标在 endTrain 之前除名（重现引擎珠表崩溃）',
     file: 'ere/system/train/train-end.js',
     find: `  era.endTrain();
-  if (target !== 0 && era_flag.target === -1) {
-    era.removeCharacter(target);
+  if (pending_removal !== 0) {
+    const cid = pending_removal;
+    pending_removal = 0;
+    era.removeCharacter(cid);
     await name_reset();
   }`,
-    replace: `  if (target !== 0 && era_flag.target === -1) {
-    era.removeCharacter(target);
+    replace: `  if (pending_removal !== 0) {
+    const cid = pending_removal;
+    pending_removal = 0;
+    era.removeCharacter(cid);
     await name_reset();
   }
   era.endTrain();`,
@@ -25,20 +29,21 @@ export default [
   },
   {
     desc: 'M15101 死亡目标待结算珠未清零（引擎收尾仍加珠）',
-    file: 'ere/event/event-end.js',
-    find: `      for (const key of era.get('palamkeys')) {
-        era.set(\`gotjuel:\${target}:\${key}\`, 0);
-      }`,
-    replace: '      // 变异：保留死亡目标的待结算珠',
+    file: 'ere/system/train/train-end.js',
+    find: `  for (const key of era.get('palamkeys')) {
+    era.set(\`gotjuel:\${cid}:\${key}\`, 0);
+  }`,
+    replace: '  // 变异：保留死亡目标的待结算珠',
     tests: ['train-end-engine'],
     engine: true,
     must_mention: '死亡目标不获得珠',
   },
   {
-    desc: 'M15102 死亡除名读记录目标而非事件恢复的暂存目标',
-    file: 'ere/system/train/train-end.js',
-    find: '  const target = era_flag.target_backup;',
-    replace: '  const target = era_flag.target_record;',
+    desc: 'M15102 死亡登记读记录目标而非事件恢复的目标',
+    file: 'ere/event/event-end.js',
+    find: '      defer_train_death(target);',
+    replace:
+      '      defer_train_death(era_flag.target_record); // 变异：登记错对象',
     tests: ['train-end-engine'],
     engine: true,
     must_mention: '死亡目标必须除名',

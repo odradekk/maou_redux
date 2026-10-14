@@ -108,7 +108,7 @@ export default [
   {
     desc: 'M19 EVENTEND 死亡删除：漏除名（DELCHARA）',
     file: 'ere/system/train/train-end.js',
-    find: '    era.removeCharacter(target);',
+    find: '    era.removeCharacter(cid);',
     replace: '    // 变异：不除名',
     tests: ['event-end'],
     must_mention: '除名',
@@ -3207,9 +3207,9 @@ export default [
   },
   {
     desc: 'M11477 EVENTEND 死亡删除分支漏调 party_char_del（队伍数据不复位就除名）',
-    file: 'ere/event/event-end.js',
-    find: '      party_char_del(target); // party_char_del 调用（#548 起真身）',
-    replace: '      // 变异：漏调 party_char_del',
+    file: 'ere/system/train/train-end.js',
+    find: '  party_char_del(cid);',
+    replace: '  // 变异：漏调 party_char_del',
     tests: ['event-charadead'],
     must_mention: 'party_del 复位',
   },

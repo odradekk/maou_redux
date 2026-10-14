@@ -1284,9 +1284,9 @@ export default [
   },
   {
     desc: 'M11791 调教后死亡时处刑済 FLAG 回退成角色 ID 直加',
-    file: 'ere/event/event-end.js',
-    find: '      era_flag.mark_hero_removed(template_no_of(target));',
-    replace: '      era_flag.mark_hero_removed(target);',
+    file: 'ere/system/train/train-end.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era_flag.mark_hero_removed(cid);',
     tests: ['event-end'],
     must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   },
@@ -1451,9 +1451,9 @@ export default [
   // —— #748：除名只登记普通勇者标记，不侵入其他玩法 ——
   {
     desc: 'M14700 死亡除名绕过范围检查，写入无关玩法标志',
-    file: 'ere/event/event-end.js',
-    find: '      era_flag.mark_hero_removed(template_no_of(target));',
-    replace: '      era.set(`flag:${template_no_of(target) + 199}`, 1);',
+    file: 'ere/system/train/train-end.js',
+    find: '  era_flag.mark_hero_removed(template_no_of(cid));',
+    replace: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
     tests: ['character-removal'],
     must_mention: '除名：普通勇者保留标记，近卫预设及后代不改其他玩法标志',
   },
