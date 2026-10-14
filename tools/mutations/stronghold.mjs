@@ -808,11 +808,11 @@ export default [
   {
     // #785：kill_target 的机械步骤（标记偏位/漏删/不清指针，原 M6820/
     // M6822/M6823）随实现移入 chara-removal，由 execution 分片 M15110–
-    // M15118 直接守护；这里只守出售链路确实转发进共同除名
+    // M15123 直接守护；这里只守出售链路确实转发进共同除名
     desc: 'M6821 KILL_TARGET 不再转发共同除名',
     file: 'ere/system/stronghold/sale.js',
-    find: '  return remove_character(cid);',
-    replace: '  return 0; // 变异：不再除名',
+    find: '  remove_character(cid);',
+    replace: '  // 变异：不再除名',
     tests: ['sale-chara'],
     must_mention: 'KILL_TARGET：经队伍门面除名',
   },

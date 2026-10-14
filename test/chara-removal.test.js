@@ -5,7 +5,8 @@
  *
  * 只断言除名后的引擎表状态（外部行为），不断言内部步骤次序；出售、处刑、
  * 博物馆三条调用链的入口行为分别由 sale-chara / character-removal /
- * event-museum 的既有用例守护。
+ * event-museum 的既有用例守护，哪些文件允许出现除名原语由
+ * chara-removal-scan 的白名单守护。
  */
 
 const assert = require('node:assert/strict');
@@ -37,7 +38,7 @@ function load_removal(fixture) {
   return fixture.load_module('system/chara-removal');
 }
 
-test('除名机械五步：标记、指针、队伍、删除、称呼重建一次完成', async () => {
+test('除名机械五步：标记、指针、队伍、删除、称呼重建一次完成', () => {
   const fixture = seed_world();
   // 被删者是队长（cflag:533 自指、530 成员标志），队伍随除名解散
   fixture.store.set('cflag:1:530', 1);
@@ -46,7 +47,7 @@ test('除名机械五步：标记、指针、队伍、删除、称呼重建一�
   fixture.store.set('callname:2:-1', '新称呼');
   fixture.store.set('callname:2:-2', '旧称呼');
 
-  await load_removal(fixture).remove_character(1);
+  load_removal(fixture).remove_character(1);
 
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
@@ -83,7 +84,7 @@ test('除名机械五步：标记、指针、队伍、删除、称呼重建一�
   );
 });
 
-test('除名引用清理：只清真正指向被删者的指针', async () => {
+test('除名引用清理：只清真正指向被删者的指针', () => {
   const fixture = seed_world();
   // 反向布阵：上次调教对象是旁观者、上次助手才是被删者
   fixture.store.set('flag:1', 2);
@@ -91,7 +92,7 @@ test('除名引用清理：只清真正指向被删者的指针', async () => {
   fixture.store.set('flag:10005', 2);
   fixture.store.set('flag:10006', 1);
 
-  await load_removal(fixture).remove_character(1);
+  load_removal(fixture).remove_character(1);
 
   assert.equal(
     fixture.era.get('flag:1'),
@@ -115,7 +116,7 @@ test('除名引用清理：只清真正指向被删者的指针', async () => {
   );
 });
 
-test('除名不重排其他角色：编号与数据桶原样保留', async () => {
+test('除名不重排其他角色：编号与数据桶原样保留', () => {
   const fixture = seed_world();
   // 旁观者带满各类数据桶；跨表抽样对照
   fixture.store.set('base:2:0', 1234);
@@ -123,7 +124,7 @@ test('除名不重排其他角色：编号与数据桶原样保留', async () =>
   fixture.store.set('talent:2:45', 1);
   fixture.store.set('cflag:2:700', 1);
 
-  await load_removal(fixture).remove_character(1);
+  load_removal(fixture).remove_character(1);
 
   assert.equal(fixture.era.get('base:2:0'), 1234, '除名后旁观者 BASE 不变');
   assert.equal(fixture.era.get('exp:2:10'), 77, '除名后旁观者 EXP 不变');
@@ -136,7 +137,7 @@ test('除名不重排其他角色：编号与数据桶原样保留', async () =>
   );
 });
 
-test('近卫后代的除名不落勇者标记（模板范围外）', async () => {
+test('近卫后代的除名不落勇者标记（模板范围外）', () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 0, '你');
   fixture.seed_chara(201, { id: 201, name: '近卫', callname: '近卫' });
@@ -149,7 +150,7 @@ test('近卫后代的除名不落勇者标记（模板范围外）', async () =>
   fixture.store.set('flag:2', -1);
   fixture.store.set('flag:10006', -1);
 
-  await load_removal(fixture).remove_character(120000);
+  load_removal(fixture).remove_character(120000);
 
   assert(!fixture.era.getAddedCharacters().includes(120000), '后代已除名');
   assert.equal(fixture.era.get('flag:1'), -1, '后代除名后上次调教对象置 -1');
@@ -157,12 +158,12 @@ test('近卫后代的除名不落勇者标记（模板范围外）', async () =>
   assert.equal(fixture.era.get('flag:400'), 7, '后代除名不碰其他玩法标志');
 });
 
-test('reset_names: false 只除名不重建称呼', async () => {
+test('reset_names: false 只除名不重建称呼', () => {
   const fixture = seed_world();
   fixture.store.set('callname:2:-1', '新称呼');
   fixture.store.set('callname:2:-2', '旧称呼');
 
-  await load_removal(fixture).remove_character(1, { reset_names: false });
+  load_removal(fixture).remove_character(1, { reset_names: false });
 
   assert(
     !fixture.era.getAddedCharacters().includes(1),
@@ -173,4 +174,19 @@ test('reset_names: false 只除名不重建称呼', async () => {
     '旧称呼',
     'reset_names 关闭时幸存角色的存档字串停在旧值',
   );
+});
+
+test('非正角色号的除名当场炸出，不静默半执行', () => {
+  const fixture = seed_world();
+  const { remove_character } = load_removal(fixture);
+  // 0 是魔王、负数是「未选中」，都不是删除对象；与死亡登记的
+  // defer_train_death 同一策略
+  assert.throws(() => remove_character(0), TypeError);
+  assert.throws(() => remove_character(-1), TypeError);
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 1, 2],
+    '契约破裂时不留下任何除名副作用',
+  );
+  assert.equal(fixture.era.get('flag:1'), 1, '指针未被动过');
 });

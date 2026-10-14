@@ -11,7 +11,6 @@ const { video_maturo } = require('#/system/stronghold/sell-video');
 const { remove_character } = require('#/system/chara-removal');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -93,7 +92,7 @@ async function dispose_character(
   // 等级在除名之前读——引擎删除被删者整行数据表（remove_character 的
   // 协议注释），机械除名步骤统一由 chara-removal 模块持有
   const level = chara(cid).chara.等级;
-  await remove_character(cid, { reset_names });
+  remove_character(cid, { reset_names });
 
   game.event.处刑勇者数 += 1;
   const experience = (level + 1) * 50;
@@ -110,8 +109,6 @@ async function dispose_character(
         `《封印吸取了勇者的力量，你获得了${experience}点的经验值！》`,
     );
   }
-  era_flag.target = game.event.上次调教对象;
-  era_flag.assi = game.event.上次助手;
   return 0;
 }
 

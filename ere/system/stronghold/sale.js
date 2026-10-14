@@ -535,8 +535,9 @@ async function long_good_bye(cid = era_flag.target) {
 }
 
 /** kill_target：把已售角色除名。机械规则统一由 chara-removal 模块持有。 */
-async function kill_target(cid = era_flag.target) {
-  return remove_character(cid);
+function kill_target(cid) {
+  remove_character(cid);
+  return 0;
 }
 
 function sale_candidate(cid) {

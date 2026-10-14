@@ -1482,7 +1482,7 @@ async function museum(a, rand_n = default_rand) {
   // 等级在除名之前读——引擎删除被删者整行数据表（remove_character 的
   // 协议注释），机械除名步骤统一由 chara-removal 模块持有
   lv = chara(a).chara.等级;
-  await remove_character(a);
+  remove_character(a);
 
   game.event.处刑勇者数 += 1;
   lv = (lv + 1) * 50;
@@ -1516,8 +1516,6 @@ async function museum(a, rand_n = default_rand) {
     era.set('talent:0:329', 1);
   }
 
-  era_flag.target = game.event.上次调教对象;
-  era_flag.assi = game.event.上次助手;
   return 0;
 }
 
