@@ -8,7 +8,7 @@ export const COUNT = 1063; // #782：新增 3 条调教死亡收尾守护（M151
 export default [
   {
     desc: 'M15100 死亡目标在 endTrain 之前除名（重现引擎珠表崩溃）',
-    file: 'ere/system/train/train-loop.js',
+    file: 'ere/system/train/train-end.js',
     find: `  era.endTrain();
   if (target !== 0 && era_flag.target === -1) {
     era.removeCharacter(target);
@@ -36,7 +36,7 @@ export default [
   },
   {
     desc: 'M15102 死亡除名读记录目标而非事件恢复的暂存目标',
-    file: 'ere/system/train/train-loop.js',
+    file: 'ere/system/train/train-end.js',
     find: '  const target = era_flag.target_backup;',
     replace: '  const target = era_flag.target_record;',
     tests: ['train-end-engine'],
@@ -112,7 +112,7 @@ export default [
   },
   {
     desc: 'M15 AFTERTRAIN 收尾：endTrain 挪到 EVENTEND 链之前',
-    file: 'ere/system/train/train-loop.js',
+    file: 'ere/system/train/train-end.js',
     find: `  const pending = await emit('EVENTEND');
   era.endTrain();`,
     replace: `  era.endTrain();

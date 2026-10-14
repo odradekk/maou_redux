@@ -367,9 +367,8 @@ test('999 → USERCOM → AFTERTRAIN：run_aftertrain 跑 EVENTEND 并收尾 end
   // 直接驱动两段状态处理器（主循环接驳在端到端用例证）；第二枚 999 是
   // JUEL_CHECK 交互循环的退出键（#47）
   fixture.set_inputs(999, 999);
-  const { run_train, run_aftertrain } = fixture.load_module(
-    'system/train/train-loop',
-  );
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
 
   assert.equal(await run_train(), 'AFTERTRAIN');
   assert.equal(await run_aftertrain(), 'TURNEND');

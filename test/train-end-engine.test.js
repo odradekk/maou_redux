@@ -119,7 +119,7 @@ engine_test('真实引擎：调教结束的死亡除名与珠结算', async (t) 
         },
         TIER.LATER,
       );
-      const { run_aftertrain } = fixture.load_module('system/train/train-loop');
+      const { run_aftertrain } = fixture.load_module('system/train/train-end');
 
       assert.equal(await run_aftertrain(), 'TURNEND');
 
@@ -147,7 +147,7 @@ engine_test('真实引擎：调教结束的死亡除名与珠结算', async (t) 
       api.set('flag:35', auto_end);
       api.set('ex:31:0', 1); // 一次阴蒂绝顶获得 1000 珠。
       fixture.set_inputs(999);
-      const { run_aftertrain } = fixture.load_module('system/train/train-loop');
+      const { run_aftertrain } = fixture.load_module('system/train/train-end');
 
       assert.equal(await run_aftertrain(), 'TURNEND');
 

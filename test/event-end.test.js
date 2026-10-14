@@ -37,7 +37,7 @@ function seed_world(fixture, { assi = -1 } = {}) {
 }
 
 async function run_eventend(fixture) {
-  return fixture.load_module('system/train/train-loop').run_aftertrain();
+  return fixture.load_module('system/train/train-end').run_aftertrain();
 }
 
 test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', async () => {

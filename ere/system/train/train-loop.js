@@ -1,6 +1,6 @@
 /**
- * @file 调教回合循环与调教域状态处理器（STATE.TRAIN / STATE.AFTERTRAIN，
- * issue #44——继事件链（#6）与分发族（#7）之后的第三套结构）。
+ * @file 调教回合循环（STATE.TRAIN 处理器，issue #44——继事件链（#6）与
+ * 分发族（#7）之后的第三套结构）。
  *
  * 引擎只提供 beginTrain/endTrain（建调教域表与结算 gotjewel），不提供
  * 回合循环本身——循环由本模块手写。EVENTTRAIN/EVENTCOM/EVENTCOMEND 的
@@ -22,8 +22,8 @@
  *   回合循环（每回合）
  *     4. SHOW_STATUS 事件链
  *     5. 探测可执行性检查族，列出可执行指令（com_able_family，未定义即
- *        可执行——whenMissing: 1）。**指令按钮的渲染是待办**（这张工单
- *        零指令，菜单只挂 [999]，见 page/page-usercom.js）
+ *        可执行——whenMissing: 1），喂给 SHOW_USERCOM 的指令按钮渲染与
+ *        输入检查（page/page-usercom.js）
  *     6. SHOW_USERCOM 事件链
  *     7. UP/DOWN/LOSEBASE/CUP/CDOWN 初始化——对应表已在上一回合末的
  *        nextTurnInTrain 结算清零，此步无独立动作；首回合的表由
@@ -69,16 +69,10 @@
  *
  *   非指令输入（含 999）→ USERCOM 事件链（999 = 调教结束 → 转 AFTERTRAIN
  *   状态，page/page-usercom.js）；链内转场的暂存目标作为本状态处理器的
- *   返回值交给主循环
- *
- * STATE.AFTERTRAIN 处理器：EVENTEND 事件链（函数体在 event/event-end.js，
- * 尾部转 TURNEND 状态）→ era.endTrain()（gotjewel 结算进 jewel、删调教域
- * 表；游戏侧 JUEL_CHECK 结算与引擎侧 endTrain 的 gotjuel→juel 不得双重
- * 累加——职责划分见 juel-check.js，#47 定案）。
+ *   返回值交给主循环。AFTERTRAIN 的收尾协议在 train-end.js。
  */
 
 const era = require('#/era-electron');
-const { name_reset } = require('#/chara/char-make');
 const { emit } = require('#/system/event/registry');
 const {
   COM_MISSING,
@@ -265,31 +259,8 @@ async function run_train() {
   }
 }
 
-/**
- * STATE.AFTERTRAIN 处理器：EVENTEND 事件链（尾部转 TURNEND 状态，函数体
- * 在 event/event-end.js）→ era.endTrain()（gotjewel 结算 + 删调教域表）。
- *
- * endTrain 放在链后：EVENTEND 体内的 JUEL_CHECK 要读 palam/gotjuel，表先
- * 于结算删除会静默丢失（引擎三段寻址检查：角色子表不在即丢弃）。
- * 死亡目标仍在引擎调教列表中，必须在 endTrain 完成珠结算后才能除名。
- *
- * @returns {Promise<string>} 下一游戏状态（EVENTEND 链的暂存转场目标）
- */
-async function run_aftertrain() {
-  // EVENTEND 会恢复暂存的目标；死亡时清空目标指针，但保留其数据直到收尾。
-  const target = era_flag.target_backup;
-  const pending = await emit('EVENTEND');
-  era.endTrain();
-  if (target !== 0 && era_flag.target === -1) {
-    era.removeCharacter(target);
-    await name_reset();
-  }
-  return pending;
-}
-
 module.exports = {
   execute_command_round,
-  run_aftertrain,
   run_train,
   scan_usable_commands,
 };

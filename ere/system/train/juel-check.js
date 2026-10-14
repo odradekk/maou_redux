@@ -7,7 +7,7 @@
  *
  * == 与引擎 endTrain() 的职责划分（#47 定案，依据 app.asar 的 endTrain 源码）==
  *
- * 引擎收尾 era.endTrain()（train-loop.js 的 run_aftertrain 在 EVENTEND 链
+ * 引擎收尾 era.endTrain()（train-end.js 的 run_aftertrain 在 EVENTEND 链
  * **之后**调用，#44 固定的顺序）做两件事：
  *   1. 对调教列里的每个角色，把 gotjuel 的**每一个键**加进 juel
  *      （`Object.entries(data.gotjuel[e])` 全键遍历）；

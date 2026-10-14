@@ -27,7 +27,7 @@ async function remove_by_death(fixture, cid) {
   fixture.era.beginTrain(0, cid);
   fixture.store.set(`base:${cid}:0`, 0);
   fixture.load_module('event/event-end');
-  const { run_aftertrain } = fixture.load_module('system/train/train-loop');
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
   assert.equal(await run_aftertrain(), 'TURNEND');
 }
 

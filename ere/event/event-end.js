@@ -1,7 +1,7 @@
 /**
  * @file 调教结束事件 EVENTEND 的处理器（issue #44，#LATER 档真身）。
  *
- * STATE.AFTERTRAIN 的主体（train-loop.js 的 run_aftertrain 发起链、收尾
+ * STATE.AFTERTRAIN 的主体（train-end.js 的 run_aftertrain 发起链、收尾
  * era.endTrain）。死亡目标在引擎收尾后由 run_aftertrain 除名。死亡分支内的
  * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
  * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。

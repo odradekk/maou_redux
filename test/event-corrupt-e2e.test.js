@@ -71,9 +71,8 @@ async function run_corrupt_path() {
   const { com_family, com_able_family } = fixture.load_module(
     'system/train/com-family',
   );
-  const { run_train, run_aftertrain } = fixture.load_module(
-    'system/train/train-loop',
-  );
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   era_flag.target = 17;
