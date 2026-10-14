@@ -7,7 +7,7 @@
  *
  * == 与引擎 endTrain() 的职责划分（#47 定案，依据 app.asar 的 endTrain 源码）==
  *
- * 引擎收尾 era.endTrain()（train-loop.js 的 run_aftertrain 在 EVENTEND 链
+ * 引擎收尾 era.endTrain()（train-end.js 的 run_aftertrain 在 EVENTEND 链
  * **之后**调用，#44 固定的顺序）做两件事：
  *   1. 对调教列里的每个角色，把 gotjuel 的**每一个键**加进 juel
  *      （`Object.entries(data.gotjuel[e])` 全键遍历）；
@@ -20,7 +20,9 @@
  * 无操作，删表职责不受影响。清 0 不会产生未定义键相加：引擎在
  * addCharacter/addCharacterForTrain 时已按 staticData.juel 名字表把
  * juel 与 gotjuel 的每个键预置为 0（app.asar 实证，initCharaTable 含
- * juel）。**gotjuel 的唯一写者是本模块**——后续工单不得绕过：erauma 式
+ * juel）。**gotjuel 的写者只有三处：本模块、自动调教路径的清零
+ * （ere/event/event-autotrain.js）与 train-end.js 的 defer_train_death
+ * （死亡清零，#782——死亡目标不获珠）**——后续工单不得绕过：erauma 式
  * 的逐回合 gotjuel 累积不适用，结算模型是一次性的 PALAM→珠换算。
  *
  * 两处有意为之的可证偏离（勿「修回去」）：

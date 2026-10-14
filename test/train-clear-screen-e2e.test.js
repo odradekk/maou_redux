@@ -89,9 +89,8 @@ test('端到端：调教每轮换屏——菜单屏行数有界、画面只留�
   //   0   再来一轮爱抚（重复同指令也换屏）
   //   999 调教结束 → AFTERTRAIN；999 = JUEL_CHECK 交互循环退出
   fixture.set_inputs(0, 0, 35, 3, 105, 0, 999, 999);
-  const { run_train, run_aftertrain } = fixture.load_module(
-    'system/train/train-loop',
-  );
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
 
   assert.equal(await run_train(), 'AFTERTRAIN');
   assert.equal(await run_aftertrain(), 'TURNEND');
@@ -132,9 +131,8 @@ test('端到端：调教每轮换屏——被拒绝与无效输入轮的结算�
 
   // 只走被拒轮（COM3 判定行有输出+等键，回合取消）与 missing 轮
   fixture.set_inputs(3, 35, 999, 999);
-  const { run_train, run_aftertrain } = fixture.load_module(
-    'system/train/train-loop',
-  );
+  const { run_train } = fixture.load_module('system/train/train-loop');
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
 
   assert.equal(await run_train(), 'AFTERTRAIN');
   assert.equal(await run_aftertrain(), 'TURNEND');

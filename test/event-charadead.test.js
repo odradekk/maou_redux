@@ -316,7 +316,7 @@ test('接入：eventend 死亡删除分支真调 party_char_del（队伍复位�
   fixture.era.beginTrain(0, 31);
   fixture.load_module('event/event-end');
 
-  const { run_aftertrain } = fixture.load_module('system/train/train-loop');
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
   const pending = await run_aftertrain();
 
   assert.equal(pending, 'TURNEND');

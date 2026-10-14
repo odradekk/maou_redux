@@ -26,7 +26,8 @@ const { BeginSignal, STATE } = require('#/system/flow/begin-signal');
 const { emit } = require('#/system/event/registry');
 const run_title_page = require('#/page/page-title');
 const { run_shop } = require('#/page/page-shop');
-const { run_train, run_aftertrain } = require('#/system/train/train-loop');
+const { run_train } = require('#/system/train/train-loop');
+const { run_aftertrain } = require('#/system/train/train-end');
 // 顶层副作用：注册 EVENTFIRST 处理器（issue #22 真身）。后续事件的
 // 处理器模块随各自所属票在此追加 require——调教域（#44）：EVENTTRAIN /
 // EVENTCOM / EVENTCOMEND / EVENTEND / EVENTTURNEND 与画面 SHOW_STATUS /
@@ -123,8 +124,9 @@ require('#/kojo/kojo-k904-fia');
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
  * 直接 begin() 抛信号（非事件路径）同样有效，见 enter_state。
  *
- * 已接入：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）/ TRAIN、AFTERTRAIN
- * （#44，处理器在 system/train/train-loop.js）/ TURNEND（#44 薄转发：仅
+ * 已接入：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）/ TRAIN（#44，处理器
+ * 在 system/train/train-loop.js）、AFTERTRAIN（#44，处理器在
+ * system/train/train-end.js）/ TURNEND（#44 薄转发：仅
  * emit EVENTTURNEND 链——真身只有 #PRI 壳，回合结算本体待办，
  * event/event-turnend.js）。
  */
