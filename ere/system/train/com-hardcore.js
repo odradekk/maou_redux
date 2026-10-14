@@ -1,6 +1,6 @@
 /**
  * @file 调教指令 80–90「重度调教」族：拳交系、G点刺激、放尿、穿环、使役魔兽
- * PLAY、兽奸 PLAY、乳内插入的 com、com_able、train_message_a/b 分支，以及
+ * PLAY、兽奸 PLAY、乳房插入的 com、com_able、train_message_a/b 分支，以及
  * get_adv_com 的 80 号规则（强制口交 → 3P）与 equip_com89（兽奸 PLAY 中
  * 持续效果）。
  *
@@ -1958,7 +1958,7 @@ async function equip_com89() {
   return 1;
 }
 
-/** com90：乳内插入。 */
+/** com90：乳房插入。 */
 async function com90() {
   const target = era_flag.target;
   if (!(await confirm_condom())) return 0;
