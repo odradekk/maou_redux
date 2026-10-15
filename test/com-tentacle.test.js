@@ -32,7 +32,7 @@ const REPO = path.join(__dirname, '..');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好触手族。 */
 function seed_world({ load_colosseum = false, load_caress = false } = {}) {
-  // 可选族按调用方的声明先装，触手族与族表随后——与既有装载顺序一致
+  // 可选族（竞技场 / 爱抚）按调用方声明先装，触手族与族表随后
   const modules = {};
   if (load_colosseum) {
     modules.colosseum = 'system/train/com-colosseum';

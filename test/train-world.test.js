@@ -43,6 +43,8 @@ test('助手 0 = 主人自己：不加角色，指针照实', () => {
 
   assert.deepEqual(world.fixture.era.getAddedCharacters(), [0, 31]);
   assert.equal(world.era_flag.assi, 0);
+  // 主人不是助手：不被当成独立角色再预置一遍，呼名仍是自己的
+  assert.equal(world.fixture.store.get('callname:0:-1'), '你');
 });
 
 test('差异项：目标、呼名、视角与调教名单各自可覆盖', () => {
@@ -55,7 +57,7 @@ test('差异项：目标、呼名、视角与调教名单各自可覆盖', () =>
     selectcom: 20,
     prevcom: 21,
     master_callname: '魔王',
-    train: [0, 32, 17],
+    train_ids: [0, 32, 17],
   });
 
   assert.deepEqual(world.fixture.era.getAddedCharacters(), [0, 17, 32]);

@@ -31,11 +31,12 @@ const { join_slave_chara, preset_chara_0 } = require('./chara');
  *   -1 = 无助手（`era_flag.assi` 一律照实写入）
  * @param {number} [options.player=0] 当前调教者（视角角色），通常为 0 = 魔王
  * @param {number} [options.assiplay=0] 助手是否参与调教
- * @param {number} [options.selectcom=-1] 当前指令编号，-1 = 尚未选定
+ * @param {number} [options.selectcom=-1] 当前指令编号；-1 = 尚未选定（调教循环
+ *   开局把「上次/下次指令」置 -1，当前指令在玩家选定前同此语义）
  * @param {number} [options.prevcom=-1] 上次指令编号，-1 = 没有上次
  * @param {string} [options.master_callname] 主人呼名（SAVESTR:0 / NAME:0 的读数
  *   源）；不给就沿用预设的「你」
- * @param {number[]} [options.train] 进调教名单，默认 `[0, target]`（助手缺省
+ * @param {number[]} [options.train_ids] 进调教名单，默认 `[0, target]`（助手缺省
  *   不进，需要时显式列出）
  * @param {Record<string, string>} [options.modules] 模块声明：键 = 调用方取的
  *   名字，值 = 经 `#/` 的模块名；按声明顺序载入，导出挂在返回值的 `modules` 上
@@ -50,7 +51,7 @@ function seed_train_world({
   selectcom = -1,
   prevcom = -1,
   master_callname,
-  train,
+  train_ids,
   modules = {},
 } = {}) {
   const fixture = create_era_fixture();
@@ -61,7 +62,7 @@ function seed_train_world({
     // 助手是独立角色：预设与呼名走 join_slave_chara 同一条路
     join_slave_chara(fixture, assi, `助手${assi}`);
   }
-  fixture.era.beginTrain(...(train ?? [0, target]));
+  fixture.era.beginTrain(...(train_ids ?? [0, target]));
 
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = target;
