@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 424; // #785 审计返工 -1（删 M6949：与 execution 分片原 M7260 同型的链路守卫，改由 chara-removal-scan 白名单扫描统一守护）；#769 -1（M51 显式去零钳制由 BASE setter 等价承担）；#743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 464; // #791 +40（M13721-M13760：四条 SOURCE_CHECK_UP_* 收敛为描述表后，逐参数位（源下标/素质对/欲情表/欲望梯/域素质/淫部位/门槛位/扇出）与共用环节的回归检查；#702 的 M14150/M14151/M14152 随 BUST_RATES 搬到文件顶层改锚）；#785 审计返工 -1（删 M6949：与 execution 分片原 M7260 同型的链路守卫，改由 chara-removal-scan 白名单扫描统一守护）；#769 -1（M51 显式去零钳制由 BASE setter 等价承担）；#743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回「- 」分隔符——补回点被改回时对应的
@@ -142,8 +142,8 @@ export default [
   {
     desc: 'M48 ABL>5 的放大算式错一格（+5 改 +4）',
     file: 'ere/event/source-check.js',
-    find: '  local0 = idiv(local0 * (abl(0) + 5), 10);',
-    replace: '  local0 = idiv(local0 * (abl(0) + 4), 10);',
+    find: '    local0 = idiv(local0 * (abl(abl_index) + 5), 10);',
+    replace: '    local0 = idiv(local0 * (abl(abl_index) + 4), 10);',
     tests: ['source-check'],
     must_mention: '技巧 0 档',
   },
@@ -3643,16 +3643,20 @@ export default [
   {
     desc: 'M14150 source_check_up_b 胸围素质组乘算改回私处源（SOURCE:17 → SOURCE:1）',
     file: 'ere/event/source-check.js',
-    find: `  for (const [t, rate] of BUST_RATES) {
-    if (tal(t)) {
-      set_src(17, times(src(17), rate));
-      break;
+    find: `  if (busts) {
+    for (const [t, rate] of busts) {
+      if (tal(t)) {
+        set_src(source, times(src(source), rate));
+        break;
+      }
     }
   }`,
-    replace: `  for (const [t, rate] of BUST_RATES) {
-    if (tal(t)) {
-      set_src(1, times(src(1), rate));
-      break;
+    replace: `  if (busts) {
+    for (const [t, rate] of busts) {
+      if (tal(t)) {
+        set_src(1, times(src(1), rate));
+        break;
+      }
     }
   }`,
     tests: ['source-check'],
@@ -3663,8 +3667,8 @@ export default [
   {
     desc: 'M14151 BUST_RATES 253 档倍率 2.5 改 2.6',
     file: 'ere/event/source-check.js',
-    find: '    [253, 2.5],',
-    replace: '    [253, 2.6],',
+    find: '  [253, 2.5],',
+    replace: '  [253, 2.6],',
     tests: ['source-check'],
     test_name:
       'source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）',
@@ -3673,8 +3677,8 @@ export default [
   {
     desc: 'M14152 BUST_RATES 119 档倍率 0.7 改 0.6',
     file: 'ere/event/source-check.js',
-    find: '    [119, 0.7],',
-    replace: '    [119, 0.6],',
+    find: '  [119, 0.7],',
+    replace: '  [119, 0.6],',
     tests: ['source-check'],
     test_name:
       'source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE:17，先于 local0 取值）',
@@ -3926,5 +3930,330 @@ export default [
       "  const death_id = require('#/chara/chara-pregnancy').template_no_of(target);\n  if (death_id >= 1 && death_id <= 100) {\n    era.set(`flag:${death_id + 999}`, -2);\n  }",
     tests: ['event-charadead'],
     must_mention: '角色 100000 的苏生登记范围',
+  },
+  // —— #791：四条 SOURCE_CHECK_UP_* 的描述表化（M13721-M13760）——
+  // 逐参数位打：描述表的每个字段各改错一次，四个变体都点名
+  {
+    desc: 'M13721 Ｃ 路读错源（SOURCE:0 改 SOURCE:17）',
+    file: 'ere/event/source-check.js',
+    find: '    source: 0,',
+    replace: '    source: 17,',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 快感源 = 源 ×0.5',
+  },
+  {
+    desc: 'M13722 Ｖ 路读错源（SOURCE:1 改 SOURCE:0）',
+    file: 'ere/event/source-check.js',
+    find: '    source: 1,',
+    replace: '    source: 0,',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 快感源 = 源 ×0.3',
+  },
+  {
+    desc: 'M13723 Ａ 路读错源（SOURCE:2 改 SOURCE:17）',
+    file: 'ere/event/source-check.js',
+    find: '    source: 2,',
+    replace: '    source: 17,',
+    tests: ['source-check'],
+    must_mention: 'Ａ 快感源 = 源 ×0.6',
+  },
+  {
+    desc: 'M13724 Ｂ 路读错源（SOURCE:17 改错位）',
+    file: 'ere/event/source-check.js',
+    find: '    source: 17,',
+    replace: '    source: 1,',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 快感源 = 源 ×0.5',
+  },
+  {
+    desc: 'M13725 Ｃ 版敏感/钝感素质对错位（101/102 改 103/104）',
+    file: 'ere/event/source-check.js',
+    find: '    talents: [101, 102],',
+    replace: '    talents: [103, 104],',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 敏感 &1 位乘 0.5',
+  },
+  {
+    desc: 'M13726 Ｖ 版敏感/钝感素质对错位（103/104 改 105/106）',
+    file: 'ere/event/source-check.js',
+    find: '    talents: [103, 104],',
+    replace: '    talents: [105, 106],',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 敏感 &1 位乘 0.5',
+  },
+  {
+    desc: 'M13727 Ａ 版敏感/钝感素质对错位（105/106 改 107/108）',
+    file: 'ere/event/source-check.js',
+    find: '    talents: [105, 106],',
+    replace: '    talents: [107, 108],',
+    tests: ['source-check'],
+    must_mention: 'Ａ 敏感 &1 位乘 0.5',
+  },
+  {
+    desc: 'M13728 Ｂ 版敏感/钝感素质对错位（107/108 改 101/102）',
+    file: 'ere/event/source-check.js',
+    find: '    talents: [107, 108],',
+    replace: '    talents: [101, 102],',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 敏感 &1 位乘 0.5',
+  },
+  {
+    desc: 'M13729 Ｃ 版欲情系数表换成 ＲATE_A',
+    file: 'ere/event/source-check.js',
+    find: '    rates: RATE_C,',
+    replace: '    rates: RATE_A,',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 快感源 = 源 ×0.5',
+  },
+  {
+    desc: 'M13730 Ｖ 版欲情系数表换成 ＲATE_B',
+    file: 'ere/event/source-check.js',
+    find: '    rates: RATE_V,',
+    replace: '    rates: RATE_B,',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 快感源 = 源 ×0.3',
+  },
+  {
+    desc: 'M13731 Ａ 版欲情系数表换成 ＲATE_C',
+    file: 'ere/event/source-check.js',
+    find: '    rates: RATE_A,',
+    replace: '    rates: RATE_C,',
+    tests: ['source-check'],
+    must_mention: 'Ａ 快感源 = 源 ×0.6',
+  },
+  {
+    desc: 'M13732 Ｂ 版欲情系数表换成 ＲATE_V',
+    file: 'ere/event/source-check.js',
+    find: '    rates: RATE_B,',
+    replace: '    rates: RATE_V,',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 快感源 = 源 ×0.5',
+  },
+  {
+    desc: 'M13733 Ｃ 版欲望梯子换成 Ａ 版独立梯',
+    file: 'ere/event/source-check.js',
+    find: '    ladder: DESIRE_LADDER,\n    high_rate: 0.5,\n    domain_talent: 74,',
+    replace:
+      '    ladder: A_LADDER,\n    high_rate: 0.5,\n    domain_talent: 74,',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 的欲情增量 = 源 ×0.1',
+  },
+  {
+    desc: 'M13734 Ａ 版独立欲望梯被平均化（改回共用梯）',
+    file: 'ere/event/source-check.js',
+    find: '    ladder: A_LADDER,',
+    replace: '    ladder: DESIRE_LADDER,',
+    tests: ['source-check'],
+    must_mention: 'Ａ 欲情增量 = 源 ×0.05',
+  },
+  {
+    desc: 'M13735 Ａ 版欲望 ≥6 档的 2.0 封顶改 0.5',
+    file: 'ere/event/source-check.js',
+    find: '    high_rate: 2.0,',
+    replace: '    high_rate: 0.5,',
+    tests: ['source-check'],
+    must_mention: 'Ａ 欲望 ≥6 档 = 源 ×2.0',
+  },
+  {
+    desc: 'M13736 Ｃ 版欲望 ≥6 档的 0.5 改成 Ａ 版的 2.0',
+    file: 'ere/event/source-check.js',
+    find: '    high_rate: 0.5,\n    domain_talent: 74,',
+    replace: '    high_rate: 2.0,\n    domain_talent: 74,',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 欲望 ≥6 档 = 源 ×0.5',
+  },
+  {
+    desc: 'M13737 Ｖ 版域特异素质错位（75 改 74）',
+    file: 'ere/event/source-check.js',
+    find: '    domain_talent: 75,',
+    replace: '    domain_talent: 74,',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 域特异素质放大 1.5',
+  },
+  {
+    desc: 'M13738 Ｂ 版域特异素质错位（78 改 75）',
+    file: 'ere/event/source-check.js',
+    find: '    domain_talent: 78,',
+    replace: '    domain_talent: 75,',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 域特异素质放大 1.5',
+  },
+  {
+    desc: 'M13739 Ｃ 版淫部位标记倍率 2.0 改 1.5',
+    file: 'ere/event/source-check.js',
+    find: '    lewd: [230, 2.0],',
+    replace: '    lewd: [230, 1.5],',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 淫部位标记 230 乘 2.0',
+  },
+  {
+    desc: 'M13740 Ｖ 版淫部位标记倍率 1.5 改 2.0',
+    file: 'ere/event/source-check.js',
+    find: '    lewd: [232, 1.5],',
+    replace: '    lewd: [232, 2.0],',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 淫部位标记 232 乘 1.5',
+  },
+  {
+    desc: 'M13741 Ａ 版淫部位标记错位（233 改 231）',
+    file: 'ere/event/source-check.js',
+    find: '    lewd: [233, 2.0],',
+    replace: '    lewd: [231, 2.0],',
+    tests: ['source-check'],
+    must_mention: 'Ａ 淫部位标记 233 乘 2.0',
+  },
+  {
+    desc: 'M13742 Ｂ 版淫部位标记错位（231 改 233）',
+    file: 'ere/event/source-check.js',
+    find: '    lewd: [231, 2.0],',
+    replace: '    lewd: [233, 2.0],',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 淫部位标记 231 乘 2.0',
+  },
+  {
+    desc: 'M13743 Ｃ 版 ABL 门槛位错位（0 改 1）',
+    file: 'ere/event/source-check.js',
+    find: '    abl_index: 0,',
+    replace: '    abl_index: 1,',
+    tests: ['source-check'],
+    must_mention: 'Ｃ ABL:0 > 5 的放大',
+  },
+  {
+    desc: 'M13744 Ｖ 版 ABL 门槛位错位（2 改 1）',
+    file: 'ere/event/source-check.js',
+    find: '    abl_index: 2,',
+    replace: '    abl_index: 1,',
+    tests: ['source-check'],
+    must_mention: 'Ｖ ABL:2 > 5 的放大',
+  },
+  {
+    desc: 'M13745 Ａ 版 ABL 门槛位错位（3 改 2）',
+    file: 'ere/event/source-check.js',
+    find: '    abl_index: 3,',
+    replace: '    abl_index: 2,',
+    tests: ['source-check'],
+    must_mention: 'Ａ ABL:3 > 5 的放大',
+  },
+  {
+    desc: 'M13746 Ｂ 版 ABL 门槛位错位（1 改 0）',
+    file: 'ere/event/source-check.js',
+    find: '    abl_index: 1,',
+    replace: '    abl_index: 0,',
+    tests: ['source-check'],
+    must_mention: 'Ｂ ABL:1 > 5 的放大',
+  },
+  {
+    desc: 'M13747 Ｖ 版快感扇出错位（UP:1 改 UP:0）',
+    file: 'ere/event/source-check.js',
+    find: '      [1, 0], // PALAM:快Ｖ',
+    replace: '      [0, 0], // PALAM:快Ｖ',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 快感源 = 源 ×0.3',
+  },
+  {
+    desc: 'M13748 Ａ 版快感扇出错位（UP:2 改 UP:1）',
+    file: 'ere/event/source-check.js',
+    find: '      [2, 0], // PALAM:快Ａ',
+    replace: '      [1, 0], // PALAM:快Ａ',
+    tests: ['source-check'],
+    must_mention: 'Ａ 快感源 = 源 ×0.6',
+  },
+  {
+    desc: 'M13749 Ｂ 版快感扇出错位（UP:14 改 UP:1）',
+    file: 'ere/event/source-check.js',
+    find: '      [14, 0], // PALAM:快Ｂ',
+    replace: '      [1, 0], // PALAM:快Ｂ',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 快感源 = 源 ×0.5',
+  },
+  {
+    desc: 'M13750 Ｃ 版快感扇出错位（UP:0 改 UP:2）',
+    file: 'ere/event/source-check.js',
+    find: '      [0, 0], // PALAM:快Ｃ',
+    replace: '      [2, 0], // PALAM:快Ｃ',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 快感源 = 源 ×0.5',
+  },
+  {
+    desc: 'M13751 Ｖ 版欲情双扇出少一处（UP:5 丢失）',
+    file: 'ere/event/source-check.js',
+    find: '      [4, 1], // PALAM:恭顺\n      [5, 1], // PALAM:欲情',
+    replace: '      [4, 1], // PALAM:恭顺',
+    tests: ['source-check'],
+    must_mention: 'Ｖ 欲情增量同时进 UP:5',
+  },
+  {
+    desc: 'M13752 Ａ 版欲情双扇出少一处（UP:6 丢失）',
+    file: 'ere/event/source-check.js',
+    find: '      [5, 1], // PALAM:欲情\n      [6, 1], // PALAM:屈服',
+    replace: '      [5, 1], // PALAM:欲情',
+    tests: ['source-check'],
+    must_mention: 'Ａ 欲情增量同时进 UP:6',
+  },
+  {
+    desc: 'M13753 Ｂ 版欲情扇出错位（UP:5 改 UP:4）',
+    file: 'ere/event/source-check.js',
+    find: '      [5, 1], // PALAM:欲情\n      [13, 2], // PALAM:抑鬱\n    ],\n  },\n};',
+    replace:
+      '      [4, 1], // PALAM:欲情\n      [13, 2], // PALAM:抑鬱\n    ],\n  },\n};',
+    tests: ['source-check'],
+    must_mention: 'Ｂ 的欲情增量 = 源 ×0.1',
+  },
+  {
+    desc: 'M13754 否定抑鬱路的条件丢掉「抵抗」(tal(34) 不再是入口）',
+    file: 'ere/event/source-check.js',
+    find: '  if (tal(32) || tal(34) || tal(71)) {',
+    replace: '  if (tal(32) || tal(71)) {',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 抑鬱 0 档乘 1',
+  },
+  {
+    desc: 'M13755 否定抑鬱路的条件丢掉「否定快感」(tal(71) 不再是入口）',
+    file: 'ere/event/source-check.js',
+    find: '  if (tal(32) || tal(34) || tal(71)) {',
+    replace: '  if (tal(32) || tal(34)) {',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 抑鬱路也认否定素质 71',
+  },
+  {
+    desc: 'M13756 抑鬱的源除数错（/3 改 /4）',
+    file: 'ere/event/source-check.js',
+    find: '    local2 = idiv(src(source), 3);',
+    replace: '    local2 = idiv(src(source), 4);',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 抑鬱 0 档乘 1',
+  },
+  {
+    desc: 'M13757 欲望 ≥6 档的抑鬱不再归零',
+    file: 'ere/event/source-check.js',
+    find: '    local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);',
+    replace:
+      '    local2 = abl(11) >= 6 ? local2 : times(local2, DENY_LADDER[abl(11)][1]);',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 抑鬱在欲望 ≥6 档归零',
+  },
+  {
+    desc: 'M13758 否定阶梯 1 档 0.85 改 0.8',
+    file: 'ere/event/source-check.js',
+    find: '  [1, 0.85],',
+    replace: '  [1, 0.8],',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 抑鬱 1 档乘 0.85',
+  },
+  {
+    desc: 'M13759 域特异素质的三路放大 1.5 改 1.4',
+    file: 'ere/event/source-check.js',
+    find: '  if (tal(domain_talent)) {\n    local0 = times(local0, 1.5);',
+    replace: '  if (tal(domain_talent)) {\n    local0 = times(local0, 1.4);',
+    tests: ['source-check'],
+    must_mention: 'Ｃ 域特异素质放大 1.5',
+  },
+  {
+    desc: 'M13760 ABL 门槛放宽到 4 档（> 5 改 > 3）',
+    file: 'ere/event/source-check.js',
+    find: '  if (abl(abl_index) > 5) {',
+    replace: '  if (abl(abl_index) > 3) {',
+    tests: ['source-check'],
+    must_mention: 'Ｃ ABL:0 = 4 不放大',
   },
 ];
