@@ -1,10 +1,11 @@
 'use strict';
 
 /**
- * 成熟奴隶异族市场与宠物市场末路测试（issue #337）。
+ * 成熟奴隶三家市场末路测试（issue #337/#797）。
  *
- * 接缝 = ere/system/stronghold/sell-maturo.js 导出的 K1、K2 与 K2 分支族；
- * 通过唯一夹具观察玩家输出、家族记录与 VIDEO_MATURO 保存的录像标题。
+ * 接缝 = ere/system/stronghold/sell-maturo-k0.js 的黑市入口、sell-maturo-k1.js
+ * 的异族市场与 sell-maturo-k2.js 的宠物市场（含 K2 分支族）；通过唯一夹具观察
+ * 玩家输出、家族记录与 VIDEO_MATURO 保存的录像标题。
  */
 
 const assert = require('node:assert/strict');
@@ -32,7 +33,11 @@ function seed_world() {
   fixture.store.set('exflag:9000', 4); // 水晶球录像保存开关
   return {
     fixture,
-    api: fixture.load_module('system/stronghold/sell-maturo'),
+    api: {
+      ...fixture.load_module('system/stronghold/sell-maturo-k0'),
+      ...fixture.load_module('system/stronghold/sell-maturo-k1'),
+      ...fixture.load_module('system/stronghold/sell-maturo-k2'),
+    },
   };
 }
 

@@ -8,7 +8,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const {
