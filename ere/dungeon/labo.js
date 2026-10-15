@@ -42,16 +42,7 @@
  */
 
 const era = require('#/era-electron');
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
-/** 整数除法（向零截断）——插值算式的差值项可负，floor 会差 1 */
-function idiv(a, b) {
-  return Math.trunc(a / b);
-}
+const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 // —— DA/DB/DC：VariableSize.csv 的三张 100×100 全局二维数组 ——
 //    引擎表一维折叠承载（文件头）；未写格 getter 返 0，与「全区
@@ -168,7 +159,7 @@ function geo_output() {
   for (let y = 0; y < 32; y += 1) {
     const row = [];
     for (let x = 0; x < 32; x += 1) {
-      row.push(...c_out(idiv(da_get(y, x), 32))); // LOCAL:2 = DA:(y):(x)/32
+      row.push(...c_out(idiv_trunc(da_get(y, x), 32))); // LOCAL:2 = DA:(y):(x)/32
     }
     // 的 PRINTL 只结束这一行的 32 个 c_out `PRINT` 串（PRINT 不换
     // 行），**不是空行**——ere 的 print 一次调用即一行，别再补（#597）
@@ -272,9 +263,9 @@ function geo_calc_interp(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   da_set(
     arg7,
     arg6,
-    idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +
-      idiv((arg1 - arg0) * kx, 100) +
-      idiv((arg2 - arg0) * ky, 100) +
+    idiv_trunc((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +
+      idiv_trunc((arg1 - arg0) * kx, 100) +
+      idiv_trunc((arg2 - arg0) * ky, 100) +
       arg0,
   );
 }
@@ -293,7 +284,7 @@ function linear_interp_cos_x(arg0, arg1, arg2, arg3) {
   const z0 = da_get(arg3, arg0); // LOCAL:0:z0
   const z1 = da_get(arg3, arg1); // LOCAL:1:z1
   const k = COS_TABLE[arg2 - arg0] ?? 0; // LOCAL:2:係数
-  return z0 + idiv((z1 - z0) * k, 100);
+  return z0 + idiv_trunc((z1 - z0) * k, 100);
 }
 
 /**
@@ -309,7 +300,7 @@ function linear_interp_cos_y(arg0, arg1, arg2, arg3) {
   const z0 = da_get(arg0, arg3); // LOCAL:0:z0
   const z1 = da_get(arg1, arg3); // LOCAL:1:z1
   const k = COS_TABLE[arg2 - arg0] ?? 0; // LOCAL:2:係数
-  return z0 + idiv((z1 - z0) * k, 100);
+  return z0 + idiv_trunc((z1 - z0) * k, 100);
 }
 
 /**

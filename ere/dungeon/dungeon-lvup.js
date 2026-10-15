@@ -28,15 +28,11 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
+const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon-trap.js 同款） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /**

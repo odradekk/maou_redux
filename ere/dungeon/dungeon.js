@@ -61,6 +61,7 @@ const trap_mod = require('#/dungeon/dungeon-trap');
 const room_mod = require('#/dungeon/dungeon-room');
 const town_mod = require('#/dungeon/dungeon-town');
 const ex_item_mod = require('#/dungeon/ex-item');
+const { default_rand } = require('#/utils/numeric');
 
 // —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
 // 键都是 FLAG:400（当前进行中的战役号）；只有 campaign_set_1 存在，
@@ -80,11 +81,6 @@ const campaign_ending_family = new DispatchFamily('CAMPAIGN_ENDING', [1]);
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 // —— 已换真身的跨域入口（工单 #172 十组 + 附属）——

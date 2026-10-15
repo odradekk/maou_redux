@@ -13,10 +13,7 @@
 
 const era = require('#/era-electron');
 const { item_name } = require('#/dungeon/monster-data');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /** monster_total_count：45 种常规怪物的库存总数。 */
 function monster_total_count() {

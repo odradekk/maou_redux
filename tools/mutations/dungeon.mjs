@@ -376,9 +376,9 @@ export default [
   {
     desc: 'M581 geo_calc_interp 的对角项分母改坏（10000 → 1000：块内插值的交叉项放大十倍）',
     file: 'ere/dungeon/labo.js',
-    find: '    idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +',
+    find: '    idiv_trunc((arg0 - arg1 - arg2 + arg3) * kx * ky, 10000) +',
     replace:
-      '    idiv((arg0 - arg1 - arg2 + arg3) * kx * ky, 1000) + // 变异：分母 10000 → 1000',
+      '    idiv_trunc((arg0 - arg1 - arg2 + arg3) * kx * ky, 1000) + // 变异：分母 10000 → 1000',
     tests: ['dungeon-labo'],
     must_mention: '对称四角的中心值',
   },
@@ -866,9 +866,9 @@ export default [
   {
     desc: 'M6724 角色对 Boss 的魔法减伤改坏（十分之一改五分之一）',
     file: 'ere/dungeon/magic.js',
-    find: '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv(damage, 10);',
+    find: '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv_trunc(damage, 10);',
     replace:
-      '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv(damage, 5); // 变异',
+      '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv_trunc(damage, 5); // 变异',
     tests: ['dungeon-magic'],
     must_mention: 'Boss',
   },
@@ -949,9 +949,9 @@ export default [
   {
     desc: 'M6734 诅咒术的防御力削减方向改坏',
     file: 'ere/dungeon/magic.js',
-    find: '  const value = chara(defender).dungeon.防御力 - idiv(rand(damage), 2);',
+    find: '  const value = chara(defender).dungeon.防御力 - idiv_trunc(rand(damage), 2);',
     replace:
-      '  const value = chara(defender).dungeon.防御力 + idiv(rand(damage), 2); // 变异',
+      '  const value = chara(defender).dungeon.防御力 + idiv_trunc(rand(damage), 2); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '削攻击与防御',
   },
@@ -1019,7 +1019,7 @@ export default [
   {
     desc: 'M6742 怪物经验吸取不给魔王分一半经验',
     file: 'ere/dungeon/magic.js',
-    find: '    add_exp(0, idiv(damage, 2));',
+    find: '    add_exp(0, idiv_trunc(damage, 2));',
     replace: '    // 变异：魔王经验加算删除',
     tests: ['dungeon-magic'],
     must_mention: '一半经验给魔王',
@@ -1072,9 +1072,9 @@ export default [
   {
     desc: 'M6749 怪物对角色的高段魔法减益阈值分支删坏',
     file: 'ere/dungeon/magic.js',
-    find: '  let debuff = get_cflag(cid, 682);\n  if (debuff > 50) {\n    damage += idiv(damage, 2);',
+    find: '  let debuff = get_cflag(cid, 682);\n  if (debuff > 50) {\n    damage += idiv_trunc(damage, 2);',
     replace:
-      '  let debuff = get_cflag(cid, 682);\n  if (false) { // 变异：高段减益分支删除\n    damage += idiv(damage, 2);',
+      '  let debuff = get_cflag(cid, 682);\n  if (false) { // 变异：高段减益分支删除\n    damage += idiv_trunc(damage, 2);',
     tests: ['dungeon-magic'],
     must_mention: '魔法减益',
   },
@@ -1152,8 +1152,8 @@ export default [
   {
     desc: 'M6758 怪物治疗漏掉固定增加的一点',
     file: 'ere/dungeon/magic.js',
-    find: '    e_set(b + 3, e_get(b + 3) + 1 + idiv(damage, 60));',
-    replace: '    e_set(b + 3, e_get(b + 3) + idiv(damage, 60)); // 变异',
+    find: '    e_set(b + 3, e_get(b + 3) + 1 + idiv_trunc(damage, 60));',
+    replace: '    e_set(b + 3, e_get(b + 3) + idiv_trunc(damage, 60)); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '治疗 2',
   },
@@ -1176,8 +1176,8 @@ export default [
   {
     desc: 'M6761 对人格斗的经验吸取把经验给受术者',
     file: 'ere/dungeon/magic.js',
-    find: '  add_exp(caster, idiv(damage, 2));',
-    replace: '  add_exp(defender, idiv(damage, 2)); // 变异',
+    find: '  add_exp(caster, idiv_trunc(damage, 2));',
+    replace: '  add_exp(defender, idiv_trunc(damage, 2)); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '按目标削经验与体力并给施法者经验',
   },

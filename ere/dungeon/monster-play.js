@@ -10,11 +10,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { chara } = require('#/facade/chara');
 const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { print_button_grid } = require('#/utils/button-grid');
-
-/** RAND:N（0..N-1）的缺省实现。 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /** ITEM:N 怪物库存；未声明槽按初值 0 处理。 */
 function item_count(id) {

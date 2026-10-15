@@ -13,13 +13,13 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { karma, chara_id_output } = require('#/chara/chara-stats');
 const { search_family } = require('#/chara/chara-family');
 const { nakadashi_check } = require('#/event/event-pregnancy');
 const { select_yes_no } = require('#/page/page-life-list');
 const { get_look_info } = require('#/chara/look-info');
 
-const default_rand = (n) => Math.floor(Math.random() * n);
 const name_of = (cid) => chara_callname(cid);
 
 const LOVER_NAMES = new Map([

@@ -34,15 +34,11 @@ const { e_get, e_set } = require('#/dungeon/monster-data');
 // 陷阱真身（#176）：quest_battle_set 的障碍陷阱三选一。其对 dungeon.js
 // 域内存根的延迟 require 同款防环；本文件不反依赖它，顶层引用无环。
 const trap_mod = require('#/dungeon/dungeon-trap');
+const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /** GETBIT(X, n) */

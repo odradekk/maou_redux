@@ -21,10 +21,10 @@ const { e_get, item_name, monster_data } = require('#/dungeon/monster-data');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 
-const default_rand = (n) => Math.floor(Math.random() * n);
 const name_of = (cid) => chara_callname(cid);
 const marriage_name = (cid) => item_name(chara(cid).chara.结婚对象 || 0);
 const talent_name = (index) => era.get(`talentname:${index}`) ?? '';
