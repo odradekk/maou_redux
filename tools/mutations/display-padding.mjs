@@ -163,9 +163,9 @@ export default [
   {
     desc: 'M12226 ablup14 的 EXP 门槛行 6 格前导退回半角空格',
     file: ABLUP,
-    find: "    era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`);",
+    find: "          `${NBSP.repeat(6)}${era.get('expname:5')}　${s.exp5}/${s.b}`,",
     replace:
-      "    era.print(`${' '.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // 变异：回退",
+      "          `${' '.repeat(6)}${era.get('expname:5')}　${s.exp5}/${s.b}`, // 变异：前导退回半角空格",
     tests: ['ablup'],
     must_mention: 'EXP 门槛行的 6 格前导须是 NBSP',
   },
