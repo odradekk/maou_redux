@@ -12,8 +12,9 @@
  *     洗涤分支不再置洗衣状态（洗后即能穿回），废弃/撕破/没收的负值状态保留；
  *   - re_clothed 的顺从+露出癖检查与再着衣输出；
  *   - soiling_cloth_no1/no2 的置位矩阵（含尿布早退与调教外无 tflag 通道）；
- *   - 查表版/渲染版两版取串表（特别服装表的 98/99 简体化、查表版已补
- *     9 号胸甲＆透视裙子、动词后置）与 clothtype_text 的组合（全裸/史莱姆/特别服装句）。
+ *   - 两版取串出口共用一份名字表（98/99 的简体名、9 号胸甲＆透视裙子、
+ *     动词后置、编号空间的守卫、两版各自的未知编号缺省），以及
+ *     clothtype_text 的组合（全裸/史莱姆/特别服装句）。
  *
  * 世界底座与 test/com-caress.test.js 同构：魔王 0 + 奴隶 31、火车表按
  * 用例决定开否（mask 参数链的用例特意**不开**——证明调教外路径不碰
@@ -623,13 +624,13 @@ test('get_clothtype_main2：9 号 = 胸甲＆透视裙子；未知编号默认�
   assert.equal(
     get_clothtype_main2(31),
     '胸甲＆透视裙子',
-    '9 号补登（与渲染版同名）',
+    '9 号（胸甲＆透视裙子）在共享表内',
   );
   fixture.store.set('cflag:31:41', 999);
   assert.equal(get_clothtype_main2(31), '服', '未知编号取默认串');
 });
 
-test('get_clothtype_special：98/99 取渲染版简体名（#60），未知 → ERROR', () => {
+test('get_clothtype_special：98/99 是简体名（#60），未知 → ERROR', () => {
   const fixture = create_era_fixture();
   const { get_clothtype_special } = fixture.load_module('system/cloth-lookup');
   fixture.store.set('cflag:31:42', 69);
@@ -638,17 +639,83 @@ test('get_clothtype_special：98/99 取渲染版简体名（#60），未知 → 
   assert.equal(
     get_clothtype_special(31),
     '神秘的尿道导管',
-    '98/99 按简体规则取渲染版名称（神秘的尿道导管）',
+    '98/99 按简体规则取名（神秘的尿道导管）',
   );
   fixture.store.set('cflag:31:42', 999);
   assert.equal(get_clothtype_special(31), 'ERROR', '未知编号哨兵');
 });
 
-test('clothtype_main2_text 的 9 号 = 胸甲＆透视裙子（与 get_clothtype_main2 两表各自实现）', () => {
+test('clothtype_main2_text 的 9 号 = 胸甲＆透视裙子（与 get_clothtype_main2 同读一份表）', () => {
   const fixture = create_era_fixture();
   const { clothtype_main2_text } = fixture.load_module('page/page-clothtype');
   fixture.store.set('cflag:31:41', 9);
-  assert.equal(clothtype_main2_text(31), '胸甲＆透视裙子', '渲染版 9 号');
+  assert.equal(clothtype_main2_text(31), '胸甲＆透视裙子', '页面版 9 号');
+});
+
+test('两版出口同源：共享表内每个编号，page 版与 GET 版返回同一个名字', () => {
+  // 表只有一份定义，两版出口只在未知编号的缺省上分叉。这条用例逐编号
+  // 比对两版返回值：谁把表拆回页面的私有拷贝、改漏一处，这里先红。
+  const fixture = create_era_fixture();
+  const lookup = fixture.load_module('system/cloth-lookup');
+  const page = fixture.load_module('page/page-clothtype');
+
+  for (const [key, name] of Object.entries(lookup.MAIN2_TABLE)) {
+    fixture.store.set('cflag:31:41', Number(key));
+    assert.equal(
+      page.clothtype_main2_text(31),
+      lookup.get_clothtype_main2(31),
+      `上衣名表 ${key}（${name}）：两版出口必须同名`,
+    );
+  }
+  for (const [key, name] of Object.entries(lookup.SPECIAL_TABLE)) {
+    fixture.store.set('cflag:31:42', Number(key));
+    assert.equal(
+      page.clothtype_special_text(31),
+      lookup.get_clothtype_special(31),
+      `特别服装名表 ${key}（${name}）：两版出口必须同名`,
+    );
+  }
+});
+
+test('名字表的编号空间：编号被删或被加都要在这里停一下', () => {
+  // 上一个用例的编号集合取自表本身，删掉一个编号就遍历不到它；这里把
+  // 数量钉住——#215 的分歧正是编号集合的分歧（MAIN2 曾缺 9 号），编号
+  // 空间的增减必须是有意为之。
+  const fixture = create_era_fixture();
+  const { MAIN2_TABLE, SPECIAL_TABLE } = fixture.load_module(
+    'system/cloth-lookup',
+  );
+  assert.equal(Object.keys(MAIN2_TABLE).length, 81, '上衣名表的编号数');
+  assert.equal(Object.keys(SPECIAL_TABLE).length, 46, '特别服装名表的编号数');
+});
+
+test('两版出口的未知编号缺省：main2 都回「服」，special 分回空串与 ERROR', () => {
+  const fixture = create_era_fixture();
+  const lookup = fixture.load_module('system/cloth-lookup');
+  const page = fixture.load_module('page/page-clothtype');
+  fixture.store.set('cflag:31:41', 999);
+  fixture.store.set('cflag:31:42', 999);
+
+  assert.equal(
+    page.clothtype_main2_text(31),
+    '服',
+    '页面版 main2 的未知编号缺省是「服」',
+  );
+  assert.equal(
+    lookup.get_clothtype_main2(31),
+    '服',
+    'GET 版 main2 的未知编号缺省也是「服」',
+  );
+  assert.equal(
+    page.clothtype_special_text(31),
+    '',
+    '页面版 special 的未知编号缺省是空串',
+  );
+  assert.equal(
+    lookup.get_clothtype_special(31),
+    'ERROR',
+    'GET 版 special 的未知编号缺省是 ERROR 哨兵',
+  );
 });
 
 test('clothtype_text：着衣模式关 / 无基本服装 → 全裸；史莱姆特装；特别服装句', () => {
