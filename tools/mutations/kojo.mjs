@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2717; // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2725; // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -25763,5 +25763,69 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['static-table-coverage'],
     test_name: '参数等级阈值',
     must_mention: '非法参数等级地址',
+  },
+  {
+    desc: 'M7690 K2 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: '      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7691 K0 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      await sell_maturo_k0(target, { rand: _rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7692 K6 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7693 K7 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7694 K9 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: '      await sell_maturo_k0(target, { price: S }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7695 K10 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7696 K12 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find: '      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: 'M7697 K903 成熟出售真身调用丢失',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: '      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0',
+    replace: '      // 变异：成熟出售真身调用丢失',
+    tests: ['sell-maturo'],
+    must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
   },
 ];
