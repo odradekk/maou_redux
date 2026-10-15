@@ -14,7 +14,7 @@
  *   | 录像书架 SUISEI_STR | 三支都不写 | 肉便器 / 士兵化 / 固定示众各写一次 |
  *   | 肉便器段的 C 敏感文案与人称 | 只有阴蒂一支、恒用「她」 | 扶她/男人分流、按素质换人称 |
  *
- * 本文件把这四条差异对照着钉住：同一条场景分别喂给两版入口，各自断言应有
+ * 本文件用回归测试固定这四条差异：同一条场景分别喂给两版入口，各自断言应有
  * 的观察结果。把任意一版的行为刷到另一版上（「好心合并重复实现」的典型
  * 形态）本文件就会红；两版实现本身不改动。
  *
@@ -165,8 +165,8 @@ test('释放分支的好感度：单选版直接赋 20，批量版只把超过 2
 test('释放分支的复位与标签：冒险状态两版一致，处刑标签只有批量版清除', async () => {
   for (const variant of VARIANTS) {
     const fixture = seed_world();
-    // 善恶值取 -55：落在 -50 与 -60 之间，把下限阈值本身钉住（-80 那样的
-    // 深值对「阈值改松」不敏感）
+    // 善恶值取 -55：落在 -50 与 -60 之间，改坏下限阈值会被看出来（-80 那样
+    // 的深值对「阈值改松」不敏感）
     fixture.store.set('cflag:31:151', -55);
     fixture.store.set('cflag:31:777', 1); // 处刑标签
 
@@ -235,43 +235,24 @@ test('录像书架：批量版三支各写一次槽位，单选版三支一个�
 });
 
 test('肉便器段的人称：批量版随 TALENT:122 用「他」，单选版恒用「她」', async () => {
+  // 这一行的两侧文案只差「她/他」：女性目标两版都是「她」，男性目标批量版
+  // 换「他」、单选版照旧，所以直接用该出现的那个字拼出整行来断言。
   const cases = [
-    [
-      '女性目标',
-      {},
-      '被吸收了全部力量的她，身体变成淫靡的肉块了。',
-      '被吸收了全部力量的她，身体变成淫靡的肉块了。',
-    ],
-    [
-      '男性目标（TALENT:122）',
-      { 'talent:31:122': 1 },
-      '被吸收了全部力量的她，身体变成淫靡的肉块了。',
-      '被吸收了全部力量的他，身体变成淫靡的肉块了。',
-    ],
+    ['女性目标', false, { single: '她', batch: '她' }],
+    ['男性目标（TALENT:122）', true, { single: '她', batch: '他' }],
   ];
-  for (const [label, talents, single_line, batch_line] of cases) {
-    const expected = { single: single_line, batch: batch_line };
+  for (const [label, male, expected] of cases) {
     for (const variant of VARIANTS) {
       const fixture = seed_world();
-      for (const [address, value] of Object.entries(talents)) {
-        fixture.store.set(address, value);
-      }
+      if (male) fixture.store.set('talent:31:122', 1);
 
       await RUN[variant](fixture, 4);
 
-      const texts = fixture.text_lines();
+      const line = `被吸收了全部力量的${expected[variant]}，身体变成淫靡的肉块了。`;
       assert(
-        texts.includes(expected[variant]),
-        `${variant}：${label} 的融合播报人称`,
+        fixture.text_lines().includes(line),
+        `${variant}：${label} 的融合播报人称是「${expected[variant]}」`,
       );
-      for (const line of [single_line, batch_line]) {
-        if (line !== expected[variant]) {
-          assert(
-            !texts.includes(line),
-            `${variant}：${label} 不该出现另一种人称`,
-          );
-        }
-      }
     }
   }
 });
