@@ -13,8 +13,8 @@
  *   - re_clothed 的顺从+露出癖检查与再着衣输出；
  *   - soiling_cloth_no1/no2 的置位矩阵（含尿布早退与调教外无 tflag 通道）；
  *   - 两版取串出口共用一份名字表（98/99 的简体名、9 号胸甲＆透视裙子、
- *     动词后置、两版各自的未知编号缺省），以及 clothtype_text 的组合
- *     （全裸/史莱姆/特别服装句）。
+ *     动词后置、编号空间的守卫、两版各自的未知编号缺省），以及
+ *     clothtype_text 的组合（全裸/史莱姆/特别服装句）。
  *
  * 世界底座与 test/com-caress.test.js 同构：魔王 0 + 奴隶 31、火车表按
  * 用例决定开否（mask 参数链的用例特意**不开**——证明调教外路径不碰
@@ -675,6 +675,18 @@ test('两版出口同源：共享表内每个编号，page 版与 GET 版返回�
       `特别服装名表 ${key}（${name}）：两版出口必须同名`,
     );
   }
+});
+
+test('名字表的编号空间：编号被删或被加都要在这里停一下', () => {
+  // 上一个用例的编号集合取自表本身，删掉一个编号就遍历不到它；这里把
+  // 数量钉住——#215 的分歧正是编号集合的分歧（MAIN2 曾缺 9 号），编号
+  // 空间的增减必须是有意为之。
+  const fixture = create_era_fixture();
+  const { MAIN2_TABLE, SPECIAL_TABLE } = fixture.load_module(
+    'system/cloth-lookup',
+  );
+  assert.equal(Object.keys(MAIN2_TABLE).length, 81, '上衣名表的编号数');
+  assert.equal(Object.keys(SPECIAL_TABLE).length, 46, '特别服装名表的编号数');
 });
 
 test('两版出口的未知编号缺省：main2 都回「服」，special 分回空串与 ERROR', () => {

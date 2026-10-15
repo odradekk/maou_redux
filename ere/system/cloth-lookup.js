@@ -182,7 +182,7 @@ const SPECIAL_TABLE = {
  * get_clothtype_main2。渲染序「名字 → 动词」（见文件头），动词缺省空串。
  * @param {number} cid 角色 ID
  * @param {string} [verb] 衣服前的动词（渲染在名字之后）
- * @returns {string} 服装名（未知编号 →「服」，页面版缺省相同）
+ * @returns {string} 服装名（未知编号 →「服」）
  */
 function get_clothtype_main2(cid, verb = '') {
   const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';
@@ -194,8 +194,7 @@ function get_clothtype_main2(cid, verb = '') {
  * @param {number} cid 角色 ID
  * @returns {string} 特别服装名（未知编号 → 'ERROR'，RETURNF "ERROR"
  *   哨兵——aftertrain_cloth 等消费方以空串
- *   判定，ERROR 与未装备的区分由调用方自理；页面版的
- *   clothtype_special_text 对未知编号返回空串，供「无输出」的内嵌）
+ *   判定，ERROR 与未装备的区分由调用方自理）
  */
 function get_clothtype_special(cid) {
   return SPECIAL_TABLE[cloth_special_type(cid)] ?? 'ERROR';

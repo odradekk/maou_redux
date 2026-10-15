@@ -48,8 +48,7 @@ function talent(cid, idx) {
 
 /**
  * clothtype_special_text：特别服装名。未知编号**无输出**
- * （表外编号不进任何分支）——ere 以空串对应。名字表与 GET 版共用
- * （ere/system/cloth-lookup.js 的 SPECIAL_TABLE）。
+ * （表外编号不进任何分支）——ere 以空串对应。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -59,7 +58,6 @@ function clothtype_special_text(cid) {
 
 /**
  * clothtype_main2_text：上衣下类型名。未知编号 →「服」（缺省分支）。
- * 名字表与 GET 版共用（ere/system/cloth-lookup.js 的 MAIN2_TABLE）。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
