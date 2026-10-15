@@ -14,9 +14,10 @@
  * 初始状态固定 TITLE（启动即进标题页；ere 侧把入口也
  * 收进状态机，STATE.TITLE 是本地扩展，见 begin-signal.js）。
  *
- * 已接入的状态：TITLE / FIRST / SHOP（贯通验证）与 TRAIN / AFTERTRAIN /
- * TURNEND（#44——调教完整流程「主菜单 → 调教 → 回合结算 → 回主菜单」）。其余
- * 其余目标不存在：转场目标只有这六种（begin-signal.js 的 STATE 枚举）。
+ * 状态清单的权威是 begin-signal.js 的 STATE 枚举，本模块不另抄一份：处理器表
+ * 必须为枚举的每个取值备一项，逐项说明写在各自条目上。自列一份清单的写法在
+ * 读档后新增 SHOP_AFTER_LOAD 时漏跟过，这张表与枚举的同步改由
+ * test/main-loop.test.js 的用例当场盯住。
  *
  * 【硬约束 #6】本模块的 catch 已按约定首行放行 BeginSignal；业务代码新写
  * 任何 try/catch 都必须同样处理（见 begin-signal.js 文件头）。
@@ -124,13 +125,11 @@ require('#/kojo/kojo-k904-fia');
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
  * 直接 begin() 抛信号（非事件路径）同样有效，见 enter_state。
  *
- * 已接入：TITLE（#19）/ FIRST（#20/#22）/ SHOP（#23）/ TRAIN（#44，处理器
- * 在 system/train/train-loop.js）、AFTERTRAIN（#44，处理器在
- * system/train/train-end.js）/ TURNEND（#44 薄转发：仅
- * emit EVENTTURNEND 链——真身只有 #PRI 壳，回合结算本体待办，
- * event/event-turnend.js）。
+ * 键必须是 begin-signal.js 的 STATE 枚举的取值，不多不少（同步用例在
+ * test/main-loop.test.js），逐项说明写在各自条目上。
  */
 const STATE_HANDLERS = {
+  // 标题页（#19）：启动的初始状态，不经 BEGIN 进入
   [STATE.TITLE]: run_title_page,
   // BEGIN FIRST → EVENTFIRST 事件链。
   // 链无人 BEGIN 时回落进 SHOP：EVENTFIRST 跑完而无转场时默认进商店轮，
@@ -202,3 +201,6 @@ async function run_main_loop() {
 // EVENTSHOP 链）的行为测试直接驱动它，不必整跑 run_main_loop
 module.exports = run_main_loop;
 module.exports.enter_state = enter_state;
+// STATE_HANDLERS 一并导出（#790）：同步用例对照 STATE 枚举核对键集，
+// 不再靠文件头手抄的清单
+module.exports.STATE_HANDLERS = STATE_HANDLERS;
