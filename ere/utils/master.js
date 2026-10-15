@@ -9,6 +9,4 @@
 /** 魔王的角色 ID。 */
 const MASTER = 0;
 
-module.exports = {
-  MASTER,
-};
+module.exports = { MASTER };

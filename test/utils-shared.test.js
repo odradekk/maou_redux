@@ -75,7 +75,7 @@ function definition_patterns(name) {
   return [
     new RegExp(`^\\s*(?:async\\s+)?function\\s+${name}\\s*\\(`),
     new RegExp(
-      `^\\s*(?:const|let|var)\\s+${name}\\s*=\\s*(?:\\(|async\\b|function\\b)`,
+      `^\\s*(?:const|let|var)\\s+${name}\\s*=\\s*(?:\\(|\\w+\\s*=>|async\\b|function\\b)`,
     ),
   ];
 }

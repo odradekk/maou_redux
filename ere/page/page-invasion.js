@@ -121,6 +121,8 @@ const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+// sengen_video 与 sengen_video_bonus 的十二处 ×小数 用 times 而非 times_exact：
+// 旧引擎的双精度与 JS 同为 IEEE 754，两边逐位同值，不需要十进制精确乘
 const { default_rand, times } = require('#/utils/numeric');
 
 /**

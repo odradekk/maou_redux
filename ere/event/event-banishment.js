@@ -34,6 +34,7 @@ const { default_rand } = require('#/utils/numeric');
 // 肉便器/精英；244–247 = 恶魔外观；314–320 = 种族、前生活、成为勇者的
 // 契机、喜好、阴茎状态及家族构成。ABL:3/11/13/17/21/22/32/39 = 肛门
 // 感觉/欲望/侍奉技术/露出癖/抖M/百合/精液中毒/兽奸中毒；EXP:56/70/74
+// = 兽奸/拍摄/卖淫经验。其余 TALENT 数字是分支条件直接判定的素质位。
 function has(cid, family, index) {
   return get(`${family}:${cid}:${index}`) !== 0;
 }

@@ -773,6 +773,7 @@ function passout_palam_up() {
   if (tal(cid, 85)) {
     z = Math.floor(z / 2);
   }
+  // 分配（恐怖/屈服走 Z，其余走 100 - Z）
   add_up(cid, 7, percent_floor(a, 100 - z));
   add_up(cid, 8, percent_floor(b, 100 - z));
   add_up(cid, 10, percent_floor(c, 100 - z));
