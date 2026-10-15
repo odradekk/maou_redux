@@ -9,6 +9,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { times_trunc } = require('#/utils/numeric');
 
 const ARCHIVE_SIZE = 20000;
 
@@ -145,8 +146,6 @@ const FEMALE_LIVES = [
   '奴隶',
   '主妇',
 ];
-
-const times = (value, multiplier) => Math.trunc(value * multiplier);
 
 function add_values(target, values = {}) {
   for (const [index, amount] of Object.entries(values)) {
@@ -308,9 +307,9 @@ function apply_command(cid, assi, command, equipment, state) {
 
   if (bonus_abl !== 0) {
     const level = era.get(`abl:${cid}:${bonus_abl}`) || 0;
-    if (level > 5) score = times(score, 1.5);
-    else if (level > 2) score = times(score, 1.2);
-    else if (level > 0) score = times(score, 1.1);
+    if (level > 5) score = times_trunc(score, 1.5);
+    else if (level > 2) score = times_trunc(score, 1.2);
+    else if (level > 0) score = times_trunc(score, 1.1);
   }
   return { equipment, score };
 }
@@ -500,7 +499,7 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
   if (game.kojo.录像内容 & 2) {
     const talking = era.get(`abl:${cid}:15`) || 0;
     const rates = [0.9, 1, 1.05, 1.1, 1.15, 1.2, 1.25];
-    score = times(score, rates[Math.min(talking, 6)]);
+    score = times_trunc(score, rates[Math.min(talking, 6)]);
   }
 
   // 素质倍率按源顺序逐项 TIMES，不合并，保留每步截断。
@@ -525,17 +524,17 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     [135, 2],
   ];
   for (const [talent, rate] of talent_rates) {
-    if (era.get(`talent:${cid}:${talent}`)) score = times(score, rate);
+    if (era.get(`talent:${cid}:${talent}`)) score = times_trunc(score, rate);
   }
   // 男人且非幼稚时的折价是二项组合，不能并入上面的单素质表。
   if (era.get(`talent:${cid}:122`) && !era.get(`talent:${cid}:132`)) {
-    score = times(score, 0.8);
+    score = times_trunc(score, 0.8);
   }
 
   // ABL:70 被摄技能倍率。
   const camera_skill = era.get(`abl:${cid}:70`) || 0;
   const camera_rates = [0.5, 0.8, 1, 1.2, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
-  score = times(score, camera_rates[Math.min(camera_skill, 10)]);
+  score = times_trunc(score, camera_rates[Math.min(camera_skill, 10)]);
 
   const title = make_video_title(cid, state);
   if (score > 0) {

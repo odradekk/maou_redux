@@ -37,16 +37,8 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-
-/**
- * 主人角色号。旧引擎里 MASTER 是内建量（当前主人所指的角色号），本作恒 0
- * （chara-pregnancy.js 文件头同款；ere 侧没有 MASTER 表）。
- */
-const MASTER = 0;
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { MASTER } = require('#/utils/master');
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * 12 组的维度表。**只剩数据**：字段含义见下方每条的注释。

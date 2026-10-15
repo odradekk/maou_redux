@@ -34,12 +34,8 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { select_yes_no } = require('#/page/page-life-list');
+const { default_rand } = require('#/utils/numeric');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 function campaign_dungeon_lv() {
   const campaign = era.get('flag:400') || 0; // FLAG:400 当前战役编号

@@ -28,6 +28,7 @@ const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { banishment } = require('#/event/event-banishment');
 const {
   apply_prestige,
@@ -44,10 +45,6 @@ const { public_execution } = require('#/event/event-public-execution');
 // 230–233 = 淫核/淫乳/淫壶/淫肛，241/242/250 = 魔术/法术/咒术，
 // 312/317/318 = 魅力点/喜好/阴茎状态；ABL:2/3/16/17/21/22/32/33 =
 // 私处感觉/肛门感觉/侍奉精神/露出癖/抖M/百合/精液中毒/百合中毒。
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
 function execution_candidates() {
   return era.getAddedCharacters().filter((cid) => {
     const state = get(`cflag:${cid}:1`);

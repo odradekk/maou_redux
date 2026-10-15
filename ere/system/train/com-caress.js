@@ -42,6 +42,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { times } = require('#/utils/numeric');
 const { e_get, monster_name } = require('#/dungeon/monster-data');
 const {
   clothtype_main2_text,
@@ -66,9 +67,6 @@ const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
 // EXPLV：经验等级阈值
 // 各等级从 0 起依次取下表值。
 const EXPLV = [0, 1, 4, 20, 50, 200, 400, 700, 1000, 1500, 2000];
-
-/** times：整数乘小数后向下取整。 */
-const times = (v, m) => Math.floor(v * m);
 
 // COM0ABL:0/1 分档 → [SOURCE:0, SOURCE:3] / [SOURCE:17, SOURCE:3 增量]
 const ABL_C_TIERS_COM0 = [

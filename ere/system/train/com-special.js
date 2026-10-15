@@ -49,21 +49,10 @@ const {
 } = require('#/system/train/train-message');
 const { clothtype_text } = require('#/page/page-clothtype');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
+const { MASTER } = require('#/utils/master');
+const { idiv, percent_floor } = require('#/utils/numeric');
 
 /** 本文件没有未移植的调用；口上台词分发随轴 B 实现。 */
-
-/**
- * TIMES 语义：每一步乘法立即向下截断，禁止合并系数。
- *
- * 小数运算不走 JS 二进制浮点。
- * 倍率以百分比整数承载，保证 90 × 140 / 100 的精确结果
- * 仍是 126，而非 Math.floor(90 * 1.4) 的 125。
- */
-const times = (value, percent) => Math.floor((value * percent) / 100);
-/** 正数整数除法（A / 2）。 */
-const idiv = (left, right) => Math.floor(left / right);
-
-const MASTER = 0;
 
 const target_id = () => era_flag.target;
 const tq = (cid, index) => era.get(`tequip:${cid}:${index}`) || 0;
@@ -111,7 +100,7 @@ const tier = (values, level) => values[Math.min(level, values.length - 1)];
 function outdoor_sources(cid) {
   let a = 500;
   let b = 500;
-  a = times(a, lust_factor(cid));
+  a = percent_floor(a, lust_factor(cid));
 
   const exposure = abl(cid, 17);
   const [extra, factor] = tier(
@@ -127,16 +116,16 @@ function outdoor_sources(cid) {
   );
   add_src(cid, 7, extra);
   add_src(cid, 10, extra);
-  a = times(a, factor);
-  a = times(a, tier([80, 100, 130, 160, 200, 300], abl(cid, 21)));
+  a = percent_floor(a, factor);
+  a = percent_floor(a, tier([80, 100, 130, 160, 200, 300], abl(cid, 21)));
 
-  if (tal(cid, 28)) a = times(a, 150);
-  if (tal(cid, 33)) a = times(a, 150);
-  if (tal(cid, 10)) b = times(b, 200);
-  if (tal(cid, 35)) b = times(b, 200);
+  if (tal(cid, 28)) a = percent_floor(a, 150);
+  if (tal(cid, 33)) a = percent_floor(a, 150);
+  if (tal(cid, 10)) b = percent_floor(b, 200);
+  if (tal(cid, 35)) b = percent_floor(b, 200);
   if (tal(cid, 89)) {
-    a = times(a, 200);
-    b = times(b, 50);
+    a = percent_floor(a, 200);
+    b = percent_floor(b, 50);
   }
 
   add_src(cid, 12, a);
@@ -149,7 +138,7 @@ function outdoor_sources(cid) {
 function shame_sources(cid, exposure_factors, maso_factors) {
   let a = 500;
   let b = 500;
-  a = times(a, tier([100, 110, 120, 130, 140], palam_level5(cid)));
+  a = percent_floor(a, tier([100, 110, 120, 130, 140], palam_level5(cid)));
 
   const exposure = abl(cid, 17);
   const source_by_exposure = [
@@ -166,21 +155,21 @@ function shame_sources(cid, exposure_factors, maso_factors) {
   add_src(cid, 13, s13);
   add_src(cid, 14, s14);
   add_src(cid, 15, s15);
-  a = times(a, tier(exposure_factors, exposure));
-  a = times(a, tier(maso_factors, abl(cid, 21)));
+  a = percent_floor(a, tier(exposure_factors, exposure));
+  a = percent_floor(a, tier(maso_factors, abl(cid, 21)));
 
-  if (tal(cid, 21)) a = times(a, 80);
-  if (tal(cid, 22)) a = times(a, 80);
-  if (tal(cid, 23)) a = times(a, 250);
-  if (tal(cid, 33)) a = times(a, 150);
-  if (tal(cid, 10)) b = times(b, 150);
-  if (tal(cid, 35)) b = times(b, 300);
-  if (tal(cid, 80)) a = times(a, 150);
-  b = times(b, 120);
+  if (tal(cid, 21)) a = percent_floor(a, 80);
+  if (tal(cid, 22)) a = percent_floor(a, 80);
+  if (tal(cid, 23)) a = percent_floor(a, 250);
+  if (tal(cid, 33)) a = percent_floor(a, 150);
+  if (tal(cid, 10)) b = percent_floor(b, 150);
+  if (tal(cid, 35)) b = percent_floor(b, 300);
+  if (tal(cid, 80)) a = percent_floor(a, 150);
+  b = percent_floor(b, 120);
   if (tal(cid, 113)) add_src(cid, 3, 500);
   add_src(cid, 16, 500);
-  a = times(a, 150);
-  b = times(b, 120);
+  a = percent_floor(a, 150);
+  b = percent_floor(b, 120);
 
   add_src(cid, 12, a);
   add_src(cid, 14, b);
@@ -192,7 +181,7 @@ function shame_sources(cid, exposure_factors, maso_factors) {
 function bath_sources(cid, base_a) {
   let a = base_a;
   let b = 50;
-  a = times(a, lust_factor(cid));
+  a = percent_floor(a, lust_factor(cid));
 
   const exposure = abl(cid, 17);
   const [extra, factor] = tier(
@@ -208,13 +197,13 @@ function bath_sources(cid, base_a) {
   );
   add_src(cid, 7, extra);
   add_src(cid, 10, extra);
-  a = times(a, factor);
-  a = times(a, tier([100, 110, 120, 130, 140, 150], abl(cid, 21)));
+  a = percent_floor(a, factor);
+  a = percent_floor(a, tier([100, 110, 120, 130, 140, 150], abl(cid, 21)));
 
-  if (tal(cid, 28)) a = times(a, 150);
-  if (tal(cid, 33)) a = times(a, 150);
-  if (tal(cid, 10)) b = times(b, 110);
-  if (tal(cid, 35)) b = times(b, 120);
+  if (tal(cid, 28)) a = percent_floor(a, 150);
+  if (tal(cid, 33)) a = percent_floor(a, 150);
+  if (tal(cid, 10)) b = percent_floor(b, 110);
+  if (tal(cid, 35)) b = percent_floor(b, 120);
 
   add_src(cid, 12, a);
   add_src(cid, 14, b);
@@ -226,7 +215,7 @@ function bath_sources(cid, base_a) {
 function newlywed_sources(cid) {
   let a = 500;
   let b = 100;
-  a = times(a, tier([100, 110, 120, 130, 140], palam_level5(cid)));
+  a = percent_floor(a, tier([100, 110, 120, 130, 140], palam_level5(cid)));
 
   const exposure = abl(cid, 17);
   const [s11, s10, s12, s14, s15, factor] = tier(
@@ -245,20 +234,20 @@ function newlywed_sources(cid) {
   add_src(cid, 12, s12);
   add_src(cid, 14, s14);
   add_src(cid, 15, s15);
-  a = times(a, factor);
-  a = times(a, tier([100, 120, 140, 160, 180, 200], abl(cid, 10)));
-  a = times(a, tier([100, 120, 140, 160, 180, 200], abl(cid, 16)));
+  a = percent_floor(a, factor);
+  a = percent_floor(a, tier([100, 120, 140, 160, 180, 200], abl(cid, 10)));
+  a = percent_floor(a, tier([100, 120, 140, 160, 180, 200], abl(cid, 16)));
 
-  if (tal(cid, 21)) a = times(a, 80);
-  if (tal(cid, 22)) a = times(a, 80);
-  if (tal(cid, 23)) a = times(a, 150);
-  if (tal(cid, 63)) a = times(a, 150);
-  if (tal(cid, 10)) b = times(b, 150);
-  if (tal(cid, 35)) b = times(b, 120);
-  if (tal(cid, 33)) a = times(a, 50);
-  if (tal(cid, 15)) b = times(b, 200);
-  if (tal(cid, 85)) a = times(a, 250);
-  if (tal(cid, 76)) a = times(a, 180);
+  if (tal(cid, 21)) a = percent_floor(a, 80);
+  if (tal(cid, 22)) a = percent_floor(a, 80);
+  if (tal(cid, 23)) a = percent_floor(a, 150);
+  if (tal(cid, 63)) a = percent_floor(a, 150);
+  if (tal(cid, 10)) b = percent_floor(b, 150);
+  if (tal(cid, 35)) b = percent_floor(b, 120);
+  if (tal(cid, 33)) a = percent_floor(a, 50);
+  if (tal(cid, 15)) b = percent_floor(b, 200);
+  if (tal(cid, 85)) a = percent_floor(a, 250);
+  if (tal(cid, 76)) a = percent_floor(a, 180);
 
   add_src(cid, 3, a);
   add_src(cid, 14, b);
@@ -449,18 +438,18 @@ async function equip_com53() {
     let a = 370;
     let b = 1750;
     let c = 700;
-    a = times(a, lust_factor(cid));
-    a = times(a, tier([40, 60, 80, 100, 110, 120], abl(cid, 10)));
+    a = percent_floor(a, lust_factor(cid));
+    a = percent_floor(a, tier([40, 60, 80, 100, 110, 120], abl(cid, 10)));
     const exposure = abl(cid, 17);
-    a = times(a, tier([80, 100, 130, 160, 200, 300], exposure));
-    c = times(c, tier([200, 170, 140, 100, 80, 60], exposure));
-    if (tal(cid, 80)) a = times(a, 200);
-    if (tal(cid, 28)) a = times(a, 150);
-    if (tal(cid, 10)) c = times(c, 170);
+    a = percent_floor(a, tier([80, 100, 130, 160, 200, 300], exposure));
+    c = percent_floor(c, tier([200, 170, 140, 100, 80, 60], exposure));
+    if (tal(cid, 80)) a = percent_floor(a, 200);
+    if (tal(cid, 28)) a = percent_floor(a, 150);
+    if (tal(cid, 10)) c = percent_floor(c, 170);
     if (tal(cid, 89)) {
-      a = times(a, 200);
-      b = times(b, 120);
-      c = times(c, 50);
+      a = percent_floor(a, 200);
+      b = percent_floor(b, 120);
+      c = percent_floor(c, 50);
     }
     add_src(cid, 10, a);
     add_src(cid, 12, b);
@@ -557,12 +546,12 @@ async function com55() {
   set_src(
     cid,
     3,
-    times(src(cid, 3), tier([80, 100, 130, 140, 170, 200], maso)),
+    percent_floor(src(cid, 3), tier([80, 100, 130, 140, 170, 200], maso)),
   );
   set_src(
     cid,
     12,
-    times(src(cid, 12), tier([80, 100, 120, 140, 150, 170], maso)),
+    percent_floor(src(cid, 12), tier([80, 100, 120, 140, 150, 170], maso)),
   );
   const [s10, s11] = tier(
     [
@@ -623,7 +612,10 @@ async function com56() {
   set_src(
     cid,
     16,
-    times(src(cid, 16), tier([90, 100, 110, 120, 130, 140], abl(cid, 15))),
+    percent_floor(
+      src(cid, 16),
+      tier([90, 100, 110, 120, 130, 140], abl(cid, 15)),
+    ),
   );
 
   if (tq(cid, 53)) {
@@ -632,13 +624,13 @@ async function com56() {
     set_src(cid, 4, tier([0, 10, 50, 100, 200, 400], exposure));
     if (exposure >= 4) add_src(cid, 10, exposure === 4 ? 50 : 100);
     if (tal(cid, 28)) {
-      set_src(cid, 4, times(src(cid, 4), 120));
-      set_src(cid, 12, times(src(cid, 12), 120));
+      set_src(cid, 4, percent_floor(src(cid, 4), 120));
+      set_src(cid, 12, percent_floor(src(cid, 12), 120));
     }
     if (tal(cid, 89)) {
-      set_src(cid, 4, times(src(cid, 4), 160));
-      set_src(cid, 12, times(src(cid, 12), 160));
-      set_src(cid, 10, times(src(cid, 10), 160));
+      set_src(cid, 4, percent_floor(src(cid, 4), 160));
+      set_src(cid, 12, percent_floor(src(cid, 12), 160));
+      set_src(cid, 10, percent_floor(src(cid, 10), 160));
     }
     if (
       tal(cid, 89) ||

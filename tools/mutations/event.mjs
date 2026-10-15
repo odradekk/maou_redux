@@ -1932,14 +1932,10 @@ export default [
     must_mention: '天数三档边界',
   },
   {
-    desc: 'M8470 RUNNING_COST：TIMES 的截断改成四舍五入（Math.floor → Math.round）',
-    file: 'ere/event/event-nextday.js',
-    find: `function times(v, m) {
-  return Math.floor(v * m);
-}`,
-    replace: `function times(v, m) {
-  return Math.round(v * m);
-}`,
+    desc: 'M8470 RUNNING_COST：TIMES 的截断改成四舍五入（Math.floor → Math.round；#792 起实现移到 ere/utils/numeric.js）',
+    file: 'ere/utils/numeric.js',
+    find: '  return Math.floor(value * multiplier);',
+    replace: '  return Math.round(value * multiplier); // 变异：截断改四舍五入',
     tests: ['event-nextday'],
     must_mention: '两把梯子',
   },

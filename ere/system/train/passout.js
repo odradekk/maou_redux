@@ -33,9 +33,8 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-
-/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
-const MASTER = 0;
+const { MASTER } = require('#/utils/master');
+const { percent_floor } = require('#/utils/numeric');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
@@ -775,13 +774,12 @@ function passout_palam_up() {
     z = Math.floor(z / 2);
   }
   // 分配（恐怖/屈服走 Z，其余走 100 - Z）
-  const idiv = (v, w) => Math.floor((v * w) / 100);
-  add_up(cid, 7, idiv(a, 100 - z));
-  add_up(cid, 8, idiv(b, 100 - z));
-  add_up(cid, 10, idiv(c, 100 - z));
-  add_up(cid, 11, idiv(d, z));
-  add_up(cid, 12, idiv(e, z));
-  add_up(cid, 13, idiv(f, z));
+  add_up(cid, 7, percent_floor(a, 100 - z));
+  add_up(cid, 8, percent_floor(b, 100 - z));
+  add_up(cid, 10, percent_floor(c, 100 - z));
+  add_up(cid, 11, percent_floor(d, z));
+  add_up(cid, 12, percent_floor(e, z));
+  add_up(cid, 13, percent_floor(f, z));
 
   // 恢复完成：相位与回数复位
   if (tflag(896) === 3 || tflag(897) === 3 || tflag(898) === 3) {

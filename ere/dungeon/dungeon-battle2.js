@@ -36,15 +36,11 @@ const monster_skill_mod = require('#/dungeon/monster-skill');
 const battle = require('#/dungeon/dungeon-battle');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
 const { party_del } = require('#/dungeon/dungeon-party');
+const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /** 阴核(ARG) 称呼（已内联） */

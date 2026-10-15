@@ -54,6 +54,7 @@ const { chara } = require('#/facade/chara');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const ex_item_mod = require('#/dungeon/ex-item');
 const summon_mod = require('#/dungeon/monster-summon');
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * CAMPAIGN_ROOM_EXTRA_{FLAG:400} 族：战役迷宫房间的扩张位域（#469，
@@ -68,11 +69,6 @@ const campaign_room_extra_family = new DispatchFamily(
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /**

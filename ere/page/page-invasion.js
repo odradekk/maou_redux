@@ -121,6 +121,9 @@ const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+// sengen_video 与 sengen_video_bonus 的十二处 ×小数 用 times 而非 times_exact：
+// 旧引擎的双精度与 JS 同为 IEEE 754，两边逐位同值，不需要十进制精确乘
+const { default_rand, times } = require('#/utils/numeric');
 
 /**
  * RESTART 语义的 ere 侧信号（control-flow.md:376-377「回到当前函数开头重新
@@ -245,26 +248,9 @@ function add_region_progress(region, gained) {
   era.set(`flag:${region.area}`, Math.min(next, 10000)); // 封顶
 }
 
-/** RAND:N（0..N-1）的缺省随机源（同族模块同款；各函数以 rand 为注入名） */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
 /** GETBIT(X, n)：FLAG:5 用到位 32+，位运算在 JS 里按 32 位截断会溢出，改算术 */
 function getbit(value, bit) {
   return Math.floor((value || 0) / 2 ** bit) % 2;
-}
-
-/**
- * `TIMES 整数, 小数` 的等价物：乘完截断小数部分。旧引擎的双精度与 JS
- * 同为 IEEE 754，两边逐位同值（sengen_video 的 ×1.20/×1.60、sengen_video_bonus
- * 的 ×1.10/×1.20/×0.80 共十二处）。
- * @param {number} value 整数原值
- * @param {number} factor 小数倍率
- * @returns {number} 截断后的整数
- */
-function times(value, factor) {
-  return Math.floor(value * factor);
 }
 
 /**

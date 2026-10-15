@@ -34,6 +34,7 @@ const {
 } = require('#/system/train/com-condom');
 const { com_order } = require('#/system/train/com-order');
 const { chara_callname } = require('#/utils/callname-utils');
+const { times } = require('#/utils/numeric');
 const { monster_name, e_get } = require('#/dungeon/monster-data');
 // —— 读取与写入：未声明序号均按项目约定缺省为 0 ——
 const get = (name) => era.get(name) || 0;
@@ -49,7 +50,6 @@ const set_src = (cid, index, value) => set(`source:${cid}:${index}`, value);
 const add_src = (cid, index, value) => add(`source:${cid}:${index}`, value);
 const add_lose = (cid, index, value) =>
   add(`deltabase:${cid}:${index}`, -value);
-const times = (value, multiplier) => Math.floor(value * multiplier);
 const divide = (value, divisor) => Math.floor(value / divisor);
 const below = (cid, index, level) => palam(cid, index) < PALAMLV[level];
 const target_name = () => chara_callname(era_flag.target);

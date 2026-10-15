@@ -32,6 +32,8 @@ const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
+const { MASTER } = require('#/utils/master');
+const { idiv_trunc, times_exact } = require('#/utils/numeric');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const { com_order } = require('#/system/train/com-order');
@@ -50,7 +52,6 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 
-const MASTER = 0;
 const PBAND = 4;
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
@@ -108,20 +109,6 @@ async function jump_to_advanced(id) {
   return com_family.call(id, { whenMissing: 1 });
 }
 
-/**
- * TIMES：十进制定点相乘，每步朝零截断。com-service.js 同款。
- */
-function times(value_to_multiply, rate) {
-  const text = String(rate);
-  const negative = text.startsWith('-');
-  const unsigned = /^[+-]/.test(text) ? text.slice(1) : text;
-  const [whole, fraction = ''] = unsigned.split('.');
-  const numerator = BigInt(`${whole}${fraction}`) * (negative ? -1n : 1n);
-  const denominator = 10n ** BigInt(fraction.length);
-  return Number((BigInt(value_to_multiply) * numerator) / denominator);
-}
-
-const idiv = (v, divisor) => Math.trunc(v / divisor);
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 const mark = (cid, i) => Math.floor(era.get(`mark:${cid}:${i}`) || 0);
 const stain_of = (cid, i) => era.get(`stain:${cid}:${i}`) || 0;
@@ -136,7 +123,7 @@ function make_src(cid) {
     times(id, rate) {
       era.set(
         `source:${cid}:${id}`,
-        times(era.get(`source:${cid}:${id}`) || 0, rate),
+        times_exact(era.get(`source:${cid}:${id}`) || 0, rate),
       );
     },
   };
@@ -187,9 +174,9 @@ function dirty_score({
   if (s & 8) y += 7;
   if (s & 16) y += bit16;
   if (urine && stain_of(player, 4) & 32) y += 3;
-  if (tal(target, 61)) y = idiv(y, 3);
+  if (tal(target, 61)) y = idiv_trunc(y, 3);
   if (tal(target, 62)) y *= 2;
-  if (divide !== 1) y = idiv(y, divide);
+  if (divide !== 1) y = idiv_trunc(y, divide);
   return y;
 }
 
@@ -263,7 +250,7 @@ async function finish_judge(parts, state, threshold) {
 }
 
 function scale_by_abl(value, cid, id, rates) {
-  return times(value, pick(rates, abl(cid, id)));
+  return times_exact(value, pick(rates, abl(cid, id)));
 }
 
 const RATE_OBED = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3];
@@ -632,7 +619,7 @@ function scale_fellatio_gauge(b, target, sense_cid) {
   b = scale_by_abl(b, target, 10, RATE_OBED);
   b = scale_by_abl(b, target, 16, RATE_SERVE_SPIRIT);
   b = scale_by_abl(b, target, 32, RATE_POISON);
-  if (tal(target, 52)) b = times(b, 2);
+  if (tal(target, 52)) b = times_exact(b, 2);
   return scale_by_abl(b, sense_cid, 0, RATE_C_SENSE);
 }
 
@@ -961,7 +948,7 @@ async function com60() {
   let b = pick([50, 200, 300, 400, 500, 600], abl(target, 12));
   b = scale_by_abl(b, target, 10, RATE_OBED);
   b = scale_by_abl(b, target, 13, RATE_SERVE_TECH);
-  if (tal(target, 52)) b = times(b, 2);
+  if (tal(target, 52)) b = times_exact(b, 2);
   b = scale_by_abl(b, player, 0, RATE_C_SENSE);
   const e = add_gauge(player, b);
   lose(target, 1, 20);
@@ -1034,7 +1021,7 @@ async function com61() {
   let b = pick([100, 500, 900, 1200, 1500, 2000], abl(target, 12));
   b = scale_by_abl(b, target, 10, RATE_OBED);
   b = scale_by_abl(b, target, 13, RATE_SERVE_TECH);
-  if (tal(target, 52)) b = times(b, 2);
+  if (tal(target, 52)) b = times_exact(b, 2);
   b = scale_by_abl(b, player, 0, RATE_C_SENSE);
   const e = add_gauge(player, b);
   lose(target, 1, 10);
@@ -1108,7 +1095,7 @@ async function com62() {
   b = scale_by_abl(b, assi, 10, RATE_OBED);
   b = scale_by_abl(b, assi, 14, RATE_SERVE_TECH);
   b = scale_by_abl(b, assi, 2, RATE_V_SENSE);
-  b = times(b, pick(RATE_V_EXP, exp_level(exp(assi, 0))));
+  b = times_exact(b, pick(RATE_V_EXP, exp_level(exp(assi, 0))));
   b = scale_by_abl(b, MASTER, 0, RATE_C_SENSE);
   const e = add_gauge(MASTER, b);
   lose(target, 1, 40);
@@ -1307,12 +1294,12 @@ async function com64() {
   await train_message_b();
   if (site_used(1)) era.set('tflag:19', 1);
   let b = pick([2700, 2800, 2900, 3100, 3200, 3300], abl(target, 12));
-  b = times(b, palam_rate(target, 3, [0.4, 0.7, 1.0, 1.3, 1.6, 1.6]));
+  b = times_exact(b, palam_rate(target, 3, [0.4, 0.7, 1.0, 1.3, 1.6, 1.6]));
   const master_e = add_gauge(MASTER, b);
   let b2 = pick([1500, 1600, 1800, 2000, 2400, 3000], abl(target, 12));
   b2 = scale_by_abl(b2, target, 10, RATE_OBED);
   b2 = scale_by_abl(b2, target, 11, [1.0, 1.1, 1.2, 1.3, 1.4, 1.5]);
-  b2 = times(b2, palam_rate(target, 3, [0.6, 0.8, 1.0, 1.2, 1.4, 1.4]));
+  b2 = times_exact(b2, palam_rate(target, 3, [0.6, 0.8, 1.0, 1.2, 1.4, 1.4]));
   const assi_e = add_gauge(assi, b2);
   lose(target, 0, 160);
   lose(target, 1, 350);
@@ -1570,7 +1557,7 @@ async function com65() {
   b = scale_by_abl(b, target, 10, RATE_OBED);
   b = scale_by_abl(b, target, 16, RATE_SERVE_SPIRIT);
   b = scale_by_abl(b, player, 2, RATE_V_SENSE);
-  b = times(b, pick(RATE_V_EXP, exp_level(exp(player, 0))));
+  b = times_exact(b, pick(RATE_V_EXP, exp_level(exp(player, 0))));
   b = scale_by_abl(b, target, 0, RATE_C_SENSE);
   const e = add_gauge(player, b);
   lose(target, 1, 40);
@@ -1889,8 +1876,8 @@ async function com68() {
   await train_message_b();
   let b = pick([800, 1100, 1500, 2000, 2400, 2800], abl(target, 12));
   b = scale_fellatio_gauge(b, target, MASTER);
-  b = times(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
-  if (tal(assi, 52)) b = times(b, 2);
+  b = times_exact(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
+  if (tal(assi, 52)) b = times_exact(b, 2);
   const e = add_gauge(MASTER, b);
   lose(target, 0, 10);
   lose(target, 1, 100);
@@ -2005,7 +1992,7 @@ async function com69() {
   src.set(0, pick([40, 160, 700, 1500, 2400, 3300], abl(target, 0)));
   if (tal(player, 52)) {
     src.times(0, 2);
-    src.add(16, idiv(src.get(0), 20));
+    src.add(16, idiv_trunc(src.get(0), 20));
   }
   apply_service_source(
     src,
@@ -2255,17 +2242,17 @@ async function com71() {
   );
   src.set(8, pick([400, 300, 150, 50, 20, 0], abl(target, 16)));
   let a = pick([100, 200, 400, 800, 1200, 1500], abl(target, 1));
-  if (tal(target, 110)) a = times(a, 1.2);
-  if (tal(target, 108)) a = times(a, 1.2);
-  else if (tal(target, 107)) a = times(a, 0.7);
+  if (tal(target, 110)) a = times_exact(a, 1.2);
+  if (tal(target, 108)) a = times_exact(a, 1.2);
+  else if (tal(target, 107)) a = times_exact(a, 0.7);
   src.add(17, a);
   const pair = pick(RATE_SENSE_PAIR, abl(assi, 1));
   src.times(4, pair[0]);
   src.times(5, pair[1]);
   let b = pick([1200, 1500, 2000, 2500, 3000, 4000], abl(target, 12));
   b = scale_fellatio_gauge(b, target, MASTER);
-  b = times(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
-  if (tal(assi, 52)) b = times(b, 2);
+  b = times_exact(b, pick(RATE_SKILL_ASSI, abl(assi, 12)));
+  if (tal(assi, 52)) b = times_exact(b, 2);
   const e = add_gauge(MASTER, b);
   apply_poison_on_ejac(src, POISON_MOUTH, e);
   if (e === 2) {
@@ -2327,8 +2314,8 @@ async function com72() {
   src.set(14, 1200);
   src.set(6, pick([600, 250, 100, 30, 0, 0], palam_level(palam(target, 3))));
   let a = 500;
-  a = times(a, pick([0.8, 1.0, 1.2, 1.5, 2.0, 2.6], abl(target, 7)));
-  a = times(a, pick([0.8, 1.0, 1.2, 1.4, 1.7, 2.0], abl(target, 21)));
+  a = times_exact(a, pick([0.8, 1.0, 1.2, 1.5, 2.0, 2.6], abl(target, 7)));
+  a = times_exact(a, pick([0.8, 1.0, 1.2, 1.4, 1.7, 2.0], abl(target, 21)));
   src.add(7, a);
   src.add(11, a);
   src.add(12, a);
@@ -2661,5 +2648,6 @@ module.exports = {
   com72,
   com73,
   incest,
-  times,
+  // 对外沿用 times 名（既有测试按此名取用）
+  times: times_exact,
 };

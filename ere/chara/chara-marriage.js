@@ -91,6 +91,7 @@ const { enter_lover, LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { monsterplay_list } = require('#/dungeon/monster-play');
 const { chara } = require('#/facade/chara');
+const { default_rand } = require('#/utils/numeric');
 
 /** 判定返回值：不可结婚（状态不对） */
 const MARRIAGE_BLOCKED = 1;
@@ -163,10 +164,6 @@ const VIRGIN_B_THRESHOLD = 4;
 const T_HOMETOWN_WIFE = 157;
 /** 异种婚姻素质 */
 const T_CROSS_MARRIAGE = 159;
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /** 代词：男人 → 他，其余 → 她 */
 function she(cid) {

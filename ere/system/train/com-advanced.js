@@ -40,6 +40,7 @@ const {
 } = require('#/system/train/train-message');
 const { read_train_name } = require('#/system/train/train-name');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
+const { times } = require('#/utils/numeric');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
@@ -51,7 +52,6 @@ const src = (id, i) => era.get(`source:${id}:${i}`) || 0;
 const set_src = (id, i, v) => era.set(`source:${id}:${i}`, v);
 const add_src = (id, i, v) => era.add(`source:${id}:${i}`, v);
 const add_lose = (id, i, v) => era.add(`deltabase:${id}:${i}`, -v);
-const times = (value, multiplier) => Math.floor(value * multiplier);
 const worn = (id) => era.get(`cflag:${id}:40`) || 0;
 const special = (id) => era.get(`cflag:${id}:42`) || 0;
 const clothes_on = () => (era.get('flag:37') || 0) !== 0;

@@ -13,8 +13,8 @@
 
 const era = require('#/era-electron');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { default_rand } = require('#/utils/numeric');
 
-const default_rand = (n) => Math.floor(Math.random() * n);
 const int = Math.trunc;
 
 function digit(value, place) {

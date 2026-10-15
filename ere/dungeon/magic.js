@@ -20,14 +20,7 @@ const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { chara_lv_check } = require('#/chara/chara-stats');
 const { e_get, e_set } = require('#/dungeon/monster-data');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
-function idiv(a, b) {
-  return Math.trunc(a / b);
-}
+const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 function show_log() {
   return ((era.get('flag:5') || 0) & 32) !== 0;
@@ -85,7 +78,7 @@ function magic_damage_cap(chara_lv, enemy_lv, damage, dmg_cap) {
   if (cap_bonus <= -100) {
     cap_bonus = -99;
   }
-  dmg_cap = idiv(dmg_cap * (100 + cap_bonus), 100);
+  dmg_cap = idiv_trunc(dmg_cap * (100 + cap_bonus), 100);
   if (damage > dmg_cap) {
     damage = dmg_cap;
   }
@@ -95,28 +88,28 @@ function magic_damage_cap(chara_lv, enemy_lv, damage, dmg_cap) {
 /** magic_bonus_c_to_m：角色对怪物的种族、畏怖与 Boss 补正。 */
 function magic_bonus_c_to_m(cid, damage, monster_head) {
   if (talent(cid, 314) === 1 || talent(cid, 314) === 7) {
-    damage += idiv(damage, 2);
+    damage += idiv_trunc(damage, 2);
   }
   if (talent(cid, 244)) {
-    damage += idiv(damage, 3);
+    damage += idiv_trunc(damage, 3);
   }
   if (talent(cid, 260)) {
-    damage += idiv(damage, 5);
+    damage += idiv_trunc(damage, 5);
   }
 
   if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {
     const fear = chara(cid).dungeon.凌辱畏怖计数;
     if (fear > 5) {
       era.print('凌辱的记忆历历在目……无法反抗！');
-      damage = idiv(damage, 10);
+      damage = idiv_trunc(damage, 10);
     } else if (fear >= 0) {
       era.print('凌辱的记忆历历在目……');
-      damage = idiv(damage * (6 - fear), 10);
+      damage = idiv_trunc(damage * (6 - fear), 10);
     }
   }
 
   if (e_get(monster_head + 8) === 1) {
-    damage = idiv(damage, 10);
+    damage = idiv_trunc(damage, 10);
     if (show_log()) {
       era.print('BOSS成功抵抗了魔法攻击！');
     }
@@ -127,7 +120,7 @@ function magic_bonus_c_to_m(cid, damage, monster_head) {
 /** magic_bonus_m_to_c：怪物对角色的 Boss、耐性、减益与畏怖补正。 */
 function magic_bonus_m_to_c(cid, damage, monster_head) {
   if (e_get(monster_head + 8) === 1) {
-    damage += idiv(damage, 2);
+    damage += idiv_trunc(damage, 2);
     if (show_log()) {
       era.print('BOSS的强力魔法！');
     }
@@ -136,22 +129,22 @@ function magic_bonus_m_to_c(cid, damage, monster_head) {
     return damage;
   }
   if (talent(cid, 257)) {
-    damage -= idiv(damage, 3);
+    damage -= idiv_trunc(damage, 3);
     if (show_log()) {
       era.print('魔法耐性！　');
     }
   }
   if (talent(cid, 253)) {
-    damage -= idiv(damage, 5);
+    damage -= idiv_trunc(damage, 5);
   }
   let debuff = get_cflag(cid, 682);
   if (debuff > 50) {
-    damage += idiv(damage, 2);
-    debuff -= idiv(debuff, 10) + 1;
+    damage += idiv_trunc(damage, 2);
+    debuff -= idiv_trunc(debuff, 10) + 1;
     era.set(`cflag:${cid}:682`, debuff);
   } else if (debuff > 0) {
-    damage = idiv(damage * (100 + debuff), 100);
-    debuff -= idiv(debuff, 10) + 1;
+    damage = idiv_trunc(damage * (100 + debuff), 100);
+    debuff -= idiv_trunc(debuff, 10) + 1;
     era.set(`cflag:${cid}:682`, debuff);
   }
   if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {
@@ -161,7 +154,7 @@ function magic_bonus_m_to_c(cid, damage, monster_head) {
       damage *= 2;
     } else if (fear >= 0) {
       era.print('凌辱的记忆历历在目……');
-      damage = idiv(damage * (6 + fear), 5);
+      damage = idiv_trunc(damage * (6 + fear), 5);
     }
   }
   return damage;
@@ -170,33 +163,33 @@ function magic_bonus_m_to_c(cid, damage, monster_head) {
 /** magic_bonus_c_to_c：角色对角色的施法者种族、目标耐性与施法者减益补正。 */
 function magic_bonus_c_to_c(cid, damage, defender) {
   if (talent(cid, 314) === 1 || talent(cid, 314) === 7) {
-    damage += idiv(damage, 2);
+    damage += idiv_trunc(damage, 2);
   }
   if (talent(cid, 244)) {
-    damage += idiv(damage, 3);
+    damage += idiv_trunc(damage, 3);
   }
   if (talent(cid, 260)) {
-    damage += idiv(damage, 5);
+    damage += idiv_trunc(damage, 5);
   }
   if (defender >= 0) {
     if (talent(defender, 257)) {
-      damage -= idiv(damage, 3);
+      damage -= idiv_trunc(damage, 3);
       if (show_log()) {
         era.print('魔法耐性！　');
       }
     }
     // 检查的是施法者 CHARA，而非 DEF_CHARA。
     if (talent(cid, 253)) {
-      damage -= idiv(damage, 5);
+      damage -= idiv_trunc(damage, 5);
     }
     let debuff = get_cflag(cid, 682);
     if (debuff > 50) {
-      damage += idiv(damage, 2);
-      debuff -= idiv(debuff, 10) + 1;
+      damage += idiv_trunc(damage, 2);
+      debuff -= idiv_trunc(debuff, 10) + 1;
       era.set(`cflag:${cid}:682`, debuff);
     } else if (debuff > 0) {
-      damage = idiv(damage * (100 + debuff), 100);
-      debuff -= idiv(debuff, 10) + 1;
+      damage = idiv_trunc(damage * (100 + debuff), 100);
+      debuff -= idiv_trunc(debuff, 10) + 1;
       era.set(`cflag:${cid}:682`, debuff);
     }
   }
@@ -235,7 +228,7 @@ async function magic_select(target_type, a, b, rand = default_rand) {
   } else if (target_type === 3) {
     magic_lv = get_cflag(b, 9);
   }
-  magic_lv = Math.min(idiv(magic_lv, 3) + 2, 7);
+  magic_lv = Math.min(idiv_trunc(magic_lv, 3) + 2, 7);
   magic_lv = rand(magic_lv);
   return [0, 3, 2, 1, 4, 5, 5][magic_lv];
 }
@@ -258,7 +251,7 @@ async function shaman_select(target_type, a, b, rand = default_rand) {
   } else if (target_type === 3) {
     magic_lv = get_cflag(b, 9);
   }
-  magic_lv = Math.min(idiv(magic_lv, 3) + 2, 7);
+  magic_lv = Math.min(idiv_trunc(magic_lv, 3) + 2, 7);
   magic_lv = rand(magic_lv);
   return [0, 3, 7, 1, 8, 9, 9][magic_lv];
 }
@@ -312,7 +305,7 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
     await print_wait(`${name_of(a)}咏唱了睡眠咒语！`);
     add_base(a, 1, -30);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9), b);
-    damage -= idiv(e_get(b + 1), 5);
+    damage -= idiv_trunc(e_get(b + 1), 5);
     damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 300);
     const value = e_get(b + 2) - rand(damage);
     e_set(b + 2, Math.max(0, value));
@@ -357,7 +350,7 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
 }
 
 function kill_monsters(a, b, damage) {
-  const kill_mons = idiv(damage, e_get(b + 3));
+  const kill_mons = idiv_trunc(damage, e_get(b + 3));
   if (kill_mons > 0) {
     const killed = Math.min(kill_mons, e_get(b + 99));
     e_set(b + 99, e_get(b + 99) - killed);
@@ -374,7 +367,7 @@ async function energy_bolt_magic(target_type, a, b) {
     await print_wait(`${name_of(a)}咏唱了魔法箭！`);
     add_base(a, 1, -15);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 5, b);
-    damage -= idiv(e_get(b + 1), 20);
+    damage -= idiv_trunc(e_get(b + 1), 20);
     damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);
     // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0
     const killed = kill_monsters(a, b, damage);
@@ -462,7 +455,7 @@ async function fireball_magic(target_type, a, b) {
   if (target_type === 1) {
     await print_wait(`${name_of(a)}咏唱了火球术！`);
     add_base(a, 1, -40);
-    damage = idiv(get_cflag(a, 9) * e_get(b + 99), 2);
+    damage = idiv_trunc(get_cflag(a, 9) * e_get(b + 99), 2);
     damage = magic_bonus_c_to_m(a, damage, b);
     damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 800);
     const killed = kill_monsters(a, b, damage);
@@ -514,7 +507,8 @@ async function heal_magic(target_type, a, b) {
     for (const cid of candidates) {
       if (
         cid > 0 &&
-        idiv(get_base(cid, 0) * 100, era.get(`maxbase:${cid}:0`) || 1) < 60
+        idiv_trunc(get_base(cid, 0) * 100, era.get(`maxbase:${cid}:0`) || 1) <
+          60
       ) {
         patient = cid;
       }
@@ -534,14 +528,14 @@ async function heal_magic(target_type, a, b) {
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了治疗术！`);
     damage = magic_bonus_m_to_c(-1, e_get(b + 1) + get_cflag(0, 9), b);
-    e_set(b + 3, e_get(b + 3) + 1 + idiv(damage, 60));
+    e_set(b + 3, e_get(b + 3) + 1 + idiv_trunc(damage, 60));
     return 0;
   }
   if (target_type !== 3) {
     return 0;
   }
   // 条件方向如此：低于六成反而直接返回。
-  if (idiv(get_base(b, 0) * 100, era.get(`maxbase:${b}:0`) || 1) < 60) {
+  if (idiv_trunc(get_base(b, 0) * 100, era.get(`maxbase:${b}:0`) || 1) < 60) {
     return 0;
   }
   await print_wait(`${name_of(b)}咏唱了治疗术！`);
@@ -565,7 +559,7 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
     add_base(a, 1, -30);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9), b);
     damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 200);
-    const value = e_get(b + 3) - idiv(rand(damage), 2);
+    const value = e_get(b + 3) - idiv_trunc(rand(damage), 2);
     e_set(b + 3, value);
     if (value <= 0) {
       await print_wait('怪物完全被诅咒了…');
@@ -580,7 +574,7 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
     await era.printAndWait(`${monster_name(b)}咏唱了诅咒术！`);
     damage = magic_bonus_m_to_c(a, e_get(b + 1) + get_cflag(0, 9), b);
     damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 200);
-    const value = chara(a).dungeon.防御力 - idiv(rand(damage), 2);
+    const value = chara(a).dungeon.防御力 - idiv_trunc(rand(damage), 2);
     chara(a).dungeon.防御力 = Math.max(0, value);
     await print_wait(value < 0 ? '勇者完全被诅咒了…' : '勇者仍然被诅咒着…');
     return 0;
@@ -599,7 +593,7 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
     damage,
     200,
   );
-  const value = chara(defender).dungeon.防御力 - idiv(rand(damage), 2);
+  const value = chara(defender).dungeon.防御力 - idiv_trunc(rand(damage), 2);
   chara(defender).dungeon.防御力 = Math.max(0, value);
   await print_wait(
     value < 0
@@ -670,8 +664,8 @@ async function lv_drain_magic(target_type, a, b) {
     await print_wait(
       killed <= 0 ? '但好像完全没有效果。' : `经验吸取贯穿了${killed}只怪物！`,
     );
-    add_exp(a, idiv(damage, 20));
-    await print_wait(`${name_of(a)}得到了${idiv(damage, 20)}点经验！`);
+    add_exp(a, idiv_trunc(damage, 20));
+    await print_wait(`${name_of(a)}得到了${idiv_trunc(damage, 20)}点经验！`);
     return 0;
   }
   if (target_type === 2) {
@@ -680,8 +674,8 @@ async function lv_drain_magic(target_type, a, b) {
     damage = magic_bonus_c_to_m(a, e_get(b + 1) + get_cflag(0, 9), b);
     damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 400);
     await apply_level_drain(a, damage);
-    add_exp(0, idiv(damage, 2));
-    await print_wait(`你得到了${idiv(damage, 2)}点经验值！`);
+    add_exp(0, idiv_trunc(damage, 2));
+    await print_wait(`你得到了${idiv_trunc(damage, 2)}点经验值！`);
     return 0;
   }
   if (target_type !== 3 && target_type !== 4) {
@@ -705,8 +699,8 @@ async function lv_drain_magic(target_type, a, b) {
     add_base(defender, 0, -damage * 10);
     await chara_lv_check(defender); // 手动降级整段被注释掉，不移植
   }
-  add_exp(caster, idiv(damage, 2));
-  await print_wait(`${name_of(caster)}得到${idiv(damage, 2)}经验值！`);
+  add_exp(caster, idiv_trunc(damage, 2));
+  await print_wait(`${name_of(caster)}得到${idiv_trunc(damage, 2)}经验值！`);
   return 0;
 }
 

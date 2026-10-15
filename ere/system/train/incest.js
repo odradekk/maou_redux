@@ -11,9 +11,7 @@
 
 const era = require('#/era-electron');
 const { game } = require('#/facade/game');
-
-/** MASTER：魔王主角，恒为角色 0（CONTEXT.md）。 */
-const MASTER = 0;
+const { MASTER } = require('#/utils/master');
 
 /**
  * 判定亲族关系，写回并返回 TFLAG:14。

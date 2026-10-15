@@ -10,12 +10,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
-const times = (value, rate) => Math.trunc(value * rate);
+const { default_rand, times_trunc } = require('#/utils/numeric');
 
 // decide_ablup2/3（ere/system/train/ablup.js）在同一算法中以这组序号切换
 // 私处/肛门语义；此处保持为单张语义表，
@@ -119,12 +114,12 @@ function decide_sensation_up(cid, kind) {
   let [cost, needed_exp] = sensation_cost(level);
   if (current.event.戒备森严) {
     const rate = level === 4 ? 2 : level === 5 ? 2.5 : level >= 6 ? 3 : 1;
-    cost = times(cost, rate);
-    needed_exp = times(needed_exp, rate);
+    cost = times_trunc(cost, rate);
+    needed_exp = times_trunc(needed_exp, rate);
   }
   if (blocked(current)) {
-    cost = times(cost, 1.2);
-    needed_exp = times(needed_exp, 1.1);
+    cost = times_trunc(cost, 1.2);
+    needed_exp = times_trunc(needed_exp, 1.1);
   }
   if (level > 5 && level <= 10 && block_count > 0) {
     cost = Math.trunc((cost * (15 - block_count)) / 15);
@@ -142,8 +137,8 @@ function decide_sensation_up(cid, kind) {
     [sensitive(current), 0.8],
   ]) {
     if (present) {
-      cost = times(cost, rate);
-      needed_exp = times(needed_exp, rate);
+      cost = times_trunc(cost, rate);
+      needed_exp = times_trunc(needed_exp, rate);
     }
   }
   cost = Math.max(cost, 1);
@@ -166,7 +161,7 @@ function decide_desire_up(cid) {
     level
   ];
   if (current.event.戒备森严) {
-    cost = times(
+    cost = times_trunc(
       cost,
       level === 3
         ? 1.5
@@ -179,17 +174,17 @@ function decide_desire_up(cid) {
               : 1,
     );
   }
-  if (current.event.克制) cost = times(cost, 1.2);
-  if (current.chara.保守的) cost = times(cost, 1.1);
-  if (current.event.看重贞操) cost = times(cost, 1.5);
-  else if (current.chara.看轻贞操) cost = times(cost, 0.95);
-  if (current.event.压抑) cost = times(cost, 1.5);
-  else if (current.chara.开放) cost = times(cost, 0.9);
-  if (current.event.抵抗) cost = times(cost, 1.5);
-  if (current.chara.害羞) cost = times(cost, 1.1);
-  else if (current.chara.不知羞耻) cost = times(cost, 0.95);
-  if (current.chara.接受快感) cost = times(cost, 0.8);
-  else if (current.event.否定快感) cost = times(cost, 1.5);
+  if (current.event.克制) cost = times_trunc(cost, 1.2);
+  if (current.chara.保守的) cost = times_trunc(cost, 1.1);
+  if (current.event.看重贞操) cost = times_trunc(cost, 1.5);
+  else if (current.chara.看轻贞操) cost = times_trunc(cost, 0.95);
+  if (current.event.压抑) cost = times_trunc(cost, 1.5);
+  else if (current.chara.开放) cost = times_trunc(cost, 0.9);
+  if (current.event.抵抗) cost = times_trunc(cost, 1.5);
+  if (current.chara.害羞) cost = times_trunc(cost, 1.1);
+  else if (current.chara.不知羞耻) cost = times_trunc(cost, 0.95);
+  if (current.chara.接受快感) cost = times_trunc(cost, 0.8);
+  else if (current.event.否定快感) cost = times_trunc(cost, 1.5);
   for (const [present, rate] of [
     [current.chara.容易上瘾, 0.95],
     [current.chara.容易陷落, 0.5],
@@ -198,7 +193,7 @@ function decide_desire_up(cid) {
     [current.dungeon.倾城, 0.8],
     [current.chara.人妻, 0.8],
   ]) {
-    if (present) cost = times(cost, rate);
+    if (present) cost = times_trunc(cost, rate);
   }
   cost = Math.max(cost, 1);
   const ignores_abnormal = [

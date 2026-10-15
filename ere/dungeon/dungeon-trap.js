@@ -65,6 +65,7 @@ const party_mod = require('#/dungeon/dungeon-party');
 // event-autotrain.js 的真身（#500，dungeon-town.js:775 先例）
 const battle = require('#/dungeon/dungeon-battle');
 const summon_mod = require('#/dungeon/monster-summon');
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * CAMPAIGN_TRAP_{FLAG:400} 族：战役迷宫的陷阱槽读值（#469，决议 #7）。
@@ -76,11 +77,6 @@ const campaign_trap_family = new DispatchFamily('CAMPAIGN_TRAP', [1]);
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /** 指定 CFLAG 位是否立起（CFLAG:503 位域，文件头） */

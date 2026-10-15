@@ -57,9 +57,7 @@ const { wearing_cloth_able } = require('#/system/train/cloth');
 const { st_up } = require('#/dungeon/dungeon-lvup');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { arcana_battle } = require('#/invasion/invasion-arcana-battle');
-
-/** RAND:N（0..N-1）的缺省实现 */
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议：SAVESTR:x ↔ callname:x:-1） */
 function name_of(cid) {

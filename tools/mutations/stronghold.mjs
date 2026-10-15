@@ -179,8 +179,8 @@ export default [
   {
     desc: 'M6661 SELL_VIDEO 内容能力最高档边界从大于 5 改成大于 6',
     file: 'ere/system/stronghold/sell-video.js',
-    find: '    if (level > 5) score = times(score, 1.5);',
-    replace: '    if (level > 6) score = times(score, 1.5);',
+    find: '    if (level > 5) score = times_trunc(score, 1.5);',
+    replace: '    if (level > 6) score = times_trunc(score, 1.5);',
     tests: ['sell-video'],
     must_mention: 'ABL:30 等级 6',
   },

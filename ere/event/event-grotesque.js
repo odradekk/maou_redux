@@ -11,16 +11,13 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const {
   apply_prestige,
   archive_fate,
   dispose_character,
   get,
 } = require('#/event/event-execution-common');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 const ENDINGS = [
   {

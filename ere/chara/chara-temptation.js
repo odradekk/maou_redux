@@ -44,6 +44,7 @@ const { karma } = require('#/chara/chara-stats');
 const { party_del } = require('#/dungeon/dungeon-party');
 const { add_ex_item } = require('#/dungeon/ex-item');
 const { chara } = require('#/facade/chara');
+const { default_rand, times } = require('#/utils/numeric');
 
 /** 判定返回值：不是侵攻中的勇者 */
 const TEMPTATION_NOT_HERO = 1;
@@ -61,10 +62,6 @@ const TEMPTATION_BAR_WIDTH = 20;
 const SPONSOR_AMOUNT = 10000;
 /** 担保人素质（yml/Talent.yml 的名字表下标） */
 const T_SPONSOR = 290;
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /** 状态（CFLAG:1；invasion 域，写经门面、读可裸寻址） */
 function state_of(cid) {
@@ -235,11 +232,6 @@ function health_factor(arg, index) {
   if (ratio >= 25) return 3;
   if (ratio >= 10) return 4.5;
   return 6;
-}
-
-/** 乘以小数后截断（向下取整） */
-function times(value, factor) {
-  return Math.floor(value * factor);
 }
 
 /**

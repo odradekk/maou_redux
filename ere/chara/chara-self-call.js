@@ -66,9 +66,7 @@ const { nid_get_type } = require('#/chara/chara-name');
 const { get_look_info } = require('#/chara/look-info');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
-
-/** 默认随机源（[0, n) 整数）；测试注入定值序固定分支 */
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** 洋名昵称表 case 3/4 的首字白名单 */
 const WEST_NICK_FIRST_CHARS = new Set([

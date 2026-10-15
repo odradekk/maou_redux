@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1068; // #789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1066; // #792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -1627,14 +1627,14 @@ export default [
   {
     desc: 'M901 PALAM_UP 的两路分配对调（恐怖屈服路走 100 - Z）',
     file: 'ere/system/train/passout.js',
-    find: `  add_up(cid, 7, idiv(a, 100 - z));
-  add_up(cid, 8, idiv(b, 100 - z));
-  add_up(cid, 10, idiv(c, 100 - z));
-  add_up(cid, 11, idiv(d, z));`,
-    replace: `  add_up(cid, 7, idiv(a, z));
-  add_up(cid, 8, idiv(b, z));
-  add_up(cid, 10, idiv(c, z));
-  add_up(cid, 11, idiv(d, 100 - z));`,
+    find: `  add_up(cid, 7, percent_floor(a, 100 - z));
+  add_up(cid, 8, percent_floor(b, 100 - z));
+  add_up(cid, 10, percent_floor(c, 100 - z));
+  add_up(cid, 11, percent_floor(d, z));`,
+    replace: `  add_up(cid, 7, percent_floor(a, z));
+  add_up(cid, 8, percent_floor(b, z));
+  add_up(cid, 10, percent_floor(c, z));
+  add_up(cid, 11, percent_floor(d, 100 - z));`,
     tests: ['passout'],
     must_mention: '恐怖/屈服路',
   },
@@ -3658,9 +3658,9 @@ export default [
   {
     desc: 'M1212 com57 将 TALENT:80 后无条件的 B 倍率误并入条件',
     file: 'ere/system/train/com-special.js',
-    find: '  if (tal(cid, 80)) a = times(a, 150);\n  b = times(b, 120);',
+    find: '  if (tal(cid, 80)) a = percent_floor(a, 150);\n  b = percent_floor(b, 120);',
     replace:
-      '  if (tal(cid, 80)) {\n    a = times(a, 150);\n    b = times(b, 120);\n  }',
+      '  if (tal(cid, 80)) {\n    a = percent_floor(a, 150);\n    b = percent_floor(b, 120);\n  }',
     tests: ['com-special'],
     must_mention: '单行条件只约束下一条语句',
   },
@@ -3669,13 +3669,13 @@ export default [
     file: 'ere/system/train/com-special.js',
     find: `  if (tal(cid, 113)) add_src(cid, 3, 500);
   add_src(cid, 16, 500);
-  a = times(a, 150);
-  b = times(b, 120);`,
+  a = percent_floor(a, 150);
+  b = percent_floor(b, 120);`,
     replace: `  if (tal(cid, 113)) {
     add_src(cid, 3, 500);
     add_src(cid, 16, 500);
-    a = times(a, 150);
-    b = times(b, 120);
+    a = percent_floor(a, 150);
+    b = percent_floor(b, 120);
   }`,
     tests: ['com-special'],
     must_mention: '单行条件只约束下一条语句',
@@ -3763,15 +3763,8 @@ export default [
     tests: ['com-service'],
     must_mention: 'COM34/36 复用性交尾段',
   },
-  {
-    desc: 'M1112 严格 TIMES 退回浮点向下取整（#222）',
-    file: 'ere/system/train/com-service.js',
-    find: '  return Number((BigInt(value_to_multiply) * numerator) / denominator);',
-    replace:
-      '  return Math.floor(value_to_multiply * rate); // 变异：JS 浮点截断',
-    tests: ['com-service'],
-    must_mention: '严格 times',
-  },
+  // M1112（严格 TIMES 退回浮点向下取整，#222）随实现移到 ere/utils/numeric.js，
+  // 条目改挂 numeric 分片（本文件的 times 导出改为转发该实现）。
   {
     desc: 'M1113 B 文公共尾部不把 TFLAG:31 的连续态归一（#222）',
     file: 'ere/system/train/train-message.js',
@@ -3879,15 +3872,8 @@ export default [
     tests: ['com-assistant'],
     must_mention: '自动调教不可',
   },
-  {
-    desc: 'M1409 严格 TIMES 退回浮点向下取整（#225）',
-    file: 'ere/system/train/com-assistant.js',
-    find: '  return Number((BigInt(value_to_multiply) * numerator) / denominator);',
-    replace:
-      '  return Math.floor(value_to_multiply * rate); // 变异：JS 浮点截断',
-    tests: ['com-assistant'],
-    must_mention: '严格 times',
-  },
+  // M1409（严格 TIMES 退回浮点向下取整，#225）随实现移到 ere/utils/numeric.js，
+  // 条目改挂 numeric 分片（本文件的 times 导出改为转发该实现）。
   {
     desc: 'M1410 CASE 61 上回合舔阴不升格（#225）',
     file: 'ere/system/train/com-assistant.js',
@@ -6630,8 +6616,8 @@ export default [
     a = 180000;
     b = 600;
     for (let n = 0; n < lv - 9; n++) {
-      a = compound(a, 125);
-      b = compound(b, 115);
+      a = percent_trunc(a, 125);
+      b = percent_trunc(b, 115);
     }
   } else if (lv < 20) {`,
     replace: `  // a＝私处点数需求、b＝私处经验需求，梯子与复利率彼此不对称
@@ -6643,8 +6629,8 @@ export default [
     a = 180000;
     b = 600;
     for (let n = 0; n < lv - 9; n++) {
-      a = compound(a, 125);
-      b = compound(b, 116);
+      a = percent_trunc(a, 125);
+      b = percent_trunc(b, 116);
     }
   } else if (lv < 20) {`,
     tests: ['ablup'],

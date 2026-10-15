@@ -28,11 +28,7 @@ const {
   dc_set,
   c_out,
 } = require('#/dungeon/labo');
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * unit_check：MAP 上に勇者が存在するか——座標 (x,y) に侵攻中

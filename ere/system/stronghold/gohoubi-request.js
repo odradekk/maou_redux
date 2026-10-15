@@ -34,9 +34,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { gohoubi_request_koujo } = require('#/kojo/kojo-dungeon-after');
-
-/** 默认随机源（[0, n) 整数）；测试注入定值序 */
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** TALENT 读数缺省 0（#13） */
 function talent(cid, idx) {

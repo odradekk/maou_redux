@@ -41,14 +41,11 @@ const { ending_2 } = require('#/event/event-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch'); // （真身 #184；模块对象引用，测试可替换）
 const { da_get, db_set, geo_test } = require('#/dungeon/labo');
 const { unit_check, mon_check, set_vil } = require('#/dungeon/labo-map');
+const { default_rand } = require('#/utils/numeric');
+
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 同款） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /**

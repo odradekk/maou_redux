@@ -32,6 +32,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { default_rand } = require('#/utils/numeric');
 const { chara } = require('#/facade/chara');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { emit } = require('#/system/event/registry');
@@ -74,11 +75,6 @@ const campaign_monster_list_family = new DispatchFamily(
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /** SHE(ARG) 代词（三行纯函数，已内联） */

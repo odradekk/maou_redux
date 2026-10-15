@@ -18,15 +18,12 @@ const { get_equip_num } = require('#/system/equip/equip-lookup');
 const { equip_weapon_spans } = require('#/system/equip/equip-print');
 const { usable_equipment } = require('#/system/equip/equip-usable');
 const { item_detox } = require('#/system/equip/item-detox');
+const { default_rand } = require('#/utils/numeric');
 
 const ITEM_FIRST_SLOT = 560;
 const ITEM_SLOT_COUNT = 5;
 const ITEM_MIN = 400;
 const ITEM_COUNT = 14;
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';

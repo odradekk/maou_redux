@@ -29,8 +29,7 @@ const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { print_button_grid } = require('#/utils/button-grid');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** 非唯一性格的素质编号表 */
 const GENERAL_CHARASTERISTICS = [

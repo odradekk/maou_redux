@@ -15,11 +15,7 @@ const {
   equip_get,
 } = require('#/system/equip/equip-lookup');
 const { equip_ring_spans } = require('#/system/equip/equip-print');
-
-/** RAND:N 的默认实现（0..N-1 均匀整数） */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * 解咒后的戒指识别号阶梯（D = RAND:100）。

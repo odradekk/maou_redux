@@ -52,6 +52,7 @@ const {
   get_fixed_chara_name,
   LIST_CHARA_NAME_SIZE,
 } = require('#/chara/chara-name-list');
+const { default_rand } = require('#/utils/numeric');
 
 /** 五个名字表计数（#332 起在本文件） */
 const WEST_NAME_COUNT = 585;
@@ -59,8 +60,6 @@ const JAPANESE_NAME_COUNT = 450;
 const WEST_MALE_NAME_COUNT = 453;
 const JAPANESE_MALE_NAME_COUNT = 1059;
 const CHINESE_NAME_COUNT = 789;
-
-const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
  * 整数除法（向零截断）：「已加入角色数 × 4 ÷ 10」这类条件按整型运算，

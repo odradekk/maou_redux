@@ -64,14 +64,13 @@ const {
 } = require('#/system/train/train-message');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
 const { chara_callname } = require('#/utils/callname-utils');
+const { MASTER } = require('#/utils/master');
+const { default_rand, idiv, times } = require('#/utils/numeric');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   clothtype_main2_text,
   clothtype_special_text,
 } = require('#/page/page-clothtype');
-
-/** 主人：角色 0 */
-const MASTER = 0;
 
 /** PBAND:0（EVENTFIRST 置 4）——ITEM:PBAND 即 ITEM:4 假阳具（持有判定） */
 const PBAND = 4;
@@ -80,16 +79,6 @@ const PBAND = 4;
 // 标题排版的组成部分——lang-table.js 的 EXEMPT_STRINGS 有本字面量的整串
 // 豁免（#212/#213 的 COMPOUND_SEP 同款处置，动态拼名走本常量）
 const MONSTER_SEP = '・';
-
-/** times：整数乘小数后截断 */
-const times = (v, m) => Math.floor(v * m);
-/** 整数除法：正数域向下取整 */
-const idiv = (a, b) => Math.floor(a / b);
-
-/** RAND:N 的缺省随机源（[0, n) 整数；测试注入定值序，benki/com-adv 先例） */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 // 目标的 LOSEBASE 读数（deltabase 存负值；source-check 同款取反）
 const lose = (cid, k) => -1 * (era.get(`deltabase:${cid}:${k}`) || 0);

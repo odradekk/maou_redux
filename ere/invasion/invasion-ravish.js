@@ -42,9 +42,7 @@ const {
   item_name,
   monster_data,
 } = require('#/dungeon/monster-data');
-
-/** RAND:N（0..N-1）的缺省实现 */
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * invasion_ryouzyoku：侵略时的凌辱旁白分发。抽三列怪物的数据，

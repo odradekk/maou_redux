@@ -13,6 +13,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { e_get, monster_name } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
+const { idiv_trunc, times_exact } = require('#/utils/numeric');
 const { com_order } = require('#/system/train/com-order');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
@@ -40,20 +41,6 @@ const {
 
 /** 本文件没有未实现的移植调用；口上由 source-check 的既有分发承载。 */
 
-/**
- * TIMES：本游戏须用十进制定点相乘、每一步朝零截断，不能让 JS 二进制
- * 浮点把 175 × 1.40 算成 244。
- */
-function times(value_to_multiply, rate) {
-  const text = String(rate);
-  const negative = text.startsWith('-');
-  const unsigned = /^[+-]/.test(text) ? text.slice(1) : text;
-  const [whole, fraction = ''] = unsigned.split('.');
-  const numerator = BigInt(`${whole}${fraction}`) * (negative ? -1n : 1n);
-  const denominator = 10n ** BigInt(fraction.length);
-  return Number((BigInt(value_to_multiply) * numerator) / denominator);
-}
-const idiv = (v, divisor) => Math.trunc(v / divisor);
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 const value = (table, cid, id) => era.get(`${table}:${cid}:${id}`) || 0;
 const target_value = (table, id) => value(table, era_flag.target, id);
@@ -126,9 +113,9 @@ function dirty_penalty({
   if (stain(player_stain) & 16) y += 1;
   if (stain(4) & 32) y += 3;
   if ((force_seven && target_tequip(89)) || force_seven_when()) y = 7;
-  if (target_talent(61)) y = idiv(y, 3);
+  if (target_talent(61)) y = idiv_trunc(y, 3);
   if (target_talent(62)) y *= 2;
-  return idiv(y, divider);
+  return idiv_trunc(y, divider);
 }
 
 function append_term(parts, state, label, amount, shown_amount) {
@@ -292,10 +279,10 @@ function source_service_skill(
   const [s4, s5, dirt_rate] = service_values[tier];
   src.set(4, s4);
   src.set(5, s5);
-  if (dirt_rate !== undefined) src.set(8, times(src.get(8), dirt_rate));
+  if (dirt_rate !== undefined) src.set(8, times_exact(src.get(8), dirt_rate));
   const rate = skill_rates[Math.min(target_abl(12), skill_rates.length - 1)];
-  src.set(4, times(src.get(4), rate));
-  src.set(5, times(src.get(5), rate));
+  src.set(4, times_exact(src.get(4), rate));
+  src.set(5, times_exact(src.get(5), rate));
 }
 
 function service_ejaculation({
@@ -315,28 +302,28 @@ function service_ejaculation({
   const player = era_flag.player;
   let b = base[Math.min(target_abl(12), 5)];
   for (const [id, rates] of Object.entries(target_rates))
-    b = times(b, rate_by_abl(target, Number(id), rates));
+    b = times_exact(b, rate_by_abl(target, Number(id), rates));
   if (extra_rates) {
     for (const [id, rates] of extra_rates)
-      b = times(b, rate_by_abl(target, id, rates));
+      b = times_exact(b, rate_by_abl(target, id, rates));
   }
   for (const [id, rates] of player_rates) {
-    b = times(b, rate_by_abl(player, id, rates));
+    b = times_exact(b, rate_by_abl(player, id, rates));
   }
   const e = settle_ejaculation_gauge(player, add_if() ? b : 0);
   if (e) {
-    source.set(4, times(source.get(4), source4_rate));
+    source.set(4, times_exact(source.get(4), source4_rate));
     if (poison) {
       const [s7, s5_rate, s13_rate] =
         poison[Math.min(target_abl(32), poison.length - 1)];
       source.set(7, s7);
-      source.set(5, times(source.get(5), s5_rate));
-      source.set(13, times(source.get(13), s13_rate));
+      source.set(5, times_exact(source.get(5), s5_rate));
+      source.set(13, times_exact(source.get(13), s13_rate));
     }
     if (e === 2) {
       const [source7_rate, source5_rate] = extra_ejaculation_rates;
-      source.set(7, times(source.get(7), source7_rate));
-      source.set(5, times(source.get(5), source5_rate));
+      source.set(7, times_exact(source.get(7), source7_rate));
+      source.set(5, times_exact(source.get(5), source5_rate));
       era.add(`exp:${player}:3`, 2);
       chara(target).dungeon.精液经验 += semen_exp[1];
       era.print('大量射精');
@@ -463,7 +450,7 @@ async function com30() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -576,7 +563,7 @@ async function com31() {
     era.add('tflag:30', 1);
   player_first_kiss(target, 201);
   love_exp(target, target_talent(122) ? 2 : 1);
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 2;
   return 1;
@@ -628,13 +615,13 @@ async function com32() {
   src.set(5, service[tier][1]);
   src.set(8, service[tier][2]);
   let breast = [100, 200, 400, 800, 1200, 1500][Math.min(target_abl(1), 5)];
-  if (target_talent(110)) breast = times(breast, 1.2);
-  if (target_talent(108)) breast = times(breast, 1.2);
-  else if (target_talent(107)) breast = times(breast, 0.7);
+  if (target_talent(110)) breast = times_exact(breast, 1.2);
+  if (target_talent(108)) breast = times_exact(breast, 1.2);
+  else if (target_talent(107)) breast = times_exact(breast, 0.7);
   src.add(17, breast);
   const skill = [0.5, 0.8, 1, 1.2, 1.5, 2][Math.min(target_abl(12), 5)];
-  src.set(4, times(src.get(4), skill));
-  src.set(5, times(src.get(5), skill));
+  src.set(4, times_exact(src.get(4), skill));
+  src.set(5, times_exact(src.get(5), skill));
   const ejaculation = service_ejaculation({
     base: [1500, 2100, 2900, 4000, 5000, 6000],
     target_rates: {
@@ -670,7 +657,7 @@ async function com32() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 2;
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -724,8 +711,8 @@ async function com33() {
   const lube_rates = [0.3, 0.6, 1, 1.5, 2, 2.5];
   const source4_rates = [0.6, 0.8, 1, 1.2, 1.4, 1.6];
   const lube = level(target_palam(3));
-  src.set(0, times(src.get(0), lube_rates[lube]));
-  src.set(4, times(src.get(4), source4_rates[lube]));
+  src.set(0, times_exact(src.get(0), lube_rates[lube]));
+  src.set(4, times_exact(src.get(4), source4_rates[lube]));
   let base = [500, 1100, 2000, 3000, 3900, 4600][Math.min(target_abl(12), 5)];
   base += [0, 0, 0, 300, 600, 1000][lube];
   service_ejaculation({
@@ -754,7 +741,7 @@ async function com33() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -811,7 +798,7 @@ async function com34_src() {
   src.set(4, service[0]);
   src.set(5, service[1]);
   src.set(14, service[2]);
-  src.set(8, times(src.get(8), service[3]));
+  src.set(8, times_exact(src.get(8), service[3]));
   const vaginal = [
     [20, 25, 0.5],
     [75, 75, 0.8],
@@ -822,30 +809,30 @@ async function com34_src() {
   ][Math.min(target_abl(2), 5)];
   src.set(1, vaginal[0]);
   src.set(3, vaginal[1]);
-  src.set(4, times(src.get(4), vaginal[2]));
+  src.set(4, times_exact(src.get(4), vaginal[2]));
   const exp = target_exp(0);
   if (exp < EXPLV[1]) {
-    src.set(1, times(src.get(1), 0.2));
+    src.set(1, times_exact(src.get(1), 0.2));
     src.set(6, 5000);
     src.set(12, 12000);
     src.set(14, 120000);
   } else if (exp < EXPLV[2]) {
-    src.set(1, times(src.get(1), 0.6));
+    src.set(1, times_exact(src.get(1), 0.6));
     src.set(6, 220);
   } else if (exp < EXPLV[3]) {
     src.set(6, 30);
   } else if (exp < EXPLV[4]) {
-    src.set(1, times(src.get(1), 1.2));
+    src.set(1, times_exact(src.get(1), 1.2));
     src.set(6, 5);
   } else if (exp < EXPLV[5]) {
-    src.set(1, times(src.get(1), 1.4));
+    src.set(1, times_exact(src.get(1), 1.4));
   } else {
-    src.set(1, times(src.get(1), 1.5));
+    src.set(1, times_exact(src.get(1), 1.5));
   }
   const lube = level(target_palam(3));
   const lube1 = [0.2, 0.6, 1, 1.3, 1.6, 2][lube];
   const lube6 = [3, 1, 0.5, 0.3, 0.2, 0.1][lube];
-  src.set(1, times(src.get(1), lube1));
+  src.set(1, times_exact(src.get(1), lube1));
   if (lube === 0) {
     src.add(6, 900);
     src.set(12, src.get(12) + 2000);
@@ -853,38 +840,38 @@ async function com34_src() {
     src.add(6, 250);
     src.set(12, src.get(12) + 400);
   }
-  src.set(6, times(src.get(6), lube6));
-  if (target_talent(99)) src.set(6, times(src.get(6), 0.8));
-  if (target_talent(100)) src.set(6, times(src.get(6), 2));
-  if (target_talent(135)) src.set(6, times(src.get(6), 4));
+  src.set(6, times_exact(src.get(6), lube6));
+  if (target_talent(99)) src.set(6, times_exact(src.get(6), 0.8));
+  if (target_talent(100)) src.set(6, times_exact(src.get(6), 2));
+  if (target_talent(135)) src.set(6, times_exact(src.get(6), 4));
   if (target_talent(30)) {
-    src.set(3, times(src.get(3), 0.6));
-    src.set(14, times(src.get(14), 15));
+    src.set(3, times_exact(src.get(3), 0.6));
+    src.set(14, times_exact(src.get(14), 15));
     src.set(15, exp === 0 ? 10000 : 1000);
   } else if (target_talent(31)) {
-    src.set(14, times(src.get(14), 0.5));
+    src.set(14, times_exact(src.get(14), 0.5));
     if (exp === 0) src.set(15, 300);
   } else if (exp === 0) src.set(15, 3000);
   const lust = level(target_palam(5));
-  src.set(1, times(src.get(1), [0.6, 0.8, 1, 1.2, 1.4, 1.6][lust]));
-  src.set(3, times(src.get(3), [0.3, 0.6, 1, 1.5, 1.8, 2.2][lust]));
+  src.set(1, times_exact(src.get(1), [0.6, 0.8, 1, 1.2, 1.4, 1.6][lust]));
+  src.set(3, times_exact(src.get(3), [0.3, 0.6, 1, 1.5, 1.8, 2.2][lust]));
   const obedience = Math.min(target_abl(10), 5);
-  src.set(1, times(src.get(1), [0.5, 0.8, 1, 1.3, 1.6, 2][obedience]));
-  src.set(3, times(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][obedience]));
-  src.set(15, times(src.get(15), [2, 1.5, 1, 0.8, 0.6, 0.3][obedience]));
+  src.set(1, times_exact(src.get(1), [0.5, 0.8, 1, 1.3, 1.6, 2][obedience]));
+  src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][obedience]));
+  src.set(15, times_exact(src.get(15), [2, 1.5, 1, 0.8, 0.6, 0.3][obedience]));
   src.add(13, [700, 500, 300, 100, 30, 0][obedience]);
   const skill = Math.min(target_abl(12), 5);
-  src.set(1, times(src.get(1), [0.5, 0.8, 1, 1.3, 1.6, 2][skill]));
-  src.set(3, times(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][skill]));
+  src.set(1, times_exact(src.get(1), [0.5, 0.8, 1, 1.3, 1.6, 2][skill]));
+  src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][skill]));
   await com_ejac_player_sex();
   if (game.train.性交射精) {
-    src.set(4, times(src.get(4), 3));
-    src.set(5, times(src.get(5), 5));
-    src.set(13, times(src.get(13), 1.5));
+    src.set(4, times_exact(src.get(4), 3));
+    src.set(5, times_exact(src.get(5), 5));
+    src.set(13, times_exact(src.get(13), 1.5));
     src.set(7, [0, 300, 1000, 1500, 2200, 3000][Math.min(target_abl(32), 5)]);
   }
   await com_after_vagina_sex();
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
 }
 
 async function com34() {
@@ -949,13 +936,13 @@ async function com35() {
   src.set(8, service[2]);
   src.set(0, [0, 50, 200, 400, 1000, 2000][Math.min(target_abl(0), 5)]);
   let breast = [200, 300, 500, 1000, 1500, 1800][Math.min(target_abl(1), 5)];
-  if (target_talent(110)) breast = times(breast, 1.2);
-  if (target_talent(108)) breast = times(breast, 1.2);
-  else if (target_talent(107)) breast = times(breast, 0.7);
+  if (target_talent(110)) breast = times_exact(breast, 1.2);
+  if (target_talent(108)) breast = times_exact(breast, 1.2);
+  else if (target_talent(107)) breast = times_exact(breast, 0.7);
   src.add(17, breast);
   const skill = [0.8, 1, 1.3, 1.6, 1.9, 2.3][Math.min(target_abl(12), 5)];
-  src.set(4, times(src.get(4), skill));
-  src.set(5, times(src.get(5), skill));
+  src.set(4, times_exact(src.get(4), skill));
+  src.set(5, times_exact(src.get(5), skill));
   service_ejaculation({
     base: [1500, 2100, 2900, 4000, 5000, 6000],
     target_rates: {
@@ -983,7 +970,7 @@ async function com35() {
   love_exp(target, 2);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 3;
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -1035,7 +1022,7 @@ async function com36() {
   src.set(4, service[0]);
   src.set(5, service[1]);
   src.set(14, service[2]);
-  src.set(8, times(src.get(8), service[3]));
+  src.set(8, times_exact(src.get(8), service[3]));
   const anal = [
     [10, 10, 80, 0.5],
     [20, 50, 300, 0.8],
@@ -1047,10 +1034,10 @@ async function com36() {
   src.set(2, anal[0]);
   src.set(3, anal[1]);
   src.add(13, anal[2]);
-  src.set(4, times(src.get(4), anal[3]));
+  src.set(4, times_exact(src.get(4), anal[3]));
   const exp = target_exp(1);
   const exp_tier = exp_level(exp);
-  src.set(2, times(src.get(2), [0.1, 0.3, 0.5, 1, 1.4, 1.6][exp_tier]));
+  src.set(2, times_exact(src.get(2), [0.1, 0.3, 0.5, 1, 1.4, 1.6][exp_tier]));
   src.set(6, [18000, 10000, 4500, 1500, 700, 300][exp_tier]);
   const extra_lose = [
     [70, 80],
@@ -1063,38 +1050,38 @@ async function com36() {
   lose(target, 0, extra_lose[0]);
   lose(target, 1, extra_lose[1]);
   const lube = level(target_palam(3));
-  src.set(2, times(src.get(2), [0.4, 0.8, 1, 1.4, 1.8, 1.8][lube]));
+  src.set(2, times_exact(src.get(2), [0.4, 0.8, 1, 1.4, 1.8, 1.8][lube]));
   src.add(6, [10000, 3600, 1200, 200, 100, 100][lube]);
-  if (target_talent(99)) src.set(6, times(src.get(6), 0.8));
-  if (target_talent(100)) src.set(6, times(src.get(6), 2));
-  if (target_talent(135)) src.set(6, times(src.get(6), 2));
+  if (target_talent(99)) src.set(6, times_exact(src.get(6), 0.8));
+  if (target_talent(100)) src.set(6, times_exact(src.get(6), 2));
+  if (target_talent(135)) src.set(6, times_exact(src.get(6), 2));
   if (target_talent(30)) {
-    src.set(3, times(src.get(3), 1.2));
-    src.set(16, times(src.get(16), 1.1));
+    src.set(3, times_exact(src.get(3), 1.2));
+    src.set(16, times_exact(src.get(16), 1.1));
     src.set(15, exp === 0 ? 500 : 0);
   }
   const lust = Math.min(level(target_palam(5)), 4);
-  src.set(2, times(src.get(2), [0.6, 0.8, 1, 1.2, 1.4][lust]));
-  src.set(13, times(src.get(13), [0.6, 0.8, 1, 1.2, 1.4][lust]));
+  src.set(2, times_exact(src.get(2), [0.6, 0.8, 1, 1.2, 1.4][lust]));
+  src.set(13, times_exact(src.get(13), [0.6, 0.8, 1, 1.2, 1.4][lust]));
   const obedience = Math.min(target_abl(10), 5);
-  src.set(2, times(src.get(2), [0.5, 0.8, 1, 1.3, 1.6, 2][obedience]));
-  src.set(3, times(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][obedience]));
-  src.set(15, times(src.get(15), [2, 1.5, 1, 0.8, 0.6, 0.3][obedience]));
+  src.set(2, times_exact(src.get(2), [0.5, 0.8, 1, 1.3, 1.6, 2][obedience]));
+  src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][obedience]));
+  src.set(15, times_exact(src.get(15), [2, 1.5, 1, 0.8, 0.6, 0.3][obedience]));
   src.add(13, [700, 500, 300, 100, 30, 0][obedience]);
   const skill = Math.min(target_abl(12), 5);
-  src.set(2, times(src.get(2), [0.5, 0.8, 1, 1.3, 1.6, 2][skill]));
-  src.set(3, times(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][skill]));
+  src.set(2, times_exact(src.get(2), [0.5, 0.8, 1, 1.3, 1.6, 2][skill]));
+  src.set(3, times_exact(src.get(3), [0.6, 0.8, 1, 1.2, 1.4, 1.6][skill]));
   await com_ejac_player_analsex();
   if (game.train.性交射精) {
-    src.set(4, times(src.get(4), 3));
-    src.set(5, times(src.get(5), 5));
-    src.set(13, times(src.get(13), 1.5));
+    src.set(4, times_exact(src.get(4), 3));
+    src.set(5, times_exact(src.get(5), 5));
+    src.set(13, times_exact(src.get(13), 1.5));
     src.set(7, [0, 300, 1000, 1500, 2200, 3000][Math.min(target_abl(32), 5)]);
   }
   await com_after_anal_sex();
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = target_exp(1) <= 1 ? 3 : 2;
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -1266,8 +1253,8 @@ async function com38() {
   ]);
   const maso = Math.min(target_abl(20), 5);
   const maso_rate = [1, 1.2, 1.4, 1.6, 1.8, 2][maso];
-  src.set(4, times(src.get(4), maso_rate));
-  src.set(5, times(src.get(5), maso_rate));
+  src.set(4, times_exact(src.get(4), maso_rate));
+  src.set(5, times_exact(src.get(5), maso_rate));
   service_ejaculation({
     base: [350, 700, 1300, 1800, 2600, 3500],
     target_rates: {
@@ -1303,7 +1290,7 @@ async function com38() {
   love_exp(target, 1);
   game.train.快乐经验 = 1;
   game.train.屈服刻印结算 = 1;
-  if (player_talent(121)) src.set(13, idiv(src.get(13), 2));
+  if (player_talent(121)) src.set(13, idiv_trunc(src.get(13), 2));
   return 1;
 }
 
@@ -1908,4 +1895,5 @@ for (const id of [30, 31, 32, 33, 35, 37, 38])
 for (const id of [34, 36])
   train_message_a_family.register(id, train_message_a_riding);
 
-module.exports = { times };
+// 对外沿用 times 名（既有测试按此名取用）
+module.exports = { times: times_exact };

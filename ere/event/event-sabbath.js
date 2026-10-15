@@ -31,6 +31,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 
 function get(name) {
   return era.get(name) || 0;
@@ -55,8 +56,6 @@ function add_juel(cid, n, v) {
 function pick(list, rand) {
   return list[rand(list.length)];
 }
-
-const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
  * sabbath：满月（当月 15 日）时，淫乱且持有法术/咒术素质的

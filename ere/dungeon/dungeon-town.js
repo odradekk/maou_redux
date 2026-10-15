@@ -46,15 +46,11 @@ const quest_mod = require('#/dungeon/dungeon-quest');
 const lovers_mod = require('#/dungeon/dungeon-lovers');
 // L13（#344）真身：sell_ex_item / add_ex_item。
 const ex_item_mod = require('#/dungeon/ex-item');
+const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /** 队伍编成（PM:0 队长 / PM:1 仲間A CFLAG:531 / PM:2 仲間B CFLAG:532） */

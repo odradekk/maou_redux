@@ -21,8 +21,7 @@ const { get_look_info } = require('#/chara/look-info');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { monster_data, monster_name } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** 使役魔兽名的青绿（0x63E390）→ 渲染层 CSS 色串 */
 const HORSE_COLOR = '#63e390';

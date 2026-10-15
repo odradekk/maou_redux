@@ -27,16 +27,12 @@ const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { clothtype_main2_text } = require('#/page/page-clothtype');
 const {
   conception_check_syoku_to_t,
   in_vagina_syoku_to_t,
 } = require('#/event/event-pregnancy');
-
-/** 随机源（[0,n) 整数）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /** %TALENTNAME:n% 的读数源 */
 function talent_name(n) {

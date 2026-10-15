@@ -13,11 +13,8 @@ const { karma, chara_lv_check } = require('#/chara/chara-stats');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { e_get, e_set, monstername } = require('#/dungeon/monster-data');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 async function print_battle_line(text) {
   if ((game.dungeon.游戏设定 & 32) !== 0) {

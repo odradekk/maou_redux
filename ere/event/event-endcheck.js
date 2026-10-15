@@ -33,15 +33,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { END_FAMILY } = require('#/event/ending-family');
 const { ending_n } = require('#/event/event-ending');
-
-/**
- * RAND:N（0..N-1）的缺省实现（dungeon-lvup.js 同款）。四条线状态机
- * 只有两处随机（银黑桃 151 档以上的乳业收入 RAND:200、黑方片 300 档的
- * RAND:5），均由调用点可注入的随机源承担——测试给确定性源（#344）。
- */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /** 二维表读点：未声明下标读得 undefined（#13），包装层同款 || 0 缺省处理 */
 function get(name) {

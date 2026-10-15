@@ -28,16 +28,13 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 
 // 数字槽语义：TALENT:46/85/121/122/204/220 = 药瘾/爱慕/扶她/男人/
 // 肉便器/精英；244–247 = 恶魔外观；314–320 = 种族、前生活、成为勇者的
 // 契机、喜好、阴茎状态及家族构成。ABL:3/11/13/17/21/22/32/39 = 肛门
 // 感觉/欲望/侍奉技术/露出癖/抖M/百合/精液中毒/兽奸中毒；EXP:56/70/74
 // = 兽奸/拍摄/卖淫经验。其余 TALENT 数字是分支条件直接判定的素质位。
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
 function has(cid, family, index) {
   return get(`${family}:${cid}:${index}`) !== 0;
 }
