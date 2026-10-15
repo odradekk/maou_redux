@@ -851,7 +851,7 @@ const EXEMPT_STRINGS = [
   },
   {
     value: '土著头饰',
-    where: 'ere/page/page-clothtype.js, ere/system/cloth-lookup.js',
+    where: 'ere/system/cloth-lookup.js',
     why: '装备判定 CFLAG:42 == 56 的「土着頭飾」（汉化版「土著头饰」）。著 在简体规范里是「土著」（tǔzhù，原住民）的正字——词级豁免而非字级映射：单收 著→着 会把这个词改坏（土着），而 著 在本作语料里只随这一个词出现。#215（J5）收录。',
   },
   ...['日常着装・裙子', '日常着装・裤子'].map((value) => ({
