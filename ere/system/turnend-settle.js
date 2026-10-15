@@ -23,11 +23,13 @@
  *     （CONTEXT.md「角色与指针」）。
  *   - equip_check/weapon_restore 自 #174（H5）起为真身（ere/system/equip/）：
  *     装备倍率按佩戴效果实际取值，戒指两事件（陷落/洗脑）随 RESULT > 0 可达。
- *     kyoten_event 自这张工单起接入：四个领域的衰减块在衰减完成后按
- *     领域号调用（ere/page/page-invasion.js——system → page
- *     的依赖方向与 juel-check → page-info-exp 同构，判断依据见 issue #119
- *     评论）。ARG:0 == 1 人间界分支是真身；2/3/4 三分支不可达（FLAG:86/88/90
- *     无写入路径恒 0，衰减分支不进），被调时空转。invasion_check（#118）
+ *     kyoten_event 自这张工单起接入：四个领域的衰减块在衰减完成后按领域号
+ *     调用。演出本体在侵略域的 page-invasion.js，system 调 page 的演出与
+ *     文本函数是既成做法（本域另有十余处 require page 域，反向的
+ *     page → system 同样存在）——分层约束的是文件角色与检索位置，不约束
+ *     调用方向，故此处不搬家（判断依据见 issue #795 评论）。ARG:0 == 1
+ *     人间界分支是真身；2/3/4 三分支自地区续接起可达（三个领域各有侵攻度
+ *     写入点），行为是空转——不推进状态字、不输出。invasion_check（#118）
  *     不在本档的调用之列——结局判定由侵略结算尾部触发（page-invasion.js）。
  *     EVENT_NEWDAY 自 #115 起为真身（ere/event/event-nextday.js，含每日一次
  *     的 run_endcheck 调用点）。
@@ -467,8 +469,8 @@ on('EVENTTURNEND', async () => {
   era.println(); // PRINTL
   // 侵攻度自然衰减：未征服（FLAG:82/87/89/91 == 0）且有余量时每日 RAND:100；
   // 已征服低概率反抗、保底 100。直接决定通关天数（#112 验收的天数估算依据），
-  // 衰减后各领域按领域号调 kyoten_event（#119 接入，
-  // 本体在 ere/page/page-invasion.js）
+  // 衰减后各领域按领域号调 kyoten_event（本体在侵略域的 page-invasion.js；
+  // 这条 system → page 的调用方向经复核维持，理由见文件头）
   await decay_invasion_degree(1, {
     conquered: era.get('flag:82') || 0, // 人间界征服完了
     degree: () => era.get('flag:81') || 0, // 人间界侵攻度
@@ -604,7 +606,8 @@ on('EVENTTURNEND', async () => {
  *
  * 未征服（conquered == 0）：余量 > 0 时每日衰减 RAND:100、下限 0；
  * 已征服（conquered == 1）：每 reconquer_rand 日一遇的反抗，余量 > 100 时
- * 衰减 RAND:100、下限 100。衰减完成后调 kyoten_event(region)（#119 接入）。
+ * 衰减 RAND:100、下限 100。衰减完成后调 kyoten_event(region)：横幅要夹在
+ * 本领域的衰减播报与等键之后，所以在这里直调，不另挂链处理器。
  *
  * @param {number} region 领域号（kyoten_event 的实参 1-4）
  *
