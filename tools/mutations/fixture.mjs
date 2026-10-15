@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 62; // #769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 70; // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -785,5 +785,71 @@ export default [
       '    if (false && !value) {\n      return era.get(var_name);\n    } // 变异：零增量仍写入',
     tests: ['engine-contract'],
     must_mention: '零增量只读取当前值',
+  },
+  // —— #793：调教世界构造入口的世界形状 ——
+  {
+    desc: 'M13801 构造入口不给魔王入列（世界缺主人）',
+    file: 'test/helpers/train-world.js',
+    find: '  preset_chara_0(fixture);\n  fixture.era.addCharacter(0);',
+    replace: '  preset_chara_0(fixture); // 变异：魔王不入列',
+    tests: ['train-world'],
+    must_mention: '缺省世界：魔王与奴隶入列并开调教',
+  },
+  {
+    desc: 'M13802 构造入口把调教对象写死为 31（target 选项失效）',
+    file: 'test/helpers/train-world.js',
+    find: '  join_slave_chara(fixture, target, target_name);',
+    replace: '  join_slave_chara(fixture, 31, target_name); // 变异：目标写死',
+    tests: ['train-world'],
+    must_mention: '差异项：目标、呼名、视角与调教名单各自可覆盖',
+  },
+  {
+    desc: 'M13803 构造入口把助手 0 也当独立角色预置入列',
+    file: 'test/helpers/train-world.js',
+    find: '  if (assi > 0) {',
+    replace: '  if (assi >= 0) { // 变异：助手 0 也入列',
+    tests: ['train-world'],
+    must_mention: '助手 0 = 主人自己：不加角色，指针照实',
+  },
+  {
+    desc: 'M13804 构造入口的缺省调教名单漏掉主人',
+    file: 'test/helpers/train-world.js',
+    find: '  fixture.era.beginTrain(...(train_ids ?? [0, target]));',
+    replace:
+      '  fixture.era.beginTrain(...(train_ids ?? [target])); // 变异：主人不进调教',
+    tests: ['train-world'],
+    must_mention: '缺省世界：魔王与奴隶入列并开调教',
+  },
+  {
+    desc: 'M13805 构造入口丢掉助手参与位（assiplay 恒 0）',
+    file: 'test/helpers/train-world.js',
+    find: '  era_flag.assiplay = assiplay;',
+    replace: '  era_flag.assiplay = 0; // 变异：助手参与位丢失',
+    tests: ['train-world'],
+    must_mention: '差异项：目标、呼名、视角与调教名单各自可覆盖',
+  },
+  {
+    desc: 'M13806 构造入口不写当前指令（selectcom 恒 -1）',
+    file: 'test/helpers/train-world.js',
+    find: '  era_flag.selectcom = selectcom;',
+    replace: '  era_flag.selectcom = -1; // 变异：当前指令不落',
+    tests: ['train-world'],
+    must_mention: '差异项：目标、呼名、视角与调教名单各自可覆盖',
+  },
+  {
+    desc: 'M13807 构造入口的主人呼名覆盖条件反向（呼名恒为预设）',
+    file: 'test/helpers/train-world.js',
+    find: '  if (master_callname !== undefined) {',
+    replace: '  if (master_callname === undefined) { // 变异：覆盖条件反向',
+    tests: ['train-world'],
+    must_mention: '差异项：目标、呼名、视角与调教名单各自可覆盖',
+  },
+  {
+    desc: 'M13808 构造入口只声明模块不载入（modules 恒 undefined）',
+    file: 'test/helpers/train-world.js',
+    find: '    loaded[key] = fixture.load_module(name);',
+    replace: '    loaded[key] = undefined; // 变异：只声明不载入',
+    tests: ['train-world'],
+    must_mention: '模块按声明载入，原样挂在 modules 上',
   },
 ];

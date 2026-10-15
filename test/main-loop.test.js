@@ -282,3 +282,25 @@ test('主启动图注册 K2 口上：KOJO_MESSAGE_COM_2 可由主循环侧的 re
     'KOJO_MESSAGE_COM_2 必须经主启动图注册',
   );
 });
+
+test('状态处理器表与 STATE 枚举同步：新增状态不得漏接处理器', () => {
+  const fixture = create_era_fixture();
+  const { STATE } = fixture.load_module('system/flow/begin-signal');
+  const { STATE_HANDLERS } = fixture.load_module('system/flow/main-loop');
+
+  // 键与取值同源（STATE.X），漂移只可能是一侧改了另一侧没改：漏接的处理器
+  // 要到玩家推进到那个状态时才报「尚未移植」，枚举删掉的取值会让对应的键
+  // 退化成字符串 'undefined'。这张表与枚举由这条用例对齐，不另抄一份清单。
+  assert.deepEqual(
+    Object.keys(STATE_HANDLERS).sort(),
+    Object.values(STATE).sort(),
+    'STATE_HANDLERS 必须为 STATE 枚举的每个取值备一个处理器',
+  );
+  for (const [state, handler] of Object.entries(STATE_HANDLERS)) {
+    assert.equal(
+      typeof handler,
+      'function',
+      `状态 ${state} 的处理器必须是函数`,
+    );
+  }
+});

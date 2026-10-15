@@ -13,40 +13,24 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 /** 道具族的最小调教世界：主人 0、目标 31、所有道具无视模式。 */
 function seed_world({ assi = -1 } = {}) {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  if (assi > 0) {
-    fixture.seed_chara(assi, {
-      id: assi,
-      name: `助手${assi}`,
-      callname: `助手${assi}`,
-    });
-    fixture.era.addCharacter(assi);
-  }
-  fixture.era.beginTrain(0, 31);
-  fixture.store.set('noitem:0', 1);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.player = 0;
-  era_flag.assi = assi;
-  era_flag.assiplay = 0;
-  era_flag.selectcom = -1;
-  fixture.load_module('system/train/com-toy');
-  const { com_able_family, com_family, equip_com_family } = fixture.load_module(
-    'system/train/com-family',
-  );
-  const { train_message_a, train_message_b } = fixture.load_module(
-    'system/train/train-message',
-  );
+  const world = seed_train_world({
+    assi,
+    modules: {
+      toy: 'system/train/com-toy',
+      family: 'system/train/com-family',
+      messages: 'system/train/train-message',
+    },
+  });
+  world.fixture.store.set('noitem:0', 1);
+  const { com_able_family, com_family, equip_com_family } =
+    world.modules.family;
+  const { train_message_a, train_message_b } = world.modules.messages;
   return {
-    fixture,
-    era_flag,
+    ...world,
     com_able_family,
     com_family,
     equip_com_family,

@@ -22,9 +22,11 @@
 /**
  * 游戏状态枚举：BEGIN 的合法目标。
  *
- * 取值 = BEGIN 的关键字。转场目标只有这 5 种（issue #20 定案，本枚举）：
- * TURNEND / SHOP / AFTERTRAIN / FIRST / TRAIN。
- * 其余目标（TITLE 除外，见下）不用，不列。
+ * 取值 = BEGIN 的关键字。原作的 BEGIN 目标只有这 5 种（issue #20 定案）：
+ * TURNEND / SHOP / AFTERTRAIN / FIRST / TRAIN。TITLE 与 SHOP_AFTER_LOAD 是
+ * ere 侧本地扩展（见下）：TITLE 由主循环直接作为初始状态跑、不经 begin()，
+ * SHOP_AFTER_LOAD 则由读档成功分支的缺省转场交给 begin()，用来把「读档进入」
+ * 与显式 BEGIN SHOP 区分开。
  */
 const STATE = Object.freeze({
   /**
