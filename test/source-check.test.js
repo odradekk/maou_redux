@@ -169,6 +169,452 @@ test('source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE
   assert.equal(both.store.get('palam:31:14'), 187, '253 与 116 同在场取 253');
 });
 
+// —— 四条 SOURCE_CHECK_UP_* 变体：逐参数位的回归面 ——
+//
+// 四个变体在同一次 SOURCE_CHECK 里各跑一遍，断言要能归到某一版：先把 20 个
+// SOURCE 全部清零（COM0 与各源修正段都会写它们，其中还含技巧系数），再单独置定
+// 一个。调教者技巧取 2 档（×1.00）——技巧阶梯在 SOURCE_CHECK 内还会给四源乘一次，
+// 取 1.0 档才能让置定的源原值进入换算。其余三版与其余源的路径因此各贡献 0，
+// palam 上的断言可以逐版算清。
+// palam:31:<下标> 与 delta:31:<下标> 一一对应（palam_up_check 当场结算）。
+async function run_variant(index, value, seed) {
+  return run_caress(undefined, (f) => {
+    f.store.set('abl:0:12', 2);
+    for (let k = 0; k < 20; k += 1) {
+      f.store.set(`source:31:${k}`, 0);
+    }
+    f.store.set(`source:31:${index}`, value);
+    if (seed) {
+      seed(f);
+    }
+  });
+}
+
+test('source_check_up_c：SOURCE:0 的扇出、ABL 门槛位、域素质与淫部位标记', async () => {
+  // 欲情 LV0 → RATE_C 首档 0.5；欲望 0 档 → DESIRE_LADDER 首档 0.1
+  const base = await run_variant(0, 2000);
+  assert.equal(base.store.get('palam:31:0'), 1000, 'Ｃ 快感源 = 源 ×0.5');
+  assert.equal(base.store.get('palam:31:5'), 200, 'Ｃ 的欲情增量 = 源 ×0.1');
+  assert.equal(
+    base.store.get('palam:31:13') || 0,
+    0,
+    'Ｃ 无否定素质时抑鬱为 0',
+  );
+  assert.equal(base.store.get('palam:31:1') || 0, 0, 'Ｃ 不落 UP:1');
+  assert.equal(base.store.get('palam:31:2') || 0, 0, 'Ｃ 不落 UP:2');
+  assert.equal(base.store.get('palam:31:14') || 0, 0, 'Ｃ 不落 UP:14');
+
+  // 欲情系数表：五档逐档（与本表取值不同的 V/A/B 三表各另有用例）
+  const C_RATES = [0.5, 0.7, 1.0, 1.3, 1.8];
+  const levels = [0, 100, 500, 3000, 10000];
+  for (let i = 0; i < C_RATES.length; i += 1) {
+    const f = await run_variant(0, 2000, (x) =>
+      x.store.set('palam:31:5', levels[i]),
+    );
+    assert.equal(
+      f.store.get('palam:31:0'),
+      Math.floor(2000 * C_RATES[i]),
+      `Ｃ 欲情档 ${levels[i]} 的系数`,
+    );
+  }
+
+  // 欲望阶梯逐档（0–5 档）与 ≥6 档封顶
+  const LADDER = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
+  for (let d = 0; d < LADDER.length; d += 1) {
+    const f = await run_variant(0, 2000, (x) => x.store.set('abl:31:11', d));
+    assert.equal(
+      f.store.get('palam:31:5'),
+      Math.floor(2000 * LADDER[d]),
+      `Ｃ 欲望 ${d} 档 = 源 ×${LADDER[d]}`,
+    );
+  }
+  const d6 = await run_variant(0, 2000, (f) => f.store.set('abl:31:11', 6));
+  assert.equal(
+    d6.store.get('palam:31:5'),
+    Math.floor(2000 * 0.5),
+    'Ｃ 欲望 ≥6 档 = 源 ×0.5',
+  );
+
+  // 敏感（&1 / &2 两位）与钝感外侧
+  const bit1 = await run_variant(0, 2000, (f) =>
+    f.store.set('talent:31:101', 1),
+  );
+  assert.equal(bit1.store.get('palam:31:0'), 500, 'Ｃ 敏感 &1 位乘 0.5');
+  const bit2 = await run_variant(0, 2000, (f) =>
+    f.store.set('talent:31:101', 2),
+  );
+  assert.equal(bit2.store.get('palam:31:0'), 100, 'Ｃ 敏感 &2 位乘 0.1');
+  const blunt = await run_variant(0, 2000, (f) =>
+    f.store.set('talent:31:102', 1),
+  );
+  assert.equal(blunt.store.get('palam:31:0'), 2000, 'Ｃ 钝感外侧乘 2.0');
+
+  // 域特异素质（74）与淫部位标记（230）
+  const domain = await run_variant(0, 2000, (f) =>
+    f.store.set('talent:31:74', 1),
+  );
+  assert.equal(domain.store.get('palam:31:0'), 1500, 'Ｃ 域特异素质放大 1.5');
+  assert.equal(
+    domain.store.get('palam:31:5'),
+    Math.floor(Math.floor(2000 * 0.1) * 1.2),
+    'Ｃ 域素质同时放大欲情 1.2',
+  );
+  const lewd = await run_variant(0, 2000, (f) =>
+    f.store.set('talent:31:230', 1),
+  );
+  assert.equal(lewd.store.get('palam:31:0'), 2000, 'Ｃ 淫部位标记 230 乘 2.0');
+
+  // ABL 门槛位是 0（1 是 Ｂ 版的位）
+  const thr = await run_variant(0, 2000, (f) => f.store.set('abl:31:0', 6));
+  assert.equal(
+    thr.store.get('palam:31:0'),
+    Math.floor((1000 * 11) / 10),
+    'Ｃ ABL:0 > 5 的放大',
+  );
+  const neighbor = await run_variant(0, 2000, (f) =>
+    f.store.set('abl:31:1', 6),
+  );
+  assert.equal(
+    neighbor.store.get('palam:31:0'),
+    1000,
+    'Ｃ 门槛位读 ABL:0 不读 ABL:1',
+  );
+  // 门槛位 4 档不放大（5 档的 (5+5)/10 恰好是 1.0，压不出边界，用 4 档钉住 > 5）
+  const thr4 = await run_variant(0, 2000, (f) => f.store.set('abl:31:0', 4));
+  assert.equal(thr4.store.get('palam:31:0'), 1000, 'Ｃ ABL:0 = 4 不放大');
+
+  // 否定/抑压/抵抗 → 抑鬱
+  const DENY = [1.0, 0.85, 0.7, 0.4, 0.3, 0.1];
+  for (let d = 0; d < DENY.length; d += 1) {
+    const f = await run_variant(0, 2000, (x) => {
+      x.store.set('talent:31:34', 1);
+      x.store.set('abl:31:11', d);
+    });
+    assert.equal(
+      f.store.get('palam:31:13'),
+      Math.floor(Math.floor(2000 / 3) * DENY[d]),
+      `Ｃ 抑鬱 ${d} 档乘 ${DENY[d]}`,
+    );
+  }
+  // 域素质的三路放大里，抑鬱那一路要另配否定素质才看得见
+  const deny_domain = await run_variant(0, 2000, (f) => {
+    f.store.set('talent:31:34', 1);
+    f.store.set('talent:31:74', 1);
+  });
+  assert.equal(
+    deny_domain.store.get('palam:31:13'),
+    Math.floor(Math.floor(2000 / 3) * 0.5),
+    'Ｃ 域素质把抑鬱再乘 0.5',
+  );
+  const deny_hi = await run_variant(0, 2000, (f) => {
+    f.store.set('talent:31:34', 1);
+    f.store.set('abl:31:11', 6);
+  });
+  assert.equal(
+    deny_hi.store.get('palam:31:13') || 0,
+    0,
+    'Ｃ 抑鬱在欲望 ≥6 档归零',
+  );
+  // 否定抑鬱路认三种素质（32 / 34 / 71），71 不在 up_talent 的抑鬱倍率表里
+  const deny71 = await run_variant(0, 2000, (f) =>
+    f.store.set('talent:31:71', 1),
+  );
+  assert.equal(
+    deny71.store.get('palam:31:13'),
+    Math.floor(2000 / 3),
+    'Ｃ 抑鬱路也认否定素质 71',
+  );
+});
+
+test('source_check_up_v：SOURCE:1 的扇出（UP:1/4/5/13）与逐参数位', async () => {
+  // 欲情 LV0 → RATE_V 首档 0.3；欲望 0 档 → DESIRE_LADDER 首档 0.1
+  const base = await run_variant(1, 2000);
+  assert.equal(base.store.get('palam:31:1'), 600, 'Ｖ 快感源 = 源 ×0.3');
+  assert.equal(base.store.get('palam:31:4'), 200, 'Ｖ 欲情增量同时进 UP:4');
+  assert.equal(base.store.get('palam:31:5'), 200, 'Ｖ 欲情增量同时进 UP:5');
+  assert.equal(base.store.get('palam:31:0') || 0, 0, 'Ｖ 不落 UP:0');
+  assert.equal(base.store.get('palam:31:2') || 0, 0, 'Ｖ 不落 UP:2');
+  assert.equal(base.store.get('palam:31:6') || 0, 0, 'Ｖ 不落 UP:6');
+  assert.equal(base.store.get('palam:31:14') || 0, 0, 'Ｖ 不落 UP:14');
+  assert.equal(
+    base.store.get('palam:31:13') || 0,
+    0,
+    'Ｖ 无否定素质时抑鬱为 0',
+  );
+
+  const V_RATES = [0.3, 0.5, 1.0, 1.5, 2.0];
+  const levels = [0, 100, 500, 3000, 10000];
+  for (let i = 0; i < V_RATES.length; i += 1) {
+    const f = await run_variant(1, 2000, (x) =>
+      x.store.set('palam:31:5', levels[i]),
+    );
+    assert.equal(
+      f.store.get('palam:31:1'),
+      Math.floor(2000 * V_RATES[i]),
+      `Ｖ 欲情档 ${levels[i]} 的系数`,
+    );
+  }
+
+  // 欲望阶梯逐档（0–5 档）与 ≥6 档封顶
+  const LADDER = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
+  for (let d = 0; d < LADDER.length; d += 1) {
+    const f = await run_variant(1, 2000, (x) => x.store.set('abl:31:11', d));
+    assert.equal(
+      f.store.get('palam:31:4'),
+      Math.floor(2000 * LADDER[d]),
+      `Ｖ 欲望 ${d} 档 = 源 ×${LADDER[d]}`,
+    );
+  }
+  const d6 = await run_variant(1, 2000, (f) => f.store.set('abl:31:11', 6));
+  assert.equal(
+    d6.store.get('palam:31:4'),
+    Math.floor(2000 * 0.5),
+    'Ｖ 欲望 ≥6 档 = 源 ×0.5',
+  );
+
+  const bit1 = await run_variant(1, 2000, (f) =>
+    f.store.set('talent:31:103', 1),
+  );
+  assert.equal(bit1.store.get('palam:31:1'), 300, 'Ｖ 敏感 &1 位乘 0.5');
+  const bit2 = await run_variant(1, 2000, (f) =>
+    f.store.set('talent:31:103', 2),
+  );
+  assert.equal(bit2.store.get('palam:31:1'), 60, 'Ｖ 敏感 &2 位乘 0.1');
+  const blunt = await run_variant(1, 2000, (f) =>
+    f.store.set('talent:31:104', 1),
+  );
+  assert.equal(blunt.store.get('palam:31:1'), 1200, 'Ｖ 钝感外侧乘 2.0');
+
+  const domain = await run_variant(1, 2000, (f) =>
+    f.store.set('talent:31:75', 1),
+  );
+  assert.equal(domain.store.get('palam:31:1'), 900, 'Ｖ 域特异素质放大 1.5');
+  assert.equal(
+    domain.store.get('palam:31:4'),
+    Math.floor(Math.floor(2000 * 0.1) * 1.2),
+    'Ｖ 域素质同时放大欲情 1.2',
+  );
+  const lewd = await run_variant(1, 2000, (f) =>
+    f.store.set('talent:31:232', 1),
+  );
+  assert.equal(lewd.store.get('palam:31:1'), 900, 'Ｖ 淫部位标记 232 乘 1.5');
+
+  const thr = await run_variant(1, 2000, (f) => f.store.set('abl:31:2', 6));
+  assert.equal(
+    thr.store.get('palam:31:1'),
+    Math.floor((600 * 11) / 10),
+    'Ｖ ABL:2 > 5 的放大',
+  );
+  const neighbor = await run_variant(1, 2000, (f) =>
+    f.store.set('abl:31:1', 6),
+  );
+  assert.equal(
+    neighbor.store.get('palam:31:1'),
+    600,
+    'Ｖ 门槛位读 ABL:2 不读 ABL:1',
+  );
+  const thr4 = await run_variant(1, 2000, (f) => f.store.set('abl:31:2', 4));
+  assert.equal(thr4.store.get('palam:31:1'), 600, 'Ｖ ABL:2 = 4 不放大');
+
+  const deny = await run_variant(1, 2000, (f) =>
+    f.store.set('talent:31:34', 1),
+  );
+  assert.equal(
+    deny.store.get('palam:31:13'),
+    Math.floor(2000 / 3),
+    'Ｖ 抑鬱 = 源/3 过阶梯 0 档',
+  );
+});
+
+test('source_check_up_a：SOURCE:2 的独立欲望梯（0.05 起步、≥6 乘 2.0）与逐参数位', async () => {
+  // 欲情 LV0 → RATE_A 首档 0.6；欲望 0 档 → Ａ 版独立梯首档 0.05
+  const base = await run_variant(2, 2000);
+  assert.equal(base.store.get('palam:31:2'), 1200, 'Ａ 快感源 = 源 ×0.6');
+  assert.equal(base.store.get('palam:31:5'), 100, 'Ａ 欲情增量 = 源 ×0.05');
+  assert.equal(base.store.get('palam:31:6'), 100, 'Ａ 欲情增量同时进 UP:6');
+  assert.equal(base.store.get('palam:31:0') || 0, 0, 'Ａ 不落 UP:0');
+  assert.equal(base.store.get('palam:31:1') || 0, 0, 'Ａ 不落 UP:1');
+  assert.equal(base.store.get('palam:31:4') || 0, 0, 'Ａ 不落 UP:4');
+  assert.equal(base.store.get('palam:31:14') || 0, 0, 'Ａ 不落 UP:14');
+  assert.equal(
+    base.store.get('palam:31:13') || 0,
+    0,
+    'Ａ 无否定素质时抑鬱为 0',
+  );
+
+  const A_RATES = [0.6, 0.8, 1.0, 1.2, 1.4];
+  const levels = [0, 100, 500, 3000, 10000];
+  for (let i = 0; i < A_RATES.length; i += 1) {
+    const f = await run_variant(2, 2000, (x) =>
+      x.store.set('palam:31:5', levels[i]),
+    );
+    assert.equal(
+      f.store.get('palam:31:2'),
+      Math.floor(2000 * A_RATES[i]),
+      `Ａ 欲情档 ${levels[i]} 的系数`,
+    );
+  }
+
+  // Ａ 版的梯子独立（0.05 起步）：逐档全表，≥6 档乘 2.0（其余三版 5 档 0.4、≥6 档乘 0.5）
+  const A_LADDER = [0.05, 0.1, 0.4, 0.8, 1.2, 1.8];
+  for (let d = 0; d < A_LADDER.length; d += 1) {
+    const f = await run_variant(2, 2000, (x) => x.store.set('abl:31:11', d));
+    assert.equal(
+      f.store.get('palam:31:5'),
+      Math.floor(2000 * A_LADDER[d]),
+      `Ａ 欲望 ${d} 档 = 源 ×${A_LADDER[d]}`,
+    );
+  }
+  const d6 = await run_variant(2, 2000, (f) => f.store.set('abl:31:11', 6));
+  assert.equal(
+    d6.store.get('palam:31:5'),
+    Math.floor(2000 * 2.0),
+    'Ａ 欲望 ≥6 档 = 源 ×2.0',
+  );
+
+  const bit1 = await run_variant(2, 2000, (f) =>
+    f.store.set('talent:31:105', 1),
+  );
+  assert.equal(bit1.store.get('palam:31:2'), 600, 'Ａ 敏感 &1 位乘 0.5');
+  const bit2 = await run_variant(2, 2000, (f) =>
+    f.store.set('talent:31:105', 2),
+  );
+  assert.equal(bit2.store.get('palam:31:2'), 120, 'Ａ 敏感 &2 位乘 0.1');
+  const blunt = await run_variant(2, 2000, (f) =>
+    f.store.set('talent:31:106', 1),
+  );
+  assert.equal(blunt.store.get('palam:31:2'), 2400, 'Ａ 钝感外侧乘 2.0');
+
+  const domain = await run_variant(2, 2000, (f) =>
+    f.store.set('talent:31:77', 1),
+  );
+  assert.equal(domain.store.get('palam:31:2'), 1800, 'Ａ 域特异素质放大 1.5');
+  const lewd = await run_variant(2, 2000, (f) =>
+    f.store.set('talent:31:233', 1),
+  );
+  assert.equal(lewd.store.get('palam:31:2'), 2400, 'Ａ 淫部位标记 233 乘 2.0');
+
+  const thr = await run_variant(2, 2000, (f) => f.store.set('abl:31:3', 6));
+  assert.equal(
+    thr.store.get('palam:31:2'),
+    Math.floor((1200 * 11) / 10),
+    'Ａ ABL:3 > 5 的放大',
+  );
+  const neighbor = await run_variant(2, 2000, (f) =>
+    f.store.set('abl:31:2', 6),
+  );
+  assert.equal(
+    neighbor.store.get('palam:31:2'),
+    1200,
+    'Ａ 门槛位读 ABL:3 不读 ABL:2',
+  );
+  const thr4 = await run_variant(2, 2000, (f) => f.store.set('abl:31:3', 4));
+  assert.equal(thr4.store.get('palam:31:2'), 1200, 'Ａ ABL:3 = 4 不放大');
+
+  const deny = await run_variant(2, 2000, (f) =>
+    f.store.set('talent:31:34', 1),
+  );
+  assert.equal(
+    deny.store.get('palam:31:13'),
+    Math.floor(2000 / 3),
+    'Ａ 抑鬱 = 源/3 过阶梯 0 档',
+  );
+});
+
+test('source_check_up_b：SOURCE:17 的扇出（UP:14/5/13）与逐参数位', async () => {
+  const base = await run_variant(17, 2000);
+  assert.equal(base.store.get('palam:31:14'), 1000, 'Ｂ 快感源 = 源 ×0.5');
+  assert.equal(base.store.get('palam:31:5'), 200, 'Ｂ 的欲情增量 = 源 ×0.1');
+  assert.equal(base.store.get('palam:31:0') || 0, 0, 'Ｂ 不落 UP:0');
+  assert.equal(base.store.get('palam:31:1') || 0, 0, 'Ｂ 不落 UP:1');
+  assert.equal(base.store.get('palam:31:2') || 0, 0, 'Ｂ 不落 UP:2');
+  assert.equal(base.store.get('palam:31:4') || 0, 0, 'Ｂ 不落 UP:4');
+  assert.equal(base.store.get('palam:31:6') || 0, 0, 'Ｂ 不落 UP:6');
+  assert.equal(
+    base.store.get('palam:31:13') || 0,
+    0,
+    'Ｂ 无否定素质时抑鬱为 0',
+  );
+
+  const B_RATES = [0.5, 0.7, 1.0, 1.3, 1.8];
+  const levels = [0, 100, 500, 3000, 10000];
+  for (let i = 0; i < B_RATES.length; i += 1) {
+    const f = await run_variant(17, 2000, (x) =>
+      x.store.set('palam:31:5', levels[i]),
+    );
+    assert.equal(
+      f.store.get('palam:31:14'),
+      Math.floor(2000 * B_RATES[i]),
+      `Ｂ 欲情档 ${levels[i]} 的系数`,
+    );
+  }
+
+  // 欲望阶梯逐档（0–5 档）与 ≥6 档封顶
+  const LADDER = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
+  for (let d = 0; d < LADDER.length; d += 1) {
+    const f = await run_variant(17, 2000, (x) => x.store.set('abl:31:11', d));
+    assert.equal(
+      f.store.get('palam:31:5'),
+      Math.floor(2000 * LADDER[d]),
+      `Ｂ 欲望 ${d} 档 = 源 ×${LADDER[d]}`,
+    );
+  }
+  const d6 = await run_variant(17, 2000, (f) => f.store.set('abl:31:11', 6));
+  assert.equal(
+    d6.store.get('palam:31:5'),
+    Math.floor(2000 * 0.5),
+    'Ｂ 欲望 ≥6 档 = 源 ×0.5',
+  );
+
+  const bit1 = await run_variant(17, 2000, (f) =>
+    f.store.set('talent:31:107', 1),
+  );
+  assert.equal(bit1.store.get('palam:31:14'), 500, 'Ｂ 敏感 &1 位乘 0.5');
+  const bit2 = await run_variant(17, 2000, (f) =>
+    f.store.set('talent:31:107', 2),
+  );
+  assert.equal(bit2.store.get('palam:31:14'), 100, 'Ｂ 敏感 &2 位乘 0.1');
+  const blunt = await run_variant(17, 2000, (f) =>
+    f.store.set('talent:31:108', 1),
+  );
+  assert.equal(blunt.store.get('palam:31:14'), 2000, 'Ｂ 钝感外侧乘 2.0');
+
+  const domain = await run_variant(17, 2000, (f) =>
+    f.store.set('talent:31:78', 1),
+  );
+  assert.equal(domain.store.get('palam:31:14'), 1500, 'Ｂ 域特异素质放大 1.5');
+  const lewd = await run_variant(17, 2000, (f) =>
+    f.store.set('talent:31:231', 1),
+  );
+  assert.equal(lewd.store.get('palam:31:14'), 2000, 'Ｂ 淫部位标记 231 乘 2.0');
+
+  const thr = await run_variant(17, 2000, (f) => f.store.set('abl:31:1', 6));
+  assert.equal(
+    thr.store.get('palam:31:14'),
+    Math.floor((1000 * 11) / 10),
+    'Ｂ ABL:1 > 5 的放大',
+  );
+  const neighbor = await run_variant(17, 2000, (f) =>
+    f.store.set('abl:31:0', 6),
+  );
+  assert.equal(
+    neighbor.store.get('palam:31:14'),
+    1000,
+    'Ｂ 门槛位读 ABL:1 不读 ABL:0',
+  );
+  const thr4 = await run_variant(17, 2000, (f) => f.store.set('abl:31:1', 4));
+  assert.equal(thr4.store.get('palam:31:14'), 1000, 'Ｂ ABL:1 = 4 不放大');
+
+  const deny = await run_variant(17, 2000, (f) =>
+    f.store.set('talent:31:34', 1),
+  );
+  assert.equal(
+    deny.store.get('palam:31:13'),
+    Math.floor(2000 / 3),
+    'Ｂ 抑鬱 = 源/3 过阶梯 0 档',
+  );
+});
+
 test('情爱双梯（顺从 × 侍奉精神）：恭顺参数的来源', async () => {
   // SOURCE:3 = 50；顺从 2 档 ×0.4 → 20；侍奉精神 3 档 ×1.10 → 22
   const fixture = await run_caress((f) => {
