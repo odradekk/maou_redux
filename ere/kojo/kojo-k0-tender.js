@@ -28,7 +28,7 @@
  */
 
 const era = require('#/era-electron');
-const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 
 const { on, TIER } = require('#/system/event/registry');
 const { search_family } = require('#/chara/chara-family');
