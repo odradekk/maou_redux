@@ -2742,7 +2742,7 @@ export default [
     file: 'ere/dungeon/magic.js',
     find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0\n    const killed = kill_monsters(a, b, damage);',
     replace:
-      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv(damage, e_get(b + 99)); // 变异：封顶删（怪物数可负）',
+      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv_trunc(damage, e_get(b + 99)); // 变异：封顶删（怪物数可负）',
     tests: ['dungeon-magic'],
     must_mention: '怪物数不跌破 0',
   },
