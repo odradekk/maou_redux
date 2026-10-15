@@ -1,7 +1,7 @@
 // issue #337：成熟奴隶出售的异族市场末路。
-// #797 按末路拆分后条目随实现落到各自的目标文件分片，编号与 desc 不变。
+// #797 按末路拆分后条目随实现落到各自的目标文件分片（本片无新增条目），find 随缩进与文件迁移重取。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 19;
+export const COUNT = 19; // #797：原 sell-maturo 分片（30 条）按市场拆分后的异族市场部分，编号与 desc 不变，本片无新增条目；旧计数沿革：#653 -1 +1（删反向变异 M7128、新增 M13264 检查 K1 奶罐判定修复）
 
 const code = 'ere/system/stronghold/sell-maturo-k1.js';
 const make = (

@@ -17,7 +17,6 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { peek_sale_price } = require('#/event/event-aftertrain');
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
 const { sell_maturo_k1 } = require('#/system/stronghold/sell-maturo-k1');
@@ -34,6 +33,7 @@ const {
 const {
   ROUTES: NORMAL_ROUTES,
 } = require('#/system/stronghold/sell-maturo-k0-normal');
+const { peek_sale_price } = require('#/event/event-aftertrain');
 const { search_family } = require('#/chara/chara-family');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');

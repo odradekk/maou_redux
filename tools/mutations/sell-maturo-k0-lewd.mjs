@@ -1,7 +1,7 @@
 // issue #338：成熟奴隶黑市的淫乱末路。
-// #797 按末路拆分后条目随实现落到各自的目标文件分片，编号与 desc 不变。
+// #797 按末路拆分后条目随实现落到各自的目标文件分片（本片无新增条目），find 随缩进与文件迁移重取。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 5;
+export const COUNT = 5; // #797：原 sell-maturo-k0 分片（73 条）按末路拆分后的淫乱末路部分，编号与 desc 不变，本片无新增条目；旧计数沿革见 sell-maturo-k0.mjs
 
 const code = 'ere/system/stronghold/sell-maturo-k0-lewd.js';
 const make = (
