@@ -33,9 +33,8 @@
 const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
+const { MASTER } = require('#/utils/master');
 const { ex_talentname } = require('#/chara/chara-ex');
-
-const MASTER = 0;
 
 function get(name) {
   return era.get(name) || 0;

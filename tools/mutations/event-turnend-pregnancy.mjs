@@ -138,10 +138,10 @@ export default [
     must_mention: 'REPEAT CHARANUM 自角色 0 起',
   },
   {
-    desc: 'M8516 妊娠：MASTER 常量改成 1',
-    file: 'ere/event/event-pregnancy.js',
+    desc: 'M8516 妊娠：MASTER 常量改成 1（#792 起实现移到 ere/utils/master.js）',
+    file: 'ere/utils/master.js',
     find: 'const MASTER = 0;',
-    replace: 'const MASTER = 1;',
+    replace: 'const MASTER = 1; // 变异：魔王不是角色 0',
     tests: ['event-pregnancy'],
     must_mention: 't_to_m',
   },

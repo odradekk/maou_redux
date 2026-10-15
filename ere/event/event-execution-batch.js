@@ -94,6 +94,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { default_rand } = require('#/utils/numeric');
 
 // #DIM CONST NUM_PAGE = 25
 const NUM_PAGE = 25;
@@ -110,10 +111,6 @@ let no_page = 0;
 /** 方法界面循环的出口信号（对应两个 GOTO 目标）。 */
 const DONE = Symbol('done'); // 回列表（GOTO 处刑介面）
 const RESTART = Symbol('restart'); // 整界面重启（JUMP 批量处刑）
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /**
  * sp_chara：特殊角色判定。定义住在判死的立绘

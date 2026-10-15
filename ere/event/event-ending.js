@@ -46,6 +46,7 @@ const { char_make, name_reset } = require('#/chara/char-make');
 const { get_look_info } = require('#/chara/look-info');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * ending_1：人间界征服的中场结局（GOOD END）。
@@ -164,14 +165,6 @@ async function ending_2() {
   // ——本函数与地下城调用链的后续语句全部不可达。quit() 之后不写任何
   // 语句（无 RETURN）
   era.quit();
-}
-
-/**
- * RAND:N / RAND(min, max)（0..N-1 / min..max-1）的缺省实现
- * （dungeon-lvup.js 同款）。
- */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
 }
 
 /** 角色姓名（NAME:x / SAVESTR:x 在 ere 侧的共同读数源，#5 决议） */

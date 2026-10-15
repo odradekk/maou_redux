@@ -19,10 +19,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 // 本函数沿各分支密集读取的数字槽：TALENT 11 反抗心、12 刚强、14 文静、
 // 16 嚣张、26 悲观、28 爱表现、34 抵抗、35 害羞、57 漏尿癖、60 容易自慰、

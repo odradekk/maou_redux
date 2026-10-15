@@ -12,6 +12,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const {
   apply_prestige,
   archive_fate,
@@ -19,10 +20,6 @@ const {
   get,
   she,
 } = require('#/event/event-execution-common');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 async function public_execution(cid, rand_n = default_rand) {
   if (cid === 0) return 0;

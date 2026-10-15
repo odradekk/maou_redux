@@ -35,9 +35,9 @@ const era_flag = require('#/era-utils/era-flag');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
+const { MASTER } = require('#/utils/master');
+const { default_rand } = require('#/utils/numeric');
 const { party_del } = require('#/dungeon/dungeon-party');
-
-const MASTER = 0;
 
 function get(name) {
   return era.get(name) || 0;
@@ -54,8 +54,6 @@ function cflag(cid, n) {
 function set_cflag(cid, n, v) {
   era.set(`cflag:${cid}:${n}`, v);
 }
-
-const default_rand = (n) => Math.floor(Math.random() * n);
 
 /**
  * aphrodisiac_addict：媚药中毒的发病与恢复——每 7 日一次残留度

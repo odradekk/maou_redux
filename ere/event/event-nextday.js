@@ -80,11 +80,7 @@ const { ntr_video } = require('#/system/ntr');
 // 随机源不注入（缺省 Math.random）——日结算的税额掷与迷宫推进的随机源
 // 同属一个全局随机序列，ere 侧各自缺省即等价
 const room_day_mod = require('#/dungeon/dungeon-room');
-
-/** 随机源（[0,n) 整数）的缺省实现（各函数以 rand 为注入名，同族模块同款） */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand, times } = require('#/utils/numeric');
 
 /** 素质名（%TALENTNAME:n%）的读数源：引擎素质名表 */
 function talent_name(n) {
@@ -129,11 +125,6 @@ async function event_futa_f(cid) {
     // 其余值 → 重印询问行（不消耗其它状态）
   }
   await era.waitAnyKey();
-}
-
-/** TIMES X, m：整数变量乘小数后截断（TIMES 语义；source-check.js 同款） */
-function times(v, m) {
-  return Math.floor(v * m);
 }
 
 /**

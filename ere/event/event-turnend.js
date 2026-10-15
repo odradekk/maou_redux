@@ -49,6 +49,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const {
   conception_check_all,
   conception_check_extra,
@@ -59,10 +60,6 @@ const {
   in_vagina_kyouou_to_t,
   in_vagina_ntrd_to_t,
 } = require('#/event/event-pregnancy');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /**
  * `RAND:CHARANUM` 的 ere 等价物：从在场名单里随机取一个角色。

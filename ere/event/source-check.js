@@ -56,6 +56,8 @@ const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { MASTER } = require('#/utils/master');
+const { idiv, times } = require('#/utils/numeric');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { train_message_a } = require('#/system/train/train-message');
@@ -84,9 +86,6 @@ const {
   yokubo_up_check,
   jujun_up_check,
 } = require('#/system/train/ability-check');
-/** MASTER（旧引擎内建量）：魔王主角，恒为角色 0（CONTEXT.md） */
-const MASTER = 0;
-
 // —— 结算上下文：目标 / 调教者的变量读写助手 ——
 
 let cid; // TARGET
@@ -118,11 +117,6 @@ const tflag = (i) => era.get(`tflag:${i}`) || 0;
 // 循环点（[91,92] 素质组、[4,5,6,8,10,11,12,13] 感情减半、ORDER 结算序、
 // count 0-4 射精系）是字面量列表与真计数器，展开与否届时裁——这张票不碰
 // （工单的统计：小尾巴，不是主命题）。
-
-/** TIMES X, m：整数乘小数后截断（TIMES 语义） */
-const times = (v, m) => Math.floor(v * m);
-/** 整数除法（正数域 = 向下取整） */
-const idiv = (a, b) => Math.floor(a / b);
 
 /** LOSEBASE 的正数域读写（deltabase 存负值，见文件头） */
 const lose = (k) => -1 * (era.get(`deltabase:${cid}:${k}`) || 0);
