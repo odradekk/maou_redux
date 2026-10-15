@@ -149,14 +149,11 @@ const {
   chara_nickname,
 } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
+const { MASTER } = require('#/utils/master');
+const { default_rand } = require('#/utils/numeric');
 
-/** MASTER 常量（内置常量，恒 0） */
-const MASTER = 0;
 /** 选人列表的每页行数（45 处 `#DIM NUM_PAGE = 23`） */
 const NUM_PAGE = 23;
-/** RAND 的缺省随机源（测试一律显式注入确定序列） */
-const default_rand = (n) => Math.floor(Math.random() * n);
-
 // —— 读数助手（跨域读放行，#70 决议）——
 
 /** CFLAG 读数缺省（未声明下标 undefined → 0，#13） */

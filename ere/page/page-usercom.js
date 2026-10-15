@@ -61,9 +61,7 @@ const { show_chara_info } = require('#/page/page-chara-info-show');
 const { stain_info } = require('#/page/components/stain-info');
 const { condom_settings } = require('#/system/train/com-condom');
 const { print_button_grid } = require('#/utils/button-grid');
-
-/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
-const MASTER = 0;
+const { MASTER } = require('#/utils/master');
 
 // %TRAINNAME:64%・%TRAINNAME:L_I% 的复合动作分隔（lang-table.js 整串
 // 豁免本字面量：・ 是既有指令名的分隔样式，归一成 · 会对不上指令名）

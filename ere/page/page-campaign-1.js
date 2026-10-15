@@ -33,11 +33,7 @@ const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
 const { campaign_monster_list_family } = require('#/dungeon/dungeon-battle');
 const { chara_callname } = require('#/utils/callname-utils');
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /** 战役名两段展示文本（FONTBOLD 段 + FONTREGULAR 段） */
 const NAME_BOLD = '赤森谜路 ';

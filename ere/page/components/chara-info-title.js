@@ -28,8 +28,7 @@ const { char_body_generate_wapped, cup_size } = require('#/chara/chara-body');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 // 素质编号（yml/Talent.yml 的名字表；本项目用编号 + 行尾注释寻址）
 const TALENT_AIBA = 85; // 爱慕

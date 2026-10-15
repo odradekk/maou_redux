@@ -73,8 +73,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** CFLAG:1（状态位）的「已献祭」档（写点在 page-shop-labo.js 的献祭召唤分支） */
 const STATE_SACRIFICED = 11;

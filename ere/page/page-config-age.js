@@ -49,8 +49,8 @@ const { game } = require('#/facade/game');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display, pad_left } = require('#/utils/display-width');
+const { default_rand } = require('#/utils/numeric');
 
-const default_rand = (n) => Math.floor(Math.random() * n);
 const int = Math.trunc;
 
 /** GETBIT(X, n)：FLAG:5 的位 32-36 会溢出 32 位位运算，算术实现（同 page-config.js） */

@@ -46,6 +46,7 @@ const { gohoubi_request } = require('#/system/stronghold/gohoubi-request');
 const { life_list_item } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { getbit } = require('#/kojo/kojo-dungeon-bitch-log');
 
 /** 每页行数（`#DIM NUM_PAGE = 26`） */
@@ -84,9 +85,6 @@ const ROOM_LEVEL_MAX = 3;
 const DARK_SEA_GREEN = '#8fbc8f';
 /** SETCOLOR 80,80,80（等级不足的灰显） */
 const GRAY = '#505050';
-
-/** 默认随机源（[0, n) 整数）；测试注入定值序 */
-const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** CFLAG 读数缺省处理（#13） */
 function cflag(cid, idx) {

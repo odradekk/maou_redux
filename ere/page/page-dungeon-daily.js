@@ -51,14 +51,10 @@ const era = require('#/era-electron');
 const { ex_talentname } = require('#/chara/chara-ex');
 const { chara } = require('#/facade/chara');
 const era_exflag = require('#/era-utils/era-exflag');
+const { default_rand } = require('#/utils/numeric');
 
 /** 文案排版的全角空格（UNICODE 0x3000，page-main-menu.js 先例） */
 const FULL_WIDTH_SPACE = '\u3000';
-
-/** RAND:N（0..N-1）的缺省实现 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon-trap.js 同款） */
 function name_of(cid) {
