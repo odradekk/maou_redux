@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 16; // #792 新建：14 条守 numeric/master 的三组取整语义与 MASTER 取值，另 2 条自 train 分片随实现迁来（M1112/M1409）
+export const COUNT = 19; // #792 新建：17 条守 numeric/master 的三组取整语义、MASTER 取值与唯一性扫描，另 2 条自 train 分片随实现迁来（M1112/M1409）
 
 export default [
   // —— 随实现迁来的条目（#792）——
@@ -142,5 +142,31 @@ export default [
     replace: 'const MASTER = 1; // 变异：魔王不是角色 0',
     tests: ['utils-shared'],
     must_mention: 'MASTER 是魔王的角色 ID 0',
+  },
+  {
+    // 唯一性扫描的两条自检：拆豁免（口上的局部定义被扫出）与拆扫描面
+    // （一份定义都找不到）。pipeline.mjs 的 M370 是同款形状。
+    desc: 'M13775 唯一性扫描的口上豁免被拆（kojo 里保留的 default_rand/MASTER 定义被扫出）',
+    file: 'test/utils-shared.test.js',
+    find: "const EXEMPT_DIRS = [path.join(ERE_DIR, 'kojo')];",
+    replace: 'const EXEMPT_DIRS = []; // 变异：口上不再豁免',
+    tests: ['utils-shared'],
+    must_mention: '的定义应为唯一一份',
+  },
+  {
+    desc: 'M13776 唯一性扫描的扫描面清空（一份定义都扫不到，判据形同虚设）',
+    file: 'test/utils-shared.test.js',
+    find: '  for (const file of list_js(ERE_DIR)) {',
+    replace: '  for (const file of []) { // 变异：扫描面清空',
+    tests: ['utils-shared'],
+    must_mention: '的定义应为唯一一份',
+  },
+  {
+    desc: 'M13777 times_exact 的倍率负号分支拆掉（负数倍率被当正数乘）',
+    file: 'ere/utils/numeric.js',
+    find: "  const negative = text.startsWith('-');",
+    replace: '  const negative = false; // 变异：负号分支拆掉',
+    tests: ['numeric'],
+    must_mention: 'times_exact：十进制定点乘法',
   },
 ];

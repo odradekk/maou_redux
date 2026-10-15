@@ -65,6 +65,8 @@ test('times_trunc：乘算后向零截断，只与 times 差在负操作数', ()
   assert.equal(times_trunc(10, 2), 20);
   assert.equal(times_trunc(7, 1.5), 10);
   assert.equal(times_trunc(-7, 1.5), -10);
+  // 9.799999999999999 → 9：四舍五入会得 10，这一例把截断与四舍五入分开
+  assert.equal(times_trunc(7, 1.4), 9);
 });
 
 test('times_exact：十进制定点乘法，双精度积偏小时仍取精确值', () => {
@@ -73,6 +75,9 @@ test('times_exact：十进制定点乘法，双精度积偏小时仍取精确值
   assert.equal(times_exact(100, '1.25'), 125);
   assert.equal(times_exact(1000, 0.001), 1);
   assert.equal(times_exact(-175, 1.4), -245);
+  // 倍率带负号本来就走另一条分支：拆掉它会把 -1.5 当 +1.5 乘
+  assert.equal(times_exact(4, '-1.5'), -6);
+  assert.equal(times_exact(-4, '-1.5'), 6);
 });
 
 test('idiv：除算后向下取整（负操作数比向零截断小一）', () => {
@@ -91,6 +96,8 @@ test('percent_floor / percent_trunc：百分数换算，负值上两式差一', 
   assert.equal(percent_trunc(90, 140), 126);
   assert.equal(percent_floor(-101, 5), -6);
   assert.equal(percent_trunc(-101, 5), -5);
+  // 5.5 → 5：四舍五入会得 6，这一例把截断与四舍五入分开
+  assert.equal(percent_trunc(110, 5), 5);
 });
 
 test('percent_* 不等于 times(value, percent / 100)：折成小数会丢精度', () => {
