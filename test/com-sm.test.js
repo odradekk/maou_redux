@@ -19,35 +19,20 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
-const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好 SM 族。 */
 function seed_world({ assi = -1 } = {}) {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  if (assi > 0) {
-    fixture.seed_chara(assi, {
-      id: assi,
-      name: `助手${assi}`,
-      callname: `助手${assi}`,
-    });
-    fixture.era.addCharacter(assi);
-  }
-  fixture.era.beginTrain(0, 31);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.player = 0;
-  era_flag.assi = assi;
-  era_flag.assiplay = 0;
-  era_flag.selectcom = -1;
-  fixture.load_module('system/train/com-sm');
-  const { com_family, com_able_family, equip_com_family } = fixture.load_module(
-    'system/train/com-family',
-  );
-  return { fixture, era_flag, com_family, com_able_family, equip_com_family };
+  const world = seed_train_world({
+    assi,
+    modules: {
+      sm: 'system/train/com-sm',
+      family: 'system/train/com-family',
+    },
+  });
+  const { com_family, com_able_family, equip_com_family } =
+    world.modules.family;
+  return { ...world, com_family, com_able_family, equip_com_family };
 }
 
 /** 经族调用一条指令（真实循环里 selectcom 由 train-loop 先置——测试同位） */

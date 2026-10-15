@@ -12,8 +12,7 @@
 
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 const ASSI = 17;
 const TARGET = 31;
@@ -99,52 +98,29 @@ function arm_assistant_world(world) {
 }
 
 function seed_world({ assi = ASSI, player = 0 } = {}) {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, TARGET, '温妮');
-  if (assi >= 0 && assi !== 0) {
-    fixture.seed_chara(assi, {
-      id: assi,
-      name: `助手${assi}`,
-      callname: `助手${assi}`,
-    });
-    fixture.era.addCharacter(assi);
-  }
-  fixture.era.beginTrain(0, TARGET);
-  seed_names(fixture);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = TARGET;
-  era_flag.player = player;
-  era_flag.assi = assi;
-  era_flag.assiplay = 0;
-  era_flag.selectcom = -1;
-  era_flag.prevcom = -1;
-  fixture.store.set('callname:0:-1', '魔王');
-  fixture.store.set('callname:0:-2', '魔王');
-  fixture.store.set(`callname:${TARGET}:-1`, '温妮');
-  fixture.store.set(`callname:${TARGET}:-2`, '温妮');
-  if (assi >= 0 && assi !== 0) {
-    fixture.store.set(`callname:${assi}:-1`, `助手${assi}`);
-    fixture.store.set(`callname:${assi}:-2`, `助手${assi}`);
-  }
-  fixture.load_module('system/train/com-assistant');
-  const { com_family, com_able_family } = fixture.load_module(
-    'system/train/com-family',
-  );
-  const { adv_com_family, get_adv_com } = fixture.load_module(
-    'system/train/com-adv',
-  );
-  const world = {
-    fixture,
-    era_flag,
+  const world = seed_train_world({
+    target: TARGET,
+    assi,
+    player,
+    master_callname: '魔王',
+    modules: {
+      assistant: 'system/train/com-assistant',
+      family: 'system/train/com-family',
+      adv: 'system/train/com-adv',
+    },
+  });
+  seed_names(world.fixture);
+  const { com_family, com_able_family } = world.modules.family;
+  const { adv_com_family, get_adv_com } = world.modules.adv;
+  const merged = {
+    ...world,
     com_family,
     com_able_family,
     adv_com_family,
     get_adv_com,
   };
-  arm_assistant_world(world);
-  return world;
+  arm_assistant_world(merged);
+  return merged;
 }
 
 async function run_com(world, id) {

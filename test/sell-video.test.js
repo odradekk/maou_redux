@@ -11,22 +11,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
 
-const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { join_slave_chara } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 function seed_world() {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  fixture.era.beginTrain(0, 31);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.assi = 0;
-  return {
-    fixture,
-    video: fixture.load_module('system/stronghold/sell-video'),
-  };
+  // 助手位 0 = 主人自己（录像出货读 ASSI 判定视角）
+  const world = seed_train_world({
+    assi: 0,
+    modules: { video: 'system/stronghold/sell-video' },
+  });
+  return { ...world, video: world.modules.video };
 }
 
 test('录像书架：备份写首个空位，计数并按每页三列显示', () => {

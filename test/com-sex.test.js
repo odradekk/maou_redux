@@ -2,48 +2,22 @@
 
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 function seed_world({ assi = -1, player = 0 } = {}) {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  if (assi >= 0 && assi !== 0) {
-    fixture.seed_chara(assi, {
-      id: assi,
-      name: `助手${assi}`,
-      callname: `助手${assi}`,
-    });
-    fixture.era.addCharacter(assi);
-  }
-  fixture.era.beginTrain(0, 31);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.player = player;
-  era_flag.assi = assi;
-  era_flag.assiplay = 0;
-  era_flag.prevcom = -1;
-  fixture.store.set('callname:0:-1', '魔王');
-  fixture.store.set('callname:0:-2', '魔王');
-  fixture.store.set('callname:31:-1', '温妮');
-  fixture.store.set('callname:31:-2', '温妮');
-  fixture.load_module('system/train/com-sex');
-  const { com_family, com_able_family } = fixture.load_module(
-    'system/train/com-family',
-  );
-  const { adv_com_family, get_adv_com } = fixture.load_module(
-    'system/train/com-adv',
-  );
-  return {
-    fixture,
-    era_flag,
-    com_family,
-    com_able_family,
-    adv_com_family,
-    get_adv_com,
-  };
+  const world = seed_train_world({
+    assi,
+    player,
+    master_callname: '魔王',
+    modules: {
+      sex: 'system/train/com-sex',
+      family: 'system/train/com-family',
+      adv: 'system/train/com-adv',
+    },
+  });
+  const { com_family, com_able_family } = world.modules.family;
+  const { adv_com_family, get_adv_com } = world.modules.adv;
+  return { ...world, com_family, com_able_family, adv_com_family, get_adv_com };
 }
 
 async function run_com(world, id) {
