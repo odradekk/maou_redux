@@ -829,6 +829,7 @@ function apply_source_check(desc) {
   const {
     source,
     talents,
+    rates,
     ladder,
     high_rate,
     domain_talent,
@@ -858,7 +859,7 @@ function apply_source_check(desc) {
   }
 
   // LOCAL:0 过欲情系数，LOCAL:1 过欲望阶梯
-  let local0 = times(src(source), desire_rate(desc.rates));
+  let local0 = times(src(source), desire_rate(rates));
   let local1 =
     abl(11) >= 6
       ? times(src(source), high_rate)

@@ -4200,7 +4200,7 @@ export default [
     must_mention: 'Ｂ 的欲情增量 = 源 ×0.1',
   },
   {
-    desc: 'M13754 否定抑鬱路的条件丢掉「否定」(tal(34) 不再是入口）',
+    desc: 'M13754 否定抑鬱路的条件丢掉「抵抗」(tal(34) 不再是入口）',
     file: 'ere/event/source-check.js',
     find: '  if (tal(32) || tal(34) || tal(71)) {',
     replace: '  if (tal(32) || tal(71)) {',
@@ -4208,7 +4208,7 @@ export default [
     must_mention: 'Ｃ 抑鬱 0 档乘 1',
   },
   {
-    desc: 'M13755 否定抑鬱路的条件丢掉「抑压」(tal(71) 不再是入口）',
+    desc: 'M13755 否定抑鬱路的条件丢掉「否定快感」(tal(71) 不再是入口）',
     file: 'ere/event/source-check.js',
     find: '  if (tal(32) || tal(34) || tal(71)) {',
     replace: '  if (tal(32) || tal(34)) {',

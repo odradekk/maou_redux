@@ -171,16 +171,20 @@ test('source_check_up_b：胸围素质组八档乘算乳房快感的源（SOURCE
 
 // —— 四条 SOURCE_CHECK_UP_* 变体：逐参数位的回归面 ——
 //
-// 四个变体在同一次 SOURCE_CHECK 里各跑一遍，断言要能归到某一版：先把 20 个
-// SOURCE 全部清零（COM0 与各源修正段都会写它们，其中还含技巧系数），再单独置定
-// 一个。调教者技巧取 2 档（×1.00）——技巧阶梯在 SOURCE_CHECK 内还会给四源乘一次，
-// 取 1.0 档才能让置定的源原值进入换算。其余三版与其余源的路径因此各贡献 0，
-// palam 上的断言可以逐版算清。
+// 四个变体在同一次 SOURCE_CHECK 里各跑一遍，断言要能归到某一版：先把 SOURCE 表
+// 声明的下标（0–18）全部清零（COM0 与各源修正段都会写它们，其中还含技巧系数），
+// 再单独置定一个。调教者技巧取 2 档（×1.00）——技巧阶梯在 SOURCE_CHECK 内还会给
+// 四源乘一次，取 1.0 档才能让置定的源原值进入换算。其余三版与其余源的路径因此各
+// 贡献 0，palam 上的断言可以逐版算清。
 // palam:31:<下标> 与 delta:31:<下标> 一一对应（palam_up_check 当场结算）。
+// 四个变体共用的驱动值：欲情档位的 PALAM:5 取值与 DESIRE_LADDER 的六档倍率。
+const PALAM5_LEVELS = [0, 100, 500, 3000, 10000];
+const DESIRE_RATES = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
+
 async function run_variant(index, value, seed) {
   return run_caress(undefined, (f) => {
     f.store.set('abl:0:12', 2);
-    for (let k = 0; k < 20; k += 1) {
+    for (let k = 0; k <= 18; k += 1) {
       f.store.set(`source:31:${k}`, 0);
     }
     f.store.set(`source:31:${index}`, value);
@@ -206,26 +210,24 @@ test('source_check_up_c：SOURCE:0 的扇出、ABL 门槛位、域素质与淫�
 
   // 欲情系数表：五档逐档（与本表取值不同的 V/A/B 三表各另有用例）
   const C_RATES = [0.5, 0.7, 1.0, 1.3, 1.8];
-  const levels = [0, 100, 500, 3000, 10000];
   for (let i = 0; i < C_RATES.length; i += 1) {
     const f = await run_variant(0, 2000, (x) =>
-      x.store.set('palam:31:5', levels[i]),
+      x.store.set('palam:31:5', PALAM5_LEVELS[i]),
     );
     assert.equal(
       f.store.get('palam:31:0'),
       Math.floor(2000 * C_RATES[i]),
-      `Ｃ 欲情档 ${levels[i]} 的系数`,
+      `Ｃ 欲情档 ${PALAM5_LEVELS[i]} 的系数`,
     );
   }
 
   // 欲望阶梯逐档（0–5 档）与 ≥6 档封顶
-  const LADDER = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
-  for (let d = 0; d < LADDER.length; d += 1) {
+  for (let d = 0; d < DESIRE_RATES.length; d += 1) {
     const f = await run_variant(0, 2000, (x) => x.store.set('abl:31:11', d));
     assert.equal(
       f.store.get('palam:31:5'),
-      Math.floor(2000 * LADDER[d]),
-      `Ｃ 欲望 ${d} 档 = 源 ×${LADDER[d]}`,
+      Math.floor(2000 * DESIRE_RATES[d]),
+      `Ｃ 欲望 ${d} 档 = 源 ×${DESIRE_RATES[d]}`,
     );
   }
   const d6 = await run_variant(0, 2000, (f) => f.store.set('abl:31:11', 6));
@@ -315,7 +317,7 @@ test('source_check_up_c：SOURCE:0 的扇出、ABL 门槛位、域素质与淫�
     0,
     'Ｃ 抑鬱在欲望 ≥6 档归零',
   );
-  // 否定抑鬱路认三种素质（32 / 34 / 71），71 不在 up_talent 的抑鬱倍率表里
+  // 否定抑鬱路认压抑（32）/ 抵抗（34）/ 否定快感（71），71 不在 up_talent 的抑鬱倍率表里
   const deny71 = await run_variant(0, 2000, (f) =>
     f.store.set('talent:31:71', 1),
   );
@@ -343,26 +345,24 @@ test('source_check_up_v：SOURCE:1 的扇出（UP:1/4/5/13）与逐参数位', a
   );
 
   const V_RATES = [0.3, 0.5, 1.0, 1.5, 2.0];
-  const levels = [0, 100, 500, 3000, 10000];
   for (let i = 0; i < V_RATES.length; i += 1) {
     const f = await run_variant(1, 2000, (x) =>
-      x.store.set('palam:31:5', levels[i]),
+      x.store.set('palam:31:5', PALAM5_LEVELS[i]),
     );
     assert.equal(
       f.store.get('palam:31:1'),
       Math.floor(2000 * V_RATES[i]),
-      `Ｖ 欲情档 ${levels[i]} 的系数`,
+      `Ｖ 欲情档 ${PALAM5_LEVELS[i]} 的系数`,
     );
   }
 
   // 欲望阶梯逐档（0–5 档）与 ≥6 档封顶
-  const LADDER = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
-  for (let d = 0; d < LADDER.length; d += 1) {
+  for (let d = 0; d < DESIRE_RATES.length; d += 1) {
     const f = await run_variant(1, 2000, (x) => x.store.set('abl:31:11', d));
     assert.equal(
       f.store.get('palam:31:4'),
-      Math.floor(2000 * LADDER[d]),
-      `Ｖ 欲望 ${d} 档 = 源 ×${LADDER[d]}`,
+      Math.floor(2000 * DESIRE_RATES[d]),
+      `Ｖ 欲望 ${d} 档 = 源 ×${DESIRE_RATES[d]}`,
     );
   }
   const d6 = await run_variant(1, 2000, (f) => f.store.set('abl:31:11', 6));
@@ -443,15 +443,14 @@ test('source_check_up_a：SOURCE:2 的独立欲望梯（0.05 起步、≥6 乘 2
   );
 
   const A_RATES = [0.6, 0.8, 1.0, 1.2, 1.4];
-  const levels = [0, 100, 500, 3000, 10000];
   for (let i = 0; i < A_RATES.length; i += 1) {
     const f = await run_variant(2, 2000, (x) =>
-      x.store.set('palam:31:5', levels[i]),
+      x.store.set('palam:31:5', PALAM5_LEVELS[i]),
     );
     assert.equal(
       f.store.get('palam:31:2'),
       Math.floor(2000 * A_RATES[i]),
-      `Ａ 欲情档 ${levels[i]} 的系数`,
+      `Ａ 欲情档 ${PALAM5_LEVELS[i]} 的系数`,
     );
   }
 
@@ -537,26 +536,24 @@ test('source_check_up_b：SOURCE:17 的扇出（UP:14/5/13）与逐参数位', a
   );
 
   const B_RATES = [0.5, 0.7, 1.0, 1.3, 1.8];
-  const levels = [0, 100, 500, 3000, 10000];
   for (let i = 0; i < B_RATES.length; i += 1) {
     const f = await run_variant(17, 2000, (x) =>
-      x.store.set('palam:31:5', levels[i]),
+      x.store.set('palam:31:5', PALAM5_LEVELS[i]),
     );
     assert.equal(
       f.store.get('palam:31:14'),
       Math.floor(2000 * B_RATES[i]),
-      `Ｂ 欲情档 ${levels[i]} 的系数`,
+      `Ｂ 欲情档 ${PALAM5_LEVELS[i]} 的系数`,
     );
   }
 
   // 欲望阶梯逐档（0–5 档）与 ≥6 档封顶
-  const LADDER = [0.1, 0.15, 0.2, 0.25, 0.3, 0.4];
-  for (let d = 0; d < LADDER.length; d += 1) {
+  for (let d = 0; d < DESIRE_RATES.length; d += 1) {
     const f = await run_variant(17, 2000, (x) => x.store.set('abl:31:11', d));
     assert.equal(
       f.store.get('palam:31:5'),
-      Math.floor(2000 * LADDER[d]),
-      `Ｂ 欲望 ${d} 档 = 源 ×${LADDER[d]}`,
+      Math.floor(2000 * DESIRE_RATES[d]),
+      `Ｂ 欲望 ${d} 档 = 源 ×${DESIRE_RATES[d]}`,
     );
   }
   const d6 = await run_variant(17, 2000, (f) => f.store.set('abl:31:11', 6));
