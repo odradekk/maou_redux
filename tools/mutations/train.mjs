@@ -2894,8 +2894,8 @@ export default [
   {
     desc: 'M1055 E2E: 回路第 1 环破环——参数上升切断（UP:0 快C 不写入 delta，使参数无法上升）',
     file: 'ere/event/source-check.js',
-    find: '  add_up(0, local0); // PALAM:快Ｃ',
-    replace: '  // 变异：不累加快C',
+    find: '      [0, 0], // PALAM:快Ｃ',
+    replace: '      // 变异：不累加快C',
     tests: ['event-corrupt-e2e', 'source-check'],
     must_mention: '角色堕落长跑',
   },

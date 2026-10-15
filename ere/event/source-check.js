@@ -694,6 +694,18 @@ const RATE_B = [
   [9, 1.8],
 ];
 
+// 胸围素质组按档乘算乳房快感的源（Ｂ 版独有）：一档命中即停
+const BUST_RATES = [
+  [253, 2.5],
+  [252, 2.15],
+  [251, 1.8],
+  [116, 1.5],
+  [109, 1.2],
+  [110, 0.9],
+  [114, 0.8],
+  [119, 0.7],
+];
+
 // 欲望（ABL:11）对 LOCAL:1 的共用阶梯
 const DESIRE_LADDER = [
   [0, 0.1],
@@ -702,6 +714,15 @@ const DESIRE_LADDER = [
   [3, 0.25],
   [4, 0.3],
   [5, 0.4],
+];
+// 快Ａ的欲望阶梯独立（0.05 起步）
+const A_LADDER = [
+  [0, 0.05],
+  [1, 0.1],
+  [2, 0.4],
+  [3, 0.8],
+  [4, 1.2],
+  [5, 1.8],
 ];
 // 快感否定的抑鬱阶梯
 const DENY_LADDER = [
@@ -713,189 +734,178 @@ const DENY_LADDER = [
   [5, 0.1],
 ];
 
-// source_check_up_c
-function source_check_up_c() {
+// —— 四条 SOURCE_CHECK_UP_* 的差异全集与运行器 ——
+//
+// 四版逐行同构，差异只有参数：敏感/钝感素质对、欲情系数表、欲望梯子（Ａ 版
+// 独立）、域特异素质、淫部位标记与倍率、ABL 门槛位、扇出目标。以下是这些
+// 参数的描述表；四版同款的环节（否定抑鬱路、域素质的三路放大、ABL 门槛放大）
+// 写在 apply_source_check 里。
+
+// 描述表字段：
+//   source        本条读写的 SOURCE 下标
+//   talents       敏感素质（&1 / &2 两位）与钝感外侧素质
+//   rates         欲情系数表（见 desire_rate）
+//   ladder        欲望阶梯 0–5 档 / high_rate 欲望 ≥6 档的倍率
+//   domain_talent 域特异素质（三路放大 1.5 / 1.2 / 0.5）
+//   lewd          淫部位标记素质与其倍率（只放大快感系数）
+//   abl_index     ABL 门槛位（> 5 时按 (n + 5) / 10 放大快感系数）
+//   outs          add_up 扇出：[UP 下标, 0|1|2 = LOCAL:0/1/2]
+//   busts         先于取值的素质倍率预乘表（一档命中即停），只有 Ｂ 版有
+const SOURCE_DESCRIPTORS = {
   // Ｃ敏感（101 & 1 / & 2）与 Ｃ钝感外侧的敏感
-  if ((tal(101) || 0) & 1) {
-    set_src(0, times(src(0), 0.5));
+  c: {
+    source: 0,
+    talents: [101, 102],
+    rates: RATE_C,
+    ladder: DESIRE_LADDER,
+    high_rate: 0.5,
+    domain_talent: 74,
+    lewd: [230, 2.0],
+    abl_index: 0,
+    outs: [
+      [0, 0], // PALAM:快Ｃ
+      [5, 1], // PALAM:欲情
+      [13, 2], // PALAM:抑鬱
+    ],
+    busts: null,
+  },
+  // 爱抚不写 SOURCE:1，本路照跑（源为 0 时各路乘算得 0）
+  v: {
+    source: 1,
+    talents: [103, 104],
+    rates: RATE_V,
+    ladder: DESIRE_LADDER,
+    high_rate: 0.5,
+    domain_talent: 75,
+    lewd: [232, 1.5],
+    abl_index: 2,
+    outs: [
+      [1, 0], // PALAM:快Ｖ
+      [4, 1], // PALAM:恭顺
+      [5, 1], // PALAM:欲情
+      [13, 2], // PALAM:抑鬱
+    ],
+    busts: null,
+  },
+  a: {
+    source: 2,
+    talents: [105, 106],
+    rates: RATE_A,
+    ladder: A_LADDER,
+    high_rate: 2.0,
+    domain_talent: 77,
+    lewd: [233, 2.0],
+    abl_index: 3,
+    outs: [
+      [2, 0], // PALAM:快Ａ
+      [5, 1], // PALAM:欲情
+      [6, 1], // PALAM:屈服
+      [13, 2], // PALAM:抑鬱
+    ],
+    busts: null,
+  },
+  // 胸围素质组按档乘算乳房快感的源——先于 local0/local1 取值，快Ｂ/欲情/
+  // 抑鬱三路同随胸围增减；这一档命中顺序停在表序第一位命中的素质
+  b: {
+    source: 17,
+    talents: [107, 108],
+    rates: RATE_B,
+    ladder: DESIRE_LADDER,
+    high_rate: 0.5,
+    domain_talent: 78,
+    lewd: [231, 2.0],
+    abl_index: 1,
+    busts: BUST_RATES,
+    outs: [
+      [14, 0], // PALAM:快Ｂ
+      [5, 1], // PALAM:欲情
+      [13, 2], // PALAM:抑鬱
+    ],
+  },
+};
+
+/** 按描述表执行一条 SOURCE → UP（delta）换算 */
+function apply_source_check(desc) {
+  const {
+    source,
+    talents,
+    ladder,
+    high_rate,
+    domain_talent,
+    lewd,
+    abl_index,
+    outs,
+    busts,
+  } = desc;
+  // 敏感（&1 / &2 两位）、钝感外侧与 Ｂ 版的胸围档：都作用在源上
+  const sensitive = tal(talents[0]) || 0;
+  if (sensitive & 1) {
+    set_src(source, times(src(source), 0.5));
   }
-  if ((tal(101) || 0) & 2) {
-    set_src(0, times(src(0), 0.1));
+  if (sensitive & 2) {
+    set_src(source, times(src(source), 0.1));
   }
-  if (tal(102)) {
-    set_src(0, times(src(0), 2.0));
+  if (tal(talents[1])) {
+    set_src(source, times(src(source), 2.0));
+  }
+  if (busts) {
+    for (const [t, rate] of busts) {
+      if (tal(t)) {
+        set_src(source, times(src(source), rate));
+        break;
+      }
+    }
   }
 
-  // LOCAL:0 过欲情系数
-  let local0 = times(src(0), desire_rate(RATE_C));
-  // LOCAL:1 过欲望阶梯
-  let local1 = src(0);
-  local1 =
+  // LOCAL:0 过欲情系数，LOCAL:1 过欲望阶梯
+  let local0 = times(src(source), desire_rate(desc.rates));
+  let local1 =
     abl(11) >= 6
-      ? times(local1, 0.5)
-      : times(local1, DESIRE_LADDER[abl(11)][1]);
+      ? times(src(source), high_rate)
+      : times(src(source), ladder[abl(11)][1]);
   // 快感的否定/ 抑压/ 抵抗→ 抑鬱
   let local2 = 0;
   if (tal(32) || tal(34) || tal(71)) {
-    local2 = idiv(src(0), 3);
+    local2 = idiv(src(source), 3);
     local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);
   }
-  // 自慰狂/ 淫核/ ABL:0 > 5 的放大
-  if (tal(74)) {
+  // 域特异素质：四版同款的三路放大，逐版只换素质编号
+  if (tal(domain_talent)) {
     local0 = times(local0, 1.5);
     local1 = times(local1, 1.2);
     local2 = times(local2, 0.5);
   }
-  if (tal(230)) {
-    local0 = times(local0, 2.0);
+  if (tal(lewd[0])) {
+    local0 = times(local0, lewd[1]);
   }
-  if (abl(0) > 5) {
-    local0 = idiv(local0 * (abl(0) + 5), 10);
+  if (abl(abl_index) > 5) {
+    local0 = idiv(local0 * (abl(abl_index) + 5), 10);
   }
-  add_up(0, local0); // PALAM:快Ｃ
-  add_up(5, local1); // PALAM:欲情
-  add_up(13, local2); // PALAM:抑鬱
+
+  const locals = [local0, local1, local2];
+  for (const [up_index, local] of outs) {
+    add_up(up_index, locals[local]);
+  }
+}
+
+// source_check_up_c
+function source_check_up_c() {
+  apply_source_check(SOURCE_DESCRIPTORS.c);
 }
 
 // source_check_up_v：爱抚不写 SOURCE:1，路径上照跑（乘算 0）
 function source_check_up_v() {
-  if ((tal(103) || 0) & 1) {
-    set_src(1, times(src(1), 0.5));
-  }
-  if ((tal(103) || 0) & 2) {
-    set_src(1, times(src(1), 0.1));
-  }
-  if (tal(104)) {
-    set_src(1, times(src(1), 2.0));
-  }
-  let local0 = times(src(1), desire_rate(RATE_V));
-  let local1 = src(1);
-  local1 =
-    abl(11) >= 6
-      ? times(local1, 0.5)
-      : times(local1, DESIRE_LADDER[abl(11)][1]);
-  let local2 = 0;
-  if (tal(32) || tal(34) || tal(71)) {
-    local2 = idiv(src(1), 3);
-    local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);
-  }
-  if (tal(75)) {
-    local0 = times(local0, 1.5);
-    local1 = times(local1, 1.2);
-    local2 = times(local2, 0.5);
-  }
-  if (tal(232)) {
-    local0 = times(local0, 1.5);
-  }
-  if (abl(2) > 5) {
-    local0 = idiv(local0 * (abl(2) + 5), 10);
-  }
-  add_up(1, local0);
-  add_up(4, local1);
-  add_up(5, local1);
-  add_up(13, local2);
+  apply_source_check(SOURCE_DESCRIPTORS.v);
 }
 
 // source_check_up_a
 function source_check_up_a() {
-  if ((tal(105) || 0) & 1) {
-    set_src(2, times(src(2), 0.5));
-  }
-  if ((tal(105) || 0) & 2) {
-    set_src(2, times(src(2), 0.1));
-  }
-  if (tal(106)) {
-    set_src(2, times(src(2), 2.0));
-  }
-  let local0 = times(src(2), desire_rate(RATE_A));
-  let local1 = src(2);
-  // 快Ａ的欲望阶梯独立（0.05 起步）
-  const A_LADDER = [
-    [0, 0.05],
-    [1, 0.1],
-    [2, 0.4],
-    [3, 0.8],
-    [4, 1.2],
-    [5, 1.8],
-  ];
-  local1 =
-    abl(11) >= 6 ? times(local1, 2.0) : times(local1, A_LADDER[abl(11)][1]);
-  let local2 = 0;
-  if (tal(32) || tal(34) || tal(71)) {
-    local2 = idiv(src(2), 3);
-    local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);
-  }
-  if (tal(77)) {
-    local0 = times(local0, 1.5);
-    local1 = times(local1, 1.2);
-    local2 = times(local2, 0.5);
-  }
-  if (tal(233)) {
-    local0 = times(local0, 2.0);
-  }
-  if (abl(3) > 5) {
-    local0 = idiv(local0 * (abl(3) + 5), 10);
-  }
-  add_up(2, local0);
-  add_up(5, local1);
-  add_up(6, local1);
-  add_up(13, local2);
+  apply_source_check(SOURCE_DESCRIPTORS.a);
 }
 
 // source_check_up_b
 function source_check_up_b() {
-  if ((tal(107) || 0) & 1) {
-    set_src(17, times(src(17), 0.5));
-  }
-  if ((tal(107) || 0) & 2) {
-    set_src(17, times(src(17), 0.1));
-  }
-  if (tal(108)) {
-    set_src(17, times(src(17), 2.0));
-  }
-  // 胸围素质组按档乘算乳房快感的源；乘算先于 local0/local1 取值，
-  // 快Ｂ/欲情/抑鬱三路同随胸围增减，一档命中即停
-  const BUST_RATES = [
-    [253, 2.5],
-    [252, 2.15],
-    [251, 1.8],
-    [116, 1.5],
-    [109, 1.2],
-    [110, 0.9],
-    [114, 0.8],
-    [119, 0.7],
-  ];
-  for (const [t, rate] of BUST_RATES) {
-    if (tal(t)) {
-      set_src(17, times(src(17), rate));
-      break;
-    }
-  }
-  let local0 = times(src(17), desire_rate(RATE_B));
-  let local1 = src(17);
-  local1 =
-    abl(11) >= 6
-      ? times(local1, 0.5)
-      : times(local1, DESIRE_LADDER[abl(11)][1]);
-  let local2 = 0;
-  if (tal(32) || tal(34) || tal(71)) {
-    local2 = idiv(src(17), 3);
-    local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);
-  }
-  if (tal(78)) {
-    local0 = times(local0, 1.5);
-    local1 = times(local1, 1.2);
-    local2 = times(local2, 0.5);
-  }
-  if (tal(231)) {
-    local0 = times(local0, 2.0);
-  }
-  if (abl(1) > 5) {
-    local0 = idiv(local0 * (abl(1) + 5), 10);
-  }
-  add_up(14, local0); // PALAM:快Ｂ
-  add_up(5, local1);
-  add_up(13, local2);
+  apply_source_check(SOURCE_DESCRIPTORS.b);
 }
 
 // source_check_up_free：局部→ UP:15
