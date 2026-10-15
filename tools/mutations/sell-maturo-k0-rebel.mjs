@@ -117,7 +117,7 @@ export default [
     '反抗高价族苦力末路丢掉结局名',
     "    ending = '苦力奴隶';\n  }\n  return ending;\n}",
     "    ending = '苦力奴隶';\n  }\n  return '';\n}",
-    'K0_ENDINGS：每条末路均可独立调用并输出正文',
+    'K0_ENDINGS：每条末路的正文首行与结局名逐条锁定',
     ['sell-maturo-k0-routes'],
   ),
   make(
