@@ -64,6 +64,7 @@ const {
 } = require('#/system/train/train-message');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { times } = require('#/utils/numeric');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { soiling_cloth_no2 } = require('#/system/train/cloth');
 const { clothtype_special_text } = require('#/page/page-clothtype');
@@ -78,9 +79,6 @@ const tal = (cid, i) => era.get(`talent:${cid}:${i}`) || 0;
 const palam = (cid, i) => era.get(`palam:${cid}:${i}`) || 0;
 const add_lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
 const add_up = (cid, i, v) => era.add(`delta:${cid}:${i}`, v);
-
-/** times(v, m)：整数乘小数后截断（TIMES 语义，source-check.js 同款） */
-const times = (v, m) => Math.floor(v * m);
 
 /**
  * EXPLV（经验等级阈值）：0,1,4,20,50,200。PALAMLV 复用

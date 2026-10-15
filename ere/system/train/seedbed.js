@@ -9,6 +9,7 @@ const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const {
   conception_check_syoku_to_t,
   in_vagina_syoku_to_t,
@@ -16,11 +17,6 @@ const {
 
 // TALENT:0/1/122/209/273 = 处女/童贞/男人/苗床/私处封印；CFLAG:1 =
 // 当前状态（7 为苗床），15 = 初体验记录，40 bit 6 与 42 = 狂王特例条件；
-// FLAG:37 = 狂王特例开关；EXP:3 = 射精经验，JUEL:0 = 阴茎点数。
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
-
 function get(name) {
   return era.get(name) || 0;
 }

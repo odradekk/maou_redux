@@ -56,15 +56,8 @@ const {
 } = require('#/system/train/ability-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
-
-/** 整数乘小数后截断（TIMES 语义；source-check.js 等同款） */
-const times = (v, m) => Math.floor(v * m);
-
-/** A = A * n / 100 型整数复利（区别于 times：整数乘整数除，非小数乘法截断） */
-const compound = (v, numerator) => Math.trunc((v * numerator) / 100);
-
-/** MASTER 角色编号（page-usercom.js 同款本地约定），ablup12 自我训练判定用 */
-const MASTER = 0;
+const { MASTER } = require('#/utils/master');
+const { percent_trunc, times } = require('#/utils/numeric');
 
 /**
  * ablup0～3 共用的可否状态文案。
@@ -110,13 +103,13 @@ function evaluate_ablup0(cid) {
     a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
   } else if (lv < 15) {
     a = 180000;
-    for (let n = 0; n < lv - 9; n++) a = compound(a, 125);
+    for (let n = 0; n < lv - 9; n++) a = percent_trunc(a, 125);
   } else if (lv < 20) {
     a = 362000;
-    for (let n = 0; n < lv - 14; n++) a = compound(a, 120);
+    for (let n = 0; n < lv - 14; n++) a = percent_trunc(a, 120);
   } else {
     a = 583000;
-    for (let n = 0; n < lv - 19; n++) a = compound(a, 115);
+    for (let n = 0; n < lv - 19; n++) a = percent_trunc(a, 115);
   }
 
   // 戒备森严：仅 lv==4/5/>=6 三级加成，别的等级不受影响
@@ -245,13 +238,13 @@ function evaluate_ablup1(cid) {
     a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
   } else if (lv < 15) {
     a = 180000;
-    for (let n = 0; n < lv - 9; n++) a = compound(a, 125);
+    for (let n = 0; n < lv - 9; n++) a = percent_trunc(a, 125);
   } else if (lv < 20) {
     a = 362000;
-    for (let n = 0; n < lv - 14; n++) a = compound(a, 120);
+    for (let n = 0; n < lv - 14; n++) a = percent_trunc(a, 120);
   } else {
     a = 583000;
-    for (let n = 0; n < lv - 19; n++) a = compound(a, 115);
+    for (let n = 0; n < lv - 19; n++) a = percent_trunc(a, 115);
   }
 
   if (talent(27)) {
@@ -382,22 +375,22 @@ function evaluate_ablup2(cid) {
     a = 180000;
     b = 600;
     for (let n = 0; n < lv - 9; n++) {
-      a = compound(a, 125);
-      b = compound(b, 115);
+      a = percent_trunc(a, 125);
+      b = percent_trunc(b, 115);
     }
   } else if (lv < 20) {
     a = 362000;
     b = 966;
     for (let n = 0; n < lv - 14; n++) {
-      a = compound(a, 120);
-      b = compound(b, 120);
+      a = percent_trunc(a, 120);
+      b = percent_trunc(b, 120);
     }
   } else {
     a = 583000;
     b = 1942;
     for (let n = 0; n < lv - 19; n++) {
-      a = compound(a, 115);
-      b = compound(b, 125);
+      a = percent_trunc(a, 115);
+      b = percent_trunc(b, 125);
     }
   }
 
@@ -549,22 +542,22 @@ function evaluate_ablup3(cid) {
     a = 180000;
     b = 600;
     for (let n = 0; n < lv - 9; n++) {
-      a = compound(a, 125);
-      b = compound(b, 115);
+      a = percent_trunc(a, 125);
+      b = percent_trunc(b, 115);
     }
   } else if (lv < 20) {
     a = 362000;
     b = 966;
     for (let n = 0; n < lv - 14; n++) {
-      a = compound(a, 120);
-      b = compound(b, 120);
+      a = percent_trunc(a, 120);
+      b = percent_trunc(b, 120);
     }
   } else {
     a = 583000;
     b = 1942;
     for (let n = 0; n < lv - 19; n++) {
-      a = compound(a, 115);
-      b = compound(b, 125);
+      a = percent_trunc(a, 115);
+      b = percent_trunc(b, 125);
     }
   }
 

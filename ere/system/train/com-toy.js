@@ -32,6 +32,7 @@ const {
 } = require('#/system/train/train-message');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { times } = require('#/utils/numeric');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -49,7 +50,6 @@ const tal = (cid, i) => era.get(`talent:${cid}:${i}`) || 0;
 const palam = (cid, i) => era.get(`palam:${cid}:${i}`) || 0;
 const exp = (cid, i) => era.get(`exp:${cid}:${i}`) || 0;
 const add_lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
-const times = (v, m) => Math.floor(v * m);
 const noitem = () => era.get('noitem:0') || 0;
 const has_item = (i) => (era.get(`item:${i}`) || 0) > 0 || noitem() !== 0;
 const target_name = () => chara_callname(era_flag.target);

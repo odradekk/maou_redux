@@ -52,12 +52,8 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { v_able } = require('#/system/train/v-able');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { benki_koujo } = require('#/kojo/kojo-system');
-
-/** 返回 [0, n) 均匀整数的缺省随机源 */
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /** 名字读取（#5 决议：本作里 = 名前） */
 function name_of(cid) {

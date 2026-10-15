@@ -23,13 +23,11 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
+const { times } = require('#/utils/numeric');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
 const tequip = (id, i) => era.get(`tequip:${id}:${i}`) || 0;
-
-/** TIMES X, m：整数乘小数后截断（TIMES 语义） */
-const times = (v, m) => Math.floor(v * m);
 
 /** ABL 分档取率：表按 LV0-5，超出取末位（缺省处理） */
 const abl_rate = (id, i, table) =>

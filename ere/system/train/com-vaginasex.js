@@ -34,6 +34,7 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { incest } = require('#/system/train/incest');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
+const { times } = require('#/utils/numeric');
 
 /** incest 使用当前 TARGET/PLAYER 计算亲族关系。 */
 function call_incest() {
@@ -47,9 +48,6 @@ const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
 const tequip = (id, i) => era.get(`tequip:${id}:${i}`) || 0;
 /** 显示名字读取 callname（#5：不使用 savestr 通道） */
 const name_of = (id) => era.get(`callname:${id}:-1`) ?? '';
-
-/** 小数乘率逐次取整，避免多次相乘累积小数。 */
-const times = (v, m) => Math.floor(v * m);
 
 /** ABL 分档取率：表按 LV0-5，超出取末位（缺省处理） */
 const abl_rate = (id, i, table) =>

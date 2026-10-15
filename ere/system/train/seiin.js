@@ -20,6 +20,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const { times } = require('#/utils/numeric');
 
 const tal = (i) => era.get(`talent:${era_flag.target}:${i}`) || 0;
 const abl32 = () => Math.floor(era.get(`abl:${era_flag.target}:32`) || 0);
@@ -31,9 +32,6 @@ const name_of = (id) => era.get(`callname:${id}:-1`) ?? '';
 function she(id) {
   return era.get(`talent:${id}:122`) || 0 ? '他' : '她';
 }
-
-/** 整数乘小数后截断（TIMES 语义） */
-const times = (v, m) => Math.floor(v * m);
 
 /**
  * seiin_start：口内射精的连锁绝顶入口。

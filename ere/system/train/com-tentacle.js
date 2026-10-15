@@ -44,9 +44,8 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand, idiv, times } = require('#/utils/numeric');
 
-const times = (v, m) => Math.floor(v * m);
-const idiv = (a, b) => Math.floor(a / b);
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
 const tequip = (id, i) => era.get(`tequip:${id}:${i}`) || 0;
@@ -69,10 +68,6 @@ const in_zooko_msg = (cid) =>
 const target_name = () => chara_callname(era_flag.target);
 const player_name = () => chara_callname(era_flag.player);
 const fetish = (cid) => era.get(`cstr:${cid}:7`) || '';
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 /** JUMP COM{id}：目标未注册返回 COM_MISSING。 */
 function jump_com(id, { rewrite_selectcom = false } = {}) {

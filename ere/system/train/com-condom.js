@@ -22,9 +22,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-
-/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
-const MASTER = 0;
+const { MASTER } = require('#/utils/master');
 
 /**
  * condom_settings：调教菜单 [103] 的设定画面。
