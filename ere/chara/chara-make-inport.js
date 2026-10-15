@@ -43,8 +43,7 @@ const { st_up } = require('#/dungeon/dungeon-lvup');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** 文本转数值（非数值与空串一律 0；记录段由 serialize_character 写出） */
 const to_int = (value) => Number(value) || 0;

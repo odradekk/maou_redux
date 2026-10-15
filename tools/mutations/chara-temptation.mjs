@@ -326,14 +326,10 @@ export default [
     must_mention: '赞助机会三支各按自己的条件命中',
   },
   {
-    desc: 'M9033 默认随机源偏移一位（default_rand 的 Math.floor 结果 +1）',
-    file: 'ere/chara/chara-temptation.js',
-    find: `function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}`,
-    replace: `function default_rand(n) {
-  return Math.floor(Math.random() * n) + 1;
-}`,
+    desc: 'M9033 默认随机源偏移一位（default_rand 的 Math.floor 结果 +1；#792 起实现移到 ere/utils/numeric.js）',
+    file: 'ere/utils/numeric.js',
+    find: '  return Math.floor(Math.random() * n);',
+    replace: '  return Math.floor(Math.random() * n) + 1; // 变异：默认随机源偏移一位',
     tests: ['page-chara-info'],
     must_mention: '诱惑真身不传随机源时走默认源',
   },

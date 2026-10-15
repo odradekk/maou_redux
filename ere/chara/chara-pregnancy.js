@@ -40,6 +40,7 @@ const { chara } = require('#/facade/chara');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { ntr_child_birth } = require('#/system/ntr');
 const era_flag = require('#/era-utils/era-flag');
+const { default_rand } = require('#/utils/numeric');
 
 const MAX_CHARANUM = 90;
 /**
@@ -61,10 +62,6 @@ const MAX_CHARANUM = 90;
  */
 const FIRST_CHILD_ID = 100000;
 const CHILD_ID_BLOCK_SIZE = 100;
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
 
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';

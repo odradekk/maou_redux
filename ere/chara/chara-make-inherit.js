@@ -21,10 +21,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 /** PAIRS —— 互斥素质对（展平） */
 const PAIRS = [

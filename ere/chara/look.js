@@ -35,13 +35,12 @@
 
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
+const { default_rand } = require('#/utils/numeric');
 const { karma } = require('#/chara/chara-stats');
 const { family_print_info } = require('#/chara/chara-family');
 const { get_look_info } = require('#/chara/look-info');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** 素质下标（yml/Talent.yml；与 ere/chara/look-info.js 的同名常量各写一份，两边都只服务本文件） */
 const T_处女 = 0;

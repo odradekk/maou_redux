@@ -80,8 +80,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** `SETCOLORBYNAME GRAY`（page-ablup.js 同值） */
 const GRAY = '#808080';

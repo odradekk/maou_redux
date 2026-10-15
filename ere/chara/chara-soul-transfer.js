@@ -39,10 +39,7 @@ const {
 } = require('#/chara/chara-family');
 const { char_size_generate } = require('#/chara/chara-body');
 const { ex_talentname } = require('#/chara/chara-ex');
-
-function default_rand(n) {
-  return Math.floor(Math.random() * n);
-}
+const { default_rand } = require('#/utils/numeric');
 
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';

@@ -14,8 +14,8 @@ const era = require('#/era-electron');
 const { char_age_expect, rf_all } = require('#/chara/chara-family');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
+const { default_rand } = require('#/utils/numeric');
 
-const default_rand = (n) => Math.floor(Math.random() * n);
 const int = Math.trunc;
 
 const WOMAN = [

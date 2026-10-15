@@ -59,8 +59,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /** 「勇者」段的每行格数 */
 const HERO_COLUMNS = 4;

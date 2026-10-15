@@ -41,8 +41,7 @@
 
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
-
-const default_rand = (n) => Math.floor(Math.random() * n);
+const { default_rand } = require('#/utils/numeric');
 
 /**
  * 婚姻段的配偶称呼与性别。
