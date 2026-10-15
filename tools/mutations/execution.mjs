@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 183; // #785 审计返工净 -3：删 M11783/M11788/M11790 与 M7260 四条同型链路守卫（改由 chara-removal-scan 白名单扫描统一守护），新增 M15123（非正角色号契约校验）；#785 审查轮 +4（M15119–M15122：处刑/博物馆的原因特定奖励不因机械段集中而重复入账）；#785 净 +6：出售/处刑/博物馆三处除名登记条目 M14701/M14702/M14704 随机械步骤收敛进 ere/system/chara-removal.js 合并为 M15110，新增 M15111–M15118（指针判等与同步、称呼重建、reset_names 缺省、实际删除、队伍移除）；#748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
+export const COUNT = 200; // #794 +17（M13811–M13827：处刑单选版与批量版的行为差异对照——所持金/好感度/善恶下限阈值/录像书架/人称与 C 敏感文案/两处头注指向，成对的两个方向都钉）；#785 审计返工净 -3：删 M11783/M11788/M11790 与 M7260 四条同型链路守卫（改由 chara-removal-scan 白名单扫描统一守护），新增 M15123（非正角色号契约校验）；#785 审查轮 +4（M15119–M15122：处刑/博物馆的原因特定奖励不因机械段集中而重复入账）；#785 净 +6：出售/处刑/博物馆三处除名登记条目 M14701/M14702/M14704 随机械步骤收敛进 ere/system/chara-removal.js 合并为 M15110，新增 M15111–M15118（指针判等与同步、称呼重建、reset_names 缺省、实际删除、队伍移除）；#748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于自动处刑与流放逐两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一检查）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
@@ -1592,5 +1592,155 @@ export default [
     replace: '  chara(0).dungeon.战斗经验 += lv * 2;',
     tests: ['event-museum'],
     must_mention: '等级 4 → (4 + 1) × 50',
+  },
+  // #794：处刑单选版与批量版的行为差异对照（test/event-execution-variant-diff.test.js）。
+  // 每对条目把一版的行为换成另一版的样子——这正是「合并重复实现」会做出的改动，
+  // 而差异是有意保留的内容（原作两个源版本各自的保真移植），对照测试必须变红。
+  {
+    desc: 'M13811 单选版释放分支照批量版没收所持金',
+    file: 'ere/event/event-execution.js',
+    find: '  chara(cid).chara.好感度 = 20;\n}',
+    replace:
+      '  era_flag.money += chara(cid).dungeon.所持金;\n  chara(cid).chara.好感度 = 20;\n}',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '释放分支的 MONEY',
+  },
+  {
+    desc: 'M13827 单选版释放分支的善恶下限阈值放宽松',
+    file: 'ere/event/event-execution.js',
+    find: '  if (chara(cid).chara.善恶值 < -50) chara(cid).chara.善恶值 = -50;',
+    replace:
+      '  if (chara(cid).chara.善恶值 < -60) chara(cid).chara.善恶值 = -50;',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '善恶值下限 -50',
+  },
+  {
+    desc: 'M13812 单选版释放分支的好感度改成夹上限',
+    file: 'ere/event/event-execution.js',
+    find: '  chara(cid).chara.好感度 = 20;',
+    replace:
+      '  if (chara(cid).chara.好感度 > 20) chara(cid).chara.好感度 = 20;',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '好感度 10（低于上限）',
+  },
+  {
+    desc: 'M13813 批量版释放分支不再没收所持金',
+    file: 'ere/event/event-execution-batch.js',
+    find: '  era_flag.money += money; // MONEY',
+    replace: '  void money; // MONEY',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '释放分支的 MONEY',
+  },
+  {
+    desc: 'M13814 批量版释放分支的好感度改成直接赋 20',
+    file: 'ere/event/event-execution-batch.js',
+    find: '  if (chara(cid).chara.好感度 > 20) chara(cid).chara.好感度 = 20;',
+    replace: '  chara(cid).chara.好感度 = 20;',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '好感度 10（低于上限）',
+  },
+  {
+    desc: 'M13815 批量版肉便器支不再写录像书架槽位',
+    file: 'ere/event/event-execution-batch.js',
+    find: "  const title = `肉便器${name}`;\n  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A\n",
+    replace:
+      "  const title = `肉便器${name}`;\n  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);\n  era.set('tstr:30', title);\n",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '批量版写书架',
+  },
+  {
+    desc: 'M13816 批量版士兵化支不再写录像书架槽位',
+    file: 'ere/event/event-execution-batch.js',
+    find: "  const title = `魔王傀儡${name}`;\n  era.set(`cstr:${cid}:30`, title); // CSTR:30（无下标 = TARGET）\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A\n",
+    replace:
+      "  const title = `魔王傀儡${name}`;\n  era.set(`cstr:${cid}:30`, title); // CSTR:30（无下标 = TARGET）\n  era.set('tstr:30', title);\n",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '批量版写书架',
+  },
+  {
+    desc: 'M13817 批量版固定示众支不再写录像书架槽位',
+    file: 'ere/event/event-execution-batch.js',
+    find: "  const title = `魔族公厕${name}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A\n",
+    replace:
+      "  const title = `魔族公厕${name}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '批量版写书架',
+  },
+  {
+    desc: 'M13818 单选版固定示众支照批量版写录像书架槽位',
+    file: 'ere/event/event-execution.js',
+    find: "  const title = `魔族公厕${chara_callname(cid)}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  video_maturo2(cid);",
+    replace:
+      "  const title = `魔族公厕${chara_callname(cid)}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${era.getAddedCharacters().indexOf(cid)}`, title);\n  video_maturo2(cid);",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '单选版不写书架',
+  },
+  {
+    desc: 'M13819 单选版士兵化支照批量版写录像书架槽位',
+    file: 'ere/event/event-execution.js',
+    find: "  const title = `魔王傀儡${chara_callname(cid)}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  video_maturo2(cid);",
+    replace:
+      "  const title = `魔王傀儡${chara_callname(cid)}`;\n  era.set(`cstr:${cid}:30`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${era.getAddedCharacters().indexOf(cid)}`, title);\n  video_maturo2(cid);",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '单选版不写书架',
+  },
+  {
+    desc: 'M13820 单选版肉便器支照批量版写录像书架槽位',
+    file: 'ere/event/event-execution.js',
+    find: "  const title = `肉便器${name}`;\n  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);\n  era.set('tstr:30', title);\n  video_maturo(cid);",
+    replace:
+      "  const title = `肉便器${name}`;\n  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);\n  era.set('tstr:30', title);\n  era.set(`videoarchive:${era.getAddedCharacters().indexOf(cid)}`, title);\n  video_maturo(cid);",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '单选版不写书架',
+  },
+  {
+    desc: 'M13821 单选版肉便器段照批量版分流扶她文案',
+    file: 'ere/event/event-execution.js',
+    find: '`${name}的阴蒂又大又肿，一鞭子下去，她就爱液四射，口水横流地绝顶了。`',
+    replace:
+      '`${name}的阴茎膨胀了起来，一鞭子下去，她就精液四射，口水横流地绝顶了。`',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '恒走阴蒂文案',
+  },
+  {
+    desc: 'M13822 批量版肉便器段取消扶她/男人分流',
+    file: 'ere/event/event-execution-batch.js',
+    find: '    if (get(`talent:${cid}:121`) || get(`talent:${cid}:122`)) {',
+    replace: '    if (false) {',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '走阴茎文案',
+  },
+  {
+    desc: 'M13823 单选版肉便器段照批量版按素质换人称',
+    file: 'ere/event/event-execution.js',
+    find: "era.print('被吸收了全部力量的她，身体变成淫靡的肉块了。');",
+    replace:
+      "era.print(`被吸收了全部力量的${get(`talent:${cid}:122`) ? '他' : '她'}，身体变成淫靡的肉块了。`);",
+    tests: ['event-execution-variant-diff'],
+    must_mention: '的融合播报人称',
+  },
+  {
+    desc: 'M13824 批量版肉便器段人称改回硬编码「她」',
+    file: 'ere/event/event-execution-batch.js',
+    find: '被吸收了全部力量的${she(cid)}',
+    replace: '被吸收了全部力量的她',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '的融合播报人称',
+  },
+  {
+    desc: 'M13825 单选版头注删掉对照测试的指向',
+    file: 'ere/event/event-execution.js',
+    find: 'test/event-execution-variant-diff.test.js 里，不要按「合并重复实现」处理。',
+    replace: '对照测试里，不要按「合并重复实现」处理。',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '头注指向对照测试',
+  },
+  {
+    desc: 'M13826 批量版头注删掉对照测试的指向',
+    file: 'ere/event/event-execution-batch.js',
+    find: 'test/event-execution-variant-diff.test.js 里并两侧各自断言；差异是',
+    replace: '对照测试里并两侧各自断言；差异是',
+    tests: ['event-execution-variant-diff'],
+    must_mention: '头注指向对照测试',
   },
 ];

@@ -19,31 +19,22 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
-const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_train_world } = require('./helpers/train-world');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好重度调教族。 */
 function seed_world() {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  fixture.era.beginTrain(0, 31);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.player = 0;
-  era_flag.assiplay = 0;
-  era_flag.assi = -1;
-  era_flag.selectcom = -1;
-  era_flag.prevcom = -1;
-  fixture.load_module('system/train/com-hardcore');
-  const { com_family, com_able_family, equip_com_family } = fixture.load_module(
-    'system/train/com-family',
-  );
-  const { adv_com_family } = fixture.load_module('system/train/com-adv');
+  const world = seed_train_world({
+    modules: {
+      hardcore: 'system/train/com-hardcore',
+      family: 'system/train/com-family',
+      adv: 'system/train/com-adv',
+    },
+  });
+  const { com_family, com_able_family, equip_com_family } =
+    world.modules.family;
+  const { adv_com_family } = world.modules.adv;
   return {
-    fixture,
-    era_flag,
+    ...world,
     com_family,
     com_able_family,
     equip_com_family,
