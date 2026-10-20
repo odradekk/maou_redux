@@ -25840,27 +25840,27 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M15404 K10 处女丧失淫乱支的增量门槛 500 改 501',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '        era.get(`talent:${target}:76`) == 1 &&\n        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)',
+    find: '        era.get(`talent:${target}:76`) == 1 &&\n        (discomfort_delta < 500 || game.system.反抗刻印回避 == 1)',
     replace:
-      '        era.get(`talent:${target}:76`) == 1 &&\n        (aversion_delta < 501 || game.system.反抗刻印回避 == 1)',
+      '        era.get(`talent:${target}:76`) == 1 &&\n        (discomfort_delta < 501 || game.system.反抗刻印回避 == 1)',
     tests: ['kojo-k10-club'],
     must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
   },
   {
     desc: 'M15405 K10 处女丧失爱慕支的增量门槛 500 改 501',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '        era.get(`talent:${target}:85`) == 1 &&\n        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)',
+    find: '        era.get(`talent:${target}:85`) == 1 &&\n        (discomfort_delta < 500 || game.system.反抗刻印回避 == 1)',
     replace:
-      '        era.get(`talent:${target}:85`) == 1 &&\n        (aversion_delta < 501 || game.system.反抗刻印回避 == 1)',
+      '        era.get(`talent:${target}:85`) == 1 &&\n        (discomfort_delta < 501 || game.system.反抗刻印回避 == 1)',
     tests: ['kojo-k10-club'],
     must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
   },
   {
     desc: 'M15406 K10 处女丧失其他支的增量门槛 500 改 501',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '      } else if (aversion_delta < 500 || game.system.反抗刻印回避 == 1) {',
+    find: '      } else if (discomfort_delta < 500 || game.system.反抗刻印回避 == 1) {',
     replace:
-      '      } else if (aversion_delta < 501 || game.system.反抗刻印回避 == 1) {',
+      '      } else if (discomfort_delta < 501 || game.system.反抗刻印回避 == 1) {',
     tests: ['kojo-k10-club'],
     must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
   },

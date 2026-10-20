@@ -526,7 +526,7 @@ engine_test(
 );
 
 engine_test(
-  'no:<n> 读的是第 n+1 个加入的角色，不是角色 n 的编号（夹具与引擎一致）',
+  'no:<n> 读的是第 n+1 个加入的角色（已加入序号 n），不是角色 ID n（夹具与引擎一致）',
   () => {
     const loader = create_chara_loader();
     loader.load_rows([

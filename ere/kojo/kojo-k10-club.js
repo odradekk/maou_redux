@@ -9449,14 +9449,14 @@ async function kojo_message_palamcng_10(rand) {
   }
 
   // A = 本回反感与不快的增量，只在本函数的处女丧失支里用
-  const aversion_delta =
+  const discomfort_delta =
     (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0);
 
   if (game.train.处女丧失 == 1 && chara(target).kojo.处女丧失 == 0) {
     if (game.train.主人导致处女丧失 == 1) {
       if (
         era.get(`talent:${target}:76`) == 1 &&
-        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)
+        (discomfort_delta < 500 || game.system.反抗刻印回避 == 1)
       ) {
         await era.printAndWait(
           `「哈啊啊啊…${heart(1)} 处女被夺走了…${heart(1)} 被诸恶的根源、身为侵略者的邪恶魔王给夺走啦${heart(1)}」`,
@@ -9472,7 +9472,7 @@ async function kojo_message_palamcng_10(rand) {
         );
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
-        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)
+        (discomfort_delta < 500 || game.system.反抗刻印回避 == 1)
       ) {
         await era.printAndWait(
           `「啊啊～！啊嗯～…啊～…啊啊啊…哈啊哈啊${heart(1)}」`,
@@ -9483,7 +9483,7 @@ async function kojo_message_palamcng_10(rand) {
         await era.printAndWait(
           `「哈啊哈啊…呐、再稍微动一下也可以哦…呐、就这样不要离开…拜托咯………」`,
         );
-      } else if (aversion_delta < 500 || game.system.反抗刻印回避 == 1) {
+      } else if (discomfort_delta < 500 || game.system.反抗刻印回避 == 1) {
         await era.printAndWait(`「哈呜～…咕…果然真是好痛呢………啊～…啊嗯～」`);
         await era.printAndWait(
           `${target_name}因为破瓜之痛而难过的呻吟着、粘稠的血粘在了${player_name}的阴茎上。`,

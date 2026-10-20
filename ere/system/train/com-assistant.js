@@ -593,7 +593,7 @@ function bump_relation(cid, other, amount) {
 
 function record_first_exp(cid, other, table) {
   if (chara(cid).train.初体验对象 !== 0) return;
-  // NO:x 就是角色 ID x。引擎的 no:<n> 返回第 n+1 个加入的角色，不能拿来取番号
+  // NO:x 即角色 ID x。引擎的 no:<n> 按已加入序号取角色，不是角色 ID
   chara(cid).train.初体验对象 = other + 1;
   chara(cid).train.初体验对象名 = chara_callname(other);
   const code = first_exp_code(era.get('tflag:14') || 0, tal(other, 122), table);

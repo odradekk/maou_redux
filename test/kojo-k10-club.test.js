@@ -368,14 +368,14 @@ test('KOJO_MESSAGE_PALAMCNG_10 处女丧失：反感与不快的本回增量满 
     { label: '其他', talent: undefined, line: '「哈呜～…咕…果然真是好痛呢' },
   ];
   for (const { label, talent, line } of branches) {
-    for (const [disgust, expected] of [
+    for (const [displeasure, expected] of [
       [199, true],
       [200, false],
     ]) {
       const fixture = await setup_k10((f) => {
         if (talent !== undefined) f.store.set(`talent:20:${talent}`, 1);
         f.store.set('delta:20:11', 300); // 反感
-        f.store.set('delta:20:12', disgust); // 不快
+        f.store.set('delta:20:12', displeasure); // 不快
       });
       const { game } = fixture.load_module('facade/game');
       game.train.处女丧失 = 1;
@@ -386,7 +386,7 @@ test('KOJO_MESSAGE_PALAMCNG_10 处女丧失：反感与不快的本回增量满 
       assert.equal(
         fixture.text_lines().some((l) => l.startsWith(line)),
         expected,
-        `${label}・增量 ${300 + disgust}：${JSON.stringify(fixture.text_lines())}`,
+        `${label}・增量 ${300 + displeasure}：${JSON.stringify(fixture.text_lines())}`,
       );
     }
   }

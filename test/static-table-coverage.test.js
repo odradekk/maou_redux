@@ -60,17 +60,15 @@ const ALIASED = new Map([
   ['maxbase', 'base'],
   ['deltabase', 'base'],
 ]);
-// 引擎寻址层自带的族，不在 staticData 里：callname/relation/love 是受保护
-// 内置；no 是已加入角色的数组；gamebase、version 是一段地址的显式 case；
-// chara 是内置只读预设对象（era.get(`chara:${id}`) →
-// this.staticData.chara[id]，#383 CSVCSTR 等价物的读法）
+// 游戏代码用到的引擎内置族，不在 staticData 里：callname/relation 是受保护
+// 内置；no 是已加入角色的数组；gamebase 是一段地址的显式 case；chara 是
+// 内置只读预设对象（era.get(`chara:${id}`) → this.staticData.chara[id]，
+// #383 CSVCSTR 等价物的读法）
 const ENGINE_BUILTIN = new Set([
   'callname',
   'relation',
-  'love',
   'no',
   'gamebase',
-  'version',
   'chara',
 ]);
 
@@ -79,9 +77,8 @@ function static_table_of(table) {
   if (ENGINE_BUILTIN.has(table)) {
     return undefined;
   }
-  // `<表>name(s)` / `<表>keys` / `<表>entries` 是名字与序号的读法，查的是
-  // 去掉后缀的那张表
-  const base = table.replace(/(?:names?|keys|entries)$/, '');
+  // `<表>name` / `<表>keys` 是名字与序号的读法，查的是去掉后缀的那张表
+  const base = table.replace(/(?:name|keys)$/, '');
   return ALIASED.get(base) ?? base;
 }
 
@@ -106,44 +103,49 @@ function strip_comments(body) {
 }
 
 /**
- * 从游戏源码里扫出 era.get/set/add 的字面量地址。表名本身是插值的地址
- * 无从核对，跳过。
- * @returns {{ where: string, quote: string, address: string, table: string }[]}
+ * 从一份源码里扫出 era.get/set/add 的字面量地址：三种引号都扫，跳过注释；
+ * 表名本身是插值的地址无从核对，跳过。
+ * @param {string} source 源码全文
+ * @param {string} file_name 报告里用的文件名
+ * @returns {{ where: string, address: string, table: string }[]}
  */
-function collect_addresses() {
+function scan_source(source, file_name) {
+  const body = strip_comments(source);
   const found = [];
-  for (const file of walk_js(ERE_DIR)) {
-    // era-electron.js 是引擎 SDK，其 JSDoc 里的例子不算游戏代码
-    if (path.basename(file) === 'era-electron.js') {
+  let line = 1;
+  let counted = 0;
+  for (const m of body.matchAll(
+    /era\.(?:get|set|add)\(\s*(?:'([^'\n]*)'|"([^"\n]*)"|`([^`]*)`)/g,
+  )) {
+    const address = m[1] ?? m[2] ?? m[3];
+    const table = /^([a-z_]+)(?::|$)/i.exec(address)?.[1];
+    if (table === undefined) {
       continue;
     }
-    const body = strip_comments(fs.readFileSync(file, 'utf8'));
-    const file_name = path.relative(REPO_ROOT, file).replace(/\\/g, '/');
-    let line = 1;
-    let counted = 0;
-    for (const m of body.matchAll(
-      /era\.(?:get|set|add)\(\s*(?:'([^'\n]*)'|"([^"\n]*)"|`([^`]*)`)/g,
-    )) {
-      const [quote, address] = [
-        ["'", m[1]],
-        ['"', m[2]],
-        ['`', m[3]],
-      ].find(([, text]) => text !== undefined);
-      const table = /^([a-z_]+)(?::|$)/i.exec(address)?.[1];
-      if (table === undefined) {
-        continue;
-      }
-      line += body.slice(counted, m.index).split('\n').length - 1;
-      counted = m.index;
-      found.push({
-        where: `${file_name}:${line}`,
-        quote,
-        address,
-        table: table.toLowerCase(),
-      });
-    }
+    line += body.slice(counted, m.index).split('\n').length - 1;
+    counted = m.index;
+    found.push({
+      where: `${file_name}:${line}`,
+      address,
+      table: table.toLowerCase(),
+    });
   }
   return found;
+}
+
+/** 扫出 ere/ 下全部游戏代码的字面量地址 */
+function collect_addresses() {
+  return (
+    walk_js(ERE_DIR)
+      // era-electron.js 是引擎 SDK，其 JSDoc 里的例子不算游戏代码
+      .filter((file) => path.basename(file) !== 'era-electron.js')
+      .flatMap((file) =>
+        scan_source(
+          fs.readFileSync(file, 'utf8'),
+          path.relative(REPO_ROOT, file).replace(/\\/g, '/'),
+        ),
+      )
+  );
 }
 
 test('参数等级阈值必须读取常量，不能作为引擎变量寻址', () => {
@@ -177,24 +179,24 @@ function load_all_products() {
   return loader;
 }
 
-test('地址扫描覆盖单引号与模板串、跳过注释', () => {
-  const addresses = collect_addresses();
+test('地址扫描覆盖三种引号，跳过注释与表名插值', () => {
+  const source = [
+    "era.get('flag:0');",
+    'era.set("money", 1);',
+    "era.add(`cflag:${cid}:2`, 1); // era.set('a:0', 1)",
+    "/* era.get('ex_flag:1') */",
+    'era.get(`${table}:0`);',
+  ].join('\n');
+  assert.deepEqual(
+    scan_source(source, 'x.js').map((e) => `${e.where} ${e.address}`),
+    ['x.js:1 flag:0', 'x.js:2 money', 'x.js:3 cflag:${cid}:2'],
+  );
   // 扫描本身要有产出——正则失效会让下面的断言退化成空转
-  const tables = new Set(addresses.map(({ table }) => table));
+  const tables = new Set(collect_addresses().map(({ table }) => table));
   assert.ok(
     tables.size >= 10,
     `从 ere/ 扫出的表只有 ${tables.size} 张，扫描八成失效了`,
   );
-  for (const quote of ["'", '`']) {
-    assert.ok(
-      addresses.some((entry) => entry.quote === quote),
-      `没有扫到 ${quote} 包住的地址`,
-    );
-  }
-  const commented = strip_comments(
-    "x(); // era.set('money', 1)\n/* era.get('a:0') */\nera.get('flag:0');",
-  );
-  assert.equal(commented, "x(); \n\nera.get('flag:0');");
 });
 
 engine_test(
