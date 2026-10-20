@@ -262,7 +262,7 @@ test('#213 输入映射：映射外的编号原样落 USERCOM（999 出口照常
   const probe = [];
   on('USERCOM', async (result) => probe.push(`usercom(${result})`));
 
-  // 999 在 L_IDX 空间外（0-100）→ USERCOM 收到原始输入 999 → AFTERTRAIN
+  // 999 不是任何指令的紧凑序号 → USERCOM 收到原始输入 999 → AFTERTRAIN
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');

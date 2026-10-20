@@ -2745,7 +2745,7 @@ export default [
     must_mention: '[死斗场决斗中]',
   },
   {
-    desc: 'M1044 able207 的死斗场检查删（不在死斗场也可用）',
+    desc: 'M1044 202-207 共用的死斗场检查删（不在死斗场也可用）',
     file: 'ere/system/train/com-colosseum.js',
     find: '    if ((era.get(`tequip:${era_flag.target}:55`) || 0) === 0) {\n      return 0; // 死斗场判定\n    }',
     replace: '    // 变异：死斗场检查删',
