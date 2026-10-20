@@ -32,6 +32,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
@@ -178,8 +179,8 @@ async function precipitate_withdrawal(cid, rand = default_rand) {
           );
           era.print(`${name}陷落了。`);
           set_cflag(cid, 1, 0);
-          era.add('money', 100 * cflag(cid, 9));
-          era.add('ex_flag:4444', 100 * cflag(cid, 9));
+          era_flag.money += 100 * cflag(cid, 9);
+          era_exflag.legit_money += 100 * cflag(cid, 9);
           await era.printAndWait(`获得${100 * cflag(cid, 9)}G！`);
           set_cflag(cid, 506, 1);
           set_cflag(cid, 507, 0);
