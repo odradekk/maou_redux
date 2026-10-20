@@ -459,7 +459,9 @@ function toolHelp(tool) {
     '参数：',
     ...Object.entries(tool.parameters.properties).map(([key, schema]) => {
       const kind = schema.type === 'array' ? `${schema.items.enum?.join('|') ?? 'string'}，可多个` : schema.type;
-      return `  --${key} <${kind}>${required.has(key) ? '（必填）' : ''}\n    ${schema.description ?? ''}`;
+      // 布尔参数在 parseToolArgs() 里是不带值的开关
+      const value = schema.type === 'boolean' ? '' : ` <${kind}>`;
+      return `  --${key}${value}${required.has(key) ? '（必填）' : ''}\n    ${schema.description ?? ''}`;
     }),
   ].join('\n');
 }
@@ -547,7 +549,10 @@ main(process.argv.slice(2)).then(
     process.exitCode = code;
   },
   (error) => {
-    console.error(error instanceof UsageError ? error.message : (error.stack ?? String(error)));
+    // 上游工具对预期内的失败（路径不存在、目录下没有 .kojo 等）一律抛普通 Error，
+    // 只打印消息；TypeError 这类子类说明是程序错误，保留调用栈方便排查
+    const expected = error instanceof UsageError || error?.constructor === Error;
+    console.error(expected ? error.message : (error?.stack ?? String(error)));
     process.exitCode = 2;
   },
 );
