@@ -1955,6 +1955,47 @@ test('sengen_video [2] 奸商代理：付金币或勋章，两种酬劳都不够
   assert.equal(poor.store.get('exflag:9011'), 0, '被拒的投放数不入账');
 });
 
+test('sengen_video [2] 奸商代理：投放前的检查与犒赏按钮同条件，进了犒赏段至少有一枚按钮', async () => {
+  // 犒赏按钮的条件是严格小于（M*5000 < MONEY、M < 勋章数）。下面三种恰好
+  // 相等的情况两枚按钮都不显示，必须在投放前就拒绝，否则犒赏段没有出口
+  for (const [label, money, medals] of [
+    ['数量 = 勋章数且钱不够', 0, 3],
+    ['数量×5000 = 金钱且勋章不够', 15000, 0],
+    ['金钱与勋章都恰好相等', 15000, 3],
+  ]) {
+    const fixture = make_video_world({ stock: 5, money, medals });
+    // 随机源给足：检查放行时会走到犒赏段，红形式是犒赏循环耗尽预置输入
+    assert.equal(
+      await run_sengen_video(fixture, [2, 3, 0, 999], seq([1, 1, 1, 1, 1])),
+      0,
+      label,
+    );
+    assert(
+      history_texts(fixture).includes('没有足够的奖赏来打动奸商'),
+      `${label}：投放前拒绝`,
+    );
+    assert.equal(
+      fixture.store.get('exflag:9011'),
+      0,
+      `${label}：被拒的投放数不入账`,
+    );
+  }
+
+  // 只差一点也算够：多 1G 或多 1 枚勋章就放行，对应的那枚犒赏按钮可按
+  for (const [label, money, medals, pay, notice] of [
+    ['金币刚好够', 15001, 3, 1, '犒赏了奸商15000G'],
+    ['勋章刚好够', 15000, 4, 2, '犒赏了奸商3枚勋章'],
+  ]) {
+    const fixture = make_video_world({ stock: 5, money, medals });
+    assert.equal(
+      await run_sengen_video(fixture, [2, 3, pay, 999], seq([1, 1, 1, 1, 1])),
+      0,
+      label,
+    );
+    assert(history_texts(fixture).includes(notice), `${label}：${notice}`);
+  }
+});
+
 test('sengen_video [3] 增强流行效果：50000G/5 勋章二选一，×1.2 起且封顶 ×2', async () => {
   const money = make_video_world({ stock: 5, money: 100000, popularity: 10 });
   // RAND:5=1（不额外加成）、RAND:2=1（不额外加成）→ floor(10×1.2) = 12

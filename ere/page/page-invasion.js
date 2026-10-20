@@ -1789,9 +1789,10 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
  *
  * 两处行为在此登记：
  *   - 犒赏段的两条按钮渲染条件（`(M*5000) < MONEY`、`M < EXP:0:81`）与
- *     接受条件同式，但支付发生在**加成之后**、判断条件用的是 `M`（= 投入数）：
- *     `M*5000 == MONEY` 或 `M == 勋章数` 时按钮不渲染，而引擎白名单会拒收
- *     未渲染的 [1]/[2]，玩家只能重问；
+ *     接受条件同式，支付发生在**加成之后**、判断条件用的是 `M`（= 投入数）。
+ *     犒赏循环只有这两枚按钮是出口，所以投放前的检查取这组条件的反面：
+ *     `M*5000 >= MONEY` 且 `M >= 勋章数`（两枚都不显示）时在投放前就拒绝，
+ *     否则恰好相等的数量会进到没有按钮可按的犒赏段，循环永远出不去；
  *   - 效果增强与时长延长在随机段之后各有一道封顶（×2 / +5）与一道保底
  *     （时长的 `(9013 - M) < 1 → M + 1`，即最小也涨 1 天）。
  *
@@ -1905,8 +1906,12 @@ async function sengen_video(rand = default_rand) {
           era.print('超出可投放数量，请重新输入');
           continue; // GOTO INPUT_LOOP_TMP1
         }
-        // 两种酬劳都付不起：重问
-        if (count > chara(0).event.勋章经验 && count * 5000 > era_flag.money) {
+        // 两种酬劳都付不起：重问。条件与下方两枚犒赏按钮的显示条件互补，
+        // 放行就保证至少有一枚按钮可按，犒赏循环才有出口
+        if (
+          count >= chara(0).event.勋章经验 &&
+          count * 5000 >= era_flag.money
+        ) {
           era.print('没有足够的奖赏来打动奸商');
           continue; // GOTO INPUT_LOOP_TMP1
         }
@@ -1928,7 +1933,7 @@ async function sengen_video(rand = default_rand) {
         if (base < chara(0).event.勋章经验) {
           era.printButton('犒赏勋章', 2);
         }
-        // $INPUT_LOOP_TMP2（无效输入重问，见函数 JSDoc 的缺陷说明）
+        // $INPUT_LOOP_TMP2（无效输入重问；投放前的检查保证至少有一枚按钮）
         for (;;) {
           const pay = await number_input();
           if (pay === 1 && base * 5000 < era_flag.money) {
