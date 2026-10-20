@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2725; // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2740; // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -25827,5 +25827,138 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '      // 变异：成熟出售真身调用丢失',
     tests: ['sell-maturo'],
     must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+  },
+  {
+    desc: "M15403 K10 调教后自慰退回读 era.get('a:0')（表不存在，次数恒 0）",
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '  const masturbation_count = peek_masturbation_count();',
+    replace: "  const masturbation_count = era.get('a:0') || 0;",
+    tests: ['kojo-k10-club'],
+    must_mention:
+      '调教后自慰：按 AFTERTRAIN 自慰检查算出的次数选单数或复数措辞',
+  },
+  {
+    desc: 'M15404 K10 处女丧失淫乱支的增量门槛 500 改 501',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '        era.get(`talent:${target}:76`) == 1 &&\n        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)',
+    replace:
+      '        era.get(`talent:${target}:76`) == 1 &&\n        (aversion_delta < 501 || game.system.反抗刻印回避 == 1)',
+    tests: ['kojo-k10-club'],
+    must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
+  },
+  {
+    desc: 'M15405 K10 处女丧失爱慕支的增量门槛 500 改 501',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '        era.get(`talent:${target}:85`) == 1 &&\n        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)',
+    replace:
+      '        era.get(`talent:${target}:85`) == 1 &&\n        (aversion_delta < 501 || game.system.反抗刻印回避 == 1)',
+    tests: ['kojo-k10-club'],
+    must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
+  },
+  {
+    desc: 'M15406 K10 处女丧失其他支的增量门槛 500 改 501',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '      } else if (aversion_delta < 500 || game.system.反抗刻印回避 == 1) {',
+    replace:
+      '      } else if (aversion_delta < 501 || game.system.反抗刻印回避 == 1) {',
+    tests: ['kojo-k10-club'],
+    must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
+  },
+  {
+    desc: 'M15407 K10 处女丧失的增量漏加不快（DELTA:12）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: '    (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0);',
+    replace: '    (era.get(`delta:${target}:11`) || 0) + 0; // 变异：漏加不快',
+    tests: ['kojo-k10-club'],
+    must_mention: '处女丧失：反感与不快的本回增量满 500 时不出破瓜台词',
+  },
+  {
+    desc: 'M15408 K10 调教后自慰的复数措辞门槛 > 1 改 >= 1（自慰 1 次也说「不断」）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: "${masturbation_count > 1 ? '不断迎来绝顶' : '迎来绝顶'}",
+    replace: "${masturbation_count >= 1 ? '不断迎来绝顶' : '迎来绝顶'}",
+    tests: ['kojo-k10-club'],
+    must_mention:
+      '调教后自慰：按 AFTERTRAIN 自慰检查算出的次数选单数或复数措辞',
+  },
+  {
+    desc: "M15409 K7 录像自我介绍「初回・本名」支退回 era.set('tflag:32 |', 2)（初回）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: "              (recall_dirty ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n          await era.print(\n            `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,\n          );\n          game.kojo.录像内容 |= 2;\n",
+    replace:
+      "              (recall_dirty ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n          await era.print(\n            `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,\n          );\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n",
+    tests: ['kojo-k7-heart'],
+    must_mention: '初回・本名',
+  },
+  {
+    desc: "M15410 K7 录像自我介绍「初回・下流的话」支退回 era.set('tflag:32 |', 2)（初回）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.print(`${target_name}向着水晶球开始说出了下流的话`);\n          game.kojo.录像内容 |= 2;\n        } else if (\n          era0(`talent:${target}:85`) ||\n          era0(`abl:${target}:10`) >= 3 ||\n          era0(`abl:${target}:11`) >= 4 ||\n          era0(`abl:${target}:17`) >= 2\n        ) {\n          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 |= 2;\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行输出：无后缀 PRINTFORM 不换行，各支的',
+    replace:
+      "          await era.print(`${target_name}向着水晶球开始说出了下流的话`);\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n        } else if (\n          era0(`talent:${target}:85`) ||\n          era0(`abl:${target}:10`) >= 3 ||\n          era0(`abl:${target}:11`) >= 4 ||\n          era0(`abl:${target}:17`) >= 2\n        ) {\n          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 |= 2;\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行输出：无后缀 PRINTFORM 不换行，各支的",
+    tests: ['kojo-k7-heart'],
+    must_mention: '初回・下流的话',
+  },
+  {
+    desc: "M15411 K7 录像自我介绍「初回・自我介绍」支退回 era.set('tflag:32 |', 2)（初回）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 |= 2;\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行输出：无后缀 PRINTFORM 不换行，各支的',
+    replace:
+      "          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行输出：无后缀 PRINTFORM 不换行，各支的",
+    tests: ['kojo-k7-heart'],
+    must_mention: '初回・自我介绍',
+  },
+  {
+    desc: "M15412 K7 录像自我介绍「二回目・本名」支退回 era.set('tflag:32 |', 2)（二回目）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: "              (recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n          await era.print(\n            `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,\n          );\n          game.kojo.录像内容 |= 2;\n",
+    replace:
+      "              (recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') +\n              `高兴地讲了出来……`,\n          );\n          await era.print(\n            `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,\n          );\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n",
+    tests: ['kojo-k7-heart'],
+    must_mention: '二回目・本名',
+  },
+  {
+    desc: "M15413 K7 录像自我介绍「二回目・爱的话语」支退回 era.set('tflag:32 |', 2)（二回目）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.print(`${target_name}一边扭着腰一边向水晶球说着爱的话语`);\n          game.kojo.录像内容 |= 2;\n',
+    replace:
+      "          await era.print(`${target_name}一边扭着腰一边向水晶球说着爱的话语`);\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n",
+    tests: ['kojo-k7-heart'],
+    must_mention: '二回目・爱的话语',
+  },
+  {
+    desc: "M15414 K7 录像自我介绍「二回目・下流的词语」支退回 era.set('tflag:32 |', 2)（二回目）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '            `${target_name}一边扭着腰一边向水晶球喊出了下流的词语`,\n          );\n          game.kojo.录像内容 |= 2;\n',
+    replace:
+      "            `${target_name}一边扭着腰一边向水晶球喊出了下流的词语`,\n          );\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n",
+    tests: ['kojo-k7-heart'],
+    must_mention: '二回目・下流的词语',
+  },
+  {
+    desc: "M15415 K7 录像自我介绍「二回目・下流的话」支退回 era.set('tflag:32 |', 2)（二回目）",
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.print(`${target_name}向着水晶球开始说出了下流的话`);\n          game.kojo.录像内容 |= 2;\n        } else if (\n          era0(`talent:${target}:85`) ||\n          era0(`abl:${target}:10`) >= 3 ||\n          era0(`abl:${target}:11`) >= 4 ||\n          era0(`abl:${target}:17`) >= 2\n        ) {\n          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 |= 2;\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行：前缀提到语句外共用，',
+    replace:
+      "          await era.print(`${target_name}向着水晶球开始说出了下流的话`);\n          era.set('tflag:32 |', 2); // 变异：写到键「32 |」上\n        } else if (\n          era0(`talent:${target}:85`) ||\n          era0(`abl:${target}:10`) >= 3 ||\n          era0(`abl:${target}:11`) >= 4 ||\n          era0(`abl:${target}:17`) >= 2\n        ) {\n          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 |= 2;\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行：前缀提到语句外共用，",
+    tests: ['kojo-k7-heart'],
+    must_mention: '二回目・下流的话',
+  },
+  {
+    desc: 'M15416 K7 录像自我介绍「二回目・自我介绍」支改成直接赋值（冲掉处女丧失位）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 |= 2;\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行：前缀提到语句外共用，',
+    replace:
+      '          await era.print(`${target_name}向着水晶球做了自我介绍`);\n          game.kojo.录像内容 = 2; // 变异：冲掉别的位\n        } else {\n          await era.print(`${target_name}头扭向一边什么都不说`);\n        }\n      } else {\n        // 同一行：前缀提到语句外共用，',
+    tests: ['kojo-k7-heart'],
+    must_mention: '二回目・自我介绍',
+  },
+  {
+    desc: 'M15417 K1 助手 17 号判断退回读 no:${assi}（取到第 assi+1 个加入的角色）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find: '    } else if (assi === 17) {',
+    replace: '    } else if ((era.get(`no:${assi}`) || assi) === 17) {',
+    tests: ['kojo-k1-confident'],
+    must_mention: '助手专属台词按助手自己的 ID 判断 17 号',
   },
 ];
