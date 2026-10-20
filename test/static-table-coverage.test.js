@@ -1,19 +1,22 @@
 /**
- * @file 静态表覆盖回归锁：游戏代码用到的每一个三段寻址族，`yml/` 里都得有
- * 对应的名字表（issue #42 实机缺陷）。
+ * @file 静态表覆盖回归锁：游戏代码里每个 era.get/set/add 地址的表，引擎都
+ * 认识；地址里写死的变量名，yml/ 的名字表里都有声明。
  *
- * 缘由：引擎的三段寻址在 **`data[表][角色]` 存在、而 `staticData[表]` 缺位**
- * 时**直接抛错**——app.asar 的 setVar 缺省分支是
- * `u = i(this.staticData[a][u], u)`，没有检查。调教域的表由
- * `beginTrain` / `addCharacter` 按角色开桶，所以桶一定在，崩就崩在名字表
- * 这一侧。实机撞见：调教开始时写 `stain:31:2` 报
- * `Cannot read properties of undefined (reading '2')`（stain/ex/cstr/tequip
- * 四张表当时都缺）。
+ * 引擎读写函数遇到下面几类地址时，要么直接崩溃，要么只记日志、玩家看到的
+ * 数值不对：
+ *   - 三段寻址在 **`data[表][角色]` 存在、而 `staticData[表]` 缺位** 时直接
+ *     抛错（issue #42 实机缺陷）。调教域的表由 `beginTrain` / `addCharacter`
+ *     按角色开桶，所以桶一定在，崩就崩在名字表这一侧：调教开始时写
+ *     `stain:31:2` 报 `Cannot read properties of undefined (reading '2')`。
+ *   - 一段、二段地址的表不存在时，引擎只调 `era.error` 记一条 key error，
+ *     写入丢弃、读取得 undefined。`era.add('money', …)` 因此不生效，玩家看到
+ *     「获得…G！」钱却没加上。
+ *   - 变量名不在名字表里时，引擎把原字符串当下标：`era.set('tflag:32 |', 2)`
+ *     写到键 `"32 |"` 上，TFLAG:32 不变。
  *
- * 这一类缺陷夹具看不见（夹具只记调用，不查静态表），单元测试也看不见
- * （各用例只播自己要的那张表）。所以本文件**从游戏源码里扫出寻址族**，
- * 再用引擎自己的 `setVar` 逐个探一遍——新写一个族而忘了配表，会在这里红，
- * 而不是等实机崩。
+ * 夹具只记调用、不查静态表，单元测试各自只播种要用的表，都看不见这几类
+ * 缺陷。所以本文件**从游戏源码里扫出地址**（单引号、双引号、模板串都扫，
+ * 跳过 SDK 与注释），按引擎装载 yml/ 的结果逐个核对。
  *
  * 引擎不在场（无 app.asar）时整文件 skip。
  */
@@ -41,11 +44,12 @@ const CHARA_PRODUCT = /^Chara\d+\.yml$/;
 //   palam/param/gotjuel/delta → staticData.juel；nowex → staticData.ex；
 //   base/maxbase/deltabase → staticData.base；item* → staticData.item
 const ALIASED = new Map([
-  // #399：itemprice/itemname/itemsales 都走引擎的 item* 分支（静态表是
-  // staticData.item.{name,price}）；itemname 另由「去 name 后缀」那条规则
-  // 命中（base = item），itemsales 在 NOT_THREE_PART，itemprice 需要显式
-  // 别名——它既无 name 后缀也不在豁免集里
+  // #399：itemprice/itemsales 走引擎的 item* 分支（`a.startsWith("item")`
+  // 一支按 `a.substring(4)` 落 data.item.price / sales，SHOP_LABO 的转生
+  // 门槛读 price），名字表是 staticData.item.name；itemname 由「去 name
+  // 后缀」那条规则命中
   ['itemprice', 'item'],
+  ['itemsales', 'item'],
   ['palam', 'juel'],
   ['param', 'juel'],
   ['gotjuel', 'juel'],
@@ -56,25 +60,30 @@ const ALIASED = new Map([
   ['maxbase', 'base'],
   ['deltabase', 'base'],
 ]);
-// 二段寻址或另有落点，不吃 staticData[表]：flag/global 走各自 case；
-// callname/relation/no 是受保护内置；itemsales / itemprice 走 item 分支
-// （引擎寻址层 `a.startsWith("item")` 一支：`switch (safeUndefinedCheck(
-// staticData.item.name[u], u), a.substring(4))` 的 "price" 落 data.item.price
-// ——SHOP_LABO 的转生门槛读它，#398 实测 app.asar 模块 183 后登记）；
-// *name 是「取名字」的读法，查的是被去掉后缀的那张表；chara 是 case 2
-// 的内置只读预设对象（era.get(`chara:${id}`) → this.staticData.chara[id]，
-// #383 CSVCSTR 等价物的读法），三段 chara:x:y 在引擎里没有对应分支、
-// 不会走本锁盯的那条 staticData[表] 缺表崩溃路径
-const NOT_THREE_PART = new Set([
-  'flag',
-  'global',
+// 引擎寻址层自带的族，不在 staticData 里：callname/relation/love 是受保护
+// 内置；no 是已加入角色的数组；gamebase、version 是一段地址的显式 case；
+// chara 是内置只读预设对象（era.get(`chara:${id}`) →
+// this.staticData.chara[id]，#383 CSVCSTR 等价物的读法）
+const ENGINE_BUILTIN = new Set([
   'callname',
   'relation',
-  'itemsales',
-  'itemprice',
+  'love',
   'no',
+  'gamebase',
+  'version',
   'chara',
 ]);
+
+/** 地址里的表名对应 staticData 的哪张表；引擎自带的族返回 undefined */
+function static_table_of(table) {
+  if (ENGINE_BUILTIN.has(table)) {
+    return undefined;
+  }
+  // `<表>name(s)` / `<表>keys` / `<表>entries` 是名字与序号的读法，查的是
+  // 去掉后缀的那张表
+  const base = table.replace(/(?:names?|keys|entries)$/, '');
+  return ALIASED.get(base) ?? base;
+}
 
 /** 递归收集 ere/ 下的 .js */
 function walk_js(dir, out = []) {
@@ -89,20 +98,52 @@ function walk_js(dir, out = []) {
   return out;
 }
 
-/** 从游戏源码里扫出 era.get/set/add 的寻址族前缀 */
-function collect_addressed_tables() {
-  const found = new Set();
+/** 去掉注释；块注释保留换行，报出的行号仍对得上源码 */
+function strip_comments(body) {
+  return body
+    .replace(/\/\*[\s\S]*?\*\//g, (block) => block.replace(/[^\n]/g, ''))
+    .replace(/(^|[^:'"`\\])\/\/.*$/gm, '$1');
+}
+
+/**
+ * 从游戏源码里扫出 era.get/set/add 的字面量地址。表名本身是插值的地址
+ * 无从核对，跳过。
+ * @returns {{ where: string, quote: string, address: string, table: string }[]}
+ */
+function collect_addresses() {
+  const found = [];
   for (const file of walk_js(ERE_DIR)) {
     // era-electron.js 是引擎 SDK，其 JSDoc 里的例子不算游戏代码
     if (path.basename(file) === 'era-electron.js') {
       continue;
     }
-    const body = fs.readFileSync(file, 'utf8');
-    for (const m of body.matchAll(/era\.(?:get|set|add)\(`([a-z_]+):/g)) {
-      found.add(m[1]);
+    const body = strip_comments(fs.readFileSync(file, 'utf8'));
+    const file_name = path.relative(REPO_ROOT, file).replace(/\\/g, '/');
+    let line = 1;
+    let counted = 0;
+    for (const m of body.matchAll(
+      /era\.(?:get|set|add)\(\s*(?:'([^'\n]*)'|"([^"\n]*)"|`([^`]*)`)/g,
+    )) {
+      const [quote, address] = [
+        ["'", m[1]],
+        ['"', m[2]],
+        ['`', m[3]],
+      ].find(([, text]) => text !== undefined);
+      const table = /^([a-z_]+)(?::|$)/i.exec(address)?.[1];
+      if (table === undefined) {
+        continue;
+      }
+      line += body.slice(counted, m.index).split('\n').length - 1;
+      counted = m.index;
+      found.push({
+        where: `${file_name}:${line}`,
+        quote,
+        address,
+        table: table.toLowerCase(),
+      });
     }
   }
-  return [...found].sort();
+  return found;
 }
 
 test('参数等级阈值必须读取常量，不能作为引擎变量寻址', () => {
@@ -136,33 +177,95 @@ function load_all_products() {
   return loader;
 }
 
+test('地址扫描覆盖单引号与模板串、跳过注释', () => {
+  const addresses = collect_addresses();
+  // 扫描本身要有产出——正则失效会让下面的断言退化成空转
+  const tables = new Set(addresses.map(({ table }) => table));
+  assert.ok(
+    tables.size >= 10,
+    `从 ere/ 扫出的表只有 ${tables.size} 张，扫描八成失效了`,
+  );
+  for (const quote of ["'", '`']) {
+    assert.ok(
+      addresses.some((entry) => entry.quote === quote),
+      `没有扫到 ${quote} 包住的地址`,
+    );
+  }
+  const commented = strip_comments(
+    "x(); // era.set('money', 1)\n/* era.get('a:0') */\nera.get('flag:0');",
+  );
+  assert.equal(commented, "x(); \n\nera.get('flag:0');");
+});
+
 engine_test(
-  '游戏代码用到的每个三段寻址族，yml/ 都有对应名字表（缺表即实机直接崩溃）',
+  '游戏代码地址里的每张表，引擎都认识（缺表时一、二段写入被丢弃，三段直接崩溃）',
   () => {
     const loader = load_all_products();
-    const addressed = collect_addressed_tables();
-    // 扫描本身要有产出——正则失效会让整条断言退化成空转
-    assert.ok(
-      addressed.length >= 10,
-      `从 ere/ 扫出的寻址族只有 ${addressed.length} 个，扫描八成失效了`,
+    const unknown = collect_addresses()
+      .filter(({ table }) => {
+        const key = static_table_of(table);
+        return key !== undefined && !loader.static_data[key];
+      })
+      .map(({ where, address }) => `${where} ${address}`);
+    assert.deepEqual(
+      unknown,
+      [],
+      `这些地址的表在 yml/ 和引擎内置族里都没有：\n  ${unknown.join('\n  ')}`,
     );
+  },
+);
 
-    const missing = [];
-    for (const table of addressed) {
-      const base = table.replace(/name$/, '');
-      const key = ALIASED.get(base) ?? base;
-      if (NOT_THREE_PART.has(base) || NOT_THREE_PART.has(table)) {
+engine_test(
+  '地址里写死的变量名都在 yml/ 名字表里（未声明时引擎把原字符串当下标）',
+  () => {
+    const loader = load_all_products();
+    const undeclared = [];
+    for (const { where, address, table } of collect_addresses()) {
+      const field = address.split(':').at(-1);
+      if (
+        !address.includes(':') ||
+        /\$\{|\}/.test(field) ||
+        /^-?\d+$/.test(field)
+      ) {
         continue;
       }
-      if (!loader.static_data[key]) {
-        missing.push(`${table} → staticData.${key}`);
+      const key = static_table_of(table);
+      const names =
+        key === 'item'
+          ? loader.static_data.item?.name
+          : key && loader.static_data[key];
+      if (names && names[field] === undefined) {
+        undeclared.push(`${where} ${address}`);
       }
     }
     assert.deepEqual(
-      missing,
+      undeclared,
       [],
-      `这些寻址族在 yml/ 里没有名字表，三段写入会在实机上抛错：\n  ${missing.join('\n  ')}`,
+      `这些地址的变量名没有在 yml/ 声明：\n  ${undeclared.join('\n  ')}`,
     );
+  },
+);
+
+engine_test(
+  '引擎实证：表不存在只记 key error、不写入；变量名未声明时写到原字符串键上',
+  () => {
+    const loader = load_all_products();
+    const errors = [];
+    const fake = {
+      staticData: { ...loader.static_data },
+      fieldNames: loader.field_names,
+      data: { flag: {}, tflag: {} },
+      global: {},
+      extendedTables: {},
+      era: { error: (m) => errors.push(String(m)) },
+    };
+    assert.equal(engine.set_var.call(fake, 'money', 100, true), undefined);
+    assert.equal(fake.data.money, undefined);
+    assert.deepEqual(errors, ['key error in getter/setter! key (money)']);
+
+    assert.equal(engine.set_var.call(fake, 'tflag:32 |', 2), 2);
+    assert.equal(fake.data.tflag[32], undefined, 'TFLAG:32 本身不变');
+    assert.equal(fake.data.tflag['32 |'], 2);
   },
 );
 
