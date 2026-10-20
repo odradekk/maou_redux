@@ -63,7 +63,10 @@ const {
   chara_name,
   chara_nickname,
 } = require('#/utils/callname-utils');
-const { peek_aftertrain_s } = require('#/event/event-aftertrain');
+const {
+  peek_aftertrain_s,
+  peek_masturbation_count,
+} = require('#/event/event-aftertrain');
 
 const { piercing_state } = require('#/system/train/piercing-state');
 
@@ -9445,18 +9448,15 @@ async function kojo_message_palamcng_10(rand) {
     chara(target).kojo.首次B绝顶 = 1;
   }
 
-  // A（单字母全局变量，A:0，跨函数共享——见 references/core-concepts/variables.md）
-  era.set(
-    'a:0',
-    (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0),
-  );
-  const a_count = era.get('a:0') || 0;
+  // A = 本回反感与不快的增量，只在本函数的处女丧失支里用
+  const aversion_delta =
+    (era.get(`delta:${target}:11`) || 0) + (era.get(`delta:${target}:12`) || 0);
 
   if (game.train.处女丧失 == 1 && chara(target).kojo.处女丧失 == 0) {
     if (game.train.主人导致处女丧失 == 1) {
       if (
         era.get(`talent:${target}:76`) == 1 &&
-        (a_count < 500 || game.system.反抗刻印回避 == 1)
+        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)
       ) {
         await era.printAndWait(
           `「哈啊啊啊…${heart(1)} 处女被夺走了…${heart(1)} 被诸恶的根源、身为侵略者的邪恶魔王给夺走啦${heart(1)}」`,
@@ -9472,7 +9472,7 @@ async function kojo_message_palamcng_10(rand) {
         );
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
-        (a_count < 500 || game.system.反抗刻印回避 == 1)
+        (aversion_delta < 500 || game.system.反抗刻印回避 == 1)
       ) {
         await era.printAndWait(
           `「啊啊～！啊嗯～…啊～…啊啊啊…哈啊哈啊${heart(1)}」`,
@@ -9483,7 +9483,7 @@ async function kojo_message_palamcng_10(rand) {
         await era.printAndWait(
           `「哈啊哈啊…呐、再稍微动一下也可以哦…呐、就这样不要离开…拜托咯………」`,
         );
-      } else if (a_count < 500 || game.system.反抗刻印回避 == 1) {
+      } else if (aversion_delta < 500 || game.system.反抗刻印回避 == 1) {
         await era.printAndWait(`「哈呜～…咕…果然真是好痛呢………啊～…啊嗯～」`);
         await era.printAndWait(
           `${target_name}因为破瓜之痛而难过的呻吟着、粘稠的血粘在了${player_name}的阴茎上。`,
@@ -9619,11 +9619,8 @@ async function kojo_message_markcng_10(rand) {
 /**
  * self_kojo_k10：事件口上入口（EVENT_AFTERTRAIN 等处调用）。调教后自慰
  * CFLAG:261，NTR 调教后自慰 CFLAG:657 每次调用递减一次，归零后停止。
- * A 是跨函数共享的单字母全局变量（a:0）：调教中由
- * kojo_message_palamcng_10 写入（本回精液量），本函数按单字母全局的语义
- * 直接读取——当轮调教没写过时读到的是更早一轮的残留值，自慰描写里
- * 「射精多次后/射精后」等措辞与精液水洼的回数消费的就是这个值，故保留
- * 跨函数读取、不改成局部变量。
+ * A 是 AFTERTRAIN 自慰检查算出的自慰次数，经 peek_masturbation_count 读取；
+ * 自慰描写里「射精多次后/射精后」等措辞与精液水洼的回数都用它。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @param {number} [q] 自慰妄想对象（Q：0 主人 / 1 助手 / 2 野狗）
@@ -9637,7 +9634,7 @@ async function self_kojo_k10(rand, q) {
   const master_name = chara_nickname(0); // %CALLNAME:MASTER%（MASTER 恒角色 0）
   let Q = q;
   const s = peek_aftertrain_s(); // SIF s >= 3 需要（跨函数全局 S，K7 kojo-k7-heart.js 先例）
-  const a_count = era.get('a:0') || 0; // A（单字母全局变量，kojo_message_palamcng_10 写入，本回精液水洼量/绝顶次数）
+  const masturbation_count = peek_masturbation_count(); // A：AFTERTRAIN 自慰检查的自慰次数
 
   void rand_n;
 
@@ -9701,7 +9698,7 @@ async function self_kojo_k10(rand, q) {
           `${target_name}在床上把双腿张得大大的并撸起了阴茎。`,
         );
         await era.printAndWait(
-          `她的肚子上出现了${a_count}回分量的精液弄成的水洼。时不时${target_name}会捧起这些精液一边舔一边继续自慰。`,
+          `她的肚子上出现了${masturbation_count}回分量的精液弄成的水洼。时不时${target_name}会捧起这些精液一边舔一边继续自慰。`,
         );
 
         await era.printAndWait(
@@ -9758,7 +9755,7 @@ async function self_kojo_k10(rand, q) {
           `「啊嗯～啊嗯～${heart(1)} 啊啊嗯～${heart(1)} 一边啾啾地吸吮着魔王大人的后颈一边撸鸡鸡真爽～${heart(1)}」`,
         );
         await era.printAndWait(
-          `${target_name}一边叫嚷着隐藏的愿望一边反复激烈自慰着。${a_count > 1 ? '射精多次后' : '射精后'}精液涂满了阴茎、用手抠着秘穴。`,
+          `${target_name}一边叫嚷着隐藏的愿望一边反复激烈自慰着。${masturbation_count > 1 ? '射精多次后' : '射精后'}精液涂满了阴茎、用手抠着秘穴。`,
         );
 
         await era.printAndWait(
@@ -9778,7 +9775,7 @@ async function self_kojo_k10(rand, q) {
           `「啊啊嗯～…嗯～…啊嗯～…${heart(1)} 明明知道那样抱我会让我变得奇怪的…你真坏${heart(1)}」`,
         );
         await era.printAndWait(
-          `${target_name}一边激烈的撸着鸡鸡一边呻吟着。${a_count > 1 ? '迎来多次绝顶的' : '迎来绝顶的'}阴茎丝毫没有萎下去的迹象。`,
+          `${target_name}一边激烈的撸着鸡鸡一边呻吟着。${masturbation_count > 1 ? '迎来多次绝顶的' : '迎来绝顶的'}阴茎丝毫没有萎下去的迹象。`,
         );
 
         await era.printAndWait(
@@ -9818,7 +9815,7 @@ async function self_kojo_k10(rand, q) {
           `「哈啊哈啊…嗯～…啊啊～…嗯～！哈啊哈啊…啊啊…我明明刚刚还被那个人抱过的…哈啊～…${heart(1)}」`,
         );
         await era.printAndWait(
-          `${target_name}自慰地停不下来的样子、撸着勃起变硬的阴茎${a_count > 1 ? '不断迎来绝顶' : '迎来绝顶'}。`,
+          `${target_name}自慰地停不下来的样子、撸着勃起变硬的阴茎${masturbation_count > 1 ? '不断迎来绝顶' : '迎来绝顶'}。`,
         );
 
         await era.printAndWait(
