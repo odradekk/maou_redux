@@ -525,6 +525,47 @@ engine_test(
   },
 );
 
+engine_test(
+  'no:<n> 读的是第 n+1 个加入的角色，不是角色 n 的编号（夹具与引擎一致）',
+  () => {
+    const loader = create_chara_loader();
+    loader.load_rows([
+      ['番号', '31'],
+      ['名前', '琼'],
+    ]);
+    loader.load_rows([
+      ['番号', '0'],
+      ['名前', '你'],
+    ]);
+    const adder = create_add_character(loader.static_data);
+    adder.add(31);
+    adder.add(0);
+    const engine_this = {
+      staticData: loader.static_data,
+      fieldNames: {},
+      data: adder.data,
+      global: {},
+      extendedTables: {},
+      era: { error: () => {} },
+    };
+
+    const fixture = create_era_fixture();
+    fixture.seed_chara(31, { id: 31, name: '琼' });
+    fixture.seed_chara(0, { id: 0, name: '你' });
+    fixture.era.addCharacter(31);
+    fixture.era.addCharacter(0);
+
+    for (const [address, expected] of [
+      ['no:0', 31],
+      ['no:1', 0],
+      ['no:31', undefined],
+    ]) {
+      assert.equal(engine.set_var.call(engine_this, address), expected);
+      assert.equal(fixture.era.get(address), expected, address);
+    }
+  },
+);
+
 engine_test('引擎 getNumber（模块 65）：input 回传归一的边界值（#151）', () => {
   const { getNumber } = engine.engine_utils;
   // 上面夹具正主用例的同一组取值——期望值由引擎真函数背书，不是凭

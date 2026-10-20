@@ -12,6 +12,7 @@
 
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
+const { join_slave_chara } = require('./helpers/chara');
 const { seed_train_world } = require('./helpers/train-world');
 
 const ASSI = 17;
@@ -817,4 +818,41 @@ test('#595 COM73：>100 时剪发菜单之后恰有一个真空行，≤100 时�
     !/^[ \u3000]*$/.test(short.fixture.lines[short_menu - 1].text ?? ''),
     '短发时菜单之前没有空行（短发分支跳过裸输出）',
   );
+});
+
+// 初体验对象记「对方角色 ID + 1」。先加 40 个填充角色、再把魔王移到队尾，
+// 让「第 n 个加入的角色」与角色 n 错开：0 号位是 31、17 号位是 115、
+// 31 号位是 129，按加入顺序取值就会记成别的角色
+function scramble_join_order(fixture) {
+  for (let id = 100; id < 140; id += 1) {
+    join_slave_chara(fixture, id);
+  }
+  fixture.era.addCharacter(0);
+}
+
+test('COM62：魔王童贞与助手处女的初体验对象是对方 ID + 1，与加入顺序无关', async () => {
+  const world = seed_world();
+  const { fixture } = world;
+  scramble_join_order(fixture);
+  fixture.store.set('talent:0:1', 1); // 魔王童贞
+  fixture.store.set(`talent:${ASSI}:0`, 1); // 助手处女
+  fixture.set_inputs(1);
+  assert.equal(await run_com(world, 62), 1);
+  const { chara } = fixture.load_module('facade/chara');
+  assert.equal(chara(0).train.初体验对象, ASSI + 1, '魔王的对象是助手');
+  assert.equal(chara(ASSI).train.初体验对象, 1, '助手的对象是魔王');
+});
+
+test('COM65：助手处女与目标童贞的初体验对象是对方 ID + 1，与加入顺序无关', async () => {
+  const world = seed_world({ player: ASSI });
+  const { fixture, era_flag } = world;
+  era_flag.assiplay = 1;
+  scramble_join_order(fixture);
+  fixture.store.set(`talent:${ASSI}:0`, 1); // 助手处女
+  fixture.store.set(`talent:${TARGET}:1`, 1); // 目标童贞
+  fixture.set_inputs(0); // 同意让目标夺走助手处女
+  assert.equal(await run_com(world, 65), 1);
+  const { chara } = fixture.load_module('facade/chara');
+  assert.equal(chara(ASSI).train.初体验对象, TARGET + 1, '助手的对象是目标');
+  assert.equal(chara(TARGET).train.初体验对象, ASSI + 1, '目标的对象是助手');
 });
