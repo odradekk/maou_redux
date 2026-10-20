@@ -2809,6 +2809,16 @@ test('等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏�
   });
 });
 
+test('等键契约：丰胸选中已是大胸的奴隶但钱不够加价，加价提示在回选人换屏前已确认', async () => {
+  // 钱够 20000 的入口门槛、不够 50000 的加价：选人 → 加价提示 → 回选人
+  // （选人屏换屏）→ 返回
+  await assert_wait_contract('modify_bustup 加价不足', {
+    fn: 'modify_bustup',
+    inputs: [1, 999],
+    seed: { 'talent:1:110': 1, 'flag:10004': 30000 },
+  });
+});
+
 test('等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认', async () => {
   await assert_wait_contract('tatoo_set_off 尾段', {
     fn: 'tatoo_set_off',

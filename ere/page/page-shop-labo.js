@@ -441,6 +441,8 @@ async function modify_bustup(rand = default_rand) {
       era.print(`${savestr(cid)}胸部伟岸，要更上一层楼，需要50000点。`);
       cost = 50000;
       if (era_flag.money < cost) {
+        // 加价提示在回选人换屏前经按键确认（ADR-0009）
+        await era.waitAnyKey();
         continue;
       }
       era.print('这样还要继续么？');

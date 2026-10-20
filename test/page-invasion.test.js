@@ -1926,8 +1926,8 @@ test('sengen_video [2] 奸商代理：付金币或勋章，两种酬劳都不够
   );
   assert.equal(
     money.waits.filter((w) => w.waited).length,
-    1,
-    '奸商成功投放后等键（PRINTFORMW）',
+    2,
+    '奸商成功投放后等键（PRINTFORMW），犒赏播报后再等一次',
   );
   assert(history_texts(money).includes('犒赏了奸商50000G'), '犒赏金币提示');
 

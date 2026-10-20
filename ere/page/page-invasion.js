@@ -1949,6 +1949,8 @@ async function sengen_video(rand = default_rand) {
           }
           // ELSE → GOTO INPUT_LOOP_TMP2
         }
+        // 犒赏播报在回菜单换屏前经按键确认（ADR-0009）
+        await era.waitAnyKey();
       } else {
         era.print('投放，似乎失败了。');
         await era.waitAnyKey(); // PRINTFORMW 的 WAIT
