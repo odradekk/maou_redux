@@ -21,7 +21,8 @@
  *
  * L_IDX 本应由循环扫描指令表算出；ere 侧运行时不能扫文件（#7），但
  * DECLARED_TRAIN_IDS 就是 yml/TrainCommand.yml 全部 id 的升序离线转写
- * （com-family.js）——升序枚举与 0–300 的逐号扫描一致，位次即下标。
+ * （com-family.js）——升序枚举与 0–300 的逐号扫描一致，位次即下标；
+ * 唯一的例外是位次逐条编号时跳过调教画面的子菜单按钮号（见 USERCOM_KEYS）。
  * 数据表变动时（转写源重跑）映射自动跟随，不会静默失配。契约测试
  * （test/com-dispatch.test.js）另从 yml 文本独立推一遍核对。
  *
@@ -39,6 +40,28 @@ if (new Set(DECLARED_TRAIN_IDS).size !== DECLARED_TRAIN_IDS.length) {
   throw new Error('DECLARED_TRAIN_IDS 含重复编号（L_IDX 映射无法建立）');
 }
 
+// 调教画面子菜单的按钮号（page-usercom.js 的 SHOW_USERCOM）。紧凑序号
+// 跳过这些号：同一画面上两枚按钮同号时，引擎两枚都回传同一个值，而
+// train-loop 先按指令处理输入，子菜单就再也按不到。改的是序号这一边：
+// 子菜单号在每个调教回合都出现、是玩家常按的键，序号从 100 起才会撞，
+// 目前只有末位指令 207 媚药史莱姆（L_IDX 100 → 109）
+const USERCOM_KEYS = new Set([
+  100, 101, 102, 103, 104, 105, 106, 107, 108, 112, 990, 991, 992, 999,
+]);
+
+// 位次逐条编号，遇到子菜单号顺延
+const INDEX_BY_ID = new Map();
+const ID_BY_INDEX = new Map();
+let next_index = 0;
+for (const id of ORDERED_TRAIN_IDS) {
+  while (USERCOM_KEYS.has(next_index)) {
+    next_index += 1;
+  }
+  INDEX_BY_ID.set(id, next_index);
+  ID_BY_INDEX.set(next_index, id);
+  next_index += 1;
+}
+
 /**
  * 渲染侧：指令表编号（L_I）→ 玩家可见紧凑序号（L_IDX）。
  * 指令菜单界面的方格编号。0-38 段两套重合（恒等），39 起错位。
@@ -47,23 +70,19 @@ if (new Set(DECLARED_TRAIN_IDS).size !== DECLARED_TRAIN_IDS.length) {
  * @returns {number|undefined} L_IDX；id 不在可直选空间内 → undefined
  */
 function com_index(id) {
-  const idx = ORDERED_TRAIN_IDS.indexOf(id);
-  return idx === -1 ? undefined : idx;
+  return INDEX_BY_ID.get(id);
 }
 
 /**
  * 输入侧：玩家输入的紧凑序号（L_IDX）→ 指令表编号（L_I）。
- * train-loop 的输入检查先过本层：undefined = 不是指令编号（含 999 出口、
- * 100-108/990-992 子菜单号、任意键盘数字），交给 usercom 界面分发。
+ * train-loop 的输入检查先过本层：undefined = 不是指令编号（含子菜单号、
+ * 999 出口、任意键盘数字），交给 usercom 界面分发。
  *
  * @param {number} idx 玩家输入（紧凑序号）
- * @returns {number|undefined} L_I；越界（idx < 0 或 ≥ 101）→ undefined
+ * @returns {number|undefined} L_I；不是任何指令的序号 → undefined
  */
 function com_id(idx) {
-  if (!Number.isInteger(idx) || idx < 0 || idx >= ORDERED_TRAIN_IDS.length) {
-    return undefined;
-  }
-  return ORDERED_TRAIN_IDS[idx];
+  return ID_BY_INDEX.get(idx);
 }
 
 module.exports = { com_id, com_index };

@@ -120,8 +120,11 @@ test('映射是双射且由 TrainCommand.yml 条目顺序推出（独立通道�
   );
   assert.equal(yml_ids.length, 101);
   const ordered = [...yml_ids].sort((a, b) => a - b);
-  ordered.forEach((id, idx) => {
-    assert.equal(com_index(id), idx, `com_index(${id}) 应为 yml 位次 ${idx}`);
+  // 位次 0-99 的序号就是位次；位次 100 起跳过子菜单号 [100]-[108]，
+  // 末位指令 207 媚药史莱姆的序号是 109
+  ordered.forEach((id, pos) => {
+    const idx = pos < 100 ? pos : pos + 9;
+    assert.equal(com_index(id), idx, `com_index(${id}) 应为 ${idx}`);
     assert.equal(com_id(idx), id, `com_id(${idx}) 应为 ${id}`);
   });
 
@@ -129,10 +132,9 @@ test('映射是双射且由 TrainCommand.yml 条目顺序推出（独立通道�
   for (const adv of [67, 84, 120, 208]) {
     assert.equal(com_index(adv), undefined);
   }
-  // 越界输入：不是指令编号（999 出口 / 子菜单号 / 乱数都经 undefined 落
-  // USERCOM 事件；100 是合法位次——末位指令 207 媚药史莱姆，与能力表示[100]
-  // 的撞号由可用性检查过滤消解）
-  for (const bad of [-1, 101, 999, 1.5]) {
+  // 不是指令编号：子菜单号、999 出口、越界与非整数都经 undefined 落 USERCOM
+  // 事件
+  for (const bad of [-1, 100, 101, 108, 110, 112, 990, 999, 1.5]) {
     assert.equal(com_id(bad), undefined, `com_id(${bad}) 必须 undefined`);
   }
   assert.equal(com_index(999), undefined);

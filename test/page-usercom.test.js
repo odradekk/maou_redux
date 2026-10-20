@@ -556,11 +556,12 @@ test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、�
   assert.equal(map.get(0), '爱抚');
   assert.equal(map.get(39), '打屁股', '编号必须是紧凑序号 L_IDX（40→39）');
   assert.equal(map.get(89), '穿脱衣服', '穿脱衣服 110→89');
-  // L_IDX 空间上界：末位指令 207（媚药史莱姆）→ 位次 100
+  // L_IDX 空间上界：末位指令 207（媚药史莱姆）位次 100，跳过子菜单号
+  // [100]-[108] 后印 109
   const last = fixture.lines.find(
-    (l) => l.type === 'button' && l.accelerator === 100,
+    (l) => l.type === 'button' && l.accelerator === 109,
   );
-  assert.equal(last?.text, '媚药史莱姆', '末位 207→100（L_IDX 空间上界）');
+  assert.equal(last?.text, '媚药史莱姆', '末位 207→109（跳过子菜单号）');
 });
 
 test('位 34 关：内建渲染路径，标签取 TRAINNAME 静态名（不升格）', async () => {
