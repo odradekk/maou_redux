@@ -1955,7 +1955,7 @@ test('sengen_video [2] 奸商代理：付金币或勋章，两种酬劳都不够
   assert.equal(poor.store.get('exflag:9011'), 0, '被拒的投放数不入账');
 });
 
-test('sengen_video [2] 奸商代理：投放前的检查与犒赏按钮同条件，进了犒赏段至少有一枚按钮', async () => {
+test('sengen_video [2] 奸商代理：投放前的检查与犒赏按钮用同一组条件，进了犒赏段至少有一枚按钮', async () => {
   // 犒赏按钮的条件是严格小于（M*5000 < MONEY、M < 勋章数）。下面三种恰好
   // 相等的情况两枚按钮都不显示，必须在投放前就拒绝，否则犒赏段没有出口
   for (const [label, money, medals] of [
@@ -1964,7 +1964,7 @@ test('sengen_video [2] 奸商代理：投放前的检查与犒赏按钮同条件
     ['金钱与勋章都恰好相等', 15000, 3],
   ]) {
     const fixture = make_video_world({ stock: 5, money, medals });
-    // 随机源给足：检查放行时会走到犒赏段，红形式是犒赏循环耗尽预置输入
+    // 随机源给足：检查一旦放行就会走到犒赏段，卡死表现为犒赏段把预置输入耗尽
     assert.equal(
       await run_sengen_video(fixture, [2, 3, 0, 999], seq([1, 1, 1, 1, 1])),
       0,
