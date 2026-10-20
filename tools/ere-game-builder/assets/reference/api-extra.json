@@ -1,0 +1,39 @@
+{
+  "note": "Members that exist at run time but are not declared in sdk/era-electron.js, plus members that exist only on the engine console object. Source: era-electron/src/era/model/era-start.js and the engine wiki #7 调试.",
+  "runtime": {
+    "raw": {
+      "signature": "raw()",
+      "kind": "function",
+      "description": "运行时注入（SDK 未声明）：返回当前存档的活引用 { data, global }。生成的开发套件（era-utils）用它绕过 base 的钳制。直接修改它不会触发引擎的边界处理。",
+      "params": [],
+      "danger": true
+    },
+    "proxyKojo": {
+      "signature": "proxyKojo(kojo)",
+      "kind": "function",
+      "description": "运行时注入（SDK 未声明）：把一个 { name: fn } 记录包装成带 %字典% 替换的代理，用于 .kojo 口上文件。单机游戏代码一般不需要直接调用。",
+      "params": [{ "name": "kojo", "type": "Record<string, Function>", "description": "口上函数记录", "required": true }],
+      "danger": false
+    },
+    "dispatchButton": {
+      "signature": "dispatchButton(buttonGroup, accelerator, ...args)",
+      "kind": "function",
+      "description": "运行时注入（SDK 未声明）：按快捷键派发 kojo 按钮组里的按钮 —— 调用 buttonGroup[accelerator] 对应的处理函数并返回它的返回值。accelerator 不存在时只记一条 `invalid accelerator: …` 的 warn 而不抛错，所以传错快捷键不会有异常提示。",
+      "params": [
+        { "name": "buttonGroup", "type": "Object", "description": "kojo 篇目返回的按钮组（键为 acc）", "required": true },
+        { "name": "accelerator", "type": "number", "description": "要派发的快捷键", "required": true },
+        { "name": "args", "type": "...unknown", "description": "透传给该按钮处理函数的参数", "required": false }
+      ],
+      "danger": false
+    }
+  },
+  "console": {
+    "add": { "signature": "add(varName, val)", "description": "控制台版 era.add（异步、返回值出现在下一行）" },
+    "get": { "signature": "get(varName)", "description": "控制台版 era.get（异步、返回值出现在下一行）" },
+    "set": { "signature": "set(varName, val)", "description": "控制台版 era.set（异步、返回值出现在下一行）" },
+    "logData": { "signature": "logData()", "description": "在控制台输出全部存档数据 { data, global }（属性名是变量序号）" },
+    "logStatic": { "signature": "logStatic()", "description": "在控制台输出全部静态数据 { static, names, resources }" },
+    "toggleDebug": { "signature": "toggleDebug()", "description": "控制台版 toggleDebug" },
+    "cleanSave": { "signature": "cleanSave(savIndex)", "description": "控制台版删除存档（内部调用 era.rmData）" }
+  }
+}

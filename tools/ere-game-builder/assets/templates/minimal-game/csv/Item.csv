@@ -1,0 +1,7 @@
+; Item.csv —— 道具表，必须写三列：序号,道具名,价格
+; 读写持有数：era.get('item:体力药') / era.set('item:体力药', 3)
+; 读价格：    era.get('itemprice:体力药')
+; 在售标记：  era.get('itemsales:体力药') / era.set('itemsales:体力药', 1)
+0,体力药,100
+1,气力药,150
+2,护身符,500

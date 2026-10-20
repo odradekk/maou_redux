@@ -1,0 +1,6 @@
+; Base.csv —— 角色基础属性表，定义 base（当前值）与 maxbase（上限）两个表
+; 读写当前值：era.get('base:角色ID:体力') / era.set('base:角色ID:体力', 值)
+; 读写上限：  era.get('maxbase:角色ID:体力')
+; 引擎会自动把 base 钳制在 0 与对应 maxbase 之间。
+0,体力
+1,气力

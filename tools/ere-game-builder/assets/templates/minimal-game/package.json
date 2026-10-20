@@ -1,0 +1,27 @@
+{
+  "name": "{{PACKAGE_NAME}}",
+  "version": "{{VERSION}}",
+  "private": true,
+  "description": "{{TITLE}} —— 基于 EraElectron (ere) 的 ere 游戏",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "webpack": "webpack",
+    "lint": "lint-staged"
+  },
+  "lint-staged": {
+    "ere/**/*.js": [
+      "eslint --fix"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "babel-loader": "^9.2.1",
+    "ere-webpack-plugin": "git+https://gitgud.io/umaera/engine/ere-webpack-plugin.git",
+    "kojo-loader": "git+https://gitgud.io/umaera/engine/kojo-loader.git",
+    "webpack": "^5.111.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

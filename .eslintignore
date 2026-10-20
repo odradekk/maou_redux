@@ -1,2 +1,5 @@
 # 日志目录保存本地调试脚本与测试副本，不参与项目检查。
 /logs/
+
+# 移植自上游 dsh-ere-game-builder，保持与上游逐字节一致以便同步，不按本项目规则检查。
+/tools/ere-game-builder/

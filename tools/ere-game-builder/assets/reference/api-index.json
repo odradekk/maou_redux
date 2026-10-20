@@ -1,0 +1,1849 @@
+{
+  "source": "EraElectron sdk/era-electron.js",
+  "sdkVersion": "4.8.5",
+  "generator": "scripts/build-api-index.mjs",
+  "api": {
+    "add": {
+      "name": "add",
+      "indent": 2,
+      "kind": "function",
+      "signature": "add(varName, val)",
+      "documented": true,
+      "description": "add a variable by name",
+      "params": [
+        {
+          "name": "varName",
+          "type": "string",
+          "description": "the name of variable, String, like 'callname:1:2'",
+          "required": true
+        },
+        {
+          "name": "val",
+          "type": "any",
+          "description": "the value to be added",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "any|undefined",
+        "description": "the new value of the variable, or undefined if failed"
+      },
+      "danger": true
+    },
+    "addCharacter": {
+      "name": "addCharacter",
+      "indent": 2,
+      "kind": "function",
+      "signature": "addCharacter(...charaId)",
+      "documented": true,
+      "description": "add some characters\n    <br>each id may be an array [dstId, srcId], which means add the character dstId with the data of the character srcId",
+      "params": [
+        {
+          "name": "charaId",
+          "type": "...(number|number[])",
+          "description": "id of the character defined in chara*.csv",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "boolean | boolean[]",
+        "description": ""
+      },
+      "danger": false
+    },
+    "addCharacterForTrain": {
+      "name": "addCharacterForTrain",
+      "indent": 2,
+      "kind": "function",
+      "signature": "addCharacterForTrain(...charaId)",
+      "documented": true,
+      "description": "initialize data of some characters for training",
+      "params": [
+        {
+          "name": "charaId",
+          "type": "...number",
+          "description": "ids of the characters defined in chara*.csv",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "beginTrain": {
+      "name": "beginTrain",
+      "indent": 2,
+      "kind": "function",
+      "signature": "beginTrain(...charaId)",
+      "documented": true,
+      "description": "initialize training and character data",
+      "params": [
+        {
+          "name": "charaId",
+          "type": "...number",
+          "description": "ids of the characters defined in chara*.csv",
+          "required": true
+        }
+      ],
+      "danger": false
+    },
+    "checkImage": {
+      "name": "checkImage",
+      "indent": 2,
+      "kind": "function",
+      "signature": "checkImage(...names)",
+      "documented": true,
+      "description": "check if a or some images are loaded",
+      "params": [
+        {
+          "name": "names",
+          "type": "...string",
+          "description": "names of the images",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "boolean|boolean[]",
+        "description": "if there is only one name, returns a boolean; otherwise an array of boolean"
+      },
+      "danger": false
+    },
+    "clear": {
+      "name": "clear",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async clear(lineCount)",
+      "documented": true,
+      "description": "clear printed lines",
+      "params": [
+        {
+          "name": "lineCount",
+          "type": "number",
+          "description": "how many lines to be cleared, leave undefined to clear all",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "Promise<number>",
+        "description": "new line count"
+      },
+      "danger": false
+    },
+    "delay": {
+      "name": "delay",
+      "indent": 2,
+      "kind": "function",
+      "signature": "delay: (function () {",
+      "documented": true,
+      "description": "make the current function to wait for some time",
+      "params": [
+        {
+          "name": "delay",
+          "type": "number",
+          "description": "time to delay, ms",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "Promise<unknown>",
+        "description": ""
+      },
+      "danger": false
+    },
+    "drawLine": {
+      "name": "drawLine",
+      "indent": 2,
+      "kind": "function",
+      "signature": "drawLine(config)",
+      "documented": true,
+      "description": "draw a divider to separate lines. the divider is also a line",
+      "params": [
+        {
+          "name": "config",
+          "type": "DividerConfig",
+          "description": "config of the line",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "endTrain": {
+      "name": "endTrain",
+      "indent": 2,
+      "kind": "function",
+      "signature": "endTrain()",
+      "documented": true,
+      "description": "end training, add gotjewel table into jewel table, and destroy temporary data",
+      "params": [],
+      "danger": false
+    },
+    "get": {
+      "name": "get",
+      "indent": 2,
+      "kind": "function",
+      "signature": "get(varName)",
+      "documented": true,
+      "description": "get a variable by name",
+      "params": [
+        {
+          "name": "varName",
+          "type": "string",
+          "description": "the name of variable, String, like 'callname:1:2'",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "any|undefined",
+        "description": "the variable, or undefined if failed"
+      },
+      "danger": false
+    },
+    "getAddedCharacters": {
+      "name": "getAddedCharacters",
+      "indent": 2,
+      "kind": "function",
+      "signature": "getAddedCharacters()",
+      "documented": true,
+      "description": "get all added characters",
+      "params": [],
+      "returns": {
+        "type": "number[]",
+        "description": "the list of added characters' ids"
+      },
+      "danger": false
+    },
+    "getAllCharacters": {
+      "name": "getAllCharacters",
+      "indent": 2,
+      "kind": "function",
+      "signature": "getAllCharacters()",
+      "documented": true,
+      "description": "get all characters",
+      "params": [],
+      "returns": {
+        "type": "number[]",
+        "description": "the list of all characters' ids"
+      },
+      "danger": false
+    },
+    "getCharactersInTrain": {
+      "name": "getCharactersInTrain",
+      "indent": 2,
+      "kind": "function",
+      "signature": "getCharactersInTrain()",
+      "documented": true,
+      "description": "get characters added in train",
+      "params": [],
+      "returns": {
+        "type": "number[]",
+        "description": "ids of characters in train"
+      },
+      "danger": false
+    },
+    "getLineCount": {
+      "name": "getLineCount",
+      "indent": 2,
+      "kind": "function",
+      "signature": "getLineCount()",
+      "documented": true,
+      "description": "get the number of current lines",
+      "params": [],
+      "returns": {
+        "type": "number",
+        "description": "the number of current lines"
+      },
+      "danger": false
+    },
+    "input": {
+      "name": "input",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async input(config)",
+      "documented": true,
+      "description": "wait for user's input, the engine will try to return number",
+      "params": [
+        {
+          "name": "config",
+          "type": "Object",
+          "description": "config of input, like rule",
+          "required": false
+        },
+        {
+          "name": "config.[disableBefore",
+          "type": "boolean",
+          "description": "if disable before buttons",
+          "required": false
+        },
+        {
+          "name": "config.[hideInput",
+          "type": "boolean",
+          "description": "if hide the input content",
+          "required": false
+        },
+        {
+          "name": "config.[rule",
+          "type": "string",
+          "description": "the regex string of the rule",
+          "required": false
+        },
+        {
+          "name": "config.[useRule",
+          "type": "boolean",
+          "description": "if use the rule",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "Promise<any>",
+        "description": "a promise of the user input, please use await"
+      },
+      "danger": false
+    },
+    "isDebug": {
+      "name": "isDebug",
+      "indent": 2,
+      "kind": "function",
+      "signature": "isDebug()",
+      "documented": true,
+      "description": "check if is debug mode",
+      "params": [],
+      "returns": {
+        "type": "boolean",
+        "description": "if is in debug mode"
+      },
+      "danger": false
+    },
+    "isEra": {
+      "name": "isEra",
+      "indent": 2,
+      "kind": "value",
+      "signature": "isEra: true",
+      "documented": false,
+      "description": "",
+      "params": [],
+      "danger": false
+    },
+    "isLandscape": {
+      "name": "isLandscape",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async isLandscape()",
+      "documented": true,
+      "description": "(android) check if is landscape",
+      "params": [],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": "if is landscape; always true on PC"
+      },
+      "danger": false
+    },
+    "loadData": {
+      "name": "loadData",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async loadData(savIndex)",
+      "documented": true,
+      "description": "load a save file",
+      "params": [
+        {
+          "name": "savIndex",
+          "type": "number",
+          "description": "the index of the save file",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": "if the loading succeeds"
+      },
+      "danger": false
+    },
+    "loadGlobal": {
+      "name": "loadGlobal",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async loadGlobal()",
+      "documented": true,
+      "description": "load global variables from save file",
+      "params": [],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": "if the loading succeeds"
+      },
+      "danger": false
+    },
+    "logger": {
+      "name": "logger",
+      "indent": 2,
+      "kind": "object",
+      "signature": "logger: {",
+      "documented": false,
+      "description": "",
+      "params": [],
+      "danger": false
+    },
+    "logger.assert": {
+      "name": "logger.assert",
+      "indent": 4,
+      "kind": "function",
+      "signature": "assert(checkVal, aimVal)",
+      "documented": true,
+      "description": "to log an assert error into program logs as warn level when checkVal !== aimVal",
+      "params": [
+        {
+          "name": "checkVal",
+          "type": "any",
+          "description": "the value to be checked",
+          "required": false
+        },
+        {
+          "name": "aimVal",
+          "type": "any",
+          "description": "the aim value",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "logger.debug": {
+      "name": "logger.debug",
+      "indent": 4,
+      "kind": "function",
+      "signature": "debug(msg)",
+      "documented": true,
+      "description": "to log something into program logs as debug level",
+      "params": [
+        {
+          "name": "msg",
+          "type": "any",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "logger.error": {
+      "name": "logger.error",
+      "indent": 4,
+      "kind": "function",
+      "signature": "error(msg, stack)",
+      "documented": true,
+      "description": "to log something into program logs as error level",
+      "params": [
+        {
+          "name": "msg",
+          "type": "any",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "stack",
+          "type": "any",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "logger.info": {
+      "name": "logger.info",
+      "indent": 4,
+      "kind": "function",
+      "signature": "info(msg)",
+      "documented": true,
+      "description": "to log something into program logs as info level",
+      "params": [
+        {
+          "name": "msg",
+          "type": "any",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "logger.warn": {
+      "name": "logger.warn",
+      "indent": 4,
+      "kind": "function",
+      "signature": "warn(msg, stack)",
+      "documented": true,
+      "description": "to log something into program logs as warn level",
+      "params": [
+        {
+          "name": "msg",
+          "type": "any",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "stack",
+          "type": "any",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "nextTurnInTrain": {
+      "name": "nextTurnInTrain",
+      "indent": 2,
+      "kind": "function",
+      "signature": "nextTurnInTrain()",
+      "documented": true,
+      "description": "add delta table into param table, nowex table into ex table, and clean source, delta and nowex table",
+      "params": [],
+      "danger": false
+    },
+    "notify": {
+      "name": "notify",
+      "indent": 2,
+      "kind": "function",
+      "signature": "notify(content, title, type, duration)",
+      "documented": true,
+      "description": "show a notification\n@param {string|({color?:string,content:string,fontSize?:string,fontWeight?:string}|{isBlank:number|true}|{isBr:number|true}|string)[]} content content of the notification",
+      "params": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "title of the notification",
+          "required": false
+        },
+        {
+          "name": "type",
+          "type": "'success'|'info'|'warning'|'error'|''",
+          "description": "type of the notification, see the enum",
+          "required": false
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "description": "duration of the notification, millisecond, 5000 in default",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "playMusic": {
+      "name": "playMusic",
+      "indent": 2,
+      "kind": "function",
+      "signature": "playMusic(names, config)",
+      "documented": true,
+      "description": "play the music that must be declared in csv files in directory res",
+      "params": [
+        {
+          "name": "names",
+          "type": "string[]|string",
+          "description": "music name, the engine will play the first available music in the array",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "Object",
+          "description": "config of the music",
+          "required": false
+        },
+        {
+          "name": "config.[loop",
+          "type": "boolean",
+          "description": "if the music is played in loop",
+          "required": false
+        },
+        {
+          "name": "config.[fade",
+          "type": "boolean",
+          "description": "if the music needs fade-in and fade-out",
+          "required": false
+        },
+        {
+          "name": "config.[fadeInternal",
+          "type": "number",
+          "description": "the interval of fade-in and fade-out, millisecond, 100-500, 100 in default",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "if the playing succeeds"
+      },
+      "danger": false
+    },
+    "print": {
+      "name": "print",
+      "indent": 2,
+      "kind": "function",
+      "signature": "print(content, config)",
+      "documented": true,
+      "description": "print some text",
+      "params": [
+        {
+          "name": "content",
+          "type": "TextContent",
+          "description": "the text to be printed",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "TextConfig",
+          "description": "config of the printed line",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed line"
+      },
+      "danger": false
+    },
+    "printAndWait": {
+      "name": "printAndWait",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async printAndWait(content, config)",
+      "documented": true,
+      "description": "print some text and wait any key from user",
+      "params": [
+        {
+          "name": "content",
+          "type": "TextContent",
+          "description": "the text to be printed",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "TextConfig",
+          "description": "config of the printed line",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "Promise<number>",
+        "description": "line number of the printed line"
+      },
+      "danger": false
+    },
+    "printButton": {
+      "name": "printButton",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printButton(content, accelerator, config)",
+      "documented": true,
+      "description": "print a button",
+      "params": [
+        {
+          "name": "content",
+          "type": "string",
+          "description": "the text of the button",
+          "required": true
+        },
+        {
+          "name": "accelerator",
+          "type": "number",
+          "description": "the accelerator key of the button used in the input",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "ButtonConfig",
+          "description": "config of the printed button",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "printImage": {
+      "name": "printImage",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printImage(...names)",
+      "documented": true,
+      "description": "print images that must be declared in csv files in directory res",
+      "params": [
+        {
+          "name": "names",
+          "type": "...string",
+          "description": "image names, a name may contain several alternatives split by '\\t'",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "printInColRows": {
+      "name": "printInColRows",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printInColRows(...columnObjects)",
+      "documented": true,
+      "description": "@see drawLine\n@see print\n@see printButton\n@see printImage\n@see printProgress\n@see printWholeImage",
+      "params": [
+        {
+          "name": "columnObjects",
+          "type": "...ColumnObject|GridObject[]",
+          "description": "",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "printLineChart": {
+      "name": "printLineChart",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printLineChart(config)",
+      "documented": true,
+      "description": "print a line chart by chart.js\n<br/> see: chart.js, chartjs-plugin-annotation, vue-chartjs\n<br/> note: options.scales.x.ticks.callback and options.scales.y.ticks.callback is the argument array used to create Function",
+      "params": [
+        {
+          "name": "config",
+          "type": "Object",
+          "description": "config of the line chart, see chart.js",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "printMultiColumns": {
+      "name": "printMultiColumns",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printMultiColumns(columnObjects, config)",
+      "documented": true,
+      "description": "print multiple columns into a row, excluding inputs\n@see drawLine\n@see print\n@see printButton\n@see printImage\n@see printProgress\n@see printWholeImage",
+      "params": [
+        {
+          "name": "columnObjects",
+          "type": "GridObject[]",
+          "description": "the array of settings of columns, like print, printButton, printImage and printProgress",
+          "required": false
+        },
+        {
+          "name": "config",
+          "type": "ColumnConfig",
+          "description": "config of the row",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "printProgress": {
+      "name": "printProgress",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printProgress(percentage, inContent, outContent, config)",
+      "documented": true,
+      "description": "print a progress bar",
+      "params": [
+        {
+          "name": "percentage",
+          "type": "number",
+          "description": "the percentage of the progress bar, float, 0-100",
+          "required": true
+        },
+        {
+          "name": "inContent",
+          "type": "string",
+          "description": "the text shown in the progress bar",
+          "required": true
+        },
+        {
+          "name": "outContent",
+          "type": "string",
+          "description": "the text shown next to the progress bar",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "ProgressConfig",
+          "description": "config of the printed progress",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "printWholeImage": {
+      "name": "printWholeImage",
+      "indent": 2,
+      "kind": "function",
+      "signature": "printWholeImage(names, config)",
+      "documented": true,
+      "description": "print the whole image",
+      "params": [
+        {
+          "name": "names",
+          "type": "string|string[]",
+          "description": "",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "WholeImageConfig",
+          "description": "",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "println": {
+      "name": "println",
+      "indent": 2,
+      "kind": "function",
+      "signature": "println()",
+      "documented": true,
+      "description": "print a line break, if just used to print enter at the end of a line, please use print('*** \\n') to replace",
+      "params": [],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "quit": {
+      "name": "quit",
+      "indent": 2,
+      "kind": "function",
+      "signature": "quit()",
+      "documented": true,
+      "description": "exit the application and close the window",
+      "params": [],
+      "danger": true
+    },
+    "removeCharacter": {
+      "name": "removeCharacter",
+      "indent": 2,
+      "kind": "function",
+      "signature": "removeCharacter(...charaId)",
+      "documented": true,
+      "description": "remove the character",
+      "params": [
+        {
+          "name": "charaId",
+          "type": "...number",
+          "description": "ids of the characters defined in chara*.csv",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": true
+    },
+    "replaceInColRows": {
+      "name": "replaceInColRows",
+      "indent": 2,
+      "kind": "function",
+      "signature": "replaceInColRows(...columnObjects)",
+      "documented": true,
+      "description": "replace the line just printed with a new in-col-row line",
+      "params": [
+        {
+          "name": "columnObjects",
+          "type": "...ColumnObject|GridObject[]",
+          "description": "",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": true
+    },
+    "replaceText": {
+      "name": "replaceText",
+      "indent": 2,
+      "kind": "function",
+      "signature": "replaceText(content, config)",
+      "documented": true,
+      "description": "replace the line just printed with a new text line",
+      "params": [
+        {
+          "name": "content",
+          "type": "TextContent",
+          "description": "the text to be printed",
+          "required": true
+        },
+        {
+          "name": "config",
+          "type": "TextConfig",
+          "description": "config of the printed line",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": true
+    },
+    "resetCharacter": {
+      "name": "resetCharacter",
+      "indent": 2,
+      "kind": "function",
+      "signature": "resetCharacter(...charaId)",
+      "documented": true,
+      "description": "reset the data of a character\n    <br>each id may be an array [dstId, srcId], which means reset the character dstId with the data of the character srcId",
+      "params": [
+        {
+          "name": "charaId",
+          "type": "...(number|number[])",
+          "description": "id of the character defined in chara*.csv",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "resetData": {
+      "name": "resetData",
+      "indent": 2,
+      "kind": "function",
+      "signature": "resetData()",
+      "documented": true,
+      "description": "reset all data of the save",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "resetGlobal": {
+      "name": "resetGlobal",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async resetGlobal()",
+      "documented": true,
+      "description": "reset global variables",
+      "params": [],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": ""
+      },
+      "danger": false
+    },
+    "resumeMusic": {
+      "name": "resumeMusic",
+      "indent": 2,
+      "kind": "function",
+      "signature": "resumeMusic()",
+      "documented": true,
+      "description": "resume the music in playing",
+      "params": [],
+      "danger": false
+    },
+    "rmData": {
+      "name": "rmData",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async rmData(savIndex)",
+      "documented": true,
+      "description": "remove a data file",
+      "params": [
+        {
+          "name": "savIndex",
+          "type": "number",
+          "description": "the index of the save file",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": "if the removing succeeds"
+      },
+      "danger": false
+    },
+    "saveData": {
+      "name": "saveData",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async saveData(savIndex, comment)",
+      "documented": true,
+      "description": "save data into a save file",
+      "params": [
+        {
+          "name": "savIndex",
+          "type": "number",
+          "description": "the index of the save file",
+          "required": true
+        },
+        {
+          "name": "comment",
+          "type": "string",
+          "description": "the comment of the save",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": "if the saving succeeds"
+      },
+      "danger": false
+    },
+    "saveGlobal": {
+      "name": "saveGlobal",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async saveGlobal()",
+      "documented": true,
+      "description": "save global variables into save file",
+      "params": [],
+      "returns": {
+        "type": "Promise<boolean>",
+        "description": "if the saving succeeds"
+      },
+      "danger": false
+    },
+    "set": {
+      "name": "set",
+      "indent": 2,
+      "kind": "function",
+      "signature": "set(varName, val)",
+      "documented": true,
+      "description": "@template T\nset a variable by name",
+      "params": [
+        {
+          "name": "varName",
+          "type": "string",
+          "description": "the name of variable, String, like 'callname:1:2'",
+          "required": true
+        },
+        {
+          "name": "val",
+          "type": "T",
+          "description": "the new value of the variable",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "T",
+        "description": "the new value of the variable, or undefined if failed"
+      },
+      "danger": false
+    },
+    "setAlign": {
+      "name": "setAlign",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setAlign(textAlign)",
+      "documented": true,
+      "description": "set default text-align",
+      "params": [
+        {
+          "name": "textAlign",
+          "type": "'center'|'left'|'right'",
+          "description": "the text-align: center, left or right used in usual",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "setBack": {
+      "name": "setBack",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setBack(name, config)",
+      "documented": true,
+      "description": "",
+      "params": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "set undefined to clear background",
+          "required": false
+        },
+        {
+          "name": "config",
+          "type": "Object",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "config.[opacity",
+          "type": "number",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "config.[position",
+          "type": "OBPosition",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "config.[fit",
+          "type": "'contain'|'cover'|'fit'|string",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "setColor": {
+      "name": "setColor",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setColor(color)",
+      "documented": true,
+      "description": "Set default text color.",
+      "params": [
+        {
+          "name": "color",
+          "type": "string",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "setHorizontalAlign": {
+      "name": "setHorizontalAlign",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setHorizontalAlign(align)",
+      "documented": true,
+      "description": "set default horizontal align of inColRows",
+      "params": [
+        {
+          "name": "align",
+          "type": "'start'|'end'|'center'|'space-around'|'space-between'|'space-evenly'",
+          "description": "the horizontal align: start (default), end, center, space-around, space-between or space-evenly",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "setMask": {
+      "name": "setMask",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setMask(name, config)",
+      "documented": true,
+      "description": "",
+      "params": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "set undefined to clear the mask",
+          "required": false
+        },
+        {
+          "name": "config",
+          "type": "Object|number",
+          "description": "config of the mask, or opacity in old versions",
+          "required": false
+        }
+      ],
+      "deprecated": "replaced with setOverlay",
+      "danger": false
+    },
+    "setOffset": {
+      "name": "setOffset",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setOffset(offset)",
+      "documented": true,
+      "description": "set default offset",
+      "params": [
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "an integer between 0 and 23",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "setOverlay": {
+      "name": "setOverlay",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setOverlay(name, config)",
+      "documented": true,
+      "description": "",
+      "params": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "set undefined to clear overlay",
+          "required": false
+        },
+        {
+          "name": "config",
+          "type": "Object",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "config.[opacity",
+          "type": "number",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "config.[position",
+          "type": "OBPosition",
+          "description": "",
+          "required": false
+        },
+        {
+          "name": "config.[fit",
+          "type": "'contain'|'cover'|'fit'|string",
+          "description": "",
+          "required": false
+        }
+      ],
+      "danger": false
+    },
+    "setTitle": {
+      "name": "setTitle",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setTitle(title)",
+      "documented": true,
+      "description": "set the title of the window",
+      "params": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "setToBottom": {
+      "name": "setToBottom",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setToBottom()",
+      "documented": true,
+      "description": "print an empty block and make the following lines shown in the bottom",
+      "params": [],
+      "returns": {
+        "type": "number",
+        "description": "line number of the printed"
+      },
+      "danger": false
+    },
+    "setVerticalAlign": {
+      "name": "setVerticalAlign",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setVerticalAlign(align)",
+      "documented": true,
+      "description": "set default vertical align of inColRows",
+      "params": [
+        {
+          "name": "align",
+          "type": "'top'|'middle'|'bottom'",
+          "description": "the vertical align: top (default), middle or bottom",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "setWidth": {
+      "name": "setWidth",
+      "indent": 2,
+      "kind": "function",
+      "signature": "setWidth(width)",
+      "documented": true,
+      "description": "set default width",
+      "params": [
+        {
+          "name": "width",
+          "type": "number",
+          "description": "an integer between 1 and 24",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "danger": false
+    },
+    "stopMusic": {
+      "name": "stopMusic",
+      "indent": 2,
+      "kind": "function",
+      "signature": "stopMusic()",
+      "documented": true,
+      "description": "pause the music in the playing",
+      "params": [],
+      "danger": false
+    },
+    "toggleDebug": {
+      "name": "toggleDebug",
+      "indent": 2,
+      "kind": "function",
+      "signature": "toggleDebug()",
+      "documented": true,
+      "description": "toggle debug status",
+      "params": [],
+      "returns": {
+        "type": "boolean",
+        "description": "if debug"
+      },
+      "danger": false
+    },
+    "version": {
+      "name": "version",
+      "indent": 2,
+      "kind": "object",
+      "signature": "version: { sdk: '4.8.5', engine: void 0 }",
+      "documented": false,
+      "description": "",
+      "params": [],
+      "danger": false
+    },
+    "waitAnyKey": {
+      "name": "waitAnyKey",
+      "indent": 2,
+      "kind": "function",
+      "signature": "async waitAnyKey()",
+      "documented": true,
+      "description": "wait any key from user",
+      "params": [],
+      "returns": {
+        "type": "Promise<void>",
+        "description": "a promise of nothing, please use await"
+      },
+      "danger": false
+    }
+  },
+  "typedefs": {
+    "ButtonConfig": {
+      "description": "type of the param 'config' in era.printButton",
+      "properties": [
+        {
+          "name": "align",
+          "type": "'left'|'center'|'right'",
+          "description": "align of the button, 'left' in default"
+        },
+        {
+          "name": "badge",
+          "type": "'dot'|string",
+          "description": "badge of the button if isButton is true"
+        },
+        {
+          "name": "buttonType",
+          "type": "'primary'|'success'|'warning'|'danger'|'info'|''",
+          "description": "type of the button in element-plus, 'warning' in default when isButton is false"
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "description": "color of the button, isButton must be false"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "if the button is disabled, false in default"
+        },
+        {
+          "name": "disableContinue",
+          "type": "boolean",
+          "description": "if the continue is disabled after clicking the button, false in default"
+        },
+        {
+          "name": "disableWarning",
+          "type": "boolean",
+          "description": "if disable warning when accelerator has been set, false in default"
+        },
+        {
+          "name": "fontSize",
+          "type": "string",
+          "description": "font size of the text in the button"
+        },
+        {
+          "name": "inTextAlign",
+          "type": "'left'|'center'|'right'",
+          "description": "align of the text in the button, 'center' in default"
+        },
+        {
+          "name": "isButton",
+          "type": "boolean",
+          "description": "if the button is a button, otherwise is a link"
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "offset of the button, 0-23, 0 in default"
+        },
+        {
+          "name": "showAcc",
+          "type": "boolean",
+          "description": "if show the accelerator, true in default on PC, and is always false on Android"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "tooltip of the button"
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "width of the button, 1-24, 24 in default"
+        }
+      ]
+    },
+    "ButtonObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "accelerator",
+          "type": "number",
+          "description": "the accelerator key of the button used in the input"
+        },
+        {
+          "name": "config",
+          "type": "ButtonConfig",
+          "description": "config of the printed button"
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "description": "the text of the button"
+        },
+        {
+          "name": "type",
+          "type": "'button'",
+          "description": ""
+        }
+      ]
+    },
+    "DividerConfig": {
+      "description": "type of the param 'config' in era.drawLine",
+      "properties": [
+        {
+          "name": "content",
+          "type": "string",
+          "description": "content of the divider"
+        },
+        {
+          "name": "position",
+          "type": "'left'|'center'|'right'",
+          "description": "position of the divider, 'center' in default"
+        },
+        {
+          "name": "isSolid",
+          "type": "boolean",
+          "description": "if the divider is solid, false in default"
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "offset of the divider, 0-23, 0 in default"
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "width of the divider, 1-24, 24 in default"
+        }
+      ]
+    },
+    "DividerObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "config",
+          "type": "DividerConfig",
+          "description": "config of the line"
+        },
+        {
+          "name": "type",
+          "type": "'divider'",
+          "description": ""
+        }
+      ]
+    },
+    "ImageObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "config",
+          "type": "Object",
+          "description": "config of the image line"
+        },
+        {
+          "name": "config.offset",
+          "type": "number",
+          "description": "offset of the image line, 0-23, 0 in default"
+        },
+        {
+          "name": "config.width",
+          "type": "number",
+          "description": "width of the image line, 1-24, 24 in default"
+        },
+        {
+          "name": "names",
+          "type": "string|string[]",
+          "description": "names of the images, a name may contain several alternatives split by '\\t'"
+        },
+        {
+          "name": "type",
+          "type": "'image'",
+          "description": ""
+        }
+      ]
+    },
+    "ProgressConfig": {
+      "description": "type of the param 'config' in era.printProgress",
+      "properties": [
+        {
+          "name": "align",
+          "type": "'left'|'center'|'right'",
+          "description": "align of the text shown next to the progress bar, 'left' in default"
+        },
+        {
+          "name": "barWidth",
+          "type": "number",
+          "description": "width of the progress bar, 0-24, 24 in default"
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "description": "color of the progress bar"
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "description": "duration(second) of the bar easing, 0.6 in default, set 0 to disable easing"
+        },
+        {
+          "name": "easing",
+          "type": "string",
+          "description": "css easing function of the bar easing, 'ease' in default"
+        },
+        {
+          "name": "fontColor",
+          "type": "string",
+          "description": "color of the font in the progress bar"
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "description": "height of the progress bar, 6-30(px), 24(px) in default"
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "offset of the progress, 0-23, 0 in default"
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "width of the progress, 1-24, 24 in default"
+        }
+      ]
+    },
+    "ProgressObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "config",
+          "type": "ProgressConfig",
+          "description": "config of the printed progress"
+        },
+        {
+          "name": "inContent",
+          "type": "string",
+          "description": "the text shown in the progress bar"
+        },
+        {
+          "name": "outContent",
+          "type": "string",
+          "description": "the text shown next to the progress bar"
+        },
+        {
+          "name": "percentage",
+          "type": "number",
+          "description": "the percentage of the progress bar, float, 0-100"
+        },
+        {
+          "name": "type",
+          "type": "'progress'",
+          "description": ""
+        }
+      ]
+    },
+    "PrintedSpan": {
+      "description": "printed span used in the param 'content' in era.print, era.printAndWait and era.replaceText",
+      "properties": [
+        {
+          "name": "color",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "display",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "fontSize",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "fontStyle",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "fontWeight",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "description": "opacity of the span, 1 in default"
+        },
+        {
+          "name": "textAlignLast",
+          "type": "string",
+          "description": "CSS text-align-last of the span"
+        },
+        {
+          "name": "textShadow",
+          "type": "string",
+          "description": "CSS text-shadow of the span"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": ""
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "description": ""
+        }
+      ]
+    },
+    "TextConfig": {
+      "description": "type of the param 'config' in era.print, era.printAndWait and era.replaceText",
+      "properties": [
+        {
+          "name": "align",
+          "type": "'left'|'center'|'right'",
+          "description": "align of the line, 'left' in default"
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "description": "color of the line, '#ffffff' in default"
+        },
+        {
+          "name": "fontSize",
+          "type": "string",
+          "description": "font size of the line, '1rem' in default"
+        },
+        {
+          "name": "fontStyle",
+          "type": "string",
+          "description": "CSS font-style of the line"
+        },
+        {
+          "name": "fontWeight",
+          "type": "string",
+          "description": "CSS font-weight of the line"
+        },
+        {
+          "name": "isParagraph",
+          "type": "boolean",
+          "description": "if the line is in a paragraph, false in default"
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "offset of the line, 0-23, 0 in default"
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "width of the line, 1-24, 24 in default"
+        }
+      ]
+    },
+    "TextObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "config",
+          "type": "TextConfig",
+          "description": "config of the printed line"
+        },
+        {
+          "name": "content",
+          "type": "TextContent",
+          "description": ""
+        },
+        {
+          "name": "type",
+          "type": "'text'",
+          "description": ""
+        }
+      ]
+    },
+    "WholeImageConfig": {
+      "description": "type of the param 'config' in era.printWholeImage",
+      "properties": [
+        {
+          "name": "fit",
+          "type": "'fill'|'contain'|'cover'|'none'|'scale-down'",
+          "description": "fit of the image"
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "offset of the whole image, 0-23, 0 in default"
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "width of the whole image, 1-24, 24 in default"
+        }
+      ]
+    },
+    "WholeImageObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "config",
+          "type": "WholeImageConfig",
+          "description": ""
+        },
+        {
+          "name": "names",
+          "type": "string|string[]",
+          "description": ""
+        },
+        {
+          "name": "type",
+          "type": "'image.whole'",
+          "description": ""
+        }
+      ]
+    },
+    "ColumnConfig": {
+      "description": "",
+      "properties": [
+        {
+          "name": "gutter",
+          "type": "number",
+          "description": "gutter between columns, 0 in default"
+        },
+        {
+          "name": "horizontalAlign",
+          "type": "'start'|'center'|'end'|'space-between'|'space-around'|'space-evenly'",
+          "description": "horizontal align of the columns, 'start' in default"
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "description": "offset of the row, 0-23, 0 in default"
+        },
+        {
+          "name": "verticalAlign",
+          "type": "'top'|'middle'|'bottom'",
+          "description": "vertical align of the columns, 'top' in default"
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "width of the row, 1-24, 24 in default"
+        }
+      ]
+    },
+    "ColumnObject": {
+      "description": "",
+      "properties": [
+        {
+          "name": "columns",
+          "type": "GridObject[]",
+          "description": ""
+        },
+        {
+          "name": "config",
+          "type": "ColumnConfig",
+          "description": ""
+        }
+      ]
+    },
+    "KojoFunction": {
+      "description": "",
+      "properties": []
+    },
+    "KojoFile": {
+      "description": "",
+      "properties": []
+    }
+  }
+}

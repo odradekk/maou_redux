@@ -19,6 +19,7 @@
     "eslint-plugin-sort-requires-by-path": "^1.0.2",
     "playwright-core": "^1.63.0",
     "prettier": "^3.4.2",
+    "yamljs": "^0.3.0",
     "zod": "^4.6.5"
   },
   "engines": {

@@ -1,0 +1,5 @@
+; Param.csv —— 角色参数表（引擎内部表名 juel / jewel，别名 juel）
+; 未进入调教时只有 jewel 表可用：era.get('juel:角色ID:好感')
+; 进入调教后同一份定义还会提供 param / delta / gotjewel 三个表。
+0,好感
+1,欲望
