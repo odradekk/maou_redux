@@ -64,7 +64,8 @@ const LEDGER_BASELINE = [
 ];
 
 // —— asar 读取（与 test/helpers/engine-bundle.js 同款头结构：前 16 字节是
-//    目录 pickle 的长度 framing，偏移 12 是头 JSON 的字节长度） ——
+//    目录 pickle 的长度 framing，偏移 4 是头 pickle 长度，偏移 12 是头 JSON
+//    的字节长度） ——
 
 /** 候选位置与 test/helpers/engine-bundle.js 同款，逐条理由见那里的注释；
  *  不一致由 test/asar-candidates.test.js 判红 */
@@ -90,8 +91,10 @@ function locate_asar(explicit) {
 /** 展开 asar 头目录为 [相对路径, {offset, size}]（offset 相对数据段起点） */
 function list_asar_files(asar_path) {
   const buf = fs.readFileSync(asar_path);
-  const header_size = buf.readUInt32LE(12);
-  const header = JSON.parse(buf.slice(16, 16 + header_size).toString('utf8'));
+  const json_size = buf.readUInt32LE(12);
+  const header = JSON.parse(buf.slice(16, 16 + json_size).toString('utf8'));
+  // 数据段起点要算上头 JSON 的 4 字节对齐补齐，理由见 engine-bundle.js 的 read_asar_file
+  const data_start = 8 + buf.readUInt32LE(4);
   const out = [];
   const walk = (node, prefix) => {
     for (const [name, entry] of Object.entries(node.files || {})) {
@@ -104,7 +107,7 @@ function list_asar_files(asar_path) {
     }
   };
   walk(header, '');
-  return { buf, header_size, files: out };
+  return { buf, data_start, files: out };
 }
 
 // —— 检查 A：调用点规则（静态扫 ere/，无需引擎） ——
@@ -262,7 +265,7 @@ function check_call_site_rules(root, engine_facts) {
  *         | { status: 'missing' } | { status: 'drift', message: string }}
  */
 function check_anchors(asar_path, engine_facts) {
-  const { buf, header_size, files } = list_asar_files(asar_path);
+  const { buf, data_start, files } = list_asar_files(asar_path);
   const map_entry = files.find(([name]) => RENDERER_MAP_RE.test(name));
   if (!map_entry) {
     return {
@@ -272,7 +275,7 @@ function check_anchors(asar_path, engine_facts) {
     };
   }
   const [map_name, entry] = map_entry;
-  const start = 16 + header_size + Number(entry.offset);
+  const start = data_start + Number(entry.offset);
   const map_text = buf.slice(start, start + entry.size).toString('utf8');
   let sources;
   try {

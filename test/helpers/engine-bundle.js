@@ -61,12 +61,16 @@ function locate_asar() {
 // 从 asar 里切出单个文件的内容；头结构见文件头注释
 function read_asar_file(asar_path, name) {
   const buf = fs.readFileSync(asar_path);
-  const header_size = buf.readUInt32LE(12);
-  const header = JSON.parse(buf.slice(16, 16 + header_size).toString('utf8'));
+  const json_size = buf.readUInt32LE(12);
+  const header = JSON.parse(buf.slice(16, 16 + json_size).toString('utf8'));
+  // 头 JSON 补齐到 4 字节对齐，数据段从 8 + 头 pickle 长度（偏移 4）起。
+  // 用 16 + JSON 长度只在 JSON 长度恰为 4 的倍数时成立：4.8.0 碰巧成立，
+  // 5.0.0 差 2 字节，切出的文件整体错位
+  const data_start = 8 + buf.readUInt32LE(4);
   const walk = (node) => {
     for (const [file_name, entry] of Object.entries(node.files || {})) {
       if (file_name === name && entry.offset !== undefined) {
-        const start = 16 + header_size + Number(entry.offset);
+        const start = data_start + Number(entry.offset);
         return buf.slice(start, start + entry.size).toString('utf8');
       }
       if (entry.files) {
