@@ -593,7 +593,8 @@ function bump_relation(cid, other, amount) {
 
 function record_first_exp(cid, other, table) {
   if (chara(cid).train.初体验对象 !== 0) return;
-  chara(cid).train.初体验对象 = (era.get(`no:${other}`) || other) + 1;
+  // NO:x 即角色 ID x。引擎的 no:<n> 按已加入序号取角色，不是角色 ID
+  chara(cid).train.初体验对象 = other + 1;
   chara(cid).train.初体验对象名 = chara_callname(other);
   const code = first_exp_code(era.get('tflag:14') || 0, tal(other, 122), table);
   if (code) chara(cid).train.初体验对象 = code;
@@ -1151,7 +1152,7 @@ async function com62() {
   if (chara(MASTER).train.童贞) {
     chara(MASTER).train.童贞 = 0;
     if (chara(MASTER).train.初体验对象 === 0) {
-      chara(MASTER).train.初体验对象 = (era.get(`no:${assi}`) || assi) + 1;
+      chara(MASTER).train.初体验对象 = assi + 1;
       chara(MASTER).train.初体验对象名 = chara_callname(assi);
       const code = first_exp_code(t14b, tal(assi, 122), [
         [2, 1, 300],
@@ -1169,7 +1170,7 @@ async function com62() {
     src.times(14, 3);
     chara(assi).chara.处女 = 0;
     if (chara(assi).train.初体验对象 === 0) {
-      chara(assi).train.初体验对象 = (era.get(`no:${MASTER}`) || MASTER) + 1;
+      chara(assi).train.初体验对象 = MASTER + 1;
       chara(assi).train.初体验对象名 = chara_callname(MASTER);
       const code = first_exp_code(t14b, tal(MASTER, 122), [
         [1, 1, 300],

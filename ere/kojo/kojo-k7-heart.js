@@ -9586,15 +9586,13 @@ async function kojo_message_com_7(rand) {
           await era.print(
             `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,
           );
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else if (
           era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5)
         ) {
           await era.print(`${target_name}向着水晶球开始说出了下流的话`);
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else if (
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 3 ||
@@ -9602,8 +9600,7 @@ async function kojo_message_com_7(rand) {
           era0(`abl:${target}:17`) >= 2
         ) {
           await era.print(`${target_name}向着水晶球做了自我介绍`);
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else {
           await era.print(`${target_name}头扭向一边什么都不说`);
         }
@@ -9729,8 +9726,7 @@ async function kojo_message_com_7(rand) {
           era0('tflag:60')
         ) {
           await era.print(`${target_name}一边扭着腰一边向水晶球说着爱的话语`);
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else if (
           era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
@@ -9739,8 +9735,7 @@ async function kojo_message_com_7(rand) {
           await era.print(
             `${target_name}一边扭着腰一边向水晶球喊出了下流的词语`,
           );
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else if (
           rand_n(3) == 0 &&
           (era0(`talent:${target}:89`) || era0(`abl:${target}:17`) >= 5)
@@ -9755,15 +9750,13 @@ async function kojo_message_com_7(rand) {
           await era.print(
             `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,
           );
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else if (
           era0(`palam:${target}:5`) >= PALAMLV[4] &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5)
         ) {
           await era.print(`${target_name}向着水晶球开始说出了下流的话`);
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else if (
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 3 ||
@@ -9771,8 +9764,7 @@ async function kojo_message_com_7(rand) {
           era0(`abl:${target}:17`) >= 2
         ) {
           await era.print(`${target_name}向着水晶球做了自我介绍`);
-          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |）
-          era.set('tflag:32 |', 2);
+          game.kojo.录像内容 |= 2;
         } else {
           await era.print(`${target_name}头扭向一边什么都不说`);
         }

@@ -37,6 +37,11 @@ let leftover_q = 0;
  */
 let leftover_s = 0;
 /**
+ * leftover_masturbation_count 是跨函数全局。AFTERTRAIN 自慰检查写自慰次数，
+ * SELF_KOJO 的调教后自慰支读（口上里的「N 回分量的精液」等）。
+ */
+let leftover_masturbation_count = 0;
+/**
  * leftover_sale 在出售链是卖出价。SELL_CHARA 写完再调 SELF_KOJO。
  */
 let leftover_sale = 0;
@@ -55,6 +60,14 @@ function peek_aftertrain_q() {
  */
 function peek_aftertrain_s() {
   return leftover_s;
+}
+
+/**
+ * SELF_KOJO 读的自慰次数。
+ * @returns {number}
+ */
+function peek_masturbation_count() {
+  return leftover_masturbation_count;
 }
 
 /**
@@ -739,6 +752,7 @@ async function aftertrain_masturbation_check(
     q = 0;
   }
 
+  leftover_masturbation_count = a;
   // TFLAG:13 = 1; CALL SELF_KOJO
   leftover_q = q;
   game.train.初吻与自我口上 = 1;
@@ -939,6 +953,7 @@ module.exports = {
   aftertrain_sex_check,
   peek_aftertrain_q,
   peek_aftertrain_s,
+  peek_masturbation_count,
   peek_sale_price,
   remember_aftertrain_s,
   remember_sale_price,

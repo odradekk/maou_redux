@@ -89,11 +89,6 @@ function talent(cid, index) {
   return era.get(`talent:${cid}:${index}`) || 0;
 }
 
-/** `NO:x` 的等价物：番号即角色 ID，未声明时回落 ID 本身（com-assistant.js:639 先例） */
-function chara_no(cid) {
-  return era.get(`no:${cid}`) || cid;
-}
-
 /**
  * show_appearance：角色当前外观的整屏描述。
  * @param {number} cid 角色 ID
@@ -167,7 +162,7 @@ function show_appearance(cid) {
   }
 
   // 阴毛状态的开头：非魔王才显示名字
-  if (chara_no(cid) !== 0) {
+  if (cid !== 0) {
     row.push({ content: chara_callname(cid) });
   }
   // 阴毛（TALENT:125 白虎优先；无 ELSE 分支，不命中则本行不收）

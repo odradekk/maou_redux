@@ -1193,6 +1193,28 @@ test('show_appearance：裙装未穿内裤的一句，与三条提前返回的�
   );
 });
 
+test('show_appearance：只有魔王的阴毛段不带名字，与加入顺序无关', () => {
+  const fixture = create_era_fixture();
+  // 先加 7 号、后加魔王：第 1 个加入的角色是 7 号
+  for (const [id, name] of [
+    [7, '考狄利亚'],
+    [0, '魔王'],
+  ]) {
+    fixture.seed_chara(id, { id, name, callname: name });
+    fixture.era.addCharacter(id);
+    fixture.store.set(`talent:${id}:310`, 1);
+  }
+  const { show_appearance } = fixture.load_module(
+    'page/components/chara-appearance',
+  );
+  show_appearance(0);
+  show_appearance(7);
+  assert.deepEqual(fixture.text_lines(), [
+    ' 的性器完全没有长毛。',
+    ' 考狄利亚的性器完全没有长毛。',
+  ]);
+});
+
 test('show_appearance：阴毛七档 + 白虎（TALENT:125）优先级', () => {
   // [TALENT:310, 期望片段, 说明]；TALENT:125 不设
   const cases = [

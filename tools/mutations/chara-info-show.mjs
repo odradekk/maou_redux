@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用编号，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 77; // #724 返工 +1（M14516「该状态不可操作」等键删除）；此前 +2（M14494/M14495） // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
+export const COUNT = 78; // 数据地址缺陷修复 +1（M15421：外观阴毛段的魔王判断改用角色 ID）； // #724 返工 +1（M14516「该状态不可操作」等键删除）；此前 +2（M14494/M14495） // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 检查的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
@@ -718,5 +718,14 @@ export default [
     tests: ['chara-info-show'],
     must_mention:
       '献祭名单等键：该状态不可操作的提示在重画前先经按键确认（#724）',
+  },
+  {
+    desc: 'M15421 外观阴毛段的魔王判断退回读 no:${cid}（取到第 cid+1 个加入的角色）',
+    file: 'ere/page/components/chara-appearance.js',
+    find: '  if (cid !== 0) {\n    row.push({ content: chara_callname(cid) });',
+    replace:
+      '  if ((era.get(`no:${cid}`) || cid) !== 0) {\n    row.push({ content: chara_callname(cid) });',
+    tests: ['chara-info-show'],
+    must_mention: '只有魔王的阴毛段不带名字，与加入顺序无关',
   },
 ];

@@ -652,6 +652,14 @@ function create_era_fixture() {
       var_reads.push({ name: var_name, value: undefined });
       return undefined;
     }
+    // 引擎的 `no:<n>` 返回 data.no 的第 n 位，即已加入序号为 n 的角色，
+    // 不是角色 ID n
+    const no_match = /^no:(\d+)$/.exec(var_name);
+    if (no_match !== null) {
+      const value = chara_no[Number(no_match[1])];
+      var_reads.push({ name: var_name, value });
+      return value;
+    }
     let value = store.get(var_name);
     const keys_match = /^([a-z]+)keys$/.exec(var_name);
     if (value === undefined && keys_match !== null) {

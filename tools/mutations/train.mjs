@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1106; // #792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1109; // 数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）； // #792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -11240,5 +11240,32 @@ export default [
     replace: '  // 变异：不写可否位',
     tests: ['ablup'],
     must_mention: 'ablup0：成功购买——扣珠、升级、显示变为LV文案',
+  },
+  {
+    desc: 'M15418 初体验对象退回读 no:${other}（record_first_exp）',
+    file: 'ere/system/train/com-assistant.js',
+    find: '  chara(cid).train.初体验对象 = other + 1;',
+    replace:
+      '  chara(cid).train.初体验对象 = (era.get(`no:${other}`) || other) + 1;',
+    tests: ['com-assistant'],
+    must_mention: '助手的对象是目标',
+  },
+  {
+    desc: 'M15419 COM62 魔王的初体验对象退回读 no:${assi}',
+    file: 'ere/system/train/com-assistant.js',
+    find: '      chara(MASTER).train.初体验对象 = assi + 1;',
+    replace:
+      '      chara(MASTER).train.初体验对象 = (era.get(`no:${assi}`) || assi) + 1;',
+    tests: ['com-assistant'],
+    must_mention: '魔王的对象是助手',
+  },
+  {
+    desc: 'M15420 COM62 助手的初体验对象退回读 no:${MASTER}',
+    file: 'ere/system/train/com-assistant.js',
+    find: '      chara(assi).train.初体验对象 = MASTER + 1;',
+    replace:
+      '      chara(assi).train.初体验对象 = (era.get(`no:${MASTER}`) || MASTER) + 1;',
+    tests: ['com-assistant'],
+    must_mention: '助手的对象是魔王',
   },
 ];
