@@ -22,3 +22,9 @@ ownership/
 
 # 本地设置由工具维护，不参与项目格式检查。
 /.claude/settings.local.json
+
+# 移植自上游 dsh-ere-game-builder（tools/ere-game-builder/README.md）：
+# 保持与上游逐字节一致以便同步，勿格式化
+/tools/ere-game-builder/
+/.agents/skills/ere-*/
+/.claude/skills/ere-*/

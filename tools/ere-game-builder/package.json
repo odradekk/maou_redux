@@ -1,0 +1,8 @@
+{
+  "name": "ere-game-builder",
+  "version": "1.3.2",
+  "private": true,
+  "description": "dsh-ere-game-builder 的本地移植：上游 lib/ 与 assets/ 原样保留，入口换成 cli.mjs",
+  "type": "module",
+  "license": "GPL-2.0-only"
+}

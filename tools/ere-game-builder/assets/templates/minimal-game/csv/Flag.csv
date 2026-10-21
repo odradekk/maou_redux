@@ -1,0 +1,5 @@
+; Flag.csv —— 一维系统变量表（属于特定存档，会随存档保存）
+; 读写：era.get('flag:变量名') / era.set('flag:变量名', 值)
+; 也支持变量序号：era.get('flag:0')；以及 'flagnames' / 'flagkeys' / 'flagentries' 三种数组查询。
+0,当前角色
+1,金钱

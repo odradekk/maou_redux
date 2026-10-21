@@ -236,3 +236,7 @@ erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`�
 ### 领域文档
 
 术语统一维护在根目录的 `CONTEXT.md`，架构决策记录在 `docs/adr/`。维护规则见 `docs/agents/domain.md`。
+
+### ere 引擎技能
+
+`.agents/skills/` 下的 `ere-game-development`、`ere-data-files`、`ere-engine-api` 移植自 dsh-ere-game-builder，工具实现在 `tools/ere-game-builder/`，来源、本地改动和同步上游的步骤见它的 README。`.claude/skills/` 是 `.agents/skills/` 的逐字节副本：改技能先改 `.agents/skills/`，再整目录复制过去，`test/agent-skills-sync.test.js` 检查两处一致。

@@ -1,0 +1,4 @@
+; Abl.csv —— 角色技能表
+; 读写：era.get('abl:角色ID:技巧') / era.set('abl:角色ID:技巧', 值)
+0,技巧
+1,魅力

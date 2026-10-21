@@ -1,0 +1,4 @@
+; Talent.csv —— 角色特性 / 素质表
+; 读写：era.get('talent:角色ID:开朗') / era.set('talent:角色ID:开朗', 1)
+0,开朗
+1,内向
