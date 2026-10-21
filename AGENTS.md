@@ -176,7 +176,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
   在 `~/.era-engine/app.asar` 中按 API 名或配置项名搜索，可找到 bundle 附带的未压缩源码。确认渲染规则后，将需要验证的结果补充到 `test/helpers/era-fixture.js` 的记录字段，并增加断言。
 - **验收时必须确认引擎实际执行了调用。** 夹具只能记录 API 调用，无法证明引擎接受了参数；例如，`addCharacter` 遇到不存在的预设角色会直接返回 false（#21/#22）。`test/helpers/engine-bundle.js` 直接加载 app.asar 中的解析器、装载循环和 `EraApi` 方法，只为调用方法提供最小的模拟 `this`，避免在测试中重新实现引擎逻辑。`ASAR_CANDIDATES` 按环境变量 `ERE_ENGINE_ASAR` → 仓库内路径 → `~/.era-engine/` 的顺序查找文件；找不到时跳过相关测试并输出警告。
 
-  **查找列表目前分别维护在三个文件中**：`test/helpers/engine-bundle.js`、`tools/mutation-check.mjs`、`tools/engine-contract-check.mjs`。`test/asar-candidates.test.js` 检查三处是否一致。`~/.era-engine/` 路径供 worktree 和并行变异测试副本共用：仓库内的 `ere-4.8.0-win-x64/` 不受 Git 跟踪，不会被复制到这些目录，缺少用户目录查找路径会导致引擎测试被跳过（#113）。
+  **查找列表目前分别维护在三个文件中**：`test/helpers/engine-bundle.js`、`tools/mutation-check.mjs`、`tools/engine-contract-check.mjs`。`test/asar-candidates.test.js` 检查三处是否一致。`~/.era-engine/` 路径供 worktree 和并行变异测试副本共用：仓库内的 `ere-5.0.0-win-x64/` 不受 Git 跟踪，不会被复制到这些目录，缺少用户目录查找路径会导致引擎测试被跳过（#113）。
   - **通常不必设置 `ERE_ENGINE_ASAR`。** 在新机器上，将 Release 中的文件放到 `~/.era-engine/app.asar`，并按 `.github/actions/setup-engine/action.yml` 校验哈希即可。
   - **检查无引擎基线时，必须设置 `ERE_ENGINE_ASAR=none`。** 三处均将这个值解释为禁用引擎查找；仅删除环境变量仍会找到用户目录中的引擎，不能模拟无引擎环境。
 
