@@ -5,7 +5,7 @@
  * 验证路线与 test/chara-yml.test.js / test/variable-yml.test.js 同构：不用
  * 夹具（记录层证明不了「引擎接受」），不用自写镜像（会不一致），全部经
  * test/helpers/engine-bundle.js 驱动 app.asar 里的 parseDataFile、eraStart
- * 装载循环转写与 setVar（模块 648，真方法 + 最小假 this）。
+ * 装载循环转写与 setVar（模块 637，真方法 + 最小假 this）。
  *
  * 本工单的存在理由（工单动机的回归锁）：EX_FLAG 是扩展普通表，yml/ExFlag.yml
  * 缺席的世界里 `era.set('exflag:99', …)` 在引擎 setVar 的二段寻址分支既找不到
@@ -101,7 +101,7 @@ engine_test(
       'exflag',
     );
 
-    // fake this 的字段按 setVar（模块 648）二段分支的最小集合构造：
+    // fake this 的字段按 setVar（模块 637）二段分支的最小集合构造：
     // staticData（名称翻译）+ data.exflag（fillData 建的桶）+ extendedTables
     // （eraStart 装载 yml 时对非内建表名登记 tableType.normal，Audio.yml
     // 头注记录的机制，#69 实测）

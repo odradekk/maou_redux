@@ -4,7 +4,7 @@
  * 夹具（era-fixture.js）对引擎 allowWait 状态机的镜像，此前只有人读
  * app.asar 后写下的注释背书——注释不会在回归时报错（#68 input 回显 +1
  * Row、#69 playMusic 不占 Row，两次都是测试全绿、实机出错）。本文件把
- * engine-bundle 取到的**真 EraApi 方法**（模块 183 的原型方法，闭包是真
+ * engine-bundle 取到的**真 EraApi 方法**（模块 176 的原型方法，闭包是真
  * 的、this 是最小假体）与夹具镜像放在同一串调用序列下**逐步**比对：每
  * 一步比对 {行数, allowWait} 与 waits 观测记录，而不是只比最终状态——三次
  * 缺陷的共同形式是「某一步的副作用被漏掉」，最终状态比对在副作用互相抵消时
@@ -486,19 +486,19 @@ engine_test(
 
 // —— 模块号不一致 → 直接判失败（不依赖真实引擎：伪造 asar 探针）——
 //
-// background.js 造形成「入口标记仍在、模块 183 不是 EraApi」的形状——
+// background.js 造形成「入口标记仍在、模块 176 不是 EraApi」的形状——
 // 即引擎升版后最可能的样子。load_engine_bundle 的形状检查必须抛
 // 「引擎变了」，而不是让下游炸 TypeError 或静默 skip。
 test('模块号不一致 → 直接判失败报「引擎变了」（engine-bundle 形状检查）', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-'));
   const asar_path = path.join(dir, 'app.asar');
-  // 形状要点：含入口标记 `r(r.s=311)}`（engine-bundle 据此切 webpack
-  // require）、wp(183) 返回非 EraApi 的对象
+  // 形状要点：含入口标记 `r(r.s=302)}`（engine-bundle 据此切 webpack
+  // require）、wp(176) 返回非 EraApi 的对象
   fs.writeFileSync(
     asar_path,
     build_asar({
       'background.js':
-        'var r=function(n){return{prototype:{}}};function main(){r(r.s=311)}main();',
+        'var r=function(n){return{prototype:{}}};function main(){r(r.s=302)}main();',
     }),
   );
   try {
@@ -519,7 +519,7 @@ test('模块号不一致 → 直接判失败报「引擎变了」（engine-bundl
         killSignal: 'SIGKILL',
       },
     );
-    assert.notEqual(probe.status, 0, '模块 183 不再是 EraApi 时必须非 0 退出');
+    assert.notEqual(probe.status, 0, '模块 176 不再是 EraApi 时必须非 0 退出');
     assert.ok(
       `${probe.stdout || ''}${probe.stderr || ''}`.includes('引擎变了'),
       `报错必须说清「引擎变了，重新核读」而非环境缺失：\n${probe.stderr}`,
@@ -529,15 +529,15 @@ test('模块号不一致 → 直接判失败报「引擎变了」（engine-bundl
   }
 });
 
-// —— 模块 183 的方法检查必须独立生效，不能靠模块 84 检查接力（#441）——
+// —— 模块 176 的方法检查必须独立生效，不能靠模块 80 检查接力（#441）——
 //
-// 上一条探针对 183 与 84 用同一个空对象（{prototype:{}}），两条检查谁先抛
-// 被跳过，但 84 那条仍会因为同一个空对象而抛出同款「引擎变了」文案，测试
+// 上一条探针对 176 与 80 用同一个空对象（{prototype:{}}），两条检查谁先抛
+// 被跳过，但 80 那条仍会因为同一个空对象而抛出同款「引擎变了」文案，测试
 // 照样全绿，真正被拆的那条检查却没人验证过（mutation-check 实测：拦截 0 /
-// 红 1）。本条把 84 造成合法形状（该检查应当放行），只让 183 的原型缺一个
-// 方法（addCharacter）——183 检查被拆时 load_engine_bundle() 会一路跑到底
+// 红 1）。本条把 80 造成合法形状（该检查应当放行），只让 176 的原型缺一个
+// 方法（addCharacter）——176 检查被拆时 load_engine_bundle() 会一路跑到底
 // 不抛错、退出码变 0，探针即刻落空，与真检查在场时的非 0 退出分道。
-test('模块 183 原型方法缺失 → 单独判失败（84 检查合法放行，不许接力顶替）', () => {
+test('模块 176 原型方法缺失 → 单独判失败（80 检查合法放行，不许接力顶替）', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-'));
   const asar_path = path.join(dir, 'app.asar');
   fs.writeFileSync(
@@ -545,10 +545,10 @@ test('模块 183 原型方法缺失 → 单独判失败（84 检查合法放行�
     build_asar({
       'background.js':
         'var r=function(n){' +
-        'if(n===183)return{prototype:{addTotalLines:function(){},setTotalLines:function(){},waitAnyKey:function(){},getLineCount:function(){},clear:function(){},print:function(){},input:function(){},playMusic:function(){},printProgress:function(){}}};' + // 缺 addCharacter
-        'if(n===84)return{staticFormatPriority:["yml","json","csv"],staticFormatRegex:[/a/,/b/,/c/]};' +
+        'if(n===176)return{prototype:{addTotalLines:function(){},setTotalLines:function(){},waitAnyKey:function(){},getLineCount:function(){},clear:function(){},print:function(){},input:function(){},playMusic:function(){},printProgress:function(){}}};' + // 缺 addCharacter
+        'if(n===80)return{staticFormatPriority:["yml","json","csv"],staticFormatRegex:[/a/,/b/,/c/]};' +
         'return{};' +
-        '};function main(){r(r.s=311)}main();',
+        '};function main(){r(r.s=302)}main();',
     }),
   );
   try {
@@ -573,11 +573,11 @@ test('模块 183 原型方法缺失 → 单独判失败（84 检查合法放行�
     assert.notEqual(
       probe.status,
       0,
-      `模块 183 缺 addCharacter 时必须非 0 退出（84 检查已合法放行，不能靠它接力）：\n${combined}`,
+      `模块 176 缺 addCharacter 时必须非 0 退出（80 检查已合法放行，不能靠它接力）：\n${combined}`,
     );
     assert.ok(
-      combined.includes('引擎变了') && combined.includes('模块 183'),
-      `报错必须点名模块 183，不能是 84 检查代打：\n${combined}`,
+      combined.includes('引擎变了') && combined.includes('模块 176'),
+      `报错必须点名模块 176，不能是 80 检查代打：\n${combined}`,
     );
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });

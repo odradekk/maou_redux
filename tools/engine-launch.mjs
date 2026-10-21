@@ -24,8 +24,8 @@ export function engine_launch_options({
     executablePath =
       env.ERE_ENGINE_EXECUTABLE ||
       [
-        path.join(root, 'ere-4.8.0-win-x64', windows_exe),
-        path.join(engine_home, 'ere-4.8.0-win-x64', windows_exe),
+        path.join(root, 'ere-5.0.0-win-x64', windows_exe),
+        path.join(engine_home, 'ere-5.0.0-win-x64', windows_exe),
       ].find((file) => existsSync(file));
     // 打包版自带 resources/app.asar，不再把另一份 asar 当作游戏参数传入。
     args = [];

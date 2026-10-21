@@ -18,8 +18,8 @@
  *     （cflag/cstr 预设不随 addCharacter 落 data）如实钉住，另有两处同族
  *     缺口（Chara34 的 MARK:4、Chara24 的相性预设，见各用例注释）。
  *   - ex_talent：登记后 addCharacter 建桶、chara-ex.js 同款写入被引擎
- *     接受；未登记的反面；存档往返；#13 死分支（fillData 不重建
- *     per-chara 桶）在新表上的同证。
+ *     接受；未登记的反面；存档往返；旧档缺桶时 fillData 为已加入角色
+ *     重建桶（引擎 4.8.3 起，4.8.0 是死分支 #13）。
  *
  * 引擎不在场（无 app.asar）时引擎级用例 skip 并留警告；文件级用例始终跑。
  */
@@ -470,7 +470,7 @@ engine_test(
 );
 
 engine_test(
-  '引擎怪癖钉住（#13 死分支）：fillData 不为 ex_talent 重建 per-chara 桶',
+  '旧档缺 ex_talent 桶：fillData 为已加入角色重建桶，写入生效（引擎 4.8.3 起）',
   () => {
     const loader = load_batch_presets();
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-extalent-quirk-'));
@@ -502,18 +502,18 @@ engine_test(
       const api = new engine.era_api(fake_era);
       api.resetData();
       api.addCharacter(31);
+      const fresh = structuredClone(fake_era.data.ex_talent);
 
       // 「表晚于存档出现」的旧档形状：角色在、唯独没有扩展表桶
       delete fake_era.data.ex_talent;
       api.fillData();
-      // 顶层桶重建（fillData 的 data[表] ||= {}），per-chara 桶不重建：
-      // 引擎的重建条件 e[1] === tableType.chara 里 e 是表名字符串（恒假）
-      assert.deepEqual(fake_era.data.ex_talent, {});
-      // 后果如实钉住：三段寻址静默丢弃。该场景在本版本轴内已被 ADR-0006
-      // 的抬版本废档策略消灭（0.0.0 档被【最低支持版本】= 1 拒收），
-      // 此用例钉的是引擎行为本身，供未来重新评估时对照
-      assert.equal(api.set('ex_talent:31:101', 1), undefined);
-      assert.equal(api.get('ex_talent:31:101'), undefined);
+      // loadData 读档后调用 fillData：它为每个已加入角色重建桶，缺的键按
+      // 角色预设补、没有预设补 0，结果与 addCharacter 新建的一致。4.8.0 的
+      // 重建条件写成 e[1] === tableType.chara（e 是表名字符串，恒假），桶不
+      // 重建、写入静默丢弃，4.8.3 修复
+      assert.deepEqual(fake_era.data.ex_talent, fresh);
+      assert.equal(api.set('ex_talent:31:101', 1), 1);
+      assert.equal(api.get('ex_talent:31:101'), 1);
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }

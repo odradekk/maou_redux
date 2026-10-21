@@ -84,7 +84,7 @@ test('引擎启动覆盖 Windows 发布包、共享目录、显式路径与 Linu
     const shared = touch(
       home,
       '.era-engine',
-      'ere-4.8.0-win-x64',
+      'ere-5.0.0-win-x64',
       'ERA-Electron - 重量级ERA引擎.exe',
     );
     assert.deepEqual(engine_launch_options(options), {
@@ -94,7 +94,7 @@ test('引擎启动覆盖 Windows 发布包、共享目录、显式路径与 Linu
     });
     const local = touch(
       root,
-      'ere-4.8.0-win-x64',
+      'ere-5.0.0-win-x64',
       'ERA-Electron - 重量级ERA引擎.exe',
     );
     assert.equal(engine_launch_options(options).executablePath, local);

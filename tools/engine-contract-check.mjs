@@ -72,7 +72,7 @@ const LEDGER_BASELINE = [
 const ASAR_CANDIDATES = () =>
   [
     process.env.ERE_ENGINE_ASAR,
-    path.join(REPO, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    path.join(REPO, 'ere-5.0.0-win-x64', 'resources', 'app.asar'),
     path.join(os.homedir(), '.era-engine', 'app.asar'),
   ].filter(Boolean);
 

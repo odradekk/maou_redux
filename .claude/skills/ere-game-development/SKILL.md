@@ -8,7 +8,7 @@ description: Use when creating, extending, debugging, or packaging an EraElectro
 > **在本项目里使用**（移植自 dsh-ere-game-builder v1.3.2，来源与本地改动见 `tools/ere-game-builder/README.md`）
 >
 > - 文中的 `ere_*` 工具改用命令行 `node tools/ere-game-builder/cli.mjs <工具名> [--参数 值]`，参数名与原工具相同，加 `--help` 看说明。文中的「插件」指 `tools/ere-game-builder/`，`assets/` 指它下面的 `assets/`。
-> - 知识库按引擎 5.0.0 核对；本项目运行引擎 4.8.0，静态数据只用 `yml/`。两边不一致时，引擎行为以 `dev-guides/` 和 app.asar 里的引擎源码为准，写法和目录组织以 `AGENTS.md` 和现有代码为准。知识库没写全、已在 4.8.0 上确认的行为：
+> - 知识库按引擎 5.0.0 核对，与本项目运行的引擎版本相同；本项目的静态数据只用 `yml/`。两边不一致时，引擎行为以 `dev-guides/` 和 app.asar 里的引擎源码为准，写法和目录组织以 `AGENTS.md` 和现有代码为准。知识库没写全、已在本项目引擎上确认的行为：
 >   - `addCharacter(id)` 遇到没有预设的 id 直接返回 false，不会建角色。
 >   - 读 `<表>name:<序号>` 时，序号未声明会抛出 TypeError，游戏卡死。
 >   - `saveData(槽, 备注)` 会顺带把备注写进 global 里的存档备注并保存 global；省略备注时，该槽的备注被写成 undefined。
@@ -16,13 +16,13 @@ description: Use when creating, extending, debugging, or packaging an EraElectro
 > - 本项目的检查以 `npm test`、`npm run lint`、`npm run format:check` 为准。`ere_check_game` 的输出要分类处理：
 >   - 「未知的数据表」和「没有变量 "<名字>"」是真缺陷，必须修。
 >   - 以下几类是本项目约定或工具局限造成的误报，不要按它们改 `ere/` 或 `yml/`：
->     - 「没有序号为 N 的变量」：`CFlag.yml` 等表按约定不登记或只登记部分序号，4.8.0 对未声明的序号按数字下标正常读写。
->     - `palam:<角色>:<序号>` 报「段数不对」：这在 4.8.0 是合法的三段地址，名字取自 `staticData.juel`。
+>     - 「没有序号为 N 的变量」：`CFlag.yml` 等表按约定不登记或只登记部分序号，引擎对未声明的序号按数字下标正常读写。
+>     - `palam:<角色>:<序号>` 报「段数不对」：这在引擎里是合法的三段地址，名字取自 `staticData.juel`。
 >     - 「表名为空」：表名是 `${table}` 这类动态拼接，工具无法检查。
 >     - Chara17 的「第一列 "portcflag" 不是引擎认识的字段」：`portcflag` 是 `_fixed.json` 的 `extendedCharaTables` 声明的扩展表。
 >     - 开发套件的两类警告（生成文件缺少 GENERATED 标记、套件与当前静态数据不一致）：原因见下一条。
 >   - 默认最多收集 200 条，超出的直接截断，排在后面的警告也一并丢掉。要看全量，加 `--maxFindings 100000`。
-> - `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成，`exp-level.js`、`palam-level.js` 是手写模块。它的文件名和标记与引擎生成的套件相同，但 4.8.0 的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议、「有套件就按套件写变量」的说法，在本项目都不适用。
+> - `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成，`exp-level.js`、`palam-level.js` 是手写模块。它的文件名和标记与引擎生成的套件相同，但引擎的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议、「有套件就按套件写变量」的说法，在本项目都不适用。
 
 EraElectron（简称 **ere**）是基于 Electron 的 ERA 游戏引擎，游戏用 **JavaScript（CommonJS）** 编写，
 界面用行列输出描述，数据用 **CSV 静态数据文件** 声明。本技能负责「把游戏做出来并且真的能在引擎里跑起来」。

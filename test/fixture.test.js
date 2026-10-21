@@ -71,7 +71,7 @@ test('无专门实现的 API 走缺省记录，不抛错', () => {
 test('quit 镜像引擎 throw 型（#148）：先记录关窗 IPC 再抛 Error("quit")，调用方后续不可达', () => {
   const fixture = create_era_fixture();
 
-  // 引擎（app.asar 模块 183 逐字）：quit(){throw this.era.quit(),new Error("quit")}
+  // 引擎（app.asar 模块 176 逐字）：quit(){throw this.era.quit(),new Error("quit")}
   // ——夹具同构：calls 里的记录＝关窗 IPC 的观测面，throw＝炸穿调用链的
   // 控制流本体（装载循环按 message === "quit" 静默放行）
   assert.throws(
@@ -566,7 +566,7 @@ engine_test(
   },
 );
 
-engine_test('引擎 getNumber（模块 65）：input 回传归一的边界值（#151）', () => {
+engine_test('引擎 getNumber（模块 64）：input 回传归一的边界值（#151）', () => {
   const { getNumber } = engine.engine_utils;
   // 上面夹具正主用例的同一组取值——期望值由引擎真函数背书，不是凭
   // Number() 的直觉抄写。空串与 null 的 0 是 Number 语义里最反直觉的
@@ -679,7 +679,7 @@ engine_test(
 test('调教域表检查（#44）：beginTrain 前后与角色入列的寻址边界', () => {
   const fixture = create_era_fixture();
 
-  // 引擎寻址层（app.asar 模块 648）的镜像：二段 tflag 在 data.tflag 不存在
+  // 引擎寻址层（app.asar 模块 637）的镜像：二段 tflag 在 data.tflag 不存在
   // 时落到缺省分支报 key error；三段 palam 在角色子表缺失时静默丢弃。
   // 引擎侧证据由 test/train-loop.test.js 的引擎比对用例锁定
   assert.throws(() => fixture.era.set('tflag:0', 1), /key error/);
@@ -1755,9 +1755,9 @@ test('input 白名单：useRule:false 跳过校验；config.rule 走正则分支
 
 // —— input 回传值的数值归一（#151/G6）：引擎把回包 val 过一遍 getNumber ——
 //
-// 引擎（app.asar 模块 183 的回传路径）逐字：`const i=y(n.val)`——归一发生
+// 引擎（app.asar 模块 176 的回传路径）逐字：`const i=y(n.val)`——归一发生
 // 在 resolve 之前，引擎还会把归一后的值 print 出去（三段短路见上；golden
-// 样本里光秃秃的 199/99 行就是回显）。getNumber（模块 65）：
+// 样本里光秃秃的 199/99 行就是回显）。getNumber（模块 64）：
 //   getNumber(e){const t=Number(e);return isNaN(t)?e:t}
 // 渲染层回包的 val 恒字符串，普通 input() 回给游戏的几乎总是数值——夹具
 // 此前预置什么回什么，字符串预置与真机当场分岔（G6「未来一踩一个准」）。

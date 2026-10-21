@@ -20,6 +20,8 @@
 # 随读档钩子票实现时在此补「名称: id」——补之前先看
 # yml/CStr.yml 头注的警告：登记进名字表的下标会被 initCharaTable 预置 0。
 #
+# 以下是引擎 4.8.0 时的记录；4.8.3 起读档的 fillData 会为已加入角色重建
+# 桶，「表晚于存档出现」的旧档也能写入。
 # #13 死分支（fillData 对 chara 类扩展表不重建 per-chara 桶）的处置：
 # 新档路径 resetData → fillData 建顶层桶，addCharacter 为每个角色建
 # data.ex_talent[cid] = {}，写入即生效；「表晚于存档出现」的旧档读档后

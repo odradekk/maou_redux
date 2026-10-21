@@ -161,7 +161,7 @@ test('选 [1] 退出：era.quit() 抛 Error("quit") 炸穿 invasion_check（真�
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
 
-  // 引擎 quit() 是 throw 型（app.asar 模块 183 逐字：先发关窗 IPC，再抛
+  // 引擎 quit() 是 throw 型（app.asar 模块 176 逐字：先发关窗 IPC，再抛
   // Error("quit")；装载循环按 message 静默放行）——QUIT 之后游戏侧一切
   // 语句不可达。夹具逐字镜像（era-fixture.js），异常从 ending_1 炸穿
   // invasion_check 传到测试。旧断言「ended !== 1 哨兵短路」断的是夹具

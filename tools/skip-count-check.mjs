@@ -17,7 +17,7 @@
 //
 // **两侧各有一份基线，别混用**（#302）：
 //   test/engine-skip-baseline.txt（现 74）—— 无引擎环境（CI 的 engineless
-//     job、未放置 ere-4.8.0 的裸克隆）。守「引擎缺席的代价必须是看得见的
+//     job、未放置 ere-5.0.0 的裸克隆）。守「引擎缺席的代价必须是看得见的
 //     数字」，新增引擎依赖用例必须同步改基线。
 //   test/engine-present-skip-baseline.txt（只能是 0）—— 有引擎环境（CI 的
 //     engine / mutation job、本机）。守「引擎装上了却还有东西被跳过」，

@@ -83,7 +83,7 @@ test('候选列表覆盖 worktree 场景：仓库内那条之外必须有 ~/.era
     SOURCES[0],
   );
 
-  // ere-4.8.0-win-x64/ 不进 git（.gitignore:15），worktree 与 mutation-check
+  // ere-5.0.0-win-x64/ 不进 git（.gitignore:15），worktree 与 mutation-check
   // 的并行副本里都没有它——只靠「仓库内」那条必然落空
   const repo_local = items.filter((i) => i.includes('<ROOT>'));
   assert.equal(repo_local.length, 1, '仓库内候选应恰有一条');
@@ -96,7 +96,7 @@ test('候选列表覆盖 worktree 场景：仓库内那条之外必须有 ~/.era
   assert.equal(
     homedir_fallback.length,
     1,
-    'ere-4.8.0-win-x64/ 不进 git，worktree 与并行副本够不着仓库内那条，' +
+    'ere-5.0.0-win-x64/ 不进 git，worktree 与并行副本够不着仓库内那条，' +
       '必须留 ~/.era-engine 这条回落，否则引擎用例会整片静默 skip',
   );
 
