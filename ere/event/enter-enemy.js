@@ -6,7 +6,7 @@
  * 月末休战的检查在原流程里就被注释掉，移植不恢复（#574 第 4 条），勇者每日
  * 来袭。
  * 移植说明（有意偏离，均注明依据）：
- *   - **SAVESTR 无引擎通道**：EraElectron 4.8.0 的 bundle 里没有 savestr
+ *   - **SAVESTR 无引擎通道**：EraElectron 5.0.0 的 bundle 里没有 savestr
  *     表（app.asar 全文零命中；寻址 `savestr:N` 经 engine-bundle 驱动引擎
  *     寻址层实测走 era.error「key error in getter/setter!」后静默丢弃）。
  *     原流程 SAVESTR:A 的角色名承载按 #5 决议落到 callname:${id}:-1

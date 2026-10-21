@@ -1,7 +1,7 @@
 /**
  * @file 跨存档勇者通信。
  *
- * 通信勇者记录在引擎里没有逐条的表可用（GLOBALS 表名在 EraElectron 4.8.0
+ * 通信勇者记录在引擎里没有逐条的表可用（GLOBALS 表名在 EraElectron 5.0.0
  * 已废弃），故把 100 条记录以 JSON 数组存入 global:100；数组元素是下划线与
  * 斜线分隔的串，后续 CHARA_MAKE_INPORT 可以逐字段消费。
  */

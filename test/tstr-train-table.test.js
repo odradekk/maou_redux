@@ -4,8 +4,8 @@
  *
  * 验证路线与 test/exflag-chara35.test.js（#113/#179 先例）同构：不用夹具
  * （记录层证明不了「引擎接受」），不自写镜像（会不一致），全部经
- * test/helpers/engine-bundle.js 驱动 app.asar 里的 setVar（模块 648）与
- * beginTrain/endTrain（模块 183 原型方法，真方法 + 最小假 this）。
+ * test/helpers/engine-bundle.js 驱动 app.asar 里的 setVar（模块 637）与
+ * beginTrain/endTrain（模块 176 原型方法，真方法 + 最小假 this）。
  *
  * 本文件的结论（写进 yml/TStr.yml 头注与 issue #5 补记）：
  *   1. ere 引擎**没有 tstr 调教期表**：beginTrain 的建桶清单与 endTrain 的

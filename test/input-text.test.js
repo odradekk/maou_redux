@@ -5,7 +5,7 @@
  * 引擎事实两条（依据与被测模块的文件头同源，此处只记结论）：
  *
  *   1. `era.input()` 的回传值先过 `getNumber`（`Number(e); isNaN(t) ? e : t`，
- *      app.asar 模块 65）——**空串与 "0" 到手都是数值 0**、非数字串原样；
+ *      app.asar 模块 64）——**空串与 "0" 到手都是数值 0**、非数字串原样；
  *      test/helpers/era-fixture.js 的 `get_number` 逐字镜像（#151）。
  *   2. 渲染层不受理空提交（app.vue 的 returnFromInput 空值检查，
  *      dev-guides/05-interaction.md:124「不会是 undefined 或空字符串''」）。

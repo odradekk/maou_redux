@@ -29,16 +29,15 @@ node tools/ere-game-builder/cli.mjs ere_scaffold_game path/to/new-game --title �
 
 ## 在本项目上的已知限制
 
-- 知识库按引擎 5.0.0 核对，本项目运行 4.8.0。CSV 空字段（4.8.3 起改）、引擎自带的 `.kojo` 校验（4.8.5 起）、`gutter` 横向滚动条（4.8.6 起修）等条目在 4.8.0 上不成立。本项目以 `dev-guides/` 和 app.asar 引擎源码为准。
-- `ere_scaffold_game` 写入的 SDK 声明 `version.sdk = '4.8.5'`，生成的工程需要引擎 4.8.5 及以上，本项目的 4.8.0 发布包会拒绝加载。要在 4.8.0 上用，传 `--sdkPath ere/era-electron.js`。
+- 知识库按引擎 5.0.0 核对，与本项目运行的引擎版本相同。两边不一致时，本项目以 `dev-guides/` 和 app.asar 引擎源码为准。
 - `ere_check_game` 对本项目报出大量错误，本项目的检查以 `npm test` 为准，但它的输出要分类处理。2026-10-21 全量检查共 6014 条错误，其中 18 条是真缺陷，全部属于「未知的数据表」和「没有变量 "<名字>"」两类，这两类必须处理。其余是本项目约定或工具局限造成的误报：
-  - 「没有序号为 N 的变量」：`CFlag.yml` 等表按约定不登记或只登记部分序号，4.8.0 对未声明的序号按数字下标正常读写。
-  - `palam:<角色>:<序号>` 报「段数不对」：这在 4.8.0 是合法的三段地址，名字取自 `staticData.juel`。
+  - 「没有序号为 N 的变量」：`CFlag.yml` 等表按约定不登记或只登记部分序号，引擎对未声明的序号按数字下标正常读写。
+  - `palam:<角色>:<序号>` 报「段数不对」：这在引擎里是合法的三段地址，名字取自 `staticData.juel`。
   - 「表名为空」：表名是 `${table}` 这类动态拼接，工具无法检查。
   - Chara17 的「第一列 "portcflag" 不是引擎认识的字段」：`portcflag` 是 `_fixed.json` 的 `extendedCharaTables` 声明的扩展表。
   - 开发套件的两类警告（生成文件缺少 GENERATED 标记、套件与当前静态数据不一致）：见下一条。
 - `ere_check_game` 默认最多收集 200 条，超出的直接截断，排在后面的警告也一并丢掉。要看全量，加 `--maxFindings 100000`。
-- `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成，`exp-level.js`、`palam-level.js` 是手写模块。它的文件名和标记与引擎生成的套件相同，但 4.8.0 的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议，在本项目都不适用。
+- `ere/era-utils/` 不是引擎的开发套件：带 `// GENERATED START/END` 标记的具名访问器由 `tools/gen-wrapper.js` 生成，`exp-level.js`、`palam-level.js` 是手写模块。它的文件名和标记与引擎生成的套件相同，但引擎的【帮助】-【生成开发套件】会把两个标记之间的内容换成 `era.raw()` 写法，还会新建一批文件，所以本项目不用它。技能正文和 `ere_check_game` 里「重新生成开发套件」的建议，在本项目都不适用。
 
 ## 同步上游新版本
 

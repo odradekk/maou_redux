@@ -18,9 +18,9 @@
  *     内置表逐一同路（setVar case 3 default 不特判扩展表，实测依据）。
  *   - 存档往返：真 EraApi 实例（临时目录、真文件、真 saveData/loadData），
  *     不经夹具——夹具的记录层证明不了「引擎接受了」。
- *   - 引擎怪癖钉住：fillData 对扩展表不重建 per-chara 桶（死分支，
- *     app.asar 的 `e[1] === tableType.chara` 里 e 是表名字符串），读
- *     「表晚于存档出现」的旧档时写入静默丢弃。
+ *   - 旧档补齐：读「表晚于存档出现」或「字段晚于存档出现」的旧档时，
+ *     fillData 按预设补齐角色桶（引擎 4.8.3 起；4.8.0 的重建条件
+ *     `e[1] === tableType.chara` 里 e 是表名字符串，恒假）。
  *
  * 引擎不在场（无 app.asar）时引擎级用例整文件 skip 并留警告；登记契约
  * 两条只读仓库文件，始终跑。
@@ -308,7 +308,7 @@ engine_test(
 );
 
 engine_test(
-  '引擎怪癖钉住：fillData 不为扩展表重建 per-chara 桶（死分支），旧档补表后写入静默丢弃',
+  '旧档缺扩展表桶或缺新增字段：fillData 按预设补齐，写入生效（引擎 4.8.3 起）',
   () => {
     const { tableType } = engine.era_api;
     const registration = { [TABLE_NAME]: tableType.chara };
@@ -343,16 +343,22 @@ engine_test(
       const api = new engine.era_api(fake_era);
       api.resetData();
       api.addCharacter(17);
+      const fresh = structuredClone(fake_era.data.portcflag);
 
-      // 「表晚于存档出现」的旧档形状：角色都在，唯独没有扩展表桶
+      // loadData 读档后调用 fillData，它为每个已加入角色重建桶，名字表声明
+      // 的字段缺了就按角色预设补、没有预设补 0，结果与 addCharacter 新建的
+      // 一致。4.8.0 的重建条件写成 e[1] === tableType.chara（e 是表名字符串，
+      // 恒假），两种旧档形状都补不上，4.8.3 修复
+      // 「表晚于存档出现」：角色都在，唯独没有扩展表桶
       delete fake_era.data.portcflag;
       api.fillData();
-      // 顶层桶重建（fillData 的 data[表] ||= {}），per-chara 桶不重建：
-      // 引擎的重建条件 e[1] === tableType.chara 里 e 是表名字符串（恒假）
-      assert.deepEqual(fake_era.data.portcflag, {});
-      // 后果如实钉住：三段寻址静默丢弃（不崩——崩的是名字表缺位那条路）
-      assert.equal(api.set('portcflag:17:0', 5), undefined);
-      assert.equal(api.get('portcflag:17:0'), undefined);
+      assert.deepEqual(fake_era.data.portcflag, fresh);
+      // 「字段晚于存档出现」：桶在、缺后来新增的字段（如排序编号）
+      delete fake_era.data.portcflag[17][1];
+      api.fillData();
+      assert.deepEqual(fake_era.data.portcflag, fresh);
+      assert.equal(api.set('portcflag:17:0', 5), 5);
+      assert.equal(api.get('portcflag:17:0'), 5);
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }

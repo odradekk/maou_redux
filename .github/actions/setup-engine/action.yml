@@ -1,7 +1,7 @@
 # 引擎 bundle 上 runner（issue #302）。
 #
-# 为什么是 release 资产而不是入库：app.asar 42 MB，提交进 git 会永久留在
-# 历史里，且「ere-4.8.0-win-x64/ 不入库」是既有约定（AGENTS.md）。也不用
+# 为什么是 release 资产而不是入库：app.asar 约 55 MB，提交进 git 会永久留在
+# 历史里，且「ere-5.0.0-win-x64/ 不入库」是既有约定（AGENTS.md）。也不用
 # actions/cache——7 天不命中就被驱逐，会把「有没有引擎」变成时红时绿。
 #
 # 为什么带 token 且走 gh：仓库转私有后，release 资产下载需要认证——
@@ -22,8 +22,8 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
-        ASAR_TAG: engine-4.8.0
-        ASAR_SHA256: 98cbd808b08c5d675665c4581ee813ff106b1bba0225102ea2950507e89808ce
+        ASAR_TAG: engine-5.0.0
+        ASAR_SHA256: 5477e1f6ff57f412e7eaca68763022fe1d66aef98b49ed7f9d4c90ede9d2cbe5
       run: |
         set -euo pipefail
         # 落到 ~/.era-engine/app.asar，即 locate_asar 的第 3 号候选，而**不是**

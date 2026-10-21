@@ -2,8 +2,9 @@
  * @file 最小 asar 构造器（issue #91 测试专用）。
  *
  * engine-contract 检查器与 engine-bundle 都按 app.asar 的头结构读文件：
- * 前 16 字节是目录 pickle 的 framing，偏移 12 处的 UInt32LE 是头 JSON 的
- * 字节长度，JSON 从 16 起；文件内容的 offset 相对「头结束处」计。本构造器
+ * 前 16 字节是目录 pickle 的 framing，偏移 4 处是头 pickle 长度，偏移 12
+ * 处是头 JSON 的字节长度，JSON 从 16 起并补齐到 4 字节对齐；文件内容的
+ * offset 相对数据段起点（8 + 头 pickle 长度）计。本构造器
  * 按同款结构产出真的能被两边解析的 asar——供测试伪造「换了哈希的渲染包」
  * 「基准被改的引擎」「模块号不一致的 background.js」，不碰真实引擎。
  *
@@ -41,12 +42,21 @@ function build_asar(files) {
   });
 
   const header = Buffer.from(JSON.stringify(root), 'utf8');
+  const padded = Math.ceil(header.length / 4) * 4;
   const prefix = Buffer.alloc(16);
+  prefix.writeUInt32LE(4, 0);
+  prefix.writeUInt32LE(8 + padded, 4);
+  prefix.writeUInt32LE(4 + padded, 8);
   prefix.writeUInt32LE(header.length, 12);
   const body = Buffer.concat(
     names.map((name) => Buffer.from(files[name], 'utf8')),
   );
-  return Buffer.concat([prefix, header, body]);
+  return Buffer.concat([
+    prefix,
+    header,
+    Buffer.alloc(padded - header.length),
+    body,
+  ]);
 }
 
 /**

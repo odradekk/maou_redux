@@ -11,12 +11,12 @@
  * 手法（均为 app.asar 的实测结构）：
  *   1. asar 头是一段 JSON 目录（前 16 字节是两个 UInt32 的 pickle 长度），
  *      按 offset/size 切出 background.js（webpack bundle）；
- *   2. 把入口调用 `r(r.s=311)` 替换成暴露 webpack require——入口模块是
+ *   2. 把入口调用 `r(r.s=302)` 替换成暴露 webpack require——入口模块是
  *      Electron 装配代码，不执行它，其余模块全部惰性、可按号取用；
  *   3. `new Function('require', …)` 求值（模块里的外部依赖走 Node 的
  *      require，本助手用到的模块树不需要 Electron）。
  *
- * 模块号是 ere-4.8.0 的实测值（见各字段注释），引擎升版后编号不一致会在这里
+ * 模块号是 ere-5.0.0 的实测值（见各字段注释），引擎升版后编号不一致会在这里
  * 抛错——那是重新核读新版的信号，不是本助手的缺陷。
  *
  * asar 定位顺序见 ASAR_CANDIDATES。全都没有时 load_engine_bundle() 返回
@@ -36,7 +36,7 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
  * 不一致由 test/asar-candidates.test.js 判红。
  *
  * 最后一条 `~/.era-engine/app.asar` 是为「worktree 里没有引擎」准备的：
- * `ere-4.8.0-win-x64/` 不进 git（.gitignore:15），所以 worktree 与
+ * `ere-5.0.0-win-x64/` 不进 git（.gitignore:15），所以 worktree 与
  * mutation-check 的并行副本都够不着仓库内那条，只剩它可回落。#113 验收踩过
  * 这个坑——几十个用例静默 skip 而测试仍报绿。它是跨机器的约定位置，asar 与
  * 平台无关，换机器只需把文件放到这个路径上。
@@ -44,7 +44,7 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const ASAR_CANDIDATES = () =>
   [
     process.env.ERE_ENGINE_ASAR,
-    path.join(REPO_ROOT, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    path.join(REPO_ROOT, 'ere-5.0.0-win-x64', 'resources', 'app.asar'),
     path.join(os.homedir(), '.era-engine', 'app.asar'),
   ].filter(Boolean);
 
@@ -61,12 +61,16 @@ function locate_asar() {
 // 从 asar 里切出单个文件的内容；头结构见文件头注释
 function read_asar_file(asar_path, name) {
   const buf = fs.readFileSync(asar_path);
-  const header_size = buf.readUInt32LE(12);
-  const header = JSON.parse(buf.slice(16, 16 + header_size).toString('utf8'));
+  const json_size = buf.readUInt32LE(12);
+  const header = JSON.parse(buf.slice(16, 16 + json_size).toString('utf8'));
+  // 头 JSON 补齐到 4 字节对齐，数据段从 8 + 头 pickle 长度（偏移 4）起。
+  // 用 16 + JSON 长度只在 JSON 长度恰为 4 的倍数时成立：4.8.0 碰巧成立，
+  // 5.0.0 差 2 字节，切出的文件整体错位
+  const data_start = 8 + buf.readUInt32LE(4);
   const walk = (node) => {
     for (const [file_name, entry] of Object.entries(node.files || {})) {
       if (file_name === name && entry.offset !== undefined) {
-        const start = 16 + header_size + Number(entry.offset);
+        const start = data_start + Number(entry.offset);
         return buf.slice(start, start + entry.size).toString('utf8');
       }
       if (entry.files) {
@@ -94,19 +98,19 @@ function load_engine_bundle() {
   const asar_path = locate_asar();
   if (!asar_path) {
     console.warn(
-      '[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过',
+      '[engine-bundle] 未找到 ere-5.0.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过',
     );
     cached_bundle = null;
     return cached_bundle;
   }
   const bundle_src = read_asar_file(asar_path, 'background.js');
-  if (!bundle_src || !bundle_src.includes('r(r.s=311)')) {
+  if (!bundle_src || !bundle_src.includes('r(r.s=302)')) {
     throw new Error(
-      `app.asar 的 background.js 不是已知形状（入口 r(r.s=311) 缺失）：${asar_path}`,
+      `app.asar 的 background.js 不是已知形状（入口 r(r.s=302) 缺失）：${asar_path}`,
     );
   }
   const patched = bundle_src.replace(
-    'r(r.s=311)}',
+    'r(r.s=302)}',
     'globalThis.__ere_wp = r;}',
   );
   const bootstrap = new Function(
@@ -115,11 +119,11 @@ function load_engine_bundle() {
   );
   const wp = bootstrap(require);
 
-  // 模块号一致性检查（#91）：4.8.0 实测 EraApi 是模块 183——引擎升版后编号
-  // 变了时 wp(183) 会取到别的模块，下游在 undefined 上炸出不知所云的
+  // 模块号一致性检查（#91）：5.0.0 实测 EraApi 是模块 176——引擎升版后编号
+  // 变了时 wp(176) 会取到别的模块，下游在 undefined 上炸出不知所云的
   // TypeError。这里就地抛「引擎变了」，与「引擎缺失 → 返回 undefined 让
   // 用例 skip」区分开：asar 在场而模块对不上 = 镜像要重核的时刻，直接判失败。
-  const era_api = wp(183);
+  const era_api = wp(176);
   const ERA_API_METHODS = [
     'addTotalLines',
     'setTotalLines',
@@ -138,17 +142,17 @@ function load_engine_bundle() {
     )
   ) {
     throw new Error(
-      '引擎变了：app.asar 的模块 183 不再是 EraApi（原型方法缺失）——重新核读 test/helpers/engine-bundle.js 的模块号映射，并核对 docs/adr/0005 的三层可达性判定是否仍成立',
+      '引擎变了：app.asar 的模块 176 不再是 EraApi（原型方法缺失）——重新核读 test/helpers/engine-bundle.js 的模块号映射，并核对 docs/adr/0005 的三层可达性判定是否仍成立',
     );
   }
 
-  // 静态表文件分类（模块 84）：eraStart 拿 `staticFormatRegex[priority.indexOf(档)]`
+  // 静态表文件分类（模块 80）：eraStart 拿 `staticFormatRegex[priority.indexOf(档)]`
   // 判定一个文件是不是逐角色数据——文件名以 chara 开头、后跟任意非斜杠字符即
   // 命中（不要求后面是数字 id），命中的文件只走逐角色分支、普通表分支不走。
   // #388 建的 CharaNameList.yml 正是栽在这条上（#435），守护用例见
   // test/chara-name-list.test.js 的「文件分类层」。数组与 priority 同序，
   // 取用一律经 indexOf——别写死下标。
-  const { staticFormatPriority, staticFormatRegex } = wp(84);
+  const { staticFormatPriority, staticFormatRegex } = wp(80);
   if (
     !Array.isArray(staticFormatPriority) ||
     !Array.isArray(staticFormatRegex) ||
@@ -156,24 +160,24 @@ function load_engine_bundle() {
     !staticFormatRegex.every((regex) => regex instanceof RegExp)
   ) {
     throw new Error(
-      '引擎变了：app.asar 的模块 84 不再是 staticFormatPriority/staticFormatRegex 的形状——重新核读 test/helpers/engine-bundle.js 的模块号映射',
+      '引擎变了：app.asar 的模块 80 不再是 staticFormatPriority/staticFormatRegex 的形状——重新核读 test/helpers/engine-bundle.js 的模块号映射',
     );
   }
 
   cached_bundle = {
-    /** 引擎静态表解析器（模块 677）：parseDataFile(文本, 'csv'|'yml', 表名) → 行数组 */
-    parse_data_file: wp(677),
-    /** 引擎键名映射（模块 676）：{ _replace, chara, gamebase } */
-    name_mapping: wp(676),
-    /** 引擎工具（模块 65）：getNumber / toLowerCase / safeUndefinedCheck 等 */
-    engine_utils: wp(65),
-    /** EraApi 类（模块 183，已过形状检查）：addCharacter 是未绑定方法，须以假 this 调用 */
+    /** 引擎静态表解析器（模块 667）：parseDataFile(文本, 'csv'|'yml', 表名) → 行数组 */
+    parse_data_file: wp(667),
+    /** 引擎键名映射（模块 666）：{ _replace, chara, gamebase } */
+    name_mapping: wp(666),
+    /** 引擎工具（模块 64）：getNumber / toLowerCase / safeUndefinedCheck 等 */
+    engine_utils: wp(64),
+    /** EraApi 类（模块 176，已过形状检查）：addCharacter 是未绑定方法，须以假 this 调用 */
     era_api,
-    /** 引擎变量寻址（模块 648）：setVar.call(this, varName, val, isAdd)，get 同路 */
-    set_var: wp(648),
-    /** 静态数据格式优先级（模块 84）：['yml','json','csv']，与下一条同序 */
+    /** 引擎变量寻址（模块 637）：setVar.call(this, varName, val, isAdd)，get 同路 */
+    set_var: wp(637),
+    /** 静态数据格式优先级（模块 80）：['yml','json','csv']，与下一条同序 */
     static_format_priority: staticFormatPriority,
-    /** 静态数据分类正则（模块 84，已过形状检查）：eraStart 用它分逐角色/普通表 */
+    /** 静态数据分类正则（模块 80，已过形状检查）：eraStart 用它分逐角色/普通表 */
     static_format_regex: staticFormatRegex,
   };
   return cached_bundle;
@@ -389,7 +393,7 @@ function create_variable_loader() {
 
 /**
  * 以「假 this + 真方法」驱动引擎的 addCharacter / removeCharacter
- * （模块 183 的原型方法）。
+ * （模块 176 的原型方法）。
  *
  * 方法体只依赖 this.staticData / this.data / this.era.extendedTables 与模块
  * 闭包里的工具函数——闭包是真的，this 是按字段清单最小构造的。返回的
@@ -462,7 +466,7 @@ function create_add_character(static_data, { extended_tables = {} } = {}) {
 }
 
 /**
- * 以「假 this + 真方法」驱动引擎的 nextTurnInTrain（模块 183 的原型方法，
+ * 以「假 this + 真方法」驱动引擎的 nextTurnInTrain（模块 176 的原型方法，
  * #163）。
  *
  * 方法体只依赖 this.getCharactersInTrain() 与 this.data 的调教结算桶

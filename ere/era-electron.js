@@ -11,14 +11,15 @@
  * @property {'primary'|'success'|'warning'|'danger'|'info'|''} [buttonType] type of the button in element-plus, 'warning' in default when isButton is false
  * @property {string} [color] color of the button, isButton must be false
  * @property {boolean} [disabled] if the button is disabled, false in default
- * @property {boolean} [disableContinue] if the button is disabled, false in default
+ * @property {boolean} [disableContinue] if the continue is disabled after clicking the button, false in default
  * @property {boolean} [disableWarning] if disable warning when accelerator has been set, false in default
+ * @property {string} [fontSize] font size of the text in the button
  * @property {'left'|'center'|'right'} [inTextAlign] align of the text in the button, 'center' in default
  * @property {boolean} [isButton] if the button is a button, otherwise is a link
  * @property {number} [offset] offset of the button, 0-23, 0 in default
  * @property {boolean} [showAcc] if show the accelerator, true in default on PC, and is always false on Android
  * @property {string} [title] tooltip of the button
- * @property {number} [width] width of the button, 1-24, 1 in default
+ * @property {number} [width] width of the button, 1-24, 24 in default
  */
 /**
  * @typedef ButtonObject
@@ -31,10 +32,10 @@
  * type of the param 'config' in era.drawLine
  * @typedef DividerConfig
  * @property {string} [content] content of the divider
- * @property {'left'|'center'|'right'} [position] position of the divider
- * @property {boolean} [isSolid] if the divider is solid
- * @property {number} [offset] offset of the divider
- * @property {number} [width] width of the divider
+ * @property {'left'|'center'|'right'} [position] position of the divider, 'center' in default
+ * @property {boolean} [isSolid] if the divider is solid, false in default
+ * @property {number} [offset] offset of the divider, 0-23, 0 in default
+ * @property {number} [width] width of the divider, 1-24, 24 in default
  */
 /**
  * @typedef DividerObject
@@ -43,7 +44,10 @@
  */
 /**
  * @typedef ImageObject
- * @property {string|string[]} names
+ * @property {Object} [config] config of the image line
+ * @property {number} [config.offset] offset of the image line, 0-23, 0 in default
+ * @property {number} [config.width] width of the image line, 1-24, 24 in default
+ * @property {string|string[]} names names of the images, a name may contain several alternatives split by '\t'
  * @property {'image'} type
  */
 /**
@@ -52,6 +56,8 @@
  * @property {'left'|'center'|'right'} [align] align of the text shown next to the progress bar, 'left' in default
  * @property {number} [barWidth] width of the progress bar, 0-24, 24 in default
  * @property {string} [color] color of the progress bar
+ * @property {number} [duration] duration(second) of the bar easing, 0.6 in default, set 0 to disable easing
+ * @property {string} [easing] css easing function of the bar easing, 'ease' in default
  * @property {string} [fontColor] color of the font in the progress bar
  * @property {number} [height] height of the progress bar, 6-30(px), 24(px) in default
  * @property {number} [offset] offset of the progress, 0-23, 0 in default
@@ -75,6 +81,9 @@
  * @property {string} [fontSize]
  * @property {string} [fontStyle]
  * @property {string} [fontWeight]
+ * @property {number} [opacity] opacity of the span, 1 in default
+ * @property {string} [textAlignLast] CSS text-align-last of the span
+ * @property {string} [textShadow] CSS text-shadow of the span
  * @property {string} [title]
  * @property {string} [url]
  */
@@ -84,6 +93,8 @@
  * @property {'left'|'center'|'right'} [align] align of the line, 'left' in default
  * @property {string} [color] color of the line, '#ffffff' in default
  * @property {string} [fontSize] font size of the line, '1rem' in default
+ * @property {string} [fontStyle] CSS font-style of the line
+ * @property {string} [fontWeight] CSS font-weight of the line
  * @property {boolean} [isParagraph] if the line is in a paragraph, false in default
  * @property {number} [offset] offset of the line, 0-23, 0 in default
  * @property {number} [width] width of the line, 1-24, 24 in default
@@ -117,11 +128,11 @@
 /**
  * @typedef ColumnConfig
  * @type {Object}
- * @property {number} [gutter]
- * @property {'start'|'center'|'end'|'space-between'|'space-around'|'space-evenly'} [horizontalAlign]
- * @property {number} [offset]
- * @property {'top'|'middle'|'bottom'} [verticalAlign]
- * @property {number} [width]
+ * @property {number} [gutter] gutter between columns, 0 in default
+ * @property {'start'|'center'|'end'|'space-between'|'space-around'|'space-evenly'} [horizontalAlign] horizontal align of the columns, 'start' in default
+ * @property {number} [offset] offset of the row, 0-23, 0 in default
+ * @property {'top'|'middle'|'bottom'} [verticalAlign] vertical align of the columns, 'top' in default
+ * @property {number} [width] width of the row, 1-24, 24 in default
  * @see https://element-plus.org/zh-CN/component/layout.html
  */
 /**
@@ -154,8 +165,8 @@ const era = {
   add(varName, val) {},
   /**
    * add some characters
-   * @param {number | number[]} charaId REQUIRED id of the character defined in chara*.csv
-   *     <br>if it is an array, is means add the character charaId[0] with the data of the character charaId[1]
+   * @param {...(number|number[])} charaId REQUIRED id of the character defined in chara*.csv
+   *     <br>each id may be an array [dstId, srcId], which means add the character dstId with the data of the character srcId
    * @returns {boolean | boolean[]}
    */
   // eslint-disable-next-line no-unused-vars
@@ -174,11 +185,11 @@ const era = {
   beginTrain(...charaId) {},
   /**
    * check if a or some images are loaded
-   * @param name the name of the image
-   * @returns {boolean|boolean[]}
+   * @param {...string} names REQUIRED names of the images
+   * @returns {boolean|boolean[]} if there is only one name, returns a boolean; otherwise an array of boolean
    */
   // eslint-disable-next-line no-unused-vars
-  checkImage(...name) {},
+  checkImage(...names) {},
   /**
    * clear printed lines
    * @param {number} [lineCount] how many lines to be cleared, leave undefined to clear all
@@ -188,8 +199,8 @@ const era = {
   async clear(lineCount) {},
   /**
    * make the current function to wait for some time
-   * @param delay time to delay, ms
-   * @return {Promise<unknown>}
+   * @param {number} delay REQUIRED time to delay, ms
+   * @returns {Promise<unknown>}
    */
   delay: (function () {
     function f(delay) {
@@ -237,13 +248,12 @@ const era = {
    */
   getLineCount() {},
   /**
-   * wait for use's input, the engine will try to return number
-   * @param [config] config of input, like rule
+   * wait for user's input, the engine will try to return number
+   * @param {Object} [config] config of input, like rule
    * @param {boolean} config.[disableBefore] if disable before buttons
+   * @param {boolean} config.[hideInput] if hide the input content
    * @param {string} config.[rule] the regex string of the rule
    * @param {boolean} config.[useRule] if use the rule
-   * @param {boolean} config.[hideInput] if hide the input content
-   * @param {boolean} config.[show] (for Android) if show the input element when using buttons
    * @returns {Promise<any>} a promise of the user input, please use await
    */
   // eslint-disable-next-line no-unused-vars
@@ -272,13 +282,20 @@ const era = {
    */
   async loadGlobal() {},
   logger: {
+    /**
+     * to log an assert error into program logs as warn level when checkVal !== aimVal
+     * @param {any} checkVal the value to be checked
+     * @param {any} aimVal the aim value
+     */
     assert(checkVal, aimVal) {
-      if (checkVal !== aimVal && era.version.engine === void 0) {
-        console.debug(
-          '[ASSERT]',
-          new Error(`assert failed! aim val: ${aimVal}, got val: ${checkVal}`)
-            .stack,
-        );
+      if (era.version.engine === void 0) {
+        if (checkVal !== aimVal) {
+          console.debug(
+            '[ASSERT]',
+            new Error(`assert failed! aim val: ${aimVal}, got val: ${checkVal}`)
+              .stack,
+          );
+        }
         return;
       }
       return era.logger.assert(checkVal, aimVal);
@@ -336,20 +353,20 @@ const era = {
   nextTurnInTrain() {},
   /**
    * show a notification
-   * @param {string|({[color]:string,content:string,[fontSize]:string,[fontWeight]:string}|{isBlank:number}|{isBr:number}|string)[]} content content of the notification
+   * @param {string|({color?:string,content:string,fontSize?:string,fontWeight?:string}|{isBlank:number|true}|{isBr:number|true}|string)[]} content content of the notification
    * @param {string} [title] title of the notification
    * @param {'success'|'info'|'warning'|'error'|''} [type] type of the notification, see the enum
-   * @param {number} [duration] duration of the notification, microsecond
+   * @param {number} [duration] duration of the notification, millisecond, 5000 in default
    */
   // eslint-disable-next-line no-unused-vars
   notify(content, title, type, duration) {},
   /**
    * play the music that must be declared in csv files in directory res
    * @param {string[]|string} names REQUIRED music name, the engine will play the first available music in the array
-   * @param [config]
+   * @param {Object} [config] config of the music
    * @param {boolean} config.[loop] if the music is played in loop
    * @param {boolean} config.[fade] if the music needs fade-in and fade-out
-   * @param {number} config.[fadeInternal] the internal of fade-in and fade-out, microsecond, default 200ms
+   * @param {number} config.[fadeInternal] the interval of fade-in and fade-out, millisecond, 100-500, 100 in default
    * @returns {boolean} if the playing succeeds
    */
   // eslint-disable-next-line no-unused-vars
@@ -381,7 +398,7 @@ const era = {
   printButton(content, accelerator, config) {},
   /**
    * print images that must be declared in csv files in directory res
-   * @param {string} names REQUIRED image names
+   * @param {...string} names REQUIRED image names, a name may contain several alternatives split by '\t'
    * @returns {number} line number of the printed
    */
   // eslint-disable-next-line no-unused-vars
@@ -402,7 +419,7 @@ const era = {
    * print a line chart by chart.js
    * <br/> see: chart.js, chartjs-plugin-annotation, vue-chartjs
    * <br/> note: options.scales.x.ticks.callback and options.scales.y.ticks.callback is the argument array used to create Function
-   * @param {*} config
+   * @param {Object} config REQUIRED config of the line chart, see chart.js
    * @returns {number} line number of the printed
    */
   // eslint-disable-next-line no-unused-vars
@@ -448,7 +465,7 @@ const era = {
   quit() {},
   /**
    * DANGER remove the character
-   * @param {number} charaId REQUIRED id of the character
+   * @param {...number} charaId REQUIRED ids of the characters defined in chara*.csv
    * @returns {void}
    */
   // eslint-disable-next-line no-unused-vars
@@ -470,8 +487,8 @@ const era = {
   replaceText(content, config) {},
   /**
    * reset the data of a character
-   * @param {number | number[]} charaId REQUIRED id of the character defined in chara*.csv
-   *     <br>if it is an array, is means reset the character charaId[0] with the data of the character charaId[1]
+   * @param {...(number|number[])} charaId REQUIRED id of the character defined in chara*.csv
+   *     <br>each id may be an array [dstId, srcId], which means reset the character dstId with the data of the character srcId
    * @returns {void}
    */
   // eslint-disable-next-line no-unused-vars
@@ -529,7 +546,7 @@ const era = {
    * @param {Object} [config]
    * @param {number} config.[opacity]
    * @param {OBPosition} config.[position]
-   * @param {'contain'|'cover'} config.[fit]
+   * @param {'contain'|'cover'|'fit'|string} config.[fit]
    */
   // eslint-disable-next-line no-unused-vars
   setBack(name, config) {},
@@ -541,18 +558,18 @@ const era = {
   setColor(color) {},
   /**
    * set default horizontal align of inColRows
-   * @param {'start'|'end'|'center'|'space-around'|'space-between'|'space-evenly'} align REQUIRED the vertical align: start (default), end, center, space-around, space-between or space-evenly
+   * @param {'start'|'end'|'center'|'space-around'|'space-between'|'space-evenly'} align REQUIRED the horizontal align: start (default), end, center, space-around, space-between or space-evenly
    * @returns {void}
    */
   // eslint-disable-next-line no-unused-vars
   setHorizontalAlign(align) {},
   /**
-   * @deprecated replaced with setOpacity
-   * @param {string} [maskName]
-   * @param {number} [opacity]
+   * @deprecated replaced with setOverlay
+   * @param {string} [name] set undefined to clear the mask
+   * @param {Object|number} [config] config of the mask, or opacity in old versions
    */
   // eslint-disable-next-line no-unused-vars
-  setMask(maskName, opacity) {},
+  setMask(name, config) {},
   /**
    * set default offset
    * @param {number} offset REQUIRED an integer between 0 and 23
@@ -565,7 +582,7 @@ const era = {
    * @param {Object} [config]
    * @param {number} config.[opacity]
    * @param {OBPosition} config.[position]
-   * @param {'contain'|'cover'} config.[fit]
+   * @param {'contain'|'cover'|'fit'|string} config.[fit]
    */
   // eslint-disable-next-line no-unused-vars
   setOverlay(name, config) {},
@@ -602,7 +619,7 @@ const era = {
    * @returns {boolean} if debug
    */
   toggleDebug() {},
-  version: { sdk: '4.8.0', engine: void 0 },
+  version: { sdk: '4.8.5', engine: void 0 },
   /**
    * wait any key from user
    * @returns {Promise<void>} a promise of nothing, please use await

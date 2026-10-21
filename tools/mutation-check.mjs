@@ -191,7 +191,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 const ENGINE_SKIP_BASELINE = 40; // 数据地址缺陷修复 +1（M15422：夹具 no:<n> 模拟由引擎比对用例守护）；收尾生命周期收拢 +1（M15103：死亡机械清理漏登记的真实引擎守护）；#782 +3（M15100-M15102：真实引擎死亡收尾）；#759 +2（M14805/M14806：普通来袭的真实引擎同号保护）；#749 +5（M14800–M14804：三个创建入口的真实引擎同号保护）；#734 +1（M14554：真实引擎非法阈值读取）；#733 +1（M14540：真实引擎通信回归场景漏载 Equip 名字表）；#640 +7（M12870/M12871/M12872/M12874/M12875/M12876 六个新引擎条目 + M7975 改由引擎实证守护）
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
-const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
+const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-5.0.0 的 app.asar';
 
 /**
  * 并行副本不携带的顶层条目（拒绝清单而非白名单：仓库里凡测试可能读到
@@ -204,7 +204,7 @@ const COPY_DENY = new Set([
   '.claude',
   '.agents',
   'node_modules',
-  'ere-4.8.0-win-x64',
+  'ere-5.0.0-win-x64',
   'sav',
   'test-report.tap',
 ]);
@@ -840,13 +840,13 @@ function run_gates(shards, entries, args) {
 /** 候选位置与 test/helpers/engine-bundle.js 同款，逐条理由见那里的注释；
  *  不一致由 test/asar-candidates.test.js 判红。
  *
- *  **并行模式尤其依赖 ~/.era-engine 那条**：COPY_DENY 把 ere-4.8.0-win-x64
+ *  **并行模式尤其依赖 ~/.era-engine 那条**：COPY_DENY 把 ere-5.0.0-win-x64
  *  排除在副本外（见那里的注释），子进程在副本里跑，仓库内那条必然落空。少了
  *  它，有引擎的机器上 --jobs 会得到「引擎在场却有 N 条按跳过处理」而整体判红。 */
 const ASAR_CANDIDATES = (root) =>
   [
     process.env.ERE_ENGINE_ASAR,
-    path.join(root, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
+    path.join(root, 'ere-5.0.0-win-x64', 'resources', 'app.asar'),
     path.join(os.homedir(), '.era-engine', 'app.asar'),
   ].filter(Boolean);
 

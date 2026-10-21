@@ -4,7 +4,7 @@
 
 ## 项目目标
 
-《魔王 Redux》：运行在 EraElectron 4.8.0 上的 JavaScript 游戏。游戏源码为 `ere/*.js`（入口 `main.js`），静态数据表为 `yml/*.yml`，资源在 `res/`。
+《魔王 Redux》：运行在 EraElectron 5.0.0 上的 JavaScript 游戏。游戏源码为 `ere/*.js`（入口 `main.js`），静态数据表为 `yml/*.yml`，资源在 `res/`。
 
 引擎不内置任何玩法系统：存读档界面、商店、调教、事件、日循环与主循环全部游戏侧自实现，引擎只提供输出、输入、变量、存档、角色、媒体与日志 API。
 
@@ -36,7 +36,7 @@
 └── dev-guides/       # 引擎手册的本地副本，已按引擎行为修正
 ```
 
-引擎运行时不进 git。Windows 发布包放在仓库内的 `ere-4.8.0-win-x64/`；Linux 运行时沿用 `~/.era-engine/`。测试共用的引擎包放在用户目录：
+引擎运行时不进 git。Windows 发布包放在仓库内的 `ere-5.0.0-win-x64/`；Linux 运行时沿用 `~/.era-engine/`。测试共用的引擎包放在用户目录：
 
 ```
 ~/.era-engine/
@@ -58,7 +58,7 @@ npm start
 2. 在【游戏】→【打开游戏】中选择仓库根目录。路径由引擎维护；手工编辑全局配置会在引擎退出时被覆盖。
 3. 显示「加载成功」后按任意键进入标题；修改代码后按 `Ctrl+R` 重新加载。
 
-`npm start` 与 Electron MCP 共用启动配置：Windows 启动发布包的 `.exe`，Linux 启动 `~/.era-engine/runtime/` 下的 Electron 与 `~/.era-engine/app.asar`。Electron 版本取自上游 4.8.0 的 `devDependencies`（`electron ^34.5.8`），换引擎版本时一并核对。
+`npm start` 与 Electron MCP 共用启动配置：Windows 启动发布包的 `.exe`，Linux 启动 `~/.era-engine/runtime/` 下的 Electron 与 `~/.era-engine/app.asar`。Electron 版本取自上游 5.0.0 的 `devDependencies`（`electron ^34.5.8`），换引擎版本时一并核对。
 
 启动顺序：读配置 → 读 `yml/*.yml`（**`GameBase.yml` 必需**）→ 读 `res/` → 以 `ere/main.js` 为入口加载脚本 → 注入 SDK → 读 `sav/` → 执行 `main.js` 导出的函数。
 
@@ -119,7 +119,7 @@ PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任�
 
 **全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。条目按 `--slice i 12` 分成 12 个并行分片各自串行运行（阶段 7 收尾时 7046 条，12 片并行实测约 20 分钟；分片单条命令上限 2100 秒，条目再涨到贴近上限时加分片），汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，但 7000 条左右实测约 3.5 小时，阶段验收优先走 CI。上千条的单工单验收也可以借这个标签在 CI 跑全量，跑完去掉标签。
 
-**CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
+**CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-5.0.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 55 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 
 跳过数分别与两份基线比较：无引擎时使用 `test/engine-skip-baseline.txt`，新增依赖引擎的用例必须同步更新该文件；有引擎时使用 `test/engine-present-skip-baseline.txt`，预期为 0。引擎已安装却仍有测试跳过时，应检查跳过条件和 `locate_asar` 的查找结果。
 
@@ -134,7 +134,9 @@ PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任�
 3. 解压整合包，在解压目录里启动 exe，确认不手动选目录也能进入标题画面，且标题显示新版本号。
 4. 在合并提交上打 `v<版本代号>` tag 并推送，用 `gh release create v<版本代号> dist/*.zip --repo odradekk/maou_redux` 发布。发版说明取自 `CHANGELOG.md`，附两个包的 SHA256。
 
-游戏的 Release 带 Latest 标记。`engine-4.8.0` 是 CI 下载引擎用的 Release，CI 按固定地址下载，不受 Latest 标记影响。整合包附带的引擎要与测试使用的版本一致，换引擎版本另开工单。
+游戏的 Release 带 Latest 标记。`engine-5.0.0` 是 CI 下载引擎用的 Release（`engine-4.8.0` 保留给旧提交），CI 按固定地址下载，不受 Latest 标记影响。整合包附带的引擎要与测试使用的版本一致，换引擎版本另开工单。
+
+**`ere/era-electron.js` 的 `version.sdk` 就是玩家需要的最低引擎版本。** 引擎版本低于它时拒绝加载游戏，提示「游戏引擎版本过低」。换 SDK 时同步改 README 中纯游戏包的引擎要求，并写进该版本的 CHANGELOG。
 
 ### 静态数据目录
 
@@ -157,7 +159,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 - **已有 `ere.config.json` 时，修改默认配置不会自动生效。** 代码中的 `||` 会直接使用已加载的 `this.config`，不读取 `_config.json` 的值。需要在本机应用新默认值时，修改 `ere.config.json` 中的对应键，或删除该文件后让引擎按新默认配置重建。
 - **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会直接崩溃或静默降级）放 `_fixed.json`，它优先于用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`，放进 `_fixed.json` 会让 UI 开关点了没反应。
   - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 游戏提供 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。
-  - erauma、ere-kanon、ere-example 所需槽位数未超过引擎默认范围，因此未设置 `saveFiles`。erauma 还会通过 `era.get('gameconfig')?.system.saveFiles` 读取生效配置，但 **4.8.0 不提供 `gameconfig` 键**，本项目不能使用这一方法。
+  - erauma、ere-kanon、ere-example 所需槽位数未超过引擎默认范围，因此未设置 `saveFiles`。erauma 还会通过 `era.get('gameconfig')?.system.saveFiles` 读取生效配置。引擎 4.8.1 起提供 `gameconfig` 键，但本项目已在 `_fixed.json` 固定 `saveFiles`，不需要运行时读取。
 
 `yml/` 文件是静态数据的唯一来源，由人工维护（issue #10 迁移后接续）。键名一律加引号，避免含 `:`、`#` 或首尾空格的键产生解析问题；名称用简体（`tools/lang-table.js`，issue #60），引擎列名键如 素質/名前 保持原样。
 

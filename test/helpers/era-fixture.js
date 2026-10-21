@@ -110,7 +110,7 @@ function create_era_fixture() {
   // —— Row 记账（#68）：一次输出调用 = 一个 Row，与引擎标准一致 ——
   //
   // 引擎侧证据（app.asar 两处实测，非手册推断）：
-  //   主进程 EraApi（模块 183）：print / printAndWait(经 print) / println /
+  //   主进程 EraApi（模块 176）：print / printAndWait(经 print) / println /
   //     printButton / printMultiColumns / printInColRows / printProgress /
   //     drawLine / printImage / printWholeImage / printLineChart / setToBottom
   //     每次调用结尾恰好调一次 addTotalLines()（++totalLines）；空内容
@@ -414,7 +414,7 @@ function create_era_fixture() {
 
   // —— 媒体资源（issue #69）：注册表 + 引擎查名/解析/计行语义的镜像 ——
   //
-  // 以下语义全部抄自 app.asar（EraApi 模块 183 与 eraStart 资源装载段）：
+  // 以下语义全部抄自 app.asar（EraApi 模块 176 与 eraStart 资源装载段）：
   //   - 注册名装载时统一小写落表（eraStart：`const s = toLowerCase(t[0])`），
   //     查名同样先小写——HEART 注册进引擎就是 'heart'，checkImage('HEART')
   //     能否命中取决于小写后的键；
@@ -792,7 +792,7 @@ function create_era_fixture() {
 
   // —— global 系存档 API（#147）：saveGlobal / loadGlobal / resetGlobal ——
   // 普查报告 G1（docs/research/fixture-engine-gap.md）与工单 #147 实现，
-  // 引擎（app.asar 模块 183，逐字，压缩名已还原）：
+  // 引擎（app.asar 模块 176，逐字，压缩名已还原）：
   //   async saveGlobal(){const e=l(this.era.path,"./sav");s(e)||o(e);try{
   //     this.global.version=this.staticData.gamebase.version,
   //     this.global.code=this.staticData.gamebase.gameCode,
@@ -1001,9 +1001,9 @@ function create_era_fixture() {
   // 仍是不取输入的记录桩，见下，机制同源）。
   const input_echo_adds_row = (config) =>
     !system_config.hideUserInput && !config?.hideInput && !config?.any;
-  // 引擎 input() 回传前的数值归一（#151/G6），模块 65 逐字：
+  // 引擎 input() 回传前的数值归一（#151/G6），模块 64 逐字：
   //   getNumber(e){const t=Number(e);return isNaN(t)?e:t}
-  // —— Number(val) 可解析则转数值，NaN 则原样返回。模块 183 的回传路径
+  // —— Number(val) 可解析则转数值，NaN 则原样返回。模块 176 的回传路径
   // `const i=y(n.val)`：归一发生在 resolve 之前，引擎还会把归一后的值
   // print 出去（回显行，golden 样本里光秃秃的 199/99 行）。渲染层回包的
   // val 恒字符串，普通 input() 回给游戏的几乎总是数值。Number 语义边界
@@ -1138,7 +1138,7 @@ function create_era_fixture() {
 
   // —— 角色列表的顺序语义（#150/G4）：引擎三个 get 是键升序，容器是插入序 ——
   //
-  // 引擎侧两套顺序并存，别混为一谈（app.asar 模块 183，逐字）：
+  // 引擎侧两套顺序并存，别混为一谈（app.asar 模块 176，逐字）：
   //   getAllCharacters()     = Object.keys(this.staticData.chara).map(Number)
   //   getAddedCharacters()   = Object.keys(this.data.base).map(Number)
   //   getCharactersInTrain() = Object.keys(this.data.tequip || {}).map(Number)
@@ -1162,7 +1162,7 @@ function create_era_fixture() {
   era.getAllCharacters = () => [...chara_presets.keys()].sort(by_id_ascending);
 
   // —— 调教 API：镜像引擎 beginTrain/endTrain 一族的数据层语义（#44）——
-  // 表的生命周期逐字镜像（#152/D6，app.asar 模块 183；简报四段实现）：
+  // 表的生命周期逐字镜像（#152/D6，app.asar 模块 176；简报四段实现）：
   //   beginTrain(...e){this.data.tequip||(this.data.deltabase={},this.data.tequip={},
   //     this.data.tflag={},this.data.tcvar={},this.data.palam={},this.data.delta={},
   //     this.data.gotjuel={},this.data.source={},this.data.stain={},this.data.ex={},
@@ -1253,7 +1253,7 @@ function create_era_fixture() {
     return undefined;
   };
   // removeCharacter（DELCHARA 的引擎等价物，#44 的 EVENTEND 死亡分支用）。
-  // 引擎（app.asar 模块 183，逐字）分两段清理：
+  // 引擎（app.asar 模块 176，逐字）分两段清理：
   //   - filter 的幸存者分支：对每个幸存者 × 每个参数，delete
   //     relation[幸存者][参数] 与 callname[幸存者][参数]（三段键）；
   //   - 删除循环：被删者自己的整行表（maxbase/base/abl/…/callname/
@@ -1287,7 +1287,7 @@ function create_era_fixture() {
 
   // —— quit：throw 型控制流的逐字镜像（issue #148，普查报告 G5）——
   //
-  // 引擎（app.asar 模块 183，逐字）：quit(){throw this.era.quit(),new Error("quit")}
+  // 引擎（app.asar 模块 176，逐字）：quit(){throw this.era.quit(),new Error("quit")}
   // ——逗号表达式：先发关窗 IPC，然后抛 Error("quit")。装载循环显式识别并
   // 静默放行（'quit' !== e.message && this.error(...)），即游戏脚本的整个
   // Promise 链被炸穿、QUIT 之后的所有语句（含各层调用方的后续）不可达。

@@ -16,7 +16,7 @@ npm ci
 
 ## 引擎与自动化
 
-把上游 4.8.0 Windows x64 发布包完整解压到 `ere-4.8.0-win-x64/`，保留 `.exe`、`resources/`、DLL 等文件的相对位置。本机该目录已存在并被 Git 忽略。
+把上游 5.0.0 Windows x64 发布包完整解压到 `ere-5.0.0-win-x64/`，保留 `.exe`、`resources/`、DLL 等文件的相对位置。本机该目录已存在并被 Git 忽略。
 
 ```powershell
 npm start
@@ -27,20 +27,20 @@ npm start
 `npm start` 和 `tools/electron-mcp-server.mjs` 共用 `tools/engine-launch.mjs`。它在 Windows 上按以下顺序查找引擎程序：
 
 1. 当前环境变量 `ERE_ENGINE_EXECUTABLE` 指定的完整发布版可执行文件。
-2. 当前仓库的 `ere-4.8.0-win-x64/ERA-Electron - 重量级ERA引擎.exe`。
-3. `$env:USERPROFILE/.era-engine/ere-4.8.0-win-x64/` 下的同名程序。
+2. 当前仓库的 `ere-5.0.0-win-x64/ERA-Electron - 重量级ERA引擎.exe`。
+3. `$env:USERPROFILE/.era-engine/ere-5.0.0-win-x64/` 下的同名程序。
 
 Windows 发布版自动加载自身的 `resources/app.asar`，启动时不额外传入 asar 路径。若引擎位于主工作目录，而游戏从另一个 Git worktree 运行，可在该 PowerShell 会话中指定引擎路径：
 
 ```powershell
-$env:ERE_ENGINE_EXECUTABLE = 'D:\Code\era\ere-4.8.0-win-x64\ERA-Electron - 重量级ERA引擎.exe'
+$env:ERE_ENGINE_EXECUTABLE = 'D:\Code\era\ere-5.0.0-win-x64\ERA-Electron - 重量级ERA引擎.exe'
 npm start
 ```
 
 测试只需要 `app.asar`。将它复制到用户目录下的 `.era-engine/`，让其他 worktree 和变异测试的隔离副本也能找到引擎。复制前核对 SHA256，期望值来自 `.github/actions/setup-engine/action.yml`：
 
 ```powershell
-$engineSource = Join-Path (Get-Location) 'ere-4.8.0-win-x64/resources/app.asar'
+$engineSource = Join-Path (Get-Location) 'ere-5.0.0-win-x64/resources/app.asar'
 $expectedHash = '98cbd808b08c5d675665c4581ee813ff106b1bba0225102ea2950507e89808ce'
 if ((Get-FileHash -LiteralPath $engineSource -Algorithm SHA256).Hash -ne $expectedHash) {
     throw '引擎版本或文件内容不符，停止复制'

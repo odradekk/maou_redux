@@ -12,6 +12,7 @@
   "window": {
     "audio": 100,
     "autoMax": false,
+    "fontFamily": "EraMono SC",
     "fontSize": 16,
     "height": 880,
     "limit": 512,

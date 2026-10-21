@@ -508,7 +508,7 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
       path.join(root, 'test', 'gated.test.js'),
       [
         "const { test } = require('node:test');",
-        "console.warn('[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过');",
+        "console.warn('[engine-bundle] 未找到 ere-5.0.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过');",
         "test('依赖引擎的用例', { skip: true }, () => {});",
         '',
       ].join('\n'),
@@ -631,7 +631,7 @@ test('抽样含依赖引擎的条目同样退 0：抽样档不核对，依赖引
       path.join(root, 'test', 'gated.test.js'),
       [
         "const { test } = require('node:test');",
-        "console.warn('[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过');",
+        "console.warn('[engine-bundle] 未找到 ere-5.0.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过');",
         "test('依赖引擎的用例', { skip: true }, () => {});",
         '',
       ].join('\n'),
@@ -684,7 +684,7 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
       path.join(root, 'test', 'gated.test.js'),
       [
         "const { test } = require('node:test');",
-        "console.warn('[engine-bundle] 未找到 ere-4.8.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过');",
+        "console.warn('[engine-bundle] 未找到 ere-5.0.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路），引擎比对用例将跳过');",
         "test('依赖引擎的用例', { skip: true }, () => {});",
         '',
       ].join('\n'),

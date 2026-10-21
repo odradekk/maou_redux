@@ -128,7 +128,7 @@ test('EVENTFIRST/EVENTLOAD 真的调用了 chara_name_init（读取 namelistkeys
 
 // —— 文件分类层：引擎按文件名把静态表分成「逐角色」与「普通表」两条路 ——
 
-/** 引擎 eraStart 的分类条件（yml 档）：模块 84 的 staticFormatRegex 按格式取 */
+/** 引擎 eraStart 的分类条件（yml 档）：模块 80 的 staticFormatRegex 按格式取 */
 function chara_file_regex() {
   const index = engine.static_format_priority.indexOf('yml');
   return engine.static_format_regex[index];
