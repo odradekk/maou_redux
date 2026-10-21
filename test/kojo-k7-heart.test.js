@@ -854,6 +854,62 @@ test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条�
   }
 });
 
+test('录像自我介绍：开口的各支给录像内容加上「自我介绍」位，不碰别的位（初回与二回目两组）', async () => {
+  const cases = [
+    { label: '初回・本名', cflag: 0, seed: { 'abl:20:17': 5 }, hit: true },
+    {
+      label: '初回・下流的话',
+      cflag: 0,
+      seed: { 'palam:20:5': 10000, 'talent:20:76': 1 },
+      hit: true,
+    },
+    {
+      label: '初回・自我介绍',
+      cflag: 0,
+      seed: { 'talent:20:85': 1 },
+      hit: true,
+    },
+    { label: '初回・不说', cflag: 0, seed: {}, hit: false },
+    {
+      label: '二回目・爱的话语',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'talent:20:85': 1, 'tflag:60': 1 },
+      hit: true,
+    },
+    {
+      label: '二回目・下流的词语',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'talent:20:76': 1, 'tflag:60': 1 },
+      hit: true,
+    },
+    { label: '二回目・本名', cflag: 1, seed: { 'abl:20:17': 5 }, hit: true },
+    {
+      label: '二回目・下流的话',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'talent:20:76': 1 },
+      hit: true,
+    },
+    {
+      label: '二回目・自我介绍',
+      cflag: 1,
+      seed: { 'talent:20:85': 1 },
+      hit: true,
+    },
+    { label: '二回目・不说', cflag: 1, seed: {}, hit: false },
+  ];
+  for (const { label, cflag, seed, hit } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('tequip:20:53', 1);
+      f.store.set('cflag:20:357', cflag);
+      for (const [key, value] of Object.entries(seed)) f.store.set(key, value);
+    }, 56);
+    const { game } = fixture.load_module('facade/game');
+    game.kojo.录像内容 = 1; // 处女丧失位已记下
+    await speak_k7(fixture, () => 0);
+    assert.equal(game.kojo.录像内容, hit ? 3 : 1, label);
+  }
+});
+
 test('#621 交谈・通常会話七支（初回与二回目两组）：前缀与各支收行段合成一条输出', async () => {
   const cases = [
     {

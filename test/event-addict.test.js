@@ -267,13 +267,18 @@ test('PRECIPITATE_WITHDRAWAL：喂媚药且侵攻中时直接陷落退出侵攻'
   fixture.store.set('item:26', 1);
   fixture.store.set('cflag:31:1', 2); // 侵攻中
   fixture.store.set('cflag:31:9', 3); // 等级，决定金钱奖励
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  const era_exflag = fixture.load_module('era-utils/era-exflag');
+  era_flag.money = 50;
+  era_exflag.legit_money = 20;
   fixture.set_inputs(0);
 
   await precipitate_withdrawal(31, seq([0]));
 
   assert.equal(fixture.store.get('cflag:31:1'), 0, '退出侵攻状态');
-  assert.equal(fixture.store.get('money'), 300, '100 × 等级');
-  assert.equal(fixture.store.get('ex_flag:4444'), 300);
+  assert.ok(fixture.text_lines().includes('获得300G！'));
+  assert.equal(era_flag.money, 350, '所持金加上 100 × 等级');
+  assert.equal(era_exflag.legit_money, 320, '非作弊资金同步增加');
   assert.equal(fixture.store.get('cflag:31:506'), 1);
   assert.equal(fixture.store.get('cflag:31:507'), 0);
 });

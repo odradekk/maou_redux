@@ -171,6 +171,37 @@ test('助手调教不跳过：首次爱抚出台词', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 1, '助手调教也推进到 1');
 });
 
+test('EVENTTRAIN 助手专属台词按助手自己的 ID 判断 17 号，与加入顺序无关', async () => {
+  const MAO_LINE = '「诶…今天是主人和另外一个人一起来调教吗？」';
+  // 加入顺序是 0、31、17、2、100…139：第 18 个加入的不是 17 号，
+  // 第 3 个加入的才是 17 号
+  const cases = [
+    { assi: 17, expected: true },
+    { assi: 2, expected: false },
+  ];
+  for (const { assi, expected } of cases) {
+    const fixture = await setup_k1((f) => {
+      for (const id of [17, 2]) {
+        join_slave_chara(f, id);
+        f.store.set(`talent:${id}:165`, 1);
+      }
+      for (let id = 100; id < 140; id += 1) {
+        join_slave_chara(f, id);
+      }
+      f.load_module('era-utils/era-flag').assi = assi;
+      f.store.set(`cflag:${CID}:201`, 9); // 越过初调教的各档
+      f.store.set(`talent:${CID}:76`, 1);
+    });
+    const { emit } = fixture.load_module('system/event/registry');
+    await emit('EVENTTRAIN');
+    assert.equal(
+      fixture.text_lines().includes(MAO_LINE),
+      expected,
+      `助手 ${assi}：${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
 test('口塞（TEQUIP:45）：SELECTCOM != 45 跳过、== 45 不被此判定拦', async () => {
   const gagged = await setup_k1((f) => f.store.set(`tequip:${CID}:45`, 1));
   await speak_k1(gagged);

@@ -587,7 +587,9 @@ on(
       return 1;
     } else if (era_flag.assi < 0) {
       await k1_kojo2(rand); // CALL K1_KOJO2
-    } else if ((era.get(`no:${assi}`) || assi) === 17) {
+    } else if (assi === 17) {
+      // NO:ASSI == 17 即助手的角色 ID 为 17。引擎的 no:<n> 按已加入序号取
+      // 角色，不是角色 ID
       era.drawLine();
       if (era.get(`talent:${assi}:165`)) {
         if (chara(target).kojo.简易助手_0 === 0) {

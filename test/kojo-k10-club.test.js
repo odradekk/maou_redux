@@ -361,7 +361,64 @@ test('KOJO_MESSAGE_MARKCNG_10：苦痛刻印变动==3 且 CFLAG:297==0 触发苦
   assert.equal(fixture.store.get('cflag:20:297'), 1);
 });
 
+test('KOJO_MESSAGE_PALAMCNG_10 处女丧失：反感与不快的本回增量满 500 时不出破瓜台词', async () => {
+  const branches = [
+    { label: '淫乱', talent: 76, line: '白梅花虽然承受着破瓜之痛' },
+    { label: '爱慕', talent: 85, line: '白梅花因为破瓜之痛而奄奄一息' },
+    { label: '其他', talent: undefined, line: '「哈呜～…咕…果然真是好痛呢' },
+  ];
+  for (const { label, talent, line } of branches) {
+    for (const [displeasure, expected] of [
+      [199, true],
+      [200, false],
+    ]) {
+      const fixture = await setup_k10((f) => {
+        if (talent !== undefined) f.store.set(`talent:20:${talent}`, 1);
+        f.store.set('delta:20:11', 300); // 反感
+        f.store.set('delta:20:12', displeasure); // 不快
+      });
+      const { game } = fixture.load_module('facade/game');
+      game.train.处女丧失 = 1;
+      game.train.主人导致处女丧失 = 1;
+      const { kojo_message_palamcng_family } =
+        fixture.load_module('kojo/kojo-system');
+      await kojo_message_palamcng_family.call(10, { args: [] });
+      assert.equal(
+        fixture.text_lines().some((l) => l.startsWith(line)),
+        expected,
+        `${label}・增量 ${300 + displeasure}：${JSON.stringify(fixture.text_lines())}`,
+      );
+    }
+  }
+});
+
 // —— self_kojo_k10 ——
+
+test('SELF_KOJO_K10 调教后自慰：按 AFTERTRAIN 自慰检查算出的次数选单数或复数措辞', async () => {
+  // ABL:31（自慰中毒）1 → 自慰 1 次，3 → 自慰 4 次
+  for (const [addiction, count, line] of [
+    [1, 1, '白梅花自慰地停不下来的样子、撸着勃起变硬的阴茎迎来绝顶。'],
+    [3, 4, '白梅花自慰地停不下来的样子、撸着勃起变硬的阴茎不断迎来绝顶。'],
+  ]) {
+    const fixture = await setup_k10((f) => {
+      f.store.set('abl:20:0', 3);
+      f.store.set('abl:20:11', 2);
+      f.store.set('abl:20:31', addiction);
+      f.store.set('base:20:0', 500);
+      f.store.set('talent:20:85', 1);
+    });
+    const { aftertrain_masturbation_check } = fixture.load_module(
+      'event/event-aftertrain',
+    );
+    await aftertrain_masturbation_check(0, 0, () => 0);
+    const lines = fixture.text_lines();
+    assert.ok(
+      lines.some((l) => l.endsWith(`自慰了${count}次。`)),
+      JSON.stringify(lines),
+    );
+    assert.ok(lines.includes(line), `${count} 次：${JSON.stringify(lines)}`);
+  }
+});
 
 test('SELF_KOJO_K10 TFLAG:13==13（自我口上·孕育）：CSTR:2 插值', async () => {
   const fixture = await setup_k10();
