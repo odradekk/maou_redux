@@ -789,6 +789,29 @@ test('影像投放等键：增强与延长流行的支付播报在回菜单换�
   }
 });
 
+test('影像投放等键：奸商代理的犒赏播报在回菜单换屏前先经按键确认', async () => {
+  for (const [pay, label, money, medals, notice] of [
+    [1, '犒赏金币', 100000, 0, '犒赏了奸商5000G'],
+    [2, '犒赏勋章', 0, 20, '犒赏了奸商1枚勋章'],
+  ]) {
+    const fixture = create_era_fixture();
+    fixture.load_module('era-utils/era-exflag').crystal_ball_stock = 3;
+    fixture.load_module('era-utils/era-flag').money = money;
+    fixture.store.set('exp:0:81', medals); // EXP:0:81 勋章经验
+    const { sengen_video } = fixture.load_module('page/page-invasion');
+
+    // [2] 奸商代理 → 投放 1 部（成功，等键）→ 犒赏 → 播报 → 回菜单 → [999]
+    fixture.set_inputs(2, 1, pay, 999);
+    await sengen_video(() => 0);
+
+    assert(
+      fixture.lines_history.some((l) => (l.text ?? '') === notice),
+      label + '：播报应输出过',
+    );
+    assert_no_unread(fixture, label);
+  }
+});
+
 test('名册动作收尾：灵魂转移播报在名册重画前先经按键确认（#724）', async () => {
   const fixture = create_era_fixture();
   const { join_slave_chara } = require('./helpers/chara');

@@ -4,8 +4,8 @@
  * 三样都要覆盖）」的覆盖范围：
  *
  *   - 200–207 号可用性检查：自动不可/装备互斥/观战券、死斗场检查、等级门槛
- *     （数据驱动）、以及 #214 的撞号消解——L_IDX 100（COM207 媚药
- *     史莱姆）被可用性检查过滤后，输入 100 恒进入 usercom 界面；
+ *     （数据驱动）、以及调教画面的撞号——COM207 媚药史莱姆的紧凑序号
+ *     跳过子菜单号，可用与否输入 100 都进入 usercom 界面；
  *   - com200 真身：进入/退出翻转、胆怯/感情淡薄的损耗缩放；
  *   - TRAIN_MESSAGE 分支：B 的 200 分支（进出两支 + 服装前缀 + 全裸示众）
  *     与 201-207 的显式无操作（无消息分支）、A 公共头的
@@ -33,6 +33,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { seed_static_names } = require('./helpers/static-names');
 
 /** 助手角色（COM201 用） */
 function join_assi_chara(fixture, id = 32, name = `助手${id}`) {
@@ -158,38 +159,73 @@ for (const [com, min_level] of [
   });
 }
 
-test('#214 撞号消解：COM207 不可用时输入 100（其紧凑序号）恒进入 usercom 界面', async () => {
-  const fixture = create_era_fixture();
-  preset_chara_0(fixture);
-  fixture.era.addCharacter(0);
-  join_slave_chara(fixture, 31, '温妮');
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = 31;
-  era_flag.assi = -1;
-  fixture.era.beginTrain(0, 31);
-  fixture.load_module('system/train/com-colosseum');
+test('COM207 与 [100] 能力表示不撞号：COM207 可用与否，输入 100 都进入 usercom 界面', async () => {
+  // 调教者等级抬到 COM207 的门槛（≥100），只用死斗场开关决定它可不可用
+  for (const in_colosseum of [false, true]) {
+    const label = in_colosseum ? 'COM207 可用' : 'COM207 不可用';
+    const { fixture } = seed_colosseum_world();
+    fixture.store.set('cflag:0:9', 100);
+    if (in_colosseum) {
+      fixture.store.set('tequip:31:55', 1);
+    }
+    fixture.load_module('page/page-usercom');
+    const { on } = fixture.load_module('system/event/registry');
+    const usercom_probe = [];
+    on('USERCOM', async (result) => {
+      usercom_probe.push(result);
+    });
+    const { run_train, scan_usable_commands } = fixture.load_module(
+      'system/train/train-loop',
+    );
+    assert.equal(
+      (await scan_usable_commands()).includes(207),
+      in_colosseum,
+      `${label}：前提`,
+    );
+
+    fixture.set_inputs(100, 999);
+    assert.equal(await run_train(), 'AFTERTRAIN', label);
+    assert.deepEqual(
+      usercom_probe,
+      [100, 999],
+      `${label}：100 必须进入 usercom 界面`,
+    );
+  }
+});
+
+test('COM207 可用时调教画面没有同号按钮：媚药史莱姆的编号避开子菜单号，按它的编号执行 COM207', async () => {
+  const { fixture } = seed_colosseum_world({ assi: true });
+  seed_static_names(fixture); // 方格按钮正文读指令名表
+  fixture.store.set('tequip:31:55', 1); // 死斗场
+  fixture.store.set('cflag:0:9', 100); // 调教者等级达到 COM207 门槛
+  // 有条件的子菜单按钮全部显示：助手记录（[102] 交代助手）、奴隶可对换
+  // （[112] 对换调教）、已登录调教菜单（[991]/[992]）
+  fixture.store.set('flag:10013', 32); // ASSI:1
+  fixture.store.set('cflag:31:0', 2); // CFLAG:0 调教状态 2 = 可对换
+  fixture.store.set('flag:550', 1); // 调教菜单长度
   fixture.load_module('page/page-usercom');
-  const { on } = fixture.load_module('system/event/registry');
-  const usercom_probe = [];
-  on('USERCOM', async (result) => {
-    usercom_probe.push(result);
-  });
-  const { com_index } = fixture.load_module('system/train/com-index');
-
-  // 207 的紧凑序号恰是 100（可直选空间的末位），与 [100] 能力表示撞号。
-  // 调教者等级抬到门槛（≥100）以隔离等级判定——不在死斗场时只剩
-  // 207 号可用性检查因不在死斗场而拒绝：100 不进 usable → usercom 界面
-  fixture.store.set('cflag:0:9', 100);
-  assert.equal(com_index(207), 100);
-  fixture.set_inputs(100, 999);
-  const { run_train } = fixture.load_module('system/train/train-loop');
-  assert.equal(await run_train(), 'AFTERTRAIN');
-
-  assert.deepEqual(usercom_probe, [100, 999], '100 必须进入 usercom 界面');
-  assert.ok(
-    !fixture.text_lines().some((l) => l.includes('媚药史莱姆')),
-    'COM207 不得被 100 触发',
+  const { emit } = fixture.load_module('system/event/registry');
+  const { scan_usable_commands } = fixture.load_module(
+    'system/train/train-loop',
   );
+  const { com_id } = fixture.load_module('system/train/com-index');
+
+  await emit('SHOW_USERCOM', await scan_usable_commands());
+
+  // 同号按钮在引擎里回传同一个值，train-loop 先按指令处理，子菜单就按不到
+  const buttons = fixture.lines.filter((line) => line.type === 'button');
+  const accelerators = buttons.map((b) => b.accelerator);
+  for (const key of [102, 112, 991, 992]) {
+    assert.ok(accelerators.includes(key), `前提：子菜单 [${key}] 应显示`);
+  }
+  assert.deepEqual(
+    accelerators.filter((acc, i) => accelerators.indexOf(acc) !== i),
+    [],
+    `调教画面不得有同号按钮，实测 ${accelerators.join(', ')}`,
+  );
+  const slime = buttons.find((b) => b.text === '媚药史莱姆');
+  assert.ok(slime, 'COM207 的按钮应在方格里');
+  assert.equal(com_id(slime.accelerator), 207, '按方格上的编号执行 COM207');
 });
 
 test('怪物败北线是严格小于：战斗点恰等于败北线判胜（202 @ level 10）', async () => {

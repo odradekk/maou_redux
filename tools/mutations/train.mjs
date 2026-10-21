@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1109; // 数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）； // #792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1113; // 界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -400,8 +400,7 @@ export default [
     desc: 'M740 反向变异（#213 必配）：映射层恒等化（com_index 返回 L_I 本身——train-loop.js:164 的旧行为）',
     file: 'ere/system/train/com-index.js',
     find: `function com_index(id) {
-  const idx = ORDERED_TRAIN_IDS.indexOf(id);
-  return idx === -1 ? undefined : idx;
+  return INDEX_BY_ID.get(id);
 }`,
     replace: `function com_index(id) {
   // 变异：恒等映射（第一个空号 39 之后的指令全部错位）
@@ -413,13 +412,8 @@ export default [
   {
     desc: 'M741 输入侧映射的越界缺省处理改成 0（空间外输入被误当爱抚执行）',
     file: 'ere/system/train/com-index.js',
-    find: `  if (!Number.isInteger(idx) || idx < 0 || idx >= ORDERED_TRAIN_IDS.length) {
-    return undefined;
-  }`,
-    replace: `  // 变异：越界回落 0（999 出口被当爱抚）
-  if (!Number.isInteger(idx) || idx < 0 || idx >= ORDERED_TRAIN_IDS.length) {
-    return 0;
-  }`,
+    find: `  return ID_BY_INDEX.get(idx);`,
+    replace: `  return ID_BY_INDEX.get(idx) ?? 0; // 变异：越界回落 0（999 出口被当爱抚）`,
     tests: ['com-dispatch', 'train-loop'],
     // train-loop 侧的红形式是输入耗尽（999→0 进指令路径吃掉退出键），
     // com-dispatch 侧是越界断言——must_mention 取后者
@@ -2751,12 +2745,12 @@ export default [
     must_mention: '[死斗场决斗中]',
   },
   {
-    desc: 'M1044 able207 的死斗场检查删（不在场也可用→输入 100 触发指令）',
+    desc: 'M1044 202-207 共用的死斗场检查删（不在死斗场也可用）',
     file: 'ere/system/train/com-colosseum.js',
     find: '    if ((era.get(`tequip:${era_flag.target}:55`) || 0) === 0) {\n      return 0; // 死斗场判定\n    }',
     replace: '    // 变异：死斗场检查删',
     tests: ['com-colosseum'],
-    must_mention: '#214 撞号消解',
+    must_mention: '不在死斗场',
   },
 
   {
@@ -11240,6 +11234,41 @@ export default [
     replace: '  // 变异：不写可否位',
     tests: ['ablup'],
     must_mention: 'ablup0：成功购买——扣珠、升级、显示变为LV文案',
+  },
+  // —— 调教画面 [100] 撞号：紧凑序号跳过子菜单按钮号 ——
+  {
+    desc: 'M15306 紧凑序号不再跳过子菜单号（COM207 回到 100，与能力表示撞号）',
+    file: 'ere/system/train/com-index.js',
+    find: `  while (USERCOM_KEYS.has(next_index)) {
+    next_index += 1;
+  }`,
+    replace: `  // 变异：不跳过子菜单号`,
+    tests: ['com-colosseum'],
+    must_mention: '调教画面不得有同号按钮',
+  },
+  {
+    desc: 'M15307 子菜单号表漏掉 100（COM207 印 100，与能力表示撞号）',
+    file: 'ere/system/train/com-index.js',
+    find: `  100, 101, 102, 103, 104, 105, 106, 107, 108, 112, 990, 991, 992, 999,`,
+    replace: `  101, 102, 103, 104, 105, 106, 107, 108, 112, 990, 991, 992, 999, // 变异：漏 100`,
+    tests: ['com-colosseum'],
+    must_mention: '调教画面不得有同号按钮',
+  },
+  {
+    desc: 'M15308 跳过子菜单号只顺延一格（COM207 印 101，与污秽表示撞号）',
+    file: 'ere/system/train/com-index.js',
+    find: `  while (USERCOM_KEYS.has(next_index)) {`,
+    replace: `  if (USERCOM_KEYS.has(next_index)) { // 变异：只顺延一格`,
+    tests: ['com-colosseum'],
+    must_mention: '调教画面不得有同号按钮',
+  },
+  {
+    desc: 'M15309 输入侧不跳过子菜单号（输入 100 被当作 COM207，109 没有指令）',
+    file: 'ere/system/train/com-index.js',
+    find: `  return ID_BY_INDEX.get(idx);`,
+    replace: `  return ORDERED_TRAIN_IDS[idx]; // 变异：输入侧按位次取`,
+    tests: ['com-dispatch'],
+    must_mention: 'com_id(109) 应为 207',
   },
   {
     desc: 'M15418 初体验对象退回读 no:${other}（record_first_exp）',
