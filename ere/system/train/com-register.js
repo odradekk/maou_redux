@@ -44,6 +44,7 @@ const {
 } = require('#/system/train/com-family');
 const { execute_command_round } = require('#/system/train/train-loop');
 const { print_button_grid } = require('#/utils/button-grid');
+const { train_command_name } = require('#/data/train-command-const');
 
 /** 菜单保存槽的 flag 区段（FLAG:551～560） */
 const SLOT_BASE = 551;
@@ -53,7 +54,7 @@ const COMSEQ_ACTIVE = 555;
 /**
  * multi_comable：指令号能否登记进调教菜单。
  * 不在可直选表 = 不可（高级 COM 不入菜单）。按 DECLARED_TRAIN_IDS 判断，
- * 不读 TRAINNAME 判空：引擎读未声明序号的名字会直接抛错。
+ * 不拿名字空不空当判据：名字层对表外编号一律返回空串。
  * 否则包着 TFLAG:224 调用 com_able_family 的对应号（实行中旗标让口上的
  * 「索求」分支静音，置位/复位成对）。
  *
@@ -72,8 +73,8 @@ async function multi_comable(id) {
 
 /**
  * comseq_show：一行显示已登录的指令序列。
- * 名字读 TRAINNAME（静态名——与指令菜单界面读 TRAIN_NAME
- * 不同表：登记面只收可直选指令，静态名恒非空）；不可用的条目显示
+ * 名字读指令常量的静态名（与指令菜单界面读 TRAIN_NAME 不同层：登记面
+ * 只收可直选指令，静态名恒非空）；不可用的条目显示
  * （不可用）；连续同指令折叠为 ×n（计数内联推进）；
  * 条目间以「 → 」分隔。
  *
@@ -97,7 +98,7 @@ async function comseq_show() {
       DECLARED_TRAIN_IDS.includes(id) &&
       (await com_able_family.call(id, { whenMissing: 1 })) !== 0;
     if (able) {
-      era.print(era.get(`traincommandname:${id}`) ?? '');
+      era.print(train_command_name(id));
     } else {
       era.print('（不可用）');
     }
@@ -135,7 +136,7 @@ async function print_comlist() {
   const items = [];
   for (const id of DECLARED_TRAIN_IDS) {
     if ((await multi_comable(id)) === 1) {
-      items.push([id, era.get(`traincommandname:${id}`) ?? '']);
+      items.push([id, train_command_name(id)]);
     }
   }
   print_button_grid(items, 3);

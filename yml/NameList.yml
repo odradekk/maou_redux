@@ -8,10 +8,10 @@
 # 逐条抽取 `LIST_CHARA_NAME:n = 名字`，过归一表（词级→字级），
 # 再按下方两条规则处理，最终按 id 升序写出。
 #
-# 一维表，无 extendedCharaTables 登记（TrainCommand.yml 同款先例）。读法：
+# 一维表，无 extendedCharaTables 登记（TrainAlias.yml 同款先例）。读法：
 # era.get(`namelistname:${nid}`)（表名取自文件名小写 namelist，
 # 引擎按「id ↔ 名字」双向映射一维表装载——`${表}name:${id}` 是取 name 字段的
-# 通用读法，见 yml/TrainCommand.yml 的 traincommandname 先例）；查表函数是
+# 通用读法）；查表函数是
 # ere/chara/chara-name-list.js 的 get_fixed_chara_name(nid)。
 #
 # **文件名不许以 chara 开头（issue #435）。** 引擎 eraStart 用一条写死的
