@@ -449,7 +449,7 @@ class KojoFacade {
 
   /**
    * 爱抚（cflag:cid:301）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 爱抚() {
@@ -464,7 +464,7 @@ class KojoFacade {
 
   /**
    * 舔阴（cflag:cid:302）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 舔阴() {
@@ -479,7 +479,7 @@ class KojoFacade {
 
   /**
    * 肛门爱抚（cflag:cid:303）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 肛门爱抚() {
@@ -494,7 +494,7 @@ class KojoFacade {
 
   /**
    * 自慰（cflag:cid:304）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 自慰() {
@@ -524,7 +524,7 @@ class KojoFacade {
 
   /**
    * 胸爱抚（cflag:cid:306）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 胸爱抚() {
@@ -539,7 +539,7 @@ class KojoFacade {
 
   /**
    * 接吻（cflag:cid:307）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 接吻() {
@@ -554,7 +554,7 @@ class KojoFacade {
 
   /**
    * 自己扒开（cflag:cid:308）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 自己扒开() {
@@ -569,7 +569,7 @@ class KojoFacade {
 
   /**
    * 插入手指（cflag:cid:309）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 插入手指() {
@@ -584,7 +584,7 @@ class KojoFacade {
 
   /**
    * 舔肛（cflag:cid:310）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 舔肛() {
@@ -599,7 +599,7 @@ class KojoFacade {
 
   /**
    * 振动宝石（cflag:cid:311）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 振动宝石() {
@@ -614,7 +614,7 @@ class KojoFacade {
 
   /**
    * 壶虫（cflag:cid:312）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 壶虫() {
@@ -629,7 +629,7 @@ class KojoFacade {
 
   /**
    * 振动杖（cflag:cid:313）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 振动杖() {
@@ -644,7 +644,7 @@ class KojoFacade {
 
   /**
    * 肛门虫（cflag:cid:314）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 肛门虫() {
@@ -659,7 +659,7 @@ class KojoFacade {
 
   /**
    * 阴蒂夹（cflag:cid:315）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 阴蒂夹() {
@@ -674,7 +674,7 @@ class KojoFacade {
 
   /**
    * 乳头夹（cflag:cid:316）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 乳头夹() {
@@ -689,7 +689,7 @@ class KojoFacade {
 
   /**
    * 榨乳器（cflag:cid:317）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 榨乳器() {
@@ -704,7 +704,7 @@ class KojoFacade {
 
   /**
    * 飞机杯（cflag:cid:318）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 飞机杯() {
@@ -719,7 +719,7 @@ class KojoFacade {
 
   /**
    * 肛珠（cflag:cid:320）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 肛珠() {
@@ -734,7 +734,7 @@ class KojoFacade {
 
   /**
    * 正常位（cflag:cid:321）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 正常位() {
@@ -749,7 +749,7 @@ class KojoFacade {
 
   /**
    * 背后位（cflag:cid:322）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 背后位() {
@@ -764,7 +764,7 @@ class KojoFacade {
 
   /**
    * 对面座位（cflag:cid:323）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 对面座位() {
@@ -779,7 +779,7 @@ class KojoFacade {
 
   /**
    * 背面座位（cflag:cid:324）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 背面座位() {
@@ -824,7 +824,7 @@ class KojoFacade {
 
   /**
    * 正常位肛交（cflag:cid:327）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 正常位肛交() {
@@ -839,7 +839,7 @@ class KojoFacade {
 
   /**
    * 背后位肛交（cflag:cid:328）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 背后位肛交() {
@@ -854,7 +854,7 @@ class KojoFacade {
 
   /**
    * 对面座位肛交（cflag:cid:329）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 对面座位肛交() {
@@ -869,7 +869,7 @@ class KojoFacade {
 
   /**
    * 背面座位肛交（cflag:cid:330）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 背面座位肛交() {
@@ -884,7 +884,7 @@ class KojoFacade {
 
   /**
    * 手淫（cflag:cid:331）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 手淫() {
@@ -899,7 +899,7 @@ class KojoFacade {
 
   /**
    * 口交_奴（cflag:cid:332）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 口交_奴() {
@@ -914,7 +914,7 @@ class KojoFacade {
 
   /**
    * 乳交（cflag:cid:333）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 乳交() {
@@ -929,7 +929,7 @@ class KojoFacade {
 
   /**
    * 股间性交（cflag:cid:334）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 股间性交() {
@@ -944,7 +944,7 @@ class KojoFacade {
 
   /**
    * 骑乘位（cflag:cid:335）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 骑乘位() {
@@ -959,7 +959,7 @@ class KojoFacade {
 
   /**
    * 全身擦洗（cflag:cid:336）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 全身擦洗() {
@@ -974,7 +974,7 @@ class KojoFacade {
 
   /**
    * 骑乘位肛交（cflag:cid:337）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 骑乘位肛交() {
@@ -989,7 +989,7 @@ class KojoFacade {
 
   /**
    * 肛门侍奉（cflag:cid:338）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 肛门侍奉() {
@@ -1019,7 +1019,7 @@ class KojoFacade {
 
   /**
    * 打屁股（cflag:cid:341）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 打屁股() {
@@ -1034,7 +1034,7 @@ class KojoFacade {
 
   /**
    * 鞭（cflag:cid:342）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 鞭() {
@@ -1049,7 +1049,7 @@ class KojoFacade {
 
   /**
    * 针（cflag:cid:343）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 针() {
@@ -1064,7 +1064,7 @@ class KojoFacade {
 
   /**
    * 眼罩（cflag:cid:344）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 眼罩() {
@@ -1079,7 +1079,7 @@ class KojoFacade {
 
   /**
    * 绳子（cflag:cid:345）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 绳子() {
@@ -1094,7 +1094,7 @@ class KojoFacade {
 
   /**
    * 口塞（cflag:cid:346）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 口塞() {
@@ -1109,7 +1109,7 @@ class KojoFacade {
 
   /**
    * 灌肠肛塞（cflag:cid:347）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 灌肠肛塞() {
@@ -1124,7 +1124,7 @@ class KojoFacade {
 
   /**
    * 穿环（cflag:cid:348）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 穿环() {
@@ -1139,7 +1139,7 @@ class KojoFacade {
 
   /**
    * 放置PLAY（cflag:cid:356）
-   * yml/TrainCommand.yml 指令名：何もしない
+   * 指令常量里的指令名：何もしない
    * @returns {number}
    */
   get 放置PLAY() {
@@ -1154,7 +1154,7 @@ class KojoFacade {
 
   /**
    * 交谈（cflag:cid:357）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 交谈() {
@@ -1169,7 +1169,7 @@ class KojoFacade {
 
   /**
    * 乳夹口交（cflag:cid:360）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 乳夹口交() {
@@ -1184,7 +1184,7 @@ class KojoFacade {
 
   /**
    * 口交时自慰（cflag:cid:361）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 口交时自慰() {
@@ -1199,7 +1199,7 @@ class KojoFacade {
 
   /**
    * 手搓口交（cflag:cid:362）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 手搓口交() {
@@ -1214,7 +1214,7 @@ class KojoFacade {
 
   /**
    * 真空口交（cflag:cid:363）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 真空口交() {
@@ -1229,7 +1229,7 @@ class KojoFacade {
 
   /**
    * 六九式（cflag:cid:364）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 六九式() {
@@ -1244,7 +1244,7 @@ class KojoFacade {
 
   /**
    * 深喉（cflag:cid:365）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 深喉() {
@@ -1439,7 +1439,7 @@ class KojoFacade {
 
   /**
    * 强制口交（cflag:cid:381）
-   * yml/TrainCommand.yml 指令名
+   * 指令常量里的指令名
    * @returns {number}
    */
   get 强制口交() {

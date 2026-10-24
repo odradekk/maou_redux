@@ -5,10 +5,10 @@
  * 缝 = test/helpers/era-fixture.js（分发表与映射是纯数据/纯逻辑，夹具只为
  * require '#/' 别名与可寻址的表）。覆盖四块：
  *   1. 121 段分发表契约：ADVANCED_COM_IDS 的精确清单与两空间的包含
- *      关系；可直选空间的逐号核对由第 2 块的 TrainCommand.yml 位次
- *      通道承担；缺号显式报错（空间外 call/register 抛错）；
+ *      关系；可直选空间的逐号核对由第 2 块的位次通道承担；缺号显式报错
+ *      （空间外 call/register 抛错）；
  *   2. L_IDX ↔ L_I 映射层（com-index.js）：双向、黄金样本实证对（穿脱
- *      衣服 110 ↔ 89）、由 TrainCommand.yml 条目顺序推出的独立通道核对、
+ *      衣服 110 ↔ 89）、由指令常量的可直选编号升序推出的独立通道核对、
  *      **恒等映射必红**（#211 的反向变异要求——工单追加范围）；
  *   3. get_adv_com 升格机制（com-adv.js）：零规则原样返回、
  *      「前两回合序列 → 高级 COM」的机制样例（测试内注册 CASE 8 形状的
@@ -19,14 +19,10 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-
-const REPO = path.resolve(__dirname, '..');
 
 // —— 1. 121 段分发表契约 ——
 
@@ -105,21 +101,15 @@ test('映射双向：恒等段 0-38、黄金实证对（打屁股 40↔39 / 交�
   assert.equal(com_id(89), 110);
 });
 
-test('映射是双射且由 TrainCommand.yml 条目顺序推出（独立通道核对，不硬编码）', async () => {
+test('映射是双射且由可直选编号的升序推出（独立通道核对，不硬编码）', async () => {
   const fixture = create_era_fixture();
   const { com_id, com_index } = fixture.load_module('system/train/com-index');
 
-  // 独立通道：直接读 yml 文本推出位次（指令菜单按名字非空逐项编号的
-  // 离线等价物），与运行时映射逐号对账
-  const yml = fs.readFileSync(
-    path.join(REPO, 'yml', 'TrainCommand.yml'),
-    'utf8',
-  );
-  const yml_ids = [...yml.matchAll(/"(.+)":\r?\n\s+id:\s*(\d+)/g)].map((m) =>
-    Number(m[2]),
-  );
-  assert.equal(yml_ids.length, 101);
-  const ordered = [...yml_ids].sort((a, b) => a - b);
+  // 独立通道：直接读指令常量的可直选编号（指令菜单按名字非空逐项编号的
+  // 等价物），与运行时映射逐号对账
+  const { TRAIN_COMMAND_IDS } = fixture.load_module('data/train-command-const');
+  const ordered = [...TRAIN_COMMAND_IDS].sort((a, b) => a - b);
+  assert.equal(ordered.length, 101);
   // 位次 0-99 的序号就是位次；位次 100 起跳过子菜单号 [100]-[108]，
   // 末位指令 207 媚药史莱姆的序号是 109
   ordered.forEach((id, pos) => {
