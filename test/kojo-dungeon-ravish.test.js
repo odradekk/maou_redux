@@ -439,17 +439,19 @@ test('DUNGEON_RYOUZYOKU 钩子：无性格编号（LOCAL 0）窗口拒绝，不�
 
 test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/1001），边界格不许飘', async () => {
   // LOCAL 120-139 与 EX 下界格经素质不可达（GET_KOJO_NUM 只产 100-119 /
-  // 1001-1700），窗口的边界值只能从**窗口本身**驱动出来：替换
-  // kojo-system 的 get_kojo_num（本模块顶层解构，替换须先于本模块加载），
-  // 让每个边界格各站一次两侧。#403 验收反馈的「local < 140 改 < 139
-  // 全绿」正是缺 139 这一格（它只差一格，行为层再也看不见）。
+  // 1001-1700），窗口的边界值只能从**编号来源**驱动出来：替换
+  // chara-ex 的 get_ex_kojo_num（kojo-system 顶层解构它，替换须先于
+  // kojo-system 加载——#854 起分发窗口收在 run_kojo 里，ravish 不再自己算
+  // LOCAL，注入点随之挪到编号的来源处），让每个边界格各站一次两侧。
+  // #403 验收反馈的「local < 140 改 < 139 全绿」正是缺 139 这一格
+  // （它只差一格，行为层再也看不见）。
   for (const [local, key] of [
     [100, 0], // 下界（慈愛 K0 的 LOCAL）
     [139, 39], // 上界内侧（声明空间最大键 39）
     [1001, 901], // EX 下界（EX_TALENT:101 → K901）
   ]) {
     const fixture = create_era_fixture();
-    fixture.load_module('kojo/kojo-system').get_kojo_num = () => local;
+    fixture.load_module('chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
     mod.ryouzyoku_kojo_family.register(key, async (...args) => {
@@ -467,7 +469,7 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     1000, // EX 下界外一格（键 900 不在声明空间）
   ]) {
     const fixture = create_era_fixture();
-    fixture.load_module('kojo/kojo-system').get_kojo_num = () => local;
+    fixture.load_module('chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
     // 三个边界键都挂探针：窗口被放宽时键会落到声明空间外直接抛错，
