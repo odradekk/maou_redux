@@ -124,7 +124,7 @@ test('端到端：读档分支（旧的奴隶）进真身读档界面，返回�
 
   // #136 起读档入口是真身 load_game（page-save-load.js）：输入 0 →
   // 读档界面 → [100] 返回 → 无条件回标题重绘 → 输入耗尽。
-  // 不抛 BeginSignal（读档不转场，返回后直接回标题重绘），也不进 FIRST。
+  // 不发起转场（读档返回后直接回标题重绘），也不进 FIRST。
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
   assert.deepEqual(fixture.inputs_consumed, [
