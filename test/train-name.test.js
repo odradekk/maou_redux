@@ -29,7 +29,7 @@ test('播种表逐条转录：抽核（头/中/尾/全角拉丁/中点）与条�
   assert.equal(table[0], '爱抚');
   assert.equal(table[4], '口交(主)');
   assert.equal(table[46], '灌肠+肛塞');
-  assert.equal(table[54], '野外PLAY');
+  assert.equal(table[54], '野外ＰＬＡＹ');
   assert.equal(table[64], '３Ｐ');
   assert.equal(table[84], '刺激Ｇ点');
   assert.equal(table[128], '正常位・接吻');
@@ -68,7 +68,7 @@ test('train_name_init：检查放行 → 120 槽全播种；再次调用幂等�
   assert.equal(fixture.store.get('trainalias:0'), '爱抚');
   assert.equal(fixture.store.get('trainalias:12'), '振动杖');
   // 别名槽存的是名称原样（不是静态名的转小写显示口径）
-  assert.equal(fixture.store.get('trainalias:54'), '野外PLAY');
+  assert.equal(fixture.store.get('trainalias:54'), '野外ＰＬＡＹ');
   // TRAIN_NAME:150 = CSTR:7 值 + 調教（CSTR:31:7 未播种 → 空串 + 调教）
   assert.equal(fixture.store.get('trainalias:150'), '调教');
 
@@ -96,4 +96,34 @@ test('read_train_name：未播种槽返回空串（#13 的 undefined 缺省处�
   mod.train_name_init();
   assert.equal(mod.read_train_name(12), '振动杖');
   assert.equal(mod.read_train_name(39), '');
+});
+
+test('旧档的半角指令名改写成全角，玩家自定义的别名不动（#822）', () => {
+  // 旧档：槽 0 已播种（检查放行），54/55 是半角旧名
+  const migrated = create_era_fixture();
+  const { mod: m1 } = load_module(migrated);
+  migrated.store.set('trainalias:0', '爱抚');
+  migrated.store.set('trainalias:54', '野外PLAY');
+  migrated.store.set('trainalias:55', '放置PLAY');
+  m1.train_name_init();
+  assert.equal(
+    migrated.store.get('trainalias:54'),
+    '野外ＰＬＡＹ',
+    '旧档的 54 号半角别名改写成全角',
+  );
+  assert.equal(migrated.store.get('trainalias:55'), '放置ＰＬＡＹ');
+
+  // 玩家自己起过的名字不是旧播种值，原样保留（别名表按存档定制的用途）
+  const custom = create_era_fixture();
+  const { mod: m2 } = load_module(custom);
+  custom.store.set('trainalias:0', '爱抚');
+  custom.store.set('trainalias:54', '野外PLAYPLAY');
+  custom.store.set('trainalias:57', '我的羞耻');
+  m2.train_name_init();
+  assert.equal(
+    custom.store.get('trainalias:54'),
+    '野外PLAYPLAY',
+    '玩家的自定义别名不动',
+  );
+  assert.equal(custom.store.get('trainalias:57'), '我的羞耻');
 });

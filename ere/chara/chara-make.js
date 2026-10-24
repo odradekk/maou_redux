@@ -698,9 +698,9 @@ async function cm_talent(cid, rand_n) {
   // 抖S气质（ABL:20）/ 抖M气质（ABL:21）
   x = rand_n(8);
   if (x === 0) {
-    chara(cid).train.抖S气质 = 3;
+    chara(cid).train.抖Ｓ气质 = 3;
   } else if (x === 1) {
-    chara(cid).system.抖M气质 = 3;
+    chara(cid).system.抖Ｍ气质 = 3;
   }
 
   // 嫉妒（84）

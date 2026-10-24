@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 37; // #746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 41; // #822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -369,5 +369,38 @@ export default [
     replace: `"追加信息": "※未经允许，任何人不得引用、修改再打包或进行商业用途※"`,
     tests: ['page-title'],
     must_mention: '【追加信息】必须留空',
+  },
+  // —— #822（显示名全角化）：玩家可见名字里的半角拉丁字母退回 ——
+  {
+    desc: 'M15700 Abl.yml 20 号名字退回半角「抖S气质」（引擎转小写后显示成抖s气质）',
+    file: 'yml/Abl.yml',
+    find: '"抖Ｓ气质":',
+    replace: '"抖S气质":',
+    tests: ['display-name-fullwidth'],
+    must_mention: '玩家可见的名字请改用全角字母',
+  },
+  {
+    desc: 'M15701 Abl.yml 21 号名字退回半角「抖M气质」',
+    file: 'yml/Abl.yml',
+    find: '"抖Ｍ气质":',
+    replace: '"抖M气质":',
+    tests: ['display-name-fullwidth'],
+    must_mention: '玩家可见的名字请改用全角字母',
+  },
+  {
+    desc: 'M15702 指令常量 54 号指令名退回半角「野外PLAY」（#836 把指令名搬进常量后同一批名字）',
+    file: 'ere/data/train-command-const.js',
+    find: "  54: '野外ＰＬＡＹ',",
+    replace: "  54: '野外PLAY',",
+    tests: ['display-name-fullwidth'],
+    must_mention: '半角字母会显示成半角小写（野外play）',
+  },
+  {
+    desc: 'M15703 指令常量 89 号指令名退回半角「兽奸PLAY」',
+    file: 'ere/data/train-command-const.js',
+    find: "  89: '兽奸ＰＬＡＹ',",
+    replace: "  89: '兽奸PLAY',",
+    tests: ['display-name-fullwidth'],
+    must_mention: '半角字母会显示成半角小写（野外play）',
   },
 ];

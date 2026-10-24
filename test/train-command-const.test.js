@@ -78,12 +78,12 @@ const SELECTABLE = {
   51: '媚药',
   52: '利尿剂',
   53: '水晶球',
-  54: '野外PLAY',
-  55: '放置PLAY',
+  54: '野外ＰＬＡＹ',
+  55: '放置ＰＬＡＹ',
   56: '交谈',
-  57: '羞耻PLAY',
-  58: '浴室PLAY',
-  59: '新妻PLAY',
+  57: '羞耻ＰＬＡＹ',
+  58: '浴室ＰＬＡＹ',
+  59: '新妻ＰＬＡＹ',
   60: '助手接吻',
   61: '强制舔阴',
   62: '侵犯助手',
@@ -101,8 +101,8 @@ const SELECTABLE = {
   83: '两穴拳交',
   85: '放尿',
   87: '穿环',
-  88: '使役魔兽PLAY',
-  89: '兽奸PLAY',
+  88: '使役魔兽ＰＬＡＹ',
+  89: '兽奸ＰＬＡＹ',
   90: '乳房插入',
   100: '触手生物',
   101: '触手插入',
@@ -197,14 +197,14 @@ test('静态名显示口径：名称列转小写（引擎装载名字表的行�
 
   // 含拉丁字母的 8 条：玩家看到的是转小写后的文本（改动前的显示）。
   // 全角拉丁同样有小写形（'Ｐ' → 'ｐ'），64 号也在此列
-  assert.equal(train_command_name(54), '野外play');
-  assert.equal(train_command_name(55), '放置play');
-  assert.equal(train_command_name(57), '羞耻play');
-  assert.equal(train_command_name(58), '浴室play');
-  assert.equal(train_command_name(59), '新妻play');
+  assert.equal(train_command_name(54), '野外ｐｌａｙ');
+  assert.equal(train_command_name(55), '放置ｐｌａｙ');
+  assert.equal(train_command_name(57), '羞耻ｐｌａｙ');
+  assert.equal(train_command_name(58), '浴室ｐｌａｙ');
+  assert.equal(train_command_name(59), '新妻ｐｌａｙ');
   assert.equal(train_command_name(64), '３ｐ');
-  assert.equal(train_command_name(88), '使役魔兽play');
-  assert.equal(train_command_name(89), '兽奸play');
+  assert.equal(train_command_name(88), '使役魔兽ｐｌａｙ');
+  assert.equal(train_command_name(89), '兽奸ｐｌａｙ');
   // 不含拉丁字母的名字原样
   assert.equal(train_command_name(0), '爱抚');
   assert.equal(train_command_name(128), '');

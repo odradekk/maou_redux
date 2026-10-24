@@ -487,7 +487,7 @@ test('equip_com89：SOURCE 累加、EXP:56 随共享变量 T 收尾、返回 1',
   fixture.store.set('maxbase:0:4', 0); // 关闭射精检查分支，只验共同尾段
   const result = await world.equip_com_family.call(89);
   assert.equal(result, 1, '尾段无条件返回 1');
-  assert.ok(fixture.text_lines().includes('＜兽奸PLAY中＞'));
+  assert.ok(fixture.text_lines().includes('＜兽奸ＰＬＡＹ中＞'));
   assert.equal(fixture.store.get('t:0'), 0, '尾段清零共享变量');
   assert.ok(fixture.store.get('exp:31:56') > 0, 'EXP:56 已随 T 收尾累加');
   assert.ok(fixture.store.get('source:31:8') > 0);

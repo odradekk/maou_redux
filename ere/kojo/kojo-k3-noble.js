@@ -912,7 +912,7 @@ async function kojo_message_com_3(rand) {
       } else if (
         // 乳头ピアス+抖M气质Lv3
         chara(target).train.穿环状态 & 1 &&
-        system.抖M气质 >= 3
+        system.抖Ｍ气质 >= 3
       ) {
         era.print(`「啊啊~${heart(1)} 被那么用力地揉的话~${heart(1)}」`); // PRINTFORML
         await era.printAndWait(`「就会有感觉了~${heart(1)}」`);

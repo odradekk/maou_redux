@@ -1683,7 +1683,7 @@ async function com87() {
 /** com88：使役魔兽 PLAY 开关。*/
 async function com88() {
   const target = era_flag.target;
-  era.print('使役魔兽PLAY');
+  era.print('使役魔兽ＰＬＡＹ');
   const inum = era.get(`cflag:${target}:570`) || 0;
   monster_data(inum, 3, target, -1);
   await train_message_b();
@@ -1699,7 +1699,7 @@ async function com88() {
 
 /** com89：兽奸 PLAY 开关。 */
 async function com89() {
-  era.print('兽奸PLAY');
+  era.print('兽奸ＰＬＡＹ');
   await train_message_b();
 
   const target = era_flag.target;
@@ -1718,7 +1718,7 @@ async function com89() {
  */
 async function equip_com89() {
   const target = era_flag.target;
-  era.print('＜兽奸PLAY中＞');
+  era.print('＜兽奸ＰＬＡＹ中＞');
   era.set('t:0', 1); // T = 1（本轮兽奸经验累加起点，随后 T+=N 累加、EXP:56 += T 收尾）
 
   let a;

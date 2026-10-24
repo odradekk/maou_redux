@@ -539,7 +539,7 @@ function check_reverse_sex(player_virgin_penalty) {
       const level = abl(cid, 20);
       const value = level * 2;
       a += value;
-      plus_level('抖S气质', level, value);
+      plus_level('抖Ｓ气质', level, value);
     }
     if (tal(cid, 35)) {
       a -= 1;

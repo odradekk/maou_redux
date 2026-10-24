@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1119; // 界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1123; // #822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -79,7 +79,7 @@ export default [
     find: "  return (TRAIN_COMMAND[id] ?? '').toLowerCase();",
     replace: "  return TRAIN_COMMAND[id] ?? ''; // 变异：不转小写",
     tests: ['train-command-const'],
-    must_mention: '野外play',
+    must_mention: '野外ｐｌａｙ',
   },
   {
     desc: 'M15654 150 号动态槽被静态名播种（别名槽丢掉「<癖好名>调教」的口上定制）',
@@ -421,6 +421,7 @@ export default [
     desc: 'M702 train_name_init 检查删（每次 EVENTTRAIN 重播种）',
     file: 'ere/system/train/train-name.js',
     find: `  if ((era.get('trainalias:0') ?? '').length > 0) {
+    migrate_legacy_names();
     return;
   }`,
     replace: `  // 变异：检查删`,
@@ -7057,8 +7058,8 @@ export default [
   {
     desc: 'M9846 SOKUOCHI_CHECK ABL:21 驱动下标读错（up(9) 错改 up(8)）',
     file: 'ere/event/source-check.js',
-    find: `    const lv = bump(sys, '抖M气质', up(9), TIERS, () => sys.欲望);`,
-    replace: `    const lv = bump(sys, '抖M气质', up(8), TIERS, () => sys.欲望); // 变异：驱动下标 9 错改 8`,
+    find: `    const lv = bump(sys, '抖Ｍ气质', up(9), TIERS, () => sys.欲望);`,
+    replace: `    const lv = bump(sys, '抖Ｍ气质', up(8), TIERS, () => sys.欲望); // 变异：驱动下标 9 错改 8`,
     tests: ['source-check'],
     must_mention: 'SOKUOCHI_CHECK：驱动下标不与相邻组混淆',
   },
@@ -11341,5 +11342,38 @@ export default [
       '      chara(assi).train.初体验对象 = (era.get(`no:${MASTER}`) || MASTER) + 1;',
     tests: ['com-assistant'],
     must_mention: '助手的对象是魔王',
+  },
+  // —— #822（显示名全角化）：指令名与能力名的显示文案退回半角 ——
+  {
+    desc: 'M15706 兽奸持续状态标签退回半角「＜兽奸PLAY中＞」',
+    file: 'ere/system/train/com-hardcore.js',
+    find: "era.print('＜兽奸ＰＬＡＹ中＞');",
+    replace: "era.print('＜兽奸PLAY中＞');",
+    tests: ['com-hardcore'],
+    must_mention: '＜兽奸ＰＬＡＹ中＞',
+  },
+  {
+    desc: 'M15707 ablup20 的组合上限文案退回半角「抖S气质(…)＋抖M气质(…)」',
+    file: 'ere/system/train/ablup.js',
+    find: "`抖Ｓ气质(${c.lv})＋抖Ｍ气质(${c.read(['abl', 21])})上限为20`",
+    replace: "`抖S气质(${c.lv})＋抖M气质(${c.read(['abl', 21])})上限为20`",
+    tests: ['ablup'],
+    must_mention: '抖Ｓ气质(10)＋抖Ｍ气质(10)上限为20',
+  },
+  {
+    desc: 'M15710 旧档别名迁移不再比对新旧值（玩家自定义的指令名被播种值覆盖）',
+    file: 'ere/system/train/train-name.js',
+    find: '    if (era.get(`trainalias:${id}`) === legacy) {',
+    replace: '    if (true) { // 变异：不比对新旧值',
+    tests: ['train-name'],
+    must_mention: '玩家的自定义别名不动',
+  },
+  {
+    desc: 'M15711 旧档别名迁移的调用删除（旧档继续显示半角指令名）',
+    file: 'ere/system/train/train-name.js',
+    find: '    migrate_legacy_names();\n    return;',
+    replace: '    return;',
+    tests: ['train-name'],
+    must_mention: '旧档的 54 号半角别名改写成全角',
   },
 ];

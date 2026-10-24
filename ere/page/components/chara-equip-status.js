@@ -10,7 +10,7 @@
  * （page-train.js 的调用点）随那张工单换真身。
  *
  * 排版依据同 chara-info-abl-mark.js 文件头：命令名后的第一个空格是分隔符，
- * `PRINT  [野外PLAY中]` 对应输出一个前导空格。
+ * `PRINT  [野外ＰＬＡＹ中]` 对应输出一个前导空格。
  */
 
 const era = require('#/era-electron');
@@ -48,17 +48,17 @@ function show_equip_2(cid) {
       1;
     push(`[摄影中(剩${remaining}次)]`);
   }
-  if (t(54)) push(' [野外PLAY中]');
-  if (t(57)) push(' [羞耻（大镜子）PLAY中]');
-  if (t(58)) push(' [浴室PLAY中]');
-  if (t(59)) push(' [新妻PLAY中]');
+  if (t(54)) push(' [野外ＰＬＡＹ中]');
+  if (t(57)) push(' [羞耻（大镜子）ＰＬＡＹ中]');
+  if (t(58)) push(' [浴室ＰＬＡＹ中]');
+  if (t(59)) push(' [新妻ＰＬＡＹ中]');
   if (t(88)) {
     // 使役魔兽（名字经 monster_data 落进 E:300）
-    push(' [使役魔兽PLAY中（');
+    push(' [使役魔兽ＰＬＡＹ中（');
     line.push({ content: monster_name(e300()), color: EQUIP_COLOR });
     push('）]');
   }
-  if (t(89)) push(' [兽奸PLAY中]');
+  if (t(89)) push(' [兽奸ＰＬＡＹ中]');
   if (t(90)) push(' [触手召唤中]');
   if (t(55)) push(' [死斗场决斗中]');
   push(' '); // （两个空格减掉分隔符那 1 格）

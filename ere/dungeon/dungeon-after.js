@@ -560,7 +560,7 @@ async function osioski(cid) {
 
   // 档位表：LOCAL:10 顺从（欲情）/ LOCAL:11 欲望（苦痛・屈服）
   const { ju: local10, desire: local11 } = osioski_reward_levels(cid);
-  const dabM = chara(cid).system.抖M气质 >= 3; // ABL:21
+  const dabM = chara(cid).system.抖Ｍ气质 >= 3; // ABL:21
   const exposure = chara(cid).system.露出癖; // ABL:17
 
   if (result === 0) {
