@@ -79,7 +79,7 @@ export default [
     find: "  return (TRAIN_COMMAND[id] ?? '').toLowerCase();",
     replace: "  return TRAIN_COMMAND[id] ?? ''; // 变异：不转小写",
     tests: ['train-command-const'],
-    must_mention: '野外play',
+    must_mention: '野外ｐｌａｙ',
   },
   {
     desc: 'M15654 150 号动态槽被静态名播种（别名槽丢掉「<癖好名>调教」的口上定制）',
