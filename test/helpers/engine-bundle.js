@@ -14,7 +14,11 @@
  *   2. 把入口调用 `r(r.s=302)` 替换成暴露 webpack require——入口模块是
  *      Electron 装配代码，不执行它，其余模块全部惰性、可按号取用；
  *   3. `new Function('require', …)` 求值（模块里的外部依赖走 Node 的
- *      require，本助手用到的模块树不需要 Electron）。
+ *      require；只有 .kojo 用到的 eraStart 模块在求值期要 Electron，那里给
+ *      最小替身，见 ELECTRON_STUB）。
+ *
+ * 除了静态表解析器、变量装载与 EraApi 方法（#35 起），#891 起还提供 .kojo 的
+ * 编译链路（compile_kojo：引擎的 yamljs + parseKojo + proxyKojo）。
  *
  * 模块号是 ere-5.0.0 的实测值（见各字段注释），引擎升版后编号不一致会在这里
  * 抛错——那是重新核读新版的信号，不是本助手的缺陷。
@@ -117,7 +121,13 @@ function load_engine_bundle() {
     'require',
     `${patched}; return globalThis.__ere_wp;`,
   );
-  const wp = bootstrap(require);
+  // 模块 638（eraStart 所在模块）求值时就 require('electron')。本助手只用它的
+  // addProxyFunc，不跑 Electron 装配，所以给一份最小替身；以后别的模块要用
+  // Electron 的其它能力，在这里按需补，不要整体替掉 Node 的 require。
+  const ELECTRON_STUB = { app: { getVersion: () => '5.0.0' } };
+  const wp = bootstrap((name) =>
+    name === 'electron' ? ELECTRON_STUB : require(name),
+  );
 
   // 模块号一致性检查（#91）：5.0.0 实测 EraApi 是模块 176——引擎升版后编号
   // 变了时 wp(176) 会取到别的模块，下游在 undefined 上炸出不知所云的
@@ -164,6 +174,21 @@ function load_engine_bundle() {
     );
   }
 
+  // .kojo 链路（#891）：引擎在 require('#/x.kojo') 时用到的三件东西。模块号与
+  // 上面同款——对不上就抛「引擎变了」，不当成夹具的缺陷。
+  const parse_kojo = wp(669);
+  const parse_yaml = wp(295)?.parse;
+  const add_proxy_func = wp(638)?.addProxyFunc;
+  if (
+    typeof parse_kojo !== 'function' ||
+    typeof parse_yaml !== 'function' ||
+    typeof add_proxy_func !== 'function'
+  ) {
+    throw new Error(
+      '引擎变了：app.asar 的 .kojo 链路形状对不上（模块 669 的 parseKojo / 295 的 yamljs.parse / 638 的 addProxyFunc）——重新核读 test/helpers/engine-bundle.js 的模块号映射',
+    );
+  }
+
   cached_bundle = {
     /** 引擎静态表解析器（模块 667）：parseDataFile(文本, 'csv'|'yml', 表名) → 行数组 */
     parse_data_file: wp(667),
@@ -179,8 +204,61 @@ function load_engine_bundle() {
     static_format_priority: staticFormatPriority,
     /** 静态数据分类正则（模块 80，已过形状检查）：eraStart 用它分逐角色/普通表 */
     static_format_regex: staticFormatRegex,
+    /** 引擎的 .kojo 编译器（模块 669）：解析后的 YAML 对象 → 篇目函数源码 */
+    parse_kojo,
+    /** 引擎自带的 yamljs（模块 295）的 parse：.kojo 与静态表用同一份解析器 */
+    parse_yaml,
+    /** 引擎把 proxyKojo / dispatchButton 挂到 SDK 上的那段（模块 638，已过形状检查） */
+    add_proxy_func,
   };
   return cached_bundle;
+}
+
+/**
+ * 用引擎自己的 .kojo 链路编译并执行一份篇目（issue #891）。
+ *
+ * 与引擎 eraStart 的装载段同构：yamljs 解析（模块 295）→ parseKojo 生成源码
+ * （模块 669）→ SDK 上挂 proxyKojo / dispatchButton（模块 638 的 addProxyFunc）→
+ * 用 `(function(exports,require,module,__filename,__dirname){const era=require(…);…})`
+ * 求值。差异只剩 `require` 那一步：引擎按 SDK 的模块 id 取回它注入的 SDK，
+ * 夹具直接给出调用方传进来的 SDK 对象，**parseKojo 产出的源码一字不改**。
+ *
+ * 不缓存编译结果：夹具是每个用例一套（era 对象也随用例换），按路径缓存会把
+ * 上一次用例的 SDK 闭包带进下一次。引擎按 resolved 路径缓存在
+ * `_module._cache` 里，那是引擎自己的生命周期，夹具不复刻。
+ *
+ * @param {string} text .kojo 文件全文（UTF-8）
+ * @param {{ era: object, filename: string }} options era = 注入记录层的 SDK；
+ *   filename 只进 __filename / __dirname，用于报错定位
+ * @returns {object} 生成的 module.exports：proxyKojo 包过的篇目对象
+ */
+function compile_kojo(text, { era, filename }) {
+  const engine = load_engine_bundle();
+  if (!engine) {
+    throw new Error(
+      '测试夹具：装载 .kojo 需要引擎的解析器，但没找到 ere-5.0.0 的 app.asar（可设 ERE_ENGINE_ASAR 指路）',
+    );
+  }
+  engine.add_proxy_func(era);
+  const source = engine.parse_kojo(engine.parse_yaml(text));
+  const module = { exports: {} };
+  const factory = new Function(
+    'exports',
+    'require',
+    'module',
+    '__filename',
+    '__dirname',
+    `const era = require('era-electron');${source}`,
+  );
+  factory.call(
+    module.exports,
+    module.exports,
+    () => era,
+    module,
+    filename,
+    path.dirname(filename),
+  );
+  return module.exports;
 }
 
 /**
@@ -496,6 +574,7 @@ function create_next_turn_in_train() {
 }
 
 module.exports = {
+  compile_kojo,
   create_add_character,
   create_chara_loader,
   create_next_turn_in_train,

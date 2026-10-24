@@ -6,18 +6,17 @@
  * == 指令方格的两条渲染路径（#214 起，按 FLAG:5 位 34 分流） ==
  *
  *   - ON（FLAG:5 位 34 = 1）：show_commenu 的自定义菜单——标签先过
- *     get_adv_com 升格（TRAIN_NAME/trainalias 取名，64 合成分支读
- *     TRAINNAME 静态名），编号印 L_IDX 紧凑序号。开局默认即 ON
+ *     get_adv_com 升格（TRAIN_NAME/trainalias 取名，64 合成分支读指令常量
+ *     的静态名），编号印 L_IDX 紧凑序号。开局默认即 ON
  *     （开局置 FLAG:5 = 17179934119，位 34 = 1，见 event-first.js；
  *     golden 两份样本的方格样式（升格名）为此态）。设置页的
  *     [18]「显示高级调教指令的名称」（翻转 FLAG:5 位 34）是开关本体，
  *     随设定票。
  *   - OFF：内建样式的指令列表（train 循环步骤 2，system-flow.md）——
- *     TRAINNAME 静态名 + 同样的位次编号（#211：编号按「全部非空
- *     TRAINNAME 条目中的位次」解释），**不升格**（设置页 [18] 的选项
- *     语义反证：内建态不显示高级名，否则该选项无意义），由
- *     draw_builtin_comlist 承载（#45/#213 的既有职责，标签自 #214 起
- *     按内建语义取静态名）。
+ *     指令常量的静态名 + 同样的位次编号（#211：编号按「可直选空间的位次」
+ *     解释），**不升格**（设置页 [18] 的选项语义反证：内建态不显示高级名，
+ *     否则该选项无意义），由 draw_builtin_comlist 承载（#45/#213 的既有
+ *     职责，标签自 #214 起按内建语义取静态名）。
  *
  * == 清除语义（不移植 CLEAR_TO_POINT） ==
  *
@@ -31,7 +30,7 @@
  * 子菜单按每行 3 列的按钮网格排（原版 PRINTC 的列数，#717 恢复）；正文
  * 不带 [编号] 前缀（PR #30 通则，引擎 showAcc 自动拼）。
  *
- * p_c（#212）：TSTR:90 承载上次的指令名，静态名表优先、
+ * p_c（#212）：TSTR:90 承载上次的指令名，静态名优先、
  * 定制名（trainalias）只补空——见 p_c 的三级回落。
  *
  * SHOW_CHARA_INFO 与 STAIN_INFO 已随 #390 换真身。
@@ -62,9 +61,10 @@ const { stain_info } = require('#/page/components/stain-info');
 const { condom_settings } = require('#/system/train/com-condom');
 const { print_button_grid } = require('#/utils/button-grid');
 const { MASTER } = require('#/utils/master');
+const { train_command_name } = require('#/data/train-command-const');
 
-// %TRAINNAME:64%・%TRAINNAME:L_I% 的复合动作分隔（lang-table.js 整串
-// 豁免本字面量：・ 是既有指令名的分隔样式，归一成 · 会对不上指令名）
+// 64 号指令名的复合动作分隔（lang-table.js 整串豁免本字面量：・ 是既有
+// 指令名的分隔样式，归一成 · 会对不上指令名）
 const COMPOUND_SEP = '・';
 
 /**
@@ -80,19 +80,15 @@ function show_advanced_names() {
 
 /**
  * p_c：上次的调教指令名 → TSTR:90。
- * 三级回落：TRAINNAME（静态名表 traincommandname）→ TRAIN_NAME
- * （trainalias 定制覆盖层）→ 全角空格。TSTR:90 的承载是 yml/TStr.yml 的
- * 扩展普通表（#5 建模项定论，引擎探针见 test/tstr-train-table.test.js）；
- * 进调教时的清空由 train-loop.js 初始化段手动完成。
+ * 三级回落：静态名（指令常量）→ TRAIN_NAME（trainalias 定制覆盖层）→
+ * 全角空格。TSTR:90 的承载是 yml/TStr.yml 的扩展普通表（#5 建模项定论，
+ * 引擎探针见 test/tstr-train-table.test.js）；进调教时的清空由
+ * train-loop.js 初始化段手动完成。
  */
 function p_c() {
   const local = era_flag.prevcom;
-  // TSTR:90 = TRAINNAME:LOCAL（TRAINNAME ＝ 静态名表）。升格进入的高级指令号
-  // 不在表内，引擎读未声明序号的名字会直接抛错，表外编号按空名处理
-  let name = '';
-  if (DECLARED_TRAIN_IDS.includes(local)) {
-    name = era.get(`traincommandname:${local}`) ?? '';
-  }
+  // TSTR:90 = 静态名。升格进入的高级指令号不在可直选表内，取到空串
+  let name = train_command_name(local);
   // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）
   if (name.length < 1) {
     name = read_train_name(local);
@@ -106,8 +102,8 @@ function p_c() {
 
 /**
  * show_commenu 的方格标签：升格后的号取名字。
- * 64 的合成分支（RESULT == 64 且 L_I != 64）读 TRAINNAME 静态名（两段
- * 拼接）；其余读 TRAIN_NAME（trainalias 覆盖层）。纯函数抽出便于断言。
+ * 64 的合成分支（RESULT == 64 且 L_I != 64）读静态名（两段拼接）；其余读
+ * TRAIN_NAME（trainalias 覆盖层）。纯函数抽出便于断言。
  *
  * @param {number} adv get_adv_com 的返回值（升格后的号；未升格 = 原号）
  * @param {number} id 当前指令号（L_I，升格前）
@@ -115,14 +111,11 @@ function p_c() {
  */
 function command_button_label(adv, id) {
   if (adv === 64 && id !== 64) {
-    // %TRAINNAME:64%・%TRAINNAME:L_I%（静态名两段拼接）。
-    // ・ 是复合动作的分隔样式（沿用训练名表的语序），与
+    // 静态名的两段拼接。・ 是复合动作的分隔样式（沿用训练名表的语序），与
     // SHOW_STATUS 的射精行同款处置（lang-table 整串豁免，见 COMPOUND_SEP）
-    return `${era.get('traincommandname:64') ?? ''}${COMPOUND_SEP}${
-      era.get(`traincommandname:${id}`) ?? ''
-    }`;
+    return `${train_command_name(64)}${COMPOUND_SEP}${train_command_name(id)}`;
   }
-  // %TRAIN_NAME:RESULT%（trainalias 覆盖层）
+  // 升格后的号的 TRAIN_NAME（trainalias 覆盖层）
   return read_train_name(adv);
 }
 
@@ -154,16 +147,13 @@ async function show_commenu() {
 
 /**
  * 内建渲染路径（train 循环步骤 2 的等价承载，#45/#213 的既有职责）：
- * TRAINNAME 静态名 + L_IDX 位次编号，不升格（见文件头「两条渲染路径」）。
+ * 静态名 + L_IDX 位次编号，不升格（见文件头「两条渲染路径」）。
  * @param {number[]} usable 可执行指令表（train-loop 的 COM_ABLE 预扫描）
  * @returns {void}
  */
 function draw_builtin_comlist(usable) {
   print_button_grid(
-    usable.map((id) => [
-      com_index(id),
-      era.get(`traincommandname:${id}`) ?? '',
-    ]),
+    usable.map((id) => [com_index(id), train_command_name(id)]),
     3,
   );
 }

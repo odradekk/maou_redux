@@ -270,6 +270,12 @@ function walk(entries, where, findings, depth) {
 function topLevelKeys(text) {
   const keys = [];
   text.split(/\r\n|\n|\r/).forEach((line, index) => {
+    // A top-level 篇目 starts at column 0 as a mapping key. A column-0 sequence
+    // item (`- random: true`) is not a 篇目: YAML allows a block sequence at the
+    // same indentation as its key, and the reference examples use that spelling.
+    // Counting those items makes two sibling `random: true` entries look like a
+    // duplicated 篇目 called "- random".
+    if (line.startsWith('-')) return;
     const match = /^([^\s#][^:]*):/.exec(line);
     if (match !== null) keys.push({ key: match[1].trim(), line: index + 1 });
   });

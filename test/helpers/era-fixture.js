@@ -16,12 +16,37 @@
  */
 
 const Module = require('node:module');
+const fs = require('node:fs');
 const path = require('node:path');
 
+const { compile_kojo } = require('./engine-bundle');
 const { yml_declared_ids } = require('./static-names');
 
 // '#/xxx' 一律映射到 <仓库>/ere/xxx，与引擎行为及 ere/jsconfig.json 的别名一致
 const ERE_DIR = path.resolve(__dirname, '..', '..', 'ere');
+
+/**
+ * .kojo 请求的落点（#891）：引擎对 `#/x.kojo` 与相对路径的 .kojo 都走自己的
+ * 篇目装载段（yamljs + parseKojo + proxyKojo），夹具经 engine-bundle 复刻同一条
+ * 链路。返回 undefined 表示这条 require 不是 .kojo，交回 Node。
+ */
+function resolve_kojo_request(request, from_module) {
+  if (!request.endsWith('.kojo')) {
+    return undefined;
+  }
+  if (request.startsWith('#/')) {
+    return path.join(ERE_DIR, request.slice(2));
+  }
+  if (path.isAbsolute(request)) {
+    return request;
+  }
+  // 相对路径按 require 发起方所在目录解析（引擎侧是 `this.path`）
+  const base =
+    from_module && from_module.filename
+      ? path.dirname(from_module.filename)
+      : process.cwd();
+  return path.resolve(base, request);
+}
 
 // 安装 '#/' 前缀解析：进程级、幂等。手法与引擎一致（替换 Module.prototype.require）
 function install_hash_resolver() {
@@ -30,12 +55,28 @@ function install_hash_resolver() {
   }
   const original_require = Module.prototype.require;
   const patched_require = function (request, ...rest) {
-    if (typeof request === 'string' && request.startsWith('#/')) {
-      return original_require.call(
-        this,
-        path.join(ERE_DIR, request.slice(2)),
-        ...rest,
-      );
+    if (typeof request === 'string') {
+      const kojo_path = resolve_kojo_request(request, this);
+      if (kojo_path !== undefined) {
+        // 执行时绑定的是「当前这套夹具」的 SDK：create_era_fixture 先
+        // purge_ere_cache 再 require SDK，缓存里那份就是最新一套——与游戏
+        // 模块经 '#/' 拿到的是同一个对象
+        const era = original_require.call(
+          this,
+          path.join(ERE_DIR, 'era-electron.js'),
+        );
+        return compile_kojo(fs.readFileSync(kojo_path, 'utf8'), {
+          era,
+          filename: kojo_path,
+        });
+      }
+      if (request.startsWith('#/')) {
+        return original_require.call(
+          this,
+          path.join(ERE_DIR, request.slice(2)),
+          ...rest,
+        );
+      }
     }
     return original_require.call(this, request, ...rest);
   };
@@ -245,6 +286,33 @@ function create_era_fixture() {
     content,
   });
 
+  // 字典替换（#891，.kojo 的 %KEY%）：引擎 print / printAndWait / printButton 的
+  // config.dict 是 [[RegExp, 替换串], …]（era.proxyKojo 把调用方的字典对象翻成
+  // 这个形状），逐条对正文 replace。片段数组只替换 span 的 content 字段、字符串
+  // 元素整串替换——与引擎 app.asar 的 print 分支逐字同构。夹具此前不认 dict，
+  // .kojo 篇目里带 %NAME% 的输出会原样留下占位符，断言就不再是玩家看到的文本。
+  const apply_dict = (content, dict) => {
+    if (!Array.isArray(dict)) {
+      return content;
+    }
+    dict.forEach(([pattern, replacement]) => {
+      if (!Array.isArray(content)) {
+        content = content.replace(pattern, replacement);
+        return;
+      }
+      content = content.map((span) => {
+        if (typeof span !== 'object') {
+          return span.replace(pattern, replacement);
+        }
+        if (typeof span.content === 'string') {
+          span.content = span.content.replace(pattern, replacement);
+        }
+        return span;
+      });
+    });
+    return content;
+  };
+
   // printButton 与多列按钮对象共用：按钮条目的引擎渲染公式（app.asar）
   const make_button_entry = (content, accelerator, config) => {
     // 入合法输入集（引擎 app.vue 的按钮行构造 P 逐字）：disabled 按钮
@@ -303,14 +371,17 @@ function create_era_fixture() {
   };
 
   // —— 输出 ——
-  era.print = (content) => push_row([make_text_entry(content)]);
+  era.print = (content, config) =>
+    push_row([make_text_entry(apply_dict(content, config?.dict))]);
   // 引擎 printAndWait = print + await waitAnyKey()（app.asar 逐字），print
   // 刚置位 allowWait → 必等键 → 任何一次回传都清空合法输入集（#130）。
   // 内部等待自 #557 起占重叠窗口（同引擎的 IPC 往返），但观测面维持既定
   // 契约：不进 waits / inputs_consumed（见上「已查实、有意不镜像的分歧」）
-  era.printAndWait = async (content) => {
+  era.printAndWait = async (content, config) => {
     begin_wait('printAndWait');
-    const returned = push_row([make_text_entry(content)]);
+    const returned = push_row([
+      make_text_entry(apply_dict(content, config?.dict)),
+    ]);
     input_rules.length = 0;
     // 内部等待在引擎里必然真等（print 刚置位 allowWait）并消费一次按键：
     // 确认边界推进到刚推入的行为止。观测面维持既定契约不进 waits /
@@ -333,7 +404,9 @@ function create_era_fixture() {
       },
     ]);
   era.printButton = (content, accelerator, config) =>
-    push_row([make_button_entry(content, accelerator, config)]);
+    push_row([
+      make_button_entry(apply_dict(content, config?.dict), accelerator, config),
+    ]);
   era.replaceText = (content) => replace_row([make_text_entry(content)]);
   // —— 多列输出族（#48 比对录制 + #68 Row 归并）：printMultiColumns /
   //    printInColRows 的 GridObject 逐格压平成既有条目类型（button/text/

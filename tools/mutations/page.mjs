@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 565; // 界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 563; // 界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -154,7 +154,7 @@ export default [
   {
     desc: 'M56 指令按钮渲染删掉（#214 起目标 = 内建分支：位 34 关的静态名按钮——e2e 与单测都走它）',
     file: 'ere/page/page-usercom.js',
-    find: "    usable.map((id) => [\n      com_index(id),\n      era.get(`traincommandname:${id}`) ?? '',\n    ]),",
+    find: '    usable.map((id) => [com_index(id), train_command_name(id)]),',
     replace: '    // 变异：按钮渲染删除',
     tests: ['source-check', 'page-usercom'],
     must_mention: '端到端',
@@ -693,15 +693,15 @@ export default [
 
   // —— #212（J2 调教回合骨架）：M704-M712 ——
   {
-    desc: 'M705 p_c 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
+    desc: 'M705 p_c 回落顺序倒置（TRAIN_NAME 抢在静态名前）',
     file: 'ere/page/page-usercom.js',
-    find: "  let name = '';\n  if (DECLARED_TRAIN_IDS.includes(local)) {\n    name = era.get(`traincommandname:${local}`) ?? '';\n  }\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }",
+    find: '  let name = train_command_name(local);\n  // 静态名空 → TRAIN_NAME:LOCAL（定制覆盖层，train_name_init 播种）\n  if (name.length < 1) {\n    name = read_train_name(local);\n  }',
     replace: `  let name = read_train_name(local);
-  if (name.length < 1 && DECLARED_TRAIN_IDS.includes(local)) {
-    name = era.get(\`traincommandname:\${local}\`) ?? '';
-  }`,
+  if (name.length < 1) {
+    name = train_command_name(local);
+  } // 变异：回落顺序倒置`,
     tests: ['page-usercom'],
-    must_mention: 'TRAINNAME 非空时不得读 TRAIN_NAME',
+    must_mention: '静态名非空时不得读 TRAIN_NAME',
   },
   {
     desc: 'M706 p_c 第三级回落的全角空格改空串（非空占位语义丢）',
@@ -4806,9 +4806,9 @@ export default [
   {
     desc: 'M14335 内建指令列表列数改 1（逐格独占一行）',
     file: 'ere/page/page-usercom.js',
-    find: "      era.get(`traincommandname:${id}`) ?? '',\n    ]),\n    3,\n  );",
+    find: '    usable.map((id) => [com_index(id), train_command_name(id)]),\n    3,\n  );',
     replace:
-      "      era.get(`traincommandname:${id}`) ?? '',\n    ]),\n    1,\n  );",
+      '    usable.map((id) => [com_index(id), train_command_name(id)]),\n    1,\n  );',
     tests: ['page-usercom'],
     must_mention: '内建列表同样按每行 3 列排布',
   },
@@ -5419,24 +5419,6 @@ export default [
     tests: ['item-shop'],
     must_mention:
       '复数购买的尾段等键：取消提前退出不等键，成交后尾段再等一次（#724）',
-  },
-  // —— #739：高级指令作 PREVCOM 时 p_c 不读静态名表 ——
-  {
-    desc: 'M14557 p_c 去掉表内编号判断（高级指令号也读 TRAINNAME，引擎抛错）',
-    file: 'ere/page/page-usercom.js',
-    find: "  if (DECLARED_TRAIN_IDS.includes(local)) {\n    name = era.get(`traincommandname:${local}`) ?? '';\n  }",
-    replace:
-      "  name = era.get(`traincommandname:${local}`) ?? ''; // 变异：表外编号也读",
-    tests: ['page-usercom'],
-    must_mention: '不读 TRAINNAME，取 TRAIN_NAME 定制名（#739）',
-  },
-  {
-    desc: 'M14558 p_c 表内编号判断取反（表内指令丢静态名、高级指令号去读静态名）',
-    file: 'ere/page/page-usercom.js',
-    find: '  if (DECLARED_TRAIN_IDS.includes(local)) {',
-    replace: '  if (!DECLARED_TRAIN_IDS.includes(local)) { // 变异：判断取反',
-    tests: ['page-usercom'],
-    must_mention: 'p_c 第一级：静态名表命中',
   },
   // —— 奸商代理投放：犒赏段的出口与犒赏播报的等键 ——
   {

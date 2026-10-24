@@ -170,8 +170,6 @@ test('指令登录换屏：连续登记多条，各轮菜单行数不增长（#7
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.era.beginTrain(0, 31);
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   const rows = track_input_rows(fixture);
   const { comseq_register } = fixture.load_module('system/train/com-register');
 

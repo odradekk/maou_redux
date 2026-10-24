@@ -46,8 +46,6 @@ function seed_menu(fixture, ids) {
 
 test('comseq_show：名字串 + 「 → 」分隔 + 收尾换行（静态名表）', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 6]);
 
   await mod.comseq_show();
@@ -60,8 +58,6 @@ test('comseq_show：名字串 + 「 → 」分隔 + 收尾换行（静态名表�
 
 test('comseq_show：连续同指令折叠 ×n', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 0, 0, 6, 6]);
 
   await mod.comseq_show();
@@ -72,8 +68,6 @@ test('comseq_show：连续同指令折叠 ×n', async () => {
 test('comseq_show：不可用条目显示（不可用）（可用性检查返回 0）', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 6]);
   com_able_family.register(6, async () => 0); // 接吻不可用
 
@@ -104,15 +98,13 @@ test('multi_comable：不在可直选表（高级 COM 84）→ 0，不进登记�
 });
 
 test('multi_comable：在册且未实现可用性检查 → 1（未定义即默认可用）', async () => {
-  const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
+  const { mod } = load_register();
   assert.equal(await mod.multi_comable(0), 1);
 });
 
 test('multi_comable：探测包着 TFLAG:224 = 555（置位 → 调用 → 复位）', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  fixture.store.set('traincommandname:0', '爱抚');
   const seen = [];
   com_able_family.register(0, async () => {
     seen.push(fixture.store.get('tflag:224'));
@@ -129,9 +121,6 @@ test('multi_comable：探测包着 TFLAG:224 = 555（置位 → 调用 → 复�
 
 test('print_comlist：可登记指令的按钮列表，编号印指令号本身', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:40', '打屁股');
-  fixture.store.set('traincommandname:110', '穿脱衣服');
   const { com_able_family } = fixture.load_module('system/train/com-family');
   com_able_family.register(40, async () => 0); // 打屁股当前不可用
 
@@ -177,7 +166,6 @@ test('print_comlist：可登记指令按每行 3 列排布（PRINTCPERLINE 的�
 
 test('comseq_register：登记一条后保存并返回（槽位/长度/旗标终态）', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 1000); // 第 1 条选爱抚 → 保存并返回
 
   await mod.comseq_register();
@@ -226,7 +214,6 @@ test('comseq_register：首步取消（1000）→ 原菜单不动', async () => 
 
 test('comseq_register：登记中途的出口文案切换（取消并返回 → 保存并返回）', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 1000);
   await mod.comseq_register();
 
@@ -240,8 +227,6 @@ test('comseq_register：登记中途的出口文案切换（取消并返回 → 
 
 test('comseq_register：重复指令[999]把已登记段循环复制到满 10 条', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   // 登记 2 条（0、6）→ 重复指令：以 2 为周期填满 10
   fixture.reset_inputs(0, 6, 999);
 
@@ -269,7 +254,6 @@ test('comseq_register：重置菜单[998]清 550-560 与本会话计数', async 
 
 test('comseq_register：登满 10 条自动进完成段（不再要输入）', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // 恰 10 次输入
 
   await mod.comseq_register();
@@ -284,7 +268,6 @@ test('comseq_register：登满 10 条自动进完成段（不再要输入）', a
 
 test('comseq_register：每轮重画带「选择第N个指令:」行', async () => {
   const { fixture, mod } = load_register();
-  fixture.store.set('traincommandname:0', '爱抚');
   only_registrable(fixture, [0]);
   fixture.reset_inputs(0, 1000);
 
@@ -333,8 +316,6 @@ test('comseq_train：预检查有不可用条目 → 整体拒绝，零执行', 
     'system/train/com-family',
   );
   const { on } = fixture.load_module('system/event/registry');
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 6]);
   com_able_family.register(6, async () => 0); // 第 2 条不可用
   const fired = [];
@@ -372,8 +353,6 @@ test('comseq_train：预检查有不可用条目 → 整体拒绝，零执行', 
 test('comseq_train：拒绝播报在回合画面换屏前先经按键确认（#724）', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 6]);
   com_able_family.register(6, async () => 0); // 第 2 条不可用 → 整段拒绝
 
@@ -398,8 +377,6 @@ test('comseq_train：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回
   const { fixture, mod } = load_register();
   const { com_family } = fixture.load_module('system/train/com-family');
   const { on } = fixture.load_module('system/event/registry');
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 6]);
   const fired = [];
   com_family.register(0, async () => fired.push('COM0'));
@@ -427,8 +404,6 @@ test('comseq_train：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回
 test('comseq_train：预检查的 prevcom 推进——探测第 k 条时它是第 k-1 条', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  fixture.store.set('traincommandname:0', '爱抚');
-  fixture.store.set('traincommandname:6', '接吻');
   seed_menu(fixture, [0, 6]);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.prevcom = 12;
