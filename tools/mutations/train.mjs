@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1113; // 界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#787：新增 1 条别名播种表与静态名表的跨表一致性守护（M15124）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1119; // 界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -47,14 +47,65 @@ export default [
     engine: true,
     must_mention: '死亡目标必须除名',
   },
-  // —— #787：别名播种表与静态名表的跨表一致性 ——
+  // —— #836：调教指令常量（编号 / 名称 / 可直选性的唯一来源） ——
   {
-    desc: 'M15124 别名播种表 90 号退回「乳内插入」（与静态名表漂移回潮）',
+    desc: 'M15650 可直选指令的编号改错（40 号与 39 号错位——存档里的指令号漂移）',
+    file: 'ere/data/train-command-const.js',
+    find: "  40: '打屁股',",
+    replace: "  39: '打屁股', // 变异：编号改错",
+    tests: ['train-command-const', 'com-dispatch'],
+    must_mention: '可直选指令的编号与名称必须逐条一致',
+  },
+  {
+    desc: 'M15651 指令名改错（0 号「爱抚」写成「爱护」——玩家看到的文本变了）',
+    file: 'ere/data/train-command-const.js',
+    find: "  0: '爱抚',",
+    replace: "  0: '爱护', // 变异：名称改错",
+    tests: ['train-command-const'],
+    must_mention: '可直选指令的编号与名称必须逐条一致',
+  },
+  {
+    desc: 'M15652 高级 COM 混进可直选表（84 同时出现在两张表——可用性分层失效）',
+    file: 'ere/data/train-command-const.js',
+    find: "  83: '两穴拳交',",
+    replace:
+      "  83: '两穴拳交',\n  84: '刺激Ｇ点', // 变异：高级 COM 混进可直选表",
+    tests: ['train-command-const'],
+    must_mention: '可直选指令的编号与名称必须逐条一致',
+  },
+  {
+    desc: 'M15653 静态名不再转小写（显示口径丢失——玩家看到的指令名变成大写）',
+    file: 'ere/data/train-command-const.js',
+    find: "  return (TRAIN_COMMAND[id] ?? '').toLowerCase();",
+    replace: "  return TRAIN_COMMAND[id] ?? ''; // 变异：不转小写",
+    tests: ['train-command-const'],
+    must_mention: '野外play',
+  },
+  {
+    desc: 'M15654 150 号动态槽被静态名播种（别名槽丢掉「<癖好名>调教」的口上定制）',
     file: 'ere/system/train/train-name.js',
-    find: "  90: '乳房插入',",
-    replace: "  90: '乳内插入', // 变异：与静态名表漂移",
+    find: '  if (name.length > 0 && Number(id) !== TRAIN_ALIAS_DYNAMIC_SLOT) {',
+    replace: '  if (name.length > 0) { // 变异：150 也播静态名',
     tests: ['train-name'],
-    must_mention: '90: 静态名「乳房插入」≠ 播种名「乳内插入」',
+    must_mention: '150 是动态槽，不进播种表',
+  },
+  {
+    desc: 'M15655 67 号的无名字槽被播种（别名表多出一条空串）',
+    file: 'ere/system/train/train-name.js',
+    find: '  if (name.length > 0 && Number(id) !== TRAIN_ALIAS_DYNAMIC_SLOT) {',
+    replace:
+      '  if (Number(id) !== TRAIN_ALIAS_DYNAMIC_SLOT) { // 变异：空名字也播',
+    tests: ['train-name'],
+    must_mention: '67 无名字，不得播种空串',
+  },
+  {
+    desc: 'M15656 别名播种表也转小写（指令菜单自定义标签的显示口径被改）',
+    file: 'ere/system/train/train-name.js',
+    find: '    TRAIN_NAME_TABLE[id] = name;',
+    replace:
+      '    TRAIN_NAME_TABLE[id] = name.toLowerCase(); // 变异：别名层也转小写',
+    tests: ['train-name'],
+    must_mention: '野外PLAY',
   },
   // —— #565 已实现函数的存根调用点接入 ——
   {
@@ -380,7 +431,7 @@ export default [
     desc: 'M703 train_name_init 的字符串内插删（播种时求值丢失）',
     file: 'ere/system/train/train-name.js',
     find: `  era.set(
-    \`trainalias:150\`,
+    \`trainalias:\${TRAIN_ALIAS_DYNAMIC_SLOT}\`,
     \`\${era.get(\`cstr:\${era_flag.target}:7\`) ?? ''}调教\`,
   );`,
     replace: `  era.set(\`trainalias:150\`, '调教');`,
@@ -498,17 +549,11 @@ export default [
   },
   {
     desc: 'M750 分发空间少一号（84 刺激Ｇ点从声明空间摘除——升格目标无处分发）',
-    file: 'ere/system/train/com-family.js',
-    find: `const ADVANCED_COM_IDS = [
-  67, 69, 70, 84, 111, 120, 121, 123, 124, 125, 126, 127, 128, 129, 130, 131,
-  132, 133, 134, 208,
-];`,
-    replace: `const ADVANCED_COM_IDS = [
-  67, 69, 70, 111, 120, 121, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132,
-  133, 134, 208, // 变异：84 摘除
-];`,
-    tests: ['com-dispatch'],
-    must_mention: '高级 COM = 分发空间 − 可直选空间',
+    file: 'ere/data/train-command-const.js',
+    find: "  84: '刺激Ｇ点',",
+    replace: '  // 变异：84 摘除',
+    tests: ['train-command-const', 'com-dispatch'],
+    must_mention: '高级 COM 的编号与名称必须逐条一致',
   },
   {
     desc: 'M751 train_message_b 的缺号回落复辟占位行（#565 起缺号 = 零输出）',
@@ -711,11 +756,11 @@ export default [
     desc: 'M775 comseq_show 的（不可用）分支换成直接印名字（不可用条目伪装可用）',
     file: 'ere/system/train/com-register.js',
     find: `    if (able) {
-      era.print(era.get(\`traincommandname:\${id}\`) ?? '');
+      era.print(train_command_name(id));
     } else {
       era.print('（不可用）');
     }`,
-    replace: `    era.print(era.get(\`traincommandname:\${id}\`) ?? ''); // 变异：不分可用性`,
+    replace: `    era.print(train_command_name(id)); // 变异：不分可用性`,
     tests: ['com-register'],
     must_mention: '（不可用）',
   },

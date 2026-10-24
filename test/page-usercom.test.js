@@ -564,13 +564,12 @@ test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、�
   assert.equal(last?.text, '媚药史莱姆', '末位 207→109（跳过子菜单号）');
 });
 
-test('位 34 关：内建渲染路径，标签取 TRAINNAME 静态名（不升格）', async () => {
+test('位 34 关：内建渲染路径，标签取指令常量的静态名（不升格）', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   const { emit } = load_page(fixture);
-  // trainalias 播种与静态名不同的槽：160 号不在静态表——用 150（动态槽，
-  // TRAIN_NAME 播种名 ≠ 静态名）区分两条路径的取表
-  fixture.store.set('traincommandname:0', '静态爱抚');
+  // 定制层（trainalias）与静态名不同的槽：0 号播种成「定制爱抚」，两条
+  // 渲染路径据此区分取哪一层
   fixture.store.set('trainalias:0', '定制爱抚');
 
   await emit('SHOW_USERCOM', [0]);
@@ -580,8 +579,8 @@ test('位 34 关：内建渲染路径，标签取 TRAINNAME 静态名（不升�
   );
   assert.deepEqual(
     buttons.map((b) => [b.accelerator, b.text]),
-    [[0, '静态爱抚']],
-    'OFF 路径读 traincommandname（内建列表的等价移植），不吃 trainalias',
+    [[0, '爱抚']],
+    'OFF 路径读指令常量的静态名（内建列表的等价移植），不吃 trainalias',
   );
 });
 
@@ -606,15 +605,14 @@ test('command_button_label：升格后的号取名字；64 合成分支读静态
   const { command_button_label } = fixture.load_module('page/page-usercom');
   const { train_name_init } = fixture.load_module('system/train/train-name');
   train_name_init();
-  fixture.store.set('traincommandname:64', '３Ｐ');
-  fixture.store.set('traincommandname:20', '正常位');
 
   // 未升格（adv = id）：TRAIN_NAME（trainalias）的名字
   assert.equal(command_button_label(0, 0), '爱抚');
   // 升格（8 → 84 刺激Ｇ点）：名字用升格后的号，编号仍用升格前的位次
   assert.equal(command_button_label(84, 8), '刺激Ｇ点');
-  // 64 合成分支（RESULT == 64 且 L_I != 64）：%TRAINNAME:64%・%TRAINNAME:L_I%
-  assert.equal(command_button_label(64, 20), '３Ｐ・正常位');
+  // 64 合成分支（RESULT == 64 且 L_I != 64）：静态名两段拼接。静态名照
+  // 改动前的显示口径转小写（'Ｐ' → 'ｐ'）
+  assert.equal(command_button_label(64, 20), '３ｐ・正常位');
   // 64 本尊不走合成分支（L_I == 64）
   assert.equal(command_button_label(64, 64), '３Ｐ');
 });
@@ -673,10 +671,9 @@ async function draw_with_prevcom(fixture, prevcom) {
   return { line, tstr: fixture.store.get('tstr:90') };
 }
 
-test('p_c 第一级：静态名表命中 → TSTR:90 = TRAINNAME', async () => {
+test('p_c 第一级：静态名命中 → TSTR:90 = 静态名', async () => {
   const fixture = create_era_fixture();
-  // traincommandname:12（振动杖，yml/TrainCommand.yml 的静态名）
-  fixture.store.set('traincommandname:12', '振动杖');
+  // 12 = 振动杖（指令常量的静态名）
   const { line, tstr } = await draw_with_prevcom(fixture, 12);
   assert.equal(tstr, '振动杖');
   assert.equal(line, '＜上次的调教指令：振动杖＞');
@@ -717,12 +714,11 @@ test('p_c 第三级：两级皆空 → 全角空格占位（非空占位）', as
   assert.equal(line, '＜上次的调教指令：　＞');
 });
 
-test('静态名优先于定制名（TRAINNAME > TRAIN_NAME 的回落顺序不可倒置）', async () => {
+test('静态名优先于定制名（静态名 > TRAIN_NAME 的回落顺序不可倒置）', async () => {
   const fixture = create_era_fixture();
-  fixture.store.set('traincommandname:12', '振动杖');
   fixture.store.set('trainalias:12', '被覆盖的名字');
   const { tstr } = await draw_with_prevcom(fixture, 12);
-  assert.equal(tstr, '振动杖', 'TRAINNAME 非空时不得读 TRAIN_NAME');
+  assert.equal(tstr, '振动杖', '静态名非空时不得读 TRAIN_NAME');
 });
 
 test('PREVCOM = -1（首轮）：无「上次的调教指令」行，也不写 TSTR:90', async () => {

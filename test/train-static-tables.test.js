@@ -4,13 +4,13 @@
  * 不用夹具（记录层证明不了「引擎接受」），不用自写镜像（会与引擎不一致），全部经
  * test/helpers/engine-bundle.js 驱动 app.asar 里的 parseDataFile 与 eraStart
  * 变量表装载分支（转写），钉住：
- *   1. **Juel 不单独成表**：装载循环里 param/palam 两个文件名落到同一
- *      分支、共同装进 staticData.juel 一张名字表（juel/jewel 等文件名是
- *      受保护表名，警告后不读），寻址层 palam/param/jewel 同查它；
- *   2. **调教指令表叫 traincommand**：train 是引擎弃用表名（装载时警告并
- *      跳过）、trainname 会被寻址层的 name 后缀规则拆成「train 表的名字
- *      查询」而 train 表不存在（寻址落入缺省分支、引擎报 key error in
- *      getter/setter）——#5 的 Train.yml 与 #10 的 TrainName.yml 都是死表。
+ *   - **Juel 不单独成表**：装载循环里 param/palam 两个文件名落到同一
+ *     分支、共同装进 staticData.juel 一张名字表（juel/jewel 等文件名是
+ *     受保护表名，警告后不读），寻址层 palam/param/jewel 同查它。
+ *
+ * 调教指令的名称自 #836 起是脚本里的常量（ere/data/train-command-const.js），
+ * 不再有 traincommand 静态表，原先钉住「调教指令表叫 traincommand、读未声明
+ * 序号的名字抛错」的两段引擎行为随表一起删除。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告。
  */
@@ -102,66 +102,5 @@ engine_test(
     // 序号 → 名称：palamname/paramname/jewelname 同查 fieldNames.juel
     assert.equal(engine.set_var.call(fake_this, 'palamname:0'), '阴核');
     assert.equal(engine.set_var.call(fake_this, 'jewelname:5'), '欲情');
-  },
-);
-
-// —— TrainCommand：表名可寻址性的比对锁 ——
-
-engine_test(
-  'TrainCommand：三种寻址全通（train/trainname 两个死名的反例见 issue #43）',
-  () => {
-    const product_text = fs.readFileSync(
-      path.join(REPO_ROOT, 'yml', 'TrainCommand.yml'),
-      'utf8',
-    );
-    const loader = load_table(product_text, 'yml', 'traincommand');
-    assert.equal(loader.static_data.traincommand['爱抚'], 0);
-    assert.equal(loader.static_data.traincommand['死斗场'], 200);
-
-    const fake_this = {
-      staticData: loader.static_data,
-      fieldNames: loader.field_names,
-      data: { traincommand: { 0: 7 } },
-      global: {},
-      extendedTables: { traincommand: engine.era_api.tableType.normal },
-    };
-    // 指令菜单渲染的三种读法：按序号取值、按名称翻序号、按序号取名称。
-    // 表名若叫 train（弃用名）产物整个不装载；若叫 trainname（name 后缀
-    // 被寻址层拆解）前两种落入引擎缺省分支报 key error——两者都给不出这三行断言
-    assert.equal(engine.set_var.call(fake_this, 'traincommand:0'), 7);
-    assert.equal(
-      engine.set_var.call(fake_this, 'traincommand:爱抚'),
-      7,
-      'traincommand:爱抚 必须经名字表翻到序号 0',
-    );
-    assert.equal(engine.set_var.call(fake_this, 'traincommandname:0'), '爱抚');
-  },
-);
-
-// 夹具读名字表时据此抛错：表内没有的序号不是返回 undefined
-engine_test(
-  'TrainCommand：读未声明序号的名字直接抛 TypeError，不返回 undefined（#739）',
-  () => {
-    const product_text = fs.readFileSync(
-      path.join(REPO_ROOT, 'yml', 'TrainCommand.yml'),
-      'utf8',
-    );
-    const loader = load_table(product_text, 'yml', 'traincommand');
-    const fake_this = {
-      staticData: loader.static_data,
-      fieldNames: loader.field_names,
-      data: {},
-      global: {},
-      extendedTables: {},
-    };
-    assert.equal(engine.set_var.call(fake_this, 'traincommandname:30'), '手淫');
-    // 126 = 手搓口交，只能经升格进入的高级指令号，不在 TrainCommand.yml
-    assert.throws(
-      () => engine.set_var.call(fake_this, 'traincommandname:126'),
-      {
-        name: 'TypeError',
-        message: "Cannot read properties of undefined (reading 'n')",
-      },
-    );
   },
 );
