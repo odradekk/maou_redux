@@ -4,8 +4,8 @@
  * STATE.AFTERTRAIN 的主体（train-end.js 的 run_aftertrain 发起链、收尾
  * era.endTrain）。死亡分支把机械清理交给 train-end.js 的 defer_train_death
  * 并延迟除名（协议与时序见该文件头）。死亡分支内的
- * begin(STATE.TURNEND) 会当场结束本函数（#6 语义：BEGIN 结束当前函数、
- * 链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
+ * BEGIN TURNEND 以返回值交出并当场结束本函数（#6 语义：BEGIN 结束当前
+ * 函数、链继续），其后的善恶值/时常发情/气力回复/珠结算/指针还原一并跳过。
  *
  * 真身一览：self_check / aftertrain_cloth / re_clothed /
  * karma（各自工单）；charadead_check 自 #548（S7）起为真身
@@ -18,7 +18,7 @@
 const era = require('#/era-electron');
 const { karma } = require('#/chara/chara-stats');
 const { on, TIER } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
@@ -99,7 +99,7 @@ on(
       // 死亡的机械步骤（除名登记/指针清空/队伍移除/待结算珠清零）收进
       // 收尾协调器；实际除名在引擎收尾后冲账（时序约束见其文件头）
       defer_train_death(target);
-      begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
+      return begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
     } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
       // 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——
       // 本体在 ere/event/event-nextday.js，#400（N16）接入
@@ -169,7 +169,7 @@ on(
     era_flag.target = era_flag.target_record;
 
     // 能力値の上昇はメイン画面で行わせる → 回合结算
-    begin(STATE.TURNEND);
+    return begin(STATE.TURNEND);
   },
   TIER.LATER,
 );

@@ -749,11 +749,10 @@ test('贯通：出兵封顶 10000 → 结算尾触发 ending_1 → 选 0 继续�
   // [109] 主菜单 → 侵略画面选 [1] 出兵 → ending_1 询问选 [0] 继续
   fixture.set_inputs(109, 1, 0);
   const { run_shop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  await assert.rejects(
-    () => run_shop(),
-    (e) => e instanceof BeginSignal && e.state === 'TURNEND',
+  assert.equal(
+    await run_shop(),
+    'TURNEND',
     '结局演出后照常走 BEGIN TURNEND（中场结局不是游戏终止）',
   );
   assert.equal(fixture.store.get('flag:81'), 10000, '侵攻度封顶 10000');

@@ -100,8 +100,8 @@ export default [
     // 行为差异（整条变异退化为跳过）；出口检查改指向链上最后生效的普通档
     desc: 'M17 TURNEND 出口：普通档 BEGIN SHOP 改 BEGIN TITLE（链上最后的出口决定去向，回不到主菜单）',
     file: 'ere/system/turnend-settle.js',
-    find: '  begin(STATE.SHOP);',
-    replace: '  begin(STATE.TITLE);',
+    find: '  return begin(STATE.SHOP);',
+    replace: '  return begin(STATE.TITLE);',
     tests: ['train-loop'],
     must_mention: '端到端',
   },

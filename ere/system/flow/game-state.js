@@ -1,5 +1,5 @@
 /**
- * @file BEGIN 转场信号与游戏状态枚举（决议 #6，实现于 issue #20）。
+ * @file 游戏状态枚举与 BEGIN 转场（决议 #6，实现于 issue #20；#850 改为返回值）。
  *
  * BEGIN 转场的约定语义（决议 #6，实测日志佐证——它推翻了 #3 第 6 节
  * 「BEGIN 中止事件链」的旧结论）：
@@ -11,12 +11,10 @@
  * 会被静默跳过——那种能跑起来、玩到中期才发现数值不对
  * 的 bug（#6 的原始动机）。
  *
- * 【硬约束（来源于 #6）】业务代码里任何 try/catch 的首行必须是：
- *     if (e instanceof BeginSignal) throw e;
- * 本信号用异常实现「结束当前函数」，任何 catch 都可能半路截走它；截走后
- * 不重新抛出 = 转场被静默吞掉（不报错、不停机、游戏停在原地）。后续十七
- * 个子系统移植时都会写 catch——先抄这一行。test/event-registry.test.js 的
- * 「吞掉信号」反例用例守着这条约束的必要性。
+ * 【怎么发出（#850）】转场是普通返回值，不再是异常信号：写 `return begin(STATE.X)`。
+ * return 正好同时满足语义 1（结束当前函数）——只调用不 return 会继续执行
+ * BEGIN 下方的语句，那不叫转场。拿到这个返回值的中间层用 is_state 判定、
+ * 逐层 return 上抛（判定点的约定见 system/event/registry.js 的文件头）。
  */
 
 /**
@@ -54,36 +52,38 @@ const STATE = Object.freeze({
   TURNEND: 'TURNEND',
 });
 
-/**
- * BEGIN 的 JS 等价物：携带目标状态的异常信号。
- * 用异常实现「从任意嵌套深度结束当前函数」（BEGIN 可出现在 IF 块
- * 中段的任意位置）。
- */
-class BeginSignal extends Error {
-  /**
-   * @param {string} state STATE 枚举的取值（跳转目标）
-   */
-  constructor(state) {
-    super(`BEGIN ${state}`);
-    this.name = 'BeginSignal';
-    this.state = state;
-  }
-}
+// 转场目标的取值集合。键与取值同源（上方枚举逐项写明），判定只看取值：
+// 调用方传的是 STATE.XXX 的取值，不是键名。
+const STATE_VALUES = new Set(Object.values(STATE));
 
 /**
- * 发出转场信号：立即结束当前函数（本函数只 throw，绝不返回）。
- * 事件链内由调度器捕获暂存（system/event/registry.js 的 emit）；非事件
- * 函数内一路上抛，由主循环接住（system/flow/main-loop.js 的 enter_state）。
+ * 发起 BEGIN 转场：校验目标并把它作为返回值交出去。
+ *
+ * 用法固定为 `return begin(STATE.X);`——返回值就是下一状态，由事件链或
+ * 状态处理器继续往上交。
  * @param {string} state STATE 枚举的取值
- * @throws {BeginSignal} 永远抛出
+ * @returns {string} 同一个 state，供调用方原样上抛
+ * @throws {TypeError} 目标不在 STATE 枚举里：笔误在发出处即报错，而不是等
+ *   主循环收到一个悬空状态
  */
 function begin(state) {
-  // 未知目标在发信号处即报错，而不是等主循环收到一个悬空状态。
-  // 按「值」校验（调用方传的是 STATE.XXX 取值，不是键）
-  if (!Object.values(STATE).includes(state)) {
+  if (!STATE_VALUES.has(state)) {
     throw new TypeError(`begin() 收到未知游戏状态: ${String(state)}`);
   }
-  throw new BeginSignal(state);
+  return state;
 }
 
-module.exports = { BeginSignal, begin, STATE };
+/**
+ * 判定一个返回值是不是转场目标。
+ *
+ * 中间层用它区分「被调用方发起了转场」与「被调用方的普通返回值」：有的
+ * 函数平时返回数字（跨存档通信的菜单返回条数、读档界面返回页起点），发起
+ * 转场时返回 STATE 取值，调用方据本判定决定是上抛还是照常消费。
+ * @param {any} value 任意返回值
+ * @returns {boolean} 是 STATE 枚举的取值即 true
+ */
+function is_state(value) {
+  return STATE_VALUES.has(value);
+}
+
+module.exports = { begin, is_state, STATE };

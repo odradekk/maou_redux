@@ -364,12 +364,10 @@ test('MONSTER_PLAY 取消返回 0；野狗路径结算处女丧失并转入回�
   fixture.store.set('item:22', 1);
   fixture.store.set('talent:0:0', 1); // TALENT:A:0 = 处女
   fixture.set_inputs(900);
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
-  await assert.rejects(
-    () => fixture.load_module('dungeon/monster-play').monster_play(seq(2)),
-    (error) => error instanceof BeginSignal && error.state === STATE.TURNEND,
+  const { STATE } = fixture.load_module('system/flow/game-state');
+  assert.equal(
+    await fixture.load_module('dungeon/monster-play').monster_play(seq(2)),
+    STATE.TURNEND,
   );
   assert.equal(fixture.store.get('exp:0:0'), 5, 'Y = RAND:5 + 3');
   assert.equal(fixture.store.get('talent:0:0'), 0);
@@ -379,14 +377,11 @@ test('MONSTER_PLAY 取消返回 0；野狗路径结算处女丧失并转入回�
 test('MONSTER_PLAY 非狗先生成第 5 列，再按 E:507 分派并共用随机序列', async () => {
   const fixture = setup();
   fixture.set_inputs(102); // 黏液怪，凌辱类型 2
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
-
-  await assert.rejects(
-    () =>
-      fixture
-        .load_module('dungeon/monster-play')
-        .monster_play(seq(0, 0, 0, 4, 1)),
-    BeginSignal,
+  assert.equal(
+    await fixture
+      .load_module('dungeon/monster-play')
+      .monster_play(seq(0, 0, 0, 4, 1)),
+    'TURNEND',
   );
   assert.equal(fixture.store.get('e:500'), 102, 'MONSTER_DATA 写入 X 列');
   assert.equal(fixture.store.get('e:507'), 2, '分派键是 X 列的怪物种族');
@@ -401,10 +396,9 @@ test('MONSTER_PLAY 保留自由输入：未显示但有库存的编号仍可进�
   const fixture = setup();
   fixture.store.set('item:22', 1);
   fixture.set_inputs(22);
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
-  await assert.rejects(
-    () => fixture.load_module('dungeon/monster-play').monster_play(seq(0, 0)),
-    BeginSignal,
+  assert.equal(
+    await fixture.load_module('dungeon/monster-play').monster_play(seq(0, 0)),
+    'TURNEND',
   );
   assert.equal(
     fixture.store.get('exp:0:0'),

@@ -116,17 +116,13 @@ const NAME_NIDS = [
 const seeded_name = (nid) => `勇${nid}`;
 const SEEDED_NAMES = new Set(NAME_NIDS.map(seeded_name));
 
-/** 接住 BeginSignal 并断言目标状态（run_shop/run_title_page 的出口协议） */
-async function expect_signal(promise, state, BeginSignal, what) {
-  try {
-    await promise;
-  } catch (e) {
-    if (e instanceof BeginSignal && e.state === state) {
-      return;
-    }
-    throw e;
-  }
-  assert.fail(`${what} 应以 BeginSignal(${state}) 离开，却正常返回了`);
+/** 断言调用以转场目标离开（BEGIN 是返回值，#850） */
+async function expect_state(promise, state, what) {
+  assert.equal(
+    await promise,
+    state,
+    `${what} 应以转场目标 ${state} 离开（返回其它值即没到站）`,
+  );
 }
 
 test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 压住侵攻度）', async () => {
@@ -198,7 +194,6 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // #346 接入的每日召唤与本用例的勇者推进无关；隔离它的随机消费，避免
@@ -213,12 +208,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
   try {
     // —— 新档：标题画面选「新的猎物」[1] → 新游戏四件套 → BEGIN FIRST ——
     fixture.set_inputs(1);
-    await expect_signal(
-      run_title_page(),
-      'FIRST',
-      BeginSignal,
-      '标题画面新游戏',
-    );
+    await expect_state(run_title_page(), 'FIRST', '标题画面新游戏');
 
     // —— EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
     // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]（#50 真身）、地下城模式选
@@ -235,12 +225,7 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     let quit_error;
     while (quit_error === undefined) {
       fixture.reset_inputs(109, 1, 0);
-      await expect_signal(
-        run_shop(),
-        'TURNEND',
-        BeginSignal,
-        `第 ${rounds + 1} 轮出兵`,
-      );
+      await expect_state(run_shop(), 'TURNEND', `第 ${rounds + 1} 轮出兵`);
       try {
         const pending = await emit('EVENTTURNEND');
         assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');

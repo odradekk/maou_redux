@@ -268,7 +268,7 @@ async function run_calltrain(sequence) {
     era_flag.selectcom = com;
     const round = await execute_command_round(com);
     if (round.pending !== undefined) {
-      return round.pending; // 转场信号中止自动执行
+      return round.pending; // 转场目标中止自动执行
     }
   }
   calltrainend();

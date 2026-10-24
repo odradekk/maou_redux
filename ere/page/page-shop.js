@@ -23,7 +23,7 @@
 const era = require('#/era-electron');
 const { relation_debugprint } = require('#/chara/chara-family');
 
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { on, emit, TIER } = require('#/system/event/registry');
 const { maounet } = require('#/system/cross-save-sharing');
 const { chara_sale } = require('#/system/stronghold/sale');
@@ -158,6 +158,8 @@ async function show_shop() {
  * #638 删除——缺内容的入口按 #574「去掉入口」处理，见函数体注释）。
  *
  * @param {number} result 玩家输入（era.input() 的返回值）
+ * @returns {Promise<string|undefined>} 转场目标（STATE 取值）；没发起转场的
+ *   分支返回 undefined，由 run_shop 回循环重绘
  */
 async function usershop(result) {
   // 购买分派（販売アイテム数 = 100）：店内输入 0-99 一律进购买流程、
@@ -214,8 +216,12 @@ async function usershop(result) {
     // 进调教（#44 补全）。
     if (era_flag.target <= 0) {
       // 目标未选 → select_target()（真身见 page-select-target.js）；
-      // 返回 0（取消/列表为空）则整次调教作罢
+      // 返回 0（取消/列表为空）则整次调教作罢。选择画面的「其它」支会
+      // 转去怪物玩弄（#340），那条路径以转场目标返回，先上抛再判 0
       const selected = await select_target();
+      if (is_state(selected)) {
+        return selected;
+      }
       if (selected === 0) {
         return;
       }
@@ -275,17 +281,17 @@ async function usershop(result) {
       await era.waitAnyKey(); // 报文后等一键
       return;
     }
-    // TARGET >= 1 且 TARGET != ASSI → begin(STATE.TRAIN)（#44 接通：
-    // 信号上抛，主循环进 TRAIN 状态——train-loop.js）
+    // TARGET >= 1 且 TARGET != ASSI → BEGIN TRAIN（#44 接通：
+    // 转场目标逐层上抛，主循环进 TRAIN 状态——train-loop.js）
     if (era_flag.target >= 1 && era_flag.target !== era_flag.assi) {
-      begin(STATE.TRAIN);
+      return begin(STATE.TRAIN);
     }
-    // begin() 抛出后到不了这里；检查不成立时（理论上不可达）落到链尾
+    // return 之后到不了这里；检查不成立时（理论上不可达）落到链尾
   } else if (result === 101) {
-    // 能力显示：chara_info()，返回 1 才 begin(STATE.TURNEND)（出口之一，
+    // 能力显示：chara_info()，返回 1 才 BEGIN TURNEND（出口之一，
     // #391 起真身）
     if ((await chara_info()) === 1) {
-      begin(STATE.TURNEND);
+      return begin(STATE.TURNEND);
     }
   } else if (result === 102) {
     // 地下城 / 场子：dungeon_info2()（#180 起真身：ere/page/
@@ -322,10 +328,10 @@ async function usershop(result) {
     era_flag.target = era.get('flag:1') || 0;
   } else if (result === 109) {
     // 侵略：invasion()（#117 起真身：魔力出兵窄路径，ere/page/
-    // page-invasion.js），返回 1 才 begin(STATE.TURNEND)（出口之一——
-    // begin 上抛信号，由主循环接站）
+    // page-invasion.js），返回 1 才 BEGIN TURNEND（出口之一——
+    // 转场目标由本分支返回，超级循环逐层交给主循环）
     if ((await invasion()) === 1) {
-      begin(STATE.TURNEND);
+      return begin(STATE.TURNEND);
     }
   } else if (result === 110 && (era.get('talent:0:325') || 0) === 1) {
     // 实验室：检查 TALENT:0:325 == 1（魔王的魔界知识，与 draw_have_items
@@ -342,29 +348,39 @@ async function usershop(result) {
     await infrastructure(selectable_count);
   } else if (result === 199) {
     // 休息（#395 起真身）：内联文本 + FLAG:9 += 5（税金）+
-    // begin(STATE.TURNEND)（出口之一——这张工单的到站标记：引擎里第一次
-    // 能把回合推过去）。begin 立即上抛，其后不留代码（同 [109] 的处理）。
+    // BEGIN TURNEND（出口之一——这张工单的到站标记：引擎里第一次
+    // 能把回合推过去）。转场目标在本分支返回，其后不留代码（同 [109]）。
     era.print('你专心于内政，稍作了休息……（税金+5%）');
     game.stronghold.税金修正 += 5;
-    begin(STATE.TURNEND);
+    return begin(STATE.TURNEND);
   } else if (result === 200) {
     // 保存：save_game()（真身见 page/page-save-load.js，#136；返回后回
     // 循环重绘主菜单——读档界面若换过数据，重绘即新状态）
     await save_game();
   } else if (result === 300) {
     // 读取：load_game()（标题画面共用，#136）；读档成功后 era.loadData
-    // 已整体替换数据表，回循环重绘的主菜单读新值
-    await load_game();
+    // 已整体替换数据表，转场目标随返回值上来，本分支原样上抛
+    const loaded = await load_game();
+    if (is_state(loaded)) {
+      return loaded;
+    }
   } else if (result === 777) {
     // 设定。#463 起为真身（page/page-config.js 全量移植）
     await config_menu();
   } else if (result === 888) {
-    // 通信
-    await maounet();
+    // 通信：maounet()。其中的特殊档读写会重放 EVENTLOAD 链，链里的转场
+    // 目标经返回值上来，本分支原样上抛
+    const next = await maounet();
+    if (is_state(next)) {
+      return next;
+    }
   } else if (result === 496 && selectable_count > 0) {
-    // 调教目标：select_target()（真身见 page-select-target.js；此处忽略
-    // 返回值——只开选择画面）
-    await select_target();
+    // 调教目标：select_target()（真身见 page-select-target.js）。返回的数字
+    // 只有 100 分支消费，这里只取转场（选择画面的「其它」支 → 怪物玩弄）
+    const chosen = await select_target();
+    if (is_state(chosen)) {
+      return chosen;
+    }
   } else if (result === 497 && selectable_count > 0) {
     // 助手：select_assi()（真身见 page-select-target.js，同 496 只开选择画面）
     await select_assi();
@@ -521,10 +537,9 @@ async function show_floor(arg) {
 
 /**
  * STATE.SHOP 的处理器：EVENTSHOP 链一次 + 「show_shop 绘制 → 等输入 →
- * usershop 分发」的循环。正常情况下永不返回（菜单是游戏的中枢，经 begin
- * 转场离开，如 100 分支的 begin(STATE.TRAIN)——#44 已接入，begin() 的
- * BeginSignal 从本循环自然上抛、由主循环接站；本模块不写 try/catch，
- * 不会吞信号，#6 硬约束）。
+ * usershop 分发」的循环。正常情况下只在转场离开时返回（菜单是游戏的中枢，
+ * 如 100 分支的 BEGIN TRAIN——#44 已接入）：转场目标是普通返回值，经
+ * usershop → 本循环逐层上抛，由主循环接站。
  *
  * @param {object} [options]
  * @param {boolean} [options.skip_eventshop] 跳过 EVENTSHOP 链——
@@ -533,12 +548,17 @@ async function show_floor(arg) {
  *   以存档数据为准，EVENTSHOP 链的两个动作（指针越界钳制 + 清 100 个
  *   道具上架位）都是「新进商店轮」的初始化，重放会给读入的数据盖掉
  *   存档时的在售状态。
+ * @returns {Promise<string>} 下一游戏状态（转场目标）
  */
 async function run_shop({ skip_eventshop = false } = {}) {
   if (!skip_eventshop) {
     // EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
-    // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）
-    await emit('EVENTSHOP');
+    // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）。
+    // 链里的转场目标是返回值，忽略就等于丢掉它，故照例上抛
+    const shop_pending = await emit('EVENTSHOP');
+    if (is_state(shop_pending)) {
+      return shop_pending;
+    }
   }
   // 商店轮每轮「换屏 + 绘制」（ADR-0009）：换屏在 show_shop 的主菜单支，
   // 道具/陷阱商店支由各商店自行换屏（#724）
@@ -546,9 +566,11 @@ async function run_shop({ skip_eventshop = false } = {}) {
     await show_shop();
     // 引擎侧：玩家点按钮（printButton 的快捷键）或直接键入编号；
     // era.input() 的返回值交 usershop 分发。
-    await usershop(await era.input());
-    // 分发完回 show_shop 重绘：面板切换类分支（500 等）的反馈就是这一次
-    // 重绘；无效输入同路，无提示。
+    const next = await usershop(await era.input());
+    // 转场目标上来就离开循环，其余分支（含无效输入）回 show_shop 重绘
+    if (is_state(next)) {
+      return next;
+    }
   }
 }
 

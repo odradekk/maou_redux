@@ -11,7 +11,7 @@
  * 设计）。新游戏路径在 SHOP 渲染主菜单、消费掉队列里的输入后到站。
  *
  * 已知未测行：STATE.FIRST 处理器的 `?? STATE.SHOP` 缺省处理（链无人 BEGIN 时
- * 默认进商店轮，#20 验收移交的引擎语义）。真身处理器必然 begin(SHOP)，
+ * 默认进商店轮，#20 验收移交的引擎语义）。真身处理器必然返回 SHOP，
  * 缺省分支在当前注册表下不可达、无法不设钩子地观测——它是防御性的引擎行为
  * 镜像，留待未来出现「可无 BEGIN 的 EVENTFIRST 处理器组合」时再证。
  * 交互提醒（变异测试者须知）：整删 event-first 的 begin(SHOP) 后端到端
@@ -38,14 +38,14 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   fixture.set_inputs(1, 1, 2, 0, 0, 100, 2);
   const main = fixture.load_module('main');
 
-  // 流程：标题画面（消费输入 1，resetData + 加入角色 0，BEGIN FIRST 信号
-  // 上抛）→ 主循环进 FIRST → emit('EVENTFIRST')：FIRST_SETTING 五问（#463
+  // 流程：标题画面（消费输入 1，resetData + 加入角色 0，BEGIN FIRST 以
+  // 返回值离开）→ 主循环进 FIRST → emit('EVENTFIRST')：FIRST_SETTING 五问（#463
   // 全量实现）——魔王性别选女性（消费输入 1，跳过肉棒尺寸一问）、狂王性别
   // 选扶她（消费输入 2）、初期奴隶问答（消费输入 0 选随机，#50）、地下城
   // 模式问答（消费输入 0 选普通，#181）、真身完成初始化、开场叙事与随机
   // 路径读键、rand_chara_make 真身（#565：形象确认 [100] → 角色信息页
-  // 两读键 → 收下确认 [2] → 收下播报读键）、begin(SHOP)（事件路径，链内
-  // 信号由 emit 捕获暂存）→ 主循环进入 SHOP（#23 已接入）：绘制主菜单 →
+  // 两读键 → 收下确认 [2] → 收下播报读键）、返回 SHOP 转场目标（事件路径，
+  // 链内目标由 emit 暂存）→ 主循环进入 SHOP（#23 已接入）：绘制主菜单 →
   // era.input() 队列已空，抛「预置输入耗尽」上抛终止。初始化细节的逐项
   // 断言在 test/event-first.test.js，此处证主循环的转场接驳与到站画面。
   fixture.override_math_random(() => 0);
@@ -140,7 +140,7 @@ test('端到端：读档分支（旧的奴隶）进真身读档界面，返回�
   assert(fixture.text_lines().includes('Ver0.0.0'));
 });
 
-test('链内后写信号胜出后进入真实 SHOP 渲染（#22 检查用例随 #23 改制）', async () => {
+test('链内后写的转场目标胜出后进入真实 SHOP 渲染（#22 检查用例随 #23 改制）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎检查）；#565 起随机
@@ -149,8 +149,8 @@ test('链内后写信号胜出后进入真实 SHOP 渲染（#22 检查用例随 
   preset_chara_1(fixture);
   fixture.set_inputs(1, 1, 2, 0, 0, 100, 2);
   const { on, TIER } = fixture.load_module('system/event/registry');
-  const { begin, STATE } = fixture.load_module('system/flow/begin-signal');
-  // 真身出口本就 begin(SHOP)；再追加一个 LATER 档处理器重复 begin(SHOP)，
+  const { begin, STATE } = fixture.load_module('system/flow/game-state');
+  // 真身出口本就返回 SHOP；再追加一个 LATER 档处理器重复发起同一转场，
   // 验证链内后写胜出（#6 语义）后主循环进入 SHOP。#22 时代此处断言「进入
   // 即报错的检查」；SHOP 接入（#23）后检查退役，改为断言真实渲染恰一次
   // ——重复进入或未进入都会在计数上暴露。
@@ -283,9 +283,41 @@ test('主启动图注册 K2 口上：KOJO_MESSAGE_COM_2 可由主循环侧的 re
   );
 });
 
-test('状态处理器表与 STATE 枚举同步：新增状态不得漏接处理器', () => {
+test('enter_state：处理器返回的转场目标原样交出，非目标值当场报错', async () => {
   const fixture = create_era_fixture();
-  const { STATE } = fixture.load_module('system/flow/begin-signal');
+  const { enter_state, STATE_HANDLERS } = fixture.load_module(
+    'system/flow/main-loop',
+  );
+  const { STATE } = fixture.load_module('system/flow/game-state');
+  const original = STATE_HANDLERS[STATE.TITLE];
+
+  try {
+    // 正常路径：处理器返回 STATE 取值 → enter_state 原样交出
+    STATE_HANDLERS[STATE.TITLE] = async () => STATE.SHOP;
+    assert.equal(await enter_state(STATE.TITLE), STATE.SHOP);
+
+    // 没有发起转场：BEGIN 目标跑完却没有待跳转状态是缺陷（决议 #6 的约定），
+    // 报错而不是把 undefined 交给状态机的下一轮
+    STATE_HANDLERS[STATE.TITLE] = async () => undefined;
+    await assert.rejects(
+      () => enter_state(STATE.TITLE),
+      /没有待跳转状态（缺少 BEGIN）/,
+    );
+
+    // 普通返回值（数字、近似字符串）同样不是转场
+    STATE_HANDLERS[STATE.TITLE] = async () => 0;
+    await assert.rejects(
+      () => enter_state(STATE.TITLE),
+      /没有待跳转状态（缺少 BEGIN）/,
+    );
+  } finally {
+    STATE_HANDLERS[STATE.TITLE] = original;
+  }
+});
+
+test('状态处理器表与 STATE 枚举同步：新增状态不得漏接处理器', async () => {
+  const fixture = create_era_fixture();
+  const { STATE } = fixture.load_module('system/flow/game-state');
   const { STATE_HANDLERS } = fixture.load_module('system/flow/main-loop');
 
   // 键与取值同源（STATE.X），漂移只可能是一侧改了另一侧没改：漏接的处理器

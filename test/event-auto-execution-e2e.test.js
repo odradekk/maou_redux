@@ -36,17 +36,13 @@ const { preset_gamebase } = require('./helpers/gamebase');
 /** 洗脑戒指的存储编号（识别号 15、强度 5；前缀 0 无附魔）——勇者佩戴态 */
 const BRAINWASH_RING = 5 * 1000 + 15;
 
-/** 接住 BeginSignal 并断言目标状态（同 event-ending-e2e 的出口协议） */
-async function expect_signal(promise, state, BeginSignal, what) {
-  try {
-    await promise;
-  } catch (e) {
-    if (e instanceof BeginSignal && e.state === state) {
-      return;
-    }
-    throw e;
-  }
-  assert.fail(`${what} 应以 BeginSignal(${state}) 离开，却正常返回了`);
+/** 断言调用以转场目标离开（BEGIN 是返回值，#850） */
+async function expect_state(promise, state, what) {
+  assert.equal(
+    await promise,
+    state,
+    `${what} 应以转场目标 ${state} 离开（返回其它值即没到站）`,
+  );
 }
 
 /** 全史文本行（clear 清掉的也在：lines_history 被动全量记录） */
@@ -82,7 +78,6 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
   // 本链不涉及勇者来袭的生成线（温妮是补齐的世界状态），关掉与
   // event-daycycle-e2e 同样的理由：避免无关随机消费打乱输入序列
@@ -93,12 +88,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
     // —— 新档：标题画面选「新的猎物」[1] → 新游戏四件套 → BEGIN FIRST ——
     // 地下城模式选 2D [1]：侵攻中的温妮走确定性的撤退路径
     fixture.set_inputs(1);
-    await expect_signal(
-      run_title_page(),
-      'FIRST',
-      BeginSignal,
-      '标题画面新游戏',
-    );
+    await expect_state(run_title_page(), 'FIRST', '标题画面新游戏');
     fixture.set_inputs(1, 2, 1, 1, 1);
     const first_exit = await emit('EVENTFIRST');
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
@@ -117,7 +107,7 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
     // [777] 设定 → [3] 开启勇者自动处刑 → [100] 返回；
     // [103] 处刑 → 17 给玛奥打标签 → [121] 选处刑方式 → [0] 流放 →
     //   流放菜单 [0] 就这样流放掉 → [1999] 结束处刑；
-    // [199] 休息 → BEGIN TURNEND（run_shop 以信号离开）
+    // [199] 休息 → BEGIN TURNEND（run_shop 以转场目标返回）
     fixture.set_inputs(
       777,
       3,
@@ -130,10 +120,9 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
       1999, // 主菜单：批量处刑流放玛奥
       199, // 休息过天
     );
-    await expect_signal(
+    await expect_state(
       run_shop(),
       'TURNEND',
-      BeginSignal,
       '主菜单（设置 → 批量处刑 → 休息）',
     );
 

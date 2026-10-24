@@ -40,7 +40,7 @@ function setup_turnend() {
   fixture.load_module('system/turnend-settle');
   fixture.load_module('event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
-  const { STATE } = fixture.load_module('system/flow/begin-signal');
+  const { STATE } = fixture.load_module('system/flow/game-state');
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 本局关闭勇者来袭（#171/#168 结论 4 的隔离开关）：本文件的用例测时段/
   // 日期/衰减/KYOTEN/结算，不测勇者——ENTER_ENEMY 自 #171 起为每日真调用，

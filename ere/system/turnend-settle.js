@@ -37,7 +37,7 @@
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
@@ -561,8 +561,9 @@ on('EVENTTURNEND', async () => {
     // 输出 + BENKI_KOUJO 口上，见 ere/system/train/benki.js）
     await run_benki(cid);
     await run_seedbed(cid);
-    // 已处于 TURNEND：同状态 BEGIN 在这里等价为顺接后文；
-    // 若让 BeginSignal 穿出，会中断本处理器并让主循环无限重进 TURNEND。
+    // 已处于 TURNEND：marriage_day 的转场在这里不消费（restart_turnend 置假，
+    // 连目标都不返回），婚后事件跑完即顺接后文。若把它的返回值当出口上抛，
+    // 主循环会拿到同状态的 TURNEND 并无限重进本状态。
     await marriage_day(cid, undefined, false);
     if ((era.get('flag:400') || 0) === 0 && chara(cid).invasion.状态 === 12) {
       chara(cid).invasion.状态 = 0;
@@ -598,7 +599,7 @@ on('EVENTTURNEND', async () => {
   era_flag.assi = era.get('flag:2') || 0;
 
   // BEGIN SHOP——覆盖 #PRI 档的暂存值（后写胜出，#6 语义）
-  begin(STATE.SHOP);
+  return begin(STATE.SHOP);
 });
 
 /**
