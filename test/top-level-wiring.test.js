@@ -27,7 +27,7 @@
  *
  * 判断条件**不**写成「禁止 kojo 顶层 require com-*」——那太粗，正当的顶层
  * 依赖（`#/kojo/kojo-text`、`#/facade/*`、`#/utils/*`，乃至底座
- * `#/kojo/kojo-system` / `#/system/event/registry` / `#/system/flow/begin-signal`
+ * `#/kojo/kojo-system` / `#/system/event/registry` / `#/system/flow/game-state`
  * ——它们被几十个文件正当顶层 require）不该被拦。
  *
  * 要拦的是「**被 main-loop 显式 require 的族模块**」被别处顶层 require。
@@ -563,7 +563,7 @@ test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
   for (const t of [
     '#/kojo/kojo-system',
     '#/system/event/registry',
-    '#/system/flow/begin-signal',
+    '#/system/flow/game-state',
     '#/system/train/com-family',
     '#/system/train/train-loop',
   ]) {

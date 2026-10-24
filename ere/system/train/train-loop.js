@@ -172,8 +172,8 @@ async function execute_command_round(result) {
 
 /**
  * STATE.TRAIN 处理器：初始化 → EVENTTRAIN → 回合循环。
- * 以链内暂存的转场目标（或上抛的 BeginSignal，如 USERCOM 之外的直发）
- * 离开，正常情况下不返回到调用方以下——返回值即下一状态，交主循环。
+ * 以链内暂存的转场目标（或 USERCOM 处理器直接返回的目标）离开——
+ * 返回值即下一状态，交主循环。
  *
  * @returns {Promise<string>} 下一游戏状态（STATE 枚举取值）
  */

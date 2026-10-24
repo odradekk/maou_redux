@@ -173,24 +173,51 @@ test('100（A > 0）无目标：select_target 取消（返回 0）后回循环�
   assert.equal(rounds_drawn(fixture), 2);
 });
 
-test('100（A > 0）已有目标：begin(TRAIN) 信号上抛（#44 接通，主循环接站）', async () => {
+test('100（A > 0）已有目标：返回 TRAIN 转场目标（#44 接通，主循环接站）', async () => {
   const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   fixture.set_inputs(100);
   const { run_shop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  // 转场进 TRAIN：begin() 抛信号、run_shop 不捕获自然上抛，由主循环接站
-  // （端到端见 test/train-loop.test.js）
-  await assert.rejects(
-    () => run_shop(),
-    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
-  );
+  // 转场进 TRAIN：目标状态经 usershop → run_shop 逐层 return 上来，由主循环
+  // 接站（端到端见 test/train-loop.test.js）
+  assert.equal(await run_shop(), 'TRAIN');
   // 助手循环已跑过：ASSI == 0 → -1（单奴隶路径候选数为 0，select_assi
   // 不可达，0 归一为 -1）
   assert.equal(era_flag.assi, -1);
+});
+
+test('100 分支：目标选择页「其它」支的转场（怪物玩弄）经 select_target 上抛', async () => {
+  const fixture = create_shop_fixture();
+  join_selectable_slave(fixture, 31);
+  const { begin, STATE } = fixture.load_module('system/flow/game-state');
+  // 选择页 [1002]「其它」直接 return monster_play()（#340）：怪物玩弄跑完以
+  // TURNEND 转场离开。此处只验转场经 select_target → usershop 逐层上抛，
+  // 怪物玩弄本体另有 test/monster-play.test.js
+  const monster_play_mod = fixture.load_module('dungeon/monster-play');
+  monster_play_mod.monster_play = async () => begin(STATE.TURNEND);
+  fixture.set_inputs(1002);
+  const { usershop } = fixture.load_module('page/page-shop');
+
+  assert.equal(
+    await usershop(100),
+    STATE.TURNEND,
+    '选择页发起的转场不得被 100 分支的后续步骤（助手循环、BEGIN TRAIN）吃掉',
+  );
+});
+
+test('496 分支：选择页「其它」支的转场同样上抛', async () => {
+  const fixture = create_shop_fixture();
+  join_selectable_slave(fixture, 31);
+  const { begin, STATE } = fixture.load_module('system/flow/game-state');
+  const monster_play_mod = fixture.load_module('dungeon/monster-play');
+  monster_play_mod.monster_play = async () => begin(STATE.TURNEND);
+  fixture.set_inputs(1002);
+  const { usershop } = fixture.load_module('page/page-shop');
+
+  assert.equal(await usershop(496), STATE.TURNEND);
 });
 
 test('100 的育儿室检查：CFLAG:MASTER:1 == 10 → 报文后返回，不转场', async () => {
@@ -221,12 +248,11 @@ test('100 分支助手选择循环：assi_candidates 恰好 1 个候选时调用
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31; // 已有目标：直入助手循环段
   const { usershop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   fixture.set_inputs(32); // select_assi 的候选按钮（accelerator = 角色 ID）
 
-  await assert.rejects(
-    () => usershop(100),
-    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+  assert.equal(
+    await usershop(100),
+    'TRAIN',
     '恰 1 个候选时应经 select_assi 选中后正常进调教',
   );
   assert(
@@ -243,11 +269,10 @@ test('100 分支助手选择循环：候选恰好 0 个（另一角色不是助�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   const { usershop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  await assert.rejects(
-    () => usershop(100),
-    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+  assert.equal(
+    await usershop(100),
+    'TRAIN',
     '0 个候选时应跳过 select_assi 直接进调教',
   );
   assert(
@@ -270,12 +295,8 @@ test('100 分支：ASSI 已有合法人选（> 0）时跳过候选计算与 sele
   era_flag.target = 31;
   era_flag.assi = 32; // 已选定助手（> 0），且与 target 不同——条件应直接跳过整块
   const { usershop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  await assert.rejects(
-    () => usershop(100),
-    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
-  );
+  assert.equal(await usershop(100), 'TRAIN');
   assert(
     !history_texts(fixture).includes('请魔王大人选择在调教过程当中的助手人选'),
     'ASSI 已是合法人选时不得重新进入 select_assi',
@@ -293,7 +314,7 @@ test('100 分支：select_assi 返回 2（我先想想）直接返回，不进 T
   const { usershop } = fixture.load_module('page/page-shop');
   fixture.set_inputs(999); // select_assi 的「我先想想」取消按钮
 
-  await usershop(100); // assi_result === 2 → return 0：不得抛 BeginSignal
+  await usershop(100); // assi_result === 2 → return 0：不得发起转场
   assert(
     !history_texts(fixture).some((line) => line.includes('@BEGIN TRAIN')),
     'assi_result === 2 时不得进入调教',
@@ -307,12 +328,8 @@ test('100 分支循环尾检查：ASSI 预先等于 TARGET 时复位为 -1，随
   era_flag.target = 1;
   era_flag.assi = 1; // 陈旧同人号（恰为边界值 1）：> 0 直接跳过候选计算块，只有循环尾检查能拦下它
   const { usershop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  await assert.rejects(
-    () => usershop(100),
-    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
-  );
+  assert.equal(await usershop(100), 'TRAIN');
   assert(
     !history_texts(fixture).includes('请魔王大人选择在调教过程当中的助手人选'),
     'ASSI > 0 时候选计算块本就该被跳过（本用例专测循环尾检查，非候选块）',
@@ -344,11 +361,11 @@ test('条件 A == 0：496/497 与无效输入同路——无反馈、只重绘�
 
   // [100] 的渲染条件走直接分发验证：A == 0 时 [100] 不渲染（[---] 文本
   // 占位），引擎的 input() 不会送达 100（#130）——进不了调教分支只能经
-  // usershop 直调证明，且不得发出 TRAIN 转场信号、不得打出 @BEGIN TRAIN
+  // usershop 直调证明，且不得返回 TRAIN 转场目标、不得打出 @BEGIN TRAIN
   // 占位
   const bare = create_shop_fixture();
   const { usershop } = bare.load_module('page/page-shop');
-  await usershop(100); // 不得抛 BeginSignal（A == 0 拦下）
+  await usershop(100); // 不得发起转场（A == 0 拦下）
   assert(
     !history_texts(bare).some((line) => line.includes('@BEGIN TRAIN')),
     'A == 0 时 100 分支不得进调教',
@@ -423,7 +440,7 @@ async function dispatch(...results) {
   const fixture = create_shop_fixture();
   const { usershop } = fixture.load_module('page/page-shop');
   for (const result of results) {
-    await usershop(result); // 条件拦下的直调不得抛信号（抛了会在用例里炸出）
+    await usershop(result); // 条件拦下的直调不得返回转场目标
   }
   return fixture;
 }
@@ -465,13 +482,11 @@ test('199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场（#395，回合�
   const fixture = create_shop_fixture();
   fixture.store.set('flag:9', 10);
   const { usershop } = fixture.load_module('page/page-shop');
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
-  await assert.rejects(
-    () => usershop(199),
-    (e) => e instanceof BeginSignal && e.state === STATE.TURNEND,
+  assert.equal(
+    await usershop(199),
+    STATE.TURNEND,
     '休息必须以 TURNEND 转场（这张工单的到站标记）',
   );
   assert(
@@ -587,7 +602,7 @@ test('200/300：真身存读档界面（#136 接通，占位移除）', async ()
 
 // —— #137：读档转场与 EVENTSHOP 链的跳过 ——
 
-test('300 读档成功：BeginSignal 从 usershop 上抛（run_shop 循环被打断，主循环接站）', async () => {
+test('300 读档成功：usershop 以 SHOP_AFTER_LOAD 返回（run_shop 循环随之结束，主循环接站）', async () => {
   const fixture = create_shop_fixture();
   fixture.store.set('global:saves:3', '三号档');
   const { usershop } = fixture.load_module('page/page-shop');
@@ -596,14 +611,12 @@ test('300 读档成功：BeginSignal 从 usershop 上抛（run_shop 循环被打
 
   // #136 实机验收撞出的缺陷正主：读档成功后 ere 侧曾把 era.loadData() 当
   // 普通函数、返回后回主菜单循环——实机上据点 [300] 读档后回主菜单而非
-  // 重进据点。读档是转场，成功后必须以信号离开，run_shop 的循环（连同本
-  // 用例的调用栈）被信号打断
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
-  await assert.rejects(
-    () => usershop(300),
-    (e) => e instanceof BeginSignal && e.state === STATE.SHOP_AFTER_LOAD,
+  // 重进据点。读档是转场，成功后必须以转场目标返回，run_shop 的循环（连同
+  // 本用例的调用栈）就此结束
+  const { STATE } = fixture.load_module('system/flow/game-state');
+  assert.equal(
+    await usershop(300),
+    STATE.SHOP_AFTER_LOAD,
     '读档成功必须转场——不得静默回主菜单循环',
   );
 });

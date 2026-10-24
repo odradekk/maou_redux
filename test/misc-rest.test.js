@@ -1511,11 +1511,8 @@ test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 
   select_fixture.set_inputs(0, 9);
   const select_net = select_fixture.load_module('system/cross-save-sharing');
   select_fixture.load_module('event/event-load');
-  await assert.rejects(select_net.inport_a(), (error) => {
-    assert.equal(error.name, 'BeginSignal');
-    assert.equal(error.state, 'SHOP');
-    return true;
-  });
+  // 恢复操作档时 EVENTLOAD 链发起 BEGIN SHOP：转场目标是返回值（#850）
+  assert.equal(await select_net.inport_a(), 'SHOP');
   const select_flag = select_fixture.load_module('era-utils/era-flag');
   assert.equal(select_flag.last_load_no, 999, '恢复操作档后必须重入 999 钩子');
   assert(

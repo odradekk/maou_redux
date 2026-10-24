@@ -101,17 +101,12 @@ test('主函数：妊娠分支在标题后返回，不清射精与父怪物记�
 
 test('主函数：野狗婚姻完成分支后清记录并发出 TURNEND', async () => {
   const { fixture, api } = setup();
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
+  const { STATE } = fixture.load_module('system/flow/game-state');
   fixture.store.set('cflag:1:601', 900);
   fixture.store.set('cflag:1:107', 9);
   fixture.store.set('cflag:1:112', 108);
   fixture.store.set('abl:1:39', 1);
-  await assert.rejects(
-    () => api.marriage_day(1, seq([0])),
-    (error) => error instanceof BeginSignal && error.state === STATE.TURNEND,
-  );
+  assert.equal(await api.marriage_day(1, seq([0])), STATE.TURNEND);
   assert.equal(fixture.store.get('cflag:1:602'), 1);
   assert.equal(fixture.store.get('cflag:1:112'), 0);
   assert.equal(fixture.store.get('exp:1:0'), 1);
@@ -120,7 +115,6 @@ test('主函数：野狗婚姻完成分支后清记录并发出 TURNEND', async 
 
 test('主函数：种族分支修改后的 Y 用于售乳双账本', async () => {
   const { fixture, api } = setup();
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   fixture.store.set('cflag:1:601', 100);
   fixture.store.set('cflag:1:602', 50);
   fixture.store.set('item:100', 1);
@@ -128,24 +122,17 @@ test('主函数：种族分支修改后的 Y 用于售乳双账本', async () =>
   fixture.store.set('abl:1:11', 2);
   fixture.store.set('abl:1:13', 3);
 
-  await assert.rejects(
-    () => api.marriage_day(1, seq([0, 0, 0, 2, 0])),
-    (error) => error instanceof BeginSignal,
-  );
+  assert.equal(await api.marriage_day(1, seq([0, 0, 0, 2, 0])), 'TURNEND');
   assert.equal(fixture.store.get('flag:10004'), 1500);
   assert.equal(fixture.store.get('exflag:4444'), 1500);
 });
 
 test('主函数：种类零回退到默认角色的同居正文', async () => {
   const { fixture, api } = setup();
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   fixture.store.set('cflag:1:601', 104);
   fixture.store.set('item:104', 1);
 
-  await assert.rejects(
-    () => api.marriage_day(1, seq([0, 0])),
-    (error) => error instanceof BeginSignal,
-  );
+  assert.equal(await api.marriage_day(1, seq([0, 0])), 'TURNEND');
   assert(texts(fixture).includes('*莉莉和丧尸的结婚生活*'));
   assert(texts(fixture).includes('莉莉和魔王一起生活着。'));
 });

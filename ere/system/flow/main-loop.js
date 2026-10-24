@@ -7,23 +7,20 @@
  * 游戏阶段由 BEGIN 切换；ere 侧的两条路径在本模块统一成状态机的边：
  *
  *   - 事件链内的 BEGIN：由 emit() 在处理器
- *     边界捕获并暂存，链跑完后作为返回值交给本模块（system/event/registry.js）；
- *   - 非事件函数内的 BEGIN（如商店页发起的 BEGIN TRAIN）：
- *     BeginSignal 一路上抛，由本模块的 enter_state 接住。
+ *     边界暂存，链跑完后作为返回值交给本模块（system/event/registry.js）；
+ *   - 非事件函数内的 BEGIN（如商店页发起的 BEGIN TRAIN）：返回值沿
+ *     调用链逐层 return 上来，由本模块的 enter_state 收下。
  *
  * 初始状态固定 TITLE（启动即进标题页；ere 侧把入口也
- * 收进状态机，STATE.TITLE 是本地扩展，见 begin-signal.js）。
+ * 收进状态机，STATE.TITLE 是本地扩展，见 game-state.js）。
  *
- * 状态清单的权威是 begin-signal.js 的 STATE 枚举，本模块不另抄一份：处理器表
+ * 状态清单的权威是 game-state.js 的 STATE 枚举，本模块不另抄一份：处理器表
  * 必须为枚举的每个取值备一项，逐项说明写在各自条目上。自列一份清单的写法在
  * 读档后新增 SHOP_AFTER_LOAD 时漏跟过，这张表与枚举的同步改由
  * test/main-loop.test.js 的用例当场盯住。
- *
- * 【硬约束 #6】本模块的 catch 已按约定首行放行 BeginSignal；业务代码新写
- * 任何 try/catch 都必须同样处理（见 begin-signal.js 文件头）。
  */
 
-const { BeginSignal, STATE } = require('#/system/flow/begin-signal');
+const { is_state, STATE } = require('#/system/flow/game-state');
 const { emit } = require('#/system/event/registry');
 const run_title_page = require('#/page/page-title');
 const { run_shop } = require('#/page/page-shop');
@@ -123,9 +120,8 @@ require('#/kojo/kojo-k904-fia');
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。
- * 直接 begin() 抛信号（非事件路径）同样有效，见 enter_state。
  *
- * 键必须是 begin-signal.js 的 STATE 枚举的取值，不多不少（同步用例在
+ * 键必须是 game-state.js 的 STATE 枚举的取值，不多不少（同步用例在
  * test/main-loop.test.js），逐项说明写在各自条目上。
  */
 const STATE_HANDLERS = {
@@ -134,14 +130,14 @@ const STATE_HANDLERS = {
   // BEGIN FIRST → EVENTFIRST 事件链。
   // 链无人 BEGIN 时回落进 SHOP：EVENTFIRST 跑完而无转场时默认进商店轮，
   // 不是报错（#20 验收移交的语义）。EVENTFIRST 处理器出口本来就显式
-  // begin(STATE.SHOP)，这里的默认值只在以后的处理器都不发信号时起作用。
+  // begin(STATE.SHOP)，这里的默认值只在以后的处理器都不发起转场时起作用。
   [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
   // BEGIN SHOP → 先调 EVENTSHOP 链一次，随后绘制商店页 →
   // 输入 → 分发循环（ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已实现）。
   [STATE.SHOP]: run_shop,
   // 读档后的商店轮（#137，由 page-save-load.js 的 load_game 发起）：同 SHOP
-  // 主循环，但**不执行 EVENTSHOP 链**（状态语义见 begin-signal.js 的
+  // 主循环，但**不执行 EVENTSHOP 链**（状态语义见 game-state.js 的
   // SHOP_AFTER_LOAD 注释）
   [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),
   // BEGIN TRAIN → 初始化调教数据（ere 侧手写——system/train/train-loop.js，
@@ -170,20 +166,12 @@ async function enter_state(state) {
       `游戏状态 ${state} 的处理器尚未移植（贯通验证后续票，见 issue #15）`,
     );
   }
-  try {
-    const next = await handler();
-    if (next === undefined) {
-      // BEGIN 目标跑完却没发起新 BEGIN 即报错终止（决议 #6 的约定）
-      throw new Error(`游戏状态 ${state} 结束时没有待跳转状态（缺少 BEGIN）`);
-    }
-    return next;
-  } catch (e) {
-    // 【硬约束 #6】凡捕获异常必先放行转场信号——此处即非事件路径的接站点
-    if (e instanceof BeginSignal) {
-      return e.state;
-    }
-    throw e;
+  const next = await handler();
+  if (!is_state(next)) {
+    // BEGIN 目标跑完却没返回新目标即报错终止（决议 #6 的约定）
+    throw new Error(`游戏状态 ${state} 结束时没有待跳转状态（缺少 BEGIN）`);
   }
+  return next;
 }
 
 /**

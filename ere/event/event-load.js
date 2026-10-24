@@ -40,7 +40,7 @@
  */
 
 const era = require('#/era-electron');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { on, TIER } = require('#/system/event/registry');
 const maounet_mod = require('#/system/cross-save-sharing');
 const { ex_talentname_init } = require('#/chara/chara-ex');
@@ -70,11 +70,19 @@ on(
     // LASTLOAD_NO 999/1000+：普通读档界面仍只放行 0-99，故两支不可达；
     // 保留钩子，供 MAOUNET 的特殊档流程使用。
     if (era_flag.last_load_no === 999) {
-      await maounet_mod.maounet();
-      begin(STATE.SHOP);
+      // 通信菜单里的特殊档读写会重放本链：链内转场（读档成功后进
+      // SHOP_AFTER_LOAD）优先于本支的 SHOP 转场，经菜单的返回值上到这里
+      const next = await maounet_mod.maounet();
+      if (is_state(next)) {
+        return next;
+      }
+      return begin(STATE.SHOP);
     }
     if (era_flag.last_load_no >= 1000 && era_flag.last_load_no < 1020) {
-      await maounet_mod.inport_b();
+      const next = await maounet_mod.inport_b();
+      if (is_state(next)) {
+        return next;
+      }
     }
 
     // 历史补丁中三处对新档仍有语义的行（判定依据见文件头）。

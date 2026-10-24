@@ -10,7 +10,7 @@
  *   1. 气力 10000 出兵一次：FLAG:81 +400（10000/25）、BASE:0:1 减半、
  *      EX_FLAG:99 +2（另固定 EXP:0:80 += SINKOU/2）；
  *   2. 威望各区间折扣逐档核对（五档全覆盖，含 61–80 无修正与相邻两档）；
- *   3. [109] 返回 1 时确实走到 BEGIN TURNEND（BeginSignal 断言）；
+ *   3. [109] 返回 1 时确实走到 BEGIN TURNEND（返回值断言）；
  *
  * 对应 #468（地上征服后菜单）：状态条与选项按征服/阶段标记切换文案、
  * [9] 转发到 campaign_menu、[5] 按钮渲染条件与派发时的拒绝条件彼此独立
@@ -1205,19 +1205,15 @@ test('侵攻度封顶 10000 与 kyoten_event 经结算链触发', async () => {
   );
 });
 
-test('【验收 3】[109] 返回 1：run_shop 抛 BeginSignal(TURNEND)', async () => {
+test('【验收 3】[109] 返回 1：run_shop 以 TURNEND 转场目标返回', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
   fixture.set_inputs(109, 1); // 主菜单选 [109] → 侵略画面选 [1]
   const { run_shop } = fixture.load_module('page/page-shop');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
-  // BEGIN TURNEND —— 旧引擎行为：BEGIN 结束当前函数；ere 侧信号
-  // 上抛由主循环接站（先例：100 分支的 BEGIN TRAIN，#44）
-  await assert.rejects(
-    () => run_shop(),
-    (e) => e instanceof BeginSignal && e.state === 'TURNEND',
-  );
+  // BEGIN TURNEND —— 旧引擎行为：BEGIN 结束当前函数；ere 侧返回目标状态，
+  // 由主循环接站（先例：100 分支的 BEGIN TRAIN，#44）
+  assert.equal(await run_shop(), 'TURNEND');
   assert.equal(fixture.store.get('flag:81'), 400, '出兵结算在转场前完成');
 });
 

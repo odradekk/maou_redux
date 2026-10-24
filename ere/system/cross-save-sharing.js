@@ -9,7 +9,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { begin } = require('#/system/flow/begin-signal');
+const { is_state } = require('#/system/flow/game-state');
 const { emit } = require('#/system/event/registry');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -66,15 +66,20 @@ function set_roster(records) {
 
 /**
  * 读档（loadData）后的转场补齐：更新 LASTLOAD_NO，重放 EVENTLOAD 事件链，
- * 并把其中的 BEGIN 继续抛给外层状态机。特殊档不经过 page-save-load，
+ * 并把其中的 BEGIN 交给外层状态机。特殊档不经过 page-save-load，
  * 必须在这里补齐。
+ *
+ * @param {number} slot 特殊档槽位
+ * @returns {Promise<boolean|string>} 没读成 false；读成且链内无转场 true；
+ *   链内有转场时为转场目标（STATE 取值），调用方须原样上抛
  */
 async function load_special_save(slot) {
   if (!(await era.loadData(slot))) return false;
   era_flag.last_load_no = slot;
   const next = await emit('EVENTLOAD');
-  if (next !== undefined) begin(next);
-  return true;
+  // 链内的转场优先于「读成」这个布尔结果：两种含义共用返回值，调用方用
+  // is_state 分辨（读成且链内无转场时给 true）
+  return is_state(next) ? next : true;
 }
 
 function sparse_values(cid, table, size) {
@@ -102,7 +107,11 @@ function serialize_character(cid) {
   return fields.join('_');
 }
 
-/** inport_b：把特殊档中的角色写入公共通信记录，再恢复 999 号操作档。 */
+/**
+ * inport_b：把特殊档中的角色写入公共通信记录，再恢复 999 号操作档。
+ * @returns {Promise<number|string>} 追加的条数；恢复操作档时 EVENTLOAD 链
+ *   发起转场则为转场目标，调用方须原样上抛
+ */
 async function inport_b() {
   const records = get_roster();
   const known = new Set(
@@ -125,8 +134,8 @@ async function inport_b() {
     added ? `${added}名勇者追加完毕` : '没有可以追加的勇者',
   );
   await era.saveGlobal();
-  await load_special_save(BACKUP_SLOT);
-  return added;
+  const next = await load_special_save(BACKUP_SLOT);
+  return is_state(next) ? next : added;
 }
 
 /**
@@ -134,6 +143,8 @@ async function inport_b() {
  * @param {number[]} selected 角色 ID（最多五名，不含魔王与敌人）
  * @param {string} team_name 队伍名
  * @param {() => number} [now] GETMILLISECOND 的等价来源
+ * @returns {Promise<number|string>} 共享的人数；恢复操作档时 EVENTLOAD 链
+ *   发起转场则为转场目标，调用方须原样上抛
  */
 async function export_characters(selected, team_name, now = Date.now) {
   const chosen = [...new Set(selected)].slice(0, 5);
@@ -154,8 +165,8 @@ async function export_characters(selected, team_name, now = Date.now) {
   await era.printAndWait(
     '已经将队伍保存到了SAVE1000.sav，在其他存档中可以从这个文件召来勇者！',
   );
-  await load_special_save(BACKUP_SLOT);
-  return chosen.length;
+  const next = await load_special_save(BACKUP_SLOT);
+  return is_state(next) ? next : chosen.length;
 }
 
 async function export_menu() {
@@ -214,7 +225,11 @@ async function export_menu() {
   }
 }
 
-/** inport_a：选择 1000..1019 号共享档并交给 inport_b 登记。 */
+/**
+ * inport_a：选择 1000..1019 号共享档并交给 inport_b 登记。
+ * @returns {Promise<number|string>} 取消时为 0；读到档时 EVENTLOAD 链发起
+ *   转场则为转场目标，调用方须原样上抛
+ */
 async function inport_a() {
   for (;;) {
     era.drawLine();
@@ -232,13 +247,20 @@ async function inport_a() {
     if (result >= 0 && result <= SHARE_SLOT_LAST - SHARE_SLOT_FIRST) {
       await era.saveData(BACKUP_SLOT, '操作');
       const slot = result + SHARE_SLOT_FIRST;
-      if (await load_special_save(slot)) return 0;
+      const loaded = await load_special_save(slot);
+      // 读到档了：链内转场原样上抛，没有转场就回通信菜单
+      if (is_state(loaded)) return loaded;
+      if (loaded) return 0;
     }
     await era.clear(1);
   }
 }
 
-/** maounet：通信菜单。 */
+/**
+ * maounet：通信菜单。
+ * @returns {Promise<number|string>} 退出时为 0；子菜单里读到特殊档并触发
+ *   EVENTLOAD 转场时为转场目标，调用方（usershop / event-load）须原样上抛
+ */
 async function maounet() {
   const anchor = era.getLineCount();
   for (;;) {
@@ -259,9 +281,14 @@ async function maounet() {
     era.printButton('返回', 9);
     const result = await era.input();
     if (result === 9) return 0;
-    if (result === 0) await export_menu();
-    else if (result === 1) await inport_a();
-    else if (result === 2) {
+    if (result === 0) {
+      // 导出：共享档写完会恢复操作档，恢复时 EVENTLOAD 链可能发起转场
+      const next = await export_menu();
+      if (is_state(next)) return next;
+    } else if (result === 1) {
+      const next = await inport_a();
+      if (is_state(next)) return next;
+    } else if (result === 2) {
       set_roster([]);
       await era.saveGlobal();
       await era.printAndWait('已清除登录的通信勇者信息');

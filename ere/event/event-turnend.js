@@ -31,7 +31,7 @@
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { check_specialskil } = require('#/event/get-specialtalent');
 const { run_event_nextday } = require('#/event/event-nextday');
@@ -495,7 +495,7 @@ on(
 
     // SHOP 转场 —— 无条件出口（链继续，普通档与 #LATER 随后执行，
     // #6 已证明的引擎行为）
-    begin(STATE.SHOP);
+    return begin(STATE.SHOP);
   },
   TIER.PRI,
 );

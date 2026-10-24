@@ -518,19 +518,19 @@ test('LOADGAME：读档成功 → LASTLOAD_NO 自写入 + EX_FLAG:2801 钳到 10
   fixture.store.set('exflag:2801', 5); // 一周目主线 < 10
   const { load_game } = load_page(fixture);
   fixture.era.loadData = async () => true; // 引擎读档成功（SDK 可变对象）
-  fixture.set_inputs(3);
+  // 多排一个 [100]：转场没发生时读档界面会继续循环、把这个输入当「返回」吃掉，
+  // 于是断言落在「返回了页起点」而不是「输入耗尽」——转场被拆时一眼看得出
+  fixture.set_inputs(3, 100);
 
   // #137 起 LOADDATA 的转场语义实现：读档成功不再返回（原断言
   // `assert.equal(await load_game(), 0)` 把「回调用方」的错误行为固化成了
   // 断言——实机上玩家读完档无路可走，#136 实机验收撞出、#137 评论移交。
   // 断言改看「去了哪个状态」：SHOP_AFTER_LOAD = 进 SHOP 且不执行 EVENTSHOP
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
-  await assert.rejects(
-    () => load_game(),
-    (e) => e instanceof BeginSignal && e.state === STATE.SHOP_AFTER_LOAD,
-    '读档成功必须以转场信号离开（LOADDATA 与 BEGIN 并列，system-flow.md:26）',
+  const { STATE } = fixture.load_module('system/flow/game-state');
+  assert.equal(
+    await load_game(),
+    STATE.SHOP_AFTER_LOAD,
+    '读档成功必须以转场目标返回（LOADDATA 与 BEGIN 并列，system-flow.md:26）',
   );
   // LASTLOAD_NO 与钳制在转场抛出前完成（先于迁移）
   assert.equal(fixture.store.get('flag:10018'), 3, 'LASTLOAD_NO = 本次槽号');
@@ -548,7 +548,7 @@ test('LOADGAME：EX_FLAG:2801 已 >= 10 时不钳制（SIF 条件）', async () 
   const { load_game } = load_page(fixture);
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
-  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(await load_game(), 'SHOP_AFTER_LOAD');
   assert.equal(fixture.store.get('exflag:2801'), 15, '15 不动');
 });
 
@@ -601,7 +601,7 @@ test('读档成功后钩子被调用：EVENTLOAD 链真的跑了（不是只证�
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
 
-  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(await load_game(), 'SHOP_AFTER_LOAD');
   assert.equal(probe_calls, 1, '读档成功必须 emit EVENTLOAD 链一次');
   // 钩子的历史补丁等价物也跑了（魔王标识写入——角色 0 虽不在场，钩子
   // 对 getAddedCharacters 循环，空列表零写入；探针即「被调用」的凭证）
@@ -623,7 +623,7 @@ test('钩子副作用：历史补丁三行对新档有语义的等价物在读�
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
 
-  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(await load_game(), 'SHOP_AFTER_LOAD');
   assert.equal(
     fixture.store.get('ex_talent:0:200'),
     1,
@@ -647,7 +647,7 @@ test('读档钩子：CHARA_NAME_INIT 与 EX_TALENTNAME_INIT 已落真身（#388�
   fixture.era.loadData = async () => true;
   fixture.set_inputs(3);
 
-  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(await load_game(), 'SHOP_AFTER_LOAD');
 });
 
 test('夹具镜像版本检查：低版本存档 loadData 拒读，不转场、数据不被替换', async () => {
@@ -662,7 +662,7 @@ test('夹具镜像版本检查：低版本存档 loadData 拒读，不转场、�
   fixture.set_inputs(3, 100);
   // 拒读：留在读档界面（3 落到无效输入重绘），100 返回。outcome 收
   // 结果：拒读路径正常返回 0；变异拆掉夹具检查时 loadData 意外成功、
-  // load_game 抛 BeginSignal，outcome 是 Error ≠ 0——本断言先红（拦截 M258）
+  // load_game 返回转场目标，outcome 是字符串 ≠ 0——本断言先红（拦截 M258）
   const outcome = await load_game().then(
     (v) => v,
     (e) => e,
@@ -692,7 +692,7 @@ test('夹具镜像整体替换：loadData 成功后变量表换成存档快照�
   const { load_game } = load_page(fixture);
   fixture.set_inputs(3);
 
-  await assert.rejects(() => load_game(), /BEGIN/);
+  assert.equal(await load_game(), 'SHOP_AFTER_LOAD');
   assert.equal(
     fixture.store.get('flag:10000'),
     7,

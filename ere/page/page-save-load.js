@@ -85,7 +85,7 @@
  *   - LOADDATA 的**转场语义**（#137）：读档成功后不回调用方（标题的
  *     RESTART、据点的循环重绘都不再走），而是 emit EVENTLOAD 链后转场进
  *     SHOP——且**不执行 EVENTSHOP**（技能 system-flow.md:51-53），以
- *     STATE.SHOP_AFTER_LOAD 承载（begin-signal.js 的本地扩展）。引擎拒读
+ *     STATE.SHOP_AFTER_LOAD 承载（game-state.js 的本地扩展）。引擎拒读
  *     （loadData false）时不转场：留在读档界面重绘（#136 已有行为，与
  *     CHKDATA 拦下等效）。
  */
@@ -96,7 +96,7 @@ const era = require('#/era-electron');
 // EVENTSHOP 同构（注册与 emit 同侧装配，测试不依赖 main-loop 的清单）
 require('#/event/event-load');
 const { emit } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -302,12 +302,12 @@ async function set_story_name(anchor) {
  *
  * 列表 + 99 号自动存档槽单列段 + 翻页行；读档成功后：EX_FLAG:2801 钳制 +
  * LASTLOAD_NO 自写入 → EVENTLOAD 链（ere/event/event-load.js）→ 转场进
- * SHOP（LOADDATA 的转场语义，见文件头）。**读档成功后本函数不再返回**
- * （begin 只 throw）——`RETURN L_POS` 与标题的 RESTART 都在
- * 「没读成」的世界里，ere 侧返回值只在 [100] 返回分支产生。
+ * SHOP（LOADDATA 的转场语义，见文件头）。**读档成功后本函数以转场目标返回**，
+ * 不再停留在读档界面——`RETURN L_POS` 与标题的 RESTART 都在
+ * 「没读成」的世界里。
  *
- * @returns {Promise<number>} [100] 返回时的页起点
- * @throws {BeginSignal} 读档成功：转场进 STATE.SHOP_AFTER_LOAD
+ * @returns {Promise<number|string>} [100] 返回时的页起点（数字）；读档成功时
+ *   为转场目标（STATE 取值），调用方用 is_state 判定后原样上抛
  */
 async function load_game() {
   let pos = 0; // #DIM L_POS（局部零值；< 0 归一不触发）
@@ -378,13 +378,13 @@ async function load_game() {
         // EVENTLOAD 链（LOADDATA 后迁移的保留名回调，ere/event/
         // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——
         // 的 BEGIN SHOP（显式、会跑 EVENTSHOP）与隐式进入 SHOP
-        // 的区分在 ere 侧即此缺省值与覆盖值之差（begin-signal.js）
+        // 的区分在 ere 侧即此缺省值与覆盖值之差（game-state.js）
         const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;
         // LOADDATA 的转场语义（#137，见文件头）：不回调用方（标题的
         // RESTART、据点的循环重绘都不再走），进 SHOP 且不执行
-        // EVENTSHOP。begin 只 throw 不返回——RETURN L_POS 在迁移
-        // 发生后不回调用方，ere 侧以「成功分支无返回」等效
-        begin(next);
+        // EVENTSHOP。return 即离开本函数——RETURN L_POS 在迁移
+        // 发生后不回调用方，ere 侧以「成功分支返回转场目标」等效
+        return begin(next);
       }
     }
     // 无效输入（CLEARLINE 1 重输）与翻页失败：统一清行重画（先例

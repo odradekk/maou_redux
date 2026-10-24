@@ -7,7 +7,7 @@
  *
  * 1. 每次绘制完主菜单后的屏幕行数不随轮数增长——第 1 轮与第 N 轮相同
  *    （换屏前历史只增不减、引擎输入耗时与行数成正比，正是 #720 要修的病）。
- *    采样点在 run_shop 以 BeginSignal(TURNEND) 离开的瞬间：此刻主菜单刚画完、
+ *    采样点在 run_shop 以 TURNEND 转场目标返回的瞬间：此刻主菜单刚画完、
  *    玩家按过选择键（回显行 +1）、休息报文已打印——每轮的屏幕内容同构，
  *    行数相同即「主菜单之上没有残留」。
  * 2. 未读输出检查（#721 的 fixture.unread_output_clears）为空——过天链的
@@ -25,17 +25,13 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
 
-/** 接住 BeginSignal 并断言目标状态（run_shop 经 begin() 的转场以异常上抛，正常返回即没到站） */
-async function expect_signal(promise, state, BeginSignal, what) {
-  try {
-    await promise;
-  } catch (e) {
-    if (e instanceof BeginSignal && e.state === state) {
-      return;
-    }
-    throw e;
-  }
-  assert.fail(`${what} 应以 BeginSignal(${state}) 离开，却正常返回了`);
+/** 断言调用以转场目标离开（BEGIN 是返回值，#850） */
+async function expect_state(promise, state, what) {
+  assert.equal(
+    await promise,
+    state,
+    `${what} 应以转场目标 ${state} 离开（返回其它值即没到站）`,
+  );
 }
 
 test('端到端：主菜单与过天换屏——反复过天，主菜单行数不增长（#723）', async () => {
@@ -56,7 +52,6 @@ test('端到端：主菜单与过天换屏——反复过天，主菜单行数�
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // 关勇者来袭：避免无关随机消费打乱本用例未种子化的输入序列
@@ -64,7 +59,7 @@ test('端到端：主菜单与过天换屏——反复过天，主菜单行数�
 
   // —— 新档：标题画面选「新的猎物」[1] → 新游戏四件套 → BEGIN FIRST ——
   fixture.set_inputs(1);
-  await expect_signal(run_title_page(), 'FIRST', BeginSignal, '标题画面新游戏');
+  await expect_state(run_title_page(), 'FIRST', '标题画面新游戏');
 
   // —— EVENTFIRST（五问）：女性 [1]、扶她 [2]、村娘 [1]、普通 [0]、抱起 [1] ——
   fixture.set_inputs(1, 2, 1, 0, 1);
@@ -77,14 +72,9 @@ test('端到端：主菜单与过天换屏——反复过天，主菜单行数�
     // TIME 置 1（下午）：199 休息后才进次日（TIME==1 时 CALL EVENT_NEXTDAY）
     era_flag.time = 1;
 
-    // 主菜单绘制 → 选 199（休息）→ begin(TURNEND) 上抛
+    // 主菜单绘制 → 选 199（休息）→ 返回 TURNEND 转场目标
     fixture.set_inputs(199);
-    await expect_signal(
-      run_shop(),
-      'TURNEND',
-      BeginSignal,
-      `第${round + 1}轮休息`,
-    );
+    await expect_state(run_shop(), 'TURNEND', `第${round + 1}轮休息`);
     // 采样：此刻屏幕上只有「主菜单 + 输入回显 + 休息报文」，别无残留
     row_samples.push(fixture.era.getLineCount());
 

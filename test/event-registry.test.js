@@ -4,7 +4,7 @@
  * 核心被测行为（#6 推翻 #3 之后的语义，这张票是它的首次运行时验证）：
  *   - 事件链中的 BEGIN 不中止链：剩余处理器仍然全部执行；
  *   - 链中多次 BEGIN 后写覆盖先写，最后一个胜出；
- *   - 吞掉信号 = 转场静默丢失（硬约束存在的原因，反例用例）。
+ *   - 转场是处理器返回值（#850），普通返回值不算转场。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。注册表是
  * 模块级状态，夹具每次重建都清 ere/ 模块缓存，用例之间互不污染。
@@ -15,13 +15,13 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-// 建夹具并载入被测两模块（registry 的 emit 需要 BeginSignal 配合发信号）
+// 建夹具并载入被测两模块（registry 的 emit 与 flow 的 begin 配合发转场）
 function setup() {
   const fixture = create_era_fixture();
   return {
     fixture,
     registry: fixture.load_module('system/event/registry'),
-    flow: fixture.load_module('system/flow/begin-signal'),
+    flow: fixture.load_module('system/flow/game-state'),
   };
 }
 
@@ -82,7 +82,7 @@ test('事件链中的 BEGIN：剩余处理器仍然全部执行，emit 返回暂
     'EVENTTEST',
     async () => {
       ran.push('pri');
-      flow.begin(flow.STATE.SHOP);
+      return flow.begin(flow.STATE.SHOP);
     },
     registry.TIER.PRI,
   );
@@ -103,13 +103,13 @@ test('链中多次 BEGIN：后写覆盖先写，最后一个生效', async () =>
     'EVENTTEST',
     async () => {
       ran.push('first-begin');
-      flow.begin(flow.STATE.SHOP);
+      return flow.begin(flow.STATE.SHOP);
     },
     registry.TIER.PRI,
   );
   registry.on('EVENTTEST', async () => {
     ran.push('second-begin');
-    flow.begin(flow.STATE.TRAIN); // 覆盖先前的暂存值
+    return flow.begin(flow.STATE.TRAIN); // 覆盖先前的暂存值
   });
   // 之后没有再 BEGIN 的处理器不改变暂存值
   registry.on(
@@ -124,27 +124,28 @@ test('链中多次 BEGIN：后写覆盖先写，最后一个生效', async () =>
   assert.equal(pending, flow.STATE.TRAIN);
 });
 
-test('反例（硬约束的由来）：处理器吞掉信号 → 转场静默丢失', async () => {
+test('处理器的普通返回值不改暂存值：只有 STATE 取值才算转场', async () => {
   const { registry, flow } = setup();
   const ran = [];
   registry.on('EVENTTEST', async () => {
-    ran.push('swallow');
-    try {
-      flow.begin(flow.STATE.SHOP);
-    } catch (e) {
-      // 故意违反硬约束：catch 住信号但不重抛。真业务代码里这么写，BEGIN
-      // 就消失了——不报错、不停机，游戏停在原地。此用例把该失效方式钉进
-      // 测试，证明「catch 首行 if (e instanceof BeginSignal) throw e;」
-      // （来源于 #6）不可省。
-    }
+    ran.push('begin');
+    return flow.begin(flow.STATE.SHOP);
   });
-  registry.on('EVENTTEST', async () => ran.push('after'));
+  // 处理器顺手返回的普通值（判断结果、按钮号、近似字符串……）不是转场：
+  // 它们既不覆盖也不伪造待跳转状态
+  registry.on('EVENTTEST', async () => {
+    ran.push('number');
+    return 1;
+  });
+  registry.on('EVENTTEST', async () => {
+    ran.push('string');
+    return 'SHOPPING';
+  });
 
   const pending = await registry.emit('EVENTTEST');
 
-  // 转场丢了：emit 返回 undefined（链本身未受影响，其余处理器照跑）
-  assert.equal(pending, undefined);
-  assert.deepEqual(ran, ['swallow', 'after']);
+  assert.deepEqual(ran, ['begin', 'number', 'string']);
+  assert.equal(pending, flow.STATE.SHOP);
 });
 
 test('处理器抛普通错误：原样上抛并中断链', async () => {

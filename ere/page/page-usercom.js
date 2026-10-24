@@ -43,7 +43,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const game_train = require('#/facade/game-train');
 const { on } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { read_train_name } = require('#/system/train/train-name');
 const { com_index } = require('#/system/train/com-index');
 const { get_adv_com } = require('#/system/train/com-adv');
@@ -346,9 +346,9 @@ on('USERCOM', async (result) => {
     return;
   }
   if (result === 999) {
-    // 调教结束 → begin(STATE.AFTERTRAIN) 转场（事件链暂存，回合循环提交）
-    begin(STATE.AFTERTRAIN);
-    return;
+    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（事件链暂存，
+    // 回合循环提交），其后不再执行
+    return begin(STATE.AFTERTRAIN);
   }
   // 其余输入落到链尾、重绘回合画面（不提示——与主菜单对无效输入的处置
   // 一致）
