@@ -162,16 +162,27 @@ const TRAIN_NAME_TABLE = {
 };
 
 /**
+ * 全角字母与半角字母在 Unicode 里相差 0xFEE0，旧播种值可以由现名逐字反推。
+ * 只留名字里真的带全角字母的下标——其余下标没有「旧名」这回事。
+ */
+const LEGACY_NAME_PAIRS = Object.entries(TRAIN_NAME_TABLE)
+  .map(([id, name]) => [
+    id,
+    name,
+    name.replace(/[Ａ-Ｚａ-ｚ]/g, (ch) =>
+      String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
+    ),
+  ])
+  .filter(([, name, legacy]) => legacy !== name);
+
+/**
  * 旧档的别名表里躺着全角化之前播下的半角指令名（#822）。只把与旧播种值
  * 逐字相同的槽改成现播种值——玩家自己改过的名字一律原样保留，别名表按
  * 存档定制正是它的用途（ADR-0006 存档保护）。
  */
 function migrate_legacy_names() {
-  for (const [id, name] of Object.entries(TRAIN_NAME_TABLE)) {
-    const legacy = name.replace(/[Ａ-Ｚａ-ｚ]/g, (ch) =>
-      String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
-    );
-    if (legacy !== name && era.get(`trainalias:${id}`) === legacy) {
+  for (const [id, name, legacy] of LEGACY_NAME_PAIRS) {
+    if (era.get(`trainalias:${id}`) === legacy) {
       era.set(`trainalias:${id}`, name);
     }
   }

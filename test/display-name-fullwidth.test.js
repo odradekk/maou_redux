@@ -18,9 +18,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
 
-const YML_DIR = path.resolve(__dirname, '..', 'yml');
-
 const { NAME_RE } = require('../tools/facade-names');
+
+const YML_DIR = path.resolve(__dirname, '..', 'yml');
 
 /** 名字表文件名：引擎按文件名小写作表名，玩家按名字寻址读到的就是这些键。 */
 const NAME_TABLE_FILE_RE = /^[A-Za-z_][A-Za-z0-9_]*\.yml$/;

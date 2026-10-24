@@ -11326,8 +11326,8 @@ export default [
   {
     desc: 'M15710 旧档别名迁移不再比对新旧值（玩家自定义的指令名被播种值覆盖）',
     file: 'ere/system/train/train-name.js',
-    find: '    if (legacy !== name && era.get(`trainalias:${id}`) === legacy) {',
-    replace: '    if (legacy !== name) { // 变异：不比对新旧值',
+    find: '    if (era.get(`trainalias:${id}`) === legacy) {',
+    replace: '    if (true) { // 变异：不比对新旧值',
     tests: ['train-name'],
     must_mention: '玩家的自定义别名不动',
   },
