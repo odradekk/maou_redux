@@ -2,9 +2,16 @@
 /**
  * @file 冷徹性格口上 K4：指令口上全量 + 非调教口上（issue #235 全量复核）。
  *
+ * == 口上子类（#854） ==
+ *
+ * 本文件是口上基类（`ere/kojo/kojo-base.js`）的第一个子类：KojoK4 在文件末尾
+ * 注册进工厂，22 个钩子各自转交下面这些口上本体；`run_kojo` 从工厂取实例执行。
+ * 台词本体没有搬家（#891/#892 迁 .kojo 时整体替换），本票只把「这个性格在
+ * 哪个时机说话」收成一张清单。
+ *
  * == 头部检查（K4 与 K3/K5 不同，逐文件不同） ==
  *
- * kojo_message_com_4 的检查（实测）：
+ * KojoK4.header_checks()（实测；基类的模板方法先跑它、再进指令分支）：
  *   1. TEQUIP:45 && SELECTCOM != 45（口塞）→ 跳过；
  *   2. TFLAG:899（失神）→ 跳过；
  *   3. TEQUIP:89（兽奸）→ **岔去本文件真身 dog_kojo_4**；
@@ -43,6 +50,8 @@ const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { KojoBase } = require('#/kojo/kojo-base');
+const { get_kojo, register_kojo } = require('#/kojo/kojo-factory');
 const {
   banishment_koujo_family,
   benki_koujo_family,
@@ -526,11 +535,12 @@ on(
 );
 
 /**
- * kojo_message_com_4：指令执行时的口上。
+ * kojo_message_com_4：指令口上的指令分支体（K4 的 SELECTCOM 平铺）。
  *
- * 五道头部检查（见文件头）之后按 SELECTCOM 平铺。其他口上
- * 的 ASSI（助手调教跳过）与 TALENT:9（崩坏）两道检查在 K4 模板从未
- * 成文，不补写：助手调教中与崩坏时口上照常播放。
+ * 五道头部检查（见文件头）在 KojoK4.header_checks()，由基类的模板方法先跑；
+ * 本函数只管指令分支，所以类方法的入口顺序与原来一致，只是不再由每个入口
+ * 各写一遍。其他口上的 ASSI（助手调教跳过）与 TALENT:9（崩坏）两道检查在
+ * K4 模板从未成文，不补写：助手调教中与崩坏时口上照常播放。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序——分支序恒按 RAND:N 从大到小）
@@ -544,28 +554,6 @@ async function kojo_message_com_4(rand) {
   const player = era_flag.player; // TALENT:PLAYER:318（手淫的调教者体型分档）
   const palam = (i) => era0(`palam:${target}:${i}`) || 0;
   const delta = (i) => era0(`delta:${target}:${i}`) || 0;
-
-  if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {
-    return 0;
-  }
-
-  if (era0('tflag:899')) {
-    return 0;
-  }
-
-  if (era0(`tequip:${target}:89`)) {
-    await dog_kojo_4(); // CALL DOG_KOJO_4
-    return 0;
-  }
-
-  if (era0(`tequip:${target}:90`)) {
-    return 0;
-  }
-
-  if (era0(`tequip:${target}:55`)) {
-    await colosseum_kojo_4(); // CALL COLOSSEUM_KOJO_4
-    return 0;
-  }
 
   if (era_flag.selectcom == 0) {
     if (era0(`cflag:${target}:301`) == 0) {
@@ -6316,32 +6304,205 @@ function gobi_koujo_k4(arg_0, rand) {
   }
 }
 
+/**
+ * K4 冷徹的口上子类（#854：口上基类的第一个子类）。
+ *
+ * == 头部检查为什么在这儿 ==
+ *
+ * 五道检查（口塞 / 失神 / 兽奸 / 触手 / 死斗场，顺序照 K4 模板）从
+ * kojo_message_com_4 挪到这里：基类的模板方法（kojo_message_com）先跑它、
+ * 通过后再进 select_com，顺序与原来一致，只是不再由每个入口各写一遍。
+ * 两道岔路（兽奸 → dog_kojo、死斗场 → colosseum_kojo）走同类的钩子，子类
+ * 也能像继承类那样按需替换。
+ *
+ * == 钩子为什么是转交 ==
+ *
+ * 每行的目标都是本文件顶层的口上本体（6,000 行的逐字台词）。本票只改结构，
+ * 不动台词（#891/#892 迁 .kojo 时整体替换），所以钩子只负责「这个性格在
+ * 这个时机实现了什么」——没覆盖的钩子落到基类的默认实现（不输出）。
+ */
+class KojoK4 extends KojoBase {
+  /** 五道头部检查：口塞 → 失神 → 兽奸（岔去专用口上）→ 触手 → 死斗场（岔去专用口上） */
+  async header_checks() {
+    const target = era_flag.target;
+
+    if (era0(`tequip:${target}:45`) && era_flag.selectcom != 45) {
+      return false;
+    }
+
+    if (era0('tflag:899')) {
+      return false;
+    }
+
+    if (era0(`tequip:${target}:89`)) {
+      await this.dog_kojo(); // CALL DOG_KOJO_4
+      return false;
+    }
+
+    if (era0(`tequip:${target}:90`)) {
+      return false;
+    }
+
+    if (era0(`tequip:${target}:55`)) {
+      await this.colosseum_kojo(); // CALL COLOSSEUM_KOJO_4
+      return false;
+    }
+
+    return true;
+  }
+
+  /** 指令分支体：SELECTCOM 平铺（逐字台词，见 kojo_message_com_4） */
+  async select_com(rand) {
+    return kojo_message_com_4(rand);
+  }
+
+  async kojo_message_palamcng() {
+    return kojo_message_palamcng_4();
+  }
+
+  async kojo_message_markcng() {
+    return kojo_message_markcng_4();
+  }
+
+  async self_kojo() {
+    return self_kojo_k4();
+  }
+
+  /** 兽奸专用（头部检查 TEQUIP:89 岔入） */
+  async dog_kojo(rand) {
+    return dog_kojo_4(rand);
+  }
+
+  /** 死斗场专用（头部检查 TEQUIP:55 岔入） */
+  async colosseum_kojo() {
+    return colosseum_kojo_4();
+  }
+
+  async benki_koujo(rand) {
+    return benki_koujo_k4(rand);
+  }
+
+  async dungeon_victory(rand) {
+    return dungeon_victory_k4(rand);
+  }
+
+  async dungeon_attack(rand) {
+    return dungeon_attack_k4(rand);
+  }
+
+  async dungeon_ryouzyoku() {
+    return dungeon_ryouzyoku_k4();
+  }
+
+  async dungeon_ryouzyoku_after() {
+    return dungeon_ryouzyoku_after_k4();
+  }
+
+  async ntr_koujo(rand, p) {
+    return ntr_koujo_k4(p);
+  }
+
+  async exucution_koujo() {
+    return exucution_koujo_k4();
+  }
+
+  async museum_koujo() {
+    return museum_koujo_k4();
+  }
+
+  async banishment_koujo() {
+    return banishment_koujo_k4();
+  }
+
+  async public_exucution_koujo() {
+    return public_exucution_koujo_k4();
+  }
+
+  async grotesque_koujo() {
+    return grotesque_koujo_k4();
+  }
+
+  async enterenemy_koujo() {
+    return enterenemy_koujo_k4();
+  }
+
+  async gohoubi_request_koujo() {
+    return gohoubi_request_koujo_k4();
+  }
+
+  async gohoubi_after_koujo() {
+    return gohoubi_after_koujo_k4();
+  }
+
+  async osioski_koujo() {
+    return osioski_koujo_k4();
+  }
+
+  async gobi_koujo(arg_0, rand) {
+    return gobi_koujo_k4(arg_0, rand);
+  }
+}
+
 // 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处（顺序照
 // kojo-system.js 的分发表）；漏一处 = 玩家侧看到占位行或不响。文件内直调的
 // 真身不在此列（dog_kojo_4 与 colosseum_kojo_4 由 COM 头部检查直调）。范围与
 // 接入由 test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
-kojo_message_com_family.register(4, kojo_message_com_4);
-kojo_message_palamcng_family.register(4, kojo_message_palamcng_4);
-kojo_message_markcng_family.register(4, kojo_message_markcng_4);
-self_kojo_family.register(4, self_kojo_k4);
-ryouzyoku_kojo_family.register(4, dungeon_ryouzyoku_k4);
-ryouzyoku_after_kojo_family.register(4, dungeon_ryouzyoku_after_k4);
-benki_koujo_family.register(4, benki_koujo_k4);
-dungeon_victory_family.register(4, dungeon_victory_k4);
-dungeon_attack_family.register(4, dungeon_attack_k4);
-ntr_koujo_family.register(4, (rand, p) => ntr_koujo_k4(p));
-exucution_koujo_family.register(4, exucution_koujo_k4);
-museum_koujo_family.register(4, museum_koujo_k4);
-banishment_koujo_family.register(4, banishment_koujo_k4);
-public_exucution_koujo_family.register(4, public_exucution_koujo_k4);
-grotesque_koujo_family.register(4, grotesque_koujo_k4);
-enterenemy_koujo_family.register(4, enterenemy_koujo_k4);
-gohoubi_request_koujo_family.register(4, gohoubi_request_koujo_k4);
-gohoubi_after_koujo_family.register(4, gohoubi_after_koujo_k4);
-osioski_koujo_family.register(4, osioski_koujo_k4);
-gobi_koujo_family.register(4, gobi_koujo_k4);
+//
+// #854 起 K4 先进工厂：`run_kojo` 走工厂实例的钩子，下面这些族注册是过渡期
+// 的旧入口（存量测试与「有本体必有注册」契约锁直调），一律转发到同一个实例
+// ——两处都经 KojoK4，头部检查不会因为走了族就被绕开。#855–#858 迁完后随族
+// 一起删。
+register_kojo(4, KojoK4);
+const kojo_k4 = get_kojo(4);
+kojo_message_com_family.register(4, (...args) =>
+  kojo_k4.kojo_message_com(...args),
+);
+kojo_message_palamcng_family.register(4, (...args) =>
+  kojo_k4.kojo_message_palamcng(...args),
+);
+kojo_message_markcng_family.register(4, (...args) =>
+  kojo_k4.kojo_message_markcng(...args),
+);
+self_kojo_family.register(4, (...args) => kojo_k4.self_kojo(...args));
+ryouzyoku_kojo_family.register(4, (...args) =>
+  kojo_k4.dungeon_ryouzyoku(...args),
+);
+ryouzyoku_after_kojo_family.register(4, (...args) =>
+  kojo_k4.dungeon_ryouzyoku_after(...args),
+);
+benki_koujo_family.register(4, (...args) => kojo_k4.benki_koujo(...args));
+dungeon_victory_family.register(4, (...args) =>
+  kojo_k4.dungeon_victory(...args),
+);
+dungeon_attack_family.register(4, (...args) => kojo_k4.dungeon_attack(...args));
+ntr_koujo_family.register(4, (...args) => kojo_k4.ntr_koujo(...args));
+exucution_koujo_family.register(4, (...args) =>
+  kojo_k4.exucution_koujo(...args),
+);
+museum_koujo_family.register(4, (...args) => kojo_k4.museum_koujo(...args));
+banishment_koujo_family.register(4, (...args) =>
+  kojo_k4.banishment_koujo(...args),
+);
+public_exucution_koujo_family.register(4, (...args) =>
+  kojo_k4.public_exucution_koujo(...args),
+);
+grotesque_koujo_family.register(4, (...args) =>
+  kojo_k4.grotesque_koujo(...args),
+);
+enterenemy_koujo_family.register(4, (...args) =>
+  kojo_k4.enterenemy_koujo(...args),
+);
+gohoubi_request_koujo_family.register(4, (...args) =>
+  kojo_k4.gohoubi_request_koujo(...args),
+);
+gohoubi_after_koujo_family.register(4, (...args) =>
+  kojo_k4.gohoubi_after_koujo(...args),
+);
+osioski_koujo_family.register(4, (...args) => kojo_k4.osioski_koujo(...args));
+gobi_koujo_family.register(4, (...args) => kojo_k4.gobi_koujo(...args));
 
 module.exports = {
+  KojoK4,
   kojo_message_com_4,
   dog_kojo_4,
   kojo_message_palamcng_4,

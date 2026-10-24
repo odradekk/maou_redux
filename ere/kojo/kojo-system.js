@@ -56,6 +56,7 @@
 
 const era = require('#/era-electron');
 const { get_ex_kojo_num } = require('#/chara/chara-ex');
+const { get_kojo } = require('#/kojo/kojo-factory');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -485,8 +486,8 @@ function get_kojo_num(arg = -1) {
 /**
  * kojo_message_com：指令执行时的口上入口。
  *
- * 两道检查（总开关；存在判定：普通口上读
- * FLAG:LOCAL，EX 口上读 EX_FLAG:(LOCAL - 900)）之后按编号分发。
+ * 两道检查（总开关；存在判定）+ 分发都交给 run_kojo；口上本体在
+ * `KOJO_MESSAGE_COM` 钩子里（K4 的头部检查与指令分支见 kojo-k4-stoic.js）。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源（返回 [0, n) 的
  *   整数；缺省均匀随机）。以参数注入而非测试钩子——随机源本就是引擎外
@@ -494,33 +495,18 @@ function get_kojo_num(arg = -1) {
  * @returns {Promise<number>} 0（各检查处的 RETURN 0；调用方不读）
  */
 async function kojo_message_com(rand) {
-  // 第一道检查：总开关 FLAG:7 <= 0 直接返回（玩家可关）
-  if ((era.get('flag:7') || 0) <= 0) {
-    return 0;
-  }
-
-  // 第二道检查：口上存在判定 FLAG:LOCAL == 0（&& EX_FLAG 分支）
-  const local = get_kojo_num(); // GET_KOJO_NUM()（参缺省 → TARGET）
-  if (
-    (era.get(`flag:${local}`) || 0) === 0 &&
-    era_exflag.get(local - 900) === 0
-  ) {
-    return 0;
-  }
-
-  // キャラ別：TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100}
-  if (in_kojo_window(local)) {
-    await kojo_message_com_family.call(local - 100, {
-      whenMissing: 0,
-      args: [rand],
-    });
-  }
+  await run_kojo('kojo_message_com', kojo_message_com_family, {
+    args: [rand],
+    flag_guard: true,
+    presence: true,
+    legacy: () => try_kojo(kojo_message_com_family, -1, [rand]),
+  });
   return 0;
 }
 
 /**
  * self_kojo：事件口上入口（EVENT_AFTERTRAIN 等处的调用点）。
- * 两道检查：FLAG:7 <= 0 时 TFLAG:15 = 0 并返回 0；LOCAL 判定后 TRYCALLFORM SELF_KOJO_K{LOCAL - 100}。
+ * 总开关关掉时清 TFLAG:15（怪物射精或购入金）；其余两道检查与分发在 run_kojo。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @param {number} [q] 自慰妄想对象（0 主人 / 1 助手 / 2 野狗）
@@ -528,25 +514,16 @@ async function kojo_message_com(rand) {
  * @returns {Promise<number>} 0
  */
 async function self_kojo(rand, q, outside_train = false) {
-  // 第一道检查：总开关 FLAG:7 <= 0
-  if ((era.get('flag:7') || 0) <= 0) {
-    if (!outside_train) {
-      const { game } = require('#/facade/game');
-      game.train.怪物射精或购入金 = 0;
-    }
-    return 0;
-  }
-
-  // GET_KOJO_NUM()
-  const local = get_kojo_num();
-
-  // キャラ別：TRYCALLFORM SELF_KOJO_K{LOCAL - 100}
-  if (in_kojo_window(local)) {
-    await self_kojo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [rand, q],
-    });
-  }
+  await run_kojo('self_kojo', self_kojo_family, {
+    args: [rand, q],
+    flag_guard: true,
+    when_disabled: () => {
+      if (!outside_train) {
+        const { game } = require('#/facade/game');
+        game.train.怪物射精或购入金 = 0;
+      }
+    },
+  });
   return 0;
 }
 
@@ -578,32 +555,111 @@ async function try_kojo(family, arg = -1, extra_args = []) {
   return 0;
 }
 
-async function kojo_message_palamcng(rand) {
-  if ((era.get('flag:7') || 0) <= 0) {
+/**
+ * 口上唯一入口（#854）：总开关 → 存在判定 → 选口上对象 → 钩子。
+ *
+ * 21 条分发族入口（20 个族；`DOG_KOJO` / `COLOSSEUM_KOJO` 两族没有分发入口，
+ * 由各口上文件内部直调）都改走这里，调用方不变。迁移过的性格走工厂实例的
+ * 同名钩子（`ere/kojo/kojo-base.js`）；没迁移的回落原分发族——这就是过渡期的
+ * 「行为不变」：K4 走新路，其余性格仍走旧路。#855–#858 迁完之后各自的回落
+ * 闭包逐条删掉，入口只剩前两段检查与一次分发。
+ *
+ * 回落闭包就是原来那句分发（含它自己的编号扫描）：过渡期多扫一次素质，换来
+ * 旧路一字未改；迁移完成后随族一起删。
+ *
+ * 钩子名由入口显式给出，不用族名推：两族的名字带 `_K` 后缀
+ * （`DUNGEON_RYOUZYOKU_K`），与钩子名不同源；写错时第一次调用即抛错，
+ * 不落回静默。
+ *
+ * @param {string} hook 钩子名（KojoBase 的方法名）
+ * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
+ *   该入口对应的分发族
+ * @param {object} [options]
+ * @param {number} [options.cid=-1] 角色号（缺省/负数取当前 TARGET；0 是合法角色号）
+ * @param {any[]|((id: number) => any[])} [options.args=[]] 钩子实参（= #213 的
+ *   handler 契约，见 kojo-base.js 的钩子名单）；给函数时按分发键算
+ * @param {boolean} [options.flag_guard=false] 是否先过 FLAG:7 总开关
+ * @param {Function} [options.when_disabled] 总开关关掉时的副作用（SELF_KOJO 要清 TFLAG:15）
+ * @param {boolean} [options.presence=false] 是否先过口上存在判定
+ * @param {(id: number) => Promise<any>} [options.legacy] 未迁移性格的回落；
+ *   缺省 = 按族签名直接调族。收到的 id 保证 >= 0
+ * @returns {Promise<any>} 钩子的返回值；未命中时 0
+ */
+async function run_kojo(hook, family, options = {}) {
+  const {
+    cid = -1,
+    args = [],
+    flag_guard = false,
+    when_disabled,
+    presence = false,
+    legacy,
+  } = options;
+
+  // 总开关：FLAG:7 <= 0 是玩家关掉了口上（默认 2 = 全量，1 = 每阶段一次）
+  if (flag_guard && (era.get('flag:7') || 0) <= 0) {
+    if (when_disabled !== undefined) {
+      await when_disabled();
+    }
     return 0;
   }
-  const local = get_kojo_num();
-  // 的第二道检查：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
-  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
-  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
+
+  const local = get_kojo_num(cid); // GET_KOJO_NUM()
+
+  // 存在判定：普通口上读 FLAG:LOCAL，EX 口上读 EX_FLAG:(LOCAL - 900)。
+  // 只判 FLAG:LOCAL 会把 EX 性格的口上永久静默（#403 实测补齐）
   if (
+    presence &&
     (era.get(`flag:${local}`) || 0) === 0 &&
     era_exflag.get(local - 900) === 0
   ) {
     return 0;
   }
-  return try_kojo(kojo_message_palamcng_family, -1, [rand]);
+
+  const id = in_kojo_window(local) ? local - 100 : -1;
+  if (id < 0) {
+    return 0;
+  }
+  // 实参可以依赖键（处刑首五族的「键 0 收事件编号、其余收随机源」）
+  const hook_args = typeof args === 'function' ? args(id) : args;
+  const kojo = get_kojo(id);
+  if (kojo === null) {
+    // 过渡期：未迁移的性格仍走原分发族
+    return legacy === undefined
+      ? family.call(id, { whenMissing: 0, args: hook_args })
+      : legacy(id);
+  }
+
+  if (typeof kojo[hook] !== 'function') {
+    throw new Error(`口上钩子 ${hook} 不存在（${family.name}[${id}]）`);
+  }
+  return kojo[hook](...hook_args);
+}
+
+async function kojo_message_palamcng(rand) {
+  // 存在判定走 EX_FLAG:(LOCAL - 900) 那一侧——只判 FLAG:LOCAL 会把 EX 性格
+  // 的 PALAMCNG 口上永久静默（#403 实测补齐）
+  return run_kojo('kojo_message_palamcng', kojo_message_palamcng_family, {
+    args: [rand],
+    flag_guard: true,
+    presence: true,
+    legacy: () => try_kojo(kojo_message_palamcng_family, -1, [rand]),
+  });
 }
 
 async function kojo_message_markcng(rand) {
-  if ((era.get('flag:7') || 0) <= 0) {
-    return 0;
-  }
-  return try_kojo(kojo_message_markcng_family, -1, [rand]);
+  // 存在判定行在旧脚本里是注释态，不移植（#403）：FLAG:LOCAL == 0 也派发
+  return run_kojo('kojo_message_markcng', kojo_message_markcng_family, {
+    args: [rand],
+    flag_guard: true,
+    legacy: () => try_kojo(kojo_message_markcng_family, -1, [rand]),
+  });
 }
 
 async function benki_koujo(rand) {
-  return try_kojo(benki_koujo_family, -1, [rand]);
+  return run_kojo('benki_koujo', benki_koujo_family, {
+    args: [rand],
+    legacy: () => try_kojo(benki_koujo_family, -1, [rand]),
+  });
 }
 
 async function victory_koujo(cid, rand) {
@@ -611,7 +667,11 @@ async function victory_koujo(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid;
   }
-  const result = await try_kojo(dungeon_victory_family, cid ?? -1, [rand]);
+  const result = await run_kojo('dungeon_victory', dungeon_victory_family, {
+    cid: cid ?? -1,
+    args: [rand],
+    legacy: () => try_kojo(dungeon_victory_family, cid ?? -1, [rand]),
+  });
   era_flag.target = target_pool;
   return result;
 }
@@ -621,7 +681,11 @@ async function attack_koujo(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid;
   }
-  const result = await try_kojo(dungeon_attack_family, cid ?? -1, [rand]);
+  const result = await run_kojo('dungeon_attack', dungeon_attack_family, {
+    cid: cid ?? -1,
+    args: [rand],
+    legacy: () => try_kojo(dungeon_attack_family, cid ?? -1, [rand]),
+  });
   era_flag.target = target_pool;
   return result;
 }
@@ -652,10 +716,14 @@ async function attack_koujo_b(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid; // TARGET = B
   }
-  const result = await try_kojo(
+  const result = await run_kojo(
+    'dungeon_attack',
     dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
-    cid ?? -1,
-    [rand],
+    {
+      cid: cid ?? -1,
+      args: [rand],
+      legacy: () => try_kojo(dungeon_attack_family, cid ?? -1, [rand]),
+    },
   );
   era_flag.target = target_pool;
   return result;
@@ -671,43 +739,63 @@ async function attack_koujo_b(cid, rand) {
  * 族内实参一个：键 0（K0 慈愛）是早期实现的旧签名，收事件编号
  * （展品号/处刑号，一族的 K 侧从 TARGET 之外显式收它）；其余键收
  * 随机源——这条分档原先写在五个调用点里（各处同款三元式），#403 整合
- * 到分发体，行为不变。
+ * 到分发体，行为不变。实参依赖键，所以以 `(id) => [...]` 交给 run_kojo：
+ * 迁移过的性格与旧族收到的是同一个实参。
  *
  * 缺席语义 = 静默（TRYCALL 落空；与 kojo_message_com 同款）。
  *
+ * @param {string} hook 钩子名（= 入口名）
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family 目标族
  * @param {number} cid 对象角色号（调用方已把 TARGET 置成它）
  * @param {number} event_no 事件编号（K0 旧签名收它）
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @returns {Promise<number>} 0（调用方不读）
  */
-async function dispatch_execution_koujo(family, cid, event_no, rand) {
-  const id = kojo_handler_id(cid); // LOCAL = GET_KOJO_NUM()
-  if (id >= 0) {
-    const arg = id === 0 ? event_no : rand;
-    await family.call(id, { whenMissing: 0, args: [arg] });
-  }
+async function dispatch_execution_koujo(hook, family, cid, event_no, rand) {
+  await run_kojo(hook, family, {
+    cid,
+    args: (id) => [id === 0 ? event_no : rand],
+  });
   return 0;
 }
 
 /** exucution_koujo：处刑口上；调用方 ere/event/event-execution.js */
 async function exucution_koujo(cid, event_no, rand) {
-  return dispatch_execution_koujo(exucution_koujo_family, cid, event_no, rand);
+  return dispatch_execution_koujo(
+    'exucution_koujo',
+    exucution_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );
 }
 
 /** museum_koujo：博物馆（雕像）口上；调用方 ere/event/event-museum.js */
 async function museum_koujo(cid, event_no, rand) {
-  return dispatch_execution_koujo(museum_koujo_family, cid, event_no, rand);
+  return dispatch_execution_koujo(
+    'museum_koujo',
+    museum_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );
 }
 
 /** banishment_koujo：流放处刑口上；调用方 ere/event/event-banishment.js */
 async function banishment_koujo(cid, event_no, rand) {
-  return dispatch_execution_koujo(banishment_koujo_family, cid, event_no, rand);
+  return dispatch_execution_koujo(
+    'banishment_koujo',
+    banishment_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );
 }
 
 /** public_exucution_koujo：公开处刑口上；调用方 ere/event/event-public-execution.js */
 async function public_exucution_koujo(cid, event_no, rand) {
   return dispatch_execution_koujo(
+    'public_exucution_koujo',
     public_exucution_koujo_family,
     cid,
     event_no,
@@ -717,30 +805,40 @@ async function public_exucution_koujo(cid, event_no, rand) {
 
 /** grotesque_koujo：猎奇处刑口上；调用方 ere/event/event-grotesque.js */
 async function grotesque_koujo(cid, event_no, rand) {
-  return dispatch_execution_koujo(grotesque_koujo_family, cid, event_no, rand);
+  return dispatch_execution_koujo(
+    'grotesque_koujo',
+    grotesque_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );
 }
 
 /**
  * ntr_koujo：按当前目标的性格编号分发 NTR 口上。
  * 族的统一参数顺序是 [rand, P]；少数旧 handler 的单参数注册在各自模块处
- * 适配，避免把随机源误当成旧引擎的全局 P。
+ * 适配，避免把随机源误当成旧引擎的全局 P。迁移过的性格收到同一对实参。
  */
 function adapt_legacy_ntr_koujo(handler) {
   return (rand, p) => handler(p ?? rand);
 }
 
 async function ntr_koujo(p, rand) {
-  const id = kojo_handler_id();
-  if (id >= 0) {
-    await ntr_koujo_family.call(id, { whenMissing: 0, args: [rand, p] });
-  }
+  await run_kojo('ntr_koujo', ntr_koujo_family, {
+    args: [rand, p],
+    legacy: () => try_kojo(ntr_koujo_family, -1, [rand, p]),
+  });
   return 0;
 }
 
 async function enterenemy_koujo(cid, rand) {
   const target_pool = era_flag.target;
   era_flag.target = cid;
-  const result = await try_kojo(enterenemy_koujo_family, cid, [rand]);
+  const result = await run_kojo('enterenemy_koujo', enterenemy_koujo_family, {
+    cid,
+    args: [rand],
+    legacy: () => try_kojo(enterenemy_koujo_family, cid, [rand]),
+  });
   era_flag.target = target_pool;
   return result;
 }
@@ -757,7 +855,10 @@ async function enterenemy_koujo(cid, rand) {
  *   就没有语尾函数）返回空串——调用方的行照常结束
  */
 async function gobi_koujo(arg0, rand) {
-  const text = await try_kojo(gobi_koujo_family, -1, [arg0, rand]);
+  const text = await run_kojo('gobi_koujo', gobi_koujo_family, {
+    args: [arg0, rand],
+    legacy: () => try_kojo(gobi_koujo_family, -1, [arg0, rand]),
+  });
   return typeof text === 'string' ? text : '';
 }
 
@@ -799,6 +900,7 @@ module.exports = {
   enterenemy_koujo,
   enterenemy_koujo_family,
   try_kojo,
+  run_kojo,
   gobi_koujo,
   gobi_koujo_family,
 };

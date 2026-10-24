@@ -51,11 +51,7 @@
 'use strict';
 
 const era_flag = require('#/era-utils/era-flag');
-const {
-  get_kojo_num,
-  in_kojo_window,
-  try_kojo,
-} = require('#/kojo/kojo-system');
+const { run_kojo, try_kojo } = require('#/kojo/kojo-system');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 
 // 声明的编号空间：分发检查（LOCAL >= 100 && LOCAL < 140 ||
@@ -94,14 +90,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
 async function gohoubi_after_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  const local = get_kojo_num(cid); // GET_KOJO_NUM()（此刻 TARGET = A）
   // 不做存在判定；キャラ別
-  if (in_kojo_window(local)) {
-    await gohoubi_after_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [cid, choice],
-    });
-  }
+  await run_kojo('gohoubi_after_koujo', gohoubi_after_koujo_family, {
+    cid,
+    args: [cid, choice],
+    legacy: (id) =>
+      gohoubi_after_koujo_family.call(id, {
+        whenMissing: 0,
+        args: [cid, choice],
+      }),
+  });
   era_flag.target = target_pool; // SWAP 还原
   return 0;
 }
@@ -136,7 +134,11 @@ async function gohoubi_after_koujo(cid, choice) {
 async function gohoubi_request_koujo(cid) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  await try_kojo(gohoubi_request_koujo_family, cid, [cid]);
+  await run_kojo('gohoubi_request_koujo', gohoubi_request_koujo_family, {
+    cid,
+    args: [cid],
+    legacy: () => try_kojo(gohoubi_request_koujo_family, cid, [cid]),
+  });
   era_flag.target = target_pool; // SWAP 还原
   return 0;
 }
@@ -151,13 +153,12 @@ async function gohoubi_request_koujo(cid) {
 async function osioski_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  const local = get_kojo_num(cid);
-  if (in_kojo_window(local)) {
-    await osioski_koujo_family.call(local - 100, {
-      whenMissing: 0,
-      args: [cid, choice],
-    });
-  }
+  await run_kojo('osioski_koujo', osioski_koujo_family, {
+    cid,
+    args: [cid, choice],
+    legacy: (id) =>
+      osioski_koujo_family.call(id, { whenMissing: 0, args: [cid, choice] }),
+  });
   era_flag.target = target_pool; // SWAP 还原
   return 0;
 }

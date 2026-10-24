@@ -272,9 +272,9 @@ export default [
   {
     desc: 'M6595 NTR_KOUJO 分发参数顺序颠倒',
     file: 'ere/kojo/kojo-system.js',
-    find: '    await ntr_koujo_family.call(id, { whenMissing: 0, args: [rand, p] });',
+    find: '    args: [rand, p],\n    legacy: () => try_kojo(ntr_koujo_family, -1, [rand, p]),',
     replace:
-      '    await ntr_koujo_family.call(id, { whenMissing: 0, args: [p, rand] });',
+      '    args: [p, rand],\n    legacy: () => try_kojo(ntr_koujo_family, -1, [p, rand]),',
     tests: ['cross-stubs'],
     must_mention: '父亲分支输出后以 P=20 调用已有 NTR 口上族',
   },
@@ -289,10 +289,10 @@ export default [
   {
     desc: 'M6597 NTR_KOUJO_K4 未注册进分发族',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'ntr_koujo_family.register(4, (rand, p) => ntr_koujo_k4(p));',
+    find: 'ntr_koujo_family.register(4, (...args) => kojo_k4.ntr_koujo(...args));',
     replace: '// NTR_KOUJO_K4 未注册',
-    tests: ['cross-stubs'],
-    must_mention: 'K2 与 K4 真身按统一的 rand、P 参数注册',
+    tests: ['kojo-register-coverage'],
+    must_mention: '未注册进 ntr_koujo_family[4]',
   },
   {
     desc: 'M6598 party_del 不再调用 search_family 真身',
