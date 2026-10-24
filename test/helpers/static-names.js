@@ -50,8 +50,8 @@ function yml_declared_ids(table) {
 }
 
 /**
- * 播种名字表：palam / abl / mark / exp（#47）+ traincommand（#45 的指令
- * 按钮与「上次的调教指令」行读 `traincommandname:${id}`）。
+ * 播种名字表：palam / abl / mark / exp（#47）。调教指令名自 #836 起改由
+ * ere/data/train-command-const.js 提供，不再有 yml 名字表可播。
  * @param {ReturnType<import('./era-fixture').create_era_fixture>} fixture
  */
 function seed_static_names(fixture) {
@@ -60,7 +60,6 @@ function seed_static_names(fixture) {
     ['abl', 'Abl.yml'],
     ['mark', 'Mark.yml'],
     ['exp', 'Exp.yml'],
-    ['traincommand', 'TrainCommand.yml'],
   ]) {
     const map = parse_yml_ids(file);
     fixture.store.set(

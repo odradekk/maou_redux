@@ -2,7 +2,7 @@
  * @file 调教指令 120–135「追加与高级」族：com、com_able、train_message_a/b
  * 分支，以及 get_adv_com 的 135 号规则（自助舔舐 → 口交时自慰）升格。
  *
- * J19（issue #229）。122 与 135 在 TrainCommand.yml（可直选）；其余 14 条是高级 COM，
+ * J19（issue #229）。122 与 135 是指令常量里的可直选指令；其余 14 条是高级 COM，
  * 只能经 get_adv_com 升格抵达，但进 DECLARED_COM_IDS 分发空间（#213）。
  *
  * **COM135 头部 `LOCAL = 21`**，与 COM21 同形——执行时走 21 号规则

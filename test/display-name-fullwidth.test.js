@@ -7,7 +7,8 @@
  * 「抖s气质」、`traincommandname:54` 显示「野外play」。名字里的字母改成
  * 全角后，转小写的结果仍是全角字母（Ｓ → ｓ），玩家看到的名字不再半角。
  *
- * 本文件守名字表本身：yml 里玩家看得见的名字不许含半角拉丁字母。名字表
+ * 本文件守名字本身：yml 名字表里的键（能力名、素质名、道具名…）与
+ * `ere/data/train-command-const.js` 里的指令名都不许含半角拉丁字母。名字表
  * 之外的内部标签（flag 名、战斗状态区布局标签）与角色预设的引擎列名不在此
  * 列，各自的理由登记在 EXEMPT 里——名单是显式的，新增例外必须写明为什么
  * 玩家看不到它。
@@ -149,4 +150,25 @@ test('全角名字仍是合法的门面访问器名（yml 列名生成访问器�
   assert.ok(NAME_RE.test('抖Ｓ气质'));
   assert.ok(NAME_RE.test('抖Ｍ气质'));
   assert.ok(!NAME_RE.test('抖Ｓ-气质'), '非标识符字符仍要拒绝');
+});
+
+test('指令常量的名字不含半角拉丁字母（#836 把指令名搬进常量后同一批名字）', () => {
+  const {
+    ADVANCED_TRAIN_COMMAND,
+    TRAIN_COMMAND,
+  } = require('../ere/data/train-command-const');
+  const offenders = [];
+  for (const table of [TRAIN_COMMAND, ADVANCED_TRAIN_COMMAND]) {
+    for (const [id, name] of Object.entries(table)) {
+      if (HALF_WIDTH_LATIN_RE.test(name)) {
+        offenders.push(`${id}: 「${name}」`);
+      }
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    '指令名是玩家在指令方格与「上次的调教指令」行看到的文本，' +
+      '半角字母会显示成半角小写（野外play）；名字里的字母请用全角',
+  );
 });
