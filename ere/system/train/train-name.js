@@ -92,12 +92,12 @@ const TRAIN_NAME_TABLE = {
   51: '媚药',
   52: '利尿剂',
   53: '水晶球',
-  54: '野外PLAY',
-  55: '放置PLAY',
+  54: '野外ＰＬＡＹ',
+  55: '放置ＰＬＡＹ',
   56: '交谈',
-  57: '羞耻PLAY',
-  58: '浴室PLAY',
-  59: '新妻PLAY',
+  57: '羞耻ＰＬＡＹ',
+  58: '浴室ＰＬＡＹ',
+  59: '新妻ＰＬＡＹ',
   60: '助手接吻',
   61: '强制舔阴',
   62: '侵犯助手',
@@ -119,8 +119,8 @@ const TRAIN_NAME_TABLE = {
   85: '放尿',
   86: '饮尿',
   87: '穿环',
-  88: '使役魔兽PLAY',
-  89: '兽奸PLAY',
+  88: '使役魔兽ＰＬＡＹ',
+  89: '兽奸ＰＬＡＹ',
   90: '乳房插入',
   100: '触手生物',
   101: '触手插入',
@@ -162,10 +162,27 @@ const TRAIN_NAME_TABLE = {
 };
 
 /**
+ * 旧档的别名表里躺着全角化之前播下的半角指令名（#822）。只把与旧播种值
+ * 逐字相同的槽改成现播种值——玩家自己改过的名字一律原样保留，别名表按
+ * 存档定制正是它的用途（ADR-0006 存档保护）。
+ */
+function migrate_legacy_names() {
+  for (const [id, name] of Object.entries(TRAIN_NAME_TABLE)) {
+    const legacy = name.replace(/[Ａ-Ｚａ-ｚ]/g, (ch) =>
+      String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
+    );
+    if (legacy !== name && era.get(`trainalias:${id}`) === legacy) {
+      era.set(`trainalias:${id}`, name);
+    }
+  }
+}
+
+/**
  * trainalias 一次性播种。幂等（检查：槽 0 非空即返回）。
  */
 function train_name_init() {
   if ((era.get('trainalias:0') ?? '').length > 0) {
+    migrate_legacy_names();
     return;
   }
   for (const [id, name] of Object.entries(TRAIN_NAME_TABLE)) {

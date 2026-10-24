@@ -3020,7 +3020,7 @@ test('ablup20：三档终止判定（特殊素质/组合上限/已达最高级�
   capped.store.set(`abl:${CID}:21`, 10);
   set_talents(capped, { 80: 1 });
   await a2(CID);
-  assert.ok(capped.text_lines().includes('抖S气质(10)＋抖M气质(10)上限为20'));
+  assert.ok(capped.text_lines().includes('抖Ｓ气质(10)＋抖Ｍ气质(10)上限为20'));
 
   const maxed = create_era_fixture();
   const { ablup20: a3 } = seed(maxed);
@@ -3118,7 +3118,7 @@ test('ablup20：成功购买写入 abl:20、扣欲情点数、显示变为LV（e
   await ablup20(CID);
   assert.equal(fixture.store.get(`abl:${CID}:20`), 1);
   assert.equal(fixture.store.get(`juel:${CID}:5`), 0);
-  assert.ok(fixture.text_lines().some((t) => t.includes('抖S气质变为LV1。')));
+  assert.ok(fixture.text_lines().some((t) => t.includes('抖Ｓ气质变为LV1。')));
 });
 
 test('ablup20：条件不足时选 [0] 重试提示"未满足条件"（无句号）', async () => {
@@ -3146,7 +3146,7 @@ test('ablup21：三档终止判定（特殊素质/组合上限/已达最高级�
   capped.store.set(`abl:${CID}:21`, 10);
   set_talents(capped, { 88: 1 });
   await a2(CID);
-  assert.ok(capped.text_lines().includes('抖S气质(10)＋抖M气质(10)上限为20'));
+  assert.ok(capped.text_lines().includes('抖Ｓ气质(10)＋抖Ｍ气质(10)上限为20'));
 
   const maxed = create_era_fixture();
   const { ablup21: a3 } = seed(maxed);
@@ -3254,7 +3254,9 @@ test('ablup21：两条购买路径各自扣对应珠、写入 chara(cid).system.
     for (const k of keys) {
       assert.equal(fixture.store.get(`juel:${CID}:${k}`), 0, `juel:${k}`);
     }
-    assert.ok(fixture.text_lines().some((t) => t.includes('抖M气质变为LV1。')));
+    assert.ok(
+      fixture.text_lines().some((t) => t.includes('抖Ｍ气质变为LV1。')),
+    );
   }
 });
 

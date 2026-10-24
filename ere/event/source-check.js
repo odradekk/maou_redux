@@ -2538,7 +2538,7 @@ function sokuochi_check() {
   }
   // ABL:21（抖M气质，门槛 ABL:11≥lv）
   {
-    const lv = bump(sys, '抖M气质', up(9), TIERS, () => sys.欲望);
+    const lv = bump(sys, '抖Ｍ气质', up(9), TIERS, () => sys.欲望);
     if (lv) {
       era.print(`${ablname(21)}LV${lv}了`);
     }

@@ -2298,7 +2298,7 @@ test('SOKUOCHI_CHECK：12 组各自驱动升到 LV1，门槛组读到同轮内�
     [12, '技巧'],
     [16, '侍奉精神'],
     [17, '露出癖'],
-    [21, '抖M气质'],
+    [21, '抖Ｍ气质'],
     [22, '百合气质'],
     [23, '断背气质'],
   ];
@@ -2473,7 +2473,7 @@ test('SOKUOCHI_CHECK：驱动下标不与相邻组混淆（ABL:2 读 UP:1 非 UP
   assert.ok(fixture.text_lines().includes('私处感觉LV1了'));
   assert.equal(fixture.store.get('abl:31:0') || 0, 0);
   assert.equal(fixture.store.get('abl:31:21'), 1);
-  assert.ok(fixture.text_lines().includes('抖M气质LV1了'));
+  assert.ok(fixture.text_lines().includes('抖Ｍ气质LV1了'));
   assert.equal(fixture.store.get('abl:31:17') || 0, 0);
 });
 

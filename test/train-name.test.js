@@ -147,3 +147,33 @@ test('read_train_name：未播种槽返回空串（#13 的 undefined 缺省处�
   assert.equal(mod.read_train_name(12), '振动杖');
   assert.equal(mod.read_train_name(39), '');
 });
+
+test('旧档的半角指令名改写成全角，玩家自定义的别名不动（#822）', () => {
+  // 旧档：槽 0 已播种（检查放行），54/55 是半角旧名
+  const migrated = create_era_fixture();
+  const { mod: m1 } = load_module(migrated);
+  migrated.store.set('trainalias:0', '爱抚');
+  migrated.store.set('trainalias:54', '野外PLAY');
+  migrated.store.set('trainalias:55', '放置PLAY');
+  m1.train_name_init();
+  assert.equal(
+    migrated.store.get('trainalias:54'),
+    '野外ＰＬＡＹ',
+    '旧档的 54 号半角别名改写成全角',
+  );
+  assert.equal(migrated.store.get('trainalias:55'), '放置ＰＬＡＹ');
+
+  // 玩家自己起过的名字不是旧播种值，原样保留（别名表按存档定制的用途）
+  const custom = create_era_fixture();
+  const { mod: m2 } = load_module(custom);
+  custom.store.set('trainalias:0', '爱抚');
+  custom.store.set('trainalias:54', '野外PLAYPLAY');
+  custom.store.set('trainalias:57', '我的羞耻');
+  m2.train_name_init();
+  assert.equal(
+    custom.store.get('trainalias:54'),
+    '野外PLAYPLAY',
+    '玩家的自定义别名不动',
+  );
+  assert.equal(custom.store.get('trainalias:57'), '我的羞耻');
+});

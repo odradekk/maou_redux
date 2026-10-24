@@ -10717,7 +10717,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.打屁股 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -10733,7 +10733,7 @@ async function kojo_message_com_11(rand) {
           kojo.打屁股 = 5;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.打屁股 <= 3 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -10771,7 +10771,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.打屁股 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -10784,7 +10784,7 @@ async function kojo_message_com_11(rand) {
           kojo.打屁股 = 5;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.打屁股 <= 3 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -10855,7 +10855,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜，呜啊，请再抽打我吧${heart(1)}」`);
@@ -10870,7 +10870,7 @@ async function kojo_message_com_11(rand) {
           kojo.鞭 = 9;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜……呜啊啊……嗯啊啊！」`);
@@ -10904,7 +10904,7 @@ async function kojo_message_com_11(rand) {
           kojo.鞭 = 7;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.鞭 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -10923,7 +10923,7 @@ async function kojo_message_com_11(rand) {
           kojo.鞭 = 6;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.鞭 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -10951,7 +10951,7 @@ async function kojo_message_com_11(rand) {
           // CFLAG:TARGET:342  = 4（变量语义：CFLAG 族，TARGET:342）
           kojo.鞭 = 4;
         } else if (
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.鞭 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`『愿意好好听话了吗，母猪姐姐！？』`);
@@ -10973,7 +10973,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.鞭 <= 8 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「打我，再用力打我…嗯啊啊${heart(1)}」`);
@@ -10990,7 +10990,7 @@ async function kojo_message_com_11(rand) {
           kojo.鞭 = 9;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.鞭 <= 7 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11018,7 +11018,7 @@ async function kojo_message_com_11(rand) {
           kojo.鞭 = 7;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.鞭 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11037,7 +11037,7 @@ async function kojo_message_com_11(rand) {
           kojo.鞭 = 6;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.鞭 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜……呜啊……啊啊啊，快……停下……已经……」`);
@@ -11060,7 +11060,7 @@ async function kojo_message_com_11(rand) {
           // CFLAG:TARGET:342  = 4（变量语义：CFLAG 族，TARGET:342）
           kojo.鞭 = 4;
         } else if (
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.鞭 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜……呜啊……啊啊啊！」`);
@@ -11124,7 +11124,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.针 <= 8 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11140,7 +11140,7 @@ async function kojo_message_com_11(rand) {
           kojo.针 = 9;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.针 <= 7 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11162,7 +11162,7 @@ async function kojo_message_com_11(rand) {
           kojo.针 = 7;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.针 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11178,7 +11178,7 @@ async function kojo_message_com_11(rand) {
           kojo.针 = 6;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.针 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11199,7 +11199,7 @@ async function kojo_message_com_11(rand) {
           // CFLAG:TARGET:343  = 4（变量语义：CFLAG 族，TARGET:343）
           kojo.针 = 4;
         } else if (
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.针 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜啊……好，好痛……不，不要再刺了啊！」`);
@@ -11217,7 +11217,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.针 <= 8 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11233,7 +11233,7 @@ async function kojo_message_com_11(rand) {
           kojo.针 = 9;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.针 <= 7 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11258,7 +11258,7 @@ async function kojo_message_com_11(rand) {
           kojo.针 = 7;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.针 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11274,7 +11274,7 @@ async function kojo_message_com_11(rand) {
           kojo.针 = 6;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.针 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11298,7 +11298,7 @@ async function kojo_message_com_11(rand) {
           // CFLAG:TARGET:343  = 4（变量语义：CFLAG 族，TARGET:343）
           kojo.针 = 4;
         } else if (
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.针 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜……呜啊啊……好痛，但……但是……呜呜」`);
@@ -11340,7 +11340,7 @@ async function kojo_message_com_11(rand) {
     } else {
       if (
         era.get(`talent:${target}:76`) === 1 &&
-        chara(target).system.抖M气质 >= 5 &&
+        chara(target).system.抖Ｍ气质 >= 5 &&
         (kojo.眼罩 <= 8 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(
@@ -11350,7 +11350,7 @@ async function kojo_message_com_11(rand) {
         kojo.眼罩 = 9;
       } else if (
         era.get(`talent:${target}:76`) === 1 &&
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.眼罩 <= 7 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(
@@ -11367,7 +11367,7 @@ async function kojo_message_com_11(rand) {
         kojo.眼罩 = 7;
       } else if (
         era.get(`talent:${target}:85`) === 1 &&
-        chara(target).system.抖M气质 >= 5 &&
+        chara(target).system.抖Ｍ气质 >= 5 &&
         (kojo.眼罩 <= 5 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(
@@ -11377,7 +11377,7 @@ async function kojo_message_com_11(rand) {
         kojo.眼罩 = 6;
       } else if (
         era.get(`talent:${target}:85`) === 1 &&
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.眼罩 <= 4 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「哈，哈啊……心扑通扑通的，跳得好快……♪」`);
@@ -11393,7 +11393,7 @@ async function kojo_message_com_11(rand) {
         // CFLAG:TARGET:344  = 4（变量语义：CFLAG 族，TARGET:344）
         kojo.眼罩 = 4;
       } else if (
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.眼罩 <= 2 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(
@@ -11473,7 +11473,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11492,7 +11492,7 @@ async function kojo_message_com_11(rand) {
           kojo.绳子 = 9;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11513,7 +11513,7 @@ async function kojo_message_com_11(rand) {
           kojo.绳子 = 7;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.绳子 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11530,7 +11530,7 @@ async function kojo_message_com_11(rand) {
           kojo.绳子 = 6;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.绳子 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11550,7 +11550,7 @@ async function kojo_message_com_11(rand) {
           // CFLAG:TARGET:345  = 4（变量语义：CFLAG 族，TARGET:345）
           kojo.绳子 = 4;
         } else if (
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.绳子 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11570,7 +11570,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11583,7 +11583,7 @@ async function kojo_message_com_11(rand) {
           kojo.绳子 = 9;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11608,7 +11608,7 @@ async function kojo_message_com_11(rand) {
           kojo.绳子 = 7;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 5 &&
+          chara(target).system.抖Ｍ气质 >= 5 &&
           (kojo.绳子 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11621,7 +11621,7 @@ async function kojo_message_com_11(rand) {
           kojo.绳子 = 6;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.绳子 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「哼啊……魔王大人……这么想虐待人家吗♪」`);
@@ -11643,7 +11643,7 @@ async function kojo_message_com_11(rand) {
           // CFLAG:TARGET:345  = 4（变量语义：CFLAG 族，TARGET:345）
           kojo.绳子 = 4;
         } else if (
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.绳子 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「嗯啊……还，还是有点痛……但，但是………」`);
@@ -11713,7 +11713,7 @@ async function kojo_message_com_11(rand) {
     } else {
       if (
         era.get(`talent:${target}:76`) === 1 &&
-        chara(target).system.抖M气质 >= 5 &&
+        chara(target).system.抖Ｍ气质 >= 5 &&
         (kojo.口塞 <= 8 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「啊啊——呣……呣呣呣${heart(1)}」`);
@@ -11724,7 +11724,7 @@ async function kojo_message_com_11(rand) {
         kojo.口塞 = 9;
       } else if (
         era.get(`talent:${target}:76`) === 1 &&
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.口塞 <= 7 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「好，好的——呣……呣呣呣${heart(1)}」`);
@@ -11745,7 +11745,7 @@ async function kojo_message_com_11(rand) {
         kojo.口塞 = 7;
       } else if (
         era.get(`talent:${target}:85`) === 1 &&
-        chara(target).system.抖M气质 >= 5 &&
+        chara(target).system.抖Ｍ气质 >= 5 &&
         (kojo.口塞 <= 5 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(
@@ -11758,7 +11758,7 @@ async function kojo_message_com_11(rand) {
         kojo.口塞 = 6;
       } else if (
         era.get(`talent:${target}:85`) === 1 &&
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.口塞 <= 4 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「啊——呣……呣呣呣……${heart(1)}」`);
@@ -11780,7 +11780,7 @@ async function kojo_message_com_11(rand) {
         // CFLAG:TARGET:346  = 4（变量语义：CFLAG 族，TARGET:346）
         kojo.口塞 = 4;
       } else if (
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.口塞 <= 2 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(`「好，好的——呣……呣呣呣……」`);
@@ -11870,7 +11870,7 @@ async function kojo_message_com_11(rand) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11905,7 +11905,7 @@ async function kojo_message_com_11(rand) {
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11937,7 +11937,7 @@ async function kojo_message_com_11(rand) {
           kojo.灌肠肛塞 = 4;
         } else if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11963,7 +11963,7 @@ async function kojo_message_com_11(rand) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -11989,7 +11989,7 @@ async function kojo_message_com_11(rand) {
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
@@ -12014,7 +12014,7 @@ async function kojo_message_com_11(rand) {
           kojo.灌肠肛塞 = 4;
         } else if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3 &&
+          chara(target).system.抖Ｍ气质 >= 3 &&
           (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「啊啊……肚子，肚子好难受……魔王大人………」`);
@@ -12039,7 +12039,7 @@ async function kojo_message_com_11(rand) {
       if (era.get(`talent:${target}:76`) === 1) {
         if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3
+          chara(target).system.抖Ｍ气质 >= 3
         ) {
           await era.printAndWait(`「出，出来了，全部出来了啊啊啊${heart(1)}」`);
           await era.printAndWait(
@@ -12060,7 +12060,7 @@ async function kojo_message_com_11(rand) {
       } else if (era.get(`talent:${target}:85`) === 1) {
         if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3
+          chara(target).system.抖Ｍ气质 >= 3
         ) {
           await era.printAndWait(
             `「呜呜……呜啊啊啊……这样突然拔掉塞子……全，全部出来了啊啊！」`,
@@ -12085,7 +12085,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3
+          chara(target).system.抖Ｍ气质 >= 3
         ) {
           await era.printAndWait(
             `「这，这样突然拔掉塞子……会，会忍不住的啊啊啊！」`,
@@ -12108,7 +12108,7 @@ async function kojo_message_com_11(rand) {
       if (era.get(`talent:${target}:76`) === 1) {
         if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3
+          chara(target).system.抖Ｍ气质 >= 3
         ) {
           await era.printAndWait(`「出，出来了，全部出来了啊啊啊${heart(1)}」`);
           await era.printAndWait(
@@ -12125,7 +12125,7 @@ async function kojo_message_com_11(rand) {
       } else if (era.get(`talent:${target}:85`) === 1) {
         if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3
+          chara(target).system.抖Ｍ气质 >= 3
         ) {
           await era.printAndWait(
             `「这，这样突然拔掉塞子……会忍不住的啊啊啊啊！」`,
@@ -12143,7 +12143,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           chara(target).system.肛门感觉 >= 3 &&
-          chara(target).system.抖M气质 >= 3
+          chara(target).system.抖Ｍ气质 >= 3
         ) {
           await era.printAndWait(
             `「这，这样突然拔掉塞子……会，会忍不住的啊啊啊！！」`,
@@ -20894,7 +20894,7 @@ async function dog_kojo_11(rand) {
         kojo.眼罩 = 10;
       } else if (
         era.get(`talent:${target}:76`) === 1 &&
-        chara(target).system.抖M气质 >= 5 &&
+        chara(target).system.抖Ｍ气质 >= 5 &&
         (kojo.眼罩 <= 8 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait('');
@@ -20902,7 +20902,7 @@ async function dog_kojo_11(rand) {
         kojo.眼罩 = 9;
       } else if (
         era.get(`talent:${target}:76`) === 1 &&
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.眼罩 <= 7 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait('');
@@ -20917,7 +20917,7 @@ async function dog_kojo_11(rand) {
         kojo.眼罩 = 7;
       } else if (
         era.get(`talent:${target}:85`) === 1 &&
-        chara(target).system.抖M气质 >= 5 &&
+        chara(target).system.抖Ｍ气质 >= 5 &&
         (kojo.眼罩 <= 5 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait('');
@@ -20925,7 +20925,7 @@ async function dog_kojo_11(rand) {
         kojo.眼罩 = 6;
       } else if (
         era.get(`talent:${target}:85`) === 1 &&
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.眼罩 <= 4 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait('');
@@ -20939,7 +20939,7 @@ async function dog_kojo_11(rand) {
         // CFLAG:TARGET:344  = 4（变量语义：CFLAG 族，TARGET:344）
         kojo.眼罩 = 4;
       } else if (
-        chara(target).system.抖M气质 >= 3 &&
+        chara(target).system.抖Ｍ气质 >= 3 &&
         (kojo.眼罩 <= 2 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait('');

@@ -503,7 +503,7 @@ async function equip_com53() {
 /** com54：野外PLAY。 */
 async function com54() {
   const cid = target_id();
-  era.print('野外PLAY');
+  era.print('野外ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.野外PLAY) {
     chara(cid).train.野外PLAY = 0;
@@ -523,7 +523,7 @@ async function com54() {
 /** equip_com54。 */
 async function equip_com54() {
   const cid = target_id();
-  era.print('＜野外PLAY中＞');
+  era.print('＜野外ＰＬＡＹ中＞');
   add_lose(cid, 0, 50);
   add_lose(cid, 1, 100);
   outdoor_sources(cid);
@@ -675,7 +675,7 @@ function palam_level4(cid, index) {
 /** com57：羞耻PLAY。 */
 async function com57() {
   const cid = target_id();
-  era.print('羞耻PLAY');
+  era.print('羞耻ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.羞耻PLAY) {
     chara(cid).train.羞耻PLAY = 0;
@@ -702,7 +702,7 @@ async function com57() {
 /** equip_com57。 */
 async function equip_com57() {
   const cid = target_id();
-  era.print('＜羞耻PLAY中＞');
+  era.print('＜羞耻ＰＬＡＹ中＞');
   add_lose(cid, 0, 10);
   add_lose(cid, 1, 100);
   shame_sources(
@@ -718,7 +718,7 @@ async function equip_com57() {
 /** com58：浴室PLAY。 */
 async function com58() {
   const cid = target_id();
-  era.print('浴室PLAY');
+  era.print('浴室ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.浴室PLAY) {
     if (chara(cid).train.淋浴中) chara(cid).train.淋浴中 = 0; // 必须先清淋浴
@@ -734,7 +734,7 @@ async function com58() {
 /** equip_com58。 */
 async function equip_com58() {
   const cid = target_id();
-  era.print('＜浴室PLAY中＞');
+  era.print('＜浴室ＰＬＡＹ中＞');
   add_lose(cid, 0, 20);
   add_lose(cid, 1, 50);
   bath_sources(cid, 70);
@@ -747,7 +747,7 @@ async function equip_com58() {
 /** com59：新妻PLAY。 */
 async function com59() {
   const cid = target_id();
-  era.print('新妻PLAY');
+  era.print('新妻ＰＬＡＹ');
   await train_message_b();
   if (chara(cid).train.新妻PLAY) {
     chara(cid).train.新妻PLAY = 0;
@@ -767,7 +767,7 @@ async function com59() {
 /** equip_com59。 */
 async function equip_com59() {
   const cid = target_id();
-  era.print('＜新妻PLAY中＞');
+  era.print('＜新妻ＰＬＡＹ中＞');
   newlywed_sources(cid);
   same_sex_exp(cid, era_flag.player, 1);
   newlywed_master_exp(cid);

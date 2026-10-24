@@ -938,16 +938,16 @@ class TrainFacade {
   }
 
   /**
-   * 抖S气质（abl:cid:20）
+   * 抖Ｓ气质（abl:cid:20）
    * @returns {number}
    */
-  get 抖S气质() {
+  get 抖Ｓ气质() {
     return era.get(`abl:${this.cid}:20`) || 0;
   }
   /**
    * @param {number} v
    */
-  set 抖S气质(v) {
+  set 抖Ｓ气质(v) {
     era.set(`abl:${this.cid}:20`, v);
   }
 

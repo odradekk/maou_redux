@@ -766,8 +766,13 @@ const NAMES = {
   deltabase,
 };
 
-/** 合法访问器名：中文或英文 snake_case，可含数字下划线 */
-const NAME_RE = /^[A-Za-z\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*$/;
+/**
+ * 合法访问器名：中文或英文 snake_case，可含数字下划线。全角拉丁字母也算合法——
+ * 显示名里的半角字母改成全角后（#822），由 yml 列名生成的访问器名跟着变成
+ * 「抖Ｓ气质」这种形状，它仍是合法标识符。
+ */
+const NAME_RE =
+  /^[A-Za-z\u4e00-\u9fff\uff21-\uff3a\uff41-\uff5a][A-Za-z0-9_\u4e00-\u9fff\uff21-\uff3a\uff41-\uff5a]*$/;
 
 function validate_names() {
   const problems = [];

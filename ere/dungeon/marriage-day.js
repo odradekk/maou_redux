@@ -2164,7 +2164,7 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
   y +=
     chara(cid).system.欲望 +
     chara(cid).system.顺从 +
-    chara(cid).system.抖M气质 +
+    chara(cid).system.抖Ｍ气质 +
     Math.trunc(chara(cid).chara.结婚爱情 / 5);
   if (cid === 0 && chara(cid).chara.结婚爱情 < 55) {
     if (chara(cid).chara.私处封印 || chara(cid).chara.男人 == 1) {
@@ -2199,7 +2199,7 @@ async function giant_marriage_day(cid, y = 1, rand = default_rand) {
   } else if (
     chara(cid).stronghold.淫乱 ||
     chara(cid).chara.结婚爱情 > 50 ||
-    (chara(cid).system.欲望 >= 3 && chara(cid).system.抖M气质 >= 3)
+    (chara(cid).system.欲望 >= 3 && chara(cid).system.抖Ｍ气质 >= 3)
   ) {
     await era.printAndWait(
       `${name_of(cid)}与${marriage_name(cid)}来到你的面前，一边交合一边展示着他们和谐的日常。`,
@@ -2725,7 +2725,7 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
     chara(cid).chara.结婚爱情 > 50
   ) {
     let description = '';
-    if (chara(cid).system.抖M气质 >= 3) {
+    if (chara(cid).system.抖Ｍ气质 >= 3) {
       description += '全身都被绳子束缚着，';
       // 赋值 BONUS[1] + = y
     }
@@ -2737,7 +2737,7 @@ async function man_marriage_day(cid, y = 1, rand = default_rand) {
       // 赋值 BONUS[0] + = y
     }
 
-    if (chara(cid).train.抖S气质 >= 3) {
+    if (chara(cid).train.抖Ｓ气质 >= 3) {
       description += '戴着道具';
     }
 

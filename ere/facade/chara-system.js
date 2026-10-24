@@ -137,6 +137,20 @@ class SystemFacade {
 
   // —— talent ——
   /**
+   * 村娘Ａ（talent:cid:165）
+   * @returns {number}
+   */
+  get 村娘Ａ() {
+    return era.get(`talent:${this.cid}:165`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 村娘Ａ(v) {
+    era.set(`talent:${this.cid}:165`, v);
+  }
+
+  /**
    * 金红桃（talent:cid:167）
    * @returns {number}
    */
@@ -190,6 +204,20 @@ class SystemFacade {
    */
   set 白梅花(v) {
     era.set(`talent:${this.cid}:170`, v);
+  }
+
+  /**
+   * 村娘Ｂ（talent:cid:171）
+   * @returns {number}
+   */
+  get 村娘Ｂ() {
+    return era.get(`talent:${this.cid}:171`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 村娘Ｂ(v) {
+    era.set(`talent:${this.cid}:171`, v);
   }
 
   /**
@@ -348,16 +376,16 @@ class SystemFacade {
   }
 
   /**
-   * 抖M气质（abl:cid:21）
+   * 抖Ｍ气质（abl:cid:21）
    * @returns {number}
    */
-  get 抖M气质() {
+  get 抖Ｍ气质() {
     return era.get(`abl:${this.cid}:21`) || 0;
   }
   /**
    * @param {number} v
    */
-  set 抖M气质(v) {
+  set 抖Ｍ气质(v) {
     era.set(`abl:${this.cid}:21`, v);
   }
 

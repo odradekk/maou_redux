@@ -1812,7 +1812,7 @@ const ABLUP_SPECS = {
         reason: 'combo',
         when: (c) => c.lv + c.read(['abl', 21]) >= 20,
         lines: (c) =>
-          `抖S气质(${c.lv})＋抖M气质(${c.read(['abl', 21])})上限为20`,
+          `抖Ｓ气质(${c.lv})＋抖Ｍ气质(${c.read(['abl', 21])})上限为20`,
       },
       { reason: 'max', when: (c) => c.lv >= 10, lines: '已达最高级' },
     ],
@@ -1924,7 +1924,7 @@ const ABLUP_SPECS = {
         reason: 'combo',
         when: (c) => c.lv + c.read(['abl', 20]) >= 20,
         lines: (c) =>
-          `抖S气质(${c.read(['abl', 20])})＋抖M气质(${c.lv})上限为20`,
+          `抖Ｓ气质(${c.read(['abl', 20])})＋抖Ｍ气质(${c.lv})上限为20`,
       },
       { reason: 'max', when: (c) => c.lv >= 10, lines: '已达最高级' },
     ],
