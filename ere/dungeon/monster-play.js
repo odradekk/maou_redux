@@ -6,7 +6,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { chara } = require('#/facade/chara');
 const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { print_button_grid } = require('#/utils/button-grid');
@@ -435,7 +435,7 @@ async function monster_play(rand = default_rand) {
     await print_wait('【处女丧失】');
     chara(cid).chara.处女 = 0;
   }
-  begin(STATE.TURNEND); // 其后的 RETURN 1 因 BEGIN 立即结束而不可达
+  return begin(STATE.TURNEND); // 其后的 RETURN 1 因本次返回而不可达
 }
 
 /** beast_monster_play：魔兽。 */

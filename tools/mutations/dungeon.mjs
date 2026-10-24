@@ -1792,8 +1792,8 @@ export default [
   {
     desc: 'M6878 monster_play 回合结束错转据点',
     file: 'ere/dungeon/monster-play.js',
-    find: '  begin(STATE.TURNEND); // 其后的 RETURN 1 因 BEGIN 立即结束而不可达',
-    replace: '  begin(STATE.SHOP); // 变异：错转据点',
+    find: '  return begin(STATE.TURNEND); // 其后的 RETURN 1 因本次返回而不可达',
+    replace: '  return begin(STATE.SHOP); // 变异：错转据点',
     tests: ['monster-play'],
     must_mention: 'MONSTER_PLAY 取消返回 0',
   },
@@ -1995,9 +1995,9 @@ export default [
   {
     desc: 'M6902 婚后错误回到商店而非继续日结算',
     file: 'ere/dungeon/marriage-day.js',
-    find: '  if (restart_turnend) begin(STATE.TURNEND);',
+    find: '  if (restart_turnend) return begin(STATE.TURNEND);',
     replace:
-      '  if (restart_turnend) begin(STATE.SHOP); // 变异：婚后错误回到商店',
+      '  if (restart_turnend) return begin(STATE.SHOP); // 变异：婚后错误回到商店',
     tests: ['marriage-day'],
     must_mention: '主函数：野狗婚姻完成分支后清记录并发出 TURNEND',
   },
@@ -2019,10 +2019,10 @@ export default [
     must_mention: '身体分流写入不同经验，后者另有显式等待',
   },
   {
-    desc: 'M6905 TURNEND 接入未关闭同状态重入',
+    desc: 'M6905 TURNEND 接入把结婚日的转场当出口（同状态重入，主循环无限重进 TURNEND）',
     file: 'ere/system/turnend-settle.js',
     find: '    await marriage_day(cid, undefined, false);',
-    replace: '    await marriage_day(cid); // 变异：重新抛出同状态转场',
+    replace: '    return marriage_day(cid); // 变异：把结婚日的转场当出口上抛',
     tests: ['event-turnend'],
     must_mention: '结婚日接入：完成婚后事件后顺接剩余结算并回到 SHOP',
   },

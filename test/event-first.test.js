@@ -452,7 +452,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   preset_chara_1(fixture);
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
-  const { STATE } = fixture.load_module('system/flow/begin-signal');
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
   // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，
   //「魔王在列」成立——RAND_CHARA_MAKE 的占位判定与收下播报都读已加入列表
@@ -531,7 +531,7 @@ test('初始化写入（村娘）：CFLAG 一组逐项落在角色 ID 17 上（�
   fixture.era.addCharacter(0); // 标题步骤的等价物
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
-  const { STATE } = fixture.load_module('system/flow/begin-signal');
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
   // #385 起身体数据生成为真身，会消耗随机数：注入 Math.random ≡ 0（RAND:N
   // 恒 0）把九个身体数据写入钉成定值（算式见 expected_init_writes 的注释）
@@ -591,7 +591,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
-  const { STATE } = fixture.load_module('system/flow/begin-signal');
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
   // 旧引擎的用例曾先喂 9（越界）验证重问。问答每轮重印按钮，引擎的 input()
   // 只送达已打印按钮的快捷键，越界值在渲染层被弹回——重问分支是引擎死

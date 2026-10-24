@@ -22,6 +22,9 @@
  *     照样是玩家可见文本；引擎要求的日文列名（名前/呼び名/基礎/素質/フラグ）
  *     在表的 ENGINE_COLUMN_KEYS 放行——它们是引擎接口，不是文案。注释行
  *     （# 开头）跳过。
+ *   - ere/ 下全部 .kojo 的每一行文本（#891）：.kojo 的正文是不加引号的
+ *     纯标量，按引号取词会整段漏掉，所以按行整行扫；整行与行尾注释（YAML 的
+ *     `#`）不是玩家可见文本，先去掉——口上里的日文分支标记写在注释里。
  *   - 豁免：tools/lang-table.js 的 EXEMPT_STRINGS 按「字符串整体」相等放行
  *     （专有名词和少数日文侧样式，每条写明理由）。
  *
@@ -44,6 +47,7 @@ const {
   find_outside_trad,
   is_exempted,
   load_table,
+  scan_kojo_lines,
   scan_string_literals,
 } = require('../tools/lang-check');
 const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
@@ -76,7 +80,7 @@ function all_offenders(content, tbl) {
  * @param {string} [ere_dir] 覆盖 ere 目录（探针自证传临时副本的 ere/；
  *   默认真树——锁必须扫的就是真目录）
  * @returns {{problems: string[], js_files: number, yml_files: number,
- *   literals: number}}
+ *   kojo_files: number, literals: number}}
  */
 function scan_repo(ere_dir = ERE_DIR) {
   const tbl = load_table();
@@ -99,6 +103,25 @@ function scan_repo(ere_dir = ERE_DIR) {
           `${rel}:${lit.line} 非简体残留 ${hits
             .map((h) => `${h.kind}:${h.value}`)
             .join(' ')}：「${lit.content}」`,
+        );
+      }
+    }
+  }
+
+  const kojo_files = walk(ere_dir, '.kojo');
+  for (const file of kojo_files) {
+    const rel = path.relative(REPO_ROOT, file).replace(/\\/g, '/');
+    for (const piece of scan_kojo_lines(fs.readFileSync(file, 'utf8'))) {
+      literals += 1;
+      if (is_exempted(piece.content, tbl)) {
+        continue;
+      }
+      const hits = all_offenders(piece.content, tbl);
+      if (hits.length > 0) {
+        problems.push(
+          `${rel}:${piece.line} 非简体残留 ${hits
+            .map((h) => `${h.kind}:${h.value}`)
+            .join(' ')}：「${piece.content}」`,
         );
       }
     }
@@ -137,6 +160,7 @@ function scan_repo(ere_dir = ERE_DIR) {
     problems,
     js_files: walk(ere_dir, '.js').length,
     yml_files: yml_files.length,
+    kojo_files: kojo_files.length,
     literals,
   };
 }
@@ -240,5 +264,64 @@ test('探针：往 ere/ 塞违规模块，锁必须报出它（自动纳入后�
   assert.ok(
     after_scan.problems.every((p) => !p.includes('__lang_lock_probe__')),
     '探针删了还在红——副本或扫描有一边不对',
+  );
+});
+
+test('探针：往 ere/ 塞带繁体字的 .kojo，锁必须报出它（#891）', () => {
+  const root = probe_repo();
+  const ere_copy = path.join(root, 'ere');
+  const probe_dir = path.join(ere_copy, 'kojo');
+  const probe = path.join(probe_dir, '__lang_lock_probe__.kojo');
+  const cleanup = () => {
+    if (fs.existsSync(probe)) {
+      fs.unlinkSync(probe);
+    }
+  };
+  cleanup(); // 上一次异常退出留下的残骸先清
+  try {
+    fs.mkdirSync(probe_dir, { recursive: true });
+    const before = scan_repo(ere_copy).kojo_files;
+    fs.writeFileSync(
+      probe,
+      [
+        '# 探针（test/output-lang-lock.test.js 写入，跑完即删）：.kojo 的正文',
+        '# 不加引号，按引号取词会整段漏，所以这里每行整行都是一段待判文本。',
+        '探针:',
+        '- 你這個變態…別碰我！',
+        '- 巖穴里的赠礼 # 行尾注释里的繁体不是玩家可见文本，不参与判定',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const { problems, kojo_files } = scan_repo(ere_copy);
+    assert.equal(
+      kojo_files,
+      before + 1,
+      `探针 .kojo 没被扫到（前 ${before} 后 ${kojo_files}）——锁对 .kojo 失明`,
+    );
+    const probe_hits = problems.filter((p) =>
+      p.includes('__lang_lock_probe__.kojo'),
+    );
+    assert.ok(
+      probe_hits.some((p) => p.includes('char:這') || p.includes('char:別')),
+      `.kojo 的字级命中未报出：\n${problems.join('\n')}`,
+    );
+    assert.ok(
+      probe_hits.some((p) => p.includes('outside:巖')),
+      `.kojo 的表外繁侧字命中未报出（outside:巖）：\n${problems.join('\n')}`,
+    );
+    assert.ok(
+      probe_hits.some((p) => p.includes('__lang_lock_probe__.kojo:4 ')),
+      `.kojo 的报错要带行号（第 4 行是…別碰我）：\n${problems.join('\n')}`,
+    );
+  } finally {
+    cleanup();
+  }
+  refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  const after_scan = scan_repo(ere_copy);
+  assert.ok(
+    after_scan.kojo_files === 0 ||
+      after_scan.problems.every((p) => !p.includes('__lang_lock_probe__.kojo')),
+    '探针 .kojo 删了还在红——副本或扫描有一边不对',
   );
 });

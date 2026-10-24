@@ -372,8 +372,8 @@ export default [
     7259,
     '据点通信入口退回空操作',
     'ere/page/page-shop.js',
-    '    await maounet();',
-    '    return;',
+    '    const next = await maounet();\n    if (is_state(next)) {\n      return next;\n    }',
+    '    return; // 变异：通信入口退回空操作',
     hooks,
   ),
 
@@ -1104,8 +1104,8 @@ export default [
     7516,
     '特殊档 EVENTLOAD 转场被丢弃',
     'ere/system/cross-save-sharing.js',
-    'if (next !== undefined) begin(next);',
-    'if (false) begin(next);',
+    '  return is_state(next) ? next : true;',
+    '  return true; // 变异：EVENTLOAD 转场被丢弃',
     hooks,
   ),
   make(

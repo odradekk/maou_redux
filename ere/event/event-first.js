@@ -24,7 +24,7 @@
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { first_setting } = require('#/event/first-setting');
 const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
 const { chara_name_init } = require('#/chara/chara-name-list');
@@ -323,9 +323,9 @@ on('EVENTFIRST', async () => {
     await era.waitAnyKey();
 
     // SHOP 转场 —— 村娘分支自己的出口（转场即结束当前函数，
-    // 的随机路径因此不再执行；ere 侧 begin() 抛信号离开本处理器，下方代码
+    // 的随机路径因此不再执行；ere 侧以返回值离开本处理器，下方代码
     // 同样被跳过）。
-    begin(STATE.SHOP);
+    return begin(STATE.SHOP);
   }
 
   // 随机分支开场（默认路径）：六行叙述（各带读键）+ 三行省略号
@@ -365,8 +365,7 @@ on('EVENTFIRST', async () => {
   // 丽塔启动！为 SAVEDATA 默认 0，唯一定值点开局设置已按默认跳过 →
   // 不可达，正文随开局设置票。
 
-  // SHOP 转场 —— 初始化完成，转入据点主菜单。事件链内信号由 emit
-  // 捕获暂存，链跑完交给主循环；主循环进入 SHOP 的检查报错（#23 未实现）
-  // 是这张工单到站的预期结果。
-  begin(STATE.SHOP);
+  // SHOP 转场 —— 初始化完成，转入据点主菜单。事件链内转场目标由 emit
+  // 暂存，链跑完交给主循环。
+  return begin(STATE.SHOP);
 });

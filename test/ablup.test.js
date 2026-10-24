@@ -2978,7 +2978,7 @@ test('userablup：非 999 返回 0；999 调 jujun_up_check／yokubo_up_check �
   fixture.store.set(`talent:${CID}:32`, 1);
   fixture.store.set(`juel:${CID}:100`, 100);
 
-  assert.equal(await userablup(999), 1, '结束本回合的转场信号');
+  assert.equal(await userablup(999), 1, '结束本回合的转场标记');
   assert.equal(fixture.store.get(`talent:${CID}:11`), 0, '反抗心失去');
   assert.equal(fixture.store.get(`talent:${CID}:13`), 1, '获得坦率');
   assert.equal(fixture.store.get(`talent:${CID}:32`), 0, '压抑清除');

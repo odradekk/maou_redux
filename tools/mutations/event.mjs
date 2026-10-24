@@ -100,8 +100,8 @@ export default [
     // 行为差异（整条变异退化为跳过）；出口检查改指向链上最后生效的普通档
     desc: 'M17 TURNEND 出口：普通档 BEGIN SHOP 改 BEGIN TITLE（链上最后的出口决定去向，回不到主菜单）',
     file: 'ere/system/turnend-settle.js',
-    find: '  begin(STATE.SHOP);',
-    replace: '  begin(STATE.TITLE);',
+    find: '  return begin(STATE.SHOP);',
+    replace: '  return begin(STATE.TITLE);',
     tests: ['train-loop'],
     must_mention: '端到端',
   },
@@ -814,7 +814,7 @@ export default [
   {
     desc: 'M6956 MUSEUM K4 口上：漏注册博物馆处理器',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'museum_koujo_family.register(4, museum_koujo_k4);',
+    find: 'museum_koujo_family.register(4, (...args) => kojo_k4.museum_koujo(...args));',
     replace: '// 变异：K4 博物馆口上未注册',
     tests: ['event-museum'],
     must_mention: 'K2 与 K4 口上模块注册博物馆处理器',

@@ -6,8 +6,9 @@
  * 标题画面是常驻交互循环（重进即整体重绘的 RESTART 语义），没有自然退出点。两种终止
  * 方式：多数用例以预置输入驱动交互，输入耗尽时 era.input() 抛错即是终止信
  * 号（夹具的既定设计），断言落在「耗尽瞬间的最后一块屏幕」与变量/调用记
- * 录上；「新的猎物」分支自 issue #20 起改为发出 BEGIN FIRST 转场信号，对
- * 应用例直接捕获 BeginSignal 终止。画布每轮重绘时会被 clear 清空，故中途
+ * 录上；「新的猎物」「旧的奴隶」两条离开分支自 issue #20 起以 BEGIN 转场
+ * 返回（#850 起转场是返回值，不再是信号），对应用例直接收下那个目标状态。
+ * 画布每轮重绘时会被 clear 清空，故中途
  * 分支的文本反馈以 waitAnyKey 记录与变量写入来证明。
  *
  * 开关的持久化在单元层证到「写 global:<id> + 显式 saveGlobal」（#18 定下的
@@ -166,7 +167,7 @@ test('未打印按钮的值引擎不送达：拒收且画面不重绘（ELSE →
   );
 });
 
-test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函数（issue #20）', async () => {
+test('选项 1（新的猎物）：返回 FIRST 转场目标并当场结束函数（issue #20）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 预置播种标记：跳过标题音乐默认值播种（#69，播种自身的用例在文件尾），
@@ -177,19 +178,14 @@ test('选项 1（新的猎物）：发出 FIRST 转场信号并当场结束函�
   preset_chara_0(fixture);
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
-  // BEGIN 的 JS 等价物是异常（#6）：新游戏分支以信号终止本函数，取代
-  // #19 的占位反馈 + 读键 + continue。信号由此处的直接调用方（主循环的
-  // enter_state）接住——本用例亲自扮演接住者。
-  await assert.rejects(
-    () => run_title_page(),
-    (e) => e instanceof BeginSignal && e.state === STATE.FIRST,
-  );
+  // BEGIN 是返回值（#6 的语义、#850 的写法）：新游戏分支返回目标状态并
+  // 终止本函数，取代 #19 的占位反馈 + 读键 + continue。由此处的直接调用方
+  // （主循环的 enter_state）收下——本用例亲自扮演收下者。
+  assert.equal(await run_title_page(), STATE.FIRST);
 
-  // 送行句在转场前输出，且未被重绘清掉：函数在信号处结束，循环没有跑
+  // 送行句在转场前输出，且未被重绘清掉：函数在 return 处结束，循环没有跑
   // 下一轮——这就是「流程离开标题画面」的画面级证据
   assert(
     fixture
@@ -264,14 +260,12 @@ test('选项 0 读档成功：转场进 SHOP_AFTER_LOAD，不回标题（#137—
   // #136 实机验收：标题读档成功后回标题画面，玩家从此无路可走（标题只有
   // 新档与再读一次）。根因：ere 侧把 era.loadData() 当普通函数，沿用了
   // 控制流的字面形状、丢掉 LOADDATA 的转场语义（LOADDATA 写死执行后迁移
-  // EVENTLOAD、不返回）。读档成功必须以信号离开
+  // EVENTLOAD、不返回）。读档成功必须以转场目标返回
   // 整条标题循环
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
-  await assert.rejects(
-    () => run_title_page(),
-    (e) => e instanceof BeginSignal && e.state === STATE.SHOP_AFTER_LOAD,
+  const { STATE } = fixture.load_module('system/flow/game-state');
+  assert.equal(
+    await run_title_page(),
+    STATE.SHOP_AFTER_LOAD,
     '标题读档成功必须转场进据点——不得 RESTART 回标题',
   );
   assert.deepEqual(
@@ -343,14 +337,9 @@ test('离开标题停曲：新游戏与读档两分支都 STOPBGM', async () => 
   preset_audio_seeded(fixture); // 跳过播种（音乐开关随之为 0，不影响停曲断言）
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
-  await assert.rejects(
-    () => run_title_page(),
-    (e) => e instanceof BeginSignal && e.state === STATE.FIRST,
-  );
+  assert.equal(await run_title_page(), STATE.FIRST);
   assert.deepEqual(fixture.music, [{ api: 'stop' }]);
 
   const second = create_era_fixture();

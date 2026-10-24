@@ -8,7 +8,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, STATE } = require('#/system/flow/game-state');
 const { search_family } = require('#/chara/chara-family');
 const {
   LOVER_NAMES,
@@ -167,10 +167,10 @@ async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
     era_flag.money += final_y * 100;
     era_exflag.legit_money += final_y * 100;
   }
-  // 子程序内 BEGIN TURNEND 会结束本次婚后事件。事件注册表以异常表达
-  // BEGIN；若已在 TURNEND 处理器内仍抛出，会中断余下结算并无限重进本状态。
-  // 正常调用保留转场；TURNEND 接入显式关闭同状态重入后，等价地顺接后文。
-  if (restart_turnend) begin(STATE.TURNEND);
+  // 子程序内 BEGIN TURNEND 会结束本次婚后事件。转场是返回值：调用方若已在
+  // TURNEND 处理器内，照样会中断余下结算并无限重进本状态，故由
+  // restart_turnend 显式关闭；关闭时等价地顺接后文（返回 1）。
+  if (restart_turnend) return begin(STATE.TURNEND);
   return 1;
 }
 

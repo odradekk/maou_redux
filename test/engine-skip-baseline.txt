@@ -136,7 +136,7 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-80
+79
 # #733：cross-save-sharing-engine 的完整旧共享档导入与恢复接收档用例 +1，70 + 1 = 71。
 # #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
 # #734：kojo-palam-level-engine 的真实引擎爱抚回归用例 +1，71 + 1 = 72。
@@ -147,3 +147,10 @@
 # #769：engine-contract 的真实引擎 BASE set/add 钳制契约用例 +1，75 + 1 = 76。
 # #782：train-end-engine 的死亡与存活收尾回归组 +1，76 + 1 = 77（组内用例随组跳过）。
 # 数据地址缺陷修复：static-table-coverage 新增变量名核对与「缺表只记 key error」引擎实证两条用例 +2，fixture 的 no:<n> 引擎比对用例 +1，77 + 3 = 80。
+# #891（.kojo 基础设施）：kojo-infra 的「.kojo 篇目装载」回归组 +1，80 + 1 = 81
+# （组内四条用例随组跳过）。计数依据：这个文件里只有那一组走 engine-bundle
+# 门控——装载、sync、定序随机、random 全筛四条共用一个 engine_test 外层；
+# 同文件的检查入口与 CI 接线四条不依赖引擎，任何环境都跑。
+# #836（指令常量取代 yml/TrainCommand.yml）：随静态表一起删掉两段引擎比对锁——
+# train-static-tables 的「TrainCommand 三种寻址全通」与「读未声明序号的名字抛错」，
+# 81 - 2 = 79。计数依据：ERE_ENGINE_ASAR=none npm test 实测 7088 = 7009 过 + 79 跳过 + 0 挂。

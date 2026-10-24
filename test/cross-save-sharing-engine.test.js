@@ -114,11 +114,8 @@ engine_test(
 
     for (let attempt = 0; attempt < 2; attempt += 1) {
       fixture.set_inputs(0, 9);
-      await assert.rejects(net.inport_a(), (error) => {
-        assert.equal(error.name, 'BeginSignal');
-        assert.equal(error.state, 'SHOP');
-        return true;
-      });
+      // 恢复操作档时 EVENTLOAD 链发起 BEGIN SHOP：转场目标是返回值（#850）
+      assert.equal(await net.inport_a(), 'SHOP');
       assert.deepEqual(api.getAddedCharacters(), [0], '导入后恢复接收档的角色');
       assert.equal(flags.date, 42, '导入后恢复接收档的日期');
       assert.equal(flags.money, 98765, '导入后恢复接收档的资金');

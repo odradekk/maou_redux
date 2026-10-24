@@ -19,7 +19,8 @@ node tools/ere-game-builder/cli.mjs ere_scaffold_game path/to/new-game --title �
 
 | 上游 | 本项目 |
 | --- | --- |
-| `lib/`、`assets/reference/`、`assets/sdk/`、`assets/templates/`、`LICENSE`、`NOTICE.md`、`RELEASE.md` | 原样保留 |
+| `assets/reference/`、`assets/sdk/`、`assets/templates/`、`LICENSE`、`NOTICE.md`、`RELEASE.md` | 原样保留 |
+| `lib/` | 与上游一致，只有一处本地修正：`lib/kojo.js` 的 `topLevelKeys` 不再把列 0 的序列项（`- random: true`）当成顶层篇目——手册 random1.kojo 那种写法有两条同名兄弟项，原实现会误报「顶层篇目「- random」重复定义」，本项目 #891 起在 CI 上跑这个检查，误报会直接挡住合法的随机文本。同步上游时按 git 历史重放这一处 |
 | `assets/skills/*` | 移到 `.agents/skills/`；只改了标题里的「DSH」，并在开头加「在本项目里使用」一段。`.claude/skills/` 是逐字节副本，`test/agent-skills-sync.test.js` 检查两处一致 |
 | `index.js`（向 DSH 注册技能与工具） | `cli.mjs`：`registerTools()` 的函数体逐行取自上游 `apply()` 的工具注册部分，外层改成命令行 |
 | `package.json` | 重写，只声明 ESM；`yamljs` 装在仓库根目录的 devDependencies |

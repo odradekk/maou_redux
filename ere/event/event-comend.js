@@ -10,15 +10,17 @@
  *   4. ASSI > 0 且 BASE:ASSI:0 < 500 → 助手衰弱——**无 FLAG:35 条件**，
  *      开关只作用于目标侧
  *
- * 分支内的转往 AFTERTRAIN 经事件链暂存（#6 语义：链继续、最后一个胜出），
- * 由 train-loop.js 的回合循环作为状态返回值提交。
+ * 分支内的转往 AFTERTRAIN 由本处理器作为返回值交出（#6 语义：链继续、
+ * 最后一个胜出），由 train-loop.js 的回合循环作为状态返回值提交。两个判定
+ * 函数各自以转场目标返回：目标侧一转场，助手侧整体跳过——转场即结束当前
+ * 处理路径，助手判定不再跑。
  *
  * TEQUIP:53（录像使用中）→ TFLAG:34 = 1：死亡时若目标侧在录像，录像标志转存。
  */
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -43,13 +45,13 @@ async function check_target_vitals() {
     era.print(`${chara_callname(era_flag.target)}一动也不动，`);
     era.print(`对${she(era_flag.target)}做什么都不再有反应了……`);
     await era.waitAnyKey(); // WAIT
-    begin(STATE.AFTERTRAIN);
+    return begin(STATE.AFTERTRAIN);
   } else if (stamina < 500 && auto_end_flag !== 0) {
     // 瀕死時に調教を自動終了設定（FLAG:35 = 1 才生效）
     era.drawLine();
     era.print('（体力到了极限。调教结束。）');
     await era.waitAnyKey(); // WAIT
-    begin(STATE.AFTERTRAIN);
+    return begin(STATE.AFTERTRAIN);
   }
 }
 
@@ -70,21 +72,24 @@ async function check_assi_vitals() {
     era.print(`${chara_callname(era_flag.assi)}一动也不动，`);
     era.print(`对${she(era_flag.assi)}做什么都不再有反应了……`);
     await era.waitAnyKey(); // WAIT
-    begin(STATE.AFTERTRAIN);
+    return begin(STATE.AFTERTRAIN);
   } else if (stamina < 500) {
     // 衰弱（不受 FLAG:35 检查——开关只管目标侧）
     era.drawLine();
     era.print('（助手体力到了极限。调教结束。）');
     await era.waitAnyKey(); // WAIT
-    begin(STATE.AFTERTRAIN);
+    return begin(STATE.AFTERTRAIN);
   }
 }
 
 on(
   'EVENTCOMEND',
   async () => {
-    await check_target_vitals();
-    await check_assi_vitals();
+    const target_next = await check_target_vitals();
+    if (is_state(target_next)) {
+      return target_next;
+    }
+    return check_assi_vitals();
   },
   TIER.PRI,
 );

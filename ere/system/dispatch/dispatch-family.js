@@ -110,7 +110,7 @@ class DispatchFamily {
       // 空间内缺失是合法的（TRYCALL 落空静默跳过的等价物），值由调用点给
       return whenMissing;
     }
-    // 实现抛出的异常（含 BeginSignal 转场信号）原样上抛，注册表不吞不拦
+    // 实现抛出的异常原样上抛，注册表不吞不拦
     return fn(...args);
   }
 

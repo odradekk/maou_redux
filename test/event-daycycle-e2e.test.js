@@ -26,17 +26,13 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
 
-/** 接住 BeginSignal 并断言目标状态（同 event-ending-e2e 的出口协议） */
-async function expect_signal(promise, state, BeginSignal, what) {
-  try {
-    await promise;
-  } catch (e) {
-    if (e instanceof BeginSignal && e.state === state) {
-      return;
-    }
-    throw e;
-  }
-  assert.fail(`${what} 应以 BeginSignal(${state}) 离开，却正常返回了`);
+/** 断言调用以转场目标离开（BEGIN 是返回值，#850） */
+async function expect_state(promise, state, what) {
+  assert.equal(
+    await promise,
+    state,
+    `${what} 应以转场目标 ${state} 离开（返回其它值即没到站）`,
+  );
 }
 
 test('端到端：据点一日循环——主菜单选休息 → 日期推进 → 回主菜单（#406）', async () => {
@@ -57,7 +53,6 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // 本用例不涉及勇者来袭，关掉与 event-ending-e2e 同样的理由：避免无关
@@ -66,7 +61,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
 
   // —— 新档：标题画面选「新的猎物」[1] → 新游戏四件套 → BEGIN FIRST ——
   fixture.set_inputs(1);
-  await expect_signal(run_title_page(), 'FIRST', BeginSignal, '标题画面新游戏');
+  await expect_state(run_title_page(), 'FIRST', '标题画面新游戏');
 
   // —— EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
   // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「普通」[0]、
@@ -82,7 +77,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
 
   // —— 1. 主菜单（EVENTSHOP → DRAW_MAINMENU）→ 2. 选 199（休息）——
   fixture.set_inputs(199);
-  await expect_signal(run_shop(), 'TURNEND', BeginSignal, '主菜单选休息');
+  await expect_state(run_shop(), 'TURNEND', '主菜单选休息');
   assert.equal(
     fixture.store.get('flag:9'),
     tax_before + 5,
@@ -106,12 +101,7 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
 
   // —— 6. BEGIN SHOP 回到主菜单，且循环真的还能再走一轮 ——
   fixture.set_inputs(199);
-  await expect_signal(
-    run_shop(),
-    'TURNEND',
-    BeginSignal,
-    '回到主菜单后再次休息',
-  );
+  await expect_state(run_shop(), 'TURNEND', '回到主菜单后再次休息');
   assert.equal(
     fixture.store.get('flag:9'),
     tax_before + 10,

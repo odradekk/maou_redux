@@ -119,17 +119,16 @@ test('has()：已实现为 true；空间内未实现与空间外一律 false', (
   assert.equal(family.has(99), false);
 });
 
-test('实现抛出的异常原样上抛（含 BeginSignal 转场信号），注册表不吞不拦', async () => {
+test('实现抛出的异常原样上抛，注册表不吞不拦', async () => {
   const fixture = create_era_fixture();
   const family = make_family(fixture, 'DEMO', [1]);
-  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   family.register(1, () => {
-    throw new BeginSignal('SHOP');
+    throw new Error('实现内部炸了');
   });
 
   await assert.rejects(
     () => family.call(1),
-    (e) => e instanceof BeginSignal && e.state === 'SHOP',
+    (e) => e.message === '实现内部炸了',
   );
 });
 
@@ -235,15 +234,10 @@ test('端到端：标题选「新的猎物」→ 加入角色 0 → 经注册表
   preset_chara_0(fixture);
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
-  const { BeginSignal, STATE } = fixture.load_module(
-    'system/flow/begin-signal',
-  );
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
-  // 新游戏分支以 FIRST 转场信号结束
-  await assert.rejects(
-    () => run_title_page(),
-    (e) => e instanceof BeginSignal && e.state === STATE.FIRST,
-  );
+  // 新游戏分支以 FIRST 转场目标结束
+  assert.equal(await run_title_page(), STATE.FIRST);
 
   // 加入初始角色 0（#23 起夹具实装已加入列表，
   // 断言列表内容即断言调用）

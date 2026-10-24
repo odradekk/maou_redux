@@ -148,7 +148,7 @@ export default [
   {
     desc: 'M7278 K4 处刑口上：漏注册猎奇处刑处理器',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: 'grotesque_koujo_family.register(4, grotesque_koujo_k4);',
+    find: 'grotesque_koujo_family.register(4, (...args) =>\n  kojo_k4.grotesque_koujo(...args),\n);',
     replace: '// 变异：K4 猎奇处刑口上未注册',
     tests: ['event-execution'],
     must_mention: 'K2 与 K4 注册四种处刑处理器',

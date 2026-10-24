@@ -28,16 +28,17 @@
  *     会话内重开局的清档（上一局的日期/金钱/角色列表不带进新局）。
  *     加入初始角色 0 并执行其专属初始化自 T6 接通（issue #21，
  *     ere/chara/chara-ex.js）。BEGIN FIRST 的转场已接通（issue #20）——
- *     发出转场信号、结束本函数，信号由主循环接住
+ *     返回目标状态并结束本函数，由主循环接住
  *     （system/flow/main-loop.js），EVENTFIRST 链的真身
  *     （event/event-first.js，issue #22）完成初始化后转入 SHOP。
  *   - 读档自 #136 起接通（真身见 page/page-save-load.js 的 load_game）：
- *     读档成功返回后标题无条件重跑——load_game 返回后的 continue 即
- *     RESTART 的等价物，重绘的标题用读入的新数据。
+ *     读档没读成时标题无条件重跑——load_game 返回后的 continue 即
+ *     RESTART 的等价物，重绘的标题用读入的新数据；读成的那一次 load_game
+ *     返回的是转场目标，标题原样上抛，不再重绘。
  */
 
 const era = require('#/era-electron');
-const { begin, STATE } = require('#/system/flow/begin-signal');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_global = require('#/era-utils/era-global');
@@ -134,31 +135,34 @@ async function run_title_page() {
       // 新游戏四件套。RESETDATA 自 #22 接通：清掉上一局的会话数据
       // （日期/金钱/角色列表），会话内重开新局不携带旧值；加入初始角色 0、
       // 经分发注册表执行其专属初始化自 T6 接通（issue #21）——ere 以角色号 0
-      // 直接寻址。之后 BEGIN FIRST——发出转场信号并当场结束本函数（begin
-      // 只 throw 不返回，下方语句与循环的下一轮都不再执行），信号由主循环的
-      // enter_state 接住转入 FIRST 状态。
+      // 直接寻址。之后 BEGIN FIRST——返回目标状态并当场结束本函数（return 之后
+      // 的语句与循环的下一轮都不再执行），主循环的 enter_state 收下它转入
+      // FIRST 状态。
       era.resetData();
       era.addCharacter(0);
       await add_chara_ex(0);
       // 移植版自建（issue #67）：给刚加入的角色盖移植数据版本戳
       // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
       init_portcflag(0);
-      begin(STATE.FIRST);
+      return begin(STATE.FIRST);
     }
 
     if (result === 0) {
       // 离开标题（读档路径）同样停曲
       era.stopMusic();
-      // 读档：分割线后进 load_game（page/page-save-load.js，#136），返回后
-      // 重跑标题循环——读档成功与否都一样（无条件重绘）
+      // 读档：分割线后进 load_game（page/page-save-load.js，#136）。没读成
+      // 就直接重跑标题循环（无条件重绘）；读成了 load_game 返回转场目标，
+      // 本函数原样上抛，标题不再重绘。
       era.drawLine();
       era.setAlign('left'); // 读档段左对齐
-      await load_game();
+      const next = await load_game();
+      if (is_state(next)) {
+        return next;
+      }
       continue;
     }
-    // 无法识别的输入重绘标题画面，不报错。（本移植的转场经 begin() 以信号
-    // 退出函数——循环仅在信号抛出时离开，其余输入都回到循环头重绘，
-    // 等价于标题画面不退出。）
+    // 无法识别的输入重绘标题画面，不报错。（本移植只有转场会让本函数返回，
+    // 其余输入都回到循环头重绘，等价于标题画面不退出。）
   }
 }
 

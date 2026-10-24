@@ -877,9 +877,9 @@ test('跨会话重进 SHOP：换屏重画，上一局/新局的残留都不留�
   era_flag.target = 31; // 100 分支无需选人，直达 TRAIN 转场
   const { run_shop } = fixture.load_module('page/page-shop');
 
-  // 第一局：100 → TRAIN 转场信号上抛，商店轮随之结束
+  // 第一局：100 → 返回 TRAIN 转场目标，商店轮随之结束
   fixture.set_inputs(100);
-  await assert.rejects(() => run_shop(), /BEGIN TRAIN/);
+  assert.equal(await run_shop(), 'TRAIN');
 
   // 状态画面整屏清空 + 新局的上方内容（EVENTFIRST 链的产物）
   await fixture.era.clear();

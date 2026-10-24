@@ -135,7 +135,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { show_data } = require('#/page/components/chara-data'); // #390 起真身
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { get_kojo_num, in_kojo_window } = require('#/kojo/kojo-system');
+const { run_kojo } = require('#/kojo/kojo-system');
 const { e_get, e_set } = require('#/dungeon/monster-data');
 const { monstername } = require('#/dungeon/monster-data');
 const { equip_database } = require('#/system/equip/equip-lookup');
@@ -187,23 +187,21 @@ const ryouzyoku_after_kojo_family = new DispatchFamily(
 );
 
 /**
- * 迷宫凌辱两钩子的共同分发体：
- * `LOCAL = GET_KOJO_NUM()`（缺省读当前 TARGET——分派前已
- * `TARGET = ARG`，本分发体不碰 TARGET）→ 检查
- * `in_kojo_window(LOCAL)`（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`
- * ，全库只此一处定义，边界用例在 test/kojo-system.test.js）→
- * `TRYCALLFORM DUNGEON_RYOUZYOKU[_AFTER]_K{LOCAL - 100}`。
- * 不做存在判定。缺席语义 = 静默（TRYCALL 落空）。
+ * 迷宫凌辱两钩子的共同分发体：交给 run_kojo（迁移过的性格走工厂实例的
+ * 钩子，未迁移的按原分发族调用）。
  *
+ * 不做存在判定，实参为空——两族都是零参钩子（TARGET 由调用方在分派前置好，
+ * `LOCAL = GET_KOJO_NUM()` 缺省读它）。缺席语义 = 静默（TRYCALL 落空）。
+ *
+ * @param {string} hook 钩子名（= 入口名）
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标族（前 = ryouzyoku_kojo_family / 后 = ryouzyoku_after_kojo_family）
  * @returns {Promise<number>} 0（调用方不读）
  */
-async function dispatch_ryouzyoku_kojo(family) {
-  const local = get_kojo_num();
-  if (in_kojo_window(local)) {
-    await family.call(local - 100, { whenMissing: 0, args: [] });
-  }
+async function dispatch_ryouzyoku_kojo(hook, family) {
+  await run_kojo(hook, family, {
+    legacy: (id) => family.call(id, { whenMissing: 0, args: [] }),
+  });
   return 0;
 }
 
@@ -216,7 +214,7 @@ async function dispatch_ryouzyoku_kojo(family) {
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function dungeon_ryouzyoku() {
-  return dispatch_ryouzyoku_kojo(ryouzyoku_kojo_family);
+  return dispatch_ryouzyoku_kojo('dungeon_ryouzyoku', ryouzyoku_kojo_family);
 }
 
 /**
@@ -226,7 +224,10 @@ async function dungeon_ryouzyoku() {
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function dungeon_ryouzyoku_after() {
-  return dispatch_ryouzyoku_kojo(ryouzyoku_after_kojo_family);
+  return dispatch_ryouzyoku_kojo(
+    'dungeon_ryouzyoku_after',
+    ryouzyoku_after_kojo_family,
+  );
 }
 
 /**
