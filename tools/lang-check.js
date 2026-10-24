@@ -10,7 +10,8 @@
  *      收紧）——数据源 tools/lang-simp-ref.js（OpenCC 派生，独立于归一表），
  *      补上查表命中对表外繁体的失明；简体锁两路判定并用。
  * 另有整串豁免判定 is_exempted 与 JS 源码字符串字面量扫描器
- * scan_string_literals（注释感知，简体锁的取词工具）。
+ * scan_string_literals（注释感知，简体锁的取词工具），以及 .kojo 的逐行
+ * 取词器 scan_kojo_lines（#891：.kojo 的正文不加引号，按引号取词会整段漏）。
  *
  * 消费方：test/lang-check.test.js（表测试）、test/output-lang-lock.test.js
  * （ere/ + yml/ 简体锁）。
@@ -245,11 +246,38 @@ function scan_string_literals(text) {
   return lits;
 }
 
+/**
+ * 扫描 `.kojo`（YAML）里逐行的文本段（#891，简体锁对 .kojo 的取词）。
+ *
+ * .kojo 的正文是不加引号的纯标量，按引号取词会整段漏掉，所以按行整行取；
+ * 两类内容不是玩家可见文本，先去掉：
+ *   - 整行注释与行尾注释（YAML 的 `#`，前面必须是行首或空白）——口上里的
+ *     日文分支标记（`それ以外` 一类）写在注释里，扫进去只会误报；
+ *   - 空行（含只有注释的行）。
+ * 行号按 1 起算，与 yml/ 分支的报错口径一致。已知边界：引号里的 `#` 也会被
+ * 当成注释切掉（项目里的 .kojo 正文不用引号包 `#`，真出现时按需要扩判定）。
+ *
+ * @param {string} text .kojo 文件全文
+ * @returns {Array<{line: number, content: string}>} 需要判定的文本段
+ */
+function scan_kojo_lines(text) {
+  const pieces = [];
+  text.split(/\r?\n/).forEach((line, index) => {
+    const code = line.replace(/(^|\s)#.*$/, '').trim();
+    if (code === '') {
+      return;
+    }
+    pieces.push({ line: index + 1, content: code });
+  });
+  return pieces;
+}
+
 module.exports = {
   find_offenders,
   find_outside_trad,
   is_exempted,
   load_table,
+  scan_kojo_lines,
   scan_string_literals,
   validate,
 };

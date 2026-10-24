@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 71; // 数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 74; // #891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -577,9 +577,11 @@ export default [
   {
     desc: 'M12352 夹具 printAndWait 不占重叠窗口（内部等待立即完成——漏写 await 的后续照样拿到预置输入）',
     file: 'test/helpers/era-fixture.js',
-    find: `  era.printAndWait = async (content) => {
+    find: `  era.printAndWait = async (content, config) => {
     begin_wait('printAndWait');
-    const returned = push_row([make_text_entry(content)]);
+    const returned = push_row([
+      make_text_entry(apply_dict(content, config?.dict)),
+    ]);
     input_rules.length = 0;
     // 内部等待在引擎里必然真等（print 刚置位 allowWait）并消费一次按键：
     // 确认边界推进到刚推入的行为止。观测面维持既定契约不进 waits /
@@ -589,9 +591,11 @@ export default [
     await settle_wait();
     return returned;
   };`,
-    replace: `  era.printAndWait = async (content) => {
+    replace: `  era.printAndWait = async (content, config) => {
     // 变异：内部等待不占窗口
-    const returned = push_row([make_text_entry(content)]);
+    const returned = push_row([
+      make_text_entry(apply_dict(content, config?.dict)),
+    ]);
     input_rules.length = 0;
     confirmed_row_count = total_rows;
     return returned;
@@ -859,6 +863,52 @@ export default [
     replace: '    const no_match = null; // 变异：不模拟 no:<n>',
     tests: ['fixture'],
     must_mention: 'no:<n> 读的是第 n+1 个加入的角色',
+    engine: true,
+  },
+  // —— #891 .kojo 基础设施 ——
+  {
+    desc: 'M15500 夹具的字典替换失效（.kojo 的 %KEY% 原样进记录，断言的不是玩家看到的文本）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const apply_dict = (content, dict) => {
+    if (!Array.isArray(dict)) {`,
+    replace: `  const apply_dict = (content, dict) => {
+    if (true || !Array.isArray(dict)) { // 变异：字典替换失效`,
+    tests: ['kojo-infra'],
+    must_mention: '你好，测试者。',
+    engine: true,
+  },
+  {
+    desc: 'M15501 编译 .kojo 前不挂 proxyKojo / dispatchButton（篇目对象根本出不来）',
+    file: 'test/helpers/engine-bundle.js',
+    find: '  engine.add_proxy_func(era);',
+    replace: '  // 变异：不挂 proxyKojo / dispatchButton',
+    tests: ['kojo-infra'],
+    must_mention: '夹具装载 .kojo 失败',
+    engine: true,
+  },
+  {
+    desc: 'M15502 编译完不返回篇目对象（装载「成功」但一个篇目都取不到）',
+    file: 'test/helpers/engine-bundle.js',
+    find: `  factory.call(
+    module.exports,
+    module.exports,
+    () => era,
+    module,
+    filename,
+    path.dirname(filename),
+  );
+  return module.exports;`,
+    replace: `  factory.call(
+    module.exports,
+    module.exports,
+    () => era,
+    module,
+    filename,
+    path.dirname(filename),
+  );
+  return {}; // 变异：不返回编译结果`,
+    tests: ['kojo-infra'],
+    must_mention: '示例篇目「问候」必须是可调用函数',
     engine: true,
   },
 ];

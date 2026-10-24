@@ -11,6 +11,7 @@
 *.json text eol=lf
 *.md text eol=lf
 *.yml text eol=lf
+*.kojo text eol=lf
 *.csv text eol=lf
 
 # 引擎 SDK 取自上游，保持原样以便与上游比对

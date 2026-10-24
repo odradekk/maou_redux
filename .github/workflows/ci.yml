@@ -75,6 +75,21 @@ jobs:
         run: npx eslint . --max-warnings 0
       - name: Prettier（格式比对）
         run: npx prettier --check .
+      # .kojo 检查（#891）：仓库里跟踪的 .kojo 逐个过 ere-game-builder 的口上
+      # 检查器。判定在 tools/ere-game-builder/lib/kojo.js，这里只负责挑文件与
+      # 传退出码——结构错误（拼错的键、重复的 acc、重名篇目）工具返回 1，
+      # 这一步跟着红。文件暂时一个都没有时跳过，不让空目录报「没有 .kojo」。
+      - name: .kojo 检查（口上文件的静默失效写法）
+        run: |
+          set -euo pipefail
+          files=$(git ls-files '*.kojo')
+          if [ -z "$files" ]; then
+            echo '仓库里没有 .kojo 文件，跳过'
+            exit 0
+          fi
+          while IFS= read -r file; do
+            node tools/ere-game-builder/cli.mjs ere_check_kojo "$file"
+          done <<< "$files"
 
   # —— 无引擎全库（只在 master push）——
   engineless:
