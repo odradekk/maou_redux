@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 7; // master 8（#640：-31 比对/转换工具条目与 M77，+2 M12877/M12878 守 lang-check）- 本工单 1（#642 删 M79：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）；M1371 改挂 com-family-wiring 自持清单
+export const COUNT = 8; // #891 +1（M15503：.kojo 逐行取词器一段都不产出，简体锁对 .kojo 失明）；master 8（#640：-31 比对/转换工具条目与 M77，+2 M12877/M12878 守 lang-check）- 本工单 1（#642 删 M79：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）；M1371 改挂 com-family-wiring 自持清单
 
 export default [
   // M77（归一表删实测字种）随语料普查测试删除、无人可守（#640 删除——
@@ -80,5 +80,13 @@ export default [
     replace: '    if (false) { // 变异：注释分支拆',
     tests: ['lang-check'],
     must_mention: '转义序列按其字面值入内容',
+  },
+  {
+    desc: 'M15503 scan_kojo_lines 一段都不产出（.kojo 的正文不进简化锁，繁体字无人报）',
+    file: 'tools/lang-check.js',
+    find: '  text.split(/\\r?\\n/).forEach((line, index) => {',
+    replace: '  [].forEach((line, index) => { // 变异：.kojo 一段都不取',
+    tests: ['output-lang-lock'],
+    must_mention: '.kojo 的字级命中未报出',
   },
 ];
