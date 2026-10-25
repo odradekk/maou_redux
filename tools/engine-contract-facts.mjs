@@ -106,10 +106,27 @@ export const ENGINE_FACTS = [
   {
     // #572 的 C 类修正：useRule 只关校验分支，不封锁按钮。
     id: 'input-userule-false-keeps-buttons',
-    desc: 'useRule: false 只跳过校验：returnFromButton 整段校验包在 `if (inputParam.value[useRule])` 里，关掉后点按钮与键入都直接回传——按钮与自由输入可并存（#572 的「按钮 + useRule: false」处置据此，先例 event-museum.js:83-85）',
+    desc: 'useRule: false 只跳过校验：returnFromButton 整段校验包在 `if (inputParam.value[useRule])` 里，关掉后点按钮与键入都直接回传——按钮与自由输入可并存（#572 的「按钮 + useRule: false」处置据此，先例 event-museum.js:83-85）。**#872 起本项目不再用这条**：原先 16 处消费点改写成 rule 或候选按钮，ere/ 里已无 useRule: false；引擎事实本身不变',
     mirror:
       'test/helpers/era-fixture.js era.input 的 `if (config?.useRule !== false)` 分支（#130）',
     anchors: ["if (inputParam.value['useRule']) {"],
     rule: null,
+  },
+  {
+    // #872：rule 的锚点由渲染层自己拼，且不补分组——含 | 的规则必须自己写
+    // (?:…)。手册 A-api-docs.md 的 input(config) 已就地补上这条（实测
+    // '100|[0-9]' 放行 -1/101/+3/250/1e3），这里把它钉成可校核的字面：
+    // 引擎升版改成带分组的拼法时，手册那段会静默过期。
+    id: 'input-rule-anchors-ungrouped',
+    desc: 'input 的 rule 锚点由渲染层拼：showInput 用 new RegExp(`^${data.config.rule}$`)——不带分组，含 | 的规则会被解释成 ^a|b$，只有首尾两支吃到锚点；同一函数的 returnFromButton 按「rule 是 RegExp 还是数组」二选一（正则分支在前），故 rule 在场时本轮不再做按钮白名单校验；不合法时只弹「输入不合法！输入规范：<rule 原文>」并 return，不回传给调用方',
+    mirror:
+      'test/helpers/era-fixture.js era.input 的 `new RegExp(`^${config.rule}$`)` 与「rule 优先于白名单」两段（#130 镜像）',
+    anchors: [
+      'inputParam.value.rule = new RegExp(`^${data.config.rule}$`);',
+      "if (inputParam.value['rule'].length === undefined) {",
+      "if (!inputParam.value['rule'].test(val.toString())) {",
+      "inputParam.value['rule'].source.substring(1, inputParam.value['rule'].source.length - 1)",
+    ],
+    rule: null, // 只校核事实；「什么时候该写 rule」无静态可判的调用点规则
   },
 ];
