@@ -4,7 +4,6 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { parse_yml_ids } = require('./helpers/static-names');
 
 function seq(values) {
   let index = 0;
@@ -860,9 +859,6 @@ test('异界勇者作为双亲任一方生成近卫后代，现种族显示异�
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '魔王');
     add_chara(fixture, 211, '异界勇者');
-    for (const [id, name] of parse_yml_ids('Item.yml')) {
-      fixture.store.set(`itemname:${id}`, name);
-    }
 
     const child = await fixture
       .load_module('chara/chara-pregnancy')

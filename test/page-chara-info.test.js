@@ -992,8 +992,8 @@ test('chara_info_individual_wrapped：顺位表是全部已加入角色（按排
   for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
   // 包装入口的顺位表＝「编号」视图那套顺序（排列键
   // PORTCFLAG:排序编号）：3 号持最小、1 号持最大 → [3,2,1]
-  fixture.store.set('portcflag:3:排序编号', 1);
-  fixture.store.set('portcflag:1:排序编号', 3);
+  fixture.era.set('portcflag:3:排序编号', 1);
+  fixture.era.set('portcflag:1:排序编号', 3);
   const { chara_info_individual_wrapped } = fixture.load_module(
     'page/page-chara-info',
   );
@@ -1887,12 +1887,12 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
   assert.equal(fixture.store.get('relation:2:0'), 52);
   // —— 唯一变化：PORTCFLAG:角色:排序编号（移植自建扩展表，ADR-0001）——
   assert.equal(
-    fixture.store.get('portcflag:1:排序编号'),
+    fixture.era.get('portcflag:1:排序编号'),
     2,
     '1 号拿到原属 2 号的排序编号',
   );
   assert.equal(
-    fixture.store.get('portcflag:2:排序编号'),
+    fixture.era.get('portcflag:2:排序编号'),
     1,
     '2 号拿到原属 1 号的排序编号（对调）',
   );
@@ -1981,7 +1981,7 @@ test('换号：[4001] 否回到第一屏重选，可选对方再确认', async (
     '否之后重选，第二次确认的名字对调',
   );
   assert.equal(
-    fixture.store.get('portcflag:1:排序编号'),
+    fixture.era.get('portcflag:1:排序编号'),
     2,
     '第二次确认才交换排序编号',
   );
@@ -2214,8 +2214,8 @@ test('排序编号：sort_by_number 按排序编号升序、并列按 ID，与�
   // 键：3→1；1→2；2→缺省回落 ID＝2。1 与 2 并列在 2，按 ID 决胜。
   // 入参故意打乱（[2,3,1]）：这里若没有并列决胜、靠稳定排序吃输入顺序，
   // 会得到 [3,2,1]
-  fixture.store.set('portcflag:3:排序编号', 1);
-  fixture.store.set('portcflag:1:排序编号', 2);
+  fixture.era.set('portcflag:3:排序编号', 1);
+  fixture.era.set('portcflag:1:排序编号', 2);
   const { sort_by_number } = fixture.load_module('chara/chara-portcflag');
 
   assert.deepEqual(sort_by_number([2, 3, 1]), [3, 1, 2]);
@@ -2233,8 +2233,8 @@ test('名册「编号」视图按 PORTCFLAG:排序编号 升序（缺省＝角�
     // 排序编号是移植自建的排列键（ADR-0001 的 portcflag 扩展表）：缺省 0 =
     // 未设，回落角色 ID。这里让 4 号持最小、1 号持最大——退回 ID 序（[1,2,3,4]）
     // 或「未设不回落 ID」（2、3 都读成 0）都会得到另一个顺序
-    fixture.store.set('portcflag:4:排序编号', 1);
-    fixture.store.set('portcflag:1:排序编号', 4);
+    fixture.era.set('portcflag:4:排序编号', 1);
+    fixture.era.set('portcflag:1:排序编号', 4);
     const { show_chara_info_list } = fixture.load_module(
       'page/page-chara-info',
     );
@@ -2259,9 +2259,9 @@ test('名册「编号」视图按 PORTCFLAG:排序编号 升序（缺省＝角�
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
-    fixture.store.set('portcflag:2:排序编号', 1);
-    fixture.store.set('portcflag:3:排序编号', 1);
-    fixture.store.set('portcflag:1:排序编号', 3);
+    fixture.era.set('portcflag:2:排序编号', 1);
+    fixture.era.set('portcflag:3:排序编号', 1);
+    fixture.era.set('portcflag:1:排序编号', 3);
     const { show_chara_info_list } = fixture.load_module(
       'page/page-chara-info',
     );
@@ -2274,9 +2274,9 @@ test('换号页：候选列表按排序编号升序，编号格显示的仍是�
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
-  fixture.store.set('portcflag:3:排序编号', 1); // 3 号排最前
-  fixture.store.set('portcflag:1:排序编号', 5);
-  fixture.store.set('portcflag:2:排序编号', 9); // 2 号排最后
+  fixture.era.set('portcflag:3:排序编号', 1); // 3 号排最前
+  fixture.era.set('portcflag:1:排序编号', 5);
+  fixture.era.set('portcflag:2:排序编号', 9); // 2 号排最后
   fixture.store.set('cflag:1:9', 5); // 1 位数 → 补 3 格
   fixture.store.set('cflag:3:9', 12); // 2 位数 → 补 2 格（左对齐 4 格宽）
   const { chara_number_swap } = fixture.load_module(
@@ -2362,7 +2362,7 @@ test('换号第二屏：只剩一名候选时也有出口——[3002] 取消回�
   );
   assert.equal(thrown, null, '整条路走完不抛错：没有卡死');
   assert.equal(
-    fixture.store.get('portcflag:17:排序编号'),
+    fixture.era.get('portcflag:17:排序编号'),
     undefined,
     '取消不写排序编号',
   );
@@ -2416,7 +2416,7 @@ test('换号：排序编号随存档往返（PORTCFLAG 随档走）——#545 �
 
   fixture.set_inputs(1, 2, 4000, 1999);
   await chara_number_swap();
-  assert.equal(fixture.store.get('portcflag:1:排序编号'), 2);
+  assert.equal(fixture.era.get('portcflag:1:排序编号'), 2);
 
   assert.equal(await fixture.era.saveData(7, '换号往返'), true);
   // 抹掉现值（等价于另开一局后的空白状态）再读回：快照里没有这一条即红
@@ -2424,11 +2424,11 @@ test('换号：排序编号随存档往返（PORTCFLAG 随档走）——#545 �
   fixture.store.delete('portcflag:2:排序编号');
   assert.equal(await fixture.era.loadData(7), true);
   assert.equal(
-    fixture.store.get('portcflag:1:排序编号'),
+    fixture.era.get('portcflag:1:排序编号'),
     2,
     '排序编号 2 读回 1 号角色',
   );
-  assert.equal(fixture.store.get('portcflag:2:排序编号'), 1);
+  assert.equal(fixture.era.get('portcflag:2:排序编号'), 1);
 
   const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
   assert.deepEqual(show_chara_info_list(0), [2, 1], '名册顺序随档回来');
@@ -2495,5 +2495,5 @@ test('名册分发：[1700] 子流程返回后名册才继续——漏 await 时
   );
   assert.equal(thrown, null, '名册与换号流程各消费各的输入，互不打断');
   assert.equal(result, 0);
-  assert.equal(fixture.store.get('portcflag:1:排序编号'), 2, '排序编号已交换');
+  assert.equal(fixture.era.get('portcflag:1:排序编号'), 2, '排序编号已交换');
 });

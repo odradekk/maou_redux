@@ -514,8 +514,10 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
     !texts.some((t) => t.includes('gobi_koujo')),
     '形象确认的 -2 贡品页不得打语尾占位（TARGET 临时换 + 未命中静默）',
   );
-  // 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾
-  assert(texts.includes('冒险者佳奈美被囚禁在了地牢里！'));
+  // 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾。
+  // 名字来自命名链：rand ≡ 0 → 名字编号 0 = yml/NameList.yml 的「玛丽」
+  // （#821 起夹具按 yml 现算名字，此前读到空串才落到保底名「佳奈美」）
+  assert(texts.includes('冒险者玛丽被囚禁在了地牢里！'));
   // FLAG:402 用过的标志归位、 TARGET = FLAG:1（开局 0）
   assert.equal(fixture.store.get('flag:402'), 0);
   const era_flag = fixture.load_module('era-utils/era-flag');

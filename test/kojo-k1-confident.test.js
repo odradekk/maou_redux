@@ -563,7 +563,7 @@ test('DOG 兽奸会話·初めて·视频·牝犬：两段各是一行（#622）
       f.store.set(`tequip:${CID}:53`, 1);
       f.store.set(`talent:${CID}:136`, 1);
       f.store.set(`cflag:${CID}:601`, 900); // 与野良犬结婚中
-      f.store.set(`talent:${CID}:成为勇者前的生活`, 1); // 学生
+      f.era.set(`talent:${CID}:成为勇者前的生活`, 1); // 学生
     }),
   );
   await speak_k1(fixture);
@@ -597,7 +597,7 @@ test('DOG 兽奸会話·二回目·视频·牝犬：两段各是一行（#622）
       f.store.set(`tequip:${CID}:53`, 1);
       f.store.set(`talent:${CID}:136`, 1);
       f.store.set(`cflag:${CID}:601`, 900);
-      f.store.set(`talent:${CID}:成为勇者前的生活`, 15); // 商人・パン屋
+      f.era.set(`talent:${CID}:成为勇者前的生活`, 15); // 商人・パン屋
     }),
   );
   await speak_k1(fixture);
@@ -622,7 +622,7 @@ test('DOG 兽奸会話·初めて·视频·牝犬的「在最后」：其余四�
         f.store.set(`tequip:${CID}:53`, 1);
         f.store.set(`talent:${CID}:136`, 1);
         f.store.set(`cflag:${CID}:601`, 900);
-        f.store.set(`talent:${CID}:成为勇者前的生活`, life);
+        f.era.set(`talent:${CID}:成为勇者前的生活`, life);
       }),
     );
     await speak_k1(fixture);
@@ -641,7 +641,7 @@ test('DOG 兽奸会話·二回目·视频·牝犬的「在最后」：另一档�
       f.store.set(`tequip:${CID}:53`, 1);
       f.store.set(`talent:${CID}:136`, 1);
       f.store.set(`cflag:${CID}:601`, 900);
-      f.store.set(`talent:${CID}:成为勇者前的生活`, 21);
+      f.era.set(`talent:${CID}:成为勇者前的生活`, 21);
     }),
   );
   await speak_k1(fixture);

@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 77; // #848 +3（M16251–M16253：resetData 按【初始角色编号】建角色的夹具镜像——不建/写死 0/内部动作冒充游戏代码调用）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 85; // #848 +3（M16251–M16253：resetData 按【初始角色编号】建角色的夹具镜像——不建/写死 0/内部动作冒充游戏代码调用）；#821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -747,8 +747,8 @@ export default [
   {
     desc: 'M14559 夹具名字表读未声明序号不抛错（回到返回 undefined，掩盖引擎崩溃）',
     file: 'test/helpers/era-fixture.js',
-    find: '    if (is_undeclared_name(var_name)) {',
-    replace: '    if (false && is_undeclared_name(var_name)) { // 变异：不抛错',
+    find: '    if (is_undeclared_name(address)) {',
+    replace: '    if (false && is_undeclared_name(address)) { // 变异：不抛错',
     tests: ['fixture'],
     must_mention: 'yml 未声明且用例没播种的序号同引擎抛 TypeError',
   },
@@ -758,7 +758,7 @@ export default [
     find: '    return ids !== undefined && !ids.has(Number(match[2]));',
     replace: '    return ids !== undefined; // 变异：不看声明集',
     tests: ['fixture'],
-    must_mention: 'yml 已声明的序号与非 yml 名字表照常读取',
+    must_mention: 'yml 已声明的序号读出 yml 里的名字',
   },
   {
     desc: 'M14561 夹具名字表不认用例显式播种的名字（测试不可达分支的用例全部崩）',
@@ -855,7 +855,7 @@ export default [
   {
     desc: 'M15422 夹具不再模拟 no:<n>（读到的是播种值，与引擎的 data.no 不符）',
     file: 'test/helpers/era-fixture.js',
-    find: '    const no_match = /^no:(\\d+)$/.exec(var_name);',
+    find: '    const no_match = /^no:(\\d+)$/.exec(address);',
     replace: '    const no_match = null; // 变异：不模拟 no:<n>',
     tests: ['fixture'],
     must_mention: 'no:<n> 读的是第 n+1 个加入的角色',
@@ -906,6 +906,89 @@ export default [
     tests: ['kojo-infra'],
     must_mention: '示例篇目「问候」必须是可调用函数',
     engine: true,
+  },
+  // —— #821 地址归一：小写 / param→palam / 名字→序号 ——
+  {
+    desc: 'M15800 夹具的地址名段不转小写（Unlisted 与 unlisted 分两个槽）',
+    file: 'test/helpers/era-fixture.js',
+    find: '      .map((segment) => segment.toLowerCase());',
+    replace: '      .map((segment) => segment); // 变异：不转小写',
+    tests: ['fixture'],
+    must_mention: '未登记名字同样按小写落键',
+  },
+  {
+    desc: 'M15801 夹具不把 param 归一成 palam（引擎里两者是同一张表）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (table === 'param') {
+      table = 'palam';
+    }`,
+    replace: '    // 变异：param 不归一成 palam',
+    tests: ['fixture'],
+    must_mention: 'param 与 palam 是同一张表',
+  },
+  {
+    desc: 'M15802 夹具三段地址不翻名字（talent:cid:男人 与 talent:cid:122 分两个槽）',
+    file: 'test/helpers/era-fixture.js',
+    find: '        segments[2] = translate_name(table, segments[2]);',
+    replace: '        // 变异：三段地址不翻名字',
+    tests: ['fixture'],
+    must_mention: '按名字写、按序号读得到同一个值',
+  },
+  {
+    desc: 'M15803 夹具两段地址不翻名字（flag/base/global 的具名落到另一个槽）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      segments[1] = translate_name(
+        table.startsWith('item') ? 'item' : table,
+        segments[1],
+      );`,
+    replace: '      // 变异：两段地址不翻名字',
+    tests: ['fixture'],
+    must_mention: 'flag 具名与序号同槽',
+  },
+  {
+    desc: 'M15804 夹具把未登记的名字丢掉（引擎 safeUndefinedCheck 的缺省是原串）',
+    file: 'test/helpers/era-fixture.js',
+    find: '      : (names.name_to_id.get(segment) ?? segment);',
+    replace:
+      '      : names.name_to_id.get(segment); // 变异：未登记的名字被丢掉',
+    tests: ['fixture'],
+    must_mention: '未登记的名字原样当键',
+  },
+  {
+    desc: 'M15805 夹具不从 yml 反查 <表>name:<序号>（名字表读取恒空）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  function yml_derived_value(var_name) {
+    const name_match = /^([a-z]+)name:(\\d+)$/.exec(var_name);`,
+    replace: `  function yml_derived_value(var_name) {
+    const name_match = null; // 变异：不按 yml 反查名字`,
+    tests: ['fixture'],
+    must_mention: '读 yml 的名字',
+  },
+  {
+    desc: 'M15806 夹具只让读路径归一（写路径按原串落库，名字写、序号读分叉）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.set = (var_name, value) => {
+    const address = normalize_address(var_name);`,
+    replace: `  era.set = (var_name, value) => {
+    const address = var_name; // 变异：写路径不归一`,
+    tests: ['fixture'],
+    must_mention: '按名字写、按序号读得到同一个值',
+  },
+  {
+    desc: 'M15807 夹具的累加路径不归一（era.add 按原串累加）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    const address = normalize_address(var_name);
+    if (address !== 'gamebase' && !train_table_allows(address)) {
+      return undefined;
+    }
+    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算`,
+    replace: `    const address = var_name; // 变异：累加路径不归一
+    if (address !== 'gamebase' && !train_table_allows(address)) {
+      return undefined;
+    }
+    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算`,
+    tests: ['fixture'],
+    must_mention: 'era.add 按序号累加',
   },
   // —— #848 夹具镜像 resetData 按 GameBase【初始角色编号】建角色 ——
   {

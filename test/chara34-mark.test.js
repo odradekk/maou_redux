@@ -24,7 +24,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0 } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 const {
   create_add_character,
   create_chara_loader,
@@ -127,7 +126,6 @@ async function run_source_check(post, { with_mark4 = true } = {}) {
   fixture.era.addCharacter(0);
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
   fixture.era.addCharacter(34);
-  seed_static_names(fixture);
   fixture.era.beginTrain(0, 34);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 34;

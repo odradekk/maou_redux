@@ -112,10 +112,12 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   assert.equal(fixture.store.get('cflag:1:450'), 9, 'cflag:450 一人称档位');
   // 随机命名与 chara_name_define 自 #384 起都是真身（名字真的写进去了），
   // 冲突检查也一并写入；#389 的 look_set 与 #394 的 chara_first_exp 都已换真身。
+  // #821 起夹具按 yml 现算名字：随机源恒 1 掷到名字编号 1 =
+  // yml/NameList.yml 的「索菲亚」（此前读不到名字才落到保底名「佳奈美」）
   assert.equal(
     fixture.store.get('callname:1:-1'),
-    '佳奈美',
-    'chara_name_define 真身：没有可查的固定名时回落到默认名',
+    '索菲亚',
+    'chara_name_define 真身：名字来自 NameList.yml 的固定名表',
   );
   // look_set 自 #389 起是真身：外貌素质真的写入了。
   // 精确值：never（RAND:N 恒 1）下发色掷到 11（粉髪）、癖掷到 2（往后看）
@@ -905,8 +907,8 @@ test('转发层 naming / name_reset：转发目标自 #384 起是真身', async 
   await forward.naming(3);
   assert.equal(fixture.store.get('cflag:3:6'), 205, 'NID 缺省沿用 cflag:6');
   assert(
-    fixture.store.get('callname:3:-1') === '佳奈美',
-    'chara_name_define 真身（205 无注册名 → 默认名）',
+    fixture.store.get('callname:3:-1') === '瑞穂',
+    'chara_name_define 真身（205 → NameList.yml 的固定名「瑞穂」）',
   );
 
   // name_reset → cn_rebuild：称呼按姓名重建（魔王之外的每个角色）

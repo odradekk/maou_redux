@@ -413,15 +413,18 @@ test('show_block：任务三段的顺序是 任务名 → 障碍聚合 → 讨�
 
 const { parse_yml_ids } = require('./helpers/static-names');
 
-/** yml/Talent.yml 的 序号 → 名（用例侧断言用） */
-const TALENT_NAMES = parse_yml_ids('Talent.yml');
-
-/** 播种名字表（talentname:N；引擎装载后由名字表提供） */
-function seed_talent_names(fixture) {
-  for (const [id, name] of TALENT_NAMES) {
-    fixture.store.set(`talentname:${id}`, name);
-  }
+/**
+ * yml 名字表的 序号 → 名（用例侧断言用）。名字过一遍 toLowerCase：引擎装载
+ * 静态数据时把名称列一律转小写（eraStart 的 `o.map((e) => (e[1] =
+ * toLowerCase(e[1]), e))`），玩家看到的是转过小写的那份（如 抖Ｓ气质 → 抖ｓ气质）。
+ */
+function lower_names(file) {
+  return new Map(
+    [...parse_yml_ids(file)].map(([id, name]) => [id, name.toLowerCase()]),
+  );
 }
+
+const TALENT_NAMES = lower_names('Talent.yml');
 
 /** 名字表里的名字（断言期望值时用，避免手抄） */
 function tname(id) {
@@ -431,7 +434,6 @@ function tname(id) {
 function talent_fixture({ flag5 = 0, talents = {}, ex_talents = {} } = {}) {
   const fixture = create_era_fixture();
   fixture.store.set('flag:5', flag5);
-  seed_talent_names(fixture);
   for (const [id, value] of Object.entries(talents)) {
     fixture.store.set(`talent:7:${id}`, value);
   }
@@ -793,7 +795,6 @@ test('show_talent：EX 素质走分类分支的 EX 段（性格 100-800 与战�
 
 test('show_talent_group：8 项换行的判定点是「第 9 项先收行再落项」', () => {
   const { fixture, show_talent_group } = talent_fixture({ flag5: 1 << 8 });
-  seed_talent_names(fixture);
   const line = { fragments: [{ content: '　标签：' }], count: 0 };
   for (let i = 0; i < 8; i += 1) show_talent_group(line, 7, 200 + i, 0);
   assert.equal(fixture.lines.length, 0, '8 项仍在同一行缓冲里');
@@ -840,15 +841,11 @@ test('show_talent：每一段的首项都能被驱动出来（表驱动全段）
 
 // —— show_info_abl / show_info_mark ——
 
-/** yml/Abl.yml 的 序号 → 名 */
-const ABL_NAMES = parse_yml_ids('Abl.yml');
+/** yml/Abl.yml 的 序号 → 名（同 TALENT_NAMES，引擎装载后是小写那份） */
+const ABL_NAMES = lower_names('Abl.yml');
 
 function abl_fixture({ talents = {}, abls = {}, marks = {} } = {}) {
   const fixture = create_era_fixture();
-  seed_talent_names(fixture);
-  for (const [id, name] of ABL_NAMES) {
-    fixture.store.set(`ablname:${id}`, name);
-  }
   for (const [id, value] of Object.entries(talents)) {
     fixture.store.set(`talent:7:${id}`, value);
   }
@@ -1826,16 +1823,6 @@ function condition_fixture({
   marks = {},
 } = {}) {
   const fixture = create_era_fixture();
-  for (const [table, file] of [
-    ['talent', 'Talent.yml'],
-    ['abl', 'Abl.yml'],
-    ['mark', 'Mark.yml'],
-    ['exp', 'Exp.yml'],
-  ]) {
-    for (const [id, name] of parse_yml_ids(file)) {
-      fixture.store.set(`${table}name:${id}`, name);
-    }
-  }
   for (const [index, value] of Object.entries(cflags)) {
     fixture.store.set(`cflag:7:${index}`, value);
   }
@@ -1875,9 +1862,9 @@ test('show_talent_condition：黄金样本 daycycle-max 的 20 行逐字复现',
     '爱慕条件： [好感度 100%]\u00A0\u00A0[顺从\u00A0\u00A0 Lv3]\u00A0\u00A0\u00A0[侍奉精神 Lv3]\u00A0[屈服刻印 Lv3]\u00A0[侍奉快乐\u00A0200]\u00A0[反抗刻印]\u00A0\u00A0',
     '淫乱条件： [好感度 100%]\u00A0\u00A0[欲望\u00A0\u00A0 Lv3]\u00A0\u00A0\u00A0[四点感觉Lv10]\u00A0[快乐刻印 Lv3]\u00A0[屈服刻印 Lv3]\u00A0[异常经验\u00A0\u00A0\u00A03]\u00A0[反抗刻印]\u00A0\u00A0',
     '擅用舌头： [技巧\u00A0\u00A0 Lv5]\u00A0\u00A0\u00A0[侍奉技术 Lv5]\u00A0[口交经验1000]\u00A0',
-    '施虐狂\u00A0\u00A0： [抖Ｓ气质 Lv4]\u00A0[技巧\u00A0\u00A0 Lv4]\u00A0\u00A0\u00A0[施虐快乐\u00A0300]\u00A0',
-    '受虐狂\u00A0\u00A0： [抖Ｍ气质 Lv4]\u00A0[露出癖 Lv2]\u00A0\u00A0\u00A0[被虐快乐\u00A0300]\u00A0',
-    '露出狂\u00A0\u00A0： [露出癖 Lv4]\u00A0\u00A0\u00A0[抖Ｍ气质 Lv2]\u00A0[调教自慰|放尿经验|喷奶经验\u00A0200]',
+    '施虐狂\u00A0\u00A0： [抖ｓ气质 Lv4]\u00A0[技巧\u00A0\u00A0 Lv4]\u00A0\u00A0\u00A0[施虐快乐\u00A0300]\u00A0',
+    '受虐狂\u00A0\u00A0： [抖ｍ气质 Lv4]\u00A0[露出癖 Lv2]\u00A0\u00A0\u00A0[被虐快乐\u00A0300]\u00A0',
+    '露出狂\u00A0\u00A0： [露出癖 Lv4]\u00A0\u00A0\u00A0[抖ｍ气质 Lv2]\u00A0[调教自慰|放尿经验|喷奶经验\u00A0200]',
     '牝犬条件： [欲望\u00A0\u00A0 Lv5]\u00A0\u00A0\u00A0[兽奸中毒 Lv3]\u00A0[兽奸经验\u00A0300]\u00A0',
     '自慰狂\u00A0\u00A0： [阴蒂感觉 Lv4]\u00A0[调教自慰\u00A0100]\u00A0[绝顶经验\u00A0100]\u00A0',
     '弄乳狂\u00A0\u00A0： [乳房感觉 Lv4]\u00A0[喷奶经验\u00A0100]\u00A0[绝顶经验\u00A0100]\u00A0',
@@ -2128,16 +2115,6 @@ function main_fixture({ flag5 = 0, cflags = {}, talents = {} } = {}) {
   const fixture = create_era_fixture();
   fixture.store.set('flag:5', flag5);
   fixture.store.set('callname:7:-1', '考狄利亚');
-  for (const [table, file] of [
-    ['talent', 'Talent.yml'],
-    ['abl', 'Abl.yml'],
-    ['mark', 'Mark.yml'],
-    ['exp', 'Exp.yml'],
-  ]) {
-    for (const [id, name] of parse_yml_ids(file)) {
-      fixture.store.set(`${table}name:${id}`, name);
-    }
-  }
   for (const [index, value] of Object.entries(cflags)) {
     fixture.store.set(`cflag:7:${index}`, value);
   }

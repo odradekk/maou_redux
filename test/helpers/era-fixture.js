@@ -20,7 +20,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { compile_kojo } = require('./engine-bundle');
-const { yml_declared_ids } = require('./static-names');
+const { yml_declared_ids, yml_name_table } = require('./static-names');
 
 // '#/xxx' 一律映射到 <仓库>/ere/xxx，与引擎行为及 ere/jsconfig.json 的别名一致
 const ERE_DIR = path.resolve(__dirname, '..', '..', 'ere');
@@ -691,6 +691,67 @@ function create_era_fixture() {
     return true;
   }
 
+  // 名字按 yml 翻成序号；表没有名字表（yml 里只有注释）或名字未登记时原样
+  // 返回传入段——引擎 `i(this.staticData[表][名], 名)` 的缺省就是原串
+  function translate_name(table, segment) {
+    const names = yml_name_table(table);
+    return names === undefined
+      ? segment
+      : (names.name_to_id.get(segment) ?? segment);
+  }
+
+  // 引擎寻址层（app.asar 模块 637）的地址归一，逐字：
+  //   1. 地址按 `:` 切开、各段 toLocaleLowerCase——表名与名字都小写；
+  //   2. 表名 param→palam、后缀 jewel→juel；
+  //   3. 数据地址的键段用该表的名字表把名字翻成序号，未登记的名字原样当键。
+  // callname / relation / global / love / chara 与 static 前缀的三段寻址不翻
+  // 名字（引擎在这几处把键直接当字符串用），`<表>name:<序号>` 也不翻——键
+  // 本来就是序号，名字从 yml 反查。
+  // 夹具的平表按归一后的地址落键：同一个变量按名字写、按序号读必须同槽，
+  // 否则代码改成按名字寻址后测试读写的是两个槽，断言全绿而行为是空的。
+  function normalize_address(var_name) {
+    const segments = String(var_name)
+      .split(':')
+      .map((segment) => segment.toLowerCase());
+    const table = normalize_table_name(segments[0]);
+    segments[0] = table;
+    if (segments.length === 3) {
+      if (table === 'base' || table === 'deltabase' || table === 'maxbase') {
+        // deltabase/maxbase 与 base 共用 Base.yml 的名字表
+        segments[2] = translate_name('base', segments[2]);
+      } else if (
+        table === 'palam' ||
+        table === 'gotjuel' ||
+        table === 'delta'
+      ) {
+        segments[2] = translate_name('palam', segments[2]);
+      } else if (table === 'nowex') {
+        segments[2] = translate_name('ex', segments[2]);
+      } else if (
+        table !== 'callname' &&
+        table !== 'relation' &&
+        table !== 'global' &&
+        !table.startsWith('static')
+      ) {
+        segments[2] = translate_name(table, segments[2]);
+      }
+    } else if (
+      segments.length === 2 &&
+      !table.endsWith('name') &&
+      table !== 'callname' &&
+      table !== 'chara' &&
+      table !== 'love' &&
+      table !== 'relation'
+    ) {
+      // item 族的二段键走 Item.yml 的双映射（引擎 `a.startsWith("item")`）
+      segments[1] = translate_name(
+        table.startsWith('item') ? 'item' : table,
+        segments[1],
+      );
+    }
+    return segments.join(':');
+  }
+
   // 调教域表的整表删除/重建镜像（#152/D6）：引擎 endTrain 删 11 张表、
   // beginTrain 在 tequip 不存在时整表换新、resetData 整份重建 data——夹具
   // 平表 store 的等价物是删该族全部键。param/gotjewel 是归一别名（era.set
@@ -717,41 +778,61 @@ function create_era_fixture() {
     return ids !== undefined && !ids.has(Number(match[2]));
   };
 
+  // yml 现算的两类地址（#821）：`<表>name:<序号>` 读名字、`<表>keys` 读声明
+  // 序号集。store 命中优先（用例播种的键与假名字仍然有效），播种的名字键
+  // 也算作声明——引擎里两者同源于同一张名字表，夹具的播种是它的代身。
+  function yml_derived_value(var_name) {
+    const name_match = /^([a-z]+)name:(\d+)$/.exec(var_name);
+    if (name_match !== null) {
+      return yml_name_table(name_match[1])?.id_to_name.get(
+        Number(name_match[2]),
+      );
+    }
+    const keys_match = /^([a-z]+)keys$/.exec(var_name);
+    if (keys_match === null) {
+      return undefined;
+    }
+    const ids = yml_declared_ids(keys_match[1]);
+    if (ids === undefined) {
+      return undefined;
+    }
+    const names = new RegExp(`^${keys_match[1]}name:(\\d+)$`);
+    const seeded_ids = [...store.keys()]
+      .map((key) => names.exec(key))
+      .filter(Boolean)
+      .map((match) => Number(match[1]));
+    return [...new Set([...ids, ...seeded_ids])];
+  }
+
   era.get = (var_name) => {
-    if (is_undeclared_name(var_name)) {
+    // 引擎寻址层先把地址归一（各段小写、param→palam、名字→序号）：守卫与
+    // 存取都用归一后的地址。var_reads 记的是调用方写的**原串**——那是「游戏
+    // 读了什么」的观测面，不是数据层（同引擎报错与日志用原串）
+    const address = normalize_address(var_name);
+    if (is_undeclared_name(address)) {
       throw new TypeError("Cannot read properties of undefined (reading 'n')");
     }
-    if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
+    if (address !== 'gamebase' && !train_table_allows(address)) {
       var_reads.push({ name: var_name, value: undefined });
       return undefined;
     }
     // 引擎的 `no:<n>` 返回 data.no 的第 n 位，即已加入序号为 n 的角色，
     // 不是角色 ID n
-    const no_match = /^no:(\d+)$/.exec(var_name);
+    const no_match = /^no:(\d+)$/.exec(address);
     if (no_match !== null) {
       const value = chara_no[Number(no_match[1])];
       var_reads.push({ name: var_name, value });
       return value;
     }
-    let value = store.get(var_name);
-    const keys_match = /^([a-z]+)keys$/.exec(var_name);
-    if (value === undefined && keys_match !== null) {
-      const ids = yml_declared_ids(keys_match[1]);
-      if (ids !== undefined) {
-        // 显式播种的名字也是声明，单独写入库存则不会创建名字。
-        const names = new RegExp(`^${keys_match[1]}name:(\\d+)$`);
-        const seeded_ids = [...store.keys()]
-          .map((key) => names.exec(key))
-          .filter(Boolean)
-          .map((match) => Number(match[1]));
-        value = [...new Set([...ids, ...seeded_ids])];
-      }
+    let value = store.get(address);
+    if (value === undefined) {
+      value = yml_derived_value(address);
     }
     var_reads.push({ name: var_name, value });
     return value;
   };
-  const clamp_base_value = (var_name, value) => {
-    const match = /^base:(\d+):(\d+)$/.exec(String(var_name));
+  const clamp_base_value = (address, value) => {
+    const match = /^base:(\d+):(\d+)$/.exec(String(address));
     if (match === null) {
       return value;
     }
@@ -759,11 +840,12 @@ function create_era_fixture() {
     return max > 0 ? Math.min(max, Math.max(0, value)) : value;
   };
   era.set = (var_name, value) => {
-    if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
+    const address = normalize_address(var_name);
+    if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined; // 引擎静默丢弃：不落盘、不留写记录
     }
-    const next = clamp_base_value(var_name, value);
-    store.set(var_name, next);
+    const next = clamp_base_value(address, value);
+    store.set(address, next);
     var_writes.push({ name: var_name, value: next });
     return next;
   };
@@ -772,12 +854,13 @@ function create_era_fixture() {
     if (!value) {
       return era.get(var_name);
     }
-    if (var_name !== 'gamebase' && !train_table_allows(var_name)) {
+    const address = normalize_address(var_name);
+    if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
     // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算
-    const next = clamp_base_value(var_name, (store.get(var_name) ?? 0) + value);
-    store.set(var_name, next);
+    const next = clamp_base_value(address, (store.get(address) ?? 0) + value);
+    store.set(address, next);
     var_writes.push({ name: var_name, value: next });
     return next;
   };
