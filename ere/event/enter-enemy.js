@@ -386,8 +386,8 @@ async function k_34_crazylord(rand_n) {
 
   era.addCharacter(34);
   await add_chara_ex(34);
-  // MARK,4,3 的预设补偿不在这里：它写在 chara-ex.js 的 34 号扩展里，
-  // 因为所有加入 34 号的路径都要过 ADDCHARA_EX——研究所复活也是（#548 返工）
+  // MARK,4,3 等预设由 addCharacter 自己抄进角色数据（yml/Mark.yml 登记了 4 号，
+  // 引擎只给名字表内的下标建槽），这里不再补写
   era_flag.crazylord_entered = 1;
   const a = 34; // A = CHARANUM-1（扁平化：刚加入的 34）
   // SAVESTR:A = %NAME:A% → callname:-1 承载（文件头，写入 no-op）

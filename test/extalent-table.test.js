@@ -199,41 +199,29 @@ engine_test(
 );
 
 engine_test(
-  '消费验证的边界（#118 定夺同族）：cflag/cstr 预设与两处名字表缺口不随 addCharacter 落 data',
+  '消费验证（#814）：cflag/cstr 预设随 addCharacter 落 data，相性预设仍不搬',
   () => {
     const loader = load_batch_presets();
     const adder = create_add_character(loader.static_data, {
       extended_tables: EXTENDED_TABLES,
     });
 
-    // #118 定夺：引擎 initCharaTable 只对名字表内登记的下标建槽抄预设，
-    // CFlag/CStr 名字表为空表 → 预设整组不落 data。装载层预设仍在
-    // （static_data.chara[id].cflag），子系统实现时按 CFlag.yml 头注
-    // 指路补名条目。
+    // #814 起 CFlag.yml / CStr.yml 登记了角色预设在用的下标，initCharaTable
+    // 按名字表建槽抄预设：战士（1）的 フラグ,1,1 与嘉德（33）的 CSTR,60,本宫
+    // 都真正落库
     assert.equal(adder.add(1), true);
-    assert.deepEqual(
-      adder.data.cflag[1],
-      {},
-      'フラグ,1,1 预设不应落 data（#118：cflag 名字表空）',
-    );
+    assert.equal(adder.data.cflag[1][1], 1, 'フラグ,1,1 预设落库');
+    assert.equal(adder.data.cflag[1][9], 0, '没预设的登记下标落 0');
     assert.equal(adder.add(33), true);
-    assert.deepEqual(
-      adder.data.cstr[33],
-      {},
-      'CSTR,60,本宫 预设不应落 data（#118：cstr 名字表空）',
-    );
+    assert.equal(adder.data.cstr[33][60], '本宫', 'CSTR,60,本宫 预设落库');
 
-    // 缺口一（MARK:4）：Mark.yml 无 4 号名条目 → initCharaTable 不建 4 槽，
-    // Chara34 的 MARK,4,3 预设丢弃（装载层在 static_data.chara[34].mark）。
-    // **#548 定夺**：不扩 Mark.yml 名条目（那会改变所有角色的预置，#118），
-    // 改为在她加入点直写 mark:34:4 = 3（ere/event/enter-enemy.js 的
-    // k_34_crazylord，test/chara34-mark.test.js 锁行为）。本用例钉的是引擎
-    // addCharacter 的原样行为，仍在。
+    // MARK:4 自 #814 起也走预设通道（Mark.yml 登记了 4 号）：Chara34 的
+    // MARK,4,3 随 addCharacter 落 data，加点上不再补写
     assert.equal(adder.add(34), true);
-    assert.equal(adder.data.mark[34][4], undefined);
+    assert.equal(adder.data.mark[34][4], 3);
     assert.equal(loader.static_data.chara[34].mark[4], 3, '装载层预设仍在');
 
-    // 缺口二（相性预设）：Chara24 的 相性,17,150 落静态 relationship 表
+    // 相性预设：Chara24 的 相性,17,150 落静态 relationship 表
     // （"24|17"），引擎 addCharacter 不把它搬进 data.relation——
     // relation:24:17 读出 undefined（旧引擎的 ADDCHARA 会拷，ere 不会）。
     // 等相性子系统实现时在加入点搬运，本工单钉住现状。

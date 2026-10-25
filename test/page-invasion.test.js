@@ -2174,10 +2174,10 @@ test('sengen_video 的库存来源真读 EX_FLAG:9010/9011（售卻相關的写�
 
 /**
  * 精锐部队（Chara18/19）的预设 → 变量表（yml/Chara18.yml / Chara19.yml 的
- * 运行时形状）。引擎 addCharacter 把「基礎」同时落 base 与 maxbase
- * （test/chara-yml.test.js 逐字段钉住），「フラグ」11/12 落 cflag 攻击/防御、
- * 9 落等级。夹具的 addCharacter 只写 callname（见 test/helpers/chara.js 头注），
- * 预设值由这里补——预设本身的装载正确性归 chara-yml.test.js。
+ * 运行时形状）。引擎 addCharacter 把「基礎」同时落 base 与 maxbase，
+ * 「フラグ」11/12 落 cflag 攻击/防御、9 落等级（CFlag.yml 登记了这些序号，
+ * test/chara-preset-apply.test.js 逐角色钉住）。夹具的 addCharacter 只写
+ * callname（见 test/helpers/chara.js 头注），预设值由这里补。
  */
 const SEIEI_PRESETS = {
   18: { hp: 9000, mp: 9000, atk: 150, def: 200, lv: 50 },

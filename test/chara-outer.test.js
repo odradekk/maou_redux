@@ -139,28 +139,27 @@ engine_test(
 );
 
 engine_test(
-  '消费验证的边界（#118 定夺同族）：CFLAG/CSTR 预设不随 addCharacter 落 data，装载层仍在',
+  '消费验证（#814）：CFLAG/CSTR 预设随 addCharacter 落 data，未预设的登记下标落缺省值',
   () => {
     const loader = load_outer_presets();
     const adder = create_add_character(loader.static_data, {
       extended_tables: EXTENDED_TABLES,
     });
 
-    // CFlag/CStr 名字表为空表（CFlag.yml/CStr.yml 头注）→ initCharaTable
-    // 不建槽，预设整组不落 data。223/777 的 CFLAG 段（浮点值 1640.0 经
-    // getNumber 折叠为 1640 的装载等价已由逐字段比对覆盖）与 223 的
-    // CSTR 31（「我」，RANDOM_SELF_CALL 档位 ≥200 的回落读数）都停在这层
+    // CFlag.yml 登记了角色预设在用的下标（#814），initCharaTable 按名字表
+    // 建槽并抄预设：丽塔的 223 项 CFLAG 预设（浮点值 1640.0 经 getNumber
+    // 折叠为 1640 的装载等价已由逐字段比对覆盖）与 CSTR 31 都真正落库
     assert.equal(adder.add(223), true);
-    assert.deepEqual(
-      adder.data.cflag[223],
-      {},
-      'CFLAG 预设不应落 data（#118：cflag 名字表空）',
+    assert.equal(adder.data.cflag[223][2], 23, '好感度预设落库');
+    assert.equal(adder.data.cflag[223][453], 1487, '身高预设落库');
+    assert.equal(adder.data.cflag[223][9], 2, '等级预设落库');
+    assert.equal(adder.data.cflag[223][152], 0, '没预设的信仰值落 0');
+    assert.equal(
+      adder.data.cstr[223][31],
+      '我',
+      'CSTR,31,我 预设落库（CStr.yml 登记了 31）',
     );
-    assert.deepEqual(
-      adder.data.cstr[223],
-      {},
-      'CSTR,31,我 预设不应落 data（#118：cstr 名字表空）',
-    );
+    // 装载层的预设与落库值同源
     assert.equal(
       loader.static_data.chara[223].cflag[453],
       1487,
@@ -169,7 +168,7 @@ engine_test(
     assert.equal(
       loader.static_data.chara[223].cstr[31],
       '我',
-      'CSTR 预设装载层仍在（消费者按 CStr.yml 头注指路补名条目）',
+      'CSTR 预设装载层仍在',
     );
   },
 );

@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #822 +1（M15708：chara-make 的抖Ｓ气质预设写到半角属性名）；#696 +1（M14109：组合名单段名不宜独存段值的追加段回归检查）；#546 起 +7（M11532-M11538，random_self_call 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 cm_gender 接通 global:3——由 test/chara-make.test.js 盯守）；#548 返工轮 +2（M11478/M11479 的目标位置从 enter-enemy.js 搬到 chara_ex 的 34 号注册回调——补偿写在所有加入路径都过的 add_chara_ex 里）；#565 起 +2（M11614/M11615，cm_st/cm_st_ace 的 st_up 接入）+ 审查轮 +2（M11624/M11625，show_chara_info 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟检查、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：这张工单 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 目标改为共享判断条件调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
+export const COUNT = 86; // #814 净 -1（+M15859：chara-ex 的 34 号回调把 MARK:4 的补偿写回来；-M11478/M11479：补偿本身已删除，那两条的目标代码不存在了）；#822 +1（M15708：chara-make 的抖Ｓ气质预设写到半角属性名）；#696 +1（M14109：组合名单段名不宜独存段值的追加段回归检查）；#546 起 +7（M11532-M11538，random_self_call 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 cm_gender 接通 global:3——由 test/chara-make.test.js 盯守）；#548 返工轮 +2（M11478/M11479 的目标位置从 enter-enemy.js 搬到 chara_ex 的 34 号注册回调——补偿写在所有加入路径都过的 add_chara_ex 里）；#565 起 +2（M11614/M11615，cm_st/cm_st_ace 的 st_up 接入）+ 审查轮 +2（M11624/M11625，show_chara_info 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟检查、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：这张工单 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 目标改为共享判断条件调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
 
 export default [
   // —— #565 st_up 接入（cm_st / cm_st_ace） ——
@@ -817,23 +817,8 @@ export default [
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
-  // —— #548（master）：chara_ex 的 34 号注册回调 MARK,4,3 补偿两条 ——
-  {
-    desc: 'M11478 chara_ex 的 34 号注册回调 MARK,4,3 补偿写错值（3 改成 2：反抗刻印履历未满，LV3 门还开着）',
-    file: 'ere/chara/chara-ex.js',
-    find: '  chara(cid).system.反抗刻印履历 = 3;',
-    replace: '  chara(cid).system.反抗刻印履历 = 2; // 变异：履历值错',
-    tests: ['chara34-mark'],
-    must_mention: 'MARK,4,3',
-  },
-  {
-    desc: 'M11479 chara_ex 的 34 号注册回调漏写 MARK,4,3 补偿（CSV 预设仍被名字表缺口丢下；K_34 与研究所复活两条加入路径都受影响）',
-    file: 'ere/chara/chara-ex.js',
-    find: '  chara(cid).system.反抗刻印履历 = 3;',
-    replace: '  // 变异：漏写反抗刻印履历补偿',
-    tests: ['chara34-mark'],
-    must_mention: 'MARK,4,3',
-  },
+  // #814：原 M11478/M11479（chara-ex 的 MARK:4 补偿写错值 / 漏写）随手工补偿删除——
+  // 补偿本身已不存在，预设改由引擎在 addCharacter 时落库（yml/Mark.yml 登记了 4 号）
   {
     desc: 'M11581 cm_gender 的 SELECTCASE 恒走 0 档（不读 global:3，#547）',
     file: 'ere/chara/chara-make.js',
@@ -860,5 +845,15 @@ export default [
     replace: 'chara(cid).train.抖S气质 = 3;',
     tests: ['chara-make'],
     must_mention: '抖S气质（train 门面）',
+  },
+  // —— #814：MARK:4 的手工补偿删除，预设改由引擎落库 ——
+  {
+    desc: 'M15859 chara-ex 的 34 号回调把 MARK:4 = 3 的补偿写回来（同一个值两套来源）',
+    file: 'ere/chara/chara-ex.js',
+    find: '  era.set(`ex_talent:${cid}:901`, 1);\n});',
+    replace:
+      '  era.set(`ex_talent:${cid}:901`, 1);\n  era.set(`mark:${cid}:4`, 3);\n});',
+    tests: ['dispatch-family', 'chara34-mark'],
+    must_mention: 'cid 经 args 透传进实现',
   },
 ];
