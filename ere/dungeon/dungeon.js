@@ -461,7 +461,7 @@ async function advance_dungeon_walk(ctx) {
     }
   }
 
-  // FLOOR = CFLAG:501（现在阶层——每轮从 CFLAG 重读，声明已外提）
+  // FLOOR = CFLAG:501（现在阶层——每轮从 CFLAG 重读，存在 ctx 上供后段共用）
   ctx.floor = chara(arg0).dungeon.侵攻阶层;
   // 房间类型：战役（FLAG:400）走 CAMPAIGN_ROOM，否则
   // FLAG:(FLOOR + 349) 的逐层房间表
