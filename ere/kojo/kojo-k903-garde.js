@@ -38,6 +38,7 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart, self_call } = require('#/kojo/kojo-text');
+const { gobi_text } = require('#/data/gobi-koujo-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -7804,28 +7805,18 @@ async function osioki_koujo_k903(rand, cid, choice) {
   }
 }
 
-// gobi_koujo_k903（ARG:0）
-function gobi_koujo_k903(arg0, rand = default_rand) {
-  const rand_n = rand;
-  if (arg0 == 1) {
-    return `哦～♪`;
-  } else if (arg0 == 2) {
-    return `哦！`;
-  } else if (arg0 == 3) {
-    return `啦……。`;
-  } else if (arg0 == 4) {
-    return `吧……算是……。`;
-  } else if (arg0 == 5) {
-    return `什么的……。`;
-  } else {
-    if (rand_n(3) == 0) {
-      return `呢。`;
-    } else if (rand_n(2) == 0) {
-      return `嘛。`;
-    } else {
-      return `啦。`;
-    }
-  }
+/**
+ * gobi_koujo_k903：语尾口上（ARG:0 分档 0-5）。
+ *
+ * 文字在常量表 ere/data/gobi-koujo-const.js 的 903 号行；这里只留分发族
+ * 的注册点，行内拼接由调用方做（#570）。迁 .kojo 后这一层随族一起删。
+ *
+ * @param {number} arg0 情绪档位
+ * @param {(n: number) => number} [rand] RAND:N 随机源（默认支三选一可注入）
+ * @returns {string} 语尾文字
+ */
+function gobi_koujo_k903(arg0, rand) {
+  return gobi_text(903, arg0, rand);
 }
 
 ryouzyoku_kojo_family.register(903, dungeon_ryouzyoku_k903);

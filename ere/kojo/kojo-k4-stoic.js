@@ -79,6 +79,7 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart } = require('#/kojo/kojo-text');
+const { gobi_text } = require('#/data/gobi-koujo-const');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
@@ -6274,34 +6275,17 @@ async function osioski_koujo_k4() {
 }
 
 /**
- * gobi_koujo_k4：语尾口上。ARG:0 1-5 各支、0 随机
- * 三选一（RAND:3 → RAND:2）。
+ * gobi_koujo_k4：语尾口上（ARG:0 分档 0-5）。
  *
- * @param {number} arg_0 语尾编号（ARG:0）
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * 文字在常量表 ere/data/gobi-koujo-const.js 的 4 号行；这里只留分发族
+ * 的注册点，行内拼接由调用方做（#570）。迁 .kojo 后这一层随族一起删。
+ *
+ * @param {number} arg_0 情绪档位
+ * @param {(n: number) => number} [rand] RAND:N 随机源（默认支三选一可注入）
+ * @returns {string} 语尾文字
  */
 function gobi_koujo_k4(arg_0, rand) {
-  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
-
-  if (arg_0 == 1) {
-    return `哦～♪`;
-  } else if (arg_0 == 2) {
-    return `哦！`;
-  } else if (arg_0 == 3) {
-    return `啦……。`;
-  } else if (arg_0 == 4) {
-    return `吧……算是……。`;
-  } else if (arg_0 == 5) {
-    return `什么的……。`;
-  } else {
-    if (rand_n(3) == 0) {
-      return `呢。`;
-    } else if (rand_n(2) == 0) {
-      return `嘛。`;
-    } else {
-      return `啦。`;
-    }
-  }
+  return gobi_text(4, arg_0, rand);
 }
 
 /**
