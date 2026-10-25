@@ -136,7 +136,7 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-86
+91
 # #733：cross-save-sharing-engine 的完整旧共享档导入与恢复接收档用例 +1，70 + 1 = 71。
 # #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
 # #734：kojo-palam-level-engine 的真实引擎爱抚回归用例 +1，71 + 1 = 72。
@@ -166,3 +166,9 @@
 # 相性镜像对默认角色只写正向），84 + 2 = 86。计数依据：ERE_ENGINE_ASAR=none npm test
 # 实测 7161 = 7075 过 + 86 跳过 + 0 挂；同文件另有两条 yml 文本用例（GameBase 的声明与
 # Chara0 的预设、相性目标不含 0）只读 yml 文本，任何环境都跑，不计入跳过。
+# #902（夹具 raw()，数据结构与引擎一致）：fixture-raw.test.js 新增五条引擎比对
+# 用例（raw().data 顶层表集合、item 子表与 global 顶层键、加入角色的行集合与
+# 未加入角色的 TypeError、调教表生命周期含 source、raw() 路径与引擎 setVar
+# 同址），86 + 5 = 91（#848 已把基线抬到 86）。计数依据：ERE_ENGINE_ASAR=none
+# npm test 实测 7167 = 7076 过 + 91 跳过 + 0 挂。同票其余七条走夹具路径，
+# 任何环境都跑。

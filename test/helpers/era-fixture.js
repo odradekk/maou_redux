@@ -20,7 +20,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { compile_kojo } = require('./engine-bundle');
-const { yml_declared_ids, yml_name_table } = require('./static-names');
+const {
+  yml_declared_ids,
+  yml_extended_chara_tables,
+  yml_name_table,
+} = require('./static-names');
 
 // '#/xxx' 一律映射到 <仓库>/ere/xxx，与引擎行为及 ere/jsconfig.json 的别名一致
 const ERE_DIR = path.resolve(__dirname, '..', '..', 'ere');
@@ -655,6 +659,10 @@ function create_era_fixture() {
   ]);
   const TRAIN_CHAR_GUARD_TABLES = new Set([...TRAIN_ONLY_TABLES, 'source']);
   let train_open = false;
+  // source 表在引擎里的生命周期与其余调教表不同：resetData 预建、beginTrain
+  // 重建、**endTrain 删**（`delete this.data.source`）。夹具的平表没有「表在
+  // 不在」这一层，raw() 的视图要按这个状态决定 source 存不存在
+  let source_present = true;
   const chars_in_train = new Set();
 
   // 引擎的表名归一：param→palam、*jewel→*juel（寻址层 648 原文同款）
@@ -804,6 +812,20 @@ function create_era_fixture() {
     return [...new Set([...ids, ...seeded_ids])];
   }
 
+  // resetGlobal 里引擎直接赋的两枚常量（`{code:…, version:…}`）：它们是
+  // saveGlobal 的盖章字段，不是可分派变量，夹具不落进 store（saveGlobal 与
+  // loadGlobal 会整份改写 global，落库会与那两步打架）。era.get 与 raw()
+  // 共用这一份缺省，两边读到同一个数
+  function global_constant(field) {
+    if (field === 'code') {
+      return save_gate.game_code;
+    }
+    if (field === 'version') {
+      return save_gate.current_version;
+    }
+    return undefined;
+  }
+
   era.get = (var_name) => {
     // 引擎寻址层先把地址归一（各段小写、param→palam、名字→序号）：守卫与
     // 存取都用归一后的地址。var_reads 记的是调用方写的**原串**——那是「游戏
@@ -825,6 +847,9 @@ function create_era_fixture() {
       return value;
     }
     let value = store.get(address);
+    if (value === undefined && address.startsWith('global:')) {
+      value = global_constant(address.slice('global:'.length));
+    }
     if (value === undefined) {
       value = yml_derived_value(address);
     }
@@ -839,12 +864,28 @@ function create_era_fixture() {
     const max = store.get(`maxbase:${match[1]}:${match[2]}`);
     return max > 0 ? Math.min(max, Math.max(0, value)) : value;
   };
+  // data.no 是引擎的活数组（raw().data.no 与 era.get('no:<n>') 读的是同一只
+  // 数组），写路径同样落到数组第 n 位，不另开一只槽——否则视图与 era.get
+  // 会在 `no:` 上分叉
+  const NO_ADDRESS = /^no:(\d+)$/;
+  const write_no = (address, value) => {
+    const match = NO_ADDRESS.exec(address);
+    if (match === null) {
+      return false;
+    }
+    chara_no[Number(match[1])] = value;
+    return true;
+  };
   era.set = (var_name, value) => {
     const address = normalize_address(var_name);
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined; // 引擎静默丢弃：不落盘、不留写记录
     }
     const next = clamp_base_value(address, value);
+    if (write_no(address, next)) {
+      var_writes.push({ name: var_name, value: next });
+      return next;
+    }
     store.set(address, next);
     var_writes.push({ name: var_name, value: next });
     return next;
@@ -858,8 +899,18 @@ function create_era_fixture() {
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
-    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算
-    const next = clamp_base_value(address, (store.get(address) ?? 0) + value);
+    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算（no:<n> 的现值
+    // 在活数组里，不在平表上）
+    const no_index = NO_ADDRESS.exec(address);
+    const current =
+      no_index === null
+        ? (store.get(address) ?? 0)
+        : (chara_no[Number(no_index[1])] ?? 0);
+    const next = clamp_base_value(address, current + value);
+    if (write_no(address, next)) {
+      var_writes.push({ name: var_name, value: next });
+      return next;
+    }
     store.set(address, next);
     var_writes.push({ name: var_name, value: next });
     return next;
@@ -1255,6 +1306,285 @@ function create_era_fixture() {
     await settle_wait();
   };
 
+  // —— raw()：开发套件具名访问器直接读写的数据层（#902）——
+  //
+  // 引擎 raw()（模块 176 逐字）：`raw(){return{data:this.data,global:this.global}}`
+  // ——返回的是数据层本身、不是拷贝，所以 #820 那批「改用开发套件」的具名
+  // 访问器（`EraChara.get(id).cflag.level`、`era_item.x.count`）拿到的每个
+  // 属性都是一次直接的属性读写，不经 era.get / era.set。夹具的数据层是平表
+  // store，这里给出两个同构的活视图：`data.<表>[角色][序号]` ↔ store 的
+  // `表:角色:序号`，`global[序号]` ↔ `global:序号`。视图不持副本，读写都落
+  // store，因此与 era.get / era.set 看到的是同一份数据（#902 第一条验收）；
+  // 地址归一在 store 那一层已经做完，按名字写、按序号从视图读得到同一个槽。
+  //
+  // 结构按 resetData / resetGlobal / addCharacter / beginTrain 的原文骨架
+  // （引擎逐字，test/fixture-raw.test.js 驱动真 resetData 比对）：
+  //   - 顶层恒有 resetData 字面量的 19 张表，外加 yml/_fixed.json 登记的扩展
+  //     角色表（引擎 fillData 为每张登记表建顶层桶，前提是名字表在场；本项目
+  //     登记的四张都有 yml 文件）。code / version 是数字，item 是四个子表
+  //     （bought 初值 -1，引擎字面量）；
+  //   - 调教表只有 beginTrain 之后存在；source 例外，它由 resetData 预建、
+  //     beginTrain 重建、endTrain 删；
+  //   - 逐角色行只对 addCharacter 过的角色存在（调教表对 addCharacterForTrain
+  //     过的角色），所以读没加入的角色的具名属性是 `undefined[序号]`，与引擎
+  //     一样抛 TypeError（#902 第三条验收）。**视图不自动建行**：行在不在是
+  //     语义，不是便利。
+  //   - 值缺省不镜像：引擎在 resetData 之后由 fillData 把声明过的序号填成 0、
+  //     resetGlobal 把 Global.yml 的声明序号填成 0；夹具保持平表的稀疏语义
+  //     （没写过就是 undefined，与 era.get 一致，游戏代码按 `|| 0` 读）。
+  //     比对用例因此只比结构（表与行的存在性）和写过的值，不比缺省值。
+  const DATA_TABLES = [
+    'abl',
+    'base',
+    'callname',
+    'cflag',
+    'code',
+    'cstr',
+    'equip',
+    'exp',
+    'flag',
+    'item',
+    'juel',
+    'love',
+    'mark',
+    'maxbase',
+    'no',
+    'relation',
+    'source',
+    'talent',
+    'version',
+    ...yml_extended_chara_tables(),
+  ];
+  // addCharacter 逐角色建的行（方法体里的那 12 条 `this.data[表][n]={}`，外加
+  // 扩展角色表的同款建桶）
+  const CHARA_TABLES = [
+    'abl',
+    'base',
+    'callname',
+    'cflag',
+    'cstr',
+    'equip',
+    'exp',
+    'juel',
+    'mark',
+    'maxbase',
+    'relation',
+    'talent',
+    ...yml_extended_chara_tables(),
+  ];
+  // beginTrain 建的表；其中带逐角色行的列在 TRAIN_CHARA_TABLES（tflag 是一维表）
+  const TRAIN_TABLES = [
+    'delta',
+    'deltabase',
+    'ex',
+    'gotjuel',
+    'nowex',
+    'palam',
+    'source',
+    'stain',
+    'tcvar',
+    'tequip',
+    'tflag',
+  ];
+  const TRAIN_CHARA_TABLES = [
+    'delta',
+    'deltabase',
+    'ex',
+    'gotjuel',
+    'nowex',
+    'palam',
+    'source',
+    'stain',
+    'tcvar',
+    'tequip',
+  ];
+  // item 的四个子表（resetData 字面量）；bought 是数字，其余按序号建槽
+  const ITEM_TABLES = ['bought', 'hold', 'price', 'sales'];
+  // resetGlobal 的顶层键：两枚盖章常量 + 存档备注表
+  const GLOBAL_KEYS = ['code', 'saves', 'version'];
+  // 平表里不属于 data 的命名空间：global 走 raw().global；gamebase / chara /
+  // res 是引擎的静态数据（staticData）；`<表>name:<序号>` 与 `<表>keys` 是名字
+  // 表（fieldNames）。callname 是数据表，虽以 name 结尾但不在其列
+  const NOT_DATA_TABLES = new Set([
+    'chara',
+    'gamebase',
+    'global',
+    'res',
+    'static',
+  ]);
+
+  const is_data_table = (table) =>
+    table === 'callname' ||
+    (!NOT_DATA_TABLES.has(table) &&
+      !table.endsWith('keys') &&
+      !table.endsWith('name'));
+
+  // 平表里某个前缀下的直接子段（`abl:31:3` 在 `abl:31` 下的子段是 `3`）；
+  // 根前缀只看带冒号的键——`code` 这类顶层标量由 DATA_TABLES 骨架给出
+  const child_segments = (prefix) => {
+    const head = prefix === '' ? '' : `${prefix}:`;
+    const children = new Set();
+    for (const key of store.keys()) {
+      if (!key.startsWith(head)) {
+        continue;
+      }
+      const rest = key.slice(head.length);
+      const cut = rest.indexOf(':');
+      if (cut >= 0) {
+        children.add(rest.slice(0, cut));
+      } else if (head !== '') {
+        children.add(rest);
+      }
+    }
+    return children;
+  };
+
+  // 一张表当前有哪些行：引擎的行由 addCharacter / addCharacterForTrain 建，
+  // 不是「写过才有」——已加入的角色一个值都没写，行对象也在
+  const table_rows = (table) => {
+    if (CHARA_TABLES.includes(table)) {
+      return chara_no.map(String);
+    }
+    if (train_open && TRAIN_CHARA_TABLES.includes(table)) {
+      return [...chars_in_train].map(String);
+    }
+    return [];
+  };
+
+  // 一个键路径在视图里是容器（对象）还是叶子。容器性只由引擎的结构决定，
+  // 不看 store 里有没有值——这正是「没加入的角色没有行」的实现处
+  const is_container = (key) => {
+    const segments = key.split(':');
+    const [table, second] = segments;
+    if (segments.length === 1) {
+      // no 是数组、code / version 是数字，由调用方各自处理
+      if (table === 'no' || table === 'code' || table === 'version') {
+        return false;
+      }
+      if (table === 'source') {
+        return source_present;
+      }
+      if (DATA_TABLES.includes(table)) {
+        return true;
+      }
+      if (train_open && TRAIN_TABLES.includes(table)) {
+        return true;
+      }
+      return is_data_table(table) && child_segments(table).size > 0;
+    }
+    if (segments.length === 2) {
+      if (table === 'item') {
+        return ITEM_TABLES.includes(second) && second !== 'bought';
+      }
+      if (table === 'global') {
+        return second === 'saves'; // 引擎 global.saves 恒是对象
+      }
+      if (table_rows(table).includes(second)) {
+        return true;
+      }
+    }
+    return child_segments(key).size > 0;
+  };
+
+  // 叶子值：store 里有什么就是什么；global 的两枚盖章常量取自 save_gate
+  const raw_leaf_value = (key) =>
+    store.get(key) ??
+    (key.startsWith('global:')
+      ? global_constant(key.slice('global:'.length))
+      : undefined);
+
+  // create_era_fixture 返回之前不能有视图访问：make_view 的处理器引用
+  // chara_no / chars_in_train / save_gate，它们在文件后半段才初始化（TDZ）
+  const make_view = (prefix) => {
+    const key_of = (prop) => (prefix === '' ? prop : `${prefix}:${prop}`);
+    const resolve = (key) => {
+      if (key === 'no') {
+        return chara_no; // 引擎 data.no 是活数组（插入序，removeCharacter 同步）
+      }
+      const value = raw_leaf_value(key);
+      return value !== undefined
+        ? value
+        : is_container(key)
+          ? make_view(key)
+          : undefined;
+    };
+    return new Proxy(Object.create(null), {
+      get(_target, prop) {
+        return typeof prop === 'symbol' ? undefined : resolve(key_of(prop));
+      },
+      set(_target, prop, value) {
+        if (typeof prop === 'symbol') {
+          return false;
+        }
+        const key = key_of(prop);
+        if (key === 'no') {
+          // 整份替换 data.no（引擎里它就是数组赋值）：就地改活数组，避免
+          // 视图与 chara_no 分叉
+          chara_no.length = 0;
+          chara_no.push(...(Array.isArray(value) ? value : []));
+          return true;
+        }
+        store.set(key, value);
+        return true;
+      },
+      has(_target, prop) {
+        return typeof prop !== 'symbol' && resolve(key_of(prop)) !== undefined;
+      },
+      deleteProperty(_target, prop) {
+        if (typeof prop === 'symbol') {
+          return false;
+        }
+        store.delete(key_of(prop));
+        return true;
+      },
+      ownKeys() {
+        const keys = new Set();
+        if (prefix === '') {
+          DATA_TABLES.forEach((table) => keys.add(table));
+          if (train_open) {
+            TRAIN_TABLES.forEach((table) => keys.add(table));
+          }
+          if (!source_present) {
+            keys.delete('source');
+          }
+        } else if (prefix === 'item') {
+          ITEM_TABLES.forEach((table) => keys.add(table));
+        } else if (prefix === 'global') {
+          GLOBAL_KEYS.forEach((table) => keys.add(table));
+        } else if (prefix.split(':').length === 1) {
+          table_rows(prefix).forEach((id) => keys.add(id));
+        }
+        child_segments(prefix).forEach((child) => {
+          if (prefix !== '' || is_data_table(child)) {
+            keys.add(child);
+          }
+        });
+        return [...keys];
+      },
+      getOwnPropertyDescriptor(_target, prop) {
+        if (typeof prop === 'symbol') {
+          return undefined;
+        }
+        const value = resolve(key_of(prop));
+        return value === undefined
+          ? undefined
+          : { value, writable: true, enumerable: true, configurable: true };
+      },
+    });
+  };
+
+  // resetData 里引擎直接写的三枚常量（`code` / `version` 取 GameBase、
+  // `item.bought` 初值 -1）：预置进 store，视图与 era.get 由构造上看到同一份
+  // 值。用例改 save_gate 不回溯这三枚——它们是 resetData 时刻的快照，引擎
+  // 侧同样只在 resetData / 读档时被改写
+  store.set('code', save_gate.game_code);
+  store.set('version', save_gate.current_version);
+  store.set('item:bought', -1);
+
+  const data_view = make_view('');
+  const global_view = make_view('global');
+  era.raw = () => ({ data: data_view, global: global_view });
+
   // —— 角色：addCharacter 有专门实现，不再是只记录的空壳（issue #35）——
   //
   // 引擎语义（app.asar 的 EraApi.addCharacter）：第一步就是
@@ -1356,6 +1686,7 @@ function create_era_fixture() {
       delete_train_table_keys();
     }
     train_open = true;
+    source_present = true; // beginTrain 逐字重建 source（`this.data.source={}`）
     chara_ids.forEach((id) => chars_in_train.add(id));
     return undefined;
   };
@@ -1393,6 +1724,9 @@ function create_era_fixture() {
   era.endTrain = () => {
     calls.push({ api: 'endTrain', args: [] });
     train_open = false;
+    // 引擎 endTrain 的 delete 段把 source 一起删掉——它不会自动回来，下一次
+    // beginTrain 或 resetData 才重建（#902 的结构比对钉住这一条）
+    source_present = false;
     chars_in_train.clear();
     // 引擎删 11 张表（见上逐字）——结算数值语义不动（自陈简化），删表镜像
     delete_train_table_keys();
@@ -1411,6 +1745,7 @@ function create_era_fixture() {
     calls.push({ api: 'resetData', args: [] });
     chara_no.length = 0;
     train_open = false;
+    source_present = true; // resetData 字面量里 source 重新出现
     chars_in_train.clear();
     delete_train_table_keys();
     // 引擎 resetData 末尾（app.asar 逐字）：`void 0 !==
@@ -1525,6 +1860,8 @@ function create_era_fixture() {
     'endTrain',
     'removeCharacter',
     'quit',
+    // raw() 返回数据层的活视图（#902）：夹具自己实现，不走记录层
+    'raw',
   ]);
   Object.keys(era).forEach((key) => {
     if (
