@@ -23,7 +23,7 @@ function setup_endcheck() {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  const mod = fixture.load_module('event/event-endcheck');
+  const mod = fixture.load_module('system/ending/endcheck');
   return { fixture, mod };
 }
 

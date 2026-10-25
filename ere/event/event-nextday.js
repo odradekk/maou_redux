@@ -48,7 +48,7 @@ const {
   transfer_soul,
 } = require('#/chara/chara-soul-transfer');
 const summon_mod = require('#/dungeon/monster-summon');
-const { run_endcheck } = require('#/event/event-endcheck');
+const { run_endcheck } = require('#/system/ending/endcheck');
 const { auto_save } = require('#/page/page-save-load');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -66,12 +66,12 @@ const { aphrodisiac_addict } = require('#/event/event-addict');
 const { sabbath, sabbath_day } = require('#/event/event-sabbath');
 const { tax_get } = require('#/system/stronghold/tax');
 const { self_kojo } = require('#/kojo/kojo-system');
-const { clothtype_text } = require('#/page/page-clothtype');
+const { clothtype_text } = require('#/utils/clothtype-utils');
 const { pillory } = require('#/event/event-nextday-pillory');
 const {
   in_vagina_m_to_t,
   conception_check_m_to_t,
-} = require('#/event/event-pregnancy');
+} = require('#/system/pregnancy');
 const { incest } = require('#/system/train/incest');
 const { aftertrain_cloth, soiling_cloth_no1 } = require('#/system/train/cloth');
 const { curse_equip_ring } = require('#/system/equip/equip-curse');
@@ -1674,7 +1674,7 @@ async function run_event_newday() {
   await dog_walk();
 
   // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在
-  // ere/event/event-endcheck.js（#116）
+  // ere/system/ending/endcheck.js（#116）
   await run_endcheck();
 
   // RETURN 1

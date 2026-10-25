@@ -391,7 +391,7 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
 
   // 回合：COM0（爱抚）→ SOURCE_CHECK（CALL KOJO_MESSAGE_COM）
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   await com_family.call(0);
   await emit('SOURCE_CHECK');

@@ -177,13 +177,13 @@ test('FLAG:26/27 数组承载与原打包值逐槽等价（BigInt 拆解原值 2
 
 test('que2mk：QUE2MK 恒返回 0（真身，非占位——SYSTEM_MODEINT 的真实翻译）', () => {
   const fixture = create_era_fixture();
-  const { que2mk } = fixture.load_module('event/first-setting');
+  const { que2mk } = fixture.load_module('page/page-first-setting');
   assert.equal(que2mk(), 0);
 });
 
 test('ask_maou_sex：四个分支各自的 TALENT/CFLAG 写入', async () => {
   const fixture = create_era_fixture();
-  const { ask_maou_sex } = fixture.load_module('event/first-setting');
+  const { ask_maou_sex } = fixture.load_module('page/page-first-setting');
   const { chara } = fixture.load_module('facade/chara');
 
   const cases = [
@@ -206,7 +206,7 @@ test('ask_maou_sex：四个分支各自的 TALENT/CFLAG 写入', async () => {
 
 test('ask_maou_sex：越界输入不落笔、重问直到有效值（旧引擎无重试豁免，本切片强制作答）', async () => {
   const fixture = create_era_fixture();
-  const { ask_maou_sex } = fixture.load_module('event/first-setting');
+  const { ask_maou_sex } = fixture.load_module('page/page-first-setting');
   fixture.set_inputs(9, 1); // 9 不是任何已打印按钮的快捷键
   await assert.rejects(
     () => ask_maou_sex(),
@@ -217,7 +217,7 @@ test('ask_maou_sex：越界输入不落笔、重问直到有效值（旧引擎�
 
 test('ask_penis_size 写 chara(0).chara.阴茎的状态', async () => {
   const fixture = create_era_fixture();
-  const { ask_penis_size } = fixture.load_module('event/first-setting');
+  const { ask_penis_size } = fixture.load_module('page/page-first-setting');
   const { chara } = fixture.load_module('facade/chara');
   fixture.set_inputs(3);
   const picked = await ask_penis_size();
@@ -227,7 +227,7 @@ test('ask_penis_size 写 chara(0).chara.阴茎的状态', async () => {
 
 test('ask_kuangwang_sex 写 game.system.狂王性别，走具名门面不裸写 FLAG:500', async () => {
   const fixture = create_era_fixture();
-  const { ask_kuangwang_sex } = fixture.load_module('event/first-setting');
+  const { ask_kuangwang_sex } = fixture.load_module('page/page-first-setting');
   const { game } = fixture.load_module('facade/game');
   fixture.set_inputs(1);
   const picked = await ask_kuangwang_sex();
@@ -240,7 +240,7 @@ test('ask_kuangwang_sex 写 game.system.狂王性别，走具名门面不裸写 
 
 test('#615 ask_kuangwang_sex：两条 PRINTL 各是一行一次 print（不带尾换行）', async () => {
   const fixture = create_era_fixture();
-  const { ask_kuangwang_sex } = fixture.load_module('event/first-setting');
+  const { ask_kuangwang_sex } = fixture.load_module('page/page-first-setting');
   fixture.set_inputs(2);
   await ask_kuangwang_sex();
 
@@ -261,7 +261,7 @@ test('#615 ask_kuangwang_sex：两条 PRINTL 各是一行一次 print（不带�
 
 test('first_setting：魔王性别选女性跳过肉棒尺寸一问（IF MAOUSEX != 1）', async () => {
   const fixture = create_era_fixture();
-  const { first_setting } = fixture.load_module('event/first-setting');
+  const { first_setting } = fixture.load_module('page/page-first-setting');
   // 女性 + 狂王男性 + 初期奴隶随机 + 地下城模式普通——若肉棒尺寸一问被
   // 误触发，第二个输入 0 会被它消费而非狂王性别，之后的断言会连锁错位
   fixture.set_inputs(1, 0, 0, 0);
@@ -280,7 +280,7 @@ test('first_setting：魔王性别选女性跳过肉棒尺寸一问（IF MAOUSEX
 
 test('first_setting：魔王性别选男性会问肉棒尺寸（条件为真）', async () => {
   const fixture = create_era_fixture();
-  const { first_setting } = fixture.load_module('event/first-setting');
+  const { first_setting } = fixture.load_module('page/page-first-setting');
   fixture.set_inputs(0, 2, 0, 0, 0); // 男性 + 肉棒尺寸短小包茎 + 狂王男性 + 随机 + 普通
   await first_setting();
   const { chara } = fixture.load_module('facade/chara');

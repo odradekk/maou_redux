@@ -1,5 +1,5 @@
 /**
- * `ere/event/event-pregnancy.js` 的行为测试（issue #401：妊娠判定一族
+ * `ere/system/pregnancy.js` 的行为测试（issue #401：妊娠判定一族
  * 31 个函数全量 + 育儿室三函数 + 页面接入）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
@@ -248,7 +248,7 @@ function setup_world({ target = -1, assi = -1, pools = {}, dog = false } = {}) {
   for (const [name, value] of Object.entries(pools)) {
     fixture.store.set(name, value);
   }
-  const pregnancy = fixture.load_module('event/event-pregnancy');
+  const pregnancy = fixture.load_module('system/pregnancy');
   return { fixture, era_flag, pregnancy };
 }
 

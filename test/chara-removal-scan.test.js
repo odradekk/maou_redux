@@ -46,7 +46,7 @@ const WHITELIST = new Map([
     'erase_chara（宝库爆炸/暴走奴隶/陪葬近邻三条链）：缺除名登记、称呼重建未走统一入口，待裁定（issue #785 不接入名单）',
   ],
   [
-    'event/ending-family.js',
+    'system/ending/ending-family.js',
     '离队 op_leave：队伍移除收到错位实参、助手指针的写入是死写入，均为有意保留的移植行为；不登记除名标记，语义是离队而非完整除名',
   ],
   [
@@ -54,7 +54,7 @@ const WHITELIST = new Map([
     '离队流程的完整移除（issue #172）：无除名登记，与献祭同属待裁定的变体',
   ],
   [
-    'event/event-ending.js',
+    'page/page-ending.js',
     '结局的贡品退场三连（队伍→删除→称呼重建）：无登记无指针清理，待裁定',
   ],
   [

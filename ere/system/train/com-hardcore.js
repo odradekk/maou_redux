@@ -78,7 +78,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const {
   clothtype_main2_text,
   clothtype_special_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 
 // —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 取默认值） ——
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;

@@ -70,7 +70,7 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   clothtype_main2_text,
   clothtype_special_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 
 /** PBAND:0（EVENTFIRST 置 4）——ITEM:PBAND 即 ITEM:4 假阳具（持有判定） */
 const PBAND = 4;
@@ -1011,7 +1011,7 @@ async function train_message_b_200() {
   }
 
   // 进入分支的服装前缀检查 CFLAG:40 的位 64/28，以及 CFLAG:42 是否 ≤ 50；
-  // ere/page/page-clothtype.js 的取值函数（#215）返回服装名字，
+  // ere/utils/clothtype-utils.js 的取值函数（#215）返回服装名字，
   // 在此拼成整行，与 com0 的服装条件一致。
   const cloth_bits = era.get(`cflag:${target}:40`) || 0;
   const special_type = era.get(`cflag:${target}:42`) || 0;

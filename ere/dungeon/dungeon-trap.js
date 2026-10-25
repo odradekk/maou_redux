@@ -36,8 +36,8 @@
  *   - KARMA（DARK_JUEL 段）经函数内延迟 require 引用 dungeon.js 的
  *     域内存根（避开循环初始化，#175 先例）；
  *   - BEFORE_AUTOTRAIN 经模块对象引用 dungeon-battle.js 的同名转发（该
- *     转发自 #508 起指向 ere/event/event-autotrain.js 的真身），测试可替换；
- *     COM50_AUTO 自 #500 起直调 ere/event/event-autotrain.js 的真身；
+ *     转发自 #508 起指向 ere/system/train/autotrain.js 的真身），测试可替换；
+ *     COM50_AUTO 自 #500 起直调 ere/system/train/autotrain.js 的真身；
  *     CAMPAIGN_TRAP 是 #469 起的族真身；SUMMON_MONSTER 已复用
  *     monster-summon.js 真身；
  *   - PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
@@ -881,7 +881,7 @@ async function love_bath_trap(a, rand_n) {
 /**
  * self_saimin_trap：自慰催眠陷阱（ITEM:67）——淫堕型。
  * 欲情中（位 9）时 DICE ×0.80 更易中招。两档催眠自慰走自动调教三连
- * （CALL com3_auto——真身 ere/event/event-autotrain.js，同族
+ * （CALL com3_auto——真身 ere/system/train/autotrain.js，同族
  * com63_auto 在 dungeon-town.js:775 的先例）。
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
@@ -915,7 +915,7 @@ async function self_saimin_trap(a, rand_n) {
       );
     }
     await battle.before_autotrain();
-    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto
+    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto
     com3_auto();
     await battle.source_check_auto();
     if (show) {
@@ -933,7 +933,7 @@ async function self_saimin_trap(a, rand_n) {
       );
     }
     await battle.before_autotrain();
-    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto
+    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto
     com3_auto();
     await battle.source_check_auto();
     if (show) {
@@ -1193,7 +1193,7 @@ async function succubus_trap(a, rand_n) {
 /**
  * slime_room_trap：史莱姆房间陷阱（ITEM:71）——淫堕型。
  * 落下时 DICE -20 更易中招；中招后润滑位（位 3）立起；走自动调教三连
- * （CALL com50_auto——真身 ere/event/event-autotrain.js）。
+ * （CALL com50_auto——真身 ere/system/train/autotrain.js）。
  * @returns {Promise<number>} RETURN（逃脱也是 0 = 作动、消耗）
  */
 async function slime_room_trap(a, rand_n) {
@@ -1270,7 +1270,7 @@ async function slime_room_trap(a, rand_n) {
 
   // ローション自動調教
   await battle.before_autotrain();
-  const { com50_auto } = require('#/event/event-autotrain'); // CALL com50_auto
+  const { com50_auto } = require('#/system/train/autotrain'); // CALL com50_auto
   com50_auto();
   await battle.source_check_auto();
 
@@ -1671,7 +1671,7 @@ async function fire_trap(a, rand_n) {
  * a_worm_trap：肛门虫陷阱（ITEM:79）——淫堕型。润滑中
  * （位 3）威力 ×1.30；A 经验 > 30 且未寄生时寄生（TALENT:193）；已寄生
  * 时走肛门虫自动调教三连（CALL com13_auto——真身
- * ere/event/event-autotrain.js）。
+ * ere/system/train/autotrain.js）。
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
 async function a_worm_trap(a, rand_n) {
@@ -1724,7 +1724,7 @@ async function a_worm_trap(a, rand_n) {
     era_flag.target = a; // TARGET = A
     // アナルワーム自動調教（CALL com13_auto——真身）
     await battle.before_autotrain();
-    const { com13_auto } = require('#/event/event-autotrain');
+    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();
     await battle.source_check_auto();
   }
@@ -1740,7 +1740,7 @@ async function a_worm_trap(a, rand_n) {
 /**
  * love_bug_trap：淫虫陷阱（ITEM:80）——淫堕型。伤害后
  * 走爱抚自动调教三连（CALL com0_auto——真身
- * ere/event/event-autotrain.js）。RETURN 01
+ * ere/system/train/autotrain.js）。RETURN 01
  * 是十进制 1 的前导零写法（数值按十进制字面量），非八进制。
  * @returns {Promise<number>} RETURN（1 = 未作动）
  */
@@ -1807,7 +1807,7 @@ async function love_bug_trap(a, rand_n) {
   era_flag.target = a; // TARGET = A
   // 愛撫自動調教（CALL com0_auto——真身）
   await battle.before_autotrain();
-  const { com0_auto } = require('#/event/event-autotrain');
+  const { com0_auto } = require('#/system/train/autotrain');
   com0_auto();
   await battle.source_check_auto();
 

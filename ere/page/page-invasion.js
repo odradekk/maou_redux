@@ -109,7 +109,7 @@ const {
   ending_3,
   ending_4,
   ending_5,
-} = require('#/event/event-ending');
+} = require('#/page/page-ending');
 const { get_enemy, MAX_CHARANUM } = require('#/event/enter-enemy');
 const { karma } = require('#/chara/chara-stats');
 const { add_chara_ex } = require('#/chara/chara-ex');
@@ -2047,7 +2047,7 @@ async function sengen_video(rand = default_rand) {
  *
  * 四组 ELSEIF（顺序照旧，命中一组即止）：各领域侵攻度满 10000 且未征服
  * → 对应结局演出 + EX_FLAG:99 += 10 + PRINTL 声望+10。演出本体全部在
- * ere/event/event-ending.js（`ending_1` / `ending_3` / `ending_4` /
+ * ere/page/page-ending.js（`ending_1` / `ending_3` / `ending_4` /
  * `ending_5`，都是真身）。
  *
  * 四组的可达性随 #505 变化：人间界组是阶段 1 的贯通终点；精灵/龙/天界
@@ -2064,7 +2064,7 @@ async function sengen_video(rand = default_rand) {
  * ENDING_1 由 test/page-invasion.test.js 的既有用例（窄路径跨 10000）覆盖，
  * 精灵组由「[1] 魔力结果段的已征服封顶」用例的第三条世界覆盖（地区续接把
  * FLAG:86 顶到 10000 → ENDING_3 + CHAR_GIFT 收下圣女），演出本体另有
- * test/event-ending.test.js 的表驱动用例。
+ * test/page-ending.test.js 的表驱动用例。
  *
  * @returns {Promise<void>}
  */

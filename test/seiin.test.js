@@ -12,7 +12,7 @@
  *     TFLAG:110 获得旗（game.event 门面）、精液中毒 LV3 直抬、
  *     SOURCE:13 的乘算与 SOURCE:5 的达阈加成。
  *
- * 契约（调用方 = ere/event/source-check.js 的 ex_check_up）：
+ * 契约（调用方 = ere/system/train/source-check.js 的 ex_check_up）：
  *   seiin_start() → Promise<void>（ecst_check 之后、多重绝顶倍率之前）。
  */
 

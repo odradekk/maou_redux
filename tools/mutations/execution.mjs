@@ -131,7 +131,7 @@ export default [
   },
   {
     desc: 'M7276 苗床妊娠：短孕期错误多一天',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '    view.event.预产日 = era_flag.day_count + 10 + rand(6);',
     replace: '    view.event.预产日 = era_flag.day_count + 11 + rand(6);',
     tests: ['event-execution'],

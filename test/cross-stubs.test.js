@@ -192,7 +192,7 @@ test('ITEM_DETOX：按原状态输出并经属主门面清除四种寄生素质'
 test('NAKADASHI_CHECK：关闭妊娠功能仍清掉对应精液池', () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:1:103', 20);
-  const { nakadashi_check } = fixture.load_module('event/event-pregnancy');
+  const { nakadashi_check } = fixture.load_module('system/pregnancy');
 
   assert.equal(
     nakadashi_check(1, 2, () => 0),
@@ -209,7 +209,7 @@ test('NAKADASHI_CHECK：剂量、体型和排卵药共同决定掷骰上界', ()
   fixture.store.set('talent:1:100', 1);
   fixture.store.set('cflag:1:109', 1);
   let upper;
-  const { nakadashi_check } = fixture.load_module('event/event-pregnancy');
+  const { nakadashi_check } = fixture.load_module('system/pregnancy');
 
   nakadashi_check(1, 2, (n) => ((upper = n), 2));
   assert.equal(upper, 6);
@@ -223,7 +223,7 @@ test('NAKADASHI_CHECK：男性和非兽耳犬交配早退时不消费精液池',
   fixture.store.set('talent:1:122', 1);
   fixture.store.set('cflag:1:103', 10);
   fixture.store.set('cflag:2:106', 10);
-  const { nakadashi_check } = fixture.load_module('event/event-pregnancy');
+  const { nakadashi_check } = fixture.load_module('system/pregnancy');
 
   nakadashi_check(1, 2, () => 0);
   nakadashi_check(2, 5, () => 0);
@@ -238,7 +238,7 @@ test('NAKADASHI_CHECK：已有预产日或正在妊娠时清池但不改妊娠�
   fixture.store.set('cflag:1:103', 10);
   fixture.store.set('talent:2:153', 1);
   fixture.store.set('cflag:2:103', 10);
-  const { nakadashi_check } = fixture.load_module('event/event-pregnancy');
+  const { nakadashi_check } = fixture.load_module('system/pregnancy');
 
   nakadashi_check(1, 2, () => 0);
   nakadashi_check(2, 2, () => 0);

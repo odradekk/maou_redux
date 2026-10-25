@@ -603,7 +603,7 @@ test('re_clothed：顺从+露出癖 ≥ 3 → 维持脱衣态；< 3 → 穿回�
   );
 });
 
-// —— 取串模块（cloth-lookup / page-clothtype）——
+// —— 取串模块（cloth-lookup / clothtype-utils）——
 
 test('get_clothtype_main2：名字查表与动词后置（渲染序 = 名字 → 动词）', () => {
   const fixture = create_era_fixture();
@@ -647,7 +647,7 @@ test('get_clothtype_special：98/99 是简体名（#60），未知 → ERROR', (
 
 test('clothtype_main2_text 的 9 号 = 胸甲＆透视裙子（与 get_clothtype_main2 同读一份表）', () => {
   const fixture = create_era_fixture();
-  const { clothtype_main2_text } = fixture.load_module('page/page-clothtype');
+  const { clothtype_main2_text } = fixture.load_module('utils/clothtype-utils');
   fixture.store.set('cflag:31:41', 9);
   assert.equal(clothtype_main2_text(31), '胸甲＆透视裙子', '页面版 9 号');
 });
@@ -657,7 +657,7 @@ test('两版出口同源：共享表内每个编号，page 版与 GET 版返回�
   // 比对两版返回值：谁把表拆回页面的私有拷贝、改漏一处，这里先红。
   const fixture = create_era_fixture();
   const lookup = fixture.load_module('system/cloth-lookup');
-  const page = fixture.load_module('page/page-clothtype');
+  const page = fixture.load_module('utils/clothtype-utils');
 
   for (const [key, name] of Object.entries(lookup.MAIN2_TABLE)) {
     fixture.store.set('cflag:31:41', Number(key));
@@ -692,7 +692,7 @@ test('名字表的编号空间：编号被删或被加都要在这里停一下',
 test('两版出口的未知编号缺省：main2 都回「服」，special 分回空串与 ERROR', () => {
   const fixture = create_era_fixture();
   const lookup = fixture.load_module('system/cloth-lookup');
-  const page = fixture.load_module('page/page-clothtype');
+  const page = fixture.load_module('utils/clothtype-utils');
   fixture.store.set('cflag:31:41', 999);
   fixture.store.set('cflag:31:42', 999);
 
@@ -720,7 +720,7 @@ test('两版出口的未知编号缺省：main2 都回「服」，special 分回
 
 test('clothtype_text：着衣模式关 / 无基本服装 → 全裸；史莱姆特装；特别服装句', () => {
   const fixture = create_era_fixture();
-  const { clothtype_text } = fixture.load_module('page/page-clothtype');
+  const { clothtype_text } = fixture.load_module('utils/clothtype-utils');
   fixture.store.set('cflag:31:41', 5);
   assert.equal(clothtype_text(31), '全裸', 'FLAG:37=0');
   fixture.store.set('flag:37', 1);
@@ -743,7 +743,7 @@ test('clothtype_text：着衣模式关 / 无基本服装 → 全裸；史莱姆�
 
 test('clothtype_main_text：半脱两态与内衣三态', () => {
   const fixture = create_era_fixture();
-  const { clothtype_main_text } = fixture.load_module('page/page-clothtype');
+  const { clothtype_main_text } = fixture.load_module('utils/clothtype-utils');
   // 只穿上衣 + 有内裤（40 = 4|1）
   fixture.store.set('cflag:31:41', 5);
   fixture.store.set('cflag:31:40', UPPER | PANTS);
@@ -779,7 +779,7 @@ test('clothtype_main_text：半脱两态与内衣三态', () => {
 
 test('clothtype_main_text：体操服（109）与全身型（201-300）的撕破态', () => {
   const fixture = create_era_fixture();
-  const { clothtype_main_text } = fixture.load_module('page/page-clothtype');
+  const { clothtype_main_text } = fixture.load_module('utils/clothtype-utils');
   // 体操服：只穿上身
   fixture.store.set('cflag:31:41', 109);
   fixture.store.set('cflag:31:40', UPPER);

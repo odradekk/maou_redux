@@ -157,7 +157,7 @@ export default [
   },
   {
     desc: 'M6581 NAKADASHI_CHECK 妊娠开关掩码 4 改错',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: "  if (((era.get('flag:5') || 0) & 4) === 0) {",
     replace: "  if (((era.get('flag:5') || 0) & 2) === 0) {",
     tests: ['cross-stubs'],
@@ -165,7 +165,7 @@ export default [
   },
   {
     desc: 'M6582 NAKADASHI_CHECK 男性早退条件改坏',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '  if (view.chara.男人 || view.train.未熟) return 0;',
     replace: '  if (view.chara.男人 && view.train.未熟) return 0;',
     tests: ['cross-stubs'],
@@ -173,7 +173,7 @@ export default [
   },
   {
     desc: 'M6583 NAKADASHI_CHECK 犬父系编号 5 改错',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '  if (kind === 5 && !view.chara.动物耳朵) return 0;',
     replace: '  if (kind === 4 && !view.chara.动物耳朵) return 0;',
     tests: ['cross-stubs'],
@@ -181,7 +181,7 @@ export default [
   },
   {
     desc: 'M6584 NAKADASHI_CHECK 剂量 10 档阈值改错',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '  else if (pool >= 10) [base, success] = [4, 2];',
     replace: '  else if (pool >= 11) [base, success] = [4, 2];',
     tests: ['cross-stubs'],
@@ -189,7 +189,7 @@ export default [
   },
   {
     desc: 'M6585 NAKADASHI_CHECK 娇小素质倍率 2 改错',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '  const upper = (base + view.chara.娇小 * 2) * ovulation;',
     replace: '  const upper = (base + view.chara.娇小) * ovulation;',
     tests: ['cross-stubs'],
@@ -197,7 +197,7 @@ export default [
   },
   {
     desc: 'M6586 NAKADASHI_CHECK 成功比较从小于等于退化为小于',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '  if (rand(upper) <= success) view.event.妊娠相手 = kind;',
     replace: '  if (rand(upper) < success) view.event.妊娠相手 = kind;',
     tests: ['cross-stubs'],
@@ -205,7 +205,7 @@ export default [
   },
   {
     desc: 'M6587 NAKADASHI_CHECK 预产日检查阈值改错',
-    file: 'ere/event/event-pregnancy.js',
+    file: 'ere/system/pregnancy.js',
     find: '  if (view.event.预产日 > 0 || view.chara.妊娠 || view.chara.育儿中) {',
     replace:
       '  if (view.event.预产日 > 10 || view.chara.妊娠 || view.chara.育儿中) {',

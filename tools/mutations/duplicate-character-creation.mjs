@@ -31,7 +31,7 @@ export default [
   },
   {
     desc: 'M14803 影仆召唤的候选漏掉「已在场」过滤（已加入的角色照样列出来）',
-    file: 'ere/page/page-shop-labo.js',
+    file: 'ere/system/labo/labo-calc.js',
     find: '    if (era.getAddedCharacters().includes(id)) continue; // 同号已在场',
     replace: '    if (false) continue; // 变异：已在场也列进候选',
     tests: ['duplicate-character-creation-engine'],

@@ -23,7 +23,7 @@
  * 合计 + 实行值）需要显示为一行，因此 com_order 自 #219 起
  * 返回段落数组、不自行打印，由调用方拼接后一次 print。
  *
- * 自动调教已随 #218 在 ere/event/event-autotrain.js 实现，
+ * 自动调教已随 #218 在 ere/system/train/autotrain.js 实现，
  * 由 dungeon 域调用，与本文件的 com0 / com3 是不同的调用路径，
  * 不需要在此登记（#459）。
  *
@@ -48,7 +48,7 @@ const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const {
   clothtype_main2_text,
   clothtype_special_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 const { com_order } = require('#/system/train/com-order');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const {
@@ -2065,7 +2065,7 @@ async function train_message_b_0() {
   const player = era_flag.player;
   const target_name = chara_callname(target);
 
-  // 服装前缀（#215，ere/page/page-clothtype.js）
+  // 服装前缀（#215，ere/utils/clothtype-utils.js）
   const cloth_bits = era.get(`cflag:${target}:40`) || 0;
   const special_type = era.get(`cflag:${target}:42`) || 0;
   let line = '';

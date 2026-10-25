@@ -38,7 +38,7 @@
  *   wearing_cloth_all 位于 ere/system/train/cloth.js，用于探测标准装位。
  *   standard_bits 暂存当前装位，调用该函数后读取标准装位，再还原当前态；
  *   各判定函数据此判断「标准装备是否含该部位」。服装名称来自
- *   ere/page/page-clothtype.js 的取值函数，由本模块合成整行再打印。
+ *   ere/utils/clothtype-utils.js 的取值函数，由本模块合成整行再打印。
  *
  * == 写入通道的域归属（#215） ==
  *
@@ -76,7 +76,7 @@ const {
   clothtype_main2_text,
   clothtype_special_text,
   clothtype_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 

@@ -37,7 +37,7 @@ test('#769 正常位完整回合：魔王满条后射精，保留封顶前的余
   const { fixture } = seed_world();
   fixture.load_module('system/train/com-sex');
   fixture.load_module('event/event-com');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   fixture.load_module('event/event-comend');
   const { execute_command_round } = fixture.load_module(
     'system/train/train-loop',

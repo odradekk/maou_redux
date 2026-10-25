@@ -51,7 +51,7 @@ function seed_train_world(fixture) {
   fixture.load_module('event/event-end');
   fixture.load_module('event/event-com');
   fixture.load_module('event/event-comend');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   fixture.load_module('page/page-train');
   fixture.load_module('page/page-usercom');
   fixture.load_module('system/train/com-caress');

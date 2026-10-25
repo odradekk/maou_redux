@@ -1719,7 +1719,7 @@ export default [
   },
   {
     desc: 'M906 LOST_VIRGIN_CHECK 早退检查的 TFLAG:19 条件删（恒早退）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: 'function lost_virgin_check() {\n  if (!tal(0) || tflag(19) === 0) {\n    return;\n  }',
     replace: `function lost_virgin_check() {
   if (!tal(0)) {
@@ -1730,7 +1730,7 @@ export default [
   },
   {
     desc: 'M907 TALENT:0 的清除删（经 chara 门面）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: "  era.print('【处女丧失】');\n  chara(cid).chara.处女 = 0; // （talent:0 属主 chara 走门面）",
     replace: "  era.print('【处女丧失】');\n  // 变异：TALENT:0 清除删",
     tests: ['source-check'],
@@ -1738,7 +1738,7 @@ export default [
   },
   {
     desc: 'M908 摄影旗（tflag:32 |= 1 经 kojo 门面）删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`tequip:\${cid}:53\`)) {
     game.kojo.录像内容 |= 1;
   }`,
@@ -1748,7 +1748,7 @@ export default [
   },
   {
     desc: 'M909 振动棒初体验覆盖码错（101 → 103）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    if (era_flag.selectcom === 11) {
       chara(cid).train.初体验对象 = 101; // 振动棒
     }`,
@@ -2924,7 +2924,7 @@ export default [
   },
   {
     desc: 'M1053 AUTOTRAIN: 常时发情（talent:271）欲情润滑初值赋错（3000 改 0）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  if (era.get(\`talent:\${target}:271\`)) {
     chara(target).train.润滑 = 3000;
     chara(target).train.欲情 = 3000;
@@ -2933,23 +2933,23 @@ export default [
     chara(target).train.润滑 = 0;
     chara(target).train.欲情 = 0;
   }`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'format_autotrain & before_autotrain',
   },
   {
     desc: 'M1054 AUTOTRAIN: COM3_AUTO 自慰经验不递增',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  chara(target).dungeon.自慰经验 += 1;
   era.print('自慰经验＋１');`,
     replace: `  // 变异：自慰经验不加
   era.print('自慰经验＋１');`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'COM3',
   },
   // 回路四环反向变异（M1055-M1058，打在结算/推进公共模块）：
   {
     desc: 'M1055 E2E: 回路第 1 环破环——参数上升切断（UP:0 快C 不写入 delta，使参数无法上升）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [0, 0], // PALAM:快Ｃ',
     replace: '      // 变异：不累加快C',
     tests: ['event-corrupt-e2e', 'source-check'],
@@ -2957,7 +2957,7 @@ export default [
   },
   {
     desc: 'M1056 E2E: 回路第 2 环破环——刻印变化切断（快感达标不授予快乐刻印）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    chara(cid).system.快乐刻印 = 1;',
     replace: '    // 变异：快乐刻印不赋值',
     tests: ['event-corrupt-e2e', 'source-check'],
@@ -3217,40 +3217,40 @@ export default [
   },
   {
     desc: 'M1282 AUTOTRAIN: com13 体力门槛失效（BASE:0<500 放行）（#218）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  const target = era_flag.target;
   if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0;
   if ((era.get(\`base:\${target}:1\`) || 0) < 300) return 0;`,
     replace: `  const target = era_flag.target;
   // 变异：体力门槛删除
   if ((era.get(\`base:\${target}:1\`) || 0) < 300) return 0;`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: '体力<500 必须拦下',
   },
   {
     desc: 'M1283 AUTOTRAIN: com13 气力门槛失效（BASE:1<300 放行）（#218）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0;
   if ((era.get(\`base:\${target}:1\`) || 0) < 300) return 0;`,
     replace: `  if ((era.get(\`base:\${target}:0\`) || 0) < 500) return 0;
   // 变异：气力门槛删除`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: '气力<300 必须拦下',
   },
   {
     desc: 'M1284 AUTOTRAIN: after_autotrain 常时发情蓄积闸失效（flag:75==0 恒蓄积）（#218）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  // 常时发情
   if ((era.get('flag:75') || 0) === 0 && !era.get(\`talent:\${target}:271\`)) {`,
     replace: `  // 变异：常时发情闸删除
   if (true && !era.get(\`talent:\${target}:271\`)) {`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention:
       'after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两道闸）',
   },
   {
     desc: 'M1285 AUTOTRAIN: autotrain 遍历跳过 cflag:666==0 失效（#218）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `    if ((era.get(\`cflag:\${target}:666\`) || 0) === 0) {
       continue;
     }`,
@@ -3258,7 +3258,7 @@ export default [
     if (false) {
       continue;
     }`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'cflag:666==0 的角色必须跳过',
   },
   {
@@ -5196,7 +5196,7 @@ export default [
   },
   {
     desc: 'M9589 TARGET_EJAC_CHECK 早退检查的 TALENT:122 条件删（只剩 121）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `function target_ejac_check() {
   if (!tal(121) && !tal(122)) {
     return;
@@ -5210,7 +5210,7 @@ export default [
   },
   {
     desc: 'M9590 TARGET_EJAC_CHECK 未熟随机修正 tal(135) 条件焊死为恒假',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const is_mijyuku = !!tal(135);
   const mijyuku = is_mijyuku
     ? Math.floor(Math.random() * 700) - Math.floor(Math.random() * 800) + 400
@@ -5224,7 +5224,7 @@ export default [
   },
   {
     desc: 'M9591 TARGET_EJAC_CHECK 克制系数 idiv(local,2) 删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
 
   let local = up(0) + up(1) + up(2) + up(14);
@@ -5267,7 +5267,7 @@ export default [
   },
   {
     desc: 'M9592 TARGET_EJAC_CHECK 接受快感系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
 
   let local = up(0) + up(1) + up(2) + up(14);
@@ -5295,7 +5295,7 @@ export default [
   },
   {
     desc: 'M9593 TARGET_EJAC_CHECK 淫乱化系数 1.1 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
 
   let local = up(0) + up(1) + up(2) + up(14);
@@ -5331,7 +5331,7 @@ export default [
   },
   {
     desc: 'M9594 TARGET_EJAC_CHECK 否定快感系数 0.8 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
 
   let local = up(0) + up(1) + up(2) + up(14);
@@ -5375,7 +5375,7 @@ export default [
   },
   {
     desc: 'M9595 TARGET_EJAC_CHECK 媚药系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`tequip:\${cid}:21\`)) {
     // 媚药
     local *= 2;
@@ -5399,7 +5399,7 @@ export default [
   },
   {
     desc: 'M9596 TARGET_EJAC_CHECK 利尿剂折减删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`tequip:\${cid}:22\`)) {
     // 利尿剂
     local = idiv(local, 2);
@@ -5420,7 +5420,7 @@ export default [
   },
   {
     desc: 'M9597 TARGET_EJAC_CHECK 安全套折减删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`tequip:\${cid}:37\`)) {
     // 调教对象安全套装着
     local = idiv(local, 2);
@@ -5439,7 +5439,7 @@ export default [
   },
   {
     desc: 'M9599 TARGET_EJAC_CHECK 大量射精档 EXPLV 最低档条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const grade = settle_ejaculation_gauge(cid, total - mijyuku_kenkai);
   if (grade === 0) {
     return;
@@ -5468,7 +5468,7 @@ export default [
   },
   {
     desc: 'M9600 TARGET_EJAC_CHECK 异常经验条件的 TALENT:122 条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    era.print(\`\${callname}大量射精\`);
     era.print('精液经验+1');
     era.print('射精经验+2');
@@ -5489,7 +5489,7 @@ export default [
   },
   {
     desc: 'M9601 TARGET_EJAC_CHECK 未熟体力上限下限 600 钳制删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      if (chara(cid).dungeon.体力上限 < 600) {
         chara(cid).dungeon.体力上限 = 600;
       }
@@ -5505,7 +5505,7 @@ export default [
   },
   {
     desc: 'M9602 TARGET_EJAC_CHECK 大量射精档阴茎污渍位 4 错改 8',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    chara(cid).train.阴茎污渍 |= 4;
 
     game.system.对象射精 = 2;`,
@@ -5517,7 +5517,7 @@ export default [
   },
   {
     desc: 'M9603 TARGET_WORMBABY_CHECK 早退检查的 TALENT:191 条件删（只剩 190）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `async function target_wormbaby_check() {
   if (!tal(190) && !tal(191)) {
     return;
@@ -5531,7 +5531,7 @@ export default [
   },
   {
     desc: 'M9604 TARGET_WORMBABY_CHECK 大量出产档阈值 25000 错改 30000',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  let grade;
   if (local > 25000) {
     grade = 2;
@@ -5546,7 +5546,7 @@ export default [
   },
   {
     desc: 'M9605 TARGET_WORMBABY_CHECK 普通出产档阈值 10000 错改 20000',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (local > 25000) {
     grade = 2;
   } else if (local > 10000) {
@@ -5567,7 +5567,7 @@ export default [
   },
   {
     desc: 'M9606 TARGET_WORMBABY_CHECK 克制系数 idiv(local,2) 删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  let local = up(0) + up(1) + up(2) + up(14);
   if (tal(20)) {
     // 克制
@@ -5620,7 +5620,7 @@ export default [
   },
   {
     desc: 'M9607 TARGET_WORMBABY_CHECK 接受快感系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(70)) {
     // 接受快感
     local = times(local, 1.2);
@@ -5664,7 +5664,7 @@ export default [
   },
   {
     desc: 'M9608 TARGET_WORMBABY_CHECK 淫乱化系数 1.1 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(76)) {
     // 淫乱化
     local = times(local, 1.1);
@@ -5700,7 +5700,7 @@ export default [
   },
   {
     desc: 'M9609 TARGET_WORMBABY_CHECK 否定快感系数 0.8 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(71)) {
     // 否定快感
     local = times(local, 0.8);
@@ -5728,7 +5728,7 @@ export default [
   },
   {
     desc: 'M9610 TARGET_WORMBABY_CHECK 媚药系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`tequip:\${cid}:21\`)) {
     // 媚药
     local *= 2;
@@ -5748,7 +5748,7 @@ export default [
   },
   {
     desc: 'M9611 TARGET_WORMBABY_CHECK 输出部位文案 both 分支条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const site = tal(190) && tal(191) ? '膣内和直肠' : tal(190) ? '膣内' : '直肠';`,
     replace: `  const site = tal(190) ? '膣内' : '直肠'; // 变异：both 分支条件删`,
     tests: ['source-check'],
@@ -5756,7 +5756,7 @@ export default [
   },
   {
     desc: 'M9612 TARGET_WORMBABY_CHECK 大量出产档 EXPLV 最低档条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (grade === 2) {
     add_lose(0, 20);
     add_lose(1, 100);
@@ -5813,7 +5813,7 @@ export default [
   },
   {
     desc: 'M9613 TARGET_WORMBABY_CHECK 大量出产档生育经验 +=2 错改 +=1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    era.print(\`\${callname}的\`);
     await era.printAndWait(\`\${site}排出了大量的蠕虫幼虫\`);
     era.print('生育经验+2');
@@ -5827,7 +5827,7 @@ export default [
   },
   {
     desc: 'M9614 TARGET_WORMBABY_CHECK TFLAG:120/121 双写的 both 分支条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(190) && tal(191)) {
     game.system.V虫产卵 = grade;
     game.system.A虫产卵 = grade;
@@ -5847,7 +5847,7 @@ export default [
   },
   {
     desc: 'M9615 PISSING_ECST_CHECK 检查 grade===0 早退条件改错（漏尿经验恒记 0 档）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
     grade = 1;
   }
@@ -5866,7 +5866,7 @@ export default [
   },
   {
     desc: 'M9616 PISSING_ECST_CHECK grade5 的 TALENT:57 条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  let grade = 0;
   if (t29 >= 7 && tequip22 && tal57) {
     grade = 5;
@@ -5881,7 +5881,7 @@ export default [
   },
   {
     desc: 'M9617 PISSING_ECST_CHECK grade4 的 TFLAG:29≥7 门槛错改 ≥10',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {
     grade = 4;
   } else if (
@@ -5896,7 +5896,7 @@ export default [
   },
   {
     desc: 'M9618 PISSING_ECST_CHECK grade3 的 (t29≥7&&tal57) 分支删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if (
     (t29 >= 7 && tal57) ||
     (t29 >= 5 && tequip22) ||
@@ -5914,7 +5914,7 @@ export default [
   },
   {
     desc: 'M9619 PISSING_ECST_CHECK grade2 的 (t29≥3&&tequip22) 分支删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if (
     (t29 >= 5 && tal57) ||
     (t29 >= 3 && tequip22) ||
@@ -5932,7 +5932,7 @@ export default [
   },
   {
     desc: 'M9620 PISSING_ECST_CHECK grade1 的 (t29≥3&&tal57) 分支删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
     grade = 1;
   }
@@ -5951,7 +5951,7 @@ export default [
   },
   {
     desc: 'M9621 PISSING_ECST_CHECK 放尿经验累加 +=grade 错改固定 +=1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  era.print(\`放尿经验+\${grade}\`);
   chara(cid).system.放尿经验 += grade;`,
     replace: `  era.print(\`放尿经验+\${grade}\`);
@@ -5961,7 +5961,7 @@ export default [
   },
   {
     desc: 'M9622 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade≥3 门槛错改 ≥4',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (grade >= 3 || (grade === 2 && !tal57)) {
     chara(cid).system.利尿剂 = 0;
   }`,
@@ -5974,7 +5974,7 @@ export default [
   },
   {
     desc: 'M9623 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade===2 分支的 !TALENT:57 条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (grade >= 3 || (grade === 2 && !tal57)) {
     chara(cid).system.利尿剂 = 0;
   }
@@ -5989,7 +5989,7 @@ export default [
   },
   {
     desc: 'M9624 PISSING_ECST_CHECK 阴茎污渍位 32 错改 16',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  chara(cid).train.阴茎污渍 |= 32;
   chara(cid).train.阴道污渍 |= 32;
   if (grade >= 2) {
@@ -6005,7 +6005,7 @@ export default [
   },
   {
     desc: 'M9625 PISSING_ECST_CHECK 阴道污渍位 32 错改 16',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  chara(cid).train.阴茎污渍 |= 32;
   chara(cid).train.阴道污渍 |= 32;
   if (grade >= 2) {
@@ -6027,7 +6027,7 @@ export default [
   },
   {
     desc: 'M9626 PISSING_ECST_CHECK STAIN 弄脏两行被误套上 grade≥2 条件（1 档不该受限）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  chara(cid).train.阴茎污渍 |= 32;
   chara(cid).train.阴道污渍 |= 32;
   if (grade >= 2) {
@@ -6046,7 +6046,7 @@ export default [
   },
   {
     desc: 'M9627 EXP_GOT_CHECK 段 1 的 UP:7<100 强制归零条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    let local = up(0) + up(1) + up(2) + up(14);
     const up7 = up(7);
     if (up7 < 100) {
@@ -6063,7 +6063,7 @@ export default [
   },
   {
     desc: 'M9628 EXP_GOT_CHECK 段 1 的 TFLAG:100 检查条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    if (tflag(100)) {
       let grade = 0;
       if (local >= 12000) {
@@ -6082,7 +6082,7 @@ export default [
   },
   {
     desc: 'M9629 EXP_GOT_CHECK 段 1 最低档阈值 1000 错改 2500',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      } else if (local >= 2000) {
         grade = 2;
         set_up(11, times(up(11), 0.85));
@@ -6109,7 +6109,7 @@ export default [
   },
   {
     desc: 'M9630 EXP_GOT_CHECK 段 1 最高档 UP:11 折减系数 0.65 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      if (local >= 12000) {
         grade = 16;
         set_up(11, times(up(11), 0.65));
@@ -6125,7 +6125,7 @@ export default [
   },
   {
     desc: 'M9631 EXP_GOT_CHECK 段 1 主从爱情经验的 TEQUIP:88 条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      if (era.get(\`tequip:\${cid}:88\`) && grade) {
         era.print(\`主从爱情经验+\${grade}\`);
         chara(cid).stronghold.主从爱情经验 += grade;
@@ -6144,7 +6144,7 @@ export default [
   },
   {
     desc: 'M9632 EXP_GOT_CHECK 段 2 的 UP:2<5000 系数 ×2 错改 ×1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    } else if (up(2) < 1000) {
       local *= 1;
     } else if (up(2) < 5000) {
@@ -6160,7 +6160,7 @@ export default [
   },
   {
     desc: 'M9633 EXP_GOT_CHECK 段 2 grade4 判定阈值 3000 错改 5000',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    } else if (local >= 3000) {
       grade = 4;
       set_up(11, times(up(11), 0.9));
@@ -6203,7 +6203,7 @@ export default [
   },
   {
     desc: 'M9634 EXP_GOT_CHECK 段 2 最高档 UP:6 折减系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    if (local >= 12000) {
       grade = 16;
       set_up(11, times(up(11), 0.8));
@@ -6221,7 +6221,7 @@ export default [
   },
   {
     desc: 'M9635 EXP_GOT_CHECK 段 2 肛门快乐经验累加 +=grade 错改固定 +=1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    if (grade) {
       era.print(\`肛门快乐经验+\${grade}\`);
       chara(cid).stronghold.肛门快乐经验 += grade;
@@ -6237,7 +6237,7 @@ export default [
   },
   {
     desc: 'M9636 EXP_GOT_CHECK 段 3 快乐 UP 总和为 0 时回退 UP:5 条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    let local = up(0) + up(1) + up(2) + up(14);
     if (local === 0) {
       local = up(5);
@@ -6251,7 +6251,7 @@ export default [
   },
   {
     desc: 'M9637 EXP_GOT_CHECK 段 3 最低档的 UP:9 双阈值条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    } else if (local >= 600 && up9 >= 300) {
       grade = 2;
       set_up(11, times(up(11), 0.85));
@@ -6272,7 +6272,7 @@ export default [
   },
   {
     desc: 'M9638 EXP_GOT_CHECK 段 3 从属快乐经验的 TEQUIP:88 条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    if (grade) {
       if (era.get(\`tequip:\${cid}:88\`)) {
         era.print(\`从属快乐经验+\${grade}\`);
@@ -6289,7 +6289,7 @@ export default [
   },
   {
     desc: 'M9639 EXP_GOT_CHECK 助手折算 assi_grade===0 分支的归零改错为 ×0.5',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `        let local1 = grade;
         let local2 = 0;
         if (assi_grade === 0) {
@@ -6309,7 +6309,7 @@ export default [
   },
   {
     desc: 'M9640 EXP_GOT_CHECK 助手折算 assi_grade===2 分支的 idiv(local1,2) 错改 idiv(local1,4)',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `        } else if (assi_grade === 2) {
           local1 = times(local1, 1.0);
           local2 = idiv(local1, 2);
@@ -6323,7 +6323,7 @@ export default [
   },
   {
     desc: 'M9641 EXP_GOT_CHECK 助手折算 assi_grade===3 分支的 *2 错改 *3',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `        } else if (assi_grade === 3) {
           local2 = local1 * 2;
         } else if (assi_grade === 4) {
@@ -6337,7 +6337,7 @@ export default [
   },
   {
     desc: 'M9642 EXP_GOT_CHECK 助手折算 assi_grade===4 分支的 *10 错改 *20',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `        } else if (assi_grade === 4) {
           local2 = local1 * 10;
         } else if (assi_grade >= 5) {
@@ -6353,7 +6353,7 @@ export default [
   },
   {
     desc: 'M9643 AUTO_NUM_CHECK 跳过条件 i>=11 错改 i>=12（下标 11 不再跳过）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  for (let i = 0; i <= 16; i += 1) {
     if (i >= 11 && i !== 14) {
       continue;
@@ -6368,7 +6368,7 @@ export default [
   },
   {
     desc: 'M9644 AUTO_NUM_CHECK 例外条件 i!==14 条件删（下标 14 被误跳过）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  for (let i = 0; i <= 16; i += 1) {
     if (i >= 11 && i !== 14) {
       continue;
@@ -6385,7 +6385,7 @@ export default [
   },
   {
     desc: 'M9645 AUTO_NUM_CHECK CFLAG:667 阈值 5 档条件改错为 6',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const rate = chara(target).event.自动调教回数;
   let m;
   if (rate < 5) {
@@ -6402,7 +6402,7 @@ export default [
   },
   {
     desc: 'M9646 AUTO_NUM_CHECK CFLAG:667 阈值 10 档系数 1.5 错改 1.25',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if (rate < 10) {
     m = 1.5;
   } else if (rate < 15) {`,
@@ -6414,7 +6414,7 @@ export default [
   },
   {
     desc: 'M9647 AUTO_NUM_CHECK CFLAG:667 阈值 40 档系数 7.25 错改 5.3',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  } else if (rate < 40) {
     m = 7.25;
   } else {
@@ -6430,7 +6430,7 @@ export default [
   },
   {
     desc: 'M9648 AUTO_NUM_CHECK 循环上界 i<=16 错改 i<=10（下标 14 不再处理）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  for (let i = 0; i <= 16; i += 1) {
     if (i >= 11 && i !== 14) {
       continue;
@@ -6950,7 +6950,7 @@ export default [
   // —— SOKUOCHI_CHECK（#462）——
   {
     desc: 'M9836 SOKUOCHI_CHECK 早退检查删除（TALENT:73=0 时也会执行 12 组升级）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `function sokuochi_check() {
   if (!tal(73)) {
     return;
@@ -6965,7 +6965,7 @@ export default [
   },
   {
     desc: 'M9837 SOKUOCHI_CHECK TIERS LV1 门槛 1 错改 2',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const TIERS = [1, 30, 60, 200, 1000];`,
     replace: `  const TIERS = [2, 30, 60, 200, 1000]; // 变异：LV1 门槛 1 错改 2`,
     tests: ['source-check'],
@@ -6973,7 +6973,7 @@ export default [
   },
   {
     desc: 'M9838 SOKUOCHI_CHECK TIERS LV2 门槛 30 错改 60',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const TIERS = [1, 30, 60, 200, 1000];`,
     replace: `  const TIERS = [1, 60, 60, 200, 1000]; // 变异：LV2 门槛 30 错改 60`,
     tests: ['source-check'],
@@ -6981,7 +6981,7 @@ export default [
   },
   {
     desc: 'M9839 SOKUOCHI_CHECK EXP_TIERS LV3 门槛 20 错改 40',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  const EXP_TIERS = [1, 5, 20, 40, 100];`,
     replace: `  const EXP_TIERS = [1, 5, 40, 40, 100]; // 变异：LV3 门槛 20 错改 40`,
     tests: ['source-check'],
@@ -6989,7 +6989,7 @@ export default [
   },
   {
     desc: 'M9840 SOKUOCHI_CHECK 阴蒂钝感封印位 &2 错改 &1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (!((tal(101) || 0) & 2)) {
     const lv = bump(sys, '阴蒂感觉', up(0), TIERS);`,
     replace: `  if (!((tal(101) || 0) & 1)) {
@@ -7001,7 +7001,7 @@ export default [
   },
   {
     desc: 'M9841 SOKUOCHI_CHECK 前置门槛 >=lv 错改 >lv',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `        domain[prop] < lv &&
         (!gate || gate() >= lv)`,
     replace: `        domain[prop] < lv &&
@@ -7011,7 +7011,7 @@ export default [
   },
   {
     desc: 'M9842 SOKUOCHI_CHECK 当前档位比较 <lv 错改 <=lv（ELSEIF 链跳档）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      if (
         value > tiers[lv - 1] &&
         domain[prop] < lv &&`,
@@ -7023,7 +7023,7 @@ export default [
   },
   {
     desc: 'M9843 SOKUOCHI_CHECK 阈值比较 >tiers 错改 >=tiers（含等号）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      if (
         value > tiers[lv - 1] &&`,
     replace: `      if (
@@ -7033,7 +7033,7 @@ export default [
   },
   {
     desc: 'M9844 SOKUOCHI_CHECK 性别标签漏判 TALENT:121（扶她分支）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `      const label = tal(122) || tal(121) ? '阴茎感觉' : ablname(0);`,
     replace: `      const label = tal(122) ? '阴茎感觉' : ablname(0); // 变异：漏判 TALENT:121`,
     tests: ['source-check'],
@@ -7041,7 +7041,7 @@ export default [
   },
   {
     desc: 'M9845 SOKUOCHI_CHECK ABL:2 驱动下标读错（up(1) 错改 up(0)）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    const lv = bump(sys, '私处感觉', up(1), TIERS);`,
     replace: `    const lv = bump(sys, '私处感觉', up(0), TIERS); // 变异：驱动下标 1 错改 0`,
     tests: ['source-check'],
@@ -7049,7 +7049,7 @@ export default [
   },
   {
     desc: 'M9846 SOKUOCHI_CHECK ABL:21 驱动下标读错（up(9) 错改 up(8)）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    const lv = bump(sys, '抖Ｍ气质', up(9), TIERS, () => sys.欲望);`,
     replace: `    const lv = bump(sys, '抖Ｍ气质', up(8), TIERS, () => sys.欲望); // 变异：驱动下标 9 错改 8`,
     tests: ['source-check'],
@@ -7057,7 +7057,7 @@ export default [
   },
   {
     desc: 'M9847 SOKUOCHI_CHECK ABL:12 误用 EXP_TIERS（应为 TIERS）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    const lv = bump(sys, '技巧', up(7), TIERS);`,
     replace: `    const lv = bump(sys, '技巧', up(7), EXP_TIERS); // 变异：误用 EXP_TIERS`,
     tests: ['source-check'],
@@ -7065,7 +7065,7 @@ export default [
   },
   {
     desc: 'M9848 SOKUOCHI_CHECK ABL:17 门槛来源读错（乳房感觉错改欲望）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.乳房感觉);`,
     replace: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.欲望); // 变异：门槛来源读错`,
     tests: ['source-check'],
@@ -7075,7 +7075,7 @@ export default [
   // —— TARGET_MILK_CHECK（#462，验收返工）——
   {
     desc: 'M9849 TARGET_MILK_CHECK 早退检查删除（TALENT:130=0 时也会执行喷乳结算）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `function target_milk_check() {
   if (!chara(cid).chara.母乳体质) {
     return;
@@ -7090,7 +7090,7 @@ export default [
   },
   {
     desc: 'M9850 TARGET_MILK_CHECK 克制折减删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
   if (tal(20)) {
     // 克制
@@ -7105,7 +7105,7 @@ export default [
   },
   {
     desc: 'M9851 TARGET_MILK_CHECK 接受快感系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
   if (tal(20)) {
     // 克制
@@ -7129,7 +7129,7 @@ export default [
   },
   {
     desc: 'M9852 TARGET_MILK_CHECK 淫乱化系数 1.1 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
   if (tal(20)) {
     // 克制
@@ -7161,7 +7161,7 @@ export default [
   },
   {
     desc: 'M9853 TARGET_MILK_CHECK 否定快感系数 0.8 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(71)) {
     // 否定快感
     local = times(local, 0.8);
@@ -7179,7 +7179,7 @@ export default [
   },
   {
     desc: 'M9854 TARGET_MILK_CHECK 乳房敏感系数 1.5 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(108)) {
     // 乳房敏感
     local = times(local, 1.5);
@@ -7193,7 +7193,7 @@ export default [
   },
   {
     desc: 'M9855 TARGET_MILK_CHECK 媚药系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(108)) {
     // 乳房敏感
     local = times(local, 1.5);
@@ -7215,7 +7215,7 @@ export default [
   },
   {
     desc: 'M9856 TARGET_MILK_CHECK 利尿剂折减删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`tequip:\${cid}:22\`)) {
     // 利尿剂
     local = idiv(local, 2);
@@ -7232,7 +7232,7 @@ export default [
   },
   {
     desc: 'M9857 TARGET_MILK_CHECK 调教者幼儿退行系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`talent:\${era_flag.player}:131\`)) {
     // 调教者幼儿退行
     local *= 2;
@@ -7246,7 +7246,7 @@ export default [
   },
   {
     desc: 'M9858 TARGET_MILK_CHECK 调教者幼稚系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (era.get(\`talent:\${era_flag.player}:132\`)) {
     // 调教者幼稚
     local *= 2;
@@ -7260,7 +7260,7 @@ export default [
   },
   {
     desc: 'M9859 TARGET_MILK_CHECK 贫乳系数 0.5 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(109)) {
     // 贫乳
     local = times(local, 0.5);
@@ -7274,7 +7274,7 @@ export default [
   },
   {
     desc: 'M9860 TARGET_MILK_CHECK 绝壁系数 0.2 错改 1.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (tal(116)) {
     // 绝壁
     local = times(local, 0.2);
@@ -7288,7 +7288,7 @@ export default [
   },
   {
     desc: 'M9861 TARGET_MILK_CHECK 三档判定 > ejac*2 错改 >= ejac*2',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  if (total > ejac * 2) {',
     replace: '  if (total >= ejac * 2) {',
     tests: ['source-check'],
@@ -7296,7 +7296,7 @@ export default [
   },
   {
     desc: 'M9862 TARGET_MILK_CHECK 大量档 EXPLV 最低档条件删',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (grade === 2) {
     add_lose(0, 20);
     add_lose(1, 100);
@@ -7310,7 +7310,7 @@ export default [
   },
   {
     desc: 'M9863 TARGET_MILK_CHECK 异常经验条件误加性别门槛（应恒不带门槛，区别于 TARGET_EJAC_CHECK）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    era.print(\`\${callname}的乳头喷出了大量的母乳。\`);
     era.print('喷奶经验+2');
     if (exp54 === 0) {`,
@@ -7322,7 +7322,7 @@ export default [
   },
   {
     desc: 'M9864 TARGET_MILK_CHECK 普通档胸部污渍位 16 错改 32',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    chara(cid).train.喷奶经验 += 1;
     chara(cid).train.胸部污渍 |= 16;`,
     replace: `    chara(cid).train.喷奶经验 += 1;
@@ -7332,7 +7332,7 @@ export default [
   },
   {
     desc: 'M9865 TARGET_MILK_CHECK 大量档喷奶经验 += 2 错改 += 1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    chara(cid).train.喷奶经验 += 2;
     chara(cid).train.胸部污渍 |= 16;`,
     replace: `    chara(cid).train.喷奶经验 += 1;
@@ -7342,7 +7342,7 @@ export default [
   },
   {
     desc: 'M9866 TARGET_MILK_CHECK 搾乳器检查 TEQUIP:90 条件删（覆盖时仍会累加）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    game.system.对象喷乳 += 1;
     if (era.get(\`tequip:\${cid}:16\`) && !era.get(\`tequip:\${cid}:90\`)) {
       game.system.榨乳中 += 1;
@@ -7356,7 +7356,7 @@ export default [
   },
   {
     desc: 'M9867 TARGET_MILK_CHECK 大量档对象喷乳 TFLAG:11 += 2 错改 += 1',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    game.system.对象喷乳 += 2;',
     replace: '    game.system.对象喷乳 += 1;',
     tests: ['source-check'],
@@ -7379,7 +7379,7 @@ export default [
   // —— #461（SOURCE_CHECK_AUTO 新逻辑 + EQUIP_COM 接入核实）——
   {
     desc: 'M9769 AUTO ANTI/LIKE 门槛：source_check_up_anti() 调用删（专属门槛失去 ANTI 分支）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    source_check_up_anti();
     source_check_up_like();`,
     replace: `    source_check_up_like();`,
@@ -7388,7 +7388,7 @@ export default [
   },
   {
     desc: 'M9770 AUTO ANTI/LIKE 门槛：PLAYER==MASTER 条件删（助手调教也能结算 ANTI/LIKE）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0 && player === MASTER) {`,
     replace: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0) {`,
     tests: ['source-check'],
@@ -7396,7 +7396,7 @@ export default [
   },
   {
     desc: 'M9771 AUTO ANTI/LIKE 门槛：CFLAG:1==0 条件取反（反抗刻印生效时反而结算）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0 && player === MASTER) {`,
     replace: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) !== 0 && player === MASTER) {`,
     tests: ['source-check'],
@@ -7404,7 +7404,7 @@ export default [
   },
   {
     desc: 'M9772 SOURCE_CHECK_UP_ANTI：反感追加写入的 UP id 错（11 → 12）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  add_up(11, src(15)); // 反感追加 → 反感',
     replace: '  add_up(12, src(15)); // 变异：UP id 误写',
     tests: ['source-check'],
@@ -7412,7 +7412,7 @@ export default [
   },
   {
     desc: 'M9773 AUTO_NUM_CHECK 倍率表：第 1 档 1.25 → 1.3',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    m = 1.25;',
     replace: '    m = 1.3;',
     tests: ['source-check'],
@@ -7420,7 +7420,7 @@ export default [
   },
   {
     desc: 'M9774 AUTO_NUM_CHECK 倍率表：第 2 档 1.5 → 1.6',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    m = 1.5;',
     replace: '    m = 1.6;',
     tests: ['source-check'],
@@ -7428,7 +7428,7 @@ export default [
   },
   {
     desc: 'M9775 AUTO_NUM_CHECK 倍率表：第 3 档门槛 < 15 抬到 < 16',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  } else if (rate < 15) {',
     replace: '  } else if (rate < 16) {',
     tests: ['source-check'],
@@ -7436,7 +7436,7 @@ export default [
   },
   {
     desc: 'M9776 AUTO_NUM_CHECK 倍率表：末档 9.9 → 9.5',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    m = 9.9;',
     replace: '    m = 9.5;',
     tests: ['source-check'],
@@ -7444,7 +7444,7 @@ export default [
   },
   {
     desc: 'M9777 AUTO_NUM_CHECK 跳过逻辑：UP:14 例外删（14 也被当作跳过处理）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    if (i >= 11 && i !== 14) {',
     replace: '    if (i >= 11) {',
     tests: ['source-check'],
@@ -7452,7 +7452,7 @@ export default [
   },
   {
     desc: 'M9778 AUTO_NUM_CHECK 跳过逻辑：跳过起点 >= 11 收窄成 > 11（UP:11 不再跳过）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    if (i >= 11 && i !== 14) {',
     replace: '    if (i > 11 && i !== 14) {',
     tests: ['source-check'],
@@ -7460,7 +7460,7 @@ export default [
   },
   {
     desc: 'M9779 AUTO handler Block A：UP:0 减半行删（气力 0 时快乐不再减半）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(0, idiv(up(0), 2));\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
     replace:
       '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {\n    set_up(1, idiv(up(1), 2));\n    set_up(2, idiv(up(2), 2));\n    set_up(14, idiv(up(14), 2));\n  }',
@@ -7469,7 +7469,7 @@ export default [
   },
   {
     desc: 'M9780 AUTO handler Block A：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {',
     replace:
       '  // 气力０的快乐减半（与 manual 同款条件，含 TFLAG:201 豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0 && tflag(201) !== 1) {',
@@ -7478,7 +7478,7 @@ export default [
   },
   {
     desc: 'M9781 AUTO handler Block B：减半数组漏 UP:9（AUTO_NUM_CHECK 放大后不再减半）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
       '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
@@ -7487,7 +7487,7 @@ export default [
   },
   {
     desc: 'M9782 AUTO handler Block B：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半加倍）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
       '  // 气力０的感情减半与损耗加倍（与 manual 同款条件，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
@@ -7496,7 +7496,7 @@ export default [
   },
   {
     desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 不再结算）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
@@ -7506,7 +7506,7 @@ export default [
   },
   {
     desc: 'M9785 SOURCE_CHECK_AUTO：down_map.clear() 删（DOWN 跨回合残留）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  down_map.clear();\n\n  // 调教者能力检查\n  player_skill_check();\n  master_skill_check();',
     replace:
       '  // 调教者能力检查\n  player_skill_check();\n  master_skill_check();',
@@ -7515,7 +7515,7 @@ export default [
   },
   {
     desc: 'M9786 AUTO handler：deltabase→base 结算跳过扣减（损耗当场生效但不写回 base）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  // 体力气力扣减（deltabase → base 当场结算并清零，钳\n  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要\n  // manual 那两个 lose0/lose1 快照变量）\n  for (const k of [0, 1]) {\n    const loss = lose(k);\n    if (loss !== 0) {\n      const base = era.get(`base:${cid}:${k}`) || 0;\n      const max = era.get(`maxbase:${cid}:${k}`) || 0;\n      let next = base - loss;',
     replace:
       '  // 体力气力扣减（deltabase → base 当场结算并清零，钳\n  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要\n  // manual 那两个 lose0/lose1 快照变量）\n  for (const k of [0, 1]) {\n    const loss = lose(k);\n    if (loss !== 0) {\n      const base = era.get(`base:${cid}:${k}`) || 0;\n      const max = era.get(`maxbase:${cid}:${k}`) || 0;\n      let next = base;',
@@ -7524,7 +7524,7 @@ export default [
   },
   {
     desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（delta:15 残留会被引擎重新累加进 palam）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
@@ -9550,32 +9550,32 @@ export default [
   // —— #508：自动调教本体的两处寻址订正与一处清零（event-autotrain.js） ——
   {
     desc: 'M11004 BEFORE_AUTOTRAIN 的 SOURCE 重置退回二段寻址（角色桶表二段写被引擎静默忽略）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `    for (let local = 0; local < 17; local += 1) {
       era.set(\`source:\${target}:\${local}\`, 0);
     }`,
     replace: `    for (let local = 0; local < 17; local += 1) {
       era.set(\`source:\${local}\`, 0); // 变异：退回二段（写不落）
     }`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'AUTOTRAIN: format_autotrain & before_autotrain 重置行为',
   },
   {
     desc: 'M11005 lose 助手的负值通道写反（deltabase 存正值——损耗反成回复）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: 'const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);',
     replace:
       'const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, v); // 变异：符号写反',
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'LOSEBASE:0 = 1 → deltabase 负值',
   },
   {
     desc: 'M11006 FORMAT_AUTOTRAIN 的 LOSEBASE 归零删除（损耗槽跨场残留）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  era.set(\`deltabase:\${target}:0\`, 0);
   era.set(\`deltabase:\${target}:1\`, 0);`,
     replace: '  // 变异：LOSEBASE 归零删除',
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'LOSEBASE 归零（deltabase 是负值通道',
   },
   // —— #512 第一步：ABLUP37/39/40 的素质表与门槛补覆盖（M10920-M10932）——
@@ -10594,7 +10594,7 @@ export default [
   },
   {
     desc: 'M13101 PALAM_UP_CHECK_MINI：ORDER 回退成缺 15 重复 14（14 双结算、15 不写回复活）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
@@ -10757,10 +10757,10 @@ export default [
   // —— #725：自动调教后 FLAG:5 第 35 位的取位 ——
   {
     desc: 'M14365 after_autotrain 的 FLAG:5 第 35 位退回 32 位位运算（实读第 3 位）',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: `  if (Math.floor((era.get('flag:5') || 0) / 2 ** 35) % 2 === 1) {`,
     replace: `  if ((era.get('flag:5') || 0) & (1 << 35)) { // 变异：退回 32 位位运算`,
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: '第 35 位为 1 时自动调教后必须执行自动提升',
   },
   // —— #723：回主菜单换屏前的按键确认（ADR-0009 的段尾等键） ——
@@ -10836,7 +10836,7 @@ export default [
   },
   {
     desc: 'M15039 调教对象喷乳分档漏掉本轮之前的槽值',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  const total = chara(cid).train.母乳槽 + local;',
     replace: '  const total = local;',
     tests: ['source-check'],
@@ -10844,7 +10844,7 @@ export default [
   },
   {
     desc: 'M15040 调教对象普通喷乳满值边界错改为 >=',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  } else if (total > ejac) {',
     replace: '  } else if (total >= ejac) {',
     tests: ['source-check'],
@@ -10852,7 +10852,7 @@ export default [
   },
   {
     desc: 'M15041 调教对象未喷乳时漏存本轮蓄积量',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (grade === 0) {
     chara(cid).train.母乳槽 = total;
     return;
@@ -10865,7 +10865,7 @@ export default [
   },
   {
     desc: 'M15042 调教对象喷乳余量封顶保护删除',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  chara(cid).train.母乳槽 = Math.min(total - ejac * grade, ejac - 1);',
     replace: '  chara(cid).train.母乳槽 = total - ejac * grade;',
     tests: ['source-check'],

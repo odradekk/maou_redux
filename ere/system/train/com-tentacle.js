@@ -30,7 +30,7 @@ const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { clothtype_special_text } = require('#/page/page-clothtype');
+const { clothtype_special_text } = require('#/utils/clothtype-utils');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const {
   COM_MISSING,

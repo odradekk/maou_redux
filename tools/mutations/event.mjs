@@ -125,7 +125,7 @@ export default [
   },
   {
     desc: 'M46 调教者技巧阶梯废掉（恒 ×1.0）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  const rate = pabl(12) >= 5 ? rates[5] : rates[pabl(12)];',
     replace: '  const rate = 1.0;',
     tests: ['source-check'],
@@ -133,7 +133,7 @@ export default [
   },
   {
     desc: 'M47 欲情系数的边界改为含下界（< 改 <=）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    if (p5 < PALAMLV[table[i][0]]) {',
     replace: '    if (p5 <= PALAMLV[table[i][0]]) {',
     tests: ['source-check'],
@@ -141,7 +141,7 @@ export default [
   },
   {
     desc: 'M48 ABL>5 的放大算式错一格（+5 改 +4）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    local0 = idiv(local0 * (abl(abl_index) + 5), 10);',
     replace: '    local0 = idiv(local0 * (abl(abl_index) + 4), 10);',
     tests: ['source-check'],
@@ -149,7 +149,7 @@ export default [
   },
   {
     desc: 'M49 绝顶阈值错档（PALAMLV[4] 改 PALAMLV[3]）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  const LV4 = PALAMLV[4]; // 10000',
     replace: '  const LV4 = PALAMLV[3]; // 变异：阈值错档',
     tests: ['source-check'],
@@ -157,7 +157,7 @@ export default [
   },
   {
     desc: 'M50 NOWEX 只写不并被破坏（直接并进 EX → 与引擎双重累加）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  era.set(`nowex:${cid}:0`, ex_c);',
     replace: '  era.add(`ex:${cid}:0`, ex_c);',
     tests: ['source-check'],
@@ -165,7 +165,7 @@ export default [
   },
   {
     desc: 'M52 TFLAG:59 读了新 PREVCOM（应为旧值）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: "  era.set('tflag:59', era_flag.prevcom);",
     replace: "  era.set('tflag:59', era_flag.selectcom);",
     tests: ['source-check'],
@@ -173,7 +173,7 @@ export default [
   },
   {
     desc: 'M53 参数行的缺段空格错一（DOWN 缺段 7 改 8）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '          (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(7)) +',
     replace:
       '          (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(8)) +',
@@ -182,7 +182,7 @@ export default [
   },
   {
     desc: 'M54 PRINTW 点线错一（39 改 38）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: "  era.print('‥'.repeat(39));",
     replace: "  era.print('‥'.repeat(38));",
     tests: ['source-check'],
@@ -201,7 +201,7 @@ export default [
   },
   {
     desc: 'M183 source-check 迁移回退一处（屈服刻印结算改回裸 era.set）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: 'game.train.屈服刻印结算 = 1; // 屈服刻印１相当',
     replace: "era.set('tflag:200', 1); // 屈服刻印１相当",
     tests: ['source-check'],
@@ -209,7 +209,7 @@ export default [
   },
   {
     desc: 'M184 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: 'chara(cid).system.反抗刻印 = 1;',
     replace: 'era.set(`mark:${cid}:3`, 1);',
     tests: ['source-check'],
@@ -296,7 +296,7 @@ export default [
   {
     desc: 'M193 ENDCHECK 调用点被删（主线剧情监测每日一次失守；#116 起为真调用）',
     file: 'ere/event/event-nextday.js',
-    find: '  // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在\n  // ere/event/event-endcheck.js（#116）\n  await run_endcheck();',
+    find: '  // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在\n  // ere/system/ending/endcheck.js（#116）\n  await run_endcheck();',
     replace: '  // 变异：ENDCHECK 不调用',
     tests: ['event-nextday'],
     must_mention: 'ENDCHECK 必须恰好被调用一次',
@@ -360,122 +360,122 @@ export default [
   },
   {
     desc: 'M205 ending_1 的 FLAG:82 置位删除',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '  era_flag.human_realm_fallen = 1;',
     replace: '  // 变异：FLAG:82 不置位',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'FLAG:82 置 1',
   },
   {
     desc: 'M206 ending_1 的 QUIT 分支也置 FLAG:82（QUIT 分支不置）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `      era.quit();
     }`,
     replace: `      era_flag.human_realm_fallen = 1; // 变异：QUIT 前置位
       era.quit();
     }`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '退出路径不置陷落标记',
   },
   {
     desc: 'M207 ending_1 入队角色号改坏（ADDCHARA 35 → 34）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '  era.addCharacter(35);',
     replace: '  era.addCharacter(34); // 变异：入错角色',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '菲娅）入队',
   },
   {
     desc: 'M208 ending_3 的置位状态机断在 1（FLAG:87 = 2 → 1）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 2;`,
     replace: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 1; // 变异：状态机断在 1`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '1→2',
   },
   {
     desc: 'M209 endcheck_main 2801 主线空闲检查删除（剧情线推进中也置 99）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  if (
     era_flag.day_count === 500 &&
     (era_exflag.first_run_deadline === 0 || era_exflag.first_run_deadline >= 90)
   ) {`,
     replace: `  if (era_flag.day_count === 500 && era_exflag.first_run_deadline >= 0) {`,
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention:
       'endcheck_main 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99；其余不动',
   },
   {
     desc: 'M210 endcheck_main 2802 反作弊容差丢失（+8766 删掉）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (era_flag.money > era_exflag.legit_money + 8766) {',
     replace: '  if (era_flag.money > era_exflag.legit_money) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '容差界',
   },
   {
     desc: 'M211 endcheck_main 2803 占用检查删除（占用中的奴隶也计入失控号）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `    if (
       (era.get(\`cflag:\${cid}:9\`) || 0) >= 5000 &&
       (era.get(\`cflag:\${cid}:1\`) || 0) === 0
     ) {`,
     replace: `    if ((era.get(\`cflag:\${cid}:9\`) || 0) >= 5000) {`,
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '占用中的角色不得计入',
   },
   {
     desc: 'M212 endcheck_main 2804 魔王过载阈值边界含等改不含（>= 1500 改 >）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: "  if ((era.get('cflag:0:9') || 0) >= 1500) {",
     replace: "  if ((era.get('cflag:0:9') || 0) > 1500) {",
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '魔王过载必须置 10',
   },
   {
     desc: 'M213 endcheck_main FLAG 侧反叛判定边界（<= 0 改 < 0，威望恰为零不置）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (era_exflag.prestige <= 0) {',
     replace: '  if (era_exflag.prestige < 0) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '威望 <= 0 必须置',
   },
   {
     desc: 'M215 endcheck_chara 素质定线值交换（恋慕也置 20）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '          starter.holder[starter.name] = 10;',
     replace: '          starter.holder[starter.name] = 20;',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '恋慕定线必须置 10',
   },
   {
     desc: 'M216 END 族分派循环防重播检查删除（个位非 0 的已播段也分发）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      if (stage % 10 === 0) {',
     replace: '      if (true) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '已播',
   },
   {
     desc: 'M217 END 族分派循环短路检查删除（2801 == 99 时照跑）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  if (era_exflag.first_run_deadline !== 99) {
     for (const family of [7, 10, 11, 14]) {`,
     replace: `  {
     for (const family of [7, 10, 11, 14]) {`,
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '整体短路',
   },
   {
     desc: 'M219 ending_n 门槛丢 DAY 检查（99 已定即每天调演出）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (era_exflag.first_run_deadline === 99 && era_flag.day_count === 500) {',
     replace: '  if (era_exflag.first_run_deadline === 99) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention:
       'ending_n：2801 == 99 且 DAY == 500 才调用（#404 起演出真身），否则不出现',
   },
@@ -524,12 +524,12 @@ export default [
   // —— #148 quit 的 throw 型控制流（夹具镜像 + ere 侧哨兵机制拆除）——
   {
     desc: 'M274 ending_1 的 quit 调用被拆、哨兵复辟（#148 前旧写法：return 1 短路）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `      // throw（era-fixture.js），测试可证
       era.quit();`,
     replace: `      // throw（era-fixture.js），测试可证
       return 1; // 变异：quit 调用被拆，哨兵复辟（#148 前旧形式）`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
   {
@@ -539,7 +539,7 @@ export default [
     replace: `    try {
       await ending_1(); // 变异：吞掉 QUIT 异常，威望 +10 照走
     } catch (e) {}`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     // 变异下吞掉异常 → run_check 正常 resolve → 用例第一条断言（炸穿在
     // 场）先红，威望断言不再执行——must_mention 取先红断言的消息片段
     must_mention: 'QUIT 的异常炸穿 invasion_check',
@@ -623,59 +623,59 @@ export default [
   // —— #173（H4）：ending_2 真身（M440-M445）——
   {
     desc: 'M440 ending_2 的 QUIT 降格为普通返回（quit() → return 0）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era.quit();
 }`,
     replace: `  return 0; // 变异：QUIT 降格为返回值
 }`,
-    tests: ['event-ending', 'dungeon-main', 'event-ending2-e2e'],
+    tests: ['page-ending', 'dungeon-main', 'event-ending2-e2e'],
     must_mention: 'QUIT 的异常从 ending_2 炸出',
   },
   {
     desc: 'M441 ending_2 封印播报的名字写死 0（%SAVESTR:TARGET% 不取指针）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "  const target_name = era.get(`callname:${era_flag.target}:-1`) ?? '';",
     replace:
       "  const target_name = era.get(`callname:0:-1`) ?? ''; // 变异：写死 0",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '封印播报随 TARGET 指针取名',
   },
   {
     desc: 'M442 ending_2 的 GAMEOVER 分隔行删除',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "  era.drawLine({ content: 'GAMEOVER' });",
     replace: '  // 变异：GAMEOVER 分隔行删',
-    tests: ['event-ending', 'event-ending2-e2e'],
+    tests: ['page-ending', 'event-ending2-e2e'],
     must_mention: 'GAMEOVER 分隔行',
   },
   {
     desc: 'M443 ending_2 横幅末行删除（「带着一丝不易察觉的微笑……」）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "  era.print('｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜');",
     replace: '  // 变异：横幅末行删',
-    tests: ['event-ending', 'event-ending2-e2e'],
+    tests: ['page-ending', 'event-ending2-e2e'],
     must_mention: '横幅末行',
   },
   {
     desc: 'M444 ending_2 的仪式性 INPUT 删除',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '  // INPUT——确认用，结果不被消费（QUIT 之后无读者）\n  await era.input();',
     replace: '  // 变异：INPUT 删（演出不等确认直接 QUIT）',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'INPUT 恰一次在 QUIT 之前',
   },
   {
     desc: 'M445 ending_2 封印播报的读键删除（PRINTFORMW 不等键）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '  await era.waitAnyKey(); // PRINTFORMW 的读键',
     replace: '  // 变异：PRINTFORMW 的读键删',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'PRINTFORMW 读键在前',
   },
   // —— #221 J11：SYSTEM_SOURCE 的对象避孕套与膣内射精计数 ——
   {
     desc: 'M1100 SOURCE_CHECK 对象避孕套前置清 TFLAG:10 删（逆侵犯误计数）（#221）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (chara(cid).train.对象避孕套 && tflag(10)) {
     era.print(\`射在避孕套里（\${era.get(\`callname:\${cid}:-2\`) ?? ''}）\`);
     chara(cid).train.对象避孕套 = 0;
@@ -687,7 +687,7 @@ export default [
   },
   {
     desc: 'M1101 SOURCE_CHECK 兽奸分支提前到 3P 主人前（优先链错序）（#221）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    } else if (tflag(2) && tflag(40) === 1) {
       chara(cid).system.主人膣内射精 += tflag(38);
     } else if (era.get(\`tequip:\${cid}:89\`) && tflag(16)) {
@@ -960,7 +960,7 @@ export default [
   },
   {
     desc: 'M7937 CHECK_SPECIALSKIL：cid 在场条件取反（不在场的反而放行）',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: '  if (!era.getAddedCharacters().includes(cid)) {',
     replace: '  if (era.getAddedCharacters().includes(cid)) {',
     tests: ['event-get-specialtalent'],
@@ -968,7 +968,7 @@ export default [
   },
   {
     desc: 'M7938 CHECK_SPECIALSKIL：TALENT:9（崩坏）检查条件被拆（崩坏角色也跑 STEP1/STEP2）',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: '  if (talent(cid, 9)) {',
     replace: '  if (false && talent(cid, 9)) {',
     tests: ['event-get-specialtalent'],
@@ -976,7 +976,7 @@ export default [
   },
   {
     desc: 'M7939 step1：顺从 Lv5 达成门槛 CFLAG:2>=2000 误写成 2001',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: '    cflag(cid, 2) >= 2000 &&\n    cflag(cid, 0) < 2 &&',
     replace: '    cflag(cid, 2) >= 2001 &&\n    cflag(cid, 0) < 2 &&',
     tests: ['event-get-specialtalent'],
@@ -984,7 +984,7 @@ export default [
   },
   {
     desc: 'M7940 semen_liking：已持有喜欢精液的早退检查条件被拆（重复触发）',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: '  if (talent(cid, 47) !== 0) {',
     replace: '  if (talent(cid, 47) === 0) {',
     tests: ['event-get-specialtalent'],
@@ -992,7 +992,7 @@ export default [
   },
   {
     desc: 'M7941 forced_semen_liking：TFLAG:110/seiin 双门条件被拆成恒真',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: '  if (!seiin || !game.event.精爱味觉 || talent(cid, 47) !== 0) {',
     replace: '  if (false) {',
     tests: ['event-get-specialtalent'],
@@ -1002,314 +1002,314 @@ export default [
   // —— #404（N20）结局链：四条角色线状态机 + 65 个 end<n> 数据表 + 演出 ——
   {
     desc: 'M8196 endcheck_square 起步档：好感门槛 2000 误写成 2001',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  const love = talent(85) === 1;\n  if (love && cflag(2) >= 2000 && stage < 10) {\n    era_exflag.route_22 = 10; // 起步',
     replace:
       '  const love = talent(85) === 1;\n  if (love && cflag(2) >= 2001 && stage < 10) {\n    era_exflag.route_22 = 10; // 起步',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '恋慕阶梯',
   },
   {
     desc: 'M8197 endcheck_square 30→40 档：ABL 攻+敏门槛 14 误写成 15',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `    if (love && get(\`abl:\${cid}:10\`) + get(\`abl:\${cid}:16\`) >= 14) {
       era_exflag.route_22 = 40;`,
     replace: `    if (love && get(\`abl:\${cid}:10\`) + get(\`abl:\${cid}:16\`) >= 15) {
       era_exflag.route_22 = 40;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '恋慕阶梯',
   },
   {
     desc: 'M8198 endcheck_square 300 档：RAND:5 命中条件 === 0 改成 === 1',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `    if (rand(5) === 0) {
       era_exflag.route_22 = era_exflag.route_22 + 10;`,
     replace: `    if (rand(5) === 1) {
       era_exflag.route_22 = era_exflag.route_22 + 10;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '恋慕阶梯',
   },
   {
     desc: 'M8199 endcheck_square 40→50 档：计数器门槛 10 误写成 11',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage >= 40 && stage < 50) {\n    if (love && cflag(515) >= 10) {\n      era_exflag.route_22 = 50;',
     replace:
       '  } else if (stage >= 40 && stage < 50) {\n    if (love && cflag(515) >= 11) {\n      era_exflag.route_22 = 50;',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '恋慕阶梯',
   },
   {
     desc: 'M8200 endcheck_square 淫乱互换重置：300-310 区间上界改成 311',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      (era_exflag.route_22 >= 300 && era_exflag.route_22 <= 310))',
     replace:
       '      (era_exflag.route_22 >= 300 && era_exflag.route_22 <= 311))',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '素质互换重置',
   },
   {
     desc: 'M8201 endcheck_spade 乳业收入：门槛 151 误写成 152',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (era_exflag.route_21 >= 151) {',
     replace: '  if (era_exflag.route_21 >= 152) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '151 档乳业收入',
   },
   {
     desc: 'M8202 endcheck_spade 乳业收入：档位基数 140 误写成 141',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      Math.trunc((era_exflag.route_21 - 140) / 10) * (rand(200) + 200);',
     replace:
       '      Math.trunc((era_exflag.route_21 - 141) / 10) * (rand(200) + 200);',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '151 档乳业收入',
   },
   {
     desc: 'M8203 endcheck_spade 乳业收入：RAND:200 的上界改 201',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      Math.trunc((era_exflag.route_21 - 140) / 10) * (rand(200) + 200);',
     replace:
       '      Math.trunc((era_exflag.route_21 - 140) / 10) * (rand(201) + 200);',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '151 档乳业收入',
   },
   {
     desc: 'M8204 endcheck_spade 淫乱 120-130 档：计数器门槛 2 误写成 3',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    if (cflag(515) >= 2) {',
     replace: '    if (cflag(515) >= 3) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '双阶梯表驱动',
   },
   {
     desc: 'M8205 endcheck_spade 淫乱 140 档：ABL:1 == 10 放宽成 >= 10（四条件合取被拆）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      get(`abl:${cid}:1`) === 10 &&',
     replace: '      get(`abl:${cid}:1`) >= 10 &&',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'ABL:1/17',
   },
   {
     desc: 'M8206 endcheck_spade 恋慕 300 档：310 误写成 311',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    if (love && cflag(515) >= 10) {\n      era_exflag.route_21 = 310;',
     replace:
       '    if (love && cflag(515) >= 10) {\n      era_exflag.route_21 = 311;',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '双阶梯表驱动',
   },
   {
     desc: 'M8207 endcheck_princess 初次会面：线值 10 误写成 11',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  if (get_chara(35) > 0 && era_exflag.route_35 === 0) {
     era_exflag.route_35 = 10;`,
     replace: `  if (get_chara(35) > 0 && era_exflag.route_35 === 0) {
     era_exflag.route_35 = 11;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '初会与两阶梯',
   },
   {
     desc: 'M8208 endcheck_princess 崩坏态：线值 -10 误写成 -20',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      era_exflag.route_35 = -10; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）',
     replace:
       '      era_exflag.route_35 = -20; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'MARK:1/2',
   },
   {
     desc: 'M8209 endcheck_princess 婚礼门槛：CFLAG:601 == 901 误写成 902',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    if (cflag(601) === 901) {',
     replace: '    if (cflag(601) === 902) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '初会与两阶梯',
   },
   {
     desc: 'M8210 endcheck_godness 110-120 档：好感上界 <= 5000 误写成 <= 5001',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    if (lust && cflag(2) <= 5000 && cflag(515) >= 70) {',
     replace: '      if (lust && cflag(2) <= 5001 && cflag(515) >= 70) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '淫乱阶梯',
   },
   {
     desc: 'M8211 endcheck_godness 120-130 档：好感门槛 8000 误写成 8001',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    if (lust && cflag(2) >= 8000) {',
     replace: '      if (lust && cflag(2) >= 8001) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '淫乱阶梯',
   },
   {
     desc: 'M8212 endcheck_godness 140-150 档：计数器门槛 150 误写成 151',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    // （计数器 >= 150 且 DAY:1 >= 350 且葵希罗在场）\n    if (lust && cflag(515) >= 150) {',
     replace:
       '    // （计数器 >= 150 且 DAY:1 >= 350 且葵希罗在场）\n    if (lust && cflag(515) >= 151) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '淫乱阶梯',
   },
   {
     desc: 'M8213 endcheck_godness 140 档：DAY:1（月份）门槛 350 误写成 351',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      if (era_flag.month >= 350 && get_chara(34)) {',
     replace: '      if (era_flag.month >= 351 && get_chara(34)) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '淫乱阶梯',
   },
   {
     desc: 'M8216 ending_3 领域征服置位：FLAG:87 = 1 误写成 0（防重复触发的条件态丢了）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 2;`,
     replace: `  era_flag.elf_realm_conquered = 0;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 2;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'ending_3/4/5',
   },
   {
     desc: 'M8217 ENDING_3 献上对象：char_gift(1) 误写成 char_gift(5)（圣女→龙族公主）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);`,
     replace: `  era_flag.elf_realm_conquered = 1;
   await char_gift(5, rand);`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'ending_3/4/5',
   },
   {
     desc: 'M8218 ending_n 的 ending_input 分档：2801 + 1000 误写成 + 2000（分档错位）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '  await ending_input(era_exflag.first_run_deadline + 1000);',
     replace: '  await ending_input(era_exflag.first_run_deadline + 2000);',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: 'ending_n',
   },
   {
     desc: 'M8219 ending_input CASE 1 的继续分支：收尾文本被改写',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "        era.print('魔王的传说，还将继续......'); // PRINTW",
     replace: "        era.print('魔王的传说，还没有结束。'); // PRINTW",
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '继续分支可见',
   },
   {
     desc: 'M8220 char_gift 性格档位表：第 0 档 160（慈爱）误写成 161（自信家）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: 'const CHAR_GIFT_PERSONAL = [160, 161, 162, 163, 164, 166, 172, 173];',
     replace:
       'const CHAR_GIFT_PERSONAL = [161, 161, 162, 163, 164, 166, 172, 173];',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'char_gift 自选路线',
   },
   {
     desc: 'M8221 char_gift 发色受理集漏掉第 10 色（上界 10 误写成 9）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "{ rule: '(?:10|11|[1-9])' }",
     replace: "{ rule: '(?:11|[1-9])' } // 变异：第 10 色被拒",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'char_gift 自选路线',
   },
   {
     desc: 'M8222 char_gift 随机贡品：RAND(1, 17) 的下界偏一格（1..16 → 2..17）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '      const rand_chara = rand(16) + 1;',
     replace: '      const rand_chara = rand(16) + 2;',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'char_gift 自选路线',
   },
   {
     desc: 'M8223 char_gift 决定键：RESULT == 100 误写成 99（决定键失效，重问）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '    if (result !== 100) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
     replace:
       '    if (result !== 99) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'char_gift 自选路线',
   },
   {
     desc: 'M8224 char_gift 的 ARG 检查：THROW INVALID ARGUMENT 被拆（任意 ARG 放行）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  const gift = CHAR_GIFT_TABLE[arg];
   if (gift === undefined) {`,
     replace: `  const gift = CHAR_GIFT_TABLE[arg] ?? CHAR_GIFT_TABLE[1];
   if (false) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'INVALID ARGUMENT',
   },
   {
     desc: 'M8225 end10_55 的嘉德线推进：+5 误写成 +6',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: '  era_exflag.route_33 = era_exflag.route_33 + 5;',
     replace: '  era_exflag.route_33 = era_exflag.route_33 + 6;',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'end10_55',
   },
   {
     desc: 'M8226 结局段插值：%SAVESTR:MASTER% 不替换（原样输出）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: "  return text.split('%SAVESTR:MASTER%').join(name_of(0));",
     replace: '  return text;',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '插值',
   },
   {
     desc: 'M8227 finish 步：< 99 的检查放宽成 <= 99（99 时也抬档）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '  if (era_exflag.first_run_deadline < 99) {',
     replace: '  if (era_exflag.first_run_deadline <= 99) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'finish 步',
   },
   {
     desc: 'M8229 cflag_between 条件：左闭 >= 改成右开 >（区间下界被排除）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '    return value >= c && value < d;',
     replace: '    return value > c && value < d;',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'END10_12 分岔',
   },
   {
     desc: 'M8230 leave 步：PARTY_CHAR_DEL 的实参从 EX_FLAG:2803 改成 cid',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '  party_char_del(era_exflag.runaway_slave_id);',
     replace: '  party_char_del(cid);',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'leave 步',
   },
   {
     desc: 'M8231 rampage 步：金库损失倍率 0.8 误写成 0.7',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '  const after = Math.trunc(before * 0.8);',
     replace: '  const after = Math.trunc(before * 0.7);',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'rampage 步',
   },
   {
     desc: 'M8232 rampage 步：库存下限 30 误写成 31',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '    if (stock <= 30 && monster < 190) {',
     replace: '    if (stock <= 31 && monster < 190) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'rampage 步',
   },
   {
     desc: 'M8233 rampage 步：190 号以下才保底的检查改成 191',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '    if (stock <= 30 && monster < 190) {',
     replace: '    if (stock <= 30 && monster < 191) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'rampage 步',
   },
   {
     desc: 'M8234 rampage 步：怪物库存的 FOR 下界 100 误写成 101',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: '  for (let monster = 100; monster < 200; monster += 1) {',
     replace: '  for (let monster = 101; monster < 200; monster += 1) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'rampage 步',
   },
   {
@@ -1318,7 +1318,7 @@ export default [
     find: "          '菲娅在床上迷糊的看着四周……似乎还没有对自己身上发生的事情有所认知……',",
     replace:
       "          '菲娅在床上迷糊的看着周围……似乎还没有对自己身上发生的事情有所认知……',",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'END7_1 的首行文本',
   },
   {
@@ -1326,7 +1326,7 @@ export default [
     file: 'ere/data/ending-scripts.js',
     find: "                    ['cflag_between', 33, 2, 3000, 5000],",
     replace: "                    ['cflag_between', 33, 2, 3001, 5000],",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'END10_12 分岔',
   },
   {
@@ -1334,7 +1334,7 @@ export default [
     file: 'ere/data/ending-scripts.js',
     find: "        ['align', 'center'],",
     replace: "        ['align', 'left'],",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'ALIGNMENT',
   },
   {
@@ -1344,348 +1344,348 @@ export default [
         ['exflag', 2814, 1],`,
     replace: `        ['w', '看来真正信任她的日子并不像%SAVESTR:MASTER%想象的那么遥远'],
         ['exflag', 2814, 2],`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '效果表驱动：每段收尾',
   },
 
   // —— #404 返工：四条 ENDCHECK 阶梯的**档位区间边界** ——
   {
     desc: 'M8239 endcheck_square 起步门区间：stage < 10 误写成 < 11（10 档被起步门抢走）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (love && cflag(2) >= 2000 && stage < 10) {\n    era_exflag.route_22 = 10; // 起步',
     replace:
       '  if (love && cflag(2) >= 2000 && stage < 11) {\n    era_exflag.route_22 = 10; // 起步',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
   {
     desc: 'M8240 endcheck_square 10-20 档下界：stage >= 10 误写成 >= 11（10 落空）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 10 && stage < 20) {
     if (love && cflag(2) >= 5000) {
       era_exflag.route_22 = 20;`,
     replace: `  } else if (stage >= 11 && stage < 20) {
     if (love && cflag(2) >= 5000) {
       era_exflag.route_22 = 20;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
   {
     desc: 'M8241 endcheck_square 20-30 档上界：stage < 30 误写成 < 31（30 被上一档抢走）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 20 && stage < 30) {
     if (love && cflag(2) >= 10000) {
       era_exflag.route_22 = 30;`,
     replace: `  } else if (stage >= 20 && stage < 31) {
     if (love && cflag(2) >= 10000) {
       era_exflag.route_22 = 30;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
   {
     desc: 'M8242 endcheck_square 30-40 档下界：stage >= 30 误写成 >= 31（30 落空、计数器不清零）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage >= 30 && stage < 40) {\n    // SIF 只护住本档的跳档，计数器清零在下一行、分支内',
     replace:
       '  } else if (stage >= 31 && stage < 40) {\n    // SIF 只护住本档的跳档，计数器清零在下一行、分支内',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
   {
     desc: 'M8243 endcheck_square 80-90 档上界：stage < 90 误写成 < 91（90 被上一档抢走）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 80 && stage < 90) {
     if (love && cflag(515) >= 150) {
       era_exflag.route_22 = 90;`,
     replace: `  } else if (stage >= 80 && stage < 91) {
     if (love && cflag(515) >= 150) {
       era_exflag.route_22 = 90;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
   {
     desc: 'M8244 endcheck_square 300 档：stage === 300 误写成 === 301（299 与 300 都不动）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage === 300) {\n    // 300 档：1/5 概率推进到 310（无门槛，计数器不动）。',
     replace:
       '  } else if (stage === 301) {\n    // 300 档：1/5 概率推进到 310（无门槛，计数器不动）。',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_square 档位区间',
   },
   {
     desc: 'M8245 endcheck_spade 恋慕起步门：stage < 10 误写成 < 11',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (love && cflag(2) >= 2000 && stage < 10) {\n    era_exflag.route_21 = 10; // 起步',
     replace:
       '  if (love && cflag(2) >= 2000 && stage < 11) {\n    era_exflag.route_21 = 10; // 起步',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8246 endcheck_spade 恋慕 40-50 档下界：stage >= 40 误写成 >= 41',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 40 && stage < 50) {
     if (love && cflag(515) >= 10) {
       era_exflag.route_21 = 50;`,
     replace: `  } else if (stage >= 41 && stage < 50) {
     if (love && cflag(515) >= 10) {
       era_exflag.route_21 = 50;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8247 endcheck_spade 恋慕 80-90 档上界：stage < 90 误写成 < 91',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 80 && stage < 90) {
     if (love && cflag(515) >= 150) {
       era_exflag.route_21 = 90;`,
     replace: `  } else if (stage >= 80 && stage < 91) {
     if (love && cflag(515) >= 150) {
       era_exflag.route_21 = 90;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8248 endcheck_spade 淫乱起步门：lust_stage < 10 误写成 < 11',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (lust && cflag(2) >= 2000 && lust_stage < 10) {\n    era_exflag.route_21 = 110; // 起步 11',
     replace:
       '  if (lust && cflag(2) >= 2000 && lust_stage < 11) {\n    era_exflag.route_21 = 110; // 起步 11',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8249 endcheck_spade 淫乱 110-120 档下界：>= 110 误写成 >= 111（110 落空）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (lust_stage >= 110 && lust_stage < 120) {
     if (lust && cflag(2) >= 5000) {`,
     replace: `  } else if (lust_stage >= 111 && lust_stage < 120) {
     if (lust && cflag(2) >= 5000) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8250 endcheck_spade 淫乱 120-130 档上界：< 130 误写成 < 131（130 被上一档抢走）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (lust_stage >= 120 && lust_stage < 130) {',
     replace: '  } else if (lust_stage >= 120 && lust_stage < 131) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8251 endcheck_spade 淫乱 190-200 档下界：>= 190 误写成 >= 191',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (lust_stage >= 190 && lust_stage < 200) {',
     replace: '  } else if (lust_stage >= 191 && lust_stage < 200) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_spade 档位区间',
   },
   {
     desc: 'M8252 endcheck_princess 初会门：route_35 === 0 误写成 === 1',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  if (get_chara(35) > 0 && era_exflag.route_35 === 0) {
     era_exflag.route_35 = 10;`,
     replace: `  if (get_chara(35) > 0 && era_exflag.route_35 === 1) {
     era_exflag.route_35 = 10;`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8253 endcheck_princess 恋慕重置下界：route >= 130 误写成 >= 131',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (talent(85) === 1 && era_exflag.route_35 >= 130) {',
     replace: '  if (talent(85) === 1 && era_exflag.route_35 >= 131) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8254 endcheck_princess 淫乱重置上界：<= 130 误写成 <= 131',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `    era_exflag.route_35 >= 30 &&
     era_exflag.route_35 <= 130`,
     replace: `    era_exflag.route_35 >= 30 &&
     era_exflag.route_35 <= 131`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8255 endcheck_princess 10-20 档下界：stage >= 10 误写成 >= 11',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (stage >= 10 && stage < 20) {',
     replace: '  if (stage >= 11 && stage < 20) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8256 endcheck_princess 130-140 档下界：stage >= 130 误写成 >= 131',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 130 && stage < 140) {
     if (cflag(2) >= 2000) {`,
     replace: `  } else if (stage >= 131 && stage < 140) {
     if (cflag(2) >= 2000) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8257 endcheck_princess 80-90 档上界：stage < 90 误写成 < 91',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 80 && stage < 90) {
     if (cflag(515) < 30) {`,
     replace: `  } else if (stage >= 80 && stage < 91) {
     if (cflag(515) < 30) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8258 endcheck_princess 110-120 档上界：stage < 120 误写成 < 121',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 110 && stage < 120) {
     if (cflag(515) < 150) {`,
     replace: `  } else if (stage >= 110 && stage < 121) {
     if (cflag(515) < 150) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8259 endcheck_princess 180-190 档下界：stage >= 180 误写成 >= 181',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 180 && stage < 190) {
     if (cflag(515) < 30) {`,
     replace: `  } else if (stage >= 181 && stage < 190) {
     if (cflag(515) < 30) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8260 endcheck_princess 210-220 档上界：stage < 220 误写成 < 221',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  } else if (stage >= 210 && stage < 220) {
     if (cflag(515) < 150) {`,
     replace: `  } else if (stage >= 210 && stage < 221) {
     if (cflag(515) < 150) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_princess 档位区间',
   },
   {
     desc: 'M8261 endcheck_godness 起步门：stage < 10 误写成 < 11',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (lust && cflag(2) >= 2000 && stage < 10) {\n    era_exflag.route_33 = 110; // 起步 11',
     replace:
       '  if (lust && cflag(2) >= 2000 && stage < 11) {\n    era_exflag.route_33 = 110; // 起步 11',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
   {
     desc: 'M8262 endcheck_godness 110-120 档下界：stage >= 110 误写成 >= 111',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage >= 110 && stage < 120) {\n    // （门槛：好感 <= 5000 且计数器 >= 70；本档起计数器无条件累加）',
     replace:
       '  } else if (stage >= 111 && stage < 120) {\n    // （门槛：好感 <= 5000 且计数器 >= 70；本档起计数器无条件累加）',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
   {
     desc: 'M8263 endcheck_godness 120-130 档上界：stage < 130 误写成 < 131',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage >= 110 && stage < 130) {',
     replace: '  } else if (stage >= 110 && stage < 131) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
   {
     desc: 'M8264 endcheck_godness 170-180 档下界：stage >= 170 误写成 >= 171',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage >= 170 && stage < 180) {\n    if (lust && cflag(515) >= 220) {',
     replace:
       '  } else if (stage >= 171 && stage < 180) {\n    if (lust && cflag(515) >= 220) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
   {
     desc: 'M8265 endcheck_godness 180-190 档上界：stage < 190 误写成 < 191',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  } else if (stage >= 180 && stage < 190) {\n    if (lust && cflag(515) >= 250) {',
     replace:
       '  } else if (stage >= 180 && stage < 191) {\n    if (lust && cflag(515) >= 250) {',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
   {
     desc: 'M8266 endcheck_godness 淫乱重置 [30,100] 下界：>= 30 误写成 >= 31',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    ((era_exflag.route_33 >= 30 && era_exflag.route_33 <= 100) ||',
     replace:
       '    ((era_exflag.route_33 >= 31 && era_exflag.route_33 <= 100) ||',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
   {
     desc: 'M8267 endcheck_godness 淫乱重置 [300,310] 上界：<= 310 误写成 <= 311',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      (era_exflag.route_33 >= 300 && era_exflag.route_33 <= 310))',
     replace:
       '      (era_exflag.route_33 >= 300 && era_exflag.route_33 <= 311))',
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'endcheck_godness 档位区间',
   },
 
   // —— #404 返工（rebase 后）：char_gift 的种族年龄支接 RACE_AGE_GENERATE 真身 ——
   {
     desc: 'M8268 char_gift 种族年龄：落值槽位改成入参槽（CFLAG:452 → 451）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `      chara(a).chara.种族年龄 = race_age_generate(`,
     replace: `      chara(a).chara.年龄 = race_age_generate(`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '种族年龄支',
   },
   {
     desc: 'M8269 char_gift 种族年龄：入参取错槽（CFLAG:A:451 → 452）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `      chara(a).chara.种族年龄 = race_age_generate(
         era.get(\`cflag:\${a}:451\`) || 0,`,
     replace: `      chara(a).chara.种族年龄 = race_age_generate(
         era.get(\`cflag:\${a}:452\`) || 0,`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '种族年龄支',
   },
   {
     desc: 'M8270 char_gift 种族年龄：种族编号写死成 1（不读 TALENT:314）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `        era.get(\`talent:\${a}:314\`) || 0,`,
     replace: `        1,`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '种族年龄支',
   },
   {
     desc: 'M8271 char_gift 种族年龄：FLAG:5 的检查位 12 误写成位 14（位 12 不再触发）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `    if (((settings >> 12) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {`,
     replace: `    if (((settings >> 14) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '种族年龄支',
   },
   {
     desc: 'M8272 char_gift 种族年龄：丢掉随机源透传（race_age_generate 落到真随机）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `        era.get(\`talent:\${a}:314\`) || 0,
         rand,
       );`,
     replace: `        era.get(\`talent:\${a}:314\`) || 0,
       );`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention:
       'char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_generate 的返回值写进 CFLAG:452',
   },
   {
     desc: 'M8273 char_gift 种族年龄：实参顺序颠倒（人类年龄 ↔ 种族编号）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `      chara(a).chara.种族年龄 = race_age_generate(
         era.get(\`cflag:\${a}:451\`) || 0,
         era.get(\`talent:\${a}:314\`) || 0,`,
     replace: `      chara(a).chara.种族年龄 = race_age_generate(
         era.get(\`talent:\${a}:314\`) || 0,
         era.get(\`cflag:\${a}:451\`) || 0,`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '种族年龄支',
   },
   // —— #400（N16）日循环全路径：素质变化三事件 ——
@@ -2966,7 +2966,7 @@ export default [
   },
   {
     desc: 'M9880 避孕套判定·主人侧：清位删（TEQUIP:35 不清零，下次判定会重复触发）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    era.print('射在避孕套里');
     chara(cid).event.主人避孕套 = 0;
     clear_condom_ejac();
@@ -2979,7 +2979,7 @@ export default [
   },
   {
     desc: 'M9881 避孕套判定：主人/助手分支的清位对象写反（TEQUIP:35/36 互换）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `    era_flag.assiplay === 0 &&
     chara(cid).event.主人避孕套 &&
     condom_ejac_hit()
@@ -2997,7 +2997,7 @@ export default [
   },
   {
     desc: 'M10209 FIRST-SETTING QUE2MK 恒返回值错位（0 → 1）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'function que2mk() {\n  return 0;\n}',
     replace: 'function que2mk() {\n  return 1;\n}',
     tests: ['event-first'],
@@ -3005,7 +3005,7 @@ export default [
   },
   {
     desc: 'M10210 FIRST-SETTING 魔王性别男性支：童贞写入错位（1 → 0）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'if (result === 0) {\n      chara(0).train.童贞 = 1;',
     replace: 'if (result === 0) {\n      chara(0).train.童贞 = 0;',
     tests: ['event-first'],
@@ -3013,7 +3013,7 @@ export default [
   },
   {
     desc: 'M10211 FIRST-SETTING 魔王性别女性支：男人写入错位（0 → 1）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: '} else if (result === 1) {\n      chara(0).train.童贞 = 0;\n      chara(0).chara.男人 = 0;',
     replace:
       '} else if (result === 1) {\n      chara(0).train.童贞 = 0;\n      chara(0).chara.男人 = 1;',
@@ -3022,7 +3022,7 @@ export default [
   },
   {
     desc: 'M10212 FIRST-SETTING 魔王性别扶她支：扶她写入错位（1 → 0）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: '} else if (result === 2) {\n      chara(0).train.童贞 = 1;\n      chara(0).chara.男人 = 0;\n      chara(0).chara.扶她 = 1;',
     replace:
       '} else if (result === 2) {\n      chara(0).train.童贞 = 1;\n      chara(0).chara.男人 = 0;\n      chara(0).chara.扶她 = 0;',
@@ -3031,7 +3031,7 @@ export default [
   },
   {
     desc: 'M10213 FIRST-SETTING 魔王性别少年支：未熟写入错位（1 → 0）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'chara(0).train.未熟 = 1;',
     replace: 'chara(0).train.未熟 = 0;',
     tests: ['event-first'],
@@ -3039,7 +3039,7 @@ export default [
   },
   {
     desc: 'M10214 FIRST-SETTING 肉棒尺寸写入偏移（result → result+1）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'chara(0).chara.阴茎的状态 = result;\n      return result;',
     replace: 'chara(0).chara.阴茎的状态 = result + 1;\n      return result;',
     tests: ['event-first'],
@@ -3047,7 +3047,7 @@ export default [
   },
   {
     desc: 'M10215 FIRST-SETTING 狂王性别写入偏移（result → result+1）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'game.system.狂王性别 = result;',
     replace: 'game.system.狂王性别 = result + 1;',
     tests: ['event-first'],
@@ -3055,7 +3055,7 @@ export default [
   },
   {
     desc: 'M10216 FIRST-SETTING 跳过肉棒尺寸的条件写反（!== 1 → !== 0）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'if (maou_sex !== 1) {',
     replace: 'if (maou_sex !== 0) {',
     tests: ['event-first'],
@@ -3063,7 +3063,7 @@ export default [
   },
   {
     desc: 'M10217 FIRST-SETTING 初吻对象初值写反（-1 → 1）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: 'chara(0).train.初吻对象 = -1;',
     replace: 'chara(0).train.初吻对象 = 1;',
     tests: ['event-first'],
@@ -3124,7 +3124,7 @@ export default [
   {
     desc: 'M11002 回合尾部不调 AUTOTRAIN（PALAM → 珠/能力的结算整段丢失）',
     file: 'ere/system/turnend-settle.js',
-    find: "  await require('#/event/event-autotrain').autotrain();",
+    find: "  await require('#/system/train/autotrain').autotrain();",
     replace: '  // 变异：不调 AUTOTRAIN',
     tests: ['event-turnend'],
     must_mention: 'AUTOTRAIN 跑在调教窗口里',
@@ -3256,24 +3256,24 @@ export default [
   // —— #814：两个奴隶加入点直接给「在城里可操作」的状态 ——
   {
     desc: 'M15862 ENDING_1 漏写菲娅的状态（她停在角色文件的待机档，不读档的会话里四个操作页都不放行）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  chara(35).invasion.状态 = 0;
 `,
     replace: `  // 变异：删掉菲娅的状态写入
 `,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     test_name:
       '【验收 1】FLAG:81 满 10000：ending_1 演出一次、菲娅入队并初始化、FLAG:82 = 1、威望 +10',
     must_mention: '加入点直接给可操作状态',
   },
   {
     desc: 'M15863 char_gift 漏写贡品的状态（同 M15862，收下之后这一整个会话都不放行）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `      chara(a).invasion.状态 = 0;
 `,
     replace: `      // 变异：删掉贡品的状态写入
 `,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     test_name:
       'ending_3/4/5：横幅 + char_gift(arg) 收下预设角色 → 领域 flag 走 1→2、威望 +10（表驱动三档）',
     must_mention: '加入点直接给可操作状态',
@@ -3281,35 +3281,35 @@ export default [
   // —— #572：结局与日循环菜单的选项按钮化 ——
   {
     desc: 'M12000 char_gift 的 [0]/[1] 收下询问退回纯文本行',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "      era.printButton('收下她吧', 0);",
     replace: "      era.print('[0] 收下她吧  [1] 另外挑选'); // 变异",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '输入不合法！请输入以下值之一：',
   },
   {
     desc: 'M12001 char_gift 性格子菜单退回纯文本行（八档点不动）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "      era.printButton('- 慈爱', 0);",
     replace:
       "      era.print('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'); // 变异",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '性格菜单',
   },
   {
     desc: 'M12002 char_gift 发色受理集漏掉未显示的 11 号色（rule 收紧到按钮集）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "{ rule: '(?:10|11|[1-9])' }",
     replace: "{ rule: '[1-9]|10' } // 变异：11 号色被拒",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '未显示的 11 号色仍可键入',
   },
   {
     desc: 'M12003 char_gift 终局三项退回纯文本行',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "    era.printButton('再换一个', 1);",
     replace: "    era.print('[1] 再换一个'); // 变异",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '终局询问',
   },
   {
@@ -3432,18 +3432,18 @@ export default [
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
   {
     desc: 'M12304 ending_1 的 [0] 继续丢掉「- 」',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: "era.printButton('- 世界这么大，我想再去看看！', 0);",
     replace:
       "era.printButton('世界这么大，我想再去看看！', 0); // 变异：丢掉「- 」",
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '正文带显示文本的「- 」',
   },
 
   // —— #615：print 正文的尾换行（first-setting.js 的狂王性别一问） ——
   {
     desc: 'M12249 狂王性别一问的两条 PRINTL 并回一次 print（内部 \\n——显示行数同、Row 数少一个）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: "  era.print('狂王是支配这个地区的领主');\n  era.print('继承了曾经封印你的勇者的血统，打算把你再次封印');",
     replace:
       "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印',\n  ); // 变异：#615 之前的并法",
@@ -3453,7 +3453,7 @@ export default [
 
   {
     desc: 'M12904 EQUIP_COM 链不执行（source-check 装备持续效果循环被架空——眼罩/振动器位静默）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    await equip_com_family.call(com);',
     replace: '    // 变异：装备持续效果不执行',
     tests: ['com-sm'],
@@ -3463,15 +3463,15 @@ export default [
   // —— #649（F3）：结局缺陷修复 ——
   {
     desc: 'M13050 endreset 嘉德清场检查回读银黑桃线值 2814（#649 改正的回退）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '  if (get_chara(33) < 0 && era_exflag.route_33 < 500) {',
     replace: '  if (get_chara(33) < 0 && era_exflag.route_21 < 500) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '嘉德 >= 500 不得清',
   },
   {
     desc: 'M13051 END31 死调用复活（#649 删除的回退：2803 非零时打印 END31）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: `  // 尾部无 END31 调用：EX_FLAG:2803（失控奴隶号）的消费者是 debug_check
   // （event-turnend.js），#649 删除了全库无定义的 END31 死引用
 }`,
@@ -3480,7 +3480,7 @@ export default [
     era.print('END31');
   }
 }`,
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: 'END31 死调用已删',
   },
   {
@@ -3492,20 +3492,20 @@ export default [
     replace: `    713: {
       steps: [],
     }`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '必须登记在节号 13',
   },
   {
     desc: 'M13053 END 分派循环混入无脚本的族 2（#649 缩圈的回退：族 2 调用抛空间外错）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    for (const family of [7, 10, 11, 14]) {',
     replace: '    for (const family of [2, 7, 10, 11, 14]) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '不在声明的编号空间内',
   },
   {
     desc: 'M13054 ending_input 的 CASEELSE 复活（#649 删除的回退：写 FLAG 侧）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `    } else {
       // 未分档的线号（5/6/8-14 各角色线）：无活调用点，原 CASEELSE 整档已删
       // （#649）——落进来静默返回，不印文本、不写任何 flag 侧
@@ -3519,16 +3519,16 @@ export default [
         era.set(\`flag:\${flag_no}\`, (era.get(\`flag:\${flag_no}\`) || 0) + 100);
       }
     }`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'FLAG 侧不得写入',
   },
   {
     desc: 'M13055 END 族声明空间扩回 2..15（#649 缩圈的回退：无脚本的族回到空间内）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: "const END_FAMILY = new DispatchFamily('END', [7, 10, 11, 14]);",
     replace:
       "const END_FAMILY = new DispatchFamily('END', [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);",
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '族 2（无脚本）必须在声明空间外',
   },
   {
@@ -3549,47 +3549,47 @@ export default [
         ['w', '此处剧情尚未做好'],
       ],
     },`,
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '演出收尾 += 1 置个位',
   },
   {
     desc: 'M13057 END 分派循环丢族 7（菲娅线当天不再命中）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    for (const family of [7, 10, 11, 14]) {',
     replace: '    for (const family of [10, 11, 14]) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '族 7 线值 20 必须以小节 2 命中',
   },
   {
     desc: 'M13058 END 分派循环丢族 10（嘉德线当天不再命中）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    for (const family of [7, 10, 11, 14]) {',
     replace: '    for (const family of [7, 11, 14]) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '族 10 线值 510 必须以小节 51 命中',
   },
   {
     desc: 'M13059 END 分派循环丢族 11（黑方片线当天不再命中）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    for (const family of [7, 10, 11, 14]) {',
     replace: '    for (const family of [7, 10, 14]) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '族 11 线值 20 必须以小节 2 命中',
   },
   {
     desc: 'M13060 END 分派循环丢族 14（银黑桃线当天不再命中）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '    for (const family of [7, 10, 11, 14]) {',
     replace: '    for (const family of [7, 10, 11]) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '族 14 线值 300 必须以小节 30 命中',
   },
   {
     desc: 'M13061 END 分派循环负线值检查（-10 不再分发，Bad Ending 播不出）',
-    file: 'ere/event/event-endcheck.js',
+    file: 'ere/system/ending/endcheck.js',
     find: '      if (stage % 10 === 0) {',
     replace: '      if (stage % 10 === 0 && stage >= 0) {',
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '演出收尾 += 1 置个位',
   },
   {
@@ -3597,7 +3597,7 @@ export default [
     file: 'ere/data/ending-scripts.js',
     find: "        ['w', '菲娅线 Bad Ending'],",
     replace: "        ['w', '菲娅线 坏结局'],",
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '当天分派必须命中 Bad Ending 占位演出（标题）',
   },
   {
@@ -3605,7 +3605,7 @@ export default [
     file: 'ere/data/ending-scripts.js',
     find: "    '-1': {",
     replace: "    '-2': {",
-    tests: ['event-endcheck'],
+    tests: ['endcheck'],
     must_mention: '演出收尾 += 1 置个位',
   },
   // —— #650 F4 缺陷回归检查 ——
@@ -3656,7 +3656,7 @@ export default [
   },
   {
     desc: 'M13107 SPECIALSKIL：嫉妒移除回退成打印 32 号（压抑）的名字',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: '      line += `【${talent_name(84)}】`;',
     replace: '      line += `【${talent_name(32)}】`;',
     tests: ['event-get-specialtalent'],
@@ -3672,7 +3672,7 @@ export default [
   },
   {
     desc: 'M14150 source_check_up_b 胸围素质组乘算改回私处源（SOURCE:17 → SOURCE:1）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  if (busts) {
     for (const [t, rate] of busts) {
       if (tal(t)) {
@@ -3696,7 +3696,7 @@ export default [
   },
   {
     desc: 'M14151 BUST_RATES 253 档倍率 2.5 改 2.6',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  [253, 2.5],',
     replace: '  [253, 2.6],',
     tests: ['source-check'],
@@ -3706,7 +3706,7 @@ export default [
   },
   {
     desc: 'M14152 BUST_RATES 119 档倍率 0.7 改 0.6',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  [119, 0.7],',
     replace: '  [119, 0.6],',
     tests: ['source-check'],
@@ -3726,7 +3726,7 @@ export default [
   },
   {
     desc: 'M14248 offer_release_seal 的解封二选一退回纯文本行',
-    file: 'ere/event/get-specialtalent.js',
+    file: 'ere/system/train/get-specialtalent.js',
     find: "    era.printButton('- 保留封印', 0);\n    era.printButton('- 解开封印', 1);",
     replace:
       "    era.print(' [0] - 保留封印'); // 变异：纯文本\n    era.print(' [1] - 解开封印');",
@@ -3736,19 +3736,19 @@ export default [
   // —— #711：结局脚本与口上的纯文本选项改按钮 ——
   {
     desc: 'M14300 ending-family 的 btn 步退回纯文本（选项按钮没了编号）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: `      for (const [accelerator, content] of a) {
         era.printButton(content, accelerator);
       }`,
     replace: `      for (const [accelerator, content] of a) {
         era.print(interpolate(content)); // 变异：选项按钮退回纯文本
       }`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '选项行是按钮',
   },
   {
     desc: 'M14301 ending-family 的 btn 步在按钮之后夹一次等键（白名单被清空）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: `        era.printButton(content, accelerator);
       }
     } else if (op === 'f') {`,
@@ -3756,7 +3756,7 @@ export default [
       }
       await era.waitAnyKey(); // 变异：按钮与下一次 INPUT 之间夹了一次等键
     } else if (op === 'f') {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '的越界输入必须被引擎拒收',
   },
   {
@@ -3770,7 +3770,7 @@ export default [
           ],
         ],`,
     replace: `        ['w', '[1] 点头 [2] 摇头'],`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '选项行是按钮',
   },
   {
@@ -3793,7 +3793,7 @@ export default [
         ],
         ['f'], // 变异：按钮与读输入的 inconseq 之间夹了一次等键
         ['inconseq', 7],`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '的越界输入必须被引擎拒收',
   },
   {
@@ -3810,7 +3810,7 @@ export default [
               ],`,
     replace: `              ['l', '可以达成菲娅的魔界公主end，想要进入这个结局吗？'],
               ['w', '[1]好的 [2]唔，还是算了 [3]明天再问我可以喵？'],`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '选项行是按钮',
   },
   {
@@ -3837,7 +3837,7 @@ export default [
               ],
               ['f'], // 变异：按钮与读输入的 INPUT 之间夹了一次等键
             ],`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '的越界输入必须被引擎拒收',
   },
   {
@@ -3847,21 +3847,21 @@ export default [
             [4, '不怎么好吃'],`,
     replace: `            [3, '[3] 好吃！'],
             [4, '不怎么好吃'],`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '选项行是按钮',
   },
   {
     desc: 'M14307 ending_n 的结束/继续选项退回纯文本（手写编号行）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era.printButton('结束游戏', 1);
   era.printButton('继续游戏', 2);`,
     replace: `  era.print('[1] 结束游戏\\t\\t[2] 继续游戏'); // 变异：结尾选项退回纯文本`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '结尾选项是按钮',
   },
   {
     desc: 'M14308 ending_n 的按钮之后夹一次等键（白名单被清空）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era.printButton('结束游戏', 1);
   era.printButton('继续游戏', 2);
   // ending_input(EX_FLAG:2801 + 1000)`,
@@ -3869,31 +3869,31 @@ export default [
   era.printButton('继续游戏', 2);
   await era.waitAnyKey(); // 变异：按钮与 ending_input 之间夹了一次等键
   // ending_input(EX_FLAG:2801 + 1000)`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'ending_n 的越界输入必须被引擎拒收',
   },
   {
     desc: 'M14309 ending_n 的按钮正文补上手写 [1] 前缀（显示成 [1] [1] 结束游戏）',
-    file: 'ere/event/event-ending.js',
+    file: 'ere/page/page-ending.js',
     find: `  era.printButton('结束游戏', 1);`,
     replace: `  era.printButton('[1] 结束游戏', 1);`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '结尾选项是按钮',
   },
   {
     desc: 'M14312 run_ask 的 again 判定反转（不命中直接落 else，不再重问）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: `    if (ask.again) {`,
     replace: `    if (!ask.again) {`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'again 为真',
   },
   {
     desc: 'M14313 run_ask 的不命中兜底被拆（else 步列表不再执行）',
-    file: 'ere/event/ending-family.js',
+    file: 'ere/system/ending/ending-family.js',
     find: `    await run_steps(ask.else ?? [], ctx);`,
     replace: `    await run_steps([], ctx);`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: 'again 不为真',
   },
   {
@@ -3906,7 +3906,7 @@ export default [
   },
   {
     desc: 'M14371 SOURCE_CHECK 结算展示收尾等键删除（源一览/损耗条/参数变动未读即被下一轮换屏清掉）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: `  palam_up_check();
 
   // 结算展示收尾等键（ADR-0009）：源一览、损耗条与参数变动行在上方
@@ -3965,7 +3965,7 @@ export default [
   // 逐参数位打：描述表的每个字段各改错一次，四个变体都点名
   {
     desc: 'M13721 Ｃ 路读错源（SOURCE:0 改 SOURCE:17）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    source: 0,',
     replace: '    source: 17,',
     tests: ['source-check'],
@@ -3973,7 +3973,7 @@ export default [
   },
   {
     desc: 'M13722 Ｖ 路读错源（SOURCE:1 改 SOURCE:0）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    source: 1,',
     replace: '    source: 0,',
     tests: ['source-check'],
@@ -3981,7 +3981,7 @@ export default [
   },
   {
     desc: 'M13723 Ａ 路读错源（SOURCE:2 改 SOURCE:17）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    source: 2,',
     replace: '    source: 17,',
     tests: ['source-check'],
@@ -3989,7 +3989,7 @@ export default [
   },
   {
     desc: 'M13724 Ｂ 路读错源（SOURCE:17 改错位）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    source: 17,',
     replace: '    source: 1,',
     tests: ['source-check'],
@@ -3997,7 +3997,7 @@ export default [
   },
   {
     desc: 'M13725 Ｃ 版敏感/钝感素质对错位（101/102 改 103/104）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    talents: [101, 102],',
     replace: '    talents: [103, 104],',
     tests: ['source-check'],
@@ -4005,7 +4005,7 @@ export default [
   },
   {
     desc: 'M13726 Ｖ 版敏感/钝感素质对错位（103/104 改 105/106）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    talents: [103, 104],',
     replace: '    talents: [105, 106],',
     tests: ['source-check'],
@@ -4013,7 +4013,7 @@ export default [
   },
   {
     desc: 'M13727 Ａ 版敏感/钝感素质对错位（105/106 改 107/108）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    talents: [105, 106],',
     replace: '    talents: [107, 108],',
     tests: ['source-check'],
@@ -4021,7 +4021,7 @@ export default [
   },
   {
     desc: 'M13728 Ｂ 版敏感/钝感素质对错位（107/108 改 101/102）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    talents: [107, 108],',
     replace: '    talents: [101, 102],',
     tests: ['source-check'],
@@ -4029,7 +4029,7 @@ export default [
   },
   {
     desc: 'M13729 Ｃ 版欲情系数表换成 ＲATE_A',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    rates: RATE_C,',
     replace: '    rates: RATE_A,',
     tests: ['source-check'],
@@ -4037,7 +4037,7 @@ export default [
   },
   {
     desc: 'M13730 Ｖ 版欲情系数表换成 ＲATE_B',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    rates: RATE_V,',
     replace: '    rates: RATE_B,',
     tests: ['source-check'],
@@ -4045,7 +4045,7 @@ export default [
   },
   {
     desc: 'M13731 Ａ 版欲情系数表换成 ＲATE_C',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    rates: RATE_A,',
     replace: '    rates: RATE_C,',
     tests: ['source-check'],
@@ -4053,7 +4053,7 @@ export default [
   },
   {
     desc: 'M13732 Ｂ 版欲情系数表换成 ＲATE_V',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    rates: RATE_B,',
     replace: '    rates: RATE_V,',
     tests: ['source-check'],
@@ -4061,7 +4061,7 @@ export default [
   },
   {
     desc: 'M13733 Ｃ 版欲望梯子换成 Ａ 版独立梯',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    ladder: DESIRE_LADDER,\n    high_rate: 0.5,\n    domain_talent: 74,',
     replace:
       '    ladder: A_LADDER,\n    high_rate: 0.5,\n    domain_talent: 74,',
@@ -4070,7 +4070,7 @@ export default [
   },
   {
     desc: 'M13734 Ａ 版独立欲望梯被平均化（改回共用梯）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    ladder: A_LADDER,',
     replace: '    ladder: DESIRE_LADDER,',
     tests: ['source-check'],
@@ -4078,7 +4078,7 @@ export default [
   },
   {
     desc: 'M13735 Ａ 版欲望 ≥6 档的 2.0 封顶改 0.5',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    high_rate: 2.0,',
     replace: '    high_rate: 0.5,',
     tests: ['source-check'],
@@ -4086,7 +4086,7 @@ export default [
   },
   {
     desc: 'M13736 Ｃ 版欲望 ≥6 档的 0.5 改成 Ａ 版的 2.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    high_rate: 0.5,\n    domain_talent: 74,',
     replace: '    high_rate: 2.0,\n    domain_talent: 74,',
     tests: ['source-check'],
@@ -4094,7 +4094,7 @@ export default [
   },
   {
     desc: 'M13737 Ｖ 版域特异素质错位（75 改 74）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    domain_talent: 75,',
     replace: '    domain_talent: 74,',
     tests: ['source-check'],
@@ -4102,7 +4102,7 @@ export default [
   },
   {
     desc: 'M13738 Ｂ 版域特异素质错位（78 改 75）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    domain_talent: 78,',
     replace: '    domain_talent: 75,',
     tests: ['source-check'],
@@ -4110,7 +4110,7 @@ export default [
   },
   {
     desc: 'M13739 Ｃ 版淫部位标记倍率 2.0 改 1.5',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    lewd: [230, 2.0],',
     replace: '    lewd: [230, 1.5],',
     tests: ['source-check'],
@@ -4118,7 +4118,7 @@ export default [
   },
   {
     desc: 'M13740 Ｖ 版淫部位标记倍率 1.5 改 2.0',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    lewd: [232, 1.5],',
     replace: '    lewd: [232, 2.0],',
     tests: ['source-check'],
@@ -4126,7 +4126,7 @@ export default [
   },
   {
     desc: 'M13741 Ａ 版淫部位标记错位（233 改 231）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    lewd: [233, 2.0],',
     replace: '    lewd: [231, 2.0],',
     tests: ['source-check'],
@@ -4134,7 +4134,7 @@ export default [
   },
   {
     desc: 'M13742 Ｂ 版淫部位标记错位（231 改 233）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    lewd: [231, 2.0],',
     replace: '    lewd: [233, 2.0],',
     tests: ['source-check'],
@@ -4142,7 +4142,7 @@ export default [
   },
   {
     desc: 'M13743 Ｃ 版 ABL 门槛位错位（0 改 1）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    abl_index: 0,',
     replace: '    abl_index: 1,',
     tests: ['source-check'],
@@ -4150,7 +4150,7 @@ export default [
   },
   {
     desc: 'M13744 Ｖ 版 ABL 门槛位错位（2 改 1）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    abl_index: 2,',
     replace: '    abl_index: 1,',
     tests: ['source-check'],
@@ -4158,7 +4158,7 @@ export default [
   },
   {
     desc: 'M13745 Ａ 版 ABL 门槛位错位（3 改 2）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    abl_index: 3,',
     replace: '    abl_index: 2,',
     tests: ['source-check'],
@@ -4166,7 +4166,7 @@ export default [
   },
   {
     desc: 'M13746 Ｂ 版 ABL 门槛位错位（1 改 0）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    abl_index: 1,',
     replace: '    abl_index: 0,',
     tests: ['source-check'],
@@ -4174,7 +4174,7 @@ export default [
   },
   {
     desc: 'M13747 Ｖ 版快感扇出错位（UP:1 改 UP:0）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [1, 0], // PALAM:快Ｖ',
     replace: '      [0, 0], // PALAM:快Ｖ',
     tests: ['source-check'],
@@ -4182,7 +4182,7 @@ export default [
   },
   {
     desc: 'M13748 Ａ 版快感扇出错位（UP:2 改 UP:1）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [2, 0], // PALAM:快Ａ',
     replace: '      [1, 0], // PALAM:快Ａ',
     tests: ['source-check'],
@@ -4190,7 +4190,7 @@ export default [
   },
   {
     desc: 'M13749 Ｂ 版快感扇出错位（UP:14 改 UP:1）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [14, 0], // PALAM:快Ｂ',
     replace: '      [1, 0], // PALAM:快Ｂ',
     tests: ['source-check'],
@@ -4198,7 +4198,7 @@ export default [
   },
   {
     desc: 'M13750 Ｃ 版快感扇出错位（UP:0 改 UP:2）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [0, 0], // PALAM:快Ｃ',
     replace: '      [2, 0], // PALAM:快Ｃ',
     tests: ['source-check'],
@@ -4206,7 +4206,7 @@ export default [
   },
   {
     desc: 'M13751 Ｖ 版欲情双扇出少一处（UP:5 丢失）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [4, 1], // PALAM:恭顺\n      [5, 1], // PALAM:欲情',
     replace: '      [4, 1], // PALAM:恭顺',
     tests: ['source-check'],
@@ -4214,7 +4214,7 @@ export default [
   },
   {
     desc: 'M13752 Ａ 版欲情双扇出少一处（UP:6 丢失）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [5, 1], // PALAM:欲情\n      [6, 1], // PALAM:屈服',
     replace: '      [5, 1], // PALAM:欲情',
     tests: ['source-check'],
@@ -4222,7 +4222,7 @@ export default [
   },
   {
     desc: 'M13753 Ｂ 版欲情扇出错位（UP:5 改 UP:4）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '      [5, 1], // PALAM:欲情\n      [13, 2], // PALAM:抑鬱\n    ],\n  },\n};',
     replace:
       '      [4, 1], // PALAM:欲情\n      [13, 2], // PALAM:抑鬱\n    ],\n  },\n};',
@@ -4231,7 +4231,7 @@ export default [
   },
   {
     desc: 'M13754 否定抑鬱路的条件丢掉「抵抗」(tal(34) 不再是入口）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  if (tal(32) || tal(34) || tal(71)) {',
     replace: '  if (tal(32) || tal(71)) {',
     tests: ['source-check'],
@@ -4239,7 +4239,7 @@ export default [
   },
   {
     desc: 'M13755 否定抑鬱路的条件丢掉「否定快感」(tal(71) 不再是入口）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  if (tal(32) || tal(34) || tal(71)) {',
     replace: '  if (tal(32) || tal(34)) {',
     tests: ['source-check'],
@@ -4247,7 +4247,7 @@ export default [
   },
   {
     desc: 'M13756 抑鬱的源除数错（/3 改 /4）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    local2 = idiv(src(source), 3);',
     replace: '    local2 = idiv(src(source), 4);',
     tests: ['source-check'],
@@ -4255,7 +4255,7 @@ export default [
   },
   {
     desc: 'M13757 欲望 ≥6 档的抑鬱不再归零',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '    local2 = abl(11) >= 6 ? 0 : times(local2, DENY_LADDER[abl(11)][1]);',
     replace:
       '    local2 = abl(11) >= 6 ? local2 : times(local2, DENY_LADDER[abl(11)][1]);',
@@ -4264,7 +4264,7 @@ export default [
   },
   {
     desc: 'M13758 否定阶梯 1 档 0.85 改 0.8',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  [1, 0.85],',
     replace: '  [1, 0.8],',
     tests: ['source-check'],
@@ -4272,7 +4272,7 @@ export default [
   },
   {
     desc: 'M13759 域特异素质的三路放大 1.5 改 1.4',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  if (tal(domain_talent)) {\n    local0 = times(local0, 1.5);',
     replace: '  if (tal(domain_talent)) {\n    local0 = times(local0, 1.4);',
     tests: ['source-check'],
@@ -4280,7 +4280,7 @@ export default [
   },
   {
     desc: 'M13760 ABL 门槛放宽到 4 档（> 5 改 > 3）',
-    file: 'ere/event/source-check.js',
+    file: 'ere/system/train/source-check.js',
     find: '  if (abl(abl_index) > 5) {',
     replace: '  if (abl(abl_index) > 3) {',
     tests: ['source-check'],

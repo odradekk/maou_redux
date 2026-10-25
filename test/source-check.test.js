@@ -1,5 +1,5 @@
 /**
- * ere/event/source-check.js 的行为测试（issue #45：source_check 的爱抚
+ * ere/system/train/source-check.js 的行为测试（issue #45：source_check 的爱抚
  * 可达路径）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
@@ -50,7 +50,7 @@ async function run_caress(seed, post) {
     seed(fixture);
   }
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);
@@ -786,7 +786,7 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   fixture.load_module('event/event-com');
   fixture.load_module('event/event-comend');
   fixture.load_module('page/page-usercom');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   fixture.load_module('system/train/com-caress');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -2526,7 +2526,7 @@ function build_auto_num_fixture() {
 
 test('AUTO_NUM_CHECK：跳过边界 LOCAL≥11 && LOCAL!=14（10/11/14/15 四点）', async () => {
   const fixture = build_auto_num_fixture();
-  const { auto_num_check } = fixture.load_module('event/source-check');
+  const { auto_num_check } = fixture.load_module('system/train/source-check');
   fixture.store.set('cflag:31:667', 0); // <5 档，×1.25
   for (let i = 0; i <= 16; i += 1) {
     fixture.store.set(`delta:31:${i}`, 100);
@@ -2551,7 +2551,7 @@ test('AUTO_NUM_CHECK：CFLAG:667（自动调教回数）八档阈值', async () 
   ];
   for (const [rate, m] of rates) {
     const fixture = build_auto_num_fixture();
-    const { auto_num_check } = fixture.load_module('event/source-check');
+    const { auto_num_check } = fixture.load_module('system/train/source-check');
     fixture.store.set('cflag:31:667', rate);
     fixture.store.set('delta:31:0', 100);
     auto_num_check(31);
@@ -2567,7 +2567,7 @@ test('AUTO_NUM_CHECK：CFLAG:667（自动调教回数）八档阈值', async () 
 
 test('写经门面 条目表寻址串的字面量 era.set/add 清零', () => {
   const text = fs.readFileSync(
-    path.resolve(__dirname, '..', 'ere', 'event', 'source-check.js'),
+    path.resolve(__dirname, '..', 'ere', 'system', 'train', 'source-check.js'),
     'utf8',
   );
   // 写侧零残留：#72 条目表里的 22 个寻址串，字面量形式的 era.set/era.add
@@ -2641,7 +2641,7 @@ async function run_ejaculation_settlement({
   era_flag.selectcom = selectcom;
   era_flag.prevcom = -1;
   fixture.store.set('callname:31:-2', '温妮');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   if (seed) seed(fixture, era_flag);
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK');
@@ -2895,7 +2895,7 @@ async function run_auto_check(seed) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK_AUTO');
   return fixture;

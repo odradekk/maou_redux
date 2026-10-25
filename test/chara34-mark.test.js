@@ -148,7 +148,7 @@ async function run_source_check(post, { with_mark4 = true } = {}) {
     fixture.store.delete('mark:34:4');
   }
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);

@@ -47,7 +47,7 @@ const {
   train_message_b,
   train_message_b_family,
 } = require('#/system/train/train-message');
-const { clothtype_text } = require('#/page/page-clothtype');
+const { clothtype_text } = require('#/utils/clothtype-utils');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { MASTER } = require('#/utils/master');
 const { idiv, percent_floor } = require('#/utils/numeric');
