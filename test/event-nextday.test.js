@@ -1904,7 +1904,7 @@ test('遛狗（DOG_WALK）：散步行拼装（服装 + 的 + 名字 + [项圈] 
 
   await dog_walk(() => 1);
 
-  const { clothtype_text } = fixture.load_module('page/page-clothtype');
+  const { clothtype_text } = fixture.load_module('utils/clothtype-utils');
   const texts = fixture.text_lines();
   // 整行拼装：服装串（PRINT_CLOTHTYPE 的出口）+ 的 + 名字 + 项圈中段 + 结尾
   assert(

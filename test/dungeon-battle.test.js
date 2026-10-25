@@ -144,10 +144,10 @@ test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMis
   );
 });
 
-// —— source_check_auto 接入（#461：真身落在 event/source-check.js，
+// —— source_check_auto 接入（#461：真身落在 system/train/source-check.js，
 //    dungeon-battle.js 的 source_check_auto 只转发事件）——
 
-test('source_check_auto 接入：转发到 event/source-check 的真实处理器', async () => {
+test('source_check_auto 接入：转发到 system/train/source-check 的真实处理器', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
@@ -164,7 +164,7 @@ test('source_check_auto 接入：转发到 event/source-check 的真实处理器
   era_flag.assi = -1;
   era_flag.assiplay = 0;
   fixture.store.set('palam:1:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛
-  load(fixture, 'event/source-check');
+  load(fixture, 'system/train/source-check');
   const battle = load(fixture, 'dungeon/dungeon-battle');
 
   await battle.source_check_auto();

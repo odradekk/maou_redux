@@ -62,7 +62,7 @@ async function run_corrupt_path() {
   fixture.load_module('event/event-end');
   fixture.load_module('event/event-com');
   fixture.load_module('event/event-comend');
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   fixture.load_module('page/page-train');
   fixture.load_module('page/page-usercom');
   // COM0 自 com0-caress.js 搬入本族模块（#219 J9，原文件删除）

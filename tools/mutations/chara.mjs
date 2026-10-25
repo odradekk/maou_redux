@@ -237,10 +237,10 @@ export default [
   },
   {
     desc: 'M6539 自动调教肛门绝顶的 KARMA -2 改 -1',
-    file: 'ere/event/event-autotrain.js',
+    file: 'ere/system/train/autotrain.js',
     find: '    karma(target, -2);',
     replace: '    karma(target, -1);',
-    tests: ['event-autotrain'],
+    tests: ['autotrain'],
     must_mention: 'ex:1/ex:2 接入 KARMA 真身',
   },
   {

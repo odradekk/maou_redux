@@ -1,5 +1,5 @@
 /**
- * ere/event/event-ending.js ending_1 真身与 ending_3/4/5 接入的
+ * ere/page/page-ending.js ending_1 真身与 ending_3/4/5 接入的
  * 行为测试（issue #118），外加 ere/page/page-invasion.js invasion_check
  * 四组条件的触发测试（经模块公开接口 invasion_check 直驱）。天神宫组
  * 随 #652 删除（条件读的 EX_FLAG:101 无写点，死分支）；end10_55 演出
@@ -213,7 +213,7 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
   fixture.era.addCharacter(2);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 1;
-  const { ending_2 } = fixture.load_module('event/event-ending');
+  const { ending_2 } = fixture.load_module('page/page-ending');
 
   fixture.set_inputs(0); // INPUT（仪式性确认，结果不被消费）
   let caught;
@@ -274,7 +274,7 @@ test('ending_2·TARGET 条件：指针指向 2 时封印播报取 2 的名字（
   fixture.era.addCharacter(2);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 2;
-  const { ending_2 } = fixture.load_module('event/event-ending');
+  const { ending_2 } = fixture.load_module('page/page-ending');
 
   fixture.set_inputs(0);
   await ending_2().catch(() => {});
@@ -420,7 +420,7 @@ test('ending_3/4/5：横幅 + char_gift(arg) 收下预设角色 → 领域 flag 
 
 test('char_gift：ARG 不在 1/5/6 三档 → THROW INVALID ARGUMENT', async () => {
   const fixture = create_era_fixture();
-  const { char_gift } = fixture.load_module('event/event-ending');
+  const { char_gift } = fixture.load_module('page/page-ending');
   await assert.rejects(() => char_gift(2), /INVALID ARGUMENT/);
   await assert.rejects(() => char_gift(0), /INVALID ARGUMENT/);
 });
@@ -432,7 +432,7 @@ test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色�
   fixture.seed_chara(0, { name: '你', callname: '你' });
   fixture.store.set('talentname:161', '自信家');
   fixture.store.set('callname:5:-1', '路人五');
-  const { char_gift } = fixture.load_module('event/event-ending');
+  const { char_gift } = fixture.load_module('page/page-ending');
   // 输入序列：另外挑选(1) → 性格([0]) → 胆量 1（自信家）→ 决定(100) → 收下(0)
   fixture.set_inputs(1, 0, 1, 100, 0);
   // 生成链的命名段读固定名表（#821 起夹具按 yml 现算名字），名字因此由
@@ -495,7 +495,7 @@ test('char_gift 子菜单边界：性格取 0 档（慈爱）、发色取 10 档
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
   fixture.store.set('talentname:160', '慈爱');
-  const { char_gift } = fixture.load_module('event/event-ending');
+  const { char_gift } = fixture.load_module('page/page-ending');
   // 另外挑选(1) → 性格([0]) → 选 0 → 发色([1]) → 选 10 → 决定(100) → 收下(0)
   fixture.set_inputs(1, 0, 0, 1, 10, 100, 0);
   await char_gift(1, seq([4])); // RAND(1, 17) → 角色 5
@@ -533,7 +533,7 @@ test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#872：�
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-  const { char_gift } = fixture.load_module('event/event-ending');
+  const { char_gift } = fixture.load_module('page/page-ending');
   // 另外挑选(1) → 发色([1]) → 11 → 决定(100) → 收下(0)
   fixture.set_inputs(1, 1, 11, 100, 0);
   await char_gift(1, seq([4])); // RAND(1, 17) → 角色 5
@@ -547,7 +547,7 @@ test('char_gift 发色子菜单：1-11 之外的编号由 rule 在输入框里�
     const fixture = create_era_fixture();
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-    const { char_gift } = fixture.load_module('event/event-ending');
+    const { char_gift } = fixture.load_module('page/page-ending');
     fixture.set_inputs(1, 1, typed, 100, 0);
     await assert.rejects(
       () => char_gift(1, seq([4])),
@@ -565,7 +565,7 @@ test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素�
       cflag: { 2: 0, 515: 3 },
     });
     fixture.store.set('exflag:2814', 50);
-    const { endcheck_spade } = fixture.load_module('event/event-endcheck');
+    const { endcheck_spade } = fixture.load_module('system/ending/endcheck');
     await endcheck_spade(seq([0, 0]));
     assert.equal(
       fixture.store.get('exflag:2814'),
@@ -581,7 +581,7 @@ test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素�
       cflag: { 2: 0, 515: 3 },
     });
     fixture.store.set('exflag:2807', 140);
-    const { endcheck_princess } = fixture.load_module('event/event-endcheck');
+    const { endcheck_princess } = fixture.load_module('system/ending/endcheck');
     endcheck_princess();
     assert.equal(
       fixture.store.get('exflag:2807'),
@@ -601,7 +601,7 @@ test('char_gift 子菜单的越界输入：引擎当场拒收（#572：选项已
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
     fixture.store.set('talentname:160', '慈爱');
-    const { char_gift } = fixture.load_module('event/event-ending');
+    const { char_gift } = fixture.load_module('page/page-ending');
     fixture.set_inputs(1, 0, picked);
     await assert.rejects(
       () => char_gift(1, seq([4])),
@@ -617,7 +617,7 @@ test('char_gift 主菜单的越界输入：引擎当场拒收（#572：选项已
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-  const { char_gift } = fixture.load_module('event/event-ending');
+  const { char_gift } = fixture.load_module('page/page-ending');
   fixture.set_inputs(1, 7);
   await assert.rejects(
     () => char_gift(1, seq([4])),
@@ -629,7 +629,7 @@ test('char_gift 终局 [2]「去要圣女」：退掉随机角色、回到预设
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-  const { char_gift } = fixture.load_module('event/event-ending');
+  const { char_gift } = fixture.load_module('page/page-ending');
   // 另外挑选(1) → 决定(100) → 终局 [2] 回预设 → [0] 收下预设
   fixture.set_inputs(1, 100, 2, 0);
   const result = await char_gift(1, seq([4]));
@@ -667,7 +667,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     // 精灵是槽 0 = 011（整数倍档）：返回值 = 年龄 × 10 + RAND:10
     const fixture = create_era_fixture();
     seed(fixture, 1 << bit);
-    const { char_gift } = fixture.load_module('event/event-ending');
+    const { char_gift } = fixture.load_module('page/page-ending');
     fixture.set_inputs(1, 100, 0);
     await char_gift(1, (n) => (n === 16 ? 4 : 0)); // 16 → 4 → 随机角色 5
     assert.equal(fixture.store.get('talent:5:314'), 1, `位 ${bit}：精灵`);
@@ -693,7 +693,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     const fixture = create_era_fixture();
     seed(fixture, 1 << 12);
     fixture.seed_chara(32, { name: '龙族公主', callname: '龙族公主' });
-    const { char_gift } = fixture.load_module('event/event-ending');
+    const { char_gift } = fixture.load_module('page/page-ending');
     const bounds = [];
     // 换一个礼物档位换种族：ARG=5 龙族公主 → 种族设定 5 → look 设置的
     // `ELSEIF … || ARG == 5` → 种族 5（槽 4 = 015，整数倍档 ×50）
@@ -720,7 +720,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     // 两位都为假：整支不走，CFLAG:452 保持 0
     const fixture = create_era_fixture();
     seed(fixture, 0);
-    const { char_gift } = fixture.load_module('event/event-ending');
+    const { char_gift } = fixture.load_module('page/page-ending');
     fixture.set_inputs(1, 100, 0);
     await char_gift(1, (n) => (n === 16 ? 4 : 0));
     assert.equal(
@@ -733,7 +733,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
 
 test('inconseq_select：ARG != 7 时只读一次键、无输出（默认空档）', async () => {
   const fixture = create_era_fixture();
-  const { inconseq_select } = fixture.load_module('event/event-ending');
+  const { inconseq_select } = fixture.load_module('page/page-ending');
   fixture.set_inputs(1);
   await inconseq_select(8);
   assert.equal(history_texts(fixture).length, 0, '非 7 的 ARG 不产出行');
@@ -747,7 +747,7 @@ test('inconseq_select：ARG != 7 时只读一次键、无输出（默认空档�
 test('end10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLAG:102 不置（#652 起不受 invasion_check 分派，直驱演出本体）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  const { end10_55 } = fixture.load_module('event/event-ending');
+  const { end10_55 } = fixture.load_module('page/page-ending');
   await end10_55();
 
   assert.equal(fixture.store.get('exflag:2810'), 5, 'EX_FLAG:2810 += 5');
@@ -1008,7 +1008,7 @@ test('endcheck_square 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与
     fixture.store.set('exflag:2811', c.stage);
     fixture.store.set('abl:22:10', c.abl);
     fixture.store.set('abl:22:16', 0);
-    const { endcheck_square } = fixture.load_module('event/event-endcheck');
+    const { endcheck_square } = fixture.load_module('system/ending/endcheck');
     endcheck_square(seq(c.rand ?? []));
     assert.equal(
       fixture.store.get('exflag:2811'),
@@ -1029,7 +1029,7 @@ test('endcheck_square 无恋慕素质（TALENT:85 != 1）时阶梯整段不动',
     cflag: { 2: 99999, 515: 0 },
   });
   fixture.store.set('exflag:2811', 9);
-  const { endcheck_square } = fixture.load_module('event/event-endcheck');
+  const { endcheck_square } = fixture.load_module('system/ending/endcheck');
   endcheck_square(seq([0]));
   assert.equal(fixture.store.get('exflag:2811'), 9, '素质不在：起步条件不成立');
 });
@@ -1100,7 +1100,7 @@ test('endcheck_square 素质互换重置：恋慕 100-200 → 10、淫乱 30-100
       cflag: { 2: 0, 515: 5 },
     });
     fixture.store.set('exflag:2811', c.stage);
-    const { endcheck_square } = fixture.load_module('event/event-endcheck');
+    const { endcheck_square } = fixture.load_module('system/ending/endcheck');
     endcheck_square(seq([1]));
     assert.equal(fixture.store.get('exflag:2811'), c.want, c.why);
     // 重置块命中时计数器清零；未命中时保持预置的 5（阶梯对 30-90 之外的档
@@ -1119,7 +1119,7 @@ test('endcheck_square 不在场时整段空转（GETCHARA(22) < 0）', async () 
   fixture.era.addCharacter(0);
   fixture.store.set('exflag:2811', 100);
   fixture.store.set('talent:22:85', 1);
-  const { endcheck_square } = fixture.load_module('event/event-endcheck');
+  const { endcheck_square } = fixture.load_module('system/ending/endcheck');
   endcheck_square(seq([0]));
   assert.equal(
     fixture.store.get('exflag:2811'),
@@ -1339,7 +1339,7 @@ test('endcheck_spade 恋慕与淫乱双阶梯表驱动', async () => {
       cflag: { 2: c.c2, 515: c.c515 },
     });
     fixture.store.set('exflag:2814', c.stage);
-    const { endcheck_spade } = fixture.load_module('event/event-endcheck');
+    const { endcheck_spade } = fixture.load_module('system/ending/endcheck');
     await endcheck_spade(seq([0, 0])); // 151 档以上会走乳业收入分支（异步）
     assert.equal(fixture.store.get('exflag:2814'), c.want, c.why);
     assert.equal(
@@ -1374,7 +1374,7 @@ test('endcheck_spade 淫乱 140 档：ABL:1/17 + TALENT:78 + TALENT:0 四条件�
     fixture.store.set('exflag:2814', 140);
     fixture.store.set('abl:21:1', c.abl1);
     fixture.store.set('abl:21:17', c.abl17);
-    const { endcheck_spade } = fixture.load_module('event/event-endcheck');
+    const { endcheck_spade } = fixture.load_module('system/ending/endcheck');
     await endcheck_spade(seq([0, 0]));
     assert.equal(fixture.store.get('exflag:2814'), c.want, c.why);
   }
@@ -1417,7 +1417,7 @@ test('endcheck_spade 151 档乳业收入：MONEY 与 EX_FLAG:4444 同步 +（含
     });
     fixture.store.set('exflag:2814', c.stage);
     fixture.store.set('flag:10004', 1000); // MONEY
-    const { endcheck_spade } = fixture.load_module('event/event-endcheck');
+    const { endcheck_spade } = fixture.load_module('system/ending/endcheck');
     const bounds = []; // 记录随机源拿到的上界（RAND:200 的绑定）
     await endcheck_spade((n) => {
       bounds.push(n);
@@ -1623,7 +1623,7 @@ test('endcheck_princess 初会与两阶梯：表驱动走完恋慕 70-120 与淫
       cflag: { 2: c.c2, 515: c.c515, 601: c.c601 ?? 0 },
     });
     fixture.store.set('exflag:2807', c.stage);
-    const { endcheck_princess } = fixture.load_module('event/event-endcheck');
+    const { endcheck_princess } = fixture.load_module('system/ending/endcheck');
     endcheck_princess();
     assert.equal(fixture.store.get('exflag:2807'), c.want, c.why);
     assert.equal(
@@ -1661,7 +1661,7 @@ test('endcheck_princess 10-20 档：MARK:1/2 == 3 与 TALENT:0 的组合', async
     fixture.store.set('exflag:2807', 10);
     fixture.store.set('mark:35:1', c.mark1);
     fixture.store.set('mark:35:2', c.mark2);
-    const { endcheck_princess } = fixture.load_module('event/event-endcheck');
+    const { endcheck_princess } = fixture.load_module('system/ending/endcheck');
     endcheck_princess();
     assert.equal(fixture.store.get('exflag:2807'), c.want, c.why);
   }
@@ -1679,7 +1679,7 @@ test('endcheck_princess 20-30 档：恋慕/淫乱素质直接定线，无素质�
       cflag: { 2: 0, 515: 0 },
     });
     fixture.store.set('exflag:2807', 20);
-    const { endcheck_princess } = fixture.load_module('event/event-endcheck');
+    const { endcheck_princess } = fixture.load_module('system/ending/endcheck');
     endcheck_princess();
     assert.equal(fixture.store.get('exflag:2807'), c.want, c.why);
   }
@@ -1802,7 +1802,7 @@ test('endcheck_godness 淫乱阶梯：表驱动走完 110-190 与 300 档（DAY:
     fixture.store.set('flag:10001', c.day ?? 0); // DAY:1 = 月
     fixture.store.set('abl:33:10', c.abl ?? 0);
     fixture.store.set('abl:33:16', 0);
-    const { endcheck_godness } = fixture.load_module('event/event-endcheck');
+    const { endcheck_godness } = fixture.load_module('system/ending/endcheck');
     endcheck_godness();
     assert.equal(fixture.store.get('exflag:2810'), c.want, c.why);
     assert.equal(
@@ -1822,7 +1822,7 @@ test('endcheck_godness 300 档：被素质互换重置抢先，310 跳档不可�
     cflag: { 2: 0, 515: 5 },
   });
   fixture.store.set('exflag:2810', 300);
-  const { endcheck_godness } = fixture.load_module('event/event-endcheck');
+  const { endcheck_godness } = fixture.load_module('system/ending/endcheck');
   endcheck_godness();
   assert.equal(fixture.store.get('exflag:2810'), 110, '重置压回淫乱起始 11');
   assert.equal(
@@ -1851,7 +1851,7 @@ test('endcheck_godness 140/160/170/180 档的 GETCHARA 检查：真值恒真（�
     });
     fixture.store.set('exflag:2810', c.stage);
     fixture.store.set('flag:10001', 400); // DAY:1 满足
-    const { endcheck_godness } = fixture.load_module('event/event-endcheck');
+    const { endcheck_godness } = fixture.load_module('system/ending/endcheck');
     endcheck_godness();
     assert.equal(fixture.store.get('exflag:2810'), c.want, c.why);
   }
@@ -1903,7 +1903,7 @@ test('endcheck_godness 秀素质互换重置：恋慕 110-200 → 10、淫乱 30
       cflag: { 2: 0, 515: 3 },
     });
     fixture.store.set('exflag:2810', c.stage);
-    const { endcheck_godness } = fixture.load_module('event/event-endcheck');
+    const { endcheck_godness } = fixture.load_module('system/ending/endcheck');
     endcheck_godness();
     assert.equal(fixture.store.get('exflag:2810'), c.want, c.why);
     assert.equal(
@@ -1952,7 +1952,7 @@ test('endcheck_square 档位区间：起步门与九个档位的下界/上界各
     fixture.store.set('abl:22:10', abl);
     fixture.store.set('abl:22:16', 0);
     fixture.store.set('exflag:2811', stage);
-    const { endcheck_square } = fixture.load_module('event/event-endcheck');
+    const { endcheck_square } = fixture.load_module('system/ending/endcheck');
     endcheck_square(seq([0]));
     assert.equal(fixture.store.get('exflag:2811'), want, why);
     assert.equal(fixture.store.get('cflag:22:515'), want515, `${why}：计数器`);
@@ -1991,7 +1991,7 @@ test('endcheck_spade 档位区间：恋慕线九档 + 淫乱线九档的下界/�
     fixture.store.set('abl:21:10', abl);
     fixture.store.set('abl:21:16', 0);
     fixture.store.set('exflag:2814', stage);
-    const { endcheck_spade } = fixture.load_module('event/event-endcheck');
+    const { endcheck_spade } = fixture.load_module('system/ending/endcheck');
     await endcheck_spade(seq([0, 0]));
     assert.equal(fixture.store.get('exflag:2814'), want, `恋慕线：${why}`);
     assert.equal(
@@ -2037,7 +2037,7 @@ test('endcheck_spade 档位区间：恋慕线九档 + 淫乱线九档的下界/�
     fixture.store.set('abl:21:17', 5);
     fixture.store.set('flag:10001', 350); // DAY:1
     fixture.store.set('exflag:2814', stage);
-    const { endcheck_spade } = fixture.load_module('event/event-endcheck');
+    const { endcheck_spade } = fixture.load_module('system/ending/endcheck');
     await endcheck_spade(seq([0, 0]));
     assert.equal(fixture.store.get('exflag:2814'), want, `淫乱线：${why}`);
     assert.equal(
@@ -2142,7 +2142,7 @@ test('endcheck_princess 档位区间：十七档 + 三处重置门槛的下界/�
     // 10-20 档的 MARK 判定：MARK:1 == 3 且处女（TALENT:0 == 1）→ 20
     fixture.store.set('mark:35:1', mark1);
     fixture.store.set('exflag:2807', stage);
-    const { endcheck_princess } = fixture.load_module('event/event-endcheck');
+    const { endcheck_princess } = fixture.load_module('system/ending/endcheck');
     endcheck_princess();
     assert.equal(fixture.store.get('exflag:2807'), want, why);
     assert.equal(fixture.store.get('cflag:35:515'), want515, `${why}：计数器`);
@@ -2192,7 +2192,7 @@ test('endcheck_godness 档位区间：九档 + 三处重置门槛的下界/上�
     fixture.store.set('abl:33:16', 0);
     fixture.store.set('flag:10001', 350); // DAY:1 >= 350
     fixture.store.set('exflag:2810', stage);
-    const { endcheck_godness } = fixture.load_module('event/event-endcheck');
+    const { endcheck_godness } = fixture.load_module('system/ending/endcheck');
     endcheck_godness();
     assert.equal(fixture.store.get('exflag:2810'), want, why);
     assert.equal(fixture.store.get('cflag:33:515'), want515, `${why}：计数器`);
@@ -2223,7 +2223,7 @@ test('endcheck_godness 档位区间：九档 + 三处重置门槛的下界/上�
       cflag: { 2: 0, 515: 5 },
     });
     fixture.store.set('exflag:2810', stage);
-    const { endcheck_godness } = fixture.load_module('event/event-endcheck');
+    const { endcheck_godness } = fixture.load_module('system/ending/endcheck');
     endcheck_godness();
     assert.equal(fixture.store.get('exflag:2810'), want, why);
     assert.equal(fixture.store.get('cflag:33:515'), want515, `${why}：计数器`);
@@ -2254,7 +2254,7 @@ test('endcheck_godness_sky_temple：500/520/530 三档空转；540 档的 560 �
     fixture.store.set('exflag:2810', c.stage);
     fixture.store.set('flag:93', c.flag93);
     const { endcheck_godness_sky_temple } = fixture.load_module(
-      'event/event-endcheck',
+      'system/ending/endcheck',
     );
     endcheck_godness_sky_temple();
     assert.equal(fixture.store.get('exflag:2810'), c.want, c.why);
@@ -2271,7 +2271,7 @@ test('endcheck_godness_sky_temple：500/520/530 三档空转；540 档的 560 �
     [present, '嘉德在场'],
   ]) {
     const { endcheck_godness_sky_temple } = fixture.load_module(
-      'event/event-endcheck',
+      'system/ending/endcheck',
     );
     endcheck_godness_sky_temple();
     assert.equal(
@@ -2290,7 +2290,7 @@ test('endcheck_godness_sky_temple：500/520/530 三档空转；540 档的 560 �
 test('END 族分派：65 段全部注册进 END_FAMILY，线值个位为 0 时按族号 + 小节命中', async () => {
   const fixture = create_era_fixture();
   const { END_SCRIPTS } = fixture.load_module('data/ending-scripts');
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   for (const family of [7, 10, 11, 14]) {
     assert.ok(END_FAMILY.has(family), `族 ${family} 必须已注册`);
   }
@@ -2316,7 +2316,7 @@ test('END 族分派贯通：菲娅线值 10 → run_endcheck 走 END7_1 → 文�
   fixture.seed_chara(35, { id: 35, name: '菲娅', callname: '菲娅' });
   fixture.era.addCharacter(35);
   fixture.store.set('exflag:2807', 10);
-  const { run_endcheck } = fixture.load_module('event/event-endcheck');
+  const { run_endcheck } = fixture.load_module('system/ending/endcheck');
   await run_endcheck();
 
   assert.equal(fixture.store.get('exflag:2807'), 11, 'END7_1 收尾 += 1');
@@ -2406,7 +2406,7 @@ test('效果表驱动：每段收尾对线值的写入（表里逐条独立写�
   ];
   for (const [family, section, want, inputs] of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     fixture.set_inputs(...(inputs ?? []));
     const line_no = 2800 + family;
     fixture.store.set(`exflag:${line_no}`, 100);
@@ -2459,7 +2459,7 @@ test('效果表驱动：带额外副作用的段（TALENT/CFLAG/BASE/EXP/EX_FLAG
   ];
   for (const c of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     for (const key of Object.keys(c.want)) {
       if (key.startsWith('talent:')) {
         fixture.store.set(key, 9); // 预置成非目标值，证明确实被改写
@@ -2510,7 +2510,7 @@ test('ask 段分岔：八个 INPUT 段的两侧都走一遍（表驱动）', asy
   ];
   for (const [family, section, inputs, want, text] of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     fixture.seed_chara(family === 11 ? 22 : 21, {
       id: family === 11 ? 22 : 21,
       name: '角色',
@@ -2551,7 +2551,7 @@ test('END10_12 分岔：INPUT 1/2 + after 的两个 CFLAG 区间子调用', asyn
   ];
   for (const [inputs, c2, want, sub, why] of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     fixture.era.addCharacter(33);
     fixture.seed_chara(33, { id: 33, name: '嘉德', callname: '嘉德' });
     fixture.store.set('cflag:33:2', c2);
@@ -2580,7 +2580,7 @@ test('end10_12 的越界输入被引擎当场拒收（#711：选项已按钮化�
   // 抛「输入不合法」：这条同时证明按钮在白名单里、没被中途的等键清掉——
   // 若按钮被打印在最后一次等键之前，白名单为空、9 反而会被放行。
   const fixture = create_era_fixture();
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   fixture.store.set('exflag:2810', 100);
   fixture.store.set('cflag:33:2', 2500);
   fixture.set_inputs(9);
@@ -2683,7 +2683,7 @@ test('选项步按钮化：十一处选项行都是按钮、在最后一次等�
   // 角色线 [1] 支要离队，离队对象得在场（与 ask 段分岔用例同款）
   const build_world = (c) => {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     const cid = c.family === 11 ? 22 : 21;
     if (c.family === 11 || c.family === 14) {
       fixture.seed_chara(cid, { id: cid, name: '角色', callname: '角色' });
@@ -2733,7 +2733,7 @@ test('ask 步的 again / else：提示按钮化后数据表不可达，执行器
   // 执行器这两个分岔的语义用「提示不打印按钮」的合成步直接驱动
   {
     const fixture = create_era_fixture();
-    const { run_steps } = fixture.load_module('event/ending-family');
+    const { run_steps } = fixture.load_module('system/ending/ending-family');
     fixture.set_inputs(9, 1); // 第一次不命中 → again 重问；第二次命中
     const ctx = { family: 7 };
     await run_steps(
@@ -2770,7 +2770,7 @@ test('ask 步的 again / else：提示按钮化后数据表不可达，执行器
   }
   {
     const fixture = create_era_fixture();
-    const { run_steps } = fixture.load_module('event/ending-family');
+    const { run_steps } = fixture.load_module('system/ending/ending-family');
     fixture.set_inputs(9);
     await run_steps(
       [
@@ -2806,7 +2806,7 @@ test('选项步按钮化的白名单：越界输入被当场拒收（#711）', a
   ];
   for (const [family, section, input, allowed, why] of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     if (family === 14) {
       fixture.seed_chara(21, { id: 21, name: '角色', callname: '角色' });
       fixture.era.addCharacter(21);
@@ -2832,7 +2832,7 @@ test('finish 步：2801 < 99 先抬到 90 再 ++；>= 99 不动；95 只 ++', as
   ];
   for (const [before, after, why] of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     fixture.store.set('exflag:2801', before);
     fixture.set_inputs(1); // END7_12 的 [1] 支
     await END_FAMILY.call(7, { args: [12] });
@@ -2846,7 +2846,7 @@ test('finish 步：2801 < 99 先抬到 90 再 ++；>= 99 不动；95 只 ++', as
 
 test('leave 步：调教对象指针归空、TARGET/ASSI 从 FLAG:1/2 回填、除名与归档', async () => {
   const fixture = create_era_fixture();
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   fixture.seed_chara(22, { id: 22, name: '黑方片', callname: '黑方片' });
   fixture.seed_chara(5, { id: 5, name: '路人', callname: '路人' });
   fixture.era.addCharacter(22);
@@ -2891,7 +2891,7 @@ test('leave 步：调教对象指针归空、TARGET/ASSI 从 FLAG:1/2 回填、�
 
 test('rampage 步（END10_15）：嘉德线 540、威望 −50、库存与全角色 BASE 扣减、金库 −20%', async () => {
   const fixture = create_era_fixture();
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(33, { id: 33, name: '嘉德', callname: '嘉德' });
   fixture.seed_chara(5, { id: 5, name: '奴隶', callname: '奴隶' });
@@ -2969,7 +2969,7 @@ test('inconseq 步：END7_2/END7_5/END7_22 调 inconseq_select(7)，按结果印
   ];
   for (const [family, section, result, text, extra] of CASES) {
     const fixture = create_era_fixture();
-    const { END_FAMILY } = fixture.load_module('event/ending-family');
+    const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
     fixture.store.set('callname:0:-1', '小魔王');
     fixture.set_inputs(...(extra ?? [result]));
     await END_FAMILY.call(family, { args: [section] });
@@ -2982,7 +2982,7 @@ test('inconseq 步：END7_2/END7_5/END7_22 调 inconseq_select(7)，按结果印
 
 test('inconseq 步的插值：%SAVESTR:MASTER% 换成角色 0 的姓名', async () => {
   const fixture = create_era_fixture();
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   fixture.store.set('callname:0:-1', '小魔王');
   fixture.set_inputs(1, 5); // 先走 END7_22 的分岔，再是因果选择
   await END_FAMILY.call(7, { args: [22] });
@@ -2996,7 +2996,7 @@ test('inconseq 步的插值：%SAVESTR:MASTER% 换成角色 0 的姓名', async 
 
 test('数据段的插值：END7_1 的 %SAVESTR:MASTER% 换成角色 0 的姓名', async () => {
   const fixture = create_era_fixture();
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   fixture.store.set('callname:0:-1', '小魔王');
   await END_FAMILY.call(7, { args: [1] });
   assert(
@@ -3009,7 +3009,7 @@ test('数据段的插值：END7_1 的 %SAVESTR:MASTER% 换成角色 0 的姓名'
 
 test('end10_54 的 ALIGNMENT：先 CENTER 后 LEFT（era.setAlign 各一次）', async () => {
   const fixture = create_era_fixture();
-  const { END_FAMILY } = fixture.load_module('event/ending-family');
+  const { END_FAMILY } = fixture.load_module('system/ending/ending-family');
   await END_FAMILY.call(10, { args: [54] });
   assert.deepEqual(
     fixture.calls
@@ -3023,7 +3023,7 @@ test('end10_54 的 ALIGNMENT：先 CENTER 后 LEFT（era.setAlign 各一次）',
 
 test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之后打印（输入按钮编号能送达）', async () => {
   const fixture = create_era_fixture();
-  const { ending_n } = fixture.load_module('event/event-ending');
+  const { ending_n } = fixture.load_module('page/page-ending');
   fixture.set_inputs(2); // [2] 继续游戏
   await ending_n();
 
@@ -3057,7 +3057,7 @@ test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之�
   // 白名单真的活着：越界值被当场拒收。按钮若打印在等键之前，白名单为空、
   // 3 反而会被放行——ending_input 重问时预置输入已耗尽，抛的是别的错
   const rejected = create_era_fixture();
-  const { ending_n: rejected_n } = rejected.load_module('event/event-ending');
+  const { ending_n: rejected_n } = rejected.load_module('page/page-ending');
   rejected.set_inputs(3);
   await assert.rejects(
     () => rejected_n(),
@@ -3069,7 +3069,7 @@ test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之�
 test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无效输入重问', async () => {
   {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
+    const { ending_input } = fixture.load_module('page/page-ending');
     fixture.set_inputs(2);
     await ending_input(1099); // EX_FLAG:2801(99) + 1000 → LOCAL 1
     assert(
@@ -3079,7 +3079,7 @@ test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无�
   }
   {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
+    const { ending_input } = fixture.load_module('page/page-ending');
     fixture.set_inputs(1);
     let caught;
     await ending_input(1099).catch((e) => {
@@ -3092,7 +3092,7 @@ test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无�
   }
   {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
+    const { ending_input } = fixture.load_module('page/page-ending');
     fixture.set_inputs(7, 5, 2); // 两次无效值后命中 [2]
     await ending_input(1099);
     assert.equal(
@@ -3114,7 +3114,7 @@ test('ending_input CASE 7（菲娅线）：[1] 两条起线提示 + 线值与主
   ];
   for (const [before, input, want, want_main, text] of CASES) {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
+    const { ending_input } = fixture.load_module('page/page-ending');
     fixture.store.set('exflag:2807', before);
     fixture.set_inputs(input);
     await ending_input(7000); // local = 7
@@ -3145,7 +3145,7 @@ test('ending_input CASE 16（双飞）：两个选项都只抬 2805（未完成�
     [3, 0],
   ]) {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('event/event-ending');
+    const { ending_input } = fixture.load_module('page/page-ending');
     fixture.set_inputs(input);
     await ending_input(16000); // local = 16
     assert.equal(
@@ -3161,7 +3161,7 @@ test('ending_input 未分档的线号（5/6/8-14）：CASEELSE 已删，静默�
   // （ending_n，LOCAL 恒 1）走不到，整档删除。未分档线号落进来不印
   // 「此处剧情尚未做好」、不写 flag:(2800+线号)、不抬主线
   const fixture = create_era_fixture();
-  const { ending_input } = fixture.load_module('event/event-ending');
+  const { ending_input } = fixture.load_module('page/page-ending');
   fixture.set_inputs(1);
   await ending_input(5000); // local = 5
   assert.equal(fixture.store.get('flag:2805') || 0, 0, 'FLAG 侧不得写入');

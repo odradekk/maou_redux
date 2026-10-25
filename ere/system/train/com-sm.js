@@ -32,7 +32,7 @@
  *
  * 持续效果由 source-check 结算按链逐位调用——链与族在 com-family.js
  * （EQUIP_COM_CHAIN / equip_com_family），消费循环在
- * event/source-check.js（这张工单接通，缺失位仍落占位行）。11-19（道具族）
+ * system/train/source-check.js（这张工单接通，缺失位仍落占位行）。11-19（道具族）
  * /53-59（特殊族）/89（重度族）/100/108（触手族）随各自族工单注册。
  *
  * == 三处已核的微妙点（防「顺手修正」） ==
@@ -67,7 +67,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { soiling_cloth_no2 } = require('#/system/train/cloth');
-const { clothtype_special_text } = require('#/page/page-clothtype');
+const { clothtype_special_text } = require('#/utils/clothtype-utils');
 // —— 读数缺省处理（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
 
 const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;
@@ -921,7 +921,7 @@ async function com49() {
 }
 
 // —— equip_com43–49：装备持续效果（48 无持续位）——
-//    调用循环在 event/source-check.js，按装备位逐项检查；
+//    调用循环在 system/train/source-check.js，按装备位逐项检查；
 //    调用顺序由 com-family.js 的 EQUIP_COM_CHAIN 定义。
 
 /**

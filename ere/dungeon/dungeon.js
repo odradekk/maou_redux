@@ -76,7 +76,7 @@ const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { party_del } = require('#/dungeon/dungeon-party');
-const { ending_2 } = require('#/event/event-ending');
+const { ending_2 } = require('#/page/page-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // H6（#175）战斗真身：dungeon-battle / dungeon-battle2 对 dungeon.js 的
 // karma 与 EX 道具兼容出口是函数内延迟 require（避开循环初始化）。

@@ -110,19 +110,19 @@ async function campaign_monster_list(floor, rand) {
 
 /**
  * before_autotrain（#508 起真身）：
- * 自动调教前置——SOURCE / delta 清零。真身在 ere/event/event-autotrain.js，
+ * 自动调教前置——SOURCE / delta 清零。真身在 ere/system/train/autotrain.js，
  * 调用点直调（浏览器/测试可替换导出，同 SOURCE_CHECK_AUTO 一族的先例）。
  * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function before_autotrain() {
-  return require('#/event/event-autotrain').before_autotrain();
+  return require('#/system/train/autotrain').before_autotrain();
 }
 
 /**
  * source_check_auto（调教域工单，#461 起真身）：自动调教结算。调用点同
  * before_autotrain 一族，调用点曾散见迷宫域四文件）
  * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
- * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
+ * ere/system/train/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
  *
  * #508：结算后补一次 `era.nextTurnInTrain()`——这是调教回合循环里 SOURCE_CHECK
  * 之后那一步（UPCHECK 的 ere 等价物，train-loop.js:70-74）在迷宫路径上的
@@ -565,10 +565,10 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   // PLAYER = 0——本函数无读者，不落变量（死赋值，注释留痕）
 
   // 肛门虫（TALENT:193）自动调教三连（CALL com13_auto——
-  // 真身 ere/event/event-autotrain.js，#500）
+  // 真身 ere/system/train/autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await before_autotrain();
-    const { com13_auto } = require('#/event/event-autotrain');
+    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();
     await source_check_auto();
   }

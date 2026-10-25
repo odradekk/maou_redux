@@ -11,7 +11,7 @@
  *   - 四条角色线推进判定（endcheck_spade / endcheck_square /
  *     endcheck_godness / endcheck_godness_sky_temple / endcheck_princess）
  *     自 #404（N20）起为真身（见下方各函数）；ending_n 演出同一工单实现
- *     （ere/event/event-ending.js）。
+ *     （ere/page/page-ending.js）。
  *
  * 说明：
  *   - GETCHARA(n) 按登记号寻址；ere 侧登记号已扁平化为角色号
@@ -31,8 +31,8 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { END_FAMILY } = require('#/event/ending-family');
-const { ending_n } = require('#/event/event-ending');
+const { END_FAMILY } = require('#/system/ending/ending-family');
+const { ending_n } = require('#/page/page-ending');
 const { default_rand } = require('#/utils/numeric');
 
 /** 二维表读点：未声明下标读得 undefined（#13），包装层同款 || 0 缺省处理 */

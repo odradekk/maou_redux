@@ -28,7 +28,7 @@ const TRAIN_PATH_MODULES = [
   'event/event-com',
   'event/event-comend',
   'event/event-end',
-  'event/source-check',
+  'system/train/source-check',
   'kojo/kojo-k3-noble',
   'page/page-train',
   'page/page-usercom',

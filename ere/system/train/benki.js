@@ -1382,7 +1382,7 @@ const NAME_BENKI_MENU_TABLE = {
  *
  * 调用点把名字拼进攻击演出（「以（名字）进行了诱惑」）；本函数
  * **返回名字串**而非直接输出，由调用点拼行（#215 决定 1 同款：
- * page-clothtype 的 clothtype_text 也返回串）。
+ * clothtype-utils 的 clothtype_text 也返回串）。
  *
  * @param {number} arg 指令号
  * @returns {string} 类型名（表外号返回空串，无对应词条即不输出）

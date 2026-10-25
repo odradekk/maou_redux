@@ -135,7 +135,7 @@ class CharaFacade {
 
   /**
    * 特别服装类型（cflag:cid:42）
-   * CFLAG:42 特別コスチュームのタイプ（类型名见 ere/page/page-clothtype.js 的 clothtype_special_text）
+   * CFLAG:42 特別コスチュームのタイプ（类型名见 ere/utils/clothtype-utils.js 的 clothtype_special_text）
    * @returns {number}
    */
   get 特别服装类型() {

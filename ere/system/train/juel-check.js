@@ -21,7 +21,7 @@
  * addCharacter/addCharacterForTrain 时已按 staticData.juel 名字表把
  * juel 与 gotjuel 的每个键预置为 0（app.asar 实证，initCharaTable 含
  * juel）。**gotjuel 的写者只有三处：本模块、自动调教路径的清零
- * （ere/event/event-autotrain.js）与 train-end.js 的 defer_train_death
+ * （ere/system/train/autotrain.js）与 train-end.js 的 defer_train_death
  * （死亡清零，#782——死亡目标不获珠）**——后续工单不得绕过：erauma 式
  * 的逐回合 gotjuel 累积不适用，结算模型是一次性的 PALAM→珠换算。
  *
@@ -68,7 +68,7 @@ const {
   auto_ablup,
   HANDLER_QUIET,
 } = require('#/system/train/ablup');
-const { check_specialskil } = require('#/event/get-specialtalent'); // #565 起接入
+const { check_specialskil } = require('#/system/train/get-specialtalent'); // #565 起接入
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const era_flag = require('#/era-utils/era-flag');
@@ -418,7 +418,7 @@ async function run_juel_check() {
   // 收尾三查，全数真身（check_specialskil 自 #565 接入）
   yokubo_up_check(target);
   await check_sellassiable(target);
-  // check_specialskil(target, 1)（#565 起真身 ere/event/get-specialtalent.js；
+  // check_specialskil(target, 1)（#565 起真身 ere/system/train/get-specialtalent.js；
   // 实参 1 = SEIIN——强制精饮绝顶次数超阈值时的档位判定用）
   await check_specialskil(target, 1);
 }

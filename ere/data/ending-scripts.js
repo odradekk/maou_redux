@@ -3,9 +3,9 @@
  *     #388 的 CHARA_NAME_INIT 先例，不为每个段写一个函数）。
  *
  * 这 65 段是同一形状的结局文本段，只经「按族号与小节键查表」
- * 到达（ere/event/event-endcheck.js 的 END_FAMILY 分派循环）——按字面
+ * 到达（ere/system/ending/endcheck.js 的 END_FAMILY 分派循环）——按字面
  * 调用数外部调用全是 0，不是死代码。执行语义在
- * ere/event/ending-family.js 的 run_steps。
+ * ere/system/ending/ending-family.js 的 run_steps。
  *
  * 结构：`{ <族号>: { <小节键>: { steps } } }`。小节键 = 段名里
  * 族号之后的部分（`END7_1` → `'1'`、`END10_12_1` → `'12_1'`）。族号即

@@ -33,7 +33,7 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { check_sellassiable } = require('#/system/stronghold/sale');
-const { check_specialskil } = require('#/event/get-specialtalent');
+const { check_specialskil } = require('#/system/train/get-specialtalent');
 const { run_event_nextday } = require('#/event/event-nextday');
 const { run_event_nextmonth } = require('#/event/event-nextmonth');
 // ENTER_ENEMY 经模块对象调用（不解构）：#171 的夹具隔离开关
@@ -59,7 +59,7 @@ const {
   in_vagina_extra,
   in_vagina_kyouou_to_t,
   in_vagina_ntrd_to_t,
-} = require('#/event/event-pregnancy');
+} = require('#/system/pregnancy');
 
 /**
  * `RAND:CHARANUM` 的 ere 等价物：从在场名单里随机取一个角色。

@@ -5,7 +5,7 @@
  * com-<族>.js 注册）。
  *
  * B 在前、A 在后；ere 侧同为两次直调：B 由各调教指令模块调
- * （com-<族>.js），A 由来源检查调用（ere/event/source-check.js）。
+ * （com-<族>.js），A 由来源检查调用（ere/system/train/source-check.js）。
  *
  * == 分发表（#209 决定 6 / #213 立面） ==
  *
@@ -55,7 +55,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const {
   clothtype_main2_text,
   clothtype_special_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 const { game } = require('#/facade/game');
 
 /**
@@ -741,7 +741,7 @@ function emit_sex_orgasm_afterglow() {
  * 癖」；失禁 = 「29 ≥ 3 且漏尿癖」或「29 ≥ 1 且利尿剂」），四组衣着共用同一
  * 对条件，照原样保留。着ぐるみ两处嵌 clothtype_special_text、服支嵌
  * clothtype_main2_text——取该模块的返回串再拼接（返回值约定见
- * page-clothtype.js 头注）。
+ * clothtype-utils.js 头注）。
  */
 function emit_incontinence() {
   const target = era_flag.target;

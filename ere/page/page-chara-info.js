@@ -127,7 +127,7 @@ const { show_button_marriage, marriage } = require('#/chara/chara-marriage');
 const {
   child_care_chara,
   show_button_child_care,
-} = require('#/event/event-pregnancy');
+} = require('#/system/pregnancy');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { show_chara_info } = require('#/page/page-chara-info-show');
@@ -713,7 +713,7 @@ async function chara_info_individual(arg, chara_sort) {
       show_button_job_change(2, current);
       show_button_temptation(3, current);
       show_button_marriage(4, current);
-      // show_button_child_care（#401 真身，ere/event/event-pregnancy.js）
+      // show_button_child_care（#401 真身，ere/system/pregnancy.js）
       show_button_child_care(5, current);
       if (is_able_to_ability_up(current)) era.printButton('提升能力', 10);
       if (current !== 0) {

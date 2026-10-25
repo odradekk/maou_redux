@@ -49,7 +49,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
-const { clothtype_main2_text } = require('#/page/page-clothtype');
+const { clothtype_main2_text } = require('#/utils/clothtype-utils');
 const { get_clothtype_special } = require('#/system/cloth-lookup');
 
 // —— 读数缺省处理（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——

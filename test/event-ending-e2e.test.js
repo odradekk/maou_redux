@@ -4,7 +4,7 @@
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点，#16）。
  *
- * 与 test/event-ending.test.js:281 的贯通用例（置位起跳）的差别：本用例
+ * 与 test/page-ending.test.js:281 的贯通用例（置位起跳）的差别：本用例
  * 从**新档起跑**——标题画面选新游戏 → EVENTFIRST（村娘线）→ 主菜单 →
  * 魔力出兵 → BEGIN TURNEND → 日循环推进，循环往复直到 FLAG:82 == 1，
  * 把 #118 已各自验过的结局三信号（横幅文本、角色 35 在队、FLAG:82 == 1）

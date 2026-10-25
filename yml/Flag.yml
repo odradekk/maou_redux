@@ -109,7 +109,7 @@
   name: "crazylord_entered"
   type: "number"
 # —— 结局线区间（issue #116）——
-# 结局线区间 2801-2820 声明在 EX_FLAG（ere/event/event-endcheck.js 头注释），但两条实际
+# 结局线区间 2801-2820 声明在 EX_FLAG（ere/system/ending/endcheck.js 头注释），但两条实际
 # 写进了 FLAG 侧（ENDCHECK 链逐条按原写点移植，见 yml/ExFlag.yml 头注的
 # 错写登记；ExFlag.yml 同 id 的 2815/2816 条目是语义登记，真值归属由
 # ENDING_1 演出票 #118 定夺——两侧均无读者，写侧必须与 ENDCHECKCHARA 的
