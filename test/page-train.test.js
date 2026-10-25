@@ -14,28 +14,9 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
 
-// Palam.yml 的名字表形状（运行时由引擎装载进 fieldNames/staticData；夹具
-// 是平表，用例预置两条寻址键：palamkeys/palamname:i）。0..15 连续、100
-// 断档——参数条只取连续段
-const PALAM_KEYS = [...Array.from({ length: 16 }, (_, i) => i), 100];
-const PALAM_NAMES = [
-  '阴核',
-  '私处',
-  '肛门',
-  '润滑',
-  '恭顺',
-  '欲情',
-  '屈服',
-  '习得',
-  '耻情',
-  '苦痛',
-  '恐怖',
-  '反感',
-  '不快',
-  '抑郁',
-  '乳房',
-  '局部',
-];
+// Palam.yml 的名字表形状（运行时由引擎装载进 fieldNames/staticData）：0..15
+// 连续、100 断档——参数条只取连续段。夹具自 #821 起按 yml 现算 palamkeys /
+// palamname:i，用例不再自己预置这两条寻址键。
 
 function seed_world(fixture) {
   // 世界底座含魔王（目标行的「调教者:」读主人姓名——真实游戏里角色 0 恒在场）
@@ -46,10 +27,6 @@ function seed_world(fixture) {
   era_flag.target = 31;
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
-  fixture.store.set('palamkeys', PALAM_KEYS);
-  PALAM_NAMES.forEach((name, i) => {
-    fixture.store.set(`palamname:${i}`, name);
-  });
   fixture.load_module('page/page-train');
   return era_flag;
 }
@@ -601,10 +578,6 @@ test('射精（助手）：仅助手调教时显示（IF ASSIPLAY）', async () 
     era_flag.assi = 32;
     era_flag.assiplay = assiplay;
     fixture.era.beginTrain(0, 31, 32);
-    fixture.store.set('palamkeys', PALAM_KEYS);
-    PALAM_NAMES.forEach((name, i) => {
-      fixture.store.set(`palamname:${i}`, name);
-    });
     fixture.load_module('page/page-train');
     era_flag.day_count = 0;
     fixture.store.set('talent:32:122', 1);

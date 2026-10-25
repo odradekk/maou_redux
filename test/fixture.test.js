@@ -12,6 +12,8 @@
  */
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -19,6 +21,7 @@ const {
   create_add_character,
   create_next_turn_in_train,
   create_chara_loader,
+  create_variable_loader,
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 
@@ -795,10 +798,10 @@ test('名字表读取（#739）：yml 未声明且用例没播种的序号同引
   });
 });
 
-test('名字表读取（#739）：yml 已声明的序号与非 yml 名字表照常读取', () => {
+test('名字表读取（#739）：yml 已声明的序号读出 yml 里的名字，非 yml 名字表照常读取', () => {
   const fixture = create_era_fixture();
-  // 已声明而名字没播种：照旧返回 undefined
-  assert.equal(fixture.era.get('ablname:10'), undefined);
+  // #821 起名字一律从 yml 计算（此前要靠用例播种）
+  assert.equal(fixture.era.get('ablname:10'), '顺从');
   // callname 不对应 yml 名字表，不检查
   assert.equal(fixture.era.get('callname:999'), undefined);
 });
@@ -820,6 +823,104 @@ test('名字表序号：包含 yml 声明和用例显式播种的名字，不包
   assert.equal(new Set(ids).size, ids.length);
   fixture.store.set('itemkeys', [341]);
   assert.deepEqual(fixture.era.get('itemkeys'), [341]);
+});
+
+// —— 变量地址的引擎归一（#821）——
+//
+// 引擎寻址层（app.asar 模块 637）逐字：地址先按 `:` 切开、各段
+// toLocaleLowerCase；表名 `param`→`palam`、后缀 `jewel`→`juel`；再拿
+// `staticData[表]` 把名字翻成序号（`safeUndefinedCheck(映射值, 原串)` 的
+// 缺省就是原串——未登记的名字原样当键）。夹具此前按地址原样存取，
+// `talent:0:男人` 与 `talent:0:122` 是两个槽：代码改成按名字寻址后，测试
+// 读的是另一个槽，断言全绿而行为是空的。以下四条钉住归一本身，引擎侧
+// 证据由文件尾的 engine_test 驱动真 set_var 比对。
+
+test('地址归一（#821）：名字按 yml 翻成序号，与序号读写同一槽', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  // 二维角色表：talent 男人 = 122、种族 = 314（yml/Talent.yml）
+  era.set('talent:31:男人', 1);
+  assert.equal(era.get('talent:31:122'), 1, '按名字写、按序号读得到同一个值');
+  era.set('talent:31:314', 2);
+  assert.equal(era.get('talent:31:种族'), 2, '按序号写、按名字读');
+  assert.equal(fixture.store.get('talent:31:122'), 1, '落库的键是序号');
+  // 累加路径同样归一（引擎 add 与 set 走同一条寻址）
+  era.add('talent:31:男人', 1);
+  assert.equal(era.get('talent:31:122'), 2, 'era.add 按序号累加');
+
+  // 一维常驻表：flag 特别税加成 = 9
+  era.set('flag:特别税加成', 7);
+  assert.equal(era.get('flag:9'), 7, 'flag 具名与序号同槽');
+  // base 体力 = 0（与 maxbase 共用 Base.yml）：MAXBASE 的正上限同样按序号钳制
+  era.set('base:0:体力', 12);
+  assert.equal(era.get('base:0:0'), 12, 'base 具名与序号同槽');
+  era.set('maxbase:0:0', 10);
+  era.set('base:0:体力', 12);
+  assert.equal(era.get('base:0:体力'), 10, 'MAXBASE 钳制按序号生效');
+  // global 二段具名：冒険者性別 → 3
+  era.set('global:冒险者性别', -1);
+  assert.equal(era.get('global:3'), -1, 'global 具名与序号同槽');
+
+  // 调教域表：palam 欲情 = 5、abl 顺从 = 10
+  era.beginTrain(31);
+  era.set('palam:31:欲情', 300);
+  assert.equal(era.get('palam:31:5'), 300, 'palam 具名与序号同槽');
+  era.set('abl:31:顺从', 4);
+  assert.equal(era.get('abl:31:10'), 4, 'abl 具名与序号同槽');
+});
+
+test('地址归一（#821）：各段转小写、param 归一成 palam', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  era.set('TALENT:31:男人', 1);
+  assert.equal(era.get('talent:31:122'), 1, '表名大写与名字大写都归一');
+  assert.equal(era.get('talent:31:男人'), 1, '归一后的键不因写法不同分叉');
+
+  era.beginTrain(31);
+  era.set('PARAM:31:5', 7);
+  assert.equal(era.get('palam:31:欲情'), 7, 'param 与 palam 是同一张表');
+  assert.equal(era.get('PALAM:31:5'), 7);
+});
+
+test('地址归一（#821）：未登记的名字原样当键（引擎 safeUndefinedCheck 的缺省）', () => {
+  const fixture = create_era_fixture();
+  const { era } = fixture;
+
+  era.set('talent:31:未登记', 3);
+  assert.equal(era.get('talent:31:未登记'), 3, '未登记的名字原样当键');
+  assert.equal(
+    era.get('talent:31:122'),
+    undefined,
+    '未登记的名字不落进任何序号槽',
+  );
+  assert.equal(fixture.store.get('talent:31:未登记'), 3, '键就是原串');
+  // 二段地址同一语义（引擎 default 分支的缺省同样是原串）
+  era.set('flag:未登记的旗标', 9);
+  assert.equal(era.get('flag:未登记的旗标'), 9, '二段未登记名字原样当键');
+  assert.equal(era.get('flag:9'), undefined, '二段未登记名字不落进序号槽');
+  // 地址各段先小写，未登记的名字同样按小写落键
+  era.set('talent:31:Unlisted', 5);
+  assert.equal(era.get('talent:31:unlisted'), 5, '未登记名字同样按小写落键');
+});
+
+test('名字表反查（#821）：<表>name:<序号> 从 yml 计算，不再靠用例播种', () => {
+  const fixture = create_era_fixture();
+  const cases = [
+    ['ablname:10', '顺从'],
+    ['palamname:5', '欲情'],
+    ['itemname:3', '肛门虫'],
+    ['talentname:122', '男人'],
+    ['expname:0', '私处经验'],
+  ];
+  for (const [address, expected] of cases) {
+    assert.equal(
+      fixture.era.get(address),
+      expected,
+      `${address} 读 yml 的名字`,
+    );
+  }
 });
 
 test('logger 被记录且不自递归', () => {
@@ -1832,5 +1933,117 @@ engine_test(
     // 只结算在训角色：0 不在 tequip，delta 原样保留
     assert.equal(data.delta[0][3], 999, '不在训的角色不被结算');
     assert.equal(data.palam[0], undefined);
+  },
+);
+
+engine_test(
+  '引擎实证（#821）：地址各形态与夹具同解——名字/序号/大小写/param 别名/未登记',
+  () => {
+    const loader = create_variable_loader();
+    // 表名与文件名同款（引擎 eraStart 按文件名的去扩展名小写建表）
+    for (const [file, table] of [
+      ['Palam.yml', 'palam'],
+      ['Abl.yml', 'abl'],
+      ['Talent.yml', 'talent'],
+      ['Flag.yml', 'flag'],
+      ['Base.yml', 'base'],
+      ['Global.yml', 'global'],
+      ['Item.yml', 'item'],
+      ['Exp.yml', 'exp'],
+    ]) {
+      loader.load_rows(
+        engine.parse_data_file(
+          fs.readFileSync(path.join(__dirname, '..', 'yml', file), 'utf8'),
+          'yml',
+          table,
+        ),
+        table,
+      );
+    }
+    // 引擎二段/三段寻址先要求 data[表]（三段还要 data[表][角色]）在场，
+    // 桶形状按 fillData 的初始化造
+    const engine_this = {
+      staticData: loader.static_data,
+      fieldNames: loader.field_names,
+      data: {
+        flag: {},
+        talent: { 31: {} },
+        abl: { 31: {} },
+        palam: { 31: {} },
+        base: { 0: {} },
+        maxbase: { 0: {} },
+        item: { hold: {}, bought: 0 },
+      },
+      global: {},
+      extendedTables: {},
+      era: { error: () => {} },
+    };
+    const fixture = create_era_fixture();
+    fixture.era.beginTrain(31);
+
+    // 每条：按 write 写、按 read 读——两侧都必须落在同一槽且值相同
+    const cases = [
+      ['talent:31:男人', 'talent:31:122', 1],
+      ['TALENT:31:男人', 'talent:31:122', 2],
+      ['talent:31:314', 'talent:31:种族', 3],
+      ['flag:特别税加成', 'flag:9', 7],
+      ['base:0:体力', 'base:0:0', 12],
+      ['global:冒险者性别', 'global:3', -1],
+      ['palam:31:欲情', 'palam:31:5', 300],
+      ['PARAM:31:5', 'palam:31:欲情', 4],
+      ['abl:31:顺从', 'abl:31:10', 6],
+    ];
+    for (const [write_address, read_address, value] of cases) {
+      assert.equal(
+        fixture.era.set(write_address, value),
+        engine.set_var.call(engine_this, write_address, value, false),
+        `写入返回值：${write_address}`,
+      );
+      assert.equal(
+        fixture.era.get(read_address),
+        engine.set_var.call(engine_this, read_address),
+        `${write_address} 写入后按 ${read_address} 读`,
+      );
+      assert.equal(fixture.era.get(read_address), value);
+    }
+
+    // 未登记的名字：两侧都原样当键，不落进任何序号槽
+    assert.equal(
+      fixture.era.set('talent:31:未登记', 3),
+      engine.set_var.call(engine_this, 'talent:31:未登记', 3, false),
+    );
+    assert.equal(
+      fixture.era.get('talent:31:未登记'),
+      engine.set_var.call(engine_this, 'talent:31:未登记'),
+    );
+    assert.equal(engine.set_var.call(engine_this, 'talent:31:122'), 2);
+
+    // 累加路径：引擎 setVar 的 isAdd 支路与夹具 era.add 同解
+    assert.equal(
+      fixture.era.add('talent:31:男人', 5),
+      engine.set_var.call(engine_this, 'talent:31:男人', 5, true),
+    );
+    assert.equal(fixture.era.get('talent:31:122'), 7);
+    assert.equal(engine.set_var.call(engine_this, 'talent:31:122'), 7);
+
+    // 反查：<表>name:<序号> 读的是引擎装载进来的名字。ablname:20/21 这一对
+    // 是「名字落键前先过 toLowerCase」的实证——引擎里玩家看到的是全角小写
+    assert.equal(fixture.era.get('ablname:20'), '抖ｓ气质');
+    assert.equal(engine.set_var.call(engine_this, 'ablname:20'), '抖ｓ气质');
+    for (const address of [
+      'ablname:10',
+      'ablname:20',
+      'ablname:21',
+      'palamname:5',
+      'itemname:3',
+      'talentname:122',
+      'expname:0',
+    ]) {
+      assert.equal(
+        fixture.era.get(address),
+        engine.set_var.call(engine_this, address),
+        address,
+      );
+    }
   },
 );

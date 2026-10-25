@@ -1139,7 +1139,7 @@ test('#623 强制排泄·出身两支的整行', async () => {
       f.store.set('tequip:31:46', 0);
       f.store.set('abl:31:3', 3);
       f.store.set('abl:31:21', 3);
-      f.store.set('talent:31:成为勇者前的生活', life);
+      f.era.set('talent:31:成为勇者前的生活', life);
     });
     await speak_k3(fixture, seq_rand(0, 0));
     assert.ok(
@@ -1154,7 +1154,7 @@ test('#623 强制排泄·出身两支的整行', async () => {
     const fixture = await setup_k3((f) => {
       f.load_module('era-utils/era-flag').selectcom = 46;
       f.store.set('tequip:31:46', 0);
-      f.store.set('talent:31:成为勇者前的生活', life);
+      f.era.set('talent:31:成为勇者前的生活', life);
     });
     await speak_k3(fixture, seq_rand(0, 0));
     assert.ok(

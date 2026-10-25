@@ -95,12 +95,14 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
 
   // 到站证据二：随机路径已走 rand_chara_make 真身（#565）——初始奴隶
   // 已生成并入列（rand ≡ 0 掷勇者位 1）、收下播报读键过（#723 起主菜单
-  // 换屏清掉它，取证看全量行史；换屏前它已由收下播报读键确认）
+  // 换屏清掉它，取证看全量行史；换屏前它已由收下播报读键确认）。
+  // 名字来自命名链（rand ≡ 0 → 名字编号 0 = NameList.yml 的「玛丽」，#821
+  // 起夹具按 yml 现算名字，此前读到空串才落到保底名「佳奈美」）
   assert(
     fixture.lines_history.some(
       (line) =>
         line.type === 'text' &&
-        line.text.includes('冒险者佳奈美被囚禁在了地牢里！'),
+        line.text.includes('冒险者玛丽被囚禁在了地牢里！'),
     ),
     '随机初始奴隶的收下播报必须播过（rand_chara_make 真身）',
   );

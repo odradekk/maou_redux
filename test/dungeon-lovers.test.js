@@ -263,7 +263,8 @@ const LOVE_EXP_CASES = [
     scene: '被大型宠物狗艹上瘾',
     summary: '兽奸经验＋9',
     seed: {
-      'talent:1:种族': 2,
+      // TALENT:314 = 种族（yml/Talent.yml）：夹具按 yml 把名字翻成序号
+      'talent:1:314': 2,
       'talent:1:317': 12,
       'abl:1:39': 2,
       'talent:1:136': 1,
