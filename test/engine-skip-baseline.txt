@@ -136,7 +136,7 @@
 # train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
 # 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。
-84
+86
 # #733：cross-save-sharing-engine 的完整旧共享档导入与恢复接收档用例 +1，70 + 1 = 71。
 # #643（R4 删除读旧资源目录的用例与该目录）复测：70 不变（6798 = 6728 过 + 70 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）——删除的用例均无引擎门控，跳过数不动。
 # #734：kojo-palam-level-engine 的真实引擎爱抚回归用例 +1，71 + 1 = 72。
@@ -161,3 +161,8 @@
 # 同票另删掉 chara-name-list 的「名字地址未播种」一条——名字与 keys 自本票起
 # 同源于 yml，那条缺口在引擎与夹具里都不可能出现，它不依赖引擎（夹具路径），
 # 跳过数不受影响。
+# #848（初始角色改由 GameBase 的【初始角色编号】声明）：+2（gamebase-default-chara.test.js
+# 的两个引擎门控用例——resetData 建出的 0 号角色与手工 addCharacter(0) 逐键一致、
+# 相性镜像对默认角色只写正向），84 + 2 = 86。计数依据：ERE_ENGINE_ASAR=none npm test
+# 实测 7161 = 7075 过 + 86 跳过 + 0 挂；同文件另有两条 yml 文本用例（GameBase 的声明与
+# Chara0 的预设、相性目标不含 0）只读 yml 文本，任何环境都跑，不计入跳过。

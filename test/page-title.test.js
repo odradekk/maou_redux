@@ -194,19 +194,20 @@ test('选项 1（新的猎物）：返回 FIRST 转场目标并当场结束函�
   );
   // 不再读键回标题：BEGIN 结束函数，分支内没有 waitAnyKey
   assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 1 }]);
-  // 新游戏四件套的前两件：RESETDATA（#22 接通 era.resetData——清掉
-  // 上一局的会话数据）与 ADDCHARA 0。真初始化在 EVENTFIRST
-  // （test/event-first.test.js），此处证标题侧的接入。
+  // 新游戏的第一步是 RESETDATA（#22 接通 era.resetData——清掉上一局的
+  // 会话数据）。0 号角色自 #848 起由引擎在 resetData 里按 GameBase
+  // 【初始角色编号】创建，标题页不再手工 addCharacter(0)；真初始化在
+  // EVENTFIRST（test/event-first.test.js），此处证标题侧的接入。
   assert(
     fixture.calls.some((c) => c.api === 'resetData'),
     '必须先清档（RESETDATA）',
   );
   assert(
-    fixture.calls.some((c) => c.api === 'addCharacter' && c.args[0] === 0),
-    '必须加入初始角色 0（ADDCHARA 0）',
+    !fixture.calls.some((c) => c.api === 'addCharacter'),
+    '初始角色 0 由 resetData 按【初始角色编号】创建，标题页不得再手工 addCharacter',
   );
-  // #35：调了 addCharacter 之外，还要证明引擎语义上的「真的加进去了」——
-  // 夹具镜像引擎检查，缺角色表时这里会失败（#21/#22 的误报通过不会再放行）
+  // #35：不能只看「调了」——要证明引擎语义上的「真的加进去了」。夹具的
+  // resetData 镜像引擎的自动创建，缺角色预设时这里同样会失败
   assert.deepEqual(
     fixture.chara_no,
     [0],
