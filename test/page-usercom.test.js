@@ -357,11 +357,11 @@ test('USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面）
     await emit('USERCOM', 100);
 
     assert.ok(
-      fixture.text_lines().some((t) => t.startsWith('NO.0\u00A0\u00A0')), // #577：标题行补位 NBSP
+      fixture.text_lines().includes('NO.0'), // 标题行的编号格（网格里不再补位）
       '100 打出角色信息标题行（真身）',
     );
     assert.ok(
-      fixture.text_lines().some((t) => t.startsWith('\u00A0苦痛:LV')),
+      fixture.text_lines().some((t) => t.startsWith('苦痛:LV')),
       '调教时样式含刻印行（SHOW_INFO_MARK）',
     );
     assert.equal(fixture.waits.length, 2, '两次 WAIT');

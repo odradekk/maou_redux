@@ -329,10 +329,7 @@ async function intercept(rand = default_rand) {
     for (const cid of window_ids) {
       life_list_item(cid);
     }
-    // 补行（L_LCOUNT < NUM_PAGE + 1 时补到页高）
-    for (let row = window_ids.length; row < NUM_PAGE; row += 1) {
-      era.print('');
-    }
+    // 末页不满整页时不补空行：ere 是滚动视图，页脚紧接列表末行即可
     era.drawLine(); // （DRAWLINE + 上一页键）
     era.printButton('- 上一页', 1000); // PRINTLC
     era.printButton('- 返 回', 999); // PRINTLC（正文两个空格，引擎折叠成一个）

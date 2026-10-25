@@ -1027,10 +1027,7 @@ test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 召唤出的角色 A�
   );
   const texts = history_texts(fixture);
   // 真身的三个条件（页码条件与 test/chara-info-show.test.js 的页码表同款）
-  assert(
-    texts.some((line) => line.startsWith('NO.202 ')),
-    '标题行 NO.<cid> 带的是被召唤的角色号 A',
-  );
+  assert(texts.includes('NO.202'), '标题行 NO.<cid> 带的是被召唤的角色号 A');
   // 页码 = -2 的条件取「经验段 ∧ 外貌段」：经验段在 -2/-1/1 三支、外貌段在
   // -2/2 两支，交集只有 -2（EX: 0/1/3/4 两段都没有或只有一段）
   assert(

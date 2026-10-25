@@ -94,9 +94,6 @@ const GRID_COLUMNS = 24;
 /** 页面总数（`<{L_PAGE+1}/5>` 的 5） */
 const PAGE_COUNT = 5;
 
-/** 素质页的行高（`LINECOUNT - L_LCOUNT < 27` 的 27） */
-const TALENT_PAGE_ROWS = 27;
-
 /** 职业唯一的区间（`INRANGE(L_TAL,200,220)`） */
 const JOB_FIRST = 200;
 const JOB_LAST = 220;
@@ -1046,14 +1043,9 @@ async function char_custom(cid, mode, rand = default_rand) {
       char_custom_look_page(page - 3, cid);
     }
 
-    // 补行到 27 行的页高
-    if (era.getLineCount() - entry < TALENT_PAGE_ROWS) {
-      const pad = TALENT_PAGE_ROWS + entry - era.getLineCount();
-      for (let i = 0; i < pad; i += 1) {
-        era.println(); // PRINTL
-      }
-    }
-
+    // 页体画完即接页脚：原版在此按 `LINECOUNT - L_LCOUNT < 27` 补行到固定
+    // 页高，在字符终端里是把页脚钉在屏幕底部的手法；ere 是滚动视图，补出来
+    // 的只是一串无内容的空行。
     era.drawLine(); // 页脚段之前的 DRAWLINE
     // 页脚四键是四个 PRINTLC 串（模式 1 少一个），紧随的 PRINTL 只结束
     // 它们所在的那一行——PRINTLC 左对齐补位、**不换行**，那个 PRINTL 因此不产生

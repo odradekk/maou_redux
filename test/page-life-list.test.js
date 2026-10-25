@@ -294,9 +294,8 @@ test('life_list：无 ☆ 时留 5 空格占位、有 ☆ 时占位消失', () =
   );
 });
 
-test('life_list：窗口只含本页，空位补空行', () => {
-  // 四人档（魔王 + 三名奴隶）、每页 2 行：第 0 页两行、第 1 页一行 + 一个
-  // 空位（列表不足一页时补满空行）
+test('life_list：窗口只含本页，末页不补空行（页高不再凑）', () => {
+  // 四人档（魔王 + 三名奴隶）、每页 2 行：第 0 页两行、第 1 页一行
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '玛奥');
@@ -314,10 +313,12 @@ test('life_list：窗口只含本页，空位补空行', () => {
   const mod = second.load_module('page/page-life-list');
   mod.life_list(1, 1, 2);
   assert.deepEqual(row_ids(second), [0, 3], '第 1 页只剩 3 号');
+  // 页脚由调用方紧接列表末行画；原实现在此按 NUM_PAGE - 已画行数补空行，
+  // 在滚动视图里只是一串无内容的空行
   assert.deepEqual(
     text_lines(second).filter((t) => t === ''),
-    [''],
-    '空位应补一行空行',
+    [],
+    '空位不补空行',
   );
 });
 

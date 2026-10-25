@@ -301,29 +301,25 @@ test('ABILITY_UP：翻页（1000/1001）按档走，页首/页尾不越界', asy
   }
 });
 
-test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）', async () => {
-  // 998 档：魔王行（1）+ 奴隶行（n）算进 L_LCOUNT，补到 NUM_PAGE + 1 = 24 行
+test('ABILITY_UP：末页不补行凑页高（原为补到 NUM_PAGE(+1)）', async () => {
+  // 998 档：魔王行（1）+ 奴隶行（n）之后原实现补到 NUM_PAGE + 1 = 24 行；
+  // 现在页脚（分割线 + 三枚按钮）紧接列表末行，中间没有空行
   const two = four_chara();
   const draw = split_draws((await run(two, [999])).added)[0];
-  // 空行 = 表头那条换行输出已随 #562 去掉 → 只剩补行；页脚三键之后的收尾
-  // 输出同样只结束那一行，不产生空行（见 CONTEXT.md「输出 API 的排版与
-  // 对齐」）；补行数由 L_LCOUNT 与 NUM_PAGE(+1) 算出——改动补行上下界
-  // 这里立刻变数
   assert.equal(
     draw.filter((l) => l.type === 'text' && l.text === '').length,
-    21,
-    '2 名奴隶（1 + 2 = 3 行）时的空行数',
+    0,
+    '2 名奴隶时不再补空行',
   );
-  // 997 档：每页 24 行，1 名敌人 → 补 23 行
+  // 997 档：1 名敌人 → 原来补 23 行，现在 0
   const enemy = four_chara();
   const draw2 = split_draws((await run(enemy, [997, 999])).added)[1];
   assert.equal(
     draw2.filter((l) => l.type === 'text' && l.text === '').length,
-    23,
-    '1 名敌人（1 行）时的空行数',
+    0,
+    '1 名敌人时不再补空行',
   );
-  // 边界的**两侧**：998 档 l_lcount 恰好等于 NUM_PAGE（23）时仍要补 1 行
-  // （条件是 `< NUM_PAGE + 1`）——收成 `< NUM_PAGE` 时这一行会消失
+  // 一整页（1 + 22 = 23 行 = 页高）同样不补
   const full_page = create_era_fixture();
   add_chara(full_page, 0, '你');
   full_page.store.set('cflag:0:9', 25);
@@ -333,12 +329,10 @@ test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）'
     full_page.store.set(`cflag:${cid}:1`, 0);
   }
   const draw3 = split_draws((await run(full_page, [999])).added)[0];
-  // 这一份切段不含页脚之后的行（split_draws 在 [1001] 处收段），表头那条又
-  // 已随 #562 去掉，故只有补行一个空行
   assert.equal(
     draw3.filter((l) => l.type === 'text' && l.text === '').length,
-    1,
-    '1 + 22 = 23 行（= NUM_PAGE）时仍补 1 行，共 1 空行',
+    0,
+    '整页时也没有空行',
   );
 });
 
