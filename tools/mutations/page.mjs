@@ -4274,9 +4274,9 @@ export default [
   {
     desc: 'M12314 苏生名单丢掉「- 」（正文前缀）',
     file: 'ere/page/page-shop-labo.js',
-    find: 'era.printButton(`- ${csv_name(count + 1)}`, idx);',
+    find: 'era.printButton(`- ${csv_name(preset)}`, preset + 99);',
     replace:
-      'era.printButton(`${csv_name(count + 1)}`, idx); // 变异：丢掉「- 」',
+      'era.printButton(`${csv_name(preset)}`, preset + 99); // 变异：丢掉「- 」',
     tests: ['page-shop-labo'],
     must_mention: '苏生名单',
   },
@@ -4285,8 +4285,9 @@ export default [
     // 而不是分隔符——这里给它补上「- 」必须被断言拦下（#612 反馈的「反向普查」）
     desc: 'M12315 部位菜单误加「- 」（旧写法 `-` 在方括号内，不是分隔符）',
     file: 'ere/page/page-shop-labo.js',
-    find: 'era.printButton(label, pid);',
-    replace: 'era.printButton(`- ${label}`, pid); // 变异：误加「- 」',
+    find: 'era.printButton(part.label, part.pid);',
+    replace:
+      'era.printButton(`- ${part.label}`, part.pid); // 变异：误加「- 」',
     tests: ['page-shop-labo'],
     must_mention: '未封锁部位',
   },
