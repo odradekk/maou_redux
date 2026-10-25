@@ -67,15 +67,20 @@ function set_values(fixture, values) {
 }
 
 function prepare_spell_case(fixture) {
-  Object.assign(fixture.battle('DEFENSE_2'), {
-    id: 100,
-    level: 5,
-    attack: 100,
-    defense: 10,
-    magic: 3,
-    boss: 0,
-    count: 5,
-  });
+  // 两列同值：怪物施法（target_type 2）用列 2，勇者施法（1）用列 1——
+  // 分开是为了让「施法者」与「被打的列号」在数值上不重合（a === b 时
+  // 写错目标的变异会被掩盖）。
+  for (const column of ['DEFENSE_2', 'DEFENSE_3']) {
+    Object.assign(fixture.battle(column), {
+      id: 100,
+      level: 5,
+      attack: 100,
+      defense: 10,
+      magic: 3,
+      boss: 0,
+      count: 5,
+    });
+  }
   set_values(fixture, {
     'cflag:1:13': 100,
     'cflag:1:14': 100,
@@ -451,6 +456,9 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       spell: 'sleep_magic',
       type,
       random: [7],
+      // 怪物施法（2）：让「列号」与「施法者」各有一个不同的攻击力，写错
+      // 目标的变异才看得见（两边都是 100 时读谁都一样）
+      setup: type === 2 ? { 'cflag:2:11': 77 } : {},
       expected:
         type === 1
           ? { 'battle:DEFENSE_2:attack': 93, 'base:1:1': 970 }
@@ -530,7 +538,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
         type === 1 || type === 4
           ? { 'base:1:0': 545, 'base:1:1': 995 }
           : type === 2
-            ? { 'battle:DEFENSE_2:defense': 11 }
+            ? { 'battle:DEFENSE_3:defense': 11 }
             : { 'base:2:0': 1245, 'base:2:1': 995 },
     })),
     ...[1, 2, 3, 4].map((type) => ({
@@ -611,7 +619,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
     prepare_spell_case(fixture);
     set_values(fixture, setup);
     const move_ctx = { d20: 50 };
-    const b = type === 1 || type === 2 ? 1 : 2;
+    const b = type === 1 ? 1 : 2;
     assert.equal(
       await magic[spell](type, 1, b, seq(...random), move_ctx),
       result,

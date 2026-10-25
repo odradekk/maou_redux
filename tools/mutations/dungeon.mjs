@@ -1057,9 +1057,9 @@ export default [
   {
     desc: 'M6746 怪物火球漏掉等级差伤害上限',
     file: 'ere/dungeon/magic.js',
-    find: '    damage = magic_bonus_m_to_c(\n      a,\n      (battle_column(b).level + get_cflag(0, 9)) * 10,\n      b,\n    );\n    damage = magic_damage_cap(\n      battle_column(b).level,\n      get_cflag(a, 9),\n      damage,\n      800,',
+    find: '      (battle_column(b).level + get_cflag(0, 9)) * 10,\n      b,\n    );\n    damage = magic_damage_cap(\n      battle_column(b).level,\n      get_cflag(a, 9),\n      damage,\n      800,\n    );\n    add_base(a, 0, -damage);',
     replace:
-      '    damage = magic_bonus_m_to_c(\n      a,\n      (battle_column(b).level + get_cflag(0, 9)) * 10,\n      b,\n    );\n    // 变异：等级差伤害上限删除\n    damage = Math.max(damage, 1);\n    void (\n      800,',
+      '      (battle_column(b).level + get_cflag(0, 9)) * 10,\n      b,\n    );\n    // 变异：删掉等级差伤害上限\n    add_base(a, 0, -damage);',
     tests: ['dungeon-magic'],
     must_mention: '怪物火球同样受等级差伤害上限约束',
   },
