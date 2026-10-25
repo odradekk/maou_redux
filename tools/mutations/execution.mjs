@@ -1099,8 +1099,8 @@ export default [
   {
     desc: 'M11390 批量处刑：页导航按钮文案写错',
     file: 'ere/event/event-execution-batch.js',
-    find: "      era.printButton('结束处刑', 1999); // 原文「結束处刑」",
-    replace: "      era.printButton('终止处刑', 1999); // 原文「結束处刑」",
+    find: "          [1999, '结束处刑'], // 原文「結束处刑」",
+    replace: "          [1999, '终止处刑'], // 原文「結束处刑」",
     tests: ['event-execution-batch'],
     must_mention: '[1999] 的按钮文案',
   },
@@ -1365,8 +1365,16 @@ export default [
   {
     desc: 'M11999 录像架翻页退回纯文本行（三条 PRINTLC 选项点不动）',
     file: 'ere/page/page-infrastructure.js',
-    find: "    era.printButton('- 下一页', 1001);",
-    replace: "    era.print('[1001] - 下一页'); // 变异",
+    find: `    print_button_grid(
+      [
+        [1000, '- 上一页'], // （\`- \` 是按钮文案自带的前缀，照写）
+        [999, '- 离  开'],
+        [1001, '- 下一页'],
+      ],
+      3,
+    );`,
+    replace:
+      "    era.print('[1000] - 上一页  [999] - 离  开  [1001] - 下一页'); // 变异：退回纯文本行",
     tests: ['event-execution'],
     must_mention: '录像架',
   },

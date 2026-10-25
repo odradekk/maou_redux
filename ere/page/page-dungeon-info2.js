@@ -330,9 +330,9 @@ async function enemy_exist2(floor) {
 async function print_subordinates(kai_result) {
   // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
   await change_screen();
-  era.print('******************');
+  era.drawLine({ isSolid: true });
   era.print('地下城内的部下');
-  era.print('******************');
+  era.drawLine({ isSolid: true });
   // 扫描区段：Z 起点与 R 剩余格数（KAI_RESULT 10 = 全 100 格）
   let z = 0;
   let r = 100;

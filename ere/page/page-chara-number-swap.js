@@ -83,6 +83,7 @@ const { get_job_name } = require('#/page/page-select-target');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display } = require('#/utils/display-width');
+const { print_button_grid } = require('#/utils/button-grid');
 // 换号页自己的分页宽度（与名册的 24 无关）
 const NUM_PAGE = 25;
 
@@ -189,9 +190,14 @@ async function chara_number_swap() {
     for (const cid of window_ids) print_swap_row(cid);
     era.println();
     era.println();
-    era.printButton('上一页', 2000);
-    era.printButton('下一页', 2001);
-    era.printButton('结束换号', 1999); // #60 简体归一
+    print_button_grid(
+      [
+        [2000, '上一页'],
+        [2001, '下一页'],
+        [1999, '结束换号'], // #60 简体归一
+      ],
+      3,
+    );
     const first = await era.input();
 
     if (first === 2000) {
@@ -221,10 +227,15 @@ async function chara_number_swap() {
       for (const cid of second_ids) print_swap_row(cid);
       era.println();
       era.println();
-      era.printButton('上一页', 3000);
-      era.printButton('下一页', 3001);
-      // [3002] 取消：有意补出的出口（ere 输入模型差异），见文件头
-      era.printButton('取消', 3002);
+      print_button_grid(
+        [
+          [3000, '上一页'],
+          [3001, '下一页'],
+          // [3002] 取消：有意补出的出口（ere 输入模型差异），见文件头
+          [3002, '取消'],
+        ],
+        3,
+      );
       const picked = await era.input();
 
       if (picked === 3000) {

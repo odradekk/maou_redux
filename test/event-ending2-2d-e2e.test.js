@@ -241,10 +241,13 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       'ENDING_2 横幅在真实循环的终点出现（两路共用的 ending_2 真身）',
     );
     assert(
-      texts.includes(
-        '-------------------------------GAMEOVER---------------------------------',
+      fixture.lines_history.some(
+        (line) =>
+          line.type === 'divider' &&
+          line.text === 'GAMEOVER' &&
+          line.border === 'dashed',
       ),
-      'GAMEOVER 分隔行',
+      'GAMEOVER 分隔行（#870 起是 drawLine 的中央标签）',
     );
     // 触发者的持久留证。触发分支在坐标落笔**之前** JUMP
     // ——触发者的 CFLAG:510/511 停留在出发格（一步可达中心的邻域），中心

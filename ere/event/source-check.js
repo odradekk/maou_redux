@@ -3081,13 +3081,13 @@ function palam_up_check() {
     }
     // 三处分隔线（SIF UPID == 14/3/10——读的仍是本轮 UP）
     if (upid === 14 && (up(0) > 0 || up(1) > 0 || up(2) > 0 || up(14) > 0)) {
-      era.print('-------------------------------');
+      era.drawLine();
     }
     if (upid === 3 && up(3) > 0) {
-      era.print('-------------------------------');
+      era.drawLine();
     }
     if (upid === 10) {
-      era.print('-------------------------------');
+      era.drawLine();
     }
   }
   // 循环外统一清零（引擎 nextTurnInTrain 的 delta→palam 由此成为无操作，

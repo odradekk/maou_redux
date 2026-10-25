@@ -146,12 +146,17 @@ test('ABILITY_UP：页脚三键同行渲染，其后没有空行', async () => {
   const fixture = four_chara();
   const { added } = await run(fixture, [999]);
 
-  // 页脚三键打在同一行，收尾输出只结束那一行，不产生空行（见 CONTEXT.md
-  // 「输出 API 的排版与对齐」）。
+  // 页脚三键打在同一行（#870 起经按钮网格排布），收尾输出只结束那一行，
+  // 不产生空行（见 CONTEXT.md「输出 API 的排版与对齐」）。
   assert.deepEqual(
     added.filter((line) => line.row > footer_row(added)),
     [],
     '能力值提升页脚按钮之后不应有空行',
+  );
+  assert.equal(
+    new Set([1000, 999, 1001].map((acc) => button_of(added, acc).row)).size,
+    1,
+    '三枚页脚键共享同一个 Row',
   );
   // 页脚三键的正文：`- 返  回` 的 `-` 与两个空格都在（引擎折叠连续
   // 空白，故渲染串里只剩一个空格）

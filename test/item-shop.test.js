@@ -344,14 +344,19 @@ test('item_shop：头行逐字复现（标题/日期/所持金/技巧Lv/两段�
     );
   }
 
-  // 页脚两键（左对齐补位、不换行，见 CONTEXT.md「输出 API 的排版与对齐」）
-  // 以 setAlign 包一次近似排版、随后还原
+  // 页脚两键同行（#870：按钮网格两格，格内居中），全局对齐不再被改动
   assert.deepEqual(
     fixture.calls
       .filter((call) => call.api === 'setAlign')
       .map((call) => call.args[0]),
-    ['center', 'left'],
+    [],
+    '页脚改走网格后不再借 setAlign 排版',
   );
+  const footer = fixture.lines.filter(
+    (line) => line.type === 'button' && [998, 999].includes(line.accelerator),
+  );
+  assert.equal(footer.length, 2, '页脚两键');
+  assert.equal(new Set(footer.map((line) => line.row)).size, 1, '两键同行');
 });
 
 test('item_shop：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0 + 1', async () => {

@@ -1764,18 +1764,28 @@ test('sengen_video 顶栏与选项：库存/已投放/流行行按 {值,N} 定�
   });
   assert.equal(await run_sengen_video(fixture, [999]), 0);
   const texts = history_texts(fixture);
-  // {STOCK,3} / {EX_FLAG:9011,3} 右对齐补半角空格；两处 \t\t 照旧保留
+  // 顶栏两格各占 12 列（#870：\t\t 补位在引擎里被折叠，改由网格分列）；
+  // {STOCK,3} / {EX_FLAG:9011,3} 仍是右对齐补半角空格
   assert(
-    texts.includes(
-      '可用于投放的水晶球\u00A0\u00A04部\t\t已投放\u00A0\u00A03部',
-    ),
-    '顶栏：库存 7-3=4、已投放 3 各补到 3 位',
+    texts.includes('可用于投放的水晶球\u00A0\u00A04部'),
+    '顶栏左格：库存 7-3=4 补到 3 位',
   );
   assert(
-    texts.includes(
-      '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0正流行的有\u00A0\u00A05部\t\t\u00A04天后将过时',
-    ),
-    '流行行：9 空格缩进 + 流行度 3 位 + 剩余天数 2 位',
+    texts.includes('已投放\u00A0\u00A03部'),
+    '顶栏右格：已投放 3 补到 3 位',
+  );
+  assert(
+    texts.includes('正流行的有\u00A0\u00A05部'),
+    '流行行左格：流行度补到 3 位',
+  );
+  assert(texts.includes('\u00A04天后将过时'), '流行行右格：剩余天数补到 2 位');
+  assert(!texts.some((line) => line.includes('\t')), '顶栏不再靠制表符排版');
+  const top_bar_widths = fixture.lines_history
+    .filter((line) => line.type === 'text' && line.grid_width !== undefined)
+    .map((line) => line.grid_width);
+  assert(
+    top_bar_widths.slice(0, 4).every((width) => width === 12),
+    `顶栏四格宽度应为 12，实际 ${JSON.stringify(top_bar_widths)}`,
   );
   const accelerators = fixture.lines_history
     .filter((line) => line.type === 'button')
@@ -1804,7 +1814,7 @@ test('sengen_video 顶栏与选项：库存/已投放/流行行按 {值,N} 定�
     '无库存文案',
   );
   assert(
-    history_texts(empty).includes(' 目前没有投放中的水晶球'),
+    history_texts(empty).includes('目前没有投放中的水晶球'),
     '无流行文案（流行度 0）',
   );
   assert.deepEqual(
@@ -2158,13 +2168,13 @@ test('sengen_video 的库存来源真读 EX_FLAG:9010/9011（售卻相關的写�
   // 顶栏分子分母与菜单开窗同源：EX_FLAG:9010 - EX_FLAG:9011
   const fixture = make_video_world({ stock: 1, deployed: 1 });
   assert.equal(await run_sengen_video(fixture, [999]), 0);
+  const texts = history_texts(fixture);
   assert(
-    history_texts(fixture).includes(
-      '可用于投放的水晶球\u00A0\u00A00部\t\t已投放\u00A0\u00A01部',
-    ),
+    texts.includes('可用于投放的水晶球\u00A0\u00A00部') &&
+      texts.includes('已投放\u00A0\u00A01部'),
     'stock 0：顶栏打 0、选项区走无库存分支',
   );
-  assert(history_texts(fixture).includes('当前没有可以用于投放的水晶球'));
+  assert(texts.includes('当前没有可以用于投放的水晶球'));
 });
 
 // ===========================================================================

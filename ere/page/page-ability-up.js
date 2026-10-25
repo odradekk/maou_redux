@@ -56,6 +56,7 @@ const { yokubo_up_check } = require('#/system/train/ability-check');
 const { ABLUP_HANDLERS, HANDLER_QUIET } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** 勇者一览的每页行数 */
 const ENEMY_NUM_PAGE = 24;
@@ -152,11 +153,15 @@ function draw_list(select_menu, no_page) {
     }
   }
   era.drawLine(); // 分割线（其后是三个页脚按钮）
-  // 三个页脚按钮各自成一行，不补空行——引擎的 printButton 每次调用独占
-  // 一行（语义与勘误见 CONTEXT.md「输出 API 的排版与对齐」）。
-  era.printButton('- 上一页', 1000);
-  era.printButton('- 返  回', 999); // `-` 是按钮正文的一部分
-  era.printButton('- 下一页', 1001);
+  // 三个页脚键同行排布（引擎 24 列网格），不补空行。
+  print_button_grid(
+    [
+      [1000, '- 上一页'],
+      [999, '- 返  回'], // `-` 是按钮正文的一部分
+      [1001, '- 下一页'],
+    ],
+    3,
+  );
   return { menu, page_size, max_page };
 }
 

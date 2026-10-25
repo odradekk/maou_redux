@@ -173,8 +173,11 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
     '封印播报取 TARGET（= 队长 1）的 callname（%SAVESTR:TARGET%）',
   );
   assert(
-    texts.includes(
-      '-------------------------------GAMEOVER---------------------------------',
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'divider' &&
+        line.text === 'GAMEOVER' &&
+        line.border === 'dashed',
     ),
     'GAMEOVER 分隔行',
   );

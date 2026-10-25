@@ -45,14 +45,34 @@ function text_lines(fixture) {
 }
 
 /**
+ * 星框下沿所在的下标：角色信息标题（`NO.` 开头）之前最后一条实线分割线。
+ *
+ * 星框自 #870 起是两条实线分割线（`era.drawLine({isSolid: true})`），按
+ * 分隔线找；show_chara_info 自己也画实线分割线，所以上界取标题行。
+ * @param {object} fixture 夹具
+ * @returns {number} 下标；找不到返回 -1
+ */
+function closing_frame_index(fixture) {
+  const title = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.startsWith('NO.'),
+  );
+  const end = title === -1 ? fixture.lines.length : title;
+  for (let i = end - 1; i >= 0; i -= 1) {
+    const line = fixture.lines[i];
+    if (line.type === 'divider' && line.border === 'solid') {
+      return i;
+    }
+  }
+  return -1;
+}
+
+/**
  * 星框之后第一条 `NO.` 开头的信息标题行（show_chara_info 的标题行，
  * 编号后跟 NBSP 补位、名字接在后面）。取不到时返回 undefined，由断言报错。
  */
 function info_title_line(fixture) {
-  const frame = fixture.lines.findLastIndex(
-    (line) => line.type === 'text' && line.text.startsWith('*****'),
-  );
-  assert.ok(frame >= 0, '星框行出现（否则断言会空过）');
+  const frame = closing_frame_index(fixture);
+  assert.ok(frame >= 0, '星框（实线分割线）出现，否则断言会空过');
   return fixture.lines
     .slice(frame + 1)
     .map((line) => line.text)
@@ -112,9 +132,20 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
     texts.includes('勇者玛丽开始了地下城的攻略！'),
     '演出行：勇者 + 名字（callname:-1 承载，已由命名链改写）+ 开始攻略',
   );
-  assert(
-    texts.includes('*****************************************'),
-    '星框上沿（41 星逐字）',
+  // 星框（#870：两条实线分割线把播报行夹在中间）
+  const line_row = fixture.lines.find(
+    (line) =>
+      line.type === 'text' && line.text === '勇者玛丽开始了地下城的攻略！',
+  ).row;
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.row === line_row - 1 || line.row === line_row + 1)
+      .map((line) => [line.type, line.border]),
+    [
+      ['divider', 'solid'],
+      ['divider', 'solid'],
+    ],
+    '播报行上下沿各一条实线分割线',
   );
   // 初期座標（zero 随机源：X = Y = 0 贴边）
   assert.equal(fixture.store.get('cflag:1:510'), 0, 'CFLAG:A:510 座標 X');
@@ -136,20 +167,26 @@ test('#597：显示角色信息时前后各一个空行；#716：标题是新勇
 
   await enter_enemy(0, zero);
 
-  // 星框最后一行（的 PRINTL）之后是与两个空行，再接
-  // show_chara_info 的第一条输出（自带收尾）； PRINTL 落在角色
-  // 信息之后，是整段演出的收尾。三处删掉任何一处都会少行。
-  const frame = fixture.lines.findLastIndex(
-    (line) => line.type === 'text' && line.text.startsWith('*****'),
-  );
-  assert.ok(frame >= 0, '星框行出现（否则断言会空过）');
+  // 播报收尾的实线分割线（星框下沿的等价物）之后是两个空行，再接
+  // show_chara_info 的第一条输出；PRINTL 落在角色信息之后，是整段演出的
+  // 收尾。三处删掉任何一处都会少行。
+  const by_row = (row) => fixture.lines.filter((line) => line.row === row);
+  const line_row = fixture.lines.find(
+    (line) =>
+      line.type === 'text' && line.text === '勇者玛丽开始了地下城的攻略！',
+  ).row;
   assert.deepEqual(
-    fixture.lines.slice(frame + 1, frame + 3).map((line) => is_blank(line)),
+    by_row(line_row + 1).map((line) => [line.type, line.border]),
+    [['divider', 'solid']],
+    '播报行下沿是实线分割线（#870：星框改成 drawLine）',
+  );
+  assert.deepEqual(
+    [line_row + 2, line_row + 3].map((row) => by_row(row).every(is_blank)),
     [true, true],
     '角色信息之前的两个空行都在',
   );
   assert.ok(
-    !is_blank(fixture.lines[frame + 3]),
+    !by_row(line_row + 4).every(is_blank),
     '两个空行之后接角色信息，不多不少',
   );
   assert_trailing_blank(fixture, '角色信息之后');

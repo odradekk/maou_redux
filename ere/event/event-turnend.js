@@ -348,9 +348,7 @@ async function debug_check(rand = default_rand) {
       '这次事件造成的伤亡，比你所有侵攻的造成的伤害还要多，世人将这次爆炸称为【大冲击】。',
     );
     await era.printAndWait('');
-    era.print(
-      '-------------------------------GAMEOVER---------------------------------',
-    ); // 横幅行
+    era.drawLine({ content: 'GAMEOVER' }); // 横幅行
     await era.input();
     era.quit(); // 退出
   }

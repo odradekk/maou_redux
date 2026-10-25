@@ -68,6 +68,7 @@ const { life_list_item } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** 战役槽位号空间：SELECT_CAMPAIGN 的 `FOR LOCAL,1,21`（1-20） */
 const CAMPAIGN_SLOT_IDS = Array.from({ length: 20 }, (_, i) => i + 1);
@@ -133,9 +134,14 @@ function render_dispatch_page(no_page, candidate_ids) {
   for (const cid of window_ids) {
     life_list_item(cid); // CALL LIFE_LIST 的列表段（按命中序号开窗）
   }
-  era.printButton('- 上一页', 1000);
-  era.printButton('返  回', 999);
-  era.printButton('- 下一页', 1001);
+  print_button_grid(
+    [
+      [1000, '- 上一页'],
+      [999, '返  回'],
+      [1001, '- 下一页'],
+    ],
+    3,
+  );
 }
 
 /**

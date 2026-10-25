@@ -151,6 +151,7 @@ const {
 } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
 const { MASTER } = require('#/utils/master');
+const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');
 
 /** 选人列表的每页行数（45 处 `#DIM NUM_PAGE = 23`） */
@@ -250,13 +251,15 @@ function draw_pick(intro, no_page, mode, cancel) {
   era.drawLine(); // DRAWLINE
   life_list(no_page, mode, NUM_PAGE); // CALL LIFE_LIST(NO_PAGE,,NUM_PAGE)
   // 页脚三个 PRINTLC（`[1000] - 上一页` / `[999] - 返  回` / `[1001] - 下一页`）
-  // 打在同一行，紧随的 PRINTL 只结束它们那一行——PRINTLC 左对齐补位、
-  // **不换行**，故不产生空行。ere 的 printButton 自成一行（＝ PRINTLC +
-  // 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md「输出 API 的排版
-  // 与对齐」）。
-  era.printButton('- 上一页', 1000); // PRINTLC [1000] - 上一页
-  era.printButton(`- ${cancel}`, 999); // PRINTLC [999] - 返  回
-  era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页
+  // 同行排布（引擎 24 列网格）；不补空行。
+  print_button_grid(
+    [
+      [1000, '- 上一页'],
+      [999, `- ${cancel}`],
+      [1001, '- 下一页'],
+    ],
+    3,
+  );
 }
 
 /**
@@ -2538,9 +2541,9 @@ async function summon_slave() {
     wearing_cloth_able(new_cid); // CALL WEARING_CLOTH_ABLE
     era_flag.target = prev_target; // TARGET = LOCAL:2
 
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     era.print(`从魔王的影子中将${savestr(new_cid)}召唤了出来！`);
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
 
     chara(new_cid).stronghold.魔王之影 = 1; // TALENT:(LOCAL:1):286-292 = 1
     chara(new_cid).invasion.状态 = 11; // CFLAG:(LOCAL:1):1 = 11（召喚酔い）
@@ -2796,13 +2799,16 @@ async function secret_labo(rand = default_rand) {
       labo_page4();
     }
     era.drawLine(); // DRAWLINE
-    // 起的三个 PRINTLC 页脚键打在同一行，紧随的 PRINTL 只结束那一行——
-    // PRINTLC 左对齐补位、**不换行**，故不产生空行。ere 的 printButton
-    // 自成一行（＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见
-    // CONTEXT.md「输出 API 的排版与对齐」）。
-    era.printButton('- 前一页', 997); // PRINTLC  [997] - 前一页
-    era.printButton('- 返回', 999); // PRINTLC  [999] - 返回
-    era.printButton('- 后一页', 998); // PRINTLC  [998] - 后一页
+    // 三个页脚键同行（引擎 24 列网格）；PRINTLC 原来靠左对齐补位挤在一行，
+    // 现在列宽由网格决定，不补空行。
+    print_button_grid(
+      [
+        [997, '- 前一页'],
+        [999, '- 返回'],
+        [998, '- 后一页'],
+      ],
+      3,
+    );
 
     // $INPUT_LOOP
     const result = await era.input(); // INPUT

@@ -431,12 +431,14 @@ async function item_shop() {
   // 提示行
   era.print('《请输入要购买的道具的编号》');
   era.drawLine({ isSolid: true });
-  // 页脚两键打在同一行、不换行（见 CONTEXT.md「输出 API 的排版与对齐」），
-  // printButton 自成一行（打完即收行），不再补空行。
-  era.setAlign('center'); // 居中
-  era.printButton('- 陷阱', 998, { align: 'center' });
-  era.printButton('- 返回', 999, { align: 'center' });
-  era.setAlign('left');
+  // 页脚两键同行（引擎 24 列网格，每格 12 列；格内居中），不补空行
+  print_button_grid(
+    [
+      [998, '- 陷阱', { align: 'center' }],
+      [999, '- 返回', { align: 'center' }],
+    ],
+    2,
+  );
 
   return 0;
 }
@@ -701,10 +703,13 @@ async function use_exp_item(count) {
     era.drawLine();
     era.print(`要让谁使用${item_name(EXP_ITEM)}？`);
     life_list(no_page, 0);
-    era.setAlign('center');
-    era.printButton('- 上一页', 1000);
-    era.printButton('- 下一页', 1001);
-    era.setAlign('left');
+    print_button_grid(
+      [
+        [1000, '- 上一页'],
+        [1001, '- 下一页'],
+      ],
+      2,
+    );
 
     const result = await era.input();
     if (result === 1000) {
@@ -887,11 +892,14 @@ async function use_item(bought) {
     era.print(`要让谁使用${item_name(bought)}？`);
     era.drawLine();
     life_list(no_page);
-    era.setAlign('center'); // 居中
-    era.printButton('- 上一页', 1000);
-    era.printButton('- 返  回', 999);
-    era.printButton('- 下一页', 1001);
-    era.setAlign('left');
+    print_button_grid(
+      [
+        [1000, '- 上一页'],
+        [999, '- 返  回'],
+        [1001, '- 下一页'],
+      ],
+      3,
+    );
 
     const result = await era.input();
     if (result === 999) {

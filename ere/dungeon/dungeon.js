@@ -370,9 +370,9 @@ async function run_dungeon(arg0, rand) {
         era.print(`${leader_name}${mapc}迷路了。`);
       }
       await era.waitAnyKey(); // WAIT
-      era.print('----------------------');
+      era.drawLine();
       era.print(`\u00A0\u00A0\u00A0${mapc}深处`); // PRINTFORML（内容空格 3，#577 起 NBSP）
-      era.print('----------------------');
+      era.drawLine();
       era.print(`第${floor}阶层`); // PRINTFORM
     }
 

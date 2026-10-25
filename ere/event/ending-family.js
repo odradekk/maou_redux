@@ -172,6 +172,9 @@ async function run_steps(steps, ctx) {
     const [op, a, b, c] = step;
     if (op === 'd') {
       era.drawLine();
+    } else if (op === 'dc') {
+      // 分隔线中央的标签（DRAWLINEFORM 的横线上带字）
+      era.drawLine({ content: interpolate(a) });
     } else if (op === 'l') {
       era.print(interpolate(a));
     } else if (op === 'w') {

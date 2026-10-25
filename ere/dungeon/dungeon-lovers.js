@@ -59,18 +59,14 @@ async function enter_lover(cid) {
   if (cid < 0) return 0;
   era.print('派遣魔王的手下外出，设下恋爱陷阱诱惑对象勇者堕落');
   era.print(`选择派遣谁外出诱惑${name_of(cid)}呢？`);
-  era.print(
-    '--------------------------------------------------------------------------------',
-  );
+  era.drawLine();
   era.printButton('谁都不派遣', 0);
   for (let lover = 1; lover < 100; lover += 1) {
     const name = LOVER_NAMES.get(lover);
     if (name) era.printButton(name, lover);
   }
   era.printButton('取消', 999);
-  era.print(
-    '--------------------------------------------------------------------------------',
-  );
+  era.drawLine();
 
   let selected;
   for (;;) {

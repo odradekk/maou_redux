@@ -154,33 +154,21 @@ async function charadead_check() {
     if (!era_exflag.next_maou) {
       // 无继任（EX_FLAG:3 = 0）：GAMEOVER + INPUT + QUIT。QUIT 是
       // throw 型（#148）：之后的死亡口上/死亡旗整段不可达
-      era.print(
-        '-------------------------------GAMEOVER---------------------------------',
-      );
+      era.drawLine({ content: 'GAMEOVER' });
       await era.input();
       era.quit();
     } else {
       // 继任候补的确定（净效果 = 最后一个持 EX_TALENT:3 的角色，
       // event-nextday.js 的 JSDoc 有证明）
       maou_kouho();
-      era.print(
-        '-------------------------------GAMEOVER---------------------------------',
-      );
-      era.print(
-        '------------------------------------------------------------------------',
-      );
+      era.drawLine({ content: 'GAMEOVER' });
+      era.drawLine();
       await era.waitAnyKey(); // PRINTW
-      era.print(
-        '------------------------------------------------------------------------',
-      );
+      era.drawLine();
       await era.waitAnyKey();
-      era.print(
-        '------------------------------------------------------------------------',
-      );
+      era.drawLine();
       await era.waitAnyKey();
-      era.print(
-        '-------------------------------@@@@@@@@---------------------------------',
-      );
+      era.drawLine({ content: '@@@@@@@@' });
       await era.waitAnyKey();
       const successor = era_exflag.next_maou;
       const successor_name = chara_name(successor);

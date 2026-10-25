@@ -305,10 +305,13 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       `被封印的勇者（${sealed_name}）就是打到第 9 层的那一个（CFLAG:501 = 9）`,
     );
     assert(
-      texts.includes(
-        '-------------------------------GAMEOVER---------------------------------',
+      fixture.lines_history.some(
+        (line) =>
+          line.type === 'divider' &&
+          line.text === 'GAMEOVER' &&
+          line.border === 'dashed',
       ),
-      'GAMEOVER 分隔行',
+      'GAMEOVER 分隔行（#870：#870 起是 drawLine 的中央标签）',
     );
 
     // —— 压住侵攻度（工单内容：确保先到 ENDING_2 而非 ENDING_1）——

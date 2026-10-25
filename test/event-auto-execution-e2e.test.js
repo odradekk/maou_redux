@@ -132,6 +132,14 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
       (line) =>
         line.type === 'button' && line.text.includes('勇者自动处刑机能'),
     );
+    // 状态自 #870 起是与标签同行的第二格（网格），不在按钮正文里
+    const config_status = (button) => {
+      const next =
+        fixture.lines_history[fixture.lines_history.indexOf(button) + 1];
+      return next && next.type === 'text' && next.row === button.row
+        ? next.text
+        : '';
+    };
     // 首末两条分别是「进入时的 OFF」与「切换后重绘的 ON」——不断言中间重绘
     // 几次（重绘次数是实现细节）
     assert.ok(
@@ -139,12 +147,12 @@ test('端到端：自动处刑——设置页 [3] 开启 → 主菜单 [103] 批
       '设置页至少渲染过两次 [3] 状态行（进入一次、切换后重绘一次）',
     );
     assert.match(
-      config_buttons[0].text,
+      config_status(config_buttons[0]),
       /现在：OFF$/,
-      '开启前 [3] 状态行是 OFF',
+      '开启前 [3] 状态格是 OFF',
     );
     assert.match(
-      config_buttons[config_buttons.length - 1].text,
+      config_status(config_buttons[config_buttons.length - 1]),
       /现在：ON$/,
       '开启后重绘为 ON',
     );

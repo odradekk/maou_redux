@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 564; // #848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 572; // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -2127,7 +2127,7 @@ export default [
     find: '  return pad_left(String(value), width);',
     replace: '  return pad_left(String(value), width - 1); // 变异：宽度少一列',
     tests: ['page-invasion'],
-    must_mention: '顶栏：库存 7-3=4、已投放 3 各补到 3 位',
+    must_mention: '顶栏左格：库存 7-3=4 补到 3 位',
   },
   {
     desc: 'M10731 无库存检查反向（!== 999 改 === 999：无库存时反而放行未知输入、[999] 被吃掉，#502）',
@@ -3676,12 +3676,18 @@ export default [
   {
     desc: 'M11572 设置页 [30] 状态行取反（OFF ↔ ON，#547）',
     file: 'ere/page/page-config.js',
-    find: `      '反作弊开关 　　　　 　　 现在：' +
-        (era_modsave.anti_cheat ? 'OFF（可开修改）' : 'ON（不可开修改）'),`,
-    replace: `      '反作弊开关 　　　　 　　 现在：' +
-        (era_modsave.anti_cheat ? 'ON（不可开修改）' : 'OFF（可开修改）'),`,
+    find: `    config_row(
+      '反作弊开关',
+      \`现在：\${era_modsave.anti_cheat ? 'OFF（可开修改）' : 'ON（不可开修改）'}\`,
+      30,
+    );`,
+    replace: `    config_row(
+      '反作弊开关',
+      \`现在：\${era_modsave.anti_cheat ? 'ON（不可开修改）' : 'OFF（可开修改）'}\`,
+      30,
+    );`,
     tests: ['page-config'],
-    must_mention: 'OFF 档',
+    must_mention: 'OFF 档的状态格',
   },
   {
     desc: 'M11574 设置页 [15] 分支退回存根占位（不进年龄子菜单，#547）',
@@ -3749,9 +3755,8 @@ export default [
   {
     desc: 'M11640 设置页 [3] 状态行读位错（位 3 → 位 4，#549 e2e 唯一检查）',
     file: 'ere/page/page-config.js',
-    find: `      '勇者自动处刑机能　　　　　现在：' + (getbit(v5, 3) ? 'ON' : 'OFF'),`,
-    replace: `      '勇者自动处刑机能　　　　　现在：' + // 变异：读位错
-        (getbit(v5, 4) ? 'ON' : 'OFF'),`,
+    find: `    config_row('勇者自动处刑机能', \`现在：\${getbit(v5, 3) ? 'ON' : 'OFF'}\`, 3);`,
+    replace: `    config_row('勇者自动处刑机能', \`现在：\${getbit(v5, 4) ? 'ON' : 'OFF'}\`, 3); // 变异：读位错`,
     tests: ['event-auto-execution-e2e'],
     must_mention: '开启后重绘为 ON',
   },
@@ -3883,9 +3888,9 @@ export default [
   {
     desc: 'M11861 能力值提升页脚补回空行（空内容输出只收三个标签那一行）',
     file: 'ere/page/page-ability-up.js',
-    find: "  era.printButton('- 下一页', 1001);\n  return { menu, page_size, max_page };",
+    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
     replace:
-      "  era.printButton('- 下一页', 1001);\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
+      "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
     tests: ['page-ability-up'],
     must_mention: '能力值提升页脚按钮之后不应有空行',
   },
@@ -4036,9 +4041,9 @@ export default [
   {
     desc: 'M12073 个别信息页操作按钮之后补回空行（PRINTL 只收那一串 PRINT 拼出的按钮行）',
     file: 'ere/page/page-chara-info.js',
-    find: "    era.drawLine();\n    era.printButton('前页', 101);",
+    find: '    era.drawLine();\n    // 页脚五键同行（引擎 24 列网格，每格 4 列）；后两枚各带条件',
     replace:
-      "    era.print(''); // 变异：:907 只收行，不是空行\n    era.drawLine();\n    era.printButton('前页', 101);",
+      "    era.print(''); // 变异：:907 只收行，不是空行\n    era.drawLine();\n    // 页脚五键同行（引擎 24 列网格，每格 4 列）；后两枚各带条件",
     tests: ['page-chara-info'],
     must_mention: '操作按钮行的下一行就是页脚分割线，中间不夹空行',
   },
@@ -4150,8 +4155,8 @@ export default [
   {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
-    find: "era.printButton('- 返 回', 999); // PRINTLC（正文两个空格，引擎折叠成一个）",
-    replace: "era.printButton('返 回', 999); // 变异：丢掉「- 」",
+    find: "        [999, '- 返 回'],",
+    replace: "        [999, '返 回'], // 变异：丢掉「- 」",
     tests: ['page-intercept'],
     must_mention: '页脚三键正文',
   },
@@ -5473,5 +5478,75 @@ export default [
     tests: ['page-title'],
     must_mention:
       '初始角色 0 由 resetData 按【初始角色编号】创建，标题页不得再手工 addCharacter',
+  },
+  // —— #870：横幅、页脚与设置页/侵略页顶栏改用引擎排版 ——
+  {
+    desc: 'M16450 设置项标签格宽度改窄（状态列错位，两格不再各占 12 列）',
+    file: 'ere/page/page-config.js',
+    find: "      config: { width: CONFIG_LABEL_WIDTH, align: 'left' },",
+    replace: "      config: { width: 6, align: 'left' }, // 变异：标签格变窄",
+    tests: ['layout-engine'],
+    must_mention: '按钮格 12 列',
+  },
+  {
+    desc: 'M16451 设置项状态格占满整行（两格合计超 24 列，状态列被挤到下一行）',
+    file: 'ere/page/page-config.js',
+    find: "      config: { width: CONFIG_STATUS_WIDTH, align: 'left' },",
+    replace:
+      "      config: { width: 24, align: 'left' }, // 变异：状态格占满整行",
+    tests: ['layout-engine'],
+    must_mention: '按钮格 12 列',
+  },
+  {
+    desc: 'M16452 设置页页脚三键退回各占一行（不再同行排布）',
+    file: 'ere/page/page-config.js',
+    find: "        [101, '下一页'],\n      ],\n      3,\n    );",
+    replace:
+      "        [101, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
+    tests: ['layout-engine'],
+    must_mention: '三枚页脚键共享同一个 Row',
+  },
+  {
+    desc: 'M16453 能力值提升页脚三键退回各占一行（不再同行排布）',
+    file: 'ere/page/page-ability-up.js',
+    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );",
+    replace:
+      "      [1001, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
+    tests: ['page-ability-up'],
+    must_mention: '三枚页脚键共享同一个 Row',
+  },
+  {
+    desc: 'M16454 宣传影像顶栏一格占满整行（两格不同行，列对齐失效）',
+    file: 'ere/page/page-invasion.js',
+    find: 'const TOP_BAR_COLUMN_WIDTH = 12;',
+    replace: 'const TOP_BAR_COLUMN_WIDTH = 24; // 变异：一格占满整行',
+    tests: ['page-invasion'],
+    must_mention: '顶栏四格宽度应为 12',
+  },
+  {
+    desc: 'M16455 宣传影像顶栏右格文案写错（「已投放」写成「投放」）',
+    file: 'ere/page/page-invasion.js',
+    find: '        content: `已投放${pad_number(era_exflag.crystal_ball_deployed, 3)}部`,',
+    replace:
+      '        content: `投放${pad_number(era_exflag.crystal_ball_deployed, 3)}部`, // 变异：漏「已」',
+    tests: ['page-invasion'],
+    must_mention: '顶栏右格',
+  },
+  {
+    desc: 'M16456 据点事件横幅文案写错（「占领了村庄」多一个感叹号）',
+    file: 'ere/page/page-invasion.js',
+    find: "  占领了村庄: '占领了村庄',",
+    replace: "  占领了村庄: '占领了村庄！', // 变异：多一个标点",
+    tests: ['layout-engine'],
+    must_mention: '占领了村庄',
+  },
+  {
+    desc: 'M16457 据点事件横幅上沿退回虚线（七行星号框的实线没了）',
+    file: 'ere/page/page-invasion.js',
+    find: "    era.drawLine({ isSolid: true });\n    era.print(banner, { align: 'center' });",
+    replace:
+      "    era.drawLine(); // 变异：上沿退回虚线\n    era.print(banner, { align: 'center' });",
+    tests: ['layout-engine'],
+    must_mention: '七行星号框改成分隔线',
   },
 ];

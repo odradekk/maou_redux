@@ -19,6 +19,7 @@
 const era = require('#/era-electron');
 const { video_check, video_shelf } = require('#/system/stronghold/sell-video');
 const { game } = require('#/facade/game');
+const { print_button_grid } = require('#/utils/button-grid');
 
 // FLAG:83/84 = 肉便器/展品总数；600–612 = 十三类展品计数；
 // FLAG:613 = 人类牧场播种者；FLAG:614 bit 0/1 = 隐藏记录/出售孩子。
@@ -325,10 +326,15 @@ async function show_video_shelf() {
       era.println();
     }
     era.drawLine();
-    // 的三项 → 按钮（PR #53 通则，#572）
-    era.printButton('- 上一页', 1000); // （`- ` 是按钮文案自带的前缀，照写）
-    era.printButton('- 离  开', 999);
-    era.printButton('- 下一页', 1001);
+    // 的三项 → 按钮（PR #53 通则，#572）；三个页脚键同行（引擎 24 列网格）
+    print_button_grid(
+      [
+        [1000, '- 上一页'], // （`- ` 是按钮文案自带的前缀，照写）
+        [999, '- 离  开'],
+        [1001, '- 下一页'],
+      ],
+      3,
+    );
     const result = await era.input();
     if (result === 999) return;
     previous_page = no_page;

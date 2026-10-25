@@ -249,9 +249,9 @@ async function char_ikai_create(rand) {
         (era.get(`exp:0:${MEDAL_EXP}`) || 0) - coins,
       );
       a = await char_ikai_append(l_i, rand);
-      era.print('*****************************************');
+      era.drawLine({ isSolid: true });
       era.print(`${era.get(`callname:${a}:-1`) ?? ''}被你强行召唤了………`);
-      era.print('*****************************************');
+      era.drawLine({ isSolid: true });
       await era.waitAnyKey(); // PRINTW
     }
     return 0; // 成交或在库分支结束后直接到函数尾
@@ -320,9 +320,9 @@ async function chara_sim_shop(rand) {
       chara(a).chara.善恶值 = -100; // 善良値調整
     }
 
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     era.print(`${chara_callname(a)}回应了你的召唤………`);
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     await era.waitAnyKey(); // PRINTW
     // -2 = 贡品信息页（#390 起真身）。rand 一路透传：标题的身体数据生成吃随机
     await show_chara_info(a, -2, rand);

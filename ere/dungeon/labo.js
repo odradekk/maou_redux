@@ -327,7 +327,7 @@ async function labo(rand) {
   const rand_n = rand ?? default_rand;
   for (;;) {
     // $INPUT_LOOP —— 菜单重绘
-    era.print('----------'); // PRINTL
+    era.drawLine(); // PRINTL
     era.print('[LABORATORY]');
     era.printButton('文字色彩测试', 1); // [001]
     era.printButton('GEO_MAKE', 4); // [004]

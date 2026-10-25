@@ -338,6 +338,28 @@ test('dispatch_config(27/29/30)：三个魔改存档变量的切换写入（#547
   assert.equal(era_modsave.anti_cheat, 0);
 });
 
+/**
+ * 设置项的状态格：与指定按钮同一行、type 为 text 的那一格。
+ *
+ * #870 起状态不再塞进按钮正文（按钮正文里的连续空白会被引擎折叠，靠全角
+ * 空格补位对不齐），改由网格的第二格承载，见 page-config.js 的 config_row。
+ * 只在当前屏（fixture.lines）里找——行号在换屏后从头计，历史行会撞号。
+ * @param {object} fixture 夹具
+ * @param {number} accelerator 按钮编号
+ * @returns {object} 状态格的行记录
+ */
+function status_cell(fixture, accelerator) {
+  const button = fixture.lines.find(
+    (l) => l.type === 'button' && l.accelerator === accelerator,
+  );
+  assert.ok(button, `当前屏应有 [${accelerator}] 按钮`);
+  const cell = fixture.lines.find(
+    (l) => l.type === 'text' && l.row === button.row,
+  );
+  assert.ok(cell, `[${accelerator}] 同一行应有状态格，实际 ${button.text}`);
+  return cell;
+}
+
 test('draw_config_page 的 [30] 状态行随反作弊开关翻转（OFF = 可开修改）', async () => {
   const fixture = create_era_fixture();
   const { config_menu } = load(fixture);
@@ -353,21 +375,20 @@ test('draw_config_page 的 [30] 状态行随反作弊开关翻转（OFF = 可开
     off_line.text.includes('反作弊开关'),
     `[30] 按钮行标签：${off_line.text}`,
   );
-  assert.ok(
-    off_line.text.includes('OFF（可开修改）'),
-    `OFF 档：${off_line.text}`,
+  assert.equal(
+    status_cell(fixture, 30).text,
+    '现在：OFF（可开修改）',
+    'OFF 档的状态格',
   );
 
   const fixture2 = create_era_fixture();
   const { config_menu: again } = load(fixture2);
   fixture2.set_inputs(101, 100);
   await again();
-  const on_line = fixture2.lines_history.find(
-    (l) => l.type === 'button' && l.accelerator === 30,
-  );
-  assert.ok(
-    on_line.text.includes('ON（不可开修改）'),
-    `ON 档（默认 0）：${on_line.text}`,
+  assert.equal(
+    status_cell(fixture2, 30).text,
+    '现在：ON（不可开修改）',
+    'ON 档（默认 0）的状态格',
   );
 });
 
@@ -388,9 +409,12 @@ test('config_menu：首屏渲染 page 0 的按钮与初始状态文案', async (
   assert.equal(result, 0);
   const buttons = fixture.lines_history.filter((l) => l.type === 'button');
   const btn0 = buttons.find((b) => b.accelerator === 0);
-  assert(btn0.text.includes('禁止')); // 初始 FLAG:5 位 0 = 0 → 假支路
-  const btn13 = buttons.find((b) => b.accelerator === 13);
-  assert(btn13.text.includes('爱抚〇'));
+  assert.equal(btn0.text, '勇者投降后的凌辱', '按钮正文只有标签');
+  assert.equal(status_cell(fixture, 0).text, '现在：禁止'); // 初始 FLAG:5 位 0 = 0 → 假支路
+  assert.equal(
+    status_cell(fixture, 13).text,
+    '现在：爱抚〇　器具〇　私处类〇　肛门类〇　SM系〇　',
+  );
 });
 
 test('config_menu：完整一轮——page0 切换开关、翻页到 page1、经 [100] 返回', async () => {

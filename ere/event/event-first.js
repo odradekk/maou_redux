@@ -314,9 +314,9 @@ on('EVENTFIRST', async () => {
     // ere 的 print 独占一行，读 callname:17:-1（引擎
     // addCharacter 已写）合并输出。无缺省处理：读不到名字即预设装载失败的信
     // 号（#35 的静默降级教训），不该被掩盖。
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     era.print(`村娘${era.get('callname:17:-1')}被囚禁在了地牢里`);
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
 
     // WAIT
     await era.waitAnyKey();

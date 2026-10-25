@@ -112,8 +112,11 @@ test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后 QUIT 抛出', async 
   );
   const texts = text_lines(fixture);
   assert(
-    texts.includes(
-      '-------------------------------GAMEOVER---------------------------------',
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'divider' &&
+        line.text === 'GAMEOVER' &&
+        line.border === 'dashed',
     ),
     'GAMEOVER 横幅',
   );
@@ -152,10 +155,14 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
   assert(texts.includes('你似乎明白了什么……'));
   assert(texts.includes('从一旁的镜子中映出的是温妮的身影……'));
   assert(texts.includes('「果然…我……死了呢」'), 'SELF_CALL 回落「我」');
-  // 横幅 ×4（GAMEOVER + 三条长线）
-  assert.equal(
-    texts.filter((line) => line.startsWith('-----')).length,
-    5,
+  // 横幅五连（GAMEOVER + 三条分隔线 + @@@@@@@@）：#870 起全是 drawLine，
+  // 按出现次序取这一段（死亡处理后面还有别的分隔线）
+  const banners = fixture.lines_history
+    .filter((line) => line.type === 'divider')
+    .map((line) => line.text);
+  assert.deepEqual(
+    banners.slice(0, 5),
+    ['GAMEOVER', '', '', '', '@@@@@@@@'],
     '横幅五连（GAMEOVER + 三条长线 + @@@@@@@@）',
   );
   // 共通死亡段：魔王自己死了（%SAVESTR:TARGET%）

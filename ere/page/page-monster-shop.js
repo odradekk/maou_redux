@@ -255,9 +255,9 @@ async function monster_shop(rand) {
       chara(a).chara.善恶值 = -100;
     }
 
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     era.print(`${chara_callname(a)}回应了你的召唤………`);
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     await era.waitAnyKey(); // PRINTW
     // CALL SHOW_CHARA_INFO, A, -2（#390 起真身；-2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
     await show_chara_info(a, -2, rand);
