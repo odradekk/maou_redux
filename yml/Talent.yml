@@ -1,8 +1,12 @@
 # 本表由人工维护。
 "处女":
   id: 0
+  name: "virgin"
+  type: "number"
 "童贞":
   id: 1
+  name: "male_virgin"
+  type: "number"
 "狂王替身":
   id: 2
   name: "crazylord_double"
@@ -13,531 +17,1061 @@
   # 序号可按名寻址（未登记时读素质名会抛错）。
 "崩坏":
   id: 9
+  name: "breakdown"
+  type: "number"
 "胆怯":
   id: 10
+  name: "timidity"
+  type: "number"
 "反抗心":
   id: 11
+  name: "rebellious"
+  type: "number"
 "刚强":
   id: 12
+  name: "firm"
+  type: "number"
 "坦率":
   id: 13
+  name: "frank"
+  type: "number"
 "文静":
   id: 14
+  name: "quiet"
+  type: "number"
 "高姿态":
   id: 15
+  name: "arrogant"
+  type: "number"
 "嚣张":
   id: 16
+  name: "insolent"
+  type: "number"
 "低姿态":
   id: 17
+  name: "humble"
+  type: "number"
 "傲娇":
   id: 18
+  name: "tsundere"
+  type: "number"
 "克制":
   id: 20
+  name: "restrained"
+  type: "number"
 "冷漠":
   id: 21
+  name: "cold"
+  type: "number"
 "感情淡薄":
   id: 22
+  name: "apathetic"
+  type: "number"
 "好奇心":
   id: 23
+  name: "curious"
+  type: "number"
 "保守的":
   id: 24
+  name: "conservative"
+  type: "number"
 "乐观的":
   id: 25
+  name: "optimistic"
+  type: "number"
 "悲观的":
   id: 26
+  name: "pessimistic"
+  type: "number"
 "戒备森严":
   id: 27
+  name: "wary"
+  type: "number"
 "爱表现":
   id: 28
+  name: "attention_seeker"
+  type: "number"
 "看重贞操":
   id: 30
+  name: "values_chastity"
+  type: "number"
 "看轻贞操":
   id: 31
+  name: "scorns_chastity"
+  type: "number"
 "压抑":
   id: 32
+  name: "repressed"
+  type: "number"
 "开放":
   id: 33
+  name: "open_minded"
+  type: "number"
 "抵抗":
   id: 34
+  name: "resistant"
+  type: "number"
 "害羞":
   id: 35
+  name: "shy"
+  type: "number"
 "不知羞耻":
   id: 36
+  name: "shameless"
+  type: "number"
 "把柄":
   id: 37
+  name: "leverage"
+  type: "number"
 "害怕疼痛":
   id: 40
+  name: "fears_pain"
+  type: "number"
 "不惧疼痛":
   id: 41
+  name: "ignores_pain"
+  type: "number"
 "容易湿":
   id: 42
+  name: "easily_wet"
+  type: "number"
 "不易湿":
   id: 43
+  name: "hardly_wet"
+  type: "number"
 "爱哭鬼":
   id: 44
+  name: "crybaby"
+  type: "number"
 "不哭泣":
   id: 45
+  name: "never_cries"
+  type: "number"
 "药物上瘾":
   id: 46
+  name: "drug_addict"
+  type: "number"
 "喜欢精液":
   id: 47
+  name: "loves_semen"
+  type: "number"
 "眼镜":
   id: 48
+  name: "glasses"
+  type: "number"
 "快速学习":
   id: 50
+  name: "fast_learner"
+  type: "number"
 "学习缓慢":
   id: 51
+  name: "slow_learner"
+  type: "number"
 "擅用舌头":
   id: 52
+  name: "skilled_tongue"
+  type: "number"
 "调合知识":
   id: 55
+  name: "mixing_knowledge"
+  type: "number"
 "抗药性":
   id: 56
+  name: "drug_resistance"
+  type: "number"
 "漏尿癖":
   id: 57
+  name: "incontinence_fetish"
+  type: "number"
 "容易自慰":
   id: 60
+  name: "prone_masturbation"
+  type: "number"
 "不怕污臭":
   id: 61
+  name: "tolerates_stench"
+  type: "number"
 "反感污臭":
   id: 62
+  name: "hates_stench"
+  type: "number"
 "献身的":
   id: 63
+  name: "devoted"
+  type: "number"
 "不怕脏":
   id: 64
+  name: "tolerates_dirt"
+  type: "number"
 "抵抗诱惑":
   id: 69
+  name: "resists_temptation"
+  type: "number"
 "接受快感":
   id: 70
+  name: "accepts_pleasure"
+  type: "number"
 "否定快感":
   id: 71
+  name: "denies_pleasure"
+  type: "number"
 "容易上瘾":
   id: 72
+  name: "prone_addiction"
+  type: "number"
 "容易陷落":
   id: 73
+  name: "easily_falls"
+  type: "number"
 "自慰狂":
   id: 74
+  name: "masturbation_maniac"
+  type: "number"
 "性爱狂":
   id: 75
+  name: "sex_maniac"
+  type: "number"
 "淫乱":
   id: 76
+  name: "lewd"
+  type: "number"
 "尻穴狂":
   id: 77
+  name: "anal_maniac"
+  type: "number"
 "弄乳狂":
   id: 78
+  name: "breast_maniac"
+  type: "number"
 "男人婆":
   id: 79
+  name: "tomboy"
+  type: "number"
 "倒错的":
   id: 80
+  name: "perverted"
+  type: "number"
 "双性恋":
   id: 81
+  name: "bisexual"
+  type: "number"
 "讨厌男人":
   id: 82
+  name: "hates_men"
+  type: "number"
 "施虐狂":
   id: 83
+  name: "sadist"
+  type: "number"
 "嫉妒":
   id: 84
+  name: "jealous"
+  type: "number"
 "爱慕":
   id: 85
+  name: "in_love"
+  type: "number"
 "盲从":
   id: 86
+  name: "blindly_obedient"
+  type: "number"
 "小恶魔":
   id: 87
+  name: "little_devil"
+  type: "number"
 "受虐狂":
   id: 88
+  name: "masochist"
+  type: "number"
 "露出狂":
   id: 89
+  name: "exhibitionist"
+  type: "number"
 "魅惑":
   id: 91
+  name: "charming"
+  type: "number"
 "谜之魅力":
   id: 92
+  name: "mysterious_charm"
+  type: "number"
 "威压感":
   id: 93
+  name: "intimidating"
+  type: "number"
 "魁梧":
   id: 99
+  name: "burly"
+  type: "number"
 "娇小":
   id: 100
+  name: "petite"
+  type: "number"
 "阴蒂钝感":
   id: 101
+  name: "dull_clitoris"
+  type: "number"
 "阴蒂敏感":
   id: 102
+  name: "sensitive_clitoris"
+  type: "number"
 "私处钝感":
   id: 103
+  name: "dull_vagina"
+  type: "number"
 "私处敏感":
   id: 104
+  name: "sensitive_vagina"
+  type: "number"
 "肛门钝感":
   id: 105
+  name: "dull_anus"
+  type: "number"
 "肛门敏感":
   id: 106
+  name: "sensitive_anus"
+  type: "number"
 "乳房钝感":
   id: 107
+  name: "dull_breast"
+  type: "number"
 "乳房敏感":
   id: 108
+  name: "sensitive_breast"
+  type: "number"
 "贫乳":
   id: 109
+  name: "small_breasts"
+  type: "number"
 "巨乳":
   id: 110
+  name: "large_breasts"
+  type: "number"
 "快速回复":
   id: 111
+  name: "fast_recovery"
+  type: "number"
 "回复缓慢":
   id: 112
+  name: "slow_recovery"
+  type: "number"
 "魅力":
   id: 113
+  name: "charisma"
+  type: "number"
 "爆乳":
   id: 114
+  name: "huge_breasts"
+  type: "number"
 "肥胖":
   id: 115
+  name: "obese"
+  type: "number"
 "绝壁":
   id: 116
+  name: "flat_chest"
+  type: "number"
 "治疗":
   id: 117
+  name: "healing"
+  type: "number"
 "鼓舞":
   id: 118
+  name: "inspiring"
+  type: "number"
 "超乳":
   id: 119
+  name: "massive_breasts"
+  type: "number"
 "扶她":
   id: 121
+  name: "futanari"
+  type: "number"
 "男人":
   id: 122
+  name: "male"
+  type: "number"
 "疯狂":
   id: 123
+  name: "madness"
+  type: "number"
 "动物耳朵":
   id: 124
+  name: "animal_ears"
+  type: "number"
 "白虎":
   id: 125
+  name: "hairless"
+  type: "number"
 "高人气":
   id: 126
+  name: "popular"
+  type: "number"
 "逆袭":
   id: 127
+  name: "counterattack"
+  type: "number"
 "母乳体质":
   id: 130
+  name: "lactation_body"
+  type: "number"
 "幼儿退行":
   id: 131
+  name: "regression"
+  type: "number"
 "幼稚":
   id: 132
+  name: "childish"
+  type: "number"
 "早泄":
   id: 133
+  name: "premature"
+  type: "number"
 "软弱":
   id: 134
+  name: "weak"
+  type: "number"
 "未熟":
   id: 135
+  name: "immature"
+  type: "number"
 "牝犬":
   id: 136
+  name: "bitch"
+  type: "number"
 "兽类":
   id: 137
+  name: "beast"
+  type: "number"
 "恋母情结":
   id: 140
+  name: "mother_complex"
+  type: "number"
 "恋父情结":
   id: 141
+  name: "father_complex"
+  type: "number"
 "萝莉控":
   id: 142
+  name: "lolicon"
+  type: "number"
 "正太控":
   id: 143
+  name: "shotacon"
+  type: "number"
 "从不自慰":
   id: 150
+  name: "never_masturbates"
+  type: "number"
 "绝不侍奉":
   id: 151
+  name: "never_serves"
+  type: "number"
 "不受洗脑":
   id: 152
+  name: "resists_brainwash"
+  type: "number"
 "妊娠":
   id: 153
+  name: "pregnant"
+  type: "number"
 "育儿中":
   id: 154
+  name: "nursing_child"
+  type: "number"
 "母性":
   id: 155
+  name: "maternal"
+  type: "number"
 "父性":
   id: 156
+  name: "paternal"
+  type: "number"
 "人妻":
   id: 157
+  name: "married_woman"
+  type: "number"
 "同族不育":
   id: 158
+  name: "infertile_with_kin"
+  type: "number"
 "异种婚姻":
   id: 159
+  name: "interspecies_marriage"
+  type: "number"
 "慈爱":
   id: 160
+  name: "affectionate"
+  type: "number"
 "自信家":
   id: 161
+  name: "confident"
+  type: "number"
 "懦弱":
   id: 162
+  name: "cowardly"
+  type: "number"
 "高贵":
   id: 163
+  name: "noble"
+  type: "number"
 "冷静":
   id: 164
+  name: "calm"
+  type: "number"
 "村娘Ａ":
   id: 165
+  name: "village_girl_a"
+  type: "number"
 "恶女":
   id: 166
+  name: "evil_woman"
+  type: "number"
 "金红桃":
   id: 167
+  name: "gold_heart"
+  type: "number"
 "银黑桃":
   id: 168
+  name: "silver_spade"
+  type: "number"
 "黑方片":
   id: 169
+  name: "black_diamond"
+  type: "number"
 "白梅花":
   id: 170
+  name: "white_club"
+  type: "number"
 "村娘Ｂ":
   id: 171
+  name: "village_girl_b"
+  type: "number"
 "智慧":
   id: 172
+  name: "wise"
+  type: "number"
 "庇护者":
   id: 173
+  name: "protector"
+  type: "number"
 "贵公子":
   id: 174
+  name: "noble_son"
+  type: "number"
 "伶俐":
   id: 175
+  name: "clever"
+  type: "number"
 "妓女":
   id: 180
+  name: "prostitute"
+  type: "number"
 "倾城":
   id: 181
+  name: "courtesan"
+  type: "number"
 "巧言":
   id: 182
+  name: "silver_tongue"
+  type: "number"
 "有常客":
   id: 183
+  name: "has_regular_guest"
+  type: "number"
 "求爱":
   id: 184
+  name: "seeking_love"
+  type: "number"
 "歌姫":
   id: 185
+  name: "songstress"
+  type: "number"
 "舞姫":
   id: 186
+  name: "dancer"
+  type: "number"
 "美姫":
   id: 187
+  name: "beauty"
+  type: "number"
 "斗姬":
   id: 188
+  name: "battle_lady"
+  type: "number"
 "私处产卵":
   id: 190
+  name: "vagina_spawn"
+  type: "number"
 "直肠产卵":
   id: 191
+  name: "rectal_spawn"
+  type: "number"
 "蠕虫":
   id: 192
+  name: "worm"
+  type: "number"
 "肛门虫":
   id: 193
+  name: "anal_worm"
+  type: "number"
 "战士":
   id: 200
+  name: "warrior"
+  type: "number"
 "魔法师":
   id: 201
+  name: "mage"
+  type: "number"
 "神官":
   id: 202
+  name: "priest"
+  type: "number"
 "盗贼":
   id: 203
+  name: "thief"
+  type: "number"
 "肉便器":
   id: 204
+  name: "cum_dump"
+  type: "number"
 "骑士":
   id: 205
+  name: "knight"
+  type: "number"
 "巫女":
   id: 206
+  name: "shrine_maiden"
+  type: "number"
 "忍者":
   id: 207
+  name: "ninja"
+  type: "number"
 "弓手":
   id: 208
+  name: "archer"
+  type: "number"
 "苗床":
   id: 209
+  name: "breeding_bed"
+  type: "number"
 "魔界将军":
   id: 210
+  name: "demon_general"
+  type: "number"
 "魔导神官":
   id: 211
+  name: "sorcerer_priest"
+  type: "number"
 "魔物使":
   id: 212
+  name: "monster_tamer"
+  type: "number"
 "精英":
   id: 220
+  name: "elite"
+  type: "number"
 "淫核":
   id: 230
+  name: "lewd_clitoris"
+  type: "number"
 "淫乳":
   id: 231
+  name: "lewd_breasts"
+  type: "number"
 "淫壶":
   id: 232
+  name: "lewd_vagina"
+  type: "number"
 "淫肛":
   id: 233
+  name: "lewd_anus"
+  type: "number"
 "战术":
   id: 240
+  name: "tactics"
+  type: "number"
 "魔术":
   id: 241
+  name: "sorcery"
+  type: "number"
 "法术":
   id: 242
+  name: "spellcraft"
+  type: "number"
 "奇袭":
   id: 243
+  name: "surprise_attack"
+  type: "number"
 "恶魔肌肤":
   id: 244
+  name: "demon_skin"
+  type: "number"
 "恶魔翅膀":
   id: 245
+  name: "demon_wings"
+  type: "number"
 "恶魔尾巴":
   id: 246
+  name: "demon_tail"
+  type: "number"
 "恶魔眼睛":
   id: 247
+  name: "demon_eyes"
+  type: "number"
 "肌肉型":
   id: 248
+  name: "muscular"
+  type: "number"
 "铁壁":
   id: 249
+  name: "iron_wall"
+  type: "number"
 "咒术":
   id: 250
+  name: "curse_magic"
+  type: "number"
 "忍术":
   id: 251
+  name: "ninjutsu"
+  type: "number"
 "先制":
   id: 252
+  name: "initiative"
+  type: "number"
 "褐色肌肤":
   id: 253
+  name: "tanned_skin"
+  type: "number"
 "魔之刻印":
   id: 254
+  name: "demon_seal"
+  type: "number"
 "白皙":
   id: 255
+  name: "pale_skin"
+  type: "number"
 "虚弱":
   id: 256
+  name: "frail"
+  type: "number"
 "魔法耐性":
   id: 257
+  name: "magic_resistance"
+  type: "number"
 "俊足":
   id: 258
+  name: "swift"
+  type: "number"
 "独眼":
   id: 259
+  name: "one_eyed"
+  type: "number"
 "额头天眼":
   id: 260
+  name: "forehead_eye"
+  type: "number"
 "史莱姆":
   id: 261
+  name: "slime_body"
+  type: "number"
 "触手":
   id: 262
+  name: "tentacle_body"
+  type: "number"
 "小人体型":
   id: 263
+  name: "tiny_body"
+  type: "number"
 "角":
   id: 264
+  name: "horns"
+  type: "number"
 "使役":
   id: 265
+  name: "beast_command"
+  type: "number"
 "时常发情":
   id: 271
+  name: "always_aroused"
+  type: "number"
 "性豪":
   id: 272
+  name: "sex_expert"
+  type: "number"
 "私处封印":
   id: 273
+  name: "vagina_seal"
+  type: "number"
 "魂缚":
   id: 274
+  name: "soul_bind"
+  type: "number"
 "火之能力者":
   id: 275
+  name: "fire_affinity"
+  type: "number"
 "冰之能力者":
   id: 276
+  name: "ice_affinity"
+  type: "number"
 "雷之能力者":
   id: 277
+  name: "thunder_affinity"
+  type: "number"
 "光之能力者":
   id: 278
+  name: "light_affinity"
+  type: "number"
 "暗之能力者":
   id: 279
+  name: "dark_affinity"
+  type: "number"
 "狂王俘虏":
   id: 280
+  name: "crazylord_captive"
+  type: "number"
 "常识改变【战斗】":
   id: 281
+  name: "common_sense_battle"
+  type: "number"
 "冒渎者":
   id: 282
+  name: "blasphemer"
+  type: "number"
 "常识改变【日常】":
   id: 283
+  name: "common_sense_daily"
+  type: "number"
 "担保人":
   id: 290
+  name: "guarantor"
+  type: "number"
 "初心者":
   id: 291
+  name: "beginner"
+  type: "number"
 "魔王之影":
   id: 292
+  name: "demon_lord_shadow"
+  type: "number"
 "主从逆转":
   id: 293
+  name: "master_slave_reversed"
+  type: "number"
 "异种恋慕":
   id: 294
+  name: "interspecies_love"
+  type: "number"
 "头发颜色":
   id: 300
+  name: "hair_color"
+  type: "number"
 "头发状态":
   id: 301
+  name: "hair_state"
+  type: "number"
 "头发长度":
   id: 302
+  name: "hair_length"
+  type: "number"
 "头发修剪方式":
   id: 303
+  name: "hair_trim"
+  type: "number"
 "发型":
   id: 304
+  name: "hair_style"
+  type: "number"
 "目":
   id: 305
+  name: "eyes"
+  type: "number"
 "瞳色":
   id: 306
+  name: "eye_color"
+  type: "number"
 "唇":
   id: 307
+  name: "lips"
+  type: "number"
 "体型":
   id: 308
+  name: "body_type"
+  type: "number"
 "乳头":
   id: 309
+  name: "nipples"
+  type: "number"
 "阴毛状态":
   id: 310
+  name: "pubic_hair_state"
+  type: "number"
 "阴毛生长极限":
   id: 311
+  name: "pubic_hair_limit"
+  type: "number"
 "魅力点":
   id: 312
+  name: "charm_points"
+  type: "number"
 "癖":
   id: 313
+  name: "fetish"
+  type: "number"
 "种族":
   id: 314
+  name: "race"
+  type: "number"
 "成为勇者前的生活":
   id: 315
+  name: "pre_hero_life"
+  type: "number"
 "成为勇者的契机":
   id: 316
+  name: "hero_trigger"
+  type: "number"
 "喜欢的东西":
   id: 317
+  name: "favorite_thing"
+  type: "number"
 "阴茎的状态":
   id: 318
+  name: "penis_state"
+  type: "number"
 "种族2":
   id: 319
+  name: "secondary_race"
+  type: "number"
 "家族构成":
   id: 320
+  name: "family_structure"
+  type: "number"
 "原种族":
   id: 321
+  name: "original_race"
+  type: "number"
 "现种族":
   id: 322
+  name: "current_race"
+  type: "number"
 "父亲种族":
   id: 323
+  name: "father_race"
+  type: "number"
 "母亲种族":
   id: 324
+  name: "mother_race"
+  type: "number"
 "魔界知识":
   id: 325
+  name: "demon_knowledge"
+  type: "number"
 "肉芽诅咒":
   id: 326
+  name: "flesh_bud_curse"
+  type: "number"
 "淫魔知识":
   id: 327
+  name: "succubus_knowledge"
+  type: "number"
 "魔虫知识":
   id: 328
+  name: "bug_knowledge"
+  type: "number"
 "【造型王】":
   id: 329
+  name: "stylist_king"
+  type: "number"
 "异常妊娠体质":
   id: 340
+  name: "abnormal_pregnancy"
+  type: "number"
 "乳内妊娠":
   id: 341
+  name: "breast_pregnancy"
+  type: "number"
 "精巢妊娠":
   id: 342
+  name: "testicle_pregnancy"
+  type: "number"
 "肛内妊娠":
   id: 343
+  name: "anal_pregnancy"
+  type: "number"
 "口内妊娠":
   id: 344
+  name: "oral_pregnancy"
+  type: "number"
 "灭焰咒印":
   id: 361
+  name: "flame_seal"
+  type: "number"
 "狂王":
   id: 399
+  name: "crazylord"
+  type: "number"
 "无":
   id: 470
+  name: "none"
+  type: "number"
 "粘液捕获":
   id: 471
+  name: "slime_capture"
+  type: "number"
 "落穴捕获":
   id: 472
+  name: "pit_capture"
+  type: "number"
 "藤蔓捕获":
   id: 473
+  name: "vine_capture"
+  type: "number"
 "铠破坏":
   id: 474
+  name: "armor_break"
+  type: "number"
 "透明":
   id: 475
+  name: "invisible"
+  type: "number"
 "再生":
   id: 476
+  name: "regenerate"
+  type: "number"
 "拟态":
   id: 477
+  name: "mimicry"
+  type: "number"
 "迷惑":
   id: 478
+  name: "confuse"
+  type: "number"
 "吐息":
   id: 479
+  name: "breath"
+  type: "number"
 "麻痹":
   id: 480
+  name: "paralysis"
+  type: "number"
 "诱惑":
   id: 481
+  name: "seduce"
+  type: "number"
 "混乱":
   id: 482
+  name: "chaos"
+  type: "number"
 "经验值吸取":
   id: 483
+  name: "exp_drain"
+  type: "number"
 "破铠吐息":
   id: 484
+  name: "armor_break_breath"
+  type: "number"
 "魔力吸取":
   id: 485
+  name: "mana_drain"
+  type: "number"

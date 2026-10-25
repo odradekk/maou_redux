@@ -28,121 +28,241 @@
 # E:500-599 == 结婚·凌辱（随凌辱票，本表不预声明）
 "第1列怪物番号":
   id: 0
+  name: "col_1_monster_id"
+  type: "number"
 "第1列等级":
   id: 1
+  name: "col_1_level"
+  type: "number"
 "第1列攻击力":
   id: 2
+  name: "col_1_attack"
+  type: "number"
 "第1列防御力":
   id: 3
+  name: "col_1_defense"
+  type: "number"
 "第1列速度":
   id: 4
+  name: "col_1_speed"
+  type: "number"
 "第1列特殊":
   id: 5
+  name: "col_1_special"
+  type: "number"
 "第1列魔法":
   id: 6
+  name: "col_1_magic"
+  type: "number"
 "第1列凌辱类型":
   id: 7
+  name: "col_1_rape_type"
+  type: "number"
 "第1列Boss标志":
   id: 8
+  name: "col_1_boss_flag"
+  type: "number"
 "第1列状态异常":
   id: 9
+  name: "col_1_status"
+  type: "number"
 "第1列耐性":
   id: 10
+  name: "col_1_resistance"
+  type: "number"
 "第1列怪物数":
   id: 99
+  name: "col_1_monster_count"
+  type: "number"
 "第2列怪物番号":
   id: 100
+  name: "col_2_monster_id"
+  type: "number"
 "第2列等级":
   id: 101
+  name: "col_2_level"
+  type: "number"
 "第2列攻击力":
   id: 102
+  name: "col_2_attack"
+  type: "number"
 "第2列防御力":
   id: 103
+  name: "col_2_defense"
+  type: "number"
 "第2列速度":
   id: 104
+  name: "col_2_speed"
+  type: "number"
 "第2列特殊":
   id: 105
+  name: "col_2_special"
+  type: "number"
 "第2列魔法":
   id: 106
+  name: "col_2_magic"
+  type: "number"
 "第2列凌辱类型":
   id: 107
+  name: "col_2_rape_type"
+  type: "number"
 "第2列Boss标志":
   id: 108
+  name: "col_2_boss_flag"
+  type: "number"
 "第2列状态异常":
   id: 109
+  name: "col_2_status"
+  type: "number"
 "第2列耐性":
   id: 110
+  name: "col_2_resistance"
+  type: "number"
 "第2列怪物数":
   id: 199
+  name: "col_2_monster_count"
+  type: "number"
 "第3列怪物番号":
   id: 200
+  name: "col_3_monster_id"
+  type: "number"
 "第3列等级":
   id: 201
+  name: "col_3_level"
+  type: "number"
 "第3列攻击力":
   id: 202
+  name: "col_3_attack"
+  type: "number"
 "第3列防御力":
   id: 203
+  name: "col_3_defense"
+  type: "number"
 "第3列速度":
   id: 204
+  name: "col_3_speed"
+  type: "number"
 "第3列特殊":
   id: 205
+  name: "col_3_special"
+  type: "number"
 "第3列魔法":
   id: 206
+  name: "col_3_magic"
+  type: "number"
 "第3列凌辱类型":
   id: 207
+  name: "col_3_rape_type"
+  type: "number"
 "第3列Boss标志":
   id: 208
+  name: "col_3_boss_flag"
+  type: "number"
 "第3列状态异常":
   id: 209
+  name: "col_3_status"
+  type: "number"
 "第3列耐性":
   id: 210
+  name: "col_3_resistance"
+  type: "number"
 "第3列怪物数":
   id: 299
+  name: "col_3_monster_count"
+  type: "number"
 "第4列怪物番号":
   id: 300
+  name: "col_4_monster_id"
+  type: "number"
 "第4列等级":
   id: 301
+  name: "col_4_level"
+  type: "number"
 "第4列攻击力":
   id: 302
+  name: "col_4_attack"
+  type: "number"
 "第4列防御力":
   id: 303
+  name: "col_4_defense"
+  type: "number"
 "第4列速度":
   id: 304
+  name: "col_4_speed"
+  type: "number"
 "第4列特殊":
   id: 305
+  name: "col_4_special"
+  type: "number"
 "第4列魔法":
   id: 306
+  name: "col_4_magic"
+  type: "number"
 "第4列凌辱类型":
   id: 307
+  name: "col_4_rape_type"
+  type: "number"
 "第4列Boss标志":
   id: 308
+  name: "col_4_boss_flag"
+  type: "number"
 "第4列状态异常":
   id: 309
+  name: "col_4_status"
+  type: "number"
 "第4列耐性":
   id: 310
+  name: "col_4_resistance"
+  type: "number"
 "第4列怪物数":
   id: 399
+  name: "col_4_monster_count"
+  type: "number"
 "第5列怪物番号":
   id: 400
+  name: "col_5_monster_id"
+  type: "number"
 "第5列等级":
   id: 401
+  name: "col_5_level"
+  type: "number"
 "第5列攻击力":
   id: 402
+  name: "col_5_attack"
+  type: "number"
 "第5列防御力":
   id: 403
+  name: "col_5_defense"
+  type: "number"
 "第5列速度":
   id: 404
+  name: "col_5_speed"
+  type: "number"
 "第5列特殊":
   id: 405
+  name: "col_5_special"
+  type: "number"
 "第5列魔法":
   id: 406
+  name: "col_5_magic"
+  type: "number"
 "第5列凌辱类型":
   id: 407
+  name: "col_5_rape_type"
+  type: "number"
 "第5列Boss标志":
   id: 408
+  name: "col_5_boss_flag"
+  type: "number"
 "第5列状态异常":
   id: 409
+  name: "col_5_status"
+  type: "number"
 "第5列耐性":
   id: 410
+  name: "col_5_resistance"
+  type: "number"
 "第5列怪物数":
   id: 499
+  name: "col_5_monster_count"
+  type: "number"

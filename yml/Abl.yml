@@ -1,57 +1,113 @@
 # 本表由人工维护。
 "阴蒂感觉":
   id: 0
+  name: "clitoris_feeling"
+  type: "number"
 "乳房感觉":
   id: 1
+  name: "breast_feeling"
+  type: "number"
 "私处感觉":
   id: 2
+  name: "vagina_feeling"
+  type: "number"
 "肛门感觉":
   id: 3
+  name: "anal_feeling"
+  type: "number"
 "局部感觉":
   id: 4
+  name: "penis_feeling"
+  type: "number"
 "顺从":
   id: 10
+  name: "obedience"
+  type: "number"
 "欲望":
   id: 11
+  name: "lust"
+  type: "number"
 "技巧":
   id: 12
+  name: "technique"
+  type: "number"
 "侍奉技术":
   id: 13
+  name: "service_skill"
+  type: "number"
 "性交技术":
   id: 14
+  name: "intercourse_skill"
+  type: "number"
 "话术":
   id: 15
+  name: "talk_skill"
+  type: "number"
 "侍奉精神":
   id: 16
+  name: "service_spirit"
+  type: "number"
 "露出癖":
   id: 17
+  name: "exhibitionism"
+  type: "number"
 "抖Ｓ气质":
   id: 20
+  name: "sadist_temper"
+  type: "number"
 "抖Ｍ气质":
   id: 21
+  name: "masochist_temper"
+  type: "number"
 "百合气质":
   id: 22
+  name: "lesbian_temper"
+  type: "number"
 "断背气质":
   id: 23
+  name: "gay_temper"
+  type: "number"
 "性交中毒":
   id: 30
+  name: "intercourse_addiction"
+  type: "number"
 "自慰中毒":
   id: 31
+  name: "masturbation_addiction"
+  type: "number"
 "精液中毒":
   id: 32
+  name: "semen_addiction"
+  type: "number"
 "百合中毒":
   id: 33
+  name: "lesbian_addiction"
+  type: "number"
 "卖淫中毒":
   id: 37
+  name: "prostitution_addiction"
+  type: "number"
 "兽奸中毒":
   id: 39
+  name: "bestiality_addiction"
+  type: "number"
 "局部中毒":
   id: 40
+  name: "penis_addiction"
+  type: "number"
 "学习能力":
   id: 100
+  name: "study_ability"
+  type: "number"
 "运动能力":
   id: 101
+  name: "athletic_ability"
+  type: "number"
 "战斗能力":
   id: 102
+  name: "combat_ability"
+  type: "number"
 "感性":
   id: 103
+  name: "sensibility"
+  type: "number"

@@ -1,93 +1,185 @@
 # 本表由人工维护。
 "私处经验":
   id: 0
+  name: "vagina_exp"
+  type: "number"
 "肛门经验":
   id: 1
+  name: "anal_exp"
+  type: "number"
 "绝顶经验":
   id: 2
+  name: "orgasm_exp"
+  type: "number"
 "射精经验":
   id: 3
+  name: "ejaculation_exp"
+  type: "number"
 "性交经验":
   id: 5
+  name: "intercourse_exp"
+  type: "number"
 "精饮绝顶经验":
   id: 8
+  name: "semen_drink_orgasm_exp"
+  type: "number"
 "自慰经验":
   id: 10
+  name: "masturbation_exp"
+  type: "number"
 "调教自慰经验":
   id: 11
+  name: "trained_masturbation_exp"
+  type: "number"
 "精液经验":
   id: 20
+  name: "semen_exp"
+  type: "number"
 "侍奉快乐经验":
   id: 21
+  name: "service_pleasure_exp"
+  type: "number"
 "口交经验":
   id: 22
+  name: "oral_exp"
+  type: "number"
 "爱情经验":
   id: 23
+  name: "love_exp"
+  type: "number"
 "被虐快乐经验":
   id: 30
+  name: "masochist_pleasure_exp"
+  type: "number"
 "放尿经验":
   id: 31
+  name: "urination_exp"
+  type: "number"
 "肛门快乐经验":
   id: 32
+  name: "anal_pleasure_exp"
+  type: "number"
 "施虐快乐经验":
   id: 33
+  name: "sadist_pleasure_exp"
+  type: "number"
 "阴蒂经验":
   id: 34
+  name: "clitoris_exp"
+  type: "number"
 "乳房经验":
   id: 35
+  name: "breast_exp"
+  type: "number"
 "百合经验":
   id: 40
+  name: "lesbian_exp"
+  type: "number"
 "断背经验":
   id: 41
+  name: "gay_exp"
+  type: "number"
 "异常经验":
   id: 50
+  name: "abnormal_exp"
+  type: "number"
 "紧缚经验":
   id: 51
+  name: "bondage_exp"
+  type: "number"
 "私处扩张经验":
   id: 52
+  name: "vagina_dilation_exp"
+  type: "number"
 "肛门扩张经验":
   id: 53
+  name: "anal_dilation_exp"
+  type: "number"
 "喷奶经验":
   id: 54
+  name: "lactation_exp"
+  type: "number"
 "触手经验":
   id: 55
+  name: "tentacle_exp"
+  type: "number"
 "兽奸经验":
   id: 56
+  name: "bestiality_exp"
+  type: "number"
 "药物经验":
   id: 57
+  name: "drug_exp"
+  type: "number"
 "异种奸经验":
   id: 58
+  name: "interspecies_exp"
+  type: "number"
 "生育经验":
   id: 60
+  name: "childbirth_exp"
+  type: "number"
 "异种妊娠经验":
   id: 62
+  name: "interspecies_pregnancy_exp"
+  type: "number"
 "从属快乐经验":
   id: 63
+  name: "submissive_pleasure_exp"
+  type: "number"
 "主从爱情经验":
   id: 64
+  name: "master_love_exp"
+  type: "number"
 "调教失神经验":
   id: 65
+  name: "training_faint_exp"
+  type: "number"
 "料理经验":
   id: 61
+  name: "cooking_exp"
+  type: "number"
 "拍摄经验":
   id: 70
+  name: "shooting_exp"
+  type: "number"
 "歌唱经验":
   id: 71
+  name: "singing_exp"
+  type: "number"
 "舞蹈经验":
   id: 72
+  name: "dance_exp"
+  type: "number"
 "调教会话经验":
   id: 73
+  name: "training_talk_exp"
+  type: "number"
 "卖淫经验":
   id: 74
+  name: "prostitution_exp"
+  type: "number"
 "营业爱情经验":
   id: 75
+  name: "business_love_exp"
+  type: "number"
 "斗技胜利经验":
   id: 76
+  name: "arena_win_exp"
+  type: "number"
 "战斗经验":
   id: 80
+  name: "battle_exp"
+  type: "number"
 "勋章经验":
   id: 81
+  name: "medal_exp"
+  type: "number"
 "狂王调教经验":
   id: 66
+  name: "crazylord_training_exp"
+  type: "number"
 "异界经验":
   id: 99
+  name: "otherworld_exp"
+  type: "number"
