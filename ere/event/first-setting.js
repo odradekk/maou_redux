@@ -102,9 +102,8 @@ async function ask_penis_size() {
 /**
  * 「狂王性别」一问：first_setting 的 RESULT == 2 子问的移植。
  *
- * game.system.狂王性别（FLAG:500）属主 system——event 域裸写会被域检查
- * 判定为新增跨域裸写（tools/domain-ledger.mjs 已冻结、不接受新条目），
- * 走具名访问器；event-first.js:15 的既有裸写是登记在案的先例，不追加。
+ * game.system.狂王性别（FLAG:500）属主 system，写经具名访问器（#71）；
+ * event-first.js:15 的既有裸写不追加。
  *
  * @returns {Promise<number>} 玩家的选择（0 男性/1 女性/2 扶她）
  */

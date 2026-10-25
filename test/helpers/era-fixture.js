@@ -1595,8 +1595,10 @@ function create_era_fixture() {
   // 直接驱动引擎代码比对，两层不重复）。
   const chara_presets = new Map(); // 源编号 → 预设对象（对应引擎 staticData.chara）
   const chara_no = []; // 已加入角色（对应引擎 data.no：先滤同号再入列）
-  era.addCharacter = (...chara_ids) => {
-    calls.push({ api: 'addCharacter', args: chara_ids });
+  // 加入动作本体：两条入口共用（游戏代码的 era.addCharacter 与 resetData 的
+  // 自动创建，#848）。记不记 calls 由调用方决定——引擎 resetData 内部也调
+  // addCharacter，但那是引擎自己的动作，不是游戏代码的调用。
+  const join_characters = (chara_ids) => {
     const results = chara_ids.map((arg) => {
       // 双参数写法 [目标号, 源数据号]；单参数两者同号
       const [target, source] = Array.isArray(arg) ? arg : [arg, arg];
@@ -1620,6 +1622,10 @@ function create_era_fixture() {
       return true;
     });
     return chara_ids.length === 1 ? results[0] : results;
+  };
+  era.addCharacter = (...chara_ids) => {
+    calls.push({ api: 'addCharacter', args: chara_ids });
+    return join_characters(chara_ids);
   };
 
   // —— 角色列表的顺序语义（#150/G4）：引擎三个 get 是键升序，容器是插入序 ——
@@ -1729,7 +1735,8 @@ function create_era_fixture() {
 
   // 引擎 resetData 整份重建 data：tequip/tflag 等调教表全部消失，
   // getCharactersInTrain 从此恒 []（D4 #150 登记的分歧在此闭合）、调教域
-  // 寻址检查关闭。夹具同清 train 态与调教域键；store 里静态预置与存档
+  // 寻址检查关闭；末尾再按 GameBase【初始角色编号】建初始角色（#848）。
+  // 夹具同清 train 态与调教域键；store 里静态预置与存档
   // 数据的全面分离是 G2 锐边（docs/research/fixture-engine-gap.md），
   // 不属本工单——已加入列表之外的数据键维持既定简化。
   era.resetData = () => {
@@ -1741,6 +1748,15 @@ function create_era_fixture() {
     source_present = true; // resetData 字面量里 source 重新出现
     chars_in_train.clear();
     delete_train_table_keys();
+    // 引擎 resetData 末尾（app.asar 逐字）：`void 0 !==
+    // this.staticData.gamebase.defaultChara && this.addCharacter(...)`——
+    // GameBase 声明了【初始角色编号】就按它的预设建角色，未声明一个都不建。
+    // 这个建角色不经 era.addCharacter：它是引擎的方法体内部动作，不是游戏
+    // 代码的调用，记进 calls 会让「标题页不得手工添加初始角色」的断言失效。
+    const default_chara = store.get('gamebase')?.defaultChara;
+    if (default_chara !== undefined) {
+      join_characters([default_chara]);
+    }
     return undefined;
   };
   // removeCharacter（DELCHARA 的引擎等价物，#44 的 EVENTEND 死亡分支用）。

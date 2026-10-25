@@ -1,9 +1,9 @@
-// 变异条目表切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
+// 变异条目表切片：tools/ 下的检查器与生成器自身（trace/engine-contract/ownership/gen-facade/facade-names）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 93; // #819 +6（M15900–M15905：Palam 文件按 juel 表识别、info 级提示默认不收集）；#822 +1（M15709：门面命名表不再接受全角拉丁字母）；+3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 87; // #904 -6（M161–M166 随域检查工具与其行为锁一并删除）；#819 +6（M15900–M15905：Palam 文件按 juel 表识别、info 级提示默认不收集）；#822 +1（M15709：门面命名表不再接受全角拉丁字母）；+3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -29,55 +29,6 @@ export default [
     replace: '.filter(() => true)',
     tests: ['gen-facade'],
     must_mention: '口上域切片缺名',
-  },
-  {
-    desc: 'M161 跨域判定被掏空：属主等于本域恒真，跨域写永不成立',
-    file: 'tools/domain-check.mjs',
-    find: '      if (owner === domain) {',
-    replace: '      if (true) {',
-    tests: ['domain-check'],
-    must_mention: '必须红且报出位置（新文件自动纳入）',
-  },
-  {
-    desc: 'M162 判定依据脱离产物：所有权区间坍缩为单下标，区间尾段全部失主',
-    file: 'tools/domain-check.mjs',
-    find: '    const end = match[2] ? Number(match[2]) : start;',
-    replace: '    const end = start;',
-    tests: ['domain-check'],
-    must_mention: '必须红且报出位置（新文件自动纳入）',
-  },
-  {
-    desc: 'M163 条目表过期失效检查被拆（count > actual 恒假，消化现有条目后忘删条目不再红）',
-    file: 'tools/domain-check.mjs',
-    find: '      if (count > actual) {',
-    replace: '      if (false) {',
-    tests: ['domain-check'],
-    must_mention: '过期失效',
-  },
-  {
-    desc: 'M164 基线计数检查被拆（count > baseline 恒假，抬计数吸收新增待办不再红）',
-    file: 'tools/domain-check.mjs',
-    find: '      } else if (count > baseline) {',
-    replace: '      } else if (false) {',
-    tests: ['domain-check'],
-    must_mention: '不得超基线',
-  },
-  {
-    desc: 'M165 基线键门被拆（baseline === undefined 恒假，基线外新条目不再红）',
-    file: 'tools/domain-check.mjs',
-    find: '      if (baseline === undefined) {',
-    replace: '      if (false) {',
-    tests: ['domain-check'],
-    must_mention: '只能变短',
-  },
-  {
-    desc: 'M166 包装层白名单退化成目录口子（ere/facade/ 整目录跳过扫描）',
-    file: 'tools/domain-check.mjs',
-    find: '    if (rel === SDK_FILE || WRAPPER_FILES.includes(rel)) {',
-    replace:
-      "    if (rel === SDK_FILE || rel.startsWith('ere/facade/') || WRAPPER_FILES.includes(rel)) {",
-    tests: ['domain-check'],
-    must_mention: '目录逃生口',
   },
   {
     desc: 'M172 调用点规则的界值检查被拆（只查下界，barWidth=24 放行）',

@@ -3,7 +3,17 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 99; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 102; // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
+// 写不落库/自动建行/行不随加入/调教表恒在/source 不随 endTrain 消失/item 骨架缺子表/
+// bought 初值/盖章常量取错/no 返回副本/no 写不落数组/get 不认盖章缺省/行与列不进枚举/
+// 视图不读平表/扩展角色表不建桶或不建行）；#848 +3（M16251–M16253：resetData 按
+// 【初始角色编号】建角色的夹具镜像——不建/写死 0/内部动作冒充游戏代码调用）；
+// #821 +8（M15800–M15807：夹具地址归一）；#891 +3（M15500–M15502：.kojo 装载）；
+// 数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：
+// train-world.js 的世界形状）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；
+// #739 +3（M14559-M14561：名字表读未声明序号抛错）；#721 返工 +1（M14355）；
+// #721 +7（M14345-M14351：整屏清空的未读输出检查）； // #717 +1（M14343：多列文本格的
+// 颜色记录）； // #557 +6（M12350-M12355：等待重叠检测）
 
 export default [
   // —— #565 ——
@@ -518,13 +528,9 @@ export default [
     train_open = false;
     source_present = true; // resetData 字面量里 source 重新出现
     chars_in_train.clear();
-    delete_train_table_keys();
-    return undefined;
-  };`,
+    delete_train_table_keys();`,
     replace: `    chara_no.length = 0;
-    // 变异：调教态与调教域键不清（#150 前只清已加入列表的写法）
-    return undefined;
-  };`,
+    // 变异：调教态与调教域键不清（#150 前只清已加入列表的写法）`,
     tests: ['fixture'],
     must_mention: 'resetData 把调教列表一并清空（引擎整份重建 data）',
   },
@@ -1145,5 +1151,32 @@ export default [
     replace: '      // 变异：子段不进枚举',
     tests: ['fixture-raw'],
     must_mention: 'callname 行的列来自写入的键',
+  },
+  // —— #848 夹具镜像 resetData 按 GameBase【初始角色编号】建角色 ——
+  {
+    desc: 'M16251 夹具 resetData 不建【初始角色编号】的角色（引擎会在末尾自动建，#848）',
+    file: 'test/helpers/era-fixture.js',
+    find: "    const default_chara = store.get('gamebase')?.defaultChara;",
+    replace: '    const default_chara = undefined; // 变异：不建初始角色',
+    tests: ['fixture'],
+    must_mention: 'resetData 后 0 号角色必须在场',
+  },
+  {
+    desc: 'M16252 夹具把初始角色号写死成 0，不读 GameBase 的声明（#848）',
+    file: 'test/helpers/era-fixture.js',
+    find: '      join_characters([default_chara]);',
+    replace: '      join_characters([0]); // 变异：写死 0',
+    tests: ['fixture'],
+    must_mention: '建的是声明的编号，不是写死的 0',
+  },
+  {
+    desc: 'M16253 夹具把 resetData 内部的建角色记成游戏代码的 addCharacter（#848——标题页「不得手工添加」的断言失去鉴别力）',
+    file: 'test/helpers/era-fixture.js',
+    find: '      join_characters([default_chara]);',
+    replace:
+      '      era.addCharacter(default_chara); // 变异：内部动作冒充游戏代码调用',
+    tests: ['fixture'],
+    must_mention:
+      'resetData 内部的建角色是引擎动作，不得记成游戏代码的 addCharacter',
   },
 ];

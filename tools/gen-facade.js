@@ -45,7 +45,7 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // 中间六张 yml 有列名；delta/deltabase 是移植自建表，属主见 PORT_TABLE_OWNERS。
 // base 随 #114 进门面（回合结算的 HP/气力回复从 event/system 域跨域写 base，
 // ownership 属主 dungeon——无门面即无合法写径）；maxbase 只读、暂不进门面
-// （读侧放行，见 domain-check 的跨域读政策）。
+// （读侧不受限）。
 // cstr 随 #136 进门面（yml 空表、名字走 facade-names；首个字段 99 故事名，
 // 读写在存档界面）。
 // ex 随 #216（J6）进门面：绝顶计数（ex/nowex 共用名字表，引擎寻址层
@@ -55,7 +55,7 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // tequip 随 #215（J5）进门面：调教域表（桶随 beginTrain 建、endTrain 删），
 // yml/TEquip.yml 是空表（有意：登记名字表会令 initCharaTable 预置 0，见该
 // 文件头注），名字走 facade-names；跨域两段（22 属 system、35 属 event）的
-// train 侧写经门面是 domain-check 的硬要求，四位检查位（45/55/89/90）一并
+// train 侧写经门面（#71），四位检查位（45/55/89/90）一并
 // 具名供族票读写。
 const TWO_DIM_TABLES = [
   'cflag',
