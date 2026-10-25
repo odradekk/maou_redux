@@ -14,7 +14,13 @@ export default [
   {
     desc: 'M7803 use_ex_item 战斗后三个调用点删除',
     file: 'ere/dungeon/dungeon.js',
-    find: "  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）\n  if (sidea > 0) {\n    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // （A = SIDEA）\n  }\n  if (sideb > 0) {\n    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // （A = SIDEB）\n  }",
+    find: `  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）
+  if (ctx.sidea > 0) {
+    await ex_item_mod.use_ex_item('战斗后', ctx.sidea, rand_n); // （A = SIDEA）
+  }
+  if (ctx.sideb > 0) {
+    await ex_item_mod.use_ex_item('战斗后', ctx.sideb, rand_n); // （A = SIDEB）
+  }`,
     replace: '  // 变异：战斗后三个 USE_EX_ITEM 调用删除',
     tests: ['event-ending2-e2e'],
     must_mention: 'USE_EX_ITEM 在 ENDING_2 战斗后调用点实际执行',

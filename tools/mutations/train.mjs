@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1124; // #906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1127; // #906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -1092,10 +1092,10 @@ export default [
     desc: 'M830 run_benki 魔王除外检查删（arg == 0 不再提前返回）',
     file: 'ere/system/train/benki.js',
     find: `  if (arg === 0) {
-    return 0; // 魔王様は除外
+    return false; // 魔王様は除外
   }`,
     replace: `  if (false) {
-    return 0; // 魔王様は除外
+    return false; // 魔王様は除外
   }`,
     tests: ['benki'],
     must_mention: '魔王（角色 0）恒被除外',
@@ -1104,10 +1104,10 @@ export default [
     desc: 'M831 run_benki 肉便器素质门槛删（TALENT:204 == 0 也结算）',
     file: 'ere/system/train/benki.js',
     find: `  if (t(arg, 204) === 0) {
-    return 0; // 肉便器以外は除外（TALENT:204 肉便器）
+    return false; // 肉便器以外は除外（TALENT:204 肉便器）
   }`,
     replace: `  if (false) {
-    return 0; // 变异：肉便器素质门槛失效
+    return false; // 变异：肉便器素质门槛失效
   }`,
     tests: ['benki'],
     must_mention: '非肉便器角色（TALENT:204 == 0）直接返回',
@@ -1116,10 +1116,10 @@ export default [
     desc: 'M832 BENKI 体力门槛删（BASE:0 < 300 也结算）',
     file: 'ere/system/train/benki.js',
     find: `  if ((era.get(\`base:\${arg}:0\`) || 0) < 300) {
-    return 0; // BASE:0 < 300
+    return false; // BASE:0 < 300
   }`,
     replace: `  if (false) {
-    return 0; // 变异：体力门槛失效
+    return false; // 变异：体力门槛失效
   }`,
     tests: ['benki'],
     must_mention: '体力 < 300 或气力 < 100 直接返回',
@@ -1128,10 +1128,10 @@ export default [
     desc: 'M833 BENKI 占用状态门槛删（CFLAG:1 != 0 也结算）',
     file: 'ere/system/train/benki.js',
     find: `  if ((era.get(\`cflag:\${arg}:1\`) || 0) !== 0) {
-    return 0; // CFLAG:1 != 0（占用状态：待机 0/1 之外不结算）
+    return false; // CFLAG:1 != 0（占用状态：待机 0/1 之外不结算）
   }`,
     replace: `  if (false) {
-    return 0; // 变异：占用状态门槛失效
+    return false; // 变异：占用状态门槛失效
   }`,
     tests: ['benki'],
     must_mention: '占用中（CFLAG:1 != 0）或育儿中不结算',
@@ -1147,14 +1147,14 @@ export default [
   {
     desc: 'M835 run_benki 奉仕分派的对方写坏（FLAG:64 最下層民 0 改 3）',
     file: 'ere/system/train/benki.js',
-    find: `    era.set('flag:62', 0); //
-    era.set('flag:64', 0); //
+    find: `  era.set('flag:62', 0); //
+  era.set('flag:64', 0); //
 
-    let s = pregnant_head(); //`,
-    replace: `    era.set('flag:62', 0); //
-    era.set('flag:64', 3); // 变异：相手写坏
+  let s = benki_pregnant_head(arg); //`,
+    replace: `  era.set('flag:62', 0); //
+  era.set('flag:64', 3); // 变异：相手写坏
 
-    let s = pregnant_head(); //`,
+  let s = benki_pregnant_head(arg); //`,
     tests: ['benki'],
     must_mention: '最下層民奉仕',
   },
@@ -1163,30 +1163,28 @@ export default [
     file: 'ere/system/train/benki.js',
     find: `    era.set('flag:62', 6); // その他。フェラ便器
   }
-
-  // —— 未定の相手を確定 ——`,
+}`,
     replace: `    era.set('flag:62', 5); // 变异：フェラ便器行动号改坏
   }
-
-  // —— 未定の相手を確定 ——`,
+}`,
     tests: ['benki'],
     must_mention: 'フェラ便器说明',
   },
   {
     desc: 'M837 BENKI 同性爱分派的对方写坏（淫魔 9 改 7）',
     file: 'ere/system/train/benki.js',
-    find: `    era.set('flag:62', 1); //
-    if (t(arg, 142)) {
-      era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
-    } else {
-      era.set('flag:64', 9); // 淫魔
-    }`,
-    replace: `    era.set('flag:62', 1); //
-    if (t(arg, 142)) {
-      era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
-    } else {
-      era.set('flag:64', 7); // 变异：淫魔写坏
-    }`,
+    find: `  era.set('flag:62', 1); //
+  if (t(arg, 142)) {
+    era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
+  } else {
+    era.set('flag:64', 9); // 淫魔
+  }`,
+    replace: `  era.set('flag:62', 1); //
+  if (t(arg, 142)) {
+    era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
+  } else {
+    era.set('flag:64', 7); // 变异：淫魔写坏
+  }`,
     tests: ['benki'],
     must_mention: '淫魔相拥',
   },
@@ -9882,9 +9880,9 @@ export default [
   {
     desc: 'M12045 run_benki 灌满句之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/benki.js',
-    find: `    // 这条空内容输出只收尾上面那条拼行——前一条没有换行，故它不是
-    // 空行，这里不补 println（#595）`,
-    replace: "    era.print(''); // 变异：灌满句之后补回空行",
+    find: `  // 这条空内容输出只收尾上面那条拼行——前一条没有换行，故它不是
+  // 空行，这里不补 println（#595）`,
+    replace: "  era.print(''); // 变异：灌满句之后补回空行",
     tests: ['benki'],
     must_mention: '下一行是名字句',
   },
@@ -10264,89 +10262,93 @@ export default [
   {
     desc: 'M12260 奉仕分派：对象名并回首行（收行输出少了换行，#615 之前的写法）',
     file: 'ere/system/train/benki.js',
-    find: "    s += '作为侍奉用便器在地下城里服侍着'; //\n    era.print(s);",
-    replace:
-      "    s += '作为侍奉用便器在地下城里服侍着' + benki_player_name(); // 变异：CALL 并回上一行\n    era.print(s);",
+    find: `  s += '作为侍奉用便器在地下城里服侍着'; //
+  era.print(s);`,
+    replace: `  s += '作为侍奉用便器在地下城里服侍着'; //
+  era.print(\`\${s}\${benki_player_name()}\${name_of(arg)}\`);`,
     tests: ['benki'],
     must_mention: '收行句在场',
   },
   {
     desc: 'M12261 奉仕分派：对象名丢了角色名（名字与对象名同在一条拼行的行尾）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${benki_player_name()}${name_of(arg)}`);',
-    replace: '    era.print(`${benki_player_name()}`); // 变异：角色名没了',
+    find: `  era.print(\`\${benki_player_name()}\${name_of(arg)}\`);`,
+    replace: `  era.print(\`\${benki_player_name()}\`); // 变异：角色名没了`,
     tests: ['benki'],
     must_mention: '对象名落在下一行行首',
   },
   {
     desc: 'M12262 奉仕分派：角色名挪回穴句行行首（那条显示行不再带角色名）',
     file: 'ere/system/train/benki.js',
-    find: "    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = '';",
-    replace:
-      '    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = `${name_of(arg)}`; // 变异：角色名挪回穴句行',
+    find: `  era.print(\`\${benki_player_name()}\${name_of(arg)}\`);
+
+  s = '';`,
+    replace: `  era.print(\`\${benki_player_name()}\${name_of(arg)}\`);
+
+  s = \`\${name_of(arg)}\`; // 变异：角色名挪回穴句行`,
     tests: ['benki'],
     must_mention: '穴句行不再带角色名',
   },
   {
     desc: 'M12263 奉仕清算：共处理句并回首行，传闻也并回去',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${name_of(arg)}共处理了${play}个底层`);',
-    replace:
-      '    era.print(`${name_of(arg)}共处理了${play}个底层${benki_player_name()}的性欲。${service_rumor(arg, play)}`); // 变异：并回一行',
+    find: `  era.print(\`\${name_of(arg)}共处理了\${play}个底层\`);`,
+    replace: `  era.print(\`\${name_of(arg)}共处理了\${play}个底层\${benki_player_name()}的性欲。\${service_rumor(arg, play)}\`); // 变异：并回一行`,
     tests: ['benki'],
     must_mention: '共处理句自成一行',
   },
   {
     desc: 'M12264 奉仕清算：对象名与「的性欲。」拆开（换行调用落在行首）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);',
-    replace:
-      '    era.print(`${benki_player_name()}`); // 变异：对象名独占一行\n    era.print(`的性欲。${service_rumor(arg, play)}`);',
+    find: `  era.print(\`\${benki_player_name()}的性欲。\${service_rumor(arg, play)}\`);`,
+    replace: `  era.print(\`\${benki_player_name()}\`); // 变异：对象名独占一行
+  era.print(\`的性欲。\${service_rumor(arg, play)}\`);`,
     tests: ['benki'],
     must_mention: '对象名与「的性欲。」落在下一行行首',
   },
   {
     desc: 'M12265 奉仕清算：传闻拆出独立一行（与「的性欲。」句同一行）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);',
-    replace:
-      '    era.print(`${benki_player_name()}的性欲。`); // 变异：传闻拆出\n    era.print(service_rumor(arg, play));',
+    find: `  era.print(\`\${benki_player_name()}的性欲。\${service_rumor(arg, play)}\`);`,
+    replace: `  era.print(\`\${benki_player_name()}的性欲。\`); // 变异：传闻拆出
+  era.print(service_rumor(arg, play));`,
     tests: ['benki'],
     must_mention: '传闻收同一行',
   },
   {
     desc: 'M12266 同性爱清算：共处理句并回首行，传闻也并回去',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${name_of(arg)}一共处理了${play}个`);',
-    replace:
-      '    era.print(`${name_of(arg)}一共处理了${play}个${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`); // 变异：并回一行',
+    find: `  era.print(\`\${name_of(arg)}一共处理了\${play}个\`);`,
+    replace: `  era.print(\`\${name_of(arg)}一共处理了\${play}个\${benki_player_name()}的性欲。\${lesbian_rumor(arg, play)}\`); // 变异：并回一行`,
     tests: ['benki'],
     must_mention: '共处理句自成一行',
   },
   {
     desc: 'M12267 同性爱清算：对象名与「的性欲。」拆开（换行调用落在行首）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);',
-    replace:
-      '    era.print(`${benki_player_name()}`); // 变异：对象名独占一行\n    era.print(`的性欲。${lesbian_rumor(arg, play)}`);',
+    find: `  era.print(\`\${benki_player_name()}的性欲。\${lesbian_rumor(arg, play)}\`);`,
+    replace: `  era.print(\`\${benki_player_name()}\`); // 变异：对象名独占一行
+  era.print(\`的性欲。\${lesbian_rumor(arg, play)}\`);`,
     tests: ['benki'],
     must_mention: '对象名与「的性欲。」落在下一行行首',
   },
   {
     desc: 'M12268 同性爱清算：传闻拆出独立一行（与「的性欲。」句同一行）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);',
-    replace:
-      '    era.print(`${benki_player_name()}的性欲。`); // 变异：传闻拆出\n    era.print(lesbian_rumor(arg, play));',
+    find: `  era.print(\`\${benki_player_name()}的性欲。\${lesbian_rumor(arg, play)}\`);`,
+    replace: `  era.print(\`\${benki_player_name()}的性欲。\`); // 变异：传闻拆出
+  era.print(lesbian_rumor(arg, play));`,
     tests: ['benki'],
     must_mention: '传闻收同一行',
   },
   {
     desc: 'M12257 一般分派清算：共处理句与传闻拆回两行（两者原同属一行）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(\n      `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,\n    );',
-    replace:
-      '    era.print(`${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。`); // 变异：拆两行\n    era.print(general_rumor(arg, play));',
+    find: `  era.print(
+    \`\${name_of(arg)}共处理了\${play}个\${benki_player_name()}的性欲。\${general_rumor(arg, play)}\`,
+  );`,
+    replace: `  era.print(\`\${name_of(arg)}共处理了\${play}个\${benki_player_name()}的性欲。\`); // 变异：拆两行
+  era.print(general_rumor(arg, play));`,
     tests: ['benki'],
     must_mention: '传闻收同一行',
   },
@@ -10354,36 +10356,131 @@ export default [
   {
     desc: 'M12320 兽奸分派：様子拆回独立一行（收行输出只收尾前面的拼行）',
     file: 'ere/system/train/benki.js',
-    find: "    s += t(arg, 9)\n      ? '浮现出被玩坏的痴笑。' // 崩坏\n      : t(arg, 136)\n        ? '高兴地摇着屁股。' // 牝犬\n        : abl(arg, 39)\n          ? '沉醉在与魔兽交配的快感之中。' // 兽奸中毒1以上\n          : '看起来很不自在。'; //\n    era.print(s);",
-    replace:
-      "    era.print(s); // 变异：様子另起一行\n    era.print(\n      t(arg, 9)\n        ? '浮现出被玩坏的痴笑。'\n        : t(arg, 136)\n          ? '高兴地摇着屁股。'\n          : abl(arg, 39)\n            ? '沉醉在与魔兽交配的快感之中。'\n            : '看起来很不自在。',\n    );",
+    find: `  s += t(arg, 9)
+    ? '浮现出被玩坏的痴笑。' // 崩坏
+    : t(arg, 136)
+      ? '高兴地摇着屁股。' // 牝犬
+      : abl(arg, 39)
+        ? '沉醉在与魔兽交配的快感之中。' // 兽奸中毒1以上
+        : '看起来很不自在。'; //
+  era.print(s);`,
+    replace: `  era.print(s); // 变异：様子另起一行
+  era.print(
+    t(arg, 9)
+      ? '浮现出被玩坏的痴笑。'
+      : t(arg, 136)
+        ? '高兴地摇着屁股。'
+        : abl(arg, 39)
+          ? '沉醉在与魔兽交配的快感之中。'
+          : '看起来很不自在。',
+  );`,
     tests: ['benki'],
     must_mention: '#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行',
   },
   {
     desc: 'M12321 奉仕分派：様子拆回独立一行（收行输出只收尾穴句行）',
     file: 'ere/system/train/benki.js',
-    find: "    s +=\n      flag63() === 1\n        ? '一如平常的面带微笑地交欢着……' // 常識改変\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑。' // 崩坏\n          : exp(arg, 21) > 100\n            ? `对底层${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。` // 侍奉快乐经验100超\n            : exp(arg, 21) > 50\n              ? `对底层${benki_player_name()}温柔地微笑着。` // 侍奉快乐经验50超\n              : '看起来很不自在。'; //\n    era.print(s);",
-    replace:
-      "    era.print(s); // 变异：様子另起一行\n    era.print(\n      flag63() === 1\n        ? '一如平常的面带微笑地交欢着……'\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑。'\n          : exp(arg, 21) > 100\n            ? `对底层${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。`\n            : exp(arg, 21) > 50\n              ? `对底层${benki_player_name()}温柔地微笑着。`\n              : '看起来很不自在。',\n    );",
+    find: `  s +=
+    flag63() === 1
+      ? '一如平常的面带微笑地交欢着……' // 常識改変
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑。' // 崩坏
+        : exp(arg, 21) > 100
+          ? \`对底层\${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。\` // 侍奉快乐经验100超
+          : exp(arg, 21) > 50
+            ? \`对底层\${benki_player_name()}温柔地微笑着。\` // 侍奉快乐经验50超
+            : '看起来很不自在。'; //
+  era.print(s);`,
+    replace: `  era.print(s); // 变异：様子另起一行
+  era.print(
+    flag63() === 1
+      ? '一如平常的面带微笑地交欢着……'
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑。'
+        : exp(arg, 21) > 100
+          ? \`对底层\${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。\`
+          : exp(arg, 21) > 50
+            ? \`对底层\${benki_player_name()}温柔地微笑着。\`
+            : '看起来很不自在。',
+  );`,
     tests: ['benki'],
     must_mention: '#620 奉仕分派：穴句 + 様子同属一条显示行',
   },
   {
     desc: 'M12322 同性爱分派：様子拆回独立一行（收行输出只收尾名字句）',
     file: 'ere/system/train/benki.js',
-    find: "    s +=\n      flag63() === 1\n        ? '一如平常的面带微笑地交欢着……' // 常識改変\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……' // 崩坏\n          : exp(arg, 40) > 1000\n            ? '快乐得快要晕过去了……' // 百合经验1000超\n            : exp(arg, 40) > 500\n              ? '沉醉在这种缠绵之中……' // 百合经验500超\n              : '看起来很不自在……'; //\n    era.print(s);",
-    replace:
-      "    era.print(s); // 变异：様子另起一行\n    era.print(\n      flag63() === 1\n        ? '一如平常的面带微笑地交欢着……'\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……'\n          : exp(arg, 40) > 1000\n            ? '快乐得快要晕过去了……'\n            : exp(arg, 40) > 500\n              ? '沉醉在这种缠绵之中……'\n              : '看起来很不自在……',\n    );",
+    find: `  s +=
+    flag63() === 1
+      ? '一如平常的面带微笑地交欢着……' // 常識改変
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑……' // 崩坏
+        : exp(arg, 40) > 1000
+          ? '快乐得快要晕过去了……' // 百合经验1000超
+          : exp(arg, 40) > 500
+            ? '沉醉在这种缠绵之中……' // 百合经验500超
+            : '看起来很不自在……'; //
+  era.print(s);`,
+    replace: `  era.print(s); // 变异：様子另起一行
+  era.print(
+    flag63() === 1
+      ? '一如平常的面带微笑地交欢着……'
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑……'
+        : exp(arg, 40) > 1000
+          ? '快乐得快要晕过去了……'
+          : exp(arg, 40) > 500
+            ? '沉醉在这种缠绵之中……'
+            : '看起来很不自在……',
+  );`,
     tests: ['benki'],
     must_mention: '#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行',
   },
   {
     desc: 'M12323 通常分派：様子拆回独立一行（收行输出只收尾名字句）',
     file: 'ere/system/train/benki.js',
-    find: "    s +=\n      flag63() === 1\n        ? '像家常便饭似的一边聊着天一边交欢着……' // 常識改変\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……' // 崩坏\n          : t(arg, 76)\n            ? '带着淫乱的表情，发出野兽般的娇喘……' // 淫乱\n            : t(arg, 85)\n              ? '泪流满面地在嘴里叨念着你的名字……' // 爱慕\n              : exp(arg, 20) > 1000\n                ? '带着谦卑的微笑央求着精液……' // 精液経験1000超\n                : exp(arg, 20) > 500\n                  ? '带着谦卑的表情不时吐露着淫语……' // 精液経験500超\n                  : exp(arg, 20) > 250\n                    ? '带着生硬的笑容做着V字手势，乞求着原谅……' // 精液経験250超\n                    : exp(arg, 20) > 100\n                      ? '带着生硬的笑容被强行做着V字手势……' // 精液経験100超\n                      : exp(arg, 20) > 50\n                        ? '不断重复着谢罪的话语……' // 精液経験50超\n                        : '两眼无神地看着远方……'; //\n    era.print(s);",
-    replace:
-      "    era.print(s); // 变异：様子另起一行\n    era.print(\n      flag63() === 1\n        ? '像家常便饭似的一边聊着天一边交欢着……'\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……'\n          : t(arg, 76)\n            ? '带着淫乱的表情，发出野兽般的娇喘……'\n            : t(arg, 85)\n              ? '泪流满面地在嘴里叨念着你的名字……'\n              : exp(arg, 20) > 1000\n                ? '带着谦卑的微笑央求着精液……'\n                : exp(arg, 20) > 500\n                  ? '带着谦卑的表情不时吐露着淫语……'\n                  : exp(arg, 20) > 250\n                    ? '带着生硬的笑容做着V字手势，乞求着原谅……'\n                    : exp(arg, 20) > 100\n                      ? '带着生硬的笑容被强行做着V字手势……'\n                      : exp(arg, 20) > 50\n                        ? '不断重复着谢罪的话语……'\n                        : '两眼无神地看着远方……',\n    );",
+    find: `  s +=
+    flag63() === 1
+      ? '像家常便饭似的一边聊着天一边交欢着……' // 常識改変
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑……' // 崩坏
+        : t(arg, 76)
+          ? '带着淫乱的表情，发出野兽般的娇喘……' // 淫乱
+          : t(arg, 85)
+            ? '泪流满面地在嘴里叨念着你的名字……' // 爱慕
+            : exp(arg, 20) > 1000
+              ? '带着谦卑的微笑央求着精液……' // 精液経験1000超
+              : exp(arg, 20) > 500
+                ? '带着谦卑的表情不时吐露着淫语……' // 精液経験500超
+                : exp(arg, 20) > 250
+                  ? '带着生硬的笑容做着V字手势，乞求着原谅……' // 精液経験250超
+                  : exp(arg, 20) > 100
+                    ? '带着生硬的笑容被强行做着V字手势……' // 精液経験100超
+                    : exp(arg, 20) > 50
+                      ? '不断重复着谢罪的话语……' // 精液経験50超
+                      : '两眼无神地看着远方……'; //
+  era.print(s);`,
+    replace: `  era.print(s); // 变异：様子另起一行
+  era.print(
+    flag63() === 1
+      ? '像家常便饭似的一边聊着天一边交欢着……'
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑……'
+        : t(arg, 76)
+          ? '带着淫乱的表情，发出野兽般的娇喘……'
+          : t(arg, 85)
+            ? '泪流满面地在嘴里叨念着你的名字……'
+            : exp(arg, 20) > 1000
+              ? '带着谦卑的微笑央求着精液……'
+              : exp(arg, 20) > 500
+                ? '带着谦卑的表情不时吐露着淫语……'
+                : exp(arg, 20) > 250
+                  ? '带着生硬的笑容做着V字手势，乞求着原谅……'
+                  : exp(arg, 20) > 100
+                    ? '带着生硬的笑容被强行做着V字手势……'
+                    : exp(arg, 20) > 50
+                      ? '不断重复着谢罪的话语……'
+                      : '两眼无神地看着远方……',
+  );`,
     tests: ['benki'],
     must_mention: '#620 通常分派：名字句 + 様子同属一条显示行',
   },
@@ -11392,5 +11489,34 @@ export default [
       '  for (const cid of [era_flag.target]) {\n    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;',
     tests: ['train-end'],
     must_mention: '同一场里的其他参与者',
+  },
+  {
+    desc: 'M16553 肉便器人数加算的随机上界改坏（rand_n(4) 改 rand_n(3)）',
+    file: 'ere/system/train/benki.js',
+    find: '  play += rand_n(4); // ランダムボーナス',
+    replace: '  play += rand_n(3); // 变异：ランダムボーナスの上界改坏',
+    tests: ['dungeon-benki-flow'],
+    must_mention: '随机上界的消费顺序',
+  },
+  {
+    desc: 'M16554 奉仕系素质的人数加算删（高贵的人不再多算人数）',
+    file: 'ere/system/train/benki.js',
+    find: `  if (t(arg, 163) && menu[0] >= 3) {
+    line += '举止高贵地 ';
+    extra += 1;
+  }`,
+    replace: `  if (t(arg, 163) && menu[0] >= 3) {
+    line += '举止高贵地 ';
+  }`,
+    tests: ['dungeon-benki-flow'],
+    must_mention: '输出行',
+  },
+  {
+    desc: 'M16555 菜单槽不再累进人数（钳位段的加算删）',
+    file: 'ere/system/train/benki.js',
+    find: '    play += menu[i]; // ついでにボーナス',
+    replace: '    // 变异：菜单槽不再累进人数',
+    tests: ['dungeon-benki-flow'],
+    must_mention: '输出行',
   },
 ];
