@@ -140,14 +140,14 @@
 
 - 一组选项按钮之后**不再补空行**；只有真正要空行时才写 `era.println()` / `era.print('')`，多补一条就是多出来的空行（#562）。
 - 页脚这类「一组导航键排一行」的位置用 `#/utils/button-grid` 的 `print_button_grid`：每格一个 `type: 'button'` 网格对象，格宽按每行格数均分引擎的 24 列。逐个 `printButton` 只会各占一行（#870 之前的写法，现已改掉）。
-- 列对齐同理：每个单元格一个 `text` / `button` 网格对象，列位由格宽固定（设置项 = 标签按钮格 + 状态文本格，各 12 列）；`setAlign` 与单格 `align` 只管格内文本，排不出列。
+- 列对齐同理：每个单元格一个 `text` / `button` 网格对象，列位由格宽固定（设置项 = 标签按钮格 + 状态文本格，各 12 列；存档槽行 = 槽号按钮格 2 + 备注文本格 18 + 删除按钮格 4）；`setAlign` 与单格 `align` 只管格内文本，排不出列。
 
-**选项按钮的正文以 `- ` 开头**，引擎拼出 `[N] ` 前缀后显示为 `[N] - 正文`。例外不逐处改齐：剪发菜单的分隔符是 `---`/`--`（`ere/system/train/com-assistant.js`）；部位菜单（`block_feeling`，`ere/page/page-shop-labo.js`）的选项不带破折号；空存档槽的 `----` 整串是正文（`ere/page/page-save-load.js`）；列表页脚的翻页键不带破折号。
+**选项按钮的正文以 `- ` 开头**，引擎拼出 `[N] ` 前缀后显示为 `[N] - 正文`。例外不逐处改齐：剪发菜单的分隔符是 `---`/`--`（`ere/system/train/com-assistant.js`）；部位菜单（`block_feeling`，`ere/page/page-shop-labo.js`）的选项不带破折号；空存档槽的 `----` 是行内备注格的正文、不在按钮正文里（`ere/page/page-save-load.js`）；列表页脚的翻页键不带破折号。
 
 **对齐补位用 U+00A0（不换行空格），不用半角空格（#577）。** 引擎渲染层对文本行没有 `white-space` 设置，连续半角空格按浏览器默认规则合并成一个——模板串里的空格补位在实机上全部失效。对齐补位一律走 `#/utils/display-width` 的 `pad_display` / `pad_left`（补位字符 U+00A0，源码以 `\u00A0` 转义或 `NBSP` 常量书写，不写裸字符）；引擎等宽字体下 U+00A0 占 1 个半角宽。两条边界：
 
 - 只为分隔而写的单个半角空格不动；行尾与整行空白不动。
-- **按钮正文不能靠 NBSP 对齐。** 渲染层的按钮行构造器（`app.asar` 的 `js/app.*.js`，构造 `lineType.button` 的 `function P(e)`）会把正文预处理成 `(!1 !== showAcc ? '[' + acc + '] ' + content : '[' + content + ']').split('\n').map(s => s.replace(/\s+/g, ' '))`——`showAcc` **缺省为真**（只有显式传 `false` 才不拼编号前缀；编号前缀由引擎拼，按钮正文不得自行添加，见 AGENTS.md），而 JS 的 `\s` 连 U+00A0、U+3000 一起匹配：按钮正文里的**任何**空白补位都被引擎自己压成一个半角空格（#577 之前用半角空格补位也是同一结果，实机表现不变）。**`printMultiColumns` 里的按钮格走同一条构造器**（多列按格的 `type` 派发），同样不能靠 NBSP 对齐；text / progress / divider / image 格不经过它。这类位置**整体**不处理、不逐处列举：按钮正文里手写的空白（存档槽位的备注 `page-save-load.js`、种族年龄配置页的档位按钮 `page-config-age.js`、实验室页的价格列 `page-shop-labo.js` 等）一律不动——改也白改（设置页的状态列自 #870 起改由网格分列，不再靠补位）。`#577` 的普查表（逐文件的原写法与处理）见该 issue 的完成评论。
+- **按钮正文不能靠 NBSP 对齐。** 渲染层的按钮行构造器（`app.asar` 的 `js/app.*.js`，构造 `lineType.button` 的 `function P(e)`）会把正文预处理成 `(!1 !== showAcc ? '[' + acc + '] ' + content : '[' + content + ']').split('\n').map(s => s.replace(/\s+/g, ' '))`——`showAcc` **缺省为真**（只有显式传 `false` 才不拼编号前缀；编号前缀由引擎拼，按钮正文不得自行添加，见 AGENTS.md），而 JS 的 `\s` 连 U+00A0、U+3000 一起匹配：按钮正文里的**任何**空白补位都被引擎自己压成一个半角空格（#577 之前用半角空格补位也是同一结果，实机表现不变）。**`printMultiColumns` 里的按钮格走同一条构造器**（多列按格的 `type` 派发），同样不能靠 NBSP 对齐；text / progress / divider / image 格不经过它。这类位置**整体**不处理、不逐处列举：按钮正文里手写的空白（种族年龄配置页的档位按钮 `page-config-age.js`、实验室页的价格列 `page-shop-labo.js` 等）一律不动——改也白改（设置页的状态列自 #870 起、存档槽的备注自 #868 起改由网格分列，不再靠补位）。`#577` 的普查表（逐文件的原写法与处理）见该 issue 的完成评论。
 
 ## 三条容易误解的语义
 

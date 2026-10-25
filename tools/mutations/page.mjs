@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 572; // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 589; // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -438,8 +438,8 @@ export default [
   {
     desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿',
     file: 'ere/page/page-save-load.js',
-    find: "    // SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）\n    if (i === era_flag.last_save_no) {\n      color = 'lightgreen';\n    }",
-    replace: '    // 变异：删掉 LASTSAVE_NO 高亮',
+    find: "  if (i === era_flag.last_save_no) {\n    color = 'lightgreen';\n  }",
+    replace: '  // 变异：删掉 LASTSAVE_NO 高亮',
     tests: ['page-save-load'],
     must_mention: '上次存档号高亮 LIGHTGREEN',
   },
@@ -473,8 +473,8 @@ export default [
   {
     desc: 'M227 删除存档：rmData 调用移除',
     file: 'ere/page/page-save-load.js',
-    find: '        await era.rmData(result);',
-    replace: '        // 变异：删除调用移除',
+    find: '    await era.rmData(slot);',
+    replace: '    // 变异：删除调用移除',
     tests: ['page-save-load'],
     must_mention: '确认后必须调 era.rmData(5)',
   },
@@ -485,7 +485,7 @@ export default [
     replace:
       "  const day_half = era_flag.time === 1 ? '午前' : '午后'; // 变异：条件反转",
     tests: ['page-save-load'],
-    must_mention: '正在调教:玛奥',
+    must_mention: '字段之间只有分隔用的单空格',
   },
   {
     desc: 'M229 LASTSAVE_NO 压栈不滑动（ARRAYSHIFT 退化为只写 [0]）',
@@ -5549,5 +5549,152 @@ export default [
       "    era.drawLine(); // 变异：上沿退回虚线\n    era.print(banner, { align: 'center' });",
     tests: ['layout-engine'],
     must_mention: '七行星号框改成分隔线',
+  },
+  // —— #868：存读档列表改用网格、删除并进列表、备注不再改游戏状态 ——
+  {
+    desc: 'M16700 槽号按钮格变窄（三格合计 23 列，备注列与删除列错位）',
+    file: 'ere/page/page-save-load.js',
+    find: 'const SLOT_WIDTH = 2;',
+    replace: 'const SLOT_WIDTH = 1; // 变异：槽号格变窄',
+    tests: ['page-save-load'],
+    must_mention: '三格合计 24 列',
+  },
+  {
+    desc: 'M16701 备注格占满整行（三格合计 28 列，删除钮被挤到下一行）',
+    file: 'ere/page/page-save-load.js',
+    find: 'const REMARK_WIDTH = 18;',
+    replace: 'const REMARK_WIDTH = 24; // 变异：备注格占满整行',
+    tests: ['page-save-load'],
+    must_mention: '三格合计 24 列',
+  },
+  {
+    desc: 'M16702 备注退回按钮正文（引擎折叠正文空白，实机又对不齐）',
+    file: 'ere/page/page-save-load.js',
+    find: "      type: 'text',\n      content: has_save ? comment : EMPTY_LABEL,",
+    replace:
+      "      type: 'button',\n      accelerator: i, // 变异：备注退回按钮正文\n      content: has_save ? comment : EMPTY_LABEL,",
+    tests: ['page-save-load'],
+    must_mention: '备注是文本格（按钮正文会被引擎折叠空白）',
+  },
+  {
+    desc: 'M16703 读档界面的空槽不设 disabled（空槽看起来可选、点了没反应）',
+    file: 'ere/page/page-save-load.js',
+    find: '        ...(has_save || empty_clickable ? {} : { disabled: true }),',
+    replace: '        // 变异：空槽不设 disabled',
+    tests: ['page-save-load'],
+    must_mention: '读档界面的空槽不可选',
+  },
+  {
+    desc: 'M16704 存档界面的空槽也设 disabled（数字键存不进空槽）',
+    file: 'ere/page/page-save-load.js',
+    find: '        ...(has_save || empty_clickable ? {} : { disabled: true }),',
+    replace:
+      '        ...(has_save ? {} : { disabled: true }), // 变异：存档界面也禁用空槽',
+    tests: ['page-save-load'],
+    must_mention: '否则存不进空槽',
+  },
+  {
+    desc: 'M16705 删除钮对空槽也放开（空槽出现一个点了没用的删除键）',
+    file: 'ere/page/page-save-load.js',
+    find: '        disabled: !has_save,',
+    replace: '        disabled: false, // 变异：空槽也能删',
+    tests: ['page-save-load'],
+    must_mention: '空槽没有可删的东西',
+  },
+  {
+    desc: 'M16706 行内删除的快捷键上界改坏（99 号自动存档槽删不掉）',
+    file: 'ere/page/page-save-load.js',
+    find: '    } else if (result >= DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {\n      // 行内删除（DELETE_BASE + 槽号）\n      await delete_save(result - DELETE_BASE);\n',
+    replace:
+      '    } else if (result >= DELETE_BASE && result < DELETE_BASE + AUTOSAVE_SLOT) {\n      // 变异：上界漏掉 99 号槽\n      await delete_save(result - DELETE_BASE);\n',
+    tests: ['page-save-load'],
+    test_name: 'DELDATA 边界',
+    must_mention: '区间上界：99 号自动存档槽的删除键要送达',
+  },
+  {
+    desc: 'M16707 行内删除的快捷键下界改坏（0 号槽删不掉）',
+    file: 'ere/page/page-save-load.js',
+    find: '    } else if (result >= DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {\n      // 行内删除（DELETE_BASE + 槽号）\n      await delete_save(result - DELETE_BASE);\n',
+    replace:
+      '    } else if (result > DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {\n      // 变异：下界漏掉 0 号槽\n      await delete_save(result - DELETE_BASE);\n',
+    tests: ['page-save-load'],
+    test_name: 'DELDATA 边界',
+    must_mention: '区间下界：0 号槽的删除键要送达',
+  },
+  {
+    desc: 'M16708 SAVEINFO 回补位（第 与日数之间又补一格，列宽由网格定不管用）',
+    file: 'ere/page/page-save-load.js',
+    find: "  let text = `第${era_flag.day_count + 1}日${day_half} LV${era.get('cflag:0:9') || 0}`;",
+    replace:
+      "  let text = `第 ${era_flag.day_count + 1}日${day_half} LV${era.get('cflag:0:9') || 0}`; // 变异：补位回潮",
+    tests: ['page-save-load'],
+    must_mention: '字段之间只有分隔用的单空格',
+  },
+  {
+    desc: 'M16709 SAVEINFO 的 TARGET/ASSI 改写副作用回潮（保存顺手改游戏状态）',
+    file: 'ere/page/page-save-load.js',
+    find: '  const story = chara(0).system.故事名;\n  if (story.length > 0) {\n    text += ` 『${story}』`;',
+    replace:
+      "  era_flag.target = era.get('flag:1') || 0; // 变异：副作用回潮\n  era_flag.assi = era.get('flag:2') || 0;\n  const story = chara(0).system.故事名;\n  if (story.length > 0) {\n    text += ` 『${story}』`;",
+    tests: ['page-save-load'],
+    must_mention: 'TARGET 保持调用前的值',
+  },
+  {
+    desc: 'M16710 调教段的 TARGET 阈值放宽（>= 1 改 >= 0，没有调教对象也印名字）',
+    file: 'ere/page/page-save-load.js',
+    find: '  if (era_flag.target >= 1) {',
+    replace: '  if (era_flag.target >= 0) { // 变异：阈值放宽',
+    tests: ['page-save-load'],
+    must_mention: 'TARGET < 1 时不出现调教段',
+  },
+  {
+    desc: 'M16711 删除确认被跳过（按删除键即删，取消钮失效）',
+    file: 'ere/page/page-save-load.js',
+    find: '  if ((await era.input()) === 1) {\n    await era.rmData(slot);',
+    replace:
+      '  if (true) {\n    // 变异：不确认就删\n    await era.rmData(slot);',
+    tests: ['page-save-load'],
+    must_mention: '取消时不得删除',
+  },
+  {
+    desc: 'M16712 删除钮的快捷键漏加基数（与槽号键撞在同一个编号上）',
+    file: 'ere/page/page-save-load.js',
+    find: '      accelerator: DELETE_BASE + i,',
+    replace: '      accelerator: i, // 变异：漏加基数',
+    tests: ['page-save-load'],
+    must_mention: '删除钮的快捷键 = DELETE_BASE + 槽号',
+  },
+  {
+    desc: 'M16713 备注格漏掉高亮色（整行只剩编号变色）',
+    file: 'ere/page/page-save-load.js',
+    find: "      config: { align: 'left', width: REMARK_WIDTH, ...highlight },",
+    replace:
+      "      config: { align: 'left', width: REMARK_WIDTH }, // 变异：备注格不着色",
+    tests: ['page-save-load'],
+    must_mention: '备注格同色（整行高亮）',
+  },
+  {
+    desc: 'M16714 空槽不再标灰（空槽与可读档的槽一样醒目）',
+    file: 'ere/page/page-save-load.js',
+    find: "  if (!has_save) {\n    color = 'gray';\n  }",
+    replace: '  // 变异：空槽不标灰',
+    tests: ['page-save-load'],
+    must_mention: '空槽一律灰色',
+  },
+  {
+    desc: 'M16715 空槽的备注格留白（---- 占位消失，行看起来是坏的）',
+    file: 'ere/page/page-save-load.js',
+    find: '      content: has_save ? comment : EMPTY_LABEL,',
+    replace: "      content: comment ?? '', // 变异：空槽留白",
+    tests: ['page-save-load'],
+    must_mention: '丢失槽显示 ----',
+  },
+  {
+    desc: 'M16716 页脚按钮格宽写死 12 列（三枚键合计 36 列，第三枚折到下一行）',
+    file: 'ere/page/page-save-load.js',
+    find: '  const width = Math.floor(24 / items.length);',
+    replace: '  const width = 12; // 变异：写死 12 列',
+    tests: ['page-save-load'],
+    must_mention: '超 24 列第三枚会被挤到下一行',
   },
 ];

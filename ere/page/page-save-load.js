@@ -1,6 +1,7 @@
 /**
- * @file 存读档界面：读档（load_game）/ 存档（save_game）/ 删除（del_data）/
- * 槽位列表（list_data）+ 存档备注正文（build_save_info）的移植（issue #136）。
+ * @file 存读档界面：读档（load_game）/ 存档（save_game）/
+ * 槽位列表（list_data / slot_row）+ 存档备注正文（build_save_info）的移植
+ * （issue #136）。
  *
  * 不移植 SYSTEM_LOADEND：静态搜索未发现调用者，且它不在保留名清单
  * （SYSTEM_TITLE / TITLE_LOADGAME / SYSTEM_AUTOSAVE / EVENTLOAD 等，见
@@ -37,22 +38,23 @@
  *     变量，ere 无对应）。
  *
  * 界面写法说明（有意偏离，均注明依据）：
- *   - 槽位行本是 PRINTFORM 文本 `[N] 备注`，`[数字]` 文本自动升格为
- *     可点按钮；ere 的 input() 只送达 printButton 的快捷键，故存在槽一律
- *     printButton（正文=备注，编号前缀由引擎 showAcc 拼）。编号宽度
- *     `{L_I,2}`（右对齐宽 2）无引擎对应——`[N]` 的拼法归渲染层。
- *   - **备注里的空白补位在实机上不成立（已知差异，#577 普查登记）：** 引擎
- *     渲染层的按钮行构造器对正文做 `/\s+/g → ' '`（JS 的 `\s` 连 U+00A0 一起
- *     匹配，见 CONTEXT.md 的「输出 API 的排版与对齐」），`build_save_info`
- *     的 `pad_display` / `pad_left` / NBSP 补位会被压成一格——#577 之前用半角
- *     空格补位也是同一结果，实机表现不变。要真正对齐得把槽位行改成
- *     `printMultiColumns` 的「按钮格 + 文本格」（page-life-list.js 的
- *     print_row 写法），不在本工单范围。
- *   - 空槽的可达性按界面分化：存档界面空槽是**灰色按钮**（CASE 0 TO
- *     98 对空槽照存，键盘数字在 ere 不可达，必须按钮化）；读档/删除界面
- *     空槽是灰色纯文本（CHKDATA 拦下 = 无效输入，不可选即等价）。
- *   - PRINTFORMLC（同行分列按钮）→ printMultiColumns；`[1] 确定 [0] 取消`
- *     一行两选项同款。
+ *   - **槽位行是「槽号按钮 + 备注文本格 + 删除按钮」三格的网格行**（#868，
+ *     官方例程 page-save-game / page-load-game 同款：`printMultiColumns` 每行
+ *     一格按钮、一格文本、一格动作按钮）。槽号按钮的**正文留空**：编号由引擎
+ *     按 showAcc 拼成 `[N]`，正文再写编号会显示成 `[N] N`；点击与键盘都按
+ *     accelerator 送达。备注进**文本格**——引擎只折叠按钮正文里的连续空白
+ *     （渲染层的按钮行构造器对正文做 `/\s+/g → ' '`，见 CONTEXT.md 的
+ *     「输出 API 的排版与对齐」），文本格不经过它；槽号 1 位与 2 位的备注因此
+ *     都从同一列起算，这就是「实机上对不齐」的修法（旧写法把备注塞在按钮
+ *     正文里，`[0] ` 与 `[98] ` 宽度不同）。
+ *   - 列宽 SLOT_WIDTH / REMARK_WIDTH / DELETE_WIDTH 合计 24（引擎一行的列数）。
+ *   - 空槽按界面分化：**读档界面不可选**（CHKDATA 拦下 = 无效输入），渲染成
+ *     `disabled` 的槽号按钮 + 灰 `----`（引擎对 disabled 按钮既挡点击也挡
+ *     快捷键，dev-guides/A-api-docs.md 的 ButtonConfig.disabled）；**存档界面
+ *     必须可点**（对空槽照存），不设 disabled——设了就连数字键都存不进去。
+ *   - **删除并进列表**（#868）：每行第三格的删除按钮走 `DELETE_BASE + 槽号`，
+ *     确认后 rmData；不再有单独的删除画面（旧写法 [300] 进子界面，一个动作
+ *     占一屏）。空槽的删除钮同样 disabled。
  *   - INPUT 的参数是**默认值**（`INPUT 99` = 空回车得 99、`INPUT 0` = 空回车
  *     得 0，技能 input.md），ere 的 input() 无默认值参数——空回车快捷语义
  *     丢失（引擎能力差异，点击/键入不受影响）。
@@ -101,7 +103,6 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { input_text } = require('#/utils/input-text');
-const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
@@ -112,6 +113,21 @@ const PAGE_LEN = 20;
 
 /** 自动存档槽号（读档界面单列渲染，ADR-0006：占用旧引擎遗留的空位）。 */
 const AUTOSAVE_SLOT = 99;
+
+/**
+ * 槽位行三格的列宽（引擎一行 24 列）：
+ * 槽号按钮格（`[98]` 4 个半角宽）2 + 备注文本格 18 + 删除按钮格 4。
+ */
+const SLOT_WIDTH = 2;
+const REMARK_WIDTH = 18;
+const DELETE_WIDTH = 4;
+
+/** 删除按钮的快捷键基数：删除 N 号槽 = DELETE_BASE + N（0–499 不撞槽号）。 */
+const DELETE_BASE = 400;
+
+/** 删除按钮与空槽占位格的正文。 */
+const DELETE_LABEL = '删除';
+const EMPTY_LABEL = '----';
 
 /**
  * CHKDATA RESULT==0 的等价条件：槽位有有效备注（11-saves.md——undefined =
@@ -134,58 +150,105 @@ function get_times() {
 }
 
 /**
- * list_data：渲染槽位列表 [start, end)。
- *
- * 高亮（后者覆盖前者——SETCOLORBYNAME 的顺序语义）：槽号 ==
- * LASTLOAD_NO → deepskyblue；槽号 == LASTSAVE_NO（裸名 = [0]）→ lightgreen。
+ * 槽位行的高亮色（SETCOLORBYNAME 的顺序语义，后者覆盖前者）：槽号 ==
+ * LASTLOAD_NO → deepskyblue；槽号 == LASTSAVE_NO（裸名 = [0]）→ lightgreen；
  * 空槽一律灰色（GRAY 覆盖先设的高亮色）。
+ *
+ * @param {number} i 槽号
+ * @param {boolean} has_save 该槽是否有有效存档
+ * @returns {string|undefined} 颜色名（无高亮时 undefined）
+ */
+function slot_color(i, has_save) {
+  let color;
+  if (i === era_flag.last_load_no) {
+    color = 'deepskyblue';
+  }
+  if (i === era_flag.last_save_no) {
+    color = 'lightgreen';
+  }
+  if (!has_save) {
+    color = 'gray';
+  }
+  return color;
+}
+
+/**
+ * slot_row：槽位列表的一行——槽号按钮 + 备注文本格 + 删除按钮（见文件头
+ * 「界面写法说明」）。
+ *
+ * @param {number} i 槽号（= 槽号按钮的快捷键）
+ * @param {boolean} empty_clickable 空槽的槽号按钮是否可点——存档界面 true
+ *   （对空槽照存），读档界面 false（CHKDATA 拦下，设 disabled）
+ */
+function slot_row(i, empty_clickable) {
+  const comment = era.get(`global:saves:${i}`);
+  const has_save = has_valid_save(comment);
+  const color = slot_color(i, has_save);
+  const highlight = color ? { color } : {};
+  era.printMultiColumns([
+    {
+      type: 'button',
+      accelerator: i,
+      content: '',
+      config: {
+        align: 'left',
+        width: SLOT_WIDTH,
+        ...highlight,
+        // 空槽：引擎对 disabled 按钮既挡点击也挡快捷键，读档界面据此不可选
+        ...(has_save || empty_clickable ? {} : { disabled: true }),
+      },
+    },
+    {
+      type: 'text',
+      content: has_save ? comment : EMPTY_LABEL,
+      config: { align: 'left', width: REMARK_WIDTH, ...highlight },
+    },
+    {
+      type: 'button',
+      accelerator: DELETE_BASE + i,
+      content: DELETE_LABEL,
+      config: {
+        align: 'right',
+        width: DELETE_WIDTH,
+        disabled: !has_save,
+      },
+    },
+  ]);
+}
+
+/**
+ * list_data：渲染槽位列表 [start, end)。
  *
  * @param {number} start 起始槽号（L_POS）
  * @param {number} end 排他上限（L_POS + L_LEN）
- * @param {boolean} empty_clickable 空槽是否渲染为按钮——存档界面 true
- *   （对空槽照存），读档/删除界面 false（CHKDATA 拦下）
+ * @param {boolean} empty_clickable 空槽是否可点——存档界面 true
+ *   （对空槽照存），读档界面 false（CHKDATA 拦下）
  */
 function list_data(start, end, empty_clickable) {
   for (let i = start; i < end; i += 1) {
     if (i >= AUTOSAVE_SLOT) {
-      // PRINTL（空行）CONTINUE——末页的 99 号位在列表里留空，
-      // 由读档界面的单列段渲染
+      // 末页的 99 号位在列表里留空，由读档界面的单列段渲染
       era.println();
       continue;
     }
-    let color;
-    // SIF L_I == LASTLOAD_NO → DEEPSKYBLUE
-    if (i === era_flag.last_load_no) {
-      color = 'deepskyblue';
-    }
-    // SIF L_I == LASTSAVE_NO → LIGHTGREEN（后设覆盖前者）
-    if (i === era_flag.last_save_no) {
-      color = 'lightgreen';
-    }
-    const comment = era.get(`global:saves:${i}`);
-    if (has_valid_save(comment)) {
-      // PRINTFORML  [{L_I,2}] %RESULTS%（存在槽一律按钮，见文件头）
-      era.printButton(comment, i, color ? { color } : undefined);
-    } else if (empty_clickable) {
-      // 存档界面的空槽：灰色按钮（正文 `----`；编号归引擎拼）
-      era.printButton('----', i, { color: 'gray' });
-    } else {
-      // SETCOLORBYNAME GRAY → [{L_I,2}] ----（读/删视角不可选）
-      era.print([{ content: '----', color: 'gray' }]);
-    }
+    slot_row(i, empty_clickable);
   }
 }
 
 /**
  * 翻页/操作按钮行（PRINTFORMLC → printMultiColumns）。
  *
+ * 格宽按本行格数均分 24 列：三枚页脚键（上一页/返回/下一页）各 8 列才排得进
+ * 一行，写死 12 列会因总量 36 > 24 让第三枚折到下一行（实机截图可见）。
+ *
  * @param {...{accelerator: number, content: string}} items 同行各列
  */
 function print_page_buttons(...items) {
+  const width = Math.floor(24 / items.length);
   era.printMultiColumns(
     items.map((item) => ({
       accelerator: item.accelerator,
-      config: { align: 'left', width: 12 },
+      config: { align: 'left', width },
       content: item.content,
       type: 'button',
     })),
@@ -206,49 +269,52 @@ function push_last_save_no(idx) {
 }
 
 /**
+ * delete_save：删除一个槽位的存档（列表里的删除按钮，DELDATA）。
+ *
+ * 确认前的提示与 [1] 确定 / [0] 取消 两个按钮沿用旧删除画面；确认后
+ * rmData 让备注从 global:saves 消失（引擎自动 saveGlobal）。清行回
+ * 调用方循环尾统一做。
+ *
+ * @param {number} slot 槽号（快捷键 - DELETE_BASE）
+ * @returns {Promise<void>}
+ */
+async function delete_save(slot) {
+  if (!has_valid_save(era.get(`global:saves:${slot}`))) {
+    // 空槽的删除钮是 disabled（引擎挡下点击与快捷键），这里兜住越界输入
+    return;
+  }
+  era.print('确定要删除这个存档么？');
+  print_page_buttons(
+    { accelerator: 1, content: '确定' },
+    { accelerator: 0, content: '取消' },
+  );
+  if ((await era.input()) === 1) {
+    await era.rmData(slot);
+  }
+}
+
+/**
  * build_save_info：拼存档备注的正文段。
  *
- * 段式（宽度均为半角显示宽）：
- *   `第N日午前/午后`（宽 11 左对齐）→ `LV等级`（右对齐宽 4）→
- *   TARGET >= 1 时 ` 正在调教:名字 `（名字左对齐宽 14）否则 24 个空格 →
- *   有故事名时追加 `『故事名』`。
- *
- * 读档备注的副作用：FLAG:1/FLAG:2 >= 0 时把 TARGET/ASSI 指针改回前回调教
- * 目标/助手（FLAG 缺省 0 也满足 >= 0，新档上等于把指针归零）。
+ * 段式：`第N日午前/午后 LV等级` → TARGET >= 1 时 ` 正在调教:名字` →
+ * 有故事名时 ` 『故事名』`。字段之间只留分隔用的单个半角空格：**不再补位**
+ * ——备注进列表的文本格后由网格分列（文件头「界面写法说明」），补位只是
+ * 给旧存档的兼容显示留着（旧备注原样存着，照常显示）。
  *
  * @returns {string} 备注正文（不含时间戳前缀）
  */
 function build_save_info() {
-  // IF TIME == 0 → 第{DAY+1,2}日午前 ELSE 第{DAY+1,2}日午后；
-  // %LOCALS,11%（宽 11 左对齐）
   const day_half = era_flag.time === 0 ? '午前' : '午后';
-  let text = pad_display(
-    `第${pad_left(String(era_flag.day_count + 1), 2)}日${day_half}`,
-    11,
-  );
-  // 指针改写副作用（见函数头注释）
-  if ((era.get('flag:1') || 0) >= 0) {
-    era_flag.target = era.get('flag:1') || 0;
-  }
-  if ((era.get('flag:2') || 0) >= 0) {
-    era_flag.assi = era.get('flag:2') || 0;
-  }
-  // PUTFORM LV{CFLAG:MASTER:9,4,RIGHT}（魔王等级，右对齐宽 4）
-  text += `LV${pad_left(String(era.get('cflag:0:9') || 0), 4)}`;
-  // TARGET >= 1 → ` 正在调教:%SAVESTR:TARGET,14,LEFT% `（首尾各一
-  // 半角空格）；ELSE → %"",24%（24 个空格）
+  let text = `第${era_flag.day_count + 1}日${day_half} LV${era.get('cflag:0:9') || 0}`;
+  // TARGET >= 1 → 正在调教段（SAVESTR:TARGET）
   if (era_flag.target >= 1) {
     // SAVESTR:TARGET → callname 的 -1 下标（#5 决议；引擎里 callname:<号> 不
     // 带下标读到的是整个名字表对象——必须用 chara_callname 读 -1）
-    const target_name = chara_callname(era_flag.target);
-    text += ` 正在调教:${pad_display(target_name, 14)} `;
-  } else {
-    text += NBSP.repeat(24);
+    text += ` 正在调教:${chara_callname(era_flag.target)}`;
   }
-  // SIF STRLENS(CSTR:MASTER:99) > 0 → 『%CSTR:MASTER:99%』
   const story = chara(0).system.故事名;
   if (story.length > 0) {
-    text += `『${story}』`;
+    text += ` 『${story}』`;
   }
   return text;
 }
@@ -323,15 +389,8 @@ async function load_game() {
     // 99 号槽（自动存档位）单列渲染：存在 → 分隔线夹槽行（高亮条件
     // LASTLOAD_NO == 99）；不存在 → 只一条分隔线（连 ---- 行都没有）
     era.drawLine();
-    const comment99 = era.get(`global:saves:${AUTOSAVE_SLOT}`);
-    if (has_valid_save(comment99)) {
-      era.printButton(
-        comment99,
-        AUTOSAVE_SLOT,
-        era_flag.last_load_no === AUTOSAVE_SLOT
-          ? { color: 'deepskyblue' }
-          : undefined,
-      );
+    if (has_valid_save(era.get(`global:saves:${AUTOSAVE_SLOT}`))) {
+      slot_row(AUTOSAVE_SLOT, false);
       era.drawLine();
     }
 
@@ -356,6 +415,9 @@ async function load_game() {
     } else if (result === 102 && pos + PAGE_LEN < 99) {
       // 下一页（< 99：末页 80 起时 80+20=100 不再翻）
       pos += PAGE_LEN;
+    } else if (result >= DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {
+      // 行内删除（DELETE_BASE + 槽号）
+      await delete_save(result - DELETE_BASE);
     } else if (
       result >= 0 &&
       result <= 99 &&
@@ -421,11 +483,8 @@ async function save_game() {
     list_data(pos, pos + PAGE_LEN, true); // （空槽也按钮，见文件头）
 
     era.drawLine();
-    // [200] 为故事命名 / [300] 删除存档
-    print_page_buttons(
-      { accelerator: 200, content: '为故事命名' },
-      { accelerator: 300, content: '删除存档' },
-    );
+    // [200] 为故事命名（存/删都在列表里，不再有 [300] 删除画面）
+    print_page_buttons({ accelerator: 200, content: '为故事命名' });
     era.println();
     // [101] 上一页 / [100] 返回 / [102] 下一页
     print_page_buttons(
@@ -449,10 +508,9 @@ async function save_game() {
     } else if (result === 200) {
       // 为故事命名（内部自管清行，返回后回 DRAW_PAGE）
       await set_story_name(anchor);
-    } else if (result === 300) {
-      // 删除存档：子界面带走当前页起点，返回新起点（子界面的
-      // 输出行留屏，由本循环尾的清行一并收走——同构）
-      pos = await del_data(pos);
+    } else if (result >= DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {
+      // 行内删除（DELETE_BASE + 槽号）：确认后回循环尾重绘
+      await delete_save(result - DELETE_BASE);
     } else if (result >= 0 && result <= 98) {
       // 槽位（0-98，不含自动存档位）：存在 → 覆盖确认
       const comment = era.get(`global:saves:${result}`);
@@ -505,10 +563,9 @@ async function save_game() {
  *   - **无输出、无确认**：日推进的输出流不被打断（无此功能，无
  *     先例可循；覆盖旧自动档无条件进行——手动档的覆盖确认是玩家动作
  *     的护栏，自动档没有玩家动作）；
- *   - build_save_info 的指针改写副作用（SIF FLAG:1/FLAG:2 >= 0 →
- *     TARGET/ASSI）随调用发生——与 SAVEINFO 的调用语义一致，且
- *     本函数的调用点（run_event_newday 入口）之后回合结算会重设同一对
- *     指针（turnend-settle.js:753-758），无实害。
+ *   - **不改游戏状态**：build_save_info 只读（#868 起删掉了旧 SAVEINFO
+ *     改写 TARGET/ASSI 的副作用——调用点之后回合结算会自行还原同一对
+ *     指针，副作用从来不是它读到的值的前提）。
  *
  * @returns {Promise<boolean>} era.saveData 的返回值
  */
@@ -517,77 +574,18 @@ async function auto_save() {
   return era.saveData(AUTOSAVE_SLOT, remark);
 }
 
-/**
- * del_data：删除存档界面。
- *
- * @param {number} [pos] 页起点（参数默认 -1 → 归 0）
- * @returns {Promise<number>} 离开时的页起点
- */
-async function del_data(pos = -1) {
-  // L_POS = L_POS < 0 ? 0 # L_POS
-  if (pos < 0) {
-    pos = 0;
-  }
-  const anchor = era.getLineCount();
-
-  // $DRAW_PAGE
-  for (;;) {
-    era.drawLine({ isSolid: true });
-    era.print('【删除存档】要删除以下哪个存档？');
-    era.drawLine();
-    list_data(pos, pos + PAGE_LEN, false);
-
-    era.drawLine();
-    era.println(); // PRINTL
-    // [101] 上一页 / [100] 返回 / [102] 下一页
-    print_page_buttons(
-      { accelerator: 101, content: '上一页' },
-      { accelerator: 100, content: '返回' },
-      { accelerator: 102, content: '下一页' },
-    );
-    era.println();
-
-    // INPUT 99（默认值 99，见文件头）
-    const result = await era.input();
-
-    if (result === 100) {
-      // 返回
-      return pos;
-    }
-    if (result === 101 && pos - PAGE_LEN >= 0) {
-      pos -= PAGE_LEN;
-    } else if (result === 102 && pos + PAGE_LEN < 99) {
-      pos += PAGE_LEN;
-    } else if (
-      result >= 0 &&
-      result <= 99 &&
-      has_valid_save(era.get(`global:saves:${result}`))
-    ) {
-      // 存在 → 删除确认
-      era.print('确定要删除这个存档么？');
-      print_page_buttons(
-        { accelerator: 1, content: '确定' },
-        { accelerator: 0, content: '取消' },
-      );
-      const confirm = await era.input();
-      if (confirm === 1) {
-        // DELDATA L_IDX（备注随之从 global:saves 消失，引擎自动
-        // saveGlobal）→ 回 DRAW_PAGE
-        await era.rmData(result);
-      }
-      // 取消/删除完成：一律回 DRAW_PAGE（循环尾清行重画）
-    }
-    // 无效输入：清行重画
-    await era.clear(era.getLineCount() - anchor);
-  }
-}
-
 module.exports = {
   PAGE_LEN,
   AUTOSAVE_SLOT,
+  DELETE_BASE,
+  DELETE_LABEL,
+  DELETE_WIDTH,
+  EMPTY_LABEL,
+  REMARK_WIDTH,
+  SLOT_WIDTH,
   auto_save,
   build_save_info,
-  del_data,
+  delete_save,
   get_times,
   has_valid_save,
   list_data,
@@ -595,4 +593,6 @@ module.exports = {
   push_last_save_no,
   save_game,
   set_story_name,
+  slot_color,
+  slot_row,
 };

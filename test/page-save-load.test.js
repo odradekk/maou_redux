@@ -1,9 +1,16 @@
 /**
- * ere/page/page-save-load.js 的行为测试（issue #136：C2 存读档界面）。
+ * ere/page/page-save-load.js 的行为测试（issue #136：C2 存读档界面；
+ * #868：槽位列表改用网格、删除并进列表、备注生成不再改游戏状态）。
  *
  * 缝 = test/helpers/era-fixture.js。验收项（工单 #136 验收清单第 3 条）：
  * 99 槽 + 分页 + 故事命名（32 字符上限）+ 删除 + 覆盖确认 + 上次存/读档号
- * 高亮，**逐条有测试**。
+ * 高亮，**逐条有测试**。#868 的三条验收另有一节：
+ *
+ * 1. 列表在引擎里对齐——每槽是一行三格的网格（槽号按钮 + 备注文本格 +
+ *    删除按钮），格宽合计 24；备注不被引擎折叠（它在文本格里，按钮正文
+ *    只有编号）。
+ * 2. 保存不再改写 TARGET/ASSI——生成备注前后指针逐值不变。
+ * 3. 旧存档的备注照常显示——带 NBSP 补位的老备注原样进文本格。
  *
  * 夹具注意：saveData / loadData / rmData 的数据层镜像与 global 系三 API
  * （saveGlobal / loadGlobal / resetGlobal）分别由 #137 / #147 落实，契约见
@@ -37,83 +44,184 @@ function history_texts(fixture) {
   );
 }
 
+/** 槽号按钮（删除钮的快捷键在 DELETE_BASE 之上，按此分开两类按钮） */
+function slot_buttons(fixture) {
+  const { DELETE_BASE } = load_page(fixture);
+  return buttons(fixture).filter((b) => b.accelerator < DELETE_BASE);
+}
+
+/** 删除按钮（快捷键 = DELETE_BASE + 槽号） */
+function delete_buttons(fixture) {
+  const { DELETE_BASE } = load_page(fixture);
+  return buttons(fixture).filter((b) => b.accelerator >= DELETE_BASE);
+}
+
+/**
+ * 按 Row 分组（夹具里一次输出调用共用一个 row 号）：返回
+ * `[{ row, cells }]`，cells 是该行的格子条目。
+ */
+function rows_of(fixture, list = fixture.lines) {
+  const map = new Map();
+  for (const line of list) {
+    if (!map.has(line.row)) {
+      map.set(line.row, []);
+    }
+    map.get(line.row).push(line);
+  }
+  return [...map.entries()].map(([row, cells]) => ({ cells, row }));
+}
+
+/** 某个槽号所在的行（槽号按钮的 accelerator 命中） */
+function slot_row_of(fixture, slot, list = fixture.lines) {
+  return rows_of(fixture, list).find(
+    (r) => r.cells.length > 1 && r.cells[0].accelerator === slot,
+  );
+}
+
 /** 预置一个槽位备注（global:saves:n，引擎维护的存档备注） */
 function seed_save(fixture, slot, comment) {
   fixture.store.set(`global:saves:${slot}`, comment);
 }
 
-// —— list_data：槽位列表渲染（99 槽基础）——
+/** #868 之前存下的备注：带 NBSP 补位的老格式 */
+const OLD_REMARK =
+  '2026/01/01 00:00:00 第\u00A01日午前\u00A0LV\u00A0\u00A0\u00A01\u00A0正在调教:玛奥';
 
-test('LIST_DATA：存在槽 = 备注按钮，空槽按视角分化（存=灰按钮 / 读=灰文本）', () => {
+// —— list_data / slot_row：槽位行的网格结构（#868）——
+
+test('SLOT_ROW：每槽一行三格——槽号按钮 + 备注文本格 + 删除按钮，格宽合计 24', () => {
   const fixture = create_era_fixture();
-  seed_save(
-    fixture,
-    0,
-    '2026/01/01 00:00:00 第\u00A01日午前 LV\u00A0\u00A0\u00A01',
-  );
-  const { list_data } = load_page(fixture);
+  seed_save(fixture, 5, '五号档');
+  const page = load_page(fixture);
+  page.list_data(5, 6, false);
 
-  list_data(0, 3, true); // 存档视角
-  let entries = buttons(fixture);
-  assert.equal(entries.length, 3, '存档视角：空槽也是按钮（对空槽照存）');
-  assert.equal(entries[0].accelerator, 0);
+  const row = slot_row_of(fixture, 5);
+  assert(row, '槽号按钮必须存在');
+  assert.equal(row.cells.length, 3, '一行三格（槽号 / 备注 / 删除）');
+  const [slot, remark, del] = row.cells;
+  assert.equal(slot.type, 'button');
+  assert.equal(slot.accelerator, 5, '槽号按钮的快捷键 = 槽号');
+  assert.equal(remark.type, 'text', '备注是文本格（按钮正文会被引擎折叠空白）');
+  assert.equal(remark.text, '五号档');
+  assert.equal(del.type, 'button');
   assert.equal(
-    entries[0].text,
-    '2026/01/01 00:00:00 第\u00A01日午前 LV\u00A0\u00A0\u00A01',
+    del.accelerator,
+    page.DELETE_BASE + 5,
+    '删除钮的快捷键 = DELETE_BASE + 槽号',
   );
-  assert.equal(entries[0].color, undefined, '无高亮的槽不着色');
-  assert.equal(entries[1].accelerator, 1);
-  assert.equal(entries[1].text, '----');
-  assert.equal(entries[1].color, 'gray', '空槽一律灰色');
+  assert.equal(del.text, page.DELETE_LABEL);
+  assert.equal(
+    slot.grid_width + remark.grid_width + del.grid_width,
+    24,
+    '三格合计 24 列，否则末格被挤到下一行',
+  );
+  assert.equal(slot.grid_width, page.SLOT_WIDTH);
+  assert.equal(remark.grid_width, page.REMARK_WIDTH);
+  assert.equal(del.grid_width, page.DELETE_WIDTH);
+  assert.equal(slot.grid_align, 'left');
+  assert.equal(remark.grid_align, 'left');
+  assert.equal(del.grid_align, 'right', '删除钮靠右，正文列不被它挤歪');
+});
 
-  const fixture2 = create_era_fixture();
-  seed_save(fixture2, 0, '备注');
-  const { list_data: list_data2 } = load_page(fixture2);
-  list_data2(0, 2, false); // 读档/删除视角
-  const entries2 = buttons(fixture2);
-  assert.equal(entries2.length, 1, '读/删视角：空槽不可点（CHKDATA 拦下）');
-  const gray_text = fixture2.lines.find(
-    (line) => line.type === 'text' && line.text === '----',
+test('SLOT_ROW：槽号按钮的正文留空（编号归引擎 showAcc 拼，正文再写会显示两遍）', () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 98, '九八');
+  const page = load_page(fixture);
+  page.list_data(98, 99, false);
+
+  const slot = slot_buttons(fixture).find((b) => b.accelerator === 98);
+  assert.equal(slot.text, '', '正文留空——编号由引擎拼');
+  assert.equal(
+    slot.rendered.trim(),
+    '[98]',
+    '实机显示 `[98]`，不得出现 `[98] 98` 这类重复编号',
   );
-  assert(gray_text, '空槽渲染为灰色纯文本 ----');
+});
+
+test('SLOT_ROW：备注进文本格后不被折叠（1 位与 2 位槽号的备注从同一列起算）', () => {
+  const fixture = create_era_fixture();
+  // 老格式备注带 NBSP 补位：进按钮正文会被引擎压成一格，进文本格不会
+  seed_save(fixture, 9, OLD_REMARK);
+  seed_save(fixture, 10, OLD_REMARK);
+  const page = load_page(fixture);
+  page.list_data(9, 11, false);
+
+  const slot9 = slot_row_of(fixture, 9);
+  const slot10 = slot_row_of(fixture, 10);
+  assert.equal(
+    slot9.cells[1].text,
+    OLD_REMARK,
+    '备注逐字进文本格，不做二次加工',
+  );
+  assert.equal(slot9.cells[1].text, slot10.cells[1].text);
+  assert.equal(
+    slot9.cells[0].grid_width,
+    slot10.cells[0].grid_width,
+    '槽号格定宽：`[9]` 与 `[10]` 的备注因此对齐',
+  );
+});
+
+test('空槽：读档视角槽号钮与删除钮都 disabled，备注格是灰 ----', () => {
+  const fixture = create_era_fixture();
+  const page = load_page(fixture);
+  page.list_data(0, 2, false);
+
+  const row = slot_row_of(fixture, 1);
+  assert(row, '空槽也要有槽号（旧写法是无编号的纯文本）');
+  const [slot, remark, del] = row.cells;
+  assert.equal(slot.disabled, true, '读档界面的空槽不可选');
+  assert.equal(slot.color, 'gray', '空槽一律灰色');
+  assert.equal(remark.text, page.EMPTY_LABEL);
+  assert.equal(remark.color, 'gray', '空槽的备注格同为灰色');
+  assert.equal(del.disabled, true, '空槽没有可删的东西');
+});
+
+test('空槽：存档视角槽号钮可点（对空槽照存），删除钮仍 disabled', () => {
+  const fixture = create_era_fixture();
+  const page = load_page(fixture);
+  page.list_data(0, 2, true);
+
+  const row = slot_row_of(fixture, 1);
+  const [slot, remark, del] = row.cells;
+  assert.equal(slot.disabled, false, '存档界面的空槽必须可点，否则存不进空槽');
+  assert.equal(slot.color, 'gray', '空槽仍是灰的（与配色语义一致）');
+  assert.equal(remark.text, page.EMPTY_LABEL);
+  assert.equal(del.disabled, true, '空槽的删除钮 disabled');
+});
+
+test('空槽不能存（读档视角）：disabled 快捷键被引擎挡下，游戏收不到这个值', async () => {
+  const fixture = create_era_fixture();
+  const { load_game } = load_page(fixture);
+  fixture.set_inputs(1, 100); // 1 号是空槽 → 槽号钮 disabled
+  await assert.rejects(
+    () => load_game(),
+    /输入不合法/,
+    '引擎对 disabled 按钮既挡点击也挡快捷键（夹具同款校验）',
+  );
 });
 
 test('LIST_DATA：`(FILE LOST) ` 前缀的备注按空槽对待（#147——引擎 loadGlobal 对账约定的消费面）', () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 0, '正常档');
   seed_save(fixture, 5, '(FILE LOST) 文件丢失的档');
-  const { list_data } = load_page(fixture);
+  const page = load_page(fixture);
+  page.list_data(0, 6, false);
 
-  // 读/删视角：带前缀的槽不可点（has_valid_save 的前缀分支——CHKDATA 等价
-  // 条件，11-saves.md：`(FILE LOST) ` 前缀 = 有备注但文件丢失）
-  list_data(0, 6, false);
-  let entries = buttons(fixture);
-  assert.equal(entries.length, 1, '丢失槽不出按钮（只剩 0 号正常档可点）');
-  assert.equal(entries[0].accelerator, 0);
-  assert.equal(entries[0].text, '正常档');
-  const gray_slots = fixture.lines.filter(
-    (line) => line.type === 'text' && line.text === '----',
-  );
-  assert.equal(
-    gray_slots.length,
-    5,
-    '四个空槽加一个丢失槽同样渲染 ---- 灰文本',
-  );
+  const lost = slot_row_of(fixture, 5).cells;
+  assert.equal(lost[1].text, page.EMPTY_LABEL, '丢失槽显示 ----');
+  assert.equal(lost[0].disabled, true, '丢失槽不可读');
+  assert.equal(lost[2].disabled, true, '丢失槽不可删（无可删的存档）');
+  const normal = slot_row_of(fixture, 0).cells;
+  assert.equal(normal[1].text, '正常档');
+  assert.equal(normal[0].disabled, false);
+  assert.equal(normal[2].disabled, false);
 
-  // 存档视角：丢失槽照旧是灰按钮（对空槽照存，可覆盖）
+  // 存档视角：丢失槽照旧可存（覆盖它）
   const fixture2 = create_era_fixture();
   seed_save(fixture2, 5, '(FILE LOST) 文件丢失的档');
-  const { list_data: list_data2 } = load_page(fixture2);
-  list_data2(0, 6, true);
-  entries = buttons(fixture2);
-  assert.equal(entries.length, 6, '存档视角：丢失槽照旧可存');
-  assert.equal(entries[5].accelerator, 5);
-  assert.equal(entries[5].text, '----');
-  assert.equal(
-    entries[5].color,
-    'gray',
-    '(FILE LOST) 前缀的备注按空槽对待（灰）',
-  );
+  const page2 = load_page(fixture2);
+  page2.list_data(0, 6, true);
+  assert.equal(slot_row_of(fixture2, 5).cells[0].disabled, false);
 });
 
 test('LIST_DATA：末页 99 号位在列表内留空行（单列段归读档界面）', () => {
@@ -122,18 +230,20 @@ test('LIST_DATA：末页 99 号位在列表内留空行（单列段归读档界�
   const { list_data } = load_page(fixture);
   const before = fixture.lines.length;
   list_data(95, 100, false); // 末页窗口 [80,100) 的缩影
-  // 95-98 渲染四行（1 存在 + 3 空），99 一个空行（println 不进 lines？
-  // ——println 是输出调用，进 lines；空行条目写法见夹具）
+  // 95-98 渲染四行（空槽也是带编号的 disabled 行），99 一个空行
   const new_lines = fixture.lines.slice(before);
-  const slot98 = new_lines.find((line) => line.type === 'button');
-  assert.equal(slot98.accelerator, 98, '98 号是最后一个列表槽');
+  const { DELETE_BASE } = load_page(fixture);
+  const slots = new_lines
+    .filter((line) => line.type === 'button' && line.accelerator < DELETE_BASE)
+    .map((line) => line.accelerator);
+  assert.deepEqual(slots, [95, 96, 97, 98], '98 号是最后一个列表槽');
   assert(
     !new_lines.some((line) => line.accelerator === 99),
     '99 号不得在列表里渲染（读档界面单列段专属）',
   );
 });
 
-test('LIST_DATA 高亮：LASTLOAD_NO 深天蓝 / LASTSAVE_NO 浅绿，同槽浅绿胜', () => {
+test('LIST_DATA 高亮：LASTLOAD_NO 深天蓝 / LASTSAVE_NO 浅绿，同槽浅绿胜，两格同色', () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 5, '五号');
   seed_save(fixture, 7, '七号');
@@ -143,21 +253,24 @@ test('LIST_DATA 高亮：LASTLOAD_NO 深天蓝 / LASTSAVE_NO 浅绿，同槽浅�
   const { list_data } = load_page(fixture);
 
   list_data(0, 20, false);
-  const by_slot = new Map(buttons(fixture).map((b) => [b.accelerator, b]));
-  assert.equal(
-    by_slot.get(5).color,
-    'deepskyblue',
-    '上次读档号高亮 DEEPSKYBLUE',
-  );
-  assert.equal(by_slot.get(7).color, 'lightgreen', '上次存档号高亮 LIGHTGREEN');
+  const row5 = slot_row_of(fixture, 5).cells;
+  assert.equal(row5[0].color, 'deepskyblue', '上次读档号高亮 DEEPSKYBLUE');
+  assert.equal(row5[1].color, 'deepskyblue', '备注格同色（整行高亮）');
+  const row7 = slot_row_of(fixture, 7).cells;
+  assert.equal(row7[0].color, 'lightgreen', '上次存档号高亮 LIGHTGREEN');
+  assert.equal(row7[1].color, 'lightgreen');
 
   // 同槽：顺序后设覆盖——LIGHTGREEN 压过 DEEPSKYBLUE
   fixture.store.set('flag:10019', 5);
   list_data(0, 20, false);
-  const slot5_latest = buttons(fixture)
-    .filter((b) => b.accelerator === 5)
+  const slot5_latest = rows_of(fixture)
+    .filter((r) => r.cells.length === 3 && r.cells[0].accelerator === 5)
     .pop();
-  assert.equal(slot5_latest.color, 'lightgreen', '同槽双高亮时后设的浅绿生效');
+  assert.equal(
+    slot5_latest.cells[0].color,
+    'lightgreen',
+    '同槽双高亮时后设的浅绿生效',
+  );
 });
 
 test('未读/未存过档：-1 作默认值，任何槽都不高亮（?? 缺省处理，0 是有效槽号）', () => {
@@ -168,17 +281,20 @@ test('未读/未存过档：-1 作默认值，任何槽都不高亮（?? 缺省�
   assert.equal(era_flag.last_load_no, -1, '未读过的初值是 -1 而非 0');
   assert.equal(era_flag.last_save_no, -1);
   list_data(0, 1, false);
-  assert.equal(buttons(fixture)[0].color, undefined, '-1 不命中任何槽');
+  const cells = slot_row_of(fixture, 0).cells;
+  assert.equal(cells[0].color, undefined, '-1 不命中任何槽');
+  assert.equal(cells[1].color, undefined);
 });
 
-// —— build_save_info：存档备注正文 ——
+// —— build_save_info：存档备注正文（#868：不再补位、不再改游戏状态）——
 
-test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接', () => {
+test('SAVEINFO：日期时段 / LV / 正在调教段 / 故事名逐段拼接（字段间只留单空格）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:10000', 0); // DAY:0 = 0 → 第 1 日
   fixture.store.set('flag:10003', 0); // TIME = 0 → 午前
   fixture.store.set('cflag:0:9', 5); // 魔王等级
-  fixture.store.set('flag:1', 3); // 前回调教目标
+  fixture.store.set('flag:1', 3); // 前回调教目标（故意与当前 TARGET 不同）
+  fixture.store.set('flag:10005', 3); // TARGET
   // 引擎把 callname 按 <角色号>:<下标> 存（-1 = 呼び名）——此前的写法不带下标读
   // callname:3 会拿到整个名字表对象，存档说明里显出 [object Object]
   fixture.store.set('callname:3:-1', '玛奥');
@@ -187,35 +303,51 @@ test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接
 
   assert.equal(
     build_save_info(),
-    '第\u00A01日午前\u00A0LV\u00A0\u00A0\u00A05 正在调教:玛奥\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 『魔王城物语』',
+    '第1日午前 LV5 正在调教:玛奥 『魔王城物语』',
+    '字段之间只有分隔用的单空格：列对齐由网格负责，不再靠 NBSP 补位',
   );
-  // 第 1日午前 = 显示宽 10 → 补 1 空格到 11；LV 右对齐宽 4；
-  // 「 正在调教:」+ 玛奥（宽 4）左对齐宽 14 → 补 10 空格，再补段尾 1 空格
 
-  // 时段翻转 + 无调教对象（TARGET < 1 → 24 个空格）+ 无故事名
+  // 时段翻转 + 无调教对象（TARGET < 1 → 无该段）+ 无故事名
   const fixture2 = create_era_fixture();
   fixture2.store.set('flag:10000', 9); // 第 10 日
   fixture2.store.set('flag:10003', 1); // 午后
   fixture2.store.set('cflag:0:9', 100);
   const { build_save_info: build2 } = load_page(fixture2);
-  assert.equal(build2(), '第10日午后\u00A0LV\u00A0100' + '\u00A0'.repeat(24));
+  assert.equal(build2(), '第10日午后 LV100');
 });
 
-test('SAVEINFO 副作用：SIF FLAG:1/FLAG:2 >= 0 改写 TARGET/ASSI 指针', () => {
+test('SAVEINFO 不再改写 TARGET/ASSI（SIF FLAG:1/FLAG:2 的副作用已删）', () => {
   const fixture = create_era_fixture();
-  fixture.store.set('flag:1', 3);
-  fixture.store.set('flag:2', 7);
+  fixture.store.set('flag:1', 3); // 前回调教目标
+  fixture.store.set('flag:2', 7); // 前回助手
+  fixture.store.set('flag:10005', -1); // TARGET
+  fixture.store.set('flag:10006', 0); // ASSI
   const { build_save_info } = load_page(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.target = -1;
-  era_flag.assi = 0;
+
   build_save_info();
-  assert.equal(
-    era_flag.target,
-    3,
-    'TARGET = FLAG:1（前回调教目标，同款副作用）',
+  assert.equal(era_flag.target, -1, 'TARGET 保持调用前的值');
+  assert.equal(era_flag.assi, 0, 'ASSI 保持调用前的值');
+  assert(
+    !fixture.var_writes.some(
+      (w) => w.name === 'flag:10005' || w.name === 'flag:10006',
+    ),
+    '生成备注不得写这两个指针',
   );
-  assert.equal(era_flag.assi, 7, 'ASSI = FLAG:2');
+});
+
+test('SAVEINFO 只读：备注里的调教段按当前 TARGET 取（不借 FLAG:1）', () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:1', 12); // 上次调教对象
+  fixture.store.set('flag:2', 8);
+  fixture.store.set('flag:10005', 0); // 当前 TARGET = 0（无调教对象）
+  fixture.store.set('callname:12:-1', '琼');
+  const { build_save_info } = load_page(fixture);
+  assert.equal(
+    build_save_info(),
+    '第1日午前 LV0',
+    'TARGET < 1 时不出现调教段（旧副作用会先把它改成 FLAG:1）',
+  );
 });
 
 // —— save_game：存档界面 ——
@@ -232,7 +364,7 @@ test('SAVEGAME：空槽直接存（无覆盖确认），备注 = 时间戳 + SAV
   assert.equal(call.args[0], 3, '存进玩家选的 3 号槽');
   assert.match(
     call.args[1],
-    /^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第\u00A01日午前/,
+    /^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第1日午前/,
     '备注前缀 = GETTIMES() 的 YYYY/MM/DD HH:MM:SS + SAVEINFO 正文',
   );
   assert(
@@ -243,6 +375,19 @@ test('SAVEGAME：空槽直接存（无覆盖确认），备注 = 时间戳 + SAV
     fixture.waits.some((w) => w.waited),
     '存档反馈必须等键（PRINTFORMW 的读键半）',
   );
+});
+
+test('SAVEGAME：保存不改写 TARGET/ASSI（备注生成只读）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:1', 3);
+  fixture.store.set('flag:2', 7);
+  fixture.store.set('flag:10005', -1);
+  fixture.store.set('flag:10006', -1);
+  const { save_game } = load_page(fixture);
+  fixture.set_inputs(2);
+  await save_game();
+  assert.equal(fixture.store.get('flag:10005'), -1, 'TARGET 不被保存动作改写');
+  assert.equal(fixture.store.get('flag:10006'), -1, 'ASSI 同');
 });
 
 test('SAVEGAME：LASTSAVE_NO 压栈（[0]=新槽，旧 [0] 移 [1]，10 元滑动）', async () => {
@@ -288,25 +433,27 @@ test('SAVEGAME 覆盖确认：存在槽先问，取消不存 / 确认后存', as
 
 test('SAVEGAME 翻页：102 前进 / 101 回退 / 首页不退 / 末页（80 起）不进', async () => {
   const fixture = create_era_fixture();
-  const { save_game, PAGE_LEN } = load_page(fixture);
+  const { save_game, PAGE_LEN, DELETE_BASE } = load_page(fixture);
   assert.equal(PAGE_LEN, 20, 'SAVENOS() 默认值 20（分页步长）');
 
   fixture.set_inputs(102, 101, 100);
   assert.equal(await save_game(), 0, '翻页往返后回到首页起点 0');
+  const slot_accs = buttons_history(fixture)
+    .map((b) => b.accelerator)
+    .filter((acc) => acc < DELETE_BASE);
   const pages = [];
   let current = [];
-  for (const b of buttons_history(fixture)) {
-    // 每轮重绘从分隔线/标题开始无法从按钮序列直接断轮——用 accelerator 断言：
-    if (current.length && b.accelerator <= current[current.length - 1]) {
+  for (const acc of slot_accs) {
+    if (current.length && acc <= current[current.length - 1]) {
       pages.push(current);
       current = [];
     }
-    current.push(b.accelerator);
+    current.push(acc);
   }
   if (current.length) {
     pages.push(current);
   }
-  // 轮次：首页(0-19 空槽按钮+200/300+101/100/102) → 翻页后(20-39…) → 回首页
+  // 轮次：首页(0-19 空槽按钮+200+101/100/102) → 翻页后(20-39…) → 回首页
   const first_round = pages.find((p) => p.includes(0));
   assert(
     first_round.includes(19) && !first_round.includes(20),
@@ -327,7 +474,9 @@ test('SAVEGAME 翻页：102 前进 / 101 回退 / 首页不退 / 末页（80 起
   const { save_game: save3 } = load_page(fixture3);
   fixture3.set_inputs(101, 100);
   await save3();
-  const slots3 = buttons_history(fixture3).map((b) => b.accelerator);
+  const slots3 = buttons_history(fixture3)
+    .map((b) => b.accelerator)
+    .filter((acc) => acc < DELETE_BASE);
   assert(
     slots3.includes(0) && !slots3.includes(20),
     '首页按 上一页 不得离开第 1 页',
@@ -338,7 +487,9 @@ test('SAVEGAME 翻页：102 前进 / 101 回退 / 首页不退 / 末页（80 起
   const { save_game: save4 } = load_page(fixture4);
   fixture4.set_inputs(102, 102, 102, 102, 102, 100);
   await save4();
-  const slots4 = buttons_history(fixture4).map((b) => b.accelerator);
+  const slots4 = buttons_history(fixture4)
+    .map((b) => b.accelerator)
+    .filter((acc) => acc < DELETE_BASE);
   assert(slots4.includes(80), '连翻四页到 80 起（末页）');
   assert(!slots4.includes(99), '末页列表不含 99 号（100 是返回按钮，非槽号）');
 });
@@ -425,15 +576,65 @@ test('故事命名：输入 0 走消名分支（#567：0 视为空输入）', as
   );
 });
 
-// —— del_data：删除存档 ——
+// —— 自动存档：同一条备注路径（#868 的「自动存档也走这条路径」）——
+
+test('AUTO_SAVE：写 99 号槽、备注带「自动」前缀，且不改写 TARGET/ASSI', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:10000', 6); // 第 7 日
+  fixture.store.set('flag:10003', 0); // 午前
+  fixture.store.set('flag:1', 3); // 上次调教对象
+  fixture.store.set('flag:2', 7); // 上次助手
+  fixture.store.set('flag:10005', -1); // TARGET
+  fixture.store.set('flag:10006', 0); // ASSI
+  const { auto_save, AUTOSAVE_SLOT } = load_page(fixture);
+
+  await auto_save();
+  const call = fixture.calls.find((c) => c.api === 'saveData');
+  assert.equal(call.args[0], AUTOSAVE_SLOT, '自动存档写 99 号槽');
+  assert.match(
+    call.args[1],
+    /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第7日午前 LV0$/,
+    '备注 = 自动前缀 + 时间戳 + saveinfo 正文（无补位）',
+  );
+  assert.equal(
+    fixture.store.get('flag:10005'),
+    -1,
+    '自动存档同样不得改写 TARGET',
+  );
+  assert.equal(fixture.store.get('flag:10006'), 0, 'ASSI 同');
+});
+
+// —— 删除：并进列表（#868），不再有单独的一屏 ——
+
+test('删除并进列表：存档界面不再有 [300]，每行自带删除钮', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 5, '五号');
+  const { save_game, DELETE_BASE } = load_page(fixture);
+  fixture.set_inputs(100);
+  await save_game();
+  assert(
+    !buttons_history(fixture).some((b) => b.accelerator === 300),
+    '[300] 删除存档画面已撤（删除在列表的每一行里）',
+  );
+  const del = delete_buttons(fixture).find(
+    (b) => b.accelerator === DELETE_BASE + 5,
+  );
+  assert(del, '5 号行必须有删除钮');
+  assert.equal(del.disabled, false, '有存档的槽可删');
+  assert.equal(
+    delete_buttons(fixture).find((b) => b.accelerator === DELETE_BASE).disabled,
+    true,
+    '空槽的删除钮 disabled',
+  );
+});
 
 test('DELDATA：确认后删档（rmData），取消不删', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 5, '五号');
-  const { del_data } = load_page(fixture);
+  const { save_game, DELETE_BASE } = load_page(fixture);
 
-  fixture.set_inputs(5, 1, 100);
-  assert.equal(await del_data(0), 0);
+  fixture.set_inputs(DELETE_BASE + 5, 1, 100);
+  assert.equal(await save_game(), 0);
   assert(
     fixture.calls.some((c) => c.api === 'rmData' && c.args[0] === 5),
     '确认后必须调 era.rmData(5)',
@@ -445,34 +646,101 @@ test('DELDATA：确认后删档（rmData），取消不删', async () => {
 
   const fixture2 = create_era_fixture();
   seed_save(fixture2, 5, '五号');
-  const { del_data: del2 } = load_page(fixture2);
-  fixture2.set_inputs(5, 0, 100);
-  await del2(0);
+  const { save_game: save2, DELETE_BASE: base2 } = load_page(fixture2);
+  fixture2.set_inputs(base2 + 5, 0, 100);
+  await save2();
   assert(!fixture2.calls.some((c) => c.api === 'rmData'), '取消时不得删除');
 });
 
-test('DELDATA：页起点参数默认归 0，返回离开时的页起点', async () => {
+test('DELDATA：读档界面同样能删（删除钮在列表里，两个界面一致）', async () => {
   const fixture = create_era_fixture();
-  const { del_data } = load_page(fixture);
-  fixture.set_inputs(100);
-  assert.equal(await del_data(-1), 0, '默认 -1 → 归 0');
+  seed_save(fixture, 7, '七号');
+  const { load_game, DELETE_BASE } = load_page(fixture);
+  fixture.set_inputs(DELETE_BASE + 7, 1, 100);
+  assert.equal(await load_game(), 0, '删完停在本界面（[100] 返回）');
   assert(
-    history_texts(fixture).some(
-      (t) => t === '【删除存档】要删除以下哪个存档？',
-    ),
+    fixture.calls.some((c) => c.api === 'rmData' && c.args[0] === 7),
+    '读档界面的行内删除也要真的调 rmData',
   );
 });
 
-test('SAVEGAME 的 [300]：进删除子界面并带回新页起点', async () => {
+test('DELDATA 边界：0 号槽与 99 号自动存档槽都能删（删除键区间两端）', async () => {
+  // 下界：DELETE_BASE + 0。1 号槽也种上备注：删除键若被区间判断漏掉，
+  // 这次输入会落到列表轮，那里只有「有存档的槽」与页脚是合法键——留着
+  // 一个可点的槽，让确认键 1 在两轮里都合法，失败停在 rmData 缺失上
+  // 而不是夹具的「输入不合法」。
   const fixture = create_era_fixture();
-  seed_save(fixture, 5, '五号');
-  const { save_game } = load_page(fixture);
-  fixture.set_inputs(300, 5, 1, 100, 100);
-  assert.equal(await save_game(), 0);
+  seed_save(fixture, 0, '零号');
+  seed_save(fixture, 1, '一号');
+  const { load_game, DELETE_BASE } = load_page(fixture);
+  fixture.set_inputs(DELETE_BASE, 1, 100);
+  assert.equal(await load_game(), 0);
   assert(
-    fixture.calls.some((c) => c.api === 'rmData' && c.args[0] === 5),
-    '经存档界面的 [300] 也能完成删除',
+    fixture.calls.some((c) => c.api === 'rmData' && c.args[0] === 0),
+    '区间下界：0 号槽的删除键要送达',
   );
+
+  // 上界：DELETE_BASE + 99（自动存档位单列渲染，同样可删）
+  const fixture2 = create_era_fixture();
+  seed_save(fixture2, 1, '一号');
+  seed_save(fixture2, 99, '自动档备注');
+  const {
+    load_game: load2,
+    DELETE_BASE: base2,
+    AUTOSAVE_SLOT,
+  } = load_page(fixture2);
+  fixture2.set_inputs(base2 + AUTOSAVE_SLOT, 1, 100);
+  assert.equal(await load2(), 0);
+  assert(
+    fixture2.calls.some((c) => c.api === 'rmData' && c.args[0] === 99),
+    '区间上界：99 号自动存档槽的删除键要送达',
+  );
+});
+
+test('del_data 已删除（导出表里不再有它，入口只剩列表内的删除钮）', () => {
+  const fixture = create_era_fixture();
+  const page = load_page(fixture);
+  assert.equal(page.del_data, undefined, '#868：单独一屏的删除画面已撤');
+});
+
+test('页脚三键排在同一行（格宽按格数均分 24 列，第三枚不折行）', async () => {
+  const fixture = create_era_fixture();
+  const { load_game } = load_page(fixture);
+  fixture.set_inputs(100);
+  await load_game();
+
+  const row = rows_of(fixture).find((r) =>
+    r.cells.some((c) => c.accelerator === 101),
+  );
+  assert(row, '页脚行必须存在');
+  const footer = row.cells.map((c) => c.accelerator);
+  assert.deepEqual(
+    footer,
+    [101, 100, 102],
+    '上一页/返回/下一页共享同一个 Row（逐个 printButton 会各占一行）',
+  );
+  const width_sum = row.cells.reduce((sum, c) => sum + c.grid_width, 0);
+  assert(
+    width_sum <= 24,
+    `三格合计 ${width_sum} 列，超 24 列第三枚会被挤到下一行`,
+  );
+});
+
+test('页脚两键（确定/取消）仍各 12 列（格宽按格数均分）', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 5, '旧档');
+  const { save_game } = load_page(fixture);
+  fixture.set_inputs(5, 0, 100);
+  await save_game();
+  const row = rows_of(fixture, fixture.lines_history).find(
+    (r) =>
+      r.cells.length === 2 &&
+      r.cells.some((c) => c.accelerator === 1) &&
+      r.cells.some((c) => c.accelerator === 0),
+  );
+  assert(row, '确认行必须存在');
+  const widths = row.cells.map((c) => c.grid_width);
+  assert.deepEqual(widths, [12, 12], '两枚选项各 12 列，正好铺满一行');
 });
 
 // —— load_game：读档界面 ——
@@ -483,10 +751,11 @@ test('LOADGAME：99 号自动存档槽单列渲染，LASTLOAD_NO==99 时深天�
   const { load_game } = load_page(fixture);
   fixture.set_inputs(100);
   await load_game();
-  const slot99 = buttons_history(fixture).find((b) => b.accelerator === 99);
-  assert(slot99, '99 号槽必须渲染成按钮');
-  assert.equal(slot99.text, '自动档备注');
-  assert.equal(slot99.color, undefined, '未读 99 号时不高亮');
+  const row = slot_row_of(fixture, 99);
+  assert(row, '99 号槽必须渲染成一行');
+  assert.equal(row.cells.length, 3, '99 号行与列表同款（槽号 / 备注 / 删除）');
+  assert.equal(row.cells[1].text, '自动档备注');
+  assert.equal(row.cells[0].color, undefined, '未读 99 号时不高亮');
 
   const fixture2 = create_era_fixture();
   seed_save(fixture2, 99, '自动档备注');
@@ -495,7 +764,7 @@ test('LOADGAME：99 号自动存档槽单列渲染，LASTLOAD_NO==99 时深天�
   fixture2.set_inputs(100);
   await load2();
   assert.equal(
-    buttons_history(fixture2).find((b) => b.accelerator === 99).color,
+    slot_row_of(fixture2, 99).cells[0].color,
     'deepskyblue',
     'SIF 99 == LASTLOAD_NO → DEEPSKYBLUE',
   );
@@ -509,6 +778,31 @@ test('LOADGAME：99 号槽无存档时不渲染槽行（只剩一条线）', asy
   assert(
     !buttons_history(fixture).some((b) => b.accelerator === 99),
     '空 99 号不得出现按钮',
+  );
+});
+
+test('LOADGAME 翻页：102 前进到第 2 页 / 101 回退 / 首页不退', async () => {
+  const fixture = create_era_fixture();
+  const { load_game, DELETE_BASE } = load_page(fixture);
+  fixture.set_inputs(102, 101, 100);
+  assert.equal(await load_game(), 0);
+  const slots = buttons_history(fixture)
+    .map((b) => b.accelerator)
+    .filter((acc) => acc < DELETE_BASE);
+  assert(slots.includes(20), '102 后一页从 20 起');
+  assert(
+    slots.includes(0) && slots.lastIndexOf(0) > slots.lastIndexOf(20),
+    '101 回退重绘又见 0 号',
+  );
+
+  // 首页按 101 无效（页起点不动）
+  const fixture2 = create_era_fixture();
+  const { load_game: load2 } = load_page(fixture2);
+  fixture2.set_inputs(101, 100);
+  await load2();
+  assert(
+    !buttons_history(fixture2).some((b) => b.accelerator === 20),
+    '首页按 上一页 不得离开第 1 页',
   );
 });
 
@@ -583,6 +877,42 @@ test('LOADGAME 读档界面标题与操作行文案（按期望逐字）', async
       `操作按钮 ${acc} 必须真的 printButton（实机可达）`,
     );
   }
+});
+
+// —— #868 验收第 3 条：旧存档的备注照常显示（存储不改、只改呈现）——
+
+test('旧存档备注照常显示：带 NBSP 补位的老备注逐字进文本格', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 4, OLD_REMARK);
+  const { load_game } = load_page(fixture);
+  fixture.set_inputs(100);
+  await load_game();
+  const row = slot_row_of(fixture, 4);
+  assert(row, '老备注也要渲染出来');
+  assert.equal(
+    row.cells[1].text,
+    OLD_REMARK,
+    '备注是存进 global:saves 的原串，只换呈现位置（文本格），不重排',
+  );
+  assert.equal(row.cells[1].grid_align, 'left');
+});
+
+test('旧存档备注：存档动作不改动 global:saves 的存储形态（只写自己那一槽）', async () => {
+  const fixture = create_era_fixture();
+  seed_save(fixture, 4, OLD_REMARK);
+  const { save_game } = load_page(fixture);
+  fixture.set_inputs(6); // 存进 6 号槽
+  await save_game();
+  assert.equal(
+    fixture.store.get('global:saves:4'),
+    OLD_REMARK,
+    '别的槽的备注原样不动',
+  );
+  assert.match(
+    fixture.store.get('global:saves:6'),
+    /^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第1日午前 LV0$/,
+    '新备注仍是「时间戳 + 正文」的一个字符串（存储格式不变）',
+  );
 });
 
 // —— #137：LOADDATA 的转场语义与读档钩子 ——

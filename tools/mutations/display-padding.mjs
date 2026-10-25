@@ -4,13 +4,12 @@
 /** 本分片条数（门 1）：增删条目必须同步改它 */
 // #869 -2（M12218 删：刻印行改网格后不再有 NBSP 列间隙；M12224 删：能力行改
 // 网格后不再有前导补位）
-export const COUNT = 15;
+export const COUNT = 14; // #868 -1（M12219 删：SAVEINFO 不再有 24 格补位——备注进文本格、字段间只有单空格）
 
 const WIDTH = 'ere/utils/display-width.js';
 const TRAIN = 'ere/page/page-train.js';
 const LIFE_LIST = 'ere/page/page-life-list.js';
 const SOURCE_CHECK = 'ere/event/source-check.js';
-const SAVE_LOAD = 'ere/page/page-save-load.js';
 const INFO_SHOW = 'ere/page/page-chara-info-show.js';
 const JUEL = 'ere/system/train/juel-check.js';
 const COM_CLOTH = 'ere/system/train/com-cloth.js';
@@ -88,14 +87,6 @@ export default [
     // 黄金块比对把 U+00A0 归一回空格，拦不住这条；红的是
     // e2e 断言（「阴核 0+5」那行的整行等值——五段全宽、无 DOWN 段的 7 位补白）
     must_mention: '算式五段全宽',
-  },
-  {
-    desc: 'M12219 SAVEINFO 无调教对象的 24 格补位退回半角空格（%("",24%）',
-    file: SAVE_LOAD,
-    find: '    text += NBSP.repeat(24);',
-    replace: "    text += ' '.repeat(24); // 变异：回退",
-    tests: ['page-save-load'],
-    must_mention: '第10日午后',
   },
   {
     desc: 'M12220 献祭演出的 16 格前导退回半角空格（PRINTS "\\s"*16 的内容）',
