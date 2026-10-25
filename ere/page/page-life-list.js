@@ -51,11 +51,9 @@
  *     `is_salave` 两个函数由四处共用——与 page-intercept.js 的
  *     `reject_reason` 同一处置（条件只有一处真相，页数与列表不会分家）。
  *
- * 5. **补行（页高固定）只在本函数内做**：life_list 由本函数补空行
- *    （不足一页补满）；life_list_enemy / life_list_salave
- *    不补（补行在其调用方，如强化页的
- *    `REPEAT (NUM_PAGE - L_LCOUNT)`），故这两支也不补——页高契约由各自
- *    调用方维持，这两支保持不补。
+ * 5. **页高不补空行**：原版按 `REPEAT (NUM_PAGE - L_LCOUNT)` 把列表补满一页，
+ *    在字符终端里是把页脚钉在屏幕底部的手法；ere 是滚动视图，补出来的只是
+ *    一串无内容的空行，本族三支都不补（调用方也不补，见各页的页脚）。
  *
  * 6. **局部的对齐参数逐字保留**：`MAX_NAME_LEN + 8` 的名字字段宽、职业的
  *    8、等级右对齐的 `MAX_LV_LEN`（列表）/4（单项）、装备品段的 3 与 20，
@@ -141,17 +139,6 @@ function print_row(cid, fragments, num_width) {
       },
     },
   ]);
-}
-
-/**
- * 空位补行：life_list 的页高固定，不足一整页时补空行。
- * @param {number} filled 已画行数
- * @param {number} num_page 每页行数
- */
-function pad_blank_rows(filled, num_page) {
-  for (let row = filled; row < num_page; row += 1) {
-    era.print('');
-  }
 }
 
 /**
@@ -289,7 +276,11 @@ function base_field_text(cid, name_width, lv_width) {
  * life_list：据点角色一览（全量、分页）。
  *
  * 表头三档：MODE 0 = 「你（可强化地下城）」字面量；MODE 2 = 不画
- * 表头；其余（缺省 1）= 魔王名。列表按位置开窗，空位补空行。
+ * 表头；其余（缺省 1）= 魔王名。列表按位置开窗。
+ *
+ * 末页不满一整页时不补空行：ere 是滚动视图，调用方的页脚紧接列表末行即可
+ * （原实现按 `REPEAT (NUM_PAGE - L_LCOUNT)` 补到固定页高，那是字符终端里把
+ * 页脚钉在屏幕底部的手法）。
  *
  * @param {number} [no_page] 页码（0 起）
  * @param {number} [mode] 表头档（0/1/2，见上）
@@ -338,7 +329,7 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
     );
   }
 
-  // 列表：窗口按位置开（文件头第 1 条），逐行渲染 + 空位补行
+  // 列表：窗口按位置开（文件头第 1 条），逐行渲染
   const window_ids = slave_ids().slice(
     no_page * num_page,
     (no_page + 1) * num_page,
@@ -354,8 +345,6 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
       num_width,
     );
   }
-  // COUNT >= CHARANUM → PRINTL（页高固定）
-  pad_blank_rows(window_ids.length, num_page);
 }
 
 /**

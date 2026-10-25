@@ -1352,8 +1352,37 @@ test('printMultiColumns：GridObject 逐格压平成既有条目类型', () => {
   assert.equal(fixture.lines[1].grid_width, 24);
   assert.equal(fixture.lines[2].color, '#bbbbbb');
   assert.equal(fixture.lines[2].grid_width, 8);
+  // 格的 config.align 同样是渲染结构：文本支落到 CSS text-align（表格的数值列
+  // 靠它右对齐），未给时为 undefined（跟随全局对齐）
+  assert.equal(fixture.lines[1].grid_align, undefined);
+  assert.equal(fixture.lines[2].grid_align, undefined);
   // 已实现集：不落缺省 calls
   assert.deepEqual(fixture.calls, []);
+});
+
+test('printMultiColumns：格的 config.align 入记录（文本支＝CSS text-align）', () => {
+  const fixture = create_era_fixture();
+  fixture.era.printMultiColumns([
+    { type: 'text', content: '名字', config: { align: 'left', width: 4 } },
+    { type: 'text', content: '42', config: { align: 'right', width: 2 } },
+    {
+      type: 'button',
+      content: '按钮',
+      accelerator: 1,
+      config: { align: 'left', width: 3 },
+    },
+  ]);
+
+  assert.deepEqual(
+    fixture.lines.map((line) => line.grid_align),
+    ['left', 'right', 'left'],
+    '三格的 align 逐格记录（文本右对齐与按钮格的对齐各记一格）',
+  );
+  assert.deepEqual(
+    fixture.lines.map((line) => line.grid_width),
+    [4, 2, 3],
+    '宽度仍逐格记录',
+  );
 });
 
 test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记录', () => {
@@ -1372,6 +1401,7 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
       content: '列组形态',
       color: undefined,
       grid_width: 24,
+      grid_align: undefined,
       row: 0,
     },
     {
@@ -1382,6 +1412,7 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
       color: undefined,
       disabled: false,
       grid_width: 24,
+      grid_align: undefined,
       row: 0,
     },
   ]);

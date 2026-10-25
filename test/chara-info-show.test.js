@@ -64,12 +64,24 @@ function title_fixture(flag5 = 0) {
   };
 }
 
-/** 取第 n 条 text 行的文本（多列行的各格在此已由夹具压平） */
+/** 取第 n 条 text 行/格的文本（多列行的各格在夹具里各是一条 text 条目） */
 function text_at(fixture, index) {
   return fixture.lines[index]?.text;
 }
 
-test('show_info_title：等号线 + 编号/名字/年龄行的逐字复现', () => {
+/**
+ * 标题行的四格（编号 / 名字 / 爱慕标 / 年龄）：`show_info_title` 先打一条
+ * 分割线，再打一次 `printMultiColumns`（四格共享一个 Row 号）。
+ * @param {object} fixture 夹具
+ * @returns {Array<object>} 四个格条目
+ */
+function title_cells(fixture) {
+  const cells = fixture.lines.filter((line) => line.type === 'text');
+  assert.equal(cells.length, 4, '标题行是四格的文本网格');
+  return cells;
+}
+
+test('show_info_title：等号线 + 四格标题行（编号/名字/爱慕标/年龄）', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:7:451', 16); // CFLAG:451 人类年龄
   fixture.store.set('cflag:7:452', 16); // CFLAG:452 种族年龄
@@ -77,42 +89,59 @@ test('show_info_title：等号线 + 编号/名字/年龄行的逐字复现', () 
 
   assert.equal(fixture.lines[0].type, 'divider');
   assert.equal(fixture.lines[0].border, 'solid', '实线分割行');
-  // —— 编号宽 3 左对齐（"7  " + 一个空格）、名字宽 12、
-  // 五个全角空格、年龄右对齐 48
-  assert.equal(
-    text_at(fixture, 1),
-    `NO.7\u00A0\u00A0 考狄利亚\u00A0\u00A0\u00A0\u00A0\u3000\u3000\u3000\u3000\u3000${'\u00A0'.repeat(43)}16 岁`,
+  const cells = title_cells(fixture);
+  assert.deepEqual(
+    cells.map((cell) => cell.text),
+    ['NO.7', '考狄利亚', '', '16 岁'],
+    '编号 / 名字 / 爱慕标（无则空）/ 年龄',
   );
+  assert.equal(
+    new Set(cells.map((cell) => cell.row)).size,
+    1,
+    '四格在同一行（一次 printMultiColumns）',
+  );
+  // 格宽之和 = 24（引擎的栅格宽度）；年龄格右对齐到行尾，其余左对齐
+  assert.deepEqual(
+    cells.map((cell) => cell.grid_width),
+    [2, 4, 3, 15],
+  );
+  assert.deepEqual(
+    cells.map((cell) => cell.grid_align),
+    ['left', 'left', 'left', 'right'],
+    '年龄靠格对齐右对齐，不再用 pad_left 补到 48 格',
+  );
+  for (const cell of cells) {
+    assert.doesNotMatch(
+      cell.text,
+      /[\u00A0\u3000]| {2,}/,
+      `格内不得再用补位字符（实得 ${JSON.stringify(cell.text)}）`,
+    );
+  }
 });
 
-test('show_info_title：爱慕优先于淫乱，两者都不命中时补五个全角空格', () => {
-  // [TALENT 位, 期望片段, 说明]
+test('show_info_title：爱慕优先于淫乱，两者都不命中时爱慕标格留空', () => {
+  // [TALENT 位, 爱慕标格, 说明]
   const cases = [
-    [85, '　<爱慕>　', 'TALENT:85 爱慕'],
-    [76, '　<淫乱>　', 'TALENT:76 淫乱'],
-    [0, '　　　　　', '两者皆无'],
+    [85, '<爱慕>', 'TALENT:85 爱慕'],
+    [76, '<淫乱>', 'TALENT:76 淫乱'],
+    [0, '', '两者皆无：该格空（原为五个全角空格占位）'],
   ];
   for (const [talent_id, fragment, label] of cases) {
     const { fixture, show_info_title } = title_fixture(bit(12));
     fixture.store.set('cflag:7:451', 16);
     if (talent_id !== 0) fixture.store.set(`talent:7:${talent_id}`, 1);
     show_info_title(7, always);
-    assert.equal(
-      text_at(fixture, 1),
-      `NO.7\u00A0\u00A0 考狄利亚\u00A0\u00A0\u00A0\u00A0${fragment}${'\u00A0'.repeat(43)}16 岁`,
+    const cells = title_cells(fixture);
+    assert.deepEqual(
+      cells.map((cell) => cell.text),
+      ['NO.7', '考狄利亚', fragment, '16 岁'],
       label,
     );
-    const colored = fixture.lines[1].content.filter(
-      (f) => f.color !== undefined,
-    );
     assert.equal(
-      colored.length,
-      talent_id === 0 ? 0 : 1,
-      `${label}：爱慕/淫乱标带 #ff6464 着色`,
+      cells[2].color,
+      talent_id === 0 ? undefined : '#ff6464',
+      `${label}：爱慕/淫乱标带 #ff6464 着色（空格不着色）`,
     );
-    if (talent_id !== 0) {
-      assert.equal(colored[0].color, '#ff6464');
-    }
   }
 });
 
@@ -122,24 +151,19 @@ test('show_info_title：85 与 76 同设时爱慕胜出（IF/ELSEIF 顺序）', 
   fixture.store.set('talent:7:85', 1);
   fixture.store.set('talent:7:76', 1);
   show_info_title(7, always);
-  assert.match(text_at(fixture, 1), /<爱慕>/);
-  assert.doesNotMatch(text_at(fixture, 1), /<淫乱>/);
+  assert.equal(title_cells(fixture)[2].text, '<爱慕>');
 });
 
 test('show_info_title：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱动）', () => {
-  // [FLAG:5 位组合, 期望年龄串（已右对齐到 48）, 说明]
+  // [FLAG:5 位组合, 期望年龄格文本, 说明]
   const cases = [
-    [0, '\u00A0'.repeat(48), '位 12 关：年龄串为空 → 48 空格'],
-    [bit(12), `${'\u00A0'.repeat(43)}16 岁`, '位 12 开：人类年龄'],
-    [
-      bit(12) | bit(13),
-      `${'\u00A0'.repeat(43)}30 岁`,
-      '位 13 开：改用种族年龄',
-    ],
+    [0, '', '位 12 关：年龄格空'],
+    [bit(12), '16 岁', '位 12 开：人类年龄'],
+    [bit(12) | bit(13), '30 岁', '位 13 开：改用种族年龄'],
     [
       bit(12) | bit(13) | bit(14),
-      `${'\u00A0'.repeat(26)}30 岁 (换算人类\u00A016 岁)`,
-      '位 14 也开且两者不同：追加换算人类',
+      '30 岁 (换算人类\u00A016 岁)',
+      '位 14 也开且两者不同：追加换算人类（括注内的 3 格右对齐保留）',
     ],
   ];
   for (const [flag5, expected, label] of cases) {
@@ -147,8 +171,7 @@ test('show_info_title：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱
     fixture.store.set('cflag:7:451', 16); // CFLAG:451 人类年龄
     fixture.store.set('cflag:7:452', 30); // CFLAG:452 种族年龄
     show_info_title(7, always);
-    const line = text_at(fixture, 1);
-    assert.equal(line.slice(-expected.length), expected, label);
+    assert.equal(title_cells(fixture)[3].text, expected, label);
   }
 });
 
@@ -159,10 +182,7 @@ test('show_info_title：位 14 开但两年龄相同时不追加换算（第三�
   fixture.store.set('cflag:7:451', 16);
   fixture.store.set('cflag:7:452', 16);
   show_info_title(7, always);
-  assert.equal(
-    text_at(fixture, 1),
-    `NO.7\u00A0\u00A0 考狄利亚\u00A0\u00A0\u00A0\u00A0\u3000\u3000\u3000\u3000\u3000${'\u00A0'.repeat(43)}16 岁`,
-  );
+  assert.equal(title_cells(fixture)[3].text, '16 岁');
 });
 
 test('show_info_title：TALENT:292 魔王之影追加寿命倒计时', () => {
@@ -171,18 +191,20 @@ test('show_info_title：TALENT:292 魔王之影追加寿命倒计时', () => {
   fixture.store.set('cflag:7:820', 7); // CFLAG:820 寿命剩余天数
   fixture.store.set('talent:7:292', 1);
   show_info_title(7, always);
-  // {CFLAG:820, 3} 右对齐宽 3 → "\u00A0\u00A07"
-  assert.match(text_at(fixture, 1), /16 岁 \[寿命还有\u00A0{2}7 天\]$/);
+  // 括注里的 {CFLAG:820, 3} 右对齐宽 3 保留（格内数值右对齐）→ "\u00A0\u00A07"
+  assert.match(
+    title_cells(fixture)[3].text,
+    /^16 岁 \[寿命还有\u00A0{2}7 天\]$/,
+  );
 });
 
 test('show_info_title：魔王（cid 0）不显示年龄行但编号行照出', () => {
   const { fixture, show_info_title } = title_fixture(bit(12));
   fixture.store.set('cflag:0:451', 999);
   show_info_title(0, always);
-  const line = text_at(fixture, 1);
-  assert.match(line, /^NO.0\u00A0{2}/);
-  assert.doesNotMatch(line, /岁/);
-  assert.equal(line.slice(-48), '\u00A0'.repeat(48));
+  const cells = title_cells(fixture);
+  assert.equal(cells[0].text, 'NO.0');
+  assert.equal(cells[3].text, '', '魔王没有年龄串，年龄格空');
 });
 
 test('show_info_title：CFLAG:451 缺失时现调 char_body_generate_wapped 补生成', () => {
@@ -190,7 +212,7 @@ test('show_info_title：CFLAG:451 缺失时现调 char_body_generate_wapped 补�
   assert.equal(fixture.store.get('cflag:7:451'), undefined);
   show_info_title(7, seq([7]));
   assert.notEqual(fixture.store.get('cflag:7:451'), 0, '生成后写入年龄');
-  assert.match(text_at(fixture, 1), /岁$/);
+  assert.match(title_cells(fixture)[3].text, /岁$/);
 });
 
 test('show_info_title：CFLAG:451 已有值时不再生成（不消费随机源）', () => {
@@ -200,7 +222,7 @@ test('show_info_title：CFLAG:451 已有值时不再生成（不消费随机源�
   show_info_title(7, () => {
     throw new Error('不应调用随机源');
   });
-  assert.match(text_at(fixture, 1), /20 岁$/);
+  assert.equal(title_cells(fixture)[3].text, '20 岁');
 });
 
 // —— show_block ——
@@ -861,28 +883,36 @@ function abl_fixture({ talents = {}, abls = {}, marks = {} } = {}) {
   };
 }
 
-/** 一条能力行的期望文本（名字宽 8 左对齐、等级宽 2 左对齐、标记位 2 空格） */
-function abl_line(name, level) {
-  const lv = String(level);
-  return `\u00A0\u00A0${name}${'\u00A0'.repeat(8 - name.length * 2)} - LV${lv}${'\u00A0'.repeat(2 - lv.length + 2)}`;
+/** 能力一览的一行：名字格 + `- LV{n}` 格（每项两格） */
+function abl_cells(fixture) {
+  return fixture.lines
+    .filter((line) => line.type === 'text')
+    .map((cell) => cell.text);
 }
 
-test('show_info_abl：黄金样本 train-upgrade 的能力行逐字复现', () => {
-  // train-upgrade-log 里魔王（cid 0）能力画面唯一的非空能力行：
-  // 2 个前导空格 + 名字宽 8 + " - LV" + 等级宽 2 + 2 个标记位空格
+test('show_info_abl：能力行是「名字格 + 等级格」，每项两格', () => {
   const { fixture, show_info_abl } = abl_fixture({ abls: { 12: 3 } });
   show_info_abl(7);
-  // #577：这一行的四段补位（前导 2 / 名字列宽 8 / 等级列宽 2 / 标记位 2）
-  // 都得是 NBSP——退回半角空格会留下连续半角空格，引擎合并后整行错位。
-  // 放在逐字比对之前：补位字符退回半角时，先红的是这条（点名补位而非整行 diff）
-  const abl_row = fixture.text_lines()[0];
-  assert.ok(
-    !/ {2,}/.test(abl_row),
-    `能力行的列补位须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(abl_row)}）`,
+  // 原实现按黄金样本 `  技巧     - LV3   ` 用 NBSP 补成定宽（两前导空格 +
+  // 名字宽 8 + 等级宽 2 + 标记位 2）；网格化后格内不再有补位字符
+  assert.deepEqual(abl_cells(fixture), ['技巧', '- LV3']);
+  const cells = fixture.lines.filter((line) => line.type === 'text');
+  assert.deepEqual(
+    cells.map((cell) => cell.grid_width),
+    [3, 3],
+    '名字 3 + 等级 3（每行 4 项占满 24 列）',
   );
-  assert.deepEqual(fixture.text_lines(), [
-    '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV3\u00A0\u00A0\u00A0',
-  ]);
+  assert.deepEqual(
+    cells.map((cell) => cell.grid_align),
+    ['left', 'left'],
+  );
+  for (const cell of cells) {
+    assert.doesNotMatch(
+      cell.text,
+      /[\u00A0\u3000]| {2,}/,
+      `能力行的格内不得再用补位字符（实得 ${JSON.stringify(cell.text)}）`,
+    );
+  }
 });
 
 test('show_info_abl：零值能力不出、每 4 项收行、末组不足 4 也收行', () => {
@@ -897,13 +927,21 @@ test('show_info_abl：零值能力不出、每 4 项收行、末组不足 4 也�
   for (const [abls, rows, first_count, label] of cases) {
     const { fixture, show_info_abl } = abl_fixture({ abls });
     show_info_abl(7);
-    const lines = fixture.text_lines();
-    assert.equal(lines.length, rows, label);
+    const row_numbers = new Set(
+      fixture.lines
+        .filter((line) => line.type === 'text')
+        .map((line) => line.row),
+    );
+    assert.equal(row_numbers.size, rows, label);
     if (rows > 0) {
+      const first_row = Math.min(...row_numbers);
+      const in_first = fixture.lines.filter(
+        (line) => line.type === 'text' && line.row === first_row,
+      );
       assert.equal(
-        lines[0].split(' - LV').length - 1,
+        in_first.length / 2,
         first_count,
-        `${label}：首行项数`,
+        `${label}：首行项数（每项两格）`,
       );
     }
   }
@@ -922,7 +960,7 @@ test('show_info_abl：编号空洞整组跳过（五段 INRANGE 与 38）', () =
   for (const id of [4, 10, 11, 17, 20, 30, 37, 39, 40]) {
     const { fixture, show_info_abl } = abl_fixture({ abls: { [id]: 5 } });
     show_info_abl(7);
-    assert.equal(fixture.text_lines().length, 1, `ABL:${id} 不在空洞里，照出`);
+    assert.equal(fixture.text_lines().length, 2, `ABL:${id} 不在空洞里，照出`);
   }
   // 41 是循环上界（FOR 0, 41），不出
   const { fixture, show_info_abl } = abl_fixture({ abls: { 41: 5 } });
@@ -951,7 +989,7 @@ test('show_info_abl：性别过滤（男无私处感觉/百合，女无断背）
       abls: { [abl_id]: 2 },
     });
     show_info_abl(7);
-    assert.equal(fixture.text_lines().length === 1, shown, label);
+    assert.equal(fixture.text_lines().length === 2, shown, label);
   }
 });
 
@@ -964,34 +1002,46 @@ test('show_info_abl：男体与扶她下阴蒂感觉（ABL:0）改名阴茎感�
   for (const [talents, name, label] of cases) {
     const { fixture, show_info_abl } = abl_fixture({ talents, abls: { 0: 3 } });
     show_info_abl(7);
-    assert.equal(fixture.text_lines()[0], abl_line(name, 3), label);
+    assert.deepEqual(abl_cells(fixture), [name, '- LV3'], label);
   }
 });
 
-test('show_info_abl：等级宽 2 左对齐（两位数不截断、一位数补 1 空格）', () => {
+test('show_info_abl：等级格原样输出位数（两位不截断、一位不补位）', () => {
   const one = abl_fixture({ abls: { 12: 3 } });
   one.show_info_abl(7);
-  assert.equal(
-    one.fixture.text_lines()[0],
-    '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV3\u00A0\u00A0\u00A0',
-  );
+  assert.deepEqual(abl_cells(one.fixture), ['技巧', '- LV3']);
 
   const ten = abl_fixture({ abls: { 12: 12 } });
   ten.show_info_abl(7);
-  assert.equal(
-    ten.fixture.text_lines()[0],
-    '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV12\u00A0\u00A0',
-  );
+  assert.deepEqual(abl_cells(ten.fixture), ['技巧', '- LV12']);
 });
 
-test('show_info_mark：黄金样本 train-upgrade 的四枚刻印行逐字复现', () => {
-  // train-upgrade-log:159：四枚全 LV0，条是 3 格的 BAR（_replace.csv
-  // 缺省字符 * 与 .，方括号由 BAR 命令加）
+test('show_info_mark：四枚刻印各占一格（6 列），格内不补位', () => {
+  // 原实现按「首项 1 格、其余 3 格」的 NBSP 补位对齐；网格化后四格等宽
   const { fixture, show_info_mark } = abl_fixture();
   show_info_mark(7);
-  assert.deepEqual(fixture.text_lines(), [
-    '\u00A0苦痛:LV0 [...]\u00A0\u00A0\u00A0快乐:LV0 [...]\u00A0\u00A0\u00A0屈服:LV0 [...]\u00A0\u00A0\u00A0反抗:LV0 [...]',
-  ]);
+  const cells = fixture.lines.filter((line) => line.type === 'text');
+  assert.deepEqual(
+    cells.map((cell) => cell.text),
+    ['苦痛:LV0 [...]', '快乐:LV0 [...]', '屈服:LV0 [...]', '反抗:LV0 [...]'],
+  );
+  assert.deepEqual(
+    cells.map((cell) => cell.grid_width),
+    [6, 6, 6, 6],
+    '24 列 ÷ 4 枚',
+  );
+  assert.equal(
+    new Set(cells.map((cell) => cell.row)).size,
+    1,
+    '四枚在同一行（一次 printMultiColumns）',
+  );
+  for (const cell of cells) {
+    assert.doesNotMatch(
+      cell.text,
+      /[\u00A0\u3000]/,
+      `刻印格内不得再用补位字符（实得 ${JSON.stringify(cell.text)}）`,
+    );
+  }
 });
 
 test('show_info_mark：等级取自 MARK:0-3，条的填充随等级变化', () => {
@@ -1007,8 +1057,9 @@ test('show_info_mark：等级取自 MARK:0-3，条的填充随等级变化', () 
   for (const [level, bar, label] of cases) {
     const { fixture, show_info_mark } = abl_fixture({ marks: { 0: level } });
     show_info_mark(7);
-    assert(
-      fixture.text_lines()[0].startsWith(`\u00A0苦痛:LV${level} [${bar}]`),
+    assert.equal(
+      fixture.text_lines()[0],
+      `苦痛:LV${level} [${bar}]`,
       `${label}（实际：${fixture.text_lines()[0]}）`,
     );
   }
@@ -1020,10 +1071,12 @@ test('show_info_mark：四枚刻印各自独立取值，顺序是 苦痛/快乐/
     // 名字表里的名字与硬编码标签不同（苦痛刻印 vs 苦痛），行里用的是后者
   });
   show_info_mark(7);
-  assert.equal(
-    fixture.text_lines()[0],
-    '\u00A0苦痛:LV1 [*..]\u00A0\u00A0\u00A0快乐:LV2 [**.]\u00A0\u00A0\u00A0屈服:LV3 [***]\u00A0\u00A0\u00A0反抗:LV0 [...]',
-  );
+  assert.deepEqual(fixture.text_lines(), [
+    '苦痛:LV1 [*..]',
+    '快乐:LV2 [**.]',
+    '屈服:LV3 [***]',
+    '反抗:LV0 [...]',
+  ]);
 });
 
 test('bar_text：条长与最大值的边界（表驱动）', () => {
@@ -2133,7 +2186,7 @@ test('show_chara_info：五个页码分支各自的段组合（表驱动）', as
       '一人称：',
       '贡品时：素质行在、无人称行（-2 分支无 show_block）',
     ],
-    [-1, '\u00A0苦痛:LV', '一人称：', '调教时：刻印行在、无人称行'],
+    [-1, '苦痛:LV', '一人称：', '调教时：刻印行在、无人称行'],
     [
       0,
       '一人称：',
@@ -2189,17 +2242,29 @@ test('show_chara_info：页码 3 的四个素质名按源序 74/78/75/77', async
   );
 });
 
-test('show_chara_info：末尾补白到 27 行（含本页已出的行）', async () => {
+test('show_chara_info：末尾不补空行凑页高（原为补白到 27 行）', async () => {
   const { fixture, show_chara_info } = main_fixture({
     flag5: (1 << 8) | (1 << 12),
     cflags: { 451: 16 },
   });
-  const before = fixture.lines.length;
   await show_chara_info(7, 3, always);
-  const used = fixture.lines.length - before;
-  assert(
-    used >= 27,
-    `从进入本函数起至少 27 行（实际 ${used}；末尾补白按行数差算）`,
+  // 页尾的补白循环删掉后，本页输出的最后一条是「※ 润滑与欲情…」那行文案
+  // ——它之后不再有一串空行（`print('')` 与 `println()` 两种写法都不许）
+  const tail = fixture.lines.slice(-1)[0];
+  assert.equal(tail.type, 'text', '最后一条输出是文案行');
+  assert.notEqual(tail.text, '', '页尾不是空行');
+  const blanks = fixture.lines.filter(
+    (line) =>
+      line.type === 'br' ||
+      // 表格里的空文本格（如无爱慕标时的那个格）不是空行
+      (line.type === 'text' &&
+        line.text === '' &&
+        line.grid_width === undefined),
+  );
+  assert.deepEqual(
+    blanks.map((line) => line.type),
+    [],
+    `本页不该有空行（原实现补到 27 行；实得 ${JSON.stringify(blanks)}）`,
   );
 });
 
@@ -2210,7 +2275,14 @@ test('show_chara_info：献祭完成分支（CFLAG:1 == 11）走近三十项与�
   fixture.set_inputs(100); // 选 [100] 返回（真按钮，见下）
   const result = await show_chara_info(7, -1, always, 0x000000);
   const lines = fixture.text_lines();
-  assert.equal(lines[1], '已献祭的肉便器数量', '第 0 行是标题行');
+  // 标题行是四格的网格（编号/名字/爱慕标/年龄），之后才是正文第一条；
+  // 本档没开 FLAG:5 位 12，年龄格空
+  assert.deepEqual(
+    lines.slice(0, 4),
+    ['NO.7', '考狄利亚', '', ''],
+    '开头是标题行的四格',
+  );
+  assert.equal(lines[4], '已献祭的肉便器数量', '第 5 条是正文首行');
   assert(
     lines.some((t) => t.startsWith('合计')),
     '合计行按六项之和',
@@ -2444,11 +2516,11 @@ test('show_chara_info：名单里勇者档（状态 2）的行打开贡品信息
   // 贡品信息页（-2 分支）自己的可认标志：9 号的标题行 + 刻印行（-1/-2 两分支共有的
   // 段）——名单页与献祭分支都不会打这两样
   assert.ok(
-    texts.some((t) => /^NO\.9\s/.test(t)),
+    texts.some((t) => t === 'NO.9'),
     `打开的是 9 号的贡品信息页（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
   );
   assert.ok(
-    texts.some((t) => t.startsWith('\u00A0苦痛:LV')),
+    texts.some((t) => t.startsWith('苦痛:LV')),
     `-2 分支的刻印行在（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
   );
   assert.ok(
@@ -2522,7 +2594,7 @@ test('#615 show_chara_info：完全召唤横幅两行、之间一个真空行、
   assert.equal(
     lines[banner1 + 1].type,
     'br',
-    '第二个 \\n：两行横幅之间的真空行',
+    '第二个换行：两行横幅之间的真空行',
   );
   // 横幅第二行：分割线 + `< 完 全 召 唤 >` + 分割线与尾随两个空格
   assert.equal(

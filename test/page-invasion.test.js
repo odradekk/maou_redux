@@ -896,11 +896,11 @@ test('[3] 页窗检查：max_page == 0 时 [上一页]/[下一页] 都不动页�
     ],
     'max_page == 0 时两个翻页键都不动页码',
   );
-  // 的补行：每页渲染 25 行、NUM_PAGE - rows = 1 行空行（三次重画各一次）
+  // 不再补行凑页高：三次重画都不出空行（原实现按 NUM_PAGE - 渲染行数补）
   assert.equal(
     history_texts(fixture).filter((line) => line === '').length,
-    3,
-    '页高补行按 NUM_PAGE - 渲染行数算',
+    0,
+    '末页不补空行',
   );
 });
 

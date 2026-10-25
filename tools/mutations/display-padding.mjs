@@ -2,13 +2,14 @@
 // 字符改 U+00A0，中央实现在 ere/utils/display-width.js）。字段与运行方式见
 // tools/mutation-check.mjs 头注释；find 在目标文件里必须恰出现一次。
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 17;
+// #869 -2（M12218 删：刻印行改网格后不再有 NBSP 列间隙；M12224 删：能力行改
+// 网格后不再有前导补位）
+export const COUNT = 15;
 
 const WIDTH = 'ere/utils/display-width.js';
 const TRAIN = 'ere/page/page-train.js';
 const LIFE_LIST = 'ere/page/page-life-list.js';
 const SOURCE_CHECK = 'ere/event/source-check.js';
-const ABLMARK = 'ere/page/components/chara-info-abl-mark.js';
 const SAVE_LOAD = 'ere/page/page-save-load.js';
 const INFO_SHOW = 'ere/page/page-chara-info-show.js';
 const JUEL = 'ere/system/train/juel-check.js';
@@ -89,15 +90,6 @@ export default [
     must_mention: '算式五段全宽',
   },
   {
-    desc: 'M12218 show_info_mark 刻印行的 3 格列间隙退回半角空格',
-    file: ABLMARK,
-    find: '      content: `${NBSP.repeat(index === 0 ? 1 : 3)}${MARK_LABELS[index]}:LV${level} `,',
-    replace:
-      "      content: `${index === 0 ? ' ' : '   '}${MARK_LABELS[index]}:LV${level} `, // 变异：回退",
-    tests: ['chara-info-show'],
-    must_mention: '四枚刻印行逐字复现',
-  },
-  {
     desc: 'M12219 SAVEINFO 无调教对象的 24 格补位退回半角空格（%("",24%）',
     file: SAVE_LOAD,
     find: '    text += NBSP.repeat(24);',
@@ -142,15 +134,6 @@ export default [
       "    return { content: '<爱  慕>', color: COLOR_LOVE }; // 变异：回退半角空格",
     tests: ['page-life-list'],
     must_mention: '爱慕标签的两格内补位须是 NBSP',
-  },
-  {
-    desc: 'M12224 能力行的前导 2 格补位退回半角空格（SHOW_INFO_ABL 的 %…,8,LEFT% 行）',
-    file: ABLMARK,
-    find: '    row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;',
-    replace:
-      '    row += `${" ".repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`; // 变异：回退',
-    tests: ['chara-info-show'],
-    must_mention: '能力行的列补位须是 NBSP',
   },
   {
     desc: 'M12225 结算表 `)` 与 `=` 之间的 12 格补位退回半角空格（juel-check 的结算表）',
