@@ -6009,7 +6009,7 @@ async function exucution_koujo_k14(event_no) {
 }
 
 /**
- * museum_koujo_k14：博物馆（陈列）口上。展品编号 分档，
+ * museum_koujo_k14：博物馆（陈列）口上。展品编号分档，
  * 空模板骨架。
  */
 async function museum_koujo_k14(event_no) {
@@ -6037,7 +6037,7 @@ async function museum_koujo_k14(event_no) {
 }
 
 /**
- * banishment_koujo_k14：流放口上。处分号 分档，空模板骨架。
+ * banishment_koujo_k14：流放口上。处分号分档，空模板骨架。
  */
 async function banishment_koujo_k14(event_no) {
   if (event_no == 0) {
@@ -6052,7 +6052,7 @@ async function banishment_koujo_k14(event_no) {
 }
 
 /**
- * public_exucution_koujo_k14：公开处刑口上。处分号 分档，
+ * public_exucution_koujo_k14：公开处刑口上。处分号分档，
  * 空模板骨架。
  */
 async function public_exucution_koujo_k14(event_no) {
@@ -6066,7 +6066,7 @@ async function public_exucution_koujo_k14(event_no) {
 }
 
 /**
- * grotesque_koujo_k14：猎奇处刑口上。处分方式 分档，空模板骨架。
+ * grotesque_koujo_k14：猎奇处刑口上。处分方式分档，空模板骨架。
  */
 async function grotesque_koujo_k14(event_no) {
   if (event_no == 0) {

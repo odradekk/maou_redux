@@ -5974,7 +5974,7 @@ async function ntr_koujo_k4(p) {
 }
 
 /**
- * exucution_koujo_k4：处刑口上（处分方式编号 分派；7 记忆消除分支模板未填写，输出空行）。
+ * exucution_koujo_k4：处刑口上（处分方式编号分派；7 记忆消除分支模板未填写，输出空行）。
  */
 async function exucution_koujo_k4(event_no) {
   if (event_no == 4) {
@@ -5991,7 +5991,7 @@ async function exucution_koujo_k4(event_no) {
 }
 
 /**
- * museum_koujo_k4：博物馆口上（展品编号 分派；3/4 有台词，其余分支模板未填写，各输出空行）。
+ * museum_koujo_k4：博物馆口上（展品编号分派；3/4 有台词，其余分支模板未填写，各输出空行）。
  */
 async function museum_koujo_k4(event_no) {
   if (event_no == 0) {
@@ -6018,7 +6018,7 @@ async function museum_koujo_k4(event_no) {
 }
 
 /**
- * banishment_koujo_k4：追放口上（处分号 分派；0 追放有台词，其余分支模板未填写，各输出空行）。
+ * banishment_koujo_k4：追放口上（处分号分派；0 追放有台词，其余分支模板未填写，各输出空行）。
  */
 async function banishment_koujo_k4(event_no) {
   if (event_no == 0) {
@@ -6035,7 +6035,7 @@ async function banishment_koujo_k4(event_no) {
 }
 
 /**
- * public_exucution_koujo_k4：公开处刑口上（处分号 分派；2 魂粉碎模板未填写，输出空行）。
+ * public_exucution_koujo_k4：公开处刑口上（处分号分派；2 魂粉碎模板未填写，输出空行）。
  */
 async function public_exucution_koujo_k4(event_no) {
   if (event_no == 0) {
@@ -6050,7 +6050,7 @@ async function public_exucution_koujo_k4(event_no) {
 }
 
 /**
- * grotesque_koujo_k4：猎奇处刑口上（处分方式 分派；全部分支模板未填写，各输出空行）。
+ * grotesque_koujo_k4：猎奇处刑口上（处分方式分派；全部分支模板未填写，各输出空行）。
  */
 async function grotesque_koujo_k4(event_no) {
   if (event_no == 0) {

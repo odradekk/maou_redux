@@ -12343,10 +12343,10 @@ ntr_koujo_family.register(8, ntr_koujo_k8);
 
 /**
  * exucution_koujo_k8：处刑口上。
- * 处分方式编号 分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
+ * 处分方式编号分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
  * 第 7 档台词未填写，输出空行。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} event_no 处分方式编号（分发体显式传入）
  */
 async function exucution_koujo_k8(event_no) {
   if (event_no == 4) {
@@ -12370,13 +12370,13 @@ async function exucution_koujo_k8(event_no) {
 
 /**
  * museum_koujo_k8：博物馆（标本化）口上。
- * 展品编号 分十档，只有 0 石化与 1 剥制化有台词，其余八档（21 蜡人形 /
+ * 展品编号分十档，只有 0 石化与 1 剥制化有台词，其余八档（21 蜡人形 /
  * 3 人形 / 4 球体关节 / 5 金属 / 6 冰像 / 7 宝石 / 8 家具 / 9 绘画封印）
  * 模板未填台词，各出空行。蜡人形档的条件写作 21：博物馆事件的
- * 展品编号 只会落 0–9（蜡像为 2）或隐藏值 100，该分支实际不触发，
+ * 展品编号只会落 0–9（蜡像为 2）或隐藏值 100，该分支实际不触发，
  * 保留占位。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} event_no 展品编号（分发体显式传入）
  */
 async function museum_koujo_k8(event_no) {
   if (event_no == 0) {
@@ -12418,9 +12418,9 @@ async function museum_koujo_k8(event_no) {
 
 /**
  * banishment_koujo_k8：流放口上（处刑内容不在口上侧）。
- * 处分号 分五档，只有 0 追放有台词，其余四档未填写。
+ * 处分号分五档，只有 0 追放有台词，其余四档未填写。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} event_no 处分号（分发体显式传入）
  */
 async function banishment_koujo_k8(event_no) {
   if (event_no == 0) {
@@ -12445,10 +12445,10 @@ async function banishment_koujo_k8(event_no) {
 
 /**
  * public_exucution_koujo_k8：公开处刑口上
- * （处刑内容不在口上侧）。处分号 分三档：0 凌辱处刑 /
+ * （处刑内容不在口上侧）。处分号分三档：0 凌辱处刑 /
  * 1 绞首刑 / 2 魂粉碎（台词未填写）。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} event_no 处分号（分发体显式传入）
  */
 async function public_exucution_koujo_k8(event_no) {
   if (event_no == 0) {
@@ -12471,10 +12471,10 @@ async function public_exucution_koujo_k8(event_no) {
 
 /**
  * grotesque_koujo_k8：猎奇处刑口上（内容不在口上侧）。
- * 处分方式 分七档（0 四肢切断 / 1 内脏凌辱 / 2 断头台 / 3 火刑 / 4 食肉 /
+ * 处分方式分七档（0 四肢切断 / 1 内脏凌辱 / 2 断头台 / 3 火刑 / 4 食肉 /
  * 5 死灵化 / 6 丧尸化），七档台词全部未填写，只出空行。
  *
- * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
+ * @param {number} event_no 处分方式编号（分发体显式传入）
  */
 async function grotesque_koujo_k8(event_no) {
   if (event_no == 0) {

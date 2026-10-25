@@ -11831,7 +11831,7 @@ async function ntr_koujo_k9(rand, P) {
   return 0;
 }
 
-// exucution_koujo_k9：处刑口上，处分方式编号 分档
+// exucution_koujo_k9：处刑口上，处分方式编号分档
 async function exucution_koujo_k9(event_no) {
   if (event_no == 4) {
     await era.printAndWait(
@@ -11848,7 +11848,7 @@ async function exucution_koujo_k9(event_no) {
   }
 }
 
-// museum_koujo_k9：博物馆口上，展品编号 分档
+// museum_koujo_k9：博物馆口上，展品编号分档
 async function museum_koujo_k9(event_no) {
   if (event_no == 0) {
     await era.printAndWait(
@@ -11877,7 +11877,7 @@ async function museum_koujo_k9(event_no) {
   }
 }
 
-// banishment_koujo_k9：流放口上，处分号 分档
+// banishment_koujo_k9：流放口上，处分号分档
 async function banishment_koujo_k9(event_no) {
   if (event_no == 0) {
     await era.printAndWait(`「我失去作为战士的力量…已经………」`);
@@ -11892,7 +11892,7 @@ async function banishment_koujo_k9(event_no) {
   }
 }
 
-// public_exucution_koujo_k9：公开处刑口上，处分号 分档
+// public_exucution_koujo_k9：公开处刑口上，处分号分档
 async function public_exucution_koujo_k9(event_no) {
   if (event_no == 0) {
     await era.printAndWait(
@@ -11907,7 +11907,7 @@ async function public_exucution_koujo_k9(event_no) {
   }
 }
 
-// grotesque_koujo_k9：猎奇处刑口上，处分方式 分档
+// grotesque_koujo_k9：猎奇处刑口上，处分方式分档
 async function grotesque_koujo_k9(event_no) {
   if (event_no == 0) {
     await era.printAndWait('');

@@ -23,7 +23,7 @@
  *
  * == 空台词槽 ==
  *
- * MUSEUM_KOUJO_K12（展品编号 分档）、GROTESQUE_KOUJO_K12（处分方式
+ * MUSEUM_KOUJO_K12（展品编号分档）、GROTESQUE_KOUJO_K12（处分方式
  * 分档）等空 PRINTFORMW 台词槽未填写，保持空输出；死斗场
  * COLOSSEUM_KOJO_12 同构保留空档。
  *
@@ -5770,7 +5770,7 @@ async function exucution_koujo_k12(event_no) {
   }
 }
 
-// museum_koujo_k12：博物馆口上（展品编号 分档）。
+// museum_koujo_k12：博物馆口上（展品编号分档）。
 async function museum_koujo_k12(event_no) {
   if (event_no == 0) {
     await era.printAndWait(`「不要啊、变成石头什么的……」`);

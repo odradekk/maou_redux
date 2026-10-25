@@ -14080,7 +14080,7 @@ async function ntr_koujo_k7(rand, P) {
 }
 
 /**
- * exucution_koujo_k7：处刑口上。处分方式编号 四档，均无头部检查。
+ * exucution_koujo_k7：处刑口上。处分方式编号四档，均无头部检查。
  * @returns {Promise<number>} 0（源无显式 RETURN，隐式落空）
  */
 async function exucution_koujo_k7(event_no) {
@@ -14099,7 +14099,7 @@ async function exucution_koujo_k7(event_no) {
 }
 
 /**
- * museum_koujo_k7：博物馆展示口上。展品编号 分档。
+ * museum_koujo_k7：博物馆展示口上。展品编号分档。
  * 档位 2（蝋人形化）无台词（模板未填写），不设分支；3-9 档同为空槽，
  * 仅输出空行。
  * @returns {Promise<number>} 0
@@ -14132,7 +14132,7 @@ async function museum_koujo_k7(event_no) {
 }
 
 /**
- * banishment_koujo_k7：流放口上。处分号 五档。
+ * banishment_koujo_k7：流放口上。处分号五档。
  * @returns {Promise<number>} 0
  */
 async function banishment_koujo_k7(event_no) {
@@ -14164,7 +14164,7 @@ async function banishment_koujo_k7(event_no) {
 }
 
 /**
- * public_exucution_koujo_k7：公开处刑口上。处分号 三档。
+ * public_exucution_koujo_k7：公开处刑口上。处分号三档。
  * @returns {Promise<number>} 0
  */
 async function public_exucution_koujo_k7(event_no) {
@@ -14181,7 +14181,7 @@ async function public_exucution_koujo_k7(event_no) {
 }
 
 /**
- * grotesque_koujo_k7：猎奇口上。处分方式 七档，全空。
+ * grotesque_koujo_k7：猎奇口上。处分方式七档，全空。
  * @returns {Promise<number>} 0
  */
 async function grotesque_koujo_k7(event_no) {
