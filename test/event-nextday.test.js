@@ -241,8 +241,9 @@ test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算
   );
 
   // EVENT_NEWDAY 的晨间事件全是存根；入口自动存档（#137，见下一条用例）
-  // 经 saveinfo 的副作用改写 TARGET/ASSI 指针（FLAG:1/FLAG:2 缺省 0
-  // 恒 >= 0 → 双写 0）；随后进入 endcheck（#116 真调用）：
+  // 只写存档备注、不动存档变量（#868 删掉了 SAVEINFO 改写 TARGET/ASSI 的
+  // 副作用——这里此前能看到那两笔 flag:10005/10006 的 0 写）；随后进入
+  // endcheck（#116 真调用）：
   // ENDRESET 十一角清场（剧情角色全不在场 → 十一笔零写，源码顺序）+
   // ENDCHECKMAIN 反叛判定（夹具零播种 → 威望 0 ≤ 0 → FLAG:2816 = 10）；
   // 其余四条线条件全不触发，ENDCHECKCHARA 无角色可定线，分派循环对空注册表静默
@@ -257,8 +258,6 @@ test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算
       { name: 'exflag:9012', value: 0 },
       { name: 'exflag:9013', value: 0 },
       { name: 'exflag:9012', value: 0 },
-      { name: 'flag:10005', value: 0 }, // TARGET = FLAG:1（自动存档的 SAVEINFO 副作用）
-      { name: 'flag:10006', value: 0 }, // ASSI = FLAG:2（同上）
       { name: 'exflag:2805', value: 0 }, // 玛奥
       { name: 'exflag:2813', value: 0 }, // 金红桃
       { name: 'exflag:2814', value: 0 }, // 银黑桃
@@ -298,7 +297,7 @@ test('自动存档（#137/ADR-0006）：EVENT_NEWDAY 入口写 99 号槽，备�
   assert.equal(saves.length, 1, '入口恰好存一次');
   assert.match(
     saves[0].args[1],
-    /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第\u00A07日午前/,
+    /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第7日午前/,
     '备注 = 「自动」前缀 + %GETTIMES()% + saveinfo 正文（#104 决议第三节）',
   );
   assert.equal(
