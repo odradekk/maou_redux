@@ -1,37 +1,73 @@
 # 本表由人工维护。
 "阴核快感":
   id: 0
+  name: "clitoris_pleasure"
+  type: "number"
 "私处快感":
   id: 1
+  name: "vagina_pleasure"
+  type: "number"
 "肛门快感":
   id: 2
+  name: "anal_pleasure"
+  type: "number"
 "情爱":
   id: 3
+  name: "affection"
+  type: "number"
 "性行为":
   id: 4
+  name: "intercourse"
+  type: "number"
 "达成感":
   id: 5
+  name: "fulfillment"
+  type: "number"
 "疼痛":
   id: 6
+  name: "pain"
+  type: "number"
 "成瘾追加":
   id: 7
+  name: "addiction_gain"
+  type: "number"
 "不洁":
   id: 8
+  name: "filth"
+  type: "number"
 "液体追加":
   id: 10
+  name: "fluid_gain"
+  type: "number"
 "欲情追加":
   id: 11
+  name: "lust_gain"
+  type: "number"
 "露出":
   id: 12
+  name: "exposure"
+  type: "number"
 "屈从":
   id: 13
+  name: "submission"
+  type: "number"
 "逃离":
   id: 14
+  name: "escape"
+  type: "number"
 "反感追加":
   id: 15
+  name: "aversion_gain"
+  type: "number"
 "恭顺追加":
   id: 16
+  name: "obedience_gain"
+  type: "number"
 "乳房快感":
   id: 17
+  name: "breast_pleasure"
+  type: "number"
 "局部快感":
   id: 18
+  name: "penis_pleasure"
+  type: "number"

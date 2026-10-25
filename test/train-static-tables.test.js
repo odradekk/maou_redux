@@ -54,9 +54,16 @@ engine_test(
     assert.equal(loader.static_data.palam, undefined);
     assert.equal(loader.static_data.juel['阴核'], 0);
     assert.equal(loader.static_data.juel['否定'], 100);
-    // 开发套件键 k 的缺省前缀是 param（引擎 param/palam 装载分支如此），不是表名
+    // 开发套件键 k 取自条目的 name（Palam 全表自 #901 起登记）；条目没写 name
+    // 时才是引擎的缺省前缀 param + 序号——拿一段不带 name 的文本钉住后半句
     assert.deepEqual(loader.field_names.juel[0], {
       n: '阴核',
+      k: 'clitoris',
+      t: 'number',
+    });
+    const unnamed = load_table('"试验":\n  id: 0\n', 'yml', 'palam');
+    assert.deepEqual(unnamed.field_names.juel[0], {
+      n: '试验',
       k: 'param0',
       t: 'number',
     });
