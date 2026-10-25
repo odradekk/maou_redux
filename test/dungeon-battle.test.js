@@ -201,8 +201,6 @@ test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asy
   const battle = load(fixture, 'dungeon/dungeon-battle');
   fixture.era.beginTrain(0, 1); // #508：三连的调教域表要建起来
   fixture.store.set('talent:1:193', 1); // 肛门虫寄生
-  // 有活着的防御列，enemy_attack 才走得到 MAGIC（三列全灭会先早退）
-  fixture.battle('DEFENSE_1').count = 1;
 
   assert.equal(await battle.enemy_attack(1, 0, () => 0), 999, 'MAGIC 短路');
   assert.equal(

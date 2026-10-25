@@ -528,22 +528,22 @@ function defence_chara_extra_dmg(arg0, dmg, rand) {
 
 /**
  * 防御侧选择（enemy_attack 与 slave_monster_attack 的同构段）：扫三列
- * 数量槽，返回首个存活列的列号。三列全灭返回 -1。
+ * 数量槽，返回首个存活列。
  *
- * 调用方拿到 -1 时走「负责防御的怪物全灭了」那条早退——旧写法的判据是
- * 扫描终值 `b >= 400`，而 REPEAT 3 的 b 最多 300，那条分支永假，-1 会带着
- * 列头一路算下去、读到别的列的字段。#883 把判据改成真实的「没找到活列」；
- * 两个入口（dungeon_party_battle / dungeon_battle2_party）都在开打前把三列
- * 的 count 填成 ≥ 1，所以这条分支是防线而不是可达路径。
- * @returns {number} 列号（0/1/2），全灭 = -1
+ * 返回值照样是「列头 + 扫描终值」两个量：#883 把列头换成列号，`b` 仍按旧
+ * 写法给出等价的值（列头 + 99，全灭时 300）——调用方的 `b >= 400` 因此
+ * 照旧永假、全灭时带着列号 -1 继续算。这条判据本身是缺陷（REPEAT 3 的终值
+ * 最多 300），但修它属于行为变更，不并入「换个容器」这张票。
+ * @returns {{column: number, b: number}} column = 列号（全灭 -1），
+ *   b = 旧写法的扫描终值（只在上面那条永不成立的判据里被读）
  */
 function pick_defender_column() {
   for (let column = 0; column < 3; column += 1) {
     if (battle_column(column).count > 0) {
-      return column;
+      return { column, b: column * 100 + 99 };
     }
   }
-  return -1;
+  return { column: -1, b: 300 }; // 全灭（column 无意义）
 }
 
 /**
@@ -574,9 +574,10 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   }
 
   // 防御侧の防御力を算出
-  let c = pick_defender_column();
-  // 三列全灭（开打前一定填满三列，见 pick_defender_column 注释）
-  if (c < 0) {
+  const { column: c, b: scan_b } = pick_defender_column();
+  // 全滅時（B >= 400）——REPEAT 3 的扫描终值最多 300，不可达（见
+  // pick_defender_column 注释：这条判据的缺陷另开工单）
+  if (scan_b >= 400) {
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
       await era.waitAnyKey();
@@ -894,9 +895,9 @@ async function slave_monster_attack(rand) {
   }
 
   // 防御侧选择（同 ENEMY_ATTACK）
-  const c = pick_defender_column();
-  if (c < 0) {
-    // 三列全灭（防线分支，见 pick_defender_column 注释）
+  const { column: c, b: scan_b } = pick_defender_column();
+  if (scan_b >= 400) {
+    // 全滅時（不可达分支，见 pick_defender_column 注释）
     if ((settings & 32) !== 0) {
       era.print('负责防御的怪物全灭了………');
       await era.waitAnyKey();

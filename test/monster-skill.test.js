@@ -48,16 +48,6 @@ function setup() {
   fixture.battle('DEFENSE_1').attack = 30;
   fixture.battle('DEFENSE_1').defense = 40;
   fixture.store.set('itemname:100', '狗头人');
-  // 列 2 由精英路径按「角色号当列号」读写（既有怪癖，见
-  // use_monster_skill 的注释）：这里的四个值就是旧写法从列 0 的偏移格读到
-  // 的那几个数（角色号 2 → +0/+1/+2/+3 落到列 0 的攻/防/速/特），换到列 2
-  // 的具名字段上，数值期望因此不变。
-  Object.assign(fixture.battle('DEFENSE_3'), {
-    id: 30,
-    level: 40,
-    attack: 0,
-    defense: 0,
-  });
   return fixture;
 }
 
@@ -239,7 +229,7 @@ test('use_monster_skill：十八种技能保留精英版的数值差异与写入
     [15, 'cflag:2:12', 24],
     [16, 'base:1:0', 1950],
     [17, 'base:1:1', 900],
-    [18, 'battle:DEFENSE_3:defense', 2],
+    [18, 'battle:DEFENSE_1:special', 2],
   ];
 
   for (const [skill, key, expected] of cases) {
@@ -305,12 +295,10 @@ test('use_monster_skill：怪物类型写列里的防御，未知类型只演出
 });
 
 test('use_monster_skill：精英射击沿用列里的怪物名而非传入名字', async () => {
-  // 精英路径把角色号 2 当列号用（既有怪癖）：怪物名取自列 2 的 id 槽，
-  // 不是形参 user_name。列号制下它落在 DEFENSE_3（旧写法的偏移读法落在
-  // 列 0 的其它槽上——同样是错的列，怪癖本身不变）。
+  // 精英路径把角色号 2 当 E 表下标用（既有怪癖）：怪物名取自 E:2 =
+  // 列 0 的攻击力槽，不是形参 user_name。
   const fixture = setup();
   fixture.store.set('flag:5', 32);
-  fixture.battle('DEFENSE_3').id = 30;
   fixture.store.set('itemname:30', '错位怪物名');
 
   await load(fixture).use_monster_skill(1, 16, 2, 0, 2, '贝丝', seq(0));

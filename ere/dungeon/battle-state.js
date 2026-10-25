@@ -52,24 +52,36 @@ const BATTLE_COLUMN = Object.freeze({
 const COLUMN_COUNT = 6;
 
 /**
+ * 字段名按原偏移表的次序（+0 … +10；+99 的 count 在表外）。
+ *
+ * 只给「把角色号当 E 表下标」那处既有怪癖换算用（monster-skill 的精英
+ * 路径，见该文件的 legacy_cell）：那张工单修完之后本常量与那条路径一起删。
+ */
+const BATTLE_FIELD_ORDER = Object.freeze([
+  'id',
+  'level',
+  'attack',
+  'defense',
+  'speed',
+  'special',
+  'magic',
+  'rape_type',
+  'boss',
+  'status',
+  'resistance',
+]);
+
+/**
  * 一列的初值：十二个字段全 0（原 E 表全区初始 0）。
  * @returns {object} 一列的战斗状态
  */
 function new_column() {
-  return {
-    id: 0,
-    level: 0,
-    attack: 0,
-    defense: 0,
-    speed: 0,
-    special: 0,
-    magic: 0,
-    rape_type: 0,
-    boss: 0,
-    status: 0,
-    resistance: 0,
-    count: 0,
-  };
+  const row = {};
+  for (const field of BATTLE_FIELD_ORDER) {
+    row[field] = 0;
+  }
+  row.count = 0;
+  return row;
 }
 
 let columns = Array.from({ length: COLUMN_COUNT }, new_column);
@@ -102,6 +114,7 @@ function reset_battle_state() {
 
 module.exports = {
   BATTLE_COLUMN,
+  BATTLE_FIELD_ORDER,
   battle_column,
   reset_battle_state,
 };

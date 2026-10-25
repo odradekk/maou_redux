@@ -277,7 +277,15 @@ async function ryouzyoku(arg, rand) {
   let mon_count = 0;
   let mon_fear = 0;
   // 第一轮扫描：找哪一列有怪物、且 CFLAG:130（上次凌辱怪物 ID）
-  // 命中该列 → MON_FEAR = 该列的怪物号（主循环拿它和每列的怪物号比）
+  // 命中该列 → MON_FEAR = 该列的「列头值」（列号 × 100）。
+  //
+  // 这里存的是**列头值而不是怪物号**，与主循环的 `mon_fear === 该列怪物号`
+  // 比较是两套量纲：只有怪物号恰为 0/100/200 时才会命中「同一怪物再来」
+  // 分支。这是移植进来的既有对照（原脚本的 MON_COUNT 就是列头，主循环却
+  // 拿它与 LOCAL:1 的怪物号比），看起来是缺陷；但改它会让「凌辱畏怖计数」
+  // CFLAG:131 从「几乎不累加」变成「按记忆累加」，而 CFLAG:131 是战斗伤害
+  // 与男版台词的分档键——那是战斗平衡改动，不并入「战斗状态换个容器」这张
+  // 票。修它另开工单，届时把这里换成怪物号、用例跟着翻面。
   while (mon_count < 3) {
     const row = battle_column(mon_count);
     // 数量 <= 0 时清掉凌辱类型槽
@@ -287,7 +295,7 @@ async function ryouzyoku(arg, rand) {
     if (row.rape_type > 0) {
       const local_1 = row.id; // 怪物号
       if ((era.get(`cflag:${arg}:130`) || 0) === local_1) {
-        mon_fear = local_1;
+        mon_fear = mon_count * 100; // 旧写法的列头值（= 原 MON_COUNT）
       }
     }
     mon_count += 1;

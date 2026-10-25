@@ -2954,8 +2954,8 @@ export default [
   {
     desc: 'M16854 列的 resistance 字段漏写（字段集少一项）',
     file: 'ere/dungeon/battle-state.js',
-    find: '    status: 0,\n    resistance: 0,\n',
-    replace: '    status: 0,\n',
+    find: "  'status',\n  'resistance',\n]);",
+    replace: "  'status',\n]);",
     tests: ['dungeon-battle-state'],
     must_mention: '字段恰是原偏移表的十二项',
   },

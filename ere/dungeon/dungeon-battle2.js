@@ -101,8 +101,9 @@ function tatoo_locate_name(locate) {
  * @param {number} arg0 奴隶
  * @param {number} arg1 回合数
  * @returns {number} 选中配下怪物时是它的列号（0-2），否则 -1（奴隶本体）。
- *   旧写法返回数量槽地址 99/199/299、调用方以 `>= 99` 分流；列号制下
- *   负值就是「没选中怪物」，判据不再依赖槽地址的量纲。
+ *   旧写法返回数量槽地址 99/199/299、调用方以 `>= 99` 分流；列号制下列号
+ *   恒小于 99，于是「奴隶号本身 >= 99 且没选中怪物」这条旧写法会误入
+ *   怪物分支的情形需要在调用方显式补上（见调用点）。
  */
 function select_slave(arg0, arg1) {
   let member = 1;
@@ -1231,8 +1232,12 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     // 戦闘を行うキャラの選択
     const defer = battle.select_atker(enemy, turn);
     const minion_column = select_slave(arg0, turn); // -1 = 奴隶本体
+    // 旧判据是「返回值 >= 99」：选中时返回值是数量槽地址（99/199/299），
+    // 没选中时返回奴隶号本身——于是奴隶号 >= 99 也会走进怪物分支。列号制
+    // 下第一种来源消失了，第二种照样存在，所以这里把两种来源分开写、行为
+    // 照旧（这条量纲混淆是缺陷，另开工单修）。
     let atker = arg0;
-    if (minion_column >= 0) {
+    if (minion_column >= 0 || arg0 >= 99) {
       atker = defer;
     }
     era_flag.target = atker; // A = RESULT

@@ -199,10 +199,32 @@ test('RYOUZYOKU 主框架：同一怪物再来 → CFLAG:131 递增（畏怖计�
   const fixture = await setup_ravish((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
+    f.store.set('cflag:31:130', 100); // 上次凌辱过狗头人（第 2 列）
+    f.store.set('cflag:31:131', 2);
+    // 狗头人（ID 100）放第 2 列（列头 100）——扫描记 MON_FEAR = 100（列头），
+    // 主循环 LOCAL:1 = 100（怪物号）→ MON_FEAR == LOCAL:1 → CFLAG:131++
+    // （列头/怪物号近似判定）
+    f.battle('DEFENSE_2').id = 100;
+    f.battle('DEFENSE_2').rape_type = 1;
+    f.battle('DEFENSE_2').count = 5;
+  });
+  const mod = fixture_module(fixture);
+  fixture.era.input = async () => 0;
+  await mod.ryouzyoku(31, seq_rand(0));
+  // 同一怪物（MON_FEAR == LOCAL:1）→ CFLAG:131++
+  assert.equal(fixture.store.get('cflag:31:131'), 3);
+});
+
+test('RYOUZYOKU 主框架：记忆的怪物不在列头量纲上对不上怪物号 → 计数不增（既有缺陷的把手）', async () => {
+  const fixture = await setup_ravish((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
     f.store.set('cflag:31:130', 110); // 上次凌辱过兽人（ID 110）
     f.store.set('cflag:31:131', 2);
-    // 兽人（ID 110）放第 2 列——第一轮扫描记下它的怪物号，主循环逐列比对
-    // 怪物号 → 同一怪物 → CFLAG:131++
+    // 兽人（ID 110）放第 2 列：第一轮扫描记下的 MON_FEAR 是列头 100，
+    // 与这个怪物号对不上，于是落「不同怪物」分支——CFLAG:131 不动。
+    // 这条与上一条一起把「列头/怪物号两套量纲」的现状钉住；单开一票修它时
+    // 两条都要翻面（改为按怪物号累加）。
     f.battle('DEFENSE_2').id = 110;
     f.battle('DEFENSE_2').rape_type = 1;
     f.battle('DEFENSE_2').count = 5;
@@ -210,8 +232,7 @@ test('RYOUZYOKU 主框架：同一怪物再来 → CFLAG:131 递增（畏怖计�
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
   await mod.ryouzyoku(31, seq_rand(0));
-  // 同一怪物（MON_FEAR == 该列怪物号）→ CFLAG:131++
-  assert.equal(fixture.store.get('cflag:31:131'), 3);
+  assert.equal(fixture.store.get('cflag:31:131'), 2, '计数不增');
 });
 
 test('RYOUZYOKU 主框架：男人（TALENT:122）→ 分派到 H14 男版（*_ryou_man）', async () => {
