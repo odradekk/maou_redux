@@ -32,8 +32,8 @@
  *   - 调教期专表的读写在调教外会失效（EraElectron 的 tflag/tequip/palam 随
  *     endTrain 删除）：TFLAG:13/14 走 game.train 的调教外通道，TEQUIP:35
  *     （安全套）改函数内局部，欲情读调教结束时存下的 CFLAG:668
- *     （system/train/train-end.js 的 save_train_desire）——三处都在
- *     offervirgin_check 的 JSDoc 里记了出处。
+ *     （system/train/train-end.js 的 save_train_desire）——三处各自在使用点
+ *     旁记了数据来源。
  *   - 三处 `[0] - 好的 / [1] - 不要` 式选项
  *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；#572）。
  *     随之「其余值 GOTO INPUT_LOOP」的重问支在实机上不可达（引擎按白名单
