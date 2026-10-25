@@ -180,13 +180,14 @@ function registerTools(ctx, config = {}) {
       const cwd = exec.agent?.session?.header?.cwd;
       if (cwd === undefined) throw new Error('ere_check_game 需要一个带工作目录的会话');
       const gameRoot = resolveUserPath(args.path, cwd);
+      const includeInfo = args.includeInfo === true;
       const report = checkGame({
         gameRoot,
         apiIndex: apiIndex(),
         maxFindings: Number.isSafeInteger(args.maxFindings) ? args.maxFindings : 200,
+        includeInfo,
       });
       exec.signal.throwIfAborted();
-      const includeInfo = args.includeInfo === true;
       const renderRow = (finding) =>
         `- ${finding.file}${finding.line > 0 ? `:${finding.line}` : ''} — ${finding.message}`;
       const info = report.findings.filter((finding) => finding.severity === 'info');
