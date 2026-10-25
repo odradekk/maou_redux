@@ -14080,66 +14080,66 @@ async function ntr_koujo_k7(rand, P) {
 }
 
 /**
- * exucution_koujo_k7：处刑口上。TFLAG:16 四档，均无头部检查。
+ * exucution_koujo_k7：处刑口上。处分方式编号 四档，均无头部检查。
  * @returns {Promise<number>} 0（源无显式 RETURN，隐式落空）
  */
-async function exucution_koujo_k7() {
-  if (era0('tflag:16') == 4) {
+async function exucution_koujo_k7(event_no) {
+  if (event_no == 4) {
     await era.printAndWait(
       `「肉、肉便器？…我、我…要为怪物一直生孩子到死为止？…不、不要…放开我！我不要那样啊啊啊啊！」`,
     );
-  } else if (era0('tflag:16') == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait(`「下达命令…主人………」`);
-  } else if (era0('tflag:16') == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait(`「我居然被怪物们当做慰安妇………」`);
-  } else if (era0('tflag:16') == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
   return 0;
 }
 
 /**
- * museum_koujo_k7：博物馆展示口上。TFLAG:500 分档。
+ * museum_koujo_k7：博物馆展示口上。展品编号 分档。
  * 档位 2（蝋人形化）无台词（模板未填写），不设分支；3-9 档同为空槽，
  * 仅输出空行。
  * @returns {Promise<number>} 0
  */
-async function museum_koujo_k7() {
-  if (era0('tflag:500') == 0) {
+async function museum_koujo_k7(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(
       `「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」`,
     );
-  } else if (era0('tflag:500') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(
       `「要把活着的我制作成标本…？不、不要…请停止…不要啊啊啊啊！」`,
     );
-  } else if (era0('tflag:500') == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
   return 0;
 }
 
 /**
- * banishment_koujo_k7：流放口上。TFLAG:510 五档。
+ * banishment_koujo_k7：流放口上。处分号 五档。
  * @returns {Promise<number>} 0
  */
-async function banishment_koujo_k7() {
+async function banishment_koujo_k7(event_no) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
 
-  if (era0('tflag:510') == 0) {
+  if (event_no == 0) {
     await era.printAndWait(`「回不去了…狂王大人那里…已经回不去了………」`);
     await era.printAndWait(`失去了力量${target_name}之后去了哪里谁也不知道。`);
     await era.printAndWait(
@@ -14151,53 +14151,53 @@ async function banishment_koujo_k7() {
     await era.printAndWait(
       `无论如何${target_name}在那以后都没有再出现在历史舞台上………`,
     );
-  } else if (era0('tflag:510') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (era0('tflag:510') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (era0('tflag:510') == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (era0('tflag:510') == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
   }
   return 0;
 }
 
 /**
- * public_exucution_koujo_k7：公开处刑口上。TFLAG:520 三档。
+ * public_exucution_koujo_k7：公开处刑口上。处分号 三档。
  * @returns {Promise<number>} 0
  */
-async function public_exucution_koujo_k7() {
-  if (era0('tflag:520') == 0) {
+async function public_exucution_koujo_k7(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(
       `「嘎咕…老实说…咳咳咳…牙齿被打折断…脸的形状…变得很奇怪啊…咕呜…咕呜」`,
     );
-  } else if (era0('tflag:520') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(`「这里…这个绞刑台是我最后的舞台吗…」`);
-  } else if (era0('tflag:520') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
   return 0;
 }
 
 /**
- * grotesque_koujo_k7：猎奇口上。TFLAG:530 七档，全空。
+ * grotesque_koujo_k7：猎奇口上。处分方式 七档，全空。
  * @returns {Promise<number>} 0
  */
-async function grotesque_koujo_k7() {
-  if (era0('tflag:530') == 0) {
+async function grotesque_koujo_k7(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
   return 0;

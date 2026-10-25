@@ -23,7 +23,7 @@
  *
  * == 空台词槽 ==
  *
- * MUSEUM_KOUJO_K12（TFLAG:500 分档）、GROTESQUE_KOUJO_K12（TFLAG:530
+ * MUSEUM_KOUJO_K12（展品编号 分档）、GROTESQUE_KOUJO_K12（处分方式
  * 分档）等空 PRINTFORMW 台词槽未填写，保持空输出；死斗场
  * COLOSSEUM_KOJO_12 同构保留空档。
  *
@@ -5756,95 +5756,90 @@ async function dungeon_attack_k12(rand) {
 }
 
 // exucution_koujo_k12：处刑口上。
-async function exucution_koujo_k12(rand) {
-  void rand;
+async function exucution_koujo_k12(event_no) {
   const target = era_flag.target;
   const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
-  if (game.event.犬射精或处刑口上 == 4) {
+  if (event_no == 4) {
     await era.printAndWait(`「不要啊、${sc()}、要变成白痴了……」`);
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait(`「嗯……知道了」`);
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait(`「这样子、好讨厌！」`);
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
 
-// museum_koujo_k12：博物馆口上（TFLAG:500 分档）。
-async function museum_koujo_k12(rand) {
-  void rand;
-  if (game.event.博物馆口上 == 0) {
+// museum_koujo_k12：博物馆口上（展品编号 分档）。
+async function museum_koujo_k12(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「不要啊、变成石头什么的……」`);
-  } else if (game.event.博物馆口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(`「救命！」`);
-  } else if (game.event.博物馆口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait(`「咕、咕欸欸……」`);
-  } else if (game.event.博物馆口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait(`「真是被要求摆出了耻辱的姿势呢…这样就行了吧？」`);
-  } else if (game.event.博物馆口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait(
       `「身、身体、结构被改变……的感觉、什么的…真是稀奇的…体…验」`,
     );
-  } else if (game.event.博物馆口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
 }
 
-// banishment_koujo_k12：流放口上（TFLAG:510）。
-async function banishment_koujo_k12(rand) {
-  void rand;
+// banishment_koujo_k12：流放口上（处分号）。
+async function banishment_koujo_k12(event_no) {
   const target = era_flag.target;
   const sc = (x = target) => self_call(x); // %SELF_CALL(...)%
-  if (game.event.流放口上 == 0) {
+  if (event_no == 0) {
     await era.printAndWait(`「${sc()}的研究、就到此为止了吗……」`);
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
   }
 }
 
-// public_exucution_koujo_k12：公开处刑口上（TFLAG:520）。
-async function public_exucution_koujo_k12(rand) {
-  void rand;
-  if (game.event.公开处刑口上 == 0) {
+// public_exucution_koujo_k12：公开处刑口上（处分号）。
+async function public_exucution_koujo_k12(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「咿呀啊～！　救命啊～！」`);
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(`「我不想死……谁来救救我……」`);
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
-// grotesque_koujo_k12：猎奇处刑口上（TFLAG:530）。
-async function grotesque_koujo_k12(rand) {
-  void rand;
-  if (game.event.猎奇处刑口上 == 0) {
+// grotesque_koujo_k12：猎奇处刑口上（处分方式）。
+async function grotesque_koujo_k12(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }

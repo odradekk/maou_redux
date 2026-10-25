@@ -38,8 +38,9 @@
  * 走 chara(cid).chara（特别服装类型）。FLAG:7/108 走 game.kojo（口上开关/
  * 口上存在_8）；FLAG:37/500 走 game.system（着衣系统/狂王性别）；FLAG:62
  * 走 game.train（肉便器行动）；TFLAG:899/13/20/3/400 走 game.train；
- * TFLAG:150/21/22/23/24 走 game.system；TFLAG:16 走 game.event（犬射精或
- * 处刑口上）；TFLAG:500/510/520/530/60 走 game.event。TFLAG:18 不在本文件读：
+ * TFLAG:150/21/22/23/24 走 game.system；TFLAG:60 走 game.event。处刑五族的
+ * 处分方式/展品编号由分发体作为实参传入（#817），不再经 tflag。
+ * TFLAG:18 不在本文件读：
  * GOHOUBI_AFTER_KOUJO_K8 与 OSIOKI_KOUJO_K8 由族把它当 choice 实参传进来
  * （同 K3）。TALENT/MARK/BASE/TEQUIP 按既有约定
  * 保留裸寻址（gen-facade 只禁 cflag/flag/tflag 字面量）。
@@ -12342,26 +12343,24 @@ ntr_koujo_family.register(8, ntr_koujo_k8);
 
 /**
  * exucution_koujo_k8：处刑口上。
- * TFLAG:16 分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
+ * 处分方式编号 分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
  * 第 7 档台词未填写，输出空行。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
-async function exucution_koujo_k8(rand) {
-  void rand;
-
-  if (game.event.犬射精或处刑口上 == 4) {
+async function exucution_koujo_k8(event_no) {
+  if (event_no == 4) {
     // 肉便器刑
     await era.printAndWait(
       `「怎么这样…我一生都要不停的给怪物生孩子什么的…啊…不要，放开我…啊啊啊啊啊啊啊！」`,
     );
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     // 戦闘員化
     await era.printAndWait(`「什么都好…命令…为了…主人大人………」`);
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     // 晒し台刑
     await era.printAndWait(`「啊…啊啊啊…做了这种事…绝对饶不了你………！」`);
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     // 記憶を消して解放する（台词未填写）
     await era.printAndWait('');
   }
@@ -12371,47 +12370,45 @@ async function exucution_koujo_k8(rand) {
 
 /**
  * museum_koujo_k8：博物馆（标本化）口上。
- * TFLAG:500 分十档，只有 0 石化与 1 剥制化有台词，其余八档（21 蜡人形 /
+ * 展品编号 分十档，只有 0 石化与 1 剥制化有台词，其余八档（21 蜡人形 /
  * 3 人形 / 4 球体关节 / 5 金属 / 6 冰像 / 7 宝石 / 8 家具 / 9 绘画封印）
  * 模板未填台词，各出空行。蜡人形档的条件写作 21：博物馆事件的
- * TFLAG:500 只会落 0–9（蜡像为 2）或隐藏值 100，该分支实际不触发，
+ * 展品编号 只会落 0–9（蜡像为 2）或隐藏值 100，该分支实际不触发，
  * 保留占位。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
-async function museum_koujo_k8(rand) {
-  void rand;
-
-  if (game.event.博物馆口上 == 0) {
+async function museum_koujo_k8(event_no) {
+  if (event_no == 0) {
     // 石化
     await era.printAndWait(
       `「啊啊…我、我的身体…变得越来越冷了…啊…啊啊…不要…不………要…………」`,
     );
-  } else if (game.event.博物馆口上 == 1) {
+  } else if (event_no == 1) {
     // 剥製化
     await era.printAndWait(`「死了之后还一直暴露着…呜…呜呜呜………」`);
-  } else if (game.event.博物馆口上 == 21) {
+  } else if (event_no == 21) {
     // 蝋人形化（模板未填台词；档值 21 实际不触发，见函数头）
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 3) {
+  } else if (event_no == 3) {
     // 人形化(マネキン)
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 4) {
+  } else if (event_no == 4) {
     // 人形化(球体間接)
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 5) {
+  } else if (event_no == 5) {
     // 金属化
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 6) {
+  } else if (event_no == 6) {
     // 氷像化
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 7) {
+  } else if (event_no == 7) {
     // 宝石化
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 8) {
+  } else if (event_no == 8) {
     // 家具化
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 9) {
+  } else if (event_no == 9) {
     // 絵画封印
     await era.printAndWait('');
   }
@@ -12421,26 +12418,24 @@ async function museum_koujo_k8(rand) {
 
 /**
  * banishment_koujo_k8：流放口上（处刑内容不在口上侧）。
- * TFLAG:510 分五档，只有 0 追放有台词，其余四档未填写。
+ * 处分号 分五档，只有 0 追放有台词，其余四档未填写。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
-async function banishment_koujo_k8(rand) {
-  void rand;
-
-  if (game.event.流放口上 == 0) {
+async function banishment_koujo_k8(event_no) {
+  if (event_no == 0) {
     // 追放
     await era.printAndWait(`「这样就自由了…但是、失去力量的我的存在价值………」`);
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     // 男体化（台词未填写）
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     // 記憶消去
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     // 小動物化
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 4) {
+  } else if (event_no == 4) {
     // 元の生活に戻す
     await era.printAndWait('');
   }
@@ -12450,25 +12445,23 @@ async function banishment_koujo_k8(rand) {
 
 /**
  * public_exucution_koujo_k8：公开处刑口上
- * （处刑内容不在口上侧）。TFLAG:520 分三档：0 凌辱处刑 /
+ * （处刑内容不在口上侧）。处分号 分三档：0 凌辱处刑 /
  * 1 绞首刑 / 2 魂粉碎（台词未填写）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
-async function public_exucution_koujo_k8(rand) {
-  void rand;
-
-  if (game.event.公开处刑口上 == 0) {
+async function public_exucution_koujo_k8(event_no) {
+  if (event_no == 0) {
     // 陵辱処刑
     await era.printAndWait(
       `「那个烙印是…啊…停、停下快停下…呀…啊…啊呀啊啊啊啊啊啊啊啊！」`,
     );
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     // 絞首刑
     await era.printAndWait(
       `「能不能至少给我套个皮革袋子、我不想漏出可怜的死相…呜…呜呜呜呜………」`,
     );
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     // 魂粉砕（模板未填台词，输出空行）
     await era.printAndWait('');
   }
@@ -12478,33 +12471,31 @@ async function public_exucution_koujo_k8(rand) {
 
 /**
  * grotesque_koujo_k8：猎奇处刑口上（内容不在口上侧）。
- * TFLAG:530 分七档（0 四肢切断 / 1 内脏凌辱 / 2 断头台 / 3 火刑 / 4 食肉 /
+ * 处分方式 分七档（0 四肢切断 / 1 内脏凌辱 / 2 断头台 / 3 火刑 / 4 食肉 /
  * 5 死灵化 / 6 丧尸化），七档台词全部未填写，只出空行。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
-async function grotesque_koujo_k8(rand) {
-  void rand;
-
-  if (game.event.猎奇处刑口上 == 0) {
+async function grotesque_koujo_k8(event_no) {
+  if (event_no == 0) {
     // 四肢切断刑
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     // 内臓陵辱刑
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     // ギロチン刑
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     // 火あぶりの刑
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     // 食肉刑
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     // 死霊化
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     // ゾンビ化
     await era.printAndWait('');
   }

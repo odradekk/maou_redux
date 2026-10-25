@@ -9046,11 +9046,11 @@ async function ntr_koujo_k904(p) {
 }
 
 // exucution_koujo_k904
-async function exucution_koujo_k904() {
+async function exucution_koujo_k904(event_no) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = (cid = target) => self_call(cid);
-  if (game.event.犬射精或处刑口上 == 4) {
+  if (event_no == 4) {
     if (era.get(`talent:${target}:85`)) {
       await era.printAndWait(
         `「如，如果这样能取悦魔王大人的话……身体不管变成什么样……${sc()}都……都会……努力……」`,
@@ -9059,7 +9059,7 @@ async function exucution_koujo_k904() {
     await era.printAndWait(
       `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
     );
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     if (era.get(`talent:${target}:85`)) {
       await era.printAndWait(
         `「如，如果这是魔王大人的要求……${sc()}……很，很荣幸……的说……」`,
@@ -9068,9 +9068,9 @@ async function exucution_koujo_k904() {
     await era.printAndWait(
       `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
     );
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
@@ -9092,11 +9092,11 @@ async function museum_koujo_k904() {
 }
 
 // banishment_koujo_k904
-async function banishment_koujo_k904() {
+async function banishment_koujo_k904(event_no) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = (cid = target) => self_call(cid);
-  if (game.event.流放口上 == 0) {
+  if (event_no == 0) {
     if (era.get(`talent:${target}:85`)) {
       await era.printAndWait(
         `「不要……！${sc()}只想……只想呆在魔王大人的身边，明明只想这样子的说……！」`,
@@ -9116,21 +9116,21 @@ async function banishment_koujo_k904() {
         `望着曾经的家乡，${target_name}的眼泪沿着脸颊滑落下来。`,
       );
     }
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
   }
 }
 
 // public_exucution_koujo_k904
-async function public_exucution_koujo_k904() {
+async function public_exucution_koujo_k904(event_no) {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = (cid = target) => self_call(cid);
-  if (game.event.公开处刑口上 == 0) {
+  if (event_no == 0) {
     if (era.get(`talent:${target}:85`)) {
       await era.printAndWait(
         `「如，如果这样能取悦魔王大人的话……身体不管变成什么样……${sc()}都……都会……努力……」`,
@@ -9139,7 +9139,7 @@ async function public_exucution_koujo_k904() {
     await era.printAndWait(
       `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
     );
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     if (era.get(`talent:${target}:85`)) {
       await era.printAndWait(
         `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
@@ -9148,26 +9148,26 @@ async function public_exucution_koujo_k904() {
     await era.printAndWait(
       `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
     );
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
 // grotesque_koujo_k904
-async function grotesque_koujo_k904() {
-  if (game.event.猎奇处刑口上 == 0) {
+async function grotesque_koujo_k904(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }

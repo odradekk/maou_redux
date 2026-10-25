@@ -18,9 +18,9 @@
  * 的观察结果。把任意一版的行为刷到另一版上（「好心合并重复实现」的典型
  * 形态）本文件就会红；两版实现本身不改动。
  *
- * 两版入口的驱动方式不同：单选版 execution() 收「候选人下标 + 处分编号」，
- * 且自己不开调教窗口（由驱动方开）；批量版 batch_execution() 收「处刑标签
- * 切换 → [121] 方法界面 → 处分编号」，调教窗口由它自己开。
+ * 两版入口的驱动方式不同：单选版 execution() 收「候选人下标 + 处分编号」；
+ * 批量版 batch_execution() 收「处刑标签切换 → [121] 方法界面 → 处分编号」。
+ * 两版都不开调教窗口——处分方式编号作为实参传给口上。
  */
 
 'use strict';
@@ -67,8 +67,7 @@ function seed_world(cid = 31) {
 }
 
 /** 单选版：候选人下标 0 → 处分编号 */
-async function run_single(fixture, method, cid = 31) {
-  fixture.era.beginTrain(0, cid);
+async function run_single(fixture, method) {
   fixture.set_inputs(0, method);
   await fixture.load_module('event/event-execution').execution(seq([0]));
 }

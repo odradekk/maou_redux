@@ -175,9 +175,9 @@ const gobi_koujo_family = new DispatchFamily(
  * whenMissing，TRYCALLFORM 落空的等价物），各行没有差别。「有对应函数而
  * 没移植」的真缺口由 test/kojo-family-coverage.test.js 静态核对拦住。
  *
- * 实参名 → 驱动方取值：cid = 目标角色号；event_no = 事件编号（K0 旧签名
- * 收它）；choice = 奖赏/惩罚选择序号；arg0 = gobi_koujo 的情绪编号；
- * q = self_kojo 的自慰妄想对象；rand = 注入的确定性随机源。
+ * 实参名 → 驱动方取值：cid = 目标角色号；event_no = 事件编号（处刑方式/展品号/
+ * 处分号，五族都只收它）；choice = 奖赏/惩罚选择序号；arg0 = gobi_koujo 的
+ * 情绪编号；q = self_kojo 的自慰妄想对象；rand = 注入的确定性随机源。
  *
  * 表内的行为分支（检查、TARGET 语义、缺席静默）在
  * test/event-k-dispatch.test.js 里逐条钉住——本表只管「谁派发到哪个族」
@@ -316,8 +316,8 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'exucution_koujo_family',
     flag_guard: false,
-    call: ['cid', 'event_no', 'rand'],
-    handler: ['rand'],
+    call: ['cid', 'event_no'],
+    handler: ['event_no'],
   },
   {
     line: 381,
@@ -327,8 +327,8 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'museum_koujo_family',
     flag_guard: false,
-    call: ['cid', 'event_no', 'rand'],
-    handler: ['rand'],
+    call: ['cid', 'event_no'],
+    handler: ['event_no'],
   },
   {
     line: 396,
@@ -338,8 +338,8 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'banishment_koujo_family',
     flag_guard: false,
-    call: ['cid', 'event_no', 'rand'],
-    handler: ['rand'],
+    call: ['cid', 'event_no'],
+    handler: ['event_no'],
   },
   {
     line: 411,
@@ -349,8 +349,8 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'public_exucution_koujo_family',
     flag_guard: false,
-    call: ['cid', 'event_no', 'rand'],
-    handler: ['rand'],
+    call: ['cid', 'event_no'],
+    handler: ['event_no'],
   },
   {
     line: 426,
@@ -360,8 +360,8 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'grotesque_koujo_family',
     flag_guard: false,
-    call: ['cid', 'event_no', 'rand'],
-    handler: ['rand'],
+    call: ['cid', 'event_no'],
+    handler: ['event_no'],
   },
   {
     line: 443,
@@ -736,81 +736,74 @@ async function attack_koujo_b(cid, rand) {
  * <族>_K{LOCAL - 100}`。五族都不设 TARGET（调用方自己管
  * TARGET），所以本分发体不碰它。
  *
- * 族内实参一个：键 0（K0 慈愛）是早期实现的旧签名，收事件编号
- * （展品号/处刑号，一族的 K 侧从 TARGET 之外显式收它）；其余键收
- * 随机源——这条分档原先写在五个调用点里（各处同款三元式），#403 整合
- * 到分发体，行为不变。实参依赖键，所以以 `(id) => [...]` 交给 run_kojo：
- * 迁移过的性格与旧族收到的是同一个实参。
+ * 族内实参一个：事件编号（处刑方式号 / 展品号 / 处分号）。旧引擎把这几个
+ * 值写在 TFLAG:16/500/510/520/530 里，口上按性格直接读或在门面上读；
+ * 批量处刑为让这几个槽可寻址曾整段打开调教窗口。现在由调用点作为参数
+ * 传进来，五族的名片一致，K0 不再需要单独的旧签名分档。
  *
  * 缺席语义 = 静默（TRYCALL 落空；与 kojo_message_com 同款）。
  *
  * @param {string} hook 钩子名（= 入口名）
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family 目标族
  * @param {number} cid 对象角色号（调用方已把 TARGET 置成它）
- * @param {number} event_no 事件编号（K0 旧签名收它）
- * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @param {number} event_no 事件编号（处分方式/展品号）
  * @returns {Promise<number>} 0（调用方不读）
  */
-async function dispatch_execution_koujo(hook, family, cid, event_no, rand) {
+async function dispatch_execution_koujo(hook, family, cid, event_no) {
   await run_kojo(hook, family, {
     cid,
-    args: (id) => [id === 0 ? event_no : rand],
+    args: [event_no],
   });
   return 0;
 }
 
 /** exucution_koujo：处刑口上；调用方 ere/event/event-execution.js */
-async function exucution_koujo(cid, event_no, rand) {
+async function exucution_koujo(cid, event_no) {
   return dispatch_execution_koujo(
     'exucution_koujo',
     exucution_koujo_family,
     cid,
     event_no,
-    rand,
   );
 }
 
 /** museum_koujo：博物馆（雕像）口上；调用方 ere/event/event-museum.js */
-async function museum_koujo(cid, event_no, rand) {
+async function museum_koujo(cid, event_no) {
   return dispatch_execution_koujo(
     'museum_koujo',
     museum_koujo_family,
     cid,
     event_no,
-    rand,
   );
 }
 
 /** banishment_koujo：流放处刑口上；调用方 ere/event/event-banishment.js */
-async function banishment_koujo(cid, event_no, rand) {
+async function banishment_koujo(cid, event_no) {
   return dispatch_execution_koujo(
     'banishment_koujo',
     banishment_koujo_family,
     cid,
     event_no,
-    rand,
   );
 }
 
 /** public_exucution_koujo：公开处刑口上；调用方 ere/event/event-public-execution.js */
-async function public_exucution_koujo(cid, event_no, rand) {
+async function public_exucution_koujo(cid, event_no) {
   return dispatch_execution_koujo(
     'public_exucution_koujo',
     public_exucution_koujo_family,
     cid,
     event_no,
-    rand,
   );
 }
 
 /** grotesque_koujo：猎奇处刑口上；调用方 ere/event/event-grotesque.js */
-async function grotesque_koujo(cid, event_no, rand) {
+async function grotesque_koujo(cid, event_no) {
   return dispatch_execution_koujo(
     'grotesque_koujo',
     grotesque_koujo_family,
     cid,
     event_no,
-    rand,
   );
 }
 

@@ -9,7 +9,6 @@ const era = require('#/era-electron');
 const { search_family } = require('#/chara/chara-family');
 const { public_exucution_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
@@ -37,20 +36,16 @@ async function public_execution(cid, rand_n = default_rand) {
     result = await era.input({ useRule: false });
   } while (result < 0 || (result >= 3 && result !== 100));
   // 的 `[100] 算了` 被注释掉、界面上不显示，但后面的
-  // `ELSEIF RESULT == 100` 仍受理它（置 TFLAG:16 = -1 后跳回批量处刑；
-  // ere 没有该入口，本函数以「不执行」返回表达同一出口）。
+  // `ELSEIF RESULT == 100` 仍受理它（旧引擎置 TFLAG:16 = -1 后跳回批量
+  // 处刑；本函数以返回 -1 表达同一出口，批量处刑据此重启界面）。
   if (result === 100) {
-    game.event.犬射精或处刑口上 = -1;
-    return 0;
+    return -1;
   }
 
   era_flag.target = cid;
   apply_prestige(cid);
-  game.event.公开处刑口上 = result;
-  // 公开处刑口上（public_exucution_koujo，#403 收到分发入口）
-  await public_exucution_koujo(cid, result, rand_n);
-  // 口上可改写 TFLAG:520；下面在调用后读取。
-  result = game.event.公开处刑口上;
+  // 公开处刑口上（public_exucution_koujo）：处分号作为实参传入
+  await public_exucution_koujo(cid, result);
 
   const name = chara_callname(cid);
   let fate;

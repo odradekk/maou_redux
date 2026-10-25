@@ -22736,32 +22736,32 @@ async function ntr_koujo_k11(_rand, p = 0) {
 }
 
 /** 处刑/展示类仅保留空台词槽；按各自事件编号输出一行空文本。 */
-async function exucution_koujo_k11() {
-  if ([4, 5, 6, 7].includes(game.event.犬射精或处刑口上)) {
+async function exucution_koujo_k11(event_no) {
+  if ([4, 5, 6, 7].includes(event_no)) {
     await era.printAndWait('');
   }
 }
 
-async function museum_koujo_k11() {
-  if ([0, 1, 2, 3, 4, 5, 6, 7, 8].includes(game.event.博物馆口上)) {
+async function museum_koujo_k11(event_no) {
+  if ([0, 1, 2, 3, 4, 5, 6, 7, 8].includes(event_no)) {
     await era.printAndWait('');
   }
 }
 
-async function banishment_koujo_k11() {
-  if ([0, 1, 2, 3, 4].includes(game.event.流放口上)) {
+async function banishment_koujo_k11(event_no) {
+  if ([0, 1, 2, 3, 4].includes(event_no)) {
     await era.printAndWait('');
   }
 }
 
-async function public_exucution_koujo_k11() {
-  if ([0, 1, 2].includes(game.event.公开处刑口上)) {
+async function public_exucution_koujo_k11(event_no) {
+  if ([0, 1, 2].includes(event_no)) {
     await era.printAndWait('');
   }
 }
 
-async function grotesque_koujo_k11() {
-  if ([0, 1, 2, 3, 4, 5, 6].includes(game.event.猎奇处刑口上)) {
+async function grotesque_koujo_k11(event_no) {
+  if ([0, 1, 2, 3, 4, 5, 6].includes(event_no)) {
     await era.printAndWait('');
   }
 }

@@ -646,18 +646,16 @@ test('NTR_KOUJO_K7：P 分派编号 1（首次经 CFLAG:650 标记）', async ()
   assert.equal(fixture.store.get('cflag:20:651'), 1);
 });
 
-test('MUSEUM_KOUJO_K7：TFLAG:500==2（蝋人形化）无台词槽，链上无分支不输出', async () => {
+test('MUSEUM_KOUJO_K7：展品编号 2（蝋人形化）无台词槽，链上无分支不输出', async () => {
   const fixture = await setup_k7();
   const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
-  fixture.store.set('tflag:500', 0);
-  await museum_koujo_family.call(7, { args: [] });
+  await museum_koujo_family.call(7, { args: [0] });
   assert.deepEqual(fixture.text_lines(), [
     '「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」',
   ]);
-  fixture.store.set('tflag:500', 2);
   const { museum_koujo_k7 } = fixture.load_module('kojo/kojo-k7-heart');
-  await museum_koujo_k7();
-  // 蝋人形化（TFLAG:500==2）无台词槽：链上不设分支，直调验证不出声。
+  await museum_koujo_k7(2);
+  // 蝋人形化（展品编号 2）无台词槽：链上不设分支，直调验证不出声。
   assert.deepEqual(fixture.text_lines(), [
     '「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」',
   ]);
@@ -671,28 +669,24 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K7：注册且
     public_exucution_koujo_family,
     grotesque_koujo_family,
   } = fixture.load_module('kojo/kojo-system');
-  fixture.store.set('tflag:16', 5);
-  await exucution_koujo_family.call(7, { args: [] });
+  await exucution_koujo_family.call(7, { args: [5] });
   assert.deepEqual(fixture.text_lines(), ['「下达命令…主人………」']);
 
   let before = fixture.text_lines().length;
-  fixture.store.set('tflag:510', 0);
-  await banishment_koujo_family.call(7, { args: [] });
+  await banishment_koujo_family.call(7, { args: [0] });
   assert.equal(
     fixture.text_lines().slice(before)[0],
     '「回不去了…狂王大人那里…已经回不去了………」',
   );
 
   before = fixture.text_lines().length;
-  fixture.store.set('tflag:520', 1);
-  await public_exucution_koujo_family.call(7, { args: [] });
+  await public_exucution_koujo_family.call(7, { args: [1] });
   assert.deepEqual(fixture.text_lines().slice(before), [
     '「这里…这个绞刑台是我最后的舞台吗…」',
   ]);
 
   before = fixture.text_lines().length;
-  fixture.store.set('tflag:530', 0);
-  await grotesque_koujo_family.call(7, { args: [] });
+  await grotesque_koujo_family.call(7, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), ['']); // 链上无文本，PRINTFORMW 仍记空行
 });
 

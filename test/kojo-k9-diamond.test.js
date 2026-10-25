@@ -534,7 +534,7 @@ test('NTR_KOUJO_K9：P 分派编号 1（首次经 CFLAG:650 标记）', async ()
   assert.equal(fixture.store.get('cflag:20:651'), 1);
 });
 
-test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且可调用', async () => {
+test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且按实参编号可调用', async () => {
   const fixture = await setup_k9();
   const {
     exucution_koujo_family,
@@ -544,36 +544,31 @@ test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且可
     grotesque_koujo_family,
   } = fixture.load_module('kojo/kojo-system');
 
-  fixture.store.set('tflag:16', 4);
-  await exucution_koujo_family.call(9, { args: [] });
+  await exucution_koujo_family.call(9, { args: [4] });
   assert.deepEqual(fixture.text_lines(), [
     '「不、不要啊…我才不要成为怪物的安慰物还要差的肉便器啊！啊…不要啊啊啊！」',
   ]);
 
   let before = fixture.text_lines().length;
-  fixture.store.set('tflag:500', 0);
-  await museum_koujo_family.call(9, { args: [] });
+  await museum_koujo_family.call(9, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), [
     '「脚、脚被…脚慢慢地变冷了起来…我、我是要死了吧…拜托了…至少，至少回到最初的故…乡…里………………」',
   ]);
 
   before = fixture.text_lines().length;
-  fixture.store.set('tflag:510', 0);
-  await banishment_koujo_family.call(9, { args: [] });
+  await banishment_koujo_family.call(9, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), [
     '「我失去作为战士的力量…已经………」',
   ]);
 
   before = fixture.text_lines().length;
-  fixture.store.set('tflag:520', 0);
-  await public_exucution_koujo_family.call(9, { args: [] });
+  await public_exucution_koujo_family.call(9, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), [
     '「快杀了我吧…我的那里已经…裂开了…啊啊啊…已经什么都感觉不到了啊…啊啊…啊啊啊………」',
   ]);
 
   before = fixture.text_lines().length;
-  fixture.store.set('tflag:530', 0);
-  await grotesque_koujo_family.call(9, { args: [] });
+  await grotesque_koujo_family.call(9, { args: [0] });
   assert.deepEqual(
     fixture.text_lines().slice(before),
     [''],

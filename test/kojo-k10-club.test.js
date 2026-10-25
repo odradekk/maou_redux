@@ -562,9 +562,8 @@ test('NTR_KOUJO_K10：P 分派编号 1（首次经 CFLAG:650 标记）', async (
   assert.equal(fixture.store.get('cflag:20:657'), 1); // RAND:3+1 → 注入 rand=undefined 时用默认随机源，仅断言已写入
 });
 
-test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K10：注册且可调用', async () => {
+test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K10：注册且按实参编号可调用', async () => {
   const fixture = await setup_k10();
-  const { game } = fixture.load_module('facade/game');
   const {
     exucution_koujo_family,
     banishment_koujo_family,
@@ -572,38 +571,32 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K10：注册�
     grotesque_koujo_family,
   } = fixture.load_module('kojo/kojo-system');
 
-  game.event.犬射精或处刑口上 = 4;
-  await exucution_koujo_family.call(10, { args: [] });
+  await exucution_koujo_family.call(10, { args: [4] });
   assert.deepEqual(fixture.text_lines(), [
     '「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」',
   ]);
 
   let before = fixture.text_lines().length;
-  game.event.流放口上 = 0;
-  await banishment_koujo_family.call(10, { args: [] });
+  await banishment_koujo_family.call(10, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), [
     '「我的魔法连让小石头动一下都不行了…啊啊………」',
   ]);
 
   before = fixture.text_lines().length;
-  game.event.公开处刑口上 = 0;
-  await public_exucution_koujo_family.call(10, { args: [] });
+  await public_exucution_koujo_family.call(10, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), [
     '「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」',
   ]);
 
   before = fixture.text_lines().length;
-  game.event.猎奇处刑口上 = 0;
-  await grotesque_koujo_family.call(10, { args: [] });
+  await grotesque_koujo_family.call(10, { args: [0] });
   assert.deepEqual(fixture.text_lines().slice(before), ['']); // 无文本，PRINTFORMW 仍记空行
 });
 
-test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
+test('MUSEUM_KOUJO_K10：展品编号八档，第一档有台词', async () => {
   const fixture = await setup_k10();
-  const { game } = fixture.load_module('facade/game');
   const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
-  game.event.博物馆口上 = 0;
-  await museum_koujo_family.call(10, { args: [] });
+  await museum_koujo_family.call(10, { args: [0] });
   assert.deepEqual(fixture.text_lines(), [
     '「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」',
   ]);

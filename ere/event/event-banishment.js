@@ -25,7 +25,6 @@ const {
 const { search_family } = require('#/chara/chara-family');
 const { banishment_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
@@ -606,9 +605,9 @@ async function banishment(cid, rand_n = default_rand) {
   // 五个选项原是纯文本列表 + 数字输入（PR #53 通则：升格为按钮，
   // 正文不写 [编号] 前缀，引擎按 showAcc 自动拼）。
   // **保留 useRule: false**：`[100] 返回` 被注释掉、界面上不显示，
-  // 但后面的 `ELSEIF RESULT == 100` 仍受理它（置 TFLAG:16 = -1
-  // 后跳回批量处刑，本移植落成下面的 return 0）——收紧白名单会把这条
-  // 未显示路径锁死，故沿用「按钮 + 自由输入」的既有处置
+  // 但后面的 `ELSEIF RESULT == 100` 仍受理它（旧引擎置 TFLAG:16 = -1
+  // 后跳回批量处刑；本移植以返回 -1 表达同一出口，批量处刑据此重启界面）
+  // ——收紧白名单会把这条未显示路径锁死，故沿用「按钮 + 自由输入」的既有处置
   // （先例：ere/event/event-museum.js 的收藏列表）。
   era.printButton('就这样流放掉', 0);
   era.printButton('施予男性化的诅咒', 1);
@@ -633,16 +632,12 @@ async function banishment(cid, rand_n = default_rand) {
     break;
   }
   if (result === 100) {
-    game.event.犬射精或处刑口上 = -1;
-    return 0;
+    return -1;
   }
 
   apply_prestige(cid);
-  game.event.流放口上 = result;
-  // 流放口上（banishment_koujo，#403 收到分发入口）
-  await banishment_koujo(cid, result, rand_n);
-  // 口上可改写 TFLAG:510；下面在调用后才按该值分支。
-  result = game.event.流放口上;
+  // 流放口上（banishment_koujo）：处分号作为实参传入
+  await banishment_koujo(cid, result);
 
   const name = chara_callname(cid);
   let fate;
@@ -739,7 +734,7 @@ async function banishment(cid, rand_n = default_rand) {
     await era.printAndWait(`——下场：${fate}`);
   }
 
-  // 回归旧生活支（TFLAG:510 == 4）是唯一不发勋章的分支，照源保留。
+  // 回归旧生活支（处分号 4）是唯一不发勋章的分支，照源保留。
   if (result !== 4) {
     chara(0).event.勋章经验 += 1;
     era.println();

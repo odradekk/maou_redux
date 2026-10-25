@@ -69,7 +69,7 @@
  *     COM 检查的 DOG/COLOSSEUM CALL 由注释改真实调用。
  *   S4（本片）：NTR_KOUJO_K14（P 参数分档，CFLAG:650-657 旗
  *     标）+ 处刑系五入口（EXUCUTION/MUSEUM/BANISHMENT/PUBLIC_EXUCUTION/
- *     GROTESQUE，TFLAG:16/500/510/520/530 分档空模板）+
+ *     GROTESQUE，处分方式编号/500/510/520/530 分档空模板）+
  *     ENTERENEMY_KOUJO_K14（台词已填）+ GOHOUBI_REQUEST
  *     （按 CFLAG:A:504 要求奖赏分档，台词已填，%SAVESTR:A% →
  *     chara_callname(a)）+ GOHOUBI_AFTER/OSIOKI
@@ -5993,105 +5993,95 @@ async function ntr_koujo_k14(rand, P) {
 }
 
 /**
- * exucution_koujo_k14：公开处刑（斩首系）口上。TFLAG:16
+ * exucution_koujo_k14：公开处刑（斩首系）口上。处分方式编号
  * 分档，空模板骨架。
  */
-async function exucution_koujo_k14(rand) {
-  void rand;
-
-  if (game.event.犬射精或处刑口上 == 2) {
+async function exucution_koujo_k14(event_no) {
+  if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
 
 /**
- * museum_koujo_k14：博物馆（陈列）口上。TFLAG:500 分档，
+ * museum_koujo_k14：博物馆（陈列）口上。展品编号 分档，
  * 空模板骨架。
  */
-async function museum_koujo_k14(rand) {
-  void rand;
-
-  if (game.event.博物馆口上 == 0) {
+async function museum_koujo_k14(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
 }
 
 /**
- * banishment_koujo_k14：流放口上。TFLAG:510 分档，空模板骨架。
+ * banishment_koujo_k14：流放口上。处分号 分档，空模板骨架。
  */
-async function banishment_koujo_k14(rand) {
-  void rand;
-
-  if (game.event.流放口上 == 0) {
+async function banishment_koujo_k14(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
   }
 }
 
 /**
- * public_exucution_koujo_k14：公开处刑口上。TFLAG:520 分档，
+ * public_exucution_koujo_k14：公开处刑口上。处分号 分档，
  * 空模板骨架。
  */
-async function public_exucution_koujo_k14(rand) {
-  void rand;
-
-  if (game.event.公开处刑口上 == 0) {
+async function public_exucution_koujo_k14(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
 /**
- * grotesque_koujo_k14：猎奇处刑口上。TFLAG:530 分档，空模板骨架。
+ * grotesque_koujo_k14：猎奇处刑口上。处分方式 分档，空模板骨架。
  */
-async function grotesque_koujo_k14(rand) {
-  void rand;
-
-  if (game.event.猎奇处刑口上 == 0) {
+async function grotesque_koujo_k14(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }

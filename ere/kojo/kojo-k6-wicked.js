@@ -11819,9 +11819,8 @@ async function ntr_koujo_k6(rand, P) {
 
 // exucution_koujo_k6
 
-async function exucution_koujo_k6(rand) {
+async function exucution_koujo_k6(event_no) {
   const {
-    rand_n,
     target,
     assi,
     target_name,
@@ -11832,28 +11831,27 @@ async function exucution_koujo_k6(rand) {
     scf,
     view,
     kojo,
-  } = bind_ctx(rand);
+  } = bind_ctx();
 
-  if (game.event.犬射精或处刑口上 === 4) {
+  if (event_no === 4) {
     await era.printAndWait(
       `「其他的什么都可以！请饶恕我，不要让我做怪兽的肉便器啊！」`,
     );
-  } else if (game.event.犬射精或处刑口上 === 5) {
+  } else if (event_no === 5) {
     await era.printAndWait(
       `「干什么！${sc()}、${sc()}不要变成这样啊…哈啊啊…啊啊啊啊啊………」`,
     );
-  } else if (game.event.犬射精或处刑口上 === 6) {
+  } else if (event_no === 6) {
     await era.printAndWait(`「${sc()}总有一天会报复回来的啊啊啊！」`);
-  } else if (game.event.犬射精或处刑口上 === 7) {
+  } else if (event_no === 7) {
     await era.printAndWait('');
   }
 }
 
 // museum_koujo_k6
 
-async function museum_koujo_k6(rand) {
+async function museum_koujo_k6(event_no) {
   const {
-    rand_n,
     target,
     assi,
     target_name,
@@ -11864,45 +11862,44 @@ async function museum_koujo_k6(rand) {
     scf,
     view,
     kojo,
-  } = bind_ctx(rand);
+  } = bind_ctx();
   const a = target; // 源 %SAVESTR:A%（分发前 TARGET=A）
 
-  if (game.event.博物馆口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait(`「谁…谁想变成你所谓的石像啊！」`);
     await era.printAndWait(`${target_name}毫无顾忌地竖起中指………`);
-  } else if (game.event.博物馆口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait(`「变成标本也会一直诅咒你啊！」`);
-  } else if (game.event.博物馆口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait(`「变成蜡像也不会放过你！」`);
-  } else if (game.event.博物馆口上 === 3) {
+  } else if (event_no === 3) {
     await era.printAndWait(
       `「呜呜、${sc()}这样的暴露的样子被…！…别盯着这边看啊！」`,
     );
-  } else if (game.event.博物馆口上 === 4) {
+  } else if (event_no === 4) {
     await era.printAndWait(
       `「${sc()}是绝对！不会…变成…你的……人…偶、什……么……的…」`,
     );
     await era.printAndWait(
       `看起来${chara_callname(a)}到最后也没有察觉到异变的发生呢…`,
     );
-  } else if (game.event.博物馆口上 === 5) {
+  } else if (event_no === 5) {
     await era.printAndWait(`「就这样毫无美感的…」`);
-  } else if (game.event.博物馆口上 === 6) {
+  } else if (event_no === 6) {
     await era.printAndWait(`「就这样变成中看不中用的玩物吗…」`);
-  } else if (game.event.博物馆口上 === 7) {
+  } else if (event_no === 7) {
     await era.printAndWait(`「就这样失去生命了呢…」`);
-  } else if (game.event.博物馆口上 === 8) {
+  } else if (event_no === 8) {
     await era.printAndWait(`「才不要变成家具，不要啊…」`);
-  } else if (game.event.博物馆口上 === 9) {
+  } else if (event_no === 9) {
     await era.printAndWait(`「敢这么做的话，小心我撕烂这幅画啊！」`);
   }
 }
 
 // banishment_koujo_k6
 
-async function banishment_koujo_k6(rand) {
+async function banishment_koujo_k6(event_no) {
   const {
-    rand_n,
     target,
     assi,
     target_name,
@@ -11913,28 +11910,27 @@ async function banishment_koujo_k6(rand) {
     scf,
     view,
     kojo,
-  } = bind_ctx(rand);
+  } = bind_ctx();
 
-  if (game.event.流放口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait(
       `「骗人的吧…${sc()}已经失去力量了…这样的话…这样的话…那些家伙…真是荒谬啊………」`,
     );
-  } else if (game.event.流放口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 === 3) {
+  } else if (event_no === 3) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 === 4) {
+  } else if (event_no === 4) {
     await era.printAndWait('');
   }
 }
 
 // public_exucution_koujo_k6
 
-async function public_exucution_koujo_k6(rand) {
+async function public_exucution_koujo_k6(event_no) {
   const {
-    rand_n,
     target,
     assi,
     target_name,
@@ -11945,26 +11941,25 @@ async function public_exucution_koujo_k6(rand) {
     scf,
     view,
     kojo,
-  } = bind_ctx(rand);
+  } = bind_ctx();
 
-  if (game.event.公开处刑口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait(
       `「喂、喂…骗人的吧…${sc()}的身体…被那些野兽什么的一起蹂躏的话…会死的啊…一定会死的啊」`,
     );
-  } else if (game.event.公开处刑口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait(
       `「呼，捕获的人就会被这样处决吗…魔王的残暴还真是一览无遗啊………」`,
     );
-  } else if (game.event.公开处刑口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
   }
 }
 
 // grotesque_koujo_k6
 
-async function grotesque_koujo_k6(rand) {
+async function grotesque_koujo_k6(event_no) {
   const {
-    rand_n,
     target,
     assi,
     target_name,
@@ -11975,21 +11970,21 @@ async function grotesque_koujo_k6(rand) {
     scf,
     view,
     kojo,
-  } = bind_ctx(rand);
+  } = bind_ctx();
 
-  if (game.event.猎奇处刑口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 3) {
+  } else if (event_no === 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 4) {
+  } else if (event_no === 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 5) {
+  } else if (event_no === 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 6) {
+  } else if (event_no === 6) {
     await era.printAndWait('');
   }
 }

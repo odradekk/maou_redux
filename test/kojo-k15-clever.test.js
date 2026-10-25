@@ -2299,7 +2299,7 @@ test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI �
   );
 });
 
-test('GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW', async () => {
+test('GOBI ARG:0==1 语尾；EXUCUTION 处分方式 4 空 PRINTFORMW', async () => {
   const gobi = await setup_k15();
   const { gobi_koujo_family } = gobi.load_module('kojo/kojo-system');
   const text = await gobi_koujo_family.call(KEY, { args: [1, () => 0] });
@@ -2307,10 +2307,8 @@ test('GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW', async () => 
   assert.deepEqual(gobi.text_lines(), [], '语尾真身不得自行打印');
 
   const exe = await setup_k15();
-  const { game } = exe.load_module('facade/game');
-  game.event.犬射精或处刑口上 = 4;
   const exe_sys = exe.load_module('kojo/kojo-system');
-  await exe_sys.exucution_koujo_family.call(KEY, { args: [] });
+  await exe_sys.exucution_koujo_family.call(KEY, { args: [4] });
   assert.ok(exe.text_lines().includes(''), 'EXUCUTION 空 PRINTFORMW');
 });
 

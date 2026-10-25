@@ -8,10 +8,8 @@
 const era = require('#/era-electron');
 const { grotesque_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-const { default_rand } = require('#/utils/numeric');
 const {
   apply_prestige,
   archive_fate,
@@ -98,7 +96,7 @@ function format_line(line, name) {
   return line.replaceAll('{name}', name);
 }
 
-async function grotesque(cid, rand_n = default_rand) {
+async function grotesque(cid) {
   if (cid === 0) return 0;
   // #710：七枚选项改成按钮（正文不写 [编号]，引擎按 showAcc 拼）。消费点
   // 保留 useRule: false——未显示的 100（取消）是该菜单既有的自由输入通道。
@@ -117,17 +115,13 @@ async function grotesque(cid, rand_n = default_rand) {
     result = await era.input({ useRule: false });
   } while (result < 0 || (result >= 7 && result !== 100));
   if (result === 100) {
-    game.event.犬射精或处刑口上 = -1;
-    return 0;
+    return -1;
   }
 
   era_flag.target = cid;
   apply_prestige(cid);
-  game.event.猎奇处刑口上 = result;
-  // 猎奇处刑口上（grotesque_koujo，#403 收到分发入口）
-  await grotesque_koujo(cid, result, rand_n);
-  // 口上可改写 TFLAG:530；下面在调用后读取。
-  result = game.event.猎奇处刑口上;
+  // 猎奇处刑口上（grotesque_koujo）：处分号作为实参传入
+  await grotesque_koujo(cid, result);
 
   const name = chara_callname(cid);
   const ending = ENDINGS[result];
