@@ -2026,9 +2026,14 @@ engine_test(
     assert.equal(fixture.era.get('talent:31:122'), 7);
     assert.equal(engine.set_var.call(engine_this, 'talent:31:122'), 7);
 
-    // 反查：<表>name:<序号> 读的是引擎装载进来的名字
+    // 反查：<表>name:<序号> 读的是引擎装载进来的名字。ablname:20/21 这一对
+    // 是「名字落键前先过 toLowerCase」的实证——引擎里玩家看到的是全角小写
+    assert.equal(fixture.era.get('ablname:20'), '抖ｓ气质');
+    assert.equal(engine.set_var.call(engine_this, 'ablname:20'), '抖ｓ气质');
     for (const address of [
       'ablname:10',
+      'ablname:20',
+      'ablname:21',
       'palamname:5',
       'itemname:3',
       'talentname:122',
