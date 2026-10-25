@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 67; // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 66; // #883 -1（M16108：yml/E.yml 随战斗状态搬成普通对象撤除） // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -546,14 +546,6 @@ export default [
     file: 'yml/Exp.yml',
     find: '  id: 80\n  name: "battle_exp"\n  type: "number"\n',
     replace: '  id: 80\n  type: "number"\n',
-    tests: ['yml-name-type'],
-    must_mention: '缺一项就只能退化成「表名+序号」',
-  },
-  {
-    desc: 'M16108 E.yml 的第 1 列怪物数那条删掉 name',
-    file: 'yml/E.yml',
-    find: '  id: 99\n  name: "col_1_monster_count"\n  type: "number"\n',
-    replace: '  id: 99\n  type: "number"\n',
     tests: ['yml-name-type'],
     must_mention: '缺一项就只能退化成「表名+序号」',
   },

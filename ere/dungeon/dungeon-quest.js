@@ -15,7 +15,8 @@
  *   - %SAVESTR:ARG% 承载名前，走 callname（#5 决议，dungeon.js 先例）；
  *     %ITEMNAME:MON_ID% 是裸 Item.yml 名，era.get(`itemname:id`)（#175
  *     monster_list 段同款；拼接名才是 monstername）；
- *   - E 数组走 yml/E.yml 引擎表（monster-data.js 的 e_get/e_set）；
+ *   - 战斗状态走 ere/dungeon/battle-state.js 的普通对象（monster-data 是
+ *     唯一写者，本文件按列号读）；
  *   - 全局 A（陷阱段换手）/ RESULT（QUEST_ON）/ ARGS（RESULT_QUEST
  *     的出参改写）改显式传参与返回值（#5 决议第六条）；ARGS 是
  *     引用传参，ere 侧以返回值 { args } 传出，调用方不消费也保留；
@@ -30,7 +31,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { e_get, e_set } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 // 陷阱真身（#176）：quest_battle_set 的障碍陷阱三选一。其对 dungeon.js
 // 域内存根的延迟 require 同款防环；本文件不反依赖它，顶层引用无环。
 const trap_mod = require('#/dungeon/dungeon-trap');
@@ -222,11 +223,11 @@ async function result_quest(arg, args, rand = default_rand) {
       continue;
     }
 
-    // 該当モンスターがいないとダメ（E 列头直比讨伐对象）
+    // 該当モンスターがいないとダメ（三列直接比讨伐对象）
     const monid = era.get(`cflag:${cid}:538`) || 0;
     let found = 0; // LOCAL
-    for (let mcount = 0; mcount < 300; mcount += 100) {
-      if (e_get(mcount) === monid) {
+    for (let column = 0; column < 3; column += 1) {
+      if (battle_column(column).id === monid) {
         found = 1;
       }
     }
@@ -539,7 +540,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
  * quest_battle_set：任务战斗判定与敌方设置。
  *
  * 每场普通战斗前由 dungeon_party_battle 调用（#178 起为真身）。对每个成员：受注计数 -1（> 0 时）；1/3 掷点命中且
- * 受注中（534 == 1）且 E 列头持有讨伐对象时进入任务战斗——按障碍位改
+ * 受注中（534 == 1）且 E 列号持有讨伐对象时进入任务战斗——按障碍位改
  * 写 E 第三列（boss 化 / 15 只）或先掷陷阱；性要求位（bit4）另算交涉值，
  * 掷过 100 即以 quest_bitch 完结任务并 RETURN 1（跳过普通战斗）。
  *
@@ -582,8 +583,8 @@ async function quest_battle_set(arg0, rand = default_rand) {
     // 該当モンスターがいないとダメ
     const monid = era.get(`cflag:${cid}:538`) || 0;
     let found = 0; // LOCAL
-    for (let mcount = 0; mcount < 300; mcount += 100) {
-      if (e_get(mcount) === monid) {
+    for (let column = 0; column < 3; column += 1) {
+      if (battle_column(column).id === monid) {
         found = 1;
       }
     }
@@ -598,10 +599,10 @@ async function quest_battle_set(arg0, rand = default_rand) {
 
     const q536 = era.get(`cflag:${cid}:536`) || 0;
 
-    // それはボスとの戦闘（最後列 boss 化——E 第三列 208/299）
+    // それはボスとの戦闘（第三列 boss 化）
     if (getbit(q536, 0) !== 0) {
-      e_set(208, 1);
-      e_set(299, 1);
+      battle_column(BATTLE_COLUMN.DEFENSE_3).boss = 1;
+      battle_column(BATTLE_COLUMN.DEFENSE_3).count = 1;
     }
 
     // それは罠が仕掛けてある（全局 A 换手 PM:LCOUNT，A 的
@@ -616,10 +617,10 @@ async function quest_battle_set(arg0, rand = default_rand) {
       }
     }
 
-    // それは敵の数が異様に多い（最前列 15 只，覆写 boss 位）
+    // それは敵の数が異様に多い（第三列 15 只，覆写 boss 位）
     if (getbit(q536, 3) !== 0) {
-      e_set(208, 0);
-      e_set(299, 15);
+      battle_column(BATTLE_COLUMN.DEFENSE_3).boss = 0;
+      battle_column(BATTLE_COLUMN.DEFENSE_3).count = 15;
     }
 
     // それは性奉仕を要求される
@@ -659,7 +660,7 @@ async function quest_battle_set(arg0, rand = default_rand) {
 }
 
 /**
- * quest_bitch：性奉侍按怪物凌辱类型（E:(列头+7)）分派到
+ * quest_bitch：性奉侍按怪物凌辱类型（列对象的 rape_type）分派到
  * 12 个类型段，最后做失贞判定。
  *
  * 初吻/失贞写点（CFLAG:16 == -1 → 995、EXP:0 > 0 且 TALENT:0 == 1 →
@@ -689,15 +690,16 @@ async function quest_bitch(arg, rand = default_rand) {
   };
 
   // 三列按凌辱类型分派（;一応モンスター数の確認——数量 > 0）
-  for (let mcount = 0; mcount < 300; mcount += 100) {
-    const monnum = e_get(mcount + 99); // MONNUM = E:(MCOUNT+99)
+  for (let column = 0; column < 3; column += 1) {
+    const row = battle_column(column);
+    const monnum = row.count; // 该列怪物数
     if (monnum <= 0) {
       continue;
     }
-    const montype = e_get(mcount + 7); // MONTYPE = E:(MCOUNT+7)
+    const montype = row.rape_type; // 凌辱类型
     const handler = dispatch[montype];
     if (handler) {
-      await handler(arg, mcount, rand_n);
+      await handler(arg, column, rand_n);
     }
   }
 
@@ -729,13 +731,13 @@ function first_kiss_check() {
 
 /**
  * orc_quest_bitch：亜人。口交/精液经验 + 初吻判定。
- * @param {number} arg 奉侍者 @param {number} mcount 列头 @param {Function} rand_n
+ * @param {number} arg 奉侍者 @param {number} column 列号 @param {Function} rand_n
  * @returns {Promise<number>} 1
  */
-async function orc_quest_bitch(arg, mcount, rand_n) {
+async function orc_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、舔起了${era.get(`itemname:${monid}`) ?? ''}的阴茎……`,
   );
@@ -749,10 +751,10 @@ async function orc_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** slime_quest_bitch：スライム。阴茎/阴核点数（JUEL:0 同槽）。 */
-async function slime_quest_bitch(arg, mcount, rand_n) {
+async function slime_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、${mon_name}慢慢地`);
   if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
@@ -769,10 +771,10 @@ async function slime_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** insect_quest_bitch：昆虫。阴茎点数 / 私处经验 +1。 */
-async function insect_quest_bitch(arg, mcount, rand_n) {
+async function insect_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、与${era.get(`itemname:${monid}`) ?? ''}交尾了……`,
   );
@@ -788,10 +790,10 @@ async function insect_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** ivy_quest_bitch：蔦触手。苦痛/恐怖点数（JUEL:9/10）。 */
-async function ivy_quest_bitch(arg, mcount, rand_n) {
+async function ivy_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、将身体交给了${mon_name}……`);
   era.print(`${mon_name}勒住了${name_of(arg)}的头！`);
@@ -804,10 +806,10 @@ async function ivy_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** syokusyu_quest_bitch：触手。阴茎点数 / 私处+阴核。 */
-async function syokusyu_quest_bitch(arg, mcount, rand_n) {
+async function syokusyu_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、任凭${era.get(`itemname:${monid}`) ?? ''}的触手触碰……`,
   );
@@ -825,10 +827,10 @@ async function syokusyu_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** faily_quest_bitch：妖精。阴茎/阴蒂摩擦（JUEL:0）。 */
-async function faily_quest_bitch(arg, mcount, rand_n) {
+async function faily_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、对${mon_name}`);
   if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
@@ -845,10 +847,10 @@ async function faily_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** giant_quest_bitch：巨人。口交/精液经验 + 初吻。 */
-async function giant_quest_bitch(arg, mcount, rand_n) {
+async function giant_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、舔起了${era.get(`itemname:${monid}`) ?? ''}的巨根……`,
   );
@@ -862,10 +864,10 @@ async function giant_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** man_quest_bitch：男。口交/精液经验 + 初吻。 */
-async function man_quest_bitch(arg, mcount, rand_n) {
+async function man_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、舔起了${era.get(`itemname:${monid}`) ?? ''}的阴茎……`,
   );
@@ -879,10 +881,10 @@ async function man_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** girl_quest_bitch：女。交尾/交合（JUEL:0）。 */
-async function girl_quest_bitch(arg, mcount, rand_n) {
+async function girl_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   const mon_name = era.get(`itemname:${monid}`) ?? '';
   era.print(`${name_of(arg)}服从了命令、与${mon_name}`);
   if (era.get(`talent:${arg}:120`) || era.get(`talent:${arg}:121`)) {
@@ -902,10 +904,10 @@ async function girl_quest_bitch(arg, mcount, rand_n) {
  * beast_quest_bitch：獣。口交/精液/兽奸经验 + 初吻。
  * 兽奸经验行是 PRINTFORMW（等键）——与段尾 WAIT 共两处等键。
  */
-async function beast_quest_bitch(arg, mcount, rand_n) {
+async function beast_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、舔起了${era.get(`itemname:${monid}`) ?? ''}的阴茎……`,
   );
@@ -922,10 +924,10 @@ async function beast_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** brain_quest_bitch：脳姦。阴茎点数（JUEL:0）。 */
-async function brain_quest_bitch(arg, mcount, rand_n) {
+async function brain_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、任${era.get(`itemname:${monid}`) ?? ''}侵犯着大脑开始自慰了起来……`,
   );
@@ -936,10 +938,10 @@ async function brain_quest_bitch(arg, mcount, rand_n) {
 }
 
 /** horse_quest_bitch：馬。口交/精液/兽奸经验 + 初吻。 */
-async function horse_quest_bitch(arg, mcount, rand_n) {
+async function horse_quest_bitch(arg, column, rand_n) {
   void rand_n;
-  const monid = e_get(mcount);
-  const monnum = e_get(mcount + 99);
+  const monid = battle_column(column).id;
+  const monnum = battle_column(column).count;
   era.print(
     `${name_of(arg)}服从了命令、舔起了${era.get(`itemname:${monid}`) ?? ''}的马阴茎……`,
   );

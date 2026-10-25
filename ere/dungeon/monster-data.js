@@ -4,17 +4,18 @@
  *
  * **为什么随 H6 实现（隐性硬前置，SOP §2 判断条件）**：H6 工单内容只有两个
  * 战斗文件的 22 个函数，但 dungeon_party_battle 的怪物全靠本函数写进 E
- * 数组（本文件是 E 数组的唯一写者）——本函数缺位的后果（实测推演）：
- * E 全空 → death_check 的怪物侧 ALIVE == 0 → RETURN 1 → 勇者每战
+ * 对象（本文件是它的唯一写者）——本函数缺位的后果（实测推演）：
+ * 三列全空 → death_check 的怪物侧 ALIVE == 0 → RETURN 1 → 勇者每战
  * 必胜且 monster_attack 因 MEMBER == 0 直接返回，**勇者不掉血**，这张工单
  * 「让勇者会被打退」的核心交付落空。与 #169 把 chara-make.js 拉进阶段 3 成
  * 为 H1 是同一形式。怪物属性数据在 ere/data/monster-database.js（#168
  * 结论 6 先例）。
  *
  * 说明（有意偏离，均注明依据）：
- *   - **E 数组走引擎变量**（yml/E.yml 建桶，见该文件头注）：数字下标寻址
- *     `era.get/set('e:N')`，读写统一经帮手 e_get/e_set（getter 一律 || 0
- *     取默认值——E 全区初始 0，ere 侧未写槽读 undefined）；
+ *   - **战斗状态走普通对象**（#883）：一列是 ere/dungeon/battle-state.js 的
+ *     具名字段对象，本文件是它的唯一写者（列号即原来的列头 ÷ 100）。
+ *     旧写法是 E 表的 `era.get/set('e:N')` 偏移读写，那份数据只在单次流程
+ *     里中转，却随存档保存；`e:1` 还被 chara-body 借去当临时变量；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
  *     Math.random——run_dungeon 第二参先例）；
  *   - 88 个怪物函数 → 数据表查表（MONSTER_DATABASE）；skeleton 的
@@ -36,6 +37,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { select_yes_no } = require('#/page/page-life-list');
 const { default_rand } = require('#/utils/numeric');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
+const { battle_column } = require('#/dungeon/battle-state');
 
 function campaign_dungeon_lv() {
   const campaign = era.get('flag:400') || 0; // FLAG:400 当前战役编号
@@ -46,20 +48,10 @@ function campaign_dungeon_lv() {
  * enemy_data_check 与 crusader 段：ARG 被声明成形参，却漏了 INUM/TOP 的
  * 赋值，两个入口字面执行都恒 0；#333 结论不修复，因此这里保留无操作行为。
  */
-function enemy_data_check(inum, top) {
+function enemy_data_check(inum, column) {
   void inum;
-  void top;
+  void column;
   return 0;
-}
-
-/** E 数组读：未写槽取 0（全局数组初始 0 的等价物） */
-function e_get(i) {
-  return era.get(`e:${i}`) || 0;
-}
-
-/** E 数组写 */
-function e_set(i, v) {
-  era.set(`e:${i}`, v);
 }
 
 /** 怪物名（Item.yml 的登记名；%ITEMNAME:ID%） */
@@ -70,26 +62,27 @@ function item_name(id) {
 /**
  * skeleton：骷髅兵——等级随掷点或阶层动态，所以不进
  * 数据表。ARG:1 < 0 时 RAND:9+1，否则用 ARG:1 的当前阶层（CFLAG:501）。
- * @param {number} top 列头
+ * @param {number} column 列号
  * @param {number} arg1 怪物持有者的角色号（-1 = 无）
  * @param {(n: number) => number} rand RAND:N 随机源
  */
-function skeleton(top, arg1, rand) {
+function skeleton(column, arg1, rand) {
   let lv;
   if (arg1 < 0) {
     lv = rand(9) + 1;
   } else {
     lv = era.get(`cflag:${arg1}:501`) || 0;
   }
-  e_set(top, 190); // 怪物番号
-  e_set(top + 1, lv + 1); // 等级
-  e_set(top + 2, lv + 1); // 攻击力
-  e_set(top + 3, lv + 1); // 防御力
-  e_set(top + 4, 0); // 速度
-  e_set(top + 5, 0); // 特殊
-  e_set(top + 6, 0); // 魔法
-  e_set(top + 7, 0); // 凌辱类型
-  e_set(top + 10, 0); // 耐性
+  const row = battle_column(column);
+  row.id = 190; // 怪物番号
+  row.level = lv + 1; // 等级
+  row.attack = lv + 1; // 攻击力
+  row.defense = lv + 1; // 防御力
+  row.speed = 0; // 速度
+  row.special = 0; // 特殊
+  row.magic = 0; // 魔法
+  row.rape_type = 0; // 凌辱类型
+  row.resistance = 0; // 耐性
 }
 
 /**
@@ -183,8 +176,8 @@ function monster_setup_able(id, selection, rand = default_rand) {
 
   // 怪物种族与法术取自 monster_data 的第 0 防卫列。
   monster_data(id, 0, -1, -1, -1, rand);
-  const type = e_get(7); // E:7 = 凌辱类型（怪物种族）
-  const magic = e_get(6); // E:6 = 怪物固有魔法
+  const type = battle_column(0).rape_type; // 凌辱类型（怪物种族）
+  const magic = battle_column(0).magic; // 怪物固有魔法
 
   if ((type === 2 || type === 5) && selection === 3) return 1;
   if (type !== 2 && selection === 5) return 1;
@@ -262,7 +255,7 @@ async function monster_setup(id, rand = default_rand) {
 
     // 只有人形五种族显示兵种菜单。
     monster_data(id, 0, -1, -1, -1, rand);
-    if ([1, 6, 7, 8, 9].includes(e_get(7))) {
+    if ([1, 6, 7, 8, 9].includes(battle_column(0).rape_type)) {
       era.print('--- 兵种 ---');
       const selected_troop = (Math.trunc(extra / 100) % 100) + 50;
       for (let selection = 50; selection < 60; selection += 1) {
@@ -310,14 +303,14 @@ async function monster_setup(id, rand = default_rand) {
 }
 
 /**
- * monster_data：把怪物写进 E 数组的一列。
+ * monster_data：把怪物写进战斗状态的一列。
  *
  * 流程：等级骰 → 数量两骰（GROUP 战取大、常规则取小）→ boss 化 →
  * 查数据表写属性 → 精英随从修正 → 兵种改造补正 → 迷宫等级缩放。
  *
  * @param {number} inum 怪物识别号（可被本函数改写为 190 骷髅）
- * @param {number} line 队列（0-2 防御三列、3 = 勇者(A)配下、
- *   4 = 勇者(T)配下、5 = X 的怪物数据取得；列头 = line * 100）
+ * @param {number} line 列号（0-2 防御三列、3 = 勇者(A)配下、
+ *   4 = 勇者(T)配下、5 = X 的怪物数据取得）
  * @param {number} [arg2] 勇者A（缺省 -1；LINE == 3 与骷髅战用）
  * @param {number} [arg3] 奴隶的对手勇者T（缺省 -1；LINE == 4 用）
  * @param {number} [group] GROUP 战分组（缺省 -1；全库无调用方
@@ -327,7 +320,7 @@ async function monster_setup(id, rand = default_rand) {
  */
 function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   const rand_n = rand ?? default_rand;
-  const top = line * 100; // TOP = 列头
+  const row = battle_column(line); // 本函数写的就是这一列
 
   // —— 怪物生成レベル ——
   let lv;
@@ -365,21 +358,21 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     } else if (line === 3) {
       inum = era.get(`cflag:${arg2}:570`) || 0; // CFLAG:570 配下怪物
       if (inum < 100) {
-        e_set(top, 0);
+        row.id = 0;
         return 0;
       }
       first_count = 1;
     } else if (line === 4) {
       inum = era.get(`cflag:${arg3}:570`) || 0;
       if (inum < 100) {
-        e_set(top, 0);
+        row.id = 0;
         return 0;
       }
       first_count = 1;
     } else {
       // LINE == 5（X 的怪物数据取得）
       if (inum < 100) {
-        e_set(top, 0);
+        row.id = 0;
         return 0;
       }
       first_count = 1;
@@ -405,17 +398,17 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   }
 
   // —— 状態異常初期化 ——
-  e_set(top + 9, 0);
+  row.status = 0;
 
   // —— ボス化判定 ——
   // 第二分支（&& GROUP）是第一分支的真子集，恒冗余——保留现状
   if (inum === 190) {
     // 骷髅兵不 boss 化
-    e_set(top + 8, 0);
+    row.boss = 0;
   } else if (first_count <= 1 && line < 3) {
-    e_set(top + 8, 1);
+    row.boss = 1;
   } else {
-    e_set(top + 8, 0);
+    row.boss = 0;
   }
 
   // —— 数量第二骰 LOCAL:0 ——
@@ -444,26 +437,26 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     second_count = rand_n(150) + 100;
   }
 
-  // E:Y+99（その列の怪物の数）
-  e_set(top + 99, second_count);
+  // 该列怪物数
+  row.count = second_count;
 
   // —— 怪物函数分发 ——
-  const row = MONSTER_DATABASE[inum];
-  if (row !== undefined) {
-    e_set(top, row.番号);
-    e_set(top + 1, row.等级);
-    e_set(top + 2, row.攻击力);
-    e_set(top + 3, row.防御力);
-    e_set(top + 4, row.速度);
-    e_set(top + 5, row.特殊);
-    e_set(top + 6, row.魔法);
-    e_set(top + 7, row.凌辱类型);
-    e_set(top + 10, row.耐性);
+  const source = MONSTER_DATABASE[inum];
+  if (source !== undefined) {
+    row.id = source.番号;
+    row.level = source.等级;
+    row.attack = source.攻击力;
+    row.defense = source.防御力;
+    row.speed = source.速度;
+    row.special = source.特殊;
+    row.magic = source.魔法;
+    row.rape_type = source.凌辱类型;
+    row.resistance = source.耐性;
   } else if (inum >= 1000 && inum < 2000) {
-    enemy_data_check(inum, top);
+    enemy_data_check(inum, line);
   } else {
     // ELSE 分支：未知识别号 → 骷髅兵（skeleton 的 ARG:1 用勇者A）
-    skeleton(top, arg2, rand_n);
+    skeleton(line, arg2, rand_n);
   }
 
   // —— 精英のお供 ——
@@ -475,7 +468,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     ((era.get(`cflag:${arg2}:0`) || 0) >= 1 || arg2 === 0);
   if (is_elite_follower) {
     // 精英のお供はボス化しない
-    e_set(top + 8, 0);
+    row.boss = 0;
     // 2回の抽選の結果、多い方を採用
     if (second_count < first_count) {
       second_count = first_count;
@@ -490,53 +483,53 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   const mod = extra % 100;
   if (mod === 1) {
     // 上級化
-    e_set(top + 2, e_get(top + 2) + rand_n(Math.floor(lv / 2)) + 1);
-    e_set(top + 3, e_get(top + 3) + rand_n(Math.floor(lv / 2)) + 1);
+    row.attack += rand_n(Math.floor(lv / 2)) + 1;
+    row.defense += rand_n(Math.floor(lv / 2)) + 1;
   } else if (mod === 2) {
     // 地形適応
-    e_set(top + 5, 17);
-    e_set(top + 3, e_get(top + 3) + rand_n(Math.floor(lv / 2)) + 1);
+    row.special = 17;
+    row.defense += rand_n(Math.floor(lv / 2)) + 1;
   } else if (mod === 3) {
     // 酸性（鎧破壊）
-    e_set(top + 5, 4);
-    e_set(top + 2, e_get(top + 2) + rand_n(Math.floor(lv / 2)) + 1);
+    row.special = 4;
+    row.attack += rand_n(Math.floor(lv / 2)) + 1;
   } else if (mod === 4) {
     // 猛毒
-    e_set(top + 2, e_get(top + 2) + rand_n(lv) + 1);
+    row.attack += rand_n(lv) + 1;
   } else if (mod === 5) {
     // 装甲
-    e_set(top + 3, e_get(top + 3) + rand_n(lv) + 1);
+    row.defense += rand_n(lv) + 1;
   }
   const troop = Math.floor(extra / 100) % 100;
   if (troop === 1) {
     // 弓兵（射撃）
-    e_set(top + 5, 16);
-    e_set(top + 2, e_get(top + 2) + rand_n(lv) + 1);
+    row.special = 16;
+    row.attack += rand_n(lv) + 1;
   } else if (troop === 2) {
     // 魔導兵（エナジーボルト）
-    e_set(top + 6, 3);
-    e_set(top + 2, e_get(top + 2) + rand_n(lv) + 1);
+    row.magic = 3;
+    row.attack += rand_n(lv) + 1;
   } else if (troop === 3) {
     // 催眠師（スリープ）
-    e_set(top + 6, 2);
-    e_set(top + 3, e_get(top + 3) + rand_n(lv) + 1);
+    row.magic = 2;
+    row.defense += rand_n(lv) + 1;
   } else if (troop === 4 && (era.get('flag:83') || 0) > 0) {
     // 肉鎧兵（肉鎧；FLAG:83 是肉铠库存）
-    e_set(top + 5, 18);
-    e_set(top + 3, e_get(top + 3) + rand_n(lv) + 1);
+    row.special = 18;
+    row.defense += rand_n(lv) + 1;
   }
 
   // —— 怪物ステータス補正 ——
-  let local = e_get(top + 1);
-  e_set(top + 1, local + 4); // 等级 +4
+  let local = row.level;
+  row.level = local + 4; // 等级 +4
   local *= 2; // テコ入れ
 
   // 知識による特定の怪物の強化
-  if ((era.get('talent:0:327') || 0) === 1 && e_get(top + 7) === 9) {
+  if ((era.get('talent:0:327') || 0) === 1 && row.rape_type === 9) {
     // 淫魔知识：女魔族 1.5 倍
     local += Math.floor(local / 2);
   }
-  if ((era.get('talent:0:328') || 0) === 1 && e_get(top + 7) === 3) {
+  if ((era.get('talent:0:328') || 0) === 1 && row.rape_type === 3) {
     // 魔虫知识：昆虫 1.5 倍
     local += Math.floor(local / 2);
   }
@@ -547,18 +540,18 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     lvup += rand_n(lv);
   }
 
-  e_set(top + 2, e_get(top + 2) * 2 + lvup);
-  e_set(top + 3, e_get(top + 3) * 2 + lvup);
+  row.attack = row.attack * 2 + lvup;
+  row.defense = row.defense * 2 + lvup;
 
   // —— 精英のお供を強化 ——
   const follower_lv = era.get(`cflag:${arg2}:9`) || 0;
   if (is_elite_follower) {
-    e_set(top + 2, e_get(top + 2) + follower_lv);
-    e_set(top + 3, e_get(top + 3) + follower_lv);
+    row.attack += follower_lv;
+    row.defense += follower_lv;
     // 精英と怪物が同じ种族なら更に強化（TALENT:319 种族2）
-    if ((era.get(`talent:${arg2}:319`) || 0) === e_get(top + 7)) {
-      e_set(top + 2, e_get(top + 2) + follower_lv);
-      e_set(top + 3, e_get(top + 3) + follower_lv);
+    if ((era.get(`talent:${arg2}:319`) || 0) === row.rape_type) {
+      row.attack += follower_lv;
+      row.defense += follower_lv;
     }
   }
   return 0;
@@ -567,8 +560,6 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
 module.exports = {
   campaign_dungeon_lv,
   enemy_data_check,
-  e_get,
-  e_set,
   item_name,
   monster_data,
   monster_setup,

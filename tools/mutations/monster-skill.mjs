@@ -72,18 +72,18 @@ export default [
   {
     desc: 'M7148 透明防御增量改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    e_set(user + 3, e_get(user + 3) + 2);',
+    find: '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    write(3, read(3) + 2);',
     replace:
-      '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    e_set(user + 3, e_get(user + 3) + 1); // 变异',
+      '  } else if (skill === 5) {\n    await print_battle_line(`${monster_name}变为透明了……（防御+2）`);\n    write(3, read(3) + 1); // 变异',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7149 迷失的第二次随机判定改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    e_set(user + 3, e_get(user + 3) + 5);\n  } else if (skill === 8) {\n    if (rand(3) === 0) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
+    find: '    write(3, read(3) + 5);\n  } else if (skill === 8) {\n    if (rand(3) === 0) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
     replace:
-      '    e_set(user + 3, e_get(user + 3) + 5);\n  } else if (skill === 8) {\n    if (rand(3) === 2) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
+      '    write(3, read(3) + 5);\n  } else if (skill === 8) {\n    if (rand(3) === 2) {\n      await print_battle_line(`${chara_callname(target)}迷失了！`);',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
@@ -125,45 +125,45 @@ export default [
   {
     desc: 'M7155 魔力吸取防御增量改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.气力 -= drain;\n    e_set(user + 3, e_get(user + 3) + 4);',
+    find: '    target_view.dungeon.气力 -= drain;\n    write(3, read(3) + 4);',
     replace:
-      '    target_view.dungeon.气力 -= drain;\n    e_set(user + 3, e_get(user + 3) + 3); // 变异',
+      '    target_view.dungeon.气力 -= drain;\n    write(3, read(3) + 3); // 变异',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7156 射击 HP 扣减删除',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.体力 -= dmg;\n  } else if (skill === 17) {\n    await monster_room_skill(target, user);',
+    find: '    target_view.dungeon.体力 -= dmg;\n  } else if (skill === 17) {\n    await monster_room_skill(target, user, 1);',
     replace:
-      '    // 变异：射击 HP 扣减删除\n  } else if (skill === 17) {\n    await monster_room_skill(target, user);',
+      '    // 变异：射击 HP 扣减删除\n  } else if (skill === 17) {\n    await monster_room_skill(target, user, 1);',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7157 普通怪物地形技能使用错误列头',
     file: 'ere/dungeon/monster-skill.js',
-    find: '  } else if (skill === 17) {\n    await monster_room_skill(target, user);\n  } else if (skill === 18) {\n    await print_battle_line(\n      `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,',
+    find: '  } else if (skill === 17) {\n    await monster_room_skill(target, user, 1);\n  } else if (skill === 18) {\n    await print_battle_line(\n      `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,',
     replace:
-      '  } else if (skill === 17) {\n    await monster_room_skill(target, user + 1); // 变异\n  } else if (skill === 18) {\n    await print_battle_line(\n      `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,',
+      '  } else if (skill === 17) {\n    await monster_room_skill(target, user + 1, 1); // 变异\n  } else if (skill === 18) {\n    await print_battle_line(\n      `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,',
     tests: ['monster-skill'],
     must_mention: '十八种技能逐项',
   },
   {
     desc: 'M7158 商店街地形 HP 倍率改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.体力 -= level * 2;\n    e_set(user + 2, e_get(user + 2) + 1);',
+    find: '    target_view.dungeon.体力 -= level * 2;\n    write(2, read(2) + 1);',
     replace:
-      '    target_view.dungeon.体力 -= level; // 变异\n    e_set(user + 2, e_get(user + 2) + 1);',
+      '    target_view.dungeon.体力 -= level; // 变异\n    write(2, read(2) + 1);',
     tests: ['monster-skill'],
     must_mention: '七种房间逐项',
   },
   {
     desc: 'M7159 沼地地形攻击增量改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    target_view.dungeon.气力 -= level * 2;\n    e_set(user + 2, e_get(user + 2) + 2);',
+    find: '    target_view.dungeon.气力 -= level * 2;\n    write(2, read(2) + 2);',
     replace:
-      '    target_view.dungeon.气力 -= level * 2;\n    e_set(user + 2, e_get(user + 2) + 1); // 变异',
+      '    target_view.dungeon.气力 -= level * 2;\n    write(2, read(2) + 1); // 变异',
     tests: ['monster-skill'],
     must_mention: '沼地攻击 +2',
   },
@@ -178,26 +178,26 @@ export default [
   {
     desc: 'M7161 冰室地形防御增量改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    e_set(user + 2, e_get(user + 2) + 2);\n    e_set(user + 3, e_get(user + 3) + 2);\n  } else if (room === 504)',
+    find: '    write(2, read(2) + 2);\n    write(3, read(3) + 2);\n  } else if (room === 504)',
     replace:
-      '    e_set(user + 2, e_get(user + 2) + 2);\n    e_set(user + 3, e_get(user + 3) + 1); // 变异\n  } else if (room === 504)',
+      '    write(2, read(2) + 2);\n    write(3, read(3) + 1); // 变异\n  } else if (room === 504)',
     tests: ['monster-skill'],
     must_mention: '冰室防御 +2',
   },
   {
     desc: 'M7162 热砂低防御检查改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    if (e_get(user + 3) > 2) {',
-    replace: '    if (e_get(user + 3) >= 2) { // 变异',
+    find: '    if (read(3) > 2) {',
+    replace: '    if (read(3) >= 2) { // 变异',
     tests: ['monster-skill'],
     must_mention: '不把低防御再减一',
   },
   {
     desc: 'M7163 迷宫地形防御增量改坏',
     file: 'ere/dungeon/monster-skill.js',
-    find: '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    e_set(user + 3, e_get(user + 3) + 5);',
+    find: '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    write(3, read(3) + 5);',
     replace:
-      '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    e_set(user + 3, e_get(user + 3) + 4); // 变异',
+      '  } else if (room === 505) {\n    await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);\n    write(3, read(3) + 4); // 变异',
     tests: ['monster-skill'],
     must_mention: '七种房间逐项',
   },
@@ -213,9 +213,9 @@ export default [
   {
     desc: 'M7165 slave_monster_skill 三分之一不发动检查删除',
     file: 'ere/dungeon/monster-skill.js',
-    find: 'async function slave_monster_skill(target, user, rand = default_rand) {\n  if (rand(3) === 0) {',
+    find: 'async function slave_monster_skill(target, cid, rand = default_rand) {\n  if (rand(3) === 0) {',
     replace:
-      'async function slave_monster_skill(target, user, rand = default_rand) {\n  if (false) {',
+      'async function slave_monster_skill(target, cid, rand = default_rand) {\n  if (false) {',
     tests: ['monster-skill'],
     must_mention: 'RAND:3 == 0 不发动',
   },
@@ -246,10 +246,10 @@ export default [
   {
     desc: 'M7169 use_monster_skill 不再覆盖传入等级',
     file: 'ere/dungeon/monster-skill.js',
-    find: '  dmg = e_get(user + 1) + chara(0).chara.等级;',
+    find: '  dmg = read(1) + chara(0).chara.等级;',
     replace: '  dmg += 0; // 变异：保留传入等级',
     tests: ['monster-skill'],
-    must_mention: '传入的精英等级会被 E 槽重算覆盖',
+    must_mention: '传入的精英等级会被列里的等级重算覆盖',
   },
   {
     desc: 'M7170 use_monster_skill 参数下降除数改坏',
@@ -264,7 +264,7 @@ export default [
     file: 'ere/dungeon/monster-skill.js',
     find: '    } else if (user_type === 2) {\n      chara(user).dungeon.防御力 += value;\n    }',
     replace:
-      '    } else if (user_type === 2) {\n      e_set(user + 3, e_get(user + 3) + value); // 变异\n    }',
+      '    } else if (user_type === 2) {\n      battle_column(user).defense += value; // 变异\n    }',
     tests: ['monster-skill'],
     must_mention: '精英版的数值差异与写入位置',
   },
@@ -289,7 +289,7 @@ export default [
   {
     desc: 'M7174 精英肉铠被顺手改成按类型分流',
     file: 'ere/dungeon/monster-skill.js',
-    find: '    e_set(user + 3, e_get(user + 3) + 2);\n  }\n  return 0;\n}\n\nmodule.exports',
+    find: '    write(3, read(3) + 2);\n  }\n  return 0;\n}\n\nmodule.exports',
     replace:
       '    add_defence(2); // 变异：按类型分流\n  }\n  return 0;\n}\n\nmodule.exports',
     tests: ['monster-skill'],

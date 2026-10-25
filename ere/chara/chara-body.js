@@ -597,7 +597,6 @@ function char_size_generate(
     previous = int((previous * previous_difference) / 100000);
     previous = int((previous * previous_difference) / 100000);
     bust_weight -= previous;
-    era.set('e:1', bust_weight); // E:1 仅胸围变化造成的重量差
   }
   weight += bust_weight * 250;
   if (t(314) === 0) race_age = age;

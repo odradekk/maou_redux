@@ -8,7 +8,8 @@
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { chara } = require('#/facade/chara');
-const { e_get, monster_data } = require('#/dungeon/monster-data');
+const { monster_data } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { print_button_grid } = require('#/utils/button-grid');
 const { default_rand } = require('#/utils/numeric');
 
@@ -393,7 +394,7 @@ async function monster_play(rand = default_rand) {
   if (selected !== 900) {
     // X 列取数。与 Y/场景共用随机序列，保留 monster_data 的消费顺序。
     monster_data(selected, 5, -1, -1, -1, rand);
-    type = e_get(507); // E:507 = 凌辱类型（怪物种族）
+    type = battle_column(BATTLE_COLUMN.RAVISH).rape_type; // E:507 = 凌辱类型（怪物种族）
   }
 
   const cid = 0; // A = 0（魔王）

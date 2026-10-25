@@ -253,7 +253,7 @@ test('ENEMY_DATA_CHECK：保留未绑定局部变量造成的无操作行为', (
   const { enemy_data_check } = fixture.load_module('dungeon/monster-data');
 
   assert.equal(enemy_data_check(1007, 200), 0);
-  assert.equal(fixture.store.get('e:200') ?? 0, 0);
+  assert.equal(fixture.battle('DEFENSE_3').id ?? 0, 0);
 });
 
 test('MONSTER_DATA：1000-1009 接入 ENEMY_DATA_CHECK 且不回退成骷髅', () => {
@@ -265,7 +265,7 @@ test('MONSTER_DATA：1000-1009 接入 ENEMY_DATA_CHECK 且不回退成骷髅', (
     monster_data(1007, 5, -1, -1, -1, () => 0),
     0,
   );
-  assert.equal(fixture.store.get('e:500') ?? 0, 0);
+  assert.equal(fixture.battle('RAVISH').id ?? 0, 0);
 });
 
 test('MONSTER_DATA：1010-1999 仍走 ENEMY_DATA_CHECK，不回退成骷髅', () => {
@@ -273,7 +273,7 @@ test('MONSTER_DATA：1010-1999 仍走 ENEMY_DATA_CHECK，不回退成骷髅', ()
   const { monster_data } = fixture.load_module('dungeon/monster-data');
 
   monster_data(1010, 5, -1, -1, -1, () => 0);
-  assert.equal(fixture.store.get('e:500') ?? 0, 0);
+  assert.equal(fixture.battle('RAVISH').id ?? 0, 0);
 });
 
 test('NTR_CHILD_BIRTH：父亲分支输出后以 P=20 调用已有 NTR 口上族', async () => {

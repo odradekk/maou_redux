@@ -88,7 +88,8 @@ const { life_list } = require('#/page/page-life-list');
 const { search_family } = require('#/chara/chara-family');
 const { chara_id_output } = require('#/chara/chara-stats');
 const { enter_lover, LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
-const { e_get, monster_data } = require('#/dungeon/monster-data');
+const { monster_data } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { monsterplay_list } = require('#/dungeon/monster-play');
 const { chara } = require('#/facade/chara');
 const { default_rand } = require('#/utils/numeric');
@@ -940,12 +941,12 @@ function resolve_groom(arg, groom_num, groom_type, partner, rand) {
       groom_type,
     };
   }
-  // ELSE：怪物。monster_data 把陵辱类型写进 E:507（列头 500 + 7）
+  // ELSE：怪物。monster_data 把陵辱类型写进凌辱列（列号 5）的 rape_type
   monster_data(groom_num, 5, -1, -1, -1, rand);
   return {
     label: itemname(groom_num),
     groom_num,
-    groom_type: e_get(507),
+    groom_type: battle_column(BATTLE_COLUMN.RAVISH).rape_type,
   };
 }
 

@@ -223,8 +223,8 @@ export default [
   {
     desc: 'M6589 enemy_data_check 不再保留未绑定局部变量造成的无操作行为',
     file: 'ere/dungeon/monster-data.js',
-    find: '  void top;',
-    replace: '  e_set(top, inum);',
+    find: '  void column;',
+    replace: '  battle_column(column).id = inum;',
     tests: ['cross-stubs'],
     must_mention: '保留未绑定局部变量造成的无操作行为',
   },

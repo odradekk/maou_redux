@@ -22,7 +22,7 @@
  *   - `IF E:NUM <= 0 THEN E:RYOUZYOKU = 0` 的就地清零：
  *     该列无怪（数量 0）时把凌辱类型抹掉，后续 `E:RYOUZYOKU > 0` 与分发
  *     都走不到。**该检查在 ere 侧不可达**：`monster_data` 给 0–2 列写的
- *     数量（`E:列头+99`）恒 ≥ 1——它算这个数的「数量第二骰」段
+ *     数量恒 ≥ 1——它算这个数的「数量第二骰」段
  *     （ere/dungeon/monster-data.js）每条分支的取值都 ≥ 1，三处
  *     提前返回只发生在 `line` 为 3/4/5，而本模块只传 0/1/2。该检查保留
  *     不删不改行为（issue #486；不可达分支无法用变异守住，故不设变异条目）。
@@ -36,17 +36,13 @@
 'use strict';
 
 const era = require('#/era-electron');
-const {
-  e_get,
-  e_set,
-  item_name,
-  monster_data,
-} = require('#/dungeon/monster-data');
+const { item_name, monster_data } = require('#/dungeon/monster-data');
+const { battle_column } = require('#/dungeon/battle-state');
 const { default_rand } = require('#/utils/numeric');
 
 /**
  * invasion_ryouzyoku：侵略时的凌辱旁白分发。抽三列怪物的数据，
- * 按各列的凌辱类型（E:(列头+7)，由 monster_data 写入）调对应的旁白。
+ * 按各列的凌辱类型（rape_type 槽，由 monster_data 写入）调对应的旁白。
  * @param {number} area 战场（1 人间界 / 2 精灵领域 / 3 龙之山 /
  *   4 天界 / 5 天神宫；其余落旁白函数内的 ELSE 分支）
  * @param {number} sinkou 侵攻点（本函数内 ÷5000 归一到 0..10）
@@ -61,42 +57,40 @@ async function invasion_ryouzyoku(area, sinkou, rand = default_rand) {
   for (let count = 0; count < 3; count += 1) {
     const x = (rand(9) + 1) * 10 + 100 + rand(5);
     monster_data(x, count, 0, -1, -1, rand);
+    const row = battle_column(count);
 
-    const ryouzyoku = count * 100 + 7;
-    const num = count * 100 + 99;
-    if (e_get(num) <= 0) {
-      e_set(ryouzyoku, 0); // その列に怪物がいなければ凌辱类型を消す
+    if (row.count <= 0) {
+      row.rape_type = 0; // その列に怪物がいなければ凌辱类型を消す
     }
-    if (e_get(ryouzyoku) > 0) {
-      const id = e_get(count * 100);
-      await era.printAndWait(`${item_name(id)}的凌辱开始了。`);
+    if (row.rape_type > 0) {
+      await era.printAndWait(`${item_name(row.id)}的凌辱开始了。`);
     }
 
     // 凌辱类型 → 旁白（1 兽人 / 2 史莱姆 / 3 昆虫 / 4 藤蔓 / 5 触手 /
     // 6 妖精 / 7 巨人 / 8 男 / 9 女 / 10 兽 / 11 脑奸 / 12 马）
-    if (e_get(ryouzyoku) === 1) {
+    if (row.rape_type === 1) {
       await orc_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 2) {
+    } else if (row.rape_type === 2) {
       await slime_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 3) {
+    } else if (row.rape_type === 3) {
       await insect_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 4) {
+    } else if (row.rape_type === 4) {
       await ivy_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 5) {
+    } else if (row.rape_type === 5) {
       await syokusyu_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 6) {
+    } else if (row.rape_type === 6) {
       await faily_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 7) {
+    } else if (row.rape_type === 7) {
       await giant_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 8) {
+    } else if (row.rape_type === 8) {
       await man_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 9) {
+    } else if (row.rape_type === 9) {
       await girl_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 10) {
+    } else if (row.rape_type === 10) {
       await beast_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 11) {
+    } else if (row.rape_type === 11) {
       await brain_inv(area, point, rand);
-    } else if (e_get(ryouzyoku) === 12) {
+    } else if (row.rape_type === 12) {
       await horse_inv(area, point, rand);
     }
     era.print(''); // PRINTL（空行分隔）

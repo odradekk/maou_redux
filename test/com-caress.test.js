@@ -876,8 +876,8 @@ test('B 分支 6（接吻）：魔兽支按 E:307 取文案（史莱姆）', asy
   fixture.store.set('tequip:31:88', 1);
   fixture.store.set('abl:31:10', 2); // 顺从 2+ → 判定段自动成功（直进 B 文）
   // 魔兽描写读取 e 表；测试直接设置种族与名称编号。
-  fixture.store.set('e:300', 0);
-  fixture.store.set('e:307', 2); // 史莱姆
+  fixture.battle('MINION_A').id = 0;
+  fixture.battle('MINION_A').rape_type = 2; // 史莱姆
   fixture.store.set('talent:31:159', 1); // 异种婚姻
   fixture.store.set('itemname:0', '史莱姆'); // MONSTER_NAME 拼名读 ITEMNAME 表
   await com_family.call(6);

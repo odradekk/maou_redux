@@ -43,12 +43,21 @@ function setup() {
   fixture.store.set('callname:1:-1', '阿尔');
   fixture.store.set('callname:2:-1', '贝丝');
   // 防御怪物列 0：识别号 100、等级 20、攻防 30/40。
-  fixture.store.set('e:0', 100);
-  fixture.store.set('e:1', 20);
-  fixture.store.set('e:2', 30);
-  fixture.store.set('e:3', 40);
+  fixture.battle('DEFENSE_1').id = 100;
+  fixture.battle('DEFENSE_1').level = 20;
+  fixture.battle('DEFENSE_1').attack = 30;
+  fixture.battle('DEFENSE_1').defense = 40;
   fixture.store.set('itemname:100', '狗头人');
   return fixture;
+}
+
+/**
+ * 断言键：`store` 地址，或 `battle:列名:字段`。战斗状态自 #883 起是普通对象
+ * （不经引擎变量表），没有 store 地址可读。
+ */
+function read(fixture, key) {
+  const battle = /^battle:(\w+):(\w+)$/.exec(key);
+  return battle ? fixture.battle(battle[1])[battle[2]] : fixture.store.get(key);
 }
 
 test('公开怪物技能四个函数', () => {
@@ -78,9 +87,9 @@ test('monster_skill：十八种技能逐项改变既定的数值', async () => {
     [2, 'base:1:0', 1970],
     [3, 'cflag:1:11', 73],
     [4, 'cflag:1:12', 63],
-    [5, 'e:3', 42],
-    [6, 'e:3', 43],
-    [7, 'e:3', 45],
+    [5, 'battle:DEFENSE_1:defense', 42],
+    [6, 'battle:DEFENSE_1:defense', 43],
+    [7, 'battle:DEFENSE_1:defense', 45],
     [8, 'cflag:1:509', 1],
     [9, 'base:1:0', 1933],
     [10, 'cflag:1:11', 70],
@@ -88,24 +97,24 @@ test('monster_skill：十八种技能逐项改变既定的数值', async () => {
     [12, 'base:1:1', 933],
     [13, 'exp:1:80', 55],
     [14, 'base:1:0', 1933],
-    [15, 'e:3', 44],
+    [15, 'battle:DEFENSE_1:defense', 44],
     [16, 'base:1:0', 1955],
     [17, 'base:1:1', 940],
-    [18, 'e:3', 42],
+    [18, 'battle:DEFENSE_1:defense', 42],
   ];
 
   for (const [skill, key, expected] of cases) {
     const fixture = setup();
     fixture.store.set('cflag:1:501', 501);
     await load(fixture).monster_skill(1, skill, 0, seq(1, 0));
-    assert.equal(fixture.store.get(key), expected, `技能 ${skill}`);
+    assert.equal(read(fixture, key), expected, `技能 ${skill}`);
   }
 });
 
 test('monster_skill：强化伤害与参数下降分别钳在 400 和 50', async () => {
   const fixture = setup();
   const { monster_skill } = load(fixture);
-  fixture.store.set('e:1', 500);
+  fixture.battle('DEFENSE_1').level = 500;
 
   await monster_skill(1, 16, 0, seq(1));
   assert.equal(fixture.store.get('base:1:0'), 1600);
@@ -145,9 +154,9 @@ test('monster_room_skill：七种房间逐项应用地形效果', async () => {
     [500, null, 'base:1:0', 1940],
     [501, null, 'base:1:1', 940],
     [502, ['flag:83', 1], 'cflag:1:11', 20],
-    [503, null, 'e:2', 32],
-    [504, null, 'e:2', 40],
-    [505, null, 'e:3', 45],
+    [503, null, 'battle:DEFENSE_1:attack', 32],
+    [504, null, 'battle:DEFENSE_1:attack', 40],
+    [505, null, 'battle:DEFENSE_1:defense', 45],
     [506, ['flag:84', 1], 'base:1:1', 955],
   ];
 
@@ -156,7 +165,7 @@ test('monster_room_skill：七种房间逐项应用地形效果', async () => {
     fixture.store.set('cflag:1:501', room);
     if (flag) fixture.store.set(...flag);
     await load(fixture).monster_room_skill(1, 0);
-    assert.equal(fixture.store.get(key), expected, `房间 ${room}`);
+    assert.equal(read(fixture, key), expected, `房间 ${room}`);
   }
 });
 
@@ -164,13 +173,13 @@ test('monster_room_skill：沼地增加攻击，冰室同时增加攻防', async
   const swamp = setup();
   swamp.store.set('cflag:1:501', 501);
   await load(swamp).monster_room_skill(1, 0);
-  assert.equal(swamp.store.get('e:2'), 32, '沼地攻击 +2');
+  assert.equal(swamp.battle('DEFENSE_1').attack, 32, '沼地攻击 +2');
 
   const ice = setup();
   ice.store.set('cflag:1:501', 503);
   await load(ice).monster_room_skill(1, 0);
-  assert.equal(ice.store.get('e:2'), 32, '冰室攻击 +2');
-  assert.equal(ice.store.get('e:3'), 42, '冰室防御 +2');
+  assert.equal(ice.battle('DEFENSE_1').attack, 32, '冰室攻击 +2');
+  assert.equal(ice.battle('DEFENSE_1').defense, 42, '冰室防御 +2');
 });
 
 test('monster_room_skill：牧场与博物馆没有库存时不发动，热砂不把低防御再减一', async () => {
@@ -185,9 +194,9 @@ test('monster_room_skill：牧场与博物馆没有库存时不发动，热砂�
 
   const fixture = setup();
   fixture.store.set('cflag:1:501', 504);
-  fixture.store.set('e:3', 2);
+  fixture.battle('DEFENSE_1').defense = 2;
   await load(fixture).monster_room_skill(1, 0);
-  assert.equal(fixture.store.get('e:3'), 2);
+  assert.equal(fixture.battle('DEFENSE_1').defense, 2);
 });
 
 test('monster_skill：战斗日志开启时等待输出，破铠吐息文案与实伤一致', async () => {
@@ -220,7 +229,7 @@ test('use_monster_skill：十八种技能保留精英版的数值差异与写入
     [15, 'cflag:2:12', 24],
     [16, 'base:1:0', 1950],
     [17, 'base:1:1', 900],
-    [18, 'e:5', 2],
+    [18, 'battle:DEFENSE_1:special', 2],
   ];
 
   for (const [skill, key, expected] of cases) {
@@ -228,11 +237,11 @@ test('use_monster_skill：十八种技能保留精英版的数值差异与写入
     fixture.store.set('cflag:2:12', 20);
     fixture.store.set('cflag:1:501', 501);
     await load(fixture).use_monster_skill(1, skill, 2, 999, 2, '贝丝', seq(0));
-    assert.equal(fixture.store.get(key), expected, `技能 ${skill}`);
+    assert.equal(read(fixture, key), expected, `技能 ${skill}`);
   }
 });
 
-test('use_monster_skill：传入的精英等级会被 E 槽重算覆盖', async () => {
+test('use_monster_skill：传入的精英等级会被列里的等级重算覆盖', async () => {
   const fixture = setup();
 
   await load(fixture).use_monster_skill(1, 1, 2, 999, 2, '贝丝', seq(0));
@@ -275,17 +284,41 @@ test('slave_monster_skill：没有值严格为 1 的素质时不发动', async (
   assert.equal(fixture.store.get('base:1:1'), 1000);
 });
 
-test('use_monster_skill：怪物类型写 E 防御，未知类型只演出不增益', async () => {
+test('slave_monster_skill：角色号 ≥ 12 的精英（cid = 31）照旧版数值结算，不出现 NaN', async () => {
+  // 守旧行为：精英路径把角色号当 E 表下标用，cid = 31 读的是 E:31 / E:32 ——
+  // 旧表一列 100 槽，这两格恒 0（没人命名、没人写）。于是
+  //   dmg = 0 + chara(0).等级 10 = 10 → 气力 1000 - 10 = 990。
+  // 过渡层若只覆盖十二个具名字段，offset 31 会落到 undefined，dmg 变 NaN、
+  // 气力变 undefined——这条用例就是那次回归的钉子。修「角色号当列号」那张
+  // 票时要把它翻面（改成按列号取），注释与标题一并改。
+  const fixture = setup();
+  fixture.seed_chara(31, { id: 31, name: '菲娅', callname: '菲娅' });
+  fixture.era.addCharacter(31);
+  fixture.store.set('callname:31:-1', '菲娅');
+  fixture.store.set('base:31:11', 0); // 精英自身攻防与列无关，留空
+  fixture.store.set('talent:31:471', 1); // 粘液捕获
+  fixture.store.set('flag:5', 32); // 打开战斗日志，顺带核对文案里没有 NaN
+
+  await load(fixture).slave_monster_skill(1, 31, seq(1));
+
+  assert.equal(fixture.store.get('base:1:1'), 990, '旧版数值 1000 - 10');
+  const lines = fixture.text_lines().join('\n');
+  assert.doesNotMatch(lines, /NaN|undefined/, '文案里不得出现 NaN / undefined');
+});
+
+test('use_monster_skill：怪物类型写列里的防御，未知类型只演出不增益', async () => {
   const monster = setup();
   await load(monster).use_monster_skill(1, 5, 0, 0, 1, '狗头人', seq(0));
-  assert.equal(monster.store.get('e:3'), 42);
+  assert.equal(monster.battle('DEFENSE_1').defense, 42);
 
   const unknown = setup();
   await load(unknown).use_monster_skill(1, 5, 0, 0, 0, '狗头人', seq(0));
-  assert.equal(unknown.store.get('e:3'), 40);
+  assert.equal(unknown.battle('DEFENSE_1').defense, 40);
 });
 
-test('use_monster_skill：精英射击沿用 E 槽怪物名而非传入名字', async () => {
+test('use_monster_skill：精英射击沿用列里的怪物名而非传入名字', async () => {
+  // 精英路径把角色号 2 当 E 表下标用（既有怪癖）：怪物名取自 E:2 =
+  // 列 0 的攻击力槽，不是形参 user_name。
   const fixture = setup();
   fixture.store.set('flag:5', 32);
   fixture.store.set('itemname:30', '错位怪物名');
@@ -309,8 +342,8 @@ test('两套战斗入口调用怪物技能真身并透传确定性随机源', as
     const magic_mod = fixture.load_module('dungeon/magic');
     magic_mod.magic = async () => 0;
     const battle = fixture.load_module('dungeon/dungeon-battle');
-    fixture.store.set('e:5', 7);
-    fixture.store.set('e:99', 1);
+    fixture.battle('DEFENSE_1').special = 7;
+    fixture.battle('DEFENSE_1').count = 1;
 
     assert.equal(await battle.monster_attack(1, 0, rand), 999);
     assert.deepEqual(calls, [[1, 7, 0, rand]]);

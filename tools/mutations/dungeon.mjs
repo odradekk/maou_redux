@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 319; // #872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 331; // #883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -878,18 +878,18 @@ export default [
   {
     desc: 'M6724 角色对 Boss 的魔法减伤改坏（十分之一改五分之一）',
     file: 'ere/dungeon/magic.js',
-    find: '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv_trunc(damage, 10);',
+    find: '  if (battle_column(monster_head).boss === 1) {\n    damage = idiv_trunc(damage, 10);',
     replace:
-      '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv_trunc(damage, 5); // 变异',
+      '  if (battle_column(monster_head).boss === 1) {\n    damage = idiv_trunc(damage, 5); // 变异',
     tests: ['dungeon-magic'],
     must_mention: 'Boss',
   },
   {
     desc: 'M6725 怪物魔法减益的自然衰减删坏',
     file: 'ere/dungeon/magic.js',
-    find: '    era.set(`cflag:${cid}:682`, debuff);\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {',
+    find: '    era.set(`cflag:${cid}:682`, debuff);\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {',
     replace:
-      '    // 变异：低段魔法减益不写回衰减\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {',
+      '    // 变异：低段魔法减益不写回衰减\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {',
     tests: ['dungeon-magic'],
     must_mention: '魔法减益',
   },
@@ -979,9 +979,9 @@ export default [
   {
     desc: 'M6736 火球术的怪物数量扣减删坏',
     file: 'ere/dungeon/magic.js',
-    find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 800);\n    const killed = kill_monsters(a, b, damage);',
+    find: "    );\n    const killed = kill_monsters(a, b, damage);\n    await print_wait(\n      killed <= 0 ? '火球术好像完全没有效果' : `火球术烧尽了${killed}只怪物！`,",
     replace:
-      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 800);\n    const killed = 0; // 变异：不消灭怪物',
+      "    );\n    const killed = 0; // 变异：不消灭怪物\n    await print_wait(\n      killed <= 0 ? '火球术好像完全没有效果' : `火球术烧尽了${killed}只怪物！`,",
     tests: ['dungeon-magic'],
     must_mention: '消灭怪物',
   },
@@ -1048,18 +1048,18 @@ export default [
   {
     desc: 'M6745 群体法术过量击杀按理论值播报（不钳现存怪物数）',
     file: 'ere/dungeon/magic.js',
-    find: '    add_exp(a, e_get(b + 1) * killed);\n    return killed;',
+    find: '    add_exp(a, battle_column(b).level * killed);\n    return killed;',
     replace:
-      '    add_exp(a, e_get(b + 1) * killed);\n    return kill_mons; // 变异',
+      '    add_exp(a, battle_column(b).level * killed);\n    return kill_mons; // 变异',
     tests: ['dungeon-magic'],
     must_mention: '过量击杀按现存怪物数播报',
   },
   {
     desc: 'M6746 怪物火球漏掉等级差伤害上限',
     file: 'ere/dungeon/magic.js',
-    find: '    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 10, b);\n    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 800);',
+    find: '      (battle_column(b).level + get_cflag(0, 9)) * 10,\n      b,\n    );\n    damage = magic_damage_cap(\n      battle_column(b).level,\n      get_cflag(a, 9),\n      damage,\n      800,\n    );\n    add_base(a, 0, -damage);',
     replace:
-      '    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 10, b);\n    // 变异：等级差伤害上限删除',
+      '      (battle_column(b).level + get_cflag(0, 9)) * 10,\n      b,\n    );\n    // 变异：删掉等级差伤害上限\n    add_base(a, 0, -damage);',
     tests: ['dungeon-magic'],
     must_mention: '怪物火球同样受等级差伤害上限约束',
   },
@@ -1164,15 +1164,15 @@ export default [
   {
     desc: 'M6758 怪物治疗漏掉固定增加的一点',
     file: 'ere/dungeon/magic.js',
-    find: '    e_set(b + 3, e_get(b + 3) + 1 + idiv_trunc(damage, 60));',
-    replace: '    e_set(b + 3, e_get(b + 3) + idiv_trunc(damage, 60)); // 变异',
+    find: '    battle_column(b).defense += 1 + idiv_trunc(damage, 60);',
+    replace: '    battle_column(b).defense += idiv_trunc(damage, 60); // 变异',
     tests: ['dungeon-magic'],
     must_mention: '治疗 2',
   },
   {
     desc: 'M6759 角色诅咒不再削怪物防御槽',
     file: 'ere/dungeon/magic.js',
-    find: '    e_set(b + 3, value);',
+    find: '    battle_column(b).defense = value;',
     replace: '    // 变异：怪物防御槽写回删除',
     tests: ['dungeon-magic'],
     must_mention: '诅咒 1',
@@ -2673,11 +2673,11 @@ export default [
     must_mention: '不再打印任何战斗行',
   },
   {
-    desc: 'M13150 monster_attack 换算回退 -100（修好不回潮，#651）',
+    desc: 'M13150 monster_attack 取列错位一列（修好不回潮，#651）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: '  // IDを先頭に（数量槽 99/199/299 → 列头 0/100/200，与同构三处一致）\n  monid -= 99;',
+    find: '  // monid 即列号（0/100/200 的列头走法不再需要）\n  const mon = battle_column(monid);',
     replace:
-      '  // 变异：换算回退 -100（数量槽错位、DMG 恒 0）\n  monid -= 100;',
+      '  // 变异：取列错位（读下一列的数据，DMG 恒 0）\n  const mon = battle_column(monid + 1);',
     tests: ['dungeon-battle'],
     must_mention: 'HP -10',
   },
@@ -2753,9 +2753,9 @@ export default [
   {
     desc: 'M13159 energy_bolt_magic 封顶删（kill_monsters 改裸算，怪物数可负，#651 修好的负怪物数不回潮）',
     file: 'ere/dungeon/magic.js',
-    find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0\n    const killed = kill_monsters(a, b, damage);',
+    find: '    // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0\n    const killed = kill_monsters(a, b, damage);',
     replace:
-      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv_trunc(damage, e_get(b + 99)); // 变异：封顶删（怪物数可负）',
+      '    const killed = idiv_trunc(damage, battle_column(b).count); // 变异：封顶删（怪物数可负）',
     tests: ['dungeon-magic'],
     must_mention: '怪物数不跌破 0',
   },
@@ -2914,5 +2914,109 @@ export default [
     replace: '  if (rand_n(3) === 0 && sideb > 0) {',
     tests: ['dungeon-benki-flow'],
     must_mention: '随机上界的消费顺序',
+  },
+  // —— #883：战斗状态从 E 表搬成普通对象（M16850-M16859）——
+  // 目标文件是 ere/dungeon/battle-state.js（列枚举与列对象）、
+  // ere/dungeon/monster-data.js（唯一写者）与 ere/chara/chara-body.js
+  // （删掉的那处 e:1 临时写）。tests 一律是 test/dungeon-battle-state.test.js。
+  {
+    desc: 'M16850 battle_column 的越界回落删掉（越界列返回 undefined）',
+    file: 'ere/dungeon/battle-state.js',
+    find: '  const row = columns[column];\n  return row === undefined ? out_of_range : row;',
+    replace: '  return columns[column];',
+    tests: ['dungeon-battle-state'],
+    must_mention: '列号越界读全 0 列而不抛错',
+  },
+  {
+    desc: 'M16851 reset_battle_state 换成新数组（列引用脱开）',
+    file: 'ere/dungeon/battle-state.js',
+    find: '  for (const row of [...columns, out_of_range]) {',
+    replace:
+      '  columns = columns.map(() => new_column());\n  for (const row of [out_of_range]) {',
+    tests: ['dungeon-battle-state'],
+    must_mention: '复位后必须还是同一个对象',
+  },
+  {
+    desc: 'M16852 battle_column 恒取第 0 列（列与列串写）',
+    file: 'ere/dungeon/battle-state.js',
+    find: '  const row = columns[column];',
+    replace: '  const row = columns[0];',
+    tests: ['dungeon-battle-state'],
+    must_mention: '各列必须是各自的对象，不能共用一个',
+  },
+  {
+    desc: 'M16853 列枚举的 RAVISH 号写错（5 改 4）',
+    file: 'ere/dungeon/battle-state.js',
+    find: '  RAVISH: 5,',
+    replace: '  RAVISH: 4,',
+    tests: ['dungeon-battle-state'],
+    must_mention: '六列都是同一形状的全 0 对象',
+  },
+  {
+    desc: 'M16854 列的 resistance 字段漏写（字段集少一项）',
+    file: 'ere/dungeon/battle-state.js',
+    find: "  'status',\n  'resistance',\n]);",
+    replace: "  'status',\n]);",
+    tests: ['dungeon-battle-state'],
+    must_mention: '字段恰是原偏移表的十二项',
+  },
+  {
+    desc: 'M16855 monster_data 把数量写进等级槽（字段错位）',
+    file: 'ere/dungeon/monster-data.js',
+    find: '  row.count = second_count;',
+    replace: '  row.level = second_count;',
+    tests: ['dungeon-battle-state'],
+    must_mention: '数量落在 count',
+  },
+  {
+    desc: 'M16856 monster_data 的 Boss 化门槛改坏（<= 1 改 < 1）',
+    file: 'ere/dungeon/monster-data.js',
+    find: '  } else if (first_count <= 1 && line < 3) {',
+    replace: '  } else if (first_count < 1 && line < 3) {',
+    tests: ['dungeon-battle-state'],
+    must_mention: '单体 Boss 化',
+  },
+  {
+    desc: 'M16857 monster_data 的等级缩放系数改坏（攻防 ×2 改 ×3）',
+    file: 'ere/dungeon/monster-data.js',
+    find: '  row.attack = row.attack * 2 + lvup;\n  row.defense = row.defense * 2 + lvup;',
+    replace:
+      '  row.attack = row.attack * 3 + lvup;\n  row.defense = row.defense * 2 + lvup;',
+    tests: ['dungeon-battle-state'],
+    must_mention: '攻击 = 基础 1 × 2 + 等级骰 0',
+  },
+  {
+    desc: 'M16858 skeleton 的等级少加一点（lv + 1 改 lv）',
+    file: 'ere/dungeon/monster-data.js',
+    find: '  row.level = lv + 1; // 等级',
+    replace: '  row.level = lv; // 等级',
+    tests: ['dungeon-battle-state'],
+    must_mention: 'skeleton：等级、攻击、防御一起写对象',
+  },
+  {
+    desc: 'M16859 身体生成的重量差又写回第 1 列等级槽（e:1 的临时用法复辟）',
+    file: 'ere/chara/chara-body.js',
+    find: '    bust_weight -= previous;\n  }',
+    replace:
+      "    bust_weight -= previous;\n    require('#/dungeon/battle-state').battle_column(0).level = bust_weight; // 变异\n  }",
+    tests: ['dungeon-battle-state'],
+    must_mention: '第 1 列等级槽不该被身体生成写入',
+  },
+  {
+    desc: 'M16860 legacy 过渡层只覆盖十二个具名字段（offset ≥ 12 读成 undefined）',
+    file: 'ere/dungeon/battle-state.js',
+    find: '      : offset < BATTLE_FIELD_ORDER.length\n        ? BATTLE_FIELD_ORDER[offset]\n        : `legacy_${offset}`;',
+    replace: '      : BATTLE_FIELD_ORDER[offset]; // 变异：不覆盖 11..98',
+    tests: ['dungeon-battle-state'],
+    must_mention: 'offset 32 读回 0（与 31 互不串写）',
+  },
+  {
+    desc: 'M16861 legacy 过渡层把 11..98 也映射到 count（三段错位）',
+    file: 'ere/dungeon/battle-state.js',
+    find: "      ? 'count'\n      : offset < BATTLE_FIELD_ORDER.length",
+    replace:
+      "      ? 'count'\n      : offset > 10 // 变异：11..98 一律落 count\n        ? 'count'\n        : offset < BATTLE_FIELD_ORDER.length",
+    tests: ['dungeon-battle-state'],
+    must_mention: 'legacy 槽不得串到 count',
   },
 ];

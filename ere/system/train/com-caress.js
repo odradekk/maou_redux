@@ -43,7 +43,8 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
-const { e_get, monster_name } = require('#/dungeon/monster-data');
+const { monster_name } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const {
   clothtype_main2_text,
   clothtype_special_text,
@@ -2081,7 +2082,7 @@ async function train_message_b_0() {
   if (teq(90)) {
     line += '触手玩弄着';
   } else if (teq(88)) {
-    const species = e_get(307);
+    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;
     const action =
       species === 2
         ? '用满是黏液的身体包覆着'
@@ -2096,7 +2097,9 @@ async function train_message_b_0() {
                 : species === 10 || species === 12
                   ? '那野兽的舌头正舔着'
                   : '正仔细地爱抚着';
-    era.print(`${line}${monster_name(e_get(300))}${action}`);
+    era.print(
+      `${line}${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}${action}`,
+    );
     era.print(`${target_name}${body_phrase(target)}的身体……`);
     await print_pregnancy_kick(target, target_name);
     return;
@@ -2142,17 +2145,20 @@ async function train_message_b_1() {
   if (era.get(`tequip:${target}:89`)) {
     line = '狗的舌头';
   } else if (era.get(`tequip:${target}:88`)) {
-    line = `${monster_name(e_get(300))} ${monster_species_text(e_get(307), {
-      2: '那黏答答的口部',
-      3: '的口器',
-      4: '的藤蔓',
-      5: '的触手',
-      11: '的触手',
-      6: '大张着那小小嘴巴',
-      10: '的野兽舌头',
-      12: '的野兽舌头',
-      default: '',
-    })}`;
+    line = `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)} ${monster_species_text(
+      battle_column(BATTLE_COLUMN.MINION_A).rape_type,
+      {
+        2: '那黏答答的口部',
+        3: '的口器',
+        4: '的藤蔓',
+        5: '的触手',
+        11: '的触手',
+        6: '大张着那小小嘴巴',
+        10: '的野兽舌头',
+        12: '的野兽舌头',
+        default: '',
+      },
+    )}`;
   } else {
     line = player_name;
   }
@@ -2169,51 +2175,60 @@ async function train_message_b_1() {
   if (futanari && lust3) {
     if (monster) {
       line += '，而那渐渐勃起的阴茎也被';
-      line += monster_species_text(e_get(307), {
-        2: '摩擦着并沾满了黏液',
-        3: '前端的口器轻轻啃咬着',
-        4: '藤蔓摩擦缠绕着',
-        5: '触手含住并吞吐着',
-        11: '触手含住并吞吐着',
-        6: '那娇小的身躯摩擦着',
-        10: '野兽舌头一同舔舐着',
-        12: '野兽舌头一同舔舐着',
-        default: '舌头一同舔舐着',
-      });
+      line += monster_species_text(
+        battle_column(BATTLE_COLUMN.MINION_A).rape_type,
+        {
+          2: '摩擦着并沾满了黏液',
+          3: '前端的口器轻轻啃咬着',
+          4: '藤蔓摩擦缠绕着',
+          5: '触手含住并吞吐着',
+          11: '触手含住并吞吐着',
+          6: '那娇小的身躯摩擦着',
+          10: '野兽舌头一同舔舐着',
+          12: '野兽舌头一同舔舐着',
+          default: '舌头一同舔舐着',
+        },
+      );
     } else {
       line += '、同时那阴茎也在舌头的舔舐中逐渐勃起';
     }
   } else if (futanari) {
     if (monster) {
       line += '、那阴茎的根部也同时';
-      line += monster_species_text(e_get(307), {
-        2: '被摩擦并沾满了黏液',
-        3: '被轻轻啃咬着',
-        4: '被藤蔓缠绕摩擦着',
-        5: '被轻轻地缠绕摩擦着',
-        11: '被轻轻地缠绕摩擦着',
-        6: '被抱住用全身摩擦着',
-        10: '被野兽舌头舔舐着',
-        12: '被野兽舌头舔舐着',
-        default: '被舌头舔舐着',
-      });
+      line += monster_species_text(
+        battle_column(BATTLE_COLUMN.MINION_A).rape_type,
+        {
+          2: '被摩擦并沾满了黏液',
+          3: '被轻轻啃咬着',
+          4: '被藤蔓缠绕摩擦着',
+          5: '被轻轻地缠绕摩擦着',
+          11: '被轻轻地缠绕摩擦着',
+          6: '被抱住用全身摩擦着',
+          10: '被野兽舌头舔舐着',
+          12: '被野兽舌头舔舐着',
+          default: '被舌头舔舐着',
+        },
+      );
     } else {
       line += '、一边又提起阴茎、在根部来回舔舐着';
     }
   } else if (lust3) {
     if (monster) {
       line += '、那硬挺起来的阴蒂也同时';
-      line += monster_species_text(e_get(307), {
-        2: '被摩擦并沾满了黏液',
-        3: '被口器轻轻啃咬舔舐着',
-        4: '被藤蔓缠绕摩擦着',
-        5: '被吸盘触手包覆吸吮着',
-        11: '被吸盘触手包覆吸吮着',
-        6: '被抱住用全身摩擦着',
-        10: '被野兽舌头舔舐着',
-        12: '被野兽舌头舔舐着',
-        default: '被舌头舔舐着',
-      });
+      line += monster_species_text(
+        battle_column(BATTLE_COLUMN.MINION_A).rape_type,
+        {
+          2: '被摩擦并沾满了黏液',
+          3: '被口器轻轻啃咬舔舐着',
+          4: '被藤蔓缠绕摩擦着',
+          5: '被吸盘触手包覆吸吮着',
+          11: '被吸盘触手包覆吸吮着',
+          6: '被抱住用全身摩擦着',
+          10: '被野兽舌头舔舐着',
+          12: '被野兽舌头舔舐着',
+          default: '被舌头舔舐着',
+        },
+      );
     } else {
       line += '、用舌头分开包裹着阴蒂的皮肤、不断吸啜着';
     }
@@ -2233,7 +2248,7 @@ async function train_message_b_2() {
 
   if (teq(88)) {
     // 魔兽支（MONSTER_NAME + E:307 种族文案 + 尾随空行）
-    const species = e_get(307);
+    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;
     let body;
     if (species === 2) {
       body = '分泌出黏液对着肛门刺激摩擦了起来……';
@@ -2250,7 +2265,9 @@ async function train_message_b_2() {
     } else {
       body = `玩弄着${target_name}的肛门${deep ? '、同时那指尖还深入到直肠绞动了起来' : ''}…`;
     }
-    era.print(`${monster_name(e_get(300))} ${body} `); // 保留仅含空格的输出行
+    era.print(
+      `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)} ${body} `,
+    ); // 保留仅含空格的输出行
   } else {
     // 普通支：未装备触手时，调教者名前缀需与后文合为一行，
     // 因而先拼接，再一次输出。
@@ -2453,8 +2470,8 @@ async function train_message_b_5() {
   } else if (teq(55) && era_flag.assi !== era_flag.player) {
     buf += '怪物喷出了恶臭的气息。';
   } else if (teq(88)) {
-    buf += `${monster_name(e_get(300))} `;
-    const species = e_get(307);
+    buf += `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)} `;
+    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;
     if (species === 2) {
       buf += '黏答答地蠕动着';
     } else if (species === 3) {
@@ -2513,7 +2530,7 @@ async function train_message_b_5() {
   if (teq(90)) {
     line('胸部被好几只触手缠住绞弄…');
   } else if (teq(88)) {
-    const species = e_get(307);
+    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;
     if (species === 2) {
       line('胸部被黏答答地包覆了起来…');
     } else if (species === 3) {
@@ -2590,7 +2607,7 @@ async function train_message_b_6() {
     era.print(`流浪狗把${clothtype_special_text(target)}舔舐变色了……`);
   } else if (teq(88)) {
     // 魔兽接吻（异种婚姻 TALENT:159 时按种族深吻）
-    const species = e_get(307);
+    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;
     if (talent(159)) {
       const text =
         species === 2
@@ -2606,9 +2623,13 @@ async function train_message_b_6() {
                   : species === 10 || species === 12
                     ? '被温柔地舌吻着、进行着充满野兽气息的亲吻……'
                     : '被温柔地舌吻着、彼此陶醉地凝视着对方……';
-      era.print(`${monster_name(e_get(300))} ${text}`);
+      era.print(
+        `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)} ${text}`,
+      );
     } else {
-      era.print(`${monster_name(e_get(300))} 与${target_name}进行着亲吻……`);
+      era.print(
+        `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)} 与${target_name}进行着亲吻……`,
+      );
     }
   } else if (full_cloth) {
     // 隔着布偶装接吻
@@ -2863,8 +2884,8 @@ async function train_message_b_9() {
 
   if (era.get(`tequip:${target}:88`)) {
     // 魔兽支
-    const species = e_get(307);
-    let line = `${monster_name(e_get(300))} `;
+    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;
+    let line = `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)} `;
     if (species === 2) {
       line += `的口部分泌出黏液刺激着${target_name}的肛门……`;
     } else if (species === 3) {

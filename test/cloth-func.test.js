@@ -872,8 +872,8 @@ test('train_message_b_family 爱抚分支：触手/兽奸装备支与魔兽双�
 
   // 魔兽（TEQUIP:88）：名字行走怪物名取串、收行后身体行另起。
   // E:307 = 10（獣）→ 那野兽的舌头正舔着
-  fixture.store.set('e:307', 10);
-  fixture.store.set('e:300', 100);
+  fixture.battle('MINION_A').rape_type = 10;
+  fixture.battle('MINION_A').id = 100;
   fixture.store.set('tequip:31:88', 1);
   fixture.store.set('cflag:31:40', 0);
   await train_message_b_family.call(0);

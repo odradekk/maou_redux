@@ -241,13 +241,29 @@ test('monster_data：库存怪物照 ITEM 数量生成、等级 +4、攻防 ×2 
   fixture.store.set('cflag:0:9', 24); // 魔王等级：LV = 24/12 + 2 = 4；24%10=4 > rand(10)=0 → +1 → 5
 
   md.monster_data(100, 0, 1, -1, -1, zero);
-  assert.equal(md.e_get(0), 100, '怪物番号');
-  assert.equal(md.e_get(1), 1 + 4, '等级 = 基础 1 + 4');
-  assert.equal(md.e_get(99), 5, '数量两骰都读 ITEM:100 = 5');
-  assert.equal(md.e_get(8), 0, 'first_count = 5 > 1 → 不 boss 化');
+  assert.equal(fixture.battle('DEFENSE_1').id, 100, '怪物番号');
+  assert.equal(fixture.battle('DEFENSE_1').level, 1 + 4, '等级 = 基础 1 + 4');
+  assert.equal(
+    fixture.battle('DEFENSE_1').count,
+    5,
+    '数量两骰都读 ITEM:100 = 5',
+  );
+  assert.equal(
+    fixture.battle('DEFENSE_1').boss,
+    0,
+    'first_count = 5 > 1 → 不 boss 化',
+  );
   // 攻防 = 基础 × 2 + LVUP（LVUP = 等级×2 次 rand(5)，zero 全 0 → 0）
-  assert.equal(md.e_get(2), 1 * 2, '攻击力 = 基础 1 × 2 + 0');
-  assert.equal(md.e_get(3), 2 * 2, '防御力 = 基础 2 × 2 + 0');
+  assert.equal(
+    fixture.battle('DEFENSE_1').attack,
+    1 * 2,
+    '攻击力 = 基础 1 × 2 + 0',
+  );
+  assert.equal(
+    fixture.battle('DEFENSE_1').defense,
+    2 * 2,
+    '防御力 = 基础 2 × 2 + 0',
+  );
 });
 
 test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随层走', () => {
@@ -262,11 +278,19 @@ test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随�
   // 等级骰 local×2 次 rand(lv) 全 0
   // arg2 = 1（勇者号 >= 0）→ skeleton 走阶层分支：lv = CFLAG:1:501 = 3
   md.monster_data(100, 0, 1, -1, -1, zero);
-  assert.equal(md.e_get(0), 190, '无库存转骷髅');
-  assert.equal(md.e_get(99), 1, '两骰各掷 1，取小 1');
-  assert.equal(md.e_get(1), 3 + 1 + 4, 'skeleton 等级 = 队长阶层 3 + 1，再 +4');
-  assert.equal(md.e_get(8), 0, '骷髅不 boss 化');
-  assert.equal(md.e_get(2), (3 + 1) * 2, '攻击 = (阶层+1)×2 + LVUP 0');
+  assert.equal(fixture.battle('DEFENSE_1').id, 190, '无库存转骷髅');
+  assert.equal(fixture.battle('DEFENSE_1').count, 1, '两骰各掷 1，取小 1');
+  assert.equal(
+    fixture.battle('DEFENSE_1').level,
+    3 + 1 + 4,
+    'skeleton 等级 = 队长阶层 3 + 1，再 +4',
+  );
+  assert.equal(fixture.battle('DEFENSE_1').boss, 0, '骷髅不 boss 化');
+  assert.equal(
+    fixture.battle('DEFENSE_1').attack,
+    (3 + 1) * 2,
+    '攻击 = (阶层+1)×2 + LVUP 0',
+  );
 
   // arg2 = -1 → skeleton 走掷点分支：rand(9)+1（m9 控制 = 9）；两骰各 10 取小
   const fixture2 = setup_world();
@@ -274,9 +298,9 @@ test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随�
   const md2 = load(fixture2, 'dungeon/monster-data');
   const m9 = (n) => (n === 9 ? 8 : n - 1);
   md2.monster_data(100, 0, -1, -1, -1, m9);
-  assert.equal(md2.e_get(99), 10, '两骰各掷 10，取小 10');
+  assert.equal(fixture2.battle('DEFENSE_1').count, 10, '两骰各掷 10，取小 10');
   assert.equal(
-    md2.e_get(1),
+    fixture2.battle('DEFENSE_1').level,
     9 + 1 + 4,
     'skeleton 等级 = rand(9)+1 = 9，再 +1 后 +4',
   );
@@ -289,23 +313,32 @@ test('monster_data：LINE 3 的配下怪物（CFLAG:570 < 100 时清列返回）
 
   // 无配下：E:300 清 0 直接返回
   md.monster_data(100, 3, 1, -1, -1, zero);
-  assert.equal(md.e_get(300), 0, 'LINE 3 无配下 → E:300 = 0');
+  assert.equal(fixture.battle('MINION_A').id, 0, 'LINE 3 无配下 → E:300 = 0');
 
   // 有配下：读 CFLAG:570 的怪物号，数量恒 1
   fixture.store.set('cflag:1:570', 152); // 魅魔
   md.monster_data(100, 3, 1, -1, -1, zero);
-  assert.equal(md.e_get(300), 152, '配下怪物号 = CFLAG:570');
-  assert.equal(md.e_get(399), 1, '配下恒 1 只');
+  assert.equal(fixture.battle('MINION_A').id, 152, '配下怪物号 = CFLAG:570');
+  assert.equal(fixture.battle('MINION_A').count, 1, '配下恒 1 只');
 });
 
-// —— E 表（yml/E.yml 的引擎通道）——
+// —— 战斗状态不再占用引擎变量表（#883）——
 
-test('E 表：夹具与引擎同名通道（era.set 写 e:N 读回；yml/E.yml 声明在库）', () => {
+test('战斗状态：monster_data 的写入不落 store（没有 e: 地址），yml/E.yml 已撤除', () => {
   const fixture = setup_world();
-  fixture.era.set('e:99', 7);
-  assert.equal(fixture.era.get('e:99'), 7, '写读一致');
-  const e_yml = fs.readFileSync(path.join(REPO_ROOT, 'yml/E.yml'), 'utf8');
-  assert.match(e_yml, /"第1列怪物数":\n {2}id: 99/, 'yml/E.yml 的布局声明在库');
+  const md = load(fixture, 'dungeon/monster-data');
+  md.monster_data(100, 0, 1, -1, -1, () => 0);
+  assert.equal(
+    [...fixture.store.keys()].filter((key) => /^e:/.test(key)).length,
+    0,
+    'monster_data 写的是普通对象，一个 e: 键都不该出现',
+  );
+  assert.equal(fixture.battle(0).id, 100, '值落在列对象上');
+  assert.equal(
+    fs.existsSync(path.join(REPO_ROOT, 'yml/E.yml')),
+    false,
+    'yml/E.yml 已撤除——留着它，引擎仍会给新档建 e 桶',
+  );
 });
 
 // —— death_check 战败分支（验收「此行为必须有测试」）——

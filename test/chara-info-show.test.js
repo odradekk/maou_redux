@@ -1610,7 +1610,7 @@ test('show_equip_2：摄影位的剩余次数公式 10 + 4*499 - 491 + 1', () =>
 
 test('show_equip_2：使役魔兽的名字取自 E:300，位关时整行只有一个空格', () => {
   const on = equip_fixture({ tequips: { 88: 1 } });
-  on.fixture.store.set('e:300', 3);
+  on.fixture.battle('MINION_A').id = 3;
   on.fixture.store.set('itemname:3', '史莱姆');
   on.show_equip_2(7);
   assert(

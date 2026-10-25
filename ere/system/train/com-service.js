@@ -11,7 +11,8 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { e_get, monster_name } = require('#/dungeon/monster-data');
+const { monster_name } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 const { idiv_trunc, times_exact } = require('#/utils/numeric');
 const { com_order } = require('#/system/train/com-order');
@@ -1321,7 +1322,9 @@ function filthy_player() {
   );
 }
 function male_monster() {
-  return [1, 7, 8, 10, 12].includes(e_get(307));
+  return [1, 7, 8, 10, 12].includes(
+    battle_column(BATTLE_COLUMN.MINION_A).rape_type,
+  );
 }
 
 com_able_family.register(30, async () => {
@@ -1489,7 +1492,7 @@ async function train_message_b_30() {
   let subject = target_tequip(89)
     ? '狗的'
     : target_tequip(88)
-      ? `${monster_name(e_get(300))}的`
+      ? `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的`
       : `${player_name()}的`;
   era.print(
     `${target_name()}${target_talent(85) && !era_flag.assiplay && !target_tequip(89) ? '带着爱慕的表情、' : ''}${target_talent(76) ? '自发地' : ''}套弄着${subject}阴茎、不停摩擦侍奉着……`,
@@ -1519,7 +1522,8 @@ async function train_message_b_31() {
 
   let suffix;
   if (target_tequip(89)) suffix = '狗的阴茎…';
-  else if (target_tequip(88)) suffix = `${monster_name(e_get(300))}的性器…`;
+  else if (target_tequip(88))
+    suffix = `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的性器…`;
   else if (target_tequip(55) && era_flag.assi !== era_flag.player)
     suffix = '怪物的阴茎…';
   else if (
@@ -1609,7 +1613,7 @@ async function train_message_b_34() {
     );
   } else if (target_tequip(88)) {
     era.print(
-      `${target}跨坐在${monster_name(e_get(300))}的上方，对准勃起的阴茎、自己主动沉下腰插进去了……`,
+      `${target}跨坐在${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的上方，对准勃起的阴茎、自己主动沉下腰插进去了……`,
     );
   } else if (
     game.event.插着不拔 &&
@@ -1683,7 +1687,7 @@ async function train_message_b_36() {
   const player = player_name();
   if (target_tequip(88)) {
     era.print(
-      `${target}跨坐在${monster_name(e_get(300))}的上方，对准勃起的阴茎、自己主动沉下腰插进去了……`,
+      `${target}跨坐在${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的上方，对准勃起的阴茎、自己主动沉下腰插进去了……`,
     );
   } else if (game.event.插着不拔 && era_flag.prevcom === 36 && same_trainer()) {
     era.print(`${target}紧紧地夹着体内的阴茎、再次开始扭动腰了…`);
