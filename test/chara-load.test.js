@@ -118,8 +118,10 @@ engine_test(
         callname: '你',
         base: { 0: 10000, 1: 10000, 2: 10000 },
         talent: { 1: 1, 122: 1 },
+        // 移植自建的扩展表预设（#884）：魔王的预设号就是 0
+        portcflag: { 2: 0 },
       },
-      '角色 0 的预设内容（基礎全满、素質 1/122）',
+      '角色 0 的预设内容（基礎全满、素質 1/122、portcflag 预设模板）',
     );
 
     const adder = create_add_character(loader.static_data);
@@ -230,8 +232,9 @@ engine_test(
           317: 8,
         },
         cflag: { 1: 1 },
-        // 人工增补的移植自建扩展表预设基线（Chara17.yml 头注），装载翻译落在 portcflag.0
-        portcflag: { 0: 0 },
+        // 人工增补的移植自建扩展表预设（Chara17.yml 头注），装载翻译落在
+        // portcflag.0（数据版本）与 portcflag.2（预设模板，#884）
+        portcflag: { 0: 0, 2: 17 },
       },
       '角色 17 的预设内容（素質 32 项、フラグ、portcflag 增补）',
     );

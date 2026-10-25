@@ -1619,6 +1619,15 @@ function create_era_fixture() {
       const preset = chara_presets.get(source);
       store.set(`callname:${target}:-1`, preset.name);
       store.set(`callname:${target}:-2`, preset.callname ?? preset.name);
+      // 扩展表 portcflag 的预设同样抄到目标角色（#884）：引擎的 addCharacter
+      // 对登记过的扩展表逐字段赋值，双号写法抄的是源预设的值——游戏侧读
+      // 「预设模板」时靠它区分角色号与预设号。写 store 不经 era.set，理由同
+      // 上面两条 callname。
+      for (const [field, value] of Object.entries(preset.portcflag ?? {})) {
+        // 平表按归一后的地址落键（名字翻成序号），与 era.get/era.set 同一个
+        // 口径——种子里的「预设模板」要按 portcflag:角色:2 落下才读得到
+        store.set(normalize_address(`portcflag:${target}:${field}`), value);
+      }
       return true;
     });
     return chara_ids.length === 1 ? results[0] : results;
@@ -2003,9 +2012,19 @@ function create_era_fixture() {
      *  先降 current_version 再 saveData，或 saveData 后改 record（不推荐）；
      *  造「异游戏 global.sav」：saveGlobal 后改 game_code 再 loadGlobal */
     save_gate,
-    /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 检查放行 */
+    /**
+     * 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 检查放行。
+     *
+     * 预设里缺 portcflag 段时补一条「预设模板 = 该预设号」（#884）：真实角色
+     * 文件每张预设都带这一行，夹具的种子是它们的简化替身，缺了它加入的角色
+     * 就读不到自己的预设号。用例要种子预设与角色号不一致时显式给
+     * `portcflag: { 预设模板: N }`（双号加入的后代就是这么来的）。
+     */
     seed_chara(chara_id, preset) {
-      chara_presets.set(chara_id, preset);
+      chara_presets.set(chara_id, {
+        ...preset,
+        portcflag: { 预设模板: chara_id, ...preset.portcflag },
+      });
     },
     /** 已加入的角色（对应引擎 data.no）；无预设的 addCharacter 不会进这里 */
     chara_no,

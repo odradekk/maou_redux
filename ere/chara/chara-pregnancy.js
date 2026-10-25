@@ -5,9 +5,11 @@
  *   - 主角恒为角色 ID 0；姓名读 callname:id:-1。
  *   - 随机数经 rand 参数逐层透传；测试可注入确定性序列。
  *   - 生产的复制角色用 addCharacter([新 ID, 预设 ID])。动态 ID 从 100000
- *     起（见 FIRST_CHILD_ID 的注释）按预设编号各保留 100 位，令存档中的 ID
- *     可反推出预设编号；这既避免覆盖预设角色，也让同一预设连续生子和多代
- *     生育保留模板身份。
+ *     起（见 FIRST_CHILD_ID 的注释）按预设编号各保留 100 位；这既避免覆盖
+ *     预设角色，也让同一预设连续生子和多代生育保留模板身份。#884 起
+ *     **预设号由 portcflag 的「预设模板」字段承载**（引擎把源预设的这行抄进
+ *     新角色，见 template_no_of），ID 区间只是 ID 空间的划分，不再被反过来
+ *     当预设号解读。
  *   - 自称口上的事件码在调教期外也走 game.train 的调用链临时值
  *     （with_self_kojo_event），不伪造调教期。
  *   - 三处尾调用都不返回：gb_define_name 与 child_care_begin 直接返回被调
@@ -81,16 +83,74 @@ function int_div(value, divisor) {
 
 function allocate_child_id(source) {
   const added = new Set(era.getAddedCharacters());
-  // 每个预设保留一个 100 位区间，令存档中的角色 ID 自带预设编号；角色总数
-  // 上限为 90，因此单一预设不可能耗尽一个区间。
+  // 每个预设保留一个 100 位区间，令新建的后代不与任何预设号或同族后代撞号
+  // （#560 把起点抬到全部页面固定按钮编号之上）；角色总数上限为 90，因此
+  // 单一预设不可能耗尽一个区间。预设号本身由「预设模板」字段承载，不靠这段
+  // 区间反推——区间只是 ID 空间的划分。
   let cid = FIRST_CHILD_ID + (source - 1) * CHILD_ID_BLOCK_SIZE;
   while (added.has(cid)) cid += 1;
   return cid;
 }
 
+/**
+ * template_no_of：角色由哪个预设生成（PORTCFLAG:角色:预设模板）。
+ *
+ * 角色号是身份、预设号只决定初始数据，两者自 #884 起分开：这个值由引擎在
+ * addCharacter 时从**源预设**抄进目标角色（yml/Chara*.yml 每张预设都带一行
+ * 「预设模板 = 番号」，`addCharacter([目标号, 预设号])` 因此对后代同样成立），
+ * 代码不再从角色号反推。
+ *
+ * 0 只属于魔王（0 号预设）；非 0 号角色读到 0 表示「还没写到」，由读档钩子的
+ * backfill_chara_templates 补齐，读侧不自己换算。
+ *
+ * @param {number} cid 角色 ID
+ * @returns {number} 预设号（未写到时为 0）
+ */
 function template_no_of(cid) {
+  return era.get(`portcflag:${cid}:预设模板`) || 0;
+}
+
+/**
+ * template_no_from_id：旧编码的预设号换算，只给读档补填用。
+ *
+ * #884 之前没有「预设模板」字段：普通角色的预设号就是角色号，后代按
+ * 「每个来源预设各保留 CHILD_ID_BLOCK_SIZE 位」编码在 ID 里，再由这里反推。
+ * 0.1.0 起的旧存档里这个字段是空的，读档时用本函数补一次；新档的字段由
+ * 源预设带入，这个换算不再参与任何读取。
+ *
+ * @param {number} cid 角色 ID
+ * @returns {number} 按旧编码反推出的预设号（0 号位是 0）
+ */
+function template_no_from_id(cid) {
   if (cid < FIRST_CHILD_ID) return cid;
   return Math.trunc((cid - FIRST_CHILD_ID) / CHILD_ID_BLOCK_SIZE) + 1;
+}
+
+/**
+ * backfill_chara_templates：读档后补填旧存档缺的「预设模板」（#884）。
+ *
+ * 读档钩子 EVENTLOAD 逐角色调用一次（ere/event/event-load.js）。两种旧档
+ * 形态都落在同一个判据上：
+ *
+ *   - 有预设的角色：引擎的 fillData 已经按它自己的预设补成预设号，值非 0，
+ *     这里跳过；
+ *   - 没有预设的后代：fillData 只能补 0，这里按旧编码换算写入。
+ *
+ * 0 号位（魔王）的预设号本来就是 0，不写——补填只负责「0 等于未知」的那些。
+ * 幂等：已补过的角色值非 0，再调用不动它。
+ *
+ * @returns {number} 实际补填的角色数（调用方不读，测试用它确认跑过）
+ */
+function backfill_chara_templates() {
+  let filled = 0;
+  for (const cid of era.getAddedCharacters()) {
+    if (template_no_of(cid) !== 0) continue;
+    const legacy = template_no_from_id(cid);
+    if (legacy === 0) continue;
+    era.set(`portcflag:${cid}:预设模板`, legacy);
+    filled += 1;
+  }
+  return filled;
 }
 
 function child_source_init(child, source) {
@@ -803,6 +863,8 @@ module.exports = {
   MAX_CHARANUM,
   FIRST_CHILD_ID,
   template_no_of,
+  template_no_from_id,
+  backfill_chara_templates,
   ninsin_main,
   ninsin_aware,
   preg_talent_get,
