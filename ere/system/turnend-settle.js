@@ -162,7 +162,7 @@ async function settle_in_train_window(target_pool) {
   for (const cid of era.getAddedCharacters()) {
     // 先把 target 指到当前角色——format_autotrain 读的就是它
     era_flag.target = cid;
-    require('#/event/event-autotrain').format_autotrain(); // （#508 真身）
+    require('#/system/train/autotrain').format_autotrain(); // （#508 真身）
     chara(cid).invasion.新人 = 0; // CFLAG:506 = 0
     chara(cid).train.自动调教 = 0; // CFLAG:666 = 0
   }
@@ -641,11 +641,11 @@ async function settle_in_train_window(target_pool) {
     }
   }
 
-  // 自动调教（#508 起真身：ere/event/event-autotrain.js 的 autotrain
+  // 自动调教（#508 起真身：ere/system/train/autotrain.js 的 autotrain
   // ——逐角色 AFTER_AUTOTRAIN → JUEL_CHECK_MAIN 把本回合攒下的 PALAM 结算
   // 成珠、AUTO_ABLUP 结算能力；CFLAG:666 由迷宫域的 COM*_AUTO 累加）
   enroll_joined_characters(); // 尾部这一轮要按名单写 GOTJUEL / PALAM（#816）
-  await require('#/event/event-autotrain').autotrain();
+  await require('#/system/train/autotrain').autotrain();
 }
 
 /**

@@ -17,7 +17,7 @@
  *     纯函数，随这张工单内联）；
  *   - 跨边：`CALL CAMPAIGN_EXP_PILLORY` 未实现（无对应真身，不产生输出）；
  *     `CALL IN_VAGINA_SYOKU_TO_T` / `CONCEPTION_CHECK_SYOKU_TO_T`
- *     在 ere/event/event-pregnancy.js 已有真身 → 直接调用（#400 接入）。
+ *     在 ere/system/pregnancy.js 已有真身 → 直接调用（#400 接入）。
  */
 
 'use strict';
@@ -28,11 +28,11 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
-const { clothtype_main2_text } = require('#/page/page-clothtype');
+const { clothtype_main2_text } = require('#/utils/clothtype-utils');
 const {
   conception_check_syoku_to_t,
   in_vagina_syoku_to_t,
-} = require('#/event/event-pregnancy');
+} = require('#/system/pregnancy');
 
 /** %TALENTNAME:n% 的读数源 */
 function talent_name(n) {

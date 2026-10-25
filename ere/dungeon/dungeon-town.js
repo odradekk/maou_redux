@@ -729,12 +729,12 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
         await before_autotrain();
         // 貝合わせ自動調教（扶她或非男）
         if (futanari || !man) {
-          const { com63_auto } = require('#/event/event-autotrain');
+          const { com63_auto } = require('#/system/train/autotrain');
           com63_auto();
         }
         // 愛撫自動調教（扶她或男——扶她两连）
         if (futanari || man) {
-          const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto
+          const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto
           com0_auto();
         }
         await source_check_auto();
@@ -746,7 +746,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
           source_check_auto,
         } = require('#/dungeon/dungeon-battle');
         await before_autotrain();
-        const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto
+        const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto
         com0_auto();
         await source_check_auto();
       }

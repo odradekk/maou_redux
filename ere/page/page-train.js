@@ -35,9 +35,9 @@ const {
 } = require('#/page/components/chara-equip-status');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
-// PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/page/page-clothtype.js 的
+// PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/utils/clothtype-utils.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
-const { clothtype_text } = require('#/page/page-clothtype');
+const { clothtype_text } = require('#/utils/clothtype-utils');
 // PALAMLV/palam_level 自 #45 起集中在 era-utils/palam-level.js（SOURCE_CHECK
 // 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
 const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
@@ -205,7 +205,7 @@ async function draw_status_screen(target) {
 
   // 調教時ステータス画面に服装表示を捻じ込んでみた：PRINT 【 /
   // 服装显示行：PRINT 【 / clothtype_text / PRINT 】三段拼一行、PRINTL（空）收行；
-  // ere 合成一次 print（#215 真身：ere/page/page-clothtype.js；FLAG:37
+  // ere 合成一次 print（#215 真身：ere/utils/clothtype-utils.js；FLAG:37
   // 着衣模式的检查在 clothtype_text 内部，关闭时显示全裸——状态屏恒出
   // 【】行）
   era.print(`【${clothtype_text(target)}】`);

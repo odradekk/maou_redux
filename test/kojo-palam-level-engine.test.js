@@ -101,7 +101,7 @@ engine_test(
     fixture.load_module('kojo/kojo-k0-tender');
     fixture.load_module('system/train/com-caress');
     fixture.load_module('event/event-com');
-    fixture.load_module('event/source-check');
+    fixture.load_module('system/train/source-check');
     fixture.load_module('event/event-comend');
     const { execute_command_round } = fixture.load_module(
       'system/train/train-loop',

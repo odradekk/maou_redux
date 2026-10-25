@@ -25,7 +25,7 @@
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
-const { first_setting } = require('#/event/first-setting');
+const { first_setting } = require('#/page/page-first-setting');
 const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
 const { chara_name_init } = require('#/chara/chara-name-list');
 const { chara_name_define } = require('#/chara/chara-name'); // #565 起接入
@@ -79,7 +79,7 @@ on('EVENTFIRST', async () => {
   // CALL FIRST_SETTING —— 交互式开局设置，issue #463 起全量实现（除
   // 丽塔/卡拉隐藏分支，SAVEDATA 变量无 ere 落点，见 first-setting.js 文件
   // 头）。五问（魔王性别/肉棒尺寸/狂王性别/初期奴隶/地下城模式）的编排在
-  // event/first-setting.js 的 first_setting()。FLAG:500 会被狂王性别一问
+  // page/page-first-setting.js 的 first_setting()。FLAG:500 会被狂王性别一问
   // 覆盖——下面置的 2 只是问答前的暂定值（同款做法：函数入口先给个
   // 初值，问答按玩家选择改写）。
   await first_setting();

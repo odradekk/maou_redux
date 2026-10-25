@@ -67,7 +67,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const {
   clothtype_main2_text,
   clothtype_special_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 const { get_clothtype_main2 } = require('#/system/cloth-lookup');
 const { print_row } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
@@ -483,7 +483,7 @@ function life_list_tailor() {
     if (cid === 0) continue; // 主人公は排除
     if ((era.get(`base:${cid}:0`) || 0) < 1) continue; // 臨死中
     if (cflag(cid, 1) !== 0) continue; // 調教中以外は排除
-    era_flag.target = cid; // TARGET = COUNT（供 page-clothtype.js 的文本函数读）
+    era_flag.target = cid; // TARGET = COUNT（供 clothtype-utils.js 的文本函数读）
     const fragments = [{ content: `${chara_callname(cid)} ` }];
     // 穿着状态：有上衣 → 「/ 穿着 上衣名」；否则内衣；否则全裸
     if (cflag(cid, 41) && (cflag(cid, 45) >= 0 || cflag(cid, 46) >= 0)) {

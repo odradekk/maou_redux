@@ -43,7 +43,7 @@ require('#/event/event-comend-normal');
 require('#/event/event-end');
 require('#/event/event-turnend');
 require('#/event/event-turnend-later');
-require('#/event/source-check');
+require('#/system/train/source-check');
 require('#/page/page-train');
 require('#/page/page-usercom');
 // COM0 与 COM_ABLE0 的实现（#45——首条真实指令；注册进 COM 分发族）

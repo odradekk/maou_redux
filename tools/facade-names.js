@@ -264,7 +264,7 @@ const cflag = {
   ),
   41: named_tail(
     '上衣类型',
-    'CFLAG:41 上着のタイプ（类型名见 ere/page/page-clothtype.js 的 clothtype_text）',
+    'CFLAG:41 上着のタイプ（类型名见 ere/utils/clothtype-utils.js 的 clothtype_text）',
   ),
   // 特别服装类型（42）属主 chara（ownership/cflag-ownership.yml "42"）——
   // aftertrain_cloth（train 域，ere/system/train/cloth.js）写它走
@@ -272,7 +272,7 @@ const cflag = {
   // 落 chara-chara.js 的域区块
   42: named_tail(
     '特别服装类型',
-    'CFLAG:42 特別コスチュームのタイプ（类型名见 ere/page/page-clothtype.js 的 clothtype_special_text）',
+    'CFLAG:42 特別コスチュームのタイプ（类型名见 ere/utils/clothtype-utils.js 的 clothtype_special_text）',
   ),
   45: named_tail(
     '上衣上状态',
@@ -603,7 +603,7 @@ const item = {
 const global = {};
 // —— MARK：只收 yml 缺口（#90）——
 // Mark.yml 列名覆盖 0-3/10；mark:4 没有列名可引，语义从 mark_got_check
-// （ere/event/source-check.js）的用法读出：与 MARK:3 同值连写、只升不降
+// （ere/system/train/source-check.js）的用法读出：与 MARK:3 同值连写、只升不降
 // （`MARK:4 <= N` 是取得门限），即反抗刻印的历史最高档，防降档后重取低级刻印。
 
 const mark = {
@@ -648,7 +648,7 @@ const cstr = {
 
 // —— DELTA：UP/DOWN 的 ere 等价物（移植自建，#90）——
 // 名字 = Palam.yml 同下标列名 +「增量」——审校者对着 source_check_up_*
-// （ere/event/source-check.js）的 `UP:N += …` 与 palam 面板行就能确认。
+// （ere/system/train/source-check.js）的 `UP:N += …` 与 palam 面板行就能确认。
 // UP/DOWN 没有列名可引。
 
 const src_delta = (i) => `UP:${i}（UP/DOWN→delta，CONTEXT.md 变量族）`;

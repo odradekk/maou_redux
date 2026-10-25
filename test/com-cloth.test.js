@@ -49,7 +49,7 @@ function seed_world(cloth0, type41, type42) {
   era_flag.assiplay = 0;
   era_flag.player = 0;
   fixture.load_module('system/train/cloth');
-  fixture.load_module('page/page-clothtype');
+  fixture.load_module('utils/clothtype-utils');
   fixture.load_module('system/train/com-cloth');
   fixture.store.set('flag:37', 1); // 着衣系统开（110 号可用性检查的前提）
   if (type41 !== undefined) {

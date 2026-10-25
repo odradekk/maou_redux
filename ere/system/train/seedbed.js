@@ -13,7 +13,7 @@ const { default_rand } = require('#/utils/numeric');
 const {
   conception_check_syoku_to_t,
   in_vagina_syoku_to_t,
-} = require('#/event/event-pregnancy');
+} = require('#/system/pregnancy');
 
 // TALENT:0/1/122/209/273 = 处女/童贞/男人/苗床/私处封印；CFLAG:1 =
 // 当前状态（7 为苗床），15 = 初体验记录，40 bit 6 与 42 = 狂王特例条件；

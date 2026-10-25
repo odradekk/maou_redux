@@ -6,7 +6,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-const { clothtype_text } = require('#/page/page-clothtype');
+const { clothtype_text } = require('#/utils/clothtype-utils');
 const { wearing_cloth_all } = require('#/system/train/cloth');
 
 /**

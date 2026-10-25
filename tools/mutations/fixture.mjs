@@ -274,7 +274,7 @@ export default [
     calls.push({ api: 'quit', args: [] });
     // 变异：throw 拆回普通返回（缺省桩形式）
   };`,
-    tests: ['fixture', 'event-ending'],
+    tests: ['fixture', 'page-ending'],
     must_mention: 'QUIT 的异常炸穿 invasion_check',
   },
   {
