@@ -39,8 +39,8 @@
  *
  * 界面写法说明（有意偏离，均注明依据）：
  *   - **槽位行是「槽号按钮 + 备注文本格 + 删除按钮」三格的网格行**（#868，
- *     官方例程 page-save-game / page-load-game 同款：`printMultiColumns` 每行
- *     一格按钮、一格文本、一格动作按钮）。槽号按钮的**正文留空**：编号由引擎
+ *     照官方存/读档例程的写法：`printMultiColumns` 每行一格按钮、一格文本、
+ *     一格动作按钮）。槽号按钮的**正文留空**：编号由引擎
  *     按 showAcc 拼成 `[N]`，正文再写编号会显示成 `[N] N`；点击与键盘都按
  *     accelerator 送达。备注进**文本格**——引擎只折叠按钮正文里的连续空白
  *     （渲染层的按钮行构造器对正文做 `/\s+/g → ' '`，见 CONTEXT.md 的
@@ -122,7 +122,8 @@ const SLOT_WIDTH = 2;
 const REMARK_WIDTH = 18;
 const DELETE_WIDTH = 4;
 
-/** 删除按钮的快捷键基数：删除 N 号槽 = DELETE_BASE + N（0–499 不撞槽号）。 */
+/** 删除按钮的快捷键基数：删除 N 号槽 = DELETE_BASE + N，取值 400–499，
+ * 避开槽号 0–99 与页脚键 100–102/200。 */
 const DELETE_BASE = 400;
 
 /** 删除按钮与空槽占位格的正文。 */
@@ -593,6 +594,5 @@ module.exports = {
   push_last_save_no,
   save_game,
   set_story_name,
-  slot_color,
   slot_row,
 };

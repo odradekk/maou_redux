@@ -604,7 +604,8 @@ export default [
   return comment !== undefined; // 变异：FILE LOST 前缀分支被拆
 }`,
     tests: ['page-save-load'],
-    must_mention: '丢失槽不出按钮（只剩 0 号正常档可点）',
+    // 变异下先红的是备注格那条（FILE LOST 被当有效档 → 显示备注而不是 ----）
+    must_mention: '丢失槽显示 ----',
   },
   {
     desc: 'M560 INFO2 陷阱写入漏判选中位图（SELECT_FLAG & COMPARE_BIT 改恒真，未选层也被写）',
