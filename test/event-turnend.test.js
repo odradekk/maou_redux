@@ -784,8 +784,8 @@ test('调教窗口（#508）：FORMAT_AUTOTRAIN 的 PALAM 重置落得下，窗�
   const open = calls.indexOf('beginTrain');
   const close = calls.indexOf('endTrain');
   assert.ok(open >= 0 && close > open, '开窗在关窗之前');
-  // 关窗即删调教域表（引擎 endTrain 语义）：窗口外的读者仍读回空，
-  // event-nextday.js:442 的「PALAM 读回来恒空」条件不受影响
+  // 关窗即删调教域表（引擎 endTrain 语义）：窗口外的读者读回空——要跨过
+  // 窗口的值只能先落不被删除的表（#906 的欲情快照就是这种）
   assert.equal(fixture.store.get('palam:31:3'), undefined);
 });
 
@@ -854,8 +854,8 @@ test('调教窗口（#816）：结算中某一步返回转场目标也照样关�
     const { begin, STATE } = f.load_module('system/flow/game-state');
     f.load_module('system/train/benki').run_benki = async () =>
       begin(STATE.TURNEND);
-    // 窗口之后的尾段（队伍结成，无条件）站在关窗之后——「PALAM 读回来恒空」
-    // 这类依赖就靠它成立
+    // 窗口之后的尾段（队伍结成，无条件）站在关窗之后：日循环里的读者看不到
+    // 调教域表，这个序就是那条边界的证人
     f.load_module('dungeon/dungeon-party').party_join = async () => {
       trained_when_tail_runs = f.era.getCharactersInTrain();
     };
