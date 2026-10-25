@@ -33,7 +33,7 @@
  *     !EX_TALENT:2 因此仍然成立，不随 #469 改动；
  *   - ere 无全局随机序列（#117 决议），随机数全部经注入的 rand_n
  *     掷出（缺省均匀随机，测试注入定值序——ere/chara/chara-init.js 先例）；
- *   - 跨域写一律走门面（#71：属主域门面 setter；本文件属 chara 域，
+ *   - 跨域写走门面（#71：属主域门面 setter；本文件属 chara 域，
  *     talent:1/135（train）、talent:11/20/21/22/26/27/30/32/34/52/57/71/82/84
  *     （event）、talent:113（dungeon）、talent:125（stronghold）、cflag:1
  *     （invasion）、cflag:11/12/501/508（dungeon）、cflag:502（event）、

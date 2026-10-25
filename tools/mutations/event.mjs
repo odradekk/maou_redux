@@ -205,7 +205,7 @@ export default [
     find: 'game.train.屈服刻印结算 = 1; // 屈服刻印１相当',
     replace: "era.set('tflag:200', 1); // 屈服刻印１相当",
     tests: ['source-check'],
-    must_mention: '跨域写走门面',
+    must_mention: '写经门面',
   },
   {
     desc: 'M184 source-check 迁移回退一处（反抗刻印改回裸 era.set）',
@@ -213,7 +213,7 @@ export default [
     find: 'chara(cid).system.反抗刻印 = 1;',
     replace: 'era.set(`mark:${cid}:3`, 1);',
     tests: ['source-check'],
-    must_mention: '跨域写走门面',
+    must_mention: '写经门面',
   },
   // —— #114 日循环骨架（EVENTTURNEND 三档；普通档体在 ere/system/
   //    turnend-settle.js，同属事件链代码，条目收本切片）——

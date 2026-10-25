@@ -55,7 +55,7 @@ function defer_train_death(cid) {
   era_flag.mark_hero_removed(template_no_of(cid));
   // 指针清空是死亡的结果状态（进存档）；不再是跨文件的除名信号——
   // 除名对象由本模块的登记直接承载。flag:1 属主是 event 域，train 域
-  // 写它必须走门面（ADR-0002）
+  // 写它经门面（#71）
   era_flag.target = -1;
   game.event.上次调教对象 = -1;
   era_flag.assi = -1;
