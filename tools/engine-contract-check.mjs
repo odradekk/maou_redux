@@ -390,8 +390,8 @@ export async function run({ root = REPO, asar } = {}) {
       `✓ 引擎契约：调用点规则 ${facts_with_rule.length} 条 × 调用点 ${targets_checked} 处全数在界内 · ${anchor_report} · 条目表 ${ENGINE_CONTRACT_LEDGER.length} 条两项检查全过`,
     );
   } else {
-    // 汇总不枚举检查项名：哪项检查触发了，上方逐条消息已写明（domain-check 同款
-    // 标准——枚举会让「文案断言」型测试被未触发的检查项名误满足）
+    // 汇总不枚举检查项名：哪项检查触发了，上方逐条消息已写明（枚举会让
+    // 「文案断言」型测试被未触发的检查项名误满足）
     log(`✗ ${failures} 处引擎契约失守（逐条见上）`);
   }
   return { failures, output: lines.join('\n') };

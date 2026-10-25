@@ -586,7 +586,7 @@ test('com111：胸罩撕碎经 stronghold 门面写 CFLAG:44 = -3（L:5）', asy
   );
   assert.equal(fixture.store.get('cflag:31:40'), PANTY);
   // CFLAG:44 属于 stronghold 域，经门面写入的
-  // 落点仍是 cflag:31:44（domain-check 守写入通道）
+  // 落点仍是 cflag:31:44
   assert.equal(fixture.store.get('cflag:31:44'), -3, '门面写 CFLAG:44');
 });
 

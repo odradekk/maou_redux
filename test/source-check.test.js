@@ -2563,9 +2563,9 @@ test('AUTO_NUM_CHECK：CFLAG:667（自动调教回数）八档阈值', async () 
   }
 });
 
-// —— #90：跨域写走门面（条目表 22 条清零的契约锁）——
+// —— #90：写经门面（22 条寻址串清零的契约锁）——
 
-test('跨域写走门面 条条目表寻址串的字面量 era.set/add 清零', () => {
+test('写经门面 条目表寻址串的字面量 era.set/add 清零', () => {
   const text = fs.readFileSync(
     path.resolve(__dirname, '..', 'ere', 'event', 'source-check.js'),
     'utf8',
@@ -2591,7 +2591,7 @@ test('跨域写走门面 条条目表寻址串的字面量 era.set/add 清零', 
     "era.set('tflag:50'",
   ];
   for (const pattern of gone) {
-    assert.ok(!text.includes(pattern), `跨域写必须走门面，仍见 ${pattern}`);
+    assert.ok(!text.includes(pattern), `写必须经门面，仍见 ${pattern}`);
   }
   // 正面样本：属主域路径可检索（mark/abl 归 system、exp 归 dungeon、
   // cflag:2 归 chara、tflag 按属主分属 train/system）

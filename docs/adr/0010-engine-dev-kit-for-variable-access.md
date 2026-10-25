@@ -35,4 +35,4 @@ ADR-0001 按域分组，是为了让跨域写在调用处显眼，好由 ADR-000
 - **base 写入仍会钳位**：生成的 base 访问器按 maxbase 钳位，和 `era.set` 一致；其余表本来就没有钳位。
 - **测试夹具要支持 `raw()`**：夹具要提供结构与引擎相同的 `raw()`，并按 ADR-0005 用引擎比对。
 - **生成要人操作**：开发套件只能由人在引擎界面上点菜单生成，改了 yml 要记得重新生成。`ere_check_game` 会报告开发套件与静态数据不一致。
-- **删除的工具**：`tools/domain-check.mjs`、`tools/domain-ledger.mjs`、`ownership/` 和对应测试都要删除（#904、#832），文档里依赖区段所有权的说法（例如 CONTEXT.md 的「无域状态模块」）一并删除或改写。
+- **删除的工具**：`tools/domain-check.mjs`、`tools/domain-ledger.mjs` 和对应测试随 #904 删除；`ownership/` 随门面在 #832 删除。文档里依赖区段所有权的说法（例如 CONTEXT.md 的「无域状态模块」）一并删除或改写。

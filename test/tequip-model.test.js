@@ -10,8 +10,8 @@
  *     #213 的 kojo_message_com 七道检查读它们）经 train 域门面可写，
  *     且检查真实触发（tequip:55 → COLOSSEUM_KOJO 支、tequip:90 → 静默
  *     跳过）——写入路径打通的端到端证明；
- *   - 跨域两段（22 属 system、35 属 event）经属主域门面写（#71：跨域写
- *     走门面是 domain-check 的硬要求，门面本体在 ere/facade/chara-system.js
+ *   - 跨域两段（22 属 system、35 属 event）经属主域门面写（#71：门面本体
+ *     在 ere/facade/chara-system.js
  *     与 chara-event.js）；
  *   - 引擎建删语义：调教外三段寻址写入静默丢弃、读回 undefined（不抛
  *     错）；beginTrain 后可写、endTrain 删表（夹具 TRAIN_ONLY_TABLES
@@ -164,7 +164,7 @@ test('检查真实触发：触手位置位 → 口上静默跳过（无爱抚台
   );
 });
 
-// —— 3. 跨域两段经属主域门面写（#71：domain-check 的硬要求）——
+// —— 3. 跨域两段经属主域门面写（#71）——
 
 test('跨域两段经门面写：tequip:22 走 chara(cid).system、tequip:35 走 chara(cid).event', () => {
   const fixture = seed_world();
