@@ -819,6 +819,9 @@ async function seed_world_with_child(template = 1) {
     name: `后代模板${template}`,
     callname: `后代模板${template}`,
   });
+  // 母亲在场：预设号自 #884 起从角色的「预设模板」字段读，字段由加入时的
+  // 预设抄写带来（不在场的角色没有桶）
+  fixture.era.addCharacter(template);
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.store.set('talent:31:314', 5); // 种族（后代继承用）
