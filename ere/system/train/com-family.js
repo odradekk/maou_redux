@@ -71,7 +71,7 @@ const com_family = new DispatchFamily('COM', DECLARED_COM_IDS);
 
 /**
  * equip_com_family：装备持续效果族（#223 J13 立）。消费点是 source-check 结算
- * 的装备 SIF 链（ere/event/source-check.js 按链序遍历），
+ * 的装备 SIF 链（ere/system/train/source-check.js 按链序遍历），
  * 实现按族分散（11-19 在道具族、43-49 在 SM 族、53-59 在
  * 特殊族、89 在重度族、100/108 在触手族）——随各自指令族工单注册。
  *

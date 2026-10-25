@@ -15,7 +15,7 @@
  *   - **TFLAG:899 写入路径 → kojo_message_com 第四道检查的端到端证明**
  *     （#213 七道检查此前无真实置位者——这张工单的位置，验收项）。
  *
- * 契约（调用方 = ere/event/source-check.js）：
+ * 契约（调用方 = ere/system/train/source-check.js）：
  *   passout_check(rand) / passout_text() / passout_outdoor() → Promise；
  *   passout_palam_check() / passout_palam_up() → 同步。rand = (n) => [0, n)。
  */

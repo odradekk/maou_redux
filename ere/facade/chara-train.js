@@ -135,7 +135,7 @@ class TrainFacade {
 
   /**
    * 上衣类型（cflag:cid:41）
-   * CFLAG:41 上着のタイプ（类型名见 ere/page/page-clothtype.js 的 clothtype_text）
+   * CFLAG:41 上着のタイプ（类型名见 ere/utils/clothtype-utils.js 的 clothtype_text）
    * @returns {number}
    */
   get 上衣类型() {

@@ -61,7 +61,7 @@ test('AUTOTRAIN: format_autotrain & before_autotrain 重置行为', async () => 
   era_flag.assi = -1;
 
   const { before_autotrain, format_autotrain } = fixture.load_module(
-    'event/event-autotrain',
+    'system/train/autotrain',
   );
   fixture.store.set('source:17:0', 100); // #508：单下标＝当前 TARGET 那一格
   fixture.store.set('delta:17:0', 50);
@@ -77,7 +77,7 @@ test('AUTOTRAIN: format_autotrain & before_autotrain 重置行为', async () => 
 
 test('AUTOTRAIN: before_autotrain 指针为空时不动任何角色格（#508 订正后同源/增量一起跳过）', async () => {
   const { fixture, era_flag } = seed_autotrain_world();
-  const { before_autotrain } = fixture.load_module('event/event-autotrain');
+  const { before_autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('source:17:0', 100);
   fixture.store.set('source:17:7', 88);
   fixture.store.set('delta:17:0', 50);
@@ -98,7 +98,7 @@ test('AUTOTRAIN: before_autotrain 指针为空时不动任何角色格（#508 �
 
 test('AUTOTRAIN: format_autotrain 重置全套状态', async () => {
   const { fixture } = seed_autotrain_world();
-  const { format_autotrain } = fixture.load_module('event/event-autotrain');
+  const { format_autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('base:0:2', 500); // 魔王射精槽
   fixture.store.set('base:17:2', 300); // 目标射精槽
   fixture.store.set('base:17:3', 400); // 母乳槽
@@ -131,14 +131,14 @@ test('AUTOTRAIN: format_autotrain 重置全套状态', async () => {
 
 test('AUTOTRAIN: format_autotrain 助手在列时也清助手射精槽', async () => {
   const { fixture } = seed_autotrain_world({ assi: 1 });
-  const { format_autotrain } = fixture.load_module('event/event-autotrain');
+  const { format_autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('base:1:2', 200); // 助手射精槽
   format_autotrain();
   assert.equal(fixture.store.get('base:1:2'), 0);
 
   // 无助手时不碰助手槽
   const { fixture: f2 } = seed_autotrain_world({ assi: -1 });
-  const { format_autotrain: fa2 } = f2.load_module('event/event-autotrain');
+  const { format_autotrain: fa2 } = f2.load_module('system/train/autotrain');
   f2.store.set('base:1:2', 200);
   fa2();
   assert.equal(f2.store.get('base:1:2'), 200);
@@ -146,7 +146,7 @@ test('AUTOTRAIN: format_autotrain 助手在列时也清助手射精槽', async (
 
 test('AUTOTRAIN: format_autotrain 常时发情缺失时不设润滑/欲情', async () => {
   const { fixture } = seed_autotrain_world();
-  const { format_autotrain } = fixture.load_module('event/event-autotrain');
+  const { format_autotrain } = fixture.load_module('system/train/autotrain');
   // 无 TALENT:271：palam 已被清 0（不设 3000 起步）
   format_autotrain();
   assert.equal(fixture.store.get('palam:17:3'), 0);
@@ -170,7 +170,7 @@ test('AUTOTRAIN: 6 个 _AUTO 分支 (COM0, COM3, COM13, COM50, COM63, RAND)', as
     com50_auto,
     com63_auto,
     rand_autotrain,
-  } = fixture.load_module('event/event-autotrain');
+  } = fixture.load_module('system/train/autotrain');
   // 1. COM0_AUTO (爱抚)
   fixture.store.set('cflag:17:666', 0);
   assert.equal(com0_auto(), 1);
@@ -208,7 +208,7 @@ test('AUTOTRAIN: autotrain 全角色遍历与 after_autotrain', async () => {
   fixture.era.beginTrain(0, 17);
 
   const { after_autotrain, autotrain } = fixture.load_module(
-    'event/event-autotrain',
+    'system/train/autotrain',
   );
   fixture.store.set('cflag:17:666', 1);
   fixture.store.set('ex:17:1', 1); // 私处绝顶
@@ -221,7 +221,7 @@ test('AUTOTRAIN: autotrain 全角色遍历与 after_autotrain', async () => {
 
 test('AUTOTRAIN: com0_auto SOURCE 分档（C感觉 × B感觉）', async () => {
   const { fixture } = seed_autotrain_world();
-  const { com0_auto } = fixture.load_module('event/event-autotrain');
+  const { com0_auto } = fixture.load_module('system/train/autotrain');
   fixture.store.set('abl:17:0', 3); // C感觉 3 → SOURCE:0=1200, SOURCE:3=100
   fixture.store.set('abl:17:1', 4); // B感觉 4 → SOURCE:17=1100, SOURCE:3+=115
   assert.equal(com0_auto(), 1);
@@ -242,7 +242,7 @@ test('AUTOTRAIN: com0_auto SOURCE 分档（C感觉 × B感觉）', async () => {
 
 test('AUTOTRAIN: com3_auto 技巧与自慰中毒乘算', async () => {
   const { fixture } = seed_autotrain_world();
-  const { com3_auto } = fixture.load_module('event/event-autotrain');
+  const { com3_auto } = fixture.load_module('system/train/autotrain');
   fixture.store.set('abl:17:0', 4); // C感觉 4 → SOURCE:0=1100
   fixture.store.set('abl:17:1', 3); // B感觉 3 → SOURCE:17=700
   fixture.store.set('abl:17:12', 3); // 技巧 3 → ×1.2
@@ -266,7 +266,7 @@ test('AUTOTRAIN: com3_auto 技巧与自慰中毒乘算', async () => {
 
 test('AUTOTRAIN: com13_auto 体力/气力门槛与触手分支', async () => {
   const { fixture } = seed_autotrain_world();
-  const { com13_auto } = fixture.load_module('event/event-autotrain');
+  const { com13_auto } = fixture.load_module('system/train/autotrain');
   fixture.store.set('base:17:1', 1000); // 气力充足，单独测体力闸
   fixture.store.set('base:17:0', 400); // HP < 500
   assert.equal(com13_auto(), 0, '体力<500 必须拦下');
@@ -281,7 +281,7 @@ test('AUTOTRAIN: com13_auto 体力/气力门槛与触手分支', async () => {
 
 test('AUTOTRAIN: com13_auto 分档计算', async () => {
   const { fixture } = seed_autotrain_world();
-  const { com13_auto } = fixture.load_module('event/event-autotrain');
+  const { com13_auto } = fixture.load_module('system/train/autotrain');
   fixture.store.set('base:17:0', 1000);
   fixture.store.set('base:17:1', 1000);
   fixture.store.set('abl:17:3', 4); // A感觉 4 → local0=650, local1=2100
@@ -301,7 +301,7 @@ test('AUTOTRAIN: com13_auto 分档计算', async () => {
 
 test('AUTOTRAIN: com50_auto 液体追加', async () => {
   const { fixture } = seed_autotrain_world();
-  const { com50_auto } = fixture.load_module('event/event-autotrain');
+  const { com50_auto } = fixture.load_module('system/train/autotrain');
   assert.equal(com50_auto(), 1);
   assert.equal(fixture.store.get('source:17:10'), 10000);
   assert.equal(fixture.store.get('source:17:12'), 300);
@@ -310,7 +310,7 @@ test('AUTOTRAIN: com50_auto 液体追加', async () => {
 
 test('AUTOTRAIN: com63_auto 分档计算', async () => {
   const { fixture } = seed_autotrain_world();
-  const { com63_auto } = fixture.load_module('event/event-autotrain');
+  const { com63_auto } = fixture.load_module('system/train/autotrain');
   fixture.store.set('abl:17:10', 1); // 顺从 1 → SOURCE:11=120
   fixture.store.set('abl:17:0', 4); // C感觉 4 → SOURCE:0=1200, SOURCE:4=700, SOURCE:5=600, SOURCE:13=20
   fixture.store.set('abl:17:12', 3); // 技巧 3 → ×1.0 / ×0.6 / ×0.5
@@ -327,7 +327,7 @@ test('AUTOTRAIN: com63_auto 分档计算', async () => {
 
 test('AUTOTRAIN: after_autotrain ex:1/ex:2 接入 KARMA 真身', async () => {
   const { fixture } = seed_autotrain_world();
-  const { after_autotrain } = fixture.load_module('event/event-autotrain');
+  const { after_autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('cflag:17:666', 1);
   fixture.store.set('ex:17:1', 1); // 私处绝顶
   await after_autotrain(17);
@@ -337,7 +337,7 @@ test('AUTOTRAIN: after_autotrain ex:1/ex:2 接入 KARMA 真身', async () => {
 
   // 第二个用例：ex:2 肛门绝顶
   const { fixture: f2 } = seed_autotrain_world();
-  const { after_autotrain: aa2 } = f2.load_module('event/event-autotrain');
+  const { after_autotrain: aa2 } = f2.load_module('system/train/autotrain');
   f2.store.set('cflag:17:666', 1);
   f2.store.set('ex:17:2', 1);
   await aa2(17);
@@ -350,7 +350,7 @@ test('AUTOTRAIN: after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两
   // flag:75=0 且非常时发情 → 蓄积
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 1);
     fixture.store.set('flag:75', 0);
     fixture.store.set('palam:17:3', 20000);
@@ -362,7 +362,7 @@ test('AUTOTRAIN: after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两
   // flag:75=1 → 不蓄积
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 1);
     fixture.store.set('flag:75', 1);
     fixture.store.set('palam:17:3', 20000);
@@ -373,7 +373,7 @@ test('AUTOTRAIN: after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两
   // TALENT:271 → 不蓄积
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 1);
     fixture.store.set('talent:17:271', 1);
     fixture.store.set('palam:17:3', 20000);
@@ -383,7 +383,7 @@ test('AUTOTRAIN: after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两
   // palam < 10000 → 蓄积归 0
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 1);
     fixture.store.set('flag:75', 0);
     fixture.store.set('palam:17:3', 5000);
@@ -398,7 +398,7 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
   // gotjuel:100 清零 + cflag:667 累加
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 7);
     fixture.store.set('gotjuel:17:100', 500);
     await after_autotrain(17);
@@ -408,7 +408,7 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
   // cflag:667 封顶 50
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 60);
     await after_autotrain(17);
     assert.equal(fixture.store.get('cflag:17:667'), 50);
@@ -416,7 +416,7 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
   // flag:5 bit 35 → AUTO_ABLUP 真身
   {
     const { fixture } = seed_autotrain_world();
-    const { after_autotrain } = fixture.load_module('event/event-autotrain');
+    const { after_autotrain } = fixture.load_module('system/train/autotrain');
     fixture.store.set('cflag:17:666', 1);
     fixture.store.set('flag:5', 2 ** 35); // 只有第 35 位为 1（1 << 35 会回绕成第 3 位）
     fixture.store.set('juel:17:0', 1); // 阴蒂感觉 Lv0 的 1 点
@@ -436,7 +436,7 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
 test('AUTOTRAIN: after_autotrain FLAG:5 第 35 位为 1 时执行自动提升', async () => {
   // 第 35 位 = 设定 [20]「自动提升角色能力」
   const { fixture } = seed_autotrain_world();
-  const { after_autotrain } = fixture.load_module('event/event-autotrain');
+  const { after_autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('cflag:17:666', 1);
   fixture.store.set('flag:5', 2 ** 35);
   fixture.store.set('juel:17:0', 1); // 阴蒂感觉 Lv0 的 1 点
@@ -451,7 +451,7 @@ test('AUTOTRAIN: after_autotrain FLAG:5 第 35 位为 1 时执行自动提升', 
 test('AUTOTRAIN: after_autotrain FLAG:5 第 3 位为 1 时不执行自动提升', async () => {
   // 第 3 位 = 设定 [3]「勇者自动处刑机能」，与自动提升无关
   const { fixture } = seed_autotrain_world();
-  const { after_autotrain } = fixture.load_module('event/event-autotrain');
+  const { after_autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('cflag:17:666', 1);
   fixture.store.set('flag:5', 2 ** 3);
   fixture.store.set('juel:17:0', 1);
@@ -465,7 +465,7 @@ test('AUTOTRAIN: after_autotrain FLAG:5 第 3 位为 1 时不执行自动提升'
 
 test('AUTOTRAIN: autotrain 遍历只处理 cflag:666!=0 并还原指针', async () => {
   const { fixture, era_flag } = seed_autotrain_world();
-  const { autotrain } = fixture.load_module('event/event-autotrain');
+  const { autotrain } = fixture.load_module('system/train/autotrain');
   fixture.store.set('cflag:17:666', 1);
   fixture.store.set('cflag:1:666', 0); // 助手不调教
   era_flag.target = 0;
@@ -484,7 +484,7 @@ test('AUTOTRAIN: autotrain 遍历只处理 cflag:666!=0 并还原指针', async 
 
 test('AUTOTRAIN: autotrain 无目标时干净返回', async () => {
   const { fixture } = seed_autotrain_world();
-  const { autotrain } = fixture.load_module('event/event-autotrain');
+  const { autotrain } = fixture.load_module('system/train/autotrain');
   // 所有角色 cflag:666 都是 0
   await autotrain();
   assert.equal(fixture.text_lines().length, 0, '没有可调教角色时无输出');

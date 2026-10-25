@@ -1,11 +1,12 @@
 /**
  * @file 服装类型的显示串构造：clothtype_text / clothtype_main_text /
  * clothtype_main2_text / clothtype_special_text
- * （issue #215 J5；PRINT_/GET_ 分法见 #106 决定三：PRINT_ → ere/page/，
- * GET_ → ere/system/cloth-lookup.js）。两版共用一份名字表，表定义在
+ * （issue #215 J5；PRINT_/GET_ 分法见 #106 决定三：GET_ 侧在
+ * ere/system/cloth-lookup.js）。两版共用一份名字表，表定义在
  * ere/system/cloth-lookup.js，本模块直接取用；两版出口只在未知编号的
  * 缺省上分叉——main2 两版都回「服」，special 本版回空串、GET 版回
- * 'ERROR' 哨兵。
+ * 'ERROR' 哨兵。四个出口只返回串、不调用输出 API，与纯字符串工具同放在
+ * utils/（#886）。
  *
  * == 出口形式（equip-print.js 的「两种出口」同款决定） ==
  *

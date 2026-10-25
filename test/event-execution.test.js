@@ -1376,7 +1376,7 @@ test('苗床妊娠：怪物精液判定成功后写短孕期与特殊父亲', ()
   const fixture = seed_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { conception_check_syoku_to_t, in_vagina_syoku_to_t } =
-    fixture.load_module('event/event-pregnancy');
+    fixture.load_module('system/pregnancy');
   era_flag.target = 31;
   era_flag.day_count = 20;
   fixture.store.set('flag:5', 4); // 妊娠系统启用

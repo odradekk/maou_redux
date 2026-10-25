@@ -665,7 +665,7 @@ test('labo 菜单：[100] 返回、[007] 打 HEART_R 图、[001] 调色行', asy
 
 test('first-setting 地下城模式一问：按钮 0/1 均在白名单内可送达（#130）', async () => {
   const fixture = create_era_fixture();
-  const { ask_dungeon_mode } = fixture.load_module('event/first-setting');
+  const { ask_dungeon_mode } = fixture.load_module('page/page-first-setting');
   fixture.set_inputs(1);
   const choice = await ask_dungeon_mode();
   assert.equal(choice, 1);
@@ -687,7 +687,7 @@ test('first-setting 地下城模式一问：按钮 0/1 均在白名单内可送�
 
 test('first_setting 地下城模式一问：选普通置 0', async () => {
   const fixture = create_era_fixture();
-  const { ask_dungeon_mode } = fixture.load_module('event/first-setting');
+  const { ask_dungeon_mode } = fixture.load_module('page/page-first-setting');
   fixture.set_inputs(0);
   const choice = await ask_dungeon_mode();
   assert.equal(choice, 0);

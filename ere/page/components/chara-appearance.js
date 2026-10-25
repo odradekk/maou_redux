@@ -27,7 +27,7 @@ const {
 const {
   clothtype_main2_text,
   clothtype_text,
-} = require('#/page/page-clothtype');
+} = require('#/utils/clothtype-utils');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** CFLAG 下标（裸下标，逐个注释） */

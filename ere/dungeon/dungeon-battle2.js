@@ -321,10 +321,10 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   era_flag.target = arg0;
 
   // 肛门虫（TALENT:193）自动调教三连（CALL com13_auto——
-  // 真身 ere/event/event-autotrain.js，#500）
+  // 真身 ere/system/train/autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await battle.before_autotrain();
-    const { com13_auto } = require('#/event/event-autotrain');
+    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();
     await battle.source_check_auto();
   }

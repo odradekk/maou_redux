@@ -2,7 +2,7 @@
  * @file 口上系统的公共底座：口上总开关、性格编号解析、指令口上的分发。
  *
  * 调用点：source-check（SIF FLAG:7 > 0 / CALL KOJO_MESSAGE_COM，
- * ere/event/source-check.js）。
+ * ere/system/train/source-check.js）。
  *
  * == 总开关与存在标志（事件链机制，#6 的真实用例） ==
  *

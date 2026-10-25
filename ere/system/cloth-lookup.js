@@ -1,7 +1,7 @@
 /**
  * @file 服装类型的取串函数：get_clothtype_main2 与 get_clothtype_special
  * （issue #215 J5；PRINT_/GET_ 分法见 #106 决定三：GET_ → ere/system/，
- * PRINT_ → ere/page/page-clothtype.js）。
+ * PRINT_ → ere/utils/clothtype-utils.js）。
  *
  * == 取值函数直接返回串 ==
  *

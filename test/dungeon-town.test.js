@@ -429,7 +429,7 @@ test('town_pt_party：娼婦購入分支的爱抚自动调教接 com0_auto 真�
   fixture.store.set('talent:1:122', 1); // 男人 → 娼婦購入
   // 开调教域（#508）：自动调教三连的本体写的 SOURCE 要落得下（夹具镜像引擎
   // 的检查），第三站 source_check_auto 的真身也要显式载入（生产由 main-loop 加载）
-  fixture.load_module('event/source-check');
+  fixture.load_module('system/train/source-check');
   fixture.era.beginTrain(0, 1);
   const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
   assert.equal(ret, 1, '开宴');
@@ -438,7 +438,7 @@ test('town_pt_party：娼婦購入分支的爱抚自动调教接 com0_auto 真�
     lines.some((l) => l.includes('妓女买了春')),
     '娼婦購入演出',
   );
-  // CALL com0_auto——ere/event/event-autotrain.js 的真身
+  // CALL com0_auto——ere/system/train/autotrain.js 的真身
   assert.ok(
     lines.some((l) => l.includes('≪摸来摸去≫')),
     'com0_auto 真身被调',

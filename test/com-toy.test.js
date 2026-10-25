@@ -457,7 +457,7 @@ test('equip_com18：每回合清洗；equip_com19：肛门经验与同性经验'
 test('source-check 正式链：道具族装备位经 emit → EQUIP_COM_CHAIN 全部打到真身', async () => {
   const world = seed_world();
   const { emit } = world.fixture.load_module('system/event/registry');
-  world.fixture.load_module('event/source-check');
+  world.fixture.load_module('system/train/source-check');
   // 八个装备位全部点亮（date 默认 0 ≠ 15，产卵分支不参与）
   for (const slot of [11, 13, 14, 15, 16, 17, 18, 19]) {
     world.fixture.store.set(`tequip:31:${slot}`, 1);

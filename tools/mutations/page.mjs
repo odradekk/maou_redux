@@ -391,7 +391,7 @@ export default [
     era_flag.human_realm_fallen === 0
   ) {`,
     replace: `  if (era_flag.human_realm_invasion >= 10000) { // 变异：删 FLAG:82 == 0 半边`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '横幅只出现一次',
   },
   {
@@ -416,7 +416,7 @@ export default [
     era_flag.human_realm_fallen === 0`,
     replace: `    era_flag.human_realm_invasion >= 9999 && // 变异：门槛改坏
     era_flag.human_realm_fallen === 0`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     must_mention: '预置输入已耗尽',
   },
   {
@@ -426,7 +426,7 @@ export default [
     era_flag.elf_realm_conquered === 0`,
     replace: `    era_flag.elf_realm_invasion >= 0 && // 变异：门槛恒真
     era_flag.elf_realm_conquered === 0`,
-    tests: ['event-ending'],
+    tests: ['page-ending'],
     // '空转零输出' 是断言消息，但门槛松开后 ending_3 会在断言执行前就
     // 因 char_gift 等待未预置的输入而炸穿，断言永远走不到——旧
     // must_mention 因此从未真正命中。真正专门测「五组门槛全未达标 → 零
@@ -795,7 +795,7 @@ export default [
   },
   {
     desc: 'M810 clothtype_text 的特别服装复合句删（穿戴着…的模样不拼）',
-    file: 'ere/page/page-clothtype.js',
+    file: 'ere/utils/clothtype-utils.js',
     find: '    out += `穿戴着${clothtype_special_text(cid)}的模样`;',
     replace: '    // 变异：特别服装句删',
     tests: ['cloth-func'],
@@ -804,7 +804,7 @@ export default [
   },
   {
     desc: 'M811 乳房外露条件删（breasts_exposed 恒假 → 一律上半身裸露）',
-    file: 'ere/page/page-clothtype.js',
+    file: 'ere/utils/clothtype-utils.js',
     find: `  return (
     talent(cid, 122) === 0 &&
     talent(cid, 116) === 0 &&
@@ -816,7 +816,7 @@ export default [
   },
   {
     desc: 'M13701 页面版 clothtype_main2_text 的未知编号缺省错（「服」改空串）',
-    file: 'ere/page/page-clothtype.js',
+    file: 'ere/utils/clothtype-utils.js',
     find: "  return MAIN2_TABLE[main_type(cid)] ?? '服';",
     replace: "  return MAIN2_TABLE[main_type(cid)] ?? '';",
     tests: ['cloth-func'],
@@ -824,7 +824,7 @@ export default [
   },
   {
     desc: 'M13702 页面版 clothtype_special_text 的未知编号缺省错（空串改 ERROR）',
-    file: 'ere/page/page-clothtype.js',
+    file: 'ere/utils/clothtype-utils.js',
     find: "  return SPECIAL_TABLE[special_type(cid)] ?? '';",
     replace: "  return SPECIAL_TABLE[special_type(cid)] ?? 'ERROR';",
     tests: ['cloth-func'],
@@ -832,7 +832,7 @@ export default [
   },
   {
     desc: 'M13704 页面版自带一份分叉的上衣名表（与 GET 版共用的表被拆开）',
-    file: 'ere/page/page-clothtype.js',
+    file: 'ere/utils/clothtype-utils.js',
     find: `function clothtype_main2_text(cid) {
   return MAIN2_TABLE[main_type(cid)] ?? '服';
 }`,
@@ -845,7 +845,7 @@ export default [
   },
   {
     desc: 'M13705 页面版自带一份分叉的特别服装名表（与 GET 版共用的表被拆开）',
-    file: 'ere/page/page-clothtype.js',
+    file: 'ere/utils/clothtype-utils.js',
     find: `function clothtype_special_text(cid) {
   return SPECIAL_TABLE[special_type(cid)] ?? '';
 }`,
@@ -4604,8 +4604,8 @@ export default [
     file: 'ere/page/page-invasion.js',
     find: "    era.print('声望+10'); // PRINTL\n    return;\n  }\n}",
     replace:
-      "    era.print('声望+10'); // PRINTL\n    return;\n  }\n  // 变异：天神宫组复活\n  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {\n    await require('#/event/event-ending').end10_55();\n    era_exflag.prestige = era_exflag.prestige + 10;\n    era.print('声望+10'); // PRINTL\n  }\n}",
-    tests: ['event-ending'],
+      "    era.print('声望+10'); // PRINTL\n    return;\n  }\n  // 变异：天神宫组复活\n  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {\n    await require('#/page/page-ending').end10_55();\n    era_exflag.prestige = era_exflag.prestige + 10;\n    era.print('声望+10'); // PRINTL\n  }\n}",
+    tests: ['page-ending'],
     must_mention: '空转零输出',
   },
   {

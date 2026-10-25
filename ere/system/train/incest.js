@@ -2,7 +2,7 @@
  * @file 亲族关系判定共用子程序。
  *
  * TFLAG:14 = 从当前 TARGET 看 PLAYER 的亲族关系：0 无、1 父母、2 子女、
- * 3 兄姐、4 弟妹、5 表姐、6 表弟。ere/event/source-check.js 与性交事后
+ * 3 兄姐、4 弟妹、5 表姐、6 表弟。ere/system/train/source-check.js 与性交事后
  * 处理都会调用，因此不能各自复制或打桩。
  *
  * CFLAG:25 命中时却以 CFLAG:24 / 100 赋值；这是错误但可观察的行为，

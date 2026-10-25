@@ -49,7 +49,7 @@
  *        验收结论分立为 missing/cancelled——开发期要分得出「我们还没做」
  *        和「游戏本来就取消了这一回合」）。
  *    12.5 SOURCE_CHECK 事件链（指令处理器之后、结算之前；函数体在
- *        event/source-check.js，#45——源→参数换算、绝顶、刻印、结算展示）
+ *        system/train/source-check.js，#45——源→参数换算、绝顶、刻印、结算展示）
  *    13. 指令执行后（仅返回非 0 的回合，见 12 的取消语义）：
  *        PREVCOM = SELECTCOM（引擎不自动推进 PREVCOM，由本循环赋值；高级
  *        COM 回填 SELECTCOM 后亦须保留该号——SOURCE_CHECK 跑了才推，取消
@@ -152,7 +152,7 @@ async function execute_command_round(result) {
     return { missing: false, cancelled: true };
   }
   // 12.5 SOURCE_CHECK 事件链（指令处理器之后、结算之前；函数体在
-  // event/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
+  // system/train/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
   // 结算展示都在链上；未注册时静默通过（空链语义）
   const source_pending = await emit('SOURCE_CHECK');
   if (source_pending !== undefined) {

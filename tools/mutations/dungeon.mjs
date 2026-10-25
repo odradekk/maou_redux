@@ -455,7 +455,7 @@ export default [
   },
   {
     desc: 'M587 first_setting 地下城模式一问的置位蒸发（FLAG:502 恒 0——2D 模式不可达）',
-    file: 'ere/event/first-setting.js',
+    file: 'ere/page/page-first-setting.js',
     find: '      game.dungeon.迷宫模式 = result; // FLAG:502 = RESULT',
     replace:
       '      // game.dungeon.迷宫模式 = result; // 变异：置位蒸发（FLAG:502 恒 0）',
@@ -2347,7 +2347,7 @@ export default [
   {
     desc: 'M10713 com3_auto 深档调用点退回占位（不再执行真身——自动调教回数与专属文本都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+    find: "    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
     replace:
       '    // 变异：调用点退回占位（不执行 COM3_AUTO 真身）\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
     tests: ['dungeon-trap'],
@@ -2356,16 +2356,16 @@ export default [
   {
     desc: 'M10714 com3_auto 深档调错变体（com3_auto 换成 com0_auto——自动调教回数照涨，文本与常量露馅）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+    find: "    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
     replace:
-      "    const { com0_auto } = require('#/event/event-autotrain'); // 变异：调错变体\n    com0_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+      "    const { com0_auto } = require('#/system/train/autotrain'); // 变异：调错变体\n    com0_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
     tests: ['dungeon-trap'],
     must_mention: 'com3_auto 真身被调',
   },
   {
     desc: 'M10715 com3_auto 浅档调用点退回占位（不再执行真身——浅度催眠档的回数停在 1）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/event/event-autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,",
+    find: "    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,",
     replace:
       '    // 变异：浅度档的调用点退回占位\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,',
     tests: ['dungeon-trap'],
@@ -2374,7 +2374,7 @@ export default [
   {
     desc: 'M10716 com50_auto 调用点退回占位（不再执行真身——液体追加/露出与专属文本都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "  const { com50_auto } = require('#/event/event-autotrain'); // CALL com50_auto\n  com50_auto();",
+    find: "  const { com50_auto } = require('#/system/train/autotrain'); // CALL com50_auto\n  com50_auto();",
     replace: `  // 变异：调用点退回占位（不执行 COM50_AUTO 真身）`,
     tests: ['dungeon-trap'],
     must_mention: 'com50_auto 真身被调',
@@ -2382,8 +2382,8 @@ export default [
   {
     desc: 'M10717 com50_auto 调错变体（com50_auto 换成 com3_auto——回数照涨，液体追加/露出落空）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: "  const { com50_auto } = require('#/event/event-autotrain'); // CALL com50_auto\n  com50_auto();",
-    replace: `  const { com3_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+    find: "  const { com50_auto } = require('#/system/train/autotrain'); // CALL com50_auto\n  com50_auto();",
+    replace: `  const { com3_auto } = require('#/system/train/autotrain'); // 变异：调错变体
   com3_auto();`,
     tests: ['dungeon-trap'],
     must_mention: 'com50_auto 真身被调',
@@ -2391,7 +2391,7 @@ export default [
   {
     desc: 'M10718 com13_auto 肛门虫陷阱调用点退回占位（不再执行真身——losebase 与逃离常量都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    find: `    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-trap'],
@@ -2401,9 +2401,9 @@ export default [
   {
     desc: 'M10719 com13_auto 调错变体（com13_auto 换成 com0_auto——回数照涨，本体文本换人）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    find: `    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();`,
-    replace: `    const { com0_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+    replace: `    const { com0_auto } = require('#/system/train/autotrain'); // 变异：调错变体
     com0_auto();`,
     tests: ['dungeon-trap'],
     must_mention:
@@ -2412,7 +2412,7 @@ export default [
   {
     desc: 'M10720 com0_auto 淫虫陷阱调用点退回占位（不再执行真身——性行为 60 与 losebase 常量都不出）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: `  const { com0_auto } = require('#/event/event-autotrain');
+    find: `  const { com0_auto } = require('#/system/train/autotrain');
   com0_auto();`,
     replace: `  // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
     tests: ['dungeon-trap'],
@@ -2421,9 +2421,9 @@ export default [
   {
     desc: 'M10721 com0_auto 调错变体（com0_auto 换成 com63_auto——回数照涨，专属文本与常量落空）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: `  const { com0_auto } = require('#/event/event-autotrain');
+    find: `  const { com0_auto } = require('#/system/train/autotrain');
   com0_auto();`,
-    replace: `  const { com63_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+    replace: `  const { com63_auto } = require('#/system/train/autotrain'); // 变异：调错变体
   com63_auto();`,
     tests: ['dungeon-trap'],
     must_mention: 'com0_auto 真身被调',
@@ -2431,7 +2431,7 @@ export default [
   {
     desc: 'M10722 com0_auto 宴会风俗（娼婦購入分支）调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-town.js',
-    find: "          const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto\n          com0_auto();",
+    find: "          const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto\n          com0_auto();",
     replace: `          // 变异：调用点退回占位（不执行 com0_auto 真身）`,
     tests: ['dungeon-town'],
     must_mention: 'com0_auto 真身被调',
@@ -2439,7 +2439,7 @@ export default [
   {
     desc: 'M10723 com0_auto 宴会风俗（少年风俗分支）调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-town.js',
-    find: "        const { com0_auto } = require('#/event/event-autotrain'); // CALL com0_auto\n        com0_auto();",
+    find: "        const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto\n        com0_auto();",
     replace: `        // 变异：调用点退回占位（不执行 com0_auto 真身）`,
     tests: ['dungeon-town'],
     must_mention: 'com0_auto 真身被调',
@@ -2447,7 +2447,7 @@ export default [
   {
     desc: 'M10724 com13_auto 勇者侧攻击调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    find: `    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
@@ -2456,7 +2456,7 @@ export default [
   {
     desc: 'M10725 com13_auto 角色对角色的攻击调用点退回占位（不再执行真身）',
     file: 'ere/dungeon/dungeon-battle2.js',
-    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    find: `    const { com13_auto } = require('#/system/train/autotrain');
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],

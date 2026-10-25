@@ -792,7 +792,7 @@ test('调教窗口（#508）：FORMAT_AUTOTRAIN 的 PALAM 重置落得下，窗�
 test('调教窗口（#508）：AUTOTRAIN 在窗口里跑真身，PALAM → 珠可结算', async () => {
   const { fixture, emit } = setup_turnend();
   join_slave_chara(fixture, 31, '温妮');
-  const mod = fixture.load_module('event/event-autotrain');
+  const mod = fixture.load_module('system/train/autotrain');
   const real_autotrain = mod.autotrain;
   let palam_inside_window;
   mod.autotrain = async () => {
@@ -963,7 +963,7 @@ test('调教窗口（#906）：关窗前把本窗口的欲情存进 CFLAG:668', 
   const { fixture, emit } = setup_turnend((f) => {
     // 借来的窗口里写欲情的只有迷宫域的自动调教（COM*_AUTO）：在 AUTOTRAIN
     // 的位置模拟它的产物
-    const mod = f.load_module('event/event-autotrain');
+    const mod = f.load_module('system/train/autotrain');
     const real_autotrain = mod.autotrain;
     mod.autotrain = async () => {
       f.era.set('palam:31:5', 12345);
