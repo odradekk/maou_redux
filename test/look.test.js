@@ -19,7 +19,6 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { parse_yml_ids } = require('./helpers/static-names');
 
 /** 素质下标（与 ere/chara/look-info.js 的常量同名，测试侧独立写死防串改） */
 const T = {
@@ -838,9 +837,6 @@ test('现种族 211 的旧存档读入后显示异界勇者', async () => {
   assert.equal(await fixture.era.saveData(0, '0.1.0 存档'), true);
   fixture.store.set('talent:5:322', 0);
   assert.equal(await fixture.era.loadData(0), true, '读回旧存档');
-  for (const [id, name] of parse_yml_ids('Item.yml')) {
-    fixture.store.set(`itemname:${id}`, name);
-  }
 
   assert.equal(fixture.store.get('talent:5:322'), 211, '旧存档现种族保持 211');
   assert.equal(

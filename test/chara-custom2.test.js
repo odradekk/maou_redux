@@ -525,12 +525,17 @@ test('char_custom_talent_deal：纤细体型（308 <= 100）清肥胖位', () =>
 // —— print_single_talent 与 char_custom_talent_page ——
 
 test('char_custom_talent_page：三页只显示已声明素质，跳过的编号不占格', () => {
-  const names = parse_yml_ids('Talent.yml');
+  // 名字由夹具按 yml 现算；断言期望值这边也过一遍 toLowerCase——引擎装载
+  // 静态数据时把名称列转小写（eraStart 的 `o.map((e) => (e[1] =
+  // toLowerCase(e[1]), e))`），玩家看到的是小写那份
+  const names = new Map(
+    [...parse_yml_ids('Talent.yml')].map(([id, name]) => [
+      id,
+      name.toLowerCase(),
+    ]),
+  );
   for (const page of [0, 1, 2]) {
     const fixture = setup();
-    for (const [id, name] of names) {
-      fixture.store.set(`talentname:${id}`, name);
-    }
     const { char_custom_talent_page } = load(fixture);
     char_custom_talent_page(page, 0, 1);
     const displayed = buttons(fixture);
