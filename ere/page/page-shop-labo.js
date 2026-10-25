@@ -1067,7 +1067,9 @@ async function tatoo_set_off() {
 
   // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的等价输入）
   era.print('（输入 0 消去刺青）');
-  const results = input_text(await era.input({ useRule: false })); // INPUTS
+  // 刺青／自由局部调教是玩家自己写的字符串，规则给不出约束；这一轮没有打印
+  // 按钮，默认（白名单为空）就是自由输入
+  const results = input_text(await era.input()); // INPUTS
   if (results !== '') {
     era.print(`在${TATOO_NAME[select]}雕刻『${results}』刺青吗？`);
   } else {
@@ -2398,7 +2400,9 @@ async function set_free_train() {
   era.print('发送空白将会重置。');
   // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的等价输入）
   era.print('（输入 0 重置）');
-  const results = input_text(await era.input({ useRule: false })); // INPUTS
+  // 刺青／自由局部调教是玩家自己写的字符串，规则给不出约束；这一轮没有打印
+  // 按钮，默认（白名单为空）就是自由输入
+  const results = input_text(await era.input()); // INPUTS
   chara(local).stronghold.自由调教内容 = results; // CSTR:LOCAL:7 = %RESULTS%
   chara(local).train.局部感觉 = 0; // ABL:LOCAL:4 = 0
   chara(local).train.局部中毒 = 0; // ABL:LOCAL:40 = 0

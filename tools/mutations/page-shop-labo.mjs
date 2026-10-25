@@ -550,8 +550,8 @@ export default [
   make(
     11840,
     '刺青的自由输入改回 A 语义（0 落成刺青文字「0」，消去支不可达）',
-    "  const results = input_text(await era.input({ useRule: false })); // INPUTS\n  if (results !== '') {",
-    "  const results = String((await era.input({ useRule: false })) ?? ''); // 变异：A 语义\n  if (results !== '') {",
+    "  const results = input_text(await era.input()); // INPUTS\n  if (results !== '') {",
+    "  const results = String((await era.input()) ?? ''); // 变异：A 语义\n  if (results !== '') {",
     '输入 0 落成空串',
   ),
   make(
@@ -571,8 +571,8 @@ export default [
   make(
     11844,
     '自由局部调教的自由输入改回 A 语义（0 落成调教项「0」，重置支不可达）',
-    '  const results = input_text(await era.input({ useRule: false })); // INPUTS\n  chara(local).stronghold.自由调教内容 = results; // CSTR:LOCAL:7 = %RESULTS%',
-    "  const results = String((await era.input({ useRule: false })) ?? ''); // 变异：A 语义\n  chara(local).stronghold.自由调教内容 = results; // CSTR:LOCAL:7 = %RESULTS%",
+    '  const results = input_text(await era.input()); // INPUTS\n  chara(local).stronghold.自由调教内容 = results; // CSTR:LOCAL:7 = %RESULTS%',
+    "  const results = String((await era.input()) ?? ''); // 变异：A 语义\n  chara(local).stronghold.自由调教内容 = results; // CSTR:LOCAL:7 = %RESULTS%",
     '输入 0 落成空串',
   ),
   // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
