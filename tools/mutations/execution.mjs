@@ -47,7 +47,7 @@ export default [
     find: '  archive_fate(cid, ending.fate);',
     replace: "  archive_fate(cid, '处刑');",
     tests: ['event-execution'],
-    must_mention: '归档选择的末路',
+    must_mention: '结局按所选末路归档',
   },
   {
     desc: 'M7267 流放：小动物第二个 ELSEIF 不再重新掷随机数',
