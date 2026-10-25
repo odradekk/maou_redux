@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 50; // #814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 52; // #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -482,5 +482,22 @@ export default [
     replace: '  name: "self_call"\n  type: "number"\n',
     tests: ['chara-preset-apply'],
     must_mention: 'type 必须是 string',
+  },
+  // —— #848 初始角色改由 GameBase 的【初始角色编号】声明 ——
+  {
+    desc: 'M16254 GameBase 的【初始角色编号】改坏（#848——按 1 号建角色，0 号魔王消失）',
+    file: 'yml/GameBase.yml',
+    find: '"初始角色编号": 0',
+    replace: '"初始角色编号": 1',
+    tests: ['gamebase-default-chara'],
+    must_mention: '【初始角色编号】必须是 0',
+  },
+  {
+    desc: 'M16255 角色预设的相性加上以 0 号为目标的键（#848——默认角色的相性镜像只写正向，两种写法的数据不再一致）',
+    file: 'yml/Chara24.yml',
+    find: '  "17": 150',
+    replace: '  "0": 500\n  "17": 150',
+    tests: ['gamebase-default-chara'],
+    must_mention: '相性目标的角色号里出现了 0，需重新核对该差异',
   },
 ];

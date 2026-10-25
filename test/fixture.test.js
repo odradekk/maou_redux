@@ -15,6 +15,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { preset_gamebase } = require('./helpers/gamebase');
 const {
   create_add_character,
   create_next_turn_in_train,
@@ -1136,6 +1137,50 @@ test('已加入角色列表：addCharacter 追加、resetData 清空（CHARANUM 
     { api: 'addCharacter', args: [31] },
     { api: 'resetData', args: [] },
   ]);
+});
+
+// —— resetData 按 GameBase【初始角色编号】建角色（#848）——
+//
+// 引擎 resetData 的方法体（app.asar）末尾：
+//   `void 0 !== this.staticData.gamebase.defaultChara &&
+//    this.addCharacter(this.staticData.gamebase.defaultChara)`
+// 夹具据此在同一位置建角色。记入 calls 的只有游戏代码调用的 API——引擎这个
+// 内部动作不记，否则「标题页不得再手工 addCharacter」的断言永远为真。
+
+test('resetData 按 GameBase【初始角色编号】建角色，且不把它算成游戏代码的调用', () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture); // 含 defaultChara: 0，即 yml/GameBase.yml 的运行时形状
+  // 严格夹具：预设先种才加得进（#35 镜像的引擎检查）
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+
+  fixture.era.resetData();
+
+  assert.deepEqual(fixture.chara_no, [0], 'resetData 后 0 号角色必须在场');
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0]);
+  // 称呼两槽由预设写入（引擎 addCharacter 的两条数据层赋值）
+  assert.equal(fixture.store.get('callname:0:-1'), '你');
+  assert.equal(fixture.store.get('callname:0:-2'), '你');
+  assert.deepEqual(
+    fixture.calls,
+    [{ api: 'resetData', args: [] }],
+    'resetData 内部的建角色是引擎动作，不得记成游戏代码的 addCharacter',
+  );
+});
+
+test('resetData 只在 GameBase 声明了【初始角色编号】时建角色，编号跟着声明走', () => {
+  // 未声明：引擎的 `void 0 !== defaultChara` 短路，一个角色都不建
+  const undeclared = create_era_fixture();
+  undeclared.seed_chara(0, { id: 0, name: '你' });
+  undeclared.era.resetData();
+  assert.deepEqual(undeclared.chara_no, [], '未声明时不建角色');
+
+  // 声明的编号从 GameBase 读，不写死 0（换 17 才能区分这两者）
+  const declared = create_era_fixture();
+  preset_gamebase(declared, { defaultChara: 17 });
+  declared.seed_chara(0, { id: 0, name: '你' });
+  declared.seed_chara(17, { id: 17, name: '玛奥', callname: '玛奥' });
+  declared.era.resetData();
+  assert.deepEqual(declared.chara_no, [17], '建的是声明的编号，不是写死的 0');
 });
 
 test('printButton 记录 config.color（按钮明暗断言的落点）', () => {
