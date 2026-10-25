@@ -45,11 +45,21 @@ test('name_lover：二十一种登记值可查，未知编号返回 0', () => {
   assert(text_lines(fixture).at(-1).includes('戴眼镜的男学生'));
 });
 
-test('enter_lover：无效输入重问；换类型写恋人并重置爱情', async () => {
+test('enter_lover：表外编号由引擎在输入框里拒收；换类型写恋人并重置爱情', async () => {
+  // 受理集＝按钮集加表里的 200（见下一条）：表外编号到不了游戏层，
+  // 原来的「无效值重问」循环随之删掉
+  const rejected = setup_world();
+  rejected.set_inputs(19);
+  await assert.rejects(
+    () => load(rejected).enter_lover(1),
+    /输入不合法！输入规范：\(\?:0\|999\|/,
+    '19 不在恋人类型表里',
+  );
+
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 1);
   fixture.store.set('cflag:1:607', 39);
-  fixture.set_inputs(19, 23);
+  fixture.set_inputs(23);
   assert.equal(await load(fixture).enter_lover(1), 1);
   assert.equal(fixture.store.get('cflag:1:606'), 23);
   assert.equal(fixture.store.get('cflag:1:607'), 0);

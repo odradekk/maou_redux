@@ -244,14 +244,14 @@ engine_test(
     });
 
     await t.test(
-      '影仆召唤拒绝已在场编号，取消后保留角色和全部代价',
+      '影仆召唤不列出已在场编号，取消后保留角色和全部代价',
       async () => {
         const { api, fixture } = setup(presets);
         mark_progress(api, 150);
         const before = snapshot_character(api, 150);
         const { summon_slave } = fixture.load_module('page/page-shop-labo');
-        fixture.set_inputs(150, 0);
-
+        // 150 已在场 → 不在候选里；候选为空时直接收摊（#872：编号改成
+        // 候选按钮后，手输已占用的编号没有受理面，这一轮不取输入）
         const result = await summon_slave();
         assert.deepEqual(
           snapshot_character(api, 150),
@@ -263,7 +263,7 @@ engine_test(
         assert.equal(api.get('exflag:4444'), 100000);
         assert.equal(api.get('cflag:0:9'), 30);
         assert.equal(api.get('flag:83'), 30);
-        assert.ok(has_text(fixture, '该角色已在场，无法重复召唤'));
+        assert.ok(has_text(fixture, '没有可以召唤的奴隶'));
       },
     );
 

@@ -68,13 +68,12 @@ async function enter_lover(cid) {
   era.printButton('取消', 999);
   era.drawLine();
 
-  let selected;
-  for (;;) {
-    // era.input 是自由数值输入（useRule: false）；保留隐藏的 200 与无效值重问语义。
-    selected = await era.input({ useRule: false });
-    if (selected === 999) return 0;
-    if (selected === 0 || LOVER_NAMES.has(selected)) break;
-  }
+  // 受理集＝按钮集（0、999 与表里 1-99 的项）加表里的 200（恋人，界面上
+  // 没有它的按钮）：整集写进 rule，越界值由引擎在输入框里拒收
+  // （见 utils/input-rule.js）。
+  const accepted = `(?:0|999|${[...LOVER_NAMES.keys()].join('|')})`;
+  const selected = await era.input({ rule: accepted });
+  if (selected === 999) return 0;
 
   const previous = era.get(`cflag:${cid}:606`) || 0; // CFLAG:606 = 恋人类型
   era.set(`cflag:${cid}:606`, selected);

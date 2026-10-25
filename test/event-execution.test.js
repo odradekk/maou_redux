@@ -1581,3 +1581,79 @@ test('INFRASTRUCTURE：录像架的翻页三枚是按钮（#572）', async () =>
     assert(buttons.includes(option), `录像架 ${option}`);
   }
 });
+
+// —— #872：数值输入的受理集交给引擎的 rule ——
+//
+// 未显示的编号（流放/公开处刑/猎奇的 100、结局发色的 11、初吻部位的
+// 201/301）必须仍可键入，按钮集写不全它们，于是用 `rule` 把整集写进正则；
+// 其余值由引擎在输入框里拒收（弹「输入不合法」且不回传），游戏侧那几处
+// 「打印提示 → 等键 → 重来」的循环随之删除。夹具镜像引擎的
+// `new RegExp('^' + rule + '$')`，所以这里断言的就是实机的受理集。
+//
+// 拼接不带分组：`a|b` 会变成 `^a|b$`，含 `|` 的规则一律自己加 `(?:…)`
+// （ere/utils/input-rule.js 的契约说明）。
+
+/** rule 拒收：引擎/夹具抛错，游戏层拿不到该值 */
+async function assert_rule_rejects(run, rule, typed, label) {
+  await assert.rejects(
+    run,
+    new RegExp(`输入不合法！输入规范：${rule}`),
+    `${label}：${JSON.stringify(typed)} 不在受理集`,
+  );
+}
+
+test('#872：流放菜单的越界编号被 rule 拦下（100 与 0-4 之外）', async () => {
+  for (const typed of [5, -1, 1000]) {
+    const fixture = seed_world();
+    fixture.set_inputs(typed);
+    const { banishment } = fixture.load_module('event/event-banishment');
+    await assert_rule_rejects(
+      () => banishment(31, seq([0])),
+      '\\(\\?:100\\|\\[0-4\\]\\)',
+      typed,
+      '流放',
+    );
+  }
+});
+
+test('#872：公开处刑菜单的越界编号被 rule 拦下（100 与 0-2 之外）', async () => {
+  for (const typed of [3, -1]) {
+    const fixture = seed_world();
+    fixture.set_inputs(typed);
+    const { public_execution } = fixture.load_module(
+      'event/event-public-execution',
+    );
+    await assert_rule_rejects(
+      () => public_execution(31, seq([0])),
+      '\\(\\?:100\\|\\[0-2\\]\\)',
+      typed,
+      '公开处刑',
+    );
+  }
+});
+
+test('#872：猎奇处刑菜单的越界编号被 rule 拦下（100 与 0-6 之外）', async () => {
+  for (const typed of [7, -1]) {
+    const fixture = seed_world();
+    fixture.set_inputs(typed);
+    const { grotesque } = fixture.load_module('event/event-grotesque');
+    await assert_rule_rejects(
+      () => grotesque(31, seq([0])),
+      '\\(\\?:100\\|\\[0-6\\]\\)',
+      typed,
+      '猎奇处刑',
+    );
+  }
+});
+
+test('#872：处刑对象列表只接受本轮候选人按钮（#710 整轮按钮化）', async () => {
+  // 候选人两枚（0/1）加 [100] 返回：2 没有受理面
+  const fixture = seed_world();
+  fixture.set_inputs(2);
+  const { execution } = fixture.load_module('event/event-execution');
+  await assert.rejects(
+    () => execution(seq([0])),
+    /输入不合法！请输入以下值之一：0, 1, 100/,
+    '处刑对象：2 不是本轮的按钮',
+  );
+});

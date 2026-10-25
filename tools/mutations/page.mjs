@@ -4743,12 +4743,12 @@ export default [
   },
   // —— #710：按钮化（C 类保留 useRule: false） ——
   {
-    desc: 'M14241 summon_slave 的「不生成」退回纯文本行（自由输入仍照旧）',
+    desc: 'M14241 summon_slave 的「不生成」退回纯文本行',
     file: 'ere/page/page-shop-labo.js',
-    find: "    era.printButton('- 不生成', 0);",
-    replace: "    era.print(' [0] - 不生成'); // 变异：纯文本",
+    find: "  era.printButton('- 不生成', 0);",
+    replace: "  era.print(' [0] - 不生成'); // 变异：纯文本",
     tests: ['page-shop-labo'],
-    must_mention: '「不生成」是按钮',
+    must_mention: 'summon_slave：前置与生成流程',
   },
   // —— #717：指令列表多列排版 ——
   {

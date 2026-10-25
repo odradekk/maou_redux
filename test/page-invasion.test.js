@@ -2077,28 +2077,29 @@ test('sengen_video [4] 延长流行时间：50000G 一次，封顶 +5、保底 +
   assert.equal(skip.store.get('exflag:9013'), 3, '算了不延长');
 });
 
-test('sengen_video 数量输入的空值与非数字：归一到 0 回菜单，NaN 不入账（#502 登记）', async () => {
-  // 引擎把空串归一成 0（#151/G6 的 getNumber 镜像），非数字串原样回传——
-  // 两者都不是旧引擎那个「数值型 RESULT」的世界；number_input 一并归一到 0，
-  // 于是走 GOTO INPUT_LOOP 回菜单。数量输入是本菜单唯一没有按钮
-  // 白名单保护的读数点（上一轮输入清空白名单、之后只 print 不 printButton），
-  // 归一前 'abc' 会被当合法数量收下并把 NaN 写进 9011
+test('sengen_video 数量输入：非数字由 rule 在输入框里拦下，NaN 不入账（#502/#872）', async () => {
+  // 数量输入是本菜单唯一没有按钮白名单保护的读数点（上一轮输入清空白名单、
+  // 之后只 print 不 printButton）——#872 起这一轮带 `[0-9]+` 的 rule：
+  // 不合法值引擎不回传，游戏层拿不到，'abc' 那条「NaN 写进 9011」的路径
+  // 结构性消失，归一不再需要
   for (const typed of ['', 'abc', NaN]) {
     const fixture = make_video_world({ stock: 3 });
-    assert.equal(await run_sengen_video(fixture, [1, typed, 999]), 0);
+    await assert.rejects(
+      () => run_sengen_video(fixture, [1, typed, 999]),
+      /输入不合法！输入规范：\[0-9\]\+/,
+      `输入 ${JSON.stringify(typed)} 被 rule 拦下`,
+    );
     assert.equal(
       fixture.store.get('exflag:9011'),
       0,
       `输入 ${JSON.stringify(typed)}：数量不入账（更不许写 NaN）`,
     );
-    assert.equal(
-      history_texts(fixture).filter((line) =>
-        line.startsWith('可用于投放的水晶球'),
-      ).length,
-      2,
-      `输入 ${JSON.stringify(typed)}：按 0 处理 → 回菜单重画`,
-    );
   }
+
+  // 合法数量照常入账，越界仍由活数据（库存）判定
+  const fixture = make_video_world({ stock: 3 });
+  assert.equal(await run_sengen_video(fixture, [1, 2, 999], seq([1, 1])), 0);
+  assert.equal(fixture.store.get('exflag:9011'), 2);
 });
 
 test('sengen_video_bonus：MODE 0/1 的随机序列、保底与提示逐条', () => {

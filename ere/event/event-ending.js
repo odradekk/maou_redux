@@ -19,8 +19,8 @@
  *     `[0] - …`；ending_2 的 INPUT 无按钮（纯确认，无选项），
  *     era.input() 直收；
  *     **#572 起覆盖 char_gift 的全部菜单**，唯一**有独立结果**的例外是
- *     发色子菜单——`RESULT == 11` 受理未显示的编号，消费点保留
- *     `useRule: false`（`RESULT >= 8 → PERSONAL = 160` 同样受理未显示
+ *     发色子菜单——`RESULT == 11` 受理未显示的编号，用 `rule` 写进受理集
+ *     由引擎拦下其余值（`RESULT >= 8 → PERSONAL = 160` 同样受理未显示
  *     编号，但与 [0] 慈爱同值、玩法上零影响，按钮化后不可达，保留结构）；
  *   - $INPUT_LOOP 的无效输入只重问不重画；
  *   - `CALL ADDCHARA_EX, CHARANUM-1` → add_chara_ex(35)（ere 以角色号
@@ -352,17 +352,12 @@ async function char_gift(arg, rand = default_rand) {
       era.printButton('紫发', 8);
       era.printButton('白发', 9);
       era.printButton('暗金发', 10);
-      // `RESULT == 11` 受理一个界面上不显示的编号（11 号发色），
-      // 收紧白名单会锁死它——保留 useRule: false 留住这条路径（#572；
-      // 先例：ere/event/event-museum.js）。
-      const picked = await era.input({ useRule: false });
-      // `RESULT >= 1 && RESULT <= 10 || RESULT == 11`：该层运算符序列是
-      // 「`&&` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式分组得到同一棵树——
-      // 两种读法在一切取值上同值，故按显式括号保留结构（#517）
-      if ((picked >= 1 && picked <= 10) || picked === 11) {
-        chara(a).chara.头发颜色 = picked;
-        haircolor = picked;
-      }
+      // `RESULT == 11` 受理一个界面上不显示的编号（11 号发色）：按钮集
+      // 写不全它，改由 rule 把 1-11 一并写进受理集，越界值由引擎在输入框里
+      // 拒收（见 utils/input-rule.js）。
+      const picked = await era.input({ rule: '(?:10|11|[1-9])' });
+      chara(a).chara.头发颜色 = picked;
+      haircolor = picked;
       continue; // GOTO INPUT_LOOP_2
     }
 

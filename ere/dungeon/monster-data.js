@@ -245,6 +245,9 @@ async function monster_setup(id, rand = default_rand) {
     );
 
     const selected_mod = extra % 100;
+    // 本轮打印出来的按钮编号＝受理集：rule 用它拼正则，越界值由引擎在
+    // 输入框里拒收（见 utils/input-rule.js）
+    const choices = [];
     for (let selection = 0; selection < 10; selection += 1) {
       const able = monster_setup_able(id, selection, rand);
       const label = MONSTER_MOD_LABELS[selection];
@@ -253,6 +256,7 @@ async function monster_setup(id, rand = default_rand) {
           `${label}${selected_mod === selection ? ' *' : ''}`,
           selection,
         );
+        choices.push(selection);
       }
     }
 
@@ -269,16 +273,19 @@ async function monster_setup(id, rand = default_rand) {
             `${label}${selected_troop === selection ? ' *' : ''}`,
             selection,
           );
+          choices.push(selection);
         }
       }
     }
 
     era.drawLine();
     era.printButton('返回', 999);
-    // PRINT 菜单 + INPUT 是自由输入；按钮只改善可点击性，不收紧输入集。
-    const selection = await era.input({ useRule: false });
+    // 受理集就是本轮打印出来的按钮（改造项 + 兵种 + 返回），写进 rule 后
+    // 未列出的编号由引擎在输入框里拒收。
+    const selection = await era.input({
+      rule: `(?:${[...choices, 999].join('|')})`,
+    });
     if (selection === 999) return 0;
-    if (monster_setup_able(id, selection, rand) === 0) return 0;
 
     era.print('改造需要１０００资金');
     if (era_flag.money < 1000) {

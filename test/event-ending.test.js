@@ -525,10 +525,10 @@ test('char_gift 子菜单边界：性格取 0 档（慈爱）、发色取 10 档
   }
 });
 
-test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#572：保留 useRule: false）', async () => {
+test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#872：受理集写在 rule 里）', async () => {
   // 受理条件是 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`——11 号
-  // 发色界面上不显示却仍被受理，收紧白名单会锁死它，故消费点保留
-  // `useRule: false`（先例 event-museum.js）。本用例走真实 input 路径
+  // 发色界面上不显示却仍被受理，按钮集写不全它，于是把 1-11 整集写进
+  // rule（先例 event-museum.js 的未显示 100）。本用例走真实 input 路径
   // 把这条路径钉住：改回默认白名单即红。
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
@@ -540,6 +540,21 @@ test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#572：�
 
   assert.equal(fixture.store.get('talent:5:300'), 11, '11 号色落盘');
   assert.equal(fixture.store.get('cflag:5:1'), 0, 'char_make 后清状态位');
+});
+
+test('char_gift 发色子菜单：1-11 之外的编号由 rule 在输入框里拦下（#872）', async () => {
+  for (const typed of [12, 0, -1]) {
+    const fixture = create_era_fixture();
+    fixture.seed_chara(31, { name: '琼', callname: '琼' });
+    fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+    const { char_gift } = fixture.load_module('event/event-ending');
+    fixture.set_inputs(1, 1, typed, 100, 0);
+    await assert.rejects(
+      () => char_gift(1, seq([4])),
+      /输入不合法！输入规范：\(\?:10\|11\|\[1-9\]\)/,
+      `${typed} 不在 1-11 的受理集`,
+    );
+  }
 });
 
 test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素质 × >= 130）各自回起始档', async () => {
