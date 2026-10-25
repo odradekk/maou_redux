@@ -40,8 +40,6 @@ const TOP_LEVEL_KEY_RE = /^"([^"]+)":/;
  * - Flag.yml 的「第N层陷阱A/B/C」：迷宫布置区的槽名，代码一律数字下标寻址
  *   （`flag:` 家族），界面显示的是 Item.yml 里的陷阱名，这层名只做变量释文
  *   与开发套件标识符用。
- * - E.yml 的「第N列Boss标志」：怪物战斗状态区的布局标签，同上一类（该文件
- *   头注：条目名只承载布局语义）。
  */
 const EXEMPT_FILES = {
   'Flag.yml': {
@@ -73,15 +71,6 @@ const EXEMPT_FILES = {
       '第7层陷阱C',
       '第8层陷阱C',
       '第9层陷阱C',
-    ],
-  },
-  'E.yml': {
-    names: [
-      '第1列Boss标志',
-      '第2列Boss标志',
-      '第3列Boss标志',
-      '第4列Boss标志',
-      '第5列Boss标志',
     ],
   },
 };

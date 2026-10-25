@@ -3,7 +3,7 @@
  *
  * 说明：
  *   - 全局 A/B 与 D:20 改为显式参数和 `move_ctx.d20`；B 在 type 1/2
- *     表示怪物列头，在 type 3/4 表示对手角色 ID。
+ *     表示怪物列号，在 type 3/4 表示对手角色 ID。
  *   - 整数除法向零截断，所有可能非整除的算式统一走 idiv。
  *   - SAVESTR 无引擎通道，沿用战斗模块约定，以 callname 承载名字。
  *   - shield_magic 没有形参，却声明了私有 TARGET_TYPE；其初值恒 0，三个
@@ -19,7 +19,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { chara_lv_check } = require('#/chara/chara-stats');
-const { e_get, e_set } = require('#/dungeon/monster-data');
+const { battle_column } = require('#/dungeon/battle-state');
 const { default_rand, idiv_trunc } = require('#/utils/numeric');
 
 function show_log() {
@@ -30,8 +30,8 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-function monster_name(head) {
-  return era.get(`itemname:${e_get(head)}`) ?? '';
+function monster_name(column) {
+  return era.get(`itemname:${battle_column(column).id}`) ?? '';
 }
 
 async function print_wait(text) {
@@ -97,7 +97,7 @@ function magic_bonus_c_to_m(cid, damage, monster_head) {
     damage += idiv_trunc(damage, 5);
   }
 
-  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {
+  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {
     const fear = chara(cid).dungeon.凌辱畏怖计数;
     if (fear > 5) {
       era.print('凌辱的记忆历历在目……无法反抗！');
@@ -108,7 +108,7 @@ function magic_bonus_c_to_m(cid, damage, monster_head) {
     }
   }
 
-  if (e_get(monster_head + 8) === 1) {
+  if (battle_column(monster_head).boss === 1) {
     damage = idiv_trunc(damage, 10);
     if (show_log()) {
       era.print('BOSS成功抵抗了魔法攻击！');
@@ -119,7 +119,7 @@ function magic_bonus_c_to_m(cid, damage, monster_head) {
 
 /** magic_bonus_m_to_c：怪物对角色的 Boss、耐性、减益与畏怖补正。 */
 function magic_bonus_m_to_c(cid, damage, monster_head) {
-  if (e_get(monster_head + 8) === 1) {
+  if (battle_column(monster_head).boss === 1) {
     damage += idiv_trunc(damage, 2);
     if (show_log()) {
       era.print('BOSS的强力魔法！');
@@ -147,7 +147,7 @@ function magic_bonus_m_to_c(cid, damage, monster_head) {
     debuff -= idiv_trunc(debuff, 10) + 1;
     era.set(`cflag:${cid}:682`, debuff);
   }
-  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {
+  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === battle_column(monster_head).id) {
     const fear = chara(cid).dungeon.凌辱畏怖计数;
     if (fear > 5) {
       era.print('凌辱的记忆历历在目……无法反抗！');
@@ -220,7 +220,7 @@ async function magic_select(target_type, a, b, rand = default_rand) {
   }
   await apply_magic_scatter(target_type, a, b);
   if (target_type === 2) {
-    return e_get(b + 6);
+    return battle_column(b).magic;
   }
   let magic_lv = 0;
   if (target_type === 1 || target_type === 4) {
@@ -305,10 +305,15 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
     await print_wait(`${name_of(a)}咏唱了睡眠咒语！`);
     add_base(a, 1, -30);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9), b);
-    damage -= idiv_trunc(e_get(b + 1), 5);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 300);
-    const value = e_get(b + 2) - rand(damage);
-    e_set(b + 2, Math.max(0, value));
+    damage -= idiv_trunc(battle_column(b).level, 5);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      300,
+    );
+    const value = battle_column(b).attack - rand(damage);
+    battle_column(b).attack = Math.max(0, value);
     if (value < 0) {
       await print_wait('怪物完全睡着了…');
     } else {
@@ -318,8 +323,13 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了睡眠咒语！`);
-    damage = magic_bonus_m_to_c(a, e_get(b + 1) + get_cflag(0, 9), b);
-    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 300);
+    damage = magic_bonus_m_to_c(a, battle_column(b).level + get_cflag(0, 9), b);
+    damage = magic_damage_cap(
+      battle_column(b).level,
+      get_cflag(a, 9),
+      damage,
+      300,
+    );
     const value = chara(a).dungeon.攻击力 - rand(damage);
     chara(a).dungeon.攻击力 = Math.max(0, value);
     await print_wait(value < 0 ? '勇者完全睡着了…' : '勇者还在沉睡…');
@@ -350,11 +360,11 @@ async function sleep_magic(target_type, a, b, rand = default_rand) {
 }
 
 function kill_monsters(a, b, damage) {
-  const kill_mons = idiv_trunc(damage, e_get(b + 3));
+  const kill_mons = idiv_trunc(damage, battle_column(b).defense);
   if (kill_mons > 0) {
-    const killed = Math.min(kill_mons, e_get(b + 99));
-    e_set(b + 99, e_get(b + 99) - killed);
-    add_exp(a, e_get(b + 1) * killed);
+    const killed = Math.min(kill_mons, battle_column(b).count);
+    battle_column(b).count = battle_column(b).count - killed;
+    add_exp(a, battle_column(b).level * killed);
     return killed;
   }
   return 0;
@@ -367,8 +377,13 @@ async function energy_bolt_magic(target_type, a, b) {
     await print_wait(`${name_of(a)}咏唱了魔法箭！`);
     add_base(a, 1, -15);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 5, b);
-    damage -= idiv_trunc(e_get(b + 1), 20);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);
+    damage -= idiv_trunc(battle_column(b).level, 20);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      600,
+    );
     // 过量击杀按现存怪物数封顶（kill_monsters 内 min）：怪物数不跌破 0
     const killed = kill_monsters(a, b, damage);
     await print_wait(
@@ -378,7 +393,11 @@ async function energy_bolt_magic(target_type, a, b) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了魔法箭！`);
-    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 5, b);
+    damage = magic_bonus_m_to_c(
+      a,
+      (battle_column(b).level + get_cflag(0, 9)) * 5,
+      b,
+    );
     add_base(a, 0, -damage);
     await print_wait(`魔法箭造成了${damage}伤害！`);
     return 0;
@@ -409,7 +428,12 @@ async function energy_drain_magic(target_type, a, b) {
     await print_wait(`${name_of(a)}咏唱了魔法吸收！`);
     add_base(a, 1, -30);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 5, b);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 500);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      500,
+    );
     const killed = kill_monsters(a, b, damage);
     await print_wait(
       killed <= 0
@@ -422,8 +446,17 @@ async function energy_drain_magic(target_type, a, b) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了魔法吸取！`);
-    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 5, b);
-    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 500);
+    damage = magic_bonus_m_to_c(
+      a,
+      (battle_column(b).level + get_cflag(0, 9)) * 5,
+      b,
+    );
+    damage = magic_damage_cap(
+      battle_column(b).level,
+      get_cflag(a, 9),
+      damage,
+      500,
+    );
     add_base(a, 1, -damage);
     await print_wait(`魔法吸取了${damage}气力！`);
     return 0;
@@ -455,9 +488,14 @@ async function fireball_magic(target_type, a, b) {
   if (target_type === 1) {
     await print_wait(`${name_of(a)}咏唱了火球术！`);
     add_base(a, 1, -40);
-    damage = idiv_trunc(get_cflag(a, 9) * e_get(b + 99), 2);
+    damage = idiv_trunc(get_cflag(a, 9) * battle_column(b).count, 2);
     damage = magic_bonus_c_to_m(a, damage, b);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 800);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      800,
+    );
     const killed = kill_monsters(a, b, damage);
     await print_wait(
       killed <= 0 ? '火球术好像完全没有效果' : `火球术烧尽了${killed}只怪物！`,
@@ -466,8 +504,17 @@ async function fireball_magic(target_type, a, b) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了火球术！`);
-    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 10, b);
-    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 800);
+    damage = magic_bonus_m_to_c(
+      a,
+      (battle_column(b).level + get_cflag(0, 9)) * 10,
+      b,
+    );
+    damage = magic_damage_cap(
+      battle_column(b).level,
+      get_cflag(a, 9),
+      damage,
+      800,
+    );
     add_base(a, 0, -damage);
     await print_wait(`火球术对勇者造成了${damage}伤害！`);
     return 0;
@@ -527,8 +574,13 @@ async function heal_magic(target_type, a, b) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了治疗术！`);
-    damage = magic_bonus_m_to_c(-1, e_get(b + 1) + get_cflag(0, 9), b);
-    e_set(b + 3, e_get(b + 3) + 1 + idiv_trunc(damage, 60));
+    damage = magic_bonus_m_to_c(
+      -1,
+      battle_column(b).level + get_cflag(0, 9),
+      b,
+    );
+    // 变异守护：M6758 盯这一行的「+ 1」
+    battle_column(b).defense += 1 + idiv_trunc(damage, 60);
     return 0;
   }
   if (target_type !== 3) {
@@ -558,12 +610,17 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
     await print_wait(`${name_of(a)}咏唱了诅咒术！`);
     add_base(a, 1, -30);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9), b);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 200);
-    const value = e_get(b + 3) - idiv_trunc(rand(damage), 2);
-    e_set(b + 3, value);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      200,
+    );
+    const value = battle_column(b).defense - idiv_trunc(rand(damage), 2);
+    battle_column(b).defense = value;
     if (value <= 0) {
       await print_wait('怪物完全被诅咒了…');
-      e_set(b, 1); // E:C，调用点的 C 与 B 同为怪物列头
+      battle_column(b).id = 1; // 调用点的 C 与 B 同为怪物列号
     } else {
       await print_wait('怪物仍然被诅咒着…');
     }
@@ -572,8 +629,13 @@ async function curse_magic(target_type, a, b, rand = default_rand) {
   if (target_type === 2) {
     // 此处打印无 FLAG:5 检查。
     await era.printAndWait(`${monster_name(b)}咏唱了诅咒术！`);
-    damage = magic_bonus_m_to_c(a, e_get(b + 1) + get_cflag(0, 9), b);
-    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 200);
+    damage = magic_bonus_m_to_c(a, battle_column(b).level + get_cflag(0, 9), b);
+    damage = magic_damage_cap(
+      battle_column(b).level,
+      get_cflag(a, 9),
+      damage,
+      200,
+    );
     const value = chara(a).dungeon.防御力 - idiv_trunc(rand(damage), 2);
     chara(a).dungeon.防御力 = Math.max(0, value);
     await print_wait(value < 0 ? '勇者完全被诅咒了…' : '勇者仍然被诅咒着…');
@@ -610,7 +672,12 @@ async function mind_drain_magic(target_type, a, b) {
     await print_wait(`${name_of(a)}咏唱了精神吸收！`);
     add_base(a, 1, -30);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 5, b);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 500);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      500,
+    );
     const killed = kill_monsters(a, b, damage);
     await print_wait(
       killed <= 0
@@ -623,8 +690,17 @@ async function mind_drain_magic(target_type, a, b) {
   }
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了精神吸收！`);
-    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 5, b);
-    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 500);
+    damage = magic_bonus_m_to_c(
+      a,
+      (battle_column(b).level + get_cflag(0, 9)) * 5,
+      b,
+    );
+    damage = magic_damage_cap(
+      battle_column(b).level,
+      get_cflag(a, 9),
+      damage,
+      500,
+    );
     add_base(a, 1, -damage);
     await print_wait(`精神吸收造成了${damage}点气力伤害！`);
     return 0;
@@ -659,7 +735,12 @@ async function lv_drain_magic(target_type, a, b) {
     await print_wait(`${name_of(a)}咏唱了经验吸取！`);
     add_base(a, 1, -50);
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 10, b);
-    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 400);
+    damage = magic_damage_cap(
+      get_cflag(a, 9),
+      battle_column(b).level,
+      damage,
+      400,
+    );
     const killed = kill_monsters(a, b, damage);
     await print_wait(
       killed <= 0 ? '但好像完全没有效果。' : `经验吸取贯穿了${killed}只怪物！`,
@@ -671,8 +752,13 @@ async function lv_drain_magic(target_type, a, b) {
   if (target_type === 2) {
     await print_wait(`${monster_name(b)}咏唱了经验吸取！`);
     // 确实调用 magic_bonus_c_to_m，而非 magic_bonus_m_to_c。
-    damage = magic_bonus_c_to_m(a, e_get(b + 1) + get_cflag(0, 9), b);
-    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 400);
+    damage = magic_bonus_c_to_m(a, battle_column(b).level + get_cflag(0, 9), b);
+    damage = magic_damage_cap(
+      battle_column(b).level,
+      get_cflag(a, 9),
+      damage,
+      400,
+    );
     await apply_level_drain(a, damage);
     add_exp(0, idiv_trunc(damage, 2));
     await print_wait(`你得到了${idiv_trunc(damage, 2)}点经验值！`);
@@ -754,7 +840,7 @@ async function magic(
   rand = default_rand,
   move_ctx = {},
 ) {
-  if (target_type === 1 && e_get(b + 3) === 0) {
+  if (target_type === 1 && battle_column(b).defense === 0) {
     return 999;
   }
   let result = await magic_use(

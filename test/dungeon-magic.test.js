@@ -41,6 +41,25 @@ function seq(...values) {
   };
 }
 
+/**
+ * 断定期望值：`store` 键按地址取，`battle:列名:字段` 取战斗状态对象
+ * （战斗状态自 #883 起不经过引擎变量表，没有 store 地址可读）。
+ */
+function assert_expected(fixture, label, expected) {
+  for (const [key, value] of Object.entries(expected)) {
+    const battle = /^battle:(\w+):(\w+)$/.exec(key);
+    if (battle) {
+      assert.equal(
+        fixture.battle(battle[1])[battle[2]],
+        value,
+        `${label}：${key}`,
+      );
+      continue;
+    }
+    assert.equal(fixture.store.get(key), value, `${label}：${key}`);
+  }
+}
+
 function set_values(fixture, values) {
   for (const [key, value] of Object.entries(values)) {
     fixture.store.set(key, value);
@@ -48,14 +67,16 @@ function set_values(fixture, values) {
 }
 
 function prepare_spell_case(fixture) {
+  Object.assign(fixture.battle('DEFENSE_2'), {
+    id: 100,
+    level: 5,
+    attack: 100,
+    defense: 10,
+    magic: 3,
+    boss: 0,
+    count: 5,
+  });
   set_values(fixture, {
-    'e:100': 100,
-    'e:101': 5,
-    'e:102': 100,
-    'e:103': 10,
-    'e:106': 3,
-    'e:108': 0,
-    'e:199': 5,
     'cflag:1:13': 100,
     'cflag:1:14': 100,
     'cflag:2:13': 100,
@@ -82,14 +103,14 @@ test('三类 magic_bonus 保留种族、Boss、耐性与魔法减益的逐步整
   fixture.store.set('talent:1:260', 1);
   fixture.store.set('cflag:1:130', 100);
   fixture.store.set('cflag:1:131', 6);
-  fixture.store.set('e:100', 100);
-  fixture.store.set('e:108', 1);
-  assert.equal(magic.magic_bonus_c_to_m(1, 300, 100), 7);
+  fixture.battle('DEFENSE_2').id = 100;
+  fixture.battle('DEFENSE_2').boss = 1;
+  assert.equal(magic.magic_bonus_c_to_m(1, 300, 1), 7);
 
   fixture.store.set('talent:2:257', 1);
   fixture.store.set('talent:2:253', 1);
   fixture.store.set('cflag:2:682', 40);
-  assert.equal(magic.magic_bonus_m_to_c(2, 300, 100), 336);
+  assert.equal(magic.magic_bonus_m_to_c(2, 300, 1), 336);
   assert.equal(fixture.store.get('cflag:2:682'), 35);
 
   fixture.store.set('cflag:1:682', 60);
@@ -102,15 +123,15 @@ test('magic_select 与 shaman_select：职业门槛、暴走伤害、怪物固�
   fixture.store.set('talent:1:241', 1);
   fixture.store.set('talent:1:250', 1);
   fixture.store.set('cflag:1:503', 2);
-  assert.equal(await magic.magic_select(1, 1, 100, seq(4)), 4);
+  assert.equal(await magic.magic_select(1, 1, 1, seq(4)), 4);
   assert.equal(fixture.store.get('base:1:0'), 710);
   assert.equal(fixture.store.get('base:1:1'), 720);
-  assert.equal(await magic.shaman_select(1, 1, 100, seq(2)), 7);
+  assert.equal(await magic.shaman_select(1, 1, 1, seq(2)), 7);
 
-  fixture.store.set('e:106', 5);
-  assert.equal(await magic.magic_select(2, 1, 100, seq()), 5);
+  fixture.battle('DEFENSE_2').magic = 5;
+  assert.equal(await magic.magic_select(2, 1, 1, seq()), 5);
   fixture.store.set('talent:1:241', 0);
-  assert.equal(await magic.magic_select(1, 1, 100, seq()), 0);
+  assert.equal(await magic.magic_select(1, 1, 1, seq()), 0);
 
   const bounds = [];
   const record_bound = (n) => {
@@ -124,8 +145,8 @@ test('magic_select 与 shaman_select：职业门槛、暴走伤害、怪物固�
 
 test('magic 调度怪物的魔法箭并接入 dungeon-battle，magic 不再登记为存根', async () => {
   const { fixture, magic } = load_world();
-  fixture.store.set('e:1', 5);
-  fixture.store.set('e:6', 3);
+  fixture.battle('DEFENSE_1').level = 5;
+  fixture.battle('DEFENSE_1').magic = 3;
   const result = await magic.magic(2, 1, 0, seq());
   assert.equal(result, 0);
   // CFLAG:130 与怪物号都缺省 0，>= 0 畏怖分支会给 1.2 倍增伤。
@@ -189,7 +210,7 @@ test('energy_bolt_magic 与 fireball_magic：角色法术造成伤害并消灭�
   await magic.energy_bolt_magic(4, 1, 2);
   assert.equal(fixture.store.get('base:2:0'), 955);
 
-  fixture.store.set('e:1', 1);
+  fixture.battle('DEFENSE_1').level = 1;
   fixture.store.set('cflag:1:9', 200);
   fixture.store.set('cflag:1:130', -1);
   await magic.fireball_magic(2, 1, 0);
@@ -199,14 +220,14 @@ test('energy_bolt_magic 与 fireball_magic：角色法术造成伤害并消灭�
     '怪物火球同样受等级差伤害上限约束',
   );
 
-  fixture.store.set('e:1', 1);
-  fixture.store.set('e:3', 1);
-  fixture.store.set('e:99', 1);
+  fixture.battle('DEFENSE_1').level = 1;
+  fixture.battle('DEFENSE_1').defense = 1;
+  fixture.battle('DEFENSE_1').count = 1;
   fixture.store.set('cflag:1:9', 20);
   fixture.store.set('cflag:1:130', -1);
   await magic.energy_bolt_magic(1, 1, 0);
   assert.equal(
-    fixture.store.get('e:99'),
+    fixture.battle('DEFENSE_1').count,
     0,
     '魔法箭过量击杀按现存怪物数收尾（怪物数不跌破 0）',
   );
@@ -215,13 +236,13 @@ test('energy_bolt_magic 与 fireball_magic：角色法术造成伤害并消灭�
   const output = [];
   fixture.era.printAndWait = async (text) => output.push(text);
   fixture.store.set('flag:5', 32);
-  fixture.store.set('e:1', 1);
-  fixture.store.set('e:3', 1);
-  fixture.store.set('e:99', 1);
+  fixture.battle('DEFENSE_1').level = 1;
+  fixture.battle('DEFENSE_1').defense = 1;
+  fixture.battle('DEFENSE_1').count = 1;
   fixture.store.set('cflag:1:9', 20);
   fixture.store.set('cflag:1:130', -1);
   await magic.fireball_magic(1, 1, 0);
-  assert.equal(fixture.store.get('e:99'), 0);
+  assert.equal(fixture.battle('DEFENSE_1').count, 0);
   assert.equal(fixture.store.get('exp:1:80'), 2, '魔法箭 1 + 火球 1');
   assert(output.includes('火球术烧尽了1只怪物！'), '过量击杀按现存怪物数播报');
 });
@@ -245,7 +266,7 @@ test('heal_magic 选择队伍中最后一个重伤成员；shield_magic 保留�
   fixture.store.set('base:3:0', 300);
   fixture.store.set('cflag:1:531', 2);
   fixture.store.set('cflag:1:532', 3);
-  await magic.heal_magic(1, 1, 100);
+  await magic.heal_magic(1, 1, 1);
   assert.equal(fixture.store.get('base:1:0'), 500);
   assert.equal(fixture.store.get('base:2:0'), 400);
   assert.equal(fixture.store.get('base:3:0'), 345);
@@ -255,7 +276,7 @@ test('heal_magic 选择队伍中最后一个重伤成员；shield_magic 保留�
 
 test('lv_drain_magic：怪物吸取经验时同步等级四维，并把一半经验给魔王', async () => {
   const { fixture, magic } = load_world();
-  fixture.store.set('e:1', 12);
+  fixture.battle('DEFENSE_1').level = 12;
   fixture.store.set('exp:1:80', 5);
   fixture.store.set('exp:0:80', 10);
   fixture.store.set('cflag:1:13', 100);
@@ -279,45 +300,45 @@ test('四个魔法数值函数按种族、耐性、Boss、畏怖与减益阈值�
     {
       label: '角色对怪物：精灵、青肌与额头眼逐步整数加成',
       setup: { 'talent:1:314': 1, 'talent:1:244': 1, 'talent:1:260': 1 },
-      call: (magic) => magic.magic_bonus_c_to_m(1, 300, 100),
+      call: (magic) => magic.magic_bonus_c_to_m(1, 300, 1),
       expected: 720,
     },
     {
       label: '角色对怪物：畏怖计数 6 进入无法反抗的十分之一档',
       setup: { 'cflag:1:130': 100, 'cflag:1:131': 6 },
-      call: (magic) => magic.magic_bonus_c_to_m(1, 300, 100),
+      call: (magic) => magic.magic_bonus_c_to_m(1, 300, 1),
       expected: 30,
     },
     {
       label: '角色对怪物：Boss 抵抗到十分之一',
-      setup: { 'e:108': 1 },
-      call: (magic) => magic.magic_bonus_c_to_m(1, 300, 100),
+      battle: { boss: 1 },
+      call: (magic) => magic.magic_bonus_c_to_m(1, 300, 1),
       expected: 30,
     },
     {
       label: '怪物对角色：魔法耐性与褐色肌逐步减伤',
       setup: { 'talent:1:257': 1, 'talent:1:253': 1 },
-      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 100),
+      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 1),
       expected: 160,
     },
     {
       label: '怪物对角色：魔法减益 50 仍走百分比档并衰减到 44',
       setup: { 'cflag:1:682': 50 },
-      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 100),
+      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 1),
       expected: 450,
       after: { 'cflag:1:682': 44 },
     },
     {
       label: '怪物对角色：魔法减益 51 进入封顶五成档并衰减到 45',
       setup: { 'cflag:1:682': 51 },
-      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 100),
+      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 1),
       expected: 450,
       after: { 'cflag:1:682': 45 },
     },
     {
       label: '怪物对角色：畏怖计数 6 倍增伤害',
       setup: { 'cflag:1:130': 100, 'cflag:1:131': 6 },
-      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 100),
+      call: (magic) => magic.magic_bonus_m_to_c(1, 300, 1),
       expected: 600,
     },
     {
@@ -335,10 +356,18 @@ test('四个魔法数值函数按种族、耐性、Boss、畏怖与减益阈值�
     },
   ];
 
-  for (const { label, setup = {}, call, expected, after = {} } of cases) {
+  for (const {
+    label,
+    setup = {},
+    battle = {},
+    call,
+    expected,
+    after = {},
+  } of cases) {
     const { fixture, magic } = load_world();
     prepare_spell_case(fixture);
     set_values(fixture, setup);
+    Object.assign(fixture.battle('DEFENSE_2'), battle);
     assert.equal(call(magic), expected, label);
     for (const [key, value] of Object.entries(after)) {
       assert.equal(fixture.store.get(key), value, `${label}：${key}`);
@@ -356,7 +385,7 @@ test('magic_select/shaman_select 按目标类型分派，怪物咒术不掷随�
 
   const selected = [];
   for (const target_type of [1, 3, 4]) {
-    const b = target_type === 1 ? 100 : 2;
+    const b = target_type === 1 ? 1 : 2;
     selected.push(await magic.magic_select(target_type, 1, b, seq(4)));
     selected.push(await magic.shaman_select(target_type, 1, b, seq(2)));
   }
@@ -364,7 +393,7 @@ test('magic_select/shaman_select 按目标类型分派，怪物咒术不掷随�
 
   let random_calls = 0;
   assert.equal(
-    await magic.shaman_select(2, 1, 100, () => {
+    await magic.shaman_select(2, 1, 1, () => {
       random_calls += 1;
       return 1;
     }),
@@ -424,7 +453,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       random: [7],
       expected:
         type === 1
-          ? { 'e:102': 93, 'base:1:1': 970 }
+          ? { 'battle:DEFENSE_2:attack': 93, 'base:1:1': 970 }
           : type === 2
             ? { 'cflag:1:11': 93 }
             : type === 3
@@ -437,7 +466,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       type,
       expected:
         type === 1
-          ? { 'e:199': 1, 'exp:1:80': 120, 'base:1:1': 985 }
+          ? { 'battle:DEFENSE_2:count': 1, 'exp:1:80': 120, 'base:1:1': 985 }
           : type === 2
             ? { 'base:1:0': 930 }
             : type === 3
@@ -462,7 +491,12 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
             : {},
       expected:
         type === 1
-          ? { 'e:199': 1, 'exp:1:80': 120, 'base:1:0': 1045, 'base:1:1': 970 }
+          ? {
+              'battle:DEFENSE_2:count': 1,
+              'exp:1:80': 120,
+              'base:1:0': 1045,
+              'base:1:1': 970,
+            }
           : type === 2
             ? { 'base:1:1': 930 }
             : type === 3
@@ -475,7 +509,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       type,
       expected:
         type === 1
-          ? { 'e:199': 3, 'exp:1:80': 110, 'base:1:1': 960 }
+          ? { 'battle:DEFENSE_2:count': 3, 'exp:1:80': 110, 'base:1:1': 960 }
           : type === 2
             ? { 'base:1:0': 860 }
             : type === 3
@@ -496,14 +530,14 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
         type === 1 || type === 4
           ? { 'base:1:0': 545, 'base:1:1': 995 }
           : type === 2
-            ? { 'e:103': 11 }
+            ? { 'battle:DEFENSE_2:defense': 11 }
             : { 'base:2:0': 1245, 'base:2:1': 995 },
     })),
     ...[1, 2, 3, 4].map((type) => ({
       label: `护盾 ${type}：无参私有 TARGET_TYPE 使各调用值都无效`,
       spell: 'shield_magic',
       type,
-      expected: { 'cflag:1:12': 100, 'e:103': 10 },
+      expected: { 'cflag:1:12': 100, 'battle:DEFENSE_2:defense': 10 },
     })),
     ...[1, 2, 3, 4].map((type) => ({
       label: `诅咒 ${type}：按目标类型削防御槽`,
@@ -512,7 +546,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       random: [8],
       expected:
         type === 1
-          ? { 'e:103': 6, 'base:1:1': 970 }
+          ? { 'battle:DEFENSE_2:defense': 6, 'base:1:1': 970 }
           : type === 2
             ? { 'cflag:1:12': 96 }
             : type === 3
@@ -531,7 +565,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
             : {},
       expected:
         type === 1
-          ? { 'e:199': 1, 'exp:1:80': 120, 'base:1:1': 1015 }
+          ? { 'battle:DEFENSE_2:count': 1, 'exp:1:80': 120, 'base:1:1': 1015 }
           : type === 2
             ? { 'base:1:1': 930 }
             : type === 3
@@ -544,7 +578,7 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
       type,
       expected:
         type === 1
-          ? { 'e:199': 0, 'exp:1:80': 129, 'base:1:1': 950 }
+          ? { 'battle:DEFENSE_2:count': 0, 'exp:1:80': 129, 'base:1:1': 950 }
           : type === 2
             ? { 'exp:1:80': 86, 'base:1:0': 860, 'exp:0:80': 107 }
             : type === 3
@@ -577,15 +611,13 @@ test('十个法术按 target_type 命中施法者、对象与怪物列', async (
     prepare_spell_case(fixture);
     set_values(fixture, setup);
     const move_ctx = { d20: 50 };
-    const b = type === 1 || type === 2 ? 100 : 2;
+    const b = type === 1 || type === 2 ? 1 : 2;
     assert.equal(
       await magic[spell](type, 1, b, seq(...random), move_ctx),
       result,
       label,
     );
-    for (const [key, value] of Object.entries(expected)) {
-      assert.equal(fixture.store.get(key), value, `${label}：${key}`);
-    }
+    assert_expected(fixture, label, expected);
     if (d20 !== undefined) {
       assert.equal(move_ctx.d20, d20, `${label}：D:20`);
     }

@@ -71,7 +71,8 @@ const {
   com_after_extra_sex,
 } = require('#/system/train/com-vaginasex');
 const { soiling_cloth_no1 } = require('#/system/train/cloth');
-const { monster_name, monster_data, e_get } = require('#/dungeon/monster-data');
+const { monster_name, monster_data } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { karma } = require('#/dungeon/dungeon');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
@@ -2405,7 +2406,7 @@ train_message_b_family.register(88, async () => {
   } else {
     era.print(`${chara_callname(target)}命令`);
   }
-  const beast_name = monster_name(e_get(300));
+  const beast_name = monster_name(battle_column(BATTLE_COLUMN.MINION_A).id);
   if (tequip(target, 88)) {
     era.print(`${beast_name}退出调教…`);
   } else {

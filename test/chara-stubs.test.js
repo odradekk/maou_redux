@@ -98,7 +98,7 @@ test('CHAR_SIZE_GENERATE：固定随机源生成三围，并写入胸围分量',
   assert.equal(fixture.store.get('cflag:6:459'), 668, 'CFLAG:459 下胸围');
 });
 
-test('CHAR_SIZE_GENERATE：胸围变化模式复用原身高体重，只记录重量差', () => {
+test('CHAR_SIZE_GENERATE：胸围变化模式复用原身高体重，不写战斗状态的等级槽', () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:6:453', 1600); // 身高
   fixture.store.set('cflag:6:454', 500); // 体重
@@ -109,7 +109,14 @@ test('CHAR_SIZE_GENERATE：胸围变化模式复用原身高体重，只记录�
     char_size_generate(6, 18, 1, always),
     [18, 18, 1600, 437, 801, 0, 0],
   );
-  assert.equal(fixture.store.get('e:1'), -25, 'E:1 只记录胸围带来的重量差');
+  // #883：旧写法把这次重量差写进 E:1（=「第 1 列等级」的槽）当临时变量，
+  // 全库没有读者。战斗状态搬成普通对象后这条写点没有等价写法，直接删掉：
+  // 等级槽不得被身体生成动过。
+  assert.equal(
+    fixture.battle('DEFENSE_1').level,
+    0,
+    '第 1 列等级槽不该被身体生成写入',
+  );
 });
 
 // chara_make_inherit / cmi_settalent / cmi_mom_complex / cmi_conflict_check

@@ -50,10 +50,11 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
   assert.equal(r, 0, '恒 return 0');
 
   // X = (RAND:9 + 1) * 10 + 100 + RAND:5 = 110 → 三列同怪
-  for (const top of [0, 100, 200]) {
-    assert.equal(fixture.store.get(`e:${top + 7}`), 1, `${top} 列凌辱类型 1`);
-    assert.equal(fixture.store.get(`e:${top + 99}`), 1, `${top} 列怪物数 1`);
-    assert.equal(fixture.store.get(`e:${top}`), 110, `${top} 列怪物番号`);
+  const columns = ['DEFENSE_1', 'DEFENSE_2', 'DEFENSE_3'];
+  for (const column of columns) {
+    assert.equal(fixture.battle(column).rape_type, 1, `${column} 列凌辱类型 1`);
+    assert.equal(fixture.battle(column).count, 1, `${column} 列怪物数 1`);
+    assert.equal(fixture.battle(column).id, 110, `${column} 列怪物番号`);
   }
   const texts = fixture.text_lines();
   assert.equal(
@@ -78,7 +79,11 @@ test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场�
   const mod = fixture.load_module('invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
   assert.equal(r, 0);
-  assert.equal(fixture.store.get('e:7') ?? 0, 0, '骷髅的凌辱类型是 0');
+  assert.equal(
+    fixture.battle('DEFENSE_1').rape_type ?? 0,
+    0,
+    '骷髅的凌辱类型是 0',
+  );
   const texts = fixture.text_lines();
   assert(
     !texts.some((line) => line.endsWith('的凌辱开始了。')),

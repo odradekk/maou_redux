@@ -236,9 +236,6 @@ test('ESTIMATE_CHARA：卖淫影响 2 不应用卖淫经验倍率，E:74 不再�
   fixture.store.set('talent:31:180', 1); // mode 2 不应用妓女倍率
   result = estimate_chara(31, { prostitution_effect: 2 });
   assert.equal(result.talent_multipliers[180], 100);
-
-  // E:74 不再是估价的跨调用状态通道
-  assert.equal(fixture.store.get('e:74'), undefined);
 });
 
 test('ESTIMATE_CHARA：卖淫影响缺省读 modsave:0（#547 存储，无参调用跟随设置页）', () => {

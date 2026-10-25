@@ -2330,18 +2330,18 @@ export default [
   {
     desc: 'M10757 [0] 特殊兵种的 E:1 加成条件反向（!= 0 改 == 0）',
     file: 'ere/page/page-invasion.js',
-    find: '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) !== 0) mon_atk += e_get(1); // 特殊',
+    find: '        if (mon.special !== 0) mon_atk += mon.level; // 特殊\n        if (mon.magic !== 0) mon_atk += mon.level; // 魔法\n        const halved',
     replace:
-      '        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4\n        if (e_get(5) === 0) mon_atk += e_get(1); // 变异：条件反向',
+      '        if (mon.special === 0) mon_atk += mon.level; // 变异：条件反向\n        if (mon.magic !== 0) mon_atk += mon.level; // 魔法\n        const halved',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },
   {
     desc: 'M10758 [0] 魔法兵种的 E:1 加成条件反向（!= 0 改 == 0）',
     file: 'ere/page/page-invasion.js',
-    find: '        if (e_get(6) !== 0) mon_atk += e_get(1); // 魔法\n        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);',
+    find: '        if (mon.magic !== 0) mon_atk += mon.level; // 魔法\n        const halved',
     replace:
-      '        if (e_get(6) === 0) mon_atk += e_get(1); // 变异：条件反向\n        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);',
+      '        if (mon.magic === 0) mon_atk += mon.level; // 变异：条件反向\n        const halved',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 累加后 /20',
   },

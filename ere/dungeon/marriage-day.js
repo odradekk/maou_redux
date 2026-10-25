@@ -17,7 +17,8 @@ const {
 } = require('#/dungeon/dungeon-lovers');
 const { she } = require('#/dungeon/dungeon-battle');
 const { clitoris_word } = require('#/dungeon/dungeon-battle2');
-const { e_get, item_name, monster_data } = require('#/dungeon/monster-data');
+const { item_name, monster_data } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -86,7 +87,7 @@ async function marriage_day(cid, rand = default_rand, restart_turnend = true) {
     spouse_name = marriage_chara < 0 ? '奴隶' : name_of(marriage_chara);
   } else if (marriage_type < 900) {
     monster_data(marriage_type, 5, -1, -1, -1, rand);
-    monster_kind = e_get(507);
+    monster_kind = battle_column(BATTLE_COLUMN.RAVISH).rape_type;
     spouse_name = item_name(monster_id);
   } else if (marriage_type === 900) {
     spouse_name = '野狗';

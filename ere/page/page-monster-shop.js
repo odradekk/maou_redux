@@ -577,9 +577,13 @@ function read_monster(id, rand) {
   // 延迟 require：monster-data 顶层取 page-life-list（→ page-select-target
   // → monster-play → monster-data）的环，加载期取会拿到半成品
   // （page-life-list.js:290-298 的同款处置）
-  const { e_get, monster_data } = require('#/dungeon/monster-data');
+  const { monster_data } = require('#/dungeon/monster-data');
+  const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
   monster_data(id, 5, -1, -1, -1, rand);
-  return { level: e_get(501), race2: e_get(507) };
+  return {
+    level: battle_column(BATTLE_COLUMN.RAVISH).level,
+    race2: battle_column(BATTLE_COLUMN.RAVISH).rape_type,
+  };
 }
 
 /**

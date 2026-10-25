@@ -16,14 +16,15 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { monster_name } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 两段统一的粉色（0xff1493）→ 渲染层 CSS 色串 */
 const EQUIP_COLOR = '#ff1493';
 
-/** E:300 的读取缺省处理（monster_data 写入的怪物番号，monster-data.js） */
-function e300() {
-  return era.get('e:300') || 0;
+/** 配下列（列号 3）的怪物番号备用访问器（monster_data 写这一列） */
+function minion_id() {
+  return battle_column(BATTLE_COLUMN.MINION_A).id;
 }
 
 /**
@@ -55,7 +56,7 @@ function show_equip_2(cid) {
   if (t(88)) {
     // 使役魔兽（名字经 monster_data 落进 E:300）
     push(' [使役魔兽ＰＬＡＹ中（');
-    line.push({ content: monster_name(e300()), color: EQUIP_COLOR });
+    line.push({ content: monster_name(minion_id()), color: EQUIP_COLOR });
     push('）]');
   }
   if (t(89)) push(' [兽奸ＰＬＡＹ中]');

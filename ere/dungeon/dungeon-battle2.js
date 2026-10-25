@@ -31,7 +31,8 @@ const {
   equip_database,
   decode_equip_no,
 } = require('#/system/equip/equip-lookup');
-const { e_get, e_set, monster_data } = require('#/dungeon/monster-data');
+const { monster_data } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const monster_skill_mod = require('#/dungeon/monster-skill');
 const battle = require('#/dungeon/dungeon-battle');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
@@ -99,48 +100,45 @@ function tatoo_locate_name(locate) {
  * select_slave：选出攻击的奴隶（或其配下怪物）。
  * @param {number} arg0 奴隶
  * @param {number} arg1 回合数
- * @returns {number} 奴隶号，或 99/199/299（选中配下怪物——
- *   作者注释「怪物数のID（99,199,299）が返る」，主循环以 >= 99 分流）
+ * @returns {number} 选中配下怪物时是它的列号（0-2），否则 -1（奴隶本体）。
+ *   旧写法返回数量槽地址 99/199/299、调用方以 `>= 99` 分流；列号制下
+ *   负值就是「没选中怪物」，判据不再依赖槽地址的量纲。
  */
 function select_slave(arg0, arg1) {
   let member = 1;
   // 仲間怪物（奴隶队伍扩展被注释掉，结构保留）
-  for (let monid = 0; monid < 300; monid += 1) {
-    monid += 99;
-    if (e_get(monid) > 0) {
+  for (let column = 0; column < 3; column += 1) {
+    if (battle_column(column).count > 0) {
       member += 1;
     }
   }
 
   const rest = arg1 % member;
   if (rest === 0) {
-    return arg0;
+    return -1;
   }
   if (rest === 1) {
     // 仲間怪物（全滅時も考える）
-    for (let monid = 0; monid < 300; monid += 1) {
-      monid += 99;
-      if (e_get(monid) > 0) {
-        return monid;
+    for (let column = 0; column < 3; column += 1) {
+      if (battle_column(column).count > 0) {
+        return column;
       }
     }
   } else if (rest === 2) {
-    for (let monid = 100; monid < 300; monid += 1) {
-      monid += 99;
-      if (e_get(monid) > 0) {
-        return monid;
+    for (let column = 1; column < 3; column += 1) {
+      if (battle_column(column).count > 0) {
+        return column;
       }
     }
   } else if (rest === 3) {
-    // 299 以外あり得ないが、一応
-    for (let monid = 200; monid < 300; monid += 1) {
-      monid += 99;
-      if (e_get(monid) > 0) {
-        return monid;
+    // 列 2 以外あり得ないが、一応
+    for (let column = 2; column < 3; column += 1) {
+      if (battle_column(column).count > 0) {
+        return column;
       }
     }
   }
-  return arg0; // 念のため
+  return -1; // 念のため
 }
 
 /**
@@ -505,24 +503,25 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
  */
 async function slave_monster_attack_to_enemy(arg0, arg1) {
   const settings = era.get('flag:5') || 0;
-  // 配下がいるかどうか（第 3 列 E:300）
+  // 配下がいるかどうか（奴隶的配下列 = 列号 3）
+  const minion = battle_column(BATTLE_COLUMN.MINION_A);
   if ((era.get(`cflag:${arg0}:570`) || 0) < 100) {
     return 0;
   }
-  if (e_get(300) < 100) {
+  if (minion.id < 100) {
     return 0;
   }
 
   // 怪物側の攻撃力（魔法补正 ×2）
-  let damage = (era.get(`cflag:${arg0}:9`) || 0) * (e_get(302) + 1);
-  if (e_get(306) !== 0) {
+  let damage = (era.get(`cflag:${arg0}:9`) || 0) * (minion.attack + 1);
+  if (minion.magic !== 0) {
     damage *= 2;
   }
 
   // 演出
   if ((settings & 32) !== 0) {
     era.print(
-      `服从于奴隶的${era.get(`itemname:${e_get(300)}`) ?? ''}发动了攻击！！`,
+      `服从于奴隶的${era.get(`itemname:${minion.id}`) ?? ''}发动了攻击！！`,
     );
   }
 
@@ -569,24 +568,25 @@ async function slave_monster_attack_to_enemy(arg0, arg1) {
  */
 async function slave_monster_attack_to_slave(arg0, arg1) {
   const settings = era.get('flag:5') || 0;
-  // 配下がいるかどうか（第 4 列 E:400）
+  // 配下がいるかどうか（勇者的配下列 = 列号 4）
+  const minion = battle_column(BATTLE_COLUMN.MINION_T);
   if ((era.get(`cflag:${arg1}:570`) || 0) < 100) {
     return 0;
   }
-  if (e_get(400) < 100) {
+  if (minion.id < 100) {
     return 0;
   }
 
   // 怪物側の攻撃力
-  let damage = (era.get(`cflag:${arg1}:9`) || 0) * (e_get(402) + 1);
-  if (e_get(406) !== 0) {
+  let damage = (era.get(`cflag:${arg1}:9`) || 0) * (minion.attack + 1);
+  if (minion.magic !== 0) {
     damage *= 2;
   }
 
   // 演出
   if ((settings & 32) !== 0) {
     era.print(
-      `服从于勇者的${era.get(`itemname:${e_get(400)}`) ?? ''}发动了攻击！！`,
+      `服从于勇者的${era.get(`itemname:${minion.id}`) ?? ''}发动了攻击！！`,
     );
   }
 
@@ -1097,8 +1097,8 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
     }
     monster_data(local, turn, arg0, -1, -1, rand_n);
     // ボス化する / 1匹だけにする
-    e_set(turn * 100 + 8, 1);
-    e_set(turn * 100 + 99, 1);
+    battle_column(turn).boss = 1;
+    battle_column(turn).count = 1;
   }
 
   if ((settings & 32) !== 0) {
@@ -1230,12 +1230,15 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
 
     // 戦闘を行うキャラの選択
     const defer = battle.select_atker(enemy, turn);
-    let atker = select_slave(arg0, turn);
+    const minion_column = select_slave(arg0, turn); // -1 = 奴隶本体
+    let atker = arg0;
+    if (minion_column >= 0) {
+      atker = defer;
+    }
     era_flag.target = atker; // A = RESULT
 
-    if (atker >= 99) {
+    if (minion_column >= 0) {
       // 怪物が選択された場合、怪物戦闘と同じ処理になる
-      atker = defer;
       era_flag.target = defer; // A = DEFER = 勇者
       // 先攻後攻決定
       const speed = battle.speed_plus(defer, rand_n);

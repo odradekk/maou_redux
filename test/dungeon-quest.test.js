@@ -52,9 +52,9 @@ function setup_world() {
   fixture.store.set('cflag:1:532', 0);
   // E 第一列：狗头人 ×3、凌辱类型 1（亜人）
   fixture.store.set('itemname:100', '狗头人');
-  fixture.store.set('e:0', 100);
-  fixture.store.set('e:7', 1);
-  fixture.store.set('e:99', 3);
+  fixture.battle('DEFENSE_1').id = 100;
+  fixture.battle('DEFENSE_1').rape_type = 1;
+  fixture.battle('DEFENSE_1').count = 3;
   return fixture;
 }
 
@@ -329,8 +329,8 @@ test('quest_battle_set：bit0（BOSS 战）把 E 第三列 boss 化', async () =
   fixture.store.set('cflag:1:536', 1 << 0);
   const { quest_battle_set } = load(fixture);
   await quest_battle_set(1, seq_rand([0]));
-  assert.equal(fixture.store.get('e:208'), 1, 'E:208 = 1（boss 位）');
-  assert.equal(fixture.store.get('e:299'), 1, 'E:299 = 1（数量）');
+  assert.equal(fixture.battle('DEFENSE_3').boss, 1, 'E:208 = 1（boss 位）');
+  assert.equal(fixture.battle('DEFENSE_3').count, 1, 'E:299 = 1（数量）');
 });
 
 test('quest_battle_set：bit3（大量敌人）覆写为 15 只', async () => {
@@ -340,8 +340,8 @@ test('quest_battle_set：bit3（大量敌人）覆写为 15 只', async () => {
   fixture.store.set('cflag:1:536', 1 << 3);
   const { quest_battle_set } = load(fixture);
   await quest_battle_set(1, seq_rand([0]));
-  assert.equal(fixture.store.get('e:208'), 0, 'boss 位清 0');
-  assert.equal(fixture.store.get('e:299'), 15, '15 只');
+  assert.equal(fixture.battle('DEFENSE_3').boss, 0, 'boss 位清 0');
+  assert.equal(fixture.battle('DEFENSE_3').count, 15, '15 只');
 });
 
 test('quest_battle_set：bit4（性要求）交涉值掷过 100 → quest_bitch 完结、RETURN 1', async () => {
@@ -455,7 +455,7 @@ for (const [fn_name, dick_writes, plain_writes] of BITCH_SECTIONS) {
       .map((k) => `${k}=${writes[k]}`)
       .join(' + ')}`, async () => {
       const fixture = setup_world();
-      fixture.store.set('e:99', 7); // E 列 7 只
+      fixture.battle('DEFENSE_1').count = 7; // E 列 7 只
       fixture.store.set('flag:10005', 1); // era_flag.target = 勇者（初吻/失贞判定对象）
       fixture.store.set('cflag:1:16', 5); // 初吻已有对象
       if (arm.startsWith('有阴茎')) {
@@ -517,10 +517,10 @@ test('quest_bitch 初吻判定：cflag:16 == -1 → 995（打在 TARGET 上，�
 test('quest_bitch 分派：按 E 列凌辱类型分派、空列跳过；失贞段（TARGET）', async () => {
   const fixture = setup_world();
   // 第一列空（数量 0）、第二列触手（type5 ×4）
-  fixture.store.set('e:99', 0);
-  fixture.store.set('e:100', 100);
-  fixture.store.set('e:107', 5);
-  fixture.store.set('e:199', 4);
+  fixture.battle('DEFENSE_1').count = 0;
+  fixture.battle('DEFENSE_2').id = 100;
+  fixture.battle('DEFENSE_2').rape_type = 5;
+  fixture.battle('DEFENSE_2').count = 4;
   // TARGET 与 ARG 分离（魔王 0 vs 奉侍者 1）：两侧都备私处经验与处女，
   // 失贞应打在 TARGET（魔王）上——变异改读 ARG 时勇者侧被动（M653 目标）
   fixture.store.set('flag:10005', 0);

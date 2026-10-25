@@ -126,7 +126,7 @@ function enemy_compare(a, b) {
     return cflag_get(a, 501) < cflag_get(b, 501) ? -1 : 1;
   }
   // 状态归类：迎击中（CFLAG:1 == 3）且勇者(T)配下（CFLAG:500 == 4，
-  // 即 E 表 LINE == 4 的列）视为「潜入中 2」，其余取 CFLAG:1 原值
+  // 即战斗状态的勇者(T)配下列）视为「潜入中 2」，其余取 CFLAG:1 原值
   const state_a =
     cflag_get(a, 1) === 3 && cflag_get(a, 500) === 4 ? 2 : cflag_get(a, 1);
   const state_b =

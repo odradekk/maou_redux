@@ -35,7 +35,8 @@ const {
 const { com_order } = require('#/system/train/com-order');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
-const { monster_name, e_get } = require('#/dungeon/monster-data');
+const { monster_name } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 // —— 读取与写入：未声明序号均按项目约定缺省为 0 ——
 const get = (name) => era.get(name) || 0;
 const set = (name, value) => era.set(name, value);
@@ -1096,7 +1097,8 @@ async function com29() {
 
 const has_pband = () => get('item:4') !== 0;
 const has_mat = () => get('item:13') !== 0 || get('noitem:0') !== 0;
-const male_monster = () => [1, 7, 8, 10, 12].includes(e_get(307));
+const male_monster = () =>
+  [1, 7, 8, 10, 12].includes(battle_column(BATTLE_COLUMN.MINION_A).rape_type);
 const clothes = (cid) => get(`cflag:${cid}:40`);
 const special_clothes = (cid) => get(`cflag:${cid}:42`);
 const clothing_guard = (cid) =>
@@ -1435,7 +1437,7 @@ async function message_b20() {
   const prev = era_flag.prevcom;
   if (tq(cid, 88)) {
     era.print(
-      `${monster_name(e_get(300))}的性器从正面贯穿了${target_name()}的阴部……`,
+      `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的性器从正面贯穿了${target_name()}的阴部……`,
     );
   } else if (continuous_same([20, 128, 129], [20, 128, 129, 130], prev)) {
     if (tal(player, 121) || tal(player, 122)) {
@@ -1530,7 +1532,7 @@ async function message_b21() {
     }
   } else if (tq(cid, 88)) {
     era.print(
-      `${monster_name(e_get(300))}的性器从后方贯穿了${target_name()}的阴部…`,
+      `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}的性器从后方贯穿了${target_name()}的阴部…`,
     );
   } else if (
     continuous_same([21, 131, 132, 133], [21, 131, 132, 133, 134], prev)
@@ -1564,7 +1566,9 @@ async function message_b21() {
 async function message_b22() {
   const cid = era_flag.target;
   const prev = era_flag.prevcom;
-  const actor = tq(cid, 88) ? monster_name(e_get(300)) : player_name();
+  const actor = tq(cid, 88)
+    ? monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)
+    : player_name();
   if (continuous_same([22], [22], prev)) {
     era.print(
       `${actor}和${target_name()}拥吻着、舌头激烈地交缠、再次开始扭动腰肢…`,
@@ -1618,7 +1622,7 @@ async function message_b23() {
     );
   } else if (tq(cid, 88)) {
     era.print(
-      `${monster_name(e_get(300))}让${target_name()}背对坐在上面，用性器从后方贯穿了${target_name()}的阴部……`,
+      `${monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)}让${target_name()}背对坐在上面，用性器从后方贯穿了${target_name()}的阴部……`,
     );
   } else if (continued_same) {
     era.print(
@@ -1750,7 +1754,9 @@ async function message_b25() {
 async function message_b26() {
   const cid = era_flag.target;
   const prev = era_flag.prevcom;
-  const actor = tq(cid, 88) ? monster_name(e_get(300)) : player_name();
+  const actor = tq(cid, 88)
+    ? monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)
+    : player_name();
   if (get('tflag:60') && prev === 26 && same_trainer()) {
     era.print(
       tal(era_flag.player, 121) || tal(era_flag.player, 122)
@@ -1821,7 +1827,8 @@ async function message_b27() {
   // `!88 && !89 && !55 || 55 && ASSI == PLAYER` 按同优先级左结合。
   // CALL MONSTER_NAME / PRINTFORM 均不收行，故前缀须同后续正文合并成一次输出。
   let prefix = '';
-  if (tq(cid, 88)) prefix += monster_name(e_get(300));
+  if (tq(cid, 88))
+    prefix += monster_name(battle_column(BATTLE_COLUMN.MINION_A).id);
   if (
     (!tq(cid, 88) && !tq(cid, 89) && !tq(cid, 55)) ||
     (tq(cid, 55) && era_flag.assi === player)
@@ -1865,7 +1872,9 @@ async function message_b27() {
 async function message_b28() {
   const cid = era_flag.target;
   const prev = era_flag.prevcom;
-  const actor = tq(cid, 88) ? monster_name(e_get(300)) : player_name();
+  const actor = tq(cid, 88)
+    ? monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)
+    : player_name();
   if (get('tflag:60') && prev === 28 && same_trainer())
     era.print(
       `${actor}和${target_name()}深吻着、舌头积极地交缠、再次开始扭动腰肢了…`,
@@ -1883,7 +1892,9 @@ async function message_b28() {
 async function message_b29() {
   const cid = era_flag.target;
   const prev = era_flag.prevcom;
-  const actor = tq(cid, 88) ? monster_name(e_get(300)) : player_name();
+  const actor = tq(cid, 88)
+    ? monster_name(battle_column(BATTLE_COLUMN.MINION_A).id)
+    : player_name();
   if (get('tflag:60') && prev === 29 && same_trainer())
     era.print(
       `${actor}从${target_name()}后面抱着她、再次剧烈地开始摇动着${target_name()}的身体…`,

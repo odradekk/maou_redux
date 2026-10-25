@@ -17,14 +17,12 @@
  * == 移植说明（有意偏离，均注明依据） ==
  *
  *   - **`MON_NUM = E:(B + 99)` 以参数注入**（#5 决议第六条「指针不隐式读
- *     全局」）：B 是 ryouzyoku 主循环的全局单字母变量（0/100/200，即
- *     三列怪物的队列号），`E:(B+99)` 是「该列怪物数量」（E:Y+99 == 数量）。
- *     E 表由迷宫战斗系统（H5/H6）建桶写入，ere 的 `era.get('e:99')`
- *     在桶缺失时报 key error（#183 引擎实测）；本文件各函数以 mon_num
- *     形参接收该值，由 ryouzyoku 分派时读出传入（#183 同款处置）。
- *     分派循环的 E 表读（E:MON_COUNT 怪物号 / E:(MON_COUNT+7) 凌辱类型 /
- *     E:(MON_COUNT+99) 数量）随本文件经 e_get 读——E 表由战斗系统
- *     建桶（yml/E.yml），e_get 读未写槽按 0 缺省。
+ *     全局」）：B 是 ryouzyoku 主循环的列号（0/1/2，即三列怪物的队列），
+ *     该列怪物数量是该列对象的 count 字段。该列由迷宫战斗系统（H5/H6）的
+ *     战斗状态写入（#883 起是普通对象，不再是引擎变量表，也没有
+ *     `era.get` 通道）；本文件各函数以 mon_num 形参接收该值，由 ryouzyoku
+ *     分派时读出传入（#183 同款处置）。分派循环自己读列对象的三格
+ *     （id / rape_type / count），不再经 e_get。
  *   - **%SAVESTR:ARG% 经 chara_callname(arg) 承载**（#5 决议：SAVESTR 无
  *     引擎通道，#171 实测三段完全静默丢弃）：ARG 是参数角色号（被凌辱者），
  *     与口上文件的 TARGET 不同源，本文件用独立的 arg_name 变量。
@@ -136,8 +134,8 @@ const { chara } = require('#/facade/chara');
 const { show_data } = require('#/page/components/chara-data'); // #390 起真身
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { run_kojo } = require('#/kojo/kojo-system');
-const { e_get, e_set } = require('#/dungeon/monster-data');
 const { monstername } = require('#/dungeon/monster-data');
+const { battle_column } = require('#/dungeon/battle-state');
 const { equip_database } = require('#/system/equip/equip-lookup');
 // 注意：check_status / karma 来自 #/dungeon/dungeon，而 dungeon.js 顶层
 // require dungeon-battle/-battle2，后者将 require 本文件——顶层引用会成环。
@@ -235,7 +233,7 @@ async function dungeon_ryouzyoku_after() {
  *
  * 流程：选择（旁观/不要，INPUT 循环）→ 凌辱畏怖记忆扫描（CFLAG:130 记录
  * 上次凌辱的怪物 ID、CFLAG:131 计数递增）→ 口上前置钩子（TARGET = ARG）→
- * 按 E:列头+7（凌辱类型 1-12）逐列分派怪物凌辱（男人 TALENT:122 → H14
+ * 按各列的凌辱类型（1-12）逐列分派怪物凌辱（男人 TALENT:122 → H14
  * *_RYOU男，否则 → 本文件 *_RYOU）→ 处女丧失判定（EXP:0 > 0 且 TALENT:0
  * == 1，魔王 0 的专属）→ 口上后置钩子 → 逃脱分支。
  *
@@ -275,26 +273,24 @@ async function ryouzyoku(arg, rand) {
   }
 
   // —— 凌辱畏怖記憶があるか ——
-  // MON_COUNT / MON_FEAR 是函数局部变量（#DIM）
+  // MON_COUNT / MON_FEAR 是函数局部变量（#DIM）；MON_COUNT 现在是列号
   let mon_count = 0;
   let mon_fear = 0;
-  // 第一轮扫描：找 E 表里哪一列有怪物、且 CFLAG:130（上次凌辱怪物 ID）
-  // 命中该列 → MON_FEAR = 该列头（0/100/200）
-  while (mon_count < 300) {
-    // 数量槽 <= 0 时清掉凌辱类型槽（E:LOCAL = 0）
-    let local = mon_count + 99;
-    if (e_get(local) <= 0) {
-      e_set(local - 92, 0); // E:(MON_COUNT+7) = 0（local-92 = +7）
+  // 第一轮扫描：找哪一列有怪物、且 CFLAG:130（上次凌辱怪物 ID）
+  // 命中该列 → MON_FEAR = 该列的怪物号（主循环拿它和每列的怪物号比）
+  while (mon_count < 3) {
+    const row = battle_column(mon_count);
+    // 数量 <= 0 时清掉凌辱类型槽
+    if (row.count <= 0) {
+      row.rape_type = 0;
     }
-    local = mon_count + 7;
-    if (e_get(local) > 0) {
-      const local_1 = e_get(mon_count); // LOCAL:1 = E:MON_COUNT（怪物号）
-      // SIF CFLAG:ARG:130 == LOCAL:1 → MON_FEAR = MON_COUNT
+    if (row.rape_type > 0) {
+      const local_1 = row.id; // 怪物号
       if ((era.get(`cflag:${arg}:130`) || 0) === local_1) {
-        mon_fear = mon_count;
+        mon_fear = local_1;
       }
     }
-    mon_count += 100;
+    mon_count += 1;
   }
 
   // TARGET = ARG（口上钩子的 GET_KOJO_NUM 缺省读它）
@@ -304,27 +300,26 @@ async function ryouzyoku(arg, rand) {
   await dungeon_ryouzyoku();
   // —— 主循环：逐列处理怪物凌辱 ——
   mon_count = 0;
-  while (mon_count < 300) {
-    const local = mon_count + 7;
-    const local_1 = e_get(mon_count); // LOCAL:1 = E:MON_COUNT（怪物号）
-    if (e_get(local) > 0 && mon_fear === 0) {
+  while (mon_count < 3) {
+    const row = battle_column(mon_count);
+    const local_1 = row.id; // 怪物号
+    if (row.rape_type > 0 && mon_fear === 0) {
       // 首次遇到凌辱怪物：记畏怖记忆
       await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);
       chara(arg).dungeon.凌辱畏怖记忆_怪物 = local_1; // CFLAG:130
       mon_fear = local_1;
       chara(arg).dungeon.凌辱畏怖计数 = 0; // CFLAG:131
-    } else if (e_get(local) > 0 && mon_fear === local_1) {
+    } else if (row.rape_type > 0 && mon_fear === local_1) {
       // 同一怪物再来：畏怖计数++
       await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);
       chara(arg).dungeon.凌辱畏怖计数 += 1; // CFLAG:131++
-    } else if (e_get(local) > 0 && mon_fear !== local_1) {
+    } else if (row.rape_type > 0 && mon_fear !== local_1) {
       // 不同怪物：只打台词，不动记忆
       await era.printAndWait(`${monstername(local_1)}的凌辱开始了。`);
     }
 
-    const b = mon_count; // B = MON_COUNT（列头，传各 *_ryou 作数量列基址）
-    const type = e_get(local); // E:(MON_COUNT+7) 凌辱类型 1-12
-    const mon_num = e_get(b + 99); // E:(B+99) 该列怪物数量
+    const type = row.rape_type; // 凌辱类型 1-12
+    const mon_num = row.count; // 该列怪物数量
     const is_male = (era.get(`talent:${arg}:122`) || 0) !== 0; // TALENT:ARG:122
 
     // 按凌辱类型分派（男人 → H14 *_RYOU男，否则 → 本文件 *_RYOU）
@@ -422,7 +417,7 @@ async function ryouzyoku(arg, rand) {
     }
 
     await era.print(''); // PRINTL
-    mon_count += 100;
+    mon_count += 1;
   }
 
   // 魔王（角色 0）被凌辱的处女丧失（EXP:0 > 0 且 TALENT:0 == 1）
@@ -3171,7 +3166,7 @@ async function pc_ryou(arg0, arg1, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const winner_name = arg_name_of(arg0); // %SAVESTR:(ARG:0)%
   const loser_name = arg_name_of(arg1); // %SAVESTR:(ARG:1)%
-  // MON_NUM：本函数无 E 表读取（#DIM 声明了但从未赋值——CALL MONSTER_DATA
+  // MON_NUM：本函数不读战斗状态（#DIM 声明了但从未赋值——CALL MONSTER_DATA
   // 是死调用，不产生 MON_NUM 写入，见文件头）。所有 {MON_NUM}
   // 显示插值在脚本里即为 0（JS 侧 mon_num 参数缺省 0，行为一致）。
   const mon_num = 0;
@@ -3727,7 +3722,7 @@ async function pc_ryou(arg0, arg1, rand) {
  *
  * 旧引擎 `ARG = -1` 缺省、`SIF ARG < 0 → ARG = A`（A = 当前攻击者 = 勇者）。
  * 门槛：善恶值（CFLAG:ARG:151）必须 <= -50（善恶低才发生），且 RAND:12 != 0。
- * 命中后按 E 表第 1 列（B = RAND:3 * 100 列头）的凌辱类型分派到 *_RYOU_YUSYA
+ * 命中后按随机列（B = RAND:3）的凌辱类型分派到 *_RYOU_YUSYA
  *（勇者版演出）；仅 slime_ryou_yusya（E:C == 2）与 girl_ryou_yusya
  *（E:C == 9）两个分支有活代码，其余全在注释内（死代码）。
  *
@@ -3754,13 +3749,13 @@ async function victory_ryouzyoku(arg = -1, rand) {
     return 0;
   }
 
-  // B = RAND:3 * 100（列头）
-  const b = rand_n(3) * 100;
-  const c = b + 7; // C = B + 7（凌辱类型槽）
+  // B = RAND:3（列号）
+  const b = rand_n(3);
+  const row = battle_column(b);
 
   // 该列有怪物 → 冒险者被瘴气侵袭、玩弄怪物（善恶值 -10）
-  if (e_get(c) > 0) {
-    const local_1 = e_get(b); // LOCAL:1 = E:B（怪物号）
+  if (row.rape_type > 0) {
+    const local_1 = row.id; // 怪物号
     await era.printAndWait(
       `冒险者被魔界的瘴气侵袭着，玩弄起${monstername(local_1)}来。（善恶值:-10）`,
     );
@@ -3769,8 +3764,8 @@ async function victory_ryouzyoku(arg = -1, rand) {
     karma(arg, -10);
   }
 
-  // ペニスを使った凌辱を先行実装（E:C 分派；注释掉的死分支保留）
-  const type = e_get(c);
+  // ペニスを使った凌辱を先行実装（凌辱类型分派；注释掉的死分支保留）
+  const type = row.rape_type;
   if (type === 2) {
     // 史莱姆（未注释的活分支）
     await slime_ryou_yusya(arg, rand_n);

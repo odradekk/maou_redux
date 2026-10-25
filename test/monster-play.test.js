@@ -399,8 +399,12 @@ test('MONSTER_PLAY 非狗先生成第 5 列，再按 E:507 分派并共用随机
       .monster_play(seq(0, 0, 0, 4, 1)),
     'TURNEND',
   );
-  assert.equal(fixture.store.get('e:500'), 102, 'MONSTER_DATA 写入 X 列');
-  assert.equal(fixture.store.get('e:507'), 2, '分派键是 X 列的怪物种族');
+  assert.equal(fixture.battle('RAVISH').id, 102, 'MONSTER_DATA 写入 X 列');
+  assert.equal(
+    fixture.battle('RAVISH').rape_type,
+    2,
+    '分派键是 X 列的怪物种族',
+  );
   assert.equal(
     fixture.store.get('exp:0:1'),
     7,

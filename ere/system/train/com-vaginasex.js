@@ -452,7 +452,7 @@ async function com_after_vagina_sex(rand) {
     return; // 死斗场到此为止
   }
 
-  // 爱情经验（E 表）
+  // 爱情经验（局部变量 e，与战斗状态无关）
   let e;
   if (tal(player, 1) && tal(cid, 0)) {
     e = 100; // 童贞 × 处女

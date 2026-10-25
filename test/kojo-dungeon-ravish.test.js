@@ -168,9 +168,9 @@ test('RYOUZYOKU 主框架：选择[0]旁观 → 走凌辱畏怖记忆 + 分派�
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
     // E 表：第 1 列（列头 0）有怪物——凌辱类型 1（兽人）、数量 5
-    f.store.set('e:0', 100); // 怪物番号（狗头人）
-    f.store.set('e:7', 1); // 凌辱类型（兽人）
-    f.store.set('e:99', 5); // 数量
+    f.battle('DEFENSE_1').id = 100; // 怪物番号（狗头人）
+    f.battle('DEFENSE_1').rape_type = 1; // 凌辱类型（兽人）
+    f.battle('DEFENSE_1').count = 5; // 数量
   });
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
@@ -199,19 +199,18 @@ test('RYOUZYOKU 主框架：同一怪物再来 → CFLAG:131 递增（畏怖计�
   const fixture = await setup_ravish((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
-    f.store.set('cflag:31:130', 100); // 上次凌辱过狗头人（第 2 列）
+    f.store.set('cflag:31:130', 110); // 上次凌辱过兽人（ID 110）
     f.store.set('cflag:31:131', 2);
-    // 狗头人（ID 100）放第 2 列（列头 100）——扫描记 MON_FEAR = 100（列头），
-    // 主循环 LOCAL:1 = 100（怪物号）→ MON_FEAR == LOCAL:1 → CFLAG:131++
-    // （列头/怪物号近似判定）
-    f.store.set('e:100', 100);
-    f.store.set('e:107', 1);
-    f.store.set('e:199', 5);
+    // 兽人（ID 110）放第 2 列——第一轮扫描记下它的怪物号，主循环逐列比对
+    // 怪物号 → 同一怪物 → CFLAG:131++
+    f.battle('DEFENSE_2').id = 110;
+    f.battle('DEFENSE_2').rape_type = 1;
+    f.battle('DEFENSE_2').count = 5;
   });
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
   await mod.ryouzyoku(31, seq_rand(0));
-  // 同一怪物（MON_FEAR == LOCAL:1）→ CFLAG:131++
+  // 同一怪物（MON_FEAR == 该列怪物号）→ CFLAG:131++
   assert.equal(fixture.store.get('cflag:31:131'), 3);
 });
 
@@ -220,9 +219,9 @@ test('RYOUZYOKU 主框架：男人（TALENT:122）→ 分派到 H14 男版（*_r
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
     f.store.set('talent:31:122', 1); // 男人
-    f.store.set('e:0', 100);
-    f.store.set('e:7', 1); // 兽人
-    f.store.set('e:99', 5);
+    f.battle('DEFENSE_1').id = 100;
+    f.battle('DEFENSE_1').rape_type = 1; // 兽人
+    f.battle('DEFENSE_1').count = 5;
   });
   const mod = fixture_module(fixture);
   fixture.era.input = async () => 0;
@@ -300,8 +299,8 @@ test('VICTORY_RYOUZYOKU：善恶值 > -50 → 直接返回 0（不发生）', as
   // -10 > 0 为假会继续，走到 YUSYA 分派并输出文本）
   const f2 = await setup_ravish((f) => {
     f.store.set('cflag:31:151', -10); // 中立但未到混沌
-    f.store.set('e:107', 2); // 第 2 列史莱姆
-    f.store.set('e:100', 152);
+    f.battle('DEFENSE_2').rape_type = 2; // 第 2 列史莱姆
+    f.battle('DEFENSE_2').id = 152;
     f.store.set('talent:31:122', 1);
   });
   const m2 = fixture_module(f2);
@@ -316,8 +315,8 @@ test('VICTORY_RYOUZYOKU：善恶值 > -50 → 直接返回 0（不发生）', as
 test('VICTORY_RYOUZYOKU：善恶值 <= -50 且随机命中 → 分派史莱姆 YUSYA 演出', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('cflag:31:151', -100); // 混沌
-    f.store.set('e:107', 2); // 第 2 列凌辱类型 = 史莱姆
-    f.store.set('e:100', 152); // 第 2 列怪物号
+    f.battle('DEFENSE_2').rape_type = 2; // 第 2 列凌辱类型 = 史莱姆
+    f.battle('DEFENSE_2').id = 152; // 第 2 列怪物号
     f.store.set('talent:31:122', 1); // 男人 → 史莱姆 YUSYA 的 TALENT:122 命中
   });
   const mod = fixture_module(fixture);

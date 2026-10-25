@@ -114,7 +114,8 @@ const { get_enemy, MAX_CHARANUM } = require('#/event/enter-enemy');
 const { karma } = require('#/chara/chara-stats');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { char_make, name_reset } = require('#/chara/char-make');
-const { e_get, monster_data } = require('#/dungeon/monster-data');
+const { monster_data } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
 const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
@@ -2854,9 +2855,10 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       for (let i = 100; i < 190; i += 1) {
         if ((era.get(`item:${i}`) || 0) < 1) continue;
         monster_data(i, 0, 0, -1, -1, rand); // CALL MONSTER_DATA, MON_ID, 0, 0
-        let mon_atk = e_get(2) + e_get(3) + e_get(4); // E:2/E:3/E:4
-        if (e_get(5) !== 0) mon_atk += e_get(1); // 特殊
-        if (e_get(6) !== 0) mon_atk += e_get(1); // 魔法
+        const mon = battle_column(BATTLE_COLUMN.DEFENSE_1);
+        let mon_atk = mon.attack + mon.defense + mon.speed;
+        if (mon.special !== 0) mon_atk += mon.level; // 特殊
+        if (mon.magic !== 0) mon_atk += mon.level; // 魔法
         const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);
         era.set(`item:${i}`, halved);
         sinkou += mon_atk * (Math.trunc(halved / 9) + 1);
@@ -2888,9 +2890,10 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
       for (let i = 100; i < 190; i += 1) {
         if ((era.get(`item:${i}`) || 0) < 1) continue;
         monster_data(i, 0, yusya_i, -1, -1, rand); // CALL MONSTER_DATA, MON_ID, 0, YUSYA_I
-        let mon_atk = e_get(2) + e_get(3) + e_get(4);
-        if (e_get(5) !== 0) mon_atk += e_get(1); // 特殊
-        if (e_get(6) !== 0) mon_atk += e_get(1); // 魔法
+        const mon = battle_column(BATTLE_COLUMN.DEFENSE_1);
+        let mon_atk = mon.attack + mon.defense + mon.speed;
+        if (mon.special !== 0) mon_atk += mon.level; // 特殊
+        if (mon.magic !== 0) mon_atk += mon.level; // 魔法
         const third = Math.trunc((era.get(`item:${i}`) || 0) / 3);
         sinkou += mon_atk * (Math.trunc(third / 9) + 1);
         era.set(`item:${i}`, third * 2); // ITEM:MON_ID *= 2

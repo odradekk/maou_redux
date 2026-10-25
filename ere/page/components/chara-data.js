@@ -6,7 +6,7 @@
  * 默认色。
  *
  * 依赖的真身（都不重造）：
- *   - `monster_data`（E:300 落怪物番号）与 `monster_name`（dungeon/monster-data.js）；
+ *   - `monster_data`（把配下怪物写进列号 3）与 `monster_name`（dungeon/monster-data.js）；
  *   - `search_family`（chara-family.js，返回角色 ID 或 -1）；
  *   - `name_lover`（dungeon-lovers.js，print_flag = 1 时自行打一行）；
  *   - `get_look_info`（chara/look-info.js，#389 已交付全量真身——这里按「婚史」kind 取）。
@@ -20,6 +20,7 @@ const { search_family } = require('#/chara/chara-family');
 const { get_look_info } = require('#/chara/look-info');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { monster_data, monster_name } = require('#/dungeon/monster-data');
+const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 
@@ -60,7 +61,7 @@ function show_data(cid, rand = default_rand) {
     monster_data(cflag(570), 3, cid, -1, -1, rand);
     stone.push({ content: '[使役魔兽:' });
     stone.push({
-      content: monster_name(era.get('e:300') || 0),
+      content: monster_name(battle_column(BATTLE_COLUMN.MINION_A).id),
       color: HORSE_COLOR,
     });
     stone.push({ content: ']' });

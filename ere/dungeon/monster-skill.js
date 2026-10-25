@@ -1,8 +1,9 @@
 /**
  * @file 怪物与精英部下的战斗技能（issue #345）。
  *
- * E 列布局沿用 monster-data：列头 +0 = 怪物识别号、+1 = 等级、+2 = 攻击、
- * +3 = 防御。两套 1–18 技能表存在多处差异（倍率、名字与写入位置），
+ * 列布局见 ere/dungeon/battle-state.js：id = 怪物识别号、level = 等级、
+ * attack = 攻击、defense = 防御；本文件按列号取列（列由调用方传，通常是
+ * 被打的防御列）。两套 1–18 技能表存在多处差异（倍率、名字与写入位置），
  * 因此分别按各自结构保留，不抽成一张会掩盖差异的共享表。
  */
 
@@ -14,7 +15,8 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
-const { e_get, e_set, monstername } = require('#/dungeon/monster-data');
+const { monstername } = require('#/dungeon/monster-data');
+const { battle_column } = require('#/dungeon/battle-state');
 
 async function print_battle_line(text) {
   if ((game.dungeon.游戏设定 & 32) !== 0) {
@@ -23,7 +25,7 @@ async function print_battle_line(text) {
 }
 
 async function monster_skill(target, skill, user, rand = default_rand) {
-  const level = e_get(user + 1) + chara(0).chara.等级;
+  const level = battle_column(user).level + chara(0).chara.等级;
   let dmg = level;
   let palam_down = Math.trunc(dmg / 5) + 1;
   if (rand(3) === 0) {
@@ -32,7 +34,7 @@ async function monster_skill(target, skill, user, rand = default_rand) {
   dmg += Math.trunc(dmg / 2);
   dmg = Math.min(dmg, 400);
   palam_down = Math.min(palam_down, 50);
-  const monster_name = monstername(e_get(user));
+  const monster_name = monstername(battle_column(user).id);
   const target_view = chara(target);
 
   if (skill === 1) {
@@ -53,13 +55,13 @@ async function monster_skill(target, skill, user, rand = default_rand) {
     target_view.dungeon.防御力 -= palam_down;
   } else if (skill === 5) {
     await print_battle_line(`${monster_name}变为透明了……（防御+2）`);
-    e_set(user + 3, e_get(user + 3) + 2);
+    battle_column(user).defense += 2;
   } else if (skill === 6) {
     await print_battle_line(`${monster_name}加速再生着……（防御+3）`);
-    e_set(user + 3, e_get(user + 3) + 3);
+    battle_column(user).defense += 3;
   } else if (skill === 7) {
     await print_battle_line(`${monster_name}巧妙地拟态着……（防御+5）`);
-    e_set(user + 3, e_get(user + 3) + 5);
+    battle_column(user).defense += 5;
   } else if (skill === 8) {
     if (rand(3) === 0) {
       await print_battle_line(`${chara_callname(target)}迷失了！`);
@@ -104,7 +106,7 @@ async function monster_skill(target, skill, user, rand = default_rand) {
       `${monster_name}发动了魔力吸取！！（气力-${drain} 防御+4）`,
     );
     target_view.dungeon.气力 -= drain;
-    e_set(user + 3, e_get(user + 3) + 4);
+    battle_column(user).defense += 4;
   } else if (skill === 16) {
     await print_battle_line(`${monster_name}用弓箭发动了攻击！！（HP-${dmg}）`);
     target_view.dungeon.体力 -= dmg;
@@ -114,14 +116,14 @@ async function monster_skill(target, skill, user, rand = default_rand) {
     await print_battle_line(
       `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,
     );
-    e_set(user + 3, e_get(user + 3) + 2);
+    battle_column(user).defense += 2;
   }
   return 0;
 }
 
 async function monster_room_skill(target, user) {
-  const monster_name = monstername(e_get(user));
-  const level = e_get(user + 1) + chara(0).chara.等级;
+  const monster_name = monstername(battle_column(user).id);
+  const level = battle_column(user).level + chara(0).chara.等级;
   const room = chara(target).dungeon.侵攻阶层; // CFLAG:501 = 所在房间
   const target_view = chara(target);
 
@@ -130,13 +132,13 @@ async function monster_room_skill(target, user) {
       `商店街里的暴徒们前来相助！！（HP-${level * 2} 攻击+1）`,
     );
     target_view.dungeon.体力 -= level * 2;
-    e_set(user + 2, e_get(user + 2) + 1);
+    battle_column(user).attack += 1;
   } else if (room === 501) {
     await print_battle_line(
       `${monster_name}从毒沼里发动奇袭！（气力-${level * 2} 攻击+2）`,
     );
     target_view.dungeon.气力 -= level * 2;
-    e_set(user + 2, e_get(user + 2) + 2);
+    battle_column(user).attack += 2;
   } else if (room === 502 && game.invasion.肉便器数 > 0) {
     await print_battle_line(
       `${monster_name}抓起一只肉便器来打人……（攻击-${level * 2}）`,
@@ -144,17 +146,17 @@ async function monster_room_skill(target, user) {
     target_view.dungeon.攻击力 -= level * 2;
   } else if (room === 503) {
     await print_battle_line(`${monster_name}聚拢寒冰！（攻击+2 防御+2）`);
-    e_set(user + 2, e_get(user + 2) + 2);
-    e_set(user + 3, e_get(user + 3) + 2);
+    battle_column(user).attack += 2;
+    battle_column(user).defense += 2;
   } else if (room === 504) {
     await print_battle_line(`${monster_name}聚拢火焰！！（攻击+10 防御-1）`);
-    e_set(user + 2, e_get(user + 2) + 10);
-    if (e_get(user + 3) > 2) {
-      e_set(user + 3, e_get(user + 3) - 1);
+    battle_column(user).attack += 10;
+    if (battle_column(user).defense > 2) {
+      battle_column(user).defense = battle_column(user).defense - 1;
     }
   } else if (room === 505) {
     await print_battle_line(`${monster_name}躲进了迷宫里。（防御+5）`);
-    e_set(user + 3, e_get(user + 3) + 5);
+    battle_column(user).defense += 5;
   } else if (room === 506 && game.event.装饰品数 > 0) {
     const damage = Math.trunc((level * 3) / 2);
     await print_battle_line(
@@ -165,14 +167,14 @@ async function monster_room_skill(target, user) {
   return 0;
 }
 
-async function slave_monster_skill(target, user, rand = default_rand) {
+async function slave_monster_skill(target, cid, rand = default_rand) {
   if (rand(3) === 0) {
     return 0;
   }
 
   const skills = [];
   for (let talent = 401; talent < 500; talent += 1) {
-    if (era.get(`talent:${user}:${talent}`) === 1) {
+    if (era.get(`talent:${cid}:${talent}`) === 1) {
       skills.push(talent);
     }
   }
@@ -186,14 +188,14 @@ async function slave_monster_skill(target, user, rand = default_rand) {
     return 0;
   }
 
-  const level = chara(user).chara.等级 * 3;
+  const level = chara(cid).chara.等级 * 3;
   await use_monster_skill(
     target,
     skill,
-    user,
+    cid,
     level,
     2,
-    chara_callname(user),
+    chara_callname(cid),
     rand,
   );
   return 0;
@@ -208,14 +210,14 @@ async function use_monster_skill(
   user_name,
   rand = default_rand,
 ) {
-  const monster_name = monstername(e_get(user));
+  const monster_name = monstername(battle_column(user).id);
   // 函数体会覆盖形参 dmg；精英等级 ×3 因而无效，有意保留。
-  dmg = e_get(user + 1) + chara(0).chara.等级;
+  dmg = battle_column(user).level + chara(0).chara.等级;
   const palam_down = Math.trunc(dmg / 3) + 1;
   const target_view = chara(target);
   const add_defence = (value) => {
     if (user_type === 1) {
-      e_set(user + 3, e_get(user + 3) + value);
+      battle_column(user).defense += value;
     } else if (user_type === 2) {
       chara(user).dungeon.防御力 += value;
     }
@@ -287,18 +289,19 @@ async function use_monster_skill(
     target_view.dungeon.气力 -= drain;
     add_defence(4);
   } else if (skill === 16) {
-    // 不用传入的 user_name，而是把精英角色号当 E 列头拼怪物名。
+    // 不用传入的 user_name，而是把精英角色号当列号拼怪物名（既有怪癖：精英
+    // 路径传进来的是角色号，不是列号；越界的列号读全 0 列，怪物名因此为空）。
     await print_battle_line(`${monster_name}用弓箭发动了攻击！！（HP-${dmg}）`);
     target_view.dungeon.体力 -= dmg;
   } else if (skill === 17) {
-    // 不按类型分流：精英路径的地形增益仍写 E 数组，保留。
+    // 不按类型分流：精英路径的地形增益仍写列，保留（同上，列号是角色号）。
     await monster_room_skill(target, user);
   } else if (skill === 18) {
-    // 同样不按类型分流，并继续使用怪物名；精英路径也固定写 E 数组。
+    // 同样不按类型分流，并继续使用怪物名；精英路径也固定写列。
     await print_battle_line(
       `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,
     );
-    e_set(user + 3, e_get(user + 3) + 2);
+    battle_column(user).defense += 2;
   }
   return 0;
 }

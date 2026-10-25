@@ -2040,6 +2040,29 @@ function create_era_fixture() {
     load_module(name) {
       return require(`#/${name}`);
     },
+    /**
+     * 战斗状态的一列（#883：`ere/dungeon/battle-state.js`）。
+     *
+     * 它是模块级普通对象，不经引擎变量表、不进存档，所以没有 store 地址可
+     * 播种——用例按字段名直接写：`fixture.battle('DEFENSE_1').count = 7`。
+     * 列名取 `BATTLE_COLUMN` 的键（也接受列号），写错的列名当场报错，免得
+     * 悄悄读到越界列的全 0 对象上。新建夹具会重新装载 ere/ 模块
+     * （`purge_ere_cache`），六列都是全 0，相当于新进程。
+     */
+    battle(column) {
+      const {
+        BATTLE_COLUMN,
+        battle_column,
+      } = require('#/dungeon/battle-state');
+      if (typeof column !== 'string') {
+        return battle_column(column);
+      }
+      const index = BATTLE_COLUMN[column];
+      if (index === undefined) {
+        throw new Error(`战斗状态没有列名 ${column}`);
+      }
+      return battle_column(index);
+    },
   };
 }
 

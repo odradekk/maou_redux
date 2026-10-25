@@ -1040,9 +1040,9 @@ export default [
     must_mention: '兽奸支',
   },
   {
-    desc: 'M807 train_message_b 魔兽支的种族分支改走 ELSE（E:307 判恒假）',
+    desc: 'M807 train_message_b 魔兽支的种族分支改走 ELSE（取不到凌辱类型）',
     file: 'ere/system/train/com-caress.js',
-    find: '  } else if (teq(88)) {\n    const species = e_get(307);\n    const action =',
+    find: '  } else if (teq(88)) {\n    const species = battle_column(BATTLE_COLUMN.MINION_A).rape_type;\n    const action =',
     replace:
       '  } else if (teq(88)) {\n    const species = -1; // 变异：种族判空\n    const action =',
     tests: ['cloth-func'],
