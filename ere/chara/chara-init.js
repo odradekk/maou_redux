@@ -11,13 +11,10 @@
  *   - 显示名槽不需要手工写：#5 决议已定由内置 callname 承载，引擎
  *     addCharacter 自动写 callname:id:-2（呼び名），正是此处要的值
  *     （CONTEXT.md「称呼」条）；
- *   - 菲娅（Chara35）的 cflag/cstr 预设不随 ere addCharacter 落 data
- *     （CFlag.yml/CStr.yml 空名字表 + 引擎 initCharaTable 只抄名字表内
- *     下标，yml/CFlag.yml 头注释实测）。本链路读点已核对全部无行为差异：
- *     CFLAG:9 预设 1 不 > 1（等级段不进）、CFLAG:450 无预设（一人称走
- *     <9 直设，真身逻辑见 chara-self-call.js）、CFLAG:451/453 只在 FLAG:5
- *     位开时被读（窄路径恒 0）。待服装/调教系统读点实现时按 CFlag.yml
- *     头注释的指路补名字条目（见 issue #118 评论的定夺）。
+ *   - 角色文件里的 cflag/cstr/mark/talent 预设由引擎的 addCharacter 套用
+ *     （yml 名字表登记了相应序号，见 yml/CFlag.yml 的文件头），因此本链路读到
+ *     的是角色文件描述的样子：菲娅（35）的 CFLAG:9 = 1 不 > 1、CFLAG:11 = 15
+ *     非 0，等级段照旧不进；身体数据段看 FLAG:5 的开工设置位，与预设无关。
  */
 
 const era = require('#/era-electron');
@@ -101,4 +98,23 @@ async function char_init(cid, rand) {
   return cid; // 返回角色号
 }
 
-module.exports = { char_init };
+/**
+ * normalize_idle_status：把状态 1（角色文件里的原版「待機」）归 0（在城里
+ * 可操作）。
+ *
+ * 移植版的状态模型没有待机档：全库的状态写点只有 0（在城里可操作）、
+ * 2（侵攻中）、3（迎击中）、5/6（战斗结果）、7（苗床）、9（NTR 中）、
+ * 10（育儿室）、11（召唤酔）、12（战役派遣），四个操作页（可选目标、能力
+ * 提升、换号、派遣）都以 0 放行。1 只会从预设进来：加入点没写状态的路径由
+ * 引擎抄进角色文件里的 1，0.1.0 的存档则在读档时由引擎的 fillData 补进来。
+ * 两处（加入点与读档钩子）共用这一个判据，免得「什么时候加入」决定行为。
+ *
+ * @param {number} cid 角色 ID
+ */
+function normalize_idle_status(cid) {
+  if (chara(cid).invasion.状态 === 1) {
+    chara(cid).invasion.状态 = 0;
+  }
+}
+
+module.exports = { char_init, normalize_idle_status };

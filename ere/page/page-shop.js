@@ -300,8 +300,8 @@ async function usershop(result) {
     await dungeon_info2();
   } else if (result === 103) {
     // 处刑：batch_execution()——#543 起真身（ere/event/
-    // event-execution-batch.js，批量处刑；会话内自带调教窗口以提供口上
-    // 通道的 tflag 表，见该文件头）
+    // event-execution-batch.js，批量处刑；处分方式作为实参传给口上，
+    // 不再打开调教窗口借 tflag，见该文件头）
     await batch_execution();
   } else if (result === 104) {
     // 迎击：intercept()（#397 起真身，page/page-intercept.js），返回前

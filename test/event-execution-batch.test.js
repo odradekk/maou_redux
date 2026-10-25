@@ -3,8 +3,8 @@
  *
  * 覆盖 魔改新增/处刑改写三函数的玩家可见契约：
  *   - @批量处刑：复选标签列表、收藏自动剃除、方法 0-7 的分支
- *     与检查、水晶球开关、口上对处分方式（TFLAG:16）的改写、取消路径
- *     （TFLAG:16 = -1 → 整界面重启）；
+ *     与检查、水晶球开关、口上按实参收到的处分方式、取消路径
+ *     （下游返回 -1 → 整界面重启）；
  *   - @自動處刑：新人标签 × 顺从 × 收藏的三岔判定；
  *   - @自動處刑1：装备回收、除名、勋章与经验结算；
  *   - 两个入口接入：主菜单 [103]（page-shop.js 的 usershop）与
@@ -683,7 +683,7 @@ test('方法 1/2/3 分发：公开处刑 / 博物馆 / 猎奇处刑各自完成�
   }
 });
 
-test('方法 0 流放：透传随机源，取消输入让整界面重启（TFLAG:16 = -1）', async () => {
+test('方法 0 流放：透传随机源，取消输入让整界面重启（下游返回 -1）', async () => {
   const fixture = seed_world(31);
   fixture.set_inputs(31, 121, 0, 100, 1999);
   const { batch_execution } = load_batch(fixture);
@@ -723,33 +723,27 @@ test('方法 0 流放：确认后角色被处刑除名', async () => {
   );
 });
 
-test('口上可改写处分方式：批量循环按改写值分发', async () => {
+test('批量循环把处分方式编号作为实参传给口上，按输入值分发', async () => {
   // 47 号（NO 47 在 17-40 段外——31 号走方法 5 会先被「不受洗脑」检查拦下）
   const fixture = seed_world(47);
   fixture.store.set('talent:47:163', 1); // 高贵性格 → K3 处刑口上
-  // 输入 5（士兵化）而口上改写为 7（释放）：两个结果的落点不同，能区分
-  // 「按改写值分发」与「按输入值分发」
   fixture.set_inputs(47, 121, 5, 1999);
   const { batch_execution } = load_batch(fixture);
   const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
-  exucution_koujo_family.register(3, async () => {
-    fixture.store.set('tflag:16', 7); // 口上把处分改写为「释放」
+  let observed;
+  exucution_koujo_family.register(3, async (event_no) => {
+    observed = event_no;
     return 0;
   });
 
   await batch_execution(seq([0]));
 
+  assert.equal(observed, 5, '口上收到输入的方法编号，经实参而不是 tflag');
   assert.equal(
-    fixture.store.get('cflag:47:1'),
-    2,
-    '按改写后的 7 号（释放）分发（若按输入值 5 走，状态不会被置 2）',
+    fixture.store.get('talent:47:254'),
+    1,
+    '按输入值 5（士兵化）分发',
   );
-  assert.equal(
-    fixture.store.get('talent:47:254') ?? 0,
-    0,
-    '没有走士兵化（5 号）',
-  );
-  assert.equal(fixture.store.get('cflag:47:777'), 0, '释放清标签');
 });
 
 test('[101] 水晶球记录：开关位翻转并重绘方法界面', async () => {
@@ -983,7 +977,7 @@ test('方法 4 肉便器：有家族对手时把末路标题写进 CSTR:<家族>
 
 test('翻页位置是函数静态变量：重启与再次进入处刑都保留当前页', async () => {
   // #DIM NO_PAGE = 0是静态变量；JUMP 批量处刑 只重执行 ，
-  // 其中只显式重置 处刑中/可处刑/TFLAG:16（技能指南「静态变量」：函数退出
+  // 其中只显式重置 处刑中/可处刑（技能指南「静态变量」：函数退出
   // 之后值不会被重置，需要重置的要在函数开头显式初始化）
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
@@ -999,7 +993,7 @@ test('翻页位置是函数静态变量：重启与再次进入处刑都保留�
   const { batch_execution } = load_batch(fixture);
 
   // 第 2 页上标记 30 号 → [121] 走方法 0 → BANISHMENT 里取消
-  // （TFLAG:16 = -1）→ 整界面重启（JUMP 批量处刑）
+  // （下游返回 -1）→ 整界面重启（JUMP 批量处刑）
   fixture.set_inputs(2001, 30, 121, 0, 100, 1999);
   await batch_execution(seq([0, 0]));
   // 名册行按「角色<ID> + 空格」认：方法界面的 [0]-[7] 也有 1 号快捷键

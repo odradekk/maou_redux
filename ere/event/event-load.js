@@ -44,6 +44,7 @@ const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { on, TIER } = require('#/system/event/registry');
 const maounet_mod = require('#/system/cross-save-sharing');
 const { ex_talentname_init } = require('#/chara/chara-ex');
+const { normalize_idle_status } = require('#/chara/chara-init');
 const { chara_name_init } = require('#/chara/chara-name-list');
 const era_flag = require('#/era-utils/era-flag');
 
@@ -66,6 +67,14 @@ on(
     chara_name_init();
     // EX素质名初始化（非存档表，读档后重放；重复调用按检查早退）
     ex_talentname_init();
+
+    // 待机档归一（#814）：引擎读档时会把角色文件里的状态预设补进旧存档里
+    // 从未写过的槽，而那些预设是原版的 1 = 待機——移植版没有这一档（四个
+    // 操作页都以 0 放行，全库从不写 1）。判据与各加入点共用，
+    // 见 chara-init.js 的 normalize_idle_status
+    for (const cid of era.getAddedCharacters()) {
+      normalize_idle_status(cid);
+    }
 
     // LASTLOAD_NO 999/1000+：普通读档界面仍只放行 0-99，故两支不可达；
     // 保留钩子，供 MAOUNET 的特殊档流程使用。

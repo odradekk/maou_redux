@@ -24,11 +24,11 @@
  *     （[0] 走 era_flag.last_save_no，[1..9] 直写；list_data 的高亮比较
  *     只读 [0]，裸名比较即如此）；
  *   - CSTR:MASTER:99（故事名）→ chara(0).system.故事名（门面访问器，
- *     cstr:0:99——ownership 属主 system；yml/CStr.yml 是空表（零条目），
- *     引擎对未登记下标原样回落数字寻址，可写可存；**不要**往该表补
- *     「故事名: 99」——登记进名字表的下标会被 addCharacter 的
- *     initCharaTable 预置 0，行为随之改变（简报事实 3 / #136）；门面命名
- *     是代码层动作（tools/facade-names.js），不碰 yml）；
+ *     cstr:0:99——ownership 属主 system；yml/CStr.yml 只登记角色预设用到的
+ *     两个下标，99 不在其中，引擎对未登记下标原样回落数字寻址，可写可存；
+ *     **不要**往该表补「故事名: 99」——登记进名字表的下标会被 addCharacter 的
+ *     initCharaTable 预置 0（字符串表预置 ''），行为随之改变（简报事实 3 /
+ *     #136）；门面命名是代码层动作（tools/facade-names.js），不碰 yml）；
  *   - SAVESTR:TARGET（build_save_info 的调教对象名）→ chara_callname(target)
  *     （读 callname:<角色号>:-1；#5 决议：SAVESTR 的名字承载归内置 callname）；
  *   - GETTIMES() → get_times()（`YYYY/MM/DD HH:MM:SS`，技能
