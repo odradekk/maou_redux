@@ -267,6 +267,51 @@ test('chara-body：胸围变化的重量差不再借 e:1 当临时变量（与�
   );
 });
 
+test('battle_legacy_reader：旧 E 列 100 槽的三段缺省值（0..10 共享具名字段 / 11..98 缺省 0 / 99 = count）', () => {
+  const fixture = create_era_fixture();
+  const {
+    BATTLE_COLUMN,
+    battle_column,
+    battle_legacy_reader,
+    reset_battle_state,
+  } = fixture.load_module('dungeon/battle-state');
+  reset_battle_state();
+  const row = battle_column(BATTLE_COLUMN.DEFENSE_1);
+  const { read, write } = battle_legacy_reader(0); // 基准 = 列头 0
+
+  // 0..10：与具名字段共享（精英路径的 +3 防御确实会改这一列的 defense）
+  assert.equal(read(0), 0);
+  write(3, 40);
+  assert.equal(row.defense, 40, 'offset 3 就是具名字段 defense');
+  assert.equal(read(3), 40);
+  write(0, 100);
+  assert.equal(row.id, 100, 'offset 0 就是具名字段 id');
+
+  // 11..98：单独存，缺省 0（不是 undefined），且互不串写
+  for (let offset = 11; offset < 99; offset += 1) {
+    assert.equal(read(offset), 0, `offset ${offset} 的读缺省值必须是 0`);
+  }
+  write(31, 7);
+  assert.equal(row.count, 0, 'legacy 槽不得串到 count');
+  assert.equal(read(31), 7);
+  assert.equal(read(32), 0, 'offset 32 读回 0（与 31 互不串写）');
+  assert.equal(row.defense, 40, 'legacy 槽不得串到具名字段');
+
+  // 99：数量槽
+  write(99, 3);
+  assert.equal(read(99), 3);
+  assert.equal(row.count, 3, 'offset 99 就是具名字段 count');
+
+  // 复位把 legacy 槽一起清掉，一列回到「十二个具名字段」的形状
+  reset_battle_state();
+  assert.deepEqual(row, zero_column());
+  assert.equal(read(31), 0, 'legacy 槽复位后读回 0（键已删）');
+
+  // 列号越界时同一条规则（读缺省 0，不抛错）
+  const far = battle_legacy_reader(999 * 100);
+  assert.equal(far.read(3), 0);
+});
+
 // —— 【战斗中能否存档】的机器判据 ——
 
 test('存档入口：玩家存档只有 SHOP 状态一处写点，战斗所在状态够不到它', () => {

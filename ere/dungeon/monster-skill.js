@@ -16,48 +16,7 @@ const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const { monstername } = require('#/dungeon/monster-data');
-const { BATTLE_FIELD_ORDER, battle_column } = require('#/dungeon/battle-state');
-
-/**
- * 旧 E 下标 → (列对象, 字段名)。
- *
- * 只服务一处既有怪癖：精英路径（`slave_monster_skill` → `use_monster_skill`
- * 的 `user_type === 2`）把**角色号**当列号传。旧写法拿它当 E 表下标用，
- * 读写落在 E:<角色号 + n>——也就是列 0 的若干槽；换成「角色号 = 列号」会
- * 落到另一个**真实列**的具名字段上（+2 防御会写到活着的防御列），那是行为
- * 变更。为了本票行为零变化，这条路径继续按旧下标换算；把它改成传正确的列
- * 是另一张票，届时本函数与 `BATTLE_FIELD_ORDER` 一起删。
- * @param {number} index 旧写法的 E 下标
- * @returns {{row: object, field: string}} 列对象与字段名
- */
-function legacy_cell(index) {
-  const offset = index % 100;
-  const field = offset === 99 ? 'count' : BATTLE_FIELD_ORDER[offset];
-  return { row: battle_column(Math.floor(index / 100)), field };
-}
-
-/**
- * 一组「按旧下标读写」的小工具：普通路径的基准是列头（列号 × 100），
- * 精英路径的基准是角色号本身（`cid` 给值时）。
- * @param {number} user 列号（普通路径）或角色号（精英路径）
- * @param {number} user_type 1/0 = 列号，2 = 角色号
- * @returns {{cell: Function, read: Function, write: Function}}
- */
-function legacy_reader(user, user_type) {
-  const base = user_type === 2 ? user : user * 100;
-  const cell = (offset) => legacy_cell(base + offset);
-  return {
-    cell,
-    read: (offset) => {
-      const { row, field } = cell(offset);
-      return row[field];
-    },
-    write: (offset, value) => {
-      const { row, field } = cell(offset);
-      row[field] = value;
-    },
-  };
-}
+const { battle_legacy_reader } = require('#/dungeon/battle-state');
 
 async function print_battle_line(text) {
   if ((game.dungeon.游戏设定 & 32) !== 0) {
@@ -66,7 +25,8 @@ async function print_battle_line(text) {
 }
 
 async function monster_skill(target, skill, user, rand = default_rand) {
-  const { read, write } = legacy_reader(user, 1);
+  // 基准 = 列头（列号 × 100）：本函数的调用方传的是列号
+  const { read, write } = battle_legacy_reader(user * 100);
   const level = read(1) + chara(0).chara.等级;
   let dmg = level;
   let palam_down = Math.trunc(dmg / 5) + 1;
@@ -164,7 +124,10 @@ async function monster_skill(target, skill, user, rand = default_rand) {
 }
 
 async function monster_room_skill(target, user, user_type) {
-  const { read, write } = legacy_reader(user, user_type);
+  // 基准：普通路径是列头（列号 × 100），精英路径是角色号本身（既有怪癖）
+  const { read, write } = battle_legacy_reader(
+    user_type === 2 ? user : user * 100,
+  );
   const monster_name = monstername(read(0));
   const level = read(1) + chara(0).chara.等级;
   const room = chara(target).dungeon.侵攻阶层; // CFLAG:501 = 所在房间
@@ -253,7 +216,10 @@ async function use_monster_skill(
   user_name,
   rand = default_rand,
 ) {
-  const { read, write } = legacy_reader(user, user_type);
+  // 基准：普通路径是列头（列号 × 100），精英路径是角色号本身（既有怪癖）
+  const { read, write } = battle_legacy_reader(
+    user_type === 2 ? user : user * 100,
+  );
   const monster_name = monstername(read(0));
   // 函数体会覆盖形参 dmg；精英等级 ×3 因而无效，有意保留。
   dmg = read(1) + chara(0).chara.等级;
@@ -334,7 +300,7 @@ async function use_monster_skill(
     add_defence(4);
   } else if (skill === 16) {
     // 不用传入的 user_name，而是把精英角色号当列号拼怪物名（既有怪癖，
-    // 按旧 E 下标换算，见 legacy_cell）。
+    // 按旧 E 下标换算，见 battle_legacy_reader）。
     await print_battle_line(`${monster_name}用弓箭发动了攻击！！（HP-${dmg}）`);
     target_view.dungeon.体力 -= dmg;
   } else if (skill === 17) {

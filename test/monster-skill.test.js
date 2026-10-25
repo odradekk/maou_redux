@@ -284,6 +284,28 @@ test('slave_monster_skill：没有值严格为 1 的素质时不发动', async (
   assert.equal(fixture.store.get('base:1:1'), 1000);
 });
 
+test('slave_monster_skill：角色号 ≥ 12 的精英（cid = 31）照旧版数值结算，不出现 NaN', async () => {
+  // 守旧行为：精英路径把角色号当 E 表下标用，cid = 31 读的是 E:31 / E:32 ——
+  // 旧表一列 100 槽，这两格恒 0（没人命名、没人写）。于是
+  //   dmg = 0 + chara(0).等级 10 = 10 → 气力 1000 - 10 = 990。
+  // 过渡层若只覆盖十二个具名字段，offset 31 会落到 undefined，dmg 变 NaN、
+  // 气力变 undefined——这条用例就是那次回归的钉子。修「角色号当列号」那张
+  // 票时要把它翻面（改成按列号取），注释与标题一并改。
+  const fixture = setup();
+  fixture.seed_chara(31, { id: 31, name: '菲娅', callname: '菲娅' });
+  fixture.era.addCharacter(31);
+  fixture.store.set('callname:31:-1', '菲娅');
+  fixture.store.set('base:31:11', 0); // 精英自身攻防与列无关，留空
+  fixture.store.set('talent:31:471', 1); // 粘液捕获
+  fixture.store.set('flag:5', 32); // 打开战斗日志，顺带核对文案里没有 NaN
+
+  await load(fixture).slave_monster_skill(1, 31, seq(1));
+
+  assert.equal(fixture.store.get('base:1:1'), 990, '旧版数值 1000 - 10');
+  const lines = fixture.text_lines().join('\n');
+  assert.doesNotMatch(lines, /NaN|undefined/, '文案里不得出现 NaN / undefined');
+});
+
 test('use_monster_skill：怪物类型写列里的防御，未知类型只演出不增益', async () => {
   const monster = setup();
   await load(monster).use_monster_skill(1, 5, 0, 0, 1, '狗头人', seq(0));

@@ -54,8 +54,8 @@ const COLUMN_COUNT = 6;
 /**
  * 字段名按原偏移表的次序（+0 … +10；+99 的 count 在表外）。
  *
- * 只给「把角色号当 E 表下标」那处既有怪癖换算用（monster-skill 的精英
- * 路径，见该文件的 legacy_cell）：那张工单修完之后本常量与那条路径一起删。
+ * 只给「把角色号当 E 表下标」那处既有怪癖换算用（见下面的
+ * `battle_legacy_reader`）：修那条怪癖的工单里，本常量与过渡层一起删。
  */
 const BATTLE_FIELD_ORDER = Object.freeze([
   'id',
@@ -98,6 +98,60 @@ function battle_column(column) {
   return row === undefined ? out_of_range : row;
 }
 
+/** 一列的标准字段集（十二项）；其余键是过渡层的 legacy 槽 */
+const COLUMN_FIELDS = Object.freeze([...BATTLE_FIELD_ORDER, 'count']);
+
+/**
+ * 旧 E 列的一格：把「列号 + 0..99 的偏移」换算到 (列对象, 键名)。
+ *
+ * 旧 E 表一列有 **100 个槽**（码距 100），而已具名化的只有十二个：+0…+10 与
+ * +99。剩下 11…98 在旧表里同样存在（没人命名、恒 0），但「把角色号当列偏移」
+ * 那条怪癖会踩到它们（`E:<角色号 + n>`），所以这一段单独存：
+ *
+ *   - offset 0…10  → `BATTLE_FIELD_ORDER[offset]`（与具名字段**共享**：
+ *     精英路径的 `+3 防御` 确实会改列 0 的 defense）
+ *   - offset 11…98 → `legacy_<offset>`（惰性、缺省 0，谁都不读）
+ *   - offset 99    → `count`
+ *
+ * 读缺省 **0** 而不是 undefined——旧 `e_get` 就是 `era.get(...) || 0`，
+ * 缺省成 undefined 会让 `dmg + 等级` 变成 NaN。
+ * @param {number} index 旧写法的 E 下标
+ * @returns {{row: object, field: string}} 列对象与键名
+ */
+function battle_legacy_cell(index) {
+  const offset = index % 100;
+  const field =
+    offset === 99
+      ? 'count'
+      : offset < BATTLE_FIELD_ORDER.length
+        ? BATTLE_FIELD_ORDER[offset]
+        : `legacy_${offset}`;
+  return { row: battle_column(Math.floor(index / 100)), field };
+}
+
+/**
+ * 按旧 E 下标读写的过渡层（读缺省 0，写落 `battle_legacy_cell` 给出的槽）。
+ *
+ * 只服务一处既有怪癖：精英路径把角色号当列号传（monster-skill 的
+ * `use_monster_skill` 在 `user_type === 2` 时）。换成「角色号 = 列号」会让
+ * 读写落到另一个**真实列**的具名字段上（`+2 防御` 会写到活着的防御列），
+ * 那是行为变更；这条路径继续按旧下标换算，修怪癖另开工单。
+ * @param {number} base 旧写法的基准下标（普通路径 = 列号 × 100）
+ * @returns {{read: Function, write: Function}} 按偏移读写
+ */
+function battle_legacy_reader(base) {
+  return {
+    read: (offset) => {
+      const { row, field } = battle_legacy_cell(base + offset);
+      return row[field] || 0; // 旧 e_get 的 `|| 0`：缺省 0，不吃 undefined
+    },
+    write: (offset, value) => {
+      const { row, field } = battle_legacy_cell(base + offset);
+      row[field] = value;
+    },
+  };
+}
+
 /**
  * 清空全部列（新游戏与用例的复位用）。
  *
@@ -106,15 +160,22 @@ function battle_column(column) {
  * @returns {void}
  */
 function reset_battle_state() {
-  for (const row of columns) {
+  for (const row of [...columns, out_of_range]) {
+    // 过渡层的 legacy 槽一并清掉，复位后一列回到「十二个具名字段」的形状
+    for (const key of Object.keys(row)) {
+      if (!COLUMN_FIELDS.includes(key)) {
+        delete row[key];
+      }
+    }
     Object.assign(row, new_column());
   }
-  Object.assign(out_of_range, new_column());
 }
 
 module.exports = {
   BATTLE_COLUMN,
   BATTLE_FIELD_ORDER,
   battle_column,
+  battle_legacy_cell,
+  battle_legacy_reader,
   reset_battle_state,
 };

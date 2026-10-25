@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 329; // #883 +10（M16850-M16859：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 331; // #883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -2930,8 +2930,9 @@ export default [
   {
     desc: 'M16851 reset_battle_state 换成新数组（列引用脱开）',
     file: 'ere/dungeon/battle-state.js',
-    find: '  for (const row of columns) {\n    Object.assign(row, new_column());\n  }',
-    replace: '  columns = Array.from({ length: COLUMN_COUNT }, new_column);',
+    find: '  for (const row of [...columns, out_of_range]) {',
+    replace:
+      '  columns = columns.map(() => new_column());\n  for (const row of [out_of_range]) {',
     tests: ['dungeon-battle-state'],
     must_mention: '复位后必须还是同一个对象',
   },
@@ -3000,5 +3001,22 @@ export default [
       "    bust_weight -= previous;\n    require('#/dungeon/battle-state').battle_column(0).level = bust_weight; // 变异\n  }",
     tests: ['dungeon-battle-state'],
     must_mention: '第 1 列等级槽不该被身体生成写入',
+  },
+  {
+    desc: 'M16860 legacy 过渡层只覆盖十二个具名字段（offset ≥ 12 读成 undefined）',
+    file: 'ere/dungeon/battle-state.js',
+    find: '      : offset < BATTLE_FIELD_ORDER.length\n        ? BATTLE_FIELD_ORDER[offset]\n        : `legacy_${offset}`;',
+    replace: '      : BATTLE_FIELD_ORDER[offset]; // 变异：不覆盖 11..98',
+    tests: ['dungeon-battle-state'],
+    must_mention: 'offset 32 读回 0（与 31 互不串写）',
+  },
+  {
+    desc: 'M16861 legacy 过渡层把 11..98 也映射到 count（三段错位）',
+    file: 'ere/dungeon/battle-state.js',
+    find: "      ? 'count'\n      : offset < BATTLE_FIELD_ORDER.length",
+    replace:
+      "      ? 'count'\n      : offset > 10 // 变异：11..98 一律落 count\n        ? 'count'\n        : offset < BATTLE_FIELD_ORDER.length",
+    tests: ['dungeon-battle-state'],
+    must_mention: 'legacy 槽不得串到 count',
   },
 ];
