@@ -20,7 +20,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { compile_kojo } = require('./engine-bundle');
-const { yml_declared_ids, yml_name_table } = require('./static-names');
+const {
+  yml_declared_ids,
+  yml_extended_chara_tables,
+  yml_name_table,
+} = require('./static-names');
 
 // '#/xxx' 一律映射到 <仓库>/ere/xxx，与引擎行为及 ere/jsconfig.json 的别名一致
 const ERE_DIR = path.resolve(__dirname, '..', '..', 'ere');
@@ -1306,8 +1310,10 @@ function create_era_fixture() {
   //
   // 结构按 resetData / resetGlobal / addCharacter / beginTrain 的原文骨架
   // （引擎逐字，test/fixture-raw.test.js 驱动真 resetData 比对）：
-  //   - 顶层恒有 resetData 字面量的 19 张表；code / version 是数字，item 是
-  //     四个子表（bought 初值 -1，引擎字面量）；
+  //   - 顶层恒有 resetData 字面量的 19 张表，外加 yml/_fixed.json 登记的扩展
+  //     角色表（引擎 fillData 为每张登记表建顶层桶，前提是名字表在场；本项目
+  //     登记的四张都有 yml 文件）。code / version 是数字，item 是四个子表
+  //     （bought 初值 -1，引擎字面量）；
   //   - 调教表只有 beginTrain 之后存在；source 例外，它由 resetData 预建、
   //     beginTrain 重建、endTrain 删；
   //   - 逐角色行只对 addCharacter 过的角色存在（调教表对 addCharacterForTrain
@@ -1338,8 +1344,10 @@ function create_era_fixture() {
     'source',
     'talent',
     'version',
+    ...yml_extended_chara_tables(),
   ];
-  // addCharacter 逐角色建的行（方法体里的那 12 条 `this.data[表][n]={}`）
+  // addCharacter 逐角色建的行（方法体里的那 12 条 `this.data[表][n]={}`，外加
+  // 扩展角色表的同款建桶）
   const CHARA_TABLES = [
     'abl',
     'base',
@@ -1353,6 +1361,7 @@ function create_era_fixture() {
     'maxbase',
     'relation',
     'talent',
+    ...yml_extended_chara_tables(),
   ];
   // beginTrain 建的表；其中带逐角色行的列在 TRAIN_CHARA_TABLES（tflag 是一维表）
   const TRAIN_TABLES = [

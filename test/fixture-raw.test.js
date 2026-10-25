@@ -27,6 +27,7 @@ const {
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
 const { load_repo_variable_tables } = require('./helpers/static-tables');
+const { yml_extended_chara_tables } = require('./helpers/static-names');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -116,7 +117,9 @@ test('raw().data 的骨架按 resetData 字面量：19 张表、item 四个子�
   const fixture = create_era_fixture();
   const { data } = fixture.era.raw();
 
-  assert.deepEqual(Object.keys(data).sort(), [
+  // resetData 的 19 个键 + yml/_fixed.json 登记的扩展角色表（引擎 fillData
+  // 为每张登记表建顶层桶）
+  const expected = [
     'abl',
     'base',
     'callname',
@@ -136,7 +139,10 @@ test('raw().data 的骨架按 resetData 字面量：19 张表、item 四个子�
     'source',
     'talent',
     'version',
-  ]);
+    ...yml_extended_chara_tables(),
+  ];
+  assert.deepEqual(Object.keys(data).sort(), expected.sort());
+  assert.ok(yml_extended_chara_tables().length > 0, '本项目登记了扩展角色表');
   assert.ok('flag' in data, '空表也在：表的存在性不取决于写过没有');
   assert.deepEqual(Object.keys(data.item), [
     'bought',
@@ -175,6 +181,15 @@ test('读没加入的角色的具名属性抛 TypeError（与引擎一致）', (
   assert.equal(typeof data.abl[31], 'object');
   assert.deepEqual(Object.keys(data.abl), ['31'], '行集合只含已加入的角色');
   assert.equal(data.abl[31][10], undefined);
+  // 扩展角色表同样逐角色建行（引擎 addCharacter 的扩展表段）
+  for (const table of yml_extended_chara_tables()) {
+    assert.equal(typeof data[table][31], 'object', `${table} 的行随加入建`);
+    assert.throws(
+      () => data[table][21][0],
+      TypeError,
+      `扩展角色表 ${table} 没加入的角色同样抛 TypeError`,
+    );
+  }
 
   // 没加入的角色：data.abl 里根本没有那一行——`undefined[序号]` 与引擎同样抛
   for (const table of ['abl', 'base', 'callname', 'maxbase', 'talent']) {
@@ -266,10 +281,26 @@ function engine_static_data(fixture) {
   return tables.static_data;
 }
 
+/**
+ * 引擎侧的扩展角色表登记：与 yml/_fixed.json 同源（全部按 tableType.chara）。
+ * filler / addCharacter 靠它建顶层桶与逐角色行，夹具靠同一份配置建骨架——
+ * 两侧的顶层表集合因此可以直接比。
+ * @returns {Object<string, number>} 表名 → tableType.chara
+ */
+function engine_extended_tables() {
+  return Object.fromEntries(
+    yml_extended_chara_tables().map((table) => [
+      table,
+      engine.era_api.tableType.chara,
+    ]),
+  );
+}
+
 engine_test('引擎比对：raw().data 的顶层表集合与 resetData 一致', () => {
   const fixture = create_era_fixture();
   const engine_data = create_engine_data({
     static_data: engine_static_data(fixture),
+    extended_tables: engine_extended_tables(),
   });
   engine_data.reset_data();
 
@@ -335,6 +366,7 @@ engine_test('引擎比对：加入角色的行集合与未加入角色的 TypeEr
   fixture.era.addCharacter(31);
   const engine_data = create_engine_data({
     static_data: engine_static_data(fixture),
+    extended_tables: engine_extended_tables(),
   });
   engine_data.reset_data();
   engine_data.add(31);
@@ -359,6 +391,7 @@ engine_test('引擎比对：加入角色的行集合与未加入角色的 TypeEr
     'maxbase',
     'relation',
     'talent',
+    ...yml_extended_chara_tables(),
   ]) {
     assert.deepEqual(
       Object.keys(fixture_raw.data[table]).sort(),
@@ -406,6 +439,7 @@ engine_test(
     fixture.era.addCharacter(31);
     const engine_data = create_engine_data({
       static_data: engine_static_data(fixture),
+      extended_tables: engine_extended_tables(),
     });
     engine_data.reset_data();
     engine_data.add(31);
@@ -444,6 +478,7 @@ engine_test('引擎比对：raw() 的路径与引擎 setVar 落在同一处', as
   fixture.era.beginTrain(31);
   const engine_data = create_engine_data({
     static_data: engine_static_data(fixture),
+    extended_tables: engine_extended_tables(),
   });
   engine_data.reset_data();
   engine_data.add(31);

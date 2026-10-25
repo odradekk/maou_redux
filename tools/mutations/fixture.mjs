@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 94; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 96; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -1016,7 +1016,7 @@ export default [
     replace:
       '      if (table_rows(table).includes(second) || /^\\d+$/.test(second)) {\n        return true; // 变异：任何数字角色都算有行\n      }',
     tests: ['fixture-raw'],
-    must_mention: '没有 21 这一行',
+    must_mention: '没加入的角色同样抛 TypeError',
   },
   {
     desc: 'M16302 夹具 raw() 的逐角色行不随 addCharacter 建（已加入角色的行也缺）',
@@ -1104,5 +1104,22 @@ export default [
       '  // 变异：视图不读平表，叶子一律 undefined\n  const raw_leaf_value = (key) => undefined;',
     tests: ['fixture-raw'],
     must_mention: 'era.set / era.add 写入后 raw() 读到同一槽',
+  },
+  {
+    desc: 'M16312 夹具 raw() 的扩展角色表不建顶层桶（_fixed.json 的登记不入骨架）',
+    file: 'test/helpers/era-fixture.js',
+    find: "    'talent',\n    'version',\n    ...yml_extended_chara_tables(),\n  ];",
+    replace:
+      "    'talent',\n    'version',\n  ]; // 变异：扩展角色表不建顶层桶",
+    tests: ['fixture-raw'],
+    must_mention: 'raw().data 的骨架按 resetData 字面量',
+  },
+  {
+    desc: 'M16313 夹具 raw() 的扩展角色表不随 addCharacter 建行',
+    file: 'test/helpers/era-fixture.js',
+    find: "    'relation',\n    'talent',\n    ...yml_extended_chara_tables(),\n  ];",
+    replace: "    'relation',\n    'talent',\n  ]; // 变异：扩展角色表不建行",
+    tests: ['fixture-raw'],
+    must_mention: '的行随加入建',
   },
 ];

@@ -115,8 +115,40 @@ function yml_name_table(table) {
   return name_maps_cache.get(table);
 }
 
+let extended_chara_tables;
+
+/**
+ * yml/_fixed.json 里登记的扩展角色表（引擎侧 `system.extendedCharaTables`，
+ * 全部按 tableType.chara 登记）。引擎在 resetData → fillData 与 addCharacter
+ * 里为每张登记表建顶层桶、为每个已加入角色建行，所以它们的「在不在」属于
+ * 数据层结构的一部分（夹具的 raw() 视图要用）。
+ *
+ * 读不到配置时返回空数组：裸克隆里 yml/ 一定在，这条兜底只对应配置被删或
+ * JSON 解不开的情形——那时引擎同样没有扩展表可登记。
+ * @returns {string[]} 表名（小写，与引擎的键一致）
+ */
+function yml_extended_chara_tables() {
+  if (extended_chara_tables === undefined) {
+    let tables = [];
+    try {
+      const config = JSON.parse(
+        fs.readFileSync(path.join(YML_DIR, '_fixed.json'), 'utf8'),
+      );
+      const declared = config?.system?.extendedCharaTables;
+      if (Array.isArray(declared)) {
+        tables = declared.map((table) => String(table).toLowerCase());
+      }
+    } catch {
+      tables = [];
+    }
+    extended_chara_tables = tables;
+  }
+  return extended_chara_tables;
+}
+
 module.exports = {
   parse_yml_ids,
   yml_declared_ids,
+  yml_extended_chara_tables,
   yml_name_table,
 };
