@@ -98,4 +98,23 @@ async function char_init(cid, rand) {
   return cid; // 返回角色号
 }
 
-module.exports = { char_init };
+/**
+ * normalize_idle_status：把状态 1（角色文件里的原版「待機」）归 0（在城里
+ * 可操作）。
+ *
+ * 移植版的状态模型没有待机档：全库的状态写点只有 0（在城里可操作）、
+ * 2（侵攻中）、3（迎击中）、5/6（战斗结果）、7（苗床）、9（NTR 中）、
+ * 10（育儿室）、11（召唤酔）、12（战役派遣），四个操作页（可选目标、能力
+ * 提升、换号、派遣）都以 0 放行。1 只会从预设进来：加入点没写状态的路径由
+ * 引擎抄进角色文件里的 1，0.1.0 的存档则在读档时由引擎的 fillData 补进来。
+ * 两处（加入点与读档钩子）共用这一个判据，免得「什么时候加入」决定行为。
+ *
+ * @param {number} cid 角色 ID
+ */
+function normalize_idle_status(cid) {
+  if (chara(cid).invasion.状态 === 1) {
+    chara(cid).invasion.状态 = 0;
+  }
+}
+
+module.exports = { char_init, normalize_idle_status };

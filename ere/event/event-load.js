@@ -44,8 +44,8 @@ const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { on, TIER } = require('#/system/event/registry');
 const maounet_mod = require('#/system/cross-save-sharing');
 const { ex_talentname_init } = require('#/chara/chara-ex');
+const { normalize_idle_status } = require('#/chara/chara-init');
 const { chara_name_init } = require('#/chara/chara-name-list');
-const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
@@ -68,16 +68,12 @@ on(
     // EX素质名初始化（非存档表，读档后重放；重复调用按检查早退）
     ex_talentname_init();
 
-    // 待机档归一（#814）：移植版的状态模型没有「待机」——全库的写点是 0
-    // （在城里可操作）、2（侵攻中）、3（迎击中）、7（苗床）、9（NTR 中）、
-    // 10（育儿室）、11（召唤酔）、12（战役派遣），从不写 1，而四个操作页
-    // （可选目标/能力提升/换号/派遣）都以 0 放行。角色文件里原版的
-    // 1 = 待機 只会在读档补槽时出现：0.1.0 的存档里没有这些槽，引擎按角色
-    // 预设填值。这里把它归 0，等于退回补槽之前读到的 0，旧存档的操作面不变
+    // 待机档归一（#814）：引擎读档时会把角色文件里的状态预设补进旧存档里
+    // 从未写过的槽，而那些预设是原版的 1 = 待機——移植版没有这一档（四个
+    // 操作页都以 0 放行，全库从不写 1）。判据与各加入点共用，
+    // 见 chara-init.js 的 normalize_idle_status
     for (const cid of era.getAddedCharacters()) {
-      if (chara(cid).invasion.状态 === 1) {
-        chara(cid).invasion.状态 = 0;
-      }
+      normalize_idle_status(cid);
     }
 
     // LASTLOAD_NO 999/1000+：普通读档界面仍只放行 0-99，故两支不可达；

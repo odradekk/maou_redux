@@ -3244,16 +3244,15 @@ export default [
     tests: ['event-load'],
     must_mention: '钩子链必须真的调用 era.loadGlobal',
   },
-  // —— #814：读档时待机档归一为 0 ——
+  // —— #814：读档与苏生共用的待机档归一 ——
   {
-    desc: 'M15860 eventload 漏掉待机档归一（0.1.0 存档里的状态 1 留在四个操作页之外，#814）',
-    file: 'ere/event/event-load.js',
-    find: `      if (chara(cid).invasion.状态 === 1) {
-        chara(cid).invasion.状态 = 0;
-      }`,
-    replace: `      // 变异：漏掉待机档归一`,
-
-    tests: ['event-load'],
+    desc: 'M15860 待机档归一变成空操作（0.1.0 存档里的状态 1 与苏生出来的角色都留在四个操作页之外，#814）',
+    file: 'ere/chara/chara-init.js',
+    find: `  if (chara(cid).invasion.状态 === 1) {
+    chara(cid).invasion.状态 = 0;
+  }`,
+    replace: `  // 变异：漏掉待机档归一`,
+    tests: ['event-load', 'page-shop-labo'],
     must_mention: '待机档归 0（在城里可操作）',
   },
   // —— #572：结局与日循环菜单的选项按钮化 ——

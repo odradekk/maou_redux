@@ -94,6 +94,8 @@ test('研究所复活：resulection 也不补写 mark:34:4（预设随 addCharac
   }
   fixture.store.set('exp:0:81', 5); // 勋章经验（> 0 才进复活流程）
   fixture.store.set('flag:1033', -2); // 条件（可复活）
+  // 34 的状态预设是 2（侵攻中）：待机档归一只针对 1，2 必须原样保留
+  fixture.store.set('cflag:34:1', 2);
   fixture.set_inputs(0, 133); // 确定 → 选 34 号
   const { resulection } = fixture.load_module('page/page-shop-labo');
 
@@ -103,6 +105,11 @@ test('研究所复活：resulection 也不补写 mark:34:4（预设随 addCharac
     '34 号被 addCharacter 收回',
   );
   assert.equal(fixture.store.get('mark:34:4'), 3, '复活后仍是预设的 3');
+  assert.equal(
+    fixture.store.get('cflag:34:1'),
+    2,
+    '侵攻中的状态不被待机档归一改掉',
+  );
   assert(
     !fixture.var_writes.some((write) => write.name === 'mark:34:4'),
     '复活路径同样不补写——所有加入点共用 addCharacter 的预设通道',
