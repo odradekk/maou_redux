@@ -868,18 +868,24 @@ function create_era_fixture() {
   // 数组），写路径同样落到数组第 n 位，不另开一只槽——否则视图与 era.get
   // 会在 `no:` 上分叉
   const NO_ADDRESS = /^no:(\d+)$/;
+  const write_no = (address, value) => {
+    const match = NO_ADDRESS.exec(address);
+    if (match === null) {
+      return false;
+    }
+    chara_no[Number(match[1])] = value;
+    return true;
+  };
   era.set = (var_name, value) => {
     const address = normalize_address(var_name);
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined; // 引擎静默丢弃：不落盘、不留写记录
     }
-    const no_match = NO_ADDRESS.exec(address);
-    if (no_match !== null) {
-      chara_no[Number(no_match[1])] = value;
-      var_writes.push({ name: var_name, value });
-      return value;
-    }
     const next = clamp_base_value(address, value);
+    if (write_no(address, next)) {
+      var_writes.push({ name: var_name, value: next });
+      return next;
+    }
     store.set(address, next);
     var_writes.push({ name: var_name, value: next });
     return next;
@@ -893,15 +899,18 @@ function create_era_fixture() {
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
-    const no_match = NO_ADDRESS.exec(address);
-    if (no_match !== null) {
-      const index = Number(no_match[1]);
-      chara_no[index] = (chara_no[index] ?? 0) + value;
-      var_writes.push({ name: var_name, value: chara_no[index] });
-      return chara_no[index];
+    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算（no:<n> 的现值
+    // 在活数组里，不在平表上）
+    const no_index = NO_ADDRESS.exec(address);
+    const current =
+      no_index === null
+        ? (store.get(address) ?? 0)
+        : (chara_no[Number(no_index[1])] ?? 0);
+    const next = clamp_base_value(address, current + value);
+    if (write_no(address, next)) {
+      var_writes.push({ name: var_name, value: next });
+      return next;
     }
-    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算
-    const next = clamp_base_value(address, (store.get(address) ?? 0) + value);
     store.set(address, next);
     var_writes.push({ name: var_name, value: next });
     return next;

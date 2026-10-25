@@ -200,6 +200,12 @@ test('读没加入的角色的具名属性抛 TypeError（与引擎一致）', (
       `读没加入的角色的 ${table} 具名属性抛 TypeError`,
     );
   }
+  // 列也来自数据层：callname 的两个负序号键是 addCharacter 写进 store 的
+  assert.deepEqual(
+    Object.keys(data.callname[31]).sort(),
+    ['-1', '-2'],
+    'callname 行的列来自写入的键',
+  );
 });
 
 test('调教表与 data.no：调教期之外不存在，在训角色才有行', () => {
@@ -214,6 +220,12 @@ test('调教表与 data.no：调教期之外不存在，在训角色才有行', 
   assert.equal(fixture.era.get('no:0'), 31, 'era.get 的 no:<n> 读同一位');
   assert.equal(fixture.era.get('no:1'), 0);
   assert.equal(raw.data.no, fixture.chara_no, 'no 就是夹具维护的那只数组');
+
+  // 写路径同样落在活数组上（与 era.get / raw() 的读同源）
+  fixture.era.set('no:1', 7);
+  assert.equal(raw.data.no[1], 7, 'era.set 写 no:<n> 落数组');
+  assert.equal(fixture.era.add('no:1', 3), 10, 'era.add 按数组现值累加');
+  assert.equal(fixture.era.get('no:1'), 10);
 
   assert.throws(
     () => raw.data.palam[31][5],

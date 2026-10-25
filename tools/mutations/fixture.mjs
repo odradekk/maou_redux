@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 96; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 99; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -986,16 +986,14 @@ export default [
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
-    const no_match = NO_ADDRESS.exec(address);
-    if (no_match !== null) {
-      const index = Number(no_match[1]);`,
+    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算（no:<n> 的现值
+    // 在活数组里，不在平表上）`,
     replace: `    const address = var_name; // 变异：累加路径不归一
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
-    const no_match = NO_ADDRESS.exec(address);
-    if (no_match !== null) {
-      const index = Number(no_match[1]);`,
+    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算（no:<n> 的现值
+    // 在活数组里，不在平表上）`,
     tests: ['fixture'],
     must_mention: 'era.add 按序号累加',
   },
@@ -1121,5 +1119,31 @@ export default [
     replace: "    'relation',\n    'talent',\n  ]; // 变异：扩展角色表不建行",
     tests: ['fixture-raw'],
     must_mention: '的行随加入建',
+  },
+  {
+    desc: 'M16314 夹具 no:<n> 的写路径不落活数组（set / add 与 raw().data.no 分叉）',
+    file: 'test/helpers/era-fixture.js',
+    find: '  const write_no = (address, value) => {\n    const match = NO_ADDRESS.exec(address);\n    if (match === null) {\n      return false;\n    }\n    chara_no[Number(match[1])] = value;\n    return true;\n  };',
+    replace:
+      '  const write_no = (address, value) => {\n    const match = NO_ADDRESS.exec(address);\n    if (match === null) {\n      return false;\n    }\n    return true; // 变异：no 写不落数组\n  };',
+    tests: ['fixture-raw'],
+    must_mention: 'era.set 写 no:<n> 落数组',
+  },
+  {
+    desc: 'M16315 夹具 raw() 的 in 恒假（骨架表与叶子都判不出存在）',
+    file: 'test/helpers/era-fixture.js',
+    find: "      has(_target, prop) {\n        return typeof prop !== 'symbol' && resolve(key_of(prop)) !== undefined;\n      },",
+    replace:
+      '      has(_target, prop) {\n        return false; // 变异：in 恒假\n      },',
+    tests: ['fixture-raw'],
+    must_mention: '空表也在：表的存在性不取决于写过没有',
+  },
+  {
+    desc: 'M16316 夹具 raw() 的列不进枚举（行的列集合恒空）',
+    file: 'test/helpers/era-fixture.js',
+    find: "      if (cut >= 0) {\n        children.add(rest.slice(0, cut));\n      } else if (head !== '') {\n        children.add(rest);\n      }",
+    replace: '      // 变异：子段不进枚举',
+    tests: ['fixture-raw'],
+    must_mention: 'callname 行的列来自写入的键',
   },
 ];
