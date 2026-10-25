@@ -5,10 +5,10 @@
  * 本项目画面组件不复刻纯视觉状态（同 LIFE_BAR/立绘先例）。过滤状态里
  * 颜色是唯一状态载体，改用「〇/×」文字标记保留可读信息，不静默丢弃。
  *
- * 按钮不能拼接：printButton 独占一行，「不换行输出 + 状态函数接着打印」
- * 拼一行的写法在这里行不通。凡状态展示依赖独立函数的选项
- * （[13]/[21]/[27]/[29]），改造成 `*_text()` 纯文本 helper 供行内按钮拼接；
- * 状态文本没有第二个调用方，不再保留独立打印包装。
+ * 设置项按网格排：标签是按钮格、状态是文本格，两格定宽同事一行（
+ * `config_row`）。状态文案仍由 `*_text()` 纯文本 helper 提供——它只产文本，
+ * 送入状态格，不再塞进按钮正文（按钮正文里的连续空白会被引擎折叠，
+ * 补位对不齐）。状态文本没有第二个调用方，不保留独立打印包装。
  *
  * 每个选择循环每轮绘制前换屏（ADR-0009）：画面上只有当前这一屏的菜单。
  */
@@ -22,6 +22,7 @@ const { config_age_setting } = require('#/page/page-config-age');
 const { get_look_info, KIND } = require('#/chara/look-info');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** GETBIT(X, n)：FLAG:5 用到位 32-36，位运算在 JS 里按 32 位截断会溢出，改算术运算 */
 function getbit(v, n) {
@@ -42,6 +43,35 @@ const FILTER_LABELS = [
   'ＳＭ系过滤',
 ];
 
+/** 设置项两格的宽度（引擎 24 列网格）：标签按钮 12 列、状态文本 12 列 */
+const CONFIG_LABEL_WIDTH = 12;
+const CONFIG_STATUS_WIDTH = 12;
+
+/**
+ * 一条设置项：标签按钮与状态文本各占一格、同处一行。
+ *
+ * 状态不再跟在标签正文里补全角空格——引擎渲染按钮时把连续空白折叠成一个
+ * 空格，补位在实机上不起作用；两格定宽由网格保证状态列从同一列起算。
+ * @param {string} label 设置项名（按钮正文，不带编号前缀）
+ * @param {string} status 状态文案（「现在：…」）
+ * @param {number} accelerator 选项编号
+ */
+function config_row(label, status, accelerator) {
+  era.printMultiColumns([
+    {
+      type: 'button',
+      accelerator,
+      content: label,
+      config: { width: CONFIG_LABEL_WIDTH, align: 'left' },
+    },
+    {
+      type: 'text',
+      content: status,
+      config: { width: CONFIG_STATUS_WIDTH, align: 'left' },
+    },
+  ]);
+}
+
 /**
  * config_filter_setting：调教指令过滤开关（FLAG:25 位 0-4，
  * game.train.指令过滤）。
@@ -53,16 +83,7 @@ async function config_filter_setting() {
     await change_screen();
     const v = game.train.指令过滤;
     for (let i = 0; i < FILTER_LABELS.length; i++) {
-      // 字符串用 + 拼接而非模板串：ESLint no-irregular-whitespace 默认跳过普通
-      // 字符串字面量、不跳过模板字面量，本行的全角空格填充需要避开这条差异
-      era.printButton(
-        FILTER_LABELS[i] +
-          '　' +
-          (i <= 1 ? '　' : '') +
-          ' 现在：' +
-          (getbit(v, i) ? 'ON' : 'OFF'),
-        i,
-      );
+      config_row(FILTER_LABELS[i], `现在：${getbit(v, i) ? 'ON' : 'OFF'}`, i);
     }
     era.drawLine();
     era.printButton('返回', 100);
@@ -77,8 +98,8 @@ async function config_filter_setting() {
 }
 
 /**
- * filter_status_text：过滤状态单行摘要。文本内联进 [13] 按钮行（见文件头
- * 「按钮不能拼接」），本函数是唯一文本载体，颜色不镜像（改〇/× 文字标记）。
+ * filter_status_text：过滤状态单行摘要。文本进 [13] 行的状态格（见文件头
+ * 「设置项按网格排」），本函数是唯一文本载体，颜色不镜像（改〇/× 文字标记）。
  */
 function filter_status_text() {
   const v = game.train.指令过滤;
@@ -119,7 +140,7 @@ async function config_virgin_conceded_setting() {
 
 /**
  * virgin_conceded_status_text：三态文案（从不发生/每人一次/持续触发）。
- * 文本内联进 [21] 按钮行，本函数是唯一文本载体。
+ * 文本进 [21] 行的状态格，本函数是唯一文本载体。
  */
 function virgin_conceded_status_text() {
   const v = era_flag.virgin_conceded_mode;
@@ -176,7 +197,7 @@ async function config_penis_you_setting() {
 /**
  * adventurer_gender_status_text：冒险者性别限制的档位文案。该设定是公共
  * 存档变量，#547 落 yml/Global.yml id 3（era_global.adventurer_gender）：
- * EVENTFIRST 链开局重置 -1，[27] 六档循环。文本内联进 [27] 按钮行，
+ * EVENTFIRST 链开局重置 -1，[27] 六档循环。文本进 [27] 行的状态格，
  * 本函数是唯一文本载体。
  */
 function adventurer_gender_status_text() {
@@ -202,7 +223,7 @@ function adventurer_gender_status_text() {
  * prostitution_effect_status_text：卖淫对奴隶售价影响的档位文案。该设定
  * 是存档变量，#547 落 yml/ModSave.yml id 0（era_modsave.prostitution_effect）：
  * 0 负面（未初始化即 0，文案自带「（默认设置）」）、1 正面、2 无影响。
- * 文本内联进 [29] 按钮行，本函数是唯一文本载体。
+ * 文本进 [29] 行的状态格，本函数是唯一文本载体。
  */
 function prostitution_effect_status_text() {
   if (era_modsave.prostitution_effect === 0) {
@@ -217,134 +238,115 @@ function prostitution_effect_status_text() {
 function draw_config_page(page) {
   era.drawLine();
   const v5 = game.dungeon.游戏设定;
-  // 字符串用 + 拼接而非模板串：ESLint no-irregular-whitespace 默认跳过普通
-  // 字符串字面量、不跳过模板字面量，本函数大量全角空格填充需要避开这条差异
   if (page === 0) {
-    era.printButton(
-      '勇者投降后的凌辱　　　　　现在：' + (getbit(v5, 0) ? '许可' : '禁止'),
+    config_row(
+      '勇者投降后的凌辱',
+      `现在：${getbit(v5, 0) ? '许可' : '禁止'}`,
       0,
     );
-    era.printButton(
-      '勇者强化　　　　　　　　　现在：' +
-        (getbit(v5, 1) ? '新的勇者会随游戏天数按比例增强' : '勇者等级维持'),
+    config_row(
+      '勇者强化',
+      `现在：${getbit(v5, 1) ? '新的勇者会随游戏天数按比例增强' : '勇者等级维持'}`,
       1,
     );
-    era.printButton(
-      '怀孕分娩机能　　　　　　　现在：' + (getbit(v5, 2) ? 'ON' : 'OFF'),
-      2,
-    );
-    era.printButton(
-      '勇者自动处刑机能　　　　　现在：' + (getbit(v5, 3) ? 'ON' : 'OFF'),
-      3,
-    );
-    era.printButton(
-      '怪物迎击　　　　　　　    现在：' +
-        (getbit(v5, 4) ? '关闭' : '开启 (+怪物会和迎击的奴隶进行训练)'),
+    config_row('怀孕分娩机能', `现在：${getbit(v5, 2) ? 'ON' : 'OFF'}`, 2);
+    config_row('勇者自动处刑机能', `现在：${getbit(v5, 3) ? 'ON' : 'OFF'}`, 3);
+    config_row(
+      '怪物迎击',
+      `现在：${getbit(v5, 4) ? '关闭' : '开启 (+怪物会和迎击的奴隶进行训练)'}`,
       4,
     );
-    era.printButton(
-      '显示战斗记录　　　　　　　现在：' + (getbit(v5, 5) ? 'ON' : 'OFF'),
-      5,
-    );
-    era.printButton(
-      '自动补充陷阱　　　　　　　现在：' + (getbit(v5, 6) ? 'ON' : 'OFF'),
-      6,
-    );
-    era.printButton(
-      'NTR机能　 　　　　　　　　现在：' + (getbit(v5, 7) ? 'ON' : 'OFF'),
-      7,
-    );
-    era.printButton(
-      '素质分类显示　　　　　　　现在：' + (getbit(v5, 8) ? 'ON' : 'OFF'),
-      8,
-    );
-    era.printButton(
-      '战斗记录的SKIP中断　　　　现在：' + (getbit(v5, 9) ? 'ON' : 'OFF'),
+    config_row('显示战斗记录', `现在：${getbit(v5, 5) ? 'ON' : 'OFF'}`, 5);
+    config_row('自动补充陷阱', `现在：${getbit(v5, 6) ? 'ON' : 'OFF'}`, 6);
+    config_row('NTR机能', `现在：${getbit(v5, 7) ? 'ON' : 'OFF'}`, 7);
+    config_row('素质分类显示', `现在：${getbit(v5, 8) ? 'ON' : 'OFF'}`, 8);
+    config_row(
+      '战斗记录的SKIP中断',
+      `现在：${getbit(v5, 9) ? 'ON' : 'OFF'}`,
       9,
     );
-    era.printButton(
-      '怀孕时的迎击・临月调教　  现在：' + (getbit(v5, 10) ? '许可' : '禁止'),
+    config_row(
+      '怀孕时的迎击・临月调教',
+      `现在：${getbit(v5, 10) ? '许可' : '禁止'}`,
       10,
     );
-    era.printButton(
-      '服装系统 　　　　　　　　现在：' + (game.system.着衣系统 ? 'ON' : 'OFF'),
-      11,
-    );
-    era.printButton(
-      '濒死时自动结束调教 　　　现在：' +
-        (game.system.濒死自动结束调教 ? 'ON' : 'OFF'),
+    config_row('服装系统', `现在：${game.system.着衣系统 ? 'ON' : 'OFF'}`, 11);
+    config_row(
+      '濒死时自动结束调教',
+      `现在：${game.system.濒死自动结束调教 ? 'ON' : 'OFF'}`,
       12,
     );
-    era.printButton(
-      '调教时的过滤　　　　　　 现在：' + filter_status_text(),
-      13,
-    );
+    config_row('调教时的过滤', `现在：${filter_status_text()}`, 13);
   } else {
     const af = era_flag.adventurer_flags;
-    era.printButton(
-      '自我介绍式的角色信息　　 现在：' + (getbit(v5, 11) ? 'ON' : 'OFF'),
+    config_row(
+      '自我介绍式的角色信息',
+      `现在：${getbit(v5, 11) ? 'ON' : 'OFF'}`,
       14,
     );
-    era.printButton(
-      '显示角色的年龄/三围　　  现在：' +
-        (getbit(v5, 12) ? 'ON' : 'OFF') +
-        '/' +
-        (getbit(v5, 15) ? 'ON' : 'OFF'),
+    config_row(
+      '显示角色的年龄/三围',
+      `现在：${getbit(v5, 12) ? 'ON' : 'OFF'}/${getbit(v5, 15) ? 'ON' : 'OFF'}`,
       15,
     );
-    era.printButton(
-      '解除勇者登录限制   　 　 现在：' + (getbit(v5, 32) ? 'ON' : 'OFF'),
+    config_row(
+      '解除勇者登录限制',
+      `现在：${getbit(v5, 32) ? 'ON' : 'OFF'}`,
       16,
     );
-    era.printButton(
-      '新探索模式         　 　 现在：' + (getbit(v5, 33) ? 'ON' : 'OFF'),
-      17,
-    );
-    era.printButton(
-      '显示高级调教指令的名称   现在：' + (getbit(v5, 34) ? 'ON' : 'OFF'),
+    config_row('新探索模式', `现在：${getbit(v5, 33) ? 'ON' : 'OFF'}`, 17);
+    config_row(
+      '显示高级调教指令的名称',
+      `现在：${getbit(v5, 34) ? 'ON' : 'OFF'}`,
       18,
     );
-    era.printButton(
-      '你那宝贝兵器的现状 　　　现在：' + get_look_info(0, KIND.PENIS),
+    config_row(
+      '你那宝贝兵器的现状',
+      `现在：${get_look_info(0, KIND.PENIS)}`,
       19,
     );
-    era.printButton(
-      '自动提升角色能力         现在：' +
-        (getbit(v5, 35) ? 'ON' : 'OFF') +
-        (getbit(v5, 36) ? ' (仅主要)' : ''),
+    config_row(
+      '自动提升角色能力',
+      `现在：${getbit(v5, 35) ? 'ON' : 'OFF'}${getbit(v5, 36) ? ' (仅主要)' : ''}`,
       20,
     );
-    era.printButton(
-      '陷落之后处女主动献身　　 现在：' + virgin_conceded_status_text(),
+    config_row(
+      '陷落之后处女主动献身',
+      `现在：${virgin_conceded_status_text()}`,
       21,
     );
     // [22] 男冒险者许可：该菜单文字本就是注释态（未公开的隐藏
     // 分支），但分发仍受理 22——不渲染按钮，只留分发
-    era.printButton(
-      '勇者出现时的素质表示　　 现在：' + (getbit(af, 1) ? 'ON' : 'OFF'),
+    config_row(
+      '勇者出现时的素质表示',
+      `现在：${getbit(af, 1) ? 'ON' : 'OFF'}`,
       23,
     );
-    era.printButton(
-      '勇者的恋爱发展　　　　　 现在：' + (getbit(af, 2) ? '许可' : '禁止'),
+    config_row(
+      '勇者的恋爱发展',
+      `现在：${getbit(af, 2) ? '许可' : '禁止'}`,
       24,
     );
-    era.printButton(
-      '勇者的任务揭示板  　　　 现在：' + (getbit(af, 3) ? '禁止' : '许可'),
+    config_row(
+      '勇者的任务揭示板',
+      `现在：${getbit(af, 3) ? '禁止' : '许可'}`,
       25,
     );
     // [26] MOD开关与 [28] 立绘开关：MOD 子系统与立绘系统均判不移植（#542），
     // 缺内容的入口随占位机制一并删除（#638 按 #574「缺内容的去掉入口」）
-    era.printButton(
-      '出现冒险者的性别限制　　 现在：' + adventurer_gender_status_text(),
+    config_row(
+      '出现冒险者的性别限制',
+      `现在：${adventurer_gender_status_text()}`,
       27,
     );
-    era.printButton(
-      '卖淫对奴隶售价的影响　　 现在：' + prostitution_effect_status_text(),
+    config_row(
+      '卖淫对奴隶售价的影响',
+      `现在：${prostitution_effect_status_text()}`,
       29,
     );
-    era.printButton(
-      '反作弊开关 　　　　 　　 现在：' +
-        (era_modsave.anti_cheat ? 'OFF（可开修改）' : 'ON（不可开修改）'),
+    config_row(
+      '反作弊开关',
+      `现在：${era_modsave.anti_cheat ? 'OFF（可开修改）' : 'ON（不可开修改）'}`,
       30,
     );
   }
@@ -420,10 +422,9 @@ async function dispatch_config(local, page) {
 /**
  * config_menu：玩家设定主菜单，两页翻页，[100] 返回。
  *
- * 导航行（[102]上一页/[100]返回/[101]下一页）原来是三段输出拼在同一行；
- * 引擎的 printButton 独占一行（AGENTS.md 已确认的渲染层约束），改竖排
- * 三个按钮，功能（编号与文案）不变，只是不再横排——同 LIFE_BAR/立绘
- * 先例，视觉排布不镜像。
+ * 导航行（[102]上一页/[100]返回/[101]下一页）原来竖排三行——当时按「
+ * printButton 独占一行」处理；现由按钮网格把它们排回同一行（引擎 24 列），
+ * 功能（编号与文案）不变。
  */
 async function config_menu() {
   let page = 0;
@@ -431,9 +432,14 @@ async function config_menu() {
     // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     await change_screen();
     draw_config_page(page);
-    era.printButton('上一页', 102);
-    era.printButton('返回', 100);
-    era.printButton('下一页', 101);
+    print_button_grid(
+      [
+        [102, '上一页'],
+        [100, '返回'],
+        [101, '下一页'],
+      ],
+      3,
+    );
     const local = await era.input();
     const next_page = await dispatch_config(local, page);
     if (next_page === null) {

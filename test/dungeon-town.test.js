@@ -507,8 +507,10 @@ test('dungeon_town：507 复位、再起点消耗与全恢复、9/10 散会', as
     '宿屋演出（开关开）',
   );
   assert(
-    lines.some((l) => l.startsWith('------')),
-    '分隔线',
+    fixture.lines_history.some(
+      (line) => line.type === 'divider' && line.border === 'dashed',
+    ),
+    '分隔线（#870 起是 drawLine，不再是减号拼的一行）',
   );
   assert(!lines.some((l) => l.includes('晚宴')), 'rand(10) > 0 散会不开宴');
 });

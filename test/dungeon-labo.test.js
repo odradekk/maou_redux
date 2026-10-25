@@ -650,15 +650,16 @@ test('labo 菜单：[100] 返回、[007] 打 HEART_R 图、[001] 调色行', asy
   );
   // #597：PRINTL 只结束 PRINT_IMG 那一行（PRINT_IMG 不换行），
   // 不是空行——ere 的 printImage 自成一行，下一行直接是重绘的菜单
+  // （#870 起菜单的分隔行是 drawLine，夹具记作 divider）
   const image_index = fixture.lines.findIndex(
     (line) =>
       line.type === 'image' && line.names && line.names[0] === 'HEART_R',
   );
   const after_image = fixture.lines[image_index + 1];
-  assert.ok(
-    after_image !== undefined &&
-      !(after_image.type === 'br' || after_image.text === ''),
-    '[007] 图片之后不补空行（#597）',
+  assert.equal(
+    after_image.type,
+    'divider',
+    '[007] 图片之后直接是重绘菜单的分隔线，不补空行（#597）',
   );
 });
 

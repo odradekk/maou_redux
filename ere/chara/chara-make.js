@@ -1927,13 +1927,13 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       }
 
       // 收下
-      era.print('*****************************************');
+      era.drawLine({ isSolid: true });
       // 「异国的」前缀只在异国分支出现（见上方注释）；
       // 收下播报一行由前缀与称呼拼成
       era.print(
         `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,
       );
-      era.print('*****************************************');
+      era.drawLine({ isSolid: true });
       chara(newchara).invasion.状态 = 0; // CFLAG:1 初始位置
       era.set('flag:402', 0); // 用过的标志归位
       era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1

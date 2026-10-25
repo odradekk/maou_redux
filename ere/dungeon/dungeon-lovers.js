@@ -59,18 +59,14 @@ async function enter_lover(cid) {
   if (cid < 0) return 0;
   era.print('派遣魔王的手下外出，设下恋爱陷阱诱惑对象勇者堕落');
   era.print(`选择派遣谁外出诱惑${name_of(cid)}呢？`);
-  era.print(
-    '--------------------------------------------------------------------------------',
-  );
+  era.drawLine();
   era.printButton('谁都不派遣', 0);
   for (let lover = 1; lover < 100; lover += 1) {
     const name = LOVER_NAMES.get(lover);
     if (name) era.printButton(name, lover);
   }
   era.printButton('取消', 999);
-  era.print(
-    '--------------------------------------------------------------------------------',
-  );
+  era.drawLine();
 
   // 受理集＝按钮集（0、999 与表里 1-99 的项）加表里的 200（恋人，界面上
   // 没有它的按钮）：整集写进 rule，越界值由引擎在输入框里拒收

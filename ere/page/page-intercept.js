@@ -48,6 +48,7 @@ const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const { getbit } = require('#/kojo/kojo-dungeon-bitch-log');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** 每页行数（`#DIM NUM_PAGE = 26`） */
 const NUM_PAGE = 26;
@@ -329,11 +330,19 @@ async function intercept(rand = default_rand) {
     for (const cid of window_ids) {
       life_list_item(cid);
     }
+
     // 末页不满整页时不补空行：ere 是滚动视图，页脚紧接列表末行即可
-    era.drawLine(); // （DRAWLINE + 上一页键）
-    era.printButton('- 上一页', 1000); // PRINTLC
-    era.printButton('- 返 回', 999); // PRINTLC（正文两个空格，引擎折叠成一个）
-    era.printButton('- 下一页', 1001);
+    era.drawLine(); // （DRAWLINE + 三个页脚键）
+    // 三个页脚键同行（引擎 24 列网格）；按钮正文里的两个空格照写，
+    // 引擎渲染时折叠成一个
+    print_button_grid(
+      [
+        [1000, '- 上一页'], // PRINTLC
+        [999, '- 返 回'],
+        [1001, '- 下一页'],
+      ],
+      3,
+    );
 
     // $INPUT_LOOP_2
     for (;;) {

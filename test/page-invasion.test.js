@@ -1764,18 +1764,28 @@ test('sengen_video 顶栏与选项：库存/已投放/流行行按 {值,N} 定�
   });
   assert.equal(await run_sengen_video(fixture, [999]), 0);
   const texts = history_texts(fixture);
-  // {STOCK,3} / {EX_FLAG:9011,3} 右对齐补半角空格；两处 \t\t 照旧保留
+  // 顶栏两格各占 12 列（#870：\t\t 补位在引擎里被折叠，改由网格分列）；
+  // {STOCK,3} / {EX_FLAG:9011,3} 仍是右对齐补半角空格
   assert(
-    texts.includes(
-      '可用于投放的水晶球\u00A0\u00A04部\t\t已投放\u00A0\u00A03部',
-    ),
-    '顶栏：库存 7-3=4、已投放 3 各补到 3 位',
+    texts.includes('可用于投放的水晶球\u00A0\u00A04部'),
+    '顶栏左格：库存 7-3=4 补到 3 位',
   );
   assert(
-    texts.includes(
-      '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0正流行的有\u00A0\u00A05部\t\t\u00A04天后将过时',
-    ),
-    '流行行：9 空格缩进 + 流行度 3 位 + 剩余天数 2 位',
+    texts.includes('已投放\u00A0\u00A03部'),
+    '顶栏右格：已投放 3 补到 3 位',
+  );
+  assert(
+    texts.includes('正流行的有\u00A0\u00A05部'),
+    '流行行左格：流行度补到 3 位',
+  );
+  assert(texts.includes('\u00A04天后将过时'), '流行行右格：剩余天数补到 2 位');
+  assert(!texts.some((line) => line.includes('\t')), '顶栏不再靠制表符排版');
+  const top_bar_widths = fixture.lines_history
+    .filter((line) => line.type === 'text' && line.grid_width !== undefined)
+    .map((line) => line.grid_width);
+  assert(
+    top_bar_widths.slice(0, 4).every((width) => width === 12),
+    `顶栏四格宽度应为 12，实际 ${JSON.stringify(top_bar_widths)}`,
   );
   const accelerators = fixture.lines_history
     .filter((line) => line.type === 'button')
@@ -1804,7 +1814,7 @@ test('sengen_video 顶栏与选项：库存/已投放/流行行按 {值,N} 定�
     '无库存文案',
   );
   assert(
-    history_texts(empty).includes(' 目前没有投放中的水晶球'),
+    history_texts(empty).includes('目前没有投放中的水晶球'),
     '无流行文案（流行度 0）',
   );
   assert.deepEqual(
@@ -2159,13 +2169,13 @@ test('sengen_video 的库存来源真读 EX_FLAG:9010/9011（售卻相關的写�
   // 顶栏分子分母与菜单开窗同源：EX_FLAG:9010 - EX_FLAG:9011
   const fixture = make_video_world({ stock: 1, deployed: 1 });
   assert.equal(await run_sengen_video(fixture, [999]), 0);
+  const texts = history_texts(fixture);
   assert(
-    history_texts(fixture).includes(
-      '可用于投放的水晶球\u00A0\u00A00部\t\t已投放\u00A0\u00A01部',
-    ),
+    texts.includes('可用于投放的水晶球\u00A0\u00A00部') &&
+      texts.includes('已投放\u00A0\u00A01部'),
     'stock 0：顶栏打 0、选项区走无库存分支',
   );
-  assert(history_texts(fixture).includes('当前没有可以用于投放的水晶球'));
+  assert(texts.includes('当前没有可以用于投放的水晶球'));
 });
 
 // ===========================================================================
@@ -4149,8 +4159,23 @@ test('CHALLENGE 的档界与人数上限边界', async () => {
 //       start_campaign() 的地区泛化
 // ————————————————————————————————————————————————————————————————
 
-/** kyoten_event 三分支的星号横幅（十处，91 个星号） */
-const KYOTEN_STAR = '*'.repeat(91);
+/** kyoten_event 的横幅文本（十档，与实现里的 KYOTEN_BANNERS 一一对应） */
+const KYOTEN_TEXTS = [
+  '占领了村庄',
+  '占领了港口',
+  '攻陷了堡垒',
+  '占领了街道',
+  '占领了城市',
+  '人间界的军队占领了村庄',
+  '人间界的军队占领了港口',
+  '人间界的军队攻陷了堡垒',
+  '人间界的军队占领了街道',
+  '人间界的军队占领了城市',
+];
+
+/** 打出来的 kyoten 横幅行（#870 起横幅是「实线 + 居中文本 + 实线」，按文本认） */
+const kyoten_banner_lines = (fixture) =>
+  history_texts(fixture).filter((line) => KYOTEN_TEXTS.includes(line));
 
 /**
  * 三个走 FLAG 侧的非人间界出兵目标（RESULT →
@@ -4284,9 +4309,9 @@ test('【地区续接】[1]/[2]/[3] 各映射到自己的 AREA/SINDO 并汇入�
     // 龙/天界三分支不输出任何内容，星号一行都不打；实参表仍由
     // 末尾「人间界分支也不打」鉴别（误调 ARG 1 会打人间界的七行横幅）
     assert.equal(
-      history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,
+      kyoten_banner_lines(fixture).length,
       0,
-      `[${region.result}] kyoten_event 走 ARG ${region.kyoten} 分支：三分支空转不打星号（#652）`,
+      `[${region.result}] kyoten_event 走 ARG ${region.kyoten} 分支：三分支空转不打横幅（#652）`,
     );
     for (const [flag, who] of [
       [93, '人间界的 FLAG:93'],
@@ -4343,9 +4368,9 @@ test('【地区续接·天神宫】[5]：累加与显示同读 FLAG:101（#652 �
     '结果段的进度条也读 FLAG:101（同一画面同一数值）',
   );
   assert.equal(
-    history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,
+    kyoten_banner_lines(fixture).length,
     0,
-    'kyoten_event 分派没有 101 分支 —— 天神宫一行星号都不打',
+    'kyoten_event 分派没有 101 分支 —— 天神宫一行横幅都不打',
   );
 });
 
@@ -4534,8 +4559,7 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
     const { kyoten_event } = fixture.load_module('page/page-invasion');
     return kyoten_event(arg);
   };
-  const star_count = (fixture) =>
-    history_texts(fixture).filter((line) => line === KYOTEN_STAR).length;
+  const banner_count = (fixture) => kyoten_banner_lines(fixture).length;
 
   for (const arm of [
     { arg: 2, progress: 86, stage: 94 },
@@ -4546,9 +4570,9 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
     fixture.store.set(`flag:${arm.progress}`, 2000); // 首档下沿
     assert.equal(await run_kyoten(fixture, arm.arg), 0, '恒 RETURN 0');
     assert.equal(
-      star_count(fixture),
+      banner_count(fixture),
       0,
-      `ARG ${arm.arg}：命中首档也不打星号（#652 三分支不再输出）`,
+      `ARG ${arm.arg}：命中首档也不打横幅（#652 三分支不再输出）`,
     );
     assert.equal(
       fixture.store.get(`flag:${arm.stage}`),
@@ -4558,19 +4582,19 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
 
     // 反复调用依旧一行都不打
     await run_kyoten(fixture, arm.arg);
-    assert.equal(star_count(fixture), 0, `ARG ${arm.arg}：再次调用仍不输出`);
+    assert.equal(banner_count(fixture), 0, `ARG ${arm.arg}：再次调用仍不输出`);
   }
 
   // 未达首档：同样空转
   const calm = create_era_fixture();
   calm.store.set('flag:88', 1999);
   await run_kyoten(calm, 3);
-  assert.equal(star_count(calm), 0, 'FLAG:88 == 1999 未达 2000 首档');
+  assert.equal(banner_count(calm), 0, 'FLAG:88 == 1999 未达 2000 首档');
 
   // ARG 0/5 及以上：空转
   const outside = create_era_fixture();
   for (const arg of [0, 5]) {
     assert.equal(await run_kyoten(outside, arg), 0, `ARG ${arg} 空转`);
   }
-  assert.equal(star_count(outside), 0, 'ARG 0/5 不打任何横幅');
+  assert.equal(banner_count(outside), 0, 'ARG 0/5 不打任何横幅');
 });

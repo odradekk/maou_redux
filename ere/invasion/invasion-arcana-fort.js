@@ -45,6 +45,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
+const { print_button_grid } = require('#/utils/button-grid');
 const { change_screen } = require('#/page/components/screen-change');
 const { game } = require('#/facade/game');
 const { add_chara_ex } = require('#/chara/chara-ex');
@@ -289,9 +290,14 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       }
     });
     era.drawLine();
-    era.printButton('- 上一页', 1000);
-    era.printButton('- 返 回', 999); // PRINTLC（写两个空格也会被引擎折叠成一个，故只写一个）
-    era.printButton('- 下一页', 1001);
+    print_button_grid(
+      [
+        [1000, '- 上一页'],
+        [999, '- 返 回'], // PRINTLC（写两个空格也会被引擎折叠成一个，故只写一个）
+        [1001, '- 下一页'],
+      ],
+      3,
+    );
 
     const result = await era.input();
     if (result === 1000) {

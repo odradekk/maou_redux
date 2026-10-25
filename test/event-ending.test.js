@@ -229,7 +229,8 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
     fixture.calls.some(({ api }) => api === 'quit'),
     'QUIT → era.quit()（关窗 IPC 已记录）',
   );
-  // 演出八行逐字
+  // 演出逐行：制表框 4 行 + 封印播报 + 空行（两个尾随空格）；GAMEOVER 是
+  // 分隔线（#870，不再是减号拼的一行文本），在下一处单独断言
   const texts = history_texts(fixture);
   assert.deepEqual(
     texts,
@@ -241,9 +242,17 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
       '└─────────────────────────────┘',
       '*勇者阿尔封印了魔王，被后人歌颂为传说中的勇者*',
       '  ',
-      '-------------------------------GAMEOVER---------------------------------',
     ],
-    '横幅 6 行 + 封印播报 + 空行（两个尾随空格）+ GAMEOVER 分隔行（逐字）',
+    '横幅 5 行 + 封印播报 + 空行（两个尾随空格）逐字',
+  );
+  assert(
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'divider' &&
+        line.text === 'GAMEOVER' &&
+        line.border === 'dashed',
+    ),
+    'GAMEOVER 分隔线（drawLine 的中央标签）',
   );
   // 的名字来自 TARGET 指针（callname:1:-1，不是 2 的「贝丝」）
   // PRINTFORMW 的读键（waitAnyKey，print 置位 allowWait 后真等）在
@@ -372,8 +381,14 @@ test('ending_3/4/5：横幅 + char_gift(arg) 收下预设角色 → 领域 flag 
         `${c.name}：询问选项 ${option}`,
       );
     }
-    assert(
-      texts.includes('*****************************************'),
+    // 播报上下沿各一条实线分割线（#870：星号框改成 drawLine；横幅段开头
+    // 另有一条虚线 drawLine，这里只看实线——贡品播报自己也用实线框）
+    assert.deepEqual(
+      fixture.lines_history
+        .filter((line) => line.type === 'divider' && line.border === 'solid')
+        .slice(0, 2)
+        .map((line) => line.border),
+      ['solid', 'solid'],
       `${c.name}：播报分隔行`,
     );
     assert(

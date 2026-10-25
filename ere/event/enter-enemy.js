@@ -190,7 +190,7 @@ async function enter_enemy(arg0 = 0, rand) {
 
     // 演出段（生成分支的公共尾部；同一显示行的 PRINT/PRINTS 归并，
     // 文件头）
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     let head = '';
     if (foreign) {
       head += '异国的'; // SIF LOCAL
@@ -203,7 +203,7 @@ async function enter_enemy(arg0 = 0, rand) {
     // 角色名读 callname:-1（#5 决议，文件头）
     const name = era.get(`callname:${result}:-1`) ?? '';
     era.print(`${head}${name}开始了地下城的攻略！`);
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     await era.waitAnyKey(); // WAIT
 
     // 勇者LVUP（FLAG:5 & 2：勇者基础等级校正开关）
@@ -325,7 +325,7 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
   chara(a).event.侵攻度 = 0; // CFLAG:A:502
   chara(a).invasion.状态 = 2; // CFLAG:A:1 侵攻中
   era.println();
-  era.print('*****************************************');
+  era.drawLine({ isSolid: true });
   era.print(
     '魔王的地下城附近的村子里有一对姐妹。她们没有双亲，一起在亲戚的家里生活。',
   );
@@ -338,7 +338,7 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
   await era.waitAnyKey();
   era.println(); // 空行：叙述与点名之间隔一行
   era.print(`村娘${name}开始了地下城的攻略！`);
-  era.print('*****************************************');
+  era.drawLine({ isSolid: true });
   await enterenemy_koujo(a);
   era.println();
   return 0;
@@ -412,9 +412,7 @@ async function k_34_crazylord(rand_n) {
 
   era.println();
   era.println();
-  era.print(
-    '*****************************************************************************',
-  );
+  era.drawLine({ isSolid: true });
   era.print('狡猾的狂王，原来对作为情妇和亲卫队长的金红桃也不是推心置腹。');
   era.print('在对你已经唯命是从的金红桃身上，没有得到任何情报。');
   era.print('其它的人也是对狂王的行踪一无所知，各地的魔物也没有找到狂王。');
@@ -429,9 +427,7 @@ async function k_34_crazylord(rand_n) {
   era.println(); // 空行：叙述与点名之间隔一行
   era.print(`狂王的替身${name}`); // 称号与名字同一行
   era.print('开始了地下城的攻略！');
-  era.print(
-    '*****************************************************************************',
-  );
+  era.drawLine({ isSolid: true });
   await enterenemy_koujo(a);
   era.println();
   era.println();
@@ -499,8 +495,8 @@ async function get_enemy(rand) {
     result = inport; // LOCAL = 1（异国路径，RESULT 沿用）
   }
 
-  // 演出段（*** 框 + 前缀 + 名字 + 被俘虏了！）
-  era.print('*****************************************');
+  // 演出段（实线框 + 前缀 + 名字 + 被俘虏了！）
+  era.drawLine({ isSolid: true });
   let head = '';
   if (inport !== 0) {
     head += '异国的'; // 异国路径
@@ -511,7 +507,7 @@ async function get_enemy(rand) {
   head += (era.get(`talent:${result}:122`) || 0) !== 0 ? '冒险者' : '勇者';
   const name = era.get(`callname:${result}:-1`) ?? ''; // 角色名
   era.print(`${head}${name}被俘虏了！`);
-  era.print('*****************************************');
+  era.drawLine({ isSolid: true });
   await era.waitAnyKey(); // WAIT
   era.println();
 

@@ -91,6 +91,7 @@ const { grotesque } = require('#/event/event-grotesque');
 const { museum } = require('#/event/event-museum');
 const { public_execution } = require('#/event/event-public-execution');
 const { chara } = require('#/facade/chara');
+const { print_button_grid } = require('#/utils/button-grid');
 const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
@@ -603,9 +604,14 @@ async function batch_execution(rand_n = default_rand) {
         era.println(); // PRINTL
         era.println(); // PRINTL
       }
-      era.printButton('上一页', 2000);
-      era.printButton('结束处刑', 1999); // 原文「結束处刑」
-      era.printButton('下一页', 2001);
+      print_button_grid(
+        [
+          [2000, '上一页'],
+          [1999, '结束处刑'], // 原文「結束处刑」
+          [2001, '下一页'],
+        ],
+        3,
+      );
 
       const result = await era.input(); // INPUT
       if (result === 2000) {

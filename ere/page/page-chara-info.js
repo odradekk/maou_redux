@@ -131,6 +131,7 @@ const {
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { show_chara_info } = require('#/page/page-chara-info-show');
+const { print_button_grid } = require('#/utils/button-grid');
 const NUM_PAGE = 24;
 
 function name_of(cid) {
@@ -591,9 +592,14 @@ async function chara_info() {
 
     print_sort_header_row();
     era.drawLine();
-    era.printButton('上一页', 997);
-    era.printButton('返回', 999);
-    era.printButton('下一页', 998);
+    print_button_grid(
+      [
+        [997, '上一页'],
+        [999, '返回'],
+        [998, '下一页'],
+      ],
+      3,
+    );
 
     const result = await era.input();
 
@@ -749,17 +755,21 @@ async function chara_info_individual(arg, chara_sort) {
       era.println();
     }
     era.drawLine();
-    era.printButton('前页', 101);
-    era.printButton('返回', 100);
-    era.printButton('后页', 102);
-    if (current > 0) era.printButton('前一人', 500);
+    // 页脚五键同行（引擎 24 列网格，每格 4 列）；后两枚各带条件
+    const footer = [
+      [101, '前页'],
+      [100, '返回'],
+      [102, '后页'],
+    ];
+    if (current > 0) footer.push([500, '前一人']);
     // 显示条件按「角色总数含魔王（chara_sort.length+1）」换算成不含魔王的
     // `l_indx >= chara_sort.length - 1`；这里不额外要求 `l_indx >= 0`——
     // 魔王行（l_indx=-1）同样受这条条件支配，且 -1 通常小于
     // chara_sort.length-1，所以魔王行也会画出「后一人」（对应 case 600
     // 分发端 `current===0` 分支跳到 chara_sort[0] 的既有逻辑）。
     // 此前一版误加了 `l_indx>=0` 前缀、把魔王行的按钮吞掉，#391 复核修正。
-    if (l_indx < chara_sort.length - 1) era.printButton('后一人', 600);
+    if (l_indx < chara_sort.length - 1) footer.push([600, '后一人']);
+    print_button_grid(footer, 5);
 
     const result = await era.input();
 

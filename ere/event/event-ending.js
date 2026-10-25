@@ -159,9 +159,7 @@ async function ending_2() {
   // 逐字保留）
   era.print('  ');
   // GAMEOVER 分隔行
-  era.print(
-    '-------------------------------GAMEOVER---------------------------------',
-  );
+  era.drawLine({ content: 'GAMEOVER' });
 
   // INPUT——确认用，结果不被消费（QUIT 之后无读者）
   await era.input();
@@ -262,9 +260,9 @@ async function char_gift(arg, rand = default_rand) {
       chara(a).invasion.状态 = 0;
       await char_init(a);
       // 贡品播报（head/tail 与角色名拼接，见函数头）
-      era.print('*****************************************');
+      era.drawLine({ isSolid: true });
       era.print(`${head}${name_of(no_chara)}${tail}`);
-      era.print('*****************************************');
+      era.drawLine({ isSolid: true });
       // 贡品播报与 PRINTW（空行 + 读键）
       era.print('');
       await era.waitAnyKey();
@@ -387,9 +385,9 @@ async function char_gift(arg, rand = default_rand) {
       );
     }
     // 定人选播报
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     era.print(`${race}挑选少女${name_of(a)}作为贡品………`);
-    era.print('*****************************************');
+    era.drawLine({ isSolid: true });
     era.print(''); // PRINTW（定人选播报）
     await era.waitAnyKey();
     // show_chara_info(a, -2)（同上，#390 真身）

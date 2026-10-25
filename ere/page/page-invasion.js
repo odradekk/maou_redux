@@ -120,8 +120,9 @@ const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
 const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
-const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { pad_left } = require('#/utils/display-width');
 const { COUNT_RULE } = require('#/utils/input-rule');
+const { print_button_grid } = require('#/utils/button-grid');
 // sengen_video 与 sengen_video_bonus 的十二处 ×小数 用 times 而非 times_exact：
 // 旧引擎的双精度与 JS 同为 IEEE 754，两边逐位同值，不需要十进制精确乘
 const { default_rand, times } = require('#/utils/numeric');
@@ -144,6 +145,9 @@ const MONSTER_THRESHOLD = 600;
 
 /** 进度条的条宽（< 24，否则引擎 el-col-0 吞掉条后数值列，见文件头） */
 const BAR_WIDTH = 16;
+
+/** 宣传影像顶栏的两格宽度（引擎 24 列网格，两格各占一半） */
+const TOP_BAR_COLUMN_WIDTH = 12;
 
 /**
  * 出兵目标的地区表（RESULT → AREA/SINDO 下标对，连同各处按 AREA
@@ -278,32 +282,18 @@ function pad_number(value, width) {
   return pad_left(String(value), width);
 }
 
-// kyoten_event 的星号横幅（含全角空格的手工对齐）
-const BANNER_STAR =
-  '*******************************************************************************************';
-const BANNER_BLANK =
-  '*********　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　**********';
+// kyoten_event 的横幅文本：星号框与全角空格补位改由分隔线 + 居中输出承担
 const KYOTEN_BANNERS = {
-  占领了村庄:
-    '*********　　　　　　　　　　　　　　　占领了村庄　　　　　　　　　　　　　　　　**********',
-  占领了港口:
-    '*********　　　　　　　　　　　　　　　占领了港口　　　　　　　　　　　　　　　　**********',
-  攻陷了堡垒:
-    '*********　　　　　　　　　　　　　　　攻陷了堡垒　　　　　　　　　　　　　　　　**********',
-  占领了街道:
-    '*********　　　　　　　　　　　　　　　占领了街道　　　　　　　　　　　　　　　　**********',
-  占领了城市:
-    '*********　　　　　　　　　　　　　　　占领了城市　　　　　　　　　　　　　　　　**********',
-  人间界的军队占领了村庄:
-    '*********　　　　　　　　　　　　人间界的军队占领了村庄　　　　　　　　　　　　　**********',
-  人间界的军队占领了港口:
-    '*********　　　　　　　　　　　　人间界的军队占领了港口　　　　　　　　　　　　　**********',
-  人间界的军队攻陷了堡垒:
-    '*********　　　　　　　　　　　　人间界的军队攻陷了堡垒　　　　　　　　　　　　　**********',
-  人间界的军队占领了街道:
-    '*********　　　　　　　　　　　　人间界的军队占领了街道　　　　　　　　　　　　　**********',
-  人间界的军队占领了城市:
-    '*********　　　　　　　　　　　　人间界的军队占领了城市　　　　　　　　　　　　　**********',
+  占领了村庄: '占领了村庄',
+  占领了港口: '占领了港口',
+  攻陷了堡垒: '攻陷了堡垒',
+  占领了街道: '占领了街道',
+  占领了城市: '占领了城市',
+  人间界的军队占领了村庄: '人间界的军队占领了村庄',
+  人间界的军队占领了港口: '人间界的军队占领了港口',
+  人间界的军队攻陷了堡垒: '人间界的军队攻陷了堡垒',
+  人间界的军队占领了街道: '人间界的军队占领了街道',
+  人间界的军队占领了城市: '人间界的军队占领了城市',
 };
 
 /**
@@ -378,13 +368,9 @@ async function kyoten_event(arg) {
     }
     const banner =
       KYOTEN_BANNERS[stage < next ? forward_key(next) : recapture_key(stage)];
-    era.print(BANNER_STAR);
-    era.print(BANNER_STAR);
-    era.print(BANNER_BLANK);
-    era.print(banner);
-    era.print(BANNER_BLANK);
-    era.print(BANNER_STAR);
-    era.print(BANNER_STAR);
+    era.drawLine({ isSolid: true });
+    era.print(banner, { align: 'center' });
+    era.drawLine({ isSolid: true });
     era_flag.human_realm_event_stage = next;
     return 0;
   }
@@ -1795,9 +1781,8 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
  *   - 菜单每轮至少打印 `[999]`，所以 `STOCK == 0 && RESULT != 999` 与落尾
  *     的空 ELSE 在真引擎里都不可达——白名单外的手工键入送不到游戏层，两
  *     支都按原样保留；
- *   - 顶栏的 `\t\t` 与前导空格是既有的对齐写法（同 page-chara-shop.js 的
- *     `\t\t` 先例）；引擎输出走 HTML 会折叠连续空白，列对齐在实机上不成
- *     立，这是全项目共有的一条表现层差异。
+ *   - 顶栏原按 `\t\t` 与前导 NBSP 补位对齐；引擎输出走 HTML 会折叠连续
+ *     空白，列对齐在实机上不成立，改由网格两格（各 12 列）承担。
  *
  * @param {(n: number) => number} [rand] 随机源（增强段的 RAND:2/5 与
  *   SENGEN_VIDEO_BONUS 的上界）
@@ -1811,23 +1796,35 @@ async function sengen_video(rand = default_rand) {
     const stock =
       era_exflag.crystal_ball_stock - era_exflag.crystal_ball_deployed;
     era.drawLine();
-    // 可用于投放的水晶球{STOCK,3}部\t\t已投放{EX_FLAG:9011,3}部
-    era.print(
-      `可用于投放的水晶球${pad_number(stock, 3)}部\t\t已投放${pad_number(
-        era_exflag.crystal_ball_deployed,
-        3,
-      )}部`,
-    );
+    // 顶栏两格同行（各 12 列）：左格投放数、右格已投放数
+    era.printMultiColumns([
+      {
+        type: 'text',
+        content: `可用于投放的水晶球${pad_number(stock, 3)}部`,
+        config: { width: TOP_BAR_COLUMN_WIDTH, align: 'left' },
+      },
+      {
+        type: 'text',
+        content: `已投放${pad_number(era_exflag.crystal_ball_deployed, 3)}部`,
+        config: { width: TOP_BAR_COLUMN_WIDTH, align: 'left' },
+      },
+    ]);
     // 两者都非零才显示流行中的数量与剩余天数
     if (era_exflag.crystal_ball_popularity && era_exflag.crystal_ball_expire) {
-      era.print(
-        `${NBSP.repeat(8)}正流行的有${pad_number(
-          era_exflag.crystal_ball_popularity,
-          3,
-        )}部\t\t${pad_number(era_exflag.crystal_ball_expire, 2)}天后将过时`,
-      );
+      era.printMultiColumns([
+        {
+          type: 'text',
+          content: `正流行的有${pad_number(era_exflag.crystal_ball_popularity, 3)}部`,
+          config: { width: TOP_BAR_COLUMN_WIDTH, align: 'left' },
+        },
+        {
+          type: 'text',
+          content: `${pad_number(era_exflag.crystal_ball_expire, 2)}天后将过时`,
+          config: { width: TOP_BAR_COLUMN_WIDTH, align: 'left' },
+        },
+      ]);
     } else {
-      era.print(' 目前没有投放中的水晶球');
+      era.print('目前没有投放中的水晶球');
     }
     era.drawLine();
     if (stock > 0) {
@@ -2506,12 +2503,16 @@ async function pick_hero(state, rejected) {
       state.list_pos = cid;
     }
     // 末页不满一整页时不补空行：ere 是滚动视图，按钮紧接列表末行即可
-    // 三个按钮（PRINTLC 左对齐补位、不换行 → printButton，引擎自动
-    // 拼 [编号]；语义见 CONTEXT.md「输出 API 的排版与对齐」）
+    // 三个页脚键同行（引擎 24 列网格；按钮正文不带 [编号] 前缀，引擎自动拼）
     era.drawLine();
-    era.printButton('- 上一页', 1000); // PRINTLC
-    era.printButton('- 返 回', 999); // PRINTLC（两个空格，引擎折叠成一个）
-    era.printButton('- 下一页', 1001); // PRINTLC
+    print_button_grid(
+      [
+        [1000, '- 上一页'], // PRINTLC
+        [999, '- 返 回'], // PRINTLC（两个空格，引擎折叠成一个）
+        [1001, '- 下一页'], // PRINTLC
+      ],
+      3,
+    );
 
     const result = await era.input(); // INPUT
 

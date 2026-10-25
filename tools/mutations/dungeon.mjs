@@ -2611,7 +2611,7 @@ export default [
     replace:
       '      era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧写法\n      // 的 PRINTL 只结束 PRINT_IMG 那一行（PRINT_IMG 不换行），',
     tests: ['dungeon-labo'],
-    must_mention: '[007] 图片之后不补空行（#597）',
+    must_mention: '图片之后直接是重绘菜单的分隔线',
   },
   {
     desc: 'M12110 地下城模式状态行补回空行（状态行 PRINTL 只收状态那一行的 PRINT）',
@@ -2851,9 +2851,11 @@ export default [
     file: 'ere/page/page-dungeon-info2.js',
     find: `  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
   await change_screen();
-  era.print('******************');`,
+  era.drawLine({ isSolid: true });
+  era.print('地下城内的部下');`,
     replace: `  // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
-  era.print('******************');`,
+  era.drawLine({ isSolid: true });
+  era.print('地下城内的部下');`,
     tests: ['page-dungeon-info', 'subpage-clear-screen'],
     must_mention:
       '迷宫概况换屏：部下总览每轮重画，主屏与总览屏各自行数相同（#724）',

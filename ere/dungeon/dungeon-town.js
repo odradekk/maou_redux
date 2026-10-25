@@ -111,9 +111,7 @@ async function dungeon_town(arg0, rand = default_rand) {
   // クエスト受注（set_quest 必须在 PLANNING 之后，读 CFLAG:520）
   await quest_mod.set_quest(pm[0], rand_n);
 
-  era.print(
-    '------------------------------------------------------------------------------------',
-  ); // PRINTFORML 分隔线
+  era.drawLine(); // PRINTFORML 分隔线
 
   // IF RAND:10 > 0 → A = ARG:0; RETURN 0（9/10 直接散会）
   if (rand_n(10) > 0) {

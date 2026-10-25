@@ -1682,10 +1682,13 @@ test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAME
     ':324 播报',
   );
   assert(
-    texts.some((line) =>
-      line.includes('-------------------------------GAMEOVER-------'),
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'divider' &&
+        line.text === 'GAMEOVER' &&
+        line.border === 'dashed',
     ),
-    ':329 GAMEOVER 横幅',
+    ':329 GAMEOVER 横幅（#870：drawLine 的中央标签）',
   );
 });
 

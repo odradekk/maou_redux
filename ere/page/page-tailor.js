@@ -72,6 +72,7 @@ const { get_clothtype_main2 } = require('#/system/cloth-lookup');
 const { print_row } = require('#/page/page-life-list');
 const { change_screen } = require('#/page/components/screen-change');
 const { wearing_cloth_able } = require('#/system/train/cloth');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /** 服装种类的编号（A = 购入品种） */
 const KIND_CLOTHES = 1; // 1-9：通常衣類（A <= 9 走应用支）
@@ -572,10 +573,16 @@ async function tailor_normal(cid) {
       era.printButton(`- ${item.label}`, item.n); // （表驱动，前缀在调用点拼）
     }
     era.drawLine();
-    era.printButton('下一页', 997); // （正文无「- 」前缀）
-    era.printButton('服装黑市', 996); // （同上）
-    era.printButton('上一页', 998); // （同上）
-    era.printButton('- 返回', 999);
+    // 四个页脚键同行（引擎 24 列网格、每格 6 列）；正文都不带「- 」前缀
+    print_button_grid(
+      [
+        [997, '下一页'],
+        [996, '服装黑市'],
+        [998, '上一页'],
+        [999, '- 返回'],
+      ],
+      4,
+    );
     const result = await era.input();
     const item = NORMAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -630,9 +637,14 @@ async function tailor_normal_special(cid) {
       era.printButton(`- ${item.label}`, item.n); // （表驱动，前缀在调用点拼）
     }
     era.drawLine();
-    era.printButton('下一页', 997); // （正文无「- 」前缀）
-    era.printButton('上一页', 998); // （同上）
-    era.printButton('- 返回', 999);
+    print_button_grid(
+      [
+        [997, '下一页'],
+        [998, '上一页'],
+        [999, '- 返回'],
+      ],
+      3,
+    );
     const result = await era.input();
     const item = SPECIAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -672,9 +684,14 @@ async function tailor_accessory(cid) {
       era.printButton(`- ${item.label}（${item.c}点）`, item.n); // （表驱动）
     }
     era.drawLine();
-    era.printButton('下一页', 997); // （正文无「- 」前缀）
-    era.printButton('上一页', 998); // （同上）
-    era.printButton('- 返回', 999);
+    print_button_grid(
+      [
+        [997, '下一页'],
+        [998, '上一页'],
+        [999, '- 返回'],
+      ],
+      3,
+    );
     const result = await era.input();
     const item = ACCESSORY_ITEMS.find((entry) => entry.n === result);
     if (item) {

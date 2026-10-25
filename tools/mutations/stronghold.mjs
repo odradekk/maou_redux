@@ -1931,9 +1931,9 @@ export default [
     // 「输出 API 的排版与对齐」）
     desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-item-shop.js',
-    find: "  era.setAlign('left');\n\n  return 0;\n}",
+    find: "      [999, '- 返回', { align: 'center' }],\n    ],\n    2,\n  );\n\n  return 0;\n}",
     replace:
-      "  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行\n\n  return 0;\n}",
+      "      [999, '- 返回', { align: 'center' }],\n    ],\n    2,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n\n  return 0;\n}",
     tests: ['item-shop'],
     must_mention: '道具商店页脚按钮之后不应有空行',
   },

@@ -36,6 +36,7 @@ const monster_play_mod = require('#/dungeon/monster-play');
 const { change_screen } = require('#/page/components/screen-change');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
+const { print_button_grid } = require('#/utils/button-grid');
 
 /**
  * is_trainable：编号可调教返回 0，
@@ -261,12 +262,17 @@ async function select_target() {
     }
     // 补行对齐（CLEARLINE 排版）不镜像，见文件头
     era.drawLine();
-    // [1000] 上一页 / [999] 返回 / [1002] 其它 / [1001] 下一页
-    //（按钮正文不带 [编号] 前缀——引擎自动拼，PR #30）
-    era.printButton('- 上一页', 1000);
-    era.printButton('返回', 999);
-    era.printButton('其它', 1002);
-    era.printButton('- 下一页', 1001);
+    // [1000] 上一页 / [999] 返回 / [1002] 其它 / [1001] 下一页同行（引擎
+    // 24 列网格、每格 6 列；按钮正文不带 [编号] 前缀——引擎自动拼，PR #30）
+    print_button_grid(
+      [
+        [1000, '- 上一页'],
+        [999, '返回'],
+        [1002, '其它'],
+        [1001, '- 下一页'],
+      ],
+      4,
+    );
 
     // 输入
     const result = await era.input();
@@ -341,12 +347,21 @@ async function select_assi() {
       return 0;
     }
     era.drawLine();
-    // [1000] 上一页 / [999] 我先想想… / [1002] 我自己上阵 /
-    // [1001] 下一页（按钮正文不带 [编号] 前缀——引擎自动拼，PR #30）
-    era.printButton('- 上一页', 1000);
-    era.printButton('我先想想…', 999);
-    era.printButton('哇嘎嘎！我可是魔王！这次就由我自己亲自上阵！', 1002);
-    era.printButton('- 下一页', 1001);
+    // [1000] 上一页 / [999] 我先想想… / [1001] 下一页同处一行；[1002] 的
+    // 正文有 22 字，24 列里放不下四格，单独占一行（按钮正文超出格宽时不
+    // 换行，硬挤会把相邻格压掉）。按钮正文都不带 [编号] 前缀，引擎自动拼。
+    print_button_grid(
+      [
+        [1000, '- 上一页'],
+        [999, '我先想想…'],
+        [1001, '- 下一页'],
+      ],
+      3,
+    );
+    print_button_grid(
+      [[1002, '哇嘎嘎！我可是魔王！这次就由我自己亲自上阵！']],
+      1,
+    );
 
     // 输入
     const result = await era.input();
