@@ -422,7 +422,7 @@ test('怪物商店换屏：祭品屏与召唤确认屏反复重画，行数不�
 
 // —— 奴隶贩卖（system/stronghold/sale.js）——
 
-test('奴隶贩卖换屏：无效输入与返回后重画，列表屏行数不增长（#724）', async () => {
+test('奴隶贩卖换屏：返回后重画，列表屏行数不增长（#724）', async () => {
   const fixture = create_era_fixture();
   const { join_slave_chara } = require('./helpers/chara');
   join_slave_chara(fixture, 0, '你');
@@ -430,11 +430,16 @@ test('奴隶贩卖换屏：无效输入与返回后重画，列表屏行数不�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.money = 100;
   era_flag.bought = -1;
+  // 31 号是可出售的候选，但带收藏标记：选中后只提示不成交，回到列表屏重画
+  fixture.store.set('cflag:31:0', 2);
+  fixture.store.set('base:31:0', 100);
+  fixture.store.set('cflag:31:700', 1);
   const rows = track_input_rows(fixture);
   const { chara_sale } = fixture.load_module('system/stronghold/sale');
 
-  // input 不走白名单（useRule:false）：500 非角色号 → 落空重画 ×2 → 999 返回
-  fixture.set_inputs(500, 500, 999);
+  // 名单＝受理集（#872）：非角色号在输入框里就被拦下，走不到重画分支；
+  // 两轮列表屏靠「选中收藏角色 → 拒绝 → 重画」凑出
+  fixture.set_inputs(31, 999);
   await chara_sale({ rand: () => 0 });
 
   assert_rows_bounded(rows, 'chara_sale 列表屏');

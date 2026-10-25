@@ -98,8 +98,9 @@ function format_line(line, name) {
 
 async function grotesque(cid) {
   if (cid === 0) return 0;
-  // #710：七枚选项改成按钮（正文不写 [编号]，引擎按 showAcc 拼）。消费点
-  // 保留 useRule: false——未显示的 100（取消）是该菜单既有的自由输入通道。
+  // #710：七枚选项改成按钮（正文不写 [编号]，引擎按 showAcc 拼）。受理集
+  // 比按钮集多一个未显示的 100（取消），用 rule 写进正则由引擎拦下其余值
+  // （见 utils/input-rule.js）。
   [
     '四肢切断刑',
     '内脏凌辱刑',
@@ -110,10 +111,7 @@ async function grotesque(cid) {
     '僵尸化',
   ].forEach((label, index) => era.printButton(label, index));
   era.println(); // 空行：选项块结束，与输入提示隔开
-  let result;
-  do {
-    result = await era.input({ useRule: false });
-  } while (result < 0 || (result >= 7 && result !== 100));
+  const result = await era.input({ rule: '(?:100|[0-6])' });
   if (result === 100) {
     return -1;
   }

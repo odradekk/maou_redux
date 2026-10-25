@@ -74,11 +74,9 @@ async function museum(a, rand_n = default_rand) {
   }
   era.print('');
 
-  let result;
-  do {
-    // 数字输入可键入未显示的 100；关闭按钮规则才能保留其隐藏路径。
-    result = await era.input({ useRule: false });
-  } while (result < 0 || (result >= 10 && result !== 100));
+  // 受理集比按钮集多一个未显示的 100，用 rule 写进正则由引擎拦下其余值
+  // （见 utils/input-rule.js）。
+  const result = await era.input({ rule: '(?:100|[0-9])' });
 
   era_flag.target = a;
   if (!get(`talent:${a}:220`) && !get(`ex_talent:${a}:1`)) {

@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 317; // #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 319; // #872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -1194,11 +1194,11 @@ export default [
     must_mention: '按目标削经验与体力并给施法者经验',
   },
   {
-    desc: 'M6682 enter_lover 自由输入改回按钮限制（隐藏 200 不可达）',
+    desc: 'M6682 enter_lover 的受理集漏掉表里的 200（隐藏的恋人类型被 rule 拒收）',
     file: 'ere/dungeon/dungeon-lovers.js',
-    find: '    selected = await era.input({ useRule: false });',
+    find: "  const accepted = `(?:0|999|${[...LOVER_NAMES.keys()].join('|')})`;",
     replace:
-      '    selected = await era.input(); // 变异：隐藏 200 被按钮白名单拒收',
+      "  const accepted = '(?:0|999|1|2|3|4|21|22|23|24|41|42|43|44|61|62|63|64|81|82|83|84)'; // 变异：漏掉 200",
     tests: ['dungeon-lovers'],
     must_mention: '自由输入保留隐藏的角色恋人编号 200',
   },
@@ -2869,6 +2869,23 @@ export default [
     await draw_screen();`,
     tests: ['page-dungeon-info', 'subpage-clear-screen'],
     must_mention: '迷宫概况换屏：选择位图反复切换，各轮主屏行数相同（#724）',
+  },
+  {
+    desc: 'M16500 怪物改造的受理集漏掉 [999] 返回（rule 只写改造项）',
+    file: 'ere/dungeon/monster-data.js',
+    find: "      rule: `(?:${[...choices, 999].join('|')})`,",
+    replace: "      rule: `(?:${choices.join('|')})`, // 变异：999 不在受理集",
+    tests: ['monster-play'],
+    must_mention: 'MONSTER_SETUP 只接受本轮打印出来的改造项与兵种',
+  },
+  {
+    desc: 'M16501 MONSTER_PLAY 撤销名单即受理集的收紧（重新开放手输编号）',
+    file: 'ere/dungeon/monster-play.js',
+    find: '  const selected = await era.input();',
+    replace:
+      '  const selected = await era.input({ useRule: false }); // 变异：手输编号重新放行',
+    tests: ['monster-play'],
+    must_mention: '22 不是本轮的按钮',
   },
   {
     desc: 'M16550 侵攻度三分支的踏破门槛改坏（>= 100 → >= 0：滞留也当踏破）',

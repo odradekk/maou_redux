@@ -87,6 +87,22 @@ test('MONSTER_SETUP 保留完整菜单判定区间的随机源副作用', async 
   }
 });
 
+test('MONSTER_SETUP 只接受本轮打印出来的改造项与兵种（#872 受理集＝按钮集）', async () => {
+  // 史莱姆（102）不能装甲化（selection 5）、非人形没有兵种段：这两个编号
+  // 本轮没有按钮，写进 rule 之外的受理集后由引擎在输入框里拒收
+  for (const typed of [5, 50]) {
+    const fixture = setup();
+    fixture.set_inputs(typed, 999);
+    await assert.rejects(
+      () =>
+        fixture.load_module('dungeon/monster-data').monster_setup(102, seq()),
+      /输入不合法！输入规范：\(\?:0\|1\|2\|3\|4\|999\)/,
+      `${typed} 不在史莱姆本轮的按钮里`,
+    );
+    assert.equal(fixture.store.get('flag:802'), undefined, '被拒项不写改造位');
+  }
+});
+
 test('MONSTER_SETUP 拒绝非法编号、缺钱和取消确认，兵种改造保留万位与低位', async () => {
   const invalid = setup();
   assert.equal(
@@ -392,17 +408,14 @@ test('MONSTER_PLAY 非狗先生成第 5 列，再按 E:507 分派并共用随机
   );
 });
 
-test('MONSTER_PLAY 保留自由输入：未显示但有库存的编号仍可进入', async () => {
+test('MONSTER_PLAY 只接受本轮按钮：未列出的编号在输入框里被拦下', async () => {
   const fixture = setup();
-  fixture.store.set('item:22', 1);
+  fixture.store.set('item:22', 1); // 野狗的库存挂在 22 号道具上，按钮却是 900
   fixture.set_inputs(22);
-  assert.equal(
-    await fixture.load_module('dungeon/monster-play').monster_play(seq(0, 0)),
-    'TURNEND',
+  await assert.rejects(
+    () => fixture.load_module('dungeon/monster-play').monster_play(seq(0, 0)),
+    /输入不合法！请输入以下值之一：/,
+    '22 不是本轮的按钮（野狗的快捷键是 900），到不了 monster_data',
   );
-  assert.equal(
-    fixture.store.get('exp:0:0'),
-    undefined,
-    '22 不是野狗快捷键 900',
-  );
+  assert.equal(fixture.store.get('exp:0:0'), undefined);
 });

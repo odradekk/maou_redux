@@ -582,26 +582,15 @@ async function chara_sale({
     }
     era.drawLine({ content: '‥' });
     era.printButton('- 返回', 999);
-    const selected = await era.input({ useRule: false });
+    // 名单就是受理集：每名候选都是按钮（快捷键＝角色号），白名单先一步
+    // 拦下不在名单里的编号——出售资格由 sale_candidate 一处判定。
+    const selected = await era.input();
     if (selected === 999) {
       era_flag.target = game.event.上次调教对象;
       return 999;
     }
-    if (!era.getAddedCharacters().includes(selected) || selected === 0)
-      continue;
-    if (chara(selected).stronghold.出售与助手资格 < 1) continue;
-    if (value('base', selected, 0) < 1) continue;
-    // CFLAG:1 = 角色状态；手输编号也必须满足出售名单的状态要求。
-    if (value('cflag', selected, 1) !== 0) continue;
     if (value('cflag', selected, 700)) {
       era.print(`${chara_callname(selected)}在你的收藏列表里，不能卖掉。`);
-      await era.waitAnyKey();
-      continue;
-    }
-    if (value('talent', selected, 292)) {
-      era.print(
-        `${chara_callname(selected)}只是影子，一旦与你分离便会烟消云散，因此无法卖掉。`,
-      );
       await era.waitAnyKey();
       continue;
     }

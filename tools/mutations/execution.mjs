@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 210; // #884 +1（M16605：除名登记退回用角色号当预设号）； #794 +17（M13811–M13827：处刑单选版与批量版的行为差异对照——所持金/好感度/善恶下限阈值/录像书架/人称与 C 敏感文案/两处头注指向，成对的两个方向都钉）；#785 审计返工净 -3：删 M11783/M11788/M11790 与 M7260 四条同型链路守卫（改由 chara-removal-scan 白名单扫描统一守护），新增 M15123（非正角色号契约校验）；#785 审查轮 +4（M15119–M15122：处刑/博物馆的原因特定奖励不因机械段集中而重复入账）；#785 净 +6：出售/处刑/博物馆三处除名登记条目 M14701/M14702/M14704 随机械步骤收敛进 ere/system/chara-removal.js 合并为 M15110，新增 M15111–M15118（指针判等与同步、称呼重建、reset_names 缺省、实际删除、队伍移除）；#748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
+export const COUNT = 212; // #872 +2（M16503/M16504：猎奇受理集与处刑对象轮的名单） #884 +1（M16605：除名登记退回用角色号当预设号）； #794 +17（M13811–M13827：处刑单选版与批量版的行为差异对照——所持金/好感度/善恶下限阈值/录像书架/人称与 C 敏感文案/两处头注指向，成对的两个方向都钉）；#785 审计返工净 -3：删 M11783/M11788/M11790 与 M7260 四条同型链路守卫（改由 chara-removal-scan 白名单扫描统一守护），新增 M15123（非正角色号契约校验）；#785 审查轮 +4（M15119–M15122：处刑/博物馆的原因特定奖励不因机械段集中而重复入账）；#785 净 +6：出售/处刑/博物馆三处除名登记条目 M14701/M14702/M14704 随机械步骤收敛进 ere/system/chara-removal.js 合并为 M15110，新增 M15111–M15118（指针判等与同步、称呼重建、reset_names 缺省、实际删除、队伍移除）；#748 +9（M14700–M14708：五处除名入口与标记范围）； #710 +2（M14249-M14251：猎奇菜单与候选人行的按钮化；M11995 的「只给返回打按钮」检查改写成 M14251，条数不变）；#650 起 -1（M7266 反向变异随流放选项 1 缺陷修复删除）；#643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，文本锁删除后无回归检查）；#597 起 +5（M12121：处刑对象列表表头之后的 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于自动处刑与流放逐两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一检查）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
@@ -1278,12 +1278,12 @@ export default [
     must_mention: '五选一菜单是按钮',
   },
   {
-    desc: 'M11991 流放消费点去掉 useRule: false（被注释掉的 100 仍受理，锁死后不可达）',
+    desc: 'M11991 流放受理集漏掉未显示的 100（rule 收紧到按钮集）',
     file: 'ere/event/event-banishment.js',
-    find: '    result = await era.input({ useRule: false });',
-    replace: '    result = await era.input(); // 变异：收紧白名单',
+    find: "{ rule: '(?:100|[0-4])' }",
+    replace: "{ rule: '[0-4]' } // 变异：未显示的 100 被拒",
     tests: ['event-execution'],
-    must_mention: '输入不合法！请输入以下值之一：',
+    must_mention: '未显示的 100 仍可键入',
   },
   {
     desc: 'M11992 公开处刑三选一退回纯文本行（同上）',
@@ -1294,12 +1294,12 @@ export default [
     must_mention: '三选一菜单是按钮',
   },
   {
-    desc: 'M11993 公开处刑消费点去掉 useRule: false（未显示的 100 被锁死）',
+    desc: 'M11993 公开处刑受理集漏掉未显示的 100（rule 收紧到按钮集）',
     file: 'ere/event/event-public-execution.js',
-    find: '    result = await era.input({ useRule: false });',
-    replace: '    result = await era.input(); // 变异：收紧白名单',
+    find: "{ rule: '(?:100|[0-2])' }",
+    replace: "{ rule: '[0-2]' } // 变异：未显示的 100 被拒",
     tests: ['event-execution'],
-    must_mention: '输入不合法！请输入以下值之一：',
+    must_mention: '未显示的 100 仍可键入',
   },
   {
     desc: 'M11994 处置菜单退回纯文本行（[0]-[7] 点不动）',
@@ -1315,9 +1315,9 @@ export default [
     // 与「候选人行退回纯文本」两侧。
     desc: 'M14251 候选人轮的 [100] 返回退回纯文本（回到只按钮化行的半套写法）',
     file: 'ere/event/event-execution.js',
-    find: "    era.printButton('返回', 100);\n    let selected;",
+    find: "    era.printButton('返回', 100);\n    const selected = await era.input();",
     replace:
-      "    era.print('[100] 返回'); // 变异：返回退回纯文本\n    let selected;",
+      "    era.print('[100] 返回'); // 变异：返回退回纯文本\n    const selected = await era.input();",
     tests: ['event-execution'],
     must_mention: '候选人轮的 [100] 返回也是按钮',
   },
@@ -1820,6 +1820,23 @@ export default [
     replace: '  await grotesque_koujo(cid, result + 1); // 变异：编号错位',
     tests: ['event-execution', 'execution-params'],
     must_mention: '五个处刑钩子从实参读处分方式',
+  },
+  {
+    desc: 'M16503 猎奇处刑的受理集漏掉未显示的 100（rule 收紧到按钮集）',
+    file: 'ere/event/event-grotesque.js',
+    find: "{ rule: '(?:100|[0-6])' }",
+    replace: "{ rule: '[0-6]' } // 变异：未显示的 100 被拒",
+    tests: ['event-execution'],
+    must_mention: '猎奇处刑菜单的越界编号被 rule 拦下',
+  },
+  {
+    desc: 'M16504 处刑对象轮撤销名单即受理集的收紧（重新开放手输编号）',
+    file: 'ere/event/event-execution.js',
+    find: '    const selected = await era.input();',
+    replace:
+      '    const selected = await era.input({ useRule: false }); // 变异：手输编号重新放行',
+    tests: ['event-execution'],
+    must_mention: '处刑对象：2 不是本轮的按钮',
   },
   {
     desc: 'M16605 除名登记退回用角色号当预设号（后代的 FLAG:(NO+199) 全部落空）',
