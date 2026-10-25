@@ -1626,6 +1626,23 @@ test('resulection：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   assert.equal((await run(cancel, 'resulection', [1], {})).ret, 0);
 });
 
+test('resulection：苏生预设 1（待機）的角色后状态归 0（#814）', async () => {
+  // 苏生名单是预设 1-100，其中 33 个角色的状态预设是原版的 1 = 待機。
+  // 移植版四个操作页（可选目标/能力提升/换号/派遣）都以 0 放行，苏生出来
+  // 停在 1 的角色等于「花一枚勋章召唤出来却不能用」，所以加入点要归一
+  const fixture = make_fixture({
+    seed: { 'exp:0:81': 5, 'flag:1099': -2 },
+  });
+  const dead = { id: 100, name: '亡者', callname: '亡者' };
+  fixture.seed_chara(100, dead);
+  fixture.store.set('chara:100', dead);
+  // 夹具不读 yml/：手工播引擎在 addCharacter 时会抄进来的预设
+  fixture.store.set('cflag:100:1', 1);
+
+  assert.equal((await run(fixture, 'resulection', [0, 199], {})).ret, 1);
+  assert.equal(fixture.store.get('cflag:100:1'), 0, '待机档归 0（可操作）');
+});
+
 test('resulection：苏生后出售的角色不再进入确认或空名单', async () => {
   const fixture = make_fixture({
     money: 100,

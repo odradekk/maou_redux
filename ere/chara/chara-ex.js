@@ -12,7 +12,6 @@
 
 const era = require('#/era-electron');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { chara } = require('#/facade/chara');
 
 // 声明的编号空间：45 个角色编号（0-24、31-35、100、
 // 150、201-211、223、777），离线生成（#7 决议「索引全部离线生成」——运行时
@@ -113,16 +112,6 @@ chara_ex.register(34, (cid) => {
   era.set(`ex_talent:${cid}:4`, 1);
   era.set(`ex_talent:${cid}:801`, 1);
   era.set(`ex_talent:${cid}:901`, 1);
-  // MARK:4 = 3（Chara34.yml 预设，非本注册回调的内容）：
-  // 引擎只按 Mark.yml 名字表建槽，预设不会整份拷进角色——4 号无名条目被丢
-  // （#118 定夺不扩名表：那会给所有角色预建该槽）。**每个加入点都要过
-  // add_chara_ex**（#548 验收：研究所复活 `page-shop-labo.js` 的 resulection
-  // 走的就是这条路），所以补偿写在这里，而不是某一个加入点（原先只在
-  // enter-enemy 的 K_34 剧情里写，#548 返工）。
-  // 反抗刻印履历 = 3 → 反抗刻印获取检查的三档（mark:4 <= 0/1/2）全关，
-  // 她不会再获得反抗刻印（test/chara34-mark.test.js 锁行为）。
-  // 跨域写走门面（domain-check 的裸写检查；mark 属 chara.system 域）
-  chara(cid).system.反抗刻印履历 = 3;
 });
 chara_ex.register(35, (cid) => {
   // EX_TALENT:104 = 菲娅

@@ -1,14 +1,182 @@
-# 本文件为人工产出：CFLAG 没有名字表（游戏侧一律用数字下标）。
+# 本文件登记角色预设（Chara*.yml 的「フラグ」「CFLAG」行）用到的 CFLAG 序号。
 #
-# 它的存在只有一个目的：让引擎装载循环（app.asar 的 eraStart）建出
-# staticData.cflag——引擎的 staticData 初始为空（{}），角色预设文件里的
-# 「フラグ」行（映射到 cflag，如 Chara17.yml）在 staticData.cflag 缺位时报
-# 「角色数据表不存在: cflag!」并整行丢弃（issue #50 用引擎代码实测）。本文件
-# 装载后 staticData.cflag = {}，预设行零错误装载；预设第二列是数字下标，名字
-# 翻译为恒等（引擎 safeUndefinedCheck），空表即够用，不需要名字条目。
+# 登记有两层作用，缺一不可：
+#   1. 让引擎装载循环建出 staticData.cflag——缺这个表时角色预设行整行丢弃并
+#      报「角色数据表不存在: cflag!」；
+#   2. 让引擎把预设值真正写进角色数据。addCharacter 与读档后的 fillData 都只
+#      处理**名字表内登记的下标**（initCharaTable 的
+#      ["abl","talent","cflag","equip","mark","exp","juel"] 分支），没登记的
+#      序号上的预设一律丢弃。本表此前是空表，44 个角色文件里 222 个非零 CFLAG
+#      预设值全部丢掉了：狂王（34）加入后等级、基础攻防、初始装备都是 0。
 #
-# 已知边界（引擎行为，app.asar 的 addCharacter 实测）：预设的 cflag 值不会随
-# addCharacter 落进 data——引擎的 initCharaTable 初始化只覆盖名字表内登记的
-# 下标。Chara17 的 フラグ,1,1（初始占用）随即被 EVENTFIRST 村娘分支的
-# CFLAG:1 = 0 覆盖，无行为差异。将来若某个角色的
-# 预设 cflag 值需要在加入时直接生效，在此补「名称: id」条目即可。
+# 字段形状与引擎自带转换器的产出一致（同 Base.yml / PortCFlag.yml 先例）：
+#   键    = 中文显示名（对上变量释文，与门面的 cflag 名一致）
+#   name  = 英文 snake_case 标识符（JS 侧访问器名）
+#   id    = 数字下标，沿用旧引擎的原下标（底层寻址一律用它）
+#   type  = 值类型（本表全是整数）
+#
+# 收录判据是「有角色预设在用」，不是「代码在用」：没有预设、只由代码读写的
+# 序号不登记——登记会让引擎在该序号上给每个角色建槽、读档时补值，初值语义
+# 随之变化。反过来，登记之后删条目会让旧档里那批槽停在原值，不要删。
+#
+# 读档影响：引擎读档时 fillData 把登记序号的预设补进旧存档里从未写过的槽。
+# 绝大多数据点在读之前都先写（加入点显式设值班、每日重算攻防、生成身体数据
+# 等），补进来的预设只是把角色还原成角色文件描述的样子；唯一注意点是状态位
+# 1——原版 0 = 調教中、1 = 待機、2 = 侵攻中，移植版一律用 0 表示「在城里可
+# 操作」，所以那 39 个角色的预设 1/2 与本移植版的状态模型语义不同。逐序号的
+# 核对结论见 #814 的 PR 说明。
+"出售与助手资格":
+  id: 0
+  name: "sale_and_assistant"
+  type: "number"
+  # 1 = 可出售，2 = 可当助手（含位组合）
+"状态":
+  id: 1
+  name: "state"
+  type: "number"
+  # 0 = 调教中、1 = 待机、2 = 侵攻中、3 = 迎击中、4 = 死亡、7 = 苗床、
+  # 10 = 育儿室、11 = 召唤酔、12 = 战役派遣
+"好感度":
+  id: 2
+  name: "affection"
+  type: "number"
+"等级":
+  id: 9
+  name: "level"
+  type: "number"
+"攻击力":
+  id: 11
+  name: "attack"
+  type: "number"
+  # 每回合结算时按装备与等级重算的实战攻击力
+"防御力":
+  id: 12
+  name: "defense"
+  type: "number"
+"基础攻击":
+  id: 13
+  name: "base_attack"
+  type: "number"
+"基础防御":
+  id: 14
+  name: "base_defense"
+  type: "number"
+"初体验对象":
+  id: 15
+  name: "first_sex_partner"
+  type: "number"
+  # 对手的角色号 + 1；101 起是怪物编号，105 = 狂王，-1 = 未设定
+"初吻对象":
+  id: 16
+  name: "first_kiss_partner"
+  type: "number"
+  # 同上的编码；-1 = 未设定
+"上衣类型":
+  id: 41
+  name: "top_type"
+  type: "number"
+"特别服装类型":
+  id: 42
+  name: "special_costume_type"
+  type: "number"
+"上衣下状态":
+  id: 46
+  name: "top_state"
+  type: "number"
+  # -3 被撕破、-2 沾满污物、-1 没收、0 通常、1 以上 洗涤中
+"卖春积极性":
+  id: 120
+  name: "prostitution_motivation"
+  type: "number"
+"善恶值":
+  id: 151
+  name: "karma"
+  type: "number"
+  # -100 以下混沌、-99～99 中立、100 以上秩序（增减钳在 [-200, 200]）
+"信仰值":
+  id: 152
+  name: "faith"
+  type: "number"
+  # 0～100，神官与巫女的职业判定读它
+"命名检查":
+  id: 420
+  name: "name_customized"
+  type: "number"
+  # 1 = 名字由玩家设定过（只写不读）
+"一人称档位":
+  id: 450
+  name: "self_call_tier"
+  type: "number"
+  # < 0 或 >= 200 走角色文件里的自称预设，[0,9) 直设「我」，
+  # [9,100) / [100,200) 各是一张自称表
+"年龄":
+  id: 451
+  name: "age"
+  type: "number"
+  # 人间换算年龄
+"种族年龄":
+  id: 452
+  name: "race_age"
+  type: "number"
+  # 每月增长的种族年龄
+"身高":
+  id: 453
+  name: "height"
+  type: "number"
+"体重":
+  id: 454
+  name: "weight"
+  type: "number"
+"胸围":
+  id: 455
+  name: "bust"
+  type: "number"
+"腰围":
+  id: 456
+  name: "waist"
+  type: "number"
+"臀围":
+  id: 457
+  name: "hip"
+  type: "number"
+"侵攻阶层":
+  id: 501
+  name: "invasion_floor"
+  type: "number"
+"再起点":
+  id: 508
+  name: "restart_point"
+  type: "number"
+  # 在迷宫外全恢复所需的点数，突破阶层时增加
+"目标阶层":
+  id: 520
+  name: "target_floor"
+  type: "number"
+"武装":
+  id: 550
+  name: "weapon"
+  type: "number"
+  # 550～559 是装备品栏，550 存武装的道具编号
+"装饰":
+  id: 551
+  name: "accessory"
+  type: "number"
+  # 551 存装饰的道具编号
+"装饰2":
+  id: 552
+  name: "accessory2"
+  type: "number"
+  # 552 存第二件装饰的道具编号
+"所持金":
+  id: 580
+  name: "money"
+  type: "number"
+  # 勇者身上带的金额（城镇消费、被夺金额都从这里扣）
+"特殊角色标记":
+  id: 800
+  name: "special_chara_mark"
+  type: "number"
+  # 1 = 琼、2 = 普林希斯、3 = 嘉德、4 = 葵希罗、5 = 白告姬。代码用它识别
+  # 狂王（4）：chara-temptation.js 的不可诱惑判定、dungeon-party.js 的独行判定。
+  # 800～805 另被角色信息页当作献祭满足度的六个分项（种族/性格/契机/生い立ち/
+  # 发色/瞳色）——两处用途复用同六个下标，但只有上面五个人带预设。

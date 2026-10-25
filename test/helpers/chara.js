@@ -12,9 +12,9 @@
 const CHARA_0_SHAPE = { id: 0, name: '你', callname: '你' };
 
 // yml/Chara17.yml 装载后的最小形状（issue #50：村娘，静态表名字是玛奥）。
-// 基礎/素質/フラグ 预设不进夹具——游戏代码不读它们（村娘分支的 cflag 写
-// 入随后覆盖 フラグ 预设位），预设本身的装载正确性由 test/chara-yml.test.js
-// 用引擎代码比对固定，两层不重复。
+// 基礎/素質/フラグ 预设不进夹具——夹具不读 yml/，用例自己按需播种；引擎侧
+// 「预设随 addCharacter 落库」由 test/chara-preset-apply.test.js 逐角色固定，
+// 两层不重复。
 const CHARA_17_SHAPE = { id: 17, name: '玛奥', callname: '玛奥' };
 
 // yml/Chara1.yml 装载后的最小形状（#565：初期奴隶选「随机」且 rand ≡ 0 时

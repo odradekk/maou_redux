@@ -133,6 +133,7 @@ const { change_screen } = require('#/page/components/screen-change');
 const { char_size_generate } = require('#/chara/chara-body');
 const { char_create } = require('#/chara/chara-custom');
 const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/chara/chara-ex');
+const { normalize_idle_status } = require('#/chara/chara-init');
 const {
   MAX_CHARANUM,
   n_breast_grow,
@@ -1637,6 +1638,10 @@ async function resulection() {
     era.addCharacter(preset); // ADDCHARA D
     revived = preset; // C = CHARANUM - 1
     await add_chara_ex_defined(revived); // CALL ADDCHARA_EX, CHARANUM-1
+    // 待机档归一：苏生名单是预设 1-100，其中 33 个角色的状态预设是原版的
+    // 1 = 待機，而移植版四个操作页都以 0 放行（判据只有一处，见 chara-init.js
+    // 的 normalize_idle_status；读档钩子走同一个函数）
+    normalize_idle_status(revived);
     era.set(`flag:${c}`, -1); // FLAG:C = -1（购买标记）
     era.print(`《${savestr(revived)}被从彼岸召唤回来了》`);
     era_flag.target = revived; // TARGET = C

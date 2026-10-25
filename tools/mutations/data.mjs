@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 41; // #822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 50; // #814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -402,5 +402,85 @@ export default [
     replace: "  89: '兽奸PLAY',",
     tests: ['display-name-fullwidth'],
     must_mention: '半角字母会显示成半角小写（野外play）',
+  },
+  // —— #814（角色预设的 cflag/cstr/mark/talent 在加入时生效）——
+  {
+    engine: true,
+    desc: 'M15850 CFlag.yml 的等级序号写成 8（角色预设落到错误下标）',
+    file: 'yml/CFlag.yml',
+    find: '"等级":\n  id: 9\n',
+    replace: '"等级":\n  id: 8\n',
+    tests: ['chara-preset-apply'],
+    must_mention: '等级、基础攻防、初始装备、所持金与角色文件一致',
+  },
+  {
+    engine: true,
+    desc: 'M15851 CFlag.yml 删掉攻击力条目（引擎不再给这个序号建槽，预设被丢弃）',
+    file: 'yml/CFlag.yml',
+    find: '"攻击力":\n  id: 11\n  name: "attack"\n  type: "number"\n  # 每回合结算时按装备与等级重算的实战攻击力\n',
+    replace: '',
+    tests: ['chara-preset-apply'],
+    must_mention: '有角色预设在用的下标没登记进 yml',
+  },
+  {
+    engine: true,
+    desc: 'M15852 CFlag.yml 的状态位序号写成 4（状态预设落到反抗刻印下标上）',
+    file: 'yml/CFlag.yml',
+    find: '"状态":\n  id: 1\n',
+    replace: '"状态":\n  id: 4\n',
+    tests: ['chara-preset-apply'],
+    must_mention: '状态：侵攻中',
+  },
+  {
+    engine: true,
+    desc: 'M15853 CFlag.yml 的特殊角色标记序号写成 806（狂王识别失败）',
+    file: 'yml/CFlag.yml',
+    find: '"特殊角色标记":\n  id: 800\n',
+    replace: '"特殊角色标记":\n  id: 806\n',
+    tests: ['chara-preset-apply'],
+    must_mention: '特殊角色标记：狂王',
+  },
+  {
+    engine: true,
+    desc: 'M15854 Mark.yml 的反抗刻印履历序号写成 5（MARK,4,3 预设仍被丢弃）',
+    file: 'yml/Mark.yml',
+    find: '"反抗刻印履历":\n  id: 4\n',
+    replace: '"反抗刻印履历":\n  id: 5\n',
+    tests: ['chara-preset-apply', 'chara34-mark'],
+    must_mention: 'MARK,4,3 随预设落 data.mark[34][4]',
+  },
+  {
+    engine: true,
+    desc: 'M15855 Talent.yml 的狂王替身序号写成 3（素質 2 号的预设仍被丢弃）',
+    file: 'yml/Talent.yml',
+    find: '"狂王替身":\n  id: 2\n',
+    replace: '"狂王替身":\n  id: 3\n',
+    tests: ['chara-preset-apply'],
+    must_mention: '狂王替身',
+  },
+  {
+    engine: true,
+    desc: 'M15856 CStr.yml 的自称序号写成 61（嘉德与菲娅的自称预设仍被丢弃）',
+    file: 'yml/CStr.yml',
+    find: '"自称":\n  id: 60\n',
+    replace: '"自称":\n  id: 61\n',
+    tests: ['chara-preset-apply'],
+    must_mention: 'CSTR,60,本宫',
+  },
+  {
+    desc: 'M15857 CFlag.yml 的 name 退回中文（不是英文 snake_case，无法生成访问器名）',
+    file: 'yml/CFlag.yml',
+    find: '  name: "sale_and_assistant"\n',
+    replace: '  name: "出售与助手资格"\n',
+    tests: ['chara-preset-apply'],
+    must_mention: '的 name 必须是英文 snake_case',
+  },
+  {
+    desc: 'M15858 CStr.yml 的 type 写成 number（字符串表被当数字表生成）',
+    file: 'yml/CStr.yml',
+    find: '  name: "self_call"\n  type: "string"\n',
+    replace: '  name: "self_call"\n  type: "number"\n',
+    tests: ['chara-preset-apply'],
+    must_mention: 'type 必须是 string',
   },
 ];

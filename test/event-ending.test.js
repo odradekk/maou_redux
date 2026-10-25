@@ -103,6 +103,14 @@ test('【验收 1】FLAG:81 满 10000：ending_1 演出一次、菲娅入队并�
   // CHAR_INIT 窄路径的一人称（RANDOM_SELF_CALL 的 <9 直设）
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称 = 我');
   assert.equal(fixture.store.get('cflag:35:450'), 9, '一人称档位 = 9');
+  // 加入点直接给「在城里可操作」。角色文件里的状态预设是原版的 1 = 待機，
+  // 而四个操作页（可选目标/能力提升/换号/派遣）都以 0 放行——只靠读档钩子
+  // 归一的话，打完 ENDING_1 选「继续」的这一整个会话里菲娅都不能用
+  assert.equal(
+    fixture.store.get('cflag:35:1'),
+    0,
+    '加入点直接给可操作状态，不等读档归一',
+  );
 
   const texts = history_texts(fixture);
   assert(
@@ -371,6 +379,13 @@ test('ending_3/4/5：横幅 + char_gift(arg) 收下预设角色 → 领域 flag 
     assert(
       fixture.chara_no.includes(c.no_chara),
       `${c.name}：收下 = 角色 ${c.no_chara} 在队`,
+    );
+    // 加入点直接给「在城里可操作」（贡品是奴隶）：角色文件里的状态预设是
+    // 原版的 1 = 待機，只靠读档钩子归一的话，收下之后这一整个会话都不放行
+    assert.equal(
+      fixture.store.get(`cflag:${c.no_chara}:1`),
+      0,
+      `${c.name}：加入点直接给可操作状态，不等读档归一`,
     );
 
     // 条件已被置 2 挡住：再查空转、不重复入队

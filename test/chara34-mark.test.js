@@ -1,16 +1,16 @@
 /**
- * `MARK,4,3`（葵希罗预设）的行为测试（#548 / S7）。
+ * `MARK,4,3`（葵希罗预设）的行为测试（#548 / S7；#814 起预设由引擎落库）。
  *
- * 背景（#118 定夺的同族缺口）：ere 引擎 initCharaTable 只按 Mark.yml
- * 名字表登记的下标建槽抄预设——Mark.yml 无 4 号名条目，addCharacter 不把
- * MARK,4,3 落 data（test/extalent-table.test.js 的引擎级用例钉住）。扩名
- * 条目会给所有角色预建 4 槽，故在加入点直写 mark:34:4 = 3（反抗刻印履历
- * 已满：三档取得检查全关，效果与预设全量拷入一致）。
+ * 背景：ere 引擎 initCharaTable 只按 Mark.yml 名字表登记的下标建槽抄预设。
+ * Mark.yml 早已有 0～3 号名条目，4 号（反抗刻印履历）自 #814 起才登记——登记
+ * 前 addCharacter 不把 MARK,4,3 落 data，代码在 34 号的扩展里手工补写
+ * （#118 的旧定夺）；现在预设自己落库，手工补偿删掉，本文件守住「加入点不再
+ * 写它、预设值照样在」。效果与预设全量拷入一致：三档取得检查全关，她不会再
+ * 获得反抗刻印。
  *
  * 覆盖：
- *   - 加入点写值（k_34_crazylord 后 mark:34:4 = 3，mark:34:3 预设原样）；
- *   - 引擎级：真 set_var 写 mark:<cid>:4 落 data 并可读回（write 通道的
- *     引擎接受度，extalent-table 同款驱动法）；
+ *   - 加入点不覆盖预设（k_34_crazylord 后 mark:34:4 仍是 3，且不再由游戏代码写）；
+ *   - 引擎级：addCharacter(34) 把 MARK,4,3 落进 data（预设通道本身）；
  *   - 效果：SOURCE_CHECK 链下反感 ≥ 500 也不取得反抗刻印（对照：无履历
  *     的世界在同一链上取得 LV1）。
  */
@@ -57,31 +57,45 @@ function setup_crazylord() {
   fixture.store.set('talent:20:76', 1); // TALENT:20:76【淫乱】
   fixture.store.set('flag:92', 15); // 四方堡垒全陷落
   fixture.store.set('flag:500', 1); // 狂王性别：女性
+  // 引擎在 addCharacter(34) 时按 Chara34.yml 的 MARK 段建槽抄预设；夹具不读
+  // yml/（引擎侧由本文件的 engine_test 与 test/chara-preset-apply.test.js 钉住），
+  // 这里手工播种同一组值，好让「加入点不覆盖预设」可观测
+  for (const mark of [1, 3, 4]) {
+    fixture.store.set(`mark:34:${mark}`, 3);
+  }
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.day_count = 350;
   fixture.set_inputs(0); // 仪式性确认输入
   return { fixture, era_flag };
 }
 
-test('K_34 加入点：mark:34:4 = 3（反抗刻印履历）与 mark:34:3 预设同在', async () => {
+test('K_34 加入点：mark:34:4 = 3 原样保留，代码不再补写（#814 删掉手工补偿）', async () => {
   const { fixture } = setup_crazylord();
   const { k_34_crazylord } = fixture.load_module('event/enter-enemy');
   await k_34_crazylord(() => 0);
 
-  assert.equal(fixture.store.get('mark:34:4'), 3, 'MARK,4,3 在加入点补写');
-  // MARK 1/3 的预设经引擎名字表自落（engine 级由 test/extalent-table.test.js
-  // 钉住：data.mark[34][1] = 3 / [3] = 3）；夹具不读 yml/，此处不重复断言
+  assert.equal(fixture.store.get('mark:34:4'), 3, '反抗刻印履历仍是预设的 3');
+  assert(
+    !fixture.var_writes.some((write) => write.name === 'mark:34:4'),
+    '加入点不得再写 mark:34:4——预设由引擎抄进角色数据，写第二次就是两套来源',
+  );
 });
 
-test('研究所复活：resulection 也经过 add_chara_ex，补偿照样写上（#548 返工）', async () => {
+test('研究所复活：resulection 也不补写 mark:34:4（预设随 addCharacter 落库）', async () => {
   // 复活 34 号：FLAG:(34+999) = -2 是死亡旗（-2 = 已死），
   // 按钮编号 = COUNT + 100（COUNT = 33 → 133 → preset = 133 - 99 = 34）
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
+  // 同 setup_crazylord：引擎侧由 addCharacter 抄预设，夹具手工播种
+  for (const mark of [1, 3, 4]) {
+    fixture.store.set(`mark:34:${mark}`, 3);
+  }
   fixture.store.set('exp:0:81', 5); // 勋章经验（> 0 才进复活流程）
   fixture.store.set('flag:1033', -2); // 条件（可复活）
+  // 34 的状态预设是 2（侵攻中）：待机档归一只针对 1，2 必须原样保留
+  fixture.store.set('cflag:34:1', 2);
   fixture.set_inputs(0, 133); // 确定 → 选 34 号
   const { resulection } = fixture.load_module('page/page-shop-labo');
 
@@ -90,10 +104,15 @@ test('研究所复活：resulection 也经过 add_chara_ex，补偿照样写上�
     fixture.era.getAddedCharacters().includes(34),
     '34 号被 addCharacter 收回',
   );
+  assert.equal(fixture.store.get('mark:34:4'), 3, '复活后仍是预设的 3');
   assert.equal(
-    fixture.store.get('mark:34:4'),
-    3,
-    'MARK,4,3 的补偿写在 add_chara_ex 里，复活路径同样经过',
+    fixture.store.get('cflag:34:1'),
+    2,
+    '侵攻中的状态不被待机档归一改掉',
+  );
+  assert(
+    !fixture.var_writes.some((write) => write.name === 'mark:34:4'),
+    '复活路径同样不补写——所有加入点共用 addCharacter 的预设通道',
   );
 });
 
@@ -167,10 +186,10 @@ test('对照：无 mark:4 履历时同一链上取得反抗刻印 LV1（条件�
   assert.equal(fixture.store.get('mark:34:4'), 1, '履历从 0 推进到 1');
 });
 
-// —— 引擎级：mark:<cid>:4 的写入通道（#13 未声明下标的 setVar 落 data）——
+// —— 引擎级：MARK,4,3 走预设通道落库（#814 起 Mark.yml 登记了 4 号）——
 
 engine_test(
-  '引擎接受 mark:<cid>:4 的写入：addCharacter 后 setVar 落 data 可读回',
+  '引擎 addCharacter：MARK,4,3 随预设落 data.mark[34][4]，无需任何补写',
   () => {
     const loader = create_chara_loader({ extended_tables: EXTENDED_TABLES });
     attach_variable_tables(loader, repo_tables);
@@ -188,23 +207,12 @@ engine_test(
       extended_tables: EXTENDED_TABLES,
     });
     assert.equal(adder.add(34), true);
-    assert.equal(adder.data.mark[34][4], undefined, '预设仍被名字表缺口丢下');
-    // 加入点补偿写入走的正是这条通道（ere.set → 引擎 setVar 三段分支）
     assert.equal(
-      engine.set_var.call(
-        {
-          data: adder.data,
-          staticData: loader.static_data,
-          fieldNames: repo_tables.field_names,
-          global: {},
-          extendedTables: EXTENDED_TABLES,
-          era: { error: () => {} },
-        },
-        'mark:34:4',
-        3,
-      ),
+      adder.data.mark[34][4],
       3,
+      'Mark.yml 登记了 4 号，initCharaTable 建槽并抄预设',
     );
-    assert.equal(adder.data.mark[34][4], 3, '写入落在 data.mark[34].4（#13）');
+    assert.equal(adder.data.mark[34][1], 3, 'MARK 1 同样是预设落库');
+    assert.equal(adder.data.mark[34][3], 3, 'MARK 3 同样是预设落库');
   },
 );

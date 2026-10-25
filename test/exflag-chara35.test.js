@@ -299,11 +299,13 @@ engine_test(
     // 同丢）
     assert.equal(adder.data.abl[35][10], 2);
     assert.equal(adder.data.abl[35][21], 3);
-    // 引擎行为记录（Chara17 同款，见 CFlag.yml 头注）：预设的 cflag 值不随
-    // addCharacter 落 data——initCharaTable 只覆盖名字表内登记的下标，而
-    // CFlag.yml 是空表。菲娅的 22 项フラグ预设（含 151 = 99）是否需要在加入
-    // 时直接生效，由 ENDING_1 演出工单对照 CHAR_INIT 的行为定夺
-    assert.deepEqual(adder.data.cflag[35], {});
+    // 引擎行为（#814 起）：CFlag.yml 登记了角色预设在用的下标，initCharaTable
+    // 按名字表建槽并抄预设，菲娅的 22 项フラグ预设（含 151 = 99、800 = 5）
+    // 随加入落库；没预设的登记下标落 0
+    assert.equal(adder.data.cflag[35][151], 99);
+    assert.equal(adder.data.cflag[35][800], 5);
+    assert.equal(adder.data.cflag[35][9], 1);
+    assert.equal(adder.data.cflag[35][580], 0, '没预设的所持金落 0');
   },
 );
 

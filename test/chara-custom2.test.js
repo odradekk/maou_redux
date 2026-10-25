@@ -537,7 +537,8 @@ test('char_custom_talent_page：三页只显示已声明素质，跳过的编号
     assert.ok(displayed.length > 0);
     assert.ok(displayed.every(({ acc, text }) => names.get(acc) === text));
     if (page === 0) {
-      assert.deepEqual(button_rows(fixture)[0], [0, 1, 9]);
+      // 0/1/2/9：2 号「狂王替身」自 #814 起登记进 yml/Talent.yml
+      assert.deepEqual(button_rows(fixture)[0], [0, 1, 2, 9]);
     }
   }
 });

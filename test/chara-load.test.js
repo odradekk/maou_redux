@@ -239,7 +239,7 @@ engine_test(
 );
 
 engine_test(
-  '引擎 addCharacter：角色 17 进入 data.no，基礎/素質落表，cflag 不落',
+  '引擎 addCharacter：角色 17 进入 data.no，基礎/素質/フラグ落表',
   () => {
     const loader = load_chara_yml('Chara17.yml');
     const adder = create_add_character(loader.static_data);
@@ -271,9 +271,15 @@ engine_test(
     assert.equal(adder.data.talent[17][0], 1);
     assert.equal(adder.data.talent[17][300], 4);
     assert.equal(adder.data.talent[17][314], 0);
-    // initCharaTable 的预设拷贝只覆盖名字表内登记的下标，cflag 名字表为空
-    // → 预设 cflag 整组不落 data（CFlag.yml 头注释的依据）
-    assert.deepEqual(adder.data.cflag[17], {});
+    // フラグ,1,1（初始占用）自 #814 起随 addCharacter 落 data：CFlag.yml 登记了
+    // 1 号，引擎按名字表建槽并抄预设；未预设的登记下标落 0
+    assert.equal(adder.data.cflag[17][1], 1, '状态位预设落库');
+    assert.equal(adder.data.cflag[17][9], 0, '没预设的等级落 0');
+    assert.equal(
+      Object.keys(adder.data.cflag[17]).length,
+      Object.values(repo_tables.static_data.cflag).length,
+      '登记过的每个 cflag 下标都要建槽',
+    );
   },
 );
 

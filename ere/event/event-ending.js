@@ -80,6 +80,11 @@ async function ending_1() {
   // add_chara_ex 分发 EX_TALENT:104 = 菲娅（#21 已实现）
   era.addCharacter(35);
   await add_chara_ex(35);
+  // 状态归 0（在城里可操作）：角色文件里的预设 1 号是「待机」，而移植版一律
+  // 用 0 表示可调教/可派遣（可选目标、能力提升、换号、派遣四个页面的判据都是
+  // === 0，全库从不写 1）。其余加入点同样显式写状态，村娘那条路径是最早的
+  // 先例（event-first.js）
+  chara(35).invasion.状态 = 0;
   await char_init(35);
 
   // WAIT
@@ -252,6 +257,9 @@ async function char_gift(arg, rand = default_rand) {
       era.addCharacter(no_chara);
       await add_chara_ex(no_chara);
       a = no_chara; // A = CHARANUM - 1（#21：角色号即预设号）
+      // 状态归 0（在城里可操作）：贡品是奴隶，不是待机中的勇者——理由同
+      // ENDING_1 的菲娅那一处
+      chara(a).invasion.状态 = 0;
       await char_init(a);
       // 贡品播报（head/tail 与角色名拼接，见函数头）
       era.print('*****************************************');
