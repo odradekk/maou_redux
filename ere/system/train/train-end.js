@@ -5,12 +5,14 @@
  * 收尾协议（本文件头是唯一权威叙述，调用点只指路）：
  *
  *   EVENTEND 事件链（函数体在 event/event-end.js，尾部转 TURNEND）→
+ *   欲情快照（PALAM:5 落 CFLAG:668，见 save_train_desire）→
  *   era.endTrain()（gotjewel 结算进 jewel、删调教域表；与游戏侧
  *   JUEL_CHECK 的职责划分见 juel-check.js，#47 定案）→ 冲账死亡登记。
  *
  * 三个反直觉的顺序约束（动协议前先核这里）：
  *   1. endTrain 在链后：EVENTEND 体内的 JUEL_CHECK 要读 palam/gotjuel，
  *      表先于结算删除会静默丢失（引擎三段寻址检查：角色子表不在即丢弃）。
+ *      欲情快照同理——它读的就是即将被删的那张表。
  *   2. 除名在 endTrain 后：死亡目标仍在引擎调教列表中，引擎收尾要遍历
  *      调教列结算珠，先删角色会访问已删除的珠表（#782 的崩溃）。
  *   3. 死亡指针当场清：TARGET/ASSI/FLAG:1 是死亡的结果状态，进存档、
@@ -23,6 +25,7 @@ const { name_reset } = require('#/chara/char-make');
 const { template_no_of } = require('#/chara/chara-pregnancy');
 const { emit } = require('#/system/event/registry');
 const { party_char_del } = require('#/dungeon/dungeon-party');
+const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 
@@ -81,12 +84,29 @@ async function settle_train_death() {
 }
 
 /**
+ * 调教结束前的欲情快照：把参与调教的角色的欲情（PALAM:5）存进「调教后欲情」
+ * 槽（CFLAG:668）。
+ *
+ * PALAM 是引擎的调教期专表，endTrain 整表删除；而次日「献出初次」的评分
+ * （event/event-nextday.js 的 virgin_offer_score）跑在日循环里，那时读 PALAM
+ * 只能读回 0，两档欲情加分从不生效。欲情要跨过窗口，只能先落进不被删除的
+ * cflag。名单以引擎的调教名单为准（getCharactersInTrain）：助手与回合结算
+ * 借窗口时中途补进名单的自动调教对象同样算参与者，不只看当前目标。
+ */
+function save_train_desire() {
+  for (const cid of era.getCharactersInTrain()) {
+    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;
+  }
+}
+
+/**
  * STATE.AFTERTRAIN 处理器（纯编排，协议与时序约束见文件头）。
  *
  * @returns {Promise<string>} 下一游戏状态（EVENTEND 链的暂存转场目标）
  */
 async function run_aftertrain() {
   const pending = await emit('EVENTEND');
+  save_train_desire();
   era.endTrain();
   await settle_train_death();
   return pending;
@@ -95,4 +115,5 @@ async function run_aftertrain() {
 module.exports = {
   defer_train_death,
   run_aftertrain,
+  save_train_desire,
 };

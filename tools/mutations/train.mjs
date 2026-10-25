@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1123; // #822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1125; // #906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -178,8 +178,10 @@ export default [
     desc: 'M15 AFTERTRAIN 收尾：endTrain 挪到 EVENTEND 链之前',
     file: 'ere/system/train/train-end.js',
     find: `  const pending = await emit('EVENTEND');
+  save_train_desire();
   era.endTrain();`,
-    replace: `  era.endTrain();
+    replace: `  save_train_desire();
+  era.endTrain();
   const pending = await emit('EVENTEND');`,
     tests: ['train-loop'],
     must_mention: 'run_aftertrain',
@@ -11375,5 +11377,28 @@ export default [
     replace: '    return;',
     tests: ['train-name'],
     must_mention: '旧档的 54 号半角别名改写成全角',
+  },
+  // —— #906：调教结束前的欲情快照（次日「献出初次」评分的两档欲情加分）——
+  {
+    desc: 'M16200 关窗前的欲情快照调用删除（次日评分读到的槽恒为 0）',
+    file: 'ere/system/train/train-end.js',
+    find: `  const pending = await emit('EVENTEND');
+  save_train_desire();
+  era.endTrain();
+  await settle_train_death();`,
+    replace: `  const pending = await emit('EVENTEND');
+  era.endTrain();
+  await settle_train_death();`,
+    tests: ['train-end', 'event-nextday'],
+    must_mention: '目标（参与者）',
+  },
+  {
+    desc: 'M16204 快照名单只看当前目标（同场参与调教的其他角色不存欲情）',
+    file: 'ere/system/train/train-end.js',
+    find: '  for (const cid of era.getCharactersInTrain()) {\n    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;',
+    replace:
+      '  for (const cid of [era_flag.target]) {\n    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;',
+    tests: ['train-end'],
+    must_mention: '同一场里的其他参与者',
   },
 ];

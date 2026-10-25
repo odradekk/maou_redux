@@ -629,6 +629,8 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'flag:10005', value: 0 },
     { name: 'flag:10005', value: -1 },
     { name: 'flag:10006', value: -1 },
+    // 关窗前的欲情快照（#906）：本世界窗口里没人写 PALAM，快照写 0
+    { name: 'cflag:0:668', value: 0 },
     // PARTY_JOIN（#172 真身）内联的 PARTY_UNITE 复调（行 743 →），
     // 魔王的 530 再清一次
     { name: 'cflag:0:530', value: 0 },
@@ -955,6 +957,45 @@ test('调教窗口（#816）：自动存档仍在 endTrain 之后', async () => 
     closed < saved,
     '自动存档在关窗之后（调教域表不进存档，存了也不该留旧值）',
   );
+});
+
+test('调教窗口（#906）：关窗前把本窗口的欲情存进 CFLAG:668', async () => {
+  const { fixture, emit } = setup_turnend((f) => {
+    // 借来的窗口里写欲情的只有迷宫域的自动调教（COM*_AUTO）：在 AUTOTRAIN
+    // 的位置模拟它的产物
+    const mod = f.load_module('event/event-autotrain');
+    const real_autotrain = mod.autotrain;
+    mod.autotrain = async () => {
+      f.era.set('palam:31:5', 12345);
+      return real_autotrain();
+    };
+  });
+  join_slave_chara(fixture, 31, '温妮');
+
+  await emit('EVENTTURNEND');
+
+  assert.equal(
+    fixture.store.get('cflag:31:668'),
+    12345,
+    '关窗前的快照读到了窗口里写的欲情（关窗后 PALAM 已删）',
+  );
+  assert.equal(
+    fixture.store.get('palam:31:5'),
+    undefined,
+    'PALAM 随 endTrain 整表删除——快照必须先于它',
+  );
+});
+
+test('调教窗口（#906）：本回合没有欲情时槽写 0，不留上一回合的值', async () => {
+  const { fixture, emit } = setup_turnend();
+  join_slave_chara(fixture, 31, '温妮');
+  // FORMAT_AUTOTRAIN 重置了 PALAM，窗口里没人再写它：快照写的是 0。
+  // 旧引擎里 PALAM 同样每回合被清零，次日评分读到的就是这个 0。
+  fixture.store.set('cflag:31:668', 10000);
+
+  await emit('EVENTTURNEND');
+
+  assert.equal(fixture.store.get('cflag:31:668'), 0, '旧值被本回合的快照覆盖');
 });
 
 test('CAMPAIGN_GAMEOVER：气力被扣到 <= 0 时战役结束、清零派遣（#469）', async () => {

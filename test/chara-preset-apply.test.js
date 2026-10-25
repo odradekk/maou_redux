@@ -53,6 +53,9 @@ const NEW_CFLAG_IDS = [
   0, 1, 2, 9, 11, 12, 13, 14, 15, 16, 41, 42, 46, 120, 151, 152, 420, 450, 451,
   452, 453, 454, 455, 456, 457, 501, 508, 520, 550, 551, 552, 580, 800,
 ];
+// 没有角色预设、但必须登记的代码自有槽：调教结束时的欲情快照（#906）。
+// 它要跨过 endTrain 留存（PALAM 随窗口删除），次日评分从日循环里读它
+const CODE_OWNED_CFLAG_IDS = [668];
 const NEW_CSTR_IDS = [31, 60];
 
 /** 角色文件清单（与引擎同款：文件名以 chara 开头） */
@@ -98,7 +101,7 @@ function old_tables() {
       }
     }
   };
-  drop('cflag', NEW_CFLAG_IDS);
+  drop('cflag', [...NEW_CFLAG_IDS, ...CODE_OWNED_CFLAG_IDS]);
   drop('cstr', NEW_CSTR_IDS);
   drop('mark', [4]);
   drop('talent', [2]);
@@ -288,6 +291,9 @@ engine_test(
       assert.equal(api.get('talent:34:2'), 1, '狂王替身补成预设 1');
       // 没预设的登记下标补 0（与补槽前的 undefined 同判定结果）
       assert.equal(api.get('cflag:34:2'), 0);
+      // 代码自有的槽同样补 0：旧存档读进来与「没有这个槽」表现一致（ADR-0006
+      // 的判定依据——#906 的新槽不需要抬存档版本）
+      assert.equal(api.get('cflag:34:668'), 0);
       // 状态位同样按预设补：原版 1 = 待機、2 = 侵攻中，与移植版 0 = 在城可
       // 操作不同——这是本工单唯一的语义差异，逐序号结论见 PR
       assert.equal(api.get('cflag:34:1'), 2);
@@ -331,8 +337,8 @@ test('CFlag.yml 登记了角色预设用到的全部下标，每条带英文 sna
   const ids = entries.map((entry) => entry.id).sort((a, b) => a - b);
   assert.deepEqual(
     ids,
-    [...NEW_CFLAG_IDS].sort((a, b) => a - b),
-    'CFlag.yml 的下标集合必须正好是角色预设在用的那 33 个',
+    [...NEW_CFLAG_IDS, ...CODE_OWNED_CFLAG_IDS].sort((a, b) => a - b),
+    'CFlag.yml 的下标集合必须正好是角色预设在用的那 33 个，加上 #906 的代码自有槽',
   );
   for (const entry of entries) {
     assert.match(
