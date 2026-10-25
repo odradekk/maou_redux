@@ -121,7 +121,7 @@ async function op_rampage() {
     era.set(`item:${monster}`, stock);
   }
   // FOR CHARA, 1, CHARANUM（0 号魔王除外）：BASE:0 -= 800 / BASE:1 -= 1000
-  // （跨域写经 chara 域门面，ADR-0002）
+  // （跨域写经 chara 域门面，#71）
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) {
       continue;

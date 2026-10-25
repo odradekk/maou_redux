@@ -13,7 +13,7 @@
 
 ## 为什么按域分组而不按表分组
 
-现状的 `era_flag` 是一个扁平的全局命名空间，把 `flag:36`（据点主菜单的面板选择）和 `tflag:*`（调教域）放在同一个对象里——**没有边界可言，工具也无从强制**。按域分组之后，`chara(cid).train.*` 出现在口上文件里就是一处显式的跨域调用，检查器抓得住（见 [ADR-0002](./0002-region-ownership-from-measurement.md)）。
+现状的 `era_flag` 是一个扁平的全局命名空间，把 `flag:36`（据点主菜单的面板选择）和 `tflag:*`（调教域）放在同一个对象里——**没有边界可言，工具也无从强制**。按域分组之后，`chara(cid).train.*` 出现在口上文件里就是一处显式的跨域调用，检查器抓得住（见 [ADR-0002](./0002-region-ownership-from-measurement.md)，已废止）。
 
 ## 为什么不是纯函数加常量表
 
@@ -52,4 +52,4 @@ Object.entries(this.era.extendedTables).filter(e => void 0 !== this.staticData[e
 ## 后果
 
 - 门面接口已在约九千处调用点复制，改动成本极高——**形状已定稿，改形状须整体迁移**。
-- 既有 466 处变量访问里 424 处是裸字符串寻址（包装层只覆盖 `flag` 与 `global`，42 处）。现有的这些冻结成一张只能变短的清单（`tools/domain-ledger.mjs`），不做一次性大修。
+- 既有 466 处变量访问里 424 处是裸字符串寻址（包装层只覆盖 `flag` 与 `global`，42 处）。现有的这些冻结成一张只能变短的清单（`tools/domain-ledger.mjs`，该工具与清单已在 #904 删除），不做一次性大修。

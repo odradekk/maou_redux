@@ -12,7 +12,7 @@
  *   - run_benki 的五个行动分派（配信 / 兽奸 / 奉仕 / 同性爱 / 一般）各有
  *     输出与结算断言；
  *   - 跨域写走门面（flag:63 经 game.dungeon、exp 属主 dungeon 经
- *     chara(cid).dungeon）——domain-check 判绿；
+ *     chara(cid).dungeon）；
  *   - TEQUIP 只读不写（#215 建模归 J5）：本文件无 tequip 写入；
  *   - 未加载口上时口上调用静默（未注册函数调用落空的语义，#565）；K3 真身随 #234。
  *
@@ -366,7 +366,7 @@ test('run_benki：配信分派（menu:6 >= 3 视频源）——水晶球传播 +
   assert.equal(exp80c, exp70, '战斗经验 = 同一 PLAY');
 });
 
-// —— 跨域写门面（domain-check 判绿）——
+// —— 跨域写门面 ——
 
 test('run_benki：FLAG:63 常識改変写经 game.dungeon 门面；62/64 域内直写', async () => {
   const { fixture, mod } = setup_benki();

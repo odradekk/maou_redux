@@ -93,9 +93,8 @@ function filter_status_text() {
  * 写 era_flag.virgin_conceded_mode（FLAG:38 = 选项值-1）。
  *
  * FLAG:38 无归属条目、且与属主 system 的 FLAG:37 同属合并区间「37-38」
- * （ownership/flag-ownership.yml），从 page 域裸写会被域检查判定为新增跨域
- * 裸写（tools/domain-ledger.mjs 已冻结、不接受新条目）——改走 era_flag 具名
- * 访问器（yml/Flag.yml 已登记，见 #468 的 arcana_fort_stage 先例）。
+ * （ownership/flag-ownership.yml），写经 era_flag 具名访问器（#71；
+ * yml/Flag.yml 已登记，见 #468 的 arcana_fort_stage 先例）。
  *
  * 无效输入清一行后重新等待（行为保留）。
  */

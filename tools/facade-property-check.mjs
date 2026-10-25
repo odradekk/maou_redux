@@ -7,7 +7,8 @@
 // `train.耻情` 让 `NaN > PALAMLV:2` 恒假；复核又发现第 14 处
 // （`kojo.初吻对象`——CFLAG:16 属 train 域，`undefined >= 0` 恒假）。既有防线
 // 一条都拦不住：
-//   - tools/domain-check.mjs 只查裸跨域写（看的是 era.set/get 的寻址串）；
+//   - 裸寻址扫描（原域检查工具，已在 #904 删除）只看 era.set/get 的寻址
+//     串，管不到门面属性；
 //   - ESLint 看不出「访问了不存在的属性」；
 //   - 口上本来就缺用例覆盖。
 //
@@ -50,7 +51,7 @@ import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-/** 引擎 SDK：不是游戏代码，整体跳过（engine-contract-check / domain-check 同款标准） */
+/** 引擎 SDK：不是游戏代码，整体跳过（engine-contract-check 同款标准） */
 const SDK_FILE = 'ere/era-electron.js';
 
 /** 门面根：域切片文件在 chara-<域>.js，装配体在 chara.js */

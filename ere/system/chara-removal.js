@@ -46,7 +46,7 @@ function remove_character(cid, { reset_names = true } = {}) {
   // FLAG:200–299 = 预设 1–100 的除名标记；后代与范围外模板不落标记
   era_flag.mark_hero_removed(template_no_of(cid));
   // 指针按 ID 判等：只清真正指向被除名者的引用。flag:1/2 属 event 域，
-  // 跨域写经其具名门面（ADR-0002）
+  // 跨域写经其具名门面（#71）
   if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;
   if (game.event.上次助手 === cid) game.event.上次助手 = -1;
   era_flag.target = game.event.上次调教对象;

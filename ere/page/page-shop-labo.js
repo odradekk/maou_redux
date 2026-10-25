@@ -48,12 +48,12 @@
  *
  * 5. **`[SKIPSTART]`…`[SKIPEND]` 两段死代码不移植**：「旧ソース」段与追加
  *    素质段按 `SKIPSTART` 语义被跳过，本移植不收。
- *    注意登记在案的跨域写 152 条里**有 62 条落在「旧ソース」段**
+ *    注意跨域写 152 条里**有 62 条落在「旧ソース」段**
  *    （MARK/ABL/PALAM/EXP/CFLAG:15,16/CFLAG:2/TALENT:75,78 的 VARSET 与赋值）
- *    ——扫描器只剥注释、不剥 SKIPSTART 块，故那 62 条是登记在册的死代码，
+ *    ——扫描器只剥注释、不剥 SKIPSTART 块，故那 62 条是死代码，
  *    活代码只有 90 条（下表逐条对照）。
  *
- * 6. **跨域写逐条走属主域门面**（#71/#72，domain-check 强制）：本文件在
+ * 6. **跨域写逐条走属主域门面**（#71/#72）：本文件在
  *    ownership 里的 writer 是 stronghold，而 `ere/page/` 文件的域是 page，
  *    故所有落到有属主下标的写都必须经 `chara(cid).<域>.<字段>` / `game.<域>.<字段>`。
  *    152 条里活着的 90 条逐条对照如下（表:下标 → 门面字段；cflag 420/454/455/71
@@ -104,7 +104,7 @@
  *    base 10、item 90）都是 stronghold 域：ownership 里 writer 也是 stronghold，
  *    在 cross-domain 清单里不出现；但 ere 侧本文件属 page 域，照样一律走门面。
  *    无属主产物的写（maxbase 0/1、juel、mark/abl/talent/flag 的动态下标段、
- *    cstr 10-19 的刺青位）按 domain-check 的既定政策直写，逐处注明。
+ *    cstr 10-19 的刺青位）按既有做法直写，逐处注明。
  *
  * 7. **一处调用实参与意图不符，按显见意图修正**：modify_amnesia 的育儿支写
  *    `CALL CHILD_CARE_CHANGE_NURSE(C)`，而同一函数的 C 是价格
@@ -1012,8 +1012,8 @@ const TATOO_NAME = {
  * tatoo_set_off：刺青的刻印/消去（部位 ＋ 自由文字两段输入）。
  *
  * 刺青位 CSTR:10-19 在 ownership 里无测量事实（cstr 表实测下标 11 个，
- * 不含 10-19），且寻址含变量段、本就是动态下标——按 domain-check 的既定
- * 政策直写（文件头第 6 条末段）。
+ * 不含 10-19），且寻址含变量段、本就是动态下标——按既有做法直写
+ * （文件头第 6 条末段）。
  */
 async function tatoo_set_off() {
   const cost = 10000; // COST = 10000

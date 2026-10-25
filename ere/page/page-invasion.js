@@ -224,9 +224,7 @@ const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];
  * 写 FLAG:101，add_region_progress）。EX_FLAG:101 没有写点，读那张表进度
  * 恒 0。
  *
- * 地址是模板串：AREA 本来就是按地区取的变量，domain-check 的属主判定对
- * 动态下标不适用（tools/domain-check.mjs 头注的「动态下标静态无法判定
- * 属主，只计数不判定」）。
+ * 地址是模板串：AREA 本来就是按地区取的变量，静态判不出落点。
  *
  * @param {object} region 地区条目
  * @returns {number} 该地区的侵攻度（未声明下标按 0 处理，见 issue #13）
@@ -2815,7 +2813,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     era.drawLine();
     // 侵攻度条按 AREA 换标签，读点一律是 FLAG 侧（见 region_progress）
     print_progress_line(region.campaign_label, region_progress(region), 10000);
-    // MAXBASE:0:1（气力上限）直读：跨域读放行（ADR-0002），maxbase 无门面
+    // MAXBASE:0:1（气力上限）直读：maxbase 无门面
     print_progress_line(
       '你的气力',
       chara(0).dungeon.气力,
