@@ -612,6 +612,12 @@
   writes: 2
   by_domain:
     event: 2
+# 代码自有槽（没有角色预设，初值 0）：调教结束时的欲情快照，写入点只有调教域的收尾
+"668":
+  owner: train
+  writes: 1
+  by_domain:
+    train: 1
 "680-682":
   owner: dungeon
   writes: 14

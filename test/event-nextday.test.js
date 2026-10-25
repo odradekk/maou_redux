@@ -2150,27 +2150,107 @@ test('处女献上（OFFERVIRGIN_CHECK）：快感/贞操/好奇/戒备的四项
   }
 });
 
-test('处女献上（OFFERVIRGIN_CHECK）：欲情两条 SIF 在调教外读不到 PALAM（引擎事实）', async () => {
-  // 两条 SIF 以 `PALAM:5 >= PALAMLV:4` 为条件，而 PALAM 在
-  // EraElectron 里是**调教期专表**（endTrain 删除，三段寻址读回 undefined）——
-  // 本函数跑在日循环里，故两支恒不命中。这条用例钉的就是这个引擎事实：
-  // 真把 PALAM:5 读成 10000，S 仍只由爱/淫乱行决定（-1 + 1 = 0 → 早退）。
-  // 哪天 PALAM 在调教外可读了，这条会红，提示回来改注释与档位用例。
+test('处女献上（OFFERVIRGIN_CHECK）：欲情两档读调教结束时存下的 CFLAG:668', async () => {
+  // 两条 SIF 都以「欲情达 PALAMLV:4」为条件，欲情读的是 system/train/train-end.js
+  // 在关窗前写下的 CFLAG:668（PALAM 是调教期专表，日循环里读回来恒空）。
+  // 爱行固定 4 档（+1）：每行的 RAND:3 取到「刚好只差欲情分不过线」的值，
+  // 于是两条 SIF 各 +1 都单独可观察——两档都在时 +2 过线，少一档就早退。
+  // 只低档的行放在最前：高档的守卫（M16202）与低档的守卫（M16203）各自失守时
+  // 红在**不同**的一行上，报错信息能指认是哪一档。
+  // [说明, 覆盖项, RAND:3, 期望是否通过]
+  const cases = [
+    [
+      '欲情满档、欲望/侍奉 4 档：只低档 +1 → S = 1 通过',
+      { 'cflag:31:668': 10000, 'abl:31:11': 4, 'abl:31:16': 4 },
+      1,
+      true,
+    ],
+    [
+      '欲情满档且欲望/侍奉 5 档：高低两档各 +1 → S = 1 通过',
+      { 'cflag:31:668': 10000, 'abl:31:11': 5, 'abl:31:16': 5 },
+      2,
+      true,
+    ],
+    [
+      '欲情差一点到第 4 档（9999）→ 两档都不加 → S = 0 早退',
+      { 'cflag:31:668': 9999, 'abl:31:11': 5, 'abl:31:16': 5 },
+      1,
+      false,
+    ],
+    [
+      '欲情满档但侍奉只到 3 档 → 两档都要求侍奉 → 不加 → S = 0 早退',
+      { 'cflag:31:668': 10000, 'abl:31:11': 5, 'abl:31:16': 3 },
+      1,
+      false,
+    ],
+    [
+      '槽里是 0（旧存档、或本回合没调教过）→ 不加 → S = 0 早退',
+      { 'cflag:31:668': 0, 'abl:31:11': 5, 'abl:31:16': 5 },
+      1,
+      false,
+    ],
+    [
+      '只把 PALAM:5 拉满（调教外读不到）→ 不加 → S = 0 早退',
+      { 'palam:31:5': 10000, 'abl:31:11': 5, 'abl:31:16': 5 },
+      1,
+      false,
+    ],
+  ];
+  for (const [label, override, roll, passes] of cases) {
+    const fixture = setup_chara_events();
+    seed_virgin_offer(fixture);
+    fixture.store.set('abl:31:10', 4); // 爱行 4 档 → +1
+    for (const [key, value] of Object.entries(override)) {
+      fixture.store.set(key, value);
+    }
+    fixture.set_inputs(1);
+    const { offervirgin_check } = fixture.load_module('event/event-nextday');
+
+    await offervirgin_check(() => roll);
+
+    assert.equal(
+      fixture.text_lines().some((t) => t.includes('要夺取温妮的处女吗？')),
+      passes,
+      label,
+    );
+  }
+});
+
+test('处女献上（OFFERVIRGIN_CHECK）：调教中的欲情跨过 endTrain 活到次日评分', async () => {
+  // 端到端：真身调教收尾存快照（train-end.js 的 save_train_desire）→ 关窗删表
+  // → 次日评分读 cflag。S = -2（RAND:3 = 2）+ 1（爱行 4 档）+ 2（两档欲情）
+  // = 1：两档都在才过线，少一档就是 0。
   const fixture = setup_chara_events();
   seed_virgin_offer(fixture);
   fixture.store.set('abl:31:10', 4); // 爱行 4 档 → +1
-  fixture.store.set('abl:31:11', 5); // 欲望 = 5（高档条件成立）
-  fixture.store.set('abl:31:16', 5); // 侍奉精神 = 5（高档条件成立）
-  fixture.store.set('palam:31:5', 10000); // 欲情拉满也不该被读到
+  fixture.store.set('abl:31:11', 5); // 欲望 5 档
+  fixture.store.set('abl:31:16', 5); // 侍奉 5 档
+  fixture.era.beginTrain(0, 31);
+  fixture.store.set('palam:31:5', 10000); // 调教中欲情达 PALAMLV:4
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
+
+  await run_aftertrain();
+
+  assert.equal(
+    fixture.store.get('cflag:31:668'),
+    10000,
+    '关窗前把欲情存进 cflag',
+  );
+  assert.equal(
+    fixture.store.get('palam:31:5'),
+    undefined,
+    'PALAM 随 endTrain 整表删除（快照必须先于它）',
+  );
+
   fixture.set_inputs(1);
   const { offervirgin_check } = fixture.load_module('event/event-nextday');
 
-  await offervirgin_check(() => 1); // S = -1 + 1 = 0 → 早退
+  await offervirgin_check(() => 2);
 
   assert.equal(
     fixture.text_lines().some((t) => t.includes('要夺取温妮的处女吗？')),
-    false,
-    'PALAM:5 读不到 → 两条 SIF 不加值 → S = 0 早退',
+    true,
+    '欲情两档加分生效：S = -2 + 1 + 2 = 1 过线',
   );
 });
 

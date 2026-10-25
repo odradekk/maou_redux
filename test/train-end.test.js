@@ -81,3 +81,42 @@ test('defer_train_death 拒绝非正角色号（0 是魔王、负数是未选中
   assert.equal(flags.target, 31, '拒绝时不做任何机械清理');
   assert.ok(fixture.era.getAddedCharacters().includes(31));
 });
+
+// —— #906：关窗前的欲情快照（次日「献出初次」的评分要读它）——
+
+test('run_aftertrain：关窗前把参与调教的角色的欲情存进 CFLAG:668', async () => {
+  // 调教名单是 [0, 31]（seed_world 的 beginTrain）：两人都是参与者，都存；
+  // 名单外的角色不动它的槽。PALAM 随 endTrain 删除，所以「快照先于关窗」
+  // 由读回值证明——顺序反了就只能读到 undefined → 0。
+  const { fixture } = seed_world();
+  join_slave_chara(fixture, 20, '琳');
+  fixture.store.set('palam:0:5', 555);
+  fixture.store.set('palam:31:5', 10000);
+  fixture.store.set('palam:20:5', 7777); // 名单外：不该被读
+  const { run_aftertrain } = fixture.load_module('system/train/train-end');
+
+  await run_aftertrain();
+
+  assert.equal(fixture.store.get('cflag:31:668'), 10000, '目标（参与者）');
+  assert.equal(fixture.store.get('cflag:0:668'), 555, '同一场里的其他参与者');
+  assert.equal(
+    fixture.store.get('cflag:20:668'),
+    undefined,
+    '不在调教名单里的角色不写（名单以 getCharactersInTrain 为准）',
+  );
+  assert.equal(
+    fixture.store.get('palam:31:5'),
+    undefined,
+    '快照之后才关窗：PALAM 已随 endTrain 删除',
+  );
+});
+
+test('save_train_desire：欲情缺值时槽写 0（旧档与没参与调教的角色）', () => {
+  const { fixture } = seed_world();
+  const { save_train_desire } = fixture.load_module('system/train/train-end');
+
+  save_train_desire();
+
+  assert.equal(fixture.store.get('cflag:0:668'), 0, '读不到 PALAM 时写 0');
+  assert.equal(fixture.store.get('cflag:31:668'), 0);
+});

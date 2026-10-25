@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 474; // #814 +3（M15860：eventload 与苏生共用的待机档归一）；#816 +4（M15950-M15953：回合结算的调教窗口改 try/finally 关窗、窗口内新加入角色的补名单两处、以及「自动存档在关窗之后」的边界）；数据地址缺陷修复 +3（M15400-M15402：媚药中毒赏金的两处表名与 AFTERTRAIN 自慰次数的交接）； // #791 +40（M13721-M13760：四条 SOURCE_CHECK_UP_* 收敛为描述表后，逐参数位（源下标/素质对/欲情表/欲望梯/域素质/淫部位/门槛位/扇出）与共用环节的回归检查；#702 的 M14150/M14151/M14152 随 BUST_RATES 搬到文件顶层改锚）；#785 审计返工 -1（删 M6949：与 execution 分片原 M7260 同型的链路守卫，改由 chara-removal-scan 白名单扫描统一守护）；#769 -1（M51 显式去零钳制由 BASE setter 等价承担）；#743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 477; // #906 +3（M16201-M16203：回合结算借来的窗口关窗前存欲情、次日「献出初次」的两档欲情加分改读 cflag 槽）；#814 +3（M15860：eventload 与苏生共用的待机档归一）；#816 +4（M15950-M15953：回合结算的调教窗口改 try/finally 关窗、窗口内新加入角色的补名单两处、以及「自动存档在关窗之后」的边界）；数据地址缺陷修复 +3（M15400-M15402：媚药中毒赏金的两处表名与 AFTERTRAIN 自慰次数的交接）； // #791 +40（M13721-M13760：四条 SOURCE_CHECK_UP_* 收敛为描述表后，逐参数位（源下标/素质对/欲情表/欲望梯/域素质/淫部位/门槛位/扇出）与共用环节的回归检查；#702 的 M14150/M14151/M14152 随 BUST_RATES 搬到文件顶层改锚）；#785 审计返工 -1（删 M6949：与 execution 分片原 M7260 同型的链路守卫，改由 chara-removal-scan 白名单扫描统一守护）；#769 -1（M51 显式去零钳制由 BASE setter 等价承担）；#743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回「- 」分隔符——补回点被改回时对应的
@@ -4317,13 +4317,10 @@ export default [
   {
     desc: 'M15950 finally 不关窗（抛异常或中途转场时调教域表残留，下一次 beginTrain 不重建）',
     file: 'ere/system/turnend-settle.js',
-    find: `  } finally {
-    // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
-    // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
+    find: `    save_train_desire();
     era.endTrain();
   }`,
-    replace: `  } finally {
-    // 变异：不关窗
+    replace: `    // 变异：不关窗
   }`,
     tests: ['event-turnend'],
     must_mention: '抛异常也要关窗（窗口用 try/finally）',
@@ -4348,9 +4345,7 @@ export default [
   {
     desc: 'M15953 关窗挪到尾段之后（自动存档跑在调教窗口里）',
     file: 'ere/system/turnend-settle.js',
-    find: `  } finally {
-    // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
-    // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
+    find: `    save_train_desire();
     era.endTrain();
   }
 
@@ -4368,8 +4363,7 @@ export default [
   if (era_flag.time === 0) {
     await run_event_newday();
   }`,
-    replace: `  } finally {
-    // 变异：关窗挪到尾段之后
+    replace: `    // 变异：关窗挪到尾段之后
   }
 
   // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
@@ -4386,8 +4380,44 @@ export default [
   if (era_flag.time === 0) {
     await run_event_newday();
   }
+  save_train_desire();
   era.endTrain(); // 变异：自动存档之后才关窗`,
     tests: ['event-turnend'],
     must_mention: '自动存档在关窗之后（调教域表不进存档，存了也不该留旧值）',
+  },
+  // —— #906：调教结束前的欲情快照与次日「献出初次」的两档欲情加分 ——
+  {
+    desc: 'M16201 借来的调教窗口关窗前不存欲情（窗口里的欲情随 endTrain 消失）',
+    file: 'ere/system/turnend-settle.js',
+    find: `    // 值（大多是 FORMAT_AUTOTRAIN 清过之后的 0，与旧引擎每回合清零等价）。
+    save_train_desire();`,
+    replace: `    // 值（大多是 FORMAT_AUTOTRAIN 清过之后的 0，与旧引擎每回合清零等价）。
+    // 变异：关窗前不存欲情`,
+    tests: ['event-turnend'],
+    must_mention: '关窗前的快照读到了窗口里写的欲情（关窗后 PALAM 已删）',
+  },
+  {
+    desc: 'M16202 次日评分的高档欲情读回 PALAM（调教外读不到，该档恒不命中）',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`abl:\${cid}:11\`) || 0) >= 5 &&
+    (era.get(\`abl:\${cid}:16\`) || 0) >= 5 &&
+    chara(cid).train.调教后欲情 >= PALAMLV[4]`,
+    replace: `    (era.get(\`abl:\${cid}:11\`) || 0) >= 5 &&
+    (era.get(\`abl:\${cid}:16\`) || 0) >= 5 &&
+    (era.get(\`palam:\${cid}:5\`) || 0) >= PALAMLV[4]`,
+    tests: ['event-nextday'],
+    must_mention: '欲情满档且欲望/侍奉 5 档',
+  },
+  {
+    desc: 'M16203 次日评分的低档欲情读回 PALAM（调教外读不到，该档恒不命中）',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`abl:\${cid}:11\`) || 0) >= 4 &&
+    (era.get(\`abl:\${cid}:16\`) || 0) >= 4 &&
+    chara(cid).train.调教后欲情 >= PALAMLV[4]`,
+    replace: `    (era.get(\`abl:\${cid}:11\`) || 0) >= 4 &&
+    (era.get(\`abl:\${cid}:16\`) || 0) >= 4 &&
+    (era.get(\`palam:\${cid}:5\`) || 0) >= PALAMLV[4]`,
+    tests: ['event-nextday'],
+    must_mention: '欲情满档、欲望/侍奉 4 档',
   },
 ];

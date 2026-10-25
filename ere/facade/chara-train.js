@@ -328,6 +328,21 @@ class TrainFacade {
     era.set(`cflag:${this.cid}:666`, v);
   }
 
+  /**
+   * 调教后欲情（cflag:cid:668）
+   * CFLAG:668 = 调教结束时的欲情（PALAM:5 的持久副本）
+   * @returns {number}
+   */
+  get 调教后欲情() {
+    return era.get(`cflag:${this.cid}:668`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 调教后欲情(v) {
+    era.set(`cflag:${this.cid}:668`, v);
+  }
+
   // —— cstr ——
   /**
    * 初体验对象名（cstr:cid:3）

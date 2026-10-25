@@ -31,8 +31,9 @@
  *     书写瑕疵都照写并在各自 JSDoc 里写明证明。
  *   - 调教期专表的读写在调教外会失效（EraElectron 的 tflag/tequip/palam 随
  *     endTrain 删除）：TFLAG:13/14 走 game.train 的调教外通道，TEQUIP:35
- *     （安全套）改函数内局部，PALAM:5 的两条 SIF 在引擎里恒不命中——
- *     offervirgin_check 的 JSDoc 逐条记了这三处。
+ *     （安全套）改函数内局部，欲情读调教结束时存下的 CFLAG:668
+ *     （system/train/train-end.js 的 save_train_desire）——三处各自在使用点
+ *     旁记了数据来源。
  *   - 三处 `[0] - 好的 / [1] - 不要` 式选项
  *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；#572）。
  *     随之「其余值 GOTO INPUT_LOOP」的重问支在实机上不可达（引擎按白名单
@@ -386,8 +387,9 @@ function virgin_offer_blocked(cid) {
 }
 
 /**
- * 判定变量 S：`-RAND:3` 起步，爱/淫乱各行按能力档加值，
- * 再叠快感/贞操/好奇/戒备四项。S ≤ 0 即「这次不发生」。
+ * 判定变量 S：`-RAND:3` 起步，爱/淫乱各行按能力档加值，欲情达第 4 档的两档
+ * 各 +1（读调教结束时存下的 CFLAG:668），再叠快感/贞操/好奇/戒备四项。
+ * S ≤ 0 即「这次不发生」。
  *
  * @param {number} cid 当前目标
  * @param {(n: number) => number} rand 随机源
@@ -409,21 +411,21 @@ function virgin_offer_score(cid, rand) {
     else if (desire === 5) s += 2;
     else if (desire >= 6) s += 3;
   }
-  // 欲情达 PALAMLV:4，两档各 +1（高档含低档，故最多 +2）。
-  // **引擎事实**：PALAM 表随 endTrain 删除，本函数跑在日循环里，读回来恒
-  // 为空 → 这两支在 EraElectron 里恒不命中（旧引擎里 PALAM 常驻，
-  // 会命中）。保留条件代码，不因引擎限制删条件。
+  // 欲情达 PALAMLV:4，两档各 +1（高档含低档，故最多 +2）。欲情读的是调教
+  // 结束时存下的 CFLAG:668：PALAM 是调教期专表、随 endTrain 整表删除，本函数
+  // 跑在日循环里，值由 system/train/train-end.js 的 save_train_desire 在关窗
+  // 前落进 cflag。
   if (
     (era.get(`abl:${cid}:11`) || 0) >= 5 &&
     (era.get(`abl:${cid}:16`) || 0) >= 5 &&
-    (era.get(`palam:${cid}:5`) || 0) >= PALAMLV[4]
+    chara(cid).train.调教后欲情 >= PALAMLV[4]
   ) {
     s += 1;
   }
   if (
     (era.get(`abl:${cid}:11`) || 0) >= 4 &&
     (era.get(`abl:${cid}:16`) || 0) >= 4 &&
-    (era.get(`palam:${cid}:5`) || 0) >= PALAMLV[4]
+    chara(cid).train.调教后欲情 >= PALAMLV[4]
   ) {
     s += 1;
   }

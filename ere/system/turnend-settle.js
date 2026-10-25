@@ -60,6 +60,7 @@ const { dungeon_after } = require('#/dungeon/dungeon-after');
 const { marriage_day } = require('#/dungeon/marriage-day');
 const { run_benki } = require('#/system/train/benki');
 const { run_seedbed } = require('#/system/train/seedbed');
+const { save_train_desire } = require('#/system/train/train-end');
 const { auto_execution } = require('#/event/event-execution-batch');
 
 /** RAND:N（0..N-1）的等价物 */
@@ -104,8 +105,9 @@ on('EVENTTURNEND', async () => {
   //
   // 窗口边界＝format_autotrain（重置 PALAM / SOURCE / TFLAG / BASE 槽）开，
   // autotrain（PALAM → 珠/能力的结算）关。之后的
-  // party_join 与 run_event_newday 留在窗口外，保持既有行为
-  // （event-nextday.js 的「PALAM 读回来恒空」判断条件依赖它）。
+  // party_join 与 run_event_newday 留在窗口外，保持既有行为：
+  // 日循环里读不到调教域表，需要跨窗口的值一律先落 cflag（欲情见
+  // save_train_desire 的调用点）。
   //
   // 开窗在这里、关窗在 finally（#816）：窗口本体四百多行
   //（settle_in_train_window），中间任何一处抛异常都会跳过关窗，而下一次
@@ -119,6 +121,11 @@ on('EVENTTURNEND', async () => {
   } finally {
     // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
     // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
+    //
+    // 关窗前先存欲情（#906）：本窗口是借来的调教会话，参与者与真身调教一样
+    // 在 endTrain 后丢掉 PALAM；次日评分读的 CFLAG:668 要在这里补上本窗口的
+    // 值（大多是 FORMAT_AUTOTRAIN 清过之后的 0，与旧引擎每回合清零等价）。
+    save_train_desire();
     era.endTrain();
   }
 
