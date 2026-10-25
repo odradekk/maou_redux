@@ -84,7 +84,7 @@ test('EVENTTRAIN 自身检查②TALENT:172!=1 静默跳过', async () => {
 // —— EVENTTRAIN：初調教 CFLAG:201 状态机 ——
 
 test('初调教（CFLAG:201==0）人狼分档（TALENT:种族==2）：CFLAG:201=1', async () => {
-  const fixture = await setup_k12((f) => f.store.set('talent:20:种族', 2));
+  const fixture = await setup_k12((f) => f.era.set('talent:20:种族', 2));
 
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -97,7 +97,7 @@ test('初调教（CFLAG:201==0）人狼分档（TALENT:种族==2）：CFLAG:201=
 });
 
 test('初调教（CFLAG:201==0）非人狼分档：CFLAG:201=1', async () => {
-  const fixture = await setup_k12((f) => f.store.set('talent:20:种族', 1));
+  const fixture = await setup_k12((f) => f.era.set('talent:20:种族', 1));
 
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTRAIN');
@@ -241,7 +241,7 @@ test('K12_KOJO2 淫乱（TALENT:76==1）rand=0 分档', async () => {
     f.store.set('cflag:20:201', 9);
     f.store.set('talent:20:76', 1);
     f.store.set('talent:20:85', 0);
-    f.store.set('talent:20:种族', 2);
+    f.era.set('talent:20:种族', 2);
   });
   // 直接驱动 k12_kojo2（rand 固定 0 → rand_n(3)==0 第一支）
   const mod = fixture.load_module('kojo/kojo-k12-intellectual');
@@ -257,7 +257,7 @@ test('K12_KOJO2 爱慕（TALENT:85==1）rand=1（rand_n(3)=1 → 第二支）', 
     f.store.set('cflag:20:201', 9);
     f.store.set('talent:20:85', 1);
     f.store.set('talent:20:76', 0);
-    f.store.set('talent:20:种族', 1);
+    f.era.set('talent:20:种族', 1);
   });
   const mod = fixture.load_module('kojo/kojo-k12-intellectual');
   // rand_n(3): 用 n=>Math.floor(n*0.4)? 不确定，直接驱动使第二支命中：
@@ -285,7 +285,7 @@ test('EVENTEND 爱慕低体力：回到研究桌继续工作', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('talent:20:85', 1);
     f.store.set('talent:20:76', 0);
-    f.store.set('talent:20:种族', 1);
+    f.era.set('talent:20:种族', 1);
     f.store.set('base:20:0', 400);
   });
   const { emit } = fixture.load_module('system/event/registry');
@@ -366,7 +366,7 @@ test('SELECTCOM==0 怀孕分支（TALENT:153 && CFLAG:111==0）爱慕：推进�
     f.store.set('talent:20:153', 1);
     f.store.set('cflag:20:111', 0); // 孩子父亲 = 主人
     f.store.set('talent:20:85', 1);
-    f.store.set('talent:20:种族', 1);
+    f.era.set('talent:20:种族', 1);
   }, 0);
   await speak_k12(fixture);
   assert.deepEqual(fixture.text_lines(), [
@@ -380,7 +380,7 @@ test('SELECTCOM==0 二回目以降淫乱：推进到 6', async () => {
   const fixture = await setup_k12((f) => {
     f.store.set('cflag:20:301', 5);
     f.store.set('talent:20:76', 1);
-    f.store.set('talent:20:种族', 1);
+    f.era.set('talent:20:种族', 1);
   }, 0);
   await speak_k12(fixture);
   assert.deepEqual(fixture.text_lines(), [
@@ -642,7 +642,7 @@ test('SELECTCOM==19（肛珠）装着二回目淫乱+A感覚Lv3：推进到 7（
     f.store.set('cflag:20:320', 6);
     f.store.set('talent:20:76', 1);
     f.store.set('abl:20:3', 3);
-    f.store.set('talent:20:种族', 2);
+    f.era.set('talent:20:种族', 2);
   }, 19);
   await speak_k12(fixture);
   assert.deepEqual(fixture.text_lines(), [
@@ -669,7 +669,7 @@ test('SELECTCOM==21（背后位）妊娠淫乱 RAND=0：推进到 6（人狼尾�
     f.store.set('cflag:20:322', 1);
     f.store.set('talent:20:153', 1);
     f.store.set('talent:20:76', 1);
-    f.store.set('talent:20:种族', 2);
+    f.era.set('talent:20:种族', 2);
   }, 21);
   await speak_k12(fixture, () => 0);
   assert.deepEqual(fixture.text_lines(), [

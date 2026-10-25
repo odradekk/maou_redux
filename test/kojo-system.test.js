@@ -30,7 +30,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 // 世界底座：玛奥入列调教，加载口上系统 + K3/K5 两模块
 async function setup_kojo(seed) {
@@ -356,7 +355,6 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 17, '玛奥');
-  seed_static_names(fixture);
   fixture.store.set('maxbase:17:0', 2000);
   fixture.store.set('maxbase:17:1', 2000);
   fixture.store.set('base:17:0', 1450);

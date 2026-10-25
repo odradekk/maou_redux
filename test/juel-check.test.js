@@ -17,7 +17,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 // 世界底座：目标 31（温妮）、火车表已开、四张名字表已播。
 // 等级 Lv1 与「初吻未定」是逐字比对用例的前态（角色生成路径置 -1）
@@ -27,7 +26,6 @@ function seed_world(fixture) {
   era_flag.target = 31;
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
-  seed_static_names(fixture);
   fixture.store.set('cflag:31:9', 1);
   fixture.store.set('cflag:31:16', -1);
   fixture.load_module('page/page-info-exp');
