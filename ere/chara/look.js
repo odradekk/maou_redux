@@ -10,8 +10,8 @@
  *   - **目标角色显式传参**（#5 决议第六条）：一律以 cid 形参传递目标
  *     角色，与 chara-make.js 同款。
  *   - **一人称与语尾口上走真身**：self_call 用 ere/kojo/kojo-text.js 的
- *     真身，gobi_koujo 用 ere/kojo/kojo-system.js 的真身（语尾口上族，
- *     未实现的分支打占位行——那是另一张工单的欠账，不在 #389）。
+ *     真身，语尾文字取自 ere/data/gobi-koujo-const.js（没有这一套语尾的
+ *     性格返回空串，那一行照常结束）。
  *   - **恋人名的 14 格填充改读 LOVER_NAMES 表**（与 ere/page/
  *     page-chara-info.js:201 同款做法）：按同一张登记表取裸文本 + 同一
  *     填充宽度。

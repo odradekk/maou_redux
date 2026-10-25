@@ -56,6 +56,7 @@ const {
   gobi_koujo_family,
 } = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
+const { gobi_text } = require('#/data/gobi-koujo-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const {
@@ -11256,31 +11257,17 @@ async function osioki_koujo_k10(rand, cid, choice) {
 }
 
 /**
- * gobi_koujo_k10：语尾口上。arg0 按心情（1=得意/2=怒/
- * 3=悲/4=羞/5=丢脸）取语尾片段，默认随机三选一（皆为句号，实测如此）。
+ * gobi_koujo_k10：语尾口上（ARG:0 分档 0-5）。
+ *
+ * 文字在常量表 ere/data/gobi-koujo-const.js 的 10 号行；这里只留分发族
+ * 的注册点，行内拼接由调用方做（#570）。迁 .kojo 后这一层随族一起删。
+ *
+ * @param {number} arg0 情绪档位
+ * @param {(n: number) => number} [rand] RAND:N 随机源（默认支三选一可注入）
+ * @returns {string} 语尾文字
  */
 function gobi_koujo_k10(arg0, rand) {
-  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
-
-  if (arg0 == 1) {
-    return `所以呢♪`;
-  } else if (arg0 == 2) {
-    return `哟！`;
-  } else if (arg0 == 3) {
-    return `怎么这样……。`;
-  } else if (arg0 == 4) {
-    return `……。`;
-  } else if (arg0 == 5) {
-    return `……。`;
-  } else {
-    if (rand_n(3) == 0) {
-      return `。`;
-    } else if (rand_n(2) == 0) {
-      return `。`;
-    } else {
-      return `。`;
-    }
-  }
+  return gobi_text(10, arg0, rand);
 }
 
 kojo_message_com_family.register(10, kojo_message_com_10);

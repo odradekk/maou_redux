@@ -18,6 +18,7 @@ const {
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { heart, self_call } = require('#/kojo/kojo-text');
+const { gobi_text } = require('#/data/gobi-koujo-const');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -9337,30 +9338,18 @@ async function osioki_koujo_k19(rand, cid, choice) {
   }
 }
 
-// gobi_koujo_k19（ARG:0）
+/**
+ * gobi_koujo_k19：语尾口上（ARG:0 分档 0-5）。
+ *
+ * 文字在常量表 ere/data/gobi-koujo-const.js 的 19 号行；这里只留分发族
+ * 的注册点，行内拼接由调用方做（#570）。迁 .kojo 后这一层随族一起删。
+ *
+ * @param {number} arg0 情绪档位
+ * @param {(n: number) => number} [rand] RAND:N 随机源（默认支三选一可注入）
+ * @returns {string} 语尾文字
+ */
 function gobi_koujo_k19(arg0, rand) {
-  const target = era_flag.target;
-  const sc = (cid = target) => self_call(cid);
-  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
-  if (arg0 == 1) {
-    return `，诶嘿嘿～♪`;
-  } else if (arg0 == 2) {
-    return `，呜～～${sc()}要咬人了的说～～`;
-  } else if (arg0 == 3) {
-    return `哈呜呜……`;
-  } else if (arg0 == 4) {
-    return `呜……\\/\\/\\/\\/`;
-  } else if (arg0 == 5) {
-    return '';
-  } else {
-    if (rand_n(3) == 0) {
-      return '';
-    } else if (rand_n(2) == 0) {
-      return '';
-    } else {
-      return '';
-    }
-  }
+  return gobi_text(19, arg0, rand);
 }
 
 ryouzyoku_kojo_family.register(19, dungeon_ryouzyoku_k19);
