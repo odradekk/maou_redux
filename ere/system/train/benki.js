@@ -42,7 +42,31 @@
  *     （dungeon-after 先例）。
  *   - **TEQUIP 只读不写**（建模归 J5，#215；这里只有判定读取）。
  *   - BASE:0/1 只读（体力/气力门槛）。
- */
+ *
+
+ * == 拆分（#882） ==
+ * == 拆分（#882） ==
+ *
+ * run_benki 原为 830 行的单函数。现按「门槛 → 菜单算分 → 分派判定 → 两段
+ * 演出 → 五个分派各自的清算」拆成命名函数，主入口只做编排：
+ *
+ *   benki_eligible              门槛（魔王 / 素质 / 体力气力 / 占用 / 育儿）
+ *   benki_menu_scores           素质、能力、经验、服装的菜单加权
+ *   benki_common_sense          常识改変对菜单与人数的影响
+ *   benki_play_bonus            共通 PLAY 补正（含 rand_n(4)）
+ *   clamp_benki_menu            各槽钳 0..9 并累入人数
+ *   choose_benki_dispatch       FLAG:62 / FLAG:64 的分派判定
+ *   confirm_benki_partner       未定相手の確定
+ *   benki_self_play_scores      自慰系源（menu[7]）
+ *   print_benki_opening         两段开场演出（返回本节的人数补正）
+ *   settle_benki_video          配信清算
+ *   settle_benki_beast          兽奸便器
+ *   settle_benki_service        奉仕便器
+ *   settle_benki_lesbian        同性爱便器
+ *   settle_benki_general        一般便器
+ *
+ * 切分只搬语句：随机源的消费顺序与拆分前逐条一致
+ * （test/dungeon-benki-flow.test.js 钉住上界序列）。 */
 
 'use strict';
 
@@ -110,36 +134,13 @@ async function run_benki(arg, rand_n = default_rand) {
   // —— 指针暂存与局部数组 ——
   const target_pool = era_flag.target; // 暂存进入前的 TARGET，出口还原
 
+  if (!benki_eligible(arg)) {
+    return 0;
+  }
+
   // 行动菜单数组（10 槽）：0 奉仕 / 1 V / 2 A / 3 同性爱 /
   // 4 兽奸 / 5 露出 / 6 视频 / 7 自慰（8/9 无人消费，保留为 0）
   const menu = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-  // —— 魔王除外 / 非肉便器除外 ——
-  if (arg === 0) {
-    return 0; // 魔王様は除外
-  }
-  if (t(arg, 204) === 0) {
-    return 0; // 肉便器以外は除外（TALENT:204 肉便器）
-  }
-
-  // —— 気力・体力による制限 ——
-  if ((era.get(`base:${arg}:0`) || 0) < 300) {
-    return 0; // BASE:0 < 300
-  }
-  if ((era.get(`base:${arg}:1`) || 0) < 100) {
-    return 0; // BASE:1 < 100
-  }
-
-  // —— 調教中以外除去 ——
-  if ((era.get(`cflag:${arg}:1`) || 0) !== 0) {
-    return 0; // CFLAG:1 != 0（占用状态：待机 0/1 之外不结算）
-  }
-
-  // 男人除外：不调用
-  // 育儿中は除外
-  if (t(arg, 154)) {
-    return 0; // TALENT:育儿中（154）
-  }
 
   // —— 空行 + 分隔线 ——
   // 开头的空内容输出只收尾上一行（前一条输出已收行）→ 真空行（#595）
@@ -157,7 +158,95 @@ async function run_benki(arg, rand_n = default_rand) {
 
   // 初期人数1人
   let play = 1;
+  benki_menu_scores(arg, menu);
+  play += benki_common_sense(arg, menu);
+  play += benki_play_bonus(arg, rand_n);
+  play += clamp_benki_menu(menu);
 
+  // 未確定の相手
+  era.set('flag:64', -1);
+  choose_benki_dispatch(arg, menu);
+  confirm_benki_partner(arg);
+  benki_self_play_scores(arg, menu);
+
+  play += await print_benki_opening(arg, menu, rand_n);
+
+  // ビデオボーナス
+  play += menu[6];
+
+  // 最低一匹
+  if (play < 1) {
+    play = 1;
+  }
+
+  // 口上前把 TARGET 切到本角色
+  era_flag.target = arg;
+  await benki_koujo();
+
+  if (menu[6] >= 3) {
+    await settle_benki_video(arg, menu, play);
+  } else if (menu[4] >= 3) {
+    await settle_benki_beast(arg, menu, play, rand_n);
+  } else if (menu[0] >= 3) {
+    await settle_benki_service(arg, menu, play, rand_n);
+  } else if (menu[3] >= 3) {
+    await settle_benki_lesbian(arg, menu, play, rand_n);
+  } else {
+    await settle_benki_general(arg, menu, play, rand_n);
+  }
+
+  // 出口：分隔线 + 空行等键 + TARGET 还原
+  era.drawLine();
+  // 这条空内容输出落在分隔线已收行之后 → 真空行 + 等键（#595）
+  era.print('');
+  await era.waitAnyKey();
+  era_flag.target = target_pool;
+
+  return 0;
+}
+
+/**
+ * 门槛：魔王 / 非肉便器 / 体力气力不足 / 占用中 / 育儿中，任一命中即不结算。
+ * @param {number} arg 角色 ID
+ * @returns {boolean} true = 继续结算
+ */
+function benki_eligible(arg) {
+  // —— 魔王除外 / 非肉便器除外 ——
+  if (arg === 0) {
+    return false; // 魔王様は除外
+  }
+  if (t(arg, 204) === 0) {
+    return false; // 肉便器以外は除外（TALENT:204 肉便器）
+  }
+
+  // —— 気力・体力による制限 ——
+  if ((era.get(`base:${arg}:0`) || 0) < 300) {
+    return false; // BASE:0 < 300
+  }
+  if ((era.get(`base:${arg}:1`) || 0) < 100) {
+    return false; // BASE:1 < 100
+  }
+
+  // —— 調教中以外除去 ——
+  if ((era.get(`cflag:${arg}:1`) || 0) !== 0) {
+    return false; // CFLAG:1 != 0（占用状态：待机 0/1 之外不结算）
+  }
+
+  // 男人除外：不调用
+  // 育儿中は除外
+  if (t(arg, 154)) {
+    return false; // TALENT:育儿中（154）
+  }
+
+  return true;
+}
+
+/**
+ * 菜单加权：素质、能力（ABL）、经验（EXP）与服装（貞操帯）对 10 个槽的加减。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽（就地修改）
+ */
+function benki_menu_scores(arg, menu) {
   // —— 素質による補正 ——
   if (t(arg, 0)) {
     menu[1] -= 20; // 处女（V減少）
@@ -236,7 +325,16 @@ async function run_benki(arg, rand_n = default_rand) {
   ) {
     menu[1] -= 20; //
   }
+}
 
+/**
+ * 常识改変（TALENT:283 五档）对菜单与人数的影响。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽（就地修改）
+ * @returns {number} 人数补正
+ */
+function benki_common_sense(arg, menu) {
+  let play = 0;
   // —— 常識改変効果 ——
   if (t(arg, 283) === 1) {
     menu[0] += 3; // 物乞い奉仕（奉仕）
@@ -250,6 +348,18 @@ async function run_benki(arg, rand_n = default_rand) {
     menu[4] += 3; // 獣姦マニア（兽奸）
   }
 
+  return play;
+}
+
+/**
+ * 共通 PLAY 补正：看轻贞操 / 接受快感 / 淫乱 / 受虐狂四个素质、四项能力与
+ * ランダムボーナス。
+ * @param {number} arg 角色 ID
+ * @param {(n: number) => number} rand_n 随机源（ランダムボーナス用 rand_n(4)）
+ * @returns {number} 人数补正
+ */
+function benki_play_bonus(arg, rand_n) {
+  let play = 0;
   // —— 共通の PLAY 補正 ——
   if (t(arg, 31)) {
     play += 1; // 看轻贞操
@@ -269,7 +379,17 @@ async function run_benki(arg, rand_n = default_rand) {
   play += abl(arg, 21); // 抖M气质
   play += rand_n(4); // ランダムボーナス
 
-  // —— プレイ内容の判定（钳位 + 人数加算）——
+  return play;
+}
+
+/**
+ * 各槽钳 0..9，并把钳后的槽值累进人数。
+ * @param {number[]} menu 菜单槽（就地修改）
+ * @returns {number} 人数补正
+ */
+function clamp_benki_menu(menu) {
+  let play = 0;
+  // 各槽钳 0..9
   for (let i = 0; i < 10; i += 1) {
     // 各槽钳 0..9
     menu[i] = Math.min(menu[i], 9);
@@ -277,9 +397,16 @@ async function run_benki(arg, rand_n = default_rand) {
     play += menu[i]; // ついでにボーナス
   }
 
-  // 未確定の相手
-  era.set('flag:64', -1);
+  return play;
+}
 
+/**
+ * 分派判定：按菜单槽决定 FLAG:62（行动内容）与 FLAG:64（相手）。
+ * 配信系（menu[6] >= 3）优先，其后依次是兽奸 / 同性爱 / 奉仕 / 両穴 / V / A。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ */
+function choose_benki_dispatch(arg, menu) {
   // —— 配信分派（menu[6] >= 3 视频源足 → 配信系）——
   if (menu[6] >= 3) {
     if (menu[4] >= 3) {
@@ -321,7 +448,13 @@ async function run_benki(arg, rand_n = default_rand) {
   } else {
     era.set('flag:62', 6); // その他。フェラ便器
   }
+}
 
+/**
+ * 未定の相手を確定（FLAG:64 == -1 时按素质补：物乞い / 正太控 / 恋父 / 反感污臭）。
+ * @param {number} arg 角色 ID
+ */
+function confirm_benki_partner(arg) {
   // —— 未定の相手を確定 ——
   if (flag64() === -1) {
     if (t(arg, 283) === 1) {
@@ -336,7 +469,14 @@ async function run_benki(arg, rand_n = default_rand) {
       era.set('flag:64', 3); // 魔族の男
     }
   }
+}
 
+/**
+ * 自慰系源（menu[7]）：容易自慰 / 自慰狂 / 自慰中毒 / 自慰经验。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽（就地修改）
+ */
+function benki_self_play_scores(arg, menu) {
   // —— 自慰系源（menu[7]）——
   if (t(arg, 60)) {
     menu[7] += 1; // 容易自慰
@@ -348,24 +488,38 @@ async function run_benki(arg, rand_n = default_rand) {
   if (exp(arg, 10)) {
     menu[7] += 1; // 自慰经验
   }
+}
 
-  // —— 実行（开头演出段）——
+/**
+ * 妊娠系前置串（三素质各一句：怀孕 / 乳内妊娠 / 精巢妊娠）。
+ * @param {number} cid 角色 ID
+ * @returns {string} 前缀串
+ */
+function benki_pregnant_head(cid) {
+  let s = '';
+  if (t(cid, 153)) {
+    s += '挺着怀孕的大肚子的'; //
+  }
+  if (t(cid, 260)) {
+    s += '乳房不时胎动着的'; // 乳内妊娠
+  }
+  if (t(cid, 262)) {
+    s += '性器不时鼓动着的'; // 精巣妊娠（文案与触手 262 共用）
+  }
+  return s;
+}
+
+/**
+ * 两段开场演出：外观（fs_bitch_looks）+ 行动 + 场所 + 相手 + 动作，每段后等键。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ * @param {(n: number) => number} rand_n 随机源（LOOKS 的外貌骰与人数共用）
+ * @returns {Promise<number>} 高贵 / 慈爱 / 献身带来的额外人数
+ */
+async function print_benki_opening(arg, menu, rand_n) {
+  let extra = 0;
   // 妊娠系前置（三素质 → 三句）
-  const pregnant_head = () => {
-    let s = '';
-    if (t(arg, 153)) {
-      s += '挺着怀孕的大肚子的'; //
-    }
-    if (t(arg, 260)) {
-      s += '乳房不时胎动着的'; // 乳内妊娠
-    }
-    if (t(arg, 262)) {
-      s += '性器不时鼓动着的'; // 精巣妊娠（文案与触手 262 共用）
-    }
-    return s;
-  };
-
-  let line = pregnant_head();
+  let line = benki_pregnant_head(arg);
   // 本人外貌描写串 + 「正」（fs_bitch_looks，#185）
   line += `${fs_bitch_looks(arg, rand_n)}正`;
 
@@ -376,15 +530,15 @@ async function run_benki(arg, rand_n = default_rand) {
   // 高貴/慈愛＆奉仕ボーナス
   if (t(arg, 163) && menu[0] >= 3) {
     line += '举止高贵地 ';
-    play += 1;
+    extra += 1;
   } else if (t(arg, 160) && menu[0] >= 3) {
     line += '满怀慈爱地';
-    play += 1;
+    extra += 1;
   }
   // 献身的＆奉仕ボーナス
   if (t(arg, 63) && menu[0] >= 3) {
     line += '主动地';
-    play += 1;
+    extra += 1;
   }
 
   // —— 説明（～をした）——
@@ -413,7 +567,7 @@ async function run_benki(arg, rand_n = default_rand) {
   await era.waitAnyKey(); // 等键
 
   // —— 第二演出段 ——
-  line = pregnant_head();
+  line = benki_pregnant_head(arg);
   if (menu[6] >= 3) {
     line += '水晶球播放了，'; //
   }
@@ -498,443 +652,466 @@ async function run_benki(arg, rand_n = default_rand) {
   era.print(line);
   await era.waitAnyKey();
 
-  // ビデオボーナス
-  play += menu[6];
+  return extra;
+}
 
-  // 最低一匹
-  if (play < 1) {
-    play = 1;
+/**
+ * 配信清算（menu[6] >= 3）：共…句、噂（水晶球传播）、珠与经验结算。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ * @param {number} play 人数
+ */
+async function settle_benki_video(arg, menu, play) {
+  const f62 = flag62();
+  era.print(`${name_of(arg)}共${clear_line(f62, play)}`);
+
+  // 噂（水晶球传播）
+  let rumor = `录下${name_of(arg)}痴态的水晶球，`;
+  rumor += play > 25 ? '公开地' : '暗地里';
+  rumor += play > 15 ? '大量地' : '少数地';
+  rumor += play > 10 ? '被复制' : '被交易';
+  rumor += `传播着，${name_of(arg)}的传闻，传到`;
+  if (play > 30) {
+    rumor += '故乡';
+  } else if (play > 25) {
+    rumor += '地下城外';
+  } else if (play > 20) {
+    rumor += '全地下城';
+  } else if (play > 15) {
+    rumor += '你的直属部队';
+  } else if (play > 10) {
+    rumor += '你的身边';
+  } else {
+    rumor += '你的耳边';
   }
+  rumor += '了。';
+  era.print(rumor);
+
+  // 珠与经验结算
+  juel_settle(arg, play);
+  // 兽奸配信 / 妓女購入 / 自慰系 / 一般
+  if (f62 === 7) {
+    era.print(`兽奸经验+${play}`);
+    chara(arg).dungeon.兽奸经验 += play;
+  } else if (f62 === 8) {
+    era.print(`百合经验+${play}`);
+    chara(arg).train.百合经验 += play;
+  } else if (f62 === 11 || f62 === 12) {
+    era.print(`自慰经验+${play}`);
+    chara(arg).dungeon.自慰经验 += play;
+  } else {
+    era.print(`性交经验+${play}`);
+    era.print(`精液经验+${play}`);
+    chara(arg).dungeon.性交经验 += play;
+    chara(arg).dungeon.精液经验 += play;
+  }
+  // 拡張配信
+  if (f62 === 11) {
+    era.print(`肛门扩张经验+${play}`);
+    chara(arg).dungeon.肛门扩张经验 += play;
+  }
+  // V/A ソース
+  if (menu[1] >= 3) {
+    era.print(`私处点数+${play * 10}`);
+    era.print(`私处经验+${play}`);
+    chara(arg).dungeon.私处经验 += play;
+  }
+  if (menu[2] >= 3) {
+    era.print(`肛门点数+${play * 10}`);
+    era.print(`肛门经验+${play}`);
+    chara(arg).dungeon.肛门经验 += play;
+  }
+  // 拍摄经验 + 战斗经验
+  era.print(`拍摄经验+${play}`);
+  chara(arg).train.拍摄经验 += play;
+  era.print(`经验值+${play}`);
+  chara(arg).dungeon.战斗经验 += play;
+
+  // 配信清算段的 JUEL 加算在 juel_settle 内（见下）
+}
+
+/**
+ * 兽奸便器分派（menu[4] >= 3）：公共便器演出、噂、珠与经验结算。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ * @param {number} play 人数
+ * @param {(n: number) => number} rand_n 随机源（LOOKS 的外貌骰）
+ */
+async function settle_benki_beast(arg, menu, play, rand_n) {
+  // —— 兽奸便器分派 ——
+  era.set('flag:62', 2); //
+  era.set('flag:64', 2); //
+
+  let s = benki_pregnant_head(arg); //
+  s += `${fs_bitch_looks(arg, rand_n)}`; //
+  if (menu[5] >= 3) {
+    s += '身边聚满了看热闹的人，'; //
+    play += menu[5]; // 露出ボーナス
+  }
+  s += '作为公共便器，处理着地下城内魔兽们的性欲。'; //
+  era.print(s);
+
+  s = `${name_of(arg)}`; //
+  if (menu[1] >= 3 && menu[2] >= 3) {
+    s += '的子宫和直肠，灌满了魔兽的精液，';
+    play += menu[1] + menu[2]; // A&Vボーナス
+  } else if (menu[1] >= 3) {
+    s += '的子宫，灌满了魔兽的精液，';
+    play += menu[1]; // Vボーナス
+  } else if (menu[2] >= 3) {
+    s += '的直肠，灌满了魔兽的精液，';
+    play += menu[2]; // Aボーナス
+  } else {
+    s += '不断摩擦着魔兽的阴茎，';
+    play += menu[0]; // 奉仕ボーナス
+  }
+  // 奴隷の様子——上面的名字句 + 穴句与这句拼成同一条显示行（#620：
+  // 此前様子另起一行）
+  s += t(arg, 9)
+    ? '浮现出被玩坏的痴笑。' // 崩坏
+    : t(arg, 136)
+      ? '高兴地摇着屁股。' // 牝犬
+      : abl(arg, 39)
+        ? '沉醉在与魔兽交配的快感之中。' // 兽奸中毒1以上
+        : '看起来很不自在。'; //
+  era.print(s);
+
+  play += menu[4]; // 兽奸ボーナス
+  if (play < 1) {
+    play = 1; // 最低一匹
+  }
+
+  era.print(`${name_of(arg)}一共处理了${play}只魔兽的性欲。。`); //
+
+  // 噂（兽奸）
+  era.print(beast_rumor(arg, play));
 
   // 口上前把 TARGET 切到本角色
   era_flag.target = arg;
   await benki_koujo();
 
-  // —— 配信清算（menu[6] >= 3）——
-  if (menu[6] >= 3) {
-    era.print(`${name_of(arg)}共${clear_line(f62, play)}`);
+  // 珠与经验结算
+  juel_settle(arg, play);
+  if (menu[1] >= 3) {
+    era.print(`私处点数+${play * 10}`);
+    era.print(`私处经验+${play}`);
+    chara(arg).dungeon.私处经验 += play;
+  }
+  if (menu[2] >= 3) {
+    era.print(`肛门点数+${play * 10}`);
+    era.print(`肛门经验+${play}`);
+    chara(arg).dungeon.肛门经验 += play;
+  }
+  era.print(`兽奸经验+${play}`);
+  era.print(`经验值+${play}`);
+  chara(arg).dungeon.兽奸经验 += play;
+  chara(arg).dungeon.战斗经验 += play;
+}
 
-    // 噂（水晶球传播）
-    let rumor = `录下${name_of(arg)}痴态的水晶球，`;
-    rumor += play > 25 ? '公开地' : '暗地里';
-    rumor += play > 15 ? '大量地' : '少数地';
-    rumor += play > 10 ? '被复制' : '被交易';
-    rumor += `传播着，${name_of(arg)}的传闻，传到`;
-    if (play > 30) {
-      rumor += '故乡';
-    } else if (play > 25) {
-      rumor += '地下城外';
-    } else if (play > 20) {
-      rumor += '全地下城';
-    } else if (play > 15) {
-      rumor += '你的直属部队';
-    } else if (play > 10) {
-      rumor += '你的身边';
-    } else {
-      rumor += '你的耳边';
-    }
-    rumor += '了。';
-    era.print(rumor);
+/**
+ * 奉仕便器分派（menu[0] >= 3）：最下層民奉仕演出、噂、珠与经验结算。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ * @param {number} play 人数
+ * @param {(n: number) => number} rand_n 随机源（LOOKS 的外貌骰）
+ */
+async function settle_benki_service(arg, menu, play, rand_n) {
+  // —— 奉仕便器分派 ——
+  era.set('flag:62', 0); //
+  era.set('flag:64', 0); //
 
-    // 珠与经验结算
-    juel_settle(arg, play);
-    // 兽奸配信 / 妓女購入 / 自慰系 / 一般
-    if (f62 === 7) {
-      era.print(`兽奸经验+${play}`);
-      chara(arg).dungeon.兽奸经验 += play;
-    } else if (f62 === 8) {
-      era.print(`百合经验+${play}`);
-      chara(arg).train.百合经验 += play;
-    } else if (f62 === 11 || f62 === 12) {
-      era.print(`自慰经验+${play}`);
-      chara(arg).dungeon.自慰经验 += play;
-    } else {
-      era.print(`性交经验+${play}`);
-      era.print(`精液经验+${play}`);
-      chara(arg).dungeon.性交经验 += play;
-      chara(arg).dungeon.精液经验 += play;
-    }
-    // 拡張配信
-    if (f62 === 11) {
-      era.print(`肛门扩张经验+${play}`);
-      chara(arg).dungeon.肛门扩张经验 += play;
-    }
-    // V/A ソース
-    if (menu[1] >= 3) {
-      era.print(`私处点数+${play * 10}`);
-      era.print(`私处经验+${play}`);
-      chara(arg).dungeon.私处经验 += play;
-    }
-    if (menu[2] >= 3) {
-      era.print(`肛门点数+${play * 10}`);
-      era.print(`肛门经验+${play}`);
-      chara(arg).dungeon.肛门经验 += play;
-    }
-    // 拍摄经验 + 战斗经验
-    era.print(`拍摄经验+${play}`);
-    chara(arg).train.拍摄经验 += play;
-    era.print(`经验值+${play}`);
-    chara(arg).dungeon.战斗经验 += play;
+  let s = benki_pregnant_head(arg); //
+  s += `${fs_bitch_looks(arg, rand_n)}`; //
+  if (menu[5] >= 3) {
+    s += '身边聚满了看热闹的人，'; //
+    play += menu[5]; // 露出ボーナス
+  }
+  if (t(arg, 163)) {
+    s += '举止高贵地'; // 高贵ボーナス
+    play += 1;
+  } else if (t(arg, 160)) {
+    s += '满怀慈爱地'; // 慈爱ボーナス
+    play += 1;
+  }
+  if (t(arg, 63)) {
+    s += '主动地'; // 献身的ボーナス
+    play += 1;
+  }
+  // 这条输出自带换行——上面的拼行到此收尾（#615：此前把随后的
+  // 名字调用也并进同一行，少了一次换行）
+  s += '作为侍奉用便器在地下城里服侍着'; //
+  era.print(s);
 
-    // 配信清算段的 JUEL 加算在 juel_settle 内（见下）
-  } else if (menu[4] >= 3) {
-    // —— 兽奸便器分派 ——
-    era.set('flag:62', 2); //
-    era.set('flag:64', 2); //
+  // 侍奉对象名落在新行行首，与角色名拼成同一条显示行：#615 起角色名
+  // 随这一行收尾，不再起始下一条穴句行
+  era.print(`${benki_player_name()}${name_of(arg)}`);
 
-    let s = pregnant_head(); //
-    s += `${fs_bitch_looks(arg, rand_n)}`; //
-    if (menu[5] >= 3) {
-      s += '身边聚满了看热闹的人，'; //
-      play += menu[5]; // 露出ボーナス
-    }
-    s += '作为公共便器，处理着地下城内魔兽们的性欲。'; //
-    era.print(s);
-
-    s = `${name_of(arg)}`; //
-    if (menu[1] >= 3 && menu[2] >= 3) {
-      s += '的子宫和直肠，灌满了魔兽的精液，';
-      play += menu[1] + menu[2]; // A&Vボーナス
-    } else if (menu[1] >= 3) {
-      s += '的子宫，灌满了魔兽的精液，';
-      play += menu[1]; // Vボーナス
-    } else if (menu[2] >= 3) {
-      s += '的直肠，灌满了魔兽的精液，';
-      play += menu[2]; // Aボーナス
-    } else {
-      s += '不断摩擦着魔兽的阴茎，';
-      play += menu[0]; // 奉仕ボーナス
-    }
-    // 奴隷の様子——上面的名字句 + 穴句与这句拼成同一条显示行（#620：
-    // 此前様子另起一行）
-    s += t(arg, 9)
-      ? '浮现出被玩坏的痴笑。' // 崩坏
-      : t(arg, 136)
-        ? '高兴地摇着屁股。' // 牝犬
-        : abl(arg, 39)
-          ? '沉醉在与魔兽交配的快感之中。' // 兽奸中毒1以上
-          : '看起来很不自在。'; //
-    era.print(s);
-
-    play += menu[4]; // 兽奸ボーナス
-    if (play < 1) {
-      play = 1; // 最低一匹
-    }
-
-    era.print(`${name_of(arg)}一共处理了${play}只魔兽的性欲。。`); //
-
-    // 噂（兽奸）
-    era.print(beast_rumor(arg, play));
-
-    // 口上前把 TARGET 切到本角色
-    era_flag.target = arg;
-    await benki_koujo();
-
-    // 珠与经验结算
-    juel_settle(arg, play);
-    if (menu[1] >= 3) {
-      era.print(`私处点数+${play * 10}`);
-      era.print(`私处经验+${play}`);
-      chara(arg).dungeon.私处经验 += play;
-    }
-    if (menu[2] >= 3) {
-      era.print(`肛门点数+${play * 10}`);
-      era.print(`肛门经验+${play}`);
-      chara(arg).dungeon.肛门经验 += play;
-    }
-    era.print(`兽奸经验+${play}`);
-    era.print(`经验值+${play}`);
-    chara(arg).dungeon.兽奸经验 += play;
-    chara(arg).dungeon.战斗经验 += play;
-  } else if (menu[0] >= 3) {
-    // —— 奉仕便器分派 ——
-    era.set('flag:62', 0); //
-    era.set('flag:64', 0); //
-
-    let s = pregnant_head(); //
-    s += `${fs_bitch_looks(arg, rand_n)}`; //
-    if (menu[5] >= 3) {
-      s += '身边聚满了看热闹的人，'; //
-      play += menu[5]; // 露出ボーナス
-    }
-    if (t(arg, 163)) {
-      s += '举止高贵地'; // 高贵ボーナス
-      play += 1;
-    } else if (t(arg, 160)) {
-      s += '满怀慈爱地'; // 慈爱ボーナス
-      play += 1;
-    }
-    if (t(arg, 63)) {
-      s += '主动地'; // 献身的ボーナス
-      play += 1;
-    }
-    // 这条输出自带换行——上面的拼行到此收尾（#615：此前把随后的
-    // 名字调用也并进同一行，少了一次换行）
-    s += '作为侍奉用便器在地下城里服侍着'; //
-    era.print(s);
-
-    // 侍奉对象名落在新行行首，与角色名拼成同一条显示行：#615 起角色名
-    // 随这一行收尾，不再起始下一条穴句行
-    era.print(`${benki_player_name()}${name_of(arg)}`);
-
-    s = ''; // 段的穴句（角色名已在上一行）
-    if (menu[1] >= 3 && menu[2] >= 3) {
-      s += '能用上的穴全用上了，';
-      play += menu[1] + menu[2]; // A&Vボーナス
-    } else if (menu[1] >= 3) {
-      s += '用私处';
-      play += menu[1]; // Vボーナス
-    } else if (menu[2] >= 3) {
-      s += '用菊花';
-      play += menu[2]; // Aボーナス
-    } else {
-      s += '用嘴和手'; //
-    }
-    s += '将底层种族'; //
-    if (t(arg, 62)) {
-      s += '满是污垢的肮脏的'; // 反感污臭ボーナス
-      play += 1;
-    }
-    s += '阴茎温柔地包裹在内，'; //
-    // 奴隷の様子——上面的穴句与这句拼成同一条显示行（#620：此前様子
-    // 另起一行；两组「对底层 + 对象名 + 文案」也收在这一行里）
-    s +=
-      flag63() === 1
-        ? '一如平常的面带微笑地交欢着……' // 常識改変
-        : t(arg, 9)
-          ? '浮现出被玩坏的痴笑。' // 崩坏
-          : exp(arg, 21) > 100
-            ? `对底层${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。` // 侍奉快乐经验100超
-            : exp(arg, 21) > 50
-              ? `对底层${benki_player_name()}温柔地微笑着。` // 侍奉快乐经验50超
-              : '看起来很不自在。'; //
-    era.print(s);
-
-    play += menu[0]; // 奉仕ボーナス
-    if (play < 1) {
-      play = 1; // 最低一人
-    }
-
-    // 这条输出自带换行——清算首行到此收尾（#615：此前把对象名与
-    // 「的性欲。」并进了同一行，少了一次换行）
-    era.print(`${name_of(arg)}共处理了${play}个底层`);
-
-    // 对象名 + 「的性欲。」 + 传闻拼成同一条显示行（传闻接在
-    // 「的性欲。」之后）
-    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);
-
-    // 口上前把 TARGET 切到本角色
-    era_flag.target = arg;
-    await benki_koujo();
-
-    // 珠与经验结算
-    juel_settle(arg, play);
-    if (menu[1] >= 3) {
-      era.print(`私处点数+${play * 10}`);
-      era.print(`私处经验+${play}`);
-      chara(arg).dungeon.私处经验 += play;
-    }
-    if (menu[2] >= 3) {
-      era.print(`肛门点数+${play * 10}`);
-      era.print(`肛门经验+${play}`);
-      chara(arg).dungeon.肛门经验 += play;
-    }
-    era.print(`性交经验+${play}`);
-    era.print(`精液经验+${play}`);
-    era.print(`经验值+${play}`);
-    chara(arg).dungeon.性交经验 += play;
-    chara(arg).dungeon.精液经验 += play;
-    chara(arg).dungeon.战斗经验 += play;
-  } else if (menu[3] >= 3) {
-    // —— 同性爱便器分派 ——
-    era.set('flag:62', 1); //
-    if (t(arg, 142)) {
-      era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
-    } else {
-      era.set('flag:64', 9); // 淫魔
-    }
-
-    let s = pregnant_head(); //
-    s += `${fs_bitch_looks(arg, rand_n)}，`; //
-    if (menu[5] >= 3) {
-      s += '在围观群众的视线下，'; //
-      play += menu[5]; // 露出ボーナス
-    }
-    s += '与性欲旺盛的淫魔们相拥着。'; //
-    era.print(s);
-
-    s = '';
-    if (t(arg, 121)) {
-      s += '双性人的'; // 扶她
-    }
-    s += `${name_of(arg)}`; //
-    if (t(arg, 121) && t(arg, 142)) {
-      s += '在精囊被掏空之前，都在和年轻淫魔扭动着腰。'; //
-      play += 6;
-    } else if (t(arg, 121)) {
-      s += '在精囊被掏空之前，不停被吸取着精液。'; //
-      play += 3;
-    } else if (t(arg, 142)) {
-      s += `被年幼的${benki_player_name()}诱惑了，`; //
-      play += 3;
-    } else {
-      s += `被${benki_player_name()}诱惑了，`; //
-    }
-    // 奴隷の様子——上面的名字句 + 条件句与这句拼成同一条显示行（#620）
-    s +=
-      flag63() === 1
-        ? '一如平常的面带微笑地交欢着……' // 常識改変
-        : t(arg, 9)
-          ? '浮现出被玩坏的痴笑……' // 崩坏
-          : exp(arg, 40) > 1000
-            ? '快乐得快要晕过去了……' // 百合经验1000超
-            : exp(arg, 40) > 500
-              ? '沉醉在这种缠绵之中……' // 百合经验500超
-              : '看起来很不自在……'; //
-    era.print(s);
-
-    play += menu[3]; // 同性爱ボーナス
-    if (play < 1) {
-      play = 1; // 最低一人
-    }
-
-    // 这条输出自带换行——清算首行到此收尾（#615，同奉仕分派）
-    era.print(`${name_of(arg)}一共处理了${play}个`);
-
-    // 对象名 + 「的性欲。」 + 传闻拼成同一条显示行
-    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);
-
-    // 口上前把 TARGET 切到本角色
-    era_flag.target = arg;
-    await benki_koujo();
-
-    // 珠与经验结算
-    juel_settle(arg, play);
-    if (t(arg, 121)) {
-      era.print(`射精经验+${play}`); // 扶她ボーナス
-      chara(arg).train.射精经验 += play;
-    }
-    era.print(`百合经验+${play}`);
-    era.print(`经验值+${play}`);
-    chara(arg).train.百合经验 += play;
-    chara(arg).dungeon.战斗经验 += play;
+  s = ''; // 段的穴句（角色名已在上一行）
+  if (menu[1] >= 3 && menu[2] >= 3) {
+    s += '能用上的穴全用上了，';
+    play += menu[1] + menu[2]; // A&Vボーナス
+  } else if (menu[1] >= 3) {
+    s += '用私处';
+    play += menu[1]; // Vボーナス
+  } else if (menu[2] >= 3) {
+    s += '用菊花';
+    play += menu[2]; // Aボーナス
   } else {
-    // —— 一般（両穴/V/A/フェラ）便器分派 ——
-    if (menu[1] >= 3 && menu[2] >= 3) {
-      era.set('flag:62', 3); // 両穴プレイ
-    } else if (menu[1] >= 3) {
-      era.set('flag:62', 4); // Vプレイ
-    } else if (menu[2] >= 3) {
-      era.set('flag:62', 5); // Aプレイ
-    } else {
-      era.set('flag:62', 6); // その他。フェラ便器
-    }
+    s += '用嘴和手'; //
+  }
+  s += '将底层种族'; //
+  if (t(arg, 62)) {
+    s += '满是污垢的肮脏的'; // 反感污臭ボーナス
+    play += 1;
+  }
+  s += '阴茎温柔地包裹在内，'; //
+  // 奴隷の様子——上面的穴句与这句拼成同一条显示行（#620：此前様子
+  // 另起一行；两组「对底层 + 对象名 + 文案」也收在这一行里）
+  s +=
+    flag63() === 1
+      ? '一如平常的面带微笑地交欢着……' // 常識改変
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑。' // 崩坏
+        : exp(arg, 21) > 100
+          ? `对底层${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。` // 侍奉快乐经验100超
+          : exp(arg, 21) > 50
+            ? `对底层${benki_player_name()}温柔地微笑着。` // 侍奉快乐经验50超
+            : '看起来很不自在。'; //
+  era.print(s);
 
-    let s = pregnant_head(); //
-    s += `${fs_bitch_looks(arg, rand_n)}的`; //
-    if (menu[5] >= 3) {
-      s += '身边聚满了看热闹的人，'; //
-      play += menu[5]; // 露出ボーナス
-    }
-    s += '成为了公共便器。'; //
-    s += t(arg, 143) ? '魔族的少年在' : '魔族的男人在'; // 正太控
-    if (menu[1] >= 3 && menu[2] >= 3) {
-      s += `${she(arg)}的子宫、直肠、嘴巴里都灌满了精液。`;
-    } else if (menu[1] >= 3) {
-      s += `${she(arg)}的子宫和嘴巴里都灌满了精液。`;
-    } else if (menu[2] >= 3) {
-      s += `${she(arg)}的直肠和嘴巴里都灌满了精液。`;
-    } else {
-      s += `${she(arg)}的嘴里灌满了精液。`;
-    }
-    era.print(s);
-    // 这条空内容输出只收尾上面那条拼行——前一条没有换行，故它不是
-    // 空行，这里不补 println（#595）
-
-    s = `${name_of(arg)}`; //
-    if (t(arg, 26) || t(arg, 10)) {
-      s += '最初是恐惧，之后就'; // 悲观的・胆怯
-    }
-    if (t(arg, 31)) {
-      s += '主动分开双腿，'; // 看轻贞操
-    }
-    // 奴隷の様子（常識改変/崩坏/淫乱/爱慕/精液経験）——上面的名字句与
-    // 这句拼成同一条显示行（#620：此前様子另起一行）
-    s +=
-      flag63() === 1
-        ? '像家常便饭似的一边聊着天一边交欢着……' // 常識改変
-        : t(arg, 9)
-          ? '浮现出被玩坏的痴笑……' // 崩坏
-          : t(arg, 76)
-            ? '带着淫乱的表情，发出野兽般的娇喘……' // 淫乱
-            : t(arg, 85)
-              ? '泪流满面地在嘴里叨念着你的名字……' // 爱慕
-              : exp(arg, 20) > 1000
-                ? '带着谦卑的微笑央求着精液……' // 精液経験1000超
-                : exp(arg, 20) > 500
-                  ? '带着谦卑的表情不时吐露着淫语……' // 精液経験500超
-                  : exp(arg, 20) > 250
-                    ? '带着生硬的笑容做着V字手势，乞求着原谅……' // 精液経験250超
-                    : exp(arg, 20) > 100
-                      ? '带着生硬的笑容被强行做着V字手势……' // 精液経験100超
-                      : exp(arg, 20) > 50
-                        ? '不断重复着谢罪的话语……' // 精液経験50超
-                        : '两眼无神地看着远方……'; //
-    era.print(s);
-
-    if (menu[1] >= 3 && menu[2] >= 3) {
-      play += menu[1] + menu[2]; // A&Vボーナス
-    } else if (menu[1] >= 3) {
-      play += menu[1]; // Vボーナス
-    } else if (menu[2] >= 3) {
-      play += menu[2]; // Aボーナス
-    } else {
-      play += menu[0]; // 奉仕ボーナス
-    }
-    if (play < 1) {
-      play = 1; // 最低一人
-    }
-
-    // 共处理句、对象名、「的性欲。」与传闻同属一条显示行（#615：此前
-    // 拆成两行）
-    era.print(
-      `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,
-    );
-
-    // 口上前把 TARGET 切到本角色
-    era_flag.target = arg;
-    await benki_koujo();
-
-    // 珠与经验结算
-    juel_settle(arg, play);
-    if (menu[1] >= 3) {
-      era.print(`私处点数+${play * 10}`);
-      era.print(`私处经验+${play}`);
-      chara(arg).dungeon.私处经验 += play;
-    }
-    if (menu[2] >= 3) {
-      era.print(`肛门点数+${play * 10}`);
-      era.print(`肛门经验+${play}`);
-      chara(arg).dungeon.肛门经验 += play;
-    }
-    if (menu[1] >= 3 || menu[2] >= 3) {
-      era.print(`性交经验+${play}`); // AかVどちらかを満たせば
-      chara(arg).dungeon.性交经验 += play;
-    }
-    era.print(`精液经验+${play}`);
-    era.print(`经验值+${play}`);
-    chara(arg).dungeon.精液经验 += play;
-    chara(arg).dungeon.战斗经验 += play;
+  play += menu[0]; // 奉仕ボーナス
+  if (play < 1) {
+    play = 1; // 最低一人
   }
 
-  // 出口：分隔线 + 空行等键 + TARGET 还原
-  era.drawLine();
-  // 这条空内容输出落在分隔线已收行之后 → 真空行 + 等键（#595）
-  era.print('');
-  await era.waitAnyKey();
-  era_flag.target = target_pool;
+  // 这条输出自带换行——清算首行到此收尾（#615：此前把对象名与
+  // 「的性欲。」并进了同一行，少了一次换行）
+  era.print(`${name_of(arg)}共处理了${play}个底层`);
 
-  return 0;
+  // 对象名 + 「的性欲。」 + 传闻拼成同一条显示行（传闻接在
+  // 「的性欲。」之后）
+  era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);
+
+  // 口上前把 TARGET 切到本角色
+  era_flag.target = arg;
+  await benki_koujo();
+
+  // 珠与经验结算
+  juel_settle(arg, play);
+  if (menu[1] >= 3) {
+    era.print(`私处点数+${play * 10}`);
+    era.print(`私处经验+${play}`);
+    chara(arg).dungeon.私处经验 += play;
+  }
+  if (menu[2] >= 3) {
+    era.print(`肛门点数+${play * 10}`);
+    era.print(`肛门经验+${play}`);
+    chara(arg).dungeon.肛门经验 += play;
+  }
+  era.print(`性交经验+${play}`);
+  era.print(`精液经验+${play}`);
+  era.print(`经验值+${play}`);
+  chara(arg).dungeon.性交经验 += play;
+  chara(arg).dungeon.精液经验 += play;
+  chara(arg).dungeon.战斗经验 += play;
+}
+
+/**
+ * 同性爱便器分派（menu[3] >= 3）：淫魔相拥演出、噂、珠与经验结算。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ * @param {number} play 人数
+ * @param {(n: number) => number} rand_n 随机源（LOOKS 的外貌骰）
+ */
+async function settle_benki_lesbian(arg, menu, play, rand_n) {
+  // —— 同性爱便器分派 ——
+  era.set('flag:62', 1); //
+  if (t(arg, 142)) {
+    era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
+  } else {
+    era.set('flag:64', 9); // 淫魔
+  }
+
+  let s = benki_pregnant_head(arg); //
+  s += `${fs_bitch_looks(arg, rand_n)}，`; //
+  if (menu[5] >= 3) {
+    s += '在围观群众的视线下，'; //
+    play += menu[5]; // 露出ボーナス
+  }
+  s += '与性欲旺盛的淫魔们相拥着。'; //
+  era.print(s);
+
+  s = '';
+  if (t(arg, 121)) {
+    s += '双性人的'; // 扶她
+  }
+  s += `${name_of(arg)}`; //
+  if (t(arg, 121) && t(arg, 142)) {
+    s += '在精囊被掏空之前，都在和年轻淫魔扭动着腰。'; //
+    play += 6;
+  } else if (t(arg, 121)) {
+    s += '在精囊被掏空之前，不停被吸取着精液。'; //
+    play += 3;
+  } else if (t(arg, 142)) {
+    s += `被年幼的${benki_player_name()}诱惑了，`; //
+    play += 3;
+  } else {
+    s += `被${benki_player_name()}诱惑了，`; //
+  }
+  // 奴隷の様子——上面的名字句 + 条件句与这句拼成同一条显示行（#620）
+  s +=
+    flag63() === 1
+      ? '一如平常的面带微笑地交欢着……' // 常識改変
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑……' // 崩坏
+        : exp(arg, 40) > 1000
+          ? '快乐得快要晕过去了……' // 百合经验1000超
+          : exp(arg, 40) > 500
+            ? '沉醉在这种缠绵之中……' // 百合经验500超
+            : '看起来很不自在……'; //
+  era.print(s);
+
+  play += menu[3]; // 同性爱ボーナス
+  if (play < 1) {
+    play = 1; // 最低一人
+  }
+
+  // 这条输出自带换行——清算首行到此收尾（#615，同奉仕分派）
+  era.print(`${name_of(arg)}一共处理了${play}个`);
+
+  // 对象名 + 「的性欲。」 + 传闻拼成同一条显示行
+  era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);
+
+  // 口上前把 TARGET 切到本角色
+  era_flag.target = arg;
+  await benki_koujo();
+
+  // 珠与经验结算
+  juel_settle(arg, play);
+  if (t(arg, 121)) {
+    era.print(`射精经验+${play}`); // 扶她ボーナス
+    chara(arg).train.射精经验 += play;
+  }
+  era.print(`百合经验+${play}`);
+  era.print(`经验值+${play}`);
+  chara(arg).train.百合经验 += play;
+  chara(arg).dungeon.战斗经验 += play;
+}
+
+/**
+ * 一般便器分派（両穴 / V / A / フェラ）：演出、噂、珠与经验结算。
+ * @param {number} arg 角色 ID
+ * @param {number[]} menu 菜单槽
+ * @param {number} play 人数
+ * @param {(n: number) => number} rand_n 随机源（LOOKS 的外貌骰）
+ */
+async function settle_benki_general(arg, menu, play, rand_n) {
+  // —— 一般（両穴/V/A/フェラ）便器分派 ——
+  if (menu[1] >= 3 && menu[2] >= 3) {
+    era.set('flag:62', 3); // 両穴プレイ
+  } else if (menu[1] >= 3) {
+    era.set('flag:62', 4); // Vプレイ
+  } else if (menu[2] >= 3) {
+    era.set('flag:62', 5); // Aプレイ
+  } else {
+    era.set('flag:62', 6); // その他。フェラ便器
+  }
+
+  let s = benki_pregnant_head(arg); //
+  s += `${fs_bitch_looks(arg, rand_n)}的`; //
+  if (menu[5] >= 3) {
+    s += '身边聚满了看热闹的人，'; //
+    play += menu[5]; // 露出ボーナス
+  }
+  s += '成为了公共便器。'; //
+  s += t(arg, 143) ? '魔族的少年在' : '魔族的男人在'; // 正太控
+  if (menu[1] >= 3 && menu[2] >= 3) {
+    s += `${she(arg)}的子宫、直肠、嘴巴里都灌满了精液。`;
+  } else if (menu[1] >= 3) {
+    s += `${she(arg)}的子宫和嘴巴里都灌满了精液。`;
+  } else if (menu[2] >= 3) {
+    s += `${she(arg)}的直肠和嘴巴里都灌满了精液。`;
+  } else {
+    s += `${she(arg)}的嘴里灌满了精液。`;
+  }
+  era.print(s);
+  // 这条空内容输出只收尾上面那条拼行——前一条没有换行，故它不是
+  // 空行，这里不补 println（#595）
+
+  s = `${name_of(arg)}`; //
+  if (t(arg, 26) || t(arg, 10)) {
+    s += '最初是恐惧，之后就'; // 悲观的・胆怯
+  }
+  if (t(arg, 31)) {
+    s += '主动分开双腿，'; // 看轻贞操
+  }
+  // 奴隷の様子（常識改変/崩坏/淫乱/爱慕/精液経験）——上面的名字句与
+  // 这句拼成同一条显示行（#620：此前様子另起一行）
+  s +=
+    flag63() === 1
+      ? '像家常便饭似的一边聊着天一边交欢着……' // 常識改変
+      : t(arg, 9)
+        ? '浮现出被玩坏的痴笑……' // 崩坏
+        : t(arg, 76)
+          ? '带着淫乱的表情，发出野兽般的娇喘……' // 淫乱
+          : t(arg, 85)
+            ? '泪流满面地在嘴里叨念着你的名字……' // 爱慕
+            : exp(arg, 20) > 1000
+              ? '带着谦卑的微笑央求着精液……' // 精液経験1000超
+              : exp(arg, 20) > 500
+                ? '带着谦卑的表情不时吐露着淫语……' // 精液経験500超
+                : exp(arg, 20) > 250
+                  ? '带着生硬的笑容做着V字手势，乞求着原谅……' // 精液経験250超
+                  : exp(arg, 20) > 100
+                    ? '带着生硬的笑容被强行做着V字手势……' // 精液経験100超
+                    : exp(arg, 20) > 50
+                      ? '不断重复着谢罪的话语……' // 精液経験50超
+                      : '两眼无神地看着远方……'; //
+  era.print(s);
+
+  if (menu[1] >= 3 && menu[2] >= 3) {
+    play += menu[1] + menu[2]; // A&Vボーナス
+  } else if (menu[1] >= 3) {
+    play += menu[1]; // Vボーナス
+  } else if (menu[2] >= 3) {
+    play += menu[2]; // Aボーナス
+  } else {
+    play += menu[0]; // 奉仕ボーナス
+  }
+  if (play < 1) {
+    play = 1; // 最低一人
+  }
+
+  // 共处理句、对象名、「的性欲。」与传闻同属一条显示行（#615：此前
+  // 拆成两行）
+  era.print(
+    `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,
+  );
+
+  // 口上前把 TARGET 切到本角色
+  era_flag.target = arg;
+  await benki_koujo();
+
+  // 珠与经验结算
+  juel_settle(arg, play);
+  if (menu[1] >= 3) {
+    era.print(`私处点数+${play * 10}`);
+    era.print(`私处经验+${play}`);
+    chara(arg).dungeon.私处经验 += play;
+  }
+  if (menu[2] >= 3) {
+    era.print(`肛门点数+${play * 10}`);
+    era.print(`肛门经验+${play}`);
+    chara(arg).dungeon.肛门经验 += play;
+  }
+  if (menu[1] >= 3 || menu[2] >= 3) {
+    era.print(`性交经验+${play}`); // AかVどちらかを満たせば
+    chara(arg).dungeon.性交经验 += play;
+  }
+  era.print(`精液经验+${play}`);
+  era.print(`经验值+${play}`);
+  chara(arg).dungeon.精液经验 += play;
+  chara(arg).dungeon.战斗经验 += play;
 }
 
 /**

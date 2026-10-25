@@ -194,7 +194,8 @@ engine_test(
     // 预设行的入库角色
     assert.deepEqual(from_yml.errors, []);
     // 预设内容逐项固定：22 项フラグ（含负值 -1 与大值 1270）、素質 36 项
-    // （两列行缺省 1 与三列行显式值）、ABL、CSTR 第一人称
+    // （两列行缺省 1 与三列行显式值）、ABL、CSTR 第一人称、portcflag 的
+    // 预设模板（#884：角色由哪个预设生成，随预设抄进角色数据）
     assert.deepEqual(
       from_yml.static_data.chara[35],
       {
@@ -264,6 +265,7 @@ engine_test(
         },
         abl: { 10: 2, 21: 3 },
         cstr: { 60: '菲娅' },
+        portcflag: { 2: 35 },
       },
       '菲娅预设内容与库内产物不一致',
     );

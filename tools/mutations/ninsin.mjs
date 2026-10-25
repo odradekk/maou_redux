@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 74; // #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）；#653 -3 +5（删反向变异 M7200/M7201/M7203，新增 M13250-M13254 检查修复后的行为）
+export const COUNT = 78; // #884 +4（M16600-M16603：预设模板字段的读取、读档补填的判据/写入值、奴隶后代改读字段）； #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）；#653 -3 +5（删反向变异 M7200/M7201/M7203，新增 M13250-M13254 检查修复后的行为）
 
 export default [
   {
@@ -562,8 +562,10 @@ export default [
     file: 'ere/chara/chara-pregnancy.js',
     find: '  return Math.trunc((cid - FIRST_CHILD_ID) / CHILD_ID_BLOCK_SIZE) + 1;',
     replace: '  return Math.trunc((cid - 1000) / CHILD_ID_BLOCK_SIZE) + 1;',
-    tests: ['event-execution-batch'],
-    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
+    // #884 起这条换算只剩读档补填一个消费者（读取侧读「预设模板」字段），
+    // 断言跟着挪到补填用例上
+    tests: ['chara-template', 'chara-pregnancy'],
+    must_mention: '后代按「来源预设各保留 100 位」反推',
   },
   // —— #653（F7）：近卫模板窗 201-211、超乳降档、生育部位按生产角色（修复检查） ——
   {
@@ -606,5 +608,38 @@ export default [
       '`${name_of(cid)}平安的${child_birth_place_text(0)}生下了${description}。`,',
     tests: ['chara-pregnancy'],
     must_mention: '正常生产分支取母亲的异常妊娠部位',
+  },
+  // —— #884：预设模板字段（角色号与预设号分开） ——
+  {
+    desc: 'M16600 预设模板改读排序编号（普通角色的预设号变成 0）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  return era.get(`portcflag:${cid}:预设模板`) || 0;',
+    replace: '  return era.get(`portcflag:${cid}:排序编号`) || 0;',
+    tests: ['chara-template'],
+    must_mention: '普通角色的预设号 = 角色号',
+  },
+  {
+    desc: 'M16601 读档补填的判据反转（该补的不补，已补的反复写）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    if (template_no_of(cid) !== 0) continue;',
+    replace: '    if (template_no_of(cid) === 0) continue;',
+    tests: ['chara-template'],
+    must_mention: '后代按「来源预设各保留 100 位」反推',
+  },
+  {
+    desc: 'M16602 读档补填写入角色号（把预设模板写成身份号）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    era.set(`portcflag:${cid}:预设模板`, legacy);',
+    replace: '    era.set(`portcflag:${cid}:预设模板`, cid);',
+    tests: ['chara-template'],
+    must_mention: '后代按「来源预设各保留 100 位」反推',
+  },
+  {
+    desc: 'M16603 奴隶后代拿母亲的角色号当来源预设（字段被绕过）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  const mother_template = template_no_of(mother);',
+    replace: '  const mother_template = mother;',
+    tests: ['chara-template'],
+    must_mention: '模板 2 的 ID 区间，与旧编码的模板 1 不同',
   },
 ];

@@ -747,11 +747,12 @@ const stain = {
 // 决定。delta/deltabase 归 train：生命周期与 tflag 一致——回合内有效、由
 // 调教结算写入（source-check 累加）、回合末由调教结算消费清零（ere 侧
 // palam_up_check 当场结算 + 引擎 nextTurnInTrain 保底处理）。
-// portcflag 同机制适用，但暂不声明属主：当前唯一字段「数据版本」由
-// ere/chara/chara-portcflag.js 的 init_portcflag 在角色加入点写入，单字段
-// 门面只是搬家、起不到统一写点的作用；第二个字段进来时随字段语义在此声明
-// （ADR-0001 的「宁宽勿新」意味着 portcflag 会长出多域字段，属主随字段定，
-// 非一表一主）。
+// portcflag 同机制适用，但暂不声明属主：三个字段的写点都在 chara 域——
+// 数据版本由 ere/chara/chara-portcflag.js 的 init_portcflag 在角色加入点写，
+// 排序编号由名册页的换号写，预设模板由引擎按角色预设抄写（#884）——门面
+// 只是搬家、起不到统一写点的作用；读侧（除名、生育、名册）不受属主约束。
+// 出现跨域写时随字段语义在此声明（ADR-0001 的「宁宽勿新」意味着 portcflag
+// 会长出多域字段，属主随字段定，非一表一主）。
 const PORT_TABLE_OWNERS = {
   delta: 'train',
   deltabase: 'train',
