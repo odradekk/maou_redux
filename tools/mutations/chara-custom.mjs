@@ -303,12 +303,13 @@ export default [
     must_mention: '每行 6 格',
   },
   {
-    desc: 'M8796 素质页的行高 27 改 26',
+    desc: 'M8796 素质页页体后重新补空行（页脚被推离页体）',
     file: 'ere/chara/chara-custom2.js',
-    find: 'const TALENT_PAGE_ROWS = 27;',
-    replace: 'const TALENT_PAGE_ROWS = 26;',
+    find: '    // 页体画完即接页脚：原版在此按 `LINECOUNT - L_LCOUNT < 27` 补行到固定',
+    replace:
+      '    era.println(); // 变异：重新补一行空行凑页高\n    // 页体画完即接页脚：原版在此按 `LINECOUNT - L_LCOUNT < 27` 补行到固定',
     tests: ['chara-custom2'],
-    must_mention: '页体恒 27 行',
+    must_mention: '页体之后不再补空行',
   },
   {
     desc: 'M8797 页数上界 4 改 3（第 5 页不可达）',

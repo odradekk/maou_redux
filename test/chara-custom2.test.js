@@ -1567,21 +1567,34 @@ test('char_custom：不成立妊娠素质时不写预产日', async () => {
   assert.equal(fixture.store.get('cflag:1:110') || 0, 0);
 });
 
-test('char_custom：页高 27 行（补行到固定高度）', async () => {
+test('char_custom：不再补行凑 27 行页高', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
   fixture.set_inputs(996); // 取消
 
   await char_custom(1, 0);
-  // 「27 行」从清屏基准起算：drawLine + 页眉 + drawLine + 内容 + 补行 = 27；
-  // 之后才是页脚（drawLine + 四枚按钮）——按钮串之后的收尾换行只结束
-  // 该行，不产生空行，故不计一行。
-  // #821 起素质名按 yml 现算（此前夹具一律返回空串，空名不进页），一格
-  // 不再是「一行一条」：页高按 Row 数算，不按条目数
-  assert.equal(
-    new Set(fixture.lines.map((line) => line.row)).size,
-    27 + 1 + 4,
-    '页体恒 27 行（含补行）',
+  // 原实现按 `LINECOUNT - L_LCOUNT < 27` 补空行，把页脚钉在固定页高之后；
+  // 滚动视图里那只是一串无内容的空行，现在页脚紧接页体。
+  // 页体 = CUSTOMDRAWLINE + 页眉 + 页眉后的分割线 + 若干内容行，之后是页脚
+  // 分割线与四枚按钮（模式 0）；整屏没有一条空行
+  const blanks = fixture.lines.filter(
+    (line) => line.type === 'br' || (line.type === 'text' && line.text === ''),
+  );
+  assert.deepEqual(
+    blanks.map((line) => line.text),
+    [],
+    '页体之后不再补空行',
+  );
+  // 页脚之前的那条分割线紧邻页体末行（不隔空行；末行通常是素质按钮）
+  const footer_divider = fixture.lines
+    .map((line, index) => ({ line, index }))
+    .filter(({ line }) => line.type === 'divider')
+    .at(-1);
+  assert.ok(footer_divider, '页脚分割线在');
+  assert.notEqual(
+    fixture.lines[footer_divider.index - 1].type,
+    'br',
+    '分割线之上紧邻的是页体末行（不隔空行）',
   );
 });
 

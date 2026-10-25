@@ -466,10 +466,7 @@ test('char_ikai_create：一览按 IKAI_IDS 的上界开区间列举（上界内
 test('召唤确认段接上 show_chara_info 真身（cid = 异界勇者 211、页码 -2）', async () => {
   const fixture = await run_chara_shop({}, 1, 0);
   const texts = history_texts(fixture);
-  assert(
-    texts.some((line) => line.startsWith('NO.211 ')),
-    '标题行 NO.<cid> 带的是召唤出的 211',
-  );
+  assert(texts.includes('NO.211'), '标题行 NO.<cid> 带的是召唤出的 211');
   // 页码 = -2 的判定：经验段（-2/-1/1 三分支）∧ 外貌段（-2/2 两分支）的交集
   assert(
     texts.some((line) => line.includes('本级经验：')),

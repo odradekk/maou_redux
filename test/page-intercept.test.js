@@ -155,6 +155,21 @@ test('INTERCEPT：列表只出可派遣者，页脚三键与返回', async () =>
   assert.ok(texts(added).includes('派遣谁前去迎击勇者？'));
 });
 
+test('INTERCEPT：末页不补空行凑页高（原为补到 NUM_PAGE）', async () => {
+  // 两名可派遣者、每页 26 行：原实现按 NUM_PAGE - L_LCOUNT 补 24 行空行，
+  // 在滚动视图里只是一串无内容的空行；现在页脚分割线紧接列表末行
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_dispatchable(fixture, 1, '玛奥');
+  add_dispatchable(fixture, 2, '菲娅');
+  const { added } = await run_intercept(fixture, [999]);
+  assert.deepEqual(
+    added.filter((line) => line.type === 'text' && line.text === ''),
+    [],
+    '列表与页脚之间没有空行',
+  );
+});
+
 test('#612 INTERCEPT：列表页脚三键的正文带「- 」前缀照写', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');

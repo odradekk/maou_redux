@@ -429,6 +429,9 @@ function create_era_fixture() {
       // 值域 1-24、缺省取设置里的 colWidth）——不记它，「每格多宽」就没有
       // 观测通道（#392 二轮验收实测：GRID_COLUMNS 改坏无人能发现）
       entry.grid_width = obj.config?.width ?? 24;
+      // 格的 config.align 与文本格同义：getButtonObject 也把它落成
+      // `textAlign: safeUndefinedCheck(data.config.align, 默认对齐)`
+      entry.grid_align = obj.config?.align;
       return entry;
     }
     if (obj?.type === 'text') {
@@ -436,6 +439,11 @@ function create_era_fixture() {
       // 引擎网格为 24 列；GridObject 未给 width 时独占 24 列。保留实际宽度，
       // 让三列布局等渲染行为可断言，而不只记录扁平文本。
       entry.grid_width = obj.config?.width ?? 24;
+      // 文本格的 config.align 落到渲染层的 CSS text-align（getTextObject 的
+      // `textAlign: safeUndefinedCheck(data.config.align, 默认对齐)`）——表格的
+      // 数值列靠它右对齐、不再补空格；不记它，「数值列真的右对齐了吗」就没有
+      // 观测通道
+      entry.grid_align = obj.config?.align;
       // 文本格的 config.color 直通渲染层（getTextObject 的
       // safeUndefinedCheck(data.config.color, …)）——按钮格有 color 记录，
       // 不记它，占位格的灰色就无从断言

@@ -12,11 +12,17 @@
 
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
+const { slice_display } = require('#/utils/display-width');
 const {
-  pad_display,
-  pad_left,
-  slice_display,
-} = require('#/utils/display-width');
+  CELLS_PER_ITEM,
+  name_value_cells,
+  print_cell_grid,
+} = require('#/utils/text-grid');
+
+/** 经验一览每行的项数（原版「U % 4 == 0 时换行」的列数） */
+const EXP_PER_ROW = 4;
+/** 名字的截断宽度（%SUBSTRING(EXPNAME,0,8)% 的 8 字节＝4 个全角字） */
+const EXP_NAME_LIMIT = 8;
 
 /**
  * 初吻括号：CFLAG:16 的值域分支。返回空串 = 无此行。
@@ -106,11 +112,14 @@ function first_experience_bracket(cid) {
 /**
  * show_info_exp：非零经验一览（4 列）+ 等级行 + 初吻/初体验括号行。
  *
+ * 一览是「每行 4 项、每项名字格 + 右对齐数值格 + 间距格」的网格（24 列 =
+ * 4 × (3 + 2 + 1)，列结构见 utils/text-grid.js）：列位置由格宽决定，不再用
+ * 补位函数把字符串凑成定宽。
+ *
  * @param {number} cid 调教目标
  */
 function show_info_exp(cid) {
-  let row = '';
-  let shown = 0;
+  const cells = [];
   // 序号 0-81 逐项过（82 项固定上界——名字表的断档处
   // EXP 恒 0，被零值检查跳过；ere 侧名字表缺的序号直接跳，等价）
   const keys = era.get('expkeys') || [];
@@ -122,21 +131,13 @@ function show_info_exp(cid) {
     if (value === 0) {
       continue; // SIF EXP:COUNT == 0 → CONTINUE
     }
-    // 全角引导空格 + %SUBSTRING(EXPNAME,0,8),8,LEFT% + 半角冒号 +
-    // {EXP,6,RIGHT}（\u3000 = 全角空格；模板字面量里的全角空白会触发
-    // no-irregular-whitespace，以转义书写）
+    // 名字列宽 8 是原版 %SUBSTRING(EXPNAME,0,8)% 的截断（名字表里最长的
+    // 「调教自慰经验」正好 8 显示宽）；格内不再补位
     const name = era.get(`expname:${id}`) ?? '';
-    row += `\u3000${pad_display(slice_display(name, 8), 8)}:${pad_left(String(value), 6)}`;
-    shown += 1; // U += 1
-    if (shown % 4 === 0) {
-      // 每 4 项换行
-      era.print(row);
-      row = '';
-    }
+    cells.push(...name_value_cells(slice_display(name, EXP_NAME_LIMIT), value));
   }
-  if (row) {
-    era.print(row); // SIF !LINEISEMPTY → PRINTL（收残行）
-  }
+  // 每行 4 项（原版「每 4 项换行」的列数）；残行按实际格数输出
+  print_cell_grid(cells, EXP_PER_ROW * CELLS_PER_ITEM);
 
   // 等级行的本级需求/总经验公式（三分支）
   const lv = era.get(`cflag:${cid}:9`) || 0; // CFLAG:9 = 等级

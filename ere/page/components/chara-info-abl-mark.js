@@ -1,20 +1,21 @@
 /**
  * @file 角色信息的能力一览与刻印行（show_info_abl / show_info_mark）。
  *
- * 两段的写法都由魔王能力画面的黄金样本钉住：`  技巧     - LV3   ` 与
- * ` 苦痛:LV0 [...]   快乐:LV0 [...]`——用例逐字复现这两行。
+ * 两段都是「每项一格」的文本网格：能力一览每行 4 项（名字格 + `- LV{n}` 格），
+ * 刻印行四枚各占 6 列（24 列网格）。列位置由格宽决定，格内不再补位——
+ * 原实现按黄金样本 `  技巧     - LV3   ` 与
+ * ` 苦痛:LV0 [...]   快乐:LV0 [...]` 用 NBSP 拼出定宽字符串，那种写法依赖
+ * 字体宽度估算（#577 的普查结论），实机会错位。
  *
- * **命令行前导空格规则**（本文件的排版依据，两行样本都验过）：
+ * **命令行前导空格规则**（原实现的排版依据，保留说明以免误读旧样本）：
  * `PRINTFORM X` 里命令名后的**第一个空格是命令与表达式之间的分隔符**，不算
  * 正文。所以 `PRINTFORM  技巧` 对应 ` 技巧`（一个前导空格）、`PRINTFORM   快乐`
- * 对应 `   快乐`（三个）。写成字符串时必须把这一格减掉，否则整行右移一格——
- * 分类素质那七行（chara-talents.js）与标题行同此规则。
+ * 对应 `   快乐`（三个）。网格化后这些前导空格由格宽承载，不再写进正文。
  *
  * 有意偏离（登记在案，不随这张工单）：
- *   - 可提升判定与其后的 `*` 标记都不随这张工单移植：判定本体
+ *   - 可提升判定与其后的 `*` 标记都不随这份实现移植：判定本体
  *     属「能力提升」票的范围（page-ablup.js 同样按「判定结果为 0」处理）。
- *     本文件按「判定结果为 0」渲染，即
- *     ABL 行尾 2 个空格、MARK 行尾不缀 `*`，与黄金样本的魔王行一致；
+ *     本文件按「判定结果为 0」渲染，即两项行尾都不缀 `*`；
  *   - 感觉封锁的灰显（能力提升画面 `[―]` 与灰字）是那个
  *     画面自己的写法，这里没有，不引入；
  *   - 字符条写法的等价物见 bar_text——只有刻印行还用它
@@ -22,7 +23,7 @@
  */
 
 const era = require('#/era-electron');
-const { NBSP, pad_display } = require('#/utils/display-width');
+const { print_cell_grid } = require('#/utils/text-grid');
 
 /** 素质编号（yml/Talent.yml 的名字表；编号 + 注释寻址） */
 const TALENT_FUTA = 121; // 扶她
@@ -44,6 +45,14 @@ const MARK_LABELS = ['苦痛', '快乐', '屈服', '反抗'];
 const MARK_BAR_MAX = 3;
 /** 刻印条的格数（同上的第三个实参） */
 const MARK_BAR_LEN = 3;
+/** 刻印格的列宽（24 列 ÷ 4 枚 = 6 列） */
+const MARK_WIDTH = 6;
+/** 能力一览每行的项数（原版「ELEMENT_COUNT % 4 == 0 时换行」的列数） */
+const ABL_PER_ROW = 4;
+/** 能力名字格的列宽（24 列 ÷ 4 项 = 6 列/项，名字 3、等级 3） */
+const ABL_NAME_WIDTH = 3;
+/** 能力等级格的列宽（左对齐的 `- LV{n}`） */
+const ABL_LEVEL_WIDTH = 3;
 
 /**
  * 「当前值, 最大值, 长度」字符条的等价物。
@@ -72,6 +81,9 @@ function bar_text(cur, max, len) {
 /**
  * show_info_abl：非零能力的一览（4 列）。
  *
+ * 每项两格：名字格（左对齐）与 `- LV{n}` 格（左对齐）——列位置由格宽决定
+ * （24 列 = 4 × (3 + 3)），不再用补位函数把字符串凑成定宽。
+ *
  * ere 侧一律显式传 cid（chara-bars.js 同款），TARGET 换出换入不移植。
  *
  * @param {number} cid 角色 ID
@@ -80,9 +92,8 @@ function show_info_abl(cid) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
   const male = t(TALENT_MAN) !== 0;
   const penis = male || t(TALENT_FUTA) !== 0;
-  let element_count = 0;
+  const cells = [];
 
-  let row = '';
   for (let abl = 0; abl < 41; abl += 1) {
     if (
       // 跳过空洞编号（五段区间）
@@ -113,43 +124,43 @@ function show_info_abl(cid) {
       penis && abl === ABL_CLITORIS
         ? '阴茎感觉'
         : (era.get(`ablname:${abl}`) ?? '');
-    // 两个前导空格（命令名后的第一个空格是分隔符，见文件头）
-    row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;
-    row += NBSP.repeat(2);
-    // 可提升标记未移植（见文件头），按判定 0 补 2 空格
-
-    element_count += 1;
-    if (element_count % 4 === 0) {
-      era.print(row);
-      row = '';
-    }
+    cells.push({
+      type: 'text',
+      content: name,
+      config: { align: 'left', width: ABL_NAME_WIDTH },
+    });
+    // 可提升标记未移植（见文件头），按判定 0 不缀 `*`
+    cells.push({
+      type: 'text',
+      content: `- LV${level}`,
+      config: { align: 'left', width: ABL_LEVEL_WIDTH },
+    });
   }
-  if (element_count % 4 !== 0) {
-    era.print(row); // （不足 4 项也收行）
-  }
+  // 每行 4 项（原版「ELEMENT_COUNT % 4 == 0 时换行」的列数）＝ 8 格；残行
+  // 按实际格数输出
+  print_cell_grid(cells, ABL_PER_ROW * 2);
 }
 
 /**
  * show_info_mark：苦痛/快乐/屈服/反抗四枚刻印一行。
+ *
+ * 四枚各占一格（24 列 ÷ 4 = 6 列）：`{刻印名}:LV{n} [字符条]`。原版靠
+ * 「首项 1 格、其余 3 格」的补位把四枚对齐，格子自己就能对齐，不需要补位。
+ *
  * @param {number} cid 角色 ID
  */
 function show_info_mark(cid) {
-  const fragments = [];
+  const cells = [];
   for (const [index, mark_id] of MARKS.entries()) {
     const level = era.get(`mark:${cid}:${mark_id}`) || 0;
-    // 间距：首项 1 个前导空格、
-    // 其余各项 3 个（命令后的第一个空格是分隔符，见文件头）。
-    // 首项那 1 格同样计入四枚刻印的列对齐，故一并用 NBSP（#577）
-    fragments.push({
-      content: `${NBSP.repeat(index === 0 ? 1 : 3)}${MARK_LABELS[index]}:LV${level} `,
-    });
-    // 刻印字符条（满级 3、3 格）
-    fragments.push({
-      content: bar_text(level, MARK_BAR_MAX, MARK_BAR_LEN),
+    cells.push({
+      type: 'text',
+      content: `${MARK_LABELS[index]}:LV${level} ${bar_text(level, MARK_BAR_MAX, MARK_BAR_LEN)}`,
+      config: { align: 'left', width: MARK_WIDTH },
     });
   }
   // 可提升的 `*` 未移植（见文件头）
-  era.print(fragments);
+  print_cell_grid(cells, MARKS.length);
 }
 
 module.exports = { bar_text, show_info_abl, show_info_mark };

@@ -29,6 +29,7 @@ const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
 const { default_rand } = require('#/utils/numeric');
+const { print_cell_grid } = require('#/utils/text-grid');
 
 // 素质编号（yml/Talent.yml 的名字表；本项目用编号 + 行尾注释寻址）
 const TALENT_AIBA = 85; // 爱慕
@@ -45,12 +46,24 @@ const BIT_SIZE = 15; // 显示三围数据
 /** `SETCOLOR 255,100,100`（爱慕/淫乱标）→ 渲染层 CSS 色串 */
 const ENAMORED_COLOR = '#ff6464';
 
+/** 标题行的列宽（24 列网格：编号 2 + 名字 4 + 爱慕标 3 + 年龄 15） */
+const TITLE_NO_WIDTH = 2;
+const TITLE_NAME_WIDTH = 4;
+const TITLE_BADGE_WIDTH = 3;
+const TITLE_AGE_WIDTH = 15;
+
 function talent(cid, index) {
   return era.get(`talent:${cid}:${index}`) || 0;
 }
 
 /**
  * show_info_title：等号分割线 + 编号/名字/爱慕标 + 年龄行。
+ *
+ * 标题行是四格的文本网格（编号 2 + 名字 4 + 爱慕标 3 + 年龄 15 = 24 列）：
+ * 年龄右对齐交给渲染层的 text-align，编号/名字/爱慕标的列位置由格宽决定。
+ * 原实现是 `NO.{n,3,LEFT%} {名字,12,LEFT%}` + 全角空格包着的爱慕标 +
+ * `{年龄,48,RIGHT%}` 拼成的一整行，那种写法依赖字体宽度估算，实机会错位。
+ *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} [rand] 随机源（身体数据缺失时现生成用）
  */
@@ -60,15 +73,45 @@ function show_info_title(cid, rand = default_rand) {
   // 名字：魔王（cid === 0）与其余角色在 ere 侧同源（callname:-1，
   // 见 callname-utils 头注），仍按两个函数取以留住语义分野
   const name = cid === 0 ? chara_name(cid) : chara_callname(cid);
-  const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }];
-  title.push({ content: pad_display(name, 12) });
-  // 爱慕优先于淫乱，两者都不命中时补五个全角空格对齐
+  const cells = [
+    {
+      type: 'text',
+      content: `NO.${cid}`,
+      config: { align: 'left', width: TITLE_NO_WIDTH },
+    },
+    {
+      type: 'text',
+      content: name,
+      config: { align: 'left', width: TITLE_NAME_WIDTH },
+    },
+  ];
+  // 爱慕优先于淫乱，两者都不命中时该格留空（原来的五个全角空格占位）
   if (talent(cid, TALENT_AIBA) !== 0) {
-    title.push({ content: '　<爱慕>　', color: ENAMORED_COLOR });
+    cells.push({
+      type: 'text',
+      content: '<爱慕>',
+      config: {
+        align: 'left',
+        width: TITLE_BADGE_WIDTH,
+        color: ENAMORED_COLOR,
+      },
+    });
   } else if (talent(cid, TALENT_INRAN) !== 0) {
-    title.push({ content: '　<淫乱>　', color: ENAMORED_COLOR });
+    cells.push({
+      type: 'text',
+      content: '<淫乱>',
+      config: {
+        align: 'left',
+        width: TITLE_BADGE_WIDTH,
+        color: ENAMORED_COLOR,
+      },
+    });
   } else {
-    title.push({ content: '　　　　　' });
+    cells.push({
+      type: 'text',
+      content: '',
+      config: { align: 'left', width: TITLE_BADGE_WIDTH },
+    });
   }
 
   // 年龄串（三段依次叠加；位 12 未开时为空串）
@@ -94,9 +137,13 @@ function show_info_title(cid, rand = default_rand) {
       age_str += ` [寿命还有${pad_left(String(era.get(`cflag:${cid}:820`) || 0), 3)} 天]`;
     }
   }
-  // 年龄行同样入标题行：右对齐宽 48（位 12 未开时为空白）
-  title.push({ content: pad_left(age_str, 48) });
-  era.print(title);
+  // 年龄行同样入标题行：右侧对齐到行尾（原为右对齐宽 48）
+  cells.push({
+    type: 'text',
+    content: age_str,
+    config: { align: 'right', width: TITLE_AGE_WIDTH },
+  });
+  print_cell_grid(cells, cells.length);
 }
 
 /**

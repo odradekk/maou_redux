@@ -14,8 +14,9 @@
  * 包装层存的就是进入时的 TARGET）。
  *
  * 实现取舍（各条注明依据）：
- *   - 记录进入时的行数 / 末尾「不足 27 行补空行」按 `era.getLineCount()`
- *     直译（引擎有该 API），补的是**从进入本函数起**的行数；
+ *   - 不再补行到固定页高：原版末尾按 `REPEAT (MIN_LINES - L_LCOUNT)` 补空行，
+ *     在字符终端里是把页脚钉在屏幕底部的手法；ere 是滚动视图，补出来的只是
+ *     一串无内容的空行，调用方的页脚紧接本页末行即可；
  *   - 献祭完成分支（状态位 = STATE_SACRIFICED）的三个无通道点：
  *       · 取窗口背景色决定横幅用白字还是黑字——引擎没有
  *         背景色的读取通道，改以 `background` 形参承载（缺省 `0x000000`，
@@ -105,8 +106,6 @@ const LIST_COLORS = new Map([
 ]);
 /** 已献祭星标的琥珀色（rgb(255,200,0)） */
 const SACRIFICED_COLOR = '#ffc800';
-/** 名单区块补白到 27 行 */
-const MIN_LINES = 27;
 /**
  * 名单轮的「返回」编号。**#586 起有意改用** 999：
  * 预设 ID 上界 777 < 999 < 本页条件键的下界 1000，既避开全部预设 ID，也避开
@@ -434,7 +433,6 @@ async function show_chara_info(
  */
 async function show_chara_info_body(cid, page, rand, background) {
   for (;;) {
-    const line_count = era.getLineCount(); // 记录进入本函数时的行数
     show_info_title(cid, rand);
     era.drawLine(); // 虚线分割行
 
@@ -537,11 +535,7 @@ async function show_chara_info_body(cid, page, rand, background) {
         break;
     }
 
-    // 不足 27 行补空行
-    const used = era.getLineCount() - line_count;
-    for (let count = used; count < MIN_LINES; count += 1) {
-      era.println();
-    }
+    // 末页不补空行（见文件头「不再补行到固定页高」）
     return 0;
   }
 }

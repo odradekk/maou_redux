@@ -45,10 +45,10 @@ function text_lines(fixture) {
 }
 
 /**
- * 星框之后第一条 `NO.` 开头的信息标题行（show_chara_info 的标题行，
- * 编号后跟 NBSP 补位、名字接在后面）。取不到时返回 undefined，由断言报错。
+ * 星框之后第一条 `NO.` 开头的格子（show_chara_info 的标题行编号格）。
+ * 取不到时返回 undefined，由断言报错。
  */
-function info_title_line(fixture) {
+function info_title_no(fixture) {
   const frame = fixture.lines.findLastIndex(
     (line) => line.type === 'text' && line.text.startsWith('*****'),
   );
@@ -57,6 +57,18 @@ function info_title_line(fixture) {
     .slice(frame + 1)
     .map((line) => line.text)
     .find((text) => text.startsWith('NO.'));
+}
+
+/**
+ * 星框之后一条信息的标题行名字格（标题行四格里紧跟编号格的那一格）。
+ * @param {object} fixture 夹具
+ * @returns {string|undefined}
+ */
+function info_title_name(fixture) {
+  const index = fixture.lines.findLastIndex(
+    (line) => line.type === 'text' && line.text.startsWith('NO.'),
+  );
+  return fixture.lines[index + 1]?.text;
 }
 
 /**
@@ -157,15 +169,15 @@ test('#597：显示角色信息时前后各一个空行；#716：标题是新勇
   // #716：显示的是**新勇者**的信息——标题行的编号与名字都必须是刚来袭的
   // 1 号（名字在命名链改写后从存档读，不硬编码）；传错角色（如 0 号魔王）
   // 时标题是 NO.0 + 魔王名，断言必须红
-  const title = info_title_line(fixture);
+  const title = info_title_no(fixture);
   assert.ok(
     title,
     '角色信息的标题行（NO. 开头）出现——flag:8 位 1 的信息段确实打了',
   );
   const hero_name = fixture.store.get('callname:1:-1');
   assert.ok(
-    /^NO\.1\u00a0/.test(title) && title.includes(hero_name),
-    `信息标题应是新勇者 1 号（${hero_name}），实际：${title}`,
+    title === 'NO.1' && info_title_name(fixture) === hero_name,
+    `信息标题应是新勇者 1 号（${hero_name}），实际：${title} / ${info_title_name(fixture)}`,
   );
 });
 
@@ -179,15 +191,15 @@ test('#716：知り合い確定エントリー（arg0 > 0）的信息标题也�
   const ret = await enter_enemy(17, zero); // arg0 = 17：种族设定为玛奥
 
   assert.equal(ret, 1, 'RETURN 1（有人来袭）');
-  const title = info_title_line(fixture);
+  const title = info_title_no(fixture);
   assert.ok(
     title,
     '角色信息的标题行（NO. 开头）出现——flag:8 位 1 的信息段确实打了',
   );
   const hero_name = fixture.store.get('callname:1:-1');
   assert.ok(
-    /^NO\.1\u00a0/.test(title) && title.includes(hero_name),
-    `信息标题应是新生成的勇者 1 号（${hero_name}）而非 arg0 指向的 17 号，实际：${title}`,
+    title === 'NO.1' && info_title_name(fixture) === hero_name,
+    `信息标题应是新生成的勇者 1 号（${hero_name}）而非 arg0 指向的 17 号，实际：${title} / ${info_title_name(fixture)}`,
   );
 });
 
