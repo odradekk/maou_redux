@@ -1,12 +1,20 @@
 # 本表由人工维护。
 "苦痛刻印":
   id: 0
+  name: "pain_mark"
+  type: "number"
 "快乐刻印":
   id: 1
+  name: "pleasure_mark"
+  type: "number"
 "屈服刻印":
   id: 2
+  name: "submission_mark"
+  type: "number"
 "反抗刻印":
   id: 3
+  name: "resistance_mark"
+  type: "number"
 "反抗刻印履历":
   id: 4
   name: "resistance_mark_history"
@@ -17,3 +25,5 @@
   # undefined 的判定结果相同）。
 "异界综合征":
   id: 10
+  name: "otherworld_syndrome"
+  type: "number"

@@ -164,5 +164,5 @@
 # #848（初始角色改由 GameBase 的【初始角色编号】声明）：+2（gamebase-default-chara.test.js
 # 的两个引擎门控用例——resetData 建出的 0 号角色与手工 addCharacter(0) 逐键一致、
 # 相性镜像对默认角色只写正向），84 + 2 = 86。计数依据：ERE_ENGINE_ASAR=none npm test
-# 实测 7156 = 7070 过 + 86 跳过 + 0 挂；同文件另有两条 yml 文本用例（GameBase 的声明与
+# 实测 7161 = 7075 过 + 86 跳过 + 0 挂；同文件另有两条 yml 文本用例（GameBase 的声明与
 # Chara0 的预设、相性目标不含 0）只读 yml 文本，任何环境都跑，不计入跳过。

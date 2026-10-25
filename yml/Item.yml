@@ -9,616 +9,1026 @@
 #   序号 1004「十字军猎手」并入后者的名称键
 "振动宝石":
   id: 0
+  name: "vibrating_gem"
+  type: "number"
   price: 200
 "壶虫":
   id: 1
+  name: "pot_worm"
+  type: "number"
   price: 500
 "振动杖":
   id: 2
+  name: "vibrating_rod"
+  type: "number"
   price: 2000
 "肛门虫":
   id: 3
+  name: "anal_worm"
+  type: "number"
   price: 5000
 "假阳具":
   id: 4
+  name: "dildo"
+  type: "number"
   price: 2000
 "眼罩":
   id: 5
+  name: "blindfold"
+  type: "number"
   price: 4000
 "水晶球":
   id: 6
+  name: "crystal_ball"
+  type: "number"
   price: 7000
 "阴蒂夹":
   id: 7
+  name: "clitoris_clamp"
+  type: "number"
   price: 2000
 "乳头夹":
   id: 8
+  name: "nipple_clamp"
+  type: "number"
   price: 3000
 "口塞":
   id: 9
+  name: "gag"
+  type: "number"
   price: 1000
 "鞭":
   id: 10
+  name: "torture_whip"
+  type: "number"
   price: 200
 "针":
   id: 11
+  name: "needle"
+  type: "number"
   price: 2000
 "飞机杯":
   id: 12
+  name: "onahole"
+  type: "number"
   price: 4000
 "地垫":
   id: 13
+  name: "floor_mat"
+  type: "number"
   price: 5000
 "绳子":
   id: 14
+  name: "rope"
+  type: "number"
   price: 3000
 "灌肠+肛塞":
   id: 15
+  name: "enema_plug"
+  type: "number"
   price: 8000
 "大镜子":
   id: 16
+  name: "big_mirror"
+  type: "number"
   price: 30000
 "榨乳器":
   id: 17
+  name: "milking_machine"
+  type: "number"
   price: 1500
 "项圈":
   id: 18
+  name: "collar"
+  type: "number"
   price: 5000
 "围裙":
   id: 19
+  name: "apron"
+  type: "number"
   price: 10000
 "肛珠":
   id: 20
+  name: "anal_beads"
+  type: "number"
   price: 7000
 "电极接头":
   id: 21
+  name: "electrode_clip"
+  type: "number"
   price: 50000
 "野狗":
   id: 22
+  name: "stray_dog"
+  type: "number"
   price: 3000
 "拘束衣":
   id: 23
+  name: "straitjacket"
+  type: "number"
   price: 10000
 "安全套":
   id: 24
+  name: "condom"
+  type: "number"
   price: 100
 "润滑液":
   id: 25
+  name: "lubricant"
+  type: "number"
   price: 200
 "媚药":
   id: 26
+  name: "aphrodisiac"
+  type: "number"
   price: 2000
 "利尿剂":
   id: 27
+  name: "diuretic"
+  type: "number"
   price: 1000
 "水晶球魔力源":
   id: 28
+  name: "crystal_ball_mana"
+  type: "number"
   price: 500
 "打虫药":
   id: 29
+  name: "deworming_drug"
+  type: "number"
   price: 500
 "营养剂":
   id: 30
+  name: "nutrient"
+  type: "number"
   price: 1000
 "熏香":
   id: 31
+  name: "incense"
+  type: "number"
   price: 3000
 "穿孔工具":
   id: 34
+  name: "piercing_kit"
+  type: "number"
   price: 5000
 "观战卷":
   id: 35
+  name: "spectator_ticket"
+  type: "number"
   price: 700
 "好感测定仪":
   id: 37
+  name: "affection_meter"
+  type: "number"
   price: 1000
 "魅力鳞甲":
   id: 38
+  name: "charm_scale_armor"
+  type: "number"
   price: 100000
 "【魔界知识】":
   id: 39
+  name: "demon_knowledge_book"
+  type: "number"
   price: 100000
 "排卵诱发剂":
   id: 40
+  name: "ovulation_drug"
+  type: "number"
   price: 2000
 "生毛剂":
   id: 41
+  name: "hair_growth_agent"
+  type: "number"
   price: 2000
 "【调合知识】":
   id: 42
+  name: "mixing_knowledge_book"
+  type: "number"
   price: 40000
 "【技巧等级】":
   id: 52
+  name: "technique_level_book"
+  type: "number"
   price: 5000
 "【经验值】":
   id: 53
+  name: "experience_book"
+  type: "number"
   price: 1000
 "【淫魔知识】":
   id: 54
+  name: "succubus_knowledge_book"
+  type: "number"
   price: 100000
 "【陷阱等级】":
   id: 55
+  name: "trap_level_book"
+  type: "number"
   price: 5000
 "【魔虫知识】":
   id: 56
+  name: "bug_knowledge_book"
+  type: "number"
   price: 10000
 "落穴":
   id: 60
+  name: "pitfall"
+  type: "number"
   price: 10
 "射箭陷阱":
   id: 61
+  name: "arrow_trap"
+  type: "number"
   price: 50
 "传送陷阱":
   id: 62
+  name: "teleport_trap"
+  type: "number"
   price: 80
 "单向通行陷阱":
   id: 63
+  name: "one_way_trap"
+  type: "number"
   price: 100
 "催淫陷阱":
   id: 64
+  name: "arousal_trap"
+  type: "number"
   price: 120
 "触手地板陷阱":
   id: 65
+  name: "tentacle_floor_trap"
+  type: "number"
   price: 150
 "媚药泥沼陷阱":
   id: 66
+  name: "aphrodisiac_mire_trap"
+  type: "number"
   price: 170
 "自慰催眠陷阱":
   id: 67
+  name: "masturbation_hypno_trap"
+  type: "number"
   price: 180
 "拟态房间陷阱":
   id: 68
+  name: "mimic_room_trap"
+  type: "number"
   price: 190
 "召唤陷阱":
   id: 69
+  name: "summon_trap"
+  type: "number"
   price: 1000
 "梦魔陷阱":
   id: 70
+  name: "nightmare_trap"
+  type: "number"
   price: 180
 "史莱姆房间陷阱":
   id: 71
+  name: "slime_room_trap"
+  type: "number"
   price: 90
 "蜘蛛网":
   id: 72
+  name: "spider_web"
+  type: "number"
   price: 10
 "奸商":
   id: 73
+  name: "dishonest_merchant"
+  type: "number"
   price: 70
 "黑暗的陷阱":
   id: 74
+  name: "dark_trap"
+  type: "number"
   price: 200
 "弹射":
   id: 75
+  name: "catapult"
+  type: "number"
   price: 180
 "魔力扩散陷阱":
   id: 76
+  name: "mana_diffusion_trap"
+  type: "number"
   price: 300
 "油壶陷阱":
   id: 77
+  name: "oil_pot_trap"
+  type: "number"
   price: 50
 "火箭发射陷阱":
   id: 78
+  name: "rocket_launcher_trap"
+  type: "number"
   price: 110
 "肛门虫陷阱":
   id: 79
+  name: "anal_worm_trap"
+  type: "number"
   price: 80
 "淫虫陷阱":
   id: 80
+  name: "lewd_worm_trap"
+  type: "number"
   price: 60
 "宝石陷阱":
   id: 81
+  name: "gem_trap"
+  type: "number"
   price: 20
 "攻击效果陷阱":
   id: 82
+  name: "attack_boost_trap"
+  type: "number"
   price: 40
 "防御效果陷阱":
   id: 83
+  name: "defense_boost_trap"
+  type: "number"
   price: 40
 "魔法伤害陷阱":
   id: 84
+  name: "magic_damage_trap"
+  type: "number"
   price: 40
 "鬼手陷阱":
   id: 85
+  name: "ghost_hand_trap"
+  type: "number"
   price: 100
 "诈骗陷阱":
   id: 87
+  name: "scam_trap"
+  type: "number"
   price: 100
 "触手生物":
   id: 90
+  name: "tentacle_creature"
+  type: "number"
   price: 50000
 "装饰的戒指":
   id: 91
+  name: "ornamental_ring"
+  type: "number"
   price: 100
 "狗头人":
   id: 100
+  name: "kobold"
+  type: "number"
   price: 100
 "哥布林":
   id: 101
+  name: "goblin"
+  type: "number"
   price: 100
 "黏液怪":
   id: 102
+  name: "viscous_monster"
+  type: "number"
   price: 100
 "龙头苍蝇":
   id: 103
+  name: "dragon_head_fly"
+  type: "number"
   price: 200
 "丧尸":
   id: 104
+  name: "zombie"
+  type: "number"
   price: 10
 "兽人":
   id: 110
+  name: "orc"
+  type: "number"
   price: 200
 "熊地精":
   id: 111
+  name: "bugbear"
+  type: "number"
   price: 180
 "藤蔓怪":
   id: 112
+  name: "vine_monster"
+  type: "number"
   price: 240
 "丧尸虫":
   id: 113
+  name: "zombie_bug"
+  type: "number"
   price: 360
 "丧尸猎犬":
   id: 114
+  name: "zombie_hound"
+  type: "number"
   price: 100
 "蜥蜴人":
   id: 120
+  name: "lizardman"
+  type: "number"
   price: 350
 "食人魔":
   id: 121
+  name: "ogre"
+  type: "number"
   price: 230
 "食铠者":
   id: 122
+  name: "armor_eater"
+  type: "number"
   price: 400
 "小仙子":
   id: 123
+  name: "pixie"
+  type: "number"
   price: 420
 "毒蜈蚣":
   id: 124
+  name: "venomous_centipede"
+  type: "number"
   price: 200
 "巨魔":
   id: 130
+  name: "troll"
+  type: "number"
   price: 430
 "石像鬼":
   id: 131
+  name: "gargoyle"
+  type: "number"
   price: 340
 "小恶魔":
   id: 132
+  name: "imp"
+  type: "number"
   price: 450
 "男巫":
   id: 133
+  name: "warlock"
+  type: "number"
   price: 500
 "报丧女妖":
   id: 134
+  name: "banshee"
+  type: "number"
   price: 300
 "下等恶魔":
   id: 140
+  name: "lesser_demon"
+  type: "number"
   price: 510
 "地狱猎犬":
   id: 141
+  name: "hellhound"
+  type: "number"
   price: 480
 "史莱姆":
   id: 142
+  name: "slime"
+  type: "number"
   price: 570
 "女巫":
   id: 143
+  name: "witch"
+  type: "number"
   price: 600
 "吸血树":
   id: 144
+  name: "bloodsucking_tree"
+  type: "number"
   price: 400
 "巨人":
   id: 150
+  name: "giant"
+  type: "number"
   price: 630
 "奇美拉":
   id: 151
+  name: "chimera"
+  type: "number"
   price: 560
 "魅魔":
   id: 152
+  name: "succubus"
+  type: "number"
   price: 680
 "男祭司":
   id: 153
+  name: "male_priest"
+  type: "number"
   price: 700
 "夜少女":
   id: 154
+  name: "night_girl"
+  type: "number"
   price: 500
 "女忍":
   id: 160
+  name: "female_ninja"
+  type: "number"
   price: 710
 "黑暗骑士":
   id: 161
+  name: "dark_knight"
+  type: "number"
   price: 690
 "食脑魔":
   id: 162
+  name: "brain_eater"
+  type: "number"
   price: 750
 "女祭司":
   id: 163
+  name: "priestess"
+  type: "number"
   price: 800
 "小精灵":
   id: 164
+  name: "sprite"
+  type: "number"
   price: 600
 "忍者":
   id: 170
+  name: "ninja"
+  type: "number"
   price: 830
 "无头骑士":
   id: 171
+  name: "dullahan"
+  type: "number"
   price: 740
 "吸血鬼":
   id: 172
+  name: "vampire"
+  type: "number"
   price: 890
 "幽灵":
   id: 173
+  name: "ghost"
+  type: "number"
   price: 900
 "死亡蝎":
   id: 174
+  name: "death_scorpion"
+  type: "number"
   price: 700
 "大恶魔":
   id: 180
+  name: "arch_demon"
+  type: "number"
   price: 1000
 "死亡领主":
   id: 181
+  name: "death_lord"
+  type: "number"
   price: 1000
 "莉莉丝":
   id: 182
+  name: "lilith"
+  type: "number"
   price: 1000
 "梦魇":
   id: 183
+  name: "nightmare"
+  type: "number"
   price: 1000
 "眼魔":
   id: 184
+  name: "beholder"
+  type: "number"
   price: 1000
 "骷髅兵":
   id: 190
+  name: "skeleton"
+  type: "number"
   price: 1
 "黑暗救世主":
   id: 191
+  name: "dark_savior"
+  type: "number"
   price: 10000
 "九尾":
   id: 192
+  name: "nine_tails"
+  type: "number"
   price: 10000
 "混沌龙":
   id: 193
+  name: "chaos_dragon"
+  type: "number"
   price: 10000
 "精英史莱姆":
   id: 201
+  name: "elite_slime"
+  type: "number"
   price: 15
 "精英狗头人":
   id: 202
+  name: "elite_kobold"
+  type: "number"
   price: 15
 "精英蚁怪":
   id: 203
+  name: "elite_ant"
+  type: "number"
   price: 15
 "精英芽怪":
   id: 204
+  name: "elite_sprout"
+  type: "number"
   price: 15
 "精英海妖":
   id: 205
+  name: "elite_siren"
+  type: "number"
   price: 15
 "精英小仙子":
   id: 206
+  name: "elite_pixie"
+  type: "number"
   price: 15
 "巨人酋长":
   id: 207
+  name: "giant_chief"
+  type: "number"
   price: 15
 "精英恶魔":
   id: 208
+  name: "elite_demon"
+  type: "number"
   price: 15
 "精英妖魔":
   id: 209
+  name: "elite_fiend"
+  type: "number"
   price: 15
 "猎犬首领":
   id: 210
+  name: "hound_leader"
+  type: "number"
   price: 15
 "异界勇者":
   id: 211
+  name: "otherworld_hero"
+  type: "number"
   price: 15
 "装饰戒指":
   id: 300
+  name: "decorative_ring"
+  type: "number"
   price: 1
 "破坏戒指":
   id: 301
+  name: "destruction_ring"
+  type: "number"
   price: 1
 "守护戒指":
   id: 302
+  name: "guardian_ring"
+  type: "number"
   price: 1
 "加速戒指":
   id: 303
+  name: "speed_ring"
+  type: "number"
   price: 1
 "再生戒指":
   id: 304
+  name: "regeneration_ring"
+  type: "number"
   price: 1
 "意志戒指":
   id: 305
+  name: "will_ring"
+  type: "number"
   price: 1
 "欲望戒指":
   id: 306
+  name: "desire_ring"
+  type: "number"
   price: 1
 "怪力戒指":
   id: 307
+  name: "power_ring"
+  type: "number"
   price: 1
 "强韧戒指":
   id: 308
+  name: "toughness_ring"
+  type: "number"
   price: 1
 "支配戒指":
   id: 309
+  name: "domination_ring"
+  type: "number"
   price: 1
 "成长戒指":
   id: 310
+  name: "growth_ring"
+  type: "number"
   price: 1
 "虚弱戒指":
   id: 311
+  name: "weakness_ring"
+  type: "number"
   price: 1
 "钝重戒指":
   id: 312
+  name: "sluggish_ring"
+  type: "number"
   price: 1
 "死之戒指":
   id: 313
+  name: "death_ring"
+  type: "number"
   price: 1
 "衰弱戒指":
   id: 314
+  name: "debility_ring"
+  type: "number"
   price: 1
 "洗脑戒指":
   id: 315
+  name: "brainwash_ring"
+  type: "number"
   price: 1
 "陷阱回避戒指":
   id: 316
+  name: "trap_avoid_ring"
+  type: "number"
   price: 1
 "侵攻戒指":
   id: 317
+  name: "invasion_ring"
+  type: "number"
   price: 1
 "结界戒指":
   id: 318
+  name: "barrier_ring"
+  type: "number"
   price: 1
 "试炼戒指":
   id: 319
+  name: "trial_ring"
+  type: "number"
   price: 1
 "不幸戒指":
   id: 320
+  name: "misfortune_ring"
+  type: "number"
   price: 1
 "剑":
   id: 340
+  name: "sword"
+  type: "number"
   price: 1
 "法杖":
   id: 341
+  name: "staff"
+  type: "number"
   price: 1
 "鞭子":
   id: 342
+  name: "whip"
+  type: "number"
   price: 1
 "匕首":
   id: 343
+  name: "dagger"
+  type: "number"
   price: 1
 "手里剑":
   id: 344
+  name: "shuriken"
+  type: "number"
   price: 1
 "弓箭":
   id: 345
+  name: "bow"
+  type: "number"
   price: 1
 "权杖":
   id: 346
+  name: "scepter"
+  type: "number"
   price: 1
 "战锤":
   id: 347
+  name: "war_hammer"
+  type: "number"
   price: 1
 "镰刀":
   id: 348
+  name: "scythe"
+  type: "number"
   price: 1
 "触手":
   id: 349
+  name: "tentacle"
+  type: "number"
   price: 1
 "细剑":
   id: 350
+  name: "rapier"
+  type: "number"
   price: 1
 "偃月刀":
   id: 351
+  name: "glaive"
+  type: "number"
   price: 1
 "指虎":
   id: 352
+  name: "knuckle"
+  type: "number"
   price: 1
 "草药":
   id: 400
+  name: "herb"
+  type: "number"
   price: 1
 "回复药水":
   id: 401
+  name: "healing_potion"
+  type: "number"
   price: 1
 "回复之杖":
   id: 402
+  name: "healing_staff"
+  type: "number"
   price: 1
 "精神之杖":
   id: 403
+  name: "spirit_staff"
+  type: "number"
   price: 1
 "力之种子":
   id: 404
+  name: "seed_of_power"
+  type: "number"
   price: 1
 "守之种子":
   id: 405
+  name: "seed_of_guard"
+  type: "number"
   price: 1
 "经验硬币":
   id: 406
+  name: "exp_coin"
+  type: "number"
   price: 1
 "命之种子":
   id: 407
+  name: "seed_of_life"
+  type: "number"
   price: 1
 "心之种子":
   id: 408
+  name: "seed_of_heart"
+  type: "number"
   price: 1
 "经验银币":
   id: 409
+  name: "exp_silver_coin"
+  type: "number"
   price: 1
 "圣水":
   id: 410
+  name: "holy_water"
+  type: "number"
   price: 1
 "堕落的宝石箱":
   id: 411
+  name: "corrupt_gem_box"
+  type: "number"
   price: 1
 "透明化之药":
   id: 412
+  name: "invisibility_potion"
+  type: "number"
   price: 1
 "英雄之药":
   id: 413
+  name: "hero_potion"
+  type: "number"
   price: 1
 "商店街":
   id: 500
+  name: "shopping_street"
+  type: "number"
   price: 1
 "沼地":
   id: 501
+  name: "swamp"
+  type: "number"
   price: 1
 "人类牧场":
   id: 502
+  name: "human_ranch"
+  type: "number"
   price: 1
 "冰室":
   id: 503
+  name: "ice_room"
+  type: "number"
   price: 1
 "热砂":
   id: 504
+  name: "hot_sand"
+  type: "number"
   price: 1
 "迷宫":
   id: 505
+  name: "labyrinth"
+  type: "number"
   price: 1
 "博物馆":
   id: 506
+  name: "museum"
+  type: "number"
   price: 1
 "娼馆街":
   id: 507
+  name: "brothel_street"
+  type: "number"
   price: 1
 "野蛮人":
   id: 600
+  name: "barbarian"
+  type: "number"
   price: 1
 "巨蚁":
   id: 601
+  name: "giant_ant"
+  type: "number"
   price: 1
 "红皮兽人":
   id: 602
+  name: "red_skin_orc"
+  type: "number"
   price: 1
 "食人花":
   id: 603
+  name: "man_eating_flower"
+  type: "number"
   price: 1
 "大猩猩":
   id: 604
+  name: "gorilla"
+  type: "number"
   price: 1
 "图腾女郎":
   id: 605
+  name: "totem_girl"
+  type: "number"
   price: 1
 "大象":
   id: 606
+  name: "elephant"
+  type: "number"
   price: 1
 "赤红萨满":
   id: 607
+  name: "crimson_shaman"
+  type: "number"
   price: 1
 "巨魔法师":
   id: 608
+  name: "troll_mage"
+  type: "number"
   price: 1
 "森林巨龙":
   id: 609
+  name: "forest_dragon"
+  type: "number"
   price: 1
 "十字军战士":
   id: 1005
+  name: "crusader_warrior"
+  type: "number"
   price: 1
 "十字军神官":
   id: 1006
+  name: "crusader_priest"
+  type: "number"
   price: 1
 "十字军骑士":
   id: 1007
+  name: "crusader_knight"
+  type: "number"
   price: 1
 "十字军法师":
   id: 1008
+  name: "crusader_mage"
+  type: "number"
   price: 1
 "十字军猎手":
   id: 1009
+  name: "crusader_hunter"
+  type: "number"
   price: 1
