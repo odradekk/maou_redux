@@ -525,12 +525,17 @@ test('char_custom_talent_deal：纤细体型（308 <= 100）清肥胖位', () =>
 // —— print_single_talent 与 char_custom_talent_page ——
 
 test('char_custom_talent_page：三页只显示已声明素质，跳过的编号不占格', () => {
-  const names = parse_yml_ids('Talent.yml');
+  // 名字由夹具按 yml 现算；断言期望值这边也过一遍 toLowerCase——引擎装载
+  // 静态数据时把名称列转小写（eraStart 的 `o.map((e) => (e[1] =
+  // toLowerCase(e[1]), e))`），玩家看到的是小写那份
+  const names = new Map(
+    [...parse_yml_ids('Talent.yml')].map(([id, name]) => [
+      id,
+      name.toLowerCase(),
+    ]),
+  );
   for (const page of [0, 1, 2]) {
     const fixture = setup();
-    for (const [id, name] of names) {
-      fixture.store.set(`talentname:${id}`, name);
-    }
     const { char_custom_talent_page } = load(fixture);
     char_custom_talent_page(page, 0, 1);
     const displayed = buttons(fixture);
@@ -1548,8 +1553,14 @@ test('char_custom：页高 27 行（补行到固定高度）', async () => {
   await char_custom(1, 0);
   // 「27 行」从清屏基准起算：drawLine + 页眉 + drawLine + 内容 + 补行 = 27；
   // 之后才是页脚（drawLine + 四枚按钮）——按钮串之后的收尾换行只结束
-  // 该行，不产生空行，故不计一行
-  assert.equal(fixture.lines.length, 27 + 1 + 4, '页体恒 27 行（含补行）');
+  // 该行，不产生空行，故不计一行。
+  // #821 起素质名按 yml 现算（此前夹具一律返回空串，空名不进页），一格
+  // 不再是「一行一条」：页高按 Row 数算，不按条目数
+  assert.equal(
+    new Set(fixture.lines.map((line) => line.row)).size,
+    27 + 1 + 4,
+    '页体恒 27 行（含补行）',
+  );
 });
 
 test('char_custom：第 3 页仍是素质页（点 205 能落到职业上）', async () => {

@@ -5,7 +5,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 function seed_world() {
   const fixture = create_era_fixture();
@@ -13,7 +12,6 @@ function seed_world() {
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
   fixture.era.beginTrain(0, 31);
-  seed_static_names(fixture);
   const flags = fixture.load_module('era-utils/era-flag');
   Object.assign(flags, {
     target: 31,

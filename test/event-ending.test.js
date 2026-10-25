@@ -420,7 +420,14 @@ test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色�
   const { char_gift } = fixture.load_module('event/event-ending');
   // 输入序列：另外挑选(1) → 性格([0]) → 胆量 1（自信家）→ 决定(100) → 收下(0)
   fixture.set_inputs(1, 0, 1, 100, 0);
-  await char_gift(1, seq([4])); // RAND(1, 17) → 4 + 1 = 角色 5
+  // 生成链的命名段读固定名表（#821 起夹具按 yml 现算名字），名字因此由
+  // Math.random 掷出：定住随机源，断言才能钉住具体名字
+  fixture.override_math_random(() => 0);
+  try {
+    await char_gift(1, seq([4])); // RAND(1, 17) → 4 + 1 = 角色 5
+  } finally {
+    fixture.restore_math_random();
+  }
 
   assert.ok(fixture.chara_no.includes(5), '随机角色 5 入队');
   assert.equal(
@@ -459,10 +466,10 @@ test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色�
   }
   // 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 char_make 生成。
   // 生成链里的命名段（#384 起为真身）会把 ADDCHARA 从预设拷来的
-  // 名字覆盖成随机名：夹具没种名字表（namelistkeys 为空），固定名分支
-  // 回落到默认名「佳奈美」。故这里断的是**生成后**的称呼——「路人五」只是
-  // ADDCHARA 那一刻的初值，不是这条输出里的值。
-  assert(texts.includes('精灵族挑选少女佳奈美作为贡品………'), 'ARG 1 的种族播报');
+  // 名字覆盖成固定名表里的随机名（#821 起夹具按 yml 现算，名字真的读得到）。
+  // 「路人五」只是 ADDCHARA 那一刻的初值，不是这条输出里的值；随机源已在
+  // 上方定住，故这里能钉住具体名字。
+  assert(texts.includes('精灵族挑选少女卡蒂亚作为贡品………'), 'ARG 1 的种族播报');
   for (const option of ['[0] 就是她了', '[1] 再换一个', '[2] 去要圣女']) {
     assert(buttons.includes(option), `终局询问 ${option}`);
   }

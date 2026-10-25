@@ -1,35 +1,69 @@
 # 本表由人工维护。
 "阴核":
   id: 0
+  name: "clitoris"
+  type: "number"
 "私处":
   id: 1
+  name: "vagina"
+  type: "number"
 "肛门":
   id: 2
+  name: "anus"
+  type: "number"
 "润滑":
   id: 3
+  name: "lubrication"
+  type: "number"
 "恭顺":
   id: 4
+  name: "obedience"
+  type: "number"
 "欲情":
   id: 5
+  name: "lust"
+  type: "number"
 "屈服":
   id: 6
+  name: "submission"
+  type: "number"
 "习得":
   id: 7
+  name: "learning"
+  type: "number"
 "耻情":
   id: 8
+  name: "shame"
+  type: "number"
 "苦痛":
   id: 9
+  name: "pain"
+  type: "number"
 "恐怖":
   id: 10
+  name: "fear"
+  type: "number"
 "反感":
   id: 11
+  name: "aversion"
+  type: "number"
 "不快":
   id: 12
+  name: "discomfort"
+  type: "number"
 "抑郁":
   id: 13
+  name: "depression"
+  type: "number"
 "乳房":
   id: 14
+  name: "breast"
+  type: "number"
 "局部":
   id: 15
+  name: "penis"
+  type: "number"
 "否定":
   id: 100
+  name: "negation"
+  type: "number"

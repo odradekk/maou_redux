@@ -301,7 +301,7 @@ test('#624 兽人凌辱·口交：无头骑士前缀、名字与种族分档同�
   ];
   for (const [race, line] of cases) {
     const fixture = await setup_ravish((f) => {
-      f.store.set('talent:31:种族', race);
+      f.era.set('talent:31:种族', race);
     });
     const mod = fixture_module(fixture);
     await mod.orc_ryou_man(31, 5, seq_rand(0, 0, 0));
@@ -393,7 +393,7 @@ test('#624 兽人凌辱·全穴奉仕：随机词条与部位分档同属一行'
         f.store.set('cflag:31:42', seed.cflag42);
       }
       if (seed.魅力点 !== undefined) {
-        f.store.set('talent:31:魅力点', seed.魅力点);
+        f.era.set('talent:31:魅力点', seed.魅力点);
       }
     });
     const mod = fixture_module(fixture);
@@ -422,7 +422,7 @@ test('#624 兽人凌辱·全穴奉仕：润滑液与部位分档同属一行', a
   for (const [seed, part] of cases) {
     const fixture = await setup_ravish((f) => {
       for (const [key, value] of Object.entries(seed)) {
-        f.store.set(`talent:31:${key}`, value);
+        f.era.set(`talent:31:${key}`, value);
       }
     });
     const mod = fixture_module(fixture);
@@ -450,7 +450,7 @@ test('#624 兽人凌辱·全穴奉仕：体型分档与收行同属一行', asyn
   for (const [seed, part] of cases) {
     const fixture = await setup_ravish((f) => {
       for (const [key, value] of Object.entries(seed)) {
-        f.store.set(`talent:31:${key}`, value);
+        f.era.set(`talent:31:${key}`, value);
       }
     });
     const mod = fixture_module(fixture);
@@ -476,7 +476,7 @@ test('#624 兽人凌辱·屈辱プレイ：素质分档与猪叫同属一行', a
   for (const [seed, part] of cases) {
     const fixture = await setup_ravish((f) => {
       for (const [key, value] of Object.entries(seed)) {
-        f.store.set(`talent:31:${key}`, value);
+        f.era.set(`talent:31:${key}`, value);
       }
     });
     const mod = fixture_module(fixture);

@@ -70,18 +70,16 @@ test('get_fixed_chara_name：未注册 id（含合并丢弃的缺口）直接返
   );
 });
 
-test('get_fixed_chara_name：已注册但名字地址未播种（undefined）时缺省为空串', () => {
+test('get_fixed_chara_name：已注册 id 的名字由夹具按 yml 现算（#821 起与 keys 同源）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('namelistkeys', [42]);
-  // 42 在 keys 里，但对应的 name: 地址没有被播种——只有在这个场景下 `?? ''`
-  // 才有意义（真实引擎里名字表与 keys 恒同步，这里是防御性验证）。
+  // 只播种 keys：<表>name:<序号> 自 #821 起由夹具按 yml 现算（42 是「塔巴莎」）。
+  // 这条此前守的是「keys 里有、名字地址没播种 → `?? ''` 缺省」；两侧同源之后
+  // 该缺口在引擎与夹具里都不可能出现（未声明的序号直接抛 TypeError，#739），
+  // 于是改守「名字确实来自同一张 yml 名字表」。
   const { get_fixed_chara_name } = fixture.load_module('chara/chara-name-list');
 
-  assert.equal(
-    get_fixed_chara_name(42),
-    '',
-    "名字地址未播种时必须缺省为空串（?? ''）",
-  );
+  assert.equal(get_fixed_chara_name(42), '塔巴莎');
 });
 
 test('get_fixed_chara_name：valid_ids 缓存只建一次（重复查表不重复读 keys）', () => {

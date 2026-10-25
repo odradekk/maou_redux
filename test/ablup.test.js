@@ -10,13 +10,11 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 const CID = 31;
 
 function seed(fixture) {
   join_slave_chara(fixture, CID);
-  seed_static_names(fixture);
   return require('#/system/train/ablup');
 }
 
@@ -3118,7 +3116,9 @@ test('ablup20：成功购买写入 abl:20、扣欲情点数、显示变为LV（e
   await ablup20(CID);
   assert.equal(fixture.store.get(`abl:${CID}:20`), 1);
   assert.equal(fixture.store.get(`juel:${CID}:5`), 0);
-  assert.ok(fixture.text_lines().some((t) => t.includes('抖Ｓ气质变为LV1。')));
+  // 名字走 yml 名字表：引擎装载时名字一律转小写，全角大写转成全角小写
+  // （抖Ｓ气质 → 抖ｓ气质，见 yml/Abl.yml 与 #822）
+  assert.ok(fixture.text_lines().some((t) => t.includes('抖ｓ气质变为LV1。')));
 });
 
 test('ablup20：条件不足时选 [0] 重试提示"未满足条件"（无句号）', async () => {
@@ -3255,7 +3255,7 @@ test('ablup21：两条购买路径各自扣对应珠、写入 chara(cid).system.
       assert.equal(fixture.store.get(`juel:${CID}:${k}`), 0, `juel:${k}`);
     }
     assert.ok(
-      fixture.text_lines().some((t) => t.includes('抖Ｍ气质变为LV1。')),
+      fixture.text_lines().some((t) => t.includes('抖ｍ气质变为LV1。')),
     );
   }
 });
