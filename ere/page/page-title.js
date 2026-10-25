@@ -26,8 +26,10 @@
  *   - CLEARLINE 1（清除输入回显行）不镜像：ere 的输入不经回显成行。
  *   - 新游戏：RESETDATA 自 #22 起接通——ere 等价物 era.resetData()，
  *     会话内重开局的清档（上一局的日期/金钱/角色列表不带进新局）。
- *     加入初始角色 0 并执行其专属初始化自 T6 接通（issue #21，
- *     ere/chara/chara-ex.js）。BEGIN FIRST 的转场已接通（issue #20）——
+ *     初始角色 0 自 #848 起不在本页手工加入：由 GameBase 的【初始角色编号】
+ *     声明，引擎在 resetData 末尾自己建（沿用官方写法，相性镜像随默认角色
+ *     的判定走）。其专属初始化自 T6 接通（issue #21，ere/chara/chara-ex.js）。
+ *     BEGIN FIRST 的转场已接通（issue #20）——
  *     返回目标状态并结束本函数，由主循环接住
  *     （system/flow/main-loop.js），EVENTFIRST 链的真身
  *     （event/event-first.js，issue #22）完成初始化后转入 SHOP。
@@ -132,14 +134,16 @@ async function run_title_page() {
       era.print('即使前路已经破碎，也请魔王大人当上这世界的王……');
       era.drawLine();
       era.setAlign('left'); // 送行段左对齐
-      // 新游戏四件套。RESETDATA 自 #22 接通：清掉上一局的会话数据
-      // （日期/金钱/角色列表），会话内重开新局不携带旧值；加入初始角色 0、
-      // 经分发注册表执行其专属初始化自 T6 接通（issue #21）——ere 以角色号 0
-      // 直接寻址。之后 BEGIN FIRST——返回目标状态并当场结束本函数（return 之后
+      // 新游戏的接入点。RESETDATA 自 #22 接通：清掉上一局的会话数据
+      // （日期/金钱/角色列表），会话内重开新局不携带旧值。初始角色 0 自
+      // #848 起由引擎在 resetData 里按 GameBase【初始角色编号】创建——本页
+      // 不再手工 addCharacter(0)（默认角色由引擎声明才是官方写法，且引擎
+      // 镜像相性时会跳过以默认角色为目标的键，手工加入走的是另一条分支）。
+      // 其专属初始化经分发注册表执行（issue #21）——ere 以角色号 0 直接寻址。
+      // 之后 BEGIN FIRST——返回目标状态并当场结束本函数（return 之后
       // 的语句与循环的下一轮都不再执行），主循环的 enter_state 收下它转入
       // FIRST 状态。
       era.resetData();
-      era.addCharacter(0);
       await add_chara_ex(0);
       // 移植版自建（issue #67）：给刚加入的角色盖移植数据版本戳
       // （portcflag 扩展表，每个加入点 addCharacter 之后都调它）
