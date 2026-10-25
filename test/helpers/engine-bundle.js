@@ -573,10 +573,101 @@ function create_next_turn_in_train() {
   };
 }
 
+/**
+ * 引擎侧的数据层：以「假 this + 真方法」驱动 resetData / resetGlobal /
+ * addCharacter / beginTrain / raw / setVar（#902）。
+ *
+ * 为什么需要它：夹具的 `raw()` 是镜像（平表 store 上的活视图），而开发套件
+ * 的具名访问器直接按 `data.<表>[角色][序号]` 取属性——**结构的形状本身**就是
+ * 被测对象（ADR-0005 第一层：能执行的逐步比对）。这里不重写结构：resetData
+ * 的顶层字面量、fillData 的缺省、addCharacter 逐角色建的行、beginTrain 建的
+ * 表全部由引擎自己的方法体产生，用例拿它的 `raw()` 与夹具的逐键对照。
+ *
+ * 假 this 的全部内容就是 `this.era` 上那几个字段：EraApi 的 data / global /
+ * staticData / fieldNames / extendedTables 都是基类上的 getter
+ * （`get data(){return this.era.data}`），原型链带过来即可，不必自己定义。
+ * `resetGlobal` 尾巴的两次落盘（listSaveFiles / saveGlobal，真方法读写
+ * sav/global.sav）在内存镜像里没有意义、还会在工作区造文件，就地短路；数据
+ * 层那两行照跑。
+ *
+ * static_data 缺省是最小集：gamebase 两枚公章、空 base 表与空的 relationship。
+ * 变量表全缺时 fillData 的 flag / item / 逐角色预填分支都空转，两侧的列集合
+ * 都是「空而存在」，正好比对结构的**存在性**（行有没有、表在不在）。要比对
+ * 预填内容时自行传 static_data（load_repo_variable_tables 的产物），比对口径
+ * 不变。
+ *
+ * @param {{ static_data?: object, extended_tables?: Object<string, number> }} [options]
+ * @returns {{
+ *   static_data: object,
+ *   data: object,
+ *   global: object,
+ *   raw: () => { data: object, global: object },
+ *   reset_data: () => undefined,
+ *   reset_global: () => Promise<undefined>,
+ *   add: (...ids: any[]) => any,
+ *   begin_train: (...ids: number[]) => undefined,
+ *   end_train: () => undefined,
+ *   set_var: (address: string, value?: any, is_add?: boolean) => any,
+ * } | undefined}
+ */
+function create_engine_data({ static_data, extended_tables = {} } = {}) {
+  const engine = load_engine_bundle();
+  if (!engine) {
+    return undefined;
+  }
+  const proto = engine.era_api.prototype;
+  const fake_this = Object.create(proto);
+  // 引擎实例上 staticData / fieldNames / extendedTables / data / global 都是
+  // 基类 getter（`get staticData(){return this.era.staticData}` 等），值挂在
+  // this.era 上；往实例本身赋值会被 getter 拦掉（无声失败），别那样写
+  fake_this.era = {
+    staticData: static_data ?? {
+      chara: {},
+      // beginTrain 的 addCharacterForTrain 会无条件遍历 staticData.base
+      // （逐键给 deltabase 置 0），缺这张表时它连 build 都跑不起来
+      base: {},
+      relationship: { callname: {}, relation: {} },
+      gamebase: { gameCode: 931060, version: 1000 },
+    },
+    fieldNames: {},
+    extendedTables: extended_tables,
+    data: undefined,
+    global: undefined,
+    // 引擎的报错口（setVar 的 key error 分支经 this.era.error 留痕后返回
+    // undefined）；比对用例只要返回值，报错文本不进断言
+    error: () => {},
+  };
+  fake_this.listSaveFiles = async () => {};
+  fake_this.saveGlobal = async () => true;
+  return {
+    static_data: fake_this.era.staticData,
+    // data / global 被 resetData / resetGlobal 整份替换，取值一律经 getter：
+    // 持有旧对象会读到替换前的残骸
+    get data() {
+      return fake_this.era.data;
+    },
+    get global() {
+      return fake_this.era.global;
+    },
+    raw: () => proto.raw.call(fake_this),
+    reset_data: () => proto.resetData.call(fake_this),
+    reset_global: () => proto.resetGlobal.call(fake_this),
+    add: (...chara_ids) => proto.addCharacter.call(fake_this, ...chara_ids),
+    begin_train: (...chara_ids) =>
+      proto.beginTrain.call(fake_this, ...chara_ids),
+    end_train: () => proto.endTrain.call(fake_this),
+    // 寻址层（模块 637）：地址 → 引擎数据层的同一处嵌套属性。有值即写、
+    // 无值即读，is_add 走累加支路——与夹具有个共同的观测口径
+    set_var: (address, value, is_add = false) =>
+      engine.set_var.call(fake_this, address, value, is_add),
+  };
+}
+
 module.exports = {
   compile_kojo,
   create_add_character,
   create_chara_loader,
+  create_engine_data,
   create_next_turn_in_train,
   create_variable_loader,
   load_engine_bundle,

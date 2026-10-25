@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 82; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
+export const COUNT = 94; // #821 +8（M15800–M15807：夹具地址归一——不转小写/param 不归一成 palam/三段不翻名字/两段不翻名字/丢掉未登记名字/不按 yml 反查名字/set 与 add 写路径不归一）；#891 +3（M15500–M15502：.kojo 装载——字典替换失效/不挂 proxyKojo/不返回编译结果）；数据地址缺陷修复 +1（M15422：夹具模拟引擎的 no:<n>）； // #793 +8（M13801-M13808：调教世界构造入口 train-world.js 的世界形状——魔王不入列/目标写死/助手 0 入列/缺省调教名单漏主人/助手参与位丢失/当前指令不落/呼名覆盖条件反向/只声明不载入）；#769 +2（M15020-M15021：BASE 正上限钳制、add(0) 只读）；#739 +3（M14559-M14561：名字表读未声明序号抛错——不抛错/不看 yml 声明集/不认显式播种）；#721 返工 +1（M14355：局部清除不压回确认边界）；#721 +7（M14345-M14351：整屏清空的未读输出检查——永不报出/三处确认边界不推进/边界不归零/已确认行误报/行文本丢失）； // #717 +1（M14343：多列文本格的颜色记录）； // #557 +6（M12350-M12355：等待重叠检测——检查拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -516,6 +516,7 @@ export default [
     file: 'test/helpers/era-fixture.js',
     find: `    chara_no.length = 0;
     train_open = false;
+    source_present = true; // resetData 字面量里 source 重新出现
     chars_in_train.clear();
     delete_train_table_keys();
     return undefined;
@@ -985,13 +986,123 @@ export default [
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
-    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算`,
+    const no_match = NO_ADDRESS.exec(address);
+    if (no_match !== null) {
+      const index = Number(no_match[1]);`,
     replace: `    const address = var_name; // 变异：累加路径不归一
     if (address !== 'gamebase' && !train_table_allows(address)) {
       return undefined;
     }
-    // 引擎语义：累加后落盘并返回新值；无现值时按 0 起算`,
+    const no_match = NO_ADDRESS.exec(address);
+    if (no_match !== null) {
+      const index = Number(no_match[1]);`,
     tests: ['fixture'],
     must_mention: 'era.add 按序号累加',
+  },
+
+  // —— #902 ——
+  {
+    desc: 'M16300 夹具 raw() 的写路径不落平表（写只活在视图里，era.get 读不到）',
+    file: 'test/helpers/era-fixture.js',
+    find: '        store.set(key, value);\n        return true;',
+    replace: '        void value; // 变异：写不落平表\n        return true;',
+    tests: ['fixture-raw'],
+    must_mention: 'raw() 写入后 era.get 读到同一槽',
+  },
+  {
+    desc: 'M16301 夹具 raw() 对没加入的角色自动建行（TypeError 这条验收作废）',
+    file: 'test/helpers/era-fixture.js',
+    find: '      if (table_rows(table).includes(second)) {\n        return true;\n      }',
+    replace:
+      '      if (table_rows(table).includes(second) || /^\\d+$/.test(second)) {\n        return true; // 变异：任何数字角色都算有行\n      }',
+    tests: ['fixture-raw'],
+    must_mention: '没有 21 这一行',
+  },
+  {
+    desc: 'M16302 夹具 raw() 的逐角色行不随 addCharacter 建（已加入角色的行也缺）',
+    file: 'test/helpers/era-fixture.js',
+    find: '    if (CHARA_TABLES.includes(table)) {\n      return chara_no.map(String);\n    }',
+    replace:
+      '    if (CHARA_TABLES.includes(table)) {\n      return []; // 变异：行不随加入建\n    }',
+    tests: ['fixture-raw'],
+    must_mention: '读没加入的角色的具名属性抛 TypeError',
+  },
+  {
+    desc: 'M16303 夹具 raw() 的调教表恒在（beginTrain 之前也能读）',
+    file: 'test/helpers/era-fixture.js',
+    find: '      if (train_open && TRAIN_TABLES.includes(table)) {\n        return true;\n      }',
+    replace:
+      '      if (TRAIN_TABLES.includes(table)) {\n        return true; // 变异：调教表恒在\n      }',
+    tests: ['fixture-raw'],
+    must_mention: '在调教期之外不存在',
+  },
+  {
+    desc: 'M16304 夹具 raw() 的 source 不随 endTrain 消失',
+    file: 'test/helpers/era-fixture.js',
+    find: '    source_present = false;',
+    replace: '    source_present = true; // 变异：source 不随 endTrain 消失',
+    tests: ['fixture-raw'],
+    must_mention: 'source 随 endTrain 一起消失',
+  },
+  {
+    desc: 'M16305 夹具 raw() 的 item 骨架缺 sales 子表',
+    file: 'test/helpers/era-fixture.js',
+    find: "  const ITEM_TABLES = ['bought', 'hold', 'price', 'sales'];",
+    replace:
+      "  const ITEM_TABLES = ['bought', 'hold', 'price']; // 变异：少了 sales",
+    tests: ['fixture-raw'],
+    must_mention: 'raw().data 的骨架按 resetData 字面量',
+  },
+  {
+    desc: 'M16306 夹具 raw() 的 item.bought 初值改错（引擎字面量是 -1）',
+    file: 'test/helpers/era-fixture.js',
+    find: "  store.set('item:bought', -1);",
+    replace: "  store.set('item:bought', 0); // 变异：初值改错",
+    tests: ['fixture-raw'],
+    must_mention: 'data.item.bought 初值 -1',
+  },
+  {
+    desc: 'M16307 夹具 global 的 version 盖章常量取成 game_code',
+    file: 'test/helpers/era-fixture.js',
+    find: "    if (field === 'version') {\n      return save_gate.current_version;\n    }",
+    replace:
+      "    if (field === 'version') {\n      return save_gate.game_code; // 变异：盖章常量取错\n    }",
+    tests: ['fixture-raw'],
+    must_mention: 'raw().global 与 era.get / era.set 同源',
+  },
+  {
+    desc: 'M16308 夹具 raw().data.no 返回副本（不再是引擎那只活数组）',
+    file: 'test/helpers/era-fixture.js',
+    find: '        return chara_no; // 引擎 data.no 是活数组（插入序，removeCharacter 同步）',
+    replace: '        return [...chara_no]; // 变异：no 返回副本',
+    tests: ['fixture-raw'],
+    must_mention: 'no 就是夹具维护的那只数组',
+  },
+  {
+    desc: 'M16309 夹具 era.get 不认 global 的两枚盖章常量（视图有值、get 读不到）',
+    file: 'test/helpers/era-fixture.js',
+    find: "    if (value === undefined && address.startsWith('global:')) {\n      value = global_constant(address.slice('global:'.length));\n    }",
+    replace:
+      "    if (false) {\n      value = global_constant(address.slice('global:'.length)); // 变异：get 不认盖章常量\n    }",
+    tests: ['fixture-raw'],
+    must_mention: 'era.get 读到的盖章常量与视图一致',
+  },
+  {
+    desc: 'M16310 夹具 raw() 的逐角色行不进枚举（Object.keys 看不到行）',
+    file: 'test/helpers/era-fixture.js',
+    find: "        } else if (prefix.split(':').length === 1) {\n          table_rows(prefix).forEach((id) => keys.add(id));\n        }",
+    replace:
+      "        } else if (prefix.split(':').length === 1) {\n          // 变异：行不进枚举\n        }",
+    tests: ['fixture-raw'],
+    must_mention: '行集合只含已加入的角色',
+  },
+  {
+    desc: 'M16311 夹具 raw() 的视图不读平表（叶子一律 undefined，与 era.get 分叉）',
+    file: 'test/helpers/era-fixture.js',
+    find: "  const raw_leaf_value = (key) =>\n    store.get(key) ??\n    (key.startsWith('global:')\n      ? global_constant(key.slice('global:'.length))\n      : undefined);",
+    replace:
+      '  // 变异：视图不读平表，叶子一律 undefined\n  const raw_leaf_value = (key) => undefined;',
+    tests: ['fixture-raw'],
+    must_mention: 'era.set / era.add 写入后 raw() 读到同一槽',
   },
 ];
