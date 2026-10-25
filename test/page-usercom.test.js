@@ -18,7 +18,6 @@ const {
   create_variable_loader,
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
-const { seed_static_names } = require('./helpers/static-names');
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
@@ -681,7 +680,6 @@ test('p_c 第一级：静态名命中 → TSTR:90 = 静态名', async () => {
 
 /** 播种静态名表与 trainalias（进调教后的名字表状态） */
 function seed_train_names(fixture) {
-  seed_static_names(fixture);
   fixture.load_module('system/train/train-name').train_name_init();
 }
 

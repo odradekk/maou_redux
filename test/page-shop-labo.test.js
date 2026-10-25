@@ -1481,8 +1481,8 @@ test('brain_washing：四档「费用 × 素质」整表 + 三道检查', async 
   seed_talentnames(has);
   const first = await run_labo(has, [998, 998, 998, 30, 1, 999], {});
   assert.ok(
-    all_text(first.added).includes('已经有【】了。'),
-    '已有素质时拒绝（素质名未预置的编号显示为空串）',
+    all_text(first.added).includes('已经有【不怕脏】了。'),
+    '已有素质时拒绝（素质名由夹具按 yml 现算，TALENT:64 = 不怕脏）',
   );
   // 检查二：不能做助手的角色（CFLAG:0 < 2）
   const no_assist = make_fixture({ seed: {} });

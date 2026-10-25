@@ -1547,8 +1547,14 @@ test('char_custom：页高 27 行（补行到固定高度）', async () => {
   await char_custom(1, 0);
   // 「27 行」从清屏基准起算：drawLine + 页眉 + drawLine + 内容 + 补行 = 27；
   // 之后才是页脚（drawLine + 四枚按钮）——按钮串之后的收尾换行只结束
-  // 该行，不产生空行，故不计一行
-  assert.equal(fixture.lines.length, 27 + 1 + 4, '页体恒 27 行（含补行）');
+  // 该行，不产生空行，故不计一行。
+  // #821 起素质名按 yml 现算（此前夹具一律返回空串，空名不进页），一格
+  // 不再是「一行一条」：页高按 Row 数算，不按条目数
+  assert.equal(
+    new Set(fixture.lines.map((line) => line.row)).size,
+    27 + 1 + 4,
+    '页体恒 27 行（含补行）',
+  );
 });
 
 test('char_custom：第 3 页仍是素质页（点 205 能落到职业上）', async () => {

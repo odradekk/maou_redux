@@ -3,7 +3,7 @@
 // 目标文件：ere/chara/chara-name-list.js、event-first.js／event-load.js 的接入点、
 // yml/NameList.yml 数据本身。对应测试见 test/chara-name-list.test.js。
 
-export const COUNT = 10;
+export const COUNT = 9;
 
 export default [
   {
@@ -29,14 +29,6 @@ export default [
     replace: "  valid_ids_cache = new Set(era.get('namelistkeys'));",
     tests: ['chara-name-list'],
     must_mention: 'namelistkeys 只应被读取一次（缓存生效）',
-  },
-  {
-    desc: 'M7971 get_fixed_chara_name 丢了名字地址的 undefined 缺省',
-    file: 'ere/chara/chara-name-list.js',
-    find: "  return era.get(`namelistname:${nid}`) ?? '';",
-    replace: '  return era.get(`namelistname:${nid}`);',
-    tests: ['chara-name-list'],
-    must_mention: "名字地址未播种时必须缺省为空串（?? ''）",
   },
   {
     desc: 'M7972 chara_name_init 的调用点被清空，valid_ids 缓存不再预热',

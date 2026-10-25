@@ -33,7 +33,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
 const seq_rand =
@@ -49,7 +48,6 @@ function setup_log(seed) {
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
-  seed_static_names(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.player = 0;
   if (seed) {

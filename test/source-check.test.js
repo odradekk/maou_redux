@@ -19,7 +19,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 // 世界底座 + 一回合爱抚的执行（COM0 + SOURCE_CHECK 全链）。post 在 COM0
 // 之后、SOURCE_CHECK 之前执行（改源面做分环节断言用——COM0 会覆写源）
@@ -28,7 +27,6 @@ async function run_caress(seed, post) {
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
-  seed_static_names(fixture);
   fixture.era.beginTrain(0, 31);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -777,7 +775,6 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
-  seed_static_names(fixture);
   fixture.store.set('maxbase:31:0', 2000);
   fixture.store.set('maxbase:31:1', 2000);
   fixture.store.set('base:31:0', 2000);
@@ -2298,7 +2295,7 @@ test('SOKUOCHI_CHECK：12 组各自驱动升到 LV1，门槛组读到同轮内�
     [12, '技巧'],
     [16, '侍奉精神'],
     [17, '露出癖'],
-    [21, '抖Ｍ气质'],
+    [21, '抖ｍ气质'],
     [22, '百合气质'],
     [23, '断背气质'],
   ];
@@ -2473,7 +2470,7 @@ test('SOKUOCHI_CHECK：驱动下标不与相邻组混淆（ABL:2 读 UP:1 非 UP
   assert.ok(fixture.text_lines().includes('私处感觉LV1了'));
   assert.equal(fixture.store.get('abl:31:0') || 0, 0);
   assert.equal(fixture.store.get('abl:31:21'), 1);
-  assert.ok(fixture.text_lines().includes('抖Ｍ气质LV1了'));
+  assert.ok(fixture.text_lines().includes('抖ｍ气质LV1了'));
   assert.equal(fixture.store.get('abl:31:17') || 0, 0);
 });
 
@@ -2635,7 +2632,6 @@ async function run_ejaculation_settlement({
     });
     fixture.era.addCharacter(assi);
   }
-  seed_static_names(fixture);
   fixture.era.beginTrain(0, 31);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -2886,7 +2882,6 @@ async function run_auto_check(seed) {
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
   join_slave_chara(fixture, 31, '温妮');
-  seed_static_names(fixture);
   fixture.era.beginTrain(0, 31);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;

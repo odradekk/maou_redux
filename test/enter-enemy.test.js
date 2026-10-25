@@ -105,10 +105,11 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
   // 演出行（PRINT/PRINTS 归并，见 enter-enemy.js 文件头）
   const texts = text_lines(fixture);
   // 名字：#384 起 CHARA_NAME_DEFINE 是真身，随机勇者（NO 1-16）的名字由
-  // 命名链**覆盖**预设名（既有行为：预设名只服务特殊角色 0/17-40）。夹具里
-  // 没有固定名表（namelistkeys 为空），故落到保底处理名「佳奈美」。
+  // 命名链**覆盖**预设名（既有行为：预设名只服务特殊角色 0/17-40）。随机源
+  // 恒 0 → 名字编号 0，即 yml/NameList.yml 的「玛丽」（#821 起夹具按 yml
+  // 现算 <表>name:<序号>，此前读不到名字才落到保底名「佳奈美」）。
   assert(
-    texts.includes('勇者佳奈美开始了地下城的攻略！'),
+    texts.includes('勇者玛丽开始了地下城的攻略！'),
     '演出行：勇者 + 名字（callname:-1 承载，已由命名链改写）+ 开始攻略',
   );
   assert(
@@ -709,7 +710,7 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
   assert.equal(fixture.store.get('cflag:1:501'), 1, 'CFLAG:A:501 = 1');
   assert.equal(fixture.store.get('cflag:1:508'), 3, 'CFLAG:A:508 = 3');
   assert(
-    text_lines(fixture).includes('勇者佳奈美被俘虏了！'),
+    text_lines(fixture).includes('勇者玛丽被俘虏了！'),
     '俘虏演出行；名字同「通常来袭」用例（命名链已改写预设名）',
   );
   // 异国判定掷 RAND(10)：zero → 判定通过 → 进 char_make_inport 真身

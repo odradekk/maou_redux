@@ -367,7 +367,8 @@ test('方法 4 肉便器：扶她阴茎四支与魅力点五支各自播报', as
 
 test('方法 4 肉便器：素质条件句逐条触发，缺素质时一条都不出', async () => {
   const cases = [
-    { address: 'talent:31:原种族', value: 1, fragment: '精灵族的' },
+    // TALENT:321 = 原种族（yml/Talent.yml）：夹具按 yml 把名字翻成序号
+    { address: 'talent:31:321', value: 1, fragment: '精灵族的' },
     { address: 'abl:31:32', value: 1, fragment: '作为精液便器' },
     { address: 'abl:31:22', value: 3, fragment: '作为女子便器' },
     { address: 'abl:31:21', value: 1, fragment: '腿间开始湿润' },

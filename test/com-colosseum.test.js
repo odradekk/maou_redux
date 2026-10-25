@@ -33,7 +33,6 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 /** 助手角色（COM201 用） */
 function join_assi_chara(fixture, id = 32, name = `助手${id}`) {
@@ -195,7 +194,6 @@ test('COM207 与 [100] 能力表示不撞号：COM207 可用与否，输入 100 
 
 test('COM207 可用时调教画面没有同号按钮：媚药史莱姆的编号避开子菜单号，按它的编号执行 COM207', async () => {
   const { fixture } = seed_colosseum_world({ assi: true });
-  seed_static_names(fixture); // 方格按钮正文读指令名表
   fixture.store.set('tequip:31:55', 1); // 死斗场
   fixture.store.set('cflag:0:9', 100); // 调教者等级达到 COM207 门槛
   // 有条件的子菜单按钮全部显示：助手记录（[102] 交代助手）、奴隶可对换

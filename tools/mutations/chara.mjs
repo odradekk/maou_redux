@@ -257,7 +257,7 @@ export default [
     find: '    chara_name_random_define(cid, -1, rand_n);',
     replace: '    void rand_n;',
     tests: ['chara-make'],
-    must_mention: 'chara_name_define 真身：没有可查的固定名时回落到默认名',
+    must_mention: 'chara_name_define 真身：名字来自 NameList.yml 的固定名表',
   },
   {
     desc: 'M6542 CHARA_ID_OUTPUT 无性格时的 FOR 终值 179 改 178',

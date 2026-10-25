@@ -15,13 +15,11 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
-const { seed_static_names } = require('./helpers/static-names');
 
 const CID = 31;
 
 function seed(fixture) {
   join_slave_chara(fixture, CID);
-  seed_static_names(fixture);
   return require('#/system/train/ablup');
 }
 
