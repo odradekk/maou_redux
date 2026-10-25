@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 65; // #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
+export const COUNT = 67; // #884 +2（M16606/M16607：角色预设的预设模板值改错、PortCFlag 的字段条目被删）； #848 +2（M16254/M16255：GameBase 的【初始角色编号】改坏、给角色预设加上以 0 号为目标的相性）；#901 +13（M16100-M16112：变量表 name/type 的缺失、重名、非 snake_case、保留字、非法 type 与豁免名单失效）；#814 +9（M15850-M15858：角色预设在用的 cflag 序号与条目、mark/talent/cstr 的新登记、name/type 形状）；#822 +4（M15700/M15701：Abl 20/21 的 yml 名字；M15702/M15703：指令常量 54/89 的指令名——#836 把指令名搬进常量后跟着改挂，编号不变）；#746 +3（M14608-M14610：现种族 211 的名字声明、编号与名称）；#733 +1（M14540：通信回归场景漏载 Equip 名字表）；#731 +1（M14530：【最低支持版本】不得高于已发布的 0.1.0）；master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为检查）+ 4（#642：M12936-M12939 标题画面使用的 GameBase 信息改坏）
 
 export default [
   {
@@ -44,7 +44,8 @@ export default [
     desc: 'M112 Chara17 预设行被删（预设生效用例必须红）',
     file: 'yml/Chara17.yml',
     find: `"portcflag":
-  "数据版本": 0`,
+  "数据版本": 0
+  "预设模板": 17`,
     replace: '# 变异：portcflag 预设行删除',
     tests: ['portcflag-table'],
     must_mention: '预设',
@@ -281,7 +282,8 @@ export default [
     find: '"基礎":\n  "0": 10000\n  "1": 10000\n  "2": 10000',
     replace: '"基礎":\n  "0": 1000\n  "1": 10000\n  "2": 10000',
     tests: ['chara-load'],
-    must_mention: '角色 0 的预设内容（基礎全满、素質 1/122）',
+    must_mention:
+      '角色 0 的预设内容（基礎全满、素質 1/122、portcflag 预设模板）',
   },
   {
     engine: true,
@@ -603,5 +605,21 @@ export default [
     replace: '  "0": 500\n  "17": 150',
     tests: ['gamebase-default-chara'],
     must_mention: '相性目标的角色号里出现了 0，需重新核对该差异',
+  },
+  {
+    desc: 'M16606 Chara31 的预设模板改错（31 改 30——预设与番号对不上）',
+    file: 'yml/Chara31.yml',
+    find: '"portcflag":\n  "预设模板": 31',
+    replace: '"portcflag":\n  "预设模板": 30',
+    tests: ['chara-template'],
+    must_mention: '角色预设缺「预设模板」行或值与番号不符',
+  },
+  {
+    desc: 'M16607 PortCFlag.yml 的预设模板条目被删（角色预设行整行丢弃）',
+    file: 'yml/PortCFlag.yml',
+    find: '"预设模板":\n  id: 2\n  name: "template_no"\n  type: "number"',
+    replace: '"预设模板-删":\n  id: 2\n  name: "template_no"\n  type: "number"',
+    tests: ['chara-template'],
+    must_mention: 'yml/PortCFlag.yml 必须有「预设模板」条目',
   },
 ];

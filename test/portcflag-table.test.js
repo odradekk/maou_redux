@@ -110,12 +110,13 @@ function load_chara17_preset(extended_tables) {
 }
 
 engine_test(
-  '名字表：PortCFlag.yml 经引擎装载，数据版本 → id 0、排序编号 → id 1，k/t 元数据齐全',
+  '名字表：PortCFlag.yml 经引擎装载，数据版本 → id 0、排序编号 → id 1、预设模板 → id 2，k/t 元数据齐全',
   () => {
     const loader = load_portcflag_table();
     assert.deepEqual(loader.static_data.portcflag, {
       数据版本: 0,
       排序编号: 1,
+      预设模板: 2,
     });
     assert.deepEqual(loader.field_names.portcflag[0], {
       n: '数据版本',
@@ -126,6 +127,11 @@ engine_test(
       loader.field_names.portcflag[1],
       { n: '排序编号', k: 'sort_number', t: 'number' },
       '#545 起的第二个字段：名册「编号」视图的排列键',
+    );
+    assert.deepEqual(
+      loader.field_names.portcflag[2],
+      { n: '预设模板', k: 'template_no', t: 'number' },
+      '#884 起的第三个字段：角色由哪个预设生成',
     );
     assert.deepEqual(loader.warnings, [], '人工表不应触发序号去重告警');
   },
@@ -140,17 +146,18 @@ engine_test(
     // 角色装载循环：预设行经 staticData.portcflag 的 name→id 翻译落进预设
     const loader = load_chara17_preset(registration);
     assert.deepEqual(loader.errors, [], '登记在场，预设行不应报缺表');
-    assert.deepEqual(loader.static_data.chara[17].portcflag, { 0: 0 });
+    assert.deepEqual(loader.static_data.chara[17].portcflag, { 0: 0, 2: 17 });
 
     // 真 addCharacter：预设值（而非缺省）落进角色桶——预设在加入时生效
     const adder = create_add_character(loader.static_data, {
       extended_tables: registration,
     });
     assert.equal(adder.add(17), true);
-    // 两个字段都落桶：预设行给的 0（数据版本），以及 initCharaTable 按名字表
-    // 补 0 的 1（排序编号，见 PortCFlag.yml）——后者缺省 0 的语义是「未设＝
-    // 回落角色 ID」，读取侧因此一律 `|| 角色 ID`
-    assert.deepEqual(adder.data.portcflag[17], { 0: 0, 1: 0 });
+    // 三个字段都落桶：预设行给的 0（数据版本）与 17（预设模板），以及
+    // initCharaTable 按名字表补 0 的 1（排序编号，见 PortCFlag.yml）——排序
+    // 编号缺省 0 的语义是「未设＝回落角色 ID」，读取侧因此一律 `|| 角色 ID`。
+    // 预设模板 17 是 #884 的落点：预设号从此跟角色数据走，不再由角色号推出
+    assert.deepEqual(adder.data.portcflag[17], { 0: 0, 1: 0, 2: 17 });
   },
 );
 
@@ -286,7 +293,7 @@ engine_test(
       );
       assert.deepEqual(
         saved.portcflag[17],
-        { 0: 7, 1: 3 },
+        { 0: 7, 1: 3, 2: 17 },
         '存档载荷里必须有扩展表（saveData 序列化整个 data）',
       );
 
