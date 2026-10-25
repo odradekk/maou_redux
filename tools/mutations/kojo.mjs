@@ -3,7 +3,7 @@
 // 分配，只作引用基准点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2754; // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
+export const COUNT = 2757; // 数据地址缺陷修复 +15（M15403-M15417：K10 自慰次数交接与处女丧失增量门槛、K7 录像自我介绍八支、K1 助手 17 号判断）； // #797 +8（M7690-M7697：成熟出售真身调用丢失的原 sell-maturo-k0 分片条目改住本分片，条目内容不变） // #734 +7（M14550–M14556：四类首次口上阈值、真实引擎爱抚与非法阈值地址检查）；#710 净 -1（M12155 改写成 M14254：卖春积极性行随 show_button_bich_level 删除、改指等级网格退回纯文本，条数不变；删 M402：SET_BICH_LEVEL 输入上限随按钮化不可观察）；#711 起 +2（M14310/M14311：K15 暗器菜单的选项按钮化——退回纯文本与按钮后夹等键两条）；#643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数；#688 +35
 
 export default [
   {
@@ -2271,38 +2271,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '首次经 CFLAG:650 标记',
   },
   {
-    desc: 'M2041 K7 EXUCUTION TFLAG:16 条件错格（== 5 改 6，#238；6 支已有台词，改后仍会输出但文本不同，红在断言精确台词）',
+    desc: 'M2041 K7 EXUCUTION 处分方式 条件错格（== 5 改 6，#238；6 支已有台词，改后仍会输出但文本不同，红在断言精确台词）',
     file: 'ere/kojo/kojo-k7-heart.js',
-    find: "} else if (era0('tflag:16') == 5) {\n    await era.printAndWait(`「下达命令…主人………」`);",
+    find: '} else if (event_no == 5) {\n    await era.printAndWait(`「下达命令…主人………」`);',
     replace:
-      "} else if (era0('tflag:16') == 6) {  // 变异\n    await era.printAndWait(`「下达命令…主人………」`);",
+      '} else if (event_no == 6) {  // 变异\n    await era.printAndWait(`「下达命令…主人………」`);',
     tests: ['kojo-k7-heart'],
     must_mention: '注册且可调用',
   },
   {
-    desc: 'M2042 K7 BANISHMENT TFLAG:510 条件错格（== 0 改 1，#238）',
+    desc: 'M2042 K7 BANISHMENT 处分号 条件错格（== 0 改 1，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
-    find: "if (era0('tflag:510') == 0) {\n    await era.printAndWait(`「回不去了…狂王大人那里…已经回不去了………」`);",
+    find: 'if (event_no == 0) {\n    await era.printAndWait(`「回不去了…狂王大人那里…已经回不去了………」`);',
     replace:
-      "if (era0('tflag:510') == 1) {  // 变异\n    await era.printAndWait(`「回不去了…狂王大人那里…已经回不去了………」`);",
+      'if (event_no == 1) {  // 变异\n    await era.printAndWait(`「回不去了…狂王大人那里…已经回不去了………」`);',
     tests: ['kojo-k7-heart'],
     must_mention: '回不去了',
   },
   {
-    desc: 'M2043 K7 PUBLIC_EXUCUTION TFLAG:520 条件错格（== 1 改 2，#238）',
+    desc: 'M2043 K7 PUBLIC_EXUCUTION 处分号 条件错格（== 1 改 2，#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
-    find: "} else if (era0('tflag:520') == 1) {\n    await era.printAndWait(`「这里…这个绞刑台是我最后的舞台吗…」`);",
+    find: '} else if (event_no == 1) {\n    await era.printAndWait(`「这里…这个绞刑台是我最后的舞台吗…」`);',
     replace:
-      "} else if (era0('tflag:520') == 2) {  // 变异\n    await era.printAndWait(`「这里…这个绞刑台是我最后的舞台吗…」`);",
+      '} else if (event_no == 2) {  // 变异\n    await era.printAndWait(`「这里…这个绞刑台是我最后的舞台吗…」`);',
     tests: ['kojo-k7-heart'],
     must_mention: '绞刑台',
   },
   {
-    desc: 'M2044 K7 GROTESQUE TFLAG:530 条件错格（== 0 改 1，#238；源全空，红在分支路由而非文本）',
+    desc: 'M2044 K7 GROTESQUE 处分方式 条件错格（== 0 改 1，#238；源全空，红在分支路由而非文本）',
     file: 'ere/kojo/kojo-k7-heart.js',
-    find: "async function grotesque_koujo_k7() {\n  if (era0('tflag:530') == 0) {\n    await era.printAndWait('');",
+    find: "async function grotesque_koujo_k7(event_no) {\n  if (event_no == 0) {\n    await era.printAndWait('');",
     replace:
-      "async function grotesque_koujo_k7() {\n  if (era0('tflag:530') == 1) {  // 变异\n    await era.printAndWait('');",
+      "async function grotesque_koujo_k7(event_no) {\n  if (event_no == 1) {  // 变异\n    await era.printAndWait('');",
     tests: ['kojo-k7-heart'],
     must_mention: 'GROTESQUE_KOUJO_K7',
   },
@@ -3334,44 +3334,45 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:650 首次标记写为 1',
   },
   {
-    desc: 'M2234 K9 EXUCUTION TFLAG:16 条件错格（== 4 改 5，#240）',
+    desc: 'M2234 K9 EXUCUTION 处分方式 条件错格（== 4 改 5，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '  if (game.event.犬射精或处刑口上 == 4) {',
-    replace: '  if (game.event.犬射精或处刑口上 == 5) { // 变异',
+    find: '  if (event_no == 4) {',
+    replace: '  if (event_no == 5) { // 变异',
     tests: ['kojo-k9-diamond'],
     must_mention: '不要成为怪物的安慰物',
   },
   {
-    desc: 'M2235 K9 MUSEUM TFLAG:500 条件错格（== 0 改 1，#240）',
+    desc: 'M2235 K9 MUSEUM 展品编号 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '  if (game.event.博物馆口上 == 0) {',
-    replace: '  if (game.event.博物馆口上 == 1) { // 变异',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(\n      `「脚、脚被…脚慢慢地变冷了起来…我、我是要死了吧…拜托了…至少，至少回到最初的故…乡…里………………」`,\n    );',
+    replace:
+      '  if (event_no == 1) { // 变异\n    await era.printAndWait(\n      `「脚、脚被…脚慢慢地变冷了起来…我、我是要死了吧…拜托了…至少，至少回到最初的故…乡…里………………」`,\n    );',
     tests: ['kojo-k9-diamond'],
     must_mention: '至少回到最初的故',
   },
   {
-    desc: 'M2236 K9 BANISHMENT TFLAG:510 条件错格（== 0 改 1，#240）',
+    desc: 'M2236 K9 BANISHMENT 处分号 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '  if (game.event.流放口上 == 0) {\n    await era.printAndWait(`「我失去作为战士的力量…已经………」`);',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(`「我失去作为战士的力量…已经………」`);',
     replace:
-      '  if (game.event.流放口上 == 1) { // 变异\n    await era.printAndWait(`「我失去作为战士的力量…已经………」`);',
+      '  if (event_no == 1) { // 变异\n    await era.printAndWait(`「我失去作为战士的力量…已经………」`);',
     tests: ['kojo-k9-diamond'],
     must_mention: '我失去作为战士的力量',
   },
   {
-    desc: 'M2237 K9 PUBLIC_EXUCUTION TFLAG:520 条件错格（== 0 改 1，#240）',
+    desc: 'M2237 K9 PUBLIC_EXUCUTION 处分号 条件错格（== 0 改 1，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '  if (game.event.公开处刑口上 == 0) {',
-    replace: '  if (game.event.公开处刑口上 == 1) { // 变异',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(\n      `「快杀了我吧…我的那里已经…裂开了…啊啊啊…已经什么都感觉不到了啊…啊啊…啊啊啊………」`,\n    );',
+    replace:
+      '  if (event_no == 1) { // 变异\n    await era.printAndWait(\n      `「快杀了我吧…我的那里已经…裂开了…啊啊啊…已经什么都感觉不到了啊…啊啊…啊啊啊………」`,\n    );',
     tests: ['kojo-k9-diamond'],
     must_mention: '快杀了我吧',
   },
   {
-    desc: 'M2238 K9 GROTESQUE TFLAG:530 条件错格（== 0 改 1，#240；源全空，红在分支路由而非文本）',
+    desc: 'M2238 K9 GROTESQUE 处分方式 条件错格（== 0 改 1，#240；源全空，红在分支路由而非文本）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: "  if (game.event.猎奇处刑口上 == 0) {\n    await era.printAndWait('');",
-    replace:
-      "  if (game.event.猎奇处刑口上 == 1) { // 变异\n    await era.printAndWait('');",
+    find: "  if (event_no == 0) {\n    await era.printAndWait('');",
+    replace: "  if (event_no == 1) { // 变异\n    await era.printAndWait('');",
     tests: ['kojo-k9-diamond'],
     must_mention: 'GROTESQUE 分支路由错位',
   },
@@ -12452,38 +12453,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2313 K10 EXUCUTION_KOUJO_K10 犬射精或处刑口上条件改错（==4 改 ==5，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '  if (game.event.犬射精或处刑口上 == 4) {\n    await era.printAndWait(\n      `「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」`,\n    );',
+    find: '  if (event_no == 4) {\n    await era.printAndWait(\n      `「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」`,\n    );',
     replace:
-      '  if (game.event.犬射精或处刑口上 == 5) {  // 变异\n    await era.printAndWait(\n      `「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」`,\n    );',
+      '  if (event_no == 5) {  // 变异\n    await era.printAndWait(\n      `「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」`,\n    );',
     tests: ['kojo-k10-club'],
-    must_mention: '注册且可调用',
+    must_mention: '注册且按实参编号可调用',
   },
   {
     desc: 'M2314 K10 MUSEUM_KOUJO_K10 博物馆口上条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '  if (game.event.博物馆口上 == 0) {\n    await era.printAndWait(\n      `「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」`,\n    );',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(\n      `「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」`,\n    );',
     replace:
-      '  if (game.event.博物馆口上 == 1) {  // 变异\n    await era.printAndWait(\n      `「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」`,\n    );',
+      '  if (event_no == 1) {  // 变异\n    await era.printAndWait(\n      `「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」`,\n    );',
     tests: ['kojo-k10-club'],
     must_mention: '八档，第一档有台词',
   },
   {
     desc: 'M2315 K10 BANISHMENT_KOUJO_K10 流放口上条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '  if (game.event.流放口上 == 0) {\n    await era.printAndWait(`「我的魔法连让小石头动一下都不行了…啊啊………」`);',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(`「我的魔法连让小石头动一下都不行了…啊啊………」`);',
     replace:
-      '  if (game.event.流放口上 == 1) {  // 变异\n    await era.printAndWait(`「我的魔法连让小石头动一下都不行了…啊啊………」`);',
+      '  if (event_no == 1) {  // 变异\n    await era.printAndWait(`「我的魔法连让小石头动一下都不行了…啊啊………」`);',
     tests: ['kojo-k10-club'],
-    must_mention: '注册且可调用',
+    must_mention: '注册且按实参编号可调用',
   },
   {
     desc: 'M2316 K10 PUBLIC_EXUCUTION_KOUJO_K10 公开处刑口上条件改错（==0 改 ==1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '  if (game.event.公开处刑口上 == 0) {\n    await era.printAndWait(\n      `「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」`,\n    );',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(\n      `「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」`,\n    );',
     replace:
-      '  if (game.event.公开处刑口上 == 1) {  // 变异\n    await era.printAndWait(\n      `「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」`,\n    );',
+      '  if (event_no == 1) {  // 变异\n    await era.printAndWait(\n      `「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」`,\n    );',
     tests: ['kojo-k10-club'],
-    must_mention: '注册且可调用',
+    must_mention: '注册且按实参编号可调用',
   },
   {
     desc: 'M2318 K10 GOHOUBI_REQUEST_KOUJO_K10 要求奖赏条件改错（==0 改 ==1，#241）',
@@ -14030,36 +14031,38 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR：P==20 公开生产按 CFLAG:102 分岔，且本支不记位',
   },
   {
-    desc: 'M1988 K8 EXUCUTION 首档检查写错（TFLAG:16 == 4 改 == 3，#239）',
+    desc: 'M1988 K8 EXUCUTION 首档检查写错（处分方式 == 4 改 == 3，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  if (game.event.犬射精或处刑口上 == 4) {',
-    replace: '  if (game.event.犬射精或处刑口上 == 3) {',
+    find: '  if (event_no == 4) {',
+    replace: '  if (event_no == 3) {',
     tests: ['kojo-k8-spade'],
-    must_mention: 'TFLAG:16==4 肉便器刑',
+    must_mention: '处分方式==4 肉便器刑',
   },
   {
     desc: 'M1989 K8 MUSEUM 蜡人形档值被「修正」成 2（档值是 21，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  } else if (game.event.博物馆口上 == 21) {',
-    replace: '  } else if (game.event.博物馆口上 == 2) {',
+    find: '  } else if (event_no == 21) {',
+    replace: '  } else if (event_no == 2) {',
     tests: ['kojo-k8-spade'],
     must_mention: '蜡人形档条件为 21',
   },
   {
-    desc: 'M1990 K8 BANISHMENT 追放档检查写错（TFLAG:510 == 0 改 == 1，#239）',
+    desc: 'M1990 K8 BANISHMENT 追放档检查写错（处分号 == 0 改 == 1，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  if (game.event.流放口上 == 0) {',
-    replace: '  if (game.event.流放口上 == 1) {',
+    find: '  if (event_no == 0) {\n    // 追放\n    await era.printAndWait(`「这样就自由了…但是、失去力量的我的存在价值………」`);',
+    replace:
+      '  if (event_no == 1) {\n    // 追放\n    await era.printAndWait(`「这样就自由了…但是、失去力量的我的存在价值………」`);',
     tests: ['kojo-k8-spade'],
-    must_mention: 'BANISHMENT：TFLAG:510 追放有词，其余四档空行',
+    must_mention: 'BANISHMENT：处分号 追放有词，其余四档空行',
   },
   {
-    desc: 'M1992 K8 GROTESQUE 末档（TFLAG:530 == 6 ゾンビ化）丢失（#239）',
+    desc: 'M1992 K8 GROTESQUE 末档（处分方式 == 6 ゾンビ化）丢失（#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '  } else if (game.event.猎奇处刑口上 == 6) {',
-    replace: '  } else if (false) {',
+    find: "  } else if (event_no == 6) {\n    // ゾンビ化\n    await era.printAndWait('');",
+    replace:
+      "  } else if (false) {\n    // ゾンビ化\n    await era.printAndWait('');",
     tests: ['kojo-k8-spade'],
-    must_mention: 'TFLAG:530 七档全未填写，逐档只出空行',
+    must_mention: '处分方式编号七档全未填写，逐档只出空行',
   },
   {
     desc: 'M1993 K8 ENTERENEMY 爱慕档检查丢失（TALENT:85 == 1 改恒真，#239）',
@@ -17904,7 +17907,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     find: '    return `♪`;',
     replace: '    return `！`; // （变异）',
     tests: ['kojo-k15-clever'],
-    must_mention: 'GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW',
+    must_mention: 'GOBI ARG:0==1 语尾；EXUCUTION 处分方式 4 空 PRINTFORMW',
   },
 
   {
@@ -19721,10 +19724,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'handler 实参逐条对上',
   },
   {
-    desc: 'M8948 处刑首五族：K0 的旧签名分档反转（K0 收随机源、其余收事件编号）',
+    desc: 'M8948 处刑首五族：分发体不传处分编号（handler 收到 undefined）',
     file: 'ere/kojo/kojo-system.js',
-    find: '    args: (id) => [id === 0 ? event_no : rand],',
-    replace: '    args: (id) => [id === 0 ? rand : event_no],',
+    find: '    args: [event_no],',
+    replace: '    args: [], // 变异：不传处分编号',
     tests: ['event-k-dispatch'],
     must_mention: 'K0 收展品/处刑编号',
   },
@@ -25991,5 +25994,32 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     replace: '    // 变异：副作用不执行',
     tests: ['kojo-base-factory'],
     must_mention: '关掉口上时清 TFLAG:15',
+  },
+  // —— #817：处刑钩子从实参读处分方式，不再读 tflag ——
+  {
+    desc: 'M16009 K4 处刑口上：处分方式分档错位（6 → 4）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: '  } else if (event_no == 6) {\n    await era.printAndWait(`「混蛋！给我记住！！………」`);',
+    replace:
+      '  } else if (event_no == 4) {\n    await era.printAndWait(`「混蛋！给我记住！！………」`);',
+    tests: ['execution-params'],
+    must_mention: 'K4 处刑 6',
+  },
+  {
+    desc: 'M16010 K7 博物馆口上：展品编号分档错位（0 → 1）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '  if (event_no == 0) {\n    await era.printAndWait(\n      `「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」`,\n    );',
+    replace:
+      '  if (event_no == 1) {\n    await era.printAndWait(\n      `「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」`,\n    );',
+    tests: ['execution-params'],
+    must_mention: 'K7 博物馆 0',
+  },
+  {
+    desc: 'M16011 处刑首五族：分发给口上的处分编号错一位',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    args: [event_no],',
+    replace: '    args: [event_no + 1], // 变异：编号错位',
+    tests: ['execution-params'],
+    must_mention: '五个处刑钩子从实参读处分方式',
   },
 ];

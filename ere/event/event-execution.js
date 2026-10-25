@@ -136,10 +136,13 @@ function print_methods(cid) {
   });
 }
 
-async function call_execution_kojo(cid, result, rand_n) {
-  game.event.犬射精或处刑口上 = result;
-  // 处刑口上（exucution_koujo，#403 收到分发入口）
-  await exucution_koujo(cid, result, rand_n);
+/**
+ * 处刑口上：处分方式编号作为实参传入，口上按它分档。
+ * @param {number} cid 目标
+ * @param {number} result 处分方式编号
+ */
+async function call_execution_kojo(cid, result) {
+  await exucution_koujo(cid, result); // TRYCALLFORM EXUCUTION_KOUJO_K{N}
 }
 
 async function keep_as_soldier(cid) {
@@ -368,8 +371,7 @@ async function execution(rand_n = default_rand) {
       }
 
       era_flag.target = cid;
-      await call_execution_kojo(cid, result, rand_n);
-      result = game.event.犬射精或处刑口上;
+      await call_execution_kojo(cid, result);
       if (result === 0) {
         era.print(
           `${chara_callname(0)}把${chara_callname(cid)}从地下城里永久驱逐了。`,
@@ -390,7 +392,7 @@ async function execution(rand_n = default_rand) {
         );
         await era.printAndWait('　　　　　　　　　　< ※ 注 意 ！ ※ >');
         await era.printAndWait('（之后将发生非常黄暴的事！！）');
-        return grotesque(cid, rand_n);
+        return grotesque(cid);
       }
       if (result === 4) {
         await make_toilet(cid);

@@ -51,7 +51,7 @@
  *     ——ere 的 museum（#347）按处理体实现，与之一致，本文件直接复用（该
  *     取消分支的登记结论原先说反了，已订正）；
  *   - NO_PAGE 是函数静态变量：`JUMP 批量处刑` 只重执行开头三行，只显式
- *     重置 处刑中/可处刑/TFLAG:16，NO_PAGE 不在其中，故翻页位置跨重启与跨
+ *     重置 处刑中/可处刑，NO_PAGE 不在其中，故翻页位置跨重启与跨
  *     调用都保留（模块级 no_page）；可处刑的清零点在进入函数处，进入函数
  *     与 JUMP 都重置、`GOTO 处刑介面` 不清，故落在 restart 循环内的局部量；
  *   - `PRINTLC` 是「左对齐打印」，**不换行**（旧引擎
@@ -61,15 +61,11 @@
  *     下一行的 `PRINTL` 只收 [121] 那一行、再下一行才是一个空行；
  *     不显示 [121] 时那两个空行。ere 的 `printButton` 自成一行，
  *     等价于两行合并——于是显示 [121] 时按钮后只 `println` 一次；
- *   - 处刑会话要 TFLAG:16/510/530/500（口上改写通道）。EraElectron 的
- *     tflag 桶只在 beginTrain/endTrain 之间存在，调教外二段寻址落
- *     「key error in getter/setter」（app.asar 寻址层；test/
- *     tstr-train-table.test.js 的正对照）；商店上下文直接读写
- *     TFLAG（旧引擎的 TFLAG 是常驻全局）。为整段会话开一个空窗口：
- *     beginTrain(0) 只建表，gotjewel 恒空、endTrain 的结算是精确无操作
- *     （turnend-settle.js 的同款先例；对照 game-train.js 为单句口上选
- *     闭包通道而非开窗的结论——这里是四条通道的整段交互会话，开窗的
- *     改动面更小）。
+ *   - 处刑会话的四个口上通道（处分方式 / 展品号 / 处分号）是显式实参，
+ *     不再借 TFLAG:16/500/510/530。EraElectron 的 tflag 桶只在
+ *     beginTrain/endTrain 之间存在，调教外二段寻址落「key error in
+ *     getter/setter」——原实现为此在整段会话外面开调教窗口；现在编号
+ *     直接进口上的实参，商店上下文没有调教窗口也能跑。
  */
 
 'use strict';
@@ -108,7 +104,7 @@ const NUM_PAGE = 25;
 /**
  * no_page（#DIM 静态变量语义）：函数静态变量跨 `JUMP 批量处刑` 与跨
  * 调用都保留——函数退出之后值不会被重置，需要重置的变量要在函数开头
- * 显式初始化；JUMP 段只显式重置 处刑中/可处刑/TFLAG:16，
+ * 显式初始化；JUMP 段只显式重置 处刑中/可处刑，
  * NO_PAGE 不在其中。故翻页位置在重启（收藏剃除、0-3 号取消）与再次进入
  * 处刑时都保留（按原样保留，不是遗漏）。
  */
@@ -190,7 +186,7 @@ function print_roster(added, no_page) {
 /**
  * $待处刑：找下一个带标签目标。士兵化的两类受限目标先播报
  * 后跳过（NO 17-40 = 【不受洗脑】的角色段，TALENT:254 = 已士兵化）。
- * @param {number} method TFLAG:16 的当前值（口上可改写）
+ * @param {number} method 处分方式编号
  * @returns {Promise<number>} 目标角色 ID；无目标返回 -1
  */
 async function next_tagged(method) {
@@ -444,54 +440,49 @@ async function release_without_memory(cid) {
 }
 
 /**
- * 进行处刑：对单个目标执行当前处分。口上先于分发（
- * EXUCUTION_KOUJO 可改写 TFLAG:16 改道）；0-3 号的下游各自完成除名，
- * 取消（输入 100）时置 TFLAG:16 = -1 并跳回批量处刑——本函数以 restart 信号回传。
+ * 进行处刑：对单个目标执行当前处分。口上先于分发，处分方式编号作为实参
+ * 传入；0-3 号的下游各自完成除名，取消（输入 100）时下游返回 -1 并跳回
+ * 批量处刑——本函数以 restart 信号回传。
  * @param {number} cid 目标
- * @param {number} method TFLAG:16 的进入值
+ * @param {number} method 处分方式编号
  * @param {Function} rand_n 随机源
- * @returns {Promise<{restart: boolean, method: number}>}
+ * @returns {Promise<boolean>} true = 取消，整界面重启
  */
 async function execute_one(cid, method, rand_n) {
   // TARGET = A
   era_flag.target = cid;
-  game.event.犬射精或处刑口上 = method;
-  await exucution_koujo(cid, method, rand_n); // TRYCALLFORM EXUCUTION_KOUJO_K{N}
-  const result = game.event.犬射精或处刑口上;
+  await exucution_koujo(cid, method); // TRYCALLFORM EXUCUTION_KOUJO_K{N}
 
   const name = chara_callname(cid);
-  if (result === 0) {
+  if (method === 0) {
     era.print(`${chara_callname(0)}把${name}从地下城里永久驱逐了。`);
-    await banishment(cid, rand_n);
-  } else if (result === 1) {
+    return (await banishment(cid, rand_n)) === -1;
+  }
+  if (method === 1) {
     era.print(`${chara_callname(0)}把${name}公开处刑了。`);
-    await public_execution(cid, rand_n);
-  } else if (result === 2) {
+    return (await public_execution(cid, rand_n)) === -1;
+  }
+  if (method === 2) {
     await era.printAndWait(`${name}被带到了工作室……`);
     await museum(cid, rand_n);
-  } else if (result === 3) {
+    return false;
+  }
+  if (method === 3) {
     era.print(`${chara_callname(0)}决定让${name}品尝真正的痛苦…`);
     await era.printAndWait('　　　　　　　　　　< ※ 注 意 ！ ※ >');
     await era.printAndWait('（之后将发生非常黄暴的事！！）');
-    await grotesque(cid, rand_n);
-  } else if (result === 4) {
+    return (await grotesque(cid)) === -1;
+  }
+  if (method === 4) {
     await make_toilet(cid);
-  } else if (result === 5) {
+  } else if (method === 5) {
     await keep_as_soldier(cid);
-  } else if (result === 6) {
+  } else if (method === 6) {
     await keep_on_display(cid);
-  } else if (result === 7) {
+  } else if (method === 7) {
     await release_without_memory(cid);
   }
-  // 0-3 号下游的取消信号：TFLAG:16 被置 -1 后跳回批量处刑（
-  // 等各自的取消支）。只在这一段认它——口上把处分改写成 0-7 之外的值时，
-  // 走 ELSE → LABEL_EXIT → 待处刑 再入同一目标（死循环，无口上
-  // 写此类值），不额外设防。TFLAG:16 初值无读者
-  // （每次分发前 execute_one 都会写它），未镜像。
-  if (result >= 0 && result <= 3 && game.event.犬射精或处刑口上 === -1) {
-    return { restart: true, method: -1 };
-  }
-  return { restart: false, method: game.event.犬射精或处刑口上 };
+  return false;
 }
 
 /**
@@ -533,15 +524,12 @@ async function method_screen(rand_n) {
 
     const choice = await era.input(); // INPUT
     if (choice >= 0 && choice <= 7) {
-      // CASE 0 TO 7：处刑中 = 1；TFLAG:16 = RESULT
-      let method = choice;
+      // CASE 0 TO 7：处刑中 = 1；处分方式 = RESULT
+      const method = choice;
       for (;;) {
         const cid = await next_tagged(method); // $待处刑
         if (cid < 0) break;
-        const outcome = await execute_one(cid, method, rand_n);
-        if (outcome.restart) return RESTART;
-        // 口上/下游改写的 TFLAG:16 延续到下一目标（全局变量的语义）
-        method = outcome.method;
+        if (await execute_one(cid, method, rand_n)) return RESTART;
       }
       return DONE; // 处刑中 = 0；GOTO 处刑介面
     }
@@ -555,99 +543,92 @@ async function method_screen(rand_n) {
 }
 
 /**
- * @批量处刑：复选处刑对象的主菜单入口。
- * @param {Function} [rand_n] 随机源（透传给 0-3 号下游）
+ * @批量处刑：复选处刑对象的主菜单入口。处分方式编号作为实参传给口上，
+ * 不再借调教窗口提供 tflag。
+ * @param {Function} [rand_n] 随机源（透传给 0-4 号下游）
  * @returns {Promise<number>} 0（[1999] 結束处刑 = BEGIN SHOP 的等价物）
  */
 async function batch_execution(rand_n = default_rand) {
-  // 处刑会话的调教窗口（文件头「tflag 通道」节）
-  era.beginTrain(0);
-  try {
-    restart: for (;;) {
-      // 可处刑：清零点在进入函数与 `JUMP 批量处刑`
-      // （重执行）时都会跑到这里重置；`GOTO 处刑介面`（翻页、切换
-      // 标签、[101] 重绘）不重跑，所以本次调用中一旦有非收藏目标带过标签，
-      // [121] 就一直显示到整界面重启为止。与跨调用保留的 NO_PAGE（
-      // 见模块顶部）不同，它每次进入函数都回到 0，故按函数局部量处理。
-      let executable = false; // 可处刑 = 0
-      screen: for (;;) {
-        // $处刑介面
-        const added = era.getAddedCharacters();
-        const charanum = added.length; // CHARANUM
-        // CUSTOMDRAWLINE 画的那条线立刻被 CLEARLINE 清掉，不镜像
-        if (
-          game.event.装饰品数 < 20 && // FLAG:84
-          era_flag.day_count < 60 && // DAY
-          !get('talent:0:329') // TALENT:MASTER:329【造型王】
-        ) {
-          era.print(
-            `<${60 - era_flag.day_count}天以内再展出${20 - game.event.装饰品数}名勇者到博物馆将解锁实绩！>`,
-          );
-        }
-        era.println(); // PRINTL
-        era.drawLine(); // 段的 DRAWLINE（默认线型）
-        era.print('请选出处刑对象(可复选)');
+  restart: for (;;) {
+    // 可处刑：清零点在进入函数与 `JUMP 批量处刑`
+    // （重执行）时都会跑到这里重置；`GOTO 处刑介面`（翻页、切换
+    // 标签、[101] 重绘）不重跑，所以本次调用中一旦有非收藏目标带过标签，
+    // [121] 就一直显示到整界面重启为止。与跨调用保留的 NO_PAGE（
+    // 见模块顶部）不同，它每次进入函数都回到 0，故按函数局部量处理。
+    let executable = false; // 可处刑 = 0
+    screen: for (;;) {
+      // $处刑介面
+      const added = era.getAddedCharacters();
+      const charanum = added.length; // CHARANUM
+      // CUSTOMDRAWLINE 画的那条线立刻被 CLEARLINE 清掉，不镜像
+      if (
+        game.event.装饰品数 < 20 && // FLAG:84
+        era_flag.day_count < 60 && // DAY
+        !get('talent:0:329') // TALENT:MASTER:329【造型王】
+      ) {
         era.print(
-          '标签：[售]可卖出\u00A0\u00A0[☆]收藏中\u00A0\u00A0[兵]已士兵化\u00A0\u00A0[SP]特殊角色',
+          `<${60 - era_flag.day_count}天以内再展出${20 - game.event.装饰品数}名勇者到博物馆将解锁实绩！>`,
         );
-        era.drawLine(); // 段的 DRAWLINE（默认线型）
-        print_roster(added, no_page);
-        era.drawLine();
+      }
+      era.println(); // PRINTL
+      era.drawLine(); // 段的 DRAWLINE（默认线型）
+      era.print('请选出处刑对象(可复选)');
+      era.print(
+        '标签：[售]可卖出\u00A0\u00A0[☆]收藏中\u00A0\u00A0[兵]已士兵化\u00A0\u00A0[SP]特殊角色',
+      );
+      era.drawLine(); // 段的 DRAWLINE（默认线型）
+      print_roster(added, no_page);
+      era.drawLine();
 
-        // 收藏目标带标签 → 播报 + 剃除 + JUMP 批量处刑
-        for (const cid of added) {
-          if (chara(cid).invasion.状态 === 8) continue;
-          if (chara(cid).patch.待处刑标签 && get(`cflag:${cid}:700`)) {
-            await era.printAndWait(
-              '有 [☆]收藏 的目标被选中，自动剃除处刑标签，若要处刑请先取消收藏',
-            );
-            chara(cid).patch.待处刑标签 = 0;
-            continue restart;
-          }
-          if (chara(cid).patch.待处刑标签) executable = true;
+      // 收藏目标带标签 → 播报 + 剃除 + JUMP 批量处刑
+      for (const cid of added) {
+        if (chara(cid).invasion.状态 === 8) continue;
+        if (chara(cid).patch.待处刑标签 && get(`cflag:${cid}:700`)) {
+          await era.printAndWait(
+            '有 [☆]收藏 的目标被选中，自动剃除处刑标签，若要处刑请先取消收藏',
+          );
+          chara(cid).patch.待处刑标签 = 0;
+          continue restart;
         }
-        // 首个 PRINTLC 不换行（左对齐打印），其后的 PRINTL 只收它
-        // 那一行、再后一行才是一个空行；`printButton` 自成一行（等价前两
-        // 行合并），故显示 [121] 时按钮后只补一个空行；不显示时
-        // 两个 PRINTL 都落成空行，随后是三个页导航按钮
-        if (executable) {
-          era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示
-          era.println(); // PRINTL
-        } else {
-          era.println(); // PRINTL
-          era.println(); // PRINTL
-        }
-        era.printButton('上一页', 2000);
-        era.printButton('结束处刑', 1999); // 原文「結束处刑」
-        era.printButton('下一页', 2001);
+        if (chara(cid).patch.待处刑标签) executable = true;
+      }
+      // 首个 PRINTLC 不换行（左对齐打印），其后的 PRINTL 只收它
+      // 那一行、再后一行才是一个空行；`printButton` 自成一行（等价前两
+      // 行合并），故显示 [121] 时按钮后只补一个空行；不显示时
+      // 两个 PRINTL 都落成空行，随后是三个页导航按钮
+      if (executable) {
+        era.printButton('选择处刑方式', 121); // 有可处刑目标时才显示
+        era.println(); // PRINTL
+      } else {
+        era.println(); // PRINTL
+        era.println(); // PRINTL
+      }
+      era.printButton('上一页', 2000);
+      era.printButton('结束处刑', 1999); // 原文「結束处刑」
+      era.printButton('下一页', 2001);
 
-        const result = await era.input(); // INPUT
-        if (result === 2000) {
-          // 上一页：页首不再退
-          if (no_page > 0) no_page -= 1;
-          continue screen;
-        }
-        if (result === 2001) {
-          // 下一页：(NO_PAGE+1)*NUM_PAGE <= CHARANUM 才进
-          if ((no_page + 1) * NUM_PAGE <= charanum) no_page += 1;
-          continue screen;
-        }
-        if (result === 1999) return 0; // BEGIN SHOP
-        if (result === 121) {
-          const outcome = await method_screen(rand_n);
-          if (outcome === RESTART) continue restart;
-          continue screen;
-        }
-        // CASEELSE：切换处刑标签
-        if (result > 0 && added.includes(result)) {
-          chara(result).patch.待处刑标签 = chara(result).patch.待处刑标签
-            ? 0
-            : 1;
-        }
+      const result = await era.input(); // INPUT
+      if (result === 2000) {
+        // 上一页：页首不再退
+        if (no_page > 0) no_page -= 1;
+        continue screen;
+      }
+      if (result === 2001) {
+        // 下一页：(NO_PAGE+1)*NUM_PAGE <= CHARANUM 才进
+        if ((no_page + 1) * NUM_PAGE <= charanum) no_page += 1;
+        continue screen;
+      }
+      if (result === 1999) return 0; // BEGIN SHOP
+      if (result === 121) {
+        const outcome = await method_screen(rand_n);
+        if (outcome === RESTART) continue restart;
+        continue screen;
+      }
+      // CASEELSE：切换处刑标签
+      if (result > 0 && added.includes(result)) {
+        chara(result).patch.待处刑标签 = chara(result).patch.待处刑标签 ? 0 : 1;
       }
     }
-  } finally {
-    era.endTrain();
   }
 }
 

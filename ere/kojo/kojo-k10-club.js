@@ -24,8 +24,8 @@
  *
  * == 空台词槽 ==
  *
- * MUSEUM_KOUJO_K10（TFLAG:500）、BANISHMENT_KOUJO_K10（TFLAG:510）、
- * GROTESQUE_KOUJO_K10（TFLAG:530）都有未填写正文的台词档（哪些档为空见
+ * MUSEUM_KOUJO_K10（展品编号）、BANISHMENT_KOUJO_K10（处分号）、
+ * GROTESQUE_KOUJO_K10（处分方式）都有未填写正文的台词档（哪些档为空见
  * 各函数头），这些档输出空行，不代填台词。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
@@ -10924,117 +10924,107 @@ async function ntr_koujo_k10(rand, P) {
 }
 
 /**
- * exucution_koujo_k10：处刑口上（TFLAG:16）。档位 7 是未填写正文的
+ * exucution_koujo_k10：处刑口上（处分方式编号）。档位 7 是未填写正文的
  * 台词槽，输出空行。
  */
-async function exucution_koujo_k10(rand) {
-  void rand;
-
-  if (game.event.犬射精或处刑口上 == 4) {
+async function exucution_koujo_k10(event_no) {
+  if (event_no == 4) {
     await era.printAndWait(
       `「求、求你么…杀了我…请杀了我吧…肉便器什么的…不要、不要啊………」`,
     );
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait(`「啊啊 …命令…请下命令…吧……」`);
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait(`「对、对我做这种过分的事情什么的………～！」`);
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
 
 /**
- * museum_koujo_k10：博物馆展示口上（TFLAG:500）。档位 2-9 是未填写
+ * museum_koujo_k10：博物馆展示口上（展品编号）。档位 2-9 是未填写
  * 正文的台词槽，输出空行。
  */
-async function museum_koujo_k10(rand) {
-  void rand;
-
-  if (game.event.博物馆口上 == 0) {
+async function museum_koujo_k10(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(
       `「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」`,
     );
-  } else if (game.event.博物馆口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(`「啊啊…我的身姿就这样永远的残留下去了呢………」`);
-  } else if (game.event.博物馆口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
 }
 
 /**
- * banishment_koujo_k10：放逐口上（TFLAG:510）。档位 1-4 是未填写正文的
+ * banishment_koujo_k10：放逐口上（处分号）。档位 1-4 是未填写正文的
  * 台词槽，输出空行。
  */
-async function banishment_koujo_k10(rand) {
-  void rand;
-
-  if (game.event.流放口上 == 0) {
+async function banishment_koujo_k10(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「我的魔法连让小石头动一下都不行了…啊啊………」`);
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
   }
 }
 
 /**
- * public_exucution_koujo_k10：公开处刑口上（TFLAG:520）。
+ * public_exucution_koujo_k10：公开处刑口上（处分号）。
  */
-async function public_exucution_koujo_k10(rand) {
-  void rand;
-
-  if (game.event.公开处刑口上 == 0) {
+async function public_exucution_koujo_k10(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(
       `「呐..开玩笑的吧？那样的…我可不觉得好笑…啊～…啊啊～！」`,
     );
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(
       `「咿…绞刑不要…饶了我！…求求你了！请住手吧！请住..手..呃..！」`,
     );
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
 /**
- * grotesque_koujo_k10：猎奇处刑口上（TFLAG:530，取值 0-6 与处刑选项
+ * grotesque_koujo_k10：猎奇处刑口上（处分方式，取值 0-6 与处刑选项
  * 一一对应）。七档均为未填写正文的台词槽，输出空行；处刑场景文本由
  * 通用处刑流程（ere/event/event-grotesque.js）统一输出。
  */
-async function grotesque_koujo_k10(rand) {
-  void rand;
-
-  if (game.event.猎奇处刑口上 == 0) {
+async function grotesque_koujo_k10(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }

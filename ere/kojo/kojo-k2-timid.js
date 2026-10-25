@@ -9345,100 +9345,100 @@ async function ntr_koujo_k2(rand, p = 0) {
 }
 
 // exucution_koujo_k2
-async function exucution_koujo_k2(rand) {
-  const { sc } = bind_ctx(rand);
+async function exucution_koujo_k2(event_no) {
+  const { sc } = bind_ctx();
 
-  if (game.event.犬射精或处刑口上 === 4) {
+  if (event_no === 4) {
     await era.printAndWait(`「肉便器…${sc()}已经成为奴隶的玩物了吗……」`);
-  } else if (game.event.犬射精或处刑口上 === 5) {
+  } else if (event_no === 5) {
     await era.printAndWait(`「${sc()}的意志已经…消失…了………」`);
-  } else if (game.event.犬射精或处刑口上 === 6) {
+  } else if (event_no === 6) {
     await era.printAndWait(`「呜呜呜…为什么…为什么做了这样的事情………」`);
-  } else if (game.event.犬射精或处刑口上 === 7) {
+  } else if (event_no === 7) {
     await era.printAndWait('');
   }
 }
 
 // museum_koujo_k2
-async function museum_koujo_k2(rand) {
-  const { sc } = bind_ctx(rand);
+async function museum_koujo_k2(event_no) {
+  const { sc } = bind_ctx();
 
-  if (game.event.博物馆口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait(`「${sc()}石化了…？收藏品…？那是…什……」`);
-  } else if (game.event.博物馆口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait(`「标本…${sc()}，明明还活着……」`);
-  } else if (game.event.博物馆口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 === 3) {
+  } else if (event_no === 3) {
     await era.printAndWait(`「那、那个…找您吩咐这样做了…到底要做什么呢…？」`);
-  } else if (game.event.博物馆口上 === 4) {
+  } else if (event_no === 4) {
     await era.printAndWait(
       `「${sc()}的身体……不要……这样的…请变回去、变……回……」`,
     );
-  } else if (game.event.博物馆口上 === 5) {
+  } else if (event_no === 5) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 === 6) {
+  } else if (event_no === 6) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 === 7) {
+  } else if (event_no === 7) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 === 8) {
+  } else if (event_no === 8) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 === 9) {
+  } else if (event_no === 9) {
     await era.printAndWait('');
   }
 }
 
 // banishment_koujo_k2
-async function banishment_koujo_k2(rand) {
-  const { sc } = bind_ctx(rand);
+async function banishment_koujo_k2(event_no) {
+  const { sc } = bind_ctx();
 
-  if (game.event.流放口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait(
       `「那种…力量被夺走的话……${sc()}该如何继续生存下去…啊啊…」`,
     );
-  } else if (game.event.流放口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 === 3) {
+  } else if (event_no === 3) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 === 4) {
+  } else if (event_no === 4) {
     await era.printAndWait('');
   }
 }
 
 // public_exucution_koujo_k2
-async function public_exucution_koujo_k2(rand) {
-  bind_ctx(rand);
+async function public_exucution_koujo_k2(event_no) {
+  bind_ctx();
 
-  if (game.event.公开处刑口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait(
       `「好多人！要死！要死了啊…呼呼…啊啊啊啊小穴要被用坏了！」`,
     );
-  } else if (game.event.公开处刑口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait(`「相比如今的结局，果然还是勇者比较好吗……」`);
-  } else if (game.event.公开处刑口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
   }
 }
 
 // grotesque_koujo_k2
-async function grotesque_koujo_k2(rand) {
-  bind_ctx(rand);
+async function grotesque_koujo_k2(event_no) {
+  bind_ctx();
 
-  if (game.event.猎奇处刑口上 === 0) {
+  if (event_no === 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 1) {
+  } else if (event_no === 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 2) {
+  } else if (event_no === 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 3) {
+  } else if (event_no === 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 4) {
+  } else if (event_no === 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 5) {
+  } else if (event_no === 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 === 6) {
+  } else if (event_no === 6) {
     await era.printAndWait('');
   }
 }

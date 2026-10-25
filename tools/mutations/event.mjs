@@ -773,10 +773,10 @@ export default [
   {
     desc: 'M6951 MUSEUM 口上分发：把性格处理器编号误写成角色 ID',
     file: 'ere/event/event-museum.js',
-    find: '  await museum_koujo(a, result, rand_n);',
-    replace: '  await museum_koujo(result, result, rand_n);',
+    find: '  await museum_koujo(a, result);',
+    replace: '  await museum_koujo(result, result);',
     tests: ['event-museum'],
-    must_mention: '按角色性格分发口上',
+    must_mention: '口上收到展品编号',
   },
   {
     desc: 'M6952 MUSEUM PRINTFORM：家具变形片段被拆成独立行',
@@ -879,7 +879,7 @@ export default [
   {
     desc: 'M6962 MUSEUM 金属像：漏加装饰品总数',
     file: 'ere/event/event-museum.js',
-    find: `  } else if (game.event.博物馆口上 === 7) {
+    find: `  } else if (result === 7) {
     game.event.装饰品数 += 1;`,
     replace: `  } else if (game.event.博物馆口上 === 7) {
     game.event.装饰品数 += 0;`,

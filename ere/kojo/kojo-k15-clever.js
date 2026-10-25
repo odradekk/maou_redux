@@ -7072,94 +7072,84 @@ async function ntr_koujo_k15(rand, P) {
 }
 
 // @exucution_koujo_k15
-async function exucution_koujo_k15(rand) {
-  void rand;
-
-  if (game.event.犬射精或处刑口上 == 4) {
+async function exucution_koujo_k15(event_no) {
+  if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
 
 // @museum_koujo_k15
-async function museum_koujo_k15(rand) {
-  void rand;
-
-  if (game.event.博物馆口上 == 0) {
+async function museum_koujo_k15(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
 }
 
 // @banishment_koujo_k15
-async function banishment_koujo_k15(rand) {
-  void rand;
-
-  if (game.event.流放口上 == 0) {
+async function banishment_koujo_k15(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
   }
 }
 
 // @public_exucution_koujo_k15
-async function public_exucution_koujo_k15(rand) {
-  void rand;
-
-  if (game.event.公开处刑口上 == 0) {
+async function public_exucution_koujo_k15(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
 // @grotesque_koujo_k15
-async function grotesque_koujo_k15(rand) {
-  void rand;
-
-  if (game.event.猎奇处刑口上 == 0) {
+async function grotesque_koujo_k15(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }

@@ -212,23 +212,22 @@ test('#597：公开处刑前两支的勋章空行不许删', async () => {
   }
 });
 
-test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async () => {
+test('GROTESQUE：口上收到处分方式编号，结局按所选末路归档', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
   fixture.set_inputs(5);
   const { grotesque } = fixture.load_module('event/event-grotesque');
   const { grotesque_koujo_family } = fixture.load_module('kojo/kojo-system');
   let observed;
-  grotesque_koujo_family.register(3, async (rand_n) => {
-    observed = [fixture.store.get('tflag:530'), rand_n(7)];
-    fixture.store.set('tflag:530', 4);
+  grotesque_koujo_family.register(3, async (event_no) => {
+    observed = event_no;
     return 0;
   });
 
-  await grotesque(31, seq([4]));
+  await grotesque(31);
 
-  assert.deepEqual(observed, [5, 4]);
-  assert.equal(fixture.store.get('videoarchive:1'), '肉类温妮');
+  assert.equal(observed, 5, '处分方式编号经实参送到口上');
+  assert.equal(fixture.store.get('videoarchive:1'), '低级幽灵温妮');
   assert.equal(fixture.store.get('exp:0:81'), 1);
   // #597：菜单末项之后的空行不许删（的 PRINTL 已收尾），删掉即少一行
   assert_one_blank_after(fixture, '僵尸化', '猎奇菜单末项');
@@ -245,7 +244,11 @@ test('GROTESQUE：#710 处刑菜单是一列按钮（0-6），未显示的 100 �
   fixture.set_inputs(100); // 取消（未显示，走 useRule: false 的自由输入）
   const { grotesque } = fixture.load_module('event/event-grotesque');
 
-  await grotesque(31, seq([0]));
+  assert.equal(
+    await grotesque(31),
+    -1,
+    '100 以 -1 回传取消信号（批量处刑据此重启界面）',
+  );
 
   assert.deepEqual(
     button_rendered(fixture),
@@ -296,16 +299,18 @@ test('处分函数直调：口上观察到传入角色，而不是调用前残�
   const { public_exucution_koujo_family } =
     fixture.load_module('kojo/kojo-system');
   let observed_target;
-  public_exucution_koujo_family.register(3, async () => {
+  let observed_event_no;
+  public_exucution_koujo_family.register(3, async (event_no) => {
     observed_target = era_flag.target;
-    fixture.store.set('tflag:520', 0);
+    observed_event_no = event_no;
     return 0;
   });
 
   await public_execution(47, seq([0]));
 
   assert.equal(observed_target, 47);
-  assert.equal(fixture.store.get('videoarchive:2'), '凌辱致死艾达');
+  assert.equal(observed_event_no, 2, '口上收到的是处分方式编号');
+  assert.equal(fixture.store.get('videoarchive:2'), '武具的素材艾达');
 });
 
 test('BANISHMENT：选项 1 对女性可选——施予男性化的诅咒（#650 修复无条件拒绝）', async () => {
@@ -961,21 +966,6 @@ test('BANISHMENT：诅咒、失忆与回归前世均使用实际主角名', asyn
       `${choice}`,
     );
   }
-
-  const rewritten = seed_world();
-  rewritten.store.set('callname:0:-1', '魔王');
-  rewritten.store.set('talent:31:163', 1); // 高贵性格 → K3
-  rewritten.set_inputs(2);
-  const { banishment } = rewritten.load_module('event/event-banishment');
-  const { banishment_koujo_family } = rewritten.load_module('kojo/kojo-system');
-  banishment_koujo_family.register(3, async () => {
-    rewritten.store.set('tflag:510', 1);
-    return 0;
-  });
-  await banishment(31, seq([0]));
-  assert(
-    rewritten.text_lines().some((line) => line.includes('被魔王男性化的温妮')),
-  );
 });
 
 test('BANISHMENT：K0 口上处理器接收处分编号', async () => {
@@ -995,22 +985,21 @@ test('BANISHMENT：K0 口上处理器接收处分编号', async () => {
   assert.equal(observed, 2);
 });
 
-test('BANISHMENT：K1 以上口上处理器接收随机源', async () => {
+test('BANISHMENT：K1 以上口上处理器接收处分编号', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
   fixture.set_inputs(2);
   const { banishment } = fixture.load_module('event/event-banishment');
   const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
-  const rand_n = seq([6]);
   let observed;
-  banishment_koujo_family.register(3, async (received_rand_n) => {
-    observed = received_rand_n;
+  banishment_koujo_family.register(3, async (event_no) => {
+    observed = event_no;
     return 0;
   });
 
-  await banishment(31, rand_n);
+  await banishment(31, seq([6]));
 
-  assert.equal(observed, rand_n);
+  assert.equal(observed, 2, 'K3 与 K0 收到同一个处分编号');
 });
 
 test('EXECUTION：使用稳定角色 ID 选择第二名角色并路由到固定示众', async () => {
@@ -1108,16 +1097,15 @@ function register_probe(family, key) {
   return seen;
 }
 
-test('EXECUTION：处刑口上处理器收到注入随机源（入口实参位置锁）', async () => {
+test('EXECUTION：处刑口上处理器收到处刑方式编号（入口实参位置锁）', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:163', 1); // 高贵 → K3
   fixture.set_inputs(0, 6); // 第 1 候选、方式 6 = 固定示众
   const { execution } = fixture.load_module('event/event-execution');
   const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
-  const rand_n = seq([0]);
   const seen = register_probe(exucution_koujo_family, 3);
 
-  await execution(rand_n);
+  await execution(seq([0]));
 
   assert.equal(
     seen.length,
@@ -1126,8 +1114,8 @@ test('EXECUTION：处刑口上处理器收到注入随机源（入口实参位�
   );
   assert.equal(
     seen[0][0],
-    rand_n,
-    '入口实参位置：第 3 参（随机源）不许与第 2 参（处刑方式）对调',
+    6,
+    '入口实参位置：K3 与 K0 一样收处分方式编号，没有随机源那一参',
   );
 });
 
@@ -1153,7 +1141,7 @@ test('EXECUTION：K0 处刑口上处理器收到处刑方式编号（入口实�
   );
 });
 
-test('PUBLIC_EXECUTION：公开处刑口上处理器收到注入随机源（入口实参位置锁）', async () => {
+test('PUBLIC_EXECUTION：公开处刑口上处理器收到处分方式编号（入口实参位置锁）', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:163', 1); // 高贵 → K3
   fixture.set_inputs(0); // 凌辱刑
@@ -1162,10 +1150,9 @@ test('PUBLIC_EXECUTION：公开处刑口上处理器收到注入随机源（入�
   );
   const { public_exucution_koujo_family } =
     fixture.load_module('kojo/kojo-system');
-  const rand_n = seq([0]);
   const seen = register_probe(public_exucution_koujo_family, 3);
 
-  await public_execution(31, rand_n);
+  await public_execution(31, seq([0]));
 
   assert.equal(
     seen.length,
@@ -1174,8 +1161,8 @@ test('PUBLIC_EXECUTION：公开处刑口上处理器收到注入随机源（入�
   );
   assert.equal(
     seen[0][0],
-    rand_n,
-    '入口实参位置：第 3 参（随机源）不许与第 2 参（处分方式）对调',
+    0,
+    '入口实参位置：K3 与 K0 一样收处分方式编号，没有随机源那一参',
   );
 });
 
@@ -1446,7 +1433,11 @@ test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#5
   fixture.set_inputs(100);
   const { banishment } = fixture.load_module('event/event-banishment');
 
-  assert.equal(await banishment(31, seq([0])), 0, '100 走「不执行」出口');
+  assert.equal(
+    await banishment(31, seq([0])),
+    -1,
+    '100 以 -1 回传取消信号（批量版据此重启界面）',
+  );
 
   assert.deepEqual(button_rendered(fixture), [
     '[0] 就这样流放掉',
@@ -1468,7 +1459,11 @@ test('#597：流放画面的两处空行', async () => {
   fixture.set_inputs(100);
   const { banishment } = fixture.load_module('event/event-banishment');
 
-  assert.equal(await banishment(31, seq([0])), 0, '100 走「不执行」出口');
+  assert.equal(
+    await banishment(31, seq([0])),
+    -1,
+    '100 以 -1 回传取消信号（批量版据此重启界面）',
+  );
 
   assert_one_blank_after(fixture, '要来点有意思的放逐吗？', '流放开场');
   assert_one_blank_after(fixture, '回到成为勇者前的生活', '流放菜单末项');
@@ -1481,7 +1476,11 @@ test('PUBLIC_EXECUTION：三选一菜单是按钮，未显示的 100 仍可键�
     'event/event-public-execution',
   );
 
-  assert.equal(await public_execution(31, seq([0])), 0, '100 走「不执行」出口');
+  assert.equal(
+    await public_execution(31, seq([0])),
+    -1,
+    '100 以 -1 回传取消信号（批量版据此重启界面）',
+  );
 
   assert.deepEqual(button_rendered(fixture), [
     '[0] 凌辱刑',

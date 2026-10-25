@@ -870,15 +870,13 @@ test('NTR_KOUJO_K13：连续无后缀 PRINT 是一行，输出一条（#600/#625
 
 test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async () => {
   const fixture = await setup_k13();
-  const { game } = fixture.load_module('facade/game');
   const {
     exucution_koujo_family,
     banishment_koujo_family,
     public_exucution_koujo_family,
   } = fixture.load_module('kojo/kojo-system');
 
-  game.event.犬射精或处刑口上 = 4;
-  await exucution_koujo_family.call(13, { args: [] });
+  await exucution_koujo_family.call(13, { args: [4] });
   assert.deepEqual(
     fixture.text_lines(),
     ['「噫、有谁……可以救救我」'],
@@ -886,8 +884,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async
   );
 
   let before = fixture.text_lines().length;
-  game.event.流放口上 = 0;
-  await banishment_koujo_family.call(13, { args: [] });
+  await banishment_koujo_family.call(13, { args: [0] });
   assert.deepEqual(
     fixture.text_lines().slice(before),
     ['「再见。应该是再也不见吧……」'],
@@ -895,8 +892,7 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async
   );
 
   before = fixture.text_lines().length;
-  game.event.公开处刑口上 = 0;
-  await public_exucution_koujo_family.call(13, { args: [] });
+  await public_exucution_koujo_family.call(13, { args: [0] });
   assert.deepEqual(
     fixture.text_lines().slice(before),
     ['「你、还是杀了我吧……」'],
@@ -904,12 +900,10 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async
   );
 });
 
-test('MUSEUM_KOUJO_K13：TFLAG:500==3 有台词', async () => {
+test('MUSEUM_KOUJO_K13：展品编号 3 有台词', async () => {
   const fixture = await setup_k13();
-  const { game } = fixture.load_module('facade/game');
   const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
-  game.event.博物馆口上 = 3;
-  await museum_koujo_family.call(13, { args: [] });
+  await museum_koujo_family.call(13, { args: [3] });
   assert.deepEqual(
     fixture.text_lines(),
     ['「啊啦啊啦、我的这副样子被看到的话…真是很困扰呢」'],

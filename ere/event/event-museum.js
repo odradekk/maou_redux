@@ -88,11 +88,10 @@ async function museum(a, rand_n = default_rand) {
     era_exflag.prestige -= 10;
     era.print('威望值减少');
   }
-  game.event.博物馆口上 = result;
-  // 博物馆口上（museum_koujo，#403 收到分发入口）
-  await museum_koujo(a, result, rand_n);
+  // 博物馆口上（museum_koujo）：展品号作为实参传入
+  await museum_koujo(a, result);
 
-  if (game.event.博物馆口上 === 0) {
+  if (result === 0) {
     game.event.装饰品数 += 1;
     if (
       get(`talent:${a}:57`) ||
@@ -486,7 +485,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`现在石像数量…${game.event.石像数}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 1) {
+  } else if (result === 1) {
     game.event.装饰品数 += 1;
     game.event.剥制数 += 1;
     era.print(
@@ -544,7 +543,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`现在的标本数量…${game.event.剥制数}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 2) {
+  } else if (result === 2) {
     game.event.装饰品数 += 1;
     game.event.蜡像数 += 1;
     era.print(`${chara_callname(a)}被封印了全部的力量，站在台座上。`);
@@ -611,7 +610,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`现在的蜡像数量…${game.event.蜡像数}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 3) {
+  } else if (result === 3) {
     game.event.装饰品数 += 1;
     game.event.人偶数_服装 += 1;
     line = '被封印一切力量的';
@@ -702,7 +701,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`人体模型人偶数量…${game.event.人偶数_服装}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 4) {
+  } else if (result === 4) {
     game.event.装饰品数 += 1;
     game.event.人偶数_球形关节 += 1;
     era.print(
@@ -775,7 +774,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`球型关节人偶数量…${game.event.人偶数_球形关节}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 5) {
+  } else if (result === 5) {
     game.event.装饰品数 += 1;
     if (
       get(`talent:${a}:57`) ||
@@ -1146,7 +1145,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`现在金属像的数量……${game.event.金属像数}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 6) {
+  } else if (result === 6) {
     game.event.装饰品数 += 1;
     game.event.冰像数 += 1;
     era.print(`${chara_callname(a)}被封印了全部的力量，站在巨型的魔法阵中央。`);
@@ -1221,7 +1220,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`现在冰雕像的数量…${game.event.冰像数}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 7) {
+  } else if (result === 7) {
     game.event.装饰品数 += 1;
     game.event.金属像数_2 += 1;
     era.print(`${chara_callname(a)}被封印了全部的力量，站在邪恶的魔法阵中央。`);
@@ -1327,7 +1326,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`现在的宝石像数量…${game.event.金属像数_2}个`);
     maturo = locals + maturo;
-  } else if (game.event.博物馆口上 === 8) {
+  } else if (result === 8) {
     game.event.装饰品数 += 1;
     game.event.家具数 += 1;
     era.print(`${chara_callname(a)}被封印了全部的力量，站在邪恶的魔法阵中央。`);
@@ -1363,7 +1362,7 @@ async function museum(a, rand_n = default_rand) {
     }
     await era.printAndWait(`${line}的样子。`);
     await era.printAndWait(`现在的家具数量…${game.event.家具数}个`);
-  } else if (game.event.博物馆口上 === 9) {
+  } else if (result === 9) {
     game.event.装饰品数 += 1;
     game.event.绘画数 += 1;
     era.print(`${chara_callname(a)}被封印了全部的力量，站在邪恶的魔法阵中央。`);

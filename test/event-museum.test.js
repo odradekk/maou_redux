@@ -136,21 +136,21 @@ test('MUSEUM：处刑后代时死亡标记按来源模板号落位（#561 第 2 
   );
 });
 
-test('MUSEUM：按角色性格分发口上并透传确定性随机源', async () => {
+test('MUSEUM：口上收到展品编号（实参，不再读 tflag）', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
   fixture.set_inputs(8);
   const { museum } = fixture.load_module('event/event-museum');
   const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
   let observed;
-  museum_koujo_family.register(3, async (rand_n) => {
-    observed = [fixture.store.get('tflag:500'), rand_n(4)];
+  museum_koujo_family.register(3, async (event_no) => {
+    observed = event_no;
     return 0;
   });
 
   await museum(31, seq([2, 0]));
 
-  assert.deepEqual(observed, [8, 2]);
+  assert.equal(observed, 8);
 });
 
 test('MUSEUM：K0 旧签名收到展品编号', async () => {

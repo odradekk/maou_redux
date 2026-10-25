@@ -5974,98 +5974,98 @@ async function ntr_koujo_k4(p) {
 }
 
 /**
- * exucution_koujo_k4：处刑口上（TFLAG:16 分派；7 记忆消除分支模板未填写，输出空行）。
+ * exucution_koujo_k4：处刑口上（处分方式编号分派；7 记忆消除分支模板未填写，输出空行）。
  */
-async function exucution_koujo_k4() {
-  if (era0('tflag:16') == 4) {
+async function exucution_koujo_k4(event_no) {
+  if (event_no == 4) {
     await era.printAndWait(`「放，放开我！我…侍奉怪物什么的………呜…呜哇哇！！」`);
-  } else if (era0('tflag:16') == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait(
       `「讨厌…讨厌！我变得不像我自己了…不要！……不、要、啊…啊………」`,
     );
-  } else if (era0('tflag:16') == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait(`「混蛋！给我记住！！………」`);
-  } else if (era0('tflag:16') == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
 
 /**
- * museum_koujo_k4：博物馆口上（TFLAG:500 分派；3/4 有台词，其余分支模板未填写，各输出空行）。
+ * museum_koujo_k4：博物馆口上（展品编号分派；3/4 有台词，其余分支模板未填写，各输出空行）。
  */
-async function museum_koujo_k4() {
-  if (era0('tflag:500') == 0) {
+async function museum_koujo_k4(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait(`「短时间内、维持这个姿势还可以做到…这样吗？」`);
-  } else if (era0('tflag:500') == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait(`「怎、怎么了…？身体…动、动不…了、呃…」`);
-  } else if (era0('tflag:500') == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (era0('tflag:500') == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
 }
 
 /**
- * banishment_koujo_k4：追放口上（TFLAG:510 分派；0 追放有台词，其余分支模板未填写，各输出空行）。
+ * banishment_koujo_k4：追放口上（处分号分派；0 追放有台词，其余分支模板未填写，各输出空行）。
  */
-async function banishment_koujo_k4() {
-  if (era0('tflag:510') == 0) {
+async function banishment_koujo_k4(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「我的…力量…被那样地………骗人…吧…………」`);
-  } else if (era0('tflag:510') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (era0('tflag:510') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (era0('tflag:510') == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (era0('tflag:510') == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
   }
 }
 
 /**
- * public_exucution_koujo_k4：公开处刑口上（TFLAG:520 分派；2 魂粉碎模板未填写，输出空行）。
+ * public_exucution_koujo_k4：公开处刑口上（处分号分派；2 魂粉碎模板未填写，输出空行）。
  */
-async function public_exucution_koujo_k4() {
-  if (era0('tflag:520') == 0) {
+async function public_exucution_koujo_k4(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「到死为止都要被侵犯？呃……有趣…来试试呗！！」`);
-  } else if (era0('tflag:520') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(
       `「这种…罪犯似的结局…我绝不认可！…放开我！…放开我！！」`,
     );
-  } else if (era0('tflag:520') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
 /**
- * grotesque_koujo_k4：猎奇处刑口上（TFLAG:530 分派；全部分支模板未填写，各输出空行）。
+ * grotesque_koujo_k4：猎奇处刑口上（处分方式分派；全部分支模板未填写，各输出空行）。
  */
-async function grotesque_koujo_k4() {
-  if (era0('tflag:530') == 0) {
+async function grotesque_koujo_k4(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (era0('tflag:530') == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }
@@ -6402,24 +6402,24 @@ class KojoK4 extends KojoBase {
     return ntr_koujo_k4(p);
   }
 
-  async exucution_koujo() {
-    return exucution_koujo_k4();
+  async exucution_koujo(event_no) {
+    return exucution_koujo_k4(event_no);
   }
 
-  async museum_koujo() {
-    return museum_koujo_k4();
+  async museum_koujo(event_no) {
+    return museum_koujo_k4(event_no);
   }
 
-  async banishment_koujo() {
-    return banishment_koujo_k4();
+  async banishment_koujo(event_no) {
+    return banishment_koujo_k4(event_no);
   }
 
-  async public_exucution_koujo() {
-    return public_exucution_koujo_k4();
+  async public_exucution_koujo(event_no) {
+    return public_exucution_koujo_k4(event_no);
   }
 
-  async grotesque_koujo() {
-    return grotesque_koujo_k4();
+  async grotesque_koujo(event_no) {
+    return grotesque_koujo_k4(event_no);
   }
 
   async enterenemy_koujo() {

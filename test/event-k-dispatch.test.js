@@ -241,27 +241,26 @@ const EXECUTION_DISPATCH = [
   ['GROTESQUE_KOUJO', 'grotesque_koujo'],
 ];
 
-test('处刑首五族：分发到 <族>_K{LOCAL-100}、随机源透传、不改写 TARGET（这五处不设 TARGET）', async () => {
+test('处刑首五族：分发到 <族>_K{LOCAL-100}、处分编号透传、不改写 TARGET（这五处不设 TARGET）', async () => {
   for (const [label, entry] of EXECUTION_DISPATCH) {
     const fixture = setup_kojo();
     seed_noble(fixture); // 高貴 163 → LOCAL 103 → 键 3
     const era_flag = fixture.load_module('era-utils/era-flag');
     const kojo = fixture.load_module('kojo/kojo-system');
     const seen = [];
-    const rand = always;
     kojo[`${entry}_family`].register(3, async (...args) => {
       seen.push(args);
       return 0;
     });
 
     era_flag.target = 5;
-    assert.equal(await kojo[entry](17, 42, rand), 0, label);
-    assert.deepEqual(seen, [[rand]], `${label}：handler 收随机源`);
+    assert.equal(await kojo[entry](17, 42), 0, label);
+    assert.deepEqual(seen, [[42]], `${label}：handler 收处分编号`);
     assert.equal(era_flag.target, 5, `${label}：TARGET 不动`);
   }
 });
 
-test('处刑首五族：K0（键 0）收事件编号而不是随机源——K0 旧签名的既有约定', async () => {
+test('处刑首五族：K0（键 0）与其余键收同一个处分编号', async () => {
   for (const [label, entry] of EXECUTION_DISPATCH) {
     const fixture = setup_kojo();
     fixture.store.set('talent:17:160', 1); // 慈愛 → LOCAL 100 → 键 0

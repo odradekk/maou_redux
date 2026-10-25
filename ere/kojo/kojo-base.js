@@ -33,11 +33,11 @@
  *   dungeon_ryouzyoku()                     迷宫凌辱前
  *   dungeon_ryouzyoku_after()               迷宫凌辱后
  *   ntr_koujo(rand, p)                      NTR（p = 旧引擎的全局 P）
- *   exucution_koujo(arg)                    处刑（键 0 收事件编号，其余收随机源）
- *   museum_koujo(arg)                       博物馆（雕像）（同上）
- *   banishment_koujo(arg)                   流放处刑（同上）
- *   public_exucution_koujo(arg)             公开处刑（同上）
- *   grotesque_koujo(arg)                    猎奇处刑（同上）
+ *   exucution_koujo(event_no)               处刑（处分方式编号）
+ *   museum_koujo(event_no)                  博物馆（雕像）（展品号）
+ *   banishment_koujo(event_no)              流放处刑（处分号）
+ *   public_exucution_koujo(event_no)        公开处刑（处分号）
+ *   grotesque_koujo(event_no)               猎奇处刑（处分号）
  *   enterenemy_koujo(rand)                  遭遇敌人
  *   gohoubi_request_koujo(cid)              奖赏请求
  *   gohoubi_after_koujo(cid, choice)        奖赏结算后

@@ -7186,88 +7186,88 @@ async function ntr_koujo_k903(rand, P) {
 }
 
 // exucution_koujo_k903
-async function exucution_koujo_k903() {
-  if (game.event.犬射精或处刑口上 == 4) {
+async function exucution_koujo_k903(event_no) {
+  if (event_no == 4) {
     await era.printAndWait(`「放，放开本宫！…侍奉怪物什么的………呜…呜哇哇！！」`);
-  } else if (game.event.犬射精或处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait(
       `「讨厌…讨厌！本宫变得不像自己了…不要！……不、要、啊…啊………」`,
     );
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait(`「混蛋！给本宫记住！！………」`);
     await era.printAndWait('');
-  } else if (game.event.犬射精或处刑口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
   }
 }
 
 // museum_koujo_k903
-async function museum_koujo_k903() {
-  if (game.event.博物馆口上 == 0) {
+async function museum_koujo_k903(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 7) {
+  } else if (event_no == 7) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 8) {
+  } else if (event_no == 8) {
     await era.printAndWait('');
-  } else if (game.event.博物馆口上 == 9) {
+  } else if (event_no == 9) {
     await era.printAndWait('');
   }
 }
 
 // banishment_koujo_k903
-async function banishment_koujo_k903() {
-  if (game.event.流放口上 == 0) {
+async function banishment_koujo_k903(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「本宫的…力量…被那样地………骗人…吧…………」`);
-  } else if (game.event.流放口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.流放口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
   }
 }
 
 // public_exucution_koujo_k903
-async function public_exucution_koujo_k903() {
-  if (game.event.公开处刑口上 == 0) {
+async function public_exucution_koujo_k903(event_no) {
+  if (event_no == 0) {
     await era.printAndWait(`「到死为止都要被侵犯？呃……有趣…来试试呗！！」`);
-  } else if (game.event.公开处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait(
       `「这种…罪犯似的结局…本宫绝不认可！…放开本宫！…放开本宫！！」`,
     );
-  } else if (game.event.公开处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
   }
 }
 
 // grotesque_koujo_k903
-async function grotesque_koujo_k903() {
-  if (game.event.猎奇处刑口上 == 0) {
+async function grotesque_koujo_k903(event_no) {
+  if (event_no == 0) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 1) {
+  } else if (event_no == 1) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 2) {
+  } else if (event_no == 2) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 3) {
+  } else if (event_no == 3) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 4) {
+  } else if (event_no == 4) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 5) {
+  } else if (event_no == 5) {
     await era.printAndWait('');
-  } else if (game.event.猎奇处刑口上 == 6) {
+  } else if (event_no == 6) {
     await era.printAndWait('');
   }
 }

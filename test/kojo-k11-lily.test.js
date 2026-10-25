@@ -6803,19 +6803,17 @@ test('NTR P=20：淫乱档按妊娠相手区分魔王之子', async () => {
 
 test('处刑、博物馆、放逐、公开处刑与猎奇族均注册并保留空台词槽', async () => {
   const fixture = setup_lily();
-  const { game } = fixture.load_module('facade/game');
   const families = fixture.load_module('kojo/kojo-system');
   const cases = [
-    ['犬射精或处刑口上', 'exucution_koujo_family', 4],
-    ['博物馆口上', 'museum_koujo_family', 8],
-    ['流放口上', 'banishment_koujo_family', 4],
-    ['公开处刑口上', 'public_exucution_koujo_family', 2],
-    ['猎奇处刑口上', 'grotesque_koujo_family', 6],
+    ['exucution_koujo_family', 4],
+    ['museum_koujo_family', 8],
+    ['banishment_koujo_family', 4],
+    ['public_exucution_koujo_family', 2],
+    ['grotesque_koujo_family', 6],
   ];
-  for (const [flag, family, value] of cases) {
-    game.event[flag] = value;
+  for (const [family, value] of cases) {
     const before = fixture.text_lines().length;
-    await families[family].call(11, { args: [] });
+    await families[family].call(11, { args: [value] });
     assert.deepEqual(fixture.text_lines().slice(before), [''], family);
   }
 });
