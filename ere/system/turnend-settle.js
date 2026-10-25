@@ -10,7 +10,8 @@
  * AUTOTRAIN 结算之间是迷宮域自动调教三连（BEFORE_AUTOTRAIN → COM*_AUTO →
  * SOURCE_CHECK_AUTO，十处调用点全在迷宮/ 下）+ 回合尾部的 AUTOTRAIN 结算，
  * 全程需要一个打开的调教窗口（`era.beginTrain` → `era.endTrain`）。
- * 理由见下方循环头的注释。
+ * 理由见下方循环头的注释；窗口本体在 settle_in_train_window，开与关由
+ * 处理器用 try/finally 收口（#816：抛异常或提前 return 同样关表）。
  * 移植说明：
  *   - 跨域写一律走门面（#71/#72：属主域门面 setter）：base 体力/气力、
  *     cflag 状态/新人/回城标志/休憩/已接任务/好感度/基础攻击/基础防御、
@@ -66,6 +67,22 @@ function rand(n) {
   return Math.floor(Math.random() * n);
 }
 
+/**
+ * 把开窗之后才加入的角色补进调教名单。
+ *
+ * 引擎的调教域表按角色分桶，桶只由 addCharacterForTrain 建（beginTrain 只给
+ * 它自己收到的角色建）。开窗后加入的角色（生产、捕获一类）没有子表，引擎对它
+ * 的三段寻址静默丢弃——本窗口里给它写的 PALAM / GOTJUEL 会整段失踪。名单以
+ * 引擎为准（getCharactersInTrain），本文件不另记一份。
+ */
+function enroll_joined_characters() {
+  const enrolled = new Set(era.getCharactersInTrain());
+  const joined = era.getAddedCharacters().filter((cid) => !enrolled.has(cid));
+  if (joined.length > 0) {
+    era.addCharacterForTrain(...joined);
+  }
+}
+
 on('EVENTTURNEND', async () => {
   // 指针暂存与复位（助手不暂存——还原时读 FLAG:2，见下方目标还原）
   const target_pool = era_flag.target;
@@ -89,7 +106,52 @@ on('EVENTTURNEND', async () => {
   // autotrain（PALAM → 珠/能力的结算）关。之后的
   // party_join 与 run_event_newday 留在窗口外，保持既有行为
   // （event-nextday.js 的「PALAM 读回来恒空」判断条件依赖它）。
+  //
+  // 开窗在这里、关窗在 finally（#816）：窗口本体四百多行
+  //（settle_in_train_window），中间任何一处抛异常都会跳过关窗，而下一次
+  // beginTrain 见 tequip 表已存在就不重建（引擎 `this.data.tequip||`），上一场
+  // 的 TFLAG / PALAM 会带进下一场调教。finally 同时覆盖提前 return 这条出口
+  // ——转场自 #850 起是返回值（`return begin(STATE.X)`），窗口里若出现它，
+  // 后半段同样被跳过。
   era.beginTrain(...era.getAddedCharacters());
+  try {
+    await settle_in_train_window(target_pool);
+  } finally {
+    // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
+    // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
+    era.endTrain();
+  }
+
+  // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
+  await party_join();
+
+  // 2D 模式（FLAG:502 == 1）的地图重绘（#181 起真身，
+  // ere/dungeon/labo-map.js 的 geo_output_2）
+  if ((era.get('flag:502') || 0) === 1) {
+    await geo_output_2();
+  }
+
+  // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
+  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）
+  if (era_flag.time === 0) {
+    await run_event_newday();
+  }
+
+  // 还原前次的调教对象与助手（FLAG:1/FLAG:2，EVENTEND 链记录）
+  era_flag.target = era.get('flag:1') || 0;
+  era_flag.assi = era.get('flag:2') || 0;
+
+  // BEGIN SHOP——覆盖 #PRI 档的暂存值（后写胜出，#6 语义）
+  return begin(STATE.SHOP);
+});
+
+/**
+ * 调教窗口本体：回合结算中段借调教域表的那四百多行。开关在调用方
+ * （EVENTTURNEND 处理器的 try/finally，理由见那里）。
+ *
+ * @param {number} target_pool 进入本段前的 TARGET 指针（步内两次还原用）
+ */
+async function settle_in_train_window(target_pool) {
   for (const cid of era.getAddedCharacters()) {
     // 先把 target 指到当前角色——format_autotrain 读的就是它
     era_flag.target = cid;
@@ -556,6 +618,7 @@ on('EVENTTURNEND', async () => {
   era_flag.target = target_pool;
 
   // 全角色：肉便器/苗床业务与结婚日、事件后的场所/任务复位
+  enroll_joined_characters(); // 前面的迷宫段可能带人进来（#816）
   for (const cid of era.getAddedCharacters()) {
     // run_benki（#217 真身：肉便器业务——门槛不中静默返回，演出段
     // 输出 + BENKI_KOUJO 口上，见 ere/system/train/benki.js）
@@ -574,33 +637,9 @@ on('EVENTTURNEND', async () => {
   // 自动调教（#508 起真身：ere/event/event-autotrain.js 的 autotrain
   // ——逐角色 AFTER_AUTOTRAIN → JUEL_CHECK_MAIN 把本回合攒下的 PALAM 结算
   // 成珠、AUTO_ABLUP 结算能力；CFLAG:666 由迷宫域的 COM*_AUTO 累加）
+  enroll_joined_characters(); // 尾部这一轮要按名单写 GOTJUEL / PALAM（#816）
   await require('#/event/event-autotrain').autotrain();
-  // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
-  // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
-  era.endTrain();
-
-  // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
-  await party_join();
-
-  // 2D 模式（FLAG:502 == 1）的地图重绘（#181 起真身，
-  // ere/dungeon/labo-map.js 的 geo_output_2）
-  if ((era.get('flag:502') || 0) === 1) {
-    await geo_output_2();
-  }
-
-  // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
-  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）
-  if (era_flag.time === 0) {
-    await run_event_newday();
-  }
-
-  // 还原前次的调教对象与助手（FLAG:1/FLAG:2，EVENTEND 链记录）
-  era_flag.target = era.get('flag:1') || 0;
-  era_flag.assi = era.get('flag:2') || 0;
-
-  // BEGIN SHOP——覆盖 #PRI 档的暂存值（后写胜出，#6 语义）
-  return begin(STATE.SHOP);
-});
+}
 
 /**
  * 侵攻度自然衰减（四个领域的同构块）。
