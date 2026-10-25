@@ -35,10 +35,17 @@ const SDK_MARKERS = [/module\.exports\s*=\s*era\s*;/, /version\s*:\s*\{[^}]*sdk\
 /**
  * Create a finding collector with a cap on emitted rows.
  *
+ * `info` rows are only collected when the caller asks for them. The train-only
+ * advisory is emitted per file and table without any call-path analysis — a read
+ * outside `beginTrain()` cannot be told apart from one inside it without a
+ * cross-file call graph — so collecting it by default reports hundreds of false
+ * positives and lets them crowd real errors out of the cap.
+ *
  * @param {number} cap - maximum findings retained.
+ * @param {boolean} includeInfo - whether `info` rows are retained at all.
  * @returns {{ add: (severity: string, file: string, line: number, message: string) => void, list: object[], overflow: boolean }} collector.
  */
-function createFindings(cap) {
+function createFindings(cap, includeInfo) {
   const list = [];
   let overflow = false;
   return {
@@ -47,6 +54,7 @@ function createFindings(cap) {
       return overflow;
     },
     add(severity, file, line, message) {
+      if (severity === 'info' && !includeInfo) return;
       if (list.length >= cap) {
         overflow = true;
         return;
@@ -63,12 +71,13 @@ function createFindings(cap) {
  *   gameRoot: string,
  *   apiIndex: { api: Record<string, unknown>, console?: Record<string, unknown> },
  *   maxFindings?: number,
+ *   includeInfo?: boolean,
  * }} request - check request.
  * @returns {Record<string, unknown>} the report.
  */
 export function checkGame(request) {
   const gameRoot = resolve(request.gameRoot);
-  const findings = createFindings(request.maxFindings ?? 300);
+  const findings = createFindings(request.maxFindings ?? 300, request.includeInfo === true);
   const error = (file, line, message) => findings.add('error', file, line, message);
   const warn = (file, line, message) => findings.add('warning', file, line, message);
   const info = (file, line, message) => findings.add('info', file, line, message);

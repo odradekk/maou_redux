@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #822 +1（M15709：门面命名表不再接受全角拉丁字母）；+3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 93; // #819 +6（M15900–M15905：Palam 文件按 juel 表识别、info 级提示默认不收集）；#822 +1（M15709：门面命名表不再接受全角拉丁字母）；+3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -897,5 +897,58 @@ export default [
     replace: '\\uff21-\\uff3a\\uff41-\\uff5a][A-Za-z0-9_\\u4e00-\\u9fff]*$/;',
     tests: ['display-name-fullwidth'],
     must_mention: "NAME_RE.test('抖Ｓ气质')",
+  },
+  // —— #819：Palam.yml 的识别与调教期表提示的默认口径 ——
+  {
+    desc: 'M15900 表定义不再登记 Palam 这个文件名（本仓库的 Palam.yml 重新被当成自定义一维表）',
+    file: 'tools/ere-game-builder/lib/tables.js',
+    find: "  juel: { file: 'param', alternateFiles: ['palam'], dimension: 2 },",
+    replace:
+      "  juel: { file: 'param', dimension: 2 }, // 变异：不认 Palam 文件名",
+    tests: ['ere-check-game'],
+    must_mention: '必须定义 juel 表',
+  },
+  {
+    desc: 'M15901 文件→表的匹配只看 file（alternateFiles 里的文件名被忽略，Palam.yml 落到自定义表）',
+    file: 'tools/ere-game-builder/lib/tables.js',
+    find: '    if (definition.file === folded || definition.alternateFiles?.includes(folded) === true) {',
+    replace:
+      '    if (definition.file === folded) { // 变异：不听 alternateFiles',
+    tests: ['ere-check-game'],
+    must_mention: '必须定义 juel 表',
+  },
+  {
+    desc: 'M15902 info 级提示恒收集（调教期表的 191 条误报重新进结果，并挤占 maxFindings）',
+    file: 'tools/ere-game-builder/lib/check.js',
+    find: "      if (severity === 'info' && !includeInfo) return;",
+    replace:
+      "      if (severity === 'info' && false) return; // 变异：info 恒收集",
+    tests: ['ere-check-game'],
+    must_mention: '默认不收集 info 级提示',
+  },
+  {
+    desc: 'M15903 调教期提示不再按「文件 × 表」去重（同一条路径出现几次就报几次）',
+    file: 'tools/ere-game-builder/lib/check.js',
+    find: '            if (trainOnlyNoted.has(table)) continue;',
+    replace: '            if (false) continue; // 变异：不去重',
+    tests: ['ere-check-game'],
+    must_mention: '同一文件里 tflag 读两次只报一次',
+  },
+  {
+    desc: 'M15904 checkGame 不把 includeInfo 传下去（显式索要 info 也拿不到，提示彻底消失）',
+    file: 'tools/ere-game-builder/lib/check.js',
+    find: '  const findings = createFindings(request.maxFindings ?? 300, request.includeInfo === true);',
+    replace:
+      '  const findings = createFindings(request.maxFindings ?? 300, false); // 变异：忽略 includeInfo',
+    tests: ['ere-check-game'],
+    must_mention: '同一文件里 tflag 读两次只报一次',
+  },
+  {
+    desc: 'M15905 命令行不把 includeInfo 转给检查器（--includeInfo 变成空开关）',
+    file: 'tools/ere-game-builder/cli.mjs',
+    find: '        includeInfo,',
+    replace: '        includeInfo: false, // 变异：不传 includeInfo',
+    tests: ['ere-check-game'],
+    must_mention: '--includeInfo 要能打开 info 级提示',
   },
 ];
