@@ -220,7 +220,7 @@ test('CHARA_SALE：重复选择零价角色不进入确认且不改动数据', a
   fixture.store.set('base:31:0', 100);
   fixture.store.set('exp:31:74', 1);
   fixture.store.set('talent:31:73', 1);
-  fixture.set_inputs(31, 0, 31, 0, 999);
+  fixture.set_inputs(31, 31, 999);
 
   const { chara_sale } = fixture.load_module('system/stronghold/sale');
   const before = new Map(fixture.store);
@@ -494,23 +494,27 @@ test('CHARA_SALE：确认出售后送别、除名并结算威望', async () => {
   assert.equal(fixture.era.getAddedCharacters().length, 2, '送别不除名误伤');
 });
 for (const state of [1, 2]) {
-  test(`CHARA_SALE：手输状态 ${state} 的角色拒绝出售且不改动数据`, async () => {
+  test(`CHARA_SALE：状态 ${state} 的角色不进名单，键入其编号被引擎拒收`, async () => {
     const fixture = create_era_fixture();
-    const era_flag = seed_world(fixture);
+    seed_world(fixture);
     fixture.store.set('cflag:32:0', 1);
     fixture.store.set('cflag:32:1', state);
     fixture.store.set('base:32:0', 100);
     fixture.store.set('talent:32:292', 0);
     fixture.store.set('cflag:32:700', 0);
     fixture.store.set('flag:1', 31);
-    fixture.set_inputs(32, 0, 999);
+    fixture.set_inputs(32, 999);
 
     const { chara_sale } = fixture.load_module('system/stronghold/sale');
     const before = new Map(fixture.store);
-    assert.equal(await chara_sale({ rand: seq([0]) }), 999);
+    // 名单＝受理集：状态非 0 的角色不打印按钮，手输编号在输入框里就被拦下
+    await assert.rejects(
+      () => chara_sale({ rand: seq([0]) }),
+      /输入不合法！请输入以下值之一：999（/,
+      `状态 ${state} 的角色不在本轮按钮里`,
+    );
 
     assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31, 32]);
-    assert.equal(era_flag.money, 100);
     assert.deepEqual(fixture.store, before, '拒绝选择不改动角色或结算数据');
     assert.equal(
       fixture.lines_history.some(
@@ -518,7 +522,7 @@ for (const state of [1, 2]) {
           line.type === 'button' && [32, 0, 1].includes(line.accelerator),
       ),
       false,
-      '状态非 0 的角色不显示在出售名单中，手输后也不进入确认',
+      '状态非 0 的角色不显示在出售名单中，也不会进确认',
     );
     assert(
       !history_text_lines(fixture).some((line) => line.includes('卖掉了')),
@@ -526,7 +530,8 @@ for (const state of [1, 2]) {
   });
 }
 
-test('CHARA_SALE：收藏与影子角色即使手输编号也拒绝出售', async () => {
+test('CHARA_SALE：收藏角色可选中但拒绝出售，影子角色不进名单', async () => {
+  // 收藏标记不在 sale_candidate 里：它仍打印成按钮，选中后给拒绝提示
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('cflag:31:0', 1);
@@ -536,13 +541,27 @@ test('CHARA_SALE：收藏与影子角色即使手输编号也拒绝出售', asyn
   fixture.store.set('base:32:0', 100);
   fixture.store.set('talent:32:292', 1);
   fixture.store.set('flag:1', 31);
-  fixture.set_inputs(31, 32, 999);
+  fixture.set_inputs(31, 999);
 
   await fixture.load_module('system/stronghold/sale').chara_sale();
 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31, 32]);
   assert(history_text_lines(fixture).some((line) => line.includes('收藏列表')));
-  assert(history_text_lines(fixture).some((line) => line.includes('只是影子')));
+
+  // 影子角色（TALENT:292）由 sale_candidate 排除在名单外，手输编号到不了
+  // 出售流程——原来的「只是影子」提示随之不可达，已删除
+  const shadow = create_era_fixture();
+  seed_world(shadow);
+  shadow.store.set('cflag:32:0', 1);
+  shadow.store.set('base:32:0', 100);
+  shadow.store.set('talent:32:292', 1);
+  shadow.set_inputs(32, 999);
+  await assert.rejects(
+    () => shadow.load_module('system/stronghold/sale').chara_sale(),
+    /输入不合法！请输入以下值之一：999（/,
+    '影子角色不在名单里',
+  );
+  assert(!history_text_lines(shadow).some((line) => line.includes('只是影子')));
 });
 
 test('USERSHOP 106：从据点分发进入 CHARA_SALE 真身', async () => {

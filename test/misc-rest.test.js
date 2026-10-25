@@ -1423,6 +1423,21 @@ test('MAOUNET：通信菜单的导出、导入、等级上限与等级一分支�
   );
 });
 
+test('MAOUNET：等级上限的输入非数字时由 rule 拦下（#872）', async () => {
+  // 负数有意义（关闭共享），所以 rule 收可选的负号；'abc' 这类值到不了
+  // game.system，不会以字符串落进存档
+  for (const typed of ['abc', '', '1.5']) {
+    const fixture = create_era_fixture();
+    fixture.set_inputs(3, typed, 9);
+    const { maounet } = fixture.load_module('system/cross-save-sharing');
+    await assert.rejects(
+      () => maounet(),
+      /输入不合法！输入规范：-\?\[0-9\]\+/,
+      `等级上限 ${JSON.stringify(typed)} 被 rule 拦下`,
+    );
+  }
+});
+
 test('MAOUNET：菜单可切换通信勇者等级规则并清空公共记录', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('global:100', JSON.stringify(['旧记录']));

@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 113; // #814 +1（M15861：苏生后漏掉待机档归一）； // 界面流程缺陷 +1（M15305：丰胸加价不足的提示等键）；#750 +5（M14900–M14904：统一苏生资格，排除 -1 与无效预设）；#743 +3（M14605–M14607：在场角色的苏生前置、名单与提交检查）；#740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
+export const COUNT = 115; // #872 +2（M16505/M16506：数量输入的 rule 与空候选收摊） // #814 +1（M15861：苏生后漏掉待机档归一）； // 界面流程缺陷 +1（M15305：丰胸加价不足的提示等键）；#750 +5（M14900–M14904：统一苏生资格，排除 -1 与无效预设）；#743 +3（M14605–M14607：在场角色的苏生前置、名单与提交检查）；#740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -270,8 +270,8 @@ export default [
   make(
     9435,
     'SUMMON_SLAVE 扣款 100000 改 100001',
-    '    pay(100000);',
-    '    pay(100001);',
+    '  game.invasion.肉便器数 = game.invasion.肉便器数 - 30; // FLAG:83 -= 30\n  pay(100000);',
+    '  game.invasion.肉便器数 = game.invasion.肉便器数 - 30; // FLAG:83 -= 30\n  pay(100001);',
     'SUMMON_SLAVE：扣掉 100000 点',
   ),
   make(
@@ -342,10 +342,10 @@ export default [
   // —— 范围端点 / 门槛 ——
   make(
     9445,
-    'SUMMON_SLAVE 的收录编号下界 150 改 149',
-    '    if (result > 199 || result < 150) {',
-    '    if (result > 199 || result < 149) {',
-    '149 以下与 199 以上都拒收',
+    'SUMMON_SLAVE 的候选区间上界 199 漏掉（<= 199 改成 < 199）',
+    '  for (let id = 150; id <= 199; id += 1) {',
+    '  for (let id = 150; id < 199; id += 1) {',
+    '[199] 末席',
   ),
   make(
     9446,
@@ -462,31 +462,31 @@ export default [
   ),
   make(
     9462,
-    '召唤编号下界的 `result < 150` 改 `<= 150`（150 被拒）',
-    '    if (result > 199 || result < 150) {',
-    '    if (result > 199 || result <= 150) {',
-    '编号 150（闭区间端点）可用',
+    '召唤候选区间下界 150 抬到 151（150 不在候选里）',
+    '  for (let id = 150; id <= 199; id += 1) {',
+    '  for (let id = 151; id <= 199; id += 1) {',
+    'summon_slave：前置与生成流程',
   ),
   make(
     9463,
-    '召唤编号上界的 `result > 199` 改 `>= 199`（199 被拒）',
-    '    if (result > 199 || result < 150) {',
-    '    if (result >= 199 || result < 150) {',
-    '编号 199（闭区间端点）可用',
+    '召唤候选漏掉「预设存在」过滤（未定义编号也列成候选）',
+    '    if (!era.getAllCharacters().includes(id)) continue; // EXISTCSV',
+    '    if (false) continue; // 变异：未定义编号也列出来',
+    'summon_slave：前置与生成流程',
   ),
   make(
     9464,
     '召唤的等级门 `cflag(0,9) < 30` 改 `<= 30`（等级恰好 30 时拒绝）',
-    '    if (cflag(MASTER, 9) < 30) {',
-    '    if (cflag(MASTER, 9) <= 30) {',
-    '编号 150（闭区间端点）可用',
+    '  if (cflag(MASTER, 9) < 30) {',
+    '  if (cflag(MASTER, 9) <= 30) {',
+    'summon_slave：前置与生成流程',
   ),
   make(
     9465,
     '召唤的肉便器门 `< 30` 改 `<= 30`（恰好 30 个时拒绝）',
-    '    if (game.invasion.肉便器数 < 30) {',
-    '    if (game.invasion.肉便器数 <= 30) {',
-    '编号 150（闭区间端点）可用',
+    '  if (game.invasion.肉便器数 < 30) {',
+    '  if (game.invasion.肉便器数 <= 30) {',
+    'summon_slave：前置与生成流程',
   ),
   make(
     9466,
@@ -963,5 +963,19 @@ export default [
     '        // 加价提示在回选人换屏前经按键确认（ADR-0009）\n        await era.waitAnyKey();',
     '        // 变异：加价提示后不等键',
     'modify_bustup 加价不足：尾段应有一次真等键',
+  ),
+  make(
+    16505,
+    'ST_UP_LABO 数量输入的 rule 放行非数字（.* 取代 [0-9]+）',
+    '    const times = await era.input({ rule: COUNT_RULE }); // INPUT',
+    "    const times = await era.input({ rule: '.*' }); // 变异：非数字放行",
+    '次数 \"abc\" 被 rule 拦下',
+  ),
+  make(
+    16506,
+    'SUMMON_SLAVE 候选为空时不收摊（摆一个只有「不生成」的死菜单）',
+    '  if (candidates.length === 0) {',
+    '  if (false) {',
+    'summon_slave：前置与生成流程',
   ),
 ];

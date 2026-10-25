@@ -94,8 +94,8 @@ function print_candidates(candidates) {
   }
   era.drawLine();
   // #710：候选人行改成按钮（行号即快捷键），与 [100] 返回整轮一起改——
-  // 只给返回打按钮会把候选人编号锁死。候选人的消费点保留
-  // `useRule: false`（未显示编号的自由输入通道，见 execution）。
+  // 只给返回打按钮会把候选人编号锁死。整轮的受理集就是按钮集，消费点用
+  // 引擎白名单（见 execution）。
   // 按钮正文里的列补位会被引擎折叠（连续空白合成一个空格），原文本行的
   // 对齐规格随文本行一起去，正文只留「名字 职业 LV 等级」与两个标记。
   candidates.forEach((cid, index) => {
@@ -330,14 +330,9 @@ async function execution(rand_n = default_rand) {
     if (candidates.length === 0) return 0;
     era.drawLine();
     // #710：候选人轮与 [100] 返回整轮按钮化（候选人行见 print_candidates）。
+    // 按钮集就是受理集（候选人下标 + 100），白名单先一步拦下其余值。
     era.printButton('返回', 100);
-    let selected;
-    do {
-      selected = await era.input({ useRule: false });
-    } while (
-      selected < 0 ||
-      (selected >= candidates.length && selected !== 100)
-    );
+    const selected = await era.input();
     if (selected === 100) return 0;
     const cid = candidates[selected];
 

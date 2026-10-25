@@ -1171,6 +1171,28 @@ test('chara_first_xp：非法输入由引擎拒收（#572：选项已按钮化�
   );
 });
 
+test('chara_first_xp：初吻部位的四码写在 rule 里，其余编号被拦下（#872）', async () => {
+  // 魔王（1）这一支的部位码显示是有条件的、受理是无条件的：按钮集写不全
+  // 201/301，改用 rule 把 KISS_POSITIONS 整集写进正则。77 这类值在引擎
+  // 那头被拒收、不回传游戏，「输入错误，请重新开始」支随之删除。
+  for (const typed of [77, 2]) {
+    const fixture = setup(1);
+    fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+    fixture.era.addCharacter(0);
+    fixture.set_inputs(1, typed, 998, 0);
+    const { chara_first_xp } = load(fixture);
+    await assert.rejects(
+      () => chara_first_xp(1, () => 0),
+      /输入不合法！输入规范：\(\?:1\|201\|301\|401\)/,
+      `${typed} 不在部位码受理集`,
+    );
+    assert.ok(
+      !texts(fixture).includes('输入错误，请重新开始。'),
+      '越界输入进不了「输入错误」支',
+    );
+  }
+});
+
 test('chara_first_xp：确认时输入 1 → 重来问卷', async () => {
   const fixture = setup();
   fixture.set_inputs(993, 998, 1, 993, 998, 0);

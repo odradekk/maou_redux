@@ -384,21 +384,10 @@ async function monster_play(rand = default_rand) {
   }
   era.printButton('返回', 999);
 
-  let selected;
-  for (;;) {
-    // 列表是 PRINT + INPUT，可输入未显示但有库存的编号；按钮不应把
-    // 这个行为收紧，故显式关闭引擎的按钮白名单。
-    selected = await era.input({ useRule: false });
-    if (selected === 999) return 0;
-    if (
-      (selected !== 900 && item_count(selected) <= 0) ||
-      (selected === 900 && item_count(22) <= 0)
-    ) {
-      await era.clear(1); // CLEARLINE 1，只清输入回显，不重画菜单
-      continue;
-    }
-    break;
-  }
+  // 列表（print_button_grid）与 [900] 野狗、[999] 返回构成整轮的按钮集，
+  // 也就是受理集：白名单先一步拦下未列出的编号。
+  const selected = await era.input();
+  if (selected === 999) return 0;
 
   let type = 0;
   if (selected !== 900) {

@@ -30,11 +30,9 @@ async function public_execution(cid, rand_n = default_rand) {
   era.printButton('魂粉碎', 2);
   era.println(); // 空行
 
-  let result;
-  do {
-    // 保留 useRule: false 以留住被注释掉的 `[100] 算了`（见下）。
-    result = await era.input({ useRule: false });
-  } while (result < 0 || (result >= 3 && result !== 100));
+  // 受理集比按钮集多一个未显示的 100（见下），用 rule 写进正则由引擎拦下
+  // 其余值（见 utils/input-rule.js）。
+  const result = await era.input({ rule: '(?:100|[0-2])' });
   // 的 `[100] 算了` 被注释掉、界面上不显示，但后面的
   // `ELSEIF RESULT == 100` 仍受理它（旧引擎置 TFLAG:16 = -1 后跳回批量
   // 处刑；本函数以返回 -1 表达同一出口，批量处刑据此重启界面）。

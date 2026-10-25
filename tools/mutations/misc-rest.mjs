@@ -1152,7 +1152,7 @@ export default [
     7522,
     '通信勇者等级上限未写入',
     'ere/system/cross-save-sharing.js',
-    'game.system.外来勇者等级上限 = await era.input();',
+    "game.system.外来勇者等级上限 = await era.input({ rule: '-?[0-9]+' });",
     'await era.input();',
     menu_routes,
   ),

@@ -30,12 +30,12 @@ export default [
     engine: true,
   },
   {
-    desc: 'M14803 影仆召唤不检查同号角色已在场',
+    desc: 'M14803 影仆召唤的候选漏掉「已在场」过滤（已加入的角色照样列出来）',
     file: 'ere/page/page-shop-labo.js',
-    find: '    if (era.getAddedCharacters().includes(local)) {',
-    replace: '    if (false) {',
+    find: '    if (era.getAddedCharacters().includes(id)) continue; // 同号已在场',
+    replace: '    if (false) continue; // 变异：已在场也列进候选',
     tests: ['duplicate-character-creation-engine'],
-    must_mention: '影仆召唤不重建既有角色',
+    must_mention: '影仆召唤不列出已在场编号',
     engine: true,
   },
   {

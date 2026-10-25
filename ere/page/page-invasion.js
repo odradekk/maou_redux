@@ -121,6 +121,7 @@ const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { COUNT_RULE } = require('#/utils/input-rule');
 // sengen_video 与 sengen_video_bonus 的十二处 ×小数 用 times 而非 times_exact：
 // 旧引擎的双精度与 JS 同为 IEEE 754，两边逐位同值，不需要十进制精确乘
 const { default_rand, times } = require('#/utils/numeric');
@@ -252,25 +253,18 @@ function getbit(value, bit) {
 }
 
 /**
- * 数值型 INPUT 的读数（本文件九处：sengen_video 内的六处，
- * post_conquest_menu 与 start_campaign 各一处菜单读数，以及 #503 的
- * pick_hero 一处列表选人）。
+ * 数量读数（sengen_video 的两处「要投放多少」）：这一轮没有打印按钮，
+ * 非数字由 `rule` 挡在输入框里——引擎不回传不合法值，`count` 因此恒为数值，
+ * 不会再把 NaN 写进 `EX_FLAG:9011`。上界取自库存这类活数据，越界仍由
+ * 调用点判定（见 utils/input-rule.js）。
  *
- * 引擎 `era.input()` 与旧引擎的 `INPUT` 有两处差异（镜像见
- * test/helpers/era-fixture.js 的 #151/G6，`getNumber(val)` 即 `Number(val)`、
- * 解析失败原样返回）：
- *   - **空输入归一成 0**——`INPUT` 没有默认值时会在引擎层原地重问，
- *     游戏层永远看不到空值；ere 侧区分不出「空」与「显式键入 0」，两者都走
- *     `RESULT == 0` 那一支；
- *   - **非数字串原样回传**（字符串），而 `INPUT` 侧的 `RESULT` 恒为数值——不归一
- *     就会让 `count` 变成 NaN：`count > stock` 恒假、直接被当合法数量收下，
- *     随后 `EX_FLAG:9011 += count` 把 NaN 写进存档变量。
+ * 其余读数（菜单与列表选人）都在打印按钮的轮次里，白名单先一步拦下非数字，
+ * 直接用 `era.input()`。
  *
- * @returns {Promise<number>} 输入值；空输入与非数字一律归一到 0
+ * @returns {Promise<number>} 玩家输入的数量
  */
-async function number_input() {
-  const value = await era.input();
-  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+async function count_input() {
+  return era.input({ rule: COUNT_RULE });
 }
 
 /**
@@ -1208,7 +1202,7 @@ async function invasion_event_fort(
  */
 async function fort_choice(allowed) {
   for (;;) {
-    const result = await number_input();
+    const result = await era.input();
     if (allowed.includes(result)) {
       return result;
     }
@@ -1795,8 +1789,9 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
  *     （时长的 `(9013 - M) < 1 → M + 1`，即最小也涨 1 天）。
  *
  * 三处由引擎行为带出的说明（都不是行为偏离）：
- *   - 六处数值读数走 number_input()：空输入与非数字归一到 0，见该函数的
- *     JSDoc（引擎侧空输入会被重问掉，游戏层看不到空值）；
+ *   - 两处数量读数（「要投放多少」）走 count_input()：那一轮没有按钮，
+ *     非数字由 rule 挡在输入框里；其余读数都在打印按钮的轮次里，白名单
+ *     先一步拦下非数字，直接用 era.input()；
  *   - 菜单每轮至少打印 `[999]`，所以 `STOCK == 0 && RESULT != 999` 与落尾
  *     的空 ELSE 在真引擎里都不可达——白名单外的手工键入送不到游戏层，两
  *     支都按原样保留；
@@ -1846,7 +1841,7 @@ async function sengen_video(rand = default_rand) {
     era.drawLine();
     era.printButton('离开', 999);
 
-    const result = await number_input();
+    const result = await era.input();
     if (stock === 0 && result !== 999) {
       continue; // （引擎白名单先一步拒收未渲染的 [1]-[4]）
     }
@@ -1860,7 +1855,7 @@ async function sengen_video(rand = default_rand) {
       // $INPUT_LOOP_TMP0（0 = 回菜单，超量 = 只重问）
       let count;
       for (;;) {
-        count = await number_input();
+        count = await count_input();
         if (count === 0) {
           continue menu; // GOTO INPUT_LOOP
         }
@@ -1896,7 +1891,7 @@ async function sengen_video(rand = default_rand) {
       // $INPUT_LOOP_TMP1
       let count;
       for (;;) {
-        count = await number_input();
+        count = await count_input();
         if (count === 0) {
           continue menu; // GOTO INPUT_LOOP
         }
@@ -1932,7 +1927,7 @@ async function sengen_video(rand = default_rand) {
         }
         // $INPUT_LOOP_TMP2（无效输入重问；投放前的检查保证至少有一枚按钮）
         for (;;) {
-          const pay = await number_input();
+          const pay = await era.input();
           if (pay === 1 && base * 5000 < era_flag.money) {
             era.print(`犒赏了奸商${base * 5000}G`);
             era_flag.money -= base * 5000; // MONEY -= (M * 5000)
@@ -1971,7 +1966,7 @@ async function sengen_video(rand = default_rand) {
       era.printButton('离开', 999);
       // $INPUT_LOOP_TMP3
       for (;;) {
-        const pay = await number_input();
+        const pay = await era.input();
         if (pay === 1 && era_flag.money > 50000) {
           era.print('犒赏了奸商50000G');
           era_flag.money -= 50000;
@@ -2013,7 +2008,7 @@ async function sengen_video(rand = default_rand) {
       era.printButton('算了', 999);
       // $INPUT_LOOP_TMP4
       for (;;) {
-        const pay = await number_input();
+        const pay = await era.input();
         if (pay === 1 && era_flag.money > 50000) {
           era.print('支付了50000G');
           era_flag.money -= 50000;
@@ -2309,7 +2304,7 @@ async function post_conquest_menu(rand = default_rand) {
 
   // $INPUT_LOOP2：无效输入重问不重画（GOTO，见文件头）
   for (;;) {
-    const result = await number_input();
+    const result = await era.input();
     if (result === 999) {
       return 0;
     }
@@ -2525,7 +2520,7 @@ async function pick_hero(state, rejected) {
     era.printButton('- 返 回', 999); // PRINTLC（两个空格，引擎折叠成一个）
     era.printButton('- 下一页', 1001); // PRINTLC
 
-    const result = await number_input(); // INPUT
+    const result = await era.input(); // INPUT
 
     if (result === 999) {
       return RESTART;
@@ -2842,7 +2837,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
 
     // $INPUT_LOOP：无效输入重问不重画（GOTO INPUT_LOOP，见文件头）
     for (;;) {
-      const result = await number_input();
+      const result = await era.input();
       if (result === 999) {
         return 0;
       }

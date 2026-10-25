@@ -21,21 +21,22 @@
  *    TATOO/AMNESIA/RESULECTION/TRANS_SPECIALTALENT/GIVEN_HUMAN_LIFE/
  *    BOUGT_TENTACLES/肉棒改造）各自单写。
  *
- * 3. **固定选项按钮化；需要自由输入的用 `useRule: false`**：
+ * 3. **固定选项按钮化；数值输入用 `rule`，文字输入才留自由输入**（#872）：
  *    `PRINTL [n] - …` 之类的固定选项在 ere 侧是 `era.printButton(…, n)`
  *    （PR #53 通则，page-tailor.js 先例；**正文里的 `- ` 照写**，它是显示正文
- *    的一部分，见 page-ability-up.js:184）；需要玩家敲任意数字/字符串的输入
- *    （SUMMON_SLAVE 的收录编号 150-199、ST_UP_LABO 的强化次数 1-D、TATOO 的
- *    刺青文字）保留正文为普通文本并用 `era.input({ useRule: false })`——那一轮
- *    的有效取值是**没显示出来的**编号或文字，按钮集给不出。`useRule: false`
- *    只跳过校验、不封锁按钮，与按钮并存是既定做法（event-museum.js:83-85 的
- *    先例即「按钮 + 自由输入」；引擎依据见 tools/engine-contract-facts.mjs 的
- *    `input-userule-false-keeps-buttons`）。**它不能反过来读成「打了按钮自由
- *    输入就进不去」**——那是 #530 的旧推断，#572 已纠正（详见
- *    docs/research/plaintext-options.md 第二节 C 类）。
+ *    的一部分，见 page-ability-up.js:184）。输入按取值形态分三种：
+ *    - 编号选择（SUMMON_SLAVE 的收录编号 150-199）改成候选按钮，编号不再手输；
+ *    - 数值（ST_UP_LABO 的强化次数 1-D）那一轮没有按钮，用 `rule` 把非数字
+ *      挡在输入框里（`COUNT_RULE`，见 utils/input-rule.js）；上界 D 取自资金
+ *      与成长点这类活数据，越界仍由本文件判定；
+ *    - 自由文字（TATOO 的刺青、SET_FREE_TRAIN 的调教内容）是玩家自己写字符串，
+ *      规则给不出约束，照旧自由输入——那一轮没有打印按钮，默认就是自由输入，
+ *      不需要再传 `useRule: false`。
  *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的缺省分支
  *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，结构保留
- *    不补用例（page-ability-up.js 文件头同款）。
+ *    不补用例（page-ability-up.js 文件头同款）；本文件里因 #872 改成 rule 或
+ *    候选按钮而**变得**不可达的那几支（SUMMON_SLAVE 的范围/存在性/重复三道
+ *    校验、ST_UP_LABO 的非数字归一）随改动一起删除。
  *    **两处自由文字输入（刺青、自由局部调教）的 0 ＝ 空输入**
  *    （#567）：旧引擎靠「留空」表达消去/重置，ere 侧经共享判断条件
  *    `#/utils/input-text` 把引擎归一后的 0 还原成空串（引擎把 `''` 与 `"0"`
@@ -149,6 +150,7 @@ const {
   chara_name,
   chara_nickname,
 } = require('#/utils/callname-utils');
+const { COUNT_RULE } = require('#/utils/input-rule');
 const { input_text } = require('#/utils/input-text');
 const { MASTER } = require('#/utils/master');
 const { default_rand } = require('#/utils/numeric');
@@ -2251,7 +2253,9 @@ async function st_up_labo(cost, b) {
       d = local; // SIF LOCAL < D → D = LOCAL
     }
     era.print(`强化${savestr(t)}多少次呢？(1-${d})`);
-    const times = await era.input({ useRule: false }); // INPUT（自由输入）
+    // 本屏没有按钮，非数字由 rule 挡在输入框里（NaN 不会再流进下面的乘算）；
+    // 上界 d 取自资金与成长点这类活数据，越界仍按它判定（见 utils/input-rule.js）
+    const times = await era.input({ rule: COUNT_RULE }); // INPUT
     if (times === 0) {
       return 0;
     }
@@ -2480,87 +2484,83 @@ async function trans_specialtalent() {
 }
 
 /**
- * summon_slave：召唤影之仆从（自由输入收录编号 150-199）。
+ * summon_slave：召唤影之仆从（候选＝收录编号 150-199 里预设存在且不在场的）。
+ *
+ * 原先是自由输入编号 + 范围/存在性/重复三道事后校验，每次拒绝都重画整屏；
+ * 编号改成候选按钮后这三道校验没有受理面（白名单只回传本轮打印过的编号），
+ * 重画循环随之去掉——失败只剩「不生成」与「没有候选」两个出口。
  */
 async function summon_slave() {
   if (!(await require_money(100000, '召唤资金可是很贵的'))) {
     return 0; // （C = 100000）
   }
-  for (;;) {
-    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
-    era.print('读取CSV来生成奴隶');
-    era.print('还需要消耗30的等级和30个肉便器');
-    era.drawLine(); // DRAWLINE
-    if (cflag(MASTER, 9) < 30) {
-      era.print('等级不足'); // PRINTW
-      await era.waitAnyKey();
-      return 0;
-    }
-    if (game.invasion.肉便器数 < 30) {
-      era.print('肉便器数量不足'); // PRINTW
-      await era.waitAnyKey();
-      return 0;
-    }
-    era.print('条件达成。要生成奴隶吗？');
-    era.print('若要生成，请输入要奴隶的编号');
-    // #710：「不生成」改成按钮（正文的 `- ` 是既有文案）。输入保留
-    // useRule: false——150-199 的编号是自由输入，不在按钮集里。
-    era.printButton('- 不生成', 0);
-    const result = await era.input({ useRule: false }); // INPUT
-    if (result === 0) {
-      return 0;
-    }
-    if (result > 199 || result < 150) {
-      era.print('请确认对象的收录编号在150以上199以下'); // PRINTW
-      await era.waitAnyKey();
-      continue; // GOTO INPUT_LOOP
-    }
-    const local = result; // LOCAL = RESULT
-    // EXISTCSV LOCAL：预设不存在则不生成
-    if (!era.getAllCharacters().includes(local)) {
-      era.print('所选奴隶并不存在'); // PRINTW
-      await era.waitAnyKey();
-      continue; // GOTO INPUT_LOOP
-    }
-    // 同号加入会覆盖现有角色，拒绝后保留资金、等级和肉便器。
-    if (era.getAddedCharacters().includes(local)) {
-      await era.printAndWait('该角色已在场，无法重复召唤');
-      continue;
-    }
-    era.addCharacter(local); // ADDCHARA LOCAL
-    // LOCAL:1 = CHARANUM - 1：序号世界里新角色恒在末位；ere 侧角色 ID
-    // 就是收录编号（文件头第 8 条）
-    const new_cid = local;
-    await add_chara_ex_defined(new_cid); // CALL ADDCHARA_EX, CHARANUM-1
-    chara(new_cid).chara.加入时名字 = chara_name(new_cid);
-    const prev_target = era_flag.target; // LOCAL:2 = TARGET
-    era_flag.target = new_cid; // TARGET = LOCAL:1
-    wearing_cloth_able(new_cid); // CALL WEARING_CLOTH_ABLE
-    era_flag.target = prev_target; // TARGET = LOCAL:2
-
-    era.print('*****************************************');
-    era.print(`从魔王的影子中将${savestr(new_cid)}召唤了出来！`);
-    era.print('*****************************************');
-
-    chara(new_cid).stronghold.魔王之影 = 1; // TALENT:(LOCAL:1):286-292 = 1
-    chara(new_cid).invasion.状态 = 11; // CFLAG:(LOCAL:1):1 = 11（召喚酔い）
-    chara(new_cid).chara.命名检查 = 1; // CFLAG:(LOCAL:1):420 = 1
-    for (let idx = 800; idx < 810; idx += 1) {
-      era.set(`cflag:${new_cid}:${idx}`, 0); // （动态下标，直写）
-    }
-    chara(MASTER).chara.等级 = cflag(MASTER, 9) - 30; // CFLAG:0:9 -= 30
-    game.invasion.肉便器数 = game.invasion.肉便器数 - 30; // FLAG:83 -= 30
-    pay(100000);
-    era.print('作为代价等级和肉便器减少了30');
-    era.print(`${savestr(new_cid)}的召唤并不完全`);
-    era.print(
-      '请找出 种族・性格・理由・成为勇者前的生活・发色・瞳色 其中一项有与之共通的奴隶做成肉便器',
-    );
-    await print_wait(
-      `各个素质均有相符后耗费30个肉便器将${savestr(new_cid)}解放出来`,
-    ); // WAIT
-    return 1;
+  era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =
+  era.print('读取CSV来生成奴隶');
+  era.print('还需要消耗30的等级和30个肉便器');
+  era.drawLine(); // DRAWLINE
+  if (cflag(MASTER, 9) < 30) {
+    era.print('等级不足'); // PRINTW
+    await era.waitAnyKey();
+    return 0;
   }
+  if (game.invasion.肉便器数 < 30) {
+    era.print('肉便器数量不足'); // PRINTW
+    await era.waitAnyKey();
+    return 0;
+  }
+  era.print('条件达成。要生成奴隶吗？');
+  era.print('请选择要召唤的奴隶');
+  const candidates = [];
+  for (let id = 150; id <= 199; id += 1) {
+    if (!era.getAllCharacters().includes(id)) continue; // EXISTCSV
+    if (era.getAddedCharacters().includes(id)) continue; // 同号已在场
+    candidates.push(id);
+  }
+  // 候选为空时没有可点的编号，只剩「不生成」——直接收摊，不摆一个死菜单
+  if (candidates.length === 0) {
+    await era.printAndWait('没有可以召唤的奴隶');
+    return 0;
+  }
+  for (const id of candidates) era.printButton(csv_name(id), id);
+  era.printButton('- 不生成', 0);
+  const result = await era.input(); // INPUT
+  if (result === 0) {
+    return 0;
+  }
+  const local = result; // LOCAL = RESULT
+  era.addCharacter(local); // ADDCHARA LOCAL
+  // LOCAL:1 = CHARANUM - 1：序号世界里新角色恒在末位；ere 侧角色 ID
+  // 就是收录编号（文件头第 8 条）
+  const new_cid = local;
+  await add_chara_ex_defined(new_cid); // CALL ADDCHARA_EX, CHARANUM-1
+  chara(new_cid).chara.加入时名字 = chara_name(new_cid);
+  const prev_target = era_flag.target; // LOCAL:2 = TARGET
+  era_flag.target = new_cid; // TARGET = LOCAL:1
+  wearing_cloth_able(new_cid); // CALL WEARING_CLOTH_ABLE
+  era_flag.target = prev_target; // TARGET = LOCAL:2
+
+  era.print('*****************************************');
+  era.print(`从魔王的影子中将${savestr(new_cid)}召唤了出来！`);
+  era.print('*****************************************');
+
+  chara(new_cid).stronghold.魔王之影 = 1; // TALENT:(LOCAL:1):286-292 = 1
+  chara(new_cid).invasion.状态 = 11; // CFLAG:(LOCAL:1):1 = 11（召喚酔い）
+  chara(new_cid).chara.命名检查 = 1; // CFLAG:(LOCAL:1):420 = 1
+  for (let idx = 800; idx < 810; idx += 1) {
+    era.set(`cflag:${new_cid}:${idx}`, 0); // （动态下标，直写）
+  }
+  chara(MASTER).chara.等级 = cflag(MASTER, 9) - 30; // CFLAG:0:9 -= 30
+  game.invasion.肉便器数 = game.invasion.肉便器数 - 30; // FLAG:83 -= 30
+  pay(100000);
+  era.print('作为代价等级和肉便器减少了30');
+  era.print(`${savestr(new_cid)}的召唤并不完全`);
+  era.print(
+    '请找出 种族・性格・理由・成为勇者前的生活・发色・瞳色 其中一项有与之共通的奴隶做成肉便器',
+  );
+  await print_wait(
+    `各个素质均有相符后耗费30个肉便器将${savestr(new_cid)}解放出来`,
+  ); // WAIT
+  return 1;
 }
 
 /** anti_aging：减龄魔药（10 岁一档）。 */

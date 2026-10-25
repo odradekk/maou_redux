@@ -54,9 +54,9 @@
  *     选项全部按钮化：input() 只回传本轮已打印按钮的快捷键，「输入错误，
  *     请重新开始」等越界支在实机不可达，保留为防御分支，不为它们造用例
  *     ——逐处说明见 chara_first_xp 的 JSDoc 与各处注释。
- *     **一处例外**：初吻部位一问保留 `useRule: false`——那四个编号的
- *     显示是有条件的（SIF）、受理是无条件的，
- *     收紧白名单会锁死「未显示但照收」的 201/301（见该处注释）。
+ *     **一处例外**：初吻部位一问的受理集是四个固定编号，但其中两个的
+ *     显示是有条件的（SIF）、受理是无条件的——按钮集写不全，改用 `rule`
+ *     把整集写进正则（见该处注释）。
  */
 
 'use strict';
@@ -714,9 +714,9 @@ const DOG_POSITIONS = [1, 2, 3];
  * select_yes_no 先例）：改为按钮后白名单就是显示出来的编号，越界输入由
  * 引擎当场拒收（弹「输入不合法」）——那些缺省处理支因此结构性不可达，
  * 保留结构不补用例（page-ability-up.js 文件头同款登记）。**例外一处**：初吻
- * 部位一问保留 `useRule: false`——那四个编号的显示是有条件的、
- * 受理是无条件的，属「允许输入未显示编号」的既有行为，按 #572 的要求
- * 保住路径。免费文本支
+ * 部位一问的四个编号显示是有条件的、受理是无条件的，属「允许输入未显示编号」
+ * 的既有行为，按 #572 的要求保住路径——按钮集写不全，改用 `rule` 把
+ * `KISS_POSITIONS` 整集写进正则，越界值由引擎当场拒收。免费文本支
  * （`INPUTS` 与 `[997] 自定义输入`）
  * 不受影响：它们是各自独立的 `era.input()`，与按钮轮不共用白名单。
  *
@@ -760,11 +760,10 @@ async function chara_first_xp(cid, rand = default_rand) {
       // 魔王：先问部位
       era.print('初吻位置是？');
       // 的四行选项 → 按钮（PR #53 通则，正文不写 [编号]；#572）。
-      // **保留 useRule: false**（#572 审查返工）：显示是有条件的（
-      // SIF），受理是无条件的（`IF GROUPMATCH(RESULT,1,201,301,401)`）
+      // 显示是有条件的（SIF），受理是无条件的（`IF GROUPMATCH(RESULT,1,201,301,401)`）
       // ——女性魔王键入 201、男性魔王键入 301，照收且落盘编码与部位词
-      // 都不同。收紧白名单会把这两条路径锁死，故与流放/公开处刑的 100、
-      // ENDING 发色的 11 同款处置（先例 event-museum.js:83-85）。
+      // 都不同。按钮集写不全这四种，改用 rule 把整集写进正则
+      // （见 utils/input-rule.js）。
       era.printButton('唇', 1);
       if (talent(0, T_扶她) || talent(0, T_男人)) {
         era.printButton('阴茎', 201); // （魔王的性别决定选项）
@@ -773,14 +772,11 @@ async function chara_first_xp(cid, rand = default_rand) {
         era.printButton('私处', 301);
       }
       era.printButton('肛门', 401);
-      const position = await era.input({ useRule: false });
-      if (groupmatch(position, KISS_POSITIONS)) {
-        kiss_name = chara_callname(0); // %SAVESTR:MASTER%
-        kiss = position;
-      } else {
-        era.print('输入错误，请重新开始。');
-        continue xp_loop; // GOTO LOOP2
-      }
+      const position = await era.input({
+        rule: `(?:${KISS_POSITIONS.join('|')})`,
+      });
+      kiss_name = chara_callname(0); // %SAVESTR:MASTER%
+      kiss = position;
     } else if (kiss === 995) {
       // 野狗：部位码加到 995 上（996/997/998）
       era.print('初吻位置是？');

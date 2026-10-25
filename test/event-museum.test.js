@@ -72,15 +72,25 @@ test('MUSEUM：魔王不能成为展品且不产生输出或状态变化', async
   assert.equal(fixture.store.get('flag:84'), undefined);
 });
 
-test('MUSEUM：拒绝范围外输入，直到选中有效展品', async () => {
-  const fixture = seed_world();
-  fixture.set_inputs(-1, 10, 8);
-  const { museum } = fixture.load_module('event/event-museum');
+test('MUSEUM：范围外输入由引擎在输入框里拒收，选中有效展品照常结算', async () => {
+  // 受理集＝0-9 加未显示的 100：范围外的值到不了游戏层（引擎弹「输入不合法」
+  // 且不回传，玩家在同一个输入框里改），所以重问循环不再存在
+  for (const typed of [-1, 10]) {
+    const rejected = seed_world();
+    rejected.set_inputs(typed);
+    const { museum } = rejected.load_module('event/event-museum');
+    await assert.rejects(
+      () => museum(31, seq([0])),
+      /输入不合法！输入规范：\(\?:100\|\[0-9\]\)/,
+      `${typed} 被 rule 拦下`,
+    );
+  }
 
-  await museum(31, seq([0]));
-
-  assert.equal(fixture.store.get('flag:608'), 1);
-  assert.equal(fixture.store.get('videoarchive:1'), '人形桌子温妮');
+  const accepted = seed_world();
+  accepted.set_inputs(8);
+  await accepted.load_module('event/event-museum').museum(31, seq([0]));
+  assert.equal(accepted.store.get('flag:608'), 1);
+  assert.equal(accepted.store.get('videoarchive:1'), '人形桌子温妮');
 });
 
 test('MUSEUM：保留隐藏输入 100 的无分类处刑路径', async () => {

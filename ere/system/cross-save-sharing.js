@@ -200,10 +200,11 @@ async function export_menu() {
       era.printButton('不要', 1);
       if ((await era.input()) === 0) {
         era.print('请输入队伍名');
-        // 队伍名输入没有空输入分支（输入值直接当作文本使用），
-        // 按 #567「没有空输入分支的地方不动」保持原样：0 在这里仍是字面量
-        // 文本，不走共享的空输入判断——例外理由见 ere/utils/input-text.js 文件头。
-        const team_name = String(await era.input({ useRule: false }));
+        // 队伍名是自由文本，本轮没有打印按钮，默认（白名单为空）即自由输入；
+        // 没有空输入分支（输入值直接当作文本使用），按 #567「没有空输入分支的
+        // 地方不动」保持原样：0 在这里仍是字面量文本，不走共享的空输入判断
+        // ——例外理由见 ere/utils/input-text.js 文件头。
+        const team_name = String(await era.input());
         era.print(`「${team_name}」这个队伍名可以吗？`);
         era.printButton('好的', 0);
         era.printButton('不要', 1);
@@ -295,7 +296,9 @@ async function maounet() {
     } else if (result === 3) {
       era.print('请输入允许从其他存档来袭的勇者的等级上限');
       era.print('如果输入小于0的数值，则不会从其他存档共享勇者');
-      game.system.外来勇者等级上限 = await era.input();
+      // 负数有意义（关闭共享），所以 rule 收可选的负号；非数字由引擎在
+      // 输入框里拦下，不会以字符串落进 game.system（见 utils/input-rule.js）
+      game.system.外来勇者等级上限 = await era.input({ rule: '-?[0-9]+' });
     } else if (result === 4) {
       era_flag.communication_hero_level_one ^= 1;
     }

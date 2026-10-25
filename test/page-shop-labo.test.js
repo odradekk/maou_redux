@@ -2091,6 +2091,21 @@ test('st_up_labo：四项整表（价格 5000 × 次数）与上限分支', asyn
     all_text(added).includes('多少次呢？(1-50)'),
     'D = CFLAG:9 * 5 - CFLAG:13 = 50',
   );
+  // 非数字由 rule 挡在输入框里（#872）：这一屏没有按钮，原来 'abc' 会被
+  // 当合法数量收下，10 × 'abc' = NaN 直接写进 maxbase
+  for (const typed of ['abc', '', -1, 1.5]) {
+    const fixture = make_fixture({ seed: { 'cflag:1:9': 10 } });
+    await assert.rejects(
+      () => run(fixture, 'st_up_labo', [1, typed, 999], { args: [5000, 0] }),
+      /输入不合法！输入规范：\[0-9\]\+/,
+      `次数 ${JSON.stringify(typed)} 被 rule 拦下`,
+    );
+    assert.equal(
+      fixture.store.get('maxbase:1:0'),
+      undefined,
+      '被拒的次数不写 maxbase',
+    );
+  }
 });
 
 test('set_free_train：写入 CSTR:7 与两项 ABL + 两档提示', async () => {
@@ -2163,7 +2178,7 @@ test('trans_specialtalent：两支互换、失败重试与条件边界', async (
   assert.equal(fail.store.get('flag:10004'), 100000000, '失败不扣款');
 });
 
-test('summon_slave：四道前置与生成流程（等级 / 肉便器 / 编号范围 / 存在性）', async () => {
+test('summon_slave：前置与生成流程（等级 / 肉便器 / 候选按钮 / 空候选）', async () => {
   // 等级不足
   const low_level = make_fixture({ seed: { 'cflag:0:9': 29 } });
   const first = await run(low_level, 'summon_slave', [], {});
@@ -2173,30 +2188,34 @@ test('summon_slave：四道前置与生成流程（等级 / 肉便器 / 编号�
   const no_mob = make_fixture({ seed: { 'flag:83': 29 } });
   const second = await run(no_mob, 'summon_slave', [], {});
   assert.ok(texts(second.added).includes('肉便器数量不足'));
-  // 编号超范围
-  const out_of_range = make_fixture({ seed: { 'flag:83': 30 } });
-  const third = await run(out_of_range, 'summon_slave', [149, 0], {});
-  assert.ok(
-    all_text(third.added).includes('请确认对象的收录编号在150以上199以下'),
-    '149 以下与 199 以上都拒收',
-  );
-  // #710：「不生成」改成按钮（保留 useRule: false，150-199 的自由输入照旧）
-  assert.ok(
-    button_texts(third.added).includes('[0] - 不生成'),
-    '「不生成」是按钮（编号由引擎按 showAcc 拼）',
-  );
+  // 候选为空（没有任何 150-199 预设）：不摆死菜单，直接收摊
+  const empty = make_fixture({ seed: { 'flag:83': 30 } });
+  const third = await run(empty, 'summon_slave', [], {});
+  assert.equal(third.ret, 0);
+  assert.ok(texts(third.added).includes('没有可以召唤的奴隶'));
   assert.equal(
-    texts(third.added).some((t) => t.includes('[0] - 不生成')),
-    false,
-    '同屏没有残留的纯文本选项行',
+    button_texts(third.added).length,
+    0,
+    '候选为空时连「不生成」都不画（没有可选的编号）',
   );
-  // 预设不存在
-  const missing = make_fixture({ seed: { 'flag:83': 30 } });
-  const fourth = await run(missing, 'summon_slave', [150, 0], {});
+  // 候选就是按钮：预设存在且不在场的 150-199 各一枚，快捷键＝收录编号
+  const picked = make_fixture({ seed: { 'flag:83': 30 } });
+  picked.seed_chara(150, { id: 150, name: '影', callname: '影' });
+  // 名字表的读数通道（era.get('chara:N') = 引擎的 staticData.chara[N]）
+  picked.store.set('chara:150', { name: '影' });
+  const fourth = await run(picked, 'summon_slave', [0], {});
   assert.ok(
-    all_text(fourth.added).includes('所选奴隶并不存在'),
-    'EXISTCSV 落空',
+    button_texts(fourth.added).includes('[150] 影'),
+    '候选按钮的正文只有名字（编号由引擎按 showAcc 拼）',
   );
+  assert.ok(button_texts(fourth.added).includes('[0] - 不生成'));
+  assert.equal(fourth.ret, 0);
+  // 区间上界 199 也是候选（闭区间）：预设存在且不在场时同样列成按钮
+  const last = make_fixture({ seed: { 'flag:83': 30 } });
+  last.seed_chara(199, { id: 199, name: '末席', callname: '末席' });
+  last.store.set('chara:199', { name: '末席' });
+  const sixth = await run(last, 'summon_slave', [0], {});
+  assert.ok(button_texts(sixth.added).includes('[199] 末席'));
   // 成功：等级 -30、肉便器 -30、钱 -100000、召唤酔い与命名检查落位
   const ok = make_fixture({ seed: { 'flag:83': 30 } });
   ok.seed_chara(150, { id: 150, name: '影', callname: '影' });
@@ -2430,6 +2449,10 @@ async function assert_dispatch(id, exits, text, extra) {
   const fixture = make_fixture({ seed });
   if (id === 51) {
     fixture.seed_chara(6, { id: 6, name: '亡者六', callname: '亡六' });
+  }
+  if (id === 56) {
+    // 影仆召唤的候选只来自「预设存在且不在场」的 150-199（#872）
+    fixture.seed_chara(150, { id: 150, name: '影', callname: '影' });
   }
   // 尾部再补一个 999：函数返回后回到主循环，得有人按下「返回」
   const { ret } = await run_labo(
