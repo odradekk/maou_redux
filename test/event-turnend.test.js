@@ -24,7 +24,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
 
 /** 建一个带三档链的夹具：魔王 0 在场（调用方按需再入奴隶 31） */
-function setup_turnend() {
+function setup_turnend(before_settle_load) {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -37,6 +37,11 @@ function setup_turnend() {
   fixture.store.set('flag:10004', 10000); // MONEY
   fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
   fixture.load_module('event/event-turnend');
+  // 结算模块按解构取得域函数（`const { run_benki } = require(...)`），替身
+  // 必须在它装载之前换好，否则拿到的是原函数
+  if (before_settle_load) {
+    before_settle_load(fixture);
+  }
   fixture.load_module('system/turnend-settle');
   fixture.load_module('event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
@@ -807,6 +812,149 @@ test('调教窗口（#508）：AUTOTRAIN 在窗口里跑真身，PALAM → 珠�
     'PALAM:5 = 12345 → 欲情珠 1000（JUEL_CHECK_MAIN 的换算梯子）',
   );
   assert.equal(fixture.store.get('cflag:31:667'), 1, 'CFLAG:667 += CFLAG:666');
+});
+
+// —— #816：回合结算借来的调教窗口（异常/转场也关窗、中途加入的角色入列）——
+
+test('调教窗口（#816）：结算中途抛异常也关窗，调教域表不残留', async () => {
+  const { fixture, emit } = setup_turnend((f) => {
+    // 肉便器业务站在窗口偏后的位置：这一类步骤抛异常时窗口必须照样关
+    f.load_module('system/train/benki').run_benki = async () => {
+      throw new Error('结算中断');
+    };
+  });
+  join_slave_chara(fixture, 31, '温妮');
+
+  await assert.rejects(() => emit('EVENTTURNEND'), /结算中断/);
+
+  const calls = fixture.calls.map((call) => call.api);
+  assert.ok(calls.includes('beginTrain'), '异常发生在开窗之后');
+  assert.ok(calls.includes('endTrain'), '抛异常也要关窗（窗口用 try/finally）');
+  assert.deepEqual(
+    fixture.era.getCharactersInTrain(),
+    [],
+    '关窗后引擎的调教名单为空',
+  );
+  // 关窗即删调教域表（引擎 endTrain 语义）：TFLAG 是幂等重建最怕残留的一张，
+  // 格式段写过 0..199，因此它一定存在过
+  assert.equal(
+    fixture.store.get('tflag:0'),
+    undefined,
+    '关窗即删 TFLAG，下一次 beginTrain 不会带进上一场的值',
+  );
+});
+
+test('调教窗口（#816）：结算中某一步返回转场目标也照样关窗', async () => {
+  // 转场自 #850 起是返回值（`return begin(STATE.X)`）而不是异常。本用例让
+  // 窗口里的一步返回转场目标：不管结算是否消费这个值，窗口都要在尾段之前关掉
+  let trained_when_tail_runs;
+  const { fixture, emit } = setup_turnend((f) => {
+    const { begin, STATE } = f.load_module('system/flow/game-state');
+    f.load_module('system/train/benki').run_benki = async () =>
+      begin(STATE.TURNEND);
+    // 窗口之后的尾段（队伍结成，无条件）站在关窗之后——「PALAM 读回来恒空」
+    // 这类依赖就靠它成立
+    f.load_module('dungeon/dungeon-party').party_join = async () => {
+      trained_when_tail_runs = f.era.getCharactersInTrain();
+    };
+  });
+  join_slave_chara(fixture, 31, '温妮');
+
+  await emit('EVENTTURNEND');
+
+  const closes = fixture.calls.filter((call) => call.api === 'endTrain');
+  assert.equal(closes.length, 1, '窗口只关一次（关窗点在 finally，不重复）');
+  assert.deepEqual(
+    trained_when_tail_runs,
+    [],
+    '窗口后的尾段跑在关窗之后（中途 return 不跳过 endTrain）',
+  );
+  assert.equal(fixture.store.get('tflag:0'), undefined, '关窗即删调教域表');
+});
+
+test('调教窗口（#816）：早段加入的角色在肉便器段之前就补进名单', async () => {
+  const NEW = 33;
+  let trained_at_benki;
+  const { fixture, emit } = setup_turnend((f) => {
+    // 迷宫段会带人进来（这里是它的等价物）：队伍编成站在迷宫循环之前
+    f.load_module('dungeon/dungeon-party').party_unite = () => {
+      f.era.addCharacter(NEW);
+    };
+    const benki = f.load_module('system/train/benki');
+    const real_run_benki = benki.run_benki;
+    benki.run_benki = async (cid) => {
+      if (cid === NEW) {
+        // 站在肉便器段：入列要发生在它之前，这一段的调教域写才落得下
+        trained_at_benki = f.era.getCharactersInTrain();
+      }
+      return real_run_benki(cid);
+    };
+  });
+  fixture.seed_chara(NEW, { id: NEW, name: '新人', callname: '新人' });
+  join_slave_chara(fixture, 31, '温妮');
+
+  await emit('EVENTTURNEND');
+
+  assert.ok(trained_at_benki !== undefined, '新角色要进肉便器段的循环');
+  assert.deepEqual(
+    trained_at_benki,
+    [0, 31, NEW],
+    '早段加入的角色在肉便器段之前就入列（beginTrain 只给开窗时的角色建子表）',
+  );
+});
+
+test('调教窗口（#816）：晚段加入的角色补进名单，尾部 AUTOTRAIN 的写入落得下', async () => {
+  const NEW = 32;
+  const { fixture, emit } = setup_turnend((f) => {
+    const benki = f.load_module('system/train/benki');
+    const real_run_benki = benki.run_benki;
+    let joined = false;
+    benki.run_benki = async (cid) => {
+      if (!joined) {
+        joined = true;
+        // 肉便器段自身带进来的角色（生产、捕获一类的等价物）。自动调教标志
+        // 让尾部 AUTOTRAIN 必然处理它——它的调教域写入就是本用例的观测点
+        f.era.addCharacter(NEW);
+        f.store.set(`cflag:${NEW}:666`, 1);
+      }
+      return real_run_benki(cid);
+    };
+  });
+  fixture.seed_chara(NEW, { id: NEW, name: '新人', callname: '新人' });
+  join_slave_chara(fixture, 31, '温妮');
+
+  await emit('EVENTTURNEND');
+
+  assert.ok(
+    fixture.calls.some(
+      (call) => call.api === 'addCharacterForTrain' && call.args.includes(NEW),
+    ),
+    '中途加入的角色要补进调教名单',
+  );
+  assert.ok(
+    fixture.var_writes.some(
+      (write) => write.name === `gotjuel:${NEW}:100` && write.value === 0,
+    ),
+    'AUTOTRAIN 对它的 GOTJUEL 写入必须落得下：没有子表时引擎静默丢弃',
+  );
+});
+
+test('调教窗口（#816）：自动存档仍在 endTrain 之后', async () => {
+  const { fixture, emit, era_flag } = setup_turnend();
+  // 站在日推进回合：TIME 1 → 0 的那次 emit 会跑翌朝事件，自动存档在那里
+  era_flag.time = 1;
+
+  await emit('EVENTTURNEND');
+
+  const calls = fixture.calls.map((call) => call.api);
+  const closed = calls.lastIndexOf('endTrain');
+  const saved = calls.indexOf('saveData');
+  assert.ok(closed >= 0, '窗口必须关');
+  assert.ok(saved >= 0, '日推进回合要写自动存档');
+  assert.ok(
+    closed < saved,
+    '自动存档在关窗之后（调教域表不进存档，存了也不该留旧值）',
+  );
 });
 
 test('CAMPAIGN_GAMEOVER：气力被扣到 <= 0 时战役结束、清零派遣（#469）', async () => {
