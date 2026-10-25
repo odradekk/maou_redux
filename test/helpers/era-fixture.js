@@ -429,6 +429,9 @@ function create_era_fixture() {
       // 值域 1-24、缺省取设置里的 colWidth）——不记它，「每格多宽」就没有
       // 观测通道（#392 二轮验收实测：GRID_COLUMNS 改坏无人能发现）
       entry.grid_width = obj.config?.width ?? 24;
+      // 格的 config.align 与文本格同义：getButtonObject 也把它落成
+      // `textAlign: safeUndefinedCheck(data.config.align, 默认对齐)`
+      entry.grid_align = obj.config?.align;
       return entry;
     }
     if (obj?.type === 'text') {
@@ -436,6 +439,11 @@ function create_era_fixture() {
       // 引擎网格为 24 列；GridObject 未给 width 时独占 24 列。保留实际宽度，
       // 让三列布局等渲染行为可断言，而不只记录扁平文本。
       entry.grid_width = obj.config?.width ?? 24;
+      // 文本格的 config.align 落到渲染层的 CSS text-align（getTextObject 的
+      // `textAlign: safeUndefinedCheck(data.config.align, 默认对齐)`）——表格的
+      // 数值列靠它右对齐、不再补空格；不记它，「数值列真的右对齐了吗」就没有
+      // 观测通道
+      entry.grid_align = obj.config?.align;
       // 文本格的 config.color 直通渲染层（getTextObject 的
       // safeUndefinedCheck(data.config.color, …)）——按钮格有 color 记录，
       // 不记它，占位格的灰色就无从断言
@@ -1619,6 +1627,15 @@ function create_era_fixture() {
       const preset = chara_presets.get(source);
       store.set(`callname:${target}:-1`, preset.name);
       store.set(`callname:${target}:-2`, preset.callname ?? preset.name);
+      // 扩展表 portcflag 的预设同样抄到目标角色（#884）：引擎的 addCharacter
+      // 对登记过的扩展表逐字段赋值，双号写法抄的是源预设的值——游戏侧读
+      // 「预设模板」时靠它区分角色号与预设号。写 store 不经 era.set，理由同
+      // 上面两条 callname。
+      for (const [field, value] of Object.entries(preset.portcflag ?? {})) {
+        // 平表按归一后的地址落键（名字翻成序号），与 era.get/era.set 同一个
+        // 口径——种子里的「预设模板」要按 portcflag:角色:2 落下才读得到
+        store.set(normalize_address(`portcflag:${target}:${field}`), value);
+      }
       return true;
     });
     return chara_ids.length === 1 ? results[0] : results;
@@ -2003,9 +2020,19 @@ function create_era_fixture() {
      *  先降 current_version 再 saveData，或 saveData 后改 record（不推荐）；
      *  造「异游戏 global.sav」：saveGlobal 后改 game_code 再 loadGlobal */
     save_gate,
-    /** 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 检查放行 */
+    /**
+     * 预置角色预设数据（对应引擎 staticData.chara[id]），addCharacter 检查放行。
+     *
+     * 预设里缺 portcflag 段时补一条「预设模板 = 该预设号」（#884）：真实角色
+     * 文件每张预设都带这一行，夹具的种子是它们的简化替身，缺了它加入的角色
+     * 就读不到自己的预设号。用例要种子预设与角色号不一致时显式给
+     * `portcflag: { 预设模板: N }`（双号加入的后代就是这么来的）。
+     */
     seed_chara(chara_id, preset) {
-      chara_presets.set(chara_id, preset);
+      chara_presets.set(chara_id, {
+        ...preset,
+        portcflag: { 预设模板: chara_id, ...preset.portcflag },
+      });
     },
     /** 已加入的角色（对应引擎 data.no）；无预设的 addCharacter 不会进这里 */
     chara_no,

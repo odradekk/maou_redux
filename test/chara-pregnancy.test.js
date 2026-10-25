@@ -1019,12 +1019,16 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
   }
 });
 
-test('动态后代作为母亲时可反推出原始预设模板', async () => {
+test('动态后代作为母亲时按「预设模板」字段取来源预设', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(1, { name: '后代模板' });
-  // 「动态母亲」的 ID 必须是真后代 ID 的形状（FIRST_CHILD_ID 段，模板 1），
-  // template_no_of 才拆得出 1；孩子因 100000 被母亲占着而顺延到 100001。
-  fixture.seed_chara(100000, { name: '动态母亲' });
+  // 「动态母亲」的角色号落在模板 1 的区间（FIRST_CHILD_ID 段）；来源预设号
+  // 由 portcflag 的「预设模板」字段承载（#884，加入时从源预设抄进目标角色）。
+  // 孩子因 100000 被母亲占着而顺延到 100001。
+  fixture.seed_chara(100000, {
+    name: '动态母亲',
+    portcflag: { 预设模板: 1 },
+  });
   assert.equal(fixture.era.addCharacter(100000), true);
 
   const child = await fixture
@@ -1032,30 +1036,35 @@ test('动态后代作为母亲时可反推出原始预设模板', async () => {
     .gb_add_slave(100000, -1, seq(new Array(200).fill(0)));
 
   assert.equal(child, 100001);
+  assert.equal(
+    fixture.store.get(`portcflag:${child}:2`),
+    1,
+    '孩子的预设模板 = 母亲的来源预设（同样由源预设抄写落地）',
+  );
 });
 
-test('后代 ID 与模板号互推：区间内任意一位都算同一模板（#560 的区间结构）', () => {
-  // 直接钉住 template_no_of 的换算式：区间起点、区间**内**（第 99 位）与
+test('旧编码的预设号换算：区间内任意一位都算同一模板（#560 的区间结构，#884 起只给读档补填用）', () => {
+  // 直接钉住 template_no_from_id 的换算式：区间起点、区间**内**（第 99 位）与
   // 下一个区间的首位分别对应什么——只断言区间起点时，除号或区间宽度写错
-  // 都可能照样绿（0 / 任何数都是 0）
-  const { FIRST_CHILD_ID, template_no_of } = create_era_fixture().load_module(
-    'chara/chara-pregnancy',
-  );
-  assert.equal(template_no_of(0), 0, '魔王');
-  assert.equal(template_no_of(31), 31, '普通角色的 NO 就是角色 ID');
-  assert.equal(template_no_of(FIRST_CHILD_ID), 1, '模板 1 的区间起点');
+  // 都可能照样绿（0 / 任何数都是 0）。#884 起这是**旧存档补填**的换算，
+  // 读取侧一律读 portcflag 的「预设模板」字段（test/chara-template.test.js）
+  const { FIRST_CHILD_ID, template_no_from_id } =
+    create_era_fixture().load_module('chara/chara-pregnancy');
+  assert.equal(template_no_from_id(0), 0, '魔王');
+  assert.equal(template_no_from_id(31), 31, '普通角色的 NO 就是角色 ID');
+  assert.equal(template_no_from_id(FIRST_CHILD_ID), 1, '模板 1 的区间起点');
   assert.equal(
-    template_no_of(FIRST_CHILD_ID + 99),
+    template_no_from_id(FIRST_CHILD_ID + 99),
     1,
     '模板 1 的区间末位仍在同一模板',
   );
   assert.equal(
-    template_no_of(FIRST_CHILD_ID + 100),
+    template_no_from_id(FIRST_CHILD_ID + 100),
     2,
     '下一个区间的首位是模板 2',
   );
   assert.equal(
-    template_no_of(FIRST_CHILD_ID + 209 * 100),
+    template_no_from_id(FIRST_CHILD_ID + 209 * 100),
     210,
     '模板 210（来源预设的序号上界）',
   );

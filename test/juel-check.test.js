@@ -37,6 +37,34 @@ function seed_world(fixture) {
 const HEADER_INDEX = 0;
 const FOOTER_INDEX = 14;
 
+/**
+ * 网格行：把 `fixture.lines` 按 Row 号分组，只留含文本/按钮格的组（一次
+ * `printMultiColumns` = 一个 Row，各格共享该 Row 号）。文本表格的断言按行取
+ * 格——格是渲染单位，行是排版单位（原实现按整行字符串比对，格边界无从断言）。
+ * @param {object} fixture 夹具
+ * @returns {Array<Array<object>>} 每行的格子（按行号升序）
+ */
+function grid_rows(fixture) {
+  const rows = new Map();
+  for (const line of fixture.lines) {
+    if (line.row === undefined || !['text', 'button'].includes(line.type)) {
+      continue;
+    }
+    if (!rows.has(line.row)) {
+      rows.set(line.row, []);
+    }
+    rows.get(line.row).push(line);
+  }
+  return [...rows.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([, cells]) => cells);
+}
+
+/** 一行网格的格文本（按渲染序） */
+function cell_texts(cells) {
+  return cells.map((cell) => cell.text);
+}
+
 // 定值随机源（三选一：返回池序号 0/1/2）：轮转 0→1→2。恒定单值在
 // 有多个非空池的用例里会永远挑中空池（真随机源靠随机性保证终止），
 // 测试必须轮转
@@ -555,21 +583,46 @@ test('结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () =>
   assert.equal(fixture.store.get('juel:31:100'), 167);
 });
 
-test('show_info_exp 的经验行与等级行逐字一致', () => {
+test('show_info_exp：经验一览是每项三格的网格，数值格右对齐', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  fixture.store.set('exp:31:2', 3); // 绝顶经验 3（逐字比对前态）
+  fixture.store.set('exp:31:2', 3); // 绝顶经验 3
   const { show_info_exp } = fixture.load_module('page/page-info-exp');
 
   show_info_exp(31);
 
-  assert.deepEqual(fixture.text_lines(), [
-    '\u3000绝顶经验:\u00A0\u00A0\u00A0\u00A0\u00A03',
+  // 一行 = 名字格 + 数值格 + 间距格（每项三格），名字格左对齐宽 3、数值格
+  // 右对齐宽 2、间距格宽 1；格内不再补位（NBSP 与连续半角空格都不该出现）
+  const [first] = grid_rows(fixture);
+  assert.deepEqual(
+    cell_texts(first),
+    ['绝顶经验', '3', ''],
+    '名字格 + 数值格 + 间距格',
+  );
+  assert.deepEqual(
+    first.map((cell) => cell.grid_width),
+    [3, 2, 1],
+    '格宽：名字 3 + 数值 2 + 间距 1（每行 4 项占满 24 列）',
+  );
+  assert.deepEqual(
+    first.map((cell) => cell.grid_align),
+    ['left', 'right', 'left'],
+    '数值列靠格对齐右对齐，不再用 pad_left 补位',
+  );
+  for (const cell of first) {
+    assert.doesNotMatch(
+      cell.text,
+      /[\u00A0\u3000]| {2,}/,
+      `格内不得再用补位字符（实得 ${JSON.stringify(cell.text)}）`,
+    );
+  }
+  // 等级行与括号行仍是普通文本行（不是表格）
+  assert.deepEqual(fixture.text_lines().slice(-1), [
     '　温妮当前是Lv1，战斗经验值总计0点，本级经验：0/20',
   ]);
 });
 
-test('show_info_exp：四个经验一行的换行与 8 宽名字列、残行收尾', () => {
+test('show_info_exp：四个经验一行、残行按实际格数收尾', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   for (const id of [0, 1, 2, 3, 5]) {
@@ -579,13 +632,33 @@ test('show_info_exp：四个经验一行的换行与 8 宽名字列、残行收�
 
   show_info_exp(31);
 
-  // 名字列：私处经验（8 显示宽）不补空格；每个格子自带全角引导空格
-  //（每格文本以全角空格开头）；LV 公式行照常殿后
-  assert.deepEqual(fixture.text_lines(), [
-    '\u3000私处经验:\u00A0\u00A0\u00A0\u00A010\u3000肛门经验:\u00A0\u00A0\u00A0\u00A011\u3000绝顶经验:\u00A0\u00A0\u00A0\u00A012\u3000射精经验:\u00A0\u00A0\u00A0\u00A013',
-    '\u3000性交经验:\u00A0\u00A0\u00A0\u00A015',
-    '　温妮当前是Lv1，战斗经验值总计0点，本级经验：0/20',
-  ]);
+  const rows = grid_rows(fixture);
+  // 5 项：第一行 4 项（12 格）、第二行 1 项（3 格）；末尾那条等级行是普通
+  // 文本行，不是表格（不计入表格行）
+  assert.equal(rows.length, 3, '2 行表格 + 等级行');
+  assert.deepEqual(
+    cell_texts(rows[0]),
+    [
+      '私处经验',
+      '10',
+      '',
+      '肛门经验',
+      '11',
+      '',
+      '绝顶经验',
+      '12',
+      '',
+      '射精经验',
+      '13',
+      '',
+    ],
+    '第一行 4 项共 12 格（每项名字格 + 数值格 + 间距格）',
+  );
+  assert.deepEqual(
+    cell_texts(rows[1]),
+    ['性交经验', '15', ''],
+    '残行只出实际项的三格，不补占位格',
+  );
 });
 
 test('show_info_exp：初吻/初体验括号行（两者皆无时不输出）', () => {
@@ -602,7 +675,7 @@ test('show_info_exp：初吻/初体验括号行（两者皆无时不输出）', 
   ]);
 });
 
-test('show_juel 三行逐字一致（结算后读数）', () => {
+test('show_juel：12 项按 4 列网格排三行，末尾空行与点线不变', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('juel:31:0', 3479);
@@ -612,12 +685,80 @@ test('show_juel 三行逐字一致（结算后读数）', () => {
 
   show_juel(31);
 
-  // 末项恰为 4 的倍数 → 补一空行（br），随后是尾部分隔线
-  assert.deepEqual(fixture.text_lines(), [
-    ' 阴核点数：\u00A0\u00A03479 私处点数：\u00A0\u00A0\u00A0\u00A0\u00A00 肛门点数：\u00A0\u00A0\u00A0\u00A0\u00A00 乳房点数：\u00A0\u00A0\u00A0\u00A0\u00A00',
-    ' 恭顺点数：\u00A0\u00A0\u00A0\u00A0\u00A00 欲情点数：\u00A0\u00A0\u00A0\u00A0\u00A00 屈服点数：\u00A0\u00A0\u00A0\u00A0\u00A00 习得点数：\u00A0\u00A0\u00A0\u00A0\u00A04',
-    ' 耻情点数：\u00A0\u00A0\u00A0\u00A0\u00A00 苦痛点数：\u00A0\u00A0\u00A0\u00A0\u00A00 恐怖点数：\u00A0\u00A0\u00A0\u00A0\u00A00 否定点数：\u00A0\u00A0\u00A0167',
+  // 每项三格：名字格（`{名}点数：`，左对齐宽 3）+ 数值格（右对齐宽 2）+
+  // 间距格（宽 1）
+  const rows = grid_rows(fixture);
+  assert.equal(rows.length, 3, '4 列 × 3 行');
+  assert.deepEqual(cell_texts(rows[0]), [
+    '阴核点数：',
+    '3479',
+    '',
+    '私处点数：',
+    '0',
+    '',
+    '肛门点数：',
+    '0',
+    '',
+    '乳房点数：',
+    '0',
+    '',
   ]);
+  assert.deepEqual(cell_texts(rows[1]), [
+    '恭顺点数：',
+    '0',
+    '',
+    '欲情点数：',
+    '0',
+    '',
+    '屈服点数：',
+    '0',
+    '',
+    '习得点数：',
+    '4',
+    '',
+  ]);
+  assert.deepEqual(cell_texts(rows[2]), [
+    '耻情点数：',
+    '0',
+    '',
+    '苦痛点数：',
+    '0',
+    '',
+    '恐怖点数：',
+    '0',
+    '',
+    '否定点数：',
+    '167',
+    '',
+  ]);
+  assert.deepEqual(
+    rows[0].map((cell) => [cell.grid_width, cell.grid_align]),
+    [
+      [3, 'left'],
+      [2, 'right'],
+      [1, 'left'],
+      [3, 'left'],
+      [2, 'right'],
+      [1, 'left'],
+      [3, 'left'],
+      [2, 'right'],
+      [1, 'left'],
+      [3, 'left'],
+      [2, 'right'],
+      [1, 'left'],
+    ],
+    '名字 3 + 数值 2（右对齐）+ 间距 1 逐项重复',
+  );
+  assert.doesNotMatch(
+    rows
+      .flat()
+      .map((cell) => cell.text)
+      .join(''),
+    /[\u00A0\u3000]/,
+    '格内不再用补位字符凑定宽',
+  );
+  // 首尾各一条点线，末项恰为 4 的倍数 → 中间补一空行（br）
+  assert.equal(fixture.era.getLineCount(), 6, '前点线 + 三行 + 空行 + 后点线');
   assert.equal(fixture.lines.at(-2).type, 'br', '末行后有空行');
   assert.equal(fixture.lines.at(-1).type, 'divider', '尾部点线');
 });
@@ -631,7 +772,11 @@ test('show_juel：男人（TALENT:122）第 0 项显示「阴茎」', () => {
 
   show_juel(31);
 
-  assert.ok(fixture.text_lines()[0].startsWith(' 阴茎点数：\u00A0\u00A03479'));
+  assert.deepEqual(cell_texts(grid_rows(fixture)[0]).slice(0, 3), [
+    '阴茎点数：',
+    '3479',
+    '',
+  ]);
 });
 
 test('show_ablup_select：能力按钮化（PR #53）——编号空间、性别过滤与 [999]', async () => {

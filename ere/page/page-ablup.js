@@ -14,8 +14,12 @@
 
 const era = require('#/era-electron');
 const { decide_ablup } = require('#/system/train/ablup');
-const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { print_button_grid } = require('#/utils/button-grid');
+const {
+  CELLS_PER_ITEM,
+  name_value_cells,
+  print_cell_grid,
+} = require('#/utils/text-grid');
 
 // 感觉缺失（[―] 灰显）的判定：能力 0-3 → TALENT:101/107/103/105 的第 1
 // 位（& 2）。名字：阴蒂/乳房/私处/肛门钝感（yml/Talent.yml）
@@ -24,15 +28,24 @@ const DULL_TALENT = { 0: 101, 1: 107, 2: 103, 3: 105 };
 // 灰显色
 const GRAY = '#808080';
 
+/** 保有珠一览的项数（12 项 = 4 列 × 3 行） */
+const JUEL_ITEMS = 12;
+/** 保有珠一览每行的项数（原版「每 4 项换行」的列数） */
+const JUEL_PER_ROW = 4;
+
 /**
  * 保有珠一览——12 项、4 列 × 3 行，首尾各一条点线。
+ *
+ * 每项三格：名字格（`{名}点数：`，左对齐）+ 数值格（右对齐）+ 间距格（列
+ * 结构见 utils/text-grid.js；24 列 = 4 × (3 + 2 + 1)）。数值右对齐交给渲染层
+ * 的 text-align，不再用补位函数把字符串凑成定宽。
  *
  * @param {number} cid 调教目标
  */
 function show_juel(cid) {
   era.drawLine(); // 点线分割线
-  let row = '';
-  for (let count = 0; count < 12; count += 1) {
+  const cells = [];
+  for (let count = 0; count < JUEL_ITEMS; count += 1) {
     // count → juel 序号映射：3→乳房 14、11→否定 100
     let idx = count;
     if (count === 3) {
@@ -45,14 +58,12 @@ function show_juel(cid) {
       count === 0 && era.get(`talent:${cid}:122`)
         ? '阴茎'
         : era.get(`palamname:${idx}`);
-    const value = era.get(`juel:${cid}:${idx}`) || 0;
-    row += ` ${name}点数：${pad_left(String(value), 6)}`; // 数值右对齐宽 6
-    if ((count + 1) % 4 === 0) {
-      // 换行（每 4 项）
-      era.print(row);
-      row = '';
-    }
+    cells.push(
+      ...name_value_cells(`${name}点数：`, era.get(`juel:${cid}:${idx}`) || 0),
+    );
   }
+  // 每行 4 项（原版「每 4 项换行」的列数）
+  print_cell_grid(cells, JUEL_PER_ROW * CELLS_PER_ITEM);
   era.println(); // 末组恰为 4 项时补一空行
   era.drawLine(); // 点线分割线
 }

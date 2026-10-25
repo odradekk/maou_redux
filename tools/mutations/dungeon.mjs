@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 314; // #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 317; // #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -39,16 +39,16 @@ export default [
   {
     desc: 'M377 踏破判定改坏（D:20 >= 100 → >= 147：one×2 = 146 恒不踏破）',
     file: 'ere/dungeon/dungeon.js',
-    find: '    if (walk20 >= 100) {',
-    replace: '    if (walk20 >= 147) {',
+    find: '  if (ctx.walk20 >= 100) {',
+    replace: '  if (ctx.walk20 >= 147) {',
     tests: ['dungeon-main'],
     must_mention: '八次踏破后到达第 9 层',
   },
   {
     desc: 'M378 ending_2 接入条件取反（TALENT:122 == 0 → != 0：真勇者反而不进结局）',
     file: 'ere/dungeon/dungeon.js',
-    find: '          if ((era.get(`talent:${arg0}:122`) || 0) === 0) {',
-    replace: '          if ((era.get(`talent:${arg0}:122`) || 0) !== 0) {',
+    find: `  if ((era.get(\`talent:\${arg0}:122\`) || 0) === 0) {`,
+    replace: `  if ((era.get(\`talent:\${arg0}:122\`) || 0) !== 0) {`,
     tests: ['dungeon-main'],
     // must_mention 随 #173 的用例翻修同步：贯通用例断言从「接入存根」改为
     // 「quit 炸穿」（ENDING_2 真身实现），定位串换新断言消息（#133 先例）
@@ -57,12 +57,12 @@ export default [
   {
     desc: 'M379 冒险者回头分支的挫折记忆改坏（507 = 1 删——撤退标志不立）',
     file: 'ere/dungeon/dungeon.js',
-    find: `              era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
-              era.print('再次鼓起勇气来到这里可能会花些时间了。');
-              chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1`,
-    replace: `              era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
-              era.print('再次鼓起勇气来到这里可能会花些时间了。');
-              // 变异：CFLAG:507 = 1 删除`,
+    find: `      era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
+      era.print('再次鼓起勇气来到这里可能会花些时间了。');
+      chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1`,
+    replace: `      era.print(\`\${leader_name}放弃了成为英雄的念头，开始回头了。\`);
+      era.print('再次鼓起勇气来到这里可能会花些时间了。');
+      // 变异：CFLAG:507 = 1 删除`,
     tests: ['dungeon-main'],
     must_mention: 'CFLAG:507 = 1 撤退中',
   },
@@ -77,17 +77,20 @@ export default [
   {
     desc: 'M381 迎击的侵攻度方向改坏（-= 改 +=：迎击方也在推进）',
     file: 'ere/dungeon/dungeon.js',
-    find: '      walk20 -= walk;',
-    replace: '      walk20 += walk;',
+    find: '    ctx.walk20 -= walk;',
+    replace: '    ctx.walk20 += walk;',
     tests: ['dungeon-main'],
     must_mention: '方向辨析',
   },
   {
     desc: 'M382 迎击魔王的房间终点改坏（507 = 0 删）',
     file: 'ere/dungeon/dungeon.js',
-    find: '          era.print(`${leader_name}返回了魔王的房间。`);\n          walk20 = 100;\n          chara(arg0).invasion.回城标志 = 0; // CFLAG:507 = 0',
-    replace:
-      '          era.print(`${leader_name}返回了魔王的房间。`);\n          walk20 = 100;\n          // 变异：CFLAG:507 = 0 删除',
+    find: `    era.print(\`\${leader_name}返回了魔王的房间。\`);
+    ctx.walk20 = 100;
+    chara(arg0).invasion.回城标志 = 0; // CFLAG:507 = 0`,
+    replace: `    era.print(\`\${leader_name}返回了魔王的房间。\`);
+    ctx.walk20 = 100;
+    // 变异：CFLAG:507 = 0 删除`,
     tests: ['dungeon-main'],
     must_mention: 'CFLAG:507 = 0',
   },
@@ -169,8 +172,8 @@ export default [
   {
     desc: 'M446 魔王房间演出行删除（「这里是魔王的房间………」）',
     file: 'ere/dungeon/dungeon.js',
-    find: "          era.print('这里是魔王的房间………');",
-    replace: '          // 变异：魔王房间演出删',
+    find: "  era.print('这里是魔王的房间………');",
+    replace: '  // 变异：魔王房间演出删',
     tests: ['dungeon-main', 'event-ending2-e2e'],
     must_mention: '这里是魔王的房间',
   },
@@ -178,9 +181,12 @@ export default [
   {
     desc: 'M480 勇者分支的战斗调用删除（dungeon_party_battle 不再发生）',
     file: 'ere/dungeon/dungeon.js',
-    find: '        // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）\n        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される\n        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);',
-    replace:
-      '        // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）\n        let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される\n        // 变异：勇者分支的战斗调用删（勇者不遇敌、不掉气力）',
+    find: `  // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
+  let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
+  await battle_mod.dungeon_party_battle(arg0, rand_n, ctx.move_ctx);`,
+    replace: `  // 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
+  let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
+  // 变异：勇者分支的战斗调用删（勇者不遇敌、不掉气力）`,
     tests: ['dungeon-main', 'dungeon-battle'],
     must_mention: '真身态实际进入过战斗',
   },
@@ -355,9 +361,10 @@ export default [
   {
     desc: 'M551 dungeon.js 的 D:20 收线删（walk20 = trap_ctx.d20）',
     file: 'ere/dungeon/dungeon.js',
-    find: '    // teleport_trap 的 D:20 写回——移動反映段的 CFLAG:502 = D:20 用它\n    walk20 = trap_ctx.d20;',
-    replace:
-      '    // teleport_trap 的 D:20 写回——变异：收线删\n    // walk20 = trap_ctx.d20;',
+    find: `  // teleport_trap 的 D:20 写回——移動反映段的 CFLAG:502 = D:20 用它
+  ctx.walk20 = trap_ctx.d20;`,
+    replace: `  // teleport_trap 的 D:20 写回——变异：收线删
+  // ctx.walk20 = trap_ctx.d20;`,
     tests: ['dungeon-trap'],
     must_mention: 'CFLAG:502 = D:20 = 1',
   },
@@ -727,18 +734,23 @@ export default [
   {
     desc: 'M633 dungeon.js 的房间调用删（不再进设施）',
     file: 'ere/dungeon/dungeon.js',
-    find: '    const move_ctx = { d20: walk20 };\n    no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);\n    walk20 = move_ctx.d20;',
-    replace:
-      '    const move_ctx = { d20: walk20 };\n    // 变异：房间调用删\n    // no_battle += await room_mod.dungeon_room(a, rand_n, move_ctx);\n    // walk20 = move_ctx.d20;',
+    find: `  ctx.move_ctx = { d20: ctx.walk20 };
+  ctx.no_battle += await room_mod.dungeon_room(a, rand_n, ctx.move_ctx);
+  ctx.walk20 = ctx.move_ctx.d20;`,
+    replace: `  ctx.move_ctx = { d20: ctx.walk20 };
+  // 变异：房间调用删
+  // ctx.no_battle += await room_mod.dungeon_room(a, rand_n, ctx.move_ctx);
+  // ctx.walk20 = ctx.move_ctx.d20;`,
     tests: ['dungeon-main', 'dungeon-room'],
     must_mention: '房间设施真身（毒沼 10 点伤害恰一次）',
   },
   {
     desc: 'M634 滞留分支的階層滞在カウント +1 删（event-turnend 新观测点自证）',
     file: 'ere/dungeon/dungeon.js',
-    find: '      // 階層滞在カウントを+1（CFLAG:514）\n      era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);',
-    replace:
-      '      // 階層滞在カウントを+1——变异：+1 删\n      // era.set(`cflag:${arg0}:514`, (era.get(`cflag:${arg0}:514`) || 0) + 1);',
+    find: `  // 階層滞在カウントを+1（CFLAG:514）
+  era.set(\`cflag:\${arg0}:514\`, (era.get(\`cflag:\${arg0}:514\`) || 0) + 1);`,
+    replace: `  // 階層滞在カウントを+1——变异：+1 删
+  // era.set(\`cflag:\${arg0}:514\`, (era.get(\`cflag:\${arg0}:514\`) || 0) + 1);`,
     tests: ['event-turnend', 'enter-enemy'],
     must_mention: '状态 12 恰好一次 DUNGEON',
   },
@@ -2305,24 +2317,25 @@ export default [
   {
     desc: 'M10620 再起点分支：CFLAG:520 的门面名退回未登记的「到达阶层」（写不落 era.set，#484）',
     file: 'ere/dungeon/dungeon.js',
-    find: `              chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8`,
-    replace: `              chara(arg0).dungeon.到达阶层 = 8; // 变异：退回未登记的门面名`,
+    find: '      chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8',
+    replace:
+      '      chara(arg0).dungeon.到达阶层 = 8; // 变异：退回未登记的门面名',
     tests: ['dungeon-main'],
     must_mention: '再起点分支的 CFLAG:520 = 8 真的落进变量',
   },
   {
     desc: 'M10621 再起点分支：CFLAG:520 的目标值改错（8 改 7，#484）',
     file: 'ere/dungeon/dungeon.js',
-    find: `              chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8`,
-    replace: `              chara(arg0).dungeon.目标阶层 = 7; // 变异：目标值改错`,
+    find: '      chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8',
+    replace: '      chara(arg0).dungeon.目标阶层 = 7; // 变异：目标值改错',
     tests: ['dungeon-main'],
     must_mention: '再起点分支的 CFLAG:520 = 8 真的落进变量',
   },
   {
     desc: 'M10622 体力富余分支：CFLAG:520 的写值改错（FLOOR 改 FLOOR + 1，#484 抽查补位）',
     file: 'ere/dungeon/dungeon.js',
-    find: `            era.set(\`cflag:\${arg0}:520\`, floor); // CFLAG:520 = FLOOR`,
-    replace: `            era.set(\`cflag:\${arg0}:520\`, floor + 1); // 变异：写值改错`,
+    find: `      era.set(\`cflag:\${arg0}:520\`, ctx.floor); // CFLAG:520 = FLOOR`,
+    replace: `      era.set(\`cflag:\${arg0}:520\`, ctx.floor + 1); // 变异：写值改错`,
     tests: ['dungeon-main'],
     must_mention: '体力富余分支：状态良好时 CFLAG:520 记下当前阶层并下潜一层',
   },
@@ -2486,8 +2499,8 @@ export default [
   {
     desc: 'M11489 bedroom_battle_male 挑战分支漏掉函数返回的后半句（只打调用方那一句——两句本应同一行，#548）',
     file: 'ere/dungeon/dungeon.js',
-    find: '                    (await bedroom_battle_male(arg0)),',
-    replace: "                    '', // 变异：漏掉函数返回的后半句",
+    find: '          (await bedroom_battle_male(arg0)),',
+    replace: "          '', // 变异：漏掉函数返回的后半句",
     tests: ['dungeon-bedroom'],
     must_mention: '两句拼成同一行',
   },
@@ -2858,5 +2871,31 @@ export default [
     await draw_screen();`,
     tests: ['page-dungeon-info', 'subpage-clear-screen'],
     must_mention: '迷宫概况换屏：选择位图反复切换，各轮主屏行数相同（#724）',
+  },
+  {
+    desc: 'M16550 侵攻度三分支的踏破门槛改坏（>= 100 → >= 0：滞留也当踏破）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '  if (ctx.walk20 >= 100) {',
+    replace: '  if (ctx.walk20 >= 0) {',
+    tests: ['dungeon-benki-flow'],
+    must_mention: '随机上界的消费顺序',
+  },
+  {
+    desc: 'M16551 撤退分支的休憩加算删（队长不再歇一口气）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `    // 休憩 +1（队长与同伴）
+    chara(arg0).dungeon.休憩 += 1;`,
+    replace: `    // 休憩 +1（队长与同伴）
+    // 变异：队长的休憩加算删除`,
+    tests: ['dungeon-benki-flow'],
+    must_mention: '变量写序列',
+  },
+  {
+    desc: 'M16552 设施受者的第二掷上界改坏（rand_n(2) 改 rand_n(3)）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '  if (rand_n(2) === 0 && sideb > 0) {',
+    replace: '  if (rand_n(3) === 0 && sideb > 0) {',
+    tests: ['dungeon-benki-flow'],
+    must_mention: '随机上界的消费顺序',
   },
 ];

@@ -135,13 +135,12 @@ export default [
     must_mention: '育儿室',
   },
   {
-    desc: 'M35 show_juel 数值列：右对齐宽 6 改 5',
-    file: 'ere/page/page-ablup.js',
-    find: '    row += ` ${name}点数：${pad_left(String(value), 6)}`; // 数值右对齐宽 6',
-    replace:
-      '    row += ` ${name}点数：${pad_left(String(value), 5)}`; // {JUEL,6,RIGHT}',
+    desc: 'M35 show_juel 数值格的列宽 2 改成 1（六位以上的数字溢出格子）',
+    file: 'ere/utils/text-grid.js',
+    find: 'const VALUE_WIDTH = 2;',
+    replace: 'const VALUE_WIDTH = 1;',
     tests: ['juel-check'],
-    must_mention: 'show_juel 三行',
+    must_mention: '名字 3 + 数值 2（右对齐）+ 间距 1 逐项重复',
   },
   {
     desc: 'M36 等级行公式：本级需求 lv*10+10 改 lv*10+5',
@@ -149,7 +148,7 @@ export default [
     find: '    // 其余\n    need = lv * 10 + 10;',
     replace: '    // 其余\n    need = lv * 10 + 5;',
     tests: ['juel-check'],
-    must_mention: 'show_info_exp 的经验行与等级行逐字一致',
+    must_mention: '本级经验：0/20',
   },
   {
     desc: 'M56 指令按钮渲染删掉（#214 起目标 = 内建分支：位 34 关的静态名按钮——e2e 与单测都走它）',
@@ -1284,12 +1283,13 @@ export default [
     must_mention: '字段宽随数据变化',
   },
   {
-    desc: 'M8392 LIFE_LIST 空位补行少补一行',
+    desc: 'M8392 LIFE_LIST 末页窗口多开一格（列表越过本页上界）',
     file: 'ere/page/page-life-list.js',
-    find: '  pad_blank_rows(window_ids.length, num_page);',
-    replace: '  pad_blank_rows(window_ids.length, num_page - 1);',
+    find: '  const window_ids = slave_ids().slice(\n    no_page * num_page,\n    (no_page + 1) * num_page,\n  );',
+    replace:
+      '  const window_ids = slave_ids().slice(\n    no_page * num_page,\n    (no_page + 1) * num_page + 1,\n  );',
     tests: ['page-life-list'],
-    must_mention: '空位应补一行空行',
+    must_mention: '表头 0 + 第 0 页的 1、2',
   },
   {
     desc: 'M8393 LIFE_LIST_ITEM 名字字段宽（12 → 13）',
@@ -1434,12 +1434,13 @@ export default [
     must_mention: '不列该行',
   },
   {
-    desc: 'M8436 ability_up 补行条件收紧（< NUM_PAGE + 1 → < NUM_PAGE）',
+    desc: 'M8436 ability_up 末页重新补空行凑页高（页脚被推离列表）',
     file: 'ere/page/page-ability-up.js',
-    find: '  if (l_lcount < page_size + 1) {',
-    replace: '  if (l_lcount < page_size) {',
+    find: '  era.drawLine(); // 分割线（其后是三个页脚按钮）',
+    replace:
+      "  era.print(''); // 变异：重新补一行空行凑页高\n  era.drawLine(); // 分割线（其后是三个页脚按钮）",
     tests: ['page-ability-up'],
-    must_mention: '补行到页高',
+    must_mention: '2 名奴隶时不再补空行',
   },
   {
     desc: 'M8404 ABILITY_UP 菜单档常量互换（998/997）',
@@ -4036,7 +4037,7 @@ export default [
   era.drawLine(); // 点线分割线`,
     replace: '  era.drawLine(); // 变异：:26 的真空行删除',
     tests: ['juel-check'],
-    must_mention: '末行后有空行',
+    must_mention: '前点线 + 三行 + 空行 + 后点线',
   },
   {
     desc: 'M12073 个别信息页操作按钮之后补回空行（PRINTL 只收那一串 PRINT 拼出的按钮行）',
@@ -4140,7 +4141,7 @@ export default [
     find: '    if (era.getLineCount() === button_anchor) {\n      era.println();\n    }',
     replace: '    // 变异：无按钮子页的真空行删掉',
     tests: ['page-chara-info'],
-    must_mention: '无按钮子页里块尾的空行在补白之后',
+    must_mention: '无按钮子页里块尾的空行在分割线之上',
   },
 
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
@@ -4397,7 +4398,7 @@ export default [
     find: '    era.println(); // 第二个 \\n：横幅之间的真空行',
     replace: '    // 变异：横幅之间的真空行删掉',
     tests: ['chara-info-show'],
-    must_mention: '第二个 \\n：两行横幅之间的真空行',
+    must_mention: '第二个换行：两行横幅之间的真空行',
   },
   {
     desc: 'M12251 横幅第二行拆回三段（三段是同一显示行）',

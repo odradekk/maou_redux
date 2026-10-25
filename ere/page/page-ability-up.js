@@ -100,9 +100,9 @@ function draw_menu_header() {
 /**
  * 列表与页脚。
  *
- * 补行规则：实际行数不足页高时逐行补空行；奴隶档（998）补行期间页高
- * 临时 +1（一对增减，为的是把本身就占一行的魔王行算进去）——空行数与
- * 页高的关系因此逐字保留。
+ * 不再补空行凑页高：换屏后画面是滚动视图，页脚紧接列表末行即可（原实现
+ * 按 `REPEAT (NUM_PAGE - L_LCOUNT)` 补到固定页高，那是字符终端里把页脚
+ * 钉在屏幕底部的手法，在这里只是一串无内容的空行）。
  *
  * @param {number} select_menu 菜单档（997/998）
  * @param {number} no_page 页码
@@ -113,7 +113,6 @@ function draw_menu_header() {
 function draw_list(select_menu, no_page) {
   let page_size;
   let menu = select_menu;
-  const anchor = era.getLineCount(); // 行数记账基准（列表画完后的差值即本页行数）
   let max_page;
   if (select_menu === MENU_ENEMY) {
     // 勇者一览：每页 24 行、页数取 max_page_enemy、列表走 life_list_enemy
@@ -140,17 +139,6 @@ function draw_list(select_menu, no_page) {
       4,
     );
     life_list_salave(no_page, page_size);
-  }
-  const l_lcount = era.getLineCount() - anchor; // 本页实际行数
-  // 补行（实际行数不足页高时补到页高）
-  if (l_lcount < page_size + 1) {
-    let pad_size = page_size;
-    if (select_menu === MENU_SLAVE) {
-      pad_size += 1; // 奴隶档页高 +1（魔王行本身占一行）
-    }
-    for (let row = 0; row < pad_size - l_lcount; row += 1) {
-      era.print('');
-    }
   }
   era.drawLine(); // 分割线（其后是三个页脚按钮）
   // 三个页脚键同行排布（引擎 24 列网格），不补空行。

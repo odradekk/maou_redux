@@ -16,6 +16,10 @@
  *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；
  *   - ex_talentname_init——非存档的 EX 素质名表初始化，真身在
  *     chara-ex.js；读档后重放，重复调用按检查早退；
+ *   - 待机档归一（#814）与预设模板补填（#884）——两处都是「旧存档里没有
+ *     新字段」的初始化：前者把引擎按预设补进来的 1 归成移植版的状态 0，
+ *     后者给没有预设的后代补上旧编码反推出的预设号。两者都幂等，读档链
+ *     重放（通信菜单的特殊档）不产生差异；
  *   - LASTLOAD_NO == 999 → MAOUNET + SHOP 转场、LASTLOAD_NO ∈ [1000,1020)
  *     → INPORT_B——跨作品数据交换，ere 读档界面只放行 0-99
  *     （page-save-load.js 的槽位分支），LASTLOAD_NO 永远取不到
@@ -45,6 +49,7 @@ const { on, TIER } = require('#/system/event/registry');
 const maounet_mod = require('#/system/cross-save-sharing');
 const { ex_talentname_init } = require('#/chara/chara-ex');
 const { normalize_idle_status } = require('#/chara/chara-init');
+const { backfill_chara_templates } = require('#/chara/chara-pregnancy');
 const { chara_name_init } = require('#/chara/chara-name-list');
 const era_flag = require('#/era-utils/era-flag');
 
@@ -75,6 +80,12 @@ on(
     for (const cid of era.getAddedCharacters()) {
       normalize_idle_status(cid);
     }
+
+    // 预设模板补填（#884）：0.1.x 的存档里没有 portcflag 的「预设模板」
+    // 字段——有预设的角色由引擎的 fillData 按自己的预设补成预设号，没有预设
+    // 的后代补 0，这里按旧编码换算写入。判据与换算见 chara-pregnancy.js 的
+    // backfill_chara_templates；幂等，读档链重放（通信菜单的特殊档）不出错
+    backfill_chara_templates();
 
     // LASTLOAD_NO 999/1000+：普通读档界面仍只放行 0-99，故两支不可达；
     // 保留钩子，供 MAOUNET 的特殊档流程使用。

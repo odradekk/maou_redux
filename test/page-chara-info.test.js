@@ -792,8 +792,9 @@ test('chara_info_individual：操作按钮行与页脚分割线之间不夹空�
 });
 
 test('chara_info_individual：无操作按钮的子页保留块尾的真空行（#596）', async () => {
-  // sub_page 3 一个按钮都不打，块尾的 println
-  // 因此落在已收行的空行上 = 真空行；有按钮的子页里它只收行（上一条用例）。
+  // sub_page 3 一个按钮都不打，块尾的 println 因此落在已收行的空行上
+  // = 真空行；有按钮的子页里它只收行（上一条用例）。页尾的补白循环删掉后，
+  // 分割线之前只剩这一个空行（原来它前面还压着 MIN_LINES 的补白）
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -803,14 +804,18 @@ test('chara_info_individual：无操作按钮的子页保留块尾的真空行�
 
   const footer = fixture.lines.filter((line) => line.type === 'divider').at(-1);
   const at = fixture.lines.indexOf(footer);
-  // 分割线之前连续两个空行：页尾补白（MIN_LINES）那一个 + 块尾 println 落在空行上的
-  // 那一个。把无按钮分支的 println 删掉后这里只剩一个（本用例的失败点）
-  const blank_forms = (index) =>
+  const is_blank = (index) =>
     fixture.lines[index].type === 'br' ||
-    (fixture.lines[index].type === 'text' && fixture.lines[index].text === '');
+    (fixture.lines[index].type === 'text' &&
+      fixture.lines[index].text === '' &&
+      fixture.lines[index].grid_width === undefined);
   assert.ok(
-    blank_forms(at - 1) && blank_forms(at - 2),
-    "无按钮子页里块尾的空行在补白之后（println 与 print('') 两种写法都算）",
+    is_blank(at - 1),
+    "无按钮子页里块尾的空行在分割线之上（println 与 print('') 两种写法都算）",
+  );
+  assert.ok(
+    !is_blank(at - 2),
+    '补白循环删掉后分割线之前只有这一个空行（原为两个）',
   );
 });
 

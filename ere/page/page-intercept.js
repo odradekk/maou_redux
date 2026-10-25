@@ -330,10 +330,8 @@ async function intercept(rand = default_rand) {
     for (const cid of window_ids) {
       life_list_item(cid);
     }
-    // 补行（L_LCOUNT < NUM_PAGE + 1 时补到页高）
-    for (let row = window_ids.length; row < NUM_PAGE; row += 1) {
-      era.print('');
-    }
+
+    // 末页不满整页时不补空行：ere 是滚动视图，页脚紧接列表末行即可
     era.drawLine(); // （DRAWLINE + 三个页脚键）
     // 三个页脚键同行（引擎 24 列网格）；按钮正文里的两个空格照写，
     // 引擎渲染时折叠成一个

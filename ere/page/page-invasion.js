@@ -2493,7 +2493,6 @@ async function pick_hero(state, rejected) {
     era.print('派遣谁去侵攻呢？');
     era.drawLine();
     // 列表（窗口外的命中项只跳过、不渲染）
-    let rows = 0; // L_LCOUNT：旧引擎按 LINECOUNT 差算，ere 侧按渲染行数代
     let t_lcount = NUM_PAGE * state.no_page + 1;
     for (const cid of added) {
       if (cid < state.list_pos) continue; // FOR COUNT, LIST_POS, CHARANUM
@@ -2507,14 +2506,8 @@ async function pick_hero(state, rejected) {
       life_list_item(cid);
       t_lcount += 1;
       state.list_pos = cid;
-      rows += 1;
     }
-    // 不足一整页时补空行
-    if (rows < NUM_PAGE + 1) {
-      for (let i = 0; i < NUM_PAGE - rows; i += 1) {
-        era.print('');
-      }
-    }
+    // 末页不满一整页时不补空行：ere 是滚动视图，按钮紧接列表末行即可
     // 三个页脚键同行（引擎 24 列网格；按钮正文不带 [编号] 前缀，引擎自动拼）
     era.drawLine();
     print_button_grid(
