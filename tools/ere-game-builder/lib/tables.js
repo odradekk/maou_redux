@@ -24,6 +24,11 @@ import { parseStructuredText } from './static-rows.js';
  * `file` is the `csv/` file base name that defines the table; `dimension` is 1
  * for `表名:变量` and 2 for `表名:角色ID:变量`; `trainOnly` marks tables that do
  * not exist until `era.beginTrain()` is called.
+ *
+ * `alternateFiles` lists further file names the engine parses into the same
+ * table: `parseObject` handles `param` and `palam` in one branch and fills
+ * `staticData.juel` for either, so a project that names the file `Palam.yml`
+ * still defines `juel` — and `palam` / `delta` / `gotjuel` stay two-dimensional.
  */
 export const TABLE_DEFS = {
   flag: { file: 'flag', dimension: 1 },
@@ -41,7 +46,7 @@ export const TABLE_DEFS = {
   equip: { file: 'equip', dimension: 2 },
   mark: { file: 'mark', dimension: 2 },
   exp: { file: 'exp', dimension: 2 },
-  juel: { file: 'param', dimension: 2 },
+  juel: { file: 'param', alternateFiles: ['palam'], dimension: 2 },
   palam: { file: 'param', dimension: 2, trainOnly: true },
   delta: { file: 'param', dimension: 2, virtual: true, trainOnly: true },
   gotjuel: { file: 'param', dimension: 2, virtual: true, trainOnly: true },
@@ -112,7 +117,10 @@ export function classifyFile(baseName) {
   if (PROTECTED_FILE_NAMES.has(folded)) return { custom: false, skipped: 'protected' };
   if (DEPRECATED_FILE_NAMES.has(folded)) return { custom: false, skipped: 'deprecated' };
   for (const [table, definition] of Object.entries(TABLE_DEFS)) {
-    if (definition.file === folded && definition.virtual !== true) return { table, custom: false };
+    if (definition.virtual === true) continue;
+    if (definition.file === folded || definition.alternateFiles?.includes(folded) === true) {
+      return { table, custom: false };
+    }
   }
   if (/^(.*?)(names|keys|values|entries)$/.test(folded)) return { custom: false, skipped: 'protected' };
   return { table: folded, custom: true };
