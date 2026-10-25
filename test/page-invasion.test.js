@@ -4158,8 +4158,23 @@ test('CHALLENGE 的档界与人数上限边界', async () => {
 //       start_campaign() 的地区泛化
 // ————————————————————————————————————————————————————————————————
 
-/** kyoten_event 三分支的星号横幅（十处，91 个星号） */
-const KYOTEN_STAR = '*'.repeat(91);
+/** kyoten_event 的横幅文本（十档，与实现里的 KYOTEN_BANNERS 一一对应） */
+const KYOTEN_TEXTS = [
+  '占领了村庄',
+  '占领了港口',
+  '攻陷了堡垒',
+  '占领了街道',
+  '占领了城市',
+  '人间界的军队占领了村庄',
+  '人间界的军队占领了港口',
+  '人间界的军队攻陷了堡垒',
+  '人间界的军队占领了街道',
+  '人间界的军队占领了城市',
+];
+
+/** 打出来的 kyoten 横幅行（#870 起横幅是「实线 + 居中文本 + 实线」，按文本认） */
+const kyoten_banner_lines = (fixture) =>
+  history_texts(fixture).filter((line) => KYOTEN_TEXTS.includes(line));
 
 /**
  * 三个走 FLAG 侧的非人间界出兵目标（RESULT →
@@ -4293,9 +4308,9 @@ test('【地区续接】[1]/[2]/[3] 各映射到自己的 AREA/SINDO 并汇入�
     // 龙/天界三分支不输出任何内容，星号一行都不打；实参表仍由
     // 末尾「人间界分支也不打」鉴别（误调 ARG 1 会打人间界的七行横幅）
     assert.equal(
-      history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,
+      kyoten_banner_lines(fixture).length,
       0,
-      `[${region.result}] kyoten_event 走 ARG ${region.kyoten} 分支：三分支空转不打星号（#652）`,
+      `[${region.result}] kyoten_event 走 ARG ${region.kyoten} 分支：三分支空转不打横幅（#652）`,
     );
     for (const [flag, who] of [
       [93, '人间界的 FLAG:93'],
@@ -4352,9 +4367,9 @@ test('【地区续接·天神宫】[5]：累加与显示同读 FLAG:101（#652 �
     '结果段的进度条也读 FLAG:101（同一画面同一数值）',
   );
   assert.equal(
-    history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,
+    kyoten_banner_lines(fixture).length,
     0,
-    'kyoten_event 分派没有 101 分支 —— 天神宫一行星号都不打',
+    'kyoten_event 分派没有 101 分支 —— 天神宫一行横幅都不打',
   );
 });
 
@@ -4543,8 +4558,7 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
     const { kyoten_event } = fixture.load_module('page/page-invasion');
     return kyoten_event(arg);
   };
-  const star_count = (fixture) =>
-    history_texts(fixture).filter((line) => line === KYOTEN_STAR).length;
+  const banner_count = (fixture) => kyoten_banner_lines(fixture).length;
 
   for (const arm of [
     { arg: 2, progress: 86, stage: 94 },
@@ -4555,9 +4569,9 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
     fixture.store.set(`flag:${arm.progress}`, 2000); // 首档下沿
     assert.equal(await run_kyoten(fixture, arm.arg), 0, '恒 RETURN 0');
     assert.equal(
-      star_count(fixture),
+      banner_count(fixture),
       0,
-      `ARG ${arm.arg}：命中首档也不打星号（#652 三分支不再输出）`,
+      `ARG ${arm.arg}：命中首档也不打横幅（#652 三分支不再输出）`,
     );
     assert.equal(
       fixture.store.get(`flag:${arm.stage}`),
@@ -4567,19 +4581,19 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
 
     // 反复调用依旧一行都不打
     await run_kyoten(fixture, arm.arg);
-    assert.equal(star_count(fixture), 0, `ARG ${arm.arg}：再次调用仍不输出`);
+    assert.equal(banner_count(fixture), 0, `ARG ${arm.arg}：再次调用仍不输出`);
   }
 
   // 未达首档：同样空转
   const calm = create_era_fixture();
   calm.store.set('flag:88', 1999);
   await run_kyoten(calm, 3);
-  assert.equal(star_count(calm), 0, 'FLAG:88 == 1999 未达 2000 首档');
+  assert.equal(banner_count(calm), 0, 'FLAG:88 == 1999 未达 2000 首档');
 
   // ARG 0/5 及以上：空转
   const outside = create_era_fixture();
   for (const arg of [0, 5]) {
     assert.equal(await run_kyoten(outside, arg), 0, `ARG ${arg} 空转`);
   }
-  assert.equal(star_count(outside), 0, 'ARG 0/5 不打任何横幅');
+  assert.equal(banner_count(outside), 0, 'ARG 0/5 不打任何横幅');
 });

@@ -3189,7 +3189,7 @@ export default [
     replace:
       '    ravish_area: 5,\n    kyoten_arg: 1, // 变异：天神宫也调 KYOTEN',
     tests: ['page-invasion'],
-    must_mention: 'kyoten_event 分派没有 101 分支',
+    must_mention: '天神宫一行横幅都不打',
   },
   {
     desc: 'M10863 征服后菜单的地区续接丢地区（CAMPAIGN_REGIONS[result] 删去）',
@@ -4572,13 +4572,13 @@ export default [
   },
   // —— #652：F6 界面缺陷修复的新行为检查 ——
   {
-    desc: 'M13200 据点事件三分支恢复星号输出（#652 删掉的反复弹星号复原）',
+    desc: 'M13200 据点事件三分支恢复横幅输出（#652 删掉的反复弹横幅复原）',
     file: 'ere/page/page-invasion.js',
     find: '  // 精灵/龙/天界三分支：不输出、不推进（见函数头注释）\n  return 0;',
     replace:
-      '  // 变异：三分支恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
+      "  // 变异：三分支恢复横幅输出\n  era.print('占领了村庄');\n  return 0;",
     tests: ['page-invasion'],
-    must_mention: '三分支空转不打星号',
+    must_mention: '三分支空转不打横幅',
   },
   {
     desc: 'M13201 侵攻度读点对天神宫读回 EX_FLAG 侧（#652 统一的 FLAG 读点被拆）',
