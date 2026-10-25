@@ -4032,7 +4032,7 @@ export default [
   era.drawLine(); // 点线分割线`,
     replace: '  era.drawLine(); // 变异：:26 的真空行删除',
     tests: ['juel-check'],
-    must_mention: '末行后有空行',
+    must_mention: '前点线 + 三行 + 空行 + 后点线',
   },
   {
     desc: 'M12073 个别信息页操作按钮之后补回空行（PRINTL 只收那一串 PRINT 拼出的按钮行）',
