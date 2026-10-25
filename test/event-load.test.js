@@ -116,3 +116,25 @@ test('LOADGLOBAL 镜像：钩子链首行恢复 global 表为最近一次保存�
     'global 表换回 global.sav 内容——未保存的设置页修改被丢弃',
   );
 });
+
+test('待机档归一（#814）：读档后状态 1 归 0，其余状态原样', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.seed_chara(35, { id: 35, name: '菲娅', callname: '菲娅' });
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(35);
+  // 0.1.0 的存档：CFlag.yml 没登记 1 号，读档补槽时引擎按角色预设（原版
+  // 1 = 待機）填进来——她的状态槽从此变成 1，四个操作页都以 0 放行
+  fixture.store.set('cflag:35:1', 1);
+  // 对照组：别的状态是游戏自己写的，不许动
+  fixture.store.set(`cflag:0:1`, 2);
+
+  await run_hook(fixture);
+
+  assert.equal(
+    fixture.store.get('cflag:35:1'),
+    0,
+    '待机档归 0（在城里可操作）',
+  );
+  assert.equal(fixture.store.get('cflag:0:1'), 2, '侵攻中的状态不动');
+});
