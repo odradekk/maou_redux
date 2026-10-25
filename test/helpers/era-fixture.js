@@ -429,8 +429,8 @@ function create_era_fixture() {
       // 值域 1-24、缺省取设置里的 colWidth）——不记它，「每格多宽」就没有
       // 观测通道（#392 二轮验收实测：GRID_COLUMNS 改坏无人能发现）
       entry.grid_width = obj.config?.width ?? 24;
-      // 格的 config.align 在按钮支是 el-row 的纵向对齐（getButtonObject 的
-      // `align`），与下面文本格的 CSS text-align 同名不同义——两支都记下来
+      // 格的 config.align 与文本格同义：getButtonObject 也把它落成
+      // `textAlign: safeUndefinedCheck(data.config.align, 默认对齐)`
       entry.grid_align = obj.config?.align;
       return entry;
     }
