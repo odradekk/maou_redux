@@ -33,9 +33,10 @@ const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
 const { charadead_check, self_check } = require('#/event/event-aftertrain');
 // 死亡删除分支的机械清理与延迟除名（收尾协调器）
 const { defer_train_death } = require('#/system/train/train-end');
+const { EVENT } = require('#/data/event-name-const');
 
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     era.print('调教结束了。');
     await era.waitAnyKey();

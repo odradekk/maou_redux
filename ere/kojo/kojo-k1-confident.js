@@ -46,6 +46,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -56,7 +57,7 @@ const MASTER = 0;
 
 // EVENTTRAIN #PRI 档
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
     // FLAG:101  = 1（变量语义：FLAG 族，101）
@@ -71,7 +72,7 @@ on(
 
 // EVENTEND #LATER 档
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
     // FLAG:101  = 0（变量语义：FLAG 族，101）
@@ -82,7 +83,7 @@ on(
 
 // EVENTTRAIN NORMAL 档
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async (rand) => {
     const target = era_flag.target;
     const assi = era_flag.assi;
@@ -1159,7 +1160,7 @@ async function k1_kojo2(rand) {
 
 // EVENTEND NORMAL 档
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     const target = era_flag.target;
     const target_name = chara_callname(target);

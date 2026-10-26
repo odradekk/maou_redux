@@ -61,11 +61,12 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { EVENT } = require('#/data/event-name-const');
 
 // EVENTSHOP #PRI：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
 // 玩家关掉（-1）不自开，1（少量模式）不改
 on(
-  'EVENTSHOP',
+  EVENT.SHOP,
   () => {
     if ((era.get('flag:7') || 0) === 0) {
       // FLAG:7 = 2（口上总开关：2=默认全量、1=每阶段一次、<=0=关）
@@ -153,7 +154,7 @@ const gobi_koujo_family = new DispatchFamily(
 /**
  * 22 条 TRYCALLFORM 分发表（#403 的交付面）。
  *
- * 不进表的 5 个入口：EVENTSHOP（本文件的 on('EVENTSHOP', …)）、
+ * 不进表的 5 个入口：EVENTSHOP（本文件的 on(EVENT.SHOP, …)）、
  * GET_KOJO_NUM（本文件的 get_kojo_num）与三个 **未使用**的入口
  * （KOJO_MESSAGE_COM_MASTER / _ASSI / KOJO_MESSAGE_PLAYERCHANGE——
  * 它们的 TRYCALLFORM 本就是注释态，不派发，故不进表）。

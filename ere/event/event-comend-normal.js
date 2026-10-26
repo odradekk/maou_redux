@@ -30,9 +30,10 @@ const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { EVENT } = require('#/data/event-name-const');
 
 // EVENTCOMEND（无属性档——on 的缺省档即 TIER.NORMAL）
-on('EVENTCOMEND', async () => {
+on(EVENT.COMEND, async () => {
   const target = era_flag.target;
   // CFLAG:TARGET:100 —— 已经认定过就不再认定（一次性位）。
   // 这里的 RETURN 0 只结束**本定义**的执行，链上其它 EVENTCOMEND 照跑

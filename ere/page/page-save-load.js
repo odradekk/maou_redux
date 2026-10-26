@@ -104,6 +104,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { input_text } = require('#/utils/input-text');
 const { chara_callname } = require('#/utils/callname-utils');
+const { EVENT } = require('#/data/event-name-const');
 
 /**
  * 分页步长：SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -442,7 +443,7 @@ async function load_game() {
         // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——
         // 的 BEGIN SHOP（显式、会跑 EVENTSHOP）与隐式进入 SHOP
         // 的区分在 ere 侧即此缺省值与覆盖值之差（game-state.js）
-        const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;
+        const next = (await emit(EVENT.LOAD)) ?? STATE.SHOP_AFTER_LOAD;
         // LOADDATA 的转场语义（#137，见文件头）：不回调用方（标题的
         // RESTART、据点的循环重绘都不再走），进 SHOP 且不执行
         // EVENTSHOP。return 即离开本函数——RETURN L_POS 在迁移

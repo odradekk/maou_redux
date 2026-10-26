@@ -46,6 +46,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -85,7 +86,7 @@ function bind_ctx(rand) {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_2 = 1; // FLAG:102 = 1（K2 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -97,7 +98,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_2 = 0;
   },
@@ -9644,8 +9645,8 @@ function gobi_koujo_k2(arg_0, rand) {
   return gobi_text(2, arg_0, rand);
 }
 
-on('EVENTTRAIN', eventtrain_k2);
-on('EVENTEND', eventend_k2);
+on(EVENT.TRAIN, eventtrain_k2);
+on(EVENT.END, eventend_k2);
 
 // 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 =
 // 玩家侧看到占位行或不响。文件内直调的真身不在此列（COLOSSEUM_KOJO_2 由 COM

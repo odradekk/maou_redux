@@ -133,10 +133,10 @@ export default [
 
     // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
     // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit('SHOW_USERCOM', usable);`,
+    const usercom_draw = await emit(EVENT.SHOW_USERCOM, usable);`,
     replace: `    // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
     // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit('SHOW_USERCOM', []);
+    const usercom_draw = await emit(EVENT.SHOW_USERCOM, []);
 
     // 5. 探测可执行性：可执行指令表（喂输入检查与 SHOW_USERCOM 的指令
     // 按钮渲染——按钮随首条指令票 #45 挂载）
@@ -177,12 +177,12 @@ export default [
   {
     desc: 'M15 AFTERTRAIN 收尾：endTrain 挪到 EVENTEND 链之前',
     file: 'ere/system/train/train-end.js',
-    find: `  const pending = await emit('EVENTEND');
+    find: `  const pending = await emit(EVENT.END);
   save_train_desire();
   era.endTrain();`,
     replace: `  save_train_desire();
   era.endTrain();
-  const pending = await emit('EVENTEND');`,
+  const pending = await emit(EVENT.END);`,
     tests: ['train-loop'],
     must_mention: 'run_aftertrain',
   },
@@ -382,7 +382,7 @@ export default [
   {
     desc: 'M55 回合循环的 SOURCE_CHECK 槽位删掉',
     file: 'ere/system/train/train-loop.js',
-    find: "  const source_pending = await emit('SOURCE_CHECK');\n  if (source_pending !== undefined) {\n    return { missing: false, pending: source_pending };\n  }",
+    find: '  const source_pending = await emit(EVENT.SOURCE_CHECK);\n  if (source_pending !== undefined) {\n    return { missing: false, pending: source_pending };\n  }',
     replace: '  // 变异：SOURCE_CHECK 槽位删除',
     tests: ['source-check'],
     must_mention: '端到端',
@@ -393,7 +393,7 @@ export default [
     desc: 'M700 回调顺序：EVENTCOM 与指令处理器分发对调（步骤 11↔12）',
     file: 'ere/system/train/train-loop.js',
     find: `  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）
-  const com_pending = await emit('EVENTCOM');
+  const com_pending = await emit(EVENT.COM);
   if (com_pending !== undefined) {
     return { missing: false, pending: com_pending };
   }
@@ -404,7 +404,7 @@ export default [
     whenMissing: COM_MISSING,
   });`,
     replace:
-      "  // 11. 变异：COM 分发先于 EVENTCOM\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });\n  const com_pending = await emit('EVENTCOM');\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }",
+      '  // 11. 变异：COM 分发先于 EVENTCOM\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });\n  const com_pending = await emit(EVENT.COM);\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }',
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
@@ -11471,11 +11471,11 @@ export default [
   {
     desc: 'M16200 关窗前的欲情快照调用删除（次日评分读到的槽恒为 0）',
     file: 'ere/system/train/train-end.js',
-    find: `  const pending = await emit('EVENTEND');
+    find: `  const pending = await emit(EVENT.END);
   save_train_desire();
   era.endTrain();
   await settle_train_death();`,
-    replace: `  const pending = await emit('EVENTEND');
+    replace: `  const pending = await emit(EVENT.END);
   era.endTrain();
   await settle_train_death();`,
     tests: ['train-end', 'event-nextday'],

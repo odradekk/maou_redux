@@ -2305,7 +2305,7 @@ export default [
     desc: 'M9882 source_check_auto 接入退回存根（不再转发真实处理器）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `async function source_check_auto() {
-  await emit('SOURCE_CHECK_AUTO');
+  await emit(EVENT.SOURCE_CHECK_AUTO);
   era.nextTurnInTrain();
 }`,
     replace: `async function source_check_auto() {

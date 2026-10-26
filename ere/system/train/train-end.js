@@ -29,6 +29,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { palam_settled } = require('#/era-utils/palam-level');
 const era_flag = require('#/era-utils/era-flag');
+const { EVENT } = require('#/data/event-name-const');
 
 // EVENTEND 链内登记、引擎收尾后冲账的待除名目标。-1 = 无登记（「未选中」
 // 的同款约定，era_flag.js 的 target 语义注）；0 是魔王（真实角色号），
@@ -111,7 +112,7 @@ function save_train_desire() {
  * @returns {Promise<string>} 下一游戏状态（EVENTEND 链的暂存转场目标）
  */
 async function run_aftertrain() {
-  const pending = await emit('EVENTEND');
+  const pending = await emit(EVENT.END);
   save_train_desire();
   era.endTrain();
   await settle_train_death();

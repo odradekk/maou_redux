@@ -65,6 +65,7 @@ const {
   self_call_first,
 } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -81,7 +82,7 @@ const {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_3 = 1; // FLAG:103 = 1（K3 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -93,7 +94,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_3 = 0;
   },
@@ -8076,7 +8077,7 @@ async function kojo_message_com_3(rand) {
 
 // EVENTTRAIN NORMAL 档：初调教 CFLAG:201 状态机
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async () => {
     await eventtrain_k3();
   },
@@ -8085,7 +8086,7 @@ on(
 
 // EVENTEND NORMAL 档：CFLAG:301 钳回 1 + 调教结束台词
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     await eventend_k3();
   },
