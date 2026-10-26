@@ -50,9 +50,10 @@ export default [
     find: `  if ((era.get(\`talent:\${arg0}:122\`) || 0) === 0) {`,
     replace: `  if ((era.get(\`talent:\${arg0}:122\`) || 0) !== 0) {`,
     tests: ['dungeon-main'],
-    // must_mention 随 #173 的用例翻修同步：贯通用例断言从「接入存根」改为
-    // 「quit 炸穿」（ENDING_2 真身实现），定位串换新断言消息（#133 先例）
-    must_mention: 'QUIT 异常炸穿',
+    // must_mention 随用例翻修同步：贯通用例断言从「接入存根」改为「quit
+    // 炸穿」（#173 ENDING_2 真身），#852 起又改为「回标题的转场目标」——
+    // 条件取反后真勇者不进结局，用例在「以 TITLE 离开」那句先红
+    must_mention: '第 9 层踏破 → ENDING_2 → 回标题的转场目标',
   },
   {
     desc: 'M379 冒险者回头分支的挫折记忆改坏（507 = 1 删——撤退标志不立）',
@@ -2309,7 +2310,7 @@ export default [
     desc: 'M9882 source_check_auto 接入退回存根（不再转发真实处理器）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `async function source_check_auto() {
-  await emit('SOURCE_CHECK_AUTO');
+  await emit(EVENT.SOURCE_CHECK_AUTO);
   era.nextTurnInTrain();
 }`,
     replace: `async function source_check_auto() {

@@ -44,9 +44,10 @@ const { on } = require('#/system/event/registry');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { EVENT } = require('#/data/event-name-const');
 
 // EVENTTRAIN（无属性档——on 的缺省档即 TIER.NORMAL）
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   // 主人公の射精を0に（BASE:2 = 射精槽，属主 train → 门面）
   chara(0).train.射精槽 = 0;
 

@@ -172,9 +172,17 @@ test('选 [1] 退出：结局以「回标题」的转场目标交回主循环（
 
   // 「我……已经……不想做魔王了……」= 游戏结束。原实现是 era.quit()（throw
   // 型，#148），玩家从此回不来；#852 起结局演出回标题，标题循环重新接管
-  // ——转场目标是返回值，沿 ending_1 → invasion_check 上抛
+  // ——转场目标是返回值，沿 ending_1 → invasion_check 上抛。转场没 return
+  // 的话会回到输入循环、撞上耗尽的输入——两种走法都算「没到标题」，异常
+  // 一并收进 over 再断言
+  let over;
+  try {
+    over = await run_check(fixture, 1);
+  } catch (e) {
+    over = e;
+  }
   assert.equal(
-    await run_check(fixture, 1),
+    over,
     STATE.TITLE,
     '退出选项以 TITLE 转场离开（回标题，不退出进程）',
   );

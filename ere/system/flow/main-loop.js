@@ -23,6 +23,7 @@
 
 const { is_state, STATE } = require('#/system/flow/game-state');
 const { emit } = require('#/system/event/registry');
+const { EVENT } = require('#/data/event-name-const');
 const run_title_page = require('#/page/page-title');
 const { run_shop } = require('#/page/page-shop');
 const { run_train } = require('#/system/train/train-loop');
@@ -132,7 +133,7 @@ const STATE_HANDLERS = {
   // 链无人 BEGIN 时回落进 SHOP：EVENTFIRST 跑完而无转场时默认进商店轮，
   // 不是报错（#20 验收移交的语义）。EVENTFIRST 处理器出口本来就显式
   // begin(STATE.SHOP)，这里的默认值只在以后的处理器都不发起转场时起作用。
-  [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
+  [STATE.FIRST]: async () => (await emit(EVENT.FIRST)) ?? STATE.SHOP,
   // BEGIN SHOP → 先调 EVENTSHOP 链一次，随后绘制商店页 →
   // 输入 → 分发循环（ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已实现）。
@@ -152,7 +153,7 @@ const STATE_HANDLERS = {
   // system/turnend-settle.js）→ #LATER（空，event/event-turnend-later.js）。
   // 出口必发 BEGIN SHOP，链无人 BEGIN 时保持 undefined 报错（补默认值只会掩盖
   // 处理器被误删的回归）。
-  [STATE.TURNEND]: async () => await emit('EVENTTURNEND'),
+  [STATE.TURNEND]: async () => await emit(EVENT.TURNEND),
 };
 
 /**

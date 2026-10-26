@@ -54,6 +54,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { peek_aftertrain_s } = require('#/event/event-aftertrain');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -68,7 +69,7 @@ const MASTER = 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_7 = 1; // FLAG:107 = 1（K7 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -80,7 +81,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_7 = 0;
   },
@@ -96,7 +97,7 @@ on(
  * 淫乱（含魔族化分支）→ 爱慕（含魔族化分支）→ 崩坏 → 简易助手分支
  * （TALENT:MASTER:122==0 或 ASSI<0 或无名助手 → K7_KOJO2）。
  */
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   if (era0('flag:7') <= 0) {
     return 0;
   }
@@ -1480,7 +1481,7 @@ async function k7_kojo2() {
  * 屈服刻印Lv1以下/Lv2/Lv3+爱无 → 淫乱/爱慕（各按体力 BASE:0 ≥/≤ 500
  * 分档）取首个命中。BASE:0 省略角色位按旧引擎 TARGET 简写展开。
  */
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   if (era0('flag:7') <= 0) {
     return 0;

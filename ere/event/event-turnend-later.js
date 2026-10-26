@@ -10,9 +10,10 @@
  */
 
 const { on, TIER } = require('#/system/event/registry');
+const { EVENT } = require('#/data/event-name-const');
 
 // 空处理器：此处即为空定义，注册它以保留三档链结构与本文件的
 // 接入点；体内无任何动作
-on('EVENTTURNEND', async () => {}, TIER.LATER);
+on(EVENT.TURNEND, async () => {}, TIER.LATER);
 
 module.exports = {};

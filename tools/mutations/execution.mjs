@@ -155,10 +155,12 @@ export default [
   },
   {
     desc: 'M7279 据点分发：设施入口退回存根',
-    file: 'ere/page/page-shop.js',
-    find: '    await infrastructure(selectable_count);',
-    replace: `    era.print('（设施·设备不在移植范围。）');
-    await era.waitAnyKey(); // 变异：入口退回提示`,
+    file: 'ere/page/page-main-menu.js',
+    find: '    run: () => infrastructure(count_selectable_slaves()),',
+    replace: `    run: async () => {
+      era.print('（设施·设备不在移植范围。）');
+      await era.waitAnyKey(); // 变异：入口退回提示
+    },`,
     tests: ['page-shop'],
     must_mention: '条件成立应进设施真身',
   },
@@ -245,8 +247,9 @@ export default [
   {
     desc: 'M7289 据点菜单：漏画设施可达入口',
     file: 'ere/page/page-main-menu.js',
-    find: "    panel.push([111, '设施·设备']);",
-    replace: '    // 变异：设施入口未渲染',
+    find: `    enabled: () =>
+      (era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0,`,
+    replace: '    enabled: () => false, // 变异：设施入口永不可用',
     tests: ['page-main-menu'],
     must_mention: '肉便器或展品存在时才渲染可点按钮',
   },
@@ -1032,10 +1035,12 @@ export default [
   },
   {
     desc: 'M11383 主菜单 [103]：退回存根占位',
-    file: 'ere/page/page-shop.js',
-    find: '    await batch_execution();',
-    replace:
-      "    era.print('（批量处刑不在移植范围。）');\n    await era.waitAnyKey(); // 变异：退回提示",
+    file: 'ere/page/page-main-menu.js',
+    find: '    run: () => batch_execution(),',
+    replace: `    run: async () => {
+      era.print('（批量处刑不在移植范围。）');
+      await era.waitAnyKey(); // 变异：退回提示
+    },`,
     tests: ['event-execution-batch'],
     must_mention: '主菜单 [103]：usershop 接通批量处刑真身',
   },

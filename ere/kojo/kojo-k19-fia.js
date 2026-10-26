@@ -19,6 +19,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -59,7 +60,7 @@ const era0 = (key) => era.get(key) || 0;
 
 // EVENTTRAIN #PRI 档
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async () => {
     // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
     // FLAG:119  = 1（变量语义：FLAG 族，119）
@@ -74,7 +75,7 @@ on(
 
 // EVENTEND #LATER 档
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
     // FLAG:119  = 0（变量语义：FLAG 族，119）
@@ -84,7 +85,7 @@ on(
 );
 
 // EVENTTRAIN NORMAL 档
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
@@ -930,7 +931,7 @@ async function k19_fuku() {
 }
 
 // EVENTEND NORMAL 档
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%

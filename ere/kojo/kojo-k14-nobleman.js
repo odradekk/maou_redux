@@ -88,6 +88,7 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -122,7 +123,7 @@ const {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_14 = 1; // FLAG:114 = 1（K14 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -134,7 +135,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_14 = 0;
   },
@@ -166,7 +167,7 @@ on(
  *
  * 已性转判定统一走 `chara(target).stronghold.已性转`（CFLAG:70，见文件头）。
  */
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_name(0); // %NAME:MASTER%（MASTER 恒角色 0）
@@ -729,7 +730,7 @@ async function k14_kojo2(rand) {
  * 屈服刻印Lv3（各无爱）/淫乱/爱 分档，淫乱与爱各按体力（BASE:0）高低
  * （>=500 / <=500）再分两支，魔族（314==9）与男/已性转再细分。
  */
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
 

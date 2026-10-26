@@ -52,6 +52,7 @@ const {
 } = require('#/kojo/kojo-system');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -98,7 +99,7 @@ function bind_ctx(rand) {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_13 = 1; // FLAG:113 = 1（K13 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -110,7 +111,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_13 = 0;
   },
@@ -6109,8 +6110,8 @@ function gobi_koujo_k13(arg_0, rand) {
   return gobi_text(13, arg_0, rand);
 }
 
-on('EVENTTRAIN', eventtrain_k13);
-on('EVENTEND', eventend_k13);
+on(EVENT.TRAIN, eventtrain_k13);
+on(EVENT.END, eventend_k13);
 
 kojo_message_com_family.register(13, kojo_message_com_13);
 self_kojo_family.register(13, self_kojo_k13);

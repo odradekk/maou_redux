@@ -12,20 +12,48 @@
  * 唯一权威落点）。#723 起主菜单每轮「换屏 + 绘制」（ADR-0009，换屏入口
  * page/components/screen-change.js）；随 #724 删除画面组件，本文件只保留
  * 绘制函数，清屏与重画节奏由调用方（page-shop.js 的商店轮）掌握。
+ *
+ * #866 起主菜单的绘制与分发共用本文件的菜单项表 MAIN_MENU_ITEMS：可用性
+ * 条件只写在表里一处，各入口的处理函数也在表里（此前 26 个魔数分支在
+ * page-shop.js 的 usershop）。商店轮只做店内输入分派与阶层按钮，其余输入
+ * 交 dispatch_menu_item。
  */
 
 const era = require('#/era-electron');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
+const { maounet } = require('#/system/cross-save-sharing');
+const { chara_sale } = require('#/system/stronghold/sale');
+const { batch_execution } = require('#/event/event-execution-batch');
 const {
   menu_button_row,
   MENU_BUTTON_DIM_COLOR,
 } = require('#/page/components/menu-button');
 const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
+const { select_target, select_assi } = require('#/page/page-select-target');
+const { invasion } = require('#/page/page-invasion');
+const { dungeon_info2 } = require('#/page/page-dungeon-info2');
+const { infrastructure } = require('#/page/page-infrastructure');
+const { monster_shop } = require('#/page/page-monster-shop');
+const { ability_up } = require('#/page/page-ability-up');
+const { intercept } = require('#/page/page-intercept');
+const { tailor_main } = require('#/page/page-tailor');
+const { save_game, load_game } = require('#/page/page-save-load');
+const { config_menu } = require('#/page/page-config');
+const {
+  chara_info,
+  chara_info_individual_wrapped,
+} = require('#/page/page-chara-info');
+const { secret_labo } = require('#/page/page-shop-labo');
 const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
 const { NBSP, pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { print_button_grid } = require('#/utils/button-grid');
+
+/** 已加入角色数上限（[120] 召唤的满员门槛） */
+const MAX_CHARANUM = 90;
 
 // 原文排版里的全角空格（UNICODE 0x3000）。以转义书写并集中定义：ESLint
 // 的 no-irregular-whitespace 拦裸写，prettier 会把字符串里的裸全角空格当
@@ -169,6 +197,408 @@ function dim_slot() {
   return { content: '[---]', config: { color: MENU_BUTTON_DIM_COLOR } };
 }
 
+/** FLAG:36 信息面板选择（0=物品/技能、1=持有陷阱、4=地城概况、5=地城日常） */
+function active_panel() {
+  // 未声明读值 undefined → || 0 处理缺值（#13）
+  return era.get('flag:36') || 0;
+}
+
+/**
+ * B：达到出售资格的已加入角色数（[106] 贩卖奴隶的可用性条件）。
+ *
+ * 只看 CFLAG:0（是否达到出售资格），实际出售列表再排除濒死/影子/占用角色。
+ */
+function count_sellable_slaves() {
+  return era
+    .getAddedCharacters()
+    .filter((cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0)
+    .length;
+}
+
+/**
+ * 主菜单项表（#866）：绘制与分发共用这一份。
+ *
+ * id 是玩家记熟的快捷键，也是引擎 showAcc 拼在按钮正文前的编号——编号与
+ * 表序都不为排版调整（表序即绘制序，改编号等于让玩家记住的按键失灵）。
+ *
+ * - label：按钮正文，不带 [编号] 前缀（引擎自己拼，PR #30）；可以是函数
+ *   （正文随世界状态变，如 [102] 的地下城/场子）。
+ * - enabled：可用性条件，省略即恒可用。为假时指令面板画灰色 [---] 占位格
+ *   （不可点、仍占一格），分发也不认这个编号——条件只写在表里这一处。
+ * - dim：两行常显入口专用，未选中时调暗。它与可用性是两回事：[496]/[497]
+ *   在 A == 0 时照样画得出来（原版如此），只是点了没反应。
+ * - run：处理函数，转场目标（STATE 取值）由分发上抛，其余返回值留在分发层。
+ * - place：'target' 第一行、'tab' 第二行、省略即指令面板、'hidden' 尚无
+ *   按钮（名字按钮随角色数据工单，分发已通）。
+ */
+const MAIN_MENU_ITEMS = [
+  // —— 第一行：调教目标 / 助手（两枚同行，暗 = 未选中：-1 未选中、0 是魔王）——
+  {
+    id: 496,
+    place: 'target',
+    label: '调教目标',
+    dim: () => era_flag.target < 1,
+    enabled: () => count_selectable_slaves() > 0,
+    // 选择画面的「其它」支会转去怪物玩弄，转场目标原样上抛
+    run: () => select_target(),
+  },
+  {
+    id: 497,
+    place: 'target',
+    label: '助手',
+    dim: () => era_flag.assi < 1,
+    enabled: () => count_selectable_slaves() > 0,
+    run: () => select_assi(),
+  },
+
+  // —— 第二行：四个信息面板切换钮（四枚同行，暗 = 当前面板不是它）——
+  // 只写 FLAG:36、重绘即反馈，不叠占位文本（#24 派单核实事实 #2）
+  {
+    id: 500,
+    place: 'tab',
+    label: '物品/技能',
+    dim: () => active_panel() !== 0,
+    run: () => {
+      era.set('flag:36', 0);
+    },
+  },
+  {
+    id: 501,
+    place: 'tab',
+    label: '持有陷阱',
+    dim: () => active_panel() !== 1,
+    run: () => {
+      era.set('flag:36', 1);
+    },
+  },
+  {
+    id: 504,
+    place: 'tab',
+    label: '地城概况',
+    dim: () => active_panel() !== 4,
+    run: () => {
+      era.set('flag:36', 4);
+    },
+  },
+  {
+    id: 505,
+    place: 'tab',
+    label: '地城日常',
+    dim: () => active_panel() !== 5,
+    run: () => {
+      era.set('flag:36', 5);
+    },
+  },
+
+  // —— 指令面板：18 项每行 3 列（原版 PRINTLCD 每 3 个换行，#717 恢复）——
+  // [100] 调教：没有这枚按钮，调教入口在实机上根本不存在——select_target
+  // 只能经 [496] 选人、选完仍回主菜单，玩家无从进入调教（实机撞见）。
+  {
+    id: 100,
+    label: '调教',
+    enabled: () => count_selectable_slaves() > 0,
+    run: run_train,
+  },
+  // [101] 能力显示：检查「已加入角色数 >= 1」——魔王自身即角色 0，恒真；
+  // 保留这个恒真检查，不发明可用性规则（同 [109]/[200]/[300]）。
+  {
+    id: 101,
+    label: '能力显示',
+    enabled: () => era.getAddedCharacters().length >= 1,
+    run: async () => {
+      if ((await chara_info()) === 1) {
+        return begin(STATE.TURNEND);
+      }
+    },
+  },
+  // [102] 地下城 / 场子：无条件渲染，条件只切换文案（FLAG:502 的 2D 模式
+  // 设定一问随 #181 H12，当前恒 0）
+  {
+    id: 102,
+    label: () => ((era.get('flag:502') || 0) === 0 ? '地下城' : '场子'),
+    run: () => dungeon_info2(),
+  },
+  // [103] 处刑 / [104] 迎击：A > 0（同 [100]，不发明别的可用性规则）
+  {
+    id: 103,
+    label: '处刑',
+    enabled: () => count_selectable_slaves() > 0,
+    run: () => batch_execution(),
+  },
+  {
+    id: 104,
+    label: '迎击',
+    enabled: () => count_selectable_slaves() > 0,
+    run: () => intercept(),
+  },
+  // [105] 能力值提升：原版的可用性检查整段是注释态，无条件渲染——不补一个
+  // 被关掉的检查
+  {
+    id: 105,
+    label: '能力值提升',
+    run: () => ability_up(),
+  },
+  // [106] 贩卖奴隶：B > 0 时显示按钮（见 count_sellable_slave）
+  {
+    id: 106,
+    label: '贩卖奴隶',
+    enabled: () => count_sellable_slaves() > 0,
+    run: () => chara_sale(),
+  },
+  // [107] 购物：置 BOUGHT = 1，下一轮 show_shop 据此跳道具商店。无条件渲染
+  // ——没有这枚按钮，道具商店在实机上进不去（同 [200]/[300] 的 #137 教训）
+  {
+    id: 107,
+    label: '购物',
+    run: () => {
+      era_flag.bought = 1;
+    },
+  },
+  // [108] 换装：A > 0 && FLAG:37 == 1。买成后 tailor_core 把 TARGET 置 -1，
+  // 返回后把 TARGET 还原为「前回调教目标」（FLAG:1）
+  {
+    id: 108,
+    label: '换装',
+    enabled: () =>
+      count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1,
+    run: async () => {
+      await tailor_main();
+      era_flag.target = era.get('flag:1') || 0;
+    },
+  },
+  // [109] 侵略：出兵成功才转场 TURNEND。没有这枚按钮，整条侵略线在实机上
+  // 入口不存在——引擎的 input() 只收已打印按钮的快捷键，键入 109 一律
+  // 「输入不合法」（#129 实机撞见）
+  {
+    id: 109,
+    label: '侵略',
+    run: async () => {
+      // 返回 1 才 BEGIN TURNEND；结局选退出时 invasion 给的是回标题的
+      // 转场目标（#852），先上抛再判 1
+      const invaded = await invasion();
+      if (is_state(invaded)) {
+        return invaded;
+      }
+      if (invaded === 1) {
+        return begin(STATE.TURNEND);
+      }
+    },
+  },
+  // [110] 实验室：TALENT:0:325 == 1（魔王的魔界知识）
+  {
+    id: 110,
+    label: '实验室',
+    enabled: () => (era.get('talent:0:325') || 0) === 1,
+    run: () => secret_labo(),
+  },
+  // [111] 设施·设备：肉便器或博物馆展品存在时才显示
+  {
+    id: 111,
+    label: '设施·设备',
+    enabled: () =>
+      (era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0,
+    run: () => infrastructure(count_selectable_slaves()),
+  },
+  // [120] 召唤：原版「卡拉启动！== 1」的内联卡拉入队事件用 SAVEDATA 自定义
+  // 变量，ere 侧无落点（恒非 1，不移植）；只剩满员判定
+  {
+    id: 120,
+    label: '召唤',
+    run: run_summon,
+  },
+  // [199] 休息（回合结束）：内联文本 + FLAG:9 += 5（税金）+ 转场 TURNEND
+  {
+    id: 199,
+    label: '休息',
+    run: () => {
+      era.print('你专心于内政，稍作了休息……（税金+5%）');
+      game.stronghold.税金修正 += 5;
+      return begin(STATE.TURNEND);
+    },
+  },
+  // [200] 保存 / [300] 读取：缺了这两枚，据点侧存读档入口在实机上不存在
+  // （引擎只送达已打印按钮的快捷键，#136 勘误移交 #137）——存读档是菜单
+  // 中枢功能，按钮与分发一起实现
+  {
+    id: 200,
+    label: '保存',
+    run: () => save_game(),
+  },
+  {
+    id: 300,
+    label: '读取',
+    run: () => load_game(),
+  },
+  // [777] 设定：[463] 起为真身（config_menu 全量移植）
+  {
+    id: 777,
+    label: '设定',
+    run: () => config_menu(),
+  },
+  // [888] 通信：跨作品数据交换；特殊档读写会重放 EVENTLOAD 链，链里的
+  // 转场目标经返回值上来
+  {
+    id: 888,
+    label: '通信',
+    run: () => maounet(),
+  },
+
+  // —— 名字按钮：分发已通，按钮本体随角色数据工单（#35 前实机无角色可显示，
+  // 正文取角色呼名，承载见 #5 已决的 callname）——
+  {
+    id: 498,
+    place: 'hidden',
+    label: '调教目标名',
+    run: () => chara_info_individual_wrapped(era_flag.target),
+  },
+  {
+    id: 499,
+    place: 'hidden',
+    label: '助手名',
+    run: () => chara_info_individual_wrapped(era_flag.assi),
+  },
+];
+
+/** 表内某一处的菜单项（按表内顺序：绘制顺序即表序） */
+function items_of(place) {
+  return MAIN_MENU_ITEMS.filter((item) => (item.place ?? 'command') === place);
+}
+
+/** 菜单项当前是否可用（enabled 省略 = 恒可用） */
+function is_enabled(item) {
+  return item.enabled ? item.enabled() : true;
+}
+
+/** 菜单项当前正文（label 可以是函数：正文随世界状态变） */
+function item_label(item) {
+  return typeof item.label === 'function' ? item.label() : item.label;
+}
+
+/**
+ * [100] 调教：选目标与助手后转场 TRAIN（#44 接通）。
+ *
+ * 目标未选先选目标（选择页的「其它」支会转去怪物玩弄，转场目标原样上抛）；
+ * 助手未选且存在候选时再选助手（单奴隶路径没有候选，跳过）；育儿室的魔王
+ * 不能调教（报文后等一键）。
+ *
+ * @returns {Promise<string|undefined>} 转场目标
+ */
+async function run_train() {
+  if (era_flag.target <= 0) {
+    const selected = await select_target();
+    if (is_state(selected)) {
+      return selected;
+    }
+    if (selected === 0) {
+      // 取消 / 列表为空：整次调教作罢
+      return undefined;
+    }
+  }
+  // 助手选择循环：候选计数——CFLAG:x:0 == 2（助手役）且 x != 0 且
+  // CFLAG:x:1 == 0（未占用）且 x != TARGET。无候选（单奴隶路径）→
+  // 跳过 select_assi()；TARGET == ASSI 时助手作废、回循环头重查
+  //（continue 跳过尾检查，等价于直接跳回循环标签）
+  let select_assi_loop = true;
+  while (select_assi_loop) {
+    select_assi_loop = false;
+    if (era_flag.assi <= 0) {
+      const assi_candidates = era
+        .getAddedCharacters()
+        .filter(
+          (cid) =>
+            cid !== 0 &&
+            (era.get(`cflag:${cid}:0`) || 0) === 2 &&
+            (era.get(`cflag:${cid}:1`) || 0) === 0 &&
+            era_flag.target !== cid,
+        ).length;
+      if (assi_candidates >= 1) {
+        // 返回 2（「我先想想」）→ 取消整次调教
+        const assi_result = await select_assi();
+        if (assi_result === 2) {
+          return undefined;
+        }
+      }
+      // ASSI == 0 时置 -1（select_assi 的两个真实分支恒把 ASSI 置为 -1 或
+      // 有效 ID，此处是防御性缺省处理，结构保留）
+      if (era_flag.assi === 0) {
+        era_flag.assi = -1;
+      }
+      // 测试覆盖备注：这里的 TARGET === ASSI 在当前过滤链下结构性不可达——
+      // assi_candidates 的筛选式与 is_assistable（page-select-target.js）
+      // 都显式排除 cid === TARGET，真实 select_assi() 选中结果不可能等于
+      // TARGET；未调用时（0 个候选）ASSI 维持在进块前的 <= 0，TARGET 此时恒
+      // >= 1，也不相等。下方循环尾检查用的是同一判断条件，但它可在 ASSI
+      // 预先已为有效值且恰好等于 TARGET 时命中（跳过本块直接进这），这一处
+      // 则不行——保留为防御性代码，不补测试（改它不可观测）。
+      if (era_flag.target === era_flag.assi) {
+        // 目标与助手同人 → 助手作废，回循环头重查
+        era_flag.assi = -1;
+        select_assi_loop = true;
+        continue;
+      }
+    }
+    // ASSI >= 1 且 TARGET == ASSI → ASSI = -1（循环外尾检查）
+    if (era_flag.assi >= 1 && era_flag.target === era_flag.assi) {
+      era_flag.assi = -1;
+    }
+  }
+  // 育儿室判定：CFLAG:MASTER:1 == 10 → 打印报文后返回
+  if ((era.get('cflag:0:1') || 0) === 10) {
+    era.print('育儿室中的你不能进行调教……'); // 魔王呼名恒为「你」
+    await era.waitAnyKey(); // 报文后等一键
+    return undefined;
+  }
+  // TARGET >= 1 且 TARGET != ASSI → BEGIN TRAIN（#44 接通：转场目标逐层
+  // 上抛，主循环进 TRAIN 状态——train-loop.js）
+  if (era_flag.target >= 1 && era_flag.target !== era_flag.assi) {
+    return begin(STATE.TRAIN);
+  }
+  return undefined;
+}
+
+/**
+ * [120] 召唤：未满员进怪物商店，满员只提示。
+ */
+async function run_summon() {
+  if (era.getAddedCharacters().length < MAX_CHARANUM) {
+    await monster_shop();
+    return;
+  }
+  era.print('奴隶太多了！'); // 打印后等一键
+  await era.waitAnyKey();
+}
+
+/**
+ * 画一整行常显菜单按钮：行的成员、正文与调暗都取自表。
+ * @param {string} place 表内位置（'target' / 'tab'）
+ * @param {number} per_line 每行枚数
+ */
+function draw_menu_row(place, per_line) {
+  menu_button_row(
+    items_of(place).map((item) => [item_label(item), item.id, item.dim()]),
+    per_line,
+  );
+}
+
+/**
+ * 主菜单分发：按编号找到表里的菜单项并执行（与绘制同源，#866）。
+ *
+ * 编号不在表里、或该项当前不可用时与改动前一样落空——调用方回循环重绘，
+ * 不提示、不报错。
+ *
+ * @param {number} result 玩家输入（era.input() 的返回值）
+ * @returns {Promise<string|undefined>} 转场目标；不进转场返回 undefined
+ */
+async function dispatch_menu_item(result) {
+  const item = MAIN_MENU_ITEMS.find((entry) => entry.id === result);
+  if (!item || !is_enabled(item)) {
+    return undefined;
+  }
+  const next = await item.run();
+  // 只有转场目标上抛：处理函数的普通返回值（如选择页的 0/1/2）留在分发层
+  return is_state(next) ? next : undefined;
+}
+
 /**
  * 绘制据点主菜单。
  *
@@ -196,15 +626,9 @@ function draw_main_menu() {
   era.drawLine();
 
   // 第一组入口：调教目标（496）/ 助手（497），两枚同行（原版 MENU_BUTTON
-  // 间以定宽空格隔开打在同一行，#717 恢复同行）。明暗判断条件：亮当且
-  // 仅当指针 >= 1（-1 未选中、0 是魔王，都算未选中）。
-  menu_button_row(
-    [
-      ['调教目标', 496, era_flag.target < 1],
-      ['助手', 497, era_flag.assi < 1],
-    ],
-    2,
-  );
+  // 间以定宽空格隔开打在同一行，#717 恢复同行）。调暗 = 未选中（-1 未
+  // 选中、0 是魔王，都算未选中）。
+  draw_menu_row('target', 2);
 
   // 调教目标名/助手名按钮（498/499，点进各自状态画面，正文取角色呼名）
   // 与生命条（life_bar/vital_bar）：随角色数据工单实现（#35 前实机无角色
@@ -214,178 +638,30 @@ function draw_main_menu() {
   era.drawLine();
 
   // 第二组入口：四个信息面板切换钮（500/501/504/505），四枚同行（原版
-  // 同打一行，#717 恢复）。亮 = 当前面板（FLAG:36），暗 = 未选中。
-  // FLAG:36 = 信息面板选择（0=物品/技能、1=持有陷阱、4=地城概况、
-  // 5=地城日常），写入随 #24 的分发；未声明读值
-  // undefined → || 0 处理缺值（#13）。
-  const active_panel = era.get('flag:36') || 0;
-  menu_button_row(
-    [
-      ['物品/技能', 500, active_panel !== 0],
-      ['持有陷阱', 501, active_panel !== 1],
-      ['地城概况', 504, active_panel !== 4],
-      ['地城日常', 505, active_panel !== 5],
-    ],
-    4,
-  );
+  // 同打一行，#717 恢复）。暗 = 当前面板不是它（FLAG:36）。
+  draw_menu_row('tab', 4);
 
   // 四个子面板的分发（FLAG:36 → 专用函数，其余值 → 物品/技能）。
   // 四支自 #180/#395 起全部真身（draw_panel 内分发）：地城概况/地城日常
   // 随 #180，物品/技能（draw_have_items）与持有陷阱（draw_have_traps）
   // 随这张工单。
-  draw_panel(active_panel);
+  draw_panel(active_panel());
 
   // 分隔线 + 指令面板标题（▌Commands，粗体）
   era.drawLine();
   // 行首一枚全角空格 + ▌Commands（粗体）
   era.print([{ content: `${FULL_WIDTH_SPACE}▌Commands`, fontWeight: 'bold' }]);
 
-  // A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
-  // B（被调教过的奴隶数）在下方 [106] 入口消费。
-  //
   // 指令面板 18 项（[100]-[111]、[120]、[199]、[200]、[300]、[777]、[888]）
   // 按每行 3 列排（原版 PRINTLCD 每 3 个换行，#717 恢复）；不可用项以
-  // 灰色 [---] 文本格占位、仍占一格，各列对齐不因可用性漂移。
-  //
-  // [100] 调教 —— #24 起第一个接入的入口：分发本体在 page-shop.js 的
-  // usershop，调教域自 #44/#45/#47 起可用。这里原是列排版纯文本配键盘
-  // 输入，ere 侧改按钮（PR #53 通则：纯文本行在实机上点不动）；正文不写
-  // [100] 前缀，交给引擎的 showAcc 拼（PR #30）。A == 0 时退化为灰色
-  // `[---]` 占位、不可选，以同色不可点文本呈现。
-  //
-  // 没有这一枚按钮，调教入口在实机上根本不存在——select_target 只能经
-  // [496] 选人、选完仍回主菜单，玩家无从进入调教（实机撞见）。
-  const panel = [];
-  if (count_selectable_slaves() > 0) {
-    panel.push([100, '调教']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [101] 能力显示 —— chara_info()（#391 起真身，page/page-chara-info.js）。
-  // 检查「已加入角色数 >= 1」：魔王自身即角色 0，恒真——保留这个恒真检查，
-  // 不发明可用性规则（同 [109]/[200]/[300] 的处理原则）。
-  if (era.getAddedCharacters().length >= 1) {
-    panel.push([101, '能力显示']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [102] 地下城 —— 指令面板里第五个接通的真身入口（#180）：
-  // 分发在 page-shop.js 的 usershop（dungeon_info2 真身，ere/page/
-  // page-dungeon-info2.js）。无条件渲染（条件只用于切换文案，不带可用性
-  // 检查）；文案依 FLAG:502（2D 模式 =「场子」，普通 =「地下城」——2D
-  // 模式的设定一问随 #181 H12，当前恒 0）。写法同 [100]：列排版文本改
-  // 按钮（PR #53），正文不写 [102] 前缀（PR #30）。
-  panel.push([102, (era.get('flag:502') || 0) === 0 ? '地下城' : '场子']);
-
-  // [103] 处刑 —— batch_execution()（#543 起真身，ere/event/event-execution-batch.js）；检查 A > 0
-  // （同 [100]/[104]，不发明可用性规则）。
-  if (count_selectable_slaves() > 0) {
-    panel.push([103, '处刑']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [104] 迎击 —— intercept()（#397 起真身，page/page-intercept.js）；检查 A > 0。
-  if (count_selectable_slaves() > 0) {
-    panel.push([104, '迎击']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [105] 能力值提升 —— ability_up()（#397 起真身，page/page-ability-up.js）。
-  // 可用性判断条件整段是注释态，故无条件渲染——不补一个被关掉的
-  // 检查。
-  panel.push([105, '能力值提升']);
-
-  // [106] 贩卖奴隶。B > 0 时显示按钮；B 只看
-  // CFLAG:0（是否达到出售资格），实际列表再排除濒死/影子/占用角色。
-  const sellable_count = era
-    .getAddedCharacters()
-    .filter(
-      (cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0,
-    ).length;
-  if (sellable_count > 0) {
-    panel.push([106, '贩卖奴隶']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [107] 购物 —— #395 置位、#399 起本体也是真身：BOUGHT = 1
-  // （分发在 usershop 的 107 分支），下一轮 show_shop 据此跳过主菜单、
-  // 整屏画 item_shop（BOUGHT ≥ 54 时画 item_shop_trap，两个本体分别在
-  // page/page-item-shop.js 与 page-shop-trap.js）。无条件渲染——没有这枚
-  // 按钮，道具商店在实机上进不去（同 [200]/[300] 的 #137 教训）。
-  panel.push([107, '购物']);
-
-  // [108] 换装 —— tailor_main()（#397 起真身，page/page-tailor.js）；
-  // 检查 A > 0 && FLAG:37 == 1（FLAG:37 未落表前未声明读值 undefined →
-  // || 0 → 恒不成立，落表后随设定生效）。
-  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {
-    panel.push([108, '换装']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [109] 侵略 —— 指令面板里第二个接通的真身入口：分发在 page-shop.js
-  // 的 usershop（#117 起 invasion 真身 + begin(STATE.TURNEND) 真转场）。
-  // 无条件渲染（不像 [100] 有 A > 0 检查）——不发明可用性规则。写法同
-  // [100]：列排版纯文本配键盘输入改为按钮（PR #53 通则：纯文本行在实机
-  // 上点不动）；正文不写 [109] 前缀，交给引擎的 showAcc 拼（PR #30）。
-  //
-  // 没有这一枚按钮，整条侵略线（#117/#118/#120）在实机上入口不存在——
-  // 引擎的 input() 只收已打印按钮的快捷键，键入 109 一律「输入不合法」
-  // （#129 实机撞见；夹具的 set_inputs 照单全收，验不出这类缺口，防复发
-  // 校验见 #130）。
-  panel.push([109, '侵略']);
-
-  // [110] 实验室 —— secret_labo()（#398 起真身，page/page-shop-labo.js）；
-  // 检查 TALENT:0:325 == 1（魔王的魔界知识，与 usershop 110 分支的分发检查
-  // 同源）。
-  if ((era.get('talent:0:325') || 0) === 1) {
-    panel.push([110, '实验室']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [111] 设施·设备：肉便器或博物馆展品存在时才显示。
-  if ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0) {
-    panel.push([111, '设施·设备']);
-  } else {
-    panel.push(dim_slot());
-  }
-
-  // [120] 召唤 —— monster_shop()（#399 起真身，page/page-monster-shop.js）；
-  // 无条件渲染。
-  panel.push([120, '召唤']);
-
-  // [199] 休息（回合结束）—— #395 起真身：内联文本 + FLAG:9 +=5
-  // （税金）+ begin(STATE.TURNEND)，分发在 page-shop.js 的 usershop。无条件
-  // 渲染——做完这一枚，引擎里第一次能把回合推过去（硬约束八）。
-  panel.push([199, '休息']);
-
-  // [200] 保存 / [300] 读取 —— 指令面板里第三、四个接通的真身入口：
-  // 分发在 page-shop.js 的 usershop（200 → save_game、300 → load_game，
-  // #136 接通）。两钮前均无检查、无条件渲染（同 [109] 的处理，不发明
-  // 可用性规则）。正文不写 [200]/[300] 前缀，交给引擎的 showAcc 拼
-  // （PR #30）。
-  // 缺了这两枚，据点侧存/读档入口在实机上不存在——引擎的 input() 只送达
-  // 已打印按钮的快捷键，#136 分发侧虽已接真身，渲染侧从未画过按钮，实机
-  // 验收当场撞出（#129 同型复现，#136 的勘误评论移交 #137）。存读档是
-  // 菜单中枢功能，与调教/侵略不同，按钮随分发真身一起实现。
-  panel.push([200, '保存']);
-  panel.push([300, '读取']);
-
-  // [777] 设定 —— config_menu()（#463 起真身，page/page-config.js）；无条件渲染。
-  panel.push([777, '设定']);
-
-  // [888] 通信 —— maounet()（真身，#350）；无条件渲染——分发真身早已
-  // 接通（#350），渲染侧此前从未画过按钮，跨作品数据交换入口在实机上
-  // 因此不存在（同 [200]/[300] 的 #137 教训）。
-  // 入口在实机上因此不存在（同 [200]/[300] 的 #137 教训）。
-  panel.push([888, '通信']);
-  print_button_grid(panel, 3);
+  // 灰色 [---] 文本格占位、仍占一格，各列对齐不因可用性漂移——成员与
+  // 可用性都取自 MAIN_MENU_ITEMS（#866 起绘制与分发同源）。
+  print_button_grid(
+    items_of('command').map((item) =>
+      is_enabled(item) ? [item.id, item_label(item)] : dim_slot(),
+    ),
+    3,
+  );
 
   // 底部双线
   era.drawLine({ isSolid: true });
@@ -627,6 +903,8 @@ function draw_dungeon_daily() {
 }
 
 module.exports = {
+  MAIN_MENU_ITEMS,
+  dispatch_menu_item,
   draw_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
