@@ -371,9 +371,11 @@ export default [
   make(
     7259,
     '据点通信入口退回空操作',
-    'ere/page/page-shop.js',
-    '    const next = await maounet();\n    if (is_state(next)) {\n      return next;\n    }',
-    '    return; // 变异：通信入口退回空操作',
+    'ere/page/page-main-menu.js',
+    '    run: () => maounet(),',
+    `    run: async () => {
+      // 变异：通信入口退回空操作
+    },`,
     hooks,
   ),
 

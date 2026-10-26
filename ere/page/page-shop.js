@@ -23,48 +23,27 @@
 const era = require('#/era-electron');
 const { relation_debugprint } = require('#/chara/chara-family');
 
-const { begin, is_state, STATE } = require('#/system/flow/game-state');
+const { is_state } = require('#/system/flow/game-state');
 const { on, emit, TIER } = require('#/system/event/registry');
-const { maounet } = require('#/system/cross-save-sharing');
-const { chara_sale } = require('#/system/stronghold/sale');
 const {
+  dispatch_menu_item,
   draw_main_menu,
   reset_out_of_range_pointers,
-  count_selectable_slaves,
 } = require('#/page/page-main-menu');
-const { select_target, select_assi } = require('#/page/page-select-target');
-const { invasion } = require('#/page/page-invasion');
-const { dungeon_info2, enemy_exist2 } = require('#/page/page-dungeon-info2');
-const { infrastructure } = require('#/page/page-infrastructure');
-const { item_shop_trap } = require('#/page/page-shop-trap');
+const { enemy_exist2 } = require('#/page/page-dungeon-info2');
 const {
   clear_shop,
   item_shop,
   purchase,
   SHOP_ITEM_COUNT,
 } = require('#/page/page-item-shop');
-const { monster_shop } = require('#/page/page-monster-shop');
-const { ability_up } = require('#/page/page-ability-up');
-const { intercept } = require('#/page/page-intercept');
-const { tailor_main } = require('#/page/page-tailor');
-const { save_game, load_game } = require('#/page/page-save-load');
-const { config_menu } = require('#/page/page-config');
-const {
-  chara_info,
-  chara_info_individual_wrapped,
-} = require('#/page/page-chara-info');
-const { game } = require('#/facade/game');
+const { item_shop_trap } = require('#/page/page-shop-trap');
 const era_flag = require('#/era-utils/era-flag');
-const { secret_labo } = require('#/page/page-shop-labo');
 const { change_screen } = require('#/page/components/screen-change');
 // SHOW_FLOOR 的怪物行与近卫名单（#548）：怪物名与 %SAVESTR% 的承载
 const { item_name, monstername } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
-const { batch_execution } = require('#/event/event-execution-batch');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
-
-/** 已加入角色数上限 */
-const MAX_CHARANUM = 90;
 
 /**
  * EVENTSHOP 链的普通档处理器：每次进入 SHOP 状态时执行一次。
@@ -148,14 +127,15 @@ async function show_shop() {
 }
 
 /**
- * usershop：主菜单输入分发（issue #24；100 分支随 #44 补全）。
+ * usershop：主菜单输入的分发口（issue #24；#866 起主菜单分支搬进菜单项表）。
  *
- * 整条 IF/ELSEIF 链顺序固定，**没有 ELSE**——认不出的输入（含被检查
- * 拦下的 100/496/497，A == 0 时）落到函数尾返回，回循环重绘，不提示、
- * 不报错。
+ * 本函数只管店内输入：购买分派（0-99）与购物态的三个键（997/998/999），
+ * 其余输入交 page-main-menu.js 的 dispatch_menu_item——菜单项的可用性条件
+ * 与处理函数都在那张表里，与绘制同源。认不出的输入（含被检查拦下的、A == 0
+ * 时的 496/497）与改动前一样落到函数尾返回，回循环重绘，不提示、不报错。
  *
- * 指令分支全部真身化（#391-#548 逐票接通；999 调试菜单与 400 隐入口随
- * #638 删除——缺内容的入口按 #574「去掉入口」处理，见函数体注释）。
+ * 阶层按钮（[521]-[530]）仍是本文件的：它们由地城概况子面板按层打印、编号
+ * 是区间，不是主菜单项；隐藏调试入口 7788 同理（界面本就不印它）。
  *
  * @param {number} result 玩家输入（era.input() 的返回值）
  * @returns {Promise<string|undefined>} 转场目标（STATE 取值）；没发起转场的
@@ -206,231 +186,27 @@ async function usershop(result) {
     return; // 购物态下其它输入无反应，回循环重绘
   }
 
-  // A（可选奴隶数）：主菜单渲染（page-main-menu.js）也算过同一份，
-  // 100/496/497 三个分支的检查读它；渲染与分发两次求值之间无写入路径，
-  // 分发时重算等价。没有可选奴隶时 A 为 0，100/496/497 进不去——这是既定
-  // 行为，勿为让占位可见而放宽检查（#24 派单核实事实 #4）。
-  const selectable_count = count_selectable_slaves();
-
-  if (result === 100 && selectable_count > 0) {
-    // 进调教（#44 补全）。
-    if (era_flag.target <= 0) {
-      // 目标未选 → select_target()（真身见 page-select-target.js）；
-      // 返回 0（取消/列表为空）则整次调教作罢。选择画面的「其它」支会
-      // 转去怪物玩弄（#340），那条路径以转场目标返回，先上抛再判 0
-      const selected = await select_target();
-      if (is_state(selected)) {
-        return selected;
-      }
-      if (selected === 0) {
-        return;
-      }
-    }
-    // 助手选择循环：候选计数——CFLAG:x:0 == 2（助手役）且 x != 0 且
-    // CFLAG:x:1 == 0（未占用）且 x != TARGET。无候选（单奴隶路径）→
-    // 跳过 select_assi()；TARGET == ASSI 时助手作废、回循环头重查
-    //（continue 跳过尾检查，等价于直接跳回循环标签）
-    let select_assi_loop = true;
-    while (select_assi_loop) {
-      select_assi_loop = false;
-      if (era_flag.assi <= 0) {
-        const assi_candidates = era
-          .getAddedCharacters()
-          .filter(
-            (cid) =>
-              cid !== 0 &&
-              (era.get(`cflag:${cid}:0`) || 0) === 2 &&
-              (era.get(`cflag:${cid}:1`) || 0) === 0 &&
-              era_flag.target !== cid,
-          ).length;
-        if (assi_candidates >= 1) {
-          // select_assi()（真身见 page-select-target.js，#395）
-          const assi_result = await select_assi();
-          // 返回 2（「我先想想」）→ 取消整次调教
-          if (assi_result === 2) {
-            return;
-          }
-        }
-        // ASSI == 0 时置 -1（select_assi 的两个真实分支恒把 ASSI 置为 -1
-        // 或有效 ID，此处是防御性缺省处理，结构保留）
-        if (era_flag.assi === 0) {
-          era_flag.assi = -1;
-        }
-        // 测试覆盖备注：这里的 TARGET === ASSI 在当前过滤链下结构性不可达——
-        // assi_candidates 的筛选式与 is_assistable（page-select-target.js）
-        // 都显式排除 cid === TARGET，真实 select_assi() 选中结果不可能等于
-        // TARGET；未调用时（0 个候选）ASSI 维持在进块前的 <= 0，TARGET 此时恒
-        // >= 1，也不相等。下方循环尾检查用的是同一判断条件，但它可在 ASSI
-        // 预先已为有效值且恰好等于 TARGET 时命中（跳过本块直接进这），这一处
-        // 则不行——保留为防御性代码，不补测试（改它不可观测）。
-        if (era_flag.target === era_flag.assi) {
-          // 目标与助手同人 → 助手作废，回循环头重查
-          era_flag.assi = -1;
-          select_assi_loop = true;
-          continue;
-        }
-      }
-      // ASSI >= 1 且 TARGET == ASSI → ASSI = -1（循环外尾检查）
-      if (era_flag.assi >= 1 && era_flag.target === era_flag.assi) {
-        era_flag.assi = -1;
-      }
-    }
-    // 育儿室判定：CFLAG:MASTER:1 == 10 → 打印报文后返回
-    if ((era.get('cflag:0:1') || 0) === 10) {
-      era.print('育儿室中的你不能进行调教……'); // 魔王呼名恒为「你」
-      await era.waitAnyKey(); // 报文后等一键
-      return;
-    }
-    // TARGET >= 1 且 TARGET != ASSI → BEGIN TRAIN（#44 接通：
-    // 转场目标逐层上抛，主循环进 TRAIN 状态——train-loop.js）
-    if (era_flag.target >= 1 && era_flag.target !== era_flag.assi) {
-      return begin(STATE.TRAIN);
-    }
-    // return 之后到不了这里；检查不成立时（理论上不可达）落到链尾
-  } else if (result === 101) {
-    // 能力显示：chara_info()，返回 1 才 BEGIN TURNEND（出口之一，
-    // #391 起真身）
-    if ((await chara_info()) === 1) {
-      return begin(STATE.TURNEND);
-    }
-  } else if (result === 102) {
-    // 地下城 / 场子：dungeon_info2()（#180 起真身：ere/page/
-    // page-dungeon-info2.js 的三标签页情报界面；按钮文案依 FLAG:502——
-    // 渲染在 page-main-menu.js 的指令面板段）
-    await dungeon_info2();
-  } else if (result === 103) {
-    // 处刑：batch_execution()——#543 起真身（ere/event/
-    // event-execution-batch.js，批量处刑；处分方式作为实参传给口上，
-    // 不再打开调教窗口借 tflag，见该文件头）
-    await batch_execution();
-  } else if (result === 104) {
-    // 迎击：intercept()（#397 起真身，page/page-intercept.js），返回前
-    // 自己完成出击决定与 gohoubi_request，回到这里只需重绘
-    await intercept();
-  } else if (result === 105) {
-    // 能力值提升：ability_up()（#397 起真身，page/page-ability-up.js）。
-    // 出售资格复核在 ability_up_core 的 [999] 支内部（读的是 CORE 期间的
-    // TARGET），这里不再重复调用 check_sellassiable（#395 时代先落的那句
-    // 已知尾接缝随真身实现撤掉）
-    await ability_up();
-  } else if (result === 106) {
-    // 贩卖奴隶（#339 真身）
-    await chara_sale();
-  } else if (result === 107) {
-    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
-    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
-    era_flag.bought = 1;
-  } else if (result === 108) {
-    // 换装：tailor_main()（#397 起真身，page/page-tailor.js）。买成后
-    // tailor_core 把 TARGET 置 -1，故返回后把 TARGET 还原为「前回调教
-    // 目标」（flag:1）
-    await tailor_main();
-    era_flag.target = era.get('flag:1') || 0;
-  } else if (result === 109) {
-    // 侵略：invasion()（#117 起真身：魔力出兵窄路径，ere/page/
-    // page-invasion.js），返回 1 才 BEGIN TURNEND（出口之一——
-    // 转场目标由本分支返回，超级循环逐层交给主循环）
-    if ((await invasion()) === 1) {
-      return begin(STATE.TURNEND);
-    }
-  } else if (result === 110 && (era.get('talent:0:325') || 0) === 1) {
-    // 实验室：检查 TALENT:0:325 == 1（魔王的魔界知识，与 draw_have_items
-    // 的知识标签判定同源）。talent 表未落 yml/ 时读值 undefined → || 0 →
-    // 检查不成立（#38 落表后随初始素质生效）
-    // #398 起真身：page/page-shop-labo.js
-    await secret_labo();
-  } else if (
-    result === 111 &&
-    ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0)
-  ) {
-    // 设施·设备：检查 FLAG:83 || FLAG:84（肉便器 / 展品数，与
-    // draw_dungeon_overview 的统计同源）
-    await infrastructure(selectable_count);
-  } else if (result === 199) {
-    // 休息（#395 起真身）：内联文本 + FLAG:9 += 5（税金）+
-    // BEGIN TURNEND（出口之一——这张工单的到站标记：引擎里第一次
-    // 能把回合推过去）。转场目标在本分支返回，其后不留代码（同 [109]）。
-    era.print('你专心于内政，稍作了休息……（税金+5%）');
-    game.stronghold.税金修正 += 5;
-    return begin(STATE.TURNEND);
-  } else if (result === 200) {
-    // 保存：save_game()（真身见 page/page-save-load.js，#136；返回后回
-    // 循环重绘主菜单——读档界面若换过数据，重绘即新状态）
-    await save_game();
-  } else if (result === 300) {
-    // 读取：load_game()（标题画面共用，#136）；读档成功后 era.loadData
-    // 已整体替换数据表，转场目标随返回值上来，本分支原样上抛
-    const loaded = await load_game();
-    if (is_state(loaded)) {
-      return loaded;
-    }
-  } else if (result === 777) {
-    // 设定。#463 起为真身（page/page-config.js 全量移植）
-    await config_menu();
-  } else if (result === 888) {
-    // 通信：maounet()。其中的特殊档读写会重放 EVENTLOAD 链，链里的转场
-    // 目标经返回值上来，本分支原样上抛
-    const next = await maounet();
-    if (is_state(next)) {
-      return next;
-    }
-  } else if (result === 496 && selectable_count > 0) {
-    // 调教目标：select_target()（真身见 page-select-target.js）。返回的数字
-    // 只有 100 分支消费，这里只取转场（选择画面的「其它」支 → 怪物玩弄）
-    const chosen = await select_target();
-    if (is_state(chosen)) {
-      return chosen;
-    }
-  } else if (result === 497 && selectable_count > 0) {
-    // 助手：select_assi()（真身见 page-select-target.js，同 496 只开选择画面）
-    await select_assi();
-  } else if (result === 498) {
-    // 目标名按钮：chara_info_individual_wrapped(target)（按钮本体随角色
-    // 数据工单，见 page-main-menu.js 的留空说明）。无检查，指针未选也
-    // 一样进分支（#391 起真身）
-    await chara_info_individual_wrapped(era_flag.target);
-  } else if (result === 499) {
-    // 助手名按钮：同上，实参 ASSI
-    await chara_info_individual_wrapped(era_flag.assi);
-  } else if (result === 500) {
-    // 面板切换：置 FLAG:36（信息面板选择）后什么都不做，回循环重绘——
-    // 重绘即反馈（对应面板的占位换掉），**不叠占位文本**（#24 派单核实
-    // 事实 #2）。flag 为引擎内嵌表，未声明下标直写可落（#13 实证，
-    // page-main-menu.js 的面板渲染同址读）
-    era.set('flag:36', 0);
-  } else if (result === 501) {
-    era.set('flag:36', 1);
-  } else if (result === 504) {
-    era.set('flag:36', 4);
-  } else if (result === 505) {
-    era.set('flag:36', 5);
-  } else if (result > 520 && result <= 530) {
-    // 阶层信息：result - 520 即阶层 → show_floor()（10 层为近卫）
-    await show_floor(result - 520);
-  } else if (result === 120) {
-    // 召唤：卡拉启动！== 1 时内联卡拉入队事件（SAVEDATA 自定义变量、
-    // 无 ere 落点 → 恒非 1，#24 起登记，这张工单不改）；否则已加入角色数
-    // < MAX_CHARANUM 时 monster_shop()（#399 起真身，
-    // page/page-monster-shop.js），满员打印「奴隶太多了！」
-    if (era.getAddedCharacters().length < MAX_CHARANUM) {
-      await monster_shop();
-    } else {
-      era.print('奴隶太多了！'); // 打印后等一键
-      await era.waitAnyKey();
-    }
+  // 主菜单分发（#866）：菜单项表是绘制与分发的唯一一份，可用性条件也在
+  // 表里——不可用项与表外编号一样落空，回循环重绘。
+  const next = await dispatch_menu_item(result);
+  if (is_state(next)) {
+    return next;
   }
+
+  // 阶层信息：[521]-[530] 是地城概况子面板按层打印的按钮（编号 = 阶层 +
+  // 520），result - 520 即阶层 → show_floor（10 层为近卫）
+  if (result > 520 && result <= 530) {
+    await show_floor(result - 520);
+    return;
+  }
+
   // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随占位
   // 机制一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
-  // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾
-
-  // 链外尾检查：未被链上分支提前 return 的输入再查一次 7788。链上的
-  // 提前 return 都在 100 分支内（取消与育儿室两处），其余分支落到这里时
-  // result 必非 7788，判定等价。
+  // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾。
+  // 剩下的 7788 是界面不印按钮的关系矩阵调试口，只能直调到达。
   if (result === 7788) {
     await relation_debugprint();
   }
-  // 认不出 / 被检查拦下的输入一律落到这里，回 show_shop 重绘（run_shop
-  // 的下一轮循环）；各分支返回值的差异不影响重绘，无需区分。
 }
 
 /**
@@ -575,9 +351,8 @@ async function run_shop({ skip_eventshop = false } = {}) {
 }
 
 // usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键。
-// #395 起 [101]-[888] 大部分分支已配上按钮（page-main-menu.js 的指令面板
-// 段，渲染与分发全部真身）；仍无按钮的是 498/499（名字按钮随角色数据
-// 工单）、52x（阶层信息，楼层总览段的 [520]-[530] 已打）与 7788（隐藏
-// 调试入口，界面本就不印它）——这些分支的分发行为只能经直接调用测试，
-// 不经输入通道。
+// #866 起主菜单的渲染与分发都在 page-main-menu.js 的菜单项表里；本文件
+// 仍无按钮分发的是 52x（阶层信息，楼层总览段的 [520]-[530] 已打）与 7788
+// （隐藏调试入口，界面本就不印它）——这些分支只能经直接调用测试，不经
+// 输入通道。
 module.exports = { run_shop, usershop, show_floor };

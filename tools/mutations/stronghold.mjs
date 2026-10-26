@@ -891,9 +891,11 @@ export default [
   },
   {
     desc: 'M6829 USERSHOP 106 断开角色出售真身',
-    file: 'ere/page/page-shop.js',
-    find: '    await chara_sale();',
-    replace: '    // 变异：漏掉角色出售',
+    file: 'ere/page/page-main-menu.js',
+    find: '    run: () => chara_sale(),',
+    replace: `    run: async () => {
+      // 变异：漏掉角色出售
+    },`,
     tests: ['sale-chara'],
     must_mention: '从据点分发进入 CHARA_SALE 真身',
   },
@@ -950,8 +952,9 @@ export default [
   {
     desc: 'M6836 主菜单误把二级助手资格当作出售按钮门槛',
     file: 'ere/page/page-main-menu.js',
-    find: 'cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0,',
-    replace: 'cid !== 0 && chara(cid).stronghold.出售与助手资格 > 1,',
+    find: '    .filter((cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0)',
+    replace:
+      '    .filter((cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 1)',
     tests: ['page-main-menu'],
     must_mention: '[106] 贩卖奴隶',
   },
@@ -1459,9 +1462,9 @@ export default [
   // 不存在，等价检查换成 M14236（返回退回纯文本）与既有的 M8926（每行格数）。
   {
     desc: 'M8916 120 分支的满员条件宽一位（< MAX_CHARANUM → <=）',
-    file: 'ere/page/page-shop.js',
-    find: 'if (era.getAddedCharacters().length < MAX_CHARANUM) {',
-    replace: 'if (era.getAddedCharacters().length <= MAX_CHARANUM) {',
+    file: 'ere/page/page-main-menu.js',
+    find: '  if (era.getAddedCharacters().length < MAX_CHARANUM) {',
+    replace: '  if (era.getAddedCharacters().length <= MAX_CHARANUM) {',
     tests: ['page-shop'],
     must_mention: '满员',
   },

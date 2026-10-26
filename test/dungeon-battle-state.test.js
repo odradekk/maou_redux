@@ -314,22 +314,95 @@ test('battle_legacy_reader：旧 E 列 100 槽的三段缺省值（0..10 共享�
 
 // —— 【战斗中能否存档】的机器判据 ——
 
+/**
+ * 代码行（保留原行号，跳过注释与空行）。
+ *
+ * 数调用点时不能把注释里的提及算进去，但要报出「多出来的写点在哪一行」，
+ * 所以块注释按等长空白抹掉（换行保留）、行尾 `//` 之后截掉，行号不漂。
+ * @param {string} source 模块源码
+ * @returns {Array<{line: number, text: string}>}
+ */
+function code_lines(source) {
+  const blanked = source.replace(/\/\*[\s\S]*?\*\//g, (block) =>
+    block.replace(/[^\n]/g, ' '),
+  );
+  const out = [];
+  blanked.split('\n').forEach((text, index) => {
+    const code = text.replace(/\/\/.*$/, '');
+    if (code.trim() === '') {
+      return;
+    }
+    out.push({ line: index + 1, text: code });
+  });
+  return out;
+}
+
+/** `ere/` 下全部 .js 的绝对路径（递归） */
+function ere_source_files() {
+  const out = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (entry.name.endsWith('.js')) {
+        out.push(full);
+      }
+    }
+  };
+  walk(ERE_DIR);
+  return out.sort();
+}
+
+/** 存档写点的调用行（`file:line 代码`），定义行不算 */
+function save_game_write_points() {
+  const hits = [];
+  for (const file of ere_source_files()) {
+    const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
+    for (const { line, text } of code_lines(fs.readFileSync(file, 'utf8'))) {
+      // `async function save_game(slot, comment)` 是定义，不是写点
+      if (/function\s+save_game\s*\(/.test(text)) {
+        continue;
+      }
+      if (/\bsave_game\s*\(/.test(text)) {
+        hits.push(`${rel}:${line} ${text.trim()}`);
+      }
+    }
+  }
+  return hits;
+}
+
 test('存档入口：玩家存档只有 SHOP 状态一处写点，战斗所在状态够不到它', () => {
   // 结论（工单的前置问题）：战斗中不能存档。证据是调用图的两个端点——
-  //   写点：page-shop.js 的 usershop 分支 result === 200 → save_game()，
-  //         而 run_shop 只由 STATE.SHOP / STATE.SHOP_AFTER_LOAD 进入；
+  //   写点：菜单项表里的 [200] → save_game()（#866 起主菜单分发搬进
+  //         page-main-menu.js），而它只经 page-shop.js 的 usershop →
+  //         dispatch_menu_item 到达，run_shop 只由 STATE.SHOP /
+  //         STATE.SHOP_AFTER_LOAD 进入；
   //   战斗：turnend-settle 的 EVENTTURNEND 处理器里 settle_in_train_window
   //         → run_dungeon，同一处理器唯一的转场是尾部的 begin(STATE.SHOP)。
   // 所以战斗期间既没有存档页，也没有回到 SHOP 的转场。断言把这两端钉住，
   // 谁把战斗挪到 SHOP 可达处、或给战斗加一条回 SHOP 的转场，这里就红。
+  //
+  // 「只有一处」这一半单独由紧随其后的调用点计数钉住：可达性那两条在别处
+  // 多一个写点时照样绿（main-loop 与表里的 [200] 都没变），而多一个写点就
+  // 等于多一个存档被破坏的口子——#883 的「战斗状态不进存档」正踩在上面。
   const shop = fs.readFileSync(
     path.join(ERE_DIR, 'page', 'page-shop.js'),
     'utf8',
   );
   assert.match(
     shop,
-    /result === 200\) \{[\s\S]{0,400}?await save_game\(\);/,
-    '玩家存档写点必须仍在 SHOP 状态的 usershop 分支',
+    /const next = await dispatch_menu_item\(result\);/,
+    'SHOP 的 usershop 必须仍经菜单分发，存档入口才在 SHOP 的可达面上',
+  );
+  const main_menu = fs.readFileSync(
+    path.join(ERE_DIR, 'page', 'page-main-menu.js'),
+    'utf8',
+  );
+  assert.match(
+    main_menu,
+    /id: 200,[\s\S]{0,200}?run: \(\) => save_game\(\),/,
+    '玩家存档的唯一写点必须仍是菜单项表的 [200] 项',
   );
   const main_loop = fs.readFileSync(
     path.join(ERE_DIR, 'system', 'flow', 'main-loop.js'),
@@ -352,6 +425,24 @@ test('存档入口：玩家存档只有 SHOP 状态一处写点，战斗所在�
   assert.ok(
     !/begin\(STATE\.SHOP\)[\s\S]*await settle_in_train_window/.test(turnend),
     '回到 SHOP 的转场必须在战斗之后，不能在其之前',
+  );
+});
+
+test('存档写点全库只有一处：菜单项表的 [200] 项（多一处就多一个破坏存档的口子）', () => {
+  // 「战斗中不能存档」的「只有」这一半：可达性由上面两条 assert.match 钉，
+  // 但谁也保不住别处再长出一枚「保存」按钮——只有数调用点能红。
+  // 读档（load_game）有意有两处入口：菜单表 [300] 与标题画面，见
+  // page-title.js；存档只有一处是设计，不是遗漏，别为了对称把存档也补齐。
+  const hits = save_game_write_points();
+  assert.equal(
+    hits.length,
+    1,
+    `存档写点必须恰好 1 处（菜单项表的 [200]），实际 ${hits.length} 处：\n${hits.join('\n')}`,
+  );
+  assert.match(
+    hits[0],
+    /^ere\/page\/page-main-menu\.js:\d+ run: \(\) => save_game\(\),$/,
+    `唯一写点必须仍是菜单项表的 [200] 项，实际是：${hits[0]}`,
   );
 });
 
