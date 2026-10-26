@@ -50,6 +50,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
+const { EVENT } = require('#/data/event-name-const');
 const {
   conception_check_all,
   conception_check_extra,
@@ -359,7 +360,7 @@ async function debug_check(rand = default_rand) {
 }
 
 on(
-  'EVENTTURNEND',
+  EVENT.TURNEND,
   async () => {
     // 全角色判定循环（LOCAL = TARGET 暂存 → FOR TARGET,0,CHARANUM →
     // 原样还原）。check_specialskil 只对非当前目标执行（SIF TARGET != LOCAL）

@@ -34,6 +34,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { default_rand } = require('#/utils/numeric');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { emit } = require('#/system/event/registry');
@@ -119,7 +120,7 @@ async function before_autotrain() {
  * source_check_auto（调教域工单，#461 起真身）：自动调教结算。调用点同
  * before_autotrain 一族，调用点曾散见迷宫域四文件）
  * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
- * ere/system/train/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
+ * ere/system/train/source-check.js 的 on(EVENT.SOURCE_CHECK_AUTO, …)。
  *
  * #508：结算后补一次 `era.nextTurnInTrain()`——这是调教回合循环里 SOURCE_CHECK
  * 之后那一步（UPCHECK 的 ere 等价物，train-loop.js:70-74）在迷宫路径上的
@@ -129,7 +130,7 @@ async function before_autotrain() {
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function source_check_auto() {
-  await emit('SOURCE_CHECK_AUTO');
+  await emit(EVENT.SOURCE_CHECK_AUTO);
   era.nextTurnInTrain();
 }
 

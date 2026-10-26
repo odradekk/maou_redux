@@ -82,6 +82,7 @@ const {
 } = require('#/system/train/com-family');
 const { com_id } = require('#/system/train/com-index');
 const era_flag = require('#/era-utils/era-flag');
+const { EVENT } = require('#/data/event-name-const');
 
 /**
  * 探测可执行性检查族，得出本回合可执行的指令编号（升序）。
@@ -135,7 +136,7 @@ async function execute_command_round(result) {
   // 10. 全角色 NOWEX 清零
   clear_nowex_all();
   // 11. EVENTCOM 事件链（函数体在 event/event-com.js）
-  const com_pending = await emit('EVENTCOM');
+  const com_pending = await emit(EVENT.COM);
   if (com_pending !== undefined) {
     return { missing: false, pending: com_pending };
   }
@@ -154,7 +155,7 @@ async function execute_command_round(result) {
   // 12.5 SOURCE_CHECK 事件链（指令处理器之后、结算之前；函数体在
   // system/train/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
   // 结算展示都在链上；未注册时静默通过（空链语义）
-  const source_pending = await emit('SOURCE_CHECK');
+  const source_pending = await emit(EVENT.SOURCE_CHECK);
   if (source_pending !== undefined) {
     return { missing: false, pending: source_pending };
   }
@@ -163,7 +164,7 @@ async function execute_command_round(result) {
   // 到不了这里）
   era_flag.prevcom = era_flag.selectcom;
   era.nextTurnInTrain();
-  const comend_pending = await emit('EVENTCOMEND');
+  const comend_pending = await emit(EVENT.COMEND);
   if (comend_pending !== undefined) {
     return { missing: false, pending: comend_pending };
   }
@@ -200,7 +201,7 @@ async function run_train() {
   }
 
   // EVENTTRAIN 事件链（函数体在 event/event-train.js）
-  const init_pending = await emit('EVENTTRAIN');
+  const init_pending = await emit(EVENT.TRAIN);
   if (init_pending !== undefined) {
     return init_pending;
   }
@@ -208,7 +209,7 @@ async function run_train() {
   // —— 回合循环 ——
   for (;;) {
     // 4. SHOW_STATUS（函数体在 page/page-train.js）
-    const status_pending = await emit('SHOW_STATUS');
+    const status_pending = await emit(EVENT.SHOW_STATUS);
     if (status_pending !== undefined) {
       return status_pending;
     }
@@ -219,7 +220,7 @@ async function run_train() {
 
     // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
     // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit('SHOW_USERCOM', usable);
+    const usercom_draw = await emit(EVENT.SHOW_USERCOM, usable);
     if (usercom_draw !== undefined) {
       return usercom_draw;
     }
@@ -251,7 +252,7 @@ async function run_train() {
 
     // 非指令输入（映射得 undefined）→ USERCOM（999 = 调教结束，函数体在
     // page/page-usercom.js；USERCOM 收到的是玩家的原始输入）
-    const usercom_pending = await emit('USERCOM', idx);
+    const usercom_pending = await emit(EVENT.USERCOM, idx);
     if (usercom_pending !== undefined) {
       return usercom_pending;
     }

@@ -58,6 +58,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { MASTER } = require('#/utils/master');
 const { idiv, times } = require('#/utils/numeric');
+const { EVENT } = require('#/data/event-name-const');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { train_message_a } = require('#/system/train/train-message');
@@ -3145,7 +3146,7 @@ function loss_bar(label, base, maxbase, loss, vital_variant) {
 
 // —— source_check 主体（按既有顺序编排） ——
 
-on('SOURCE_CHECK', async () => {
+on(EVENT.SOURCE_CHECK, async () => {
   cid = era_flag.target;
   player = era_flag.player;
   down_map.clear();
@@ -3530,7 +3531,7 @@ on('SOURCE_CHECK', async () => {
 // AUTO 从 PLAYER_SKILL_CHECK 直接起步）、不含"同一指令连续"减半（AUTO 不
 // 读 SELECTCOM）、不含两处"相性"梯度块、不含 TFLAG:59 赋值、不含灵魂错位/
 // 失神检查、不含挿しっぱ判定
-on('SOURCE_CHECK_AUTO', async () => {
+on(EVENT.SOURCE_CHECK_AUTO, async () => {
   cid = era_flag.target;
   player = era_flag.player;
   down_map.clear();

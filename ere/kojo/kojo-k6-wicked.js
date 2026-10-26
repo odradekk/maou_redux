@@ -59,6 +59,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const {
@@ -100,7 +101,7 @@ function bind_ctx(rand) {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_6 = 1; // FLAG:106 = 1（K6 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -112,7 +113,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_6 = 0;
   },
@@ -12262,8 +12263,8 @@ function gobi_koujo_k6(arg_0, rand) {
   return gobi_text(6, arg_0, rand);
 }
 
-on('EVENTTRAIN', eventtrain_k6);
-on('EVENTEND', eventend_k6);
+on(EVENT.TRAIN, eventtrain_k6);
+on(EVENT.END, eventend_k6);
 
 kojo_message_com_family.register(6, kojo_message_com_6);
 dog_kojo_family.register(6, dog_kojo_6);

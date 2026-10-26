@@ -11,10 +11,11 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { train_name_init } = require('#/system/train/train-name');
 const { pritrain_message } = require('#/event/event-beforetrain');
+const { EVENT } = require('#/data/event-name-const');
 
 // EVENTTRAIN（#PRI 档）
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async () => {
     // 主人公の射精を0に（BASE:2 = 射精槽；MASTER 恒角色 0）
     era.set('base:0:2', 0);

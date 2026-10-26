@@ -86,6 +86,7 @@ const {
 } = require('#/kojo/kojo-dungeon-after');
 const { heart } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -96,7 +97,7 @@ const era0 = (k) => era.get(k) || 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_8 = 1; // FLAG:108 = 1（K8 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -108,7 +109,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_8 = 0;
   },
@@ -125,7 +126,7 @@ on(
  * 22 / 扶她 23）→ 其余 CALL K8_KOJO2（二回目以降）。
  */
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async () => {
     const target = era_flag.target;
     const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -1476,7 +1477,7 @@ async function k8_kojo2() {
  * 检查：FLAG:7、TALENT:168、BASE:0（死亡跳过）。
  */
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     const target = era_flag.target;
     const target_name = chara_callname(target); // %SAVESTR:TARGET%

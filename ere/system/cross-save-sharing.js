@@ -16,6 +16,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_global = require('#/era-utils/era-global');
 const { chara_callname } = require('#/utils/callname-utils');
+const { EVENT } = require('#/data/event-name-const');
 
 const BACKUP_SLOT = 999;
 const SHARE_SLOT_FIRST = 1000;
@@ -76,7 +77,7 @@ function set_roster(records) {
 async function load_special_save(slot) {
   if (!(await era.loadData(slot))) return false;
   era_flag.last_load_no = slot;
-  const next = await emit('EVENTLOAD');
+  const next = await emit(EVENT.LOAD);
   // 链内的转场优先于「读成」这个布尔结果：两种含义共用返回值，调用方用
   // is_state 分辨（读成且链内无转场时给 true）
   return is_state(next) ? next : true;
