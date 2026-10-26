@@ -6,8 +6,7 @@
     "extendedCharaTables": [],
     "hideUserInput": false,
     "resource": true,
-    "saveCompressedData": false,
-    "saveFiles": 10
+    "saveCompressedData": false
   },
   "window": {
     "audio": 100,

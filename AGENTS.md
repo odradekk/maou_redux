@@ -129,6 +129,8 @@ PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任�
 
 版本号与存档兼容按 ADR-0006「玩家存档保护」：0.1.0 已有玩家，已发布版本的存档必须能继续读取。发版只提高 `yml/GameBase.yml` 的【版本】与【版本代号】，【最低支持版本】固定在 1000（0.1.0），提高它需要用户单独决定。破坏性改动先改写法避开，避不开就写迁移代码。每个版本在 `CHANGELOG.md` 写明与哪些旧版本的存档通用。
 
+**【版本】在引擎提示里按 `version/1000` 显示。** 引擎 `loadData` 的「saveN.sav 版本过低」提示打印 `${version/1000}`，而本项目的编码是 `major×1000000 + minor×1000 + patch`：0.1.5 的 1005 会显示成 `1.005`，不是 `0.1.5`。global.sav 的同类提示例外，直接打印【版本】整数（1005）。标题画面与游戏信息面板显示的是【版本代号】（没写【版本代号】时引擎才用 `getGameVersion` 把【版本】换算过去），所以玩家反馈与验收记录里的版本号一律按【版本代号】写；玩家贴出 `1.005` 这类数字时才需要对应回【版本】。
+
 1. 发版工单的 PR 改版本号和 `CHANGELOG.md`，合并后切回 master。
 2. 在 master 上运行 `node tools/pack-release.mjs`，在 `dist/` 下生成纯游戏包和整合包，并输出两个包的 SHA256。脚本只收 git 已跟踪的 `ere/`、`yml/`、`res/` 与说明文件，这些路径有未提交的改动时拒绝打包。整合包里的引擎取本机引擎目录，查找顺序同 `npm start`；压缩需要 7-Zip。
 3. 解压整合包，在解压目录里启动 exe，确认不手动选目录也能进入标题画面，且标题显示新版本号。
@@ -155,10 +157,10 @@ catch(e) { this.defaultConfig = getEmptyConfigForm() }
 if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))), …)
 ```
 
-- **`yml/_config.json` 必须提供完整的默认配置。** 文件存在且可解析时，`defaultConfig` 整体取自该文件，**缺少的键不会从引擎默认值补齐**。各使用位置对缺值的处理不同：`saveFiles` 使用 `||10`，`window.*` 交给渲染层，`resource` 按假值关闭。文件必须包含 `getEmptyConfigForm()` 的全部字段；`test/resource-media.test.js` 逐键与引擎默认配置比较，目前只允许 `resource` 的值不同。
+- **`yml/_config.json` 必须提供完整的默认配置。** 文件存在且可解析时，`defaultConfig` 整体取自该文件，**缺少的键不会从引擎默认值补齐**。各使用位置对缺值的处理不同：`saveFiles` 使用 `||10`，`window.*` 交给渲染层，`resource` 按假值关闭。文件必须包含 `getEmptyConfigForm()` 的全部字段，**`_fixed.json` 已固定的键除外**——那些键写在 `_config.json` 也只是无效值（`saveFiles` 曾写 10，实际生效的永远是 `_fixed.json` 的 99），不写；`test/resource-media.test.js` 逐键与引擎默认配置比较，只允许 `resource` 的值不同、`_fixed.json` 固定的键缺席。
 - **已有 `ere.config.json` 时，修改默认配置不会自动生效。** 代码中的 `||` 会直接使用已加载的 `this.config`，不读取 `_config.json` 的值。需要在本机应用新默认值时，修改 `ere.config.json` 中的对应键，或删除该文件后让引擎按新默认配置重建。
 - **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会直接崩溃或静默降级）放 `_fixed.json`，它优先于用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`，放进 `_fixed.json` 会让 UI 开关点了没反应。
-  - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 游戏提供 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。
+  - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 游戏提供 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。`yml/_config.json` 因此不再写 `saveFiles`（#847 删掉了残留的 10）。
   - erauma、ere-kanon、ere-example 所需槽位数未超过引擎默认范围，因此未设置 `saveFiles`。erauma 还会通过 `era.get('gameconfig')?.system.saveFiles` 读取生效配置。引擎 4.8.1 起提供 `gameconfig` 键，但本项目已在 `_fixed.json` 固定 `saveFiles`，不需要运行时读取。
 
 `yml/` 文件是静态数据的唯一来源，由人工维护（issue #10 迁移后接续）。键名一律加引号，避免含 `:`、`#` 或首尾空格的键产生解析问题；名称用简体（`tools/lang-table.js`，issue #60），引擎列名键如 素質/名前 保持原样。

@@ -179,21 +179,25 @@ test('版本库默认配置开着资源：yml/_config.json 的 system.resource �
 });
 
 engine_test(
-  'yml/_config.json 是引擎默认配置整份 + 唯一偏离 resource:true',
+  'yml/_config.json 是引擎默认配置整份（_fixed.json 固定的键除外）+ 唯一偏离 resource:true',
   () => {
     // 缺键调研（app.asar 实证）：_config.json 存在时 defaultConfig 整个是它，
     // getEmptyConfigForm() 只在文件缺失/解析失败时用作缺省值、不做逐键合并；
     // syncConfig 又把 config 合并 _fixed.json 后整份写回 ere.config.json——
     // _config.json 没写的键从此不存在（window.audio 缺失 = 静默没声音一类坑）。
     // 故必须写全：与 getEmptyConfigForm() 逐键一致，唯一偏离 resource。
+    // 例外是 _fixed.json 固定住的 saveFiles：它整体覆盖 _config.json，写在
+    // _config.json 只是无效值（曾写 10，实际生效的永远是 99），所以不写。
     const defaults = engine.engine_utils.getEmptyConfigForm();
     const config = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
     );
-    assert.deepEqual(config, {
+    const expected = {
       ...defaults,
       system: { ...defaults.system, resource: true },
-    });
+    };
+    delete expected.system.saveFiles;
+    assert.deepEqual(config, expected);
   },
 );
 
@@ -235,6 +239,16 @@ engine_test(
     assert.ok(
       fixed.system.saveFiles >= 99,
       '99 号自动存档槽要被 loadGlobal 扫描到，saveFiles 不得小于 99',
+    );
+    // 同名键不写在 _config.json：_fixed.json 整体覆盖它，写了也只是无效值
+    // （引擎先取 _config.json 的默认值，再应用 _fixed.json 的固定设置）
+    const config = JSON.parse(
+      fs.readFileSync(path.join(REPO_ROOT, 'yml', '_config.json'), 'utf8'),
+    );
+    assert.equal(
+      config?.system?.saveFiles,
+      undefined,
+      'saveFiles 只写在 _fixed.json：_config.json 的同名键永远被覆盖',
     );
   },
 );
