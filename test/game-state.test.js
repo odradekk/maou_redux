@@ -32,6 +32,15 @@ test('begin() 拒绝未知目标：笔误在发出处即报错，不进状态机
   assert.throws(() => begin(undefined), TypeError);
 });
 
+test('TITLE 是游戏结束的转场目标：结局演出回到标题，不再退出进程', () => {
+  const fixture = create_era_fixture();
+  const { begin, STATE } = fixture.load_module('system/flow/game-state');
+
+  // 游戏结束（原 QUIT）改成回标题：TITLE 因此成为合法的 BEGIN 目标。
+  // 游戏内的退出只留标题画面的退出按钮（走 era.quit()）
+  assert.equal(begin(STATE.TITLE), STATE.TITLE);
+});
+
 test('is_state()：只认 STATE 枚举的取值，普通返回值一律不是转场', () => {
   const fixture = create_era_fixture();
   const { is_state, STATE } = fixture.load_module('system/flow/game-state');
@@ -65,7 +74,8 @@ test('STATE 枚举：5 种 BEGIN 目标 + ere 侧的本地扩展', () => {
   assert.equal(STATE.TRAIN, 'TRAIN');
   assert.equal(STATE.AFTERTRAIN, 'AFTERTRAIN');
   assert.equal(STATE.TURNEND, 'TURNEND');
-  // TITLE 是 ere 侧本地扩展（主循环入口，不对应任何 BEGIN 目标）
+  // TITLE 是 ere 侧本地扩展：既是主循环入口，也是游戏结束的转场目标
+  // （各结局与 GAMEOVER 回到标题，#852）
   assert.equal(STATE.TITLE, 'TITLE');
   // 枚举冻结，防运行期被改
   assert.ok(Object.isFrozen(STATE));

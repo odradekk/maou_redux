@@ -329,8 +329,13 @@ async function usershop(result) {
   } else if (result === 109) {
     // 侵略：invasion()（#117 起真身：魔力出兵窄路径，ere/page/
     // page-invasion.js），返回 1 才 BEGIN TURNEND（出口之一——
-    // 转场目标由本分支返回，超级循环逐层交给主循环）
-    if ((await invasion()) === 1) {
+    // 转场目标由本分支返回，超级循环逐层交给主循环）。结局选退出时
+    // invasion 给的是回标题的转场目标（#852），先上抛再判 1
+    const invaded = await invasion();
+    if (is_state(invaded)) {
+      return invaded;
+    }
+    if (invaded === 1) {
       return begin(STATE.TURNEND);
     }
   } else if (result === 110 && (era.get('talent:0:325') || 0) === 1) {

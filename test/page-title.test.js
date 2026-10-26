@@ -83,6 +83,10 @@ test('首屏：标题、版本行、作者、年份与两个按钮（#642：名�
     buttons.some((b) => b.accelerator === 1 && b.rendered === '[1] 新的猎物'),
   );
   assert(
+    buttons.some((b) => b.accelerator === 2 && b.rendered === '[2] 退出游戏'),
+    '标题循环的退出入口（#852）：第三枚按钮是退出游戏',
+  );
+  assert(
     buttons.every((b) => b.accelerator !== 8 && b.accelerator !== 9),
     '名单展开/折叠钮 9 与联系方式钮 8 已删除，不得再渲染',
   );
@@ -328,20 +332,26 @@ test('标题音乐：开关关着（播种过、用户关掉）不播；资源�
 
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
 
-  assert.deepEqual(fixture.music, []);
+  // 关着 = 不播（只剩进标题那一次停曲，见「游戏结束回到标题」用例）
+  assert.deepEqual(
+    fixture.music.filter((m) => m.api === 'play'),
+    [],
+  );
   assert.deepEqual(fixture.var_writes, []);
 });
 
-test('离开标题停曲：新游戏与读档两分支都 STOPBGM', async () => {
+test('停曲：进标题静音一次，离开标题（新游戏/读档）再停一次', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
-  preset_audio_seeded(fixture); // 跳过播种（音乐开关随之为 0，不影响停曲断言）
+  preset_audio_seeded(fixture); // 跳过播种（音乐开关随之为 0，进标题走静音分支）
   fixture.set_inputs(1);
   const run_title_page = fixture.load_module('page/page-title');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
   assert.equal(await run_title_page(), STATE.FIRST);
-  assert.deepEqual(fixture.music, [{ api: 'stop' }]);
+  // 进标题：标题音乐关着 → 停掉上一局可能还在响的曲子（#852）；
+  // 离开标题（新游戏）：再停一次
+  assert.deepEqual(fixture.music, [{ api: 'stop' }, { api: 'stop' }]);
 
   const second = create_era_fixture();
   preset_gamebase(second);
@@ -349,7 +359,57 @@ test('离开标题停曲：新游戏与读档两分支都 STOPBGM', async () => 
   second.set_inputs(0);
   const run_again = second.load_module('page/page-title');
   await assert.rejects(() => run_again(), /预置输入已耗尽/);
-  assert.deepEqual(second.music, [{ api: 'stop' }]);
+  // 读档分支同样停曲（进入 [0] 分支后、进读档界面之前）
+  assert.deepEqual(second.music, [{ api: 'stop' }, { api: 'stop' }]);
+});
+
+test('选项 2（退出游戏）：走 era.quit() 真的退出进程（#852 唯一的退出入口）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  preset_audio_seeded(fixture);
+  fixture.set_inputs(2);
+  const run_title_page = fixture.load_module('page/page-title');
+
+  // 标题循环里游戏结束回标题、不再退出进程（#852），退出只剩这一个入口：
+  // 引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，#148），测试按
+  // 夹具同款的异常收到它。异常收进局部变量而不是 assert.rejects——其后的
+  // 断言还要读这一轮的画面与调用记录
+  let caught;
+  try {
+    await run_title_page();
+  } catch (e) {
+    caught = e;
+  }
+  assert.equal(
+    caught?.message,
+    'quit',
+    '退出按钮 → era.quit() 抛 Error("quit")（引擎 throw 型控制流）',
+  );
+
+  assert(
+    fixture.calls.some(({ api, args }) => api === 'quit' && args.length === 0),
+    '退出按钮 → era.quit()（关窗 IPC 已记录）',
+  );
+  // 退出不是转场：不清档、不读档、不写任何游戏变量
+  assert(
+    !fixture.calls.some((c) => c.api === 'resetData' || c.api === 'loadData'),
+    '退出按钮不得顺手清档或读档（ADR-0006：标题画面没有绕过存档校验的入口）',
+  );
+  assert.deepEqual(fixture.var_writes, []);
+});
+
+test('游戏结束回到标题：先停掉上一局的 BGM（标题音乐关着也不把战斗曲带进标题）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  preset_audio_seeded(fixture);
+  fixture.store.set('global:0', 0); // 用户关掉了标题音乐
+  const run_title_page = fixture.load_module('page/page-title');
+
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+
+  // 回到标题是换屏：上一局正在播的曲子（战斗/据点）必须停掉。标题音乐
+  // 开关关着时尤其明显——不播新曲就只剩旧曲还在响
+  assert.deepEqual(fixture.music, [{ api: 'stop' }]);
 });
 
 test('标题图：资源在场时显示 TITLE 全图，缺席时回退纯文本', async () => {

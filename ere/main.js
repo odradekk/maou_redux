@@ -3,8 +3,8 @@
  * （dev-guides/01-basic.md）。
  *
  * 主循环与转场状态机在 system/flow/main-loop.js（issue #20）：标题画面是
- * 初始状态，「新的猎物」经 BEGIN FIRST 转入新游戏初始化；其余页面随贯通验证
- * 后续票接入（issue #15）。
+ * 初始状态，也是游戏结束后的落脚点（#852 的标题循环——结局回标题，可重开、
+ * 读档或退出）；其余页面随贯通验证后续票接入（issue #15）。
  */
 const run_main_loop = require('#/system/flow/main-loop');
 

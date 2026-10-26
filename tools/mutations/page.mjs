@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 589; // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 590; // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经 usershop 上抛） // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -370,7 +370,7 @@ export default [
   {
     desc: 'M2112 [109] 出兵成功不转场（TURNEND 转场删除）',
     file: 'ere/page/page-shop.js',
-    find: '    if ((await invasion()) === 1) {\n      return begin(STATE.TURNEND);\n    }',
+    find: '    const invaded = await invasion();\n    if (is_state(invaded)) {\n      return invaded;\n    }\n    if (invaded === 1) {\n      return begin(STATE.TURNEND);\n    }',
     replace: '    await invasion(); // 变异：不转场',
     tests: ['page-invasion', 'page-shop'],
     must_mention: 'TURNEND',
@@ -401,7 +401,7 @@ export default [
     // 的是条件整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
     desc: 'M220 人间界结局条件整支删除（#120 端到端：新档循环永不停止）',
     file: 'ere/page/page-invasion.js',
-    find: '  // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1\n  if (\n    era_flag.human_realm_invasion >= 10000 &&\n    era_flag.human_realm_fallen === 0\n  ) {\n    // QUIT 是 throw 型（#148，引擎 quit() 抛 Error("quit")）：选 [1] 退出\n    // 时异常在 ending_1 内部炸穿，下面两行不可达——QUIT 之后的收尾同样\n    // 同样不可达，靠的也是异常炸穿而非哨兵短路（旧写法 ended !== 1 是夹具\n    // 降格期发明的机制，#148 拆除；真机上该判断唯一可达的出口只有「正常\n    // 返回 0」——见 event-ending.js 的 JSDoc）。调用链上任何一层都不得\n    // try/catch 吞掉这个异常，夹具同款 throw 由测试钉住\n    await ending_1();\n    era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10\n    era.print(\'声望+10\'); // PRINTL\n    return;\n  }',
+    find: "  // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1\n  if (\n    era_flag.human_realm_invasion >= 10000 &&\n    era_flag.human_realm_fallen === 0\n  ) {\n    // 结局演出以转场目标离开（#852 起是返回值）：选「退出」时是回标题的\n    // TITLE，原样上抛——威望 +10 与 PRINTL 不再执行（这一局结束了）；选\n    // [0] 继续时演出返回 0，落到下面照常结算\n    const ended = await ending_1();\n    if (is_state(ended)) {\n      return ended;\n    }\n    era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10\n    era.print('声望+10'); // PRINTL\n    return;\n  }",
     replace: `  // 变异：人间界条件整支删除
   if (false) {
     return;
@@ -5698,5 +5698,16 @@ export default [
     replace: '  const width = 12; // 变异：写死 12 列',
     tests: ['page-save-load'],
     must_mention: '超 24 列第三枚会被挤到下一行',
+  },
+  // —— #852 标题循环：侵略结算里的结局转场经 usershop 上抛 ——
+  {
+    desc: 'M17330 [109] 吞掉入侵结局的转场（ENDING_1 选退出后按 TURNEND 推进，回不到标题）',
+    file: 'ere/page/page-shop.js',
+    find: `    if (is_state(invaded)) {
+      return invaded;
+    }`,
+    replace: `    // 变异：结局的转场被吞`,
+    tests: ['page-invasion'],
+    must_mention: '结局回标题的转场经 invasion → usershop 上抛',
   },
 ];

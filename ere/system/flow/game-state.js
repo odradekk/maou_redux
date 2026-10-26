@@ -15,6 +15,13 @@
  * return 正好同时满足语义 1（结束当前函数）——只调用不 return 会继续执行
  * BEGIN 下方的语句，那不叫转场。拿到这个返回值的中间层用 is_state 判定、
  * 逐层 return 上抛（判定点的约定见 system/event/registry.js 的文件头）。
+ *
+ * 【游戏结束（#852）】结局演出与 GAMEOVER 不退出进程，写
+ * `return begin(STATE.TITLE)` 回到标题，由主循环的标题循环重新接管。TITLE 是
+ * 终止型转场：世界已经结束，事件链在发出处中止——原实现在这些位置是
+ * era.quit()，靠异常炸断整条链，返回值必须保留这条语义（否则回合结算会在
+ * 结局之后继续跑完，并用自己的 BEGIN SHOP 覆盖掉回标题）。退出进程只由
+ * 标题画面的退出按钮发出。
  */
 
 /**
@@ -22,14 +29,19 @@
  *
  * 取值 = BEGIN 的关键字。原作的 BEGIN 目标只有这 5 种（issue #20 定案）：
  * TURNEND / SHOP / AFTERTRAIN / FIRST / TRAIN。TITLE 与 SHOP_AFTER_LOAD 是
- * ere 侧本地扩展（见下）：TITLE 由主循环直接作为初始状态跑、不经 begin()，
+ * ere 侧本地扩展（见下）：TITLE 既是主循环的入口状态，也是**游戏结束**的
+ * 转场目标（#852 起各结局与 GAMEOVER 回到标题，不再退出进程）；
  * SHOP_AFTER_LOAD 则由读档成功分支的缺省转场交给 begin()，用来把「读档进入」
  * 与显式 BEGIN SHOP 区分开。
  */
 const STATE = Object.freeze({
   /**
-   * 标题画面。ere 侧本地扩展，非 BEGIN 目标：启动直接进标题页，
-   * 没有 BEGIN TITLE；ere 侧主循环以状态统一承载入口。
+   * 标题画面。ere 侧本地扩展：启动即进标题页（没有 BEGIN TITLE 的进入
+   * 路径），游戏结束时又以它为转场目标回到这里（#852 的标题循环）。
+   *
+   * 它是**终止型**转场：回到标题即世界结束，事件链在发出处中止，链上
+   * 后续的处理器不再执行、也不能把它覆盖成别的目标（判定见
+   * system/event/registry.js 的 emit）。
    */
   TITLE: 'TITLE',
   /** 新游戏初始化（进入 EVENTFIRST 事件链） */

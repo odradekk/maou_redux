@@ -585,6 +585,21 @@ test('ending_n：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
   }
 });
 
+test('ending_n 选 [1] 结束游戏：run_endcheck 以 TITLE 离开（#852 回标题）', async () => {
+  const { fixture, mod } = setup_endcheck();
+  fixture.store.set('flag:10000', 500);
+  fixture.store.set('exflag:2801', 99);
+  fixture.set_inputs(1); // ending_input 的 [1] 结束游戏
+
+  // 游戏结束回标题：转场目标从 ending_input 经 ending_n 上抛到本函数，
+  // 由每日结算的调用链继续交给主循环（原先 era.quit() 靠异常炸穿）
+  assert.equal(await mod.run_endcheck(), 'TITLE');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '结束游戏不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
+});
+
 // —— 菲娅线 -10 崩坏态（#649 用户决定：触发 Bad Ending，内容占位）——
 
 test('菲娅线 -10 崩坏态：当天命中 Bad Ending 占位演出、只播一次、线值停在 -9', async () => {

@@ -1669,12 +1669,17 @@ test(
   },
 );
 
-test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAMEOVER', async () => {
+test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAMEOVER（回标题）', async () => {
   const { fixture, debug_check } = setup_debug();
   fixture.store.set('cflag:0:9', 5000);
   fixture.set_inputs(0); // INPUT
 
-  await assert.rejects(() => debug_check(seq([])), /quit/, ':331 QUIT');
+  // GAMEOVER 回标题（#852）：转场目标是返回值，原先是 era.quit() 抛出
+  assert.equal(await debug_check(seq([])), 'TITLE', ':331 回标题');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    'GAMEOVER 不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
   assert.equal(fixture.store.get('exflag:2804'), 0, ':323 触发位复位');
   const texts = fixture.text_lines();
   assert(
@@ -1693,6 +1698,50 @@ test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAME
 });
 
 // —— 反作弊开关（SIF !反作弊 → DEBUG_CHECK，#547 落 modsave:1）——
+
+test('EVENTTURNEND：魔王暴走 GAMEOVER → 整条链以 TITLE 离开，回合结算不再跑', async () => {
+  const { fixture, emit } = setup_turnend();
+  fixture.store.set('cflag:0:9', 5000); // 魔王等级超 5000 → 第三段点火
+  fixture.set_inputs(0); // GAMEOVER 横幅后的 INPUT
+
+  // #PRI 档判定游戏结束 → 链当场中止（#852）：普通档的回合结算不再执行，
+  // 也就不会用自己的 BEGIN SHOP 把「回标题」盖掉。改前这里是 era.quit()，
+  // 靠异常炸断整条链——世界已经齑粉，结算不该继续跑
+  assert.equal(await emit('EVENTTURNEND'), 'TITLE', '整条链以 TITLE 离开');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    'GAMEOVER 不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
+});
+
+test('EVENTTURNEND：日推进深处的结局回标题时，结算不再用 BEGIN SHOP 覆盖它', async () => {
+  // run_event_newday 的深处是 run_endcheck → ending_n → 选「结束游戏」。
+  // 这一层用替身把「深处的结局回了标题」直接摆出来：结算本体拿到
+  // TITLE 必须原样上抛，不得跑到尾部无条件 BEGIN SHOP
+  const { fixture, emit } = setup_turnend((f) => {
+    f.load_module('event/event-nextday').run_event_newday = async () => 'TITLE';
+  });
+  fixture.store.set('flag:10003', 1); // TIME=1：本次调用走到日推进分支
+
+  assert.equal(await emit('EVENTTURNEND'), 'TITLE', '整条链以 TITLE 离开');
+});
+
+test('EVENTTURNEND：迷宫攻略在结局回标题时，结算照常关掉调教窗口', async () => {
+  // 结算中段的调教窗口（beginTrain → endTrain）包住 run_dungeon：深处回
+  // 标题时不能把窗口留在打开状态（#816 的 finally 覆盖这条出口）
+  const { fixture, emit } = setup_turnend((f) => {
+    f.load_module('dungeon/dungeon').run_dungeon = async () => 'TITLE';
+  });
+  fixture.seed_chara(31, { id: 31, name: '奴隶31', callname: '角色31' });
+  fixture.era.addCharacter(31);
+  fixture.store.set('cflag:31:1', 2); // 勇者探索中 → 走 run_dungeon
+
+  assert.equal(await emit('EVENTTURNEND'), 'TITLE', '整条链以 TITLE 离开');
+  assert(
+    fixture.calls.some(({ api }) => api === 'endTrain'),
+    '回标题前调教窗口必须关掉（era.endTrain）',
+  );
+});
 
 test('EVENTTURNEND：反作弊 1 时跳过 DEBUG_CHECK（modsave:1，设置页 [30] 可切）', async () => {
   const { fixture, emit } = setup_turnend();

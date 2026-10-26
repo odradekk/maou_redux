@@ -48,6 +48,7 @@ const {
   transfer_soul,
 } = require('#/chara/chara-soul-transfer');
 const summon_mod = require('#/dungeon/monster-summon');
+const { is_state } = require('#/system/flow/game-state');
 const { run_endcheck } = require('#/system/ending/endcheck');
 const { auto_save } = require('#/page/page-save-load');
 const { chara } = require('#/facade/chara');
@@ -1649,6 +1650,9 @@ async function run_event_nextday() {
  * 调用时机（turnend-settle.js）：#PRI 档已推进 DAY:0 += 1、TIME
  * 已归 0——本函数入口即「新游戏日开始」的语义点，自动存档（#137 / ADR-0006
  * 的有意偏离）挂在这里，备注里的「第N日午前」反映新的一天。
+ *
+ * @returns {Promise<string|undefined>} Normal End 选「结束游戏」时返回
+ *   STATE.TITLE（回标题的转场目标，由回合结算继续上抛，#852）
  */
 async function run_event_newday() {
   // 自动存档进 99 号槽（行为边界与有意取舍见 page-save-load.js 的
@@ -1674,8 +1678,12 @@ async function run_event_newday() {
   await dog_walk();
 
   // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在
-  // ere/system/ending/endcheck.js（#116）
-  await run_endcheck();
+  // ere/system/ending/endcheck.js（#116）。Normal End 选「结束游戏」时
+  // 它是回标题的转场目标（#852），原样上抛
+  const over = await run_endcheck();
+  if (is_state(over)) {
+    return over;
+  }
 
   // RETURN 1
 }

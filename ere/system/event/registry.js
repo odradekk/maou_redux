@@ -21,9 +21,14 @@
  * 「catch 首行重抛」的硬约束已随信号一起删除。代价是拿到返回值的一方必须
  * 自己上抛：调用 emit 或调用会发起转场的函数后，用 is_state 判定返回值，
  * 是 STATE 取值就立刻 `return` 出去。忽略返回值 = 转场被静默丢掉。
+ *
+ * 【终止型转场（#852）】回标题是游戏结束：链在发出处中止，后续处理器不再
+ * 执行，暂存槽也不会再被覆盖。原实现在这些位置是 era.quit()（throw 型），
+ * 异常炸断了整条链；改成返回值后必须保留这条语义——否则世界已经结束，
+ * 回合结算仍会跑完并用尾部的 BEGIN SHOP 把「回标题」盖掉。
  */
 
-const { is_state } = require('#/system/flow/game-state');
+const { is_state, STATE } = require('#/system/flow/game-state');
 
 /** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 没有用到，不实现） */
 const TIER = Object.freeze({
@@ -31,6 +36,9 @@ const TIER = Object.freeze({
   NORMAL: 'NORMAL',
   LATER: 'LATER',
 });
+
+// 终止型转场目标：发出即结束链（理由见文件头）
+const TERMINAL_STATES = new Set([STATE.TITLE]);
 
 // 执行序：优先档 → 普通档 → 延后档（#6 保留三档的依据）
 const TIER_ORDER = [TIER.PRI, TIER.NORMAL, TIER.LATER];
@@ -69,6 +77,9 @@ function on(event_name, handler, tier = TIER.NORMAL) {
  * 证实的约定语义）；返回其它值时按普通返回值忽略。处理器抛异常则原样
  * 上抛（引擎对脚本错误报错停机）——转场已不是异常，不再需要为它开洞。
  *
+ * 唯一例外是终止型转场（回标题 = 游戏结束）：暂存它并当场返回，链上剩余
+ * 处理器不再执行。理由见文件头的「终止型转场」。
+ *
  * @param {string} event_name 事件名
  * @param {...any} args 透传给每个处理器的参数
  * @returns {Promise<string|undefined>} 链内最后一次 BEGIN 暂存的目标状态；
@@ -86,6 +97,9 @@ async function emit(event_name, ...args) {
       const next = await handler(...args);
       if (is_state(next)) {
         pending = next;
+        if (TERMINAL_STATES.has(next)) {
+          return pending; // 世界已结束：后续处理器不再执行
+        }
       }
     }
   }

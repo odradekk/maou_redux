@@ -99,6 +99,7 @@
  */
 
 const era = require('#/era-electron');
+const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { campaign_menu } = require('#/page/page-campaign');
@@ -2066,7 +2067,8 @@ async function sengen_video(rand = default_rand) {
  * FLAG:86 顶到 10000 → ENDING_3 + CHAR_GIFT 收下圣女），演出本体另有
  * test/page-ending.test.js 的表驱动用例。
  *
- * @returns {Promise<void>}
+ * @returns {Promise<string|undefined>} 结局选了退出时返回 STATE.TITLE
+ *   （回标题的转场目标，由 invasion / usershop 逐层上抛）
  */
 async function invasion_check() {
   // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1
@@ -2074,13 +2076,13 @@ async function invasion_check() {
     era_flag.human_realm_invasion >= 10000 &&
     era_flag.human_realm_fallen === 0
   ) {
-    // QUIT 是 throw 型（#148，引擎 quit() 抛 Error("quit")）：选 [1] 退出
-    // 时异常在 ending_1 内部炸穿，下面两行不可达——QUIT 之后的收尾同样
-    // 同样不可达，靠的也是异常炸穿而非哨兵短路（旧写法 ended !== 1 是夹具
-    // 降格期发明的机制，#148 拆除；真机上该判断唯一可达的出口只有「正常
-    // 返回 0」——见 event-ending.js 的 JSDoc）。调用链上任何一层都不得
-    // try/catch 吞掉这个异常，夹具同款 throw 由测试钉住
-    await ending_1();
+    // 结局演出以转场目标离开（#852 起是返回值）：选「退出」时是回标题的
+    // TITLE，原样上抛——威望 +10 与 PRINTL 不再执行（这一局结束了）；选
+    // [0] 继续时演出返回 0，落到下面照常结算
+    const ended = await ending_1();
+    if (is_state(ended)) {
+      return ended;
+    }
     era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10
     era.print('声望+10'); // PRINTL
     return;
@@ -2168,14 +2170,15 @@ async function apply_prestige_tier(sinkou) {
  * invasion：侵略画面入口，按 FLAG:82 分派。
  *
  * 返回 0 = 取消（不消耗回合，回主菜单）；返回 1 = 回合已耗（调用方
- * page-shop 的 [109] 分支据此 BEGIN TURNEND）。
+ * page-shop 的 [109] 分支据此 BEGIN TURNEND）；结局选了退出时返回
+ * STATE.TITLE（回标题的转场目标，#852，调用方用 is_state 分辨）。
  *
  * 外层 `for (;;)` 承载 RESTART：菜单与其下各层
  * 把 RESTART 信号原样返回，这里重走入口分派——与「回到函数开头重新执行」
  * 等价（RESTART 常量的说明见上）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（透传到出兵路线）
- * @returns {Promise<number>} 0 / 1
+ * @returns {Promise<number|string>} 0 / 1，或转场目标 STATE.TITLE
  */
 async function invasion(rand = default_rand) {
   for (;;) {
@@ -3077,8 +3080,12 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     await kyoten_event(region.kyoten_arg);
   }
   // CALL INVASION_CHECK（结局判定，#118 本体：FLAG:81 满时在此触发
-  // ENDING_1，演出含 [0] 继续 / [1] 退出的询问——选 0 继续后回落到这里）
-  await invasion_check();
+  // ENDING_1，演出含 [0] 继续 / [1] 退出的询问——选 0 继续后回落到这里）。
+  // 选退出时它是回标题的转场目标（#852），原样上抛
+  const over = await invasion_check();
+  if (is_state(over)) {
+    return over;
+  }
   return 1;
 }
 

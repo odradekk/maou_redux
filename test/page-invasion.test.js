@@ -1205,6 +1205,33 @@ test('侵攻度封顶 10000 与 kyoten_event 经结算链触发', async () => {
   );
 });
 
+test('【验收 3 补】结局选退出：[109] 出兵路径以 TITLE 回标题（#852，不退出进程）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { prestige: 90, invasion: 9900 });
+  fixture.seed_chara(35, { name: '菲娅', callname: '菲娅' }); // ENDING_1 的菲娅
+  // 主菜单 [109] → 出兵路线 [1] → 结算尾命中 ENDING_1 → 询问选 [1]
+  // 「我……已经……不想做魔王了……」= 游戏结束
+  fixture.set_inputs(109, 1, 1);
+  const { run_shop } = fixture.load_module('page/page-shop');
+
+  // 回标题的转场目标由 ending_1 → invasion_check → invasion → usershop
+  // 逐层上抛（#852 起是返回值；原先 era.quit() 把进程结束掉）。转场丢了
+  // 的话主菜单会接着重绘、撞上耗尽的输入——两种走法都算「没到标题」，
+  // 异常一并收进 next 再断言，红的是同一句话
+  let next;
+  try {
+    next = await run_shop();
+  } catch (e) {
+    next = e;
+  }
+  assert.equal(next, 'TITLE', '结局回标题的转场经 invasion → usershop 上抛');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '结局不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
+  assert.equal(fixture.store.get('flag:82'), 0, '退出路径不置陷落标记');
+});
+
 test('【验收 3】[109] 返回 1：run_shop 以 TURNEND 转场目标返回', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);

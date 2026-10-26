@@ -396,18 +396,18 @@ test('unit_move：到中心 (16,16) → JUMP ENDING_2 的尾跳转语义', async
   fixture.store.set('maxbase:1:0', 1000);
   fixture.store.set('base:1:1', 1000);
   fixture.store.set('maxbase:1:1', 1000);
-  let quit_error;
   fixture.set_inputs(0); // ENDING_2 仪式性 INPUT
-  try {
-    await labo_dungeon_map.unit_move(1, 89, rand_max);
-  } catch (e) {
-    if (e instanceof Error && e.message === 'quit') {
-      quit_error = e;
-    } else {
-      throw e;
-    }
-  }
-  assert.ok(quit_error, 'ENDING_2 的 QUIT 炸穿 unit_move（JUMP 后续不可达）');
+  // 到中心 = JUMP ENDING_2：回标题的转场目标（#852）交回调用方，本回合的
+  // 移动结算与坐标落笔不再执行
+  assert.equal(
+    await labo_dungeon_map.unit_move(1, 89, rand_max),
+    'TITLE',
+    'ENDING_2 以 TITLE 转场离开 unit_move（JUMP 后续不可达）',
+  );
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    'ENDING_2 不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
   assert.equal(
     fixture.store.get('cflag:1:501'),
     2,
@@ -427,6 +427,31 @@ test('unit_move：到中心 (16,16) → JUMP ENDING_2 的尾跳转语义', async
     fixture.store.get('cflag:1:510'),
     15,
     'JUMP 后续不可达：坐标停留出发格（变异若把 JUMP 改 CALL，坐标将被改写）',
+  );
+});
+
+test('dungeon_map：走到中心以 TITLE 转场离开（本回合的结算与写回都不执行）', async () => {
+  const { fixture, labo_dungeon_map } = setup_labo();
+  seed_unit(fixture, 1, '甲', 2, 15, 16);
+  fixture.store.set('base:1:0', 1000);
+  fixture.store.set('maxbase:1:0', 1000);
+  fixture.store.set('base:1:1', 1000);
+  fixture.store.set('maxbase:1:1', 1000);
+  fixture.store.set('cflag:1:502', 0); // 侵攻度初值：正常结算会写回
+  fixture.set_inputs(0); // ENDING_2 的仪式性 INPUT
+  const before_willpower = fixture.store.get('base:1:1');
+
+  // unit_move 的转场目标不是 D:20：dungeon_map 原样上抛（#852），气力消耗、
+  // 卖春、宝箱、侵攻度写回这些后续结算全部跳过
+  assert.equal(
+    await labo_dungeon_map.dungeon_map(1, rand_max),
+    'TITLE',
+    '走到中心以 TITLE 转场离开 dungeon_map',
+  );
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    before_willpower,
+    '转场之后不再扣冒险的疲劳（气力不变）',
   );
 });
 

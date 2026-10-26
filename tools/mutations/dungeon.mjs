@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 331; // #883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 333; // #852 +2（M17320/M17321：3D 与 2D 两条 ENDING_2 回标题的转场上抛）；#883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟） // #883 +12（M16850-M16861：战斗状态搬成普通对象——列枚举、越界回落、跨列隔离、字段错位、Boss 化门槛、等级缩放、e:1 临时写法复辟）；#872 +2（M16500/M16501：怪物改造与怪物玩弄的受理集＝本轮按钮） #724 +2（M14492/M14493：page-dungeon-info2 主屏与部下总览换屏） // #723 +3（M14410-M14412：回主菜单换屏前的段尾等键——回合结算衰减段、尿床播报、巨人婚后结算）；#710 +4（M14239 补回逐层等键、M14255 怪物按钮挪到循环之后、M14240 返回退回纯文本：page-dungeon-info2；M14245：dungeon-battle2 的确认键退回纯文本）；#641 起 -2+1（M6743/M6881 名单复辟检查随存根名单机制移除；+1 M12906 LABO 战斗删除检查）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 回归检查）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判断条件、欲望门槛、睡着分支文案；M11489：挑战分支漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接入 M9882，号段见 #461 完成报告——原
@@ -412,7 +412,7 @@ export default [
     find: '  if (mx === 16 && my === 16) {',
     replace: '  if (mx === 15 && my === 16) { // 变异：中心判定偏移一格',
     tests: ['dungeon-labo', 'event-ending2-2d-e2e'],
-    must_mention: '炸穿 unit_move',
+    must_mention: 'ENDING_2 以 TITLE 转场离开 unit_move',
   },
   {
     desc: 'M585 dungeon_map 的侵攻度写回改坏（D:20 丢失——2D 单位的推进状态不再持久）',
@@ -426,7 +426,11 @@ export default [
     desc: 'M586 turnend else 分支的 dungeon_map 调用蒸发（2D 模式的勇者原地不动）',
     file: 'ere/system/turnend-settle.js',
     find: `    } else if (place === 2 || place === 3) {
-      await dungeon_map(cid);
+      // 2D 地图同理（走到中心 = ENDING_2）
+      const over = await dungeon_map(cid);
+      if (is_state(over)) {
+        return over;
+      }
     }`,
     replace: `    } else if (place === 2 || place === 3) {
       // 变异：dungeon_map 调用蒸发（2D 模式空转）
@@ -3018,5 +3022,29 @@ export default [
       "      ? 'count'\n      : offset > 10 // 变异：11..98 一律落 count\n        ? 'count'\n        : offset < BATTLE_FIELD_ORDER.length",
     tests: ['dungeon-battle-state'],
     must_mention: 'legacy 槽不得串到 count',
+  },
+  // —— #852 标题循环：迷宫两侧的 ENDING_2 回标题必须上抛 ——
+  {
+    desc: 'M17320 run_dungeon 丢掉回合的转场（第 9 层 ENDING_2 回标题后照常收尾）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `  const turn = await run_dungeon_turn(ctx);
+  // 结局回了标题（#852）：迷宫深处的 ENDING_2 给出转场目标，原样上抛
+  // ——本回合的收尾段不再执行
+  if (is_state(turn)) {
+    return turn;
+  }`,
+    replace: `  const turn = await run_dungeon_turn(ctx); // 变异：结局的转场被吞`,
+    tests: ['dungeon-main'],
+    must_mention: '第 9 层踏破 → ENDING_2 → 回标题的转场目标',
+  },
+  {
+    desc: 'M17321 2D 地图的 ENDING_2 转场在 dungeon_map 被吞（走到中心后照常扣疲劳）',
+    file: 'ere/dungeon/labo-dungeon-map.js',
+    find: `  if (is_state(walk20)) {
+    return walk20;
+  }`,
+    replace: `  // 变异：ENDING_2 的转场被吞`,
+    tests: ['dungeon-labo'],
+    must_mention: '走到中心以 TITLE 转场离开 dungeon_map',
   },
 ];

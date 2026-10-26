@@ -100,15 +100,21 @@ test('菲娅线推进：EX_FLAG:2807 ∈ [160,170) 且目标是菲娅 → 170', 
   assert.equal(fixture.store.get('exflag:2807'), 170);
 });
 
-test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后 QUIT 抛出', async () => {
+test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后回标题（不再退出进程）', async () => {
   const { fixture } = seed_world({ target: 0 });
   fixture.store.set('base:0:0', 0); // 魔王倒下
   fixture.store.set('exflag:3', 0); // EX_FLAG:3 无继任
   fixture.set_inputs(0); // INPUT（无分支确认）
 
-  await assert.rejects(
-    () => run_check(fixture),
-    (e) => e.message === 'quit',
+  // GAMEOVER 回标题（#852）：转场目标是返回值，原先是 era.quit() 抛出
+  assert.equal(
+    await run_check(fixture),
+    'TITLE',
+    'GAMEOVER 以 TITLE 转场离开（回标题，不退出进程）',
+  );
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    'GAMEOVER 不得退出进程（退出只由标题画面的退出按钮发出）',
   );
   const texts = text_lines(fixture);
   assert(
@@ -122,9 +128,9 @@ test('魔王死亡·无候补：GAMEOVER 横幅 + INPUT 后 QUIT 抛出', async 
   );
   assert(
     fixture.inputs_consumed.some((c) => c.api === 'input'),
-    'QUIT 前的 INPUT 被消费',
+    '回标题前的 INPUT 被消费',
   );
-  // QUIT 是 throw 型：之后的语句（死亡口上/死亡旗）不可达
+  // 转场当场结束本函数：之后的语句（死亡口上/死亡旗）不可达
   assert(!texts.some((line) => line.includes('死掉了')));
   assert.equal(fixture.store.get('flag:31'), undefined);
 });

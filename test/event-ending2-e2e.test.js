@@ -1,7 +1,7 @@
 /**
  * ere 阶段 3 第四条贯通路径的端到端验收（issue #173，#169 阶段 3 的收尾）：
  * 新档从标题画面一路跑到 ENDING_2——**游戏第二次能走到结局，这次是输的
- * 那个**（真 GAMEOVER，quit 抛出）。夹具跑完整逻辑循环，毫秒级，每次
+ * 那个**（真 GAMEOVER，回到标题；#852 起不再退出进程）。夹具跑完整逻辑循环，毫秒级，每次
  * `npm test` 都跑（与阶段 1 的 test/event-ending-e2e.test.js 并列）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点，#16）。
@@ -125,7 +125,7 @@ async function expect_state(promise, state, what) {
   );
 }
 
-test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 压住侵攻度）', async () => {
+test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + 压住侵攻度）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 角色预设：0 魔王（标题新游戏加入）、17 玛奥（村娘线）、1-16 勇者池
@@ -219,23 +219,19 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
     // —— 主循环：每半天出兵一次（压住侵攻度的论证见文件头），直到
-    // ENDING_2 的 QUIT 从 EVENTTURNEND 链里炸出来。触发轮比正常轮多一个
-    // 输入（ENDING_2 的仪式性 INPUT）——reset_inputs 每轮清掉
+    // ENDING_2 的回标题转场从 EVENTTURNEND 链里交出来（#852）。触发轮比
+    // 正常轮多一个输入（ENDING_2 的仪式性 INPUT）——reset_inputs 每轮清掉
     // 上一轮未消费的残留，避免错位（阶段 1 e2e 同款）
-    let quit_error;
-    while (quit_error === undefined) {
+    let over;
+    while (over === undefined) {
       fixture.reset_inputs(109, 1, 0);
       await expect_state(run_shop(), 'TURNEND', `第 ${rounds + 1} 轮出兵`);
-      try {
-        const pending = await emit('EVENTTURNEND');
-        assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');
-      } catch (e) {
-        if (e instanceof Error && e.message === 'quit') {
-          quit_error = e;
-          break;
-        }
-        throw e;
+      const pending = await emit('EVENTTURNEND');
+      if (pending === 'TITLE') {
+        over = pending;
+        break;
       }
+      assert.equal(pending, 'SHOP', '回合结算的出口必是 BEGIN SHOP');
       rounds += 1;
       assert(
         rounds <= ROUND_LIMIT,
@@ -244,14 +240,12 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       );
     }
 
-    // —— 终局条件：真 GAMEOVER 是 quit 抛出，不是某个 flag 变 1（工单内容）——
+    // —— 终局条件：真 GAMEOVER 是回标题的转场目标，不是某个 flag 变 1，
+    // 也不再退出进程（#852：结局一律回标题）——
+    assert.equal(over, 'TITLE', 'ENDING_2 以回标题的转场离开 EVENTTURNEND 链');
     assert(
-      quit_error instanceof Error && quit_error.message === 'quit',
-      'ENDING_2 的 QUIT 异常炸穿 EVENTTURNEND 链（#148 throw 型控制流）',
-    );
-    assert(
-      fixture.calls.some(({ api }) => api === 'quit'),
-      'QUIT → era.quit()（关窗 IPC 已记录）',
+      !fixture.calls.some(({ api }) => api === 'quit'),
+      'ENDING_2 不得退出进程（退出只由标题画面的退出按钮发出）',
     );
 
     const texts = fixture.lines_history

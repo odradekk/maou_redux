@@ -18,7 +18,7 @@
 const era = require('#/era-electron');
 const { karma } = require('#/chara/chara-stats');
 const { on, TIER } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/game-state');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
@@ -64,8 +64,11 @@ on(
 
     // 調教後に死んでいる可能性をチェック（#548 起真身：
     // ere/event/event-aftertrain.js。RESULT 0 = 存活 / 1 = 已死；魔王自己
-    // 死亡且无候补时在真身内 QUIT，throw 直接炸穿本链）
+    // 死亡且无候补时在真身内回标题，转场目标原样上抛，#852）
     const charadead_result = await charadead_check();
+    if (is_state(charadead_result)) {
+      return charadead_result;
+    }
 
     // 生きていれば調教後行為のチェック（IF RESULT == 0）
     if (charadead_result === 0) {

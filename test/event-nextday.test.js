@@ -206,6 +206,25 @@ test('每推进一天 ENDCHECK 恰好被调用一次：午后回合 0 次、日�
   );
 });
 
+test('run_event_newday：每日结局判定回标题时原样上抛（#852）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  // 把「每日结局判定的深处回了标题」直接摆出来：run_event_newday 拿到
+  // TITLE 必须原样上抛，由回合结算继续交给主循环（Instance 替身在装载
+  // nextday 之前换好——它按解构取函数）
+  const endcheck = fixture.load_module('system/ending/endcheck');
+  endcheck.run_endcheck = async () => 'TITLE';
+  const { run_event_newday } = fixture.load_module('event/event-nextday');
+
+  assert.equal(await run_event_newday(), 'TITLE', '回标题的转场目标原样上抛');
+  // 自动存档在判定之前已经落过（世界结束不回滚存档，ADR-0006 的读档钩子不变）
+  assert(
+    fixture.calls.some(({ api }) => api === 'saveData'),
+    '自动存档照常落盘',
+  );
+});
+
 test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算；EVENT_NEWDAY 经 ENDCHECK 追加清场与反叛写', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });

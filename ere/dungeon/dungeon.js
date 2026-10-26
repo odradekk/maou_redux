@@ -68,6 +68,7 @@
  * 逐语句一致。 */
 
 const era = require('#/era-electron');
+const { is_state } = require('#/system/flow/game-state');
 const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -252,7 +253,8 @@ const TURN_ABORT = 'abort';
  *
  * @param {number} arg0 攻略中的角色·队长（ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 恒 return 0
+ * @returns {Promise<number|string>} 正常结束恒 return 0；迷宫深处走到结局时
+ *   返回 STATE.TITLE（回标题的转场目标，由调用方上抛）
  */
 async function run_dungeon(arg0, rand) {
   const rand_n = rand ?? default_rand;
@@ -307,7 +309,13 @@ async function run_dungeon(arg0, rand) {
   }
 
   // バランス調整のため侵攻は一回で終了する（旧 FOR TURN 0..4 的单轮）
-  if (await run_dungeon_turn(ctx)) {
+  const turn = await run_dungeon_turn(ctx);
+  // 结局回了标题（#852）：迷宫深处的 ENDING_2 给出转场目标，原样上抛
+  // ——本回合的收尾段不再执行
+  if (is_state(turn)) {
+    return turn;
+  }
+  if (turn) {
     return 0;
   }
 
@@ -372,7 +380,8 @@ async function print_dungeon_opening(ctx) {
 /**
  * 推进一「回合」。
  * @param {object} ctx 回合上下文
- * @returns {Promise<boolean>} true = 调用方须立即返回 0（原 return 0 路径）
+ * @returns {Promise<boolean|string>} true = 调用方须立即返回 0（原 return 0
+ *   路径）；STATE.TITLE = 迷宫深处走到结局，调用方上抛回标题的转场目标
  */
 async function run_dungeon_turn(ctx) {
   const { arg0, rand_n } = ctx;
@@ -387,6 +396,9 @@ async function run_dungeon_turn(ctx) {
 
   // === 侵攻度检查（三分支）===
   const position = await resolve_dungeon_position(ctx);
+  if (is_state(position)) {
+    return position; // 结局回标题（#852）
+  }
   if (position === TURN_ABORT) {
     return true;
   }
@@ -399,6 +411,9 @@ async function run_dungeon_turn(ctx) {
 
   // === 戦闘フェイズ（三分支）===
   const battle = await dungeon_battle_phase(ctx);
+  if (is_state(battle)) {
+    return battle; // 结局回标题（#852）
+  }
   if (battle === TURN_ABORT) {
     return true;
   }
@@ -558,7 +573,7 @@ async function dungeon_hero_breakthrough(ctx) {
 
 /**
  * 踏破后的去向：战役尽头、魔王的房间、体力富余时下潜一层。
- * @returns {Promise<string>} TURN_*
+ * @returns {Promise<string>} TURN_*，或 STATE.TITLE（结局回标题的转场目标）
  */
 async function advance_dungeon_floor(ctx) {
   const { arg0, mapc } = ctx;
@@ -578,17 +593,16 @@ async function advance_dungeon_floor(ctx) {
 /**
  * 魔王的房间（第 9 层）：真勇者走 ENDING_2 收尾，冒险者四分之一概率挑战，
  * 否则留下挫折阶层记忆回头。
- * @returns {Promise<string>} TURN_*
+ * @returns {Promise<string>} TURN_*，或 STATE.TITLE（ENDING_2 回标题）
  */
 async function dungeon_master_room(ctx) {
   const { arg0, rand_n, leader_name, mapc } = ctx;
   // 魔王的房间——这张工单的贯通终点
   era.print('这里是魔王的房间………');
   if ((era.get(`talent:${arg0}:122`) || 0) === 0) {
-    // 真勇者（非冒险者）→ JUMP ending_2（#173 H4；
-    // QUIT 后不返回，以 RETURN 收尾）
-    await ending_2();
-    return TURN_ABORT;
+    // 真勇者（非冒险者）→ JUMP ending_2（#173 H4）：结局以回标题的转场
+    // 目标离开（#852），本回合与后续结算都不再执行
+    return await ending_2();
   } else if (era.get(`talent:${arg0}:122`)) {
     // 冒险者（TALENT:122 非零）：深知无法击败魔王
     era.print('作为冒险者而非勇者的他深知自己无法击败魔王。');

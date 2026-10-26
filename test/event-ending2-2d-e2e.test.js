@@ -162,8 +162,8 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
     // 调教轮跨四个状态（SHOP→TRAIN→AFTERTRAIN→TURNEND→SHOP），用主循环
     // 的 enter_state 逐态驱动（main-loop 导出的接站入口，#137），与真实
     // 状态机同一张表——比手写 expect_signal 的两态驱动更贴近引擎
-    let quit_error;
-    while (quit_error === undefined) {
+    let over;
+    while (over === undefined) {
       const fallen = (fixture.store.get('flag:82') ?? 0) !== 0;
       if (fallen) {
         // 征服后：调教推进。首轮多一个目标选择（[17] 玛奥，select_target
@@ -184,24 +184,20 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
         // 本轮仍走侵略档）
         fixture.reset_inputs(109, 1, 0);
       }
-      try {
-        let state = STATE.SHOP;
-        while (state !== STATE.TURNEND) {
-          state = await enter_state(state);
-          assert(
-            !(state === STATE.SHOP),
-            `第 ${rounds + 1} 轮提前回 SHOP——回合没有推进（输入档与菜单错位）`,
-          );
-        }
-        const pending = await enter_state(STATE.TURNEND);
-        assert.equal(pending, STATE.SHOP, '回合结算的出口必是 BEGIN SHOP');
-      } catch (e) {
-        if (e instanceof Error && e.message === 'quit') {
-          quit_error = e;
-          break;
-        }
-        throw e;
+      let state = STATE.SHOP;
+      while (state !== STATE.TURNEND) {
+        state = await enter_state(state);
+        assert(
+          !(state === STATE.SHOP),
+          `第 ${rounds + 1} 轮提前回 SHOP——回合没有推进（输入档与菜单错位）`,
+        );
       }
+      const pending = await enter_state(STATE.TURNEND);
+      if (pending === STATE.TITLE) {
+        over = pending;
+        break;
+      }
+      assert.equal(pending, STATE.SHOP, '回合结算的出口必是 BEGIN SHOP');
       rounds += 1;
       assert(
         rounds <= ROUND_LIMIT,
@@ -210,14 +206,11 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       );
     }
 
-    // —— 终局条件：真 GAMEOVER 是 quit 抛出 ——
+    // —— 终局条件：真 GAMEOVER 是回标题的转场目标（#852，不再退出进程）——
+    assert.equal(over, 'TITLE', 'ENDING_2 以回标题的转场离开回合链');
     assert(
-      quit_error instanceof Error && quit_error.message === 'quit',
-      'ENDING_2 的 QUIT 异常炸穿 EVENTTURNEND 链（#148 throw 型控制流）',
-    );
-    assert(
-      fixture.calls.some(({ api }) => api === 'quit'),
-      'QUIT → era.quit()（关窗 IPC 已记录）',
+      !fixture.calls.some(({ api }) => api === 'quit'),
+      'ENDING_2 不得退出进程（退出只由标题画面的退出按钮发出）',
     );
 
     const texts = fixture.lines_history
