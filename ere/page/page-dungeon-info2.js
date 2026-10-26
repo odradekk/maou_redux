@@ -532,7 +532,7 @@ async function dungeon_info2() {
           );
         }
         era.printButton('- 好的', 0); // [0]
-        era.printButton('- 不要', 1); // [1]（同行并排两个选项）
+        era.printButton('- 不要', 1); // [1]（两枚确认钮各占一行，printButton 排不进网格）
       } else if (dialogue[1] === -1) {
         era.print([
           { content: '\u3000\u3000* 还没有选择对象！！ *', color: COLOR_DIM },
