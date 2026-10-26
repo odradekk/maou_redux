@@ -23,6 +23,7 @@ const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
 const era_flag = require('#/era-utils/era-flag');
+const { palam_settled } = require('#/era-utils/palam-level');
 // aftertrain_cloth / re_clothed 自 #215（J5）起为真身（train 域的
 // ere/system/train/cloth.js——EVENTEND 在 endTrain 之前发（run_aftertrain
 // 的既有次序），TFLAG:45 的读写落在火车表内，原生成立）
@@ -126,14 +127,14 @@ on(
       !era.get(`talent:${era_flag.target}:271`)
     ) {
       // 润滑（PALAM:3）
-      const lubrication = era.get(`palam:${era_flag.target}:3`) || 0;
+      const lubrication = palam_settled(era_flag.target, 3);
       if (lubrication >= 10000) {
         era.add(`cflag:${era_flag.target}:81`, Math.floor(lubrication / 10000));
       } else {
         era.set(`cflag:${era_flag.target}:81`, 0);
       }
       // 欲情（PALAM:5）
-      const desire = era.get(`palam:${era_flag.target}:5`) || 0;
+      const desire = palam_settled(era_flag.target, 5);
       if (desire >= 10000) {
         era.add(`cflag:${era_flag.target}:82`, Math.floor(desire / 10000));
       } else {

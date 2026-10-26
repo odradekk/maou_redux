@@ -244,6 +244,47 @@ test('气力回复钳上限：超上限回落 MAXBASE', async () => {
   );
 });
 
+test('结算前的残量：#874 起 EVENTEND 与欲情快照读 palam + delta', async () => {
+  // 回合内的欲情增量落在 delta，palam 由引擎 nextTurnInTrain 加算。正常流程
+  // 走到调教收尾时最后一轮已结算（delta 为 0），但没走到结算的路径（取消
+  // 回合等）会把残量留在 delta 里——那正是「还没并进 palam 的欲情」。本处
+  // 读点一律取 palam + delta（palam_settled），这里用一个残量非 0 的世界
+  // 验证三条读点都算上了它：时常发情的 CFLAG:82、调教后欲情 CFLAG:668、
+  // 以及调教后性交检查的欲情门槛（「做了 N 次」）。
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('base:31:0', 2000);
+  fixture.store.set('palam:31:5', 5000); // 已结算的欲情
+  fixture.store.set('delta:31:5', 6000); // 未结算的残量 → 合计 11000
+  // 调教后性交检查的前置（aftertrain_sex_check 的门槛串）
+  fixture.store.set('talent:31:85', 1); // 爱慕
+  fixture.store.set('exp:31:5', 30); // 性交经验
+  fixture.store.set('talent:0:122', 1); // 主人是男人
+  fixture.store.set('abl:31:2', 4); // V感觉 4 档 → s += 1
+  fixture.store.set('abl:31:11', 5); // 欲望 5 档
+  fixture.store.set('abl:31:16', 5); // 侍奉精神 5 档
+  fixture.set_inputs(999);
+
+  await run_eventend(fixture);
+
+  assert.equal(
+    fixture.store.get('cflag:31:82'),
+    1,
+    '时常发情：欲情 11000 蓄积 1 次（只读 palam 会得到 5000 → 清零）',
+  );
+  assert.equal(
+    fixture.store.get('cflag:31:668'),
+    11000,
+    '调教后欲情快照同样取 palam + delta',
+  );
+  // s = 1（V感觉 4 档）+ 2（欲情 ≥10000）+ 1（欲望/侍奉/V 感觉三档）+ 1（爱慕）
+  // = 5；只读 palam（5000）时两个欲情门槛都不成立，s = 2
+  assert(
+    fixture.text_lines().includes('回到床上做了5次…'),
+    '性交检查的欲情门槛（≥3000/≥10000）按 palam + delta 判定：合计 5 次；只读 palam 只有 2 次',
+  );
+});
+
 test('存根名单：#548 后本模块不再持有运行时占位', async () => {
   // event_maou_tenshin 自 #400（N16）、charadead_check / party_char_del 自 #548
   // （S7）起为真身，本模块存根名单清空

@@ -3,7 +3,7 @@
 // 分配，只作引用编号，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 16; // #643 -1（M185：产物出处路径注释变异无行为面，出处核对用例删除）；#641 起 -4（M145、M11310–M11312 随 ere/utils/stub-line.js 删除）；#542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
+export const COUNT = 17; // #874 +1（M17404：palam_settled 漏加 delta——调教收尾的欲情快照）; // #643 -1（M185：产物出处路径注释变异无行为面，出处核对用例删除）；#641 起 -4（M145、M11310–M11312 随 ere/utils/stub-line.js 删除）；#542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
 // 话术退回、丢等键、丢 @函数名，均由 test/page-config.test.js 的 dispatch_config(26/28)
 // 用例盯守）
 //；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首分支——由 test/era-modsave.test.js 与 test/era-global.test.js 盯守）
@@ -161,5 +161,14 @@ export default [
     replace: '  if (raw === 0) {',
     tests: ['input-text'],
     must_mention: 'undefined / null 的缺值输入也归空串',
+  },
+  {
+    desc: 'M17404 palam_settled 漏加 delta（「结算后的值」退回结算前的值）',
+    file: 'ere/era-utils/palam-level.js',
+    find: `    (era.get(\`palam:\${cid}:\${index}\`) || 0) +
+    (era.get(\`delta:\${cid}:\${index}\`) || 0)`,
+    replace: `    (era.get(\`palam:\${cid}:\${index}\`) || 0) + 0 // 变异：漏加 delta`,
+    tests: ['palam-engine-settle'],
+    must_mention: '未结算时快照把本轮的增量算进去',
   },
 ];

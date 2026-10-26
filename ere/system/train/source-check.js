@@ -3,10 +3,11 @@
  * issue #461：自动调教入口 SOURCE_CHECK_AUTO）。
  *
  * 与引擎的职责划分（app.asar 的 nextTurnInTrain 实证，#44）：
- *   - UP/DOWN 的 ere 等价物是 delta 表（清零归引擎回合结算）。本模块把 UP
- *     累加进 delta；PALAM_UP_CHECK 展示后**当场把 delta 结算进 palam 并清零
- *     （PALAM += UP / PALAM -= DOWN 由本模块承载）**，引擎的
- *     nextTurnInTrain 随后加 0、成为无操作——避免双重累加；
+ *   - UP/DOWN 的 ere 等价物是 delta 表。本模块只把 UP 累加进 delta、并在
+ *     PALAM_UP_CHECK 里把 DOWN 折成 delta 的有符号减法（`delta = UP - DOWN`）
+ *     供展示；**palam 的加算与 delta 的清零全部归引擎的 nextTurnInTrain**，
+ *     本模块不写 palam、不清 delta（#874）。手工再做一次就是双重累加——#461
+ *     漏清一处时出过同性质的问题；
  *   - LOSEBASE 的 ere 等价物是 deltabase 的负值（com0 写 -5/-50）。本模块
  *     在 BASE 扣减处当场结算 deltabase → base（钳 0..maxbase，
  *     引擎语义）并清零，同理避免双重扣减；
@@ -1514,6 +1515,19 @@ const down_map = new Map();
 const down = (k) => down_map.get(k) || 0;
 const set_down = (k, v) => down_map.set(k, v);
 
+/**
+ * 把 DOWN 折进 delta 的有符号减法（`delta = UP - DOWN`）：引擎
+ * nextTurnInTrain 的 `palam += delta` 是唯一一次结算，减法只能在这里带上。
+ * 不写 palam、不清 delta——两者都归引擎（见文件头的职责划分）。
+ * @param {number} upid PALAM 序号
+ */
+function fold_down(upid) {
+  const d = down(upid);
+  if (d > 0) {
+    set_up(upid, up(upid) - d);
+  }
+}
+
 // ecst_check：绝顶强度的快照
 function ecst_check(arg) {
   game.system.绝顶强度 = arg;
@@ -2947,9 +2961,10 @@ function soul_dislocation_debuff() {
 }
 
 // palam_message：参数状态短语（返回串，拼在行尾——
-// 调用后紧跟 PRINTL，同一行）
-function palam_message(id) {
-  const p = palam(id);
+// 调用后紧跟 PRINTL，同一行）。描述的是**结算后的值**：由调用方把 post
+// 传进来。自己读 palam 表拿到的是结算前的旧值，会把「+N 之后的状态」显示
+// 成「+N 之前的状态」（#874：结算交给引擎后 palam 在打印时还没被加算）
+function palam_message(id, p) {
   switch (id) {
     case 3:
       if (p < PALAMLV[2]) {
@@ -3047,13 +3062,15 @@ function palam_message(id) {
   }
 }
 
-// palam_up_check：参数变动的展示与结算（含 DOWN）。
-// PALAM 的当场更新在行内做；delta 的清零在**整轮之后**——
-// UP 数组活到函数结束（三处 SIF 分隔线在循环内还要读它）
+// palam_up_check：参数变动的展示＋把 DOWN 折进 delta。
+//
+// 展示行仍是「旧值 + UP - DOWN = 结算后的值」，但**不写 palam**：本轮变动
+// 全部留在 delta 里（DOWN 折成有符号的减法），由引擎 nextTurnInTrain 在
+// 回合末加算并清零 delta。手工写 palam 或手工清 delta 都会让引擎那一步变成
+// 重复累加或空转（#874；#461 漏清一处时出过同性质的问题）。
 function palam_up_check() {
   // FOR UPCOUNT,0,16 的 UPID 序（0,1,2,14,3,4,...,13,15）
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];
-  const touched = [];
   for (const upid of ORDER) {
     if (up(upid) > 0 || down(upid) > 0) {
       // 名列（UPID 15 是 CSTR:7 的癖好名；UPID 0 且男人叫陰莖——沿用该字）
@@ -3067,8 +3084,6 @@ function palam_up_check() {
       const u = up(upid);
       const d = down(upid);
       const post = old + u - d;
-      // PALAM += UP / PALAM -= DOWN —— ere 侧当场结算
-      era.set(`palam:${cid}:${upid}`, post);
       era.print(
         name +
           figure_indent_2(old) +
@@ -3076,9 +3091,8 @@ function palam_up_check() {
           (u > 0 ? `+${figure_indent_2(u)}${u}` : NBSP.repeat(7)) +
           (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(7)) +
           `=${figure_indent_2(post)}${post}` +
-          palam_message(upid),
+          palam_message(upid, post),
       );
-      touched.push(upid);
     }
     // 三处分隔线（SIF UPID == 14/3/10——读的仍是本轮 UP）
     if (upid === 14 && (up(0) > 0 || up(1) > 0 || up(2) > 0 || up(14) > 0)) {
@@ -3091,33 +3105,31 @@ function palam_up_check() {
       era.drawLine();
     }
   }
-  // 循环外统一清零（引擎 nextTurnInTrain 的 delta→palam 由此成为无操作，
-  // 不与行内结算双重累加——文件头的职责划分说明）
-  for (const upid of touched) {
-    era.set(`delta:${cid}:${upid}`, 0);
+  // 折 DOWN 必须在打印与分隔线**之后**：分隔线的判据读 `up(k)`，而 fold_down
+  // 会把 `up(k)` 改成 `UP - DOWN`——DOWN 大于 UP 的判据序号会变成负数，
+  // 有条件的那条分隔线就静默少画（#874 返工，与改动前对照实测少一条）。
+  for (const upid of ORDER) {
+    if (down(upid) > 0) {
+      fold_down(upid);
+    }
   }
 }
 
-// palam_up_check_mini：自动调教专用的静默结算——不打印任何
-// 行（三处 PRINT/CALL PALAM_MESSAGE_MINI 均不移植）。UPID 序与完整版
-// palam_up_check 相同（0,1,2,14,3,…,13,15）：14 号位稳快乐在 C/V/A 之后，
-// 15 号（CSTR:7 的癖好名）收尾；UPID 14 单次结算、UPID 15 照常写回。
-// delta 表由本模块当场结算进 palam 并清零、令引擎 nextTurnInTrain 的通用
-// 结算成为无操作（见文件头顶部 delta/palam 结算职责划分的说明）——这是
-// ere 自身承担的收尾职责。ORDER 不含 15 会让 touched 永远漏收 15，
-// delta:15 残留到引擎的 nextTurnInTrain 就会被重新累加进 palam，等于
-// 未生效的收益意外实现（issue #461 验收发现），故 ORDER 末位必须收 15。
+// palam_up_check_mini：自动调教专用的静默版——不打印任何行（三处
+// PRINT/CALL PALAM_MESSAGE_MINI 均不移植）。UPID 序与完整版 palam_up_check
+// 相同（0,1,2,14,3,…,13,15）：14 号位稳快乐在 C/V/A 之后，15 号（CSTR:7 的
+// 癖好名）收尾。与完整版一样只把 DOWN 折进 delta，palam 的加算与 delta 的
+// 清零归引擎 nextTurnInTrain（见文件头的职责划分）。
+//
+// ORDER 必须收全所有可能带 DOWN 的序号：DOWN 只在折进 delta 时被消费，
+// 漏一个就等于这条减值静默失效。末位收 15 的来历另见 #461（ORDER 漏 15 会让
+// delta:15 残留到下一次结算，等于未生效的收益意外实现）。
 function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];
-  const touched = [];
   for (const upid of ORDER) {
     if (up(upid) > 0 || down(upid) > 0) {
-      era.set(`palam:${cid}:${upid}`, palam(upid) + up(upid) - down(upid));
-      touched.push(upid);
+      fold_down(upid);
     }
-  }
-  for (const upid of touched) {
-    era.set(`delta:${cid}:${upid}`, 0);
   }
 }
 

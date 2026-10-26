@@ -15,6 +15,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { palam_settled } = require('#/era-utils/palam-level');
 const era_exflag = require('#/era-utils/era-exflag');
 // maou_kouho 的真身（ere/event/event-nextday.js）——另一处调用点正是
 // 本文件的 charadead_check，ere 侧此前只有 EVENTEND 的魔王倒下分支
@@ -307,7 +308,7 @@ async function aftertrain_sex_check() {
 
   const abl11 = era.get(`abl:${target}:11`) || 0; // 欲望
   const abl16 = era.get(`abl:${target}:16`) || 0; // 侍奉精神
-  const palam5 = era.get(`palam:${target}:5`) || 0; // 欲情
+  const palam5 = palam_settled(target, 5); // 欲情（结算后的值）
   const palamlv3 = 3000;
   const palamlv4 = 10000;
 
@@ -395,7 +396,7 @@ async function aftertrain_analsex_check() {
 
   const abl11 = era.get(`abl:${target}:11`) || 0;
   const abl16 = era.get(`abl:${target}:16`) || 0;
-  const palam5 = era.get(`palam:${target}:5`) || 0;
+  const palam5 = palam_settled(target, 5); // 欲情（结算后的值）
   const palamlv3 = 3000;
   const palamlv4 = 10000;
 
@@ -499,7 +500,7 @@ async function aftertrain_lesbiansex_check(sex_result = 0) {
 
   if (n <= 0) return 0;
 
-  const palam5 = era.get(`palam:${target}:5`) || 0;
+  const palam5 = palam_settled(target, 5); // 欲情（结算后的值）
   const palamlv3 = 3000;
   if (abl22 >= 5 && palam5 >= palamlv3) n += 1;
   if ((era.get(`abl:${assi}:22`) || 0) >= 3 && palam5 >= palamlv3) n += 1;
@@ -674,7 +675,7 @@ async function aftertrain_masturbation_check(
   else if (abl31 >= 6) a += 14;
 
   const abl11 = era.get(`abl:${target}:11`) || 0;
-  const palam5 = era.get(`palam:${target}:5`) || 0;
+  const palam5 = palam_settled(target, 5); // 欲情（结算后的值）
   const palamlv3 = 3000;
   const palamlv4 = 10000;
 
@@ -821,7 +822,7 @@ async function aftertrain_beastsex_check() {
 
   const abl11 = era.get(`abl:${target}:11`) || 0;
   const abl17 = era.get(`abl:${target}:17`) || 0;
-  const palam5 = era.get(`palam:${target}:5`) || 0;
+  const palam5 = palam_settled(target, 5); // 欲情（结算后的值）
   const palamlv3 = 3000;
   const palamlv4 = 10000;
 

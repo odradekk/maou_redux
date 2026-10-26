@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 102; // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
+export const COUNT = 103; // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
 // 写不落库/自动建行/行不随加入/调教表恒在/source 不随 endTrain 消失/item 骨架缺子表/
 // bought 初值/盖章常量取错/no 返回副本/no 写不落数组/get 不认盖章缺省/行与列不进枚举/
 // 视图不读平表/扩展角色表不建桶或不建行）；#848 +3（M16251–M16253：resetData 按
@@ -1178,5 +1178,18 @@ export default [
     tests: ['fixture'],
     must_mention:
       'resetData 内部的建角色是引擎动作，不得记成游戏代码的 addCharacter',
+  },
+  {
+    desc: 'M17406 夹具的 nextTurnInTrain 不把 delta 加进 palam（回合末停在结算前的值）',
+    file: 'test/helpers/era-fixture.js',
+    find: `        store.set(
+          palam_key,
+          (settled === undefined && palam_ids.has(index) ? 0 : settled) +
+            store.get(key),
+        );`,
+    replace: `        store.set(palam_key, settled ?? 0); // 变异：不把 delta 加进 palam`,
+    tests: ['palam-engine-settle'],
+    must_mention:
+      'palam 终值（引擎 delta→palam 之后）与改动前的当场结算逐号相同',
   },
 ];

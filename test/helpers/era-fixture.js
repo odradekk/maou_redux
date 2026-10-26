@@ -1726,14 +1726,37 @@ function create_era_fixture() {
     // SOURCE:0），上回合残留若不清会被下回合的共用闸再乘再转一遍。
     // 同一 engine_test 的末两条断言「只结算在训角色」——所以这里也只清
     // chars_in_train 里的（引擎侧的闸是 data.tequip，夹具的同构物是它）。
-    // delta/deltabase/nowex 的结算游戏侧已在 SOURCE_CHECK 内行内完成
-    //（引擎做时已是空值，同结果），此处只补 SOURCE 这一件。
+    //
+    // delta → palam 也在这里结算（#874）：游戏侧不再当场写 palam、也不清
+    // delta，引擎的 `palam[t] += delta[t]; delta[t] = 0` 成了唯一结算点，
+    // 夹具不镜像它，所有「回合末的 palam」断言读到的就都是没结算的值。
+    // 遍历按 store 里实际存在的 delta 键（引擎遍历 `Object.keys(data.delta[cid])`
+    // = 声明集 + 写入时新建的键）；声明序号在引擎里由 addCharacterForTrain
+    // 预置 0，未声明序号没有这一格，`undefined + n` 得 NaN——夹具按声明集
+    // 还原同一个分歧，好让「ORDER 与写入点必须落在 Palam.yml 声明集内」这条
+    // 约束有测试可守（#923）。
+    const palam_ids = yml_declared_ids('palam') ?? new Set();
     for (const cid of chars_in_train) {
       const prefix = `source:${cid}:`;
       for (const key of [...store.keys()]) {
         if (key.startsWith(prefix)) {
           store.set(key, 0);
         }
+      }
+      const delta_prefix = `delta:${cid}:`;
+      for (const key of [...store.keys()]) {
+        if (!key.startsWith(delta_prefix)) {
+          continue;
+        }
+        const palam_key = `palam:${cid}:${key.slice(delta_prefix.length)}`;
+        const index = Number(key.slice(delta_prefix.length));
+        const settled = store.get(palam_key);
+        store.set(
+          palam_key,
+          (settled === undefined && palam_ids.has(index) ? 0 : settled) +
+            store.get(key),
+        );
+        store.set(key, 0);
       }
     }
     return undefined;

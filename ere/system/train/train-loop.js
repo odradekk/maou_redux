@@ -54,9 +54,9 @@
  *        PREVCOM = SELECTCOM（引擎不自动推进 PREVCOM，由本循环赋值；高级
  *        COM 回填 SELECTCOM 后亦须保留该号——SOURCE_CHECK 跑了才推，取消
  *        回合不推）→ era.nextTurnInTrain()（结算：delta→palam、nowex→ex、
- *        deltabase→base 并清 source/delta/nowex；#45 起 SOURCE_CHECK 对
- *        palam/base 当场结算、delta/deltabase 清零，本步对已结算行为成为
- *        无操作——防双重累加的职责划分见 source-check.js 文件头）→
+ *        deltabase→base 并清 source/delta/nowex；SOURCE_CHECK 只写 delta 与
+ *        DOWN 折算，palam 的加算归这一步，本步是唯一的结算点；deltabase→base
+ *        仍由 SOURCE_CHECK 当场结算，见 source-check.js 文件头的职责划分）→
  *        EVENTCOMEND 事件链
  *    14. 回到 4
  *

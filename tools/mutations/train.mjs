@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1127; // #906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1133; // #874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -7495,14 +7495,14 @@ export default [
     must_mention: '两处气力 0 减半块',
   },
   {
-    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 不再结算）',
+    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 删 UPID 14（乳房绝顶的 DOWN 不再折进 delta）',
     file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     tests: ['source-check'],
-    must_mention: 'UPID 14 只结算一次',
+    must_mention: '乳房绝顶的回落：10000 + 312 - 9000',
   },
   {
     desc: 'M9785 SOURCE_CHECK_AUTO：down_map.clear() 删（DOWN 跨回合残留）',
@@ -7523,14 +7523,14 @@ export default [
     must_mention: '当场结算到 base',
   },
   {
-    desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（delta:15 残留会被引擎重新累加进 palam）',
+    desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（局部绝顶的 DOWN 不再折进 delta）',
     file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];`,
     tests: ['source-check'],
-    must_mention: 'UPID 15：ORDER 末位收 15',
+    must_mention: '局部绝顶的回落：10000 + 1000 - 9000',
   },
   // —— #460（COMF203_カビ犬／COMF205_腐れ豚 变异覆盖补齐）——
   {
@@ -10593,14 +10593,14 @@ export default [
     must_mention: '兽奸报告二次累加按兽奸回数结算',
   },
   {
-    desc: 'M13101 PALAM_UP_CHECK_MINI：ORDER 回退成缺 15 重复 14（14 双结算、15 不写回复活）',
+    desc: 'M13101 PALAM_UP_CHECK_MINI：ORDER 回退成缺 15 重复 14（重复的 14 二次折减、15 的 DOWN 丢失）',
     file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];`,
     tests: ['source-check'],
-    must_mention: 'UPID 14 只结算一次',
+    must_mention: '乳房绝顶的回落：10000 + 312 - 9000',
   },
 
   // —— #648 F2 缺陷修复：调教指令、服装与昏迷（M13000-M13013 守修复点；
@@ -11484,9 +11484,9 @@ export default [
   {
     desc: 'M16204 快照名单只看当前目标（同场参与调教的其他角色不存欲情）',
     file: 'ere/system/train/train-end.js',
-    find: '  for (const cid of era.getCharactersInTrain()) {\n    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;',
+    find: '  for (const cid of era.getCharactersInTrain()) {\n    chara(cid).train.调教后欲情 = palam_settled(cid, 5);',
     replace:
-      '  for (const cid of [era_flag.target]) {\n    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;',
+      '  for (const cid of [era_flag.target]) {\n    chara(cid).train.调教后欲情 = palam_settled(cid, 5);',
     tests: ['train-end'],
     must_mention: '同一场里的其他参与者',
   },
@@ -11518,5 +11518,78 @@ export default [
     replace: '    // 变异：菜单槽不再累进人数',
     tests: ['dungeon-benki-flow'],
     must_mention: '输出行',
+  },
+  // —— #874：调教结算交还引擎（palam 由 nextTurnInTrain 加算，DOWN 并进 delta）——
+  {
+    desc: 'M17400 结算时又当场写 palam（引擎再累加一次 = 双重结算）',
+    file: 'ere/system/train/source-check.js',
+    find: `  for (const upid of ORDER) {
+    if (down(upid) > 0) {
+      fold_down(upid);
+    }
+  }
+}`,
+    replace: `  for (const upid of ORDER) {
+    if (down(upid) > 0) {
+      fold_down(upid);
+    }
+  }
+  // 变异：当场结算（引擎再累加一次 = 双重结算）
+  for (const upid of ORDER) {
+    era.set(\`palam:\${cid}:\${upid}\`, palam(upid) + up(upid));
+  }
+}`,
+    tests: ['palam-engine-settle'],
+    must_mention: 'palam 不应当场写：旧值原样留着',
+  },
+  {
+    desc: 'M17401 DOWN 不并进 delta（减法整段丢失，只加 UP）',
+    file: 'ere/system/train/source-check.js',
+    find: '    set_up(upid, up(upid) - d);',
+    replace: '    // 变异：DOWN 丢掉',
+    tests: ['palam-engine-settle'],
+    must_mention:
+      'DOWN 并进 delta：9000+3640-9000 的减法落在 delta 上（3640-9000）',
+  },
+  {
+    desc: 'M17402 静默版（AUTO）不折 DOWN（绝顶回落整段丢失）',
+    file: 'ere/system/train/source-check.js',
+    find: `  for (const upid of ORDER) {
+    if (up(upid) > 0 || down(upid) > 0) {
+      fold_down(upid);
+    }
+  }
+}`,
+    replace: `  // 变异：mini 不折 DOWN
+}`,
+    tests: ['source-check'],
+    must_mention: '首次调用：EX_CHECK_UP 触发 DOWN:0=9000，结算为 10000-9000',
+  },
+  {
+    desc: 'M17403 欲情快照读裸 palam（少掉本轮还没结算的增量）',
+    file: 'ere/system/train/train-end.js',
+    find: '    chara(cid).train.调教后欲情 = palam_settled(cid, 5);',
+    replace:
+      '    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0; // 变异：漏掉 delta',
+    tests: ['palam-engine-settle'],
+    must_mention: '未结算时快照把本轮的增量算进去',
+  },
+  {
+    desc: 'M17405 时常发情读裸 palam（未结算的欲情不计入蓄积槽）',
+    file: 'ere/event/event-end.js',
+    find: '      const desire = palam_settled(era_flag.target, 5);',
+    replace:
+      '      const desire = era.get(`palam:${era_flag.target}:5`) || 0; // 变异：只读 palam',
+    tests: ['event-end'],
+    must_mention: '时常发情：欲情 11000 蓄积 1 次',
+  },
+  {
+    desc: 'M17407 参数状态短语用结算前的值（「+N 之后的状态」显示成「+N 之前」）',
+    file: 'ere/system/train/source-check.js',
+    find: '          palam_message(upid, post),',
+    replace: '          palam_message(upid, old), // 变异：用结算前的值',
+    tests: ['palam-engine-settle'],
+    must_mention:
+      '参数变动行的算式（旧值/UP/DOWN/结算后的值）与文案必须与改动前一致',
   },
 ];
