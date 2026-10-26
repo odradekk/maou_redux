@@ -24,6 +24,7 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
 const { preset_chara_0 } = require('./helpers/chara');
 const { preset_audio_seeded } = require('./helpers/audio');
+const { EVENT } = require('../ere/data/event-name-const');
 
 // ere/ 的绝对路径（require.cache 键以此为前缀），独立性用例用它断言
 // 「载入 A 不连带动入 B」
@@ -274,8 +275,8 @@ test('独立性：事件注册表可用且不连带载入分发注册表', async
   const fixture = create_era_fixture();
   const registry = fixture.load_module('system/event/registry');
   const ran = [];
-  registry.on('EVENTTEST', async () => ran.push('处理器'));
-  await registry.emit('EVENTTEST');
+  registry.on(EVENT.TURNEND, async () => ran.push('处理器'));
+  await registry.emit(EVENT.TURNEND);
   assert.deepEqual(ran, ['处理器']);
 
   const loaded = Object.keys(require.cache).filter((key) =>
@@ -292,24 +293,26 @@ test('独立性：CHARA_EX 族不往事件注册表塞任何处理器（反之�
   const { chara_ex } = fixture.load_module('chara/chara-ex');
   const registry = fixture.load_module('system/event/registry');
 
-  // 族名不是事件名：emit 空链返回 undefined，没有任何处理器被广播执行
-  assert.equal(await registry.emit('CHARA_EX'), undefined);
+  // chara_ex 没有往事件注册表注册任何处理器：合法事件名在这里同样是空链，
+  // 没有任何处理器被广播执行（#849 起事件名只收枚举里的名字，不能拿族名试）
+  assert.equal(await registry.emit(EVENT.SHOP), undefined);
   // 族自身状态完好（8 实现未被事件机制干扰）
   assert.equal(chara_ex.missing().length, 37);
 });
 
 test('独立性：两套机制同进程并用，同名互不串扰', async () => {
   const fixture = create_era_fixture();
-  const family = make_family(fixture, 'CHARA_EX', [0]);
+  // 族名与事件名取同一个字符串：两套机制各认各的键，互不串扰才是这条用例的意思
+  const family = make_family(fixture, EVENT.TURNEND, [0]);
   const registry = fixture.load_module('system/event/registry');
   family.register(0, async () => '查表命中');
   const ran = [];
-  registry.on('CHARA_EX', async () => ran.push('广播处理器'));
+  registry.on(EVENT.TURNEND, async () => ran.push('广播处理器'));
 
   // 查表式：一个编号命中唯一实现
   assert.equal(await family.call(0), '查表命中');
   // 广播式：一个事件跑全部处理器；族的存在不影响事件链的返回
-  assert.equal(await registry.emit('CHARA_EX'), undefined);
+  assert.equal(await registry.emit(EVENT.TURNEND), undefined);
   assert.deepEqual(ran, ['广播处理器']);
   // 事件注册没有给族凭空造出实现，广播执行也没有算进族的实现
   assert.deepEqual(family.missing(), []);

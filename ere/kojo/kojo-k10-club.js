@@ -57,6 +57,7 @@ const {
 } = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const {
@@ -83,7 +84,7 @@ const {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_10 = 1; // FLAG:110 = 1（K10 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -95,7 +96,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_10 = 0;
   },
@@ -106,7 +107,7 @@ on(
 // 初调教（0）→ 魔族化仅一次（<5 且未魔族化）→ NTR 再捕获（>=1 &&
 // CFLAG:650==1）→ 屈服刻印 Lv1/2/3（各一次）→ 淫乱 → 爱慕 → 简易助手
 // 分支（NO:ASSI 直判 20/21/22）→ 二回目以降调 k10_kojo2。
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
@@ -1411,7 +1412,7 @@ async function k10_kojo2(rand) {
 
 // EVENTEND NORMAL 档：调教结束时的口上。死亡/崩坏跳过，随后
 // 按屈服刻印 Lv0-3、淫乱/爱慕（各含体力高低分档）取首个命中。
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
 

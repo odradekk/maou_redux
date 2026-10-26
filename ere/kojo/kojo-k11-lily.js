@@ -136,6 +136,7 @@ const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
+const { EVENT } = require('#/data/event-name-const');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 保底处理 */
 const era0 = (k) => era.get(k) || 0;
@@ -146,7 +147,7 @@ const MASTER = 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_11 = 1; // FLAG:111 = 1（K11 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -158,7 +159,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_11 = 0; // FLAG:111 = 0
   },
@@ -176,7 +177,7 @@ on(
  * 非玛奥无专属口上 → K11_KOJO2；助手是玛奥 → CFLAG:202 三阶）。
  */
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async () => {
     const target = era_flag.target;
     const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -1081,7 +1082,7 @@ async function k11_kojo2() {
  * 判 CFLAG:202（是否见过妹妹）分支正文。
  */
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     const target = era_flag.target;
     const target_name = chara_callname(target); // %SAVESTR:TARGET%

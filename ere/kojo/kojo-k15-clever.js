@@ -49,6 +49,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { self_call } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -59,7 +60,7 @@ const era0 = (k) => era.get(k) || 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_15 = 1; // FLAG:115 = 1（K15 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -71,7 +72,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_15 = 0;
   },
@@ -180,7 +181,7 @@ async function k15_kojo2() {
  * （>=1 && CFLAG:650 == 1）→ 屈服刻印Lv1/2/3（各一次）→ 淫乱 → 爱慕
  * → 崩坏 → 助手无 → K15_KOJO2。
  */
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
@@ -388,7 +389,7 @@ on('EVENTTRAIN', async () => {
  * 反抗刻印 Lv3、屈服刻印 Lv1 以下/2/3、淫乱/爱慕（各含体力高低分档）
  * 取首个命中。PRINTDATAL 走 Math.random。
  */
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%

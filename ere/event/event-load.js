@@ -52,6 +52,7 @@ const { normalize_idle_status } = require('#/chara/chara-init');
 const { backfill_chara_templates } = require('#/chara/chara-pregnancy');
 const { chara_name_init } = require('#/chara/chara-name-list');
 const era_flag = require('#/era-utils/era-flag');
+const { EVENT } = require('#/data/event-name-const');
 
 /**
  * EVENTLOAD：读档成功后的固定钩子。
@@ -59,7 +60,7 @@ const era_flag = require('#/era-utils/era-flag');
  * 对读入的存档数据重放；逐行处置见文件头。
  */
 on(
-  'EVENTLOAD',
+  EVENT.LOAD,
   async () => {
     // LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
     // `this.era.global = n`），丢弃读档前未保存的内存改动——event-first.js

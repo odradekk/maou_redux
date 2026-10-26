@@ -24801,9 +24801,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M13300 K903 EVENTEND 第二次注册回归：调教结束正文又打两遍（#654）',
     file: 'ere/kojo/kojo-k903-garde.js',
-    find: "on('EVENTEND', eventend_kojo_903);",
+    find: 'on(EVENT.END, eventend_kojo_903);',
     replace:
-      "on('EVENTEND', eventend_kojo_903);\n// 变异：第二次注册回归\non('EVENTEND', eventend_kojo_903);",
+      'on(EVENT.END, eventend_kojo_903);\n// 变异：第二次注册回归\non(EVENT.END, eventend_kojo_903);',
     tests: ['kojo-k903-garde'],
     must_mention: 'EVENTEND 调教结束正文只执行一次',
   },

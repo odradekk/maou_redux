@@ -39,11 +39,12 @@ const era_exflag = require('#/era-utils/era-exflag');
 const era_global = require('#/era-utils/era-global');
 const { geo_test, db_set } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
 const { set_vil } = require('#/dungeon/labo-map');
+const { EVENT } = require('#/data/event-name-const');
 
 // 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
 // 函数体内调用，#6 的两条硬规则之二）。普通档：源 EVENTFIRST 的其他
 // 定义随各自所属票接入。
-on('EVENTFIRST', async () => {
+on(EVENT.FIRST, async () => {
   // 自建（#136 返工，非源 EVENTFIRST 的行）：存读档指针的初值
   // -1（flag:10018-10028，已登记 yml/Flag.yml 保留区）。登记后引擎
   // resetData/fillData 会为已声明序号赋 0——0 是有效槽号（0 号槽会被误

@@ -7,9 +7,10 @@
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
+const { EVENT } = require('#/data/event-name-const');
 
 on(
-  'EVENTCOM',
+  EVENT.COM,
   async () => {
     // TFLAG:0～30 はコマンドを選択する度に空にする（半开区间 0..29）
     for (let i = 0; i < 30; i += 1) {

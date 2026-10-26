@@ -80,6 +80,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
@@ -88,7 +89,7 @@ const era0 = (k) => era.get(k) || 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_4 = 1; // FLAG:104 = 1（K4 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -100,7 +101,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_4 = 0;
   },
@@ -116,7 +117,7 @@ on(
  * （ASSI < 0 或无名助手 → K4_KOJO2；助手口上模板未填写）。
  */
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   async () => {
     const target = era_flag.target;
     const target_name = chara_callname(target); // %SAVESTR:TARGET%
@@ -462,7 +463,7 @@ async function k4_kojo2() {
  * 检查：FLAG:7、TALENT:164、BASE:0（死亡跳过）。
  */
 on(
-  'EVENTEND',
+  EVENT.END,
   async () => {
     const target = era_flag.target;
     if (era0('flag:7') <= 0) {

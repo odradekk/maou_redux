@@ -44,6 +44,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { piercing_state } = require('#/system/train/piercing-state');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -77,7 +78,7 @@ const {
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_12 = 1; // FLAG:112 = 1（K12 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -89,7 +90,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_12 = 0;
   },
@@ -102,7 +103,7 @@ on(
  * Lv1/2/3（各一次）→ 淫乱 → 爱慕 → 助手分支（ASSI<0 或无专属口上 →
  * CALL K12_KOJO2，真身 k12_kojo2）。
  */
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
@@ -331,7 +332,7 @@ async function k12_kojo2(rand) {
  * 随后按反抗刻印 Lv3 / 屈服刻印 Lv0-3（爱无）/ 淫乱（体力 500 上下）/
  * 爱慕（体力 500 上下）取首个命中。
  */
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%

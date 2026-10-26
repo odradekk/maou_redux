@@ -44,6 +44,7 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { get_look_info } = require('#/chara/look-info'); // #565 起接入（式中函数，纯取值）
 const { chara_callname } = require('#/utils/callname-utils');
+const { EVENT } = require('#/data/event-name-const');
 const { run_event_newday } = require('#/event/event-nextday');
 const { equip_check } = require('#/system/equip/equip-check');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
@@ -84,7 +85,7 @@ function enroll_joined_characters() {
   }
 }
 
-on('EVENTTURNEND', async () => {
+on(EVENT.TURNEND, async () => {
   // 指针暂存与复位（助手不暂存——还原时读 FLAG:2，见下方目标还原）
   const target_pool = era_flag.target;
   era_flag.player = 0;

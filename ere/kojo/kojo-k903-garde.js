@@ -39,6 +39,7 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -52,7 +53,7 @@ const era0 = (key) => era.get(key) || 0;
 
 // EVENTTRAIN #PRI 档：设置嘉德口上存在标志。
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     era_exflag.kojo_gade_session = 1; // EX_FLAG:103 = 嘉德口上存在标志
     if (game.kojo.口上开关 == 0) {
@@ -63,10 +64,10 @@ on(
 );
 
 // EVENTEND #LATER 档：清嘉德口上存在标志。
-on('EVENTEND', () => (era_exflag.kojo_gade_session = 0), TIER.LATER);
+on(EVENT.END, () => (era_exflag.kojo_gade_session = 0), TIER.LATER);
 
 // EVENTTRAIN NORMAL 档：调教开始口上。
-on('EVENTTRAIN', async () => {
+on(EVENT.TRAIN, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const master_name = chara_nickname(0);
@@ -512,7 +513,7 @@ async function eventend_kojo_903() {
   return 0;
 }
 
-on('EVENTEND', eventend_kojo_903);
+on(EVENT.END, eventend_kojo_903);
 
 // kojo_message_com_903
 async function kojo_message_com_903(rand = default_rand) {

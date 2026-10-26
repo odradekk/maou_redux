@@ -586,13 +586,13 @@ export default [
     // EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
     // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）。
     // 链里的转场目标是返回值，忽略就等于丢掉它，故照例上抛
-    const shop_pending = await emit('EVENTSHOP');
+    const shop_pending = await emit(EVENT.SHOP);
     if (is_state(shop_pending)) {
       return shop_pending;
     }
   }`,
     replace: `  // 变异：跳过开关被拆，一律执行 EVENTSHOP 链
-  const shop_pending = await emit('EVENTSHOP');
+  const shop_pending = await emit(EVENT.SHOP);
   if (is_state(shop_pending)) {
     return shop_pending;
   }`,
@@ -602,7 +602,7 @@ export default [
   {
     desc: 'M256 读档钩子链被拆（load_game 成功分支不再 emit EVENTLOAD——钩子存在但从不被调用）',
     file: 'ere/page/page-save-load.js',
-    find: `        const next = (await emit('EVENTLOAD')) ?? STATE.SHOP_AFTER_LOAD;`,
+    find: `        const next = (await emit(EVENT.LOAD)) ?? STATE.SHOP_AFTER_LOAD;`,
     replace: `        const next = STATE.SHOP_AFTER_LOAD; // 变异：钩子链被拆`,
     tests: ['page-save-load'],
     must_mention: '读档成功必须 emit EVENTLOAD 链一次',

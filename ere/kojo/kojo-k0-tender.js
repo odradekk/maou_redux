@@ -68,6 +68,7 @@ const {
   self_call_first,
 } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
+const { EVENT } = require('#/data/event-name-const');
 const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
@@ -77,7 +78,7 @@ const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 on(
-  'EVENTTRAIN',
+  EVENT.TRAIN,
   () => {
     game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）
     if (game.kojo.口上开关 === 0) {
@@ -89,7 +90,7 @@ on(
 
 // EVENTEND #LATER 档：调教结束清存在标志
 on(
-  'EVENTEND',
+  EVENT.END,
   () => {
     game.kojo.口上存在_0 = 0;
   },
@@ -789,10 +790,10 @@ async function eventtrain_normal_k0(rand) {
 }
 
 // EVENTTRAIN NORMAL 档注册（直调函数上方；测试可经导出函数绕 #PRI 单测检查）
-on('EVENTTRAIN', eventtrain_normal_k0);
+on(EVENT.TRAIN, eventtrain_normal_k0);
 
 // EVENTEND NORMAL 档：调教结束口上。死亡（BASE:0 <= 0）跳过。
-on('EVENTEND', async () => {
+on(EVENT.END, async () => {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const sc = () => self_call(target);

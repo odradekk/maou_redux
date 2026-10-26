@@ -44,6 +44,7 @@ const { change_screen } = require('#/page/components/screen-change');
 const { item_name, monstername } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { EVENT } = require('#/data/event-name-const');
 
 /**
  * EVENTSHOP 链的普通档处理器：每次进入 SHOP 状态时执行一次。
@@ -53,7 +54,7 @@ const { pad_display } = require('#/utils/display-width'); // #577：对齐补位
  * 见 system/event/registry.js）。
  */
 on(
-  'EVENTSHOP',
+  EVENT.SHOP,
   () => {
     // 指针越界钳制（判断条件的 ID 语义移植说明见
     // page-main-menu.js 的 reset_out_of_range_pointers）。
@@ -331,7 +332,7 @@ async function run_shop({ skip_eventshop = false } = {}) {
     // EVENTSHOP 链（普通档是本文件的处理器；口上总开关的 #PRI 档在
     // kojo/kojo-system.js——#PRI 先跑，见 EVENTSHOP 注册处的说明）。
     // 链里的转场目标是返回值，忽略就等于丢掉它，故照例上抛
-    const shop_pending = await emit('EVENTSHOP');
+    const shop_pending = await emit(EVENT.SHOP);
     if (is_state(shop_pending)) {
       return shop_pending;
     }

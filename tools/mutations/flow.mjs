@@ -5,8 +5,10 @@
 // #790 建片：本文件域的条目此前随各自功能票落在别处（kojo.mjs 的装载行、
 // page.mjs 的 M257、train.mjs 的注册行），那些留在原处不搬。
 // #850 追加 M15600-M15610：转场从异常信号改成返回值后，新增的判定与上抛点。
+// #849 追加 M17200-M17204：事件名枚举（ere/data/event-name-const.js）与
+// on / emit 的未知名校验——注册与触发只认枚举、名字拼错当场抛错。
 
-export const COUNT = 14; // #790 建片 3 条 + #850 新增 11 条（M15600-M15610）
+export const COUNT = 19; // #790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
 
 export default [
   {
@@ -32,7 +34,7 @@ export default [
   {
     desc: 'M13713 处理器表留着一个空条目（键在、值不是函数）',
     file: 'ere/system/flow/main-loop.js',
-    find: `  [STATE.TURNEND]: async () => await emit('EVENTTURNEND'),`,
+    find: `  [STATE.TURNEND]: async () => await emit(EVENT.TURNEND),`,
     replace: `  [STATE.TURNEND]: undefined, // 变异：处理器置空`,
     tests: ['main-loop'],
     must_mention: '状态 TURNEND 的处理器必须是函数',
@@ -152,5 +154,46 @@ export default [
     },`,
     tests: ['page-shop'],
     must_mention: '496 分支：选择页「其它」支的转场同样上抛',
+  },
+  {
+    desc: 'M17200 注册处的未知名校验被拆（拼错的事件名又变成一条等不到触发的死链）（#849）',
+    file: 'ere/system/event/registry.js',
+    find: `  assert_known(event_name, 'on');`,
+    replace: `  // 变异：注册处不再校验事件名`,
+    tests: ['event-registry'],
+    must_mention: 'on() 收到未知事件名',
+  },
+  {
+    desc: 'M17201 触发处的未知名校验被拆（拼错的触发又按空链静默返回）（#849）',
+    file: 'ere/system/event/registry.js',
+    find: `  assert_known(event_name, 'emit');`,
+    replace: `  // 变异：触发处不再校验事件名`,
+    tests: ['event-registry'],
+    must_mention: 'emit 收到未知事件名',
+  },
+  {
+    desc: 'M17202 事件名枚举少了 EVENTSHOP 一项（枚举与调用点引用的键对不上）（#849）',
+    file: 'ere/data/event-name-const.js',
+    find: `  SHOP: 'EVENTSHOP',
+`,
+    replace: ``,
+    tests: ['event-name-enum'],
+    must_mention: '有 13 个名字',
+  },
+  {
+    desc: 'M17203 事件名枚举不再冻结（运行时可被就地改写，拼错的名字照样能塞进去）（#849）',
+    file: 'ere/data/event-name-const.js',
+    find: `const EVENT = Object.freeze({`,
+    replace: `const EVENT = ({ // 变异：不再冻结`,
+    tests: ['event-name-enum'],
+    must_mention: '枚举与名单都冻结',
+  },
+  {
+    desc: 'M17204 某个注册点退回裸字符串事件名（枚举的单一出处守卫失效）（#849）',
+    file: 'ere/page/page-train.js',
+    find: `on(EVENT.SHOW_STATUS, async () => {`,
+    replace: `on('SHOW_STATUS', async () => { // 变异：裸字符串事件名`,
+    tests: ['event-name-enum'],
+    must_mention: '还在写裸字符串事件名',
   },
 ];

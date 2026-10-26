@@ -38,6 +38,7 @@ const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NB
 // PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/utils/clothtype-utils.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
 const { clothtype_text } = require('#/utils/clothtype-utils');
+const { EVENT } = require('#/data/event-name-const');
 // PALAMLV/palam_level 自 #45 起集中在 era-utils/palam-level.js（SOURCE_CHECK
 // 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
 const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
@@ -363,7 +364,7 @@ async function draw_status_screen(target) {
   show_equip_1(target);
 }
 
-on('SHOW_STATUS', async () => {
+on(EVENT.SHOW_STATUS, async () => {
   // 每轮换屏（ADR-0009）：回到指令菜单是一屏的开始，整屏清空后绘制
   // 状态画面。上一次菜单选择之后的结算展示、口上叙述必须已经被玩家按键
   // 确认过——缺等键的路径由测试夹具的未读输出检查（unread_output_clears）

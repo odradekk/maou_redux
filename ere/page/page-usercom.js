@@ -62,6 +62,7 @@ const { condom_settings } = require('#/system/train/com-condom');
 const { print_button_grid } = require('#/utils/button-grid');
 const { MASTER } = require('#/utils/master');
 const { train_command_name } = require('#/data/train-command-const');
+const { EVENT } = require('#/data/event-name-const');
 
 // 64 号指令名的复合动作分隔（lang-table.js 整串豁免本字面量：・ 是既有
 // 指令名的分隔样式，归一成 · 会对不上指令名）
@@ -197,7 +198,7 @@ function handover_guard_ok() {
   };
 }
 
-on('SHOW_USERCOM', async (usable = []) => {
+on(EVENT.SHOW_USERCOM, async (usable = []) => {
   // 指令方格：FLAG:5 位 34 开 → 自定义菜单（show_commenu），
   // 否则内建路径（draw_builtin_comlist）——两条路径都是净追加
   // （清除语义见文件头「清除语义」节）
@@ -261,7 +262,7 @@ on('SHOW_USERCOM', async (usable = []) => {
   }
 });
 
-on('USERCOM', async (result) => {
+on(EVENT.USERCOM, async (result) => {
   // REDRAW 1 —— 不移植；RETURN 1/0 均无效果（见文件头）
   const guards = handover_guard_ok();
   if (result === 100) {

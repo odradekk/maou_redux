@@ -21,9 +21,14 @@
  * 「catch 首行重抛」的硬约束已随信号一起删除。代价是拿到返回值的一方必须
  * 自己上抛：调用 emit 或调用会发起转场的函数后，用 is_state 判定返回值，
  * 是 STATE 取值就立刻 `return` 出去。忽略返回值 = 转场被静默丢掉。
+ *
+ * 【事件名（#849）】on / emit 收到的名字必须在 EVENT 枚举里，否则当场抛错。
+ * 名字拼错时两侧都不会有任何提示：注册处建出一条永远等不到触发的链，触发处
+ * 找不到链就按空链返回——功能静默消失，读代码才发现。校验因此放在入口。
  */
 
 const { is_state } = require('#/system/flow/game-state');
+const { EVENT_NAMES } = require('#/data/event-name-const');
 
 /** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 没有用到，不实现） */
 const TIER = Object.freeze({
@@ -40,13 +45,34 @@ const TIER_ORDER = [TIER.PRI, TIER.NORMAL, TIER.LATER];
 // 这是引擎允许的——模块顶层调 era.* 才会报错，#6 已核实）
 const registry = new Map();
 
+// 认得的名字来自枚举，注册表不另抄一份
+const KNOWN_EVENT_NAMES = new Set(EVENT_NAMES);
+
+/**
+ * 名字不在枚举里就抛错。
+ *
+ * 注册与触发都走这里：注册处拼错的名字永远等不到同名触发，触发处拼错的名字
+ * 永远找不到链，两种都是「功能不响、没人报错」的老样子。
+ *
+ * @param {string} event_name 收到的名字
+ * @param {string} caller 调用方（on / emit），报错时指明是哪一侧拼错
+ */
+function assert_known(event_name, caller) {
+  if (!KNOWN_EVENT_NAMES.has(event_name)) {
+    throw new Error(
+      `${caller}() 收到未知事件名 ${String(event_name)}——事件名只能用 EVENT 枚举里的名字：${EVENT_NAMES.join(' / ')}`,
+    );
+  }
+}
+
 /**
  * 注册事件处理器。
- * @param {string} event_name 事件名（如 'EVENTFIRST'）
+ * @param {string} event_name 事件名，取 EVENT 枚举的取值
  * @param {Function} handler 异步处理器；返回值是 STATE 取值即发起转场
  * @param {string} [tier] TIER 三档之一，默认 NORMAL
  */
 function on(event_name, handler, tier = TIER.NORMAL) {
+  assert_known(event_name, 'on');
   if (typeof handler !== 'function') {
     throw new TypeError(`on(${event_name}) 的处理器必须是函数`);
   }
@@ -69,15 +95,16 @@ function on(event_name, handler, tier = TIER.NORMAL) {
  * 证实的约定语义）；返回其它值时按普通返回值忽略。处理器抛异常则原样
  * 上抛（引擎对脚本错误报错停机）——转场已不是异常，不再需要为它开洞。
  *
- * @param {string} event_name 事件名
+ * @param {string} event_name 事件名，取 EVENT 枚举的取值
  * @param {...any} args 透传给每个处理器的参数
  * @returns {Promise<string|undefined>} 链内最后一次 BEGIN 暂存的目标状态；
  *   全链无人发起 BEGIN（或事件无人注册）时为 undefined，由主循环决定处置
  */
 async function emit(event_name, ...args) {
+  assert_known(event_name, 'emit');
   const chain = registry.get(event_name);
   if (chain === undefined) {
-    // 空链 = 事件零定义，静默通过
+    // 空链 = 这个事件没有任何定义，静默通过
     return undefined;
   }
   let pending; // 待跳转状态：BEGIN 暂存槽，后写覆盖先写（最后一个胜出）

@@ -23,6 +23,7 @@ const { on, TIER } = require('#/system/event/registry');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { EVENT } = require('#/data/event-name-const');
 
 // she(cid)：性别代词——TALENT:x:122（男人）→「他」，其余（含 121 扶她）
 // →「她」。代词全集的逐字核对归输出比对票（#48）。
@@ -83,7 +84,7 @@ async function check_assi_vitals() {
 }
 
 on(
-  'EVENTCOMEND',
+  EVENT.COMEND,
   async () => {
     const target_next = await check_target_vitals();
     if (is_state(target_next)) {
