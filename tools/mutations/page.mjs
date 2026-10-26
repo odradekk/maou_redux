@@ -4147,7 +4147,7 @@ export default [
 
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
   {
-    desc: 'M12296 设施确认的 [0] 好的丢掉「- 」（同一行并排两个选项的写法）',
+    desc: 'M12296 设施确认的 [0] 好的丢掉「- 」（两枚确认钮各占一行，破折号是选项正文的约定）',
     file: 'ere/page/page-dungeon-info2.js',
     find: "era.printButton('- 好的', 0); // [0]",
     replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
