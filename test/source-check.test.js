@@ -3167,9 +3167,34 @@ test('down_map 在每次 SOURCE_CHECK_AUTO 开头清空，不跨回合残留 DOW
   );
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK_AUTO');
+  // 第二次调用之后同样走结算：残留的 DOWN 只有在 delta 加进 palam 之后才看得见
+  //（#874 起本模块不再当场写 palam）
+  fixture.era.nextTurnInTrain();
   assert.equal(
     fixture.store.get('palam:31:0'),
     1000,
     '第二次调用：down_map 已清空，UP:0=DOWN:0=0，PALAM:0 不再变化（若 clear() 缺失会跌到 -8000）',
+  );
+});
+
+test('PALAM_UP_CHECK_MINI：ORDER 覆盖全部会带 DOWN 的序号（14/15 的绝顶回落）', async () => {
+  // 静默版的 ORDER 不再决定「谁被结算」（那是引擎的事），它只剩一件职责：
+  // 把 DOWN 折进 delta。ex_check_up 会给 0/1/2/14/15 都设 DOWN，ORDER 漏收
+  // 哪一个，那个号的绝顶回落就静默失效（值直接冲过阈值）。
+  const fixture = await run_auto_check((f) => {
+    f.store.set('palam:31:14', 10000); // 乳房与本轮 UP 合计触及 LV4
+    f.store.set('palam:31:15', 10000); // 局部同上
+    f.store.set('source:31:17', 1000); // → UP:14（乳房）
+    f.store.set('source:31:18', 1000); // → UP:15（局部）
+  });
+  assert.equal(
+    fixture.store.get('palam:31:14'),
+    1312,
+    '乳房绝顶的回落：10000 + 312 - 9000（ORDER 漏 14 会停在 10312）',
+  );
+  assert.equal(
+    fixture.store.get('palam:31:15'),
+    2000,
+    '局部绝顶的回落：10000 + 1000 - 9000（ORDER 漏 15 会停在 11000）',
   );
 });

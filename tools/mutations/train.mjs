@@ -7495,14 +7495,14 @@ export default [
     must_mention: '两处气力 0 减半块',
   },
   {
-    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 不再结算）',
+    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 删 UPID 14（乳房绝顶的 DOWN 不再折进 delta）',
     file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     tests: ['source-check'],
-    must_mention: 'UPID 14 只结算一次',
+    must_mention: '乳房绝顶的回落：10000 + 312 - 9000',
   },
   {
     desc: 'M9785 SOURCE_CHECK_AUTO：down_map.clear() 删（DOWN 跨回合残留）',
@@ -7523,14 +7523,14 @@ export default [
     must_mention: '当场结算到 base',
   },
   {
-    desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（delta:15 残留会被引擎重新累加进 palam）',
+    desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（局部绝顶的 DOWN 不再折进 delta）',
     file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];`,
     tests: ['source-check'],
-    must_mention: 'UPID 15：ORDER 末位收 15',
+    must_mention: '局部绝顶的回落：10000 + 1000 - 9000',
   },
   // —— #460（COMF203_カビ犬／COMF205_腐れ豚 变异覆盖补齐）——
   {
@@ -10593,14 +10593,14 @@ export default [
     must_mention: '兽奸报告二次累加按兽奸回数结算',
   },
   {
-    desc: 'M13101 PALAM_UP_CHECK_MINI：ORDER 回退成缺 15 重复 14（14 双结算、15 不写回复活）',
+    desc: 'M13101 PALAM_UP_CHECK_MINI：ORDER 回退成缺 15 重复 14（重复的 14 二次折减、15 的 DOWN 丢失）',
     file: 'ere/system/train/source-check.js',
     find: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     replace: `function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];`,
     tests: ['source-check'],
-    must_mention: 'UPID 14 只结算一次',
+    must_mention: '乳房绝顶的回落：10000 + 312 - 9000',
   },
 
   // —— #648 F2 缺陷修复：调教指令、服装与昏迷（M13000-M13013 守修复点；
