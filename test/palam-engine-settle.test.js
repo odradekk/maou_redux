@@ -232,3 +232,76 @@ test('nextTurnInTrain 对未声明的 delta 序号得 NaN：写入点必须落�
     '游戏侧一律 `|| 0` 读值，NaN 是假值——污染被读侧吞掉，这正是它难被发现的原因',
   );
 });
+
+/** 改动前的结算块（含三处分隔线），取自 master 的同一份种子（NBSP 已归一） */
+const DOWN_BLOCK_GOLDEN = [
+  '阴核 10000+  3640-  9000=  4640',
+  '私处 10000       -  9000=  1000',
+  '肛门 10000       -  9000=  1000',
+  '乳房 10000+    15-  9000=  1015',
+  '<divider>',
+  '润滑     0+   731       =   731（晨露般稍湿）',
+  '<divider>',
+  '恭顺     0+ 16014       = 16014（寄予信赖）',
+  '欲情     0+ 35008       = 35008（成为快乐的俘虏）',
+  '屈服     0+ 21200       = 21200（顶礼膜拜）',
+  '习得     0+    34       =    34（不是很懂）',
+  '耻情     0+ 23300       = 23300（羞愧欲死）',
+  '<divider>',
+  '反感     0+ 11668       = 11668（抱有杀意）',
+  '不快     0+    30       =    30（没有感到不快）',
+  '抑郁     0+  5088       =  5088（消沉）',
+];
+
+test('分隔线与改动前一致：判据序号的 UP 折成负数时仍照画', async () => {
+  // ORDER 前四位（0/1/2/14）各自绝顶：DOWN=9000 大于各自的本轮 UP，折进
+  // delta 之后 up(0)/up(1)/up(2)/up(14) 全是负数。三处分隔线的判据读的正是
+  // 这些 up(k)——若在打印循环里就折 DOWN，upid === 14 那条会静默消失
+  // （#874 返工：与改动前对照实测少一条分隔线）。
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 31, '温妮');
+  fixture.era.beginTrain(0, 31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  era_flag.player = 0;
+  era_flag.assi = -1;
+  era_flag.assiplay = 0;
+  era_flag.selectcom = 0;
+  era_flag.prevcom = 12;
+  fixture.store.set('maxbase:31:0', 2000);
+  fixture.store.set('maxbase:31:1', 2000);
+  fixture.store.set('base:31:0', 1450);
+  fixture.store.set('base:31:1', 410);
+  fixture.store.set('talent:0:122', 1);
+  fixture.store.set('abl:31:0', 8);
+  fixture.store.set('abl:0:12', 5);
+  for (const index of [0, 1, 2, 14]) {
+    fixture.store.set(`palam:31:${index}`, 10000);
+  }
+  fixture.load_module('system/train/com-caress');
+  fixture.load_module('system/train/source-check');
+  const { com_family } = fixture.load_module('system/train/com-family');
+  const { emit } = fixture.load_module('system/event/registry');
+  await com_family.call(0);
+  await emit('SOURCE_CHECK');
+
+  const seq = fixture.lines.map((line) =>
+    line.type === 'divider' ? '<divider>' : narrow(line.text ?? ''),
+  );
+  const start = seq.indexOf(DOWN_BLOCK_GOLDEN[0]);
+  assert.ok(start >= 0, '结算块的第一行在场');
+  assert.deepEqual(
+    seq.slice(start),
+    DOWN_BLOCK_GOLDEN,
+    '结算块逐行一致：四条 DOWN 行 + 三处分隔线（14/3/10）的位置不变',
+  );
+  // 折进 delta 之后判据序号确实是负的——这条保证上面的用例真的压到了那个角
+  for (const index of [0, 1, 2, 14]) {
+    assert.ok(
+      fixture.store.get(`delta:31:${index}`) < 0,
+      `delta:${index} 是负的（DOWN 大于 UP）`,
+    );
+  }
+});

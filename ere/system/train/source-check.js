@@ -3084,7 +3084,6 @@ function palam_up_check() {
       const u = up(upid);
       const d = down(upid);
       const post = old + u - d;
-      fold_down(upid);
       era.print(
         name +
           figure_indent_2(old) +
@@ -3104,6 +3103,14 @@ function palam_up_check() {
     }
     if (upid === 10) {
       era.drawLine();
+    }
+  }
+  // 折 DOWN 必须在打印与分隔线**之后**：分隔线的判据读 `up(k)`，而 fold_down
+  // 会把 `up(k)` 改成 `UP - DOWN`——DOWN 大于 UP 的判据序号会变成负数，
+  // 有条件的那条分隔线就静默少画（#874 返工，与改动前对照实测少一条）。
+  for (const upid of ORDER) {
+    if (down(upid) > 0) {
+      fold_down(upid);
     }
   }
 }

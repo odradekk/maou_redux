@@ -11523,10 +11523,22 @@ export default [
   {
     desc: 'M17400 结算时又当场写 palam（引擎再累加一次 = 双重结算）',
     file: 'ere/system/train/source-check.js',
-    find: `      const post = old + u - d;
-      fold_down(upid);`,
-    replace: `      const post = old + u - d;
-      era.set(\`palam:\${cid}:\${upid}\`, post); // 变异：当场结算`,
+    find: `  for (const upid of ORDER) {
+    if (down(upid) > 0) {
+      fold_down(upid);
+    }
+  }
+}`,
+    replace: `  for (const upid of ORDER) {
+    if (down(upid) > 0) {
+      fold_down(upid);
+    }
+  }
+  // 变异：当场结算（引擎再累加一次 = 双重结算）
+  for (const upid of ORDER) {
+    era.set(\`palam:\${cid}:\${upid}\`, palam(upid) + up(upid));
+  }
+}`,
     tests: ['palam-engine-settle'],
     must_mention: 'palam 不应当场写：旧值原样留着',
   },
