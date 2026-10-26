@@ -20,6 +20,23 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
+/**
+ * 结算前的 SOURCE 快照。SOURCE_CHECK 的换算结果（source:31:N）在回合末由
+ * 引擎的 nextTurnInTrain 清零，#874 起 helper 也照做；断言换算产出的用例
+ * 读这份快照——它才是 SOURCE_CHECK 结束那一刻的中段状态。
+ * @param {object} fixture 夹具
+ * @returns {Map<string, unknown>} 地址→值
+ */
+function snapshot_source(fixture) {
+  const out = new Map();
+  for (const [key, value] of fixture.store) {
+    if (key.startsWith('source:')) {
+      out.set(key, value);
+    }
+  }
+  return out;
+}
+
 // 世界底座 + 一回合爱抚的执行（COM0 + SOURCE_CHECK 全链）。post 在 COM0
 // 之后、SOURCE_CHECK 之前执行（改源面做分环节断言用——COM0 会覆写源）
 async function run_caress(seed, post) {
@@ -58,6 +75,12 @@ async function run_caress(seed, post) {
     post(fixture);
   }
   await emit('SOURCE_CHECK');
+  // 回合循环第 13 步：结算（delta→palam、source 清零）。游戏侧不再当场写
+  // palam（#874），这里补上引擎那一步，palam 断言读到的回合末值与关掉现场
+  // 结算之前同义。SOURCE 同时被引擎清零，而本文件的换算断言看的是结算前的
+  // 中段产出，快照留给它们（round_source）
+  fixture.round_source = snapshot_source(fixture);
+  fixture.era.nextTurnInTrain();
   return fixture;
 }
 
@@ -1058,18 +1081,18 @@ test('SOURCE_LESBIAN_SEX_CHECK：TARGET 百合气质/中毒 + 调教者同名两
     f.store.set('source:31:7', 0);
   });
   // 100*0.4(A tier2)*0.6(B tier1)=24 ； 同
-  assert.equal(fixture.store.get('source:31:8'), 24);
-  assert.equal(fixture.store.get('source:31:14'), 24);
+  assert.equal(fixture.round_source.get('source:31:8'), 24);
+  assert.equal(fixture.round_source.get('source:31:14'), 24);
   // 100*0.6(A tier2，B 不碰 13)=60
-  assert.equal(fixture.store.get('source:31:13'), 60);
+  assert.equal(fixture.round_source.get('source:31:13'), 60);
   // 0+200(A tier2)=200（B/C/D 均不加）
-  assert.equal(fixture.store.get('source:31:7'), 200);
+  assert.equal(fixture.round_source.get('source:31:7'), 200);
   // 100*1.2(A)*1.2(B)=144 → *1.3(C tier3)=187 → *2.5(D tier3)=467
-  assert.equal(fixture.store.get('source:31:5'), 467);
+  assert.equal(fixture.round_source.get('source:31:5'), 467);
   // 不经 A/B（两者都不碰 3/4），只经 C（tier3：3×1.4/4×1.3）、
   // D（tier3：3/4 同 ×2.5）
-  assert.equal(fixture.store.get('source:31:3'), 350);
-  assert.equal(fixture.store.get('source:31:4'), 325);
+  assert.equal(fixture.round_source.get('source:31:3'), 350);
+  assert.equal(fixture.round_source.get('source:31:4'), 325);
 });
 
 test('SOURCE_LESBIAN_SEX_CHECK：调教者百合中毒（ABL:PLAYER:33）无 0 档，ELSE 同时保底处理 0 与 ≥5', async () => {
@@ -1085,9 +1108,9 @@ test('SOURCE_LESBIAN_SEX_CHECK：调教者百合中毒（ABL:PLAYER:33）无 0 �
   const at0 = await run_caress(undefined, seed(0));
   const at2 = await run_caress(undefined, seed(2));
   const at5 = await run_caress(undefined, seed(5));
-  assert.equal(at0.store.get('source:31:3'), 500); // ELSE：×5.0
-  assert.equal(at2.store.get('source:31:3'), 200); // tier2：×2.0，与 ELSE 不同
-  assert.equal(at5.store.get('source:31:3'), 500); // ELSE：与 0 档同值
+  assert.equal(at0.round_source.get('source:31:3'), 500); // ELSE：×5.0
+  assert.equal(at2.round_source.get('source:31:3'), 200); // tier2：×2.0，与 ELSE 不同
+  assert.equal(at5.round_source.get('source:31:3'), 500); // ELSE：与 0 档同值
 });
 
 test('SOURCE_GAY_SEX_CHECK：只按 TARGET 的ホモっ気（ABL:23）单段级联', async () => {
@@ -1100,10 +1123,10 @@ test('SOURCE_GAY_SEX_CHECK：只按 TARGET 的ホモっ気（ABL:23）单段级�
     }
     f.store.set('source:31:7', 0);
   });
-  assert.equal(fixture.store.get('source:31:7'), 10);
-  assert.equal(fixture.store.get('source:31:8'), 200);
-  assert.equal(fixture.store.get('source:31:14'), 200);
-  assert.equal(fixture.store.get('source:31:5'), 70);
+  assert.equal(fixture.round_source.get('source:31:7'), 10);
+  assert.equal(fixture.round_source.get('source:31:8'), 200);
+  assert.equal(fixture.round_source.get('source:31:14'), 200);
+  assert.equal(fixture.round_source.get('source:31:5'), 70);
 });
 
 test('SOURCE_GAY_SEX_CHECK：ABL:23 ≥ 6 无 ELSE 保底处理，整段跳过', async () => {
@@ -1113,7 +1136,7 @@ test('SOURCE_GAY_SEX_CHECK：ABL:23 ≥ 6 无 ELSE 保底处理，整段跳过',
     f.store.set('abl:31:23', 6);
     f.store.set('source:31:8', 100);
   });
-  assert.equal(fixture.store.get('source:31:8'), 100);
+  assert.equal(fixture.round_source.get('source:31:8'), 100);
 });
 
 test('同性检查末尾：调教者克制（TALENT:PLAYER:20）令 SOURCE:4/5 各再减半', async () => {
@@ -1125,8 +1148,8 @@ test('同性检查末尾：调教者克制（TALENT:PLAYER:20）令 SOURCE:4/5 �
     f.store.set('source:31:4', 100);
     f.store.set('source:31:5', 100);
   });
-  assert.equal(restrained.store.get('source:31:4'), 50);
-  assert.equal(restrained.store.get('source:31:5'), 25);
+  assert.equal(restrained.round_source.get('source:31:4'), 50);
+  assert.equal(restrained.round_source.get('source:31:5'), 25);
 
   const unrestrained = await run_caress(undefined, (f) => {
     f.store.set('talent:31:122', 1);
@@ -1135,7 +1158,7 @@ test('同性检查末尾：调教者克制（TALENT:PLAYER:20）令 SOURCE:4/5 �
     f.store.set('abl:31:23', 0);
     f.store.set('source:31:4', 100);
   });
-  assert.equal(unrestrained.store.get('source:31:4'), 100);
+  assert.equal(unrestrained.round_source.get('source:31:4'), 100);
 });
 
 // —— SOUL_DISLOCATION_DEBUFF（灵魂错位减益） ——
@@ -1159,7 +1182,7 @@ test('SOUL_DISLOCATION_DEBUFF：循环上界不含 19（SOURCE:19 不缩放）',
     f.store.set('ex_talent:31:0', 2);
     f.store.set('source:31:19', 999);
   });
-  assert.equal(fixture.store.get('source:31:19'), 999);
+  assert.equal(fixture.round_source.get('source:31:19'), 999);
 });
 
 // —— TARGET_EJAC_CHECK ——
@@ -1201,8 +1224,8 @@ test('TARGET_EJAC_CHECK：普通射精档（EJAC < BASE:2 ≤ EJAC*2），男人
     },
   );
   // LOCAL=2500 → 1000+idiv(1500,2)=1750 → BASE:2=1750，EJAC=1000：>1000 且不>2000
-  assert.equal(fixture.store.get('source:31:12'), 10000); // EXP:3=0 < EXPLV[1]
-  assert.equal(fixture.store.get('source:31:13'), 5000);
+  assert.equal(fixture.round_source.get('source:31:12'), 10000); // EXP:3=0 < EXPLV[1]
+  assert.equal(fixture.round_source.get('source:31:13'), 5000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('温妮射精'));
   assert.ok(texts.includes('射精经验+1'));
@@ -1231,8 +1254,8 @@ test('TARGET_EJAC_CHECK：大量射精档（BASE:2 > EJAC*2），扶她非男人
     },
   );
   // LOCAL=6000 → 1000+idiv(5000,2)=3500 → BASE:2=3500，EJAC=1000：>2000
-  assert.equal(fixture.store.get('source:31:12'), 20000); // EXP:3=0 < EXPLV[1]
-  assert.equal(fixture.store.get('source:31:13'), 10000);
+  assert.equal(fixture.round_source.get('source:31:12'), 20000); // EXP:3=0 < EXPLV[1]
+  assert.equal(fixture.round_source.get('source:31:13'), 10000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('温妮大量射精'));
   assert.ok(texts.includes('精液经验+1'));
@@ -1278,8 +1301,8 @@ test('TARGET_EJAC_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:3<EXPLV[3]）不与�
       f.store.set('delta:31:0', 6000);
     },
   );
-  assert.equal(fixture.store.get('source:31:12'), 7000);
-  assert.equal(fixture.store.get('source:31:13'), 6000);
+  assert.equal(fixture.round_source.get('source:31:12'), 7000);
+  assert.equal(fixture.round_source.get('source:31:13'), 6000);
 });
 
 test('TARGET_EJAC_CHECK：三档判定边界，BASE:2 恰等于 EJAC*2 时归入普通档（非 >=）', async () => {
@@ -1312,8 +1335,8 @@ test('TARGET_EJAC_CHECK：EXPLV 最高档（EXP:3 ≥ 200）走 ELSE 分支，�
       f.store.set('delta:31:0', 6000);
     },
   );
-  assert.equal(fixture.store.get('source:31:12'), 1800);
-  assert.equal(fixture.store.get('source:31:13'), 1200);
+  assert.equal(fixture.round_source.get('source:31:12'), 1800);
+  assert.equal(fixture.round_source.get('source:31:13'), 1200);
   assert.ok(!fixture.text_lines().some((t) => t.includes('异常经验')));
 });
 
@@ -1464,8 +1487,8 @@ test('TARGET_MILK_CHECK：普通档（EJAC < BASE:3 ≤ EJAC*2），EXP:54 非 0
   );
   // LOCAL=900×3=2700 → 1000+idiv(1700,2)=1850 → BASE:3=1850，EJAC=1000：>1000 不>2000
   // EXPLV=[0,1,4,20,50,200]：EXP:54=3 不 <EXPLV[1]=1，但 <EXPLV[2]=4，落二档
-  assert.equal(fixture.store.get('source:31:12'), 5000);
-  assert.equal(fixture.store.get('source:31:13'), 4000);
+  assert.equal(fixture.round_source.get('source:31:12'), 5000);
+  assert.equal(fixture.round_source.get('source:31:13'), 4000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('温妮的乳头流出了母乳。'));
   assert.ok(texts.includes('喷奶经验+1'));
@@ -1493,8 +1516,8 @@ test('TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）', async () => {
   );
   // LOCAL=1500×3=4500 → 1000+idiv(3500,2)=2750 → BASE:3=2750，EJAC=1000：>2000
   // EXP:54=3 落二档（同上）
-  assert.equal(fixture.store.get('source:31:12'), 10000);
-  assert.equal(fixture.store.get('source:31:13'), 8000);
+  assert.equal(fixture.round_source.get('source:31:12'), 10000);
+  assert.equal(fixture.round_source.get('source:31:13'), 8000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('温妮的乳头喷出了大量的母乳。'));
   assert.ok(texts.includes('喷奶经验+2'));
@@ -1524,8 +1547,8 @@ test('TARGET_MILK_CHECK：大量档 EXP:54=0 → EXPLV 最低档 + 恒加异常�
       f.store.set('delta:31:14', 1500); // 大量档
     },
   );
-  assert.equal(fixture.store.get('source:31:12'), 20000);
-  assert.equal(fixture.store.get('source:31:13'), 10000);
+  assert.equal(fixture.round_source.get('source:31:12'), 20000);
+  assert.equal(fixture.round_source.get('source:31:13'), 10000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('异常经验+1'));
   assert.equal(fixture.store.get('exp:31:50'), 1);
@@ -1562,8 +1585,8 @@ test('TARGET_MILK_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:54<EXPLV[3]）不与�
       f.store.set('delta:31:14', 1500);
     },
   );
-  assert.equal(fixture.store.get('source:31:12'), 7000);
-  assert.equal(fixture.store.get('source:31:13'), 6000);
+  assert.equal(fixture.round_source.get('source:31:12'), 7000);
+  assert.equal(fixture.round_source.get('source:31:13'), 6000);
 });
 
 test('TARGET_MILK_CHECK：EXPLV 最高档（EXP:54 ≥ 200）走 ELSE 分支', async () => {
@@ -1579,8 +1602,8 @@ test('TARGET_MILK_CHECK：EXPLV 最高档（EXP:54 ≥ 200）走 ELSE 分支', a
       f.store.set('delta:31:14', 1500);
     },
   );
-  assert.equal(fixture.store.get('source:31:12'), 1800);
-  assert.equal(fixture.store.get('source:31:13'), 1200);
+  assert.equal(fixture.round_source.get('source:31:12'), 1800);
+  assert.equal(fixture.round_source.get('source:31:13'), 1200);
 });
 
 for (const [name, initial, breast_up, grade, remaining] of [
@@ -1722,8 +1745,8 @@ test('TARGET_WORMBABY_CHECK：普通出产档（10000 < LOCAL ≤ 25000），私
     (f) => f.store.set('talent:31:190', 1),
     (f) => spread_local(f, 15000),
   );
-  assert.equal(fixture.store.get('source:31:12'), 10000); // EXP:3=0 < EXPLV[1]
-  assert.equal(fixture.store.get('source:31:13'), 5000);
+  assert.equal(fixture.round_source.get('source:31:12'), 10000); // EXP:3=0 < EXPLV[1]
+  assert.equal(fixture.round_source.get('source:31:13'), 5000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('温妮的'));
   assert.ok(texts.includes('膣内排出了的蠕虫幼虫'));
@@ -1738,8 +1761,8 @@ test('TARGET_WORMBABY_CHECK：大量出产档（LOCAL > 25000），直肠产卵�
     (f) => f.store.set('talent:31:191', 1),
     (f) => spread_local(f, 30000),
   );
-  assert.equal(fixture.store.get('source:31:12'), 20000); // EXP:3=0 < EXPLV[1]
-  assert.equal(fixture.store.get('source:31:13'), 10000);
+  assert.equal(fixture.round_source.get('source:31:12'), 20000); // EXP:3=0 < EXPLV[1]
+  assert.equal(fixture.round_source.get('source:31:13'), 10000);
   const texts = fixture.text_lines();
   assert.ok(texts.includes('温妮的'));
   assert.ok(texts.includes('直肠排出了大量的蠕虫幼虫'));
@@ -1772,8 +1795,8 @@ test('TARGET_WORMBABY_CHECK：EXPLV 最高档（EXP:3 ≥ 200）走 ELSE 分支'
     },
     (f) => spread_local(f, 30000),
   );
-  assert.equal(fixture.store.get('source:31:12'), 1800);
-  assert.equal(fixture.store.get('source:31:13'), 1200);
+  assert.equal(fixture.round_source.get('source:31:12'), 1800);
+  assert.equal(fixture.round_source.get('source:31:13'), 1200);
 });
 
 test('TARGET_WORMBABY_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:3<EXPLV[3]）不与两端档位混淆', async () => {
@@ -1784,8 +1807,8 @@ test('TARGET_WORMBABY_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:3<EXPLV[3]）不�
     },
     (f) => spread_local(f, 30000),
   );
-  assert.equal(fixture.store.get('source:31:12'), 7000);
-  assert.equal(fixture.store.get('source:31:13'), 6000);
+  assert.equal(fixture.round_source.get('source:31:12'), 7000);
+  assert.equal(fixture.round_source.get('source:31:13'), 6000);
 });
 
 test('TARGET_WORMBABY_CHECK：五项乘算系数各自方向正确（克制/接受快感/淫乱化/否定快感/媚药）', async () => {
@@ -2877,7 +2900,7 @@ test('射精结算：逆侵犯与 COM62/65 按助手/主人落 CFLAG:104/101', a
 
 // 世界底座（与 run_caress 相同）+ 一次 SOURCE_CHECK_AUTO。不调用 COM_FAMILY：
 // AUTO 不读 era_flag.selectcom。
-async function run_auto_check(seed) {
+async function run_auto_check(seed, { settle = true } = {}) {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -2898,14 +2921,22 @@ async function run_auto_check(seed) {
   fixture.load_module('system/train/source-check');
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK_AUTO');
+  // 迷宫路径的结算对应物（dungeon-battle.js 的 source_check_auto 在 emit
+  // 之后补的正是这一步）：delta→palam、source 清零都归引擎，#874
+  fixture.round_source = snapshot_source(fixture);
+  if (settle) {
+    fixture.era.nextTurnInTrain();
+  }
   return fixture;
 }
 
 test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（AUTO 专属门槛，manual 路径的 ANTI 调用被注释掉）', async () => {
+  // 跳过的两行：增量是 0（palam 是声明表，引擎结算后每个声明序号都存在，
+  // 不再靠 undefined 表达「没写」——0 与「有增益」仍然分得开）
   const cases = [
     ['主人调教·无反抗刻印', {}, 300, Math.floor(400 * 1.25)],
-    ['反抗刻印生效（CFLAG:1 != 0）', { cflag1: 1 }, undefined, undefined],
-    ['助手调教（PLAYER != MASTER）', { player: 31 }, undefined, undefined],
+    ['反抗刻印生效（CFLAG:1 != 0）', { cflag1: 1 }, 0, 0],
+    ['助手调教（PLAYER != MASTER）', { player: 31 }, 0, 0],
   ];
   for (const [name, opts, expect_anti, expect_like] of cases) {
     const fixture = await run_auto_check((f, era_flag) => {
@@ -2921,11 +2952,15 @@ test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（
     // UP:11（反感）不在 AUTO_NUM_CHECK 处理范围内，300 直达 PALAM 不经缩放；
     // UP:4（恭顺）在处理范围内，AUTO_NUM_CHECK 默认档（CFLAG:667 未播种）×1.25
     assert.equal(
-      fixture.store.get('palam:31:11'),
+      fixture.store.get('palam:31:11') || 0,
       expect_anti,
       `${name}：反感`,
     );
-    assert.equal(fixture.store.get('palam:31:4'), expect_like, `${name}：恭顺`);
+    assert.equal(
+      fixture.store.get('palam:31:4') || 0,
+      expect_like,
+      `${name}：恭顺`,
+    );
   }
 });
 
@@ -2990,21 +3025,28 @@ test('AUTO_NUM_CHECK：跳过 UP:11/12/13，UP:14 是例外不跳（SIF LOCAL>=1
   );
 });
 
-test('AUTO_NUM_CHECK：跳过 UP:16（死区，PALAM.yml 无此展示位，需读 delta 而非 palam 验证）', async () => {
-  // UP:16／PALAM:16 全库无消费者，yml/Palam.yml 的展示位止于
-  // 15——16 是 FOR LOCAL,0,17 循环上界比实际展示位多出的一档死区。
-  // palam_up_check_mini 的 ORDER 不含 16，处理器执行完后 palam:31:16 恒
-  // 为 undefined、没有区分力；但 16 也不会被 touched 清零或本次新增的
-  // delta:15 无条件清零覆盖，所以 AUTO_NUM_CHECK 结算后的 delta:31:16
-  // 仍保留原值，可以直接读它验证跳过逻辑（issue #461 验收发现）
-  const low = await run_auto_check((f) => {
-    f.store.set('delta:31:16', 200);
-    f.store.set('cflag:31:667', 0); // 第 1 档 ×1.25
-  });
-  const high = await run_auto_check((f) => {
-    f.store.set('delta:31:16', 200);
-    f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90
-  });
+test('AUTO_NUM_CHECK：跳过 UP:16（死区，Palam.yml 无此声明位，读结算前的 delta 验证）', async () => {
+  // UP:16／PALAM:16 全库无消费者，yml/Palam.yml 的声明位止于 15——16 是
+  // FOR LOCAL,0,17 循环上界比实际声明位多出的一档死区。
+  // 16 不在声明集里，所以 #874 之后它在两处都没有观测面：palam:31:16 由
+  // nextTurnInTrain 的 `undefined + delta` 变成 NaN（#923 的污染形式），
+  // delta:31:16 也在同一步被引擎清零。因此本用例在**结算前**读 delta
+  // （helper 的 settle: false）：那正是回合中段、AUTO_NUM_CHECK 跑完而结算
+  // 未发生的状态（issue #461 验收发现）
+  const low = await run_auto_check(
+    (f) => {
+      f.store.set('delta:31:16', 200);
+      f.store.set('cflag:31:667', 0); // 第 1 档 ×1.25
+    },
+    { settle: false },
+  );
+  const high = await run_auto_check(
+    (f) => {
+      f.store.set('delta:31:16', 200);
+      f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90
+    },
+    { settle: false },
+  );
   assert.equal(
     low.store.get('delta:31:16'),
     200,

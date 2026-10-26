@@ -27,6 +27,7 @@ const { emit } = require('#/system/event/registry');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const { palam_settled } = require('#/era-utils/palam-level');
 const era_flag = require('#/era-utils/era-flag');
 
 // EVENTEND 链内登记、引擎收尾后冲账的待除名目标。-1 = 无登记（「未选中」
@@ -92,10 +93,15 @@ async function settle_train_death() {
  * 只能读回 0，两档欲情加分从不生效。欲情要跨过窗口，只能先落进不被删除的
  * cflag。名单以引擎的调教名单为准（getCharactersInTrain）：助手与回合结算
  * 借窗口时中途补进名单的自动调教对象同样算参与者，不只看当前目标。
+ *
+ * 读的是「结算后的值」（palam + delta，见 palam_settled）：回合内的变动只落
+ * 在 delta，palam 由引擎 nextTurnInTrain 在回合末加算——本函数在 endTrain
+ * 之前跑，正常流程里那一轮已经结算，但最后一轮若没走到结算（未结算的增量仍
+ * 在 delta 里），只读 palam 就会少掉本轮的欲情（#874）。
  */
 function save_train_desire() {
   for (const cid of era.getCharactersInTrain()) {
-    chara(cid).train.调教后欲情 = era.get(`palam:${cid}:5`) || 0;
+    chara(cid).train.调教后欲情 = palam_settled(cid, 5);
   }
 }
 
