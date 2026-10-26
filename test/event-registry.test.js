@@ -4,7 +4,9 @@
  * 核心被测行为（#6 推翻 #3 之后的语义，这张票是它的首次运行时验证）：
  *   - 事件链中的 BEGIN 不中止链：剩余处理器仍然全部执行；
  *   - 链中多次 BEGIN 后写覆盖先写，最后一个胜出；
- *   - 转场是处理器返回值（#850），普通返回值不算转场。
+ *   - 转场是处理器返回值（#850），普通返回值不算转场；
+ *   - 回标题是终止型转场（#852）：链当场中止，后续处理器不再执行、不再
+ *     覆盖它——原实现在这些位置是 QUIT，异常炸断整条链。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。注册表是
  * 模块级状态，夹具每次重建都清 ere/ 模块缓存，用例之间互不污染。
@@ -127,6 +129,32 @@ test('链中多次 BEGIN：后写覆盖先写，最后一个生效', async () =>
 
   assert.deepEqual(ran, ['first-begin', 'second-begin', 'no-begin']);
   assert.equal(pending, flow.STATE.TRAIN);
+});
+
+test('回标题（游戏结束）是终止型转场：链当场中止，后续的 BEGIN SHOP 不覆盖它', async () => {
+  const { registry, flow } = setup();
+  const ran = [];
+  // 魔王暴走走的就是这条形状：EVENTTURNEND 的 #PRI 档判定游戏结束，
+  // 普通档（回合结算本体）无条件 BEGIN SHOP。游戏结束后世界已结束，
+  // 结算不得再跑、更不得把转场改成 SHOP
+  registry.on(
+    EVENT.TRAIN,
+    async () => {
+      ran.push('pri-gameover');
+      return flow.begin(flow.STATE.TITLE);
+    },
+    registry.TIER.PRI,
+  );
+  registry.on(EVENT.TRAIN, async () => {
+    ran.push('normal-settle');
+    return flow.begin(flow.STATE.SHOP);
+  });
+  registry.on(EVENT.TRAIN, async () => ran.push('later'), registry.TIER.LATER);
+
+  const pending = await registry.emit(EVENT.TRAIN);
+
+  assert.deepEqual(ran, ['pri-gameover'], '链在回标题处中止');
+  assert.equal(pending, flow.STATE.TITLE, '转场仍是回标题，不被打包成 SHOP');
 });
 
 test('处理器的普通返回值不改暂存值：只有 STATE 取值才算转场', async () => {

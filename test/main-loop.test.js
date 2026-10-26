@@ -317,6 +317,52 @@ test('enter_state：处理器返回的转场目标原样交出，非目标值当
   }
 });
 
+test('游戏结束回到标题：主循环不退出进程，标题重新可交互（#852 标题循环）', async () => {
+  const fixture = create_era_fixture();
+  const run_main_loop = fixture.load_module('system/flow/main-loop');
+  const { STATE_HANDLERS } = run_main_loop;
+  const { STATE } = fixture.load_module('system/flow/game-state');
+
+  // 三个处理器换成最小替身：SHOP 一轮就游戏结束回标题，标题被重新进入
+  // 两次——第二次抛错收场。整条循环不碰 era.quit()，即「游戏结束不再
+  // 退出进程、回到标题」；退出只由标题画面的退出按钮发出
+  const originals = {
+    FIRST: STATE_HANDLERS[STATE.FIRST],
+    SHOP: STATE_HANDLERS[STATE.SHOP],
+    TITLE: STATE_HANDLERS[STATE.TITLE],
+  };
+  let shop_entries = 0;
+  let title_entries = 0;
+  try {
+    STATE_HANDLERS[STATE.FIRST] = async () => STATE.SHOP;
+    STATE_HANDLERS[STATE.SHOP] = async () => {
+      shop_entries += 1;
+      return STATE.TITLE; // 游戏结束
+    };
+    STATE_HANDLERS[STATE.TITLE] = async () => {
+      title_entries += 1;
+      if (title_entries === 2) {
+        throw new Error('第二次进标题：玩到了再开局');
+      }
+      return STATE.FIRST; // 玩家选「新的猎物」
+    };
+    await assert.rejects(() => run_main_loop(), /第二次进标题/);
+  } finally {
+    Object.assign(STATE_HANDLERS, {
+      [STATE.FIRST]: originals.FIRST,
+      [STATE.SHOP]: originals.SHOP,
+      [STATE.TITLE]: originals.TITLE,
+    });
+  }
+
+  assert.equal(shop_entries, 1, '游戏内只进了一次据点轮');
+  assert.equal(title_entries, 2, '游戏结束回到标题后还能重新开局');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '游戏结束回标题不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
+});
+
 test('状态处理器表与 STATE 枚举同步：新增状态不得漏接处理器', async () => {
   const fixture = create_era_fixture();
   const { STATE } = fixture.load_module('system/flow/game-state');

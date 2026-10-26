@@ -25,9 +25,14 @@
  * 【事件名（#849）】on / emit 收到的名字必须在 EVENT 枚举里，否则当场抛错。
  * 名字拼错时两侧都不会有任何提示：注册处建出一条永远等不到触发的链，触发处
  * 找不到链就按空链返回——功能静默消失，读代码才发现。校验因此放在入口。
+ *
+ * 【终止型转场（#852）】回标题是游戏结束：链在发出处中止，后续处理器不再
+ * 执行，暂存槽也不会再被覆盖。原实现在这些位置是 era.quit()（throw 型），
+ * 异常炸断了整条链；改成返回值后必须保留这条语义——否则世界已经结束，
+ * 回合结算仍会跑完并用尾部的 BEGIN SHOP 把「回标题」盖掉。
  */
 
-const { is_state } = require('#/system/flow/game-state');
+const { is_state, STATE } = require('#/system/flow/game-state');
 const { EVENT_NAMES } = require('#/data/event-name-const');
 
 /** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 没有用到，不实现） */
@@ -36,6 +41,9 @@ const TIER = Object.freeze({
   NORMAL: 'NORMAL',
   LATER: 'LATER',
 });
+
+// 终止型转场目标：发出即结束链（理由见文件头）
+const TERMINAL_STATES = new Set([STATE.TITLE]);
 
 // 执行序：优先档 → 普通档 → 延后档（#6 保留三档的依据）
 const TIER_ORDER = [TIER.PRI, TIER.NORMAL, TIER.LATER];
@@ -95,6 +103,9 @@ function on(event_name, handler, tier = TIER.NORMAL) {
  * 证实的约定语义）；返回其它值时按普通返回值忽略。处理器抛异常则原样
  * 上抛（引擎对脚本错误报错停机）——转场已不是异常，不再需要为它开洞。
  *
+ * 唯一例外是终止型转场（回标题 = 游戏结束）：暂存它并当场返回，链上剩余
+ * 处理器不再执行。理由见文件头的「终止型转场」。
+ *
  * @param {string} event_name 事件名，取 EVENT 枚举的取值
  * @param {...any} args 透传给每个处理器的参数
  * @returns {Promise<string|undefined>} 链内最后一次 BEGIN 暂存的目标状态；
@@ -113,6 +124,9 @@ async function emit(event_name, ...args) {
       const next = await handler(...args);
       if (is_state(next)) {
         pending = next;
+        if (TERMINAL_STATES.has(next)) {
+          return pending; // 世界已结束：后续处理器不再执行
+        }
       }
     }
   }

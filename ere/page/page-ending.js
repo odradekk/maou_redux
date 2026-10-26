@@ -7,11 +7,11 @@
  *
  * 说明（有意偏离，均注明依据）：
  *   - ending_1 是中场结局不是游戏终止（#112 判断条件）：默认路径继续游戏，
- *     玩家选 [1] 才 QUIT（era.quit()，引擎 API）；「演出已出现」的判定
- *     取 FLAG:82 == 1，只在继续路径置位（QUIT 分支不置）；
- *   - ending_2 是真 GAMEOVER（#173 判断条件）：无条件 QUIT、无 RETURN、不置
- *     任何旗标（整段即演出 + INPUT + QUIT）——端到端的断言是
- *     quit 抛出，不是某个 flag 变 1；
+ *     玩家选 [1] 才结束（自 #852 起是回标题的转场，不再 era.quit()）；
+ *     「演出已出现」的判定取 FLAG:82 == 1，只在继续路径置位（回标题分支不置）；
+ *   - ending_2 是真 GAMEOVER（#173 判断条件）：无条件回标题、无 RETURN 0、不置
+ *     任何旗标（整段即演出 + INPUT + 回标题的转场）——端到端的断言是
+ *     转场目标为 TITLE，不是某个 flag 变 1；
  *   - [0]/[1] 选项用 printButton（原为 PRINTL [0] - … + INPUT）：引擎
  *     showAcc 自动拼 [快捷键] 正文，按钮正文不写 [编号] 前缀（PR #30
  *     实机教训，工单「两个容易做错的点」之二），但**正文里的 `- ` 保留**，
@@ -36,6 +36,7 @@
  */
 
 const era = require('#/era-electron');
+const { begin, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { race_age_generate } = require('#/chara/chara-body');
@@ -54,12 +55,13 @@ const { default_rand } = require('#/utils/numeric');
  * 横幅 → 菲娅（角色 35）入队与初始化 → 询问是否继续 → 置 FLAG:82。
  * 选 [1] 才 QUIT，选 [0] 继续游戏（阶段 3 的接续前提）。
  *
- * QUIT 是 throw 型控制流（#148，普查报告 G5）：引擎 quit() 发关窗 IPC 后
- * 抛 Error("quit")，异常炸穿整个调用链（装载循环按 message 静默放行），
- * 故 QUIT 路径上置 FLAG:82 与收尾 PRINTW 均不可达——quit()
- * 之后不写任何语句。夹具同款 throw（era-fixture.js），测试可证。
+ * QUIT 自 #852 起是「回标题」的转场（不再退出进程）：`return begin(STATE.TITLE)`
+ * 把目标交给调用方，异常通道不再参与——原先 era.quit() 抛 Error("quit") 炸穿
+ * 调用链，玩家只能重启引擎。回标题后标题循环重新接管（主循环见
+ * system/flow/main-loop.js）。
  *
- * @returns {Promise<number>} 0 = 继续游戏。QUIT 路径不返回（异常炸穿，见上）。
+ * @returns {Promise<number|string>} 0 = 继续游戏；选退出时返回 STATE.TITLE
+ *   （回标题的转场目标）
  */
 async function ending_1() {
   // 横幅（DRAWLINE + 制表框 8 行 + 空行 2，含全角空格的手工对齐，
@@ -96,15 +98,13 @@ async function ending_1() {
   era.printButton('- 世界这么大，我想再去看看！', 0);
   era.printButton('- 我……已经……不想做魔王了……', 1);
 
-  // $INPUT_LOOP：选 1 → QUIT；非 0 的其它值重问
+  // $INPUT_LOOP：选 1 → 回标题；非 0 的其它值重问
   for (;;) {
     const result = await era.input();
     if (result === 1) {
-      // QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，
-      // #148）——本函数与全部调用方的后续语句不可达，FLAG:82 = 1
-      // 与收尾 PRINTW 均不执行。quit() 之后不写任何语句；夹具同款
-      // throw（era-fixture.js），测试可证
-      era.quit();
+      // 回标题（#852）：结局演出到此为止，世界结束。转场是返回值，
+      // FLAG:82 = 1 与收尾 PRINTW 都不执行（这一局不再继续）
+      return begin(STATE.TITLE);
     }
     if (result !== 0) {
       continue; // GOTO INPUT_LOOP（重问不重画）
@@ -124,14 +124,14 @@ async function ending_1() {
  *
  * 与 ending_1 的中场结局写法不同：横幅 → 勇者封印播报（PRINTFORMW）→
  * 空行（行尾两个半角空格，逐字保留）→ GAMEOVER 分隔行 → INPUT（仪式性
- * 确认，结果不被消费——下一步就 QUIT）→ QUIT。**无条件退出，无 RETURN。**
+ * 确认，结果不被消费——下一步就回标题）→ 回标题。**无条件结束，无 RETURN 0。**
  *
  * 调用点在 ere/dungeon/dungeon.js（FLOOR >= 9 且 TALENT:122 == 0
- * 的真勇者踏破第 9 层）。尾跳转语义：调用方不再执行后续，ere 侧以
- * 调用后的 return 0 收尾（#172）——真身抛 quit 后该行不可达（#148 的
- * throw 型控制流，与 ending_1 的 QUIT 路径同一机制，夹具同款 throw）。
+ * 的真勇者踏破第 9 层）与 ere/dungeon/labo-dungeon-map.js（2D 地图走到中心）。
+ * 尾跳转语义：调用方不再执行后续，转场目标沿调用链上抛（#852 起是返回值，
+ * 不再靠 era.quit() 的异常炸穿）。
  *
- * @returns {Promise<void>} 永不返回（QUIT 抛 Error("quit") 炸穿调用链）
+ * @returns {Promise<string>} 恒 STATE.TITLE（回标题的转场目标）
  */
 async function ending_2() {
   // DRAWLINE
@@ -161,13 +161,11 @@ async function ending_2() {
   // GAMEOVER 分隔行
   era.drawLine({ content: 'GAMEOVER' });
 
-  // INPUT——确认用，结果不被消费（QUIT 之后无读者）
+  // INPUT——确认用，结果不被消费（回标题之后无读者）
   await era.input();
 
-  // QUIT：引擎 quit() 发关窗 IPC 后抛 Error("quit")（throw 型，#148）
-  // ——本函数与地下城调用链的后续语句全部不可达。quit() 之后不写任何
-  // 语句（无 RETURN）
-  era.quit();
+  // 回标题（#852）：GAMEOVER 之后没有「继续」，世界结束、标题循环重新接管
+  return begin(STATE.TITLE);
 }
 
 /** 角色姓名（NAME:x / SAVESTR:x 在 ere 侧的共同读数源，#5 决议） */
@@ -503,7 +501,8 @@ async function ending_5(rand) {
  * 若跟着选项行一起提前打印，后面那次等键会清空白名单，玩家点不动
  * （#711；正文不写 [编号]，引擎按 showAcc 拼）。
  *
- * @returns {Promise<void>}
+ * @returns {Promise<string|undefined>} 选「结束游戏」时返回 STATE.TITLE
+ *   （回标题的转场目标，由 run_endcheck 继续上抛）；其余情况无返回值
  */
 async function ending_n() {
   // DRAWLINE + 首行 PRINTFORMW
@@ -541,8 +540,9 @@ async function ending_n() {
   // 会点不动（引擎规则）。正文不写 [编号]，引擎按 showAcc 拼（PR #30）
   era.printButton('结束游戏', 1);
   era.printButton('继续游戏', 2);
-  // ending_input(EX_FLAG:2801 + 1000)
-  await ending_input(era_exflag.first_run_deadline + 1000);
+  // ending_input(EX_FLAG:2801 + 1000)：选「结束游戏」时它是回标题的转场
+  // 目标，原样上抛（其余分支无返回值）
+  return await ending_input(era_exflag.first_run_deadline + 1000);
 }
 
 /**
@@ -557,7 +557,8 @@ async function ending_n() {
  * 自 #649 起整档删除；未分档线号静默返回。
  *
  * @param {number} arg 选项档（千位以上是分档，见上）
- * @returns {Promise<void>} QUIT 路径不返回（异常炸穿，见 ending_1 的说明）
+ * @returns {Promise<string|undefined>} 选「结束游戏」时返回 STATE.TITLE
+ *   （回标题的转场目标），其余情况无返回值
  */
 async function ending_input(arg) {
   // arg / 1000（整数除法向零截断）
@@ -567,10 +568,11 @@ async function ending_input(arg) {
     const result = await era.input(); // 分档菜单的 INPUT
     let handled = true;
     if (local === 1) {
-      // Normal End：[1] 结束游戏（QUIT）/ [2] 继续
+      // Normal End：[1] 结束游戏（回标题）/ [2] 继续
       if (result === 1) {
-        // QUIT：throw 型控制流（#148）——QUIT 之后无语句
-        era.quit();
+        // 回标题（#852）：转场是返回值，交给 ending_n → run_endcheck →
+        // 每日结算 → 主循环
+        return begin(STATE.TITLE);
       } else if (result === 2) {
         era.print('魔王的传说，还将继续......'); // PRINTW
         await era.waitAnyKey();

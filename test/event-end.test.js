@@ -83,6 +83,38 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   assert.equal(era_flag.assi, 32);
 });
 
+test('魔王倒下且无继任：EVENTEND 以 TITLE 离开，调教窗口照常关掉', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = seed_world(fixture);
+  // 本次调教的对象是魔王本人，且倒下后没有继任者 → GAMEOVER
+  era_flag.target_backup = 0;
+  era_flag.target_record = 0;
+  fixture.store.set('base:0:0', 0);
+  fixture.store.set('exflag:3', 0);
+  fixture.set_inputs(0); // GAMEOVER 横幅后的 INPUT
+
+  // 游戏结束回标题（#852）：转场目标从处理器边界经 emit 交回本函数，
+  // 其后的死亡口上/死亡旗整段跳过（改前是 era.quit() 靠异常炸断）。
+  // 转场丢了的话这里会继续跑珠结算、撞上耗尽的输入——两种走法都算
+  // 「没停在回标题」，异常一并收进 pending 再断言，红的是同一句话
+  let pending;
+  try {
+    pending = await run_eventend(fixture);
+  } catch (e) {
+    pending = e;
+  }
+  assert.equal(pending, 'TITLE', 'GAMEOVER 以 TITLE 转场离开 run_aftertrain');
+  assert(
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    'GAMEOVER 不得退出进程（退出只由标题画面的退出按钮发出）',
+  );
+  // 回标题不是「带着开着的调教表逃走」：关窗照常执行
+  assert(
+    fixture.calls.some(({ api }) => api === 'endTrain'),
+    '回标题前调教窗口必须关掉（era.endTrain）',
+  );
+});
+
 test('录像出售接入：EVENTEND 在调教表销毁前结算有效录像', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);

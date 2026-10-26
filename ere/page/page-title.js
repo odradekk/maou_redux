@@ -24,6 +24,10 @@
  *     一处）。
  *   - RESTART 的语义是重跑本函数，ere 侧写成 for(;;) 循环，不用递归。
  *   - CLEARLINE 1（清除输入回显行）不镜像：ere 的输入不经回显成行。
+ *   - 本页是标题循环的循环头（#852）：游戏结束的各结局与 GAMEOVER 以
+ *     TITLE 转场回到这里（system/flow/main-loop.js），因此「离开标题」与
+ *     「从游戏回到标题」走同一段入口；退出进程只由本页的 [2] 退出按钮发出
+ *     （era.quit()），标题音乐关着时进本页先停掉上一局的曲子。
  *   - 新游戏：RESETDATA 自 #22 起接通——ere 等价物 era.resetData()，
  *     会话内重开局的清档（上一局的日期/金钱/角色列表不带进新局）。
  *     初始角色 0 自 #848 起不在本页手工加入：由 GameBase 的【初始角色编号】
@@ -100,6 +104,9 @@ function draw_title_screen() {
   // 「[0] [0] 旧的奴隶」。方括号编号归引擎，本文件只给正文。
   era.printButton('旧的奴隶', 0);
   era.printButton('新的猎物', 1);
+  // 退出游戏（#852）：标题循环里唯一会结束进程的入口——游戏内的结局一律
+  // 回到标题，不再靠退出进程收场
+  era.printButton('退出游戏', 2);
 }
 
 /**
@@ -107,8 +114,8 @@ function draw_title_screen() {
  * 的等价物。
  */
 async function run_title_page() {
-  // 标题音乐：在重绘循环之前，每次进标题状态只执行一次（重绘不重播）。
-  // 播种先于播放：全新 global.sav 的开关是 0，先补上随包默认值 1/66
+  // 标题音乐：每次进标题状态（启动，或游戏结束回到标题）执行一次，重绘不
+  // 重播。播种先于播放：全新 global.sav 的开关是 0，先补上随包默认值 1/66
   // （#18 移交、#69 实现），否则首局进标题没 BGM。
   await era_global.seed_title_music_defaults();
   if (era_global.title_music_enabled === 1) {
@@ -116,6 +123,10 @@ async function run_title_page() {
     // {loop: true}。资源未启用时引擎查无此名、静默返回 false——不停机、
     // 不报错，与 resource: false 的回退一致。
     era.playMusic('TFM-003A_17.mp3', { loop: true });
+  } else {
+    // 标题音乐关着：停掉上一局还在响的曲子（战斗/据点 BGM）。回到标题是
+    // 换屏不是换曲——不播新曲时不能把上一局的音乐带进标题画面
+    era.stopMusic();
   }
 
   for (;;) {
@@ -164,6 +175,13 @@ async function run_title_page() {
         return next;
       }
       continue;
+    }
+
+    if (result === 2) {
+      // 退出游戏（#852）：标题循环里唯一的退出入口。引擎 quit() 发关窗 IPC
+      // 后抛 Error("quit")（throw 型，#148）——之后不写任何语句，本函数与
+      // 主循环都不再继续。退出不是转场：不清档、不读档，也不改任何游戏变量
+      era.quit();
     }
     // 无法识别的输入重绘标题画面，不报错。（本移植只有转场会让本函数返回，
     // 其余输入都回到循环头重绘，等价于标题画面不退出。）

@@ -274,8 +274,8 @@ export default [
     calls.push({ api: 'quit', args: [] });
     // 变异：throw 拆回普通返回（缺省桩形式）
   };`,
-    tests: ['fixture', 'page-ending'],
-    must_mention: 'QUIT 的异常炸穿 invasion_check',
+    tests: ['fixture', 'page-title'],
+    must_mention: 'quit 必须 throw Error("quit")',
   },
   {
     desc: 'M276 夹具 saveGlobal 的盖戳写盘被拆（内存代身恒空——#147/G1 的镜像缺口本体）',

@@ -31,6 +31,7 @@
  */
 
 const era = require('#/era-electron');
+const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -60,7 +61,8 @@ function name_of(cid) {
  * @param {number} walk20 侵攻度 D:20（传入时的值；函数内修改后经返回值
  *   显式传出——全局换手，#5 决议第六条）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 更新后的 D:20（钳制后）
+ * @returns {Promise<number|string>} 更新后的 D:20（钳制后）；走到中心时是
+ *   STATE.TITLE（ENDING_2 回标题的转场目标）
  */
 async function unit_move(a, walk20, rand) {
   const rand_n = rand ?? default_rand;
@@ -161,8 +163,9 @@ async function unit_move(a, walk20, rand) {
   if (mx === 16 && my === 16) {
     chara(a).dungeon.侵攻阶层 = 2; // CFLAG:A:501 = 2
     era.print('这里就是魔王城了吗………'); // PRINTL（简体归一：這裡→这里、嗎→吗，#60）
-    await ending_2(); // JUMP ENDING_2（#173 真身；quit 抛出后不返回）
-    return 0;
+    // JUMP ENDING_2（#173 真身）：结局以回标题的转场目标离开（#852），
+    // 本回合的移动结算与坐标落笔不再执行
+    return await ending_2();
   }
 
   // 撞上其他单位
@@ -213,7 +216,8 @@ async function unit_move(a, walk20, rand) {
  *
  * @param {number} a 推进中的单位（全局 A）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 恒 return 0
+ * @returns {Promise<number|string>} 正常结束恒 return 0；走到中心时是
+ *   STATE.TITLE（ENDING_2 回标题的转场目标，由回合结算上抛）
  */
 async function dungeon_map(a, rand) {
   const rand_n = rand ?? default_rand;
@@ -237,6 +241,11 @@ async function dungeon_map(a, rand) {
 
   // CALL unit_move（D:20 经返回值换手，文件头）
   const walk20 = await unit_move(a, chara(a).event.侵攻度, rand_n);
+  // 走到中心 = ENDING_2：回标题的转场目标（#852）原样上抛，本回合的
+  // 结算与写回不再执行
+  if (is_state(walk20)) {
+    return walk20;
+  }
 
   // BASE:A:1 -= RAND:6（冒険の疲れ）
   chara(a).dungeon.气力 -= rand_n(6);

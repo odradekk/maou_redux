@@ -29,6 +29,7 @@
  */
 
 const era = require('#/era-electron');
+const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { END_FAMILY } = require('#/system/ending/ending-family');
@@ -746,6 +747,8 @@ function endcheck_godness_sky_temple() {
 /**
  * 主线剧情监测：每日清场、全局判定、角色线推进、END 族分派与 Normal End
  * 演出。每日一次，run_event_newday 尾部调用。
+ * @returns {Promise<string|undefined>} Normal End 选「结束游戏」时返回
+ *   STATE.TITLE（回标题的转场目标，由 run_event_newday 继续上抛）
  */
 async function run_endcheck() {
   // 每日清场
@@ -778,7 +781,11 @@ async function run_endcheck() {
   }
   // Normal End 演出：2801 == 99 && DAY:0 == 500
   if (era_exflag.first_run_deadline === 99 && era_flag.day_count === 500) {
-    await ending_n();
+    // 选「结束游戏」时演出给的是回标题的转场目标（#852），原样上抛
+    const over = await ending_n();
+    if (is_state(over)) {
+      return over;
+    }
   }
   // 尾部无 END31 调用：EX_FLAG:2803（失控奴隶号）的消费者是 debug_check
   // （event-turnend.js），#649 删除了全库无定义的 END31 死引用

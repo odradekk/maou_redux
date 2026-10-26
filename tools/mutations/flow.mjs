@@ -8,7 +8,7 @@
 // #849 追加 M17200-M17204：事件名枚举（ere/data/event-name-const.js）与
 // on / emit 的未知名校验——注册与触发只认枚举、名字拼错当场抛错。
 
-export const COUNT = 19; // #790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
+export const COUNT = 24; // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
 
 export default [
   {
@@ -61,6 +61,9 @@ export default [
     find: `      const next = await handler(...args);
       if (is_state(next)) {
         pending = next;
+        if (TERMINAL_STATES.has(next)) {
+          return pending; // 世界已结束：后续处理器不再执行
+        }
       }`,
     replace: `      await handler(...args); // 变异：转场目标不再暂存`,
     tests: ['event-registry'],
@@ -71,6 +74,9 @@ export default [
     file: 'ere/system/event/registry.js',
     find: `      if (is_state(next)) {
         pending = next;
+        if (TERMINAL_STATES.has(next)) {
+          return pending; // 世界已结束：后续处理器不再执行
+        }
       }`,
     replace: `      if (next !== undefined) {
         pending = next;
@@ -154,6 +160,52 @@ export default [
     },`,
     tests: ['page-shop'],
     must_mention: '496 分支：选择页「其它」支的转场同样上抛',
+  },
+  // —— #852 标题循环：游戏结束回标题，退出进程只留标题画面的按钮 ——
+  {
+    desc: 'M17300 emit 不再把回标题当终止型转场（链继续，回合结算的 BEGIN SHOP 覆盖它）',
+    file: 'ere/system/event/registry.js',
+    find: `        if (TERMINAL_STATES.has(next)) {
+          return pending; // 世界已结束：后续处理器不再执行
+        }`,
+    replace: `        // 变异：回标题不再终止链`,
+    tests: ['event-registry', 'event-turnend'],
+    must_mention: '链在回标题处中止',
+  },
+  {
+    desc: 'M17301 标题退出按钮的快捷键写错（2 → 3：引擎拒收原快捷键，退出键点不到）',
+    file: 'ere/page/page-title.js',
+    find: `  era.printButton('退出游戏', 2);`,
+    replace: `  era.printButton('退出游戏', 3); // 变异：快捷键错档`,
+    tests: ['page-title'],
+    must_mention: '退出按钮 → era.quit() 抛 Error("quit")',
+  },
+  {
+    desc: 'M17302 标题退出按钮走到清档路径（退出前顺手 resetData）',
+    file: 'ere/page/page-title.js',
+    find: `      era.quit();`,
+    replace: `      era.resetData(); // 变异：退出前顺手清档
+      era.quit();`,
+    tests: ['page-title'],
+    must_mention: '退出按钮不得顺手清档或读档',
+  },
+  {
+    desc: 'M17303 标题退出按钮不接 quit（点了没反应，回标题重绘）',
+    file: 'ere/page/page-title.js',
+    find: `      era.quit();`,
+    replace: `      // 变异：退出按钮不接 quit`,
+    tests: ['page-title'],
+    must_mention: '退出按钮 → era.quit() 抛 Error("quit")',
+  },
+  {
+    desc: 'M17304 回到标题不停上一局的 BGM（标题音乐关着时旧曲带进标题画面）',
+    file: 'ere/page/page-title.js',
+    find: `    // 标题音乐关着：停掉上一局还在响的曲子（战斗/据点 BGM）。回到标题是
+    // 换屏不是换曲——不播新曲时不能把上一局的音乐带进标题画面
+    era.stopMusic();`,
+    replace: `    // 变异：回到标题不停上一局的曲子`,
+    tests: ['page-title'],
+    must_mention: '先停掉上一局的 BGM',
   },
   {
     desc: 'M17200 注册处的未知名校验被拆（拼错的事件名又变成一条等不到触发的死链）（#849）',

@@ -14,6 +14,7 @@
  */
 
 const era = require('#/era-electron');
+const { begin, STATE } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const { palam_settled } = require('#/era-utils/palam-level');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -126,7 +127,8 @@ function get_chara(no) {
  * 完整说明）。判死全部走 `< 1`，除显示档位外的行为不受影响；写入仍写
  * -1。
  *
- * @returns {Promise<number>} 0/1（QUIT 路径 throw，不返回）
+ * @returns {Promise<number|string>} 0/1；魔王倒下且无继任时返回 STATE.TITLE
+ *   （回标题的转场目标）
  */
 async function charadead_check() {
   const target = era_flag.target;
@@ -153,11 +155,12 @@ async function charadead_check() {
   // mowangsiwang（TARGET == 0 = 魔王自己倒下）
   if (target === 0) {
     if (!era_exflag.next_maou) {
-      // 无继任（EX_FLAG:3 = 0）：GAMEOVER + INPUT + QUIT。QUIT 是
-      // throw 型（#148）：之后的死亡口上/死亡旗整段不可达
+      // 无继任（EX_FLAG:3 = 0）：GAMEOVER + INPUT + 回标题。转场是返回值
+      // （#852，原先是 era.quit() 抛异常）——之后的死亡口上/死亡旗整段
+      // 不可达，转场目标由 EVENTEND 处理器原样上抛
       era.drawLine({ content: 'GAMEOVER' });
       await era.input();
-      era.quit();
+      return begin(STATE.TITLE);
     } else {
       // 继任候补的确定（净效果 = 最后一个持 EX_TALENT:3 的角色，
       // event-nextday.js 的 JSDoc 有证明）

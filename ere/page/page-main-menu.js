@@ -373,7 +373,13 @@ const MAIN_MENU_ITEMS = [
     id: 109,
     label: '侵略',
     run: async () => {
-      if ((await invasion()) === 1) {
+      // 返回 1 才 BEGIN TURNEND；结局选退出时 invasion 给的是回标题的
+      // 转场目标（#852），先上抛再判 1
+      const invaded = await invasion();
+      if (is_state(invaded)) {
+        return invaded;
+      }
+      if (invaded === 1) {
         return begin(STATE.TURNEND);
       }
     },

@@ -122,7 +122,7 @@ test('接入点·战役分支：CFLAG:1 == 12 的角色让检查为真（战役�
 
 // —— 层数推进 1 → 9 与 ENDING_2 接入（验收「此行为必须有测试」）——
 
-test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 真身（quit 炸穿）', async () => {
+test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 真身（回标题）', async () => {
   const fixture = setup_world();
   const { run_dungeon } = load(fixture);
 
@@ -143,19 +143,24 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
   );
 
   // 第 9 层的踏破：D:20 再次到 100 → FLOOR >= 9 → 魔王的房间 → ENDING_2
-  // 真身（#173 起）：演出 + INPUT + QUIT（throw 型，#148）炸穿 run_dungeon
+  // 真身（#173 起）：演出 + INPUT + 回标题的转场（#852 起是返回值，
+  // 原先 era.quit() 抛出）——目标沿 run_dungeon 逐层上抛
   fixture.set_inputs(0); // INPUT（确认用）
-  let caught;
-  for (let i = 0; i < 2; i += 1) {
-    try {
-      await run_dungeon(1, max);
-    } catch (e) {
-      caught = e;
+  let over;
+  for (let i = 0; i < 2 && over === undefined; i += 1) {
+    const turn = await run_dungeon(1, max);
+    if (turn === 'TITLE') {
+      over = turn;
     }
   }
+  assert.equal(
+    over,
+    'TITLE',
+    '第 9 层踏破 → ENDING_2 → 回标题的转场目标（不再退出进程）',
+  );
   assert(
-    caught instanceof Error && caught.message === 'quit',
-    '第 9 层踏破 → JUMP ENDING_2 → QUIT 异常炸穿（真 GAMEOVER）',
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    'ENDING_2 不得退出进程（退出只由标题画面的退出按钮发出）',
   );
   const texts = text_lines(fixture);
   assert(
@@ -181,7 +186,7 @@ test('贯通：max 随机源下层数 1 → 9，第 9 层踏破触发 ENDING_2 �
     ),
     'GAMEOVER 分隔行',
   );
-  // JUMP 语义：ENDING_2 的 QUIT 之后本回合不再执行——侵攻度写回
+  // JUMP 语义：ENDING_2 的转场之后本回合不再执行——侵攻度写回
   // 不可达，502 停在上一次（第 17 次）调用写回的 73，而不是本次踏破的
   // 0 或 146
   assert.equal(
@@ -201,22 +206,20 @@ test('贯通·战斗真身（H6）：推进全程战斗确实发生、勇者气�
   const { run_dungeon } = load(fixture);
   // H6（#175）起 dungeon_party_battle 是真身：每轮滞留都发生战斗、
   // 战斗的逃跑段（TURN > 5，max 下 rand(3) = 2 ≠ 0 必成）扣勇者气力
-  // RAND:30 = 29。第 18 次调用踏破第 9 层 → ENDING_2 真身 quit（#173）。
+  // RAND:30 = 29。第 18 次调用踏破第 9 层 → ENDING_2 真身（#173）。
   // 判断条件换正向：战斗确实扣了气力，推进本身
   // 不受阻挡（max 下 WALK 恒 73，层数轨迹与 H3 相同——随机源注入与
   // 序列无关，见下一条对比测试的论证）
   fixture.set_inputs(0);
-  let caught;
-  for (let i = 0; i < 8 * 2 + 2; i += 1) {
-    try {
-      await run_dungeon(1, max);
-    } catch (e) {
-      caught = e;
-    }
+  let over;
+  for (let i = 0; i < 8 * 2 + 2 && over === undefined; i += 1) {
+    const turn = await run_dungeon(1, max);
+    if (turn === 'TITLE') over = turn;
   }
-  assert(
-    caught instanceof Error && caught.message === 'quit',
-    '以 ENDING_2 的 QUIT 收场（贯通终点不因战斗接入而断）',
+  assert.equal(
+    over,
+    'TITLE',
+    '以 ENDING_2 的回标题收场（贯通终点不因战斗接入而断）',
   );
   assert.equal(
     fixture.store.get('cflag:1:1'),

@@ -165,44 +165,47 @@ test('【验收 2】FLAG:82 == 1 后再次满足 FLAG:81 >= 10000 不重复触�
   assert.equal(fixture.store.get('flag:82'), 1);
 });
 
-test('选 [1] 退出：era.quit() 抛 Error("quit") 炸穿 invasion_check（真机 throw 型控制流，#148）', async () => {
+test('选 [1] 退出：结局以「回标题」的转场目标交回主循环（#852，不再退出进程）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
-  // 引擎 quit() 是 throw 型（app.asar 模块 176 逐字：先发关窗 IPC，再抛
-  // Error("quit")；装载循环按 message 静默放行）——QUIT 之后游戏侧一切
-  // 语句不可达。夹具逐字镜像（era-fixture.js），异常从 ending_1 炸穿
-  // invasion_check 传到测试。旧断言「ended !== 1 哨兵短路」断的是夹具
-  // 降格期的巧合：真机上哨兵不存在，威望 +10 的不发生靠异常炸穿（见
-  // event-ending.js 的 JSDoc 与 invasion_check 的行内注释）
-  let caught;
-  await run_check(fixture, 1).catch((e) => {
-    caught = e;
-  });
-  assert(
-    caught instanceof Error && caught.message === 'quit',
-    'QUIT 的异常炸穿 invasion_check（引擎 throw 型，非哨兵短路）',
+  // 「我……已经……不想做魔王了……」= 游戏结束。原实现是 era.quit()（throw
+  // 型，#148），玩家从此回不来；#852 起结局演出回标题，标题循环重新接管
+  // ——转场目标是返回值，沿 ending_1 → invasion_check 上抛。转场没 return
+  // 的话会回到输入循环、撞上耗尽的输入——两种走法都算「没到标题」，异常
+  // 一并收进 over 再断言
+  let over;
+  try {
+    over = await run_check(fixture, 1);
+  } catch (e) {
+    over = e;
+  }
+  assert.equal(
+    over,
+    STATE.TITLE,
+    '退出选项以 TITLE 转场离开（回标题，不退出进程）',
   );
 
   assert(
-    fixture.calls.some(({ api, args }) => api === 'quit' && args.length === 0),
-    'QUIT → era.quit()（先记录关窗 IPC 再抛，引擎逗号表达式的同构）',
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '游戏结束不得退出进程（退出只由标题画面的退出按钮发出）',
   );
   assert.equal(
     fixture.store.get('flag:82'),
     0,
-    '退出路径不置陷落标记（异常炸穿，置位不可达）',
+    '退出路径不置陷落标记（回标题后这一局不再继续）',
   );
   assert.equal(
     fixture.store.get('exflag:99'),
     70,
-    '威望 +10 不发生（异常炸穿——不是哨兵短路）',
+    '威望 +10 不发生（转场上抛，invasion_check 的尾段不执行）',
   );
 });
 
 // —— ending_2 真身（#173 H4）：魔王城陷落的真 GAMEOVER ——
 
-test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的名字）+ GAMEOVER 行 + INPUT 后 quit 抛出', async () => {
+test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的名字）+ GAMEOVER 行 + INPUT 后回标题', async () => {
   const fixture = create_era_fixture();
   // 两个角色在场：TARGET 指针指向 1——封印播报必须取指针的名字，不是
   // 「最近的」「随便一个」角色（#173：取 TARGET 不是队长 ARG:0，
@@ -214,20 +217,18 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 1;
   const { ending_2 } = fixture.load_module('page/page-ending');
+  const { STATE } = fixture.load_module('system/flow/game-state');
 
   fixture.set_inputs(0); // INPUT（仪式性确认，结果不被消费）
-  let caught;
-  await ending_2().catch((e) => {
-    caught = e;
-  });
-  // QUIT：throw 型（#148）——异常炸穿本函数，无 RETURN
-  assert(
-    caught instanceof Error && caught.message === 'quit',
-    'QUIT 的异常从 ending_2 炸出（真 GAMEOVER，无 RETURN）',
+  // 真 GAMEOVER 回标题（#852）：改前是 era.quit() 抛出，玩家只能重启进程
+  assert.equal(
+    await ending_2(),
+    STATE.TITLE,
+    '真 GAMEOVER 以 TITLE 转场离开（回标题，不退出进程）',
   );
   assert(
-    fixture.calls.some(({ api }) => api === 'quit'),
-    'QUIT → era.quit()（关窗 IPC 已记录）',
+    !fixture.calls.some(({ api }) => api === 'quit'),
+    '真 GAMEOVER 不得退出进程（退出只由标题画面的退出按钮发出）',
   );
   // 演出逐行：制表框 4 行 + 封印播报 + 空行（两个尾随空格）；GAMEOVER 是
   // 分隔线（#870，不再是减号拼的一行文本），在下一处单独断言
@@ -262,7 +263,7 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
       value === undefined ? api : `${api}:${value}`,
     ),
     ['waitAnyKey', 'input:0'],
-    'PRINTFORMW 读键在前、INPUT 恰一次在 QUIT 之前（顺序）',
+    'PRINTFORMW 读键在前、INPUT 恰一次在回标题之前（顺序）',
   );
 });
 
@@ -3066,7 +3067,7 @@ test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之�
   );
 });
 
-test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无效输入重问', async () => {
+test('ending_input CASE 1：输入的 [2] 继续 / [1] 回标题 / 无效输入重问', async () => {
   {
     const fixture = create_era_fixture();
     const { ending_input } = fixture.load_module('page/page-ending');
@@ -3080,14 +3081,17 @@ test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无�
   {
     const fixture = create_era_fixture();
     const { ending_input } = fixture.load_module('page/page-ending');
+    const { STATE } = fixture.load_module('system/flow/game-state');
     fixture.set_inputs(1);
-    let caught;
-    await ending_input(1099).catch((e) => {
-      caught = e;
-    });
+    // [1] 结束游戏 = 游戏结束回标题（#852）：转场目标交回主循环
+    assert.equal(
+      await ending_input(1099),
+      STATE.TITLE,
+      '[1] 结束游戏 → TITLE 转场（回标题，不退出进程）',
+    );
     assert(
-      caught instanceof Error && caught.message === 'quit',
-      '[1] 结束游戏 → era.quit() 抛 Error("quit")（#148 throw 型）',
+      !fixture.calls.some(({ api }) => api === 'quit'),
+      '结束游戏不得退出进程（退出只由标题画面的退出按钮发出）',
     );
   }
   {

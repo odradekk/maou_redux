@@ -38,7 +38,7 @@
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/game-state');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
@@ -117,8 +117,9 @@ on(EVENT.TURNEND, async () => {
   // ——转场自 #850 起是返回值（`return begin(STATE.X)`），窗口里若出现它，
   // 后半段同样被跳过。
   era.beginTrain(...era.getAddedCharacters());
+  let settled; // 窗口内深处的转场目标（世界结束回标题时不能被尾部的 BEGIN SHOP 覆盖）
   try {
-    await settle_in_train_window(target_pool);
+    settled = await settle_in_train_window(target_pool);
   } finally {
     // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
     // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
@@ -128,6 +129,12 @@ on(EVENT.TURNEND, async () => {
     // 值（大多是 FORMAT_AUTOTRAIN 清过之后的 0，与旧引擎每回合清零等价）。
     save_train_desire();
     era.endTrain();
+  }
+
+  // 窗口深处的结局回了标题（#852）：调教窗口已由 finally 关掉，转场目标
+  // 原样上抛——尾部的 BEGIN SHOP 不再执行（世界已经结束）
+  if (is_state(settled)) {
+    return settled;
   }
 
   // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
@@ -140,9 +147,13 @@ on(EVENT.TURNEND, async () => {
   }
 
   // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
-  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）
+  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）。Normal End 选
+  // 「结束游戏」时它是回标题的转场目标（#852）：原样上抛，尾部不再执行
   if (era_flag.time === 0) {
-    await run_event_newday();
+    const newday = await run_event_newday();
+    if (is_state(newday)) {
+      return newday;
+    }
   }
 
   // 还原前次的调教对象与助手（FLAG:1/FLAG:2，EVENTEND 链记录）
@@ -158,6 +169,8 @@ on(EVENT.TURNEND, async () => {
  * （EVENTTURNEND 处理器的 try/finally，理由见那里）。
  *
  * @param {number} target_pool 进入本段前的 TARGET 指针（步内两次还原用）
+ * @returns {Promise<string|undefined>} 迷宫深处走到结局时的转场目标
+ *   （STATE.TITLE，回标题），未走到结局时无返回值
  */
 async function settle_in_train_window(target_pool) {
   for (const cid of era.getAddedCharacters()) {
@@ -179,7 +192,12 @@ async function settle_in_train_window(target_pool) {
     weapon_restore(cid); // #174 起真身
     if (chara(cid).invasion.状态 === 12) {
       // 阶段 3 的接入点之一（勇者战役）——#172 起真身。
-      await run_dungeon(cid);
+      // 迷宫深处可能走到结局回标题（#852）：转场目标原样上抛，
+      // 结算的其余段落不再执行
+      const over = await run_dungeon(cid);
+      if (is_state(over)) {
+        return over;
+      }
     }
   }
 
@@ -202,9 +220,17 @@ async function settle_in_train_window(target_pool) {
     // ere/dungeon/labo-dungeon-map.js，缺省随机源走 Math.random）。
     const place = chara(cid).invasion.状态;
     if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {
-      await run_dungeon(cid);
+      // 迷宫深处可能走到结局回标题（#852）：同上一段，转场上抛
+      const over = await run_dungeon(cid);
+      if (is_state(over)) {
+        return over;
+      }
     } else if (place === 2 || place === 3) {
-      await dungeon_map(cid);
+      // 2D 地图同理（走到中心 = ENDING_2）
+      const over = await dungeon_map(cid);
+      if (is_state(over)) {
+        return over;
+      }
     }
 
     // 升级结算（侵攻中的勇者除外）——#179 起真身

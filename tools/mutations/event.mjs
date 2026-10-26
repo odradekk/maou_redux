@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 480; // #870 +2（M16458/M16459：星框与 GAMEOVER 横幅改用 drawLine）+ #884 +1（M16604：读档链漏掉预设模板补填）；#906 +3（M16201-M16203：回合结算借来的窗口关窗前存欲情、次日「献出初次」的两档欲情加分改读 cflag 槽）；#814 +3（M15860：eventload 与苏生共用的待机档归一）；#816 +4（M15950-M15953：回合结算的调教窗口改 try/finally 关窗、窗口内新加入角色的补名单两处、以及「自动存档在关窗之后」的边界）；数据地址缺陷修复 +3（M15400-M15402：媚药中毒赏金的两处表名与 AFTERTRAIN 自慰次数的交接）； // #791 +40（M13721-M13760：四条 SOURCE_CHECK_UP_* 收敛为描述表后，逐参数位（源下标/素质对/欲情表/欲望梯/域素质/淫部位/门槛位/扇出）与共用环节的回归检查；#702 的 M14150/M14151/M14152 随 BUST_RATES 搬到文件顶层改锚）；#785 审计返工 -1（删 M6949：与 execution 分片原 M7260 同型的链路守卫，改由 chara-removal-scan 白名单扫描统一守护）；#769 -1（M51 显式去零钳制由 BASE setter 等价承担）；#743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 485; // #852 +5（M17310-M17314：各结局/GAMEOVER 回标题的转场在事件链与日推进一步的逐层上抛） // #870 +2（M16458/M16459：星框与 GAMEOVER 横幅改用 drawLine）+ #884 +1（M16604：读档链漏掉预设模板补填）；#906 +3（M16201-M16203：回合结算借来的窗口关窗前存欲情、次日「献出初次」的两档欲情加分改读 cflag 槽）；#814 +3（M15860：eventload 与苏生共用的待机档归一）；#816 +4（M15950-M15953：回合结算的调教窗口改 try/finally 关窗、窗口内新加入角色的补名单两处、以及「自动存档在关窗之后」的边界）；数据地址缺陷修复 +3（M15400-M15402：媚药中毒赏金的两处表名与 AFTERTRAIN 自慰次数的交接）； // #791 +40（M13721-M13760：四条 SOURCE_CHECK_UP_* 收敛为描述表后，逐参数位（源下标/素质对/欲情表/欲望梯/域素质/淫部位/门槛位/扇出）与共用环节的回归检查；#702 的 M14150/M14151/M14152 随 BUST_RATES 搬到文件顶层改锚）；#785 审计返工 -1（删 M6949：与 execution 分片原 M7260 同型的链路守卫，改由 chara-removal-scan 白名单扫描统一守护）；#769 -1（M51 显式去零钳制由 BASE setter 等价承担）；#743 +5（M14600–M14604：苏生登记范围与后代身份）；#722 +1（M14371：SOURCE_CHECK 结算展示收尾等键）； #716 起 +1（M14314：enter_enemy 的角色信息显示目标改回来袭模式 arg0——#716 缺陷的回归检查）；#710 +2（M14246/M14248：event-addict 与 get-specialtalent 的确认键退回纯文本）；#711 起 +12（M14300-M14313：结局脚本的选项按钮化——btn 步、三处因果选择、八处询问、ending_n 结尾，另两条守住 run_ask 的 again/else 分岔）；#702 起 +3（M14150-M14152：source_check_up_b 胸围素质组乘算槽位与两档倍率的回归检查）；#660 起 +1（M13700：跨年年龄增长跳过 0 号位）；#649/#650 合并后重算（两边在同位置追加条目块，389 + 12 = 401）：#650 起 +6-2（M13102-M13107 回归检查；删反向变异 M6960/M348）；#649 菲娅线 -10 用户决定起 +3（M13061-M13063；M13056 改写为拆 Bad Ending 收尾）；#649 返工起 +4（M13057-M13060：分派循环丢一族的检查）；#649 起 +7-2（M13050-M13056 结局缺陷检查；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行检查）；#615 起 +1（M12249：狂王性别一问的尾换行，那里是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回「- 」分隔符——补回点被改回时对应的
@@ -296,7 +296,7 @@ export default [
   {
     desc: 'M193 ENDCHECK 调用点被删（主线剧情监测每日一次失守；#116 起为真调用）',
     file: 'ere/event/event-nextday.js',
-    find: '  // 主线剧情监测——每日一次的结局判定入口，ENDCHECK 全链本体在\n  // ere/system/ending/endcheck.js（#116）\n  await run_endcheck();',
+    find: '  const over = await run_endcheck();\n  if (is_state(over)) {\n    return over;\n  }',
     replace: '  // 变异：ENDCHECK 不调用',
     tests: ['event-nextday'],
     must_mention: 'ENDCHECK 必须恰好被调用一次',
@@ -305,7 +305,10 @@ export default [
     desc: 'M194 普通档的 TIME==0 检查删掉（午后回合也跑翌朝事件，每日翻倍）',
     file: 'ere/system/turnend-settle.js',
     find: `  if (era_flag.time === 0) {
-    await run_event_newday();
+    const newday = await run_event_newday();
+    if (is_state(newday)) {
+      return newday;
+    }
   }`,
     replace: '  await run_event_newday();',
     tests: ['event-nextday'],
@@ -367,12 +370,12 @@ export default [
     must_mention: 'FLAG:82 置 1',
   },
   {
-    desc: 'M206 ending_1 的 QUIT 分支也置 FLAG:82（QUIT 分支不置）',
+    desc: 'M206 ending_1 的回标题分支也置 FLAG:82（回标题分支不置）',
     file: 'ere/page/page-ending.js',
-    find: `      era.quit();
+    find: `      return begin(STATE.TITLE);
     }`,
-    replace: `      era_flag.human_realm_fallen = 1; // 变异：QUIT 前置位
-      era.quit();
+    replace: `      era_flag.human_realm_fallen = 1; // 变异：回标题前置位
+      return begin(STATE.TITLE);
     }`,
     tests: ['page-ending'],
     must_mention: '退出路径不置陷落标记',
@@ -523,26 +526,27 @@ export default [
   },
   // —— #148 quit 的 throw 型控制流（夹具镜像 + ere 侧哨兵机制拆除）——
   {
-    desc: 'M274 ending_1 的 quit 调用被拆、哨兵复辟（#148 前旧写法：return 1 短路）',
+    desc: 'M274 ending_1 的转场没有 return（回标题之后继续跑：置 FLAG:82 并返回 0）',
     file: 'ere/page/page-ending.js',
-    find: `      // throw（era-fixture.js），测试可证
-      era.quit();`,
-    replace: `      // throw（era-fixture.js），测试可证
-      return 1; // 变异：quit 调用被拆，哨兵复辟（#148 前旧形式）`,
+    find: `      // 回标题（#852）：结局演出到此为止，世界结束。转场是返回值，
+      // FLAG:82 = 1 与收尾 PRINTW 都不执行（这一局不再继续）
+      return begin(STATE.TITLE);`,
+    replace: `      begin(STATE.TITLE); // 变异：转场没有 return，后面照跑`,
     tests: ['page-ending'],
-    must_mention: 'QUIT 的异常炸穿 invasion_check',
+    must_mention: '退出选项以 TITLE 转场离开',
   },
   {
-    desc: 'M275 INVASION_CHECK 吞掉 QUIT 异常（调用链上不得 try/catch 拦截炸穿）',
+    desc: 'M275 INVASION_CHECK 吞掉结局的转场目标（选退出后回不到标题，威望照加）',
     file: 'ere/page/page-invasion.js',
-    find: '    await ending_1();',
-    replace: `    try {
-      await ending_1(); // 变异：吞掉 QUIT 异常，威望 +10 照走
-    } catch (e) {}`,
+    find: `    const ended = await ending_1();
+    if (is_state(ended)) {
+      return ended;
+    }`,
+    replace: `    await ending_1(); // 变异：结局的转场目标被吞，威望 +10 照走`,
     tests: ['page-ending'],
-    // 变异下吞掉异常 → run_check 正常 resolve → 用例第一条断言（炸穿在
-    // 场）先红，威望断言不再执行——must_mention 取先红断言的消息片段
-    must_mention: 'QUIT 的异常炸穿 invasion_check',
+    // 变异下转场被吞 → run_check resolve 出 undefined，用例第一条断言
+    // （以 TITLE 离开）先红，威望断言不再执行——must_mention 取先红断言
+    must_mention: '退出选项以 TITLE 转场离开',
   },
   // —— #171 H2 勇者来袭（ere/event/enter-enemy.js 与其接入）——
   {
@@ -622,14 +626,13 @@ export default [
   },
   // —— #173（H4）：ending_2 真身（M440-M445）——
   {
-    desc: 'M440 ending_2 的 QUIT 降格为普通返回（quit() → return 0）',
+    desc: 'M440 ending_2 的回标题降格为普通返回（结局不结束，玩家回不到标题）',
     file: 'ere/page/page-ending.js',
-    find: `  era.quit();
-}`,
-    replace: `  return 0; // 变异：QUIT 降格为返回值
-}`,
+    find: `  // 回标题（#852）：GAMEOVER 之后没有「继续」，世界结束、标题循环重新接管
+  return begin(STATE.TITLE);`,
+    replace: `  return 0; // 变异：GAMEOVER 降格为普通返回值`,
     tests: ['page-ending', 'dungeon-main', 'event-ending2-e2e'],
-    must_mention: 'QUIT 的异常从 ending_2 炸出',
+    must_mention: '真 GAMEOVER 以 TITLE 转场离开',
   },
   {
     desc: 'M441 ending_2 封印播报的名字写死 0（%SAVESTR:TARGET% 不取指针）',
@@ -659,10 +662,10 @@ export default [
   {
     desc: 'M444 ending_2 的仪式性 INPUT 删除',
     file: 'ere/page/page-ending.js',
-    find: '  // INPUT——确认用，结果不被消费（QUIT 之后无读者）\n  await era.input();',
-    replace: '  // 变异：INPUT 删（演出不等确认直接 QUIT）',
+    find: '  // INPUT——确认用，结果不被消费（回标题之后无读者）\n  await era.input();',
+    replace: '  // 变异：INPUT 删（演出不等确认直接回标题）',
     tests: ['page-ending'],
-    must_mention: 'INPUT 恰一次在 QUIT 之前',
+    must_mention: 'INPUT 恰一次在回标题之前',
   },
   {
     desc: 'M445 ending_2 封印播报的读键删除（PRINTFORMW 不等键）',
@@ -1183,8 +1186,9 @@ export default [
   {
     desc: 'M8218 ending_n 的 ending_input 分档：2801 + 1000 误写成 + 2000（分档错位）',
     file: 'ere/page/page-ending.js',
-    find: '  await ending_input(era_exflag.first_run_deadline + 1000);',
-    replace: '  await ending_input(era_exflag.first_run_deadline + 2000);',
+    find: '  return await ending_input(era_exflag.first_run_deadline + 1000);',
+    replace:
+      '  return await ending_input(era_exflag.first_run_deadline + 2000);',
     tests: ['endcheck'],
     must_mention: 'ending_n',
   },
@@ -3188,12 +3192,13 @@ export default [
     must_mention: '威压感：杀害数累计到 3',
   },
   {
-    desc: 'M11476 CHARADEAD_CHECK 魔王死亡无候补分支漏 QUIT（GAMEOVER 后游戏继续）',
+    desc: 'M11476 CHARADEAD_CHECK 魔王死亡无候补分支不回标题（GAMEOVER 后游戏继续）',
     file: 'ere/event/event-aftertrain.js',
-    find: '      await era.input();\n      era.quit();',
-    replace: '      await era.input();\n      // 变异：漏 QUIT',
+    find: '      await era.input();\n      return begin(STATE.TITLE);',
+    replace:
+      '      await era.input();\n      // 变异：GAMEOVER 后不结束，游戏继续',
     tests: ['event-charadead'],
-    must_mention: '魔王死亡·无候补',
+    must_mention: 'GAMEOVER 以 TITLE 转场离开',
   },
   {
     desc: 'M11477 EVENTEND 死亡删除分支漏调 party_char_del（队伍数据不复位就除名）',
@@ -3215,11 +3220,9 @@ export default [
     desc: 'M11579 EVENTTURNEND 的反作弊闸门取反（开着检查、关了执行，#547）',
     file: 'ere/event/event-turnend.js',
     find: `    if (!era_modsave.anti_cheat) {
-      await debug_check();
-    }`,
+      const checked = await debug_check();`,
     replace: `    if (era_modsave.anti_cheat) {
-      await debug_check();
-    } // 变异：闸门取反`,
+      const checked = await debug_check(); // 变异：闸门取反`,
     tests: ['event-turnend'],
     must_mention: '反作弊 1 时跳过 DEBUG_CHECK',
   },
@@ -3227,9 +3230,9 @@ export default [
     desc: 'M11580 EVENTTURNEND 的反作弊闸门删除（开关失效，恒执行 DEBUG_CHECK，#547）',
     file: 'ere/event/event-turnend.js',
     find: `    if (!era_modsave.anti_cheat) {
-      await debug_check();
-    }`,
-    replace: `    await debug_check(); // 变异：闸门删除`,
+      const checked = await debug_check();`,
+    replace: `    if (true) {
+      const checked = await debug_check(); // 变异：闸门删除`,
     tests: ['event-turnend'],
     must_mention: '反作弊 1 时跳过 DEBUG_CHECK',
   },
@@ -4347,6 +4350,12 @@ export default [
     era.endTrain();
   }
 
+  // 窗口深处的结局回了标题（#852）：调教窗口已由 finally 关掉，转场目标
+  // 原样上抛——尾部的 BEGIN SHOP 不再执行（世界已经结束）
+  if (is_state(settled)) {
+    return settled;
+  }
+
   // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();
 
@@ -4357,13 +4366,24 @@ export default [
   }
 
   // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
-  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）
+  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）。Normal End 选
+  // 「结束游戏」时它是回标题的转场目标（#852）：原样上抛，尾部不再执行
   if (era_flag.time === 0) {
-    await run_event_newday();
-  }`,
+    const newday = await run_event_newday();
+    if (is_state(newday)) {
+      return newday;
+    }
+  }
+`,
     replace: `    // 变异：关窗挪到尾段之后
   }
 
+  // 窗口深处的结局回了标题（#852）：调教窗口已由 finally 关掉，转场目标
+  // 原样上抛——尾部的 BEGIN SHOP 不再执行（世界已经结束）
+  if (is_state(settled)) {
+    return settled;
+  }
+
   // 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();
 
@@ -4374,12 +4394,17 @@ export default [
   }
 
   // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
-  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）
+  // 晨间三事件真身 + 每日一次的 run_endcheck 调用点）。Normal End 选
+  // 「结束游戏」时它是回标题的转场目标（#852）：原样上抛，尾部不再执行
   if (era_flag.time === 0) {
-    await run_event_newday();
+    const newday = await run_event_newday();
+    if (is_state(newday)) {
+      return newday;
+    }
   }
   save_train_desire();
-  era.endTrain(); // 变异：自动存档之后才关窗`,
+  era.endTrain(); // 变异：自动存档之后才关窗
+`,
     tests: ['event-turnend'],
     must_mention: '自动存档在关窗之后（调教域表不进存档，存了也不该留旧值）',
   },
@@ -4443,5 +4468,62 @@ export default [
     replace: '    // 变异：读档不补填预设模板',
     tests: ['chara-template'],
     must_mention: 'EVENTLOAD 把后代补成来源预设号',
+  },
+  // —— #852 标题循环：各结局与 GAMEOVER 回标题的转场必须逐层上抛 ——
+  {
+    desc: 'M17310 EVENTTURNEND 的 DEBUG_CHECK 回标题被吞（魔王暴走 GAMEOVER 后回合结算照跑）',
+    file: 'ere/event/event-turnend.js',
+    find: `      const checked = await debug_check();
+      // 反作弊判定出游戏结束（魔王暴走 GAMEOVER）时它是回标题的转场目标
+      // （#852）：原样上抛，本档下方的 BEGIN SHOP 不再执行
+      if (is_state(checked)) {
+        return checked;
+      }`,
+    replace: `      await debug_check(); // 变异：回标题的转场被吞`,
+    tests: ['event-turnend'],
+    must_mention: '整条链以 TITLE 离开',
+  },
+  {
+    desc: 'M17311 EVENTEND 的 CHARADEAD 回标题被吞（魔王倒下后调教后结算照跑）',
+    file: 'ere/event/event-end.js',
+    find: `    const charadead_result = await charadead_check();
+    if (is_state(charadead_result)) {
+      return charadead_result;
+    }`,
+    replace: `    const charadead_result = await charadead_check(); // 变异：回标题的转场被吞`,
+    tests: ['event-end'],
+    must_mention: 'GAMEOVER 以 TITLE 转场离开 run_aftertrain',
+  },
+  {
+    desc: 'M17312 回合结算丢掉迷宫深处的转场（调教窗口里的结局被尾部 BEGIN SHOP 覆盖）',
+    file: 'ere/system/turnend-settle.js',
+    find: `  if (is_state(settled)) {
+    return settled;
+  }`,
+    replace: `  // 变异：窗口里的转场被吞`,
+    tests: ['event-turnend'],
+    must_mention: '整条链以 TITLE 离开',
+  },
+  {
+    desc: 'M17313 回合结算丢掉翌朝事件的转场（Normal End 的「结束游戏」被尾部 BEGIN SHOP 覆盖）',
+    file: 'ere/system/turnend-settle.js',
+    find: `    const newday = await run_event_newday();
+    if (is_state(newday)) {
+      return newday;
+    }`,
+    replace: `    await run_event_newday(); // 变异：翌朝事件的转场被吞`,
+    tests: ['event-turnend'],
+    must_mention: '整条链以 TITLE 离开',
+  },
+  {
+    desc: 'M17314 run_event_newday 丢掉每日结局判定的转场（Normal End 的结束丢失）',
+    file: 'ere/event/event-nextday.js',
+    find: `  const over = await run_endcheck();
+  if (is_state(over)) {
+    return over;
+  }`,
+    replace: `  await run_endcheck(); // 变异：结局判定的转场被吞`,
+    tests: ['event-nextday'],
+    must_mention: '回标题的转场目标原样上抛',
   },
 ];

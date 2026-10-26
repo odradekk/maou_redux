@@ -31,7 +31,7 @@
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
-const { begin, STATE } = require('#/system/flow/game-state');
+const { begin, is_state, STATE } = require('#/system/flow/game-state');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { check_specialskil } = require('#/system/train/get-specialtalent');
 const { run_event_nextday } = require('#/event/event-nextday');
@@ -351,11 +351,12 @@ async function debug_check(rand = default_rand) {
     await era.printAndWait('');
     era.drawLine({ content: 'GAMEOVER' }); // 横幅行
     await era.input();
-    era.quit(); // 退出
+    // GAMEOVER 回标题（#852）：转场是返回值，由本文件的处理器原样上抛，
+    // 事件链在 TITLE 处中止（原先是 era.quit() 抛异常炸断整条链）
+    return begin(STATE.TITLE);
   }
 
-  // 收尾 0 ——QUIT 是 throw 型（引擎 quit() 直接
-  // 抛，event-ending.js 同款），其后不可达，故本行只在三段都没触发时走到
+  // 收尾 0 ——回标题的那一支在上面已经 return；本行只在三段都没触发时走到
   return 0;
 }
 
@@ -489,7 +490,12 @@ on(
     // （era_modsave.anti_cheat）：0 = 每回合执行（新档默认），1 = 跳过检查
     // （设置页 [30] 可切，OFF = 可开修改）
     if (!era_modsave.anti_cheat) {
-      await debug_check();
+      const checked = await debug_check();
+      // 反作弊判定出游戏结束（魔王暴走 GAMEOVER）时它是回标题的转场目标
+      // （#852）：原样上抛，本档下方的 BEGIN SHOP 不再执行
+      if (is_state(checked)) {
+        return checked;
+      }
     }
 
     // SHOP 转场 —— 无条件出口（链继续，普通档与 #LATER 随后执行，
