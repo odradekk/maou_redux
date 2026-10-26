@@ -111,12 +111,11 @@ export default [
   },
   {
     desc: 'M15607 据点 [300] 丢掉读档的转场目标（读成后静默回主菜单）',
-    file: 'ere/page/page-shop.js',
-    find: `    const loaded = await load_game();
-    if (is_state(loaded)) {
-      return loaded;
-    }`,
-    replace: `    await load_game(); // 变异：读档转场被丢弃`,
+    file: 'ere/page/page-main-menu.js',
+    find: '    run: () => load_game(),',
+    replace: `    run: async () => {
+      await load_game(); // 变异：读档转场被丢弃
+    },`,
     tests: ['page-shop'],
     must_mention: 'usershop 以 SHOP_AFTER_LOAD 返回',
   },
@@ -132,23 +131,25 @@ export default [
   },
   {
     desc: 'M15609 主菜单 [100] 忽略选择页的转场（怪物玩弄后接着进调教）',
-    file: 'ere/page/page-shop.js',
-    find: `      const selected = await select_target();
-      if (is_state(selected)) {
-        return selected;
-      }`,
-    replace: `      const selected = await select_target(); // 变异：选择页的转场被丢弃`,
+    file: 'ere/page/page-main-menu.js',
+    find: `    const selected = await select_target();
+    if (is_state(selected)) {
+      return selected;
+    }`,
+    replace:
+      '    const selected = await select_target(); // 变异：选择页的转场被丢弃',
     tests: ['page-shop'],
     must_mention: '目标选择页「其它」支的转场（怪物玩弄）经 select_target 上抛',
   },
   {
     desc: 'M15610 主菜单 [496] 忽略选择页的转场',
-    file: 'ere/page/page-shop.js',
-    find: `    const chosen = await select_target();
-    if (is_state(chosen)) {
-      return chosen;
-    }`,
-    replace: `    await select_target(); // 变异：选择页的转场被丢弃`,
+    file: 'ere/page/page-main-menu.js',
+    find: `    // 选择画面的「其它」支会转去怪物玩弄，转场目标原样上抛
+    run: () => select_target(),`,
+    replace: `    // 变异：选择页的转场被丢弃
+    run: async () => {
+      await select_target();
+    },`,
     tests: ['page-shop'],
     must_mention: '496 分支：选择页「其它」支的转场同样上抛',
   },

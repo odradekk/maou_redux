@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 589; // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 594; // #866 +5（M17250–M17254：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -128,9 +128,9 @@ export default [
   },
   {
     desc: 'M18 100 分支检查：育儿室条件取反（10 改 11，检查永不成立）',
-    file: 'ere/page/page-shop.js',
-    find: "    if ((era.get('cflag:0:1') || 0) === 10) {",
-    replace: "    if ((era.get('cflag:0:1') || 0) === 11) {",
+    file: 'ere/page/page-main-menu.js',
+    find: "  if ((era.get('cflag:0:1') || 0) === 10) {",
+    replace: "  if ((era.get('cflag:0:1') || 0) === 11) {",
     tests: ['page-shop'],
     must_mention: '育儿室',
   },
@@ -369,17 +369,21 @@ export default [
   },
   {
     desc: 'M2112 [109] 出兵成功不转场（TURNEND 转场删除）',
-    file: 'ere/page/page-shop.js',
-    find: '    if ((await invasion()) === 1) {\n      return begin(STATE.TURNEND);\n    }',
-    replace: '    await invasion(); // 变异：不转场',
+    file: 'ere/page/page-main-menu.js',
+    find: `      if ((await invasion()) === 1) {
+        return begin(STATE.TURNEND);
+      }`,
+    replace: '      await invasion(); // 变异：不转场',
     tests: ['page-invasion', 'page-shop'],
     must_mention: 'TURNEND',
   },
   {
     desc: 'M221 [109] 侵略按钮 accelerator 改坏（109 → 1090——入口在实机上不存在，同 #129）',
     file: 'ere/page/page-main-menu.js',
-    find: "  panel.push([109, '侵略']);",
-    replace: "  panel.push([1090, '侵略']); // 变异：accelerator 改坏",
+    find: `    id: 109,
+    label: '侵略',`,
+    replace: `    id: 1090, // 变异：accelerator 改坏
+    label: '侵略',`,
     tests: ['page-main-menu'],
     must_mention: '侵略必须是按钮',
   },
@@ -551,9 +555,26 @@ export default [
   {
     desc: 'M251 主菜单 [200]/[300] 存读档按钮被拆（据点两处入口实机不可达，#136 勘误移交 #137 的缺口正主）',
     file: 'ere/page/page-main-menu.js',
-    find: `  panel.push([200, '保存']);
-  panel.push([300, '读取']);`,
-    replace: `  // 变异：两枚按钮被拆`,
+    find: `    id: 200,
+    label: '保存',
+    run: () => save_game(),
+  },
+  {
+    id: 300,
+    label: '读取',
+    run: () => load_game(),
+  },`,
+    replace: `    id: 200,
+    place: 'hidden', // 变异：两枚按钮被拆，画不出来
+    label: '保存',
+    run: () => save_game(),
+  },
+  {
+    id: 300,
+    place: 'hidden', // 变异：两枚按钮被拆，画不出来
+    label: '读取',
+    run: () => load_game(),
+  },`,
     tests: ['page-main-menu'],
     must_mention:
       '保存必须是按钮——没有 [200]，据点存档入口在实机上不存在（#137）',
@@ -685,8 +706,9 @@ export default [
   {
     desc: 'M569 主菜单 [102] 地下城按钮删除（实机可达性——#129 型缺口的防复发钉）',
     file: 'ere/page/page-main-menu.js',
-    find: `  panel.push([102, (era.get('flag:502') || 0) === 0 ? '地下城' : '场子']);`,
-    replace: `  // 变异：不渲染 [102] 按钮`,
+    find: "    label: () => ((era.get('flag:502') || 0) === 0 ? '地下城' : '场子'),",
+    replace: `    place: 'hidden', // 变异：不渲染 [102] 按钮
+    label: () => ((era.get('flag:502') || 0) === 0 ? '地下城' : '场子'),`,
     tests: ['page-dungeon-info'],
     must_mention: '[102] 恰一枚',
   },
@@ -867,33 +889,29 @@ export default [
   },
   {
     desc: 'M7888 199 休息：FLAG:9 税金增量算错（+5 改 +4）',
-    file: 'ere/page/page-shop.js',
-    find: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
-    game.stronghold.税金修正 += 5;`,
-    replace: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
-    game.stronghold.税金修正 += 4; // 变异：税金少算 1`,
+    file: 'ere/page/page-main-menu.js',
+    find: `      era.print('你专心于内政，稍作了休息……（税金+5%）');
+      game.stronghold.税金修正 += 5;`,
+    replace: `      era.print('你专心于内政，稍作了休息……（税金+5%）');
+      game.stronghold.税金修正 += 4; // 变异：税金少算 1`,
     tests: ['page-shop'],
     must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
     desc: 'M7889 199 休息：TURNEND 转场删（回合推不动，这张工单的到站标记失守）',
-    file: 'ere/page/page-shop.js',
-    find: `    game.stronghold.税金修正 += 5;
-    return begin(STATE.TURNEND);`,
-    replace: `    game.stronghold.税金修正 += 5;
-    // 变异：TURNEND 转场删`,
+    file: 'ere/page/page-main-menu.js',
+    find: `      game.stronghold.税金修正 += 5;
+      return begin(STATE.TURNEND);`,
+    replace: `      game.stronghold.税金修正 += 5;
+      // 变异：TURNEND 转场删`,
     tests: ['page-shop'],
     must_mention: '199 休息：内联文本 + FLAG:9 += 5 + TURNEND 转场',
   },
   {
     desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转条件永不成立）',
-    file: 'ere/page/page-shop.js',
-    find: `    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
-    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
-    era_flag.bought = 1;`,
-    replace: `    // 购物：BOUGHT = 1，下一轮 show_shop 据此跳道具商店（show_shop 的
-    // 0-53 支，#399 起本体是真身 page/page-item-shop.js）
-    era_flag.bought = -1; // 变异：不再触发商店跳转`,
+    file: 'ere/page/page-main-menu.js',
+    find: '      era_flag.bought = 1;',
+    replace: '      era_flag.bought = -1; // 变异：不再触发商店跳转',
     tests: ['page-shop'],
     must_mention: '107 购物：BOUGHT = 1，下一轮 show_shop 画真身道具商店',
   },
@@ -993,18 +1011,20 @@ export default [
   {
     desc: 'M7899 [101] 能力显示：角色数检查边界错一格（>= 1 改 >= 2）',
     file: 'ere/page/page-main-menu.js',
-    find: '  if (era.getAddedCharacters().length >= 1) {',
-    replace: '  if (era.getAddedCharacters().length >= 2) {',
+    find: '    enabled: () => era.getAddedCharacters().length >= 1,',
+    replace: '    enabled: () => era.getAddedCharacters().length >= 2,',
     tests: ['page-main-menu'],
     must_mention: '[101] 能力显示：角色数 >= 1 时是可点按钮',
   },
   {
     desc: 'M7900 [103] 处刑：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
-    find: `  if (count_selectable_slaves() > 0) {
-    panel.push([103, '处刑']);`,
-    replace: `  if (count_selectable_slaves() <= 0) {
-    panel.push([103, '处刑']);`,
+    find: `    id: 103,
+    label: '处刑',
+    enabled: () => count_selectable_slaves() > 0,`,
+    replace: `    id: 103,
+    label: '处刑',
+    enabled: () => count_selectable_slaves() <= 0,`,
     tests: ['page-main-menu'],
     must_mention:
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
@@ -1012,10 +1032,12 @@ export default [
   {
     desc: 'M7901 [104] 迎击：A > 0 检查取反',
     file: 'ere/page/page-main-menu.js',
-    find: `  if (count_selectable_slaves() > 0) {
-    panel.push([104, '迎击']);`,
-    replace: `  if (count_selectable_slaves() <= 0) {
-    panel.push([104, '迎击']);`,
+    find: `    id: 104,
+    label: '迎击',
+    enabled: () => count_selectable_slaves() > 0,`,
+    replace: `    id: 104,
+    label: '迎击',
+    enabled: () => count_selectable_slaves() <= 0,`,
     tests: ['page-main-menu'],
     must_mention:
       '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
@@ -1023,9 +1045,9 @@ export default [
   {
     desc: 'M7902 [108] 换装：FLAG:37 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
-    find: "  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {",
+    find: "      count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1,",
     replace:
-      "  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 0) {",
+      "      count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 0,",
     tests: ['page-main-menu'],
     must_mention:
       '[108] 换装：A > 0 且 FLAG:37 == 1 才渲染（未落表前恒不成立）',
@@ -1033,18 +1055,18 @@ export default [
   {
     desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 检查取反',
     file: 'ere/page/page-main-menu.js',
-    find: `  if ((era.get('talent:0:325') || 0) === 1) {
-    panel.push([110, '实验室']);`,
-    replace: `  if ((era.get('talent:0:325') || 0) === 0) {
-    panel.push([110, '实验室']);`,
+    find: "    enabled: () => (era.get('talent:0:325') || 0) === 1,",
+    replace: "    enabled: () => (era.get('talent:0:325') || 0) === 0,",
     tests: ['page-main-menu'],
     must_mention: '[110] 实验室：TALENT:0:325 == 1（魔王的魔界知识）才渲染',
   },
   {
     desc: 'M7904 [199] 休息按钮编号错位（199 改 198，键入 199 不再送达）',
     file: 'ere/page/page-main-menu.js',
-    find: "  panel.push([199, '休息']);",
-    replace: "  panel.push([198, '休息']); // 变异：编号错位",
+    find: `    id: 199,
+    label: '休息',`,
+    replace: `    id: 198, // 变异：编号错位
+    label: '休息',`,
     tests: ['page-main-menu'],
     must_mention:
       '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
@@ -1052,8 +1074,10 @@ export default [
   {
     desc: 'M7905 [777] 设定按钮编号错位',
     file: 'ere/page/page-main-menu.js',
-    find: "  panel.push([777, '设定']);",
-    replace: "  panel.push([776, '设定']); // 变异：编号错位",
+    find: `    id: 777,
+    label: '设定',`,
+    replace: `    id: 776, // 变异：编号错位
+    label: '设定',`,
     tests: ['page-main-menu'],
     must_mention:
       '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
@@ -1061,8 +1085,10 @@ export default [
   {
     desc: 'M7906 [888] 通信按钮编号错位',
     file: 'ere/page/page-main-menu.js',
-    find: "  panel.push([888, '通信']);",
-    replace: "  panel.push([887, '通信']); // 变异：编号错位",
+    find: `    id: 888,
+    label: '通信',`,
+    replace: `    id: 887, // 变异：编号错位
+    label: '通信',`,
     tests: ['page-main-menu'],
     must_mention:
       '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
@@ -4501,11 +4527,18 @@ export default [
   {
     desc: 'M12909 主菜单 400 LABO 隐入口复活（提示行+等键打回——#638 删除的分支不得回潮）',
     file: 'ere/page/page-shop.js',
-    find: '  } else if (result === 496 && selectable_count > 0) {',
-    replace: `  } else if (result === 400) {
+    find: `  const next = await dispatch_menu_item(result);
+  if (is_state(next)) {
+    return next;
+  }`,
+    replace: `  if (result === 400) {
     era.print('（2D 迷宫实验室不在移植范围。）');
     await era.waitAnyKey();
-  } else if (result === 496 && selectable_count > 0) { // 变异：400 入口复活`,
+  }
+  const next = await dispatch_menu_item(result); // 变异：400 入口复活
+  if (is_state(next)) {
+    return next;
+  }`,
     tests: ['page-shop'],
     must_mention: '实验室隐入口不得等待读键',
   },
@@ -4756,50 +4789,40 @@ export default [
   {
     desc: 'M14330 指令面板列数改 4（原版 PRINTLCD 每 3 个换行）',
     file: 'ere/page/page-main-menu.js',
-    find: '  print_button_grid(panel, 3);',
-    replace: '  print_button_grid(panel, 4); // 变异：列数改 4',
+    find: `      is_enabled(item) ? [item.id, item_label(item)] : dim_slot(),
+    ),
+    3,`,
+    replace: `      is_enabled(item) ? [item.id, item_label(item)] : dim_slot(),
+    ),
+    4, // 变异：列数改 4`,
     tests: ['page-main-menu'],
     must_mention: '18 项每行 3 格 = 6 行',
   },
   {
     desc: 'M14331 指令面板不可用占位不占格（各列随可用性漂移）',
     file: 'ere/page/page-main-menu.js',
-    find: `  if (count_selectable_slaves() > 0) {
-    panel.push([100, '调教']);
-  } else {
-    panel.push(dim_slot());
-  }`,
-    replace: `  if (count_selectable_slaves() > 0) {
-    panel.push([100, '调教']);
-  }`,
+    find: `    items_of('command').map((item) =>
+      is_enabled(item) ? [item.id, item_label(item)] : dim_slot(),
+    ),`,
+    replace: `    items_of('command')
+      .filter((item) => is_enabled(item)) // 变异：不可用项不占格
+      .map((item) => [item.id, item_label(item)]),`,
     tests: ['page-main-menu'],
-    must_mention: '占位格仍占一格，各列不因可用性漂移',
+    must_mention: '18 项每行 3 格 = 6 行',
   },
   {
     desc: 'M14332 调教目标/助手两枚退回各占一行',
     file: 'ere/page/page-main-menu.js',
-    find: `      ['助手', 497, era_flag.assi < 1],
-    ],
-    2,
-  );`,
-    replace: `      ['助手', 497, era_flag.assi < 1],
-    ],
-    1,
-  );`,
+    find: "  draw_menu_row('target', 2);",
+    replace: "  draw_menu_row('target', 1); // 变异：两枚各占一行",
     tests: ['page-main-menu'],
     must_mention: '调教目标与助手排在同一行',
   },
   {
     desc: 'M14333 四个信息面板切换钮拆成两行',
     file: 'ere/page/page-main-menu.js',
-    find: `      ['地城日常', 505, active_panel !== 5],
-    ],
-    4,
-  );`,
-    replace: `      ['地城日常', 505, active_panel !== 5],
-    ],
-    2,
-  );`,
+    find: "  draw_menu_row('tab', 4);",
+    replace: "  draw_menu_row('tab', 2); // 变异：拆成两行",
     tests: ['page-main-menu'],
     must_mention: '四个信息面板切换钮排在同一行',
   },
@@ -5698,5 +5721,64 @@ export default [
     replace: '  const width = 12; // 变异：写死 12 列',
     tests: ['page-save-load'],
     must_mention: '超 24 列第三枚会被挤到下一行',
+  },
+  // #866：主菜单项表（绘制与分发同源）。下面五条守表本身——可用性条件被
+  // 删掉、入口串到邻项的处理函数、绘制与分发不再读同一份条件。
+  {
+    desc: 'M17250 [496] 调教目标的可用性条件被删（A == 0 也放行分发）',
+    file: 'ere/page/page-main-menu.js',
+    find: `    id: 496,
+    place: 'target',
+    label: '调教目标',
+    dim: () => era_flag.target < 1,
+    enabled: () => count_selectable_slaves() > 0,`,
+    replace: `    id: 496,
+    place: 'target',
+    label: '调教目标',
+    dim: () => era_flag.target < 1,
+    enabled: () => true, // 变异：可用性条件被删`,
+    tests: ['page-main-menu-items'],
+    must_mention: '调教目标/助手：A == 0 时仍画成调暗的按钮，分发落空',
+  },
+  {
+    desc: 'M17251 [497] 助手项分发到 select_target（入口串到邻项的处理函数）',
+    file: 'ere/page/page-main-menu.js',
+    find: '    run: () => select_assi(),',
+    replace: '    run: () => select_target(), // 变异：助手分发接到选目标',
+    tests: ['page-shop'],
+    must_mention: '496/497（A > 0）：select_target 与 select_assi 均为真身',
+  },
+  {
+    desc: 'M17252 [107] 购物项分发到面板切换（入口串到邻项的处理函数）',
+    file: 'ere/page/page-main-menu.js',
+    find: `    id: 107,
+    label: '购物',
+    run: () => {
+      era_flag.bought = 1;
+    },`,
+    replace: `    id: 107,
+    label: '购物',
+    run: () => {
+      era.set('flag:36', 0); // 变异：购物分发接到面板切换
+    },`,
+    tests: ['page-main-menu-items', 'page-shop'],
+    must_mention: '[107] 必须置 BOUGHT = 1',
+  },
+  {
+    desc: 'M17253 指令面板绘制不看表的可用性（不可用项也画成可点按钮）',
+    file: 'ere/page/page-main-menu.js',
+    find: '      is_enabled(item) ? [item.id, item_label(item)] : dim_slot(),',
+    replace: '      [item.id, item_label(item)], // 变异：不看可用性',
+    tests: ['page-main-menu-items'],
+    must_mention: '绘制按表的可用性走',
+  },
+  {
+    desc: 'M17254 [102] 的动态正文不解析（按钮印出 label 函数本身）',
+    file: 'ere/page/page-main-menu.js',
+    find: '      is_enabled(item) ? [item.id, item_label(item)] : dim_slot(),',
+    replace:
+      '      is_enabled(item) ? [item.id, item.label] : dim_slot(), // 变异：正文不解析函数',
+    tests: ['page-main-menu-items'],
+    must_mention: '[102] 的动态正文',
   },
 ];
