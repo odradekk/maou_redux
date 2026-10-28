@@ -1332,7 +1332,7 @@ export default [
     find: '    era.printButton(line, index);',
     replace: '    era.print(`[${index}] ${line}`); // 变异：纯文本行',
     tests: ['event-execution'],
-    must_mention: '候选人行是按钮',
+    must_mention: '输入不合法！请输入以下值之一',
   },
   {
     desc: 'M14249 猎奇处刑菜单的七枚选项退回纯文本行',

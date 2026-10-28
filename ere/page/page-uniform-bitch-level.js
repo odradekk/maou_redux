@@ -70,11 +70,8 @@ async function uniform_bitch_level() {
   era.println();
   const target = await era.input();
 
-  // [2003] 取消：不动作，直接返回（重进名册由调用方处理）
-  if (target === SCOPE_CANCEL_KEY) {
-    return;
-  }
-  // 三支范围分支；白名单外的其余输入落到空分支，同样不动作
+  // 三支范围分支；[2003] 取消与白名单外的其余输入落到空分支，
+  // 不动作直接返回（重进名册由调用方处理）
   let scope;
   if (target === SCOPE_INVASION_KEY) {
     scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' };
