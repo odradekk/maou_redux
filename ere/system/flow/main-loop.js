@@ -25,6 +25,7 @@ const { is_state, STATE } = require('#/system/flow/game-state');
 const { emit } = require('#/system/event/registry');
 const { EVENT } = require('#/data/event-name-const');
 const run_title_page = require('#/page/page-title');
+const { handle_first } = require('#/event/event-first');
 const { run_shop } = require('#/page/page-shop');
 const { run_train } = require('#/system/train/train-loop');
 const { run_aftertrain } = require('#/system/train/train-end');
@@ -44,11 +45,11 @@ register_all();
 const STATE_HANDLERS = {
   // 标题页（#19）：启动的初始状态，不经 BEGIN 进入
   [STATE.TITLE]: run_title_page,
-  // BEGIN FIRST → EVENTFIRST 事件链。
-  // 链无人 BEGIN 时回落进 SHOP：EVENTFIRST 跑完而无转场时默认进商店轮，
-  // 不是报错（#20 验收移交的语义）。EVENTFIRST 处理器出口本来就显式
-  // begin(STATE.SHOP)，这里的默认值只在以后的处理器都不发起转场时起作用。
-  [STATE.FIRST]: async () => (await emit(EVENT.FIRST)) ?? STATE.SHOP,
+  // BEGIN FIRST → 开局钩子（event/event-first.js，只有一个处理者，直接调用）。
+  // 它不返回转场时回落进 SHOP：开局钩子跑完而无转场时默认进商店轮，
+  // 不是报错（#20 验收移交的语义）。出口本来就显式返回 begin(STATE.SHOP)，
+  // 这里的默认值只在以后的钩子都不发起转场时起作用。
+  [STATE.FIRST]: async () => (await handle_first()) ?? STATE.SHOP,
   // BEGIN SHOP → 先调 EVENTSHOP 链一次，随后绘制商店页 →
   // 输入 → 分发循环（ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已实现）。

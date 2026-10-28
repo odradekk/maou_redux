@@ -8,7 +8,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 
 function seq(values) {
   let index = 0;
@@ -44,6 +43,10 @@ function setup_ntr() {
 
 function setup_communication(ids) {
   const fixture = create_era_fixture();
+  // 名册读写用例不测特殊档恢复后的菜单回流：读档钩子换成空操作（钩子只有
+  // 一个调用者，load_special_save 直接调用，#853；真钩子会把通信菜单重新
+  // 打开，那份流程在文件末尾的 EVENTLOAD 用例里）
+  fixture.load_module('event/event-load').handle_load = async () => {};
   for (const cid of ids) {
     fixture.seed_chara(cid, {
       id: cid,
@@ -1161,6 +1164,8 @@ test('MAOUNET：INPORT_B 按字段格式写入通信记录并跳过重复勇者'
   fixture.store.set('maxbase:17:0', 600);
   fixture.store.set('cstr:17:12', '翼纹');
   await fixture.era.saveData(999, '操作');
+  // 只测名册字段格式：读档钩子换成空操作（同 setup_communication 的说明）
+  fixture.load_module('event/event-load').handle_load = async () => {};
   const net = fixture.load_module('system/cross-save-sharing');
 
   assert.equal(await net.inport_b(), 1);
@@ -1408,6 +1413,8 @@ test('MAOUNET：导入菜单只接受 0..19 并尝试对应的 1000..1019 档', 
   const success = create_era_fixture();
   await success.era.saveData(1019, '共享队伍');
   success.set_inputs(19);
+  // 只验证导入菜单的档号与候选：读档钩子换成空操作（见 setup_communication）
+  success.load_module('event/event-load').handle_load = async () => {};
   const success_net = success.load_module('system/cross-save-sharing');
   assert.equal(await success_net.inport_a(), 0);
   assert.equal(success.load_module('era-utils/era-flag').last_load_no, 1019);
@@ -1501,9 +1508,8 @@ test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 
   };
   const backup_flag = backup_fixture.load_module('era-utils/era-flag');
   backup_flag.last_load_no = 999;
-  register_handlers(backup_fixture, 'event/event-load');
-  const backup_events = backup_fixture.load_module('system/event/registry');
-  assert.equal(await backup_events.emit('EVENTLOAD'), 'SHOP');
+  const backup_events = backup_fixture.load_module('event/event-load');
+  assert.equal(await backup_events.handle_load(), 'SHOP');
   assert.equal(opened, 1);
 
   const share_fixture = create_era_fixture();
@@ -1514,9 +1520,8 @@ test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 
   };
   const share_flag = share_fixture.load_module('era-utils/era-flag');
   share_flag.last_load_no = 1019;
-  register_handlers(share_fixture, 'event/event-load');
-  const share_events = share_fixture.load_module('system/event/registry');
-  await share_events.emit('EVENTLOAD');
+  const share_events = share_fixture.load_module('event/event-load');
+  await share_events.handle_load();
   assert.equal(imported, 1);
 
   const select_fixture = create_era_fixture();
@@ -1524,8 +1529,7 @@ test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 
   select_fixture.store.delete('global:saves:1000');
   select_fixture.set_inputs(0, 9);
   const select_net = select_fixture.load_module('system/cross-save-sharing');
-  register_handlers(select_fixture, 'event/event-load');
-  // 恢复操作档时 EVENTLOAD 链发起 BEGIN SHOP：转场目标是返回值（#850）
+  // 恢复操作档时读档钩子发起 BEGIN SHOP：转场目标是返回值（#850）
   assert.equal(await select_net.inport_a(), 'SHOP');
   const select_flag = select_fixture.load_module('era-utils/era-flag');
   assert.equal(select_flag.last_load_no, 999, '恢复操作档后必须重入 999 钩子');

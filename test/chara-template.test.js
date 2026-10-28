@@ -34,7 +34,6 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const {
   create_add_character,
   create_chara_loader,
@@ -305,10 +304,8 @@ test('EVENTLOAD 链上执行补填：读档后旧角色的字段不再是空的'
   // 旧存档：魔王是 0 号预设、后代没有预设（fillData 只能补 0）
   fixture.store.set('portcflag:0:2', 0);
   fixture.store.delete('portcflag:100250:2');
-
-  const { emit } = fixture.load_module('system/event/registry');
-  register_handlers(fixture, 'event/event-load');
-  await emit('EVENTLOAD');
+  const { handle_load } = fixture.load_module('event/event-load');
+  await handle_load();
 
   assert.equal(fixture.store.get('portcflag:0:2'), 0, '魔王不用补');
   assert.equal(

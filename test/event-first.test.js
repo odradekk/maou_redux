@@ -22,7 +22,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const { preset_gamebase } = require('./helpers/gamebase');
 const {
   preset_chara_0,
@@ -437,11 +436,10 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   // rand ≡ 0 → RAND(1,17) 取 1：勇者位 1 的预设必须先种（严格夹具，#35）
   preset_chara_0(fixture);
   preset_chara_1(fixture);
-  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
-  const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
-  // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，
+  // 标题步骤的等价物（直接调开局钩子，不经标题）：先加角色 0，
   //「魔王在列」成立——RAND_CHARA_MAKE 的占位判定与收下播报都读已加入列表
   fixture.era.addCharacter(0);
   // 四次问答（魔王性别「女性」跳过肉棒尺寸 + 狂王性别「扶她」+ 初期奴隶
@@ -451,7 +449,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   fixture.override_math_random(() => 0);
   let pending;
   try {
-    pending = await emit('EVENTFIRST');
+    pending = await handle_first();
   } finally {
     fixture.restore_math_random();
   }
@@ -518,8 +516,7 @@ test('初始化写入（村娘）：CFLAG 一组逐项落在角色 ID 17 上（�
   preset_chara_0(fixture);
   preset_chara_17(fixture);
   fixture.era.addCharacter(0); // 标题步骤的等价物
-  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
-  const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
   // #385 起身体数据生成为真身，会消耗随机数：注入 Math.random ≡ 0（RAND:N
@@ -529,7 +526,7 @@ test('初始化写入（村娘）：CFLAG 一组逐项落在角色 ID 17 上（�
     // 五次输入：魔王性别「女性」（跳过肉棒尺寸）、狂王性别「扶她」、问答
     // 「村娘」、地下城模式「普通」（#181 的第二问）、搬运「抱起来」
     fixture.set_inputs(1, 2, 1, 0, 1);
-    const pending = await emit('EVENTFIRST');
+    const pending = await handle_first();
 
     // 出口：村娘分支自己跳 BEGIN SHOP
     assert.equal(pending, STATE.SHOP);
@@ -548,13 +545,12 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_17(fixture);
-  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
-  const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   fixture.set_inputs(1, 2, 1, 0, 1); // 女性 + 扶她 + 村娘 + 普通（#181 第二问）+ 搬运默认走完
-  // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，村娘加入后世界才是
+  // 标题步骤的等价物（直接调开局钩子，不经标题）：先加角色 0，村娘加入后世界才是
   // 该语境的 [0, 17]——序号 1 恰好指向村娘
   fixture.era.addCharacter(0);
-  await emit('EVENTFIRST');
+  await handle_first();
 
   // CFLAG 组的每笔都落在 17 上，一笔都不许落在 1 上
   const wrong_index_writes = fixture.var_writes.filter((w) =>
@@ -578,8 +574,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
-  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
-  const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
   // 旧引擎的用例曾先喂 9（越界）验证重问。问答每轮重印按钮，引擎的 input()
@@ -591,7 +586,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   fixture.override_math_random(() => 0);
   let pending;
   try {
-    pending = await emit('EVENTFIRST');
+    pending = await handle_first();
   } finally {
     fixture.restore_math_random();
   }
@@ -624,15 +619,14 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
 
 test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重问', async () => {
   const fixture = create_era_fixture();
-  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
-  const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
 
   // 女性（跳过肉棒尺寸）→ 狂王性别扶她 → 村娘 → 地下城模式普通（#181 第二问）
   // → 搬运方式选 2 拖拽。旧引擎的用例曾在中间喂越界的 3 验证 GOTO 重问：搬运
   // 画面只印一次 [1]/[2]，引擎的 input() 只送达已打印按钮的快捷键，3 在
   // 渲染层被弹回——重问分支是引擎死路径（#130），此处只走有效输入
   fixture.set_inputs(1, 2, 1, 0, 2);
-  await emit('EVENTFIRST');
+  await handle_first();
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),

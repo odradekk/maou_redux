@@ -3,9 +3,11 @@
  * 分发族（#7）之后的第三套结构）。
  *
  * 引擎只提供 beginTrain/endTrain（建调教域表与结算 gotjewel），不提供
- * 回合循环本身——循环由本模块手写。EVENTTRAIN/EVENTCOM/EVENTCOMEND 的
- * 函数体在 ere/event/ 下各自模块（事件链挂接），画面在 ere/page/ 下
- * ——本模块只承载「谁驱动、回调顺序、SELECTCOM 从哪来」。
+ * 回合循环本身——循环由本模块手写。EVENTTRAIN/EVENTCOMEND 是多处理器的链
+ * （挂接见 system/flow/startup.js），其余钩子只有一个处理者、由本模块直接
+ * 调用（#853）：指令前清理、状态画面、指令菜单、输入分发、SOURCE_CHECK。
+ * 一个回合的指令段在 system/train/command-round.js。本模块只承载「谁驱动、
+ * 回调顺序、SELECTCOM 从哪来」。
  *
  * 回调顺序（顺序错了不报错、只会静默改变游戏行为，test/train-loop.test.js
  * 固定）：
@@ -20,11 +22,11 @@
  *        delta/deltabase 表 + nextTurnInTrain 结算承载。
  *     3. EVENTTRAIN 事件链
  *   回合循环（每回合）
- *     4. SHOW_STATUS 事件链
+ *     4. 状态画面（page-train.js 的 handle_show_status，直接调用）
  *     5. 探测可执行性检查族，列出可执行指令（com_able_family，未定义即
  *        可执行——whenMissing: 1），喂给 SHOW_USERCOM 的指令按钮渲染与
  *        输入检查（page/page-usercom.js）
- *     6. SHOW_USERCOM 事件链
+ *     6. 指令菜单（page-usercom.js 的 handle_show_usercom，直接调用）
  *     7. UP/DOWN/LOSEBASE/CUP/CDOWN 初始化——对应表已在上一回合末的
  *        nextTurnInTrain 结算清零，此步无独立动作；首回合的表由
  *        beginTrain 建为零
@@ -33,9 +35,9 @@
  *     9. 输入检查：映射有效且命中可执行指令 → SELECTCOM = L_I（flag 槽位）；
  *        映射无效（999 出口、子菜单号、乱数）→ USERCOM 事件链
  *    10. 全部角色 NOWEX 清零（exkeys 枚举，逐格置 0）
- *    11. EVENTCOM 事件链
+ *    11. 指令执行前的旗标清理（event-com.js 的 handle_com，直接调用）
  *    12. 对应指令处理器（com_family 分发）。未实现 → 「重新要求输入」
- *        语义：丢弃本次输入回循环头，不结算、不进 EVENTCOMEND。EVENTCOM
+ *        语义：丢弃本次输入回循环头，不结算、不进 EVENTCOMEND。旗标清理
  *        先于该判定是本模块的解读（引擎未明文），#45 已核——执行链尾是
  *        SOURCE_CHECK→EVENTCOMEND，缺失路径无观察差异，维持本序（详见
  *        issue #45 留言）。**指令处理器返回 0 → 回合取消**：SOURCE 不清零、
@@ -48,7 +50,7 @@
  *        子指令失败支（此前 0 与 missing 由同一字段 not_executed 承载，
  *        验收结论分立为 missing/cancelled——开发期要分得出「我们还没做」
  *        和「游戏本来就取消了这一回合」）。
- *    12.5 SOURCE_CHECK 事件链（指令处理器之后、结算之前；函数体在
+ *    12.5 SOURCE_CHECK（指令处理器之后、结算之前；函数体在
  *        system/train/source-check.js，#45——源→参数换算、绝顶、刻印、结算展示）
  *    13. 指令执行后（仅返回非 0 的回合，见 12 的取消语义）：
  *        PREVCOM = SELECTCOM（引擎不自动推进 PREVCOM，由本循环赋值；高级
@@ -60,7 +62,8 @@
  *        EVENTCOMEND 事件链
  *    14. 回到 4
  *
- *    步骤 10-13 抽成 execute_command_round（#214）：正常输入路径与指令
+ *    步骤 10-13 抽成 execute_command_round（#214，现住 system/train/command-round.js）：
+ *    正常输入路径与指令
  *    序列执行走同一条链。自动连播（run_calltrain）**不含 SHOW_STATUS/
  *    SHOW_USERCOM**（那是玩家交互步骤），也不重判可执行性——序列由调用
  *    方预验证（每条探测时 PREVCOM = 前一条）。SELECTCOM 的序列数组不进
@@ -75,12 +78,14 @@
 const era = require('#/era-electron');
 const { emit } = require('#/system/event/registry');
 const {
-  COM_MISSING,
   com_able_family,
-  com_family,
   DECLARED_TRAIN_IDS,
 } = require('#/system/train/com-family');
 const { com_id } = require('#/system/train/com-index');
+const { execute_command_round } = require('#/system/train/command-round');
+const { is_state } = require('#/system/flow/game-state');
+const { handle_show_status } = require('#/page/page-train');
+const { handle_show_usercom, handle_usercom } = require('#/page/page-usercom');
 const era_flag = require('#/era-utils/era-flag');
 const { EVENT } = require('#/data/event-name-const');
 
@@ -104,73 +109,6 @@ async function scan_usable_commands() {
   usable.sort((a, b) => a - b);
   return usable;
 }
-
-/**
- * 全部入列角色的 NOWEX 清零（循环步骤 10）。
- * 枚举经引擎寻址的 'exkeys'（Exp 名字表的全部序号），NOWEX 与 EX 同构。
- */
-function clear_nowex_all() {
-  const ex_keys = era.get('exkeys') || [];
-  for (const cid of era.getCharactersInTrain()) {
-    for (const key of ex_keys) {
-      era.set(`nowex:${cid}:${key}`, 0);
-    }
-  }
-}
-
-/**
- * 执行一个调教回合（循环步骤 10-13，#214 抽出）：正常输入路径与指令
- * 序列执行共用。**不含**输入检查与 SELECTCOM 设定（调用方先置 selectcom）。
- *
- * @param {number} result SELECTCOM（Train.csv 编号 L_I）
- * @returns {Promise<{missing: boolean, cancelled?: boolean, pending?: string}>}
- *   missing = 指令未实现（「重新要求输入」语义，调用方丢弃本回合；
- *   债务信号，族票实现齐后消失）；
- *   cancelled = 指令返回 0（回合取消：副作用保留但不结算，调用方回
- *   循环头重绘——与 missing 对调用方表现相同，但性质不同：cancelled 是游戏的
- *   正确行为，永远存在。两者必须分立：测试断言与问题归因都
- *   靠这个区分「我们还没做」与「游戏本来就取消了这一回合」）；
- *   pending = 链内暂存的转场目标（转场优先，调用方须立即上抛）
- */
-async function execute_command_round(result) {
-  // 10. 全角色 NOWEX 清零
-  clear_nowex_all();
-  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）
-  const com_pending = await emit(EVENT.COM);
-  if (com_pending !== undefined) {
-    return { missing: false, pending: com_pending };
-  }
-  // 12. 对应指令处理器；未实现 → 重新要求输入（见文件头）；返回 0 →
-  // 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第 12 步的
-  // 取消语义，子菜单指令全出口返回 0）
-  const com_result = await com_family.call(result, {
-    whenMissing: COM_MISSING,
-  });
-  if (com_result === COM_MISSING) {
-    return { missing: true };
-  }
-  if (com_result === 0) {
-    return { missing: false, cancelled: true };
-  }
-  // 12.5 SOURCE_CHECK 事件链（指令处理器之后、结算之前；函数体在
-  // system/train/source-check.js，#45）。源 → delta/palam 的换算、绝顶、刻印、
-  // 结算展示都在链上；未注册时静默通过（空链语义）
-  const source_pending = await emit(EVENT.SOURCE_CHECK);
-  if (source_pending !== undefined) {
-    return { missing: false, pending: source_pending };
-  }
-  // 13. PREVCOM = SELECTCOM（高级 COM 可能在本回合回填 SELECTCOM，不能
-  // 误存调用前的 result）→ 结算 → EVENTCOMEND（取消回合已在 12 处返回，
-  // 到不了这里）
-  era_flag.prevcom = era_flag.selectcom;
-  era.nextTurnInTrain();
-  const comend_pending = await emit(EVENT.COMEND);
-  if (comend_pending !== undefined) {
-    return { missing: false, pending: comend_pending };
-  }
-  return { missing: false };
-}
-
 /**
  * STATE.TRAIN 处理器：初始化 → EVENTTRAIN → 回合循环。
  * 以链内暂存的转场目标（或 USERCOM 处理器直接返回的目标）离开——
@@ -208,22 +146,16 @@ async function run_train() {
 
   // —— 回合循环 ——
   for (;;) {
-    // 4. SHOW_STATUS（函数体在 page/page-train.js）
-    const status_pending = await emit(EVENT.SHOW_STATUS);
-    if (status_pending !== undefined) {
-      return status_pending;
-    }
+    // 4. 状态画面（page/page-train.js，每个回合换屏后绘制）
+    await handle_show_status();
 
-    // 5. 探测可执行性：可执行指令表（喂输入检查与 SHOW_USERCOM 的指令
-    // 按钮渲染——按钮随首条指令票 #45 挂载）
+    // 5. 探测可执行性：可执行指令表（喂输入检查与指令菜单的按钮渲染
+    // ——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();
 
-    // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
-    // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit(EVENT.SHOW_USERCOM, usable);
-    if (usercom_draw !== undefined) {
-      return usercom_draw;
-    }
+    // 6. 指令菜单（page/page-usercom.js，含 [999] 调教结束；可执行指令表
+    // 透传给按钮渲染）
+    await handle_show_usercom(usable);
 
     // 7. UP/DOWN/LOSEBASE/CUP/CDOWN 初始化：对应表已在上一回合末
     // nextTurnInTrain 结算清零（文件头第 7 步说明），无独立动作
@@ -250,18 +182,18 @@ async function run_train() {
       continue;
     }
 
-    // 非指令输入（映射得 undefined）→ USERCOM（999 = 调教结束，函数体在
-    // page/page-usercom.js；USERCOM 收到的是玩家的原始输入）
-    const usercom_pending = await emit(EVENT.USERCOM, idx);
-    if (usercom_pending !== undefined) {
-      return usercom_pending;
+    // 非指令输入（映射得 undefined）→ 输入分发（999 = 调教结束，函数体在
+    // page/page-usercom.js；收到的是玩家的原始输入）。只有一个处理者，
+    // 直接调用；它返回 STATE 取值时（999 的 AFTERTRAIN）立即上抛
+    const usercom_next = await handle_usercom(idx);
+    if (is_state(usercom_next)) {
+      return usercom_next;
     }
-    // USERCOM 的返回 0：忽略返回值、重绘回合画面（回循环头）
+    // 返回其它值（含 undefined）：忽略、重绘回合画面（回循环头）
   }
 }
 
 module.exports = {
-  execute_command_round,
   run_train,
   scan_usable_commands,
 };

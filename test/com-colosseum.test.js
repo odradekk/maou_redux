@@ -32,7 +32,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /** 助手角色（COM201 用） */
@@ -168,12 +167,15 @@ test('COM207 与 [100] 能力表示不撞号：COM207 可用与否，输入 100 
     if (in_colosseum) {
       fixture.store.set('tequip:31:55', 1);
     }
-    register_handlers(fixture, 'page/page-usercom');
-    const { on } = fixture.load_module('system/event/registry');
+    // 指令菜单页只有一个调用者（调教回合循环直接调用，#853）：先把模块导出的
+    // 分发函数换成探针，装载回合循环时它绑定的就是探针，探针再交回真身
+    const page_usercom = fixture.load_module('page/page-usercom');
+    const real_usercom = page_usercom.handle_usercom;
     const usercom_probe = [];
-    on('USERCOM', async (result) => {
+    page_usercom.handle_usercom = async (result) => {
       usercom_probe.push(result);
-    });
+      return real_usercom(result);
+    };
     const { run_train, scan_usable_commands } = fixture.load_module(
       'system/train/train-loop',
     );
@@ -202,14 +204,14 @@ test('COM207 可用时调教画面没有同号按钮：媚药史莱姆的编号�
   fixture.store.set('flag:10013', 32); // ASSI:1
   fixture.store.set('cflag:31:0', 2); // CFLAG:0 调教状态 2 = 可对换
   fixture.store.set('flag:550', 1); // 调教菜单长度
-  register_handlers(fixture, 'page/page-usercom');
-  const { emit } = fixture.load_module('system/event/registry');
   const { scan_usable_commands } = fixture.load_module(
     'system/train/train-loop',
   );
   const { com_id } = fixture.load_module('system/train/com-index');
 
-  await emit('SHOW_USERCOM', await scan_usable_commands());
+  await fixture
+    .load_module('page/page-usercom')
+    .handle_show_usercom(await scan_usable_commands());
 
   // 同号按钮在引擎里回传同一个值，train-loop 先按指令处理，子菜单就按不到
   const buttons = fixture.lines.filter((line) => line.type === 'button');
@@ -1020,14 +1022,14 @@ test('死斗场中的状态显示：装备行出 [死斗场决斗中]（粉色�
   era_flag.target = 31;
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
-  register_handlers(fixture, 'page/page-train');
-  const { emit } = fixture.load_module('system/event/registry');
+  const run_show_status = () =>
+    fixture.load_module('page/page-train').handle_show_status();
 
-  await emit('SHOW_STATUS');
+  await run_show_status();
   // #390 起 show_equip_2 是完整实现：无任何位时只打一个空格。
 
   fixture.store.set('tequip:31:55', 1);
-  await emit('SHOW_STATUS');
+  await run_show_status();
   // 装备状态项的正文保留一个前导空格与一个尾随空格，
   // 以便与同一行的其他状态项分隔。
   const arena = fixture.lines
@@ -1053,12 +1055,16 @@ test('RETURN 0 的指令：回合作废——不结算、不进 EVENTCOMEND、PR
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
   fixture.load_module('system/train/com-colosseum');
-  register_handlers(fixture, 'page/page-usercom');
-  const { on } = fixture.load_module('system/event/registry');
+  // source-check 只有一个调用者（回合循环直接调用，#853）：把模块导出的
+  // 钩子换成探针，装载回合循环时它绑定的就是探针
+  const page_source_check = fixture.load_module('system/train/source-check');
+  const real_source_check = page_source_check.handle_source_check;
   const probe = [];
-  on('SOURCE_CHECK', async () => {
+  page_source_check.handle_source_check = async () => {
     probe.push('SOURCE_CHECK');
-  });
+    return real_source_check();
+  };
+  const { on } = fixture.load_module('system/event/registry');
   on('EVENTCOMEND', async () => {
     probe.push('EVENTCOMEND');
   });

@@ -194,6 +194,7 @@ test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + �
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // #346 接入的每日召唤与本用例的勇者推进无关；隔离它的随机消费，避免
@@ -215,7 +216,7 @@ test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + �
     // 「普通」[0]（#181 加的一问——本条走 3D 路径，2D 版见
     // event-ending2-2d-e2e.test.js）、搬运选「抱起」[1]
     fixture.set_inputs(1, 2, 1, 0, 1);
-    const first_exit = await emit('EVENTFIRST');
+    const first_exit = await handle_first();
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
     // —— 主循环：每半天出兵一次（压住侵攻度的论证见文件头），直到

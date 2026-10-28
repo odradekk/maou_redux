@@ -2,7 +2,7 @@
  * @file ere/data/event-name-const.js 与「调用点只用枚举」的守护（issue #849）。
  *
  * 三件事各一个用例组：
- *   - 枚举本身的形状（13 个名字、冻结、取值就是运行里认得的那串字符）；
+ *   - 枚举本身的形状（名字清单、冻结、取值就是运行里认得的那串字符）；
  *   - 注册表认得表里的每一个名字，表外的名字不管从哪一侧进来都当场抛错
  *     （抛错的行为细节在 event-registry.test.js）；
  *   - 源码扫描：ere/ 里凡是注册或触发事件的地方都写 `EVENT.X`，不再出现裸
@@ -43,25 +43,18 @@ function ere_source_files() {
   return files;
 }
 
-test('事件名枚举有 13 个名字，取值就是运行里认的那串字符', () => {
+test('事件名枚举有 5 个名字，取值就是运行里认的那串字符', () => {
   // 这些字符串不只内部认：触发侧的写法与日志、存档外的排查都按它们认事件，
-  // 改名等于把「事件名」换掉，必须是显式决定，不能顺手调整拼法
+  // 改名等于把「事件名」换掉，必须是显式决定，不能顺手调整拼法。
+  // 只剩多处理器链：只有一个处理器的钩子不再是事件，直接调用（#853）
   assert.deepEqual(EVENT_NAMES, [
-    'EVENTFIRST',
-    'EVENTLOAD',
     'EVENTSHOP',
     'EVENTTURNEND',
-    'EVENTCOM',
-    'SOURCE_CHECK',
-    'SOURCE_CHECK_AUTO',
     'EVENTCOMEND',
     'EVENTTRAIN',
-    'SHOW_STATUS',
-    'SHOW_USERCOM',
-    'USERCOM',
     'EVENTEND',
   ]);
-  assert.equal(new Set(EVENT_NAMES).size, 13);
+  assert.equal(new Set(EVENT_NAMES).size, 5);
   assert.deepEqual(
     Object.keys(EVENT).map((key) => EVENT[key]),
     EVENT_NAMES,
@@ -73,9 +66,9 @@ test('枚举与名单都冻结：运行时改不动、加不进', () => {
   assert.ok(Object.isFrozen(EVENT_NAMES));
   // 用 Reflect 探针：非严格模式下普通赋值静默失败，看不出冻没冻
   assert.equal(Reflect.set(EVENT, 'TRAIN', 'EVENTTRAIN_TYPO'), false);
-  assert.equal(Reflect.set(EVENT_NAMES, 13, 'EVENT_ROGUE'), false);
+  assert.equal(Reflect.set(EVENT_NAMES, 5, 'EVENT_ROGUE'), false);
   assert.equal(EVENT.TRAIN, 'EVENTTRAIN');
-  assert.equal(EVENT_NAMES.length, 13);
+  assert.equal(EVENT_NAMES.length, 5);
 });
 
 test('注册表认得枚举里的每一个名字：注册后触发，处理器跑一次', async () => {

@@ -20,7 +20,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { seed_train_world } = require('./helpers/train-world');
-const { register_handlers } = require('./helpers/event-registration');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好 SM 族。 */
 function seed_world({ assi = -1 } = {}) {
@@ -1206,16 +1205,17 @@ test('口塞装上（COM45 真身）→ K3 检查跳过；selectcom = 45 豁免�
 
 test('source-check 链循环：装备位按链序全部走真身（链上无缺失位）', async () => {
   const world = seed_world({ assi: 17 });
-  const { emit } = world.fixture.load_module('system/event/registry');
+  const page_source_check = world.fixture.load_module(
+    'system/train/source-check',
+  );
   world.fixture.load_module('system/train/com-toy'); // 道具族 equip_com11 注册
-  register_handlers(world.fixture, 'system/train/source-check');
   // 眼罩（43，SM 族）+ 振动器位 11（道具族）同时点亮——链上每个号都有真身
   world.fixture.store.set('tequip:31:43', 1);
   world.fixture.store.set('tequip:31:11', 1);
   world.era_flag.selectcom = 43;
   world.fixture.store.set('flag:7', 0); // 关口上总开关，聚焦装备循环输出
 
-  await emit('SOURCE_CHECK');
+  await page_source_check.handle_source_check();
   const lines = world.fixture.text_lines();
   assert.ok(lines.includes('＜眼罩装着中＞'), '眼罩位真身执行');
   assert.ok(

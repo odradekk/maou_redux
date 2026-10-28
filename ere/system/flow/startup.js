@@ -15,6 +15,13 @@
  * 装配顺序来源）：口上模块同档内按此顺序执行，event-train（#PRI）→
  * event-train-normal（无属性）等跨档顺序由档位决定、不受本表影响。
  *
+ * 只有一个处理器的钩子不在这里（#853）：调教回合的状态画面、指令菜单、
+ * 输入分发、指令前的旗标清理、两处 SOURCE_CHECK 都由调用点直接调用处理器
+ * 函数（system/train/train-loop.js、system/dungeon/dungeon-battle.js），
+ * 因此本表只列真正的多处理器链。要判断某个钩子该不该进表，数一下它的
+ * 处理者：一个就别放进来——总线上挂单条链，链的顺序没有意义，反而多一条
+ * 「模块没装配就静默变成空链」的路。
+ *
  * 分发族是另一套机制（docs/skeleton.md「模块注册有两套机制」）：按编号查表、
  * 编号唯一（重复注册抛错），没有执行顺序语义。族模块仍靠装载时注册，本文件
  * 末尾的清单就是「启动时装了哪些族」的一份账；#274 / #282 的接入锁扫的也是
@@ -29,26 +36,17 @@
  * 每项 = `[模块路径（报错与审计用）, 模块]`。路径只是标签，真正取用的是模块
  * 导出的 `register()`——两边对不上时 register_all 会抛错。
  *
- * 口上的 EVENTTRAIN / EVENTEND 同档处理器按此顺序执行；调教域的 SHOW_STATUS /
- * SHOW_USERCOM / USERCOM 与商店的 EVENTSHOP 也都在这里，页面模块的 require
- * 不再兼任注册。
+ * 口上的 EVENTTRAIN / EVENTEND 同档处理器按此顺序执行；商店的 EVENTSHOP
+ * 与回合结算的 EVENTTURNEND 也在这里，页面模块的 require 不再兼任注册。
  */
 const HANDLER_MODULES = [
-  ['#/event/event-first', require('#/event/event-first')],
   ['#/event/event-train', require('#/event/event-train')],
   ['#/event/event-train-normal', require('#/event/event-train-normal')],
-  ['#/event/event-com', require('#/event/event-com')],
   ['#/event/event-comend', require('#/event/event-comend')],
   ['#/event/event-comend-normal', require('#/event/event-comend-normal')],
   ['#/event/event-end', require('#/event/event-end')],
-  // EVENTLOAD 原先由 page-save-load 的顶层 require 顺带注册；读档页是否被
-  // 装载不该决定读档钩子存不存在，随本表在启动时注册
-  ['#/event/event-load', require('#/event/event-load')],
   ['#/event/event-turnend', require('#/event/event-turnend')],
   ['#/event/event-turnend-later', require('#/event/event-turnend-later')],
-  ['#/system/train/source-check', require('#/system/train/source-check')],
-  ['#/page/page-train', require('#/page/page-train')],
-  ['#/page/page-usercom', require('#/page/page-usercom')],
   ['#/page/page-shop', require('#/page/page-shop')],
   ['#/system/turnend-settle', require('#/system/turnend-settle')],
   ['#/kojo/kojo-system', require('#/kojo/kojo-system')],

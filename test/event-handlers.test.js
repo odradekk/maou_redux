@@ -4,9 +4,11 @@
  * 守什么：
  *   - 每条事件链由哪些模块、按什么档位、以什么顺序组成，有一份可读的期望
  *     表。表是装配顺序的契约，改装配顺序必须在这里显式改；
- *   - 各模块导出的 HANDLERS 与装配表对得上，没声明的模块不会被静默跳过；
+ *   - 各模块导出的 register() 与装配表对得上，没声明的模块不会被静默跳过；
  *   - register_all() 确实把声明的处理器挂进注册表，且**装载处理器模块本身
- *     不注册**——这正是本票要拆掉的旧行为（require 的副作用即注册）。
+ *     不注册**——这正是本票要拆掉的旧行为（require 的副作用即注册）；
+ *   - 总线只承载多处理器链：只有一个处理器的钩子直接调用，注册表里不该有
+ *     它（#853）。
  *
  * 期望表按档位分组：同一档内自上而下就是执行顺序（registry.js 的「书写
  * 顺序」），跨档顺序由 emit 固定（PRI → NORMAL → LATER），不受装配表影响。
@@ -29,9 +31,6 @@ const TIER_ORDER = ['PRI', 'NORMAL', 'LATER'];
  * 前、无属性档在后由档位决定。删一行 = 某条链少一个处理器，会在这里当场红。
  */
 const EXPECTED = {
-  EVENTFIRST: {
-    NORMAL: ['#/event/event-first'],
-  },
   EVENTTRAIN: {
     PRI: [
       '#/event/event-train',
@@ -77,9 +76,6 @@ const EXPECTED = {
       '#/kojo/kojo-k19-fia',
       '#/kojo/kojo-k904-fia',
     ],
-  },
-  EVENTCOM: {
-    PRI: ['#/event/event-com'],
   },
   EVENTCOMEND: {
     PRI: ['#/event/event-comend'],
@@ -130,28 +126,10 @@ const EXPECTED = {
       '#/kojo/kojo-k904-fia',
     ],
   },
-  EVENTLOAD: {
-    NORMAL: ['#/event/event-load'],
-  },
   EVENTTURNEND: {
     PRI: ['#/event/event-turnend'],
     NORMAL: ['#/system/turnend-settle'],
     LATER: ['#/event/event-turnend-later'],
-  },
-  SOURCE_CHECK: {
-    NORMAL: ['#/system/train/source-check'],
-  },
-  SOURCE_CHECK_AUTO: {
-    NORMAL: ['#/system/train/source-check'],
-  },
-  SHOW_STATUS: {
-    NORMAL: ['#/page/page-train'],
-  },
-  SHOW_USERCOM: {
-    NORMAL: ['#/page/page-usercom'],
-  },
-  USERCOM: {
-    NORMAL: ['#/page/page-usercom'],
   },
   EVENTSHOP: {
     PRI: ['#/kojo/kojo-system'],
@@ -214,6 +192,21 @@ test('装配表与期望一致：每条链的模块、档位、顺序都在一�
   assert.deepEqual(table, EXPECTED);
   // 枚举里的每个名字都有人挂——不留「合法但没人响应」的死名字
   assert.deepEqual(Object.keys(table).sort(), [...EVENT_NAMES].sort());
+});
+
+test('总线只承载多处理器链：没有单处理器事件（#853）', () => {
+  const fixture = create_era_fixture();
+  const registry = fixture.load_module('system/event/registry');
+  fixture.load_module('system/flow/startup').register_all();
+
+  for (const event_name of EVENT_NAMES) {
+    const counts = registry.handler_counts(event_name);
+    const total = counts.PRI + counts.NORMAL + counts.LATER;
+    assert.ok(
+      total >= 2,
+      `${event_name} 只有 ${total} 个处理器——单处理器的钩子直接调用，不走总线`,
+    );
+  }
 });
 
 test('装配表里的模块都导出了 register()，且没有重复项', () => {

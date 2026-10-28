@@ -1,7 +1,10 @@
 /**
- * @file 调教指令菜单：SHOW_USERCOM（绘制）与 USERCOM（输入分发）的处理器
- * （issue #44；指令按钮 #45 挂载、#213 换紧凑序号与升格标签、#214 挂
+ * @file 调教指令菜单：绘制（旧引擎 SHOW_USERCOM）与输入分发（USERCOM）的
+ * 处理器（issue #44；指令按钮 #45 挂载、#213 换紧凑序号与升格标签、#214 挂
  * 子菜单按钮组、自定义 COM 菜单与 USERCOM 全分支分发）。
+ *
+ * 两个钩子各只有一个调用者（调教回合循环），不走事件总线：循环直接调用
+ * 本模块导出的函数（#853）。
  *
  * == 指令方格的两条渲染路径（#214 起，按 FLAG:5 位 34 分流） ==
  *
@@ -35,12 +38,11 @@
  *
  * SHOW_CHARA_INFO 与 STAIN_INFO 已随 #390 换真身。
  * USERCOM 各分支的 RETURN 1/0 均无效果（重绘回合画面是唯一效果），
- * ere 侧 emit 同构（返回值无消费者）。
+ * 返回值只有 999 的转场目标有消费者。
  * 「上次的调教指令」的淡紫色（0xDDA0DD）不移植（有意偏离：着色）。
  */
 
 const era = require('#/era-electron');
-const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const game_train = require('#/facade/game-train');
 const { begin, STATE } = require('#/system/flow/game-state');
@@ -62,7 +64,6 @@ const { condom_settings } = require('#/system/train/com-condom');
 const { print_button_grid } = require('#/utils/button-grid');
 const { MASTER } = require('#/utils/master');
 const { train_command_name } = require('#/data/train-command-const');
-const { EVENT } = require('#/data/event-name-const');
 
 // 64 号指令名的复合动作分隔（lang-table.js 整串豁免本字面量：・ 是既有
 // 指令名的分隔样式，归一成 · 会对不上指令名）
@@ -347,21 +348,17 @@ async function handle_usercom(result) {
     return;
   }
   if (result === 999) {
-    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（事件链暂存，
-    // 回合循环提交），其后不再执行
+    // 调教结束 → BEGIN AFTERTRAIN 转场：返回目标状态（回合循环提交），
+    // 其后不再执行
     return begin(STATE.AFTERTRAIN);
   }
   // 其余输入落到链尾、重绘回合画面（不提示——与主菜单对无效输入的处置
   // 一致）
 }
 
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.SHOW_USERCOM, handle_show_usercom);
-  on(EVENT.USERCOM, handle_usercom);
-}
-
-module.exports = { register, command_button_label, show_commenu };
+module.exports = {
+  handle_show_usercom,
+  handle_usercom,
+  command_button_label,
+  show_commenu,
+};

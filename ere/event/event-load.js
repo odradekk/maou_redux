@@ -1,11 +1,12 @@
 /**
  * @file 读档钩子 EVENTLOAD（issue #137：C3 读档钩子与自动存档）。
  *
- * 读档是转场操作：读档成功后不再回到读档界面，引擎转入本钩子链；链跑完
- * 读档页随后转场进 SHOP 阶段（不触发 EVENTSHOP 链）。ere 侧落点：
- * page-save-load.js 的 load_game 成功分支在钳制 EX_FLAG:2801、自写入
- * LASTLOAD_NO 之后 emit 本链，再以 begin(STATE.SHOP_AFTER_LOAD) 转场
- * （链内暂存的转场值覆盖缺省目标）。
+ * 读档是转场操作：读档成功后不再回到读档界面，读档页跑完本钩子再转场进
+ * SHOP 阶段（不触发 EVENTSHOP 链）。ere 侧落点：page-save-load.js 的
+ * load_game 成功分支在钳制 EX_FLAG:2801、自写入 LASTLOAD_NO 之后直接调用本
+ * 函数，以它的返回值（转场目标）为下一状态，缺省落 SHOP_AFTER_LOAD。
+ * 只有一个处理者，不走事件总线（#853）；maounet 的特殊档路径
+ * （system/cross-save-sharing.js）同样直接调用。
  *
  * 逐行处置（复核于 #137）：
  *   - LOADGLOBAL——#137 曾判「ere 引擎行为（global 表在内存、读档不动
@@ -45,14 +46,11 @@
 
 const era = require('#/era-electron');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
-const { on, TIER } = require('#/system/event/registry');
-const maounet_mod = require('#/system/cross-save-sharing');
 const era_flag = require('#/era-utils/era-flag');
 const { ex_talentname_init } = require('#/system/chara/chara-ex');
 const { normalize_idle_status } = require('#/system/chara/chara-init');
 const { backfill_chara_templates } = require('#/system/chara/chara-pregnancy');
 const { chara_name_init } = require('#/system/chara/chara-name-list');
-const { EVENT } = require('#/data/event-name-const');
 
 /**
  * EVENTLOAD：读档成功后的固定钩子。
@@ -60,6 +58,10 @@ const { EVENT } = require('#/data/event-name-const');
  * 对读入的存档数据重放；逐行处置见文件头。
  */
 async function handle_load() {
+  // 共享档模块的读档路径要回调本函数（它的 load_special_save 读成后重放本
+  // 链），与本模块的 maounet/inport_b 调用成环。装载期互引会拿到半装好的
+  // 导出，调用时再取。
+  const maounet_mod = require('#/system/cross-save-sharing');
   // LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
   // `this.era.global = n`），丢弃读档前未保存的内存改动——event-first.js
   // 与设置页 [27] 都不即时 SAVEGLOBAL，读档须恢复最近一次保存值
@@ -124,12 +126,4 @@ async function handle_load() {
   }
 }
 
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.LOAD, handle_load, TIER.NORMAL);
-}
-
-module.exports = { register };
+module.exports = { handle_load };
