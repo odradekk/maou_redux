@@ -569,19 +569,13 @@ async function purchase(item_id) {
  * @returns {Promise<number>} 1 = 成交 / 0 = 取消（一分钱没动）
  */
 async function buy_simple(bought) {
-  // 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
-  // 「其余」由引擎按白名单拒收，重问支不可达，结构保留）
-  for (;;) {
-    era.print(`确定购买${item_name(bought)}？`);
-    era.printButton('- 好的', 0); // （正文保留 `- `）
-    era.printButton('- 不要', 1);
-    const result = await era.input();
-    if (result === 1) {
-      return 0; // 取消：还没扣钱、也没给货
-    }
-    if (result === 0) {
-      break;
-    }
+  // 購入確認（0 好的 / 1 不要）。#572 起两项升格为按钮，白名单就是这两枚，
+  // 原先「其余 → 重问」的回边没有受理面，已随 #953 删除
+  era.print(`确定购买${item_name(bought)}？`);
+  era.printButton('- 好的', 0); // （正文保留 `- `）
+  era.printButton('- 不要', 1);
+  if ((await era.input()) === 1) {
+    return 0; // 取消：还没扣钱、也没给货
   }
 
   // 确认后一次结清：先扣钱、再给货

@@ -1984,8 +1984,8 @@ export default [
   {
     desc: 'M12028 道具商店购买确认退回纯文本行',
     file: 'ere/page/page-item-shop.js',
-    find: "    era.printButton('- 好的', 0);",
-    replace: "    era.print('[0] - 好的'); // 变异",
+    find: "  era.printButton('- 好的', 0); // （正文保留 `- `）",
+    replace: "  era.print('[0] - 好的'); // 变异",
     tests: ['item-shop'],
     must_mention: '确认支：两项是按钮',
   },

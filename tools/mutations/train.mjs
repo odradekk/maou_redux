@@ -936,7 +936,7 @@ export default [
   {
     desc: 'M796 AFTERTRAIN_CLOTH 尿布换新不扣费（MONEY -= 50 删）',
     file: 'ere/system/train/cloth.js',
-    find: '        era_flag.money -= 50;',
+    find: '      era_flag.money -= 50;',
     replace: '// 变异：不扣费',
     tests: ['cloth-func'],
     must_mention: 'MONEY -= 50',
@@ -1884,9 +1884,9 @@ export default [
   {
     desc: 'M14247 尿布换新确认的两枚按钮退回纯文本行',
     file: 'ere/system/train/cloth.js',
-    find: "      era.printButton('- 好的', 0);\n      era.printButton('- 不要', 1);",
+    find: "    era.printButton('- 好的', 0);\n    era.printButton('- 不要', 1);",
     replace:
-      "      era.print(' [0] - 好的'); // 变异：纯文本\n      era.print(' [1] - 不要');",
+      "    era.print(' [0] - 好的'); // 变异：纯文本\n    era.print(' [1] - 不要');",
     tests: ['cloth-func'],
     must_mention: '换尿布确认是按钮',
   },
@@ -9890,9 +9890,9 @@ export default [
   {
     desc: 'M12048 cloth 尿布句之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/cloth.js',
-    find: `          // 本句与上句连续输出、各占一行，之间不是空行——
-          // 不补 println（#595）`,
-    replace: "          era.print(''); // 变异：尿布句之后补回空行",
+    find: `        // 本句与上句连续输出、各占一行，之间不是空行——
+        // 不补 println（#595）`,
+    replace: "        era.print(''); // 变异：尿布句之后补回空行",
     tests: ['cloth-func'],
     must_mention: '下一行是点数句',
   },
@@ -10657,12 +10657,12 @@ export default [
   {
     desc: 'M13005 尿布洗涤的洗衣状态复辟（CFLAG:47 又置 2——洗过的尿布要购新才回得来）',
     file: 'ere/system/train/cloth.js',
-    find: `        // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
-        set_mask(mask() - 16);
-        if (worn(cid) & 64) {`,
-    replace: `        era.set(\`cflag:\${cid}:47\`, 2); // 变异：洗衣状态复辟
-        set_mask(mask() - 16);
-        if (worn(cid) & 64) {`,
+    find: `      // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
+      set_mask(mask() - 16);
+      if (worn(cid) & 64) {`,
+    replace: `      era.set(\`cflag:\${cid}:47\`, 2); // 变异：洗衣状态复辟
+      set_mask(mask() - 16);
+      if (worn(cid) & 64) {`,
     tests: ['cloth-func'],
     must_mention: '洗衣状态不再设置（洗过不留占用）',
   },

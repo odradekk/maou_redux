@@ -980,3 +980,24 @@ test('equip_magic_weapon：等级不足的灰显与「取下」', async () => {
   assert.equal(off.store.get('cflag:1:550'), -1, '槽置 -1');
   assert.equal(off.store.get('item:340'), 1, '识别号 40 的道具回包（300+40）');
 });
+
+test('pick_enhance_amount：买不起的档位仍画在屏上，「钱不够！！」可命中（#953）', async () => {
+  // 可选档位是 {0,1,2,4,6,8,上限} 的定值集，固定档位不随所持金收窄：
+  // 钱只够 3 档时屏上照样有 [4]/[6]/[8]，点下去走「钱不够！！」那一支。
+  // 文件头 5b 原先写「打印出来的按钮集合里不会有超过它的档位」——那是错的。
+  const fixture = tailor_fixture({
+    'item:300': 3,
+    'cflag:0:9': 30,
+    'cflag:1:551': -1,
+    'flag:10004': 30000,
+    'exflag:4444': 30000,
+  });
+  const added = await run_core(fixture, [7, 1, 300, 4, 999, 999, 999]);
+  assert.ok(accs(added).includes(4), '所持金 3 档时 [4] 照样是按钮');
+  assert.ok(
+    texts(added).includes('钱不够！！'),
+    '点了走「钱不够！！」并放弃强化',
+  );
+  assert.equal(fixture.store.get('cflag:1:551'), -1, '没强化，槽仍是空');
+  assert.equal(fixture.store.get('flag:10004'), 30000, '没扣钱');
+});
