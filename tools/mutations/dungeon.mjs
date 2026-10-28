@@ -2456,7 +2456,7 @@ export default [
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
-    must_mention: 'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
+    must_mention: 'LOSEBASE:0 = 10（COM13 专属，结算后 2000 - 10）',
   },
   {
     desc: 'M10725 com13_auto 角色对角色的攻击调用点退回占位（不再执行真身）',
@@ -2465,7 +2465,7 @@ export default [
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
-    must_mention: 'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
+    must_mention: 'LOSEBASE:0 = 10（COM13 专属，结算后 2000 - 10）',
   },
   // —— #508：迷宫自动调教链的 UPCHECK 等价步 ——
   {

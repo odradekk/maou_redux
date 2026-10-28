@@ -38,6 +38,21 @@ const HEADER_INDEX = 0;
 const FOOTER_INDEX = 14;
 
 /**
+ * 结算后的珠（juel + gotjuel）：调教窗口内的读法（era-utils/train-settle.js
+ * 的 juel_settled）。#875 起 juel_check_main 只写 gotjuel，juel 要到引擎
+ * endTrain 才加算，所以「本次调教之后的珠」在窗口内必须两表相加。
+ * @param {object} fixture 夹具
+ * @param {number} key juel 序号
+ * @returns {number}
+ */
+function settled_juel(fixture, key) {
+  return (
+    (fixture.store.get(`juel:31:${key}`) || 0) +
+    (fixture.store.get(`gotjuel:31:${key}`) || 0)
+  );
+}
+
+/**
  * 网格行：把 `fixture.lines` 按 Row 号分组，只留含文本/按钮格的组（一次
  * `printMultiColumns` = 一个 Row，各格共享该 Row 号）。文本表格的断言按行取
  * 格——格是渲染单位，行是排版单位（原实现按整行字符串比对，格边界无从断言）。
@@ -246,9 +261,13 @@ for (const tc of ROW_CASES) {
     assert.equal(texts[HEADER_INDEX], tc.header ?? '调教结果：');
     assert.equal(texts[1 + tc.row], tc.line);
     assert.equal(texts[FOOTER_INDEX], '以上的点数变化了。');
-    assert.equal(fixture.store.get(`juel:31:${tc.juel_key}`), tc.juel_now);
-    // 结算后 gotjuel 清零（职责划分定案，见下组用例）
-    assert.equal(fixture.store.get(`gotjuel:31:${tc.juel_key}`), 0);
+    assert.equal(settled_juel(fixture, tc.juel_key), tc.juel_now);
+    // 游戏侧不再当场写 juel：原始值仍是结算前的种子（没有种子的键连键都没有）
+    assert.equal(
+      fixture.store.get(`juel:31:${tc.juel_key}`),
+      tc.seed.juel?.[tc.juel_key],
+      'juel 不应当场写，等待引擎 endTrain 加算 gotjuel',
+    );
   });
 }
 
@@ -278,14 +297,23 @@ test('相殺：否定余量逐轮减半（定值随机源），逐步写序固�
 
   // 每轮扣余量一半（向下取整）：100 → 50 → 25 → 13 → 7 → 4 → 2 → 1 → 0；
   // 余量 1 时半值为 0、改扣 1。逐步写序断言——终态守恒（总量 = 100）对
-  // 取量公式的变化不敏感，只有中间步能区分
+  // 取量公式的变化不敏感，只有中间步能区分。扣减写进 gotjuel 的负值
+  //（夹具记的是写入后的值，所以是累加结果），juel 本身一动不动
   assert.deepEqual(
     fixture.var_writes
-      .filter((w) => w.name === 'juel:31:100')
+      .filter((w) => w.name === 'gotjuel:31:100')
       .map((w) => w.value),
-    [50, 25, 13, 7, 4, 2, 1, 0],
+    [-50, -75, -87, -93, -96, -98, -99, -100],
+    '抵消的逐步扣减量（负值累加进 gotjuel）',
   );
-  assert.equal(fixture.store.get('juel:31:4'), 900, '1000 - 100 = 900');
+  assert.equal(fixture.store.get('juel:31:100'), 100, 'juel 不被当场写');
+  assert.equal(
+    fixture.store.get('juel:31:4'),
+    1000,
+    '池子的 juel 也不被当场写',
+  );
+  assert.equal(settled_juel(fixture, 4), 900, '结算后的值 1000 - 100 = 900');
+  assert.equal(settled_juel(fixture, 100), 0, '否定余量清零');
 });
 
 test('相殺：池子里不够时整池扣走（钳制），否定余量留在池空之后', () => {
@@ -296,8 +324,9 @@ test('相殺：池子里不够时整池扣走（钳制），否定余量留在�
 
   mod.offset_negative_group(31, [4, 5, 6], rotating_rng());
 
-  assert.equal(fixture.store.get('juel:31:5'), 0, '现有 30 整池扣走');
-  assert.equal(fixture.store.get('juel:31:100'), 970, '三池皆空 → 否定残留');
+  assert.equal(settled_juel(fixture, 5), 0, '现有 30 整池扣走');
+  assert.equal(settled_juel(fixture, 100), 970, '三池皆空 → 否定残留');
+  assert.equal(fixture.store.get('juel:31:100'), 1000, 'juel 原始值不动');
 });
 
 test('相殺：余量取半为 0 且未清零时改扣 1（单点余量路径）', () => {
@@ -308,8 +337,8 @@ test('相殺：余量取半为 0 且未清零时改扣 1（单点余量路径）
 
   mod.offset_negative_group(31, [4, 5, 6], () => 2);
 
-  assert.equal(fixture.store.get('juel:31:100'), 0);
-  assert.equal(fixture.store.get('juel:31:6'), 4);
+  assert.equal(settled_juel(fixture, 100), 0);
+  assert.equal(settled_juel(fixture, 6), 4);
 });
 
 test('相殺两组先后（恭顺组在前、耻情组在后）：前组吃满后组不动', () => {
@@ -323,9 +352,9 @@ test('相殺两组先后（恭顺组在前、耻情组在后）：前组吃满�
 
   mod.juel_check_main(31, () => 0);
 
-  assert.equal(fixture.store.get('juel:31:100'), 0);
-  assert.equal(fixture.store.get('juel:31:4'), 970, '恭顺组消化全部 30');
-  assert.equal(fixture.store.get('juel:31:8'), 500, '否定已清 → 耻情组不动');
+  assert.equal(settled_juel(fixture, 100), 0);
+  assert.equal(settled_juel(fixture, 4), 970, '恭顺组消化全部 30');
+  assert.equal(settled_juel(fixture, 8), 500, '否定已清 → 耻情组不动');
 });
 
 test('TFLAG 快照：相殺前的 juel 4/5/6/8/9/10/100 记入 51-53/55-57/58，tflag:54 不写', () => {
@@ -352,33 +381,48 @@ test('TFLAG 快照：相殺前的 juel 4/5/6/8/9/10/100 记入 51-53/55-57/58，
   );
 });
 
-// ———— 与引擎 endTrain 的职责划分（验收项：不发生重复结算） ————
+// ———— 与引擎 endTrain 的职责划分（#875：引擎是唯一结算点） ————
 
-test('职责划分：结算尾部把全部 OWNED 键的 gotjuel 清回 0（引擎加算成无操作）', () => {
+test('职责划分：结算尾部不清零 gotjuel、不写 juel——留给引擎 endTrain 加算', () => {
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
   // 复合前态：多个键有非零增量的结算路径
   fixture.store.set('palam:31:0', 10000);
   fixture.store.set('ex:31:0', 1);
   fixture.store.set('palam:31:5', 3000);
-  fixture.store.set('palam:31:11', 3000);
+  fixture.store.set('palam:31:11', 60000);
   fixture.store.set('juel:31:0', 2279);
   fixture.store.set('juel:31:100', 108);
 
   mod.juel_check_main(31, rotating_rng());
-  const owned_keys = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];
-  for (const key of owned_keys) {
-    assert.equal(
-      fixture.store.get(`gotjuel:31:${key}`),
-      0,
-      `gotjuel:${key} 必须清零`,
-    );
-  }
+
+  // 本次调教的收益留在 gotjuel 里，juel 原始值一格没动
+  assert.equal(
+    fixture.store.get('gotjuel:31:0'),
+    2000,
+    '阴核收益（1000 梯子 + 绝顶 ×1000）落 gotjuel',
+  );
+  assert.equal(
+    fixture.store.get('gotjuel:31:100'),
+    2900,
+    '否定收益 3000 减掉抵消掉的 100 后落 gotjuel',
+  );
+  assert.equal(fixture.store.get('juel:31:0'), 2279, 'juel 不应当场写');
+  assert.equal(fixture.store.get('juel:31:100'), 108, 'juel 不应当场写');
+  assert(
+    !fixture.var_writes.some((w) => w.name.startsWith('juel:31:')),
+    '结算路径上不得再写 juel（加算归引擎）',
+  );
   // 死存储不落笔（引擎 endTrain 会把非零 gotjuel:3 加进 juel:3、造成偏差）
   assert(
     !fixture.var_writes.some((w) => w.name === 'gotjuel:31:3'),
     'GOTJUEL:3（润滑）是死存储，ere 侧不得写',
   );
+
+  // 引擎 endTrain 加算后，终值与 #47 定案的数一致
+  fixture.era.endTrain();
+  assert.equal(fixture.store.get('juel:31:0'), 4279, '2279 + 2000');
+  assert.equal(fixture.store.get('juel:31:100'), 3008, '108 + 2900');
 });
 
 const { load_engine_bundle } = require('./helpers/engine-bundle');
@@ -387,7 +431,7 @@ const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 engine_test(
-  '引擎比对：endTrain 逐键把 gotjuel 加进 juel——非零残留即双重累加；全零为精确无操作',
+  '引擎比对：endTrain 逐键把 gotjuel 加进 juel——这是唯一的结算点',
   () => {
     const { era_api } = engine;
     const settle = (got0, got100) => {
@@ -403,9 +447,10 @@ engine_test(
       return data.juel[31];
     };
     // 引擎确实会加（app.asar 源码：Object.entries(gotjuel[e]) 全键遍历）——
-    // 游戏侧若不清零，本次增量被再加一遍
+    // #875 起游戏侧把收益、抵消（负）、消费（负）全写进 gotjuel，正是等这一步
     assert.deepEqual(settle(5, 7), { 0: 15, 100: 27 });
-    // juel-check 的清零使引擎加算成为精确无操作（数值一动不动）
+    assert.deepEqual(settle(-5, -7), { 0: 5, 100: 13 }, '负的增量照样加');
+    // 全零是空操作（收尾不再手工清零，但引擎语义本身允许零值）
     assert.deepEqual(settle(0, 0), { 0: 10, 100: 20 });
   },
 );
@@ -457,8 +502,10 @@ test('交互循环：999 退出后欲情变化检查走真身（压抑清除 + �
     '真身应打印失去压抑的提示',
   );
   assert.equal(fixture.store.get('talent:31:32'), 0, '压抑清除');
-  assert.equal(fixture.store.get('juel:31:100'), 4, '否定点数减半截断');
   assert.equal(fixture.store.get('tflag:25'), 1, '压抑抵抗消灭旗标');
+  assert.equal(settled_juel(fixture, 100), 4, '否定点数减半截断（结算后的值）');
+  fixture.era.endTrain();
+  assert.equal(fixture.store.get('juel:31:100'), 4, '引擎加算后落到 juel');
 });
 
 test('交互循环：能力分支走真身、重绘后可再选（进得去出得来）', async () => {
@@ -508,7 +555,9 @@ test('自动升级（FLAG:5 位 35）：不吃输入，auto_ablup 真身三连�
   // 三连：目标升一级并打印；ASSI 分支由 ASSI <= 0 跳过，
   // MASTER（角色 0）确实被调到（读过它的 abl:0:0）
   assert.equal(fixture.store.get('abl:31:0'), 1);
-  assert.equal(fixture.store.get('juel:31:0'), 0);
+  assert.equal(settled_juel(fixture, 0), 0, '升级消耗结算后的珠');
+  fixture.era.endTrain();
+  assert.equal(fixture.store.get('juel:31:0'), 0, '引擎加算后落到 juel');
   assert.ok(
     fixture.text_lines().some((line) => line.includes('温妮的阴蒂感觉变为LV1')),
     'auto_ablup_core 的等级行',
@@ -577,10 +626,18 @@ test('结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () =>
     '癖好点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
     '以上的点数变化了。',
   ]);
-  // 相殺后的账面（show_juel 的读数源）
-  assert.equal(fixture.store.get('juel:31:0'), 3479);
-  assert.equal(fixture.store.get('juel:31:7'), 4);
-  assert.equal(fixture.store.get('juel:31:100'), 167);
+  // 相殺后的账面（show_juel 的读数源）：结算后的值在 gotjuel 里，juel 原始
+  // 值保持结算前——引擎 endTrain 加算后才落进 juel
+  assert.equal(settled_juel(fixture, 0), 3479);
+  assert.equal(settled_juel(fixture, 7), 4);
+  assert.equal(settled_juel(fixture, 100), 167);
+  assert.equal(fixture.store.get('juel:31:0'), 2279, 'juel 未被当场写');
+  assert.equal(fixture.store.get('juel:31:7'), 3, 'juel 未被当场写');
+  assert.equal(fixture.store.get('juel:31:100'), 108, 'juel 未被当场写');
+  fixture.era.endTrain();
+  assert.equal(fixture.store.get('juel:31:0'), 3479, 'endTrain 加算');
+  assert.equal(fixture.store.get('juel:31:7'), 4, 'endTrain 加算');
+  assert.equal(fixture.store.get('juel:31:100'), 167, 'endTrain 加算');
 });
 
 test('show_info_exp：经验一览是每项三格的网格，数值格右对齐', () => {
