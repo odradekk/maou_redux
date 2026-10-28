@@ -38,6 +38,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const benki_mod = require('#/system/train/benki');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
@@ -6229,8 +6230,7 @@ async function benki_koujo_k12(rand) {
   const a = era_flag.target; // A（肉便器行动对象）
   const target_name = chara_callname(a); // %SAVESTR:A%（初稿已展开）
   const sc = (x = target) => self_call(x); // %SELF_CALL(A)%
-  const benki_player_name = () =>
-    require('#/system/train/benki').benki_player_name(); // CALL BENKI_PLAYER_NAME
+  const benki_player_name = () => benki_mod.benki_player_name(); // CALL BENKI_PLAYER_NAME
   if (game.train.肉便器行动 == 0) {
     if (game.dungeon.肉便器常识改写 == 1) {
       await era.printAndWait(

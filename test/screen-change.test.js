@@ -24,9 +24,7 @@ test('换屏：整屏清空，屏幕回到 0 行', async () => {
   era.println();
   assert.equal(era.getLineCount(), 3, '预置三行，避免 clear(1) 冒充整屏清空');
 
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   assert.equal(await change_screen(), 0, '返回清屏后的行数（恒 0）');
   assert.equal(era.getLineCount(), 0, '换屏后行数必须归 0（整屏清空）');
 });
@@ -34,9 +32,7 @@ test('换屏：整屏清空，屏幕回到 0 行', async () => {
 test('换屏：不补等键——不产生任何按键消费', async () => {
   const fixture = create_era_fixture();
   fixture.era.print('有输出：若 waitAnyKey 被调用，必然真的等待');
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(fixture.waits, [], '换屏不得调用 waitAnyKey');
   assert.deepEqual(fixture.inputs_consumed, [], '换屏不得消费按键');
@@ -47,9 +43,7 @@ test('换屏：清掉的未读输出由夹具记录（与检查共用同一条 c
   fixture.set_inputs(1);
   await fixture.era.input();
   fixture.era.print('还没被确认的结算');
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(fixture.unread_output_clears, [
     { row: 1, type: 'text', text: '还没被确认的结算' },

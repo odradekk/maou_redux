@@ -295,9 +295,7 @@ test('KYOTEN_EVENT 经日循环触发（#119 接入）：未征服衰减后推�
 
   // 换屏规则（#723/ADR-0009）：横幅之后的链尾等键保证它在回主菜单换屏
   // 前已被按键确认（衰减块自己的读键在横幅之前，兜不到它）
-  const { change_screen } = world.fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = world.fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(
     world.fixture.unread_output_clears,
@@ -657,9 +655,7 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   // 换屏检查先行（#723/ADR-0009）：整屏清空时不得有未读行——等键删掉时，
   // 最小世界的衰减段分隔行会在这里被夹具报出（晨间事件全部早退，没有更晚
   // 的等待能替它兜底）
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(
     fixture.unread_output_clears,

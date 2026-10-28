@@ -125,7 +125,7 @@ export default [
   {
     // #710：原 M6577（纯文本行的 0/1 含义互换）随按钮化改成同一含义的按钮版
     desc: 'M14235 SELECT_YES_NO 的两枚按钮正文互换（0/1 的含义反了）',
-    file: 'ere/page/page-life-list.js',
+    file: 'ere/utils/input-yes-no.js',
     find: "        [0, '是的'],\n        [1, '不要'],",
     replace: "        [0, '不要'],\n        [1, '是的'], // 变异",
     tests: ['cross-stubs'],

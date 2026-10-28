@@ -245,9 +245,7 @@ test('道具商店换屏：陷阱等级与戒指退还的尾段输出在换屏�
     seed_item_shop(fixture);
     fixture.store.set('cflag:0:9', 2); // 魔王等级（陷阱等级上限）
     const { purchase } = fixture.load_module('page/page-item-shop');
-    const { change_screen } = fixture.load_module(
-      'page/components/screen-change',
-    );
+    const { change_screen } = fixture.load_module('utils/screen-change');
     fixture.set_inputs(1); // 数量选择：买一件
     await purchase(55);
     // 商店轮的下一轮绘制（item_shop 的换屏）由这里显式代演
@@ -266,9 +264,7 @@ test('道具商店换屏：陷阱等级与戒指退还的尾段输出在换屏�
     seed_item_shop(fixture);
     fixture.store.set('item:300', 99);
     const { purchase } = fixture.load_module('page/page-item-shop');
-    const { change_screen } = fixture.load_module(
-      'page/components/screen-change',
-    );
+    const { change_screen } = fixture.load_module('utils/screen-change');
     fixture.set_inputs(1); // 数量选择：买一件
     await purchase(91);
     // 商店轮的下一轮绘制（item_shop 的换屏）由这里显式代演
@@ -598,9 +594,7 @@ test('名册动作收尾：改名播报在名册重画前先经按键确认（#7
   const { chara_info_name_edit } = fixture.load_module(
     'system/chara/chara-name-edit',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
 
   fixture.set_inputs('新名字');
   await chara_info_name_edit(17);
@@ -623,9 +617,7 @@ test('名册动作收尾：不可改名的反馈在名册重画前先经按键�
   const { chara_info_name_edit } = fixture.load_module(
     'system/chara/chara-name-edit',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
 
   await chara_info_name_edit(17);
   await change_screen();
@@ -647,9 +639,7 @@ test('名册动作收尾：还原名字的播报在名册重画前先经按键�
   const { chara_info_name_edit } = fixture.load_module(
     'system/chara/chara-name-edit',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
 
   await chara_info_name_edit(17, 1);
   await change_screen();
@@ -672,9 +662,7 @@ test('名册动作收尾：侵攻中的勇者无反馈，不得多按一次键�
   const { chara_info_name_edit } = fixture.load_module(
     'system/chara/chara-name-edit',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
 
   // 先按下名册按钮（回显在，等键若被改成无条件就会真等——玩家多按键）
   fixture.set_inputs(30);
@@ -828,9 +816,7 @@ test('名册动作收尾：灵魂转移播报在名册重画前先经按键确�
   const { transfer_soul } = fixture.load_module(
     'system/chara/chara-soul-transfer',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
 
   fixture.set_inputs(0); // 确认转移
   await transfer_soul(17, 0, () => 0);
@@ -1269,9 +1255,7 @@ test('实验室等键：条目成交的播报在回主菜单换屏前先经按�
   const { modify_bonyu } = fixture.load_module('page/page-shop-labo');
   await modify_bonyu(() => 0);
   // 主菜单下一轮换屏由这里显式代演（ADR-0009：成交播报必须已确认）
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
 
   assert_no_unread(fixture, '条目成交播报');

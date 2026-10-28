@@ -54,6 +54,7 @@ const {
 const { run_benki } = require('#/system/train/benki');
 const { run_seedbed } = require('#/system/train/seedbed');
 const { save_train_desire } = require('#/system/train/train-end');
+const autotrain_mod = require('#/system/train/autotrain');
 const { get_look_info } = require('#/system/chara/look-info'); // #565 起接入（式中函数，纯取值）
 const { run_dungeon } = require('#/system/dungeon/dungeon');
 const { dungeon_map } = require('#/system/dungeon/labo-dungeon-map');
@@ -176,7 +177,7 @@ async function settle_in_train_window(target_pool) {
   for (const cid of era.getAddedCharacters()) {
     // 先把 target 指到当前角色——format_autotrain 读的就是它
     era_flag.target = cid;
-    require('#/system/train/autotrain').format_autotrain(); // （#508 真身）
+    autotrain_mod.format_autotrain(); // （#508 真身）
     chara(cid).invasion.新人 = 0; // CFLAG:506 = 0
     chara(cid).train.自动调教 = 0; // CFLAG:666 = 0
   }
@@ -672,7 +673,7 @@ async function settle_in_train_window(target_pool) {
   // ——逐角色 AFTER_AUTOTRAIN → JUEL_CHECK_MAIN 把本回合攒下的 PALAM 结算
   // 成珠、AUTO_ABLUP 结算能力；CFLAG:666 由迷宫域的 COM*_AUTO 累加）
   enroll_joined_characters(); // 尾部这一轮要按名单写 GOTJUEL / PALAM（#816）
-  await require('#/system/train/autotrain').autotrain();
+  await autotrain_mod.autotrain();
 }
 
 /**

@@ -10,6 +10,10 @@
  * `*` 可提升标记由 #467 接入：逐行调 system/train/ablup.js 的 decide_ablup
  * （decide_ablupN 分发），可提升时在按钮正文尾追一个空格加 `*`。编号
  * 20-23/30-33 的 decide_ablupN 没有对应函数（未补判定），这几行不打标记。
+ *
+ * 放在 train 域而不是 page/：驱动它的交互循环在 system/train/juel-check.js，
+ * 系统层不该为了一屏渲染去 require 页面层。页面层的「能力值提高」画面也用
+ * 这两个渲染函数，那个方向（页面 → 系统）是允许的。
  */
 
 const era = require('#/era-electron');

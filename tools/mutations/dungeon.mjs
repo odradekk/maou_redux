@@ -108,7 +108,7 @@ export default [
   },
   {
     desc: 'M384 check_status 首分支阈值改坏（S1_HP 60 → 40：半血不再判轻伤）',
-    file: 'ere/system/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/party-status.js',
     find: '  if (hp_pct < 60 || wp_pct < 50) {',
     replace: '  if (hp_pct < 40 || wp_pct < 50) {',
     tests: ['dungeon-main'],
@@ -163,7 +163,7 @@ export default [
   },
   {
     desc: 'M388 get_junk_item 阶层乘算删坏（LOCAL *= CFLAG:501 删）',
-    file: 'ere/system/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/ex-item.js',
     find: '  // LOCAL *= CFLAG:ARG:501（阶层）\n  local *= chara(cid).dungeon.侵攻阶层;',
     replace: '  // LOCAL *= CFLAG:ARG:501（阶层）——变异：乘算删除',
     tests: ['dungeon-main'],
@@ -652,7 +652,7 @@ export default [
   {
     desc: 'M608 dungeon_hotel 的入账删（MONEY += COST 不写）',
     file: 'ere/system/dungeon/dungeon-room.js',
-    find: '  era_flag.money += cost;\n  era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1（域内延迟 require，文件头）',
+    find: '  era_flag.money += cost;\n  era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1',
     replace:
       '  // era_flag.money += cost; // 变异：入账删\n  // era_exflag.legit_money += cost;\n  chara(a).dungeon.所持金 -= cost;\n\n  // CALL karma, A, -1（域内延迟 require，文件头）',
     tests: ['dungeon-room'],
@@ -2193,7 +2193,7 @@ export default [
   },
   {
     desc: 'M10116 campaign_quest：剧情推进门槛 off-by-one（> 改 >=，重复推进，#469）',
-    file: 'ere/system/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/dungeon-campaign.js',
     find: `  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {`,
     replace: `  if (chara(cid).dungeon.侵攻阶层 >= era_flag.campaign_story_progress) {`,
     tests: ['dungeon-main'],
@@ -2201,7 +2201,7 @@ export default [
   },
   {
     desc: 'M10117 campaign_quest：剧情进度计数删除（FLAG:401 停在 0，#469）',
-    file: 'ere/system/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/dungeon-campaign.js',
     find: `    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
     era_flag.campaign_story_progress += 1;`,
     replace: `    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
@@ -2211,7 +2211,7 @@ export default [
   },
   {
     desc: 'M10118 campaign_ending：全员取消派遣判断条件失效（=== 12 改 === 1200，#469）',
-    file: 'ere/system/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/dungeon-campaign.js',
     find: `  for (const cid of era.getAddedCharacters()) {
     if (chara(cid).invasion.状态 === 12) {
       party_del(cid);
@@ -2232,7 +2232,7 @@ export default [
   },
   {
     desc: 'M10119 campaign_room：FLAG:400 早退检查失效（<1 改 <0，#469）',
-    file: 'ere/system/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/dungeon-campaign.js',
     find: `async function campaign_room(floor) {
   const active = era_flag.hero_campaign_active;
   if (active < 1) {
@@ -2280,7 +2280,7 @@ export default [
   },
   {
     desc: 'M10122 campaign_monster_list：FLAG:400 未置位时骸骨缺省改错（190 改 0，#469）',
-    file: 'ere/system/dungeon/dungeon-battle.js',
+    file: 'ere/system/dungeon/dungeon-campaign.js',
     find: `  const active = era_flag.hero_campaign_active;
   if (active < 1) {
     return 190;
@@ -2294,7 +2294,7 @@ export default [
   },
   {
     desc: 'M10123 campaign_monster_list：whenMissing 骸骨缺省改错（190 改 0，#469）',
-    file: 'ere/system/dungeon/dungeon-battle.js',
+    file: 'ere/system/dungeon/dungeon-campaign.js',
     find: `  return campaign_monster_list_family.call(active, {
     whenMissing: 190,
     args: [floor, rand],
@@ -2309,9 +2309,10 @@ export default [
   {
     desc: 'M9882 source_check_auto 接入退回存根（不再直接调真实处理器）',
     file: 'ere/system/dungeon/dungeon-battle.js',
+    // #889：真身迁到 system/train/autotrain.js，本文件只留同名转发；
+    // 条目仍锚在这里——「接入是否转发」正是本文件的契约
     find: `async function source_check_auto() {
-  await handle_source_check_auto();
-  era.nextTurnInTrain();
+  return autotrain_mod.source_check_auto();
 }`,
     replace: `async function source_check_auto() {
   // 变异：不再转发真实处理器（回合循环的 UPCHECK 等价步也没了）
@@ -2352,34 +2353,34 @@ export default [
   {
     desc: 'M10713 com3_auto 深档调用点退回占位（不再执行真身——自动调教回数与专属文本都不出）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+    find: '    const com3_auto = autotrain_mod.com3_auto; // CALL com3_auto\n    com3_auto();\n    await autotrain_mod.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
     replace:
-      '    // 变异：调用点退回占位（不执行 COM3_AUTO 真身）\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
+      '    // 变异：调用点退回占位（不执行 COM3_AUTO 真身）\n    await autotrain_mod.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
     tests: ['dungeon-trap'],
     must_mention: 'com3_auto 真身被调',
   },
   {
     desc: 'M10714 com3_auto 深档调错变体（com3_auto 换成 com0_auto——自动调教回数照涨，文本与常量露馅）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+    find: '    const com3_auto = autotrain_mod.com3_auto; // CALL com3_auto\n    com3_auto();\n    await autotrain_mod.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
     replace:
-      "    const { com0_auto } = require('#/system/train/autotrain'); // 变异：调错变体\n    com0_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,",
+      '    const com0_auto = autotrain_mod.com0_auto; // 变异：调错变体\n    com0_auto();\n    await autotrain_mod.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力降为0！）`,',
     tests: ['dungeon-trap'],
     must_mention: 'com3_auto 真身被调',
   },
   {
     desc: 'M10715 com3_auto 浅档调用点退回占位（不再执行真身——浅度催眠档的回数停在 1）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: "    const { com3_auto } = require('#/system/train/autotrain'); // CALL com3_auto\n    com3_auto();\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,",
+    find: '    const com3_auto = autotrain_mod.com3_auto; // CALL com3_auto\n    com3_auto();\n    await autotrain_mod.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,',
     replace:
-      '    // 变异：浅度档的调用点退回占位\n    await battle.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,',
+      '    // 变异：浅度档的调用点退回占位\n    await autotrain_mod.source_check_auto();\n    if (show) {\n      era.print(\n        `${name}连怪物跑到面前的声音都听不到了。（攻击力和防御力下降一半！）`,',
     tests: ['dungeon-trap'],
     must_mention: '浅度档同样接真身',
   },
   {
     desc: 'M10716 com50_auto 调用点退回占位（不再执行真身——液体追加/露出与专属文本都不出）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: "  const { com50_auto } = require('#/system/train/autotrain'); // CALL com50_auto\n  com50_auto();",
+    find: '  const com50_auto = autotrain_mod.com50_auto; // CALL com50_auto\n  com50_auto();',
     replace: `  // 变异：调用点退回占位（不执行 COM50_AUTO 真身）`,
     tests: ['dungeon-trap'],
     must_mention: 'com50_auto 真身被调',
@@ -2387,8 +2388,8 @@ export default [
   {
     desc: 'M10717 com50_auto 调错变体（com50_auto 换成 com3_auto——回数照涨，液体追加/露出落空）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: "  const { com50_auto } = require('#/system/train/autotrain'); // CALL com50_auto\n  com50_auto();",
-    replace: `  const { com3_auto } = require('#/system/train/autotrain'); // 变异：调错变体
+    find: '  const com50_auto = autotrain_mod.com50_auto; // CALL com50_auto\n  com50_auto();',
+    replace: `  const com3_auto = autotrain_mod.com3_auto; // 变异：调错变体
   com3_auto();`,
     tests: ['dungeon-trap'],
     must_mention: 'com50_auto 真身被调',
@@ -2396,9 +2397,9 @@ export default [
   {
     desc: 'M10718 com13_auto 肛门虫陷阱调用点退回占位（不再执行真身——losebase 与逃离常量都不出）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: `    const { com13_auto } = require('#/system/train/autotrain');
+    find: `    const com13_auto = autotrain_mod.com13_auto;
     com13_auto();`,
-    replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
+    replace: '    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）',
     tests: ['dungeon-trap'],
     must_mention:
       'com13_auto 真身被调（本体只在 TEQUIP:90 时改说「肛门触手」）',
@@ -2406,9 +2407,9 @@ export default [
   {
     desc: 'M10719 com13_auto 调错变体（com13_auto 换成 com0_auto——回数照涨，本体文本换人）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: `    const { com13_auto } = require('#/system/train/autotrain');
+    find: `    const com13_auto = autotrain_mod.com13_auto;
     com13_auto();`,
-    replace: `    const { com0_auto } = require('#/system/train/autotrain'); // 变异：调错变体
+    replace: `    const com0_auto = autotrain_mod.com0_auto; // 变异：调错变体
     com0_auto();`,
     tests: ['dungeon-trap'],
     must_mention:
@@ -2417,7 +2418,7 @@ export default [
   {
     desc: 'M10720 com0_auto 淫虫陷阱调用点退回占位（不再执行真身——性行为 60 与 losebase 常量都不出）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: `  const { com0_auto } = require('#/system/train/autotrain');
+    find: `  const com0_auto = autotrain_mod.com0_auto;
   com0_auto();`,
     replace: `  // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
     tests: ['dungeon-trap'],
@@ -2426,9 +2427,9 @@ export default [
   {
     desc: 'M10721 com0_auto 调错变体（com0_auto 换成 com63_auto——回数照涨，专属文本与常量落空）',
     file: 'ere/system/dungeon/dungeon-trap.js',
-    find: `  const { com0_auto } = require('#/system/train/autotrain');
+    find: `  const com0_auto = autotrain_mod.com0_auto;
   com0_auto();`,
-    replace: `  const { com63_auto } = require('#/system/train/autotrain'); // 变异：调错变体
+    replace: `  const com63_auto = autotrain_mod.com63_auto; // 变异：调错变体
   com63_auto();`,
     tests: ['dungeon-trap'],
     must_mention: 'com0_auto 真身被调',
@@ -2436,7 +2437,7 @@ export default [
   {
     desc: 'M10722 com0_auto 宴会风俗（娼婦購入分支）调用点退回占位（不再执行真身）',
     file: 'ere/system/dungeon/dungeon-town.js',
-    find: "          const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto\n          com0_auto();",
+    find: '          autotrain_mod.com0_auto(); // CALL com0_auto',
     replace: `          // 变异：调用点退回占位（不执行 com0_auto 真身）`,
     tests: ['dungeon-town'],
     must_mention: 'com0_auto 真身被调',
@@ -2444,16 +2445,15 @@ export default [
   {
     desc: 'M10723 com0_auto 宴会风俗（少年风俗分支）调用点退回占位（不再执行真身）',
     file: 'ere/system/dungeon/dungeon-town.js',
-    find: "        const { com0_auto } = require('#/system/train/autotrain'); // CALL com0_auto\n        com0_auto();",
-    replace: `        // 变异：调用点退回占位（不执行 com0_auto 真身）`,
+    find: '        await before_autotrain();\n        autotrain_mod.com0_auto(); // CALL com0_auto',
+    replace: `        await before_autotrain();\n        // 变异：调用点退回占位（不执行 com0_auto 真身）`,
     tests: ['dungeon-town'],
     must_mention: 'com0_auto 真身被调',
   },
   {
     desc: 'M10724 com13_auto 勇者侧攻击调用点退回占位（不再执行真身）',
     file: 'ere/system/dungeon/dungeon-battle.js',
-    find: `    const { com13_auto } = require('#/system/train/autotrain');
-    com13_auto();`,
+    find: '    autotrain_mod.com13_auto();',
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
     must_mention: 'LOSEBASE:0 = 10（COM13 专属，结算后 2000 - 10）',
@@ -2461,7 +2461,7 @@ export default [
   {
     desc: 'M10725 com13_auto 角色对角色的攻击调用点退回占位（不再执行真身）',
     file: 'ere/system/dungeon/dungeon-battle2.js',
-    find: `    const { com13_auto } = require('#/system/train/autotrain');
+    find: `    const com13_auto = autotrain_mod.com13_auto;
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
@@ -2470,7 +2470,7 @@ export default [
   // —— #508：迷宫自动调教链的 UPCHECK 等价步 ——
   {
     desc: 'M11007 自动调教结算后不补 nextTurnInTrain（NOWEX→EX 不合并、SOURCE 不消费）',
-    file: 'ere/system/dungeon/dungeon-battle.js',
+    file: 'ere/system/train/autotrain.js',
     find: '  era.nextTurnInTrain();',
     replace: '  // 变异：不补 UPCHECK 等价步',
     tests: ['dungeon-trap'],

@@ -614,7 +614,7 @@ test('max_page_salave：页数算式与 enemy 同构，条件换六状态', () =
 test('select_yes_no：一行两枚按钮（0 是的 / 1 不要），输入走按钮编号', async () => {
   const fixture = create_era_fixture();
   fixture.set_inputs(0);
-  const { select_yes_no } = fixture.load_module('page/page-life-list');
+  const { select_yes_no } = fixture.load_module('utils/input-yes-no');
   assert.equal(await select_yes_no(), 0);
   assert.deepEqual(
     fixture.lines_history
@@ -634,6 +634,6 @@ test('select_yes_no：一行两枚按钮（0 是的 / 1 不要），输入走按
 
   const second = create_era_fixture();
   second.set_inputs(1);
-  const mod = second.load_module('page/page-life-list');
+  const mod = second.load_module('utils/input-yes-no');
   assert.equal(await mod.select_yes_no(), 1);
 });

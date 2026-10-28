@@ -853,9 +853,7 @@ test('复数购买的尾段等键：取消提前退出不等键，成交后尾�
     [],
     '取消路径不等键',
   );
-  const { change_screen } = cancel.fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = cancel.fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(cancel.fixture.unread_output_clears, [], '取消路径无未读');
 
@@ -870,7 +868,7 @@ test('复数购买的尾段等键：取消提前退出不等键，成交后尾�
     2,
     '成交分支与尾段各等一次键',
   );
-  const cs = out.fixture.load_module('page/components/screen-change');
+  const cs = out.fixture.load_module('utils/screen-change');
   await cs.change_screen();
   assert.deepEqual(
     out.fixture.unread_output_clears,

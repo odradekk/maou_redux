@@ -252,9 +252,7 @@ test('giant_marriage_day：结算数字的裸 print 在换屏清空前经按键�
   const { fixture, api } = setup();
   await api.giant_marriage_day(0, 3, seq([]));
 
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(
     fixture.unread_output_clears,

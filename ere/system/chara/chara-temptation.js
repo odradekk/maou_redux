@@ -42,7 +42,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { karma } = require('#/system/chara/chara-stats');
 const { party_del } = require('#/system/dungeon/dungeon-party');
 const { add_ex_item } = require('#/system/dungeon/ex-item');
-const { select_yes_no } = require('#/page/page-life-list');
+const { select_yes_no } = require('#/utils/input-yes-no');
 const { chara } = require('#/facade/chara');
 const { default_rand, times } = require('#/utils/numeric');
 

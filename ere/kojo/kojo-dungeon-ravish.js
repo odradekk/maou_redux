@@ -90,7 +90,7 @@
  *     CHA_IMG2 无引擎通道。`IF 立绘` 分支保留结构注释、不移植调用。
  *   - **`CALL SHOW_DATA`**：角色状态显示
  *     已随 #390 实现，真身在
- *     ere/page/components/chara-data.js。
+ *     ere/system/chara/chara-data-screen.js。
  *   - **`CALL EQUIP_DATABASE` 与 W:0/W:1 装备记录**：pc_ryou 的
  *     武器检查（W:0 = CFLAG:550 存储编号，素手时装剑 40；CALL
  *     EQUIP_DATABASE 填 W:1 识别号）。ERE 侧用 #174 真身
@@ -131,15 +131,15 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
-const { show_data } = require('#/page/components/chara-data'); // #390 起真身
+const { show_data } = require('#/system/chara/chara-data-screen'); // #390 起真身
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { run_kojo } = require('#/kojo/kojo-system');
+const { gobi_koujo, run_kojo } = require('#/kojo/kojo-system');
+const ravish_man_mod = require('#/kojo/kojo-dungeon-ravish-man');
+const { karma } = require('#/system/chara/chara-stats');
+const { check_status } = require('#/system/dungeon/party-status');
 const { equip_database } = require('#/system/equip/equip-lookup');
 const { monstername } = require('#/system/dungeon/monster-data');
 const { battle_column } = require('#/system/dungeon/battle-state');
-// 注意：check_status / karma 来自 #/system/dungeon/dungeon，而 dungeon.js 顶层
-// require dungeon-battle/-battle2，后者将 require 本文件——顶层引用会成环。
-// 本文件在函数体内延迟 require（dungeon-battle.js 的 karma 先例）。
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -334,7 +334,7 @@ async function ryouzyoku(arg, rand) {
     if (type === 1) {
       // カタコト（兽人）
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.orc_ryou_man(arg, mon_num, rand_n);
       } else {
         await orc_ryou(arg, mon_num, rand_n);
@@ -342,7 +342,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 2) {
       // 史莱姆
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.slime_ryou_man(arg, mon_num, rand_n);
       } else {
         await slime_ryou(arg, mon_num, rand_n);
@@ -350,7 +350,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 3) {
       // 昆虫
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.insect_ryou_man(arg, mon_num, rand_n);
       } else {
         await insect_ryou(arg, mon_num, rand_n);
@@ -358,7 +358,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 4) {
       // 蔦触手
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.ivy_ryou_man(arg, mon_num, rand_n);
       } else {
         await ivy_ryou(arg, mon_num, rand_n);
@@ -366,7 +366,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 5) {
       // 触手
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.syokusyu_ryou_man(arg, mon_num, rand_n);
       } else {
         await syokusyu_ryou(arg, mon_num, rand_n);
@@ -374,7 +374,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 6) {
       // 妖精
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.faily_ryou_man(arg, mon_num, rand_n);
       } else {
         await faily_ryou(arg, mon_num, rand_n);
@@ -382,7 +382,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 7) {
       // 巨人
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.giant_ryou_man(arg, mon_num, rand_n);
       } else {
         await giant_ryou(arg, mon_num, rand_n);
@@ -390,7 +390,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 8) {
       // 男
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.man_ryou_man(arg, mon_num, rand_n);
       } else {
         await man_ryou(arg, mon_num, rand_n);
@@ -401,7 +401,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 10) {
       // 獣
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.beast_ryou_man(arg, mon_num, rand_n);
       } else {
         await beast_ryou(arg, mon_num, rand_n);
@@ -409,7 +409,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 11) {
       // 脑奸
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.brain_ryou_man(arg, mon_num, rand_n);
       } else {
         await brain_ryou(arg, mon_num, rand_n);
@@ -417,7 +417,7 @@ async function ryouzyoku(arg, rand) {
     } else if (type === 12) {
       // 馬
       if (is_male) {
-        const man = require('#/kojo/kojo-dungeon-ravish-man');
+        const man = ravish_man_mod;
         await man.horse_ryou_man(arg, mon_num, rand_n);
       } else {
         await horse_ryou(arg, mon_num, rand_n);
@@ -1083,12 +1083,8 @@ async function orc_ryou(arg, mon_num, rand) {
 
     // 『猪…』整段拼成一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
     // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
-    const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
-      era.get(`talent:${arg}:17`) ? 1 : 5,
-    ); // （プライド低い → 喜び、否则情けない）
-    const gobi_pig2 = await require('#/kojo/kojo-system').gobi_koujo(
-      era.get(`talent:${arg}:17`) ? 1 : 5,
-    );
+    const gobi_pig = await gobi_koujo(era.get(`talent:${arg}:17`) ? 1 : 5); // （プライド低い → 喜び、否则情けない）
+    const gobi_pig2 = await gobi_koujo(era.get(`talent:${arg}:17`) ? 1 : 5);
     await era.printAndWait(
       `『猪${gobi_pig}还自称冒险者……简直傻了${gobi_pig2}${'\u3000'}噗噗，噗嘻！』`,
     );
@@ -3767,8 +3763,7 @@ async function victory_ryouzyoku(arg = -1, rand) {
     await era.printAndWait(
       `冒险者被魔界的瘴气侵袭着，玩弄起${monstername(local_1)}来。（善恶值:-10）`,
     );
-    // CALL KARMA, ARG, -10（dungeon.js 的 karma 域内存根）
-    const { karma } = require('#/system/dungeon/dungeon');
+    // CALL KARMA, ARG, -10
     karma(arg, -10);
   }
 
@@ -3966,8 +3961,7 @@ async function dungeon_ryouzyoku_escape(arg, rand) {
   }
 
   // 分析队伍状态（CALL CHECK_STATUS, ARG, 1——MODE 1 静默）
-  const { check_status: check_status_fn } = require('#/system/dungeon/dungeon');
-  const status = await check_status_fn(arg, 1);
+  const status = await check_status(arg, 1);
   const rating = status[7]; // RESULT:7 队伍当前状态评级
 
   // 发现奄奄一息的勇者

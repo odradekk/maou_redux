@@ -158,7 +158,7 @@ test('FAMILY_BIRTHTO_MOM/DAD：普通父母先重建关系，再以 6/5 加入�
 test('SELECT_YES_NO：#710 起选项是按钮，返回 0 或 1', async () => {
   const fixture = create_era_fixture();
   fixture.set_inputs(1);
-  const { select_yes_no } = fixture.load_module('page/page-life-list');
+  const { select_yes_no } = fixture.load_module('utils/input-yes-no');
 
   assert.equal(await select_yes_no(), 1);
   assert.deepEqual(

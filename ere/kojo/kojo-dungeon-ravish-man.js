@@ -60,6 +60,7 @@
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
+const { gobi_koujo } = require('#/kojo/kojo-system');
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -442,12 +443,8 @@ async function orc_ryou_man(arg, mon_num, rand) {
 
     // 『猪…』整段拼成一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
     // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
-    const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
-      t(17) ? 1 : 5,
-    ); // （プライド低い → 喜び、否则情けない）
-    const gobi_pig2 = await require('#/kojo/kojo-system').gobi_koujo(
-      t(17) ? 1 : 5,
-    );
+    const gobi_pig = await gobi_koujo(t(17) ? 1 : 5); // （プライド低い → 喜び、否则情けない）
+    const gobi_pig2 = await gobi_koujo(t(17) ? 1 : 5);
     await era.printAndWait(
       `『猪${gobi_pig}还自称冒险者……简直傻了${gobi_pig2}${'\u3000'}噗噗，噗嘻！』`,
     );

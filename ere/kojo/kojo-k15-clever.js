@@ -17,6 +17,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { piercing_state } = require('#/system/train/piercing-state');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
@@ -5909,7 +5910,6 @@ async function kojo_message_com_15(rand) {
   }
 
   if (era_flag.selectcom == 87) {
-    const { piercing_state } = require('#/system/train/piercing-state');
     const P = piercing_state.p;
 
     if (kojo.穿环 == 0) {

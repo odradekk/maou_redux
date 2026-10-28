@@ -72,41 +72,45 @@ const { is_state } = require('#/system/flow/game-state');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { karma } = require('#/system/chara/chara-stats');
 const { party_del } = require('#/system/dungeon/dungeon-party');
-// H6（#175）战斗真身：dungeon-battle / dungeon-battle2 对 dungeon.js 的
-// karma 与 EX 道具兼容出口是函数内延迟 require（避开循环初始化）。
-// H7（#176）陷阱真身在 ere/system/dungeon/dungeon-trap.js（其对 dungeon.js 的
-// karma 真身是延迟 require，同款防环；dark_juel_trap 唯一调用点）。
-// H8（#177）房间与设施真身在 ere/system/dungeon/dungeon-room.js（其 karma /
-// campaign_room 域内存根经延迟 require 复用；EX 道具随 #344 直连真身）。
+// H6（#175）战斗真身：dungeon-battle / dungeon-battle2 已直连 karma 与 EX 道具
+// 的真身（chara-stats / ex-item），不再经本文件转发。
+// H7（#176）陷阱真身在 ere/system/dungeon/dungeon-trap.js（其 karma 同样直连
+// 真身；dark_juel_trap 唯一调用点）。
+// H8（#177）房间与设施真身在 ere/system/dungeon/dungeon-room.js（其 karma 与
+// campaign_room 都直连真身）。
 const battle_mod = require('#/system/dungeon/dungeon-battle');
 const battle2_mod = require('#/system/dungeon/dungeon-battle2');
 const trap_mod = require('#/system/dungeon/dungeon-trap');
 const room_mod = require('#/system/dungeon/dungeon-room');
 const town_mod = require('#/system/dungeon/dungeon-town');
 const ex_item_mod = require('#/system/dungeon/ex-item');
-const { ending_2 } = require('#/page/page-ending');
+const { get_junk_item } = ex_item_mod;
+const campaign_mod = require('#/system/dungeon/dungeon-campaign');
+const {
+  check_status,
+  check_status_one,
+} = require('#/system/dungeon/party-status');
+const { ending_2 } = require('#/system/ending/ending-screen');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 const { default_rand } = require('#/utils/numeric');
 
-// —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
-// 键都是 FLAG:400（当前进行中的战役号）；只有 campaign_set_1 存在，
-// FLAG:400 在可达状态下只能是 0/1（各调用点先挡 < 1），declaredIds
-// 声明 {1} 即可（page-campaign.js 文件头同款依据）。实现在
-// ere/page/page-campaign-1.js 注册。
+const {
+  campaign_room,
+  campaign_quest,
+  campaign_ending,
+  campaign_room_family,
+  campaign_quest_family,
+  campaign_story_family,
+  campaign_ending_family,
+} = campaign_mod;
 
-/** CAMPAIGN_ROOM_{FLAG:400} 族：战役迷宫的房间类型 */
-const campaign_room_family = new DispatchFamily('CAMPAIGN_ROOM', [1]);
-/** CAMPAIGN_QUEST_{FLAG:400} 族：战役中的踏破判定 */
-const campaign_quest_family = new DispatchFamily('CAMPAIGN_QUEST', [1]);
-/** CAMPAIGN_STORY_{FLAG:400} 族：踏破推进时插播的剧情文本 */
-const campaign_story_family = new DispatchFamily('CAMPAIGN_STORY', [1]);
-/** CAMPAIGN_ENDING_{FLAG:400} 族：战役终局演出 */
-const campaign_ending_family = new DispatchFamily('CAMPAIGN_ENDING', [1]);
+// 战役 1「赤蛮咒森」的族与入口真身在 ere/system/dungeon/dungeon-campaign.js
+// （房间选择 / 讨伐对象 / 踏破与终局三处都要用，故落在比战斗模块更低的位置）。
+// 本文件只把入口留在自己的导出面上，供既有调用点照旧取用。
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -132,73 +136,6 @@ function name_of(cid) {
 // dungeon_town：#178（H9）起为真身
 // ere/system/dungeon/dungeon-town.js（撤到迷宫外时的城镇事件——
 // 补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
-
-/**
- * campaign_quest：战役中的踏破判定，含
- * 楼层推进剧情（内嵌 campaign_story 族派发）。
- * RESULT：1 = 攻略成功 / 0 = 失败被赶回。
- * @param {number} cid 队长（ARG:0）
- * @returns {Promise<number>} RESULT（FLAG:400 < 1 时恒 0）
- */
-async function campaign_quest(cid) {
-  const active = era_flag.hero_campaign_active;
-  if (active < 1) {
-    return 0;
-  }
-  // 楼层（CFLAG:cid:501）超过剧情进度（FLAG:401）时推进一段剧情
-  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {
-    era.print('―STORY―');
-    await era.waitAnyKey(true); // FORCEWAIT
-    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
-    era_flag.campaign_story_progress += 1;
-  }
-  return campaign_quest_family.call(active, { whenMissing: 0, args: [cid] });
-}
-
-/**
- * campaign_ending：战役终局演出。
- *
- * 角色复位循环无条件跑（不受 FLAG:400 < 1 早退约束，
- * FOR 循环放在 SIF 之前）：即使调用点已经用 `FLAG:400 > 0` 挡过一层，
- * 函数体自身仍保留这个无条件动作。
- *
- * 调用点传 ARG:0（队长），但函数体自身不使用，CAMPAIGN_ENDING_{n} 也不接收
- * 参数——故本移植不设形参。
- * @returns {Promise<number>} 家族调用的 RESULT（FLAG:400 < 1 时恒 0）
- */
-async function campaign_ending() {
-  // 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立保留）
-  for (const cid of era.getAddedCharacters()) {
-    if (chara(cid).invasion.状态 === 12) {
-      party_del(cid);
-      chara(cid).invasion.状态 = 0;
-      chara(cid).invasion.回城标志 = 0;
-    }
-  }
-  const active = era_flag.hero_campaign_active;
-  if (active < 1) {
-    return 0;
-  }
-  const result = await campaign_ending_family.call(active, {
-    whenMissing: 0,
-    args: [],
-  });
-  era_flag.hero_campaign_active = 0; // FLAG:400 = 0 战役结束清零
-  return result;
-}
-
-/**
- * campaign_room：战役迷宫的房间类型。
- * @param {number} floor 阶层（ARG:0）
- * @returns {Promise<number>} 房间类型（FLAG:400 < 1 时恒 0）
- */
-async function campaign_room(floor) {
-  const active = era_flag.hero_campaign_active;
-  if (active < 1) {
-    return 0;
-  }
-  return campaign_room_family.call(active, { whenMissing: 0, args: [floor] });
-}
 
 /**
  * bedroom_battle_male：男魔王寝室战
@@ -1516,210 +1453,9 @@ async function dungeon_rest_phase(ctx) {
   }
 }
 
-/**
- * check_status 的单人判定段（队长 / 仲間A / 仲間B 的同构链）：
- * 按 HP/MP 百分比写 CFLAG:534（状态档）并返回累加的
- * STATUS 槽位。
- *
- * 首分支 `HP% < 60 || MP% < 50` 已吞并其后全部六个分支（身体抱恙 / 重伤 /
- * 头脑发昏 / 濒死×2 / 气绝在逻辑上均不可达），实际可达态只有「轻伤（2）」
- * 与「元气满满（1）」两档——run_dungeon 的撤退判定（534 >= 3 / == 4）
- * 随之只有「轻伤 + 胆小」一分支真实可达。
- *
- * @param {number} cid 角色
- * @param {number} mode MODE（非 0 时静默不打印）
- * @returns {number} STATUS 槽位（1 轻伤 / 0 元气满满；2-6 为不可达档）
- */
-function check_status_one(cid, mode) {
-  const name = name_of(cid);
-  const hp_pct = Math.floor(
-    (chara(cid).dungeon.体力 * 100) / (era.get(`maxbase:${cid}:0`) || 0),
-  );
-  const wp_pct = Math.floor(
-    (chara(cid).dungeon.气力 * 100) / (era.get(`maxbase:${cid}:1`) || 0),
-  );
-  // 阈值（S1_HP 60 / S1_MP 50 / S2_HP 35 / S2_MP 30 / S3_HP 20 /
-  // S3_MP 10）随各分支字面内联。ELSEIF 链以顺序 if + return
-  // 等价改写（首个真条件胜出）——分支 2-7 的条件被首分支覆盖，
-  // 改写不引入行为差异
-  if (hp_pct < 60 || wp_pct < 50) {
-    if (!mode) {
-      era.print(`${name}轻伤。`);
-    }
-    chara(cid).dungeon.已接任务 = 2; // CFLAG:534 = 2
-    return 1;
-  }
-  if (wp_pct < 50) {
-    // 不可达（首分支已含），保留
-    if (!mode) {
-      era.print(`${name}身体抱恙。`);
-    }
-    chara(cid).dungeon.已接任务 = 2;
-    return 4;
-  }
-  if (hp_pct < 35 || wp_pct < 30) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}重伤。`);
-    }
-    chara(cid).dungeon.已接任务 = 3;
-    return 2;
-  }
-  if (wp_pct < 30) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}头脑发昏。`);
-    }
-    chara(cid).dungeon.已接任务 = 3;
-    return 5;
-  }
-  if (hp_pct < 20 && wp_pct < 10) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}濒死。`);
-    }
-    chara(cid).dungeon.已接任务 = 4;
-    return 3;
-  }
-  if (hp_pct < 20) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}濒死。`);
-    }
-    chara(cid).dungeon.已接任务 = 4;
-    return 3;
-  }
-  if (wp_pct < 10) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}气绝。`);
-    }
-    chara(cid).dungeon.已接任务 = 4;
-    return 6;
-  }
-  if (!mode) {
-    era.print(`${name}元气满满。`);
-  }
-  chara(cid).dungeon.已接任务 = 1; // CFLAG:534 = 1
-  return 0;
-}
-
-/**
- * check_status：队伍伤势判定。
- *
- * 从队长记忆（CFLAG:533）解析三人（自己是队长读自己的 531/532；自己是
- * 同伴则读队长的，且若自己占了同伴A 位则视角换成队长），对侵攻 / 迎击中
- * （CFLAG:1 == 2 || 3）的三人各走判定链，产出 8 槽 STATUS 数组。
- *
- * @param {number} arg0 队长（ARG:0）
- * @param {number} [mode] MODE（缺省 0；非 0 静默）
- * @returns {Promise<number[]>} RETURN STATUS,STATUS:1..STATUS:7（8 值）：
- *   [0]=STATUS:0（无消费）、[1]轻伤数、[2]重伤数、[3]濒死数、[4]身体抱恙
- *   数、[5]头脑发昏数、[6]气绝数、[7]评级
- */
-async function check_status(arg0, mode = 0) {
-  let sidea;
-  let sideb;
-  if ((era.get(`cflag:${arg0}:533`) || 0) === arg0) {
-    // 自己是队长
-    sidea = era.get(`cflag:${arg0}:531`) || 0;
-    sideb = era.get(`cflag:${arg0}:532`) || 0;
-  } else {
-    // 视角换队长；自己占同伴位时把自己换成队长号
-    const leader = era.get(`cflag:${arg0}:533`) || 0;
-    sidea = era.get(`cflag:${leader}:531`) || 0;
-    sideb = era.get(`cflag:${leader}:532`) || 0;
-    if (sidea === arg0) {
-      sidea = leader;
-    }
-    if (sideb === arg0) {
-      sideb = leader;
-    }
-  }
-
-  // varset STATUS
-  const status = [0, 0, 0, 0, 0, 0, 0, 0];
-
-  const place = chara(arg0).invasion.状态;
-  if (place === 2 || place === 3) {
-    // 队长
-    status[check_status_one(arg0, mode)] += 1;
-    // 仲間A
-    if (sidea > 0) {
-      status[check_status_one(sidea, mode)] += 1;
-    }
-    // 仲間B
-    if (sideb > 0) {
-      status[check_status_one(sideb, mode)] += 1;
-    }
-  }
-
-  // 队伍当前状态评级：基础分0|元气满满+0|轻伤+1|身体抱恙+1|
-  // 重伤+3|头脑发昏+2|濒死+4|气绝+4
-  status[7] =
-    status[1] +
-    status[2] +
-    status[3] * 4 +
-    status[4] * 3 +
-    status[5] * 2 +
-    status[6] * 4;
-  // RETURN STATUS,STATUS:1..STATUS:7
-  return status;
-}
-
-/**
- * get_junk_item：换金财物入手。
- *
- * 计算式：100 + 等级 × RAND(√(魔王等级 + 等级 + 1))；素质补正
- * （好奇心 +10 / 为钱而来 +20 / 霍比特·矮人 +30 / 盗贼 1.5 倍）后乘当前
- * 阶层（CFLAG:501），下限 1，累入 CFLAG:581（掠夺的换金前金品）。
- *
- * @param {number} cid 角色（ARG）
- * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 恒 return 0
- */
-async function get_junk_item(cid, rand) {
-  const rand_n = rand ?? default_rand;
-  // CFLAG:MASTER:9 魔王等级（MASTER 恒角色 0）；SQRT 整数平方根
-  const master_lv = era.get('cflag:0:9') || 0;
-  const lv = era.get(`cflag:${cid}:9`) || 0;
-  let local = 100 + lv * rand_n(Math.floor(Math.sqrt(master_lv + lv + 1)));
-
-  // 好奇心ボーナス（TALENT:23）
-  if (era.get(`talent:${cid}:23`)) {
-    local += 10;
-  }
-  // 金のためボーナス（TALENT:316 成为勇者的契机 == 2）
-  if ((era.get(`talent:${cid}:316`) || 0) === 2) {
-    local += 20;
-  }
-  // ホビット（種族 TALENT:314 == 10）・ドワーフ（== 11）+30
-  if (
-    (era.get(`talent:${cid}:314`) || 0) === 10 ||
-    (era.get(`talent:${cid}:314`) || 0) === 11
-  ) {
-    local += 30;
-  }
-  // 盗賊は収入が多い（1.5倍；TALENT:203）
-  if (era.get(`talent:${cid}:203`)) {
-    local += Math.floor(local / 2);
-  }
-
-  // LOCAL *= CFLAG:ARG:501（阶层）
-  local *= chara(cid).dungeon.侵攻阶层;
-
-  // SIF LOCAL < 1 → 1
-  if (local < 1) {
-    local = 1;
-  }
-  if (((era.get('flag:5') || 0) & 32) !== 0) {
-    era.print(`${name_of(cid)}找到了价值${local}的财物。`);
-  }
-
-  // CFLAG:ARG:581 += LOCAL（dungeon 属主域内）
-  era.set(`cflag:${cid}:581`, (era.get(`cflag:${cid}:581`) || 0) + local);
-  return 0;
-}
+// CHECK_STATUS 一族与 get_junk_item 的真身分别在 party-status.js 与
+// ex-item.js：迷宫主流程反过来依赖战斗模块，这两个共用件留在本文件里
+// 就只能靠函数内 require 绕开装载顺序。
 
 /**
  * get_down_enemy：勇者陷落时的初始化与资金入手。
@@ -1756,11 +1492,11 @@ module.exports = {
   bedroom_battle_male,
   check_status,
   check_status_one,
-  get_junk_item,
+  get_junk_item: ex_item_mod.get_junk_item,
   get_down_enemy,
-  // 三支战斗侧消费的域内存根（#175 起 dungeon-battle/-battle2 经模块对象
-  // 引用——本文件单点导出）。#177 起增补
-  // campaign_room（dungeon-room.js 战役分支的延迟 require 同款）
+  // 本文件把迷宫域内几支共用件留在导出面上（既有调用点照旧取用）；真身
+  // 分别在 chara-stats（karma）、ex-item（EX 道具与换金财物）、
+  // dungeon-campaign（战役四族与入口）。
   karma,
   add_ex_item: ex_item_mod.add_ex_item,
   use_ex_item: ex_item_mod.use_ex_item,

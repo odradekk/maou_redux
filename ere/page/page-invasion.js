@@ -113,7 +113,7 @@ const {
 } = require('#/system/invasion/invasion-campaign');
 const { print_progress_line } = require('#/system/invasion/invasion-progress');
 const { campaign_menu } = require('#/page/page-campaign');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_left } = require('#/utils/display-width');
 const { COUNT_RULE } = require('#/utils/input-rule');

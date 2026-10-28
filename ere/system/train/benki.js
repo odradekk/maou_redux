@@ -78,6 +78,7 @@ const { v_able } = require('#/system/train/v-able');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const { benki_koujo } = require('#/kojo/kojo-system');
+const bitch_log_mod = require('#/kojo/kojo-dungeon-bitch-log');
 
 /** 名字读取（#5 决议：本作里 = 名前） */
 function name_of(cid) {
@@ -1278,11 +1279,7 @@ function general_rumor(cid, play) {
  *  同源注入，测试用定值序固定分支（LOOKS 的骰子与人数加算的随机共用
  *  同一序列，与 kojo-dungeon-bitch 的先例一致）。 */
 function fs_bitch_looks(cid, rand_n) {
-  return require('#/kojo/kojo-dungeon-bitch-log').fs_bitch(
-    'LOOKS',
-    cid,
-    rand_n,
-  );
+  return bitch_log_mod.fs_bitch('LOOKS', cid, rand_n);
 }
 
 /**

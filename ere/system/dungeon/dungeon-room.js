@@ -51,7 +51,12 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
+// 改名避开 dungeon_hotel 里同名局部量（该处 karma 是读出来的善恶值）
+const { karma: apply_karma } = require('#/system/chara/chara-stats');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+// 战役房间类型的入口真身在 dungeon-campaign.js（族实例与本文件的
+// CAMPAIGN_ROOM_EXTRA 同处一层，不再回引迷宫主流程）。
+const { campaign_room } = require('#/system/dungeon/dungeon-campaign');
 const ex_item_mod = require('#/system/dungeon/ex-item');
 const summon_mod = require('#/system/dungeon/monster-summon');
 const { default_rand } = require('#/utils/numeric');
@@ -140,10 +145,8 @@ async function dungeon_room(arg0, rand, ctx) {
   let room;
   let extra;
   if (place === 12) {
-    // 戦役：campaign_room（延迟 require dungeon.js，防环）/
-    // campaign_room_extra（域内真身，#469 起）
-    const dungeon_mod = require('#/system/dungeon/dungeon');
-    room = await dungeon_mod.campaign_room(chara(arg0).dungeon.侵攻阶层);
+    // 戦役：campaign_room（战役族入口）/ campaign_room_extra（域内真身，#469 起）
+    room = await campaign_room(chara(arg0).dungeon.侵攻阶层);
     extra = await campaign_room_extra(chara(arg0).dungeon.侵攻阶层);
   } else {
     const room_id = chara(arg0).dungeon.侵攻阶层 + 349;
@@ -1227,9 +1230,8 @@ async function dungeon_hotel(a, extra) {
   era_exflag.legit_money += cost;
   chara(a).dungeon.所持金 -= cost;
 
-  // CALL karma, A, -1（域内延迟 require，文件头）
-  const dungeon_mod = require('#/system/dungeon/dungeon');
-  dungeon_mod.karma(a, -1);
+  // CALL karma, A, -1
+  apply_karma(a, -1);
 
   return 0;
 }

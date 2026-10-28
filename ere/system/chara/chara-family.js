@@ -13,6 +13,7 @@
 
 const era = require('#/era-electron');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { nid_get_type } = require('#/system/chara/chara-name-type');
 const { default_rand } = require('#/utils/numeric');
 
 const int = Math.trunc;
@@ -624,13 +625,6 @@ function f_is_close_experience(a, b) {
 
 function f_check_relevant(a, b) {
   if (!f_is_same_race(a, b)) return 0;
-  // nid_get_type 的真身自 #384（N2）起在 ere/system/chara/chara-name.js；本文件只在
-  // f_check_relevant 里用它，故在调用点惰性取。
-  // **不能写成顶层 require**：chara-name 顶层 require 本文件的
-  // relation_rename_rebuild，两边静态引用即环——谁先装载，另一边的解构就是
-  // undefined。惰性取在这里是安全的：两个模块必已装载完。同款处置见
-  // ere/kojo/kojo-k12-intellectual.js。
-  const { nid_get_type } = require('#/system/chara/chara-name');
   if (
     Math.min(1, Math.max(0, nid_get_type(nid(a)))) !==
     Math.min(1, Math.max(0, nid_get_type(nid(b))))

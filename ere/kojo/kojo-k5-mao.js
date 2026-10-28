@@ -27,6 +27,7 @@
  */
 
 const era = require('#/era-electron');
+const { piercing_state } = require('#/system/train/piercing-state');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
@@ -9208,7 +9209,6 @@ async function kojo_message_com_5(rand) {
     // 延迟读取：主启动图的 COM80–90 注册仍仅由 com-hardcore 自己负责；本模块
     // 只在 COM 口上读穿环位图。顶层 require 会让 main-loop 漏装时模块仍被间接
     // 拉进来，#274/#282 接入锁与 M1249 一起失明（#233 全量变异抓到）。
-    const { piercing_state } = require('#/system/train/com-hardcore');
     P = piercing_state.p;
 
     if (kojo.穿环 === 0) {

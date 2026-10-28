@@ -611,8 +611,67 @@ async function add_ex_item(kind, cid, source, rand = default_rand) {
   return 0;
 }
 
+/**
+ * get_junk_item：换金财物入手。
+ *
+ * 计算式：100 + 等级 × RAND(√(魔王等级 + 等级 + 1))；素质补正
+ * （好奇心 +10 / 为钱而来 +20 / 霍比特·矮人 +30 / 盗贼 1.5 倍）后乘当前
+ * 阶层（CFLAG:501），下限 1，累入 CFLAG:581（掠夺的换金前金品）。
+ *
+ * 战利品搜刮与迷宫陷落结算共用；放在 EX 道具模块里，是因为它和道具入手
+ * 一样只写勇者资产 CFLAG:580/581，而迷宫主流程反过来依赖战斗模块，真身
+ * 留在主流程里就只能靠函数内 require 绕开装载顺序。
+ *
+ * @param {number} cid 角色（ARG）
+ * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
+ * @returns {Promise<number>} 恒 return 0
+ */
+async function get_junk_item(cid, rand) {
+  const rand_n = rand ?? default_rand;
+  // CFLAG:MASTER:9 魔王等级（MASTER 恒角色 0）；SQRT 整数平方根
+  const master_lv = era.get('cflag:0:9') || 0;
+  const lv = era.get(`cflag:${cid}:9`) || 0;
+  let local = 100 + lv * rand_n(Math.floor(Math.sqrt(master_lv + lv + 1)));
+
+  // 好奇心ボーナス（TALENT:23）
+  if (era.get(`talent:${cid}:23`)) {
+    local += 10;
+  }
+  // 金のためボーナス（TALENT:316 成为勇者的契机 == 2）
+  if ((era.get(`talent:${cid}:316`) || 0) === 2) {
+    local += 20;
+  }
+  // ホビット（種族 TALENT:314 == 10）・ドワーフ（== 11）+30
+  if (
+    (era.get(`talent:${cid}:314`) || 0) === 10 ||
+    (era.get(`talent:${cid}:314`) || 0) === 11
+  ) {
+    local += 30;
+  }
+  // 盗賊は収入が多い（1.5倍；TALENT:203）
+  if (era.get(`talent:${cid}:203`)) {
+    local += Math.floor(local / 2);
+  }
+
+  // LOCAL *= CFLAG:ARG:501（阶层）
+  local *= chara(cid).dungeon.侵攻阶层;
+
+  // SIF LOCAL < 1 → 1
+  if (local < 1) {
+    local = 1;
+  }
+  if (((era.get('flag:5') || 0) & 32) !== 0) {
+    era.print(`${name_of(cid)}找到了价值${local}的财物。`);
+  }
+
+  // CFLAG:ARG:581 += LOCAL（dungeon 属主域内）
+  era.set(`cflag:${cid}:581`, (era.get(`cflag:${cid}:581`) || 0) + local);
+  return 0;
+}
+
 module.exports = {
   use_ex_item,
+  get_junk_item,
   sell_ex_item,
   add_ex_item,
   ex_item_name,

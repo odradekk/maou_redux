@@ -54,7 +54,7 @@ const WHITELIST = new Map([
     '离队流程的完整移除（issue #172）：无除名登记，与献祭同属待裁定的变体',
   ],
   [
-    'page/page-ending.js',
+    'system/ending/ending-screen.js',
     '结局的贡品退场三连（队伍→删除→称呼重建）：无登记无指针清理，待裁定',
   ],
   [

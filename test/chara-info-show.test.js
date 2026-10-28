@@ -1744,7 +1744,7 @@ function data_fixture({ cflags = {}, ex_talents = {}, items = {} } = {}) {
     fixture.store.set(`itemname:${index}`, value);
   }
   fixture.era.beginTrain(7); // e: 与 tflag 同属调教域的表
-  return { fixture, ...fixture.load_module('page/components/chara-data') };
+  return { fixture, ...fixture.load_module('system/chara/chara-data-screen') };
 }
 
 test('show_data：无色段与底色——使役魔兽的名字着 #63e390', () => {

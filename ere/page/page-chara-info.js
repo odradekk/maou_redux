@@ -102,7 +102,7 @@ const {
   show_button_name_edit,
 } = require('#/system/chara/chara-name-edit');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
 const { chara_number_swap } = require('#/page/page-chara-number-swap');
 const { ability_up_core } = require('#/page/page-ability-up');

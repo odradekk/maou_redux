@@ -43,13 +43,14 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-test('公开十八个函数，ex_item_name 区分已鉴定与未鉴定品', () => {
+test('公开十九个函数，ex_item_name 区分已鉴定与未鉴定品', () => {
   const fixture = setup();
   const mod = load(fixture);
   const names = [
     'use_ex_item',
     'sell_ex_item',
     'add_ex_item',
+    'get_junk_item',
     'ex_item_name',
     'harb_item',
     'potion_item',

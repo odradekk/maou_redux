@@ -20675,9 +20675,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11770 男版迷宫凌辱：语尾档位选择写死 5（丢 プライド低い → 1 分档，#570）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
-    find: "    const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(\n      t(17) ? 1 : 5,\n    ); // （プライド低い → 喜び、否则情けない）",
-    replace:
-      "    const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(\n      5,\n    ); // 变异：档位写死 5",
+    find: '    const gobi_pig = await gobi_koujo(t(17) ? 1 : 5); // （プライド低い → 喜び、否则情けない）',
+    replace: '    const gobi_pig = await gobi_koujo(5); // 变异：档位写死 5',
     tests: ['kojo-dungeon-ravish-man'],
     must_mention: '整段在 ere 是一行',
   },

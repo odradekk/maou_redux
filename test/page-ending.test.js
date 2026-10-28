@@ -1,5 +1,5 @@
 /**
- * ere/page/page-ending.js ending_1 真身与 ending_3/4/5 接入的
+ * ere/system/ending/ending-screen.js ending_1 真身与 ending_3/4/5 接入的
  * 行为测试（issue #118），外加 system/invasion/invasion-check.js invasion_check
  * 四组条件的触发测试（经模块公开接口 invasion_check 直驱）。天神宫组
  * 随 #652 删除（条件读的 EX_FLAG:101 无写点，死分支）；end10_55 演出
@@ -219,7 +219,7 @@ test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
   fixture.era.addCharacter(2);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 1;
-  const { ending_2 } = fixture.load_module('page/page-ending');
+  const { ending_2 } = fixture.load_module('system/ending/ending-screen');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
   fixture.set_inputs(0); // INPUT（仪式性确认，结果不被消费）
@@ -278,7 +278,7 @@ test('ending_2·TARGET 条件：指针指向 2 时封印播报取 2 的名字（
   fixture.era.addCharacter(2);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 2;
-  const { ending_2 } = fixture.load_module('page/page-ending');
+  const { ending_2 } = fixture.load_module('system/ending/ending-screen');
 
   fixture.set_inputs(0);
   await ending_2().catch(() => {});
@@ -424,7 +424,7 @@ test('ending_3/4/5：横幅 + char_gift(arg) 收下预设角色 → 领域 flag 
 
 test('char_gift：ARG 不在 1/5/6 三档 → THROW INVALID ARGUMENT', async () => {
   const fixture = create_era_fixture();
-  const { char_gift } = fixture.load_module('page/page-ending');
+  const { char_gift } = fixture.load_module('system/ending/ending-screen');
   await assert.rejects(() => char_gift(2), /INVALID ARGUMENT/);
   await assert.rejects(() => char_gift(0), /INVALID ARGUMENT/);
 });
@@ -436,7 +436,7 @@ test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色�
   fixture.seed_chara(0, { name: '你', callname: '你' });
   fixture.store.set('talentname:161', '自信家');
   fixture.store.set('callname:5:-1', '路人五');
-  const { char_gift } = fixture.load_module('page/page-ending');
+  const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 输入序列：另外挑选(1) → 性格([0]) → 胆量 1（自信家）→ 决定(100) → 收下(0)
   fixture.set_inputs(1, 0, 1, 100, 0);
   // 生成链的命名段读固定名表（#821 起夹具按 yml 现算名字），名字因此由
@@ -499,7 +499,7 @@ test('char_gift 子菜单边界：性格取 0 档（慈爱）、发色取 10 档
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
   fixture.store.set('talentname:160', '慈爱');
-  const { char_gift } = fixture.load_module('page/page-ending');
+  const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 另外挑选(1) → 性格([0]) → 选 0 → 发色([1]) → 选 10 → 决定(100) → 收下(0)
   fixture.set_inputs(1, 0, 0, 1, 10, 100, 0);
   await char_gift(1, seq([4])); // RAND(1, 17) → 角色 5
@@ -537,7 +537,7 @@ test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#872：�
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-  const { char_gift } = fixture.load_module('page/page-ending');
+  const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 另外挑选(1) → 发色([1]) → 11 → 决定(100) → 收下(0)
   fixture.set_inputs(1, 1, 11, 100, 0);
   await char_gift(1, seq([4])); // RAND(1, 17) → 角色 5
@@ -551,7 +551,7 @@ test('char_gift 发色子菜单：1-11 之外的编号由 rule 在输入框里�
     const fixture = create_era_fixture();
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-    const { char_gift } = fixture.load_module('page/page-ending');
+    const { char_gift } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(1, 1, typed, 100, 0);
     await assert.rejects(
       () => char_gift(1, seq([4])),
@@ -605,7 +605,7 @@ test('char_gift 子菜单的越界输入：引擎当场拒收（#572：选项已
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
     fixture.store.set('talentname:160', '慈爱');
-    const { char_gift } = fixture.load_module('page/page-ending');
+    const { char_gift } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(1, 0, picked);
     await assert.rejects(
       () => char_gift(1, seq([4])),
@@ -621,7 +621,7 @@ test('char_gift 主菜单的越界输入：引擎当场拒收（#572：选项已
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-  const { char_gift } = fixture.load_module('page/page-ending');
+  const { char_gift } = fixture.load_module('system/ending/ending-screen');
   fixture.set_inputs(1, 7);
   await assert.rejects(
     () => char_gift(1, seq([4])),
@@ -633,7 +633,7 @@ test('char_gift 终局 [2]「去要圣女」：退掉随机角色、回到预设
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-  const { char_gift } = fixture.load_module('page/page-ending');
+  const { char_gift } = fixture.load_module('system/ending/ending-screen');
   // 另外挑选(1) → 决定(100) → 终局 [2] 回预设 → [0] 收下预设
   fixture.set_inputs(1, 100, 2, 0);
   const result = await char_gift(1, seq([4]));
@@ -671,7 +671,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     // 精灵是槽 0 = 011（整数倍档）：返回值 = 年龄 × 10 + RAND:10
     const fixture = create_era_fixture();
     seed(fixture, 1 << bit);
-    const { char_gift } = fixture.load_module('page/page-ending');
+    const { char_gift } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(1, 100, 0);
     await char_gift(1, (n) => (n === 16 ? 4 : 0)); // 16 → 4 → 随机角色 5
     assert.equal(fixture.store.get('talent:5:314'), 1, `位 ${bit}：精灵`);
@@ -697,7 +697,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     const fixture = create_era_fixture();
     seed(fixture, 1 << 12);
     fixture.seed_chara(32, { name: '龙族公主', callname: '龙族公主' });
-    const { char_gift } = fixture.load_module('page/page-ending');
+    const { char_gift } = fixture.load_module('system/ending/ending-screen');
     const bounds = [];
     // 换一个礼物档位换种族：ARG=5 龙族公主 → 种族设定 5 → look 设置的
     // `ELSEIF … || ARG == 5` → 种族 5（槽 4 = 015，整数倍档 ×50）
@@ -724,7 +724,7 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     // 两位都为假：整支不走，CFLAG:452 保持 0
     const fixture = create_era_fixture();
     seed(fixture, 0);
-    const { char_gift } = fixture.load_module('page/page-ending');
+    const { char_gift } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(1, 100, 0);
     await char_gift(1, (n) => (n === 16 ? 4 : 0));
     assert.equal(
@@ -737,7 +737,9 @@ test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
 
 test('inconseq_select：ARG != 7 时只读一次键、无输出（默认空档）', async () => {
   const fixture = create_era_fixture();
-  const { inconseq_select } = fixture.load_module('page/page-ending');
+  const { inconseq_select } = fixture.load_module(
+    'system/ending/ending-screen',
+  );
   fixture.set_inputs(1);
   await inconseq_select(8);
   assert.equal(history_texts(fixture).length, 0, '非 7 的 ARG 不产出行');
@@ -751,7 +753,7 @@ test('inconseq_select：ARG != 7 时只读一次键、无输出（默认空档�
 test('end10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLAG:102 不置（#652 起不受 invasion_check 分派，直驱演出本体）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  const { end10_55 } = fixture.load_module('page/page-ending');
+  const { end10_55 } = fixture.load_module('system/ending/ending-screen');
   await end10_55();
 
   assert.equal(fixture.store.get('exflag:2810'), 5, 'EX_FLAG:2810 += 5');
@@ -3028,7 +3030,7 @@ test('end10_54 的 ALIGNMENT：先 CENTER 后 LEFT（era.setAlign 各一次）',
 
 test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之后打印（输入按钮编号能送达）', async () => {
   const fixture = create_era_fixture();
-  const { ending_n } = fixture.load_module('page/page-ending');
+  const { ending_n } = fixture.load_module('system/ending/ending-screen');
   fixture.set_inputs(2); // [2] 继续游戏
   await ending_n();
 
@@ -3062,7 +3064,9 @@ test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之�
   // 白名单真的活着：越界值被当场拒收。按钮若打印在等键之前，白名单为空、
   // 3 反而会被放行——ending_input 重问时预置输入已耗尽，抛的是别的错
   const rejected = create_era_fixture();
-  const { ending_n: rejected_n } = rejected.load_module('page/page-ending');
+  const { ending_n: rejected_n } = rejected.load_module(
+    'system/ending/ending-screen',
+  );
   rejected.set_inputs(3);
   await assert.rejects(
     () => rejected_n(),
@@ -3074,7 +3078,7 @@ test('ending_n 结尾选项：结束/继续是按钮、在最后一次等键之�
 test('ending_input CASE 1：输入的 [2] 继续 / [1] 回标题 / 无效输入重问', async () => {
   {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('page/page-ending');
+    const { ending_input } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(2);
     await ending_input(1099); // EX_FLAG:2801(99) + 1000 → LOCAL 1
     assert(
@@ -3084,7 +3088,7 @@ test('ending_input CASE 1：输入的 [2] 继续 / [1] 回标题 / 无效输入�
   }
   {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('page/page-ending');
+    const { ending_input } = fixture.load_module('system/ending/ending-screen');
     const { STATE } = fixture.load_module('system/flow/game-state');
     fixture.set_inputs(1);
     // [1] 结束游戏 = 游戏结束回标题（#852）：转场目标交回主循环
@@ -3100,7 +3104,7 @@ test('ending_input CASE 1：输入的 [2] 继续 / [1] 回标题 / 无效输入�
   }
   {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('page/page-ending');
+    const { ending_input } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(7, 5, 2); // 两次无效值后命中 [2]
     await ending_input(1099);
     assert.equal(
@@ -3122,7 +3126,7 @@ test('ending_input CASE 7（菲娅线）：[1] 两条起线提示 + 线值与主
   ];
   for (const [before, input, want, want_main, text] of CASES) {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('page/page-ending');
+    const { ending_input } = fixture.load_module('system/ending/ending-screen');
     fixture.store.set('exflag:2807', before);
     fixture.set_inputs(input);
     await ending_input(7000); // local = 7
@@ -3153,7 +3157,7 @@ test('ending_input CASE 16（双飞）：两个选项都只抬 2805（未完成�
     [3, 0],
   ]) {
     const fixture = create_era_fixture();
-    const { ending_input } = fixture.load_module('page/page-ending');
+    const { ending_input } = fixture.load_module('system/ending/ending-screen');
     fixture.set_inputs(input);
     await ending_input(16000); // local = 16
     assert.equal(
@@ -3169,7 +3173,7 @@ test('ending_input 未分档的线号（5/6/8-14）：CASEELSE 已删，静默�
   // （ending_n，LOCAL 恒 1）走不到，整档删除。未分档线号落进来不印
   // 「此处剧情尚未做好」、不写 flag:(2800+线号)、不抬主线
   const fixture = create_era_fixture();
-  const { ending_input } = fixture.load_module('page/page-ending');
+  const { ending_input } = fixture.load_module('system/ending/ending-screen');
   fixture.set_inputs(1);
   await ending_input(5000); // local = 5
   assert.equal(fixture.store.get('flag:2805') || 0, 0, 'FLAG 侧不得写入');

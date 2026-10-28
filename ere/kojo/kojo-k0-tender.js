@@ -28,6 +28,8 @@
  */
 
 const era = require('#/era-electron');
+const { piercing_state } = require('#/system/train/piercing-state');
+const benki_mod = require('#/system/train/benki');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 
 const { on, TIER } = require('#/system/event/registry');
@@ -1731,10 +1733,8 @@ async function benki_koujo_k0() {
   /* eslint-disable no-irregular-whitespace -- 台词含全角空格（BENKI 段，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
-  // benki_player_name()：对象名真身，延迟
-  // require 是 K12/K3 同款（防顶层漏装遮蔽），名字表只有一份
-  const benki_player_name = () =>
-    require('#/system/train/benki').benki_player_name();
+  // benki_player_name()：对象名真身（名字表只有一份）
+  const benki_player_name = () => benki_mod.benki_player_name();
 
   if (era.get('flag:62') === 0) {
     if (era.get('flag:63') === 1) {
@@ -11909,7 +11909,6 @@ async function kojo_message_com_0(rand) {
   if (era_flag.selectcom === 87) {
     // 延迟读取：主启动图的 COM80-90 注册仍仅由 com-hardcore 自己负责。顶层
     // require 会让 main-loop 漏装时模块仍被间接拉进来（#233/#234 先例）
-    const { piercing_state } = require('#/system/train/com-hardcore');
     const assi = era_flag.assi;
     const assiplay = era_flag.assiplay;
     const p = piercing_state.p;

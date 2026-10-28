@@ -35,21 +35,36 @@ const era_flag = require('#/era-utils/era-flag');
 const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { default_rand } = require('#/utils/numeric');
 const { chara } = require('#/facade/chara');
-const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { handle_source_check_auto } = require('#/system/train/source-check');
+const { karma } = require('#/system/chara/chara-stats');
 const {
   attack_koujo: speak_attack_koujo,
   victory_koujo: speak_victory_koujo,
 } = require('#/kojo/kojo-system');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
 const { equip_database } = require('#/system/equip/equip-lookup');
-const { monstername, monster_name } = require('#/system/dungeon/monster-data');
+const { weapon_restore } = require('#/system/equip/weapon-restore');
+const ex_item_mod = require('#/system/dungeon/ex-item');
+const {
+  monster_data,
+  monstername,
+  monster_name,
+} = require('#/system/dungeon/monster-data');
 const {
   BATTLE_COLUMN,
   battle_column,
 } = require('#/system/dungeon/battle-state');
 const magic_mod = require('#/system/dungeon/magic');
 const monster_skill_mod = require('#/system/dungeon/monster-skill');
+const {
+  campaign_monster_list,
+  campaign_monster_list_family,
+} = require('#/system/dungeon/dungeon-campaign');
+// 凌辱口上的真身在 kojo 域；调用点与测试都在本文件的导出上替换，故经模块
+// 对象取用，读属性发生在调用期。
+const ravish_mod = require('#/kojo/kojo-dungeon-ravish');
+// 自动调教的真身在 train 域；本文件只转发（调用点与测试都在本文件的导出上
+// 替换，故经模块对象取用，读属性发生在调用期）。
+const autotrain_mod = require('#/system/train/autotrain');
 // H9（#178）任务真身：QUEST_BATTLE_SET / RESULT_QUEST 经模块对象引用
 // （对比测试可替换导出）。dungeon-quest 回引本文件的 CAMPAIGN_MONSTER_LIST
 // 走函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
@@ -65,12 +80,9 @@ const {
  * CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
  * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
  * 依据）；实现在 ere/page/page-campaign-1.js 注册。whenMissing
- * 预置 190（骸骨缺省）。
+ * 预置 190（骸骨缺省）。族与入口的真身在 dungeon-campaign.js：迷宫主流程、
+ * 任务、房间三处都要用，而它们互相顶层 require。
  */
-const campaign_monster_list_family = new DispatchFamily(
-  'CAMPAIGN_MONSTER_LIST',
-  [1],
-);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -89,51 +101,24 @@ function she(cid) {
 // （调用点经模块对象 quest_mod 引用，见文件头）。
 
 /**
- * CAMPAIGN_MONSTER_LIST：战役迷宫的出现
- * 怪物表。RESULT 预置 190（骸骨缺省）。
- * @param {number} floor 阶层
- * @param {(n: number) => number} [rand] RAND:N 随机源，透传给
- *   CAMPAIGN_MONSTER_LIST_1 的 DICE = RAND:3（缺省均匀随机，与调用方
- *   dungeon_party_battle 共用同一注入源，保持 PRNG 序列对齐）
- * @returns {Promise<number>} 怪物 ID（FLAG:400 < 1 时恒 190）
- */
-async function campaign_monster_list(floor, rand) {
-  const active = era_flag.hero_campaign_active;
-  if (active < 1) {
-    return 190;
-  }
-  return campaign_monster_list_family.call(active, {
-    whenMissing: 190,
-    args: [floor, rand],
-  });
-}
-
-/**
  * before_autotrain（#508 起真身）：
  * 自动调教前置——SOURCE / delta 清零。真身在 ere/system/train/autotrain.js，
  * 调用点直调（浏览器/测试可替换导出，同 SOURCE_CHECK_AUTO 一族的先例）。
  * @returns {Promise<number>} 恒 return 0（调用点不消费）
  */
 async function before_autotrain() {
-  return require('#/system/train/autotrain').before_autotrain();
+  return autotrain_mod.before_autotrain();
 }
 
 /**
- * source_check_auto（调教域工单，#461 起真身）：自动调教结算。调用点同
- * before_autotrain 一族，调用点曾散见迷宫域四文件）
- * 真身在 ere/system/train/source-check.js 的 handle_source_check_auto，
- * 只有一个调用者、直接调用（#853）。
- *
- * #508：结算后补一次 `era.nextTurnInTrain()`——这是调教回合循环里 SOURCE_CHECK
- * 之后那一步（UPCHECK 的 ere 等价物，train-loop.js:70-74）在迷宫路径上的
- * 对应物。本移植把 NOWEX→EX 的合并交给引擎的 nextTurnInTrain（source-check.js
- * 文件头的职责划分），而迷宫路径不经过回合循环，不补这一步的话 EX:0-4
- * （绝顶次数，JUEL_CHECK_MAIN 的珠加成读它）在 endTrain 删表时丢掉。
+ * source_check_auto（调教域工单，#461 起真身）：自动调教结算。真身在
+ * ere/system/train/autotrain.js（转发给 source-check 的结算钩子并补一次
+ * nextTurnInTrain），迷宫各调用点与测试都在本文件的导出上取它，故这里
+ * 保留同名转发。
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function source_check_auto() {
-  await handle_source_check_auto();
-  era.nextTurnInTrain();
+  return autotrain_mod.source_check_auto();
 }
 
 /**
@@ -165,8 +150,7 @@ async function victory_koujo(cid) {
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function victory_ryouzyoku(atker, rand) {
-  const mod = require('#/kojo/kojo-dungeon-ravish');
-  await mod.victory_ryouzyoku(atker, rand);
+  await ravish_mod.victory_ryouzyoku(atker, rand);
 }
 
 /**
@@ -178,8 +162,7 @@ async function victory_ryouzyoku(atker, rand) {
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function ryouzyoku(atker, rand) {
-  const mod = require('#/kojo/kojo-dungeon-ravish');
-  await mod.ryouzyoku(atker, rand);
+  await ravish_mod.ryouzyoku(atker, rand);
 }
 
 /**
@@ -571,8 +554,7 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   // 真身 ere/system/train/autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await before_autotrain();
-    const { com13_auto } = require('#/system/train/autotrain');
-    com13_auto();
+    autotrain_mod.com13_auto();
     await source_check_auto();
   }
 
@@ -1223,18 +1205,15 @@ async function victory_get(arg0, rand) {
     await era.waitAnyKey();
   }
 
-  // CALL karma, (ARG:0), -5（dungeon.js 的域内存根，不改值）
-  const { karma } = require('#/system/dungeon/dungeon');
+  // CALL karma, (ARG:0), -5
   karma(arg0, -5);
 
-  // CALL add_ex_item, -1, (ARG:0), 0（dungeon.js 的域内存根，缺省 0 = 没找到）
-  const { add_ex_item } = require('#/system/dungeon/dungeon');
-  const found = await add_ex_item(-1, arg0, 0);
+  // CALL add_ex_item, -1, (ARG:0), 0（缺省 0 = 没找到）
+  const found = await ex_item_mod.add_ex_item(-1, arg0, 0);
 
   // なにも見つからなかったらしい。代わりに金品を得る
   if (found === 0) {
-    const { get_junk_item } = require('#/system/dungeon/dungeon');
-    await get_junk_item(arg0, rand);
+    await ex_item_mod.get_junk_item(arg0, rand);
   }
   return 1;
 }
@@ -1481,9 +1460,8 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     const atker = select_atker(arg0, turn);
     atker_slot = atker;
 
-    // 消耗品を使用するかチェック（dungeon.js 转发）
-    const { use_ex_item } = require('#/system/dungeon/dungeon');
-    await use_ex_item('战斗中', atker);
+    // 消耗品を使用するかチェック
+    await ex_item_mod.use_ex_item('战斗中', atker);
 
     // 支配している怪物の攻撃（A 换手后打防御怪物）
     era_flag.target = atker;
@@ -1566,7 +1544,6 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
   }
 
   // === 装備の回復（队长与两同伴同构）===
-  const { weapon_restore } = require('#/system/equip/weapon-restore');
   const restore_one = async (cid) => {
     era_flag.target = cid; // A = 换手
     if (
@@ -1597,14 +1574,7 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
 
 /** monster_data 的调用别名（rand 透传——选召骰点必须走注入的随机源） */
 function monster_data_call(inum, line, arg2, arg3, rand) {
-  return require('#/system/dungeon/monster-data').monster_data(
-    inum,
-    line,
-    arg2,
-    arg3,
-    -1,
-    rand,
-  );
+  return monster_data(inum, line, arg2, arg3, -1, rand);
 }
 
 module.exports = {

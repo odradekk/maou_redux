@@ -28,8 +28,8 @@ function seed_world(fixture) {
   fixture.era.beginTrain(0, 31);
   fixture.store.set('cflag:31:9', 1);
   fixture.store.set('cflag:31:16', -1);
-  fixture.load_module('page/page-info-exp');
-  fixture.load_module('page/page-ablup');
+  fixture.load_module('system/train/info-exp-screen');
+  fixture.load_module('system/train/ablup-screen');
   return fixture.load_module('system/train/juel-check');
 }
 
@@ -644,7 +644,7 @@ test('show_info_exp：经验一览是每项三格的网格，数值格右对齐'
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('exp:31:2', 3); // 绝顶经验 3
-  const { show_info_exp } = fixture.load_module('page/page-info-exp');
+  const { show_info_exp } = fixture.load_module('system/train/info-exp-screen');
 
   show_info_exp(31);
 
@@ -685,7 +685,7 @@ test('show_info_exp：四个经验一行、残行按实际格数收尾', () => {
   for (const id of [0, 1, 2, 3, 5]) {
     fixture.store.set(`exp:31:${id}`, 10 + id);
   }
-  const { show_info_exp } = fixture.load_module('page/page-info-exp');
+  const { show_info_exp } = fixture.load_module('system/train/info-exp-screen');
 
   show_info_exp(31);
 
@@ -723,7 +723,7 @@ test('show_info_exp：初吻/初体验括号行（两者皆无时不输出）', 
   seed_world(fixture);
   fixture.store.set('cflag:31:16', 993);
   fixture.store.set('cflag:31:15', 103);
-  const { show_info_exp } = fixture.load_module('page/page-info-exp');
+  const { show_info_exp } = fixture.load_module('system/train/info-exp-screen');
 
   show_info_exp(31);
 
@@ -738,7 +738,7 @@ test('show_juel：12 项按 4 列网格排三行，末尾空行与点线不变',
   fixture.store.set('juel:31:0', 3479);
   fixture.store.set('juel:31:7', 4);
   fixture.store.set('juel:31:100', 167);
-  const { show_juel } = fixture.load_module('page/page-ablup');
+  const { show_juel } = fixture.load_module('system/train/ablup-screen');
 
   show_juel(31);
 
@@ -825,7 +825,7 @@ test('show_juel：男人（TALENT:122）第 0 项显示「阴茎」', () => {
   seed_world(fixture);
   fixture.store.set('talent:31:122', 1);
   fixture.store.set('juel:31:0', 3479);
-  const { show_juel } = fixture.load_module('page/page-ablup');
+  const { show_juel } = fixture.load_module('system/train/ablup-screen');
 
   show_juel(31);
 
@@ -841,7 +841,9 @@ test('show_ablup_select：能力按钮化（PR #53）——编号空间、性别
   seed_world(fixture);
   fixture.store.set('abl:31:0', 3);
   fixture.store.set('mark:31:3', 1);
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   // #467 起本函数是 async（逐行调 decide_ablup 打 `*`）
   await show_ablup_select(31);
@@ -885,7 +887,9 @@ test('show_ablup_select：能力按钮按每行 4 列排布，[99]/癖好两枚�
   fixture.store.set('mark:31:3', 1);
   fixture.store.set('cstr:31:7', '足交');
   fixture.store.set('abl:31:4', 2);
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 
@@ -940,7 +944,9 @@ test('show_ablup_select：男无 私处感觉/百合气质/百合中毒，第 0 
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:122', 1);
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 
@@ -961,7 +967,9 @@ test('show_ablup_select：感觉缺失灰显（TALENT:101 & 2 → 阴蒂钮变�
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:101', 2);
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 
@@ -974,7 +982,9 @@ test('show_ablup_select：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中�
   seed_world(fixture);
   fixture.store.set('cstr:31:7', '足交');
   fixture.store.set('abl:31:4', 2);
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 
@@ -1000,7 +1010,9 @@ test('show_ablup_select：#467 `*` 标记按 decide_ablup 结果逐行渲染', a
   fixture.store.set('mark:31:3', 1);
   fixture.store.set('abl:31:10', 3);
   fixture.store.set('juel:31:6', 5000);
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 
@@ -1024,7 +1036,9 @@ test('show_ablup_select：#467 满级行不打 `*`（decide_ablup 的提前返�
   seed_world(fixture);
   fixture.store.set('abl:31:0', 5); // Lv5 且无[自慰狂] → 需要特殊素质
   fixture.store.set('juel:31:0', 999999); // 珠再多也不可提升
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 
@@ -1039,7 +1053,9 @@ test('show_ablup_select：#467 癖好行（[4]／[40]）也按各自 decide_ablu
   seed_world(fixture);
   fixture.store.set('cstr:31:7', '舔'); // 两行只在定制癖好名后才渲染
   fixture.store.set('juel:31:15', 1); // 局部感觉 Lv0 恰需 1 点
-  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+  const { show_ablup_select } = fixture.load_module(
+    'system/train/ablup-screen',
+  );
 
   await show_ablup_select(31);
 

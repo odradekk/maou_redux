@@ -144,7 +144,7 @@ export default [
   },
   {
     desc: 'M36 等级行公式：本级需求 lv*10+10 改 lv*10+5',
-    file: 'ere/page/page-info-exp.js',
+    file: 'ere/system/train/info-exp-screen.js',
     find: '    // 其余\n    need = lv * 10 + 10;',
     replace: '    // 其余\n    need = lv * 10 + 5;',
     tests: ['juel-check'],
@@ -4136,7 +4136,7 @@ export default [
   // —— #596：print 之后多补的空行普查（画面侧） ——
   {
     desc: 'M12070 能力值提升页的按钮行之间补回空行（五行按钮逐行相邻）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';",
     replace:
       "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';\n    era.println(); // 变异：多补一条空行",
@@ -4145,7 +4145,7 @@ export default [
   },
   {
     desc: 'M12071 能力值提升页 [999] 之后补回空行（空内容输出只收行）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）",
     replace:
       "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
@@ -4154,7 +4154,7 @@ export default [
   },
   {
     desc: 'M12072 保有珠一览末尾的真空行删除（那一个空内容输出是真行，不是收行）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: `  era.println(); // 末组恰为 4 项时补一空行
   era.drawLine(); // 点线分割线`,
     replace: '  era.drawLine(); // 变异：:26 的真空行删除',
@@ -4220,7 +4220,7 @@ export default [
   },
   {
     desc: 'M12080 能力值提升页 [99] 行与尾部分割线之间补回空行（空内容输出只结束 [40] 行）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: `  // [100] 异界综合征行是调试专用，不绘制
   // （[99] 行与尾部分割线逐行相邻，不补空行）
   era.drawLine(); // 点线分割线
@@ -4734,7 +4734,7 @@ export default [
     file: 'ere/system/invasion/invasion-check.js',
     find: "    era.print('声望+10'); // PRINTL\n    return;\n  }\n}",
     replace:
-      "    era.print('声望+10'); // PRINTL\n    return;\n  }\n  // 变异：天神宫组复活\n  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {\n    await require('#/page/page-ending').end10_55();\n    era_exflag.prestige = era_exflag.prestige + 10;\n    era.print('声望+10'); // PRINTL\n  }\n}",
+      "    era.print('声望+10'); // PRINTL\n    return;\n  }\n  // 变异：天神宫组复活\n  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {\n    await require('#/system/ending/ending-screen').end10_55();\n    era_exflag.prestige = era_exflag.prestige + 10;\n    era.print('声望+10'); // PRINTL\n  }\n}",
     tests: ['page-ending'],
     must_mention: '空转零输出',
   },
@@ -4948,7 +4948,7 @@ export default [
   },
   {
     desc: 'M14337 能力值提升列数改 3（原版 U % 4 换行）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: '  print_button_grid(items, 4);',
     replace: '  print_button_grid(items, 3); // 变异：列数改 3',
     tests: ['juel-check'],
@@ -4956,7 +4956,7 @@ export default [
   },
   {
     desc: 'M14338 [99]/癖好两枚拆成独立行',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: '  print_button_grid(tail, 4);',
     replace: '  print_button_grid(tail, 1); // 变异：各占一行',
     tests: ['juel-check'],
@@ -4972,7 +4972,7 @@ export default [
   },
   {
     desc: 'M14344 感觉缺失的灰显配置丢（ablup 灰按钮变默认色）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: '      lost ? { color: GRAY } : undefined,',
     replace: '      undefined,',
     tests: ['juel-check'],
@@ -4981,7 +4981,7 @@ export default [
   // —— #721：换屏入口 ——
   {
     desc: 'M14352 换屏入口不清屏（退回只追加，历史行数随游玩增长）',
-    file: 'ere/page/components/screen-change.js',
+    file: 'ere/utils/screen-change.js',
     find: `async function change_screen() {
   return await era.clear();
 }`,
@@ -4993,7 +4993,7 @@ export default [
   },
   {
     desc: 'M14353 换屏入口只清一行（clear(1) 冒充整屏清空）',
-    file: 'ere/page/components/screen-change.js',
+    file: 'ere/utils/screen-change.js',
     find: `  return await era.clear();`,
     replace: `  return await era.clear(1); // 变异：只清一行`,
     tests: ['screen-change'],
@@ -5001,7 +5001,7 @@ export default [
   },
   {
     desc: 'M14354 换屏入口补等键（每次菜单选择后都多一次按键）',
-    file: 'ere/page/components/screen-change.js',
+    file: 'ere/utils/screen-change.js',
     find: `async function change_screen() {
   return await era.clear();
 }`,

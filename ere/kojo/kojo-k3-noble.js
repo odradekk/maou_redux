@@ -37,6 +37,8 @@
  */
 
 const era = require('#/era-electron');
+const { piercing_state } = require('#/system/train/piercing-state');
+const benki_mod = require('#/system/train/benki');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
@@ -7649,7 +7651,6 @@ async function kojo_message_com_3(rand) {
     // 延迟读取：主启动图的 COM80-90 注册仍仅由 com-hardcore 自己负责。顶层
     // require 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接入锁与
     // M1249 一起失明（#233 全量变异抓到，这张工单重犯一次）
-    const { piercing_state } = require('#/system/train/com-hardcore');
     p = piercing_state.p;
 
     if (kojo.穿环 === 0) {
@@ -11913,8 +11914,7 @@ async function benki_koujo_k3(rand) {
     if (game.dungeon.肉便器常识改写 === 1) {
       // 「请」、对象名与收尾三行同属一行输出（与 K0 四处同型）；名字按 #599
       // 用插值接在 CALL 的位置，拼接基准让前缀行也进锁 B/D
-      const player_name_benki =
-        require('#/system/train/benki').benki_player_name();
+      const player_name_benki = benki_mod.benki_player_name();
       await era.printAndWait(
         `「请${player_name_benki}大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,
       );

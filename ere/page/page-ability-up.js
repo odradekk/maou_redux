@@ -44,13 +44,13 @@ const {
   max_page_salave,
   print_row,
 } = require('#/page/page-life-list');
-const { show_ablup_select, show_juel } = require('#/page/page-ablup');
-const { show_info_exp } = require('#/page/page-info-exp');
+const { show_ablup_select, show_juel } = require('#/system/train/ablup-screen');
+const { show_info_exp } = require('#/system/train/info-exp-screen');
 const { menu_button } = require('#/page/components/menu-button');
 const {
   change_screen,
   confirm_output_since,
-} = require('#/page/components/screen-change');
+} = require('#/utils/screen-change');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
 const { ABLUP_HANDLERS, HANDLER_QUIET } = require('#/system/train/juel-check');

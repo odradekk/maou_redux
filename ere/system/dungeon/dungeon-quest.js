@@ -31,13 +31,16 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
+const { karma } = require('#/system/chara/chara-stats');
 const {
   BATTLE_COLUMN,
   battle_column,
 } = require('#/system/dungeon/battle-state');
-// 陷阱真身（#176）：quest_battle_set 的障碍陷阱三选一。其对 dungeon.js
-// 域内存根的延迟 require 同款防环；本文件不反依赖它，顶层引用无环。
+// 陷阱真身（#176）：quest_battle_set 的障碍陷阱三选一。
 const trap_mod = require('#/system/dungeon/dungeon-trap');
+// 战役讨伐对象表的真身在 dungeon-campaign.js（不带战斗模块的重依赖）。
+const { campaign_monster_list } = require('#/system/dungeon/dungeon-campaign');
+const ex_item_mod = require('#/system/dungeon/ex-item');
 const { default_rand } = require('#/utils/numeric');
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
@@ -109,14 +112,12 @@ async function set_quest(arg, rand = default_rand) {
         const local = 10;
         era.print(`${name_of(cid)}完成了任务、道德提升了${local}！`);
         await era.waitAnyKey(); // PRINTFORMW
-        const { karma } = require('#/system/dungeon/dungeon');
         karma(cid, local); // CALL KARMA, (PM:LCOUNT), LOCAL
       } else if (reward === 3) {
         // 道具
         era.print(`${name_of(cid)}完成了任务！`);
         await era.waitAnyKey(); // PRINTFORMW
-        const { add_ex_item } = require('#/system/dungeon/dungeon');
-        await add_ex_item(-3, cid, 1); // CALL ADD_EX_ITEM, -3, (PM:LCOUNT), 1
+        await ex_item_mod.add_ex_item(-3, cid, 1); // CALL ADD_EX_ITEM, -3, (PM:LCOUNT), 1
       }
       chara(cid).dungeon.已接任务 = 0;
     }
@@ -157,9 +158,6 @@ async function set_quest(arg, rand = default_rand) {
     // 討伐対象（モンスターID）
     if (chara(cid).invasion.状态 === 12) {
       // 戦役（CFLAG:1 == 12）：怪物表由战役侧给出（#469 起真身）
-      const {
-        campaign_monster_list,
-      } = require('#/system/dungeon/dungeon-battle');
       const monid = await campaign_monster_list(
         era.get(`cflag:${cid}:501`) || 0,
         rand_n,

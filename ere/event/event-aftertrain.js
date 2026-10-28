@@ -355,7 +355,6 @@ async function aftertrain_sex_check() {
   era.print(`欲情点数＋${s * 250}`);
   await era.waitAnyKey();
 
-  const { chara } = require('#/facade/chara');
   chara(target).dungeon.私处经验 += s;
   chara(target).dungeon.性交经验 += s;
   era.add(`juel:${target}:1`, s * 200);
@@ -444,7 +443,6 @@ async function aftertrain_analsex_check() {
   era.print(`欲情点数＋${s * 250}`);
   await era.waitAnyKey();
 
-  const { chara } = require('#/facade/chara');
   chara(target).dungeon.肛门经验 += s;
   chara(target).dungeon.性交经验 += s;
   era.add(`juel:${target}:2`, s * 200);
@@ -750,7 +748,6 @@ async function aftertrain_masturbation_check(
   game.train.初吻与自我口上 = 1;
   await self_kojo(undefined, q);
   era.print(`自慰经验＋${a}`);
-  const { chara } = require('#/facade/chara');
   chara(target).dungeon.自慰经验 += a;
 
   if (era.get(`talent:${target}:122`)) {
@@ -864,7 +861,6 @@ async function aftertrain_beastsex_check() {
   era.print(`兽奸经验＋${b}`);
   era.print(`绝顶经验＋${b}`);
   era.print(`性交经验＋${b}`);
-  const { chara } = require('#/facade/chara');
   chara(target).dungeon.兽奸经验 += b;
   chara(target).dungeon.私处经验 += b;
   chara(target).dungeon.性交经验 += b;
@@ -899,7 +895,6 @@ async function aftertrain_beastsex_check() {
 async function self_check(rand) {
   // 逆レイプ関連のもの
   if (era.get('cflag:0:61')) {
-    const { chara } = require('#/facade/chara');
     chara(0).train.逆强暴 = 0;
   }
 

@@ -228,8 +228,8 @@ function juel_world() {
   fixture.era.beginTrain(0, 31);
   fixture.store.set('cflag:31:9', 1);
   fixture.store.set('cflag:31:16', -1);
-  fixture.load_module('page/page-info-exp');
-  fixture.load_module('page/page-ablup');
+  fixture.load_module('system/train/info-exp-screen');
+  fixture.load_module('system/train/ablup-screen');
   return { fixture, mod: fixture.load_module('system/train/juel-check') };
 }
 
@@ -290,7 +290,7 @@ test('juel：能力提升从结算后的珠里扣，窗口内显示结算后的�
   assert.equal(settled(fixture, 0), 2, '1 + 本次获得 1');
 
   // 升级前重绘：显示的是结算后的 2，不是 juel 原始值 1
-  const { show_juel } = fixture.load_module('page/page-ablup');
+  const { show_juel } = fixture.load_module('system/train/ablup-screen');
   fixture.lines.length = 0;
   show_juel(31);
   let cells = fixture.lines

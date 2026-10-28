@@ -632,7 +632,7 @@ const cstr = {
   // train（ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
   3: named_tail('初体验对象名', 'CSTR:(ARG:1):3 = %SAVESTR:(ARG:0)%'),
   // 初吻对象名：口上里把对象名抄进 CSTR:4（如 K8 简易助手三人关系初吻
-  // 分支；ere/page/page-info-exp.js 读它显示）。属主 train
+  // 分支；ere/system/train/info-exp-screen.js 读它显示）。属主 train
   // （ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
   4: named_tail('初吻对象名', 'CSTR:TARGET:4 = %SAVESTR:ASSI%'),
   // 家人末路：售出成熟角色后，把结局称号与角色名写给检索到的家人。

@@ -51,7 +51,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
 const { print_button_grid } = require('#/utils/button-grid');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { game } = require('#/facade/game');
 const {
   char_body_generate_wapped,

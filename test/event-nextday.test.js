@@ -1685,9 +1685,7 @@ test('尿床（ONESHO）：播报在换屏清空前都经按键确认（#723/ADR
 
     await onesho(seq(rolls));
 
-    const { change_screen } = fixture.load_module(
-      'page/components/screen-change',
-    );
+    const { change_screen } = fixture.load_module('utils/screen-change');
     await change_screen();
     assert.deepEqual(
       fixture.unread_output_clears,

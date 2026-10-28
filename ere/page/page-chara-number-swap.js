@@ -80,7 +80,7 @@ const {
   swap_sort_numbers,
 } = require('#/system/chara/chara-portcflag');
 const { get_job_name } = require('#/page/page-select-target');
-const { change_screen } = require('#/page/components/screen-change');
+const { change_screen } = require('#/utils/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display } = require('#/utils/display-width');
 const { print_button_grid } = require('#/utils/button-grid');
