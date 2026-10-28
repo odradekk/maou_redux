@@ -1330,9 +1330,13 @@ export default [
     desc: 'M14250 候选人行退回纯文本（行号即输入值，点不动）',
     file: 'ere/event/event-execution.js',
     find: '    era.printButton(line, index);',
-    replace: '    era.print(`[${index}] ${line}`); // 变异：纯文本行',
+    replace: `    if (index === 0) {
+      era.print('[' + index + '] ' + line); // 变异：第 0 行退回纯文本
+    } else {
+      era.printButton(line, index);
+    }`,
     tests: ['event-execution'],
-    must_mention: '输入不合法！请输入以下值之一',
+    must_mention: '候选人行是按钮、编号由 showAcc 拼；正文含名字与等级',
   },
   {
     desc: 'M14249 猎奇处刑菜单的七枚选项退回纯文本行',

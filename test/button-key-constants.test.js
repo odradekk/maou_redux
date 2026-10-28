@@ -83,6 +83,19 @@ test('按钮编号常量的值都小于 FIRST_CHILD_ID（常量化后的撞号�
     constants.length >= 40,
     `扫描面异常：只找到 ${constants.length} 个 *_KEY 常量（编号常量应画在各屏模块顶部）`,
   );
+  // 扫描面从 `ere/page/` 扩到 `ere/` 之后，三处都必须仍在里面：page/ 的旧常量
+  // 与本批新增的 system/、event/ 常量。少了任何一处就说明递归被改窄了——
+  // 那条「覆盖面不许靠改名悄悄换掉」的检查靠这一段。
+  const dirs = new Set(
+    constants.map((c) => c.file.split(/[\\/]/).slice(0, 2).join('/')),
+  );
+  for (const dir of ['ere/page', 'ere/system', 'ere/event']) {
+    assert.ok(
+      dirs.has(dir),
+      `扫描面必须包含 ${dir}（扫描根是 ere/，逐层递归）`,
+    );
+  }
+
   const offenders = constants
     .filter(
       (c) => !Number.isInteger(c.value) || c.value < 0 || c.value >= limit,

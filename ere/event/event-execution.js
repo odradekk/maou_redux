@@ -337,7 +337,7 @@ async function execution(rand_n = default_rand) {
     // 按钮集就是受理集（候选人下标 + 100），白名单先一步拦下其余值。
     era.printButton('返回', EXECUTION_STOP_KEY);
     const selected = await era.input();
-    if (selected === 100) return 0;
+    if (selected === EXECUTION_STOP_KEY) return 0;
     const cid = candidates[selected];
 
     for (;;) {

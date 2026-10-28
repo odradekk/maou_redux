@@ -77,6 +77,7 @@ const era = require('#/era-electron');
  * 名单页脚上一页 [2000] / 结束 [1999] / 下一页 [2001]。
  */
 const BATCH_STOP_KEY = 100;
+const BATCH_VIDEO_KEY = 101;
 const BATCH_METHOD_KEY = 121;
 const BATCH_PREV_KEY = 2000;
 const BATCH_END_KEY = 1999;
@@ -527,7 +528,7 @@ async function method_screen(rand_n) {
     era.printButton('停止', BATCH_STOP_KEY);
     era.printButton(
       `水晶球记录：${(era_exflag.mod_switch_bits & 4) !== 0 ? '开' : '关'}`,
-      101,
+      BATCH_VIDEO_KEY,
       {
         color: (era_exflag.mod_switch_bits & 4) !== 0 ? '#ffffff' : '#646464',
       },
@@ -545,7 +546,7 @@ async function method_screen(rand_n) {
       return DONE; // 处刑中 = 0；GOTO 处刑介面
     }
     if (choice === BATCH_STOP_KEY) return DONE; // CASE 100 → GOTO 处刑介面
-    if (choice === 101) {
+    if (choice === BATCH_VIDEO_KEY) {
       era_exflag.mod_switch_bits ^= 4; // INVERTBIT EX_FLAG:9000,2
       continue; // GOTO 处刑介面2
     }
@@ -635,7 +636,7 @@ async function batch_execution(rand_n = default_rand) {
         continue screen;
       }
       if (result === BATCH_END_KEY) return 0; // BEGIN SHOP
-      if (result === 121) {
+      if (result === BATCH_METHOD_KEY) {
         const outcome = await method_screen(rand_n);
         if (outcome === RESTART) continue restart;
         continue screen;
