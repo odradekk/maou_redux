@@ -31,10 +31,10 @@
  *   - GOTJUEL:3 = GET_JUEL（润滑）是**死存储**：写入后全库无读者
  *     （加算循环跳过 3，显示表不出现润滑），引擎侧却会把非零的
  *     gotjuel:3 加进 juel:3、令 juel:3 出现无人读的增量——这笔写不落。
- *   - 相殺的随机三选一无引擎 API，默认均匀三选一（Math.random）；
- *     随机源以参数注入（juel_check_main / offset_negative_group 的 rng
- *     形参，返回值 = 池序号整数），供测试固定住相殺的逐步数值，
- *     生产路径不传参。
+ *   - 相殺的随机抽取无引擎 API，默认在「本组内值 > 0 的池」里均匀抽
+ *     （Math.random）；随机源以参数注入（juel_check_main /
+ *     offset_negative_group 的 rng 形参，返回值 = 候选池序号整数），
+ *     供测试固定住相殺的逐步数值，生产路径不传参。
  */
 
 const era = require('#/era-electron');
@@ -193,22 +193,23 @@ function getbit(value, bit) {
  * 否定の珠による相殺。
  *
  * 两组池子（恭顺 4/欲情 5/屈服 6 与 耻情 8/苦痛 9/恐怖 10）各跑同一个
- * 循环：每轮随机挑一池，扣 min(否定余量的一半, 该池结算后的值)——否定
- * 余量取半为 0 且未清零时改扣 1；直到否定清零或该组池子全空。习得
- * （juel:7）与两组之外的项目不参与抵消。
+ * 循环：每轮从**本组内值 > 0 的池**里随机挑一个，扣 min(否定余量的一半,
+ * 该池结算后的值)——否定余量取半为 0 且未清零时改扣 1；直到否定清零或该
+ * 组池子全空。习得（juel:7）与两组之外的项目不参与抵消。
+ *
+ * 候选集按每轮的实际值重算，抽到的池必定扣得动（take 至少 1，否定余量
+ * 每轮下降），循环因此必然收敛。若候选集里带上空池，抽中空池那一轮
+ * take 被钳成 0、两笔 `-= 0` 不改变任何值，循环条件也不变，只能碰运气等
+ * 下一次抽到非空池——最小世界或注入定值随机源的测试会原地空转（#959）。
  *
  * **扣减写进 gotjuel（负值），不写 juel**：#875 起引擎 endTrain 的
  * `juel += gotjuel` 是唯一结算点。池值与否定余量都读 juel_settled
  * （juel + gotjuel），所以抵消的落账与当场写 juel 时逐值相同。
  *
  * **有意偏离：循环体语义上是 do-while（先跑一遍再判条件），此处写成
- * while。** do-while 在「否定已清零」或「该组池子全空」时循环体仍会跑
- * 一遍。跑那一遍在珠值非负时是**数值上的空操作**：扣减量被池值下限夹
- * 到 0，两笔 `-= 0` 不改变任何值——差别只在多出两笔同值写入。唯一不
- * 等价的情形是某个池子的珠值为**负**（负值会当扣减量、反向加回两侧）；
- * 珠的来源只有加算与本函数的有界扣减，负值在正常存档里不可达，故写成
- * while、不复刻这条退化路径。改回 do-while 会多出两笔空写、动到逐步
- * 写序的用例——真要复刻请连同用例一起改。
+ * while。** do-while 在「否定已清零」或「该组池子全空」时仍会跑那一遍：
+ * 前者会从某个池子里多扣 1（余量为 0 时 `take` 被提到 1），后者没有候选
+ * 可抽。两种都不该发生，所以让循环条件先判、出口只有一个。
  *
  * 另：`take === 0 → take = 1` 这条最小扣减量不是排版细节，是**循环的终止
  * 条件**——去掉它，否定余量为 1 时永远扣 0，循环不退出（验收实测：整个
@@ -216,11 +217,10 @@ function getbit(value, bit) {
  *
  * @param {number} cid 调教目标
  * @param {number[]} pools 参与抵消的 juel 序号组（长度 3，随机三选一）
- * @param {() => number} [rng] 池序号的随机源（须返回
- *   [0, pools.length) 的整数；默认均匀三选一，测试注入定值序）
+ * @param {() => number} [rng] 候选池序号的随机源（候选集 = 本组内值 > 0 的
+ *   池，须返回 [0, 候选数) 的整数；默认在候选集内均匀抽取，测试注入定值序）
  */
 function offset_negative_group(cid, pools, rng) {
-  const pick_index = rng ?? (() => Math.floor(Math.random() * pools.length));
   const negative = () => juel_settled(cid, 100);
   const pool_value = (id) => juel_settled(cid, id);
   // 循环条件：JUEL:100 > 0 && (组内三池之和) > 0
@@ -228,7 +228,10 @@ function offset_negative_group(cid, pools, rng) {
     negative() > 0 &&
     pools.reduce((sum, id) => sum + pool_value(id), 0) > 0
   ) {
-    const pick = pools[pick_index()];
+    // 候选池每轮按实际值重算：池子扣空后自动退出候选集，抽到的池总扣得动
+    const candidates = pools.filter((id) => pool_value(id) > 0);
+    const pick =
+      candidates[rng ? rng() : Math.floor(Math.random() * candidates.length)];
     let take = Math.floor(negative() / 2); // 扣减量 = JUEL:100 / 2
     if (take === 0) {
       take = 1; // 否定未清零时至少扣 1

@@ -80,12 +80,17 @@ function cell_texts(cells) {
   return cells.map((cell) => cell.text);
 }
 
-// 定值随机源（三选一：返回池序号 0/1/2）：轮转 0→1→2。恒定单值在
-// 有多个非空池的用例里会永远挑中空池（真随机源靠随机性保证终止），
-// 测试必须轮转
-const rotating_rng = () => {
-  let i = 0;
-  return () => i++ % 3;
+// 定值随机源：恒挑候选集的第一个非空池。候选集只含值 > 0 的池（#959 起），
+// 单值随机源也能收敛——轮转曾是绕开「抽到空池原地空转」的手段，修复后不
+// 再需要。上界不是精确契约，只用来把空转变成一句断言：空转没有终止点，
+// 靠它才不会挂住整个测试进程
+const pick_first_candidate = (limit = 64) => {
+  let picks = 0;
+  return () => {
+    picks += 1;
+    assert.ok(picks <= limit, `抽池 ${picks} 次仍未收敛`);
+    return 0;
+  };
 };
 
 // ———— 梯子 ————
@@ -253,7 +258,7 @@ for (const tc of ROW_CASES) {
       fixture.store.set(`juel:31:${key}`, value);
     }
 
-    mod.juel_check_main(31, () => 0);
+    mod.juel_check_main(31, pick_first_candidate());
 
     const texts = fixture.text_lines();
     // 表头：TFLAG:58（相殺前的否定保有）> 0 才有抵消句——仅第 11 行用例
@@ -277,7 +282,7 @@ test('结算表第 12 行：CSTR:7 定制癖好名替换「癖好」标签', () 
   fixture.store.set('palam:31:15', 1500);
   fixture.store.set('cstr:31:7', '足交');
 
-  mod.juel_check_main(31, () => 0);
+  mod.juel_check_main(31, pick_first_candidate());
 
   assert.equal(
     fixture.text_lines()[1 + 12],
@@ -293,7 +298,7 @@ test('相殺：否定余量逐轮减半（定值随机源），逐步写序固�
   fixture.store.set('juel:31:100', 100);
   fixture.store.set('juel:31:4', 1000); // 池子远大于否定 → 不触发钳制
 
-  mod.offset_negative_group(31, [4, 5, 6], () => 0); // 恒挑池 4
+  mod.offset_negative_group(31, [4, 5, 6], pick_first_candidate()); // 恒挑池 4
 
   // 每轮扣余量一半（向下取整）：100 → 50 → 25 → 13 → 7 → 4 → 2 → 1 → 0；
   // 余量 1 时半值为 0、改扣 1。逐步写序断言——终态守恒（总量 = 100）对
@@ -322,7 +327,7 @@ test('相殺：池子里不够时整池扣走（钳制），否定余量留在�
   fixture.store.set('juel:31:100', 1000);
   fixture.store.set('juel:31:5', 30); // 池 5 是唯一非空池：take=min(500,30)=30
 
-  mod.offset_negative_group(31, [4, 5, 6], rotating_rng());
+  mod.offset_negative_group(31, [4, 5, 6], pick_first_candidate());
 
   assert.equal(settled_juel(fixture, 5), 0, '现有 30 整池扣走');
   assert.equal(settled_juel(fixture, 100), 970, '三池皆空 → 否定残留');
@@ -335,10 +340,50 @@ test('相殺：余量取半为 0 且未清零时改扣 1（单点余量路径）
   fixture.store.set('juel:31:100', 1);
   fixture.store.set('juel:31:6', 5);
 
-  mod.offset_negative_group(31, [4, 5, 6], () => 2);
+  // 候选集只有池 6，定值随机源取首个候选即池 6
+  mod.offset_negative_group(31, [4, 5, 6], pick_first_candidate());
 
   assert.equal(settled_juel(fixture, 100), 0);
   assert.equal(settled_juel(fixture, 6), 4);
+});
+
+test('相殺：三池之和 > 0 而随机源总挑空池时仍然返回（不空转）', () => {
+  const fixture = create_era_fixture();
+  const mod = seed_world(fixture);
+  fixture.store.set('juel:31:100', 100);
+  fixture.store.set('juel:31:6', 30); // 只有屈服池非空（池 4/5 均为 0）
+
+  // 定值随机源恒返回 0：候选集过滤前它指向池 4（空池）。修复前这一抽
+  // 折成 take = 0、两笔 `-= 0` 之后循环条件不变——池 4 永远是空的，于是
+  // 死循环（上界断言把它变成失败的用例，而不是挂住测试进程）
+  mod.offset_negative_group(31, [4, 5, 6], pick_first_candidate());
+
+  assert.equal(settled_juel(fixture, 6), 0, '唯一非空池整池扣走（30）');
+  assert.equal(settled_juel(fixture, 100), 70, '否定余量 100 - 30 = 70');
+});
+
+test('相殺：缺省随机源（Math.random）也只在非空池里抽——恒挑首个候选不空转', () => {
+  const fixture = create_era_fixture();
+  const mod = seed_world(fixture);
+  fixture.store.set('juel:31:100', 300);
+  fixture.store.set('juel:31:6', 40); // 同上：池 4/5 为空
+  let picks = 0;
+  // 0.5 落在「按池数取整」与「按候选数取整」之间：候选只剩一个时，缺省
+  // 随机源若仍按 pools.length 折算就会越出候选集，抽到 undefined
+  fixture.override_math_random(() => {
+    picks += 1;
+    assert.ok(picks <= 64, `缺省随机源被抽 ${picks} 次仍未收敛`);
+    return 0.5;
+  });
+
+  try {
+    mod.juel_check_main(31); // 不传 rng：走生产缺省
+  } finally {
+    fixture.restore_math_random();
+  }
+
+  assert.equal(settled_juel(fixture, 6), 0, '唯一非空池整池扣走（40）');
+  assert.equal(settled_juel(fixture, 100), 260, '否定余量 300 - 40 = 260');
 });
 
 test('相殺两组先后（恭顺组在前、耻情组在后）：前组吃满后组不动', () => {
@@ -350,7 +395,7 @@ test('相殺两组先后（恭顺组在前、耻情组在后）：前组吃满�
   fixture.store.set('juel:31:4', 1000);
   fixture.store.set('juel:31:8', 500);
 
-  mod.juel_check_main(31, () => 0);
+  mod.juel_check_main(31, pick_first_candidate());
 
   assert.equal(settled_juel(fixture, 100), 0);
   assert.equal(settled_juel(fixture, 4), 970, '恭顺组消化全部 30');
@@ -365,7 +410,7 @@ test('TFLAG 快照：相殺前的 juel 4/5/6/8/9/10/100 记入 51-53/55-57/58，
     fixture.store.set(`juel:31:${key}`, value);
   }
 
-  mod.juel_check_main(31, rotating_rng());
+  mod.juel_check_main(31, pick_first_candidate());
 
   // count 0-2、4-6 → tflag:(count+51) = juel:(count+4)；count 3 跳过
   assert.equal(fixture.store.get('tflag:51'), 11);
@@ -394,7 +439,7 @@ test('职责划分：结算尾部不清零 gotjuel、不写 juel——留给引�
   fixture.store.set('juel:31:0', 2279);
   fixture.store.set('juel:31:100', 108);
 
-  mod.juel_check_main(31, rotating_rng());
+  mod.juel_check_main(31, pick_first_candidate());
 
   // 本次调教的收益留在 gotjuel 里，juel 原始值一格没动
   assert.equal(
@@ -594,12 +639,9 @@ test('结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () =>
   fixture.store.set('palam:31:7', 200); // 习得 → 1（同上）
   fixture.store.set('palam:31:8', 2000); // 耻情 → 20（同欲情档）
   fixture.store.set('palam:31:11', 3000); // 反感 → 100（[3000,6000) 档，汇入否定）
-  // 相殺抽取序（定值随机源，轮转防死循环）：欲情 → 屈服（第一组清 21），
-  // 耻情整池 20（第二组）——否定的 208 - 21 - 20 = 167
-  const picks = [1, 2, 0];
-  let pick_index = 0;
-
-  mod.juel_check_main(31, () => picks[pick_index++ % picks.length]);
+  // 相殺抽取（定值随机源恒取首个候选）：第一组依次清空欲情 20、屈服 1
+  // （共 21），第二组清空耻情 20——否定的 208 - 21 - 20 = 167
+  mod.juel_check_main(31, pick_first_candidate());
   // #577：13 行算式列的补位（`figure_indent` 的右对齐 8 格、`)` 与 `=` 之间
   // 的 12 格）都得是 NBSP——退回半角空格会留下连续半角空格，实机合并后错位。
   // 放在逐字比对之前：补位字符退回半角时，先红的是这条（点名补位而非整行 diff）
@@ -1075,7 +1117,7 @@ test('#595 调教结果表头与表格首行之间不夹空行（收尾输出只
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
 
-  mod.juel_check_main(31, () => 0);
+  mod.juel_check_main(31, pick_first_candidate());
 
   const header = fixture.lines.find((l) => l.text?.startsWith('调教结果：'));
   assert.ok(header, '结算表头在场');

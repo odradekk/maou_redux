@@ -250,9 +250,9 @@ test('juel：结算表 15 行逐字一致，endTrain 得到改动前的终值', 
   fixture.store.set('palam:31:7', 200);
   fixture.store.set('palam:31:8', 2000);
   fixture.store.set('palam:31:11', 3000);
-  const picks = [1, 2, 0];
-  let i = 0;
-  mod.juel_check_main(31, () => picks[i++ % picks.length]);
+  // 定值随机源恒取首个候选：第一组依次清空欲情 20、屈服 1，第二组清空
+  // 耻情 20，否定 208 - 21 - 20 = 167
+  mod.juel_check_main(31, () => 0);
 
   assert.deepEqual(
     fixture.text_lines().slice(0, 15).map(narrow),
