@@ -20,10 +20,14 @@ const { chara_callname } = require('#/utils/callname-utils');
  * 按 HP/MP 百分比写 CFLAG:534（状态档）并返回累加的
  * STATUS 槽位。
  *
- * 首分支 `HP% < 60 || MP% < 50` 已吞并其后全部六个分支（身体抱恙 / 重伤 /
- * 头脑发昏 / 濒死×2 / 气绝在逻辑上均不可达），实际可达态只有「轻伤（2）」
- * 与「元气满满（1）」两档——run_dungeon 的撤退判定（534 >= 3 / == 4）
- * 随之只有「轻伤 + 胆小」一分支真实可达。
+ * 首分支 `HP% < 60 || MP% < 50` 吞并了原脚本其后全部六个分支（身体抱恙 /
+ * 重伤 / 头脑发昏 / 濒死×2 / 气绝）——它们的条件分别是 `MP% < 50`、
+ * `HP% < 35 || MP% < 30`、`MP% < 30`、`HP% < 20 && MP% < 10`、`HP% < 20`、
+ * `MP% < 10`，逐条是首分支条件的子集，永远不会被判中；那六支已删除（#954），
+ * 原阈值（S1_HP 60 / S1_MP 50 / S2_HP 35 / S2_MP 30 / S3_HP 20 / S3_MP 10）
+ * 记在这里而不是留在代码里。实际可达态只有「轻伤（2）」与「元气满满（1）」
+ * 两档——run_dungeon 的撤退判定（534 >= 3 / == 4）随之只有「轻伤 + 胆小」
+ * 一分支真实可达。
  *
  * @param {number} cid 角色
  * @param {number} mode MODE（非 0 时静默不打印）
@@ -37,64 +41,14 @@ function check_status_one(cid, mode) {
   const wp_pct = Math.floor(
     (chara(cid).dungeon.气力 * 100) / (era.get(`maxbase:${cid}:1`) || 0),
   );
-  // 阈值（S1_HP 60 / S1_MP 50 / S2_HP 35 / S2_MP 30 / S3_HP 20 /
-  // S3_MP 10）随各分支字面内联。ELSEIF 链以顺序 if + return
-  // 等价改写（首个真条件胜出）——分支 2-7 的条件被首分支覆盖，
-  // 改写不引入行为差异
+  // 阈值（S1_HP 60 / S1_MP 50）内联在首分支里；S2/S3 两档的阈值只在
+  // 原脚本的分支顺序下成立，这里由首分支吞并、不写成代码（见函数注释）
   if (hp_pct < 60 || wp_pct < 50) {
     if (!mode) {
       era.print(`${name}轻伤。`);
     }
     chara(cid).dungeon.已接任务 = 2; // CFLAG:534 = 2
     return 1;
-  }
-  if (wp_pct < 50) {
-    // 不可达（首分支已含），保留
-    if (!mode) {
-      era.print(`${name}身体抱恙。`);
-    }
-    chara(cid).dungeon.已接任务 = 2;
-    return 4;
-  }
-  if (hp_pct < 35 || wp_pct < 30) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}重伤。`);
-    }
-    chara(cid).dungeon.已接任务 = 3;
-    return 2;
-  }
-  if (wp_pct < 30) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}头脑发昏。`);
-    }
-    chara(cid).dungeon.已接任务 = 3;
-    return 5;
-  }
-  if (hp_pct < 20 && wp_pct < 10) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}濒死。`);
-    }
-    chara(cid).dungeon.已接任务 = 4;
-    return 3;
-  }
-  if (hp_pct < 20) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}濒死。`);
-    }
-    chara(cid).dungeon.已接任务 = 4;
-    return 3;
-  }
-  if (wp_pct < 10) {
-    // 不可达，保留
-    if (!mode) {
-      era.print(`${name}气绝。`);
-    }
-    chara(cid).dungeon.已接任务 = 4;
-    return 6;
   }
   if (!mode) {
     era.print(`${name}元气满满。`);
