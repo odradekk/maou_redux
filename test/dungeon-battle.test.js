@@ -189,11 +189,12 @@ test('source_check_auto 接入：转发到 system/train/source-check 的真实�
 // magic 短路，让被调真身的常量落进变量——com13_auto 的 LOSEBASE:0 = 10
 // 是同族四个变体里唯一的值（COM0 1 / COM3 5 / COM50 0），可分辨「调错变体」。
 // #508 订正后 LOSEBASE 走 `deltabase` 负值通道（原写 `losebase:0` 在真机上
-// 落 key error）；这里不载入 source_check_auto 真身，观察的是三连的中间态
-// ——生产里第三步会把它结算进 BASE 并清零。短路要按各自的查表路径下手：
-// enemy_attack 走魔法的模块对象（dungeon-battle.js 的 magic_mod.magic），
-// duel_attack 走 dungeon-battle 的导出属性（dungeon-battle2.js 的
-// battle.magic，dungeon-magic.test.js:147 先例）。
+// 落 key error）。三连末尾的 nextTurnInTrain 会把 deltabase 结算进 BASE 并
+// 清零（#875 起夹具也照引擎结算），所以观察值是扣减后的 base 与清零后的
+// deltabase。短路要按各自的查表路径下手：enemy_attack 走魔法的模块对象
+// （dungeon-battle.js 的 magic_mod.magic），duel_attack 走 dungeon-battle
+// 的导出属性（dungeon-battle2.js 的 battle.magic，dungeon-magic.test.js:147
+// 先例）。
 
 test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', async () => {
   const fixture = setup_world();
@@ -205,9 +206,14 @@ test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asy
 
   assert.equal(await battle.enemy_attack(1, 0, () => 0), 999, 'MAGIC 短路');
   assert.equal(
+    fixture.store.get('base:1:0'),
+    1990,
+    'LOSEBASE:0 = 10（COM13 专属，结算后 2000 - 10）',
+  );
+  assert.equal(
     fixture.store.get('deltabase:1:0'),
-    -10,
-    'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
+    0,
+    'deltabase 由 nextTurnInTrain 清零',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
@@ -226,9 +232,14 @@ test('duel_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asyn
     'MAGIC 短路',
   );
   assert.equal(
+    fixture.store.get('base:1:0'),
+    1990,
+    'LOSEBASE:0 = 10（COM13 专属，结算后 2000 - 10）',
+  );
+  assert.equal(
     fixture.store.get('deltabase:1:0'),
-    -10,
-    'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
+    0,
+    'deltabase 由 nextTurnInTrain 清零',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });

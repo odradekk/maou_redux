@@ -41,6 +41,7 @@ const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { base_settled } = require('#/era-utils/train-settle');
 const {
   kojo_message_com_family,
   self_kojo_family,
@@ -10827,7 +10828,9 @@ async function kojo_message_palamcng_3(rand) {
         era_flag.selectcom === 46 &&
         era.get(`tequip:${target}:46`) === 0 &&
         era.get(`abl:${target}:3`) === 0 &&
-        era.get(`base:${target}:1`) === 0
+        // 参数变动口上跑在 SOURCE_CHECK 的扣减之后、引擎 nextTurnInTrain 之前：
+        // 本回合的 LOSEBASE 还在 deltabase 里，读结算后的值才等于改动前
+        base_settled(target, 1) === 0
       ) {
         await era.printAndWait(
           `从脱力抽搐着的菊花里、肠内残余的脏污液体全都喷了出来`,

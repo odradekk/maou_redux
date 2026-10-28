@@ -403,12 +403,9 @@ test('item_shop_trap：网格三种情况——空段不打行、恰好满行、
   ]);
 });
 
-test('item_shop_trap：绘制顺带点亮在售位，且据点期不写 tflag（#399 起暂存落模块内）', async () => {
+test('item_shop_trap：绘制顺带点亮在售位，且据点期不写 tflag', async () => {
   const fixture = create_era_fixture();
   const { item_shop_trap } = fixture.load_module('page/page-shop-trap');
-  const { get_temp_money, snapshot_money } = fixture.load_module(
-    'page/page-item-shop',
-  );
   fixture.store.set('flag:10004', 4321);
   // 非调教期：tflag 表不存在，写二段会抛 key error（夹具镜像引擎检查）
   await assert.doesNotReject(() => item_shop_trap());
@@ -418,12 +415,8 @@ test('item_shop_trap：绘制顺带点亮在售位，且据点期不写 tflag（
   );
   assert(
     !fixture.var_writes.some((w) => w.name.startsWith('tflag:')),
-    '据点期不写 tflag（TFLAG:15 改落模块内暂存，见 page-item-shop.js 文件头）',
+    '据点期不写 tflag（TFLAG:15 的暂存已随 #867 的退款路径一起删除）',
   );
-  assert.equal(get_temp_money(), 4321, '暂存值 = 绘制时的 MONEY');
-  // 暂存值的消费者是取消购买时的退钱（page-item-shop 的 event_buy）
-  snapshot_money();
-  assert.equal(get_temp_money(), 4321);
 });
 
 /** 全量行史的文本行（含被重绘清掉的；「发生过什么」的取证面，同 page-shop） */
@@ -433,163 +426,51 @@ function history_texts(fixture) {
     .map((line) => line.text);
 }
 
-/** 跑商店轮直到预置输入耗尽 */
-async function run_shop_with_bought(bought, ...inputs) {
-  const fixture = create_era_fixture();
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.bought = bought;
-  fixture.set_inputs(...inputs);
-  const { run_shop } = fixture.load_module('page/page-shop');
-  await assert.rejects(
-    () => run_shop({ skip_eventshop: true }),
-    /预置输入已耗尽/,
-  );
-  return fixture;
+/** 跑一遍商店循环（page/page-shop-loop.js）：每个场景都以 [999] 退出 */
+async function run_loop(fixture) {
+  const { shop_loop } = fixture.load_module('page/page-shop-loop');
+  await shop_loop();
 }
 
-// show_shop 的 BOUGHT 跳转由 test/page-shop.test.js 的 show_shop 用例覆盖
-// （那里是商店轮自身的行为目标）；
-// 本文件覆盖陷阱商店本体与 usershop 侧的调用点。
+// 店内状态（BOUGHT 切屏、997/998/999 三键）随 #867 搬进 page-shop-loop.js，
+// 由 test/page-shop-loop.test.js 覆盖；本文件只剩陷阱商店本体与它在循环里的
+// 购买。
 
-test('usershop 999：购物态下清购物标志与在售位后直接结束（#592：CLEAR_SHOP 把 RESULT 清 0）', async () => {
-  const fixture = create_era_fixture();
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  const { usershop } = fixture.load_module('page/page-shop');
-  era_flag.bought = 54;
-  fixture.store.set('itemsales:60', 1); // 陷阱商店点亮的在售位（CALL CLEAR_SHOP 的对象）
-  await usershop(999);
-  assert.equal(era_flag.bought, -1, '999 退出商店');
-  assert.equal(
-    fixture.store.get('itemsales:60'),
-    0,
-    'CALL CLEAR_SHOP 必须清在售位（0-299 全段）',
-  );
-  assert(
-    !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
-    '店内 999 不得落到 DEBUG_MENU_U（CLEAR_SHOP 无 RETURN，RESULT 被清 0）',
-  );
-  assert.equal(
-    fixture.waits.filter((w) => w.waited).length,
-    0,
-    '退出商店不等键',
-  );
-
-  // 边界：BOUGHT == 0（刚买 0 号商品）也在购物态内（条件是 >= 0），同样退出
-  const zero = create_era_fixture();
-  zero.load_module('era-utils/era-flag').bought = 0;
-  await zero.load_module('page/page-shop').usershop(999);
-  assert.equal(
-    zero.load_module('era-utils/era-flag').bought,
-    -1,
-    'BOUGHT == 0 仍在购物态（>= 0 的下界）',
-  );
-
-  // 非购物态：999 的调试菜单入口已删（#638，#542 判不移植）——不改 BOUGHT，
-  // 不打印提示行、不等键
-  const outside = create_era_fixture();
-  const outside_flag = outside.load_module('era-utils/era-flag');
-  const outside_shop = outside.load_module('page/page-shop');
-  outside_flag.bought = -1;
-  await outside_shop.usershop(999);
-  assert.equal(outside_flag.bought, -1);
-  assert(
-    !history_texts(outside).some((line) => line.includes('@DEBUG_MENU_U')),
-    '调试菜单入口删掉后不得再打印提示行（#638）',
-  );
-  assert.equal(outside.waits.filter((w) => w.waited).length, 0, '不得等待读键');
-});
-
-test('usershop 999 后回主菜单：下一轮 show_shop 重画主菜单（回合能继续）', async () => {
-  const fixture = await run_shop_with_bought(54, 999, 500);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  assert.equal(era_flag.bought, -1);
-  assert(
-    fixture.lines_history.some(
-      (line) => line.type === 'button' && line.accelerator === 496,
-    ),
-    '退出商店后主菜单必须重画（否则玩家被困在商店里）',
-  );
-  assert(
-    !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
-    '整轮里不得出现调试菜单提示（#592：店内 999 就是退出商店）',
-  );
-});
-
-test('usershop 998：切陷阱商店，重画归商店轮（JUMP 分支不再直画）', async () => {
-  const fixture = create_era_fixture();
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  const { usershop } = fixture.load_module('page/page-shop');
-  era_flag.bought = 1; // 道具商店态（BOUGHT < 54）
-  await usershop(998);
-  assert.equal(era_flag.bought, 200, 'BOUGHT = 200');
-  // #724 起两个商店各自在绘制前换屏：直画的屏与商店轮的下一轮重画之间
-  // 没有输入，换屏会清掉未经确认的直画——切店只置位，重画归 show_shop
-  assert.deepEqual(
-    fixture.lines_history,
-    [],
-    'usershop 998 不直画陷阱商店（下一轮 show_shop 画）',
-  );
-});
-
-test('usershop 997：切回道具商店，重画归商店轮（JUMP 分支不再直画）', async () => {
-  const fixture = create_era_fixture();
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  const { usershop } = fixture.load_module('page/page-shop');
-  era_flag.bought = 200; // 陷阱商店态
-  await usershop(997);
-  assert.equal(era_flag.bought, 1, 'BOUGHT = 1');
-  assert.deepEqual(
-    fixture.lines_history,
-    [],
-    'usershop 997 不直画道具商店（下一轮 show_shop 画）',
-  );
-});
-
-test('usershop：购物态下的其它输入一律 RETURN 0，不落到主菜单分发', async () => {
-  // `ELSEIF BOUGHT >= 0 → RETURN 0`：101（能力显示）在购物态
-  // 不生效——若漏掉这一支，101 会画角色信息并 BEGIN TURNEND
-  for (const result of [100, 101, 106, 109, 199, 200, 300, 500]) {
-    const fixture = create_era_fixture();
-    const era_flag = fixture.load_module('era-utils/era-flag');
-    const { usershop } = fixture.load_module('page/page-shop');
-    era_flag.bought = 54;
-    await usershop(result);
-    assert.deepEqual(
-      history_texts(fixture),
-      [],
-      `购物态下 ${result} 不应有输出（该分支一律 RETURN 0）`,
-    );
-    assert.equal(era_flag.bought, 54, `购物态下 ${result} 不改 BOUGHT`);
-  }
-});
-
-test('陷阱商店里的购买：点中陷阱走同一套 purchase（#399 起两个商店共用列货与购买）', async () => {
+test('陷阱商店里的购买：点中陷阱走同一套 purchase（两个商店共用列货与购买）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const era_exflag = fixture.load_module('era-utils/era-exflag');
-  era_flag.bought = 60;
   era_flag.money = 1000;
   fixture.store.set('itemname:60', '落穴');
   fixture.store.set('itemprice:60', 10);
   fixture.store.set('itemkeys', [60]);
-  fixture.set_inputs(60, 1); // 点中 [60] 落穴 → 数量选 1
-  const { run_shop } = fixture.load_module('page/page-shop');
+  // [998] 从道具店切到陷阱店 → 点中 [60] 落穴 → 数量选 1 → 退出
+  fixture.set_inputs(998, 60, 1, 999);
+  await run_loop(fixture);
 
-  await assert.rejects(
-    () => run_shop({ skip_eventshop: true }),
-    /预置输入已耗尽/,
-  );
-
-  assert.equal(fixture.store.get('item:60'), 1, '引擎侧先给货');
+  assert.equal(fixture.store.get('item:60'), 1, '陷阱 +1 件');
   assert.equal(
     era_flag.money,
     990,
-    '引擎侧先扣钱（TRAP_PRICE 与 ITEMPRICE 同值）',
+    '确认后扣钱（TRAP_PRICE 与 ITEMPRICE 同值）',
   );
-  assert.equal(era_exflag.legit_money, -10, 'event_buy → buy_plural 的记账');
-  assert.equal(era_flag.bought, 60, '买完仍在陷阱商店（BOUGHT 停在商品号）');
+  assert.equal(era_exflag.legit_money, -10, 'buy_plural 的记账');
   assert(
     history_texts(fixture).includes('《购买了落穴》'),
     '复数购买支的成交行',
   );
+});
+
+test('陷阱商店里的取消：数量选 0 时钱与陷阱都不动', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.money = 1000;
+  fixture.store.set('itemname:60', '落穴');
+  fixture.store.set('itemprice:60', 10);
+  fixture.store.set('itemkeys', [60]);
+  fixture.set_inputs(998, 60, 0, 999);
+  await run_loop(fixture);
+
+  assert.equal(fixture.store.get('item:60') ?? 0, 0, '取消不给货');
+  assert.equal(era_flag.money, 1000, '取消不扣钱');
 });

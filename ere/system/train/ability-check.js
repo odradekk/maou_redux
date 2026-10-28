@@ -17,6 +17,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const { in_train_window, juel_settled } = require('#/era-utils/train-settle');
 
 /**
  * 欲情检查：欲望（ABL:11）≥3 时清除压抑/抵抗，否定点数减半。
@@ -42,10 +43,20 @@ function yokubo_up_check(target, { in_train = true } = {}) {
     }
     era.print('失去了');
     era.print('否定点数减半');
-    era.set(
-      `juel:${target}:100`,
-      Math.floor((era.get(`juel:${target}:100`) || 0) / 2),
-    );
+    // 否定点数读「结算后的值」（juel + gotjuel）：本函数在引擎 endTrain
+    // 之前跑，本次调教刚获得/抵消的否定都还记在 gotjuel 里（#875）。调教内
+    // 减半后的值要落回 gotjuel（juel 由引擎加算）；窗口外（商店、userablup
+    // 这类没有调教会话的调用）没有 gotjuel 表，直接写 juel。in_train 只决定
+    // TFLAG:25 写不写，表的选择以引擎的调教名单为准。
+    const halved = Math.floor(juel_settled(target, 100) / 2);
+    if (in_train && in_train_window(target)) {
+      era.set(
+        `gotjuel:${target}:100`,
+        halved - (era.get(`juel:${target}:100`) || 0),
+      );
+    } else {
+      era.set(`juel:${target}:100`, halved);
+    }
     if (in_train) {
       game.train.压抑抵抗消灭 = 1;
     }

@@ -164,7 +164,8 @@ async function handle_end_later() {
 
   // 何点数を得られたか（一次性珠结算，#47 实现——普通 CALL
   // 非引擎回调；结算本体与 era.endTrain 的职责划分见 juel-check.js
-  // 文件头：gotjuel 已在结算尾部清零，链后的 endTrain 只删表、不加算）
+  // 文件头：run_juel_check 只写 gotjuel，链后的 endTrain 才把本次调教的
+  // 珠收益（含负的抵消与消费）加进 juel —— #875）
   await run_juel_check();
 
   // 切换回原来的目标与助手（train 循环记录的 TARGET:1/ASSI:1）

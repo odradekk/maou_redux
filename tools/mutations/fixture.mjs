@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 103; // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
+export const COUNT = 105; // #875 +2（M17563/M17564：夹具的 nextTurnInTrain 不结算 deltabase→base、endTrain 不结算 gotjuel→juel） // #874 +1（M17406：夹具 nextTurnInTrain 的 delta→palam 镜像） // #902 +17（M16300–M16316：夹具 raw() 的数据层视图——
 // 写不落库/自动建行/行不随加入/调教表恒在/source 不随 endTrain 消失/item 骨架缺子表/
 // bought 初值/盖章常量取错/no 返回副本/no 写不落数组/get 不认盖章缺省/行与列不进枚举/
 // 视图不读平表/扩展角色表不建桶或不建行）；#848 +3（M16251–M16253：resetData 按
@@ -1191,5 +1191,52 @@ export default [
     tests: ['palam-engine-settle'],
     must_mention:
       'palam 终值（引擎 delta→palam 之后）与改动前的当场结算逐号相同',
+  },
+  {
+    desc: 'M17563 夹具的 nextTurnInTrain 不结算 deltabase→base（base 停在扣减前）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      // deltabase → base 也在这里结算（#875）：游戏侧不再当场写 base、也不清
+      // deltabase，引擎的「base += deltabase → maxbase > 0 时钳到
+      // [0, maxbase] → deltabase = 0」是唯一结算点，遍历范围同样是
+      // \`Object.keys(data.deltabase[cid])\`（声明序号由 addCharacter 预置 0，
+      // 未声明序号 \`undefined + n\` 得 NaN——与 delta→palam 同款分歧）。
+      const deltabase_prefix = \`deltabase:\${cid}:\`;
+      for (const key of [...store.keys()]) {
+        if (!key.startsWith(deltabase_prefix)) {
+          continue;
+        }
+        const index = Number(key.slice(deltabase_prefix.length));
+        const base_key = \`base:\${cid}:\${index}\`;
+        const before = store.get(base_key);
+        let next =
+          (before === undefined && base_ids.has(index) ? 0 : before) +
+          store.get(key);
+        const max = store.get(\`maxbase:\${cid}:\${index}\`);
+        if (max > 0) {
+          next = Math.max(Math.min(next, max), 0);
+        }
+        store.set(base_key, next);
+        store.set(key, 0);
+      }`,
+    replace: '      // 变异：不结算 deltabase→base',
+    tests: ['train-engine-settle'],
+    must_mention: '1450 - 25',
+  },
+  {
+    desc: 'M17564 夹具的 endTrain 不把 gotjuel 加进 juel（珠停在结算前的值）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    for (const cid of chars_in_train) {
+      const prefix = \`gotjuel:\${cid}:\`;
+      for (const key of [...store.keys()]) {
+        if (!key.startsWith(prefix)) {
+          continue;
+        }
+        const juel_key = \`juel:\${cid}:\${key.slice(prefix.length)}\`;
+        store.set(juel_key, (store.get(juel_key) || 0) + store.get(key));
+      }
+    }`,
+    replace: '    // 变异：不结算 gotjuel→juel',
+    tests: ['train-engine-settle'],
+    must_mention: '2279 + 1200',
   },
 ];

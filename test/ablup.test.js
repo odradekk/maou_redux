@@ -2980,7 +2980,16 @@ test('userablup：非 999 返回 0；999 调 jujun_up_check／yokubo_up_check �
   assert.equal(fixture.store.get(`talent:${CID}:11`), 0, '反抗心失去');
   assert.equal(fixture.store.get(`talent:${CID}:13`), 1, '获得坦率');
   assert.equal(fixture.store.get(`talent:${CID}:32`), 0, '压抑清除');
-  assert.equal(fixture.store.get(`juel:${CID}:100`), 50, '否定点数减半');
+  // #875：调教窗口内珠的加减只写 gotjuel，减半后的「结算后的值」＝ juel +
+  // gotjuel；引擎 endTrain 才把它加进 juel
+  assert.equal(
+    (fixture.store.get(`juel:${CID}:100`) || 0) +
+      (fixture.store.get(`gotjuel:${CID}:100`) || 0),
+    50,
+    '否定点数减半（结算后的值）',
+  );
+  fixture.era.endTrain();
+  assert.equal(fixture.store.get(`juel:${CID}:100`), 50, '引擎加算后落到 juel');
 });
 
 test('decide_ablup39：上限条件是 32+33+39 >= 30（主流程是 >= 10）', async () => {

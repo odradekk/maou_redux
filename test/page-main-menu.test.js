@@ -825,7 +825,6 @@ test('分发期输出玩家先看到再被重绘清掉：阶层信息入口的�
   // 屏 + 重绘后不在屏上」）。
   const stub_direct = create_era_fixture();
   join_chara(stub_direct, 31);
-  stub_direct.load_module('era-utils/era-flag').bought = -1; // BOUGHT = -1：非购物态
   const { usershop: usershop_stub } = stub_direct.load_module('page/page-shop');
   register_handlers(stub_direct, 'page/page-shop');
   stub_direct.store.set('cflag:0:1', 10); // 育儿室检查分支（魔王在育儿室）

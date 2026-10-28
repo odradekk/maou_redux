@@ -5,19 +5,12 @@
  * 「show_shop 绘制 → 等输入 → usershop 分发」——这一轮收进本模块导出的
  * 处理器 run_shop，由 main-loop.js 的 STATE_HANDLERS 接驳。
  *
- * BOUGHT（购入品指针，#395 起落表：yml/Flag.yml「购入品指针」/
- * ere-utils/era-flag.js 的 bought）：show_shop 开头按 BOUGHT 分流、整个
- * 接管本轮（0-53 跑 item_shop、≥ 54 跑 item_shop_trap，都不再画主菜单）。
- * #396 起 ≥ 54 一侧是真身（page/page-shop-trap.js）、#399 起 0-53 一侧也是
- * （page/page-item-shop.js），usershop 的店内购物段（997-999 且
- * BOUGHT >= 0）三支到齐——退出商店的出口与进入商店的入口必须同一张工单
- * 完成，否则玩家会被困在商店界面里。
- *
- * **购买流程也归本文件的输入分发**：店内输入 0-99（販売アイテム数）进商品
- * 购买与购买回调、其余才交菜单分发——EraElectron 没有这条内建引擎路径
- * （guide 的 system-flow:60-64 与 config.md「販売アイテム数」条是该语义的
- * 两处记载），故本文件的 usershop 开头补上这一段（page-item-shop.js 的
- * purchase），两个商店共用。
+ * 这一屏只画据点主菜单。#867 之前商店（道具店 / 陷阱店）是「把购入品指针
+ * 设成 1，下一轮本函数按指针的值改画商店屏、输入还回本函数的 usershop」，
+ * 商店的状态因此散在一个 flag 里；现在两个商店各是一个独立循环
+ * （page/page-shop-loop.js），由主菜单的 [107] 直接调用、自己在店内收
+ * 输入，进出店都是那个循环的事。本文件因此只剩菜单侧的输入分派：菜单项
+ * 表（page/page-main-menu.js）、阶层信息（show_floor）与调试后门。
  */
 
 const era = require('#/era-electron');
@@ -32,13 +25,6 @@ const {
   reset_out_of_range_pointers,
 } = require('#/page/page-main-menu');
 const { enemy_exist2 } = require('#/page/page-dungeon-info2');
-const {
-  clear_shop,
-  item_shop,
-  purchase,
-  SHOP_ITEM_COUNT,
-} = require('#/page/page-item-shop');
-const { item_shop_trap } = require('#/page/page-shop-trap');
 const era_flag = require('#/era-utils/era-flag');
 const { change_screen } = require('#/page/components/screen-change');
 // SHOW_FLOOR 的怪物行与近卫名单（#548）：怪物名与 %SAVESTR% 的承载
@@ -65,10 +51,6 @@ function handle_shop() {
   for (let i = 0; i < 100; i += 1) {
     era.set(`itemsales:${i}`, 0);
   }
-
-  // BOUGHT = -1（#395 起落表：flag:10029，与 EVENTFIRST 链的初始化
-  // 同一变量，见文件头 BOUGHT 段）。
-  era_flag.bought = -1;
 }
 
 /**
@@ -79,29 +61,6 @@ async function show_shop() {
   // 承载（Chara0.yml 的名前同为「你」）。ere 侧没有它的读者——需要魔王名
   // 时一律走 name_of(0)/chara_callname，所以这里不做「每轮重写回你」的
   // 维护（#548 清单订正：名字按钮 498/499 也不读它）。
-
-  // clear_shop（清 ITEMSALES:0-299）：每轮重绘前都清一遍，商店本体
-  // （item_shop / item_shop_trap）随后各自重新点亮——清与亮分居两处是
-  // 既有结构（商店轮内还各有一次清，见 usershop 的 997/998/999）。
-  clear_shop();
-
-  // BOUGHT 0-53 → item_shop（道具商店）：#399 起真身
-  // （page/page-item-shop.js）。整个接管本轮——日期修正与主菜单都不执行；
-  // 玩家 [999] 退出后（bought → -1）的下一次重绘由主菜单的换屏收掉商店
-  // 那段（同 #396 陷阱商店的机制）。
-  if (era_flag.bought >= 0 && era_flag.bought < 54) {
-    await item_shop();
-    return; // 本轮没画主菜单（show_shop 无返回值，调用方不取）
-  }
-
-  // BOUGHT >= 54 → item_shop_trap（陷阱商店）：#396 起真身
-  // （page/page-shop-trap.js）。BOUGHT 停在 54-91 的情形有两处：商店内切
-  // 陷阱商店（998），以及刚买下 54 号【淫魔知识】（BOUGHT 停在 54，成交
-  // 后即转入陷阱商店）。
-  if (era_flag.bought >= 54) {
-    await item_shop_trap();
-    return; // 同上
-  }
 
   // 防御性日期修正：月/日小于 1 时钳成 1。EVENTFIRST 链只初始化
   // DAY:1 = 1、DAY 与 DAY:2 留 0（#22 的决定），玩家看到的开局因此是
@@ -116,9 +75,9 @@ async function show_shop() {
 
   // 主菜单绘制在 page/page-main-menu.js。#723 起主菜单每一屏开始时换屏
   // （ADR-0009：先整屏清空再绘制，画面上只有主菜单本身）——前一阶段的
-  // 输出（调教、过天事件、子页面）都已在玩家按键确认后被清掉；换屏不
-  // 补等键，缺确认的路径由测试夹具的未读输出检查报出、在那段输出末尾
-  // 补。重绘只发生在玩家交互之后：本函数只在 run_shop 的循环里被调，
+  // 输出（调教、过天事件、子页面、商店屏）都已在玩家按键确认后被清掉；
+  // 换屏不补等键，缺确认的路径由测试夹具的未读输出检查报出、在那段输出
+  // 末尾补。重绘只发生在玩家交互之后：本函数只在 run_shop 的循环里被调，
   // 输入先行（ADR-0003 的约定落点）。
   await change_screen();
   await draw_main_menu();
@@ -127,63 +86,20 @@ async function show_shop() {
 /**
  * usershop：主菜单输入的分发口（issue #24；#866 起主菜单分支搬进菜单项表）。
  *
- * 本函数只管店内输入：购买分派（0-99）与购物态的三个键（997/998/999），
- * 其余输入交 page-main-menu.js 的 dispatch_menu_item——菜单项的可用性条件
- * 与处理函数都在那张表里，与绘制同源。认不出的输入（含被检查拦下的、A == 0
- * 时的 496/497）与改动前一样落到函数尾返回，回循环重绘，不提示、不报错。
+ * 本函数只管不由菜单项表承载的两类输入：阶层按钮（[521]-[530]）与隐藏的
+ * 调试后门 7788，其余交 page-main-menu.js 的 dispatch_menu_item——菜单项的
+ * 可用性条件与处理函数都在那张表里，与绘制同源。认不出的输入与改动前一样
+ * 落到函数尾返回，回循环重绘，不提示、不报错。商店（0-99 的购买、997/998/
+ * 999 三键）自 #867 起在各自的循环里消费，不经这里。
  *
- * 阶层按钮（[521]-[530]）仍是本文件的：它们由地城概况子面板按层打印、编号
- * 是区间，不是主菜单项；隐藏调试入口 7788 同理（界面本就不印它）。
+ * 阶层按钮仍是本文件的：它们由地城概况子面板按层打印、编号是区间，不是
+ * 主菜单项；7788 同理（界面本就不印它）。
  *
  * @param {number} result 玩家输入（era.input() 的返回值）
  * @returns {Promise<string|undefined>} 转场目标（STATE 取值）；没发起转场的
  *   分支返回 undefined，由 run_shop 回循环重绘
  */
 async function usershop(result) {
-  // 购买分派（販売アイテム数 = 100）：店内输入 0-99 一律进购买流程、
-  // **不进下方的菜单分发**（guide 的 config.md「販売アイテム数」条）。
-  // #399 起这一段有宿主：page-item-shop.js 的 print_shopitem（列货）＋
-  // purchase（校验 → BOUGHT → 给货 → 扣钱 → event_buy）。判断条件不含
-  // BOUGHT：主菜单下 0-99 的输入同样进购买流程，ITEMSALES 全为 0 时
-  // purchase 无声退回（clear_shop 的结果）；引擎侧只送达已打印按钮的
-  // 编号，主菜单不印这些编号，故该情形只经直调可达（#130）。
-  if (result >= 0 && result < SHOP_ITEM_COUNT) {
-    await purchase(result);
-    return;
-  }
-
-  // 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 切商店）。
-  // #395 给 BOUGHT 落了表、#396 接上陷阱商店、#399 接上道具商店，整段自此
-  // 三支都是真身——判断条件与出口行为固定，三支的 **return 写法各不相同**，
-  // 逐支说明：
-  //   - 999 没有独立的返回语句、落到函数尾：清完购物标志回到主菜单，
-  //     **不进调试菜单**（旧移植按「调用之后输入值不变」错落到 7788 的
-  //     调试菜单分支，#562 实机发现；语义依据见 #592 的完成评论）；
-  //   - 998/997 是切换商店：只置 BOUGHT 与清账后 return，重画归商店轮
-  //     （两个商店各自绘制前换屏，抢先直画会被清掉未经确认的屏，#724）；
-  //   - BOUGHT >= 0 的其它输入直接 return：购物态下主菜单指令全部失效，
-  //     只有 997/998/999 三个键有反应。
-  // 三处 clear_shop（清 ITEMSALES:0-299）自 #399 起是真身——show_shop
-  // 每轮进店也清一次，此处是退出/切店时两次清账（既有行为）。
-  if (result === 999 && era_flag.bought >= 0) {
-    clear_shop();
-    era_flag.bought = -1;
-    return; // 支的出口：回主菜单（#592）
-  } else if (result === 998 && era_flag.bought >= 0) {
-    era_flag.bought = 200;
-    clear_shop();
-    // 切完由商店轮的下一轮绘制（show_shop 的 BOUGHT 支）重画——两个商店
-    // 各自在绘制前换屏（#724），这里不再抢先直画：直画的屏与循环重画之间
-    // 没有输入，换屏会把未经确认的直画内容清掉
-    return;
-  } else if (result === 997 && era_flag.bought >= 0) {
-    era_flag.bought = 1;
-    clear_shop();
-    return; // 重画同上，归商店轮
-  } else if (era_flag.bought >= 0) {
-    return; // 购物态下其它输入无反应，回循环重绘
-  }
-
   // 主菜单分发（#866）：菜单项表是绘制与分发的唯一一份，可用性条件也在
   // 表里——不可用项与表外编号一样落空，回循环重绘。
   const next = await dispatch_menu_item(result);
@@ -200,7 +116,7 @@ async function usershop(result) {
 
   // 调试菜单入口（作者的调试工具）自 #542 判不移植、#638 起随占位
   // 机制一并删除：主菜单不印 [999] 按钮，引擎的输入白名单（#130）本就
-  // 送不到这里；店内的 999 在上面的购物段早退（#592），也不会落到链尾。
+  // 送不到这里。
   // 剩下的 7788 是界面不印按钮的关系矩阵调试口，只能直调到达。
   if (result === 7788) {
     await relation_debugprint();
@@ -315,6 +231,9 @@ async function show_floor(arg) {
  * 如 100 分支的 BEGIN TRAIN——#44 已接入）：转场目标是普通返回值，经
  * usershop → 本循环逐层上抛，由主循环接站。
  *
+ * 商店（道具店 / 陷阱店）自 #867 起不是转场、也不占本循环：主菜单的 [107]
+ * 直接调用 page/page-shop-loop.js 的循环，退出后回到本循环重绘主菜单。
+ *
  * @param {object} [options]
  * @param {boolean} [options.skip_eventshop] 跳过 EVENTSHOP 链——
  *   STATE.SHOP_AFTER_LOAD（读档后的进入路径）专用：技能
@@ -334,8 +253,7 @@ async function run_shop({ skip_eventshop = false } = {}) {
       return shop_pending;
     }
   }
-  // 商店轮每轮「换屏 + 绘制」（ADR-0009）：换屏在 show_shop 的主菜单支，
-  // 道具/陷阱商店支由各商店自行换屏（#724）
+  // 商店轮每轮「换屏 + 绘制」（ADR-0009）：换屏在 show_shop 的主菜单支
   for (;;) {
     await show_shop();
     // 引擎侧：玩家点按钮（printButton 的快捷键）或直接键入编号；
@@ -349,10 +267,10 @@ async function run_shop({ skip_eventshop = false } = {}) {
 }
 
 // usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键。
-// #866 起主菜单的渲染与分发都在 page-main-menu.js 的菜单项表里；本文件
-// 仍无按钮分发的是 52x（阶层信息，楼层总览段的 [520]-[530] 已打）与 7788
-// （隐藏调试入口，界面本就不印它）——这些分支只能经直接调用测试，不经
-// 输入通道。
+// #866 起主菜单的渲染与分发都在 page-main-menu.js 的菜单项表里；#867 起
+// 商店的输入归各自的循环。本文件仍无按钮分发的是 52x（阶层信息，楼层
+// 总览段的 [520]-[530] 已打）与 7788（隐藏调试入口，界面本就不印它）——
+// 这些分支只能经直接调用测试，不经输入通道。
 /**
  * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
  * 注册（模块装载本身不注册，装配顺序见该文件）。
