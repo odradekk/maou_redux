@@ -41,7 +41,7 @@ const make_calc = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 129; // #888 +14（M16800–M16813：页面与 system/labo 的分界） // #872 +2（M16505/M16506：数量输入的 rule 与空候选收摊） // #814 +1（M15861：苏生后漏掉待机档归一）； // 界面流程缺陷 +1（M15305：丰胸加价不足的提示等键）；#750 +5（M14900–M14904：统一苏生资格，排除 -1 与无效预设）；#743 +3（M14605–M14607：在场角色的苏生前置、名单与提交检查）；#740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
+export const COUNT = 131; // #953 +2（M18000/M18001：被删缺省支的编号集前提） // #888 +14（M16800–M16813：页面与 system/labo 的分界） // #872 +2（M16505/M16506：数量输入的 rule 与空候选收摊） // #814 +1（M15861：苏生后漏掉待机档归一）； // 界面流程缺陷 +1（M15305：丰胸加价不足的提示等键）；#750 +5（M14900–M14904：统一苏生资格，排除 -1 与无效预设）；#743 +3（M14605–M14607：在场角色的苏生前置、名单与提交检查）；#740 +7（M14562–M14568：勋章提示不读素质 398、苏生名单取预设名）；#724 返工 +12（M14500–M14511：条目尾段等键删除）；此前 +3（M14496/M14497/M14499） // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -266,8 +266,8 @@ export default [
   make(
     9432,
     '触手生物 扣款 50000 改 50001',
-    '      pay(50000);\n      await era.waitAnyKey(); // WAIT',
-    '      pay(50001);\n      await era.waitAnyKey(); // WAIT',
+    '  pay(50000);\n  await era.waitAnyKey(); // WAIT',
+    '  pay(50001);\n  await era.waitAnyKey(); // WAIT',
     'BOUGT_TENTACLES：扣掉 50000 点',
   ),
   make(
@@ -294,8 +294,8 @@ export default [
   make(
     9436,
     '肉棒改造 扣款 20000 改 20001',
-    '    pay(20000);\n    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    await era.waitAnyKey();\n    return 1;',
-    '    pay(20001);\n    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    await era.waitAnyKey();\n    return 1;',
+    '  pay(20000);\n  // 改造播报在回选人屏前经按键确认（ADR-0009）\n  await era.waitAnyKey();\n  return 1;',
+    '  pay(20001);\n  // 改造播报在回选人屏前经按键确认（ADR-0009）\n  await era.waitAnyKey();\n  return 1;',
     '肉棒改造：扣掉 20000 点',
   ),
   // —— 素质编号 / 映射（改一项应只被对应的表驱动用例抓到） ——
@@ -651,13 +651,13 @@ export default [
   {
     desc: 'M14499 run_modify 成交尾段的换屏确认等键删除（apply 播报未读就被清）',
     file: 'ere/page/page-shop-labo.js',
-    find: `      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
-      // 条目的 apply 都打印，这里必等且只等一次
-      await era.waitAnyKey();
-      return 1;`,
-    replace: `      // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
-      // 条目的 apply 都打印，这里必等且只等一次
-      return 1;`,
+    find: `  // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+  // 条目的 apply 都打印，这里必等且只等一次
+  await era.waitAnyKey();
+  return 1;`,
+    replace: `  // apply 的结果文案在回主菜单屏前经按键确认（ADR-0009）——全部
+  // 条目的 apply 都打印，这里必等且只等一次
+  return 1;`,
     tests: ['page-shop-labo', 'subpage-clear-screen'],
     must_mention:
       '实验室等键：条目成交的播报在回主菜单换屏前先经按键确认（#724）',
@@ -695,8 +695,8 @@ export default [
   make(
     14502,
     'modify_futanari 尾段等键删除（形状播报未读就被清）',
-    '    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    await era.waitAnyKey();\n    return 1;\n  }\n}\n\n/** modify_futanari_erase */',
-    '    // 改造播报在回选人屏前经按键确认（ADR-0009）\n    return 1;\n  }\n}\n\n/** modify_futanari_erase */',
+    '  // 改造播报在回选人屏前经按键确认（ADR-0009）\n  await era.waitAnyKey();\n  return 1;\n}\n\n/** modify_futanari_erase */',
+    '  // 改造播报在回选人屏前经按键确认（ADR-0009）\n  return 1;\n}\n\n/** modify_futanari_erase */',
     '等键契约：改造族尾段（bustup/bustdown/futanari/penis）换屏前已确认',
   ),
   // —— #724 返工：换屏前的等键 ——
@@ -739,11 +739,11 @@ export default [
   {
     desc: 'M14506 demon_rebirth 转生播报等键删除（转生播报未读就被清）',
     file: 'ere/page/page-shop-labo.js',
-    find: `      // 转生播报在回选人屏前经按键确认（ADR-0009）
-      await era.waitAnyKey();
-      return 1;`,
-    replace: `      // 转生播报在回选人屏前经按键确认（ADR-0009）
-      return 1;`,
+    find: `    // 转生播报在回选人屏前经按键确认（ADR-0009）
+    await era.waitAnyKey();
+    return 1;`,
+    replace: `    // 转生播报在回选人屏前经按键确认（ADR-0009）
+    return 1;`,
     tests: ['page-shop-labo'],
     must_mention: '等键契约：刺青/发色/肤色/转生/自由调教/强化尾段换屏前已确认',
   },
@@ -799,16 +799,14 @@ export default [
   {
     desc: 'M14511 penis_remodel 尾段等键删除（改造播报未读就被清）',
     file: 'ere/page/page-shop-labo.js',
-    find: `    // 改造播报在回选人屏前经按键确认（ADR-0009）
-    await era.waitAnyKey();
-    return 1;
-  }
+    find: `  // 改造播报在回选人屏前经按键确认（ADR-0009）
+  await era.waitAnyKey();
+  return 1;
 }
 
 // ————————————————————————————————————————————————`,
-    replace: `    // 改造播报在回选人屏前经按键确认（ADR-0009）
-    return 1;
-  }
+    replace: `  // 改造播报在回选人屏前经按键确认（ADR-0009）
+  return 1;
 }
 
 // ————————————————————————————————————————————————`,
@@ -968,15 +966,15 @@ export default [
   make(
     16800,
     'run_modify 不打印 apply 返回的播报行（成交后整段结果文案丢失）',
-    '      for (const text of item.apply(cid, rand)) {',
-    '      for (const text of []) {',
+    '  for (const text of item.apply(cid, rand)) {',
+    '  for (const text of []) {',
     'modify_animal / _erase：种族 2（人狼）时换文案',
   ),
   make(
     16801,
     'run_modify 漏调 after（胸围重算与性征成长不执行）',
-    '      if (item.after) {',
-    '      if (false) {',
+    '  if (item.after) {',
+    '  if (false) {',
     'modify_bonyu：N_BREAST_GROW 副作用（巨乳 → 爆乳；绝壁被检查拦下）',
   ),
   make_calc(
@@ -1062,5 +1060,23 @@ export default [
     '  if (base(cid, 10) !== 0) {',
     '  if (true) { // 变异：非人类也走这一支',
     'given_human_life：非人类支只提示不返回 + 勋章清零 + 口上事件 15',
+  ),
+
+  // —— #953：被删的缺省支凭什么可以删（本屏的编号集就是受理集） ——
+  // 这两条改的都是「屏上印出来的编号」，破了删除的前提：缺省支删掉之后，
+  // 多印出来的那个编号没有任何分支接。
+  make(
+    18000,
+    '确认菜单多印一个编号 2（缺省支已删，这个编号没有受理方）',
+    '  era.printButton(`- ${no}`, 1);',
+    '  era.printButton(`- ${no}`, 1);\n  era.printButton(`- 等等`, 2);',
+    '各屏的编号集',
+  ),
+  make(
+    18001,
+    '刺青部位屏印的编号比 TATOO_NAME 的键多一（点下去落到下一个部位）',
+    '      Number(index),\n    );',
+    '      Number(index) + 1,\n    );',
+    '各屏的编号集',
   ),
 ];

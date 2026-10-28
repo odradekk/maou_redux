@@ -13,13 +13,16 @@
  *   5. 特殊流程各自一段（多段菜单逐支）；
  *   6. 随机上界用 seq_probe 捕获实参（RAND:2 / RAND:3 / RAND:7）。
  *
- * **不可达支**（按钮化之后输入集 = 本轮已打印按钮，逐条保留结构不补用例，
- * 与 page-ability-up.js 文件头同款登记）：
+ * **被删掉的不可达支**（#953；按钮化之后输入集 = 本轮已打印按钮，这些支
+ * 没有受理面，连同回边一并删除；前提由第八节的编号集断言钉住）：
  *   - 各确认菜单的 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`（输入只有 0/1）；
- *   - 选人处的 `RESULT < 0 || RESULT >= CHARANUM`（列表按钮即输入集）；
  *   - FUTANARI / 肉棒改造的形状菜单、TATOO 的部位表、DEMON_REBIRTH 的类型表
  *     的缺省分支（`shape < 0 || shape > 4`、`result < 0 || result > 6/2`、
- *     `pid < 0 || pid > 3`、转生类型表的 `id <= 0`）。
+ *     `pid < 0 || pid > 3`、转生类型表的 `id <= 0`）；
+ *   - 主循环末尾的 `ELSE CLEARLINE 1 + GOTO INPUT_LOOP`。
+ *
+ * 选人处的 `RESULT < 0 || RESULT >= CHARANUM` 属「调用点守卫已拦」一类
+ * （#954），不在这次的删除范围内，仍是保留结构、不补用例。
  *
  * **取不了等号侧的条件**（第六节的例外，逐条给理由——不是漏掉）：
  *   - 死者苏生的未列出编号无法从按钮输入，但提交前状态可能变化；
@@ -2938,4 +2941,161 @@ test('run_modify 的等键：成交必等一次，取消支不等键', async () 
   );
   await cancel.load_module('utils/screen-change').change_screen();
   assert.deepEqual(cancel.unread_output_clears, [], '取消支无未读输出');
+});
+
+// ————————————————————————————————————————————————
+// 八、被删分支的前提：本屏的编号集（#953）
+// ————————————————————————————————————————————————
+
+/**
+ * 选人骨架之后那一屏的编号集（页脚 `[1000]/[999]/[1001]` 之后的 n 个按钮）。
+ * @param {object[]} lines 输出行
+ * @param {number} n 取几个
+ * @returns {number[]} 编号
+ */
+function screen_after_pick(lines, n) {
+  const all = accs(lines);
+  const start = all.indexOf(1001) + 1; // 选人骨架的页脚收尾键
+  return all.slice(start, start + n);
+}
+
+/**
+ * 「输入不在按钮集里」这一类分支为什么可以删（#953）：引擎只把本轮**已
+ * 打印按钮**的编号回传给 `era.input()`，本屏没打印的编号永远收不到。下表
+ * 把每个被删过缺省支的屏的编号集钉死——给某一屏加了编号、或换了某个编号，
+ * 「没有受理面」的前提就变了，这条当场红，不能再照着旧注释删分支。
+ */
+test('各屏的编号集：被删的缺省支在这张表之外（#953）', async () => {
+  /** @type {{name: string, fn: string, inputs: number[], args?: number[], seed?: object, mode: string, expected: number[]}[]} */
+  const screens = [
+    // 确认屏：ask_yes_no 只打印 0/1，故「既不是 0 也不是 1」的支没有受理面
+    {
+      name: 'modify_bustup 的确认屏',
+      fn: 'modify_bustup',
+      inputs: [1, 1],
+      mode: 'pick',
+      expected: [0, 1],
+    },
+    {
+      name: 'modify_futanari 的形状屏',
+      fn: 'modify_futanari',
+      inputs: [1, 999],
+      mode: 'pick',
+      expected: [0, 1, 2, 3, 4, 999],
+    },
+    {
+      name: 'penis_remodel 的形状屏',
+      fn: 'penis_remodel',
+      inputs: [1, 999],
+      // 无肉棒的角色先被检查拦下，画不到形状菜单
+      seed: { 'talent:1:122': 1 },
+      mode: 'pick',
+      expected: [0, 1, 2, 3, 4, 999],
+    },
+    {
+      name: 'modify_hair_color 的颜色屏',
+      fn: 'modify_hair_color',
+      inputs: [1, 999, 999],
+      mode: 'pick',
+      expected: [0, 1, 2, 3, 4, 5, 6, 999],
+    },
+    {
+      name: 'modify_skin_color 的肤色屏',
+      fn: 'modify_skin_color',
+      inputs: [1, 999, 999],
+      mode: 'pick',
+      expected: [0, 1, 2, 999],
+    },
+    {
+      name: 'block_feeling 的部位屏（女性四行）',
+      fn: 'block_feeling',
+      inputs: [1, 999],
+      mode: 'pick',
+      expected: [0, 1, 2, 3, 9, 999],
+    },
+    {
+      name: 'block_feeling 的部位屏（男性不画私处行）',
+      fn: 'block_feeling',
+      inputs: [1, 999],
+      seed: { 'talent:1:122': 1 },
+      mode: 'pick',
+      expected: [0, 2, 3, 9, 999],
+    },
+    {
+      name: 'tatoo_set_off 的部位屏',
+      fn: 'tatoo_set_off',
+      inputs: [1, 999],
+      mode: 'pick',
+      expected: [10, 11, 12, 13, 14, 15, 16, 17, 999],
+    },
+    {
+      name: 'demon_rebirth 的类型屏',
+      fn: 'demon_rebirth',
+      inputs: [1, 999, 999],
+      mode: 'pick',
+      // DEMON_TYPES 的十一个族 × 各组，编号 = 族号 * 10 + 组内下标
+      expected: [
+        0, 1, 2, 3, 4, 5, 10, 11, 12, 13, 14, 20, 21, 22, 23, 30, 31, 32, 33,
+        34, 35, 40, 41, 50, 51, 52, 53, 54, 60, 61, 62, 63, 64, 70, 71, 72, 80,
+        81, 90, 91, 92, 100, 101, 102, 999,
+      ],
+    },
+    {
+      name: 'evilapp 的菜单',
+      fn: 'evilapp',
+      inputs: [999],
+      mode: 'all',
+      expected: [1, 2, 3, 4, 999],
+    },
+    {
+      name: '主循环第 1 页',
+      fn: 'secret_labo',
+      inputs: [999],
+      mode: 'tail',
+      expected: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 997, 999, 998],
+    },
+    {
+      name: '主循环第 2 页',
+      fn: 'secret_labo',
+      inputs: [998, 999],
+      mode: 'tail',
+      expected: [
+        12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 997, 999, 998,
+      ],
+    },
+    {
+      name: '主循环第 3 页（有勋章、未买触手）',
+      fn: 'secret_labo',
+      inputs: [998, 998, 999],
+      seed: { 'exp:0:81': 5, 'item:90': 0 },
+      mode: 'tail',
+      expected: [
+        50, 51, 52, 54, 55, 56, 59, 60, 64, 65, 66, 67, 68, 997, 999, 998,
+      ],
+    },
+    {
+      name: '主循环第 4 页',
+      fn: 'secret_labo',
+      inputs: [998, 998, 998, 999],
+      mode: 'tail',
+      expected: [70, 71, 72, 73, 74, 30, 31, 32, 33, 997, 999, 998],
+    },
+  ];
+
+  for (const screen of screens) {
+    const fixture = make_fixture({ seed: screen.seed ?? {} });
+    const { added } = await run(
+      fixture,
+      screen.fn,
+      screen.inputs,
+      screen.args ? { args: screen.args } : {},
+    );
+    const actual =
+      screen.mode === 'pick'
+        ? screen_after_pick(added, screen.expected.length)
+        : screen.mode === 'tail'
+          ? accs(added).slice(-screen.expected.length)
+          : accs(added);
+    assert.deepEqual(actual, screen.expected, `${screen.name} 的编号集`);
+  }
 });
