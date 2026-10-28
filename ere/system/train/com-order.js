@@ -51,7 +51,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** 名字表读取的空值缺省处理（#13：未声明读值得 undefined） */
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';

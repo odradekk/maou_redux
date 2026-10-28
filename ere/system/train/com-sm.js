@@ -65,9 +65,9 @@ const {
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { soiling_cloth_no2 } = require('#/system/train/cloth');
 const { clothtype_special_text } = require('#/utils/clothtype-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 // —— 读数缺省处理（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
 
 const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;
@@ -82,7 +82,7 @@ const add_up = (cid, i, v) => era.add(`delta:${cid}:${i}`, v);
 
 /**
  * EXPLV（经验等级阈值）：0,1,4,20,50,200。PALAMLV 复用
- * era-utils/palam-level.js。
+ * data/palam-level-const.js。
  */
 const EXPLV = [0, 1, 4, 20, 50, 200];
 

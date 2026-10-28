@@ -44,8 +44,8 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 // 旧引擎数值变量未声明时为 0；EraElectron 原始 API 返回 undefined（#13）。

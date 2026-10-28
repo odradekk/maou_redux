@@ -8,6 +8,10 @@
  *
  * palam_settled 是同一域的读侧访问器：调教期参数分居 palam / delta 两表，
  * 需要「把本回合的增量算进去」的读点必须两表相加，理由见函数注释。
+ *
+ * 阈值阶梯与由它派生的读取规则放在一处：palam_level 就是阶梯的查表函数，
+ * 拆开会让「改阈值」和「改分档口径」落到两个文件。同型的体力/宝珠结算
+ * 读值（base / juel）在 era-utils/train-settle.js，那组没有阈值阶梯。
  */
 
 const era = require('#/era-electron');

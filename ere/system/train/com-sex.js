@@ -10,8 +10,6 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { PALAMLV } = require('#/era-utils/palam-level');
-const { EXPLV } = require('#/era-utils/exp-level');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const {
@@ -40,6 +38,8 @@ const {
 } = require('#/system/dungeon/battle-state');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
+const { PALAMLV } = require('#/data/palam-level-const');
+const { EXPLV } = require('#/data/exp-level-const');
 // —— 读取与写入：未声明序号均按项目约定缺省为 0 ——
 const get = (name) => era.get(name) || 0;
 const set = (name, value) => era.set(name, value);

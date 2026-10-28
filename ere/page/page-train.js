@@ -37,9 +37,9 @@ const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NB
 // PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/utils/clothtype-utils.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
 const { clothtype_text } = require('#/utils/clothtype-utils');
-// PALAMLV/palam_level 自 #45 起集中在 era-utils/palam-level.js（SOURCE_CHECK
-// 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
-const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
+// PALAMLV/palam_level 集中在 data/palam-level-const.js（SOURCE_CHECK 一族
+// 共用）；此处再导出 palam_level 供既有用例继续从本模块取用
+const { PALAMLV, palam_level } = require('#/data/palam-level-const');
 
 // 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
 //   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的

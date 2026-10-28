@@ -29,7 +29,6 @@ const { piercing_state } = require('#/system/train/piercing-state');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -68,6 +67,7 @@ const {
   peek_aftertrain_s,
 } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。

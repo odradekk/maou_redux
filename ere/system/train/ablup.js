@@ -53,7 +53,6 @@ const era = require('#/era-electron');
  * 换屏前的等键。调教侧分发（juel-check.js 的 run_juel_check）不读返回值。
  */
 const HANDLER_QUIET = 'quiet';
-const { EXPLV } = require('#/era-utils/exp-level');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
@@ -70,6 +69,7 @@ const { MASTER } = require('#/utils/master');
 /** 能力值提高页的「停止」键（各能力项子屏共用） */
 const ABLUP_STOP_KEY = 100;
 const { percent_trunc, times } = require('#/utils/numeric');
+const { EXPLV } = require('#/data/exp-level-const');
 
 /**
  * ablup0～3 共用的可否状态文案。

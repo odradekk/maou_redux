@@ -50,13 +50,13 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { DECLARED_COM_IDS } = require('#/system/train/com-family');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
   clothtype_main2_text,
   clothtype_special_text,
 } = require('#/utils/clothtype-utils');
 const { game } = require('#/facade/game');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /**
  * train_message_b 的分支族（指令号 → 情景描写）。族工单在 com-<族>.js

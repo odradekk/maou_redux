@@ -49,8 +49,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { piercing_state } = require('#/system/train/piercing-state');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { PALAMLV } = require('#/era-utils/palam-level');
-const { EXPLV } = require('#/era-utils/exp-level');
 const {
   com_able_family,
   com_family,
@@ -82,6 +80,8 @@ const {
   clothtype_main2_text,
   clothtype_special_text,
 } = require('#/utils/clothtype-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
+const { EXPLV } = require('#/data/exp-level-const');
 
 // —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 取默认值） ——
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;

@@ -56,7 +56,6 @@ const era = require('#/era-electron');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { peek_aftertrain_s } = require('#/event/event-aftertrain');
 const {
   kojo_message_com_family,
@@ -91,6 +90,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const { piercing_state } = require('#/system/train/piercing-state');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），TALENT/MARK/BASE/TEQUIP 一律 || 0 保底处理 */
 const era0 = (k) => era.get(k) || 0;

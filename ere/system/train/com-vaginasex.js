@@ -30,11 +30,11 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { PALAMLV } = require('#/era-utils/palam-level');
-const { EXPLV } = require('#/era-utils/exp-level');
 const { incest } = require('#/system/train/incest');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { times } = require('#/utils/numeric');
+const { PALAMLV } = require('#/data/palam-level-const');
+const { EXPLV } = require('#/data/exp-level-const');
 
 /** incest 使用当前 TARGET/PLAYER 计算亲族关系。 */
 function call_incest() {

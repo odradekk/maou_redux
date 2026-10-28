@@ -69,11 +69,11 @@ const { weapon_restore } = require('#/system/equip/weapon-restore');
 const { chara_callname } = require('#/utils/callname-utils');
 const { MASTER } = require('#/utils/master');
 const { default_rand, idiv, times } = require('#/utils/numeric');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const {
   clothtype_main2_text,
   clothtype_special_text,
 } = require('#/utils/clothtype-utils');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** PBAND:0（EVENTFIRST 置 4）——ITEM:PBAND 即 ITEM:4 假阳具（持有判定） */
 const PBAND = 4;

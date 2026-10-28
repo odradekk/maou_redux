@@ -305,7 +305,7 @@ async function step1(cid) {
   } else if (cflag(cid, 2) >= 1000) {
     if (
       abl(cid, 10) >= 3 &&
-      exp(cid, 21) >= 200 && // EXPLV:5（era-utils/exp-level.js）
+      exp(cid, 21) >= 200 && // EXPLV:5（data/exp-level-const.js）
       talent(cid, 76) === 0 &&
       talent(cid, 85) === 0 &&
       talent(cid, 184) === 0 &&

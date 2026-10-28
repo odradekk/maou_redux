@@ -733,7 +733,7 @@ test('#623 交谈录像：自我介绍整行合并', async () => {
 test('#623 交谈：六支各自并入前缀整行', async () => {
   for (const replay of [false, true]) {
     const phase = replay ? '二回目' : '初回';
-    // PALAMLV[4] 是内建常量 10000、PALAMLV[2] = 500（era-utils/palam-level）；
+    // PALAMLV[4] 是内建常量 10000、PALAMLV[2] = 500（data/palam-level-const）；
     // 的无后缀 PRINTFORM 前缀提到语句外，六支都拼它（#623）
     const merge_cases = [
       {

@@ -128,7 +128,7 @@ const ABLUP_HANDLERS = {
   100: ablup100,
 };
 
-// PALAMLV 各级阈值，与 era-utils/palam-level.js 的 PALAMLV 取值相同
+// PALAMLV 各级阈值，与 data/palam-level-const.js 的 PALAMLV 取值相同
 const PALAMLV = [
   0, 100, 500, 3000, 10000, 30000, 60000, 100000, 150000, 250000,
 ];

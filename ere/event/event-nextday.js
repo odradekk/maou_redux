@@ -51,7 +51,6 @@ const { auto_save } = require('#/page/page-save-load');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const era_exflag = require('#/era-utils/era-exflag');
 const {
   chara_callname,
@@ -83,6 +82,7 @@ const summon_mod = require('#/system/dungeon/monster-summon');
 // 同属一个全局随机序列，ere 侧各自缺省即等价
 const room_day_mod = require('#/system/dungeon/dungeon-room');
 const { default_rand, times } = require('#/utils/numeric');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 /** 素质名（%TALENTNAME:n%）的读数源：引擎素质名表 */
 function talent_name(n) {

@@ -19,8 +19,6 @@
 const era = require('#/era-electron');
 const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
-const { EXPLV } = require('#/era-utils/exp-level');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
@@ -41,6 +39,8 @@ const {
 const { read_train_name } = require('#/system/train/train-name');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
+const { EXPLV } = require('#/data/exp-level-const');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);

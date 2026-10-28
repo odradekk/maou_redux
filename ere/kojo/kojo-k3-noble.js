@@ -42,7 +42,6 @@ const benki_mod = require('#/system/train/benki');
 const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
 const { base_settled } = require('#/era-utils/train-settle');
 const {
   kojo_message_com_family,
@@ -82,6 +81,7 @@ const {
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
+const { PALAMLV } = require('#/data/palam-level-const');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
 function handle_train_pri() {
