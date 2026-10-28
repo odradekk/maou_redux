@@ -8230,7 +8230,7 @@ export default [
   },
   {
     desc: 'M10521 page-ablup：`*` 标记恒不上屏（DECIDE 结果被丢弃）',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';",
     replace:
       "    const mark = (await decide_ablup(cid, count)) === 1 ? '' : '';",
@@ -8239,7 +8239,7 @@ export default [
   },
   {
     desc: 'M10522 page-ablup：[99] 行的 `*` 标记恒不上屏',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: "  const mark99 = (await decide_ablup(cid, 99)) === 1 ? ' *' : '';",
     replace: "  const mark99 = (await decide_ablup(cid, 99)) === 1 ? '' : '';",
     tests: ['juel-check'],
@@ -8256,7 +8256,7 @@ export default [
   },
   {
     desc: 'M10524 page-ablup：[4] 癖好感觉行的 `*` 标记恒不上屏',
-    file: 'ere/page/page-ablup.js',
+    file: 'ere/system/train/ablup-screen.js',
     find: "    const mark_f = (await decide_ablup(cid, 4)) === 1 ? ' *' : '';",
     replace: "    const mark_f = (await decide_ablup(cid, 4)) === 1 ? '' : '';",
     tests: ['juel-check'],

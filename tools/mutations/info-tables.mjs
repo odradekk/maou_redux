@@ -14,8 +14,8 @@
 export const COUNT = 12;
 
 const TEXT_GRID = 'ere/utils/text-grid.js';
-const INFO_EXP = 'ere/page/page-info-exp.js';
-const ABLUP = 'ere/page/page-ablup.js';
+const INFO_EXP = 'ere/system/train/info-exp-screen.js';
+const ABLUP = 'ere/system/train/ablup-screen.js';
 const ABLMARK = 'ere/page/components/chara-info-abl-mark.js';
 const TITLE = 'ere/page/components/chara-info-title.js';
 const INTERCEPT = 'ere/page/page-intercept.js';

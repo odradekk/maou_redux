@@ -84,7 +84,7 @@ export default [
   },
   {
     desc: 'M7985 nid_get_type 和名下界改错',
-    file: 'ere/system/chara/chara-name.js',
+    file: 'ere/system/chara/chara-name-type.js',
     find: '  if (nid < 200 || nid >= 2000) {\n    return 1; // 洋名（含男性洋名 [2000,2453)）',
     replace:
       '  if (nid < 201 || nid >= 2000) {\n    return 1; // 洋名（含男性洋名 [2000,2453)）',
@@ -93,7 +93,7 @@ export default [
   },
   {
     desc: 'M7986 nid_get_type 的和名上界改错（999 判成洋名）',
-    file: 'ere/system/chara/chara-name.js',
+    file: 'ere/system/chara/chara-name-type.js',
     find: '  if (nid < 1000) {\n    return 0; // 和名 [200,650)',
     replace: '  if (nid < 1001) {\n    return 0; // 和名 [200,650)',
     tests: ['chara-name'],
@@ -491,7 +491,7 @@ export default [
   },
   {
     desc: 'M7821 nid_get_type 和名下界改错（#384 起真身落在 chara-name.js）',
-    file: 'ere/system/chara/chara-name.js',
+    file: 'ere/system/chara/chara-name-type.js',
     find: '  if (nid < 200 || nid >= 2000) {\n    return 1; // 洋名',
     replace: '  if (nid < 201 || nid >= 2000) {\n    return 1; // 洋名',
     tests: ['chara-name'],
@@ -611,7 +611,7 @@ export default [
   // —— #653（F7）：男性和名/中式名的判型检查 ——
   {
     desc: 'M13261 nid_get_type 的 3000 和名分支回退（男性和名/中式名又判成洋名）',
-    file: 'ere/system/chara/chara-name.js',
+    file: 'ere/system/chara/chara-name-type.js',
     find: '  if (nid >= 3000) {\n    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)',
     replace:
       '  if (nid >= 3001) {\n    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)',

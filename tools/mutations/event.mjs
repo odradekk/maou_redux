@@ -362,7 +362,7 @@ export default [
   },
   {
     desc: 'M205 ending_1 的 FLAG:82 置位删除',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '  era_flag.human_realm_fallen = 1;',
     replace: '  // 变异：FLAG:82 不置位',
     tests: ['page-ending'],
@@ -370,7 +370,7 @@ export default [
   },
   {
     desc: 'M206 ending_1 的回标题分支也置 FLAG:82（回标题分支不置）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `      return begin(STATE.TITLE);
     }`,
     replace: `      era_flag.human_realm_fallen = 1; // 变异：回标题前置位
@@ -381,7 +381,7 @@ export default [
   },
   {
     desc: 'M207 ending_1 入队角色号改坏（ADDCHARA 35 → 34）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '  era.addCharacter(35);',
     replace: '  era.addCharacter(34); // 变异：入错角色',
     tests: ['page-ending'],
@@ -389,7 +389,7 @@ export default [
   },
   {
     desc: 'M208 ending_3 的置位状态机断在 1（FLAG:87 = 2 → 1）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 2;`,
@@ -518,7 +518,7 @@ export default [
   // —— #148 quit 的 throw 型控制流（夹具镜像 + ere 侧哨兵机制拆除）——
   {
     desc: 'M274 ending_1 的转场没有 return（回标题之后继续跑：置 FLAG:82 并返回 0）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `      // 回标题（#852）：结局演出到此为止，世界结束。转场是返回值，
       // FLAG:82 = 1 与收尾 PRINTW 都不执行（这一局不再继续）
       return begin(STATE.TITLE);`,
@@ -618,7 +618,7 @@ export default [
   // —— #173（H4）：ending_2 真身（M440-M445）——
   {
     desc: 'M440 ending_2 的回标题降格为普通返回（结局不结束，玩家回不到标题）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  // 回标题（#852）：GAMEOVER 之后没有「继续」，世界结束、标题循环重新接管
   return begin(STATE.TITLE);`,
     replace: `  return 0; // 变异：GAMEOVER 降格为普通返回值`,
@@ -627,7 +627,7 @@ export default [
   },
   {
     desc: 'M441 ending_2 封印播报的名字写死 0（%SAVESTR:TARGET% 不取指针）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "  const target_name = era.get(`callname:${era_flag.target}:-1`) ?? '';",
     replace:
       "  const target_name = era.get(`callname:0:-1`) ?? ''; // 变异：写死 0",
@@ -636,7 +636,7 @@ export default [
   },
   {
     desc: 'M442 ending_2 的 GAMEOVER 分隔行删除',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "  era.drawLine({ content: 'GAMEOVER' });",
     replace: '  // 变异：GAMEOVER 分隔行删',
     tests: ['page-ending', 'event-ending2-e2e'],
@@ -644,7 +644,7 @@ export default [
   },
   {
     desc: 'M443 ending_2 横幅末行删除（「带着一丝不易察觉的微笑……」）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "  era.print('｜　　　带着一丝不易察觉的微笑，再次陷入了封印的沉睡之中　　｜');",
     replace: '  // 变异：横幅末行删',
     tests: ['page-ending', 'event-ending2-e2e'],
@@ -652,7 +652,7 @@ export default [
   },
   {
     desc: 'M444 ending_2 的仪式性 INPUT 删除',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '  // INPUT——确认用，结果不被消费（回标题之后无读者）\n  await era.input();',
     replace: '  // 变异：INPUT 删（演出不等确认直接回标题）',
     tests: ['page-ending'],
@@ -660,7 +660,7 @@ export default [
   },
   {
     desc: 'M445 ending_2 封印播报的读键删除（PRINTFORMW 不等键）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '  await era.waitAnyKey(); // PRINTFORMW 的读键',
     replace: '  // 变异：PRINTFORMW 的读键删',
     tests: ['page-ending'],
@@ -1154,7 +1154,7 @@ export default [
   },
   {
     desc: 'M8216 ending_3 领域征服置位：FLAG:87 = 1 误写成 0（防重复触发的条件态丢了）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);
   era_flag.elf_realm_conquered = 2;`,
@@ -1166,7 +1166,7 @@ export default [
   },
   {
     desc: 'M8217 ENDING_3 献上对象：char_gift(1) 误写成 char_gift(5)（圣女→龙族公主）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  era_flag.elf_realm_conquered = 1;
   await char_gift(1, rand);`,
     replace: `  era_flag.elf_realm_conquered = 1;
@@ -1176,7 +1176,7 @@ export default [
   },
   {
     desc: 'M8218 ending_n 的 ending_input 分档：2801 + 1000 误写成 + 2000（分档错位）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '  return await ending_input(era_exflag.first_run_deadline + 1000);',
     replace:
       '  return await ending_input(era_exflag.first_run_deadline + 2000);',
@@ -1185,7 +1185,7 @@ export default [
   },
   {
     desc: 'M8219 ending_input CASE 1 的继续分支：收尾文本被改写',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "        era.print('魔王的传说，还将继续......'); // PRINTW",
     replace: "        era.print('魔王的传说，还没有结束。'); // PRINTW",
     tests: ['endcheck'],
@@ -1193,7 +1193,7 @@ export default [
   },
   {
     desc: 'M8220 char_gift 性格档位表：第 0 档 160（慈爱）误写成 161（自信家）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: 'const CHAR_GIFT_PERSONAL = [160, 161, 162, 163, 164, 166, 172, 173];',
     replace:
       'const CHAR_GIFT_PERSONAL = [161, 161, 162, 163, 164, 166, 172, 173];',
@@ -1202,7 +1202,7 @@ export default [
   },
   {
     desc: 'M8221 char_gift 发色受理集漏掉第 10 色（上界 10 误写成 9）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "{ rule: '(?:10|11|[1-9])' }",
     replace: "{ rule: '(?:11|[1-9])' } // 变异：第 10 色被拒",
     tests: ['page-ending'],
@@ -1210,7 +1210,7 @@ export default [
   },
   {
     desc: 'M8222 char_gift 随机贡品：RAND(1, 17) 的下界偏一格（1..16 → 2..17）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '      const rand_chara = rand(16) + 1;',
     replace: '      const rand_chara = rand(16) + 2;',
     tests: ['page-ending'],
@@ -1218,7 +1218,7 @@ export default [
   },
   {
     desc: 'M8223 char_gift 决定键：RESULT == 100 误写成 99（决定键失效，重问）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '    if (result !== 100) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
     replace:
       '    if (result !== 99) {\n      continue; // ELSE / GOTO INPUT_LOOP_2',
@@ -1227,7 +1227,7 @@ export default [
   },
   {
     desc: 'M8224 char_gift 的 ARG 检查：THROW INVALID ARGUMENT 被拆（任意 ARG 放行）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  const gift = CHAR_GIFT_TABLE[arg];
   if (gift === undefined) {`,
     replace: `  const gift = CHAR_GIFT_TABLE[arg] ?? CHAR_GIFT_TABLE[1];
@@ -1237,7 +1237,7 @@ export default [
   },
   {
     desc: 'M8225 end10_55 的嘉德线推进：+5 误写成 +6',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: '  era_exflag.route_33 = era_exflag.route_33 + 5;',
     replace: '  era_exflag.route_33 = era_exflag.route_33 + 6;',
     tests: ['page-ending'],
@@ -1627,7 +1627,7 @@ export default [
   // —— #404 返工（rebase 后）：char_gift 的种族年龄支接 RACE_AGE_GENERATE 真身 ——
   {
     desc: 'M8268 char_gift 种族年龄：落值槽位改成入参槽（CFLAG:452 → 451）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `      chara(a).chara.种族年龄 = race_age_generate(`,
     replace: `      chara(a).chara.年龄 = race_age_generate(`,
     tests: ['page-ending'],
@@ -1635,7 +1635,7 @@ export default [
   },
   {
     desc: 'M8269 char_gift 种族年龄：入参取错槽（CFLAG:A:451 → 452）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `      chara(a).chara.种族年龄 = race_age_generate(
         era.get(\`cflag:\${a}:451\`) || 0,`,
     replace: `      chara(a).chara.种族年龄 = race_age_generate(
@@ -1645,7 +1645,7 @@ export default [
   },
   {
     desc: 'M8270 char_gift 种族年龄：种族编号写死成 1（不读 TALENT:314）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `        era.get(\`talent:\${a}:314\`) || 0,`,
     replace: `        1,`,
     tests: ['page-ending'],
@@ -1653,7 +1653,7 @@ export default [
   },
   {
     desc: 'M8271 char_gift 种族年龄：FLAG:5 的检查位 12 误写成位 14（位 12 不再触发）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `    if (((settings >> 12) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {`,
     replace: `    if (((settings >> 14) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {`,
     tests: ['page-ending'],
@@ -1661,7 +1661,7 @@ export default [
   },
   {
     desc: 'M8272 char_gift 种族年龄：丢掉随机源透传（race_age_generate 落到真随机）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `        era.get(\`talent:\${a}:314\`) || 0,
         rand,
       );`,
@@ -1673,7 +1673,7 @@ export default [
   },
   {
     desc: 'M8273 char_gift 种族年龄：实参顺序颠倒（人类年龄 ↔ 种族编号）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `      chara(a).chara.种族年龄 = race_age_generate(
         era.get(\`cflag:\${a}:451\`) || 0,
         era.get(\`talent:\${a}:314\`) || 0,`,
@@ -3119,7 +3119,7 @@ export default [
   {
     desc: 'M11002 回合尾部不调 AUTOTRAIN（PALAM → 珠/能力的结算整段丢失）',
     file: 'ere/system/turnend-settle.js',
-    find: "  await require('#/system/train/autotrain').autotrain();",
+    find: '  await autotrain_mod.autotrain();',
     replace: '  // 变异：不调 AUTOTRAIN',
     tests: ['event-turnend'],
     must_mention: 'AUTOTRAIN 跑在调教窗口里',
@@ -3248,7 +3248,7 @@ export default [
   // —— #814：两个奴隶加入点直接给「在城里可操作」的状态 ——
   {
     desc: 'M15862 ENDING_1 漏写菲娅的状态（她停在角色文件的待机档，不读档的会话里四个操作页都不放行）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  chara(35).invasion.状态 = 0;
 `,
     replace: `  // 变异：删掉菲娅的状态写入
@@ -3260,7 +3260,7 @@ export default [
   },
   {
     desc: 'M15863 char_gift 漏写贡品的状态（同 M15862，收下之后这一整个会话都不放行）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `      chara(a).invasion.状态 = 0;
 `,
     replace: `      // 变异：删掉贡品的状态写入
@@ -3273,7 +3273,7 @@ export default [
   // —— #572：结局与日循环菜单的选项按钮化 ——
   {
     desc: 'M12000 char_gift 的 [0]/[1] 收下询问退回纯文本行',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "      era.printButton('收下她吧', 0);",
     replace: "      era.print('[0] 收下她吧  [1] 另外挑选'); // 变异",
     tests: ['page-ending'],
@@ -3281,7 +3281,7 @@ export default [
   },
   {
     desc: 'M12001 char_gift 性格子菜单退回纯文本行（八档点不动）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "      era.printButton('- 慈爱', 0);",
     replace:
       "      era.print('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'); // 变异",
@@ -3290,7 +3290,7 @@ export default [
   },
   {
     desc: 'M12002 char_gift 发色受理集漏掉未显示的 11 号色（rule 收紧到按钮集）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "{ rule: '(?:10|11|[1-9])' }",
     replace: "{ rule: '[1-9]|10' } // 变异：11 号色被拒",
     tests: ['page-ending'],
@@ -3298,7 +3298,7 @@ export default [
   },
   {
     desc: 'M12003 char_gift 终局三项退回纯文本行',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "    era.printButton('再换一个', 1);",
     replace: "    era.print('[1] 再换一个'); // 变异",
     tests: ['page-ending'],
@@ -3424,7 +3424,7 @@ export default [
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
   {
     desc: 'M12304 ending_1 的 [0] 继续丢掉「- 」',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: "era.printButton('- 世界这么大，我想再去看看！', 0);",
     replace:
       "era.printButton('世界这么大，我想再去看看！', 0); // 变异：丢掉「- 」",
@@ -3497,7 +3497,7 @@ export default [
   },
   {
     desc: 'M13054 ending_input 的 CASEELSE 复活（#649 删除的回退：写 FLAG 侧）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `    } else {
       // 未分档的线号（5/6/8-14 各角色线）：无活调用点，原 CASEELSE 整档已删
       // （#649）——落进来静默返回，不印文本、不写任何 flag 侧
@@ -3844,7 +3844,7 @@ export default [
   },
   {
     desc: 'M14307 ending_n 的结束/继续选项退回纯文本（手写编号行）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  era.printButton('结束游戏', 1);
   era.printButton('继续游戏', 2);`,
     replace: `  era.print('[1] 结束游戏\\t\\t[2] 继续游戏'); // 变异：结尾选项退回纯文本`,
@@ -3853,7 +3853,7 @@ export default [
   },
   {
     desc: 'M14308 ending_n 的按钮之后夹一次等键（白名单被清空）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  era.printButton('结束游戏', 1);
   era.printButton('继续游戏', 2);
   // ending_input(EX_FLAG:2801 + 1000)`,
@@ -3866,7 +3866,7 @@ export default [
   },
   {
     desc: 'M14309 ending_n 的按钮正文补上手写 [1] 前缀（显示成 [1] [1] 结束游戏）',
-    file: 'ere/page/page-ending.js',
+    file: 'ere/system/ending/ending-screen.js',
     find: `  era.printButton('结束游戏', 1);`,
     replace: `  era.printButton('[1] 结束游戏', 1);`,
     tests: ['page-ending'],

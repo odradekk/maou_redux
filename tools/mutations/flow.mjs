@@ -8,7 +8,7 @@
 // #849 追加 M17200-M17204：事件名枚举（ere/data/event-name-const.js）与
 // on / emit 的未知名校验——注册与触发只认枚举、名字拼错当场抛错。
 
-export const COUNT = 32; // #851 +8（M17650-M17657：装配表与注册点的缺失/顺序变异） // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
+export const COUNT = 34; // #851 +8（M17650-M17657：装配表与注册点的缺失/顺序变异） // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）；#889 +2（M17950-M17951：分层边界锁的两类违规）
 
 export default [
   {
@@ -315,5 +315,25 @@ export default [
       '  for (const [path, handler_module] of [...HANDLER_MODULES].reverse()) { // 变异：倒序装配',
     tests: ['event-handlers'],
     must_mention: '#/kojo/kojo-k904-fia',
+  },
+
+  {
+    desc: 'M17950 系统层顶层 require 页面层（dungeon-trap 取 page-life-list，#889）',
+    file: 'ere/system/dungeon/dungeon-trap.js',
+    find: "const { default_rand } = require('#/utils/numeric');",
+    replace: `const { default_rand } = require('#/utils/numeric');
+const page_life_list = require('#/page/page-life-list'); // 变异：系统层引用页面层`,
+    tests: ['layer-boundary'],
+    must_mention: 'ere/system/dungeon/dungeon-trap.js → #/page/page-life-list',
+  },
+  {
+    desc: 'M17951 新增未登记的函数内 require（party-status 在函数体里取 utils，#889）',
+    file: 'ere/system/dungeon/party-status.js',
+    find: 'async function check_status(arg0, mode = 0) {',
+    replace: `async function check_status(arg0, mode = 0) {
+  const { default_rand } = require('#/utils/numeric'); // 变异：函数内 require
+  void default_rand;`,
+    tests: ['layer-boundary'],
+    must_mention: '未登记的函数内 require',
   },
 ];

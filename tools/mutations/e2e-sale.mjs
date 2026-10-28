@@ -6,7 +6,7 @@ export default [
   {
     desc: 'M7802 use_ex_item 战斗中调用点删除',
     file: 'ere/system/dungeon/dungeon-battle.js',
-    find: "    await use_ex_item('战斗中', atker);",
+    find: "    await ex_item_mod.use_ex_item('战斗中', atker);",
     replace: '    // 变异：战斗中 USE_EX_ITEM 调用删除',
     tests: ['event-ending2-e2e'],
     must_mention: 'USE_EX_ITEM 在 ENDING_2 战斗中调用点实际执行',

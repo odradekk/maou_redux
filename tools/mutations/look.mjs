@@ -398,11 +398,11 @@ export default [
     desc: 'M11768 LOOK_INFO 语尾包装层自行打印（#570 原始症状复辟：语尾单独成行）',
     file: look,
     find: `async function gobi_koujo(arg0) {
-  return require('#/kojo/kojo-system').gobi_koujo(arg0);
+  return kojo_system.gobi_koujo(arg0);
 }`,
     replace: `async function gobi_koujo(arg0) {
   // 变异：自行打印（#570 前的旧写法），不再交给调用方拼行
-  era.print(await require('#/kojo/kojo-system').gobi_koujo(arg0));
+  era.print(await kojo_system.gobi_koujo(arg0));
   return '';
 }`,
     tests: ['look'],
