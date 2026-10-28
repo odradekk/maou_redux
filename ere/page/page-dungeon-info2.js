@@ -45,7 +45,7 @@ const {
   item_name,
   monster_setup,
   monstername,
-} = require('#/dungeon/monster-data');
+} = require('#/system/dungeon/monster-data');
 // MAX_NAME_LEN 的量尺与 `%,N,LEFT%` 等价物（#/utils/display-width，#390
 // 提取为公共模块）
 const {

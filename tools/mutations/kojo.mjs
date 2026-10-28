@@ -19605,7 +19605,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   {
     desc: 'M6206 get_ex_kojo_num 扫描漏掉 EX_TALENT:102（#248）',
-    file: 'ere/chara/chara-ex.js',
+    file: 'ere/system/chara/chara-ex.js',
     find: '  for (let count = 101; count < 801; count += 1) {',
     replace: '  for (let count = 101; count < 102; count += 1) {',
     tests: ['kojo-system'],
@@ -19613,7 +19613,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   {
     desc: 'M6207 get_ex_kojo_num 映射偏移 +900 改 +901（#248）',
-    file: 'ere/chara/chara-ex.js',
+    file: 'ere/system/chara/chara-ex.js',
     find: '      get_ex_kojo_num_local = count + 900;',
     replace: '      get_ex_kojo_num_local = count + 901;',
     tests: ['kojo-system'],

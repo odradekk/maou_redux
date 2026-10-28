@@ -5,7 +5,7 @@ export const COUNT = 78; // #884 +4（M16600-M16603：预设模板字段的读�
 export default [
   {
     desc: 'M7180 弱召唤不再折半（陷阱 -1 实参失去语义）',
-    file: 'ere/dungeon/monster-summon.js',
+    file: 'ere/system/dungeon/monster-summon.js',
     find: '  if (arg === -1) summon_num = Math.trunc(summon_num / 2);',
     replace: '  if (arg === -1) summon_num = summon_num;',
     tests: ['chara-pregnancy'],
@@ -13,7 +13,7 @@ export default [
   },
   {
     desc: 'M7181 未满总库存时也允许返回满槽',
-    file: 'ere/dungeon/monster-summon.js',
+    file: 'ere/system/dungeon/monster-summon.js',
     find: 'if ((era.get(`item:${id}`) || 0) < 999 || total >= 44_955)',
     replace: 'if ((era.get(`item:${id}`) || 0) < 999 || total >= 0)',
     tests: ['chara-pregnancy'],
@@ -21,7 +21,7 @@ export default [
   },
   {
     desc: 'M7182 怪物抽选漏掉第九层',
-    file: 'ere/dungeon/monster-summon.js',
+    file: 'ere/system/dungeon/monster-summon.js',
     find: 'const id = 100 + rand(9) * 10 + rand(5);',
     replace: 'const id = 100 + rand(8) * 10 + rand(5);',
     tests: ['chara-pregnancy'],
@@ -29,7 +29,7 @@ export default [
   },
   {
     desc: 'M7183 弱召唤轮数误除以三',
-    file: 'ere/dungeon/monster-summon.js',
+    file: 'ere/system/dungeon/monster-summon.js',
     find: 'Math.trunc(summon_num / 2)',
     replace: 'Math.trunc(summon_num / 3)',
     tests: ['chara-pregnancy'],
@@ -37,7 +37,7 @@ export default [
   },
   {
     desc: 'M7184 怪物库存上限误降为 998',
-    file: 'ere/dungeon/monster-summon.js',
+    file: 'ere/system/dungeon/monster-summon.js',
     find: 'Math.min(999, (era.get(`item:${id}`) || 0) + count)',
     replace: 'Math.min(998, (era.get(`item:${id}`) || 0) + count)',
     tests: ['chara-pregnancy'],
@@ -45,7 +45,7 @@ export default [
   },
   {
     desc: 'M7185 pregnancy_master 自跳缺陷被静默吞掉',
-    file: 'ere/dungeon/monster-summon.js',
+    file: 'ere/system/dungeon/monster-summon.js',
     find: "  throw new Error('pregnancy_master 会无限尾调用自身');",
     replace: '  return 0;',
     tests: ['chara-pregnancy'],
@@ -53,7 +53,7 @@ export default [
   },
   {
     desc: 'M7186 幼年随机失败边界从 2 漂到 3',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'if (cv.年龄 <= 14 && rand(5) > 1)',
     replace: 'if (cv.年龄 <= 14 && rand(5) > 2)',
     tests: ['chara-pregnancy'],
@@ -61,7 +61,7 @@ export default [
   },
   {
     desc: 'M7187 普通受孕失败边界不再包含 2',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (rand(chance) <= 2) {',
     replace: '  if (rand(chance) < 2) {',
     tests: ['chara-pregnancy'],
@@ -69,7 +69,7 @@ export default [
   },
   {
     desc: 'M7188 N_FLAG_CLEAR 漏清主人精液计数',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  chara(cid).system.主人膣内射精 = 0;',
     replace: '  void cid;',
     tests: ['chara-pregnancy'],
@@ -77,7 +77,7 @@ export default [
   },
   {
     desc: 'M7189 N_FLAG_CLEAR 错清排卵诱发剂位 109',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  chara(cid).system.狂王膣内射精 = 0;\n  chara(cid).event.预产日 = 0;',
     replace:
       '  chara(cid).system.狂王膣内射精 = 0;\n  chara(cid).stronghold.排卵诱发剂 = 0;\n  chara(cid).event.预产日 = 0;',
@@ -86,7 +86,7 @@ export default [
   },
   {
     desc: 'M7190 妊娠时体力上限只减少 400',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'Math.max(1, chara(cid).dungeon.体力上限 - 500)',
     replace: 'Math.max(1, chara(cid).dungeon.体力上限 - 400)',
     tests: ['chara-pregnancy'],
@@ -94,7 +94,7 @@ export default [
   },
   {
     desc: 'M7191 换护士菜单把序号误当角色 ID',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    selected = eligible[selected];',
     replace: '    selected = selected;',
     tests: ['chara-pregnancy'],
@@ -102,7 +102,7 @@ export default [
   },
   {
     desc: 'M7192 动态后代保留区起点错位',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'const FIRST_CHILD_ID = 100000;',
     replace: 'const FIRST_CHILD_ID = 100001;',
     tests: ['chara-pregnancy'],
@@ -110,7 +110,7 @@ export default [
   },
   {
     desc: 'M7193 连续同模板生子不再跳过已占用 ID',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  while (added.has(cid)) cid += 1;',
     replace: '  void added;',
     tests: ['chara-pregnancy'],
@@ -118,7 +118,7 @@ export default [
   },
   {
     desc: 'M7194 后代种族2误写回旧下标 315',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  era.set(`talent:${child}:319`, era.get(`talent:${mother}:319`) || 0);',
     replace:
       '  era.set(`talent:${child}:315`, era.get(`talent:${mother}:319`) || 0);',
@@ -127,7 +127,7 @@ export default [
   },
   {
     desc: 'M7195 后代原种族误写回旧下标 316',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  era.set(`talent:${child}:321`, race);',
     replace: '  era.set(`talent:${child}:316`, race);',
     tests: ['chara-pregnancy'],
@@ -135,7 +135,7 @@ export default [
   },
   {
     desc: 'M7196 后代现种族读取母亲旧下标 317',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '      : era.get(`talent:${mother}:322`) || 0,',
     replace: '      : era.get(`talent:${mother}:317`) || 0,',
     tests: ['chara-pregnancy'],
@@ -159,7 +159,7 @@ export default [
   },
   {
     desc: 'M7199 临月触发日从预产前三天漂成两天',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    if (due - 3 === era_flag.day_count) {',
     replace: '    if (due - 2 === era_flag.day_count) {',
     tests: ['chara-pregnancy'],
@@ -167,7 +167,7 @@ export default [
   },
   {
     desc: 'M7202 绝壁升档后漏置贫乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.绝壁 = 0;\n    view.贫乳 = 1;',
     replace: '    view.绝壁 = 0;',
     tests: ['chara-pregnancy'],
@@ -175,7 +175,7 @@ export default [
   },
   {
     desc: 'M7204 体型重算的两个独立设定位误改为同时成立',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.巨乳 = 1;\n  }\n  if (cid !== 0 && (setting_bit(12) || setting_bit(15))) {',
     replace:
       '    view.巨乳 = 1;\n  }\n  if (cid !== 0 && (setting_bit(12) && setting_bit(15))) {',
@@ -184,7 +184,7 @@ export default [
   },
   {
     desc: 'M7205 异常妊娠不再取得部位专属素质',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    era.set(`talent:${cid}:${special}`, 1);',
     replace: '    void special;',
     tests: ['chara-pregnancy'],
@@ -192,7 +192,7 @@ export default [
   },
   {
     desc: 'M7206 妊娠发觉后漏清异常妊娠部位',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  chara(cid).train.异常妊娠部位 = 0;',
     replace: '  void cid;',
     tests: ['chara-pregnancy'],
@@ -200,7 +200,7 @@ export default [
   },
   {
     desc: 'M7207 育儿结束后漏清母亲位置状态',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    chara(cid).invasion.状态 = 0;\n    chara(child).invasion.状态 = 0;',
     replace: '    chara(child).invasion.状态 = 0;',
     tests: ['chara-pregnancy'],
@@ -208,7 +208,7 @@ export default [
   },
   {
     desc: 'M7208 育儿结束后漏清孩子位置状态',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    chara(cid).invasion.状态 = 0;\n    chara(child).invasion.状态 = 0;',
     replace: '    chara(cid).invasion.状态 = 0;',
     tests: ['chara-pregnancy'],
@@ -216,7 +216,7 @@ export default [
   },
   {
     desc: 'M7209 贫乳升档后仍保留贫乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.贫乳 = 0;\n  } else if (view.巨乳) {',
     replace: '    view.贫乳 = 1;\n  } else if (view.巨乳) {',
     tests: ['chara-pregnancy'],
@@ -224,7 +224,7 @@ export default [
   },
   {
     desc: 'M7210 普通胸部升档后漏置巨乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  } else if (!view.超乳) {\n    era.print(',
     replace: '  } else if (false) {\n    era.print(',
     tests: ['chara-pregnancy'],
@@ -232,7 +232,7 @@ export default [
   },
   {
     desc: 'M7211 巨乳升档后漏置爆乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.巨乳 = 0;\n    view.爆乳 = 1;',
     replace: '    view.巨乳 = 0;\n    view.爆乳 = 0;',
     tests: ['chara-pregnancy'],
@@ -240,7 +240,7 @@ export default [
   },
   {
     desc: 'M7212 爆乳升档后漏置超乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.爆乳 = 0;\n    view.超乳 = 1;',
     replace: '    view.爆乳 = 0;\n    view.超乳 = 0;',
     tests: ['chara-pregnancy'],
@@ -248,7 +248,7 @@ export default [
   },
   {
     desc: 'M7213 爆乳降档后漏置巨乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.爆乳 = 0;\n    view.巨乳 = 1;',
     replace: '    view.爆乳 = 0;\n    view.巨乳 = 0;',
     tests: ['chara-pregnancy'],
@@ -256,7 +256,7 @@ export default [
   },
   {
     desc: 'M7214 巨乳降档后仍保留巨乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  } else if (view.巨乳) {\n    view.巨乳 = 0;\n  } else if (!view.贫乳',
     replace:
       '  } else if (view.巨乳) {\n    view.巨乳 = 1;\n  } else if (!view.贫乳',
@@ -265,7 +265,7 @@ export default [
   },
   {
     desc: 'M7215 普通胸部降档后漏置贫乳',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  } else if (!view.贫乳 && !view.绝壁) {\n    view.贫乳 = 1;',
     replace: '  } else if (!view.贫乳 && !view.绝壁) {\n    view.贫乳 = 0;',
     tests: ['chara-pregnancy'],
@@ -273,7 +273,7 @@ export default [
   },
   {
     desc: 'M7216 乳内妊娠错授精巢妊娠素质',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'const special = { 1: 341, 2: 342, 3: 343, 4: 344 }[kind];',
     replace: 'const special = { 1: 342, 2: 342, 3: 343, 4: 344 }[kind];',
     tests: ['chara-pregnancy'],
@@ -281,7 +281,7 @@ export default [
   },
   {
     desc: 'M7217 异常妊娠取得专属素质但漏置通用妊娠素质',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  chara(cid).chara.妊娠 = 1;\n  chara(cid).train.异常妊娠部位 = 0;',
     replace:
       '  chara(cid).chara.妊娠 = 0;\n  chara(cid).train.异常妊娠部位 = 0;',
@@ -290,7 +290,7 @@ export default [
   },
   {
     desc: 'M7218 育儿离室后漏做妊娠育儿完整重置',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  n_reset_status(cid, rand);\n  era.drawLine();\n  return 0;',
     replace: '  void rand;\n  era.drawLine();\n  return 0;',
     tests: ['chara-pregnancy'],
@@ -298,7 +298,7 @@ export default [
   },
   {
     desc: 'M7219 胸部降档体型重算的两个独立设定位误改为同时成立',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  } else {\n    return 0;\n  }\n  if (cid !== 0 && (setting_bit(12) || setting_bit(15))) {',
     replace:
       '  } else {\n    return 0;\n  }\n  if (cid !== 0 && (setting_bit(12) && setting_bit(15))) {',
@@ -307,7 +307,7 @@ export default [
   },
   {
     desc: 'M7380 妊娠重置漏清母乳体质',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.母乳体质 = 0;',
     replace: '    view.母乳体质 = 1;',
     tests: ['chara-pregnancy'],
@@ -315,7 +315,7 @@ export default [
   },
   {
     desc: 'M7381 妊娠重置的超乳保护分支失效',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (view.超乳) {\n    era.print(`${name_of(cid)}超乳仍然淫乱地胀大着缩不回去了。`);',
     replace:
       '  if (false) {\n    era.print(`${name_of(cid)}超乳仍然淫乱地胀大着缩不回去了。`);',
@@ -324,7 +324,7 @@ export default [
   },
   {
     desc: 'M7382 乳内生产文案误用精巢文案',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: "  if (chara(cid).chara.乳内妊娠) return '从巨大的乳房中';",
     replace:
       "  if (chara(cid).chara.乳内妊娠) return '从巨大的阴囊，通过阴茎';",
@@ -333,7 +333,7 @@ export default [
   },
   {
     desc: 'M7383 临月时狂王育儿室早退失效',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (chara(cid).invasion.状态 === 9) {',
     replace: '  if (false) {',
     tests: ['chara-pregnancy'],
@@ -341,7 +341,7 @@ export default [
   },
   {
     desc: 'M7384 临月传送召回随机门槛取反',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    if (rand(9) > 0) {',
     replace: '    if (rand(9) === 0) {',
     tests: ['chara-pregnancy'],
@@ -349,7 +349,7 @@ export default [
   },
   {
     desc: 'M7385 已妊娠者仍重复进入发觉流程',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    cv.妊娠 ||\n    cv.育儿中 ||',
     replace: '    false ||\n    cv.育儿中 ||',
     tests: ['chara-pregnancy'],
@@ -357,7 +357,7 @@ export default [
   },
   {
     desc: 'M7386 关闭妊娠设定时仍允许发觉',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (!setting_bit(2)) return 0;',
     replace: '  if (false) return 0;',
     tests: ['chara-pregnancy'],
@@ -365,7 +365,7 @@ export default [
   },
   {
     desc: 'M7387 普通体质也允许异常部位妊娠',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if ([1, 2, 3, 4].includes(kind) && !abnormal) return 0;',
     replace: '  if (false) return 0;',
     tests: ['chara-pregnancy'],
@@ -373,7 +373,7 @@ export default [
   },
   {
     desc: 'M7388 受孕来源范围上界误放宽到八',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    !(source >= 1 && source <= 7) ||',
     replace: '    !(source >= 1 && source <= 8) ||',
     tests: ['chara-pregnancy'],
@@ -381,7 +381,7 @@ export default [
   },
   {
     desc: 'M7389 胎儿怪物实名随机门槛取反',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'if (chara(cid).dungeon.胎儿怪物编号 > 0 && rand(3) === 0)',
     replace: 'if (chara(cid).dungeon.胎儿怪物编号 > 0 && rand(3) !== 0)',
     tests: ['chara-pregnancy'],
@@ -389,7 +389,7 @@ export default [
   },
   {
     desc: 'M7390 野狗妊娠爱慕压力误降为九十',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (source === 5) {\n    stress += love ? 100 : lewd ? 80 : 40;',
     replace: '  if (source === 5) {\n    stress += love ? 90 : lewd ? 80 : 40;',
     tests: ['chara-pregnancy'],
@@ -397,7 +397,7 @@ export default [
   },
   {
     desc: 'M7391 妊娠压力一百也按高兴处理',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (stress < 100 || cid === 0) {',
     replace: '  if (stress <= 100 || cid === 0) {',
     tests: ['chara-pregnancy'],
@@ -405,7 +405,7 @@ export default [
   },
   {
     desc: 'M7392 负数双亲不再随机近卫模板',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  else if (other_template < 0) source = 1 + rand(16);',
     replace: '  else if (other_template < 0) source = 2 + rand(15);',
     tests: ['chara-pregnancy'],
@@ -413,7 +413,7 @@ export default [
   },
   {
     desc: 'M7393 普通近卫双亲模板被误判为随机',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    (other_template >= 1 && other_template <= 16) ||',
     replace: '    (other_template >= 2 && other_template <= 16) ||',
     tests: ['chara-pregnancy'],
@@ -421,7 +421,7 @@ export default [
   },
   {
     desc: 'M7394 普通奴隶母亲模板被误判为随机',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    (mother_template >= 1 && mother_template <= 16) ||',
     replace: '    (mother_template >= 2 && mother_template <= 16) ||',
     tests: ['chara-pregnancy'],
@@ -429,7 +429,7 @@ export default [
   },
   {
     desc: 'M7395 换护士不再要求母性',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '        chara(id).chara.母性 &&',
     replace: '        true &&',
     tests: ['chara-pregnancy'],
@@ -437,7 +437,7 @@ export default [
   },
   {
     desc: 'M7396 崩坏母亲不再转交护士',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (chara(cid).stronghold.崩坏) return child_care_change_nurse(cid, rand);',
     replace: '  if (false) return child_care_change_nurse(cid, rand);',
     tests: ['chara-pregnancy'],
@@ -445,7 +445,7 @@ export default [
   },
   {
     desc: 'M7397 迎击状态不再进入生产日流产分支',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (state === 3 || state === 2) {',
     replace: '  if (state === 2) {',
     tests: ['chara-pregnancy'],
@@ -453,7 +453,7 @@ export default [
   },
   {
     desc: 'M7398 狂王生产状态早退失效',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (state === 9) {\n    era_flag.target = cid;',
     replace: '  if (false) {\n    era_flag.target = cid;',
     tests: ['chara-pregnancy'],
@@ -461,7 +461,7 @@ export default [
   },
   {
     desc: 'M7399 正常生产漏破再生处女膜',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    chara(cid).chara.处女 = 0;',
     replace: '    chara(cid).chara.处女 = 1;',
     tests: ['chara-pregnancy'],
@@ -469,7 +469,7 @@ export default [
   },
   {
     desc: 'M7400 近产期在允许自动移动时也不移室',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '      if (!setting_bit(10) && chara(cid).invasion.状态 === 0) {',
     replace: '      if (setting_bit(10) && chara(cid).invasion.状态 === 0) {',
     tests: ['chara-pregnancy'],
@@ -477,7 +477,7 @@ export default [
   },
   {
     desc: 'M7401 怪物父亲不再走直接生产分支',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (father === -2 || father === -3) {\n    await summon_mod.summon_monster(mother, rand);',
     replace:
       '  if (father === -3) {\n    await summon_mod.summon_monster(mother, rand);',
@@ -486,7 +486,7 @@ export default [
   },
   {
     desc: 'M7402 后代命名忽略正数父亲的名字类型',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    father > 0\n      ? nid_get_type(nid(father))',
     replace: '    false\n      ? nid_get_type(nid(father))',
     tests: ['chara-pregnancy'],
@@ -494,7 +494,7 @@ export default [
   },
   {
     desc: 'M7403 主人妊娠的淫乱压力被删除',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (!love && lewd && source === 1) stress += 30;',
     replace: '  if (!love && lewd && source === 1) stress += 0;',
     tests: ['chara-pregnancy'],
@@ -502,7 +502,7 @@ export default [
   },
   {
     desc: 'M7404 勇者双亲关系压力计算被删除',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    stress += relation\n      ? 10 * int_div(200 - relation, 100) + (love ? 10 : 0)',
     replace: '    stress += relation\n      ? 0',
     tests: ['chara-pregnancy'],
@@ -510,7 +510,7 @@ export default [
   },
   {
     desc: 'M7405 陌生人妊娠的爱慕压力被删除',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (source === 4) stress += love ? 80 : lewd ? 50 : 0;',
     replace: '  if (source === 4) stress += love ? 0 : lewd ? 50 : 0;',
     tests: ['chara-pregnancy'],
@@ -518,7 +518,7 @@ export default [
   },
   {
     desc: 'M7406 狂王妊娠的爱慕压力被删除',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (source === 7) stress += love ? 80 : lewd ? 30 : 0;',
     replace: '  if (source === 7) stress += love ? 0 : lewd ? 30 : 0;',
     tests: ['chara-pregnancy'],
@@ -526,7 +526,7 @@ export default [
   },
   {
     desc: 'M7407 陌生人妊娠的淫乱压力被删除',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (source === 4) stress += love ? 80 : lewd ? 50 : 0;',
     replace: '  if (source === 4) stress += love ? 80 : lewd ? 0 : 0;',
     tests: ['chara-pregnancy'],
@@ -534,7 +534,7 @@ export default [
   },
   {
     desc: 'M7408 狂王妊娠的淫乱压力被删除',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  if (source === 7) stress += love ? 80 : lewd ? 30 : 0;',
     replace: '  if (source === 7) stress += love ? 80 : lewd ? 0 : 0;',
     tests: ['chara-pregnancy'],
@@ -542,7 +542,7 @@ export default [
   },
   {
     desc: 'M7409 排卵诱发剂的随机上界从十一降为九',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  const chance = chara(cid).stronghold.排卵诱发剂 ? 11 : 5;',
     replace: '  const chance = chara(cid).stronghold.排卵诱发剂 ? 9 : 5;',
     tests: ['chara-pregnancy'],
@@ -551,7 +551,7 @@ export default [
   // —— #560（与 #561 同票）：后代 ID 区间抬到固定按钮编号之上（M11780 起） ——
   {
     desc: 'M11780 后代保留区起点退回旧的 1000 段（撞进页面固定按钮编号）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'const FIRST_CHILD_ID = 100000;',
     replace: 'const FIRST_CHILD_ID = 1000;',
     tests: ['child-id-collision'],
@@ -559,7 +559,7 @@ export default [
   },
   {
     desc: 'M11781 后代模板号反推改用旧的 1000 起点',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  return Math.trunc((cid - FIRST_CHILD_ID) / CHILD_ID_BLOCK_SIZE) + 1;',
     replace: '  return Math.trunc((cid - 1000) / CHILD_ID_BLOCK_SIZE) + 1;',
     // #884 起这条换算只剩读档补填一个消费者（读取侧读「预设模板」字段），
@@ -570,7 +570,7 @@ export default [
   // —— #653（F7）：近卫模板窗 201-211、超乳降档、生育部位按生产角色（修复检查） ——
   {
     desc: 'M13250 近卫后代随机模板退回 200 起（缺预设报错中断）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: 'source = 201 + rand(11);',
     replace: 'source = 200 + rand(11);',
     tests: ['chara-pregnancy'],
@@ -578,7 +578,7 @@ export default [
   },
   {
     desc: 'M13251 近卫生成的双亲模板窗退回 200-210（模板 211 被当作随机模板）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    (other_template >= 201 && other_template <= 211)',
     replace: '    (other_template >= 200 && other_template <= 210)',
     tests: ['chara-pregnancy'],
@@ -586,7 +586,7 @@ export default [
   },
   {
     desc: 'M13252 奴隶后代的母亲模板窗退回 200-210',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    (mother_template >= 201 && mother_template <= 211)',
     replace: '    (mother_template >= 200 && mother_template <= 210)',
     tests: ['chara-pregnancy'],
@@ -594,7 +594,7 @@ export default [
   },
   {
     desc: 'M13253 超乳降档改回写超乳（永不退档）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    view.超乳 = 0;\n    view.爆乳 = 1;',
     replace: '    view.超乳 = 1;',
     tests: ['chara-pregnancy'],
@@ -602,7 +602,7 @@ export default [
   },
   {
     desc: 'M13254 生育部位文案改回读 0 号角色',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '`${name_of(cid)}平安的${child_birth_place_text(cid)}生下了${description}。`,',
     replace:
       '`${name_of(cid)}平安的${child_birth_place_text(0)}生下了${description}。`,',
@@ -612,7 +612,7 @@ export default [
   // —— #884：预设模板字段（角色号与预设号分开） ——
   {
     desc: 'M16600 预设模板改读排序编号（普通角色的预设号变成 0）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  return era.get(`portcflag:${cid}:预设模板`) || 0;',
     replace: '  return era.get(`portcflag:${cid}:排序编号`) || 0;',
     tests: ['chara-template'],
@@ -620,7 +620,7 @@ export default [
   },
   {
     desc: 'M16601 读档补填的判据反转（该补的不补，已补的反复写）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    if (template_no_of(cid) !== 0) continue;',
     replace: '    if (template_no_of(cid) === 0) continue;',
     tests: ['chara-template'],
@@ -628,7 +628,7 @@ export default [
   },
   {
     desc: 'M16602 读档补填写入角色号（把预设模板写成身份号）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '    era.set(`portcflag:${cid}:预设模板`, legacy);',
     replace: '    era.set(`portcflag:${cid}:预设模板`, cid);',
     tests: ['chara-template'],
@@ -636,7 +636,7 @@ export default [
   },
   {
     desc: 'M16603 奴隶后代拿母亲的角色号当来源预设（字段被绕过）',
-    file: 'ere/chara/chara-pregnancy.js',
+    file: 'ere/system/chara/chara-pregnancy.js',
     find: '  const mother_template = template_no_of(mother);',
     replace: '  const mother_template = mother;',
     tests: ['chara-template'],

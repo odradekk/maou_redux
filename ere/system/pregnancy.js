@@ -31,11 +31,11 @@
  */
 
 const era = require('#/era-electron');
-const { nid } = require('#/chara/chara-family');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { nid } = require('#/system/chara/chara-family');
 const { chara_callname } = require('#/utils/callname-utils');
 const { MASTER } = require('#/utils/master');
 const { default_rand } = require('#/utils/numeric');

@@ -81,20 +81,26 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { search_family } = require('#/system/chara/chara-family');
+const { random_self_call } = require('#/system/chara/chara-self-call');
+const { sort_by_number } = require('#/system/chara/chara-portcflag');
+const { LOVER_NAMES } = require('#/system/dungeon/dungeon-lovers');
+const { get_look_info } = require('#/system/chara/look-info');
+const { transfer_soul } = require('#/system/chara/chara-soul-transfer');
+const {
+  show_button_marriage,
+  marriage,
+} = require('#/system/chara/chara-marriage');
 // 导入分组按 AGENTS.md（system 在 page 前；本文件存量的 chara-before-page
 // 顺序是历史写法，新增行按约定位置放）
 const {
   show_button_equip,
   equip_st_show,
 } = require('#/system/equip/equip-show');
-const { search_family } = require('#/chara/chara-family');
 const {
   chara_info_name_edit,
   show_button_name_edit,
-} = require('#/chara/chara-name-edit');
-const { random_self_call } = require('#/chara/chara-self-call');
-const { sort_by_number } = require('#/chara/chara-portcflag');
-const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
+} = require('#/system/chara/chara-name-edit');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
 const { change_screen } = require('#/page/components/screen-change');
 const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
@@ -102,7 +108,6 @@ const { chara_number_swap } = require('#/page/page-chara-number-swap');
 const { ability_up_core } = require('#/page/page-ability-up');
 const { tailor_core } = require('#/page/page-tailor');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
-const { get_look_info } = require('#/chara/look-info');
 const {
   set_bich_level,
   bich_level_text,
@@ -113,17 +118,15 @@ const {
   chara_info_recover_hp,
   chara_info_up_level,
   chara_info_callback,
-} = require('#/chara/chara-info-actions');
-const { transfer_soul } = require('#/chara/chara-soul-transfer');
+} = require('#/system/chara/chara-info-actions');
 const {
   show_button_job_change,
   chara_info_job_change,
-} = require('#/chara/chara-job-change');
+} = require('#/system/chara/chara-job-change');
 const {
   show_button_temptation,
   temptation,
-} = require('#/chara/chara-temptation');
-const { show_button_marriage, marriage } = require('#/chara/chara-marriage');
+} = require('#/system/chara/chara-temptation');
 const {
   child_care_chara,
   show_button_child_care,
@@ -706,7 +709,7 @@ async function chara_info_individual(arg, chara_sort) {
     // 记下行数差判断这一轮有没有打过按钮（块内只有 printButton，见 #596）
     const button_anchor = era.getLineCount();
     if (sub_page === 0) {
-      // 两个改名按钮（#384 落真身：ere/chara/chara-name-edit.js）
+      // 两个改名按钮（#384 落真身：ere/system/chara/chara-name-edit.js）
       show_button_name_edit(0, current);
       show_button_name_edit(1, current, 1);
       // 三个动作按钮（#393 落真身，三个同构模块各一对）

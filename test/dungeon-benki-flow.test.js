@@ -892,7 +892,7 @@ for (const kase of DUNGEON_CASES) {
   test(`run_dungeon 行为基线：${kase.name}`, async () => {
     const fixture = dungeon_world(kase.seed);
     fixture.set_inputs(...Array(200).fill(0));
-    const { run_dungeon } = fixture.load_module('dungeon/dungeon');
+    const { run_dungeon } = fixture.load_module('system/dungeon/dungeon');
     const actual = await capture(
       fixture,
       (rand) => run_dungeon(1, rand),

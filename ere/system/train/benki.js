@@ -7,7 +7,7 @@
  *
  *   - run_benki 由回合结算的普通档逐角色调用（ere/system/turnend-settle.js）；
  *   - select_benki_menu / name_benki_menu / get_exp_benki_menu 由地下城
- *     战斗调用（ere/dungeon/dungeon-battle.js）；
+ *     战斗调用（ere/system/dungeon/dungeon-battle.js）；
  *   - benki_koujo（肉便器口上）由 run_benki 在五个分派段各调用一次——
  *     口上内容归口上工单（#210 决定 2）；
  *   - benki_player_name 是 run_benki 内部的行内名字函数（读 FLAG:64），

@@ -5,7 +5,7 @@ export const COUNT = 41; // #710 -1：M6576（SELECT_YES_NO 接受非法输入�
 export default [
   {
     desc: 'M6562 SEARCH_FAMILY 村娘 A 标志改错',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '  if (era.get(`talent:${cid}:165`)) {\n    for (const candidate of added) {',
     replace:
       '  if (era.get(`talent:${cid}:166`)) {\n    for (const candidate of added) {',
@@ -14,7 +14,7 @@ export default [
   },
   {
     desc: 'M6563 SEARCH_FAMILY 村娘分支由最后匹配退化为首个匹配',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '      if (era.get(`talent:${candidate}:171`)) found = candidate;',
     replace: '      if (era.get(`talent:${candidate}:171`)) return candidate;',
     tests: ['cross-stubs'],
@@ -22,7 +22,7 @@ export default [
   },
   {
     desc: 'M6564 SEARCH_FAMILY 魔王婚姻识别码 901 改错',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '      if (target_relation.data === 901) return candidate;',
     replace: '      if (target_relation.data === 902) return candidate;',
     tests: ['cross-stubs'],
@@ -30,7 +30,7 @@ export default [
   },
   {
     desc: 'M6565 SEARCH_FAMILY 略过名字编号校验',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '    if (target_relation.name !== char_name) continue;',
     replace: '    if (false && target_relation.name !== char_name) continue;',
     tests: ['cross-stubs'],
@@ -38,7 +38,7 @@ export default [
   },
   {
     desc: 'M6566 SEARCH_FAMILY 前身编码除数改错',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '    const former_life = Math.trunc((source_relation.data % 1_000) / 10);',
     replace:
       '    const former_life = Math.trunc((source_relation.data % 1_000) / 100);',
@@ -47,7 +47,7 @@ export default [
   },
   {
     desc: 'M6567 SEARCH_FAMILY 性格编号基数 160 改错',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '      Math.trunc((source_relation.data % 100_000) / 1_000) + 160;',
     replace:
       '      Math.trunc((source_relation.data % 100_000) / 1_000) + 161;',
@@ -56,7 +56,7 @@ export default [
   },
   {
     desc: 'M6568 SEARCH_FAMILY 家族构成编码位移改错',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '    const encoded_family = Math.trunc(source_relation.data / 100_000);',
     replace:
       '    const encoded_family = Math.trunc(source_relation.data / 10_000);',
@@ -65,7 +65,7 @@ export default [
   },
   {
     desc: 'M6569 SEARCH_FAMILY 男性本人不计入父母的儿子数',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '    (male ? 1 : 0);',
     replace: '    (male ? 0 : 0);',
     tests: ['cross-stubs'],
@@ -73,7 +73,7 @@ export default [
   },
   {
     desc: 'M6570 SEARCH_FAMILY 候选儿子位从千位错读成百位',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '    digit(target_family, 1_000) === source_sons &&',
     replace: '    digit(target_family, 100) === source_sons &&',
     tests: ['cross-stubs'],
@@ -81,7 +81,7 @@ export default [
   },
   {
     desc: 'M6571 SEARCH_FAMILY 家族关系 0 的未找到值改错',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: "  if (search_type === 0 && kind === 'FAMILY') return found;",
     replace: "  if (search_type === 0 && kind === 'FAMILY') return 0;",
     tests: ['cross-stubs'],
@@ -89,7 +89,7 @@ export default [
   },
   {
     desc: 'M6572 FAMILY_BIRTHTO_MOM 取消负母亲异常',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '  if (mother < 0) {',
     replace: '  if (mother > 0) {',
     tests: ['cross-stubs'],
@@ -97,7 +97,7 @@ export default [
   },
   {
     desc: 'M6573 FAMILY_BIRTHTO_MOM 母亲关系码 6 改为 5',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '  return rf_join_to(child, mother, 6, 0, rand);',
     replace: '  return rf_join_to(child, mother, 5, 0, rand);',
     tests: ['cross-stubs'],
@@ -105,7 +105,7 @@ export default [
   },
   {
     desc: 'M6574 FAMILY_BIRTHTO_DAD 负父亲误走家庭加入路径',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '  if (father < 0) return rf_set_both(child, father, 5);',
     replace: '  if (father > 0) return rf_set_both(child, father, 5);',
     tests: ['cross-stubs'],
@@ -113,7 +113,7 @@ export default [
   },
   {
     desc: 'M6575 FAMILY_BIRTHTO_DAD 父亲关系码 5 改为 6',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '  return rf_join_to(child, father, 5, 0, rand);',
     replace: '  return rf_join_to(child, father, 6, 0, rand);',
     tests: ['cross-stubs'],
@@ -214,7 +214,7 @@ export default [
   },
   {
     desc: 'M6588 monster_data 把侵略兵调用范围缩窄到有数据编号',
-    file: 'ere/dungeon/monster-data.js',
+    file: 'ere/system/dungeon/monster-data.js',
     find: '  } else if (inum >= 1000 && inum < 2000) {',
     replace: '  } else if (inum >= 1000 && inum <= 1009) {',
     tests: ['cross-stubs'],
@@ -222,7 +222,7 @@ export default [
   },
   {
     desc: 'M6589 enemy_data_check 不再保留未绑定局部变量造成的无操作行为',
-    file: 'ere/dungeon/monster-data.js',
+    file: 'ere/system/dungeon/monster-data.js',
     find: '  void column;',
     replace: '  battle_column(column).id = inum;',
     tests: ['cross-stubs'],
@@ -230,7 +230,7 @@ export default [
   },
   {
     desc: 'M6590 campaign_dungeon_lv 战役 1 等级常量改错',
-    file: 'ere/dungeon/monster-data.js',
+    file: 'ere/system/dungeon/monster-data.js',
     find: '  return campaign === 1 ? 45 : 0;',
     replace: '  return campaign === 1 ? 44 : 0;',
     tests: ['cross-stubs'],
@@ -238,7 +238,7 @@ export default [
   },
   {
     desc: 'M6591 campaign_dungeon_lv 忽略当前战役编号',
-    file: 'ere/dungeon/monster-data.js',
+    file: 'ere/system/dungeon/monster-data.js',
     find: '  return campaign === 1 ? 45 : 0;',
     replace: '  return campaign > 0 ? 45 : 0;',
     tests: ['cross-stubs'],
@@ -296,7 +296,7 @@ export default [
   },
   {
     desc: 'M6598 party_del 不再调用 search_family 真身',
-    file: 'ere/dungeon/dungeon-party.js',
+    file: 'ere/system/dungeon/dungeon-party.js',
     find: "    const partner = search_family(cid, 'MARRIAGE');",
     replace: '    const partner = -1;',
     tests: ['cross-stubs'],
@@ -330,7 +330,7 @@ export default [
   // —— #596：print 之后多补的空行普查（角色家族调试/输出） ——
   {
     desc: 'M12081 关系调试表每行之后补回空行（PRINTL 只结束那一串 PRINTFORM 拼出的行）',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '    era.print(parts);\n    // 一名角色一行，行间不额外产生空行',
     replace:
       '    era.print(parts);\n    era.println(); // 变异：多补一条空行\n    // 一名角色一行，行间不额外产生空行',
@@ -339,7 +339,7 @@ export default [
   },
   {
     desc: 'M12082 家族信息行之后补回空行（!LINEISEMPTY → PRINTL 只收尾那一行）',
-    file: 'ere/chara/chara-family.js',
+    file: 'ere/system/chara/chara-family.js',
     find: '  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：',
     replace:
       '  if (displayed > 0) era.println(); // 变异：多补一条空行\n  // 行尾只结束上面那行（有内容才收尾、空行上不动），不产生空行：',

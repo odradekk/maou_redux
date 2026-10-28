@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-job-change.js 的行为测试（issue #393，N9）。
+ * @file ere/system/chara/chara-job-change.js 的行为测试（issue #393，N9）。
  *
  * 缝 = test/helpers/era-fixture.js。判定与按钮外观照 chara-name-edit.test.js
  * 的读法（`rendered` 看引擎拼的快捷键前缀，染灰看 `setColor` 调用序列——
@@ -19,7 +19,7 @@ function add_chara(fixture, cid, name = `角色${cid}`) {
 }
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-job-change');
+  return fixture.load_module('system/chara/chara-job-change');
 }
 
 function texts(fixture) {

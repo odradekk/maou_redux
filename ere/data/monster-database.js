@@ -1,13 +1,13 @@
 /**
  * @file 怪物数据表（issue #175，阶段 3 H6）：怪物分发器里的各
- *     怪物判定落为纯数据常量表；查表与生成行为在 ere/dungeon/monster-data.js。
+ *     怪物判定落为纯数据常量表；查表与生成行为在 ere/system/dungeon/monster-data.js。
  *
  * 与 ere/data/equip-database.js 同一先例（#168 结论 6：纯 ELSEIF 数据链落
  * ere/data/，无逻辑、无 require、无条件分支）。形状由
  * test/dungeon-battle.test.js 的「从源解析怪物函数、与产物逐条比对」
  * 用例自证（验收标准：机械转写的验收证据是逐条等价，不是行为覆盖）。
  *
- * == 战斗状态一列的字段（列布局见 ere/dungeon/battle-state.js）==
+ * == 战斗状态一列的字段（列布局见 ere/system/dungeon/battle-state.js）==
  *
  *   番号     → id（怪物识别号，同 Item.csv 的序号）
  *   等级     → level（基础等级；分发器再按迷宫等级缩放）

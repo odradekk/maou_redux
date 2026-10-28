@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-soul-transfer.js 的行为测试（issue #391）。
+ * @file ere/system/chara/chara-soul-transfer.js 的行为测试（issue #391）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖 swap_chara/personalock/
  * transferapp/bodycheck_maou/transfer_soul/soul_dislocation 六个函数。
@@ -38,7 +38,9 @@ test('swap_chara：数值表与字符串表双向互换，双侧皆未声明时�
   fixture.store.set('cflag:1:9', 3);
   fixture.store.set('cstr:0:5', '旧文本A');
   fixture.store.set('cstr:1:5', '旧文本B');
-  const { swap_chara } = fixture.load_module('chara/chara-soul-transfer');
+  const { swap_chara } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   swap_chara(0, 1);
 
@@ -56,7 +58,9 @@ test('swap_chara：仅一侧声明时，另一侧读作 0/空串，不留旧值'
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '奴隶甲');
   fixture.store.set('cflag:0:20', 5); // 角色1侧完全未声明
-  const { swap_chara } = fixture.load_module('chara/chara-soul-transfer');
+  const { swap_chara } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   swap_chara(0, 1);
 
@@ -72,7 +76,9 @@ test('personalock：区间左闭右开（[10,19) 命中10不含19），55 被显
   fixture.store.set('talent:0:19', 1); // 区间终点（不含），不应交换
   fixture.store.set('talent:0:55', 1); // 显式 continue 跳过
   fixture.store.set('talent:0:117', 1); // 离散列表项，应交换
-  const { personalock } = fixture.load_module('chara/chara-soul-transfer');
+  const { personalock } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   personalock(1);
 
@@ -95,7 +101,9 @@ test('transferapp：等级/攻防互换、双侧状态清零、姓名呼び名�
   fixture.store.set('cflag:0:1', 5); // 转移前的状态标记
   fixture.store.set('cflag:1:1', 3);
   fixture.store.set('talent:0:15', 1); // personalock 覆盖范围内的一项
-  const { transferapp } = fixture.load_module('chara/chara-soul-transfer');
+  const { transferapp } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   transferapp(1);
 
@@ -123,7 +131,9 @@ test('bodycheck_maou：种族>0 用 666，种族为0用 21，三围缺项时补�
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     fixture.store.set('cflag:0:314', 2); // 有种族（用 CFLAG:314，不是 TALENT:314）
-    const { bodycheck_maou } = fixture.load_module('chara/chara-soul-transfer');
+    const { bodycheck_maou } = fixture.load_module(
+      'system/chara/chara-soul-transfer',
+    );
     bodycheck_maou();
     assert.equal(fixture.store.get('cflag:0:452'), 666);
     assert.equal(
@@ -144,7 +154,9 @@ test('bodycheck_maou：种族>0 用 666，种族为0用 21，三围缺项时补�
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     // cflag:0:314 缺省 = 0（人类）
-    const { bodycheck_maou } = fixture.load_module('chara/chara-soul-transfer');
+    const { bodycheck_maou } = fixture.load_module(
+      'system/chara/chara-soul-transfer',
+    );
     bodycheck_maou();
     assert.equal(fixture.store.get('cflag:0:452'), 21);
   }
@@ -171,7 +183,9 @@ test('bodycheck_maou：已有完整数据时不覆盖', () => {
   fixture.store.set('talent:0:308', 9);
   fixture.store.set('talent:0:309', 9);
   fixture.store.set('talent:0:310', 9);
-  const { bodycheck_maou } = fixture.load_module('chara/chara-soul-transfer');
+  const { bodycheck_maou } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   bodycheck_maou();
 
@@ -187,7 +201,9 @@ test('transfer_soul：拒绝确认时原地返回参数，不触发任何互换'
   fixture.store.set('cflag:0:9', 10);
   fixture.store.set('cflag:1:9', 3);
   fixture.set_inputs(1); // 否
-  const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+  const { transfer_soul } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   const result = await transfer_soul(1);
 
@@ -205,7 +221,9 @@ test('transfer_soul：确认后返回 0，双重互换抵消令等级/攻防/婚
   fixture.store.set('cflag:1:601', 0); // 婚姻状态=0 → 走直接互换分支
   fixture.store.set('cflag:0:601', 555);
   fixture.set_inputs(0); // 是
-  const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+  const { transfer_soul } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   const result = await transfer_soul(1, 0, seq([2])); // debuff = 2+1 = 3
 
@@ -242,7 +260,9 @@ test('transfer_soul：婚姻区间 [900,902] 闭区间两端都走直接互换�
     fixture.store.set('cflag:0:601', 777);
     fixture.store.set('cflag:1:601', marriage);
     fixture.set_inputs(0); // 是
-    const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+    const { transfer_soul } = fixture.load_module(
+      'system/chara/chara-soul-transfer',
+    );
 
     await transfer_soul(1, 0, seq([2]));
 
@@ -270,7 +290,9 @@ test('transfer_soul：婚姻状态为其他值时改走 search_family，命中�
   fixture.store.set('cflag:2:601', 700);
   fixture.store.set('cflag:2:6', 42);
   fixture.set_inputs(0);
-  const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+  const { transfer_soul } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   await transfer_soul(1, 0, seq([0])); // debuff = 0+1 = 1
 
@@ -297,7 +319,9 @@ test('transfer_soul：错位等级继承——swap_chara 先把 cid 的旧错位
   // 错位，不是魔王本身持有的
   fixture.store.set('ex_talent:1:0', 2);
   fixture.set_inputs(0);
-  const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+  const { transfer_soul } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   // rand 队列传入的值不应该被使用（继承分支忽略 rand）
   await transfer_soul(1, 0, seq([]));
@@ -312,7 +336,9 @@ test('transfer_soul：mode 非 0 跳过确认直接执行', async () => {
   add_chara(fixture, 1, '奴隶甲');
   fixture.store.set('cflag:1:601', 0);
   // 不预置任何输入：mode!=0 不应调用 era.input()
-  const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+  const { transfer_soul } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
 
   const result = await transfer_soul(1, 1, seq([0]));
 
@@ -330,7 +356,7 @@ test('soul_dislocation：命中降级，降到 0 时播报康复；未命中不�
     add_chara(fixture, 1, '奴隶甲');
     fixture.store.set('ex_talent:1:0', 1);
     const { soul_dislocation } = fixture.load_module(
-      'chara/chara-soul-transfer',
+      'system/chara/chara-soul-transfer',
     );
     soul_dislocation(1, seq([0])); // cap=min(1,3)=1 → rand(2)==0 命中
 
@@ -342,7 +368,7 @@ test('soul_dislocation：命中降级，降到 0 时播报康复；未命中不�
     add_chara(fixture, 1, '奴隶甲');
     fixture.store.set('ex_talent:1:0', 3);
     const { soul_dislocation } = fixture.load_module(
-      'chara/chara-soul-transfer',
+      'system/chara/chara-soul-transfer',
     );
     soul_dislocation(1, seq([1])); // cap=3 → rand(4)==1，非0，不命中
 
@@ -353,7 +379,7 @@ test('soul_dislocation：命中降级，降到 0 时播报康复；未命中不�
     add_chara(fixture, 1, '奴隶甲');
     // ex_talent:1:0 缺省 = 0：level=0，短路条件 `level && ...` 恒假
     const { soul_dislocation } = fixture.load_module(
-      'chara/chara-soul-transfer',
+      'system/chara/chara-soul-transfer',
     );
     soul_dislocation(1, () => {
       throw new Error('level=0 时不应调用 rand');

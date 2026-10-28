@@ -8,7 +8,7 @@
 #
 # 二维生效靠登记：yml/_fixed.json 的 system.extendedCharaTables 含
 # "ex_talent"（注意下划线——文件名小写即表名，寻址 `ex_talent:角色:序号`，
-# ere/chara/chara-ex.js 的九处写入用的就是这个前缀）。登记与表在场的双向
+# ere/system/chara/chara-ex.js 的九处写入用的就是这个前缀）。登记与表在场的双向
 # 契约由 test/extalent-table.test.js 钉住（portcflag 的同款实害：登记了
 # 没表 → addCharacter 建顶层桶时直接崩；有表没登记 → 引擎按一维自动生效，
 # 角色桶永不建、写入静默丢弃）。

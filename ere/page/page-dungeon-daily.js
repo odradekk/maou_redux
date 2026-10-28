@@ -48,9 +48,9 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { ex_talentname } = require('#/chara/chara-ex');
 const { chara } = require('#/facade/chara');
 const era_exflag = require('#/era-utils/era-exflag');
+const { ex_talentname } = require('#/system/chara/chara-ex');
 const { default_rand } = require('#/utils/numeric');
 
 /** 文案排版的全角空格（UNICODE 0x3000，page-main-menu.js 先例） */

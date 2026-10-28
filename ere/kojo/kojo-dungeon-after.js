@@ -1,7 +1,7 @@
 /**
  * @file 战果口上的分发层（issue #179，阶段 3 H10）：奖赏口上与惩罚口上。
  *
- * 调用点：ere/dungeon/dungeon-after.js 的 gohoubi_after_koujo / osioski_koujo（这张工单接入）；
+ * 调用点：ere/system/dungeon/dungeon-after.js 的 gohoubi_after_koujo / osioski_koujo（这张工单接入）；
  * GOHOUBI_REQUEST_KOUJO 的调用方是商店侧 ere/system/stronghold/
  * gohoubi-request.js（#397）。
  *

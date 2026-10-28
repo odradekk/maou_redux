@@ -599,7 +599,9 @@ test('名册动作收尾：改名播报在名册重画前先经按键确认（#7
   const { join_slave_chara } = require('./helpers/chara');
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 17, '玛奥');
-  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { chara_info_name_edit } = fixture.load_module(
+    'system/chara/chara-name-edit',
+  );
   const { change_screen } = fixture.load_module(
     'page/components/screen-change',
   );
@@ -622,7 +624,9 @@ test('名册动作收尾：不可改名的反馈在名册重画前先经按键�
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 17, '玛奥');
   fixture.store.set('cflag:17:1', 7); // 苗床：不可改名，有反馈
-  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { chara_info_name_edit } = fixture.load_module(
+    'system/chara/chara-name-edit',
+  );
   const { change_screen } = fixture.load_module(
     'page/components/screen-change',
   );
@@ -644,7 +648,9 @@ test('名册动作收尾：还原名字的播报在名册重画前先经按键�
   const { join_slave_chara } = require('./helpers/chara');
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 17, '玛奥');
-  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { chara_info_name_edit } = fixture.load_module(
+    'system/chara/chara-name-edit',
+  );
   const { change_screen } = fixture.load_module(
     'page/components/screen-change',
   );
@@ -667,7 +673,9 @@ test('名册动作收尾：侵攻中的勇者无反馈，不得多按一次键�
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 17, '勇者');
   fixture.store.set('cflag:17:1', 2); // 侵攻中的勇者：防御分支，无反馈
-  const { chara_info_name_edit } = fixture.load_module('chara/chara-name-edit');
+  const { chara_info_name_edit } = fixture.load_module(
+    'system/chara/chara-name-edit',
+  );
   const { change_screen } = fixture.load_module(
     'page/components/screen-change',
   );
@@ -821,7 +829,9 @@ test('名册动作收尾：灵魂转移播报在名册重画前先经按键确�
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 17, '玛奥');
   fixture.store.set('cflag:17:601', 0); // 走直接互换分支
-  const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+  const { transfer_soul } = fixture.load_module(
+    'system/chara/chara-soul-transfer',
+  );
   const { change_screen } = fixture.load_module(
     'page/components/screen-change',
   );
@@ -1082,7 +1092,9 @@ test('要塞勇者选择换屏：翻页空转轮重画，行数相同（#724）'
   fixture.store.set('cflag:1:1', 0); // 待命
   fixture.store.set('talent:1:85', 1); // 爱慕（出击条件）
   const rows = track_input_rows(fixture);
-  const { arcana_fort } = fixture.load_module('invasion/invasion-arcana-fort');
+  const { arcana_fort } = fixture.load_module(
+    'system/invasion/invasion-arcana-fort',
+  );
 
   // 入口选门 [0] → 勇者选择 [1000] 上一页空转 ×2 → [999] 返回 → [4] 撤退
   fixture.set_inputs(0, 1000, 1000, 999, 4);

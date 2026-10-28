@@ -168,9 +168,9 @@ test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + �
   let monster_skill_calls = 0;
   let use_ex_item_in_battle_calls = 0;
   let use_ex_item_after_battle_calls = 0;
-  const magic_mod = fixture.load_module('dungeon/magic');
-  const monster_skill_mod = fixture.load_module('dungeon/monster-skill');
-  const ex_item_mod = fixture.load_module('dungeon/ex-item');
+  const magic_mod = fixture.load_module('system/dungeon/magic');
+  const monster_skill_mod = fixture.load_module('system/dungeon/monster-skill');
+  const ex_item_mod = fixture.load_module('system/dungeon/ex-item');
   const real_magic = magic_mod.magic;
   const real_monster_skill = monster_skill_mod.monster_skill;
   const real_use_ex_item = ex_item_mod.use_ex_item;
@@ -199,7 +199,7 @@ test('端到端：新档从标题走到 ENDING_2（回标题 + 演出齐全 + �
   // #346 接入的每日召唤与本用例的勇者推进无关；隔离它的随机消费，避免
   // 全局 PRNG 序列把固定剧本偏移到需要额外输入的凌辱分支。召唤自身及
   // EVENT_NEXTDAY 接入由 chara-pregnancy.test.js 独立覆盖。
-  const summon_mod = fixture.load_module('dungeon/monster-summon');
+  const summon_mod = fixture.load_module('system/dungeon/monster-summon');
   summon_mod.summon_monster = async () => 0;
 
   // 勇者来袭开着（与阶段 1 e2e 的隔离方向相反，文件头）

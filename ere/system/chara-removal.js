@@ -11,11 +11,11 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { name_reset } = require('#/chara/char-make');
-const { template_no_of } = require('#/chara/chara-pregnancy');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { name_reset } = require('#/system/chara/char-make');
+const { template_no_of } = require('#/system/chara/chara-pregnancy');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 
 /**
  * 执行一次完整的角色除名（必须处于允许删除的时机——调教会话内要等

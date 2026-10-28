@@ -21,14 +21,14 @@
  */
 
 const era = require('#/era-electron');
-const { name_reset } = require('#/chara/char-make');
-const { template_no_of } = require('#/chara/chara-pregnancy');
 const { emit } = require('#/system/event/registry');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { palam_settled } = require('#/era-utils/palam-level');
 const era_flag = require('#/era-utils/era-flag');
+const { name_reset } = require('#/system/chara/char-make');
+const { template_no_of } = require('#/system/chara/chara-pregnancy');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { EVENT } = require('#/data/event-name-const');
 
 // EVENTEND 链内登记、引擎收尾后冲账的待除名目标。-1 = 无登记（「未选中」

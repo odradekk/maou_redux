@@ -14,5 +14,5 @@
 # 空表即够用（CFlag.yml/DB.yml 同款先例）：格子语义是纯坐标，逐条声明只有
 # 噪声，不声明；未声明下标读侧 getter 回 0（「全区 0 起步」——
 # 2D 模式未开时地形恒平，UNIT_MOVE 的高低差拒绝恒不触发）。
-# 读写包装：ere/dungeon/labo.js 的 da_get / da_set（DB 的 db_get/db_set 同栈
+# 读写包装：ere/system/dungeon/labo.js 的 da_get / da_set（DB 的 db_get/db_set 同栈
 # 导出，两票共用的唯一真相源）。

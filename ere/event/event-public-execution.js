@@ -6,10 +6,10 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { search_family } = require('#/chara/chara-family');
 const { public_exucution_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const {

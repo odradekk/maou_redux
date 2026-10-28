@@ -207,7 +207,9 @@ engine_test(
           const { api, fixture } = setup(presets);
           mark_progress(api, cid);
           const before = snapshot_character(api, cid);
-          const { char_create } = fixture.load_module('chara/chara-custom');
+          const { char_create } = fixture.load_module(
+            'system/chara/chara-custom',
+          );
           fixture.set_inputs(selection);
 
           const result = await char_create(0, () => 0).catch((error) => error);
@@ -274,7 +276,9 @@ engine_test(
           const { api, fixture } = setup(presets);
           mark_progress(api, 1);
           const before = structuredClone(api.data);
-          const { char_append } = fixture.load_module('chara/chara-custom');
+          const { char_append } = fixture.load_module(
+            'system/chara/chara-custom',
+          );
           assert.equal(await char_append(1, mode, () => 0), -1);
           assert.deepEqual(api.data, before);
         }
@@ -331,7 +335,9 @@ engine_test(
         [201, 21],
       ]) {
         const { api, fixture } = setup(presets);
-        const { char_create } = fixture.load_module('chara/chara-custom');
+        const { char_create } = fixture.load_module(
+          'system/chara/chara-custom',
+        );
         fixture.set_inputs(selection, 1, '莉塔', 996);
         assert.equal(await char_create(0, () => 0), cid);
         assert.deepEqual(api.getAddedCharacters(), [0, cid]);

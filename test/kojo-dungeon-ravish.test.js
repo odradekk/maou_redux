@@ -471,7 +471,7 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     [1001, 901], // EX 下界（EX_TALENT:101 → K901）
   ]) {
     const fixture = create_era_fixture();
-    fixture.load_module('chara/chara-ex').get_ex_kojo_num = () => local;
+    fixture.load_module('system/chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
     mod.ryouzyoku_kojo_family.register(key, async (...args) => {
@@ -489,7 +489,7 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     1000, // EX 下界外一格（键 900 不在声明空间）
   ]) {
     const fixture = create_era_fixture();
-    fixture.load_module('chara/chara-ex').get_ex_kojo_num = () => local;
+    fixture.load_module('system/chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
     // 三个边界键都挂探针：窗口被放宽时键会落到声明空间外直接抛错，

@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-battle.js / dungeon-battle2.js / monster-data.js /
+ * ere/system/dungeon/dungeon-battle.js / dungeon-battle2.js / monster-data.js /
  * data/monster-database.js 的行为测试（issue #175，阶段 3 H6）。
  *
  * 缝 = test/helpers/era-fixture.js。随机源经 rand 参数注入（run_dungeon
@@ -100,7 +100,10 @@ function setup_duel_world() {
 
 test('campaign_monster_list()：FLAG:400 < 1 时恒 190（骸骨缺省）', async () => {
   const fixture = create_era_fixture();
-  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  const { campaign_monster_list } = load(
+    fixture,
+    'system/dungeon/dungeon-battle',
+  );
   assert.equal(await campaign_monster_list(3), 190);
 });
 
@@ -108,7 +111,10 @@ test('campaign_monster_list()：FLAG:400 = 1 时按 campaign_monster_list_1 三�
   const fixture = create_era_fixture();
   fixture.store.set('flag:400', 1);
   fixture.load_module('page/page-campaign-1'); // 触发战役 1 的 register()
-  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  const { campaign_monster_list } = load(
+    fixture,
+    'system/dungeon/dungeon-battle',
+  );
   // 战役 1 的 6 层 × 3 怪整表（#469 需求审查 3a 指出
   // 旧用例只抽了 4 格）
   const TABLE = [
@@ -136,7 +142,10 @@ test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMis
   fixture.store.set('flag:400', 1);
   // 不 load_module('page/page-campaign-1')：族声明空间含 1 但未注册实现，
   // 命中 DispatchFamily 的合法缺失分支（非拼写错误）
-  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  const { campaign_monster_list } = load(
+    fixture,
+    'system/dungeon/dungeon-battle',
+  );
   assert.equal(
     await campaign_monster_list(1, () => 0),
     190,
@@ -165,7 +174,7 @@ test('source_check_auto 接入：转发到 system/train/source-check 的真实�
   era_flag.assiplay = 0;
   fixture.store.set('palam:1:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛
   load(fixture, 'system/train/source-check');
-  const battle = load(fixture, 'dungeon/dungeon-battle');
+  const battle = load(fixture, 'system/dungeon/dungeon-battle');
 
   await battle.source_check_auto();
   assert.equal(
@@ -196,9 +205,9 @@ test('source_check_auto 接入：转发到 system/train/source-check 的真实�
 
 test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', async () => {
   const fixture = setup_world();
-  const magic_mod = load(fixture, 'dungeon/magic');
+  const magic_mod = load(fixture, 'system/dungeon/magic');
   magic_mod.magic = async () => 999; // 战斗链短路（enemy_attack 的查表路径）
-  const battle = load(fixture, 'dungeon/dungeon-battle');
+  const battle = load(fixture, 'system/dungeon/dungeon-battle');
   fixture.era.beginTrain(0, 1); // #508：三连的调教域表要建起来
   fixture.store.set('talent:1:193', 1); // 肛门虫寄生
 
@@ -213,9 +222,9 @@ test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asy
 
 test('duel_attack：TALENT:193 的自动调教三连接 com13_auto 真身', async () => {
   const fixture = setup_duel_world();
-  const battle = load(fixture, 'dungeon/dungeon-battle');
+  const battle = load(fixture, 'system/dungeon/dungeon-battle');
   battle.magic = async () => 999; // 战斗链短路（duel_attack 的查表路径）
-  const battle2 = load(fixture, 'dungeon/dungeon-battle2');
+  const battle2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.era.beginTrain(0, 1); // #508
   fixture.store.set('talent:1:193', 1); // 攻击方（奴隶 1）带肛门虫
 
@@ -236,7 +245,7 @@ test('duel_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asyn
 
 test('monster_data：库存怪物照 ITEM 数量生成、等级 +4、攻防 ×2 加等级骰', () => {
   const fixture = setup_world();
-  const md = load(fixture, 'dungeon/monster-data');
+  const md = load(fixture, 'system/dungeon/monster-data');
   const zero = () => 0;
   fixture.store.set('cflag:0:9', 24); // 魔王等级：LV = 24/12 + 2 = 4；24%10=4 > rand(10)=0 → +1 → 5
 
@@ -269,7 +278,7 @@ test('monster_data：库存怪物照 ITEM 数量生成、等级 +4、攻防 ×2 
 test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随层走', () => {
   const zero = () => 0;
   const fixture = setup_world();
-  const md = load(fixture, 'dungeon/monster-data');
+  const md = load(fixture, 'system/dungeon/monster-data');
   fixture.store.set('item:100', 0); // 无库存 → 骷髅
   fixture.store.set('cflag:1:501', 3); // 队长的阶层 3（skeleton 用）
 
@@ -295,7 +304,7 @@ test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随�
   // arg2 = -1 → skeleton 走掷点分支：rand(9)+1（m9 控制 = 9）；两骰各 10 取小
   const fixture2 = setup_world();
   fixture2.store.set('item:100', 0);
-  const md2 = load(fixture2, 'dungeon/monster-data');
+  const md2 = load(fixture2, 'system/dungeon/monster-data');
   const m9 = (n) => (n === 9 ? 8 : n - 1);
   md2.monster_data(100, 0, -1, -1, -1, m9);
   assert.equal(fixture2.battle('DEFENSE_1').count, 10, '两骰各掷 10，取小 10');
@@ -308,7 +317,7 @@ test('monster_data：无库存转骷髅（190）、两骰取小、skeleton 随�
 
 test('monster_data：LINE 3 的配下怪物（CFLAG:570 < 100 时清列返回）', () => {
   const fixture = setup_world();
-  const md = load(fixture, 'dungeon/monster-data');
+  const md = load(fixture, 'system/dungeon/monster-data');
   const zero = () => 0;
 
   // 无配下：E:300 清 0 直接返回
@@ -326,7 +335,7 @@ test('monster_data：LINE 3 的配下怪物（CFLAG:570 < 100 时清列返回）
 
 test('战斗状态：monster_data 的写入不落 store（没有 e: 地址），yml/E.yml 已撤除', () => {
   const fixture = setup_world();
-  const md = load(fixture, 'dungeon/monster-data');
+  const md = load(fixture, 'system/dungeon/monster-data');
   md.monster_data(100, 0, 1, -1, -1, () => 0);
   assert.equal(
     [...fixture.store.keys()].filter((key) => /^e:/.test(key)).length,
@@ -345,14 +354,14 @@ test('战斗状态：monster_data 的写入不落 store（没有 e: 地址），
 
 test('death_check：HP <= 300 投降（CFLAG:1 = 0，RETURN 2）；气力尽同型', async () => {
   const fixture = setup_world();
-  const b = load(fixture, 'dungeon/dungeon-battle');
+  const b = load(fixture, 'system/dungeon/dungeon-battle');
   fixture.store.set('base:1:0', 200); // HP 200 <= 300
   const r = await b.death_check(1);
   assert.equal(r, 2, '生命垂危 → RETURN 2');
   assert.equal(fixture.store.get('cflag:1:1'), 0, '投降（CFLAG:1 = 0）');
 
   const fixture2 = setup_world();
-  const b2 = load(fixture2, 'dungeon/dungeon-battle');
+  const b2 = load(fixture2, 'system/dungeon/dungeon-battle');
   fixture2.store.set('base:1:1', 0); // 气力 0
   const r2 = await b2.death_check(1);
   assert.equal(r2, 2, '失去战意 → RETURN 2');
@@ -361,8 +370,8 @@ test('death_check：HP <= 300 投降（CFLAG:1 = 0，RETURN 2）；气力尽同�
 
 test('death_check：怪物全灭 → RETURN 1（胜利）；健在 → 0（继续）', async () => {
   const fixture = setup_world();
-  const b = load(fixture, 'dungeon/dungeon-battle');
-  const md = load(fixture, 'dungeon/monster-data');
+  const b = load(fixture, 'system/dungeon/dungeon-battle');
+  const md = load(fixture, 'system/dungeon/monster-data');
   const zero = () => 0;
   // 全灭：数量槽全 0
   assert.equal(await b.death_check(1), 1, 'E:99/199/299 全 0 → 勇者胜');
@@ -376,7 +385,7 @@ test('death_check：怪物全灭 → RETURN 1（胜利）；健在 → 0（继�
 
 test('death_check2：勇者 HP <= 0 用尽 → RETURN 2 且 CFLAG:1 = 0', () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.store.set('base:2:0', 0);
   assert.equal(b2.death_check2(1, 2), 2, '勇者侧退场');
   assert.equal(fixture.store.get('cflag:2:1'), 0, '勇者 CFLAG:1 = 0');
@@ -384,13 +393,13 @@ test('death_check2：勇者 HP <= 0 用尽 → RETURN 2 且 CFLAG:1 = 0', () => 
 
 test('death_check2：奴隶侧退场 → RETURN 1；狂王线（FLAG:5 位 7）状态 9', () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.store.set('base:1:0', 100); // 奴隶 HP <= 300
   assert.equal(b2.death_check2(1, 2), 1, '魔王侧退场 → RETURN 1');
   assert.equal(fixture.store.get('cflag:1:1'), 0, '通常线状态 0');
 
   const fixture2 = setup_duel_world();
-  const b2v2 = load(fixture2, 'dungeon/dungeon-battle2');
+  const b2v2 = load(fixture2, 'system/dungeon/dungeon-battle2');
   fixture2.store.set('flag:5', 128); // 狂王线
   fixture2.store.set('base:1:0', 100);
   assert.equal(b2v2.death_check2(1, 2), 1, '狂王线同样 RETURN 1');
@@ -405,7 +414,7 @@ test('death_check2：奴隶侧退场 → RETURN 1；狂王线（FLAG:5 位 7）�
 
 test('spy_battle：三分支扣勇者 HP/气力并写 JUEL（谜药分支的欲情珠）', async () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.store.set('abl:1:12', 2); // 技巧 2
 
   // rand(3) === 0 → 谜药：MDMG += 20、JUEL:5 += 10+16
@@ -421,7 +430,7 @@ test('spy_battle：三分支扣勇者 HP/气力并写 JUEL（谜药分支的欲�
 
 test('spy_battle：施虐狂 1.2 倍；KARMA 真身扣善恶值', async () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.store.set('talent:1:83', 1); // 施虐狂
   fixture.store.set('abl:1:12', 0);
   fixture.store.set('cflag:2:151', 50);
@@ -435,7 +444,7 @@ test('spy_battle：施虐狂 1.2 倍；KARMA 真身扣善恶值', async () => {
 
 test('dungeon_spy：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏金）', async () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.store.set('flag:10004', 0); // MONEY
   fixture.store.set('exflag:4444', 0);
   // 潜入奴隶 1 在勇者 2 队里（队长记忆与仲間位）
@@ -494,8 +503,8 @@ test('dungeon_spy：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏�
 test('monster_attack：换算 -99 读数量槽，按 数量 × 攻撃 扣勇者 HP 与气力', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:12', 0); // 防御归零：伤害全额透过
-  const b = load(fixture, 'dungeon/dungeon-battle');
-  const md = load(fixture, 'dungeon/monster-data');
+  const b = load(fixture, 'system/dungeon/dungeon-battle');
+  const md = load(fixture, 'system/dungeon/monster-data');
   const zero = () => 0;
   md.monster_data(100, 0, 1, -1, -1, zero); // 第一列狗头人 ×5
 
@@ -514,7 +523,7 @@ test('victory_get：骄傲低只扣一次意愿（重印段不回潮）', async 
   fixture.store.set('talent:1:17', 1); // プライド低い
   // 善恶 0 → will = rand(15) = 7；骄傲低 -1 → 6 > 5 不搜刮。
   // 重印段若回潮（-2 → 5）会走进搜刮分支（RETURN 1 且善恶 -5）
-  const b = load(fixture, 'dungeon/dungeon-battle');
+  const b = load(fixture, 'system/dungeon/dungeon-battle');
   assert.equal(await b.victory_get(1, () => 7), 0, 'will 6 > 5，RETURN 0');
   assert.equal(
     fixture.store.get('cflag:1:151'),
@@ -527,7 +536,7 @@ test('defence_chara_extra_dmg：CFLAG:680 低位按 DEBUFF% 放大并衰减（68
   const fixture = setup_world();
   fixture.store.set('cflag:1:12', 0); // 防御 0：全额透过
   fixture.store.set('cflag:1:680', 10);
-  const b = load(fixture, 'dungeon/dungeon-battle');
+  const b = load(fixture, 'system/dungeon/dungeon-battle');
   const dmg = b.defence_chara_extra_dmg(1, 100, () => 50); // rand(100)=50 不闪避
   assert.equal(dmg, 110, 'DMG 100 × 110%');
   assert.equal(fixture.store.get('base:1:0'), 2000 - 110, 'HP 扣减');
@@ -542,7 +551,7 @@ test('defence_chara_extra_dmg：CFLAG:680 低位按 DEBUFF% 放大并衰减（68
 
 test('dungeon_battle2_party：勇者被打退 → result 2 + loser 败者号（B 的显式传参）', async () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   const one = (n) => (n === 3 ? 1 : 1); // 对象选择 rand(3)=1 不跳过
   const r = await b2.dungeon_battle2_party(1, one);
   assert.equal(r.result, 2, '勇者气力被打空 → 退场');
@@ -552,7 +561,7 @@ test('dungeon_battle2_party：勇者被打退 → result 2 + loser 败者号（B
 
 test('dungeon_battle2_party：找不到对手 → result 0 且无演出推进', async () => {
   const fixture = setup_duel_world();
-  const b2 = load(fixture, 'dungeon/dungeon-battle2');
+  const b2 = load(fixture, 'system/dungeon/dungeon-battle2');
   fixture.store.set('cflag:2:501', 5); // 勇者不同层
   const r = await b2.dungeon_battle2_party(1, () => 2);
   assert.deepEqual(r, { result: 0, loser: 0 }, '对象选择失败');
@@ -567,8 +576,8 @@ test('对比：同一种子下，接入战斗后勇者到达的层数与战斗�
   /** 跑一个世界，返回每轮后的层数轨迹与终态气力 */
   async function run_world(stub_battle) {
     const fixture = setup_world();
-    const { run_dungeon } = load(fixture, 'dungeon/dungeon');
-    const battle = load(fixture, 'dungeon/dungeon-battle');
+    const { run_dungeon } = load(fixture, 'system/dungeon/dungeon');
+    const battle = load(fixture, 'system/dungeon/dungeon-battle');
     let battle_calls = 0;
     if (stub_battle) {
       // 战斗短路行为：直接 return 0（不改任何状态）——替换模块导出即短路

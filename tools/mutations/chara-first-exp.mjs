@@ -1,17 +1,17 @@
 // 变异条目表分片：chara 域收尾（issue #394，N10）。
-// 目标文件：ere/chara/chara-first-exp.js（chara_first_exp 真身）、
-//         ere/chara/chara-make-inport.js（chara_make_inport 真身）。
+// 目标文件：ere/system/chara/chara-first-exp.js（chara_first_exp 真身）、
+//         ere/system/chara/chara-make-inport.js（chara_make_inport 真身）。
 // 守护测试：test/chara-first-exp.test.js、test/chara-make-inport.test.js。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。
 
 export const COUNT = 40; // #394 建表（M8341-M8380）
 
 export default [
-  // —— ere/chara/chara-first-exp.js ——
+  // —— ere/system/chara/chara-first-exp.js ——
 
   {
     desc: 'M8341 性别判断取反（男人也走「未体验」修正）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: 'if (t(122) === 0 && not_virgin() && first_sex === -1) {',
     replace: 'if (t(122) !== 0 && not_virgin() && first_sex === -1) {',
     tests: ['chara-first-exp'],
@@ -19,7 +19,7 @@ export default [
   },
   {
     desc: 'M8342 性交经验下界 0 改 -1（无不经验也拉回初吻）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: 'if ((dungeon.性交经验 > 0 || dungeon.卖淫经验 > 0) && first_kiss === -1) {',
     replace:
       'if ((dungeon.性交经验 >= 0 || dungeon.卖淫经验 > 0) && first_kiss === -1) {',
@@ -28,7 +28,7 @@ export default [
   },
   {
     desc: 'M8343 兽姦第一档部位 996 改 966（肛门编码错位）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    first_kiss = 996;',
     replace: '    first_kiss = 966;',
     tests: ['chara-first-exp'],
@@ -36,7 +36,7 @@ export default [
   },
   {
     desc: 'M8344 侵入阶层写 0（CFLAG:501 的定值）',
-    file: 'ere/chara/chara-make-inport.js',
+    file: 'ere/system/chara/chara-make-inport.js',
     find: '  chara(cid).dungeon.侵攻阶层 = 1; // CFLAG:501',
     replace: '  chara(cid).dungeon.侵攻阶层 = 0; // CFLAG:501',
     tests: ['chara-make-inport'],
@@ -44,7 +44,7 @@ export default [
   },
   {
     desc: 'M8345 FLAG:77 分支里的战斗经验不清零',
-    file: 'ere/chara/chara-make-inport.js',
+    file: 'ere/system/chara/chara-make-inport.js',
     find: '    chara(cid).dungeon.战斗经验 = 0; // EXP:80',
     replace: '    chara(cid).dungeon.战斗经验 = 1; // EXP:80',
     tests: ['chara-make-inport'],
@@ -52,7 +52,7 @@ export default [
   },
   {
     desc: 'M8346 兽姦的第一档概率上界 20 改 19（极稀有的取法变了）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    dungeon.兽奸经验 > 0 &&\n    rand(20) === 0\n  ) {\n    first_kiss = 996;',
     replace:
       '    dungeon.兽奸经验 > 0 &&\n    rand(19) === 0\n  ) {\n    first_kiss = 996;',
@@ -61,7 +61,7 @@ export default [
   },
   {
     desc: 'M8347 兽姦的初体验编码 103 改 130',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    first_kiss = 996;\n    if (not_virgin() && first_sex === 0 && rand(2) === 0) {\n      first_sex = 103;',
     replace:
       '    first_kiss = 996;\n    if (not_virgin() && first_sex === 0 && rand(2) === 0) {\n      first_sex = 130;',
@@ -70,7 +70,7 @@ export default [
   },
   {
     desc: 'M8348 兽姦经验的下界 0 改 -1（无兽奸经验也吃这一段）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    dungeon.兽奸经验 > 0 &&\n    rand(10) === 0',
     replace: '    dungeon.兽奸经验 >= 0 &&\n    rand(10) === 0',
     tests: ['chara-first-exp'],
@@ -78,7 +78,7 @@ export default [
   },
   {
     desc: 'M8349 家族设定有无取个位改取十位（% 10）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  const family_flag = family % 10;',
     replace: '  const family_flag = family % 100;',
     tests: ['chara-first-exp'],
@@ -86,7 +86,7 @@ export default [
   },
   {
     desc: 'M8350 婚姻状态的万位截取 10000 改 1000（位数错位）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    const marriage = Math.trunc((family % 100000) / 10000);',
     replace: '    const marriage = Math.trunc((family % 100000) / 1000);',
     tests: ['chara-first-exp'],
@@ -94,7 +94,7 @@ export default [
   },
   {
     desc: 'M8351 配偶性别数字位的 CASE 0,4,8 改成 0,4,9',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  if (digit === 0 || digit === 4 || digit === 8) return 0;',
     replace: '  if (digit === 0 || digit === 4 || digit === 9) return 0;',
     tests: ['chara-first-exp'],
@@ -102,7 +102,7 @@ export default [
   },
   {
     desc: 'M8352 配偶性别数字位的 CASE 1,5,7 改成 1,5,6',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  if (digit === 1 || digit === 5 || digit === 7) return 1;',
     replace: '  if (digit === 1 || digit === 5 || digit === 6) return 1;',
     tests: ['chara-first-exp'],
@@ -110,7 +110,7 @@ export default [
   },
   {
     desc: 'M8353 兄的万分位截取 1000000 改 100000（兄弟位置串味）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    let scratch = Math.trunc((family % 10000000) / 1000000);',
     replace: '    let scratch = Math.trunc((family % 10000000) / 100000);',
     tests: ['chara-first-exp'],
@@ -118,7 +118,7 @@ export default [
   },
   {
     desc: 'M8354 弟的亿分位截取 100000000 改 10000000',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    scratch = Math.trunc((family % 1000000000) / 100000000);',
     replace: '    scratch = Math.trunc((family % 1000000000) / 10000000);',
     tests: ['chara-first-exp'],
@@ -126,7 +126,7 @@ export default [
   },
   {
     desc: 'M8355 姉的十万分位截取 100000 改 10000000（该位永远读到 0）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    scratch = Math.trunc((family % 1000000) / 100000);',
     replace: '    scratch = Math.trunc((family % 1000000) / 10000000);',
     tests: ['chara-first-exp'],
@@ -134,7 +134,7 @@ export default [
   },
   {
     desc: 'M8356 妹的千万分位截取 10000000 改 100000000（该位永远读到 0）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    scratch = Math.trunc((family % 100000000) / 10000000);',
     replace: '    scratch = Math.trunc((family % 100000000) / 100000000);',
     tests: ['chara-first-exp'],
@@ -142,7 +142,7 @@ export default [
   },
   {
     desc: 'M8357 正太控加成的概率上界 5 改 4',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "} else if (scratch > 0 && candidate === '' && t(143) && rand(5) === 0) {",
     replace:
       "} else if (scratch > 0 && candidate === '' && t(143) && rand(4) === 0) {",
@@ -151,7 +151,7 @@ export default [
   },
   {
     desc: 'M8358 萝莉控加成的素质编号 142 改 143（与正太控互换）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "} else if (scratch > 0 && candidate === '' && t(142) && rand(5) === 0) {",
     replace:
       "} else if (scratch > 0 && candidate === '' && t(143) && rand(5) === 0) {",
@@ -160,7 +160,7 @@ export default [
   },
   {
     desc: 'M8359 恋父情结加成的素质编号 141 改 140',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "} else if (candidate === '' && t(141) && rand(10) === 0) {",
     replace: "} else if (candidate === '' && t(140) && rand(10) === 0) {",
     tests: ['chara-first-exp'],
@@ -168,7 +168,7 @@ export default [
   },
   {
     desc: 'M8360 恋母情结加成的概率上界 10 改 20',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "} else if (candidate === '' && t(140) && rand(10) === 0) {",
     replace: "} else if (candidate === '' && t(140) && rand(20) === 0) {",
     tests: ['chara-first-exp'],
@@ -176,7 +176,7 @@ export default [
   },
   {
     desc: 'M8361 家族段的开关 1 改 0（家族段对所有人都展开）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  if (family_flag === 1) {',
     replace: '  if (family_flag === 0) {',
     tests: ['chara-first-exp'],
@@ -184,7 +184,7 @@ export default [
   },
   {
     desc: 'M8362 故郷の恋人的喜好取值 4 改 5（判断条件）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  if (t(317) === 4) {',
     replace: '  if (t(317) === 5) {',
     tests: ['chara-first-exp'],
@@ -192,7 +192,7 @@ export default [
   },
   {
     desc: 'M8363 性别待定标记 4 改 3（整段不跑）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    candidate_gender = 4;',
     replace: '    candidate_gender = 3;',
     tests: ['chara-first-exp'],
@@ -200,7 +200,7 @@ export default [
   },
   {
     desc: 'M8364 职业段男／扶她表的性别固定值 2 改 1',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  gender: 2, // とりあえず女限定',
     replace: '  gender: 1, // とりあえず女限定',
     tests: ['chara-first-exp'],
@@ -208,7 +208,7 @@ export default [
   },
   {
     desc: 'M8365 职业段女表的性别固定值 1 改 3',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  gender: 1, // とりあえず男限定',
     replace: '  gender: 3, // とりあえず男限定',
     tests: ['chara-first-exp'],
@@ -216,7 +216,7 @@ export default [
   },
   {
     desc: 'M8366 职业段男表「軍人」的缺省称呼改错（长官的女儿）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "        fallback: '长官的女儿',",
     replace: "        fallback: '部下的女儿',",
     tests: ['chara-first-exp'],
@@ -224,7 +224,7 @@ export default [
   },
   {
     desc: 'M8367 职业段女表「貴族」的链首概率 20 改 21',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "          [20, '家庭教师'],",
     replace: "          [21, '家庭教师'],",
     tests: ['chara-first-exp'],
@@ -232,7 +232,7 @@ export default [
   },
   {
     desc: 'M8368 不幸なキス的女表选项改错（强奸魔 → 强奸狂）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "          options: ['流氓', '窃贼', '强奸魔'],",
     replace: "          options: ['流氓', '窃贼', '强奸狂'],",
     tests: ['chara-first-exp'],
@@ -240,7 +240,7 @@ export default [
   },
   {
     desc: 'M8369 谁にでもあるキス的男表选项改错（女朋友 → 女友）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "      ? { gender: 2, options: ['青梅竹马', '女朋友', '初恋'] }",
     replace: "      ? { gender: 2, options: ['青梅竹马', '女友', '初恋'] }",
     tests: ['chara-first-exp'],
@@ -248,7 +248,7 @@ export default [
   },
   {
     desc: 'M8370 性别待定的扶她短链上界 10 改 11',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    if (rand(10) === 0 && is_futa) {',
     replace: '    if (rand(11) === 0 && is_futa) {',
     tests: ['chara-first-exp'],
@@ -256,7 +256,7 @@ export default [
   },
   {
     desc: 'M8371 性别待定的男性短链上界 20 改 21',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    } else if (rand(20) === 0 && is_male) {',
     replace: '    } else if (rand(21) === 0 && is_male) {',
     tests: ['chara-first-exp'],
@@ -264,7 +264,7 @@ export default [
   },
   {
     desc: 'M8372 气力补满时读错槽位（maxbase:1 → maxbase:0）',
-    file: 'ere/chara/chara-make-inport.js',
+    file: 'ere/system/chara/chara-make-inport.js',
     find: '  chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;',
     replace: '  chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:0`) || 0;',
     tests: ['chara-make-inport'],
@@ -272,7 +272,7 @@ export default [
   },
   {
     desc: 'M8373 白纸规则的上界 300 改 400（ペニス 区间变宽）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  if (first_kiss >= 100 && first_kiss < 300 && matched_gender === 2) {',
     replace:
       '  if (first_kiss >= 100 && first_kiss < 400 && matched_gender === 2) {',
@@ -281,7 +281,7 @@ export default [
   },
   {
     desc: 'M8374 白纸规则的另一半性别条件 1 改 3（ヴァギナ 区间）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '  if (first_kiss >= 300 && first_kiss < 400 && matched_gender === 1) {',
     replace:
       '  if (first_kiss >= 300 && first_kiss < 400 && matched_gender === 3) {',
@@ -290,7 +290,7 @@ export default [
   },
   {
     desc: 'M8375 初吻部位的第一分支上界 30 改 31（嘴唇概率）',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: "  if (kiss_name !== '' && first_kiss === 0 && rand(30) > 0) {",
     replace: "  if (kiss_name !== '' && first_kiss === 0 && rand(31) > 0) {",
     tests: ['chara-first-exp'],
@@ -298,7 +298,7 @@ export default [
   },
   {
     desc: 'M8376 初吻部位的アナル编码 401 改 402',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    first_kiss = 401; // アナル',
     replace: '    first_kiss = 402; // アナル',
     tests: ['chara-first-exp'],
@@ -306,18 +306,18 @@ export default [
   },
   {
     desc: 'M8377 初吻部位的ヴァギナ编码 301 改 302',
-    file: 'ere/chara/chara-first-exp.js',
+    file: 'ere/system/chara/chara-first-exp.js',
     find: '    first_kiss = 301; // 女でヴァギナ',
     replace: '    first_kiss = 302; // 女でヴァギナ',
     tests: ['chara-first-exp'],
     must_mention: '301',
   },
 
-  // —— ere/chara/chara-make-inport.js ——
+  // —— ere/system/chara/chara-make-inport.js ——
 
   {
     desc: 'M8378 名单槽位上界 100 改 99（最后一槽永远读不到）',
-    file: 'ere/chara/chara-make-inport.js',
+    file: 'ere/system/chara/chara-make-inport.js',
     find: '  for (let slot = 0; slot < 100; slot += 1) {',
     replace: '  for (let slot = 0; slot < 99; slot += 1) {',
     tests: ['chara-make-inport'],
@@ -325,7 +325,7 @@ export default [
   },
   {
     desc: 'M8379 记录段回填丢掉段尾空元素（RESULT-1 语义失守）',
-    file: 'ere/chara/chara-make-inport.js',
+    file: 'ere/system/chara/chara-make-inport.js',
     find: "  const pieces = segment.split('/').slice(0, -1);",
     replace: "  const pieces = segment.split('/');",
     tests: ['chara-make-inport'],
@@ -333,7 +333,7 @@ export default [
   },
   {
     desc: 'M8380 等级上限的早退阈值 0 改 -1（FLAG:76 未设也开跑）',
-    file: 'ere/chara/chara-make-inport.js',
+    file: 'ere/system/chara/chara-make-inport.js',
     find: '  if (level_cap <= 0) {',
     replace: '  if (level_cap < 0) {',
     tests: ['chara-make-inport'],

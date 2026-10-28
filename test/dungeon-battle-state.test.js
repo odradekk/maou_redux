@@ -88,7 +88,7 @@ function seq(values) {
 test('battle_column：六列都是同一形状的全 0 对象，字段恰是原偏移表的十二项', () => {
   const fixture = create_era_fixture();
   const { BATTLE_COLUMN, battle_column } = fixture.load_module(
-    'dungeon/battle-state',
+    'system/dungeon/battle-state',
   );
   assert.deepEqual(Object.values(BATTLE_COLUMN).sort(), [0, 1, 2, 3, 4, 5]);
   for (const column of Object.values(BATTLE_COLUMN)) {
@@ -108,7 +108,7 @@ test('battle_column：六列都是同一形状的全 0 对象，字段恰是原�
 test('battle_column：写一列不串到别的列（原 E 表的步长隔离由对象身份保证）', () => {
   const fixture = create_era_fixture();
   const { BATTLE_COLUMN, battle_column } = fixture.load_module(
-    'dungeon/battle-state',
+    'system/dungeon/battle-state',
   );
   battle_column(BATTLE_COLUMN.DEFENSE_2).defense = 42;
   battle_column(BATTLE_COLUMN.DEFENSE_2).count = 7;
@@ -119,7 +119,7 @@ test('battle_column：写一列不串到别的列（原 E 表的步长隔离由�
 
 test('battle_column：列号越界读全 0 列而不抛错（同原 E 表未声明序号读 0）', () => {
   const fixture = create_era_fixture();
-  const { battle_column } = fixture.load_module('dungeon/battle-state');
+  const { battle_column } = fixture.load_module('system/dungeon/battle-state');
   assert.deepEqual(battle_column(-1), zero_column());
   assert.deepEqual(battle_column(99), zero_column());
   // 越界列可以写，但不影响真实列（历史路径会往 -1 列写数量 0）
@@ -130,7 +130,7 @@ test('battle_column：列号越界读全 0 列而不抛错（同原 E 表未声�
 test('reset_battle_state：就地清零，调用方手里的列引用仍然有效', () => {
   const fixture = create_era_fixture();
   const { BATTLE_COLUMN, battle_column, reset_battle_state } =
-    fixture.load_module('dungeon/battle-state');
+    fixture.load_module('system/dungeon/battle-state');
   const row = battle_column(BATTLE_COLUMN.MINION_A);
   row.id = 190;
   row.level = 9;
@@ -181,8 +181,11 @@ test('monster_data：整列写进战斗状态对象，E 表一个键都不写', 
   const fixture = create_era_fixture();
   fixture.store.set('item:100', 5);
   fixture.store.set('itemname:100', '狗头人');
-  const { monster_data } = fixture.load_module('dungeon/monster-data');
-  const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
+  const { monster_data } = fixture.load_module('system/dungeon/monster-data');
+  const {
+    BATTLE_COLUMN,
+    battle_column,
+  } = require('#/system/dungeon/battle-state');
   // 随机源恒 0：等级骰不升级、等级缩放骰（local = 基础等级 ×2 次）全 0
   monster_data(100, BATTLE_COLUMN.DEFENSE_1, -1, -1, -1, seq([0]));
   const row = battle_column(BATTLE_COLUMN.DEFENSE_1);
@@ -208,8 +211,11 @@ test('monster_data：列号 3/4 的勇者配下与列 0 互不干扰（对象列
   const fixture = create_era_fixture();
   fixture.store.set('item:100', 4);
   fixture.store.set('cflag:1:570', 100);
-  const { monster_data } = fixture.load_module('dungeon/monster-data');
-  const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
+  const { monster_data } = fixture.load_module('system/dungeon/monster-data');
+  const {
+    BATTLE_COLUMN,
+    battle_column,
+  } = require('#/system/dungeon/battle-state');
   battle_column(BATTLE_COLUMN.MINION_A).id = 0;
   battle_column(BATTLE_COLUMN.DEFENSE_1).count = 3;
   monster_data(100, BATTLE_COLUMN.MINION_A, 1, -1, -1, seq([0, 1, 1]));
@@ -225,12 +231,12 @@ test('monster_data：列号 3/4 的勇者配下与列 0 互不干扰（对象列
 test('skeleton：等级、攻击、防御一起写对象（原列头 +1/+2/+3）', () => {
   const fixture = create_era_fixture();
   fixture.store.set('cflag:2:501', 3); // 持有者阶层 3
-  const { skeleton } = fixture.load_module('dungeon/monster-data');
+  const { skeleton } = fixture.load_module('system/dungeon/monster-data');
   const {
     BATTLE_COLUMN,
     battle_column,
     reset_battle_state,
-  } = require('#/dungeon/battle-state');
+  } = require('#/system/dungeon/battle-state');
   reset_battle_state();
   skeleton(BATTLE_COLUMN.DEFENSE_3, 2, seq([]));
   const row = battle_column(BATTLE_COLUMN.DEFENSE_3);
@@ -252,7 +258,7 @@ test('chara-body：胸围变化的重量差不再借 e:1 当临时变量（与�
   fixture.store.set('cflag:6:454', 500); // 体重
   fixture.store.set('cflag:6:458', 500); // 原胸围差
   fixture.store.set('cflag:6:459', 1000); // 原下胸围
-  const { char_size_generate } = fixture.load_module('chara/chara-body');
+  const { char_size_generate } = fixture.load_module('system/chara/chara-body');
   const size = char_size_generate(6, 18, 1, () => 0);
   assert.deepEqual(size, [18, 18, 1600, 437, 801, 0, 0]);
   assert.equal(
@@ -274,7 +280,7 @@ test('battle_legacy_reader：旧 E 列 100 槽的三段缺省值（0..10 共享�
     battle_column,
     battle_legacy_reader,
     reset_battle_state,
-  } = fixture.load_module('dungeon/battle-state');
+  } = fixture.load_module('system/dungeon/battle-state');
   reset_battle_state();
   const row = battle_column(BATTLE_COLUMN.DEFENSE_1);
   const { read, write } = battle_legacy_reader(0); // 基准 = 列头 0
@@ -519,7 +525,7 @@ engine_test(
   async () => {
     const fixture = create_era_fixture();
     const { BATTLE_COLUMN, battle_column } = fixture.load_module(
-      'dungeon/battle-state',
+      'system/dungeon/battle-state',
     );
     const payload = build_legacy_payload();
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-battle-state-'));

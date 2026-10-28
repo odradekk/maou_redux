@@ -21,7 +21,6 @@
  */
 
 const era = require('#/era-electron');
-const { relation_debugprint } = require('#/chara/chara-family');
 
 const { is_state } = require('#/system/flow/game-state');
 const { on, emit, TIER } = require('#/system/event/registry');
@@ -39,9 +38,10 @@ const {
 } = require('#/page/page-item-shop');
 const { item_shop_trap } = require('#/page/page-shop-trap');
 const era_flag = require('#/era-utils/era-flag');
-const { change_screen } = require('#/page/components/screen-change');
+const { relation_debugprint } = require('#/system/chara/chara-family');
 // SHOW_FLOOR 的怪物行与近卫名单（#548）：怪物名与 %SAVESTR% 的承载
-const { item_name, monstername } = require('#/dungeon/monster-data');
+const { item_name, monstername } = require('#/system/dungeon/monster-data');
+const { change_screen } = require('#/page/components/screen-change');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { EVENT } = require('#/data/event-name-const');

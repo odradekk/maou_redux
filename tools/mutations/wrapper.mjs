@@ -12,7 +12,7 @@ export const COUNT = 17; // #874 +1（M17404：palam_settled 漏加 delta——�
 export default [
   {
     desc: 'M110 版本戳盖错值（PORT_DATA_VERSION 1 改 2）',
-    file: 'ere/chara/chara-portcflag.js',
+    file: 'ere/system/chara/chara-portcflag.js',
     find: 'const PORT_DATA_VERSION = 1;',
     replace: 'const PORT_DATA_VERSION = 2;',
     tests: ['event-first', 'page-title'],
@@ -20,7 +20,7 @@ export default [
   },
   {
     desc: 'M111 寻址族拼错（portcflag 改 portflag——族缺名字表时实机直接崩溃）',
-    file: 'ere/chara/chara-portcflag.js',
+    file: 'ere/system/chara/chara-portcflag.js',
     find: '  return era.set(`portcflag:${cid}:数据版本`, PORT_DATA_VERSION);',
     replace: '  return era.set(`portflag:${cid}:数据版本`, PORT_DATA_VERSION);',
     tests: ['event-first', 'page-title'],
@@ -72,7 +72,7 @@ export default [
   },
   {
     desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，#383 起真身落在 chara-self-call.js）',
-    file: 'ere/chara/chara-self-call.js',
+    file: 'ere/system/chara/chara-self-call.js',
     find: `    era.set(\`cstr:\${cid}:60\`, '我');
     era.set(\`cflag:\${cid}:450\`, 9);`,
     replace: '    // 变异：一人称直设删除',
@@ -81,7 +81,7 @@ export default [
   },
   {
     desc: 'M204 能力者技能检查反转（!(275||…||279)）',
-    file: 'ere/chara/chara-init.js',
+    file: 'ere/system/chara/chara-init.js',
     find: '  if (!has_element) {',
     replace: '  if (has_element) { // 变异：检查反转',
     tests: ['chara-init'],

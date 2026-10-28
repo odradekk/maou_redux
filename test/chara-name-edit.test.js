@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-name-edit.js 的行为测试（issue #384，N2）：
+ * @file ere/system/chara/chara-name-edit.js 的行为测试（issue #384，N2）：
  * show_button_name_edit / check_able_to_name_edit / chara_info_name_edit。
  *
  * 缝 = test/helpers/era-fixture.js。判定函数是纯的（只看 CFLAG:1），
@@ -15,7 +15,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-name-edit');
+  return fixture.load_module('system/chara/chara-name-edit');
 }
 
 function add_chara(fixture, cid, name = `角色${cid}`) {

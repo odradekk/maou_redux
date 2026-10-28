@@ -1,5 +1,5 @@
 /**
- * ere/invasion/invasion-arcana-battle.js 的行为测试（issue #470，Q13
+ * ere/system/invasion/invasion-arcana-battle.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
  * 缝 = test/helpers/era-fixture.js。随机源按上界注入（knob），duel_attack
@@ -72,7 +72,7 @@ test('DEATH_CHECK4：圣灵侧三档退场 → RETURN 2 且状态 0（PRINTFORML
   for (const [key, value, text] of cases) {
     const fixture = setup_arcana_world();
     fixture.store.set(key, value);
-    const mod = fixture.load_module('invasion/invasion-arcana-battle');
+    const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
     const dc = await mod.death_check4(1, 2);
     assert.equal(dc, 2, `${key}=${value} → RETURN 2`);
     assert.equal(fixture.store.get('cflag:2:1'), 0, '圣灵退场状态 0');
@@ -86,7 +86,7 @@ test('DEATH_CHECK4：圣灵侧三档退场 → RETURN 2 且状态 0（PRINTFORML
 test('DEATH_CHECK4：元勇者通常线三档 → RETURN 1 且状态 0（HP≤0 档无第二行）', async () => {
   const fixture = setup_arcana_world();
   fixture.store.set('base:1:0', 0);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   assert.equal(await mod.death_check4(1, 2), 1);
   assert.equal(fixture.store.get('cflag:1:1'), 0, '通常线状态 0');
   const texts = fixture.text_lines();
@@ -95,7 +95,7 @@ test('DEATH_CHECK4：元勇者通常线三档 → RETURN 1 且状态 0（HP≤0 
 
   const fixture2 = setup_arcana_world();
   fixture2.store.set('base:1:0', 300);
-  const mod2 = fixture2.load_module('invasion/invasion-arcana-battle');
+  const mod2 = fixture2.load_module('system/invasion/invasion-arcana-battle');
   assert.equal(await mod2.death_check4(1, 2), 1);
   assert(
     fixture2.text_lines().includes('贝丝怜悯着倒下的她，把她赶到了堡垒外。'),
@@ -106,7 +106,7 @@ test('DEATH_CHECK4：狂王线（FLAG:5 位 7）状态 9「带回城堡」；无
   const fixture = setup_arcana_world();
   fixture.store.set('flag:5', 128);
   fixture.store.set('base:1:0', 0);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   assert.equal(await mod.death_check4(1, 2), 1);
   assert.equal(fixture.store.get('cflag:1:1'), 9, '狂王线状态 9');
   assert(
@@ -117,7 +117,7 @@ test('DEATH_CHECK4：狂王线（FLAG:5 位 7）状态 9「带回城堡」；无
   const fixture2 = setup_arcana_world();
   fixture2.store.set('flag:5', 128);
   fixture2.store.set('base:1:1', 0);
-  const mod2 = fixture2.load_module('invasion/invasion-arcana-battle');
+  const mod2 = fixture2.load_module('system/invasion/invasion-arcana-battle');
   assert.equal(await mod2.death_check4(1, 2), 1);
   assert(
     fixture2.text_lines().includes('贝丝把她绑起来并带回了狂王的城堡。'),
@@ -130,13 +130,13 @@ test('DEATH_CHECK4：狂王线（FLAG:5 位 7）状态 9「带回城堡」；无
   fixture3.store.set('flag:5', 128);
   fixture3.store.set('talent:1:280', 1);
   fixture3.store.set('base:1:1', 500);
-  const mod3 = fixture3.load_module('invasion/invasion-arcana-battle');
+  const mod3 = fixture3.load_module('system/invasion/invasion-arcana-battle');
   assert.equal(await mod3.death_check4(1, 2), 0, '无提前丧失战意档');
 });
 
 test('DEATH_CHECK4：双方健在 → 0', async () => {
   const fixture = setup_arcana_world();
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   assert.equal(await mod.death_check4(1, 2), 0);
   assert.equal(fixture.text_lines().length, 0, '健在时不输出');
 });
@@ -145,7 +145,7 @@ test('DEATH_CHECK4：双方健在 → 0', async () => {
 
 test('ARCANA_BATTLE：一回合击破——四层伤害核算、弹药 15、经验与武器恢复', async () => {
   const fixture = setup_arcana_world();
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, knob());
   assert.equal(result, 2, '骑士投降 → RETURN 2');
 
@@ -195,7 +195,7 @@ test('ARCANA_BATTLE：一回合击破——四层伤害核算、弹药 15、经�
 test('ARCANA_BATTLE：显示开（FLAG:5 位 5）——开场、参数、VS 与攻击顺序（平局奴隶先攻）', async () => {
   const fixture = setup_arcana_world();
   fixture.store.set('flag:5', 32);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, knob());
 
   const texts = fixture.text_lines();
@@ -237,7 +237,7 @@ test('ARCANA_BATTLE：X < Y 圣灵先攻——后手无 +20%，伤害 186 ≠ 22
     }
     return base(n);
   };
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, rand);
 
   const texts = fixture.text_lines();
@@ -255,7 +255,7 @@ test('ARCANA_BATTLE：超时（TURN > 15）撤退——败北叙述、回合损�
   // 双方攻 0：伤害恒 0（(0-防)*2 与 MDMG 0），只能打到超时
   fixture.store.set('cflag:1:11', 0);
   fixture.store.set('cflag:2:11', 0);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, knob({ 20: 3, 30: 7 }));
 
   assert.equal(result, 0, '超时未分胜负 → RETURN 0');
@@ -280,7 +280,7 @@ test('ARCANA_BATTLE：先制（元勇者 TALENT:252）×2 先制打击——力�
   const fixture = setup_arcana_world();
   fixture.store.set('flag:5', 32);
   fixture.store.set('talent:1:252', 1);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, knob());
 
   assert.equal(result, 2, '仍胜');
@@ -308,7 +308,7 @@ test('ARCANA_BATTLE：先制（元勇者 TALENT:252）×2 先制打击——力�
 test('ARCANA_BATTLE：先制圣灵（骑士 TALENT:252）arg3=2 落账', async () => {
   const fixture = setup_arcana_world();
   fixture.store.set('talent:2:252', 1);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
   const result = await mod.arcana_battle(1, 2, knob());
 
   assert.equal(result, 2, '元勇者仍胜');
@@ -329,8 +329,8 @@ test('ARCANA_BATTLE：先制圣灵（骑士 TALENT:252）arg3=2 落账', async (
 
 test('ARCANA_BATTLE：999 的 BREAK 嵌在显示检查内——显示关时不中断，打满 16 回合', async () => {
   const fixture = setup_arcana_world();
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
-  const battle2 = fixture.load_module('dungeon/dungeon-battle2');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
+  const battle2 = fixture.load_module('system/dungeon/dungeon-battle2');
   const calls = [];
   battle2.duel_attack = async (...args) => {
     calls.push(args.slice(0, 4));
@@ -356,8 +356,8 @@ test('ARCANA_BATTLE：999 的 BREAK 嵌在显示检查内——显示关时不�
 test('ARCANA_BATTLE：999 + 显示开 → 打印「战斗中断了」并退出', async () => {
   const fixture = setup_arcana_world();
   fixture.store.set('flag:5', 32);
-  const mod = fixture.load_module('invasion/invasion-arcana-battle');
-  const battle2 = fixture.load_module('dungeon/dungeon-battle2');
+  const mod = fixture.load_module('system/invasion/invasion-arcana-battle');
+  const battle2 = fixture.load_module('system/dungeon/dungeon-battle2');
   const calls = [];
   battle2.duel_attack = async (...args) => {
     calls.push(args.slice(0, 4));

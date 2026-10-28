@@ -481,7 +481,7 @@ test('处刑归档的槽位与 NO（#561）：后代按列表位置写书架、�
   // 真后代（EX_TALENT:2，批量处刑列表可见）：来源模板 1，ID 从 FIRST_CHILD_ID 起
   fixture.seed_chara(1, { id: 1, name: '后代模板', callname: '后代模板' });
   const child = await fixture
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .gb_add_slave(31, -4, seq(new Array(300).fill(0)));
   assert.equal(child, 100000, '后代 ID 从 FIRST_CHILD_ID 起（#560）');
   assert.deepEqual(

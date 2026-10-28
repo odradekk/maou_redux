@@ -2064,7 +2064,7 @@ function create_era_fixture() {
       return require(`#/${name}`);
     },
     /**
-     * 战斗状态的一列（#883：`ere/dungeon/battle-state.js`）。
+     * 战斗状态的一列（#883：`ere/system/dungeon/battle-state.js`）。
      *
      * 它是模块级普通对象，不经引擎变量表、不进存档，所以没有 store 地址可
      * 播种——用例按字段名直接写：`fixture.battle('DEFENSE_1').count = 7`。
@@ -2076,7 +2076,7 @@ function create_era_fixture() {
       const {
         BATTLE_COLUMN,
         battle_column,
-      } = require('#/dungeon/battle-state');
+      } = require('#/system/dungeon/battle-state');
       if (typeof column !== 'string') {
         return battle_column(column);
       }

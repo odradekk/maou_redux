@@ -13,7 +13,7 @@ export const COUNT = 52; // #872 +1（M16507：sengen_video 数量读数走 rule
 export default [
   {
     desc: 'M10300 ARCANA_BATTLE 弹药补充 15 改 7（BATTLE2 的字面量混入）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'chara(atker).dungeon.弹药 = 15;\n  chara(defer).dungeon.弹药 = 15;',
     replace: 'chara(atker).dungeon.弹药 = 7;\n  chara(defer).dungeon.弹药 = 7;',
     tests: ['invasion-arcana-battle'],
@@ -21,7 +21,7 @@ export default [
   },
   {
     desc: 'M10301 平局方向改坏（X >= Y 改 X > Y，平局归圣灵先攻）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if (speed >= 0) {',
     replace: 'if (speed > 0) {',
     tests: ['invasion-arcana-battle'],
@@ -29,7 +29,7 @@ export default [
   },
   {
     desc: 'M10302 超时阈值 TURN > 15 改 > 10',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if (turn > 15) {',
     replace: 'if (turn > 10) {',
     tests: ['invasion-arcana-battle'],
@@ -37,7 +37,7 @@ export default [
   },
   {
     desc: 'M10303 主循环上界 20 回合改 10（永远到不了超时档）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'for (let turn = 0; turn < 20; turn += 1) {',
     replace: 'for (let turn = 0; turn < 10; turn += 1) {',
     tests: ['invasion-arcana-battle'],
@@ -45,7 +45,7 @@ export default [
   },
   {
     desc: 'M10304 超时撤退损耗 RAND:30 改 RAND:20',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'chara(atker).dungeon.气力 -= rand(30);',
     replace: 'chara(atker).dungeon.气力 -= rand(20);',
     tests: ['invasion-arcana-battle'],
@@ -53,7 +53,7 @@ export default [
   },
   {
     desc: 'M10305 双方回合损耗删（RAND:20 恒 0）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'chara(atker).dungeon.气力 -= rand(20);\n    chara(defer).dungeon.气力 -= rand(20);',
     replace:
       'chara(atker).dungeon.气力 -= 0;\n    chara(defer).dungeon.气力 -= 0;',
@@ -62,7 +62,7 @@ export default [
   },
   {
     desc: 'M10306 DEATH_CHECK4 狂王线位 7（128）改位 6（64）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: "const crazy = (era.get('flag:5') || 0) & 128;",
     replace: "const crazy = (era.get('flag:5') || 0) & 64;",
     tests: ['invasion-arcana-battle'],
@@ -70,7 +70,7 @@ export default [
   },
   {
     desc: 'M10307 圣灵投降档 HP≤300 改 HP≤150',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if (chara(defer).dungeon.体力 <= 300) {',
     replace: 'if (chara(defer).dungeon.体力 <= 150) {',
     tests: ['invasion-arcana-battle'],
@@ -78,7 +78,7 @@ export default [
   },
   {
     desc: 'M10308 元勇者通常线投降档 HP≤300 改 HP≤150',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if (chara(atker).dungeon.体力 <= 300) {',
     replace: 'if (chara(atker).dungeon.体力 <= 150) {',
     tests: ['invasion-arcana-battle'],
@@ -86,7 +86,7 @@ export default [
   },
   {
     desc: 'M10309 999 的 BREAK 挪出显示检查（BATTLE2 写法，显示关也中断）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头）\n      if (result === 999 && (settings & 32) !== 0) {',
     replace:
       '// RESULT == 999：BREAK 嵌在 IF FLAG:5 & 32 内（文件头）\n      if (result === 999) {',
@@ -95,7 +95,7 @@ export default [
   },
   {
     desc: 'M10310 奴隶先攻段的中断行改坏（战斗中断了→中断）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: "if (result === 999 && (settings & 32) !== 0) {\n        era.print('战斗中断了');\n        break;\n      }\n    } else {",
     replace:
       "if (result === 999 && (settings & 32) !== 0) {\n        era.print('中断');\n        break;\n      }\n    } else {",
@@ -104,7 +104,7 @@ export default [
   },
   {
     desc: 'M10311 元勇者先制的先制打击（arg1=2）改普通先手（arg1=0）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'await battle2.duel_attack(atker, 2, defer, 3, rand, move_ctx);',
     replace: 'await battle2.duel_attack(atker, 0, defer, 3, rand, move_ctx);',
     tests: ['invasion-arcana-battle'],
@@ -112,7 +112,7 @@ export default [
   },
   {
     desc: 'M10312 先制圣灵的先制打击（arg1=2）改普通先手（arg1=0）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'await battle2.duel_attack(defer, 2, atker, 2, rand, move_ctx);',
     replace: 'await battle2.duel_attack(defer, 0, atker, 2, rand, move_ctx);',
     tests: ['invasion-arcana-battle'],
@@ -120,7 +120,7 @@ export default [
   },
   {
     desc: 'M10313 元勇者先制体质 252 改 251（先制永不触发）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if ((era.get(`talent:${atker}:252`) || 0) === 1) {',
     replace: 'if ((era.get(`talent:${atker}:251`) || 0) === 1) {',
     tests: ['invasion-arcana-battle'],
@@ -128,7 +128,7 @@ export default [
   },
   {
     desc: 'M10314 败北叙述条件反转（骑士在任 !== 2 才打印）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if (chara(defer).invasion.状态 === 2) {',
     replace: 'if (chara(defer).invasion.状态 !== 2) {',
     tests: ['invasion-arcana-battle'],
@@ -136,7 +136,7 @@ export default [
   },
   {
     desc: 'M10315 胜利返回条件改坏（状态 === 0 改 === 2）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'if (chara(defer).invasion.状态 === 0) {',
     replace: 'if (chara(defer).invasion.状态 === 2) {',
     tests: ['invasion-arcana-battle'],
@@ -144,7 +144,7 @@ export default [
   },
   {
     desc: 'M10316 骑士侧 WEAPON_RESTORE 删（只恢复元勇者）',
-    file: 'ere/invasion/invasion-arcana-battle.js',
+    file: 'ere/system/invasion/invasion-arcana-battle.js',
     find: 'await weapon_restore(atker);\n  await weapon_restore(defer);',
     replace: 'await weapon_restore(atker);',
     tests: ['invasion-arcana-battle'],
@@ -152,7 +152,7 @@ export default [
   },
   {
     desc: 'M10317 duel_attack 攻击演出的解码回退（show 改空对象，+undefined 复现）',
-    file: 'ere/dungeon/dungeon-battle2.js',
+    file: 'ere/system/dungeon/dungeon-battle2.js',
     find: 'const show = decode_equip_no(w.存储编号);',
     replace: 'const show = {};',
     tests: ['invasion-arcana-battle'],
@@ -161,7 +161,7 @@ export default [
   // —— 第二批：ARCANA_FORT（M10318-M10330）——
   {
     desc: 'M10318 门的位掩码西/南互换（1: 4, 2: 2 改 1: 2, 2: 4）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: '{ 0: 1, 1: 4, 2: 2, 3: 8 }[tmp_arcana];',
     replace: '{ 0: 1, 1: 2, 2: 4, 3: 8 }[tmp_arcana];',
     tests: ['invasion-arcana-fort'],
@@ -169,7 +169,7 @@ export default [
   },
   {
     desc: 'M10319 北门的年龄换算 18 改 17（体型回写取错档）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: '{ 0: 21, 1: 27, 2: 24, 3: 18 }[tmp_arcana];',
     replace: '{ 0: 21, 1: 27, 2: 24, 3: 17 }[tmp_arcana];',
     tests: ['invasion-arcana-fort'],
@@ -177,7 +177,7 @@ export default [
   },
   {
     desc: 'M10320 妊娠出撃可的位号 10 改 9',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'let pregnant_ok = ((settings >> 10) & 1) === 1;',
     replace: 'let pregnant_ok = ((settings >> 9) & 1) === 1;',
     tests: ['invasion-arcana-fort'],
@@ -185,7 +185,7 @@ export default [
   },
   {
     desc: 'M10321 体型回写闸门位 12 改 13',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'if (((settings >> 12) & 1) === 1 || ((settings >> 15) & 1) === 1) {',
     replace:
       'if (((settings >> 13) & 1) === 1 || ((settings >> 15) & 1) === 1) {',
@@ -194,7 +194,7 @@ export default [
   },
   {
     desc: 'M10322 赏金倍率 1000 改 500',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'const gain = 1000 * (era.get(`cflag:${a_arcana}:9`) || 0);',
     replace: 'const gain = 500 * (era.get(`cflag:${a_arcana}:9`) || 0);',
     tests: ['invasion-arcana-fort'],
@@ -202,7 +202,7 @@ export default [
   },
   {
     desc: 'M10323 金红桃的接頭語 400000（强击）改 300000',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'preset: 20, weapon: 50 + 10000 + 400000',
     replace: 'preset: 20, weapon: 50 + 10000 + 300000',
     tests: ['invasion-arcana-fort'],
@@ -210,7 +210,7 @@ export default [
   },
   {
     desc: 'M10324 金红桃的初体验对象 105（狂王）改 100',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'chara(a_arcana).train.初体验对象 = 105;',
     replace: 'chara(a_arcana).train.初体验对象 = 100;',
     tests: ['invasion-arcana-fort'],
@@ -218,7 +218,7 @@ export default [
   },
   {
     desc: 'M10325 白梅花的自慰中毒 1 改 0',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'chara(a_arcana).train.自慰中毒 = 1;',
     replace: 'chara(a_arcana).train.自慰中毒 = 0;',
     tests: ['invasion-arcana-fort'],
@@ -226,7 +226,7 @@ export default [
   },
   {
     desc: 'M10326 候选条件的淫乱素质 76 改 86（贝丝的资格消失）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: '(era.get(`talent:${cid}:76`) || 0) !== 1',
     replace: '(era.get(`talent:${cid}:86`) || 0) !== 1',
     tests: ['invasion-arcana-fort'],
@@ -234,7 +234,7 @@ export default [
   },
   {
     desc: 'M10327 已攻占的门渲染文案改坏（东方堡垒已攻占）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: "era.print('[*] - 东方堡垒（已攻占）');",
     replace: "era.print('[*] - 东方堡垒（已破）');",
     tests: ['invasion-arcana-fort'],
@@ -242,7 +242,7 @@ export default [
   },
   {
     desc: 'M10328 无候选提示行改坏',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: "era.print('*没有可以攻击的勇士*');",
     replace: "era.print('*没有可以攻击的勇者*');",
     tests: ['invasion-arcana-fort'],
@@ -250,7 +250,7 @@ export default [
   },
   {
     desc: 'M10329 四门全破的总结叙述文案改坏',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: "era.print('圣灵骑士全部都被打倒了，四个据点也都被攻陷了。');",
     replace: "era.print('圣灵骑士全部都被打倒了，四个据点都陷落了。');",
     tests: ['invasion-arcana-fort'],
@@ -258,7 +258,7 @@ export default [
   },
   {
     desc: 'M10330 捕获三人的档位列表漏掉 11（1011 档落空）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'if (stage === 14 || stage === 13 || stage === 11 || stage === 7) {',
     replace: 'if (stage === 14 || stage === 13 || stage === 7) {',
     tests: ['invasion-arcana-fort'],
@@ -266,7 +266,7 @@ export default [
   },
   {
     desc: 'M10331 狂王线清槽的判定反向（上次调教对象 !== 本人）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'if (game.event.上次调教对象 === y_arcana) {',
     replace: 'if (game.event.上次调教对象 !== y_arcana) {',
     tests: ['invasion-arcana-fort'],
@@ -274,7 +274,7 @@ export default [
   },
   {
     desc: 'M10332 助手清槽的判定改写成魔王本人（FLAG:2 误清）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'if (game.event.上次助手 === y_arcana) {',
     replace: 'if (game.event.上次助手 === 0) {',
     tests: ['invasion-arcana-fort'],
@@ -284,7 +284,7 @@ export default [
   //     invasion-ravish.js，见该文件头）——
   {
     desc: 'M10333 侵攻点归一除数 5000 改 500',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'const point = Math.floor(sinkou / 5000);',
     replace: 'const point = Math.floor(sinkou / 500);',
     tests: ['invasion-ravish'],
@@ -292,7 +292,7 @@ export default [
   },
   {
     desc: 'M10334 怪物号抽取的 +100 底数改 +200（怪物表落空成骷髅）',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'const x = (rand(9) + 1) * 10 + 100 + rand(5);',
     replace: 'const x = (rand(9) + 1) * 10 + 200 + rand(5);',
     tests: ['invasion-ravish'],
@@ -300,7 +300,7 @@ export default [
   },
   {
     desc: 'M10335 三列循环上界 3 改 2',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'for (let count = 0; count < 3; count += 1) {',
     replace: 'for (let count = 0; count < 2; count += 1) {',
     tests: ['invasion-ravish'],
@@ -308,7 +308,7 @@ export default [
   },
   {
     desc: 'M10336 凌辱类型 > 0 的判定放宽到 >= 0（数量 0 也进旁白）',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'if (row.rape_type > 0) {',
     replace: 'if (row.rape_type >= 0) {',
     tests: ['invasion-ravish'],
@@ -316,7 +316,7 @@ export default [
   },
   {
     desc: 'M10337 凌辱开场行的怪物名改印番号',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'await era.printAndWait(`${item_name(row.id)}的凌辱开始了。`);',
     replace: 'await era.printAndWait(`${row.id}的凌辱开始了。`);',
     tests: ['invasion-ravish'],
@@ -324,7 +324,7 @@ export default [
   },
   {
     desc: 'M10338 凌辱类型 1 派给史莱姆旁白',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'await orc_inv(area, point, rand);',
     replace: 'await slime_inv(area, point, rand);',
     tests: ['invasion-ravish'],
@@ -332,7 +332,7 @@ export default [
   },
   {
     desc: 'M10339 兽人战场表的人间界三名字次序颠倒',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: "1: ['看板娘', '女骑士', '少女'],",
     replace: "1: ['少女', '女骑士', '看板娘'],",
     tests: ['invasion-ravish'],
@@ -340,7 +340,7 @@ export default [
   },
   {
     desc: 'M10340 兽人第一分支的侵攻点门槛 > 1 改 > 6',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'if (rand(5) === 0 && sinkou > 1) {',
     replace: 'if (rand(5) === 0 && sinkou > 6) {',
     tests: ['invasion-ravish'],
@@ -348,7 +348,7 @@ export default [
   },
   {
     desc: 'M10341 兽人第二分支的妊娠数上档 > 7 改 > 6',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: 'if (sinkou > 7) {\n      era.print(`${l1}的妊娠数已经超过了三位数',
     replace:
       'if (sinkou > 6) {\n      era.print(`${l1}的妊娠数已经超过了三位数',
@@ -357,7 +357,7 @@ export default [
   },
   {
     desc: 'M10342 史莱姆第一分支的侵攻点门槛 > 1 改 > 6',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: '  if (rand(4) === 0 && sinkou > 1) {\n    await era.printAndWait(`成为俘虏的${l2}被往肛门里尽可能地注入了泥浆`);',
     replace:
       '  if (rand(4) === 0 && sinkou > 6) {\n    await era.printAndWait(`成为俘虏的${l2}被往肛门里尽可能地注入了泥浆`);',
@@ -366,7 +366,7 @@ export default [
   },
   {
     desc: 'M10343 女旁白的第一分支补上侵攻点门槛（其它函数同位置都有，唯独这里缺）',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: '  if (rand(3) === 0) {',
     replace: '  if (rand(3) === 0 && sinkou > 1) {',
     tests: ['invasion-ravish'],
@@ -374,7 +374,7 @@ export default [
   },
   {
     desc: 'M10345 马旁白的第一分支检查反向（rand(2) === 0 改 === 1）',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: "  if (rand(2) === 0) {\n    await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');",
     replace:
       "  if (rand(2) === 1) {\n    await era.printAndWait('魔王军将军骑的马的肚子下，吊着奇妙的肉块。');",
@@ -384,7 +384,7 @@ export default [
   // —— 第三批：独立审查后的补钉（M10346-M10348）——
   {
     desc: 'M10346 捕获三人行里西门的拼名改坏（白梅花 → 金红桃）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: "        last_one += '白梅花';",
     replace: "        last_one += '金红桃';",
     tests: ['invasion-arcana-fort'],
@@ -392,7 +392,7 @@ export default [
   },
   {
     desc: 'M10347 金红桃精液经验档的条件改坏（FLAG:500 == 0 改 == 3）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: "if ((era.get('flag:500') || 0) === 0 || (era.get('flag:500') || 0) === 2) {",
     replace:
       "if ((era.get('flag:500') || 0) === 3 || (era.get('flag:500') || 0) === 2) {",
@@ -401,7 +401,7 @@ export default [
   },
   {
     desc: 'M10348 FLAG:60 的升级循环只跑一级（i < level_ups 改 i < 1）',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: 'for (let i = 0; i < level_ups; i += 1) {',
     replace: 'for (let i = 0; i < 1; i += 1) {',
     tests: ['invasion-arcana-fort'],
@@ -411,7 +411,7 @@ export default [
   // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
   {
     desc: 'M12305 圣灵骑士堡垒的 [0] 东方堡垒丢掉「- 」',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: "era.printButton('- 东方堡垒', 0);",
     replace: "era.printButton('东方堡垒', 0); // 变异：丢掉「- 」",
     tests: ['invasion-arcana-fort'],
@@ -421,7 +421,7 @@ export default [
   // —— #655（F9）：ivy_inv 天神宫档的检查 ——
   {
     desc: 'M13355 藤蔓旁白的战场表删掉天神宫档（5 档移除，天神宫落回 ELSE 拿人间界称呼，#655 修正回退）',
-    file: 'ere/invasion/invasion-ravish.js',
+    file: 'ere/system/invasion/invasion-ravish.js',
     find: "    5: ['十字军', '十字军军官'],\n  }[area] ?? ['女人', '女兵士'];",
     replace: "  }[area] ?? ['女人', '女兵士']; // 变异：删天神宫档",
     tests: ['invasion-ravish'],
@@ -430,7 +430,7 @@ export default [
   // —— #724：子页面换屏 ——
   {
     desc: 'M14498 要塞勇者选择每轮换屏调用删除',
-    file: 'ere/invasion/invasion-arcana-fort.js',
+    file: 'ere/system/invasion/invasion-arcana-fort.js',
     find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     await change_screen();
     // 每轮重扫（REPEAT CHARANUM 重过滤）；无效输入会把模式翻到`,

@@ -1,15 +1,15 @@
 /**
- * ere/chara/chara-init.js char_init 窄路径的行为测试
+ * ere/system/chara/chara-init.js char_init 窄路径的行为测试
  * （issue #118，ENDING_1 的 ADDCHARA 链第三环）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开
  * 接口 char_init 直驱。一人称设定（random_self_call）自 #383 起是完整实现，
- * 落在 ere/chara/chara-self-call.js，分支覆盖见 test/chara-self-call.test.js，
+ * 落在 ere/system/chara/chara-self-call.js，分支覆盖见 test/chara-self-call.test.js，
  * 本文件不重复。
  *
  * 窄路径的既定事实（chara-init.js 文件头）：菲娅 CFLAG:35:9 = 1（等级段
  * 不进）、CFLAG:35:450 无预设（一人称走 <9 直设）、FLAG:5 恒 0（身体数据
- * 段不进——真身自 #385 起在 ere/chara/chara-body.js，条件看 CFLAG:451 的写入）。本文件另用注入态覆盖条件段的两个入口（等级段、
+ * 段不进——真身自 #385 起在 ere/system/chara/chara-body.js，条件看 CFLAG:451 的写入）。本文件另用注入态覆盖条件段的两个入口（等级段、
  * 身体数据段），守住条件结构不走样。
  */
 
@@ -19,7 +19,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-init');
+  return fixture.load_module('system/chara/chara-init');
 }
 
 test('char_init 窄路径（菲娅预设）：一人称直设 + 无服装静默 + 能力者全掷不中', async () => {
@@ -103,7 +103,7 @@ test('身体数据段条件：FLAG:5 位 12/15 开且 451/453 缺失才进', asy
   fixture.store.set('flag:5', 4096);
   const { char_init } = load(fixture);
   await char_init(35, () => 1);
-  // #385 起身体数据生成为真身（ere/chara/chara-body.js）：无素质的默认支
+  // #385 起身体数据生成为真身（ere/system/chara/chara-body.js）：无素质的默认支
   // 推算年龄 = 17 + 处女修正 1 = 18，取点 RAND:17 掷 1（-1）→ 17；未设种族
   // 走 1 倍档，故 CFLAG:451 与 CFLAG:452 同为 17
   assert.equal(
