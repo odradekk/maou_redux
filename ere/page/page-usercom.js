@@ -40,9 +40,9 @@
  */
 
 const era = require('#/era-electron');
+const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const game_train = require('#/facade/game-train');
-const { on } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { read_train_name } = require('#/system/train/train-name');
 const { com_index } = require('#/system/train/com-index');
@@ -198,7 +198,7 @@ function handover_guard_ok() {
   };
 }
 
-on(EVENT.SHOW_USERCOM, async (usable = []) => {
+async function handle_show_usercom(usable = []) {
   // 指令方格：FLAG:5 位 34 开 → 自定义菜单（show_commenu），
   // 否则内建路径（draw_builtin_comlist）——两条路径都是净追加
   // （清除语义见文件头「清除语义」节）
@@ -260,9 +260,9 @@ on(EVENT.SHOW_USERCOM, async (usable = []) => {
     p_c();
     era.print(`＜上次的调教指令：${era.get('tstr:90') ?? ''}＞`);
   }
-});
+}
 
-on(EVENT.USERCOM, async (result) => {
+async function handle_usercom(result) {
   // REDRAW 1 —— 不移植；RETURN 1/0 均无效果（见文件头）
   const guards = handover_guard_ok();
   if (result === 100) {
@@ -353,6 +353,15 @@ on(EVENT.USERCOM, async (result) => {
   }
   // 其余输入落到链尾、重绘回合画面（不提示——与主菜单对无效输入的处置
   // 一致）
-});
+}
 
-module.exports = { command_button_label, show_commenu };
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.SHOW_USERCOM, handle_show_usercom);
+  on(EVENT.USERCOM, handle_usercom);
+}
+
+module.exports = { register, command_button_label, show_commenu };

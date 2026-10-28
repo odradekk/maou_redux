@@ -55,26 +55,22 @@
  */
 
 const era = require('#/era-electron');
-const { get_ex_kojo_num } = require('#/chara/chara-ex');
 const { get_kojo } = require('#/kojo/kojo-factory');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { get_ex_kojo_num } = require('#/system/chara/chara-ex');
 const { EVENT } = require('#/data/event-name-const');
 
 // EVENTSHOP #PRI：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
 // 玩家关掉（-1）不自开，1（少量模式）不改
-on(
-  EVENT.SHOP,
-  () => {
-    if ((era.get('flag:7') || 0) === 0) {
-      // FLAG:7 = 2（口上总开关：2=默认全量、1=每阶段一次、<=0=关）
-      era.set('flag:7', 2);
-    }
-  },
-  TIER.PRI,
-);
+function handle_shop_pri() {
+  if ((era.get('flag:7') || 0) === 0) {
+    // FLAG:7 = 2（口上总开关：2=默认全量、1=每阶段一次、<=0=关）
+    era.set('flag:7', 2);
+  }
+}
 
 // 声明的编号空间：分发检查能拼出的全部 KOJO_MESSAGE_COM_{N} 名。
 // 普通口上 0-39 + EX 口上 901-1600；空间内缺失 = TRYCALL 落空（合法）
@@ -856,7 +852,16 @@ async function gobi_koujo(arg0, rand) {
   return typeof text === 'string' ? text : '';
 }
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.SHOP, handle_shop_pri, TIER.PRI);
+}
+
 module.exports = {
+  register,
   EVENT_K_DISPATCH_TABLE,
   get_kojo_num,
   in_kojo_window,

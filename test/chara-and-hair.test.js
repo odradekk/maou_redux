@@ -1,5 +1,5 @@
 /**
- * ere/chara/chara-and-hair.js 的行为测试（issue #392，N8 段 2）。
+ * ere/system/chara/chara-and-hair.js 的行为测试（issue #392，N8 段 2）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）+ 两个随机函数的
  * `rand` 形参（随机源，缺省均匀随机）。
@@ -18,10 +18,10 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** 性格素质编号表（ere/chara/chara-and-hair.js 的 GENERAL_CHARASTERISTICS 同表） */
+/** 性格素质编号表（ere/system/chara/chara-and-hair.js 的 GENERAL_CHARASTERISTICS 同表） */
 const CHARASTERISTICS = [160, 161, 162, 163, 164, 166, 172, 173, 174, 175];
 
-/** 发色名表（ere/chara/chara-and-hair.js 的 ARR_HAIRCOLOR 同表，0 号是空串） */
+/** 发色名表（ere/system/chara/chara-and-hair.js 的 ARR_HAIRCOLOR 同表，0 号是空串） */
 const HAIRCOLORS = [
   '',
   '金发',
@@ -38,7 +38,7 @@ const HAIRCOLORS = [
 ];
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-and-hair');
+  return fixture.load_module('system/chara/chara-and-hair');
 }
 
 /** 建一名角色（cid）并预置 TARGET 指针 */
@@ -370,7 +370,7 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
   const answers = [100, 2];
   let asked = 0;
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
-  const { rand_chara_make } = fixture.load_module('chara/chara-make');
+  const { rand_chara_make } = fixture.load_module('system/chara/chara-make');
   // 的位号掷骰（上界 16）只命中第一次、给 2（位号 3）；其余随机恒 0：
   // 性格掷中表内第 0 项（160）、发色掷中 11（粉发）
   let rolled = false;

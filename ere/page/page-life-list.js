@@ -80,7 +80,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { get_look_info } = require('#/chara/look-info'); // #389 起的全量真身
+const { get_look_info } = require('#/system/chara/look-info'); // #389 起的全量真身
 const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
@@ -381,7 +381,7 @@ function life_list_item_e(arg) {
     : talent(arg, 121)
       ? { content: '<扶她>' }
       : { content: '\u00A0\u00A0<女>' };
-  // 种族・性格（get_look_info，真身在 ere/chara/look-info.js；
+  // 种族・性格（get_look_info，真身在 ere/system/chara/look-info.js；
   // #389 实现前它是 kojo-dungeon-bitch-log.js 里的子集，那份已随 #389 并入）
   const look = `[${get_look_info(arg, '种族')} - ${get_look_info(arg, '性格')}]`;
   print_row(

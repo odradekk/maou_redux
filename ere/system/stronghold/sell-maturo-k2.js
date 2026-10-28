@@ -16,9 +16,9 @@
 const era = require('#/era-electron');
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
-const { search_family } = require('#/chara/chara-family');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 // 15 个末路文案合为一张表，按末路编号交给 sell_maturo_k2_branch 分发。

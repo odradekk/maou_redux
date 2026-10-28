@@ -255,7 +255,7 @@ class DungeonFacade {
 
   /**
    * 恋人（cflag:cid:606）
-   * CFLAG:606 = 恋人（ere/dungeon/dungeon-lovers.js）
+   * CFLAG:606 = 恋人（ere/system/dungeon/dungeon-lovers.js）
    * @returns {number}
    */
   get 恋人() {
@@ -270,7 +270,7 @@ class DungeonFacade {
 
   /**
    * 恋人爱情（cflag:cid:607）
-   * CFLAG:607 = 恋人愛情（ere/dungeon/dungeon-lovers.js）
+   * CFLAG:607 = 恋人愛情（ere/system/dungeon/dungeon-lovers.js）
    * @returns {number}
    */
   get 恋人爱情() {
@@ -285,7 +285,7 @@ class DungeonFacade {
 
   /**
    * 恋人名字（cflag:cid:608）
-   * CFLAG:608 = 恋人の名前（ere/dungeon/dungeon-lovers.js）
+   * CFLAG:608 = 恋人の名前（ere/system/dungeon/dungeon-lovers.js）
    * @returns {number}
    */
   get 恋人名字() {

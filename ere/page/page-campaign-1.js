@@ -8,7 +8,7 @@
  * system/flow/main-loop.js 显式 require 才会触发。
  *
  * * 战役 1 的迷宫等级（RETURN 45）已在
- * ere/dungeon/monster-data.js 真身实现（按 FLAG:400 手写 if/else，非
+ * ere/system/dungeon/monster-data.js 真身实现（按 FLAG:400 手写 if/else，非
  * DispatchFamily），不在本文件重复。战役 1 的怪物追加登记不实现：
  * 唯一潜在调用方在 ere 里零调用点，本身不可达（issue #469 实测范围评论）。
  */
@@ -23,15 +23,17 @@ const {
   campaign_set_family,
 } = require('#/page/page-campaign');
 const { campaign_equip_select_family } = require('#/system/equip/equip-select');
+const { campaign_room_extra_family } = require('#/system/dungeon/dungeon-room');
+const { campaign_trap_family } = require('#/system/dungeon/dungeon-trap');
+const {
+  campaign_monster_list_family,
+} = require('#/system/dungeon/dungeon-battle');
 const {
   campaign_room_family,
   campaign_quest_family,
   campaign_story_family,
   campaign_ending_family,
-} = require('#/dungeon/dungeon');
-const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
-const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
-const { campaign_monster_list_family } = require('#/dungeon/dungeon-battle');
+} = require('#/system/dungeon/dungeon');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 

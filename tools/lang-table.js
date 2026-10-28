@@ -222,7 +222,7 @@ const TRAD_CHAR_MAP = {
   樂: '乐',
   標: '标',
   樣: '样',
-  薔: '蔷', // 薔薇（刺青名表，经 #389 进 ere/chara/look.js）
+  薔: '蔷', // 薔薇（刺青名表，经 #389 进 ere/system/chara/look.js）
   樹: '树',
   機: '机',
   檢: '检',
@@ -717,17 +717,17 @@ const WORD_MAP = [
 const EXEMPT_STRINGS = [
   {
     value: 'アイウエオンー',
-    where: 'ere/chara/chara-name.js（MERGE_HEAD_KANA）',
+    where: 'ere/system/chara/chara-name.js（MERGE_HEAD_KANA）',
     why: '组合名生成的段首吃字表（段首是这几个假名时被前一段吃掉）。日文侧是一串逐项比较，移植收成一个字符串常量；同样是日文侧内容、汉化版未译，按整串豁免。',
   },
   {
     value: 'ッ',
-    where: 'ere/chara/chara-name.js（SOKUON）',
+    where: 'ere/system/chara/chara-name.js（SOKUON）',
     why: '组合名生成的促音判定字符（前一段以「ッ」结尾时本段的「ー」丢尾两字）。日文侧内容，按整串豁免。',
   },
   {
     value: 'ー',
-    where: 'ere/chara/chara-name.js（CHOON）',
+    where: 'ere/system/chara/chara-name.js（CHOON）',
     why: '组合名生成的长音符判定字符，同上。',
   },
   {
@@ -802,7 +802,7 @@ const EXEMPT_STRINGS = [
 901 シフ
 902 ソラ
 903 ミロ`,
-    where: 'ere/chara/chara-name.js（COMBINE_NAME_V2_ROWS）',
+    where: 'ere/system/chara/chara-name.js（COMBINE_NAME_V2_ROWS）',
     why: '组合名音节表（ver0.2），日文侧内容、汉化版未译。#384（N2）实现 CN_SPAN_COMBINE_NAME 真身时整表原样收录；表值全是假名，字级/词级归一在这里没有意义（音节不是词）。整表以**一块字符串**承载、按整串豁免——这正是豁免粒度「字符串整体」的用法：表被改写即失配变红，改者须有意识地同步本表。',
   },
   {
@@ -846,7 +846,7 @@ const EXEMPT_STRINGS = [
 208 ミア
 209 リア
 210 リカ`,
-    where: 'ere/chara/chara-name.js（COMBINE_NAME_V1_ROWS）',
+    where: 'ere/system/chara/chara-name.js（COMBINE_NAME_V1_ROWS）',
     why: '组合名音节表（ver0.1，留档路径），理由同上一条。',
   },
   {
@@ -935,7 +935,7 @@ const EXEMPT_STRINGS = [
   },
   {
     value: '${name}与肉体・精神接彼此相爱的伙伴结婚了…',
-    where: 'ere/chara/chara-marriage.js',
+    where: 'ere/system/chara/chara-marriage.js',
     why:
       '异种婚姻台词「（名字）与肉体・精神接彼此相爱的夥伴结婚了…」——' +
       '・ 是日文侧在「肉体」与「精神」之间的并列连接样式，不是日文假名；夥 已按字级归一成 伙。' +

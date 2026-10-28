@@ -2,7 +2,7 @@
 #
 # 内容：3,336 条固定名（id → 名字，id 上限 5500）。5 个计数常量
 # （WEST_NAME_COUNT 等）不在本表——它们只服务 chara_name_random_define 的
-# 随机范围计算，定义在 ere/chara/chara-name.js。
+# 随机范围计算，定义在 ere/system/chara/chara-name.js。
 #
 # 本文件为人工产出（CFlag.yml / Ex_Talent.yml 同款先例）：按上面的源行，
 # 逐条抽取 `LIST_CHARA_NAME:n = 名字`，过归一表（词级→字级），
@@ -12,7 +12,7 @@
 # era.get(`namelistname:${nid}`)（表名取自文件名小写 namelist，
 # 引擎按「id ↔ 名字」双向映射一维表装载——`${表}name:${id}` 是取 name 字段的
 # 通用读法）；查表函数是
-# ere/chara/chara-name-list.js 的 get_fixed_chara_name(nid)。
+# ere/system/chara/chara-name-list.js 的 get_fixed_chara_name(nid)。
 #
 # **文件名不许以 chara 开头（issue #435）。** 引擎 eraStart 用一条写死的
 # 正则 /chara[^/]+\.yml/（json/csv 同款）把「文件名 chara 开头 + 任意非斜杠
@@ -44,7 +44,7 @@
 # yml 的键唯一性放不下。归一表把繁体/日文汉字与对应简体字合并成同一个
 # 名字后，又带出 10 组新合并（如「綾」与既有「绫」）；最终共 65 组、
 # 丢弃 70 个 id——那些 id 查表会返回空，未来的读取实现
-# （chara_name_define，ere 落点 ere/chara/chara-name.js）回落到它已有的
+# （chara_name_define，ere 落点 ere/system/chara/chara-name.js）回落到它已有的
 # 默认名，不在本工单范围：
 #   爱理（保留 225，丢弃 96）
 #   伊芙（保留 1352，丢弃 49）

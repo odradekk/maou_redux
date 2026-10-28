@@ -47,819 +47,789 @@ const {
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
 const { EVENT } = require('#/data/event-name-const');
-const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { piercing_state } = require('#/system/train/piercing-state');
+const { get_look_info } = require('#/system/chara/look-info');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 const MASTER = 0;
 
 // EVENTTRAIN #PRI 档
-on(
-  EVENT.TRAIN,
-  () => {
-    // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
-    // FLAG:101  = 1（变量语义：FLAG 族，101）
-    game.kojo.口上存在_1 = 1;
-    if (game.kojo.口上开关 === 0) {
-      // FLAG:7  = 2（变量语义：FLAG 族，7）
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
+  // FLAG:101  = 1（变量语义：FLAG 族，101）
+  game.kojo.口上存在_1 = 1;
+  if (game.kojo.口上开关 === 0) {
+    // FLAG:7  = 2（变量语义：FLAG 族，7）
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档
-on(
-  EVENT.END,
-  () => {
-    // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
-    // FLAG:101  = 0（变量语义：FLAG 族，101）
-    game.kojo.口上存在_1 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
+  // FLAG:101  = 0（变量语义：FLAG 族，101）
+  game.kojo.口上存在_1 = 0;
+}
 
 // EVENTTRAIN NORMAL 档
-on(
-  EVENT.TRAIN,
-  async (rand) => {
-    const target = era_flag.target;
-    const assi = era_flag.assi;
-    const target_name = chara_callname(target);
-    const assi_name = chara_callname(assi);
-    const master_name = chara_name(MASTER);
-    const sc = () => self_call(target);
-    const scf = () => self_call_first(target);
+async function handle_train(rand) {
+  const target = era_flag.target;
+  const assi = era_flag.assi;
+  const target_name = chara_callname(target);
+  const assi_name = chara_callname(assi);
+  const master_name = chara_name(MASTER);
+  const sc = () => self_call(target);
+  const scf = () => self_call_first(target);
 
-    if (game.kojo.口上开关 <= 0) {
-      return 0;
-    }
-    if (era.get(`talent:${target}:161`) !== 1) {
-      return 0;
-    }
+  if (game.kojo.口上开关 <= 0) {
+    return 0;
+  }
+  if (era.get(`talent:${target}:161`) !== 1) {
+    return 0;
+  }
 
-    if (chara(target).kojo.初调教 === 0) {
-      era.drawLine();
+  if (chara(target).kojo.初调教 === 0) {
+    era.drawLine();
 
-      if (era.get(`talent:${target}:314`) === 1) {
-        await era.printAndWait(`「这、这种事情你居然对${sc()}做的出来…！？」`);
-        await era.printAndWait(`${target_name}靠着最后的勇气硬挺的瞪着你。`);
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 2) {
-        await era.printAndWait(`「满月的时候我们走着瞧！」`);
-        await era.printAndWait(`${target_name}用野兽一样的眼睛瞪着你`);
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 3) {
-        await era.printAndWait(
-          `「高贵的血族${sc()}是不会臣服于你的调教之下的…」`,
-        );
-        await era.printAndWait(`「你这是在玩火自焚」`);
-        await era.printAndWait(
-          `身为一个血族、${target_name}用他的尊严做的保证………`,
-        );
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 4) {
-        await era.printAndWait(`「呼......这就是传说中的调教室么…」`);
-        await era.printAndWait(
-          `「那么尊敬的魔王大人你难道对${sc()}没什么想法么？」`,
-        );
-        await era.printAndWait(
-          `无头骑士${target_name}用最后的倔强硬挺着胸膛………`,
-        );
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 5) {
-        await era.printAndWait(`「真是有趣、身体无法自由移动了么？…」`);
-        await era.printAndWait(`「难道还想着让${sc()}屈服吗？魔王大人？」`);
-        await era.printAndWait(`这是一名龙族${target_name}根深蒂固的骄傲………`);
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 6) {
-        await era.printAndWait(
-          `「就算是你的肮脏的手碰到我${sc()}也是一种亵渎！」`,
-        );
-        await era.printAndWait(`「你一定会受到惩罚的！」`);
-        await era.printAndWait(
-          `虽然已经猜到了自己之后的命运、但是${target_name}的态度还是十分强硬………`,
-        );
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 9) {
-        await era.printAndWait(`「你这个可恶的恶魔、下地狱去吧！」`);
-        await era.printAndWait(`${target_name}用恶狠狠的眼神凝视着你…`);
-        await era.printAndWait(`这是当然的了、因为她已经是黑暗的居民-魔族了。`);
-        await era.printAndWait(`但是不管这个女人有多么憎恨魔族`);
-        await era.printAndWait(
-          `她也开始感到这种必须臣服于魔族之王的意志的本能………`,
-        );
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-
-        // CFLAG:370  = 1（变量语义：CFLAG 族，370）
-        chara(target).kojo.魔族化 = 1;
-      } else if (era.get(`talent:${target}:314`) === 10) {
-        await era.printAndWait(`「别开玩笑了！ 这种事情…」`);
-        await era.printAndWait(`「至少每天也要给我5份食物吧！」`);
-        await era.printAndWait(
-          `${target_name}应该是误解了吧、她向你提出改善待遇的要求…`,
-        );
-        await era.printAndWait(`这种态度如何？这种慢慢崩溃的希望…`);
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else if (era.get(`talent:${target}:314`) === 11) {
-        await era.printAndWait(`「想要被我心爱的斧子干掉吗？…」`);
-        await era.printAndWait(
-          `${target_name}虽然比你的个子矮、她还是用威慑性目光看着你。`,
-        );
-        await era.printAndWait(`然而这种态度并不会持续太久………`);
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-      } else {
-        await era.printAndWait(`「别开玩笑了！ 这种事情…」`);
-        await era.printAndWait(`${target_name}用坚强的目光注视着你`);
-        await era.printAndWait(`然而这种态度并不会持续太久………………`);
-        // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 1;
-        return 1;
-      }
-    } else if (
-      chara(target).kojo.初调教 < 5 &&
-      chara(target).kojo.魔族化 === 0 &&
-      era.get(`talent:${target}:314`) === 9 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
+    if (era.get(`talent:${target}:314`) === 1) {
+      await era.printAndWait(`「这、这种事情你居然对${sc()}做的出来…！？」`);
+      await era.printAndWait(`${target_name}靠着最后的勇气硬挺的瞪着你。`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 2) {
+      await era.printAndWait(`「满月的时候我们走着瞧！」`);
+      await era.printAndWait(`${target_name}用野兽一样的眼睛瞪着你`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 3) {
       await era.printAndWait(
-        `「身体...身体变成这样的话.....已经....回不去家了......」`,
+        `「高贵的血族${sc()}是不会臣服于你的调教之下的…」`,
       );
+      await era.printAndWait(`「你这是在玩火自焚」`);
       await era.printAndWait(
-        `经过反复的改造、${target_name}的身体已经完全变成魔族了。她流下了眼泪、双肩止不住的颤抖着`,
+        `身为一个血族、${target_name}用他的尊严做的保证………`,
       );
-      await era.printAndWait(`即使她心里悲恸万分以泪洗面、但是身为一个魔族`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 4) {
+      await era.printAndWait(`「呼......这就是传说中的调教室么…」`);
+      await era.printAndWait(
+        `「那么尊敬的魔王大人你难道对${sc()}没什么想法么？」`,
+      );
+      await era.printAndWait(`无头骑士${target_name}用最后的倔强硬挺着胸膛………`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 5) {
+      await era.printAndWait(`「真是有趣、身体无法自由移动了么？…」`);
+      await era.printAndWait(`「难道还想着让${sc()}屈服吗？魔王大人？」`);
+      await era.printAndWait(`这是一名龙族${target_name}根深蒂固的骄傲………`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 6) {
+      await era.printAndWait(
+        `「就算是你的肮脏的手碰到我${sc()}也是一种亵渎！」`,
+      );
+      await era.printAndWait(`「你一定会受到惩罚的！」`);
+      await era.printAndWait(
+        `虽然已经猜到了自己之后的命运、但是${target_name}的态度还是十分强硬………`,
+      );
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 9) {
+      await era.printAndWait(`「你这个可恶的恶魔、下地狱去吧！」`);
+      await era.printAndWait(`${target_name}用恶狠狠的眼神凝视着你…`);
+      await era.printAndWait(`这是当然的了、因为她已经是黑暗的居民-魔族了。`);
+      await era.printAndWait(`但是不管这个女人有多么憎恨魔族`);
       await era.printAndWait(
         `她也开始感到这种必须臣服于魔族之王的意志的本能………`,
       );
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
 
-      // CFLAG:370  = 2（变量语义：CFLAG 族，370）
-      chara(target).kojo.魔族化 = 2;
-      return 1;
-    } else if (
-      chara(target).kojo.初调教 >= 1 &&
-      chara(target).kojo.NTR再捕获 === 1
-    ) {
-      if (era.get(`talent:${target}:85`) || era.get(`talent:${target}:76`)) {
-        era.drawLine();
-        await era.printAndWait(
-          `在看到那个水晶球之后${target_name}的脸色大变。`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「这种事情不是真的…${sc()}的意志不是真的…${sc()}的意志不可能是真的!」`,
-        );
-        await era.printAndWait(
-          `「是、是的...那个卑鄙的狂王用药物....所以.....所以求你了.....原谅我.....」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}混乱的体态是因为使用了药物之类的东西还是因为${target_name}的身体贪图快感${master_name}马上就看得出来。看着${target_name}慌乱不已尝试掩盖的样子、${master_name}就嫉妒的要发疯了………`,
-        );
-
-        // CFLAG:650  = 0（变量语义：CFLAG 族，650）
-        chara(target).kojo.NTR再捕获 = 0;
-      } else {
-        era.drawLine();
-        await era.printAndWait(
-          `「啊啊...又输了呢…勇者的自信心什么的已经找不回来了………」`,
-        );
-        await era.printAndWait(
-          `「肯定又是你…侵犯侵犯竭尽全力的侵犯吧？………那样的被狂王大人………」`,
-        );
-        await era.printAndWait(
-          `${target_name}轻蔑的笑了起来并且张开双手不再抵抗………`,
-        );
-
-        // CFLAG:650  = 0（变量语义：CFLAG 族，650）
-        chara(target).kojo.NTR再捕获 = 0;
-      }
-      return 1;
-    } else if (
-      chara(target).kojo.初调教 < 2 &&
-      era.get(`mark:${target}:2`) === 1 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「啊..那样的...」`);
+      // CFLAG:370  = 1（变量语义：CFLAG 族，370）
+      chara(target).kojo.魔族化 = 1;
+    } else if (era.get(`talent:${target}:314`) === 10) {
+      await era.printAndWait(`「别开玩笑了！ 这种事情…」`);
+      await era.printAndWait(`「至少每天也要给我5份食物吧！」`);
       await era.printAndWait(
-        `${target_name}在你的面前双臂抱着身体、仿佛要保护自己………`,
+        `${target_name}应该是误解了吧、她向你提出改善待遇的要求…`,
       );
-      await era.printAndWait(`「这...这没什么好吓人的！」`);
-      // CFLAG:201  = 2（变量语义：CFLAG 族，201）
-      chara(target).kojo.初调教 = 2;
+      await era.printAndWait(`这种态度如何？这种慢慢崩溃的希望…`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else if (era.get(`talent:${target}:314`) === 11) {
+      await era.printAndWait(`「想要被我心爱的斧子干掉吗？…」`);
+      await era.printAndWait(
+        `${target_name}虽然比你的个子矮、她还是用威慑性目光看着你。`,
+      );
+      await era.printAndWait(`然而这种态度并不会持续太久………`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
+    } else {
+      await era.printAndWait(`「别开玩笑了！ 这种事情…」`);
+      await era.printAndWait(`${target_name}用坚强的目光注视着你`);
+      await era.printAndWait(`然而这种态度并不会持续太久………………`);
+      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 1;
       return 1;
-    } else if (
-      chara(target).kojo.初调教 < 3 &&
-      era.get(`mark:${target}:2`) === 2 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
+    }
+  } else if (
+    chara(target).kojo.初调教 < 5 &&
+    chara(target).kojo.魔族化 === 0 &&
+    era.get(`talent:${target}:314`) === 9 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    await era.printAndWait(
+      `「身体...身体变成这样的话.....已经....回不去家了......」`,
+    );
+    await era.printAndWait(
+      `经过反复的改造、${target_name}的身体已经完全变成魔族了。她流下了眼泪、双肩止不住的颤抖着`,
+    );
+    await era.printAndWait(`即使她心里悲恸万分以泪洗面、但是身为一个魔族`);
+    await era.printAndWait(`她也开始感到这种必须臣服于魔族之王的意志的本能………`);
+
+    // CFLAG:370  = 2（变量语义：CFLAG 族，370）
+    chara(target).kojo.魔族化 = 2;
+    return 1;
+  } else if (
+    chara(target).kojo.初调教 >= 1 &&
+    chara(target).kojo.NTR再捕获 === 1
+  ) {
+    if (era.get(`talent:${target}:85`) || era.get(`talent:${target}:76`)) {
       era.drawLine();
-      await era.printAndWait(`「不一样...但是…」`);
-      await era.printAndWait(`${target_name}在你的面前不安的摇了摇头………`);
-      // CFLAG:201  = 3（变量语义：CFLAG 族，201）
-      chara(target).kojo.初调教 = 3;
-      return 1;
-    } else if (
-      chara(target).kojo.初调教 < 4 &&
-      era.get(`mark:${target}:2`) === 3 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
+      await era.printAndWait(`在看到那个水晶球之后${target_name}的脸色大变。`);
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「这种事情不是真的…${sc()}的意志不是真的…${sc()}的意志不可能是真的!」`,
+      );
+      await era.printAndWait(
+        `「是、是的...那个卑鄙的狂王用药物....所以.....所以求你了.....原谅我.....」`,
+      );
+      era.setColor('');
+      await era.printAndWait(
+        `${target_name}混乱的体态是因为使用了药物之类的东西还是因为${target_name}的身体贪图快感${master_name}马上就看得出来。看着${target_name}慌乱不已尝试掩盖的样子、${master_name}就嫉妒的要发疯了………`,
+      );
+
+      // CFLAG:650  = 0（变量语义：CFLAG 族，650）
+      chara(target).kojo.NTR再捕获 = 0;
+    } else {
       era.drawLine();
-      await era.printAndWait(`「已经没有办法回去了呢…」`);
-      await era.printAndWait(`${target_name}用着一种期待的眼神看着你。`);
-      await era.printAndWait(`「啊、魔王大人....今天真是温柔呢………」`);
-      // CFLAG:201  = 4（变量语义：CFLAG 族，201）
-      chara(target).kojo.初调教 = 4;
-      return 1;
-    } else if (
-      chara(target).kojo.初调教 < 5 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 1 &&
-      era.get(`talent:${target}:314`) !== 9
-    ) {
-      era.drawLine();
+      await era.printAndWait(
+        `「啊啊...又输了呢…勇者的自信心什么的已经找不回来了………」`,
+      );
+      await era.printAndWait(
+        `「肯定又是你…侵犯侵犯竭尽全力的侵犯吧？………那样的被狂王大人………」`,
+      );
+      await era.printAndWait(
+        `${target_name}轻蔑的笑了起来并且张开双手不再抵抗………`,
+      );
+
+      // CFLAG:650  = 0（变量语义：CFLAG 族，650）
+      chara(target).kojo.NTR再捕获 = 0;
+    }
+    return 1;
+  } else if (
+    chara(target).kojo.初调教 < 2 &&
+    era.get(`mark:${target}:2`) === 1 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「啊..那样的...」`);
+    await era.printAndWait(
+      `${target_name}在你的面前双臂抱着身体、仿佛要保护自己………`,
+    );
+    await era.printAndWait(`「这...这没什么好吓人的！」`);
+    // CFLAG:201  = 2（变量语义：CFLAG 族，201）
+    chara(target).kojo.初调教 = 2;
+    return 1;
+  } else if (
+    chara(target).kojo.初调教 < 3 &&
+    era.get(`mark:${target}:2`) === 2 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「不一样...但是…」`);
+    await era.printAndWait(`${target_name}在你的面前不安的摇了摇头………`);
+    // CFLAG:201  = 3（变量语义：CFLAG 族，201）
+    chara(target).kojo.初调教 = 3;
+    return 1;
+  } else if (
+    chara(target).kojo.初调教 < 4 &&
+    era.get(`mark:${target}:2`) === 3 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「已经没有办法回去了呢…」`);
+    await era.printAndWait(`${target_name}用着一种期待的眼神看着你。`);
+    await era.printAndWait(`「啊、魔王大人....今天真是温柔呢………」`);
+    // CFLAG:201  = 4（变量语义：CFLAG 族，201）
+    chara(target).kojo.初调教 = 4;
+    return 1;
+  } else if (
+    chara(target).kojo.初调教 < 5 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 1 &&
+    era.get(`talent:${target}:314`) !== 9
+  ) {
+    era.drawLine();
+    era.setColor('#ffccff');
+    await era.printAndWait(`「是的...主人…${heart(1)}」`);
+    era.setColor('');
+    await era.printAndWait(
+      `${target_name}眼睛里带着浓浓的春意、迫切的看着你………`,
+    );
+    era.setColor('#ffccff');
+    await era.printAndWait(
+      `「今天的主人好棒…有好多～好棒的侍奉要我来做呢...${heart(1)}」」`,
+    );
+    await era.printAndWait(
+      `「${sc()}果然和主人一起最让人心情舒畅了…花心的话可是不行的哦」`,
+    );
+    era.setColor('');
+    await era.printAndWait(
+      `${target_name}为了增加和阴茎的摩擦、她紧紧抱住了你的身体。`,
+    );
+    era.setColor('#ffccff');
+    await era.printAndWait(
+      `「啊…要让我说感觉的话…${sc()}因为主人最能让我快乐了${heart(3)}」`,
+    );
+    era.setColor('');
+    await era.printAndWait(
+      `用甜美的声音献媚、${target_name}的脑中满是令人愉悦的事情………`,
+    );
+    // CFLAG:201  = 5（变量语义：CFLAG 族，201）
+    chara(target).kojo.初调教 = 5;
+    return 1;
+  } else if (
+    era.get(`talent:${target}:314`) === 9 &&
+    chara(target).kojo.初调教 < 6 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 1
+  ) {
+    era.drawLine();
+
+    if (chara(target).kojo.魔族化 === 1) {
       era.setColor('#ffccff');
       await era.printAndWait(`「是的...主人…${heart(1)}」`);
       era.setColor('');
-      await era.printAndWait(
-        `${target_name}眼睛里带着浓浓的春意、迫切的看着你………`,
-      );
+      await era.printAndWait(`${target_name}是以前完全无法想象的发情的目光………`);
       era.setColor('#ffccff');
       await era.printAndWait(
-        `「今天的主人好棒…有好多～好棒的侍奉要我来做呢...${heart(1)}」」`,
+        `「已经…完全忍不下去了…子宫已经习惯了这种美妙的感觉了啊…好想要、好想要主人的精液啊………${heart(1)}」`,
       );
-      await era.printAndWait(
-        `「${sc()}果然和主人一起最让人心情舒畅了…花心的话可是不行的哦」`,
-      );
-      era.setColor('');
-      await era.printAndWait(
-        `${target_name}为了增加和阴茎的摩擦、她紧紧抱住了你的身体。`,
-      );
-      era.setColor('#ffccff');
-      await era.printAndWait(
-        `「啊…要让我说感觉的话…${sc()}因为主人最能让我快乐了${heart(3)}」`,
-      );
-      era.setColor('');
-      await era.printAndWait(
-        `用甜美的声音献媚、${target_name}的脑中满是令人愉悦的事情………`,
-      );
-      // CFLAG:201  = 5（变量语义：CFLAG 族，201）
-      chara(target).kojo.初调教 = 5;
-      return 1;
-    } else if (
-      era.get(`talent:${target}:314`) === 9 &&
-      chara(target).kojo.初调教 < 6 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 1
-    ) {
-      era.drawLine();
-
-      if (chara(target).kojo.魔族化 === 1) {
+      if (era.get(`talent:${target}:0`) === 1) {
         era.setColor('#ffccff');
-        await era.printAndWait(`「是的...主人…${heart(1)}」`);
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}是以前完全无法想象的发情的目光………`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「已经…完全忍不下去了…子宫已经习惯了这种美妙的感觉了啊…好想要、好想要主人的精液啊………${heart(1)}」`,
-        );
-        if (era.get(`talent:${target}:0`) === 1) {
-          era.setColor('#ffccff');
-        }
-        await era.printAndWait(
-          `「处女...处女膜已经早就交给主人了呢…${heart(1)} 这是主人专用的阴道、请用吧${heart(1)}」`,
-        );
-        era.setColor('');
-        if (era.get(`talent:${target}:0`) === 1) {
-          await era.printAndWait(
-            `${target_name}用双手张开了沾满爱液的阴唇给${master_name}看。`,
-          );
-        }
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「啊啊..这具身体要为主人提供服务了呢…${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `「全力在侍奉啊…${heart(1)} 满满的...好开心…${heart(1)}」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `脸上带着能融化一切的笑容${target_name}紧紧地抱住了${master_name}。`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(`「这种色情的身体习惯…非常幸福呢…${heart(1)}」`);
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}反复调教的结果体现出来了、她完全被情欲支配了`,
-        );
-        await era.printAndWait(`调教前的魔族改造向好的方向发展了呢………`);
-        era.setColor('');
-        // CFLAG:201  = 6（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 6;
-        return 1;
-      } else if (chara(target).kojo.魔族化 === 2) {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「是的..主人尽管…${heart(1)}」`);
-        era.setColor('');
-        await era.printAndWait(
-          `但是她的样子很奇怪${target_name}用着发情的目光看着${master_name}………`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「想要主人的精液…${heart(1)} 好想要的说…${heart(1)}」`,
-        );
-        era.setColor('');
-        if (era.get(`talent:${target}:0`) === 1) {
-          era.setColor('#ffccff');
-        }
-        await era.printAndWait(
-          `「阴道想要精液…${heart(1)} 这是主人专用的阴道请插进来吧${heart(1)}」`,
-        );
-        era.setColor('');
-        if (era.get(`talent:${target}:0`) === 1) {
-          await era.printAndWait(
-            `${target_name}用双手张开了沾满爱液的阴唇给${master_name}看。`,
-          );
-        }
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「终于...终于明白了的说…${sc()}的身体…似乎想侍奉您呢…${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `「那样的主人永远不会腻呢…满满的…真是满满的侍奉啊…希望可以把我灌满的色色的东西啊${heart(1)}」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `脸上带着能融化一切的笑容${target_name}张开双臂紧紧搂住${master_name}。`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(`「能够变成魔族…真的是太好了呢…${heart(1)}」」`);
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}反复调教的结果体现出来了、她完全被情欲支配了。`,
-        );
-        await era.printAndWait(`魔化改造向好的方向发展了呢………`);
-        // CFLAG:201  = 6（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 6;
-        return 1;
-      } else {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「主人${heart(1)} 真的谢谢你呢${heart(1)}」`);
-        era.setColor('');
-        await era.printAndWait(
-          `一进入房间、${target_name}就欢呼着跳上了后背…看来她一直在门口等着你的到来………`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「因为成为魔族…就能一直...一直…对主人进行满满的侍奉了呢${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `「呵呵...${heart(1)} 谢谢主人${heart(1)}…谢谢${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `「魔族的胸部..魔族的阴道...魔族的肛门…全都是用来侍奉主人的东西呢${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `「快点...快点…抱着我啊…已经…已经忍不住了…一起来做爱做的事情吧！${heart(1)}」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}对于自己的兴奋的感情已经完全控制不住了、两只魔眼更是绽放着光芒………`,
-        );
-        // CFLAG:201  = 6（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 6;
-        return 1;
       }
-    } else if (
-      chara(target).kojo.初调教 < 7 &&
-      era.get(`talent:${target}:85`) === 1 &&
-      era.get(`talent:${target}:314`) !== 9
-    ) {
-      era.drawLine();
-      era.setColor('#ffccff');
-      await era.printAndWait(`「啊…是您啊…主人…」`);
-      era.setColor('');
-      await era.printAndWait(`${target_name}和原来的样子有点不太一样………`);
-      era.setColor('#ffccff');
-      await era.printAndWait(`「${scf()}、${sc()}请听我说…！」`);
-      era.setColor('');
       await era.printAndWait(
-        `${target_name}仿佛像对待恋人一样随意的抱住了你………`,
+        `「处女...处女膜已经早就交给主人了呢…${heart(1)} 这是主人专用的阴道、请用吧${heart(1)}」`,
       );
-      era.setColor('#ffccff');
-      await era.printAndWait(
-        `「那个…${sc()}…主人的话…真的好喜欢…我爱你！………」`,
-      );
-      await era.printAndWait(`「对${sc()}的爱慕、并不是什么假话…」`);
       era.setColor('');
-      await era.printAndWait(
-        `${target_name}为了更好地抱住你、她撒娇一样的把脸颊紧贴着你………`,
-      );
-      // CFLAG:201  = 7（变量语义：CFLAG 族，201）
-      chara(target).kojo.初调教 = 7;
-      return 1;
-    } else if (
-      era.get(`talent:${target}:314`) === 9 &&
-      chara(target).kojo.初调教 < 8 &&
-      era.get(`talent:${target}:85`) === 1 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
-      era.drawLine();
-
-      if (chara(target).kojo.魔族化 === 1) {
-        era.setColor('#ffccff');
+      if (era.get(`talent:${target}:0`) === 1) {
         await era.printAndWait(
-          `「这样…居然会有这样的感觉…那么…讨厌这样吗………真的讨厌这样吗？」`,
+          `${target_name}用双手张开了沾满爱液的阴唇给${master_name}看。`,
         );
-        era.setColor('');
-        await era.printAndWait(`${target_name}和平时的样子有些不同。`);
-        await era.printAndWait(
-          `注意到了${master_name}的到来、好像坚定了什么决心、开口了。`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「${scf()}、${sc()}…那、那个…主人…对你的话…好、好像喜欢上了呢………」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}说出的那句话连她自己都感觉吃惊………`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(`「啊…啊…啊啊啊、真的真的很喜欢…很爱你！」`);
-        await era.printAndWait(
-          `「能一直呆在你脚下…就算只是一只宠物…那也好啊………」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}满溢的感情已经按捺不住了、泪水夺眶而出。`,
-        );
-        await era.printAndWait(
-          `因为多次的调教和魔族的本能、${target_name}深爱着${master_name}………`,
-        );
-        // CFLAG:201  = 8（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 8;
-        era.setColor('');
-        return 1;
-      } else if (chara(target).kojo.魔族化 === 2) {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「没有办法回到故乡也好…好不容易放弃了………」`);
-        era.setColor('');
-        await era.printAndWait(`${target_name}的样子和以前不太一样。`);
-        await era.printAndWait(
-          `注意到了${master_name}的到来、好像坚定了什么决心、开口了。`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「终于明白了${sc()}的归宿是哪里…那就是…这里啊………」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `${target_name}走近${master_name}、充满爱意的把手放在了胸膛上。`,
-        );
-        await era.printAndWait(`手不断地颤抖着、可以看出来她下了多大的决心。`);
-        await era.printAndWait(
-          `要是真的话真想立刻抱抱这个女孩啊、她忍住了抱上来的冲动、自说自话道………`,
-        );
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「现在的主人…是${sc()}活下去的动力…${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `「最喜欢的主人…满足的侍奉、所以离不开了呢…对吧…？」`,
-        );
-        era.setColor('');
-        await era.printAndWait(
-          `因为多次的调教和魔族的本能、${target_name}深爱着${master_name}………`,
-        );
-        // CFLAG:201  = 8（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 8;
-        era.setColor('');
-        return 1;
-      } else {
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「啊啊啊…${sc()}…真的变成魔族了…已经回不了头了啊…${heart(1)}」`,
-        );
-        era.setColor('');
-        await era.printAndWait(`${target_name}高兴的连眼泪都流了出来………`);
-        era.setColor('#ffccff');
-        await era.printAndWait(`「不过这样一来…${sc()}我永远离不开了………」`);
-        era.setColor('');
-        await era.printAndWait(`${target_name}只是羞涩的笑了一下、就抱住了………`);
-        era.setColor('#ffccff');
-        await era.printAndWait(`「哼哼、一定要更努力呢…亲爱的…${heart(1)}」`);
-        era.setColor('');
-        // CFLAG:201  = 8（变量语义：CFLAG 族，201）
-        chara(target).kojo.初调教 = 8;
-        era.setColor('');
-        return 1;
       }
-    } else if (
-      era.get(`talent:${target}:9`) === 1 &&
-      chara(target).kojo.初调教 < 9
-    ) {
-      era.drawLine();
+      era.setColor('#ffccff');
       await era.printAndWait(
-        `${target_name}露出了一种奇怪的表情自言自语着该如何是好。`,
+        `「啊啊..这具身体要为主人提供服务了呢…${heart(1)}」`,
       );
       await era.printAndWait(
-        `看到${master_name}来了、整张脸都僵住了、小便无法抑制的往外流。`,
+        `「全力在侍奉啊…${heart(1)} 满满的...好开心…${heart(1)}」`,
       );
-      await era.printAndWait(`${target_name}崩溃的精神应该是无法复原了吧………`);
-      // CFLAG:201  = 9（变量语义：CFLAG 族，201）
-      chara(target).kojo.初调教 = 9;
+      era.setColor('');
+      await era.printAndWait(
+        `脸上带着能融化一切的笑容${target_name}紧紧地抱住了${master_name}。`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(`「这种色情的身体习惯…非常幸福呢…${heart(1)}」`);
+      era.setColor('');
+      await era.printAndWait(
+        `${target_name}反复调教的结果体现出来了、她完全被情欲支配了`,
+      );
+      await era.printAndWait(`调教前的魔族改造向好的方向发展了呢………`);
+      era.setColor('');
+      // CFLAG:201  = 6（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 6;
       return 1;
-    } else if (era_flag.assi < 0) {
-      await k1_kojo2(rand); // CALL K1_KOJO2
-    } else if (assi === 17) {
-      // NO:ASSI == 17 即助手的角色 ID 为 17。引擎的 no:<n> 按已加入序号取
-      // 角色，不是角色 ID
-      era.drawLine();
-      if (era.get(`talent:${assi}:165`)) {
-        if (chara(target).kojo.简易助手_0 === 0) {
-          if (era.get(`talent:${target}:9`) === 1) {
-            await era.printAndWait(`『…主人、这个人坏掉了...』`);
-          } else if (
-            era.get(`talent:${target}:76`) === 1 &&
-            chara(target).kojo.初调教 >= 5
-          ) {
-            era.setColor('#ffccff');
-            await era.printAndWait(
-              `「诶…今天是主人和另外一个人一起来调教吗？」`,
-            );
-            era.setColor('');
-            await era.printAndWait(
-              `${target_name}对着第一次见到的少女舔着嘴唇。作为助手${master_name}简单介绍了一下${assi_name}。`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(`「哈哈…就是那个孩子来调教${sc()}吗？」`);
-            era.setColor('');
-            await era.printAndWait(
-              `她笑出了声来、${assi_name}有一点生气、皱起了眉头。`,
-            );
-            await era.printAndWait(
-              `『虽然腿脚都被固定住无法站立、但是还是让我告诉你谁在上面吧、原勇者姐姐。${heart(1)}』`,
-            );
-            if (era.get(`talent:${assi}:76`) === 1) {
-              await era.printAndWait(
-                `兴奋不已的${assi_name}开始摩擦双腿。这样就可以了吧${master_name}按住了她的头………`,
-              );
-            }
-          } else if (
-            era.get(`talent:${target}:85`) === 1 &&
-            chara(target).kojo.初调教 >= 7
-          ) {
-            await era.printAndWait(
-              `${target_name}看到${master_name}带来的少女不由得大声呵斥起来。`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(`「啊…啊…这个孩子…啊！」`);
-            era.setColor('');
-            await era.printAndWait(
-              `${target_name}斜睨着、仿佛稍微许可了。看着这种态度${assi_name}不满的上前一步。`,
-            );
-            await era.printAndWait(
-              `『说什么呢我的姐姐、我们还都是主人的奴隶啊…这有什么值得自豪的么…？』`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(
-              `「嘛、虽说是奴隶…可是你这样的孩子…那一位…那个………」`,
-            );
-            era.setColor('');
-            await era.printAndWait(
-              `好像想起了自己”奴隶”的立场、${target_name}不再说什么了。`,
-            );
-            await era.printAndWait(`『啊…这样啊…姐姐你嫉妒了呢…』`);
+    } else if (chara(target).kojo.魔族化 === 2) {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「是的..主人尽管…${heart(1)}」`);
+      era.setColor('');
+      await era.printAndWait(
+        `但是她的样子很奇怪${target_name}用着发情的目光看着${master_name}………`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「想要主人的精液…${heart(1)} 好想要的说…${heart(1)}」`,
+      );
+      era.setColor('');
+      if (era.get(`talent:${target}:0`) === 1) {
+        era.setColor('#ffccff');
+      }
+      await era.printAndWait(
+        `「阴道想要精液…${heart(1)} 这是主人专用的阴道请插进来吧${heart(1)}」`,
+      );
+      era.setColor('');
+      if (era.get(`talent:${target}:0`) === 1) {
+        await era.printAndWait(
+          `${target_name}用双手张开了沾满爱液的阴唇给${master_name}看。`,
+        );
+      }
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「终于...终于明白了的说…${sc()}的身体…似乎想侍奉您呢…${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `「那样的主人永远不会腻呢…满满的…真是满满的侍奉啊…希望可以把我灌满的色色的东西啊${heart(1)}」`,
+      );
+      era.setColor('');
+      await era.printAndWait(
+        `脸上带着能融化一切的笑容${target_name}张开双臂紧紧搂住${master_name}。`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(`「能够变成魔族…真的是太好了呢…${heart(1)}」」`);
+      era.setColor('');
+      await era.printAndWait(
+        `${target_name}反复调教的结果体现出来了、她完全被情欲支配了。`,
+      );
+      await era.printAndWait(`魔化改造向好的方向发展了呢………`);
+      // CFLAG:201  = 6（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 6;
+      return 1;
+    } else {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「主人${heart(1)} 真的谢谢你呢${heart(1)}」`);
+      era.setColor('');
+      await era.printAndWait(
+        `一进入房间、${target_name}就欢呼着跳上了后背…看来她一直在门口等着你的到来………`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「因为成为魔族…就能一直...一直…对主人进行满满的侍奉了呢${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `「呵呵...${heart(1)} 谢谢主人${heart(1)}…谢谢${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `「魔族的胸部..魔族的阴道...魔族的肛门…全都是用来侍奉主人的东西呢${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `「快点...快点…抱着我啊…已经…已经忍不住了…一起来做爱做的事情吧！${heart(1)}」`,
+      );
+      era.setColor('');
+      await era.printAndWait(
+        `${target_name}对于自己的兴奋的感情已经完全控制不住了、两只魔眼更是绽放着光芒………`,
+      );
+      // CFLAG:201  = 6（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 6;
+      return 1;
+    }
+  } else if (
+    chara(target).kojo.初调教 < 7 &&
+    era.get(`talent:${target}:85`) === 1 &&
+    era.get(`talent:${target}:314`) !== 9
+  ) {
+    era.drawLine();
+    era.setColor('#ffccff');
+    await era.printAndWait(`「啊…是您啊…主人…」`);
+    era.setColor('');
+    await era.printAndWait(`${target_name}和原来的样子有点不太一样………`);
+    era.setColor('#ffccff');
+    await era.printAndWait(`「${scf()}、${sc()}请听我说…！」`);
+    era.setColor('');
+    await era.printAndWait(`${target_name}仿佛像对待恋人一样随意的抱住了你………`);
+    era.setColor('#ffccff');
+    await era.printAndWait(`「那个…${sc()}…主人的话…真的好喜欢…我爱你！………」`);
+    await era.printAndWait(`「对${sc()}的爱慕、并不是什么假话…」`);
+    era.setColor('');
+    await era.printAndWait(
+      `${target_name}为了更好地抱住你、她撒娇一样的把脸颊紧贴着你………`,
+    );
+    // CFLAG:201  = 7（变量语义：CFLAG 族，201）
+    chara(target).kojo.初调教 = 7;
+    return 1;
+  } else if (
+    era.get(`talent:${target}:314`) === 9 &&
+    chara(target).kojo.初调教 < 8 &&
+    era.get(`talent:${target}:85`) === 1 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
 
-            if (era.get(`talent:${assi}:85`) === 1) {
-              await era.printAndWait(
-                `『姐姐应该也深爱着主人吧…那样的话、就和我一起侍奉主人吧${heart(1)}』`,
-              );
-              await era.printAndWait(
-                `${assi_name}说着、舔着嘴唇压倒了${target_name}。`,
-              );
-              era.setColor('#ffccff');
-              await era.printAndWait(`「啊、这样的…不要…住手啊………」`);
-              era.setColor('');
-              await era.printAndWait(
-                `『我可爱的姐姐啊…好啊、我会好好的调教你、但是在主人面前我们还是公平竞争吧。${heart(1)}』`,
-              );
-            } else {
-              era.setColor('#ffccff');
-              await era.printAndWait(
-                `「那样的…${scf()}、${sc()}并不是…那样的…嫉妒什么的………！」`,
-              );
-              era.setColor('');
-              await era.printAndWait(
-                `『我可爱的姐姐啊…好啊、我会好好的调教你、但是在主人面前我们还是公平竞争吧。${heart(1)}』`,
-              );
-              await era.printAndWait(
-                `${assi_name}这么说着然后用舌头舔着嘴唇推到了${target_name}………`,
-              );
-            }
-          } else {
-            await era.printAndWait(
-              `今天的${master_name}拉着助手${assi_name}一起来了。`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(
-              `「啊…这个孩子难道说来自附近的村庄………她姐姐哭着求我”请帮我找一下、我求你了”！」`,
-            );
-            era.setColor('');
-            await era.printAndWait(`『这样啊…我姐姐的事早忘记了呢…』`);
-            await era.printAndWait(
-              `${assi_name}稍微抬起头不胜感慨的自言自语道。`,
-            );
-            await era.printAndWait(
-              `『但是我…已经不想回去了啊。而且今天我是作为主人的助手来调教”原”勇者大人的呢。』`,
-            );
-            await era.printAndWait(
-              `${assi_name}掐着${target_name}的乳房尽情扭起来。`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(`「呃…呃…呃…啊啊啊啊！」`);
-            era.setColor('');
-            await era.printAndWait(
-              `一边看着${target_name}痛苦的悲鸣${assi_name}翘起了嘴角。`,
-            );
-            await era.printAndWait(
-              `看着今天有趣的调教${master_name}露出了笑容………`,
-            );
-          }
-          // CFLAG:202  = 1（变量语义：CFLAG 族，202）
-          chara(target).kojo.简易助手_0 = 1;
-          return 1;
+    if (chara(target).kojo.魔族化 === 1) {
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「这样…居然会有这样的感觉…那么…讨厌这样吗………真的讨厌这样吗？」`,
+      );
+      era.setColor('');
+      await era.printAndWait(`${target_name}和平时的样子有些不同。`);
+      await era.printAndWait(
+        `注意到了${master_name}的到来、好像坚定了什么决心、开口了。`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「${scf()}、${sc()}…那、那个…主人…对你的话…好、好像喜欢上了呢………」`,
+      );
+      era.setColor('');
+      await era.printAndWait(`${target_name}说出的那句话连她自己都感觉吃惊………`);
+      era.setColor('#ffccff');
+      await era.printAndWait(`「啊…啊…啊啊啊、真的真的很喜欢…很爱你！」`);
+      await era.printAndWait(
+        `「能一直呆在你脚下…就算只是一只宠物…那也好啊………」`,
+      );
+      era.setColor('');
+      await era.printAndWait(
+        `${target_name}满溢的感情已经按捺不住了、泪水夺眶而出。`,
+      );
+      await era.printAndWait(
+        `因为多次的调教和魔族的本能、${target_name}深爱着${master_name}………`,
+      );
+      // CFLAG:201  = 8（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 8;
+      era.setColor('');
+      return 1;
+    } else if (chara(target).kojo.魔族化 === 2) {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「没有办法回到故乡也好…好不容易放弃了………」`);
+      era.setColor('');
+      await era.printAndWait(`${target_name}的样子和以前不太一样。`);
+      await era.printAndWait(
+        `注意到了${master_name}的到来、好像坚定了什么决心、开口了。`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「终于明白了${sc()}的归宿是哪里…那就是…这里啊………」`,
+      );
+      era.setColor('');
+      await era.printAndWait(
+        `${target_name}走近${master_name}、充满爱意的把手放在了胸膛上。`,
+      );
+      await era.printAndWait(`手不断地颤抖着、可以看出来她下了多大的决心。`);
+      await era.printAndWait(
+        `要是真的话真想立刻抱抱这个女孩啊、她忍住了抱上来的冲动、自说自话道………`,
+      );
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「现在的主人…是${sc()}活下去的动力…${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `「最喜欢的主人…满足的侍奉、所以离不开了呢…对吧…？」`,
+      );
+      era.setColor('');
+      await era.printAndWait(
+        `因为多次的调教和魔族的本能、${target_name}深爱着${master_name}………`,
+      );
+      // CFLAG:201  = 8（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 8;
+      era.setColor('');
+      return 1;
+    } else {
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「啊啊啊…${sc()}…真的变成魔族了…已经回不了头了啊…${heart(1)}」`,
+      );
+      era.setColor('');
+      await era.printAndWait(`${target_name}高兴的连眼泪都流了出来………`);
+      era.setColor('#ffccff');
+      await era.printAndWait(`「不过这样一来…${sc()}我永远离不开了………」`);
+      era.setColor('');
+      await era.printAndWait(`${target_name}只是羞涩的笑了一下、就抱住了………`);
+      era.setColor('#ffccff');
+      await era.printAndWait(`「哼哼、一定要更努力呢…亲爱的…${heart(1)}」`);
+      era.setColor('');
+      // CFLAG:201  = 8（变量语义：CFLAG 族，201）
+      chara(target).kojo.初调教 = 8;
+      era.setColor('');
+      return 1;
+    }
+  } else if (
+    era.get(`talent:${target}:9`) === 1 &&
+    chara(target).kojo.初调教 < 9
+  ) {
+    era.drawLine();
+    await era.printAndWait(
+      `${target_name}露出了一种奇怪的表情自言自语着该如何是好。`,
+    );
+    await era.printAndWait(
+      `看到${master_name}来了、整张脸都僵住了、小便无法抑制的往外流。`,
+    );
+    await era.printAndWait(`${target_name}崩溃的精神应该是无法复原了吧………`);
+    // CFLAG:201  = 9（变量语义：CFLAG 族，201）
+    chara(target).kojo.初调教 = 9;
+    return 1;
+  } else if (era_flag.assi < 0) {
+    await k1_kojo2(rand); // CALL K1_KOJO2
+  } else if (assi === 17) {
+    // NO:ASSI == 17 即助手的角色 ID 为 17。引擎的 no:<n> 按已加入序号取
+    // 角色，不是角色 ID
+    era.drawLine();
+    if (era.get(`talent:${assi}:165`)) {
+      if (chara(target).kojo.简易助手_0 === 0) {
+        if (era.get(`talent:${target}:9`) === 1) {
+          await era.printAndWait(`『…主人、这个人坏掉了...』`);
         } else if (
-          chara(target).kojo.简易助手_0 === 1 &&
-          game.kojo.口上开关 === 2
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).kojo.初调教 >= 5
         ) {
-          if (era.get(`talent:${target}:9`) === 1) {
+          era.setColor('#ffccff');
+          await era.printAndWait(`「诶…今天是主人和另外一个人一起来调教吗？」`);
+          era.setColor('');
+          await era.printAndWait(
+            `${target_name}对着第一次见到的少女舔着嘴唇。作为助手${master_name}简单介绍了一下${assi_name}。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(`「哈哈…就是那个孩子来调教${sc()}吗？」`);
+          era.setColor('');
+          await era.printAndWait(
+            `她笑出了声来、${assi_name}有一点生气、皱起了眉头。`,
+          );
+          await era.printAndWait(
+            `『虽然腿脚都被固定住无法站立、但是还是让我告诉你谁在上面吧、原勇者姐姐。${heart(1)}』`,
+          );
+          if (era.get(`talent:${assi}:76`) === 1) {
             await era.printAndWait(
-              `『主人、这个坏了的玩具无法复原的话真的好吗？』`,
+              `兴奋不已的${assi_name}开始摩擦双腿。这样就可以了吧${master_name}按住了她的头………`,
             );
-          } else if (era.get(`talent:${target}:85`) === 1) {
-            await era.printAndWait(
-              `今天的${master_name}拉着助手${assi_name}一起来了。`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(`「啊啊啊…还…带着这个孩子过来了啊………」`);
-            era.setColor('');
-            await era.printAndWait(`${target_name}想着闭上了眼睛。`);
-            await era.printAndWait(
-              `『不要移开双眼啊…我可是很喜欢我可爱的姐姐的说${heart(1)}』`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(`「啊啊啊…！是不行的哦…停、快停下………」`);
-            era.setColor('');
-            await era.printAndWait(
-              `${target_name}在${master_name}的眼前被少女捉弄………`,
-            );
+          }
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).kojo.初调教 >= 7
+        ) {
+          await era.printAndWait(
+            `${target_name}看到${master_name}带来的少女不由得大声呵斥起来。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(`「啊…啊…这个孩子…啊！」`);
+          era.setColor('');
+          await era.printAndWait(
+            `${target_name}斜睨着、仿佛稍微许可了。看着这种态度${assi_name}不满的上前一步。`,
+          );
+          await era.printAndWait(
+            `『说什么呢我的姐姐、我们还都是主人的奴隶啊…这有什么值得自豪的么…？』`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(
+            `「嘛、虽说是奴隶…可是你这样的孩子…那一位…那个………」`,
+          );
+          era.setColor('');
+          await era.printAndWait(
+            `好像想起了自己”奴隶”的立场、${target_name}不再说什么了。`,
+          );
+          await era.printAndWait(`『啊…这样啊…姐姐你嫉妒了呢…』`);
 
-            if (era.get(`abl:${target}:17`) >= 3) {
-              await era.printAndWait(
-                `『你看姐姐、亲爱的主人似乎特别想让我们展示讨厌的地方呢？』`,
-              );
-              await era.printAndWait(
-                `${assi_name}在${target_name}的耳边低声说道。`,
-              );
-              await era.printAndWait(
-                `${target_name}一边红着脸坐在地上双腿像M字一样打开一边挺着腰诱惑${master_name}。`,
-              );
-              era.setColor('#ffccff');
-              await era.printAndWait(
-                `「啊啊啊…看啊…主人啊…${sc()}的小穴…只是被主人看到就变得黏糊糊的了啊………」`,
-              );
-              era.setColor('');
-              await era.printAndWait(
-                `『哈哈、姐姐很可爱哟…棒极了${heart(1)}』`,
-              );
-            } else if (era.get(`abl:${target}:17`) >= 1) {
-              await era.printAndWait(
-                `『你看姐姐、好像展示给主人讨厌的地方了呢${heart(1)}』`,
-              );
-              await era.printAndWait(
-                `${assi_name}从后面抱住${target_name}、把她的胸从下面抬了起来展示给${master_name}。`,
-              );
-              era.setColor('#ffccff');
-              await era.printAndWait(
-                `「啊啊啊…啊啊啊啊啊啊啊啊…被看到喽…被主人看到喽………${heart(1)}」`,
-              );
-              era.setColor('');
-              await era.printAndWait(`『哈、姐姐很可爱哟…${heart(1)}』`);
-            } else {
-              await era.printAndWait(
-                `『你看姐姐、好像展示给主人讨厌的地方了呢${heart(1)}』`,
-              );
-              await era.printAndWait(
-                `${assi_name}从后面抱住把双腿拉开了、采取了展现给${master_name}的姿势。`,
-              );
-              era.setColor('#ffccff');
-              await era.printAndWait(`「啊啊啊…不行啦…快停下吧！」`);
-              era.setColor('');
-              await era.printAndWait(`『嗯、还需要更多的调教么？』`);
-            }
-          } else if (era.get(`talent:${target}:76`) === 1) {
+          if (era.get(`talent:${assi}:85`) === 1) {
             await era.printAndWait(
-              `今天的${master_name}拉着助手${assi_name}一起来了。`,
+              `『姐姐应该也深爱着主人吧…那样的话、就和我一起侍奉主人吧${heart(1)}』`,
+            );
+            await era.printAndWait(
+              `${assi_name}说着、舔着嘴唇压倒了${target_name}。`,
             );
             era.setColor('#ffccff');
+            await era.printAndWait(`「啊、这样的…不要…住手啊………」`);
+            era.setColor('');
             await era.printAndWait(
-              `「哈…今天也来了呢${assi_name}酱${heart(1)}」`,
+              `『我可爱的姐姐啊…好啊、我会好好的调教你、但是在主人面前我们还是公平竞争吧。${heart(1)}』`,
+            );
+          } else {
+            era.setColor('#ffccff');
+            await era.printAndWait(
+              `「那样的…${scf()}、${sc()}并不是…那样的…嫉妒什么的………！」`,
             );
             era.setColor('');
             await era.printAndWait(
-              `${target_name}一边咬着嘴唇一边淫乱的弯起了嘴角。`,
+              `『我可爱的姐姐啊…好啊、我会好好的调教你、但是在主人面前我们还是公平竞争吧。${heart(1)}』`,
             );
-            if (era.get(`talent:${assi}:76`) === 1) {
-              await era.printAndWait(
-                `『嗯、今天也要”玩”哟…要做到爽够了为止呦${heart(1)}』`,
-              );
-            }
+            await era.printAndWait(
+              `${assi_name}这么说着然后用舌头舔着嘴唇推到了${target_name}………`,
+            );
+          }
+        } else {
+          await era.printAndWait(
+            `今天的${master_name}拉着助手${assi_name}一起来了。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(
+            `「啊…这个孩子难道说来自附近的村庄………她姐姐哭着求我”请帮我找一下、我求你了”！」`,
+          );
+          era.setColor('');
+          await era.printAndWait(`『这样啊…我姐姐的事早忘记了呢…』`);
+          await era.printAndWait(
+            `${assi_name}稍微抬起头不胜感慨的自言自语道。`,
+          );
+          await era.printAndWait(
+            `『但是我…已经不想回去了啊。而且今天我是作为主人的助手来调教”原”勇者大人的呢。』`,
+          );
+          await era.printAndWait(
+            `${assi_name}掐着${target_name}的乳房尽情扭起来。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(`「呃…呃…呃…啊啊啊啊！」`);
+          era.setColor('');
+          await era.printAndWait(
+            `一边看着${target_name}痛苦的悲鸣${assi_name}翘起了嘴角。`,
+          );
+          await era.printAndWait(
+            `看着今天有趣的调教${master_name}露出了笑容………`,
+          );
+        }
+        // CFLAG:202  = 1（变量语义：CFLAG 族，202）
+        chara(target).kojo.简易助手_0 = 1;
+        return 1;
+      } else if (
+        chara(target).kojo.简易助手_0 === 1 &&
+        game.kojo.口上开关 === 2
+      ) {
+        if (era.get(`talent:${target}:9`) === 1) {
+          await era.printAndWait(
+            `『主人、这个坏了的玩具无法复原的话真的好吗？』`,
+          );
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          await era.printAndWait(
+            `今天的${master_name}拉着助手${assi_name}一起来了。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(`「啊啊啊…还…带着这个孩子过来了啊………」`);
+          era.setColor('');
+          await era.printAndWait(`${target_name}想着闭上了眼睛。`);
+          await era.printAndWait(
+            `『不要移开双眼啊…我可是很喜欢我可爱的姐姐的说${heart(1)}』`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(`「啊啊啊…！是不行的哦…停、快停下………」`);
+          era.setColor('');
+          await era.printAndWait(
+            `${target_name}在${master_name}的眼前被少女捉弄………`,
+          );
+
+          if (era.get(`abl:${target}:17`) >= 3) {
+            await era.printAndWait(
+              `『你看姐姐、亲爱的主人似乎特别想让我们展示讨厌的地方呢？』`,
+            );
+            await era.printAndWait(
+              `${assi_name}在${target_name}的耳边低声说道。`,
+            );
+            await era.printAndWait(
+              `${target_name}一边红着脸坐在地上双腿像M字一样打开一边挺着腰诱惑${master_name}。`,
+            );
             era.setColor('#ffccff');
             await era.printAndWait(
-              `「啊啊…来啊…来啊…${assi_name}尽管来吧…${heart(1)}」`,
+              `「啊啊啊…看啊…主人啊…${sc()}的小穴…只是被主人看到就变得黏糊糊的了啊………」`,
             );
             era.setColor('');
+            await era.printAndWait(`『哈哈、姐姐很可爱哟…棒极了${heart(1)}』`);
+          } else if (era.get(`abl:${target}:17`) >= 1) {
             await era.printAndWait(
-              `看到少女的${target_name}热情的张开双手求欢、${master_name}对从现在开始的表演兴奋不已………`,
+              `『你看姐姐、好像展示给主人讨厌的地方了呢${heart(1)}』`,
+            );
+            await era.printAndWait(
+              `${assi_name}从后面抱住${target_name}、把她的胸从下面抬了起来展示给${master_name}。`,
+            );
+            era.setColor('#ffccff');
+            await era.printAndWait(
+              `「啊啊啊…啊啊啊啊啊啊啊啊…被看到喽…被主人看到喽………${heart(1)}」`,
+            );
+            era.setColor('');
+            await era.printAndWait(`『哈、姐姐很可爱哟…${heart(1)}』`);
+          } else {
+            await era.printAndWait(
+              `『你看姐姐、好像展示给主人讨厌的地方了呢${heart(1)}』`,
+            );
+            await era.printAndWait(
+              `${assi_name}从后面抱住把双腿拉开了、采取了展现给${master_name}的姿势。`,
+            );
+            era.setColor('#ffccff');
+            await era.printAndWait(`「啊啊啊…不行啦…快停下吧！」`);
+            era.setColor('');
+            await era.printAndWait(`『嗯、还需要更多的调教么？』`);
+          }
+        } else if (era.get(`talent:${target}:76`) === 1) {
+          await era.printAndWait(
+            `今天的${master_name}拉着助手${assi_name}一起来了。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(
+            `「哈…今天也来了呢${assi_name}酱${heart(1)}」`,
+          );
+          era.setColor('');
+          await era.printAndWait(
+            `${target_name}一边咬着嘴唇一边淫乱的弯起了嘴角。`,
+          );
+          if (era.get(`talent:${assi}:76`) === 1) {
+            await era.printAndWait(
+              `『嗯、今天也要”玩”哟…要做到爽够了为止呦${heart(1)}』`,
+            );
+          }
+          era.setColor('#ffccff');
+          await era.printAndWait(
+            `「啊啊…来啊…来啊…${assi_name}尽管来吧…${heart(1)}」`,
+          );
+          era.setColor('');
+          await era.printAndWait(
+            `看到少女的${target_name}热情的张开双手求欢、${master_name}对从现在开始的表演兴奋不已………`,
+          );
+        } else {
+          await era.printAndWait(
+            `今天的${master_name}拉着助手${assi_name}一起来了。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(
+            `「还把那孩子带过来什么的…啊、真是不知羞耻！」`,
+          );
+          era.setColor('');
+          await era.printAndWait(
+            `少女的面前、不想破坏强硬姿态的${target_name}看着${master_name}微微地笑了笑。`,
+          );
+          await era.printAndWait(`『哎～…很期待和我见面吗？』`);
+          await era.printAndWait(
+            `${assi_name}露出了好色的笑容把脸贴近了${target_name}的面前。`,
+          );
+          era.setColor('#ffccff');
+          await era.printAndWait(`「那、那种事怎么可能………」`);
+          era.setColor('');
+
+          if (era.get(`abl:${target}:33`) >= 3) {
+            await era.printAndWait(
+              `${target_name}一边说着一边双眼湿润露出眼馋的样子。`,
+            );
+            await era.printAndWait(
+              `『啊哈哈…这种表情的勇者大人啊${heart(1)} 好哟我会让你好好满足的！』`,
+            );
+            await era.printAndWait(
+              `少女被${target_name}推到同时露出高兴的叹息………`,
+            );
+          } else if (era.get(`abl:${target}:22`) >= 1) {
+            await era.printAndWait(
+              `${target_name}一边说着一边扭扭捏捏的情不自禁把视线放到了两脚上。`,
+            );
+            await era.printAndWait(`『勇者大人真不老实啊…』`);
+            await era.printAndWait(
+              `少女被动地被${target_name}推到露出了羞耻的声音………`,
             );
           } else {
             await era.printAndWait(
-              `今天的${master_name}拉着助手${assi_name}一起来了。`,
+              `${target_name}开始拼命想移开看向${assi_name}的视线。`,
             );
-            era.setColor('#ffccff');
+            await era.printAndWait(`『算了吧、马上就好了啊${heart(1)}』`);
             await era.printAndWait(
-              `「还把那孩子带过来什么的…啊、真是不知羞耻！」`,
+              `少女被${target_name}推到后咬紧嘴唇忍耐着………`,
             );
-            era.setColor('');
-            await era.printAndWait(
-              `少女的面前、不想破坏强硬姿态的${target_name}看着${master_name}微微地笑了笑。`,
-            );
-            await era.printAndWait(`『哎～…很期待和我见面吗？』`);
-            await era.printAndWait(
-              `${assi_name}露出了好色的笑容把脸贴近了${target_name}的面前。`,
-            );
-            era.setColor('#ffccff');
-            await era.printAndWait(`「那、那种事怎么可能………」`);
-            era.setColor('');
-
-            if (era.get(`abl:${target}:33`) >= 3) {
-              await era.printAndWait(
-                `${target_name}一边说着一边双眼湿润露出眼馋的样子。`,
-              );
-              await era.printAndWait(
-                `『啊哈哈…这种表情的勇者大人啊${heart(1)} 好哟我会让你好好满足的！』`,
-              );
-              await era.printAndWait(
-                `少女被${target_name}推到同时露出高兴的叹息………`,
-              );
-            } else if (era.get(`abl:${target}:22`) >= 1) {
-              await era.printAndWait(
-                `${target_name}一边说着一边扭扭捏捏的情不自禁把视线放到了两脚上。`,
-              );
-              await era.printAndWait(`『勇者大人真不老实啊…』`);
-              await era.printAndWait(
-                `少女被动地被${target_name}推到露出了羞耻的声音………`,
-              );
-            } else {
-              await era.printAndWait(
-                `${target_name}开始拼命想移开看向${assi_name}的视线。`,
-              );
-              await era.printAndWait(`『算了吧、马上就好了啊${heart(1)}』`);
-              await era.printAndWait(
-                `少女被${target_name}推到后咬紧嘴唇忍耐着………`,
-              );
-            }
           }
-          return 1;
         }
-      } else {
-        await k1_kojo2(rand); // CALL K1_KOJO2
+        return 1;
       }
     } else {
       await k1_kojo2(rand); // CALL K1_KOJO2
     }
-  },
-  TIER.NORMAL,
-);
+  } else {
+    await k1_kojo2(rand); // CALL K1_KOJO2
+  }
+}
 
 // k1_kojo2
 async function k1_kojo2(rand) {
@@ -1159,136 +1129,132 @@ async function k1_kojo2(rand) {
 }
 
 // EVENTEND NORMAL 档
-on(
-  EVENT.END,
-  async () => {
-    const target = era_flag.target;
-    const target_name = chara_callname(target);
-    const master_name = chara_name(MASTER);
+async function handle_end() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target);
+  const master_name = chara_name(MASTER);
 
-    if (game.kojo.口上开关 <= 0) {
-      return 0;
-    }
-    if (era.get(`talent:${target}:161`) !== 1) {
-      return 0;
-    }
-
-    if (era.get(`base:${target}:0`) <= 0) {
-      return 0;
-    }
-
-    if (era.get(`talent:${target}:9`) === 1) {
-      era.drawLine();
-      await era.printAndWait(`「嘻嘻…嘻嘻！…啊、啊…咕咭咿………」`);
-      await era.printAndWait(
-        `${target_name}的全身被污物沾满了、${master_name}吩咐女仆打扫了房间和她的身体………`,
-      );
-      return 1;
-    } else if (
-      era.get(`mark:${target}:3`) === 3 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「无聊」`);
-      return 1;
-    } else if (
-      era.get(`mark:${target}:2`) <= 1 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「…停下了？」`);
-      return 1;
-    } else if (
-      era.get(`mark:${target}:2`) === 2 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「…相当不错嘛。但是堕落什么的」`);
-      return 1;
-    } else if (
-      era.get(`mark:${target}:2`) === 3 &&
-      era.get(`talent:${target}:85`) === 0 &&
-      era.get(`talent:${target}:76`) === 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「哈哈…太好了…」`);
-      return 1;
-    } else if (
-      era.get(`talent:${target}:76`) === 1 &&
-      era.get(`base:${target}:0`) >= 500
-    ) {
-      era.drawLine();
-
-      if (era.get(`talent:${target}:314`) === 9) {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「啊、真是的…身体好热啊…忍不住的快感………」`);
-        era.setColor('');
-      } else {
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「你的侍奉不够的哟～ 来更多各种各样的吧${heart(1)}」`,
-        );
-        era.setColor('');
-      }
-      return 1;
-    } else if (
-      era.get(`talent:${target}:76`) === 1 &&
-      era.get(`base:${target}:0`) <= 500
-    ) {
-      era.drawLine();
-
-      if (era.get(`talent:${target}:314`) === 9) {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「啊啊啊…太好了………${heart(1)}」`);
-        era.setColor('');
-      } else {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「哈…哈…你满足了呢…${heart(1)}」`);
-        era.setColor('');
-      }
-      return 1;
-    } else if (
-      era.get(`talent:${target}:85`) === 1 &&
-      era.get(`base:${target}:0`) >= 500
-    ) {
-      era.drawLine();
-
-      if (era.get(`talent:${target}:314`) === 9) {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「啊啊啊…我还想要更多啊………」`);
-        era.setColor('');
-      } else {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「更加激烈地也可以啊？　唔呼呼」`);
-        era.setColor('');
-      }
-      return 1;
-    } else if (
-      era.get(`talent:${target}:85`) === 1 &&
-      era.get(`base:${target}:0`) <= 500
-    ) {
-      era.drawLine();
-
-      if (era.get(`talent:${target}:314`) === 9) {
-        era.setColor('#ffccff');
-        await era.printAndWait(
-          `「哈…啊…已经…脑海之中…乱七八糟的…啊…啊啊啊…${heart(1)}」`,
-        );
-        era.setColor('');
-      } else {
-        era.setColor('#ffccff');
-        await era.printAndWait(`「还…完全没关系…可以继续呢………${heart(1)}」`);
-        era.setColor('');
-      }
-      return 1;
-    }
+  if (game.kojo.口上开关 <= 0) {
     return 0;
-  },
-  TIER.NORMAL,
-);
+  }
+  if (era.get(`talent:${target}:161`) !== 1) {
+    return 0;
+  }
+
+  if (era.get(`base:${target}:0`) <= 0) {
+    return 0;
+  }
+
+  if (era.get(`talent:${target}:9`) === 1) {
+    era.drawLine();
+    await era.printAndWait(`「嘻嘻…嘻嘻！…啊、啊…咕咭咿………」`);
+    await era.printAndWait(
+      `${target_name}的全身被污物沾满了、${master_name}吩咐女仆打扫了房间和她的身体………`,
+    );
+    return 1;
+  } else if (
+    era.get(`mark:${target}:3`) === 3 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「无聊」`);
+    return 1;
+  } else if (
+    era.get(`mark:${target}:2`) <= 1 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「…停下了？」`);
+    return 1;
+  } else if (
+    era.get(`mark:${target}:2`) === 2 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「…相当不错嘛。但是堕落什么的」`);
+    return 1;
+  } else if (
+    era.get(`mark:${target}:2`) === 3 &&
+    era.get(`talent:${target}:85`) === 0 &&
+    era.get(`talent:${target}:76`) === 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「哈哈…太好了…」`);
+    return 1;
+  } else if (
+    era.get(`talent:${target}:76`) === 1 &&
+    era.get(`base:${target}:0`) >= 500
+  ) {
+    era.drawLine();
+
+    if (era.get(`talent:${target}:314`) === 9) {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「啊、真是的…身体好热啊…忍不住的快感………」`);
+      era.setColor('');
+    } else {
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「你的侍奉不够的哟～ 来更多各种各样的吧${heart(1)}」`,
+      );
+      era.setColor('');
+    }
+    return 1;
+  } else if (
+    era.get(`talent:${target}:76`) === 1 &&
+    era.get(`base:${target}:0`) <= 500
+  ) {
+    era.drawLine();
+
+    if (era.get(`talent:${target}:314`) === 9) {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「啊啊啊…太好了………${heart(1)}」`);
+      era.setColor('');
+    } else {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「哈…哈…你满足了呢…${heart(1)}」`);
+      era.setColor('');
+    }
+    return 1;
+  } else if (
+    era.get(`talent:${target}:85`) === 1 &&
+    era.get(`base:${target}:0`) >= 500
+  ) {
+    era.drawLine();
+
+    if (era.get(`talent:${target}:314`) === 9) {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「啊啊啊…我还想要更多啊………」`);
+      era.setColor('');
+    } else {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「更加激烈地也可以啊？　唔呼呼」`);
+      era.setColor('');
+    }
+    return 1;
+  } else if (
+    era.get(`talent:${target}:85`) === 1 &&
+    era.get(`base:${target}:0`) <= 500
+  ) {
+    era.drawLine();
+
+    if (era.get(`talent:${target}:314`) === 9) {
+      era.setColor('#ffccff');
+      await era.printAndWait(
+        `「哈…啊…已经…脑海之中…乱七八糟的…啊…啊啊啊…${heart(1)}」`,
+      );
+      era.setColor('');
+    } else {
+      era.setColor('#ffccff');
+      await era.printAndWait(`「还…完全没关系…可以继续呢………${heart(1)}」`);
+      era.setColor('');
+    }
+    return 1;
+  }
+  return 0;
+}
 
 // kojo_message_com_1
 async function kojo_message_com_1(rand) {
@@ -11358,4 +11324,15 @@ gohoubi_after_koujo_family.register(1, gohoubi_after_koujo_k1);
 osioski_koujo_family.register(1, osioski_koujo_k1);
 gobi_koujo_family.register(1, gobi_koujo_k1);
 
-module.exports = { kojo_message_com_1 };
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train, TIER.NORMAL);
+  on(EVENT.END, handle_end, TIER.NORMAL);
+}
+
+module.exports = { register, kojo_message_com_1 };

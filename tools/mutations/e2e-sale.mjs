@@ -5,7 +5,7 @@ export const COUNT = 4; // #641 起 -2（M7800/M7801 名单复辟检查随存根
 export default [
   {
     desc: 'M7802 use_ex_item 战斗中调用点删除',
-    file: 'ere/dungeon/dungeon-battle.js',
+    file: 'ere/system/dungeon/dungeon-battle.js',
     find: "    await use_ex_item('战斗中', atker);",
     replace: '    // 变异：战斗中 USE_EX_ITEM 调用删除',
     tests: ['event-ending2-e2e'],
@@ -13,7 +13,7 @@ export default [
   },
   {
     desc: 'M7803 use_ex_item 战斗后三个调用点删除',
-    file: 'ere/dungeon/dungeon.js',
+    file: 'ere/system/dungeon/dungeon.js',
     find: `  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // （A = ARG:0）
   if (ctx.sidea > 0) {
     await ex_item_mod.use_ex_item('战斗后', ctx.sidea, rand_n); // （A = SIDEA）

@@ -15,7 +15,10 @@
 
 'use strict';
 
-const { n_breast_grow, n_breast_reverse } = require('#/chara/chara-pregnancy');
+const {
+  n_breast_grow,
+  n_breast_reverse,
+} = require('#/system/chara/chara-pregnancy');
 const { chara } = require('#/facade/chara');
 const {
   cflag,

@@ -28,97 +28,12 @@ const run_title_page = require('#/page/page-title');
 const { run_shop } = require('#/page/page-shop');
 const { run_train } = require('#/system/train/train-loop');
 const { run_aftertrain } = require('#/system/train/train-end');
-// 顶层副作用：注册 EVENTFIRST 处理器（issue #22 真身）。后续事件的
-// 处理器模块随各自所属票在此追加 require——调教域（#44）：EVENTTRAIN /
-// EVENTCOM / EVENTCOMEND / EVENTEND / EVENTTURNEND 与画面 SHOW_STATUS /
-// SHOW_USERCOM / USERCOM。
-require('#/event/event-first');
-require('#/event/event-train');
-// EVENTTRAIN 的**无属性档**（#401）：与上一个（#PRI 档）
-// 是同一事件的另一份定义，事件链按 #PRI → 无属性 → #LATER 全部执行，
-// 故两份都要注册；同档内次序 = 这里的装载序
-require('#/event/event-train-normal');
-require('#/event/event-com');
-require('#/event/event-comend');
-// EVENTCOMEND 的无属性档（#401），同上
-require('#/event/event-comend-normal');
-require('#/event/event-end');
-require('#/event/event-turnend');
-require('#/event/event-turnend-later');
-require('#/system/train/source-check');
-require('#/page/page-train');
-require('#/page/page-usercom');
-// COM0 与 COM_ABLE0 的实现（#45——首条真实指令；注册进 COM 分发族）
-// COM0-9「爱抚系」族（#219 J9）：COM/COM_ABLE 分发族真身 + TRAIN_MESSAGE 分支
-// + GET_ADV_COM 的 CASE 1/3/4/5/6/8 升格规则
-require('#/system/train/com-caress');
-// COM20-29「性交系」族（#221 J11）：阴道性交、逆侵犯与肛交的 COM /
-// COM_ABLE 真身、TRAIN_MESSAGE 与 GET_ADV_COM 注册必须在主启动图实际加载。
-require('#/system/train/com-sex');
-// COM30-38「奉仕系」族（#222 J12）：COM/COM_ABLE 真身 + TRAIN_MESSAGE 分支
-// + GET_ADV_COM 的 CASE 30-34 升格规则
-require('#/system/train/com-service');
-// COM40-49「SM 系」族（#223 J13）：COM/COM_ABLE 真身 + EQUIP_COM43-49
-// 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 40 升格规则
-require('#/system/train/com-sm');
-// COM80-90「重度调教」族（#226 J16）：拳交系、G 点刺激、放尿、穿环、使役
-// 魔兽 PLAY、兽奸 PLAY、乳房插入的 COM/COM_ABLE 真身 + EQUIP_COM89
-// 装备持续效果 + TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 80 升格规则
-require('#/system/train/com-hardcore');
-// COM50-59「特殊」族（#224 J14）：药剂、录像与场景切换真身、可用性、
-// TRAIN_MESSAGE 分支及 EQUIP_COM53/54/57/58/59 持续效果
-require('#/system/train/com-special');
-// COM110/111「着装脱衣」族（#228 J18）：穿衣 / 脱衣。漏 require 时游戏里
-// 这两条指令根本没注册（#274 通用锁的起因之一）。
-require('#/system/train/com-cloth');
-// COM60-73「助手与蕾丝」族（#225 J15）：助手指令、3P、六九式、发型
-require('#/system/train/com-assistant');
-// 死斗场与怪物族 COM200-207（#230 J20）：TEQUIP:55 的写入方与
-// com_after_arena / arena_slave_point / arena_assi_point 的宿主（J17 触手接入时复用后三者）
-require('#/system/train/com-colosseum');
-// COM10-19「道具使用」族（#220 J10）：真身、可用性、装备持续效果与训练消息分支
-require('#/system/train/com-toy');
-// COM120-135「追加与高级」族（#229 J19）：高级 COM 真身 + COM_ABLE +
-// TRAIN_MESSAGE 分支 + GET_ADV_COM 的 CASE 135 升格规则
-require('#/system/train/com-advanced');
-// COM100-109 / 150 / 208「触手与自由调教」族（#227 J17）：触手召唤、
-// 触手插入/口辱/自由调教、死斗场触手的 COM/COM_ABLE 真身 + EQUIP_COM100/108
-// 持续效果 + TRAIN_MESSAGE 分支；JUMP 目标 11/13-17/31 未实现 → COM_MISSING
-require('#/system/train/com-tentacle');
-// 回合结算本体（#114）：EVENTTURNEND 的普通档定义。
-// 与上面 event-turnend.js 的 #PRI 档、event-turnend-later.js 的空 #LATER 档
-// 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）
-require('#/system/turnend-settle');
-// 战役1「赤蛮呪森」（#469）：13 个编号函数向
-// page-campaign.js / dungeon.js 等文件声明的 CAMPAIGN_* DispatchFamily
-// 注册实现，注册是顶层副作用，必须在此显式 require 才会触发
-require('#/page/page-campaign-1');
-// 口上（#46）：公共底座（EVENTSHOP 总开关 / get_kojo_num / 指令口上
-// 分发族）与口上模块（K0 慈爱、K1 自信家、K2 気弱、K3 高貴、K4 冷徹、
-// K5 マオ、K6 悪女、K7 金红桃、K8 银黑桃、K9 方片、K10 俱乐部、K11
-// 莉莉、K12 知的、K13 庇护者、K14 贵公子、K15 伶俐、K903 嘉德——各带
-// EVENTTRAIN 存在标志与 kojo_message_com_family 注册）。口上是独立顶层
-// 目录（docs/skeleton.md）
-require('#/kojo/kojo-system');
-require('#/kojo/kojo-k0-tender');
-require('#/kojo/kojo-k2-timid');
-require('#/kojo/kojo-k3-noble');
-require('#/kojo/kojo-k5-mao');
-require('#/kojo/kojo-k1-confident');
-require('#/kojo/kojo-k4-stoic');
-require('#/kojo/kojo-k6-wicked');
-require('#/kojo/kojo-k7-heart');
-require('#/kojo/kojo-k8-spade');
-require('#/kojo/kojo-k9-diamond');
-require('#/kojo/kojo-k10-club');
-require('#/kojo/kojo-k11-lily');
-require('#/kojo/kojo-k13-protector');
-require('#/kojo/kojo-k14-nobleman');
-require('#/kojo/kojo-k15-clever');
-require('#/kojo/kojo-k12-intellectual');
-require('#/kojo/kojo-k903-garde');
-require('#/kojo/kojo-k19-fia');
-require('#/kojo/kojo-k904-fia');
+
+const { register_all } = require('#/system/flow/startup');
+
+// 事件处理器与分发族在进入状态机之前统一注册：装配顺序（= 同档处理器的执行
+// 顺序）读 system/flow/startup.js 的 HANDLER_MODULES，与装载顺序无关。
+register_all();
 
 /**
  * 各状态的处理器：返回值 = 下一状态（通常是事件链 emit 的待跳转值）。

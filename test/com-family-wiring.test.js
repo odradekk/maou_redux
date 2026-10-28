@@ -2,7 +2,7 @@
  * 指令族接入的通用锁（issue #274）：`ere/system/train/com-*.js` 里靠副作用
  * 注册进 COM / COM_ABLE 的模块，必须同时出现在两张加载图上——
  *
- *   - `ere/system/flow/main-loop.js`：游戏运行时实际加载的族；
+ *   - `ere/system/flow/startup.js`（启动装配表）：游戏运行时实际装载的族；
  *   - 本文件自持的 TRAIN_PATH_MODULES：一次调教路径实际装载的模块清单。
  * 两张图都没有检查时，族票的单测走 `load_module('system/train/com-xxx')`、
  * 主流程走自己的加载清单，另一张图漏装不会被任何检查发现（#228 的

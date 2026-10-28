@@ -21,6 +21,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 /** 建一个带三档链的夹具：魔王 0 在场（调用方按需再入奴隶 31） */
@@ -36,14 +37,14 @@ function setup_turnend(before_settle_load) {
   // 污染整条链的输出与写入清单，还会多掷几次随机数。
   fixture.store.set('flag:10004', 10000); // MONEY
   fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
-  fixture.load_module('event/event-turnend');
+  register_handlers(fixture, 'event/event-turnend');
   // 结算模块按解构取得域函数（`const { run_benki } = require(...)`），替身
   // 必须在它装载之前换好，否则拿到的是原函数
   if (before_settle_load) {
     before_settle_load(fixture);
   }
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -856,7 +857,7 @@ test('调教窗口（#816）：结算中某一步返回转场目标也照样关�
       begin(STATE.TURNEND);
     // 窗口之后的尾段（队伍结成，无条件）站在关窗之后：日循环里的读者看不到
     // 调教域表，这个序就是那条边界的证人
-    f.load_module('dungeon/dungeon-party').party_join = async () => {
+    f.load_module('system/dungeon/dungeon-party').party_join = async () => {
       trained_when_tail_runs = f.era.getCharactersInTrain();
     };
   });
@@ -879,7 +880,7 @@ test('调教窗口（#816）：早段加入的角色在肉便器段之前就补�
   let trained_at_benki;
   const { fixture, emit } = setup_turnend((f) => {
     // 迷宫段会带人进来（这里是它的等价物）：队伍编成站在迷宫循环之前
-    f.load_module('dungeon/dungeon-party').party_unite = () => {
+    f.load_module('system/dungeon/dungeon-party').party_unite = () => {
       f.era.addCharacter(NEW);
     };
     const benki = f.load_module('system/train/benki');
@@ -1213,9 +1214,9 @@ function setup_pregnancy({ time = 0 } = {}) {
   fixture.store.set('flag:5', 4); // 妊娠出产功能 ON
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.disable_enter_enemy();
@@ -1324,9 +1325,9 @@ test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接入后按既有格式拼
   fixture.store.set('flag:5', 4);
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   fixture.disable_enter_enemy();
   fixture.store.set('flag:10005', -1); // TARGET
@@ -1730,7 +1731,7 @@ test('EVENTTURNEND：迷宫攻略在结局回标题时，结算照常关掉调�
   // 结算中段的调教窗口（beginTrain → endTrain）包住 run_dungeon：深处回
   // 标题时不能把窗口留在打开状态（#816 的 finally 覆盖这条出口）
   const { fixture, emit } = setup_turnend((f) => {
-    f.load_module('dungeon/dungeon').run_dungeon = async () => 'TITLE';
+    f.load_module('system/dungeon/dungeon').run_dungeon = async () => 'TITLE';
   });
   fixture.seed_chara(31, { id: 31, name: '奴隶31', callname: '角色31' });
   fixture.era.addCharacter(31);

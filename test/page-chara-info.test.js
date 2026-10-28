@@ -2221,7 +2221,9 @@ test('排序编号：sort_by_number 按排序编号升序、并列按 ID，与�
   // 会得到 [3,2,1]
   fixture.era.set('portcflag:3:排序编号', 1);
   fixture.era.set('portcflag:1:排序编号', 2);
-  const { sort_by_number } = fixture.load_module('chara/chara-portcflag');
+  const { sort_by_number } = fixture.load_module(
+    'system/chara/chara-portcflag',
+  );
 
   assert.deepEqual(sort_by_number([2, 3, 1]), [3, 1, 2]);
   assert.deepEqual(sort_by_number([1, 2, 3]), [3, 1, 2], '两种入参同结果');

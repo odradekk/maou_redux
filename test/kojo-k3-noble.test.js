@@ -18,6 +18,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // 世界底座：温妮（高貴 163 → GET_KOJO_NUM 103）入列调教
@@ -39,8 +40,8 @@ async function setup_k3(seed) {
   if (seed) {
     seed(fixture);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k3-noble');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k3-noble');
   return fixture;
 }
 

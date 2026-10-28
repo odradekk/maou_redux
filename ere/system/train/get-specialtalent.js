@@ -31,10 +31,10 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { ex_talentname } = require('#/system/chara/chara-ex');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { MASTER } = require('#/utils/master');
-const { ex_talentname } = require('#/chara/chara-ex');
 
 function get(name) {
   return era.get(name) || 0;

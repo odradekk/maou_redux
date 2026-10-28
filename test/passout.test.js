@@ -24,6 +24,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /** 世界底座：魔王 0 + 奴隶 31，火车表开着（tflag/tequip 可写） */
@@ -605,8 +606,8 @@ test('端到端：真实写入路径置 TFLAG:899 → K5 口上整体跳过（#2
   fixture.store.set('talent:31:165', 1);
   fixture.store.set('flag:105', 1);
   fixture.store.set('flag:7', 2);
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k5-mao');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k5-mao');
   const { kojo_message_com } = fixture.load_module('kojo/kojo-system');
 
   // 对照组：未失神 → 口上出台词

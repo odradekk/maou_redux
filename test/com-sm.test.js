@@ -20,6 +20,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { seed_train_world } = require('./helpers/train-world');
+const { register_handlers } = require('./helpers/event-registration');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好 SM 族。 */
 function seed_world({ assi = -1 } = {}) {
@@ -1207,7 +1208,7 @@ test('source-check 链循环：装备位按链序全部走真身（链上无缺�
   const world = seed_world({ assi: 17 });
   const { emit } = world.fixture.load_module('system/event/registry');
   world.fixture.load_module('system/train/com-toy'); // 道具族 equip_com11 注册
-  world.fixture.load_module('system/train/source-check');
+  register_handlers(world.fixture, 'system/train/source-check');
   // 眼罩（43，SM 族）+ 振动器位 11（道具族）同时点亮——链上每个号都有真身
   world.fixture.store.set('tequip:31:43', 1);
   world.fixture.store.set('tequip:31:11', 1);

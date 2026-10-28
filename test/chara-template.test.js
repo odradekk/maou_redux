@@ -9,7 +9,7 @@
  *     引擎的 addCharacter 把它抄进目标角色的 portcflag——**目标号与源号
  *     可以不同**（addCharacter([新 ID, 预设号]) 是后代唯一的建角色写法），
  *     这正是角色号与预设号分开的落点；
- *   - 需要预设号的代码改读 template_no_of（ere/chara/chara-pregnancy.js），
+ *   - 需要预设号的代码改读 template_no_of（ere/system/chara/chara-pregnancy.js），
  *     不再从角色号反推；
  *   - 0.1.0 起的旧存档里没有这个字段，读档钩子 EVENTLOAD 调用
  *     backfill_chara_templates 按旧编码（template_no_from_id）补填。
@@ -34,6 +34,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   create_add_character,
   create_chara_loader,
@@ -166,14 +167,16 @@ test('旧编码换算只在读档补填里用：读取侧不自己从角色号�
     .map((file) => path.relative(REPO_ROOT, file).replace(/\\/g, '/'));
   assert.deepEqual(
     offenders,
-    ['ere/chara/chara-pregnancy.js'],
+    ['ere/system/chara/chara-pregnancy.js'],
     'template_no_from_id 只给 backfill_chara_templates 用——别处要用预设号就调 ' +
       'template_no_of（读 portcflag 的「预设模板」字段）',
   );
 });
 
 function template_no_of(fixture, cid) {
-  return fixture.load_module('chara/chara-pregnancy').template_no_of(cid);
+  return fixture
+    .load_module('system/chara/chara-pregnancy')
+    .template_no_of(cid);
 }
 
 test('template_no_of 读预设模板字段：普通角色是预设号，后代带上来源预设', () => {
@@ -211,7 +214,7 @@ test('模板字段优先于旧编码：字段写 2 的后代按模板 2 生成',
   assert.equal(template_no_of(fixture, 100000), 2);
 
   const child = await fixture
-    .load_module('chara/chara-pregnancy')
+    .load_module('system/chara/chara-pregnancy')
     .gb_add_slave(100000, -1, (n) => (n === 789 ? 1 : 0));
 
   assert.equal(child, 100100, '模板 2 的 ID 区间，与旧编码的模板 1 不同');
@@ -253,7 +256,7 @@ test('backfill_chara_templates：旧存档缺字段的角色按旧编码补，0 
   assert.equal(fixture.store.get('portcflag:100250:2'), 0, '旧档补进来的 0');
 
   const { backfill_chara_templates } = fixture.load_module(
-    'chara/chara-pregnancy',
+    'system/chara/chara-pregnancy',
   );
   const filled = backfill_chara_templates();
 
@@ -280,7 +283,9 @@ test('backfill_chara_templates：字段整体缺失（未初始化）时同样�
   assert.equal(fixture.store.get('portcflag:100000:2'), undefined);
 
   assert.equal(
-    fixture.load_module('chara/chara-pregnancy').backfill_chara_templates(),
+    fixture
+      .load_module('system/chara/chara-pregnancy')
+      .backfill_chara_templates(),
     1,
   );
 
@@ -302,7 +307,7 @@ test('EVENTLOAD 链上执行补填：读档后旧角色的字段不再是空的'
   fixture.store.delete('portcflag:100250:2');
 
   const { emit } = fixture.load_module('system/event/registry');
-  fixture.load_module('event/event-load');
+  register_handlers(fixture, 'event/event-load');
   await emit('EVENTLOAD');
 
   assert.equal(fixture.store.get('portcflag:0:2'), 0, '魔王不用补');

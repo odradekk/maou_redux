@@ -1,5 +1,5 @@
-// 变异条目表切片：#391 角色信息域（ere/chara/chara-info-actions.js、
-// ere/chara/chara-soul-transfer.js、ere/page/page-chara-info.js 的核心判定
+// 变异条目表切片：#391 角色信息域（ere/system/chara/chara-info-actions.js、
+// ere/system/chara/chara-soul-transfer.js、ere/page/page-chara-info.js 的核心判定
 // 与计算函数）＋ ere/kojo/kojo-dungeon-bitch-log.js 的四个 get_look_info
 // 分支（#391 补）。字段与运行方式见 tools/mutation-check.mjs 头注释。desc
 // 里的 M 编号不人工分配，只作引用编号，但全表必须唯一（#295；M117 曾被
@@ -13,7 +13,7 @@ export const COUNT = 94; // #696 起净 0（M7852 反向变异随魔王计费缺
 export default [
   {
     desc: 'M7848 IS_ABLE_TO_ABILITY_UP 砍掉侵支的魔王等级门槛（LV<20 也能给侵攻中角色提升）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: `  return (
     (state === 0 ||
       (master_lv >= 20 && state === 2) ||
@@ -34,7 +34,7 @@ export default [
   },
   {
     desc: 'M7849 is_able_to_cloth 砍掉状态检查（侵攻/迎击/苗床中也能换装）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: `  return state === 0 && hp >= 1;`,
     replace: `  return hp >= 1;`,
     tests: ['chara-info-actions'],
@@ -42,7 +42,7 @@ export default [
   },
   {
     desc: 'M7850 CHARA_INFO_RESTORE_STATE 迎击中不再先离队（party_del 被短路）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 3) {
     party_del(cid);
   }`,
@@ -54,7 +54,7 @@ export default [
   },
   {
     desc: 'M7851 CHARA_INFO_RECOVER_HP 气力单价 5 改 4（恢复花费算错）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: `  const cost = Math.trunc(((max_hp - hp) * 10) / 3 + ((max_mp - mp) * 5) / 3);`,
     replace: `  const cost = Math.trunc(((max_hp - hp) * 10) / 3 + ((max_mp - mp) * 4) / 3);`,
     tests: ['chara-info-actions'],
@@ -62,7 +62,7 @@ export default [
   },
   {
     desc: 'M7853 chara_info_callback 砍掉等级差检查（对不低于魔王的角色也放行传送）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: `  if (target_lv >= master_lv) {`,
     replace: `  if (false) {`,
     tests: ['chara-info-actions'],
@@ -70,7 +70,7 @@ export default [
   },
   {
     desc: 'M7854 swap_var 的 b 侧写回自身（交换失效——a/b 槽各保留原值）',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `  era.set(key_b, val_a === undefined ? empty : val_a);`,
     replace: `  era.set(key_b, val_b === undefined ? empty : val_a);`,
     tests: ['chara-soul-transfer'],
@@ -78,7 +78,7 @@ export default [
   },
   {
     desc: 'M7855 personalock 的 [50,58) 段检查反转折掉 55（只交换调合知识，其余全跳）',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `    if (tc === 55) continue;`,
     replace: `    if (tc !== 55) continue;`,
     tests: ['chara-soul-transfer'],
@@ -86,7 +86,7 @@ export default [
   },
   {
     desc: 'M7856 transferapp 收尾不再把双方 CFLAG:1 复位为 0',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `  chara(0).invasion.状态 = 0;
   chara(cid).invasion.状态 = 0;`,
     replace: `  // 变异：不把双方状态复位为 0`,
@@ -95,7 +95,7 @@ export default [
   },
   {
     desc: 'M7857 bodycheck_maou 魔族缺省种族年龄 666 改 667',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `    era.set('cflag:0:452', 666);`,
     replace: `    era.set('cflag:0:452', 667);`,
     tests: ['chara-soul-transfer'],
@@ -103,7 +103,7 @@ export default [
   },
   {
     desc: 'M7858 transfer_soul 旧错位素质继承支被短路（魔王带着 debuff 转移时不 +1 继承）',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `  if (era.get('ex_talent:0:0')) {
     debuff = (era.get('ex_talent:0:0') || 0) + 1;
   }`,
@@ -115,7 +115,7 @@ export default [
   },
   {
     desc: 'M7859 transfer_soul 婚姻检查砍掉未婚分支（601 == 0 的角色错走配偶迁移分支）',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `  if ((marriage >= 900 && marriage <= 902) || marriage === 0) {`,
     replace: `  if (marriage >= 900 && marriage <= 902) {`,
     tests: ['chara-soul-transfer'],
@@ -123,7 +123,7 @@ export default [
   },
   {
     desc: 'M7860 soul_dislocation 命中条件取反（未命中反而降级、命中反而不降）',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `  if (level && !rand(cap + 1)) {`,
     replace: `  if (level && rand(cap + 1)) {`,
     tests: ['chara-soul-transfer'],
@@ -131,7 +131,7 @@ export default [
   },
   {
     desc: 'M7861 soul_dislocation 归零康复播报被短路',
-    file: 'ere/chara/chara-soul-transfer.js',
+    file: 'ere/system/chara/chara-soul-transfer.js',
     find: `    if (next === 0) {
       era.print(\`\${name_of(cid)}从【\${ex_talentname(0)}】中恢复了\`);
     }`,
@@ -557,7 +557,7 @@ export default [
   },
   {
     desc: 'M11445 换号：排序编号只写一侧（b 侧不写，交换不成立）',
-    file: 'ere/chara/chara-portcflag.js',
+    file: 'ere/system/chara/chara-portcflag.js',
     find: '  era.set(`portcflag:${a}:排序编号`, b_number);\n  era.set(`portcflag:${b}:排序编号`, a_number);',
     replace: '  era.set(`portcflag:${a}:排序编号`, b_number);',
     tests: ['page-chara-info'],
@@ -565,7 +565,7 @@ export default [
   },
   {
     desc: 'M11446 换号：先写 a 再读 a（b 被写成自己刚被读走的那个值）',
-    file: 'ere/chara/chara-portcflag.js',
+    file: 'ere/system/chara/chara-portcflag.js',
     find: '  const a_number = sort_number_of(a);\n  const b_number = sort_number_of(b);\n  era.set(`portcflag:${a}:排序编号`, b_number);\n  era.set(`portcflag:${b}:排序编号`, a_number);',
     replace:
       '  era.set(`portcflag:${a}:排序编号`, sort_number_of(b));\n  era.set(`portcflag:${b}:排序编号`, sort_number_of(a));',
@@ -574,7 +574,7 @@ export default [
   },
   {
     desc: 'M11447 排序编号：未设时不再回落角色 ID（读成 0）',
-    file: 'ere/chara/chara-portcflag.js',
+    file: 'ere/system/chara/chara-portcflag.js',
     find: '  return era.get(`portcflag:${cid}:排序编号`) || cid;',
     replace: '  return era.get(`portcflag:${cid}:排序编号`) || 0;',
     tests: ['page-chara-info'],
@@ -686,7 +686,7 @@ export default [
   },
   {
     desc: 'M11460 名册编号视图：排列键退回角色 ID（排序编号不参与排序）',
-    file: 'ere/chara/chara-portcflag.js',
+    file: 'ere/system/chara/chara-portcflag.js',
     find: '  return [...ids].sort(\n    (a, b) => sort_number_of(a) - sort_number_of(b) || a - b,\n  );',
     replace: '  return [...ids].sort((a, b) => a - b);',
     tests: ['page-chara-info'],
@@ -841,7 +841,7 @@ export default [
   // —— #653（F7）：等级购买播报主语修复检查 ——
   {
     desc: 'M13260 等级购买播报改回写魔王名字（奴隶升级也播「你花费了」）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: '    await era.printAndWait(\n      `${name_of(cid)}花费了${cost}G，购买了经验${need}点`,\n    );',
     replace:
       '    await era.printAndWait(\n      `${name_of(0)}花费了${cost}G，购买了经验${need}点`,\n    );',
@@ -851,7 +851,7 @@ export default [
   // —— #696（F12）：魔王升级购买曲线与升级结算对齐 ——
   {
     desc: 'M14107 魔王升级购买曲线改回 10 倍（LV*10+10 → LV*100+10）',
-    file: 'ere/chara/chara-info-actions.js',
+    file: 'ere/system/chara/chara-info-actions.js',
     find: '    need = lv * 10 + 10; // 魔王（与升级结算同曲线）',
     replace: '    need = lv * 100 + 10; // 魔王（与升级结算同曲线）',
     tests: ['chara-info-actions'],

@@ -23,6 +23,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   is_blank,
   assert_one_blank_before,
@@ -266,9 +267,9 @@ test('链路：生成勇者后 turnend-settle 的 DUNGEON 检查第一次为真'
   fixture.store.set('flag:10004', 10000); // MONEY
   fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
   // 三档链同 test/event-nextday.test.js 的 setup
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const { enter_enemy } = load(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -297,9 +298,9 @@ test('隔离接入：EVENTTURNEND 的调用点真调 enter_enemy（日推进即�
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.override_math_random(() => 0); // CHARA = 1（[1,17) + 恒 0）
@@ -763,7 +764,7 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
     '俘虏演出行；名字同「通常来袭」用例（命名链已改写预设名）',
   );
   // 异国判定掷 RAND(10)：zero → 判定通过 → 进 char_make_inport 真身
-  // （#394 起，ere/chara/chara-make-inport.js）。FLAG:76 未设时它早退 0
+  // （#394 起，ere/system/chara/chara-make-inport.js）。FLAG:76 未设时它早退 0
   // （无候选），于是**恰好只有生成分支建出的那一名**角色在场；真身的行为面
   // 在 test/chara-make-inport.test.js，这里只钉「判定通过后没有被真身另建一名」。
   assert.deepEqual(
@@ -789,9 +790,9 @@ test('夹具隔离开关：disable_enter_enemy 后 EVENTTURNEND 不再生成勇�
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.override_math_random(() => 0);

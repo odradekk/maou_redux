@@ -32,7 +32,7 @@
  *     会话内重开局的清档（上一局的日期/金钱/角色列表不带进新局）。
  *     初始角色 0 自 #848 起不在本页手工加入：由 GameBase 的【初始角色编号】
  *     声明，引擎在 resetData 末尾自己建（沿用官方写法，相性镜像随默认角色
- *     的判定走）。其专属初始化自 T6 接通（issue #21，ere/chara/chara-ex.js）。
+ *     的判定走）。其专属初始化自 T6 接通（issue #21，ere/system/chara/chara-ex.js）。
  *     BEGIN FIRST 的转场已接通（issue #20）——
  *     返回目标状态并结束本函数，由主循环接住
  *     （system/flow/main-loop.js），EVENTFIRST 链的真身
@@ -45,9 +45,9 @@
 
 const era = require('#/era-electron');
 const { begin, is_state, STATE } = require('#/system/flow/game-state');
-const { add_chara_ex } = require('#/chara/chara-ex');
-const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_global = require('#/era-utils/era-global');
+const { add_chara_ex } = require('#/system/chara/chara-ex');
+const { init_portcflag } = require('#/system/chara/chara-portcflag');
 const { load_game } = require('#/page/page-save-load');
 
 // 标题画面的整屏渲染（每轮重绘都从头跑一遍）

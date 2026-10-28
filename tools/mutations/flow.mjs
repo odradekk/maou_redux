@@ -8,7 +8,7 @@
 // #849 追加 M17200-M17204：事件名枚举（ere/data/event-name-const.js）与
 // on / emit 的未知名校验——注册与触发只认枚举、名字拼错当场抛错。
 
-export const COUNT = 24; // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
+export const COUNT = 32; // #851 +8（M17650-M17657：装配表与注册点的缺失/顺序变异） // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
 
 export default [
   {
@@ -243,9 +243,77 @@ export default [
   {
     desc: 'M17204 某个注册点退回裸字符串事件名（枚举的单一出处守卫失效）（#849）',
     file: 'ere/page/page-train.js',
-    find: `on(EVENT.SHOW_STATUS, async () => {`,
-    replace: `on('SHOW_STATUS', async () => { // 变异：裸字符串事件名`,
+    find: '  on(EVENT.SHOW_STATUS, handle_show_status);',
+    replace: "  on('SHOW_STATUS', handle_show_status); // 变异：裸字符串事件名",
     tests: ['event-name-enum'],
     must_mention: '还在写裸字符串事件名',
+  },
+
+  // —— #851：显式装配表（M17650-M17657） ——
+  {
+    desc: 'M17650 主启动图不执行装配表的注册（所有事件链整条静默消失）（#851）',
+    file: 'ere/system/flow/main-loop.js',
+    find: 'register_all();',
+    replace: '// 变异：装配表不执行注册',
+    tests: ['event-handlers'],
+    must_mention: 'EVENTFIRST 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M17651 装配表漏掉一个口上模块（该事件的处理器链静默少一段）（#851）',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k903-garde', require('#/kojo/kojo-k903-garde')],\n",
+    replace: '  // 变异：漏掉 K903 的装配\n',
+    tests: ['event-handlers'],
+    must_mention: '#/kojo/kojo-k903-garde',
+  },
+  {
+    desc: 'M17652 装配表把 K4/K6 的顺序对调（同档口上的执行顺序变了）（#851）',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k4-stoic', require('#/kojo/kojo-k4-stoic')],\n  ['#/kojo/kojo-k6-wicked', require('#/kojo/kojo-k6-wicked')],\n",
+    replace:
+      "  ['#/kojo/kojo-k6-wicked', require('#/kojo/kojo-k6-wicked')],\n  ['#/kojo/kojo-k4-stoic', require('#/kojo/kojo-k4-stoic')],\n",
+    tests: ['event-handlers'],
+    must_mention: '#/kojo/kojo-k6-wicked',
+  },
+  {
+    desc: 'M17653 EVENTTURNEND 的 #PRI 处理器不再注册（日推进整条静默消失）（#851）',
+    file: 'ere/event/event-turnend.js',
+    find: '  on(EVENT.TURNEND, handle_turnend_pri, TIER.PRI);\n',
+    replace: '  // 变异：EVENTTURNEND 的 #PRI 档不注册\n',
+    tests: ['event-handlers'],
+    must_mention: 'EVENTTURNEND 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M17654 注册时丢掉档位（#PRI 处理器落进普通档，执行序整体后移）（#851）',
+    file: 'ere/event/event-turnend.js',
+    find: '  on(EVENT.TURNEND, handle_turnend_pri, TIER.PRI);\n',
+    replace: '  on(EVENT.TURNEND, handle_turnend_pri); // 变异：档位丢失\n',
+    tests: ['event-handlers'],
+    must_mention: 'EVENTTURNEND 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M17655 K11 的 EVENTEND #LATER 注册漏掉（存在标志不清，下一次调教混用）（#851）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  on(EVENT.END, handle_end_later, TIER.LATER);\n',
+    replace: '  // 变异：K11 的 EVENTEND #LATER 不注册\n',
+    tests: ['event-handlers', 'kojo-k11-lily'],
+    must_mention: 'EVENTEND 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M17656 EVENTLOAD 的处理器不注册（读档钩子整条静默消失）（#851）',
+    file: 'ere/event/event-load.js',
+    find: '  on(EVENT.LOAD, handle_load, TIER.NORMAL);\n',
+    replace: '  // 变异：EVENTLOAD 处理器不注册\n',
+    tests: ['event-handlers', 'event-load'],
+    must_mention: 'EVENTLOAD 注册条数与装配表不一致',
+  },
+  {
+    desc: 'M17657 装配表按倒序装配（同档处理器整体反序，链的输出顺序变了）（#851）',
+    file: 'ere/system/flow/startup.js',
+    find: '  for (const [path, handler_module] of HANDLER_MODULES) {',
+    replace:
+      '  for (const [path, handler_module] of [...HANDLER_MODULES].reverse()) { // 变异：倒序装配',
+    tests: ['event-handlers'],
+    must_mention: '#/kojo/kojo-k904-fia',
   },
 ];

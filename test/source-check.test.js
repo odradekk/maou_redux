@@ -18,6 +18,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /**
@@ -67,7 +68,7 @@ async function run_caress(seed, post) {
     seed(fixture);
   }
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);
@@ -805,11 +806,11 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   // TALENT:0:122 = 男人：同 run_caress，避免 source_sex_check() 把默认的
   // 未声明值误判为「双方均非男性」触发 SOURCE_LESBIAN_SEX_CHECK。
   fixture.store.set('talent:0:122', 1);
-  fixture.load_module('event/event-train');
-  fixture.load_module('event/event-com');
-  fixture.load_module('event/event-comend');
-  fixture.load_module('page/page-usercom');
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'event/event-train');
+  register_handlers(fixture, 'event/event-com');
+  register_handlers(fixture, 'event/event-comend');
+  register_handlers(fixture, 'page/page-usercom');
+  register_handlers(fixture, 'system/train/source-check');
   fixture.load_module('system/train/com-caress');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -2664,7 +2665,7 @@ async function run_ejaculation_settlement({
   era_flag.selectcom = selectcom;
   era_flag.prevcom = -1;
   fixture.store.set('callname:31:-2', '温妮');
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   if (seed) seed(fixture, era_flag);
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK');
@@ -2918,7 +2919,7 @@ async function run_auto_check(seed, { settle = true } = {}) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK_AUTO');
   // 迷宫路径的结算对应物（dungeon-battle.js 的 source_check_auto 在 emit

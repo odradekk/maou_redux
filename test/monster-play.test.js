@@ -1,7 +1,7 @@
 /**
  * 怪物改造与玩弄的行为测试（issue #340，阶段 5a L9）。
  *
- * 缝 = ere/dungeon/monster-data.js、ere/dungeon/monster-play.js 的公开出口，
+ * 缝 = ere/system/dungeon/monster-data.js、ere/system/dungeon/monster-play.js 的公开出口，
  * 以及既有页面入口；RAND 一律经函数参数注入确定性序列。
  */
 
@@ -42,7 +42,9 @@ function rendered_lines(fixture) {
 
 test('MONSTER_SETUP_ABLE 按种族、改造与兵种条件判定', () => {
   const fixture = setup();
-  const { monster_setup_able } = fixture.load_module('dungeon/monster-data');
+  const { monster_setup_able } = fixture.load_module(
+    'system/dungeon/monster-data',
+  );
 
   assert.equal(monster_setup_able(100, 0, seq()), 1, '无改造对所有怪物可用');
   assert.equal(monster_setup_able(190, 2, seq()), 0, '骷髅不能土地适应');
@@ -61,7 +63,7 @@ test('MONSTER_SETUP 购买改造时只替换对应位并同时扣两份资金', 
   fixture.store.set('itemname:500', '遗迹街');
   fixture.store.set('flag:800', 301); // 怪物 100：弓兵 + 上级化
   fixture.set_inputs(2, 0, 999); // 土地适应 → 确认 → 返回
-  const { monster_setup } = fixture.load_module('dungeon/monster-data');
+  const { monster_setup } = fixture.load_module('system/dungeon/monster-data');
 
   assert.equal(await monster_setup(100, seq()), 0);
   assert.equal(fixture.store.get('flag:800'), 302, '保留兵种百位，只换低两位');
@@ -79,7 +81,9 @@ test('MONSTER_SETUP 保留完整菜单判定区间的随机源副作用', async 
     return 0;
   };
 
-  await fixture.load_module('dungeon/monster-data').monster_setup(100, rand);
+  await fixture
+    .load_module('system/dungeon/monster-data')
+    .monster_setup(100, rand);
 
   assert.equal(random_bounds.length, 54, '18 次 MONSTER_DATA 各消费三次随机数');
   for (let i = 0; i < random_bounds.length; i += 3) {
@@ -95,7 +99,9 @@ test('MONSTER_SETUP 只接受本轮打印出来的改造项与兵种（#872 受�
     fixture.set_inputs(typed, 999);
     await assert.rejects(
       () =>
-        fixture.load_module('dungeon/monster-data').monster_setup(102, seq()),
+        fixture
+          .load_module('system/dungeon/monster-data')
+          .monster_setup(102, seq()),
       /输入不合法！输入规范：\(\?:0\|1\|2\|3\|4\|999\)/,
       `${typed} 不在史莱姆本轮的按钮里`,
     );
@@ -106,27 +112,35 @@ test('MONSTER_SETUP 只接受本轮打印出来的改造项与兵种（#872 受�
 test('MONSTER_SETUP 拒绝非法编号、缺钱和取消确认，兵种改造保留万位与低位', async () => {
   const invalid = setup();
   assert.equal(
-    await invalid.load_module('dungeon/monster-data').monster_setup(99, seq()),
+    await invalid
+      .load_module('system/dungeon/monster-data')
+      .monster_setup(99, seq()),
     999,
   );
 
   const poor = setup();
   poor.store.set('flag:10004', 999);
   poor.set_inputs(1);
-  await poor.load_module('dungeon/monster-data').monster_setup(100, seq());
+  await poor
+    .load_module('system/dungeon/monster-data')
+    .monster_setup(100, seq());
   assert.equal(poor.store.get('flag:800'), undefined);
   assert.equal(poor.store.get('exflag:4444'), 5000);
 
   const declined = setup();
   declined.set_inputs(1, 1);
-  await declined.load_module('dungeon/monster-data').monster_setup(100, seq());
+  await declined
+    .load_module('system/dungeon/monster-data')
+    .monster_setup(100, seq());
   assert.equal(declined.store.get('flag:800'), undefined);
   assert.equal(declined.store.get('flag:10004'), 5000);
 
   const troop = setup();
   troop.store.set('flag:800', 12034);
   troop.set_inputs(51, 0, 999);
-  await troop.load_module('dungeon/monster-data').monster_setup(100, seq());
+  await troop
+    .load_module('system/dungeon/monster-data')
+    .monster_setup(100, seq());
   assert.equal(troop.store.get('flag:800'), 10134);
 });
 
@@ -140,7 +154,9 @@ test('MONSTERPLAY_LIST 只列出持有且已声明的 100-199 怪物', () => {
   fixture.store.set('item:193', 1);
   fixture.store.set('item:105', 30);
   fixture.store.set('item:199', 30);
-  const { monsterplay_list } = fixture.load_module('dungeon/monster-play');
+  const { monsterplay_list } = fixture.load_module(
+    'system/dungeon/monster-play',
+  );
 
   assert.equal(monsterplay_list(), 0);
   const lines = rendered_lines(fixture);
@@ -166,7 +182,7 @@ test('MONSTERPLAY_LIST 只列出持有且已声明的 100-199 怪物', () => {
 test('野狗、魔兽与马分支写入各自的兽奸经验和点数', async () => {
   const fixture = setup();
   const { monster_play_dog, beast_monster_play, horse_monster_play } =
-    fixture.load_module('dungeon/monster-play');
+    fixture.load_module('system/dungeon/monster-play');
 
   await monster_play_dog(0, 4);
   assert.equal(fixture.store.get('exp:0:0'), 4);
@@ -189,7 +205,7 @@ test('兽人分支按第二骰区分口交与多穴轮奸', async () => {
   const oral = setup();
   oral.set_inputs(0);
   await oral
-    .load_module('dungeon/monster-play')
+    .load_module('system/dungeon/monster-play')
     .orc_monster_play(0, 4, seq(0, 0));
   assert.equal(oral.store.get('exp:0:22'), 4);
   assert.equal(oral.store.get('exp:0:20'), 4);
@@ -198,7 +214,7 @@ test('兽人分支按第二骰区分口交与多穴轮奸', async () => {
   const group = setup();
   group.set_inputs(0);
   await group
-    .load_module('dungeon/monster-play')
+    .load_module('system/dungeon/monster-play')
     .orc_monster_play(0, 5, seq(0, 1));
   assert.equal(group.store.get('exp:0:0'), 5);
   assert.equal(group.store.get('exp:0:1'), 5);
@@ -210,7 +226,7 @@ test('兽人分支按第二骰区分口交与多穴轮奸', async () => {
 test('史莱姆、昆虫、藤蔓与触手按随机分支结算经验和点数', async () => {
   const fixture = setup();
   fixture.set_inputs(0, 0, 0);
-  const mod = fixture.load_module('dungeon/monster-play');
+  const mod = fixture.load_module('system/dungeon/monster-play');
 
   await mod.slime_monster_play(0, 3, seq(1));
   assert.equal(fixture.store.get('exp:0:1'), 3);
@@ -249,7 +265,9 @@ test('男性魔王在十个异性怪物分支提前返回', async () => {
   for (const function_name of function_names) {
     const fixture = setup();
     fixture.store.set('talent:0:122', 1); // TALENT:MASTER:122 = 男人
-    const play = fixture.load_module('dungeon/monster-play')[function_name];
+    const play = fixture.load_module('system/dungeon/monster-play')[
+      function_name
+    ];
 
     assert.equal(await play(0, 3, seq()), 0, function_name);
     assert.equal(fixture.store.get('exp:0:0'), undefined, function_name);
@@ -261,7 +279,7 @@ test('男性魔王在十个异性怪物分支提前返回', async () => {
 test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机分支均可达', async () => {
   const slime = setup();
   await slime
-    .load_module('dungeon/monster-play')
+    .load_module('system/dungeon/monster-play')
     .slime_monster_play(0, 3, seq(0));
   assert.equal(slime.store.get('juel:0:5'), 30);
   assert.equal(slime.store.get('juel:0:8'), 30);
@@ -269,13 +287,15 @@ test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机分支均�
 
   const insect = setup();
   await insect
-    .load_module('dungeon/monster-play')
+    .load_module('system/dungeon/monster-play')
     .insect_monster_play(0, 4, seq(0));
   assert.equal(insect.store.get('juel:0:5'), 40);
   assert.equal(insect.store.get('exp:0:1'), undefined);
 
   const ivy = setup();
-  await ivy.load_module('dungeon/monster-play').ivy_monster_play(0, 5, seq(0));
+  await ivy
+    .load_module('system/dungeon/monster-play')
+    .ivy_monster_play(0, 5, seq(0));
   assert.equal(ivy.store.get('juel:0:9'), 50);
   assert.equal(ivy.store.get('juel:0:10'), 50);
   assert.equal(ivy.store.get('exp:0:1'), undefined);
@@ -283,7 +303,7 @@ test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机分支均�
   for (const branch of [0, 1, 2]) {
     const tentacle = setup();
     await tentacle
-      .load_module('dungeon/monster-play')
+      .load_module('system/dungeon/monster-play')
       .syokusyu_monster_play(0, 6, seq(branch));
     assert.equal(tentacle.store.get('exp:0:55'), 6, `触手分支 ${branch}`);
     assert.equal(tentacle.store.get('juel:0:5'), 60, `触手分支 ${branch}`);
@@ -295,7 +315,9 @@ test('史莱姆、昆虫、藤蔓、触手与男魔族的其余随机分支均�
   }
 
   const man = setup();
-  await man.load_module('dungeon/monster-play').man_monster_play(0, 7, seq(0));
+  await man
+    .load_module('system/dungeon/monster-play')
+    .man_monster_play(0, 7, seq(0));
   assert.equal(man.store.get('exp:0:22'), 7);
   assert.equal(man.store.get('exp:0:20'), 7);
   assert.equal(man.store.get('cflag:0:107'), undefined);
@@ -305,7 +327,9 @@ test('妖精的男性与扶她分支、女魔族的男性分支均可达', async
   for (const talent of [122, 121]) {
     const fairy = setup();
     fairy.store.set(`talent:0:${talent}`, 1); // TALENT:A:122/121 = 男人/扶她
-    await fairy.load_module('dungeon/monster-play').fairy_monster_play(0, 3);
+    await fairy
+      .load_module('system/dungeon/monster-play')
+      .fairy_monster_play(0, 3);
     assert.equal(fairy.store.get('juel:0:0'), 30);
     assert.equal(fairy.store.get('juel:0:5'), 30);
     assert(rendered_lines(fairy).some((line) => line.includes('阴茎')));
@@ -313,7 +337,7 @@ test('妖精的男性与扶她分支、女魔族的男性分支均可达', async
 
   const girl = setup();
   girl.store.set('talent:0:122', 1); // TALENT:A:122 = 男人
-  await girl.load_module('dungeon/monster-play').girl_monster_play(0, 4);
+  await girl.load_module('system/dungeon/monster-play').girl_monster_play(0, 4);
   assert.equal(girl.store.get('juel:0:0'), 40);
   assert.equal(girl.store.get('juel:0:5'), 40);
   assert.equal(girl.store.get('exp:0:40'), undefined);
@@ -328,7 +352,7 @@ test('妖精、巨人、男女魔族分支保留性别条件与各自经验', as
     print_and_wait_calls += 1;
     return original_print_and_wait(text);
   };
-  const mod = fixture.load_module('dungeon/monster-play');
+  const mod = fixture.load_module('system/dungeon/monster-play');
 
   await mod.fairy_monster_play(0, 3);
   assert.equal(print_and_wait_calls, 4, '女性妖精分支保留四个 PRINTW');
@@ -353,7 +377,9 @@ test('妖精、巨人、男女魔族分支保留性别条件与各自经验', as
 test('食脑魔保留无条件返回，后半死亡分支不可达', async () => {
   const fixture = setup();
   fixture.store.set('base:0:0', 100);
-  const { brain_monster_play } = fixture.load_module('dungeon/monster-play');
+  const { brain_monster_play } = fixture.load_module(
+    'system/dungeon/monster-play',
+  );
   let random_calls = 0;
 
   assert.equal(
@@ -372,7 +398,7 @@ test('MONSTER_PLAY 取消返回 0；野狗路径结算处女丧失并转入回�
   const cancel = setup();
   cancel.set_inputs(999);
   assert.equal(
-    await cancel.load_module('dungeon/monster-play').monster_play(seq()),
+    await cancel.load_module('system/dungeon/monster-play').monster_play(seq()),
     0,
   );
 
@@ -382,7 +408,9 @@ test('MONSTER_PLAY 取消返回 0；野狗路径结算处女丧失并转入回�
   fixture.set_inputs(900);
   const { STATE } = fixture.load_module('system/flow/game-state');
   assert.equal(
-    await fixture.load_module('dungeon/monster-play').monster_play(seq(2)),
+    await fixture
+      .load_module('system/dungeon/monster-play')
+      .monster_play(seq(2)),
     STATE.TURNEND,
   );
   assert.equal(fixture.store.get('exp:0:0'), 5, 'Y = RAND:5 + 3');
@@ -395,7 +423,7 @@ test('MONSTER_PLAY 非狗先生成第 5 列，再按 E:507 分派并共用随机
   fixture.set_inputs(102); // 黏液怪，凌辱类型 2
   assert.equal(
     await fixture
-      .load_module('dungeon/monster-play')
+      .load_module('system/dungeon/monster-play')
       .monster_play(seq(0, 0, 0, 4, 1)),
     'TURNEND',
   );
@@ -417,7 +445,10 @@ test('MONSTER_PLAY 只接受本轮按钮：未列出的编号在输入框里被�
   fixture.store.set('item:22', 1); // 野狗的库存挂在 22 号道具上，按钮却是 900
   fixture.set_inputs(22);
   await assert.rejects(
-    () => fixture.load_module('dungeon/monster-play').monster_play(seq(0, 0)),
+    () =>
+      fixture
+        .load_module('system/dungeon/monster-play')
+        .monster_play(seq(0, 0)),
     /输入不合法！请输入以下值之一：/,
     '22 不是本轮的按钮（野狗的快捷键是 900），到不了 monster_data',
   );

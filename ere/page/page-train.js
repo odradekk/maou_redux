@@ -364,7 +364,7 @@ async function draw_status_screen(target) {
   show_equip_1(target);
 }
 
-on(EVENT.SHOW_STATUS, async () => {
+async function handle_show_status() {
   // 每轮换屏（ADR-0009）：回到指令菜单是一屏的开始，整屏清空后绘制
   // 状态画面。上一次菜单选择之后的结算展示、口上叙述必须已经被玩家按键
   // 确认过——缺等键的路径由测试夹具的未读输出检查（unread_output_clears）
@@ -372,9 +372,18 @@ on(EVENT.SHOW_STATUS, async () => {
   // 本身就算一次新输出，入口里等键会让每次菜单选择后都多一次按键。
   await change_screen();
   await draw_status_screen(era_flag.target);
-});
+}
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.SHOW_STATUS, handle_show_status);
+}
 
 module.exports = {
+  register,
   palam_level,
   print_palam,
 };

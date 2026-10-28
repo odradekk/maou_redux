@@ -4,6 +4,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   create_chara_loader,
   create_variable_loader,
@@ -89,7 +90,7 @@ function seed_world() {
   api.set('gotjuel:31:0', 7);
   api.set('juel:32:0', 20);
   api.set('gotjuel:32:0', 5);
-  fixture.load_module('event/event-end');
+  register_handlers(fixture, 'event/event-end');
   return { api, errors, fixture, flags };
 }
 

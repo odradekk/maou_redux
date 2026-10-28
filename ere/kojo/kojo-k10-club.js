@@ -83,31 +83,23 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_10 = 1; // FLAG:110 = 1（K10 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_10 = 1; // FLAG:110 = 1（K10 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_10 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_10 = 0;
+}
 
 // EVENTTRAIN NORMAL 档：调教开始时的口上。CFLAG:201 状态机——
 // 初调教（0）→ 魔族化仅一次（<5 且未魔族化）→ NTR 再捕获（>=1 &&
 // CFLAG:650==1）→ 屈服刻印 Lv1/2/3（各一次）→ 淫乱 → 爱慕 → 简易助手
 // 分支（NO:ASSI 直判 20/21/22）→ 二回目以降调 k10_kojo2。
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
@@ -1062,7 +1054,7 @@ on(EVENT.TRAIN, async () => {
   } else {
     await k10_kojo2(); // 二回目以降
   }
-});
+}
 
 /**
  * k10_kojo2：二回目以降的调教开始口上。按崩坏 / 淫乱 /
@@ -1412,7 +1404,7 @@ async function k10_kojo2(rand) {
 
 // EVENTEND NORMAL 档：调教结束时的口上。死亡/崩坏跳过，随后
 // 按屈服刻印 Lv0-3、淫乱/爱慕（各含体力高低分档）取首个命中。
-on(EVENT.END, async () => {
+async function handle_end() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
 
@@ -1503,7 +1495,7 @@ on(EVENT.END, async () => {
     return 1;
   }
   return 0;
-});
+}
 
 /**
  * kojo_message_com_10：七道头部检查 + SELECTCOM 指令口上。
@@ -11296,7 +11288,19 @@ banishment_koujo_family.register(10, banishment_koujo_k10);
 public_exucution_koujo_family.register(10, public_exucution_koujo_k10);
 grotesque_koujo_family.register(10, grotesque_koujo_k10);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train);
+  on(EVENT.END, handle_end);
+}
+
 module.exports = {
+  register,
   kojo_message_com_10,
   dog_kojo_10,
   colosseum_kojo_10,

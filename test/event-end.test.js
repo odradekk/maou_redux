@@ -11,6 +11,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：train 循环已跑过的调教后状态——目标 31、记录值与暂存值就位、
@@ -32,7 +33,7 @@ function seed_world(fixture, { assi = -1 } = {}) {
   era_flag.target_backup = 31;
   era_flag.assi_backup = assi;
   fixture.era.beginTrain(0, 31, ...(assi >= 0 ? [assi] : []));
-  fixture.load_module('event/event-end');
+  register_handlers(fixture, 'event/event-end');
   return era_flag;
 }
 

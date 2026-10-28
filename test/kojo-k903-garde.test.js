@@ -9,6 +9,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 const CID = 33;
@@ -29,8 +30,8 @@ async function setup_k903(seed, selectcom = 0) {
   fixture.store.set(`ex_talent:${CID}:103`, 1);
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k903-garde');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k903-garde');
   return fixture;
 }
 

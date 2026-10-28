@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon.js run_dungeon / check_status / get_junk_item /
+ * ere/system/dungeon/dungeon.js run_dungeon / check_status / get_junk_item /
  * get_down_enemy 的行为测试（issue #172，阶段 3 H3）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。随机源经
@@ -20,6 +20,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 /** 所有掷骰恒 0（RAND:N == 0；WALK = 0：不推进） */
 const zero = () => 0;
@@ -29,7 +30,7 @@ const max = (n) => n - 1;
 const one = () => 1;
 
 function load(fixture) {
-  return fixture.load_module('dungeon/dungeon');
+  return fixture.load_module('system/dungeon/dungeon');
 }
 
 function text_lines(fixture) {
@@ -63,9 +64,9 @@ function setup_world() {
 
 /** 装载三档链并触发一次 EVENTTURNEND（era_flag.time 由调用方控制） */
 async function emit_turnend(fixture) {
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTURNEND');
 }
@@ -476,7 +477,7 @@ test('勇者撤退：D:20 <= 0 且 FLOOR <= 1 → 走到迷宫外（dungeon_town
 
   await run_dungeon(1, zero);
   assert(text_lines(fixture).includes('阿尔回到了地下城外面。'), '撤到迷宫外');
-  // #178 起城镇事件走真身（ere/dungeon/dungeon-town.js）：zero 随机下
+  // #178 起城镇事件走真身（ere/system/dungeon/dungeon-town.js）：zero 随机下
   // 受注段必达（set_quest 的 534 = 1）——以受注播报钉「真身被调用」
   assert(
     text_lines(fixture).some((l) => l.includes('阿尔接受了任务！')),

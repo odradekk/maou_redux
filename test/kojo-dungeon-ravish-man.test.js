@@ -17,6 +17,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：被凌辱者 31 入列（无调教上下文——本文件不依赖 beginTrain）
@@ -253,7 +254,7 @@ test('GOBI_KOUJO 行内拼接：『猪…』整段一行收语尾（#570）', as
     f.store.set('talent:31:17', 1);
     f.store.set('talent:31:163', 1);
   });
-  fixture.load_module('kojo/kojo-k3-noble');
+  register_handlers(fixture, 'kojo/kojo-k3-noble');
   fixture.load_module('era-utils/era-flag').target = 31;
   const mod = fixture_module(fixture);
   // orc：rand_n(5)=2 不中口交、rand_n(4)=1 不中全穴、rand_n(3)=0 中屈辱

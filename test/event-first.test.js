@@ -22,6 +22,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_gamebase } = require('./helpers/gamebase');
 const {
   preset_chara_0,
@@ -101,7 +102,7 @@ function expected_init_writes(initial_slave) {
       { name: 'portcflag:17:数据版本', value: 1 },
       { name: 'flag:10005', value: 17 }, // TARGET = 1（序号）→ 角色 ID 17
       { name: 'cflag:17:420', value: 1 }, // 玛奥专属标记
-      // CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/
+      // CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/system/chara/
       // chara-name.js）：省略数值参数按 0 处理（无 TARGET 代入），L_A = 0 =
       // 魔王，落特殊角色分支——两槽称呼取预设呼び名（addCharacter
       // 已写过同值，这里再写一次）、NID = 10000；村娘不经此调用
@@ -362,7 +363,7 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   );
   // 真身的可观察效果：NID 落 10000 + 17（特殊角色分支的「定义 NID」）
   assert.equal(fixture.store.get('cflag:17:6'), 10017);
-  // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/chara/chara-body.js）：
+  // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/system/chara/chara-body.js）：
   // 条件看 CFLAG:17 的落盘（本用例不注入随机源，只断言
   // 写入发生；逐值与全量写入断言在下方两条「初始化写入」用例里）
   assert(
@@ -436,7 +437,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   // rand ≡ 0 → RAND(1,17) 取 1：勇者位 1 的预设必须先种（严格夹具，#35）
   preset_chara_0(fixture);
   preset_chara_1(fixture);
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
@@ -517,7 +518,7 @@ test('初始化写入（村娘）：CFLAG 一组逐项落在角色 ID 17 上（�
   preset_chara_0(fixture);
   preset_chara_17(fixture);
   fixture.era.addCharacter(0); // 标题步骤的等价物
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
@@ -547,7 +548,7 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_17(fixture);
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   fixture.set_inputs(1, 2, 1, 0, 1); // 女性 + 扶她 + 村娘 + 普通（#181 第二问）+ 搬运默认走完
   // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，村娘加入后世界才是
@@ -577,7 +578,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
@@ -623,7 +624,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
 
 test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重问', async () => {
   const fixture = create_era_fixture();
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
 
   // 女性（跳过肉棒尺寸）→ 狂王性别扶她 → 村娘 → 地下城模式普通（#181 第二问）

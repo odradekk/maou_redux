@@ -68,25 +68,17 @@ const rand_n = (n) => Math.floor(Math.random() * n);
 const MASTER = 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_7 = 1; // FLAG:107 = 1（K7 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_7 = 1; // FLAG:107 = 1（K7 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_7 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_7 = 0;
+}
 
 /**
  * EVENTTRAIN NORMAL 档：调教开始时的口上。
@@ -97,7 +89,7 @@ on(
  * 淫乱（含魔族化分支）→ 爱慕（含魔族化分支）→ 崩坏 → 简易助手分支
  * （TALENT:MASTER:122==0 或 ASSI<0 或无名助手 → K7_KOJO2）。
  */
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   if (era0('flag:7') <= 0) {
     return 0;
   }
@@ -1038,7 +1030,7 @@ on(EVENT.TRAIN, async () => {
     return k7_kojo2(); // CALL K7_KOJO2
   }
   return 0;
-});
+}
 
 /**
  * k7_kojo2：调教开始口上的二回目以降（崩坏 / 反抗刻印Lv3 /
@@ -1481,7 +1473,7 @@ async function k7_kojo2() {
  * 屈服刻印Lv1以下/Lv2/Lv3+爱无 → 淫乱/爱慕（各按体力 BASE:0 ≥/≤ 500
  * 分档）取首个命中。BASE:0 省略角色位按旧引擎 TARGET 简写展开。
  */
-on(EVENT.END, async () => {
+async function handle_end() {
   const target = era_flag.target;
   if (era0('flag:7') <= 0) {
     return 0;
@@ -1600,7 +1592,7 @@ on(EVENT.END, async () => {
     return 1;
   }
   return 0;
-});
+}
 
 /**
  * kojo_message_com_7：指令口上族。
@@ -14452,7 +14444,19 @@ banishment_koujo_family.register(7, banishment_koujo_k7);
 public_exucution_koujo_family.register(7, public_exucution_koujo_k7);
 grotesque_koujo_family.register(7, grotesque_koujo_k7);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train);
+  on(EVENT.END, handle_end);
+}
+
 module.exports = {
+  register,
   kojo_message_com_7,
   dog_kojo_7,
   colosseum_kojo_7,

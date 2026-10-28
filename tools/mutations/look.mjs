@@ -1,12 +1,12 @@
 // issue #389：LOOK 外观描述（新条目 M8301-M8340 ＋ 随实现迁入的 M7826 / M7868-M7871）。
 //
-// 两个目标文件：ere/chara/look.js（look_set/look_clear/look_info/
-// look_info_love/love_like_base）与 ere/chara/look-info.js（get_look_info）。
+// 两个目标文件：ere/system/chara/look.js（look_set/look_clear/look_info/
+// look_info_love/love_like_base）与 ere/system/chara/look-info.js（get_look_info）。
 // tests 一律是这张工单的 test/look.test.js。
 //
 // M7826 原在 tools/mutations/kojo.mjs、M7868-M7871 原在
 // tools/mutations/chara-info.mjs（目标都是 kojo-dungeon-bitch-log.js 里的
-// get_look_info 子集）：#389 把那份子集搬进 ere/chara/look-info.js，五条
+// get_look_info 子集）：#389 把那份子集搬进 ere/system/chara/look-info.js，五条
 // 随目标搬家（本分片 +5：kojo.mjs -1、chara-info.mjs -4），tests 改到这张工单的
 // test/look.test.js——kojo/chara-info 两侧的 get_look_info 用例已随实现
 // 一并搬走，留原 tests 会「find 失配 + 无人守」双错。
@@ -14,8 +14,8 @@
 // 覆盖面取法：每条钉一个**可观测的**字面量或分支——look_set/love_score 是
 // 纯计算（返回值/素质表层直接可断言），look_info/look_info_love 经
 // era.print 的输出行断言。
-const look = 'ere/chara/look.js';
-const info = 'ere/chara/look-info.js';
+const look = 'ere/system/chara/look.js';
+const info = 'ere/system/chara/look-info.js';
 
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 89; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）；+30（M11910-M11939，20 个语尾调用点的情绪档与其分支，含两处条件对调）；+3（M11960-M11962，显示面的上界/门槛/心形上限三个字面量——票里点名的 29/31 实测是等价变异，见条目头注）；+3（M12180-M12182，经验補正七组各自的档位，#601）；#653 +2（M13262/M13263：双性恋与牝犬补正段的回归检查）
@@ -335,7 +335,7 @@ export default [
     },
   ),
 
-  // —— get_look_info：随实现搬进 ere/chara/look-info.js 的存量条目
+  // —— get_look_info：随实现搬进 ere/system/chara/look-info.js 的存量条目
   //    （M7826 来自 kojo.mjs、M7868-M7871 来自 chara-info.mjs；目标文件与
   //    tests 一并改到这张工单，kojo/chara-info 两个分片的 COUNT 相应减一/减四） ——
   {
@@ -441,7 +441,7 @@ export default [
 
   // —— #583：20 个语尾调用点各自传的情绪档（`CALL GOBI_KOUJO, <档>`） ——
   //
-  // 这一批打在 ere/chara/look.js 的语尾实参上，守它们的是 test/look.test.js
+  // 这一批打在 ere/system/chara/look.js 的语尾实参上，守它们的是 test/look.test.js
   // 的「语尾档位表」：语尾族里装假处理函数返回 `〈档〉` 标记，按构造出的
   // 状态断言**整行**的标记序列——只断「行里有某档」会被同一行的另一个同档
   // 标记顶过去，档位写错照样绿（#570 抽样把该处 4 改成 0 时全绿，正是

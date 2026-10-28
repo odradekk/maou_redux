@@ -1,5 +1,5 @@
 /**
- * @file ere/system/dispatch/dispatch-family.js 与 ere/chara/chara-ex.js 的
+ * @file ere/system/dispatch/dispatch-family.js 与 ere/system/chara/chara-ex.js 的
  * 行为测试（issue #21，决议 #7）。
  *
  * 核心被测行为（#7 的接口语义，这张票是它的首次运行时验证）：
@@ -137,7 +137,9 @@ test('实现抛出的异常原样上抛，注册表不吞不拦', async () => {
 
 function load_chara_ex() {
   const fixture = create_era_fixture();
-  const { add_chara_ex, chara_ex } = fixture.load_module('chara/chara-ex');
+  const { add_chara_ex, chara_ex } = fixture.load_module(
+    'system/chara/chara-ex',
+  );
   return { fixture, add_chara_ex, chara_ex };
 }
 
@@ -290,7 +292,7 @@ test('独立性：事件注册表可用且不连带载入分发注册表', async
 
 test('独立性：CHARA_EX 族不往事件注册表塞任何处理器（反之亦然）', async () => {
   const fixture = create_era_fixture();
-  const { chara_ex } = fixture.load_module('chara/chara-ex');
+  const { chara_ex } = fixture.load_module('system/chara/chara-ex');
   const registry = fixture.load_module('system/event/registry');
 
   // chara_ex 没有往事件注册表注册任何处理器：合法事件名在这里同样是空链，

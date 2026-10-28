@@ -41,13 +41,13 @@ const { run_event_nextmonth } = require('#/event/event-nextmonth');
 // enter_enemy 导出，解构会把函数固化进本闭包、替换不可达——两个写法的
 // 游戏行为完全等价，差别只在导出表的属性查找发生在调用时
 const enter_enemy_mod = require('#/event/enter-enemy');
-const { name_reset } = require('#/chara/char-make');
-const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_modsave = require('#/era-utils/era-modsave');
+const { name_reset } = require('#/system/chara/char-make');
+const { party_char_del } = require('#/system/dungeon/dungeon-party');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 const { EVENT } = require('#/data/event-name-const');
@@ -360,152 +360,157 @@ async function debug_check(rand = default_rand) {
   return 0;
 }
 
-on(
-  EVENT.TURNEND,
-  async () => {
-    // 全角色判定循环（LOCAL = TARGET 暂存 → FOR TARGET,0,CHARANUM →
-    // 原样还原）。check_specialskil 只对非当前目标执行（SIF TARGET != LOCAL）
-    const saved_target = era_flag.target;
+async function handle_turnend_pri() {
+  // 全角色判定循环（LOCAL = TARGET 暂存 → FOR TARGET,0,CHARANUM →
+  // 原样还原）。check_specialskil 只对非当前目标执行（SIF TARGET != LOCAL）
+  const saved_target = era_flag.target;
+  for (const cid of era.getAddedCharacters()) {
+    era_flag.target = cid; // FOR TARGET 写全局 TARGET
+    await check_sellassiable(cid);
+    if (cid !== saved_target) {
+      await check_specialskil(cid);
+    }
+    in_vagina_all(); // 妊娠判定（全角色）
+    conception_check_all(); // 妊娠确定处理（全角色）
+  }
+  era_flag.target = saved_target; // TARGET = LOCAL
+
+  // 完全死亡角色的删除段：整段被注释掉，保持不实现。
+
+  // 休憩标志外す（flag:0 = 休息，EVENTSHOP 的休息置位、此处复位）
+  era.set('flag:0', 0);
+
+  // 午后（TIME==1）则进次日、午前（TIME==0）则进午后
+  if (era_flag.time === 1) {
+    // 妊判第二组（卖春/狂王兽奸/NTR 各两件）。这里也是
+    // FOR TARGET,0,CHARANUM——六个被调函数内部自己 REPEAT 全角色、
+    // 不看 TARGET，但 FOR 仍写全局 TARGET，按原样写回（#5 决议第六条）
+    const local = era_flag.target;
     for (const cid of era.getAddedCharacters()) {
-      era_flag.target = cid; // FOR TARGET 写全局 TARGET
-      await check_sellassiable(cid);
-      if (cid !== saved_target) {
-        await check_specialskil(cid);
-      }
-      in_vagina_all(); // 妊娠判定（全角色）
-      conception_check_all(); // 妊娠确定处理（全角色）
+      era_flag.target = cid;
+      in_vagina_extra();
+      conception_check_extra();
+      in_vagina_kyouou_to_t();
+      conception_check_kyouou_to_t();
+      in_vagina_ntrd_to_t();
+      conception_check_ntrd_to_t();
     }
-    era_flag.target = saved_target; // TARGET = LOCAL
+    era_flag.target = local; // TARGET = LOCAL
 
-    // 完全死亡角色的删除段：整段被注释掉，保持不实现。
+    // 日付変更時のイベント（日程推进，#115 真身；只此一处调用，
+    // 先于 DAY:0 += 1 执行）
+    await run_event_nextday();
 
-    // 休憩标志外す（flag:0 = 休息，EVENTSHOP 的休息置位、此处复位）
-    era.set('flag:0', 0);
+    // 日推进：DAY:0 天数 +1；DAY:2 日 +1，超过 28 触发月替（
+    // EVENTNEXTMONTH，#115）；DAY:3 星期 +1，日曜的次日回月曜
+    era_flag.day_count += 1;
+    era_flag.date += 1;
+    if (era_flag.date > 28) {
+      // 毎月 29 日以上になってたら月替わり処理（#115 真身）
+      await run_event_nextmonth();
+    }
+    era_flag.weekday += 1;
+    if (era_flag.weekday > 6) {
+      // 日曜の次は月曜にする
+      era_flag.weekday = 0;
+    }
 
-    // 午后（TIME==1）则进次日、午前（TIME==0）则进午后
-    if (era_flag.time === 1) {
-      // 妊判第二组（卖春/狂王兽奸/NTR 各两件）。这里也是
-      // FOR TARGET,0,CHARANUM——六个被调函数内部自己 REPEAT 全角色、
-      // 不看 TARGET，但 FOR 仍写全局 TARGET，按原样写回（#5 决议第六条）
-      const local = era_flag.target;
-      for (const cid of era.getAddedCharacters()) {
-        era_flag.target = cid;
-        in_vagina_extra();
-        conception_check_extra();
-        in_vagina_kyouou_to_t();
-        conception_check_kyouou_to_t();
-        in_vagina_ntrd_to_t();
-        conception_check_ntrd_to_t();
-      }
-      era_flag.target = local; // TARGET = LOCAL
+    // TIME = 0（次日午前）
+    era_flag.time = 0;
 
-      // 日付変更時のイベント（日程推进，#115 真身；只此一处调用，
-      // 先于 DAY:0 += 1 执行）
-      await run_event_nextday();
+    // 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）
+    await enter_enemy_mod.enter_enemy(0);
 
-      // 日推进：DAY:0 天数 +1；DAY:2 日 +1，超过 28 触发月替（
-      // EVENTNEXTMONTH，#115）；DAY:3 星期 +1，日曜的次日回月曜
-      era_flag.day_count += 1;
-      era_flag.date += 1;
-      if (era_flag.date > 28) {
-        // 毎月 29 日以上になってたら月替わり処理（#115 真身）
-        await run_event_nextmonth();
-      }
-      era_flag.weekday += 1;
-      if (era_flag.weekday > 6) {
-        // 日曜の次は月曜にする
-        era_flag.weekday = 0;
-      }
-
-      // TIME = 0（次日午前）
-      era_flag.time = 0;
-
-      // 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）
-      await enter_enemy_mod.enter_enemy(0);
-
-      // 宣言数 SENGEN/SENGENMAX（EX_FLAG:9012 = 水晶球流行度，SENGEN
-      // 一族：投放时累加、每日 SENGEN_VIDEO_DE 衰减）。#502 起真读——此前
-      // 「EX_FLAG 表未实现、按 0 承接」的 TODO 已过时（门面早已备好）。
-      // DAY 分档（>=100/>=300/>=500 各减一档，注意 IF 顺序：
-      // DAY >= 500 的分支因 >= 100 先命中而不可达，按原样保留）
-      const ex_flag_9012 = era_exflag.crystal_ball_popularity;
-      const day = era_flag.day_count;
-      let sengen;
-      let sengenmax;
-      if (day >= 100) {
-        sengen = ex_flag_9012 - 2;
-        sengenmax = 12 - 2;
-      } else if (day >= 300) {
-        sengen = ex_flag_9012 - 3;
-        sengenmax = 12 - 3;
-      } else if (day >= 500) {
-        sengen = ex_flag_9012 - 4;
-        sengenmax = 12 - 4;
-      } else {
-        sengen = ex_flag_9012 - 2;
-        sengenmax = 12 - 1;
-      }
-      // 上限钳制、按 DAY 追加遇敌、下限修正（EX_FLAG:9012 == 0 时
-      // SENGEN 归 0，追加循环不发生）
-      if (sengen >= sengenmax) {
-        sengen = sengenmax;
-      }
-      if (day >= 100) {
-        // enter_enemy（#171 起为真身）
-        await enter_enemy_mod.enter_enemy(0);
-      }
-      if (day >= 300) {
-        // enter_enemy
-        await enter_enemy_mod.enter_enemy(0);
-      }
-      if (day >= 500) {
-        // enter_enemy
-        await enter_enemy_mod.enter_enemy(0);
-      }
-      if (sengen <= 0 && ex_flag_9012 > 0) {
-        sengen = 1;
-      }
-      if (ex_flag_9012 === 0) {
-        sengen = 0;
-      }
-      // IF SENGEN > 0：FOR EFFECT, 0, SENGEN 追加遇敌
-      for (let effect = 0; effect < sengen; effect += 1) {
-        // enter_enemy
-        await enter_enemy_mod.enter_enemy(0);
-      }
+    // 宣言数 SENGEN/SENGENMAX（EX_FLAG:9012 = 水晶球流行度，SENGEN
+    // 一族：投放时累加、每日 SENGEN_VIDEO_DE 衰减）。#502 起真读——此前
+    // 「EX_FLAG 表未实现、按 0 承接」的 TODO 已过时（门面早已备好）。
+    // DAY 分档（>=100/>=300/>=500 各减一档，注意 IF 顺序：
+    // DAY >= 500 的分支因 >= 100 先命中而不可达，按原样保留）
+    const ex_flag_9012 = era_exflag.crystal_ball_popularity;
+    const day = era_flag.day_count;
+    let sengen;
+    let sengenmax;
+    if (day >= 100) {
+      sengen = ex_flag_9012 - 2;
+      sengenmax = 12 - 2;
+    } else if (day >= 300) {
+      sengen = ex_flag_9012 - 3;
+      sengenmax = 12 - 3;
+    } else if (day >= 500) {
+      sengen = ex_flag_9012 - 4;
+      sengenmax = 12 - 4;
     } else {
-      // 午前 → 午后
-      era_flag.time = 1;
+      sengen = ex_flag_9012 - 2;
+      sengenmax = 12 - 1;
     }
-
-    // 道具自动购入（AUTO_BUYING，真身在本文件；触发位 FLAG:34 无写入点、恒 0）
-    await auto_buying();
-
-    // 调教对象与助手清空
-    era_flag.target = -1;
-    era_flag.assi = -1;
-
-    // 反作弊检查（`SIF !反作弊` → debug_check）。反作弊是 MOD
-    // 追加的 SAVEDATA 开关（魔改使用的自定义全局变量），#547 落 modsave:1
-    // （era_modsave.anti_cheat）：0 = 每回合执行（新档默认），1 = 跳过检查
-    // （设置页 [30] 可切，OFF = 可开修改）
-    if (!era_modsave.anti_cheat) {
-      const checked = await debug_check();
-      // 反作弊判定出游戏结束（魔王暴走 GAMEOVER）时它是回标题的转场目标
-      // （#852）：原样上抛，本档下方的 BEGIN SHOP 不再执行
-      if (is_state(checked)) {
-        return checked;
-      }
+    // 上限钳制、按 DAY 追加遇敌、下限修正（EX_FLAG:9012 == 0 时
+    // SENGEN 归 0，追加循环不发生）
+    if (sengen >= sengenmax) {
+      sengen = sengenmax;
     }
+    if (day >= 100) {
+      // enter_enemy（#171 起为真身）
+      await enter_enemy_mod.enter_enemy(0);
+    }
+    if (day >= 300) {
+      // enter_enemy
+      await enter_enemy_mod.enter_enemy(0);
+    }
+    if (day >= 500) {
+      // enter_enemy
+      await enter_enemy_mod.enter_enemy(0);
+    }
+    if (sengen <= 0 && ex_flag_9012 > 0) {
+      sengen = 1;
+    }
+    if (ex_flag_9012 === 0) {
+      sengen = 0;
+    }
+    // IF SENGEN > 0：FOR EFFECT, 0, SENGEN 追加遇敌
+    for (let effect = 0; effect < sengen; effect += 1) {
+      // enter_enemy
+      await enter_enemy_mod.enter_enemy(0);
+    }
+  } else {
+    // 午前 → 午后
+    era_flag.time = 1;
+  }
 
-    // SHOP 转场 —— 无条件出口（链继续，普通档与 #LATER 随后执行，
-    // #6 已证明的引擎行为）
-    return begin(STATE.SHOP);
-  },
-  TIER.PRI,
-);
+  // 道具自动购入（AUTO_BUYING，真身在本文件；触发位 FLAG:34 无写入点、恒 0）
+  await auto_buying();
+
+  // 调教对象与助手清空
+  era_flag.target = -1;
+  era_flag.assi = -1;
+
+  // 反作弊检查（`SIF !反作弊` → debug_check）。反作弊是 MOD
+  // 追加的 SAVEDATA 开关（魔改使用的自定义全局变量），#547 落 modsave:1
+  // （era_modsave.anti_cheat）：0 = 每回合执行（新档默认），1 = 跳过检查
+  // （设置页 [30] 可切，OFF = 可开修改）
+  if (!era_modsave.anti_cheat) {
+    const checked = await debug_check();
+    // 反作弊判定出游戏结束（魔王暴走 GAMEOVER）时它是回标题的转场目标
+    // （#852）：原样上抛，本档下方的 BEGIN SHOP 不再执行
+    if (is_state(checked)) {
+      return checked;
+    }
+  }
+
+  // SHOP 转场 —— 无条件出口（链继续，普通档与 #LATER 随后执行，
+  // #6 已证明的引擎行为）
+  return begin(STATE.SHOP);
+}
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TURNEND, handle_turnend_pri, TIER.PRI);
+}
 
 module.exports = {
+  register,
   auto_buying,
   debug_check,
 };

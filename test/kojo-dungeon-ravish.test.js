@@ -25,6 +25,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -113,7 +114,7 @@ test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾
     f.store.set('talent:31:17', 1); // プライド低い → 语尾档 1（喜び）
     f.store.set('talent:31:163', 1); // K3 高貴
   });
-  fixture.load_module('kojo/kojo-k3-noble');
+  register_handlers(fixture, 'kojo/kojo-k3-noble');
   fixture.load_module('era-utils/era-flag').target = 31;
   const mod = fixture_module(fixture);
   // orc（女版）畏怖阶段口上先消费 1 掷（c131=0 → 初见档 pick），分支链同
@@ -471,7 +472,7 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     [1001, 901], // EX 下界（EX_TALENT:101 → K901）
   ]) {
     const fixture = create_era_fixture();
-    fixture.load_module('chara/chara-ex').get_ex_kojo_num = () => local;
+    fixture.load_module('system/chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
     mod.ryouzyoku_kojo_family.register(key, async (...args) => {
@@ -489,7 +490,7 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
     1000, // EX 下界外一格（键 900 不在声明空间）
   ]) {
     const fixture = create_era_fixture();
-    fixture.load_module('chara/chara-ex').get_ex_kojo_num = () => local;
+    fixture.load_module('system/chara/chara-ex').get_ex_kojo_num = () => local;
     const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
     const seen = [];
     // 三个边界键都挂探针：窗口被放宽时键会落到声明空间外直接抛错，

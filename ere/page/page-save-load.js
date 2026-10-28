@@ -76,7 +76,8 @@
  *     「不输入」在引擎上的归一写法，按 #567 的决定（空输入分支一律保留）
  *     恢复可达。
  *   - EVENTLOAD（读档后的回调链）**自 #137 起由 ere/event/event-load.js
- *     承载**（本文件 require 装配，emit 点在 load_game 的成功分支）：
+ *     承载**（处理器在 system/flow/startup.js 的装配表里注册，emit 点在
+ *     load_game 的成功分支）：
  *     LOADGLOBAL 自 #547 起在该链首行镜像（await era.loadGlobal——global:3
  *     不即时 SAVEGLOBAL 打破了 #137 的不镜像前提，见 event-load.js 文件头）；
  *     名字初始化两调用自 #105 起为真身；LASTLOAD_NO == 999 →
@@ -93,10 +94,6 @@
  */
 
 const era = require('#/era-electron');
-// EVENTLOAD 钩子的注册模块（#137）：emit 点在本文件 load_game 的成功
-// 分支，require 即装配（on 注册在模块顶层）——与 page-shop.js 的
-// EVENTSHOP 同构（注册与 emit 同侧装配，测试不依赖 main-loop 的清单）
-require('#/event/event-load');
 const { emit } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
 const { chara } = require('#/facade/chara');

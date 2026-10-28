@@ -19,6 +19,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_gamebase } = require('./helpers/gamebase');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
@@ -47,13 +48,13 @@ function seed_train_world(fixture) {
   fixture.store.set('base:17:1', 2000);
   fixture.store.set('maxbase:17:1', 2000);
 
-  fixture.load_module('event/event-train');
-  fixture.load_module('event/event-end');
-  fixture.load_module('event/event-com');
-  fixture.load_module('event/event-comend');
-  fixture.load_module('system/train/source-check');
-  fixture.load_module('page/page-train');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'event/event-train');
+  register_handlers(fixture, 'event/event-end');
+  register_handlers(fixture, 'event/event-com');
+  register_handlers(fixture, 'event/event-comend');
+  register_handlers(fixture, 'system/train/source-check');
+  register_handlers(fixture, 'page/page-train');
+  register_handlers(fixture, 'page/page-usercom');
   fixture.load_module('system/train/com-caress');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 17;

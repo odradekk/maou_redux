@@ -6,7 +6,6 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { search_family } = require('#/chara/chara-family');
 const { museum_koujo } = require('#/kojo/kojo-system');
 const {
   archive_slot_of,
@@ -18,6 +17,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname } = require('#/utils/callname-utils');
 const { default_rand } = require('#/utils/numeric');
 

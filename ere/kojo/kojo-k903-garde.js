@@ -52,22 +52,20 @@ const default_rand = (n) => Math.floor(Math.random() * n);
 const era0 = (key) => era.get(key) || 0;
 
 // EVENTTRAIN #PRI 档：设置嘉德口上存在标志。
-on(
-  EVENT.TRAIN,
-  () => {
-    era_exflag.kojo_gade_session = 1; // EX_FLAG:103 = 嘉德口上存在标志
-    if (game.kojo.口上开关 == 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  era_exflag.kojo_gade_session = 1; // EX_FLAG:103 = 嘉德口上存在标志
+  if (game.kojo.口上开关 == 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：清嘉德口上存在标志。
-on(EVENT.END, () => (era_exflag.kojo_gade_session = 0), TIER.LATER);
+function handle_end_later() {
+  era_exflag.kojo_gade_session = 0;
+}
 
 // EVENTTRAIN NORMAL 档：调教开始口上。
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const master_name = chara_nickname(0);
@@ -217,7 +215,7 @@ on(EVENT.TRAIN, async () => {
   } else {
     return k903_kojo2();
   }
-});
+}
 
 // k903_kojo2
 async function k903_kojo2() {
@@ -512,8 +510,6 @@ async function eventend_kojo_903() {
   await era.printAndWait(`「啊……可恶……已经………………」`);
   return 0;
 }
-
-on(EVENT.END, eventend_kojo_903);
 
 // kojo_message_com_903
 async function kojo_message_com_903(rand = default_rand) {
@@ -7846,7 +7842,19 @@ kojo_message_palamcng_family.register(903, kojo_message_palamcng_903);
 kojo_message_markcng_family.register(903, kojo_message_markcng_903);
 self_kojo_family.register(903, self_kojo_k903);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train);
+  on(EVENT.END, eventend_kojo_903);
+}
+
 module.exports = {
+  register,
   k903_kojo2,
   kojo_message_com_903,
   dog_kojo_903,

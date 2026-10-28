@@ -93,7 +93,7 @@ test('FS_BITCH：LOOKS 本人描写（头发颜色默认 + 随机覆盖 + 种族
     seq_rand(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   );
   // 随机源已钉死（全 0）→ 整串确定：发色取 GET_LOOK_INFO、随机覆盖逐次命中、
-  // 末尾种族 + 名字拼接（#389 起 GET_LOOK_INFO 的真身在 ere/chara/look-info.js）
+  // 末尾种族 + 名字拼接（#389 起 GET_LOOK_INFO 的真身在 ere/system/chara/look-info.js）
   assert.equal(look, '金发的人类的温妮', '发色 + 种族 + 名字的整串');
 });
 
@@ -103,11 +103,11 @@ test('FS_BITCH「LOOKS」：41 行 overwrite 表逐行走完（条件取值 × �
   // 条件为真、其余为假，locals 就是本行的词（末尾恒拼上「种族的名字」）。
   //
   // 条件用到的 24 个 talent / 1 个 cflag / 6 个 abl 下标全部在 yml 里有名字，
-  // 且**每一行的取值在游戏里都造得出来**：素质侧的取值域由 ere/chara/look.js
+  // 且**每一行的取值在游戏里都造得出来**：素质侧的取值域由 ere/system/chara/look.js
   // 的分档表写死（310 ∈ {1,20,50,100,150,201}、313 ∈ 1-34、312 ∈ 1-28、
   // 315 ∈ 1-21∪90-93、305 ∈ 1-8，253/255/244/99/100/256/204/35/15/16/17/12/
   // 10/26/23/25/73/21/22 是 0/1 开关），ABL 侧是能力等级（37 的 1-3 与 10、
-  // 30-33 的 10），CFLAG:509 由 ere/dungeon/dungeon-room.js:1060 写（迷惑状態）。
+  // 30-33 的 10），CFLAG:509 由 ere/system/dungeon/dungeon-room.js:1060 写（迷惑状態）。
   // 没有「造不出来的行」——41 行逐条核过。
   //
   // 边界外的三格单列：它们必须**不**命中，用来钉住比较方向与 INRANGE 的上下界
@@ -332,7 +332,7 @@ test('LOG_TRY_BITCH 与 FI_TRY_BITCH 互不混同：LOG 只输出不改状态、
   });
   // LOG_TRY_BITCH：整行文本逐字钉死（随机源已钉死，取值是确定的；原来只查
   // 「有输出」，把整段文本放掉了）。首段是 FS_BITCH 的 LOOKS 分档——
-  // #389 起它的 GET_LOOK_INFO 真身在 ere/chara/look-info.js。
+  // #389 起它的 GET_LOOK_INFO 真身在 ere/system/chara/look-info.js。
   // #600 起各分支片段是同一行（无后缀 PRINTFORM 不换行），输出恰好一条
   await mod.log_try_bitch(31, 'DUNGEON');
   assert.deepEqual(
@@ -495,7 +495,7 @@ test('【验收】卖春主流程调用日志真身（LOG_TRY_BITCH 真身文本
 // —— GET_LOOK_INFO 的用例已随实现搬到 test/look.test.js（#389） ——
 //
 // 本文件此前内联了该函数的 11 个子集 kind 实现，并以 mod.get_look_info 断言；
-// #389 把整函数搬进 ere/chara/look-info.js，断言随之搬家，这里的 5 条回归
+// #389 把整函数搬进 ere/system/chara/look-info.js，断言随之搬家，这里的 5 条回归
 // 用例（种族2 映射与 $N 回落、种族12 精英切换、性格两段优先与 [160,179) 开闭、
 // 婚史压缩码各分支）在 test/look.test.js 的表驱动用例里逐条有对应。
 

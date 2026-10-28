@@ -9,6 +9,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 function seed_world(fixture) {
@@ -262,7 +263,7 @@ test('SALE_CHARA：零价普通、精英与近卫角色不结算也不触发出�
     fixture.store.set('talent:19:85', 1);
     if (key) fixture.store.set(key, 1);
     fixture.set_inputs(0);
-    fixture.load_module('kojo/kojo-k19-fia');
+    register_handlers(fixture, 'kojo/kojo-k19-fia');
     const aftertrain = fixture.load_module('event/event-aftertrain');
     aftertrain.remember_sale_price(12345);
     const before = new Map(fixture.store);
@@ -323,7 +324,7 @@ test('SALE_CHARA：调教外事件码能抵达角色出售口上', async () => {
   fixture.store.set('talent:19:179', 1);
   fixture.store.set('talent:19:85', 1);
   fixture.set_inputs(0);
-  fixture.load_module('kojo/kojo-k19-fia');
+  register_handlers(fixture, 'kojo/kojo-k19-fia');
 
   await fixture
     .load_module('system/stronghold/sale')
@@ -578,7 +579,7 @@ test('CHECK_SELLASSIABLE：回合结束与珠结算两个入口，以及能力�
   for (const id of [0, 10, 11, 12, 22]) {
     turnend.store.set(`abl:31:${id}`, id === 22 ? 3 : id === 11 ? 4 : 5);
   }
-  turnend.load_module('event/event-turnend');
+  register_handlers(turnend, 'event/event-turnend');
   await turnend.load_module('system/event/registry').emit('EVENTTURNEND');
   assert.equal(turnend.store.get('cflag:31:0'), 2);
   assert(

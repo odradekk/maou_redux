@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-marriage.js 的行为测试（issue #393，N9）。
+ * @file ere/system/chara/chara-marriage.js 的行为测试（issue #393，N9）。
  *
  * 缝 = test/helpers/era-fixture.js。婚姻状况读写 cflag:601/602/606/609，
  * 家族构成读 talent:320（`chara_marriage_before` 的既有测试在
@@ -19,7 +19,7 @@ function add_chara(fixture, cid, name = `角色${cid}`) {
 }
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-marriage');
+  return fixture.load_module('system/chara/chara-marriage');
 }
 
 function texts(fixture) {
@@ -1082,7 +1082,7 @@ test('marriage：奴隶列表的翻页窗口按位置开——第 21 人只在�
   assert.ok(texts(fixture).includes('*角色1和角色21举行了结婚典礼*'));
   assert.equal(
     fixture.store.get('cflag:1:601'),
-    fixture.load_module('chara/chara-stats').chara_id_output(21) + 9,
+    fixture.load_module('system/chara/chara-stats').chara_id_output(21) + 9,
     '登记对象 = chara_id_output(21) + 9',
   );
 });
@@ -1214,7 +1214,7 @@ test('divorce：对方侧只清「真角色」——search_family 回 0（魔王
   fixture.store.set('cflag:1:609', 0); // 名字槽 0
   fixture.store.set('cflag:0:601', 1); // 魔王那侧压缩数据非零
   fixture.store.set('cflag:0:609', 42);
-  const { search_family } = fixture.load_module('chara/chara-family');
+  const { search_family } = fixture.load_module('system/chara/chara-family');
   assert.equal(search_family(1, 'MARRIAGE'), 0, '家族册搜索回的是 0 号');
 
   load(fixture).divorce(1);

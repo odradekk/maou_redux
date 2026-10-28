@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-info-actions.js 的行为测试（issue #391）。
+ * @file ere/system/chara/chara-info-actions.js 的行为测试（issue #391）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖六个函数：能力提升/换装资格判定、
  * 状态复位、金钱回体力气力、金钱购买等级、传送召回。
@@ -29,7 +29,7 @@ test('IS_ABLE_TO_ABILITY_UP：状态 0/7 且有体力则可，2/3 需魔王 LV>=
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { is_able_to_ability_up } = fixture.load_module(
-    'chara/chara-info-actions',
+    'system/chara/chara-info-actions',
   );
 
   fixture.store.set('cflag:1:1', 0);
@@ -54,7 +54,9 @@ test('IS_ABLE_TO_ABILITY_UP：状态 0/7 且有体力则可，2/3 需魔王 LV>=
 test('IS_ABLE_TO_CLOTH：仅状态 0 且有体力', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
-  const { is_able_to_cloth } = fixture.load_module('chara/chara-info-actions');
+  const { is_able_to_cloth } = fixture.load_module(
+    'system/chara/chara-info-actions',
+  );
 
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('base:1:0', 1);
@@ -72,7 +74,7 @@ test('CHARA_INFO_RESTORE_STATE：迎击中先离队，其余直接清状态为 0
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { chara_info_restore_state } = fixture.load_module(
-    'chara/chara-info-actions',
+    'system/chara/chara-info-actions',
   );
 
   fixture.store.set('cflag:1:1', 3);
@@ -101,7 +103,7 @@ test('CHARA_INFO_RECOVER_HP：金钱不够只播报不扣款', async () => {
   fixture.store.set('base:1:1', 0);
   fixture.store.set('flag:10004', 0); // MONEY 恒不够（需要 100*10/3=333）
   const { chara_info_recover_hp } = fixture.load_module(
-    'chara/chara-info-actions',
+    'system/chara/chara-info-actions',
   );
 
   await chara_info_recover_hp(1);
@@ -122,7 +124,7 @@ test('CHARA_INFO_RECOVER_HP：确认后按公式扣双资金并回满，取消�
     fixture.store.set('exflag:4444', 1000);
     fixture.set_inputs(0); // 立即恢复
     const { chara_info_recover_hp } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_recover_hp(1);
@@ -141,7 +143,7 @@ test('CHARA_INFO_RECOVER_HP：确认后按公式扣双资金并回满，取消�
     fixture.store.set('flag:10004', 1000);
     fixture.set_inputs(1); // 还是算了
     const { chara_info_recover_hp } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_recover_hp(1);
@@ -170,7 +172,7 @@ test('CHARA_INFO_UP_LEVEL：三条经验曲线（魔王/精英/通常）只看�
     fixture.store.set('flag:10004', 100000);
     fixture.set_inputs(1); // 还是算了
     const { chara_info_up_level } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_up_level(cid);
@@ -199,7 +201,7 @@ test('CHARA_INFO_UP_LEVEL：已有战斗经验先抵扣需求量', async () => {
   fixture.store.set('flag:10004', 100000);
   fixture.set_inputs(1);
   const { chara_info_up_level } = fixture.load_module(
-    'chara/chara-info-actions',
+    'system/chara/chara-info-actions',
   );
 
   await chara_info_up_level(1);
@@ -219,7 +221,7 @@ test('CHARA_INFO_UP_LEVEL：确认购买后扣双资金、经验入账并触发�
   fixture.store.set('exflag:4444', 100000);
   fixture.set_inputs(0);
   const { chara_info_up_level } = fixture.load_module(
-    'chara/chara-info-actions',
+    'system/chara/chara-info-actions',
   );
 
   await chara_info_up_level(1);
@@ -239,7 +241,7 @@ test('CHARA_INFO_UP_LEVEL：金钱不够不扣款，购买播报用被升级角�
     fixture.store.set('cflag:1:9', 1); // 需 20，需金钱 2000
     fixture.store.set('flag:10004', 0);
     const { chara_info_up_level } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_up_level(1);
@@ -255,7 +257,7 @@ test('CHARA_INFO_UP_LEVEL：金钱不够不扣款，购买播报用被升级角�
     fixture.store.set('flag:10004', 100000);
     fixture.set_inputs(0);
     const { chara_info_up_level } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_up_level(1);
@@ -278,7 +280,7 @@ test('CHARA_INFO_CALLBACK：等级不够或气力不够都提前失败，不产�
     fixture.store.set('cflag:0:9', 5);
     fixture.store.set('cflag:1:9', 5); // target_lv >= master_lv
     const { chara_info_callback } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_callback(1);
@@ -299,7 +301,7 @@ test('CHARA_INFO_CALLBACK：等级不够或气力不够都提前失败，不产�
     fixture.store.set('maxbase:0:1', 100);
     fixture.store.set('base:0:1', 20); // 气力不足（cost=25）
     const { chara_info_callback } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_callback(1);
@@ -321,7 +323,7 @@ test('CHARA_INFO_CALLBACK：确认后扣魔王气力、召回并清对方状态�
     fixture.store.set('base:0:1', 50);
     fixture.set_inputs(0);
     const { chara_info_callback } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_callback(1);
@@ -341,7 +343,7 @@ test('CHARA_INFO_CALLBACK：确认后扣魔王气力、召回并清对方状态�
     fixture.store.set('base:0:1', 50);
     fixture.set_inputs(1); // 还是算了
     const { chara_info_callback } = fixture.load_module(
-      'chara/chara-info-actions',
+      'system/chara/chara-info-actions',
     );
 
     await chara_info_callback(1);

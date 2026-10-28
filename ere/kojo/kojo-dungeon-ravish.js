@@ -105,9 +105,9 @@
  *     #182 复核判为**死调用**（B/C 在该点无定义读取方、RESULT 无消费），
  *     注释保留不落调用（#103 的同款死调用判定）。
  *   - **`CALL CHECK_STATUS, ARG, 1`**：队伍伤势判定（#172 真身，
- *     ere/dungeon/dungeon.js 的 check_status）——返回 8 槽数组，RESULT:7
+ *     ere/system/dungeon/dungeon.js 的 check_status）——返回 8 槽数组，RESULT:7
  *     = 队伍当前状态评级（> 9 时同伴无力救援）。
- *   - **`CALL KARMA, ARG, -10`**：善恶值增减（ere/dungeon/dungeon.js 的
+ *   - **`CALL KARMA, ARG, -10`**：善恶值增减（ere/system/dungeon/dungeon.js 的
  *     karma 域内存根，#172 接入）。
  *   - **`$INPUT_LOOP` / `INPUT` / `GOTO`**：旁观/不
  *     凌辱的选择循环。ERE 侧以 while 循环 + era.input() 重写（输入 < 0
@@ -134,10 +134,10 @@ const { chara } = require('#/facade/chara');
 const { show_data } = require('#/page/components/chara-data'); // #390 起真身
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { run_kojo } = require('#/kojo/kojo-system');
-const { monstername } = require('#/dungeon/monster-data');
-const { battle_column } = require('#/dungeon/battle-state');
 const { equip_database } = require('#/system/equip/equip-lookup');
-// 注意：check_status / karma 来自 #/dungeon/dungeon，而 dungeon.js 顶层
+const { monstername } = require('#/system/dungeon/monster-data');
+const { battle_column } = require('#/system/dungeon/battle-state');
+// 注意：check_status / karma 来自 #/system/dungeon/dungeon，而 dungeon.js 顶层
 // require dungeon-battle/-battle2，后者将 require 本文件——顶层引用会成环。
 // 本文件在函数体内延迟 require（dungeon-battle.js 的 karma 先例）。
 
@@ -3768,7 +3768,7 @@ async function victory_ryouzyoku(arg = -1, rand) {
       `冒险者被魔界的瘴气侵袭着，玩弄起${monstername(local_1)}来。（善恶值:-10）`,
     );
     // CALL KARMA, ARG, -10（dungeon.js 的 karma 域内存根）
-    const { karma } = require('#/dungeon/dungeon');
+    const { karma } = require('#/system/dungeon/dungeon');
     karma(arg, -10);
   }
 
@@ -3966,7 +3966,7 @@ async function dungeon_ryouzyoku_escape(arg, rand) {
   }
 
   // 分析队伍状态（CALL CHECK_STATUS, ARG, 1——MODE 1 静默）
-  const { check_status: check_status_fn } = require('#/dungeon/dungeon');
+  const { check_status: check_status_fn } = require('#/system/dungeon/dungeon');
   const status = await check_status_fn(arg, 1);
   const rating = status[7]; // RESULT:7 队伍当前状态评级
 

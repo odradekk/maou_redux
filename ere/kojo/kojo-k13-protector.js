@@ -33,6 +33,7 @@ const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { get_look_info } = require('#/system/chara/look-info');
 const {
   kojo_message_com_family,
   self_kojo_family,
@@ -53,7 +54,6 @@ const {
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { gobi_text } = require('#/data/gobi-koujo-const');
 const { EVENT } = require('#/data/event-name-const');
-const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -98,25 +98,17 @@ function bind_ctx(rand) {
 }
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_13 = 1; // FLAG:113 = 1（K13 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_13 = 1; // FLAG:113 = 1（K13 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_13 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_13 = 0;
+}
 
 // eventtrain_k13：EVENTTRAIN NORMAL 档
 async function eventtrain_k13(rand) {
@@ -6110,9 +6102,6 @@ function gobi_koujo_k13(arg_0, rand) {
   return gobi_text(13, arg_0, rand);
 }
 
-on(EVENT.TRAIN, eventtrain_k13);
-on(EVENT.END, eventend_k13);
-
 kojo_message_com_family.register(13, kojo_message_com_13);
 self_kojo_family.register(13, self_kojo_k13);
 kojo_message_palamcng_family.register(13, kojo_message_palamcng_13);
@@ -6138,7 +6127,19 @@ banishment_koujo_family.register(13, banishment_koujo_k13);
 public_exucution_koujo_family.register(13, public_exucution_koujo_k13);
 grotesque_koujo_family.register(13, grotesque_koujo_k13);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, eventtrain_k13);
+  on(EVENT.END, eventend_k13);
+}
+
 module.exports = {
+  register,
   eventtrain_k13,
   eventend_k13,
   kojo_message_com_13,

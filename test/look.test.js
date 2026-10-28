@@ -1,5 +1,5 @@
 /**
- * ere/chara/look-info.js 的行为测试（issue #389，N5 段 1）：
+ * ere/system/chara/look-info.js 的行为测试（issue #389，N5 段 1）：
  * get_look_info 的全部 kind。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开导出
@@ -19,8 +19,9 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
-/** 素质下标（与 ere/chara/look-info.js 的常量同名，测试侧独立写死防串改） */
+/** 素质下标（与 ere/system/chara/look-info.js 的常量同名，测试侧独立写死防串改） */
 const T = {
   个性: { 精英: 220 },
   种族: 314,
@@ -67,12 +68,12 @@ function world(talents = {}) {
 }
 
 /**
- * 取 `chara/look-info` 的导出（每个用例独立夹具 → 独立模块实例）。
+ * 取 `system/chara/look-info` 的导出（每个用例独立夹具 → 独立模块实例）。
  * @param {Record<number, number>} talents 素质预置
  * @returns {object} 模块导出
  */
 function load(talents = {}) {
-  return world(talents).load_module('chara/look-info');
+  return world(talents).load_module('system/chara/look-info');
 }
 
 /**
@@ -86,7 +87,7 @@ function load(talents = {}) {
 function table(kind, talent_idx, cases, note) {
   test(`get_look_info「${kind}」：${note}`, () => {
     const fixture = create_era_fixture();
-    const { get_look_info } = fixture.load_module('chara/look-info');
+    const { get_look_info } = fixture.load_module('system/chara/look-info');
     for (const [value, expected] of cases) {
       fixture.store.set(`talent:5:${talent_idx}`, value);
       assert.equal(
@@ -505,7 +506,7 @@ table(
 test('get_look_info「成为勇者前的生活」：四档按性别分叉的女性侧', () => {
   // （男人素质未置位）
   const fixture = create_era_fixture();
-  const { get_look_info } = fixture.load_module('chara/look-info');
+  const { get_look_info } = fixture.load_module('system/chara/look-info');
   for (const [value, expected] of [
     [2, '修女'],
     [11, '巫女'],
@@ -588,7 +589,7 @@ test('get_look_info「职业」：200-228 取最后一个真值档的素质名',
   const single = world({ 205: 1 });
   single.store.set('talentname:205', '剑士');
   assert.equal(
-    single.load_module('chara/look-info').get_look_info(5, '职业'),
+    single.load_module('system/chara/look-info').get_look_info(5, '职业'),
     '剑士',
   );
 
@@ -596,7 +597,7 @@ test('get_look_info「职业」：200-228 取最后一个真值档的素质名',
   both.store.set('talentname:205', '剑士');
   both.store.set('talentname:228', '大魔王');
   assert.equal(
-    both.load_module('chara/look-info').get_look_info(5, '职业'),
+    both.load_module('system/chara/look-info').get_look_info(5, '职业'),
     '大魔王',
     '后扫到的档覆盖前者',
   );
@@ -617,7 +618,9 @@ test('get_look_info「职业」：扫的区间是 200-228，199/229 不在内', 
     for (const [idx, label] of Object.entries(name)) {
       fixture.store.set(`talentname:${idx}`, label);
     }
-    return fixture.load_module('chara/look-info').get_look_info(5, '职业');
+    return fixture
+      .load_module('system/chara/look-info')
+      .get_look_info(5, '职业');
   };
   assert.equal(probe({ 199: 1 }, { 199: '圈外' }), '无');
   assert.equal(probe({ 229: 1 }, { 229: '圈外' }), '无');
@@ -631,7 +634,9 @@ test('get_look_info「性格」：160-178 优先，全空才回落 10-18', () =>
     for (const [idx, label] of Object.entries(names)) {
       fixture.store.set(`talentname:${idx}`, label);
     }
-    return fixture.load_module('chara/look-info').get_look_info(5, '性格');
+    return fixture
+      .load_module('system/chara/look-info')
+      .get_look_info(5, '性格');
   };
   assert.equal(probe({ 170: 1 }, { 170: '高姿态' }), '高姿态');
   assert.equal(probe({ 15: 1 }, { 15: '嚣张' }), '嚣张');
@@ -650,7 +655,9 @@ test('get_look_info「性格」：两段扫描区间各含自己的上界与下�
     for (const [idx, label] of Object.entries(names)) {
       fixture.store.set(`talentname:${idx}`, label);
     }
-    return fixture.load_module('chara/look-info').get_look_info(5, '性格');
+    return fixture
+      .load_module('system/chara/look-info')
+      .get_look_info(5, '性格');
   };
   assert.equal(probe({ 160: 1 }, { 160: 'A' }), 'A');
   assert.equal(probe({ 178: 1 }, { 178: 'B' }), 'B');
@@ -683,7 +690,7 @@ test('get_look_info「婚史」：CASE 0 未婚，CFLAG:601 != 0 时加「原」
   const remarried = world({ [T.家族构成]: 1 });
   remarried.store.set('cflag:5:601', 900);
   assert.equal(
-    remarried.load_module('chara/look-info').get_look_info(5, '婚史'),
+    remarried.load_module('system/chara/look-info').get_look_info(5, '婚史'),
     '原未婚',
   );
 });
@@ -721,7 +728,7 @@ test('get_look_info「家族」：双亲指定时按素质/物品名拼串', () 
   });
   fixture.store.set('talentname:12', '刚强');
   fixture.store.set('itemname:345', '蜥蜴人');
-  const { get_look_info } = fixture.load_module('chara/look-info');
+  const { get_look_info } = fixture.load_module('system/chara/look-info');
   assert.equal(get_look_info(5, '家族'), '刚强的父亲，蜥蜴人的母亲，');
 });
 
@@ -819,7 +826,7 @@ test('get_look_info「现种族」：范围内已声明的编号显示物品名�
   ]) {
     const fixture = world({ [T.现种族]: value });
     fixture.store.set(`itemname:${value}`, expected);
-    const { get_look_info } = fixture.load_module('chara/look-info');
+    const { get_look_info } = fixture.load_module('system/chara/look-info');
     assert.equal(get_look_info(5, '现种族'), expected, `现种族 ${value}`);
   }
   for (const value of [0, 99, 105, 194, 212, 220, 221]) {
@@ -840,7 +847,7 @@ test('现种族 211 的旧存档读入后显示异界勇者', async () => {
 
   assert.equal(fixture.store.get('talent:5:322'), 211, '旧存档现种族保持 211');
   assert.equal(
-    fixture.load_module('chara/look-info').get_look_info(5, '现种族'),
+    fixture.load_module('system/chara/look-info').get_look_info(5, '现种族'),
     '异界勇者',
     '旧存档现种族名称',
   );
@@ -914,7 +921,7 @@ test('get_look_info：读未声明的角色返回默认值而非抛错（引擎 
 });
 
 // ===========================================================================
-// ere/chara/look.js：look_set
+// ere/system/chara/look.js：look_set
 // ===========================================================================
 
 /**
@@ -982,7 +989,7 @@ const top = (n) => n - 1;
  */
 function look_world() {
   const fixture = create_era_fixture();
-  const mod = fixture.load_module('chara/look');
+  const mod = fixture.load_module('system/chara/look');
   let next_cid = 100;
   return {
     fixture,
@@ -2108,7 +2115,7 @@ test('love_like_base：20 档文本与命中标志', () => {
     [20, '游泳'],
   ];
   const fixture = create_era_fixture();
-  const { love_like_base } = fixture.load_module('chara/look');
+  const { love_like_base } = fixture.load_module('system/chara/look');
   for (const [value, expected] of cases) {
     fixture.store.set('talent:5:317', value);
     assert.deepEqual(
@@ -2133,7 +2140,7 @@ test('love_like_base：20 档文本与命中标志', () => {
 
 test('love_like_base：4/8/9/10/11 五档在 CFLAG:0 != 0 时不命中', () => {
   const fixture = create_era_fixture();
-  const { love_like_base } = fixture.load_module('chara/look');
+  const { love_like_base } = fixture.load_module('system/chara/look');
   for (const value of [4, 8, 9, 10, 11]) {
     fixture.store.set('talent:5:317', value);
     fixture.store.set('cflag:5:0', 1);
@@ -2154,13 +2161,13 @@ test('love_like_base：4/8/9/10/11 五档在 CFLAG:0 != 0 时不命中', () => {
 });
 
 // ===========================================================================
-// ere/chara/look.js：look_info
+// ere/system/chara/look.js：look_info
 // ===========================================================================
 
 /** look_info 的驱动面：一个夹具、自增角色 ID、可预置任意变量 */
 function info_world() {
   const fixture = create_era_fixture();
-  const mod = fixture.load_module('chara/look');
+  const mod = fixture.load_module('system/chara/look');
   // 自增角色号从 2 起：**必须 < 200**——「来据点之前」前缀按
   // 角色号 >= 200 分叉，用 500 起会把默认路径整个挪到配下支
   let next_cid = 2;
@@ -2502,7 +2509,7 @@ test('look_info：常识改变四态（战斗/日常/两者/都无）', async ()
 
 /**
  * 把 kojo-system 的 `gobi_koujo` 就地换成一个只记录实参的函数（与夹具的
- * `disable_enter_enemy` 同一手法）：ere/chara/look.js 里是
+ * `disable_enter_enemy` 同一手法）：ere/system/chara/look.js 里是
  * `require('#/kojo/kojo-system').gobi_koujo(...)` 的**属性查找**，替换导出即
  * 短路，不必碰游戏代码。返回记录数组与还原函数。
  * @param {object} fixture 夹具
@@ -2535,7 +2542,7 @@ function capture_gobi(fixture) {
  * @returns {Promise<number[]>} 捕获到的 gobi_koujo 实参序列
  */
 async function gobi_sequence(fixture, roll21, roll20) {
-  const mod = fixture.load_module('chara/look');
+  const mod = fixture.load_module('system/chara/look');
   const cid = 800;
   // 一次掷到位：315/316 分别由 RAND:21 / RAND:20 决定（掷值 + 1）
   mod.look_set(cid, 0, steer({ 21: roll21, 20: roll20 }));
@@ -2635,7 +2642,7 @@ function gobi_world(talent_idx) {
 
 test('look_info：语尾口上拼进「」之内、与台词同一行（#570）', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
-  w.fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(w.fixture, 'kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   // 两条断言的先后是有意的：断言抛出即中止本条用例，先断「不单独成行」
   //（包装层复辟的 M11768 走这条），再断「拼在「」之内」（丢掉语尾的
@@ -2653,8 +2660,8 @@ test('look_info：语尾口上拼进「」之内、与台词同一行（#570）'
 test('look_info：无对应语尾模块的性格不多出空内容（K11 两侧同缺，#570）', async () => {
   const { w, cid } = gobi_world(171); // K11 リリィ：语尾族表没有 K11 条目
   // 族里先装两个别的性格——族表空时任何编号都落空，测不出「K11 缺号」这件事
-  w.fixture.load_module('kojo/kojo-k0-tender');
-  w.fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(w.fixture, 'kojo/kojo-k0-tender');
+  register_handlers(w.fixture, 'kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   assert.ok(
     lines.includes('「人类的阿名」'),
@@ -2672,7 +2679,7 @@ test('look_info：无对应语尾模块的性格不多出空内容（K11 两侧�
 
 test('look_info_love 收尾：喜び语尾接在最后一项物品的同一行', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
-  w.fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(w.fixture, 'kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   // 语尾与「」 」接在最后一项物品
   // 之后（#570 返工：引擎实测原先语尾另起一行、跑到物品行外）
@@ -2699,7 +2706,7 @@ test('look_info_love 收尾：喜び语尾接在最后一项物品的同一行',
  */
 test('look_info 语尾调用点：返回值必须被消费（#570 行内拼接的前提）', () => {
   const src = fs.readFileSync(
-    path.join(__dirname, '..', 'ere', 'chara', 'look.js'),
+    path.join(__dirname, '..', 'ere', 'system', 'chara', 'look.js'),
     'utf8',
   );
   const bare = src
@@ -2734,7 +2741,7 @@ test('look_info 语尾调用点：返回值必须被消费（#570 行内拼接�
  */
 function gobi_tier_world() {
   const fixture = create_era_fixture();
-  const mod = fixture.load_module('chara/look');
+  const mod = fixture.load_module('system/chara/look');
   // 素质 164（性格 K4 冷徹）→ get_kojo_num = 104 → 语尾族键 4
   fixture
     .load_module('kojo/kojo-system')
@@ -3228,13 +3235,13 @@ test('look_info：返回 1', async () => {
 });
 
 // ===========================================================================
-// ere/chara/look.js：look_info_love 的评分半（love_score）
+// ere/system/chara/look.js：look_info_love 的评分半（love_score）
 // ===========================================================================
 
 /** love_score 的驱动面：一个夹具、一个固定角色号、各表按需预置 */
 function love_world() {
   const fixture = create_era_fixture();
-  const mod = fixture.load_module('chara/look');
+  const mod = fixture.load_module('system/chara/look');
   const cid = 300;
   const set = (table) => (idx, value) => {
     fixture.store.set(`${table}:${cid}:${idx}`, value);
@@ -4014,7 +4021,7 @@ test('love_score：新夫/恋人ボーナス与刻印', () => {
 });
 
 // ===========================================================================
-// ere/chara/look.js：look_info_love 的显示半
+// ere/system/chara/look.js：look_info_love 的显示半
 // ===========================================================================
 
 test('look_info_love：显示行的排序、心形数与「共 N 个」计数', async () => {
@@ -4150,7 +4157,7 @@ test('look_info_love：满旋钮角色的显示面上限（名额 28 < LOVE_SORT
     '满旋钮角色里越过显示门槛的下标数（23 个里含恒不显示的 50 → 能出 22 项）',
   );
   const src = fs.readFileSync(
-    path.join(__dirname, '..', 'ere', 'chara', 'look.js'),
+    path.join(__dirname, '..', 'ere', 'system', 'chara', 'look.js'),
     'utf8',
   );
   const branches = new Set(

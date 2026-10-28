@@ -34,10 +34,10 @@ const {
   ROUTES: NORMAL_ROUTES,
 } = require('#/system/stronghold/sell-maturo-k0-normal');
 const { peek_sale_price } = require('#/event/event-aftertrain');
-const { search_family } = require('#/chara/chara-family');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { search_family } = require('#/system/chara/chara-family');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 /** 黑市末路表：k0_route 给出的编号 → 该末路族的买家选择与分派函数。 */

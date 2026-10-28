@@ -80,7 +80,7 @@ export function readDevkit(ereDirectory, ereEntry = 'ere') {
  * Best-effort table name for one generated module.
  *
  * Root modules are `era-<table>.js` (with `era-chara.js` / `era-info.js` being
- * the special ones), per-character tables are `chara/era-<table>.js`, and the
+ * the special ones), per-character tables are `system/chara/era-<table>.js`, and the
  * name maps are `names/era-<table>-names.js`.
  *
  * @param {string} nested - the subdirectory, with a leading slash or empty.

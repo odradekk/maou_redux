@@ -60,33 +60,25 @@ const era0 = (key) => era.get(key) || 0;
 // 口塞/死斗场/兽奸/触手；TFLAG:899 = 失神状态。
 
 // EVENTTRAIN #PRI 档
-on(
-  EVENT.TRAIN,
-  async () => {
-    // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
-    // EX_FLAG:104 = 1（变量语义：K904 口上存在标志）
-    era_exflag.set(104, 1);
-    if (game.kojo.口上开关 == 0) {
-      // FLAG:7  = 2（变量语义：FLAG 族，7）
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+async function handle_train_pri() {
+  // #PRI（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
+  // EX_FLAG:104 = 1（变量语义：K904 口上存在标志）
+  era_exflag.set(104, 1);
+  if (game.kojo.口上开关 == 0) {
+    // FLAG:7  = 2（变量语义：FLAG 族，7）
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档
-on(
-  EVENT.END,
-  async () => {
-    // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
-    // EX_FLAG:104 = 0（变量语义：K904 口上存在标志）
-    era_exflag.set(104, 0);
-  },
-  TIER.LATER,
-);
+async function handle_end_later() {
+  // #LATER（事件优先级修饰符，JS 侧用 on() 的 TIER 表达）
+  // EX_FLAG:104 = 0（变量语义：K904 口上存在标志）
+  era_exflag.set(104, 0);
+}
 
 // EVENTTRAIN NORMAL 档
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
@@ -453,7 +445,7 @@ on(EVENT.TRAIN, async () => {
     await k904_kojo2();
     await k904_fuku();
   }
-});
+}
 
 // k904_kojo2
 async function k904_kojo2() {
@@ -932,7 +924,7 @@ async function k904_fuku() {
 }
 
 // EVENTEND NORMAL 档
-on(EVENT.END, async () => {
+async function handle_end() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
@@ -1060,7 +1052,7 @@ on(EVENT.END, async () => {
     return 1;
   }
   return 0;
-});
+}
 
 // kojo_message_com_904
 async function kojo_message_com_904(rand) {
@@ -9378,4 +9370,15 @@ self_kojo_family.register(904, self_kojo_k904);
 
 // #625：colosseum_kojo_904 在 kojo_message_com_904 里的调用点位于助手检查之后，
 // 带助手时运行时走不到它；导出只为行为测试能直接调用这具真身。
-module.exports = { colosseum_kojo_904 };
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train);
+  on(EVENT.END, handle_end);
+}
+
+module.exports = { register, colosseum_kojo_904 };

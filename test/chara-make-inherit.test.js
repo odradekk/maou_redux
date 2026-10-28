@@ -1,5 +1,5 @@
 /**
- * @file ere/chara/chara-make-inherit.js 的行为测试（issue #384）：
+ * @file ere/system/chara/chara-make-inherit.js 的行为测试（issue #384）：
  * cmi_settalent / cmi_mom_complex / cmi_conflict_check 三个存根换真身。
  *
  */
@@ -38,7 +38,7 @@ function seq_capture(values) {
 }
 
 function load(fixture) {
-  return fixture.load_module('chara/chara-make-inherit');
+  return fixture.load_module('system/chara/chara-make-inherit');
 }
 
 // —— cmi_settalent：三档概率继承 ——

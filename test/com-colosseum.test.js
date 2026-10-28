@@ -32,6 +32,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /** 助手角色（COM201 用） */
@@ -167,7 +168,7 @@ test('COM207 与 [100] 能力表示不撞号：COM207 可用与否，输入 100 
     if (in_colosseum) {
       fixture.store.set('tequip:31:55', 1);
     }
-    fixture.load_module('page/page-usercom');
+    register_handlers(fixture, 'page/page-usercom');
     const { on } = fixture.load_module('system/event/registry');
     const usercom_probe = [];
     on('USERCOM', async (result) => {
@@ -201,7 +202,7 @@ test('COM207 可用时调教画面没有同号按钮：媚药史莱姆的编号�
   fixture.store.set('flag:10013', 32); // ASSI:1
   fixture.store.set('cflag:31:0', 2); // CFLAG:0 调教状态 2 = 可对换
   fixture.store.set('flag:550', 1); // 调教菜单长度
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const { emit } = fixture.load_module('system/event/registry');
   const { scan_usable_commands } = fixture.load_module(
     'system/train/train-loop',
@@ -1019,7 +1020,7 @@ test('死斗场中的状态显示：装备行出 [死斗场决斗中]（粉色�
   era_flag.target = 31;
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
-  fixture.load_module('page/page-train');
+  register_handlers(fixture, 'page/page-train');
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('SHOW_STATUS');
@@ -1052,7 +1053,7 @@ test('RETURN 0 的指令：回合作废——不结算、不进 EVENTCOMEND、PR
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
   fixture.load_module('system/train/com-colosseum');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const { on } = fixture.load_module('system/event/registry');
   const probe = [];
   on('SOURCE_CHECK', async () => {

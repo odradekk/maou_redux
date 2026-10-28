@@ -7,7 +7,7 @@
  *
  * 引擎的 era.print 每次调用即结束一行，行内拼接必须由调用方合成一次
  * 输出——本模块的取值函数因此直接返回名字串，供调用方并入一次
- * era.print（ere/dungeon/monster-data.js 的 monster_name 同款写法）。
+ * era.print（ere/system/dungeon/monster-data.js 的 monster_name 同款写法）。
  *
  * 动词参数的渲染序是「名字 → 动词」：get_clothtype_main2(cid, '身穿')
  * 返回「紧身衣＆裙甲身穿」而非「身穿紧身衣＆裙甲」。带参调用都在

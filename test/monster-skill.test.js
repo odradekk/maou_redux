@@ -1,7 +1,7 @@
 /**
  * 怪物技能四个函数的行为测试（issue #345，阶段 5a L14）。
  *
- * 测试注入点 = ere/dungeon/monster-skill.js 的公开出口与
+ * 测试注入点 = ere/system/dungeon/monster-skill.js 的公开出口与
  * test/helpers/era-fixture.js。
  * RAND 经函数参数注入，所有行为用例都使用确定性 seq。
  */
@@ -12,7 +12,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
-  return fixture.load_module('dungeon/monster-skill');
+  return fixture.load_module('system/dungeon/monster-skill');
 }
 
 function seq(...values) {
@@ -339,9 +339,9 @@ test('两套战斗入口调用怪物技能真身并透传确定性随机源', as
       calls.push(args);
       return 999;
     };
-    const magic_mod = fixture.load_module('dungeon/magic');
+    const magic_mod = fixture.load_module('system/dungeon/magic');
     magic_mod.magic = async () => 0;
-    const battle = fixture.load_module('dungeon/dungeon-battle');
+    const battle = fixture.load_module('system/dungeon/dungeon-battle');
     fixture.battle('DEFENSE_1').special = 7;
     fixture.battle('DEFENSE_1').count = 1;
 
@@ -358,9 +358,9 @@ test('两套战斗入口调用怪物技能真身并透传确定性随机源', as
       calls.push(args);
       return 999;
     };
-    const battle = fixture.load_module('dungeon/dungeon-battle');
+    const battle = fixture.load_module('system/dungeon/dungeon-battle');
     battle.magic = async () => 0;
-    const battle2 = fixture.load_module('dungeon/dungeon-battle2');
+    const battle2 = fixture.load_module('system/dungeon/dungeon-battle2');
 
     assert.equal(await battle2.duel_attack(1, 0, 2, 1, rand), 999);
     assert.deepEqual(calls, [[2, 1, rand]]);

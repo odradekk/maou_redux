@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 function seed_world() {
@@ -26,7 +27,7 @@ async function remove_by_death(fixture, cid) {
   flags.master_backup = flags.player = 0;
   fixture.era.beginTrain(0, cid);
   fixture.store.set(`base:${cid}:0`, 0);
-  fixture.load_module('event/event-end');
+  register_handlers(fixture, 'event/event-end');
   const { run_aftertrain } = fixture.load_module('system/train/train-end');
   assert.equal(await run_aftertrain(), 'TURNEND');
 }
@@ -39,7 +40,9 @@ test('死亡除名后正常回复气力：近卫后代不触发战役，普通�
       let cid = 1;
       if (source === 201) {
         fixture.seed_chara(201, { name: '近卫', callname: '近卫' });
-        const { gb_add_guard } = fixture.load_module('chara/chara-pregnancy');
+        const { gb_add_guard } = fixture.load_module(
+          'system/chara/chara-pregnancy',
+        );
         cid = await gb_add_guard(0, -2, () => 0);
         assert.equal(cid, 120000);
       } else {
@@ -48,9 +51,9 @@ test('死亡除名后正常回复气力：近卫后代不触发战役，普通�
 
       await remove_by_death(fixture, cid);
       assert(!fixture.era.getAddedCharacters().includes(cid));
-      fixture.load_module('event/event-turnend');
-      fixture.load_module('system/turnend-settle');
-      fixture.load_module('event/event-turnend-later');
+      register_handlers(fixture, 'event/event-turnend');
+      register_handlers(fixture, 'system/turnend-settle');
+      register_handlers(fixture, 'event/event-turnend-later');
       fixture.disable_enter_enemy();
       await fixture.load_module('system/event/registry').emit('EVENTTURNEND');
 

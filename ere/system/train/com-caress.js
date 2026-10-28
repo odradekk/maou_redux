@@ -43,8 +43,6 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { times } = require('#/utils/numeric');
-const { monster_name } = require('#/dungeon/monster-data');
-const { BATTLE_COLUMN, battle_column } = require('#/dungeon/battle-state');
 const {
   clothtype_main2_text,
   clothtype_special_text,
@@ -62,6 +60,11 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
+const { monster_name } = require('#/system/dungeon/monster-data');
+const {
+  BATTLE_COLUMN,
+  battle_column,
+} = require('#/system/dungeon/battle-state');
 
 // —— 纯数据表（错一格不会报错——每档的用例与变异条目固定住） ——
 
