@@ -27,6 +27,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 // 便捷：预设状态后画一次主菜单，返回夹具
 function draw_menu_with(preset) {
@@ -749,6 +750,7 @@ test('show_shop 日期钳制：月/日小于 1 时钳成 1（开局显示 1月1�
   era_flag.month = 0;
   era_flag.date = 0;
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
 
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.equal(era_flag.month, 1);
@@ -767,6 +769,7 @@ test('show_shop 日期钳制：正常日期不动', async () => {
   era_flag.month = 5;
   era_flag.date = 20;
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
 
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.equal(era_flag.month, 5);
@@ -783,6 +786,7 @@ async function run_shop_rounds(inputs) {
   fixture.era.print('上方一');
   fixture.era.print('上方二');
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
   fixture.set_inputs(...inputs);
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   return fixture;
@@ -822,6 +826,7 @@ test('分发期输出玩家先看到再被重绘清掉：阶层信息入口的�
   const stub_direct = create_era_fixture();
   join_chara(stub_direct, 31);
   const { usershop: usershop_stub } = stub_direct.load_module('page/page-shop');
+  register_handlers(stub_direct, 'page/page-shop');
   stub_direct.store.set('cflag:0:1', 10); // 育儿室检查分支（魔王在育儿室）
   stub_direct.load_module('era-utils/era-flag').target = 31; // 跳过选人，直达检查
   await usershop_stub(100);
@@ -840,6 +845,7 @@ test('分发期输出玩家先看到再被重绘清掉：阶层信息入口的�
   stub_round.era.print('上方二');
   join_chara(stub_round, 31); // 与对照轮同世界
   const { run_shop: run_stub } = stub_round.load_module('page/page-shop');
+  register_handlers(stub_round, 'page/page-shop');
   stub_round.set_inputs(504, 521, 500);
   await assert.rejects(() => run_stub(), /预置输入已耗尽/);
   // 对照轮带同一世界：差异只剩「分发是否打了一屏内容」这一个变量
@@ -848,6 +854,7 @@ test('分发期输出玩家先看到再被重绘清掉：阶层信息入口的�
   plain.era.print('上方二');
   join_chara(plain, 31);
   const { run_shop: run_plain } = plain.load_module('page/page-shop');
+  register_handlers(plain, 'page/page-shop');
   plain.set_inputs(504, 500, 500);
   await assert.rejects(() => run_plain(), /预置输入已耗尽/);
 
@@ -875,6 +882,7 @@ test('跨会话重进 SHOP：换屏重画，上一局/新局的残留都不留�
   join_chara(fixture, 31);
   era_flag.target = 31; // 100 分支无需选人，直达 TRAIN 转场
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
 
   // 第一局：100 → 返回 TRAIN 转场目标，商店轮随之结束
   fixture.set_inputs(100);

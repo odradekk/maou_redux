@@ -20,6 +20,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 /** 所有掷骰恒 0（RAND:N == 0；WALK = 0：不推进） */
 const zero = () => 0;
@@ -63,9 +64,9 @@ function setup_world() {
 
 /** 装载三档链并触发一次 EVENTTURNEND（era_flag.time 由调用方控制） */
 async function emit_turnend(fixture) {
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTTURNEND');
 }

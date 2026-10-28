@@ -17,6 +17,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // 世界底座：玛奥入列调教 + K5 触发面（素质 165 / 存在标志 / 总开关默认 2）
@@ -38,8 +39,8 @@ async function setup_k5(seed) {
   if (seed) {
     seed(fixture);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k5-mao');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k5-mao');
   return fixture;
 }
 

@@ -25,6 +25,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -113,7 +114,7 @@ test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾
     f.store.set('talent:31:17', 1); // プライド低い → 语尾档 1（喜び）
     f.store.set('talent:31:163', 1); // K3 高貴
   });
-  fixture.load_module('kojo/kojo-k3-noble');
+  register_handlers(fixture, 'kojo/kojo-k3-noble');
   fixture.load_module('era-utils/era-flag').target = 31;
   const mod = fixture_module(fixture);
   // orc（女版）畏怖阶段口上先消费 1 掷（c131=0 → 初见档 pick），分支链同

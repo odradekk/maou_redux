@@ -21,6 +21,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 const { assert_one_blank_after } = require('./helpers/blank-lines');
 
@@ -36,9 +37,9 @@ function setup_nextday() {
   // 角色仍在场为前提（工单：不许把断言放宽成区间绕过去）
   fixture.store.set('flag:10004', 10000); // MONEY
   fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 本局关闭勇者来袭（#171/#168 结论 4 的隔离开关）：本文件的用例测日程

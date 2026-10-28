@@ -26,6 +26,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 function seq(values) {
   let index = 0;
@@ -1186,9 +1187,9 @@ test('EVENTTURNEND 接入：FLAG:5 位 3 开启时洗脑陷落的勇者被自动
   // 金钱不变量（debug_check 的条件，见 event-turnend.test.js 的 setup 说明）
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   fixture.disable_enter_enemy();
   fixture.override_math_random(() => 0.5);
@@ -1226,9 +1227,9 @@ test('EVENTTURNEND 接入：开关关闭时不处刑', async () => {
   fixture.store.set('maxbase:31:1', 1000);
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   fixture.disable_enter_enemy();
   fixture.override_math_random(() => 0.5);

@@ -11,6 +11,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：白梅花（素质 170 → GET_KOJO_NUM = 110 → 分发 key 10）入列调教
@@ -33,8 +34,8 @@ async function setup_k10(seed, selectcom = 0) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k10-club');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k10-club');
   return fixture;
 }
 

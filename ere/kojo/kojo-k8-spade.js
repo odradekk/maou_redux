@@ -96,25 +96,17 @@ const { piercing_state } = require('#/system/train/piercing-state');
 const era0 = (k) => era.get(k) || 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_8 = 1; // FLAG:108 = 1（K8 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_8 = 1; // FLAG:108 = 1（K8 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_8 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_8 = 0;
+}
 
 /**
  * EVENTTRAIN NORMAL 档：调教开始时的口上。
@@ -125,983 +117,965 @@ on(
  * （+魔族化分档）→ 崩坏 → 崩坏后/助手无/非男性/简易助手（金红桃 20 /
  * 22 / 扶她 23）→ 其余 CALL K8_KOJO2（二回目以降）。
  */
-on(
-  EVENT.TRAIN,
-  async () => {
-    const target = era_flag.target;
-    const target_name = chara_callname(target); // %SAVESTR:TARGET%
-    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
-    const kojo = chara(target).kojo;
-    // 「TIME == 0 ? 今日 # 今夜」条件文本三元
-    const today_or_night = era_flag.time === 0 ? '今日' : '今夜';
+async function handle_train() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const kojo = chara(target).kojo;
+  // 「TIME == 0 ? 今日 # 今夜」条件文本三元
+  const today_or_night = era_flag.time === 0 ? '今日' : '今夜';
 
-    if (game.kojo.口上开关 <= 0) {
-      return 0;
-    }
-    if (era0(`talent:${target}:168`) != 1) {
-      return 0;
-    }
+  if (game.kojo.口上开关 <= 0) {
+    return 0;
+  }
+  if (era0(`talent:${target}:168`) != 1) {
+    return 0;
+  }
 
-    // 初調教時 CFLAG:201 == 0
-    if (kojo.初调教 == 0) {
-      era.drawLine();
-      if (era0(`talent:${target}:314`) == 9) {
-        await era.printAndWait(
-          `${target_name}在被${player_name}调教之前，被魔族改造了。成为了魔族中的忍者...魔忍了。`,
-        );
-        await era.printAndWait(
-          `${target_name}青色的肌肤映照着银发非常的美丽。真想就这样压倒做一些乱七八糟想做的事。`,
-        );
-        await era.printAndWait(`「让我做这开玩笑一样的事情…咕…离我远点！」`);
-        await era.printAndWait(
-          `${target_name}通红的恶魔眼睛怒目而视着，感觉非常可爱。`,
-        );
-        await era.printAndWait(
-          `因为变成魔族的原因，${target_name}是无法从${player_name}身边逃开的………`,
-        );
-        kojo.初调教 = 1; // CFLAG:201 = 1
-        kojo.魔族化 = 1; // CFLAG:370 = 1（魔族スイッチ１）
-      } else {
-        await era.printAndWait(
-          `${target_name}在调教房间的床上盘腿坐着。很无聊的打着哈欠朝着一个地方看，好像在等些什么。`,
-        );
-        await era.printAndWait(
-          `然后，把那美丽的银发拨到后面盯着${player_name}。`,
-        );
-        await era.printAndWait(
-          `「哎呀…真想不到居然把我捉住了呢。首先把恬不知耻的你的头给割下来…然后顺便救出其他的女孩子………」`,
-        );
-        await era.printAndWait(
-          `「…啊…嗯？…使不出力气了…忍术也用不了…怎么可能！」`,
-        );
-        await era.printAndWait(
-          `这是理所当然的，这个调教房间为了让勇士的力量无法使用，用奇怪的法术张开了特殊的结界。`,
-        );
-        await era.printAndWait(
-          `${player_name}默默的笑着把${target_name}压倒了。`,
-        );
-        await era.printAndWait(
-          `「在这个状态下会被做些什么我已经知道了…不过不管你干什么，我是绝对不会屈服的」`,
-        );
-        await era.printAndWait(`（唔…早知道这样应该接受女忍的训练的！）`);
-        kojo.初调教 = 1; // CFLAG:201 = 1
-      }
-      return 1;
-
-      // 魔族化（１回のみ）初回調教後魔族化、陥落前
-    } else if (
-      kojo.初调教 < 5 &&
-      kojo.魔族化 == 0 &&
-      era0(`talent:${target}:314`) == 9 &&
-      era0(`talent:${target}:85`) == 0 &&
-      era0(`talent:${target}:76`) == 0
-    ) {
+  // 初調教時 CFLAG:201 == 0
+  if (kojo.初调教 == 0) {
+    era.drawLine();
+    if (era0(`talent:${target}:314`) == 9) {
       await era.printAndWait(
-        `${target_name}经${player_name}之手改造成了魔族。成为魔族的忍者…魔忍了。`,
+        `${target_name}在被${player_name}调教之前，被魔族改造了。成为了魔族中的忍者...魔忍了。`,
       );
       await era.printAndWait(
         `${target_name}青色的肌肤映照着银发非常的美丽。真想就这样压倒做一些乱七八糟想做的事。`,
       );
-      await era.printAndWait(`「咕…嗯…做了这样的事情…想要我吗…？」`);
-      await era.printAndWait(`${target_name}通红的魔族眼睛哭泣着。`);
+      await era.printAndWait(`「让我做这开玩笑一样的事情…咕…离我远点！」`);
       await era.printAndWait(
-        `变成了这么肮脏的魔族…狂王大人也会抛弃我吧…啊啊………」`,
+        `${target_name}通红的恶魔眼睛怒目而视着，感觉非常可爱。`,
       );
-      await era.printAndWait(`${target_name}发出了叹息、然后留下了一滴眼泪………`);
-      kojo.魔族化 = 2; // CFLAG:370 = 2（魔族スイッチ２）
-      return 1;
+      await era.printAndWait(
+        `因为变成魔族的原因，${target_name}是无法从${player_name}身边逃开的………`,
+      );
+      kojo.初调教 = 1; // CFLAG:201 = 1
+      kojo.魔族化 = 1; // CFLAG:370 = 1（魔族スイッチ１）
+    } else {
+      await era.printAndWait(
+        `${target_name}在调教房间的床上盘腿坐着。很无聊的打着哈欠朝着一个地方看，好像在等些什么。`,
+      );
+      await era.printAndWait(
+        `然后，把那美丽的银发拨到后面盯着${player_name}。`,
+      );
+      await era.printAndWait(
+        `「哎呀…真想不到居然把我捉住了呢。首先把恬不知耻的你的头给割下来…然后顺便救出其他的女孩子………」`,
+      );
+      await era.printAndWait(
+        `「…啊…嗯？…使不出力气了…忍术也用不了…怎么可能！」`,
+      );
+      await era.printAndWait(
+        `这是理所当然的，这个调教房间为了让勇士的力量无法使用，用奇怪的法术张开了特殊的结界。`,
+      );
+      await era.printAndWait(
+        `${player_name}默默的笑着把${target_name}压倒了。`,
+      );
+      await era.printAndWait(
+        `「在这个状态下会被做些什么我已经知道了…不过不管你干什么，我是绝对不会屈服的」`,
+      );
+      await era.printAndWait(`（唔…早知道这样应该接受女忍的训练的！）`);
+      kojo.初调教 = 1; // CFLAG:201 = 1
+    }
+    return 1;
 
-      // NTR再捕獲
-    } else if (kojo.初调教 >= 1 && kojo.NTR再捕获 == 1) {
-      if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
-        era.drawLine();
+    // 魔族化（１回のみ）初回調教後魔族化、陥落前
+  } else if (
+    kojo.初调教 < 5 &&
+    kojo.魔族化 == 0 &&
+    era0(`talent:${target}:314`) == 9 &&
+    era0(`talent:${target}:85`) == 0 &&
+    era0(`talent:${target}:76`) == 0
+  ) {
+    await era.printAndWait(
+      `${target_name}经${player_name}之手改造成了魔族。成为魔族的忍者…魔忍了。`,
+    );
+    await era.printAndWait(
+      `${target_name}青色的肌肤映照着银发非常的美丽。真想就这样压倒做一些乱七八糟想做的事。`,
+    );
+    await era.printAndWait(`「咕…嗯…做了这样的事情…想要我吗…？」`);
+    await era.printAndWait(`${target_name}通红的魔族眼睛哭泣着。`);
+    await era.printAndWait(
+      `变成了这么肮脏的魔族…狂王大人也会抛弃我吧…啊啊………」`,
+    );
+    await era.printAndWait(`${target_name}发出了叹息、然后留下了一滴眼泪………`);
+    kojo.魔族化 = 2; // CFLAG:370 = 2（魔族スイッチ２）
+    return 1;
+
+    // NTR再捕獲
+  } else if (kojo.初调教 >= 1 && kojo.NTR再捕获 == 1) {
+    if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
+      era.drawLine();
+      await era.printAndWait(
+        `「啊、好久不见………不处刑我证明你觉得我还有利用价值？」`,
+      );
+      await era.printAndWait(
+        `${target_name}被反手捆绑正坐着。${target_name}好像很习惯似的一脸平静让人看不出情绪。`,
+      );
+      await era.printAndWait(
+        `「难道说…看到我和狂王大人被其他的男人抱着，稍微受到了点打击吗？」`,
+      );
+      await era.printAndWait(
+        `${target_name}嘲笑似的歪着嘴唇、没被提问也滔滔不绝开始讲起来了。`,
+      );
+      await era.printAndWait(
+        `「啊啊、比你抱起来舒服得多了啊，果然还是被很多人一起抱更爽」`,
+      );
+      await era.printAndWait(
+        `「被狂王大人抱着无数次的绝顶是到目前为止的经验中最棒的一个」`,
+      );
+      await era.printAndWait(
+        `「在那个城里全身沾满了爱液和精液不停被轮奸的时候简直就像做梦…一样…呢………」`,
+      );
+      await era.printAndWait(
+        `${target_name}的声音渐渐变成了哭腔、额头垂到了地板上。`,
+      );
+      await era.printAndWait(`「对不起…对不起…不要把我扔掉…不要把我扔掉………」`);
+      kojo.NTR再捕获 = 0; // （NTRスイッチ解除）
+    } else {
+      era.drawLine();
+      await era.printAndWait(
+        `${target_name}被反手捆绑正坐着。用吃了苦瓜一样的表情看着${player_name}。`,
+      );
+      await era.printAndWait(
+        `「咕…第二次你被捉住了呢…这种屈辱已经无法忍受了…杀了我吧！」`,
+      );
+      await era.printAndWait(
+        `「………什么？这次要把我调教成完全属于你的东西？…怎么会有你这样的人！」`,
+      );
+      await era.printAndWait(
+        `给惊讶的${target_name}看了里面有狂王痴态的水晶球，在耳边说着，${target_name}连耳朵都红了。`,
+      );
+      await era.printAndWait(
+        `「这、这又怎么了…我和狂王大人不管做什么…都跟你没有关系吧！」`,
+      );
+      await era.printAndWait(
+        `${player_name}默默的笑着，为了把${target_name}谁回来而将他压倒在了床上………`,
+      );
+      kojo.NTR再捕获 = 0; // （NTRスイッチ解除）
+    }
+    return 1;
+
+    // 屈服刻印Lv1
+  } else if (kojo.初调教 < 2 && era0(`mark:${target}:2`) == 1) {
+    era.drawLine();
+    await era.printAndWait(`「哼，这样的事情和那个地狱修行相比，什么也不算」`);
+    await era.printAndWait(
+      `${target_name}虽然在之前的调教中被做了屈辱的事情，不过还是一脸冷静的和${player_name}说着话。`,
+    );
+    await era.printAndWait(`「那么，接下来要做什么呢？」`);
+    kojo.初调教 = 2; // CFLAG:201 = 2
+    return 1;
+
+    // 屈服刻印Lv2
+  } else if (kojo.初调教 < 3 && era0(`mark:${target}:2`) == 2) {
+    era.drawLine();
+    await era.printAndWait(
+      `「你也给我适可而止吧，你这种这样的调教什么的对我来说就像是微风一样」`,
+    );
+    await era.printAndWait(
+      `${target_name}把手臂挽在一起显示着自己的从容，然而${player_name}没有看漏她的肩膀微妙的颤抖着。`,
+    );
+    await era.printAndWait(`${target_name}发现你含着笑容，马上移开了视线。`);
+    await era.printAndWait(`「哼，快开始你那温吞的调教吧」`);
+    kojo.初调教 = 3; // CFLAG:201 = 3
+    return 1;
+
+    // 屈服刻印Lv3
+  } else if (
+    kojo.初调教 < 4 &&
+    era0(`mark:${target}:2`) == 3 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(
+      `${player_name}在来房间的时候${target_name}一边用手擦拭眼角一边站了起来。`,
+    );
+    await era.printAndWait(
+      `「突、突然干什么啊，抱我？ 是啊…到这个地方来的理由只能是那个啊」`,
+    );
+    await era.printAndWait(`「随你怎么做吧，你的做法我也习惯了………」`);
+    await era.printAndWait(
+      `然后${target_name}用自然的动作靠近了${player_name}刷的转动手和头，在${player_name}的耳边轻声说`,
+    );
+    await era.printAndWait(
+      `「呵呵呵、这么轻松被抱住也太大意了？…啊！什么啊…啊嗯！」`,
+    );
+    await era.printAndWait(
+      `${player_name}开玩笑似得绊倒了${target_name}推倒在床上，调教开始了………`,
+    );
+    kojo.初调教 = 4; // CFLAG:201 = 4
+    return 1;
+
+    // 淫乱
+  } else if (
+    kojo.初调教 < 5 &&
+    era0(`talent:${target}:85`) == 0 &&
+    era0(`talent:${target}:76`) == 1 &&
+    era0(`talent:${target}:314`) != 9
+  ) {
+    era.drawLine();
+    await era.printAndWait(
+      `「嗯啊…啊、终于来了吗…呐…快点抱我，再不被你抱的话就要变得奇怪了………」`,
+    );
+    await era.printAndWait(
+      `${target_name}黑色湿润的瞳孔染上了淫荡的颜色。这个忍者终于忍受不住自己身体的欲望了。`,
+    );
+    await era.printAndWait(
+      `「胸…再摸摸…啊~啊…虽然不是特别大…嗯、非常的有感觉…啊~啊${heart(1)}」`,
+    );
+    await era.printAndWait(
+      `${target_name}被${player_name}抱在怀中、身体里面就那样体会着快乐。`,
+    );
+    await era.printAndWait(
+      `「啊…果然应该完成女忍的训练的…然后就可以跟你做更舒服的事了………」`,
+    );
+    if (era0(`talent:${target}:0`) == 1) {
+      await era.printAndWait(
+        `然后${target_name}从${player_name}的怀中离开，坐在了床上。${target_name}双腿打开，手抚摸着股间，散发着一股淫靡的感觉。`,
+      );
+      await era.printAndWait(`「不过托她的福我还是处女哦${heart(1)}」`);
+      await era.printAndWait(`「所以快点…给我你的那个东西${heart(1)}」`);
+    } else {
+      await era.printAndWait(
+        `然后${target_name}从${player_name}的怀中离开，坐在了床上${target_name}双腿打开，手抚摸着股间，散发着一股淫靡的感觉。。`,
+      );
+      await era.printAndWait(
+        `「呵呵呵，真相把你的阴茎…啊啊…更多的插进我的小穴里！」`,
+      );
+      await era.printAndWait(
+        `${target_name}舍弃了忍者冷静的假面，向你撒着娇。`,
+      );
+      await era.printAndWait(
+        `「啊啊，请把你那出色的东西赐给牝奴隶的我吧………${heart(1)}」`,
+      );
+    }
+    kojo.初调教 = 5; // CFLAG:201 = 5
+    return 1;
+
+    // 淫乱+魔族化
+  } else if (
+    era0(`talent:${target}:314`) == 9 &&
+    kojo.初调教 < 6 &&
+    era0(`talent:${target}:85`) == 0 &&
+    era0(`talent:${target}:76`) == 1
+  ) {
+    era.drawLine();
+
+    if (kojo.魔族化 == 1) {
+      // 調教前から魔族
+      await era.printAndWait(
+        `「啊…已经无法离开你了…更多…让我更多的舒服吧…${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `无数次的调教让${target_name}输给了自己的肉欲。${target_name}的魔族的黄色双眼中沉淀着情欲、脑袋中全是些淫乱的妄想。`,
+      );
+      await era.printAndWait(`「来爱抚我敏感的胸部…吮吸到留下吻痕吧…」`);
+      await era.printAndWait(
+        `「我…我想被你侵犯…啊啊…在这个青色的小穴和肛门…期待着你的精液灌注${heart(1)}`,
+      );
+      await era.printAndWait(`${target_name}在床上慢慢的分开了双腿。`);
+      if (era0(`talent:${target}:0`) == 1) {
         await era.printAndWait(
-          `「啊、好久不见………不处刑我证明你觉得我还有利用价值？」`,
+          `「呐！…现在就把我的纯洁夺走…把阴茎插进来…啊啊…做了那么羞耻的事情要是还不被侵犯的话…干脆咬舌头死了算了………」`,
         );
         await era.printAndWait(
-          `${target_name}被反手捆绑正坐着。${target_name}好像很习惯似的一脸平静让人看不出情绪。`,
+          `${target_name}一副快要哭出来的样子一边用手指撑开了蜜裂。爱液溢出的淫乱的香味在不断的漂浮着。`,
         );
         await era.printAndWait(
-          `「难道说…看到我和狂王大人被其他的男人抱着，稍微受到了点打击吗？」`,
+          `「所以、呐…拜托了、让可悲的母魔族变成你的东西…”魔王大人”${heart(1)}」`,
         );
-        await era.printAndWait(
-          `${target_name}嘲笑似的歪着嘴唇、没被提问也滔滔不绝开始讲起来了。`,
-        );
-        await era.printAndWait(
-          `「啊啊、比你抱起来舒服得多了啊，果然还是被很多人一起抱更爽」`,
-        );
-        await era.printAndWait(
-          `「被狂王大人抱着无数次的绝顶是到目前为止的经验中最棒的一个」`,
-        );
-        await era.printAndWait(
-          `「在那个城里全身沾满了爱液和精液不停被轮奸的时候简直就像做梦…一样…呢………」`,
-        );
-        await era.printAndWait(
-          `${target_name}的声音渐渐变成了哭腔、额头垂到了地板上。`,
-        );
-        await era.printAndWait(
-          `「对不起…对不起…不要把我扔掉…不要把我扔掉………」`,
-        );
-        kojo.NTR再捕获 = 0; // （NTRスイッチ解除）
       } else {
-        era.drawLine();
         await era.printAndWait(
-          `${target_name}被反手捆绑正坐着。用吃了苦瓜一样的表情看着${player_name}。`,
+          `「快点…来…在我的肚子里装满你的精液之前一直侵犯我${heart(1)}」`,
         );
         await era.printAndWait(
-          `「咕…第二次你被捉住了呢…这种屈辱已经无法忍受了…杀了我吧！」`,
+          `${target_name}一副快要哭出来的样子一边用手指撑开了蜜裂。爱液溢出的淫乱的香味在不断的漂浮着。`,
         );
         await era.printAndWait(
-          `「………什么？这次要把我调教成完全属于你的东西？…怎么会有你这样的人！」`,
+          `「啊啊…请给母魔族奴隶的我…你那出色的东西………${heart(1)}」`,
         );
-        await era.printAndWait(
-          `给惊讶的${target_name}看了里面有狂王痴态的水晶球，在耳边说着，${target_name}连耳朵都红了。`,
-        );
-        await era.printAndWait(
-          `「这、这又怎么了…我和狂王大人不管做什么…都跟你没有关系吧！」`,
-        );
-        await era.printAndWait(
-          `${player_name}默默的笑着，为了把${target_name}谁回来而将他压倒在了床上………`,
-        );
-        kojo.NTR再捕获 = 0; // （NTRスイッチ解除）
       }
+      kojo.初调教 = 6; // CFLAG:201 = 6
       return 1;
-
-      // 屈服刻印Lv1
-    } else if (kojo.初调教 < 2 && era0(`mark:${target}:2`) == 1) {
-      era.drawLine();
+    } else if (kojo.魔族化 == 2) {
+      // 初回調教後に魔族
       await era.printAndWait(
-        `「哼，这样的事情和那个地狱修行相比，什么也不算」`,
+        `「啊…我已经…不被你抱着…就会不正常了…呐…抱我…我和小穴都要…${heart(1)}」`,
       );
       await era.printAndWait(
-        `${target_name}虽然在之前的调教中被做了屈辱的事情，不过还是一脸冷静的和${player_name}说着话。`,
+        `${target_name}一边下流的舔着嘴唇一边撒娇的抱了过来`,
       );
-      await era.printAndWait(`「那么，接下来要做什么呢？」`);
-      kojo.初调教 = 2; // CFLAG:201 = 2
-      return 1;
-
-      // 屈服刻印Lv2
-    } else if (kojo.初调教 < 3 && era0(`mark:${target}:2`) == 2) {
-      era.drawLine();
+      await era.printAndWait(`「来爱抚我敏感的胸部…吮吸到留下吻痕吧…」`);
       await era.printAndWait(
-        `「你也给我适可而止吧，你这种这样的调教什么的对我来说就像是微风一样」`,
+        `${target_name}的手划过${player_name}的身体。好像舔着身体一样的触感让${player_name}打了一个冷战。`,
       );
       await era.printAndWait(
-        `${target_name}把手臂挽在一起显示着自己的从容，然而${player_name}没有看漏她的肩膀微妙的颤抖着。`,
-      );
-      await era.printAndWait(`${target_name}发现你含着笑容，马上移开了视线。`);
-      await era.printAndWait(`「哼，快开始你那温吞的调教吧」`);
-      kojo.初调教 = 3; // CFLAG:201 = 3
-      return 1;
-
-      // 屈服刻印Lv3
-    } else if (
-      kojo.初调教 < 4 &&
-      era0(`mark:${target}:2`) == 3 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(
-        `${player_name}在来房间的时候${target_name}一边用手擦拭眼角一边站了起来。`,
+        `「啊啊…在这个青色的小穴和肛门里…期待着你的精液灌注${heart(1)}`,
       );
       await era.printAndWait(
-        `「突、突然干什么啊，抱我？ 是啊…到这个地方来的理由只能是那个啊」`,
-      );
-      await era.printAndWait(`「随你怎么做吧，你的做法我也习惯了………」`);
-      await era.printAndWait(
-        `然后${target_name}用自然的动作靠近了${player_name}刷的转动手和头，在${player_name}的耳边轻声说`,
-      );
-      await era.printAndWait(
-        `「呵呵呵、这么轻松被抱住也太大意了？…啊！什么啊…啊嗯！」`,
-      );
-      await era.printAndWait(
-        `${player_name}开玩笑似得绊倒了${target_name}推倒在床上，调教开始了………`,
-      );
-      kojo.初调教 = 4; // CFLAG:201 = 4
-      return 1;
-
-      // 淫乱
-    } else if (
-      kojo.初调教 < 5 &&
-      era0(`talent:${target}:85`) == 0 &&
-      era0(`talent:${target}:76`) == 1 &&
-      era0(`talent:${target}:314`) != 9
-    ) {
-      era.drawLine();
-      await era.printAndWait(
-        `「嗯啊…啊、终于来了吗…呐…快点抱我，再不被你抱的话就要变得奇怪了………」`,
-      );
-      await era.printAndWait(
-        `${target_name}黑色湿润的瞳孔染上了淫荡的颜色。这个忍者终于忍受不住自己身体的欲望了。`,
-      );
-      await era.printAndWait(
-        `「胸…再摸摸…啊~啊…虽然不是特别大…嗯、非常的有感觉…啊~啊${heart(1)}」`,
-      );
-      await era.printAndWait(
-        `${target_name}被${player_name}抱在怀中、身体里面就那样体会着快乐。`,
-      );
-      await era.printAndWait(
-        `「啊…果然应该完成女忍的训练的…然后就可以跟你做更舒服的事了………」`,
+        `然后${target_name}抓着${player_name}的手伸向了自己的蜜裂。`,
       );
       if (era0(`talent:${target}:0`) == 1) {
         await era.printAndWait(
-          `然后${target_name}从${player_name}的怀中离开，坐在了床上。${target_name}双腿打开，手抚摸着股间，散发着一股淫靡的感觉。`,
+          `「呐！…现在就把我的纯洁夺走…把阴茎插进来…啊啊…做了那么羞耻的事情要是还不被侵犯的话…干脆咬舌头死了算了………」`,
         );
-        await era.printAndWait(`「不过托她的福我还是处女哦${heart(1)}」`);
-        await era.printAndWait(`「所以快点…给我你的那个东西${heart(1)}」`);
+        await era.printAndWait(
+          `${target_name}一副快要哭出来的样子一边被${player_name}的手指轻抚着，爱液溢出的淫乱的香味在不断的漂浮着。`,
+        );
+        await era.printAndWait(
+          `「所以、呐…拜托了、让可悲的母魔族变成你的东西…”魔王大人”${heart(1)}」`,
+        );
       } else {
         await era.printAndWait(
-          `然后${target_name}从${player_name}的怀中离开，坐在了床上${target_name}双腿打开，手抚摸着股间，散发着一股淫靡的感觉。。`,
+          `在我的肚子里装满你的精液之前一直侵犯我${heart(1)}」`,
         );
         await era.printAndWait(
-          `「呵呵呵，真相把你的阴茎…啊啊…更多的插进我的小穴里！」`,
+          `${target_name}为了让${player_name}的手指插进而自己撑开了蜜裂，爱液溢出的淫乱的香味在不断的漂浮着`,
         );
         await era.printAndWait(
-          `${target_name}舍弃了忍者冷静的假面，向你撒着娇。`,
-        );
-        await era.printAndWait(
-          `「啊啊，请把你那出色的东西赐给牝奴隶的我吧………${heart(1)}」`,
+          `「啊啊…请给母魔族奴隶的我…你那出色的东西………${heart(1)}」`,
         );
       }
-      kojo.初调教 = 5; // CFLAG:201 = 5
+      kojo.初调教 = 6; // CFLAG:201 = 6
+      return 1;
+    } else {
+      // 陥落後に魔族
+      await era.printAndWait(
+        `经${player_name}之手被改造，变成了魔族的${target_name}一脸陶醉，坐在床上。`,
+      );
+      await era.printAndWait(
+        `「我好开心、这个身体的话可以和你一直sex几小时也好…嗯、一整夜也好，几天也好都可以了。…${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `${target_name}站起来用紫色的舌头舔着嘴唇一边靠近。能清楚看出，那紫色的皮肤因为发情而红润。`,
+      );
+      await era.printAndWait(
+        `「呐，做吧…抱我到会坏掉的程度…弄的乱七八糟的…呐？呐？」`,
+      );
+      await era.printAndWait(
+        `${target_name}抱住${player_name}不停的亲吻着脖子祈求着………`,
+      );
+      kojo.初调教 = 6; // CFLAG:201 = 6
+      return 1;
+    }
+
+    // 爱慕
+  } else if (
+    kojo.初调教 < 7 &&
+    era0(`talent:${target}:85`) == 1 &&
+    era0(`talent:${target}:314`) != 9 &&
+    era0(`talent:${target}:76`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`${target_name}一脸神圣，单膝跪地，等待着你。`);
+    await era.printAndWait(
+      `${player_name}快被这个气氛彻底吞没，突然${target_name}说起了话。`,
+    );
+    await era.printAndWait(
+      `「呐、差不多该考虑考虑怎么称呼“你”了。这样吧……主君、夫君大人、馆主大人、魔王大人」`,
+    );
+    await era.printAndWait(`「………哪个好呢？…你希望我用哪个称呼你？」`);
+    await era.printAndWait(
+      `${player_name}一副惊讶的表情对${target_name}带着一副受不了了似的表情说道。`,
+    );
+    await era.printAndWait(
+      `「诶~、还不明白吗…简单的说就是，我希望你成为的新主人」`,
+    );
+    await era.printAndWait(`「不相信我的话…在你想通之前继续调教我就好了」`);
+    if (era0(`talent:${target}:0`) == 1) {
+      await era.printAndWait(`${target_name}放松着嘴角，微微的笑了`);
+      await era.printAndWait(`「那么、作为服从你的证明，把处女也可以哦」`);
+      await era.printAndWait(
+        `「…怎么了这个表情？…啊啊、我可是没有受过女忍的训练的，还是处女哦。所以」`,
+      );
+      await era.printAndWait(`「请温柔一点…」`);
+    } else {
+      await era.printAndWait(`「嘛，今天就是这么打算的吧」`);
+      await era.printAndWait(`${target_name}放松着嘴角，微微的笑了………`);
+    }
+    kojo.初调教 = 7; // CFLAG:201 = 7
+    return 1;
+
+    // 爱慕+魔族化
+  } else if (
+    era0(`talent:${target}:314`) == 9 &&
+    kojo.初调教 < 8 &&
+    era0(`talent:${target}:85`) == 1 &&
+    era0(`talent:${target}:76`) == 0
+  ) {
+    era.drawLine();
+
+    if (kojo.魔族化 == 1) {
+      // 調教前から魔族
+      // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。
+      // 条件提到语句外当条件、文本留在输出语句里
+      await era.printAndWait(
+        (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +
+          `${target_name}单膝跪地，好像是在等待着${player_name}。`,
+      );
+      await era.printAndWait(`然后${target_name}战战兢兢的开口了。`);
+      await era.printAndWait(
+        `「我…我已经…把你认作主君了…魔王大人。所以把我当成是下属…那个…正式的…承认…一下吧…」`,
+      );
+      await era.printAndWait(
+        `一边瞟视这里一边用战战兢兢的语调说这话的，好像不是平时刚强而充满自信的那个人一样。`,
+      );
+      await era.printAndWait(
+        `「虽说以前被强行变成这幅身体的时候也曾怨恨过、不过现在…对你…啊啊…求你了！如果你不点头的话我马上在这里咬舌自尽！」`,
+      );
+      await era.printAndWait(
+        `「诶…可以么…我可以成为你的东西啊…啊啊…太好了…真的太好了…」`,
+      );
+      await era.printAndWait(
+        `${target_name}看到${player_name}点着头，终于彻底安心了一样松了一口气。`,
+      );
+      if (era0(`talent:${target}:0`) == 1) {
+        await era.printAndWait(`「那么…作为我主君的证明，把我的处女拿走吧…♪」`);
+        await era.printAndWait(
+          `${target_name}的紫色舌头舔着嘴唇，着灼热的吐息`,
+        );
+        await era.printAndWait(
+          `「呵呵呵，这是我的一族的规矩啊…要为奉上处女的人献出一生………骗你的。」`,
+        );
+        await era.printAndWait(`一边说着${target_name}一边可爱的吐了吐舌头………`);
+      } else {
+        await era.printAndWait(
+          `「啊…今天为了纪念我成为你的东西，会好好奉仕你的…♪」`,
+        );
+        await era.printAndWait(
+          `${target_name}是太兴奋了吗，紫色的舌头下流的舔着嘴唇。`,
+        );
+        await era.printAndWait(
+          `「我是竭尽全力做事的类型…好好期待着吧…${heart(1)}」`,
+        );
+      }
+      kojo.初调教 = 8; // CFLAG:201 = 8
+      return 1;
+    } else if (kojo.魔族化 == 2) {
+      // 調教後に魔族
+      // 与上一段同型（#622）
+      await era.printAndWait(
+        (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +
+          `${target_name}单膝跪地，好像是在等待着${player_name}。`,
+      );
+      await era.printAndWait(`然后${target_name}战战兢兢的开口了。`);
+      await era.printAndWait(
+        `「我…我已经…把你认作主君了…魔王大人。所以把我当成是下属…那个…正式的…承认…一下吧…」`,
+      );
+      await era.printAndWait(
+        `一边瞟视这里一边用战战兢兢的语调说这话的，好像不是平时刚强而充满自信的那个人一样`,
+      );
+      await era.printAndWait(
+        `「我变成魔族之后已经…你…你的…啊啊…拜托了！如果你不答应的话我马上在这里咬舌自尽！」`,
+      );
+      await era.printAndWait(
+        `「诶…可以么…我成为你的…魔王大人东西真的可以么…啊啊…太好了…真的太好了…」`,
+      );
+      await era.printAndWait(
+        `${target_name}看到${player_name}点着头，终于彻底安心了一样松了一口气。`,
+      );
+      if (era0(`talent:${target}:0`) == 1) {
+        await era.printAndWait(`「那么…作为我主君的证明，把我的处女拿走吧…♪」`);
+        await era.printAndWait(
+          `${target_name}的紫色舌头舔着嘴唇，着灼热的吐息`,
+        );
+        await era.printAndWait(
+          `「呵呵呵，这是我的一族的规矩啊…要为奉上处女的人献出一生………骗你的。」`,
+        );
+        await era.printAndWait(`一边说着${target_name}一边可爱的吐了吐舌头………`);
+      } else {
+        await era.printAndWait(
+          `「啊…今天为了纪念我成为你的东西，会好好奉仕你的…♪」`,
+        );
+        await era.printAndWait(
+          `${target_name}太兴奋了吗，紫色的舌头下流的舔着嘴唇。`,
+        );
+        await era.printAndWait(
+          `「我是竭尽全力做事的类型…好好期待着吧…${heart(1)}」`,
+        );
+      }
+      kojo.初调教 = 8; // CFLAG:201 = 8
+      return 1;
+    } else {
+      // 陥落後に魔族
+      await era.printAndWait(
+        `「如果是不久之前的我的话、变成了这个样子的时候肯定会当场自裁吧」`,
+      );
+      await era.printAndWait(
+        `${target_name}进行了多次的改造变成了魔族。魔族那恶魔的肌肤跟她的银发非常合适。`,
+      );
+      await era.printAndWait(
+        `「啊…所以说、我成为你的下属真的好吗…魔王大人${heart(1)}」`,
+      );
+      await era.printAndWait(
+        `${target_name}的魔族那琥珀色的眼睛闪耀着迷人的光辉，淡淡笑了………`,
+      );
+      kojo.初调教 = 8; // CFLAG:201 = 8
+      return 1;
+    }
+
+    // 崩坏
+  } else if (era0(`talent:${target}:9`) == 1 && kojo.初调教 < 9) {
+    era.drawLine();
+    await era.printAndWait(`${target_name}的双眼看上去已经没有理智存在了`);
+    await era.printAndWait(`进行了过于残酷的调教、精神貌似已经崩坏了。`);
+    await era.printAndWait(
+      `${target_name}像是坏掉的玩具一样好像在呼唤着谁的名字………`,
+    );
+    await era.printAndWait(`「哈…呵…啊哈啊…啊哇、哇的大人哈哇大人在哪里」`);
+    kojo.初调教 = 9; // CFLAG:201 = 9
+    return 1;
+
+    // 崩坏してたら二回目以降へ飛ぶ
+  } else if (era0(`talent:${target}:9`) == 1) {
+    return k8_kojo2(); // CALL K8_KOJO2
+
+    // 助手の有無をチェック（いない場合は二回目以降へ）
+  } else if (era_flag.assi < 0) {
+    return k8_kojo2(); // CALL K8_KOJO2
+
+    // 你が男じゃなかったら二回目以降
+  } else if (era0('talent:0:122') == 0) {
+    // TALENT:MASTER:122（MASTER 恒角色 0）
+    return k8_kojo2(); // CALL K8_KOJO2
+
+    // 簡易助手口上：金红桃（NO:ASSI == 20）
+  } else if (era_flag.assi == 20) {
+    const assi = era_flag.assi;
+    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    era.drawLine();
+
+    if (kojo.简易助手_0 == 0) {
+      if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
+        // 既に爱持ちで爱取得時初口上（陥落イベント）が発生済み
+        await era.printAndWait(
+          `「啊…${assi_name}连队长都变成了魔王大人的仆人什么的………」`,
+        );
+        await era.printAndWait(
+          `看到被${player_name}搂着肩膀的${assi_name}，${target_name}露出了十分惊讶的表情。`,
+        );
+        await era.printAndWait(
+          `「对、对呢、魔王大人把我的${assi_name}变成了自己的东西呢………」`,
+        );
+        await era.printAndWait(
+          `在嘟囔着的${target_name}面前、${player_name}吮吸着${assi_name}的嘴唇。`,
+        );
+        await era.printAndWait(
+          `『嗯~…不要…啾啾…被那个孩子看到了可不好呢…嗯♪』`,
+        );
+        await era.printAndWait(
+          `「唔！太，太狡猾了！我明明也很想和${assi_name}队长接吻！」`,
+        );
+        await era.printAndWait(
+          `冲击性的告白、看来${target_name}喜欢${assi_name}的样子。`,
+        );
+        await era.printAndWait(
+          `『嘛、嘛啊…我明明以为你一直讨厌我呢…原来是这样………』`,
+        );
+        await era.printAndWait(
+          `「开始本来很讨厌的！但是渐渐的爱上队长了…啊啊！我也爱着魔王大人的呀！我该怎么做才好！」`,
+        );
+        kojo.简易助手_0 = 2; // CFLAG:202 = 2
+      } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
+        // 既に淫乱持ちで淫乱取得時初口上（陥落イベント）が発生済み
+        await era.printAndWait(
+          `「啊…没想到连${assi_name}队长也被魔王大人的阴茎攻陷了………多么的美妙！」`,
+        );
+        await era.printAndWait(
+          `看到被${player_name}搂着肩膀的${assi_name}，${target_name}开心的笑了。`,
+        );
+        await era.printAndWait(
+          `「和我最喜欢的${assi_name}队长一起侍奉魔王大人什么的！实在是太幸福了！」`,
+        );
+        await era.printAndWait(`『嘛、居然说最喜欢我了！？』`);
+        await era.printAndWait(
+          `「嗯、我最喜欢你了${assi_name}队长${heart(1)}、啊啊、比起那个不如商量一下如何侍奉魔王大人吧」`,
+        );
+        await era.printAndWait(
+          `${target_name}的告白吓到了${assi_name}、但${target_name}的兴趣已经转向了如何三个人一起获得快乐了………`,
+        );
+        kojo.简易助手_0 = 2; // CFLAG:202 = 2
+      } else {
+        // それ以外
+        await era.printAndWait(
+          `「啊、这种事…骗人…骗人…${assi_name}队长怎么可能变成了魔王的走狗…！」`,
+        );
+        await era.printAndWait(
+          `${target_name}看到${assi_name}服侍${player_name}的样子，好像受到了打击。`,
+        );
+        await era.printAndWait(
+          `${player_name}给${assi_name}递了个眼色。然后${assi_name}抱着${target_name}亲了起来。`,
+        );
+        await era.printAndWait(
+          `「啊啊！停、停下来啊…我和${assi_name}队长用这种方式…唔…嗯…呜啊…啊啊………！」`,
+        );
+        await era.printAndWait(`『哼哼、老实的呆着吧…哼…啾啾…${heart(1)}』`);
+        await era.printAndWait(
+          `那个酷酷的女忍者一边翻着白眼一边被${assi_name}亲着。嘴唇分开后${target_name}空虚的瞳孔中洒下了眼泪………`,
+        );
+        if (chara(target).train.初吻对象 == -1) {
+          // 初吻
+          chara(target).train.初吻对象 = 1; // CFLAG:TARGET:16 = 1
+          chara(target).train.初吻对象名 = assi_name; // CSTR:TARGET:4 = %SAVESTR:ASSI%
+          await era.printAndWait(`看来是${target_name}的初吻………`);
+        }
+        kojo.简易助手_0 = 1; // CFLAG:202 = 1
+      }
       return 1;
 
-      // 淫乱+魔族化
+      // 二回目以降（爱/淫乱持ち）
     } else if (
-      era0(`talent:${target}:314`) == 9 &&
-      kojo.初调教 < 6 &&
-      era0(`talent:${target}:85`) == 0 &&
+      // `CFLAG:202 == 1 && FLAG:7 == 2 && TALENT:85 == 1 || TALENT:76 == 1`
+      // 同层混写：旧引擎的 && 与 || 同优先级、左结合，读作
+      // `(三项 && ) || 淫乱`——`||` 之后没有 `&&`，两种读法同值（#517）。
+      // 本文件另两处同形（202/203/204 三阶）。
+      (kojo.简易助手_0 == 1 &&
+        game.kojo.口上开关 == 2 &&
+        era0(`talent:${target}:85`) == 1) ||
       era0(`talent:${target}:76`) == 1
     ) {
-      era.drawLine();
-
-      if (kojo.魔族化 == 1) {
-        // 調教前から魔族
+      if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(`「啊、队、队长…对、对不起…」`);
+        await era.printAndWait(`『有什么要对我道歉的？』`);
         await era.printAndWait(
-          `「啊…已经无法离开你了…更多…让我更多的舒服吧…${heart(1)}」`,
+          `「因为我对魔王大人…那个、主君…喜欢上了…所以………」`,
+        );
+        await era.printAndWait(`『你还喜欢着我吗？』`);
+        await era.printAndWait(`「！、是、是的、最喜欢了！最爱了！」`);
+        await era.printAndWait(
+          `『所以什么问题也不会有吧？ 一起来侍奉魔王大人吧？』`,
+        );
+        await era.printAndWait(`「是！是的！我会努力的！」`);
+        await era.printAndWait(
+          `看来${target_name}和${assi_name}建筑了新的关系………`,
+        );
+        kojo.简易助手_0 = 2; // CFLAG:202 = 2
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(`「啊哈、队长…和我接吻吧…接吻${heart(1)}」`);
+        await era.printAndWait(
+          `『被魔王调教了以后、变得特别可爱呢、${target_name}』`,
         );
         await era.printAndWait(
-          `无数次的调教让${target_name}输给了自己的肉欲。${target_name}的魔族的黄色双眼中沉淀着情欲、脑袋中全是些淫乱的妄想。`,
-        );
-        await era.printAndWait(`「来爱抚我敏感的胸部…吮吸到留下吻痕吧…」`);
-        await era.printAndWait(
-          `「我…我想被你侵犯…啊啊…在这个青色的小穴和肛门…期待着你的精液灌注${heart(1)}`,
-        );
-        await era.printAndWait(`${target_name}在床上慢慢的分开了双腿。`);
-        if (era0(`talent:${target}:0`) == 1) {
-          await era.printAndWait(
-            `「呐！…现在就把我的纯洁夺走…把阴茎插进来…啊啊…做了那么羞耻的事情要是还不被侵犯的话…干脆咬舌头死了算了………」`,
-          );
-          await era.printAndWait(
-            `${target_name}一副快要哭出来的样子一边用手指撑开了蜜裂。爱液溢出的淫乱的香味在不断的漂浮着。`,
-          );
-          await era.printAndWait(
-            `「所以、呐…拜托了、让可悲的母魔族变成你的东西…”魔王大人”${heart(1)}」`,
-          );
-        } else {
-          await era.printAndWait(
-            `「快点…来…在我的肚子里装满你的精液之前一直侵犯我${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `${target_name}一副快要哭出来的样子一边用手指撑开了蜜裂。爱液溢出的淫乱的香味在不断的漂浮着。`,
-          );
-          await era.printAndWait(
-            `「啊啊…请给母魔族奴隶的我…你那出色的东西………${heart(1)}」`,
-          );
-        }
-        kojo.初调教 = 6; // CFLAG:201 = 6
-        return 1;
-      } else if (kojo.魔族化 == 2) {
-        // 初回調教後に魔族
-        await era.printAndWait(
-          `「啊…我已经…不被你抱着…就会不正常了…呐…抱我…我和小穴都要…${heart(1)}」`,
+          `看着沉溺于淫荡的${target_name}样子、${assi_name}轻轻的笑了。`,
         );
         await era.printAndWait(
-          `${target_name}一边下流的舔着嘴唇一边撒娇的抱了过来`,
-        );
-        await era.printAndWait(`「来爱抚我敏感的胸部…吮吸到留下吻痕吧…」`);
-        await era.printAndWait(
-          `${target_name}的手划过${player_name}的身体。好像舔着身体一样的触感让${player_name}打了一个冷战。`,
+          `「队长讨厌我吗？ 我可是最喜欢队长的…所以快来接吻吧${heart(1)}」`,
         );
         await era.printAndWait(
-          `「啊啊…在这个青色的小穴和肛门里…期待着你的精液灌注${heart(1)}`,
+          `『哼哼、来这里、我和魔王大人会好好地疼爱你的${heart(1)}』`,
         );
-        await era.printAndWait(
-          `然后${target_name}抓着${player_name}的手伸向了自己的蜜裂。`,
-        );
-        if (era0(`talent:${target}:0`) == 1) {
-          await era.printAndWait(
-            `「呐！…现在就把我的纯洁夺走…把阴茎插进来…啊啊…做了那么羞耻的事情要是还不被侵犯的话…干脆咬舌头死了算了………」`,
-          );
-          await era.printAndWait(
-            `${target_name}一副快要哭出来的样子一边被${player_name}的手指轻抚着，爱液溢出的淫乱的香味在不断的漂浮着。`,
-          );
-          await era.printAndWait(
-            `「所以、呐…拜托了、让可悲的母魔族变成你的东西…”魔王大人”${heart(1)}」`,
-          );
-        } else {
-          await era.printAndWait(
-            `在我的肚子里装满你的精液之前一直侵犯我${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `${target_name}为了让${player_name}的手指插进而自己撑开了蜜裂，爱液溢出的淫乱的香味在不断的漂浮着`,
-          );
-          await era.printAndWait(
-            `「啊啊…请给母魔族奴隶的我…你那出色的东西………${heart(1)}」`,
-          );
-        }
-        kojo.初调教 = 6; // CFLAG:201 = 6
-        return 1;
-      } else {
-        // 陥落後に魔族
-        await era.printAndWait(
-          `经${player_name}之手被改造，变成了魔族的${target_name}一脸陶醉，坐在床上。`,
-        );
-        await era.printAndWait(
-          `「我好开心、这个身体的话可以和你一直sex几小时也好…嗯、一整夜也好，几天也好都可以了。…${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `${target_name}站起来用紫色的舌头舔着嘴唇一边靠近。能清楚看出，那紫色的皮肤因为发情而红润。`,
-        );
-        await era.printAndWait(
-          `「呐，做吧…抱我到会坏掉的程度…弄的乱七八糟的…呐？呐？」`,
-        );
-        await era.printAndWait(
-          `${target_name}抱住${player_name}不停的亲吻着脖子祈求着………`,
-        );
-        kojo.初调教 = 6; // CFLAG:201 = 6
-        return 1;
+        kojo.简易助手_0 = 2; // CFLAG:202 = 2
       }
-
-      // 爱慕
-    } else if (
-      kojo.初调教 < 7 &&
-      era0(`talent:${target}:85`) == 1 &&
-      era0(`talent:${target}:314`) != 9 &&
-      era0(`talent:${target}:76`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`${target_name}一脸神圣，单膝跪地，等待着你。`);
-      await era.printAndWait(
-        `${player_name}快被这个气氛彻底吞没，突然${target_name}说起了话。`,
-      );
-      await era.printAndWait(
-        `「呐、差不多该考虑考虑怎么称呼“你”了。这样吧……主君、夫君大人、馆主大人、魔王大人」`,
-      );
-      await era.printAndWait(`「………哪个好呢？…你希望我用哪个称呼你？」`);
-      await era.printAndWait(
-        `${player_name}一副惊讶的表情对${target_name}带着一副受不了了似的表情说道。`,
-      );
-      await era.printAndWait(
-        `「诶~、还不明白吗…简单的说就是，我希望你成为的新主人」`,
-      );
-      await era.printAndWait(`「不相信我的话…在你想通之前继续调教我就好了」`);
-      if (era0(`talent:${target}:0`) == 1) {
-        await era.printAndWait(`${target_name}放松着嘴角，微微的笑了`);
-        await era.printAndWait(`「那么、作为服从你的证明，把处女也可以哦」`);
-        await era.printAndWait(
-          `「…怎么了这个表情？…啊啊、我可是没有受过女忍的训练的，还是处女哦。所以」`,
-        );
-        await era.printAndWait(`「请温柔一点…」`);
-      } else {
-        await era.printAndWait(`「嘛，今天就是这么打算的吧」`);
-        await era.printAndWait(`${target_name}放松着嘴角，微微的笑了………`);
-      }
-      kojo.初调教 = 7; // CFLAG:201 = 7
       return 1;
 
-      // 爱慕+魔族化
-    } else if (
-      era0(`talent:${target}:314`) == 9 &&
-      kojo.初调教 < 8 &&
-      era0(`talent:${target}:85`) == 1 &&
-      era0(`talent:${target}:76`) == 0
-    ) {
-      era.drawLine();
-
-      if (kojo.魔族化 == 1) {
-        // 調教前から魔族
-        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。
-        // 条件提到语句外当条件、文本留在输出语句里
+      // 二回目以降（三人関係成立後）
+    } else if (kojo.简易助手_0 == 2 && game.kojo.口上开关 == 2) {
+      if (era0(`talent:${target}:85`) == 1) {
         await era.printAndWait(
-          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +
-            `${target_name}单膝跪地，好像是在等待着${player_name}。`,
-        );
-        await era.printAndWait(`然后${target_name}战战兢兢的开口了。`);
-        await era.printAndWait(
-          `「我…我已经…把你认作主君了…魔王大人。所以把我当成是下属…那个…正式的…承认…一下吧…」`,
+          `「啊啊…魔王大人太过分了…在我眼前…和${assi_name}队长做那样的事情…呜呜呜」`,
         );
         await era.printAndWait(
-          `一边瞟视这里一边用战战兢兢的语调说这话的，好像不是平时刚强而充满自信的那个人一样。`,
+          `${target_name}在${player_name}前正座着、在她眼前${player_name}和${assi_name}正粘粘糊糊的深吻给她看。`,
         );
         await era.printAndWait(
-          `「虽说以前被强行变成这幅身体的时候也曾怨恨过、不过现在…对你…啊啊…求你了！如果你不点头的话我马上在这里咬舌自尽！」`,
+          `『嗯…嗯啾啾…你就在那里看着我们现在的样子…嗯哼…啾${heart(1)}』`,
         );
         await era.printAndWait(
-          `「诶…可以么…我可以成为你的东西啊…啊啊…太好了…真的太好了…」`,
+          `${target_name}因为两人的样子而焦急着、像被淫乱的火焰烘烤着………`,
+        );
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「呐${assi_name}队长、和我一起做一些快乐的事情吧…呐${heart(1)}」`,
         );
         await era.printAndWait(
-          `${target_name}看到${player_name}点着头，终于彻底安心了一样松了一口气。`,
-        );
-        if (era0(`talent:${target}:0`) == 1) {
-          await era.printAndWait(
-            `「那么…作为我主君的证明，把我的处女拿走吧…♪」`,
-          );
-          await era.printAndWait(
-            `${target_name}的紫色舌头舔着嘴唇，着灼热的吐息`,
-          );
-          await era.printAndWait(
-            `「呵呵呵，这是我的一族的规矩啊…要为奉上处女的人献出一生………骗你的。」`,
-          );
-          await era.printAndWait(
-            `一边说着${target_name}一边可爱的吐了吐舌头………`,
-          );
-        } else {
-          await era.printAndWait(
-            `「啊…今天为了纪念我成为你的东西，会好好奉仕你的…♪」`,
-          );
-          await era.printAndWait(
-            `${target_name}是太兴奋了吗，紫色的舌头下流的舔着嘴唇。`,
-          );
-          await era.printAndWait(
-            `「我是竭尽全力做事的类型…好好期待着吧…${heart(1)}」`,
-          );
-        }
-        kojo.初调教 = 8; // CFLAG:201 = 8
-        return 1;
-      } else if (kojo.魔族化 == 2) {
-        // 調教後に魔族
-        // 与上一段同型（#622）
-        await era.printAndWait(
-          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +
-            `${target_name}单膝跪地，好像是在等待着${player_name}。`,
-        );
-        await era.printAndWait(`然后${target_name}战战兢兢的开口了。`);
-        await era.printAndWait(
-          `「我…我已经…把你认作主君了…魔王大人。所以把我当成是下属…那个…正式的…承认…一下吧…」`,
+          `${target_name}坦率的顺从着自己的欲望、一边抱着${assi_name}的身体一边撒娇。`,
         );
         await era.printAndWait(
-          `一边瞟视这里一边用战战兢兢的语调说这话的，好像不是平时刚强而充满自信的那个人一样`,
+          `『真是的、还真没想到你是这么喜欢撒娇的孩子呢』`,
         );
         await era.printAndWait(
-          `「我变成魔族之后已经…你…你的…啊啊…拜托了！如果你不答应的话我马上在这里咬舌自尽！」`,
+          `${assi_name}看到${player_name}露出困惑的表情看着${target_name}轻抚着头………`,
         );
-        await era.printAndWait(
-          `「诶…可以么…我成为你的…魔王大人东西真的可以么…啊啊…太好了…真的太好了…」`,
-        );
-        await era.printAndWait(
-          `${target_name}看到${player_name}点着头，终于彻底安心了一样松了一口气。`,
-        );
-        if (era0(`talent:${target}:0`) == 1) {
-          await era.printAndWait(
-            `「那么…作为我主君的证明，把我的处女拿走吧…♪」`,
-          );
-          await era.printAndWait(
-            `${target_name}的紫色舌头舔着嘴唇，着灼热的吐息`,
-          );
-          await era.printAndWait(
-            `「呵呵呵，这是我的一族的规矩啊…要为奉上处女的人献出一生………骗你的。」`,
-          );
-          await era.printAndWait(
-            `一边说着${target_name}一边可爱的吐了吐舌头………`,
-          );
-        } else {
-          await era.printAndWait(
-            `「啊…今天为了纪念我成为你的东西，会好好奉仕你的…♪」`,
-          );
-          await era.printAndWait(
-            `${target_name}太兴奋了吗，紫色的舌头下流的舔着嘴唇。`,
-          );
-          await era.printAndWait(
-            `「我是竭尽全力做事的类型…好好期待着吧…${heart(1)}」`,
-          );
-        }
-        kojo.初调教 = 8; // CFLAG:201 = 8
-        return 1;
-      } else {
-        // 陥落後に魔族
-        await era.printAndWait(
-          `「如果是不久之前的我的话、变成了这个样子的时候肯定会当场自裁吧」`,
-        );
-        await era.printAndWait(
-          `${target_name}进行了多次的改造变成了魔族。魔族那恶魔的肌肤跟她的银发非常合适。`,
-        );
-        await era.printAndWait(
-          `「啊…所以说、我成为你的下属真的好吗…魔王大人${heart(1)}」`,
-        );
-        await era.printAndWait(
-          `${target_name}的魔族那琥珀色的眼睛闪耀着迷人的光辉，淡淡笑了………`,
-        );
-        kojo.初调教 = 8; // CFLAG:201 = 8
-        return 1;
       }
-
-      // 崩坏
-    } else if (era0(`talent:${target}:9`) == 1 && kojo.初调教 < 9) {
-      era.drawLine();
-      await era.printAndWait(`${target_name}的双眼看上去已经没有理智存在了`);
-      await era.printAndWait(`进行了过于残酷的调教、精神貌似已经崩坏了。`);
-      await era.printAndWait(
-        `${target_name}像是坏掉的玩具一样好像在呼唤着谁的名字………`,
-      );
-      await era.printAndWait(`「哈…呵…啊哈啊…啊哇、哇的大人哈哇大人在哪里」`);
-      kojo.初调教 = 9; // CFLAG:201 = 9
       return 1;
 
-      // 崩坏してたら二回目以降へ飛ぶ
-    } else if (era0(`talent:${target}:9`) == 1) {
-      return k8_kojo2(); // CALL K8_KOJO2
-
-      // 助手の有無をチェック（いない場合は二回目以降へ）
-    } else if (era_flag.assi < 0) {
-      return k8_kojo2(); // CALL K8_KOJO2
-
-      // 你が男じゃなかったら二回目以降
-    } else if (era0('talent:0:122') == 0) {
-      // TALENT:MASTER:122（MASTER 恒角色 0）
-      return k8_kojo2(); // CALL K8_KOJO2
-
-      // 簡易助手口上：金红桃（NO:ASSI == 20）
-    } else if (era_flag.assi == 20) {
-      const assi = era_flag.assi;
-      const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-      era.drawLine();
-
-      if (kojo.简易助手_0 == 0) {
-        if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
-          // 既に爱持ちで爱取得時初口上（陥落イベント）が発生済み
-          await era.printAndWait(
-            `「啊…${assi_name}连队长都变成了魔王大人的仆人什么的………」`,
-          );
-          await era.printAndWait(
-            `看到被${player_name}搂着肩膀的${assi_name}，${target_name}露出了十分惊讶的表情。`,
-          );
-          await era.printAndWait(
-            `「对、对呢、魔王大人把我的${assi_name}变成了自己的东西呢………」`,
-          );
-          await era.printAndWait(
-            `在嘟囔着的${target_name}面前、${player_name}吮吸着${assi_name}的嘴唇。`,
-          );
-          await era.printAndWait(
-            `『嗯~…不要…啾啾…被那个孩子看到了可不好呢…嗯♪』`,
-          );
-          await era.printAndWait(
-            `「唔！太，太狡猾了！我明明也很想和${assi_name}队长接吻！」`,
-          );
-          await era.printAndWait(
-            `冲击性的告白、看来${target_name}喜欢${assi_name}的样子。`,
-          );
-          await era.printAndWait(
-            `『嘛、嘛啊…我明明以为你一直讨厌我呢…原来是这样………』`,
-          );
-          await era.printAndWait(
-            `「开始本来很讨厌的！但是渐渐的爱上队长了…啊啊！我也爱着魔王大人的呀！我该怎么做才好！」`,
-          );
-          kojo.简易助手_0 = 2; // CFLAG:202 = 2
-        } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
-          // 既に淫乱持ちで淫乱取得時初口上（陥落イベント）が発生済み
-          await era.printAndWait(
-            `「啊…没想到连${assi_name}队长也被魔王大人的阴茎攻陷了………多么的美妙！」`,
-          );
-          await era.printAndWait(
-            `看到被${player_name}搂着肩膀的${assi_name}，${target_name}开心的笑了。`,
-          );
-          await era.printAndWait(
-            `「和我最喜欢的${assi_name}队长一起侍奉魔王大人什么的！实在是太幸福了！」`,
-          );
-          await era.printAndWait(`『嘛、居然说最喜欢我了！？』`);
-          await era.printAndWait(
-            `「嗯、我最喜欢你了${assi_name}队长${heart(1)}、啊啊、比起那个不如商量一下如何侍奉魔王大人吧」`,
-          );
-          await era.printAndWait(
-            `${target_name}的告白吓到了${assi_name}、但${target_name}的兴趣已经转向了如何三个人一起获得快乐了………`,
-          );
-          kojo.简易助手_0 = 2; // CFLAG:202 = 2
-        } else {
-          // それ以外
-          await era.printAndWait(
-            `「啊、这种事…骗人…骗人…${assi_name}队长怎么可能变成了魔王的走狗…！」`,
-          );
-          await era.printAndWait(
-            `${target_name}看到${assi_name}服侍${player_name}的样子，好像受到了打击。`,
-          );
-          await era.printAndWait(
-            `${player_name}给${assi_name}递了个眼色。然后${assi_name}抱着${target_name}亲了起来。`,
-          );
-          await era.printAndWait(
-            `「啊啊！停、停下来啊…我和${assi_name}队长用这种方式…唔…嗯…呜啊…啊啊………！」`,
-          );
-          await era.printAndWait(`『哼哼、老实的呆着吧…哼…啾啾…${heart(1)}』`);
-          await era.printAndWait(
-            `那个酷酷的女忍者一边翻着白眼一边被${assi_name}亲着。嘴唇分开后${target_name}空虚的瞳孔中洒下了眼泪………`,
-          );
-          if (chara(target).train.初吻对象 == -1) {
-            // 初吻
-            chara(target).train.初吻对象 = 1; // CFLAG:TARGET:16 = 1
-            chara(target).train.初吻对象名 = assi_name; // CSTR:TARGET:4 = %SAVESTR:ASSI%
-            await era.printAndWait(`看来是${target_name}的初吻………`);
-          }
-          kojo.简易助手_0 = 1; // CFLAG:202 = 1
-        }
-        return 1;
-
-        // 二回目以降（爱/淫乱持ち）
-      } else if (
-        // `CFLAG:202 == 1 && FLAG:7 == 2 && TALENT:85 == 1 || TALENT:76 == 1`
-        // 同层混写：旧引擎的 && 与 || 同优先级、左结合，读作
-        // `(三项 && ) || 淫乱`——`||` 之后没有 `&&`，两种读法同值（#517）。
-        // 本文件另两处同形（202/203/204 三阶）。
-        (kojo.简易助手_0 == 1 &&
-          game.kojo.口上开关 == 2 &&
-          era0(`talent:${target}:85`) == 1) ||
-        era0(`talent:${target}:76`) == 1
-      ) {
-        if (era0(`talent:${target}:85`) == 1) {
-          await era.printAndWait(`「啊、队、队长…对、对不起…」`);
-          await era.printAndWait(`『有什么要对我道歉的？』`);
-          await era.printAndWait(
-            `「因为我对魔王大人…那个、主君…喜欢上了…所以………」`,
-          );
-          await era.printAndWait(`『你还喜欢着我吗？』`);
-          await era.printAndWait(`「！、是、是的、最喜欢了！最爱了！」`);
-          await era.printAndWait(
-            `『所以什么问题也不会有吧？ 一起来侍奉魔王大人吧？』`,
-          );
-          await era.printAndWait(`「是！是的！我会努力的！」`);
-          await era.printAndWait(
-            `看来${target_name}和${assi_name}建筑了新的关系………`,
-          );
-          kojo.简易助手_0 = 2; // CFLAG:202 = 2
-        } else if (era0(`talent:${target}:76`) == 1) {
-          await era.printAndWait(`「啊哈、队长…和我接吻吧…接吻${heart(1)}」`);
-          await era.printAndWait(
-            `『被魔王调教了以后、变得特别可爱呢、${target_name}』`,
-          );
-          await era.printAndWait(
-            `看着沉溺于淫荡的${target_name}样子、${assi_name}轻轻的笑了。`,
-          );
-          await era.printAndWait(
-            `「队长讨厌我吗？ 我可是最喜欢队长的…所以快来接吻吧${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `『哼哼、来这里、我和魔王大人会好好地疼爱你的${heart(1)}』`,
-          );
-          kojo.简易助手_0 = 2; // CFLAG:202 = 2
-        }
-        return 1;
-
-        // 二回目以降（三人関係成立後）
-      } else if (kojo.简易助手_0 == 2 && game.kojo.口上开关 == 2) {
-        if (era0(`talent:${target}:85`) == 1) {
-          await era.printAndWait(
-            `「啊啊…魔王大人太过分了…在我眼前…和${assi_name}队长做那样的事情…呜呜呜」`,
-          );
-          await era.printAndWait(
-            `${target_name}在${player_name}前正座着、在她眼前${player_name}和${assi_name}正粘粘糊糊的深吻给她看。`,
-          );
-          await era.printAndWait(
-            `『嗯…嗯啾啾…你就在那里看着我们现在的样子…嗯哼…啾${heart(1)}』`,
-          );
-          await era.printAndWait(
-            `${target_name}因为两人的样子而焦急着、像被淫乱的火焰烘烤着………`,
-          );
-        } else if (era0(`talent:${target}:76`) == 1) {
-          await era.printAndWait(
-            `「呐${assi_name}队长、和我一起做一些快乐的事情吧…呐${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `${target_name}坦率的顺从着自己的欲望、一边抱着${assi_name}的身体一边撒娇。`,
-          );
-          await era.printAndWait(
-            `『真是的、还真没想到你是这么喜欢撒娇的孩子呢』`,
-          );
-          await era.printAndWait(
-            `${assi_name}看到${player_name}露出困惑的表情看着${target_name}轻抚着头………`,
-          );
-        }
-        return 1;
-
-        // それ以外
-      } else {
-        await era.printAndWait(
-          `「呐、呐~…这是调教吧？是的话…就把${assi_name}队长的嘴巴的第一次给我吧………」`,
-        );
-        await era.printAndWait(
-          `${target_name}好像因为冲击把之前接吻忘掉了，死皮赖脸的要求着${assi_name}。`,
-        );
-        await era.printAndWait(`看来${target_name}喜欢${assi_name}。`);
-        await era.printAndWait(`『真是没办法的孩子呢…来、把下巴抬起来』`);
-        await era.printAndWait(`「呜~…啾…接吻…喜欢………」`);
-        return 1;
-      }
-
-      // 簡易助手口上：（NO:ASSI == 22）
-    } else if (era_flag.assi == 22) {
-      const assi = era_flag.assi;
-      const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-      era.drawLine();
-
-      if (kojo.简易助手_1 == 0) {
-        if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
-          await era.printAndWait(
-            `「啊啊、你也变成了魔王大人的下仆了啊………并没有生气。因为我也是这样啊」`,
-          );
-          await era.printAndWait(
-            `${target_name}好像很开心的样子和${assi_name}说着话。`,
-          );
-          await era.printAndWait(
-            `「和你一起的话很放心啊、接下来就好好相处吧…欸？比起那种无聊的事还是快点一起侍奉魔王大人吧？」`,
-          );
-          await era.printAndWait(
-            `『是的、我们应做的事就是作为魔王大人的下仆奉献一切啊』`,
-          );
-          await era.printAndWait(
-            `「是啊、那是比什么事都重要的事情${heart(1)}」`,
-          );
-          kojo.简易助手_1 = 2; // CFLAG:203 = 2
-        } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
-          await era.printAndWait(
-            `「你也经魔王大人之手变成这样了吗？啊啊、看着这个表情我就知道${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `${target_name}和${assi_name}因为想象之外的再会开心的笑了。`,
-          );
-          await era.printAndWait(
-            `「以后就要两个人一起为魔王大人服务了…啊啊、没想到会和你变成这样的关系♪」`,
-          );
-          await era.printAndWait(
-            `『你也变了啊、但是现在的你看起来更棒哦${heart(1)}』`,
-          );
-          kojo.简易助手_1 = 2; // CFLAG:203 = 2
-        } else {
-          await era.printAndWait(
-            `「你也输了啊…真是的，真吃惊你是怎么当圣灵骑士的」`,
-          );
-          await era.printAndWait(
-            `${target_name}（完全无视自己也输了）用侮蔑的目光看着被作为助手带了过来的${assi_name}。`,
-          );
-          await era.printAndWait(
-            `但是看到${assi_name}寄宿着的淫色的眼神，“呜”的停止了一下呼吸。`,
-          );
-          await era.printAndWait(
-            `「难、难道你…你变成了魔王的下仆了？快、快住手…不要摸我…啊啊！」`,
-          );
-          await era.printAndWait(
-            `『来…一起来愉悦吧♪，没关系的，你也会在魔王大人的拥抱中感受到无上的喜悦的♪』`,
-          );
-          kojo.简易助手_1 = 1; // CFLAG:203 = 1
-        }
-        return 1;
-      } else if (
-        (kojo.简易助手_1 == 1 &&
-          game.kojo.口上开关 == 2 &&
-          era0(`talent:${target}:85`) == 1) ||
-        era0(`talent:${target}:76`) == 1
-      ) {
-        if (era0(`talent:${target}:85`) == 1) {
-          await era.printAndWait(
-            `『阿拉阿拉、圣灵骑士的${target_name}大人变成了魔王的下仆了』`,
-          );
-          await era.printAndWait(`「这、不要说这样的话啊…」`);
-          await era.printAndWait(
-            `看着${target_name}的羞耻的姿态的${assi_name}非常的愉悦。`,
-          );
-          await era.printAndWait(
-            `『呵呵呵、你也成为了魔王大人的下仆的话，咱们必须要庆祝一下啊』`,
-          );
-          await era.printAndWait(`「庆祝？你到底想要做什么？」`);
-          await era.printAndWait(
-            `『是呢、比如说作为纪念而穿环和烧印什么的、各种各样可以做的事情跟山一样多呢』`,
-          );
-          await era.printAndWait(
-            `${assi_name}紧紧握着${target_name}的手快乐的笑了………`,
-          );
-          kojo.简易助手_1 = 2; // CFLAG:203 = 2
-        } else if (era0(`talent:${target}:76`) == 1) {
-          await era.printAndWait(
-            `「呵呵呵、被魔王大人抱真是太棒了、接下来${today_or_night}跟你一起sex也行啊${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `『人类什么的真是马上就会改变的东西啊。你也变成了这么淫乱的女人、原来就算是开玩笑也不会想到呢』`,
-          );
-          await era.printAndWait(
-            `${assi_name}深吸了一口气、重振了精神向${target_name}提出意见。`,
-          );
-          await era.printAndWait(
-            `『呐、接下来一起进行魔王大人侍奉对决怎么样？ 我融化般的奉仕会让魔王大人称赞我的${heart(1)}』`,
-          );
-          await era.printAndWait(
-            `「啊啊、很棒的意见、不过如果这么比的话我可是会获得魔王大人所有的称赞的♪」`,
-          );
-          kojo.简易助手_1 = 2; // CFLAG:203 = 2
-        }
-        return 1;
-      } else if (kojo.简易助手_1 == 2 && game.kojo.口上开关 == 2) {
-        if (era0(`talent:${target}:85`) == 1) {
-          await era.printAndWait(`「我爱你们两个…${heart(1)}」`);
-          await era.printAndWait(
-            `『呵呵呵、我先来帮你放松一下♪ 然后由魔王大人吧你…嗯呵呵和』`,
-          );
-          await era.printAndWait(`「啊嗯！不温柔一点的话可不行！」`);
-          await era.printAndWait(
-            `${target_name}因为${player_name}和${assi_name}发出了很开心的声音………`,
-          );
-        } else if (era0(`talent:${target}:76`) == 1) {
-          await era.printAndWait(
-            `「啊…我和${assi_name}、谁的侍奉更好？答不上来的话那就继续侍奉哟…啊嗯…啊啊${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `『我这边更好，是吧？不好好回答的话可是很讨厌的呢。』`,
-          );
-          await era.printAndWait(
-            `${target_name}与${assi_name}双方合力缠绕着，爱抚${player_name}全身………`,
-          );
-        }
-        return 1;
-      } else {
-        await era.printAndWait(`${assi_name}舔着嘴唇推倒了${target_name}。`);
-        await era.printAndWait(`「不、不行…你做这种事…啊啊！不、讨厌！」`);
-        await era.printAndWait(`『你长得这么漂亮，让人受不了呢♪』`);
-        await era.printAndWait(
-          `${target_name}在${assi_name}的身体下方笨拙的挣扎着………`,
-        );
-        return 1;
-      }
-
-      // 簡易助手口上：扶她（NO:ASSI == 23，TALENT:ASSI:121 检查）
-    } else if (era_flag.assi == 23) {
-      const assi = era_flag.assi;
-      const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-      if (era0(`talent:${assi}:121`) == 0) {
-        return 0;
-      }
-      era.drawLine();
-
-      if (kojo.简易助手_2 == 0) {
-        if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
-          await era.printAndWait(
-            `「你也成为魔王大人的下仆了呢…同伴增加了真是令人开心。话说回来你的身体居然是这样的、真是没想到」`,
-          );
-          await era.printAndWait(
-            `${target_name}看着扶她阴茎勃起着的${assi_name}的样子、脸颊染成了红色。`,
-          );
-          await era.printAndWait(
-            `「呐、果然魔王大人看见你的身体很兴奋吧？………啊啊、不，不回答也可以」`,
-          );
-          await era.printAndWait(`『呵呵呵、你实际体验一下就知道了♪』`);
-          await era.printAndWait(
-            `${target_name}尴尬的摇着手。${assi_name}哭笑着邀请${target_name}上床………`,
-          );
-          kojo.简易助手_2 = 2; // CFLAG:204 = 2
-        } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
-          await era.printAndWait(
-            `「呀、你也经魔王大人之手变成这样了呢…啊啊、你的身体居然是这样的、真是没想到」`,
-          );
-          await era.printAndWait(
-            `${target_name}看着${assi_name}的扶她阴茎勃起的样子、兴奋了起来。`,
-          );
-          await era.printAndWait(`脸色红润、气息混乱、然后吞了吞口水说说道。`);
-          await era.printAndWait(
-            `「今天的对手是你啊…好吧、用你的肉棒来不停的侵犯我吧…！」`,
-          );
-          await era.printAndWait(
-            `『你也堕落成那么下流的样子了、魔王大人的调教真是美妙啊♪』`,
-          );
-          kojo.简易助手_2 = 2; // CFLAG:204 = 2
-        } else {
-          await era.printAndWait(
-            `「你成为魔王的下仆了啊、${assi_name}。难道说是背叛了？」`,
-          );
-          await era.printAndWait(
-            `${target_name}锐利的眼光贯穿了${assi_name}。${assi_name}轻轻的回避着那个视线、取下了腰间的布，展示着已经完全勃起了的扶她肉棒。`,
-          );
-          await era.printAndWait(
-            `「呀！？这，这什么啊、扶她！？…怎、怎么可能…今天是你把我…？」`,
-          );
-          await era.printAndWait(
-            `『是啊、侵犯你也没关系的，魔王大人下了这样的命令${heart(1)}』`,
-          );
-          await era.printAndWait(
-            `${assi_name}露出了冷笑的点着头，把${target_name}推倒了………`,
-          );
-          kojo.简易助手_2 = 1; // CFLAG:204 = 1
-        }
-        return 1;
-      } else if (
-        (kojo.简易助手_2 == 1 &&
-          game.kojo.口上开关 == 2 &&
-          era0(`talent:${target}:85`) == 1) ||
-        era0(`talent:${target}:76`) == 1
-      ) {
-        if (era0(`talent:${target}:85`) == 1) {
-          await era.printAndWait(
-            `「呵呵呵、我也成为魔王大人的下仆了哟。听从魔王大人的是命令就是我的幸福${heart(1)}」`,
-          );
-          await era.printAndWait(`『是么、所以是因为魔王大人的命令才抱我？』`);
-          await era.printAndWait(
-            `「当然不是、啊啊、在魔王大人的面前抱你什么的…会变得奇怪的${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `你明明还什么命令都没下，${target_name}因为想象自己抱着${assi_name}而发情了………`,
-          );
-          kojo.简易助手_2 = 2; // CFLAG:204 = 2
-        } else if (era0(`talent:${target}:76`) == 1) {
-          await era.printAndWait(
-            `「嗯哼…来侵犯我的吗？好啊…侵犯我吧…把我弄的乱七八糟${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `『在这个情况下停止的话好像会很糟、魔王大人、怎么做呢？』`,
-          );
-          await era.printAndWait(
-            `看着伸展着四肢请求着的${target_name}，${assi_name}叹息着。`,
-          );
-          await era.printAndWait(
-            `「还商量什么呢？我的小穴${heart(1)} ，屁股小穴${heart(1)} 都准备好了啊${heart(1)}」`,
-          );
-          kojo.简易助手_2 = 2; // CFLAG:204 = 2
-        }
-        return 1;
-      } else if (kojo.简易助手_2 == 2 && game.kojo.口上开关 == 2) {
-        if (era0(`talent:${target}:85`) == 1) {
-          await era.printAndWait(
-            `「那么、今天是哪个来疼爱我呢？${assi_name}？还是你？」`,
-          );
-          await era.printAndWait(
-            `「啊啊、干脆的两个人一起来也没关系哦…${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `『都说到这种程度的话、魔王大人和我两根一起插你！』`,
-          );
-        } else if (era0(`talent:${target}:76`) == 1) {
-          await era.printAndWait(
-            `「哈啊哈啊…一想到你们两个侵犯我的话…我的胸里面就好像充满了什么东西${heart(1)}」`,
-          );
-          await era.printAndWait(
-            `${target_name}因为欲望和兴奋耳朵都红了、摇动着臀部诱惑着${player_name}和${assi_name}。`,
-          );
-          await era.printAndWait(
-            `『感觉真是下流啊、已经比起忍者不如说只是母猪了！』`,
-          );
-        }
-        return 1;
-      } else {
-        await era.printAndWait(
-          `「啊啊…没想到你还有这种兴趣…看在以前是伙伴的面上手下留情哦…啊！」`,
-        );
-        await era.printAndWait(`${target_name}被无情的${assi_name}推倒了。`);
-        await era.printAndWait(
-          `『不行、把你侵犯到屈服，这可是魔王大人的命令♪ 虽说我也很有兴趣啦』`,
-        );
-        return 1;
-      }
-
-      // それ以外（未知助手）→ 二回目以降
+      // それ以外
     } else {
-      return k8_kojo2(); // CALL K8_KOJO2
+      await era.printAndWait(
+        `「呐、呐~…这是调教吧？是的话…就把${assi_name}队长的嘴巴的第一次给我吧………」`,
+      );
+      await era.printAndWait(
+        `${target_name}好像因为冲击把之前接吻忘掉了，死皮赖脸的要求着${assi_name}。`,
+      );
+      await era.printAndWait(`看来${target_name}喜欢${assi_name}。`);
+      await era.printAndWait(`『真是没办法的孩子呢…来、把下巴抬起来』`);
+      await era.printAndWait(`「呜~…啾…接吻…喜欢………」`);
+      return 1;
     }
-  },
-  TIER.NORMAL,
-);
+
+    // 簡易助手口上：（NO:ASSI == 22）
+  } else if (era_flag.assi == 22) {
+    const assi = era_flag.assi;
+    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    era.drawLine();
+
+    if (kojo.简易助手_1 == 0) {
+      if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
+        await era.printAndWait(
+          `「啊啊、你也变成了魔王大人的下仆了啊………并没有生气。因为我也是这样啊」`,
+        );
+        await era.printAndWait(
+          `${target_name}好像很开心的样子和${assi_name}说着话。`,
+        );
+        await era.printAndWait(
+          `「和你一起的话很放心啊、接下来就好好相处吧…欸？比起那种无聊的事还是快点一起侍奉魔王大人吧？」`,
+        );
+        await era.printAndWait(
+          `『是的、我们应做的事就是作为魔王大人的下仆奉献一切啊』`,
+        );
+        await era.printAndWait(`「是啊、那是比什么事都重要的事情${heart(1)}」`);
+        kojo.简易助手_1 = 2; // CFLAG:203 = 2
+      } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
+        await era.printAndWait(
+          `「你也经魔王大人之手变成这样了吗？啊啊、看着这个表情我就知道${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `${target_name}和${assi_name}因为想象之外的再会开心的笑了。`,
+        );
+        await era.printAndWait(
+          `「以后就要两个人一起为魔王大人服务了…啊啊、没想到会和你变成这样的关系♪」`,
+        );
+        await era.printAndWait(
+          `『你也变了啊、但是现在的你看起来更棒哦${heart(1)}』`,
+        );
+        kojo.简易助手_1 = 2; // CFLAG:203 = 2
+      } else {
+        await era.printAndWait(
+          `「你也输了啊…真是的，真吃惊你是怎么当圣灵骑士的」`,
+        );
+        await era.printAndWait(
+          `${target_name}（完全无视自己也输了）用侮蔑的目光看着被作为助手带了过来的${assi_name}。`,
+        );
+        await era.printAndWait(
+          `但是看到${assi_name}寄宿着的淫色的眼神，“呜”的停止了一下呼吸。`,
+        );
+        await era.printAndWait(
+          `「难、难道你…你变成了魔王的下仆了？快、快住手…不要摸我…啊啊！」`,
+        );
+        await era.printAndWait(
+          `『来…一起来愉悦吧♪，没关系的，你也会在魔王大人的拥抱中感受到无上的喜悦的♪』`,
+        );
+        kojo.简易助手_1 = 1; // CFLAG:203 = 1
+      }
+      return 1;
+    } else if (
+      (kojo.简易助手_1 == 1 &&
+        game.kojo.口上开关 == 2 &&
+        era0(`talent:${target}:85`) == 1) ||
+      era0(`talent:${target}:76`) == 1
+    ) {
+      if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(
+          `『阿拉阿拉、圣灵骑士的${target_name}大人变成了魔王的下仆了』`,
+        );
+        await era.printAndWait(`「这、不要说这样的话啊…」`);
+        await era.printAndWait(
+          `看着${target_name}的羞耻的姿态的${assi_name}非常的愉悦。`,
+        );
+        await era.printAndWait(
+          `『呵呵呵、你也成为了魔王大人的下仆的话，咱们必须要庆祝一下啊』`,
+        );
+        await era.printAndWait(`「庆祝？你到底想要做什么？」`);
+        await era.printAndWait(
+          `『是呢、比如说作为纪念而穿环和烧印什么的、各种各样可以做的事情跟山一样多呢』`,
+        );
+        await era.printAndWait(
+          `${assi_name}紧紧握着${target_name}的手快乐的笑了………`,
+        );
+        kojo.简易助手_1 = 2; // CFLAG:203 = 2
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「呵呵呵、被魔王大人抱真是太棒了、接下来${today_or_night}跟你一起sex也行啊${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `『人类什么的真是马上就会改变的东西啊。你也变成了这么淫乱的女人、原来就算是开玩笑也不会想到呢』`,
+        );
+        await era.printAndWait(
+          `${assi_name}深吸了一口气、重振了精神向${target_name}提出意见。`,
+        );
+        await era.printAndWait(
+          `『呐、接下来一起进行魔王大人侍奉对决怎么样？ 我融化般的奉仕会让魔王大人称赞我的${heart(1)}』`,
+        );
+        await era.printAndWait(
+          `「啊啊、很棒的意见、不过如果这么比的话我可是会获得魔王大人所有的称赞的♪」`,
+        );
+        kojo.简易助手_1 = 2; // CFLAG:203 = 2
+      }
+      return 1;
+    } else if (kojo.简易助手_1 == 2 && game.kojo.口上开关 == 2) {
+      if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(`「我爱你们两个…${heart(1)}」`);
+        await era.printAndWait(
+          `『呵呵呵、我先来帮你放松一下♪ 然后由魔王大人吧你…嗯呵呵和』`,
+        );
+        await era.printAndWait(`「啊嗯！不温柔一点的话可不行！」`);
+        await era.printAndWait(
+          `${target_name}因为${player_name}和${assi_name}发出了很开心的声音………`,
+        );
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「啊…我和${assi_name}、谁的侍奉更好？答不上来的话那就继续侍奉哟…啊嗯…啊啊${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `『我这边更好，是吧？不好好回答的话可是很讨厌的呢。』`,
+        );
+        await era.printAndWait(
+          `${target_name}与${assi_name}双方合力缠绕着，爱抚${player_name}全身………`,
+        );
+      }
+      return 1;
+    } else {
+      await era.printAndWait(`${assi_name}舔着嘴唇推倒了${target_name}。`);
+      await era.printAndWait(`「不、不行…你做这种事…啊啊！不、讨厌！」`);
+      await era.printAndWait(`『你长得这么漂亮，让人受不了呢♪』`);
+      await era.printAndWait(
+        `${target_name}在${assi_name}的身体下方笨拙的挣扎着………`,
+      );
+      return 1;
+    }
+
+    // 簡易助手口上：扶她（NO:ASSI == 23，TALENT:ASSI:121 检查）
+  } else if (era_flag.assi == 23) {
+    const assi = era_flag.assi;
+    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
+    if (era0(`talent:${assi}:121`) == 0) {
+      return 0;
+    }
+    era.drawLine();
+
+    if (kojo.简易助手_2 == 0) {
+      if (era0(`talent:${target}:85`) == 1 && kojo.初调教 >= 5) {
+        await era.printAndWait(
+          `「你也成为魔王大人的下仆了呢…同伴增加了真是令人开心。话说回来你的身体居然是这样的、真是没想到」`,
+        );
+        await era.printAndWait(
+          `${target_name}看着扶她阴茎勃起着的${assi_name}的样子、脸颊染成了红色。`,
+        );
+        await era.printAndWait(
+          `「呐、果然魔王大人看见你的身体很兴奋吧？………啊啊、不，不回答也可以」`,
+        );
+        await era.printAndWait(`『呵呵呵、你实际体验一下就知道了♪』`);
+        await era.printAndWait(
+          `${target_name}尴尬的摇着手。${assi_name}哭笑着邀请${target_name}上床………`,
+        );
+        kojo.简易助手_2 = 2; // CFLAG:204 = 2
+      } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {
+        await era.printAndWait(
+          `「呀、你也经魔王大人之手变成这样了呢…啊啊、你的身体居然是这样的、真是没想到」`,
+        );
+        await era.printAndWait(
+          `${target_name}看着${assi_name}的扶她阴茎勃起的样子、兴奋了起来。`,
+        );
+        await era.printAndWait(`脸色红润、气息混乱、然后吞了吞口水说说道。`);
+        await era.printAndWait(
+          `「今天的对手是你啊…好吧、用你的肉棒来不停的侵犯我吧…！」`,
+        );
+        await era.printAndWait(
+          `『你也堕落成那么下流的样子了、魔王大人的调教真是美妙啊♪』`,
+        );
+        kojo.简易助手_2 = 2; // CFLAG:204 = 2
+      } else {
+        await era.printAndWait(
+          `「你成为魔王的下仆了啊、${assi_name}。难道说是背叛了？」`,
+        );
+        await era.printAndWait(
+          `${target_name}锐利的眼光贯穿了${assi_name}。${assi_name}轻轻的回避着那个视线、取下了腰间的布，展示着已经完全勃起了的扶她肉棒。`,
+        );
+        await era.printAndWait(
+          `「呀！？这，这什么啊、扶她！？…怎、怎么可能…今天是你把我…？」`,
+        );
+        await era.printAndWait(
+          `『是啊、侵犯你也没关系的，魔王大人下了这样的命令${heart(1)}』`,
+        );
+        await era.printAndWait(
+          `${assi_name}露出了冷笑的点着头，把${target_name}推倒了………`,
+        );
+        kojo.简易助手_2 = 1; // CFLAG:204 = 1
+      }
+      return 1;
+    } else if (
+      (kojo.简易助手_2 == 1 &&
+        game.kojo.口上开关 == 2 &&
+        era0(`talent:${target}:85`) == 1) ||
+      era0(`talent:${target}:76`) == 1
+    ) {
+      if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(
+          `「呵呵呵、我也成为魔王大人的下仆了哟。听从魔王大人的是命令就是我的幸福${heart(1)}」`,
+        );
+        await era.printAndWait(`『是么、所以是因为魔王大人的命令才抱我？』`);
+        await era.printAndWait(
+          `「当然不是、啊啊、在魔王大人的面前抱你什么的…会变得奇怪的${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `你明明还什么命令都没下，${target_name}因为想象自己抱着${assi_name}而发情了………`,
+        );
+        kojo.简易助手_2 = 2; // CFLAG:204 = 2
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「嗯哼…来侵犯我的吗？好啊…侵犯我吧…把我弄的乱七八糟${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `『在这个情况下停止的话好像会很糟、魔王大人、怎么做呢？』`,
+        );
+        await era.printAndWait(
+          `看着伸展着四肢请求着的${target_name}，${assi_name}叹息着。`,
+        );
+        await era.printAndWait(
+          `「还商量什么呢？我的小穴${heart(1)} ，屁股小穴${heart(1)} 都准备好了啊${heart(1)}」`,
+        );
+        kojo.简易助手_2 = 2; // CFLAG:204 = 2
+      }
+      return 1;
+    } else if (kojo.简易助手_2 == 2 && game.kojo.口上开关 == 2) {
+      if (era0(`talent:${target}:85`) == 1) {
+        await era.printAndWait(
+          `「那么、今天是哪个来疼爱我呢？${assi_name}？还是你？」`,
+        );
+        await era.printAndWait(
+          `「啊啊、干脆的两个人一起来也没关系哦…${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `『都说到这种程度的话、魔王大人和我两根一起插你！』`,
+        );
+      } else if (era0(`talent:${target}:76`) == 1) {
+        await era.printAndWait(
+          `「哈啊哈啊…一想到你们两个侵犯我的话…我的胸里面就好像充满了什么东西${heart(1)}」`,
+        );
+        await era.printAndWait(
+          `${target_name}因为欲望和兴奋耳朵都红了、摇动着臀部诱惑着${player_name}和${assi_name}。`,
+        );
+        await era.printAndWait(
+          `『感觉真是下流啊、已经比起忍者不如说只是母猪了！』`,
+        );
+      }
+      return 1;
+    } else {
+      await era.printAndWait(
+        `「啊啊…没想到你还有这种兴趣…看在以前是伙伴的面上手下留情哦…啊！」`,
+      );
+      await era.printAndWait(`${target_name}被无情的${assi_name}推倒了。`);
+      await era.printAndWait(
+        `『不行、把你侵犯到屈服，这可是魔王大人的命令♪ 虽说我也很有兴趣啦』`,
+      );
+      return 1;
+    }
+
+    // それ以外（未知助手）→ 二回目以降
+  } else {
+    return k8_kojo2(); // CALL K8_KOJO2
+  }
+}
 
 /**
  * k8_kojo2：调教开始口上的二回目以降（崩坏後の逗留分岐、
@@ -1476,134 +1450,122 @@ async function k8_kojo2() {
  * EVENTEND NORMAL 档：调教结束时的口上。
  * 检查：FLAG:7、TALENT:168、BASE:0（死亡跳过）。
  */
-on(
-  EVENT.END,
-  async () => {
-    const target = era_flag.target;
-    const target_name = chara_callname(target); // %SAVESTR:TARGET%
-    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+async function handle_end() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
 
-    if (game.kojo.口上开关 <= 0) {
-      return 0;
-    }
-    if (era0(`talent:${target}:168`) != 1) {
-      return 0;
-    }
-    if (era0(`base:${target}:0`) <= 0) {
-      return 0;
-    }
-
-    // 崩坏
-    if (era0(`talent:${target}:9`) == 1 && game.kojo.口上开关 == 2) {
-      era.drawLine();
-      await era.printAndWait(`「想要哈哇大人的……」`);
-      await era.printAndWait(`${target_name}朝着奇怪的方向嘟囔着什么………`);
-      return 1;
-
-      // 反抗刻印Lv3+爱無
-    } else if (
-      era0(`mark:${target}:3`) == 3 &&
-      era0(`talent:${target}:76`) == 0 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「………呸」`);
-      await era.printAndWait(
-        `${target_name}朝着${player_name}的方向吐了口口水………`,
-      );
-      return 1;
-
-      // 屈服刻印Lv1以下+爱無
-    } else if (
-      era0(`mark:${target}:2`) <= 1 &&
-      era0(`talent:${target}:76`) == 0 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「唔…啊啊、肩膀的僵硬稍微好点了」`);
-      await era.printAndWait(
-        `${target_name}说着，对着${player_name}哼了一声………`,
-      );
-      return 1;
-
-      // 屈服刻印Lv2+爱無
-    } else if (
-      era0(`mark:${target}:2`) == 2 &&
-      era0(`talent:${target}:76`) == 0 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「哈啊哈啊…啊……真不舒服……咕」`);
-      await era.printAndWait(
-        `${target_name}的身体被汗濡湿了，露出艳丽的痴态………`,
-      );
-      return 1;
-
-      // 屈服刻印Lv3+爱無
-    } else if (
-      era0(`mark:${target}:2`) == 3 &&
-      era0(`talent:${target}:76`) == 0 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「哈啊哈啊…你…意外的那个…温柔呢………啊………」`);
-      await era.printAndWait(
-        `${target_name}的身体横躺着，发出了炽热的叹息声………`,
-      );
-      return 1;
-
-      // 淫乱(体力500以上)
-    } else if (
-      era0(`talent:${target}:76`) == 1 &&
-      era0(`base:${target}:0`) >= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「啊啊、还不够啊…难道是对我已经厌倦了吗………？」`);
-      await era.printAndWait(
-        `${target_name}还有余力的样子，在床上画着圈圈闹变扭………`,
-      );
-      return 1;
-
-      // 淫乱(体力500未満)
-    } else if (
-      era0(`talent:${target}:76`) == 1 &&
-      era0(`base:${target}:0`) <= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(
-        `「哈啊哈啊…更多…你的阴茎…啊啊…啊啊…想要${heart(1)}」`,
-      );
-      await era.printAndWait(`${target_name}筋疲力尽的躺在床上………`);
-      return 1;
-
-      // 爱慕(体力500以上)
-    } else if (
-      era0(`talent:${target}:85`) == 1 &&
-      era0(`base:${target}:0`) >= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(
-        `「哈啊哈啊…明明…我的身体还可以继续让你随便弄………」`,
-      );
-      await era.printAndWait(`${target_name}躺在床上………`);
-      return 1;
-
-      // 爱慕(体力500未満)
-    } else if (
-      era0(`talent:${target}:85`) == 1 &&
-      era0(`base:${target}:0`) <= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(
-        `「啊啊…在我的身体上满足了吗？那样的话真是开心啊…下一次…啊…疼爱我吧………」`,
-      );
-      await era.printAndWait(`${target_name}筋疲力尽的躺在床上………`);
-      return 1;
-    }
+  if (game.kojo.口上开关 <= 0) {
     return 0;
-  },
-  TIER.NORMAL,
-);
+  }
+  if (era0(`talent:${target}:168`) != 1) {
+    return 0;
+  }
+  if (era0(`base:${target}:0`) <= 0) {
+    return 0;
+  }
+
+  // 崩坏
+  if (era0(`talent:${target}:9`) == 1 && game.kojo.口上开关 == 2) {
+    era.drawLine();
+    await era.printAndWait(`「想要哈哇大人的……」`);
+    await era.printAndWait(`${target_name}朝着奇怪的方向嘟囔着什么………`);
+    return 1;
+
+    // 反抗刻印Lv3+爱無
+  } else if (
+    era0(`mark:${target}:3`) == 3 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「………呸」`);
+    await era.printAndWait(
+      `${target_name}朝着${player_name}的方向吐了口口水………`,
+    );
+    return 1;
+
+    // 屈服刻印Lv1以下+爱無
+  } else if (
+    era0(`mark:${target}:2`) <= 1 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「唔…啊啊、肩膀的僵硬稍微好点了」`);
+    await era.printAndWait(`${target_name}说着，对着${player_name}哼了一声………`);
+    return 1;
+
+    // 屈服刻印Lv2+爱無
+  } else if (
+    era0(`mark:${target}:2`) == 2 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「哈啊哈啊…啊……真不舒服……咕」`);
+    await era.printAndWait(`${target_name}的身体被汗濡湿了，露出艳丽的痴态………`);
+    return 1;
+
+    // 屈服刻印Lv3+爱無
+  } else if (
+    era0(`mark:${target}:2`) == 3 &&
+    era0(`talent:${target}:76`) == 0 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「哈啊哈啊…你…意外的那个…温柔呢………啊………」`);
+    await era.printAndWait(`${target_name}的身体横躺着，发出了炽热的叹息声………`);
+    return 1;
+
+    // 淫乱(体力500以上)
+  } else if (
+    era0(`talent:${target}:76`) == 1 &&
+    era0(`base:${target}:0`) >= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「啊啊、还不够啊…难道是对我已经厌倦了吗………？」`);
+    await era.printAndWait(
+      `${target_name}还有余力的样子，在床上画着圈圈闹变扭………`,
+    );
+    return 1;
+
+    // 淫乱(体力500未満)
+  } else if (
+    era0(`talent:${target}:76`) == 1 &&
+    era0(`base:${target}:0`) <= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(
+      `「哈啊哈啊…更多…你的阴茎…啊啊…啊啊…想要${heart(1)}」`,
+    );
+    await era.printAndWait(`${target_name}筋疲力尽的躺在床上………`);
+    return 1;
+
+    // 爱慕(体力500以上)
+  } else if (
+    era0(`talent:${target}:85`) == 1 &&
+    era0(`base:${target}:0`) >= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「哈啊哈啊…明明…我的身体还可以继续让你随便弄………」`);
+    await era.printAndWait(`${target_name}躺在床上………`);
+    return 1;
+
+    // 爱慕(体力500未満)
+  } else if (
+    era0(`talent:${target}:85`) == 1 &&
+    era0(`base:${target}:0`) <= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(
+      `「啊啊…在我的身体上满足了吗？那样的话真是开心啊…下一次…啊…疼爱我吧………」`,
+    );
+    await era.printAndWait(`${target_name}筋疲力尽的躺在床上………`);
+    return 1;
+  }
+  return 0;
+}
 
 /**
  * kojo_message_com_8：指令执行时的口上。
@@ -12827,7 +12789,19 @@ osioski_koujo_family.register(8, (cid, choice) =>
 );
 gobi_koujo_family.register(8, gobi_koujo_k8);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train, TIER.NORMAL);
+  on(EVENT.END, handle_end, TIER.NORMAL);
+}
+
 module.exports = {
+  register,
   kojo_message_com_8,
   dog_kojo_8,
   kojo_message_palamcng_8,

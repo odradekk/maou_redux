@@ -19,6 +19,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const seq_rand =
@@ -46,8 +47,8 @@ async function setup_k6(seed, selectcom = 0) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k6-wicked');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k6-wicked');
   return fixture;
 }
 

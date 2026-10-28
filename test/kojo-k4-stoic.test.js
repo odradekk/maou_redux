@@ -36,6 +36,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -65,8 +66,8 @@ async function setup_k4(seed, selectcom = 0) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k4-stoic');
   return fixture;
 }
 
@@ -525,7 +526,7 @@ test('处女丧失（TFLAG:3 && CFLAG:229 == 0 && TFLAG:20）：素质分档 + C
   fixture.store.set('delta:31:11', 100); // UP:11（纯爱）
   fixture.store.set('delta:31:12', 100); // UP:12 → A = 200 < 500
   fixture.store.set('talent:31:85', 1); // 爱慕
-  fixture.load_module('kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-system');
   const mod = fixture.load_module('kojo/kojo-k4-stoic');
   await mod.kojo_message_palamcng_4();
   assert.deepEqual(fixture.text_lines(), [
@@ -556,7 +557,7 @@ test('处女丧失 A >= 500（UP:11 + UP:12 够高）时走「それ以外」档
   fixture.store.set('delta:31:11', 400); // UP:11
   fixture.store.set('delta:31:12', 200); // UP:12 → A = 600 >= 500
   fixture.store.set('talent:31:85', 1); // 爱慕（但 A 门槛拦下）
-  fixture.load_module('kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-system');
   const mod = fixture.load_module('kojo/kojo-k4-stoic');
   await mod.kojo_message_palamcng_4();
   assert.deepEqual(

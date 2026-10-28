@@ -11,6 +11,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /** 开调教表、加入主人与目标，并加载特殊指令族。 */
@@ -680,7 +681,7 @@ test('com59：爱情经验 +2，持续效果再 +1 与主人经验四条件', as
 test('SHOW_STATUS 事件：COM53 启动并推进后显示剩余录像次数和特殊持续状态，不落 show_equip_2 占位', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
-  fixture.load_module('page/page-train');
+  register_handlers(fixture, 'page/page-train');
   fixture.store.set('item:6', 1);
   fixture.store.set('item:28', 1);
   await run_com(world, 53);

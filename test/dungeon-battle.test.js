@@ -24,6 +24,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -173,7 +174,7 @@ test('source_check_auto 接入：转发到 system/train/source-check 的真实�
   era_flag.assi = -1;
   era_flag.assiplay = 0;
   fixture.store.set('palam:1:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛
-  load(fixture, 'system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   const battle = load(fixture, 'system/dungeon/dungeon-battle');
 
   await battle.source_check_auto();

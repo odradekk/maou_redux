@@ -100,25 +100,17 @@ function bind_ctx(rand) {
 }
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_6 = 1; // FLAG:106 = 1（K6 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_6 = 1; // FLAG:106 = 1（K6 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_6 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_6 = 0;
+}
 
 async function eventtrain_k6(rand) {
   const {
@@ -12263,9 +12255,6 @@ function gobi_koujo_k6(arg_0, rand) {
   return gobi_text(6, arg_0, rand);
 }
 
-on(EVENT.TRAIN, eventtrain_k6);
-on(EVENT.END, eventend_k6);
-
 kojo_message_com_family.register(6, kojo_message_com_6);
 dog_kojo_family.register(6, dog_kojo_6);
 colosseum_kojo_family.register(6, colosseum_kojo_6);
@@ -12289,7 +12278,19 @@ gohoubi_after_koujo_family.register(6, gohoubi_after_koujo_k6);
 osioski_koujo_family.register(6, osioki_koujo_k6);
 gobi_koujo_family.register(6, gobi_koujo_k6);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, eventtrain_k6);
+  on(EVENT.END, eventend_k6);
+}
+
 module.exports = {
+  register,
   kojo_message_com_6,
   dog_kojo_6,
   colosseum_kojo_6,

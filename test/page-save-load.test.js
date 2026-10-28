@@ -22,9 +22,14 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 function load_page(fixture) {
-  return fixture.load_module('page/page-save-load');
+  const page = fixture.load_module('page/page-save-load');
+  // EVENTLOAD 的处理器在启动装配表里注册（#851）；本文件只装载读档页，
+  // 用例自己把这条链接上
+  register_handlers(fixture, 'event/event-load');
+  return page;
 }
 
 /** 终态按钮条目（lines；type=button → {text, accelerator, rendered, color}） */

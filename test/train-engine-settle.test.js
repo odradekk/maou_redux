@@ -58,7 +58,9 @@ async function run_round({ base0 = 1450, base1 = 410 } = {}) {
   fixture.store.set('abl:0:12', 5);
   fixture.store.set('palam:31:0', 9000);
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('system/train/source-check');
+  // #851 起处理器模块装载本身不注册：显式调用本模块的 register()（装配表在
+  // 生产走 system/flow/startup.js 的 register_all）
+  fixture.load_module('system/train/source-check').register();
   const { com_family } = fixture.load_module('system/train/com-family');
   const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);
@@ -184,7 +186,9 @@ test('base：AUTO 路径同样只写 deltabase（结算留到 nextTurnInTrain）
   fixture.store.set('maxbase:31:1', 2000);
   fixture.store.set('base:31:0', 1450);
   fixture.store.set('base:31:1', 0); // 气力０ → 损耗 ×2 + 80
-  fixture.load_module('system/train/source-check');
+  // #851 起处理器模块装载本身不注册：显式调用本模块的 register()（装配表在
+  // 生产走 system/flow/startup.js 的 register_all）
+  fixture.load_module('system/train/source-check').register();
   const { emit } = fixture.load_module('system/event/registry');
   await emit('SOURCE_CHECK_AUTO');
 

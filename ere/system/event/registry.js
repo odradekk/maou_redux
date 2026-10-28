@@ -8,9 +8,11 @@
  * 定义），emit 时全部执行，顺序分三档：
  *     PRI（#PRI 优先档）/ NORMAL（无标记普通档）/ LATER（#LATER 延后档）
  *
- * 【有意偏离（#6 决议）】同档内的顺序取**注册的书写顺序**（即调用方 require
- * 清单里的书写顺序），不取文件系统的目录项序——后者随环境变化、不可复
- * 现。#PRI 组各口上只写自己的存在标志、互不干涉，本游戏风险低（#6 评估）。
+ * 【有意偏离（#6 决议）】同档内的顺序取**注册的书写顺序**，不取文件系统的
+ * 目录项序——后者随环境变化、不可复现。注册由启动装配表
+ * （system/flow/startup.js）按表里的模块顺序逐条发出（#851），所以「书写
+ * 顺序」现在读装配表与各模块的 HANDLERS 即可，不再取决于谁先 require 谁。
+ * #PRI 组各口上只写自己的存在标志、互不干涉，本游戏风险低（#6 评估）。
  *
  * BEGIN 语义（#6 推翻 #3 后的版本，本模块是它的运行时验证）：
  * 处理器 `return begin(STATE.X)` 把这个目标交到处理器边界，emit 在此**暂存**，
@@ -49,8 +51,8 @@ const TERMINAL_STATES = new Set([STATE.TITLE]);
 const TIER_ORDER = [TIER.PRI, TIER.NORMAL, TIER.LATER];
 
 // 注册表：event_name -> { PRI: 处理器数组, NORMAL: ..., LATER: ... }
-// 模块级状态；注册发生在各处理器模块的顶层（往数组里塞函数，不碰 era.*，
-// 这是引擎允许的——模块顶层调 era.* 才会报错，#6 已核实）
+// 模块级状态；注册只由启动装配表（system/flow/startup.js）调用 on() 完成，
+// 处理器模块只导出声明（#851）
 const registry = new Map();
 
 // 认得的名字来自枚举，注册表不另抄一份
@@ -133,4 +135,27 @@ async function emit(event_name, ...args) {
   return pending;
 }
 
-module.exports = { on, emit, TIER };
+/**
+ * 某事件已注册的处理器条数（按档位）。只读。
+ *
+ * 供启动装配的审计用例核对「模块声明的条数」与「真正进了注册表的条数」
+ * 一致：装配表与声明都在源码里，只有这一处能证明它们确实被执行过。
+ * 执行顺序不在这里——它是装配顺序（system/flow/startup.js）决定的。
+ *
+ * @param {string} event_name 事件名，取 EVENT 枚举的取值
+ * @returns {{PRI: number, NORMAL: number, LATER: number}}
+ */
+function handler_counts(event_name) {
+  assert_known(event_name, 'handler_counts');
+  const chain = registry.get(event_name);
+  if (chain === undefined) {
+    return { PRI: 0, NORMAL: 0, LATER: 0 };
+  }
+  return {
+    PRI: chain.PRI.length,
+    NORMAL: chain.NORMAL.length,
+    LATER: chain.LATER.length,
+  };
+}
+
+module.exports = { on, emit, handler_counts, TIER };

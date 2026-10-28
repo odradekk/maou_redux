@@ -41,10 +41,10 @@ const { geo_test, db_set } = require('#/system/dungeon/labo'); // 2D 模式分�
 const { set_vil } = require('#/system/dungeon/labo-map');
 const { EVENT } = require('#/data/event-name-const');
 
-// 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
-// 函数体内调用，#6 的两条硬规则之二）。普通档：源 EVENTFIRST 的其他
-// 定义随各自所属票接入。
-on(EVENT.FIRST, async () => {
+// 普通档：源 EVENTFIRST 的其他定义随各自所属票接入。处理器在
+// system/flow/startup.js 的装配表里注册（era.* 只在函数体内调用，
+// #6 的两条硬规则之二）。
+async function handle_first() {
   // 自建（#136 返工，非源 EVENTFIRST 的行）：存读档指针的初值
   // -1（flag:10018-10028，已登记 yml/Flag.yml 保留区）。登记后引擎
   // resetData/fillData 会为已声明序号赋 0——0 是有效槽号（0 号槽会被误
@@ -365,4 +365,14 @@ on(EVENT.FIRST, async () => {
   // SHOP 转场 —— 初始化完成，转入据点主菜单。事件链内转场目标由 emit
   // 暂存，链跑完交给主循环。
   return begin(STATE.SHOP);
-});
+}
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.FIRST, handle_first);
+}
+
+module.exports = { register };

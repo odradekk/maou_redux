@@ -88,25 +88,17 @@ const { chara_callname, chara_name } = require('#/utils/callname-utils');
 const era0 = (k) => era.get(k) || 0;
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_4 = 1; // FLAG:104 = 1（K4 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_4 = 1; // FLAG:104 = 1（K4 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_4 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_4 = 0;
+}
 
 /**
  * EVENTTRAIN NORMAL 档：调教开始时的口上。
@@ -116,148 +108,138 @@ on(
  * 屈服刻印Lv1/2/3（各一次）→ 淫乱（一次）→ 爱慕（一次）→ 助手分支
  * （ASSI < 0 或无名助手 → K4_KOJO2；助手口上模板未填写）。
  */
-on(
-  EVENT.TRAIN,
-  async () => {
-    const target = era_flag.target;
-    const target_name = chara_callname(target); // %SAVESTR:TARGET%
-    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
-    const master_name = chara_name(0); // %CALLNAME:MASTER%（MASTER 恒角色 0）
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (era0(`talent:${target}:164`) != 1) {
-      return 0;
-    }
+async function handle_train() {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+  const master_name = chara_name(0); // %CALLNAME:MASTER%（MASTER 恒角色 0）
+  if (era0('flag:7') <= 0) {
+    return 0;
+  }
+  if (era0(`talent:${target}:164`) != 1) {
+    return 0;
+  }
 
-    if (era0(`cflag:${target}:201`) == 0) {
-      era.drawLine();
-      if (era0(`talent:${target}:314`) == 3) {
-        await era.printAndWait(
-          `「如果以为我和那些在魔界堕落的同胞一样，就大错特错啦！」`,
-        );
-        await era.printAndWait(`「流淌着的高贵血脉，绝不会被你玷污！……」`);
-      } else if (era0(`talent:${target}:314`) == 4) {
-        await era.printAndWait(`「身为精灵勇者的我，不可能屈从于黑暗！」`);
-        await era.printAndWait(`「哪怕同伴都在淫威下屈服了……我也坚贞不屈！」`);
-      } else {
-        await era.printAndWait(`「…原来如此，用这样的牢狱来封住我的力量啊…」`);
-        await era.printAndWait(
-          `「哼，卑鄙。这都是徒劳的笑话罢了，我绝不屈服。」`,
-        );
-      }
-
-      if (era0(`cflag:${target}:42`) == 83) {
-        await era.printAndWait(`这么说着、${target_name}推了推眼镜…`);
-      }
-      // CFLAG:201  = 1（变量语义：CFLAG 族，201）
-      era.set(`cflag:${target}:201`, 1);
-      return 1;
-    } else if (
-      era0(`cflag:${target}:201`) >= 1 &&
-      era0(`cflag:${target}:650`) == 1
-    ) {
-      if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
-        era.drawLine();
-        await era.printAndWait(
-          `将看了那水晶球的事告诉了${target_name}之后，她的脸色苍白了。`,
-        );
-        await era.printAndWait(
-          `「………和别人私通的家伙摆出这样的脸，怎么，准备哭了么是要？」`,
-        );
-        await era.printAndWait(
-          `「我……被狂王抱着，感受到了无上的快乐……那样……可耻……可耻的姿态……哇……呜呜呜……」`,
-        );
-        await era.printAndWait(
-          `${target_name}泪流满面。对背叛${player_name}感到后悔，或对被狂王弄得高潮感到悔恨，也许两者都有吧………`,
-        );
-
-        // CFLAG:650  = 0（变量语义：CFLAG 族，650）
-        era.set(`cflag:${target}:650`, 0);
-      } else {
-        era.drawLine();
-        await era.printAndWait(
-          `「唉……曾经背叛过的我，已经没资格再成为魔王的东西了………」`,
-        );
-        await era.printAndWait(`「我只是战败之身，要杀要剐，悉随尊便。」`);
-
-        // CFLAG:650  = 0（变量语义：CFLAG 族，650）
-        era.set(`cflag:${target}:650`, 0);
-      }
-      return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 2 &&
-      era0(`mark:${target}:2`) == 1
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「哼……都是徒劳的，徒劳的！」`);
-      // CFLAG:201  = 2（变量语义：CFLAG 族，201）
-      era.set(`cflag:${target}:201`, 2);
-      return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 3 &&
-      era0(`mark:${target}:2`) == 2
-    ) {
-      era.drawLine();
+  if (era0(`cflag:${target}:201`) == 0) {
+    era.drawLine();
+    if (era0(`talent:${target}:314`) == 3) {
       await era.printAndWait(
-        `「我，是怎么了？不！我还是我！还是我！不会屈服！」`,
+        `「如果以为我和那些在魔界堕落的同胞一样，就大错特错啦！」`,
       );
-      // CFLAG:201  = 3（变量语义：CFLAG 族，201）
-      era.set(`cflag:${target}:201`, 3);
-      return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 4 &&
-      era0(`mark:${target}:2`) == 3 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(
-        `「再，再也受不了啦……哇！呜呜……是我输了……多么屈辱啊…」`,
-      );
-      // CFLAG:201  = 4（变量语义：CFLAG 族，201）
-      era.set(`cflag:${target}:201`, 4);
-      return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 5 &&
-      era0(`talent:${target}:76`) == 1 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`${target_name}一贯以来的冷静感完全消失了。`);
-      await era.printAndWait(`彻底成为了一只被快感所俘虏的牝奴。`);
-      await era.printAndWait(
-        `四脚爬爬，扭动着腰，用炽热的视线仰视着${master_name}。`,
-      );
-      await era.printAndWait(
-        `「我，我不行了……我是肉棒最忠实的奴隶！……唔…喔……请，请给我……肉棒！」`,
-      );
-      // CFLAG:201  = 5（变量语义：CFLAG 族，201）
-      era.set(`cflag:${target}:201`, 5);
-      return 1;
-    } else if (
-      era0(`cflag:${target}:201`) < 6 &&
-      era0(`talent:${target}:85`) == 1
-    ) {
-      era.drawLine();
-      await era.printAndWait(`${target_name}害羞地向${master_name}表白了。`);
-      await era.printAndWait(
-        `「我其实留意了很久了，魔王大人有着与众不同闪光点……啊～不不～不要说这种多余的话！」`,
-      );
-      await era.printAndWait(
-        `${target_name}有点手足无措，看了${master_name}一眼，红着脸，说「魔王大人……以后，请让我侍奉左右吧……」`,
-      );
-      await era.printAndWait(`${target_name}顺势跪下，亲吻着你的手。`);
-      // CFLAG:201  = 6（变量语义：CFLAG 族，201）
-      era.set(`cflag:${target}:201`, 6);
-      return 1;
-    } else if (era_flag.assi < 0) {
-      await k4_kojo2(); // CALL K4_KOJO2
+      await era.printAndWait(`「流淌着的高贵血脉，绝不会被你玷污！……」`);
+    } else if (era0(`talent:${target}:314`) == 4) {
+      await era.printAndWait(`「身为精灵勇者的我，不可能屈从于黑暗！」`);
+      await era.printAndWait(`「哪怕同伴都在淫威下屈服了……我也坚贞不屈！」`);
     } else {
-      await k4_kojo2(); // CALL K4_KOJO2
+      await era.printAndWait(`「…原来如此，用这样的牢狱来封住我的力量啊…」`);
+      await era.printAndWait(
+        `「哼，卑鄙。这都是徒劳的笑话罢了，我绝不屈服。」`,
+      );
     }
-  },
-  TIER.NORMAL,
-);
+
+    if (era0(`cflag:${target}:42`) == 83) {
+      await era.printAndWait(`这么说着、${target_name}推了推眼镜…`);
+    }
+    // CFLAG:201  = 1（变量语义：CFLAG 族，201）
+    era.set(`cflag:${target}:201`, 1);
+    return 1;
+  } else if (
+    era0(`cflag:${target}:201`) >= 1 &&
+    era0(`cflag:${target}:650`) == 1
+  ) {
+    if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
+      era.drawLine();
+      await era.printAndWait(
+        `将看了那水晶球的事告诉了${target_name}之后，她的脸色苍白了。`,
+      );
+      await era.printAndWait(
+        `「………和别人私通的家伙摆出这样的脸，怎么，准备哭了么是要？」`,
+      );
+      await era.printAndWait(
+        `「我……被狂王抱着，感受到了无上的快乐……那样……可耻……可耻的姿态……哇……呜呜呜……」`,
+      );
+      await era.printAndWait(
+        `${target_name}泪流满面。对背叛${player_name}感到后悔，或对被狂王弄得高潮感到悔恨，也许两者都有吧………`,
+      );
+
+      // CFLAG:650  = 0（变量语义：CFLAG 族，650）
+      era.set(`cflag:${target}:650`, 0);
+    } else {
+      era.drawLine();
+      await era.printAndWait(
+        `「唉……曾经背叛过的我，已经没资格再成为魔王的东西了………」`,
+      );
+      await era.printAndWait(`「我只是战败之身，要杀要剐，悉随尊便。」`);
+
+      // CFLAG:650  = 0（变量语义：CFLAG 族，650）
+      era.set(`cflag:${target}:650`, 0);
+    }
+    return 1;
+  } else if (era0(`cflag:${target}:201`) < 2 && era0(`mark:${target}:2`) == 1) {
+    era.drawLine();
+    await era.printAndWait(`「哼……都是徒劳的，徒劳的！」`);
+    // CFLAG:201  = 2（变量语义：CFLAG 族，201）
+    era.set(`cflag:${target}:201`, 2);
+    return 1;
+  } else if (era0(`cflag:${target}:201`) < 3 && era0(`mark:${target}:2`) == 2) {
+    era.drawLine();
+    await era.printAndWait(
+      `「我，是怎么了？不！我还是我！还是我！不会屈服！」`,
+    );
+    // CFLAG:201  = 3（变量语义：CFLAG 族，201）
+    era.set(`cflag:${target}:201`, 3);
+    return 1;
+  } else if (
+    era0(`cflag:${target}:201`) < 4 &&
+    era0(`mark:${target}:2`) == 3 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(
+      `「再，再也受不了啦……哇！呜呜……是我输了……多么屈辱啊…」`,
+    );
+    // CFLAG:201  = 4（变量语义：CFLAG 族，201）
+    era.set(`cflag:${target}:201`, 4);
+    return 1;
+  } else if (
+    era0(`cflag:${target}:201`) < 5 &&
+    era0(`talent:${target}:76`) == 1 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`${target_name}一贯以来的冷静感完全消失了。`);
+    await era.printAndWait(`彻底成为了一只被快感所俘虏的牝奴。`);
+    await era.printAndWait(
+      `四脚爬爬，扭动着腰，用炽热的视线仰视着${master_name}。`,
+    );
+    await era.printAndWait(
+      `「我，我不行了……我是肉棒最忠实的奴隶！……唔…喔……请，请给我……肉棒！」`,
+    );
+    // CFLAG:201  = 5（变量语义：CFLAG 族，201）
+    era.set(`cflag:${target}:201`, 5);
+    return 1;
+  } else if (
+    era0(`cflag:${target}:201`) < 6 &&
+    era0(`talent:${target}:85`) == 1
+  ) {
+    era.drawLine();
+    await era.printAndWait(`${target_name}害羞地向${master_name}表白了。`);
+    await era.printAndWait(
+      `「我其实留意了很久了，魔王大人有着与众不同闪光点……啊～不不～不要说这种多余的话！」`,
+    );
+    await era.printAndWait(
+      `${target_name}有点手足无措，看了${master_name}一眼，红着脸，说「魔王大人……以后，请让我侍奉左右吧……」`,
+    );
+    await era.printAndWait(`${target_name}顺势跪下，亲吻着你的手。`);
+    // CFLAG:201  = 6（变量语义：CFLAG 族，201）
+    era.set(`cflag:${target}:201`, 6);
+    return 1;
+  } else if (era_flag.assi < 0) {
+    await k4_kojo2(); // CALL K4_KOJO2
+  } else {
+    await k4_kojo2(); // CALL K4_KOJO2
+  }
+}
 
 /**
  * k4_kojo2：调教开始口上的二回目以降（助手无口上时）。
@@ -462,79 +444,75 @@ async function k4_kojo2() {
  * EVENTEND NORMAL 档：调教结束时的口上。
  * 检查：FLAG:7、TALENT:164、BASE:0（死亡跳过）。
  */
-on(
-  EVENT.END,
-  async () => {
-    const target = era_flag.target;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (era0(`talent:${target}:164`) != 1) {
-      return 0;
-    }
-
-    if (era0(`base:${target}:0`) <= 0) {
-      return 0;
-    }
-
-    if (era0(`mark:${target}:3`) == 3 && era0(`talent:${target}:85`) == 0) {
-      era.drawLine();
-      await era.printAndWait(`「可恶！」`);
-      return 1;
-    } else if (
-      era0(`mark:${target}:2`) <= 1 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「哈哈……就这，这种程度……」`);
-      return 1;
-    } else if (
-      era0(`mark:${target}:2`) == 2 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「还没，还不能屈服！…」`);
-      return 1;
-    } else if (
-      era0(`mark:${target}:2`) == 3 &&
-      era0(`talent:${target}:85`) == 0
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「已……已经不行了啊……我回不去了………」`);
-      return 1;
-    } else if (
-      era0(`talent:${target}:76`) == 1 &&
-      era0(`base:${target}:0`) >= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「请……请再用肉棒蹂躏我………可以吗？」`);
-      return 1;
-    } else if (
-      era0(`talent:${target}:76`) == 1 &&
-      era0(`base:${target}:0`) <= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「要……要死了！…」`);
-      return 1;
-    } else if (
-      era0(`talent:${target}:85`) == 1 &&
-      era0(`base:${target}:0`) >= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「嘻嘻，这次也很完美～～」`);
-      return 1;
-    } else if (
-      era0(`talent:${target}:85`) == 1 &&
-      era0(`base:${target}:0`) <= 500
-    ) {
-      era.drawLine();
-      await era.printAndWait(`「呆子，就不能对人家再温柔些吗？…坏人～」`);
-      return 1;
-    }
+async function handle_end() {
+  const target = era_flag.target;
+  if (era0('flag:7') <= 0) {
     return 0;
-  },
-  TIER.NORMAL,
-);
+  }
+  if (era0(`talent:${target}:164`) != 1) {
+    return 0;
+  }
+
+  if (era0(`base:${target}:0`) <= 0) {
+    return 0;
+  }
+
+  if (era0(`mark:${target}:3`) == 3 && era0(`talent:${target}:85`) == 0) {
+    era.drawLine();
+    await era.printAndWait(`「可恶！」`);
+    return 1;
+  } else if (
+    era0(`mark:${target}:2`) <= 1 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「哈哈……就这，这种程度……」`);
+    return 1;
+  } else if (
+    era0(`mark:${target}:2`) == 2 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「还没，还不能屈服！…」`);
+    return 1;
+  } else if (
+    era0(`mark:${target}:2`) == 3 &&
+    era0(`talent:${target}:85`) == 0
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「已……已经不行了啊……我回不去了………」`);
+    return 1;
+  } else if (
+    era0(`talent:${target}:76`) == 1 &&
+    era0(`base:${target}:0`) >= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「请……请再用肉棒蹂躏我………可以吗？」`);
+    return 1;
+  } else if (
+    era0(`talent:${target}:76`) == 1 &&
+    era0(`base:${target}:0`) <= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「要……要死了！…」`);
+    return 1;
+  } else if (
+    era0(`talent:${target}:85`) == 1 &&
+    era0(`base:${target}:0`) >= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「嘻嘻，这次也很完美～～」`);
+    return 1;
+  } else if (
+    era0(`talent:${target}:85`) == 1 &&
+    era0(`base:${target}:0`) <= 500
+  ) {
+    era.drawLine();
+    await era.printAndWait(`「呆子，就不能对人家再温柔些吗？…坏人～」`);
+    return 1;
+  }
+  return 0;
+}
 
 /**
  * kojo_message_com_4：指令口上的指令分支体（K4 的 SELECTCOM 平铺）。
@@ -6486,7 +6464,19 @@ gohoubi_after_koujo_family.register(4, (...args) =>
 osioski_koujo_family.register(4, (...args) => kojo_k4.osioski_koujo(...args));
 gobi_koujo_family.register(4, (...args) => kojo_k4.gobi_koujo(...args));
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train, TIER.NORMAL);
+  on(EVENT.END, handle_end, TIER.NORMAL);
+}
+
 module.exports = {
+  register,
   KojoK4,
   kojo_message_com_4,
   dog_kojo_4,

@@ -34,6 +34,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 // 组一个窄路径开局世界：魔王气力、威望、人间界侵攻度、征服标记
 function make_world(
@@ -1213,6 +1214,7 @@ test('【验收 3 补】结局选退出：[109] 出兵路径以 TITLE 回标题�
   // 「我……已经……不想做魔王了……」= 游戏结束
   fixture.set_inputs(109, 1, 1);
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
 
   // 回标题的转场目标由 ending_1 → invasion_check → invasion → usershop
   // 逐层上抛（#852 起是返回值；原先 era.quit() 把进程结束掉）。转场丢了
@@ -1237,6 +1239,7 @@ test('【验收 3】[109] 返回 1：run_shop 以 TURNEND 转场目标返回', a
   make_world(fixture);
   fixture.set_inputs(109, 1); // 主菜单选 [109] → 侵略画面选 [1]
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
 
   // BEGIN TURNEND —— 旧引擎行为：BEGIN 结束当前函数；ere 侧返回目标状态，
   // 由主循环接站（先例：100 分支的 BEGIN TRAIN，#44）
@@ -1249,6 +1252,7 @@ test('[109] 返回 0（999 取消）：不转场，回主菜单重绘', async ()
   make_world(fixture);
   fixture.set_inputs(109, 999);
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   assert.equal(fixture.store.get('flag:81'), 0);
 });

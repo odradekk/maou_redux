@@ -24,6 +24,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 const { assert_one_blank_after } = require('./helpers/blank-lines');
 
@@ -327,7 +328,7 @@ test('接入：eventend 死亡删除分支真调 party_char_del（队伍复位�
   fixture.store.set('cflag:31:533', 31);
   fixture.store.set('base:31:0', 0);
   fixture.era.beginTrain(0, 31);
-  fixture.load_module('event/event-end');
+  register_handlers(fixture, 'event/event-end');
 
   const { run_aftertrain } = fixture.load_module('system/train/train-end');
   const pending = await run_aftertrain();
@@ -354,7 +355,7 @@ test('接入：存活路径 RESULT == 0 → SELF_CHECK 照常执行', async () =
   era_flag.assi_backup = -1;
   fixture.store.set('base:31:0', 2000);
   fixture.era.beginTrain(0, 31);
-  fixture.load_module('event/event-end');
+  register_handlers(fixture, 'event/event-end');
   fixture.set_inputs(999); // juel_check 交互循环退出键
 
   const { emit } = fixture.load_module('system/event/registry');

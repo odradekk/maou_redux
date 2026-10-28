@@ -9,6 +9,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_gamebase } = require('./helpers/gamebase');
 
 /**
@@ -58,13 +59,13 @@ async function run_corrupt_path() {
   // 误判为「双方均非男性」触发 SOURCE_LESBIAN_SEX_CHECK，改变爱抚产生的
   // 快感系数，导致本测试依赖的 MARK:1 阈值判定失真。
   fixture.store.set('talent:0:122', 1);
-  fixture.load_module('event/event-train');
-  fixture.load_module('event/event-end');
-  fixture.load_module('event/event-com');
-  fixture.load_module('event/event-comend');
-  fixture.load_module('system/train/source-check');
-  fixture.load_module('page/page-train');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'event/event-train');
+  register_handlers(fixture, 'event/event-end');
+  register_handlers(fixture, 'event/event-com');
+  register_handlers(fixture, 'event/event-comend');
+  register_handlers(fixture, 'system/train/source-check');
+  register_handlers(fixture, 'page/page-train');
+  register_handlers(fixture, 'page/page-usercom');
   // COM0 自 com0-caress.js 搬入本族模块（#219 J9，原文件删除）
   fixture.load_module('system/train/com-caress');
   fixture.load_module('system/train/com-sm');
@@ -199,7 +200,7 @@ test('端到端：角色堕落后完成奴隶出售全链', async () => {
     'ESTIMATE_CHARA 必须按调教后的能力给出独立可复算的估价',
   );
 
-  fixture.load_module('kojo/kojo-k0-tender');
+  register_handlers(fixture, 'kojo/kojo-k0-tender');
   fixture.store.set('flag:7', 1); // 口上总开关
   fixture.store.set('talent:17:160', 1); // 慈爱性格：SELF_KOJO_K0
   fixture.reset_inputs(17, 0, 0, 999); // 选玛奥、确认、黑市、返回据点

@@ -59,71 +59,77 @@ const { EVENT } = require('#/data/event-name-const');
  *
  * 对读入的存档数据重放；逐行处置见文件头。
  */
-on(
-  EVENT.LOAD,
-  async () => {
-    // LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
-    // `this.era.global = n`），丢弃读档前未保存的内存改动——event-first.js
-    // 与设置页 [27] 都不即时 SAVEGLOBAL，读档须恢复最近一次保存值
-    // （#547 验收第 3 条修正 #137 的判断：当时「global 表变量改完都立即
-    // SAVEGLOBAL」的前提被 global:3 打破）。副作用核对过引擎源码：随后
-    // listSaveFiles 重扫备注、saveGlobal 写回同值，不动刚读入的存档数据
-    await era.loadGlobal();
-    // 角色名初始化，真身见 chara-name-list.js（#388）
-    chara_name_init();
-    // EX素质名初始化（非存档表，读档后重放；重复调用按检查早退）
-    ex_talentname_init();
+async function handle_load() {
+  // LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
+  // `this.era.global = n`），丢弃读档前未保存的内存改动——event-first.js
+  // 与设置页 [27] 都不即时 SAVEGLOBAL，读档须恢复最近一次保存值
+  // （#547 验收第 3 条修正 #137 的判断：当时「global 表变量改完都立即
+  // SAVEGLOBAL」的前提被 global:3 打破）。副作用核对过引擎源码：随后
+  // listSaveFiles 重扫备注、saveGlobal 写回同值，不动刚读入的存档数据
+  await era.loadGlobal();
+  // 角色名初始化，真身见 chara-name-list.js（#388）
+  chara_name_init();
+  // EX素质名初始化（非存档表，读档后重放；重复调用按检查早退）
+  ex_talentname_init();
 
-    // 待机档归一（#814）：引擎读档时会把角色文件里的状态预设补进旧存档里
-    // 从未写过的槽，而那些预设是原版的 1 = 待機——移植版没有这一档（四个
-    // 操作页都以 0 放行，全库从不写 1）。判据与各加入点共用，
-    // 见 chara-init.js 的 normalize_idle_status
-    for (const cid of era.getAddedCharacters()) {
-      normalize_idle_status(cid);
-    }
+  // 待机档归一（#814）：引擎读档时会把角色文件里的状态预设补进旧存档里
+  // 从未写过的槽，而那些预设是原版的 1 = 待機——移植版没有这一档（四个
+  // 操作页都以 0 放行，全库从不写 1）。判据与各加入点共用，
+  // 见 chara-init.js 的 normalize_idle_status
+  for (const cid of era.getAddedCharacters()) {
+    normalize_idle_status(cid);
+  }
 
-    // 预设模板补填（#884）：0.1.x 的存档里没有 portcflag 的「预设模板」
-    // 字段——有预设的角色由引擎的 fillData 按自己的预设补成预设号，没有预设
-    // 的后代补 0，这里按旧编码换算写入。判据与换算见 chara-pregnancy.js 的
-    // backfill_chara_templates；幂等，读档链重放（通信菜单的特殊档）不出错
-    backfill_chara_templates();
+  // 预设模板补填（#884）：0.1.x 的存档里没有 portcflag 的「预设模板」
+  // 字段——有预设的角色由引擎的 fillData 按自己的预设补成预设号，没有预设
+  // 的后代补 0，这里按旧编码换算写入。判据与换算见 chara-pregnancy.js 的
+  // backfill_chara_templates；幂等，读档链重放（通信菜单的特殊档）不出错
+  backfill_chara_templates();
 
-    // LASTLOAD_NO 999/1000+：普通读档界面仍只放行 0-99，故两支不可达；
-    // 保留钩子，供 MAOUNET 的特殊档流程使用。
-    if (era_flag.last_load_no === 999) {
-      // 通信菜单里的特殊档读写会重放本链：链内转场（读档成功后进
-      // SHOP_AFTER_LOAD）优先于本支的 SHOP 转场，经菜单的返回值上到这里
-      const next = await maounet_mod.maounet();
-      if (is_state(next)) {
-        return next;
-      }
-      return begin(STATE.SHOP);
+  // LASTLOAD_NO 999/1000+：普通读档界面仍只放行 0-99，故两支不可达；
+  // 保留钩子，供 MAOUNET 的特殊档流程使用。
+  if (era_flag.last_load_no === 999) {
+    // 通信菜单里的特殊档读写会重放本链：链内转场（读档成功后进
+    // SHOP_AFTER_LOAD）优先于本支的 SHOP 转场，经菜单的返回值上到这里
+    const next = await maounet_mod.maounet();
+    if (is_state(next)) {
+      return next;
     }
-    if (era_flag.last_load_no >= 1000 && era_flag.last_load_no < 1020) {
-      const next = await maounet_mod.inport_b();
-      if (is_state(next)) {
-        return next;
-      }
+    return begin(STATE.SHOP);
+  }
+  if (era_flag.last_load_no >= 1000 && era_flag.last_load_no < 1020) {
+    const next = await maounet_mod.inport_b();
+    if (is_state(next)) {
+      return next;
     }
+  }
 
-    // 历史补丁中三处对新档仍有语义的行（判定依据见文件头）。
-    // FOR A,0,CHARANUM 对全部已加入角色（含 0 号位）
-    for (const cid of era.getAddedCharacters()) {
-      // A == MASTER → EX_TALENT:A:200 = 1（历史补丁行，判定依据见文件头）。
-      // MASTER 恒 0（魔王，本作无换主机制）；ex_talent 表随 #138 实现
-      if (cid === 0) {
-        // EX_TALENT:200 = 魔王（高贵标识）
-        era.set('ex_talent:0:200', 1);
-      }
-      // MAXBASE:0 = 体力上限、MAXBASE:1 = 气力上限（yml/Base.yml 的列名）。
-      // || 0 防 undefined（#13：读未声明序号得 undefined）
-      if ((era.get(`maxbase:${cid}:0`) || 0) < 600) {
-        era.set(`maxbase:${cid}:0`, 600);
-      }
-      if ((era.get(`maxbase:${cid}:1`) || 0) < 100) {
-        era.set(`maxbase:${cid}:1`, 100);
-      }
+  // 历史补丁中三处对新档仍有语义的行（判定依据见文件头）。
+  // FOR A,0,CHARANUM 对全部已加入角色（含 0 号位）
+  for (const cid of era.getAddedCharacters()) {
+    // A == MASTER → EX_TALENT:A:200 = 1（历史补丁行，判定依据见文件头）。
+    // MASTER 恒 0（魔王，本作无换主机制）；ex_talent 表随 #138 实现
+    if (cid === 0) {
+      // EX_TALENT:200 = 魔王（高贵标识）
+      era.set('ex_talent:0:200', 1);
     }
-  },
-  TIER.NORMAL,
-);
+    // MAXBASE:0 = 体力上限、MAXBASE:1 = 气力上限（yml/Base.yml 的列名）。
+    // || 0 防 undefined（#13：读未声明序号得 undefined）
+    if ((era.get(`maxbase:${cid}:0`) || 0) < 600) {
+      era.set(`maxbase:${cid}:0`, 600);
+    }
+    if ((era.get(`maxbase:${cid}:1`) || 0) < 100) {
+      era.set(`maxbase:${cid}:1`, 100);
+    }
+  }
+}
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.LOAD, handle_load, TIER.NORMAL);
+}
+
+module.exports = { register };

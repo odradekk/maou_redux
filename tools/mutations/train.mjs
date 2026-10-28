@@ -31,9 +31,9 @@ export default [
   {
     desc: 'M15102 死亡登记读记录目标而非事件恢复的目标',
     file: 'ere/event/event-end.js',
-    find: '      defer_train_death(target);',
+    find: '    defer_train_death(target);',
     replace:
-      '      defer_train_death(era_flag.target_record); // 变异：登记错对象',
+      '    defer_train_death(era_flag.target_record); // 变异：登记错对象',
     tests: ['train-end-engine'],
     engine: true,
     must_mention: '死亡目标必须除名',
@@ -3052,7 +3052,7 @@ export default [
   },
   {
     desc: 'M1109 主启动图删性交系注册（COM20/COM_ABLE20 不进实际运行图）（#221）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-sex');",
     replace: '// 变异：性交系不在主启动图注册',
     tests: ['main-loop'],
@@ -3411,7 +3411,7 @@ export default [
   },
   {
     desc: 'M1249 主启动图删重度调教系注册（COM80/COM_ABLE80 不进实际运行图）（#226）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-hardcore');",
     replace: '// 变异：重度调教系不在主启动图注册',
     tests: ['main-loop'],
@@ -3704,7 +3704,7 @@ export default [
   },
   {
     desc: 'M1214 主启动图删特殊系注册（COM50/COM_ABLE50 不进实际运行图）（#224）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-special');",
     replace: '// 变异：特殊系不在主启动图注册',
     tests: ['main-loop'],
@@ -3813,7 +3813,7 @@ export default [
   },
   {
     desc: 'M1114 主启动图删奉仕系注册（COM30/COM_ABLE30 不进实际运行图）（#222）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-service');",
     replace: '// 变异：奉仕系不在主启动图注册',
     tests: ['main-loop'],
@@ -3821,7 +3821,7 @@ export default [
   },
   {
     desc: 'M1400 主启动图删助手与蕾丝系注册（COM60/COM_ABLE60 不进实际运行图）（#225）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-assistant');",
     replace: '// 变异：助手与蕾丝系不在主启动图注册',
     tests: ['main-loop'],
@@ -3993,7 +3993,7 @@ export default [
   },
   {
     desc: 'M1453 主启动图删追加与高级系注册（COM122/COM_ABLE122 不进实际运行图）（#229）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-advanced');",
     replace: '// 变异：追加与高级系不在主启动图注册',
     tests: ['main-loop'],
@@ -4261,7 +4261,7 @@ export default [
   },
   {
     desc: 'M1074 主启动图删道具系注册（COM10/COM_ABLE10 不进实际运行图）（#220）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-toy');",
     replace: '// 变异：道具系不在主启动图注册',
     tests: ['main-loop'],
@@ -4269,7 +4269,7 @@ export default [
   },
   {
     desc: 'M1370 主启动图删着装脱衣系注册（COM110/111 不进实际运行图）（#274）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-cloth');",
     replace: '// 变异：着装脱衣系不在主启动图注册',
     tests: ['com-family-wiring'],
@@ -4277,17 +4277,17 @@ export default [
   },
   {
     desc: 'M1520 主启动图删 K3 高貴口上注册（KOJO 3 不进实际运行图）（#282）',
-    file: 'ere/system/flow/main-loop.js',
-    find: "require('#/kojo/kojo-k3-noble');",
-    replace: '// 变异：K3 高貴口上不在主启动图注册',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k3-noble', require('#/kojo/kojo-k3-noble')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图漏装：kojo-k3-noble',
   },
   {
     desc: 'M1521 主启动图删 K5 マオ口上注册（KOJO 5 不进实际运行图）（#282）',
-    file: 'ere/system/flow/main-loop.js',
-    find: "require('#/kojo/kojo-k5-mao');",
-    replace: '// 变异：K5 マオ口上不在主启动图注册',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k5-mao', require('#/kojo/kojo-k5-mao')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图漏装：kojo-k5-mao',
   },
@@ -4577,7 +4577,7 @@ export default [
   },
   {
     desc: 'M1364 主启动图删触手系注册（#227）',
-    file: 'ere/system/flow/main-loop.js',
+    file: 'ere/system/flow/startup.js',
     find: "require('#/system/train/com-tentacle');",
     replace: '// 变异：触手系不在主启动图注册',
     tests: ['main-loop'],
@@ -4627,9 +4627,9 @@ export default [
   },
   {
     desc: 'M1544 主启动图删 K2 口上注册（#233）',
-    file: 'ere/system/flow/main-loop.js',
-    find: "require('#/kojo/kojo-k2-timid');",
-    replace: '// 变异：K2 口上不在主启动图注册',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k2-timid', require('#/kojo/kojo-k2-timid')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['main-loop'],
     must_mention: '主启动图注册 K2',
   },
@@ -11578,9 +11578,9 @@ export default [
   {
     desc: 'M17405 时常发情读裸 palam（未结算的欲情不计入蓄积槽）',
     file: 'ere/event/event-end.js',
-    find: '      const desire = palam_settled(era_flag.target, 5);',
+    find: '    const desire = palam_settled(era_flag.target, 5);',
     replace:
-      '      const desire = era.get(`palam:${era_flag.target}:5`) || 0; // 变异：只读 palam',
+      '    const desire = era.get(`palam:${era_flag.target}:5`) || 0; // 变异：只读 palam',
     tests: ['event-end'],
     must_mention: '时常发情：欲情 11000 蓄积 1 次',
   },

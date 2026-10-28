@@ -82,25 +82,17 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_3 = 1; // FLAG:103 = 1（K3 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_3 = 1; // FLAG:103 = 1（K3 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_3 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_3 = 0;
+}
 
 /**
  * kojo_message_com_3：七道跳过判定 + 爱抚分支。
@@ -8077,22 +8069,14 @@ async function kojo_message_com_3(rand) {
 }
 
 // EVENTTRAIN NORMAL 档：初调教 CFLAG:201 状态机
-on(
-  EVENT.TRAIN,
-  async () => {
-    await eventtrain_k3();
-  },
-  TIER.NORMAL,
-);
+async function handle_train() {
+  await eventtrain_k3();
+}
 
 // EVENTEND NORMAL 档：CFLAG:301 钳回 1 + 调教结束台词
-on(
-  EVENT.END,
-  async () => {
-    await eventend_k3();
-  },
-  TIER.NORMAL,
-);
+async function handle_end() {
+  await eventend_k3();
+}
 
 async function eventtrain_k3(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -12668,7 +12652,19 @@ banishment_koujo_family.register(3, banishment_koujo_k3);
 public_exucution_koujo_family.register(3, public_exucution_koujo_k3);
 grotesque_koujo_family.register(3, grotesque_koujo_k3);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train, TIER.NORMAL);
+  on(EVENT.END, handle_end, TIER.NORMAL);
+}
+
 module.exports = {
+  register,
   kojo_message_com_3,
   dog_kojo_3,
   colosseum_kojo_3,

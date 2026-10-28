@@ -8,6 +8,7 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const CID = 35;
@@ -35,8 +36,8 @@ async function setup_k904(seed) {
   fixture.store.set('exflag:104', 1);
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k904-fia');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k904-fia');
   return fixture;
 }
 
