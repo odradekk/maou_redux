@@ -33,7 +33,7 @@ const QUIT_WHITELIST = new Map([
  */
 const RETURN_TO_TITLE_WHITELIST = new Map([
   [
-    'page/page-ending.js',
+    'system/ending/ending-screen.js',
     '结局演出：ending_1 选退出、ending_2 真 GAMEOVER、ending_n 选结束游戏',
   ],
   ['event/event-turnend.js', '魔王暴走的大冲击 GAMEOVER'],

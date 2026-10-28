@@ -2815,9 +2815,7 @@ async function assert_wait_contract(
 ) {
   const fixture = make_fixture({ seed });
   await run(fixture, fn, inputs, { args });
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.ok(
     fixture.waits.some((w) => w.waited),
@@ -2925,9 +2923,7 @@ test('run_modify 的等键：成交必等一次，取消支不等键', async () 
     1,
     '成交等一次键（确认回显之外只有 apply 文案待读）',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(fixture.unread_output_clears, [], '成交文案在换屏前已确认');
 
@@ -2940,6 +2936,6 @@ test('run_modify 的等键：成交必等一次，取消支不等键', async () 
     [],
     '取消支不等键',
   );
-  await cancel.load_module('page/components/screen-change').change_screen();
+  await cancel.load_module('utils/screen-change').change_screen();
   assert.deepEqual(cancel.unread_output_clears, [], '取消支无未读输出');
 });

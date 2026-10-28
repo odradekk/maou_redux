@@ -1340,9 +1340,7 @@ test('NAEDOKO：女性苗床结算的尾部分隔行在换屏清空前经按键�
 
   await run_seedbed(31, seq([7]));
 
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(
     fixture.unread_output_clears,

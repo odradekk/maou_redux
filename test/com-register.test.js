@@ -362,9 +362,7 @@ test('comseq_train：拒绝播报在回合画面换屏前先经按键确认（#7
     fixture.waits.some((w) => w.waited),
     '拒绝播报后应有一次真等键',
   );
-  const { change_screen } = fixture.load_module(
-    'page/components/screen-change',
-  );
+  const { change_screen } = fixture.load_module('utils/screen-change');
   await change_screen();
   assert.deepEqual(
     fixture.unread_output_clears,
