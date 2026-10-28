@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #904 -6（M161–M166 随域检查工具与其行为锁一并删除）；#819 +6（M15900–M15905：Palam 文件按 juel 表识别、info 级提示默认不收集）；#822 +1（M15709：门面命名表不再接受全角拉丁字母）；+3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
+export const COUNT = 91; // #961 +4（M17952–M17955：模块级 require 图无环锁的取边、SCC、自环与路径拼装）；#904 -6（M161–M166 随域检查工具与其行为锁一并删除）；#819 +6（M15900–M15905：Palam 文件按 juel 表识别、info 级提示默认不收集）；#822 +1（M15709：门面命名表不再接受全角拉丁字母）；+3（M14220–M14222：子进程超时检查的扫描器跳过注释）；#536 -8 +2（启动自检随串行档改走隔离副本删除，条目一并删；M14210：串行档就地变异；M14211：串行档不看副本对照）；#646 +2（M14200：出处检查的只占位符模板串；M14201：--changed 按 tests: 选条目）；#641 -96（追溯与存根检查条目随相应工具与清单一并删除）；更早的计数沿革见 git 历史
 
 export default [
   {
@@ -901,5 +901,42 @@ export default [
     replace: '        includeInfo: false, // 变异：不传 includeInfo',
     tests: ['ere-check-game'],
     must_mention: '--includeInfo 要能打开 info 级提示',
+  },
+  // —— #961：模块级 require 图的无环锁（顶层强连通分量必须全是单点） ——
+  {
+    desc: 'M17952 建图不再只取顶层 require（函数内 require 也算边——登记过的那批绕行写法当场连成一个环）',
+    file: 'test/helpers/require-graph.js',
+    find: '      if (!r.top_level) continue;',
+    replace: '      if (false) continue; // 变异：函数内 require 也建边',
+    tests: ['require-cycle'],
+    test_name: '模块级 require 无环',
+    must_mention: '模块级 require 出现环',
+  },
+  {
+    desc: 'M17953 Tarjan 的回边不收缩分量（强连通分量退化成单点，任何环都报不出来）',
+    file: 'test/helpers/require-graph.js',
+    find: '        low.set(node, Math.min(low.get(node), index_of.get(next)));',
+    replace: '        // 变异：回边不收缩分量',
+    tests: ['require-cycle'],
+    test_name: '环检测自证',
+    must_mention: '三节点环必须报成',
+  },
+  {
+    desc: 'M17954 自环不当环（单点分量只按弧数判定，a.js → a.js 无人报）',
+    file: 'test/helpers/require-graph.js',
+    find: '    if (comp.length > 1 || edges.get(node).includes(node)) {',
+    replace: '    if (comp.length > 1) { // 变异：自环不算环',
+    tests: ['require-cycle'],
+    test_name: '环检测自证',
+    must_mention: '自环也是环',
+  },
+  {
+    desc: 'M17955 环路径不闭合（只报分量里走过的节点，读者看不出从哪回到哪）',
+    file: 'test/helpers/require-graph.js',
+    find: '        return [...nodes, start];',
+    replace: '        return nodes; // 变异：路径不闭合',
+    tests: ['require-cycle'],
+    test_name: '环检测自证',
+    must_mention: '三节点环必须报成',
   },
 ];
