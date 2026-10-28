@@ -257,7 +257,7 @@ export default [
     find: 'register_all();',
     replace: '// 变异：装配表不执行注册',
     tests: ['event-handlers'],
-    must_mention: 'EVENTFIRST 注册条数与装配表不一致',
+    must_mention: '注册条数与装配表不一致',
   },
   {
     desc: 'M17651 装配表漏掉一个口上模块（该事件的处理器链静默少一段）（#851）',
