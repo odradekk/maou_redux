@@ -67,7 +67,9 @@ test('kyoten_event 的横幅：实线 + 居中文本 + 实线', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:81', 2000); // FLAG:81 人间界侵攻度首档下沿
   fixture.store.set('flag:93', 0); // FLAG:93 事件状态字
-  const { kyoten_event } = fixture.load_module('page/page-invasion');
+  const { kyoten_event } = fixture.load_module(
+    'system/invasion/invasion-kyoten',
+  );
 
   assert.equal(await kyoten_event(1), 0);
   assert.deepEqual(

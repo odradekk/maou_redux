@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 605; // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 606; // #873 +1（M17900：每屏编号常量的值域守卫） // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -72,8 +72,8 @@ export default [
   {
     desc: 'M8 select_target 取消：999 返回 1（假选中）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 返回 → 0\n      return 0;\n    }',
-    replace: `    if (result === 999) {
+    find: '    if (result === BACK_KEY) {\n      // 返回 → 0\n      return 0;\n    }',
+    replace: `    if (result === BACK_KEY) {
       // 变异：返回 1
       return 1;
     }`,
@@ -272,7 +272,7 @@ export default [
   },
   {
     desc: 'M2101 出兵公式：气力 /25 改 /30',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     replace:
       '      sinkou = Math.floor(chara(0).dungeon.气力 / 30); // 变异：公式改坏\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
@@ -281,7 +281,7 @@ export default [
   },
   {
     desc: 'M2102 气力减半删除（失败也照减）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
     replace:
       '      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      // 变异：不减半\n      // 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）',
@@ -290,7 +290,7 @@ export default [
   },
   {
     desc: 'M2103 威望 +2 删除（结算尾）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  era_exflag.prestige = era_exflag.prestige + 2; // EX_FLAG:99 += 2',
     replace: '  // 变异：威望不增',
     tests: ['page-invasion'],
@@ -298,7 +298,7 @@ export default [
   },
   {
     desc: 'M2104 略受质疑折扣公式：(100+(p-60)*2) 改 (100+(p-60))',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      sinkou: Math.floor((sinkou * (100 + (prestige - 60) * 2)) / 100),',
     replace:
       '      sinkou: Math.floor((sinkou * (100 + (prestige - 60))) / 100), // 变异',
@@ -307,7 +307,7 @@ export default [
   },
   {
     desc: 'M2105 相安无事档偷偷打折（61-80 无修正）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "    era.print('威望值是【相安无事】');\n    return { sinkou, failed: false };",
     replace:
       "    era.print('威望值是【相安无事】');\n    return { sinkou: Math.floor(sinkou / 4), failed: false }; // 变异",
@@ -316,7 +316,7 @@ export default [
   },
   {
     desc: 'M2106 广受爱戴加成公式：(100+(p-80)) 改 (100+(p-80)*2)',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      sinkou: Math.floor((sinkou * (100 + (prestige - 80))) / 100),',
     replace:
       '      sinkou: Math.floor((sinkou * (100 + (prestige - 80) * 2)) / 100), // 变异',
@@ -325,7 +325,7 @@ export default [
   },
   {
     desc: 'M2107 侵攻度封顶阈值挪走（10000 改 99999）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  era.set(`flag:${region.area}`, Math.min(next, 10000)); // 封顶',
     replace:
       '  era.set(`flag:${region.area}`, Math.min(next, 99999)); // 变异：封顶失效',
@@ -334,7 +334,7 @@ export default [
   },
   {
     desc: 'M2108 KYOTEN_EVENT 首档阈值 2000 改 3000（FLAG:93 状态机）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-kyoten.js',
     find: '  if (progress >= 2000 && stage === 0) return 1;',
     replace:
       '  if (progress >= 3000 && stage === 0) return 1; // 变异：阈值挪走',
@@ -343,7 +343,7 @@ export default [
   },
   {
     desc: 'M2109 首次侵略传闻检查删掉（FLAG:AREA == 0 恒假）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  const progress = era.get(`flag:${area}`) || 0; // FLAG:AREA\n  // FLAG:AREA == 0：狂王组织精锐部队的传闻（PRINTFORMW → 等键）\n  if (progress === 0) {',
     replace:
       '  const progress = era.get(`flag:${area}`) || 0; // FLAG:AREA\n  // FLAG:AREA == 0：狂王组织精锐部队的传闻（PRINTFORMW → 等键）\n  if (progress === -1) { // 变异：恒假',
@@ -352,7 +352,7 @@ export default [
   },
   {
     desc: 'M2110 [999] 取消误报成功（返回 1 消耗回合）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      if (result === 999) {\n        return 0;\n      }',
     replace:
       '      if (result === 999) {\n        return 1; // 变异：取消误报成功\n      }',
@@ -361,7 +361,7 @@ export default [
   },
   {
     desc: 'M2111 魔王侵略经验丢失（EXP:0:80 += SINKOU/2 的写入删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  chara(0).dungeon.战斗经验 += exp_gain; // EXP:0:80（魔王的侵略经验）',
     replace: '  // 变异：经验写入删除',
     tests: ['page-invasion'],
@@ -393,7 +393,7 @@ export default [
   },
   {
     desc: 'M2115 人间界结局条件删掉防重复半边（FLAG:82 == 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-check.js',
     find: `  if (
     era_flag.human_realm_invasion >= 10000 &&
     era_flag.human_realm_fallen === 0
@@ -408,7 +408,7 @@ export default [
     // 有意登记的待办）挡住再次出兵，invasion_check 不再被调。端到端能守
     // 的是条件整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
     desc: 'M220 人间界结局条件整支删除（#120 端到端：新档循环永不停止）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-check.js',
     find: "  // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1\n  if (\n    era_flag.human_realm_invasion >= 10000 &&\n    era_flag.human_realm_fallen === 0\n  ) {\n    // 结局演出以转场目标离开（#852 起是返回值）：选「退出」时是回标题的\n    // TITLE，原样上抛——威望 +10 与 PRINTL 不再执行（这一局结束了）；选\n    // [0] 继续时演出返回 0，落到下面照常结算\n    const ended = await ending_1();\n    if (is_state(ended)) {\n      return ended;\n    }\n    era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10\n    era.print('声望+10'); // PRINTL\n    return;\n  }",
     replace: `  // 变异：人间界条件整支删除
   if (false) {
@@ -419,7 +419,7 @@ export default [
   },
   {
     desc: 'M2116 人间界结局门槛 10000 改 9999',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-check.js',
     find: `    era_flag.human_realm_invasion >= 10000 &&
     era_flag.human_realm_fallen === 0`,
     replace: `    era_flag.human_realm_invasion >= 9999 && // 变异：门槛改坏
@@ -429,7 +429,7 @@ export default [
   },
   {
     desc: 'M2117 精灵领域条件门槛改成恒真（FLAG:86）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-check.js',
     find: `    era_flag.elf_realm_invasion >= 10000 &&
     era_flag.elf_realm_conquered === 0`,
     replace: `    era_flag.elf_realm_invasion >= 0 && // 变异：门槛恒真
@@ -472,7 +472,7 @@ export default [
   {
     desc: 'M226 存档界面翻页步长改坏（+20 → +19）',
     file: 'ere/page/page-save-load.js',
-    find: '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === 200) {',
+    find: '    } else if (result === PAGE_NEXT_KEY && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === NAME_STORY_KEY) {',
     replace:
       '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN - 1; // 变异：步长改坏\n    } else if (result === 200) {',
     tests: ['page-save-load'],
@@ -665,10 +665,10 @@ export default [
   {
     desc: 'M562 INFO2 怪物迎击 toggle 的位换算改坏（FLAG:5 位 4 → 位 3）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: `    if (result === 100) {
+    find: `    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 16);
     }`,
-    replace: `    if (result === 100) {
+    replace: `    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 8); // 变异：位 3
     }`,
     tests: ['page-dungeon-info'],
@@ -1065,10 +1065,10 @@ export default [
   {
     desc: 'M17615 使用支取消也扣钱（选人时按 [999] 也算买下）',
     file: 'ere/page/page-item-shop.js',
-    find: `    if (result === 999) {
+    find: `    if (result === TARGET_CANCEL_KEY) {
       return 0; // 取消：还没付款，道具也没动
     }`,
-    replace: `    if (result === 999) {
+    replace: `    if (result === TARGET_CANCEL_KEY) {
       era_flag.money -= item_price(bought); // 变异：取消也扣钱
       return 0; // 取消：还没付款，道具也没动
     }`,
@@ -1114,12 +1114,12 @@ export default [
       game.event.上次助手 = -1;
       return 0;
     }
-    if (result === 999) {`,
+    if (result === BACK_KEY) {`,
     replace: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
       return 2; // 变异：误判为取消
     }
-    if (result === 999) {`,
+    if (result === BACK_KEY) {`,
     tests: ['page-select-target'],
     must_mention:
       'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
@@ -1127,9 +1127,9 @@ export default [
   {
     desc: 'M7896 select_assi [999]：返回值改 0（误判为非取消，与 1002 混淆）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
+    find: '    if (result === BACK_KEY) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
     replace:
-      '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
+      '    if (result === BACK_KEY) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
     tests: ['page-select-target'],
     must_mention:
       'select_assi 我先想想（999）：返回 2（取消，与 select_target 的 999=0 不同码），不置 ASSI',
@@ -1152,11 +1152,11 @@ export default [
       game.event.上次助手 = result;
       return 1;
     }
-    if (result === 1000) {`,
+    if (result === PAGE_PREV_KEY) {`,
     replace: `      era_flag.assi = result;
       return 1; // 变异：FLAG:2 未写
     }
-    if (result === 1000) {`,
+    if (result === PAGE_PREV_KEY) {`,
     tests: ['page-select-target'],
     must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
@@ -1613,17 +1613,17 @@ export default [
   {
     desc: 'M8406 ability_up 等级条件（< 20 → < 21）',
     file: 'ere/page/page-ability-up.js',
-    find: '        if (result > 990 && result < 999 && cflag(0, 9) < 20) {',
-    replace: '        if (result > 990 && result < 999 && cflag(0, 9) < 21) {',
+    find: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 20) {`,
+    replace: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 21) {`,
     tests: ['page-ability-up'],
     must_mention: '等级门整表驱动',
   },
   {
     desc: 'M8407 ABILITY_UP 返回键编号（999 → 998）',
     file: 'ere/page/page-ability-up.js',
-    find: '        if (result === 999) {\n          return 0;\n        }',
+    find: '        if (result === BACK_KEY) {\n          return 0;\n        }',
     replace:
-      '        if (result === 998) {\n          return 0; // 变异：返回键编号错\n        }',
+      '        if (result === MENU_SLAVE) {\n          return 0; // 变异：返回键编号错\n        }',
     tests: ['page-ability-up'],
     must_mention: '菜单档维度整表驱动',
   },
@@ -1639,8 +1639,8 @@ export default [
   {
     desc: 'M8409 ABILITY_UP_CORE 结束键编号（999 → 997）',
     file: 'ere/page/page-ability-up.js',
-    find: '    if (result === 999) {\n      // 结束',
-    replace: '    if (result === 997) {\n      // 变异：结束键编号错',
+    find: '    if (result === BACK_KEY) {\n      // 结束',
+    replace: '    if (result === MENU_ENEMY) {\n      // 变异：结束键编号错',
     tests: ['page-ability-up'],
     must_mention: '999 收尾三件',
   },
@@ -2242,7 +2242,7 @@ export default [
   // —— #502：medal_bonus 与 sengen_video 族 ——
   {
     desc: 'M10726 勋章首档阈值 5 改 4（6 枚落 100 档的边界被吃掉，#502）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  { over: 5, bonus: 101 },',
     replace: '  { over: 4, bonus: 101 }, // 变异：阈值挪一格',
     tests: ['page-invasion'],
@@ -2250,7 +2250,7 @@ export default [
   },
   {
     desc: 'M10727 勋章最高档数值 160 改 150（501 枚的补正少一档，#502）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  { over: 500, bonus: 160 },',
     replace: '  { over: 500, bonus: 150 }, // 变异：数值改坏',
     tests: ['page-invasion'],
@@ -2258,7 +2258,7 @@ export default [
   },
   {
     desc: 'M10728 勋章分档条件方向改坏（medals > over 改 >=，档界整体下移一档，#502）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  const tier = MEDAL_TIERS.find((t) => medals > t.over);',
     replace: '  const tier = MEDAL_TIERS.find((t) => medals >= t.over);',
     tests: ['page-invasion'],
@@ -2266,7 +2266,7 @@ export default [
   },
   {
     desc: 'M10729 勋章补正提示不打印（PRINTFORMW 整支删除，#502）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: `  era.print(
     chara_nickname(cid) + '的勋章补正　x' + (tier.bonus / 100).toFixed(2),
   );`,
@@ -2398,7 +2398,7 @@ export default [
   // —— #502 追加：PRINTFORMW 等键的四条检查（验收抽样发现缺号段后补，M10748-M10751）——
   {
     desc: 'M10748 MEDAL_BONUS 的补正提示后不等键（PRINTFORMW 的 WAIT 删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: `  await era.waitAnyKey(); // PRINTFORMW 的 WAIT
   return tier.bonus;`,
     replace: `  // 变异：补正提示后不等键
@@ -2437,7 +2437,7 @@ export default [
   },
   {
     desc: 'M10752 [0] 怪物出兵：怪物减半写成三等分（/2 改 /3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 2);',
     replace:
       '        const halved = Math.trunc((era.get(`item:${i}`) || 0) / 3); // 变异：三等分',
@@ -2446,7 +2446,7 @@ export default [
   },
   {
     desc: 'M10753 [0] 怪物出兵：战力系数除数的分母改坏（/9 改 /8）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        sinkou += mon_atk * (Math.trunc(halved / 9) + 1);',
     replace:
       '        sinkou += mon_atk * (Math.trunc(halved / 8) + 1); // 变异：分母改坏',
@@ -2455,7 +2455,7 @@ export default [
   },
   {
     desc: 'M10754 [0] 怪物出兵：战力系数的 +1 改 +2',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        sinkou += mon_atk * (Math.trunc(halved / 9) + 1);',
     replace:
       '        sinkou += mon_atk * (Math.trunc(halved / 9) + 2); // 变异：+2',
@@ -2464,7 +2464,7 @@ export default [
   },
   {
     desc: 'M10755 [0] 怪物出兵：战力归一的分母改坏（/20 改 /10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      sinkou = Math.trunc(sinkou / 20);\n      // 威望修正（与魔力分支同构，共用一套五档）',
     replace:
       '      sinkou = Math.trunc(sinkou / 10); // 变异：分母改坏\n      // 威望修正（与魔力分支同构，共用一套五档）',
@@ -2473,7 +2473,7 @@ export default [
   },
   {
     desc: 'M10756 [0] 600 只门槛放松（600 改 500）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: 'const MONSTER_THRESHOLD = 600;',
     replace: 'const MONSTER_THRESHOLD = 500; // 变异：门槛放松',
     tests: ['page-invasion'],
@@ -2481,7 +2481,7 @@ export default [
   },
   {
     desc: 'M10757 [0] 特殊兵种的 E:1 加成条件反向（!= 0 改 == 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        if (mon.special !== 0) mon_atk += mon.level; // 特殊\n        if (mon.magic !== 0) mon_atk += mon.level; // 魔法\n        const halved',
     replace:
       '        if (mon.special === 0) mon_atk += mon.level; // 变异：条件反向\n        if (mon.magic !== 0) mon_atk += mon.level; // 魔法\n        const halved',
@@ -2490,7 +2490,7 @@ export default [
   },
   {
     desc: 'M10758 [0] 魔法兵种的 E:1 加成条件反向（!= 0 改 == 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        if (mon.magic !== 0) mon_atk += mon.level; // 魔法\n        const halved',
     replace:
       '        if (mon.magic === 0) mon_atk += mon.level; // 变异：条件反向\n        const halved',
@@ -2499,7 +2499,7 @@ export default [
   },
   {
     desc: 'M10759 [0] MONSTER_DATA 的队列参数改坏（line 0 改 1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        monster_data(i, 0, 0, -1, -1, rand); // CALL MONSTER_DATA, MON_ID, 0, 0',
     replace: '        monster_data(i, 1, 0, -1, -1, rand); // 变异：队列改坏',
     tests: ['page-invasion'],
@@ -2507,7 +2507,7 @@ export default [
   },
   {
     desc: 'M10760 [0] 威望失败档的返回改坏（RETURN 1 改 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "      if (tier.failed) {\n        era.print('侵攻失败'); // PRINTW\n        await era.waitAnyKey();\n        return 1; // 与魔力分支同款的早退（不结算、不消耗后续流程）\n      }",
     replace:
       "      if (tier.failed) {\n        era.print('侵攻失败'); // PRINTW\n        await era.waitAnyKey();\n        return 0; // 变异：不耗回合\n      }",
@@ -2516,7 +2516,7 @@ export default [
   },
   {
     desc: 'M10761 [0] 战力提示行文案改坏（怪物的战斗力 → 战斗力）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "      }\n      era.print('怪物的战斗力　' + sinkou + '点'); // PRINTFORMW",
     replace:
       "      }\n      era.print('战斗力　' + sinkou + '点'); // 变异：漏「怪物的」",
@@ -2525,7 +2525,7 @@ export default [
   },
   {
     desc: 'M10762 [0] 结果段封顶值改坏（10000*10 改 10000*5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    // 人间界/精灵/龙/天界（已征服）：封顶 100000 + 强制征收\n    sinkou = Math.min(sinkou, 10000 * 10);',
     replace:
       '    // 人间界/精灵/龙/天界（已征服）：封顶 100000 + 强制征收\n    sinkou = Math.min(sinkou, 10000 * 5);',
@@ -2534,7 +2534,7 @@ export default [
   },
   {
     desc: 'M10763 [0] 结果段战利品倍率改坏（×10 改 ×5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    era.print(`得到了${sinkou * 10}点的战利品！`); // PRINTFORMW',
     replace:
       '    era.print(`得到了${sinkou * 5}点的战利品！`); // 变异：倍率改坏',
@@ -2543,7 +2543,7 @@ export default [
   },
   {
     desc: 'M10764 [0] 结果段资金入账漏掉（MONEY += SINKOU*10 改 += 1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    era.print(`得到了${sinkou * 10}点的战利品！`); // PRINTFORMW\n    await era.waitAnyKey();\n    era_flag.money += sinkou * 10;',
     replace:
       '    era.print(`得到了${sinkou * 10}点的战利品！`); // PRINTFORMW\n    await era.waitAnyKey();\n    era_flag.money += 1;',
@@ -2552,7 +2552,7 @@ export default [
   },
   {
     desc: 'M10765 [0] 5% 抓捕的阈值改坏（< 5 改 < 6）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  // 5% 概率抓到负隅顽抗的勇者（GET_ENEMY 返回 0 = 人数上限早退）\n  if (rand(100) < 5) {',
     replace:
       '  // 5% 概率抓到负隅顽抗的勇者（GET_ENEMY 返回 0 = 人数上限早退）\n  if (rand(100) < 6) { // 变异：阈值改坏',
@@ -2561,7 +2561,7 @@ export default [
   },
   {
     desc: 'M10766 [3] 掠夺战力来源改坏（气力 /25 改 /20）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
     replace:
       "      sinkou = Math.floor(chara(0).dungeon.气力 / 20);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
@@ -2570,7 +2570,7 @@ export default [
   },
   {
     desc: 'M10767 [3] 掠夺路线不扣气力（BASE:0:1 /= 2 整行删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
     replace:
       "      sinkou = Math.floor(chara(0).dungeon.气力 / 25);\n      // 变异：不扣气力\n      era.print('魔王的力量　' + sinkou + '点'); // PRINTFORMW",
@@ -2579,7 +2579,7 @@ export default [
   },
   {
     desc: 'M10768 [3] 勇者补正漏掉等级（+100 改 +0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      const hero_bonus = chara(yusya_i).chara.等级 + 100; // TMP2_I',
     replace:
       '      const hero_bonus = chara(yusya_i).chara.等级; // 变异：漏 +100',
@@ -2588,7 +2588,7 @@ export default [
   },
   {
     desc: 'M10769 [3] 勋章补正传错实参（勇者号改 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      sinkou = Math.floor((sinkou * (await medal_bonus(yusya_i))) / 100);',
     replace:
       '      sinkou = Math.floor((sinkou * (await medal_bonus())) / 100);',
@@ -2597,7 +2597,7 @@ export default [
   },
   {
     desc: 'M10770 [3] 掠夺结算的金额倍率改坏（MONEY += SINKOU 改 * 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  era_flag.money += sinkou; // MONEY += SINKOU',
     replace: '  era_flag.money += sinkou * 10; // 变异：倍率改坏',
     tests: ['page-invasion'],
@@ -2605,7 +2605,7 @@ export default [
   },
   {
     desc: 'M10771 [3] 掠夺经验的分母改坏（/20 改 /10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  const exp_gain = Math.floor(sinkou / 20); // SINKOU / 20',
     replace: '  const exp_gain = Math.floor(sinkou / 10); // 变异：分母改坏',
     tests: ['page-invasion'],
@@ -2613,7 +2613,7 @@ export default [
   },
   {
     desc: 'M10772 [3] 掠夺经验不入角色账（EXP:YUSYA_I:80 += 整行删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  chara(yusya_i).dungeon.战斗经验 += exp_gain; // EXP:YUSYA_I:80',
     replace: '  // 变异：经验不入账',
     tests: ['page-invasion'],
@@ -2621,7 +2621,7 @@ export default [
   },
   {
     desc: 'M10773 [3] 善恶值减量改坏（KARMA -5 改 -1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  karma(yusya_i, -5); // CALL KARMA, YUSYA_I, -5',
     replace: '  karma(yusya_i, -1); // 变异：减量改坏',
     tests: ['page-invasion'],
@@ -2629,7 +2629,7 @@ export default [
   },
   {
     desc: 'M10774 [3] 掠夺结算的封顶值改坏（10000*10 改 10000*9）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    // （已征服）：封顶 100000 + 强行征收到\n    sinkou = Math.min(sinkou, 10000 * 10);',
     replace:
       '    // （已征服）：封顶 100000 + 强行征收到\n    sinkou = Math.min(sinkou, 10000 * 9);',
@@ -2638,7 +2638,7 @@ export default [
   },
   {
     desc: 'M10775 [3] 派遣条件：体力门槛反向（< 1 改 < 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  if ((era.get(`base:${cid}:0`) || 0) < 1) return true; // 体力为 0\n  if (cid === 0) return true; // COUNT == 0（魔王自己）',
     replace:
       '  if ((era.get(`base:${cid}:0`) || 0) < 0) return true; // 变异：门槛反向\n  if (cid === 0) return true; // COUNT == 0（魔王自己）',
@@ -2647,7 +2647,7 @@ export default [
   },
   {
     desc: 'M10776 [3] 派遣条件：漏掉「魔王自己」（cid === 0 整行删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  if (cid === 0) return true; // COUNT == 0（魔王自己）\n  if (chara(cid).invasion.状态 !== 0) return true; // CFLAG:1 != 0',
     replace:
       '  // 变异：漏掉魔王自己\n  if (chara(cid).invasion.状态 !== 0) return true; // CFLAG:1 != 0',
@@ -2656,7 +2656,7 @@ export default [
   },
   {
     desc: 'M10777 [3] 派遣条件：待机条件反向（!== 0 改 === 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  if (chara(cid).invasion.状态 !== 0) return true; // CFLAG:1 != 0',
     replace:
       '  if (chara(cid).invasion.状态 === 0) return true; // 变异：条件反向',
@@ -2665,7 +2665,7 @@ export default [
   },
   {
     desc: 'M10778 [3] 派遣条件：未驯服的 AND 改 OR（持有魔之刻印也被筛掉）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  if (\n    (era.get(`cflag:${cid}:0`) || 0) === 0 &&\n    (era.get(`talent:${cid}:254`) || 0) === 0\n  ) {\n    return true;\n  }',
     replace:
       '  if (\n    (era.get(`cflag:${cid}:0`) || 0) === 0 ||\n    (era.get(`talent:${cid}:254`) || 0) === 0\n  ) {\n    return true;\n  }',
@@ -2674,7 +2674,7 @@ export default [
   },
   {
     desc: 'M10779 [3] 派遣条件：孕妇开关的位号改坏（FLAG:5 位 10 改位 11）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
     replace:
       "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 11) === 0\n  ) {",
@@ -2683,7 +2683,7 @@ export default [
   },
   {
     desc: 'M10780 [3] 派遣条件：孕妇开关的取值条件反向（=== 0 改 === 1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 0\n  ) {",
     replace:
       "  // 配置页的 [10] 开关）\n  if (\n    (era.get(`talent:${cid}:153`) || 0) === 1 &&\n    getbit(era.get('flag:5'), 10) === 1\n  ) {",
@@ -2692,7 +2692,7 @@ export default [
   },
   {
     desc: 'M10781 [3] 无候选早退的条件反向（=== 0 改 < 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "  if (candidates === 0) {\n    era.print('没有勇者可进行侵攻。');",
     replace: "  if (candidates < 0) {\n    era.print('没有勇者可进行侵攻。');",
     tests: ['page-invasion'],
@@ -2700,7 +2700,7 @@ export default [
   },
   {
     desc: 'M10782 [3] MAX_PAGE 少减一（max_page -= 1 整行删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  max_page -= 1;',
     replace: '  // 变异：少减一',
     tests: ['page-invasion'],
@@ -2708,7 +2708,7 @@ export default [
   },
   {
     desc: 'M10783 [3] 下一页的页码检查放宽（< max_page 改 < max_page + 1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      if (state.no_page < max_page) {\n        state.no_page += 1;\n      }',
     replace:
       '      if (state.no_page < max_page + 1) {\n        state.no_page += 1;\n      }',
@@ -2717,7 +2717,7 @@ export default [
   },
   {
     desc: 'M10784 [3] 页窗起点少一（t_lcount 初值去掉 +1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    let t_lcount = NUM_PAGE * state.no_page + 1;',
     replace: '    let t_lcount = NUM_PAGE * state.no_page; // 变异：起点少一',
     tests: ['page-invasion'],
@@ -2725,7 +2725,7 @@ export default [
   },
   {
     desc: 'M10785 [3] 页窗上界放宽（>= 改 >）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        t_lcount >= (state.no_page + 1) * NUM_PAGE ||',
     replace: '        t_lcount > (state.no_page + 1) * NUM_PAGE ||',
     tests: ['page-invasion'],
@@ -2733,7 +2733,7 @@ export default [
   },
   {
     desc: 'M10786 [3] 列表窗口起点条件改坏（cid < list_pos 改 <=）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      if (cid < state.list_pos) continue; // FOR COUNT, LIST_POS, CHARANUM',
     replace: '      if (cid <= state.list_pos) continue; // 变异：条件改坏',
     tests: ['page-invasion'],
@@ -2741,7 +2741,7 @@ export default [
   },
   {
     desc: 'M10787 [3] 列表游标不推进（LIST_POS = cid 整行删除）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      life_list_item(cid);\n      t_lcount += 1;\n      state.list_pos = cid;',
     replace: '      life_list_item(cid);\n      t_lcount += 1;',
     tests: ['page-invasion'],
@@ -2749,7 +2749,7 @@ export default [
   },
   {
     desc: 'M10788 invasion_event 分发骰的上界改坏（RAND:10 改 RAND:9）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  const local = rand(10); // LOCAL = RAND:10',
     replace: '  const local = rand(9); // 变异：上界改坏',
     tests: ['page-invasion'],
@@ -2757,7 +2757,7 @@ export default [
   },
   {
     desc: 'M10789 invasion_event_fort 检查按 C 式「&& 优先」读错（左结合改先 || 后 &&，#503 审查订正）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    ((era.get(`flag:${sindo}`) || 0) !== 0 || inv_type !== 0) &&\n    inv_type !== 2 &&\n    inv_type !== 3',
     replace:
       '    (era.get(`flag:${sindo}`) || 0) !== 0 ||\n    (inv_type !== 0 && inv_type !== 2 && inv_type !== 3)',
@@ -2766,7 +2766,7 @@ export default [
   },
   {
     desc: 'M10790 invasion_event 分发：fort 与 challenge 两分支对调',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (local === 9) {\n    return await invasion_event_fort(area, sindo, inv_type, state, rand);\n  }',
     replace:
       '  if (local === 8) {\n    return await invasion_event_fort(area, sindo, inv_type, state, rand); // 变异：分支对调\n  }',
@@ -2775,7 +2775,7 @@ export default [
   },
   {
     desc: 'M10791 invasion_event_seiei 出敌条件的上界放宽（RAND:FLAG:AREA > 2000 改 > 2001）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (roll > 2000) {',
     replace: '    if (roll > 2001) {',
     tests: ['page-invasion'],
@@ -2783,7 +2783,7 @@ export default [
   },
   {
     desc: 'M10792 SEIEI 战斗体的侵攻度门槛改坏（>= 5000 改 >= 5001）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (progress >= 5000) {\n    const roll = rand(progress); // LOCAL = RAND:FLAG:AREA',
     replace:
       '  if (progress >= 5001) {\n    const roll = rand(progress); // 变异：门槛改坏',
@@ -2792,7 +2792,7 @@ export default [
   },
   {
     desc: 'M10793 invasion_event_seiei 的精锐类型条件反转（防御型 18 / 攻击型 19 互换）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (rand(2) === 0) {\n    era.addCharacter(SEIEI_DEFENDER);',
     replace:
       '  if (rand(2) !== 0) {\n    era.addCharacter(SEIEI_DEFENDER); // 变异：条件反转',
@@ -2801,7 +2801,7 @@ export default [
   },
   {
     desc: 'M10794 SEIEI 回合数改坏（REPEAT 21 改 20）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: 'const SEIEI_ROUNDS = 21;',
     replace: 'const SEIEI_ROUNDS = 20;',
     tests: ['page-invasion'],
@@ -2809,7 +2809,7 @@ export default [
   },
   {
     desc: 'M10795 invasion_event_seiei 超时条件改坏（TIME_I > 19 改 > 18）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: 'const SEIEI_TIMEOUT_AT = 19;',
     replace: 'const SEIEI_TIMEOUT_AT = 18;',
     tests: ['page-invasion'],
@@ -2817,7 +2817,7 @@ export default [
   },
   {
     desc: 'M10796 invasion_event_seiei 先制检查的档位除数改坏（SINKOU/2048 改 /1024）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);',
     replace:
       '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1);',
@@ -2826,7 +2826,7 @@ export default [
   },
   {
     desc: 'M10797 SEIEI 伤害式的档位除数改坏（SINKOU/1024 改 /2048）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1);\n    const guard_line =',
     replace:
       '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);\n    const guard_line =',
@@ -2835,7 +2835,7 @@ export default [
   },
   {
     desc: 'M10798 SEIEI 会心一击的概率改坏（RAND:5 == 0 改 == 1）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      const crit = rand(5) === 0; // RAND:5',
     replace: '      const crit = rand(5) === 1; // 变异：概率档改坏',
     tests: ['page-invasion'],
@@ -2843,7 +2843,7 @@ export default [
   },
   {
     desc: 'M10799 SEIEI 会心一击的倍率改坏（×4 改 ×3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '受到了${damage * (crit ? 4 : 2)}点伤害！`,',
     replace: '受到了${damage * (crit ? 3 : 2)}点伤害！`, // 变异：倍率改坏',
     tests: ['page-invasion'],
@@ -2851,7 +2851,7 @@ export default [
   },
   {
     desc: 'M10800 SEIEI 普通一击的倍率改坏（×2 改 ×3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      chara(seiei).dungeon.体力 -= damage * (crit ? 4 : 2);',
     replace:
       '      chara(seiei).dungeon.体力 -= damage * (crit ? 4 : 3); // 变异：倍率改坏',
@@ -2860,7 +2860,7 @@ export default [
   },
   {
     desc: 'M10801 invasion_event_seiei 忍术检查反转（TALENT:251 == 0 改 != 0，削攻防的条件反过来）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      if ((era.get(`talent:${seiei}:251`) || 0) === 0) {',
     replace: '      if ((era.get(`talent:${seiei}:251`) || 0) !== 0) {',
     tests: ['page-invasion'],
@@ -2868,7 +2868,7 @@ export default [
   },
   {
     desc: 'M10802 SEIEI 精锐反击的伤害倍率改坏（×5 改 ×4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '率领的魔王军受到了${damage * 5}点伤害！`,',
     replace: '率领的魔王军受到了${damage * 4}点伤害！`, // 变异：倍率改坏',
     tests: ['page-invasion'],
@@ -2876,7 +2876,7 @@ export default [
   },
   {
     desc: 'M10803 SEIEI 勇者防御的折半系数改坏（/3 改 /4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      const guard = chara(yusya).dungeon.防御力;\n      chara(yusya).dungeon.防御力 = Math.trunc(\n        Math.trunc(chara(yusya).dungeon.防御力 / 3) * 2,\n      );',
     replace:
       '      const guard = chara(yusya).dungeon.防御力;\n      chara(yusya).dungeon.防御力 = Math.trunc(\n        Math.trunc(chara(yusya).dungeon.防御力 / 4) * 2,\n      ); // 变异：系数改坏',
@@ -2885,7 +2885,7 @@ export default [
   },
   {
     desc: 'M10804 SEIEI 超时经验改坏（SINKOU/10 改 SINKOU/5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      const gained = Math.trunc(sinkou / 10);',
     replace: '      const gained = Math.trunc(sinkou / 5);',
     tests: ['page-invasion'],
@@ -2893,7 +2893,7 @@ export default [
   },
   {
     desc: 'M10805 SEIEI 胜出经验改坏（SINKOU/5 改 SINKOU/4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      const gained = Math.trunc(sinkou / 5);',
     replace: '      const gained = Math.trunc(sinkou / 4);',
     tests: ['page-invasion'],
@@ -2901,7 +2901,7 @@ export default [
   },
   {
     desc: 'M10806 SEIEI 的 FLAG:60 等级补正系数改坏（10 * 改 5 *）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: "  const bonus = 10 * (era.get('flag:60') || 0);",
     replace: "  const bonus = 5 * (era.get('flag:60') || 0);",
     tests: ['page-invasion'],
@@ -2909,7 +2909,7 @@ export default [
   },
   {
     desc: 'M10807 SEIEI 的 SINKOU 补正错加到气力两次（体力那行改气力）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  chara(yusya).dungeon.体力 += sinkou;\n  chara(yusya).dungeon.气力 += sinkou;',
     replace:
       '  chara(yusya).dungeon.气力 += sinkou;\n  chara(yusya).dungeon.气力 += sinkou;',
@@ -2918,7 +2918,7 @@ export default [
   },
   {
     desc: 'M10808 @_INV_DEATH_CHECK 精锐的溃败线改坏（<= 100 改 <= 101）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (elite_hp <= 100) {',
     replace: '  if (elite_hp <= 101) {',
     tests: ['page-invasion'],
@@ -2926,7 +2926,7 @@ export default [
   },
   {
     desc: 'M10809 @_INV_DEATH_CHECK 魔王侧的俘虏线改坏（<= 1000 改 <= 999）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    hero_mp <= 1000 &&',
     replace: '    hero_mp <= 999 &&',
     tests: ['page-invasion'],
@@ -2934,7 +2934,7 @@ export default [
   },
   {
     desc: 'M10810 @_INV_DEATH_CHECK 魔王军的溃败线改坏（<= 300 改 <= 299）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      : hero_hp <= 300',
     replace: '      : hero_hp <= 299',
     tests: ['page-invasion'],
@@ -2942,7 +2942,7 @@ export default [
   },
   {
     desc: 'M10811 @_INV_DEATH_CHECK 的退场状态对调（被狂王带走 9 / 逃回 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  chara(arg0).invasion.状态 = taken ? 9 : 0;',
     replace: '  chara(arg0).invasion.状态 = taken ? 0 : 9; // 变异：状态对调',
     tests: ['page-invasion'],
@@ -2950,7 +2950,7 @@ export default [
   },
   {
     desc: 'M10812 FLAG:5 的狂王俘虏位改坏（& 128 改 & 64）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: "  return ((era.get('flag:5') || 0) & 128) !== 0;",
     replace: "  return ((era.get('flag:5') || 0) & 64) !== 0;",
     tests: ['page-invasion'],
@@ -2958,7 +2958,7 @@ export default [
   },
   {
     desc: 'M10813 [2] 路线的怪物消耗改坏（/= 3 改 /= 2）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        const third = Math.trunc((era.get(`item:${i}`) || 0) / 3);',
     replace:
       '        const third = Math.trunc((era.get(`item:${i}`) || 0) / 2); // 变异：除数改坏',
@@ -2967,7 +2967,7 @@ export default [
   },
   {
     desc: 'M10814 [2] 路线的怪物回写漏掉 ×2（third * 2 改 third）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '        era.set(`item:${i}`, third * 2); // ITEM:MON_ID *= 2',
     replace: '        era.set(`item:${i}`, third); // 变异：漏掉回写',
     tests: ['page-invasion'],
@@ -2975,7 +2975,7 @@ export default [
   },
   {
     desc: 'M10815 [2] 结果段的战利品倍数改坏（SINKOU × 5 改 × 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    era.print(`得到了${sinkou * 5}点的战利品！`); // PRINTFORMW',
     replace:
       '    era.print(`得到了${sinkou * 10}点的战利品！`); // 变异：倍数改坏',
@@ -2984,7 +2984,7 @@ export default [
   },
   {
     desc: 'M10816 [2] 结果段的经验除数改坏（SINKOU / 2 改 / 4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    const exp_gain = Math.trunc(sinkou / 2);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain;\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）',
     replace:
       '    const exp_gain = Math.trunc(sinkou / 4);\n    chara(yusya_i).dungeon.战斗经验 += exp_gain; // 变异：除数改坏\n    era.print(`${chara_callname(yusya_i)}获得了${exp_gain}点经验值！`);\n    await era.waitAnyKey();\n  }\n  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA）',
@@ -2993,7 +2993,7 @@ export default [
   },
   {
     desc: 'M10817 [2] 结果段的善恶值改坏（KARMA -50 改 -5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  karma(yusya_i, -50); // CALL KARMA, YUSYA_I, -50',
     replace: '  karma(yusya_i, -5); // 变异：善恶值改坏',
     tests: ['page-invasion'],
@@ -3001,7 +3001,7 @@ export default [
   },
   {
     desc: 'M10818 [2] 结果段的抓捕概率改坏（RAND:100 < 9 改 < 5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "  if (rand(100) < 9) {\n    era.print('好像抓到了负隅顽抗的勇者…………'); // PRINTFORMW",
     replace:
       "  if (rand(100) < 5) {\n    era.print('好像抓到了负隅顽抗的勇者…………'); // 变异：概率改坏",
@@ -3010,7 +3010,7 @@ export default [
   },
   {
     desc: 'M10819 [2] 结果段的抓捕威望漏掉（EX_FLAG:99 += 1 删掉）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    era_exflag.prestige = era_exflag.prestige + 1; // EX_FLAG:99 += 1',
     replace: '    // 变异：漏掉威望 +1',
     tests: ['page-invasion'],
@@ -3018,7 +3018,7 @@ export default [
   },
   {
     desc: 'M10820 [2] 性格旁白的档位号改坏（慈爱 160 改 161）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      160,\n      `${chara_callname(yusya_i)}在侵略的时候依旧全程保持着慈爱的笑容',
     replace:
       '      161,\n      `${chara_callname(yusya_i)}在侵略的时候依旧全程保持着慈爱的笑容',
@@ -3027,7 +3027,7 @@ export default [
   },
   {
     desc: 'M10821 [2] 已征服来路的战利品倍数改坏（强制征收 ×5 改 ×4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    era.print(`强制征收了${sinkou * 5}点！`); // PRINTFORMW\n    await era.waitAnyKey();\n    era_flag.money += sinkou * 5;',
     replace:
       '    era.print(`强制征收了${sinkou * 5}点！`); // PRINTFORMW\n    await era.waitAnyKey();\n    era_flag.money += sinkou * 4; // 变异：倍数改坏',
@@ -3036,7 +3036,7 @@ export default [
   },
   {
     desc: 'M10822 [2] 的候选条件放宽（CFLAG:1 不属于 {0,7} 改只挡 7）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  if (status !== 0 && status !== 7) return true; // 待机 / 苗床之外一律淘汰',
     replace: '  if (status === 7) return true; // 变异：条件放宽',
     tests: ['page-invasion'],
@@ -3044,7 +3044,7 @@ export default [
   },
   {
     desc: 'M10823 invasion_event_fort 强攻成功档的条件改坏（LOCAL >= 6 改 >= 5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (roll >= 6) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`,',
     replace:
       '    if (roll >= 5) {\n      era.print(\n        `魔王军向着${info.fort}发起了最为猛烈的进攻，在付出较小的代价后攻破了${info.fort}的一角。`, // 变异：条件改坏',
@@ -3053,7 +3053,7 @@ export default [
   },
   {
     desc: 'M10824 invasion_event_fort 强攻惨胜档的条件改坏（LOCAL >= 2 改 >= 3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (roll >= 2) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`);',
     replace:
       '    if (roll >= 3) {\n      era.print(`魔王军向着${info.fort}发起了最为猛烈的进攻。`); // 变异：条件改坏',
@@ -3062,7 +3062,7 @@ export default [
   },
   {
     desc: 'M10825 FORT 强攻成功的减员比例改坏（× 9 / 10 改 × 8 / 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      state.sinkou = Math.trunc((state.sinkou * 9) / 10);\n      await era.waitAnyKey(); // WAIT',
     replace:
       '      state.sinkou = Math.trunc((state.sinkou * 8) / 10); // 变异：比例改坏\n      await era.waitAnyKey(); // WAIT',
@@ -3071,7 +3071,7 @@ export default [
   },
   {
     desc: 'M10826 FORT 强攻惨胜的减员比例改坏（/ 2 改 / 3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      state.sinkou = Math.trunc(state.sinkou / 2);',
     replace:
       '      state.sinkou = Math.trunc(state.sinkou / 3); // 变异：比例改坏',
@@ -3080,7 +3080,7 @@ export default [
   },
   {
     desc: 'M10827 FORT 惨败支的体力剩量改坏（× 3 / 10 改 × 7 / 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '        (chara(yusya).dungeon.体力 * 3) / 10,\n      );',
     replace:
       '        (chara(yusya).dungeon.体力 * 7) / 10,\n      ); // 变异：剩量改坏',
@@ -3089,7 +3089,7 @@ export default [
   },
   {
     desc: 'M10828 invasion_event_fort 潜入成功档的条件改坏（LOCAL >= 5 改 >= 4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (roll >= 5 || native) {\n      // 潜入成功 50%',
     replace: '    if (roll >= 4 || native) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
@@ -3097,7 +3097,7 @@ export default [
   },
   {
     desc: 'M10829 FORT 潜入失败支的减员比例改坏（× 7 / 10 改 × 8 / 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      state.sinkou = Math.trunc((state.sinkou * 7) / 10);',
     replace:
       '      state.sinkou = Math.trunc((state.sinkou * 8) / 10); // 变异：比例改坏',
@@ -3106,7 +3106,7 @@ export default [
   },
   {
     desc: 'M10830 FORT 人间牧场的入账数改坏（FLAG:83 += 5 改 += 3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      era_flag.meat_toilet_count += 5; // FLAG:83 += 5',
     replace: '      era_flag.meat_toilet_count += 3; // 变异：入账数改坏',
     tests: ['page-invasion'],
@@ -3114,7 +3114,7 @@ export default [
   },
   {
     desc: 'M10831 invasion_event_fort 绕路平安档的条件改坏（LOCAL > 0 改 >= 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    const roll = rand(10);\n    if (roll > 0) {',
     replace: '    const roll = rand(10);\n    if (roll >= 0) {',
     tests: ['page-invasion'],
@@ -3122,7 +3122,7 @@ export default [
   },
   {
     desc: 'M10832 FORT 绕路平安档的减员比例改坏（× 9 / 10 改 × 8 / 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: "      state.sinkou = Math.trunc((state.sinkou * 9) / 10);\n      era.print('怪物数量减少了10%'); // PRINTFORMW",
     replace:
       "      state.sinkou = Math.trunc((state.sinkou * 8) / 10); // 变异：比例改坏\n      era.print('怪物数量减少了10%'); // PRINTFORMW",
@@ -3131,7 +3131,7 @@ export default [
   },
   {
     desc: 'M10833 FORT 绕路埋伏档的减员比例改坏（× 5 / 10 改 × 4 / 10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    state.sinkou = Math.trunc((state.sinkou * 5) / 10);',
     replace:
       '    state.sinkou = Math.trunc((state.sinkou * 4) / 10); // 变异：比例改坏',
@@ -3140,7 +3140,7 @@ export default [
   },
   {
     desc: 'M10834 FORT 掠夺选项号偏移丢掉（L_CHOICE = RESULT + 1 改 RESULT）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    choice = (await fort_choice([1, 2])) + 1; // $INPUT_LOOP2',
     replace: '    choice = await fort_choice([1, 2]); // 变异：偏移丢掉',
     tests: ['page-invasion'],
@@ -3148,7 +3148,7 @@ export default [
   },
   {
     desc: 'M10835 invasion_event_challenge 位域检查的条件改坏（& bit 改 ^ bit）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (((era_exflag.defeated_heroes_bits || 0) & info.bit) !== 0) {',
     replace:
       '  if (((era_exflag.defeated_heroes_bits || 0) ^ info.bit) !== 0) {',
@@ -3157,7 +3157,7 @@ export default [
   },
   {
     desc: 'M10836 invasion_event_challenge 开挂取胜档的条件改坏（LOCAL >= 2 改 >= 3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (choice === 1 && local >= 2) {',
     replace: '    if (choice === 1 && local >= 3) {',
     tests: ['page-invasion'],
@@ -3165,7 +3165,7 @@ export default [
   },
   {
     desc: 'M10837 invasion_event_challenge 以流程掷出的 LOCAL 直接当条件（漏掉人数上限归零）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    const local = hero_cap_reached() ? 0 : roll;',
     replace: '    const local = roll; // 变异：漏掉人数上限归零',
     tests: ['page-invasion'],
@@ -3173,7 +3173,7 @@ export default [
   },
   {
     desc: 'M10838 CHALLENGE 开挂取胜的威望增量改坏（EX_FLAG:99 += 1 改 += 2）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      era_exflag.prestige = era_exflag.prestige + 1;',
     replace:
       '      era_exflag.prestige = era_exflag.prestige + 2; // 变异：增量改坏',
@@ -3182,7 +3182,7 @@ export default [
   },
   {
     desc: 'M10839 CHALLENGE 开挂取胜的金额改坏（MONEY -= 3000 改 -= 2000）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      era_flag.money -= 3000;\n      era_exflag.legit_money -= 3000;\n      era_exflag.defeated_heroes_bits = kill_bits;',
     replace:
       '      era_flag.money -= 2000; // 变异：金额改坏\n      era_exflag.legit_money -= 3000;\n      era_exflag.defeated_heroes_bits = kill_bits;',
@@ -3191,7 +3191,7 @@ export default [
   },
   {
     desc: 'M10840 CHALLENGE 抓人时的地区位写丢（EX_FLAG:95 = kill_bits 改回原值）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      era_exflag.defeated_heroes_bits = kill_bits;',
     replace:
       '      era_exflag.defeated_heroes_bits = era_exflag.defeated_heroes_bits; // 变异：写丢',
@@ -3200,7 +3200,7 @@ export default [
   },
   {
     desc: 'M10841 invasion_event_challenge 亲自处理取胜档的条件改坏（LOCAL < 2 改 < 3）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (roll < 2) {\n      // 奴隶取胜 20%',
     replace: '    if (roll < 3) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
@@ -3208,7 +3208,7 @@ export default [
   },
   {
     desc: 'M10842 invasion_event_challenge 亲自处理不分胜负档的条件改坏（LOCAL < 6 改 < 5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (roll < 6) {\n      // 奴隶不分胜负 40%',
     replace: '    if (roll < 5) {\n      // 变异：条件改坏',
     tests: ['page-invasion'],
@@ -3216,7 +3216,7 @@ export default [
   },
   {
     desc: 'M10843 CHALLENGE 不分胜负档的体力比例改坏（/ 10 改 / 5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 10);',
     replace:
       '      chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 5); // 变异：比例改坏',
@@ -3225,7 +3225,7 @@ export default [
   },
   {
     desc: 'M10844 CHALLENGE 无视档的减员比例改坏（× 4 / 5 改 × 3 / 5）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  state.sinkou = Math.trunc((state.sinkou * 4) / 5);',
     replace:
       '  state.sinkou = Math.trunc((state.sinkou * 3) / 5); // 变异：比例改坏',
@@ -3234,7 +3234,7 @@ export default [
   },
   {
     desc: 'M10845 CHALLENGE 无视档的随机分支反转（RAND:2 != 0 改 == 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: "  if (rand(2) !== 0) {\n    era.print('然而由于地形狭窄魔王军的数量优势无法发挥、');",
     replace:
       "  if (rand(2) === 0) {\n    era.print('然而由于地形狭窄魔王军的数量优势无法发挥、'); // 变异：分支反转",
@@ -3243,7 +3243,7 @@ export default [
   },
   {
     desc: 'M10846 CHALLENGE 精灵族复现职业的两个候选对调（12/16 换位）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    job: [12, 16],',
     replace: '    job: [16, 12],',
     tests: ['page-invasion'],
@@ -3251,7 +3251,7 @@ export default [
   },
   {
     desc: 'M10847 CHALLENGE 人数上限的第一支阈值改坏（> 60 改 > 59）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (f(82) === 0 && charanum > 60) {',
     replace: '  if (f(82) === 0 && charanum > 59) {',
     tests: ['page-invasion'],
@@ -3259,7 +3259,7 @@ export default [
   },
   {
     desc: 'M10848 SEIEI 第二档传闻的上界改坏（< 5000 改 < 5001）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  } else if (progress >= 1 && progress < 5000 && inv_type !== 1) {',
     replace:
       '  } else if (progress >= 1 && progress < 5001 && inv_type !== 1) {',
@@ -3268,7 +3268,7 @@ export default [
   },
   {
     desc: 'M10849 SEIEI 第三档传闻的 INV_TYPE 条件漏掉（!= 1 删去）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  } else if (progress >= 1 && progress < 10000 && inv_type !== 1) {',
     replace: '  } else if (progress >= 1 && progress < 10000) {',
     tests: ['page-invasion'],
@@ -3277,7 +3277,7 @@ export default [
   // —— #505：地区续接与 start_campaign 的地区泛化 ——
   {
     desc: 'M10850 地区表的 AREA 改坏（精灵族领域 86 → 88）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 88,\n    sindo: 87, // 变异：AREA 改坏',
     tests: ['page-invasion'],
@@ -3285,7 +3285,7 @@ export default [
   },
   {
     desc: 'M10851 地区表的 SINDO 改坏（精灵族领域 87 → 89）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 86,\n    sindo: 89, // 变异：SINDO 改坏',
     tests: ['page-invasion'],
@@ -3294,7 +3294,7 @@ export default [
   },
   {
     desc: 'M10852 侵攻度累加写到 EX_FLAG 侧（FLAG:AREA → EX_FLAG:AREA）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  era.set(`flag:${region.area}`, Math.min(next, 10000)); // 封顶',
     replace:
       '  era.set(`exflag:${region.area}`, Math.min(next, 10000)); // 变异：写侧换表',
@@ -3303,7 +3303,7 @@ export default [
   },
   {
     desc: 'M10857 [2] 结果段的地区名写死人间界（PRINT 分派丢失）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '到达了${region.name}，尽可能地施暴着',
     replace: '到达了人间界，尽可能地施暴着',
     tests: ['page-invasion'],
@@ -3311,7 +3311,7 @@ export default [
   },
   {
     desc: 'M10858 [3] 结果段的地区名写死人间界（PRINT 分派丢失）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '得到了魔王的力量！${region.name}被掠夺了',
     replace: '得到了魔王的力量！人间界被掠夺了',
     tests: ['page-invasion'],
@@ -3319,7 +3319,7 @@ export default [
   },
   {
     desc: 'M10859 [0] 结果段的凌辱地区号写死 1（地区号分派丢失）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  // CALL INVASION_RYOUZYOKU, <地区号>, SINKOU（#470 的真身）\n  await invasion_ryouzyoku(region.ravish_area, sinkou, rand);',
     replace:
       '  // 变异：凌辱地区号写死 1\n  await invasion_ryouzyoku(1, sinkou, rand);',
@@ -3328,7 +3328,7 @@ export default [
   },
   {
     desc: 'M10860 地区表的凌辱地区号改坏（精灵族领域 2 → 4）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    ravish_area: 2,\n    kyoten_arg: 2,',
     replace: '    ravish_area: 4,\n    kyoten_arg: 2, // 变异：凌辱地区号改坏',
     tests: ['page-invasion'],
@@ -3336,7 +3336,7 @@ export default [
   },
   {
     desc: 'M10862 天神宫补上 kyoten 实参（旧写法没有 101 分支）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    ravish_area: 5,\n    kyoten_arg: null,',
     replace:
       '    ravish_area: 5,\n    kyoten_arg: 1, // 变异：天神宫也调 KYOTEN',
@@ -3353,7 +3353,7 @@ export default [
   },
   {
     desc: 'M10867 出兵菜单的地区标签改坏（精灵族领域的侵攻度 → 侵攻度）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "    campaign_label: '精灵族领域的侵攻度',",
     replace: "    campaign_label: '侵攻度', // 变异：标签改坏",
     tests: ['page-invasion'],
@@ -3361,7 +3361,7 @@ export default [
   },
   {
     desc: 'M10868 结果段的地区标签改坏（精灵族领域　侵攻度 → 侵攻度）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: "    result_label: '精灵族的领域　侵攻度',",
     replace: "    result_label: '侵攻度', // 变异：标签改坏",
     tests: ['page-invasion'],
@@ -3369,7 +3369,7 @@ export default [
   },
   {
     desc: 'M10869 魔力结果段的已征服封顶改大（100000 改 1000000）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '      exp_sinkou = Math.min(exp_sinkou, 10000 * 10);',
     replace:
       '      exp_sinkou = Math.min(exp_sinkou, 10000 * 100); // 变异：封顶改大',
@@ -3378,7 +3378,7 @@ export default [
   },
   {
     desc: 'M10870 魔力结果段的已征服条件恒真（!== 0 改 >= 0）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10);',
     replace:
       '    if ((era.get(`flag:${region.sindo}`) || 0) >= 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // 变异：条件恒真',
@@ -3387,7 +3387,7 @@ export default [
   },
   {
     desc: 'M10871 出兵流程的默认地区改坏（HUMAN_WORLD 改 CAMPAIGN_REGIONS[1]）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: 'async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {',
     replace:
       'async function start_campaign(rand = default_rand, region = CAMPAIGN_REGIONS[1]) { // 变异：默认地区改坏',
@@ -3396,7 +3396,7 @@ export default [
   },
   {
     desc: 'M10872 [0] 结果段的地区实参写死人间界（region 改 HUMAN_WORLD）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    await monster_result_section(region, sinkou, rand);',
     replace:
       '    await monster_result_section(HUMAN_WORLD, sinkou, rand); // 变异：地区写死',
@@ -3405,7 +3405,7 @@ export default [
   },
   {
     desc: 'M10873 [2] 结果段的凌辱地区号写死 1（地区号分派丢失）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  await invasion_ryouzyoku(region.ravish_area, sinkou, rand);\n  // 9% 概率抓到负隅顽抗的勇者（比 [0] 的 5% 高；GET_ENEMY 之后',
     replace:
       '  await invasion_ryouzyoku(1, sinkou, rand); // 变异：凌辱地区号写死\n  // 9% 概率抓到负隅顽抗的勇者（比 [0] 的 5% 高；GET_ENEMY 之后',
@@ -3414,7 +3414,7 @@ export default [
   },
   {
     desc: 'M10874 魔力结果段的已征服条件写死（region.sindo 改字面量 82）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {',
     replace: "    if ((era.get('flag:82') || 0) !== 0) { // 变异：条件写死",
     tests: ['page-invasion'],
@@ -3451,7 +3451,7 @@ export default [
   {
     desc: 'M11206 献祭两个出口的 [100] 返回退回纯文本（白名单里有 [10]，100 被引擎拒收，#530）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // 输入",
+    find: "  era.printButton('返回', ENTRY_BACK_KEY);\n  const choice = await era.input(); // 输入",
     replace:
       "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // 输入",
     tests: ['chara-info-show'],
@@ -3557,7 +3557,7 @@ export default [
   {
     desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）\n    if (getbit(v, 13)) {\n      era.printButton('详细设定', 9);\n    }",
+    find: "    // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）\n    if (getbit(v, 13)) {\n      era.printButton('详细设定', AGE_DETAIL_KEY);\n    }",
     replace: `    // 变异：渲染门用位 12
     if (getbit(v, 12)) {
       era.printButton('详细设定', 9);
@@ -3629,8 +3629,8 @@ export default [
   {
     desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
     file: 'ere/page/page-config-age.js',
-    find: '    } else if (result === 9) {\n      // 表未设时先播种默认，再进详细设定\n      if (race_table_unset()) {\n        seed_race_defaults();\n      }\n      await race_config(rand);',
-    replace: `    } else if (result === 9) {
+    find: '    } else if (result === AGE_DETAIL_KEY) {\n      // 表未设时先播种默认，再进详细设定\n      if (race_table_unset()) {\n        seed_race_defaults();\n      }\n      await race_config(rand);',
+    replace: `    } else if (result === AGE_DETAIL_KEY) {
       // 变异：不播种默认表
       await race_config(rand);`,
     tests: ['page-config-age'],
@@ -3640,8 +3640,8 @@ export default [
   {
     desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    } else if (result === 98) {\n      // 回默认（确认后直接 RETURN）\n      if (await confirm_reset('全种族的年龄均返回默认值。')) {\n        seed_race_defaults();\n        return 0;\n      }",
-    replace: `    } else if (result === 98) {
+    find: "    } else if (result === AGE_DEFAULT_KEY) {\n      // 回默认（确认后直接 RETURN）\n      if (await confirm_reset('全种族的年龄均返回默认值。')) {\n        seed_race_defaults();\n        return 0;\n      }",
+    replace: `    } else if (result === AGE_DEFAULT_KEY) {
       // 变异：确认后不写默认
       if (await confirm_reset('全种族的年龄均返回默认值。')) {
         return 0;
@@ -3652,10 +3652,10 @@ export default [
   {
     desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    } else if (result === 99 || result === 100) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === 99) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
-    replace: `    } else if (result === 99 || result === 100) {
+    find: "    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === AGE_RESEED_KEY) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
+    replace: `    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {
       // 变异：打包挪进确认之后
-      if (result === 99) {
+      if (result === AGE_RESEED_KEY) {
         if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
           game.chara.种族年龄设定_0 = cla
             .slice(0, 6)
@@ -3685,8 +3685,8 @@ export default [
   {
     desc: 'M11561 RACE_CONFIG [999] 决定的保存分档判错（<= 1 → < 1，小数倍档保存成随机三元组，#547）',
     file: 'ere/page/page-config-age.js',
-    find: '        } else if (sub === 999) {\n          // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）\n          if (sv[0] <= 1) {',
-    replace: `        } else if (sub === 999) {
+    find: '        } else if (sub === AGE_EDIT_DECIDE) {\n          // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）\n          if (sv[0] <= 1) {',
+    replace: `        } else if (sub === AGE_EDIT_DECIDE) {
           // 变异：分档判错
           if (sv[0] < 1) {`,
     tests: ['page-config-age'],
@@ -4002,18 +4002,18 @@ export default [
   {
     desc: 'M11860 陷阱商店页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-shop-trap.js',
-    find: "  era.printButton('- 返回', 999);\n  era.setAlign('left');",
+    find: "  era.printButton('- 返回', LEAVE_SHOP_KEY);\n  era.setAlign('left');",
     replace:
-      "  era.printButton('- 返回', 999);\n  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行",
+      "  era.printButton('- 返回', LEAVE_SHOP_KEY);\n  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行",
     tests: ['shop-trap'],
     must_mention: '陷阱商店页脚按钮之后不应有空行',
   },
   {
     desc: 'M11861 能力值提升页脚补回空行（空内容输出只收三个标签那一行）',
     file: 'ere/page/page-ability-up.js',
-    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
+    find: "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
     replace:
-      "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
+      "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
     tests: ['page-ability-up'],
     must_mention: '能力值提升页脚按钮之后不应有空行',
   },
@@ -4146,9 +4146,9 @@ export default [
   {
     desc: 'M12071 能力值提升页 [999] 之后补回空行（空内容输出只收行）',
     file: 'ere/page/page-ablup.js',
-    find: "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）",
+    find: "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）",
     replace:
-      "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
+      "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
     tests: ['juel-check'],
     must_mention: '按钮行之间不夹空行',
   },
@@ -4194,9 +4194,9 @@ export default [
   {
     desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（首个换行只收 [10] 那一行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.println();\n  era.printButton('返回', 100);",
+    find: "  era.println();\n  era.printButton('返回', ENTRY_BACK_KEY);",
     replace:
-      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', 100);",
+      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', ENTRY_BACK_KEY);",
     tests: ['chara-info-show'],
     must_mention: '三个真空行',
   },
@@ -4212,9 +4212,9 @@ export default [
   {
     desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（两个换行都是真行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY);",
     replace:
-      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY);",
     tests: ['chara-info-show'],
     must_mention: '三个真空行',
   },
@@ -4224,7 +4224,7 @@ export default [
     find: `  // [100] 异界综合征行是调试专用，不绘制
   // （[99] 行与尾部分割线逐行相邻，不补空行）
   era.drawLine(); // 点线分割线
-  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）`,
+  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）`,
     replace: `  era.println(); // 变异：多补一条空行
   era.drawLine(); // 点线分割线
   era.printButton('- 能力值提高结束', 999);`,
@@ -4278,8 +4278,8 @@ export default [
   {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
-    find: "        [999, '- 返 回'],",
-    replace: "        [999, '返 回'], // 变异：丢掉「- 」",
+    find: "        [LIST_BACK_KEY, '- 返 回'],",
+    replace: "        [LIST_BACK_KEY, '返 回'], // 变异：丢掉「- 」",
     tests: ['page-intercept'],
     must_mention: '页脚三键正文',
   },
@@ -4703,7 +4703,7 @@ export default [
   // —— #652：F6 界面缺陷修复的新行为检查 ——
   {
     desc: 'M13200 据点事件三分支恢复横幅输出（#652 删掉的反复弹横幅复原）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-kyoten.js',
     find: '  // 精灵/龙/天界三分支：不输出、不推进（见函数头注释）\n  return 0;',
     replace:
       "  // 变异：三分支恢复横幅输出\n  era.print('占领了村庄');\n  return 0;",
@@ -4712,7 +4712,7 @@ export default [
   },
   {
     desc: 'M13201 侵攻度读点对天神宫读回 EX_FLAG 侧（#652 统一的 FLAG 读点被拆）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: 'function region_progress(region) {\n  return era.get(`flag:${region.area}`) || 0;\n}',
     replace:
       'function region_progress(region) {\n  // 变异：天神宫读回 EX_FLAG 侧\n  return era.get(`${region.area > 100 ? "exflag" : "flag"}:${region.area}`) || 0;\n}',
@@ -4721,7 +4721,7 @@ export default [
   },
   {
     desc: 'M13202 [0] 已征服分支漏列天神宫复原（#652 补上的 101 被删掉）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: 'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];',
     replace:
       'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90]; // 变异：漏列 101 复原',
@@ -4731,7 +4731,7 @@ export default [
   },
   {
     desc: 'M13203 invasion_check 的天神宫死分支复活（#652 删除的 EX_FLAG:101 条件被接回）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-check.js',
     find: "    era.print('声望+10'); // PRINTL\n    return;\n  }\n}",
     replace:
       "    era.print('声望+10'); // PRINTL\n    return;\n  }\n  // 变异：天神宫组复活\n  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {\n    await require('#/page/page-ending').end10_55();\n    era_exflag.prestige = era_exflag.prestige + 10;\n    era.print('声望+10'); // PRINTL\n  }\n}",
@@ -4740,7 +4740,7 @@ export default [
   },
   {
     desc: 'M13204 SEIEI 战斗体第一处退场检查退回无实参（#652 补的实参被删，又判魔王自己）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    const first_check = await inv_death_check(yusya, seiei);',
     replace:
       '    const first_check = await inv_death_check(0, 0); // 变异：退回无实参判魔王',
@@ -4749,7 +4749,7 @@ export default [
   },
   {
     desc: 'M13205 FORT 绕路（INV_TYPE == 3）的平安支删除、恒埋伏（#652 补的 RAND:10 被删）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '  if (choice === 3 && inv_type === 3) {\n    if (rand(10) > 0) {',
     replace:
       '  if (choice === 3 && inv_type === 3) {\n    if (false) { // 变异：平安支删除、恒埋伏',
@@ -4758,7 +4758,7 @@ export default [
   },
   {
     desc: 'M13206 [2] 候选资格的助手可检查删除（#652 按意图补的淘汰被拆）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: '  // 只有助手可（CFLAG:0 == 2）能带队\n  if ((era.get(`cflag:${cid}:0`) || 0) !== 2) return true;',
     replace: '  // 变异：助手可检查删除',
     tests: ['page-invasion'],
@@ -4818,7 +4818,7 @@ export default [
   },
   {
     desc: 'M13214 FORT 绕路（INV_TYPE == 3）的 RAND:10 上界改坏（10 改 5，九成平安变五成）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '    if (rand(10) > 0) {',
     replace: '    if (rand(5) > 0) { // 变异：上界改坏',
     tests: ['page-invasion'],
@@ -4826,7 +4826,7 @@ export default [
   },
   {
     desc: 'M13215 invasion_event_seiei 先制检查的档位除数改坏（SINKOU/2048 改 /1024，检查与伤害同档）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);',
     replace:
       '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1); // 变异：检查除数改坏',
@@ -4835,7 +4835,7 @@ export default [
   },
   {
     desc: 'M13216 FORT 绕路（INV_TYPE == 3）平安支的体力公式改坏（×9/10 改 ×8/10）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '      chara(yusya).dungeon.体力 = Math.trunc(\n        (chara(yusya).dungeon.体力 * 9) / 10,\n      );',
     replace:
       '      chara(yusya).dungeon.体力 = Math.trunc(\n        (chara(yusya).dungeon.体力 * 8) / 10,\n      ); // 变异：体力公式改坏',
@@ -4844,7 +4844,7 @@ export default [
   },
   {
     desc: 'M13217 FORT 绕路（INV_TYPE == 3）平安支的播报把勇者的称呼换成姓名（chara_nickname 改 chara_callname）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-event.js',
     find: '        `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,',
     replace:
       '        `${chara_callname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`, // 变异：称呼换成姓名',
@@ -5375,7 +5375,7 @@ export default [
   // —— #724：子页面换屏 ——
   {
     desc: 'M14479 掠夺勇者屏每轮换屏调用删除',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: `    // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     await change_screen();
     // 标题（CUSTOMDRAWLINE = 的空分割线不镜像，见文件头）`,
@@ -5388,7 +5388,7 @@ export default [
   // —— #724：子页面换屏 ——
   {
     desc: 'M14480 出兵菜单每轮换屏调用删除',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-campaign.js',
     find: `  for (;;) {
     await change_screen();
     // 怪物数量 = ITEM:100..189 之和（[0]/[2] 路线的 600 门槛）`,
@@ -5621,18 +5621,18 @@ export default [
   {
     desc: 'M16452 设置页页脚三键退回各占一行（不再同行排布）',
     file: 'ere/page/page-config.js',
-    find: "        [101, '下一页'],\n      ],\n      3,\n    );",
+    find: "        [CONFIG_NEXT_PAGE_KEY, '下一页'],\n      ],\n      3,\n    );",
     replace:
-      "        [101, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
+      "        [CONFIG_NEXT_PAGE_KEY, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
     tests: ['layout-engine'],
     must_mention: '三枚页脚键共享同一个 Row',
   },
   {
     desc: 'M16453 能力值提升页脚三键退回各占一行（不再同行排布）',
     file: 'ere/page/page-ability-up.js',
-    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );",
+    find: "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );",
     replace:
-      "      [1001, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
+      "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
     tests: ['page-ability-up'],
     must_mention: '三枚页脚键共享同一个 Row',
   },
@@ -5655,7 +5655,7 @@ export default [
   },
   {
     desc: 'M16456 据点事件横幅文案写错（「占领了村庄」多一个感叹号）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-kyoten.js',
     find: "  占领了村庄: '占领了村庄',",
     replace: "  占领了村庄: '占领了村庄！', // 变异：多一个标点",
     tests: ['layout-engine'],
@@ -5663,7 +5663,7 @@ export default [
   },
   {
     desc: 'M16457 据点事件横幅上沿退回虚线（七行星号框的实线没了）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-kyoten.js',
     find: "    era.drawLine({ isSolid: true });\n    era.print(banner, { align: 'center' });",
     replace:
       "    era.drawLine(); // 变异：上沿退回虚线\n    era.print(banner, { align: 'center' });",
@@ -5894,5 +5894,13 @@ export default [
     save: () => save_game(),`,
     tests: ['dungeon-battle-state'],
     must_mention: '存档写点必须恰好 1 处',
+  },
+  {
+    desc: 'M17900 每屏编号常量越过后代 ID 段（陷阱店的回道具店键改用 100000）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const TO_ITEM_KEY = 997;',
+    replace: 'const TO_ITEM_KEY = 100000; // 变异：编号落进后代 ID 段',
+    tests: ['page-button-key-constants'],
+    must_mention: '每屏编号常量必须是非负整数且小于 FIRST_CHILD_ID',
   },
 ];

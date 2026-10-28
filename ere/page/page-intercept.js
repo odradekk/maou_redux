@@ -59,6 +59,17 @@ const EQUIP_COST = 2000;
 /** 出发阶层的可取值范围（`(1-9)`） */
 const FLOOR_MIN = 1;
 const FLOOR_MAX = 9;
+
+/**
+ * 迎击列表页脚三键：上一页 [1000] / 返回 [999] / 下一页 [1001]。
+ * 返回键同号复用在迎击设定屏（两屏不同屏，设定屏只印 [998]/[999]）。
+ */
+const LIST_PREV_KEY = 1000;
+const LIST_BACK_KEY = 999;
+const LIST_NEXT_KEY = 1001;
+
+/** 迎击设定的出击键（[998] 落到出撃決定） */
+const GO_KEY = 998;
 /** 出击时写入的固定值（`CFLAG:SELECT:502 = 90`、505 = 0） */
 const DISPATCH_DURATION = 90;
 /** 行动设定各档（渲染与检查共用一处） */
@@ -175,8 +186,8 @@ function draw_settings(select, floor, work, item_get) {
   );
   era.print(''); // PRINTL
   // SETCOLORBYNAME DarkSeaGreen → RESETCOLOR（只染这一枚按钮）
-  era.printButton('去吧！皮卡丘！', 998, { color: DARK_SEA_GREEN });
-  era.printButton('返回', 999);
+  era.printButton('去吧！皮卡丘！', GO_KEY, { color: DARK_SEA_GREEN });
+  era.printButton('返回', LIST_BACK_KEY);
 }
 
 /**
@@ -337,9 +348,9 @@ async function intercept(rand = default_rand) {
     // 引擎渲染时折叠成一个
     print_button_grid(
       [
-        [1000, '- 上一页'], // PRINTLC
-        [999, '- 返 回'],
-        [1001, '- 下一页'],
+        [LIST_PREV_KEY, '- 上一页'], // PRINTLC
+        [LIST_BACK_KEY, '- 返 回'],
+        [LIST_NEXT_KEY, '- 下一页'],
       ],
       3,
     );
@@ -347,16 +358,16 @@ async function intercept(rand = default_rand) {
     // $INPUT_LOOP_2
     for (;;) {
       const result = await era.input(); // INPUT
-      if (result === 999) {
+      if (result === LIST_BACK_KEY) {
         return 0; // （返回键）
       }
-      if (result === 1000) {
+      if (result === LIST_PREV_KEY) {
         if (no_page > 0) {
           no_page -= 1;
         }
         continue main0;
       }
-      if (result === 1001) {
+      if (result === LIST_NEXT_KEY) {
         if (no_page < max_page) {
           no_page += 1;
         }
@@ -402,7 +413,7 @@ async function intercept(rand = default_rand) {
         await change_screen();
         draw_settings(select, floor, work, item_get);
         const choice = await era.input();
-        if (choice === 999) {
+        if (choice === LIST_BACK_KEY) {
           continue main0; // 返回列表
         }
         if (choice === 0) {
@@ -440,7 +451,7 @@ async function intercept(rand = default_rand) {
           item_get = 0; // 取消补给
           continue;
         }
-        if (choice !== 998) {
+        if (choice !== GO_KEY) {
           continue; // 其余输入重绘
         }
         break; // [998] 落到出撃決定

@@ -90,6 +90,14 @@ const campaign_set_family = new DispatchFamily(
 const NUM_PAGE = 24;
 
 /**
+ * 本模块两屏（战役选择 / 派遣列表）共用的返回键 [999]，
+ * 派遣列表另有上一页 [1000] / 下一页 [1001]。
+ */
+const BACK_KEY = 999;
+const PAGE_PREV_KEY = 1000;
+const PAGE_NEXT_KEY = 1001;
+
+/**
  * select_campaign：战役选择菜单。
  * @returns {Promise<number>} RETURN 0（恒 return 0，调用点不消费）
  */
@@ -101,10 +109,10 @@ async function select_campaign() {
     await campaign_exist_family.call(slot, { whenMissing: 0, args: [slot] });
   }
   era.drawLine();
-  era.printButton('返回', 999);
+  era.printButton('返回', BACK_KEY);
 
   const result = await era.input();
-  if (result === 999) {
+  if (result === BACK_KEY) {
     return 0;
   }
   // CAMPAIGN_SET_{RESULT}：RESULT 来自按钮白名单，恒落在
@@ -136,9 +144,9 @@ function render_dispatch_page(no_page, candidate_ids) {
   }
   print_button_grid(
     [
-      [1000, '- 上一页'],
-      [999, '返  回'],
-      [1001, '- 下一页'],
+      [PAGE_PREV_KEY, '- 上一页'],
+      [BACK_KEY, '返  回'],
+      [PAGE_NEXT_KEY, '- 下一页'],
     ],
     3,
   );
@@ -209,16 +217,16 @@ async function dispatch_campaign_slave(no_page) {
     );
     render_dispatch_page(no_page, candidate_ids);
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       return no_page;
     }
-    if (result === 1000) {
+    if (result === PAGE_PREV_KEY) {
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === PAGE_NEXT_KEY) {
       if (no_page < max_page) {
         no_page += 1;
       }
@@ -296,10 +304,10 @@ async function campaign_menu(rand) {
       era.printButton('派遣奴隶', 2);
     }
     era.drawLine(); // 行动按钮与 [999] 之间的第二条分隔线
-    era.printButton('返回', 999);
+    era.printButton('返回', BACK_KEY);
 
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       return 0;
     }
     if (result === 0) {

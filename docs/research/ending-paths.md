@@ -7,7 +7,7 @@
 ## 结论摘要
 
 1. 结局分四层：**主线结局 6 个**（`ending_1`~`ending_5`、`ending_n`，`ere/event/event-ending.js`）、**角色线结局 4 族 68 个分支**（`END7_*`/`END10_*`/`END11_*`/`END14_*`）、**隐藏 GAMEOVER 2 处**（`ending_2` 魔王城陷落、`debug_check` 大冲击）、以及**10 个无脚本的分支族**（`END2/3/4/5/6/8/9/12/13/15_*`，分派静默空转）。
-2. 判定入口 `run_endcheck`（`ere/event/event-endcheck.js`）挂在日循环上，每天午后回合结束、进入次日时执行一次；侵略结局由每次侵略结算后的 `invasion_check`（`ere/page/page-invasion.js`）触发。
+2. 判定入口 `run_endcheck`（`ere/event/event-endcheck.js`）挂在日循环上，每天午后回合结束、进入次日时执行一次；侵略结局由每次侵略结算后的 `invasion_check`（`ere/system/invasion/invasion-check.js`）触发。
 3. **最短通关路径是侵略线：新游戏 → 初始设置 → 主菜单 [109] 反复用魔力出兵，约 100 个游戏日堆满人间界侵攻度 10000，触发 `ending_1`（Good End）**（#120 端到端实测 100 日，初稿曾按「每日一次衰减」估为 55–70 日，勘误见「天数估算与假设」）。Normal End 硬门槛 500 天；角色线结局依赖调教积累与多阶段计数器，周期更长。
 4. 推荐终点判定用 **`ending_1`**：条件单一确定、主动达成、演出完整、路径覆盖五个核心子系统（理由见第五节）。
 

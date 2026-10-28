@@ -39,6 +39,17 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { print_button_grid } = require('#/utils/button-grid');
 
 /**
+ * 两屏（选择调教目标 / 选择助手）的固定键：上一页 [1000] / 下一页 [1001]、
+ * 返回 [999]（目标屏 = 取消，助手屏 = 「我先想想」也取消）、
+ * 其它 [1002]（目标屏转怪物玩弄，助手屏 = 自己上阵）。
+ * 编号都在角色 ID 之上（后代 ID 从 100000 起），与列表行不撞号。
+ */
+const PAGE_PREV_KEY = 1000;
+const PAGE_NEXT_KEY = 1001;
+const BACK_KEY = 999;
+const OTHER_KEY = 1002;
+
+/**
  * is_trainable：编号可调教返回 0，
  * 否则 1（范围外/魔王）或 2（CFLAG:x:1 != 0，占用中）。
  * @param {number} cid 角色 ID
@@ -266,21 +277,21 @@ async function select_target() {
     // 24 列网格、每格 6 列；按钮正文不带 [编号] 前缀——引擎自动拼，PR #30）
     print_button_grid(
       [
-        [1000, '- 上一页'],
-        [999, '返回'],
-        [1002, '其它'],
-        [1001, '- 下一页'],
+        [PAGE_PREV_KEY, '- 上一页'],
+        [BACK_KEY, '返回'],
+        [OTHER_KEY, '其它'],
+        [PAGE_NEXT_KEY, '- 下一页'],
       ],
       4,
     );
 
     // 输入
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       // 返回 → 0
       return 0;
     }
-    if (result === 1002) {
+    if (result === OTHER_KEY) {
       // 其它 → 怪物玩弄（#340 真身），返回其结果
       return monster_play_mod.monster_play();
     }
@@ -296,14 +307,14 @@ async function select_target() {
       era.set('flag:2', result);
       return 1;
     }
-    if (result === 1000) {
+    if (result === PAGE_PREV_KEY) {
       // 上一页（页首不再退；整屏重绘）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === PAGE_NEXT_KEY) {
       // 下一页（页尾不再进）
       if (no_page < max_page) {
         no_page += 1;
@@ -352,26 +363,26 @@ async function select_assi() {
     // 换行，硬挤会把相邻格压掉）。按钮正文都不带 [编号] 前缀，引擎自动拼。
     print_button_grid(
       [
-        [1000, '- 上一页'],
-        [999, '我先想想…'],
-        [1001, '- 下一页'],
+        [PAGE_PREV_KEY, '- 上一页'],
+        [BACK_KEY, '我先想想…'],
+        [PAGE_NEXT_KEY, '- 下一页'],
       ],
       3,
     );
     print_button_grid(
-      [[1002, '哇嘎嘎！我可是魔王！这次就由我自己亲自上阵！']],
+      [[OTHER_KEY, '哇嘎嘎！我可是魔王！这次就由我自己亲自上阵！']],
       1,
     );
 
     // 输入
     const result = await era.input();
-    if (result === 1002) {
+    if (result === OTHER_KEY) {
       // 无助手 → 置 ASSI = -1，返回 0
       era_flag.assi = -1;
       game.event.上次助手 = -1;
       return 0;
     }
-    if (result === 999) {
+    if (result === BACK_KEY) {
       // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）
       return 2;
     }
@@ -381,14 +392,14 @@ async function select_assi() {
       game.event.上次助手 = result;
       return 1;
     }
-    if (result === 1000) {
+    if (result === PAGE_PREV_KEY) {
       // 上一页（页首不再退；整屏重绘）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === PAGE_NEXT_KEY) {
       // 下一页（页尾不再进）
       if (no_page < max_page) {
         no_page += 1;

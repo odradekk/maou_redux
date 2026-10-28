@@ -73,6 +73,23 @@ function config_row(label, status, accelerator) {
 }
 
 /**
+ * 设定主菜单与两个子菜单的返回键（[100]）。
+ * 子菜单画在设定菜单之上，返回键与主菜单同号——两者不同屏，不冲突。
+ */
+const CONFIG_BACK_KEY = 100;
+
+/**
+ * 设定主菜单的两页切换键：[102] 上一页 / [101] 下一页。
+ * **与存读档页的号相反**（那边 101 是上一页）——各屏的键位表各自定义，
+ * 别按语义猜号。
+ */
+const CONFIG_PREV_PAGE_KEY = 102;
+const CONFIG_NEXT_PAGE_KEY = 101;
+
+/** 魔王兵器设定的返回键（[999]：嵌套子屏避开与页脚 [100] 同号） */
+const PENIS_BACK_KEY = 999;
+
+/**
  * config_filter_setting：调教指令过滤开关（FLAG:25 位 0-4，
  * game.train.指令过滤）。
  *
@@ -86,9 +103,9 @@ async function config_filter_setting() {
       config_row(FILTER_LABELS[i], `现在：${getbit(v, i) ? 'ON' : 'OFF'}`, i);
     }
     era.drawLine();
-    era.printButton('返回', 100);
+    era.printButton('返回', CONFIG_BACK_KEY);
     const result = await era.input();
-    if (result === 100) {
+    if (result === CONFIG_BACK_KEY) {
       return 0;
     }
     if (result >= 0 && result <= 4) {
@@ -124,14 +141,14 @@ async function config_virgin_conceded_setting() {
   era.printButton('每人一次', 1);
   era.printButton('持续触发', 2);
   era.drawLine();
-  era.printButton('返回', 100);
+  era.printButton('返回', CONFIG_BACK_KEY);
   for (;;) {
     const result = await era.input();
     if (result >= 0 && result <= 2) {
       era_flag.virgin_conceded_mode = result - 1;
       return 0;
     }
-    if (result === 100) {
+    if (result === CONFIG_BACK_KEY) {
       return 0;
     }
     await era.clear(1);
@@ -173,9 +190,9 @@ async function config_penis_you_setting() {
   era.printButton('- 包茎', 3);
   era.printButton('- 马阴茎', 4);
   era.drawLine();
-  era.printButton('- 返回', 999);
+  era.printButton('- 返回', PENIS_BACK_KEY);
   const result = await era.input();
-  if (result === 999) {
+  if (result === PENIS_BACK_KEY) {
     return 0;
   }
   if (result >= 0 && result <= 4) {
@@ -365,9 +382,9 @@ function draw_config_page(page) {
  *   null 表示应退出 config_menu（[100] 分支）
  */
 async function dispatch_config(local, page) {
-  if (local === 100) {
+  if (local === CONFIG_BACK_KEY) {
     return null;
-  } else if (local === 101 || local === 102) {
+  } else if (local === CONFIG_NEXT_PAGE_KEY || local === CONFIG_PREV_PAGE_KEY) {
     return (page + 1) % 2;
   } else if (local >= 0 && local <= 10) {
     game.dungeon.游戏设定 = invertbit(game.dungeon.游戏设定, local);
@@ -434,9 +451,9 @@ async function config_menu() {
     draw_config_page(page);
     print_button_grid(
       [
-        [102, '上一页'],
-        [100, '返回'],
-        [101, '下一页'],
+        [CONFIG_PREV_PAGE_KEY, '上一页'],
+        [CONFIG_BACK_KEY, '返回'],
+        [CONFIG_NEXT_PAGE_KEY, '下一页'],
       ],
       3,
     );

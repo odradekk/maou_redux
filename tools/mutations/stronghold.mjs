@@ -1885,9 +1885,9 @@ export default [
     // 「输出 API 的排版与对齐」）
     desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-item-shop.js',
-    find: "      [999, '- 返回', { align: 'center' }],\n    ],\n    2,\n  );\n\n  return 0;\n}",
+    find: "      [LEAVE_SHOP_KEY, '- 返回', { align: 'center' }],\n    ],\n    2,\n  );\n\n  return 0;\n}",
     replace:
-      "      [999, '- 返回', { align: 'center' }],\n    ],\n    2,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n\n  return 0;\n}",
+      "      [LEAVE_SHOP_KEY, '- 返回', { align: 'center' }],\n    ],\n    2,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n\n  return 0;\n}",
     tests: ['item-shop'],
     must_mention: '道具商店页脚按钮之后不应有空行',
   },
@@ -1929,7 +1929,7 @@ export default [
     // 随之调转方向：现在检查「返回退回纯文本」会让商品编号被拒收。
     desc: 'M14236 商品一览轮的 [999] 返回退回纯文本（商品编号当场被拒收）',
     file: 'ere/page/page-monster-shop.js',
-    find: "    era.printButton('返回', 999);\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
+    find: "    era.printButton('返回', BACK_KEY);\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
     replace:
       "    era.print('[999] 返回'); // 变异：返回退回纯文本\n    era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');",
     tests: ['monster-shop'],

@@ -19,7 +19,6 @@ const ABLUP = 'ere/page/page-ablup.js';
 const ABLMARK = 'ere/page/components/chara-info-abl-mark.js';
 const TITLE = 'ere/page/components/chara-info-title.js';
 const INTERCEPT = 'ere/page/page-intercept.js';
-const INVASION = 'ere/page/page-invasion.js';
 const INFO_SHOW = 'ere/page/page-chara-info-show.js';
 
 export default [

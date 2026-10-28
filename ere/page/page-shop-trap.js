@@ -52,6 +52,13 @@ const COLUMNS = 5;
 const CELL_WIDTH = 16;
 
 /**
+ * 本屏页脚两键：回道具店（[997]）与离开商店（[999]）。
+ * 两个编号由商店循环（page/page-shop-loop.js）分派，本文件只负责画。
+ */
+const TO_ITEM_KEY = 997;
+const LEAVE_SHOP_KEY = 999;
+
+/**
  * 基础在售段：无检查，逐行移植。
  * 淫魔知识（TALENT:0:327 == 1）二选一，
  * 魔虫知识（TALENT:MASTER:328 == 0）单独点亮 56，
@@ -216,8 +223,8 @@ async function item_shop_trap() {
   // （＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md
   // 「输出 API 的排版与对齐」）。
   era.setAlign('center'); // PRINTLC（排版近似：见 CONTEXT.md）
-  era.printButton('- 普通物品', 997);
-  era.printButton('- 返回', 999);
+  era.printButton('- 普通物品', TO_ITEM_KEY);
+  era.printButton('- 返回', LEAVE_SHOP_KEY);
   era.setAlign('left');
 
   return 0;

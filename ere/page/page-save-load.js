@@ -108,6 +108,17 @@ const { chara_callname } = require('#/utils/callname-utils');
  */
 const PAGE_LEN = 20;
 
+/**
+ * 本屏页脚三键：上一页 / 返回 / 下一页（存读档两个界面共用）。
+ * 三个编号与槽号（0–99）、删除键（400 起）都不重叠。
+ */
+const PAGE_PREV_KEY = 101;
+const PAGE_BACK_KEY = 100;
+const PAGE_NEXT_KEY = 102;
+
+/** 存档界面的「为故事命名」键（读档界面不印） */
+const NAME_STORY_KEY = 200;
+
 /** 自动存档槽号（读档界面单列渲染，ADR-0006：占用旧引擎遗留的空位）。 */
 const AUTOSAVE_SLOT = 99;
 
@@ -394,23 +405,23 @@ async function load_game() {
 
     // [101] 上一页 / [100] 返回 / [102] 下一页 + PRINTL
     print_page_buttons(
-      { accelerator: 101, content: '上一页' },
-      { accelerator: 100, content: '返回' },
-      { accelerator: 102, content: '下一页' },
+      { accelerator: PAGE_PREV_KEY, content: '上一页' },
+      { accelerator: PAGE_BACK_KEY, content: '返回' },
+      { accelerator: PAGE_NEXT_KEY, content: '下一页' },
     );
     era.println();
 
     // INPUT 99（99 是默认值——空回车得 99；ere 无默认值参数，见文件头）
     const result = await era.input();
 
-    if (result === 100) {
+    if (result === PAGE_BACK_KEY) {
       // 返回
       return pos;
     }
-    if (result === 101 && pos - PAGE_LEN >= 0) {
+    if (result === PAGE_PREV_KEY && pos - PAGE_LEN >= 0) {
       // 上一页
       pos -= PAGE_LEN;
-    } else if (result === 102 && pos + PAGE_LEN < 99) {
+    } else if (result === PAGE_NEXT_KEY && pos + PAGE_LEN < 99) {
       // 下一页（< 99：末页 80 起时 80+20=100 不再翻）
       pos += PAGE_LEN;
     } else if (result >= DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {
@@ -482,28 +493,28 @@ async function save_game() {
 
     era.drawLine();
     // [200] 为故事命名（存/删都在列表里，不再有 [300] 删除画面）
-    print_page_buttons({ accelerator: 200, content: '为故事命名' });
+    print_page_buttons({ accelerator: NAME_STORY_KEY, content: '为故事命名' });
     era.println();
     // [101] 上一页 / [100] 返回 / [102] 下一页
     print_page_buttons(
-      { accelerator: 101, content: '上一页' },
-      { accelerator: 100, content: '返回' },
-      { accelerator: 102, content: '下一页' },
+      { accelerator: PAGE_PREV_KEY, content: '上一页' },
+      { accelerator: PAGE_BACK_KEY, content: '返回' },
+      { accelerator: PAGE_NEXT_KEY, content: '下一页' },
     );
     era.println();
 
     // INPUT（无默认值）
     const result = await era.input();
 
-    if (result === 100) {
+    if (result === PAGE_BACK_KEY) {
       // 返回
       return pos;
     }
-    if (result === 101 && pos - PAGE_LEN >= 0) {
+    if (result === PAGE_PREV_KEY && pos - PAGE_LEN >= 0) {
       pos -= PAGE_LEN;
-    } else if (result === 102 && pos + PAGE_LEN < 99) {
+    } else if (result === PAGE_NEXT_KEY && pos + PAGE_LEN < 99) {
       pos += PAGE_LEN;
-    } else if (result === 200) {
+    } else if (result === NAME_STORY_KEY) {
       // 为故事命名（内部自管清行，返回后回 DRAW_PAGE）
       await set_story_name(anchor);
     } else if (result >= DELETE_BASE && result <= DELETE_BASE + AUTOSAVE_SLOT) {

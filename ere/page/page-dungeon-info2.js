@@ -70,6 +70,26 @@ const COLOR_INVASION = 'rgb(255, 100, 100)';
 const COLOR_SUBORDINATE = 'rgb(255, 255, 0)';
 
 /**
+ * 地下城情报主屏的固定键。三标签页 [900]-[902]、批量选择 [200]-[203]、
+ * 尾部五枚 [10]-[14] 与怪物迎击开关 [100]、返回 [999]；110-190 的阶层/单元
+ * 按钮与 500-507/60-88/300-320 的库存项是数据编号，由循环算出来。
+ */
+const TAB_TRAPS_KEY = 900;
+const TAB_FACILITIES_KEY = 901;
+const TAB_TREASURES_KEY = 902;
+const SELECT_ALL_KEY = 200;
+const SELECT_TRAP_A_KEY = 201;
+const SELECT_TRAP_B_KEY = 202;
+const SELECT_TRAP_C_KEY = 203;
+const SUBORDINATES_KEY = 10;
+const FLOOR_1_3_KEY = 11;
+const FLOOR_4_6_KEY = 12;
+const FLOOR_7_9_KEY = 13;
+const GUARDS_KEY = 14;
+const INTERCEPT_TOGGLE_KEY = 100;
+const INFO_BACK_KEY = 999;
+
+/**
  * enemy_exist2 的 `#DIM MAX_NAME_LEN = 0`：函数级静态量，
  * 初值只在程序开始时生效一次，跨调用保留；`MAX(STRLENS(…),
  * 2 格）一直决定之后所有调用的补齐宽度，勇者行与护卫行
@@ -380,7 +400,7 @@ async function print_subordinates(kai_result) {
     r -= 1;
   }
   era.drawLine();
-  era.printButton('返回', 999);
+  era.printButton('返回', INFO_BACK_KEY);
   // INPUT
   return era.input();
 }
@@ -408,9 +428,9 @@ async function dungeon_info2() {
     era.drawLine({ isSolid: true });
     // FONTBOLD + 三枚标签页按钮（未选中的调暗；▌ 前缀归 menu_button。
     // FONTBOLD 的加粗无 printButton 通道，省略）
-    menu_button('陷 阱', 900, display_flag !== 0);
-    menu_button('设 施', 901, display_flag !== 1);
-    menu_button('戒 指', 902, display_flag !== 2);
+    menu_button('陷 阱', TAB_TRAPS_KEY, display_flag !== 0);
+    menu_button('设 施', TAB_FACILITIES_KEY, display_flag !== 1);
+    menu_button('戒 指', TAB_TREASURES_KEY, display_flag !== 2);
     // 九层的布置矩阵
     let compare_bit = 1;
     for (let l = 0; l < 9; l += 1) {
@@ -479,12 +499,12 @@ async function dungeon_info2() {
     }
     // 批量选择按钮
     if (display_flag === 0) {
-      era.printButton('全部陷阱', 200);
-      era.printButton('陷阱Ａ', 201);
-      era.printButton('陷阱Ｂ', 202);
-      era.printButton('陷阱Ｃ', 203);
+      era.printButton('全部陷阱', SELECT_ALL_KEY);
+      era.printButton('陷阱Ａ', SELECT_TRAP_A_KEY);
+      era.printButton('陷阱Ｂ', SELECT_TRAP_B_KEY);
+      era.printButton('陷阱Ｃ', SELECT_TRAP_C_KEY);
     } else {
-      era.printButton('全部阶层', 200);
+      era.printButton('全部阶层', SELECT_ALL_KEY);
     }
     // 三页全未选时下半区置灰（颜色由后续行携带，此处无独立动作）
     const none_selected =
@@ -581,26 +601,26 @@ async function dungeon_info2() {
       }
     }
     // 尾部指令区
-    era.printButton('部下状态总览', 10);
-    era.printButton('1～3层', 11);
-    era.printButton('4～6层', 12);
-    era.printButton('7～9层', 13);
-    era.printButton('近卫兵', 14);
+    era.printButton('部下状态总览', SUBORDINATES_KEY);
+    era.printButton('1～3层', FLOOR_1_3_KEY);
+    era.printButton('4～6层', FLOOR_4_6_KEY);
+    era.printButton('7～9层', FLOOR_7_9_KEY);
+    era.printButton('近卫兵', GUARDS_KEY);
     // PRINTPLAIN 显示部下（尾部全角空格填充只服务对齐，ere 版式
     // 已不同，取语义文本）
     era.print('显示部下');
     // [100]怪物迎击 现在开启/关闭（FLAG:5 位 4 toggle；#60 归一简体）
     era.printButton(
       `怪物迎击\u3000现在：${(flag_get(5) & 16) !== 0 ? '关闭' : '开启'}`,
-      100,
+      INTERCEPT_TOGGLE_KEY,
     );
     era.drawLine();
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', INFO_BACK_KEY);
   };
 
   // WHILE RESULT != 999
   let result = 0;
-  while (result !== 999) {
+  while (result !== INFO_BACK_KEY) {
     // 每轮绘制前换屏：画面上只有当前这一屏（ADR-0009）
     await change_screen();
     await draw_screen();
@@ -616,7 +636,7 @@ async function dungeon_info2() {
       if (result > 100 && result < 204) {
         // COMPARE_BIT = 1 << RESULT/10 - 11（110→位0 ... 190→位8）
         const compare_bit = 1 << (Math.floor(result / 10) - 11);
-        if (result === 200) {
+        if (result === SELECT_ALL_KEY) {
           // 全指定：三列全开（511）或全关
           if (
             select_flag[0] === 511 &&
@@ -646,9 +666,9 @@ async function dungeon_info2() {
             select_flag[1] |= compare_bit;
             select_flag[2] |= compare_bit;
           }
-        } else if (result > 200) {
+        } else if (result > SELECT_ALL_KEY) {
           // 列指定：201/202/203 → SELECT_FLAG[0..2] 全开（511）或全关
-          const col = result - 201;
+          const col = result - SELECT_TRAP_A_KEY;
           select_flag[col] = select_flag[col] === 511 ? 0 : 511;
         } else if (result % 10 < 4) {
           // 単独指定：111-113 等 → 对应列的该层翻转
@@ -713,7 +733,7 @@ async function dungeon_info2() {
       if (result > 100 && result < 200) {
         // 単独指定（阶层面板按钮 110-190）
         select_flag[0] ^= 1 << (Math.floor(result / 10) - 11);
-      } else if (result === 200) {
+      } else if (result === SELECT_ALL_KEY) {
         // 全指定
         select_flag[0] = select_flag[0] === 511 ? 0 : 511;
       } else if (result === 0 || (result >= 500 && result < 508)) {
@@ -738,7 +758,7 @@ async function dungeon_info2() {
       if (result > 100 && result < 200) {
         // 単独指定
         select_flag[0] ^= 1 << (Math.floor(result / 10) - 11);
-      } else if (result === 200) {
+      } else if (result === SELECT_ALL_KEY) {
         // 全指定
         select_flag[0] = select_flag[0] === 511 ? 0 : 511;
       } else if (
@@ -761,18 +781,18 @@ async function dungeon_info2() {
       }
     }
     // 全設定時：[900]-[902] 标签页切换（选择位图清零）
-    if (result >= 900 && result <= 902) {
+    if (result >= TAB_TRAPS_KEY && result <= TAB_TREASURES_KEY) {
       display_flag = result % 10;
       select_flag[0] = 0;
       select_flag[1] = 0;
       select_flag[2] = 0;
     }
     // コンフィグ「怪物迎撃禁止」（FLAG:5 位 4 翻转）
-    if (result === 100) {
+    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 16);
     }
     // 部下の表示（[10]-[14]）
-    if (result >= 10 && result <= 14) {
+    if (result >= SUBORDINATES_KEY && result <= GUARDS_KEY) {
       // $PRINT 块：部下一览（内部等输入；[100-199] → MONSTER_SETUP 后重画）
       for (;;) {
         const sub_result = await print_subordinates(result);

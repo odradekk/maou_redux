@@ -73,7 +73,10 @@ const WHITELIST = new Map([
     'page/page-monster-shop.js',
     '怪物商店购买流程的角色退场：无登记无指针清理，待裁定',
   ],
-  ['page/page-invasion.js', '精锐部队（临时角色）的战果清理：不是除名'],
+  [
+    'system/invasion/invasion-event.js',
+    '精锐部队（临时角色）的战果清理：不是除名',
+  ],
 ]);
 
 // 定义行是 `function party_char_del(cid)`，正则用调用括号即可命中调用

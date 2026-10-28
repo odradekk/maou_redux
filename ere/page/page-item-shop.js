@@ -65,6 +65,21 @@ const MONEY_UNIT = 'pts.';
 /** 标签行染色的颜色名 */
 const LIGHT_SALMON = 'LightSalmon';
 
+/**
+ * 道具店页脚两键：切去陷阱店（[998]）与离开商店（[999]）。
+ * 两个编号由商店循环（page/page-shop-loop.js）分派——本文件只负责画。
+ */
+const TO_TRAP_KEY = 998;
+const LEAVE_SHOP_KEY = 999;
+
+/**
+ * 使用对象选择的两枚翻页键与取消键（use_item / use_exp_item 自己的内循环）。
+ * 三个编号与商店循环的键无关：同一屏里由本文件分派。
+ */
+const TARGET_PREV_KEY = 1000;
+const TARGET_NEXT_KEY = 1001;
+const TARGET_CANCEL_KEY = 999;
+
 /** TALENT 读数缺省处理（#13：未声明下标读回 undefined，按 0 计） */
 function talent(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
@@ -422,8 +437,8 @@ async function item_shop() {
   // 页脚两键同行（引擎 24 列网格，每格 12 列；格内居中），不补空行
   print_button_grid(
     [
-      [998, '- 陷阱', { align: 'center' }],
-      [999, '- 返回', { align: 'center' }],
+      [TO_TRAP_KEY, '- 陷阱', { align: 'center' }],
+      [LEAVE_SHOP_KEY, '- 返回', { align: 'center' }],
     ],
     2,
   );
@@ -673,14 +688,14 @@ async function use_exp_item(count) {
     life_list(no_page, 0);
     print_button_grid(
       [
-        [1000, '- 上一页'],
-        [1001, '- 下一页'],
+        [TARGET_PREV_KEY, '- 上一页'],
+        [TARGET_NEXT_KEY, '- 下一页'],
       ],
       2,
     );
 
     const result = await era.input();
-    if (result === 1000) {
+    if (result === TARGET_PREV_KEY) {
       // 上一页（首页再按无反应，退回选人）
       if (no_page > 0) {
         no_page -= 1;
@@ -688,7 +703,7 @@ async function use_exp_item(count) {
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === TARGET_NEXT_KEY) {
       // 下一页
       if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {
         no_page += 1;
@@ -860,25 +875,25 @@ async function use_item(bought) {
     life_list(no_page);
     print_button_grid(
       [
-        [1000, '- 上一页'],
-        [999, '- 返  回'],
-        [1001, '- 下一页'],
+        [TARGET_PREV_KEY, '- 上一页'],
+        [TARGET_CANCEL_KEY, '- 返  回'],
+        [TARGET_NEXT_KEY, '- 下一页'],
       ],
       3,
     );
 
     const result = await era.input();
-    if (result === 999) {
+    if (result === TARGET_CANCEL_KEY) {
       return 0; // 取消：还没付款，道具也没动
     }
-    if (result === 1000) {
+    if (result === TARGET_PREV_KEY) {
       // 上一页（首页再按无反应：整块退回首屏重画）
       if (no_page > 0) {
         no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === TARGET_NEXT_KEY) {
       // 下一页
       if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {
         no_page += 1;

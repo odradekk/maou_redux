@@ -26,10 +26,20 @@ export default [
     must_mention: 'USE_EX_ITEM 在 ENDING_2 战斗后调用点实际执行',
   },
   {
-    desc: 'M7804 SELL_MATURO_K0 成熟出售调用退回空存根',
-    file: 'ere/kojo/kojo-k0-tender.js',
-    find: '      await sell_maturo_k0(target, { rand: _rand }); // CALL SELL_MATURO_K0',
-    replace: '      // 变异：SELL_MATURO_K0 退回空存根',
+    desc: 'M7804 SELL_MATURO_K0 黑市末路台词里的「买下」改坏',
+    file: 'ere/system/stronghold/sell-maturo-k0-normal.js',
+    find: `  await era.printAndWait(\`\${buyer}买下\${target_name}之后………\`);
+  await era.printAndWait(\`………\`);
+  await era.printAndWait(\`……\`);
+  await era.printAndWait(\`…\`);
+
+  if (route === 3) ending = await normal_other_lt100k_mine_owner(ctx);`,
+    replace: `  await era.printAndWait(\`\${buyer}收下\${target_name}之后………\`);
+  await era.printAndWait(\`………\`);
+  await era.printAndWait(\`……\`);
+  await era.printAndWait(\`…\`);
+
+  if (route === 3) ending = await normal_other_lt100k_mine_owner(ctx);`,
     tests: ['event-corrupt-e2e'],
     must_mention: 'SELL_MATURO_K0 必须进入低价自然态的黑市末路',
   },

@@ -1346,7 +1346,7 @@ export default [
   {
     desc: 'M11996 设施主菜单退回纯文本行（展品行点不动）',
     file: 'ere/page/page-infrastructure.js',
-    find: "  era.printButton('看看全部展品的样子', 50);",
+    find: "  era.printButton('看看全部展品的样子', ALL_EXHIBITS_KEY);",
     replace: "  era.print('[50] 看看全部展品的样子'); // 变异",
     tests: ['event-execution'],
     must_mention: '设施菜单',
@@ -1362,7 +1362,7 @@ export default [
   {
     desc: 'M11998 牧场设定菜单的 [999] 返回退回纯文本行（白名单收成 0/1/2，999 被拒收）',
     file: 'ere/page/page-infrastructure.js',
-    find: "    era.printButton('返回', 999);",
+    find: "    era.printButton('返回', FARM_BACK_KEY);",
     replace: "    era.print('[999] 返回'); // 变异",
     tests: ['event-execution'],
     must_mention: '输入不合法！请输入以下值之一：',
@@ -1372,9 +1372,9 @@ export default [
     file: 'ere/page/page-infrastructure.js',
     find: `    print_button_grid(
       [
-        [1000, '- 上一页'], // （\`- \` 是按钮文案自带的前缀，照写）
-        [999, '- 离  开'],
-        [1001, '- 下一页'],
+        [SHELF_PREV_KEY, '- 上一页'], // （\`- \` 是按钮文案自带的前缀，照写）
+        [FARM_BACK_KEY, '- 离  开'],
+        [SHELF_NEXT_KEY, '- 下一页'],
       ],
       3,
     );`,
