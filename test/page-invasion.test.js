@@ -1,6 +1,7 @@
 /**
- * ere/page/page-invasion.js invasion() 出兵路线（issue #117 魔力 / #503 怪物与
- * 掠夺）与地上征服后菜单（issue #468）的行为测试。
+ * 侵略域的行为测试：invasion() 的出兵路线（issue #117 魔力 / #503 怪物与
+ * 掠夺）、地上征服后菜单（issue #468）、中途事件与结局判定。画面在
+ * page/page-invasion.js，主流程与事件在 system/invasion/ 下（#887）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。经模块公开接口
  * invasion()/post_conquest_menu()/start_campaign() 直驱（对局内则由
@@ -1037,7 +1038,9 @@ test('invasion_event_seiei 的三档传闻：后两档只对非魔力路线开',
     const fixture = create_era_fixture();
     fixture.store.set('flag:81', progress); // FLAG:AREA
     fixture.store.set('flag:82', 0); // FLAG:SINDO
-    const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+    const { invasion_event_seiei } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     // 确定随机源：RAND:FLAG:AREA 取上界内最大的「没出现」档（2000）
     const rand = (n) => Math.min(2000, n - 1);
     const ret = await invasion_event_seiei(
@@ -1119,7 +1122,9 @@ test('invasion_event_seiei 的已征服早退：FLAG:SINDO != 0 时零输出', a
   const fixture = create_era_fixture();
   fixture.store.set('flag:81', 0); // 首档条件成立也不打
   fixture.store.set('flag:82', 2);
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   assert.equal(await invasion_event_seiei(81, 82, 0), -1);
   assert.deepEqual(fixture.text_lines(), [], '已征服：不打印任何传闻');
 });
@@ -1136,7 +1141,7 @@ test('kyoten_event 人间界分支：五档推进、夺回回退、阈值间空�
     const used = create_era_fixture();
     used.store.set('flag:81', progress);
     used.store.set('flag:93', stage);
-    const mod = used.load_module('page/page-invasion');
+    const mod = used.load_module('system/invasion/invasion-kyoten');
     await mod.kyoten_event(1);
     assert.equal(
       used.store.get('flag:93'),
@@ -1160,7 +1165,7 @@ test('kyoten_event 人间界分支：五档推进、夺回回退、阈值间空�
     const fixture = create_era_fixture();
     fixture.store.set('flag:81', progress);
     fixture.store.set('flag:93', stage);
-    const mod = fixture.load_module('page/page-invasion');
+    const mod = fixture.load_module('system/invasion/invasion-kyoten');
     await mod.kyoten_event(1);
     assert.equal(
       fixture.store.get('flag:93'),
@@ -1173,7 +1178,7 @@ test('kyoten_event 人间界分支：五档推进、夺回回退、阈值间空�
   const idle = create_era_fixture();
   idle.store.set('flag:81', 1500);
   idle.store.set('flag:93', 1);
-  const mod = idle.load_module('page/page-invasion');
+  const mod = idle.load_module('system/invasion/invasion-kyoten');
   await mod.kyoten_event(1);
   assert.equal(idle.store.get('flag:93'), 1, '阈值间空转');
   assert.equal(history_texts(idle).length, 0);
@@ -1610,7 +1615,9 @@ test('征服后菜单 [0]：与 start_campaign() 直驱产生相同结算（提�
   const direct = create_era_fixture();
   make_world(direct, { fallen: 1 });
   direct.set_inputs(1);
-  const { start_campaign } = direct.load_module('page/page-invasion');
+  const { start_campaign } = direct.load_module(
+    'system/invasion/invasion-campaign',
+  );
   assert.equal(await start_campaign(), 1);
   assert.equal(direct.store.get('flag:81'), 400);
 });
@@ -1738,7 +1745,9 @@ test('medal_bonus：十一档与档界逐例（> 阈值判定），≤5 枚不�
   ];
   for (const [medals, expected] of cases) {
     const fixture = make_video_world({ medals });
-    const { medal_bonus } = fixture.load_module('page/page-invasion');
+    const { medal_bonus } = fixture.load_module(
+      'system/invasion/invasion-campaign',
+    );
     assert.equal(
       await medal_bonus(),
       expected,
@@ -2295,7 +2304,9 @@ test('inv_death_check：精锐部队的三条退场条件', async () => {
     fixture.store.set('base:5:1', 500);
     fixture.store.set('base:9:0', elite_hp);
     fixture.store.set('base:9:1', elite_mp);
-    const { inv_death_check } = fixture.load_module('page/page-invasion');
+    const { inv_death_check } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     return {
       ret: await inv_death_check(5, 9),
       texts: fixture.text_lines(),
@@ -2340,7 +2351,9 @@ test('inv_death_check：魔王侧四条退场条件与俘虏支', async () => {
     fixture.store.set('base:0:0', 5000); // 魔王体力
     fixture.store.set('base:0:1', 5000); // 魔王气力
     setup(fixture.store);
-    const { inv_death_check } = fixture.load_module('page/page-invasion');
+    const { inv_death_check } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     return { ret: await inv_death_check(0, 9), texts: fixture.text_lines() };
   };
 
@@ -2402,7 +2415,9 @@ test('inv_death_check 的 CFLAG 状态写入：俘虏支 9 / 逃回支 0', async
     fixture.store.set('base:7:0', 5000);
     fixture.store.set('base:7:1', 5000);
     setup(fixture.store);
-    const { inv_death_check } = fixture.load_module('page/page-invasion');
+    const { inv_death_check } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     return { ret: await inv_death_check(7, 9), fixture };
   };
 
@@ -2457,7 +2472,9 @@ test('invasion_event_seiei 战斗体：防御型 18 与血量/攻防套算', asy
   fixture.store.set('maxbase:18:1', 12000);
 
   const state = { sinkou: 2048, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   // RAND:FLAG:AREA = 2001 > 2000（才出敌）；RAND:2 == 0 → 防御型 18
   const rand = seq([2001, 0]);
   assert.equal(await invasion_event_seiei(81, 82, 2, state, rand), 0);
@@ -2544,7 +2561,9 @@ test('invasion_event_seiei 战斗体：精锐反击的伤害 ×5 与防御折半
   seed_seiei(fixture, 18);
   seed_seiei(fixture, 19);
   const state = { sinkou: 0, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   const ret = await invasion_event_seiei(81, 82, 2, state, seq([2001, 0]));
   assert.equal(ret, 1, '勇者被消灭：侵攻中止 RETURN 1');
   const texts = history_texts(fixture);
@@ -2580,7 +2599,9 @@ test('invasion_event_seiei 战斗体：第一条退场检查带实参、判精�
   fixture.store.set('base:18:0', 100); // 精锐残血 → 第一条检查判溃
 
   const state = { sinkou: 2048, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   assert.equal(await invasion_event_seiei(81, 82, 2, state, seq([2001, 0])), 0);
   // 胜利经验 SINKOU/5 = 409
   assert.equal(fixture.store.get('exp:1:80'), 409, '胜利经验 SINKOU/5');
@@ -2621,7 +2642,9 @@ test('invasion_event_seiei 战斗体：攻击型 19 与 FLAG:60 的等级补正'
   fixture.store.set('base:19:0', 0);
 
   const state = { sinkou: 0, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   // RAND:2 == 1 → 攻击型 19
   assert.equal(await invasion_event_seiei(81, 82, 2, state, seq([2001, 1])), 0);
 
@@ -2672,7 +2695,9 @@ test('invasion_event_seiei 战斗体：REPEAT 21 打满 → 战线崩溃 RETURN 
   seed_seiei(fixture, 19);
 
   const state = { sinkou: 2048, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   const rand = head_rand([2001, 0]);
   assert.equal(
     await invasion_event_seiei(81, 82, 2, state, rand),
@@ -2708,7 +2733,9 @@ test('invasion_event_seiei 战斗体：RAND:FLAG:AREA <= 2000 时不出现', asy
   fixture.store.set('flag:81', 5000);
   fixture.store.set('flag:82', 0);
   const state = { sinkou: 0, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   // RAND:5000 = 2000 → 不 > 2000
   assert.equal(
     await invasion_event_seiei(81, 82, 2, state, seq([2000])),
@@ -2728,7 +2755,9 @@ test('invasion_event_seiei 战斗体：侵攻度 < 5000 时整段跳过且不掷
   fixture.store.set('flag:81', 4999);
   fixture.store.set('flag:82', 0);
   const state = { sinkou: 0, yusya_i: 1 };
-  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const { invasion_event_seiei } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   const rand = seq([]); // 一次抽取都不该发生
   assert.equal(await invasion_event_seiei(81, 82, 2, state, rand), 0);
   assert.deepEqual(rand.uppers, [], 'FLAG:AREA >= 5000 不成立就不掷骰');
@@ -2997,14 +3026,17 @@ function make_arm_world({ sindo = 0, progress = 0, money = 0, ex95 = 0 } = {}) {
 // 直驱 FORT / CHALLENGE 两分支（实参顺序：AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I）
 async function run_fort(fixture, inputs, inv_type, state, rand) {
   fixture.set_inputs(...inputs);
-  const { invasion_event_fort } = fixture.load_module('page/page-invasion');
+  const { invasion_event_fort } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   return invasion_event_fort(81, 82, inv_type, state, rand);
 }
 
 async function run_challenge(fixture, inputs, inv_type, state, rand) {
   fixture.set_inputs(...inputs);
-  const { invasion_event_challenge } =
-    fixture.load_module('page/page-invasion');
+  const { invasion_event_challenge } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   return invasion_event_challenge(81, 82, inv_type, state, rand);
 }
 
@@ -3378,7 +3410,9 @@ test('FORT 的四个地区名表：AREA 决定五组称呼', async () => {
   ];
   for (const item of cases) {
     const fixture = make_arm_world();
-    const { invasion_event_fort } = fixture.load_module('page/page-invasion');
+    const { invasion_event_fort } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     await invasion_event_fort(
       item.area,
       82,
@@ -3398,8 +3432,9 @@ test('CHALLENGE 的 EX_FLAG:95 位检查：每个地区的单挑只发生一次'
   for (const [area, bit] of Object.entries(bits)) {
     const fixture = make_arm_world();
     fixture.store.set('exflag:95', Number(bit));
-    const { invasion_event_challenge } =
-      fixture.load_module('page/page-invasion');
+    const { invasion_event_challenge } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     const ret = await invasion_event_challenge(
       Number(area),
       82,
@@ -3413,8 +3448,9 @@ test('CHALLENGE 的 EX_FLAG:95 位检查：每个地区的单挑只发生一次'
   // 位未置：正常进入（并在此置位前不写 EX_FLAG:95——写入只在开挂取胜支）
   const fixture = make_arm_world();
   fixture.store.set('exflag:95', 8); // AREA 90 的位
-  const { invasion_event_challenge } =
-    fixture.load_module('page/page-invasion');
+  const { invasion_event_challenge } = fixture.load_module(
+    'system/invasion/invasion-event',
+  );
   assert.equal(
     await invasion_event_challenge(
       81,
@@ -3883,8 +3919,9 @@ test('CHALLENGE 的四个地区名表：AREA 决定称呼表与复现职业', as
     }
     // 抽取顺序：AREA 86+ 先掷职业 RAND:2，随后是 DATALIST 的 RAND:4、再 RAND:10
     const rand = head_rand([0, 0, 0]);
-    const { invasion_event_challenge } =
-      fixture.load_module('page/page-invasion');
+    const { invasion_event_challenge } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     fixture.set_inputs(1); // [1] 召唤魔王应战
     await invasion_event_challenge(
       item.area,
@@ -3937,8 +3974,9 @@ test('CHALLENGE 的四个地区名表：AREA 决定称呼表与复现职业', as
           callname: `角色${id}`,
         });
       }
-      const { invasion_event_challenge } =
-        fixture.load_module('page/page-invasion');
+      const { invasion_event_challenge } = fixture.load_module(
+        'system/invasion/invasion-event',
+      );
       fixture.set_inputs(1, 1); // [1] 召唤魔王应战 → [1] 使用氪金道具
       await invasion_event_challenge(
         area,
@@ -3984,7 +4022,9 @@ test('invasion_event_seiei 先制攻撃：会心/普通/忍术三档与伤害套
     fixture.store.set('base:18:0', roll5 === 0 ? 5000 : 5675);
     fixture.store.set('talent:18:251', talent251);
     const state = { sinkou: 2048, yusya_i: 1 };
-    const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+    const { invasion_event_seiei } = fixture.load_module(
+      'system/invasion/invasion-event',
+    );
     // RAND:5000 = 2001 → 出敌；RAND:2 = 0 → 防御型 18；RAND:5 = roll5
     assert.equal(
       await invasion_event_seiei(81, 82, 2, state, seq([2001, 0, roll5])),
@@ -4587,7 +4627,9 @@ test('【地区泛化】kyoten_event 的 ARG 2/3/4 分支：空转、不推进�
   // 模块必须从同一份夹具加载：fixture 每建一份就 purge 一次 ere/ 的模块缓存，
   // era 的绑定是每夹具一份（test/helpers/era-fixture.js）
   const run_kyoten = (fixture, arg) => {
-    const { kyoten_event } = fixture.load_module('page/page-invasion');
+    const { kyoten_event } = fixture.load_module(
+      'system/invasion/invasion-kyoten',
+    );
     return kyoten_event(arg);
   };
   const banner_count = (fixture) => kyoten_banner_lines(fixture).length;

@@ -528,7 +528,7 @@ export default [
   },
   {
     desc: 'M275 INVASION_CHECK 吞掉结局的转场目标（选退出后回不到标题，威望照加）',
-    file: 'ere/page/page-invasion.js',
+    file: 'ere/system/invasion/invasion-check.js',
     find: `    const ended = await ending_1();
     if (is_state(ended)) {
       return ended;

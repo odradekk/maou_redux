@@ -1,6 +1,6 @@
 /**
  * ere/page/page-ending.js ending_1 真身与 ending_3/4/5 接入的
- * 行为测试（issue #118），外加 ere/page/page-invasion.js invasion_check
+ * 行为测试（issue #118），外加 system/invasion/invasion-check.js invasion_check
  * 四组条件的触发测试（经模块公开接口 invasion_check 直驱）。天神宫组
  * 随 #652 删除（条件读的 EX_FLAG:101 无写点，死分支）；end10_55 演出
  * 本体保留、直驱测试。
@@ -66,7 +66,9 @@ function make_world(
 
 async function run_check(fixture, ...inputs) {
   fixture.set_inputs(...inputs);
-  const { invasion_check } = fixture.load_module('page/page-invasion');
+  const { invasion_check } = fixture.load_module(
+    'system/invasion/invasion-check',
+  );
   return invasion_check();
 }
 

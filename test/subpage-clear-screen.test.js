@@ -1179,7 +1179,7 @@ test('裁缝换屏：武器装备屏往返重画，行数相同（#724）', asyn
   assert_no_unread(fixture, '武器装备');
 });
 
-// —— 侵略的征服后菜单与出兵路线（page-invasion.js，#724） ——
+// —— 侵略的征服后菜单与出兵路线（page-invasion.js 与 system/invasion/，#724） ——
 
 test('出兵菜单换屏：掠夺路线的勇者屏取消后回出兵菜单，行数相同（#724）', async () => {
   const fixture = create_era_fixture();

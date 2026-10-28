@@ -5,8 +5,8 @@
  * 口上文件的同词先例 `kojo-dungeon-ravish.js`）；
  * 函数名沿用罗马字 `invasion_ryouzyoku`。
  *
- * 调用方是 ere/page/page-invasion.js 出兵路线的两处（人间界/精灵
- * 领域/龙之山/天界/天神宫各一段）。
+ * 调用方是出兵流程的两个结果段（system/invasion/invasion-campaign.js；
+ * 人间界/精灵领域/龙之山/天界/天神宫各一段）。
  *
  * 整份模块是**无状态纯叙事**：只有 PRINTFORMW/PRINTW/PRINTFORML 输出，没有
  * 任何 CFLAG/BASE/FLAG 写入。唯一的对外依赖是 monster_data（写 E: 三列的
