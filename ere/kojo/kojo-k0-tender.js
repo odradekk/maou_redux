@@ -77,25 +77,17 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_0 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_0 = 0;
+}
 
 /**
  * k0_kojo2：无助手 / 非村娘助手时的二次调教开始口上。
@@ -789,11 +781,8 @@ async function eventtrain_normal_k0(rand) {
   }
 }
 
-// EVENTTRAIN NORMAL 档注册（直调函数上方；测试可经导出函数绕 #PRI 单测检查）
-on(EVENT.TRAIN, eventtrain_normal_k0);
-
 // EVENTEND NORMAL 档：调教结束口上。死亡（BASE:0 <= 0）跳过。
-on(EVENT.END, async () => {
+async function handle_end() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
   const sc = () => self_call(target);
@@ -884,7 +873,7 @@ on(EVENT.END, async () => {
     return 1;
   }
   return 0;
-});
+}
 
 /**
  * self_kojo_k0：调教后事件口上。按 TFLAG:13 分段：
@@ -12334,4 +12323,15 @@ kojo_message_palamcng_family.register(0, kojo_message_palamcng_0);
 kojo_message_markcng_family.register(0, kojo_message_markcng_0);
 kojo_message_com_family.register(0, kojo_message_com_0);
 
-module.exports = { kojo_message_com_0, eventtrain_normal_k0 };
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, eventtrain_normal_k0);
+  on(EVENT.END, handle_end);
+}
+
+module.exports = { register, kojo_message_com_0, eventtrain_normal_k0 };

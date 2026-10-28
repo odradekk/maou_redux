@@ -85,7 +85,7 @@ function enroll_joined_characters() {
   }
 }
 
-on(EVENT.TURNEND, async () => {
+async function handle_turnend() {
   // 指针暂存与复位（助手不暂存——还原时读 FLAG:2，见下方目标还原）
   const target_pool = era_flag.target;
   era_flag.player = 0;
@@ -162,7 +162,7 @@ on(EVENT.TURNEND, async () => {
 
   // BEGIN SHOP——覆盖 #PRI 档的暂存值（后写胜出，#6 语义）
   return begin(STATE.SHOP);
-});
+}
 
 /**
  * 调教窗口本体：回合结算中段借调教域表的那四百多行。开关在调用方
@@ -722,3 +722,13 @@ async function decay_invasion_degree(region, spec) {
     }
   }
 }
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TURNEND, handle_turnend);
+}
+
+module.exports = { register };

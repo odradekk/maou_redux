@@ -14,6 +14,14 @@ const { EVENT } = require('#/data/event-name-const');
 
 // 空处理器：此处即为空定义，注册它以保留三档链结构与本文件的
 // 接入点；体内无任何动作
-on(EVENT.TURNEND, async () => {}, TIER.LATER);
+async function handle_turnend_later() {}
 
-module.exports = {};
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TURNEND, handle_turnend_later, TIER.LATER);
+}
+
+module.exports = { register };

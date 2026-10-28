@@ -37,6 +37,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 /**
  * 商店轮测试的夹具：预置商店轮的入口状态 BOUGHT = -1（EVENTFIRST 链初始
@@ -627,7 +628,7 @@ test('SHOP_AFTER_LOAD：读档后的进入路径不执行 EVENTSHOP 链（system
   const probe_and_run = async (options) => {
     const fixture = create_shop_fixture();
     // 装配 kojo 的 #PRI 档（真实链形状：多档注册），计数探针挂 NORMAL 档
-    fixture.load_module('kojo/kojo-system');
+    register_handlers(fixture, 'kojo/kojo-system');
     const { on } = fixture.load_module('system/event/registry');
     let probe = 0;
     on('EVENTSHOP', () => {

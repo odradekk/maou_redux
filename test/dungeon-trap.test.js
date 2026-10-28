@@ -22,6 +22,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 /** 定值序列注入：按消费顺序取值，耗尽后用末值 */
 function seq(...values) {
@@ -262,7 +263,7 @@ test('self_saimin_trap：两档催眠自慰——攻防归零 / 减半，TARGET 
   // 开调教域（#508）：自动调教三连的本体写的 SOURCE 要落得下才看得到效果，
   // 否则被夹具的引擎检查静默丢弃；三连的第三站 source_check_auto 是真身
   // 事件（生产由 main-loop.js:47 加载），也要显式载入才会响应
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 80);
@@ -382,7 +383,7 @@ test('slime_room_trap：攻防弱化 + 肛门经验 + 润滑位置起（位 3）
   const { slime_room_trap } = load(fixture);
   // 开调教域（#508）：com50_auto 真身写的 SOURCE 要落得下（夹具镜像引擎检查），
   // 第三站 source_check_auto 的真身也要显式载入（生产由 main-loop 加载）
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 90);
@@ -604,7 +605,7 @@ test('a_worm_trap：气力损耗、A 经验 > 30 未寄生则寄生（TALENT:193
   assert.equal(fixture.store.get('exp:1:1'), 32, '寄生后再 +1');
   // 已寄生 → 肛门虫自动调教三连（CALL com13_auto——真身）
   fixture.store.set('base:1:1', 1000);
-  fixture.load_module('system/train/source-check'); // #508：第三站真身要注册
+  register_handlers(fixture, 'system/train/source-check'); // #508：第三站真身要注册
   fixture.era.beginTrain(0, 1); // #508：SOURCE 等调教域表要落得下（夹具检查）
   await a_worm_trap(1, seq(50));
   assert.ok(
@@ -651,7 +652,7 @@ test('love_bug_trap：伤害 + 爱抚自动调教（com0_auto）+ 天使免疫',
   const { love_bug_trap } = load(fixture);
   // 开调教域（#508）：com0_auto 真身写的 SOURCE 要落得下（夹具镜像引擎检查），
   // 第三站 source_check_auto 的真身也要显式载入（生产由 main-loop 加载）
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('talent:1:314', 6); // 天使
   assert.equal(await love_bug_trap(1, seq(10)), 1, '天使飞起（未作动）');
@@ -1061,7 +1062,7 @@ test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON�
       'love_bug_trap',
       async (mod, fixture) => {
         // 的 com0_auto 真身要开调教域（#508），同 LOVE_BUG 主用例
-        fixture.load_module('system/train/source-check');
+        register_handlers(fixture, 'system/train/source-check');
         fixture.era.beginTrain(0, 1);
         await mod.love_bug_trap(1, seq(10, 39));
       },

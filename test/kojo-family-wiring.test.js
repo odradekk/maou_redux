@@ -1,7 +1,7 @@
 /**
  * 口上模块接入的通用锁（issue #282）：`ere/kojo/kojo-*.js` 里靠副作用注册
  * 进 `kojo_message_com_family` / `self_kojo_family` 的模块，必须被主启动图
- * （ere/system/flow/main-loop.js）require——注册与否全看有没有人 require 它，
+ * （ere/system/flow/startup.js 的装配清单）require——注册与否全看有没有人 require 它，
  * 而口上票的单测走 `load_module('kojo/kojo-xxx')` 直接加载模块，绕过主启动图，
  * 漏装不会被任何检查发现（#228 的 com-cloth 就是同写法漏的：游戏里两条指令
  *

@@ -13,6 +13,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
 
 const LILY = 24; // Chara24.yml「名前」「呼び名」= 莉莉
@@ -39,8 +40,8 @@ function setup_lily(seed, selectcom = 0) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k11-lily');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k11-lily');
   return fixture;
 }
 

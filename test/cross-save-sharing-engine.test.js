@@ -7,6 +7,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   create_chara_loader,
   create_variable_loader,
@@ -110,7 +111,7 @@ engine_test(
     flags.date = 42;
     flags.money = 98765;
     const net = fixture.load_module('system/cross-save-sharing');
-    fixture.load_module('event/event-load');
+    register_handlers(fixture, 'event/event-load');
 
     for (let attempt = 0; attempt < 2; attempt += 1) {
       fixture.set_inputs(0, 9);

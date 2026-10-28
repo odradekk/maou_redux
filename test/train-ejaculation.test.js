@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 function seed_world() {
@@ -36,9 +37,9 @@ function seed_world() {
 test('#769 正常位完整回合：魔王满条后射精，保留封顶前的余量', async () => {
   const { fixture } = seed_world();
   fixture.load_module('system/train/com-sex');
-  fixture.load_module('event/event-com');
-  fixture.load_module('system/train/source-check');
-  fixture.load_module('event/event-comend');
+  register_handlers(fixture, 'event/event-com');
+  register_handlers(fixture, 'system/train/source-check');
+  register_handlers(fixture, 'event/event-comend');
   const { execute_command_round } = fixture.load_module(
     'system/train/train-loop',
   );

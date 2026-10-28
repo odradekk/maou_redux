@@ -21,6 +21,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   assert_one_blank_after,
   assert_one_blank_before,
@@ -1399,8 +1400,8 @@ test('处刑口上：K2 与 K4 注册四种处刑处理器', () => {
     grotesque_koujo_family,
     public_exucution_koujo_family,
   } = fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k2-timid');
-  fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(fixture, 'kojo/kojo-k2-timid');
+  register_handlers(fixture, 'kojo/kojo-k4-stoic');
 
   for (const family of [
     banishment_koujo_family,

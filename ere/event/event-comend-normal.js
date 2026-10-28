@@ -33,7 +33,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { EVENT } = require('#/data/event-name-const');
 
 // EVENTCOMEND（无属性档——on 的缺省档即 TIER.NORMAL）
-on(EVENT.COMEND, async () => {
+async function handle_comend() {
   const target = era_flag.target;
   // CFLAG:TARGET:100 —— 已经认定过就不再认定（一次性位）。
   // 这里的 RETURN 0 只结束**本定义**的执行，链上其它 EVENTCOMEND 照跑
@@ -55,4 +55,14 @@ on(EVENT.COMEND, async () => {
       '（能守住贞操的话，稍微被进攻一下后面，也不是不能接受）',
     ); // 打印后等待确认
   }
-});
+}
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.COMEND, handle_comend);
+}
+
+module.exports = { register };

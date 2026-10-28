@@ -19,6 +19,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   join_slave_chara,
   preset_chara_0,
@@ -41,8 +42,8 @@ function seed_world(fixture) {
 test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色入列且先于火车表写入', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
-  fixture.load_module('event/event-train'); // EVENTTRAIN 处理器真身（写 TFLAG）
-  fixture.load_module('page/page-usercom'); // 注册 999 → AFTERTRAIN
+  register_handlers(fixture, 'event/event-train'); // EVENTTRAIN 处理器真身（写 TFLAG）
+  register_handlers(fixture, 'page/page-usercom'); // 注册 999 → AFTERTRAIN
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
 
@@ -65,7 +66,7 @@ test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色�
 test('BEGIN TRAIN 清空 TSTR:90（整族清空的 ere 手动镜像，#212）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  fixture.load_module('page/page-usercom'); // 注册 999 → AFTERTRAIN
+  register_handlers(fixture, 'page/page-usercom'); // 注册 999 → AFTERTRAIN
   fixture.set_inputs(999);
   // 上一局残留的前回指令名（tstr 是持久普通表，见 yml/TStr.yml）
   fixture.store.set('tstr:90', '振动杖');
@@ -93,7 +94,7 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
   const { com_able_family, com_family } = fixture.load_module(
     'system/train/com-family',
   );
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
 
   // 探针：SHOW_STATUS 落一笔标记（供 COM_ABLE 探针证明自己在其后）
@@ -158,7 +159,7 @@ test('回合循环的回调顺序：逐条钉死（探针固定）', async () =>
 test('COM_ABLE 未定义即视为可执行：零实现下可直选空间 101 个编号全可用', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const { scan_usable_commands } = fixture.load_module(
     'system/train/train-loop',
   );
@@ -176,7 +177,7 @@ test('#213 输入映射：玩家输入是 L_IDX，SELECTCOM 取 L_I（39→40 / 
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { com_family } = fixture.load_module('system/train/com-family');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
   // 指令 40（打屁股）的探针实现：证明经映射分发到位
   com_family.register(40, async () => {
@@ -228,7 +229,7 @@ test('升格回合：COM8 跳到 COM84 后 PREVCOM 保留回填的 SELECTCOM', a
 test('#213 输入映射：89 跑出穿脱衣服的路由，未实现 → 重新要求输入', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
 
   // 89 = 穿脱衣服的 L_IDX（Train.csv 110）。指令 110 未实现 → 引擎「重新要求输入」：
   // SELECTCOM 已置、无输出、PREVCOM 不推进、下一输入（999）正常退出
@@ -258,7 +259,7 @@ test('#213 输入映射：映射外的编号原样落 USERCOM（999 出口照常
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
   on('USERCOM', async (result) => probe.push(`usercom(${result})`));
 
@@ -278,7 +279,7 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   com_able_family.register(5, async () => 0); // 指令 5 显式禁用
   const probe = [];
   on('EVENTCOM', async () => probe.push('eventcom'));
@@ -313,7 +314,7 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
   const { com_able_family: family_locked } = locked.load_module(
     'system/train/com-family',
   );
-  locked.load_module('page/page-usercom');
+  register_handlers(locked, 'page/page-usercom');
   family_locked.register(5, async () => 0);
   locked.set_inputs(5);
   const { run_train: run_locked } = locked.load_module(
@@ -327,7 +328,7 @@ test('指令处理器未实现：EVENTCOM 后重新要求输入（不结算、�
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   const probe = [];
   on('SHOW_STATUS', async () => probe.push('show_status'));
   on('EVENTCOM', async () => probe.push('eventcom'));
@@ -361,9 +362,9 @@ test('999 → USERCOM → AFTERTRAIN：run_aftertrain 跑 EVENTEND 并收尾 end
   // 这笔写入会被检查拦下（引擎寻址语义），flag:7 落不了盘。以此固定
   //「链后收尾」的顺序
   fixture.store.set('tflag:860', 1);
-  fixture.load_module('event/event-train');
-  fixture.load_module('event/event-end');
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'event/event-train');
+  register_handlers(fixture, 'event/event-end');
+  register_handlers(fixture, 'page/page-usercom');
   // 直接驱动两段状态处理器（主循环接驳在端到端用例证）；第二枚 999 是
   // JUEL_CHECK 交互循环的退出键（#47）
   fixture.set_inputs(999, 999);

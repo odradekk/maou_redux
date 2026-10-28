@@ -53,8 +53,8 @@
  */
 
 const era = require('#/era-electron');
-const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const { on } = require('#/system/event/registry');
+const { settle_ejaculation_gauge } = require('#/system/train/calc-ejaculation');
 const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { MASTER } = require('#/utils/master');
@@ -3158,7 +3158,7 @@ function loss_bar(label, base, maxbase, loss, vital_variant) {
 
 // —— source_check 主体（按既有顺序编排） ——
 
-on(EVENT.SOURCE_CHECK, async () => {
+async function handle_source_check() {
   cid = era_flag.target;
   player = era_flag.player;
   down_map.clear();
@@ -3535,7 +3535,7 @@ on(EVENT.SOURCE_CHECK, async () => {
   // 下一轮换屏才会清掉它们——漏掉这一键，调教循环回到指令菜单的换屏
   // 会抹掉玩家还没读的结算结果。
   await era.waitAnyKey();
-});
+}
 
 // SOURCE_CHECK_AUTO（issue #461）：自动调教
 // 入口。与 manual 共享大部分函数，但序列不同——不含口上/EQUIP_COM 链/服装
@@ -3543,7 +3543,7 @@ on(EVENT.SOURCE_CHECK, async () => {
 // AUTO 从 PLAYER_SKILL_CHECK 直接起步）、不含"同一指令连续"减半（AUTO 不
 // 读 SELECTCOM）、不含两处"相性"梯度块、不含 TFLAG:59 赋值、不含灵魂错位/
 // 失神检查、不含挿しっぱ判定
-on(EVENT.SOURCE_CHECK_AUTO, async () => {
+async function handle_source_check_auto() {
   cid = era_flag.target;
   player = era_flag.player;
   down_map.clear();
@@ -3648,6 +3648,15 @@ on(EVENT.SOURCE_CHECK_AUTO, async () => {
   show_source();
   // 参数变动的静默结算（含 DOWN，不打印）
   palam_up_check_mini();
-});
+}
 
-module.exports = { auto_num_check };
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.SOURCE_CHECK, handle_source_check);
+  on(EVENT.SOURCE_CHECK_AUTO, handle_source_check_auto);
+}
+
+module.exports = { register, auto_num_check };

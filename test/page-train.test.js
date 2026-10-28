@@ -12,6 +12,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 // Palam.yml 的名字表形状（运行时由引擎装载进 fieldNames/staticData）：0..15
@@ -27,7 +28,7 @@ function seed_world(fixture) {
   era_flag.target = 31;
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
-  fixture.load_module('page/page-train');
+  register_handlers(fixture, 'page/page-train');
   return era_flag;
 }
 
@@ -578,7 +579,7 @@ test('射精（助手）：仅助手调教时显示（IF ASSIPLAY）', async () 
     era_flag.assi = 32;
     era_flag.assiplay = assiplay;
     fixture.era.beginTrain(0, 31, 32);
-    fixture.load_module('page/page-train');
+    register_handlers(fixture, 'page/page-train');
     era_flag.day_count = 0;
     fixture.store.set('talent:32:122', 1);
     fixture.store.set('maxbase:32:2', 10000);

@@ -105,16 +105,16 @@ export default [
   {
     desc: 'M69 EVENTSHOP #PRI 档总开关默认值（FLAG:7 = 2 改 1）',
     file: 'ere/kojo/kojo-system.js',
-    find: "      era.set('flag:7', 2);",
-    replace: "      era.set('flag:7', 1);",
+    find: "    era.set('flag:7', 2);",
+    replace: "    era.set('flag:7', 1);",
     tests: ['kojo-system'],
     must_mention: 'EVENTSHOP',
   },
   {
     desc: 'M70 K5 EVENTEND #LATER 档清标志删除',
     file: 'ere/kojo/kojo-k5-mao.js',
-    find: '    game.kojo.口上存在_5 = 0;',
-    replace: '    // 变异：清标志删除',
+    find: '  game.kojo.口上存在_5 = 0;',
+    replace: '  // 变异：清标志删除',
     tests: ['kojo-system'],
     must_mention: '清 0',
   },
@@ -559,18 +559,18 @@ export default [
   },
   {
     desc: 'M1773 K4 主启动图删 K4 冷徹口上注册（KOJO 4 不进实际运行图，#235）',
-    file: 'ere/system/flow/main-loop.js',
-    find: "require('#/kojo/kojo-k4-stoic');",
-    replace: '// 变异：K4 冷徹口上不在主启动图注册',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k4-stoic', require('#/kojo/kojo-k4-stoic')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图漏装：kojo-k4-stoic',
   },
   {
     desc: 'M1774 K4 插值槽位错配（CALLNAME:MASTER 与 NAME:MASTER 混，#235 保真；#640 起由行为断言守）',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: '        `四脚爬爬，扭动着腰，用炽热的视线仰视着${master_name}。`,\n      );',
+    find: '      `四脚爬爬，扭动着腰，用炽热的视线仰视着${master_name}。`,\n    );',
     replace:
-      '        `四脚爬爬，扭动着腰，用炽热的视线仰视着${target_name}。`,\n      ); // 变异：填错孔',
+      '      `四脚爬爬，扭动着腰，用炽热的视线仰视着${target_name}。`,\n    ); // 变异：填错孔',
     tests: ['kojo-k4-stoic'],
     must_mention: '仰视着你',
   },
@@ -1371,8 +1371,8 @@ export default [
   {
     desc: 'M1560 K2 EVENTEND #LATER 档清标志删除（#233）',
     file: 'ere/kojo/kojo-k2-timid.js',
-    find: '    game.kojo.口上存在_2 = 0;',
-    replace: '    // 变异：清标志删除',
+    find: '  game.kojo.口上存在_2 = 0;',
+    replace: '  // 变异：清标志删除',
     tests: ['kojo-k2-timid'],
     must_mention: 'FLAG:102',
   },
@@ -2313,10 +2313,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2340 K11 EVENTTRAIN #PRI 存在标志置位丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '    game.kojo.口上存在_11 = 1; // FLAG:111 = 1（K11 口上存在标志）\n    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;',
-    replace: `    // 变异：K11 口上存在标志置位丢失
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;`,
+    find: '  game.kojo.口上存在_11 = 1; // FLAG:111 = 1（K11 口上存在标志）\n  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;',
+    replace:
+      '  // 变异：K11 口上存在标志置位丢失\n  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;',
     tests: ['kojo-k11-lily'],
     must_mention:
       'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）',
@@ -2324,10 +2323,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2341 K11 EVENTEND #LATER 存在标志清零丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '    game.kojo.口上存在_11 = 0; // FLAG:111 = 0\n  },\n  TIER.LATER,',
-    replace: `    // 变异：K11 口上存在标志清零丢失
-  },
-  TIER.LATER,`,
+    find: 'function handle_end_later() {\n  game.kojo.口上存在_11 = 0; // FLAG:111 = 0\n}',
+    replace:
+      'function handle_end_later() {\n  // 变异：K11 口上存在标志清零丢失\n}',
     tests: ['kojo-k11-lily'],
     must_mention:
       'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K11 一对）',
@@ -2335,46 +2333,18 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2342 EVENTTRAIN 主体 FLAG:7 <= 0 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-    const kojo = chara(target).kojo;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }`,
-    replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-    const kojo = chara(target).kojo;
-    if (false) {
-      // 变异：FLAG:7 <= 0 检查删
-      return 0;
-    }
-    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }`,
+    find: "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }",
+    replace:
+      '  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (false) {\n    // 变异：FLAG:7 <= 0 检查删\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTTRAIN 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   },
   {
     desc: 'M2343 EVENTTRAIN 主体 TALENT:171 != 1 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-    const kojo = chara(target).kojo;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }`,
-    replace: `    const assi_name = chara_callname(assi); // %SAVESTR:ASSI%
-    const kojo = chara(target).kojo;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (false) {
-      // 变异：TALENT:171 != 1 检查删
-      return 0;
-    }`,
+    find: "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }",
+    replace:
+      "  const assi_name = chara_callname(assi); // %SAVESTR:ASSI%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (false) {\n    // 变异：TALENT:171 != 1 检查删\n    return 0;\n  }",
     tests: ['kojo-k11-lily'],
     must_mention:
       'EVENTTRAIN 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
@@ -2382,14 +2352,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2344 姉妹判定 CFLAG:TARGET:21 姐姐标记写错（317 改 316）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    if (assi > 0 && assi == 17) {
-      kojo.肉亲_0 = 317;
-      chara(assi).kojo.肉亲_0 = 224;
-    }`,
-    replace: `    if (assi > 0 && assi == 17) {
-      kojo.肉亲_0 = 316; // 变异
-      chara(assi).kojo.肉亲_0 = 224;
-    }`,
+    find: '  if (assi > 0 && assi == 17) {\n    kojo.肉亲_0 = 317;\n    chara(assi).kojo.肉亲_0 = 224;\n  }',
+    replace:
+      '  if (assi > 0 && assi == 17) {\n    kojo.肉亲_0 = 316; // 变异\n    chara(assi).kojo.肉亲_0 = 224;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention:
       '初调教（CFLAG:201 == 0）：助手是玛奥时走姉妹相认分档，互标肉亲关系并置 CFLAG:202',
@@ -2397,14 +2362,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2345 姉妹判定 CFLAG:ASSI:21 妹妹标记写错（224 改 223）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    if (assi > 0 && assi == 17) {
-      kojo.肉亲_0 = 317;
-      chara(assi).kojo.肉亲_0 = 224;
-    }`,
-    replace: `    if (assi > 0 && assi == 17) {
-      kojo.肉亲_0 = 317;
-      chara(assi).kojo.肉亲_0 = 223; // 变异
-    }`,
+    find: '  if (assi > 0 && assi == 17) {\n    kojo.肉亲_0 = 317;\n    chara(assi).kojo.肉亲_0 = 224;\n  }',
+    replace:
+      '  if (assi > 0 && assi == 17) {\n    kojo.肉亲_0 = 317;\n    chara(assi).kojo.肉亲_0 = 223; // 变异\n  }',
     tests: ['kojo-k11-lily'],
     must_mention:
       '初调教（CFLAG:201 == 0）：助手是玛奥时走姉妹相认分档，互标肉亲关系并置 CFLAG:202',
@@ -2412,12 +2372,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2346 初调教推进 CFLAG:201 写错（1 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `      }
-      kojo.初调教 = 1;
-      return 1;`,
-    replace: `      }
-      kojo.初调教 = 2; // 变异
-      return 1;`,
+    find: '    }\n    kojo.初调教 = 1;\n    return 1;',
+    replace: '    }\n    kojo.初调教 = 2; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention:
       '初调教（CFLAG:201 == 0）：无玛奥助手时走寻妹对峙分档，推进到 1',
@@ -2425,9 +2381,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2347 魔族化推进写错（CFLAG:400 = 2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "      // 魔族化（１回のみ，初回调教后、陷落前）\n      await era.printAndWait(''); // PRINTFORMW 空行\n      kojo.魔族化_K11 = 2;\n      return 1;",
+    find: "    // 魔族化（１回のみ，初回调教后、陷落前）\n    await era.printAndWait(''); // PRINTFORMW 空行\n    kojo.魔族化_K11 = 2;\n    return 1;",
     replace:
-      "      // 魔族化（１回のみ，初回调教后、陷落前）\n      await era.printAndWait(''); // PRINTFORMW 空行\n      kojo.魔族化_K11 = 1; // 变异\n      return 1;",
+      "    // 魔族化（１回のみ，初回调教后、陷落前）\n    await era.printAndWait(''); // PRINTFORMW 空行\n    kojo.魔族化_K11 = 1; // 变异\n    return 1;",
     tests: ['kojo-k11-lily'],
     must_mention:
       '魔族化（１回のみ）：CFLAG:201<5 且未魔族化时改造，CFLAG:400 = 2',
@@ -2435,9 +2391,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2348 NTR再捕获（爱慕/淫乱分支）清零丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "      if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {\n        era.drawLine();\n        await era.printAndWait(''); // PRINTFORMW 空行\n        kojo.NTR再捕获 = 0;\n      } else {",
+    find: "    if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {\n      era.drawLine();\n      await era.printAndWait(''); // PRINTFORMW 空行\n      kojo.NTR再捕获 = 0;\n    } else {",
     replace:
-      "      if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {\n        era.drawLine();\n        await era.printAndWait(''); // PRINTFORMW 空行\n        // 变异：CFLAG:650 清零丢失\n      } else {",
+      "    if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {\n      era.drawLine();\n      await era.printAndWait(''); // PRINTFORMW 空行\n      // 变异：CFLAG:650 清零丢失\n    } else {",
     tests: ['kojo-k11-lily'],
     must_mention:
       'NTR再捕获（CFLAG:201>=1 && CFLAG:650==1）：爱慕分支清 NTR 开关',
@@ -2445,45 +2401,41 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2349 屈服刻印Lv1推进写错（2 改 3）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '      );\n      kojo.初调教 = 2;\n      return 1;',
-    replace: '      );\n      kojo.初调教 = 3; // 变异\n      return 1;',
+    find: '    );\n    kojo.初调教 = 2;\n    return 1;',
+    replace: '    );\n    kojo.初调教 = 3; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
   },
   {
     desc: 'M2350 屈服刻印Lv2推进写错（3 改 4）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '      );\n      kojo.初调教 = 3;\n      return 1;',
-    replace: '      );\n      kojo.初调教 = 4; // 变异\n      return 1;',
+    find: '    );\n    kojo.初调教 = 3;\n    return 1;',
+    replace: '    );\n    kojo.初调教 = 4; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
   },
   {
     desc: 'M2351 屈服刻印Lv3推进写错（4 改 5）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '      );\n      kojo.初调教 = 4;\n      return 1;',
-    replace: '      );\n      kojo.初调教 = 5; // 变异\n      return 1;',
+    find: '    );\n    kojo.初调教 = 4;\n    return 1;',
+    replace: '    );\n    kojo.初调教 = 5; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '屈服刻印分档（各 Lv 一次）：CFLAG:201 1→2、2→3、3→4',
   },
   {
     desc: 'M2352 淫乱推进写错（5 改 6）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `      }
-      kojo.初调教 = 5;
-      return 1;`,
-    replace: `      }
-      kojo.初调教 = 6; // 变异
-      return 1;`,
+    find: '    }\n    kojo.初调教 = 5;\n    return 1;',
+    replace: '    }\n    kojo.初调教 = 6; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '淫乱：CFLAG:201 = 5，处女附注按 TALENT:0 分档',
   },
   {
     desc: 'M2353 淫乱+魔族化推进写错（6 改 7，调教前从魔族档）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '          await era.printAndWait(`${target_name}的双眼却露出了期待的光芒…`);\n        }\n        kojo.初调教 = 6;\n        return 1;\n      } else if (kojo.魔族化_K11 == 2) {',
+    find: '        await era.printAndWait(`${target_name}的双眼却露出了期待的光芒…`);\n      }\n      kojo.初调教 = 6;\n      return 1;\n    } else if (kojo.魔族化_K11 == 2) {',
     replace:
-      '          await era.printAndWait(`${target_name}的双眼却露出了期待的光芒…`);\n        }\n        kojo.初调教 = 7; // 变异\n        return 1;\n      } else if (kojo.魔族化_K11 == 2) {',
+      '        await era.printAndWait(`${target_name}的双眼却露出了期待的光芒…`);\n      }\n      kojo.初调教 = 7; // 变异\n      return 1;\n    } else if (kojo.魔族化_K11 == 2) {',
     tests: ['kojo-k11-lily'],
     must_mention:
       '淫乱+魔族化：调教前从魔族（CFLAG:400==1）分档，CFLAG:201 = 6',
@@ -2491,31 +2443,26 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2354 爱慕推进写错（7 改 6）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `      }
-      kojo.初调教 = 7;
-      return 1;`,
-    replace: `      }
-      kojo.初调教 = 6; // 变异
-      return 1;`,
+    find: '    }\n    kojo.初调教 = 7;\n    return 1;',
+    replace: '    }\n    kojo.初调教 = 6; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '爱慕：CFLAG:201 = 7',
   },
   {
     desc: 'M2355 崩坏推进写错（9 改 8）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '      await era.printAndWait(`「啊哈…呼呼…啊……哈哈……」`);\n      kojo.初调教 = 9;\n      return 1;',
+    find: '    await era.printAndWait(`「啊哈…呼呼…啊……哈哈……」`);\n    kojo.初调教 = 9;\n    return 1;',
     replace:
-      '      await era.printAndWait(`「啊哈…呼呼…啊……哈哈……」`);\n      kojo.初调教 = 8; // 变异\n      return 1;',
+      '    await era.printAndWait(`「啊哈…呼呼…啊……哈哈……」`);\n    kojo.初调教 = 8; // 变异\n    return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '崩坏（TALENT:9 == 1 && CFLAG:201 < 9）：CFLAG:201 = 9',
   },
   {
     desc: 'M2356 崩坏后二回目以降 CALL K11_KOJO2 丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '    } else if (era0(`talent:${target}:9`) == 1) {\n      // 崩坏后（已崩坏，二回目以降）\n      await k11_kojo2(); // CALL K11_KOJO2\n    } else if (assi < 0) {',
-    replace: `    } else if (era0(\`talent:\${target}:9\`) == 1) {
-      // 变异：崩坏后 CALL K11_KOJO2 丢失
-    } else if (assi < 0) {`,
+    find: '  } else if (era0(`talent:${target}:9`) == 1) {\n    // 崩坏后（已崩坏，二回目以降）\n    await k11_kojo2(); // CALL K11_KOJO2\n  } else if (assi < 0) {',
+    replace:
+      '  } else if (era0(`talent:${target}:9`) == 1) {\n    // 变异：崩坏后 CALL K11_KOJO2 丢失\n  } else if (assi < 0) {',
     tests: ['kojo-k11-lily'],
     must_mention:
       '崩坏后（TALENT:9==1 且 CFLAG:201==9）改走 K11_KOJO2，不再打崩坏台词',
@@ -2523,20 +2470,18 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2357 无助手 CALL K11_KOJO2 丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '    } else if (assi < 0) {\n      // 无助手\n      await k11_kojo2(); // CALL K11_KOJO2\n    } else if (era0(`talent:${MASTER}:122`) == 0) {',
-    replace: `    } else if (assi < 0) {
-      // 变异：无助手 CALL K11_KOJO2 丢失
-    } else if (era0(\`talent:\${MASTER}:122\`) == 0) {`,
+    find: '  } else if (assi < 0) {\n    // 无助手\n    await k11_kojo2(); // CALL K11_KOJO2\n  } else if (era0(`talent:${MASTER}:122`) == 0) {',
+    replace:
+      '  } else if (assi < 0) {\n    // 变异：无助手 CALL K11_KOJO2 丢失\n  } else if (era0(`talent:${MASTER}:122`) == 0) {',
     tests: ['kojo-k11-lily'],
     must_mention: '无助手（ASSI < 0）时岔去 K11_KOJO2，不进简易助手分支',
   },
   {
     desc: 'M2358 主人非男性 CALL K11_KOJO2 丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '    } else if (era0(`talent:${MASTER}:122`) == 0) {\n      // 主人非男性时二回目以降（简易助手口上不适用）\n      await k11_kojo2(); // CALL K11_KOJO2\n    } else if (assi == 17) {',
-    replace: `    } else if (era0(\`talent:\${MASTER}:122\`) == 0) {
-      // 变异：主人非男性 CALL K11_KOJO2 丢失
-    } else if (assi == 17) {`,
+    find: '  } else if (era0(`talent:${MASTER}:122`) == 0) {\n    // 主人非男性时二回目以降（简易助手口上不适用）\n    await k11_kojo2(); // CALL K11_KOJO2\n  } else if (assi == 17) {',
+    replace:
+      '  } else if (era0(`talent:${MASTER}:122`) == 0) {\n    // 变异：主人非男性 CALL K11_KOJO2 丢失\n  } else if (assi == 17) {',
     tests: ['kojo-k11-lily'],
     must_mention:
       '主人非男性（TALENT:MASTER:122==0）时岔去 K11_KOJO2，不进简易助手分支',
@@ -2544,31 +2489,25 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2359 助手非玛奥 CALL K11_KOJO2 丢失（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '    } else {\n      // 口上のある助手が居ない場合（助手非玛奥，或无助手专属口上）\n      await k11_kojo2(); // CALL K11_KOJO2\n    }',
-    replace: `    } else {
-      // 变异：助手非玛奥 CALL K11_KOJO2 丢失
-    }`,
+    find: '  } else {\n    // 口上のある助手が居ない場合（助手非玛奥，或无助手专属口上）\n    await k11_kojo2(); // CALL K11_KOJO2\n  }',
+    replace: '  } else {\n    // 变异：助手非玛奥 CALL K11_KOJO2 丢失\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: '助手非玛奥时岔去 K11_KOJO2，不进简易助手分支',
   },
   {
     desc: 'M2360 助手玛奥初めて それ以外 CFLAG:202 推进写错（1 改 2）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `          kojo.简易助手_0 = 1;
-        }
-        return 1;`,
-    replace: `          kojo.简易助手_0 = 2; // 变异
-        }
-        return 1;`,
+    find: '        kojo.简易助手_0 = 1;\n      }\n      return 1;',
+    replace: '        kojo.简易助手_0 = 2; // 变异\n      }\n      return 1;',
     tests: ['kojo-k11-lily'],
     must_mention: '助手玛奥初めて：未持爱慕/淫乱时それ以外分档，CFLAG:202 = 1',
   },
   {
     desc: 'M2361 助手玛奥初めて 陷落事件（已持爱慕）CFLAG:202 推进写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '            );\n          }\n          kojo.简易助手_0 = 2;\n        } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {',
+    find: '          );\n        }\n        kojo.简易助手_0 = 2;\n      } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {',
     replace:
-      '            );\n          }\n          kojo.简易助手_0 = 1; // 变异\n        } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {',
+      '          );\n        }\n        kojo.简易助手_0 = 1; // 变异\n      } else if (era0(`talent:${target}:76`) == 1 && kojo.初调教 >= 5) {',
     tests: ['kojo-k11-lily'],
     must_mention:
       '助手玛奥初めて：已持爱慕且 CFLAG:201>=5 时陷落事件分档，CFLAG:202 = 2',
@@ -2576,9 +2515,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2362 助手玛奥二回目以降（爱慕）CFLAG:202 推进写错（2 改 1）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '            `看着已经彻底变样了的姐姐，${assi_name}微笑了起来………`,\n          );\n          kojo.简易助手_0 = 2;\n        } else if (era0(`talent:${target}:76`) == 1) {',
+    find: '          `看着已经彻底变样了的姐姐，${assi_name}微笑了起来………`,\n        );\n        kojo.简易助手_0 = 2;\n      } else if (era0(`talent:${target}:76`) == 1) {',
     replace:
-      '            `看着已经彻底变样了的姐姐，${assi_name}微笑了起来………`,\n          );\n          kojo.简易助手_0 = 1; // 变异\n        } else if (era0(`talent:${target}:76`) == 1) {',
+      '          `看着已经彻底变样了的姐姐，${assi_name}微笑了起来………`,\n        );\n        kojo.简易助手_0 = 1; // 变异\n      } else if (era0(`talent:${target}:76`) == 1) {',
     tests: ['kojo-k11-lily'],
     must_mention:
       '助手玛奥二回目以降：CFLAG:202==1 且爱慕时进一步陷落，CFLAG:202 = 2',
@@ -2586,9 +2525,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2363 助手玛奥それ以外（拒绝分档）误改为推进 CFLAG:202（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '        await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n        return 1;',
+    find: '      await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n      return 1;',
     replace:
-      '        await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n        era.set(`cflag:${target}:202`, 2); // 变异：それ以外不推进\n        return 1;',
+      '      await era.printAndWait(`「不要…不要不要不要啊…神啊，救救我………」`);\n      era.set(`cflag:${target}:202`, 2); // 变异：それ以外不推进\n      return 1;',
     tests: ['kojo-k11-lily'],
     must_mention:
       '助手玛奥それ以外（未持爱慕/淫乱、CFLAG:202==1）：拒绝分档，不改 CFLAG:202',
@@ -2596,12 +2535,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2364 K11_KOJO2 崩坏条件错格（TALENT:9==1 改 ==0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `  if (era0(\`talent:\${target}:9\`) == 1 && era0('flag:7') == 2) {
-    // 崩坏
-    era.drawLine();`,
-    replace: `  if (era0(\`talent:\${target}:9\`) == 0 && era0('flag:7') == 2) {
-    // 变异：崩坏条件错格
-    era.drawLine();`,
+    find: "  const kojo = chara(target).kojo;\n\n  if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n    // 崩坏\n    era.drawLine();",
+    replace:
+      "  const kojo = chara(target).kojo;\n\n  if (era0(`talent:${target}:9`) == 0 && era0('flag:7') == 2) {\n    // 变异：崩坏条件错格\n    era.drawLine();",
     tests: ['kojo-k11-lily'],
     must_mention:
       '崩坏后（TALENT:9==1 且 CFLAG:201==9）改走 K11_KOJO2，不再打崩坏台词',
@@ -2661,135 +2597,71 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2369 EVENTEND 主体 FLAG:7 <= 0 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
-    const kojo = chara(target).kojo;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }
-    if (era0(\`base:\${target}:0\`) <= 0) {
-      return 0;
-    }`,
-    replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
-    const kojo = chara(target).kojo;
-    if (false) {
-      // 变异：FLAG:7 <= 0 检查删
-      return 0;
-    }
-    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }
-    if (era0(\`base:\${target}:0\`) <= 0) {
-      return 0;
-    }`,
+    find: "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }",
+    replace:
+      '  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (false) {\n    // 变异：FLAG:7 <= 0 检查删\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND 检查：FLAG:7 <= 0（口上总开关关闭）时静默跳过',
   },
   {
     desc: 'M2370 EVENTEND 主体 TALENT:171 != 1 检查删（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
-    const kojo = chara(target).kojo;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }
-    if (era0(\`base:\${target}:0\`) <= 0) {
-      return 0;
-    }`,
-    replace: `    const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
-    const kojo = chara(target).kojo;
-    if (era0('flag:7') <= 0) {
-      return 0;
-    }
-    if (false) {
-      // 变异：TALENT:171 != 1 检查删
-      return 0;
-    }
-    if (era0(\`base:\${target}:0\`) <= 0) {
-      return 0;
-    }`,
+    find: "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }",
+    replace:
+      "  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%\n  const kojo = chara(target).kojo;\n  if (era0('flag:7') <= 0) {\n    return 0;\n  }\n  if (false) {\n    // 变异：TALENT:171 != 1 检查删\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }",
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND 检查：TALENT:171 != 1（非莉莉专属素质）时静默跳过',
   },
   {
     desc: 'M2371 EVENTEND 死亡检查删（BASE:0 <= 0 不再跳过）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }
-    if (era0(\`base:\${target}:0\`) <= 0) {
-      return 0;
-    }`,
-    replace: `    if (era0(\`talent:\${target}:171\`) != 1) {
-      return 0;
-    }
-    if (false) {
-      // 变异：BASE:0 <= 0 死亡检查删
-      return 0;
-    }`,
+    find: '  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (era0(`base:${target}:0`) <= 0) {\n    return 0;\n  }',
+    replace:
+      '  if (era0(`talent:${target}:171`) != 1) {\n    return 0;\n  }\n  if (false) {\n    // 变异：BASE:0 <= 0 死亡检查删\n    return 0;\n  }',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：角色死亡（BASE:0<=0）时跳过口上',
   },
   {
     desc: 'M2372 EVENTEND 崩坏条件错格（TALENT:9==1 改 ==0）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: "    if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n      // 崩坏\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
+    find: "  if (era0(`talent:${target}:9`) == 1 && era0('flag:7') == 2) {\n    // 崩坏\n    era.drawLine();\n    await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);\n    await era.printAndWait(`少女眼中理性的光芒已经不复存在………`);",
     replace:
-      "    if (era0(`talent:${target}:9`) == 0 && era0('flag:7') == 2) {\n      // 变异：崩坏条件错格\n      era.drawLine();\n      await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);",
+      "  if (era0(`talent:${target}:9`) == 0 && era0('flag:7') == 2) {\n    // 变异：崩坏条件错格\n    era.drawLine();\n    await era.printAndWait(`「咕嘿……咕嘿嘿嘿………」`);\n    await era.printAndWait(`少女眼中理性的光芒已经不复存在………`);",
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：崩坏分档',
   },
   {
     desc: 'M2373 EVENTEND 反発刻印Lv3+爱慕无 CFLAG:202 分档条件颠倒（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: '      era.drawLine();\n      if (kojo.简易助手_0 >= 1) {\n        await era.printAndWait(`「我，我是绝对不会认输的……」`);',
+    find: '    era.drawLine();\n    if (kojo.简易助手_0 >= 1) {\n      await era.printAndWait(`「我，我是绝对不会认输的……」`);',
     replace:
-      '      era.drawLine();\n      if (kojo.简易助手_0 < 1) {\n        // 变异：条件颠倒\n        await era.printAndWait(`「我，我是绝对不会认输的……」`);',
+      '    era.drawLine();\n    if (kojo.简易助手_0 < 1) {\n      // 变异：条件颠倒\n      await era.printAndWait(`「我，我是绝对不会认输的……」`);',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：反発刻印Lv3+爱慕无，按 CFLAG:202 分支',
   },
   {
     desc: 'M2374 EVENTEND 淫乱体力500分档阈值改错（>= 500 改 >= 700）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    } else if (
-      era0(\`talent:\${target}:76\`) == 1 &&
-      era0(\`base:\${target}:0\`) >= 500
-    ) {
-      // 淫乱(体力500以上)`,
-    replace: `    } else if (
-      era0(\`talent:\${target}:76\`) == 1 &&
-      era0(\`base:\${target}:0\`) >= 700 // 变异
-    ) {
-      // 淫乱(体力500以上)`,
+    find: '  } else if (\n    era0(`talent:${target}:76`) == 1 &&\n    era0(`base:${target}:0`) >= 500\n  ) {\n    // 淫乱(体力500以上)',
+    replace:
+      '  } else if (\n    era0(`talent:${target}:76`) == 1 &&\n    era0(`base:${target}:0`) >= 700 // 变异\n  ) {\n    // 淫乱(体力500以上)',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：淫乱按体力 500 分档',
   },
   {
     desc: 'M2375 EVENTEND 爱慕体力500分档阈值改错（>= 500 改 >= 700）（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: `    } else if (
-      era0(\`talent:\${target}:85\`) == 1 &&
-      era0(\`base:\${target}:0\`) >= 500
-    ) {
-      // 爱慕(体力500以上)`,
-    replace: `    } else if (
-      era0(\`talent:\${target}:85\`) == 1 &&
-      era0(\`base:\${target}:0\`) >= 700 // 变异
-    ) {
-      // 爱慕(体力500以上)`,
+    find: '  } else if (\n    era0(`talent:${target}:85`) == 1 &&\n    era0(`base:${target}:0`) >= 500\n  ) {\n    // 爱慕(体力500以上)',
+    replace:
+      '  } else if (\n    era0(`talent:${target}:85`) == 1 &&\n    era0(`base:${target}:0`) >= 700 // 变异\n  ) {\n    // 爱慕(体力500以上)',
     tests: ['kojo-k11-lily'],
     must_mention: 'EVENTEND：爱慕按体力 500 分档',
   },
   {
     desc: 'M2376 主启动图删 K11 莉莉口上注册（KOJO 11 不进实际运行图）（#242）',
-    file: 'ere/system/flow/main-loop.js',
-    find: `require('#/kojo/kojo-k11-lily');`,
-    replace: `// 变异：K11 莉莉口上不在主启动图注册`,
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k11-lily', require('#/kojo/kojo-k11-lily')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-k11-lily'],
     must_mention:
       '经主启动图 main-loop 加载（而非直接 load_module），K11 EVENTTRAIN 仍会置存在标志',
@@ -3044,19 +2916,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2200 K9 EVENTTRAIN #PRI 存在标志错值（FLAG:109 = 1 改 0，#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '    game.kojo.口上存在_9 = 1; // FLAG:109 = 1（K9 口上存在标志）',
-    replace: `    game.kojo.口上存在_9 = 0; // 变异：:56 FLAG:109 = 1（K9 口上存在标志）`,
+    find: '  game.kojo.口上存在_9 = 1; // FLAG:109 = 1（K9 口上存在标志）',
+    replace:
+      '  game.kojo.口上存在_9 = 0; // 变异：:56 FLAG:109 = 1（K9 口上存在标志）',
     tests: ['kojo-k9-diamond'],
     must_mention: 'K9 存在标志',
   },
   {
     desc: 'M2201 K9 EVENTEND #LATER 清标志删除（#240）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '    game.kojo.口上存在_9 = 0;\n  },\n  TIER.LATER,\n);',
-    replace: `    // 变异：:62 清标志删除
-  },
-  TIER.LATER,
-);`,
+    find: 'function handle_end_later() {\n  game.kojo.口上存在_9 = 0;\n}',
+    replace: 'function handle_end_later() {\n  // 变异：K9 清标志删除\n}',
     tests: ['kojo-k9-diamond'],
     must_mention: 'K9 一对',
   },
@@ -12067,9 +11937,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2271 K10 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: '    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;\n    }',
+    find: '  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;\n  }',
     replace:
-      '    if (game.kojo.口上开关 === 1) {  // 变异\n      game.kojo.口上开关 = 2;\n    }',
+      '  if (game.kojo.口上开关 === 1) {  // 变异\n    game.kojo.口上开关 = 2;\n  }',
     tests: ['kojo-k10-club'],
     must_mention: 'K10 一对',
   },
@@ -12702,8 +12572,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1815 K8 初調教推进写错（CFLAG:201 = 1 改 2，#239）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        kojo.初调教 = 1; // CFLAG:201 = 1\n      }',
-    replace: '        kojo.初调教 = 2; // 变异\n      }',
+    find: '      kojo.初调教 = 1; // CFLAG:201 = 1\n    }',
+    replace: '      kojo.初调教 = 2; // 变异\n    }',
     tests: ['kojo-k8-spade'],
     must_mention: 'CFLAG:201 推进到 1',
   },
@@ -14219,8 +14089,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1604 K0 EVENTEND #LATER 档清标志删除（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '    game.kojo.口上存在_0 = 0;',
-    replace: '    // 变异：清标志删除',
+    find: '  game.kojo.口上存在_0 = 0;',
+    replace: '  // 变异：清标志删除',
     tests: ['kojo-k0-tender'],
     must_mention: 'K0 EVENTEND 清 FLAG:100',
   },
@@ -14235,9 +14105,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   {
     desc: 'M1606 主启动图删 K0 口上注册（KOJO_MESSAGE_COM_0 不进实际运行图）（#231）',
-    file: 'ere/system/flow/main-loop.js',
-    find: "require('#/kojo/kojo-k0-tender');",
-    replace: '// 变异：K0 口上不在主启动图注册',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k0-tender', require('#/kojo/kojo-k0-tender')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图漏装：kojo-k0-tender（KOJO 0）',
   },
@@ -14320,8 +14190,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M1616 K0 EVENTTRAIN #PRI 档置 FLAG:100 删除（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: '    game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）',
-    replace: '    // 变异：置标志删除',
+    find: '  game.kojo.口上存在_0 = 1; // FLAG:100 = 1（K0 口上存在标志）',
+    replace: '  // 变异：置标志删除',
     tests: ['kojo-k0-tender'],
     must_mention: 'K0 EVENTTRAIN 置 FLAG:100',
   },
@@ -16499,25 +16369,25 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3300 K13 EVENTTRAIN #PRI 存在标志写错值（FLAG:113=1 改 2，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
-    find: '    game.kojo.口上存在_13 = 1; // FLAG:113 = 1（K13 口上存在标志）',
-    replace: '    game.kojo.口上存在_13 = 2; // （变异）',
+    find: '  game.kojo.口上存在_13 = 1; // FLAG:113 = 1（K13 口上存在标志）',
+    replace: '  game.kojo.口上存在_13 = 2; // （变异）',
     tests: ['kojo-k13-protector'],
     must_mention: 'K13 一对',
   },
   {
     desc: 'M3301 K13 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
-    find: '    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;\n    }',
+    find: '  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;\n  }',
     replace:
-      '    if (game.kojo.口上开关 === 1) { // 变异\n      game.kojo.口上开关 = 2;\n    }',
+      '  if (game.kojo.口上开关 === 1) { // 变异\n    game.kojo.口上开关 = 2;\n  }',
     tests: ['kojo-k13-protector'],
     must_mention: 'K13 一对',
   },
   {
     desc: 'M3302 K13 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
-    find: '    game.kojo.口上存在_13 = 0;',
-    replace: '    game.kojo.口上存在_13 = 1; // （变异）',
+    find: '  game.kojo.口上存在_13 = 0;',
+    replace: '  game.kojo.口上存在_13 = 1; // （变异）',
     tests: ['kojo-k13-protector'],
     must_mention: 'K13 一对',
   },
@@ -16729,9 +16599,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   {
     desc: 'M3328 K13 主启动图删 K13 庇护者口上注册（KOJO 13 不进实际运行图，#244）',
-    file: 'ere/system/flow/main-loop.js',
-    find: `require('#/kojo/kojo-k13-protector');`,
-    replace: `// 变异：K13 庇护者口上不在主启动图注册`,
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k13-protector', require('#/kojo/kojo-k13-protector')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图漏装：kojo-k13-protector',
   },
@@ -17145,25 +17015,25 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3500 K15 EVENTTRAIN #PRI 存在标志写错值（FLAG:115=1 改 2，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: '    game.kojo.口上存在_15 = 1; // FLAG:115 = 1（K15 口上存在标志）',
-    replace: '    game.kojo.口上存在_15 = 2; // （变异）',
+    find: '  game.kojo.口上存在_15 = 1; // FLAG:115 = 1（K15 口上存在标志）',
+    replace: '  game.kojo.口上存在_15 = 2; // （变异）',
     tests: ['kojo-k15-clever'],
     must_mention: 'K15 存在标志 FLAG:115',
   },
   {
     desc: 'M3501 K15 EVENTTRAIN #PRI 口上开关补 0 条件改错（===0 改 ===1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: '    if (game.kojo.口上开关 === 0) {\n      game.kojo.口上开关 = 2;\n    }',
+    find: '  if (game.kojo.口上开关 === 0) {\n    game.kojo.口上开关 = 2;\n  }',
     replace:
-      '    if (game.kojo.口上开关 === 1) {  // 变异\n      game.kojo.口上开关 = 2;\n    }',
+      '  if (game.kojo.口上开关 === 1) {  // 变异\n    game.kojo.口上开关 = 2;\n  }',
     tests: ['kojo-k15-clever'],
     must_mention: 'EVENTTRAIN #PRI 档口上开关补 0（FLAG:7 从 0 补到 2）',
   },
   {
     desc: 'M3502 K15 EVENTEND #LATER 存在标志清除值改错（=0 改 =1，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: '    game.kojo.口上存在_15 = 0;',
-    replace: '    game.kojo.口上存在_15 = 1; // （变异）',
+    find: '  game.kojo.口上存在_15 = 0;',
+    replace: '  game.kojo.口上存在_15 = 1; // （变异）',
     tests: ['kojo-k15-clever'],
     must_mention: 'EVENTEND #LATER 清 FLAG:115',
   },
@@ -18146,8 +18016,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3233 K12 EVENTTRAIN #PRI 存在标志置位删除（FLAG:112 = 1）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
-    find: '    game.kojo.口上存在_12 = 1; // FLAG:112 = 1（K12 口上存在标志）',
-    replace: '    // 变异：存在标志置位删除',
+    find: '  game.kojo.口上存在_12 = 1; // FLAG:112 = 1（K12 口上存在标志）',
+    replace: '  // 变异：存在标志置位删除',
     tests: ['kojo-k12-intellectual'],
     must_mention:
       'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）',
@@ -18155,8 +18025,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3234 K12 EVENTEND #LATER 存在标志清除删除（FLAG:112 = 0）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
-    find: '    game.kojo.口上存在_12 = 0;',
-    replace: '    // 变异：存在标志清除删除',
+    find: '  game.kojo.口上存在_12 = 0;',
+    replace: '  // 变异：存在标志清除删除',
     tests: ['kojo-k12-intellectual'],
     must_mention:
       'EVENTTRAIN #PRI 档置存在标志、EVENTEND #LATER 档清 0（K12 一对）',
@@ -18164,8 +18034,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M6400 K903 EVENTTRAIN EX_FLAG:103 置位删除（#249）',
     file: 'ere/kojo/kojo-k903-garde.js',
-    find: '    era_exflag.kojo_gade_session = 1; // EX_FLAG:103 = 嘉德口上存在标志',
-    replace: '    // 变异：EX_FLAG:103 置位删除',
+    find: '  era_exflag.kojo_gade_session = 1; // EX_FLAG:103 = 嘉德口上存在标志',
+    replace: '  // 变异：EX_FLAG:103 置位删除',
     tests: ['kojo-k903-garde'],
     must_mention: 'EX_FLAG:103 生命周期',
   },
@@ -19638,16 +19508,16 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M6500 K904 EVENTTRAIN EX_FLAG:104 置位删除（#250）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: '    era_exflag.set(104, 1);',
-    replace: '    // 变异：EX_FLAG:104 置位删除',
+    find: '  era_exflag.set(104, 1);',
+    replace: '  // 变异：EX_FLAG:104 置位删除',
     tests: ['kojo-k904-fia'],
     must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
   },
   {
     desc: 'M6501 K904 EVENTEND EX_FLAG:104 清除删除（#250）',
     file: 'ere/kojo/kojo-k904-fia.js',
-    find: '    era_exflag.set(104, 0);',
-    replace: '    // 变异：EX_FLAG:104 清除删除',
+    find: '  era_exflag.set(104, 0);',
+    replace: '  // 变异：EX_FLAG:104 清除删除',
     tests: ['kojo-k904-fia'],
     must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
   },
@@ -19688,9 +19558,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   },
   {
     desc: 'M6506 主启动图删除 K904 口上装载（#250）',
-    file: 'ere/system/flow/main-loop.js',
-    find: "require('#/kojo/kojo-k904-fia');",
-    replace: '// 变异：删除 K904 口上装载',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/kojo/kojo-k904-fia', require('#/kojo/kojo-k904-fia')],\n",
+    replace: '  // 变异：口上模块不在启动装配表注册\n',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
   },
@@ -22645,18 +22515,18 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12500 K8 爱慕+魔族化·调教前从魔族拆回两条（#622：SIF 的「全裸的」又占一行）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: "        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
+    find: "      // 調教前から魔族\n      // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n      // 条件提到语句外当条件、文本留在输出语句里\n      await era.printAndWait(\n        (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n          `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n      );",
     replace:
-      '        // 調教前から魔族\n        // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n        // 条件提到语句外当条件、文本留在输出语句里\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+      '      // 調教前から魔族\n      // 同一行输出：SIF 的 PRINT 无后缀，与下一行 PRINTFORMW 同属一行（#622）。\n      // 条件提到语句外当条件、文本留在输出语句里\n      if (chara(target).train.着衣状态 == 0) {\n        await era.print(`全裸的`); // 变异：拆回\n      }\n      await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
     must_mention: '爱慕+魔族化（调教前从魔族',
   },
   {
     desc: 'M12501 K8 爱慕+魔族化·调教后从魔族拆回两条（#622）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: "        // 与上一段同型（#622）\n        await era.printAndWait(\n          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n        );",
+    find: "      // 与上一段同型（#622）\n      await era.printAndWait(\n        (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n          `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n      );",
     replace:
-      '        // 与上一段同型（#622）\n        if (chara(target).train.着衣状态 == 0) {\n          await era.print(`全裸的`); // 变异：拆回\n        }\n        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+      '      // 与上一段同型（#622）\n      if (chara(target).train.着衣状态 == 0) {\n        await era.print(`全裸的`); // 变异：拆回\n      }\n      await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
     must_mention: '爱慕+魔族化（调教后从魔族',
   },
@@ -25900,8 +25770,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M15417 K1 助手 17 号判断退回读 no:${assi}（取到第 assi+1 个加入的角色）',
     file: 'ere/kojo/kojo-k1-confident.js',
-    find: '    } else if (assi === 17) {',
-    replace: '    } else if ((era.get(`no:${assi}`) || assi) === 17) {',
+    find: '  } else if (assi === 17) {',
+    replace: '  } else if ((era.get(`no:${assi}`) || assi) === 17) {',
     tests: ['kojo-k1-confident'],
     must_mention: '助手专属台词按助手自己的 ID 判断 17 号',
   },

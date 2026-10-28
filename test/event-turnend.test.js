@@ -21,6 +21,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 /** 建一个带三档链的夹具：魔王 0 在场（调用方按需再入奴隶 31） */
@@ -36,14 +37,14 @@ function setup_turnend(before_settle_load) {
   // 污染整条链的输出与写入清单，还会多掷几次随机数。
   fixture.store.set('flag:10004', 10000); // MONEY
   fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
-  fixture.load_module('event/event-turnend');
+  register_handlers(fixture, 'event/event-turnend');
   // 结算模块按解构取得域函数（`const { run_benki } = require(...)`），替身
   // 必须在它装载之前换好，否则拿到的是原函数
   if (before_settle_load) {
     before_settle_load(fixture);
   }
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -1213,9 +1214,9 @@ function setup_pregnancy({ time = 0 } = {}) {
   fixture.store.set('flag:5', 4); // 妊娠出产功能 ON
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.disable_enter_enemy();
@@ -1324,9 +1325,9 @@ test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接入后按既有格式拼
   fixture.store.set('flag:5', 4);
   fixture.store.set('flag:10004', 10000);
   fixture.store.set('exflag:4444', 1234);
-  fixture.load_module('event/event-turnend');
-  fixture.load_module('system/turnend-settle');
-  fixture.load_module('event/event-turnend-later');
+  register_handlers(fixture, 'event/event-turnend');
+  register_handlers(fixture, 'system/turnend-settle');
+  register_handlers(fixture, 'event/event-turnend-later');
   const { emit } = fixture.load_module('system/event/registry');
   fixture.disable_enter_enemy();
   fixture.store.set('flag:10005', -1); // TARGET

@@ -9,6 +9,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 function seed_world(fixture, { assi = -1 } = {}) {
@@ -433,7 +434,7 @@ test('EVENTEND 接入母乳与死斗场真身，不再输出对应存根', async
   fixture.store.set('tflag:35', 1);
   fixture.store.set('tflag:402', 10);
   fixture.set_inputs(999); // 两笔 WAIT 后，JUEL_CHECK 菜单退出
-  fixture.load_module('event/event-end');
+  register_handlers(fixture, 'event/event-end');
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('EVENTEND');

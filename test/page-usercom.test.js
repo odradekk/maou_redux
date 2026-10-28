@@ -13,6 +13,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   create_chara_loader,
   create_variable_loader,
@@ -24,7 +25,7 @@ const engine_test = engine ? test : test.skip;
 const YML_DIR = path.join(__dirname, '..', 'yml');
 
 function load_page(fixture) {
-  fixture.load_module('page/page-usercom');
+  register_handlers(fixture, 'page/page-usercom');
   return fixture.load_module('system/event/registry');
 }
 

@@ -19,6 +19,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 /** 素质下标（与 ere/chara/look-info.js 的常量同名，测试侧独立写死防串改） */
 const T = {
@@ -2635,7 +2636,7 @@ function gobi_world(talent_idx) {
 
 test('look_info：语尾口上拼进「」之内、与台词同一行（#570）', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
-  w.fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(w.fixture, 'kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   // 两条断言的先后是有意的：断言抛出即中止本条用例，先断「不单独成行」
   //（包装层复辟的 M11768 走这条），再断「拼在「」之内」（丢掉语尾的
@@ -2653,8 +2654,8 @@ test('look_info：语尾口上拼进「」之内、与台词同一行（#570）'
 test('look_info：无对应语尾模块的性格不多出空内容（K11 两侧同缺，#570）', async () => {
   const { w, cid } = gobi_world(171); // K11 リリィ：语尾族表没有 K11 条目
   // 族里先装两个别的性格——族表空时任何编号都落空，测不出「K11 缺号」这件事
-  w.fixture.load_module('kojo/kojo-k0-tender');
-  w.fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(w.fixture, 'kojo/kojo-k0-tender');
+  register_handlers(w.fixture, 'kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   assert.ok(
     lines.includes('「人类的阿名」'),
@@ -2672,7 +2673,7 @@ test('look_info：无对应语尾模块的性格不多出空内容（K11 两侧�
 
 test('look_info_love 收尾：喜び语尾接在最后一项物品的同一行', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
-  w.fixture.load_module('kojo/kojo-k4-stoic');
+  register_handlers(w.fixture, 'kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
   // 语尾与「」 」接在最后一项物品
   // 之后（#570 返工：引擎实测原先语尾另起一行、跑到物品行外）

@@ -85,25 +85,17 @@ function bind_ctx(rand) {
 }
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_2 = 1; // FLAG:102 = 1（K2 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_2 = 1; // FLAG:102 = 1（K2 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_2 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_2 = 0;
+}
 
 // eventtrain_k2：EVENTTRAIN NORMAL 档
 async function eventtrain_k2(rand) {
@@ -9645,9 +9637,6 @@ function gobi_koujo_k2(arg_0, rand) {
   return gobi_text(2, arg_0, rand);
 }
 
-on(EVENT.TRAIN, eventtrain_k2);
-on(EVENT.END, eventend_k2);
-
 // 口上族接入：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 =
 // 玩家侧看到占位行或不响。文件内直调的真身不在此列（COLOSSEUM_KOJO_2 由 COM
 // 头部检查直调；DOG_KOJO_2 有真身但检查静默跳过，见文件头）。范围与接入由
@@ -9673,7 +9662,19 @@ enterenemy_koujo_family.register(2, enterenemy_koujo_k2);
 gohoubi_request_koujo_family.register(2, gohoubi_request_koujo_k2);
 gobi_koujo_family.register(2, gobi_koujo_k2);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, eventtrain_k2);
+  on(EVENT.END, eventend_k2);
+}
+
 module.exports = {
+  register,
   kojo_message_com_2,
   dog_kojo_2,
   colosseum_kojo_2,

@@ -14,6 +14,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：魔王 + 奴隶 31，目标 31、无助手（ASSI = -1）、主人亲自调教
@@ -76,7 +77,7 @@ test('eventtrain 直线赋值：与既有清单逐项一致（全量断言，意
   seed_world(fixture);
   const { TRAIN_NAME_TABLE } = fixture.load_module('system/train/train-name');
   const { emit } = fixture.load_module('system/event/registry');
-  fixture.load_module('event/event-train'); // 顶层注册 EVENTTRAIN 处理器
+  register_handlers(fixture, 'event/event-train'); // 注册 EVENTTRAIN 处理器
 
   const pending = await emit('EVENTTRAIN');
 
@@ -95,7 +96,7 @@ test('时常发情（TALENT:TARGET:271）：润滑与欲情从 3000 起步', asy
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:271', 1);
-  fixture.load_module('event/event-train');
+  register_handlers(fixture, 'event/event-train');
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('EVENTTRAIN');
@@ -118,7 +119,7 @@ test('助手参与（ASSIPLAY = 1）：PLAYER = ASSI，助手射精槽一并清�
   era_flag.assi = 32;
   era_flag.assiplay = 1; // 助手调教中
   fixture.era.beginTrain(0, 31, 32);
-  fixture.load_module('event/event-train');
+  register_handlers(fixture, 'event/event-train');
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('EVENTTRAIN');
@@ -181,8 +182,8 @@ test('调教域 flag 槽位：包装层寻址钉在 yml/Flag.yml 的保留区 id
  */
 function seed_world_both_tiers(fixture) {
   const era_flag = seed_world(fixture); // 魔王 + 奴隶 31 + beginTrain
-  fixture.load_module('event/event-train-normal');
-  fixture.load_module('event/event-train');
+  register_handlers(fixture, 'event/event-train-normal');
+  register_handlers(fixture, 'event/event-train');
   return era_flag;
 }
 
@@ -225,7 +226,7 @@ test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不
 test('#401 无属性档：VARSET TFLAG, 0, 0, 201 的 201 个下标一个不少、全清 0', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture); // 只装无属性档（下一行才 require）
-  fixture.load_module('event/event-train-normal');
+  register_handlers(fixture, 'event/event-train-normal');
   const { emit } = fixture.load_module('system/event/registry');
   fixture.override_math_random(() => 0);
   try {
@@ -259,7 +260,7 @@ test('#401 无属性档：调教者选择的两个分支（ASSIPLAY 是调教域
   // ASSIPLAY == 0 → PLAYER = MASTER（角色 0）
   const solo = create_era_fixture();
   const solo_flag = seed_world(solo); // assi = -1
-  solo.load_module('event/event-train-normal');
+  register_handlers(solo, 'event/event-train-normal');
   const { emit: emit_solo } = solo.load_module('system/event/registry');
   await emit_solo('EVENTTRAIN');
   assert.equal(solo_flag.player, 0, 'ASSIPLAY == 0 → PLAYER = MASTER = 0');
@@ -273,7 +274,7 @@ test('#401 无属性档：调教者选择的两个分支（ASSIPLAY 是调教域
   duo_flag.assi = 32;
   duo.era.beginTrain(0, 31, 32);
   duo_flag.assiplay = 1;
-  duo.load_module('event/event-train-normal');
+  register_handlers(duo, 'event/event-train-normal');
   const { emit: emit_duo } = duo.load_module('system/event/registry');
   await emit_duo('EVENTTRAIN');
   assert.equal(duo_flag.player, 32, 'ASSIPLAY != 0 → PLAYER = ASSI');

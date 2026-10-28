@@ -122,25 +122,17 @@ const {
 } = require('#/kojo/kojo-dungeon-ravish');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_14 = 1; // FLAG:114 = 1（K14 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_14 = 1; // FLAG:114 = 1（K14 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_14 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_14 = 0;
+}
 
 /**
  * EVENTTRAIN NORMAL 档：调教开始时的口上。
@@ -167,7 +159,7 @@ on(
  *
  * 已性转判定统一走 `chara(target).stronghold.已性转`（CFLAG:70，见文件头）。
  */
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const master_name = chara_name(0); // %NAME:MASTER%（MASTER 恒角色 0）
@@ -621,7 +613,7 @@ on(EVENT.TRAIN, async () => {
     // 口上のある助手が居ない場合は、通常の二回目以降の口上へ飛ぶ
     await k14_kojo2(); // CALL K14_KOJO2
   }
-});
+}
 
 /**
  * k14_kojo2：调教开始口上的二回目以降。
@@ -730,7 +722,7 @@ async function k14_kojo2(rand) {
  * 屈服刻印Lv3（各无爱）/淫乱/爱 分档，淫乱与爱各按体力（BASE:0）高低
  * （>=500 / <=500）再分两支，魔族（314==9）与男/已性转再细分。
  */
-on(EVENT.END, async () => {
+async function handle_end() {
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
 
@@ -883,7 +875,7 @@ on(EVENT.END, async () => {
     return 1;
   }
   return 0;
-});
+}
 
 /**
  * kojo_message_com_14：调教中「指令口上」入口。
@@ -6316,7 +6308,19 @@ banishment_koujo_family.register(14, banishment_koujo_k14);
 public_exucution_koujo_family.register(14, public_exucution_koujo_k14);
 grotesque_koujo_family.register(14, grotesque_koujo_k14);
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train);
+  on(EVENT.END, handle_end);
+}
+
 module.exports = {
+  register,
   k14_kojo2,
   kojo_message_com_14,
   dog_kojo_14,

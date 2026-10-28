@@ -10,11 +10,12 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 
 /** 建一个带双角色的夹具并直接 emit 钩子链（不经 load_game） */
 async function run_hook(fixture) {
   const { emit } = fixture.load_module('system/event/registry');
-  fixture.load_module('event/event-load');
+  register_handlers(fixture, 'event/event-load');
   await emit('EVENTLOAD');
 }
 

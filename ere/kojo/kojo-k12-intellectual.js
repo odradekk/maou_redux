@@ -77,25 +77,17 @@ const {
 } = require('#/kojo/kojo-dungeon-after');
 
 // EVENTTRAIN #PRI 档：存在标志 + 总开关补 0
-on(
-  EVENT.TRAIN,
-  () => {
-    game.kojo.口上存在_12 = 1; // FLAG:112 = 1（K12 口上存在标志）
-    if (game.kojo.口上开关 === 0) {
-      game.kojo.口上开关 = 2;
-    }
-  },
-  TIER.PRI,
-);
+function handle_train_pri() {
+  game.kojo.口上存在_12 = 1; // FLAG:112 = 1（K12 口上存在标志）
+  if (game.kojo.口上开关 === 0) {
+    game.kojo.口上开关 = 2;
+  }
+}
 
 // EVENTEND #LATER 档：调教结束清存在标志
-on(
-  EVENT.END,
-  () => {
-    game.kojo.口上存在_12 = 0;
-  },
-  TIER.LATER,
-);
+function handle_end_later() {
+  game.kojo.口上存在_12 = 0;
+}
 /**
  * EVENTTRAIN NORMAL 档：调教开始时的口上。头部检查：
  * FLAG:7 <= 0 跳过、TALENT:172 != 1 跳过；此后按 CFLAG:201 状态机推进：
@@ -103,7 +95,7 @@ on(
  * Lv1/2/3（各一次）→ 淫乱 → 爱慕 → 助手分支（ASSI<0 或无专属口上 →
  * CALL K12_KOJO2，真身 k12_kojo2）。
  */
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
@@ -233,7 +225,7 @@ on(EVENT.TRAIN, async () => {
   } else {
     await k12_kojo2(); // CALL K12_KOJO2（无专属助手口上，二回目以降）
   }
-});
+}
 
 /**
  * k12_kojo2：二回目以降的调教开始口上。按反抗刻印 Lv3 /
@@ -332,7 +324,7 @@ async function k12_kojo2(rand) {
  * 随后按反抗刻印 Lv3 / 屈服刻印 Lv0-3（爱无）/ 淫乱（体力 500 上下）/
  * 爱慕（体力 500 上下）取首个命中。
  */
-on(EVENT.END, async () => {
+async function handle_end() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
@@ -441,7 +433,7 @@ on(EVENT.END, async () => {
     return 1;
   }
   return 0;
-});
+}
 
 /**
  * kojo_message_com_12（指令口上状态机）：SELECTCOM 指令台词，
@@ -6480,7 +6472,19 @@ async function benki_koujo_k12(rand) {
   return 0;
 }
 
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train_pri, TIER.PRI);
+  on(EVENT.END, handle_end_later, TIER.LATER);
+  on(EVENT.TRAIN, handle_train);
+  on(EVENT.END, handle_end);
+}
+
 module.exports = {
+  register,
   k12_kojo2,
   kojo_message_com_12,
   kojo_message_palamcng_12,

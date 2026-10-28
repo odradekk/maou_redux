@@ -29,6 +29,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // 世界底座：玛奥入列调教，加载口上系统 + K3/K5 两模块
@@ -50,10 +51,10 @@ async function setup_kojo(seed) {
   if (seed) {
     seed(fixture);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k3-noble');
-  fixture.load_module('kojo/kojo-k5-mao');
-  fixture.load_module('kojo/kojo-k2-timid');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k3-noble');
+  register_handlers(fixture, 'kojo/kojo-k5-mao');
+  register_handlers(fixture, 'kojo/kojo-k2-timid');
   return fixture;
 }
 
@@ -361,11 +362,12 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
   fixture.store.set('base:17:1', 410);
 
   // BEGIN SHOP → EVENTSHOP 链（kojo-system 的 #PRI + page-shop 的普通档；
-  // 挂载顺序同 main-loop：页面先、口上后——档位序保证 #PRI 先跑）
+  // 注册顺序同装配表：页面先、口上后——档位序保证 #PRI 先跑）
   const { run_shop } = fixture.load_module('page/page-shop');
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k3-noble');
-  fixture.load_module('kojo/kojo-k5-mao');
+  register_handlers(fixture, 'page/page-shop');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k3-noble');
+  register_handlers(fixture, 'kojo/kojo-k5-mao');
   // 走一轮面板切换（500 是已打印按钮，#130：引擎只送达已打印按钮的快捷
   // 键；原用例的 9999 属无效输入，引擎侧根本不会送达）后输入耗尽
   fixture.set_inputs(500);
@@ -391,7 +393,7 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
 
   // 回合：COM0（爱抚）→ SOURCE_CHECK（CALL KOJO_MESSAGE_COM）
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   await com_family.call(0);
   await emit('SOURCE_CHECK');

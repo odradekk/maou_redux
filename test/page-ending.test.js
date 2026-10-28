@@ -22,6 +22,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const {
   create_add_character,
   create_chara_loader,
@@ -802,6 +803,7 @@ test('贯通：出兵封顶 10000 → 结算尾触发 ending_1 → 选 0 继续�
   // [109] 主菜单 → 侵略画面选 [1] 出兵 → ending_1 询问选 [0] 继续
   fixture.set_inputs(109, 1, 0);
   const { run_shop } = fixture.load_module('page/page-shop');
+  register_handlers(fixture, 'page/page-shop');
 
   assert.equal(
     await run_shop(),

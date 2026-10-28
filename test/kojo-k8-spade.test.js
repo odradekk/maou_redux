@@ -19,6 +19,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
@@ -49,8 +50,8 @@ async function setup_k8(seed, selectcom = 0) {
   if (seed) {
     seed(fixture, era_flag);
   }
-  fixture.load_module('kojo/kojo-system');
-  fixture.load_module('kojo/kojo-k8-spade');
+  register_handlers(fixture, 'kojo/kojo-system');
+  register_handlers(fixture, 'kojo/kojo-k8-spade');
   return fixture;
 }
 

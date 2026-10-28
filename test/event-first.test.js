@@ -22,6 +22,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_gamebase } = require('./helpers/gamebase');
 const {
   preset_chara_0,
@@ -450,7 +451,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   // rand ≡ 0 → RAND(1,17) 取 1：勇者位 1 的预设必须先种（严格夹具，#35）
   preset_chara_0(fixture);
   preset_chara_1(fixture);
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
@@ -531,7 +532,7 @@ test('初始化写入（村娘）：CFLAG 一组逐项落在角色 ID 17 上（�
   preset_chara_0(fixture);
   preset_chara_17(fixture);
   fixture.era.addCharacter(0); // 标题步骤的等价物
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
@@ -561,7 +562,7 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_17(fixture);
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   fixture.set_inputs(1, 2, 1, 0, 1); // 女性 + 扶她 + 村娘 + 普通（#181 第二问）+ 搬运默认走完
   // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，村娘加入后世界才是
@@ -591,7 +592,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/game-state');
 
@@ -637,7 +638,7 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
 
 test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重问', async () => {
   const fixture = create_era_fixture();
-  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
+  register_handlers(fixture, 'event/event-first'); // 注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
 
   // 女性（跳过肉棒尺寸）→ 狂王性别扶她 → 村娘 → 地下城模式普通（#181 第二问）

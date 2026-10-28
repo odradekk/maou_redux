@@ -47,7 +47,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { EVENT } = require('#/data/event-name-const');
 
 // EVENTTRAIN（无属性档——on 的缺省档即 TIER.NORMAL）
-on(EVENT.TRAIN, async () => {
+async function handle_train() {
   // 主人公の射精を0に（BASE:2 = 射精槽，属主 train → 门面）
   chara(0).train.射精槽 = 0;
 
@@ -138,4 +138,14 @@ on(EVENT.TRAIN, async () => {
   } else {
     era_flag.player = era_flag.assi;
   }
-});
+}
+
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.TRAIN, handle_train);
+}
+
+module.exports = { register };

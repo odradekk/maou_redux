@@ -81,17 +81,17 @@ export default [
   {
     desc: 'M6 EVENTTRAIN 全量：删掉一笔直线赋值（BASE:MASTER:4 = 0）',
     file: 'ere/event/event-train.js',
-    find: "    // BASE:MASTER:4 = 0（触手射精槽）\n    era.set('base:0:4', 0);",
-    replace: '    // BASE:MASTER:4 = 0（触手射精槽）——变异：删除',
+    find: "  // BASE:MASTER:4 = 0（触手射精槽）\n  era.set('base:0:4', 0);",
+    replace: '  // BASE:MASTER:4 = 0（触手射精槽）——变异：删除',
     tests: ['event-train'],
     must_mention: '全量断言',
   },
   {
     desc: 'M7 EVENTTRAIN/PRITRAIN 暂存：SIF ASSI 的非零判定改成大于零',
     file: 'ere/event/event-train.js',
-    find: '    // 记录目标与助手，以备人物切换：ASSI:1 / TARGET:1（flag 槽位）\n    era_flag.assi_record = era_flag.assi;\n    era_flag.target_record = era_flag.target;',
-    replace: `    // 变异：漏记 assi_record
-    era_flag.target_record = era_flag.target;`,
+    find: '  // 记录目标与助手，以备人物切换：ASSI:1 / TARGET:1（flag 槽位）\n  era_flag.assi_record = era_flag.assi;\n  era_flag.target_record = era_flag.target;',
+    replace:
+      '  // 变异：漏记 assi_record\n  era_flag.target_record = era_flag.target;',
     tests: ['event-train'],
     must_mention: '全量断言',
   },
@@ -116,10 +116,9 @@ export default [
   {
     desc: 'M20 EVENTEND 指针还原：尾部读错槽（target_record 改 master_backup）',
     file: 'ere/event/event-end.js',
-    find: `    era_flag.assi = era_flag.assi_record;
-    era_flag.target = era_flag.target_record;`,
-    replace: `    era_flag.assi = era_flag.assi_record;
-    era_flag.target = era_flag.master_backup;`,
+    find: '  era_flag.assi = era_flag.assi_record;\n  era_flag.target = era_flag.target_record;',
+    replace:
+      '  era_flag.assi = era_flag.assi_record;\n  era_flag.target = era_flag.master_backup;',
     tests: ['event-end'],
     must_mention: '主体',
   },
@@ -220,16 +219,16 @@ export default [
   {
     desc: 'M2114 EVENTTURNEND（#PRI）时段条件取反（TIME==1 改 !=）',
     file: 'ere/event/event-turnend.js',
-    find: '    if (era_flag.time === 1) {',
-    replace: '    if (era_flag.time !== 1) {',
+    find: '  if (era_flag.time === 1) {',
+    replace: '  if (era_flag.time !== 1) {',
     tests: ['event-turnend'],
     must_mention: '时段与日期推进',
   },
   {
     desc: 'M186 EVENTTURNEND（#PRI）日期推进漏 +1（day_count 不增）',
     file: 'ere/event/event-turnend.js',
-    find: '      era_flag.day_count += 1;',
-    replace: '      // 变异：day_count 不推进',
+    find: '    era_flag.day_count += 1;',
+    replace: '    // 变异：day_count 不推进',
     tests: ['event-turnend'],
     must_mention: 'DAY:0 += 1',
   },
@@ -493,24 +492,16 @@ export default [
   {
     desc: 'M254 钩子的 EX_TALENT:MASTER:200 写入被拆（历史补丁三行之一，魔王高贵标识）',
     file: 'ere/event/event-load.js',
-    find: `      if (cid === 0) {
-        // EX_TALENT:200 = 魔王（高贵标识）
-        era.set('ex_talent:0:200', 1);
-      }`,
-    replace: `      // 变异：魔王标识写入被拆`,
+    find: "    if (cid === 0) {\n      // EX_TALENT:200 = 魔王（高贵标识）\n      era.set('ex_talent:0:200', 1);\n    }",
+    replace: '    // 变异：魔王标识写入被拆',
     tests: ['event-load', 'page-save-load'],
     must_mention: 'EX_TALENT:MASTER:200 = 1（魔王高贵标识）',
   },
   {
     desc: 'M255 钩子的 MAXBASE 下限钳制被拆（历史补丁三行之二与三——读入存档的低上限不被兜回）',
     file: 'ere/event/event-load.js',
-    find: `      if ((era.get(\`maxbase:\${cid}:0\`) || 0) < 600) {
-        era.set(\`maxbase:\${cid}:0\`, 600);
-      }
-      if ((era.get(\`maxbase:\${cid}:1\`) || 0) < 100) {
-        era.set(\`maxbase:\${cid}:1\`, 100);
-      }`,
-    replace: `      // 变异：MAXBASE 钳制被拆`,
+    find: '    if ((era.get(`maxbase:${cid}:0`) || 0) < 600) {\n      era.set(`maxbase:${cid}:0`, 600);\n    }\n    if ((era.get(`maxbase:${cid}:1`) || 0) < 100) {\n      era.set(`maxbase:${cid}:1`, 100);\n    }',
+    replace: '    // 变异：MAXBASE 钳制被拆',
     tests: ['event-load', 'page-save-load'],
     must_mention: '体力上限 < 600 → 600',
   },
@@ -619,8 +610,8 @@ export default [
   {
     desc: 'M356 EVENTTURNEND 的调用点被拆（日推进不再来袭）',
     file: 'ere/event/event-turnend.js',
-    find: '      // 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）\n      await enter_enemy_mod.enter_enemy(0);',
-    replace: '      // 变异：ENTER_ENEMY 调用被拆',
+    find: '    // 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）\n    await enter_enemy_mod.enter_enemy(0);',
+    replace: '    // 变异：ENTER_ENEMY 调用被拆',
     tests: ['enter-enemy'],
     must_mention: ':93 CALL ENTER_ENEMY,0 经日推进真跑（勇者入队）',
   },
@@ -3103,8 +3094,8 @@ export default [
   {
     desc: 'M10747 宣言数退回硬编码 0（EX_FLAG:9012 真读删除，#502）',
     file: 'ere/event/event-turnend.js',
-    find: '      const ex_flag_9012 = era_exflag.crystal_ball_popularity;',
-    replace: '      const ex_flag_9012 = 0; // 变异：退回硬编码',
+    find: '    const ex_flag_9012 = era_exflag.crystal_ball_popularity;',
+    replace: '    const ex_flag_9012 = 0; // 变异：退回硬编码',
     tests: ['event-turnend'],
     must_mention: '流行度 6 → 当日衰减为 5',
   },
@@ -3219,20 +3210,18 @@ export default [
   {
     desc: 'M11579 EVENTTURNEND 的反作弊闸门取反（开着检查、关了执行，#547）',
     file: 'ere/event/event-turnend.js',
-    find: `    if (!era_modsave.anti_cheat) {
-      const checked = await debug_check();`,
-    replace: `    if (era_modsave.anti_cheat) {
-      const checked = await debug_check(); // 变异：闸门取反`,
+    find: '  if (!era_modsave.anti_cheat) {\n    const checked = await debug_check();',
+    replace:
+      '  if (era_modsave.anti_cheat) {\n    const checked = await debug_check(); // 变异：闸门取反',
     tests: ['event-turnend'],
     must_mention: '反作弊 1 时跳过 DEBUG_CHECK',
   },
   {
     desc: 'M11580 EVENTTURNEND 的反作弊闸门删除（开关失效，恒执行 DEBUG_CHECK，#547）',
     file: 'ere/event/event-turnend.js',
-    find: `    if (!era_modsave.anti_cheat) {
-      const checked = await debug_check();`,
-    replace: `    if (true) {
-      const checked = await debug_check(); // 变异：闸门删除`,
+    find: '  if (!era_modsave.anti_cheat) {\n    const checked = await debug_check();',
+    replace:
+      '  if (true) {\n    const checked = await debug_check(); // 变异：闸门删除',
     tests: ['event-turnend'],
     must_mention: '反作弊 1 时跳过 DEBUG_CHECK',
   },
@@ -3240,8 +3229,8 @@ export default [
   {
     desc: 'M11589 eventload 漏 LOADGLOBAL 镜像（global 表不回最近保存值，#547 返工 3）',
     file: 'ere/event/event-load.js',
-    find: `    await era.loadGlobal();`,
-    replace: `    // 变异：漏 LOADGLOBAL 镜像`,
+    find: '  await era.loadGlobal();',
+    replace: '  // 变异：漏 LOADGLOBAL 镜像',
     tests: ['event-load'],
     must_mention: '钩子链必须真的调用 era.loadGlobal',
   },
@@ -3910,16 +3899,8 @@ export default [
   {
     desc: 'M14371 SOURCE_CHECK 结算展示收尾等键删除（源一览/损耗条/参数变动未读即被下一轮换屏清掉）',
     file: 'ere/system/train/source-check.js',
-    find: `  palam_up_check();
-
-  // 结算展示收尾等键（ADR-0009）：源一览、损耗条与参数变动行在上方
-  // 「‥×39」的读键之后打印，本回合的输出必须全部被玩家按键确认过，
-  // 下一轮换屏才会清掉它们——漏掉这一键，调教循环回到指令菜单的换屏
-  // 会抹掉玩家还没读的结算结果。
-  await era.waitAnyKey();
-});`,
-    replace: `  palam_up_check(); // 变异：收尾等键删除
-});`,
+    find: '  palam_up_check();\n\n  // 结算展示收尾等键（ADR-0009）：源一览、损耗条与参数变动行在上方\n  // 「‥×39」的读键之后打印，本回合的输出必须全部被玩家按键确认过，\n  // 下一轮换屏才会清掉它们——漏掉这一键，调教循环回到指令菜单的换屏\n  // 会抹掉玩家还没读的结算结果。\n  await era.waitAnyKey();\n}',
+    replace: '  palam_up_check(); // 变异：收尾等键删除\n}',
     tests: ['train-clear-screen-e2e'],
     must_mention: '整屏清空抹掉了未读输出',
   },
@@ -4464,8 +4445,8 @@ export default [
   {
     desc: 'M16604 读档链漏掉预设模板补填（旧档的后代永远带着 0）',
     file: 'ere/event/event-load.js',
-    find: '    backfill_chara_templates();',
-    replace: '    // 变异：读档不补填预设模板',
+    find: '  backfill_chara_templates();',
+    replace: '  // 变异：读档不补填预设模板',
     tests: ['chara-template'],
     must_mention: 'EVENTLOAD 把后代补成来源预设号',
   },
@@ -4473,24 +4454,17 @@ export default [
   {
     desc: 'M17310 EVENTTURNEND 的 DEBUG_CHECK 回标题被吞（魔王暴走 GAMEOVER 后回合结算照跑）',
     file: 'ere/event/event-turnend.js',
-    find: `      const checked = await debug_check();
-      // 反作弊判定出游戏结束（魔王暴走 GAMEOVER）时它是回标题的转场目标
-      // （#852）：原样上抛，本档下方的 BEGIN SHOP 不再执行
-      if (is_state(checked)) {
-        return checked;
-      }`,
-    replace: `      await debug_check(); // 变异：回标题的转场被吞`,
+    find: '    const checked = await debug_check();\n    // 反作弊判定出游戏结束（魔王暴走 GAMEOVER）时它是回标题的转场目标\n    // （#852）：原样上抛，本档下方的 BEGIN SHOP 不再执行\n    if (is_state(checked)) {\n      return checked;\n    }',
+    replace: '    await debug_check(); // 变异：回标题的转场被吞',
     tests: ['event-turnend'],
     must_mention: '整条链以 TITLE 离开',
   },
   {
     desc: 'M17311 EVENTEND 的 CHARADEAD 回标题被吞（魔王倒下后调教后结算照跑）',
     file: 'ere/event/event-end.js',
-    find: `    const charadead_result = await charadead_check();
-    if (is_state(charadead_result)) {
-      return charadead_result;
-    }`,
-    replace: `    const charadead_result = await charadead_check(); // 变异：回标题的转场被吞`,
+    find: '  const charadead_result = await charadead_check();\n  if (is_state(charadead_result)) {\n    return charadead_result;\n  }',
+    replace:
+      '  const charadead_result = await charadead_check(); // 变异：回标题的转场被吞',
     tests: ['event-end'],
     must_mention: 'GAMEOVER 以 TITLE 转场离开 run_aftertrain',
   },

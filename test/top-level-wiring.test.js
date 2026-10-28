@@ -6,15 +6,15 @@
  *
  * `ere/system/train/com-*.js` 与 `ere/kojo/kojo-*.js` 靠副作用注册进
  * COM / KOJO 分发族，注册与否全看有没有人 require 它（#274/#282 两把
- * 接入锁的前提）。主启动图（ere/system/flow/main-loop.js）显式 require
+ * 接入锁的前提）。主启动图（ere/system/flow/startup.js）显式 require
  * 这些族模块，是「这些族在游戏运行时确实被注册」的唯一保证。
  *
  * 漏洞：某文件若在**模块顶层** `require('#/system/train/com-hardcore')`，
- * 则 main-loop 里那行同名 require 被删掉也没事——模块经这个文件间接照样
+ * 则装配表里那行同名 require 被删掉也没事——模块经这个文件间接照样
  * 装上，COM80-90 照常注册。三处同时失明：
  *
  *   - #226 的 M1249（「主启动图删重度调教系注册」）改坏了却没有测试红；
- *   - #274 的 com-family-wiring：判断条件是「只加载 main-loop 后族里实际有的
+ *   - #274 的 com-family-wiring：判断条件是「只加载主启动图后族里实际有的
  *     号 == 源码扫出的号」，间接装上后号照样齐；
  *   - #282 的 kojo-family-wiring：同理。
  *
@@ -30,11 +30,11 @@
  * `#/kojo/kojo-system` / `#/system/event/registry` / `#/system/flow/game-state`
  * ——它们被几十个文件正当顶层 require）不该被拦。
  *
- * 要拦的是「**被 main-loop 显式 require 的族模块**」被别处顶层 require。
+ * 要拦的是「**被装配表显式 require 的族模块**」被别处顶层 require。
  * 两步定义，不手写名单：
  *
- *   1. 从 main-loop.js 扫出它 require 的模块清单——这就是「装载责任属于
- *      主启动图」的定义（main-loop 自己豁免）；
+ *   1. 从 startup.js 扫出它 require 的模块清单——这就是「装载责任属于
+ *      主启动图」的定义（装配表自己豁免）；
  *   2. 清单内、且有副作用族注册的模块才进保护集合。族注册用
  *      test/helpers/register-scan.js 的 extract_register_ids 判定（#274/
  *      #282 同款扫描器，已覆盖字面量 / for-of / Object.entries 三种写法，
@@ -43,7 +43,7 @@
  *      被别处顶层 require 是正当的，不削弱接入锁。
  *
  * 保护集合当前 17 个：12 个 com-* 指令族 + 5 个 kojo-* 口上。新族模块
- * 并入 main-loop 清单即自动纳入；新口上文件若顶层 require 任一保护模块，
+ * 并入装配表清单即自动纳入；新口上文件若顶层 require 任一保护模块，
  * 锁当场红并点名「哪个文件顶层 require 了哪个族模块」。
  *
  * == 顶层 vs 函数体（这张工单的核心难点） ==
@@ -79,9 +79,9 @@
  *
  * == 与既有锁的分工 ==
  *
- * - #274 com-family-wiring：族模块必须被 main-loop / replay 清单 require
+ * - #274 com-family-wiring：族模块必须被装配表 / replay 清单 require
  *   （号集合对账）；
- * - #282 kojo-family-wiring：口上模块必须被 main-loop require（号集合
+ * - #282 kojo-family-wiring：口上模块必须被装配表 require（号集合
  *   对账）；
  * - 本锁：主启动图清单里的**族模块**不许被别处**顶层** require（间接
  *   装载会让上面两把锁对「漏 require」失明）。
@@ -102,7 +102,7 @@ const { extract_register_ids } = require('./helpers/register-scan');
 
 const REPO = path.resolve(__dirname, '..');
 const ERE_DIR = path.join(REPO, 'ere');
-const MAIN_LOOP = path.join(ERE_DIR, 'system', 'flow', 'main-loop.js');
+const STARTUP = path.join(ERE_DIR, 'system', 'flow', 'startup.js');
 
 // 判定「族模块」的四个分发族：指令族两个 + 口上族两个（#274/#282 同款）
 const FAMILIES = [
@@ -474,22 +474,22 @@ function list_js_files(dir) {
   return out.sort();
 }
 
-/** main-loop.js 的 require 清单（这就是「装载责任属于主启动图」的定义） */
-function main_loop_targets() {
-  const src = fs.readFileSync(MAIN_LOOP, 'utf8');
+/** startup.js 的 require 清单（这就是「装载责任属于主启动图」的定义） */
+function startup_targets() {
+  const src = fs.readFileSync(STARTUP, 'utf8');
   return scan_requires(src)
     .filter((r) => r.target)
     .map((r) => r.target);
 }
 
 /**
- * 保护集合：main-loop require 的 ∩ 有副作用族注册的模块。
+ * 保护集合：装配表 require 的 ∩ 有副作用族注册的模块。
  * 族注册用 #274/#282 同款扫描器判定（解析不了就抛）。
  * @returns {Map<string, string>} target → 相对路径（无 .js 后缀）
  */
 function protected_modules() {
   const out = new Map();
-  for (const target of main_loop_targets()) {
+  for (const target of startup_targets()) {
     const rel = target.replace(/^#\//, '');
     const full = path.join(ERE_DIR, `${rel}.js`);
     if (!fs.existsSync(full)) continue;
@@ -545,7 +545,7 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   );
 });
 
-test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
+test('保护集合：装配表清单 ∩ 族注册，底座不进表', () => {
   const protected_map = protected_modules();
   // 族模块在表
   for (const t of [
@@ -556,7 +556,7 @@ test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
   ]) {
     assert.ok(
       protected_map.has(t),
-      `${t} 应进保护集合（main-loop require 的族模块）`,
+      `${t} 应进保护集合（装配表 require 的族模块）`,
     );
   }
   // 底座不在表（被别处顶层 require 是正当的）
@@ -577,7 +577,7 @@ test('全树：主启动图清单里的族模块不被别处顶层 require', () 
   const protected_map = protected_modules();
   const violations = [];
   for (const rel of list_js_files('ere')) {
-    if (rel === 'ere/system/flow/main-loop.js') continue; // main-loop 自己豁免
+    if (rel === 'ere/system/flow/startup.js') continue; // 装配表自己豁免
     const src = fs.readFileSync(path.join(REPO, rel), 'utf8');
     for (const r of scan_requires(src)) {
       if (r.target && protected_map.has(r.target) && r.top_level) {

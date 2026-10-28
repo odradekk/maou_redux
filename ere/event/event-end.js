@@ -35,146 +35,152 @@ const { charadead_check, self_check } = require('#/event/event-aftertrain');
 const { defer_train_death } = require('#/system/train/train-end');
 const { EVENT } = require('#/data/event-name-const');
 
-on(
-  EVENT.END,
-  async () => {
-    era.print('调教结束了。');
+async function handle_end_later() {
+  era.print('调教结束了。');
+  await era.waitAnyKey();
+
+  // 角色復位（读 train 循环暂存的 T:10/11/12）。
+  // MASTER = T:10 —— ere 侧 MASTER 不是变量而是常量约定（恒角色 0，
+  // CONTEXT.md），暂存值亦恒 0，此行为空操作、不落槽位
+  era_flag.target = era_flag.target_backup; // TARGET = T:11
+  if (era_flag.assi) {
+    era_flag.assi = era_flag.assi_backup; // SIF ASSI → ASSI = T:12
+  }
+
+  // 失神時の口上非表示の回復（TFLAG:860 → FLAG:7）
+  const faint_flag = era.get('tflag:860') || 0;
+  if (faint_flag === 1) {
+    era.set('flag:7', 1);
+    era.set('tflag:860', 0);
+  } else if (faint_flag === 2) {
+    era.set('flag:7', 2);
+    era.set('tflag:860', 0);
+  }
+
+  // 今回の調教対象と助手を記録（FLAG:1 = 前回调教目标、
+  // FLAG:2 = 前回助手——TARGET:1/ASSI:1 是 train 循环的记录值）
+  era.set('flag:1', era_flag.target_record);
+  era.set('flag:2', era_flag.assi_record);
+
+  // 調教後に死んでいる可能性をチェック（#548 起真身：
+  // ere/event/event-aftertrain.js。RESULT 0 = 存活 / 1 = 已死；魔王自己
+  // 死亡且无候补时在真身内回标题，转场目标原样上抛，#852）
+  const charadead_result = await charadead_check();
+  if (is_state(charadead_result)) {
+    return charadead_result;
+  }
+
+  // 生きていれば調教後行為のチェック（IF RESULT == 0）
+  if (charadead_result === 0) {
+    await self_check();
+    era.drawLine();
+  }
+
+  // 三笔卖出结算（母乳与死斗场 #335、录像 #336 起全为真身）
+  await sell_milk();
+  await sell_video(era_flag.target, era_flag.assi);
+  await sell_fightmoney();
+
+  // 生きていて着衣モードなら調教後の衣類の処理（FLAG:37 =
+  // 着衣系统，开局置 1；#215 真身——调教内调用，TFLAG:45
+  // 直读直清）
+  if (
+    (era.get('flag:37') || 0) !== 0 &&
+    (era.get(`base:${era_flag.target}:0`) || 0) > 0
+  ) {
+    await aftertrain_cloth(era_flag.target);
+    // 衣類の再着衣
+    await re_clothed(era_flag.target);
+  }
+
+  // 調教後に死ぬか臨死状態なら珠を獲得せずに、ターゲットを
+  // 空にしてターン終了
+  const target = era_flag.target;
+  const target_stamina = era.get(`base:${target}:0`) || 0;
+  const target_willpower = era.get(`base:${target}:1`) || 0;
+  if (target_stamina < 1 && target !== 0) {
+    // 死亡的机械步骤（除名登记/指针清空/队伍移除/待结算珠清零）收进
+    // 收尾协调器；实际除名在引擎收尾后冲账（时序约束见其文件头）
+    defer_train_death(target);
+    return begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
+  } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
+    // 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——
+    // 本体在 ere/event/event-nextday.js，#400（N16）接入
+    await event_maou_tenshin();
+  }
+
+  // 善恶值増減（EX:1 私处绝顶 / EX:2 肛门绝顶，零指令下恒 0）
+  if (era.get(`ex:${era_flag.target}:1`)) {
+    era.print('(私处绝顶使善恶值:-1)'); // PRINTW
+    await era.waitAnyKey(); // PRINTW 的读键
+    karma(era_flag.target, -1); // CALL KARMA, TARGET, -1
+  }
+  if (era.get(`ex:${era_flag.target}:2`)) {
+    era.print('(肛门绝顶使善恶值:-2)');
     await era.waitAnyKey();
+    karma(era_flag.target, -2);
+  }
 
-    // 角色復位（读 train 循环暂存的 T:10/11/12）。
-    // MASTER = T:10 —— ere 侧 MASTER 不是变量而是常量约定（恒角色 0，
-    // CONTEXT.md），暂存值亦恒 0，此行为空操作、不落槽位
-    era_flag.target = era_flag.target_backup; // TARGET = T:11
-    if (era_flag.assi) {
-      era_flag.assi = era_flag.assi_backup; // SIF ASSI → ASSI = T:12
+  // 时常发情（非「时常发情」体质时，润滑/欲情各按万分比蓄积
+  // 进 CFLAG:81/82；不足 10000 则清零）
+  if (
+    (era.get('flag:75') || 0) === 0 &&
+    !era.get(`talent:${era_flag.target}:271`)
+  ) {
+    // 润滑（PALAM:3）
+    const lubrication = palam_settled(era_flag.target, 3);
+    if (lubrication >= 10000) {
+      era.add(`cflag:${era_flag.target}:81`, Math.floor(lubrication / 10000));
+    } else {
+      era.set(`cflag:${era_flag.target}:81`, 0);
     }
-
-    // 失神時の口上非表示の回復（TFLAG:860 → FLAG:7）
-    const faint_flag = era.get('tflag:860') || 0;
-    if (faint_flag === 1) {
-      era.set('flag:7', 1);
-      era.set('tflag:860', 0);
-    } else if (faint_flag === 2) {
-      era.set('flag:7', 2);
-      era.set('tflag:860', 0);
+    // 欲情（PALAM:5）
+    const desire = palam_settled(era_flag.target, 5);
+    if (desire >= 10000) {
+      era.add(`cflag:${era_flag.target}:82`, Math.floor(desire / 10000));
+    } else {
+      era.set(`cflag:${era_flag.target}:82`, 0);
     }
+  }
 
-    // 今回の調教対象と助手を記録（FLAG:1 = 前回调教目标、
-    // FLAG:2 = 前回助手——TARGET:1/ASSI:1 是 train 循环的记录值）
-    era.set('flag:1', era_flag.target_record);
-    era.set('flag:2', era_flag.assi_record);
+  // 调教奴隶的气力回复（FLAG:400 开、TALENT:85 爱慕加成）
+  let recover = 0;
+  if (
+    (era.get('flag:400') || 0) !== 0 &&
+    era.get(`talent:${era_flag.target}:85`)
+  ) {
+    era.print('*因奴隶的爱而恢复了气力*');
+    recover = 700;
+  } else if ((era.get('flag:400') || 0) !== 0) {
+    era.print('*因调教奴隶而恢复了气力*');
+    recover = 500;
+  }
+  // BASE:0:1 = 魔王（角色 0）的气力，回复后钳到上限
+  era.add('base:0:1', recover);
+  const max_willpower = era.get('maxbase:0:1') || 0;
+  if ((era.get('base:0:1') || 0) > max_willpower) {
+    era.set('base:0:1', max_willpower);
+  }
 
-    // 調教後に死んでいる可能性をチェック（#548 起真身：
-    // ere/event/event-aftertrain.js。RESULT 0 = 存活 / 1 = 已死；魔王自己
-    // 死亡且无候补时在真身内回标题，转场目标原样上抛，#852）
-    const charadead_result = await charadead_check();
-    if (is_state(charadead_result)) {
-      return charadead_result;
-    }
+  // 何点数を得られたか（一次性珠结算，#47 实现——普通 CALL
+  // 非引擎回调；结算本体与 era.endTrain 的职责划分见 juel-check.js
+  // 文件头：gotjuel 已在结算尾部清零，链后的 endTrain 只删表、不加算）
+  await run_juel_check();
 
-    // 生きていれば調教後行為のチェック（IF RESULT == 0）
-    if (charadead_result === 0) {
-      await self_check();
-      era.drawLine();
-    }
+  // 切换回原来的目标与助手（train 循环记录的 TARGET:1/ASSI:1）
+  era_flag.assi = era_flag.assi_record;
+  era_flag.target = era_flag.target_record;
 
-    // 三笔卖出结算（母乳与死斗场 #335、录像 #336 起全为真身）
-    await sell_milk();
-    await sell_video(era_flag.target, era_flag.assi);
-    await sell_fightmoney();
+  // 能力値の上昇はメイン画面で行わせる → 回合结算
+  return begin(STATE.TURNEND);
+}
 
-    // 生きていて着衣モードなら調教後の衣類の処理（FLAG:37 =
-    // 着衣系统，开局置 1；#215 真身——调教内调用，TFLAG:45
-    // 直读直清）
-    if (
-      (era.get('flag:37') || 0) !== 0 &&
-      (era.get(`base:${era_flag.target}:0`) || 0) > 0
-    ) {
-      await aftertrain_cloth(era_flag.target);
-      // 衣類の再着衣
-      await re_clothed(era_flag.target);
-    }
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.END, handle_end_later, TIER.LATER);
+}
 
-    // 調教後に死ぬか臨死状態なら珠を獲得せずに、ターゲットを
-    // 空にしてターン終了
-    const target = era_flag.target;
-    const target_stamina = era.get(`base:${target}:0`) || 0;
-    const target_willpower = era.get(`base:${target}:1`) || 0;
-    if (target_stamina < 1 && target !== 0) {
-      // 死亡的机械步骤（除名登记/指针清空/队伍移除/待结算珠清零）收进
-      // 收尾协调器；实际除名在引擎收尾后冲账（时序约束见其文件头）
-      defer_train_death(target);
-      return begin(STATE.TURNEND); // —— 结束本函数，其后结算整段跳过
-    } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
-      // 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——
-      // 本体在 ere/event/event-nextday.js，#400（N16）接入
-      await event_maou_tenshin();
-    }
-
-    // 善恶值増減（EX:1 私处绝顶 / EX:2 肛门绝顶，零指令下恒 0）
-    if (era.get(`ex:${era_flag.target}:1`)) {
-      era.print('(私处绝顶使善恶值:-1)'); // PRINTW
-      await era.waitAnyKey(); // PRINTW 的读键
-      karma(era_flag.target, -1); // CALL KARMA, TARGET, -1
-    }
-    if (era.get(`ex:${era_flag.target}:2`)) {
-      era.print('(肛门绝顶使善恶值:-2)');
-      await era.waitAnyKey();
-      karma(era_flag.target, -2);
-    }
-
-    // 时常发情（非「时常发情」体质时，润滑/欲情各按万分比蓄积
-    // 进 CFLAG:81/82；不足 10000 则清零）
-    if (
-      (era.get('flag:75') || 0) === 0 &&
-      !era.get(`talent:${era_flag.target}:271`)
-    ) {
-      // 润滑（PALAM:3）
-      const lubrication = palam_settled(era_flag.target, 3);
-      if (lubrication >= 10000) {
-        era.add(`cflag:${era_flag.target}:81`, Math.floor(lubrication / 10000));
-      } else {
-        era.set(`cflag:${era_flag.target}:81`, 0);
-      }
-      // 欲情（PALAM:5）
-      const desire = palam_settled(era_flag.target, 5);
-      if (desire >= 10000) {
-        era.add(`cflag:${era_flag.target}:82`, Math.floor(desire / 10000));
-      } else {
-        era.set(`cflag:${era_flag.target}:82`, 0);
-      }
-    }
-
-    // 调教奴隶的气力回复（FLAG:400 开、TALENT:85 爱慕加成）
-    let recover = 0;
-    if (
-      (era.get('flag:400') || 0) !== 0 &&
-      era.get(`talent:${era_flag.target}:85`)
-    ) {
-      era.print('*因奴隶的爱而恢复了气力*');
-      recover = 700;
-    } else if ((era.get('flag:400') || 0) !== 0) {
-      era.print('*因调教奴隶而恢复了气力*');
-      recover = 500;
-    }
-    // BASE:0:1 = 魔王（角色 0）的气力，回复后钳到上限
-    era.add('base:0:1', recover);
-    const max_willpower = era.get('maxbase:0:1') || 0;
-    if ((era.get('base:0:1') || 0) > max_willpower) {
-      era.set('base:0:1', max_willpower);
-    }
-
-    // 何点数を得られたか（一次性珠结算，#47 实现——普通 CALL
-    // 非引擎回调；结算本体与 era.endTrain 的职责划分见 juel-check.js
-    // 文件头：gotjuel 已在结算尾部清零，链后的 endTrain 只删表、不加算）
-    await run_juel_check();
-
-    // 切换回原来的目标与助手（train 循环记录的 TARGET:1/ASSI:1）
-    era_flag.assi = era_flag.assi_record;
-    era_flag.target = era_flag.target_record;
-
-    // 能力値の上昇はメイン画面で行わせる → 回合结算
-    return begin(STATE.TURNEND);
-  },
-  TIER.LATER,
-);
+module.exports = { register };

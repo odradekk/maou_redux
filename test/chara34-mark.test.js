@@ -23,6 +23,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { preset_chara_0 } = require('./helpers/chara');
 const {
   create_add_character,
@@ -148,7 +149,7 @@ async function run_source_check(post, { with_mark4 = true } = {}) {
     fixture.store.delete('mark:34:4');
   }
   fixture.load_module('system/train/com-caress');
-  fixture.load_module('system/train/source-check');
+  register_handlers(fixture, 'system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);

@@ -14,6 +14,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 // 世界底座：目标 31（体力由用例另置）、助手可选。tflag/tequip 寻址有夹具
@@ -27,7 +28,7 @@ function seed_world(fixture, { assi = -1 } = {}) {
   era_flag.target = 31;
   era_flag.assi = assi;
   fixture.era.beginTrain(0, 31, ...(assi >= 0 ? [assi] : []));
-  fixture.load_module('event/event-comend');
+  register_handlers(fixture, 'event/event-comend');
   return era_flag;
 }
 
@@ -164,7 +165,7 @@ test('健在路径：体力充足、无助手 → 无消息无转场，DRAWLINE 
 function seed_world_comend_normal(fixture) {
   const era_flag = seed_world(fixture);
   fixture.store.set('base:31:0', 2000); // 目标健在（否则 #PRI 档会转场 AFTERTRAIN）
-  fixture.load_module('event/event-comend-normal');
+  register_handlers(fixture, 'event/event-comend-normal');
   return era_flag;
 }
 
@@ -223,7 +224,7 @@ test('#401 无属性档：三个条件的否定侧各自不动作（膣经验 / 
 test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不是重命名冲突）', async () => {
   const fixture = create_era_fixture();
   seed_world_comend_normal(fixture);
-  fixture.load_module('event/event-comend'); // #PRI 档
+  register_handlers(fixture, 'event/event-comend'); // #PRI 档
   fixture.store.set('exp:31:0', 0);
   fixture.store.set('exp:31:1', 3);
   fixture.store.set('talent:31:30', 1);

@@ -21,10 +21,11 @@
  */
 
 const era = require('#/era-electron');
+const { on } = require('#/system/event/registry');
 const { relation_debugprint } = require('#/chara/chara-family');
 
 const { is_state } = require('#/system/flow/game-state');
-const { on, emit, TIER } = require('#/system/event/registry');
+const { emit, TIER } = require('#/system/event/registry');
 const {
   dispatch_menu_item,
   draw_main_menu,
@@ -53,26 +54,22 @@ const { EVENT } = require('#/data/event-name-const');
  * kojo/kojo-system.js 挂 #PRI 档置口上总开关，先于本处理器跑——分档语义
  * 见 system/event/registry.js）。
  */
-on(
-  EVENT.SHOP,
-  () => {
-    // 指针越界钳制（判断条件的 ID 语义移植说明见
-    // page-main-menu.js 的 reset_out_of_range_pointers）。
-    reset_out_of_range_pointers();
+function handle_shop() {
+  // 指针越界钳制（判断条件的 ID 语义移植说明见
+  // page-main-menu.js 的 reset_out_of_range_pointers）。
+  reset_out_of_range_pointers();
 
-    // 清道具上架位（ITEMSALES:0-99 全部置 0）。Item 表已随 #38 落表，
-    // item* 寻址的直接崩溃支（PR #34）已消除；注意清零范围 0..99 覆盖开局
-    // EVENTFIRST 链置 1 的 53 号——先清干净，在售位随后由商店侧重新点亮。
-    for (let i = 0; i < 100; i += 1) {
-      era.set(`itemsales:${i}`, 0);
-    }
+  // 清道具上架位（ITEMSALES:0-99 全部置 0）。Item 表已随 #38 落表，
+  // item* 寻址的直接崩溃支（PR #34）已消除；注意清零范围 0..99 覆盖开局
+  // EVENTFIRST 链置 1 的 53 号——先清干净，在售位随后由商店侧重新点亮。
+  for (let i = 0; i < 100; i += 1) {
+    era.set(`itemsales:${i}`, 0);
+  }
 
-    // BOUGHT = -1（#395 起落表：flag:10029，与 EVENTFIRST 链的初始化
-    // 同一变量，见文件头 BOUGHT 段）。
-    era_flag.bought = -1;
-  },
-  TIER.NORMAL,
-);
+  // BOUGHT = -1（#395 起落表：flag:10029，与 EVENTFIRST 链的初始化
+  // 同一变量，见文件头 BOUGHT 段）。
+  era_flag.bought = -1;
+}
 
 /**
  * show_shop：绘制一轮主菜单。
@@ -356,4 +353,12 @@ async function run_shop({ skip_eventshop = false } = {}) {
 // 仍无按钮分发的是 52x（阶层信息，楼层总览段的 [520]-[530] 已打）与 7788
 // （隐藏调试入口，界面本就不印它）——这些分支只能经直接调用测试，不经
 // 输入通道。
-module.exports = { run_shop, usershop, show_floor };
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.SHOP, handle_shop, TIER.NORMAL);
+}
+
+module.exports = { register, run_shop, usershop, show_floor };

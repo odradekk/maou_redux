@@ -83,16 +83,20 @@ async function check_assi_vitals() {
   }
 }
 
-on(
-  EVENT.COMEND,
-  async () => {
-    const target_next = await check_target_vitals();
-    if (is_state(target_next)) {
-      return target_next;
-    }
-    return check_assi_vitals();
-  },
-  TIER.PRI,
-);
+async function handle_comend_pri() {
+  const target_next = await check_target_vitals();
+  if (is_state(target_next)) {
+    return target_next;
+  }
+  return check_assi_vitals();
+}
 
-module.exports = {};
+/**
+ * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
+ * 注册（模块装载本身不注册，装配顺序见该文件）。
+ */
+function register() {
+  on(EVENT.COMEND, handle_comend_pri, TIER.PRI);
+}
+
+module.exports = { register };
