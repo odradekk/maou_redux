@@ -84,6 +84,20 @@ const { change_screen } = require('#/page/components/screen-change');
 const { chara } = require('#/facade/chara');
 const { pad_display } = require('#/utils/display-width');
 const { print_button_grid } = require('#/utils/button-grid');
+
+/**
+ * 换号族三屏的固定键。名册轮：[1999] 结束换号、[2000]/[2001] 翻页；
+ * 选人轮：[3000]/[3001] 翻页、[3002] 取消；确认屏：[4000] 是、[4001] 否。
+ * 编号都在角色 ID 之上（后代 ID 从 100000 起）。
+ */
+const LIST_END_KEY = 1999;
+const LIST_PREV_KEY = 2000;
+const LIST_NEXT_KEY = 2001;
+const PICK_PREV_KEY = 3000;
+const PICK_NEXT_KEY = 3001;
+const PICK_CANCEL_KEY = 3002;
+const CONFIRM_YES_KEY = 4000;
+const CONFIRM_NO_KEY = 4001;
 // 换号页自己的分页宽度（与名册的 24 无关）
 const NUM_PAGE = 25;
 
@@ -192,25 +206,25 @@ async function chara_number_swap() {
     era.println();
     print_button_grid(
       [
-        [2000, '上一页'],
-        [2001, '下一页'],
-        [1999, '结束换号'], // #60 简体归一
+        [LIST_PREV_KEY, '上一页'],
+        [LIST_NEXT_KEY, '下一页'],
+        [LIST_END_KEY, '结束换号'], // #60 简体归一
       ],
       3,
     );
     const first = await era.input();
 
-    if (first === 2000) {
+    if (first === LIST_PREV_KEY) {
       // 上一页（页首不动，仅重绘）
       if (no_page > 0) no_page -= 1;
       continue;
     }
-    if (first === 2001) {
+    if (first === LIST_NEXT_KEY) {
       // 下一页
       if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;
       continue;
     }
-    if (first === 1999) {
+    if (first === LIST_END_KEY) {
       return; // 回到名册分发
     }
     // 其余输入＝第一屏选中的角色 ID（条件外的编号不可达，见文件头）
@@ -229,26 +243,26 @@ async function chara_number_swap() {
       era.println();
       print_button_grid(
         [
-          [3000, '上一页'],
-          [3001, '下一页'],
+          [PICK_PREV_KEY, '上一页'],
+          [PICK_NEXT_KEY, '下一页'],
           // [3002] 取消：有意补出的出口（ere 输入模型差异），见文件头
-          [3002, '取消'],
+          [PICK_CANCEL_KEY, '取消'],
         ],
         3,
       );
       const picked = await era.input();
 
-      if (picked === 3000) {
+      if (picked === PICK_PREV_KEY) {
         // 上一页（与第一屏共用 no_page）
         if (no_page > 0) no_page -= 1;
         continue;
       }
-      if (picked === 3001) {
+      if (picked === PICK_NEXT_KEY) {
         // 下一页
         if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;
         continue;
       }
-      if (picked === 3002) {
+      if (picked === PICK_CANCEL_KEY) {
         // 回第一屏重选（见文件头）——跳到外层循环头
         continue swap_page;
       }
@@ -260,11 +274,11 @@ async function chara_number_swap() {
     await change_screen();
     era.println();
     era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`);
-    era.printButton('是', 4000);
-    era.printButton('否', 4001);
+    era.printButton('是', CONFIRM_YES_KEY);
+    era.printButton('否', CONFIRM_NO_KEY);
     const confirm = await era.input();
 
-    if (confirm === 4000) {
+    if (confirm === CONFIRM_YES_KEY) {
       // 不搬角色数据、不改 ID，只交换排序编号（见文件头）
       swap_sort_numbers(first, second);
       await era.printAndWait('已完成互换');

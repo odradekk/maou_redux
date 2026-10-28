@@ -66,6 +66,15 @@ const SLAVE_NUM_PAGE = 23;
 const MENU_SLAVE = 998;
 /** 勇者一览的菜单档 */
 const MENU_ENEMY = 997;
+/**
+ * 菜单档的编号带与页脚三键。menu_button 的档号是 997/998，副标题里的
+ * 991-996 也落在同一带（> 990 且 < 999）；页脚是上一页 [1000] /
+ * 返回 [999] / 下一页 [1001]。
+ */
+const MENU_LEVEL_MIN = 991;
+const PAGE_PREV_KEY = 1000;
+const BACK_KEY = 999;
+const PAGE_NEXT_KEY = 1001;
 
 /**
  * 上一次绘制用的菜单档。跨调用保留——每次绘制前与本次的菜单档比较，
@@ -144,9 +153,9 @@ function draw_list(select_menu, no_page) {
   // 三个页脚键同行排布（引擎 24 列网格），不补空行。
   print_button_grid(
     [
-      [1000, '- 上一页'],
-      [999, '- 返  回'], // `-` 是按钮正文的一部分
-      [1001, '- 下一页'],
+      [PAGE_PREV_KEY, '- 上一页'],
+      [BACK_KEY, '- 返  回'], // `-` 是按钮正文的一部分
+      [PAGE_NEXT_KEY, '- 下一页'],
     ],
     3,
   );
@@ -195,27 +204,27 @@ async function ability_up() {
       for (;;) {
         const result = await era.input();
 
-        if (result === 999) {
+        if (result === BACK_KEY) {
           return 0;
         }
-        if (result > 990 && result < 999 && cflag(0, 9) < 20) {
+        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 20) {
           // 等级不足：提示后原地重输（挡住两个按钮的点选）
           await print_guard('这个指令需要更高等级');
           continue;
         }
-        if (result > 990 && result < 999) {
+        if (result >= MENU_LEVEL_MIN && result < BACK_KEY) {
           // 切换菜单档（991-998 一律归奴隶一览）
           select_menu = result;
           continue menu; // 回菜单循环
         }
-        if (result === 1000) {
+        if (result === PAGE_PREV_KEY) {
           // 上一页
           if (no_page > 0) {
             no_page -= 1;
           }
           continue menu;
         }
-        if (result === 1001) {
+        if (result === PAGE_NEXT_KEY) {
           // 下一页
           if (no_page < max_page) {
             no_page += 1;
@@ -299,7 +308,7 @@ async function ability_up_core(arg) {
     // 菜单按钮的编号与 ABLUP_HANDLERS 的键一一对应（#464-#466 全部实现），
     // 未实现时的回落分支已随占位机制一并删除（#638）：其余输入落到链尾重绘
 
-    if (result === 999) {
+    if (result === BACK_KEY) {
       // 结束：欲情变化检查 → 出售资格复核 → 还原调教目标
       // 商店内、非调教期调用，tflag 桶不存在——见 ability-check.js 文件头
       // 「TFLAG:25 的调教外通道」节

@@ -531,18 +531,18 @@ export default [
   {
     desc: 'M11442 换号第一屏：下一页条件 <= 写成 <（恰 25 人时进不了空尾页）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '    if (first === 2001) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
+    find: '    if (first === LIST_NEXT_KEY) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
     replace:
-      '    if (first === 2001) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE < total) no_page += 1;',
+      '    if (first === LIST_NEXT_KEY) {\n      // 下一页\n      if ((no_page + 1) * NUM_PAGE < total) no_page += 1;',
     tests: ['page-chara-info'],
     must_mention: '第 2 页没有第 1 人',
   },
   {
     desc: 'M11443 换号第二屏：下一页条件 <= 写成 <（同一边界）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      if (picked === 3001) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
+    find: '      if (picked === PICK_NEXT_KEY) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;',
     replace:
-      '      if (picked === 3001) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE < total) no_page += 1;',
+      '      if (picked === PICK_NEXT_KEY) {\n        // 下一页\n        if ((no_page + 1) * NUM_PAGE < total) no_page += 1;',
     tests: ['page-chara-info'],
     must_mention: '角色 2 出现在第一屏初始',
   },
@@ -761,7 +761,7 @@ export default [
   {
     desc: 'M11468 换号第二屏：取消支路被删（[3002] 落到 CN:2，只剩一名候选时又卡死——#545 第 2 轮返工）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      if (picked === 3002) {\n        // 回第一屏重选（见文件头）——跳到外层循环头\n        continue swap_page;\n      }\n',
+    find: '      if (picked === PICK_CANCEL_KEY) {\n        // 回第一屏重选（见文件头）——跳到外层循环头\n        continue swap_page;\n      }\n',
     replace: '',
     tests: ['page-chara-info'],
     must_mention: '取消后回到第一屏重画',

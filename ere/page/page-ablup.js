@@ -29,6 +29,13 @@ const DULL_TALENT = { 0: 101, 1: 107, 2: 103, 3: 105 };
 // 灰显色
 const GRAY = '#808080';
 
+/**
+ * 能力值提高画面（show_ablup_select）的结束键。
+ * 输入由能力值提高循环（system/train/juel-check.js）取，常量从这里导出，
+ * 免得画与分派各写一遍 999。
+ */
+const ABLUP_END_KEY = 999;
+
 /** 保有珠一览的项数（12 项 = 4 列 × 3 行） */
 const JUEL_ITEMS = 12;
 /** 保有珠一览每行的项数（原版「每 4 项换行」的列数） */
@@ -136,7 +143,7 @@ async function show_ablup_select(cid) {
   // [100] 异界综合征行是调试专用，不绘制
   // （[99] 行与尾部分割线逐行相邻，不补空行）
   era.drawLine(); // 点线分割线
-  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）
+  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）
 }
 
-module.exports = { show_ablup_select, show_juel };
+module.exports = { ABLUP_END_KEY, show_ablup_select, show_juel };

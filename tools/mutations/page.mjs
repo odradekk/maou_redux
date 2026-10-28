@@ -72,8 +72,8 @@ export default [
   {
     desc: 'M8 select_target 取消：999 返回 1（假选中）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 返回 → 0\n      return 0;\n    }',
-    replace: `    if (result === 999) {
+    find: '    if (result === BACK_KEY) {\n      // 返回 → 0\n      return 0;\n    }',
+    replace: `    if (result === BACK_KEY) {
       // 变异：返回 1
       return 1;
     }`,
@@ -1114,12 +1114,12 @@ export default [
       game.event.上次助手 = -1;
       return 0;
     }
-    if (result === 999) {`,
+    if (result === BACK_KEY) {`,
     replace: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
       return 2; // 变异：误判为取消
     }
-    if (result === 999) {`,
+    if (result === BACK_KEY) {`,
     tests: ['page-select-target'],
     must_mention:
       'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
@@ -1127,9 +1127,9 @@ export default [
   {
     desc: 'M7896 select_assi [999]：返回值改 0（误判为非取消，与 1002 混淆）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
+    find: '    if (result === BACK_KEY) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
     replace:
-      '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
+      '    if (result === BACK_KEY) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
     tests: ['page-select-target'],
     must_mention:
       'select_assi 我先想想（999）：返回 2（取消，与 select_target 的 999=0 不同码），不置 ASSI',
@@ -1152,11 +1152,11 @@ export default [
       game.event.上次助手 = result;
       return 1;
     }
-    if (result === 1000) {`,
+    if (result === PAGE_PREV_KEY) {`,
     replace: `      era_flag.assi = result;
       return 1; // 变异：FLAG:2 未写
     }
-    if (result === 1000) {`,
+    if (result === PAGE_PREV_KEY) {`,
     tests: ['page-select-target'],
     must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
@@ -1613,17 +1613,17 @@ export default [
   {
     desc: 'M8406 ability_up 等级条件（< 20 → < 21）',
     file: 'ere/page/page-ability-up.js',
-    find: '        if (result > 990 && result < 999 && cflag(0, 9) < 20) {',
-    replace: '        if (result > 990 && result < 999 && cflag(0, 9) < 21) {',
+    find: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 20) {`,
+    replace: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 21) {`,
     tests: ['page-ability-up'],
     must_mention: '等级门整表驱动',
   },
   {
     desc: 'M8407 ABILITY_UP 返回键编号（999 → 998）',
     file: 'ere/page/page-ability-up.js',
-    find: '        if (result === 999) {\n          return 0;\n        }',
+    find: '        if (result === BACK_KEY) {\n          return 0;\n        }',
     replace:
-      '        if (result === 998) {\n          return 0; // 变异：返回键编号错\n        }',
+      '        if (result === MENU_SLAVE) {\n          return 0; // 变异：返回键编号错\n        }',
     tests: ['page-ability-up'],
     must_mention: '菜单档维度整表驱动',
   },
@@ -1639,8 +1639,8 @@ export default [
   {
     desc: 'M8409 ABILITY_UP_CORE 结束键编号（999 → 997）',
     file: 'ere/page/page-ability-up.js',
-    find: '    if (result === 999) {\n      // 结束',
-    replace: '    if (result === 997) {\n      // 变异：结束键编号错',
+    find: '    if (result === BACK_KEY) {\n      // 结束',
+    replace: '    if (result === MENU_ENEMY) {\n      // 变异：结束键编号错',
     tests: ['page-ability-up'],
     must_mention: '999 收尾三件',
   },
@@ -3451,7 +3451,7 @@ export default [
   {
     desc: 'M11206 献祭两个出口的 [100] 返回退回纯文本（白名单里有 [10]，100 被引擎拒收，#530）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // 输入",
+    find: "  era.printButton('返回', ENTRY_BACK_KEY);\n  const choice = await era.input(); // 输入",
     replace:
       "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // 输入",
     tests: ['chara-info-show'],
@@ -4011,9 +4011,9 @@ export default [
   {
     desc: 'M11861 能力值提升页脚补回空行（空内容输出只收三个标签那一行）',
     file: 'ere/page/page-ability-up.js',
-    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
+    find: "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
     replace:
-      "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
+      "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
     tests: ['page-ability-up'],
     must_mention: '能力值提升页脚按钮之后不应有空行',
   },
@@ -4146,9 +4146,9 @@ export default [
   {
     desc: 'M12071 能力值提升页 [999] 之后补回空行（空内容输出只收行）',
     file: 'ere/page/page-ablup.js',
-    find: "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）",
+    find: "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）",
     replace:
-      "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
+      "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
     tests: ['juel-check'],
     must_mention: '按钮行之间不夹空行',
   },
@@ -4194,9 +4194,9 @@ export default [
   {
     desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（首个换行只收 [10] 那一行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.println();\n  era.printButton('返回', 100);",
+    find: "  era.println();\n  era.printButton('返回', ENTRY_BACK_KEY);",
     replace:
-      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', 100);",
+      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', ENTRY_BACK_KEY);",
     tests: ['chara-info-show'],
     must_mention: '三个真空行',
   },
@@ -4212,9 +4212,9 @@ export default [
   {
     desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（两个换行都是真行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY);",
     replace:
-      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY);",
     tests: ['chara-info-show'],
     must_mention: '三个真空行',
   },
@@ -4224,7 +4224,7 @@ export default [
     find: `  // [100] 异界综合征行是调试专用，不绘制
   // （[99] 行与尾部分割线逐行相邻，不补空行）
   era.drawLine(); // 点线分割线
-  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）`,
+  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）`,
     replace: `  era.println(); // 变异：多补一条空行
   era.drawLine(); // 点线分割线
   era.printButton('- 能力值提高结束', 999);`,
@@ -5630,9 +5630,9 @@ export default [
   {
     desc: 'M16453 能力值提升页脚三键退回各占一行（不再同行排布）',
     file: 'ere/page/page-ability-up.js',
-    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );",
+    find: "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );",
     replace:
-      "      [1001, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
+      "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
     tests: ['page-ability-up'],
     must_mention: '三枚页脚键共享同一个 Row',
   },

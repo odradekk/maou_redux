@@ -269,7 +269,7 @@ export default [
   {
     desc: 'M31 交互循环出口：999 改 998（退出键失效）',
     file: 'ere/system/train/juel-check.js',
-    find: `    if (result === 999) {
+    find: `    if (result === ABLUP_END_KEY) {
       break; // 能力值提高结束
     }`,
     replace:
