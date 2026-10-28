@@ -121,8 +121,9 @@ on(EVENT.TURNEND, async () => {
   try {
     settled = await settle_in_train_window(target_pool);
   } finally {
-    // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
-    // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
+    // 关窗：引擎 endTrain 在这里真正结算 gotjuel→juel——本窗口的珠收益、
+    // 否定抵消与能力提升的消费都只记在 gotjuel 里（可能是负值），读点用
+    // juel + gotjuel（#875，juel-check.js 文件头），加算之后才删调教域表
     //
     // 关窗前先存欲情（#906）：本窗口是借来的调教会话，参与者与真身调教一样
     // 在 endTrain 后丢掉 PALAM；次日评分读的 CFLAG:668 要在这里补上本窗口的

@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1133; // #874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1143; // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -204,24 +204,14 @@ export default [
     must_mention: '结算表第 0 行',
   },
   {
-    desc: 'M23 加算对象混入 3（润滑不是保有珠）',
+    desc: 'M23 死存储落笔：GOTJUEL:3（润滑）也写（引擎 endTrain 会把它加进 juel:3）',
     file: 'ere/system/train/juel-check.js',
-    find: 'const OWNED_JUEL_KEYS = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];',
-    replace:
-      'const OWNED_JUEL_KEYS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100];',
+    find: `      if (count !== 3) {
+        era.set(\`gotjuel:\${cid}:\${count}\`, gain);
+      }`,
+    replace: `      era.set(\`gotjuel:\${cid}:\${count}\`, gain); // 变异：润滑也落笔`,
     tests: ['juel-check'],
-    must_mention: '职责划分',
-  },
-  {
-    desc: 'M24 双重结算：删掉结算尾部的 gotjuel 清零',
-    file: 'ere/system/train/juel-check.js',
-    find: `  for (const key of OWNED_JUEL_KEYS) {
-    era.set(\`gotjuel:\${cid}:\${key}\`, 0);
-  }
-  return 0;`,
-    replace: '  return 0;',
-    tests: ['juel-check'],
-    must_mention: '职责划分',
+    must_mention: 'GOTJUEL:3（润滑）是死存储，ere 侧不得写',
   },
   {
     desc: 'M25 相殺取量：否定余量减半改三分之一',
@@ -251,24 +241,24 @@ export default [
   {
     desc: 'M28 TFLAG 快照：槽位错一格（+51 改 +52）',
     file: 'ere/system/train/juel-check.js',
-    find: '    era.set(`tflag:${count + 51}`, era.get(`juel:${cid}:${count + 4}`) || 0);',
+    find: '    era.set(`tflag:${count + 51}`, juel_settled(cid, count + 4));',
     replace:
-      '    era.set(`tflag:${count + 52}`, era.get(`juel:${cid}:${count + 4}`) || 0);',
+      '    era.set(`tflag:${count + 52}`, juel_settled(cid, count + 4));',
     tests: ['juel-check'],
     must_mention: 'TFLAG 快照',
   },
   {
     desc: 'M29 TFLAG:58：否定快照读错槽（juel:100 改 juel:99）',
     file: 'ere/system/train/juel-check.js',
-    find: "  era.set('tflag:58', era.get(`juel:${cid}:100`) || 0);",
-    replace: "  era.set('tflag:58', era.get(`juel:${cid}:99`) || 0);",
+    find: "  era.set('tflag:58', juel_settled(cid, 100));",
+    replace: "  era.set('tflag:58', juel_settled(cid, 99));",
     tests: ['juel-check'],
     must_mention: 'TFLAG 快照',
   },
   {
     desc: 'M30 相殺两组先后：LABEL_1/LABEL_2 对调',
     file: 'ere/system/train/juel-check.js',
-    find: `  // 否定の珠による相殺（两个循环同构，参数化）
+    find: `  // 否定の珠による相殺（两个循环同构，参数化）：扣减写进 gotjuel 的负值
   offset_negative_group(cid, [4, 5, 6], rng); // 恭顺/欲情/屈服
   offset_negative_group(cid, [8, 9, 10], rng); // 耻情/苦痛/恐怖`,
     replace: `  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_1 恭顺/欲情/屈服
@@ -6556,9 +6546,9 @@ export default [
   {
     desc: 'M9662 ablup1：成功购买扣珠额',
     file: 'ere/system/train/ablup.js',
-    find: '    era.add(ref_address(ref, ctx.cid), -below_value(amount, state, ctx));',
+    find: '    const delta = -below_value(amount, state, ctx);',
     replace:
-      '    era.add(ref_address(ref, ctx.cid), -(below_value(amount, state, ctx) + 1));',
+      '    const delta = -(below_value(amount, state, ctx) + 1); // 变异：多扣 1',
     tests: ['ablup'],
     must_mention: 'ablup1：三档终止判定',
   },
@@ -6616,9 +6606,9 @@ export default [
   {
     desc: 'M9669 ablup2：结算成功扣珠額',
     file: 'ere/system/train/ablup.js',
-    find: '    era.add(ref_address(ref, ctx.cid), -below_value(amount, state, ctx));',
+    find: '    const delta = -below_value(amount, state, ctx);',
     replace:
-      '    era.add(ref_address(ref, ctx.cid), -(below_value(amount, state, ctx) + 1));',
+      '    const delta = -(below_value(amount, state, ctx) + 1); // 变异：多扣 1',
     tests: ['ablup'],
     must_mention: 'ablup2：三档终止判定',
   },
@@ -7514,13 +7504,24 @@ export default [
     must_mention: '不跨回合残留 DOWN',
   },
   {
-    desc: 'M9786 AUTO handler：deltabase→base 结算跳过扣减（损耗当场生效但不写回 base）',
+    desc: 'M9786 AUTO handler：气力０的损耗漏掉 +80（损耗当场生效但少了固定一档）',
     file: 'ere/system/train/source-check.js',
-    find: '  // 体力气力扣减（deltabase → base 当场结算并清零，钳\n  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要\n  // manual 那两个 lose0/lose1 快照变量）\n  for (const k of [0, 1]) {\n    const loss = lose(k);\n    if (loss !== 0) {\n      const base = era.get(`base:${cid}:${k}`) || 0;\n      const max = era.get(`maxbase:${cid}:${k}`) || 0;\n      let next = base - loss;',
-    replace:
-      '  // 体力气力扣减（deltabase → base 当场结算并清零，钳\n  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要\n  // manual 那两个 lose0/lose1 快照变量）\n  for (const k of [0, 1]) {\n    const loss = lose(k);\n    if (loss !== 0) {\n      const base = era.get(`base:${cid}:${k}`) || 0;\n      const max = era.get(`maxbase:${cid}:${k}`) || 0;\n      let next = base;',
+    find: `    set_lose(0, lose(0) * 2 + 80);
+  }
+
+  // 苦痛的追加损耗
+  pain_damage_check_up();
+
+  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual`,
+    replace: `    set_lose(0, lose(0) * 2); // 变异：漏掉 +80
+  }
+
+  // 苦痛的追加损耗
+  pain_damage_check_up();
+
+  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual`,
     tests: ['source-check'],
-    must_mention: '当场结算到 base',
+    must_mention: 'base:31:0 初始 1450，扣减 Block B 写入的 80 损耗',
   },
   {
     desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（局部绝顶的 DOWN 不再折进 delta）',
@@ -11205,9 +11206,9 @@ export default [
   {
     desc: 'M13871 pay：扣减少了负号（购买变成倒送点数）',
     file: 'ere/system/train/ablup.js',
-    find: '    era.add(ref_address(ref, ctx.cid), -below_value(amount, state, ctx));',
+    find: '    const delta = -below_value(amount, state, ctx);',
     replace:
-      '    era.add(ref_address(ref, ctx.cid), below_value(amount, state, ctx));',
+      '    const delta = below_value(amount, state, ctx); // 变异：丢掉负号',
     tests: ['ablup'],
     must_mention: 'ablup0：成功购买——扣珠、升级、显示变为LV文案',
   },
@@ -11591,5 +11592,124 @@ export default [
     tests: ['palam-engine-settle'],
     must_mention:
       '参数变动行的算式（旧值/UP/DOWN/结算后的值）与文案必须与改动前一致',
+  },
+  // —— #875：调教结算交还引擎（base 与宝珠由 nextTurnInTrain / endTrain 结算）——
+  {
+    desc: 'M17550 结算时又当场写 base（引擎再扣一次 = 双重扣减）',
+    file: 'ere/system/train/source-check.js',
+    find: `  const lose0 = Math.max(lose(0), 0);
+  const lose1 = Math.max(lose(1), 0);`,
+    replace: `  const lose0 = Math.max(lose(0), 0);
+  const lose1 = Math.max(lose(1), 0);
+  // 变异：当场结算（引擎再扣一次 = 双重扣减）
+  for (const k of [0, 1]) {
+    if (lose(k) !== 0) {
+      era.set(\`base:\${cid}:\${k}\`, base_settled(cid, k));
+      era.set(\`deltabase:\${cid}:\${k}\`, 0);
+    }
+  }`,
+    tests: ['train-engine-settle'],
+    must_mention: 'base 不应当场写',
+  },
+  {
+    desc: 'M17551 损耗条读裸 base（结算之前的旧值，条与星标退回扣减前）',
+    file: 'ere/system/train/source-check.js',
+    find: `  const base0 = base_settled(cid, 0);
+  const base1 = base_settled(cid, 1);`,
+    replace: `  const base0 = era.get(\`base:\${cid}:0\`) || 0; // 变异：只读 base
+  const base1 = era.get(\`base:\${cid}:1\`) || 0;`,
+    tests: ['train-engine-settle'],
+    must_mention: '源一览、两条损耗条与结算块与改动前逐字一致',
+  },
+  {
+    desc: 'M17552 AUTO 路径重新当场结算 deltabase（引擎再扣一次）',
+    file: 'ere/system/train/source-check.js',
+    find: `  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual
+  // 同款语义，见文件头；AUTO 不显示损耗条，故不需要 manual 那两个
+  // lose0/lose1 快照变量）`,
+    replace: `  for (const k of [0, 1]) {
+    if (lose(k) !== 0) {
+      era.set(\`base:\${cid}:\${k}\`, base_settled(cid, k));
+      era.set(\`deltabase:\${cid}:\${k}\`, 0);
+    }
+  }`,
+    tests: ['train-engine-settle'],
+    must_mention: 'base 不应当场写',
+  },
+  {
+    desc: 'M17553 珠结算时又当场加 juel（引擎 endTrain 再累加一次 = 双重结算）',
+    file: 'ere/system/train/juel-check.js',
+    find: `  // 相殺前の珠を TFLAG:51-58 に記录（渲染的「上次值/抵消量」快照；#875 起
+  // 这份快照就是「已含本次增量」的结算后值，即 juel + gotjuel）`,
+    replace: `  // 变异：当场加 juel（引擎 endTrain 再累加一次 = 双重结算）
+  for (const key of [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 14, 15, 100]) {
+    era.add(\`juel:\${cid}:\${key}\`, era.get(\`gotjuel:\${cid}:\${key}\`) || 0);
+  }
+  // 相殺前の珠を TFLAG:51-58 に記录（渲染的「上次值/抵消量」的快照；#875 起
+  // 这份快照就是「已含本次增量」的结算后值，即 juel + gotjuel）`,
+    tests: ['train-engine-settle'],
+    must_mention: '结算表 15 行（含抵消列与表头）与改动前逐字一致',
+  },
+  {
+    desc: 'M17554 抵消写 juel 而非 gotjuel（抵消量被引擎再算一次）',
+    file: 'ere/system/train/juel-check.js',
+    find: '    era.add(`gotjuel:${cid}:${pick}`, -take);',
+    replace: '    era.add(`juel:${cid}:${pick}`, -take); // 变异：当场写 juel',
+    tests: ['train-engine-settle'],
+    must_mention: '结算表 15 行（含抵消列与表头）与改动前逐字一致',
+  },
+  {
+    desc: 'M17555 结算表的抵消行把抵消后的 gotjuel 当本次增量（算式两段错位）',
+    file: 'ere/system/train/juel-check.js',
+    find: '  const got = tflag - raw;',
+    replace:
+      '  const got = era.get(`gotjuel:${cid}:${idx}`) || 0; // 变异：用抵消后的增量',
+    tests: ['train-engine-settle'],
+    must_mention: '结算表 15 行（含抵消列与表头）与改动前逐字一致',
+  },
+  {
+    desc: 'M17556 能力提升在调教窗口内也当场扣 juel（不走 gotjuel）',
+    file: 'ere/system/train/ablup.js',
+    find: "    if (ref[0] === 'juel' && in_train_window(ctx.cid)) {",
+    replace:
+      "    if (ref[0] === 'juel' && false && in_train_window(ctx.cid)) { // 变异：窗口内也写 juel",
+    tests: ['train-engine-settle'],
+    must_mention: 'juel 本身没被扣',
+  },
+  {
+    desc: 'M17557 能力提升在窗口外也写 gotjuel（商店没有这张表，珠扣不掉）',
+    file: 'ere/system/train/ablup.js',
+    find: "    if (ref[0] === 'juel' && in_train_window(ctx.cid)) {",
+    replace: "    if (ref[0] === 'juel') { // 变异：窗口外也写 gotjuel",
+    tests: ['train-engine-settle'],
+    must_mention: '扣减直接落 juel',
+  },
+  {
+    desc: 'M17558 否定点数减半读裸 juel（少算本次调教刚获得的否定）',
+    file: 'ere/system/train/ability-check.js',
+    find: '    const halved = Math.floor(juel_settled(target, 100) / 2);',
+    replace:
+      '    const halved = Math.floor((era.get(`juel:${target}:100`) || 0) / 2); // 变异：只读 juel',
+    tests: ['train-engine-settle'],
+    must_mention: '9 + 本轮 100 = 109，减半截断为 54（只读裸 juel 会得 4）',
+  },
+  {
+    desc: 'M17559 结算表的基础行读裸 juel（结果列与「上一次值」错位）',
+    file: 'ere/system/train/juel-check.js',
+    find: `    const got = era.get(\`gotjuel:\${cid}:\${idx}\`) || 0;
+    const now = juel_settled(cid, idx);`,
+    replace: `    const got = era.get(\`gotjuel:\${cid}:\${idx}\`) || 0;
+    const now = era.get(\`juel:\${cid}:\${idx}\`) || 0; // 变异：只读 juel`,
+    tests: ['train-engine-settle'],
+    must_mention: '结算表 15 行（含抵消列与表头）与改动前逐字一致',
+  },
+  {
+    desc: 'M17560 抵消循环条件只读 gotjuel（漏掉已结算的否定，循环整段不动）',
+    file: 'ere/system/train/juel-check.js',
+    find: '  const negative = () => juel_settled(cid, 100);',
+    replace:
+      '  const negative = () => era.get(`gotjuel:${cid}:100`) || 0; // 变异：只读增量表',
+    tests: ['juel-check'],
+    must_mention: '抵消的逐步扣减量（负值累加进 gotjuel）',
   },
 ];

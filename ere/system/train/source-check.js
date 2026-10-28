@@ -9,8 +9,9 @@
  *     本模块不写 palam、不清 delta（#874）。手工再做一次就是双重累加——#461
  *     漏清一处时出过同性质的问题；
  *   - LOSEBASE 的 ere 等价物是 deltabase 的负值（com0 写 -5/-50）。本模块
- *     在 BASE 扣减处当场结算 deltabase → base（钳 0..maxbase，
- *     引擎语义）并清零，同理避免双重扣减；
+ *     只写 deltabase；**base 的加算、钳 0..maxbase 与 deltabase 的清零归引擎
+ *     nextTurnInTrain**（#875，与 palam/delta 同型）。损耗条这类「结算之后才
+ *     成立」的显示读 base_settled（base + deltabase）；
  *   - NOWEX 的 ex 合并留给引擎（EX_CHECK 只写 nowex，不手动加 ex——引擎
  *     nextTurnInTrain 的 nowex→ex 成为唯一一次合并，数值等价于旧引擎的
  *     EX += …）。
@@ -61,6 +62,7 @@ const { MASTER } = require('#/utils/master');
 const { idiv, times } = require('#/utils/numeric');
 const { EVENT } = require('#/data/event-name-const');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { base_settled } = require('#/era-utils/train-settle');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { train_message_a } = require('#/system/train/train-message');
 const {
@@ -3373,24 +3375,12 @@ on(EVENT.SOURCE_CHECK, async () => {
   // 苦痛的追加损耗
   pain_damage_check_up();
 
-  // 体力气力扣减（deltabase → base 当场结算并清零，钳 0..maxbase
-  // ——引擎 nextTurnInTrain 的同款语义，见文件头）。损耗值先快照——后面的
-  // 损耗条在扣减之后还要读 LOSEBASE，LOSEBASE 独立存活于扣减后
+  // 体力气力扣减只写 deltabase——base 的加算、钳 0..maxbase 与 deltabase 的
+  // 清零归引擎 nextTurnInTrain（本回合的 loop 第 13 步紧接在 SOURCE_CHECK
+  // 之后），手工再做一次就是双重扣减。损耗值先快照：后面的损耗条在结算之前
+  // 打印，读 base_settled 得到扣减后的值，LOSEBASE 本身独立存活到引擎结算
   const lose0 = Math.max(lose(0), 0);
   const lose1 = Math.max(lose(1), 0);
-  for (const k of [0, 1]) {
-    const loss = lose(k);
-    if (loss !== 0) {
-      const base = era.get(`base:${cid}:${k}`) || 0;
-      const max = era.get(`maxbase:${cid}:${k}`) || 0;
-      let next = base - loss;
-      if (max > 0) {
-        next = Math.max(Math.min(next, max), 0);
-      }
-      era.set(`base:${cid}:${k}`, next);
-      era.set(`deltabase:${cid}:${k}`, 0);
-    }
-  }
 
   // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——条件
   // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——条件照写）
@@ -3509,9 +3499,10 @@ on(EVENT.SOURCE_CHECK, async () => {
 
   // 体力气力损耗条（含濒死/死亡星标；死亡档显示 BAR 0）——条与
   // 「 -N 」拼为一行（PRINT/PRINTFORM 同行累积 + PRINTL 收行）。
-  // 损耗值用扣减前的快照（见上）
-  const base0 = era.get(`base:${cid}:0`) || 0;
-  const base1 = era.get(`base:${cid}:1`) || 0;
+  // 损耗值用快照；读数用结算后的值（base + deltabase，引擎 nextTurnInTrain
+  // 在此之前不会写 base）
+  const base0 = base_settled(cid, 0);
+  const base1 = base_settled(cid, 1);
   const max0 = era.get(`maxbase:${cid}:0`) || 0;
   const max1 = era.get(`maxbase:${cid}:1`) || 0;
   if (base0 > 0 && lose0 > 0) {
@@ -3619,22 +3610,9 @@ on(EVENT.SOURCE_CHECK_AUTO, async () => {
   // 苦痛的追加损耗
   pain_damage_check_up();
 
-  // 体力气力扣减（deltabase → base 当场结算并清零，钳
-  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要
-  // manual 那两个 lose0/lose1 快照变量）
-  for (const k of [0, 1]) {
-    const loss = lose(k);
-    if (loss !== 0) {
-      const base = era.get(`base:${cid}:${k}`) || 0;
-      const max = era.get(`maxbase:${cid}:${k}`) || 0;
-      let next = base - loss;
-      if (max > 0) {
-        next = Math.max(Math.min(next, max), 0);
-      }
-      era.set(`base:${cid}:${k}`, next);
-      era.set(`deltabase:${cid}:${k}`, 0);
-    }
-  }
+  // 体力气力扣减只写 deltabase，扣减与清零归引擎 nextTurnInTrain（与 manual
+  // 同款语义，见文件头；AUTO 不显示损耗条，故不需要 manual 那两个
+  // lose0/lose1 快照变量）
 
   // 绝顶时的漏尿处理（#462 真身化）
   await pissing_ecst_check();

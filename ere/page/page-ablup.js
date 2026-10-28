@@ -14,6 +14,7 @@
 
 const era = require('#/era-electron');
 const { decide_ablup } = require('#/system/train/ablup');
+const { juel_settled } = require('#/era-utils/train-settle');
 const { print_button_grid } = require('#/utils/button-grid');
 const {
   CELLS_PER_ITEM,
@@ -40,6 +41,10 @@ const JUEL_PER_ROW = 4;
  * 结构见 utils/text-grid.js；24 列 = 4 × (3 + 2 + 1)）。数值右对齐交给渲染层
  * 的 text-align，不再用补位函数把字符串凑成定宽。
  *
+ * 数值读「结算后的值」（juel + gotjuel，见 era-utils/train-settle.js）：
+ * 能力值提高画面在引擎 endTrain 之前反复重绘，只读 juel 会把本次调教刚获得
+ * 的珠显示成旧值（#875）。
+ *
  * @param {number} cid 调教目标
  */
 function show_juel(cid) {
@@ -58,9 +63,7 @@ function show_juel(cid) {
       count === 0 && era.get(`talent:${cid}:122`)
         ? '阴茎'
         : era.get(`palamname:${idx}`);
-    cells.push(
-      ...name_value_cells(`${name}点数：`, era.get(`juel:${cid}:${idx}`) || 0),
-    );
+    cells.push(...name_value_cells(`${name}点数：`, juel_settled(cid, idx)));
   }
   // 每行 4 项（原版「每 4 项换行」的列数）
   print_cell_grid(cells, JUEL_PER_ROW * CELLS_PER_ITEM);
