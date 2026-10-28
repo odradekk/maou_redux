@@ -36,8 +36,8 @@
  *     旁记了数据来源。
  *   - 三处 `[0] - 好的 / [1] - 不要` 式选项
  *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；#572）。
- *     随之「其余值 GOTO INPUT_LOOP」的重问支在实机上不可达（引擎按白名单
- *     拒收），不补用例（page-ability-up.js 文件头同款登记）。
+ *     随之「其余值 GOTO INPUT_LOOP」的重问支没有受理面（引擎按白名单拒收），
+ *     已随 #953 删除（三处都只剩一次 input）。
  */
 const era = require('#/era-electron');
 const {
@@ -106,25 +106,19 @@ function mark_name(n) {
 async function event_futa_f(cid) {
   const name = chara_callname(cid);
   era.print('（呃…这是什么？）');
-  for (;;) {
-    era.print(`${name}要【${talent_name(121)}】化吗？`);
-    // 两行选项 → 按钮（PR #53 通则，#572）
-    era.printButton('- 好的', 0); // （正文的 `- ` 是既有文案）
-    era.printButton('- 不要', 1);
-    const result = await era.input();
-    if (result === 0) {
-      era.print(`${name}获得了【${talent_name(121)}】。`);
-      chara(cid).stronghold.肉芽诅咒 = 0;
-      chara(cid).chara.扶她 = 1;
-      chara(cid).train.童贞 = 1;
-      break;
-    }
-    if (result === 1) {
-      era.print(`${name}失去了【${talent_name(326)}】。`);
-      chara(cid).stronghold.肉芽诅咒 = 0;
-      break;
-    }
-    // 其余值 → 重印询问行（不消耗其它状态）
+  era.print(`${name}要【${talent_name(121)}】化吗？`);
+  // 两行选项 → 按钮（PR #53 通则，#572）。本屏只印 0/1，两支各有出口，
+  // 原先「其余值 → 重印询问行」的回边没有受理面（#953）
+  era.printButton('- 好的', 0); // （正文的 `- ` 是既有文案）
+  era.printButton('- 不要', 1);
+  if ((await era.input()) === 0) {
+    era.print(`${name}获得了【${talent_name(121)}】。`);
+    chara(cid).stronghold.肉芽诅咒 = 0;
+    chara(cid).chara.扶她 = 1;
+    chara(cid).train.童贞 = 1;
+  } else {
+    era.print(`${name}失去了【${talent_name(326)}】。`);
+    chara(cid).stronghold.肉芽诅咒 = 0;
   }
   await era.waitAnyKey();
 }
@@ -528,16 +522,12 @@ async function offervirgin_check(rand = default_rand) {
     );
   }
 
-  let answer;
-  for (;;) {
-    era.print(`要夺取${name}的处女吗？`);
-    // 两行选项 → 按钮（PR #53 通则，#572）
-    era.printButton('- 等你很久了！', 0);
-    era.printButton('- 继续等着吧你……', 1);
-    answer = await era.input();
-    if (answer === 1 || answer === 0) break;
-    // 其余值 → 重问
-  }
+  era.print(`要夺取${name}的处女吗？`);
+  // 两行选项 → 按钮（PR #53 通则，#572）；本屏只印 0/1，原先「其余值 →
+  // 重问」的回边没有受理面（#953）
+  era.printButton('- 等你很久了！', 0);
+  era.printButton('- 继续等着吧你……', 1);
+  const answer = await era.input();
 
   if (answer === 1) {
     // 拒绝支
@@ -561,18 +551,13 @@ async function offervirgin_check(rand = default_rand) {
   }
 
   if (era.get(`item:24`)) {
-    // 安全套二问
-    for (;;) {
-      era.print('要使用安全套吗？');
-      // 两行选项 → 按钮（PR #53 通则，#572）
-      era.printButton('- 安全第一！', 0);
-      era.printButton('- 中出最高！', 1);
-      const answer_condom = await era.input();
-      if (answer_condom === 1) break; // 非 1 → 重问
-      if (answer_condom === 0) {
-        condom = 1; // TEQUIP:35 = 1
-        break;
-      }
+    // 安全套二问（本屏只印 0/1，原先「非 1 → 重问」的回边没有受理面，#953）
+    era.print('要使用安全套吗？');
+    // 两行选项 → 按钮（PR #53 通则，#572）
+    era.printButton('- 安全第一！', 0);
+    era.printButton('- 中出最高！', 1);
+    if ((await era.input()) === 0) {
+      condom = 1; // TEQUIP:35 = 1
     }
     if (condom === 1) {
       game.train.安全套 -= 1; // ITEM:24 -= 1
