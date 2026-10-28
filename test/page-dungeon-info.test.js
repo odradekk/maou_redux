@@ -390,19 +390,24 @@ test('INFO2 陷阱路：行选择（110）覆盖三列，列选择（201）覆�
   assert.equal(fixture2.store.get('flag:310') ?? 0, 0, 'B 列不受列选择影响');
 });
 
-test('INFO2 陷阱路：未选对象先设陷阱 → 提示「还没有选择对象」并等键', async () => {
+test('INFO2 陷阱路：未选对象时库存项与「解除陷阱」是 disabled（引擎不送达）', async () => {
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
+  // 没有选任何层/单元：库存项与解除陷阱都不可选，键入 60 被引擎白名单拒收
   fixture.set_inputs(60, 999);
-  await dungeon_info2();
-  const history = fixture.lines_history
-    .filter((l) => l.type === 'text')
-    .map((l) => l.text);
-  assert.ok(
-    history.some((t) => t.includes('还没有选择对象')),
-    '未选对象时打提示行',
+  await assert.rejects(dungeon_info2(), /输入不合法/);
+  const disabled = fixture.lines_history.filter(
+    (l) => l.type === 'button' && l.disabled === true,
   );
-  assert.equal(fixture.store.get('flag:300') ?? 0, 0, '提示路径不写槽');
+  assert.ok(
+    disabled.some((l) => l.accelerator === 60),
+    '库存项 60 是 disabled 按钮',
+  );
+  assert.ok(
+    disabled.some((l) => l.accelerator === 0),
+    '解除陷阱 0 是 disabled 按钮',
+  );
+  assert.equal(fixture.store.get('flag:300') ?? 0, 0, '未选对象时一个槽都没写');
 });
 
 test('INFO2 设施路：选择层 + 设施 → 确认对话 → 确认执行（双扣款）', async () => {

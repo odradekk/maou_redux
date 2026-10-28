@@ -96,7 +96,6 @@ const ROOM_LEVEL_MAX = 3;
 /** SETCOLORBYNAME DarkSeaGreen（按钮用十六进制，命名色在 hover 态会拼错） */
 const DARK_SEA_GREEN = '#8fbc8f';
 /** SETCOLOR 80,80,80（等级不足的灰显） */
-const GRAY = '#505050';
 
 /** CFLAG 读数缺省处理（#13） */
 function cflag(cid, idx) {
@@ -261,8 +260,12 @@ async function pick_action(select, floor) {
       if (master_lv >= gate.level) {
         era.printButton(gate.label, gate.work);
       } else {
-        // 等的灰显不可选（保持纯文本，见文件头第 3 条）
-        era.print([{ content: `[---] （魔王等级不足）`, color: GRAY }]);
+        // 等级不足的档画成 disabled 按钮：正文保留档名与「魔王等级不足」，
+        // 编号仍是该档的 work——引擎只把 !disabled 的加速键推进
+        // inputParam.rule，所以按不动是引擎保证的（解锁后同一编号才可达）。
+        era.printButton(`${gate.label}（魔王等级不足）`, gate.work, {
+          disabled: true,
+        });
       }
     }
     era.drawLine(); // （DRAWLINE + INPUT）

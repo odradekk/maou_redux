@@ -174,6 +174,7 @@ test('ABILITY_UP：表头按钮文案与等级门灰显（CFLAG:0:9 < 20 → #bb
     const draw = split_draws(added)[0];
     assert.equal(button_of(draw, 998).text, '▌奴隶一览');
     assert.equal(button_of(draw, 998).color, undefined, '等级 ≥ 20 不灰');
+    assert.equal(button_of(draw, 998).disabled, false, '等级 ≥ 20 不禁用');
     assert.equal(button_of(draw, 997).text, '▌勇者一览');
     assert.equal(button_of(draw, 997).color, undefined);
     assert.ok(texts(draw).includes('要提高谁的能力值？'), '标题行');
@@ -199,6 +200,13 @@ test('ABILITY_UP：表头按钮文案与等级门灰显（CFLAG:0:9 < 20 → #bb
     const draw = split_draws(added)[0];
     assert.equal(button_of(draw, 998).color, color, `${level} 级的调暗`);
     assert.equal(button_of(draw, 997).color, color);
+    // #873：调暗之外还置 disabled——等级不足时引擎不送达 997/998
+    assert.equal(
+      button_of(draw, 998).disabled,
+      level < 20,
+      `${level} 级的禁用`,
+    );
+    assert.equal(button_of(draw, 997).disabled, level < 20);
   }
 });
 
@@ -220,21 +228,24 @@ test('ABILITY_UP：魔王行的名字与等级按定宽渲染（名字 12 / 8 �
 
 // —— 输入分发 ——
 
-test('ABILITY_UP：等级门整表驱动（< 20 拦下两个菜单键、≥ 20 放行）', async () => {
-  // 拦截分支**回输入而不重绘**，故本次调用只有一次绘制，玩家看到提示后
-  // 要重新选。
-  for (const level of [19, 20]) {
-    const fixture = four_chara({ 'cflag:0:9': level });
+test('ABILITY_UP：等级门（< 20 两个菜单键 disabled、≥ 20 放行）', async () => {
+  // #873：等级不足时两个菜单键画成 disabled——编号照旧 997/998，但引擎
+  // 只把 !disabled 的加速键推进 inputParam.rule，键入被当场拒收（不再走
+  // 「这个指令需要更高等级」那条防御分支）。
+  {
+    const fixture = four_chara({ 'cflag:0:9': 19 });
+    await assert.rejects(run(fixture, [997, 999]), /输入不合法/);
+  }
+  {
+    const fixture = four_chara({ 'cflag:0:9': 20 });
     const { added } = await run(fixture, [997, 999]);
     const draws = split_draws(added);
-    const blocked = texts(added).includes('这个指令需要更高等级');
-    if (level < 20) {
-      assert.equal(blocked, true, `${level} 级：应提示等级不足`);
-      assert.equal(draws.length, 1, '拦截回输入，不重绘');
-    } else {
-      assert.equal(blocked, false, `${level} 级：放行`);
-      assert.deepEqual(accs(draws[1]), [998, 997, 3, 1000, 999, 1001]);
-    }
+    assert.equal(
+      draws.length,
+      2,
+      '20 级：切档后应重绘（判断条件 < 20 未命中）',
+    );
+    assert.deepEqual(accs(draws[1]), [998, 997, 3, 1000, 999, 1001]);
   }
 });
 

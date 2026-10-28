@@ -90,15 +90,16 @@ function cflag(cid, idx) {
 /**
  * 菜单头：奴隶一览 / 勇者一览两个按钮 + 标题。
  *
- * 魔王等级不足（CFLAG:0:9 < 20）时把两个按钮调暗——按 menu-button.js
- * 的既有近似（调暗 = #bbbbbb）走 menu_button 的 dim 参数。
+ * 魔王等级不足（CFLAG:0:9 < 20）时两个按钮同时调暗并置 disabled：调暗沿用
+ * menu-button.js 的既有近似（#bbbbbb），禁用让引擎不送达 997/998——此前
+ * 还能点，点中只出一条「这个指令需要更高等级」再重画。
  */
 function draw_menu_header() {
   era.drawLine({ isSolid: true }); // 实线分割线
   // 标题字体设置不绘制（见文件头第 4 条）
   const dim = cflag(0, 9) < 20; // CFLAG:0:9 = 魔王等级
-  menu_button('奴隶一览', MENU_SLAVE, dim); // （▌ 前缀由 menu_button 拼接）
-  menu_button('勇者一览', MENU_ENEMY, dim);
+  menu_button('奴隶一览', MENU_SLAVE, dim, dim); // （▌ 前缀由 menu_button 拼接）
+  menu_button('勇者一览', MENU_ENEMY, dim, dim);
   // 按钮自成一行（见 CONTEXT.md「输出 API 的排版与对齐」）；实测输出里
   // 按钮行与随后的分割线逐行相邻，故这里不补空行（#562）
   era.drawLine(); // 分割线

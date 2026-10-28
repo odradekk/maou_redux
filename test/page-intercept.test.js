@@ -449,7 +449,11 @@ test('INTERCEPT：行动设定的等级门渲染（19 级看不到卖淫、55 �
     const action = level < 20 ? 1 : 5;
     const { added } = await run_intercept(fixture, [1, 1, action, 999, 999]);
     const labels = added.filter((l) => l.type === 'button').map((l) => l.text);
-    const dimmed = texts(added).filter((t) => t.includes('（魔王等级不足）'));
+    // #873：等级不足的四档是 disabled 按钮（编号照旧 1-5，引擎不送达）；
+    // 正文带「（魔王等级不足）」，与解锁态的档名区分开
+    const dimmed = added.filter(
+      (l) => l.type === 'button' && l.disabled === true,
+    );
     if (level < 20) {
       assert.ok(
         labels.includes('内职') && labels.includes('卖淫'),
@@ -461,9 +465,18 @@ test('INTERCEPT：行动设定的等级门渲染（19 级看不到卖淫、55 �
         '潜入工作',
         '训练',
       ]) {
-        assert.ok(!labels.includes(absent), `${absent}（≥20）不该是按钮`);
+        assert.ok(!labels.includes(absent), `${absent}（≥20）不该可点`);
       }
-      assert.equal(dimmed.length, 4, '其余四档灰显为纯文本');
+      assert.deepEqual(
+        dimmed.map((l) => [l.accelerator, l.text]),
+        [
+          [2, '补充陷阱（魔王等级不足）'],
+          [3, '扩张设施(要2000G)（魔王等级不足）'],
+          [4, '潜入工作（魔王等级不足）'],
+          [5, '训练（魔王等级不足）'],
+        ],
+        '其余四档是 disabled 按钮',
+      );
     } else {
       for (const label of [
         '内职',

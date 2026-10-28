@@ -1152,7 +1152,7 @@ test('裁缝换屏：装备品与戒指槽屏往返重画，行数相同（#724�
   assert_rows_bounded([rows[2], rows[6]], '戒指槽屏');
   assert_screen_top(fixture, '装饰A', '装备品选槽屏');
   // 本测试世界没持有装备品，未开放行就是戒指屏的第一行
-  assert_screen_top(fixture, '未开放（30级后才能装备强化）', '戒指槽屏', 2);
+  assert_screen_top(fixture, '装备强化（30级后才能装备强化）', '戒指槽屏', 2);
   assert_no_unread(fixture, '装备品与戒指槽');
 });
 

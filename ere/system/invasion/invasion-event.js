@@ -156,6 +156,28 @@ async function inv_death_check(arg0, arg1) {
 }
 
 /** 精锐部队的两个预设角色号（`ADDCHARA 18` 防御型 / `ADDCHARA 19` 攻击型） */
+/**
+ * 堡垒遭遇两种屏幕的选项键。
+ * - inv_type 2：[1] 全军强攻 / [2] 亲自潜入 / [3] 绕路；
+ * - inv_type 3：[1] 偷偷潜入 / [2] 绕路（选项号加一后与 inv_type 2 共用分支，
+ *   故两屏不能用同一组名字）。
+ */
+const FORT_CHARGE_KEY = 1;
+const FORT_INFILTRATE_KEY = 2;
+const FORT_DETOUR_KEY = 3;
+const FORT_STEALTH_KEY = 1;
+const FORT_ROUNDABOUT_KEY = 2;
+
+/**
+ * 强敌对决两屏：召唤魔王 [1] / 亲自上前 [2] / 无视 [3]；
+ * 魔王决斗：使用氪金道具 [1] / 堂堂正正 [2]。
+ */
+const DUEL_SUMMON_KEY = 1;
+const DUEL_PERSONAL_KEY = 2;
+const DUEL_IGNORE_KEY = 3;
+const DUEL_ITEM_KEY = 1;
+const DUEL_FAIR_KEY = 2;
+
 const SEIEI_DEFENDER = 18;
 const SEIEI_ATTACKER = 19;
 
@@ -552,10 +574,14 @@ async function invasion_event_fort(
       `${info.fort}看起来防御坚固防备森严，于是${chara_nickname(yusya)}决定……`, // PRINTFORMW
     );
     await era.waitAnyKey();
-    era.printButton('全军强攻', 1);
-    era.printButton('亲自潜入', 2);
-    era.printButton('绕路', 3);
-    choice = await fort_choice([1, 2, 3]); // $INPUT_LOOP
+    era.printButton('全军强攻', FORT_CHARGE_KEY);
+    era.printButton('亲自潜入', FORT_INFILTRATE_KEY);
+    era.printButton('绕路', FORT_DETOUR_KEY);
+    choice = await fort_choice([
+      FORT_CHARGE_KEY,
+      FORT_INFILTRATE_KEY,
+      FORT_DETOUR_KEY,
+    ]); // $INPUT_LOOP
   } else if (inv_type === 3) {
     era.print(
       `${chara_nickname(yusya)}向${info.place}进发着，却在必经之路上遇到了${info.troop}建起的一座${info.fort}。`,
@@ -564,10 +590,10 @@ async function invasion_event_fort(
       `${info.fort}看起来防御坚固防备森严，于是${chara_nickname(yusya)}决定……`, // PRINTFORMW
     );
     await era.waitAnyKey();
-    era.printButton('偷偷潜入', 1);
-    era.printButton('绕路', 2);
+    era.printButton('偷偷潜入', FORT_STEALTH_KEY);
+    era.printButton('绕路', FORT_ROUNDABOUT_KEY);
     // `L_CHOICE = RESULT + 1`——选项号加一后与 [2] 路线共用下面的分支
-    choice = (await fort_choice([1, 2])) + 1; // $INPUT_LOOP2
+    choice = (await fort_choice([FORT_STEALTH_KEY, FORT_ROUNDABOUT_KEY])) + 1; // $INPUT_LOOP2
   } else {
     era.print(`魔王军浩浩荡荡地向${info.place}进发着。`);
     era.print(
@@ -582,7 +608,7 @@ async function invasion_event_fort(
 
   era.drawLine();
   // [1] 全军强攻（RAND:10 三档：>= 6 成功 / >= 2 惨胜 / 其余 惨败）
-  if (choice === 1) {
+  if (choice === FORT_CHARGE_KEY) {
     const roll = rand(10);
     if (roll >= 6) {
       era.print(
@@ -645,7 +671,7 @@ async function invasion_event_fort(
   }
 
   // [2] 亲自潜入（INV_TYPE 2 与 3 两套结算）
-  if (choice === 2 && inv_type === 2) {
+  if (choice === FORT_INFILTRATE_KEY && inv_type === 2) {
     const roll = rand(10);
     // 天使/恶魔翼（TALENT:245）或精灵族（种族 6）/魔族（种族 8）→ 100%
     if (has_wing(yusya)) {
@@ -711,7 +737,7 @@ async function invasion_event_fort(
     chara(yusya).invasion.状态 = 9;
     return 1;
   }
-  if (choice === 2 && inv_type === 3) {
+  if (choice === FORT_INFILTRATE_KEY && inv_type === 3) {
     const roll = rand(10);
     if (has_wing(yusya)) {
       era.print(
@@ -751,7 +777,7 @@ async function invasion_event_fort(
   }
 
   // [3] 绕路（INV_TYPE == 2：RAND:10，九成平安 / 一成埋伏）
-  if (choice === 3 && inv_type === 2) {
+  if (choice === FORT_DETOUR_KEY && inv_type === 2) {
     const roll = rand(10);
     if (roll > 0) {
       era.print(
@@ -773,7 +799,7 @@ async function invasion_event_fort(
   }
   // [3] 绕路（INV_TYPE == 3）：RAND:10，九成平安无事（体力 ×9/10，直接
   // RETURN 0）/ 一成埋伏（RETURN 1），与怪物路线（INV_TYPE == 2）同构。
-  if (choice === 3 && inv_type === 3) {
+  if (choice === FORT_DETOUR_KEY && inv_type === 3) {
     if (rand(10) > 0) {
       era.print(
         `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,
@@ -1029,13 +1055,17 @@ async function invasion_event_challenge(
       `面对${info.foe}的挑衅，${chara_nickname(yusya)}决定……`, // PRINTFORMW
     );
     await era.waitAnyKey();
-    era.printButton('召唤魔王应战', 1);
-    era.printButton('亲自上前处理', 2);
-    era.printButton('无视，全军进攻', 3);
-    choice = await fort_choice([1, 2, 3]); // $INPUT_LOOP
-    if (choice === 1) {
+    era.printButton('召唤魔王应战', DUEL_SUMMON_KEY);
+    era.printButton('亲自上前处理', DUEL_PERSONAL_KEY);
+    era.printButton('无视，全军进攻', DUEL_IGNORE_KEY);
+    choice = await fort_choice([
+      DUEL_SUMMON_KEY,
+      DUEL_PERSONAL_KEY,
+      DUEL_IGNORE_KEY,
+    ]); // $INPUT_LOOP
+    if (choice === DUEL_SUMMON_KEY) {
       era.print(`魔王回应了${chara_nickname(yusya)}召唤前来迎战${info.foe}。`);
-    } else if (choice === 2) {
+    } else if (choice === DUEL_PERSONAL_KEY) {
       era.print(`${chara_nickname(yusya)}决定亲自迎战${info.foe}。`);
     } else {
       era.print(
@@ -1086,16 +1116,16 @@ async function invasion_event_challenge(
   }
 
   // [1] 召唤魔王应战
-  if (choice === 1) {
+  if (choice === DUEL_SUMMON_KEY) {
     if (era_flag.money >= 3000) {
       // 道具二选一（钱不够就直接落到堂堂正正）
       era.print('但对方看起来也不是省油的灯、未必能稳操胜券、');
       era.print('好在魔王身上携带了些一次性魔法道具、');
       era.print('虽然价格昂贵但威力巨大、');
       era.print('魔王考虑着是否要在决斗中使用这些道具。。。');
-      era.printButton('使用氪金道具', 1);
-      era.printButton('堂堂正正一决胜负', 2);
-      choice = await fort_choice([1, 2]); // $INPUT_LOOP2
+      era.printButton('使用氪金道具', DUEL_ITEM_KEY);
+      era.printButton('堂堂正正一决胜负', DUEL_FAIR_KEY);
+      choice = await fort_choice([DUEL_ITEM_KEY, DUEL_FAIR_KEY]); // $INPUT_LOOP2
     } else {
       choice = 2;
     }
@@ -1103,7 +1133,7 @@ async function invasion_event_challenge(
     // 人数上限七分支：命中即 LOCAL = 0 → 开挂取胜不成立
     const local = hero_cap_reached() ? 0 : roll;
     // 开挂取胜
-    if (choice === 1 && local >= 2) {
+    if (choice === DUEL_ITEM_KEY && local >= 2) {
       era.print(`魔王和${info.foe}的战斗开始了。`);
       // 的 PRINTFORM 与 PRINTDATAL 的第一行同显示行（归并见文件头）
       const items = printdata(rand, [
@@ -1141,7 +1171,7 @@ async function invasion_event_challenge(
       return 0;
     }
     // 开挂失败
-    if (choice === 1) {
+    if (choice === DUEL_ITEM_KEY) {
       era.print(`魔王和${info.foe}的战斗开始了。`);
       // 的 PRINTFORM 与 PRINTDATAL 的第一行同显示行（归并见文件头）
       const items = printdata(rand, [
@@ -1191,7 +1221,7 @@ async function invasion_event_challenge(
   }
 
   // [2] 亲自上前处理
-  if (choice === 2) {
+  if (choice === DUEL_FAIR_KEY) {
     const roll = rand(10);
     if (roll < 2) {
       // 奴隶取胜 20%

@@ -48,6 +48,16 @@ const { default_rand } = require('#/utils/numeric');
  */
 const RESTART = Symbol('restart');
 
+/**
+ * 本模块两屏的固定键。
+ * - 派遣选人屏（pick_hero）页脚：上一页 [1000] / 返回 [999] / 下一页 [1001]；
+ * - 出兵方式屏：返回 [999]（0-3 是 inv_type 的方法号，由各结果段消费）。
+ */
+const HERO_PREV_KEY = 1000;
+const HERO_BACK_KEY = 999;
+const HERO_NEXT_KEY = 1001;
+const DISPATCH_BACK_KEY = 999;
+
 /** 每页角色数（`#DIM NUM_PAGE = 26`） */
 const NUM_PAGE = 26;
 
@@ -413,26 +423,26 @@ async function pick_hero(state, rejected) {
     era.drawLine();
     print_button_grid(
       [
-        [1000, '- 上一页'], // PRINTLC
-        [999, '- 返 回'], // PRINTLC（两个空格，引擎折叠成一个）
-        [1001, '- 下一页'], // PRINTLC
+        [HERO_PREV_KEY, '- 上一页'], // PRINTLC
+        [HERO_BACK_KEY, '- 返 回'], // PRINTLC（两个空格，引擎折叠成一个）
+        [HERO_NEXT_KEY, '- 下一页'], // PRINTLC
       ],
       3,
     );
 
     const result = await era.input(); // INPUT
 
-    if (result === 999) {
+    if (result === HERO_BACK_KEY) {
       return RESTART;
     }
-    if (result === 1000) {
+    if (result === HERO_PREV_KEY) {
       // 上一页（到底不动，GOTO 回循环头重画）
       if (state.no_page > 0) {
         state.no_page -= 1;
       }
       continue;
     }
-    if (result === 1001) {
+    if (result === HERO_NEXT_KEY) {
       // 下一页（到末页不动）
       if (state.no_page < max_page) {
         state.no_page += 1;
@@ -733,12 +743,12 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     }
     era.printButton('- 派遣勇者前去掠夺资金（资金·经验值）', 3);
     era.drawLine();
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', DISPATCH_BACK_KEY);
 
     // $INPUT_LOOP：无效输入重问不重画（GOTO INPUT_LOOP，见文件头）
     for (;;) {
       const result = await era.input();
-      if (result === 999) {
+      if (result === DISPATCH_BACK_KEY) {
         return 0;
       }
       if (result >= 4 || result < 0) {

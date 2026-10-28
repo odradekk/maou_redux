@@ -125,6 +125,18 @@ const { default_rand, times } = require('#/utils/numeric');
 const TOP_BAR_COLUMN_WIDTH = 12;
 
 /**
+ * 本模块两屏的固定键。
+ * - 水晶球投放屏（sengen_video）：各层子菜单的出口都是 [999]；
+ *   1-4 是投放/奸商投放/增强/延长四个动作号，由分支消费，不设常量。
+ * - 征服后菜单（post_conquest_menu）：[9] 进战役菜单、[999] 退出、
+ *   [1000] 进水晶球投放屏；0-5 是地区下标（CAMPAIGN_REGIONS），是数据。
+ */
+const SENGEN_LEAVE_KEY = 999;
+const POST_CONQUEST_CAMPAIGN_KEY = 9;
+const POST_CONQUEST_BACK_KEY = 999;
+const POST_CONQUEST_VIDEO_KEY = 1000;
+
+/**
  * 数量读数（sengen_video 的两处「要投放多少」）：这一轮没有打印按钮，
  * 非数字由 `rule` 挡在输入框里——引擎不回传不合法值，`count` 因此恒为数值，
  * 不会再把 NaN 写进 `EX_FLAG:9011`。上界取自库存这类活数据，越界仍由
@@ -276,7 +288,7 @@ async function sengen_video(rand = default_rand) {
       era.print('当前没有可以用于投放的水晶球');
     }
     era.drawLine();
-    era.printButton('离开', 999);
+    era.printButton('离开', SENGEN_LEAVE_KEY);
 
     const result = await era.input();
     if (stock === 0 && result !== 999) {
@@ -400,7 +412,7 @@ async function sengen_video(rand = default_rand) {
       if (chara(0).event.勋章经验 > 5) {
         era.printButton('支付勋章', 2);
       }
-      era.printButton('离开', 999);
+      era.printButton('离开', SENGEN_LEAVE_KEY);
       // $INPUT_LOOP_TMP3
       for (;;) {
         const pay = await era.input();
@@ -415,7 +427,7 @@ async function sengen_video(rand = default_rand) {
           chara(0).event.勋章经验 -= 5;
           break;
         }
-        if (pay === 999) {
+        if (pay === SENGEN_LEAVE_KEY) {
           continue menu; // GOTO INPUT_LOOP
         }
         // ELSE → GOTO INPUT_LOOP_TMP3
@@ -442,7 +454,7 @@ async function sengen_video(rand = default_rand) {
       if (era_flag.money > 50000) {
         era.printButton('支付', 1);
       }
-      era.printButton('算了', 999);
+      era.printButton('算了', SENGEN_LEAVE_KEY);
       // $INPUT_LOOP_TMP4
       for (;;) {
         const pay = await era.input();
@@ -452,7 +464,7 @@ async function sengen_video(rand = default_rand) {
           era_exflag.legit_money -= 50000;
           break;
         }
-        if (pay === 999) {
+        if (pay === SENGEN_LEAVE_KEY) {
           continue menu; // GOTO INPUT_LOOP
         }
         // ELSE → GOTO INPUT_LOOP_TMP4
@@ -471,7 +483,7 @@ async function sengen_video(rand = default_rand) {
       continue; // GOTO INPUT_LOOP
     }
 
-    if (result === 999) {
+    if (result === SENGEN_LEAVE_KEY) {
       return 0; // （[999] 的 RETURN 0 与紧随其后落尾的空 ELSE 同值）
     }
     // 其余值落在空 ELSE 上：落尾即隐式 RETURN 0，同样退出菜单。
@@ -610,21 +622,21 @@ async function post_conquest_menu(rand = default_rand) {
   }
   era.printButton('- 向着世界之外', 9); // 旧文本作「向著」，#60 归一为简体
   era.drawLine();
-  era.printButton('- 退出', 999);
+  era.printButton('- 退出', POST_CONQUEST_BACK_KEY);
   // [1000] 的分子/分母走具名门面（#502 起；此前的「无门面、直读」注释
   // 已过时，era-exflag.js 的 crystal_ball_deployed/stock 早已备好）
   era.printButton(
     `向城里投放水晶球[${era_exflag.crystal_ball_deployed}/${era_exflag.crystal_ball_stock}]`,
-    1000,
+    POST_CONQUEST_VIDEO_KEY,
   );
 
   // $INPUT_LOOP2：无效输入重问不重画（GOTO，见文件头）
   for (;;) {
     const result = await era.input();
-    if (result === 999) {
+    if (result === POST_CONQUEST_BACK_KEY) {
       return 0;
     }
-    if (result === 1000) {
+    if (result === POST_CONQUEST_VIDEO_KEY) {
       // 调 sengen_video → RETURN 0（#502 起真身）；注释单占一行，
       // 免得变异条目的 find 串把这行注释当定位串
       await sengen_video();
@@ -633,7 +645,7 @@ async function post_conquest_menu(rand = default_rand) {
     // 的 ELSEIF RESULT == 1001 分支随 #638 删除（#103：
     // 复制改名事故、不排期，缺内容的入口去掉），键入 1001 落到
     // 下方的 >=6 拒收支继续重问
-    if (result === 9) {
+    if (result === POST_CONQUEST_CAMPAIGN_KEY) {
       await campaign_menu();
       return 0;
     }

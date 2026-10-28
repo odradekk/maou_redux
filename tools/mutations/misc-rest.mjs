@@ -383,8 +383,8 @@ export default [
     7340,
     '菜单按钮明暗条件反转',
     'ere/page/components/menu-button.js',
-    'dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined',
-    '!dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined',
+    '...(dim ? { color: MENU_BUTTON_DIM_COLOR } : {}),',
+    '...(!dim ? { color: MENU_BUTTON_DIM_COLOR } : {}),',
     menu_button,
   ),
   make(
