@@ -393,10 +393,9 @@ test('实机路径端到端：主菜单 → 调教 → 爱抚 → 玛奥真的�
 
   // 回合：COM0（爱抚）→ SOURCE_CHECK（CALL KOJO_MESSAGE_COM）
   fixture.load_module('system/train/com-caress');
-  register_handlers(fixture, 'system/train/source-check');
   const { com_family } = fixture.load_module('system/train/com-family');
   await com_family.call(0);
-  await emit('SOURCE_CHECK');
+  await fixture.load_module('system/train/source-check').handle_source_check();
   assert.ok(
     fixture.text_lines().includes('「你这个变态…别、别碰我！」'),
     'K5 首次台词经真实调用点出现在输出里（#60 归一为简体）',

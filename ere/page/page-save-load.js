@@ -6,7 +6,7 @@
  * 不移植 SYSTEM_LOADEND：静态搜索未发现调用者，且它不在保留名清单
  * （SYSTEM_TITLE / TITLE_LOADGAME / SYSTEM_AUTOSAVE / EVENTLOAD 等，见
  * system-flow.md「主要系统函数一览」）——读档成功的收尾由本文件的
- * EVENTLOAD 链与转场承担。
+ * 读档钩子（event-load.js）与转场承担。
  *
  * 旧引擎机制 → ere 写法的映射（本文件全部语义依据集中在此）：
  *   - SAVENOS()（分页步长）→ 常量 PAGE_LEN = 20。它是
@@ -75,10 +75,10 @@
  *     分支真机双重不可达，登记为换代失效）随这张工单作废**：0 就是
  *     「不输入」在引擎上的归一写法，按 #567 的决定（空输入分支一律保留）
  *     恢复可达。
- *   - EVENTLOAD（读档后的回调链）**自 #137 起由 ere/event/event-load.js
- *     承载**（处理器在 system/flow/startup.js 的装配表里注册，emit 点在
- *     load_game 的成功分支）：
- *     LOADGLOBAL 自 #547 起在该链首行镜像（await era.loadGlobal——global:3
+ *   - EVENTLOAD（读档后的回调）**自 #137 起由 ere/event/event-load.js
+ *     承载**（只有一个处理者，#853 起由 load_game 的成功分支直接调用，
+ *     不再走事件总线）：
+ *     LOADGLOBAL 自 #547 起在该函数首行镜像（await era.loadGlobal——global:3
  *     不即时 SAVEGLOBAL 打破了 #137 的不镜像前提，见 event-load.js 文件头）；
  *     名字初始化两调用自 #105 起为真身；LASTLOAD_NO == 999 →
  *     MAOUNET 与 1000–1020 → INPORT_B 是跨作品数据交换（ere 读档界面只放行
@@ -86,7 +86,7 @@
  *     三处对新档有语义的行经 #137 逐条判定后归钩子等价实现（判定依据见
  *     event-load.js 文件头）。
  *   - LOADDATA 的**转场语义**（#137）：读档成功后不回调用方（标题的
- *     RESTART、据点的循环重绘都不再走），而是 emit EVENTLOAD 链后转场进
+ *     RESTART、据点的循环重绘都不再走），而是跑读档钩子后转场进
  *     SHOP——且**不执行 EVENTSHOP**（技能 system-flow.md:51-53），以
  *     STATE.SHOP_AFTER_LOAD 承载（game-state.js 的本地扩展）。引擎拒读
  *     （loadData false）时不转场：留在读档界面重绘（#136 已有行为，与
@@ -94,14 +94,13 @@
  */
 
 const era = require('#/era-electron');
-const { emit } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/game-state');
+const { handle_load } = require('#/event/event-load');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { input_text } = require('#/utils/input-text');
 const { chara_callname } = require('#/utils/callname-utils');
-const { EVENT } = require('#/data/event-name-const');
 
 /**
  * 分页步长：SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -377,7 +376,7 @@ async function set_story_name(anchor) {
  * load_game：读档界面。
  *
  * 列表 + 99 号自动存档槽单列段 + 翻页行；读档成功后：EX_FLAG:2801 钳制 +
- * LASTLOAD_NO 自写入 → EVENTLOAD 链（ere/event/event-load.js）→ 转场进
+ * LASTLOAD_NO 自写入 → 读档钩子（ere/event/event-load.js，直接调用）→ 转场进
  * SHOP（LOADDATA 的转场语义，见文件头）。**读档成功后本函数以转场目标返回**，
  * 不再停留在读档界面——`RETURN L_POS` 与标题的 RESTART 都在
  * 「没读成」的世界里。
@@ -447,11 +446,11 @@ async function load_game() {
         // LASTLOAD_NO：引擎在 LOADDATA 时自动设置；ere 自写入（写进
         // 读入后的数据，随下一次存档带走——同序）
         era_flag.last_load_no = result;
-        // EVENTLOAD 链（LOADDATA 后迁移的保留名回调，ere/event/
-        // event-load.js）。链内 BEGIN 的暂存值覆盖缺省转场目标——
-        // 的 BEGIN SHOP（显式、会跑 EVENTSHOP）与隐式进入 SHOP
-        // 的区分在 ere 侧即此缺省值与覆盖值之差（game-state.js）
-        const next = (await emit(EVENT.LOAD)) ?? STATE.SHOP_AFTER_LOAD;
+        // 读档钩子（LOADDATA 后迁移的保留名回调，ere/event/event-load.js，
+        // 只有一个处理者，直接调用）。它返回的转场目标覆盖缺省目标——
+        // 显式 BEGIN SHOP（会跑 EVENTSHOP）与隐式进入 SHOP 的区分在 ere
+        // 侧即此缺省值与返回值之差（game-state.js）
+        const next = (await handle_load()) ?? STATE.SHOP_AFTER_LOAD;
         // LOADDATA 的转场语义（#137，见文件头）：不回调用方（标题的
         // RESTART、据点的循环重绘都不再走），进 SHOP 且不执行
         // EVENTSHOP。return 即离开本函数——RETURN L_POS 在迁移

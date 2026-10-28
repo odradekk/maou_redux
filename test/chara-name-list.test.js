@@ -20,7 +20,6 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const {
   create_variable_loader,
   load_engine_bundle,
@@ -124,10 +123,9 @@ test('EVENTFIRST/EVENTLOAD 真的调用了 chara_name_init（读取 namelistkeys
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  const { emit } = fixture.load_module('system/event/registry');
-  register_handlers(fixture, 'event/event-load');
+  const { handle_load } = fixture.load_module('event/event-load');
 
-  await emit('EVENTLOAD');
+  await handle_load();
 
   assert(
     fixture.var_reads.some((r) => r.name === 'namelistkeys'),

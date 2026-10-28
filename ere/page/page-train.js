@@ -21,7 +21,6 @@
  */
 
 const era = require('#/era-electron');
-const { on } = require('#/system/event/registry');
 const { change_screen } = require('#/utils/screen-change');
 const {
   life_bar,
@@ -38,7 +37,6 @@ const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NB
 // PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/utils/clothtype-utils.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
 const { clothtype_text } = require('#/utils/clothtype-utils');
-const { EVENT } = require('#/data/event-name-const');
 // PALAMLV/palam_level 自 #45 起集中在 era-utils/palam-level.js（SOURCE_CHECK
 // 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
 const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
@@ -364,6 +362,10 @@ async function draw_status_screen(target) {
   show_equip_1(target);
 }
 
+/**
+ * 调教状态画面（旧引擎 SHOW_STATUS 的原处理器）：调教回合循环每轮直接调用
+ * （#853）——只有一个调用者，链上没有第二个处理器可排。
+ */
 async function handle_show_status() {
   // 每轮换屏（ADR-0009）：回到指令菜单是一屏的开始，整屏清空后绘制
   // 状态画面。上一次菜单选择之后的结算展示、口上叙述必须已经被玩家按键
@@ -374,16 +376,8 @@ async function handle_show_status() {
   await draw_status_screen(era_flag.target);
 }
 
-/**
- * 本模块的事件处理器：由 system/flow/startup.js 的装配表按顺序调用 register()
- * 注册（模块装载本身不注册，装配顺序见该文件）。
- */
-function register() {
-  on(EVENT.SHOW_STATUS, handle_show_status);
-}
-
 module.exports = {
-  register,
+  handle_show_status,
   palam_level,
   print_palam,
 };

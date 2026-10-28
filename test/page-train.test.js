@@ -12,7 +12,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara } = require('./helpers/chara');
 
 // Palam.yml 的名字表形状（运行时由引擎装载进 fieldNames/staticData）：0..15
@@ -28,13 +27,11 @@ function seed_world(fixture) {
   era_flag.target = 31;
   era_flag.assi = -1;
   fixture.era.beginTrain(0, 31);
-  register_handlers(fixture, 'page/page-train');
   return era_flag;
 }
 
 async function run_show_status(fixture) {
-  const { emit } = fixture.load_module('system/event/registry');
-  return emit('SHOW_STATUS');
+  return fixture.load_module('page/page-train').handle_show_status();
 }
 
 test('palam_level：PALAMLV 默认阈值下的等级判定', () => {
@@ -304,7 +301,6 @@ test('SHOW_STATUS 换屏：无效输入轮整屏清空后重画（菜单与回�
 test('SHOW_STATUS 换屏：指令轮的叙述须先经按键确认再被清（ADR-0009）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  const { emit } = fixture.load_module('system/event/registry');
   await run_show_status(fixture);
 
   // 模拟一轮指令执行：叙述与算式行（SOURCE_CHECK 一族的输出）在菜单输入
@@ -312,7 +308,7 @@ test('SHOW_STATUS 换屏：指令轮的叙述须先经按键确认再被清（AD
   // 它们就是「抹掉玩家还没读的输出」
   fixture.era.print('「哈呜、温妮、可是，一心地，想要杀了……」');
   fixture.era.print('阴核  5240+   300       =  5540');
-  await emit('EVENTCOM');
+  await fixture.load_module('event/event-com').handle_com();
 
   await run_show_status(fixture); // 指令轮 → 换屏
 
@@ -345,16 +341,15 @@ test('SHOW_STATUS 换屏：指令轮的叙述须先经按键确认再被清（AD
 test('SHOW_STATUS 换屏：重复执行同一指令同样换屏（每轮都只留当前一屏）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  const { emit } = fixture.load_module('system/event/registry');
   await run_show_status(fixture);
 
   // 两轮同指令（爱抚→爱抚）：每轮 SHOW_STATUS 都换屏，不存在「同指令轮
   // 追加」的分支
   fixture.era.print('「第一轮的叙述行」');
-  await emit('EVENTCOM');
+  await fixture.load_module('event/event-com').handle_com();
   await run_show_status(fixture); // 第一轮：换屏（清掉第一轮叙述）
   fixture.era.print('「第二轮的叙述行」');
-  await emit('EVENTCOM');
+  await fixture.load_module('event/event-com').handle_com();
   await run_show_status(fixture); // 第二轮（同指令）：同样换屏
 
   // 画面只留当前一屏：两轮叙述都不在屏（各被自己那轮之后的换屏清掉）
@@ -377,7 +372,7 @@ test('SHOW_STATUS 换屏：再次进调教时上一屏内容不残留（无会�
 
   // 会话 1（零指令局）：EVENTTRAIN → SHOW_STATUS
   await emit('EVENTTRAIN');
-  await emit('SHOW_STATUS');
+  await run_show_status(fixture);
 
   // 出调教、进商店：屏幕上是商店内容（主菜单重绘的消费样式）
   await fixture.era.clear();
@@ -388,7 +383,7 @@ test('SHOW_STATUS 换屏：再次进调教时上一屏内容不残留（无会�
   // 会话 2：再次进调教。SHOW_STATUS 每轮无条件整屏清空——不存在跨会话
   // 复用的基准点，上一屏的商店内容天然不残留
   await emit('EVENTTRAIN');
-  await emit('SHOW_STATUS');
+  await run_show_status(fixture);
 
   assert(
     !fixture.text_lines().some((t) => t.includes('商店主菜单占位行')),
@@ -579,7 +574,6 @@ test('射精（助手）：仅助手调教时显示（IF ASSIPLAY）', async () 
     era_flag.assi = 32;
     era_flag.assiplay = assiplay;
     fixture.era.beginTrain(0, 31, 32);
-    register_handlers(fixture, 'page/page-train');
     era_flag.day_count = 0;
     fixture.store.set('talent:32:122', 1);
     fixture.store.set('maxbase:32:2', 10000);

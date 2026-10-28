@@ -24,7 +24,6 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -155,7 +154,8 @@ test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMis
 });
 
 // —— source_check_auto 接入（#461：真身落在 system/train/source-check.js，
-//    dungeon-battle.js 的 source_check_auto 只转发事件）——
+//    dungeon-battle.js 的 source_check_auto 直接调用它：#853 起只有一个
+//    处理者，不再经过事件总线）——
 
 test('source_check_auto 接入：转发到 system/train/source-check 的真实处理器', async () => {
   const fixture = create_era_fixture();
@@ -174,7 +174,6 @@ test('source_check_auto 接入：转发到 system/train/source-check 的真实�
   era_flag.assi = -1;
   era_flag.assiplay = 0;
   fixture.store.set('palam:1:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛
-  register_handlers(fixture, 'system/train/source-check');
   const battle = load(fixture, 'system/dungeon/dungeon-battle');
 
   await battle.source_check_auto();
@@ -209,6 +208,10 @@ test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asy
   const fixture = setup_world();
   const magic_mod = load(fixture, 'system/dungeon/magic');
   magic_mod.magic = async () => 999; // 战斗链短路（enemy_attack 的查表路径）
+  // 三连末尾的自动结算不是本用例的观察对象：换成空操作（钩子只有一个
+  // 调用者，装载 dungeon-battle 之前换掉才生效）
+  load(fixture, 'system/train/source-check').handle_source_check_auto =
+    async () => {};
   const battle = load(fixture, 'system/dungeon/dungeon-battle');
   fixture.era.beginTrain(0, 1); // #508：三连的调教域表要建起来
   fixture.store.set('talent:1:193', 1); // 肛门虫寄生
@@ -229,6 +232,10 @@ test('enemy_attack：TALENT:193 的自动调教三连接 com13_auto 真身', asy
 
 test('duel_attack：TALENT:193 的自动调教三连接 com13_auto 真身', async () => {
   const fixture = setup_duel_world();
+  // 三连末尾的自动结算不是本用例的观察对象：换成空操作（钩子只有一个
+  // 调用者，装载 dungeon-battle 之前换掉才生效）
+  load(fixture, 'system/train/source-check').handle_source_check_auto =
+    async () => {};
   const battle = load(fixture, 'system/dungeon/dungeon-battle');
   battle.magic = async () => 999; // 战斗链短路（duel_attack 的查表路径）
   const battle2 = load(fixture, 'system/dungeon/dungeon-battle2');

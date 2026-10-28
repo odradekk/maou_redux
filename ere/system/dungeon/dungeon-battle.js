@@ -112,8 +112,9 @@ async function before_autotrain() {
 
 /**
  * source_check_auto（调教域工单，#461 起真身）：自动调教结算。真身在
- * ere/system/train/autotrain.js（只发事件 + 补一次 nextTurnInTrain），迷宫
- * 各调用点与测试都在本文件的导出上取它，故这里保留同名转发。
+ * ere/system/train/autotrain.js（转发给 source-check 的结算钩子并补一次
+ * nextTurnInTrain），迷宫各调用点与测试都在本文件的导出上取它，故这里
+ * 保留同名转发。
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function source_check_auto() {

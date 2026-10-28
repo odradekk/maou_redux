@@ -52,6 +52,7 @@ test('端到端：主菜单与过天换屏——反复过天，主菜单行数�
   const run_title_page = fixture.load_module('page/page-title');
   const { run_shop } = fixture.load_module('page/page-shop');
   const { emit } = fixture.load_module('system/event/registry');
+  const { handle_first } = fixture.load_module('event/event-first');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   // 关勇者来袭：避免无关随机消费打乱本用例未种子化的输入序列
@@ -63,7 +64,7 @@ test('端到端：主菜单与过天换屏——反复过天，主菜单行数�
 
   // —— EVENTFIRST（五问）：女性 [1]、扶她 [2]、村娘 [1]、普通 [0]、抱起 [1] ——
   fixture.set_inputs(1, 2, 1, 0, 1);
-  const first_exit = await emit('EVENTFIRST');
+  const first_exit = await handle_first();
   assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
   const ROUND_COUNT = 4;

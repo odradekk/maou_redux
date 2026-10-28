@@ -8,7 +8,7 @@
 // #849 追加 M17200-M17204：事件名枚举（ere/data/event-name-const.js）与
 // on / emit 的未知名校验——注册与触发只认枚举、名字拼错当场抛错。
 
-export const COUNT = 34; // #851 +8（M17650-M17657：装配表与注册点的缺失/顺序变异） // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）；#889 +2（M17950-M17951：分层边界锁的两类违规）
+export const COUNT = 36; // #853 净 +2（+3 M17800-M17802：单处理器钩子挂回总线/混进装配表/回到枚举；-1 M17656：EVENTLOAD 的注册点随直接调用删除） // #889 +2（M17950-M17951：分层边界锁的两类违规） // #851 +8（M17650-M17657：装配表与注册点的缺失/顺序变异） // #852 +5（M17300-M17304：回标题的终止型转场、标题退出按钮的快捷键/错误路径、回到标题的 BGM 重置）；#790 建片 3 条 + #850 新增 11 条（M15600-M15610）+ #849 新增 5 条（M17200-M17204）
 
 export default [
   {
@@ -230,7 +230,7 @@ export default [
 `,
     replace: ``,
     tests: ['event-name-enum'],
-    must_mention: '有 13 个名字',
+    must_mention: '有 5 个名字',
   },
   {
     desc: 'M17203 事件名枚举不再冻结（运行时可被就地改写，拼错的名字照样能塞进去）（#849）',
@@ -242,9 +242,10 @@ export default [
   },
   {
     desc: 'M17204 某个注册点退回裸字符串事件名（枚举的单一出处守卫失效）（#849）',
-    file: 'ere/page/page-train.js',
-    find: '  on(EVENT.SHOW_STATUS, handle_show_status);',
-    replace: "  on('SHOW_STATUS', handle_show_status); // 变异：裸字符串事件名",
+    file: 'ere/event/event-comend.js',
+    find: '  on(EVENT.COMEND, handle_comend_pri, TIER.PRI);',
+    replace:
+      "  on('EVENTCOMEND', handle_comend_pri, TIER.PRI); // 变异：裸字符串事件名",
     tests: ['event-name-enum'],
     must_mention: '还在写裸字符串事件名',
   },
@@ -256,7 +257,7 @@ export default [
     find: 'register_all();',
     replace: '// 变异：装配表不执行注册',
     tests: ['event-handlers'],
-    must_mention: 'EVENTFIRST 注册条数与装配表不一致',
+    must_mention: '注册条数与装配表不一致',
   },
   {
     desc: 'M17651 装配表漏掉一个口上模块（该事件的处理器链静默少一段）（#851）',
@@ -300,14 +301,6 @@ export default [
     must_mention: 'EVENTEND 注册条数与装配表不一致',
   },
   {
-    desc: 'M17656 EVENTLOAD 的处理器不注册（读档钩子整条静默消失）（#851）',
-    file: 'ere/event/event-load.js',
-    find: '  on(EVENT.LOAD, handle_load, TIER.NORMAL);\n',
-    replace: '  // 变异：EVENTLOAD 处理器不注册\n',
-    tests: ['event-handlers', 'event-load'],
-    must_mention: 'EVENTLOAD 注册条数与装配表不一致',
-  },
-  {
     desc: 'M17657 装配表按倒序装配（同档处理器整体反序，链的输出顺序变了）（#851）',
     file: 'ere/system/flow/startup.js',
     find: '  for (const [path, handler_module] of HANDLER_MODULES) {',
@@ -317,6 +310,36 @@ export default [
     must_mention: '#/kojo/kojo-k904-fia',
   },
 
+  // —— #853：单处理器的钩子改为直接调用（M17800-M17802） ——
+  {
+    desc: 'M17800 开局钩子的转场被丢弃（主循环拿不到下一状态）（#853）',
+    file: 'ere/system/flow/main-loop.js',
+    find: '  [STATE.FIRST]: async () => (await handle_first()) ?? STATE.SHOP,',
+    replace:
+      '  [STATE.FIRST]: async () => { await handle_first(); }, // 变异：转场被丢弃',
+    tests: ['main-loop'],
+    must_mention: '结束时没有待跳转状态',
+  },
+  {
+    desc: 'M17801 装配表重挂单处理器钩子的模块（那个模块已经没有 register()，装配当场抛错）（#853）',
+    file: 'ere/system/flow/startup.js',
+    find: "  ['#/page/page-shop', require('#/page/page-shop')],",
+    replace:
+      "  ['#/page/page-train', require('#/page/page-train')], // 变异：单处理器钩子混进装配表\n  ['#/page/page-shop', require('#/page/page-shop')],",
+    tests: ['event-handlers'],
+    must_mention: '没有导出 register()',
+  },
+  {
+    desc: 'M17802 事件名枚举把单处理器钩子 USERCOM 加回来（总线上又多一条单条链）（#853）',
+    file: 'ere/data/event-name-const.js',
+    find: `  END: 'EVENTEND',`,
+    replace: `  END: 'EVENTEND',
+  // 变异：单处理器钩子回到枚举
+  USERCOM: 'USERCOM',`,
+    tests: ['event-name-enum', 'event-handlers'],
+    must_mention: '只有 0 个处理器',
+  },
+  // —— #889：分层边界锁（函数内 require 与 系统层→页面层） ——
   {
     desc: 'M17950 系统层顶层 require 页面层（dungeon-trap 取 page-life-list，#889）',
     file: 'ere/system/dungeon/dungeon-trap.js',

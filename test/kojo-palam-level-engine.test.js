@@ -101,11 +101,9 @@ engine_test(
     api.set('talent:31:160', 1); // 目标使用慈爱口上。
     register_handlers(fixture, 'kojo/kojo-k0-tender');
     fixture.load_module('system/train/com-caress');
-    register_handlers(fixture, 'event/event-com');
-    register_handlers(fixture, 'system/train/source-check');
     register_handlers(fixture, 'event/event-comend');
     const { execute_command_round } = fixture.load_module(
-      'system/train/train-loop',
+      'system/train/command-round',
     );
     assert.deepEqual(await execute_command_round(0), { missing: false });
     assert.deepEqual(errors, [], '爱抚不得产生引擎变量寻址错误');

@@ -13,7 +13,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const { seed_train_world } = require('./helpers/train-world');
 
 /** 道具族的最小调教世界：主人 0、目标 31、所有道具无视模式。 */
@@ -457,8 +456,9 @@ test('equip_com18：每回合清洗；equip_com19：肛门经验与同性经验'
 
 test('source-check 正式链：道具族装备位经 emit → EQUIP_COM_CHAIN 全部打到真身', async () => {
   const world = seed_world();
-  const { emit } = world.fixture.load_module('system/event/registry');
-  register_handlers(world.fixture, 'system/train/source-check');
+  const page_source_check = world.fixture.load_module(
+    'system/train/source-check',
+  );
   // 八个装备位全部点亮（date 默认 0 ≠ 15，产卵分支不参与）
   for (const slot of [11, 13, 14, 15, 16, 17, 18, 19]) {
     world.fixture.store.set(`tequip:31:${slot}`, 1);
@@ -466,7 +466,7 @@ test('source-check 正式链：道具族装备位经 emit → EQUIP_COM_CHAIN �
   world.era_flag.selectcom = 11;
   world.fixture.store.set('flag:7', 0); // 关口上总开关，聚焦装备循环输出
 
-  await emit('SOURCE_CHECK');
+  await page_source_check.handle_source_check();
 
   // 各位的横幅即真身执行的足迹；横幅序 = EQUIP_COM_CHAIN 的链序
   const banners = [

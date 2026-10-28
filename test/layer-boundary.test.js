@@ -77,12 +77,18 @@ const INNER_ALLOWED = new Map([
       '本页的形象确认屏——两边互引，只能让页面侧延迟取（本方向是页面→' +
       '系统，本来合法，延迟只为破环）。',
   ],
+  [
+    'ere/event/event-load.js → #/system/cross-save-sharing',
+    '共享档模块的读档路径要回调 EVENTLOAD 的处理函数（它的 load_special_save' +
+      '读成后重放本链），与本模块的 maounet/inport_b 调用成环；装载期互引会' +
+      '拿到半装好的导出。本条早于 #889，保留并登记。',
+  ],
 ]);
 
 /**
  * 系统层引用页面层的允许清单（装配入口不在此列——它们的职责就是拉起页面）。
  *
- * 四条都是「系统流程跑到一半需要一屏交互或演出」：反转方向要把整段流程交给
+ * 六条都是「系统流程跑到一半需要一屏交互或演出」：反转方向要把整段流程交给
  * 页面层驱动，属于交互层重构，不在拆循环依赖的范围里；先登记，防止无声增加。
  */
 const SYSTEM_TO_PAGE_ALLOWED = new Map([
@@ -101,6 +107,15 @@ const SYSTEM_TO_PAGE_ALLOWED = new Map([
   [
     'ere/system/invasion/invasion-campaign.js → #/page/page-life-list',
     '战役派遣的角色行打印（life_list_item）。',
+  ],
+  [
+    'ere/system/train/train-loop.js → #/page/page-train',
+    '调教回合循环按 #853 直接调用状态画面的处理器（旧事件总线上只有一个',
+    '处理者，链上没有第二个可排）。',
+  ],
+  [
+    'ere/system/train/train-loop.js → #/page/page-usercom',
+    '同上：指令菜单与输入检查的两个处理器（#853）。',
   ],
 ]);
 

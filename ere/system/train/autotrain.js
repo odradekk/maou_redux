@@ -7,10 +7,9 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_text } = require('#/utils/clothtype-utils');
-const { EVENT } = require('#/data/event-name-const');
 const { juel_check_main } = require('#/system/train/juel-check');
 const { auto_ablup } = require('#/system/train/ablup');
-const { emit } = require('#/system/event/registry');
+const source_check_mod = require('#/system/train/source-check');
 const { karma } = require('#/system/chara/chara-stats');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -19,9 +18,12 @@ const { game } = require('#/facade/game');
 /**
  * source_check_auto：自动调教的结算入口。
  *
- * 只发事件，不重复实现调度逻辑；真身见 ere/system/train/source-check.js 的
- * on(EVENT.SOURCE_CHECK_AUTO, …)。迷宫路径也走这里，所以和 before_autotrain
- * 一起留在本文件，调用方不必再经迷宫战斗模块转发。
+ * 结算真身在 source-check.js 的 handle_source_check_auto（穿环、九连等都
+ * 在那边）；这里只做「迷宫路径上的调用点」，所以和 before_autotrain 一起
+ * 留在本文件，调用方不必再经迷宫战斗模块转发。
+ *
+ * 经模块对象取结算钩子：调用点与测试都在模块对象上替换它，读属性必须发生
+ * 在调用期。
  *
  * 结算后补一次 `era.nextTurnInTrain()`：这是调教回合循环里 SOURCE_CHECK 之后
  * 那一步（UPCHECK 的 ere 等价物）在迷宫路径上的对应物。本移植把 NOWEX→EX 的
@@ -31,7 +33,7 @@ const { game } = require('#/facade/game');
  * @returns {Promise<void>} 无 RESULT 消费
  */
 async function source_check_auto() {
-  await emit(EVENT.SOURCE_CHECK_AUTO);
+  await source_check_mod.handle_source_check_auto();
   era.nextTurnInTrain();
 }
 

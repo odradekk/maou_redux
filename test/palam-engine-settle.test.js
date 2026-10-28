@@ -16,7 +16,6 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 /** NBSP 归一成空格：宽度信息不丢（1:1 替换），读起来能对格式 */
@@ -87,14 +86,15 @@ async function run_round() {
   fixture.store.set('abl:0:12', 5);
   fixture.store.set('palam:31:0', 9000);
   fixture.load_module('system/train/com-caress');
-  register_handlers(fixture, 'system/train/source-check');
+  const { handle_source_check } = fixture.load_module(
+    'system/train/source-check',
+  );
   const { com_family } = fixture.load_module('system/train/com-family');
-  const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);
   // COM0 之后补种子：COM0 会覆写这些源/名字
   fixture.store.set('source:31:18', 1234);
   fixture.store.set('cstr:31:7', '足');
-  await emit('SOURCE_CHECK');
+  await handle_source_check();
   return fixture;
 }
 
@@ -282,11 +282,12 @@ test('分隔线与改动前一致：判据序号的 UP 折成负数时仍照画'
     fixture.store.set(`palam:31:${index}`, 10000);
   }
   fixture.load_module('system/train/com-caress');
-  register_handlers(fixture, 'system/train/source-check');
+  const { handle_source_check } = fixture.load_module(
+    'system/train/source-check',
+  );
   const { com_family } = fixture.load_module('system/train/com-family');
-  const { emit } = fixture.load_module('system/event/registry');
   await com_family.call(0);
-  await emit('SOURCE_CHECK');
+  await handle_source_check();
 
   const seq = fixture.lines.map((line) =>
     line.type === 'divider' ? '<divider>' : narrow(line.text ?? ''),

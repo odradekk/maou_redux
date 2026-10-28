@@ -13,7 +13,6 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const {
   create_chara_loader,
   create_variable_loader,
@@ -24,9 +23,9 @@ const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 const YML_DIR = path.join(__dirname, '..', 'yml');
 
+/** 装载指令菜单页：两个钩子都只有一个调用者，直接调用（#853） */
 function load_page(fixture) {
-  register_handlers(fixture, 'page/page-usercom');
-  return fixture.load_module('system/event/registry');
+  return fixture.load_module('page/page-usercom');
 }
 
 /** 播种自定义菜单开关（FLAG:5 位 34；开局值见 event-first.js） */
@@ -40,9 +39,9 @@ function seed_flag5(fixture, bit34) {
 test('子菜单按钮组全挂载：默认态 9 个按钮，条件按钮不出现', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const buttons = fixture.lines
     .filter((line) => line.type === 'button')
@@ -78,9 +77,9 @@ test('子菜单按钮组按每行 3 列排布：行间不夹空行，页脚之�
     const label = advanced ? '自定义菜单路径' : '内建列表路径';
     const fixture = create_era_fixture();
     seed_flag5(fixture, advanced);
-    const { emit } = load_page(fixture);
+    const { handle_show_usercom } = load_page(fixture);
 
-    await emit('SHOW_USERCOM');
+    await handle_show_usercom();
 
     // 网格行的排版语义（CONTEXT.md「输出 API 的排版与对齐」）：按钮按每行
     // 3 格进网格，网格行之间与页脚之后都不应再补空行
@@ -139,8 +138,8 @@ test('子菜单的条件态分组复刻原版：[103] 与 [990] 之后硬收行'
   both.store.set('flag:10006', 31); // ASSI
   both.store.set('flag:10013', 32); // ASSI:1
   both.store.set('flag:10005', 0); // TARGET = MASTER → 112 的 CFLAG:0 免
-  const { emit: emit_both } = load_page(both);
-  await emit_both('SHOW_USERCOM');
+  const { handle_show_usercom } = load_page(both);
+  await handle_show_usercom();
   const divider_both = both.lines.find((line) => line.type === 'divider');
   assert.deepEqual(
     button_rows(both)
@@ -154,8 +153,8 @@ test('子菜单的条件态分组复刻原版：[103] 与 [990] 之后硬收行'
   const with_menu = create_era_fixture();
   seed_flag5(with_menu, false);
   with_menu.store.set('flag:550', 2);
-  const { emit: emit_menu } = load_page(with_menu);
-  await emit_menu('SHOW_USERCOM');
+  const menu_page = load_page(with_menu);
+  await menu_page.handle_show_usercom();
   const divider_menu = with_menu.lines.find((line) => line.type === 'divider');
   assert.deepEqual(
     button_rows(with_menu)
@@ -175,10 +174,10 @@ test('指令方格（自定义菜单路径）：按每行 3 列排布，末行�
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
   const { train_name_init } = fixture.load_module('system/train/train-name');
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
   train_name_init();
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const divider = fixture.lines.find((line) => line.type === 'divider');
   // 零规则态 101 条指令全部可用：34 行 = 33 行满 3 格 + 末行 2 格
@@ -203,9 +202,9 @@ test('指令方格（自定义菜单路径）：按每行 3 列排布，末行�
 test('指令方格（内建路径）：按每行 3 列排布', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
 
-  await emit('SHOW_USERCOM', [0, 6, 7, 8, 9]);
+  await handle_show_usercom([0, 6, 7, 8, 9]);
 
   const divider = fixture.lines.find((line) => line.type === 'divider');
   const rows = button_rows(fixture).filter((r) => r.row < divider.row);
@@ -228,9 +227,9 @@ test('显示条件：ASSI>0 且 ASSI:1>0 时交代助手[102]出现', async () =
   seed_flag5(fixture, false);
   fixture.store.set('flag:10006', 31); // ASSI
   fixture.store.set('flag:10013', 32); // ASSI:1（记录的助手）
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const labels = fixture.lines
     .filter((l) => l.type === 'button')
@@ -243,9 +242,9 @@ test('显示条件：TARGET==MASTER 且 ASSI:1>0 时对换调教[112]出现（CF
   seed_flag5(fixture, false);
   fixture.store.set('flag:10005', 0); // TARGET = MASTER（角色 0）
   fixture.store.set('flag:10013', 32); // ASSI:1
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const labels = fixture.lines
     .filter((l) => l.type === 'button')
@@ -264,15 +263,15 @@ test('显示条件：TARGET≠MASTER 时需 CFLAG:0 >= 2 才出现对换调教',
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.store.set('cflag:31:0', 1); // < 2
-  const { emit } = load_page(fixture);
-  await emit('SHOW_USERCOM');
+  const { handle_show_usercom } = load_page(fixture);
+  await handle_show_usercom();
   let labels = fixture.lines
     .filter((l) => l.type === 'button')
     .map((b) => b.text);
   assert.ok(!labels.includes('对换调教'), 'CFLAG:0 = 1 不得出现');
 
   fixture.store.set('cflag:31:0', 2);
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
   labels = fixture.lines.filter((l) => l.type === 'button').map((b) => b.text);
   assert.ok(labels.includes('对换调教'), 'CFLAG:0 = 2 放行');
 });
@@ -281,9 +280,9 @@ test('显示条件：FLAG:550 > 0 时调教菜单表示[991]/实行[992]出现',
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   fixture.store.set('flag:550', 2);
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const accs = fixture.lines
     .filter((l) => l.type === 'button')
@@ -295,9 +294,9 @@ test('过滤按钮染色：开启灰 #646464、未开启各系色、104 未开�
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
   fixture.store.set('flag:25', 1); // 爱抚系过滤开
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const colors = Object.fromEntries(
     fixture.lines
@@ -318,9 +317,9 @@ test('过滤按钮染色：开启灰 #646464、未开启各系色、104 未开�
 
 test('USERCOM：999 → 转场 AFTERTRAIN（链内暂存，最后一个胜出）', async () => {
   const fixture = create_era_fixture();
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
 
-  const pending = await emit('USERCOM', 999);
+  const pending = await handle_usercom(999);
 
   assert.equal(pending, 'AFTERTRAIN');
 });
@@ -333,10 +332,10 @@ test('USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）'
   fixture.era.addCharacter(31);
   fixture.era.beginTrain(0, 31);
   fixture.store.set('callname:31:-1', '温妮');
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
   fixture.set_inputs(9); // [9] 返回（不改动设定）
 
-  await emit('USERCOM', 103);
+  await handle_usercom(103);
 
   assert.ok(
     fixture.text_lines().some((t) => t.includes('和温妮做爱要戴套吗？')),
@@ -353,9 +352,9 @@ test('USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面）
   {
     const fixture = create_era_fixture();
     fixture.store.set('callname:0:-1', '魔王');
-    const { emit } = load_page(fixture);
+    const { handle_usercom } = load_page(fixture);
 
-    await emit('USERCOM', 100);
+    await handle_usercom(100);
 
     assert.ok(
       fixture.text_lines().includes('NO.0'), // 标题行的编号格（网格里不再补位）
@@ -372,9 +371,9 @@ test('USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面）
   {
     const fixture = create_era_fixture();
     fixture.store.set('callname:0:-1', '魔王');
-    const { emit } = load_page(fixture);
+    const { handle_usercom } = load_page(fixture);
 
-    await emit('USERCOM', 101);
+    await handle_usercom(101);
 
     assert.ok(
       fixture.text_lines().some((t) => t.endsWith('的嘴巴：')),
@@ -389,14 +388,14 @@ test('USERCOM：102 交代助手三分支的视角/助手切换', async () => {
   // 分支一：TARGET == MASTER → PLAYER 在 TARGET:1/ASSI:1 间翻转，ASSI = PLAYER
   {
     const fixture = create_era_fixture();
-    const { emit } = load_page(fixture);
+    const { handle_usercom } = load_page(fixture);
     const era_flag = fixture.load_module('era-utils/era-flag');
     fixture.store.set('flag:10005', 0); // TARGET = MASTER
     fixture.store.set('flag:10006', 31); // ASSI
     fixture.store.set('flag:10012', 31); // TARGET:1
     fixture.store.set('flag:10013', 32); // ASSI:1
     era_flag.player = 31; // PLAYER == TARGET:1 → 取 ASSI:1
-    await emit('USERCOM', 102);
+    await handle_usercom(102);
     assert.equal(era_flag.player, 32, '分支一命中 TARGET:1 → 换成 ASSI:1');
     assert.equal(era_flag.assi, 32, 'ASSI = PLAYER');
     assert.equal(era_flag.assiplay, 1, 'PLAYER != MASTER → ASSIPLAY = 1');
@@ -404,28 +403,28 @@ test('USERCOM：102 交代助手三分支的视角/助手切换', async () => {
   // 分支二：TARGET == TARGET:1 → PLAYER 在 MASTER/ASSI:1 间翻转
   {
     const fixture = create_era_fixture();
-    const { emit } = load_page(fixture);
+    const { handle_usercom } = load_page(fixture);
     const era_flag = fixture.load_module('era-utils/era-flag');
     fixture.store.set('flag:10005', 31); // TARGET = TARGET:1（记录对象本人）
     fixture.store.set('flag:10006', 31);
     fixture.store.set('flag:10012', 31);
     fixture.store.set('flag:10013', 32);
     era_flag.player = 0; // PLAYER == MASTER → 取 ASSI:1
-    await emit('USERCOM', 102);
+    await handle_usercom(102);
     assert.equal(era_flag.player, 32, '分支二命中 MASTER → 换成 ASSI:1');
     assert.equal(era_flag.assi, 32, '分支二的 ASSI = ASSI:1（非 PLAYER 跟随）');
   }
   // 分支三：其余 → PLAYER 在 MASTER/TARGET:1 间翻转，ASSI = TARGET:1
   {
     const fixture = create_era_fixture();
-    const { emit } = load_page(fixture);
+    const { handle_usercom } = load_page(fixture);
     const era_flag = fixture.load_module('era-utils/era-flag');
     fixture.store.set('flag:10005', 33); // TARGET 异于 MASTER 与 TARGET:1
     fixture.store.set('flag:10006', 31);
     fixture.store.set('flag:10012', 31); // TARGET:1
     fixture.store.set('flag:10013', 32);
     era_flag.player = 0; // PLAYER == MASTER → 取 TARGET:1
-    await emit('USERCOM', 102);
+    await handle_usercom(102);
     assert.equal(era_flag.player, 31, '分支三命中 MASTER → 换成 TARGET:1');
     assert.equal(era_flag.assi, 31, '分支三的 ASSI = TARGET:1');
   }
@@ -433,13 +432,13 @@ test('USERCOM：102 交代助手三分支的视角/助手切换', async () => {
 
 test('USERCOM：102 条件不满足时落链尾（无输出无切换）', async () => {
   const fixture = create_era_fixture();
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.store.set('flag:10006', 0); // ASSI = 0：ELSEIF 条件不满足
   fixture.store.set('flag:10013', 32);
   era_flag.player = 7;
 
-  await emit('USERCOM', 102);
+  await handle_usercom(102);
 
   assert.equal(era_flag.player, 7, '条件不满足不得切换');
   assert.deepEqual(
@@ -450,7 +449,7 @@ test('USERCOM：102 条件不满足时落链尾（无输出无切换）', async 
 
 test('usercom：112 对换调教（SWAP TARGET/PLAYER + 助手归位 + ASSIPLAY）', async () => {
   const fixture = create_era_fixture();
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
@@ -459,7 +458,7 @@ test('usercom：112 对换调教（SWAP TARGET/PLAYER + 助手归位 + ASSIPLAY�
   fixture.store.set('flag:10012', 99); // TARGET:1（异于双方，不触发归位歧义）
   fixture.store.set('flag:10013', 31); // ASSI:1——换入视角 31 正是它 → 归位
   era_flag.player = 33;
-  await emit('USERCOM', 112);
+  await handle_usercom(112);
 
   assert.equal(era_flag.target, 33, 'SWAP：TARGET ← 原 PLAYER');
   assert.equal(era_flag.player, 31, 'SWAP：PLAYER ← 原 TARGET');
@@ -477,28 +476,28 @@ test('USERCOM：104-108 过滤位翻转（开 ↔ 关；掩码逐位独立）', 
   ];
   for (const [acc, mask] of cases) {
     const fixture = create_era_fixture();
-    const { emit } = load_page(fixture);
+    const { handle_usercom } = load_page(fixture);
     fixture.store.set('flag:25', 0);
-    await emit('USERCOM', acc);
+    await handle_usercom(acc);
     assert.equal(fixture.store.get('flag:25'), mask, `${acc} 首按置位 ${mask}`);
-    await emit('USERCOM', acc);
+    await handle_usercom(acc);
     assert.equal(fixture.store.get('flag:25'), 0, `${acc} 再按清位`);
   }
   // 邻位不受清位掩码波及（FLAG:25 &= 31^mask 只清目标位）
   const fixture = create_era_fixture();
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
   fixture.store.set('flag:25', 0b01011); // 位 0/1/3
-  await emit('USERCOM', 105); // 清位 1
+  await handle_usercom(105); // 清位 1
   assert.equal(fixture.store.get('flag:25'), 0b01001, '只清位 1，位 0/3 保留');
 });
 
 test('USERCOM：991 调教菜单表示（DRAWLINE + 序列行 + DRAWLINE + 等键）', async () => {
   const fixture = create_era_fixture();
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
   fixture.store.set('flag:550', 1);
   fixture.store.set('flag:551', 0);
 
-  await emit('USERCOM', 991);
+  await handle_usercom(991);
 
   const texts = fixture.text_lines();
   assert.ok(
@@ -516,8 +515,8 @@ test('USERCOM：991 调教菜单表示（DRAWLINE + 序列行 + DRAWLINE + 等�
 test('USERCOM：991/992 在 FLAG:550 = 0 时落链尾（条件不满足）', async () => {
   for (const acc of [991, 992]) {
     const fixture = create_era_fixture();
-    const { emit } = load_page(fixture);
-    await emit('USERCOM', acc);
+    const { handle_usercom } = load_page(fixture);
+    await handle_usercom(acc);
     assert.deepEqual(
       fixture.lines.filter((l) => l.type !== 'wait'),
       [],
@@ -528,9 +527,9 @@ test('USERCOM：991/992 在 FLAG:550 = 0 时落链尾（条件不满足）', asy
 
 test('USERCOM：未定义编号（555）落到链尾，无输出无转场', async () => {
   const fixture = create_era_fixture();
-  const { emit } = load_page(fixture);
+  const { handle_usercom } = load_page(fixture);
 
-  const pending = await emit('USERCOM', 555);
+  const pending = await handle_usercom(555);
 
   assert.equal(pending, undefined);
   assert.deepEqual(fixture.lines, [], '未挂载输入不得有任何反馈（重绘即反馈）');
@@ -542,10 +541,10 @@ test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、�
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
   const { train_name_init } = fixture.load_module('system/train/train-name');
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
   train_name_init();
 
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const buttons = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator < 100,
@@ -567,12 +566,12 @@ test('位 34 开（开局默认）：自定义菜单，标签取 TRAIN_NAME、�
 test('位 34 关：内建渲染路径，标签取指令常量的静态名（不升格）', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
   // 定制层（trainalias）与静态名不同的槽：0 号播种成「定制爱抚」，两条
   // 渲染路径据此区分取哪一层
   fixture.store.set('trainalias:0', '定制爱抚');
 
-  await emit('SHOW_USERCOM', [0]);
+  await handle_show_usercom([0]);
 
   const buttons = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator < 100,
@@ -588,10 +587,10 @@ test('位 34 开的自定义菜单对 COM_ABLE=0 的指令不渲染', async () =
   const fixture = create_era_fixture();
   seed_flag5(fixture, true);
   const { com_able_family } = fixture.load_module('system/train/com-family');
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
   com_able_family.register(0, async () => 0); // 爱抚不可用
 
-  await emit('SHOW_USERCOM', [0]);
+  await handle_show_usercom([0]);
 
   const accs = fixture.lines
     .filter((l) => l.type === 'button' && l.accelerator < 100)
@@ -623,7 +622,7 @@ test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 
   const { train_name_init } = fixture.load_module('system/train/train-name');
   const { adv_com_family } = fixture.load_module('system/train/com-adv');
   const era_flag = fixture.load_module('era-utils/era-flag');
-  const { emit } = load_page(fixture);
+  const { handle_show_usercom } = load_page(fixture);
   train_name_init();
 
   // 测试内注册 CASE 8 形状的升格规则（#213 骨架态零生产规则；J9 实现真
@@ -631,7 +630,7 @@ test('自定义菜单的升格标签：标签换、编号不换（train-upgrade 
   adv_com_family.register(8, async () => (era_flag.prevcom === 8 ? 84 : 8));
 
   era_flag.prevcom = 8;
-  await emit('SHOW_USERCOM');
+  await handle_show_usercom();
 
   const button = fixture.lines.find(
     (l) => l.type === 'button' && l.accelerator === 8,
@@ -645,8 +644,8 @@ test('按钮白名单：子菜单按钮驱动输入必须可送达（#130 的夹
   seed_flag5(fixture, false);
   fixture.store.set('flag:550', 1);
   fixture.store.set('flag:551', 0);
-  const { emit } = load_page(fixture);
-  await emit('SHOW_USERCOM'); // 画面上已打印 [100]-[108]/[990]/[991]/[999]
+  const { handle_show_usercom } = load_page(fixture);
+  await handle_show_usercom(); // 画面上已打印 [100]-[108]/[990]/[991]/[999]
 
   // 逐个喂子菜单号：全部在已打印按钮的白名单内（不在则夹具当场抛错）
   for (const acc of [100, 101, 103, 104, 990, 999]) {
@@ -662,8 +661,8 @@ test('按钮白名单：子菜单按钮驱动输入必须可送达（#130 的夹
 async function draw_with_prevcom(fixture, prevcom) {
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.prevcom = prevcom;
-  const { emit } = load_page(fixture);
-  await emit('SHOW_USERCOM');
+  const { handle_show_usercom } = load_page(fixture);
+  await handle_show_usercom();
   const line = fixture.lines
     .filter((l) => l.type === 'text')
     .map((l) => l.text)

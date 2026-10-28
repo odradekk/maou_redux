@@ -2307,13 +2307,15 @@ export default [
     must_mention: 'whenMissing 骸骨缺省',
   },
   {
-    desc: 'M9882 source_check_auto 接入退回存根（不再转发真实处理器）',
+    desc: 'M9882 source_check_auto 接入退回存根（不再直接调真实处理器）',
     file: 'ere/system/dungeon/dungeon-battle.js',
+    // #889：真身迁到 system/train/autotrain.js，本文件只留同名转发；
+    // 条目仍锚在这里——「接入是否转发」正是本文件的契约
     find: `async function source_check_auto() {
   return autotrain_mod.source_check_auto();
 }`,
     replace: `async function source_check_auto() {
-  // 变异：不再转发真实处理器（事件订阅者收不到，回合循环的 UPCHECK 等价步也没了）
+  // 变异：不再转发真实处理器（回合循环的 UPCHECK 等价步也没了）
 }`,
     tests: ['dungeon-battle'],
     must_mention: '真实处理器执行',

@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1143; // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
+export const COUNT = 1146; // #853 +3（M17810-M17812：直接调用的三个钩子调用点） // #875 净 +10：+11（M17550-M17560：结算交还引擎——当场写 base、损耗条读裸 base、AUTO 当场结算、当场加 juel、抵消写 juel、抵消行取错增量、窗口内外写错珠表、否定减半读裸 juel、结算表两处读裸 juel），-1（M24 删：结算尾部不再清零 gotjuel，双重结算由 M17553 守；M23 改指 GOTJUEL:3 死存储的写入守卫，M28/M29/M30 与 M9662/M9669/M13871/M9786 随代码改写重锚，条数不变）；#874 +6（M17400-M17403/M17405/M17407：结算交还引擎——当场写 palam、DOWN 折进 delta（完整版与静默版）、欲情快照、时常发情蓄积、参数状态短语）；#906 +2（M16200/M16204：调教结束前的欲情快照、快照名单按参与调教的角色）；#904 -1（M995 删：它守的是「CFLAG:44 经 stronghold 门面写」这条域检查要求，域检查已随 ADR-0010 删除，门面写与裸写落点相同，com-cloth 的落点断言两边都过）；#822 +4（M15706/M15707/M15710/M15711：指令名与能力名的显示文案、旧档别名迁移；M15705 随 #836 删——别名播种表改由指令常量派生，播种表不再另存一份名字）；#836：删 M15124（单一来源后跨表一致性不复存在）、增 7 条指令常量守护（M15650-M15656）、M703/M775 改挂常量写法；界面流程缺陷 +4（M15306–M15309：紧凑序号跳过调教画面子菜单号），M740/M741 改挂新写法，M1044 改由可用性表拦截；数据地址缺陷修复 +3（M15418-M15420：初体验对象改用角色 ID）；#792 净 -2（M1112/M1409 随 times 实现移到 ere/utils/numeric.js，改挂 numeric 分片）；#789 追补 +2（M13706/M13707：编号空间的守卫）；#789 +1（M13703：GET 版特别服装名的未知编号哨兵）；收尾生命周期收拢：新增 2 条登记冲账守护（M15100 重锚为 settle 形状、M15103；M15104 随入口清残留删除）；#782：新增 3 条调教死亡收尾守护（M15100-M15102）；#777：新增 12 条助手射精经验守护（M15047-M15058）；此前沿革见 git 历史。
 
 export default [
   {
@@ -127,19 +127,19 @@ export default [
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
     file: 'ere/system/train/train-loop.js',
-    find: `    // 5. 探测可执行性：可执行指令表（喂输入检查与 SHOW_USERCOM 的指令
-    // 按钮渲染——按钮随首条指令票 #45 挂载）
+    find: `    // 5. 探测可执行性：可执行指令表（喂输入检查与指令菜单的按钮渲染
+    // ——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();
 
-    // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
-    // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit(EVENT.SHOW_USERCOM, usable);`,
-    replace: `    // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
-    // 可执行指令表透传给按钮渲染）
-    const usercom_draw = await emit(EVENT.SHOW_USERCOM, []);
+    // 6. 指令菜单（page/page-usercom.js，含 [999] 调教结束；可执行指令表
+    // 透传给按钮渲染）
+    await handle_show_usercom(usable);`,
+    replace: `    // 6. 指令菜单（page/page-usercom.js，含 [999] 调教结束；可执行指令表
+    // 透传给按钮渲染）
+    await handle_show_usercom([]);
 
-    // 5. 探测可执行性：可执行指令表（喂输入检查与 SHOW_USERCOM 的指令
-    // 按钮渲染——按钮随首条指令票 #45 挂载）
+    // 5. 探测可执行性：可执行指令表（喂输入检查与指令菜单的按钮渲染
+    // ——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
@@ -154,12 +154,14 @@ export default [
   },
   {
     desc: 'M13 回合循环：删掉全角色 NOWEX 清零（步骤 10）',
-    file: 'ere/system/train/train-loop.js',
+    file: 'ere/system/train/command-round.js',
     find: `  // 10. 全角色 NOWEX 清零
   clear_nowex_all();
-  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）`,
+  // 11. 指令执行前的旗标清理（event/event-com.js，只有一个处理者：旧
+  // EVENTCOM 的机能，直接调用）`,
     replace: `  // 10. 变异：NOWEX 不清零
-  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）`,
+  // 11. 指令执行前的旗标清理（event/event-com.js，只有一个处理者：旧
+  // EVENTCOM 的机能，直接调用）`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
@@ -371,8 +373,10 @@ export default [
   },
   {
     desc: 'M55 回合循环的 SOURCE_CHECK 槽位删掉',
-    file: 'ere/system/train/train-loop.js',
-    find: '  const source_pending = await emit(EVENT.SOURCE_CHECK);\n  if (source_pending !== undefined) {\n    return { missing: false, pending: source_pending };\n  }',
+    file: 'ere/system/train/command-round.js',
+    find: `  // 12.5 源 → 参数换算、绝顶、刻印、结算展示（system/train/source-check.js，
+  // 指令处理器之后、结算之前；只有一个处理者，直接调用）
+  await handle_source_check();`,
     replace: '  // 变异：SOURCE_CHECK 槽位删除',
     tests: ['source-check'],
     must_mention: '端到端',
@@ -381,22 +385,23 @@ export default [
   // —— #212（J2 调教回合骨架）：M700-M703 ——
   {
     desc: 'M700 回调顺序：EVENTCOM 与指令处理器分发对调（步骤 11↔12）',
-    file: 'ere/system/train/train-loop.js',
-    find: `  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）
-  const com_pending = await emit(EVENT.COM);
-  if (com_pending !== undefined) {
-    return { missing: false, pending: com_pending };
-  }
-  // 12. 对应指令处理器；未实现 → 重新要求输入（见文件头）；返回 0 →
-  // 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第 12 步的
-  // 取消语义，子菜单指令全出口返回 0）
+    file: 'ere/system/train/command-round.js',
+    find: `  // 11. 指令执行前的旗标清理（event/event-com.js，只有一个处理者：旧
+  // EVENTCOM 的机能，直接调用）
+  await handle_com();
+  // 12. 对应指令处理器；未实现 → 重新要求输入（见 train-loop.js 文件头）；
+  // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第
+  // 12 步的取消语义，子菜单指令全出口返回 0）
   const com_result = await com_family.call(result, {
     whenMissing: COM_MISSING,
   });`,
-    replace:
-      '  // 11. 变异：COM 分发先于 EVENTCOM\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });\n  const com_pending = await emit(EVENT.COM);\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }',
-    tests: ['train-loop'],
-    must_mention: '回调顺序',
+    replace: `  // 11. 变异：COM 分发先于指令前的旗标清理
+  const com_result = await com_family.call(result, {
+    whenMissing: COM_MISSING,
+  });
+  await handle_com();`,
+    tests: ['com-register', 'train-loop'],
+    must_mention: '序列执行',
   },
   {
     desc: 'M701 BEGIN TRAIN 清空 TSTR:90 删（#212：整族清空的手动镜像）',
@@ -2758,7 +2763,7 @@ export default [
   },
   {
     desc: 'M1042 train-loop 的 RETURN 0 分支删（作废回合照结算）',
-    file: 'ere/system/train/train-loop.js',
+    file: 'ere/system/train/command-round.js',
     find: '  if (com_result === 0) {\n    return { missing: false, cancelled: true };\n  }',
     replace: '  // 变异：RETURN 0 分支删',
     tests: ['com-colosseum', 'com-cloth'],
@@ -3805,7 +3810,7 @@ export default [
   },
   {
     desc: 'M1116 升格回合把 PREVCOM 错存执行入口而非 SELECTCOM（#222）',
-    file: 'ere/system/train/train-loop.js',
+    file: 'ere/system/train/command-round.js',
     find: '  era_flag.prevcom = era_flag.selectcom;',
     replace: '  era_flag.prevcom = result; // 变异：丢掉高级 COM 回填号',
     tests: ['train-loop'],
@@ -11711,5 +11716,36 @@ export default [
       '  const negative = () => era.get(`gotjuel:${cid}:100`) || 0; // 变异：只读增量表',
     tests: ['juel-check'],
     must_mention: '抵消的逐步扣减量（负值累加进 gotjuel）',
+  },
+
+  // —— #853：单处理器的钩子改为直接调用（M17810-M17812） ——
+  {
+    desc: 'M17810 回合段的指令前旗标清理调用删（TFLAG 带着上一回合的值进指令）（#853）',
+    file: 'ere/system/train/command-round.js',
+    find: `  // 11. 指令执行前的旗标清理（event/event-com.js，只有一个处理者：旧
+  // EVENTCOM 的机能，直接调用）
+  await handle_com();`,
+    replace: '  // 变异：指令前的旗标清理不调',
+    tests: ['com-register', 'train-loop'],
+    must_mention: '序列执行',
+  },
+  {
+    desc: 'M17811 回合循环的状态画面调用删（每轮不换屏、不画状态）（#853）',
+    file: 'ere/system/train/train-loop.js',
+    find: `    // 4. 状态画面（page/page-train.js，每个回合换屏后绘制）
+    await handle_show_status();`,
+    replace: '    // 变异：状态画面不画',
+    tests: ['train-clear-screen-e2e'],
+    must_mention: '菜单屏各轮行数之差应在 ±3 行内',
+  },
+  {
+    desc: 'M17812 回合循环的指令菜单调用删（菜单不画，输入层无按钮可送）（#853）',
+    file: 'ere/system/train/train-loop.js',
+    find: `    // 6. 指令菜单（page/page-usercom.js，含 [999] 调教结束；可执行指令表
+    // 透传给按钮渲染）
+    await handle_show_usercom(usable);`,
+    replace: '    // 变异：指令菜单不画',
+    tests: ['train-clear-screen-e2e'],
+    must_mention: '应走过七轮指令菜单',
   },
 ];

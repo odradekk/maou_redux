@@ -15,8 +15,9 @@
  * 引擎回调链、调用方代码暂停到序列结束（system-flow.md「CALLTRAIN 自动
  * 执行」）。SELECTCOM:1..N 数组不落表（全库唯一写点就是本文件的预检查
  * 循环，无引擎外读者；CALLTRAIN 是瞬时过程，无跨存档语义——差异
- * 已记录，见 train-loop.js 文件头）。回合链复用 train-loop 的
- * execute_command_round（正常输入路径同一链；CALLTRAIN 循环**不含**
+ * 已记录，见 train-loop.js 文件头）。回合链复用同一段
+ * execute_command_round（system/train/command-round.js，正常输入路径同一链；
+ * CALLTRAIN 循环**不含**
  * 状态显示与指令菜单步骤——那是玩家交互环节）。
  *
  * 序列的预检查顺序敏感：探测第 k 条时 PREVCOM = 第 k-1 条
@@ -42,7 +43,7 @@ const {
   com_able_family,
   DECLARED_TRAIN_IDS,
 } = require('#/system/train/com-family');
-const { execute_command_round } = require('#/system/train/train-loop');
+const { execute_command_round } = require('#/system/train/command-round');
 const { print_button_grid } = require('#/utils/button-grid');
 const { train_command_name } = require('#/data/train-command-const');
 

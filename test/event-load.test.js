@@ -1,22 +1,19 @@
 /**
  * ere/event/event-load.js（eventload 读档钩子，#137）的行为测试。
  *
- * 验收项：钩子本体直驱（emit('EVENTLOAD')）——历史补丁三行等价物的
+ * 验收项：钩子本体直驱（handle_load()）——历史补丁三行等价物的
  * 实现逐条判定（判定依据见 event-load.js 文件头）；「读档成功后钩子被调用」
- * 的集成条件在 test/page-save-load.test.js（emit 点与转场一起测）。
+ * 的集成条件在 test/page-save-load.test.js（调用点与转场一起测）。
  */
 
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 
-/** 建一个带双角色的夹具并直接 emit 钩子链（不经 load_game） */
+/** 建一个带双角色的夹具并直接调用钩子（不经 load_game） */
 async function run_hook(fixture) {
-  const { emit } = fixture.load_module('system/event/registry');
-  register_handlers(fixture, 'event/event-load');
-  await emit('EVENTLOAD');
+  return fixture.load_module('event/event-load').handle_load();
 }
 
 test('历史补丁等价物 1：EX_TALENT:MASTER:200 = 1，只写 MASTER（恒 0 号魔王）', async () => {

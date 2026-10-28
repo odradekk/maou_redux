@@ -7,7 +7,6 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { register_handlers } = require('./helpers/event-registration');
 const {
   create_chara_loader,
   create_variable_loader,
@@ -111,11 +110,10 @@ engine_test(
     flags.date = 42;
     flags.money = 98765;
     const net = fixture.load_module('system/cross-save-sharing');
-    register_handlers(fixture, 'event/event-load');
 
     for (let attempt = 0; attempt < 2; attempt += 1) {
       fixture.set_inputs(0, 9);
-      // 恢复操作档时 EVENTLOAD 链发起 BEGIN SHOP：转场目标是返回值（#850）
+      // 恢复操作档时读档钩子发起 BEGIN SHOP：转场目标是返回值（#850）
       assert.equal(await net.inport_a(), 'SHOP');
       assert.deepEqual(api.getAddedCharacters(), [0], '导入后恢复接收档的角色');
       assert.equal(flags.date, 42, '导入后恢复接收档的日期');
