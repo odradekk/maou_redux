@@ -3,8 +3,8 @@
  *
  * **列货与购买流程是两个商店共用的一套**，真身在 page/page-item-shop.js
  * （`print_shopitem` / `purchase`）；玩家点中的编号由商店循环
- * （page-shop-loop.js）的输入分派交给 purchase，event_buy 的三支分派与
- * 账目也都在那边。
+ * （page-shop-loop.js）的输入分派交给 purchase，三支购买的分派与账目也都
+ * 在那边。
  *
  * **进店的路径**：道具店的 [998] 键（商店循环的切店分支，只翻一个局部量）。
  * #867 之前是「把购入品指针置成 200，下一轮商店轮改画这里」，那条路已随
@@ -24,8 +24,7 @@
  *
  * 出口（$INPUT_LOOP 之后的提示行）分属两处：本函数是「绘制半」，由商店
  * 循环每轮调用；购买本身的循环（$INPUT_LOOP 标签、PRINT_SHOPITEM 之后接
- * event_buy）在 page/page-item-shop.js 的 purchase 与各支——两个商店共用
- * 一套。
+ * 购买）在 page/page-item-shop.js 的 purchase 与三支——两个商店共用一套。
  */
 
 'use strict';
