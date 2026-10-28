@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 605; // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
+export const COUNT = 606; // #873 +1（M17900：每屏编号常量的值域守卫） // #867 净 +9（-8：BOUGHT 切屏作废的 M7891/M7892/M8113/M8114/M8115/M11971/M11972/M11973；+17：M17600–M17616 商店循环与确认后付款） // #852 +1（M17330：[109] 出兵路径里的 ENDING_1 回标题转场经菜单项上抛）；#866 +6（M17250–M17255：菜单项表的可用性条件被删、入口串到邻项的处理函数、绘制不再读表的可用性、动态正文不解析、多一处存档写点）；被 #866 搬到 page-main-menu.js 的 24 条改挂新写法，条数不变 // #868 +17（M16700–M16715：存读档列表的网格行、空槽 disabled 的两侧、行内删除与快捷键区间、备注不再补位/不再改游戏状态） // #870 +8（M16450-M16457：横幅/页脚/设置页与侵略页顶栏改用引擎排版）；#848 +1（M16250：标题页手工 addCharacter(0) 回潮）；界面流程缺陷 +5（M15300–M15304：奸商代理投放前的检查与犒赏播报的等键）；#789 +4（M13701/M13702/M13704/M13705：两版出口同源与各自的未知编号缺省）；#739 +2（M14557/M14558：p_c 的表内编号判断——删除/取反），M705 改挂新写法；#836 -2（删 M14557/M14558：指令名改由常量提供，p_c 不再读名字表，表内判断不存在）；M56/M705/M14335 改挂常量写法；#724 返工收口：+M14514/M14515/M14517/M14518/M14520/M14522（换屏前等键），恢复 M10749/M10750，删 M14455（与 M143 重复）；此前 +36（M14450–M14485，#724 子页面换屏）净 -2（删 M10749/M10750 有误后复原）（删 M10749/M10750：sengen_video 投放支的分支内等键，随回菜单换屏确认等键收口而不可观察）；#724 删 5（M137–M140、M152——screen-block.js 随画面组件删除；M141/M142 的 tests 改指 menu-button，M143 随 show_shop 直调 draw_main_menu 改写）；#723 改写 M143（主菜单换屏调用删除——tests 与 must_mention 随新行为）、删 M144（基准点不再被读，单例变异守不到行为）；#722 净 -3 +1（+M14370：调教每轮换屏调用；删 M150/M151/M154——重绘分支、EVENTTRAIN 重建与 EVENTCOM 探针随换屏方案消失）； // #721 +3（M14352-M14354：换屏入口——不清屏、只清一行、补等键）； // #717 +11（M14330-M14339/M14344：主菜单指令面板与入口行、调教方格与子菜单、能力值提升、道具商店的多列排版）； // #710 净 0（+1 M14241：page-shop-labo 的「不生成」退回纯文本；-1 M8401：SELECT_YES_NO 放行多一个输入随按钮化不可观察）；#702 起 +2（M14153/M14154：装备品页码不补位写法的回归检查，含旧单补位与双补位两种偏法）；#685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 分支空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码写法；+18 新回归检查 M13200-M13217）
 // 跳过、设施名表、近卫护卫条件、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 条件、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -72,8 +72,8 @@ export default [
   {
     desc: 'M8 select_target 取消：999 返回 1（假选中）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 返回 → 0\n      return 0;\n    }',
-    replace: `    if (result === 999) {
+    find: '    if (result === BACK_KEY) {\n      // 返回 → 0\n      return 0;\n    }',
+    replace: `    if (result === BACK_KEY) {
       // 变异：返回 1
       return 1;
     }`,
@@ -472,7 +472,7 @@ export default [
   {
     desc: 'M226 存档界面翻页步长改坏（+20 → +19）',
     file: 'ere/page/page-save-load.js',
-    find: '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === 200) {',
+    find: '    } else if (result === PAGE_NEXT_KEY && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN;\n    } else if (result === NAME_STORY_KEY) {',
     replace:
       '    } else if (result === 102 && pos + PAGE_LEN < 99) {\n      pos += PAGE_LEN - 1; // 变异：步长改坏\n    } else if (result === 200) {',
     tests: ['page-save-load'],
@@ -665,10 +665,10 @@ export default [
   {
     desc: 'M562 INFO2 怪物迎击 toggle 的位换算改坏（FLAG:5 位 4 → 位 3）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: `    if (result === 100) {
+    find: `    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 16);
     }`,
-    replace: `    if (result === 100) {
+    replace: `    if (result === INTERCEPT_TOGGLE_KEY) {
       flag_set(5, flag_get(5) ^ 8); // 变异：位 3
     }`,
     tests: ['page-dungeon-info'],
@@ -1065,10 +1065,10 @@ export default [
   {
     desc: 'M17615 使用支取消也扣钱（选人时按 [999] 也算买下）',
     file: 'ere/page/page-item-shop.js',
-    find: `    if (result === 999) {
+    find: `    if (result === TARGET_CANCEL_KEY) {
       return 0; // 取消：还没付款，道具也没动
     }`,
-    replace: `    if (result === 999) {
+    replace: `    if (result === TARGET_CANCEL_KEY) {
       era_flag.money -= item_price(bought); // 变异：取消也扣钱
       return 0; // 取消：还没付款，道具也没动
     }`,
@@ -1114,12 +1114,12 @@ export default [
       game.event.上次助手 = -1;
       return 0;
     }
-    if (result === 999) {`,
+    if (result === BACK_KEY) {`,
     replace: `      era_flag.assi = -1;
       game.event.上次助手 = -1;
       return 2; // 变异：误判为取消
     }
-    if (result === 999) {`,
+    if (result === BACK_KEY) {`,
     tests: ['page-select-target'],
     must_mention:
       'select_assi 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
@@ -1127,9 +1127,9 @@ export default [
   {
     desc: 'M7896 select_assi [999]：返回值改 0（误判为非取消，与 1002 混淆）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
+    find: '    if (result === BACK_KEY) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 2;\n    }',
     replace:
-      '    if (result === 999) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
+      '    if (result === BACK_KEY) {\n      // 我先想想… → 返回 2（取消，与 select_target 的 999 不同码）\n      return 0; // 变异：误判为非取消\n    }',
     tests: ['page-select-target'],
     must_mention:
       'select_assi 我先想想（999）：返回 2（取消，与 select_target 的 999=0 不同码），不置 ASSI',
@@ -1152,11 +1152,11 @@ export default [
       game.event.上次助手 = result;
       return 1;
     }
-    if (result === 1000) {`,
+    if (result === PAGE_PREV_KEY) {`,
     replace: `      era_flag.assi = result;
       return 1; // 变异：FLAG:2 未写
     }
-    if (result === 1000) {`,
+    if (result === PAGE_PREV_KEY) {`,
     tests: ['page-select-target'],
     must_mention: 'select_assi 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
   },
@@ -1613,17 +1613,17 @@ export default [
   {
     desc: 'M8406 ability_up 等级条件（< 20 → < 21）',
     file: 'ere/page/page-ability-up.js',
-    find: '        if (result > 990 && result < 999 && cflag(0, 9) < 20) {',
-    replace: '        if (result > 990 && result < 999 && cflag(0, 9) < 21) {',
+    find: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 20) {`,
+    replace: `        if (result >= MENU_LEVEL_MIN && result < BACK_KEY && cflag(0, 9) < 21) {`,
     tests: ['page-ability-up'],
     must_mention: '等级门整表驱动',
   },
   {
     desc: 'M8407 ABILITY_UP 返回键编号（999 → 998）',
     file: 'ere/page/page-ability-up.js',
-    find: '        if (result === 999) {\n          return 0;\n        }',
+    find: '        if (result === BACK_KEY) {\n          return 0;\n        }',
     replace:
-      '        if (result === 998) {\n          return 0; // 变异：返回键编号错\n        }',
+      '        if (result === MENU_SLAVE) {\n          return 0; // 变异：返回键编号错\n        }',
     tests: ['page-ability-up'],
     must_mention: '菜单档维度整表驱动',
   },
@@ -1639,8 +1639,8 @@ export default [
   {
     desc: 'M8409 ABILITY_UP_CORE 结束键编号（999 → 997）',
     file: 'ere/page/page-ability-up.js',
-    find: '    if (result === 999) {\n      // 结束',
-    replace: '    if (result === 997) {\n      // 变异：结束键编号错',
+    find: '    if (result === BACK_KEY) {\n      // 结束',
+    replace: '    if (result === MENU_ENEMY) {\n      // 变异：结束键编号错',
     tests: ['page-ability-up'],
     must_mention: '999 收尾三件',
   },
@@ -3451,7 +3451,7 @@ export default [
   {
     desc: 'M11206 献祭两个出口的 [100] 返回退回纯文本（白名单里有 [10]，100 被引擎拒收，#530）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.printButton('返回', 100);\n  const choice = await era.input(); // 输入",
+    find: "  era.printButton('返回', ENTRY_BACK_KEY);\n  const choice = await era.input(); // 输入",
     replace:
       "  era.print(' [100] 返回 '); // 变异：退回纯文本\n  const choice = await era.input(); // 输入",
     tests: ['chara-info-show'],
@@ -3557,7 +3557,7 @@ export default [
   {
     desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）\n    if (getbit(v, 13)) {\n      era.printButton('详细设定', 9);\n    }",
+    find: "    // [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）\n    if (getbit(v, 13)) {\n      era.printButton('详细设定', AGE_DETAIL_KEY);\n    }",
     replace: `    // 变异：渲染门用位 12
     if (getbit(v, 12)) {
       era.printButton('详细设定', 9);
@@ -3629,8 +3629,8 @@ export default [
   {
     desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
     file: 'ere/page/page-config-age.js',
-    find: '    } else if (result === 9) {\n      // 表未设时先播种默认，再进详细设定\n      if (race_table_unset()) {\n        seed_race_defaults();\n      }\n      await race_config(rand);',
-    replace: `    } else if (result === 9) {
+    find: '    } else if (result === AGE_DETAIL_KEY) {\n      // 表未设时先播种默认，再进详细设定\n      if (race_table_unset()) {\n        seed_race_defaults();\n      }\n      await race_config(rand);',
+    replace: `    } else if (result === AGE_DETAIL_KEY) {
       // 变异：不播种默认表
       await race_config(rand);`,
     tests: ['page-config-age'],
@@ -3640,8 +3640,8 @@ export default [
   {
     desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    } else if (result === 98) {\n      // 回默认（确认后直接 RETURN）\n      if (await confirm_reset('全种族的年龄均返回默认值。')) {\n        seed_race_defaults();\n        return 0;\n      }",
-    replace: `    } else if (result === 98) {
+    find: "    } else if (result === AGE_DEFAULT_KEY) {\n      // 回默认（确认后直接 RETURN）\n      if (await confirm_reset('全种族的年龄均返回默认值。')) {\n        seed_race_defaults();\n        return 0;\n      }",
+    replace: `    } else if (result === AGE_DEFAULT_KEY) {
       // 变异：确认后不写默认
       if (await confirm_reset('全种族的年龄均返回默认值。')) {
         return 0;
@@ -3652,10 +3652,10 @@ export default [
   {
     desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（打包先于确认：取消也写回编辑态，#547）',
     file: 'ere/page/page-config-age.js',
-    find: "    } else if (result === 99 || result === 100) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === 99) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
-    replace: `    } else if (result === 99 || result === 100) {
+    find: "    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {\n      // 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）\n      game.chara.种族年龄设定_0 = cla\n        .slice(0, 6)\n        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);\n      game.chara.种族年龄设定_1 = [6, 7].map(\n        (i) => cla[i] * 100 + deg[i] * 10 + num[i],\n      );\n      if (result === AGE_RESEED_KEY) {\n        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {",
+    replace: `    } else if (result === AGE_RESEED_KEY || result === AGE_BACK_KEY) {
       // 变异：打包挪进确认之后
-      if (result === 99) {
+      if (result === AGE_RESEED_KEY) {
         if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
           game.chara.种族年龄设定_0 = cla
             .slice(0, 6)
@@ -3685,8 +3685,8 @@ export default [
   {
     desc: 'M11561 RACE_CONFIG [999] 决定的保存分档判错（<= 1 → < 1，小数倍档保存成随机三元组，#547）',
     file: 'ere/page/page-config-age.js',
-    find: '        } else if (sub === 999) {\n          // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）\n          if (sv[0] <= 1) {',
-    replace: `        } else if (sub === 999) {
+    find: '        } else if (sub === AGE_EDIT_DECIDE) {\n          // 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）\n          if (sv[0] <= 1) {',
+    replace: `        } else if (sub === AGE_EDIT_DECIDE) {
           // 变异：分档判错
           if (sv[0] < 1) {`,
     tests: ['page-config-age'],
@@ -4002,18 +4002,18 @@ export default [
   {
     desc: 'M11860 陷阱商店页脚补回空行（按「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/page/page-shop-trap.js',
-    find: "  era.printButton('- 返回', 999);\n  era.setAlign('left');",
+    find: "  era.printButton('- 返回', LEAVE_SHOP_KEY);\n  era.setAlign('left');",
     replace:
-      "  era.printButton('- 返回', 999);\n  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行",
+      "  era.printButton('- 返回', LEAVE_SHOP_KEY);\n  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行",
     tests: ['shop-trap'],
     must_mention: '陷阱商店页脚按钮之后不应有空行',
   },
   {
     desc: 'M11861 能力值提升页脚补回空行（空内容输出只收三个标签那一行）',
     file: 'ere/page/page-ability-up.js',
-    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
+    find: "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  return { menu, page_size, max_page };",
     replace:
-      "      [1001, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
+      "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );\n  era.print(''); // 变异：页脚之后多补空行\n  return { menu, page_size, max_page };",
     tests: ['page-ability-up'],
     must_mention: '能力值提升页脚按钮之后不应有空行',
   },
@@ -4146,9 +4146,9 @@ export default [
   {
     desc: 'M12071 能力值提升页 [999] 之后补回空行（空内容输出只收行）',
     file: 'ere/page/page-ablup.js',
-    find: "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）",
+    find: "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）",
     replace:
-      "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
+      "  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
     tests: ['juel-check'],
     must_mention: '按钮行之间不夹空行',
   },
@@ -4194,9 +4194,9 @@ export default [
   {
     desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（首个换行只收 [10] 那一行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.println();\n  era.printButton('返回', 100);",
+    find: "  era.println();\n  era.printButton('返回', ENTRY_BACK_KEY);",
     replace:
-      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', 100);",
+      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', ENTRY_BACK_KEY);",
     tests: ['chara-info-show'],
     must_mention: '三个真空行',
   },
@@ -4212,9 +4212,9 @@ export default [
   {
     desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（两个换行都是真行）',
     file: 'ere/page/page-chara-info-show.js',
-    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY);",
     replace:
-      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY);",
     tests: ['chara-info-show'],
     must_mention: '三个真空行',
   },
@@ -4224,7 +4224,7 @@ export default [
     find: `  // [100] 异界综合征行是调试专用，不绘制
   // （[99] 行与尾部分割线逐行相邻，不补空行）
   era.drawLine(); // 点线分割线
-  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）`,
+  era.printButton('- 能力值提高结束', ABLUP_END_KEY); // （[999] 前缀由引擎拼）`,
     replace: `  era.println(); // 变异：多补一条空行
   era.drawLine(); // 点线分割线
   era.printButton('- 能力值提高结束', 999);`,
@@ -4278,8 +4278,8 @@ export default [
   {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
-    find: "        [999, '- 返 回'],",
-    replace: "        [999, '返 回'], // 变异：丢掉「- 」",
+    find: "        [LIST_BACK_KEY, '- 返 回'],",
+    replace: "        [LIST_BACK_KEY, '返 回'], // 变异：丢掉「- 」",
     tests: ['page-intercept'],
     must_mention: '页脚三键正文',
   },
@@ -5621,18 +5621,18 @@ export default [
   {
     desc: 'M16452 设置页页脚三键退回各占一行（不再同行排布）',
     file: 'ere/page/page-config.js',
-    find: "        [101, '下一页'],\n      ],\n      3,\n    );",
+    find: "        [CONFIG_NEXT_PAGE_KEY, '下一页'],\n      ],\n      3,\n    );",
     replace:
-      "        [101, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
+      "        [CONFIG_NEXT_PAGE_KEY, '下一页'],\n      ],\n      1, // 变异：每行一格\n    );",
     tests: ['layout-engine'],
     must_mention: '三枚页脚键共享同一个 Row',
   },
   {
     desc: 'M16453 能力值提升页脚三键退回各占一行（不再同行排布）',
     file: 'ere/page/page-ability-up.js',
-    find: "      [1001, '- 下一页'],\n    ],\n    3,\n  );",
+    find: "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    3,\n  );",
     replace:
-      "      [1001, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
+      "      [PAGE_NEXT_KEY, '- 下一页'],\n    ],\n    1, // 变异：每行一格\n  );",
     tests: ['page-ability-up'],
     must_mention: '三枚页脚键共享同一个 Row',
   },
@@ -5894,5 +5894,13 @@ export default [
     save: () => save_game(),`,
     tests: ['dungeon-battle-state'],
     must_mention: '存档写点必须恰好 1 处',
+  },
+  {
+    desc: 'M17900 每屏编号常量越过后代 ID 段（陷阱店的回道具店键改用 100000）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const TO_ITEM_KEY = 997;',
+    replace: 'const TO_ITEM_KEY = 100000; // 变异：编号落进后代 ID 段',
+    tests: ['page-button-key-constants'],
+    must_mention: '每屏编号常量必须是非负整数且小于 FIRST_CHILD_ID',
   },
 ];

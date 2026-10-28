@@ -594,24 +594,36 @@ export default [
     11903,
     'SHOW_CHARA_INFO：条件键上界挪一格（1005 → 1004——最后一档瞳色切不过去）',
     MAIN,
-    'if (result >= 1000 && result <= 1005) {',
-    'if (result >= 1000 && result <= 1004) {',
+    `    if (
+      result >= CONDITION_KEY_BASE &&
+      result < CONDITION_KEY_BASE + SACRIFICE_KINDS.length
+    ) {`,
+    `    if (
+      result >= CONDITION_KEY_BASE &&
+      result < CONDITION_KEY_BASE + SACRIFICE_KINDS.length - 1
+    ) {`,
     '切页后 9 号不再符合条件',
   ),
   make(
     11907,
     'SHOW_CHARA_INFO：条件键下界挪一格（1000 → 1001——第一档种族切不回去）',
     MAIN,
-    'if (result >= 1000 && result <= 1005) {',
-    'if (result >= 1001 && result <= 1005) {',
+    `    if (
+      result >= CONDITION_KEY_BASE &&
+      result < CONDITION_KEY_BASE + SACRIFICE_KINDS.length
+    ) {`,
+    `    if (
+      result > CONDITION_KEY_BASE &&
+      result < CONDITION_KEY_BASE + SACRIFICE_KINDS.length
+    ) {`,
     '切页后 9 号不再符合条件',
   ),
   make(
     11908,
     'SHOW_CHARA_INFO：条件键的编号基数挪一格（1000 + index → 1001 + index）',
     MAIN,
-    '      era.printButton(kind, 1000 + index);',
-    '      era.printButton(kind, 1001 + index);',
+    '      era.printButton(kind, CONDITION_KEY_BASE + index);',
+    '      era.printButton(kind, CONDITION_KEY_BASE + 1 + index);',
     '输入不合法！请输入以下值之一',
   ),
   make(
@@ -655,7 +667,7 @@ export default [
     11983,
     'SHOW_CHARA_INFO：条件键编号基数挪进预设 ID 段（1000 + index → 100 + index，只被静态核对盯住）',
     MAIN,
-    '      era.printButton(kind, 1000 + index);',
+    '      era.printButton(kind, CONDITION_KEY_BASE + index);',
     '      era.printButton(kind, 100 + index);',
     '同一轮里与角色行同屏的固定编号不得等于预设 ID',
     ['child-id-collision'],

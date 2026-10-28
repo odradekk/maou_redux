@@ -139,6 +139,16 @@ const SACRIFICED_COLOR = '#ffc800';
 const LIST_RETURN = 999;
 
 /**
+ * 名单轮的条件键下界：六个条件键 = 1000 + 条件下标（1000-1005）。
+ * 条件个数取自 SACRIFICE_KINDS，上界不写死——条件增减时编号带自己跟着变。
+ */
+const CONDITION_KEY_BASE = 1000;
+
+/** 入口屏（未满 30 的两枚）：[10] 查看符合条件的奴隶或勇者、[100] 返回 */
+const FILTER_ENTRY_KEY = 10;
+const ENTRY_BACK_KEY = 100;
+
+/**
  * hex_to_dec：`0xRRGGBB` 拆成三段十进制。
  *
  * 颜色整数先转成 6 位十六进制串再逐位取值（非十六进制位按 0 处理），
@@ -262,17 +272,17 @@ async function sacrifice_flow(cid, background) {
   // 正文不写 `[N]`（引擎按 showAcc 自动拼，自带会显示成 `[10] [ 10] …`）。
   era.println();
   era.println();
-  era.printButton('查看符合条件的奴隶或勇者', 10); // `[ 10]` 的补位交给引擎排版
+  era.printButton('查看符合条件的奴隶或勇者', FILTER_ENTRY_KEY); // `[ 10]` 的补位交给引擎排版
   // 第二句「空两行 + 返回文本」：首个 \n 只结束 [10] 那一行
   // （ere 的 printButton 自成一行），余下的一个是真空白；两枚按钮之间只有
   // 一个空行，末尾的返回文本之后不换行
   era.println();
-  era.printButton('返回', 100);
+  era.printButton('返回', ENTRY_BACK_KEY);
   const choice = await era.input(); // 输入
-  if (choice === 100) {
+  if (choice === ENTRY_BACK_KEY) {
     return false; // 返回首页
   }
-  if (choice !== 10) {
+  if (choice !== FILTER_ENTRY_KEY) {
     return true; // 其余输入：重新开始
   }
 
@@ -310,7 +320,7 @@ async function sacrifice_flow(cid, background) {
     era.println();
     // 六个条件按钮（编号即 kind 下标 + 1000）
     for (const [index, kind] of SACRIFICE_KINDS.entries()) {
-      era.printButton(kind, 1000 + index);
+      era.printButton(kind, CONDITION_KEY_BASE + index);
     }
     era.println();
     era.println();
@@ -325,7 +335,10 @@ async function sacrifice_flow(cid, background) {
     if (result === LIST_RETURN) {
       return true; // 重画（外层循环继续）
     }
-    if (result >= 1000 && result <= 1005) {
+    if (
+      result >= CONDITION_KEY_BASE &&
+      result < CONDITION_KEY_BASE + SACRIFICE_KINDS.length
+    ) {
       page = result % 10;
       continue; // 重画名单
     }

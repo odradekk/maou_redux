@@ -51,6 +51,12 @@ const { print_button_grid } = require('#/utils/button-grid');
 const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
+/**
+ * 本模块五个画面（入口/性别/种族/祭品/确认）的公共返回键 [999]。
+ * 各屏都只印自己那一枚，编号在商店族里是同一套「返回」约定。
+ */
+const BACK_KEY = 999;
+
 /** 魔物从者的上限（`COUNT:1 >= 30`） */
 const FOLLOWER_LIMIT = 30;
 /** 魔物从者的素质编号（`TALENT:COUNT:220`，召喚済み标记） */
@@ -152,9 +158,9 @@ async function monster_shop(rand) {
   era.printButton('召唤魔物从者', 1);
   // [IF DEBUG] 的 [2]召唤异界勇者不移植（文件头第 2 条）
   era.drawLine({ isSolid: true });
-  era.printButton('返回', 999);
+  era.printButton('返回', BACK_KEY);
   const entry = await era.input();
-  if (entry === 999) {
+  if (entry === BACK_KEY) {
     clear_shop();
     return 0;
   }
@@ -185,9 +191,9 @@ async function monster_shop(rand) {
     era.printButton('女性', 2);
     era.printButton('扶她', 3);
     era.drawLine({ isSolid: true });
-    era.printButton('返回', 999);
+    era.printButton('返回', BACK_KEY);
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       clear_shop();
       return 0;
     }
@@ -217,10 +223,10 @@ async function monster_shop(rand) {
     era.printButton('魔人类', 8);
     era.printButton('魔兽类', 9);
     era.drawLine({ isSolid: true });
-    era.printButton('返回', 999);
+    era.printButton('返回', BACK_KEY);
     era.print('\u3000请选择魔物从者的种类');
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       clear_shop();
       return 0;
     }
@@ -349,11 +355,11 @@ async function select_follower({ arg0, show, guard, rand }) {
 
     era.drawLine({ isSolid: true });
     // #710：返回与商品格整轮一起按钮化。
-    era.printButton('返回', 999);
+    era.printButton('返回', BACK_KEY);
     era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者');
 
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       return 0;
     }
     // 商品编号段与在售位的两道检查（不在段内/没点亮则重问；
@@ -512,11 +518,11 @@ async function buy_follower({ show, rand }) {
     }
     print_button_grid(pick_items, COLUMNS);
     era.drawLine({ isSolid: true });
-    era.printButton('返回', 999);
+    era.printButton('返回', BACK_KEY);
     era.print('');
 
     const result = await era.input();
-    if (result === 999) {
+    if (result === BACK_KEY) {
       return 0;
     }
     if (result < 100 || result >= 200) {

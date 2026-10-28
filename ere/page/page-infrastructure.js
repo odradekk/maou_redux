@@ -188,6 +188,20 @@ function get(name) {
   return era.get(name) || 0;
 }
 
+/**
+ * 设施菜单（0-12 是展品槽位号，由 EXHIBITS 决定）与农场内屏的固定键。
+ * 槽位号本身是数据，不设常量；固定键只列本屏导航与三个非槽位入口。
+ */
+const ALL_EXHIBITS_KEY = 50;
+const FARM_KEY = 51;
+const VIDEO_SHELF_KEY = 99;
+const INFRA_BACK_KEY = 100;
+/** 农场内屏的返回键（避开外层菜单的 [100]：内层菜单画在外层之上） */
+const FARM_BACK_KEY = 999;
+/** 水晶球书架的翻页键 */
+const SHELF_PREV_KEY = 1000;
+const SHELF_NEXT_KEY = 1001;
+
 function print_menu() {
   era.print('去哪个设施呢？');
   era.drawLine();
@@ -197,19 +211,19 @@ function print_menu() {
   // 选项自 #572 起升格为按钮（PR #53 通则，正文不写 [编号] 前缀，引擎按
   // showAcc 自动拼）。本屏的菜单只打印一次、消费一次（各分支 RETURN 0），
   // 按钮不会被后续回传禁用；白名单＝本轮的按钮集（0-12/50/51/99/100）。
-  era.printButton('看看肉便器的样子', 51);
+  era.printButton('看看肉便器的样子', FARM_KEY);
   era.print('＿＿＿＿＿＿');
   era.print('＼ 博 物 馆 ／');
   era.print('\u00A0\u00A0￣￣￣￣￣');
-  era.printButton('看看全部展品的样子', 50);
+  era.printButton('看看全部展品的样子', ALL_EXHIBITS_KEY);
   era.println();
   for (const [index, [, name]] of EXHIBITS) {
     era.printButton(`看看${name}的状态`, index);
   }
   era.println();
-  era.printButton('看看已拍的影像水晶球', 99);
+  era.printButton('看看已拍的影像水晶球', VIDEO_SHELF_KEY);
   era.drawLine();
-  era.printButton('返回', 100);
+  era.printButton('返回', INFRA_BACK_KEY);
 }
 
 async function show_exhibit(result) {
@@ -272,9 +286,9 @@ async function show_farm() {
       `卖掉产出的孩子  现在：${get('flag:614') & 2 ? '出售' : '不出售'}`,
       2,
     );
-    era.printButton('返回', 999);
+    era.printButton('返回', FARM_BACK_KEY);
     const result = await era.input();
-    if (result === 999) return;
+    if (result === FARM_BACK_KEY) return;
     if (result === 0) {
       era.print('请选择播种者');
       // 的四项 → 按钮（同上）
@@ -329,19 +343,19 @@ async function show_video_shelf() {
     // 的三项 → 按钮（PR #53 通则，#572）；三个页脚键同行（引擎 24 列网格）
     print_button_grid(
       [
-        [1000, '- 上一页'], // （`- ` 是按钮文案自带的前缀，照写）
-        [999, '- 离  开'],
-        [1001, '- 下一页'],
+        [SHELF_PREV_KEY, '- 上一页'], // （`- ` 是按钮文案自带的前缀，照写）
+        [FARM_BACK_KEY, '- 离  开'],
+        [SHELF_NEXT_KEY, '- 下一页'],
       ],
       3,
     );
     const result = await era.input();
-    if (result === 999) return;
+    if (result === FARM_BACK_KEY) return;
     previous_page = no_page;
-    if (result === 1000 && no_page > 0) {
+    if (result === SHELF_PREV_KEY && no_page > 0) {
       no_page -= 1;
       await era.clear(era.getLineCount() - screen_anchor);
-    } else if (result === 1001 && no_page < max_page) {
+    } else if (result === SHELF_NEXT_KEY && no_page < max_page) {
       no_page += 1;
       await era.clear(era.getLineCount() - screen_anchor);
     }
@@ -360,7 +374,7 @@ async function infrastructure(selectable_count) {
     const result = await era.input();
     if (result < 0) continue;
     if (EXHIBITS.has(result)) await show_exhibit(result);
-    else if (result === 50) {
+    else if (result === ALL_EXHIBITS_KEY) {
       const count = get('flag:84');
       if (count === 0) await era.printAndWait('还没制作过展品。');
       else {
@@ -371,9 +385,9 @@ async function infrastructure(selectable_count) {
           '现在，任何人都没有办法改变她们这种冻结的神态了。',
         );
       }
-    } else if (result === 51) await show_farm();
-    else if (result === 99) await show_video_shelf();
-    else if (result === 100) return 0;
+    } else if (result === FARM_KEY) await show_farm();
+    else if (result === VIDEO_SHELF_KEY) await show_video_shelf();
+    else if (result === INFRA_BACK_KEY) return 0;
     else if (result >= selectable_count) continue;
     return 0;
   }

@@ -112,6 +112,20 @@ const WEAPON_TENTACLE_ID = 349; // 武器化触手的装备编号
 const SWORD_ITEM = 340; // 剑的按钮编号 [340]
 /** 强化开放所需等级 */
 const ENHANCE_LEVEL = 30;
+
+/**
+ * 换装族各屏的固定键。服装三屏共用翻页 [997]/[998] 与返回 [999]，
+ * 普通服装屏另有黑市入口 [996]；装备管理两屏的 [997]/[998] 是
+ * 「装备强化 / 取下」（与服装翻页同号、不同屏），[999] 都是返回。
+ */
+const PAGE_NEXT_KEY = 997;
+const PAGE_PREV_KEY = 998;
+const CLOTH_MARKET_KEY = 996;
+const TAILOR_BACK_KEY = 999;
+const EQUIP_ENHANCE_KEY = 997;
+const EQUIP_REMOVE_KEY = 998;
+/** 选择强化档位屏的「不装备」键（同一屏的返回语义，正文不同） */
+const EQUIP_NONE_KEY = 999;
 /** 等级不足的灰显文本用的染色（RGB 80,80,80） */
 const GRAY = '#505050';
 
@@ -537,13 +551,13 @@ async function tailor_casual(cid) {
       era.printButton(`- ${item.label}`, item.n);
     }
     era.drawLine();
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', TAILOR_BACK_KEY);
     const result = await era.input();
     const item = CASUAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
       return { a: KIND_CLOTHES, c: price, r: item.r, s: item.s(cid) };
     }
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return { a: 0, c: 0, r: 0, s: 0 };
     }
     // 其余输入重绘
@@ -576,10 +590,10 @@ async function tailor_normal(cid) {
     // 四个页脚键同行（引擎 24 列网格、每格 6 列）；正文都不带「- 」前缀
     print_button_grid(
       [
-        [997, '下一页'],
-        [996, '服装黑市'],
-        [998, '上一页'],
-        [999, '- 返回'],
+        [PAGE_NEXT_KEY, '下一页'],
+        [CLOTH_MARKET_KEY, '服装黑市'],
+        [PAGE_PREV_KEY, '上一页'],
+        [TAILOR_BACK_KEY, '- 返回'],
       ],
       4,
     );
@@ -593,21 +607,21 @@ async function tailor_normal(cid) {
         s: item.s(cid),
       };
     }
-    if (result === 997) {
+    if (result === PAGE_NEXT_KEY) {
       page = (page + 1) % NORMAL_PAGES;
       continue;
     }
-    if (result === 998) {
+    if (result === PAGE_PREV_KEY) {
       page = (page + NORMAL_PAGES - 1) % NORMAL_PAGES;
       continue;
     }
-    if (result === 996) {
+    if (result === CLOTH_MARKET_KEY) {
       // 服装黑市：tailor_normal_special 的返回值（含取消的 A = 0）直接
       // 作为本函数的返回值上交——A == 0 时 tailor_core 回主菜单
       // （不是留在本画面）
       return tailor_normal_special(cid);
     }
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return { a: 0, c: 0, r: 0, s: 0 };
     }
     // 其余输入重绘
@@ -639,9 +653,9 @@ async function tailor_normal_special(cid) {
     era.drawLine();
     print_button_grid(
       [
-        [997, '下一页'],
-        [998, '上一页'],
-        [999, '- 返回'],
+        [PAGE_NEXT_KEY, '下一页'],
+        [PAGE_PREV_KEY, '上一页'],
+        [TAILOR_BACK_KEY, '- 返回'],
       ],
       3,
     );
@@ -651,15 +665,15 @@ async function tailor_normal_special(cid) {
       // A = 2（黑市的服装档）
       return { a: 2, c: price, r: item.r, s: item.s(cid) };
     }
-    if (result === 997) {
+    if (result === PAGE_NEXT_KEY) {
       page = (page + 1) % SPECIAL_PAGES;
       continue;
     }
-    if (result === 998) {
+    if (result === PAGE_PREV_KEY) {
       page = (page + SPECIAL_PAGES - 1) % SPECIAL_PAGES;
       continue;
     }
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return { a: 0, c: 0, r: 0, s: 0 }; // （A/C/R/S/T 清零）
     }
   }
@@ -686,9 +700,9 @@ async function tailor_accessory(cid) {
     era.drawLine();
     print_button_grid(
       [
-        [997, '下一页'],
-        [998, '上一页'],
-        [999, '- 返回'],
+        [PAGE_NEXT_KEY, '下一页'],
+        [PAGE_PREV_KEY, '上一页'],
+        [TAILOR_BACK_KEY, '- 返回'],
       ],
       3,
     );
@@ -702,15 +716,15 @@ async function tailor_accessory(cid) {
         s: item.s(cid),
       };
     }
-    if (result === 997) {
+    if (result === PAGE_NEXT_KEY) {
       page = page > ACCESSORY_PAGE_MAX - 1 ? 0 : page + 1;
       continue;
     }
-    if (result === 998) {
+    if (result === PAGE_PREV_KEY) {
       page = page < 1 ? ACCESSORY_PAGE_MAX : page - 1;
       continue;
     }
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return { a: 0, c: 0, r: 0, s: 0 };
     }
   }
@@ -808,9 +822,9 @@ async function pick_enhance_amount() {
     for (const amount of [...new Set([0, 1, 2, 4, 6, 8, max_amount])]) {
       era.printButton(String(amount), amount);
     }
-    era.printButton('- 不装备', 999);
+    era.printButton('- 不装备', EQUIP_NONE_KEY);
     const result = await era.input();
-    if (result === 999) {
+    if (result === EQUIP_NONE_KEY) {
       return null;
     }
     // 条件读档位上限（max_amount）而非输入值——每轮重算且按钮集合受限，该检查恒不命中
@@ -834,9 +848,9 @@ async function pick_weapon_prefix() {
   for (let index = 0; index <= WEAPON_PREFIX_MAX; index += 1) {
     era.printButton(`- ${WEAPON_PREFIXES[index]}`, index); // （表驱动）
   }
-  era.printButton('- 返回', 999);
+  era.printButton('- 返回', TAILOR_BACK_KEY);
   const result = await era.input();
-  if (result === 999) {
+  if (result === TAILOR_BACK_KEY) {
     return null;
   }
   if (result >= 0 && result <= WEAPON_PREFIX_MAX) {
@@ -896,9 +910,9 @@ async function equip_magic_item(cid) {
         );
       }
     }
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', TAILOR_BACK_KEY);
     const result = await era.input();
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return { a: 0, c: 0, r: 0, s: 0 };
     }
     let slot;
@@ -942,22 +956,22 @@ async function pick_ring(cid, slot) {
         { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
       ]);
     } else if (cflag(cid, slot) >= 0) {
-      era.printButton('- 装备强化', 997);
+      era.printButton('- 装备强化', EQUIP_ENHANCE_KEY);
     }
     if (cflag(cid, slot) >= 0) {
-      era.printButton('- 取下', 998);
+      era.printButton('- 取下', EQUIP_REMOVE_KEY);
     }
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', TAILOR_BACK_KEY);
 
     const result = await era.input();
     let enhance_type = 0; // EQUIPTYPE = 0
     let item_no = null;
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return; // （回选槽）
     }
-    if (result === 997 && cflag(0, 9) >= ENHANCE_LEVEL) {
+    if (result === EQUIP_ENHANCE_KEY && cflag(0, 9) >= ENHANCE_LEVEL) {
       enhance_type = 1;
-    } else if (result === 998) {
+    } else if (result === EQUIP_REMOVE_KEY) {
       // 取下：装备回包、槽置 -1
       const w = { 存储编号: cflag(cid, slot) };
       equip_get(w);
@@ -1038,27 +1052,27 @@ async function equip_magic_weapon(cid) {
         { content: '[---] - 未开放（30级后才能装备强化）', color: GRAY },
       ]);
     } else if (current.存储编号 >= 0) {
-      era.printButton('- 装备强化', 997);
+      era.printButton('- 装备强化', EQUIP_ENHANCE_KEY);
     }
     if (current.存储编号 >= 0) {
-      era.printButton('- 取下', 998);
+      era.printButton('- 取下', EQUIP_REMOVE_KEY);
     }
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', TAILOR_BACK_KEY);
 
     const result = await era.input();
     let enhance_type = 0; // EQUIPTYPE = 0
     let item_no = result;
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return { a: 0, c: 0, r: 0, s: 0 };
     }
     if (result === WEAPON_TENTACLE_RESULT) {
       item_no = WEAPON_TENTACLE_ID; // Y:1 = 349; RESULT = 349
-    } else if (result === 997 && current.存储编号 <= -1) {
+    } else if (result === EQUIP_ENHANCE_KEY && current.存储编号 <= -1) {
       era.print('手无寸铁，强化啥子？');
       continue;
-    } else if (result === 997 && cflag(0, 9) >= ENHANCE_LEVEL) {
+    } else if (result === EQUIP_ENHANCE_KEY && cflag(0, 9) >= ENHANCE_LEVEL) {
       enhance_type = 1;
-    } else if (result === 998) {
+    } else if (result === EQUIP_REMOVE_KEY) {
       // 取下
       const w = { 存储编号: cflag(cid, SLOT_WEAPON) };
       equip_get(w);
@@ -1269,7 +1283,7 @@ async function tailor_core(arg) {
     era.printButton('- 魔法装备', 7);
     era.printButton('- 武器', 8);
     era.drawLine();
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', TAILOR_BACK_KEY);
 
     const result = await era.input();
 
@@ -1297,7 +1311,7 @@ async function tailor_core(arg) {
       picked = await equip_magic_item(arg);
     } else if (result === 8) {
       picked = await equip_magic_weapon(arg);
-    } else if (result === 999) {
+    } else if (result === TAILOR_BACK_KEY) {
       return 0; // （返回键）
     } else {
       continue;
@@ -1384,10 +1398,10 @@ async function tailor_main() {
     era.drawLine(); // 分隔线（成员列表上方）
     life_list_tailor();
     era.drawLine(); // 点线（返回键上方）
-    era.printButton('- 返回', 999);
+    era.printButton('- 返回', TAILOR_BACK_KEY);
 
     const result = await era.input();
-    if (result === 999) {
+    if (result === TAILOR_BACK_KEY) {
       return 0;
     }
     // 三项检查：范围外 / 濒死 / 非待机（均静默回循环头）
